@@ -1,0 +1,48 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "OpenHarmony",
+        "material": {
+          "certpath": "D:\\hmprojects\\HelloWorld\\app-cert-chain.pem",
+          "storePassword": "123456",
+          "storeFile": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\toolchains\\lib\\OpenHarmony.p12",
+          "keyAlias": "openharmony application release",
+          "keyPassword": "123456",
+          "profile": "D:\\hmprojects\\HelloWorld\\entry-default.p7b",
+          "signAlg": "SHA256withECDSA"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "26.0.0",
+        "compileSdkVersion": "26.0.0",
+        "runtimeOS": "OpenHarmony",
+        "targetSdkVersion": "26.0.0"
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

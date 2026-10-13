@@ -1,0 +1,138 @@
+Ôr@œªassertions¤code´customTransformCache¢id¤meta¬originalCode±originalSourcemap«resolvedIds®sourcemapChainµsyntheticNamedExportsµtransformDependencies¨cacheAstÔrA ÂÙ‡D:\hmprojects\HelloWorld\oh_modules\.ohpm\@ohos+hypium@1.0.6\oh_modules\@ohos\hypium\src\main\module\assert\deepEquals\DeepTypeUtils.jsÔrB˜±isLocalDependency¯isNodeEntryFile§pkgPath§pkgNameªpkgVersion±belongProjectPath±dependencyPkgInfo¨commonjsÂÂÙTD:\hmprojects\HelloWorld\oh_modules\.ohpm\@ohos+hypium@1.0.6\oh_modules\@ohos\hypium¬@ohos/hypium¥1.0.6¸D:\hmprojects\HelloWorldÔrC’§pkgNameªpkgVersion¬@ohos/hypium¥1.0.6ÔrD’°hasDefaultExportªisCommonJSÃÂÚä/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+class DeepTypeUtils {
+    static getType_(value) {
+       return Object.prototype.toString.apply(value);
+   }
+    static isA_(typeName, value) {
+        return this.getType_(value) === '[object ' + typeName + ']';
+    }
+    static isAsymmetricEqualityTester_(obj) {
+        return obj ? this.isA_('Function', obj.asymmetricMatch) : false;
+    }
+
+    /**
+     * æ˜¯å¦æ˜¯function
+     * @param value
+     */
+    static isFunction_(value) {
+        return this.isA_('Function', value);
+    }
+
+    /**
+     * æ˜¯å¦æ˜¯undefined
+     * @param obj
+     */
+    static isUndefined(obj) {
+        return obj === void 0;
+    }
+
+    /**
+     * æ˜¯å¦æ˜¯Node
+     * @param obj
+     */
+    static isDomNode(obj) {
+        return obj !== null &&
+              typeof obj === 'object' &&
+              typeof obj.nodeType === 'number' &&
+              typeof obj.nodeName === 'string';
+    }
+
+    /**
+     * æ˜¯å¦æ˜¯promiseå¯¹è±¡
+     * @param obj
+     */
+    static isPromise (obj) {
+        return !!obj && obj.constructor === Promise;
+  };
+    /**
+     *  æ˜¯å¦æ˜¯mapå¯¹è±¡
+     * @param obj
+     */
+    static isMap(obj) {
+        return (
+            obj !== null &&
+            typeof obj !== 'undefined' &&
+            obj.constructor === Map
+        );
+    }
+
+    /**
+     * æ˜¯å¦æ˜¯setå¯¹è±¡
+     * @param obj å¯¹è±¡
+     */
+    static isSet(obj) {
+        return (
+            obj !== null &&
+            typeof obj !== 'undefined' &&
+            obj.constructor === Set
+        );
+    }
+
+    /**
+     * å¯¹è±¡æ˜¯å¦æœ‰keyå±æ€§
+     * @param obj å¯¹è±¡
+     * @param key å¯¹è±¡å±æ€§åç§°
+     */
+    static has(obj, key) {
+        return Object.prototype.hasOwnProperty.call(obj, key);
+    }
+
+    /**
+     * è·å–å¯¹è±¡çš„è‡ªæœ‰å±æ€§
+     * @param obj å¯¹è±¡
+     * @param isArray æ˜¯å¦æ˜¯æ•°ç»„,[object Array]
+     */
+    static keys(obj, isArray) {
+     const extraKeys = [];
+        // è·å–å¯¹è±¡æ‰€æœ‰å±æ€§
+     const  allKeys = this.getAllKeys(obj);
+        if (!isArray) {
+            return allKeys;
+        }
+        if (allKeys.length === 0) {
+            return allKeys;
+        }
+        for (const k of allKeys) {
+            if (typeof k === 'symbol' || !/^[0-9]+$/.test(k)) {
+                extraKeys.push(k);
+            }
+        }
+        return extraKeys;
+    }
+
+    /**
+     * è·å–objå¯¹è±¡çš„æ‰€æœ‰å±æ€§
+     * @param obj objå¯¹è±¡
+     */
+    static getAllKeys(obj) {
+        const keys = [];
+        for (let key in obj) {
+            if(this.has(obj, key)) {
+                keys.push(key);
+            }
+        }
+        const symbols = Object.getOwnPropertySymbols(obj);
+        for (const sym of symbols) {
+            if (obj.propertyIsEnumerable(sym)) {
+                keys.push(sym);
+            }
+        }
+        return keys;
+    }
+
+}
+export default DeepTypeUtils;ÀAÂÔrE”²dynamicImportCache¹exportAllDeclarationCache»exportNamedDeclarationCache«importCache

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "conservation",
+    "status": "FAIL",
+    "measured": {
+      "driftWater": 0.0,
+      "driftHeavy": 0.02,
+      "driftLight": 0.02
+    },
+    "threshold": {
+      "driftWater": "< 0.001",
+      "driftHeavy": "< 0.001",
+      "driftLight": "< 0.001"
+    },
+    "evidence_count": 1,
+    "note": "Algorithm v1 §3.3 synthetic defect correctly exposed."
+  }
+]
