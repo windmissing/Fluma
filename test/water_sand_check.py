@@ -41,7 +41,7 @@ def parse_lines(lines: list[str]) -> list[dict[str, Any]]:
         hook = match.group(1)
         subtype = match.group(2)
         try:
-            payload = json.loads(match.group(2))
+            payload = json.loads(match.group(3))
         except json.JSONDecodeError as error:
             records.append(
                 {
@@ -76,6 +76,27 @@ def events(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return parsed_events
 
 
+def snapshot_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [record for record in records if record["type"] == "SNAPSHOT"]
+
+
+def metric_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [record for record in records if record["type"] == "METRIC"]
+
+
+def nearest_metric_record(
+    snapshot_record: dict[str, Any], records: list[dict[str, Any]]
+) -> dict[str, Any] | None:
+    rows = metric_records(records)
+    if not rows:
+        return None
+    snapshot_line = snapshot_record.get("line", 0)
+    preceding = [row for row in rows if row.get("line", 0) <= snapshot_line]
+    if preceding:
+        return max(preceding, key=lambda row: row.get("line", 0))
+    return min(rows, key=lambda row: abs(row.get("line", 0) - snapshot_line))
+
+
 def build_segments(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     # TODO(product-hook): align event line numbers with hilog/record timestamps.
     # The final implementation will split init, tilt, shake, invert, rest, and
@@ -101,50 +122,273 @@ def blocked(name: str, missing: list[str]) -> CheckResult:
         status="BLOCKED",
         measured={},
         threshold={},
-        note="TODO(product-hook): missing " + ", ".join(missing),
+        note="BLOCKED(missing_hook): missing " + ", ".join(missing),
     )
 
 
+SNAPSHOT_FIELDS = (
+    "schemaVersion",
+    "cols",
+    "capacity",
+    "waterTop",
+    "bh",
+    "bl",
+    "mh",
+    "ml",
+    "suspH",
+    "suspL",
+    "hs",
+    "hl",
+    "sandTop",
+)
+
+
+def validate_snapshot(data: dict[str, Any]) -> tuple[list[str], list[str]]:
+    missing = [field for field in SNAPSHOT_FIELDS if field not in data]
+    if missing:
+        return missing, []
+    invalid: list[str] = []
+    if data["schemaVersion"] != 2:
+        invalid.append("schemaVersion")
+    if not isinstance(data["capacity"], int) or data["capacity"] <= 0:
+        invalid.append("capacity")
+    cols = data["cols"]
+    if not isinstance(cols, int) or cols <= 0:
+        invalid.append("cols")
+        return missing, invalid
+    for field in SNAPSHOT_FIELDS[3:]:
+        values = data[field]
+        if not isinstance(values, list) or len(values) != cols:
+            invalid.append(field)
+            continue
+        if any(not isinstance(value, (int, float)) or not math.isfinite(value) for value in values):
+            invalid.append(field)
+    if invalid:
+        return missing, invalid
+    for index in range(cols):
+        if (
+            abs(data["hs"][index] - data["bh"][index] - data["mh"][index]) > 1e-9
+            or abs(data["hl"][index] - data["bl"][index] - data["ml"][index]) > 1e-9
+            or abs(data["sandTop"][index] - data["hs"][index] - data["hl"][index]) > 1e-9
+        ):
+            invalid.append("derived hs/hl/sandTop")
+            break
+    return missing, invalid
+
+
+def snapshot_totals(data: dict[str, Any]) -> dict[str, float]:
+    water = 0.0
+    heavy = 0.0
+    light = 0.0
+    for index in range(data["cols"]):
+        water += max(
+            0.0,
+            data["waterTop"][index]
+            - data["sandTop"][index]
+            - data["suspH"][index]
+            - data["suspL"][index],
+        )
+        heavy += data["bh"][index] + data["mh"][index] + data["suspH"][index]
+        light += data["bl"][index] + data["ml"][index] + data["suspL"][index]
+    return {"water": water, "heavy": heavy, "light": light}
+
+
+def snapshot_drift(data: dict[str, Any], initial: dict[str, float]) -> dict[str, float]:
+    totals = snapshot_totals(data)
+    return {
+        phase: abs(totals[phase] - initial[phase]) / max(initial[phase], 1e-9)
+        for phase in ("water", "heavy", "light")
+    }
+
+
+def snapshot_separation_profile(data: dict[str, Any]) -> dict[str, float | None]:
+    low_heavy = 0.0
+    low_light = 0.0
+    high_heavy = 0.0
+    high_light = 0.0
+    has_heavy = False
+    has_light = False
+    epsilon = 1e-9
+    for index in range(data["cols"]):
+        bh = data["bh"][index]
+        bl = data["bl"][index]
+        mh = data["mh"][index]
+        ml = data["ml"][index]
+        sand_top = data["sandTop"][index]
+        has_heavy = has_heavy or bh + mh > epsilon
+        has_light = has_light or bl + ml > epsilon
+        lower_bound = sand_top / 3
+        upper_bound = 2 * sand_top / 3
+        mix_start = bh + bl
+        mix_total = max(mh + ml, epsilon)
+        lower_mix = max(0.0, min(lower_bound, sand_top) - max(0.0, mix_start))
+        upper_mix = max(0.0, sand_top - max(upper_bound, mix_start))
+        low_heavy += min(bh, lower_bound) + lower_mix * mh / mix_total
+        low_light += max(0.0, min(bh + bl, lower_bound) - bh) + lower_mix * ml / mix_total
+        high_heavy += max(0.0, min(bh, sand_top) - upper_bound) + upper_mix * mh / mix_total
+        high_light += (
+            max(0.0, min(bh + bl, sand_top) - max(bh, upper_bound))
+            + upper_mix * ml / mix_total
+        )
+    if (
+        not has_heavy
+        or not has_light
+        or low_heavy + low_light <= epsilon
+        or high_heavy + high_light <= epsilon
+    ):
+        return {"lowerHeavyShare": None, "upperHeavyShare": None, "separationRatio": None}
+    lower_heavy_share = low_heavy / (low_heavy + low_light)
+    upper_heavy_share = high_heavy / (high_heavy + high_light)
+    return {
+        "lowerHeavyShare": lower_heavy_share,
+        "upperHeavyShare": upper_heavy_share,
+        "separationRatio": upper_heavy_share / max(lower_heavy_share, epsilon),
+    }
+
+
+def conservation_status(values: dict[str, Any]) -> str:
+    return "PASS" if all(abs(float(value)) < 0.001 for value in values.values()) else "FAIL"
+
+
+def sorting_status(value: Any) -> str:
+    if value is None:
+        return "N/A"
+    return "PASS" if float(value) <= 0.5 else "FAIL"
+
+
 def evaluate_conservation(records: list[dict[str, Any]]) -> CheckResult:
-    # TODO(product-hook): WS_METRIC must expose driftWater, driftHeavy, driftLight.
-    rows = metrics(records)
+    rows = metric_records(records)
+    ws_snapshots = snapshot_records(records)
     fields = ("driftWater", "driftHeavy", "driftLight")
-    if not rows or any(field not in row for row in rows for field in fields):
-        return blocked("conservation", list(fields))
-    maxima = {field: max(abs(float(row[field])) for row in rows) for field in fields}
-    passed = all(value < 0.001 for value in maxima.values())
+    missing = ["WS_SNAPSHOT"] if not ws_snapshots else []
+    if not rows:
+        missing.append("WS_METRIC")
+    elif any(
+        field not in row["data"] or row["data"].get("ledgerVersion") != 2
+        for row in rows
+        for field in ("ledgerVersion", *fields)
+    ):
+        missing.extend(fields)
+    if missing:
+        return blocked("conservation", missing)
+    for row in ws_snapshots:
+        snapshot_missing, snapshot_invalid = validate_snapshot(row["data"])
+        if snapshot_missing or snapshot_invalid:
+            return CheckResult(
+                name="conservation",
+                status="BLOCKED",
+                measured={},
+                threshold={},
+                evidence_count=len(ws_snapshots),
+                note="BLOCKED(missing_hook): " + ", ".join(snapshot_missing + snapshot_invalid),
+            )
+    initial = snapshot_totals(ws_snapshots[0]["data"])
+    snapshot_maxima = {
+        phase: max(snapshot_drift(row["data"], initial)[phase] for row in ws_snapshots)
+        for phase in ("water", "heavy", "light")
+    }
+    metric_maxima = {
+        field: max(abs(float(row["data"][field])) for row in rows) for field in fields
+    }
+    mismatched = 0
+    for row in ws_snapshots:
+        metric = nearest_metric_record(row, records)
+        if metric is None:
+            mismatched += 1
+            continue
+        metric_values = {field: metric["data"][field] for field in fields}
+        snapshot_values = snapshot_drift(row["data"], initial)
+        if conservation_status(snapshot_values) != conservation_status(metric_values):
+            mismatched += 1
+    passed = (
+        all(value < 0.001 for value in snapshot_maxima.values())
+        and all(value < 0.001 for value in metric_maxima.values())
+        and mismatched == 0
+    )
     return CheckResult(
         name="conservation",
         status="PASS" if passed else "FAIL",
-        measured=maxima,
+        measured={
+            "snapshotDriftWater": snapshot_maxima["water"],
+            "snapshotDriftHeavy": snapshot_maxima["heavy"],
+            "snapshotDriftLight": snapshot_maxima["light"],
+            "metricDriftWater": metric_maxima["driftWater"],
+            "metricDriftHeavy": metric_maxima["driftHeavy"],
+            "metricDriftLight": metric_maxima["driftLight"],
+        },
         threshold={field: "< 0.001" for field in fields},
-        evidence_count=len(rows),
+        evidence_count=len(ws_snapshots),
+        note="" if mismatched == 0 else f"HG-06 conclusion mismatch on {mismatched} snapshots.",
     )
 
 
 def evaluate_sorting(records: list[dict[str, Any]]) -> CheckResult:
-    # TODO(product-hook): WS_METRIC must expose separationRatio and both shares.
-    rows = metrics(records)
+    rows = metric_records(records)
+    ws_snapshots = snapshot_records(records)
     fields = ("separationRatio", "lowerHeavyShare", "upperHeavyShare")
-    if not rows or any(field not in row for row in rows for field in fields):
-        return blocked("sorting", list(fields))
-    final = rows[-1]
-    if final.get("notApplicable") is True:
+    missing = ["WS_SNAPSHOT"] if not ws_snapshots else []
+    if not rows:
+        missing.append("WS_METRIC")
+    elif any(
+        field not in row["data"] or row["data"].get("ledgerVersion") != 2
+        for row in rows
+        for field in ("ledgerVersion", *fields)
+    ):
+        missing.extend(fields)
+    if missing:
+        return blocked("sorting", missing)
+    for row in ws_snapshots:
+        snapshot_missing, snapshot_invalid = validate_snapshot(row["data"])
+        if snapshot_missing or snapshot_invalid:
+            return CheckResult(
+                name="sorting",
+                status="BLOCKED",
+                measured={},
+                threshold={},
+                evidence_count=len(ws_snapshots),
+                note="BLOCKED(missing_hook): " + ", ".join(snapshot_missing + snapshot_invalid),
+            )
+    final_metric = nearest_metric_record(ws_snapshots[-1], records)
+    if final_metric is None:
+        return blocked("sorting", ["WS_METRIC"])
+    snapshot_profile = snapshot_separation_profile(ws_snapshots[-1]["data"])
+    metric_profile = {field: final_metric["data"][field] for field in fields}
+    snapshot_conclusion = sorting_status(snapshot_profile["separationRatio"])
+    metric_conclusion = sorting_status(metric_profile["separationRatio"])
+    mismatched = 0
+    for row in ws_snapshots:
+        metric = nearest_metric_record(row, records)
+        if metric is None:
+            mismatched += 1
+            continue
+        row_profile = snapshot_separation_profile(row["data"])
+        if sorting_status(row_profile["separationRatio"]) != sorting_status(metric["data"]["separationRatio"]):
+            mismatched += 1
+    if snapshot_conclusion == "N/A":
         return CheckResult(
             name="sorting",
             status="N/A",
-            measured={field: final[field] for field in fields},
+            measured={"snapshot": snapshot_profile, "metric": metric_profile},
             threshold={"separationRatio": "<= 0.5"},
-            evidence_count=len(rows),
+            evidence_count=len(ws_snapshots),
             note="Single phase or empty sorting regions.",
         )
-    value = float(final["separationRatio"])
+    value = snapshot_profile["separationRatio"]
+    passed = (
+        value is not None
+        and value <= 0.5
+        and snapshot_conclusion == metric_conclusion
+        and mismatched == 0
+    )
     return CheckResult(
         name="sorting",
-        status="PASS" if value <= 0.5 else "FAIL",
-        measured={field: final[field] for field in fields},
+        status="PASS" if passed else "FAIL",
+        measured={"snapshot": snapshot_profile, "metric": metric_profile},
         threshold={"separationRatio": "<= 0.5"},
-        evidence_count=len(rows),
+        evidence_count=len(ws_snapshots),
+        note=""
+        if mismatched == 0
+        else f"HG-06 conclusion mismatch on {mismatched} snapshots.",
     )
 
 
@@ -291,23 +535,92 @@ def evaluate_fps(records: list[dict[str, Any]]) -> CheckResult:
 
 
 def self_check_defect() -> list[CheckResult]:
+    metric = {
+        "ledgerVersion": 2,
+        "driftWater": 0.0,
+        "driftHeavy": 0.0,
+        "driftLight": 0.0,
+        "lowerHeavyShare": 0.5,
+        "upperHeavyShare": 0.5,
+        "separationRatio": 1.0,
+    }
     synthetic = [
         {
             "type": "METRIC",
-            "data": {
-                "driftWater": 0.0,
-                "driftHeavy": 0.02,
-                "driftLight": -0.02,
-            },
-        }
+            "subtype": None,
+            "line": 1,
+            "data": metric,
+        },
+        {
+            "type": "SNAPSHOT",
+            "subtype": None,
+            "line": 2,
+            "data": synthetic_snapshot(
+                [4.0, 4.0],
+                [1.0, 1.0],
+                [1.0, 1.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+            ),
+        },
+        {
+            "type": "METRIC",
+            "subtype": None,
+            "line": 3,
+            "data": metric,
+        },
+        {
+            "type": "SNAPSHOT",
+            "subtype": None,
+            "line": 4,
+            "data": synthetic_snapshot(
+                [4.0, 4.0],
+                [1.5, 1.5],
+                [0.5, 0.5],
+                [0.0, 0.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+                [0.0, 0.0],
+            ),
+        },
     ]
     result = evaluate_conservation(synthetic)
     if result.status != "FAIL":
         result.status = "ERROR"
         result.note = "Defect sentinel unexpectedly did not fail."
     else:
-        result.note = "Algorithm v1 §3.3 synthetic defect correctly exposed."
+        result.note = "Algorithm v2 synthetic phase-transfer defect correctly failed."
     return [result]
+
+
+def synthetic_snapshot(
+    water_top: list[float],
+    bh: list[float],
+    bl: list[float],
+    mh: list[float],
+    ml: list[float],
+    susp_h: list[float],
+    susp_l: list[float],
+) -> dict[str, Any]:
+    hs = [bh[index] + mh[index] for index in range(len(bh))]
+    hl = [bl[index] + ml[index] for index in range(len(bl))]
+    return {
+        "schemaVersion": 2,
+        "cols": len(bh),
+        "capacity": 10,
+        "waterTop": water_top,
+        "bh": bh,
+        "bl": bl,
+        "mh": mh,
+        "ml": ml,
+        "suspH": susp_h,
+        "suspL": susp_l,
+        "hs": hs,
+        "hl": hl,
+        "sandTop": [hs[index] + hl[index] for index in range(len(hs))],
+    }
 
 
 def selected_results(

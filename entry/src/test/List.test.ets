@@ -6,6 +6,7 @@ import boundsTest from './BoundsTest';
 import collisionSolverTest from './CollisionSolverTest';
 import sandGridTest from './SandGridTest';
 import heightFieldTest from './HeightFieldTest';
+import waterSandFieldTest from './WaterSandFieldTest';
 
 export default function abilityTest() {
   describe('ActsAbilityTest', () => {
@@ -23,4 +24,5 @@ export default function abilityTest() {
   collisionSolverTest();
   sandGridTest();
   heightFieldTest();
+  waterSandFieldTest();
 }

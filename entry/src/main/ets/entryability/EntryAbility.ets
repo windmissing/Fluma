@@ -29,6 +29,31 @@ export default class EntryAbility extends UIAbility {
         hilog.info(this.hilogDomain, this.hilogTag, 'want param rendermode=%{public}d', rm);
       }
     }
+    if (params && params.wspreset !== undefined) {
+      AppStorage.setOrCreate('wspreset', `${params.wspreset}`);
+      hilog.info(this.hilogDomain, this.hilogTag, 'want param wspreset=%{public}s', `${params.wspreset}`);
+    }
+    if (params && params.wscols !== undefined) {
+      const cols = parseInt(`${params.wscols}`);
+      if (!Number.isNaN(cols) && cols >= 2) {
+        AppStorage.setOrCreate('wscols', cols);
+      }
+    }
+    if (params && params.wscapacity !== undefined) {
+      const capacity = parseInt(`${params.wscapacity}`);
+      if (!Number.isNaN(capacity) && capacity >= 2) {
+        AppStorage.setOrCreate('wscapacity', capacity);
+      }
+    }
+    if (params && params.wsmixband !== undefined) {
+      const mixBand = parseFloat(`${params.wsmixband}`);
+      if (!Number.isNaN(mixBand) && mixBand >= 1 && mixBand <= 2) {
+        AppStorage.setOrCreate('wsmixband', mixBand);
+      }
+    }
+    if (params && params.wssnapshot !== undefined) {
+      AppStorage.setOrCreate('wssnapshot', `${params.wssnapshot}` === 'true');
+    }
   }
 
   onDestroy(): void {

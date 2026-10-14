@@ -1,9 +1,11 @@
 import { SandGrid } from '../physics/SandGrid';
 import { FluidField } from '../physics/FluidField';
+import { WaterSandField, WaterSandSnapshot, WaterSandParams, WaterSandScene, WaterSandRegion, defaultWaterSandParams } from '../physics/WaterSandField';
 import sensor from '@ohos.sensor';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 import { ComponentContent } from '@ohos.arkui.node';
 import { BusinessError } from '@ohos.base';
+import hilog from '@ohos.hilog';
 
 /** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
 class MyFrameCallback extends FrameCallback {
@@ -40,9 +42,10 @@ const MODE_SAND = 0;
 const MODE_FLUID = 1;
 const MODE_HYBRID = 2;
 /** 模式总数（四态循环：M1' 新增液体模式走 CA 液体相规则，渲染复用 B 结构） */
-const MODE_COUNT = 4;
+const MODE_COUNT = 5;
 /** 液体模式（M1'）：模拟层 SandGrid.liquidMode，渲染层=流体带结构 */
 const MODE_LIQUID = 3;
+const MODE_WATERSAND = 4;
 
 /** BindSheet 面板参数桥接类（s78）：全局 @Builder 无组件 this 绑定，
  *  经 owner 引用回组件实例读写 @State 与方法（wrapBuilder 传参载体）。
@@ -55,6 +58,9 @@ class PanelParams {
   fi: boolean = false;
   renderMode: number = MODE_FLUID;
   flowSpeed: number = 3;
+  percolationRate: number = 6;
+  mixBandPx: number = 1.5;
+  shakeInput: number = 0;
 }
 
 /** 面板内容全局 Builder（BindSheet 挂载）：内容与原 Stack 内 Column 一致。
@@ -90,7 +96,9 @@ function panelSheetBuilder(params: PanelParams) {
 
       Button(params.renderMode === MODE_SAND ? '模式:细沙'
         : params.renderMode === MODE_FLUID ? '模式:流体'
-        : params.renderMode === MODE_HYBRID ? '模式:混合' : '模式:液体')
+        : params.renderMode === MODE_HYBRID ? '\u6A21\u5F0F\uFF1A\u6DF7\u5408'
+        : params.renderMode === MODE_LIQUID ? '\u6A21\u5F0F\uFF1A\u6DB2\u4F53'
+        : '\u6A21\u5F0F\uFF1A\u6C34\u6C99')
         .fontSize(14)
         .width('100%')
         .onClick(() => {
@@ -119,6 +127,41 @@ function panelSheetBuilder(params: PanelParams) {
         }
         params.owner.setFlowSpeed(value);
       })
+
+    if (params.renderMode === MODE_WATERSAND) {
+      Text(`\u5206\u9009\u5F3A\u5EA6: ${params.percolationRate.toFixed(1)}/s`)
+        .fontSize(13).fontColor('#CCCCCC').width('100%')
+      Slider({ value: params.percolationRate, min: 0, max: 12, step: 0.5 })
+        .blockColor('#D9A64A').selectedColor('#D9A64A')
+        .onChange((value: number) => {
+          if (params.owner === null) {
+            return;
+          }
+          params.owner.setWaterSandPercolationRate(value);
+        })
+
+      Text(`\u6DF7\u5408\u5E26\u5BBD: ${params.mixBandPx.toFixed(1)}px`)
+        .fontSize(13).fontColor('#CCCCCC').width('100%')
+      Slider({ value: params.mixBandPx, min: 1, max: 2, step: 0.5 })
+        .blockColor('#63A35D').selectedColor('#63A35D')
+        .onChange((value: number) => {
+          if (params.owner === null) {
+            return;
+          }
+          params.owner.setWaterSandMixBand(value);
+        })
+
+      Text(`\u6D4B\u8BD5\u6270\u52A8: ${params.shakeInput.toFixed(1)}`)
+        .fontSize(13).fontColor('#CCCCCC').width('100%')
+      Slider({ value: params.shakeInput, min: 0, max: 1, step: 0.1 })
+        .blockColor('#F6E2A7').selectedColor('#F6E2A7')
+        .onChange((value: number) => {
+          if (params.owner === null) {
+            return;
+          }
+          params.owner.setWaterSandShakeInput(value);
+        })
+    }
   }
   .width('100%')
   .padding(16)
@@ -130,6 +173,8 @@ struct SandCanvas {
   @State displayInfo: string = '';
   @State showPanel: boolean = false;
   @State flowSpeed: number = 3;      // 每帧模拟步数（预留，当前 rAF 单步）
+  @State mixBandPx: number = 1.5;
+  @State waterSandShakeInput: number = 0;
   private tiltX: number = 0;
   private lastTiltX: number = 0;
   private gestureHoldUntil: number = 0;
@@ -143,6 +188,9 @@ struct SandCanvas {
   private rafId: number = -1;
   private field: SandGrid | null = null;
   private fluidField: FluidField | null = null;
+  private waterSandField: WaterSandField | null = null;
+  private waterSandSnapshot: WaterSandSnapshot | null = null;
+  private waterSandParams: WaterSandParams = defaultWaterSandParams();
   private boxX: number = 0;
   private boxY: number = 0;
   private boxW: number = 0;
@@ -176,6 +224,19 @@ struct SandCanvas {
   /** 传感器角速度上限 °/s（液体转动惯性，翻转时渐变过渡） */
   private readonly maxOmega: number = 240;
   private lastFrameTime: number = 0;
+  private waterSandPreset: string = 'default';
+  private waterSandCols: number = 128;
+  private waterSandCapacity: number = 192;
+  private waterSandSnapshotEnabled: boolean = false;
+  private waterSandVisualInverted: boolean = false;
+  private waterRenderA: Float64Array = new Float64Array(0);
+  private waterRenderB: Float64Array = new Float64Array(0);
+  private waterRenderC: Float64Array = new Float64Array(0);
+  private waterRenderD: Float64Array = new Float64Array(0);
+  private lastWaterSandMetricTime: number = 0;
+  private lastWaterSandTilt: number | null = null;
+  private lastWaterSandDormant: boolean | null = null;
+  private hilogDomain: number = 0x0000;
   /** BindSheet 内容（s78：面板迁移至系统半模态浮层，与画布手势 hitTest 隔离）。
    *  ComponentContent 在 aboutToAppear 构造；@Builder 函数里通过 params 镜像
    *  快照渲染文案，toggle 后 syncSheet() 更新快照并 updateBindSheet 重建。 */
@@ -196,6 +257,9 @@ struct SandCanvas {
     this.sheetParams.fi = this.forceInvert;
     this.sheetParams.renderMode = this.renderMode;
     this.sheetParams.flowSpeed = this.flowSpeed;
+    this.sheetParams.percolationRate = this.waterSandParams.percolationRate;
+    this.sheetParams.mixBandPx = this.mixBandPx;
+    this.sheetParams.shakeInput = this.waterSandShakeInput;
     this.sheetContent.update(this.sheetParams);
   }
 
@@ -220,6 +284,26 @@ struct SandCanvas {
     const rm = AppStorage.get<number>('rendermode');
     if (rm !== undefined) {
       this.renderMode = rm;
+    }
+    const wsPreset = AppStorage.get<string>('wspreset');
+    if (wsPreset !== undefined) {
+      this.waterSandPreset = wsPreset;
+    }
+    const wsCols = AppStorage.get<number>('wscols');
+    if (wsCols !== undefined && Number.isInteger(wsCols) && wsCols >= 2) {
+      this.waterSandCols = wsCols;
+    }
+    const wsCapacity = AppStorage.get<number>('wscapacity');
+    if (wsCapacity !== undefined && Number.isInteger(wsCapacity) && wsCapacity >= 2) {
+      this.waterSandCapacity = wsCapacity;
+    }
+    const wsMixBand = AppStorage.get<number>('wsmixband');
+    if (wsMixBand !== undefined && wsMixBand >= 1 && wsMixBand <= 2) {
+      this.mixBandPx = wsMixBand;
+    }
+    const wsSnapshot = AppStorage.get<boolean>('wssnapshot');
+    if (wsSnapshot !== undefined) {
+      this.waterSandSnapshotEnabled = wsSnapshot;
     }
     console.info(`[ForceInvert] aboutToAppear: testMode=${this.testMode} forceInvert=${this.forceInvert} useSensor=${this.useSensor} renderMode=${this.renderMode}`);
     try {
@@ -271,17 +355,121 @@ struct SandCanvas {
   cycleRenderMode(): void {
     this.renderMode = (this.renderMode + 1) % MODE_COUNT;
     this.needRedraw = true;
+    if (this.renderMode === MODE_WATERSAND) {
+      this.logWaterSand(`WS_EVENT mode ${JSON.stringify({ renderMode: this.renderMode })}`);
+    }
     console.info(`[ForceInvert] panel renderMode -> ${this.renderMode}`);
     this.syncSheet();
   }
 
   resetField(): void {
     this.initField();
+    if (this.renderMode === MODE_WATERSAND) {
+      this.logWaterSand(`WS_EVENT reset ${JSON.stringify({
+        preset: this.waterSandPreset,
+        ledgerVersion: 2,
+        percolationRate: this.waterSandParams.percolationRate
+      })}`);
+      if (this.waterSandSnapshotEnabled) {
+        this.logWaterSandSnapshot();
+      }
+    }
     console.info(`[ForceInvert] panel reset`);
   }
 
   setFlowSpeed(v: number): void {
     this.flowSpeed = v;
+  }
+
+  setWaterSandPercolationRate(value: number): void {
+    const clipped = Math.max(0, Math.min(12, value));
+    this.waterSandParams.percolationRate = Math.max(0.1, clipped);
+    this.waterSandField?.configure(this.waterSandParams);
+    this.syncSheet();
+  }
+
+  setWaterSandMixBand(value: number): void {
+    this.mixBandPx = Math.max(1, Math.min(2, value));
+    this.syncSheet();
+  }
+
+  setWaterSandShakeInput(value: number): void {
+    this.waterSandShakeInput = Math.max(0, Math.min(1, value));
+    if (this.renderMode === MODE_WATERSAND && this.waterSandShakeInput > 0) {
+      this.waterSandField?.setShakeInput(this.waterSandShakeInput);
+      this.logWaterSand(`WS_EVENT shake ${JSON.stringify({ input: this.waterSandShakeInput })}`);
+    }
+    this.syncSheet();
+  }
+
+  private logWaterSand(message: string): void {
+    hilog.info(this.hilogDomain, 'WaterSand', '%{public}s', message);
+  }
+
+  private snapshotJson(snapshot: WaterSandSnapshot): string {
+    return JSON.stringify({
+      schemaVersion: snapshot.schemaVersion,
+      cols: snapshot.cols,
+      capacity: snapshot.capacity,
+      waterTop: Array.from(snapshot.waterTop),
+      bh: Array.from(snapshot.bh),
+      bl: Array.from(snapshot.bl),
+      mh: Array.from(snapshot.mh),
+      ml: Array.from(snapshot.ml),
+      suspH: Array.from(snapshot.suspH),
+      suspL: Array.from(snapshot.suspL),
+      hs: Array.from(snapshot.hs),
+      hl: Array.from(snapshot.hl),
+      sandTop: Array.from(snapshot.sandTop)
+    });
+  }
+
+  private logWaterSandSnapshot(): void {
+    const snapshot = this.waterSandField?.snapshot();
+    if (snapshot === undefined) {
+      return;
+    }
+    this.logWaterSand(`WS_SNAPSHOT ${this.snapshotJson(snapshot)}`);
+  }
+
+  private waterSandScene(preset: string, cols: number): WaterSandScene {
+    const all: WaterSandRegion = { startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 110 };
+    if (preset === 'sorting') {
+      return {
+        waterRegions: [all],
+        heavyDepositedRegions: [],
+        lightDepositedRegions: [],
+        heavySuspendedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 20 }],
+        lightSuspendedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 20 }]
+      };
+    }
+    if (preset === 'nowater') {
+      return {
+        waterRegions: [],
+        heavyDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 18 }],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 18, height: 18 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      };
+    }
+    if (preset === 'heavyonly' || preset === 'lightonly') {
+      return {
+        waterRegions: [all],
+        heavyDepositedRegions: preset === 'heavyonly'
+          ? [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 18 }] : [],
+        lightDepositedRegions: preset === 'lightonly'
+          ? [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 18 }] : [],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      };
+    }
+    return {
+      waterRegions: [all],
+      heavyDepositedRegions: [],
+      lightDepositedRegions: [],
+      heavySuspendedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 24 }],
+      lightSuspendedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 16 }]
+    };
   }
 
   /** 打开浮层前先同步一次快照（防上次会话遗留陈旧文案） */
@@ -348,6 +536,23 @@ struct SandCanvas {
       ff.heavy[c] = botRow - midRow;
     }
     this.fluidField = ff;
+    this.waterSandField = new WaterSandField(this.waterSandCols, this.waterSandCapacity);
+    this.waterSandParams = defaultWaterSandParams();
+    this.waterSandField.configure(this.waterSandParams);
+    this.waterSandField.initialize(this.waterSandScene(this.waterSandPreset, this.waterSandCols));
+    this.waterSandSnapshot = this.waterSandField.snapshot();
+    this.waterSandVisualInverted = false;
+    this.lastWaterSandMetricTime = Date.now();
+    this.logWaterSand(`WS_EVENT init ${JSON.stringify({
+      preset: this.waterSandPreset,
+      cols: this.waterSandCols,
+      capacity: this.waterSandCapacity,
+      ledgerVersion: 2,
+      percolationRate: this.waterSandParams.percolationRate
+    })}`);
+    if (this.waterSandSnapshotEnabled) {
+      this.logWaterSandSnapshot();
+    }
     this.needRedraw = true;
   }
 
@@ -358,6 +563,7 @@ struct SandCanvas {
     }
     // FPS 统计
     const now = Date.now();
+    const previousFrameTime = this.lastFrameTime;
     this.lastFrameTime = now;
     if (this.lastTime > 0) {
       const delta = now - this.lastTime;
@@ -371,6 +577,7 @@ struct SandCanvas {
       }
     }
     this.lastTime = now;
+    const frameDeltaMs = previousFrameTime > 0 ? now - previousFrameTime : 16.7;
 
     // 重力向量：手势（保持期内）优先，其次传感器
     // CA 引擎吃重力向量 (gx, gy)，360° 任意方向自动正确（含倒立）
@@ -502,6 +709,63 @@ struct SandCanvas {
       this.getUIContext().postFrameCallback(this.frameCb);
       return;
     }
+    if (this.renderMode === MODE_WATERSAND) {
+      const ws = this.waterSandField;
+      if (ws !== null) {
+        const normalized = ((this.tiltX % 360) + 360) % 360;
+        const visualInverted = normalized > 90 && normalized < 270;
+        if (visualInverted !== this.waterSandVisualInverted) {
+          ws.invert180();
+          this.waterSandVisualInverted = visualInverted;
+          this.logWaterSand('WS_EVENT invert180 {"count":1}');
+        }
+        const effectiveTilt = visualInverted
+          ? Math.max(-89, Math.min(89, normalized - 180))
+          : Math.max(-89, Math.min(89, normalized));
+        ws.setTilt(effectiveTilt);
+        if (this.lastWaterSandTilt === null || Math.abs(this.lastWaterSandTilt - effectiveTilt) > 0.01) {
+          this.logWaterSand(`WS_EVENT tilt ${JSON.stringify({
+            targetDeg: effectiveTilt,
+            effectiveDeg: effectiveTilt
+          })}`);
+          this.lastWaterSandTilt = effectiveTilt;
+        }
+        const stepResult = ws.step(frameDeltaMs / 1000);
+        if (this.lastWaterSandDormant !== stepResult.dormant) {
+          this.logWaterSand(`WS_EVENT ${stepResult.dormant ? 'dormant' : 'wake'} ${JSON.stringify({
+            value: stepResult.dormant
+          })}`);
+          this.lastWaterSandDormant = stepResult.dormant;
+        }
+        if (!stepResult.ok) {
+          this.logWaterSand(`WS_EVENT model_error ${JSON.stringify({
+            code: stepResult.errorCode,
+            column: stepResult.errorColumn
+          })}`);
+        }
+        if (this.waterSandSnapshot === null) {
+          this.waterSandSnapshot = ws.snapshot();
+        } else {
+          ws.copyStateTo(this.waterSandSnapshot);
+        }
+        this.renderWaterSand(this.ctx, this.waterSandSnapshot);
+        if (this.testMode) {
+          this.logWaterSand(`WS_FRAME ${JSON.stringify({
+            frameTimeMs: frameDeltaMs,
+            physicsTimeMs: stepResult.physicsTimeMs
+          })}`);
+        }
+        if (now - this.lastWaterSandMetricTime >= 250) {
+          this.lastWaterSandMetricTime = now;
+          this.logWaterSand(`WS_METRIC ${JSON.stringify(ws.getMetrics(this.cellPx))}`);
+          if (this.waterSandSnapshotEnabled) {
+            this.logWaterSandSnapshot();
+          }
+        }
+      }
+      this.getUIContext().postFrameCallback(this.frameCb);
+      return;
+    }
     if (this.renderMode === MODE_HYBRID) {
       const ff = this.fluidField;
       if (ff !== null) {
@@ -589,6 +853,106 @@ struct SandCanvas {
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
     ctx.lineWidth = 3;
     ctx.strokeRect(this.boxX, this.boxY, this.boxW, this.boxH);
+  }
+
+  private smoothWaterSandProfile(source: Float64Array, target: Float64Array): void {
+    const n = source.length;
+    if (n === 0) {
+      return;
+    }
+    for (let c = 0; c < n; c++) {
+      const left = source[Math.max(0, c - 1)];
+      const right = source[Math.min(n - 1, c + 1)];
+      target[c] = (left + source[c] + right) / 3;
+    }
+  }
+
+  private mixedSandColor(heavyShare: number): string {
+    const heavyRed = 0x24 + (0x63 - 0x24) * heavyShare;
+    const heavyGreen = 0x57 + (0xA3 - 0x57) * heavyShare;
+    const heavyBlue = 0x1F + (0x5D - 0x1F) * heavyShare;
+    const lightRed = 0xD9 + (0xF6 - 0xD9) * heavyShare;
+    const lightGreen = 0xA6 + (0xE2 - 0xA6) * heavyShare;
+    const lightBlue = 0x4A + (0xA7 - 0x4A) * heavyShare;
+    const red = Math.round(lightRed * (1 - heavyShare) + heavyRed * heavyShare);
+    const green = Math.round(lightGreen * (1 - heavyShare) + heavyGreen * heavyShare);
+    const blue = Math.round(lightBlue * (1 - heavyShare) + heavyBlue * heavyShare);
+    return `rgb(${red},${green},${blue})`;
+  }
+
+  private renderWaterSand(ctx: CanvasRenderingContext2D, snapshot: WaterSandSnapshot): void {
+    const n = snapshot.cols;
+    if (this.waterRenderA.length !== n) {
+      this.waterRenderA = new Float64Array(n);
+      this.waterRenderB = new Float64Array(n);
+      this.waterRenderC = new Float64Array(n);
+      this.waterRenderD = new Float64Array(n);
+    }
+    const bh = this.waterRenderA;
+    const mixStart = this.waterRenderB;
+    const sandTop = this.waterRenderC;
+    for (let c = 0; c < n; c++) {
+      bh[c] = snapshot.bh[c];
+      mixStart[c] = snapshot.bh[c] + snapshot.bl[c];
+      sandTop[c] = snapshot.sandTop[c];
+    }
+    const scratch = this.waterRenderD;
+    this.smoothWaterSandProfile(bh, scratch);
+    this.smoothWaterSandProfile(scratch, bh);
+    this.smoothWaterSandProfile(bh, scratch);
+    this.smoothWaterSandProfile(scratch, bh);
+    this.smoothWaterSandProfile(mixStart, scratch);
+    this.smoothWaterSandProfile(scratch, mixStart);
+    this.smoothWaterSandProfile(mixStart, scratch);
+    this.smoothWaterSandProfile(scratch, mixStart);
+    this.smoothWaterSandProfile(sandTop, scratch);
+    this.smoothWaterSandProfile(scratch, sandTop);
+    this.smoothWaterSandProfile(sandTop, scratch);
+    this.smoothWaterSandProfile(scratch, sandTop);
+
+    const centerX = this.boxX + this.boxW / 2;
+    const centerY = this.boxY + this.boxH / 2;
+    ctx.save();
+    if (this.waterSandVisualInverted) {
+      ctx.translate(centerX, centerY);
+      ctx.rotate(Math.PI);
+      ctx.translate(-centerX, -centerY);
+    }
+    ctx.fillStyle = '#101024';
+    ctx.fillRect(this.boxX, this.boxY, this.boxW, this.boxH);
+    const columnWidth = this.boxW / n;
+    const heightToY = (height: number): number =>
+      this.boxY + (snapshot.capacity - Math.max(0, Math.min(snapshot.capacity, height))) * this.boxH / snapshot.capacity;
+    for (let c = 0; c < n; c++) {
+      const x = this.boxX + c * columnWidth;
+      const waterTopY = heightToY(snapshot.waterTop[c]);
+      const sandTopY = heightToY(sandTop[c]);
+      const mixStartY = heightToY(mixStart[c]);
+      const bhY = heightToY(bh[c]);
+      const bottomY = this.boxY + this.boxH;
+      ctx.fillStyle = 'rgba(64,148,222,0.42)';
+      ctx.fillRect(x, waterTopY, columnWidth, Math.max(0, sandTopY - waterTopY));
+      ctx.fillStyle = '#24571F';
+      ctx.fillRect(x, bhY, columnWidth, Math.max(0, bottomY - bhY));
+      ctx.fillStyle = '#D9A64A';
+      ctx.fillRect(x, mixStartY, columnWidth, Math.max(0, bhY - mixStartY));
+      const mixTotal = snapshot.mh[c] + snapshot.ml[c];
+      const heavyShare = mixTotal > 0 ? snapshot.mh[c] / mixTotal : 0.5;
+      ctx.fillStyle = this.mixedSandColor(heavyShare);
+      ctx.fillRect(x, sandTopY, columnWidth, Math.max(0, mixStartY - sandTopY));
+    }
+    ctx.strokeStyle = 'rgba(210,240,255,0.70)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(this.boxX, heightToY(snapshot.waterTop[0]));
+    for (let c = 1; c < n; c++) {
+      ctx.lineTo(this.boxX + c * columnWidth, heightToY(snapshot.waterTop[c]));
+    }
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(this.boxX, this.boxY, this.boxW, this.boxH);
+    ctx.restore();
   }
 
   /**
