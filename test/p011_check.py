@@ -1,11 +1,12 @@
 ﻿#!/usr/bin/env python3
-"""P-011 bottom-creep-v2.7 objective log checker."""
+"""P-011 bottom-creep-v2.8-heavy-interface objective log checker."""
 
 from __future__ import annotations
 
 import argparse
 import bisect
 from collections import Counter, defaultdict
+from contextlib import ExitStack
 import json
 import math
 import re
@@ -13,9 +14,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from p011_tc02_schedule import build_schedule, closed_capture, validate_log, verify_capture
+
 P011_HOOK_RE = re.compile(r'P011_(EVENT|METRIC|BOTTOM)\s+(input|reset)?\s*(\{.*\})')
 
-DEFAULT_ROUTE = "bottom-creep-v2.7.3"
+SCHEMA_VERSION = 2
+DEFAULT_ROUTE = "bottom-creep-v2.8-heavy-interface"
 BEHAVIOR_ROLE = "behavior"
 BUDGET_ISOLATION_ROLE = "budgetIsolation"
 PRESSURE_CLIP_ROLE = "pressureClip"
@@ -27,6 +31,22 @@ DONOR_FIELD = "bottomCreepDonorEffectiveDisplacement"
 RECEIVER_FIELD = "bottomCreepReceiverEffectiveDisplacement"
 HOOK_RE = re.compile(r"P011_(EVENT|METRIC|BOTTOM)\s+(?:input\s+)?(\{.*\})")
 WS_INIT_RE = re.compile(r"WS_EVENT init\s+(\{.*\})")
+
+
+REQUIRED_METRIC_FIELDS = (
+    'commandPhaseId', 'commandPhaseSign', 'commandPhaseStartPhysicsTime',
+    'heavyFlux', 'lightFlux',
+    'heavyActualDisplacement', 'lightActualDisplacement',
+    'heavyIdealDisplacement', 'lightIdealDisplacement',
+    'heavyResidual', 'lightResidual',
+    'heavyShapeRms', 'lightShapeRms',
+    'heavyShapeMaxDelta', 'lightShapeMaxDelta',
+    'maxSubstepBh', 'maxSubstepBl',
+    'heavyShare', 'heavyShareDeficit',
+)
+COMPACT_METRIC_NUMERIC_FIELDS = tuple(
+    field for field in REQUIRED_METRIC_FIELDS if field != 'heavyShare'
+)
 
 
 def parse_lines(lines: list[str]) -> tuple[dict[str, list[dict[str, Any]]], int, int | None]:
@@ -137,6 +157,13 @@ def bottom_motion_sign(bottom: dict[str, Any]) -> int:
     if receiver < -BOTTOM_FLUX_EPS:
         return -1
     return 0
+
+
+def compact_signed_motion(current, previous):
+    same_phase = (current.get('runId') == previous.get('runId')
+                  and current.get('commandPhaseId') == previous.get('commandPhaseId'))
+    return tuple(current.get(field, 0) - (previous.get(field, 0) if same_phase else 0)
+                 for field in ('heavyActualDisplacement', 'lightActualDisplacement'))
 
 
 def active_indices(activity: list[float]) -> list[int]:
@@ -271,6 +298,16 @@ def segmentation_regression_metric(
         'totalMotionBudgetLimit': 0.0, 'totalMotionBudgetClipped': 0.0,
         'directionCorrect': True, 'waterTotal': 1.0, 'heavyTotal': 1.0,
         'lightTotal': 1.0,
+        'commandPhaseId': 1, 'commandPhaseSign': 1,
+        'commandPhaseStartPhysicsTime': 0.0,
+        'heavyFlux': 0.0, 'lightFlux': 0.0,
+        'heavyActualDisplacement': 0.0, 'lightActualDisplacement': 0.0,
+        'heavyIdealDisplacement': 0.0, 'lightIdealDisplacement': 0.0,
+        'heavyResidual': 0.0, 'lightResidual': 0.0,
+        'heavyShapeRms': 0.0, 'lightShapeRms': 0.0,
+        'heavyShapeMaxDelta': 0.0, 'lightShapeMaxDelta': 0.0,
+        'maxSubstepBh': 0.0, 'maxSubstepBl': 0.0,
+        'heavyShare': None, 'heavyShareDeficit': 0.0,
     }
 
 
@@ -312,6 +349,8 @@ def segmentation_regression_log(
         metric = segmentation_regression_metric(
             run_id, sequence, frame_id, substep_id, physics_time, physics_dt, tilt
         )
+        metric['maxSubstepBh'] = bottom_value if physics_dt > 0 else 0.0
+        metric['maxSubstepBl'] = bottom_value if physics_dt > 0 else 0.0
         bottom = segmentation_regression_bottom(
             metric, bottom_value, frame_override=(999 if mismatch_frame and index == 1 else None)
         )
@@ -373,9 +412,9 @@ def run_segmentation_regressions() -> dict[str, bool]:
     )
     return {
         'sameRunContinuousSample': max_values(continuous) == (10.0, 10.0),
-        'runSwitchExcluded': max_values(run_switch) == (0.0, 0.0),
-        'resetSwitchExcluded': max_values(reset_switch) == (0.0, 0.0),
-        'targetPhaseSwitchExcluded': max_values(phase_switch) == (0.0, 0.0),
+        'runSwitchUsesCompactMax': max_values(run_switch) == (100.0, 100.0),
+        'resetSwitchUsesCompactMax': max_values(reset_switch) == (100.0, 100.0),
+        'targetPhaseSwitchUsesCompactMax': max_values(phase_switch) == (100.0, 100.0),
         'dormantNoopExcluded': max_values(dormant) == (0.0, 0.0),
         'metricBottomIdentityMismatch': identity['dataCompleteness']['identityMismatchCount'] == 1,
         'sequenceRegressionBlocked': (
@@ -510,6 +549,18 @@ def check(
     suite_role: str = BEHAVIOR_ROLE,
 ) -> dict[str, Any]:
     lines = log_text.splitlines()
+    compact_only = expected_route == DEFAULT_ROUTE
+    bottom_diagnostics = {'malformedCount': 0, 'incompleteCount': 0}
+    if compact_only:
+        # P-011 v2.8: long arrays are diagnostic; malformed/truncated diagnostics
+        # must not erase valid compact observations or become physical evidence.
+        for index, line in enumerate(lines):
+            if 'P011_BOTTOM' in line:
+                try:
+                    json.loads(line.split('P011_BOTTOM', 1)[1].strip())
+                except (ValueError, TypeError):
+                    bottom_diagnostics['malformedCount'] += 1
+                    lines[index] = ''
     parsed, parse_errors, capacity = parse_lines(lines)
     all_p011_events = parsed['event']
     reset_events = [item for item in all_p011_events if item.get('_eventType') == 'reset']
@@ -519,7 +570,19 @@ def check(
     events.sort(key=lambda item: item.get('commandTime', 0))
     events = sorted(parsed["event"], key=lambda item: item.get("commandTime", 0))
     metrics = sorted(parsed["metric"], key=lambda item: item.get("physicsTime", 0))
-    bottoms = sorted(parsed["bottom"], key=lambda item: item.get("physicsTime", 0))
+    bottoms = sorted(parsed["bottom"], key=lambda item: item.get("physicsTime", 0)
+                     if not compact_only or finite_number(item.get('physicsTime', 0)) else 0)
+    if compact_only:
+        complete_bottoms = []
+        for bottom in bottoms:
+            if (finite_number(bottom.get('physicsTime')) and all(
+                    isinstance(bottom.get(field), list)
+                    and all(finite_number(value) for value in bottom[field])
+                    for field in ('bh', 'bl', DONOR_FIELD, RECEIVER_FIELD))):
+                complete_bottoms.append(bottom)
+            else:
+                bottom_diagnostics['incompleteCount'] += 1
+        bottoms = complete_bottoms
 
     events = [
         item for item in all_p011_events if item.get('_eventType', 'input') == 'input'
@@ -530,7 +593,7 @@ def check(
         missing.append("P011_EVENT input")
     if not metrics:
         missing.append("P011_METRIC")
-    if not bottoms:
+    if not bottoms and not compact_only:
         missing.append("P011_BOTTOM")
     bottom_by_time = {item.get("physicsTime"): item for item in bottoms}
     for metric in metrics:
@@ -546,16 +609,32 @@ def check(
         if not isinstance(metric.get("directionCorrect"), bool):
             missing.append("P011_METRIC.directionCorrect(bool)")
             break
+    for metric in metrics:
+        for field in REQUIRED_METRIC_FIELDS:
+            if field not in metric:
+                missing.append(f'P011_METRIC.{field}')
+                break
+        for field in COMPACT_METRIC_NUMERIC_FIELDS:
+            if not finite_number(metric.get(field)):
+                missing.append(f'P011_METRIC.{field}(number)')
+                break
+        heavy_share = metric.get('heavyShare')
+        if heavy_share is not None and (
+            not finite_number(heavy_share) or heavy_share < -1e-12 or heavy_share > 1 + 1e-12
+        ):
+            missing.append('P011_METRIC.heavyShare(range)')
+        if metric.get('commandPhaseSign') not in (-1, 0, 1):
+            missing.append('P011_METRIC.commandPhaseSign(range)')
     if metrics and not all(valid_identity(metric) for metric in metrics):
         missing.append('P011_METRIC.runId/sequence/frameId/substepId')
-    for bottom in bottoms:
+    for bottom in ([] if compact_only else bottoms):
         for key in ("bh", "bl", DONOR_FIELD, RECEIVER_FIELD):
             value = bottom.get(key)
             expected_length = len(bottoms[0].get(key, [])) if bottoms else None
             if not isinstance(value, list) or (expected_length is not None and len(value) != expected_length):
                 missing.append(f"P011_BOTTOM.{key}")
                 break
-    if bottoms and not all(valid_identity(bottom) for bottom in bottoms):
+    if not compact_only and bottoms and not all(valid_identity(bottom) for bottom in bottoms):
         missing.append('P011_BOTTOM.runId/sequence/frameId/substepId')
     if capacity is None:
         missing.append("WS_EVENT init.capacity")
@@ -567,7 +646,7 @@ def check(
         if event.get("source") not in {"script", "sensor", "gesture"}:
             missing.append("P011_EVENT input.source")
             break
-    route_mismatch = any(item.get("routeId") != expected_route for item in events + metrics + bottoms)
+    route_mismatch = any(item.get("routeId") != expected_route for item in events + metrics + ([] if compact_only else bottoms))
     if events and not all(
         isinstance(event.get('runId'), str)
         and isinstance(event.get('sequence'), int)
@@ -602,7 +681,7 @@ def check(
     timestamp_order_errors += sum(
         1 for previous, current in zip(bottom_times, bottom_times[1:])
         if not finite_number(previous) or not finite_number(current) or current <= previous
-    )
+    ) if not compact_only else 0
     for event in events:
         command_time = event.get("commandTime")
         accepted_time = event.get("acceptedTime")
@@ -614,7 +693,7 @@ def check(
             timestamp_order_errors += 1
         if physics_time not in metric_times:
             timestamp_order_errors += 1
-    if (
+    if not compact_only and (
         len(metrics) != len(bottoms)
         or len(set(metric_times)) != len(metric_times)
         or len(set(bottom_times)) != len(bottom_times)
@@ -623,11 +702,12 @@ def check(
         missing.append("P011_METRIC/P011_BOTTOM.physicsTime alignment")
 
     identity_missing_count = sum(
-        not valid_identity(metric) or not valid_identity(bottom_by_time.get(metric.get('physicsTime'), {}))
+        not valid_identity(metric) or (not compact_only and not valid_identity(bottom_by_time.get(metric.get('physicsTime'), {})))
         for metric in metrics
     )
     identity_mismatch_count = sum(
         valid_identity(metric)
+        and (not compact_only or metric.get('physicsTime') in bottom_by_time)
         and identity_tuple(metric) != identity_tuple(bottom_by_time.get(metric.get('physicsTime'), {}))
         for metric in metrics
     )
@@ -782,6 +862,18 @@ def check(
             continue
         crossing_time = current.get("physicsTime", 0)
         crossing_scope = metric_scope_keys[current_index]
+        if compact_only:
+            for candidate_index in range(current_index, len(metrics)):
+                candidate = metrics[candidate_index]
+                if (metric_scope_keys[candidate_index] != crossing_scope
+                        or candidate.get('commandPhaseId') != current.get('commandPhaseId')):
+                    break
+                if (candidate.get('heavyFlux', 0) + candidate.get('lightFlux', 0)) > BOTTOM_FLUX_EPS:
+                    signed_motion = compact_signed_motion(candidate, metrics[candidate_index - 1])
+                    if sum(abs(value) for value in signed_motion) > BOTTOM_FLUX_EPS:
+                        bottom_response_values.append(candidate['physicsTime'] - crossing_time)
+                        break
+            continue
         bottom_index = max(1, bisect.bisect_left(bottom_times, crossing_time))
         bottom_index = (
             next_active_bottom_in_scope[bottom_index]
@@ -826,7 +918,7 @@ def check(
         time = current.get("physicsTime", 0)
         previous_time = previous.get("physicsTime", 0)
         bottom = bottom_by_time.get(time)
-        if bottom is None or current.get("runId") is None:
+        if (bottom is None and not compact_only) or current.get("runId") is None:
             continue
         reset_epoch = reset_epoch_for_time(resets, current.get("runId"), current.get("physicsTime")) or 0
         target_sign = 1 if current.get("targetTilt", 0) > DEAD_ZONE_DEGREES else (-1 if current.get("targetTilt", 0) < -DEAD_ZONE_DEGREES else 0)
@@ -837,10 +929,10 @@ def check(
             current_phase_key = phase_key
             response_cumulative_h = 0.0
             response_cumulative_l = 0.0
-        _, receiver_motion = signed_bottom_motion(bottom)
-        signed_displacement = receiver_motion
-        response_cumulative_h += signed_displacement
-        response_cumulative_l += signed_displacement
+        heavy_flux = current.get('heavyFlux', 0)
+        light_flux = current.get('lightFlux', 0)
+        response_cumulative_h += target_sign * heavy_flux
+        response_cumulative_l += target_sign * light_flux
         times.append(time)
         activity.append(target_sign)
         response_h.append(response_cumulative_h)
@@ -850,6 +942,61 @@ def check(
     active_a = [activity[index] for index in active_sample_indices]
     active_h = [response_h[index] for index in active_sample_indices]
     active_l = [response_l[index] for index in active_sample_indices]
+    active_actual_h = [
+        metric.get('heavyActualDisplacement', 0) for metric in metrics
+        if abs(metric.get('targetTilt', 0)) > DEAD_ZONE_DEGREES
+    ]
+    active_actual_l = [
+        metric.get('lightActualDisplacement', 0) for metric in metrics
+        if abs(metric.get('targetTilt', 0)) > DEAD_ZONE_DEGREES
+    ]
+    variance_ch = (
+        sum((value - mean(active_actual_h)) ** 2 for value in active_actual_h)
+        / len(active_actual_h) if active_actual_h else None
+    )
+    variance_cl = (
+        sum((value - mean(active_actual_l)) ** 2 for value in active_actual_l)
+        / len(active_actual_l) if active_actual_l else None
+    )
+    phase_groups: dict[tuple[Any, int, int], list[dict[str, Any]]] = defaultdict(list)
+    for metric in metrics:
+        phase_id = metric.get('commandPhaseId')
+        phase_sign = metric.get('commandPhaseSign')
+        if not isinstance(phase_id, int) or isinstance(phase_id, bool) or phase_sign not in (-1, 1):
+            continue
+        reset_epoch = reset_epoch_for_time(
+            resets, metric.get('runId'), metric.get('physicsTime')
+        )
+        if reset_epoch is None:
+            continue
+        phase_groups[(metric.get('runId'), reset_epoch, phase_id)].append(metric)
+    phase_observations: list[dict[str, Any]] = []
+    for phase_samples in phase_groups.values():
+        final = phase_samples[-1]
+        phase_sign = final.get('commandPhaseSign', 0)
+        start_time = final.get('commandPhaseStartPhysicsTime', final.get('physicsTime', 0))
+        end_time = final.get('physicsTime', start_time)
+        duration_ms = end_time - start_time
+        if duration_ms < 2000:
+            continue
+        heavy_nonzero = sum(
+            metric.get('heavyFlux', 0) > BOTTOM_FLUX_EPS for metric in phase_samples
+        )
+        final_heavy = final.get('heavyActualDisplacement', 0)
+        phase_observations.append({
+            'commandPhaseId': final.get('commandPhaseId'),
+            'commandPhaseSign': phase_sign,
+            'durationMs': duration_ms,
+            'heavyFluxNonZeroSamples': heavy_nonzero,
+            'heavyActualDisplacement': final_heavy,
+            'heavyDirectionCorrect': phase_sign * final_heavy > BOTTOM_FLUX_EPS,
+            'heavyShapeRms': max(
+                metric.get('heavyShapeRms', 0) for metric in phase_samples
+            ),
+            'heavyShapeMaxDelta': max(
+                metric.get('heavyShapeMaxDelta', 0) for metric in phase_samples
+            ),
+        })
     correlation_h = pearson(active_a, active_h)
     correlation_l = pearson(active_a, active_l)
     lag_h, correlated_h = best_lag(active_a, active_h, active_times)
@@ -867,7 +1014,7 @@ def check(
     out_of_range_count = 0
     non_dead_zone_samples = 0
     direction_correct_samples = 0
-    for previous, current in zip(bottoms, bottoms[1:]):
+    for previous, current in ([] if compact_only else zip(bottoms, bottoms[1:])):
         previous_phase = metric_phase_by_time.get(previous.get('physicsTime'))
         current_phase = metric_phase_by_time.get(current.get('physicsTime'))
         current_metric = metric_by_time.get(current.get('physicsTime'))
@@ -890,6 +1037,17 @@ def check(
                     max_substep_bl = max(max_substep_bl, difference)
                 if a < -1e-9 or b < -1e-9 or (capacity is not None and (a > capacity + 1e-9 or b > capacity + 1e-9)):
                     out_of_range_count += 1
+    compact_substep_bh = [
+        metric.get('maxSubstepBh') for metric in metrics
+        if finite_number(metric.get('maxSubstepBh'))
+    ]
+    compact_substep_bl = [
+        metric.get('maxSubstepBl') for metric in metrics
+        if finite_number(metric.get('maxSubstepBl'))
+    ]
+    if compact_substep_bh or compact_substep_bl:
+        max_substep_bh = max(compact_substep_bh, default=0.0)
+        max_substep_bl = max(compact_substep_bl, default=0.0)
     for metric in metrics:
         if abs(metric.get("effectiveTilt", 0)) > DEAD_ZONE_DEGREES:
             non_dead_zone_samples += 1
@@ -904,6 +1062,9 @@ def check(
                       'totalMotionBudgetLimit', 'totalMotionBudgetClipped'):
             if not finite_number(metric.get(field)):
                 non_finite_count += 1
+        for field in COMPACT_METRIC_NUMERIC_FIELDS:
+            if not finite_number(metric.get(field)):
+                non_finite_count += 1
         if metric.get('bottomCreepBudgetUsed', 0) > metric.get('bottomCreepBudgetLimit', 0) + 1e-9:
             bottom_budget_violations += 1
         if metric.get('totalMotionBudgetUsed', 0) > metric.get('totalMotionBudgetLimit', 0) + 1e-9:
@@ -912,7 +1073,7 @@ def check(
             bottom_independent_clips += 1
         if metric.get('totalMotionBudgetClipped', 0) > 1e-9:
             total_motion_clips += 1
-        for field in (DONOR_FIELD, RECEIVER_FIELD):
+        for field in (() if compact_only else (DONOR_FIELD, RECEIVER_FIELD)):
             if any(not finite_number(value) for value in bottom_by_time.get(metric.get("physicsTime"), {}).get(field, [])):
                 non_finite_count += 1
 
@@ -923,11 +1084,35 @@ def check(
             or metric_scope_keys[current_index] != metric_scope_keys[current_index - 1]
         ):
             last_non_zero_bottom_direction = 0
+            if compact_only:
+                continue
         effective_tilt = metric.get("effectiveTilt", 0)
         direction_sign = 1 if effective_tilt > DEAD_ZONE_DEGREES else (-1 if effective_tilt < -DEAD_ZONE_DEGREES else 0)
         if direction_sign == 0:
             continue
         if metric.get("bottomCreepBudgetUsed", 0) <= 1e-9:
+            continue
+        if compact_only:
+            # Compact directionCorrect is emitted for this metric's actual
+            # transport; run/reset boundaries are enforced by metric_scope_keys.
+            if metric.get('heavyFlux', 0) + metric.get('lightFlux', 0) <= BOTTOM_FLUX_EPS:
+                continue
+            heavy_motion, light_motion = compact_signed_motion(metric, previous_metric)
+            signed_motion = heavy_motion + light_motion
+            observed_direction = 1 if signed_motion > BOTTOM_FLUX_EPS else (-1 if signed_motion < -BOTTOM_FLUX_EPS else 0)
+            expected_motion = (metric.get('directionCorrect') is True
+                               and direction_sign * heavy_motion >= -BOTTOM_FLUX_EPS
+                               and direction_sign * light_motion >= -BOTTOM_FLUX_EPS
+                               and direction_sign * signed_motion > BOTTOM_FLUX_EPS)
+            if observed_direction and last_non_zero_bottom_direction and observed_direction != last_non_zero_bottom_direction:
+                if observed_direction == -1:
+                    positive_to_negative_switches += 1
+                else:
+                    negative_to_positive_switches += 1
+            if observed_direction:
+                last_non_zero_bottom_direction = observed_direction
+            bottom_direction_samples += 1
+            bottom_direction_error += int(not expected_motion)
             continue
         previous_bottom = bottom_by_time.get(previous_metric.get("physicsTime"))
         current_bottom = bottom_by_time.get(metric.get("physicsTime"))
@@ -1027,6 +1212,32 @@ def check(
         "modelErrorZero": model_error_count == 0,
         "crashZero": crash_count == 0,
         "maxSubstepBelow5": max(max_substep_bh, max_substep_bl) <= 5,
+        "degenerateMeasurement": (
+            variance_ch is not None and variance_ch > 1e-12
+            and variance_cl is not None and variance_cl > 1e-12
+        ),
+        "heavyFluxPhaseCoverage": (
+            bool(phase_observations)
+            and all(
+                observation['heavyFluxNonZeroSamples'] >= 30
+                for observation in phase_observations
+            )
+        ),
+        "heavyDirectionCorrect": (
+            bool(phase_observations)
+            and all(
+                observation['heavyDirectionCorrect']
+                for observation in phase_observations
+            )
+        ),
+        "heavyShapeMeasurable": (
+            bool(phase_observations)
+            and all(
+                observation['heavyShapeRms'] >= 0.5
+                and observation['heavyShapeMaxDelta'] >= 1.0
+                for observation in phase_observations
+            )
+        ),
         "maxUncommandedTiltStepBelow2": max_uncommanded_tilt_step <= 2,
         "zeroResidualBelow1": zero_residual <= 1,
         "reverseDirectionErrorZero": reverse_direction_error == 0,
@@ -1054,7 +1265,7 @@ def check(
         and not route_mismatch
         and timestamp_order_errors == 0
         and identity_missing_count == 0
-        and identity_mismatch_count == 0
+        and (compact_only or identity_mismatch_count == 0)
         and sequence_regression_count == 0
         and frame_id_regression_count == 0
         and substep_id_regression_count == 0
@@ -1063,20 +1274,28 @@ def check(
     applicable_must_pass = [
         value for value in must_pass.values() if value != NOT_APPLICABLE
     ]
-    overall = "BLOCKED(missing_hook)" if not data_complete else (
-        "PASS" if all(value is True for value in applicable_must_pass) and (
-            suite_role != BEHAVIOR_ROLE or min(score_tc1, score_tc2, score_tc3) >= 6
-        ) else "FAIL"
-    )
+    if not data_complete:
+        overall = 'BLOCKED(missing_hook)'
+    elif not must_pass['degenerateMeasurement']:
+        overall = 'INCOMPLETE(degenerateMeasurement)'
+    else:
+        overall = (
+            'PASS' if all(value is True for value in applicable_must_pass) and (
+                suite_role != BEHAVIOR_ROLE or min(score_tc1, score_tc2, score_tc3) >= 6
+            ) else 'FAIL'
+        )
     per_log_gate_pass = data_complete and all(value is True for value in applicable_must_pass)
     result = {
+        'bottomDiagnostics': dict(bottom_diagnostics,
+                                  identityMismatchCount=identity_mismatch_count,
+                                  presentCount=len(parsed['bottom'])),
         'budgetMetrics': {
             'bottomCreepBudgetViolationRate': bottom_budget_violations / len(metrics) if metrics else None,
             'totalMotionBudgetViolationRate': total_budget_violations / len(metrics) if metrics else None,
             'bottomCreepIndependentClipRate': bottom_independent_clips / len(metrics) if metrics else None,
             'totalMotionClipRate': total_motion_clips / len(metrics) if metrics else None,
         },
-        "schemaVersion": 1,
+        "schemaVersion": SCHEMA_VERSION,
         "routeId": expected_route,
         "suiteRole": suite_role,
         "overall": overall,
@@ -1103,6 +1322,8 @@ def check(
         "tcP01102": {
             "activitySamples": len(active_a),
             "varianceACorr": sum((value - sum(active_a) / len(active_a)) ** 2 for value in active_a) / len(active_a) if active_a else None,
+            "varianceCH": variance_ch,
+            "varianceCL": variance_cl,
             "varianceRCorrH": sum((value - sum(active_h) / len(active_h)) ** 2 for value in active_h) / len(active_h) if active_h else None,
             "varianceRCorrL": sum((value - sum(active_l) / len(active_l)) ** 2 for value in active_l) / len(active_l) if active_l else None,
             "positivePhaseSamples": sum(value > 0 for value in active_a),
@@ -1140,6 +1361,9 @@ def check(
             "fullLoadLimitErrorRate": full_load_limit_error_rate,
             "totalMotionClipRuns": total_motion_clip_runs,
             "totalMotionClipSegments": total_motion_clip_segments,
+        },
+        "v28Observations": {
+            "phaseObservations": phase_observations,
         },
         "regressionChecks": regression_checks,
         "mustPass": must_pass,
@@ -1202,11 +1426,29 @@ def check(
 
 def self_check_log() -> str:
     lines = [f'WS_EVENT init {{"capacity":192,"routeId":"{DEFAULT_ROUTE}"}}']
-    phases = ((1000, -5, 20, 1820), (2000, 20, -20, 2820), (3000, -20, -5, 3820))
+    phases = ((1000, -5, 20, 3200), (4000, 20, -20, 6200), (7000, -20, -5, 9200))
     bottom_left_offset = 0.0
     bottom_right_offset = 0.0
-    ramp_sample_counts = (30, 8, 30)
+    heavy_left_offset = 0.0
+    heavy_right_offset = 0.0
+    light_left_offset = 0.0
+    light_right_offset = 0.0
+    command_phase_id = 0
+    phase_sign = 0
+    phase_start_time = 0
+    heavy_actual = 0.0
+    light_actual = 0.0
+    heavy_shape_accum = 0.0
+    light_shape_accum = 0.0
+    ramp_sample_counts = (30, 30, 30)
     for phase_index, (command_time, start, target, end_time) in enumerate(phases):
+        command_phase_id += 1
+        phase_sign = 1 if target > 0 else -1
+        phase_start_time = command_time
+        heavy_actual = 0.0
+        light_actual = 0.0
+        heavy_shape_accum = 0.0
+        light_shape_accum = 0.0
         ramp = ramp_increments(start, target, ramp_sample_counts[phase_index], phase_index)
         metric_target = start
         lines.append("P011_EVENT input " + json.dumps({
@@ -1237,6 +1479,25 @@ def self_check_log() -> str:
             "waterTotal": 500,
             "heavyTotal": 400,
             "lightTotal": 400,
+            'commandPhaseId': command_phase_id,
+            'commandPhaseSign': phase_sign,
+            'commandPhaseStartPhysicsTime': phase_start_time,
+            'heavyFlux': 0.0,
+            'lightFlux': 0.0,
+            'heavyActualDisplacement': 0.0,
+            'lightActualDisplacement': 0.0,
+            'heavyIdealDisplacement': 0.0,
+            'lightIdealDisplacement': 0.0,
+            'heavyResidual': 0.0,
+            'lightResidual': 0.0,
+            'heavyShapeRms': 0.0,
+            'lightShapeRms': 0.0,
+            'heavyShapeMaxDelta': 0.0,
+            'lightShapeMaxDelta': 0.0,
+            'maxSubstepBh': 0.0,
+            'maxSubstepBl': 0.0,
+            'heavyShare': None,
+            'heavyShareDeficit': 0.0,
         }
         lines.append("P011_METRIC " + json.dumps(baseline_metric, separators=(",", ":")))
         lines.append("P011_BOTTOM " + json.dumps({
@@ -1258,7 +1519,7 @@ def self_check_log() -> str:
             metric_target += step
             activity = abs(step)
             direction_sign = 1 if current > DEAD_ZONE_DEGREES else (-1 if current < -DEAD_ZONE_DEGREES else 0)
-            bottom_requested = activity / 40 + 0.008 if direction_sign != 0 else 0.0
+            bottom_requested = activity / 40 + 1e-6 if direction_sign != 0 else 0.0
             bottom_limit = 10 * 0.008
             bottom_used = min(bottom_requested, bottom_limit)
             total_limit = 300 * 0.008
@@ -1268,10 +1529,20 @@ def self_check_log() -> str:
             if full_load:
                 total_used = total_limit
                 total_clipped = 0.01
+            heavy_flux = 0.65 * bottom_used
+            light_flux = 0.35 * bottom_used
+            heavy_actual += direction_sign * heavy_flux
+            light_actual += direction_sign * light_flux
+            heavy_shape_accum += heavy_flux
+            light_shape_accum += light_flux
             bottom_left_offset -= bottom_used * direction_sign
             bottom_right_offset += bottom_used * direction_sign
-            bh = [50 + (bottom_left_offset if column < 4 else bottom_right_offset) for column in range(8)]
-            bl = [50 + (bottom_left_offset if column < 4 else bottom_right_offset) for column in range(8)]
+            heavy_left_offset -= direction_sign * heavy_flux
+            heavy_right_offset += direction_sign * heavy_flux
+            light_left_offset -= direction_sign * light_flux
+            light_right_offset += direction_sign * light_flux
+            bh = [50 + (heavy_left_offset if column < 4 else heavy_right_offset) for column in range(8)]
+            bl = [50 + (light_left_offset if column < 4 else light_right_offset) for column in range(8)]
             donor_displacement = [-direction_sign * bottom_used if column < 4 else 0.0 for column in range(8)]
             receiver_displacement = [0.0 if column < 4 else direction_sign * bottom_used for column in range(8)]
             metric = {
@@ -1293,6 +1564,25 @@ def self_check_log() -> str:
                 "waterTotal": 500,
                 "heavyTotal": 400,
                 "lightTotal": 400,
+                'commandPhaseId': command_phase_id,
+                'commandPhaseSign': phase_sign,
+                'commandPhaseStartPhysicsTime': phase_start_time,
+                'heavyFlux': heavy_flux,
+                'lightFlux': light_flux,
+                'heavyActualDisplacement': heavy_actual,
+                'lightActualDisplacement': light_actual,
+                'heavyIdealDisplacement': abs(heavy_actual),
+                'lightIdealDisplacement': abs(light_actual),
+                'heavyResidual': 0.0,
+                'lightResidual': 0.0,
+                'heavyShapeRms': min(2.0, 0.6 + heavy_shape_accum),
+                'lightShapeRms': min(2.0, 0.6 + light_shape_accum),
+                'heavyShapeMaxDelta': min(4.0, 1.2 + heavy_shape_accum),
+                'lightShapeMaxDelta': min(4.0, 1.2 + light_shape_accum),
+                'maxSubstepBh': heavy_flux,
+                'maxSubstepBl': light_flux,
+                'heavyShare': 0.65,
+                'heavyShareDeficit': 0.0,
             }
             metric.update({
                 field: (0.5 if full_load else 0.0)
@@ -1474,7 +1764,7 @@ def check_suite(
     )
     return {
         'suite': True,
-        'schemaVersion': 1,
+        'schemaVersion': SCHEMA_VERSION,
         'routeId': expected_route,
         'overall': overall,
         'logResults': results,
@@ -1504,6 +1794,11 @@ def ramp_increments(start: float, target: float, sample_count: int, phase_index:
 
 
 def write_markdown(path: Path, result: dict[str, Any]) -> None:
+    if result.get('captureGateFailed'):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('# P-011 capture gate\n\n' + result['overall'] + '\n\n' +
+                        '\n'.join(result['schedulePrecheck']['errors']) + '\n', encoding='utf-8')
+        return
     if result.get('suite'):
         lines = [
             "# P-011 objective suite check",
@@ -1572,8 +1867,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path)
     parser.add_argument("--route-id", default=DEFAULT_ROUTE)
-    parser.add_argument("--json", type=Path, default=Path("test/artifacts/p011_check_v2.json"))
-    parser.add_argument("--markdown", type=Path, default=Path("docs/test-report-P011-bottom-creep-v2.7-20261016.md"))
+    parser.add_argument("--json", type=Path, default=Path("test/artifacts/p011-v28-heavy-interface/p011-check.json"))
+    parser.add_argument("--markdown", type=Path, default=Path("docs/test-report-P011-bottom-creep-v2.8-heavy-interface.md"))
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument('--suite-input', action='append', type=Path, default=[])
     parser.add_argument('--suite-role', action='append', default=[])
@@ -1596,23 +1891,55 @@ def suite_role_for_path(path: Path, explicit_roles: list[str], index: int) -> st
     return role
 
 
+def check_file_inputs(paths: list[Path], roles: list[str], route: str, single=False):
+    """P-011 v2.8: frozen TC02 schedule gate always precedes physical scoring."""
+    behavior = [path for path, role in zip(paths, roles) if role == BEHAVIOR_ROLE]
+    if route != DEFAULT_ROUTE:
+        texts = [path.read_text(encoding='utf-8', errors='replace') for path in paths]
+        return check(texts[0], route) if single else check_suite(texts, route, log_roles=roles)
+    precheck = {'passed': False, 'errors': ['capturePathMismatch: exactly one TC02 input required']}
+    try:
+        if len(behavior) != 1:
+            raise ValueError(precheck['errors'][0])
+        tc02_path = behavior[0]
+        precheck = validate_log(build_schedule(100), 100, tc02_path)
+        if not precheck['passed']:
+            raise ValueError('; '.join(precheck['errors']))
+        with ExitStack() as stack:
+            handles = [stack.enter_context(closed_capture(path)) for path in paths]
+            _, before = verify_capture(tc02_path, 100, precheck['capturePath'])
+            texts = [handle.read() for handle in handles]
+            result = check(texts[0], route) if single else check_suite(texts, route, log_roles=roles)
+            _, after = verify_capture(tc02_path, 100, precheck['capturePath'])
+            if before != after:
+                raise ValueError('captureNotFrozen: capture changed during physical scoring')
+        result.update(schedulePrecheck=precheck, captureFrozen=True,
+                      captureAudit=precheck['captureAudit'], capturePath=precheck['capturePath'])
+        return result
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        message = str(error)
+        reason = ('capturePathMismatch' if 'capturePathMismatch' in message else
+                  ('schedulePrecheck' if precheck.get('captureFrozen') else 'captureNotFrozen'))
+        precheck = dict(precheck, passed=False, errors=[message])
+        return {'overall': f'FAIL({reason})', 'routeId': route, 'schemaVersion': SCHEMA_VERSION,
+                'captureGateFailed': True, 'captureFrozen': False, 'schedulePrecheck': precheck,
+                'captureAudit': precheck.get('captureAudit', {}),
+                'capturePath': precheck.get('capturePath')}
+
+
 def main() -> int:
     args = parse_args()
     if args.self_check:
-        args.json = Path("test/artifacts/p011_selfcheck_v2.json")
-        args.markdown = Path("test/artifacts/p011_selfcheck_v2.md")
+        args.json = Path("test/artifacts/p011-v28-canonical-20261018/p011-selfcheck.json")
+        args.markdown = Path("test/artifacts/p011-v28-canonical-20261018/p011-selfcheck.md")
         log_text = self_check_log()
     else:
         if args.suite_input:
-            suite_texts = [
-                path.read_text(encoding='utf-8', errors='replace')
-                for path in args.suite_input
-            ]
             suite_roles = [
                 suite_role_for_path(path, args.suite_role, index)
                 for index, path in enumerate(args.suite_input)
             ]
-            result = check_suite(suite_texts, args.route_id, log_roles=suite_roles)
+            result = check_file_inputs(args.suite_input, suite_roles, args.route_id)
             write_json(args.json, result)
             write_markdown(args.markdown, result)
             print('overall: ' + result['overall'])
@@ -1622,7 +1949,7 @@ def main() -> int:
         if args.input is None:
             print("--input is required unless --self-check is used", file=sys.stderr)
             return 2
-        log_text = sys.stdin.read() if str(args.input) == "-" else args.input.read_text(encoding="utf-8", errors="replace")
+        log_text = None
     if args.self_check:
         result = check_suite(
             [log_text],
@@ -1633,7 +1960,10 @@ def main() -> int:
             log_roles=[BEHAVIOR_ROLE],
         )
     else:
-        result = check(log_text, args.route_id, include_regressions=args.self_check)
+        if args.route_id == DEFAULT_ROUTE or str(args.input) != '-':
+            result = check_file_inputs([args.input], [BEHAVIOR_ROLE], args.route_id, single=True)
+        else:
+            result = check(sys.stdin.read(), args.route_id)
     write_json(args.json, result)
     write_markdown(args.markdown, result)
     print(f"overall: {result['overall']}")

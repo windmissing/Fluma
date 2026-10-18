@@ -212,3 +212,254 @@ aa start -b com.example.helloworld -a EntryAbility --ps rendermode 4 --ps testmo
 
 - 2026-10-13：初始创建。
 - 2026-10-13：追加 P-003/P-005 场景二客观用例 TC-WS-01..12 与 WS 钩子数据源映射。原因：P-005 测试先行，补齐三相守恒、分选、沉降、安息角、水面、倒立、摇晃再堆积、长时静置、FPS 与像素交叉验证；TC-WS-01 同时作为 algorithm v1 §3.3 分相守恒缺陷的回归防线。
+
+## P-011：倾斜跟手性 / 底层运动响应客观测试用例
+
+> 版本：v1　日期：2026-10-14　对应算法：`docs/algorithm-P011.md` v0.1  
+> 说明：本节仅覆盖客观指标；倾斜手感、视觉舒适性、主观跟手感受由 effector 另行维护。  
+> 路线要求：每个技术路线必须使用稳定 `routeId`，并独立输出一份客观测试报告；不同技术路线不做全量 dominance 比较。
+
+### 1. 公共前置与数据口径
+
+- **运行配置**：`testmode=true`，禁用真实传感器；目标倾角只能由测试脚本、Want 参数或事件注入，禁止面板误触或传感器接管。
+- **物理步长**：固定 `1/120s`。若渲染帧间隔大于 `1/60s`，必须按既定子步规则推进，不得把帧间隔直接当作物理 `dt`。
+- **时间戳**：每个输入命令必须记录 `commandTime`、`acceptedTime`、首个消费该输入的 `physicsTime`；三者使用同一时钟源，且全程单调递增。
+- **有效倾角**：`effectiveTilt` 定义为物理求解器实际消费的倾角，不是 UI 目标值、传感器原始值或渲染矩阵值。
+- **底层位移**：
+  - `B_h(t) = [bh[0](t), …, bh[N-1](t)]`
+  - `B_l(t) = [bl[0](t), …, bl[N-1](t)]`
+  - 单步位移量：`ΔB_h(t) = Σ_c |bh[c](t) - bh[c](t-dt)|`，`ΔB_l(t) = Σ_c |bl[c](t) - bl[c](t-dt)|`
+  - 输入活动量：`A(t) = |effectiveTilt(t) - effectiveTilt(t-dt)|`
+- **相关性**：在连续运动窗口内计算 `Pearson(A(t), ΔB_h(t))` 与 `Pearson(A(t), ΔB_l(t))`；静置段不参与相关性计算。
+- **跟随误差**：对每条连续运动曲线，将输入活动量与 `bh/bl` 位移量分别归一化为累计曲线后，计算最大偏差：
+  - `FE_h = max_t |C_A(t) - C_h(t)|`
+  - `FE_l = max_t |C_A(t) - C_l(t)|`
+- **数据完整性**：缺少输入时间戳、有效倾角、`bh/bl` 数组或三相总量钩子时，正式结论记为 `BLOCKED(missing_hook)`；不得用渲染像素替代模拟层数据。
+- **报告隔离**：每个技术路线独立输出 `docs/test-report-P011-<routeId>.md`；同一路线迭代采用追加模式。报告中必须记录日期、`routeId`、HAP/commit hash、测试脚本 commit hash、原始日志与判定 JSON 路径。
+
+### 2. 用例总览
+
+| 用例 ID | 覆盖目标 | 核心阈值 | 分类 |
+|---|---|---|---|
+| TC-P011-01 | 输入倾角到有效倾角的响应时延 | `P95 T90 <= 100ms` 达到 6 分；无方向反转 | TIERED |
+| TC-P011-02 | 输入变化与底层 `bh/bl` 位移的相关性与跟随误差 | `r >= 0.70`、`lag <= 66.7ms`、`FE <= 0.15` 达到 6 分 | TIERED |
+| TC-P011-03 | 快速倾斜、回正、反向倾斜连续性 | 无瞬移、无非命令方向反转、回正误差 `<= 1°` | MUST-PASS + TIERED |
+| TC-P011-04 | 三相守恒与数值稳定性 | 三相漂移 `< 0.1%`；无非有限数；无越界；无崩溃 | MUST-PASS |
+
+### 3. TC-P011-01：输入倾角到有效倾角响应时延
+
+- **前置条件**：场景初始化完成并静置 `3s`；倾角为 `0°`；输入、有效倾角与物理时间戳完整可用。
+- **输入序列**：  
+  `0° → +15°` 保持 `3s` → `0°` 保持 `3s` → `-15°` 保持 `3s` → `0°` 保持 `3s`；重复 5 轮。阶跃命令必须带事件边界与时间戳。
+- **期望输出**：每次命令后，`effectiveTilt` 按命令方向连续变化，并在可量化时间内达到目标倾角的 90%；不出现方向反转、卡死或跳变。
+- **指标定义**：
+  - `T50`：从 `commandTime` 到 `effectiveTilt` 首次达到目标变化量 50% 的时间。
+  - `T90`：从 `commandTime` 到 `effectiveTilt` 首次达到目标变化量 90% 的时间。
+  - `P95 T90`：所有有效阶跃的 95 分位数。
+  - `directionError`：命令后 `100ms` 内 `effectiveTilt` 与目标方向相反的次数，必须为 0。
+- **TIERED 判定**：
+
+| 分数 | `P95 T90` |
+|---:|---:|
+| 10 | `<= 50ms` |
+| 8 | `<= 75ms` |
+| 6 | `<= 100ms` |
+| 4 | `<= 150ms` |
+| 2 | `<= 200ms` |
+| 0 | `> 200ms` |
+
+- **通过标准**：TIERED 得分 `>= 6`，且 `directionError = 0`。数据缺失时不判分，正式结论为 `BLOCKED(missing_hook)`。
+
+### 4. TC-P011-02：输入变化与底层 `bh/bl` 位移相关性及跟随误差
+
+- **前置条件**：延续 TC-P011-01 的稳定初始态；`bh/bl` 为模拟层权威数组，渲染层只做交叉验证。
+- **输入序列**：  
+  `0° → +20°` 用 `2s` 匀速到达 → 保持 `1s` → `+20° → -20°` 用 `4s` 匀速到达 → 保持 `1s` → `-20° → 0°` 用 `2s` 匀速到达；重复 5 轮。全程记录每个物理子步。
+- **期望输出**：输入活动量与底层 `bh/bl` 位移量存在正相关；位移响应滞后有限；归一化累计曲线的形状差有界，不得出现输入停止后底层无响应、或输入尚未变化底层提前大幅变化。
+- **指标定义**：
+  - `r_h = Pearson(A(t), ΔB_h(t))`
+  - `r_l = Pearson(A(t), ΔB_l(t))`
+  - `lag_h`、`lag_l`：在 `[-200ms, +200ms]` 内使相关性最大的时间滞后。
+  - `FE_h`、`FE_l`：按公共口径计算的归一化累计曲线最大偏差。
+- **TIERED 判定**：分别对 `bh`、`bl` 按下表取最高满足档；两相最终得分为较低值。
+
+| 分数 | 相关系数 `r` | 绝对滞后 `|lag|` | 跟随误差 `FE` |
+|---:|---:|---:|---:|
+| 10 | `>= 0.90` | `<= 16.7ms` | `<= 0.05` |
+| 8 | `>= 0.80` | `<= 33.3ms` | `<= 0.10` |
+| 6 | `>= 0.70` | `<= 66.7ms` | `<= 0.15` |
+| 4 | `>= 0.55` | `<= 100ms` | `<= 0.25` |
+| 2 | `>= 0.40` | `<= 150ms` | `<= 0.35` |
+| 0 | 未达以上任一条件 | — | — |
+
+- **通过标准**：`bh` 与 `bl` 的 TIERED 得分均 `>= 6`。若任一相缺失，整体记为 `BLOCKED(missing_hook)`，不得仅用另一相结果放行。
+
+### 5. TC-P011-03：快速倾斜、回正与反向倾斜连续性
+
+- **前置条件**：正立稳态；输入由脚本注入，事件边界完整；物理子步与输入时间戳可对齐。
+- **输入序列**：  
+  `0° → +25°` 用 `0.25s` 到达 → 保持 `0.5s` → `+25° → 0°` 用 `0.25s` 回正 → 保持 `0.5s` → `0° → -25°` 用 `0.25s` 到达 → 保持 `0.5s` → `-25° → 0°` 用 `0.25s` 回正 → 保持 `0.5s`；重复 10 轮。
+- **期望输出**：`effectiveTilt` 与底层 `bh/bl` 在快速变化、回正、反向切换时保持连续；不出现整块瞬移、符号错误、非命令方向摆动或回正残留。
+- **指标定义**：
+  - `maxSubstepBh = max_{t,c} |bh[c](t) - bh[c](t-dt)|`
+  - `maxSubstepBl = max_{t,c} |bl[c](t) - bl[c](t-dt)|`
+  - `maxUncommandedTiltStep = max_t |ΔeffectiveTilt(t) - ΔtargetTilt(t)|`
+  - `zeroResidual = max_t |effectiveTilt(t)|`，仅取每次回正后 `300ms` 至下一段开始前的样本。
+  - `reverseDirectionError`：反向命令后 `100ms` 内 `effectiveTilt` 与新命令方向相反的次数。
+- **MUST-PASS**：
+  - `maxSubstepBh <= 5 cell` 且 `maxSubstepBl <= 5 cell`；超过判定为瞬移 FAIL。
+  - `maxUncommandedTiltStep <= 2°`，事件边界外不得出现无输入对应的有效倾角跳变。
+  - `zeroResidual <= 1°`。
+  - `reverseDirectionError = 0`。
+  - 全程无 crash、fatal exception、ANR 或非预期退出。
+- **TIERED 判定**：以 `maxSubstepBh`、`maxSubstepBl` 的较大值评分；两指标分档一致，取最低分。
+
+| 分数 | 最大单子步底层位移 |
+|---:|---:|
+| 10 | `<= 0.5 cell` |
+| 8 | `<= 1.0 cell` |
+| 6 | `<= 1.5 cell` |
+| 4 | `<= 2.5 cell` |
+| 2 | `<= 4.0 cell` |
+| 0 | `> 4.0 cell` |
+
+- **通过标准**：MUST-PASS 全部 PASS，且 TIERED 得分 `>= 6`。
+
+### 6. TC-P011-04：三相守恒与数值稳定性压力测试
+
+- **前置条件**：使用与正式方案一致的初始化场景；初始三相总量 `Vw0`、`Vh0`、`Vl0` 必须在 init/reset 后记录。
+- **输入序列**：执行 TC-P011-03 的快速倾斜序列 100 轮，总时长不少于 `120s`；随后静置 `60s`。全程采集每个物理子步或至少每 `250ms` 一份状态快照。
+- **期望输出**：水、重沙、轻沙三相总量保持守恒；所有状态量有限且在合法范围内；长时压力下无崩溃、无数值爆炸、无累积漂移。
+- **指标定义**：
+  - `driftWater(t) = |Vw(t) - Vw0| / max(Vw0, ε)`
+  - `driftHeavy(t) = |Vh(t) - Vh0| / max(Vh0, ε)`
+  - `driftLight(t) = |Vl(t) - Vl0| / max(Vl0, ε)`
+  - `nonFiniteCount`：`waterTop/bh/bl/mh/ml/suspH/suspL/effectiveTilt` 中 `NaN/Inf` 的样本数。
+  - `outOfRangeCount`：`bh/bl/mh/ml/suspH/suspL < -1e-9` 或 `> rows + 1e-9` 的样本数。
+- **MUST-PASS**：
+  - 任一采样点均满足 `driftWater < 0.001`、`driftHeavy < 0.001`、`driftLight < 0.001`。
+  - `nonFiniteCount = 0`。
+  - `outOfRangeCount = 0`。
+  - 全程进程存活，无 crash、fatal exception、ANR 或非预期退出。
+  - 输入事件与物理时间戳可对齐；不得出现未输入触发的 reset、模式切换或倾角跳变。
+- **通过标准**：全部 MUST-PASS 通过。任何三相漂移、非有限数、越界或崩溃均直接 FAIL，不得由其他指标高分抵消。
+
+### 7. P011 bottom-creep-v2.7 正式测试准备（等待 developer 修复）
+
+- **状态**：`BLOCKED(dev-fix-pending)`。本节只准备时间表、场景与命令，不判定 P-011；developer 完成 `test/p011_check.py` 与 objective fixture 修复前，不得执行真机正式测试。
+
+#### 7.1 TC-P011-02 连续线性目标角时间表
+
+- **前置条件**：固定种子 `seed=20261016`；`rendermode=4`、`testmode=true`、`forceinvert=false`；`wspreset=thick`、`wscols=10`、`wscapacity=1000`、`wssnapshot=true`；初始 `0°` 静置 `3s`。
+- **输入公式**：`0° -> +20°` 用 `2s` 匀速，保持 `1s`；`+20° -> -20°` 用 `4s` 匀速，保持 `1s`；`-20° -> 0°` 用 `2s` 匀速；重复 `5` 轮。总时长 `53s`（含初始静置）。
+- **100ms 命令表**：每轮 `20+10+40+10+20=100` 条 Want，加初始 `31` 条，共 `531` 条；相邻目标角步长最大 `1.0°`。120Hz 显示帧下限为 `8.333ms`，`100ms` 间隔满足“至少一个显示帧”。
+- **审查硬门槛（MUST-PASS）**：
+  - `P011_EVENT input.source="script"` 数量必须为 `531`。
+  - 相邻 `acceptedTime` 差必须 `>= 100ms`（若改用其他命令周期，则 `>=` 该周期且不小于一个显示帧）；不接受重叠或跳过中间目标角。
+  - 每条 `targetTilt` 与生成的连续时间表误差 `<= 0.001°`。
+  - 五轮相位完整；`P011_METRIC.physicsTime` 与 `P011_BOTTOM.physicsTime` 按样本数和时间一一对齐。
+  - 不用 `±200ms` 脉冲扩展把 `A(t)=0` 样本混入 activity 相关性窗口。
+
+#### 7.2 满载并发与独立 total-clip 场景
+
+所有压力场景均使用固定种子与 TC-P011-02 相同的基础启动参数；每个场景独立启动并独立采集日志。
+
+| 场景 ID | 输入 | 时长 | 必须证明 |
+|---|---|---:|---|
+| `P011-SEC-01-FULL-LOAD` | `wstilt=88` 满载保持 | `20s` | `fullLoadSamples > 0`；settlement、percolation、slip、suspension 四类运动申请在同一物理子步内非零 |
+| `P011-SEC-02-CLIP-A` | `wstilt=88` 高压保持 | `20s` | 本段出现 `totalMotionBudgetClipped > 0` |
+| `P011-SEC-03-CLIP-B` | `wstilt=-88` 高压保持 | `20s` | 本段出现 `totalMotionBudgetClipped > 0` |
+| `P011-SEC-04-CLIP-C` | `wstilt=88` 高压保持 | `20s` | 本段出现 `totalMotionBudgetClipped > 0` |
+
+- 三段 total-clip 使用独立进程、独立日志和分段标识隔离；不得合并缺失段或用其他场景补判。
+- 场景完整性硬门槛：`fullLoadSamples > 0` 且 `totalMotionClipRuns >= 3`。
+- suite 聚合符号切换硬门槛：`fullLoad + CLIP-A + CLIP-B + CLIP-C` 聚合后必须至少出现 1 次 `positive -> negative` 和 1 次 `negative -> positive` 的 `bottomDirection` 符号切换；单符号压力日志不得因自身缺少切换而独立失败。
+- 重启采集硬门槛：每个独立压力段在启动后必须等待新的 `P011_EVENT reset`（含新 `runId`）和该 `runId` 的首个 `P011_METRIC` 后才开始计时采集；不得把重启边界前后样本拼入同一相位。
+- suite 聚合报告必须逐 run 输出 `runId`、reset 次数、`sequence/frameId/substepId` 范围、target 相位数、相位内样本数与符号切换计数，并单独输出 suite 级 `positive -> negative` 与 `negative -> positive` 计数。
+
+#### 7.3 待执行命令
+
+```powershell
+python test/p011_tc02_schedule.py --frame-ms 100 --output test/artifacts/p011-formal-prep-20261016/p011-tc02-schedule.csv
+powershell -ExecutionPolicy Bypass -File test/p011_tc02_formal_suite.ps1 -Mode Schedule
+```
+
+developer 修复通过后按顺序执行：
+
+```powershell
+python test/p011_check.py --self-check
+powershell -ExecutionPolicy Bypass -File test/p011_tc02_formal_suite.ps1 -Mode Tc02
+powershell -ExecutionPolicy Bypass -File test/p011_tc02_formal_suite.ps1 -Mode PressureSegments
+python test/p011_check.py --input test/artifacts/p011-formal-prep-20261016/p011-tc02-formal.log --json test/artifacts/p011-formal-prep-20261016/p011-tc02-check.json --markdown test/artifacts/p011-formal-prep-20261016/p011-tc02-check.md
+```
+
+### 8. 技术路线报告与比较边界
+
+- 每个技术路线必须独立输出一份客观测试报告，路径为 `docs/test-report-P011-<routeId>.md`。
+- 同一路线的新迭代在原报告中追加记录，必须包含日期、被测代码 commit hash、HAP 标识、测试脚本 commit hash、输入序列、原始日志路径、判定 JSON 路径与各项实测值。
+- 不同技术路线不得共用同一份客观测试报告，也不得把多条路线的数据合并后形成单一验收结论。
+- 不同技术路线之间不做全量 dominance 比较，不输出“某路线全面优于另一路线”的验收结论。
+- 如需跨路线说明，只能以参考表列出各自实测值，并明确标注“仅参考、不作为验收依据”；验收结论只对单一路线闭环生效。
+
+
+### 9. bottom-creep-v2.8-heavy-interface added cases
+
+These cases do not replace TC-P011-01~04. They add v2.8 green heavy-interface observation and schema v2 strict gates. No threshold may be relaxed.
+
+#### 9.1 TC-P011-V28-00 green-ROI preflight
+
+- Precondition: independent runId, rendermode=4, testmode=true, wspreset=thick, fixed resolution, central 80% ROI.
+- Input: 0 degree baseline, +15 degree hold, return, -15 degree hold, return; capture each segment.
+- Expected: green boundary centroid moves in the command direction; heavyFlux has enough non-zero samples; routeId is recorded.
+- Pass: status == OBSERVATION_READY; positive and negative heavyFluxNonZeroSamples >= 30; heavyShapeRms >= 0.5 and heavyShapeMaxDelta >= 1.0. Missing ROI is BLOCKED(roiObservation).
+
+#### 9.2 TC-P011-V28-01 TC02 schedule precheck
+
+- Precondition: one raw log, one runId, one process; do not splice runs.
+- Input: 531 rows of the 100ms continuous-linear target schedule.
+- Expected: input/source=script maps 1:1 to schedule; input_state does not enter command metrics.
+- Pass: scriptEventCount == 531; scriptRunIdCount == 1; sequence is continuous [1..531]; target matches exactly; acceptedTimeGapViolations == 0; minAcceptedTimeGapMs >= 100; unknown telemetry == 0. A precheck FAIL forbids TC02 physical scoring.
+
+#### 9.3 TC-P011-V28-02 heavy non-zero and direction
+
+- Precondition: TC02 precheck PASS; evaluate each valid positive/negative tilt phase of at least 2 seconds.
+- Pass: heavyFluxNonZeroSamples >= 30; sign(C_H) == sign(targetTilt); direction errors == 0.
+
+#### 9.4 TC-P011-V28-03 heavy shape observability
+
+- Precondition: phase-start baseline, central 80% columns.
+- Pass: heavyShapeRms >= 0.5 model unit; heavyShapeMaxDelta >= 1.0 model unit; maxSubstepBh remains under the current TC03 smoothing threshold.
+
+#### 9.5 TC-P011-V28-04 independent H/L observation
+
+- Precondition: heavyFlux and lightFlux are accumulated independently; the checker must not duplicate one aggregate displacement into H and L.
+- Pass: variance(C_H) > 1e-12 and variance(C_L) > 1e-12; otherwise record INCOMPLETE(degenerateMeasurement) and do not score physical behavior.
+
+#### 9.6 TC-P011-V28-05 existing gates and pressure isolation
+
+- Pass: all current TC-P011-01~04 tiered, budget, conservation, finite-value, out-of-range, model-error, crash/ANR gates remain unchanged. The suite must contain behavior, full-load, and total-clip segments and must not reuse logs from another route.
+## 变更记录
+
+- 2026-10-13：初始创建。
+- 2026-10-13：追加 P-003/P-005 场景二客观用例 TC-WS-01..12 与 WS 钩子数据源映射。原因：P-005 测试先行，补齐三相守恒、分选、沉降、安息角、水面、倒立、摇晃再堆积、长时静置、FPS 与像素交叉验证；TC-WS-01 同时作为 algorithm v1 §3.3 分相守恒缺陷的回归防线。
+- 2026-10-13：追加 TC-WS-01..12 的 MUST-PASS/TIERED 判定口径 v2。原因：用户新增硬门槛与 0~10 分档要求；保持原硬阈值不放宽，将质量类指标以旧阈值为 6 分及格锚点，并统一“提升=改善、及格线内下降=可接受、跌破及格线或硬门槛失败=恶化/未通过”的报告口径。
+- 2026-10-14：澄清 HG-04“单帧位移”为物理子步口径，并在 TC-WS-08 增加重/轻沙分相悬浮观测记录。原因：30Hz 帧内两个子步必须分别校验，避免相加后误判或误放行；现有总悬浮比例无法识别“峰值达标但重沙未扬起”的摇晃交融构成问题。阈值本身不放宽，分相指标仅用于客观记录与报告呈现。
+- 2026-10-14：追加 P-006 场景一 TC-11~13 正式用例与 `liquid_mode_check.py` 判定脚本设计。原因：manager 批准等待期转正场景一测试设计；覆盖油水分层、摇晃恢复与倒立重排，明确硬门槛、TIERED 分档与暂允许失败项，且不占用真机、不抢占 G2+G3 主线。
+- 2026-10-16：按 architecture-P011 §7.7.2 固化 P-011 objective suite 聚合正负方向切换覆盖、独立压力日志/run-reset 分段与场景重启后 reset/runId 采集门控。
+- 2026-10-18: added bottom-creep-v2.8-heavy-interface green-ROI preflight, TC02 schedule precheck, heavy non-zero/direction/shape, independent H/L observation, and pressure isolation cases.
+
+### 10. P-011 双模式输入客观验收（2026-10-18，用户授权测试输入替代手持）
+
+本节仅增加输入工程验收，不改变 bottom-creep-v2.8-heavy-interface 物理/预算阈值。以下均为 MUST-PASS、不分档；既有质量指标继续0~10、及格线6。脚本模拟通过不能声明真实传感器E2E通过。最终接口名称由 designer/architect 冻结，测试通过输入/事件/状态观测验证语义，不绑定实现命名。
+
+| 用例 ID | 前置条件 | 输入 | 期望输出与判定标准 | 执行与证据 |
+|---|---|---|---|---|
+| TC-P011-MODE-01 源互斥 | 场景4，明确模式与runId | 测试模式发送0,+15,-15,0模拟姿态，同时注入不同传感器样本；体验模式发送传感器样本并尝试脚本姿态 | 测试仅模拟姿态驱动；体验仅传感器驱动；被排除源对目标/物理输入贡献为0；遥测source准确，禁止将脚本改名sensor | 主机路由unit覆盖两源冲突；设备日志验证实际入口，保留源与目标时间序列 |
+| TC-P011-MODE-02 切换清残留 | 活跃script、待消费Want、forceInvert、gesture hold及非零滤波历史均已建立 | 测试→体验→测试；分别经UI/Want入口，覆盖同模式重复设置 | 切换后旧script/pending/forceInvert/gesture/filter不再驱动；体验等待/读取当前真实回调，不能复用测试姿态；重入测试无旧命令回放；同模式幂等不能误删新命令 | 状态转换unit与设备事件；记录切换前后字段及首个新输入 |
+| TC-P011-MODE-03 真实回调接线 | 体验模式，真实加速度计订阅可用 | 无人手持条件下自动启动，观察系统实际回调；另用unit构造正负向加速度 | 实际callback计数>0，有限值与时间戳来自系统回调并进入source=sensor链；unit校验符号与共用链路；静止设备不冒充动态姿态/噪声/标定验收；缺真实回调证据即BLOCKED | callback/run遥测及OS/API；模拟unit和真实回调证据分开 |
+| TC-P011-MODE-04 模拟可复现 | 固定seed、schedule、初态与模拟时间；reset后独立run | 同序列重复两次，含0/+15/-15/回零和已批准边界 | 目标、顺序、模拟时间逐项一致；姿态由程序构造，无传感器/手势依赖；同一物理初态与固定dt下结果按最终设计数值契约一致；真实墙钟差异不冒充目标差异 | 保存schedule/hash、两run输入及状态序列；物理容差待设计冻结，不擅设阈值 |
+| TC-P011-MODE-05 fresh Want与531闸门 | 从体验切测试，同一Want携带testmode与首个wstilt | canonical完整531行；首命令同时触发进入测试；各帧保持目标 | 首条新命令不被清理丢失；531/531、单run、sequence1..531、target精确一致、accepted gap>=100ms且0违规；input_state不计script；冻结captureAudit全部满足后才物理评分 | canonical runner；冻结TC02一次采集复用，禁止拼run或删样本 |
+| TC-P011-MODE-06 重启与退出 | 有待消费命令、非零姿态和forceInvert | 场景重建、应用重启、退出测试、订阅注销后重入 | 按冻结契约初始化模式，无旧run命令重放/旧滤波污染；订阅无重复；退出后无残留更新；新run/resetEpoch可追溯，首个fresh输入仍消费一次 | 生命周期unit与设备事件，分别记录run/resetEpoch |
+| TC-P011-MODE-07 共用处理链与既有门槛 | 模式入口已实现；匹配HAP/source manifest | 两入口构造相同规范姿态并检查下游；执行原TC01~04、green-ROI及压力suite | 模式只改变输入来源，下游方向/平滑/预算/物理链共用；所有原硬门槛维持，质量>=6；模拟验收与真实传感器接线报告分开 | 主机adapter unit+源审查；设备完整客观suite，主观交effector |
+
+RED基线：`python test/test_p011_input_modes.py --output test/artifacts/p011-v28-canonical-20261018/input-modes-red-baseline.json` 仅执行源码库存检查；其presence不是runtime PASS。新契约/业务未交付时上述runtime用例如实BLOCKED/NOT_IMPLEMENTED，待实现后原用例重测。

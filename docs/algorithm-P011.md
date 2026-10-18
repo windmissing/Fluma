@@ -1,6 +1,6 @@
 # 算法原则：P-011 倾斜跟手性/底层运动响应
 
-> 版本：v0.6　日期：2026-10-18　状态：DESIGN_UPDATED_PENDING_RETEST  
+> 版本：v0.7　日期：2026-10-18　状态：DESIGN_UPDATED_PENDING_APPROVAL  
 > 维护人：designer  
 > 问题：P-011（倾斜跟手性/底层运动响应）  
 > 本文件登记设计原则、技术路线迭代记录与当前具体算法方案；不改工程代码。
@@ -220,7 +220,7 @@ for frame:
 
 > **routeId**：`bottom-creep-v2.7.3`  
 > **日期**：2026-10-18  
-> **状态**：`DESIGN_PENDING_APPROVAL`；本轮只更新设计文档，不修改业务代码。  
+> **状态**：`REJECTED(subjective HG-TT-04)`；客观 suite PASS 不能覆盖主观硬门槛失败。  
 > **基线**：同一 `bottom-creep` 技术族内的 `bottom-creep-v2.7.2 behavior-stability`。本节不与 `gravity-advection-v1` 或其他路线合并数据。
 
 ### 4.1 2026-10-18 v2.7.2 复测事实与 v2.7.3 归因
@@ -268,3 +268,283 @@ for frame:
 
 - 本文档修订不改业务代码。后续实施时，业务实现只允许升级 `routeId=bottom-creep-v2.7.3`、新增 H/L 本地累计状态与通道内残差分配；`vBottomCreepMax`、`totalMotionBudget`、donor/receiver 语义与遥测字段集合不变。
 - checker 允许按 §4.2 与 §4.3 更新特征、相位边界、方差预检、Pearson、lag 与 FE 计算；不得平滑、重采样、删除样本或改变阈值。
+
+---
+
+## 5. 下一迭代设计：bottom-creep-v2.8-heavy-interface
+
+> **routeId**：`bottom-creep-v2.8-heavy-interface`  
+> **日期**：2026-10-18  
+> **状态**：`DESIGN_PENDING_APPROVAL`；本轮仅更新算法设计文档，不改业务代码、manager 文档或测试报告。  
+> **基线**：同一 `bottom-creep` 技术族内的 `bottom-creep-v2.7.3 behavior-stability`。本节不与 `gravity-advection-v1` 或其他路线做 dominance 比较。  
+> **结论**：v2.7.3 的客观 PASS 与主观 FAIL 不矛盾：客观指标确认了聚合底层转移，但没有确认用户可见的绿色 heavy 底层移动；v2.7.3 因此 REJECTED，需要行为变更后的新 route。
+
+### 5.1 v2.7.3 失败归因（证据链）
+
+1. **绿色视觉层绑定的是 heavy deposited `bh`，不是聚合底层位移**。渲染代码将 `bh` 画为底部绿色带，将 `bh+bl` 画为上方黄沙带；因此绿色边界的变化只能来自 `bh`。
+2. **算法把授予的 bottom creep 优先从 `bl` 取出**。`splitBottomLightFirst` 先消耗 `bl`，仅当 `bl` 不够时才消耗 `bh`。thick 预设下 `bh=72`、`bl=72`，有效倾斜期间 `bl` 未耗尽，所以 `bh` 可以长期保持 72。
+3. **客观 suite 自己已经暴露了该事实**：`test/artifacts/p011-formal-prep-20261016/p011-suite.optimized.json` 的 behavior 记录为 `maxSubstepBh=0.0`、`maxSubstepBl=0.029000537833468343`。正式客观样本中 heavy 底层没有发生子步变化，只有 light 底层变化。
+4. **主观日志与客观结论一致**：对 `demo/effect/P011-v273/` 的 8 个有效 hilog 逐一统计，所有 run 的 `bh` 范围均为 0；`bl` 的最大高度范围为 `1.72485249182122` 至 `3.47041291657493`。这解释了“水/黄沙有响应、绿色底层完全静止”。
+5. **客观 TC02 的 H/L 标签不能区分 heavy 与 light**：checker 将同一个聚合 receiver 位移同时累加为 `response_h` 与 `response_l`，导致 `pearsonH=pearsonL`、`FE_H=FE_L`。它能证明“有底层材料向正确方向转移”，不能证明“绿色 heavy 界面移动”。
+6. **TC03 不要求 heavy 必动**：现行 TC03 以 `max(maxSubstepBh, maxSubstepBl)` 判定平滑性；`bh=0`、`bl>0` 仍可得到满分。这不是测试用例错误，而是该门槛的观测对象是跳变/平滑，不是绿色层可见运动。
+7. **排除项**：现有证据不支持“viewport/颜色遮罩”“渲染接线错误”“route gating 错误”或“算法完全没有底层运动”。routeId 一致，水/黄沙视觉与日志变化方向一致，真实 bottom flux 存在；问题在于相位分配与客观特征口径。
+8. **次要事实**：effect 侧 128 列的 `P011_BOTTOM` 行在 donor/receiver 数组后段被 hilog 截断，但 `bh/bl` 数组完整，且截断不是本次绿色静止的原因。后续必须用紧凑标量遥测避免长数组截断。
+9. **证据卫生问题**：客观报告记录 source commit `bb854c21a260e7ace92edc99084fbdac736d81d7`，主观报告与本轮任务记录基线 commit `fdc819045f66bdc666b0f9b1fa8e9d65c3760934`；两份报告的 signed HAP SHA256 相同。该不一致不得作为修改结论的依据，但 v2.8 正式复测必须同时记录 source commit、HAP SHA256 与每个 log SHA256。
+
+### 5.2 假设
+
+- **ASSUMPTION-1**：`demo/effect/P011-v273/` 主观评价所指“green bottom layer”就是渲染中的 `#24571F` heavy deposited 带，即 `bh` 边界。
+- **ASSUMPTION-2**：在现有独立/总预算内，将聚合 flux 的至少 35% 分配给 heavy，可在 2 秒级有效倾斜内产生 `>=1.0` model unit 的 `bh` 形状变化；该假设需在 v2.8 实现后的单场景预检中校准，不允许靠提高预算达成。
+- **ASSUMPTION-3**：`1.0` model unit 的 `bh` 边界变化在当前 viewport 映射下至少约为 2px。正式验收前 tester 必须用同分辨率 ROI 实测换算，不允许仅凭该假设闭环。
+
+### 5.3 新路线机制：phase-balanced heavy-interface creep
+
+#### 5.3.1 核心思想
+
+v2.7.3 的错误不在 donor/receiver 方向，而在“授予量全部由 light 优先承担”。v2.8 保持方向语义、守恒和预算不变，将每个 donor→receiver 的授予量拆成 heavy/light 双通道，并给 heavy 一个下限份额，使绿色 heavy 界面与 yellow light 界面同步响应倾斜。
+
+#### 5.3.2 数学模型
+
+对每个相邻 donor/receiver 的本子步授予量 `a >= 0`：
+
+1. 计算 heavy 基准份额：
+   `wH0 = clamp(bh[donor] / max(bh[donor] + bl[donor], eps), 0.35, 0.65)`。
+2. 若 `eH > eL`，将 `wH0` 向上限偏置；若 `eL > eH`，向下限偏置；仍限制在 `[0.35, 0.65]`：
+   `wH = clamp(wH0 + kBias * (eH - eL), 0.35, 0.65)`，`kBias` 的实现值由 developer 固化为常量，禁止逐帧调参。
+3. 拆分：
+   `aH = min(a * wH, bh[donor], a)`；
+   `aL = min(a - aH, bl[donor])`；
+   `aRemainder = a - aH - aL`；
+   若 donor 某相不足，允许 remainder 转移到另一相，但仍受该相存量、receiver 容量、独立 bottom 预算与总 motion 预算约束。
+4. 状态更新：
+   `bh[donor] -= aH; bl[donor] -= aL`；
+   `bh[receiver] += aH; bl[receiver] += aL`。
+5. 命令相位内累计：
+   `C_H += directionSign * aH`、`C_L += directionSign * aL`；同相位内不因 0° hold、dormant no-op 或零预算清零，仅在 run/reset 或目标符号翻转时清零。
+
+保留 v2.7.3 的双通道残差请求整形：`Cstar_H = Cstar_L = ∫ kTarget * |targetTilt| dt`；`requestRate = clamp(kTarget * |targetTilt| + max(eH/tauH, eL/tauL), 0, vBottomCreepMax)`；`eH=Cstar_H-C_H`，`eL=Cstar_L-C_L`。`kTarget`、`tauH=100ms`、`tauL=60ms`、`vBottomCreepMax=10`、`totalMotionBudget`、dead zone、donor/receiver 语义与现有客观分档阈值均不变。
+
+#### 5.3.3 伪代码
+
+```text
+for each physics substep:
+    update tilt and command phase
+    if |targetTilt| <= deadZone:
+        requestRate = 0
+    else:
+        idealStep = kTarget * |targetTilt| * dt
+        Cstar_H += idealStep
+        Cstar_L += idealStep
+        requestRate = clamp(kTarget*|targetTilt| + max(eH/tauH, eL/tauL), 0, vBottomCreepMax)
+
+    collect bottom requests under independent and total budget caps
+    for each donor->receiver request in direction order:
+        a = grantedAmount(request)
+        wH = clamp(bh[d]/max(bh[d]+bl[d],eps), 0.35, 0.65)
+        wH = clamp(wH + kBias*(eH-eL), 0.35, 0.65)
+        aH = min(a*wH, bh[d], a)
+        aL = min(a-aH, bl[d])
+        move remaining grant to the phase that still has stock
+        bh[d] -= aH; bl[d] -= aL
+        bh[r] += aH; bl[r] += aL
+        C_H += directionSign*aH
+        C_L += directionSign*aL
+        emit compact per-phase telemetry
+```
+
+### 5.4 输入、输出与复杂度
+
+- **输入**：`targetTilt/effectiveTilt`、`bh/bl`、donor/receiver 方向、`vBottomCreepMax`、`totalMotionBudget`、`commandPhaseId`、相位起点 `bh0/bl0`、帧间隔 `dt`。
+- **输出**：状态更新后的 `bh/bl`、`bottomFlux`、`heavyFlux`、`lightFlux`、`C_H/C_L`、`eH/eL`、`heavyShapeRms`、`lightShapeRms`、`heavyShapeMaxDelta`、`directionCorrect`、`heavyShareDeficit`。
+- **复杂度**：与 v2.7.3 相同，仍为 `O(cols)` 时间、`O(cols)` 状态；仅新增常数个标量，端侧额外内存可忽略。每个相邻对的拆分是 O(1)，不引入排序、全列卷积或额外物理 pass。
+
+### 5.5 验收与判别信号
+
+以下为 v2.8 新增的路线内观测门槛；不放宽、不替代 v2.7.3 已有的 objective tiered minimum、预算、守恒、稳定性或主观 TIERED/HG 门槛。
+
+1. **heavy 非零且方向正确**：每个 ≥2 秒的有效正/负倾斜相位，`heavyFlux` 至少 30 个非零样本；`sign(C_H)` 与 `sign(targetTilt)` 一致，方向错误为 0。
+2. **heavy 形状可测**：以相位起点为基准，中央 80% 列的 `heavyShapeRms >= 0.5` model unit，且 `heavyShapeMaxDelta >= 1.0` model unit；`maxSubstepBh` 仍必须满足现行 TC03 平滑阈值。
+3. **heavy/light 独立观测**：`heavyFlux` 与 `lightFlux` 分开累计；禁止 checker 再把同一个聚合位移同时复制为 H/L response。`variance(C_H)>1e-12` 且 `variance(C_L)>1e-12`，否则判 `INCOMPLETE(degenerateMeasurement)`，不得给物理行为计分。
+4. **客观原有门槛不降**：现有 Pearson、lag、FE、方向、预算、守恒、非有限值、out-of-range、model error、crash/ANR 与 TC01/TC02/TC03 分档继续按现行规则判定，不做阈值放宽。
+5. **主观绿色 ROI 成功信号**：EC-TT-01~EC-TT-04 两轮中，绿色 `bh` 边界在 ≥15° 或用例规定的最大有效倾角保持期内，中央 80% ROI 的边界质心位移同向且 `>=2px`；反向倾斜时符号翻转，复位后回到水平趋势。水/黄沙改善不得用于替代绿色 ROI 指标。
+6. **失败判别**：
+   - 若 `heavyFlux>0` 但 `heavyShapeRms` 不足，归因为幅度/预算分配不足；
+   - 若 `heavyShapeRms` 达标但视觉 ROI 静止，归因为渲染/ROI/颜色映射或帧采样问题；
+   - 若 `bh` 日志变化而 `bl` 不变，检查 heavy/light 拆分过偏；
+   - 若两者均静止但 `bottomFlux>0`，检查 donor/receiver 或遥测状态；
+   - 若遥测静止且帧也静止，才归因为算法未生成 bottom motion。
+
+### 5.6 交接约束
+
+#### Developer
+
+1. 只在实现新 route 时将 `routeId` 升级为 `bottom-creep-v2.8-heavy-interface`；禁止沿用 v2.7.3 routeId 发布行为变更。
+2. 实现必须新增紧凑标量遥测，禁止把 128 列全数组作为唯一 H/L 证据；保留现有数组仅用于诊断。
+3. 不得提高 `vBottomCreepMax`、`totalMotionBudget`、独立预算或任何现有及格线来制造视觉响应。
+4. 必须保持 heavy/light/water 总量守恒、receiver 容量约束、donor 存量约束与 donor/receiver 方向语义。
+5. `kBias` 固化为常量并记录实现值；禁止在验收运行中调参。
+
+#### Tester
+
+1. 客观与主观报告独立成文：`docs/test-report-P011-bottom-creep-v2.8-heavy-interface.md` 与 `docs/effect-report-P011-bottom-creep-v2.8-heavy-interface.md`。
+2. 每份报告必须记录 source commit、signed HAP SHA256、device、OS/API、每个原始 log 的 SHA256、routeId、runId 与 resetEpoch。
+3. checker 必须分别解析 `heavyFlux/lightFlux/C_H/C_L/heavyShapeRms`，不得复制聚合 response 冒充 H/L。
+4. 需要新增一条最小预检：±15° 各保持 2 秒，输出 green ROI 质心位移、`heavyShapeRms`、`heavyShapeMaxDelta` 与 `heavyFlux`。该预检只判定观测链路，不替代完整 suite。
+5. 不得因水/黄沙响应良好而修改 HG-TT-04 或主观用例；v2.7.3 的主观 FAIL 保持原判。
+
+#### Effector / 评审闭环
+
+1. 评审截图/视频必须同时标出 water、yellow light、green heavy 三个 ROI，并给出绿色边界的时间序列或逐帧 diff。
+2. 若只提交连续视频，需至少提供 0°、正倾保持、0°、负倾保持、0° 五个关键帧及 frame timestamp 与最近 `P011_METRIC` sequence 对齐表。
+3. 若 hilog 仍出现 128 列数组截断，不得据此判定 H/L 位移；必须使用 compact scalar telemetry。
+4. 闭环仍按三条判定：现行硬门槛必须 PASS、现行软门槛不低于及格线、P-011 用例有可见改善；未解决问题用例可失败，但不允许重解释 HG-TT-04。
+5. 本路线不得与 `gravity-advection-v1` 做全量 dominance 比较；跨路线只能作为选型参考。
+
+### 5.7 2026-10-18 TC02 正式复测归因与观测协议修订
+
+> **状态**：`DESIGN_UPDATED_PENDING_RETEST`  
+> **判定**：本轮 TC02 FAIL 不是 `bottom-creep-v2.8-heavy-interface` 物理/预算机制的失败，而是 test-mode 输入观测状态机把非 Want 帧写成 `source=script` 遥测的调度/观测语义缺陷。物理机制、预算、方向语义与既有阈值均不修订。
+
+#### 5.7.1 证据与归因
+
+1. 正式复测解析到 546 条 script 事件，期望 531 条；最小 accepted gap 为 17ms，accepted gap 违规 10 处。证据为 `test/artifacts/p011-v28-heavy-interface/p011-tc02-formal.tc02-validation.json`。
+2. 事件流自第 256 条开始偏离 schedule：第 256 条 `targetTilt=0`，而 schedule 第 256 行应为 `20`。第 256 条距前一条 acceptedTime 仅 17ms，随后一条又被计为 83ms gap。
+3. 事件 target 多集相对 schedule 多出 `0×9`、`+15×3`、`-15×3` 共 15 条。这些目标值不是新增 schedule 命令，而是输入状态机在无新鲜 Want 帧内对 `tiltX` 衰减/复位后产生的中间值。
+4. 代码路径显示，`inputSource` 默认就是 `script`；test-mode 下无新鲜 Want 时仍可能改变 `tiltX`，随后因 `tiltChanged` 进入事件记录分支。该分支把衰减/复位帧与真实 `aa start --ps wstilt` 命令混在同一 `P011_EVENT input/source=script` 语义中。
+5. 因此 546/531 与 17ms gap 是观测语义污染，不是算法生成多余命令，也不是调度要求应从 100ms 放宽到 17ms。
+
+#### 5.7.2 修订设计
+
+1. **命令唯一来源**：TC02 中只有新消费到的 `wstilt` Want 才能产生 `P011_EVENT input` 且 `source=script`。输入恢复、保持、平滑、force-invert 退场或零复位帧不得复用该语义。
+2. **保持语义显式化**：有效 script 命令之间必须精确保持上一次 `wstilt` 目标；禁止隐式向 0 衰减。若后续确实需要衰减/复位观测，必须使用独立显式 schedule 命令，不能由帧循环合成。
+3. **遥测隔离**：帧循环状态恢复或诊断帧可记录 `P011_EVENT input_state`，checker 不把其计入 script 事件、Pearson、lag、FE 或 accepted-gap 指标。禁止把 `input_state` 改名为 `script` 后继续混入。
+4. **1:1 映射**：531 条 schedule 行必须对应 531 条 `source=script` 事件；同一 run 内 `sequence` 连续且不重复。出现第二个 `runId`、进程重启或事件缺失时，直接判 TC02 schedule precheck FAIL，不允许跨 run 拼接物理解。
+5. ** accepted gap 不变**：相邻真实 script 命令的 `acceptedTime` gap 仍必须满足 `>=100ms`，违规数为 0；不允许为吸收合成帧而放宽该阈值。
+6. **复测闸门顺序**：先完成 schedule precheck；只有上述 identity/count/gap/target 全部通过，才允许进入 TC02 物理评分、压力段或主观复测。TC02 物理评分与压力段沿用现行门槛。
+
+#### 5.7.3 可验证验收指标
+
+TC02 schedule precheck 必须在同一份原始 log 上输出并全部满足：
+
+```text
+scriptEventCount == 531
+expectedEventCount == 531
+scriptRunIdCount == 1
+scriptSequence == [1..531] 连续且无重复
+targetSequence == schedule.targetTilt 精确一致
+acceptedTimeGapViolations == 0
+minAcceptedTimeGapMs >= 100
+```
+
+同时新增结构检查：`P011_EVENT input/source=script` 只能由新鲜 `wstilt` Want 命令产生；`P011_EVENT input_state` 不进入上述指标。任一项失败即判 schedule precheck FAIL，不评估 TC02 物理分数。
+
+#### 5.7.4 2026-10-18 第二次正式复测失败归因与采集冻结闸门
+
+第二次复测出现独立 precheck `531/531` 通过而全量套件捕获 `984/531`、双 `runId`、`sequence invalid`、最小间隔 `23ms` 的不一致。该差异不能解释为物理调度失败：完整套件日志仍是可增长采集流时被读取，注入 shell 未完成/采集未冻结时得到的样本数量、相邻间隔和 run 边界都不是终态。此后等待同一采集生命周期自然结束再校验，冻结后的全量套件日志为 `531/531`、单 `runId`、sequence 完整、`minAcceptedTimeGapMs=116`、0 violations。因此第二次失败归因为采集生命周期与校验时序语义差异，不是阈值不足。
+
+为消除这一差异，schedule precheck 增加采集冻结闸门；该闸门只约束证据生命周期，不修改或放宽既有 `531/sequence/100ms/target` 阈值：
+
+1. **单一路径**：全量套件 TC02 与独立 schedule precheck 必须使用同一个 schedule、同一种 `aa start` Want 注入命令、同一段 shell 间隔和同一 hilog 采集参数。禁止 precheck 用短脚本、全量套件改由另一个采集/注入路径替代。
+2. **先等待注入完成**：`hdc shell sh <device script>` 必须在采集进程存活期间同步执行并返回；校验前必须确认 531 条注入命令已全部结束。
+3. **先冻结再校验**：采集停止后，必须先冻结证据：记录 log 绝对路径、大小与修改时间；间隔至少 1 秒复查一次，大小和修改时间不变才允许解析。校验读取前后再次比较大小、修改时间与 SHA256；任一变化即丢弃结果并判 `FAIL(captureNotFrozen)`。
+4. **禁止活动残留采集**：同一目标/输出路径存在未结束的历史 hilog 子进程或前一次采集句柄时，不得开始新 formal run；必须先显式终止并清空目标，再启动采集。
+5. **终态 run 边界**：解析必须以冻结后 log 为准，禁止在运行中逐行读取后缓存事件，也禁止把清理前、注入前或另一 run 的 `input/source=script` 事件计入本 run。
+6. **可审计证据**：冻结前后的 log size/mtime/SHA256 必须进入 report 或 validation JSON；缺少这些字段时 schedule precheck 不能 PASS。
+
+第二次复测的评分闸门顺序仍按 §5.7.3：冻结与采集审计先于 identity/count/sequence/gap/target 判定。若采集冻结闸门失败，即使事件数恰好为 531，也不得进入 TC02 物理评分。
+
+### 5.8 2026-10-18 用户授权的双输入模式补充设计
+
+> **技术路线**：`bottom-creep-v2.8-heavy-interface`，输入协议修订 `dual-input-v1`；不是新物理路线。  
+> **状态**：`READY_FOR_ARCHITECT`，待实现与双报告验证，不能标记 VALIDATED。  
+> **原因与授权**：用户明确要求“测试模式（自己构建出手机倾斜状态并测试），体验模式（通过传感器获取手机状态）”。本轮用程序构造姿态替代先前要求用户配合手持的测试输入；不再把人工手持作为程序测试前置。物理预算、方向、HG-TT-04、主观 ≥6/10 及格线与 §5.7 fresh-Want/canonical/frozen 闸门全部保留。模拟输入证明模拟场景下的视觉与物理行为，不能冒充真人传感器体验已获验证。
+
+#### 5.8.1 现状、缺口与候选取舍
+
+现有 `test/p011_tc02_schedule.py` 已能确定性生成 TC02 倾角 schedule，canonical runner 将其作为 `aa start ... --ps testmode true --ps wstilt <angle>` Want 注入；`parseP011TiltWant` 已校验 `rendermode=4`、测试模式、非 force-invert 及 `[-89,+89]` 有限角度。现有 `!testMode` 分支已有真实加速度传感器映射与滤波。两条能力可复用。
+
+实际缺口是隔离与切换：传感器 callback 在测试中仍更新滤波；面板、长按、热 Want 重复切换而不完整清理；水沙消费端未校验当前模式；拖动在体验中仍关闭传感器并保持 2.5 秒；按钮只显示“测试开/关”，无法直接说明真实输入来源。
+
+| 候选 | 结论 | 理由 |
+|---|---|---|
+| A. 复用外部 deterministic schedule/Want，统一输入模式转换及入口隔离 | **SELECTED** | 已有完整可审计输入协议，修改边界小，可覆盖重复运行和两方向切换 |
+| B. 新增 App 内置脚本场景引擎及每帧 script 输入事件 | REJECTED | 重复现有 harness，扩大维护面；每帧合成事件还会破坏仅 fresh Want 计数及 531 identity |
+| C. 沿用两个布尔标志，仅修改按钮文案 | REJECTED | 仍存在旧 target、pending Want、滤波与手势接管残留，不能实现源隔离 |
+
+#### 5.8.2 输入选择与数学语义
+
+逻辑上仅有 `TEST` 与 `EXPERIENCE` 两模式；可继续以 `testMode` 表示，不要求全项目重构。输入所有权由模式唯一决定：
+
+```text
+mode == TEST       => accept script/测试手势/测试 forceInvert; reject sensor samples
+mode == EXPERIENCE => accept sensor samples; reject script/倾角手势/forceInvert
+```
+
+TEST 的正式自动输入是既有 schedule 行 `u_k=(sequence_k, targetTilt_k, commandTime_k)`；有效新鲜命令被消费一次后，`targetTilt(t)=targetTilt_k` 保持至下一条命令，不自动衰减。只有该消费动作可写 `input/source=script`；保持、复位与切换不产生 script 命令。测试手势可保留作手工调试，但不得覆盖正在保持的正式 script 目标；需要手势调试时应显式结束 script 控制，其记录仍为 gesture/input_state，不能混入 TC02。
+
+EXPERIENCE 继续使用既有加速度映射 `sx=-filteredAx, sy=filteredAy`，当平面模长 `sqrt(sx²+sy²)>0.3` 时，`target=atan2(sx,sy)*180/pi`，继续走既有滤波/角速度限制与物理 `effectiveTilt` 管线，不改参数或方向约定。没有有效传感器样本时保持初始化安全姿态 0°；不得回退使用上次模拟角度。退出 TEST 后下一个新鲜传感器 callback 即重新获得输入权，无需手势结束或等待旧 hold 到期。
+
+#### 5.8.3 统一转换、清理边界与首命令顺序
+
+面板、长按、启动初始化与热 Want 必须走同一转换语义。仅当模式确实变化时清理；TC02 中每条 Want 都带 `testmode=true`，同模式重复声明不得重置 target、滤波/输入序列、runId 或物理累计。
+
+一次模式变化应在下一次输入消费/physics step 前完成以下操作：清除 `p011ScriptTargetTilt`、旧 pending `wstilt`、`forceInvert/wasForceInvert`、gesture hold/接管状态、`tiltX/lastTiltX` 与输入滤波 `sensorGx/sensorGy`、旧输入时间戳；按目标模式设置 `useSensor=!testMode`，同步 UI 与 telemetry。水沙内部若有输入平滑状态，也须通过最小既有接口清理该输入缓存；不能直接改 `bh/bl/water`、重置材料场或把模式转换伪装成物理位移。跨切换边界的输入延迟/跳变统计应标注边界，不作为连续 TC02 样本拼接。
+
+**实现顺序陷阱**：当前 `EntryAbility.applyWant` 先发布 `p011TiltWantCommand`，再发布 `liquidWantCommand`。若转换时无条件丢弃 AppStorage 最新 sequence，会吞掉“从体验进入测试且同一 Want 携带首条 wstilt”的合法命令。architect 应选择以下最小方案之一并写明：
+
+1. 将当前 Want 的模式变更与可选 wstilt 作为同一转换 envelope 处理，先清旧状态，再发布/消费 envelope 的合法新命令；或
+2. 携带可审计的当前 Want 命令身份/sequence，转换时只丢弃旧 pending，保留当前转换 Want 的合法新命令。
+
+不得仅靠 commandTime 大小或与帧时间相近猜测身份。面板/长按没有新命令 envelope，应推进已消费 watermark 至当时 pending seq 以废弃旧命令。EXPERIENCE 消费端必须再次拒绝/废弃 pending，即使生产端曾允许其进入缓存；重新进入 TEST 也不能重放它。同模式重复 Want 仍须保留一命令一事件的原协议。
+
+```text
+onModeRequest(nextMode, optional currentWantEnvelope):
+    if nextMode != mode:
+        clear input-only state and discard pending commands from previous mode
+        mode = nextMode
+        useSensor = (mode == EXPERIENCE)
+        sync UI and telemetry
+    apply only this envelope's valid controls for the selected mode
+
+onSensor(sample):
+    if mode != EXPERIENCE: return
+    update existing filter and fresh sensor timestamp
+
+onFrame():
+    if mode == EXPERIENCE:
+        discard any script pending; derive tilt only from fresh sensor state
+    else:
+        consume fresh valid wstilt once; otherwise hold script target
+        emit input/source=script only for this actual consumption
+    feed unchanged physical/render interface
+
+onPan/update/end():
+    if mode != TEST: return
+    follow test gesture ownership policy; never enable sensor while TEST
+```
+
+按钮应直接显示当前模式及输入来源，例如“测试模式（模拟姿态）”与“体验模式（传感器）”；保留既有可用启动参数：`rendermode=4,testmode=true,wstilt=<angle>` 为测试，`rendermode=4,testmode=false` 为体验，且后者禁用/忽略 `forceinvert` 与模拟倾角。UI/启动命名是同一模式的两个入口，不能有不同清理规则。
+
+#### 5.8.4 输入、输出、复杂度与假设
+
+- **输入**：模式请求、来源（面板/长按/Want/启动）、可选当前 Want 身份、有效 wstilt 命令、传感器样本、手势事件、既有帧时间。
+- **输出**：唯一生效输入源、目标倾角与既有物理输入、清理后的输入缓存、准确 UI 文案、原协议 input/input_state 事件。正式运行元信息记录 `inputMode=TEST` 与 schedule/capture 身份；不需新增每帧 mode 日志。
+- **复杂度**：每次 callback/模式转换/帧输入选择均 `O(1)` 时间与 `O(1)` 额外状态；保持既有一条传感器订阅即可，callback 早退，避免反复注册带来的异步竞态。外部 schedule 的 `O(K)` 存储和生成在 host，不增加端侧物理 pass。
+- **ASSUMPTION-4**：同一 UI/Ability 输入状态按现有事件循环串行处理；若存在跨线程写入，architect 必须用现有串行分发确保“清旧后应用当前 envelope”原子可见。
+- **ASSUMPTION-5**：传感器可用的设备会持续产生新样本。本轮无需用户手持来触发该能力；若设备不提供样本，记录设备限制，纯 helper/回调测试只能证明隔离和映射，不能冒充真传感器端到端通过。
+
+#### 5.8.5 可量化验收与测试方法
+
+下列是输入功能新增验收，不替代/放宽现有客观、主观阈值。tester 在实现前补同 route 用例与 RED 基线；只对新增 helper 做实际状态机测试，不能仅以源码匹配冒充行为测试。
+
+| 项 | 方法 | 必须满足 |
+|---|---|---|
+| TEST 传感器隔离 | 同一测试状态分别注入 0 次与 100 次不同加速度 callback，执行相同 script/帧序列 | 模拟目标和生效输入逐步精确相等；测试中的滤波/传感器时间戳更新次数均为 0 |
+| EXPERIENCE 模拟隔离 | 已有有效传感器状态下注入 wstilt、Pan update/end、forceInvert；含旧 pending | 生效倾角与只传感器对照逐步精确相等，script 消费/事件数均为 0，forceInvert 始终 false |
+| 切换无残留 | 两方向各 10 次，预置非零 target/tilt/filter、pending 与 forceInvert/gesture 状态；覆盖面板、长按、启动与热 Want | 每个边界清理完整；无旧 pending 重放，TEST 永不恢复 sensor，EXPERIENCE 不等待 2.5 秒/24 小时 |
+| 首命令与幂等声明 | 体验→测试的同一个 Want 携带 wstilt；接着 3 条 testmode=true Want；另测冷启动首条 | 合法新命令各消费恰好一次，target 序列精确一致；没有首条被清空，也没有同模式清理 |
+| 传感器恢复 | TEST 先保持 +20°，退出后注入/观察首个新鲜传感器 callback | 下一次输入消费即选 sensor；无 script 残留、无 gesture hold 阻断；既有映射/滤波策略不变 |
+| 可重复程序构造 | 同参数两次生成 canonical schedule 与注入脚本；端到端采集运行仍串行 | schedule/script SHA256 分别一致；保留 531/531、单 run、连续 sequence、目标精确一致、min accepted gap ≥100ms、0 gap violation；完整 capturePath/captureFrozen/captureAudit PASS |
+| UI/入口一致 | 打开面板，切两次并对照两种启动入口 | 文案与真实模式一致，每次均清同一组输入状态；体验入口不允许 forceInvert 生效 |
+
+主观自动复测可用程序生成 EC-TT-01~04 既有角度/速度/保持序列，并保留连续帧、时间对齐、green ROI 与原评分标准；输入元信息明确为模拟姿态。若既有用例含人工输入措辞，由 manager 将本次用户授权同步给 tester/effector 后追加变更记录，不可暗改历史结果。本节未完成实现与双报告，因此只作交接设计，不宣布 P-011 闭环。

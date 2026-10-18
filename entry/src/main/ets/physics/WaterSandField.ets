@@ -174,6 +174,25 @@ export interface WaterSandP011Metric {
   waterTotal: number;
   heavyTotal: number;
   lightTotal: number;
+  commandPhaseId: number;
+  commandPhaseSign: number;
+  commandPhaseStartPhysicsTime: number;
+  heavyFlux: number;
+  lightFlux: number;
+  heavyActualDisplacement: number;
+  lightActualDisplacement: number;
+  heavyIdealDisplacement: number;
+  lightIdealDisplacement: number;
+  heavyResidual: number;
+  lightResidual: number;
+  heavyShapeRms: number;
+  lightShapeRms: number;
+  heavyShapeMaxDelta: number;
+  lightShapeMaxDelta: number;
+  maxSubstepBh: number;
+  maxSubstepBl: number;
+  heavyShare: number | null;
+  heavyShareDeficit: number;
 }
 
 export interface WaterSandP011Bottom {
@@ -185,7 +204,7 @@ export interface WaterSandP011Bottom {
   physicsTime: number;
   bh: number[];
   bl: number[];
-  // P-011 bottom-creep-v2.7: effective displacement after independent and total clips.
+  // P-011 bottom-creep-v2.8-heavy-interface: diagnostic displacement arrays.
   bottomCreepDonorEffectiveDisplacement: number[];
   bottomCreepReceiverEffectiveDisplacement: number[];
 }
@@ -257,9 +276,13 @@ export interface WaterSandSnapshot {
 const EPS = 1e-9;
 const DRIFT_LIMIT = 0.001;
 const P011_TARGET_SHAPE_K = 0.5;
-const P011_TARGET_SHAPE_TAU_H_MS = 100;
-const P011_TARGET_SHAPE_TAU_L_MS = 60;
-const P011_BOTTOM_ROUTE_ID = 'bottom-creep-v2.7.3';
+const P011_TARGET_SHAPE_TAU_H_SECONDS = 0.100;
+const P011_TARGET_SHAPE_TAU_L_SECONDS = 0.060;
+const P011_HEAVY_SHARE_MIN = 0.35;
+const P011_HEAVY_SHARE_MAX = 0.65;
+const P011_HEAVY_SHARE_BIAS = 0.10;
+const P011_CENTRAL_ROI_FRACTION = 0.80;
+const P011_BOTTOM_ROUTE_ID = 'bottom-creep-v2.8-heavy-interface';
 
 export function defaultWaterSandParams(): WaterSandParams {
   return {
@@ -315,9 +338,13 @@ export class WaterSandField {
   private bottomCreepRequestAmounts: Float64Array;
   private bottomCreepRequestDonors: Int32Array;
   private bottomCreepRequestReceivers: Int32Array;
-  // P-011 bottom-creep-v2.7: substep-local donor/receiver displacement accumulators.
+  // P-011 bottom-creep-v2.8-heavy-interface: substep-local and phase telemetry state.
   private bottomCreepDonorEffectiveDisplacement: Float64Array;
   private bottomCreepReceiverEffectiveDisplacement: Float64Array;
+  private phaseHeavyBaseline: Float64Array;
+  private phaseLightBaseline: Float64Array;
+  private substepBhBefore: Float64Array;
+  private substepBlBefore: Float64Array;
   private settleRequestAmounts: Float64Array;
   private percolationRequestAmounts: Float64Array;
   private slipRequestAmounts: Float64Array;
@@ -343,12 +370,23 @@ export class WaterSandField {
   private bottomCreepBudgetRequested = 0;
   private targetShapeIdealDisplacement = 0;
   private targetShapeActualDisplacement = 0;
-  private targetShapeIdealHeavy = 0;
-  private targetShapeIdealLight = 0;
-  private targetShapeActualHeavy = 0;
-  private targetShapeActualLight = 0;
-  private targetShapeSign = 0;
   private targetShapeRequestRate = 0;
+  private commandPhaseId = 0;
+  private commandPhaseSign = 0;
+  private commandPhaseStartPhysicsTime = 0;
+  private phaseHeavyIdeal = 0;
+  private phaseLightIdeal = 0;
+  private phaseHeavyActual = 0;
+  private phaseLightActual = 0;
+  private lastHeavyFlux = 0;
+  private lastLightFlux = 0;
+  private lastHeavyShapeRms = 0;
+  private lastLightShapeRms = 0;
+  private lastHeavyShapeMaxDelta = 0;
+  private lastLightShapeMaxDelta = 0;
+  private lastMaxSubstepBh = 0;
+  private lastMaxSubstepBl = 0;
+  private lastBottomSplitError: WaterSandErrorCode | null = null;
   private bottomCreepRequestCount = 0;
   private slipRequestCount = 0;
   private totalMotionBudgetRemaining = 0;
@@ -406,6 +444,10 @@ export class WaterSandField {
     this.bottomCreepRequestReceivers = new Int32Array(cols - 1);
     this.bottomCreepDonorEffectiveDisplacement = new Float64Array(cols);
     this.bottomCreepReceiverEffectiveDisplacement = new Float64Array(cols);
+    this.phaseHeavyBaseline = new Float64Array(cols);
+    this.phaseLightBaseline = new Float64Array(cols);
+    this.substepBhBefore = new Float64Array(cols);
+    this.substepBlBefore = new Float64Array(cols);
     this.settleRequestAmounts = new Float64Array(cols);
     this.percolationRequestAmounts = new Float64Array(cols);
     this.slipRequestAmounts = new Float64Array(6 * (cols - 1));
@@ -509,11 +551,24 @@ export class WaterSandField {
     this.lastBottomCreepRate = 0;
     this.targetShapeIdealDisplacement = 0;
     this.targetShapeActualDisplacement = 0;
-    this.targetShapeIdealHeavy = 0;
-    this.targetShapeIdealLight = 0;
-    this.targetShapeActualHeavy = 0;
-    this.targetShapeActualLight = 0;
-    this.targetShapeSign = 0;
+    this.commandPhaseId = 0;
+    this.commandPhaseSign = 0;
+    this.commandPhaseStartPhysicsTime = 0;
+    this.phaseHeavyIdeal = 0;
+    this.phaseLightIdeal = 0;
+    this.phaseHeavyActual = 0;
+    this.phaseLightActual = 0;
+    this.lastHeavyFlux = 0;
+    this.lastLightFlux = 0;
+    this.lastHeavyShapeRms = 0;
+    this.lastLightShapeRms = 0;
+    this.lastHeavyShapeMaxDelta = 0;
+    this.lastLightShapeMaxDelta = 0;
+    this.lastMaxSubstepBh = 0;
+    this.lastMaxSubstepBl = 0;
+    this.lastBottomSplitError = null;
+    this.phaseHeavyBaseline.set(this.bh);
+    this.phaseLightBaseline.set(this.bl);
     this.lastP011PhysicsTime = 0;
     this.lastP011PhysicsDt = 0;
     this.p011RunId = nextP011RunId();
@@ -530,6 +585,18 @@ export class WaterSandField {
     this.initialize(scene === undefined ? this.defaultScene() : scene);
   }
 
+  // P-011 dual-input-v1: O(1) mode boundary; preserves materials, budgets and run identity.
+  resetInputState(): void {
+    this.targetTilt = 0;
+    this.effectiveTilt = 0;
+    this.effectiveTiltRate = 0;
+    this.bottomCreepDirection = 0;
+    this.lastBottomDirectionChange = this.simulationTime;
+    this.lastNonZeroTargetTime = this.simulationTime;
+    this.zeroTargetSince = this.simulationTime;
+    this.dormant = false;
+  }
+
   setTilt(deg: number): void {
     if (!finite(deg)) {
       throw new WaterSandParamError('tilt must be finite');
@@ -543,17 +610,25 @@ export class WaterSandField {
       this.zeroTargetSince = -1;
       this.lastNonZeroTargetTime = this.simulationTime;
     }
-    const targetSign = this.targetTilt > EPS ? 1 : this.targetTilt < -EPS ? -1 : this.targetShapeSign;
-    if (this.targetShapeSign !== 0 && targetSign !== this.targetShapeSign) {
-      this.targetShapeIdealDisplacement = 0;
-      this.targetShapeActualDisplacement = 0;
-      this.targetShapeIdealHeavy = 0;
-      this.targetShapeIdealLight = 0;
-      this.targetShapeActualHeavy = 0;
-      this.targetShapeActualLight = 0;
+    const targetSign = this.targetTilt > EPS ? 1 : this.targetTilt < -EPS ? -1 : this.commandPhaseSign;
+    if (targetSign !== 0 && targetSign !== this.commandPhaseSign) {
+      this.beginCommandPhase(targetSign);
     }
-    this.targetShapeSign = targetSign;
     this.dormant = false;
+  }
+
+  private beginCommandPhase(sign: number): void {
+    this.commandPhaseId += 1;
+    this.commandPhaseSign = sign;
+    this.commandPhaseStartPhysicsTime = this.lastP011PhysicsTime;
+    this.targetShapeIdealDisplacement = 0;
+    this.targetShapeActualDisplacement = 0;
+    this.phaseHeavyIdeal = 0;
+    this.phaseLightIdeal = 0;
+    this.phaseHeavyActual = 0;
+    this.phaseLightActual = 0;
+    this.phaseHeavyBaseline.set(this.bh);
+    this.phaseLightBaseline.set(this.bl);
   }
 
   setShakeInput(value: number): void {
@@ -675,9 +750,16 @@ export class WaterSandField {
       this.updateSandTop();
       this.beginSubstepMotionBudget(substepDt, true, 1);
       this.substepSandTopBefore.set(this.sandTopScratch);
+      this.substepBhBefore.set(this.bh);
+      this.substepBlBefore.set(this.bl);
       this.lastBottomFlux = 0;
       this.lastBottomCreepRate = 0;
       this.targetShapeRequestRate = 0;
+      this.lastHeavyFlux = 0;
+      this.lastLightFlux = 0;
+      this.lastMaxSubstepBh = 0;
+      this.lastMaxSubstepBl = 0;
+      this.lastBottomSplitError = null;
       this.lastP011DirectionCorrect = true;
       let errorCode = this.substep(substepDt);
       if (errorCode === null) {
@@ -716,6 +798,7 @@ export class WaterSandField {
       this.lastP011PhysicsTime = nextP011TimeMs();
       this.lastP011PhysicsDt = substepDt;
       this.p011SubstepId += 1;
+      this.updatePhaseShapeTelemetry();
       if (p011Hook !== undefined) {
         p011Hook(this.getP011Metric(), this.getP011Bottom());
       }
@@ -741,8 +824,41 @@ export class WaterSandField {
     return { water, heavy, light };
   }
 
+  private updatePhaseShapeTelemetry(): void {
+    const margin = Math.floor(this.cols * (1 - P011_CENTRAL_ROI_FRACTION) / 2);
+    const start = margin;
+    const endExclusive = this.cols - margin;
+    const count = Math.max(1, endExclusive - start);
+    let heavySquareSum = 0;
+    let lightSquareSum = 0;
+    let heavyMaxDelta = 0;
+    let lightMaxDelta = 0;
+    for (let column = start; column < endExclusive; column++) {
+      const heavyDelta = this.bh[column] - this.phaseHeavyBaseline[column];
+      const lightDelta = this.bl[column] - this.phaseLightBaseline[column];
+      heavySquareSum += heavyDelta * heavyDelta;
+      lightSquareSum += lightDelta * lightDelta;
+      heavyMaxDelta = Math.max(heavyMaxDelta, Math.abs(heavyDelta));
+      lightMaxDelta = Math.max(lightMaxDelta, Math.abs(lightDelta));
+    }
+    this.lastHeavyShapeRms = Math.sqrt(heavySquareSum / count);
+    this.lastLightShapeRms = Math.sqrt(lightSquareSum / count);
+    this.lastHeavyShapeMaxDelta = heavyMaxDelta;
+    this.lastLightShapeMaxDelta = lightMaxDelta;
+    this.lastMaxSubstepBh = 0;
+    this.lastMaxSubstepBl = 0;
+    for (let column = 0; column < this.cols; column++) {
+      this.lastMaxSubstepBh = Math.max(this.lastMaxSubstepBh,
+        Math.abs(this.bh[column] - this.substepBhBefore[column]));
+      this.lastMaxSubstepBl = Math.max(this.lastMaxSubstepBl,
+        Math.abs(this.bl[column] - this.substepBlBefore[column]));
+    }
+  }
+
   getP011Metric(): WaterSandP011Metric {
     const totals = this.getTotals();
+    this.updatePhaseShapeTelemetry();
+    const heavyShare = this.lastBottomFlux > EPS ? this.lastHeavyFlux / this.lastBottomFlux : null;
     this.p011SampleSequence += 1;
     return {
       routeId: this.params.routeId,
@@ -766,7 +882,26 @@ export class WaterSandField {
       directionCorrect: this.lastP011DirectionCorrect,
       waterTotal: totals.water,
       heavyTotal: totals.heavy,
-      lightTotal: totals.light
+      lightTotal: totals.light,
+      commandPhaseId: this.commandPhaseId,
+      commandPhaseSign: this.commandPhaseSign,
+      commandPhaseStartPhysicsTime: this.commandPhaseStartPhysicsTime,
+      heavyFlux: this.lastHeavyFlux,
+      lightFlux: this.lastLightFlux,
+      heavyActualDisplacement: this.phaseHeavyActual,
+      lightActualDisplacement: this.phaseLightActual,
+      heavyIdealDisplacement: this.phaseHeavyIdeal,
+      lightIdealDisplacement: this.phaseLightIdeal,
+      heavyResidual: this.phaseHeavyIdeal - this.phaseHeavyActual,
+      lightResidual: this.phaseLightIdeal - this.phaseLightActual,
+      heavyShapeRms: this.lastHeavyShapeRms,
+      lightShapeRms: this.lastLightShapeRms,
+      heavyShapeMaxDelta: this.lastHeavyShapeMaxDelta,
+      lightShapeMaxDelta: this.lastLightShapeMaxDelta,
+      maxSubstepBh: this.lastMaxSubstepBh,
+      maxSubstepBl: this.lastMaxSubstepBl,
+      heavyShare,
+      heavyShareDeficit: heavyShare === null ? 0 : Math.max(0, P011_HEAVY_SHARE_MIN - heavyShare)
     };
   }
 
@@ -795,13 +930,17 @@ export class WaterSandField {
   }
 
   emitP011NoopTelemetry(p011Hook?: WaterSandP011Hook): void {
-    // P-011 bottom-creep-v2.7: keep a consumed dormant command alignable by physicsTime.
+    // P-011 bottom-creep-v2.8-heavy-interface: align dormant commands by physicsTime.
     this.p011FrameId += 1;
     this.p011SubstepId += 1;
     this.lastP011PhysicsTime = nextP011TimeMs();
     this.lastBottomFlux = 0;
     this.lastBottomCreepRate = 0;
     this.lastP011PhysicsDt = 0;
+    this.lastHeavyFlux = 0;
+    this.lastLightFlux = 0;
+    this.lastMaxSubstepBh = 0;
+    this.lastMaxSubstepBl = 0;
     this.bottomCreepBudgetUsed = 0;
     this.bottomCreepBudgetLimit = 0;
     this.bottomCreepBudgetClipped = 0;
@@ -811,6 +950,9 @@ export class WaterSandField {
     this.lastP011DirectionCorrect = true;
     this.bottomCreepDonorEffectiveDisplacement.fill(0);
     this.bottomCreepReceiverEffectiveDisplacement.fill(0);
+    this.substepBhBefore.set(this.bh);
+    this.substepBlBefore.set(this.bl);
+    this.updatePhaseShapeTelemetry();
     if (p011Hook !== undefined) {
       p011Hook(this.getP011Metric(), this.getP011Bottom());
     }
@@ -907,7 +1049,7 @@ export class WaterSandField {
 
   private beginSubstepMotionBudget(substepDt: number, collectRequests: boolean,
     totalMotionScale: number): void {
-    // P-003/P-005 v2.2 and P-011 bottom-creep-v2.7: substep-local motion budgets.
+    // P-003/P-005 v2.2 and P-011 v2.8: substep-local motion budgets.
     const budget = this.params.vSandTopMax * substepDt;
     this.substepMotionBudgetRemaining.fill(budget);
     this.substepMotionBudgetUsed.fill(0);
@@ -1029,7 +1171,10 @@ export class WaterSandField {
     }
     this.settleSandV2(dt);
     this.percolateHeavyConservative(dt);
-    this.creepBottom(dt);
+    const creepError = this.creepBottom(dt);
+    if (creepError !== null) {
+      return creepError;
+    }
     this.relaxAngle(dt);
     this.liftByShake(dt);
     this.updateSandTop();
@@ -1039,7 +1184,10 @@ export class WaterSandField {
   private applyMotionChannels(dt: number): WaterSandErrorCode | null {
     this.settleSandV2(dt);
     this.percolateHeavyConservative(dt);
-    this.creepBottom(dt);
+    const creepError = this.creepBottom(dt);
+    if (creepError !== null) {
+      return creepError;
+    }
     this.relaxAngle(dt);
     this.liftByShake(dt);
     this.updateSandTop();
@@ -1290,15 +1438,15 @@ export class WaterSandField {
     }
   }
 
-  private creepBottom(dt: number): void {
+  private creepBottom(dt: number): WaterSandErrorCode | null {
     const tiltMagnitude = Math.abs(this.targetTilt);
     if (tiltMagnitude >= this.params.bottomCreepDeadZone) {
       let requestRate = this.targetShapeRequestRate;
       if (this.collectingTotalMotionRequests) {
-        const residualHeavy = this.targetShapeIdealHeavy - this.targetShapeActualHeavy;
-        const residualLight = this.targetShapeIdealLight - this.targetShapeActualLight;
-        const residual = Math.max(residualHeavy / P011_TARGET_SHAPE_TAU_H_MS,
-          residualLight / P011_TARGET_SHAPE_TAU_L_MS);
+        const residualHeavy = this.phaseHeavyIdeal - this.phaseHeavyActual;
+        const residualLight = this.phaseLightIdeal - this.phaseLightActual;
+        const residual = Math.max(residualHeavy / P011_TARGET_SHAPE_TAU_H_SECONDS,
+          residualLight / P011_TARGET_SHAPE_TAU_L_SECONDS);
         requestRate = Math.max(0, Math.min(this.params.vBottomCreepMax,
           P011_TARGET_SHAPE_K * tiltMagnitude +
           residual));
@@ -1306,22 +1454,22 @@ export class WaterSandField {
         const idealStep =
           P011_TARGET_SHAPE_K * tiltMagnitude * dt;
         this.targetShapeIdealDisplacement += idealStep;
-        this.targetShapeIdealHeavy += idealStep;
-        this.targetShapeIdealLight += idealStep;
+        this.phaseHeavyIdeal += idealStep;
+        this.phaseLightIdeal += idealStep;
       }
       this.lastBottomCreepRate = requestRate;
       if (requestRate > EPS) {
-        this.creepBottomRequests(dt, requestRate);
-        return;
+        return this.creepBottomRequests(dt, requestRate);
       }
     }
     this.lastBottomCreepRate = 0;
     this.lastP011DirectionCorrect = true;
     this.targetShapeRequestRate = 0;
+    return null;
   }
 
   private creepBottomRequests(dt: number, requestRate: number,
-    ): void {
+    ): WaterSandErrorCode | null {
     const requestedDirection = this.targetTilt > 0 ? 1 : -1;
     const holdSeconds = this.params.directionHoldTime / 1000;
     if (this.targetTilt === 0 && this.zeroTargetSince >= 0 &&
@@ -1329,14 +1477,14 @@ export class WaterSandField {
       this.bottomCreepDirection = 0;
       this.lastBottomCreepRate = 0;
       this.lastP011DirectionCorrect = true;
-      return;
+      return null;
     }
     if (this.bottomCreepDirection === 0) {
       this.bottomCreepDirection = requestedDirection;
       this.lastBottomDirectionChange = this.simulationTime;
     } else if (requestedDirection !== this.bottomCreepDirection &&
       this.simulationTime - this.lastBottomDirectionChange < holdSeconds) {
-      // P-011 bottom-creep-v2.7: hold the last valid direction within the debounce window.
+      // P-011 v2.8: hold the last valid direction within the debounce window.
     } else if (requestedDirection !== this.bottomCreepDirection) {
       this.bottomCreepDirection = requestedDirection;
       this.lastBottomDirectionChange = this.simulationTime;
@@ -1344,11 +1492,11 @@ export class WaterSandField {
     if (this.bottomCreepDirection === 0) {
       this.lastBottomCreepRate = 0;
       this.lastP011DirectionCorrect = true;
-      return;
+      return null;
     }
     this.lastP011DirectionCorrect = requestedDirection === this.bottomCreepDirection;
     const maxFlux = requestRate * dt;
-    // P-011 bottom-creep-v2.7: positive tilt sends mass left-to-right; negative is symmetric.
+    // P-011 v2.8: positive tilt sends mass left-to-right; negative is symmetric.
     for (let offset = 0; offset < this.cols - 1; offset++) {
       const index = this.bottomCreepDirection > 0 ? this.cols - 2 - offset : offset;
       const left = index;
@@ -1373,7 +1521,7 @@ export class WaterSandField {
       }
     }
     this.bottomCreepRequestCount = this.cols - 1;
-    // P-011 bottom-creep-v2.7: allocate the independent budget by request share.
+    // P-011 v2.8: allocate the independent budget by request share.
     const independentScale = this.bottomCreepBudgetRequested <= EPS
       ? 0 : Math.min(1, this.bottomCreepBudgetLimit / this.bottomCreepBudgetRequested);
     this.bottomCreepBudgetClipped = Math.max(0,
@@ -1381,7 +1529,7 @@ export class WaterSandField {
     if (this.collectingTotalMotionRequests) {
       this.totalMotionBudgetRequested += Math.min(this.bottomCreepBudgetRequested,
         this.bottomCreepBudgetLimit);
-      return;
+      return null;
     }
     for (let index = 0; index < this.bottomCreepRequestCount; index++) {
       const requested = this.bottomCreepRequestAmounts[index];
@@ -1398,18 +1546,26 @@ export class WaterSandField {
       if (amount <= EPS) {
         continue;
       }
-      const split = this.splitBottomLightFirst(donor, amount);
+      const heavyResidual = this.phaseHeavyIdeal - this.phaseHeavyActual;
+      const lightResidual = this.phaseLightIdeal - this.phaseLightActual;
+      const split = this.splitBottomPhaseBalanced(donor, amount, heavyResidual, lightResidual);
+      if (this.lastBottomSplitError !== null) {
+        return this.lastBottomSplitError;
+      }
       this.bh[receiver] += split.heavy;
       this.bl[receiver] += split.light;
-      // P-011 bottom-creep-v2.7: signed global left/right effective displacement.
+      // P-011 v2.8: signed global left/right effective displacement.
       const directionSign = this.bottomCreepDirection > 0 ? 1 : -1;
       this.bottomCreepDonorEffectiveDisplacement[donor] -= directionSign * amount;
       this.bottomCreepReceiverEffectiveDisplacement[receiver] += directionSign * amount;
       this.lastBottomFlux += amount;
-      this.targetShapeActualHeavy += split.heavy;
-      this.targetShapeActualLight += split.light;
+      this.lastHeavyFlux += split.heavy;
+      this.lastLightFlux += split.light;
+      this.phaseHeavyActual += directionSign * split.heavy;
+      this.phaseLightActual += directionSign * split.light;
       this.updateSandTop();
     }
+    return null;
   }
 
   private liftByShake(dt: number): void {
@@ -1492,12 +1648,33 @@ export class WaterSandField {
     return { heavy, light };
   }
 
-  private splitBottomLightFirst(column: number, amount: number): WaterSandSplitResult {
-    const light = Math.min(amount, this.bl[column]);
-    const heavy = Math.min(amount - light, this.bh[column]);
-    this.bl[column] -= light;
-    this.bh[column] -= heavy;
-    this.updateSandTop();
+  private splitBottomPhaseBalanced(
+    donor: number,
+    amount: number,
+    heavyResidual: number,
+    lightResidual: number
+  ): WaterSandSplitResult {
+    const deposited = Math.max(this.bh[donor] + this.bl[donor], EPS);
+    const baseShare = Math.max(P011_HEAVY_SHARE_MIN,
+      Math.min(P011_HEAVY_SHARE_MAX, this.bh[donor] / deposited));
+    const biasedShare = Math.max(P011_HEAVY_SHARE_MIN,
+      Math.min(P011_HEAVY_SHARE_MAX,
+        baseShare + P011_HEAVY_SHARE_BIAS * (heavyResidual - lightResidual)));
+    let heavy = Math.min(amount * biasedShare, this.bh[donor], amount);
+    let light = Math.min(amount - heavy, this.bl[donor]);
+    let remainder = amount - heavy - light;
+    const extraHeavy = Math.min(remainder, this.bh[donor] - heavy);
+    heavy += extraHeavy;
+    remainder -= extraHeavy;
+    const extraLight = Math.min(remainder, this.bl[donor] - light);
+    light += extraLight;
+    remainder -= extraLight;
+    if (remainder > EPS) {
+      this.lastBottomSplitError = WaterSandErrorCode.CAPACITY_OVERFLOW;
+      return { heavy: 0, light: 0 };
+    }
+    this.bh[donor] -= heavy;
+    this.bl[donor] -= light;
     return { heavy, light };
   }
 

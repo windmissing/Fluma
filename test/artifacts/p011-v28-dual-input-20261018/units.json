@@ -1,0 +1,163 @@
+{
+  "execution": "actual-product-ets-via-bundled-typescript",
+  "results": [
+    {
+      "name": "MODE01_testRejectsOneHundredSensorSamplesExactly",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE01_03_experienceRejectsScriptAndGestureAndForceInvert",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE02_06_tenRoundTripsClearAllInputOnlyState",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE05_coldHotFirstEnvelopeAndSameModePreserveCommands",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE03_07_freshCallbackRecoversAndBothSignsMapThroughSameChain",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE04_repeatedDeterministicCommandTraceAndInvalidWatermark",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE07_equivalentNormalizedInputsShareExactPhysicsTrajectory",
+      "status": "PASS"
+    },
+    {
+      "name": "P011_MODE02_resetInputPreservesMaterialAndRunIdentity",
+      "status": "PASS"
+    },
+    {
+      "name": "canonicalLedger_derivesExternalState",
+      "status": "PASS"
+    },
+    {
+      "name": "conservation_randomOperationSequence",
+      "status": "PASS"
+    },
+    {
+      "name": "percolationV2_crossExchangeHasNonZeroQ",
+      "status": "PASS"
+    },
+    {
+      "name": "percolationV2_pairSortingHasNonZeroR",
+      "status": "PASS"
+    },
+    {
+      "name": "separationProfile_matchesIndependentReference",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_consistentAcross30_60_120Hz",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_bindsSharedSubstepFlux",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_bindsShallowWaterSettling",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_validatesSandTopMaxRange",
+      "status": "PASS"
+    },
+    {
+      "name": "separation_singlePhaseReturnsNull",
+      "status": "PASS"
+    },
+    {
+      "name": "dormant_zeroSubstepStepResult",
+      "status": "PASS"
+    },
+    {
+      "name": "frameHook_emitsDormantFrame",
+      "status": "PASS"
+    },
+    {
+      "name": "thickGeometry_tilt68MovesWithoutCapacityOverflow",
+      "status": "PASS"
+    },
+    {
+      "name": "bottomCreep_tiltMovesLowerLayers",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_routeAndHooksAreSubstepAligned",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_bottomCreepUsesDirectionAndIndependentBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_phaseBalancedSplitKeepsHeavyShareAndTelemetry",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_commandSignFlipResetsPhaseAndReversesDisplacement",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_negativeTiltReversesBottomCreep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_totalMotionBudgetClipsBottomCreep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_totalBudgetExhaustionScalesRequestsProportionally",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_multiChannelTotalBudgetScalesAllRequestsProportionally",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_fullLoadPercolationKeepsBottomBudgetIsolated",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_deadZoneClearsBottomCreepRate",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_velocityGainDoesNotOverrideShapeRateCap",
+      "status": "PASS"
+    },
+    {
+      "name": "shake_peakAndRestResidual",
+      "status": "PASS"
+    },
+    {
+      "name": "invert180_preservesConservationAndPhaseOrder",
+      "status": "PASS"
+    },
+    {
+      "name": "failedInjection_restoresCanonicalState",
+      "status": "PASS"
+    },
+    {
+      "name": "copyStateTo_rejectsInvalidSchema",
+      "status": "PASS"
+    }
+  ],
+  "passed": 39,
+  "failed": 0
+}
