@@ -15,7 +15,8 @@ import {
 } from '../main/ets/physics/WaterSandField';
 import {
   P011NaturalObservationProbe,
-  P011NaturalObservationSubstepContext
+  P011NaturalObservationSubstepContext,
+  P011NaturalObservationEdgeGrant
 } from '../main/ets/physics/P011NaturalObservation';
 
 export default function waterSandFieldTest() {
@@ -937,6 +938,103 @@ export default function waterSandFieldTest() {
       }
       expect(thrown).assertTrue();
     });
+
+    // Review blocking item B: budget-limited edges must keep active (requested>0
+    // means activeAfter=true); a missing grant must never be recorded as a stop.
+    it('p011_transitionTelemetry_budgetLimitedEdgeKeepsActive', 0, () => {
+      const slipRecords: P011NaturalObservationEdgeGrant[] = [];
+      const probe = new P011NaturalObservationProbe(2, record => {
+        for (const grant of record.slip) {
+          slipRecords.push(grant);
+        }
+      });
+      const field = new WaterSandField(2, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      params.vSandTopMax = 28;
+      params.maxAvalancheFlux = 24;
+      params.totalMotionBudget = 0.000001;
+      field.configure(params);
+      field.initialize(humpSceneForP011Cols2());
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(45);
+      for (let index = 0; index < 6; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+      }
+      expect(slipRecords.length > 0).assertTrue();
+      for (const grant of slipRecords) {
+        if (grant.requested > 1e-12) {
+          // Budget clipping may shrink the grant but never the active state.
+          expect(grant.activeAfter).assertTrue();
+          if (grant.activeBefore) {
+            expect(grant.transitionType === 'holdActive' ||
+              grant.transitionType === 'start').assertTrue();
+          }
+        }
+      }
+      // Every clipped substep must keep the active state (holdActive), never a
+      // synthetic stop: budget limiting preserves active per the transition
+      // contract (requested>0 stays active; no grant is not a stop).
+      let sawHoldActive = false;
+      for (const grant of slipRecords) {
+        const clipped = grant.requested > grant.allowed * 2;
+        if (clipped && grant.transitionType === 'holdActive') {
+          sawHoldActive = true;
+        }
+        if (clipped) {
+          expect(grant.transitionType !== 'stop').assertTrue();
+          expect(grant.activeAfter).assertTrue();
+        }
+      }
+      expect(sawHoldActive).assertTrue();
+    });
+
+    // Review blocking item A: slip request slots are compacted candidates; the
+    // reported edge identity must be min(donor, receiver), not the slot index.
+    // A hump over interior columns makes candidates a non-0..k prefix of edges.
+    it('p011_transitionTelemetry_edgeIdentityIsNotSlotIndex', 0, () => {
+      const slipRecords: P011NaturalObservationEdgeGrant[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        for (const grant of record.slip) {
+          slipRecords.push(grant);
+        }
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      field.configure(params);
+      // Hump over columns 6..9: steep edges are 5,6,7,8,9; edges 0..4 and
+      // 10..14 stay flat, so candidate edges are NOT the 0..k prefix.
+      field.initialize(humpSceneForP011(16, 6, 9, 60));
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(0);
+      for (let index = 0; index < 4; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+      }
+      expect(slipRecords.length > 0).assertTrue();
+      for (const grant of slipRecords) {
+        // Edge identity invariants: 0 <= interfaceIndex = min(donor, receiver).
+        expect(grant.interfaceIndex >= 0).assertTrue();
+        expect(grant.interfaceIndex < 15).assertTrue();
+        expect(grant.interfaceIndex).assertEqual(
+          grant.donor < grant.receiver ? grant.donor : grant.receiver);
+        // Residual is computed from the same edge: r = |d|.
+        expect(grant.r).assertEqual(Math.abs(grant.d));
+      }
+      // The steep hump edges are 5 (d>0) and 9 (d<0). With the compacted-slot
+      // bug the first candidates would have been misreported as edges 0 and 1.
+      const firstSubstepEdges = [slipRecords[0].interfaceIndex, slipRecords[1].interfaceIndex];
+      firstSubstepEdges.sort((a, b) => a - b);
+      expect(firstSubstepEdges[0]).assertEqual(5);
+      expect(firstSubstepEdges[1]).assertEqual(9);
+      // No flat edge (r < 1) may ever carry a large residual from another edge.
+      for (const grant of slipRecords) {
+        expect(grant.r > 5 ? (grant.interfaceIndex === 5 || grant.interfaceIndex === 9)
+          : true).assertTrue();
+      }
+    });
   });
 }
 
@@ -1112,4 +1210,31 @@ function assertSnapshotsEqual(left: WaterSandSnapshot, right: WaterSandSnapshot)
     expect(Math.abs(left.suspH[c] - right.suspH[c]) < 1e-12).assertTrue();
     expect(Math.abs(left.suspL[c] - right.suspL[c]) < 1e-12).assertTrue();
   }
+}
+
+// P-011 observation ①b remediation tests (review blocking items A and B).
+
+// Staircase deposit: a hump confined to columns [startCol, endColInclusive] so the
+// relax candidates are interior edges only — edge 0 (and the far edge) stay flat.
+function humpSceneForP011(cols: number, startCol: number, endColInclusive: number,
+  humpHeight: number): WaterSandScene {
+  const scene = thickSceneForP011(cols);
+  // Flatten the base deposits first: uniform heavy/light layers everywhere.
+  scene.heavyDepositedRegions = [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 72 }];
+  scene.lightDepositedRegions = [{ startCol: 0, endColInclusive: cols - 1, bottom: 72, height: 48 }];
+  // Add a local hump on top of the chosen columns so only their edges are steep.
+  scene.heavyDepositedRegions.push({
+    startCol: startCol, endColInclusive: endColInclusive, bottom: 120, height: humpHeight
+  });
+  return scene;
+}
+
+function humpSceneForP011Cols2(): WaterSandScene {
+  return {
+    waterRegions: [{ startCol: 0, endColInclusive: 1, bottom: 144, height: 38 }],
+    heavyDepositedRegions: [{ startCol: 0, endColInclusive: 1, bottom: 0, height: 72 }],
+    lightDepositedRegions: [{ startCol: 0, endColInclusive: 1, bottom: 72, height: 72 }],
+    heavySuspendedRegions: [],
+    lightSuspendedRegions: []
+  };
 }

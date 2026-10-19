@@ -1751,14 +1751,20 @@ export class WaterSandField {
       const requested = this.slipRequestAmounts[index];
       const donor = this.slipRequestDonors[index];
       const receiver = this.slipRequestReceivers[index];
+      // P-011 observation ①b fix A: slipRequest* slots are compacted candidates;
+      // the physical edge identity is min(donor, receiver), never the slot index.
+      const edge = donor < receiver ? donor : receiver;
       const amount = this.clipSubstepMotion(donor, receiver, requested);
-      const activeBefore = this.naturalObservationSlidingBefore[index] !== 0;
-      const activeAfter = amount > EPS;
-      this.naturalObservationSlipSeen[index] = 1;
-      this.naturalObservationSlidingAfter[index] = activeAfter ? 1 : 0;
+      const activeBefore = this.naturalObservationSlidingBefore[edge] !== 0;
+      // P-011 observation ①b fix B: active state follows the transition contract
+      // requested>0 <-> requested=0 (algorithm-P011.md v2.10 edge contract:
+      // budget-limited active edges stay active; a missing grant is not a stop).
+      const activeAfter = requested > EPS;
+      this.naturalObservationSlipSeen[edge] = 1;
+      this.naturalObservationSlidingAfter[edge] = activeAfter ? 1 : 0;
       if (requested > EPS && amount <= EPS) {
         this.naturalObservationProbe?.recordSlip({
-          interfaceIndex: index,
+          interfaceIndex: edge,
           donor: donor,
           receiver: receiver,
           directionSign: donor < receiver ? 1 : -1,
@@ -1780,7 +1786,7 @@ export class WaterSandField {
       const split = this.splitTopV2(donor, amount);
       if (this.naturalObservationProbe !== null) {
         this.naturalObservationProbe.recordSlip({
-          interfaceIndex: index,
+          interfaceIndex: edge,
           donor: donor,
           receiver: receiver,
           directionSign: donor < receiver ? 1 : -1,
@@ -1791,7 +1797,7 @@ export class WaterSandField {
           activeBefore: activeBefore,
           activeAfter: activeAfter
         });
-        this.recordNaturalTopSplit(index, donor, amount, donorBhBefore, donorBlBefore,
+        this.recordNaturalTopSplit(edge, donor, amount, donorBhBefore, donorBlBefore,
           donorMhBefore, donorMlBefore, split);
       }
       this.mh[receiver] += split.heavy;
