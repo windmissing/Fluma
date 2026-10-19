@@ -3,32 +3,23 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import Want from '@ohos.app.ability.Want';
 import window from '@ohos.window';
 import hilog from '@ohos.hilog';
+import { LiquidCAWantCommand, parseLiquidCAWant } from '../physics/LiquidCAWant';
+import { LiquidCAEventPayload, LiquidInputSource } from '../physics/LiquidCATypes';
+import { LiquidCATelemetry } from '../physics/LiquidCATelemetry';
+import { nextP011TimeMs } from '../physics/WaterSandField';
+import { P011TiltWantCommand, parseP011TiltWant } from '../physics/P011TiltWant';
 
 export default class EntryAbility extends UIAbility {
   hilogTag: string = 'EntryAbility';
   hilogDomain: number = 0x0000;
+  private liquidTelemetry: LiquidCATelemetry = new LiquidCATelemetry();
+  private wantCommandSequence: number = 0;
+  private p011TiltWantSequence: number = 0;
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onCreate');
-    // 测试自动化参数（s77）：aa start --ps 传入，零 UI 依赖控制测试状态
-    // 用法：aa start -b com.example.helloworld -a EntryAbility --ps testmode true --ps forceinvert true
+    this.applyWant(want.parameters, false);
     const params = want.parameters;
-    if (params && params.testmode !== undefined) {
-      AppStorage.setOrCreate('testmode', `${params.testmode}` === 'true');
-      hilog.info(this.hilogDomain, this.hilogTag, 'want param testmode=%{public}s', `${params.testmode}`);
-    }
-    if (params && params.forceinvert !== undefined) {
-      AppStorage.setOrCreate('forceinvert', `${params.forceinvert}` === 'true');
-      hilog.info(this.hilogDomain, this.hilogTag, 'want param forceinvert=%{public}s', `${params.forceinvert}`);
-    }
-    if (params && params.rendermode !== undefined) {
-      // 0=细沙 1=流体 2=混合（调试：细沙模式直接画网格，验证物理层粒子移动）
-      const rm = parseInt(`${params.rendermode}`);
-      if (!Number.isNaN(rm)) {
-        AppStorage.setOrCreate('rendermode', rm);
-        hilog.info(this.hilogDomain, this.hilogTag, 'want param rendermode=%{public}d', rm);
-      }
-    }
     if (params && params.wspreset !== undefined) {
       AppStorage.setOrCreate('wspreset', `${params.wspreset}`);
       hilog.info(this.hilogDomain, this.hilogTag, 'want param wspreset=%{public}s', `${params.wspreset}`);
@@ -54,6 +45,89 @@ export default class EntryAbility extends UIAbility {
     if (params && params.wssnapshot !== undefined) {
       AppStorage.setOrCreate('wssnapshot', `${params.wssnapshot}` === 'true');
     }
+    if (params && params.wssandtopmax !== undefined) {
+      const sandTopMax = parseFloat(`${params.wssandtopmax}`);
+      if (Number.isFinite(sandTopMax) && sandTopMax > 0 && sandTopMax <= 30) {
+        AppStorage.setOrCreate('wssandtopmax', sandTopMax);
+        hilog.info(this.hilogDomain, this.hilogTag, 'want param wssandtopmax=%{public}f', sandTopMax);
+      }
+    }
+  }
+
+  onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    hilog.info(this.hilogDomain, this.hilogTag, 'onNewWant');
+    this.applyWant(want.parameters, true);
+  }
+
+  private applyWant(parameters: Record<string, Object> | undefined, isNewWant: boolean): void {
+    const parsed = parseLiquidCAWant(parameters, isNewWant);
+    // P-011 dual-input-v1: identity travels with mode; publish mode before this Want's tilt.
+    const tiltCommand = this.parseP011Want(parameters, parsed.renderMode, parsed.testMode, parsed.forceInvert);
+    const tiltSequence = tiltCommand === null ? 0 : tiltCommand.sequence;
+    AppStorage.setOrCreate('rendermode', parsed.renderMode);
+    AppStorage.setOrCreate('testmode', parsed.testMode);
+    AppStorage.setOrCreate('forceinvert', false);
+    AppStorage.setOrCreate('liquidSeed', parsed.seed);
+    AppStorage.setOrCreate('liquidCellPx', parsed.cellPx);
+    AppStorage.setOrCreate('liquidStartShake', parsed.shake);
+    AppStorage.setOrCreate('liquidCaseId', parsed.caseId);
+    AppStorage.setOrCreate('p011TiltWantModeSequence', tiltSequence);
+    this.liquidTelemetry.setTestMode(parsed.testMode);
+    for (const warning of parsed.warnings) {
+      const event: LiquidCAEventPayload = {
+        type: 'model_error', sequence: 0, eventTimeMs: Date.now(), caseId: parsed.caseId, boundary: true,
+        source: LiquidInputSource.WANT, forceInvert: false, shakeIntensity: parsed.shake,
+        errorCode: warning, cols: 0, rows: 0, cellPx: parsed.cellPx,
+        initialHeavy: 0, initialLight: 0, seed: parsed.seed, scaled: false
+      };
+      this.liquidTelemetry.onEvent(event);
+    }
+    hilog.info(this.hilogDomain, this.hilogTag,
+      'LiquidCA want rendermode=%{public}d testmode=%{public}d seed=%{public}d shake=%{public}f',
+      parsed.renderMode, parsed.testMode ? 1 : 0, parsed.seed, parsed.shake);
+    if (!isNewWant) {
+      this.publishP011TiltWant(tiltCommand);
+      return;
+    }
+    this.wantCommandSequence++;
+    const command: LiquidCAWantCommand = {
+      p011TiltWantSequence: tiltSequence,
+      renderMode: parsed.renderMode,
+      testMode: parsed.testMode,
+      forceInvert: parsed.forceInvert,
+      shake: parsed.shake,
+      seed: parsed.seed,
+      cellPx: parsed.cellPx,
+      caseId: parsed.caseId,
+      warnings: parsed.warnings
+    };
+    AppStorage.setOrCreate('liquidWantCommand', JSON.stringify(command));
+    AppStorage.setOrCreate('liquidWantCommandSeq', this.wantCommandSequence);
+    this.publishP011TiltWant(tiltCommand);
+  }
+
+  private parseP011Want(parameters: Record<string, Object> | undefined,
+    renderMode: number, testMode: boolean, forceInvert: boolean): P011TiltWantCommand | null {
+    if (parameters === undefined || parameters.wstilt === undefined) {
+      return null;
+    }
+    this.p011TiltWantSequence++;
+    const parsed = parseP011TiltWant(parameters, renderMode, testMode, forceInvert,
+      this.p011TiltWantSequence, nextP011TimeMs());
+    for (const warning of parsed.warnings) {
+      hilog.warn(this.hilogDomain, this.hilogTag, 'P011_WSTILT_WARNING %{public}s', warning);
+    }
+    return parsed.command;
+  }
+
+  private publishP011TiltWant(command: P011TiltWantCommand | null): void {
+    if (command === null) {
+      return;
+    }
+    AppStorage.setOrCreate('p011TiltWantCommand', JSON.stringify(command));
+    AppStorage.setOrCreate('p011TiltWantCommandSeq', command.sequence);
+    hilog.info(this.hilogDomain, this.hilogTag,
+      'P011_WSTILT seq=%{public}d target=%{public}f', command.sequence, command.targetTilt);
   }
 
   onDestroy(): void {

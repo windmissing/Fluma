@@ -1,0 +1,67 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 90, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#0F2A43' }}>四步流水线 · 公式展开（一）水面平衡 与 沉降分选</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 28 }}>
+        {/* 左：水面平衡 */}
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 16, padding: 22, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 9, background: '#1D4E79', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1D4E79' }}>水面平衡（leveling）</Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>目标：找一个水面高度 b，让水的总量刚好装下，且表面斜率等于重力倾角：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    targetTop[c] = b + tan(倾角)·(c − 中心)<br />
+                    Σ (targetTop − sandTop) = 水的总量
+                </Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>b 用二分法找。然后每列把「多出来的水」搬给「缺水的列」：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    err[c] = 当前水面 − 目标水面<br />
+                    q = min(多出量, 缺口, 速率×dt)<br />
+                    donor 水面 −q，receiver 水面 +q
+                </Text>
+            </Box>
+            <Box style={{ background: 'rgba(243,156,18,0.12)', borderRadius: 8, padding: '10px 14px' }}>
+                <Text style={{ fontSize: 15, color: '#B06A00', lineHeight: 1.5 }}><span style={{ fontWeight: 'bold' }}>红线：</span>禁止每列各自直接 lerp 到目标——那会凭空造水/灭水，必须「从多的搬给少的」。</Text>
+            </Box>
+        </Box>
+        {/* 右：沉降分选 */}
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 16, padding: 22, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 9, background: '#8A5A2B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#8A5A2B' }}>沉降与分选（rate-limited）</Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>每列悬浮沙按「指数衰减」往下沉——沉多少跟当前悬浮量和水深成正比：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    desiredH = suspH × 64 × dt ÷ 水深<br />
+                    desiredL = suspL × 38 × dt ÷ 水深
+                </Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>两相**合计**限幅（不是各限各的）：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    scale = min(1, 预算 ÷ (desiredH+desiredL))<br />
+                    实沉 = 期望 × scale
+                </Text>
+            </Box>
+            <Box style={{ background: 'rgba(29,78,121,0.10)', borderRadius: 8, padding: '10px 14px' }}>
+                <Text style={{ fontSize: 15, color: '#1D4E79', lineHeight: 1.55 }}><span style={{ fontWeight: 'bold' }}>两个要点：</span>① 64:38 = 1.68 倍速度差 → 自动分选；② 合计限幅 → 浅水区不会一帧清空（v2.2 修复的瞬移隐患）。</Text>
+            </Box>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>15 / 15</Text>
+    </Box>
+</Slide>

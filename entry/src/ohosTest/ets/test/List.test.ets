@@ -7,6 +7,7 @@ import collisionSolverTest from './CollisionSolverTest';
 import sandGridTest from './SandGridTest';
 import heightFieldTest from './HeightFieldTest';
 import waterSandFieldTest from './WaterSandFieldTest';
+import liquidCAFieldTest from './LiquidCAFieldTest';
 
 export default function abilityTest() {
   describe('ActsAbilityTest', () => {
@@ -25,4 +26,5 @@ export default function abilityTest() {
   sandGridTest();
   heightFieldTest();
   waterSandFieldTest();
+  liquidCAFieldTest();
 }

@@ -1,0 +1,23 @@
+<Slide style={{ width: 1280, height: 720, background: 'linear-gradient(160deg, #0F2A43 0%, #1D4E79 100%)', padding: 0, position: 'relative' }}>
+    {/* 时间线纹样 */}
+    <svg width={1280} height={720} viewBox='0 0 1280 720' style={{ position: 'absolute', top: 0, left: 0, opacity: 0.12 }}>
+        <line x1={80} y1={360} x2={1200} y2={360} stroke='#7FB3D5' strokeWidth={2} />
+        {[140, 400, 660, 920, 1140].map((x) => (
+            <circle key={x} cx={x} cy={360} r={8} fill='#7FB3D5' />
+        ))}
+    </svg>
+    <Box style={{ position: 'absolute', left: 0, top: 0, width: 1280, height: 720, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 28 }}>
+        <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#F39C12', lineHeight: 1 }}>02</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#FFFFFF' }}>四轮迭代修了什么</Text>
+        <Box style={{ width: 90, height: 6, background: '#7FB3D5', borderRadius: 3 }} />
+        <Text style={{ fontSize: 24, color: '#C8D8E6', textAlign: 'center', lineHeight: 1.6 }}>
+            v1 → v2 → v2.2 → v2.3 / v2.4<br />
+            每一轮只修一个根因，不放宽任何验收线
+        </Text>
+    </Box>
+    <Box style={{ position: 'absolute', left: 60, bottom: 20, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Box style={{ width: 12, height: 12, background: '#F39C12' }} />
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+    </Box>
+    <Text style={{ position: 'absolute', right: 60, bottom: 20, fontSize: 14, color: '#5D6D7E' }}>07 / 14</Text>
+</Slide>

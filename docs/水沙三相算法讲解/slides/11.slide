@@ -1,0 +1,24 @@
+<Slide style={{ width: 1280, height: 720, background: 'linear-gradient(160deg, #0F2A43 0%, #1D4E79 100%)', padding: 0, position: 'relative' }}>
+    {/* 坐标纸网格纹样 */}
+    <svg width={1280} height={720} viewBox='0 0 1280 720' style={{ position: 'absolute', top: 0, left: 0, opacity: 0.10 }}>
+        {[64, 128, 192, 256, 320, 384, 448, 512, 576, 640, 704, 768, 832, 896, 960, 1024, 1088, 1152, 1216].map((x) => (
+            <line key={'v'+x} x1={x} y1={0} x2={x} y2={720} stroke='#7FB3D5' strokeWidth={1} />
+        ))}
+        {[60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660].map((y) => (
+            <line key={'h'+y} x1={0} y1={y} x2={1280} y2={y} stroke='#7FB3D5' strokeWidth={1} />
+        ))}
+    </svg>
+    <Box style={{ position: 'absolute', left: 0, top: 0, width: 1280, height: 720, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 28 }}>
+        <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#F39C12', lineHeight: 1 }}>03</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#FFFFFF' }}>数字怎么验证</Text>
+        <Box style={{ width: 90, height: 6, background: '#7FB3D5', borderRadius: 3 }} />
+        <Text style={{ fontSize: 24, color: '#C8D8E6', textAlign: 'center', lineHeight: 1.6 }}>
+            所有关键数字都能手算复核——<br />「74%」不是拟合出来的，是推导出来的
+        </Text>
+    </Box>
+    <Box style={{ position: 'absolute', left: 60, bottom: 20, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Box style={{ width: 12, height: 12, background: '#F39C12' }} />
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+    </Box>
+    <Text style={{ position: 'absolute', right: 60, bottom: 20, fontSize: 14, color: '#5D6D7E' }}>11 / 14</Text>
+</Slide>

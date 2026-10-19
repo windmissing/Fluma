@@ -1,0 +1,231 @@
+{
+  "budgetMetrics": {
+    "bottomCreepBudgetViolationRate": 0.0,
+    "totalMotionBudgetViolationRate": 0.0,
+    "bottomCreepIndependentClipRate": 0.16070493805618566,
+    "totalMotionClipRate": 0.20851509335194557
+  },
+  "schemaVersion": 1,
+  "routeId": "bottom-creep-v2.7",
+  "overall": "BLOCKED(missing_hook)",
+  "dataCompleteness": {
+    "missingHooks": [
+      "P011_BOTTOM.bottomCreepDonorEffectiveDisplacement",
+      "P011_METRIC/P011_BOTTOM.physicsTime alignment"
+    ],
+    "parseErrors": 269,
+    "timestampOrderErrors": 0,
+    "routeMismatch": false,
+    "eventCount": 19,
+    "metricCount": 5731,
+    "bottomCount": 5711
+  },
+  "tcP01101": {
+    "bottomCreepResponseCount": 0,
+    "t90P95Ms": null,
+    "directionAccuracy": 1.0,
+    "directionError": 0,
+    "bottomDirectionSamples": 898,
+    "bottomDirectionError": 898,
+    "bottomDirectionSignSwitches": 0,
+    "score": 0
+  },
+  "tcP01102": {
+    "pearsonH": 0.71812659490429,
+    "pearsonL": 0.5043645671934598,
+    "lagHMs": -155.0,
+    "lagLMs": -144.0,
+    "feH": 0.21213652069158473,
+    "feL": 0.29010526662369407,
+    "score": 0
+  },
+  "tcP01103": {
+    "maxSubstepBh": 1.705176385448027,
+    "maxSubstepBl": 14.167695303383717,
+    "maxUncommandedTiltStep": 7.920000000000002,
+    "zeroResidual": 0,
+    "reverseDirectionError": 0,
+    "score": 0
+  },
+  "tcP01104": {
+    "driftWater": 3.590110664893141e-15,
+    "driftHeavy": 3.1579677144893343e-16,
+    "driftLight": 6.315935428978669e-16,
+    "nonFiniteCount": 0,
+    "outOfRangeCount": 0,
+    "modelErrorCount": 0,
+    "crashCount": 2
+  },
+  "budgetAcceptance": {
+    "soloBottomCreepBudgetLimit": 0.01,
+    "fullLoadSamples": 1195,
+    "fullLoadLimitErrorRate": 0.0,
+    "totalMotionClipRuns": 21,
+    "totalMotionClipSegments": [
+      {
+        "startTime": 1792136547584,
+        "endTime": 1792136549387,
+        "clipSampleCount": 53,
+        "maxClipped": 3.9460951446298984,
+        "maxTotalUsed": 2.390445148067597
+      },
+      {
+        "startTime": 1792136550656,
+        "endTime": 1792136552696,
+        "clipSampleCount": 72,
+        "maxClipped": 4.0117193541894265,
+        "maxTotalUsed": 2.6459466415464767
+      },
+      {
+        "startTime": 1792136552726,
+        "endTime": 1792136552726,
+        "clipSampleCount": 1,
+        "maxClipped": 0.1914277805734233,
+        "maxTotalUsed": 1.313094970184814
+      },
+      {
+        "startTime": 1792136553677,
+        "endTime": 1792136555548,
+        "clipSampleCount": 95,
+        "maxClipped": 4.20379176168228,
+        "maxTotalUsed": 2.6919684161497486
+      },
+      {
+        "startTime": 1792136555580,
+        "endTime": 1792136555580,
+        "clipSampleCount": 1,
+        "maxClipped": 0.09975905346619307,
+        "maxTotalUsed": 1.392081650949897
+      },
+      {
+        "startTime": 1792136557401,
+        "endTime": 1792136558719,
+        "clipSampleCount": 63,
+        "maxClipped": 4.156376990223851,
+        "maxTotalUsed": 2.588530886813489
+      },
+      {
+        "startTime": 1792136559820,
+        "endTime": 1792136561724,
+        "clipSampleCount": 97,
+        "maxClipped": 4.5771595153354765,
+        "maxTotalUsed": 2.978746977068186
+      },
+      {
+        "startTime": 1792136563428,
+        "endTime": 1792136565030,
+        "clipSampleCount": 91,
+        "maxClipped": 4.065848073013419,
+        "maxTotalUsed": 2.6923628155572663
+      },
+      {
+        "startTime": 1792136565062,
+        "endTime": 1792136565081,
+        "clipSampleCount": 4,
+        "maxClipped": 0.1776361294445077,
+        "maxTotalUsed": 1.304394314213034
+      },
+      {
+        "startTime": 1792136565112,
+        "endTime": 1792136565112,
+        "clipSampleCount": 1,
+        "maxClipped": 0.08721102775913872,
+        "maxTotalUsed": 1.306015406372586
+      },
+      {
+        "startTime": 1792136639817,
+        "endTime": 1792136640820,
+        "clipSampleCount": 102,
+        "maxClipped": 4.1146375078823505,
+        "maxTotalUsed": 3.01064034284931
+      },
+      {
+        "startTime": 1792136640852,
+        "endTime": 1792136640870,
+        "clipSampleCount": 4,
+        "maxClipped": 0.570057410401858,
+        "maxTotalUsed": 1.5452534038162231
+      },
+      {
+        "startTime": 1792136640902,
+        "endTime": 1792136640902,
+        "clipSampleCount": 1,
+        "maxClipped": 0.03268772108520175,
+        "maxTotalUsed": 1.3970818936242824
+      },
+      {
+        "startTime": 1792136641670,
+        "endTime": 1792136642957,
+        "clipSampleCount": 127,
+        "maxClipped": 4.345121667654766,
+        "maxTotalUsed": 2.7176648432064323
+      },
+      {
+        "startTime": 1792136642990,
+        "endTime": 1792136642990,
+        "clipSampleCount": 1,
+        "maxClipped": 0.013047478999002795,
+        "maxTotalUsed": 1.44269918702545
+      },
+      {
+        "startTime": 1792136643573,
+        "endTime": 1792136644743,
+        "clipSampleCount": 115,
+        "maxClipped": 4.520141318931443,
+        "maxTotalUsed": 2.903056595212346
+      },
+      {
+        "startTime": 1792136645460,
+        "endTime": 1792136646713,
+        "clipSampleCount": 125,
+        "maxClipped": 4.337875867473031,
+        "maxTotalUsed": 2.7733405321780493
+      },
+      {
+        "startTime": 1792136646745,
+        "endTime": 1792136646745,
+        "clipSampleCount": 1,
+        "maxClipped": 0.05634191461188473,
+        "maxTotalUsed": 1.4423665000188999
+      },
+      {
+        "startTime": 1792136647346,
+        "endTime": 1792136648516,
+        "clipSampleCount": 117,
+        "maxClipped": 4.73424244070565,
+        "maxTotalUsed": 2.928452763310732
+      },
+      {
+        "startTime": 1792136649249,
+        "endTime": 1792136650469,
+        "clipSampleCount": 120,
+        "maxClipped": 4.36002064334792,
+        "maxTotalUsed": 2.762581692925258
+      },
+      {
+        "startTime": 1792136650501,
+        "endTime": 1792136650519,
+        "clipSampleCount": 4,
+        "maxClipped": 0.29378839621435676,
+        "maxTotalUsed": 1.4893033392495496
+      }
+    ]
+  },
+  "mustPass": {
+    "driftBelow0_1Percent": true,
+    "nonFiniteCountZero": true,
+    "outOfRangeCountZero": true,
+    "modelErrorZero": true,
+    "crashZero": false,
+    "maxSubstepBelow5": false,
+    "maxUncommandedTiltStepBelow2": false,
+    "zeroResidualBelow1": true,
+    "reverseDirectionErrorZero": true,
+    "bottomBudgetViolationZero": true,
+    "totalBudgetViolationZero": true,
+    "directionCorrectAll": true,
+    "bottomDirectionCorrectAll": false,
+    "independentBudgetIsolation": true,
+    "highPressureEvidenceCount": true
+  }
+}

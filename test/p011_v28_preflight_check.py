@@ -72,6 +72,20 @@ def green_centroid(image_path):
     return x_sum / count if count else None
 
 
+def physical_gates(summary):
+    """Existing TC-P011-V28-00 minima; ROI presence alone is insufficient."""
+    thresholds = {
+        'heavyFluxNonZeroSamples': 30,
+        'heavyShapeRms': 0.5,
+        'heavyShapeMaxDelta': 1.0,
+    }
+    return {
+        field: isinstance(summary.get(field), (int, float))
+        and math.isfinite(summary[field]) and summary[field] >= minimum
+        for field, minimum in thresholds.items()
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--baseline', type=Path, required=True)
@@ -114,10 +128,20 @@ def main():
             **metric_summary(metrics, -1, segments.get('negative')),
         },
     }
+    result['roiReady'] = status == 'OBSERVATION_READY'
+    result['physicalGates'] = {
+        direction: physical_gates(result[direction])
+        for direction in ('positive', 'negative')
+    }
+    result['physicalGatePassed'] = all(
+        passed for gates in result['physicalGates'].values() for passed in gates.values()
+    )
+    if result['roiReady'] and not result['physicalGatePassed']:
+        result['status'] = 'FAIL(heavyObservation)'
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(result, indent=2))
-    return 0 if status == 'OBSERVATION_READY' else 2
+    return 0 if result['roiReady'] and result['physicalGatePassed'] else 2
 
 
 if __name__ == '__main__':

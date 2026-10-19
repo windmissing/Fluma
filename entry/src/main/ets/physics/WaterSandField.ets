@@ -2,6 +2,16 @@
  * WaterSandField - P-003/P-005 scene 2 three-phase column model, algorithm v2.2.
  * Canonical ledger: waterTop/bh/bl/mh/ml/suspH/suspL; hs/hl/sandTop are derived.
  */
+import {
+  P011NaturalObservationAudit,
+  P011NaturalObservationBudgets,
+  P011NaturalObservationProbe,
+  P011NaturalObservationRunRole,
+  P011NaturalObservationState,
+  P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
+  P011_NATURAL_OBSERVATION_ROUTE_ID,
+  p011NaturalObservationPhaseForCommand
+} from './P011NaturalObservation';
 
 export enum WaterSandPhase {
   WATER = 0,
@@ -418,6 +428,20 @@ export class WaterSandField {
   private lastError: WaterSandErrorCode | null = null;
   private frozen = false;
   private dormant = false;
+  private naturalObservationProbe: P011NaturalObservationProbe | null = null;
+  private naturalObservationStateBefore: P011NaturalObservationState | null = null;
+  private naturalObservationPhysicsDt = 0;
+  private naturalObservationTotalRequested = 0;
+  private naturalObservationRelaxCandidateCount = 0;
+  private naturalObservationRelaxRequestedTotal = 0;
+  private naturalObservationRunRole: P011NaturalObservationRunRole | null = null;
+  private naturalObservationThresholdCalibrationId: string | null = null;
+  private naturalObservationThetaStartDeg: number | null = null;
+  private naturalObservationThetaStopDeg: number | null = null;
+  private naturalObservationSliding: Uint8Array;
+  private naturalObservationSlidingBefore: Uint8Array;
+  private naturalObservationSlidingAfter: Uint8Array;
+  private naturalObservationSlipSeen: Uint8Array;
 
   constructor(cols: number, capacity: number) {
     if (!Number.isInteger(cols) || !Number.isInteger(capacity) || cols < 2 || capacity < 2) {
@@ -454,6 +478,10 @@ export class WaterSandField {
     this.slipRequestDonors = new Int32Array(6 * (cols - 1));
     this.slipRequestReceivers = new Int32Array(6 * (cols - 1));
     this.riseRequestAmounts = new Float64Array(cols);
+    this.naturalObservationSliding = new Uint8Array(cols - 1);
+    this.naturalObservationSlidingBefore = new Uint8Array(cols - 1);
+    this.naturalObservationSlidingAfter = new Uint8Array(cols - 1);
+    this.naturalObservationSlipSeen = new Uint8Array(cols - 1);
     this.backup = this.createEmptySnapshot();
     this.motionSnapshot = this.createEmptySnapshot();
     this.initialize(this.defaultScene());
@@ -525,6 +553,10 @@ export class WaterSandField {
     this.ml.fill(0);
     this.suspH.fill(0);
     this.suspL.fill(0);
+    this.naturalObservationSliding.fill(0);
+    this.naturalObservationSlidingBefore.fill(0);
+    this.naturalObservationSlidingAfter.fill(0);
+    this.naturalObservationSlipSeen.fill(0);
     this.fillRegions(this.waterTop, scene.waterRegions, false);
     this.fillRegions(this.bh, scene.heavyDepositedRegions, true);
     this.fillRegions(this.bl, scene.lightDepositedRegions, true);
@@ -761,16 +793,22 @@ export class WaterSandField {
       this.lastMaxSubstepBl = 0;
       this.lastBottomSplitError = null;
       this.lastP011DirectionCorrect = true;
+      this.updateTilt(substepDt);
+      this.beginNaturalObservation(substepDt);
       let errorCode = this.substep(substepDt);
       if (errorCode === null) {
         this.restoreMotionSnapshot();
         this.lastBottomFlux = 0;
         const scale = this.totalMotionBudgetRequested <= this.totalMotionBudgetLimit
           ? 1 : this.totalMotionBudgetLimit / this.totalMotionBudgetRequested;
+        if (this.naturalObservationProbe !== null) {
+          this.naturalObservationTotalRequested = this.totalMotionBudgetRequested;
+        }
         this.beginMotionApplication(substepDt, scale);
         errorCode = this.applyMotionChannels(substepDt);
       }
       if (errorCode !== null) {
+        this.finishNaturalObservation(errorCode);
         this.restoreBackup();
         this.frozen = true;
         this.lastError = errorCode;
@@ -779,6 +817,7 @@ export class WaterSandField {
         result.errorColumn = this.firstInvalidColumn();
         break;
       }
+      this.finishNaturalObservation(null);
       result.stepped = true;
       result.substeps++;
       result.moved = this.changedSinceBackup() || result.moved;
@@ -922,6 +961,180 @@ export class WaterSandField {
 
   getP011RunId(): string {
     return this.p011RunId;
+  }
+
+  setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void {
+    this.naturalObservationProbe = probe;
+    this.naturalObservationStateBefore = null;
+  }
+
+  setNaturalObservationRunMetadata(runRole: P011NaturalObservationRunRole | null,
+    thresholdCalibrationId: string | null, thetaStartDeg: number | null,
+    thetaStopDeg: number | null): void {
+    this.naturalObservationRunRole = runRole;
+    this.naturalObservationThresholdCalibrationId = thresholdCalibrationId;
+    this.naturalObservationThetaStartDeg = thetaStartDeg;
+    this.naturalObservationThetaStopDeg = thetaStopDeg;
+  }
+
+  private naturalObservationState(): P011NaturalObservationState {
+    this.updateSandTop();
+    return {
+      bh: Array.from(this.bh),
+      bl: Array.from(this.bl),
+      mh: Array.from(this.mh),
+      ml: Array.from(this.ml),
+      suspH: Array.from(this.suspH),
+      suspL: Array.from(this.suspL),
+      S: Array.from(this.sandTopScratch),
+      waterTop: Array.from(this.waterTop)
+    };
+  }
+
+  private beginNaturalObservation(substepDt: number): void {
+    if (this.naturalObservationProbe === null) {
+      return;
+    }
+    this.naturalObservationPhysicsDt = substepDt;
+    const state = this.naturalObservationState();
+    this.naturalObservationStateBefore = state;
+    this.naturalObservationSlidingBefore.set(this.naturalObservationSliding);
+    this.naturalObservationSlidingAfter.fill(0);
+    this.naturalObservationSlipSeen.fill(0);
+    this.naturalObservationProbe.beginSubstep({
+      observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
+      ledgerSchemaVersion: P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
+      runId: this.p011RunId,
+      frameId: this.p011FrameId,
+      substepId: this.p011SubstepId + 1,
+      sequence: this.p011SampleSequence + 1,
+      physicsTime: nextP011TimeMs(),
+      physicsDt: substepDt,
+      commandSequence: this.p011InputSequence,
+      commandPhaseId: this.commandPhaseId,
+      commandPhaseSign: this.commandPhaseSign,
+      phaseD: p011NaturalObservationPhaseForCommand(this.p011InputSequence, this.targetTilt),
+      targetTilt: this.targetTilt,
+      effectiveTilt: this.effectiveTilt,
+      effectiveTiltRate: this.effectiveTiltRate,
+      shakeEnergy: this.shakeEnergy,
+      runRole: this.naturalObservationRunRole,
+      thresholdCalibrationId: this.naturalObservationThresholdCalibrationId,
+      thetaStartDeg: this.naturalObservationThetaStartDeg,
+      thetaStopDeg: this.naturalObservationThetaStopDeg,
+      transitionTelemetryAvailable: true
+    }, state);
+    this.naturalObservationRelaxCandidateCount = 0;
+    this.naturalObservationRelaxRequestedTotal = 0;
+  }
+
+  private naturalObservationBudgets(): P011NaturalObservationBudgets {
+    const localUsed = Array.from(this.substepMotionBudgetUsed);
+    const localRemaining = Array.from(this.substepMotionBudgetRemaining);
+    const localLimit = localUsed.map((used, index) => used + localRemaining[index]);
+    return {
+      localLimit: localLimit,
+      localUsed: localUsed,
+      localRemaining: localRemaining,
+      bottomRequested: this.bottomCreepBudgetRequested,
+      bottomUsed: this.bottomCreepBudgetUsed,
+      bottomLimit: this.bottomCreepBudgetLimit,
+      bottomClipped: this.bottomCreepBudgetClipped,
+      totalRequested: this.naturalObservationTotalRequested,
+      totalUsed: this.totalMotionBudgetUsed,
+      totalLimit: this.totalMotionBudgetLimit,
+      totalRemaining: this.totalMotionBudgetRemaining,
+      totalClipped: this.totalMotionBudgetClipped
+    };
+  }
+
+  private finishNaturalObservation(errorCode: WaterSandErrorCode | null): void {
+    const probe = this.naturalObservationProbe;
+    const before = this.naturalObservationStateBefore;
+    if (probe === null || before === null) {
+      return;
+    }
+    if (errorCode === null) {
+      this.naturalObservationSliding.set(this.naturalObservationSlidingAfter);
+    }
+    const after = this.naturalObservationState();
+    let finite = true;
+    let range = true;
+    let capacity = true;
+    let stock = true;
+    let waterBefore = 0;
+    let heavyBefore = 0;
+    let lightBefore = 0;
+    let waterAfter = 0;
+    let heavyAfter = 0;
+    let lightAfter = 0;
+    let maxSubstepBh = 0;
+    let maxSubstepBl = 0;
+    let maxSandTopSubstepDelta = 0;
+    let maxSandTopInvariantError = 0;
+    for (let c = 0; c < this.cols; c++) {
+      const values = [before.bh[c], before.bl[c], before.mh[c], before.ml[c],
+        before.suspH[c], before.suspL[c], before.S[c], before.waterTop[c],
+        after.bh[c], after.bl[c], after.mh[c], after.ml[c],
+        after.suspH[c], after.suspL[c], after.S[c], after.waterTop[c]];
+      for (const value of values) {
+        finite = finite && Number.isFinite(value);
+        stock = stock && value >= -EPS;
+        range = range && value <= this.capacity + EPS;
+      }
+      capacity = capacity && after.S[c] + after.suspH[c] + after.suspL[c] <= this.capacity + EPS;
+      waterBefore += before.waterTop[c];
+      heavyBefore += before.bh[c] + before.mh[c] + before.suspH[c];
+      lightBefore += before.bl[c] + before.ml[c] + before.suspL[c];
+      waterAfter += after.waterTop[c];
+      heavyAfter += after.bh[c] + after.mh[c] + after.suspH[c];
+      lightAfter += after.bl[c] + after.ml[c] + after.suspL[c];
+      maxSubstepBh = Math.max(maxSubstepBh, Math.abs(after.bh[c] - before.bh[c]));
+      maxSubstepBl = Math.max(maxSubstepBl, Math.abs(after.bl[c] - before.bl[c]));
+      maxSandTopSubstepDelta = Math.max(maxSandTopSubstepDelta,
+        Math.abs(after.S[c] - before.S[c]));
+      if (c + 1 < this.cols) {
+        maxSandTopInvariantError = Math.max(maxSandTopInvariantError,
+          Math.abs(after.S[c + 1] - after.S[c] - Math.tan(this.effectiveTilt * Math.PI / 180)));
+      }
+    }
+    range = range && maxSandTopInvariantError <= Math.tan(30 * Math.PI / 180) + EPS;
+    const conservation = Math.abs(waterAfter - waterBefore) <= 1e-6 &&
+      Math.abs(heavyAfter - heavyBefore) <= 1e-6 &&
+      Math.abs(lightAfter - lightBefore) <= 1e-6;
+    const budgets = this.naturalObservationBudgets();
+    let maxLocalBudgetExcess = 0;
+    for (let c = 0; c < this.cols; c++) {
+      maxLocalBudgetExcess = Math.max(maxLocalBudgetExcess,
+        budgets.localUsed[c] - budgets.localLimit[c]);
+    }
+    const audit: P011NaturalObservationAudit = {
+      finite: finite,
+      range: range,
+      capacity: capacity,
+      stock: stock,
+      conservation: conservation,
+      waterTotalBefore: waterBefore,
+      waterTotalAfter: waterAfter,
+      heavyTotalBefore: heavyBefore,
+      heavyTotalAfter: heavyAfter,
+      lightTotalBefore: lightBefore,
+      lightTotalAfter: lightAfter,
+      maxSubstepBh: maxSubstepBh,
+      maxSubstepBl: maxSubstepBl,
+      maxSandTopSubstepDelta: maxSandTopSubstepDelta,
+      maxSandTopInvariantError: maxSandTopInvariantError,
+      bottomBudgetExcess: Math.max(0, budgets.bottomUsed - budgets.bottomLimit),
+      totalBudgetExcess: Math.max(0, budgets.totalUsed - budgets.totalLimit),
+      maxLocalBudgetExcess: Math.max(0, maxLocalBudgetExcess),
+      relaxCandidateCount: this.naturalObservationRelaxCandidateCount,
+      relaxTriggered: this.naturalObservationRelaxRequestedTotal > EPS,
+      relaxRequestedTotal: this.naturalObservationRelaxRequestedTotal,
+      relaxAppliedTotal: 0,
+      errorCode: errorCode === null ? null : `${errorCode}`
+    };
+    probe.finishSubstep(after, budgets, audit);
+    this.naturalObservationStateBefore = null;
   }
 
   nextP011InputSequence(): number {
@@ -1162,7 +1375,6 @@ export class WaterSandField {
   }
 
   private substep(dt: number): WaterSandErrorCode | null {
-    this.updateTilt(dt);
     this.updateSandTop();
     this.waterLevel(dt);
     this.diffuseSuspension(dt);
@@ -1290,22 +1502,26 @@ export class WaterSandField {
           this.suspensionCapacity(c));
         this.suspH[c + 1] -= flux;
         this.suspH[c] += flux;
+        this.recordNaturalSuspensionDiffusion(c, c + 1, c, flux, 0);
       } else if (heavyDifference < 0) {
         const flux = Math.min(this.params.heavyDiffusion * dt, -heavyDifference / 2,
           this.suspensionCapacity(c + 1));
         this.suspH[c] -= flux;
         this.suspH[c + 1] += flux;
+        this.recordNaturalSuspensionDiffusion(c, c, c + 1, flux, 0);
       }
       if (lightDifference > 0) {
         const flux = Math.min(this.params.lightDiffusion * dt, lightDifference / 2,
           this.suspensionCapacity(c));
         this.suspL[c + 1] -= flux;
         this.suspL[c] += flux;
+        this.recordNaturalSuspensionDiffusion(c, c + 1, c, 0, flux);
       } else if (lightDifference < 0) {
         const flux = Math.min(this.params.lightDiffusion * dt, -lightDifference / 2,
           this.suspensionCapacity(c + 1));
         this.suspL[c] -= flux;
         this.suspL[c + 1] += flux;
+        this.recordNaturalSuspensionDiffusion(c, c, c + 1, 0, flux);
       }
     }
   }
@@ -1313,6 +1529,98 @@ export class WaterSandField {
   private suspensionCapacity(column: number): number {
     return Math.max(0, this.waterTop[column] - this.sandTopScratch[column] -
       this.suspH[column] - this.suspL[column]);
+  }
+
+  private recordNaturalSuspensionDiffusion(interfaceIndex: number, donor: number,
+    receiver: number, heavy: number, light: number): void {
+    if (this.naturalObservationProbe === null || !this.collectingTotalMotionRequests) {
+      return;
+    }
+    this.naturalObservationProbe.recordSuspensionDiffusion({
+      interfaceIndex: interfaceIndex,
+      donor: donor,
+      receiver: receiver,
+      directionSign: donor < receiver ? 1 : -1,
+      requested: heavy + light,
+      allowed: heavy + light,
+      heavy: heavy,
+      light: light
+    });
+  }
+
+  private recordNaturalRelaxSummary(appliedTotal: number): void {
+    if (this.naturalObservationProbe === null) {
+      return;
+    }
+    this.naturalObservationProbe.recordRelaxAngle(
+      this.naturalObservationRelaxCandidateCount,
+      this.naturalObservationRelaxRequestedTotal > EPS,
+      this.naturalObservationRelaxRequestedTotal,
+      appliedTotal
+    );
+  }
+
+  private recordNaturalRelaxInactiveEdges(): void {
+    if (this.naturalObservationProbe === null) {
+      return;
+    }
+    for (let index = 0; index < this.cols - 1; index++) {
+      if (this.naturalObservationSlipSeen[index] !== 0 ||
+        this.naturalObservationSlidingBefore[index] === 0) {
+        continue;
+      }
+      this.naturalObservationProbe.recordSlip({
+        interfaceIndex: index,
+        donor: index,
+        receiver: index + 1,
+        directionSign: 0,
+        requested: 0,
+        allowed: 0,
+        heavy: 0,
+        light: 0,
+        activeBefore: true,
+        activeAfter: false
+      });
+    }
+  }
+
+  private recordNaturalTopSplit(interfaceIndex: number | null, column: number, amount: number,
+    donorBh: number, donorBl: number, donorMh: number, donorMl: number,
+    split: WaterSandSplitResult): void {
+    if (this.naturalObservationProbe === null) {
+      return;
+    }
+    const fromMix = Math.min(amount, donorMh + donorMl);
+    const mixTotal = Math.max(donorMh + donorMl, EPS);
+    const mixScale = fromMix / mixTotal;
+    const fromMixedHeavy = donorMh * mixScale;
+    const fromMixedLight = donorMl * mixScale;
+    let remaining = amount - fromMix;
+    const fromLight = Math.min(remaining, donorBl);
+    remaining -= fromLight;
+    const fromHeavy = Math.min(remaining, donorBh);
+    this.naturalObservationProbe.recordTopSplit({
+      channel: 'top',
+      interfaceIndex: interfaceIndex,
+      column: column,
+      amount: amount,
+      donorBhBefore: donorBh,
+      donorBlBefore: donorBl,
+      donorMhBefore: donorMh,
+      donorMlBefore: donorMl,
+      baseHeavyShare: null,
+      biasedHeavyShare: null,
+      initialHeavy: fromMixedHeavy,
+      initialLight: fromMixedLight,
+      fromMixedHeavy: fromMixedHeavy,
+      fromMixedLight: fromMixedLight,
+      fromLight: fromLight,
+      fromHeavy: fromHeavy,
+      fallbackHeavy: fromHeavy,
+      fallbackLight: fromLight,
+      finalHeavy: split.heavy,
+      finalLight: split.light
+    });
   }
 
   private settleSandV2(dt: number): void {
@@ -1341,6 +1649,9 @@ export class WaterSandField {
       this.mh[c] += heavy;
       this.suspL[c] -= light;
       this.ml[c] += light;
+      if (this.naturalObservationProbe !== null) {
+        this.naturalObservationProbe.recordSettle(c, originalRequested, allowed, heavy, light);
+      }
     }
     this.updateSandTop();
   }
@@ -1380,6 +1691,9 @@ export class WaterSandField {
       this.bh[c] += q + r;
       this.bl[c] += r - q;
       this.ml[c] += q - r;
+      if (this.naturalObservationProbe !== null) {
+        this.naturalObservationProbe.recordPercolate(c, originalRequested, allowed, q, r);
+      }
     }
     this.updateSandTop();
   }
@@ -1393,10 +1707,14 @@ export class WaterSandField {
       maximumDeviation = Math.max(maximumDeviation, Math.abs(deviation));
     }
     if (maximumDeviation <= limit) {
+      this.recordNaturalRelaxInactiveEdges();
+      this.recordNaturalRelaxSummary(0);
       return;
     }
     const maxFlux = this.params.maxAvalancheFlux * dt;
     if (this.collectingTotalMotionRequests) {
+      let candidateCount = 0;
+      let requestedTotal = 0;
       for (let index = 0; index < this.cols - 1; index++) {
         const c = index;
         const next = c + 1;
@@ -1404,6 +1722,7 @@ export class WaterSandField {
         if (Math.abs(deviation) <= limit) {
           continue;
         }
+        candidateCount += 1;
         const donor = deviation > 0 ? next : c;
         const receiver = deviation > 0 ? c : next;
         const excess = Math.abs(deviation) - limit;
@@ -1413,6 +1732,7 @@ export class WaterSandField {
           : this.capacity - this.sandTopScratch[receiver];
         const naturalAmount = Math.min(excess / 2, maxFlux,
           this.sandTopScratch[donor], receiverCapacity);
+        requestedTotal += Math.max(0, naturalAmount);
         this.totalMotionBudgetRequested += Math.max(0, naturalAmount);
         if (naturalAmount > EPS && this.slipRequestCount < this.slipRequestAmounts.length) {
           this.slipRequestAmounts[this.slipRequestCount] = naturalAmount;
@@ -1421,21 +1741,66 @@ export class WaterSandField {
           this.slipRequestCount++;
         }
       }
+      this.naturalObservationRelaxCandidateCount = candidateCount;
+      this.naturalObservationRelaxRequestedTotal = requestedTotal;
+      this.recordNaturalRelaxSummary(0);
       return;
     }
+    let appliedTotal = 0;
     for (let index = 0; index < this.slipRequestCount; index++) {
       const requested = this.slipRequestAmounts[index];
       const donor = this.slipRequestDonors[index];
       const receiver = this.slipRequestReceivers[index];
       const amount = this.clipSubstepMotion(donor, receiver, requested);
+      const activeBefore = this.naturalObservationSlidingBefore[index] !== 0;
+      const activeAfter = amount > EPS;
+      this.naturalObservationSlipSeen[index] = 1;
+      this.naturalObservationSlidingAfter[index] = activeAfter ? 1 : 0;
+      if (requested > EPS && amount <= EPS) {
+        this.naturalObservationProbe?.recordSlip({
+          interfaceIndex: index,
+          donor: donor,
+          receiver: receiver,
+          directionSign: donor < receiver ? 1 : -1,
+          requested: requested,
+          allowed: amount,
+          heavy: 0,
+          light: 0,
+          activeBefore: activeBefore,
+          activeAfter: activeAfter
+        });
+      }
       if (amount <= EPS) {
         continue;
       }
+      const donorBhBefore = this.bh[donor];
+      const donorBlBefore = this.bl[donor];
+      const donorMhBefore = this.mh[donor];
+      const donorMlBefore = this.ml[donor];
       const split = this.splitTopV2(donor, amount);
+      if (this.naturalObservationProbe !== null) {
+        this.naturalObservationProbe.recordSlip({
+          interfaceIndex: index,
+          donor: donor,
+          receiver: receiver,
+          directionSign: donor < receiver ? 1 : -1,
+          requested: requested,
+          allowed: amount,
+          heavy: split.heavy,
+          light: split.light,
+          activeBefore: activeBefore,
+          activeAfter: activeAfter
+        });
+        this.recordNaturalTopSplit(index, donor, amount, donorBhBefore, donorBlBefore,
+          donorMhBefore, donorMlBefore, split);
+      }
       this.mh[receiver] += split.heavy;
       this.ml[receiver] += split.light;
+      appliedTotal += amount;
       this.updateSandTop();
     }
+    this.recordNaturalRelaxInactiveEdges();
+    this.recordNaturalRelaxSummary(appliedTotal);
   }
 
   private creepBottom(dt: number): WaterSandErrorCode | null {
@@ -1535,6 +1900,7 @@ export class WaterSandField {
       const requested = this.bottomCreepRequestAmounts[index];
       const donor = this.bottomCreepRequestDonors[index];
       const receiver = this.bottomCreepRequestReceivers[index];
+      const directionSign = this.bottomCreepDirection > 0 ? 1 : -1;
       const donorDeposited = this.bh[donor] + this.bl[donor];
       const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
       const receiverCapacity = this.waterTop[receiver] > EPS
@@ -1544,18 +1910,79 @@ export class WaterSandField {
       const amount = this.clipBottomCreepMotion(
         Math.max(0, Math.min(independentGrant, donorDeposited, receiverCapacity)));
       if (amount <= EPS) {
+        if (requested > EPS && this.naturalObservationProbe !== null) {
+          this.naturalObservationProbe.recordBottomCreep({
+            interfaceIndex: index,
+            donor: donor,
+            receiver: receiver,
+            directionSign: directionSign,
+            requested: requested,
+            allowed: 0,
+            heavy: 0,
+            light: 0
+          });
+        }
         continue;
       }
       const heavyResidual = this.phaseHeavyIdeal - this.phaseHeavyActual;
       const lightResidual = this.phaseLightIdeal - this.phaseLightActual;
+      const donorBhBefore = this.bh[donor];
+      const donorBlBefore = this.bl[donor];
+      const donorMhBefore = this.mh[donor];
+      const donorMlBefore = this.ml[donor];
+      const deposited = Math.max(donorBhBefore + donorBlBefore, EPS);
+      const baseHeavyShare = Math.max(P011_HEAVY_SHARE_MIN,
+        Math.min(P011_HEAVY_SHARE_MAX, donorBhBefore / deposited));
+      const biasedHeavyShare = Math.max(P011_HEAVY_SHARE_MIN,
+        Math.min(P011_HEAVY_SHARE_MAX,
+          baseHeavyShare + P011_HEAVY_SHARE_BIAS * (heavyResidual - lightResidual)));
+      const initialHeavy = Math.min(amount * biasedHeavyShare, donorBhBefore, amount);
+      const initialLight = Math.min(amount - initialHeavy, donorBlBefore);
+      let remainder = amount - initialHeavy - initialLight;
+      const fallbackHeavy = Math.min(remainder, donorBhBefore - initialHeavy);
+      remainder -= fallbackHeavy;
+      const fallbackLight = Math.min(remainder, donorBlBefore - initialLight);
       const split = this.splitBottomPhaseBalanced(donor, amount, heavyResidual, lightResidual);
       if (this.lastBottomSplitError !== null) {
         return this.lastBottomSplitError;
       }
+      if (this.naturalObservationProbe !== null) {
+        this.naturalObservationProbe.recordBottomCreep({
+          interfaceIndex: index,
+          donor: donor,
+          receiver: receiver,
+          directionSign: directionSign,
+          requested: requested,
+          allowed: amount,
+          heavy: split.heavy,
+          light: split.light
+        });
+        this.naturalObservationProbe.recordBottomSplit({
+          channel: 'bottom',
+          interfaceIndex: index,
+          column: donor,
+          amount: amount,
+          donorBhBefore: donorBhBefore,
+          donorBlBefore: donorBlBefore,
+          donorMhBefore: donorMhBefore,
+          donorMlBefore: donorMlBefore,
+          baseHeavyShare: baseHeavyShare,
+          biasedHeavyShare: biasedHeavyShare,
+          initialHeavy: initialHeavy,
+          initialLight: initialLight,
+          fromMixedHeavy: 0,
+          fromMixedLight: 0,
+          fromLight: 0,
+          fromHeavy: 0,
+          fallbackHeavy: fallbackHeavy,
+          fallbackLight: fallbackLight,
+          finalHeavy: split.heavy,
+          finalLight: split.light
+        });
+      }
       this.bh[receiver] += split.heavy;
       this.bl[receiver] += split.light;
       // P-011 v2.8: signed global left/right effective displacement.
-      const directionSign = this.bottomCreepDirection > 0 ? 1 : -1;
       this.bottomCreepDonorEffectiveDisplacement[donor] -= directionSign * amount;
       this.bottomCreepReceiverEffectiveDisplacement[receiver] += directionSign * amount;
       this.lastBottomFlux += amount;
@@ -1608,9 +2035,22 @@ export class WaterSandField {
       }
       const amount = this.clipSubstepMotion(c, -1, originalRequested);
       if (amount <= EPS) {
+        if (this.naturalObservationProbe !== null) {
+          this.naturalObservationProbe.recordLift(c, originalRequested, 0, 0, 0);
+        }
         continue;
       }
+      const donorBhBefore = this.bh[c];
+      const donorBlBefore = this.bl[c];
+      const donorMhBefore = this.mh[c];
+      const donorMlBefore = this.ml[c];
       const split = this.splitTopV2(c, amount);
+      if (this.naturalObservationProbe !== null) {
+        this.naturalObservationProbe.recordLift(c, originalRequested, amount,
+          split.heavy, split.light);
+        this.recordNaturalTopSplit(null, c, amount, donorBhBefore, donorBlBefore,
+          donorMhBefore, donorMlBefore, split);
+      }
       this.suspH[c] += split.heavy;
       this.suspL[c] += split.light;
       this.updateSandTop();

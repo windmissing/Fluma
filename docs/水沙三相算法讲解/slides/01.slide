@@ -1,0 +1,59 @@
+<Slide style={{ width: 1280, height: 720, background: 'linear-gradient(160deg, #0F2A43 0%, #1D4E79 100%)', padding: 0, position: 'relative' }}>
+    {/* 背景网格纹样 */}
+    <svg width={1280} height={720} viewBox='0 0 1280 720' style={{ position: 'absolute', top: 0, left: 0, opacity: 0.08 }}>
+        {[80, 160, 240, 320, 400, 480, 560, 640, 720].map((x) => (
+            <line key={'v'+x} x1={x} y1={0} x2={x} y2={720} stroke='#7FB3D5' strokeWidth={1} />
+        ))}
+        {[90, 180, 270, 360, 450, 540, 630].map((y) => (
+            <line key={'h'+y} x1={0} y1={y} x2={1280} y2={y} stroke='#7FB3D5' strokeWidth={1} />
+        ))}
+    </svg>
+    {/* 左侧文字区 */}
+    <Box style={{ position: 'absolute', left: 80, top: 150, width: 520, flexDirection: 'column', gap: 24 }}>
+        <Text style={{ fontSize: 22, color: '#7FB3D5', letterSpacing: 6 }}>HelloWorld 流沙画 · P-003 算法方案</Text>
+        <Text style={{ fontSize: 64, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.2 }}>水沙三相<br />算法讲解</Text>
+        <Box style={{ width: 80, height: 6, background: '#F39C12', borderRadius: 3 }} />
+        <Text style={{ fontSize: 22, color: '#C8D8E6', lineHeight: 1.6 }}>
+            把「水中的两种沙」变成 28 列 × 6 个数字，<br />
+            用四条物理机制 + 一条守恒底线跑通全部场景
+        </Text>
+        <Text style={{ fontSize: 16, color: '#5D6D7E', marginTop: 12 }}>方案版本 v2.4 · 2026-10-14</Text>
+    </Box>
+    {/* 右侧主视觉：容器剖面 SVG */}
+    <Box style={{ position: 'absolute', right: 60, top: 120, width: 560, height: 480 }}>
+        <svg width={560} height={480} viewBox='0 0 560 480'>
+            {/* 玻璃容器外框 */}
+            <rect x={40} y={20} width={480} height={420} rx={18} fill='rgba(127,179,213,0.10)' stroke='#7FB3D5' strokeWidth={3} />
+            {/* 水体 */}
+            <rect x={44} y={150} width={472} height={286} rx={14} fill='rgba(127,179,213,0.28)' />
+            {/* 水面线 */}
+            <line x1={44} y1={150} x2={516} y2={150} stroke='#7FB3D5' strokeWidth={3} strokeDasharray='8 5' />
+            <text x={488} y={140} fill='#7FB3D5' fontSize={16}>水面</text>
+            {/* 沙堆轮廓（安息角形状） */}
+            <path d='M44 436 L44 380 L120 380 L200 320 L280 320 L360 372 L444 372 L516 384 L516 436 Z' fill='#C9A15C' opacity={0.9} />
+            {/* 重沙核心（下层深色） */}
+            <path d='M44 436 L44 412 L140 412 L230 356 L320 356 L410 400 L516 408 L516 436 Z' fill='#8A5A2B' />
+            {/* 悬浮颗粒 */}
+            {[[150, 240], [230, 200], [310, 230], [390, 190], [200, 280], [350, 270], [430, 250], [280, 180]].map(([cx, cy], i) => (
+                <circle key={i} cx={cx} cy={cy} r={5} fill={i % 2 === 0 ? '#F39C12' : '#E8E8E8'} opacity={0.85} />
+            ))}
+            {/* 列分隔线示意 */}
+            {[105, 170, 235, 300, 365, 430].map((x) => (
+                <line key={x} x1={x} y1={30} x2={x} y2={434} stroke='#7FB3D5' strokeWidth={1} opacity={0.25} strokeDasharray='3 6' />
+            ))}
+            {/* 图例 */}
+            <rect x={60} y={52} width={14} height={14} fill='#8A5A2B' rx={3} />
+            <text x={82} y={65} fill='#C8D8E6' fontSize={15}>重沙（沉积）</text>
+            <rect x={210} y={52} width={14} height={14} fill='#C9A15C' rx={3} />
+            <text x={232} y={65} fill='#C8D8E6' fontSize={15}>轻沙（上覆）</text>
+            <circle cx={370} cy={58} r={6} fill='#F39C12' />
+            <text x={384} y={64} fill='#C8D8E6' fontSize={15}>悬浮颗粒</text>
+        </svg>
+    </Box>
+    {/* 页脚 */}
+    <Box style={{ position: 'absolute', left: 60, bottom: 20, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Box style={{ width: 12, height: 12, background: '#F39C12' }} />
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+    </Box>
+    <Text style={{ position: 'absolute', right: 60, bottom: 20, fontSize: 14, color: '#5D6D7E' }}>01 / 14</Text>
+</Slide>

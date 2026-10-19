@@ -1,18 +1,36 @@
 import { SandGrid } from '../physics/SandGrid';
 import { FluidField } from '../physics/FluidField';
-import { WaterSandField, WaterSandSnapshot, WaterSandParams, WaterSandScene, WaterSandRegion, defaultWaterSandParams } from '../physics/WaterSandField';
+import { WaterSandField, WaterSandSnapshot, WaterSandParams, WaterSandScene, WaterSandRegion, WaterSandP011InputSource, WaterSandP011Metric, WaterSandP011Bottom, defaultWaterSandParams, nextP011TimeMs, waterSandFrameHookPayload } from '../physics/WaterSandField';
+import { LiquidCAController } from '../physics/LiquidCAController';
+import { LiquidCATelemetry } from '../physics/LiquidCATelemetry';
+import { defaultLiquidCAConfig, LiquidCAConfig, LiquidCAFramePayload, LiquidCARenderer,
+  LiquidInputSource, LiquidRenderSnapshot } from '../physics/LiquidCATypes';
 import sensor from '@ohos.sensor';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 import { ComponentContent } from '@ohos.arkui.node';
 import { BusinessError } from '@ohos.base';
 import hilog from '@ohos.hilog';
+import { decodeP011TiltWant } from '../physics/P011TiltWant';
+import common from '@ohos.app.ability.common';
+import {
+  P011NaturalObservationProbe,
+  P011NaturalObservationRecord,
+  P011_NATURAL_OBSERVATION_ROUTE_ID
+} from '../physics/P011NaturalObservation';
+import {
+  P011NaturalObservationStore,
+  createP011NaturalObservationStore
+} from '../physics/P011NaturalObservationStore';
+import { P011InputModeState, P011ModeRequestSource, P011InputSelection,
+  transitionP011InputMode, acceptP011SensorSample, selectP011Input,
+  canP011GestureOwnInput } from '../physics/P011InputMode';
 
 /** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
 class MyFrameCallback extends FrameCallback {
   owner: SandCanvas | null = null;
   onFrame(frameTimeInNano: number): void {
     if (this.owner !== null) {
-      this.owner.frame();
+      this.owner.frame(frameTimeInNano);
     }
   }
 }
@@ -63,6 +81,44 @@ class PanelParams {
   shakeInput: number = 0;
 }
 
+interface LiquidWantCommand {
+  p011TiltWantSequence?: number;
+  renderMode: number;
+  testMode: boolean;
+  forceInvert: boolean;
+  shake: number;
+  seed: number;
+  cellPx: number;
+  caseId: string;
+  warnings: string[];
+}
+
+class SandCanvasLiquidRenderer implements LiquidCARenderer {
+  private owner: SandCanvas;
+  private config: LiquidCAConfig;
+  private telemetry: LiquidCATelemetry;
+
+  constructor(owner: SandCanvas, config: LiquidCAConfig, telemetry: LiquidCATelemetry) {
+    this.owner = owner;
+    this.config = config;
+    this.telemetry = telemetry;
+  }
+
+  render(snapshot: LiquidRenderSnapshot, frame: LiquidCAFramePayload): void {
+    this.owner.renderLiquidSnapshot(snapshot, frame);
+  }
+
+  onModelError(errorCode: string): void {
+    this.telemetry.onEvent({
+      type: 'model_error', sequence: 0, eventTimeMs: Date.now(), caseId: this.owner.liquidTestCaseId(), boundary: true,
+      source: LiquidInputSource.INTERNAL, forceInvert: this.owner.forceInvert,
+      shakeIntensity: 0, errorCode: errorCode, cols: this.config.cols,
+      rows: this.config.rows, cellPx: this.config.cellPx, initialHeavy: 0,
+      initialLight: 0, seed: this.config.seed, scaled: false
+    });
+  }
+}
+
 /** 面板内容全局 Builder（BindSheet 挂载）：内容与原 Stack 内 Column 一致。
  *  按钮 onClick 日志链路保留（验证方 dumpLayout vs hilog 双向一致验收用）。
  *  @State 变更经 owner 触发组件重渲染；builder 内读 owner 的 @State 也能
@@ -83,7 +139,7 @@ function panelSheetBuilder(params: PanelParams) {
         params.owner.toggleForceInvert();
       })
 
-    Button(params.tm ? '测试模式:开(传感器禁用)' : '测试模式:关(传感器启用)')
+    Button(params.tm ? '测试模式（模拟姿态）' : '体验模式（传感器）')
       .fontSize(12)
       .width('100%')
       .backgroundColor(params.tm ? '#C62828' : '#455A64')
@@ -128,7 +184,7 @@ function panelSheetBuilder(params: PanelParams) {
         params.owner.setFlowSpeed(value);
       })
 
-    if (params.renderMode === MODE_WATERSAND) {
+    if (params.renderMode === MODE_WATERSAND || params.renderMode === MODE_LIQUID) {
       Text(`\u5206\u9009\u5F3A\u5EA6: ${params.percolationRate.toFixed(1)}/s`)
         .fontSize(13).fontColor('#CCCCCC').width('100%')
       Slider({ value: params.percolationRate, min: 0, max: 12, step: 0.5 })
@@ -159,7 +215,11 @@ function panelSheetBuilder(params: PanelParams) {
           if (params.owner === null) {
             return;
           }
+          if (params.renderMode === MODE_LIQUID) {
+            params.owner.setLiquidShakeInput(value);
+        } else {
           params.owner.setWaterSandShakeInput(value);
+          }
         })
     }
   }
@@ -189,6 +249,14 @@ struct SandCanvas {
   private field: SandGrid | null = null;
   private fluidField: FluidField | null = null;
   private waterSandField: WaterSandField | null = null;
+  private liquidController: LiquidCAController | null = null;
+  private liquidTelemetry: LiquidCATelemetry = new LiquidCATelemetry();
+  private liquidSeed: number = 0;
+  private liquidCaseId: string = '';
+  private liquidShakeInput: number = 0;
+  private liquidWantCommandSeq: number = 0;
+  private p011TiltWantConsumedSeq: number = 0;
+  private p011ScriptTargetTilt: number | null = null;
   private waterSandSnapshot: WaterSandSnapshot | null = null;
   private waterSandParams: WaterSandParams = defaultWaterSandParams();
   private boxX: number = 0;
@@ -222,20 +290,28 @@ struct SandCanvas {
   /** 渲染模式：0=细沙 A，1=流体 B（面板可切换） */
   @State renderMode: number = MODE_FLUID;
   /** 传感器角速度上限 °/s（液体转动惯性，翻转时渐变过渡） */
-  private readonly maxOmega: number = 240;
+  private readonly maxOmega: number = 720;
   private lastFrameTime: number = 0;
   private waterSandPreset: string = 'default';
   private waterSandCols: number = 128;
   private waterSandCapacity: number = 192;
+  private waterSandVSandTopMax: number = 28;
   private waterSandSnapshotEnabled: boolean = false;
+  private naturalObservationProbe: P011NaturalObservationProbe | null = null;
+  private naturalObservationStore: P011NaturalObservationStore | null = null;
+  private naturalObservationStoreLogged: boolean = false;
   private waterSandVisualInverted: boolean = false;
   private waterRenderA: Float64Array = new Float64Array(0);
   private waterRenderB: Float64Array = new Float64Array(0);
   private waterRenderC: Float64Array = new Float64Array(0);
   private waterRenderD: Float64Array = new Float64Array(0);
+  private waterRenderE: Float64Array = new Float64Array(0);
   private lastWaterSandMetricTime: number = 0;
   private lastWaterSandTilt: number | null = null;
   private lastWaterSandDormant: boolean | null = null;
+  private lastTiltCommandTime: number = 0;
+  private lastSensorCommandTime: number = 0;
+  private hasFreshSensorSample: boolean = false;
   private hilogDomain: number = 0x0000;
   /** BindSheet 内容（s78：面板迁移至系统半模态浮层，与画布手势 hitTest 隔离）。
    *  ComponentContent 在 aboutToAppear 构造；@Builder 函数里通过 params 镜像
@@ -259,31 +335,44 @@ struct SandCanvas {
     this.sheetParams.flowSpeed = this.flowSpeed;
     this.sheetParams.percolationRate = this.waterSandParams.percolationRate;
     this.sheetParams.mixBandPx = this.mixBandPx;
-    this.sheetParams.shakeInput = this.waterSandShakeInput;
+    this.sheetParams.shakeInput = this.renderMode === MODE_LIQUID
+      ? this.liquidShakeInput : this.waterSandShakeInput;
     this.sheetContent.update(this.sheetParams);
   }
 
   aboutToAppear(): void {
     this.frameCb.owner = this;
+    this.p011TiltWantConsumedSeq = AppStorage.get<number>('p011TiltWantConsumedSeq') ?? 0;
     // s78：构造 BindSheet 内容（owner 桥接 this，builder 内按钮经公开方法改状态）
     this.sheetContent = new ComponentContent(this.getUIContext(), wrapBuilder(panelSheetBuilder), this.makePanelParams());
     // 测试自动化：want 参数（EntryAbility 写入 AppStorage）初始化测试状态，
     // 零 UI 依赖（面板按钮热区随布局变化不可预测，多轮实测已弃用坐标点击）
     const tm = AppStorage.get<boolean>('testmode');
-    if (tm !== undefined) {
-      this.testMode = tm;
-      if (tm) {
-        this.useSensor = false;
-        this.gestureHoldUntil = Date.now() + 24 * 3600 * 1000;
-      }
+    this.applyInputMode(tm === true, 'startup', AppStorage.get<number>('p011TiltWantModeSequence') ?? 0);
+    const liquidCaseId = AppStorage.get<string>('liquidCaseId');
+    if (liquidCaseId !== undefined) {
+      this.liquidCaseId = liquidCaseId;
     }
+    this.liquidTelemetry.setTestMode(this.testMode);
     const fi = AppStorage.get<boolean>('forceinvert');
     if (fi !== undefined) {
-      this.forceInvert = fi;
+      this.forceInvert = this.testMode && fi;
     }
     const rm = AppStorage.get<number>('rendermode');
     if (rm !== undefined) {
       this.renderMode = rm;
+    }
+    const liquidSeed = AppStorage.get<number>('liquidSeed');
+    if (liquidSeed !== undefined && Number.isInteger(liquidSeed) && liquidSeed >= 0) {
+      this.liquidSeed = liquidSeed;
+    }
+    const liquidCellPx = AppStorage.get<number>('liquidCellPx');
+    if (liquidCellPx !== undefined && Number.isInteger(liquidCellPx) && liquidCellPx > 0) {
+      this.cellPx = liquidCellPx;
+    }
+    const liquidStartShake = AppStorage.get<number>('liquidStartShake');
+    if (liquidStartShake !== undefined && liquidStartShake >= 0 && liquidStartShake <= 1) {
+      this.liquidShakeInput = liquidStartShake;
     }
     const wsPreset = AppStorage.get<string>('wspreset');
     if (wsPreset !== undefined) {
@@ -305,12 +394,29 @@ struct SandCanvas {
     if (wsSnapshot !== undefined) {
       this.waterSandSnapshotEnabled = wsSnapshot;
     }
+    const wsSandTopMax = AppStorage.get<number>('wssandtopmax');
+    if (wsSandTopMax !== undefined && wsSandTopMax > 0 && wsSandTopMax <= 30) {
+      this.waterSandVSandTopMax = wsSandTopMax;
+    }
     console.info(`[ForceInvert] aboutToAppear: testMode=${this.testMode} forceInvert=${this.forceInvert} useSensor=${this.useSensor} renderMode=${this.renderMode}`);
     try {
       sensor.on(sensor.SensorId.ACCELEROMETER, (data: sensor.AccelerometerResponse) => {
-        // 轻度低通：跟手优先
-        this.sensorGx = this.sensorGx * 0.65 + data.x * 0.35;
-        this.sensorGy = this.sensorGy * 0.65 + data.y * 0.35;
+        // P-011 dual-input-v1: rejected source cannot update filter or timestamps.
+        if (this.testMode) {
+          return;
+        }
+        const wasFresh = this.hasFreshSensorSample;
+        const next = acceptP011SensorSample(this.readInputModeState(), data.x, data.y,
+          nextP011TimeMs(), this.waterSandParams.inputSmoothingAlpha);
+        this.writeInputModeState(next);
+        if (!wasFresh && next.hasFreshSensorSample) {
+          this.logWaterSand(`P011_MODE sensor_fresh ${JSON.stringify({
+            inputMode: 'EXPERIENCE', source: 'sensor', callback: true,
+            runId: this.waterSandField === null ? '' : this.waterSandField.getP011RunId(),
+            callbackTimestamp: data.timestamp, commandTime: next.lastSensorCommandTime,
+            x: data.x, y: data.y, filteredX: next.sensorGx, filteredY: next.sensorGy
+          })}`);
+        }
       });
     } catch (e) {
     }
@@ -318,10 +424,23 @@ struct SandCanvas {
 
   aboutToDisappear(): void {
     this.frameCb.owner = null;
+    this.stopLiquidController();
     try {
       sensor.off(sensor.SensorId.ACCELEROMETER);
     } catch (e) {
     }
+    // Disposed page cannot replay old pending/filter state on the next appearance.
+    const disposedState = this.readInputModeState();
+    disposedState.testMode = !this.testMode;
+    this.writeInputModeState(transitionP011InputMode(disposedState, this.testMode,
+      AppStorage.get<number>('p011TiltWantCommandSeq') ?? 0, 0).state);
+    this.waterSandField?.resetInputState();
+    const observationStore = this.naturalObservationStore;
+    this.naturalObservationStore = null;
+    this.naturalObservationProbe = null;
+    this.waterSandField?.setNaturalObservationProbe(null);
+    observationStore?.close().catch((): void => {
+    });
     if (this.sheetContent !== null) {
       this.sheetContent.dispose();
     }
@@ -331,29 +450,82 @@ struct SandCanvas {
    *  每个 toggle 后 syncSheet()：镜像快照写入 params 并 updateBindSheet 强制
    *  builder 重建 → sheet 内按钮文案与实际状态一致（缺陷 2 根治）。 */
   toggleForceInvert(): void {
+    if (!this.testMode) {
+      return;
+    }
     this.forceInvert = !this.forceInvert;
+    if (this.renderMode === MODE_LIQUID && this.liquidController !== null) {
+      this.liquidController.setForceInvert(this.forceInvert, LiquidInputSource.PANEL);
+    }
     console.info(`[ForceInvert] panel toggle -> ${this.forceInvert} (testMode=${this.testMode})`);
     this.syncSheet();
   }
 
   toggleTestMode(): void {
-    this.testMode = !this.testMode;
-    console.info(`[ForceInvert] panel toggle testMode -> ${this.testMode}`);
-    if (this.testMode) {
-      // 进入测试模式：冻结手势角度为重力源，传感器数据不再参与
-      this.useSensor = false;
-      this.gestureHoldUntil = Date.now() + 24 * 3600 * 1000;
-    } else {
-      // 退出测试模式：恢复传感器路径，同时清掉强制倒立
-      this.useSensor = true;
-      this.gestureHoldUntil = 0;
-      this.forceInvert = false;
+    this.applyInputMode(!this.testMode, 'panel');
+  }
+
+  // P-011 dual-input-v1: these adapters write helper results back to the real UI/physics inputs.
+  private readInputModeState(): P011InputModeState {
+    return { testMode: this.testMode, useSensor: this.useSensor,
+      scriptTargetTilt: this.p011ScriptTargetTilt, consumedSequence: this.p011TiltWantConsumedSeq,
+      tiltX: this.tiltX, lastTiltX: this.lastTiltX, forceInvert: this.forceInvert,
+      wasForceInvert: this.wasForceInvert, gestureHoldUntil: this.gestureHoldUntil,
+      sensorGx: this.sensorGx, sensorGy: this.sensorGy, hasFreshSensorSample: this.hasFreshSensorSample,
+      lastSensorCommandTime: this.lastSensorCommandTime, lastTiltCommandTime: this.lastTiltCommandTime };
+  }
+
+  private writeInputModeState(state: P011InputModeState): void {
+    this.testMode = state.testMode;
+    this.useSensor = state.useSensor;
+    this.p011ScriptTargetTilt = state.scriptTargetTilt;
+    this.p011TiltWantConsumedSeq = state.consumedSequence;
+    AppStorage.setOrCreate('p011TiltWantConsumedSeq', state.consumedSequence);
+    this.tiltX = state.tiltX;
+    this.lastTiltX = state.lastTiltX;
+    this.forceInvert = state.forceInvert;
+    this.wasForceInvert = state.wasForceInvert;
+    this.gestureHoldUntil = state.gestureHoldUntil;
+    this.sensorGx = state.sensorGx;
+    this.sensorGy = state.sensorGy;
+    this.hasFreshSensorSample = state.hasFreshSensorSample;
+    this.lastSensorCommandTime = state.lastSensorCommandTime;
+    this.lastTiltCommandTime = state.lastTiltCommandTime;
+  }
+
+  private applyInputMode(nextTestMode: boolean, source: P011ModeRequestSource,
+    currentWantSequence: number = 0): void {
+    const pending = AppStorage.get<number>('p011TiltWantCommandSeq') ?? 0;
+    const transition = transitionP011InputMode(this.readInputModeState(), nextTestMode,
+      pending, currentWantSequence);
+    this.writeInputModeState(transition.state);
+    if (transition.changed) {
+      this.lastWaterSandTilt = null;
+      this.waterSandField?.resetInputState();
+      if (this.renderMode === MODE_LIQUID && this.liquidController !== null) {
+        this.liquidController.setForceInvert(false, LiquidInputSource.PANEL);
+      }
+      this.logWaterSand(`P011_MODE boundary ${JSON.stringify({
+        boundary: true, inputMode: nextTestMode ? 'TEST' : 'EXPERIENCE', source,
+        pendingDiscardedThrough: transition.state.consumedSequence,
+        retainedWantSequence: nextTestMode ? currentWantSequence : 0
+      })}`);
     }
+    AppStorage.setOrCreate('testmode', this.testMode);
+    AppStorage.setOrCreate('forceinvert', this.forceInvert);
+    this.liquidTelemetry.setTestMode(this.testMode);
+    this.needRedraw = true;
     this.syncSheet();
   }
 
   cycleRenderMode(): void {
+    if (this.renderMode === MODE_LIQUID) {
+      this.stopLiquidController();
+    }
     this.renderMode = (this.renderMode + 1) % MODE_COUNT;
+    if (this.renderMode === MODE_LIQUID) {
+      this.startLiquidController();
+    }
     this.needRedraw = true;
     if (this.renderMode === MODE_WATERSAND) {
       this.logWaterSand(`WS_EVENT mode ${JSON.stringify({ renderMode: this.renderMode })}`);
@@ -363,11 +535,28 @@ struct SandCanvas {
   }
 
   resetField(): void {
+    if (this.renderMode === MODE_LIQUID) {
+      if (this.liquidController !== null) {
+        this.liquidController.reset(this.liquidSeed, LiquidInputSource.PANEL);
+      } else {
+        this.initField();
+      }
+      console.info('[ForceInvert] panel reset');
+      return;
+    }
     this.initField();
     if (this.renderMode === MODE_WATERSAND) {
       this.logWaterSand(`WS_EVENT reset ${JSON.stringify({
         preset: this.waterSandPreset,
         ledgerVersion: 2,
+        paramsVersion: 'v2.2',
+        vH: this.waterSandParams.heavySettleSpeed,
+        vL: this.waterSandParams.lightSettleSpeed,
+        liftHRate: this.waterSandParams.heavyLiftRate,
+        liftLRate: this.waterSandParams.lightLiftRate,
+        shakeRampRate: this.waterSandParams.shakeRampRate,
+        vSandTopMax: this.waterSandParams.vSandTopMax,
+        boundary: true,
         percolationRate: this.waterSandParams.percolationRate
       })}`);
       if (this.waterSandSnapshotEnabled) {
@@ -395,15 +584,34 @@ struct SandCanvas {
 
   setWaterSandShakeInput(value: number): void {
     this.waterSandShakeInput = Math.max(0, Math.min(1, value));
-    if (this.renderMode === MODE_WATERSAND && this.waterSandShakeInput > 0) {
+    if (this.renderMode === MODE_WATERSAND) {
       this.waterSandField?.setShakeInput(this.waterSandShakeInput);
-      this.logWaterSand(`WS_EVENT shake ${JSON.stringify({ input: this.waterSandShakeInput })}`);
+      if (this.waterSandShakeInput > 0) {
+        this.logWaterSand(`WS_EVENT shake ${JSON.stringify({
+          input: this.waterSandShakeInput,
+          boundary: true
+        })}`);
+      }
+    }
+    this.syncSheet();
+  }
+
+  setLiquidShakeInput(value: number): void {
+    this.liquidShakeInput = Math.max(0, Math.min(1, value));
+    if (this.renderMode === MODE_LIQUID && this.liquidController !== null) {
+      this.liquidController.setShake(this.liquidShakeInput, LiquidInputSource.PANEL);
     }
     this.syncSheet();
   }
 
   private logWaterSand(message: string): void {
     hilog.info(this.hilogDomain, 'WaterSand', '%{public}s', message);
+  }
+
+  private logWaterSandP011Pair(metric: WaterSandP011Metric, bottom: WaterSandP011Bottom): void {
+    // P-011 bottom-creep-v2.7: one hilog call keeps metric/bottom samples aligned.
+    hilog.info(this.hilogDomain, 'WaterSand', 'P011_METRIC %{public}s\nP011_BOTTOM %{public}s',
+      JSON.stringify(metric), JSON.stringify(bottom));
   }
 
   private snapshotJson(snapshot: WaterSandSnapshot): string {
@@ -432,8 +640,106 @@ struct SandCanvas {
     this.logWaterSand(`WS_SNAPSHOT ${this.snapshotJson(snapshot)}`);
   }
 
+  private setupNaturalObservation(ws: WaterSandField): void {
+    if (!this.waterSandSnapshotEnabled) {
+      return;
+    }
+    const previousStore = this.naturalObservationStore;
+    this.naturalObservationStore = null;
+    this.naturalObservationProbe = null;
+    this.naturalObservationStoreLogged = false;
+    ws.setNaturalObservationProbe(null);
+    previousStore?.close().catch((): void => {
+    });
+    const pendingRecords: P011NaturalObservationRecord[] = [];
+    const runId = ws.getP011RunId();
+    const probe = new P011NaturalObservationProbe(ws.cols, (record) => {
+      const store = this.naturalObservationStore;
+      if (store === null) {
+        pendingRecords.push(record);
+        return;
+      }
+      store.append(record);
+    });
+    this.naturalObservationProbe = probe;
+    ws.setNaturalObservationProbe(probe);
+    const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    createP011NaturalObservationStore(context, runId).then((store) => {
+      if (this.waterSandField !== ws || this.naturalObservationProbe !== probe) {
+        store.close().catch((): void => {
+        });
+        return;
+      }
+      this.naturalObservationStore = store;
+      for (const record of pendingRecords) {
+        store.append(record);
+      }
+      pendingRecords.length = 0;
+      if (!this.naturalObservationStoreLogged) {
+        this.naturalObservationStoreLogged = true;
+        this.logWaterSand(`P011_OBS_STORE ${JSON.stringify({
+          observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
+          runId: runId,
+          filePath: store.filePath
+        })}`);
+        this.logWaterSand(`P011_RASTER_LAYOUT ${JSON.stringify({
+          runId: runId,
+          canvasWidth: this.canvasW,
+          canvasHeight: this.canvasH,
+          boxX: this.boxX,
+          boxY: this.boxY,
+          boxWidth: this.boxW,
+          boxHeight: this.boxH,
+          cols: ws.cols,
+          capacity: ws.capacity,
+          pixelsPerColumn: this.boxW / ws.cols,
+          pixelsPerModelUnitY: this.boxH / ws.capacity
+        })}`);
+      }
+    }).catch((error: Error) => {
+      ws.setNaturalObservationProbe(null);
+      this.naturalObservationProbe = null;
+      this.logWaterSand(`P011_OBS_ERROR ${JSON.stringify({
+        observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
+        runId: runId,
+        message: error.message
+      })}`);
+    });
+  }
+
+  private logNaturalObservationHeartbeat(metric: WaterSandP011Metric): void {
+    const context = this.naturalObservationProbe?.getLastContext();
+    const audit = this.naturalObservationProbe?.getLastAudit();
+    if (context === null || context === undefined || audit === null || audit === undefined) {
+      return;
+    }
+    this.logWaterSand(`P011_OBS_METRIC ${JSON.stringify({
+      observationRouteId: context.observationRouteId,
+      runId: context.runId,
+      sequence: metric.sequence,
+      phaseD: context.phaseD,
+      targetTilt: context.targetTilt,
+      effectiveTilt: context.effectiveTilt,
+      effectiveTiltRate: context.effectiveTiltRate,
+      shakeEnergy: context.shakeEnergy,
+      waterTotal: metric.waterTotal,
+      heavyTotal: metric.heavyTotal,
+      lightTotal: metric.lightTotal,
+      bottomBudgetUsed: metric.bottomCreepBudgetUsed,
+      bottomBudgetLimit: metric.bottomCreepBudgetLimit,
+      totalBudgetUsed: metric.totalMotionBudgetUsed,
+      totalBudgetLimit: metric.totalMotionBudgetLimit,
+      auditFinite: audit.finite,
+      auditRange: audit.range,
+      auditCapacity: audit.capacity,
+      auditStock: audit.stock,
+      auditConservation: audit.conservation
+    })}`);
+  }
+
   private waterSandScene(preset: string, cols: number): WaterSandScene {
     const all: WaterSandRegion = { startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 110 };
+    const thickWater: WaterSandRegion = { startCol: 0, endColInclusive: cols - 1, bottom: 144, height: 38 };
     if (preset === 'sorting') {
       return {
         waterRegions: [all],
@@ -441,6 +747,15 @@ struct SandCanvas {
         lightDepositedRegions: [],
         heavySuspendedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 20 }],
         lightSuspendedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 20 }]
+      };
+    }
+    if (preset === 'thick') {
+      return {
+        waterRegions: [thickWater],
+        heavyDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 72 }],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 72, height: 72 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
       };
     }
     if (preset === 'nowater') {
@@ -497,6 +812,170 @@ struct SandCanvas {
     });
   }
 
+  private async startLiquidController(): Promise<void> {
+    if (this.canvasW <= 0 || this.canvasH <= 0) {
+      return;
+    }
+    await this.stopLiquidController();
+    this.boxW = Math.floor(this.canvasW * 0.72);
+    this.boxH = Math.floor(this.canvasH * 0.42);
+    this.boxX = Math.floor((this.canvasW - this.boxW) / 2);
+    this.boxY = Math.floor((this.canvasH - this.boxH) / 2);
+    let cellPx = this.cellPx;
+    let cols = Math.floor(this.boxW / cellPx);
+    let rows = Math.floor(this.boxH / cellPx);
+    if (cols * rows > 24000) {
+      const scale = Math.ceil(Math.sqrt(cols * rows / 24000));
+      cellPx *= scale;
+      cols = Math.floor(this.boxW / cellPx);
+      rows = Math.floor(this.boxH / cellPx);
+    }
+    if (cols < 2 || rows < 2 || cols * rows > 24000) {
+      this.liquidTelemetry.onEvent({
+        type: 'model_error', sequence: 0, eventTimeMs: Date.now(), caseId: this.liquidCaseId, boundary: true,
+        source: LiquidInputSource.INTERNAL, forceInvert: false, shakeIntensity: 0,
+        errorCode: 'GRID_TOO_LARGE', cols: cols, rows: rows, cellPx: cellPx,
+        initialHeavy: 0, initialLight: 0, seed: this.liquidSeed, scaled: true
+      });
+      return;
+    }
+    this.cellPx = cellPx;
+    const config: LiquidCAConfig = defaultLiquidCAConfig();
+    config.cols = cols;
+    config.rows = rows;
+    config.cellPx = cellPx;
+    config.seed = this.liquidSeed;
+    const renderer = new SandCanvasLiquidRenderer(this, config, this.liquidTelemetry);
+    this.liquidController = new LiquidCAController(renderer, this.liquidTelemetry);
+    this.liquidController.setCaseId(this.liquidCaseId);
+    this.liquidController.start(config).then((): void => {
+      if (this.liquidShakeInput > 0) {
+        this.liquidController?.setShake(this.liquidShakeInput, LiquidInputSource.WANT);
+      }
+    }).catch((error: Error): void => {
+      console.error(`[LiquidCA] start failed: ${error.message}`);
+    });
+  }
+
+  liquidTestCaseId(): string {
+    return this.liquidCaseId;
+  }
+
+  private stopLiquidController(): Promise<void> {
+    if (this.liquidController !== null) {
+      const controller = this.liquidController;
+      this.liquidController = null;
+      return controller.stop().catch((error: Error): void => {
+        console.error(`[LiquidCA] stop failed: ${error.message}`);
+      });
+    }
+    return Promise.resolve();
+  }
+
+  private processLiquidWantCommand(): void {
+    const sequence = AppStorage.get<number>('liquidWantCommandSeq');
+    const rawCommand = AppStorage.get<string>('liquidWantCommand');
+    if (sequence === undefined || rawCommand === undefined || sequence <= this.liquidWantCommandSeq) {
+      return;
+    }
+    this.liquidWantCommandSeq = sequence;
+    const command = JSON.parse(rawCommand) as LiquidWantCommand;
+    this.applyInputMode(command.testMode, 'want', command.p011TiltWantSequence ?? 0);
+    this.liquidCaseId = command.caseId;
+    this.liquidTelemetry.setTestMode(this.testMode);
+    this.forceInvert = this.testMode && command.forceInvert;
+    const seedChanged = command.seed !== this.liquidSeed;
+    this.liquidShakeInput = Math.max(0, Math.min(1, command.shake));
+    this.liquidSeed = Math.max(0, Math.floor(command.seed));
+    if (command.renderMode !== this.renderMode) {
+      if (this.renderMode === MODE_LIQUID) {
+        this.stopLiquidController();
+      }
+      this.renderMode = command.renderMode;
+      if (this.renderMode === MODE_LIQUID) {
+        this.startLiquidController();
+      }
+    }
+    if (this.renderMode === MODE_LIQUID && this.liquidController !== null) {
+      this.liquidController.setCaseId(this.liquidCaseId);
+      if (seedChanged) {
+        this.liquidController.reset(this.liquidSeed, LiquidInputSource.WANT);
+      }
+      this.liquidController.setForceInvert(this.forceInvert, LiquidInputSource.WANT);
+      this.liquidController.setShake(this.liquidShakeInput, LiquidInputSource.WANT);
+    }
+    this.syncSheet();
+  }
+
+  private liquidFrame(frameTimeInNano: number): void {
+    const now = frameTimeInNano / 1000000;
+    if (this.lastTime > 0) {
+      const delta = now - this.lastTime;
+      this.frameCount++;
+      this.fpsTime += delta;
+      if (this.fpsTime >= 500) {
+        this.fps = Math.round(this.frameCount * 1000 / this.fpsTime);
+        this.frameCount = 0;
+        this.fpsTime = 0;
+        this.displayInfo = `FPS=${this.fps}`;
+      }
+    }
+    this.lastTime = now;
+    this.processLiquidWantCommand();
+    this.liquidController?.onVsync(now);
+    this.getUIContext().postFrameCallback(this.frameCb);
+  }
+
+  renderLiquidSnapshot(snapshot: LiquidRenderSnapshot, frame: LiquidCAFramePayload): void {
+    const ctx = this.ctx;
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, this.canvasH);
+    bgGrad.addColorStop(0, '#0a0a14');
+    bgGrad.addColorStop(1, '#1a1a2e');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    const width = snapshot.cols * snapshot.cellPx;
+    const height = snapshot.rows * snapshot.cellPx;
+    const boxX = Math.floor((this.canvasW - width) / 2);
+    const boxY = Math.floor((this.canvasH - height) / 2);
+    ctx.fillStyle = '#101024';
+    ctx.fillRect(boxX, boxY, width, height);
+    for (let row = 0; row < snapshot.rows; row++) {
+      let runStart = -1;
+      let runPhase = -1;
+      let runShade = -1;
+      for (let col = 0; col <= snapshot.cols; col++) {
+        const index = row * snapshot.cols + col;
+        const occupied = col < snapshot.cols && snapshot.cells[index] === 1;
+        const phase = occupied ? snapshot.phase[index] : -1;
+        const shade = occupied ? snapshot.shade[index] : -1;
+        if (occupied && phase === runPhase && shade === runShade) {
+          continue;
+        }
+        if (runStart >= 0) {
+          ctx.fillStyle = runPhase === 0 ? SHADE_GREEN[runShade] : SHADE_BLUE[runShade];
+          ctx.fillRect(boxX + runStart * snapshot.cellPx, boxY + row * snapshot.cellPx,
+            (col - runStart) * snapshot.cellPx, snapshot.cellPx);
+        }
+        runStart = occupied ? col : -1;
+        runPhase = phase;
+        runShade = shade;
+      }
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(boxX, boxY, width, height);
+    this.displayInfo = `FPS=${this.fps} LIQ=${frame.sequence}`;
+  }
+
+  private consumeP011TiltWant(): P011InputSelection {
+    const sequence = AppStorage.get<number>('p011TiltWantCommandSeq') ?? 0;
+    const command = decodeP011TiltWant(AppStorage.get<string>('p011TiltWantCommand'),
+      sequence, this.p011TiltWantConsumedSeq);
+    const selection = selectP011Input(this.readInputModeState(), sequence, command);
+    this.writeInputModeState(selection.state);
+    return selection;
+  }
+
   private initField(): void {
     this.boxW = Math.floor(this.canvasW * 0.72);
     this.boxH = Math.floor(this.canvasH * 0.42);
@@ -538,8 +1017,15 @@ struct SandCanvas {
     this.fluidField = ff;
     this.waterSandField = new WaterSandField(this.waterSandCols, this.waterSandCapacity);
     this.waterSandParams = defaultWaterSandParams();
+    this.waterSandParams.vSandTopMax = this.waterSandVSandTopMax;
+    if (this.waterSandPreset === 'thick') {
+      this.waterSandParams.angleDeg = 4;
+      this.waterSandParams.maxAvalancheFlux = 80;
+      this.waterSandParams.bottomCreepRate = 96;
+    }
     this.waterSandField.configure(this.waterSandParams);
     this.waterSandField.initialize(this.waterSandScene(this.waterSandPreset, this.waterSandCols));
+    this.setupNaturalObservation(this.waterSandField);
     this.waterSandSnapshot = this.waterSandField.snapshot();
     this.waterSandVisualInverted = false;
     this.lastWaterSandMetricTime = Date.now();
@@ -548,17 +1034,53 @@ struct SandCanvas {
       cols: this.waterSandCols,
       capacity: this.waterSandCapacity,
       ledgerVersion: 2,
+      paramsVersion: 'v2.7',
+      routeId: this.waterSandParams.routeId,
+      vH: this.waterSandParams.heavySettleSpeed,
+      vL: this.waterSandParams.lightSettleSpeed,
+      liftHRate: this.waterSandParams.heavyLiftRate,
+      liftLRate: this.waterSandParams.lightLiftRate,
+      shakeRampRate: this.waterSandParams.shakeRampRate,
+      vSandTopMax: this.waterSandParams.vSandTopMax,
+      totalMotionBudget: this.waterSandParams.totalMotionBudget,
+      bottomCreepRate: this.waterSandParams.bottomCreepRate,
+      vBottomCreepMax: this.waterSandParams.vBottomCreepMax,
+      bottomCreepVelocityGain: this.waterSandParams.bottomCreepVelocityGain,
+      bottomCreepDeadZone: this.waterSandParams.bottomCreepDeadZone,
+      directionHoldTime: this.waterSandParams.directionHoldTime,
+      inputSmoothingAlpha: this.waterSandParams.inputSmoothingAlpha,
+      boundary: true,
       percolationRate: this.waterSandParams.percolationRate
+    })}`);
+    this.logWaterSand(`P011_EVENT reset ${JSON.stringify({
+      routeId: this.waterSandParams.routeId,
+      runId: this.waterSandField.getP011RunId(),
+      sequence: 0,
+      eventTime: Date.now(),
+      physicsTime: 0,
+      reason: 'scene-reset',
+      boundary: true
     })}`);
     if (this.waterSandSnapshotEnabled) {
       this.logWaterSandSnapshot();
     }
+    if (this.renderMode === MODE_LIQUID) {
+      this.startLiquidController();
+    } else {
+      this.stopLiquidController();
+    }
     this.needRedraw = true;
   }
 
-  frame(): void {
+  frame(frameTimeInNano: number = Date.now() * 1000000): void {
+    // P-011 dual-input-v1: complete mode envelope before consuming its optional tilt.
+    this.processLiquidWantCommand();
     const f = this.field;
     if (f === null) {
+      return;
+    }
+    if (this.renderMode === MODE_LIQUID) {
+      this.liquidFrame(frameTimeInNano);
       return;
     }
     // FPS 统计
@@ -578,18 +1100,26 @@ struct SandCanvas {
     }
     this.lastTime = now;
     const frameDeltaMs = previousFrameTime > 0 ? now - previousFrameTime : 16.7;
+    const p011Selection = this.renderMode === MODE_WATERSAND ? this.consumeP011TiltWant() : null;
+    if (p011Selection !== null && p011Selection.targetTilt !== null) {
+      this.tiltX = p011Selection.targetTilt;
+    }
 
     // 重力向量：手势（保持期内）优先，其次传感器
     // CA 引擎吃重力向量 (gx, gy)，360° 任意方向自动正确（含倒立）
     let gx: number;
     let gy: number;
-    if (this.useSensor && !this.testMode && now >= this.gestureHoldUntil) {
+    let inputSource: WaterSandP011InputSource = 'gesture';
+    let inputCommandTime = 0;
+    if (!this.testMode && this.hasFreshSensorSample) {
+      inputSource = 'sensor';
+      inputCommandTime = this.lastSensorCommandTime;
       // VYG-AL00 加速度计 x 轴与屏幕左右相反，取反镜像
       const sx = -this.sensorGx;
       const sy = this.sensorGy;
       // 平放检测：合成加速度过小时 atan2 噪声主导 → 保持上次角度
       let tilt = this.tiltX;
-      if (Math.sqrt(sx * sx + sy * sy) > 1.5) {
+      if (Math.sqrt(sx * sx + sy * sy) > 0.3) {
         tilt = Math.atan2(sx, sy) * 180 / Math.PI;
         // 角速度限制（液体转动惯性）：快翻时渐变过渡
         let diff = tilt - this.tiltX;
@@ -621,6 +1151,7 @@ struct SandCanvas {
     } else {
       // 测试模式：重力全由手势/testMode 开关构造
       if (this.testMode && this.forceInvert) {
+        inputCommandTime = nextP011TimeMs();
         // 强制倒立：重力直接置 180°（主轴反转），绕过手势 tiltX
         // 仍走 tiltX 变量以保持 maxOmega 渐变语义：向 180° 渐变过渡而非瞬跳
         // 状态边沿日志（s77r）：倒立开始生效打一条，供验证方 hilog 判定传导链
@@ -649,6 +1180,7 @@ struct SandCanvas {
           this.tiltX = 180;
         }
       } else if (this.wasForceInvert) {
+        inputCommandTime = nextP011TimeMs();
         // 倒立关闭边沿（s80 修复 bug A）：tiltX 从 180 渐变回 0（maxOmega 限速）。
         // s79 及之前此处只打日志不更新 tiltX——tiltX 残留 180°，重力向量
         // (sin180, cos180)=(0,-1) 仍指向上方，物理永远回不了正（TC-12/13 FAIL
@@ -675,7 +1207,12 @@ struct SandCanvas {
         } else {
           this.tiltX = 0;
         }
-      } else if (this.tiltX !== 0 && this.testMode) {
+      } else if (this.p011ScriptTargetTilt !== null && this.testMode) {
+        // Fresh and held script targets are stable; only a new Want changes them.
+        inputSource = 'script';
+      } else if (this.tiltX !== 0 && this.testMode && now >= this.gestureHoldUntil) {
+        inputSource = 'script';
+        inputCommandTime = nextP011TimeMs();
         // 倒立关闭后的渐变续程（s80）：OFF 只在边沿帧触发一次，此分支接续
         // 后续帧的 tiltX -> 0 渐变直至归零（否则渐变只走一步就停）。
         let diff2 = 0 - this.tiltX;
@@ -698,6 +1235,9 @@ struct SandCanvas {
         } else {
           this.tiltX = 0;
         }
+      } else if (now < this.gestureHoldUntil) {
+        inputSource = 'gesture';
+        inputCommandTime = this.lastTiltCommandTime > 0 ? this.lastTiltCommandTime : nextP011TimeMs();
       }
       const rad = this.tiltX * Math.PI / 180;
       gx = Math.sin(rad);
@@ -712,30 +1252,125 @@ struct SandCanvas {
     if (this.renderMode === MODE_WATERSAND) {
       const ws = this.waterSandField;
       if (ws !== null) {
+        const p011TiltWant = p011Selection === null ? null : p011Selection.freshScriptCommand;
+        let p011ScriptHasEvent = false;
+        let p011ScriptCommandTime = 0;
+        let p011ScriptAcceptedTime = 0;
+        let p011ScriptTargetTilt = 0;
+        let p011InputSequence = 0;
+        if (p011TiltWant !== null) {
+          this.p011ScriptTargetTilt = p011TiltWant.targetTilt;
+          this.tiltX = p011TiltWant.targetTilt;
+          ws.setNaturalObservationRunMetadata(
+            p011TiltWant.observationRunRole,
+            p011TiltWant.thresholdCalibrationId,
+            p011TiltWant.thetaStartDeg,
+            p011TiltWant.thetaStopDeg
+          );
+          inputSource = 'script';
+          inputCommandTime = p011TiltWant.commandTime;
+          p011ScriptHasEvent = true;
+          p011InputSequence = ws.nextP011InputSequence();
+          p011ScriptCommandTime = p011TiltWant.commandTime;
+          p011ScriptAcceptedTime = nextP011TimeMs();
+          p011ScriptTargetTilt = p011TiltWant.targetTilt;
+        } else if (this.p011ScriptTargetTilt !== null && this.testMode && !this.forceInvert) {
+          this.tiltX = this.p011ScriptTargetTilt;
+        } else {
+          this.p011ScriptTargetTilt = null;
+        }
         const normalized = ((this.tiltX % 360) + 360) % 360;
-        const visualInverted = normalized > 90 && normalized < 270;
+        const signedTilt = normalized >= 180 ? normalized - 360 : normalized;
+        const visualInverted = Math.abs(signedTilt) > 90;
         if (visualInverted !== this.waterSandVisualInverted) {
           ws.invert180();
           this.waterSandVisualInverted = visualInverted;
-          this.logWaterSand('WS_EVENT invert180 {"count":1}');
+          const drift = ws.getDrift();
+          this.logWaterSand(`WS_EVENT invert180 ${JSON.stringify({
+            count: 1,
+            reason: 'cross90',
+            boundary: true,
+            driftWater: drift.water,
+            driftHeavy: drift.heavy,
+            driftLight: drift.light
+          })}`);
         }
         const effectiveTilt = visualInverted
-          ? Math.max(-89, Math.min(89, normalized - 180))
-          : Math.max(-89, Math.min(89, normalized));
-        ws.setTilt(effectiveTilt);
-        if (this.lastWaterSandTilt === null || Math.abs(this.lastWaterSandTilt - effectiveTilt) > 0.01) {
+          ? Math.max(-89, Math.min(89, signedTilt - (signedTilt > 0 ? 180 : -180)))
+          : Math.max(-89, Math.min(89, signedTilt));
+        let p011HasEvent = false;
+        let p011CommandTime = 0;
+        let p011AcceptedTime = 0;
+        let p011PhysicsTime = 0;
+        let p011TargetTilt = 0;
+        const tiltChanged = this.lastWaterSandTilt === null ||
+          Math.abs(this.lastWaterSandTilt - effectiveTilt) > 0.01;
+        const dormantNoopScriptCommand = p011ScriptHasEvent && !tiltChanged &&
+          ws.getMetrics().dormant;
+        if (tiltChanged || (p011ScriptHasEvent && !dormantNoopScriptCommand)) {
+          let acceptedTime = 0;
+          if (this.testMode && !p011ScriptHasEvent) {
+            this.logWaterSand(`P011_EVENT input_state ${JSON.stringify({
+              routeId: this.waterSandParams.routeId,
+              runId: ws.getP011RunId(),
+              stateTilt: effectiveTilt,
+              source: inputSource,
+              diagnosticOnly: true
+            })}`);
+          }
+          ws.setTilt(effectiveTilt);
           this.logWaterSand(`WS_EVENT tilt ${JSON.stringify({
             targetDeg: effectiveTilt,
             effectiveDeg: effectiveTilt
           })}`);
           this.lastWaterSandTilt = effectiveTilt;
         }
-        const stepResult = ws.step(frameDeltaMs / 1000);
-        if (this.lastWaterSandDormant !== stepResult.dormant) {
-          this.logWaterSand(`WS_EVENT ${stepResult.dormant ? 'dormant' : 'wake'} ${JSON.stringify({
-            value: stepResult.dormant
+        if (p011ScriptHasEvent) {
+          p011HasEvent = true;
+          p011CommandTime = p011ScriptCommandTime;
+          p011AcceptedTime = p011ScriptAcceptedTime;
+          p011TargetTilt = p011ScriptTargetTilt;
+        }
+        if (this.waterSandPreset === 'thick') {
+          ws.setShakeInput(Math.min(1, Math.abs(effectiveTilt) / 90));
+        }
+        const stepResult = this.testMode
+          ? ws.step(frameDeltaMs / 1000, (metric, bottom) => {
+            if (p011HasEvent && p011PhysicsTime === 0) {
+              p011PhysicsTime = metric.physicsTime;
+            }
+            this.logWaterSandP011Pair(metric, bottom);
+            this.logNaturalObservationHeartbeat(metric);
+          })
+          : ws.step(frameDeltaMs / 1000);
+        if (p011HasEvent && stepResult.dormant) {
+          ws.emitP011NoopTelemetry((metric, bottom) => {
+            if (p011PhysicsTime === 0) {
+              p011PhysicsTime = metric.physicsTime;
+            }
+            this.logWaterSandP011Pair(metric, bottom);
+          });
+        }
+        if (p011HasEvent && p011PhysicsTime > 0) {
+          this.logWaterSand(`P011_EVENT input ${JSON.stringify({
+            routeId: this.waterSandParams.routeId,
+            runId: ws.getP011RunId(),
+            sequence: p011InputSequence,
+            commandTime: p011CommandTime,
+            acceptedTime: p011AcceptedTime,
+            physicsTime: p011PhysicsTime,
+            targetTilt: p011TargetTilt,
+            source: 'script'
           })}`);
-          this.lastWaterSandDormant = stepResult.dormant;
+        }
+        const modelDormant = ws.getMetrics().dormant;
+        if (this.lastWaterSandDormant === null) {
+          this.lastWaterSandDormant = modelDormant;
+        } else if (this.lastWaterSandDormant !== modelDormant) {
+          this.logWaterSand(`WS_EVENT ${modelDormant ? 'dormant' : 'wake'} ${JSON.stringify({
+            value: modelDormant
+          })}`);
+          this.lastWaterSandDormant = modelDormant;
         }
         if (!stepResult.ok) {
           this.logWaterSand(`WS_EVENT model_error ${JSON.stringify({
@@ -750,10 +1385,9 @@ struct SandCanvas {
         }
         this.renderWaterSand(this.ctx, this.waterSandSnapshot);
         if (this.testMode) {
-          this.logWaterSand(`WS_FRAME ${JSON.stringify({
-            frameTimeMs: frameDeltaMs,
-            physicsTimeMs: stepResult.physicsTimeMs
-          })}`);
+          this.logWaterSand(`WS_FRAME ${JSON.stringify(
+            waterSandFrameHookPayload(frameDeltaMs, stepResult)
+          )}`);
         }
         if (now - this.lastWaterSandMetricTime >= 250) {
           this.lastWaterSandMetricTime = now;
@@ -887,14 +1521,17 @@ struct SandCanvas {
       this.waterRenderB = new Float64Array(n);
       this.waterRenderC = new Float64Array(n);
       this.waterRenderD = new Float64Array(n);
+      this.waterRenderE = new Float64Array(n);
     }
     const bh = this.waterRenderA;
     const mixStart = this.waterRenderB;
     const sandTop = this.waterRenderC;
+    const waterTop = this.waterRenderE;
     for (let c = 0; c < n; c++) {
       bh[c] = snapshot.bh[c];
       mixStart[c] = snapshot.bh[c] + snapshot.bl[c];
       sandTop[c] = snapshot.sandTop[c];
+      waterTop[c] = snapshot.waterTop[c];
     }
     const scratch = this.waterRenderD;
     this.smoothWaterSandProfile(bh, scratch);
@@ -909,6 +1546,10 @@ struct SandCanvas {
     this.smoothWaterSandProfile(scratch, sandTop);
     this.smoothWaterSandProfile(sandTop, scratch);
     this.smoothWaterSandProfile(scratch, sandTop);
+    this.smoothWaterSandProfile(waterTop, scratch);
+    this.smoothWaterSandProfile(scratch, waterTop);
+    this.smoothWaterSandProfile(waterTop, scratch);
+    this.smoothWaterSandProfile(scratch, waterTop);
 
     const centerX = this.boxX + this.boxW / 2;
     const centerY = this.boxY + this.boxH / 2;
@@ -925,7 +1566,7 @@ struct SandCanvas {
       this.boxY + (snapshot.capacity - Math.max(0, Math.min(snapshot.capacity, height))) * this.boxH / snapshot.capacity;
     for (let c = 0; c < n; c++) {
       const x = this.boxX + c * columnWidth;
-      const waterTopY = heightToY(snapshot.waterTop[c]);
+      const waterTopY = heightToY(waterTop[c]);
       const sandTopY = heightToY(sandTop[c]);
       const mixStartY = heightToY(mixStart[c]);
       const bhY = heightToY(bh[c]);
@@ -944,9 +1585,17 @@ struct SandCanvas {
     ctx.strokeStyle = 'rgba(210,240,255,0.70)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(this.boxX, heightToY(snapshot.waterTop[0]));
+    ctx.moveTo(this.boxX, heightToY(waterTop[0]));
     for (let c = 1; c < n; c++) {
-      ctx.lineTo(this.boxX + c * columnWidth, heightToY(snapshot.waterTop[c]));
+      ctx.lineTo(this.boxX + c * columnWidth, heightToY(waterTop[c]));
+    }
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,224,130,0.95)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(this.boxX, heightToY(sandTop[0]));
+    for (let c = 1; c < n; c++) {
+      ctx.lineTo(this.boxX + c * columnWidth, heightToY(sandTop[c]));
     }
     ctx.stroke();
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
@@ -1303,30 +1952,27 @@ struct SandCanvas {
       // duration=400ms：uitest longClick 按压时长较短，800ms 触发不了。
       LongPressGesture({ repeat: false, duration: 400 })
         .onAction(() => {
-          this.testMode = !this.testMode;
-          console.info(`[ForceInvert] longPress toggle testMode -> ${this.testMode}`);
-          if (this.testMode) {
-            this.useSensor = false;
-            this.gestureHoldUntil = Date.now() + 24 * 3600 * 1000;
-          } else {
-            this.useSensor = true;
-            this.gestureHoldUntil = 0;
-            this.forceInvert = false;
-          }
+          this.applyInputMode(!this.testMode, 'longPress');
           this.lastLongPressTime = Date.now();
         })
     )
     .gesture(
       PanGesture()
         .onActionUpdate((e: GestureEvent) => {
-          this.useSensor = false;
+          if (!canP011GestureOwnInput(this.readInputModeState())) {
+            return;
+          }
           this.gestureHoldUntil = Date.now() + 2500;
+          this.lastTiltCommandTime = nextP011TimeMs();
           // 映射系数 0.4：200px 满行程 ≈ 80°，比旧 0.3 跟手 33%
           this.tiltX = Math.max(-80, Math.min(80, e.offsetX * this.gestureSensitivity));
         })
         .onActionEnd(() => {
-          // 保持手势角度 2.5s 后恢复传感器控制（frame 中按 gestureHoldUntil 判断）
-          this.useSensor = true;
+          if (!canP011GestureOwnInput(this.readInputModeState())) {
+            return;
+          }
+          // TEST never restores sensor ownership on gesture end.
+          this.useSensor = !this.testMode;
         })
     )
   }

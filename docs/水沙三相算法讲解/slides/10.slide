@@ -1,0 +1,53 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>v2.2：把「每帧预算」改成「速率」</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 36 }}>
+        {/* 左侧图表 */}
+        <Box style={{ width: 600, background: '#FFFFFF', borderRadius: 16, padding: 20, boxShadow: '0 4px 16px rgba(15,42,67,0.10)' }}>
+            <Chart
+                style={{ width: '100%', height: 400 }}
+                chartType='barChart'
+                barDirection='column'
+                grouping='clustered'
+                title='摇晃峰值悬浮比例：不同刷新率下的表现'
+                titleColor='#0F2A43'
+                showLegend={true}
+                showDataLabels={true}
+                legendColor='#5D6D7E'
+                axisColor='#5D6D7E'
+                dataLabelColor='#1D4E79'
+                colors={['#B03A2E', '#1D4E79']}
+                data={[
+                    ['刷新率', '改前（每帧固定预算）', '改后（28列/秒速率）'],
+                    ['30Hz', 63.6, 74],
+                    ['60Hz', 31.8, 74],
+                    ['120Hz', 15.9, 74],
+                ]}
+            />
+        </Box>
+        {/* 右侧文字 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 18, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#2C3E50', lineHeight: 1.65 }}>
+                <span style={{ fontWeight: 'bold', color: '#B03A2E' }}>改前的问题：</span>
+                预算按「每帧」发，60Hz 手机一秒发 60 份、120Hz 发 120 份——同一部动画在高端机上慢一倍，物理随刷新率漂移。
+            </Text>
+            <Text style={{ fontSize: 22, color: '#2C3E50', lineHeight: 1.65 }}>
+                <span style={{ fontWeight: 'bold', color: '#1D4E79' }}>改后：</span>
+                换成速率上限「每秒最多 28 列」。每个子步用 <span style={{ fontFamily: 'monospace', color: '#1D4E79' }}>28 × 子步时长</span> 算预算，物理走多快只跟时间有关。
+            </Text>
+            <Box style={{ background: 'rgba(243,156,18,0.12)', borderRadius: 12, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 18, color: '#B06A00', lineHeight: 1.6 }}>
+                    <span style={{ fontWeight: 'bold' }}>副产物：</span>顺带修复了「浅水区一帧清空悬浮沙」的瞬移隐患；摇晃峰值目标带随之修订为 65%~80%。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>10 / 14</Text>
+    </Box>
+</Slide>

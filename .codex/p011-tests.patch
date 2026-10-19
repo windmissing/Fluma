@@ -1,0 +1,71 @@
+*** Begin Patch
+*** Update File: entry/src/ohosTest/ets/test/WaterSandFieldTest.ets
+@@
+     });
+ 
++    it('p011_fullLoadKeepsBottomCreepIndependentBudget', 0, () => {
++      const dt = 1 / 60;
++      const baselineParams = deterministicRateParams();
++      baselineParams.totalMotionBudget = 1000;
++      baselineParams.heavySettleSpeed = 0.002;
++      baselineParams.lightSettleSpeed = 0.001;
++      baselineParams.percolationRate = 0.001;
++      baselineParams.heavyDiffusion = 0;
++      baselineParams.lightDiffusion = 0;
++      baselineParams.maxAvalancheFlux = 0.001;
++      baselineParams.heavyLiftRate = 0;
++      baselineParams.lightLiftRate = 0.001;
++      const baseline = new WaterSandField(8, 192);
++      baseline.configure(baselineParams);
++      baseline.initialize(fullLoadSceneForP011(8));
++
++      const fullLoadParams = deterministicRateParams();
++      fullLoadParams.totalMotionBudget = 1000;
++      fullLoadParams.heavySettleSpeed = 0.002;
++      fullLoadParams.lightSettleSpeed = 0.001;
++      const fullLoad = new WaterSandField(8, 192);
++      fullLoad.configure(fullLoadParams);
++      fullLoad.initialize(fullLoadSceneForP011(8));
++
++      baseline.setTilt(20);
++      fullLoad.setTilt(20);
++      fullLoad.setShakeInput(1);
++      const baselineResult = baseline.step(dt);
++      const fullLoadResult = fullLoad.step(dt);
++      expect(baselineResult.ok).assertTrue();
++      expect(fullLoadResult.ok).assertTrue();
++
++      const baselineMetric = baseline.getP011Metric();
++      const fullLoadMetric = fullLoad.getP011Metric();
++      expect(fullLoadMetric.totalMotionBudgetUsed >
++        fullLoadMetric.bottomCreepBudgetUsed + 1e-9).assertTrue();
++      expect(fullLoadMetric.bottomCreepBudgetUsed <=
++        fullLoadMetric.bottomCreepBudgetLimit + 1e-12).assertTrue();
++      expect(fullLoadMetric.bottomCreepBudgetUsed >=
++        baselineMetric.bottomCreepBudgetUsed * 0.98 - 1e-12).assertTrue();
++    });
++
++    it('p011_totalBudgetExhaustionScalesRequestsProportionally', 0, () => {
++      const field = new WaterSandField(2, 192);
++      const params = deterministicRateParams();
++      params.vSandTopMax = 1;
++      params.totalMotionBudget = 1;
++      field.configure(params);
++      field.initialize(thickSceneForP011(2));
++      field.setTilt(20);
++      const result = field.step(1 / 60);
++      expect(result.ok).assertTrue();
++      const metric = field.getP011Metric();
++      const requestedTotal = metric.totalMotionBudgetUsed + metric.totalMotionBudgetClipped;
++      const expectedScale = metric.totalMotionBudgetLimit / requestedTotal;
++      const expectedBottomGrant = params.vBottomCreepMax / 60 * expectedScale;
++      expect(metric.totalMotionBudgetUsed <=
++        metric.totalMotionBudgetLimit + 1e-12).assertTrue();
++      expect(metric.totalMotionBudgetClipped > 0).assertTrue();
++      expect(Math.abs(metric.bottomCreepBudgetUsed - expectedBottomGrant) < 1e-9).assertTrue();
++    });
++
+     it('p011_multiChannelTotalBudgetScalesAllRequestsProportionally', 0, () => {
+       const field = new WaterSandField(8, 192);
+       const params = deterministicRateParams();
+*** End Patch

@@ -147,12 +147,16 @@ aa start -b com.example.helloworld -a EntryAbility --ps rendermode 4 --ps testmo
 #### TC-WS-08 摇晃扬起与再沉降
 
 - **前置条件**：`wspreset=default`，已形成沙堆且 `VH0+VL0>0`；`testmode=true`，`tilt=0°`。
-- **操作序列**：静置 3s → 注入 `shake=1.0` 持续 3s → 停止摇晃静置 8s → 记录全程 `suspensionFraction`。
+- **操作序列**：静置 3s → 注入 `shake=1.0` 持续 3s → 停止摇晃静置 8s → 记录全程 `suspensionFraction`、`suspensionFractionHeavy`、`suspensionFractionLight`。
 - **判定指标与阈值**：
   - 摇晃段峰值 `peakSusp >= 0.5`。
   - 静置 8s 后 `residualSusp <= 0.05`。
   - 全程三相漂移 `< 0.1%`，无永久悬浮。
-- **数据来源**：`WS_EVENT shake`、`WS_METRIC.suspensionFraction/drift*`、`WS_SNAPSHOT.suspH/suspL`。
+- **数据来源**：`WS_EVENT shake`、`WS_METRIC.suspensionFraction/suspensionFractionHeavy/suspensionFractionLight/drift*`、`WS_SNAPSHOT.suspH/suspL`。
+- **分相悬浮记录**：
+  - 数据来源钩子：`WS_METRIC` additive 追加 `suspensionFractionHeavy`、`suspensionFractionLight`，随既有 250ms 指标周期输出；计算口径为 `sum(suspH)/max(initialHeavy,eps)` 与 `sum(suspL)/max(initialLight,eps)`。二者必须能用最近 `WS_SNAPSHOT.suspH/suspL` 与 init 阶段记录的相初值重算交叉校验；缺失任一字段判 `BLOCKED(missing_hook)`，不得默认为 `0`。
+  - 记录方式：按 `WS_EVENT shake` 边界分段，保留摇晃段与静置 8s 段的全量采样序列，分别计算 `peakSuspHeavy`、`peakSuspLight`、`residualSuspHeavy`、`residualSuspLight`，并保留对应的 `WS_METRIC` 原始时间戳。
+  - 报告呈现：在 TC-WS-08 结果表中将总量峰值/残余与重、轻沙分相峰值/残余并列输出，并绘制三条悬浮比例时间序列（或以同一时间轴列出采样值）。分相指标当前为观测记录，不新增 PASS/FAIL 阈值、不放宽既有阈值；若总量峰值达标而重沙峰值接近 `0`，必须在失败分析/设计反馈中明确记录“摇晃交融构成未达成”。
 - **通过标准**：峰值、残余、守恒全部 PASS；若 `peakSusp` 未达标但画面有扬起，仍判 FAIL，不能放宽阈值。
 
 #### TC-WS-09 摇晃→悬浮→再堆积质量
@@ -162,7 +166,7 @@ aa start -b com.example.helloworld -a EntryAbility --ps rendermode 4 --ps testmo
 - **判定指标与阈值**：
   - 再堆积后 `separationRatio <= 0.5`。
   - `maxSlopeDeg <= 32°`，`maxCurvature <= 0.35`。
-  - `maxSandTopDeltaPerSecond <= 30` 列/秒，单帧位移 `<= 0.5` 列。
+  - `maxSandTopDeltaPerSecond <= 30` 列/秒，任一物理子步位移 `<= 0.5` 列；30Hz 一帧包含 2 个子步时分别检查两个子步，不得相加后套用 `0.5` 列。
   - 末段 `residualSusp <= 0.05`，三相漂移 `< 0.1%`。
 - **数据来源**：`WS_EVENT shake`、`WS_METRIC` 全量指标、`WS_SNAPSHOT`；录制帧由 `water_sand_pixel_check.py` 分类。
 - **通过标准**：分选、安息角、无瞬移、残余悬浮与守恒全部 PASS；任一项 FAIL 则整个用例 FAIL。
@@ -208,10 +212,173 @@ aa start -b com.example.helloworld -a EntryAbility --ps rendermode 4 --ps testmo
 - 脚本当前为待钩子实现的骨架；缺失 `WS_*` 字段时必须输出 `BLOCKED(missing_hook)`，不得默认 0 或用主观判断替代。
 - §3.3 回归防线：`water_sand_check.py` 的守恒评估必须逐样本检查三相漂移，并保留 `--self-check-defect` 模式验证“重沙增加、轻沙减少”的合成缺陷会被判 FAIL。
 
-## 变更记录
+### 5. 2026-10-13 判定口径 v2（追加：MUST-PASS 与 TIERED）
 
-- 2026-10-13：初始创建。
-- 2026-10-13：追加 P-003/P-005 场景二客观用例 TC-WS-01..12 与 WS 钩子数据源映射。原因：P-005 测试先行，补齐三相守恒、分选、沉降、安息角、水面、倒立、摇晃再堆积、长时静置、FPS 与像素交叉验证；TC-WS-01 同时作为 algorithm v1 §3.3 分相守恒缺陷的回归防线。
+> 追加原因：用户要求将不变量类指标设为不可放宽的硬门槛，将质量类指标改为 0~10 分档；同时 algorithm v2 已引入守恒渗透公式，需要统一后续报告口径。
+> 生效范围：仅 TC-WS-01..TC-WS-12。本节不降低、不替换 v1 已写入的任何硬阈值；v1 的质量阈值在本节中等同于 6 分及格锚点。
+> 判定优先级：MUST-PASS 失败时，即使所有 TIERED 指标为 10 分，用例与整体结论仍为 FAIL/未通过；`BLOCKED(missing_hook)` 与 `N/A(environment_refresh_rate)` 表示证据不足或环境不适用，不得折算为分数，也不得默认 PASS。
+
+#### 5.1 全局硬门槛（MUST-PASS）
+
+| 门槛 ID | 指标 | 判定标准 | 适用范围 |
+|---|---|---|---|
+| HG-01 | 无崩溃 | 被测进程持续存活，无 fatal exception、ANR、native crash 或测试编排导致的非预期退出 | TC-WS-01..12 全部执行段 |
+| HG-02 | 三相守恒 | `driftWater`、`driftHeavy`、`driftLight` 在全时段与每个分段均 `< 0.001`（0.1%）；不得用平均值、末帧值或静默重置掩盖分段超限 | 全部产生物理状态的用例；TC-WS-01/07/08/09/10 为显式验收项，其余用例作为全局门禁 |
+| HG-03 | 无数值爆炸 | 所有 `WS_*` 数值为有限数；六状态值不得为负，且任一单列/总量绝对值不得超过 `max(wscapacity, 2 × max(Vw0, VH0, VL0))`；该上限只可按场景配置固定，不得为通过临时调大 | TC-WS-01..12 全部执行段 |
+| HG-04 | 无粒子瞬移 | `maxSandTopDeltaPerSecond <= 30` 列/秒，且任一物理子步位移 `<= 0.5` 列；30Hz 一帧包含 2 个子步时分别检查两个子步，不得相加后套用 `0.5` 列。判定口径与 `WS_FRAME.maxSandTopSubstepDeltaObserved/maxSandTopSpeedObserved/substeps/substepDt` 对齐，任一子步超限即 FAIL | TC-WS-04、TC-WS-09；TC-WS-12 的帧间分类突变也必须回溯该门槛 |
+| HG-05 | 无非预期模型错误 | 不得出现未由测试输入触发的 `model_error`、非预期 `wake` 或状态静默重置 | TC-WS-01..12；TC-WS-10 的长时静置为显式验收项 |
+| HG-06 | 守恒数据一致性 | `WS_SNAPSHOT` 六状态重算出的三相漂移与 `WS_METRIC.drift*` 在 0.1% 判定下结论必须一致；一个 FAIL 一个 PASS 时判 FAIL | TC-WS-01 及其他提供快照与指标交叉数据的用例 |
+| HG-07 | §3.3 缺陷哨兵 | 合成“重沙增加、轻沙减少”缺陷必须被判 FAIL；若实现等效于 algorithm v1 的 `hl[c] -= q; hs[c] += q`，TC-WS-01 必须在第 2 步静置段 FAIL | TC-WS-01 及 `--self-check-defect` 回归 |
+
+#### 5.2 用例分类矩阵
+
+| 用例 | 硬门槛（MUST-PASS，不可分档/不可放宽） | 分档指标（TIERED，0~10 分，`>=6` 及格） |
+|---|---|---|
+| TC-WS-01 | HG-01~HG-07；三相漂移每相每分段 `<0.1%`；无 `model_error`；v1 缺陷必须暴露 | 无。该用例只判 PASS/FAIL，质量分记 `N/A(hard_gate_only)` |
+| TC-WS-02 | HG-01~HG-06 | `separationRatio` |
+| TC-WS-03 | HG-01~HG-06；`vH > vL` 配置校验；3 次 `t90` 均必须存在 | `t90Ratio = t90H/t90L`（3 次重复取最低分） |
+| TC-WS-04 | HG-01~HG-06；`maxSandTopDeltaPerSecond <=30`、单帧位移 `<=0.5` 列 | `maxSlopeDeg`、`maxCurvature` |
+| TC-WS-05 | HG-01~HG-06 | `waterSlopeDeg`、`waterAmplitudePx` |
+| TC-WS-06 | HG-01~HG-06；`effectiveDeg` 必须有限且无非输入跳变 | `tiltSlopeErrorPct`（15° 与 30° 两段分别评分取最低分）；回正段复用 TC-WS-05 两项评分 |
+| TC-WS-07 | HG-01~HG-06；视觉层必须为 180° 旋转且相序方向正确；倒立/回正过渡无非输入跳变 | `phaseOrderScore` |
+| TC-WS-08 | HG-01~HG-06；无永久悬浮由残余项参与及格判定，若数值发散或状态爆炸仍按 HG-03 硬失败 | `peakSusp`、`residualSusp` |
+| TC-WS-09 | HG-01~HG-06；无粒子瞬移（HG-04） | `separationRatio`、`maxSlopeDeg`、`maxCurvature`、`residualSusp`，取最低分 |
+| TC-WS-10 | HG-01~HG-06；后 5s `bedDrift <= 0.25` 列；后 5s 三相漂移 `<0.1%`；不得出现未输入触发的 `wake/model_error` | 无。该用例是稳定性不变量用例，只判 PASS/FAIL，质量分记 `N/A(hard_gate_only)` |
+| TC-WS-11 | HG-01、HG-03、HG-05；至少 100 个有效 `WS_FRAME` 样本为证据完整性门槛，不足判 `BLOCKED(insufficient_samples)` | `fpsP95`；`physicsTimeMs` P95 仅记录诊断，不评分、不参与及格判定 |
+| TC-WS-12 | HG-01~HG-06；帧间突变不得违反 HG-04；至少 3 个关键帧为证据完整性门槛 | `maxPhaseDeviationPct`（水体、重沙、轻沙三类偏差的最大值；混合带不评分） |
+
+#### 5.3 分档标准（0~10 分，`>=6` 及格）
+
+分档原则：旧阈值一律落在 6 分，表示“达到原验收及格线”；10 分为显著优于原阈值；4 分及以下表示低于原验收线。除 `N/A` 与 `BLOCKED` 外，分数必须由脚本按实测值计算，不得人工给分。
+
+| 指标 | 方向 | 10 分 | 8 分 | 6 分（及格锚点） | 4 分 | 2 分 | 0 分 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `separationRatio` | 越低越好 | `<=0.20` | `<=0.35` | `<=0.50` | `<=0.65` | `<=0.80` | `>0.80` 或上下区数据无效 |
+| `t90Ratio = t90H/t90L` | 越低越好 | `<=0.40` | `<=0.50` | `<=0.70` 且 `t90H<t90L` | `<=0.85` 且 `t90H<t90L` | `<=1.00` 且 `t90H<t90L` | `>1.00`、顺序错误、任一 `t90` 不存在或重复数据无效 |
+| `maxSlopeDeg` | 越低越好 | `<=28°` | `<=30°` | `<=32°` | `<=35°` | `<=38°` | `>38°` |
+| `maxCurvature` | 越低越好 | `<=0.20` | `<=0.27` | `<=0.35` | `<=0.45` | `<=0.55` | `>0.55` |
+| `waterSlopeDeg` | 越低越好 | `<=0.5°` | `<=1.0°` | `<=2.0°` | `<=3.0°` | `<=4.0°` | `>4.0°` |
+| `waterAmplitudePx` | 越低越好 | `<=0.5px` | `<=1.0px` | `<=2.0px` | `<=3.0px` | `<=4.0px` | `>4.0px` 或缺少 `pixelScale` |
+| `tiltSlopeErrorPct` | 越低越好 | `<=5%` | `<=10%` | `<=15%` | `<=20%` | `<=30%` | `>30%`、斜率符号错误或数据无效 |
+| `phaseOrderScore` | 越高越好 | `>=0.60` | `>=0.45` | `>=0.30` | `>=0.20` | `>=0.10` | `<0.10` 或相序方向错误 |
+| `peakSusp` | 越高越好 | `>=0.90` | `>=0.75` | `>=0.50` | `>=0.35` | `>=0.20` | `<0.20` 或摇晃段数据无效 |
+| `residualSusp` | 越低越好 | `<=0.010` | `<=0.025` | `<=0.050` | `<=0.075` | `<=0.100` | `>0.100` 或末段数据无效 |
+| `fpsP95` | 越高越好 | `>=120` | `>=110` | `>=100` | `>=80` | `>=60` | `<60`；低刷新率环境按原规则 `N/A(environment_refresh_rate)` |
+| `maxPhaseDeviationPct` | 越低越好 | `<=2.0` | `<=3.5` | `<=5.0` | `<=6.5` | `<=8.0` | `>8.0`、关键帧不足或颜色标定无效 |
+
+评分细则：
+
+- 多次重复、多个分段或多个同类指标的 TIERED 得分取最低分；不得用高分区抵消低分区。
+- 混合用例的 TIERED 总分为其分档指标最低分；任一硬门槛失败时总分不参与“可接受”判定，结论为 FAIL/未通过。
+- 硬门槛阈值不得降低。若需修改硬门槛，只能先反馈 manager 决策并记录原因；不得为了通过测试临时放宽。
+- `N/A` 仅允许按原用例规则出现，必须记录原因与证据；不得把缺失钩子、样本不足或环境不满足写成 `N/A` 来规避 FAIL/BLOCKED。
+
+#### 5.4 后续报告口径
+
+后续 `docs/test-report-P003-P005.md` 追加执行记录时，必须为每个 TIERED 指标输出：实测值、0~10 分、及格状态、与上一版的分数变化；为每个 MUST-PASS 指标输出：实测值、阈值、PASS/FAIL。趋势判定如下：
+
+| 情况 | 趋势/结论 |
+|---|---|
+| 任一 MUST-PASS 失败 | 恶化/未通过，整体不得判 PASS；不得被 TIERED 高分掩盖 |
+| TIERED 分数上升 | 改善 |
+| TIERED 分数下降但仍 `>=6` | 可接受，报告中必须标注下降幅度与具体指标 |
+| TIERED 分数跌破 `<6` | 恶化/未通过 |
+| 上一版 `N/A/BLOCKED`，本轮有效得分 `>=6` | 改善（解除阻塞并达到及格） |
+| 本轮 `N/A/BLOCKED` | 不可比较，必须保留阻塞原因；不得推定为改善或恶化 |
+
+---
+
+## P-006：场景一“两种不互溶液体（油水分层）”客观测试用例（等待期设计版）
+
+> 版本：v1　日期：2026-10-14　对应实现方向：`SandGrid` M1' 液体模式（`rendermode=3`）
+> 说明：本节将 `test/TC_TEST_CASES.md` 中 TC-11~13 草案转正，只覆盖场景一与共享容器动态目标；主观观感仍由 effector 维护。TC-11~13 编号仅在本 P-006 语境内使用，不与场景二 `TC-WS-*` 混用。
+> 执行边界：本轮只做用例与判定脚本设计，不占用真机、不修改业务代码、不抢占 G2+G3 主线；正式执行等待 manager 单独排期。
+
+### 1. 公共前置与数据口径
+
+- **启动配置**：`rendermode=3`（液体模式）、`testmode=true`、`forceinvert=false`；测试期间禁用传感器，倾角、摇晃与倒立只能由测试脚本或 Want 参数注入。
+- **初始场景**：沿用当前液体模式固定初始化：轻相（蓝/油）在上、重相（绿/水）在下；init 钩子必须记录 `cols/rows/cellPx/initialHeavy/initialLight`。
+- **分段边界**：摇晃、倒立开关、模式切换与 reset 必须输出带 `boundary:true` 的事件；事件边界不得计入相邻帧连续性或瞬移判定。
+- **权威口径**：分相守恒以模拟层粒子计数为准；渲染层像素面积只做交叉验证，不得替代粒子计数。缺失模拟层钩子时正式结论为 `BLOCKED(missing_hook)`。
+- **像素标定**：每轮先用竖直 BGR 切片标定背景、纯轻相、纯重相与混合色带阈值；忽略容器边框与左右两端各 10% 列。像素口径必须记录标定参数与每帧分类计数。
+
+### 2. 测试钩子与判定脚本设计
+
+后续实现独立脚本 `test/liquid_mode_check.py`，不复用或修改 `water_sand_check.py` 的场景二判定逻辑：
+
+1. **输入**：hilog 文件、连拍帧目录、帧时间戳 manifest、颜色标定 JSON、用例 ID；输出 JSON 与 Markdown 报告，报告路径按问题独立为 `docs/test-report-P006.md`。
+2. **产品钩子**：建议新增 `LIQ_EVENT` 与 `LIQ_METRIC`，仅在 `testmode=true && rendermode=3` 时输出，避免与 `WS_*` 混淆：
+   - `LIQ_EVENT init/reset/shake/invert/mode/model_error`：含 `boundary`、时间戳、`forceInvert`、目标倾角与摇晃强度。
+   - `LIQ_METRIC`：每 250ms 输出 `heavyCount/lightCount/emptyCount`、两相质心、界面每列行号、界面波动格数、有限数标记与仿真时间。
+   - `LIQ_FRAME`：每帧输出 `frameTimeMs/physicsTimeMs`，用于 FPS 与逐帧连续性诊断。
+3. **指标定义**：
+   - `phaseDrift = max(|count(t)-count(0)|/count(0))`，重、轻相分别计算。
+   - `interfaceRangeCells`：忽略两端 10% 列后，每列重相上边界行号的 `max-min`，除以 `cellPx` 换算为格。
+   - `mixedBandShare`：像素分类中混合色带面积 / 液体总面积；仅表示视觉碎块/暂混程度，不代表质量交换。
+   - `phaseOrderCorrect`：按重力坐标系判断重相质心位于轻相下方；倒立渲染方向只作交叉验证。
+   - `recoveryTime`：从停止摇晃或倒立开关边界起，到相序正确且 `interfaceRangeCells<=3` 并持续 1s 的首时刻。
+   - `rearrangeTime`：TC-13 从倒立开关边界到重排稳定（同上判定）的时长。
+4. **判定顺序**：先解析事件与钩子完整性，再判 MUST-PASS，最后计算 TIERED 分；任一硬门槛失败不得被高分掩盖。像素与模拟层同指标结论冲突时按数据一致性失败处理。
+5. **当前实现缺口**：上述 `LIQ_*` 钩子尚未实现；在补齐前，脚本可先做像素层诊断，但正式结论只能为 `BLOCKED(missing_hook)`。
+
+### 3. 用例总览
+
+| 用例 ID | 覆盖目标 | 核心阈值 | 分类 |
+|---|---|---|---|
+| TC-11 | 静置油水分层与水平界面 | 两相漂移 `<0.1%`；界面波动 `<=2` 格；稳态零抖动 | MUST-PASS + TIERED |
+| TC-12 | 摇晃暂时混合后恢复分层 | 两相漂移 `<0.1%`；混色曲线先升后降；恢复 `<=4s`；终态相序正确 | MUST-PASS + TIERED |
+| TC-13 | 倒立/回正动态重排 | 两相漂移 `<0.1%`；重排 `2~4s`；相序随重力翻转；无阶跃 | MUST-PASS + TIERED |
+
+### 4. 详细用例
+
+#### TC-11 液体模式静置分层
+
+- **前置条件**：液体模式初始化完成，正立、无摇晃、无倒立；至少采集 30s 与 100 帧。
+- **操作序列**：静置 30s，全程采集 `LIQ_METRIC`、连拍帧与 `LIQ_FRAME`；末 5s 定义为稳态段。
+- **MUST-PASS**：
+  - 进程持续存活，无 fatal exception、ANR、native crash 或非预期退出。
+  - 重、轻相 `phaseDrift < 0.001`，全时段与每个分段逐样本判定。
+  - 稳态段相序正确：重相质心位于轻相下方。
+  - 稳态段相邻帧像素分类变化 `<=0.1%`，不得出现自发流动或零抖动伪影。
+  - 所有 `LIQ_*` 数值为有限数，事件序列无未输入触发的 `invert/shake/reset/model_error`。
+- **TIERED**：界面波动按 `<=0.5/1/2/3/4/>4` 格映射 `10/8/6/4/2/0` 分，`>=6` 及格；稳态像素变化按 `0%/0.05%/0.10%/0.20%/0.40%/>0.40%` 映射同档。
+- **通过标准**：硬门槛全部 PASS 且两项 TIERED 均 `>=6`。
+
+#### TC-12 液体模式摇晃暂时混合与恢复
+
+- **前置条件**：延续 TC-11 稳态；摇晃输入由脚本注入，禁止面板误触或传感器接管。
+- **操作序列**：注入 `shake=1.0` 左右往复 6s → 停止静置 30s；全程按事件边界分成混合段与恢复段。
+- **MUST-PASS**：
+  - 全程两相 `phaseDrift < 0.001`，激烈摇晃段逐样本判定。
+  - 混合段 `mixedBandShare` 存在可测上升，恢复段存在单调或带小噪声的收敛下降；不得只看终态。
+  - 恢复终态相序正确，界面波动 `<=3` 格，且不存在永久乳浊。
+  - 恢复 `recoveryTime <= 4s`；超过 30s 未恢复判永久混合 FAIL。
+  - 事件边界与帧时间戳可对齐；摇晃期间不得出现未输入触发的倒立或 reset。
+- **TIERED**：峰值混色占比按 `>=30%/20%/10%/5%/2%/<2%` 映射 `10/8/6/4/2/0` 分；恢复时间按 `<=2/3/4/6/8/>8s` 映射同档；终态混色占比按 `<=1%/2%/5%/8%/12%/>12%` 映射同档。三项取最低分，`>=6` 及格。
+- **通过标准**：硬门槛全部 PASS 且 TIERED 最低分 `>=6`。
+
+#### TC-13 液体模式倒立与回正重排
+
+- **前置条件**：正立稳态；倒立只通过 `forceinvert` 或脚本注入的 180° 手势触发，事件必须带边界。
+- **操作序列**：开启倒立 → 静置至稳定 → 关闭倒立 → 静置至稳定；两段均至少覆盖 8s。
+- **MUST-PASS**：
+  - 全程两相 `phaseDrift < 0.001`。
+  - 每次事件后的相序在重力坐标系中正确翻转；倒立关闭后必须回到正立相序。
+  - 每次 `rearrangeTime` 均为 `2~4s`：短于 2s 判跳变，长于 4s 判拖尾。
+  - 重排过程相邻帧质心位移与像素分类变化连续，不得出现整块瞬移或颜色整体跳变。
+  - 事件边界处不参与跨边界连续性判定，但必须通过事件日志与渲染方向交叉验证。
+- **TIERED**：重排时长按落在 `2.5~3.5s`、`2.2~3.8s`、`2.0~4.0s`、`1.5~4.5s`、`1.0~5.5s`、其他映射 `10/8/6/4/2/0` 分；过程平滑度按最大相邻帧质心位移 `<=0.5/1/2/3/4/>4` 格映射同档。两项取最低分，`>=6` 及格。
+- **通过标准**：硬门槛全部 PASS 且 TIERED 最低分 `>=6`。
+
+### 5. 暂允许失败项（只限等待期基线，不构成放行）
+
+| 临时项 | 影响用例 | 允许状态 | 解除条件 |
+|---|---|---|---|
+| `LIQ_METRIC` 粒子计数与质心钩子缺失 | TC-11~13 | `BLOCKED(missing_hook)`；像素结果只能作诊断 | developer 补齐钩子并由 tester 校验解析 |
+| 已知 bug A：倒立 OFF 后物理不回正 | TC-12、TC-13 | `FAIL(known_defect_A)` 作为 RED 基线记录 | developer 修复并复测通过 |
+| 面板/BindSheet 自动化误触风险 | TC-12、TC-13 | 执行编排缺陷，不归因物理实现；必须修正脚本或使用 Want/事件注入 | 脚本不再依赖不可靠面板坐标 |
+
+上述状态不得改写为 PASS，也不得用 TC-11 的静态 PASS 抵消 TC-12/13 的动态 FAIL。硬门槛阈值不因临时项放宽。
 
 ## P-011：倾斜跟手性 / 底层运动响应客观测试用例
 
@@ -463,3 +630,55 @@ These cases do not replace TC-P011-01~04. They add v2.8 green heavy-interface ob
 | TC-P011-MODE-07 共用处理链与既有门槛 | 模式入口已实现；匹配HAP/source manifest | 两入口构造相同规范姿态并检查下游；执行原TC01~04、green-ROI及压力suite | 模式只改变输入来源，下游方向/平滑/预算/物理链共用；所有原硬门槛维持，质量>=6；模拟验收与真实传感器接线报告分开 | 主机adapter unit+源审查；设备完整客观suite，主观交effector |
 
 RED基线：`python test/test_p011_input_modes.py --output test/artifacts/p011-v28-canonical-20261018/input-modes-red-baseline.json` 仅执行源码库存检查；其presence不是runtime PASS。新契约/业务未交付时上述runtime用例如实BLOCKED/NOT_IMPLEMENTED，待实现后原用例重测。
+
+### 10.1 2026-10-18 green预检工具硬闸门澄清
+
+TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只表示三张图均可识别绿色；physicalGatePassed必须要求正负两个phase各自heavyFluxNonZeroSamples>=30、heavyShapeRms>=0.5、heavyShapeMaxDelta>=1.0且值有限。两者均满足才能OBSERVATION_READY/exit0；ROI缺失保持BLOCKED(roiObservation)/非零，ROI存在但物理未过为FAIL(heavyObservation)/非零。原诊断字段保留，不增加或放宽物理阈值。回归命令：`python -m unittest discover -s test -p test_p011_preflight_gates.py`；真实新包FAIL与旧真实PASS均只读输入，输出至临时文件，禁止改冻结证据。
+
+## 11. P011 SLIP 七相观测正式用例（2026-10-19，target-based 转正）
+
+> 本节只固化客观验收；不替代 TC-P011-01~04。正式校验器为 `test/p011_slip_formal_check.py`，报告为 `docs/test-report-P011-slip-v1.md`。
+
+### 11.1 TC-P011-SLIP-01 逐边 tan30 硬约束
+
+- **前置条件**：完整七相 ledger；每个子步有同 `sequence/frameId/substepId/physicsTime` 的 `P011_METRIC.effectiveTilt` post-update 快照。
+- **输入**：每个提交物理子步的 `stateBefore.S` 与 `stateAfter.S`。
+- **判定标准**：对每子步全部 127 边，`|S[c+1]-S[c]-tan(effectiveTilt_committed)|<=tan30°`；总违约数必须为 0。禁止使用下一子步或上一相位 `context.effectiveTilt` 作为提交倾角。
+- **分类**：MUST-PASS。
+
+### 11.2 TC-P011-SLIP-02 ±45° raster 收敛与 target-based t90
+
+- **前置条件**：`positiveOvershoot` 与 `negativeOvershoot` 的 raster 全宽轮廓均可解析。
+- **输入**：相位内所有 raster 样本。
+- **判定标准**：相位最后一次 raster 全宽 OLS 线性坡度 ∈ `30°±2°`，`R²>=0.90`，并报告 RMSE（rad/column）；`t90` 为 target-based 首次线性坡度达到 `27°`（30° 目标的 90%）的相对时间，且 `<=5100ms`。禁止以本相位实测终值的 90% 计算 t90。
+- **分类**：MUST-PASS。
+
+### 11.3 TC-P011-SLIP-03 相位终点稳定与悬沙预算
+
+- **前置条件**：七相 ledger 完整，初始沉积沙总量取首子步 `stateBefore` 的 `bh+bl` 总和。
+- **输入**：每相位最后 1s ledger 状态与相位终点 `suspH+suspL`。
+- **判定标准**：每相位最后 1s OLS 坡度变化 `<=1°`；相位终点 `suspH+suspL<=0.05×初始沉积沙总量`。
+- **分类**：MUST-PASS。
+
+### 11.4 TC-P011-SLIP-04 预算与账本对齐
+
+- **前置条件**：完整 ledger 与同子步 `P011_METRIC`。
+- **输入**：逐子步 `budgets`、audit 预算超额字段、`context.effectiveTilt`、同子步 metric post-update `effectiveTilt`。
+- **判定标准**：local/bottom/total 预算全程原值，不放宽、不追加：`localUsed<=localLimit`；`bottomUsed<=min(bottomRequested,bottomLimit)`；`totalUsed<=min(totalRequested,totalLimit)`；clipping/relax/三类预算超额为 0。ledger `context.effectiveTilt` 与同子步 `P011_METRIC.effectiveTilt` 均为 `updateTilt()` 后参考，并绑定同一子步身份字段；缺失或身份错配数为 0。
+- **分类**：MUST-PASS。
+
+### 11.5 v1 历史证据 RED 基线
+
+- **输入**：`test/artifacts/p011-slip-overshoot-v1/`（只读）。
+- **预期**：正式口径暴露硬约束违约、raster 未收敛、target-based t90 缺失与旧 `slope90TimeMs` 口径缺陷；允许预算对账本身通过。该结果是预期 RED，不得以放宽标准转绿。
+
+## 12. 观测①b：激活逐边转折遥测交付验收（2026-10-19，架构冻结）
+
+> 本节为 manager 观测①b 任务的验收 checklist 备注与交叉引用；完整判定口径、代码锚点、工程边界与交付要求见 `architecture-P011.md` §19.13。四项 MUST-PASS，全部勾选后才可提交正式七相 run 冻结证据。
+
+- [ ] **□1 转折记录字段完整**：正式七相 run ledger `slip[]` 每条边记录 activeBefore/activeAfter/transitionType(start|stop)/effectiveTilt/残差 r 全部非空有效，transitionType 与状态组合一致。
+- [ ] **□2 无 unavailable 残留**：正式七相 run ledger `slip[]` 中 transitionType=unavailable 计数=0；计数范围仅 relax 滑移通道，bottomCreep/suspensionDiffusion 的设计内 unavailable 不计入且不得伪造；合成自测 ledger 允许。
+- [ ] **□3 transitionTelemetryAvailable=true**：每个 ledger record `context.transitionTelemetryAvailable===true` 且 schema v3；合成 ledger 单测（`test/test_p011_transition_telemetry.py`）全部 PASS。
+- [ ] **□4 物理逻辑与参数零改动**：relaxAngle 判据、local/bottom/total 预算、全部物理常量逐字不变；probe=null 同输入状态序列等价。
+
+验证资产：`test/p011_v210_natural_observation_check.py`（`validate()` 承载 □1/□3 合成校验）、`test/test_p011_transition_telemetry.py`（合成 ledger 转折契约用例）。正式 run 的 □2 专项计数在 ledger 冻结后执行，计数口径详见 architecture §19.13.1。

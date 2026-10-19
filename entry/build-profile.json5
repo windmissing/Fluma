@@ -1,6 +1,12 @@
 {
   "apiType": "stageMode",
-  "buildOption": {},
+  "buildOption": {
+    "sourceOption": {
+      "workers": [
+        "./src/main/ets/physics/P011NaturalObservationWorker.ets"
+      ]
+    }
+  },
   "targets": [
     {
       "name": "default",

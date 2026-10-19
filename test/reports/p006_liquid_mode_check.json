@@ -1,0 +1,575 @@
+{
+  "problemId": "P-006",
+  "case": "ALL",
+  "overall": "PASS",
+  "selfCheck": true,
+  "commit": "bb854c21a260e7ace92edc99084fbdac736d81d7",
+  "generatedAt": "2026-10-15T16:46:13+08:00",
+  "parseErrors": [],
+  "frameInputs": {
+    "frameCount": 0,
+    "firstTime": null,
+    "lastTime": null
+  },
+  "cases": {
+    "TC-11": {
+      "caseId": "TC-11",
+      "overall": "PASS",
+      "missing": [],
+      "measured": {
+        "particleDriftPct": 0.0,
+        "pixelAreaDriftPct": 0.0,
+        "maxDualShareDeviationPct": 0.0,
+        "initialParticleShares": {
+          "particleLight": 0.4166666666666667,
+          "particleHeavy": 0.5833333333333334
+        },
+        "maxInterfaceAmplitudeCells": 1.0,
+        "longestStaticFrameRun": 3620,
+        "finalPhaseOrder": true,
+        "observationSeconds": 30.992,
+        "validFrameCount": 3720,
+        "validFrameRatio": 1.0,
+        "fpsP95": 119.99999999999999,
+        "physicsTimeMsP95": 1.5,
+        "invalidFramesWithClippedTime": 0
+      },
+      "checks": [
+        {
+          "id": "HG-COUNT-CONSERVATION",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.1%",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-PIXEL-AREA-CONSERVATION",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.1%",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "VV-01-DUAL-SHARE",
+          "category": "MUST-PASS / TIERED",
+          "measured": 0.0,
+          "threshold": "<= 3 percentage points; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-TIMESTAMP-ORDER",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "non-decreasing",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-INTERFACE-AMPLITUDE",
+          "category": "MUST-PASS / TIERED",
+          "measured": 1.0,
+          "threshold": "<= 2 cells; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-STATIC-300-FRAMES",
+          "category": "MUST-PASS",
+          "measured": 3620,
+          "threshold": ">= 300 consecutive frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-UPRIGHT-PHASE-ORDER",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "light row < heavy row",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-OBSERVATION-DURATION",
+          "category": "MUST-PASS",
+          "measured": 30.992,
+          "threshold": ">= 30 seconds",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-VALID-FRAME-COUNT",
+          "category": "MUST-PASS",
+          "measured": 3720,
+          "threshold": ">= 100 valid frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-VALID-FRAME-RATIO",
+          "category": "MUST-PASS",
+          "measured": 1.0,
+          "threshold": "100% valid frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-FPS-P95",
+          "category": "MUST-PASS",
+          "measured": 119.99999999999999,
+          "threshold": ">= 100 fps",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-PHYSICS-TIME-P95",
+          "category": "MUST-PASS",
+          "measured": 1.5,
+          "threshold": "<= 4 ms",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-BACKPRESSURE-FRAME-FIELDS",
+          "category": "MUST-PASS",
+          "measured": 0,
+          "threshold": "every invalid frame has clipped_time_ms > 0",
+          "status": "PASS",
+          "score": null
+        }
+      ],
+      "passLine": 6
+    },
+    "TC-12": {
+      "caseId": "TC-12",
+      "overall": "PASS",
+      "missing": [],
+      "measured": {
+        "particleDriftPct": 0.0,
+        "pixelAreaDriftPct": 0.0,
+        "maxDualShareDeviationPct": 0.0,
+        "initialParticleShares": {
+          "particleLight": 0.4166666666666667,
+          "particleHeavy": 0.5833333333333334
+        },
+        "recoveryStableMetric": {
+          "time": 10.308,
+          "mixedShare": 0.025
+        },
+        "baselineMixedFraction": 0.02,
+        "peakMixedFraction": 0.35,
+        "mixedRise": 0.32999999999999996,
+        "recoveryResidual": 0.005000000000000001,
+        "recoverySlopePerSecond": -0.0025647254615758816,
+        "recoveryTimeSeconds": 3.308,
+        "recoveryDurationSeconds": 30.0,
+        "tierScores": {
+          "peakMixedShare": 10,
+          "recoveryTime": 6,
+          "finalMixedShare": 6,
+          "minimum": 6
+        },
+        "finalPhaseOrder": true,
+        "finalInterfaceAmplitudeCells": 1.0,
+        "validFrameCount": 4441,
+        "validFrameRatio": 1.0,
+        "fpsP95": 119.99999999999999,
+        "physicsTimeMsP95": 1.5,
+        "invalidFramesWithClippedTime": 0
+      },
+      "checks": [
+        {
+          "id": "HG-COUNT-CONSERVATION",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.1%",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-PIXEL-AREA-CONSERVATION",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.1%",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "VV-01-DUAL-SHARE",
+          "category": "MUST-PASS / TIERED",
+          "measured": 0.0,
+          "threshold": "<= 3 percentage points; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-TIMESTAMP-ORDER",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "non-decreasing",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-SHAKE-EVENTS",
+          "category": "MUST-PASS",
+          "measured": {
+            "start": 1,
+            "stop": 1
+          },
+          "threshold": "one start and one stop",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-RECOVERY-DURATION",
+          "category": "MUST-PASS",
+          "measured": 30.0,
+          "threshold": ">= 30 seconds after shake_stop",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-MIXED-RISE",
+          "category": "MUST-PASS / TIERED",
+          "measured": 0.32999999999999996,
+          "threshold": ">= 0.05; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-RECOVERY-RESIDUAL",
+          "category": "MUST-PASS / TIERED",
+          "measured": 0.005000000000000001,
+          "threshold": "<= 0.02; score >= 6",
+          "status": "PASS",
+          "score": 8
+        },
+        {
+          "id": "HG-RECOVERY-SLOPE",
+          "category": "MUST-PASS",
+          "measured": -0.0025647254615758816,
+          "threshold": "< 0",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-RECOVERY-TIME",
+          "category": "MUST-PASS / TIERED",
+          "measured": 3.308,
+          "threshold": "<= 4 seconds and stable for 1 second; score >= 6",
+          "status": "PASS",
+          "score": 6
+        },
+        {
+          "id": "TIERED-PEAK-MIXED-SHARE",
+          "category": "TIERED",
+          "measured": 0.35,
+          "threshold": ">= 10%; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "TIERED-RECOVERY-TIME",
+          "category": "TIERED",
+          "measured": 3.308,
+          "threshold": "<= 4 seconds; score >= 6",
+          "status": "PASS",
+          "score": 6
+        },
+        {
+          "id": "TIERED-FINAL-MIXED-SHARE",
+          "category": "TIERED",
+          "measured": 0.025,
+          "threshold": "<= 5%; score >= 6",
+          "status": "PASS",
+          "score": 6
+        },
+        {
+          "id": "TIERED-TC12-MINIMUM",
+          "category": "TIERED",
+          "measured": 6,
+          "threshold": "minimum score >= 6",
+          "status": "PASS",
+          "score": 6
+        },
+        {
+          "id": "HG-FINAL-PHASE-ORDER",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "light row < heavy row",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-FINAL-INTERFACE-AMPLITUDE",
+          "category": "MUST-PASS / TIERED",
+          "measured": 1.0,
+          "threshold": "<= 3 cells; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-VALID-FRAME-COUNT",
+          "category": "MUST-PASS",
+          "measured": 4441,
+          "threshold": ">= 100 valid frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-VALID-FRAME-RATIO",
+          "category": "MUST-PASS",
+          "measured": 1.0,
+          "threshold": "100% valid frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-FPS-P95",
+          "category": "MUST-PASS",
+          "measured": 119.99999999999999,
+          "threshold": ">= 100 fps",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-PHYSICS-TIME-P95",
+          "category": "MUST-PASS",
+          "measured": 1.5,
+          "threshold": "<= 4 ms",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-BACKPRESSURE-FRAME-FIELDS",
+          "category": "MUST-PASS",
+          "measured": 0,
+          "threshold": "every invalid frame has clipped_time_ms > 0",
+          "status": "PASS",
+          "score": null
+        }
+      ],
+      "passLine": 6
+    },
+    "TC-13": {
+      "caseId": "TC-13",
+      "overall": "PASS",
+      "missing": [],
+      "measured": {
+        "particleDriftPct": 0.0,
+        "pixelAreaDriftPct": 0.0,
+        "maxDualShareDeviationPct": 0.0,
+        "initialParticleShares": {
+          "particleLight": 0.4166666666666667,
+          "particleHeavy": 0.5833333333333334
+        },
+        "transitions": [
+          {
+            "event": "invert_on",
+            "eventTime": 1.0,
+            "target": "inverted",
+            "rearrangeSeconds": 2.625,
+            "stablePhaseOrder": true
+          },
+          {
+            "event": "invert_off",
+            "eventTime": 5.0,
+            "target": "upright",
+            "rearrangeSeconds": 2.625,
+            "stablePhaseOrder": true
+          }
+        ],
+        "maxAdjacentCentroidDisplacementCells": 0.3329999999999984,
+        "centroidDisplacementSources": {
+          "metric": 0.3329999999999984,
+          "frames": 0.0
+        },
+        "maxAdjacentPixelClassificationChange": 0.0,
+        "pixelClassificationSources": [
+          "LIQUID_METRIC changedCells/totalCells"
+        ],
+        "maxInterfaceStepCells": 0.5,
+        "tierScores": {
+          "rearrange": [
+            10,
+            10
+          ],
+          "smoothness": 10,
+          "minimum": 10
+        },
+        "postLastEventSeconds": 4.992000000000001,
+        "validFrameCount": 1200,
+        "validFrameRatio": 1.0,
+        "fpsP95": 119.99999999999999,
+        "physicsTimeMsP95": 1.5,
+        "invalidFramesWithClippedTime": 0
+      },
+      "checks": [
+        {
+          "id": "HG-COUNT-CONSERVATION",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.1%",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-PIXEL-AREA-CONSERVATION",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.1%",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "VV-01-DUAL-SHARE",
+          "category": "MUST-PASS / TIERED",
+          "measured": 0.0,
+          "threshold": "<= 3 percentage points; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-TIMESTAMP-ORDER",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "non-decreasing",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-TRANSITION-EVENTS",
+          "category": "MUST-PASS",
+          "measured": 2,
+          "threshold": ">= 2 invert transitions",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-REARRANGE-WINDOW-1",
+          "category": "MUST-PASS / TIERED",
+          "measured": 2.625,
+          "threshold": "2.0 <= seconds <= 4.0; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-PHASE-ORDER-1",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "target inverted",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-REARRANGE-WINDOW-2",
+          "category": "MUST-PASS / TIERED",
+          "measured": 2.625,
+          "threshold": "2.0 <= seconds <= 4.0; score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-PHASE-ORDER-2",
+          "category": "MUST-PASS",
+          "measured": true,
+          "threshold": "target upright",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-NO-TELEPORT",
+          "category": "MUST-PASS",
+          "measured": 0.5,
+          "threshold": "<= 2 cells per physics frame",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-CENTROID-DISPLACEMENT",
+          "category": "MUST-PASS",
+          "measured": 0.3329999999999984,
+          "threshold": "<= 1 cell per adjacent frame (event boundary excluded)",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "TIERED-PROCESS-SMOOTHNESS",
+          "category": "TIERED",
+          "measured": 0.3329999999999984,
+          "threshold": "<= 2 cells for score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-PIXEL-CLASSIFICATION-CONTINUITY",
+          "category": "MUST-PASS",
+          "measured": 0.0,
+          "threshold": "<= 0.10% adjacent classified pixels (event boundary excluded)",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "TIERED-TC13-MINIMUM",
+          "category": "TIERED",
+          "measured": 10,
+          "threshold": "minimum score >= 6",
+          "status": "PASS",
+          "score": 10
+        },
+        {
+          "id": "HG-POST-EVENT-OBSERVATION",
+          "category": "MUST-PASS",
+          "measured": 4.992000000000001,
+          "threshold": ">= 4.5 seconds",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-VALID-FRAME-COUNT",
+          "category": "MUST-PASS",
+          "measured": 1200,
+          "threshold": ">= 100 valid frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-VALID-FRAME-RATIO",
+          "category": "MUST-PASS",
+          "measured": 1.0,
+          "threshold": "100% valid frames",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-FPS-P95",
+          "category": "MUST-PASS",
+          "measured": 119.99999999999999,
+          "threshold": ">= 100 fps",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-PHYSICS-TIME-P95",
+          "category": "MUST-PASS",
+          "measured": 1.5,
+          "threshold": "<= 4 ms",
+          "status": "PASS",
+          "score": null
+        },
+        {
+          "id": "HG-BACKPRESSURE-FRAME-FIELDS",
+          "category": "MUST-PASS",
+          "measured": 0,
+          "threshold": "every invalid frame has clipped_time_ms > 0",
+          "status": "PASS",
+          "score": null
+        }
+      ],
+      "passLine": 6
+    }
+  }
+}

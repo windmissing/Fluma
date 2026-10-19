@@ -1,0 +1,33 @@
+﻿import { WaterSandField, defaultWaterSandParams } from './WaterSandField';
+
+const params = defaultWaterSandParams();
+params.heavyDiffusion = 0;
+params.lightDiffusion = 0;
+params.waterLevelRate = 0.001;
+params.totalMotionBudget = 1;
+params.vSandTopMax = 30;
+params.heavySettleSpeed = 100;
+params.lightSettleSpeed = 50;
+params.percolationRate = 1000;
+params.angleDeg = 1;
+params.bottomCreepDeadZone = 0.5;
+params.maxAvalancheFlux = 100;
+params.heavyLiftRate = 1000;
+params.lightLiftRate = 1000;
+const field = new WaterSandField(8, 192);
+field.configure(params);
+field.initialize({
+  waterRegions: [{ startCol: 0, endColInclusive: 7, bottom: 120, height: 60 }],
+  heavyDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 0, height: 50 }],
+  lightDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 50, height: 50 }],
+  heavySuspendedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 0, height: 10 }],
+  lightSuspendedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 0, height: 10 }]
+});
+field.setTilt(20);
+field.setShakeInput(1);
+field.step(1 / 60);
+const first = field.snapshot();
+field.step(1 / 60);
+const second = field.snapshot();
+const sum = (snapshot: typeof first) => snapshot.suspH.reduce((a, b) => a + b, 0) + snapshot.suspL.reduce((a, b) => a + b, 0);
+console.log(JSON.stringify({ first: sum(first), second: sum(second) }));

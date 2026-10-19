@@ -7,6 +7,7 @@ import collisionSolverTest from './CollisionSolverTest';
 import sandGridTest from './SandGridTest';
 import heightFieldTest from './HeightFieldTest';
 import waterSandFieldTest from './WaterSandFieldTest';
+import liquidCAFieldTest from './LiquidCAFieldTest';
 import p011InputModeTest from './P011InputModeTest';
 
 export default function abilityTest() {
@@ -26,5 +27,6 @@ export default function abilityTest() {
   sandGridTest();
   heightFieldTest();
   waterSandFieldTest();
+  liquidCAFieldTest();
   p011InputModeTest();
 }

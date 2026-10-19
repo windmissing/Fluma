@@ -1,0 +1,61 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>峰值 74% 是算出来的</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'column', gap: 20, justifyContent: 'center' }}>
+        {/* 推导链 SVG */}
+        <Box style={{ background: '#FFFFFF', borderRadius: 16, padding: 20, boxShadow: '0 4px 16px rgba(15,42,67,0.10)' }}>
+            <svg width={1130} height={230} viewBox='0 0 1130 250'>
+                {[
+                    { x: 10, t: '扬起速度比', d: '重 36 : 轻 40', e: '轻沙更容易被抖起来', c: '#1D4E79' },
+                    { x: 300, t: '悬浮构成', d: '重 35 : 轻 65', e: '悬浮里大部分是轻沙', c: '#1D4E79' },
+                    { x: 590, t: '等效沉降速度', d: 'vBar ≈ 47', e: '35%×64 + 65%×38', c: '#1D4E79' },
+                    { x: 880, t: '峰值悬浮', d: 'f ≈ 74%', e: '24.5 ÷ (47 − 14)', c: '#F39C12' },
+                ].map((n) => (
+                    <g key={n.x}>
+                        <rect x={n.x} y={30} width={240} height={125} rx={14} fill='#ECF2F7' stroke={n.c} strokeWidth={2.5} />
+                        <rect x={n.x} y={30} width={240} height={42} rx={14} fill={n.c} />
+                        <text x={n.x + 120} y={58} fill='#FFFFFF' fontSize={19} fontWeight='bold' textAnchor='middle'>{n.t}</text>
+                        <text x={n.x + 120} y={112} fill='#0F2A43' fontSize={28} fontWeight='bold' textAnchor='middle'>{n.d}</text>
+                        <text x={n.x + 120} y={142} fill='#5D6D7E' fontSize={15} textAnchor='middle'>{n.e}</text>
+                    </g>
+                ))}
+                {[252, 542, 832].map((x) => (
+                    <g key={x}>
+                        <line x1={x} y1={92} x2={x + 34} y2={92} stroke='#5D6D7E' strokeWidth={3} />
+                        <polygon points={`${x+34},85 ${x+46},92 ${x+34},99`} fill='#5D6D7E' />
+                    </g>
+                ))}
+                <text x={565} y={200} fill='#5D6D7E' fontSize={16} textAnchor='middle'>四个箭头推到底，每一步都只用模型自己的参数——不引入任何新假设</text>
+            </svg>
+        </Box>
+        {/* 下半：数字 + 结论 */}
+        <Box style={{ flexDirection: 'row', gap: 24, alignItems: 'stretch' }}>
+            <Box style={{ width: 340, background: '#0F2A43', borderRadius: 16, padding: 24, justifyContent: 'center', alignItems: 'center', gap: 8 }}>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#F39C12', lineHeight: 1 }}>74%</Text>
+                <Text style={{ fontSize: 18, color: '#C8D8E6', textAlign: 'center' }}>摇晃时悬浮的沙占比<br />（此前误估为 63.6%）</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Box style={{ background: 'rgba(29,78,121,0.10)', borderRadius: 12, padding: '16px 20px' }}>
+                    <Text style={{ fontSize: 19, color: '#2C3E50', lineHeight: 1.6 }}>
+                        <span style={{ fontWeight: 'bold', color: '#1D4E79' }}>为什么从 63.6% 修正到 74%？</span><br />
+                        旧数字偷偷假设了「悬浮里轻重各半」；把模型参数代进去重算，轻沙其实占 65%——悬浮更多、落得更慢。
+                    </Text>
+                </Box>
+                <Box style={{ background: 'rgba(243,156,18,0.12)', borderRadius: 12, padding: '16px 20px' }}>
+                    <Text style={{ fontSize: 19, color: '#B06A00', lineHeight: 1.6 }}>
+                        <span style={{ fontWeight: 'bold' }}>目标带同步修订为 65%~80%：</span>
+                        74% 居中；vBar 每降 2，峰值涨约 5 个点——44.6 就顶到上沿。实测出带即报警，不放宽阈值。
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#F39C12' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>12 / 14</Text>
+    </Box>
+</Slide>

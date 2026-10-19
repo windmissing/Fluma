@@ -538,6 +538,7 @@ heavyShare, heavyShareDeficit
 | 2026-10-18 | `bottom-creep-v2.8-heavy-interface` | 依据算法 §5.7 落地 TC02 观测协议闸门：新增 §7.5，隔离 `source=script` 与 `input_state`，要求 531 行 1:1 schedule precheck 与先闸后评分顺序；状态保持 `READY_FOR_DEVELOPER` |
 | 2026-10-18 | `bottom-creep-v2.8-heavy-interface` | 依据第二次 formal FAIL 归因新增 §7.5.6：采集冻结、全量/precheck 等价注入与冻结前后 hash 审计；禁止在活动日志上判定 schedule precheck；状态保持 `READY_FOR_DEVELOPER` |
 | 2026-10-18 | `bottom-creep-v2.8-heavy-interface` | 新增 §7.5.7：formal suite 与独立 precheck 必须共用 canonical TC02 注入/采集/precheck runner，携带同一 capturePath 身份与 captureAudit；状态保持 `READY_FOR_DEVELOPER` |
+| 2026-10-19 | `bottom-creep-v2.9-central-dune-heavy-interface` | 工程审批 `BLOCKED`：bottom-first 预算预约与相邻输运可工程化，但 `A=2.7,K=2` 与现行 30° 崩塌不变量冲突，且 residual 清零不代表实际 heavy 形状仍达标；详见 §16 |
 
 ## 15. dual-input-v1 工程补充（2026-10-18）
 
@@ -661,3 +662,1543 @@ UI 面板文本固定为“测试模式（模拟姿态）”/“体验模式（�
 5. host 开发既有 canonical/compact 文件独立维护；业务 developer 按本节实施，不复制 host 工具。构建/相关单测完成后 reviewer 审核，tester/effector 按设备串行纪律复测。本节不修改任何 PASS 阈值，不宣布 P-011 闭环。
 
 变更记录：2026-10-18，依据用户双模式授权与算法 §5.8 新增 §15；选定显式当前 Want sequence 保留首命令，统一输入转换与双向隔离，补充纯 helper 和 O(1) 物理输入缓存接口。状态 `READY_FOR_DEVELOPER`。
+
+## 16. v2.9 工程审批与落地方案（2026-10-19）
+
+> **routeId**：`bottom-creep-v2.9-central-dune-heavy-interface`  
+> **状态**：`BLOCKED`  
+> **依据**：`docs/algorithm-P011.md` §6、`docs/retro-P011-v2.9.md`、v2.8 正式证据与本文 §4~§15。  
+> **结论**：bottom-first 预算预约、相邻界面输运、守恒与容量约束均可工程化；但 designer 给定的中央 4 列 dipole 与现行 `relaxAngle` 崩塌不变量存在直接冲突，不能进入 `READY_FOR_DEVELOPER`。
+
+### 16.1 审批结论与冲突审计
+
+| 审计项 | 结论 | 工程判定 |
+|---|---|---|
+| heavy/light/water 守恒 | 通过 | 只允许相邻 donor→receiver 输运；同一接口按 phase 拆分，`bh/bl` 分相总量不变，不引入跨列 teleport。 |
+| donor 存量与 receiver 容量 | 通过 | 每个中央接口独立受限；不足时输出 `duneBlockedInterface` 与剩余 residual，不允许提高预算或静默改目标。 |
+| 独立 bottom 预算 | 通过 | `bottomCreepBudgetUsed <= vBottomCreepMax*dt`；预约只改变 total budget 内的应用顺序，不改变上限。 |
+| total motion 预算 | 通过 | bottom 先扣 total 预算，其余通道按剩余预算缩放；必须避免 bottom 同时进入 requested 缩放和预留扣减的双重衰减。 |
+| 安息角/崩塌角 | **阻断** | `angleDeg=30` 时 `relaxAngle` 阈值为 `tan(30°)≈0.577`；`A=2.7` 的 heavy-only dipole 在中央界面产生 `2A=5.4` 高差，约为阈值的 9.4 倍，必然触发崩塌。 |
+| 预算释放条件 | **阻断** | `duneResidual=sum(abs(F-X))` 可测，但只表示计划 flux 是否输送完；它不校验实际 `bh-phaseHeavyBaseline` 是否仍等于 `targetDelta`，清零后会把预算交还崩塌等通道。 |
+| green ROI 可见性 | 待实测 | 算法 ASSUMPTION-7 未被模型换算证明；只能由冻结截图/连续录像判定，不能作为解除上述阻断的依据。 |
+| 子步平滑 | 待实测 | 单次输运受 `vBottomCreepMax*dt` 限制，预计不违反 `maxSubstepBh`；但崩塌通道介入后的最终形状必须用现行 TC03 复测。 |
+
+#### 16.1.1 阻断项 1：`BLOCKED-V29-ANGLE`
+
+现行实现在每个 application substep 中执行 `relaxAngle`：
+
+```text
+limit = tan(angleDeg)
+targetSlope = tan(effectiveTilt)
+deviation = sandTop[c+1] - sandTop[c] - targetSlope
+if abs(deviation) > limit:
+    request avalanche from higher column to lower column
+```
+
+默认 `angleDeg=30`，正式输入为 ±15°。以 +15° 为例：
+
+```text
+tan(15°) ≈ 0.268
+tan(30°) ≈ 0.577
+触发高差上界 ≈ 0.268 + 0.577 = 0.845
+```
+
+v2.9 正方向 heavy 目标为：
+
+```text
+bh delta = {-2.7, -2.7, +2.7, +2.7}
+```
+
+即使不考虑 light 同 profile 输运，中央两个半 dune 之间的相邻高差也达到 `5.4`，远超 `0.845`；dune 与非目标列的边界同样产生 `2.7` 高差并触发崩塌。按 v2.9 的 bottom-first 顺序，同一 application pass 随后的 `relaxAngle` 即可看到该形状，并以 `maxAvalancheFlux*dt` 持续削平；`totalMotionBudget=300` 足以让该请求获得预算。因此在约 5 秒保持段结束时，中央 heavy RMS/max 大概率不满足 `RMS>=0.5/max>=1.0`。
+
+解除条件必须由 designer 给出，可选方向包括但不限于：
+
+1. 重新设计满足现行角度不变量的目标 profile，并同时保持 RMS/max、green ROI 与预算成本。
+2. 在算法层显式定义允许的崩塌语义、幅度与保护窗口，并升级 route；工程侧不得私自豁免 `relaxAngle` 或调高 `angleDeg`。
+3. 给出可证明的相位平衡方案，使崩塌后的稳态形状仍满足全部硬门槛。
+
+#### 16.1.2 阻断项 2：`BLOCKED-V29-RELEASE`
+
+算法的释放条件是 `duneResidual <= 1e-4`，其中：
+
+```text
+duneResidual = sum(abs(F - X))
+```
+
+该条件可以由 telemetry 精确测试，但它只跟踪“计划 cumulative heavy flux 是否输送完”。一旦 `X=F`，后续 `relaxAngle`、settle、percolation 或 rise 通道改变 `bh` 时，`X` 不会回退，`duneResidual` 仍为 0。于是：
+
+1. bottom 停止新增 dune 输运；
+2. 未用完的 bottom 预算与剩余 total 预算交还其他通道；
+3. 崩塌通道获得预算并继续削平实际形状；
+4. checker 仍可能看到 `duneResidual=0`，从而误判“目标已达成”。
+
+因此释放条件可测但不充分。解除条件必须由 designer 明确以下之一：
+
+1. release 改为校验实际 heavy shape residual，例如与 `targetDelta` 的列级误差，且同时定义崩塌后的允许误差；
+2. dune 完成后维持某种明确的状态保护或预算预约，直到相位结束，并说明其他通道的公平性与总预算语义；
+3. 接受崩塌后的稳态形状作为新目标，并给出对应数学模型与验收阈值。
+
+在 designer 更新前，developer 不得通过关闭 `relaxAngle`、延长 reservation、修改 `F/X` 或调高阈值来绕过阻断。
+
+### 16.2 条件化模块设计（未授权实施）
+
+以下设计保留给 designer 解除 §16.1 阻断后的下一版工程审批使用；本轮不得据此修改业务代码。
+
+#### 16.2.1 常量与内部状态
+
+```ts
+const P011_BOTTOM_ROUTE_ID = 'bottom-creep-v2.9-central-dune-heavy-interface';
+const P011_DUNE_HALF_SUPPORT_COLUMNS = 2;
+const P011_DUNE_TARGET_AMPLITUDE = 2.7;
+const P011_DUNE_RESIDUAL_EPS = 1e-4;
+```
+
+`WaterSandField` 新增相位状态：
+
+```ts
+private duneCenterColumn = -1;
+private duneTargetDelta: Float64Array;
+private duneTargetFlux: Float64Array;      // length 3, signed left-to-right target
+private duneCumulativeFlux: Float64Array;  // length 3, signed actual heavy flux
+private duneResidual = 0;
+private duneBlockedInterface: number | null = null;
+private bottomBudgetReserved = 0;
+private bottomBudgetReleased = 0;
+private otherMotionBudgetRequested = 0;
+```
+
+`duneTargetDelta` 只保存中央 4 列非零目标；`duneTargetFlux` 与 `duneCumulativeFlux` 保存三个中央接口：
+
+```text
+interface[j] means column j -> j+1
+j ∈ {center-2, center-1, center}
+```
+
+正方向 signed flux 为正，负方向为负。`X[j]` 只能由该接口实际 heavy 输运累加，不得由形状反推。
+
+#### 16.2.2 内部方法
+
+```ts
+private initializeDuneProfile(sign: number): void;
+private collectBottomDuneRequest(substepDt: number): number;
+private applyBottomDune(substepDt: number): WaterSandErrorCode | null;
+private updateDuneResidual(): void;
+private computeOtherMotionScale(): number;
+```
+
+语义：
+
+1. `beginCommandPhase(sign)` 调用 `initializeDuneProfile(sign)`，按算法 §6.3 重建 `targetDelta/F/X/residual`。
+2. `collectBottomDuneRequest` 在 collect pass 计算本子步 dune 请求，并返回 `bottomBudgetReserved`。
+3. `applyBottomDune` 在 application pass 中先于 settle/percolation/relax/rise 执行，只使用三个中央相邻接口。
+4. `updateDuneResidual` 只由实际 `X` 更新；若 donor/capacity 使接口无法达到 `F[j]`，记录接口索引并返回观测失败，不回退 v2.8。
+5. `computeOtherMotionScale` 在 bottom 实际应用后计算，使用剩余 total 预算，而不是 collect 时的预估剩余。
+
+#### 16.2.3 Bottom-first 预算方程
+
+Collect pass：
+
+```text
+otherRequested = sum(non-bottom motion requests)
+duneRequested = min(vBottomCreepMax*dt, donor/receiver/capacity limits)
+
+if duneResidual > EPS and abs(targetTilt) > bottomCreepDeadZone:
+    bottomBudgetReserved =
+        min(duneRequested, bottomCreepBudgetLimit, totalMotionBudgetLimit)
+else:
+    bottomBudgetReserved = 0
+```
+
+Application pass：
+
+```text
+bottomUsed = applyBottomDune()
+bottomBudgetReleased = max(0, bottomBudgetReserved - bottomUsed)
+
+if otherRequested <= EPS:
+    otherScale = 1
+else:
+    otherScale = min(1, totalMotionBudgetRemaining / otherRequested)
+```
+
+不变量：
+
+1. `bottomCreepBudgetUsed <= bottomCreepBudgetLimit`。
+2. `totalMotionBudgetUsed <= totalMotionBudgetLimit`。
+3. bottom 不先按 `totalMotionBudgetScale` 缩放，也不重复计入 other requested。
+4. `totalMotionBudgetClipped` 只表示请求被裁剪，不表示预算 violation；violation 必须为 0。
+5. 同一子步内 bottom 未用完的 reservation 留在 `totalMotionBudgetRemaining`，供 other channels 按 `otherScale` 使用。
+
+### 16.3 遥测接口与观测钩子
+
+解除阻断后，扩展 `WaterSandP011Metric`，hook 签名保持不变：
+
+```ts
+export interface WaterSandP011Metric {
+  // all v2.8 fields remain required
+  duneCenterColumn: number;
+  duneTargetAmplitude: number;
+  duneHalfSupport: number;
+  duneTargetFlux: number[];
+  duneCumulativeFlux: number[];
+  duneResidual: number;
+  duneBlockedInterface: number | null;
+  bottomBudgetReserved: number;
+  bottomBudgetReleased: number;
+  otherMotionBudgetRequested: number;
+  otherMotionBudgetScale: number | null;
+}
+```
+
+字段定义：
+
+| 字段 | 定义 |
+|---|---|
+| `duneTargetFlux` | 三个中央接口的 signed 目标 cumulative heavy flux。 |
+| `duneCumulativeFlux` | 三个中央接口的 signed 实际 cumulative heavy flux。 |
+| `duneResidual` | `sum(abs(duneTargetFlux-duneCumulativeFlux))`。 |
+| `duneBlockedInterface` | 无法达到目标的接口索引；无阻断为 `null`。 |
+| `bottomBudgetReserved` | collect pass 预留的 bottom total-budget 份额。 |
+| `bottomBudgetReleased` | 同一 application pass 中未使用的 reservation。 |
+| `otherMotionBudgetScale` | bottom 应用后按剩余 total 预算计算的 other-channel scale。 |
+
+额外要求：
+
+1. `P011_METRIC` 必须先输出 compact 标量与三个元素的数组，再输出 `P011_BOTTOM` 长数组。
+2. checker 必须用 `P011_BOTTOM` 独立重算 central 80% RMS/max，并与 compact metric 差值小于浮点容差。
+3. 若 designer 修改 release 语义，必须新增实际 shape residual 字段；不得继续只用 `F-X` 判定完成。
+
+### 16.4 文件与集成点（解除阻断后）
+
+| 文件 | 变更 |
+|---|---|
+| `entry/src/main/ets/physics/WaterSandField.ets` | 升级 route；新增 dune 状态、预算预约、中央三接口输运与 compact telemetry；不改输入协议。 |
+| `entry/src/main/ets/pages/SandCanvas.ets` | 无渲染/线程语义变更；仅随 metric 接口携带新字段。 |
+| `entry/src/main/ets/physics/P011InputMode.ets` | 不改；§15 `dual-input-v1` 语义保持。 |
+| `entry/src/main/ets/physics/P011TiltWant.ets` | 不改协议。 |
+| `entry/src/main/ets/entryability/EntryAbility.ets` | 不改接口；继续 Want 解析与单槽命令发布。 |
+| `entry/src/test/WaterSandFieldTest.ets` | 新增 route、守恒、角度不变量、预算预约、release、blocked-interface 与 telemetry 测试。 |
+| `entry/src/ohosTest/ets/test/WaterSandFieldTest.ets` | 同步端侧行为与 route 断言。 |
+| `test/p011_check.py` | 升级 schema v3，默认 v2.9 route，强制 dune 字段与 route 一致。 |
+| `test/p011_tc02_formal_suite.ps1` | 输出 v2.9 独立目录与报告路径；继续复用 canonical 注入/采集/precheck lifecycle。 |
+| `tools/run_p011_v29_preflight.ps1`（新增） | v2.9 green-ROI preflight runner；继承已修复的硬闸门逻辑。 |
+| `test/p011_v29_preflight_check.py`（新增） | 解析 v2.9 hilog 与截图；不得复制出与 v2.8 不同的 gate 口径。 |
+
+报告路径：
+
+```text
+docs/test-report-P011-bottom-creep-v2.9-central-dune-heavy-interface.md
+docs/effect-report-P011-bottom-creep-v2.9-central-dune-heavy-interface.md
+demo/effect/P011-v29-central-dune-heavy-interface/preflight/
+```
+
+### 16.5 线程模型与时序
+
+1. 不新增 worker；`WaterSandField` 仍由 `SandCanvas` frame callback 驱动。
+2. dune 请求与应用均为 `O(1)`，shape 遥测沿用既有 `O(cols)`。
+3. 每个子步顺序必须为：
+
+```text
+collect other motion requests
+collect dune request and reserve bottom budget
+restore motion snapshot
+apply bottom dune first
+recompute other scale from remaining total budget
+apply settle/percolation/relax/rise with remaining budget
+audit conservation/capacity/finite/range
+emit compact telemetry
+```
+
+4. 任何 model/capacity error 均恢复本子步 backup 并冻结字段，不得静默重放或降低阈值。
+5. UI 不等待额外 pass；若现有 frame 时间超限，按性能 FAIL 处理，不得减少遥测或改用非 canonical 输入。
+
+### 16.6 Tester 验证链（先证明阻断，再等复批）
+
+本轮可立即执行的验证：
+
+1. 使用同 route RED 基线证明角度冲突：构造默认 128 列正式几何与 ±15° 相位，断言同时满足现行 `relaxAngle` 不变量和 `heavyShapeRms>=0.5/max>=1.0`。当前算法预期 FAIL，输出用于 designer 归因。
+2. 断言 release 语义缺陷：在 `X=F` 后注入一帧现行崩塌请求，验证 `duneResidual` 仍为 0 而 `bh-targetDelta` 增大。
+3. 保留 tester 已修复的 preflight 硬闸门行为：ROI 存在只是必要条件，`heavyFluxNonZeroSamples>=30`、`heavyShapeRms>=0.5`、`heavyShapeMaxDelta>=1.0` 缺一不可。
+
+解除阻断后的正式链：
+
+1. 先生成 v2.9 RED 基线，不使用 v2.8 FAIL 冒充。
+2. 执行 v2.9 green-ROI preflight；route、schema、capturePath 与冻结审计必须一致。
+3. 先执行 TC02 schedule precheck：531/531、sequence、target、gap、`input_state` 隔离、capture frozen/canonical audit 全部 PASS。
+4. precheck PASS 后执行完整 objective suite；所有 log 一次性传入 schema v3 checker。
+5. 断言两方向 heavy 非零样本、RMS/max、green centroid、方向、守恒、预算、`maxSubstepBh`、dune release/blocked 语义全部满足。
+6. 保留 10 列/capacity1000 压力回归，但其 PASS 不替代默认 128 列判定。
+
+### 16.7 Effector 验证链
+
+1. 使用原生连续录像执行 EC-TT-01~04 两轮与 EC-TT-05 回放。
+2. 关键帧 timestamp 与最近 `P011_METRIC.sequence` 对齐。
+3. 评审图同时标出 water、yellow light、green heavy ROI，并输出 green 质心时间序列或逐帧 diff。
+4. HG-TT-01~06 全部按现行硬门槛判定；不得把水/黄沙运动或 light shape 替代 green heavy。
+5. 绿色中央 dipole 不得出现 teleport、撕裂、持续冻结或 persistent jitter；若崩塌导致视觉抖动，如实 FAIL。
+6. 生成 §16.4 的两份独立报告，记录 source commit、HAP SHA256、每个原始 log SHA256、runId/resetEpoch，并由 designer 复核后才可通知 manager。
+
+### 16.8 实施步骤与回滚
+
+当前阻断期：
+
+1. developer 不修改业务代码、checker 或测试期望。
+2. tester 可按 §16.6 增加“阻断证明”测试或独立分析产物，但不得把结果写成 v2.9 行为 FAIL 后又调参。
+3. designer 需针对 §16.1.1/§16.1.2 升级算法版本；如继续使用 v2.9 route，必须先撤销本 BLOCKED 结论并追加变更记录。
+
+解除阻断后：
+
+1. architect 复审新算法并更新本节状态。
+2. developer 先补 RED 测试，再实现 route、状态、预算预约、三接口输运与 telemetry。
+3. 更新 schema v3 checker、formal suite 与 v2.9 preflight。
+4. 按 §16.6/§16.7 串行执行 preflight、objective、subjective。
+5. 任一环节失败即保留 routeId、日志与报告；下一版必须再次升级 routeId，禁止在 v2.8/v2.9 route 下混发行为。
+
+回滚边界：
+
+1. 只回滚 v2.9 实现文件与测试期望，不改写 v2.8/v2.7.3 历史报告。
+2. 保留 BLOCKED 归因与阻断证明，作为下一版设计输入。
+3. 不得通过提高 `angleDeg`、`vBottomCreepMax`、`totalMotionBudget`、capacity 或放宽 RMS/max/green 阈值解除失败。
+
+变更记录：2026-10-19，依据 algorithm §6 与 retro v2.9 新增 §16；审批结论 `BLOCKED`。bottom-first 预算预约与相邻输运的工程方案已条件化记录，但 `A=2.7,K=2` 与 30° 崩塌不变量冲突，且 `F-X` residual 清零不能证明实际形状达标，未授权 developer 实施。
+
+---
+
+## 17. v2.10 工程方案：natural-observation-v2.10（2026-10-19）
+
+状态：`READY_FOR_DEVELOPER`，仅授权观测实验实现与运行；不授权修改物理规则、参数或效果门槛。依据 `algorithm-P011.md` §6.16、§7.1~§7.10。本节 supersede §16 的实施指引；§16 保留为 v2.9 `BLOCKED/REJECTED` 历史归因，developer 不得再实现 dune/target/bottom-first reservation。
+
+工程结论：
+
+1. 不升级 `WaterSandParams.routeId`，不修改 `P011_BOTTOM_ROUTE_ID`。物理继续使用现有 `bottom-creep-v2.8-heavy-interface` 自然规则；v2.10 身份只存在于新增观测记录 `observationRouteId='natural-observation-v2.10'`，避免污染既有 route 断言和历史报告。
+2. 观测使用独立 `P011NaturalObservationProbe`。它只复制状态、记录实际 grant 与审计，不写任何 `WaterSandField` 状态，不参与预算、容量、阈值或通道优先级决策。
+3. 完整逐子步账本不进 hilog 长数组；由后台 worker 写应用 cache 文件，hilog 只输出 compact heartbeat 与文件路径，避免 UI 线程序列化/IO 阻塞。
+4. 默认实验为 `128/192/28`、`wspreset=thick`、`dual-input-v1`、真实 Want 序列 `0/+15/0/-15/0`。runner 只复用现有 `wstilt` 输入，不新增输入语义。
+
+### 17.1 模块划分与文件清单
+
+| 文件 | 变更 | 职责 |
+|---|---|---|
+| `entry/src/main/ets/physics/P011NaturalObservation.ets` | 新增 | 数据契约、纯 phase 映射、Probe 与逐子步审计；不 import ArkUI/AppStorage/sensor/file |
+| `entry/src/main/ets/physics/P011NaturalObservationStore.ets` | 新增 | 创建 worker sink，接收不可变 record，后台写 `ledger.ndjson` |
+| `entry/src/main/ets/physics/P011NaturalObservationWorker.ets` | 新增 | worker 入口；只 `JSON.stringify`、追加写、flush，不接触物理对象 |
+| `entry/src/main/ets/physics/WaterSandField.ets` | 修改 | 新增可选 probe setter 与只读 record 调用点；公式、常量、预算、错误处理逐字不变 |
+| `entry/src/main/ets/pages/SandCanvas.ets` | 修改 | `wssnapshot=true` 时接线 store/probe 并输出 raster layout；渲染与 frame 驱动不变 |
+| `entry/src/main/ets/entryability/EntryAbility.ets` | 不改 | 继续既有 Want 解析与 `dual-input-v1` 发布时序 |
+| `entry/src/main/ets/physics/P011InputMode.ets`、`P011TiltWant.ets` | 不改 | 输入模式、watermark、模式隔离与倾角命令语义保持 |
+| `tools/run_p011_v210_natural_observation.ps1` | 新增 | 默认场景 phase runner 与 hilog/file/raster 冻结采集 |
+| `test/p011_v210_natural_observation_check.py` | 新增 | 解析 ledger/raster/manifest，输出 summary 与分类；为观测分析工具，不是效果门槛 |
+| 既有 `entry/src/test/**`、`entry/src/ohosTest/**`、`test/p011_check.py`、`test/p011_tc02_formal_suite.ps1` | 不改 | 不改任何既有测试用例、schema 或期望 |
+
+证据路径：
+
+```text
+test/artifacts/p011-v210-natural-observation-<timestamp>/
+  hilog.txt
+  ledger.ndjson
+  schedule.csv
+  raster/<phase>/t<capture-time-ms>.jpeg
+  raster-manifest.json
+  summary.json
+  source-manifest.json
+docs/observation-report-P011-natural-observation-v2.10.md
+```
+
+`ledger.ndjson` 每行一个 record。`raster-manifest.json` 每项记录 capture wall time、相对 phase time、SHA256、原图尺寸、最近 `sequence/physicsTime` 和 runId。
+
+### 17.2 核心接口
+
+列向量长度为 `128`，相邻接口向量长度为 `127`；设备内用 `Float64Array` 复制，序列化为 JSON number array。
+
+```ts
+export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-observation-v2.10';
+export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 3;
+
+export type P011NaturalObservationPhaseName =
+  'baseline' | 'positive' | 'positiveReturn' | 'negative' | 'negativeReturn' | 'unknown';
+
+export interface P011NaturalObservationState {
+  bh: number[]; bl: number[]; mh: number[]; ml: number[];
+  suspH: number[]; suspL: number[]; S: number[]; waterTop: number[];
+}
+
+export interface P011NaturalObservationSubstepContext {
+  observationRouteId: string;
+  ledgerSchemaVersion: number;
+  runId: string;
+  frameId: number;
+  substepId: number;
+  sequence: number;
+  physicsTime: number;
+  physicsDt: number;
+  commandSequence: number;
+  commandPhaseId: number;
+  commandPhaseSign: number;
+  phaseD: P011NaturalObservationPhaseName;
+  targetTilt: number;
+  effectiveTilt: number;
+  effectiveTiltRate: number;
+  shakeEnergy: number;
+}
+
+export interface P011NaturalObservationColumnGrant {
+  requested: number[]; allowed: number[]; heavy: number[]; light: number[];
+}
+
+export interface P011NaturalObservationPercolationGrant {
+  requested: number[]; allowed: number[]; q: number[]; r: number[];
+  heavyDown: number[]; lightDown: number[];
+}
+
+export interface P011NaturalObservationEdgeGrant {
+  interfaceIndex: number; donor: number; receiver: number; directionSign: number;
+  requested: number; allowed: number; heavy: number; light: number;
+}
+
+export interface P011RelaxStateTransitionRecord {
+  runId: string;
+  substepId: number;
+  interfaceIndex: number; // c, edge between columns c and c+1
+  phaseD: P011NaturalObservationPhaseName;
+  thresholdCalibrationId: string;
+  thetaStartDeg: number;
+  thetaStopDeg: number;
+  transition: 'start' | 'stop';
+  effectiveTilt: number; // committed reference angle used for d/r in this substep
+  d: number;             // signed residual at the transition decision, model height
+  r: number;             // abs(d)/dx, model slope
+  activeBefore: boolean;
+  activeAfter: boolean;
+  requested: number;
+  granted: number;
+  budgetScale: number | null; // granted/requested; null when requested == 0
+  previousSubstepId: number | null;
+  previousD: number | null;
+  previousR: number | null;
+  previousActive: boolean | null;
+  previousRequested: number | null;
+  previousGranted: number | null;
+  previousBudgetScale: number | null;
+  dAfter: number;         // post-application residual, same effectiveTilt
+  rAfter: number;
+  transitionPoint: 'collect' | 'postApply';
+}
+
+export interface P011NaturalObservationSplitRecord {
+  channel: 'top' | 'bottom';
+  interfaceIndex: number | null;
+  column: number | null;
+  amount: number;
+  donorBhBefore: number; donorBlBefore: number;
+  donorMhBefore: number; donorMlBefore: number;
+  baseHeavyShare: number | null; biasedHeavyShare: number | null;
+  initialHeavy: number; initialLight: number;
+  fromMixedHeavy: number; fromMixedLight: number;
+  fromLight: number; fromHeavy: number;
+  fallbackHeavy: number; fallbackLight: number;
+  finalHeavy: number; finalLight: number;
+}
+
+export interface P011NaturalObservationBudgets {
+  localLimit: number[]; localUsed: number[]; localRemaining: number[];
+  bottomRequested: number; bottomUsed: number; bottomLimit: number; bottomClipped: number;
+  totalRequested: number; totalUsed: number; totalLimit: number;
+  totalRemaining: number; totalClipped: number;
+}
+
+export interface P011NaturalObservationAudit {
+  finite: boolean; range: boolean; capacity: boolean; stock: boolean; conservation: boolean;
+  waterTotalBefore: number; waterTotalAfter: number;
+  heavyTotalBefore: number; heavyTotalAfter: number;
+  lightTotalBefore: number; lightTotalAfter: number;
+  maxSubstepBh: number; maxSubstepBl: number;
+  maxSandTopSubstepDelta: number; maxSandTopInvariantError: number;
+  bottomBudgetExcess: number; totalBudgetExcess: number; maxLocalBudgetExcess: number;
+  relaxCandidateCount: number; relaxTriggered: boolean;
+  relaxRequestedTotal: number; relaxAppliedTotal: number;
+  errorCode: string | null;
+}
+
+export interface P011NaturalObservationRecord {
+  context: P011NaturalObservationSubstepContext;
+  stateBefore: P011NaturalObservationState;
+  stateAfter: P011NaturalObservationState;
+  settle: P011NaturalObservationColumnGrant;
+  percolate: P011NaturalObservationPercolationGrant;
+  lift: P011NaturalObservationColumnGrant;
+  suspensionDiffusion: P011NaturalObservationEdgeGrant[];
+  slip: P011NaturalObservationEdgeGrant[];
+  relaxStateTransitions: P011RelaxStateTransitionRecord[];
+  bottomCreep: P011NaturalObservationEdgeGrant[];
+  splits: P011NaturalObservationSplitRecord[];
+  budgets: P011NaturalObservationBudgets;
+  audit: P011NaturalObservationAudit;
+}
+
+export type P011NaturalObservationSink = (record: P011NaturalObservationRecord) => void;
+
+export class P011NaturalObservationProbe {
+  constructor(cols: number, sink: P011NaturalObservationSink);
+  beginSubstep(context: P011NaturalObservationSubstepContext,
+    stateBefore: P011NaturalObservationState): void;
+  recordSuspensionDiffusion(grant: P011NaturalObservationEdgeGrant): void;
+  recordSettle(column: number, requested: number, allowed: number,
+    heavy: number, light: number): void;
+  recordPercolate(column: number, requested: number, allowed: number,
+    q: number, r: number): void;
+  recordLift(column: number, requested: number, allowed: number,
+    heavy: number, light: number): void;
+  recordSlip(grant: P011NaturalObservationEdgeGrant): void;
+  recordRelaxStateTransition(transition: P011RelaxStateTransitionRecord): void;
+  recordBottomCreep(grant: P011NaturalObservationEdgeGrant): void;
+  recordTopSplit(split: P011NaturalObservationSplitRecord): void;
+  recordBottomSplit(split: P011NaturalObservationSplitRecord): void;
+  recordRelaxAngle(candidateCount: number, triggered: boolean,
+    requestedTotal: number, appliedTotal: number): void;
+  finishSubstep(stateAfter: P011NaturalObservationState,
+    budgets: P011NaturalObservationBudgets,
+    audit: P011NaturalObservationAudit): void;
+}
+
+export function p011NaturalObservationPhaseForCommand(
+  commandSequence: number, targetTilt: number
+): P011NaturalObservationPhaseName;
+```
+
+Probe 不持有 `WaterSandField` 引用；`record*` 为 append-only，request 非零而 `allowed=0` 也必须记录。`directionSign=+1` 为左→右，`-1` 为右→左；`heavy/light` 是非负实际量。phase mapper 只识别 sequence `1..5` 与 `0/+15/0/-15/0`，其他输入返回 `unknown`。
+
+`WaterSandField` 仅新增 `setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void`，不改变 `step(dt, p011Hook?)`、`WaterSandP011Metric`、`WaterSandP011Bottom`。文件 sink：
+
+```ts
+export interface P011NaturalObservationStore {
+  readonly filePath: string;
+  append(record: P011NaturalObservationRecord): void;
+  close(): Promise<void>;
+}
+
+export function createP011NaturalObservationStore(
+  context: common.UIAbilityContext, runId: string
+): Promise<P011NaturalObservationStore>;
+```
+
+`append` 在 UI 线程只 postMessage 已复制 record；worker 对每条 record `JSON.stringify` 后追加一行并 flush。路径固定 `${context.cacheDir}/p011-v210-${runId}.ndjson`，成功后页面输出一次 `P011_OBS_STORE {"observationRouteId":"natural-observation-v2.10","runId":"...","filePath":"..."}`。
+
+### 17.3 模拟循环插入点与时序
+
+`WaterSandField.step` 的既有两阶段 collect/apply 语义不变：
+
+```text
+frame callback
+  └─ WaterSandField.step(dt, existing P011 hook)
+       ├─ saveBackup
+       ├─ beginSubstepMotionBudget(dt, collect=true, 1)
+       ├─ updateTilt(dt)
+       ├─ probe.beginSubstep(context, stateBefore)          // effectiveTilt is the value used by this substep
+       ├─ substep(dt)                                      // existing collect pass
+       │    ├─ waterLevel / diffuseSuspension
+       │    │    └─ recordSuspensionDiffusion(actual grant) // diffusion is not rolled back
+       │    └─ settle/percolate/creep/relax/lift request collection
+       ├─ restoreMotionSnapshot
+       ├─ beginMotionApplication(dt, unchanged scale)
+       ├─ applyMotionChannels(dt)
+       │    ├─ settle: record requested/allowed/H/L
+       │    ├─ percolate: record requested/allowed/q/r and H/L composition
+       │    ├─ creepBottom: record edge requested/allowed/H/L + donor split/fallback
+       │    ├─ relaxAngle: record request summary, triggered, edge grants + top split
+       │    └─ lift: record requested/allowed/H/L + top split
+       ├─ existing audit(true)
+       ├─ probe.finishSubstep(stateAfter, budgets, independent audit)
+       └─ existing getP011Metric/getP011Bottom hook
+```
+
+插入规则：
+
+1. `settle/percolate/creep/relax/lift` 的 record 只放在 `collectingTotalMotionRequests===false` 的 application 分支；collect pass 不产生假 grant。
+2. `diffuseSuspension` 只在 collect 阶段执行一次，实际 grant 在该处记录；它不进入 `300dt`，不得在 apply 后重复统计。
+3. `effectiveTilt` 在本子步 `updateTilt(dt)` 后冻结；`stateBefore` 在任何改变材料的 settle/percolate/creep/relax/lift apply 前复制。水面/悬沙扩散按既有 collect 时序执行并单独记录；`stateAfter` 在 `applyMotionChannels` 与 `audit(true)` 后复制。context、逐边残差、grants 与 audit 必须引用同一 `substepId` 和同一冻结倾角，避免旧版 context 落后一子步。
+4. Probe 调用不能出现在赋值表达式、预算计算、容量判断或 `if` 条件中；只允许作为语句后的观测记录。
+5. 若 field 自身 audit 失败，沿用现有 restore/freeze/error 行为；Probe 记录 `errorCode`，不得替 field 重放、修复或放宽。
+6. `P011_OBS_METRIC` heartbeat 每有效子步一条，仅含 identity、phase、`effectiveTilt/shakeEnergy`、totals、budget 汇总和 audit booleans；完整数组只进文件。
+
+### 17.4 逐子步数据契约
+
+| 字段组 | 契约 |
+|---|---|
+| `context` | `phaseD` 为 `baseline/positive/positiveReturn/negative/negativeReturn`；包含 command sequence、field phase id/sign、`targetTilt/effectiveTilt/effectiveTiltRate/shakeEnergy`、`physicsDt` 与身份 |
+| `stateBefore/stateAfter` | 每列完整 `(bh,bl,mh,ml,suspH,suspL,S,waterTop)`；`S=sandTop=bh+bl+mh+ml`，两份状态用于差分与守恒 |
+| `settle` | 每列 request、实际 allowed、`suspH→mh` H grant、`suspL→ml` L grant；`allowed=0` 也保留 request |
+| `percolate` | 每列 request、allowed、`q`（heavy 穿透 light）、`r`（heavy/light 成对下移）；`heavyDown=q+r`，`lightDown=r-q` |
+| `lift` | 每列 request、allowed、top→suspension 实际 H/L grant，含 local/shared budget 截断 |
+| `suspensionDiffusion` | 127 个相邻接口实际 H/L 通量、donor/receiver、方向；不计 material motion 共享账本 |
+| `slip` | `relaxAngle` 实际相邻输运 request、allowed、H/L、donor/receiver、方向；触发摘要另在 `audit` |
+| `relaxStateTransitions` | 仅状态翻转时追加逐边 `start/stop`；包含 run/substep/边号、该步 `effectiveTilt,d,r`、`activeBefore/After`、request/grant/edge scale、转换前一子步的残差/active/grant，以及本步 apply 后 `dAfter/rAfter`。不能只记全局 relaxTriggered |
+| `bottomCreep` | 每条 bottom edge 实际 request、allowed、H/L、方向；可核对 `10dt` 独立预算与速率截断 |
+| `splits` | top/bottom split 前 donor 四相库存、base/biased heavy share、初始 H/L、mixed/light/heavy 来源、fallback H/L、最终 H/L |
+| `budgets` | 每列 local `28dt` limit/used/remaining；bottom `10dt` requested/used/limit/clipped；shared `300dt` requested/used/remaining/clipped |
+| `audit` | 守恒、库存、容量、finite/range、`maxSubstepBh/Bl`、sandTop 不变量、bottom/total/local 超额、relax 触发与错误码 |
+
+审计公式：
+
+```text
+heavyTotalAfter-heavyTotalBefore = 0
+lightTotalAfter-lightTotalBefore = 0
+waterTotalAfter-waterTotalBefore = 0
+max(localUsed[c]-28dt,0)=0
+max(bottomUsed-10dt,0)=0
+max(totalUsed-300dt,0)=0
+maxSubstepBh=max(|bhAfter[c]-bhBefore[c]|)
+maxSandTopInvariantError=max(|SAfter[c+1]-SAfter[c]-tan(effectiveTilt)|)
+```
+
+`tan30°` 只用于 §6.16 形式验收的完整 sandTop 不变量；thick 运行时 `relaxAngle` 触发阈值仍是现行 `angleDeg=4`，两者不得合并。`relaxCandidateCount` 按 `|deviation|>tan4°` 统计，`relaxTriggered` 表示本子步存在非零 request。
+
+### 17.5 Phase schedule 与 runner 入口
+
+入口：
+
+```powershell
+tools/run_p011_v210_natural_observation.ps1 `
+  -Hdc <hdc.exe> -Target <deviceId> -Bundle com.example.helloworld `
+  -Ability EntryAbility -Seed 20261016 -OutputRoot <fresh-output-root>
+```
+
+固定 schedule：
+
+| sequence | phase | target | hold |
+|---:|---|---:|---:|
+| 1 | baseline | 0 | 3.0 s |
+| 2 | positive | +15 | 5.1 s |
+| 3 | positiveReturn | 0 | 2.0 s |
+| 4 | negative | -15 | 5.1 s |
+| 5 | negativeReturn | 0 | 3.0 s |
+
+每条命令均通过真实 `aa start ... --ps wstilt <target>` 发布，并携带 `rendermode=4`、`testmode=true`、`forceinvert=false`、`seed=20261016`、`wspreset=thick`、`wssnapshot=true`、`wscols=128`、`wscapacity=192`、`wssandtopmax=28`。
+
+Runner 生命周期：
+
+1. 创建全新 OutputRoot；发现既有证据即 fail，不覆盖。
+2. 清理目标 hilog collector，设置 16M app buffer，启动 frozen hilog capture。
+3. 冷启动 sequence 1，等待 `P011_EVENT reset` 与同 runId 的首个 `P011_METRIC/P011_OBS_STORE`。
+4. 依序发布 sequence 2..5；每相记录 command wall time，不跳过回零或反相。
+5. 全程每 100ms 调 `snapshot_display -f` 采集原始分辨率 raster，另强制保存每相 endpoint；实际 capture 时间写入 manifest。
+6. 结束后停止 collector，执行 hilog/schedule/ledger/raster 冻结审计，再从 `P011_OBS_STORE.filePath` 拉取 `ledger.ndjson`。
+7. 运行 `test/p011_v210_natural_observation_check.py` 生成 `summary.json` 与报告；任何缺项输出 `invalid`，不得补造结论。
+
+该 runner 不复用 v2.8 TC02 的 10 列/1000 capacity 压力 schedule；那是历史测试，不得外推为本默认场景。
+
+### 17.6 Raster 标定
+
+`SandCanvas` 在 `wssnapshot=true` 且首个 run 确定后输出一次：
+
+```text
+P011_RASTER_LAYOUT {"runId":"...","canvasWidth":W,"canvasHeight":H,
+ "boxX":X,"boxY":Y,"boxWidth":BW,"boxHeight":BH,"cols":128,"capacity":192,
+ "pixelsPerColumn":BW/128,"pixelsPerModelUnitY":BH/192}
+```
+
+标定规则：
+
+1. 只使用 `snapshot_display` 得到的原始分辨率 JPEG，不 resize、不 crop 后再上采样；manifest 记录原图宽高和 SHA256。
+2. 以 `P011_RASTER_LAYOUT` 的 sandbox 矩形为唯一坐标基准，不做 whole green mask 质心替代。
+3. 在每列 `pixelsPerColumn` 桶内识别与底部连通的 bottom-heavy 绿色带；颜色阈值以现行渲染 `#24571F` 为中心，允许抗锯齿与半透明水层容差，阈值写入 `summary.json`。
+4. 每列重沙界面为该绿色带的上边界像素；用布局把像素 y 转换为 model height：`capacity-(y+0.5-boxY)/BH*capacity`。位移符号取“界面升高为正、降低为负”，单位 px。
+5. `A_B+`、`A_B-` 分别为正/反相期间每列边界位移相对本 run baseline 的最大绝对值；`A_H` 为绿色可见像素数最大变化；`ΔHeavy(x)` 为每列 raster 边界和 model heavy 库存最终变化向量。
+6. `t50/t90/τ` 使用 raster capture 实际时间与最近 ledger `physicsTime` 对齐计算；采样不足或相位不完整时输出 `insufficientEvidence`。
+7. whole green mask 质心、model `bh` 曲线和 ledger flux 仅作诊断，不得替代 raster 的 `A_B`。
+
+`summary.json` 至少包含：
+
+```json
+{
+  "schemaVersion": 1,
+  "observationRouteId": "natural-observation-v2.10",
+  "status": "invalid|visibleNaturalLimitObserved|ruleDriveTooWeak|intrinsicallySlow|insufficientEvidence",
+  "phaseComplete": true,
+  "auditPassed": true,
+  "rasterValid": true,
+  "transitionTelemetryAvailable": false,
+  "relaxTransitionCounts": {"start": 0, "stop": 0},
+  "relaxThresholdCalibration": {
+    "thresholdCalibrationId": null,
+    "thetaStartEstimateDeg": null,
+    "thetaStartCi95Deg": null,
+    "thetaStopEstimateDeg": null,
+    "thetaStopCi95Deg": null,
+    "fitTransitionCounts": {"start": 0, "stop": 0},
+    "holdoutTransitionCounts": {"start": 0, "stop": 0},
+    "hardRangeViolations": null,
+    "status": "unavailable|insufficientEvidence|calibrated|invalid"
+  },
+  "A_B_plus_px": 0.0,
+  "A_B_minus_px": 0.0,
+  "A_H_pixels": 0.0,
+  "t50_plus_ms": null,
+  "t90_plus_ms": null,
+  "t50_minus_ms": null,
+  "t90_minus_ms": null,
+  "tau_ms": null,
+  "residual_px": {"positiveReturn": 0.0, "negativeReturn": 0.0},
+  "driveDiagnostics": {}
+}
+```
+
+`>=2px` 只沿用既有可见判据用于分类，不新增、不放宽、不替换任何原门槛。
+
+### 17.7 线程模型与性能
+
+1. 物理仍在 `SandCanvas` frame callback 所属 UI/render 线程执行；不新增物理 worker，不改变 substep 数量或 `dt` 计算。
+2. Ledger 序列化与文件 IO 在 `P011NaturalObservationWorker` 后台线程执行；UI 线程只复制 typed arrays 并 postMessage，`O(cols)`，无 JSON stringify。
+3. UI 每有效子步只发一条 compact `P011_OBS_METRIC`；完整 record 不进 hilog，不产生长数组日志。
+4. 禁止丢弃落后 record。worker 队列、文件或关闭失败时输出 `P011_OBS_ERROR` 并标记本轮 `invalid`，不得截断账本继续判定。
+5. raster 采集由 host runner 执行，不调用 UI API，不改渲染节拍；capture 耗时只记录在 manifest。
+6. 若 observation 接线导致 frame 超时、ANR、dormant 异常或 runId 断裂，本轮实验无效；修复观测链路后重跑，不得减少记录字段。
+
+### 17.8 异常处理与降级
+
+| 故障 | 处理 |
+|---|---|
+| store/worker 创建失败 | 不创建 Probe，物理可继续；runner 收到 `P011_OBS_ERROR` 后停止并标记 `invalid`，不得回退到 model 推测 raster |
+| worker 写文件失败 | 记录错误与最后完整 sequence；本轮 `invalid`，禁止从部分账本外推 `t50/t90` |
+| hilog 丢失 heartbeat | 判观测链路失败；ledger 与 raster 身份仍需一致，否则 `invalid` |
+| raster 缺相/无法识别 heavy 边界 | `rasterValid=false`，分类 `invalid`；不得用 `bh` 或 green centroid 补值 |
+| field audit/error | 沿用现有 freeze 行为；观测记录错误码，实验 `invalid`，不得静默重放 |
+| phase sequence 不完整 | `phaseComplete=false`，不得计算正反对称性或自然上限 |
+| 性能超限 | 实验 `invalid`；不得降低采样、删除数组或关闭 store 换性能 |
+
+任何观测异常都不允许修改物理参数、阈值或测试期望来“修复”。
+
+### 17.9 硬约束与验收
+
+Developer 实现验收：
+
+1. `WaterSandField` 在 Probe 为 `null` 时的状态轨迹、预算、错误码和既有 telemetry 与修改前等价；可用同一输入对比完整 snapshot 序列。
+2. Probe 开启时不写任何 field 状态；`settle/percolate/lift/slip/bottomCreep/suspensionDiffusion` grant 总和能逐列解释 `stateAfter-stateBefore`。
+3. 每有效子步恰有一个 ledger record；dormant/noop 不伪造 `physicsDt>0` 的有效子步。
+4. Phase sequence 为真实 `dual-input-v1` Want `0/+15/0/-15/0`，sequence `1..5`，无伪 script 事件。
+5. 默认几何严格 `128/192/28`，thick 初始化和现行参数不变。
+6. 不修改 `angleDeg=4`、`vSandTopMax=28`、`vBottomCreepMax=10`、`totalMotionBudget=300`、capacity、崩塌、守恒或任何效果门槛。
+7. 不修改任何既有测试用例、历史报告或 v2.9 BLOCKED 结论。
+8. `summary.json` 只按 algorithm §7.6 判定树分类；实验成立前状态仍为 `OBSERVATION_PENDING_HIL`，不得升级为 `READY_FOR_ARCHITECT`。
+9. 新 ledger 每子步必须含 `relaxStateTransitions`（允许空数组）；schema/summary 必须明确 `transitionTelemetryAvailable`。若本次运行没有真实 sliding 状态，则设为 false，并禁止把空数组作为“未发生转换”的证明。
+10. 逐边 transition probe 只复制状态机决定与实际 grant，不得写回 `sliding[]`、重算 request 或参与预算/admission；probe on/off 的同输入物理轨迹必须一致。
+
+### 17.10 实施步骤
+
+1. 新增 `P011NaturalObservation.ets` 数据契约、Probe 与纯审计。
+2. 新增 store/worker，验证文件路径心跳与后台写入。
+3. 在 `WaterSandField` 各实际 application 分支插入只读 record 调用，并新增可选 setter。
+4. 在 `SandCanvas` 接线 store/probe、phase mapper 和 raster layout 心跳；不改渲染。
+5. 新增 host runner 与观测 checker，先做本地 synthetic ledger/raster schema 校验，再上设备。
+6. 执行一次默认场景完整 run，检查 phase、账本、守恒、budget、raster 与身份冻结审计。
+7. 生成 `summary.json` 和 observation report；若 `invalid`，只修观测/执行链路后重跑。
+8. 将结果交 designer 复核，再决定后续是物理增强还是预期校准；本节不授权第三步实现。
+9. ledger schema v3 增加逐边 hysteresis transition capture 与显式 availability/status；旧 schema v1/v2 artifacts 只读兼容，不回写、不覆盖，也不将缺字段补成零事件。
+
+### v2.12 双角标定所需的逐边转换事件
+
+v2.10 observation framework ledger schema v3 增加 `relaxStateTransitions: P011RelaxStateTransitionRecord[]`，每个有效子步均存在该数组；没有边翻转时为空数组，不得伪造事件。每次实际 `sliding[c]` 从 false→true 或 true→false 时写一条事件，核心字段严格覆盖：
+
+```text
+(runId, substepId, c, effectiveTilt, d, r,
+ activeBefore, activeAfter, requested, granted, budgetScale)
+```
+
+额外保存 `transition`、`phaseD`、`thresholdCalibrationId/thetaStartDeg/thetaStopDeg`、前一相邻采样 `(previousSubstepId, previousD, previousR, previousActive)`、对应前一 active grant、以及本子步 apply 后 `(dAfter,rAfter)`，用以夹出阈值区间并区分“达到停止阈值”与“请求被限流”。`effectiveTilt,d,r` 是作出转换判定时同一快照；`d/r` 采用 `d=S[c+1]-S[c]-tan(effectiveTilt)*dx`、`r=abs(d)/dx`。`granted` 指该边本子步实际应用的总量，`budgetScale=granted/requested`；request 为0时 scale 为 null，避免把无请求误记成全额通过。`previous*` 是紧邻同一 run、同一 edge 的有效子步样本，若中间有 substep gap、run/reset/几何变化则不配对并标该转换不可用于阈值 bracket。
+
+状态机应在 collect 判定 start、stop 及 hold；请求和 grant 在同一 substep 的 apply 后回填事件，再由 `finishSubstep` 一次 append。若 stop 判定发生于 apply 后，`transitionPoint='postApply'` 且记录 apply 前后残差；不得把 postApply 残差冒充 collect 输入。request/grant 不得影响状态或预算。限流期间 active 保持时虽然不是转换事件，也必须保留在常规逐边 `slip` grant trace 中；校准器要把这些样本与转换事件关联，不能将 grant=0 误判为 stop。
+
+该字段是 v2.10 observation framework ledger schema v3 的可选数据内容；历史 v1/v2 ledger 与当前没有 `sliding[]` 的 legacy run 输出空数组/`transitionTelemetryAvailable=false`，不可伪造 sliding 状态。双角阈值校准 run 采用显式 candidate grid，每个 run manifest 绑定 `thetaStartDeg/thetaStopDeg` 与唯一 `thresholdCalibrationId`；阈值并非隐式默认30/20。只有具备实际双阈值状态的 candidate run 才产生可用于 v2.12选择的事件；拟合 run 与独立 holdout run 分离。start 的相邻 inactive→active 样本夹出起动转折；stop 的相邻 active→inactive 样本夹出停止转折。基于 raster `30°±2°`、逐子步 hard gate、预算、停止后稳定时间联合筛选候选，再按 run 重采样计算95% bootstrap区间，并按正负 residual、±tilt、budgetScale分层。样本缺失、非连续、holdout越界或候选均不能同时满足坡度/时间/硬门槛时仍为 `DESIGN_PENDING_OBSERVATION`。Probe 不创建/修改 sliding 状态，避免观测本身改变被测物理。
+
+阈值转换采集不得只复用 ±15° schedule 并假定它会经过约30°残差。新增校准 schedule `p011-v212-hysteresis-calibration-v1`，顺序为 `0/+15/0/+45/0/-45/0`，正负45°各保持5.1s，其余phase沿用 v2.10 时长；原始 `p011-v210-natural-observation` schedule 与旧 artifacts 完全不变。每个 candidate 使用独立全新 run，候选排序随机化；至少5个校准 run 与5个独立 holdout run（每组每个有效方向转换不少于20个），各自绑定同一显式 candidate pair。若 5.1s 内未观察到 stop transition，标记 `stopTransitionUnobserved`，不得把 phase end 当作停止点或用外推填角度。
+
+变更记录：2026-10-19，依据 `algorithm-P011.md` §7 新增 §17。v2.9 目标形状与逐列搬运路线已由 designer 标记 `REJECTED`；本节仅授权零侵入自然规则观测、逐子步账本、真实 raster 标定和默认场景完整实验。2026-10-19 追加 ledger schema v3 的逐边 `relaxStateTransitions` 与独立 ±45° 阈值校准 schedule，旧 v1/v2 ledger artifacts 保持原样。
+
+## 18. v2.11 工程方案：gravity-advection-v2.11（2026-10-19）
+
+状态：`READY_FOR_DEVELOPER`。依据 `algorithm-P011.md` §8.1~§8.8。本节在 §17 的零侵入观测链路上实现物理增强；§17 的 Probe、worker sink、runner 采集规则与 raster 标定继续有效。除本节明确列出的测试契约修订外，developer 不得修改任何既有测试用例、历史报告或效果门槛。
+
+### 18.1 工程结论与模块划分
+
+1. `WaterSandParams.routeId` 升级为 `gravity-advection-v2.11`，禁止沿用 v2.8 routeId 发布行为变更；不新增参数，`bottomCreepVelocityGain` 只被激活为重力交换增益。
+2. 新增纯物理模块 `P011GravityAdvection.ets`，只包含局部势计算、交换计划与应用函数；不 import ArkUI、AppStorage、sensor、file 或 worker。
+3. 重力交换作为 `WaterSandField` 的独立 application 算子插入，不改动既有 `creepBottom` 的 shape request、方向保持、split 或 independent scaling。`bottomCreepVelocityGain` 不得写入 `targetShapeRequestRate` 或 `lastBottomCreepRate`。
+4. v2.10 Probe 继续零侵入：collect pass 不记录 gravity grant；application pass 只在状态更新完成后复制诊断数据。Probe 为 `null` 时物理行为完全相同，只是没有 ledger。
+5. 预算不新增通道、不改变上限：每次交换消耗 bottom `2q`、total motion `2q`。局部 `vSandTopMax=28` 账本不消耗，因为每列 `bh+bl` 与 `sandTop` 均不变。
+
+| 文件 | 变更 | 职责 |
+|---|---|---|
+| `entry/src/main/ets/physics/P011GravityAdvection.ets` | 新增 | 路线常量、纯 plan/apply 接口、局部势与交换公式；无 UI/IO 依赖 |
+| `entry/src/main/ets/physics/WaterSandField.ets` | 修改 | routeId 升级；在 collect/application 两阶段插入 gravity 算子；接入 bottom/total 预算与错误恢复 |
+| `entry/src/main/ets/physics/P011NaturalObservation.ets` | 修改 | ledger schema 升级到 v2；新增 `routeId` 与 `gravityAdvection` 驱动诊断；保持 Probe 只读 |
+| `entry/src/main/ets/physics/P011NaturalObservationStore.ets` | 修改 | 支持可选 artifact 前缀，默认保持 `p011-v210`；v2.11 传入 `p011-v211` |
+| `entry/src/main/ets/pages/SandCanvas.ets` | 修改 | 仅按当前 route 选择 ledger 文件前缀；Probe/store/raster layout 接线不变 |
+| `entry/src/main/ets/entryability/EntryAbility.ets` | 不改 | 继续既有 Want 解析与 `dual-input-v1` 发布时序 |
+| `entry/src/main/ets/physics/P011InputMode.ets`、`P011TiltWant.ets` | 不改 | 输入协议、watermark、模式隔离与倾角命令语义保持 |
+| `tools/run_p011_v211_gravity_advection.ps1` | 新增 | 复用 §17.5 phase schedule 与 §17.6 raster 采集流程，输出 v2.11 独立证据目录 |
+| `test/p011_v211_gravity_advection_check.py` | 新增 | 解析 v2 ledger/raster/manifest，执行原硬门槛与新增 raster/P95 判定 |
+| `entry/src/test/**`、`entry/src/ohosTest/**` | 不改 | developer 不修改测试；§18.7 列出的契约修订交 tester 执行 |
+
+### 18.2 核心接口
+
+```ts
+export const P011_GRAVITY_ADVECTION_ROUTE_ID = 'gravity-advection-v2.11';
+export const P011_GRAVITY_ADVECTION_MODULE_VERSION = 1;
+
+export interface P011GravityAdvectionParams {
+  bottomCreepDeadZone: number;
+  bottomCreepVelocityGain: number;
+  vBottomCreepMax: number;
+}
+
+export interface P011GravityAdvectionState {
+  sandTop: Float64Array;
+  bh: Float64Array;
+  bl: Float64Array;
+}
+
+export interface P011GravityAdvectionLimits {
+  bottomRemaining: number;
+  totalRemaining: number;
+  totalScale: number;
+}
+
+export interface P011GravityAdvectionEdgePlan {
+  interfaceIndex: number;
+  donor: number;
+  receiver: number;
+  directionSign: number;
+  surfaceDrive: number;
+  heavyExcess: number;
+  potential: number;
+  requestRate: number;
+  requestedHalf: number;
+  rateLimitHalf: number;
+  stockLimitHalf: number;
+  requestedMotion: number;
+}
+
+export interface P011GravityAdvectionPlan {
+  active: boolean;
+  directionSign: number;
+  edges: P011GravityAdvectionEdgePlan[];
+  requestedMotionTotal: number;
+}
+
+export interface P011GravityAdvectionAppliedEdge extends P011GravityAdvectionEdgePlan {
+  appliedHalf: number;
+  appliedMotion: number;
+  heavyFlux: number;
+  lightFlux: number;
+  bottomClippedMotion: number;
+  totalClippedMotion: number;
+  rejection: 'none' | 'deadZone' | 'nonPositivePotential' | 'stock' |
+    'epsilon' | 'bottomBudget' | 'totalBudget';
+}
+
+export interface P011GravityAdvectionApplication {
+  edges: P011GravityAdvectionAppliedEdge[];
+  requestedMotionTotal: number;
+  appliedMotionTotal: number;
+  appliedQTotal: number;
+  bottomBudgetUsed: number;
+  totalBudgetUsed: number;
+  maxColumnSumDelta: number;
+  errorCode: 'nonFinite' | 'negativeStock' | 'columnSumInvariant' | null;
+}
+
+export function planP011GravityAdvection(
+  dt: number,
+  effectiveTilt: number,
+  params: P011GravityAdvectionParams,
+  state: P011GravityAdvectionState
+): P011GravityAdvectionPlan;
+
+export function applyP011GravityAdvection(
+  state: P011GravityAdvectionState,
+  plan: P011GravityAdvectionPlan,
+  limits: P011GravityAdvectionLimits
+): P011GravityAdvectionApplication;
+```
+
+公式与语义：
+
+1. `directionSign=sign(effectiveTilt)`；`abs(effectiveTilt)<bottomCreepDeadZone` 时返回 inactive plan，不产生请求。
+2. `surfaceDrive=directionSign*(sandTop[donor]-sandTop[receiver])`，`heavyExcess=bh[donor]-bh[receiver]`，`potential=surfaceDrive+heavyExcess`；`potential<=0` 的接口保留为零值诊断，不交换。
+3. `requestRate=bottomCreepVelocityGain*max(0,potential)`；`requestedHalf=min(requestRate*dt/2,vBottomCreepMax*dt/2,bh[donor],bl[receiver])`，`requestedMotion=2*requestedHalf`。
+4. 遍历顺序沿用现有 downhill 顺序：`directionSign>0` 时 interface `cols-2..0`，`directionSign<0` 时 `0..cols-2`。每条接口使用当前数组值，不做全局排序或目标形状拟合。
+5. application 前重新校验当前 stock：`allowedHalf=min(requestedHalf*totalScale,bottomRemaining/2,totalRemaining/2,bh[donor],bl[receiver])`。`totalScale` 是既有共享预算比例；最终的 bottom/total remaining 硬裁剪保证不超上限。
+6. 状态更新为 `bh[donor]-=q`、`bh[receiver]+=q`、`bl[donor]+=q`、`bl[receiver]-=q`；`q=allowedHalf`。heavy flux 为 donor→receiver 的 `q`，light flux 为 receiver→donor 的 `q`，总运动量为 `2q`。
+7. `maxColumnSumDelta=max(|(bh[c]+bl[c])_after-(bh[c]+bl[c])_before|)`；超过 EPS 返回 `columnSumInvariant`，由 field 回滚并冻结。operator 内不调用 `updateSandTop()`。
+
+### 18.3 WaterSandField 插入点与时序
+
+```text
+WaterSandField.step
+  └─ each substep
+       ├─ saveBackup / updateSandTop
+       ├─ beginSubstepMotionBudget(dt, collect=true, 1)
+       ├─ probe.beginSubstep(context, stateBefore)
+       ├─ substep(dt)                         // collect pass
+       │    ├─ updateTilt / waterLevel / diffuseSuspension
+       │    ├─ settle / percolate
+       │    ├─ creepBottom                    // shape request unchanged
+       │    ├─ gravityAdvection.plan          // no state mutation
+       │    │    └─ totalMotionBudgetRequested += plan.requestedMotionTotal
+       │    └─ relax / lift / audit
+       ├─ restoreMotionSnapshot
+       ├─ beginMotionApplication(dt, sharedScale)
+       ├─ applyMotionChannels(dt)             // application pass
+       │    ├─ settle / percolate
+       │    ├─ creepBottom                    // unchanged
+       │    ├─ gravityAdvection.apply
+       │    │    ├─ mutate bh/bl only
+       │    │    ├─ consumeBottomBudget(2q)
+       │    │    ├─ consumeTotalMotionBudget(2q)
+       │    │    └─ probe.recordGravityAdvection(copy-only diagnostic)
+       │    ├─ relax / lift
+       │    └─ updateSandTop / audit
+       └─ probe.finishSubstep(stateAfter, budgets, audit)
+```
+
+集成规则：
+
+1. gravity plan 在 collect pass 只产生请求并计入 `totalMotionBudgetRequested`，不写 `bh/bl`，不调用 Probe record。
+2. legacy `creepBottom` 的 independent bottom scale 只使用其自身 request total；gravity 使用应用时的 bottom remaining 硬裁剪。`budgets.bottomRequested` 输出 legacy request 与 gravity request 的总和，二者共享同一 `10dt` limit。
+3. gravity 插入在 `creepBottom` 之后、`relaxAngle` 之前，保持既有通道顺序；不得因 gravity 预算不足回滚或重排其他通道。
+4. Probe record 只接收 application 后复制的数字，不进入赋值表达式、预算判断或 `if` 条件；Probe 异常不得改变物理结果。
+5. `gravityAdvection` 返回错误时映射：`nonFinite→NON_FINITE_VALUE`，`negativeStock→NEGATIVE_VALUE`，`columnSumInvariant→UNKNOWN`；随后沿用现有 restoreBackup/freeze/lastError 行为。
+
+### 18.4 逐子步数据契约扩展
+
+`P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION` 升级为 `3`。v1/v2 字段全部保留（包括 v2 `gravityAdvection`）；新增逐边状态转换字段只增不删，旧 checker 若遇到 v3 必须显式拒绝而不是忽略未知字段。
+
+```ts
+export interface P011NaturalObservationSubstepContext {
+  // all v1 fields remain unchanged
+  routeId: string; // 'gravity-advection-v2.11'
+}
+
+export interface P011GravityAdvectionDiagnostic {
+  routeId: string;
+  active: boolean;
+  directionSign: number;
+  edgeCount: number;
+  requestedMotionTotal: number;
+  appliedMotionTotal: number;
+  appliedQTotal: number;
+  bottomBudgetUsed: number;
+  totalBudgetUsed: number;
+  bottomClippedMotion: number;
+  totalClippedMotion: number;
+  maxColumnSumDelta: number;
+  edges: P011GravityAdvectionAppliedEdge[];
+}
+
+export interface P011NaturalObservationRecord {
+  // all v1 fields remain unchanged
+  gravityAdvection: P011GravityAdvectionDiagnostic;
+}
+
+export class P011NaturalObservationProbe {
+  recordGravityAdvection(diagnostic: P011GravityAdvectionDiagnostic): void;
+}
+```
+
+契约：
+
+1. 每个有效 application 子步恰好记录一个 `gravityAdvection` 对象；inactive/dead-zone/no-op 也记录聚合零值，缺失字段判 ledger invalid。
+2. `edges` 长度为 `cols-1=127`，按实际遍历顺序保留全部接口；`potential<=0`、stock 不足、预算截断和 EPS 拒绝都必须可区分。
+3. `appliedMotionTotal=sum(appliedMotion)`，`bottomBudgetUsed=appliedMotionTotal`，`totalBudgetUsed=appliedMotionTotal`；三者不一致判 audit invalid。
+4. `stateAfter-stateBefore` 仍必须能由全部通道解释；gravity 部分满足每列 `Δbh+Δbl=0`，且 `S` 不因该算子改变。
+5. `driveDiagnostics` 汇总至少输出 requested/applied/clipped motion、受限子步数、截断量、`potential` 分布与 `bottomCreepRate` 限制命中率；不得用诊断值替代 raster 判定。
+
+### 18.5 Runner、phase schedule 与 raster 复用
+
+新增 `tools/run_p011_v211_gravity_advection.ps1`，复用 §17.5/§17.6 的采集规则，不改 v2.10 runner 与历史证据：
+
+| sequence | phase | target | hold |
+|---:|---|---:|---:|
+| 1 | baseline | 0 | 3.0 s |
+| 2 | positive | +15 | 5.1 s |
+| 3 | positiveReturn | 0 | 2.0 s |
+| 4 | negative | -15 | 5.1 s |
+| 5 | negativeReturn | 0 | 3.0 s |
+
+固定参数：真实 `dual-input-v1` Want、`rendermode=4`、`testmode=true`、`forceinvert=false`、`seed=20261016`、`wspreset=thick`、`wssnapshot=true`、`wscols=128`、`wscapacity=192`、`wssandtopmax=28`。
+
+输出路径：
+
+```text
+test/artifacts/p011-v211-gravity-advection-<timestamp>/
+  hilog.txt
+  ledger.ndjson
+  schedule.csv
+  raster/<phase>/t<capture-time-ms>.jpeg
+  raster-manifest.json
+  summary.json
+  source-manifest.json
+docs/test-report-P011-gravity-advection-v2.11.md
+docs/effect-report-P011-gravity-advection-v2.11.md
+```
+
+验收判定：
+
+1. 原硬门槛全部保持：材料守恒、库存、容量、`maxSubstepBh`、bottom `<=10dt`、total `<=300dt`、完整 `sandTop` 的 `|ΔS-tan(effectiveTilt)|<=tan30°`。
+2. gravity 附加审计：每列 `bh+bl` 与 `sandTop` 不变，heavy/light 总量分别守恒，bottom/total 使用量均等于 `2q` 总和。
+3. 同分辨率 raster 上 `A_B+` 或 `A_B-` 至少一个方向 `>=2px`；两个方向均记录，不做全量 dominance。
+4. `t50/t90`、方向性、回零残余与 TEST/EXPERIENCE 切换残余必须输出；`t90` 按既有 P95 `<=100ms` 判定。
+5. raster 识别、`P011_RASTER_LAYOUT`、100ms capture、每相 endpoint 与 manifest SHA256 规则完全复用 §17.6；不得 resize、crop 后上采样或用 model `bh` 替代 raster。
+
+### 18.6 异常、降级与线程模型
+
+| 情况 | 处理 |
+|---|---|
+| dead zone 或 `potential<=0` | 本接口 `q=0`，正常物理继续；ledger 记录拒绝原因 |
+| stock 不足 | `q` 裁剪到当前 `bh[donor]`/`bl[receiver]`，不是错误；记录 clipped 量 |
+| bottom/total 预算不足 | `q` 裁剪到剩余预算的一半，不超上限；记录受限子步数与截断量 |
+| 数值非有限 / 负库存 / column sum invariant | 返回错误，field restoreBackup 并 freeze；本轮 run invalid |
+| Probe/store/worker/raster 失败 | 沿用 §17.8：本轮 run invalid，不得用推测或 model 数据补造结论 |
+| route/schema/runId 不一致 | run invalid；不得静默回退 v2.8 route |
+| P95 `t90>100ms` | 效果验收 FAIL/invalid；不得降低采样、删除字段或关闭 store 换性能 |
+
+线程模型：
+
+1. 物理仍在 `SandCanvas` frame callback 所属 UI/render 线程执行；gravity 每子步 `O(cols-1)`，无新数组、无嵌套循环、无全局搜索。
+2. ledger 序列化与文件 IO 继续由 `P011NaturalObservationWorker` 后台线程执行；UI 线程只复制数组与 postMessage。
+3. raster 继续由 host runner 调 `snapshot_display` 采集，不调用 UI API，不改变渲染节奏。
+4. 不得因性能新增物理 worker、减少 substep、降低 raster 采样或关闭观测来“修复”门槛。
+
+### 18.7 旧测试契约冲突与交接
+
+现有 `p011_velocityGainDoesNotOverrideShapeRateCap` 断言 `bottomCreepVelocityGain=0` 与 `=36` 的 `bh/bl` 状态完全相同，属于 v2.11 之前的旧契约。**manager 已授权修订该用例**，修订交 tester 执行，developer 不得私自修改。
+
+新契约语义：
+
+1. 两份输入的 `bottomCreepRate` 必须仍完全相同，且均 `<=vBottomCreepMax=10`；增益不得改变 `targetShapeRequestRate` 或绕过 shape rate cap。
+2. 当 `potential>0` 时，`bottomCreepVelocityGain=36` 允许产生与 `=0` 不同的 `bh/bl` 状态差异。
+3. 差异必须满足每列 `bh+bl` 不变、`sandTop` 不变、heavy/light 总量守恒。
+4. bottom 与 total 预算使用量必须包含 `2q`，且不得超过 `10dt` / `300dt`。
+5. 建议用例名保持不变以便追溯；断言从“状态无差异”改为“shape rate 不变 + 有界守恒交换”。测试资产中仅同步 v2.11 routeId 字面值，不得放宽其他行为期望。
+
+Tester 待办：
+
+1. 修订上述授权用例，并同步 route identity 断言；除该语义修订与机械 route 字面值同步外，不得修改其他断言。
+2. 新增/扩展纯函数契约测试：dead zone、`potential<=0`、stock cap、rate cap、bottom/total 裁剪、`bh+bl` invariance、Probe null 等价。
+3. 执行完整 v2.11 HIL run，生成独立 test/effect 报告；任何 hard gate 或 raster/P95 失败不得通过调参放宽。
+
+### 18.8 实施步骤
+
+1. tester 先完成 §18.7 授权测试修订；developer 等测试资产合并后再实现。
+2. developer 新增 `P011GravityAdvection.ets`，先完成纯 plan/apply 单元契约，不接 UI。
+3. 修改 `WaterSandField`：升级 routeId、接入两阶段 plan/apply、预算与错误映射，保持 shape request 不变。
+4. 扩展 observation schema v3 与 Probe record，确认 Probe null 时完整 snapshot 序列不受影响。
+5. 参数化 ledger artifact 前缀，新增 v2.11 runner 与 checker；先做 synthetic ledger/raster schema 校验。
+6. 执行一次默认 `128/192/28`、`dual-input-v1`、`0/+15/0/-15/0` 完整 run，冻结 source/HAP/log/raster SHA256。
+7. 检查 hard gates、`A_B>=2px`、P95 `t90<=100ms`、预算、守恒与 `bh+bl` invariance；失败时修复实现或回滚整条 route，不得运行时降级。
+8. tester/effector 分别生成 `docs/test-report-P011-gravity-advection-v2.11.md` 与 `docs/effect-report-P011-gravity-advection-v2.11.md`，交 designer 复核。
+
+变更记录：2026-10-19，依据 `algorithm-P011.md` §8 新增 §18。本节将 `bottomCreepVelocityGain` 激活为重力交换增益，同时保持既有预算、几何、门槛、守恒与崩塌约束不变；v2.10 观测 Probe 继续零侵入复用。
+
+## 19. v2.12 工程方案：natural-relax-hysteresis-v1（2026-10-19）
+
+### 19.1 工程结论与范围
+
+**状态：`ARCHITECTURE_PENDING_OBSERVATION`。**
+
+本节只完成架构设计，不授权直接实现。实现前仍必须满足 `algorithm-P011.md` §8.11 的两项前置条件：
+
+1. 取得逐边起动/停止转折观测与留出验证，并以此确定 `thetaStart/thetaStop`。
+2. Architect 复核所有会修改 `sandTop` 的通道都接入统一 hard guard，且不引入额外预算、几何或目标形状。
+
+**目标**：
+
+1. 将 `relaxAngle` 的单一触发阈值替换为逐边双阈值滞回状态机。
+2. 保留既有 donor/receiver 方向、`splitTopV2` 材料拆分、局部/total 预算和守恒审计。
+3. 为阈值标定提供逐边、逐子步、可复核的观测账本。
+
+**非目标**：
+
+1. 不修复 `slip-overshoot-v1` 的 `effectiveTilt` 参考跳变、pre-commit guard 缺失或预算竞争问题；该缺陷仍独立保持 `BLOCKED`。
+2. 不新增目标形状、ROI 权重、预设列号或任何视觉优先级。
+3. 不增加 bottom/total/local 预算，不改变几何、容量、材料守恒或 `tan30°` 硬门槛。
+4. 不把 `angleDeg=4°`、`thetaStart/thetaStop` 与 `thetaHardMax=30°` 合并为同一语义。
+
+### 19.2 模块划分与文件职责
+
+| 文件 | 变更类型 | 职责 |
+|---|---|---|
+| `entry/src/main/ets/physics/P011RelaxHysteresis.ets` | 新增 | 纯状态机与阈值/残差计算；不 import ArkUI、AppStorage、sensor 或文件 API |
+| `entry/src/main/ets/physics/WaterSandField.ets` | 修改 | 持有 `sliding[]`，接入 collect/apply，执行 hard guard 与既有预算 |
+| `entry/src/main/ets/physics/P011NaturalObservation.ets` | 修改 | 扩展逐边滞回观测 schema，记录 active 转换、残差、请求与授予 |
+| `entry/src/main/ets/physics/P011NaturalObservationStore.ets` | 修改 | 仅传递扩展 record，不改变后台写模型 |
+| `entry/src/main/ets/physics/P011NaturalObservationWorker.ets` | 不变或最小修改 | 继续只做 JSON 序列化与追加写 |
+| `tools/run_p011_v212_relax_hysteresis.ps1` | 新增 | 独立 runner，显式传入标定后的阈值并复用 raster 采集 |
+| `test/p011_v212_relax_hysteresis_check.py` | 新增 | 校验状态机、预算、守恒、hard guard、阈值标定与 holdout 结果 |
+
+### 19.3 核心接口
+
+```ts
+export interface P011RelaxHysteresisParams {
+  thetaStartDeg: number;
+  thetaStopDeg: number;
+  thetaHardMaxDeg: number;
+}
+
+export interface P011RelaxHysteresisThresholds {
+  slopeStart: number;
+  slopeStop: number;
+  slopeHardMax: number;
+}
+
+export interface P011RelaxHysteresisEdgeSample {
+  interfaceIndex: number;
+  d: number;
+  r: number;
+  activeBefore: boolean;
+  activeAfter: boolean;
+  requested: number;
+  granted: number;
+  budgetScale: number;
+}
+
+export function p011RelaxHysteresisThresholds(
+  params: P011RelaxHysteresisParams
+): P011RelaxHysteresisThresholds;
+
+export function p011RelaxHysteresisNextActive(
+  activeBefore: boolean,
+  residual: number,
+  thresholds: P011RelaxHysteresisThresholds
+): boolean;
+
+export function p011RelaxHysteresisRequested(
+  residual: number,
+  thresholds: P011RelaxHysteresisThresholds,
+  dt: number,
+  maxAvalancheFlux: number,
+  donorSand: number,
+  receiverCapacity: number
+): number;
+```
+
+接口语义：
+
+1. `d[c] = sandTop[c+1] - sandTop[c] - tan(effectiveTilt) * dx`，`r[c] = abs(d[c]) / dx`。
+2. `slopeStart = tan(thetaStartDeg)`，`slopeStop = tan(thetaStopDeg)`，`slopeHardMax = tan(thetaHardMaxDeg)`。
+3. 参数不变量为 `0 <= thetaStopDeg < thetaStartDeg <= thetaHardMaxDeg`，且 `thetaHardMaxDeg <= 30`。
+4. `activeBefore=false` 且 `r >= slopeStart` 时进入滑行；`activeBefore=true` 且 `r <= slopeStop` 时退出；两阈值之间保持原状态。
+5. `requested` 只在 `activeAfter=true` 时大于 0，计算沿用 `max(0, r - slopeStop) * dx / 2` 并受 `maxAvalancheFlux*dt`、donor 库存与 receiver 容量截断。
+6. `granted` 与 `budgetScale` 由 `WaterSandField` 的既有预算/裁剪流程产生，不由状态机自行放大。
+
+### 19.4 `WaterSandField` 插入点与时序
+
+```text
+WaterSandField.step
+  └── each substep
+       ├── saveBackup / updateSandTop
+       ├── updateTilt(dt)
+       ├── beginSubstepMotionBudget(dt, collect=true, 1)
+       ├── probe.beginSubstep(context, stateBefore)
+       ├── compute d/r from current sandTop
+       ├── update sliding[c] by dual thresholds
+       ├── collect requests only for active edges
+       ├── restoreMotionSnapshot / beginMotionApplication
+       ├── apply requests through existing clip + splitTopV2
+       ├── recompute sandTop and d/r
+       ├── update sliding[c] again only at next collect boundary
+       └── probe.finishSubstep(stateAfter, budgets, audit)
+```
+
+关键时序要求：
+
+1. `effectiveTilt`、`stateBefore`、grant 与 audit 必须使用同一子步快照；不得再出现 context 落后一子步的错位。
+2. `sliding[c]` 在同一连续 run 内跨子步保留，预算限流不清状态。
+3. reset、几何重建、列数变化、TEST↔EXPERIENCE 切换时清空 `sliding[]`。
+4. 0° 暂停、倾角反向或输入抖动不清状态；每子步按当前 `effectiveTilt` 与实际 `sandTop` 重算 `d/r`。
+5. 状态数组长度为 `cols-1`，不保存目标形状、相位 baseline 或 ROI。
+
+### 19.5 Hard guard 与预算
+
+对 `sandTop` 的写入者逐通道显式登记；guard 在**每个通道实际提交每笔材料增量之前**运行。不得等整个 `applyMotionChannels` 结束后才统一检查。guard 按下方合法态/违规态谓词对 `S'=S+deltaS` 计算受影响边的带符号 residual，并以闭式区间求出最大可准入 grant。通过后才写材料和记账；后续 writer 以刚提交后的真实 `S` 为基准重新检查。
+
+本节记 `H=slopeHardMax=tan(thetaHardMaxDeg)`；每个残差都使用本子步已提交的 `effectiveTilt`。
+
+| writer | `S` 写入类型 | 单笔写入对 `S` 的影响 | guard 覆盖边 |
+|---|---|---|---|
+| `relaxAngle` | 列间搬运型 | donor 列 `S` 减少 `q`、receiver 列 `S` 增加 `q`；总沉积量守恒 | 不能只查正在修正的边 `c`。一次 `c↔c+1` 搬运同时检查所有相邻差分：中央边 `c` 与外侧邻边 `c-1`、`c+1`（越界边忽略） |
+| `creepBottom` | 列间搬运型 | donor 的 `bh+bl` 与 `S` 减少，receiver 的 `bh+bl` 与 `S` 增加，同一 grant 等量反向 | donor/receiver 两列及其相邻所有边；按实际 `deltaS[]` 联合预演 |
+| `liftByShake` | 减少型（列内沉积转悬沙） | 单列 `bh/bl` 转入 `suspH/suspL`，该列 `S` 减少，不增加其他列 `S` | 写入列左右相邻边 `c-1`、`c`（越界边忽略） |
+| `settleSandV2` | 增加型（悬沙回到同列沉积层） | 单列 `S` 增加 `heavy+light`，不改变其他列 | 写入列左右相邻边 `c-1`、`c`（越界边忽略） |
+| `percolateHeavyConservative` | `S`-invariant（列内相间重分配） | 同列 `bh/bl/mh/ml` 重分配；每列 `bh+bl+mh+ml` 不变，故 `ΔS=0` | 不产生坡度边增量，但仍作为一个受事务跟踪的 writer 登记；记录 `SInvariant=true`、逐列 `deltaS=0` 和请求/授予/预算使用，纳入本子步 writer 顺序及审计 |
+
+`relaxAngle` 的边级联采用闭式联合预演：每次候选边 grant `q` 都检查中央边及两条外侧邻边，不只检查目标边。对每个受影响边 `e`，令当前带符号残差 `d_e=(S[e+1]-S[e])/dx-tan(effectiveTilt)`，并令 `k_e=(∂deltaS[e+1]/∂q-∂deltaS[e]/∂q)/dx` 为每单位 grant 对该边坡度的有符号影响，则 `d'_e(q)=d_e+k_e*q`。合法态要求 `-H<=d'_e(q)<=H`；每个边给出一个关于 `q` 的闭区间，与 `0<=q<=qGranted` 取交集，取交集上界作为最大可准入 grant。`k_e=0` 时该边要么不限制 `q`，要么判该候选不可行。由于本笔材料事务的列增量对 grant 线性，本判定无需迭代或二分。commit 后下一个候选边再基于更新后的 `S` 独立求闭式上界。
+
+### Guard 边界与状态谓词
+
+本节 guard 只覆盖**材料 writer**，检查点是每笔 writer 增量提交前；它不覆盖 `updateTilt` 对参考角 `effectiveTilt` 的更新。倾角跳变可能在任何材料 writer 运行前就使 residual 越界，这类参考角可行性由 §20 动态可行域限幅处理。两个机制各自负责倾角更新与材料提交的边界；不得把材料 guard 描述为零违约保证，也不得用后续 `relaxAngle` 修复抹掉已记录的越界。
+
+对每笔候选增量，按提交前全场状态分支：
+
+1. **合法态**（所有边 `|d_e|<=H`）：准入 grant 必须令提交后所有边仍合法；受影响边按闭式约束求最大 `q`，未受影响边保持不变。
+2. **违规态**（至少一边 `|d_e|>H`）：所有原本合法的边提交后仍须合法；每条原本违规边须满足 `|d'_e|<=|d_e|`（non-worsening），且不得新增越界边。此分支只允许在既有预算内逐步修复，不会把当前子步标成通过；run 保留 hard-gate failure，直至外层验收规则处理。
+
+违规态同样是线性闭区间求解：原本合法边使用 `-H<=d'_e(q)<=H`，原本违规边使用 `-|d_e|<=d'_e(q)<=|d_e|`，再与 `0<=q<=qGranted` 求交。若交集为空，grant 置零；不得选取会扩大任一已有违规的部分 grant。
+
+闭区间直接按系数符号求出：令每条边的容许界为 `L_e=H`（合法边）或 `L_e=|d_e|`（违规边），约束为 `-L_e<=d_e+k_e*q<=L_e`。当 `k_e>0`，该边区间是 `[(-L_e-d_e)/k_e, (L_e-d_e)/k_e]`；当 `k_e<0`，交换这两个端点；当 `k_e=0`，若 `|d_e|<=L_e` 则不收窄 `q`，否则本笔无可行 grant。将所有受影响边区间与 `[0,qGranted]` 相交，最终上端点即 `qAccepted`；若下端点大于上端点则 `qAccepted=0`。这给出单一标量 grant 的精确最大值，不需要二分或迭代。
+
+### Helper、生命周期豁免与预算回写
+
+`splitTopV2`、`splitBottomPhaseBalanced` 是材料拆分 helper，不具备独立 guard 或预算语义；只能由已经完成本笔 admission guard 的具名 writer 调用。helper 不得被无 guard 的直接路径、测试注入路径或其他 writer 复用来写材料。
+
+下列离散生命周期操作明确豁免于逐笔物理材料 writer guard，理由是它们不是正常积分中的按额度材料提交；豁免不代表免除各自现有验证或可以静默通过：
+
+| 操作 | 豁免理由 | 仍需执行 |
+|---|---|---|
+| `initialize` / `reset` | 以完整场景快照替换整个材料场，是新 run 的建场边界，无逐子步 grant 可供 admission | 场景参数、库存/容量与既有初始化 audit；新 run 首个子步记录实际初始坡度，若越硬界不得报告零违规通过 |
+| `inject` | 外部测试/场景操作不属于物理通道，不消费本子步 local/bottom/total grant；已沉积态注入增加 `S`，悬沙态注入不改变 `S` | 输入范围、容量与守恒基线更新；记录 phase/state、注入身份及前后 `S`，若越硬界标为场景干预/硬门槛失败 |
+| `invert180` | 离散相态变换，将全部沉积物映射至悬沙并镜像场，使沉积 `S` 变为零；不是连续搬运通道，无法解释为单笔 local grant | 保留现有全场容量/数值检查；记录显式变换事件及前后快照，不冒充普通材料 grant；后续物理提交仍由 §20/材料 guard 约束 |
+
+任何其他能写 `S` 的路径均不自动豁免；必须加入 writer 清单和受影响边事务观测，否则 hard-guard 覆盖不完整。
+
+guard 截断 grant 后，必须将 `qGranted-qAccepted` 同步退回原事务账本：`localUsed/localRemaining`、`bottomUsed/bottomRemaining`、`totalUsed/totalRemaining`、`channelUsed/channelRemaining` 四层均以最终接受量重算，且不突破各自上限。预算释放仅按既有分配顺序可供尚未执行的后续通道使用；不得重发当前 writer 被拒绝的那部分，不欠账、不跨子步结转。Probe 同时记录原 request、预 guard grant、接受 grant、拒绝量及四层预算回写前后值。
+
+通用规则：
+
+1. 滞回 `relaxAngle` 不消耗 bottom 预算；各通道仍使用既有 local `vSandTopMax*dt`、`maxAvalancheFlux*dt`、bottom `10*dt`（仅 creepBottom）与 total `300*dt` 额度。
+2. 每笔提交后立即检查本笔受影响边；`applyMotionChannels` 结束时仍做全场审计 `r[c] <= slopeHardMax`，作为最终账本核验，不能替代逐 writer guard。
+
+### 19.6 观测契约
+
+v2.12 观测 record 必须新增：
+
+```ts
+interface P011RelaxHysteresisObservation {
+  effectiveTilt: number;
+  thresholds: P011RelaxHysteresisThresholds;
+  edges: P011RelaxHysteresisEdgeSample[];
+  hardGuardRejected: number;
+  hardGuardClipped: number;
+  maxResidualBefore: number;
+  maxResidualAfter: number;
+}
+```
+
+每个 edge record 必须包含：
+
+1. `(runId, substepId, c, effectiveTilt, d, r)`。
+2. `activeBefore/activeAfter` 与转换类型：`start`、`stop`、`holdActive`、`holdInactive`。
+3. `requested/granted/budgetScale`。
+4. donor/receiver 库存与容量截断原因。
+5. hard guard 拒绝或截断量。
+
+阈值标定输出必须包含：
+
+1. `thetaStart/thetaStop` 的点估计与 95% bootstrap 区间。
+2. 校准 run 与 holdout run 的样本数、误判率和 hard gate 违规数。
+3. 正负残差、±倾角与阈值附近噪声的分层数据。
+4. 若区间重叠或转折不可分辨，必须保留 `DESIGN_PENDING_OBSERVATION`，不得填默认值。
+
+### 19.7 Runner 与 checker
+
+1. 新 route：`natural-relax-hysteresis-v1`；artifact 前缀：`p011-v212-relax-hysteresis`。
+2. Runner 必须显式传入 `thetaStartDeg/thetaStopDeg`，不得隐式使用 `30/20` 作为默认值。
+3. Phase schedule 复用 v2.10/v2.12 观测序列，但校准 run 与 holdout run 必须分离，不得用同一 run 既估参又验收。
+4. Checker 必须验证：
+   - 参数不变量。
+   - 状态转换与阈值边界语义。
+   - 正负坡度与 ±倾角方向。
+   - 限流期间 active 状态不丢失。
+   - local/total/bottom 预算不越界。
+   - 守恒、stock、capacity 与 `tan30°` hard gate。
+   - 无目标形状、ROI 或列号优先级。
+   - 校准与 holdout 的置信区间和误判率。
+5. 任何 hard gate、预算、守恒或 holdout 失败均判 `invalid`，不得通过调参放宽。
+
+### 19.8 线程模型与性能
+
+1. 物理与状态机仍在 `SandCanvas` frame callback 所属 UI/render 线程执行。
+2. 每子步 `O(cols-1)`，无全局搜索、无嵌套循环、无新增 worker。
+3. ledger 序列化与文件 IO 继续由 `P011NaturalObservationWorker` 后台线程执行。
+4. UI 线程只复制数组与 postMessage，不进行 JSON stringify。
+5. 不得因性能新增物理 worker、减少 substep、降低 raster 采样或关闭观测。
+
+### 19.9 异常处理
+
+| 情况 | 处理 |
+|---|---|
+| 参数不变量不满足 | 构造/配置阶段失败，禁止进入 run |
+| `effectiveTilt` 更新导致 residual 越界 | 记录 hard gate failure；只能用既有预算修复，否则 run invalid |
+| 预算不足 | `granted` 被裁剪；`active` 保持，下一子步继续请求 |
+| hard guard 拒绝/截断 | 记录拒绝量与原因，不重发、不补预算 |
+| 数值非有限 / 负库存 / 容量越界 | 返回错误，restoreBackup 并 freeze |
+| Probe/store/worker/raster 失败 | 本轮 run invalid，不得用推测数据替代 |
+| route/schema/runId 不一致 | run invalid，不得静默回退 |
+
+### 19.10 实施步骤
+
+1. 新增 `P011RelaxHysteresis.ets`，先完成纯状态机、阈值与请求函数。
+2. 修改 `WaterSandField`：持有 `sliding[]`，接入 collect/apply，并统一 `effectiveTilt` 采样时序。
+3. 为所有修改 `sandTop` 的通道接入统一 pre-commit hard guard。
+4. 扩展 `P011NaturalObservation` schema 与 Probe record。
+5. 新增 v2.12 runner 与 checker，先做 synthetic ledger/raster schema 校验。
+6. 使用标定 run 估计 `thetaStart/thetaStop`，再用独立 holdout run 复核。
+7. 执行完整 HIL run，冻结 source/HAP/log/raster SHA256。
+8. 生成 test/effect 报告；任何 hard gate 或 holdout 失败不得通过调参放宽。
+
+### 19.11 与 `slip-overshoot-v1` 的关系
+
+v2.12 不解除 `slip-overshoot-v1` 的 `BLOCKED` 状态。该缺陷的独立修复必须先处理：
+
+1. `effectiveTilt` 更新前的可行性检查。
+2. 所有修改 `sandTop` 操作的 pre-commit slope guard。
+3. 现有 total/local/bottom 预算竞争。
+4. 观测 context 与 grant/audit 子步对齐。
+
+双角度滞回只改变“何时滑”，不改变参考坡度跳变、全局预算缩放或均匀通量抵消；不得作为该缺陷的单独修复。
+
+### 19.12 变更记录
+
+2026-10-19，依据 `algorithm-P011.md` §8.11 新增 §19。本节仅落盘架构设计；实现仍等待阈值标定与 hard guard 复核，不修改代码或测试用例。2026-10-19 二次修订 §19.5：补齐 settle/percolate writer、合法/违规态闭式 grant 交集、材料 guard 与 tilt 可行域边界、helper/生命周期豁免及四层预算回写。
+
+### 19.13 观测①b：激活逐边转折遥测——交付验收 checklist（2026-10-19）
+
+**状态：`READY_FOR_DEVELOPER`（仅授权观测遥测的激活与补全；不改变 §19.1 的 `ARCHITECTURE_PENDING_OBSERVATION`，不授权实现双阈值状态机，不标定 `thetaStart/thetaStop`）。**
+
+依据：manager 2026-10-19 观测①b 任务（激活逐边转折遥测，为 v2.12 双角标定供数）、`algorithm-P011.md` §8.11 v2.10 逐边转换事件契约、§17 ledger schema v3 与 §17.9 观测隔离验收。本节是 developer 交付指令与验收口径，四项全部 MUST-PASS，逐项勾选。
+
+#### 19.13.1 验收 checklist
+
+- [ ] **□1 转折记录字段完整**：每条边转换时 activeBefore/activeAfter/transitionType(start|stop)/effectiveTilt/残差 r 全部非空。
+  - 判定口径：正式七相 run ledger 的 `slip[]` 数组内每条边记录，六字段全部有效——`activeBefore`/`activeAfter` ∈ {true,false}（禁止 null/缺失）；`transitionType` ∈ {start,stop,holdActive,holdInactive} 且与 activeBefore/activeAfter 组合一致（按 checker `expected_transition` 规则：false→true=start，true→false=stop，true→true=holdActive，false→false=holdInactive）；`effectiveTilt` 为有限数；`d` 与 `r` 为有限数且 `r=|d|`。start/stop 转换事件是 v2.12 阈值标定的 bracket 样本来源；holdActive/holdInactive 保持类记录同样必须字段完整。
+  - 字段契约锚点：`P011NaturalObservationEdgeGrant`（`P011NaturalObservation.ets:86-98`）。
+  - 验证：`test/p011_v210_natural_observation_check.py` 的 `validate()` 对正式 run ledger 零 `activeState`/`transitionType`/`transitionMismatch`/`.r` 错误。
+
+- [ ] **□2 无 unavailable 残留**：正式七相 run 的 ledger 中 transitionType=unavailable 的记录数必须为 0（合成自测 ledger 中允许）。
+  - 判定口径：计数范围限定 `slip[]`（relax 滑移通道）——正式七相 run ledger 内全部 `slip[]` 记录中 `transitionType='unavailable'` 的计数必须为 0。
+  - 工程边界（重要）：`bottomCreep[]` 与 `suspensionDiffusion[]` 的边记录不属于 relax 通道，无 sliding 语义；其 `transitionType='unavailable'` 是 schema 设计内的既定行为（`completeEdgeGrant` 对未携带 active 状态记录的标准标注），**不计入本项验收**，且**不得为凑零伪造这两个通道的 active 状态**——那会违反 §17.9.10（probe 只复制状态机决定，不伪造）与 algorithm §8.11 零侵入边界。若 manager 要求全 ledger 严格为 0，须先升级 schema 并授权非 relax 通道省略 transitionType 字段，属独立变更，不在本任务范围。
+  - 合成自测 ledger（`test/test_p011_transition_telemetry.py` 构造的 unavailable/telemetryUnavailable 用例）允许出现 unavailable。
+  - 验证：对正式 run `ledger.ndjson` 逐 record 统计 `slip` 数组内 unavailable 计数为 0。
+
+- [ ] **□3 transitionTelemetryAvailable=true，且合成 ledger 校验转折记录完整**。
+  - 判定口径：正式七相 run 每个 ledger record 的 `context.transitionTelemetryAvailable===true` 且 `context.ledgerSchemaVersion===3`（两者绑定：available=true 仅在 schema v3 合法）。实现锚点：`WaterSandField.ets` `beginNaturalObservation()` 的 context 写入点（当前实际行号 :1025；manager 任务书引用 :1010 为行号漂移，同一调用点）；常量 `P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION=3`（`P011NaturalObservation.ets:8`）、`P011_NATURAL_OBSERVATION_ROUTE_ID='natural-relax-hysteresis-v1'`（`P011NaturalObservation.ets:7`）。
+  - 合成 ledger 校验：`python -m unittest discover -s test -p "test_p011_transition_telemetry.py"` 全部 PASS（现有用例已覆盖：available 状态校验 transition、缺失 activeState/transitionType 拒绝、available 绑定 schema v3、unavailable 状态拒绝伪造、guard 值与 availability 绑定）。
+  - checker 边界：`validate_observation_contract()` 的 `runRole`/`thresholdCalibrationId`/`thetaStartDeg`/`thetaStopDeg` 分支仅适用于 v2.12 校准/holdout run（`runRole∈{calibration,holdout}`）；观测①b 正式七相 run 为观测 run（`runRole=null`），不适用该分支——不得因该分支报错而判观测①b FAIL，也不得为绕过它伪造校准身份或 candidate 阈值。
+
+- [ ] **□4 物理逻辑与参数零改动**：relaxAngle 判据、预算、常量逐字不变（只加观测记录）。
+  - 判定口径：diff 审查以下物理路径无任何语义变更——`relaxAngle()`（`WaterSandField.ets:1701-1804`：`tan(angleDeg)` 判据、`excess/2` 请求量、`maxAvalancheFlux*dt` 截断、donor/receiver 方向与 `receiverCapacity` 公式、`clipSubstepMotion` 裁剪）；预算通道（`beginSubstepMotionBudget`/`clipSubstepMotion`/`clipTotalMotion`/`clipBottomCreepMotion`：local `vSandTopMax*dt=28*dt`、total `totalMotionBudget=300*dt`、bottom `10*dt` 仅 creepBottom）；全部物理常量（`angleDeg=4`、`maxAvalancheFlux`、`totalMotionBudget=300`、`vSandTopMax=28`、`vBottomCreepMax=10`、`percolationRate`、扩散系数、`P011_HEAVY_SHARE_*` 等）逐字不变。
+  - 允许变更范围（仅观测侧）：`recordSlip`/`recordBottomCreep`/`recordSuspensionDiffusion` 等遥测调用点、`naturalObservationSliding*` 观测影子状态数组（`relaxAngle()` 判据不读取它，不影响物理轨迹）、schema/契约文件、合成测试资产。
+  - 行为等价验收：Probe=null 时同输入（固定 seed/schedule）完整状态序列与改动前逐项一致（沿用 §17.9.1 口径）；probe on/off 同输入物理轨迹一致（§17.9.10）。
+
+#### 19.13.2 Developer 交付要求（通知）
+
+1. 按 §19.13.1 四项 checklist 交付；四项全部勾选后，才可提交正式七相 run 的 ledger/raster/manifest 冻结证据。
+2. 自验顺序：先跑合成 ledger 单测（□3），再执行正式七相 run 与专项计数（□1/□2），最后做 diff 审查与 probe=null 等价验证（□4）。
+3. 任何一项不满足即 BLOCKED 返工；不得通过放宽口径、伪造通道状态或修改 checker 判定转绿。
+4. 本任务不授权：实现双阈值状态机、填 `thetaStart/thetaStop` 默认值、修改 `relaxAngle` 判据/预算/常量、处理 slip-overshoot-v1 的 BLOCKED 事项。
+
+变更记录：2026-10-19，依据 manager 观测①b 任务新增 §19.13。仅落盘验收 checklist 与 developer 交付指令；不修改代码、既有测试用例或历史结论。§19.1 状态保持 `ARCHITECTURE_PENDING_OBSERVATION`。
+
+## 20. v2.14 动态倾角可行域限幅对接材料
+
+**状态：BLOCKED / DESIGN_NOT_CALIBRATED。** 本节把 `algorithm-P011.md` §8.13 的逐子步动态可行域方案翻译为 architect 可据以细化模块与调用点的契约。它不授权实现，不改变任何预算、几何、硬阈值或体验门槛；v2.14 当前没有多档 omega 的真机 P95 数据，也没有批准的固定 `maxTiltOmega`。
+
+### 20.1 输入、输出与不可变快照
+
+每个物理子步开始时只建立一次不可变输入快照：
+
+```ts
+interface P011TiltFeasibilityInput {
+  runId: string;
+  substepId: number;
+  dt: number;
+  thetaBefore: number;       // 当前已提交 effectiveTilt，degree
+  targetTilt: number;        // 输入层目标，degree
+  maxTiltOmega: number;      // 待标定候选，degree/second
+  sandTopBefore: Float64Array; // S0，cols 个
+  budgetsBefore: ExistingBudgetSnapshot;
+  channelStateBefore: ExistingChannelStateSnapshot;
+}
+```
+
+规划器返回被接受的 `thetaNext`、本子步各既有通道的计划与实际 grant 预演、每边 `gBefore/deltaG/rNext`、可行区间、active constraint edge、clipped 请求与 BLOCKED 原因。所有角度内部运算须统一 degree/radian 转换；`sandTop` 高差先按 `dx` 归一为坡度。规划阶段不得写材料场、预算累计器、滑移状态、输入状态或 Probe。
+
+### 20.2 两轮 planning pass 的确定时序
+
+“两轮”指最多两次**纯规划/预算预演**，不是同一子步执行两次物理，也不是获得两份预算。两轮都从相同 `S0`、`thetaBefore` 与 `budgetsBefore` 起算；只有最终选中的计划提交一次。通道顺序和预算优先级必须复用当前 `WaterSandField` application 事务的单一权威定义，预演不得重新排序或另设优先级。
+
+```text
+snapshot S0, theta0, target, dt, budget B0, channel states
+thetaRequested = moveToward(theta0, target, maxTiltOmega * dt)
+
+PASS 1 (preview only, no mutation):
+  plans1 = collect all existing channel requests from S0 at thetaRequested
+  grants1 = allocate plans1 once against a copy of B0,
+            using the existing channel order and all existing caps
+  deltaG1[c] = sum of sandTop-slope effects of every granted channel at edge c
+  I1 = intersect over c of:
+       atan(g0[c] + deltaG1[c] - H) .. atan(g0[c] + deltaG1[c] + H)
+  if I1 is nonempty:
+    theta1 = clamp(thetaRequested, I1, and the max-omega step interval)
+  else:
+    mark target-angle candidate infeasible; do not invent theta1
+
+if I1 is nonempty and theta1 == thetaRequested and grants1 are admissible:
+  commit (theta1, plans1, grants1) exactly once
+else:
+  PASS 2 (replan from the same snapshot; discard pass 1):
+    if target-angle candidate theta1 exists:
+      plans2 = recollect all channel requests from S0 at theta1
+      grants2 = allocate the complete plans2 against a fresh copy of B0,
+                with the same existing order and caps
+      compute deltaG2 and I2 from actual planned grants
+  if theta1 exists and theta1 in I2 and all post-commit invariants are admissible:
+    commit (theta1, plans2, grants2) exactly once
+  else:
+    evaluate the old-angle fallback plan at theta0 as the second-pass
+    alternative, from S0 and another fresh copy of B0; do not commit either
+    alternative until the complete old-angle plan passes the same checks
+    commit theta0 plus that safe old-reference plan, with rejected requests clipped
+    if no admissible committed state exists: BLOCKED; do not mutate this substep
+
+after the single commit:
+  recompute all 127 residuals from committed S and committed theta
+  audit conservation, stock, capacity, every existing budget, and abs(r[c]) <= H
+  publish context, grants, effectiveTiltRate, feasibility telemetry, and audit
+```
+
+`I1/I2` use the exact edge condition `|g0[c]+deltaG[c]-tan(theta)|<=H`, with `H=tan(30°)` and current `dx`; intersection is computed in slope space then mapped through monotone `atan` on the configured tilt domain. The accepted angle is additionally intersected with `[theta0-maxTiltOmega*dt, theta0+maxTiltOmega*dt]` and the directed interval from `theta0` toward `targetTilt`. Empty intersection is infeasible. A clamp in pass 1 requires pass 2 because channel requests, donor/receiver direction, and shared grants may depend on accepted effective tilt. If pass 2 produces an interval excluding `theta1`, its old-angle alternative is evaluated within pass 2 against a separate fresh copy of `B0`; no third planning pass is allowed. Each alternative is a complete all-channel allocation, and only one can commit.
+
+`deltaG[c]` must be derived from the combined, actually previewed grants of every channel that can change `sandTop`, including settle, percolation, creep, relax/avalanche, lift/rise, and any route-specific advection. Compute it from the complete per-column planned `deltaS`, not a local request, a single edge's theoretical cap, or the sum of absolute fluxes; neighboring fluxes can cancel. Channels that only exchange `bh/bl` while preserving each column's `bh+bl` contribute zero `deltaS`, but still consume their existing budgets if their accounting contract says so. Any unmodeled `sandTop` writer makes the preview incomplete and prohibits a safety claim.
+
+### 20.3 与现有通道及预算账本的接口
+
+Architect 细化接口时应将每通道分成只读 planning 与单次 commit 两个角色，至少具备：
+
+```ts
+interface P011ChannelPlan {
+  channelId: ExistingChannelId;
+  requested: ExistingRequestShape;
+  plannedGrant: ExistingGrantShape;
+  deltaSandTopByColumn: Float64Array;
+  budgetUse: ExistingBudgetUse;
+  admissibility: 'admissible' | 'clipped' | 'rejected';
+}
+
+interface P011TiltFeasibilityResult {
+  thetaRequested: number;
+  thetaAccepted: number;
+  feasibleThetaMin: number;
+  feasibleThetaMax: number;
+  limitingEdge: number | null;
+  plans: P011ChannelPlan[];
+  passCount: 1 | 2;
+  fallbackUsed: boolean;
+  status: 'accepted' | 'clamped' | 'held' | 'blocked';
+  blockedReason: string | null;
+}
+```
+
+`ExistingBudgetSnapshot` 是现行 local、bottom、total 和各通道 rate cap 的剩余额度快照；每轮均以同一快照的副本预演，pass 1 的扣账必须整体丢弃后才能启动 pass 2。最终 commit 只消费选中计划的 grant，累计一次真实 `requested/granted/clipped`。不允许通过计划重算重复扣账、结转被拒额度、创建 correction channel、把崩塌修复额度与原有 relax/total 预算叠加，或让预演本身改动 `sliding[]`/方向滞回状态。状态转换只在最终 commit 所用的已接受参考角与材料快照上推进一次。
+
+现有 `updateTilt(dt)` 不得在 grants/audit 之前单独提交参考角。子步 context、`stateBefore`、选中计划、实际 grant、提交后 `stateAfter` 和 audit 必须共享同一 `runId/substepId`；`effectiveTilt` 表示 `thetaAccepted`，`effectiveTiltRate=(thetaAccepted-thetaBefore)/dt`。Probe 记录两轮诊断但不得参与规划或更改排序；pass 1/被丢弃 pass 2 只能作为诊断记录，不能记成实际 grant。
+
+### 20.4 BLOCKED 与回退语义
+
+| 条件 | 本子步处理 | run/验收语义 |
+|---|---|---|
+| 当前状态合法，投影后 angle 与真实预算 grant 可共同满足全部边界 | 按唯一选中计划提交；被 clamp 时记 `clamped` | 继续；clamp/hold 时长进入跟手性统计 |
+| pass 1 clamp 后 pass 2 可行且符合原 cap | 丢弃 pass 1，commit pass 2 一次 | 继续；passCount=2 |
+| pass 2 不闭合，但旧 `thetaBefore` 下可重算出合法计划 | 丢弃两轮预演，采用旧角度回退计划；拒绝请求量记 clipped，不结转 | 继续并标 `held/fallbackUsed`；纳入角度延迟与 P95，不可记作成功追随 |
+| 可行域交集为空，或旧角度回退仍无法在原预算内形成合法提交状态 | 不提交倾角和材料状态；记录 `BLOCKED`、edge/预算/通道证据与原因 | 本 run 标 `BLOCKED/invalid`，硬安全门槛失败；不得静默暂停后仍判通过 |
+| 子步开始时状态已违反 `H`，且原预算内不存在恢复到合法集合的实际 grant | 不允许用角度投影伪装恢复，不写材料；保留失败快照 | `BLOCKED`，run invalid；不得放宽 `tan30°` 或补预算 |
+| grant 预演与真实 apply 不一致，或 commit 后任一边 `|r|>H` | 立即冻结/restoreBackup（沿用现有事务错误恢复），记录首个违规边和两套账本 | 硬失败，run invalid；说明规划器或通道接口不完整 |
+| 有限值/库存/容量/守恒/任一既有预算失败 | 沿用当前 field 错误恢复，不允许靠后续子步冲销 | `BLOCKED/invalid` |
+
+`BLOCKED` 不是把角度偷偷 clamp 到任意值后继续，也不是可忽略 warning：必须携带 `reasonCode`（如 `EMPTY_FEASIBLE_INTERVAL`、`NO_SAFE_OLD_TILT_PLAN`、`PREEXISTING_INFEASIBLE_STATE`、`PREVIEW_COMMIT_MISMATCH`）、`runId/substepId`、theta requested/accepted、最紧边、`g/deltaG/r`、通道 grants、预算剩余与拒绝量。只要发生 BLOCKED，该 run 不得满足“零越界”验收；恢复运行若由调用层选择继续，必须作为同一 run 的明确 invalid continuation 记录，不能抹除阻断事件。
+
+### 20.5 复杂度、证据与状态
+
+每个 planning pass 遍历既有 `O(cols)` 通道计划与 `O(cols-1)` 边。pass 2 可评估目标候选与旧角度回退两个完整分配，各自使用独立的 `B0` 副本；这是同一快照的备选预演，不串接预算，最终只提交一个候选。最多两轮规划、最多三个候选分配，复杂度仍为 `O(cols)` 时间与 `O(cols)` 临时存储，没有全局搜索、排序、额外物理线程或额外物理子步。Architect 应在详细设计中证明 pass 上限、预算优先序与并列分配确定性、全部 `sandTop` writer 已接入、预演纯度及 preview/commit 一致性。
+
+硬安全公式只能证明单步可行性，不能证明用户体验：v2.14 仍须扫描候选 `maxTiltOmega` 并用冻结输入、真机 raster 和独立 run 测现有 P95 T90 `<=100ms`。动态投影开启后仍不达标即为安全/跟手约束冲突，保持 BLOCKED 并交 manager 裁决；不以降低安全上限、增加预算、删样本或单独报告 effectiveTilt 到位时间替代。
+
+### 20.6 实现细则与证明义务
+
+本节补齐 §20.5 要求的四项实现前证明，不改变 §20 的 `BLOCKED / DESIGN_NOT_CALIBRATED` 状态，也不授权绕过标定直接接入物理循环。现阶段的 `P011TiltPlanningPass.ets` 只是服务级骨架：`createPreview()` 返回阻断结果，`commit()` 抛出 `P011_PLANNING_PASS_BLOCKED`。后续实现必须先满足下列义务，才能把该骨架替换为可提交路径。
+
+#### 20.6.1 Pass 上限与三候选闭包
+
+候选角集合在本控制律下是封闭的三元集：
+
+```text
+C = {thetaRequested, theta1, theta0}
+```
+
+其中 `thetaRequested` 由 `moveToward(theta0, target, maxTiltOmega*dt)` 唯一产生；`theta1` 只在 pass 1 的可行区间非空时由 `clamp(thetaRequested, I1, max-omega interval)` 唯一产生；`theta0` 是子步开始时的已提交参考角。除此之外，本控制律不生成其他候选角。
+
+因此 pass 上限证明如下：
+
+1. **pass 1** 只在 `thetaRequested` 上收集请求并预演一次。若 `theta1==thetaRequested` 且分配可准入，则直接提交，`passCount=1`。
+2. **pass 2** 只在 `theta1` 上重算请求并预演一次；若 `theta1` 不存在或不可准入，则同一 pass 内再评估 `theta0` 回退候选。二者共用同一 `S0/B0` 快照，但各自使用独立预算副本，最终只提交一个候选。
+3. **不存在第三轮**。任何第四候选角 `theta*` 只有两种来源：
+   - 若 `theta*` 仍在 `C` 中，则它已由前三候选覆盖，是冗余候选。
+   - 若 `theta*` 不在 `C` 中，则它要么落在 `maxTiltOmega*dt` 之外，非法；要么位于 `theta0` 与 `theta1` 之间。后者在跟手性上被 `theta1` 支配，且若要证明安全仍需一次新的全通道重算，即第三轮 planning pass，超出本设计的固定复杂度承诺。
+
+所以，在 §20.2 指定的控制律内，最多两轮 planning、三个候选分配已构成完整候选闭包；若三者均不可提交，正确结果只能是 `BLOCKED`，不得通过追加第四候选或第三轮搜索来继续尝试。
+
+#### 20.6.2 预算优先序与请求比例分摊
+
+预演与提交必须复用现行 `WaterSandField` application 事务的固定通道顺序，不得另设优先级。权威顺序为：
+
+```text
+settle → percolate → bottomCreep → relax → lift
+```
+
+若实现为完整性单独表示 `suspensionDiffusion`，它仍属于 collect 阶段的既有非 total 通道，不得插入或重排上述 apply 顺序。
+
+共享 total 预算的确定分配流程如下：
+
+1. 在固定通道顺序和固定列/边顺序内收集请求，先应用各通道自身 rate cap、local cap、bottom cap 与库存/容量约束，得到 `r_i`。
+2. 计算 `R = Σ r_i`。若 `R <= B_total`，全部请求足额授予。
+3. 否则计算唯一比例 `s = B_total / R`，并在固定顺序内执行 `g_i = min(r_i, r_i*s, localRemaining_i, channelRemaining_i, totalRemaining)`。
+4. 每笔授予后立即扣减对应 local、bottom、channel 与 total 余量；不回补、不结转、不重发。
+
+并列时的 tie-break 规则固定为：
+
+```text
+channelRank 升序 → columnIndex/interfaceIndex 升序
+```
+
+即先按 `settle < percolate < bottomCreep < relax < lift` 的固定通道等级，再按列号或边号从小到大。相同通道、相同列/边的请求天然唯一；不同请求之间不比较浮点数值大小，也不按请求量排序。
+
+#### 20.6.3 并列分配的唯一化规则
+
+同一预算下若存在多种合法分配，实现必须采用以下唯一化规则，而不是依赖浮点排序或实现细节：
+
+1. 每个请求拥有固定优先键 `(channelRank, columnIndex)`；边通道使用 `(channelRank, interfaceIndex)`。
+2. 分配只按该键的字典序遍历，键值完全由整数和固定枚举组成。
+3. 若比例缩放后仍有因数值舍入产生的余量，不重新排序、不二次分配；按上述顺序逐项授予，并把未授予部分记入 `clipped/rejected`。
+4. `limitingEdge` 在多条边给出相同约束值时，取 `interfaceIndex` 最小者。
+
+因此任意两个实现只要输入快照、通道顺序、比例公式和枚举顺序一致，就必须得到同一份 `plannedGrant/budgetUse/deltaSandTopByColumn`，不得出现由排序稳定性或浮点比较引起的分叉。
+
+#### 20.6.4 Preview / commit 一致性与失败路径
+
+preview 与 commit 必须共享同一份纯规划函数，不允许复制两套相似逻辑。`P011TiltPlanningPassPreview` 的语义是：
+
+1. `createPreview()` 只读 `S0/theta0/B0/channelState`，生成完整候选计划，不写任何物理或账本状态。
+2. `discard()` 只丢弃 preview，不产生副作用。
+3. `commit()` 是唯一提交路径，只执行最终选中的 `thetaAccepted` 与 `plans`，并一次性更新倾角、材料、预算和状态。
+
+一致性要求为逐项精确相等，不使用容差：
+
+```text
+thetaAccepted === preview.thetaAccepted
+plans[i].plannedGrant === committed plans[i].plannedGrant
+plans[i].budgetUse === committed plans[i].budgetUse
+plans[i].deltaSandTopByColumn[c] === committed deltaSandTopByColumn[c]
+```
+
+比较前须把 `-0` 规范化为 `0`，并显式拒绝 `NaN`。若任一项不一致，立即置 `PREVIEW_COMMIT_MISMATCH`，冻结本子步，执行 `restoreBackup()`，保留 preview 与 commit 两套诊断账本，不允许用后续子步或额外 correction 修复。该路径与 §20.4 的 `PREVIEW_COMMIT_MISMATCH` 行为一致。
+
+变更记录：2026-10-19，依据 `algorithm-P011.md` §8.13 增加 v2.14 architect 对接材料。仅补充两轮可行域预演、现有通道/预算接口与 BLOCKED 事务语义；无代码、测试用例或硬门槛变更。状态保持 `BLOCKED / DESIGN_NOT_CALIBRATED`。

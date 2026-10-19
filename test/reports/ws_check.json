@@ -1,0 +1,64 @@
+[
+  {
+    "name": "rate",
+    "status": "PASS",
+    "measured": {
+      "maxSandTopSpeedObserved": 24.0,
+      "maxSubstepBudgetRate": 24.0,
+      "vSandTopMax": 28.0,
+      "frames": 3,
+      "activeFrames": 3,
+      "dormantFrames": 0,
+      "dormantSource": "field"
+    },
+    "threshold": {
+      "paramsVersion": "v2.2",
+      "vSandTopMax": 28,
+      "substepSpeed": "<= 30",
+      "substepBudgetRate": "<= 28",
+      "activeFrames": ">= 1"
+    },
+    "evidence_count": 3,
+    "note": ""
+  },
+  {
+    "name": "rateChecker_skipsDormantFrames",
+    "status": "PASS",
+    "measured": {
+      "maxSandTopSpeedObserved": 18.0,
+      "maxSubstepBudgetRate": 18.0,
+      "vSandTopMax": 28.0,
+      "frames": 2,
+      "activeFrames": 1,
+      "dormantFrames": 1,
+      "dormantSource": "field"
+    },
+    "threshold": {
+      "activeFrames": 1,
+      "dormantFrames": 1,
+      "rate": "PASS"
+    },
+    "evidence_count": 2,
+    "note": ""
+  },
+  {
+    "name": "rateChecker_legacyDormantInference",
+    "status": "PASS",
+    "measured": {
+      "maxSandTopSpeedObserved": 18.0,
+      "maxSubstepBudgetRate": 18.0,
+      "vSandTopMax": 28.0,
+      "frames": 3,
+      "activeFrames": 2,
+      "dormantFrames": 1,
+      "dormantSource": "event"
+    },
+    "threshold": {
+      "activeFrames": 2,
+      "dormantFrames": 1,
+      "dormantSource": "event"
+    },
+    "evidence_count": 3,
+    "note": ""
+  }
+]

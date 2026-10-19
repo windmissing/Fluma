@@ -47,11 +47,28 @@ DESIGN_GAP_CLOSE.md 的 B1~B4 批次可视为已排好优先级的 gap 条目，
 (2) designer  针对问题设计算法方案 → algorithm*.md（含量化验收指标）
 (3) architect 根据问题 + algorithm 方案设计开发方案 → architecture*.md
 (4) developer 按 algorithm + architecture 开发 → 算法代码
-(5) reviewer  审核代码一致性 → 通过则 git commit；不通过退回 (4)
+(5) reviewer  审核代码一致性 → 通过则 git commit；不通过退回 (4)，并输出明确的阻断项清单
+    review 失败后的 developer 整改纪律：
+      ① 禁止大范围重写或顺手重构，只处理 reviewer 列出的阻断项
+      ② 每个阻断项先补或修正对应测试，再做最小实现修改
+      ③ 逐项输出“阻断项 → 最小修改 → 测试证据”映射
+      ④ 非阻断问题只能记录为后续建议，不得混入本轮整改
+      ⑤ 若整改需要改变接口或架构，先退回 designer/architect 决策，不得擅自扩大实现
 (6) tester    设计用例并执行 → test-report-P*.md   ┐ 并行
     effector  设计场景并执行 → effect-report-P*.md  ┘
 (7) designer  对照双报告验证验收指标：
-      达成   → 标记 VALIDATED → 问题闭环，manager 在 priority.md 标 CLOSED
+      达成   → 满足以下两条即视为达成，标记 VALIDATED → 问题闭环，manager 在 priority.md 标 CLOSED：
+                ① 整体测试结果没有恶化（与上一份报告相比无新增失败/降分，含其他问题的用例）
+                ② 当前问题对应的测试结果有改善（对应用例从 FAIL/BLOCKED 向 PASS 方向推进；
+                   允许当前方案只部分解决当前问题——只要对应用例有实质改善，方案即视为有效）
+                注：部分用例对应尚未解决的问题，允许其暂时失败，不计入“恶化”
+      判定口径 → 测试通过需同时满足三条：
+                ① 已解决的硬门槛必须达成（不变量类指标不可失败、不可放宽，不允许回退）
+                ② 已解决的软门槛不低于及格线（分档指标允许较上版略降，但必须 ≥ 及格线）
+                ③ 当前要解决的问题有改善（对应用例向 PASS/更高分档推进即可，允许部分解决）
+                硬门槛 = MUST-PASS（不变量类）；软门槛 = TIERED（0~10 分档设及格线）
+                未解决问题（含当前问题尚未攻克部分）的用例允许暂时失败，不计入恶化；
+                当前问题判定达成并 CLOSED 后，其门槛转入①②类，后续轮次必须维持
       未达成 → 先归因，再分流：
         算法方案问题 → 回到 (2) designer 重新设计算法（v2/v3），manager 同步调整优先级
         实现方案问题 → 算法与测试用例均无问题时 → 回到 (3) architect 修订实现方案
@@ -71,6 +88,14 @@ DESIGN_GAP_CLOSE.md 的 B1~B4 批次可视为已排好优先级的 gap 条目，
 
 ## 问题路由规则（manager 决策后）
 
+## 自动接力（用户已授权）
+
+- 每个环节完成通知到达后，主会话自动启动下一环节，无需用户逐段确认：
+  designer 完成 → architect；architect 完成 → developer；developer 完成 → reviewer；
+  reviewer 通过 → tester+effector 并行；双报告齐 → designer 验证；designer 判定 → manager 闭环并调度下一轮
+- 仅在需要用户决策的点暂停：测试用例争议、目标/优先级重大变更、角色报告异常或越权
+- 与主线无文件冲突的辅助任务（如用例口径更新）可与主线并行推进
+
 manager 在 `priority.md` 选出本轮要解决的问题后，按问题类型路由到下一角色。
 
 **测试先行原则**：manager 决定要解决某个问题时，必须先保证存在能验证“该问题是否已解决”的主观或客观测试用例；若用例缺失，先把补齐用例作为前置事项路由给 tester/effector，用例就位后再进入实现，不得先实现后补测。
@@ -83,6 +108,7 @@ manager 在 `priority.md` 选出本轮要解决的问题后，按问题类型路
 
 - 同轮同时存在实现类与测试类问题时，manager 应在 `priority.md` 为每个问题标注路由与依赖（如“P-003 → designer，P-005 → tester”），测试类问题不经过 designer/architect/developer。
 - tester 与 effector 可并行（纪律 5）；它们与 designer/developer 等写同一批文件的角色必须串行。
+- **共享设备执行必须串行或分设备**：tester 与 effector 的 agent 工作可并行（写用例/分析/报告，文件互不冲突），但同一台真机/模拟器上的测试执行必须串行（如 tester 先跑客观采集，effector 后跑主观录制），或各占一台设备；严禁同时在同一设备上安装/启动/操作/抓 hilog，否则手势互相污染、日志串流、fpsP95 失真。
 - **基线测试**：测试用例补齐/修改后，tester/effector 必须立即用最新用例执行一次基线测试，并输出该问题的 test-report-P*.md / effect-report-P*.md；功能未实现时如实记录 FAIL/NOT_IMPLEMENTED（RED 基线），作为改动前证据，不得放宽判定或推迟执行。基线阶段因“问题尚未解决”产生的 FAIL/BLOCKED 属可预见结果，不需要 designer 分析，也不触发第 (7) 步的归因闭环；仅当基线暴露用例/脚本自身缺陷时才反馈修正。
 
 ## 调度指令示例
@@ -112,6 +138,22 @@ manager 在 `priority.md` 选出本轮要解决的问题后，按问题类型路
 6. 测试先行：manager 选定要解决的问题必须先有可验证的客观/主观用例；用例缺失时先补用例再实现
 7. 测试争议：测试未达成时 designer 可质疑测试用例正确性，异议上报 manager 决策；manager 认为测试不合理时上报用户决策。绝对不允许任何角色为了通过测试而私自修改测试用例或放宽标准
 
+## Windows Git 执行约定
+
+本机 `git` 未加入 PATH，不能因为 PowerShell 报 `git` 不是命令就判断仓库不可用。reviewer 与需要读取 git 状态的角色必须使用 GitHub Desktop 自带的完整路径：
+
+```powershell
+$git = 'C:\Users\admin\AppData\Local\GitHubDesktop\app-3.6.6\resources\app\git\mingw64\bin\git.exe'
+& $git status --short
+& $git log --oneline -5
+```
+
+当前约定：
+- Git 版本：`2.53.0.windows.4`
+- 当前分支：`main`
+- 当前仓库仅本地初始化，未配置远端；不得执行 `git pull` / `git push`
+- reviewer 提交时也必须通过上述完整路径调用 `git add` / `git commit`
+
 ## 变更记录
 
 - 2026-10-13：新增“问题路由规则”：算法实现类问题交 designer；测试用例补充/实现类问题按客观/主观分别交 tester 或 effector，不再统一走 designer。
@@ -125,3 +167,10 @@ manager 在 `priority.md` 选出本轮要解决的问题后，按问题类型路
 - 2026-10-13：问题路由规则新增基线测试要求：用例补齐/修改后必须立即执行基线测试并输出报告，功能未实现时如实记录 RED 基线。
 - 2026-10-13：基线测试规则补充：因问题尚未解决产生的基线失败属可预见结果，不由 designer 分析、不触发第 (7) 步归因闭环；仅用例/脚本自身缺陷需反馈修正。
 - 2026-10-13：新增方案复盘规则：designer 须积极探索多种方案；每轮 (2)→(7) 沉淀独立复盘文档 docs/retro-P*-v*.md。
+- 2026-10-13：第 (7) 步“达成”标准放宽为：整体不恶化且当前问题对应用例有改善；未解决问题对应的用例允许暂时失败，不计入恶化。
+- 2026-10-13：第 (7) 步补充：允许方案部分解决当前问题，只要对应用例有实质改善即视为方案有效。
+- 2026-10-13：新增测试判定分档口径：硬门槛必须通过不可放宽；分档指标 0~10 分档设及格线，略降但过线可接受。已同步 tester/effector 职责配置。
+- 2026-10-13：判定口径收敛为三条规范表述：已解决硬门槛必须达成；已解决软门槛不低于及格线；当前问题有改善。未解决用例暂可失败；问题 CLOSED 后门槛转入维持类。
+- 2026-10-13：用户授权自动接力：环节完成后自动进入下一环节，仅在用户决策点暂停。
+- 2026-10-14：新增设备执行规则：tester/effector 可并行工作，但共享真机/模拟器上的测试执行必须串行或分设备，防止安装竞争、手势干扰、日志串流与性能指标失真。
+- 2026-10-14：新增 Windows Git 执行约定：本机 git 不在 PATH，reviewer 必须使用 GitHub Desktop 自带完整路径；当前仓库为本地 main 分支且无远端。

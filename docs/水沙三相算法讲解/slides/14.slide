@@ -1,0 +1,37 @@
+<Slide style={{ width: 1280, height: 720, background: 'linear-gradient(160deg, #0F2A43 0%, #1D4E79 100%)', padding: 0, position: 'relative' }}>
+    <svg width={1280} height={720} viewBox='0 0 1280 720' style={{ position: 'absolute', top: 0, left: 0, opacity: 0.10 }}>
+        {[80, 160, 240, 320, 400, 480, 560, 640, 720, 800, 880, 960, 1040, 1120, 1200].map((x) => (
+            <line key={'v'+x} x1={x} y1={0} x2={x} y2={720} stroke='#7FB3D5' strokeWidth={1} />
+        ))}
+    </svg>
+    {/* 中央玻璃管剖面 */}
+    <Box style={{ position: 'absolute', right: 100, top: 160, width: 360, height: 420 }}>
+        <svg width={360} height={420} viewBox='0 0 360 420'>
+            <rect x={20} y={10} width={320} height={400} rx={16} fill='rgba(127,179,213,0.10)' stroke='#7FB3D5' strokeWidth={3} />
+            <rect x={24} y={130} width={312} height={276} rx={12} fill='rgba(127,179,213,0.25)' />
+            <path d='M24 406 L24 350 L110 350 L180 300 L250 300 L336 340 L336 406 Z' fill='#C9A15C' opacity={0.9} />
+            <path d='M24 406 L24 382 L130 382 L200 340 L280 340 L336 366 L336 406 Z' fill='#8A5A2B' />
+            <circle cx={110} cy={220} r={5} fill='#F39C12' />
+            <circle cx={200} cy={190} r={5} fill='#F39C12' />
+            <circle cx={260} cy={230} r={5} fill='#E8E8E8' stroke='#95A5A6' />
+        </svg>
+    </Box>
+    {/* 左侧金句 */}
+    <Box style={{ position: 'absolute', left: 90, top: 0, width: 620, height: 720, justifyContent: 'center', flexDirection: 'column', gap: 26 }}>
+        <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.5 }}>
+            列标量 × 守恒账本<br />速率化 × 可复算
+        </Text>
+        <Box style={{ width: 80, height: 6, background: '#F39C12', borderRadius: 3 }} />
+        <Text style={{ fontSize: 24, color: '#C8D8E6', lineHeight: 1.7 }}>
+            四轮迭代没有推翻任何东西——<br />
+            是同一套模型的四次校准。<br />
+            <span style={{ color: '#F39C12', fontWeight: 'bold' }}>演进，不重写。</span>
+        </Text>
+        <Text style={{ fontSize: 16, color: '#5D6D7E', marginTop: 10 }}>方案 v2.4 · DRAFT → 待 developer 合入 v2.2 后实现 v2.4</Text>
+    </Box>
+    <Box style={{ position: 'absolute', left: 60, bottom: 20, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Box style={{ width: 12, height: 12, background: '#F39C12' }} />
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+    </Box>
+    <Text style={{ position: 'absolute', right: 60, bottom: 20, fontSize: 14, color: '#5D6D7E' }}>14 / 14</Text>
+</Slide>

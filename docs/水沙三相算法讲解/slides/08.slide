@@ -1,0 +1,60 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>v1 的致命伤：一步「交换」毁掉守恒</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 32 }}>
+        {/* 左 60%：错误交换 SVG */}
+        <Box style={{ width: 660, background: '#FFFFFF', borderRadius: 16, padding: 20, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', justifyContent: 'center' }}>
+            <svg width={620} height={420} viewBox='0 0 620 420'>
+                <text x={310} y={30} fill='#2C3E50' fontSize={19} fontWeight='bold' textAnchor='middle'>v1 想表达「重沙穿过轻沙下沉」，写成：</text>
+                {/* 代码块 */}
+                <rect x={130} y={50} width={360} height={72} rx={10} fill='#0F2A43' />
+                <text x={310} y={82} fill='#F39C12' fontSize={22} fontFamily='monospace' textAnchor='middle'>hl -= q   (轻沙减 q)</text>
+                <text x={310} y={110} fill='#F39C12' fontSize={22} fontFamily='monospace' textAnchor='middle'>hs += q   (重沙加 q)</text>
+                {/* 后果示意：一列中轻沙凭空变重沙 */}
+                <text x={90} y={175} fill='#5D6D7E' fontSize={16}>执行前</text>
+                <rect x={40} y={185} width={70} height={40} fill='#C9A15C' />
+                <rect x={40} y={225} width={70} height={40} fill='#8A5A2B' />
+                <text x={230} y={175} fill='#5D6D7E' fontSize={16}>执行后</text>
+                <rect x={180} y={185} width={30} height={40} fill='#C9A15C' />
+                <rect x={210} y={185} width={40} height={40} fill='#8A5A2B' />
+                <rect x={180} y={225} width={70} height={40} fill='#8A5A2B' />
+                {/* 变化箭头 */}
+                <path d='M 120 205 L 172 205' stroke='#F39C12' strokeWidth={3} />
+                <polygon points='172,198 184,205 172,212' fill='#F39C12' />
+                <text x={148} y={196} fill='#F39C12' fontSize={14} textAnchor='middle'>q</text>
+                {/* 右侧结论 */}
+                <rect x={300} y={170} width={300} height={110} rx={10} fill='rgba(243,156,18,0.12)' stroke='#F39C12' strokeWidth={2} />
+                <text x={450} y={205} fill='#B06A00' fontSize={18} fontWeight='bold' textAnchor='middle'>轻沙没有搬家，</text>
+                <text x={450} y={232} fill='#B06A00' fontSize={18} fontWeight='bold' textAnchor='middle'>而是「变成」了重沙</text>
+                <text x={450} y={262} fill='#2C3E50' fontSize={16} textAnchor='middle'>VL 减 q、VH 加 q</text>
+                {/* 底部后果 */}
+                <rect x={40} y={305} width={540} height={90} rx={10} fill='#0F2A43' />
+                <text x={310} y={342} fill='#F39C12' fontSize={19} fontWeight='bold' textAnchor='middle'>每步漂移约 1%，30 步后超出 0.1% 红线 300 倍</text>
+                <text x={310} y={372} fill='#C8D8E6' fontSize={16} textAnchor='middle'>只检查了总沙量 VH+VL，漏了「各自不变」</text>
+            </svg>
+        </Box>
+        {/* 右 40%：三条教训 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1D4E79' }}>为什么会被发现？</Text>
+            {[
+                '「看起来像位置交换」的公式，实际执行的是「物质转换」——两相混写是最隐蔽的坑',
+                '守恒审计不能只盯总量：VH 和 VL 各自都是不变量',
+                '每个动力学公式都要单独做一次「进出相抵」证明，不能靠声明',
+            ].map((t, i) => (
+                <Box key={i} style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start', background: '#FFFFFF', borderRadius: 12, padding: 16, boxShadow: '0 4px 16px rgba(15,42,67,0.10)' }}>
+                    <FAIcon name='times-circle' style={{ fill: '#F39C12', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 18, color: '#2C3E50', lineHeight: 1.55, flex: 1 }}>{t}</Text>
+                </Box>
+            ))}
+            <Text style={{ fontSize: 16, color: '#5D6D7E' }}>发现者：架构评审。v1 被标记为阻塞项，禁止进入实现。</Text>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>08 / 14</Text>
+    </Box>
+</Slide>

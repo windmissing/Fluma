@@ -13,9 +13,29 @@ import {
   waterSandFrameHookPayload,
   defaultWaterSandParams
 } from '../main/ets/physics/WaterSandField';
+import {
+  P011NaturalObservationProbe,
+  P011NaturalObservationSubstepContext
+} from '../main/ets/physics/P011NaturalObservation';
 
 export default function waterSandFieldTest() {
   describe('WaterSandFieldTest', () => {
+    it('P011_ledgerContextSamplesAfterTiltUpdate', 0, () => {
+      const probe = new P011NaturalObservationProbe(16, () => {});
+      const field = new WaterSandField(16, 192);
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(45);
+      field.step(1 / 60);
+      const context: P011NaturalObservationSubstepContext | null = probe.getLastContext();
+      const metric = field.getP011Metric();
+      expect(context === null).assertFalse();
+      if (context !== null) {
+        expect(context.substepId).assertEqual(metric.substepId);
+        expect(context.effectiveTilt).assertEqual(metric.effectiveTilt);
+        expect(context.effectiveTiltRate).assertEqual(metric.effectiveTiltRate);
+      }
+    });
+
     it('P011_MODE02_resetInputPreservesMaterialAndRunIdentity', 0, () => {
       const field = new WaterSandField(16, 192);
       field.setTilt(20);

@@ -1,28 +1,28 @@
 import { describe, it, expect } from '@ohos/hypium';
 import { HeightField } from '../main/ets/physics/HeightField';
 
+function makeField(): HeightField {
+  const field: HeightField = new HeightField(66, 77);
+  for (let c = 0; c < 66; c++) {
+    field.light[c] = 19;
+    field.heavy[c] = 27;
+  }
+  return field;
+}
+
+function vol(field: HeightField): number[] {
+  let heavy = 0;
+  let light = 0;
+  for (let c = 0; c < field.cols; c++) {
+    heavy += field.heavy[c];
+    light += field.light[c];
+  }
+  return [heavy, light];
+}
+
 export default function heightFieldTest() {
   describe('HeightFieldTest', () => {
     /** 构造标准初始场：蓝(轻)上 19 / 绿(重)下 27，水平分层 */
-    function makeField(): HeightField {
-      const f: HeightField = new HeightField(66, 77);
-      for (let c = 0; c < 66; c++) {
-        f.light[c] = 19;
-        f.heavy[c] = 27;
-      }
-      return f;
-    }
-
-    function vol(f: HeightField): number[] {
-      let h = 0;
-      let l = 0;
-      for (let c = 0; c < f.cols; c++) {
-        h += f.heavy[c];
-        l += f.light[c];
-      }
-      return [h, l];
-    }
-
     it('volumeConserved_allTilts', 0, () => {
       const f = makeField();
       const v0 = vol(f);

@@ -1,0 +1,67 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 90, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#0F2A43' }}>四步流水线 · 公式展开（二）坡度滑移 与 摇晃扬起</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 28 }}>
+        {/* 左：安息角滑移 */}
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 16, padding: 22, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 9, background: '#C9A15C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#A87F2E' }}>坡度滑移（v2.4 判据）</Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>相邻两列的沙面坡度，减去重力目标坡后，超过安息角才滑：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    d = 右列沙顶 − 左列沙顶<br />
+                    deviation = d − tan(倾角)<br />
+                    |deviation| 超过 tan(30°) 触发
+                </Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>滑动量取「超角部分的一半」，且受通量与预算双重封顶：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    q = min(超角÷2, 24×dt, 两列剩余预算)<br />
+                    从高列顶取 q → 卸到低列顶
+                </Text>
+            </Box>
+            <Box style={{ background: 'rgba(29,78,121,0.10)', borderRadius: 8, padding: '10px 14px' }}>
+                <Text style={{ fontSize: 15, color: '#1D4E79', lineHeight: 1.55 }}><span style={{ fontWeight: 'bold' }}>细节：</span>取沙「表层优先」——轻沙在上先被搬走，所以滑移自动把轻沙铺到沙堆外围。每子步做 4~6 次左右交替扫描，消除方向偏差。</Text>
+            </Box>
+        </Box>
+        {/* 右：摇晃扬起 */}
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 16, padding: 22, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 9, background: '#F39C12', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>+</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#B06A00' }}>摇晃扬起（三重限幅）</Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>摇晃能量 E 平滑跟随输入、松手指数衰减（防抖防突跳）：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    E += clamp(目标 − E, ±8×dt)   摇晃时<br />
+                    E ×= exp(−衰减×dt)            松手后
+                </Text>
+            </Box>
+            <Text style={{ fontSize: 17, color: '#2C3E50', lineHeight: 1.5 }}>扬起率 = 能量 × 表层带宽 × 按表层轻重占比分配，再被三道闸门取最小：</Text>
+            <Box style={{ background: '#0F2A43', borderRadius: 10, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#F8D8A0', fontFamily: 'monospace', lineHeight: 1.7 }}>
+                    actual = min( 理论率,<br />
+                    &nbsp;&nbsp;剩余预算率, 表层沙 ÷ dt )
+                </Text>
+            </Box>
+            <Box style={{ background: 'rgba(243,156,18,0.12)', borderRadius: 8, padding: '10px 14px' }}>
+                <Text style={{ fontSize: 15, color: '#B06A00', lineHeight: 1.55 }}><span style={{ fontWeight: 'bold' }}>分配比：</span>轻沙 40/s、重沙 36/s——轻沙更容易被抖起来，这正是悬浮相 35:65 偏轻的源头（P12 峰值推导的起点）。</Text>
+            </Box>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>16 / 16</Text>
+    </Box>
+</Slide>

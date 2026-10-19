@@ -1,0 +1,74 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>三条底线与一个坑</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 32 }}>
+        {/* 左：阈值表 */}
+        <Box style={{ width: 620, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1D4E79' }}>三条硬底线（测试不过 = 方案不过）</Text>
+            <Table
+                style={{ width: '100%', height: 300 }}
+                defaultTextStyle={{ fontSize: 17, textAlign: 'center', color: '#2C3E50' }}
+                defaultCellStyle={{
+                    border: {
+                        left: { width: 1, color: '#D5DEE7' },
+                        right: { width: 1, color: '#D5DEE7' },
+                        top: { width: 1, color: '#D5DEE7' },
+                        bottom: { width: 1, color: '#D5DEE7' },
+                    },
+                }}
+                cells={[
+                    [
+                        { text: '底线', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#0F2A43' } } },
+                        { text: '阈值', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#0F2A43' } } },
+                        { text: '含义', textStyle: { bold: true, color: '#FFFFFF' }, cellStyle: { background: { color: '#0F2A43' } } },
+                    ],
+                    ['分相守恒', { text: '漂移 < 0.1%', textStyle: { bold: true, color: '#1D4E79' } }, '重沙/轻沙/水各自不灭不生'],
+                    ['无瞬移', { text: '子步 ≤ 0.5 列', textStyle: { bold: true, color: '#1D4E79' } }, '沙顶每步最多移半列'],
+                    [{ text: '摇晃峰值', cellStyle: { background: { color: '#F5F8FB' } } }, { text: '65% ~ 80%', textStyle: { bold: true, color: '#B06A00' }, cellStyle: { background: { color: '#F5F8FB' } } }, { text: '出带即报警复核', cellStyle: { background: { color: '#F5F8FB' } } }],
+                    ['静置残余', '≤ 5%', '8 秒内悬沙落干净'],
+                    ['安息角', '坡度 ≤ 32°', '沙堆不塌成饼'],
+                ]}
+            />
+            <Text style={{ fontSize: 16, color: '#5D6D7E' }}>另有验收线「峰值 ≥ 50%」兜底；65%~80% 是诊断带，不是放行线。</Text>
+        </Box>
+        {/* 右：v2.4 坡度判据 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1D4E79' }}>一个坑：坡度要看「相对重力」</Text>
+            <Box style={{ background: '#FFFFFF', borderRadius: 14, padding: 16, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', justifyContent: 'center' }}>
+                <svg width={470} height={230} viewBox='0 0 520 230'>
+                    {/* 错误判据 */}
+                    <text x={130} y={24} fill='#B03A2E' fontSize={16} fontWeight='bold' textAnchor='middle'>旧判据：只看列间差</text>
+                    <rect x={40} y={40} width={180} height={130} fill='#ECF2F7' stroke='#95A5A6' strokeWidth={2} rx={8} />
+                    <line x1={40} y1={140} x2={220} y2={140} stroke='#8A5A2B' strokeWidth={5} />
+                    <text x={130} y={192} fill='#B03A2E' fontSize={14} textAnchor='middle'>容器斜 45° 时沙面「水平」≠ 稳定</text>
+                    {/* 正确判据 */}
+                    <text x={390} y={24} fill='#1D4E79' fontSize={16} fontWeight='bold' textAnchor='middle'>v2.4：先减去重力目标坡</text>
+                    <rect x={300} y={40} width={180} height={130} fill='#ECF2F7' stroke='#1D4E79' strokeWidth={2} rx={8} />
+                    <line x1={300} y1={150} x2={480} y2={110} stroke='#8A5A2B' strokeWidth={5} />
+                    <line x1={300} y1={165} x2={480} y2={165} stroke='#F39C12' strokeWidth={2} strokeDasharray='6 4' />
+                    <text x={390} y={192} fill='#1D4E79' fontSize={14} textAnchor='middle'>|沙面坡 − 重力坡| 超过 tan30° 才滑</text>
+                    {/* 判据公式 */}
+                    <rect x={40} y={140} width={0} height={0} fill='none' />
+                </svg>
+            </Box>
+            <Box style={{ background: '#0F2A43', borderRadius: 12, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 18, color: '#F39C12', fontFamily: 'monospace', textAlign: 'center' }}>|d − tan(倾角)| 超过 tan(30°) 即滑移</Text>
+                <Text style={{ fontSize: 15, color: '#C8D8E6', textAlign: 'center', marginTop: 6 }}>直立时退化为旧判据，老测试全部不受影响</Text>
+            </Box>
+            <Box style={{ background: 'rgba(243,156,18,0.12)', borderRadius: 12, padding: '12px 16px', flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+                <FAIcon name='exclamation-circle' style={{ fill: '#F39C12', width: 24, height: 24 }} />
+                <Text style={{ fontSize: 16, color: '#B06A00', lineHeight: 1.5, flex: 1 }}>
+                    待办提醒：测试脚本里「连续旋转到 180°」的 Run B 与「±89° + 事件跨越」的 G3 目标还没对齐，执行前需改口径。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>13 / 14</Text>
+    </Box>
+</Slide>

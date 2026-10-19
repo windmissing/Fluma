@@ -1,0 +1,60 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>每个子步的四步流水线</Text>
+    </Box>
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 36 }}>
+        {/* 左侧窄标题栏 */}
+        <Box style={{ width: 330, background: '#0F2A43', borderRadius: 16, padding: 28, flexDirection: 'column', gap: 18, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#FFFFFF', lineHeight: 1.7, fontWeight: 'bold' }}>物理时钟每次走一小步（1/120 秒），固定按四步执行：</Text>
+            <Text style={{ fontSize: 18, color: '#C8D8E6', lineHeight: 1.7 }}>
+                顺序不能乱——先定水面，再让沙沉，再做坡面修正，最后对账。每一步都有速率上限兜底。
+            </Text>
+            <Box style={{ background: 'rgba(243,156,18,0.15)', borderRadius: 10, padding: 14 }}>
+                <Text style={{ fontSize: 17, color: '#F39C12', fontWeight: 'bold' }}>关键数字</Text>
+                <Text style={{ fontSize: 17, color: '#C8D8E6', lineHeight: 1.6 }}>沉降速度 64 / 38 列每秒<br />坡度阈值 tan 30°<br />沙顶速率 ≤ 28 列每秒</Text>
+            </Box>
+        </Box>
+        {/* 右侧流水线 SVG */}
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 16, padding: 24, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', justifyContent: 'center' }}>
+            <svg width={760} height={430} viewBox='0 0 780 430'>
+                {/* 四个步骤块 */}
+                {[
+                    { x: 20, t: '① 水面平衡', d: '水往低处流', d2: '直到水面水平', c: '#1D4E79' },
+                    { x: 210, t: '② 沉降+分选', d: '重沙 64 列/s 先沉', d2: '轻沙 38 列/s 后沉', c: '#8A5A2B' },
+                    { x: 400, t: '③ 坡面滑移', d: '超过 tan30° 的沙', d2: '向低处滑落堆积', c: '#C9A15C' },
+                    { x: 590, t: '④ 守恒审计', d: 'ΔVH=ΔVL=ΔVw=0', d2: '对不上立刻报警', c: '#F39C12' },
+                ].map((s) => (
+                    <g key={s.x}>
+                        <rect x={s.x} y={60} width={170} height={150} rx={12} fill='#ECF2F7' stroke={s.c} strokeWidth={2.5} />
+                        <rect x={s.x} y={60} width={170} height={44} rx={12} fill={s.c} />
+                        <text x={s.x + 85} y={89} fill='#FFFFFF' fontSize={19} fontWeight='bold' textAnchor='middle'>{s.t}</text>
+                        <text x={s.x + 85} y={132} fill='#2C3E50' fontSize={16} textAnchor='middle'>{s.d}</text>
+                        <text x={s.x + 85} y={160} fill='#5D6D7E' fontSize={16} textAnchor='middle'>{s.d2}</text>
+                    </g>
+                ))}
+                {/* 箭头 */}
+                {[195, 385, 575].map((x) => (
+                    <g key={x}>
+                        <line x1={x} y1={135} x2={x + 12} y2={135} stroke='#5D6D7E' strokeWidth={3} />
+                        <polygon points={`${x+12},128 ${x+24},135 ${x+12},142`} fill='#5D6D7E' />
+                    </g>
+                ))}
+                {/* 回环箭头（每子步循环） */}
+                <path d='M 675 215 L 675 245 L 105 245 L 105 215' fill='none' stroke='#7FB3D5' strokeWidth={2.5} strokeDasharray='7 5' />
+                <polygon points='98,220 105,208 112,220' fill='#7FB3D5' />
+                <text x={390} y={272} fill='#5D6D7E' fontSize={16} textAnchor='middle'>每个子步循环一次 · 每秒最多 120 步</text>
+                {/* 底部速率限制条 */}
+                <rect x={20} y={300} width={740} height={100} rx={12} fill='rgba(243,156,18,0.10)' stroke='#F39C12' strokeWidth={2} />
+                <text x={40} y={336} fill='#B06A00' fontSize={19} fontWeight='bold'>兜底机制：任何一列的沙顶每秒最多移动 28 列（v2.2 速率限幅）</text>
+                <text x={40} y={368} fill='#2C3E50' fontSize={16}>抖得再剧烈、刷新率再高，物理走多快由这条线说了算——不会出现一帧内沙堆瞬移</text>
+            </svg>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>05 / 14</Text>
+    </Box>
+</Slide>

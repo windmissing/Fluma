@@ -8,3 +8,34 @@
 *.log
 entry/build
 entry/.cxx
+# build/runtime artifacts & local evidence (never commit)
+/entry/.test/
+__pycache__/
+*.pyc
+/demo/
+/selfcheck/
+/test/artifacts/
+*.hap
+*.cer
+*.p7b
+*.p12
+/.ws-*
+/.hvigor-*
+/tmp-report-*
+/tmp-*.txt
+/*.patch
+/.codex-patch
+/.codex.patch
+/test/p011_patch_probe.txt
+/test/p011-forcestop.patch
+/local2.properties
+/test.txt
+/zz_test.txt
+/EPS
+.cache/
+
+# slide-generation tool cache
+# slide tool cache dirs
+.cache/
+.slidep/
+/restore-*.txt

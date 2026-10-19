@@ -1,0 +1,67 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>v2：账本改造——等量对向交换</Text>
+    </Box>
+    {/* 上半：before */}
+    <Box style={{ height: 230, flexDirection: 'row', gap: 24 }}>
+        <Box style={{ width: 260, background: 'rgba(243,156,18,0.12)', borderRadius: 14, padding: 20, justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#B06A00' }}>改造前（v1）</Text>
+            <Text style={{ fontSize: 18, color: '#2C3E50', lineHeight: 1.6 }}>只有两个总厚度：hs、hl。看不出沙堆内部「谁压着谁」。</Text>
+        </Box>
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 16, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', justifyContent: 'center' }}>
+            <svg width={800} height={180} viewBox='0 0 800 180'>
+                <text x={400} y={24} fill='#2C3E50' fontSize={17} fontWeight='bold' textAnchor='middle'>错误直觉：重沙下沉 = 轻沙消失</text>
+                <rect x={120} y={50} width={90} height={45} fill='#C9A15C' />
+                <rect x={120} y={95} width={90} height={45} fill='#8A5A2B' />
+                <text x={165} y={165} fill='#5D6D7E' fontSize={15} textAnchor='middle'>轻沙 90 → 55</text>
+                <path d='M 230 72 L 330 72' stroke='#F39C12' strokeWidth={3} />
+                <polygon points='330,65 342,72 330,79' fill='#F39C12' />
+                <rect x={350} y={50} width={50} height={45} fill='#C9A15C' />
+                <rect x={400} y={50} width={40} height={45} fill='#8A5A2B' />
+                <rect x={350} y={95} width={90} height={45} fill='#8A5A2B' />
+                <text x={395} y={165} fill='#B06A00' fontSize={15} textAnchor='middle'>轻沙凭空减少 ✗</text>
+            </svg>
+        </Box>
+    </Box>
+    {/* 下半：after */}
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 24, marginTop: 20 }}>
+        <Box style={{ width: 260, background: 'rgba(29,78,121,0.10)', borderRadius: 14, padding: 20, justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1D4E79' }}>改造后（v2）</Text>
+            <Text style={{ fontSize: 18, color: '#2C3E50', lineHeight: 1.6 }}>沙堆拆成三层账本：有序重层 bh、有序轻层 bl、混合表层 mh/ml。每层各记各的。</Text>
+        </Box>
+        <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 16, boxShadow: '0 4px 16px rgba(15,42,67,0.10)', justifyContent: 'center' }}>
+            <svg width={800} height={210} viewBox='0 0 800 210'>
+                <text x={400} y={24} fill='#2C3E50' fontSize={17} fontWeight='bold' textAnchor='middle'>v2 规则：重沙下沉多少，必须等量轻沙「对向」上浮</text>
+                {/* 左列：混合表层+重沙下移 */}
+                <rect x={120} y={45} width={110} height={34} fill='#D9B87C' />
+                <rect x={120} y={79} width={110} height={45} fill='#C9A15C' />
+                <rect x={120} y={124} width={110} height={45} fill='#8A5A2B' />
+                <text x={175} y={195} fill='#5D6D7E' fontSize={15} textAnchor='middle'>交换前</text>
+                {/* 对向箭头：重沙下、轻沙上 */}
+                <line x1={280} y1={95} x2={390} y2={95} stroke='#8A5A2B' strokeWidth={4} />
+                <polygon points='390,88 404,95 390,102' fill='#8A5A2B' />
+                <text x={342} y={82} fill='#8A5A2B' fontSize={15} textAnchor='middle'>重沙下 q</text>
+                <line x1={390} y1={145} x2={280} y2={145} stroke='#C9A15C' strokeWidth={4} />
+                <polygon points='280,138 266,145 280,152' fill='#C9A15C' />
+                <text x={342} y={172} fill='#A87F2E' fontSize={15} textAnchor='middle'>轻沙上 q</text>
+                {/* 右列：交换后 */}
+                <rect x={420} y={45} width={110} height={34} fill='#D9B87C' />
+                <rect x={420} y={79} width={110} height={45} fill='#C9A15C' />
+                <rect x={420} y={124} width={110} height={45} fill='#8A5A2B' />
+                <text x={475} y={195} fill='#5D6D7E' fontSize={15} textAnchor='middle'>交换后（三层各守恒）</text>
+                {/* 右侧守恒式 */}
+                <rect x={570} y={60} width={210} height={120} rx={10} fill='rgba(29,78,121,0.10)' stroke='#1D4E79' strokeWidth={1.5} />
+                <text x={675} y={95} fill='#1D4E79' fontSize={19} fontWeight='bold' textAnchor='middle'>ΔVH = 0</text>
+                <text x={675} y={125} fill='#1D4E79' fontSize={19} fontWeight='bold' textAnchor='middle'>ΔVL = 0</text>
+                <text x={675} y={158} fill='#5D6D7E' fontSize={16} textAnchor='middle'>且相序被真实记录</text>
+            </svg>
+        </Box>
+    </Box>
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>09 / 14</Text>
+    </Box>
+</Slide>

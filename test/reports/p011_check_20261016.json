@@ -1,0 +1,79 @@
+{
+  "budgetMetrics": {
+    "bottomCreepBudgetViolationRate": 0.0,
+    "totalMotionBudgetViolationRate": 0.0,
+    "bottomCreepIndependentClipRate": 0.36449704142011835,
+    "totalMotionClipRate": 0.4136094674556213
+  },
+  "schemaVersion": 1,
+  "routeId": "bottom-creep-v2.7",
+  "overall": "FAIL",
+  "dataCompleteness": {
+    "missingHooks": [],
+    "parseErrors": 0,
+    "timestampOrderErrors": 0,
+    "routeMismatch": false,
+    "eventCount": 13,
+    "metricCount": 1690,
+    "bottomCount": 1690
+  },
+  "tcP01101": {
+    "bottomCreepResponseCount": 6,
+    "t90P95Ms": 0,
+    "directionAccuracy": 1.0,
+    "directionError": 29,
+    "bottomDirectionSamples": 616,
+    "bottomDirectionError": 427,
+    "bottomDirectionSignSwitches": 0,
+    "score": 0
+  },
+  "tcP01102": {
+    "pearsonH": 0.48168260498997467,
+    "pearsonL": 0.0810382044076828,
+    "lagHMs": 44.0,
+    "lagLMs": -186.0,
+    "feH": 0.07406769940182156,
+    "feL": 0.4755119651164316,
+    "score": 0
+  },
+  "tcP01103": {
+    "maxSubstepBh": 0.009448241024514914,
+    "maxSubstepBl": 0.40026558489093134,
+    "maxUncommandedTiltStep": 11.52,
+    "zeroResidual": 0,
+    "reverseDirectionError": 0,
+    "score": 10
+  },
+  "tcP01104": {
+    "driftWater": 1.495879443705474e-15,
+    "driftHeavy": 3.1579677144893343e-16,
+    "driftLight": 6.315935428978669e-16,
+    "nonFiniteCount": 0,
+    "outOfRangeCount": 0,
+    "modelErrorCount": 0,
+    "crashCount": 0
+  },
+  "budgetAcceptance": {
+    "soloBottomCreepBudgetLimit": 0.02,
+    "fullLoadSamples": 699,
+    "fullLoadLimitErrorRate": 0.0,
+    "totalMotionClipRuns": 11
+  },
+  "mustPass": {
+    "driftBelow0_1Percent": true,
+    "nonFiniteCountZero": true,
+    "outOfRangeCountZero": true,
+    "modelErrorZero": true,
+    "crashZero": true,
+    "maxSubstepBelow5": true,
+    "maxUncommandedTiltStepBelow2": false,
+    "zeroResidualBelow1": true,
+    "reverseDirectionErrorZero": true,
+    "bottomBudgetViolationZero": true,
+    "totalBudgetViolationZero": true,
+    "directionCorrectAll": true,
+    "bottomDirectionCorrectAll": false,
+    "independentBudgetIsolation": true,
+    "highPressureEvidenceCount": true
+  }
+}

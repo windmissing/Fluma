@@ -1,0 +1,42 @@
+<Slide style={{ width: 1280, height: 720, background: '#F5F8FB', padding: '20px 60px', flexDirection: 'column' }}>
+    {/* A 标题块 */}
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#0F2A43' }}>目录</Text>
+    </Box>
+    {/* B 内容区：左标题说明 + 右三条目 */}
+    <Box style={{ flex: 1, flexDirection: 'row', gap: 40 }}>
+        <Box style={{ width: 340, justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 22, color: '#2C3E50', lineHeight: 1.7 }}>
+                整套方案回答三个问题：<br />
+                <span style={{ color: '#1D4E79', fontWeight: 'bold' }}>状态怎么表示、<br />错误怎么改掉、<br />数字怎么验证。</span>
+            </Text>
+            <Box style={{ width: 60, height: 5, background: '#F39C12', borderRadius: 3 }} />
+        </Box>
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 24, justifyContent: 'center' }}>
+            {[
+                { n: '01', t: '模型是什么', d: '每列 6 个数字表示水+重沙+轻沙；四步流水线推进；分相守恒是地基', icon: 'layer-group' },
+                { n: '02', t: '四轮迭代修了什么', d: 'v1 守恒缺陷 → v2 账本改造 → v2.2 速率化 → v2.3/v2.4 参数与判据收尾', icon: 'wrench' },
+                { n: '03', t: '数字怎么验证', d: '峰值 74% 可手算复核；三条验收底线；一个待办的坑', icon: 'calculator' },
+            ].map((item) => (
+                <Box key={item.n} style={{ flexDirection: 'row', alignItems: 'center', gap: 24, background: '#FFFFFF', borderRadius: 14, padding: '22px 28px', boxShadow: '0 4px 16px rgba(15,42,67,0.10)' }}>
+                    <Box style={{ width: 72, height: 72, borderRadius: 14, background: '#0F2A43', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>{item.n}</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1D4E79' }}>{item.t}</Text>
+                        <Text style={{ fontSize: 18, color: '#5D6D7E', lineHeight: 1.5 }}>{item.d}</Text>
+                    </Box>
+                    <FAIcon name={item.icon} style={{ fill: '#7FB3D5', width: 36, height: 36 }} />
+                </Box>
+            ))}
+        </Box>
+    </Box>
+    {/* C 页脚 */}
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Box style={{ width: 12, height: 12, background: '#1D4E79' }} />
+            <Text style={{ fontSize: 14, color: '#5D6D7E' }}>水沙三相算法 · HelloWorld</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#5D6D7E' }}>02 / 14</Text>
+    </Box>
+</Slide>

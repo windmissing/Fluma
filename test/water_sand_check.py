@@ -534,6 +534,174 @@ def evaluate_fps(records: list[dict[str, Any]]) -> CheckResult:
     )
 
 
+def evaluate_rate(records: list[dict[str, Any]]) -> CheckResult:
+    init_events = [event for event in events(records) if event.get("type") == "init"]
+    frame_rows = frames(records)
+    event_fields = (
+        "paramsVersion",
+        "vH",
+        "vL",
+        "liftHRate",
+        "liftLRate",
+        "shakeRampRate",
+        "vSandTopMax",
+    )
+    frame_fields = (
+        "frameTimeMs",
+        "substeps",
+        "substepDt",
+        "maxSandTopSubstepDeltaObserved",
+        "maxSandTopSpeedObserved",
+        "substepBudgetUsedMax",
+        "substepBudgetClipped",
+    )
+    missing = ["WS_EVENT init"] if not init_events else []
+    if not frame_rows:
+        missing.append("WS_FRAME")
+    elif any(field not in row for row in frame_rows for field in frame_fields):
+        missing.extend(frame_fields)
+    if init_events and any(field not in init_events[0] for field in event_fields):
+        missing.extend(event_fields)
+    if missing:
+        return blocked("rate", missing)
+
+    init = init_events[0]
+    numeric_event_fields = event_fields[1:]
+    if any(
+        not isinstance(init[field], (int, float)) or not math.isfinite(init[field])
+        for field in numeric_event_fields
+    ):
+        return blocked("rate", ["valid numeric WS_EVENT init fields"])
+    numeric_frame_fields = frame_fields[:6]
+    if any(
+        not isinstance(row[field], (int, float)) or not math.isfinite(row[field])
+        for row in frame_rows
+        for field in numeric_frame_fields
+    ):
+        return blocked("rate", ["valid numeric WS_FRAME fields"])
+    expected_params = {
+        "paramsVersion": "v2.2",
+        "vH": 64.0,
+        "vL": 38.0,
+        "liftHRate": 36.0,
+        "liftLRate": 40.0,
+        "shakeRampRate": 8.0,
+        "vSandTopMax": 28.0,
+    }
+    param_errors = [
+        name
+        for name, expected in expected_params.items()
+        if init[name] != expected
+        and not (isinstance(expected, float) and math.isclose(float(init[name]), expected, abs_tol=1e-9))
+    ]
+
+    failures: list[str] = []
+    classified_rows: list[dict[str, Any]] = []
+    dormant_source = "field"
+    has_missing_dormant = False
+    has_dormancy_event = False
+    inferred_dormant = False
+    for record in records:
+        if record["type"] == "EVENT" and record.get("subtype") in {"dormant", "wake"}:
+            has_dormancy_event = True
+            inferred_dormant = record.get("subtype") == "dormant"
+        if record["type"] != "FRAME":
+            continue
+        row = dict(record["data"])
+        if "dormant" in row:
+            if not isinstance(row["dormant"], bool):
+                failures.append("WS_FRAME.dormant is not boolean")
+        else:
+            has_missing_dormant = True
+            dormant_source = "event"
+            row["dormant"] = inferred_dormant
+        classified_rows.append(row)
+    if has_missing_dormant and not has_dormancy_event:
+        return blocked("rate", ["WS_FRAME.dormant or WS_EVENT dormant/wake"])
+
+    max_speed = 0.0
+    max_budget_use = 0.0
+    for row in classified_rows:
+        frame_dt = float(row["frameTimeMs"]) / 1000.0
+        substeps = row["substeps"]
+        substep_dt = float(row["substepDt"])
+        delta = float(row["maxSandTopSubstepDeltaObserved"])
+        speed = float(row["maxSandTopSpeedObserved"])
+        budget_used = float(row["substepBudgetUsedMax"])
+        clipped = row["substepBudgetClipped"]
+        if frame_dt <= 0:
+            failures.append("non-positive frame dt")
+            continue
+        if not isinstance(clipped, bool):
+            failures.append("substepBudgetClipped is not boolean")
+        if row["dormant"]:
+            if substeps != 0 or not math.isclose(substep_dt, 0.0, abs_tol=1e-12) or \
+                    not math.isclose(delta, 0.0, abs_tol=1e-12) or \
+                    not math.isclose(speed, 0.0, abs_tol=1e-12) or \
+                    not math.isclose(budget_used, 0.0, abs_tol=1e-12) or clipped:
+                failures.append("dormant frame contract violation")
+            continue
+        if substep_dt <= 0:
+            failures.append("non-positive substep dt")
+            continue
+        if not isinstance(substeps, int) or substeps not in {1, 2}:
+            failures.append("invalid substeps")
+            continue
+        clipped_dt = min(frame_dt, 1.0 / 30.0)
+        expected_substeps = 1 if clipped_dt <= 1.0 / 60.0 + 1e-9 else 2
+        expected_dt = clipped_dt / expected_substeps
+        if substeps != expected_substeps or not math.isclose(substep_dt, expected_dt, abs_tol=1e-9):
+            failures.append("substep schedule mismatch")
+        if not math.isclose(speed, delta / substep_dt, abs_tol=1e-6):
+            failures.append("substep speed mismatch")
+        if delta > 28.0 * substep_dt + 1e-9 or budget_used > 28.0 * substep_dt + 1e-9:
+            failures.append("substep budget exceeded")
+        if speed > 30.0 + 1e-9:
+            failures.append("HG-04 speed exceeded")
+        max_speed = max(max_speed, speed)
+        max_budget_use = max(max_budget_use, budget_used / substep_dt)
+
+    active_rows = [row for row in classified_rows if not row["dormant"]]
+    dormant_rows = [row for row in classified_rows if row["dormant"]]
+    if not active_rows and not failures and not param_errors:
+        return CheckResult(
+            name="rate",
+            status="BLOCKED",
+            measured={
+                "activeFrames": 0,
+                "dormantFrames": len(dormant_rows),
+                "dormantSource": dormant_source,
+            },
+            threshold={"activeFrames": ">= 1"},
+            evidence_count=len(classified_rows),
+            note="BLOCKED(insufficient_active_frames)",
+        )
+
+    passed = not param_errors and not failures
+    return CheckResult(
+        name="rate",
+        status="PASS" if passed else "FAIL",
+        measured={
+            "maxSandTopSpeedObserved": max_speed,
+            "maxSubstepBudgetRate": max_budget_use,
+            "vSandTopMax": init["vSandTopMax"],
+            "frames": len(classified_rows),
+            "activeFrames": len(active_rows),
+            "dormantFrames": len(dormant_rows),
+            "dormantSource": dormant_source,
+        },
+        threshold={
+            "paramsVersion": "v2.2",
+            "vSandTopMax": 28,
+            "substepSpeed": "<= 30",
+            "substepBudgetRate": "<= 28",
+            "activeFrames": ">= 1",
+        },
+        evidence_count=len(classified_rows),
+        note="" if passed else "; ".join(param_errors + failures[:5]),
+    )
+
+
 def self_check_defect() -> list[CheckResult]:
     metric = {
         "ledgerVersion": 2,
@@ -595,6 +763,166 @@ def self_check_defect() -> list[CheckResult]:
     return [result]
 
 
+def self_check_rate() -> list[CheckResult]:
+    init = {
+        "type": "init",
+        "paramsVersion": "v2.2",
+        "vH": 64.0,
+        "vL": 38.0,
+        "liftHRate": 36.0,
+        "liftLRate": 40.0,
+        "shakeRampRate": 8.0,
+        "vSandTopMax": 28.0,
+    }
+    frame30 = {
+        "frameTimeMs": 1000.0 / 30.0,
+        "substeps": 2,
+        "substepDt": 1.0 / 60.0,
+        "maxSandTopSubstepDeltaObserved": 0.4,
+        "maxSandTopSpeedObserved": 24.0,
+        "substepBudgetUsedMax": 0.4,
+        "substepBudgetClipped": True,
+        "dormant": False,
+    }
+    frame60 = {
+        "frameTimeMs": 1000.0 / 60.0,
+        "substeps": 1,
+        "substepDt": 1.0 / 60.0,
+        "maxSandTopSubstepDeltaObserved": 0.3,
+        "maxSandTopSpeedObserved": 18.0,
+        "substepBudgetUsedMax": 0.3,
+        "substepBudgetClipped": False,
+        "dormant": False,
+    }
+    frame120 = {
+        "frameTimeMs": 1000.0 / 120.0,
+        "substeps": 1,
+        "substepDt": 1.0 / 120.0,
+        "maxSandTopSubstepDeltaObserved": 0.15,
+        "maxSandTopSpeedObserved": 18.0,
+        "substepBudgetUsedMax": 0.15,
+        "substepBudgetClipped": False,
+        "dormant": False,
+    }
+    synthetic = [
+        {"type": "EVENT", "subtype": "init", "line": 1, "data": init},
+        {"type": "FRAME", "subtype": None, "line": 2, "data": frame30},
+        {"type": "FRAME", "subtype": None, "line": 3, "data": frame60},
+        {"type": "FRAME", "subtype": None, "line": 4, "data": frame120},
+    ]
+    return [evaluate_rate(synthetic)]
+
+
+def rateChecker_skipsDormantFrames() -> list[CheckResult]:
+    init = {
+        "type": "init",
+        "paramsVersion": "v2.2",
+        "vH": 64.0,
+        "vL": 38.0,
+        "liftHRate": 36.0,
+        "liftLRate": 40.0,
+        "shakeRampRate": 8.0,
+        "vSandTopMax": 28.0,
+    }
+    active = {
+        "frameTimeMs": 1000.0 / 60.0,
+        "substeps": 1,
+        "substepDt": 1.0 / 60.0,
+        "maxSandTopSubstepDeltaObserved": 0.3,
+        "maxSandTopSpeedObserved": 18.0,
+        "substepBudgetUsedMax": 0.3,
+        "substepBudgetClipped": False,
+        "dormant": False,
+    }
+    dormant = {
+        "frameTimeMs": 1000.0 / 60.0,
+        "substeps": 0,
+        "substepDt": 0.0,
+        "maxSandTopSubstepDeltaObserved": 0.0,
+        "maxSandTopSpeedObserved": 0.0,
+        "substepBudgetUsedMax": 0.0,
+        "substepBudgetClipped": False,
+        "dormant": True,
+    }
+    records = [
+        {"type": "EVENT", "subtype": "init", "line": 1, "data": init},
+        {"type": "FRAME", "subtype": None, "line": 2, "data": active},
+        {"type": "FRAME", "subtype": None, "line": 3, "data": dormant},
+    ]
+    result = evaluate_rate(records)
+    passed = (
+        result.status == "PASS"
+        and result.measured.get("activeFrames") == 1
+        and result.measured.get("dormantFrames") == 1
+    )
+    return [
+        CheckResult(
+            name="rateChecker_skipsDormantFrames",
+            status="PASS" if passed else "FAIL",
+            measured=result.measured,
+            threshold={"activeFrames": 1, "dormantFrames": 1, "rate": "PASS"},
+            evidence_count=result.evidence_count,
+            note="" if passed else "dormant frame was not skipped or rate check failed",
+        )
+    ]
+
+
+def rateChecker_legacyDormantInference() -> list[CheckResult]:
+    init = {
+        "type": "init",
+        "paramsVersion": "v2.2",
+        "vH": 64.0,
+        "vL": 38.0,
+        "liftHRate": 36.0,
+        "liftLRate": 40.0,
+        "shakeRampRate": 8.0,
+        "vSandTopMax": 28.0,
+    }
+    active = {
+        "frameTimeMs": 1000.0 / 60.0,
+        "substeps": 1,
+        "substepDt": 1.0 / 60.0,
+        "maxSandTopSubstepDeltaObserved": 0.3,
+        "maxSandTopSpeedObserved": 18.0,
+        "substepBudgetUsedMax": 0.3,
+        "substepBudgetClipped": False,
+    }
+    dormant = {
+        "frameTimeMs": 1000.0 / 60.0,
+        "substeps": 0,
+        "substepDt": 0.0,
+        "maxSandTopSubstepDeltaObserved": 0.0,
+        "maxSandTopSpeedObserved": 0.0,
+        "substepBudgetUsedMax": 0.0,
+        "substepBudgetClipped": False,
+    }
+    records = [
+        {"type": "EVENT", "subtype": "init", "line": 1, "data": init},
+        {"type": "FRAME", "subtype": None, "line": 2, "data": dict(active)},
+        {"type": "EVENT", "subtype": "dormant", "line": 3, "data": {"value": True}},
+        {"type": "FRAME", "subtype": None, "line": 4, "data": dict(dormant)},
+        {"type": "EVENT", "subtype": "wake", "line": 5, "data": {"value": False}},
+        {"type": "FRAME", "subtype": None, "line": 6, "data": dict(active)},
+    ]
+    result = evaluate_rate(records)
+    passed = (
+        result.status == "PASS"
+        and result.measured.get("activeFrames") == 2
+        and result.measured.get("dormantFrames") == 1
+        and result.measured.get("dormantSource") == "event"
+    )
+    return [
+        CheckResult(
+            name="rateChecker_legacyDormantInference",
+            status="PASS" if passed else "FAIL",
+            measured=result.measured,
+            threshold={"activeFrames": 2, "dormantFrames": 1, "dormantSource": "event"},
+            evidence_count=result.evidence_count,
+            note="" if passed else "legacy dormant/wake inference failed",
+        )
+    ]
+
+
 def synthetic_snapshot(
     water_top: list[float],
     bh: list[float],
@@ -636,6 +964,7 @@ def selected_results(
         "shake": lambda: evaluate_shake(records),
         "long_rest": lambda: evaluate_long_rest(records),
         "fps": lambda: evaluate_fps(records),
+        "rate": lambda: evaluate_rate(records),
     }
     names = set(evaluators) if "all" in selectors else selectors
     return [evaluators[name]() for name in sorted(names)]
@@ -669,6 +998,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--markdown", type=Path, default=Path("test/reports/ws_check.md"))
     parser.add_argument("--angle", type=float, default=30.0)
     parser.add_argument("--self-check-defect", action="store_true")
+    parser.add_argument("--self-check-rate", action="store_true")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--all", action="store_true")
     group.add_argument(
@@ -684,6 +1014,7 @@ def parse_args() -> argparse.Namespace:
             "shake",
             "long_rest",
             "fps",
+            "rate",
         ],
     )
     return parser.parse_args()
@@ -693,6 +1024,8 @@ def main() -> int:
     args = parse_args()
     if args.self_check_defect:
         results = self_check_defect()
+    elif args.self_check_rate:
+        results = self_check_rate() + rateChecker_skipsDormantFrames() + rateChecker_legacyDormantInference()
     else:
         if args.input is None:
             print("--input is required unless --self-check-defect is used", file=sys.stderr)
@@ -712,6 +1045,8 @@ def main() -> int:
 
     if args.self_check_defect:
         return 0 if results[0].status == "FAIL" else 1
+    if args.self_check_rate:
+        return 0 if all(result.status == "PASS" for result in results) else 1
     return 0 if all(result.status in {"PASS", "N/A"} for result in results) else 1
 
 
