@@ -30,6 +30,178 @@ import {
   p011GuardAdmit,
   p011GuardConstraintsForDelta
 } from './P011MaterialGuard';
+import {
+  P011CorrectionLedger,
+  P011CorrectionParams,
+  P011CorrectionReservation,
+  P011CorrectionStockView,
+  p011CorrectionApplyOnce,
+  p011CorrectionReserve
+} from './P011RelaxCorrection';
+
+/**
+ * §24 relax-correction-weighted-v1 view/ledger adapters. ArkTS forbids
+ * object literals with function properties, so the stock views and ledger
+ * implementations are classes.
+ */
+class LiveCorrectionStockView implements P011CorrectionStockView {
+  private readonly field: WaterSandField;
+  constructor(field: WaterSandField) {
+    this.field = field;
+  }
+  get sandTop(): Float64Array {
+    return this.field.internalSandTopScratch();
+  }
+  get effectiveTiltDeg(): number {
+    return this.field.internalEffectiveTilt();
+  }
+  donorStock(column: number): number {
+    return this.field.internalSandTopScratch()[column];
+  }
+  receiverCapacity(column: number): number {
+    const suspension = this.field.suspH[column] + this.field.suspL[column];
+    return this.field.waterTop[column] > EPS
+      ? this.field.waterTop[column] - this.field.internalSandTopScratch()[column] - suspension
+      : this.field.capacity - this.field.internalSandTopScratch()[column];
+  }
+  guardResidual(edge: number): number {
+    const s = this.field.internalSandTopScratch();
+    return s[edge + 1] - s[edge] -
+      Math.tan(this.field.internalEffectiveTilt() * Math.PI / 180);
+  }
+}
+
+class S0CorrectionStockView implements P011CorrectionStockView {
+  private readonly field: WaterSandField;
+  constructor(field: WaterSandField) {
+    this.field = field;
+  }
+  get sandTop(): Float64Array {
+    return this.field.internalSubstepSandTopBefore();
+  }
+  get effectiveTiltDeg(): number {
+    return this.field.internalEffectiveTilt();
+  }
+  donorStock(column: number): number {
+    return this.field.internalSubstepSandTopBefore()[column];
+  }
+  receiverCapacity(column: number): number {
+    const suspension = this.field.suspH[column] + this.field.suspL[column];
+    return this.field.waterTop[column] > EPS
+      ? this.field.waterTop[column] - this.field.internalSubstepSandTopBefore()[column] - suspension
+      : this.field.capacity - this.field.internalSubstepSandTopBefore()[column];
+  }
+  guardResidual(edge: number): number {
+    const s = this.field.internalSubstepSandTopBefore();
+    return s[edge + 1] - s[edge] -
+      Math.tan(this.field.internalEffectiveTilt() * Math.PI / 180);
+  }
+}
+
+class LiveCorrectionLedger implements P011CorrectionLedger {
+  private readonly field: WaterSandField;
+  constructor(field: WaterSandField) {
+    this.field = field;
+  }
+  debit(donor: number, receiver: number, amount: number): void {
+    this.field.substepMotionBudgetRemaining[donor] -= amount;
+    this.field.substepMotionBudgetRemaining[receiver] -= amount;
+    this.field.substepMotionBudgetUsed[donor] += amount;
+    this.field.substepMotionBudgetUsed[receiver] += amount;
+    this.field.totalMotionBudgetUsed += amount;
+    this.field.totalMotionBudgetRemaining -= amount;
+    this.field.correctionBudgetUsed += amount;
+    this.field.correctionBudgetRemaining -= amount;
+  }
+  refund(donor: number, receiver: number, amount: number): void {
+    this.field.substepMotionBudgetRemaining[donor] += amount;
+    this.field.substepMotionBudgetRemaining[receiver] += amount;
+    this.field.substepMotionBudgetUsed[donor] = Math.max(0,
+      this.field.substepMotionBudgetUsed[donor] - amount);
+    this.field.substepMotionBudgetUsed[receiver] = Math.max(0,
+      this.field.substepMotionBudgetUsed[receiver] - amount);
+    this.field.totalMotionBudgetRemaining += amount;
+    this.field.totalMotionBudgetUsed = Math.max(0,
+      this.field.totalMotionBudgetUsed - amount);
+    this.field.correctionBudgetRemaining += amount;
+    this.field.correctionBudgetUsed = Math.max(0,
+      this.field.correctionBudgetUsed - amount);
+  }
+}
+
+/**
+ * Shadow ledger for the preview mirror: local arrays by reference plus
+ * total/correction scalars captured through accessors (ArkTS closures in
+ * constructors are fine; object-literal function properties are not).
+ */
+class ShadowCorrectionLedger implements P011CorrectionLedger {
+  private readonly localRemaining: Float64Array;
+  private readonly localUsed: Float64Array;
+  private readonly readTotal: () => number;
+  private readonly addTotal: (delta: number) => void;
+  private readonly readCorrection: () => number;
+  private readonly addCorrection: (delta: number) => void;
+  constructor(localRemaining: Float64Array, localUsed: Float64Array,
+    readTotal: () => number, addTotal: (delta: number) => void,
+    readCorrection: () => number, addCorrection: (delta: number) => void) {
+    this.localRemaining = localRemaining;
+    this.localUsed = localUsed;
+    this.readTotal = readTotal;
+    this.addTotal = addTotal;
+    this.readCorrection = readCorrection;
+    this.addCorrection = addCorrection;
+  }
+  debit(donor: number, receiver: number, amount: number): void {
+    this.localRemaining[donor] -= amount;
+    this.localRemaining[receiver] -= amount;
+    this.localUsed[donor] += amount;
+    this.localUsed[receiver] += amount;
+    this.addTotal(-amount);
+    this.addCorrection(-amount);
+  }
+  refund(donor: number, receiver: number, amount: number): void {
+    this.localRemaining[donor] += amount;
+    this.localRemaining[receiver] += amount;
+    this.localUsed[donor] = Math.max(0, this.localUsed[donor] - amount);
+    this.localUsed[receiver] = Math.max(0, this.localUsed[receiver] - amount);
+    this.addTotal(amount);
+    this.addCorrection(amount);
+  }
+}
+
+/** Shadow-array stock view for the preview mirror's correction slot. */
+class ShadowCorrectionStockView implements P011CorrectionStockView {
+  private readonly field: WaterSandField;
+  private readonly shadowS: Float64Array;
+  private readonly shadowSuspH: Float64Array;
+  private readonly shadowSuspL: Float64Array;
+  constructor(field: WaterSandField, shadowS: Float64Array,
+    shadowSuspH: Float64Array, shadowSuspL: Float64Array) {
+    this.field = field;
+    this.shadowS = shadowS;
+    this.shadowSuspH = shadowSuspH;
+    this.shadowSuspL = shadowSuspL;
+  }
+  get sandTop(): Float64Array {
+    return this.shadowS;
+  }
+  get effectiveTiltDeg(): number {
+    return this.field.internalEffectiveTilt();
+  }
+  donorStock(column: number): number {
+    return this.shadowS[column];
+  }
+  receiverCapacity(column: number): number {
+    const suspension = this.shadowSuspH[column] + this.shadowSuspL[column];
+    return this.field.waterTop[column] > EPS
+      ? this.field.waterTop[column] - this.shadowS[column] - suspension
+      : this.field.capacity - this.shadowS[column];
+  }
+  guardResidual(edge: number): number {
+    return this.shadowS[edge + 1] - this.shadowS[edge] -
+      Math.tan(this.field.internalEffectiveTilt() * Math.PI / 180);
+  }
+}
 
 /** P-011 v2.14 §20: scalar state saved/restored around planning previews. */
 class PlanningScalars {
@@ -402,19 +574,19 @@ export class WaterSandField {
   readonly capacity: number;
 
   private params: WaterSandParams = defaultWaterSandParams();
-  private waterTop: Float64Array;
+  waterTop: Float64Array;
   private bh: Float64Array;
   private bl: Float64Array;
   private mh: Float64Array;
   private ml: Float64Array;
-  private suspH: Float64Array;
-  private suspL: Float64Array;
+  suspH: Float64Array;
+  suspL: Float64Array;
   private sandTopScratch: Float64Array;
   private targetTopScratch: Float64Array;
   private errorScratch: Float64Array;
   private smoothScratch: Float64Array;
-  private substepMotionBudgetRemaining: Float64Array;
-  private substepMotionBudgetUsed: Float64Array;
+  substepMotionBudgetRemaining: Float64Array;
+  substepMotionBudgetUsed: Float64Array;
   private substepSandTopBefore: Float64Array;
   private bottomCreepRequestAmounts: Float64Array;
   private bottomCreepRequestDonors: Int32Array;
@@ -470,8 +642,8 @@ export class WaterSandField {
   private lastBottomSplitError: WaterSandErrorCode | null = null;
   private bottomCreepRequestCount = 0;
   private slipRequestCount = 0;
-  private totalMotionBudgetRemaining = 0;
-  private totalMotionBudgetUsed = 0;
+  totalMotionBudgetRemaining = 0;
+  totalMotionBudgetUsed = 0;
   private totalMotionBudgetLimit = 0;
   private totalMotionBudgetClipped = 0;
   private totalMotionBudgetRequested = 0;
@@ -513,11 +685,35 @@ export class WaterSandField {
   private lastPlanningLimitingEdge: number | null = null;
   private lastPlanningCommittedPlans: P011ChannelPlan[] | null = null;
   private lastPlanningCommittedTheta = 0;
+  // §24 relax-correction-weighted-v1 ledger: independent reservation-first
+  // sub-channel for the relax slot. Lifecycle aligns with
+  // beginSubstepMotionBudget / beginMotionApplication; grants are NOT
+  // scaled by totalMotionBudgetScale (reservation semantics).
+  correctionBudgetUsed = 0;
+  correctionBudgetRemaining = 0;
+  private correctionBudgetRequested = 0;
+  private correctionBudgetClipped = 0;
+  private correctionReservation: P011CorrectionReservation | null = null;
+  private correctionStalledCount = 0;
   private planningDelegate: P011PlanningPassDelegate =
     new WaterSandFieldPlanningDelegate(this);
 
   internalPreviewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {
     return this.previewChannelPlansAt(thetaCandidate);
+  }
+
+  // §24 correction adapter accessors (same-file classes cannot touch
+  // private members under ArkTS class-level privacy).
+  internalSandTopScratch(): Float64Array {
+    return this.sandTopScratch;
+  }
+
+  internalEffectiveTilt(): number {
+    return this.effectiveTilt;
+  }
+
+  internalSubstepSandTopBefore(): Float64Array {
+    return this.substepSandTopBefore;
   }
 
   internalSandTopSnapshot(): Float64Array {
@@ -915,8 +1111,14 @@ export class WaterSandField {
       if (errorCode === null) {
         this.restoreMotionSnapshot();
         this.lastBottomFlux = 0;
-        const scale = this.totalMotionBudgetRequested <= this.totalMotionBudgetLimit
-          ? 1 : this.totalMotionBudgetLimit / this.totalMotionBudgetRequested;
+        // §24 correction reservation on the candidate-angle snapshot: the
+        // ordinary channels' shared total budget is folded by the reserved
+        // amount R_limit (B − R), equivalent to (B−R)/requested scaling.
+        this.computeCorrectionReservation(substepDt);
+        const ordinaryBudget = this.totalMotionBudgetLimit -
+          this.correctionReservation!.rLimit;
+        const scale = this.totalMotionBudgetRequested <= ordinaryBudget
+          ? 1 : ordinaryBudget / Math.max(this.totalMotionBudgetRequested, EPS);
         if (this.naturalObservationProbe !== null) {
           this.naturalObservationTotalRequested = this.totalMotionBudgetRequested;
         }
@@ -1557,10 +1759,162 @@ export class WaterSandField {
     if (creepError !== null) {
       return creepError;
     }
-    this.relaxAngle(dt);
+    // §24 relax-correction-weighted-v1: the relax slot's budget allocation
+    // is replaced by the reservation-first correction sub-channel (the
+    // ordinary relaxAngle path remains for the collect phase).
+    this.applyCorrectionSlot(dt);
     this.liftByShake(dt);
     this.updateSandTop();
     return this.audit(true);
+  }
+
+  /**
+   * §24 computeCorrectionReservation: on the candidate-angle snapshot (post
+   * restoreMotionSnapshot, pre beginMotionApplication) compute the
+   * independent correction reservation — candidates, R_limit, per-column
+   * P_i and the frozen execution order. Ordinary channels then see a
+   * folded total budget B − R_limit via the scale in the step loop.
+   */
+  private computeCorrectionReservation(substepDt: number): void {
+    this.correctionReservation = null;
+    this.correctionStalledCount = 0;
+    const params: P011CorrectionParams = {
+      relaxBoundSlope: Math.tan(this.params.angleDeg * Math.PI / 180),
+      maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
+      localBudget: this.params.vSandTopMax * substepDt,
+      totalBudget: this.params.totalMotionBudget * substepDt,
+      dt: substepDt
+    };
+    const view = this.correctionStockView();
+    const reservation = p011CorrectionReserve(view, params,
+      this.materialGuardHardMax(), this.totalMotionBudgetRequested);
+    this.correctionReservation = reservation;
+    this.correctionBudgetRequested = reservation.rLimit;
+    this.correctionBudgetRemaining = reservation.rLimit;
+    this.correctionBudgetUsed = 0;
+    this.correctionBudgetClipped = 0;
+  }
+
+  /** Live-field stock view for the reservation and the apply slot. */
+  private correctionStockView(): P011CorrectionStockView {
+    return new LiveCorrectionStockView(this);
+  }
+
+  /**
+   * §24 applyCorrectionSlot: replaces relaxAngle's budget allocation in the
+   * apply chain. Executes the frozen (−w, edgeId) order; every candidate
+   * re-derives direction/e/D/K and stock on the CURRENT field, debits
+   * local+total+correction ledgers, admits via the shared three-edge
+   * closed-form guard, refunds the rejected part, and applies the accepted
+   * material move with splitTopV2 semantics (mh/ml proportional mixed
+   * slice first, then bl/bh fallbacks) so updateSandTop recomputes
+   * bit-identically to the preview mirror.
+   */
+  private applyCorrectionSlot(substepDt: number): void {
+    const reservation = this.correctionReservation;
+    if (reservation === null || reservation.candidates.length === 0) {
+      this.recordNaturalRelaxInactiveEdges();
+      this.recordNaturalRelaxSummary(0);
+      return;
+    }
+    const params: P011CorrectionParams = {
+      relaxBoundSlope: Math.tan(this.params.angleDeg * Math.PI / 180),
+      maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
+      localBudget: this.params.vSandTopMax * substepDt,
+      totalBudget: this.params.totalMotionBudget * substepDt,
+      dt: substepDt
+    };
+    const view = this.correctionStockView();
+    const ledger: P011CorrectionLedger = new LiveCorrectionLedger(this);
+    let appliedTotal = 0;
+    let stalled = 0;
+    for (const index of reservation.order) {
+      const candidate = reservation.candidates[index];
+      const outcome = p011CorrectionApplyOnce(reservation, index, view,
+        params, this.materialGuardHardMax(), ledger);
+      if (outcome.cancelled || outcome.reason !== null) {
+        if (outcome.reason === 'NO_POSITIVE_LOCAL_CONTRIBUTION' ||
+          outcome.reason === 'DIRECTION_REVERSED' ||
+          outcome.reason === 'GUARD_REJECTED') {
+          stalled += 1;
+        }
+      }
+      const edge = candidate.edge;
+      const activeBefore = this.naturalObservationSlidingBefore[edge] !== 0;
+      this.naturalObservationSlipSeen[edge] = 1;
+      // Transition semantics: budget-limited/rejected edges stay active
+      // (requested>0 ↔ =0 contract, obs①b fix B).
+      const activeAfter = candidate.p > EPS;
+      this.naturalObservationSlidingAfter[edge] = activeAfter ? 1 : 0;
+      if (outcome.accepted > EPS) {
+        const donor = candidate.donor;
+        const receiver = candidate.receiver;
+        // splitTopV2-exact material write (proportional mixed slice first).
+        const mixAvail = this.mh[donor] + this.ml[donor];
+        const fromMix = Math.min(outcome.accepted, mixAvail);
+        const mixScale = fromMix / Math.max(mixAvail, EPS);
+        let heavy = this.mh[donor] * mixScale;
+        let light = this.ml[donor] * mixScale;
+        let remaining = outcome.accepted - fromMix;
+        const fromLight = Math.min(remaining, this.bl[donor]);
+        light += fromLight;
+        remaining -= fromLight;
+        const fromHeavy = Math.min(remaining, this.bh[donor]);
+        heavy += fromHeavy;
+        const donorBhBefore = this.bh[donor];
+        const donorBlBefore = this.bl[donor];
+        const donorMhBefore = this.mh[donor];
+        const donorMlBefore = this.ml[donor];
+        this.mh[donor] -= this.mh[donor] * mixScale;
+        this.ml[donor] -= this.ml[donor] * mixScale;
+        this.bl[donor] -= fromLight;
+        this.bh[donor] -= fromHeavy;
+        this.mh[receiver] += heavy;
+        this.ml[receiver] += light;
+        appliedTotal += outcome.accepted;
+        this.updateSandTop();
+        if (this.naturalObservationProbe !== null) {
+          this.naturalObservationProbe.recordSlip({
+            interfaceIndex: edge,
+            donor: donor,
+            receiver: receiver,
+            directionSign: donor < receiver ? 1 : -1,
+            requested: candidate.p,
+            allowed: outcome.accepted,
+            heavy: heavy,
+            light: light,
+            activeBefore: activeBefore,
+            activeAfter: activeAfter,
+            hardGuardRejected: outcome.rejected,
+            hardGuardClipped: outcome.rejected > 0 && outcome.accepted > EPS
+              ? outcome.rejected : 0,
+            hardGuardAvailable: true
+          });
+          this.recordNaturalTopSplit(edge, donor, outcome.accepted,
+            donorBhBefore, donorBlBefore, donorMhBefore, donorMlBefore,
+            { heavy: heavy, light: light });
+        }
+      } else if (candidate.p > EPS && this.naturalObservationProbe !== null) {
+        this.naturalObservationProbe.recordSlip({
+          interfaceIndex: edge,
+          donor: candidate.donor,
+          receiver: candidate.receiver,
+          directionSign: candidate.donor < candidate.receiver ? 1 : -1,
+          requested: candidate.p,
+          allowed: 0,
+          heavy: 0,
+          light: 0,
+          activeBefore: activeBefore,
+          activeAfter: activeAfter,
+          hardGuardRejected: outcome.rejected,
+          hardGuardClipped: 0,
+          hardGuardAvailable: true
+        });
+      }
+    }
+    this.correctionStalledCount = stalled;
+    this.recordNaturalRelaxInactiveEdges();
+    this.recordNaturalRelaxSummary(appliedTotal);
   }
 
   private updateTilt(dt: number): void {
@@ -1764,8 +2118,26 @@ export class WaterSandField {
     let bottomRemaining = this.params.vBottomCreepMax * substepDt;
     let totalRemaining = this.params.totalMotionBudget * substepDt;
     const totalRequested = Math.max(0, this.totalMotionBudgetRequested);
-    const totalScale = totalRequested <= this.params.totalMotionBudget * substepDt
-      ? 1 : this.params.totalMotionBudget * substepDt / Math.max(totalRequested, EPS);
+    // 24 correction reservation on the HEAD shadow state (identical inputs
+    // to the real computeCorrectionReservation post-restoreMotionSnapshot),
+    // computed before the ordinary totalScale so the ordinary channels can
+    // be folded by (B - R) exactly like the real step loop.
+    const correctionParams: P011CorrectionParams = {
+      relaxBoundSlope: Math.tan(this.params.angleDeg * Math.PI / 180),
+      maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
+      localBudget: this.params.vSandTopMax * substepDt,
+      totalBudget: this.params.totalMotionBudget * substepDt,
+      dt: substepDt
+    };
+    const headCorrectionView: P011CorrectionStockView =
+      new S0CorrectionStockView(this);
+    headCorrectionView.sandTop.set(this.substepSandTopBefore);
+    const shadowReservation = p011CorrectionReserve(headCorrectionView,
+      correctionParams, this.materialGuardHardMax(), this.totalMotionBudgetRequested);
+    const ordinaryBudget = this.params.totalMotionBudget * substepDt -
+      shadowReservation.rLimit;
+    const totalScale = totalRequested <= ordinaryBudget
+      ? 1 : ordinaryBudget / Math.max(totalRequested, EPS);
 
     // Shadow material arrays: initialize from the live post-collect state.
     const shadowS = new Float64Array(cols);
@@ -2052,73 +2424,70 @@ export class WaterSandField {
       plans.push(makePlan('bottomCreep', requestedTotal, grantedTotal, bottomUse,
         totalUse, deltaS));
     }
-    // --- relax: slip requests in collect order (static), local pair then
-    // total, then the guard mirror; shadow surface advances per applied
-    // grant (updateSandTop inside the apply loop). The apply phase re-checks
-    // maximumDeviation at its own entry — on the post-settle/post-creep
-    // surface, which the creep repairs may have brought back within the
-    // relax trigger limit; in that case the whole apply loop early-returns
-    // and every collected slip request is silently dropped. Mirror that
-    // exact gate: when the shadow surface's maximum deviation is within the
-    // limit at relax-apply entry, the relax channel grants nothing. ---
+    // --- 24 correction slot mirror: the apply chain replaced relaxAngle's
+    // budget allocation with the reservation-first correction sub-channel,
+    // so the mirror does the same on the shadow arrays: reserve with
+    // p011CorrectionReserve (stock view over the shadow layers), then
+    // execute the frozen (-w, edgeId) order with the SAME
+    // p011CorrectionApplyOnce the real apply uses, debiting the shadow
+    // ledgers and writing splitTopV2-exact material so recomputeShadowS
+    // stays bit-identical to the real apply's updateSandTop. The
+    // reservation is computed on the HEAD shadow state (S0 + post-diffuse
+    // layers) which is exactly the state the real
+    // computeCorrectionReservation sees after restoreMotionSnapshot, so
+    // R_limit matches bit-for-bit; the per-candidate re-verification then
+    // runs on the EVOLVED shadow (post-settle/percolate/creep) exactly like
+    // the real apply slot re-derives on the live field. ---
     {
       const deltaS = new Float64Array(cols);
-      let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
-      const relaxLimit = Math.tan(this.params.angleDeg * Math.PI / 180);
-      const relaxTargetSlope = Math.tan(this.effectiveTilt * Math.PI / 180);
-      let relaxMaxDeviation = 0;
-      for (let c = 0; c < cols - 1; c++) {
-        const deviation = shadowS[c + 1] - shadowS[c] - relaxTargetSlope;
-        relaxMaxDeviation = Math.max(relaxMaxDeviation, Math.abs(deviation));
-      }
-      if (relaxMaxDeviation > relaxLimit) {
-      for (let index = 0; index < this.slipRequestCount; index++) {
-        const requested = this.slipRequestAmounts[index];
-        const donor = this.slipRequestDonors[index];
-        const receiver = this.slipRequestReceivers[index];
-        if (requested <= EPS) {
-          continue;
-        }
-        requestedTotal += requested;
-        let allowed = clipLocalPair(donor, receiver, requested);
-        if (allowed > EPS) {
-          const deltaColumns = new Map<number, number>();
-          deltaColumns.set(donor, -1);
-          deltaColumns.set(receiver, 1);
-          allowed = guardAdmit(allowed, deltaColumns);
-        }
+      // The reservation came from the head (identical to the real one);
+      // the per-candidate applyOnce view reads the EVOLVED shadow arrays.
+      const headView: P011CorrectionStockView =
+        new ShadowCorrectionStockView(this, shadowS, shadowSuspH, shadowSuspL);
+      let shadowCorrectionRemaining = shadowReservation.rLimit;
+      const correctionLedger: P011CorrectionLedger =
+        new ShadowCorrectionLedger(localRemaining, localUsed, () => totalRemaining,
+          (delta: number): void => { totalRemaining += delta; },
+          () => shadowCorrectionRemaining,
+          (delta: number): void => { shadowCorrectionRemaining += delta; });
+      const requestedTotal = shadowReservation.rLimit;
+      for (const index of shadowReservation.order) {
+        const candidate = shadowReservation.candidates[index];
+        const outcome = p011CorrectionApplyOnce(shadowReservation, index,
+          headView, correctionParams, this.materialGuardHardMax(),
+          correctionLedger);
+        const allowed = outcome.accepted;
         grantedTotal += allowed;
         totalUse += allowed;
-        deltaS[donor] -= allowed;
-        deltaS[receiver] += allowed;
-        // Mirror splitTopV2 + material write + updateSandTop exactly: the
-        // real relax takes a proportional slice of the donor's mixed layers
-        // (mh/ml scaled by fromMix/mixTotal), then the light and heavy
-        // deposited layers as fallbacks, and adds the split to the
-        // receiver's mh/ml; S is then recomputed from layer sums.
-        const mixAvail = shadowMh[donor] + shadowMl[donor];
-        const fromMix = Math.min(allowed, mixAvail);
-        const mixScale = fromMix / Math.max(mixAvail, EPS);
-        let relaxHeavy = shadowMh[donor] * mixScale;
-        let relaxLight = shadowMl[donor] * mixScale;
-        let relaxRemaining = allowed - fromMix;
-        const relaxFromLight = Math.min(relaxRemaining, shadowBl[donor]);
-        relaxLight += relaxFromLight;
-        relaxRemaining -= relaxFromLight;
-        const relaxFromHeavy = Math.min(relaxRemaining, shadowBh[donor]);
-        relaxHeavy += relaxFromHeavy;
-        shadowMh[donor] -= shadowMh[donor] * mixScale;
-        shadowMl[donor] -= shadowMl[donor] * mixScale;
-        shadowBl[donor] -= relaxFromLight;
-        shadowBh[donor] -= relaxFromHeavy;
-        shadowMh[receiver] += relaxHeavy;
-        shadowMl[receiver] += relaxLight;
-        recomputeShadowS();
+        if (allowed > EPS) {
+          const donor = candidate.donor;
+          const receiver = candidate.receiver;
+          deltaS[donor] -= allowed;
+          deltaS[receiver] += allowed;
+          // splitTopV2-exact shadow material write.
+          const mixAvail = shadowMh[donor] + shadowMl[donor];
+          const fromMix = Math.min(allowed, mixAvail);
+          const mixScale = fromMix / Math.max(mixAvail, EPS);
+          let heavy = shadowMh[donor] * mixScale;
+          let light = shadowMl[donor] * mixScale;
+          let remaining = allowed - fromMix;
+          const fromLight = Math.min(remaining, shadowBl[donor]);
+          light += fromLight;
+          remaining -= fromLight;
+          const fromHeavy = Math.min(remaining, shadowBh[donor]);
+          heavy += fromHeavy;
+          shadowMh[donor] -= shadowMh[donor] * mixScale;
+          shadowMl[donor] -= shadowMl[donor] * mixScale;
+          shadowBl[donor] -= fromLight;
+          shadowBh[donor] -= fromHeavy;
+          shadowMh[receiver] += heavy;
+          shadowMl[receiver] += light;
+          recomputeShadowS();
+        }
       }
-      }
-      plans.push(makePlan('relax', requestedTotal, grantedTotal, 0, totalUse, deltaS));
+      plans.push(makePlan('correction', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
     // --- lift: column ascending, static request, local then total, then
     // the guard mirror; shadow surface advances per applied grant. ---
@@ -2182,7 +2551,8 @@ export class WaterSandField {
       bottomCreep: 0,
       relax: 0,
       lift: 0,
-      suspensionDiffusion: 0
+      suspensionDiffusion: 0,
+      correction: 0
     };
     const budgetsBefore: P011ExistingBudgetSnapshot = {
       localRemaining: Array.from(this.substepMotionBudgetRemaining),

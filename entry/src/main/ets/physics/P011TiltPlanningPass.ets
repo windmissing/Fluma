@@ -12,7 +12,10 @@
  */
 
 export type P011ExistingChannelId =
-  'settle' | 'percolate' | 'bottomCreep' | 'relax' | 'lift' | 'suspensionDiffusion';
+  'settle' | 'percolate' | 'bottomCreep' | 'relax' | 'lift' | 'suspensionDiffusion' |
+  // §24 relax-correction-weighted-v1: independent reservation-first budget
+  // sub-channel replacing the relax slot's budget allocation.
+  'correction';
 
 export interface P011ExistingRequestShape {
   requested: number;
@@ -38,6 +41,7 @@ export interface P011ExistingChannelRateCapRemaining {
   relax: number;
   lift: number;
   suspensionDiffusion: number;
+  correction: number;
 }
 
 export interface P011ExistingBudgetSnapshot {
@@ -123,6 +127,8 @@ export function p011ChannelRank(id: P011ExistingChannelId): number {
       return 4;
     case 'suspensionDiffusion':
       return 5;
+    case 'correction':
+      return 6;
     default:
       return 6;
   }
