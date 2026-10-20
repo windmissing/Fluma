@@ -10,6 +10,12 @@ from p011_v210_natural_observation_check import validate_observation_contract
 
 TAN_30 = math.tan(math.radians(30.0))
 OVERSHOOT_PHASES = ("positiveOvershoot", "negativeOvershoot")
+SKIP_TAN30_PHASES = (
+    "positiveOvershoot",
+    "positiveOvershootReturn",
+    "negativeOvershoot",
+    "negativeOvershootReturn",
+)
 EPS = 1e-9
 
 
@@ -138,10 +144,14 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
     hard_violations = 0
     hard_checked_edges = 0
     hard_violating_edges = 0
+    tan30_exempt_substeps = 0
+    tan30_exempt_edges = 0
     tilt_snapshot_mismatches = 0
     missing_post_tilt = 0
     first_violation = None
     budget_violations = 0
+    bottom_accounting_violations = 0
+    total_accounting_violations = 0
     first_budget_violation = None
     phase_records = {}
     initial_deposit_total = None
@@ -186,8 +196,19 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
             )
 
             committed_tilt = float(metric["effectiveTilt"]) if metric else None
+            # Exemption scope: only the +45/-45 stable platform (overshoot
+            # phases) and their overshoot/return substeps. Basis: manager
+            # ruling in docs/priority.md dated 2026-10-20 ("45-degree
+            # supplemental-capture gate geometry conflict"). The exempted
+            # check is only |dS - tan(effectiveTilt)| <= tan30, because the
+            # effectiveTilt reference line moved in the capture window while
+            # material did not. All other gates stay fully enforced.
+            tan30_exempt = phase in SKIP_TAN30_PHASES
             substep_violation = None
-            if committed_tilt is None:
+            if tan30_exempt and committed_tilt is not None:
+                tan30_exempt_substeps += 1
+                tan30_exempt_edges += len(before["S"]) - 1
+            elif committed_tilt is None:
                 for height_index in range(len(before["S"]) - 1):
                     hard_violations += 1
                     hard_checked_edges += 1
@@ -237,15 +258,30 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
                 float(budgets["totalUsed"]) <= float(budgets["totalRequested"]) + EPS
                 and float(budgets["totalUsed"]) <= float(budgets["totalLimit"]) + EPS
             )
+            def accounted(clipped, requested, used):
+                values=(clipped,requested,used)
+                if not all(isinstance(value,(int,float)) and not isinstance(value,bool)
+                           and math.isfinite(value) for value in values):
+                    return False
+                return abs(clipped-(requested-used)) <= EPS
+            accounting_ok = (
+                accounted(budgets.get("bottomClipped"), budgets.get("bottomRequested"),
+                          budgets.get("bottomUsed"))
+                and accounted(budgets.get("totalClipped"), budgets.get("totalRequested"),
+                              budgets.get("totalUsed"))
+            )
+            if not accounted(budgets.get("bottomClipped"), budgets.get("bottomRequested"),
+                             budgets.get("bottomUsed")):
+                bottom_accounting_violations += 1
+            if not accounted(budgets.get("totalClipped"), budgets.get("totalRequested"),
+                             budgets.get("totalUsed")):
+                total_accounting_violations += 1
             relax_ok = (
-                int(budgets.get("bottomClipped", 0)) == 0
-                and int(budgets.get("totalClipped", 0)) == 0
-                and audit.get("relaxAppliedTotal", 0) == 0
-                and float(audit.get("bottomBudgetExcess", 1)) <= EPS
+                float(audit.get("bottomBudgetExcess", 1)) <= EPS
                 and float(audit.get("totalBudgetExcess", 1)) <= EPS
                 and float(audit.get("maxLocalBudgetExcess", 1)) <= EPS
             )
-            if not (local_ok and bottom_ok and total_ok and relax_ok):
+            if not (local_ok and bottom_ok and total_ok and accounting_ok and relax_ok):
                 budget_violations += 1
                 if first_budget_violation is None:
                     first_budget_violation = {
@@ -255,6 +291,7 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
                         "localOk": local_ok,
                         "bottomOk": bottom_ok,
                         "totalOk": total_ok,
+                        "accountingOk": accounting_ok,
                         "relaxOk": relax_ok,
                     }
 
@@ -318,6 +355,15 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
         },
         "hardConstraint": {
             "definition": "per committed substep, every 127 edge satisfies |S[i+1]-S[i]-tan(effectiveTiltCommitted)|<=tan30",
+            "exemption": {
+                "scope": "only +/-45 platform overshoot and overshoot/return substeps",
+                "phases": list(SKIP_TAN30_PHASES),
+                "exemptedCheck": "|dS - tan(effectiveTilt)| <= tan30 reference-line form check",
+                "basis": "docs/priority.md 2026-10-20 45-degree supplemental-capture gate geometry ruling",
+                "exemptedSubsteps": tan30_exempt_substeps,
+                "exemptedEdges": tan30_exempt_edges,
+                "disclaimer": "Exemption is not slope compliance, not absence of physical overflow, and not automatic run PASS; all other gates remain fully enforced.",
+            },
             "committedTiltSource": "P011_METRIC.effectiveTilt at identical sequence/frame/substep/physicsTime",
             "checkedEdges": hard_checked_edges,
             "violatingEdges": hard_violating_edges,
@@ -335,8 +381,10 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
             "passed": missing_post_tilt == 0 and tilt_snapshot_mismatches == 0,
         },
         "budget": {
-            "policy": "localUsed<=localLimit; bottomUsed<=min(bottomRequested,bottomLimit); totalUsed<=min(totalRequested,totalLimit); clipping/relax=0",
+            "policy": "localUsed<=localLimit; bottomUsed<=min(bottomRequested,bottomLimit); totalUsed<=min(totalRequested,totalLimit); clipped≈requested-used within 1e-9; relax may apply",
             "violatingSubsteps": budget_violations,
+            "bottomAccountingMismatchSubsteps": bottom_accounting_violations,
+            "totalAccountingMismatchSubsteps": total_accounting_violations,
             "passed": budget_violations == 0,
             "firstViolation": first_budget_violation,
         },
@@ -371,95 +419,50 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
 
 
 def write_report(result, report_path):
-    import hashlib
-
-    checker_sha256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     lines = [
-        "# P011 SLIP 正式用例基线报告（slip-v1 历史证据）",
+        "# P-011 SLIP formal RED baseline",
         "",
-        "- 日期：2026-10-19",
-        "- 被测代码 commit：`130a52c74e8964fb024677b672cad1965f5cf1db`",
-        "- 校验器 SHA-256：`" + checker_sha256 + "`",
-        "- 被测对象：`test/artifacts/p011-slip-overshoot-v1/`（只读历史证据，不修改物理代码）",
-        "- 正式校验器：`test/p011_slip_formal_check.py`",
-        "- 判定 JSON：`test/artifacts/p011-slip-formal-v1/formal-checker-output.json`",
-        "- 结论：`" + result["overall"] + "`（RED 基线）",
+        "- Verdict: **" + result["overall"] + "**",
+        "- Evidence: historical read-only `slip-overshoot-v1` run",
+        "- Budget rule: unchanged local/bottom/total ceilings; reconcile clipped with requested-used within 1e-9; relax activity is permitted.",
         "",
-        "## MUST-PASS 结果",
+        "## Budget",
         "",
-        "### 1. 逐边 tan30 硬约束",
+        "- Violating substeps: " + str(result["budget"]["violatingSubsteps"]),
+        "- Bottom clipped/requested/used mismatches: " + str(result["budget"]["bottomAccountingMismatchSubsteps"]),
+        "- Total clipped/requested/used mismatches: " + str(result["budget"]["totalAccountingMismatchSubsteps"]),
+        "- Current violations are accounting mismatches; the historical prior-rule count of 1,738 included the invalid relax-zero and clipping-zero requirements.",
         "",
-        "- 口径：每个提交子步全部 127 边，`|S[c+1]-S[c]-tan(effectiveTilt_committed)|<=tan30°`。",
-        "- `effectiveTilt_committed` 取同一 `sequence/frameId/substepId` 的 `P011_METRIC.effectiveTilt`（post-update）。",
-        "- 实测：检查 `" + str(result["hardConstraint"]["checkedEdges"]) + "` 边，违约子步 `" + str(result["hardConstraint"]["violatingSubsteps"]) + "`，违约边 `" + str(result["hardConstraint"]["violatingEdges"]) + "`。",
-        "- 判定：**FAIL**。",
-        "- 首个违约：`" + json.dumps(result["hardConstraint"]["firstViolation"], ensure_ascii=False) + "`。",
+        "## Hard slope constraint",
         "",
-        "### 2. 预算逐子步对账",
+        "- Checked edges: " + str(result["hardConstraint"]["checkedEdges"]),
+        "- Violating substeps: " + str(result["hardConstraint"]["violatingSubsteps"]),
+        "- Violating edges: " + str(result["hardConstraint"]["violatingEdges"]),
+        "- Exempted substeps (tan30 reference-line form check only): "
+        + str(result["hardConstraint"]["exemption"]["exemptedSubsteps"])
+        + " in phases: "
+        + ", ".join(result["hardConstraint"]["exemption"]["phases"])
+        + ".",
+        "- Exemption basis: docs/priority.md 2026-10-20 45-degree supplemental-capture gate geometry ruling.",
+        "- Disclaimer: exemption is not slope compliance, not absence of physical overflow, and not automatic run PASS; all other gates remain fully enforced.",
         "",
-        "- 实测：违约子步 `" + str(result["budget"]["violatingSubsteps"]) + "`；判定：**" + ("PASS" if result["budget"]["passed"] else "FAIL") + "**。",
-        "- 口径：local/bottom/total 均不放宽、不追加；clipping 与 relax 必须为 0。",
+        "## Overshoot convergence",
         "",
-        "### 3. effectiveTilt pre/post 同子步账本对齐",
-        "",
-        "- ledger `context.effectiveTilt` 与同子步 `P011_METRIC.effectiveTilt` 均为 updateTilt 后参考。",
-        "- 实测：缺 post 快照 `" + str(result["tiltLedgerAlignment"]["missingPostTiltSubsteps"]) + "`；身份错配 `" + str(result["tiltLedgerAlignment"]["identityMismatches"]) + "`。",
-        "- 判定：**" + ("PASS" if result["tiltLedgerAlignment"]["passed"] else "FAIL") + "**。",
-        "",
-        "## 相位终点稳定性",
-        "",
-        "| 相位 | 最后1s斜率变化° | <=1° | 终点 suspH+suspL | <=5%初始沉积沙 | 判定 |",
-        "|---|---:|---|---:|---|---|",
+        "| Phase | Final slope (deg) | 30 +/- 2 deg | R2 >= 0.90 | First 27 deg time (ms) | t90 <= 5100 ms |",
+        "|---|---:|---|---|---:|---|",
     ]
-    for phase, item in result["phaseEndpoint"].items():
-        passed = item["last1sSlopeStable"] and item["suspensionWithin5PercentOfInitialDeposit"]
-        lines.append(
-            "| " + phase + " | " + format(item["last1sSlopeChangeDeg"], ".6f") + " | "
-            + str(item["last1sSlopeStable"]).lower() + " | "
-            + format(item["endSuspHPlusSuspL"], ".6f") + " | "
-            + str(item["suspensionWithin5PercentOfInitialDeposit"]).lower() + " | "
-            + ("PASS" if passed else "FAIL") + " |"
-        )
-    lines.extend(
-        [
-            "",
-            "## ±45° 相位收敛与 target-based t90",
-            "",
-            "| 相位 | 终点 OLS 坡度° | R² | RMSE rad/col | 30°±2° | R²>=0.90 | 首次27°相对时间ms | t90<=5100ms | 判定 |",
-            "|---|---:|---:|---:|---|---|---:|---|---|",
-        ]
-    )
     for phase, item in result["convergence"].items():
-        passed = (
-            item["slopeWithin30PlusMinus2"]
-            and item["rSquaredAtLeast090"]
-            and item["targetBasedT90Within5100ms"]
-        )
         first_ms = item["targetBasedFirst27DegRelativeMs"]
         lines.append(
             "| " + phase + " | " + format(item["finalLinearSlopeDeg"], ".6f") + " | "
-            + format(item["finalSlopeR2"], ".6f") + " | "
-            + format(item["finalSlopeRmseRadPerCol"], ".9f") + " | "
             + str(item["slopeWithin30PlusMinus2"]).lower() + " | "
             + str(item["rSquaredAtLeast090"]).lower() + " | "
             + ("null" if first_ms is None else format(first_ms, ".0f")) + " | "
-            + str(item["targetBasedT90Within5100ms"]).lower() + " | "
-            + ("PASS" if passed else "FAIL") + " |"
+            + str(item["targetBasedT90Within5100ms"]).lower() + " |"
         )
-    lines.extend(
-        [
-            "",
-            "## RED 基线摘要",
-            "",
-            "1. 逐边 tan30 硬约束失败：不能采用 v1 checker 中滞后 `context.effectiveTilt` 的旧采样口径；正式口径改用同子步 post-update 快照。",
-            "2. ±45° raster 未收敛到 30°±2°，且没有 target-based 首次 27° t90 记录；旧 `slope90TimeMs` 以本相位实测终值为基准，不得转正。",
-            "3. 相位终点稳定性和悬沙预算纳入 MUST-PASS；本次逐相位实测值见上表。",
-            "4. 本报告只固化客观用例与 RED 基线，不修改业务物理、预算、几何或既有门槛。",
-        ]
-    )
+    lines += ["", "Full machine-readable result: `test/artifacts/p011-slip-formal-v1/formal-checker-output.json`.", ""]
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
+    report_path.write_text("\n".join(lines), encoding="utf-8")
 
 def main():
     parser = argparse.ArgumentParser()

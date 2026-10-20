@@ -213,6 +213,50 @@ class TransitionTelemetryTests(unittest.TestCase):
         errors = validate_observation_contract([record], 2, manifest_for(record))
         self.assertTrue(any(error.endswith(':relaxHysteresis') for error in errors))
 
+    def test_schema_v3_observation_run_skips_calibration_threshold_identity(self):
+        record = base_record(True, edge(
+            activeBefore=False,
+            activeAfter=True,
+            transitionType='start',
+        ))
+        record['context']['runRole'] = None
+        record['context']['thresholdCalibrationId'] = None
+        record['context']['thetaStartDeg'] = None
+        record['context']['thetaStopDeg'] = None
+        manifest = {
+            'observationRouteId': record['context']['observationRouteId'],
+            'runRole': None,
+            'transitionTelemetryAvailable': True,
+        }
+        self.assertEqual(validate_observation_contract([record], 2, manifest), [])
+
+    def test_schema_v3_observation_run_still_requires_transition_telemetry(self):
+        record = base_record(False, edge(
+            activeBefore=False,
+            activeAfter=True,
+            transitionType='start',
+        ))
+        record['context']['runRole'] = None
+        record['context']['thresholdCalibrationId'] = None
+        record['context']['thetaStartDeg'] = None
+        record['context']['thetaStopDeg'] = None
+        errors = validate_observation_contract(
+            [record], 2,
+            {'observationRouteId': 'natural-observation-v2.10',
+             'runRole': None, 'transitionTelemetryAvailable': False},
+        )
+        self.assertTrue(any(error.endswith(':transitionTelemetryAvailable') for error in errors))
+
+    def test_schema_v3_unknown_run_role_is_rejected(self):
+        record = base_record(True, edge(
+            activeBefore=False,
+            activeAfter=True,
+            transitionType='start',
+        ))
+        record['context']['runRole'] = 'production'
+        errors = validate_observation_contract([record], 2, manifest_for(record))
+        self.assertTrue(any(error.endswith(':runRole') for error in errors))
+
     def test_guard_available_positive_values_are_accepted(self):
         slip = edge(
             activeBefore=True,

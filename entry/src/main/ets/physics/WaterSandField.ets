@@ -12,6 +12,59 @@ import {
   P011_NATURAL_OBSERVATION_ROUTE_ID,
   p011NaturalObservationPhaseForCommand
 } from './P011NaturalObservation';
+import {
+  P011ChannelPlan,
+  P011ExistingBudgetSnapshot,
+  P011ExistingChannelId,
+  P011ExistingChannelRateCapRemaining,
+  P011ExistingChannelStateSnapshot,
+  P011PlanningPassDelegate,
+  P011TiltFeasibilityInput,
+  P011TiltPlanningPassService,
+  P011_PLANNING_PASS_TAN_HARD_MAX,
+  p011PreviewCommitConsistent
+} from './P011TiltPlanningPass';
+
+/** P-011 v2.14 §20: scalar state saved/restored around planning previews. */
+class PlanningScalars {
+  targetShapeRequestRate = 0;
+  targetShapeIdealDisplacement = 0;
+  phaseHeavyIdeal = 0;
+  phaseLightIdeal = 0;
+  bottomCreepDirection = 0;
+  lastBottomDirectionChange = 0;
+  lastP011DirectionCorrect = true;
+  lastBottomCreepRate = 0;
+  effectiveTilt = 0;
+  effectiveTiltRate = 0;
+  totalMotionBudgetRequested = 0;
+  bottomCreepBudgetRequested = 0;
+}
+
+/**
+ * Class-based planning-pass delegate (ArkTS forbids untyped object literals
+ * with function properties). Forwards to WaterSandField's authoritative
+ * collect machinery; declared after WaterSandField to avoid forward refs.
+ */
+class WaterSandFieldPlanningDelegate implements P011PlanningPassDelegate {
+  private readonly field: WaterSandField;
+
+  constructor(field: WaterSandField) {
+    this.field = field;
+  }
+
+  previewAt(thetaCandidate: number): P011ChannelPlan[] | null {
+    return this.field.internalPreviewChannelPlansAt(thetaCandidate);
+  }
+
+  sandTopSnapshot(): Float64Array {
+    return this.field.internalSandTopSnapshot();
+  }
+
+  preexistingViolation(hardMax: number): boolean {
+    return this.field.internalPreexistingViolation(hardMax);
+  }
+}
 
 export enum WaterSandPhase {
   WATER = 0,
@@ -29,6 +82,8 @@ export enum WaterSandErrorCode {
   NON_FINITE_VALUE = 2,
   CAPACITY_OVERFLOW = 3,
   WATER_SOLVE_FAILED = 4,
+  TILT_PLANNING_BLOCKED = 5,
+  PREVIEW_COMMIT_MISMATCH = 6,
   UNKNOWN = 99
 }
 
@@ -143,6 +198,16 @@ export interface WaterSandMetrics {
   substepBudgetClipped: boolean;
   physicsTimeMs: number;
   dormant: boolean;
+}
+
+/** P-011 v2.14 §20: last committed substep's planning-pass diagnostics. */
+export interface P011PlanningTelemetry {
+  status: string | null;
+  blockedReason: string | null;
+  passCount: number;
+  fallbackUsed: boolean;
+  thetaRequested: number;
+  limitingEdge: number | null;
 }
 
 export interface WaterSandStepResult {
@@ -430,6 +495,41 @@ export class WaterSandField {
   private dormant = false;
   private naturalObservationProbe: P011NaturalObservationProbe | null = null;
   private naturalObservationStateBefore: P011NaturalObservationState | null = null;
+  // P-011 v2.14 §20: planning pass state. The preview flag detaches the probe
+  // and suppresses telemetry so discarded passes leave zero side effects.
+  private planningPassService = new P011TiltPlanningPassService();
+  private planningPreviewActive = false;
+  private lastPlanningStatus: string | null = null;
+  private lastPlanningBlockedReason: string | null = null;
+  private lastPlanningPassCount = 0;
+  private lastPlanningFallbackUsed = false;
+  private lastPlanningThetaRequested = 0;
+  private lastPlanningLimitingEdge: number | null = null;
+  private lastPlanningCommittedPlans: P011ChannelPlan[] | null = null;
+  private lastPlanningCommittedTheta = 0;
+  private planningDelegate: P011PlanningPassDelegate =
+    new WaterSandFieldPlanningDelegate(this);
+
+  internalPreviewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {
+    return this.previewChannelPlansAt(thetaCandidate);
+  }
+
+  internalSandTopSnapshot(): Float64Array {
+    const copy = new Float64Array(this.cols);
+    copy.set(this.substepSandTopBefore);
+    return copy;
+  }
+
+  internalPreexistingViolation(hardMax: number): boolean {
+    for (let c = 0; c + 1 < this.cols; c++) {
+      const residual = this.substepSandTopBefore[c + 1] - this.substepSandTopBefore[c] -
+        Math.tan(this.effectiveTilt * Math.PI / 180);
+      if (Math.abs(residual) > hardMax + 1e-12) {
+        return true;
+      }
+    }
+    return false;
+  }
   private naturalObservationPhysicsDt = 0;
   private naturalObservationTotalRequested = 0;
   private naturalObservationRelaxCandidateCount = 0;
@@ -484,6 +584,7 @@ export class WaterSandField {
     this.naturalObservationSlipSeen = new Uint8Array(cols - 1);
     this.backup = this.createEmptySnapshot();
     this.motionSnapshot = this.createEmptySnapshot();
+    this.planningPassService.attach(this.planningDelegate);
     this.initialize(this.defaultScene());
   }
 
@@ -793,9 +894,17 @@ export class WaterSandField {
       this.lastMaxSubstepBl = 0;
       this.lastBottomSplitError = null;
       this.lastP011DirectionCorrect = true;
-      this.updateTilt(substepDt);
-      this.beginNaturalObservation(substepDt);
-      let errorCode = this.substep(substepDt);
+      const planningError = this.planAndCommitTilt(substepDt);
+      let errorCode: WaterSandErrorCode | null = planningError;
+      if (errorCode === null) {
+        this.beginNaturalObservation(substepDt);
+        errorCode = this.substep(substepDt);
+      }
+      if (errorCode === null) {
+        // §20.6.4: verify the authoritative collect against the preview plans
+        // before any material is applied; mismatch freezes the substep.
+        errorCode = this.verifyPreviewCommitConsistency(substepDt);
+      }
       if (errorCode === null) {
         this.restoreMotionSnapshot();
         this.lastBottomFlux = 0;
@@ -810,7 +919,14 @@ export class WaterSandField {
       if (errorCode !== null) {
         this.finishNaturalObservation(errorCode);
         this.restoreBackup();
-        this.frozen = true;
+        // §20.4: a planning BLOCKED substep marks the run invalid via
+        // ok=false, but unlike transaction errors it must NOT freeze the
+        // field — the caller may choose an explicit invalid continuation
+        // (the blocked evidence stays in lastPlanning* telemetry).
+        if (errorCode !== WaterSandErrorCode.TILT_PLANNING_BLOCKED &&
+          errorCode !== WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH) {
+          this.frozen = true;
+        }
         this.lastError = errorCode;
         result.ok = false;
         result.errorCode = errorCode;
@@ -1411,6 +1527,410 @@ export class WaterSandField {
     const difference = Math.max(-maxStep, Math.min(maxStep, this.targetTilt - this.effectiveTilt));
     this.effectiveTilt += difference;
     this.effectiveTiltRate = difference / dt;
+  }
+
+  // ==========================================================================
+  // P-011 v2.14 §20: two-pass planning pass with dynamic tilt feasibility.
+  // §20.6.1 candidate closure {thetaRequested, theta1, theta0}; §20.6.2 fixed
+  // channel order settle→percolate→bottomCreep→relax→lift with (rank, index)
+  // lexicographic allocation; §20.6.4 preview/commit share this code path.
+  // ==========================================================================
+
+  private planningScalarsBefore: PlanningScalars = new PlanningScalars();
+
+  private savePlanningScalars(): void {
+    this.planningScalarsBefore.targetShapeRequestRate = this.targetShapeRequestRate;
+    this.planningScalarsBefore.targetShapeIdealDisplacement = this.targetShapeIdealDisplacement;
+    this.planningScalarsBefore.phaseHeavyIdeal = this.phaseHeavyIdeal;
+    this.planningScalarsBefore.phaseLightIdeal = this.phaseLightIdeal;
+    this.planningScalarsBefore.bottomCreepDirection = this.bottomCreepDirection;
+    this.planningScalarsBefore.lastBottomDirectionChange = this.lastBottomDirectionChange;
+    this.planningScalarsBefore.lastP011DirectionCorrect = this.lastP011DirectionCorrect;
+    this.planningScalarsBefore.lastBottomCreepRate = this.lastBottomCreepRate;
+    this.planningScalarsBefore.effectiveTilt = this.effectiveTilt;
+    this.planningScalarsBefore.effectiveTiltRate = this.effectiveTiltRate;
+    this.planningScalarsBefore.totalMotionBudgetRequested = this.totalMotionBudgetRequested;
+    this.planningScalarsBefore.bottomCreepBudgetRequested = this.bottomCreepBudgetRequested;
+  }
+
+  private restorePlanningScalars(): void {
+    this.targetShapeRequestRate = this.planningScalarsBefore.targetShapeRequestRate;
+    this.targetShapeIdealDisplacement = this.planningScalarsBefore.targetShapeIdealDisplacement;
+    this.phaseHeavyIdeal = this.planningScalarsBefore.phaseHeavyIdeal;
+    this.phaseLightIdeal = this.planningScalarsBefore.phaseLightIdeal;
+    this.bottomCreepDirection = this.planningScalarsBefore.bottomCreepDirection;
+    this.lastBottomDirectionChange = this.planningScalarsBefore.lastBottomDirectionChange;
+    this.lastP011DirectionCorrect = this.planningScalarsBefore.lastP011DirectionCorrect;
+    this.lastBottomCreepRate = this.planningScalarsBefore.lastBottomCreepRate;
+    this.effectiveTilt = this.planningScalarsBefore.effectiveTilt;
+    this.effectiveTiltRate = this.planningScalarsBefore.effectiveTiltRate;
+    this.totalMotionBudgetRequested = this.planningScalarsBefore.totalMotionBudgetRequested;
+    this.bottomCreepBudgetRequested = this.planningScalarsBefore.bottomCreepBudgetRequested;
+  }
+
+  /**
+   * One pure preview at thetaCandidate: temporarily detach the probe, set the
+   * candidate reference angle, run the authoritative collect phase, then
+   * allocate the collected requests against independent budget copies with the
+   * fixed channel order. Restores every touched scalar and material field.
+   */
+  private previewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {
+    const substepDt = this.lastPlanningSubstepDt;
+    const probe = this.naturalObservationProbe;
+    this.savePlanningScalars();
+    this.naturalObservationProbe = null;
+    this.planningPreviewActive = true;
+    this.effectiveTilt = thetaCandidate;
+    this.effectiveTiltRate = (thetaCandidate - this.planningScalarsBefore.effectiveTilt) /
+      Math.max(substepDt, EPS);
+    let plans: P011ChannelPlan[] | null = null;
+    try {
+      // The substep-start backup (saved by the step loop before planning) holds
+      // the exact S0 material state; restore from it to discard any preview
+      // mutation from an earlier candidate run.
+      this.restoreBackup();
+      this.updateSandTop();
+      this.lastBottomFlux = 0;
+      this.lastBottomSplitError = null;
+      this.beginSubstepMotionBudget(substepDt, true, 1);
+      const collectError = this.substep(substepDt);
+      if (collectError === null) {
+        plans = this.allocatePreviewPlans(substepDt);
+      }
+      this.restoreBackup();
+      this.updateSandTop();
+    } finally {
+      this.planningPreviewActive = false;
+      this.naturalObservationProbe = probe;
+      this.restorePlanningScalars();
+      // Reset every request ledger so the authoritative collect (which runs
+      // after planning and no longer passes through beginSubstepMotionBudget)
+      // starts from the same clean state the step loop originally created.
+      // Without this, incremental counters like slipRequestCount continue from
+      // the preview's value and the apply phase double-counts preview requests.
+      this.beginSubstepMotionBudget(substepDt, true, 1);
+    }
+    return plans;
+  }
+
+  private lastPlanningSubstepDt = 0;
+
+  /**
+   * Shadow allocation of the collected requests, mirroring the authoritative
+   * apply-phase caps in the fixed channel order (§20.6.2): each channel's own
+   * rate/local/stock caps first, then the shared total budget with the
+   * proportional scale, exactly like clipSubstepMotion/clipTotalMotion.
+   */
+  /**
+   * Shadow allocation of the collected requests, exactly mirroring the
+   * authoritative apply-phase clip semantics (§20.6.2): each request is first
+   * capped by its own local/stock/capacity limits (clipSubstepMotion's local
+   * stage), then the shared total budget clips it as
+   * min(locallyAllowed, locallyAllowed * totalScale, totalRemaining) — the
+   * exact formula of clipTotalMotion(locallyAllowed, locallyAllowed). Channel
+   * order settle → percolate → bottomCreep → relax → lift matches
+   * applyMotionChannels; the bottomCreep independent budget is applied first
+   * exactly as in creepBottomRequests.
+   */
+  private allocatePreviewPlans(substepDt: number): P011ChannelPlan[] {
+    const cols = this.cols;
+    const plans: P011ChannelPlan[] = [];
+    const localRemaining = new Float64Array(cols);
+    localRemaining.fill(this.params.vSandTopMax * substepDt);
+    let bottomRemaining = this.params.vBottomCreepMax * substepDt;
+    let totalRemaining = this.params.totalMotionBudget * substepDt;
+    const totalRequested = Math.max(0, this.totalMotionBudgetRequested);
+    const totalScale = totalRequested <= this.params.totalMotionBudget * substepDt
+      ? 1 : this.params.totalMotionBudget * substepDt / Math.max(totalRequested, EPS);
+
+    // clipTotalMotion shadow: allowed = min(locallyAllowed,
+    // locallyAllowed * totalScale, totalRemaining); clipped accumulates
+    // locallyAllowed - allowed exactly like the real ledger.
+    const clipTotal = (locallyAllowed: number): number => {
+      const locally = Math.max(0, locallyAllowed);
+      const allowed = Math.min(locally, locally * totalScale, totalRemaining);
+      totalRemaining -= allowed;
+      return allowed;
+    };
+    // clipSubstepMotion shadow for single-column channels (target === -1).
+    const clipLocal = (source: number, requested: number): number => {
+      const locally = Math.max(0, Math.min(requested, localRemaining[source]));
+      const allowed = clipTotal(locally);
+      localRemaining[source] -= allowed;
+      return allowed;
+    };
+    // clipSubstepMotion shadow for two-column channels (relax).
+    const clipLocalPair = (donor: number, receiver: number,
+      requested: number): number => {
+      const locally = Math.max(0, Math.min(requested, localRemaining[donor],
+        localRemaining[receiver]));
+      const allowed = clipTotal(locally);
+      localRemaining[donor] -= allowed;
+      localRemaining[receiver] -= allowed;
+      return allowed;
+    };
+
+    const makePlan = (channelId: P011ExistingChannelId,
+      requestedTotal: number, grantedTotal: number, bottomUse: number,
+      totalUse: number, deltaS: Float64Array): P011ChannelPlan => {
+      const clipped = Math.max(0, requestedTotal - grantedTotal);
+      const plan: P011ChannelPlan = {
+        channelId: channelId,
+        requested: { requested: requestedTotal },
+        plannedGrant: {
+          granted: grantedTotal,
+          clipped: clipped,
+          rejected: 0
+        },
+        deltaSandTopByColumn: deltaS,
+        budgetUse: {
+          local: Math.max(0, grantedTotal),
+          bottom: Math.max(0, bottomUse),
+          total: Math.max(0, totalUse),
+          channelRateCap: 0
+        },
+        admissibility: requestedTotal <= EPS ? 'admissible'
+          : (clipped <= EPS ? 'admissible' : 'clipped')
+      };
+      return plan;
+    };
+
+    // --- settle: column ascending (apply order), local then total ---
+    {
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let totalUse = 0;
+      for (let c = 0; c < cols; c++) {
+        const requested = this.settleRequestAmounts[c];
+        if (requested <= EPS) {
+          continue;
+        }
+        requestedTotal += requested;
+        const allowed = clipLocal(c, requested);
+        grantedTotal += allowed;
+        totalUse += allowed;
+        deltaS[c] += allowed;
+      }
+      plans.push(makePlan('settle', requestedTotal, grantedTotal, 0, totalUse, deltaS));
+    }
+    // --- percolate: S-invariant; no local ledger, total clips on requested ---
+    {
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let totalUse = 0;
+      for (let c = 0; c < cols; c++) {
+        const requested = this.percolationRequestAmounts[c];
+        if (requested <= EPS) {
+          continue;
+        }
+        requestedTotal += requested;
+        const allowed = clipTotal(requested);
+        grantedTotal += allowed;
+        totalUse += allowed;
+        // deltaS stays zero: percolate is S-invariant.
+      }
+      plans.push(makePlan('percolate', requestedTotal, grantedTotal, 0, totalUse, deltaS));
+    }
+    // --- bottomCreep: independent bottom budget, then shared total ---
+    {
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let bottomUse = 0;
+      let totalUse = 0;
+      const independentScale = this.bottomCreepBudgetRequested <= EPS
+        ? 0 : Math.min(1, bottomRemaining / Math.max(this.bottomCreepBudgetRequested, EPS));
+      for (let index = 0; index < this.bottomCreepRequestCount; index++) {
+        const requested = this.bottomCreepRequestAmounts[index];
+        const donor = this.bottomCreepRequestDonors[index];
+        const receiver = this.bottomCreepRequestReceivers[index];
+        if (requested <= EPS) {
+          continue;
+        }
+        requestedTotal += requested;
+        const donorDeposited = this.bh[donor] + this.bl[donor];
+        const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
+        const receiverCapacity = this.waterTop[receiver] > EPS
+          ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
+          : this.capacity - this.sandTopScratch[receiver];
+        const independentGrant = Math.max(0, Math.min(requested * independentScale,
+          donorDeposited, receiverCapacity, bottomRemaining));
+        const allowed = clipTotal(independentGrant);
+        bottomRemaining -= allowed;
+        grantedTotal += allowed;
+        bottomUse += allowed;
+        totalUse += allowed;
+        deltaS[donor] -= allowed;
+        deltaS[receiver] += allowed;
+      }
+      plans.push(makePlan('bottomCreep', requestedTotal, grantedTotal, bottomUse,
+        totalUse, deltaS));
+    }
+    // --- relax: slip requests in collect order, local pair then total ---
+    {
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let totalUse = 0;
+      for (let index = 0; index < this.slipRequestCount; index++) {
+        const requested = this.slipRequestAmounts[index];
+        const donor = this.slipRequestDonors[index];
+        const receiver = this.slipRequestReceivers[index];
+        if (requested <= EPS) {
+          continue;
+        }
+        requestedTotal += requested;
+        const allowed = clipLocalPair(donor, receiver, requested);
+        grantedTotal += allowed;
+        totalUse += allowed;
+        deltaS[donor] -= allowed;
+        deltaS[receiver] += allowed;
+      }
+      plans.push(makePlan('relax', requestedTotal, grantedTotal, 0, totalUse, deltaS));
+    }
+    // --- lift: column ascending, local then total ---
+    {
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let totalUse = 0;
+      for (let c = 0; c < cols; c++) {
+        const requested = this.riseRequestAmounts[c];
+        if (requested <= EPS) {
+          continue;
+        }
+        requestedTotal += requested;
+        const allowed = clipLocal(c, requested);
+        grantedTotal += allowed;
+        totalUse += allowed;
+        deltaS[c] -= allowed;
+      }
+      plans.push(makePlan('lift', requestedTotal, grantedTotal, 0, totalUse, deltaS));
+    }
+    return plans;
+  }
+
+  /**
+   * Replace the unconditional updateTilt commit (§20.3: the reference angle
+   * must not be committed before grants/audit). Runs the two-pass planning
+   * control law and leaves the field in the state selected by the single
+   * commit: effectiveTilt = thetaAccepted. On BLOCKED the reference angle is
+   * held at thetaBefore and the substep is marked failed via lastPlanning*.
+   */
+  private planAndCommitTilt(dt: number): WaterSandErrorCode | null {
+    const thetaBefore = this.effectiveTilt;
+    this.lastPlanningSubstepDt = dt;
+    const rateCapRemaining: P011ExistingChannelRateCapRemaining = {
+      settle: 0,
+      percolate: 0,
+      bottomCreep: 0,
+      relax: 0,
+      lift: 0,
+      suspensionDiffusion: 0
+    };
+    const budgetsBefore: P011ExistingBudgetSnapshot = {
+      localRemaining: Array.from(this.substepMotionBudgetRemaining),
+      bottomRemaining: this.params.vBottomCreepMax * dt,
+      totalRemaining: this.params.totalMotionBudget * dt,
+      channelRateCapRemaining: rateCapRemaining
+    };
+    const slidingState = new Array<boolean>(Math.max(1, this.cols - 1)).fill(false);
+    const channelStateBefore: P011ExistingChannelStateSnapshot = {
+      sliding: slidingState
+    };
+    const input: P011TiltFeasibilityInput = {
+      runId: this.p011RunId,
+      substepId: this.p011SubstepId + 1,
+      dt: dt,
+      thetaBefore: thetaBefore,
+      targetTilt: this.targetTilt,
+      maxTiltOmega: this.params.maxTiltOmegaDegPerSec,
+      sandTopBefore: new Float64Array(this.cols),
+      budgetsBefore: budgetsBefore,
+      channelStateBefore: channelStateBefore
+    };
+    input.sandTopBefore.set(this.substepSandTopBefore);
+    const preview = this.planningPassService.createPreview(input,
+      P011_PLANNING_PASS_TAN_HARD_MAX);
+    const result = preview.result;
+    this.lastPlanningStatus = result.status;
+    this.lastPlanningBlockedReason = result.blockedReason;
+    this.lastPlanningPassCount = result.passCount;
+    this.lastPlanningFallbackUsed = result.fallbackUsed;
+    this.lastPlanningThetaRequested = result.thetaRequested;
+    this.lastPlanningLimitingEdge = result.limitingEdge;
+    if (result.status === 'blocked') {
+      // §20.4: BLOCKED is run-level invalid, not a silent hold. Freeze the
+      // substep with an explicit error code so step() reports ok=false and
+      // the run cannot satisfy zero-violation acceptance.
+      preview.discard();
+      this.effectiveTilt = thetaBefore;
+      this.effectiveTiltRate = 0;
+      this.lastError = WaterSandErrorCode.TILT_PLANNING_BLOCKED;
+      return WaterSandErrorCode.TILT_PLANNING_BLOCKED;
+    }
+    // Commit the accepted angle, then verify preview/commit exact equality
+    // (§20.6.4): the authoritative collect re-runs at thetaAccepted inside
+    // the step loop; capture its allocation here by re-collecting once and
+    // comparing against the preview plans with p011PreviewCommitConsistent.
+    preview.commit();
+    this.effectiveTilt = result.thetaAccepted;
+    this.effectiveTiltRate = (result.thetaAccepted - thetaBefore) / Math.max(dt, EPS);
+    this.lastPlanningCommittedPlans = result.plans;
+    this.lastPlanningCommittedTheta = result.thetaAccepted;
+    return null;
+  }
+
+  /**
+   * §20.6.4 preview/commit exact-equality check, run after the authoritative
+   * collect (substep) has filled the request ledgers at thetaAccepted. The
+   * committed allocation is recomputed with the same shared pure allocator
+   * (allocatePreviewPlans) from the real ledgers and compared item by item
+   * against the preview plans; -0 is normalized and NaN rejected inside the
+   * comparator. Any mismatch freezes the substep as PREVIEW_COMMIT_MISMATCH.
+   */
+  private verifyPreviewCommitConsistency(dt: number): WaterSandErrorCode | null {
+    const previewPlans = this.lastPlanningCommittedPlans;
+    if (previewPlans === null || this.lastPlanningStatus === null ||
+      this.lastPlanningStatus === 'blocked') {
+      return null;
+    }
+    const committedPlans = this.allocatePreviewPlans(dt);
+    const consistent = p011PreviewCommitConsistent(
+      {
+        thetaRequested: this.lastPlanningThetaRequested,
+        thetaAccepted: this.lastPlanningCommittedTheta,
+        feasibleThetaMin: 0,
+        feasibleThetaMax: 0,
+        limitingEdge: this.lastPlanningLimitingEdge,
+        plans: previewPlans,
+        passCount: this.lastPlanningPassCount === 2 ? 2 : 1,
+        fallbackUsed: this.lastPlanningFallbackUsed,
+        status: 'accepted',
+        blockedReason: null
+      },
+      this.effectiveTilt,
+      committedPlans);
+    if (!consistent) {
+      this.lastPlanningStatus = 'blocked';
+      this.lastPlanningBlockedReason = 'PREVIEW_COMMIT_MISMATCH';
+      this.lastError = WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+      return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+    }
+    return null;
+  }
+
+  getPlanningTelemetry(): P011PlanningTelemetry {
+    return {
+      status: this.lastPlanningStatus,
+      blockedReason: this.lastPlanningBlockedReason,
+      passCount: this.lastPlanningPassCount,
+      fallbackUsed: this.lastPlanningFallbackUsed,
+      thetaRequested: this.lastPlanningThetaRequested,
+      limitingEdge: this.lastPlanningLimitingEdge
+    };
   }
 
   private waterLevel(dt: number): void {

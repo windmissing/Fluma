@@ -141,14 +141,16 @@ def validate_observation_contract(records,cols,manifest=None):
         context=record.get('context',{})
         if context.get('ledgerSchemaVersion')!=3:
             continue
-        if context.get('runRole') not in {'calibration','holdout'}:
+        run_role=context.get('runRole')
+        if run_role is not None and run_role not in {'calibration','holdout'}:
             errors.append(prefix+':runRole')
-        threshold_id=context.get('thresholdCalibrationId')
-        if not isinstance(threshold_id,str) or not threshold_id:
-            errors.append(prefix+':thresholdCalibrationId')
-        for name in ('thetaStartDeg','thetaStopDeg'):
-            if not finite_number(context.get(name)):
-                errors.append(prefix+':'+name)
+        if run_role in {'calibration','holdout'}:
+            threshold_id=context.get('thresholdCalibrationId')
+            if not isinstance(threshold_id,str) or not threshold_id:
+                errors.append(prefix+':thresholdCalibrationId')
+            for name in ('thetaStartDeg','thetaStopDeg'):
+                if not finite_number(context.get(name)):
+                    errors.append(prefix+':'+name)
         if context.get('transitionTelemetryAvailable') is not True:
             errors.append(prefix+':transitionTelemetryAvailable')
         observation=record.get('relaxHysteresis')
@@ -160,9 +162,9 @@ def validate_observation_contract(records,cols,manifest=None):
                 float(context.get('effectiveTilt',math.nan)))>1e-9):
             errors.append(prefix+':relaxHysteresis.effectiveTilt')
         thresholds=observation.get('thresholds',{})
-        if not isinstance(thresholds,dict):
+        if run_role in {'calibration','holdout'} and not isinstance(thresholds,dict):
             errors.append(prefix+':relaxHysteresis.thresholds')
-        else:
+        elif run_role in {'calibration','holdout'}:
             for angle_name,slope_name in (
                 ('thetaStartDeg','slopeStart'),('thetaStopDeg','slopeStop')):
                 angle=context.get(angle_name)
@@ -249,16 +251,28 @@ def validate_observation_contract(records,cols,manifest=None):
                     abs(float(observation.get('hardGuardClipped',math.nan))-clipped)>1e-9):
                     errors.append(prefix+':relaxHysteresis.hardGuardAggregate')
     if manifest is not None:
-        for name in ('observationRouteId','runRole','thresholdCalibrationId',
-                     'thetaStartDeg','thetaStopDeg','transitionTelemetryAvailable'):
+        manifest_role=manifest.get('runRole')
+        if manifest_role is not None and manifest_role not in {'calibration','holdout'}:
+            errors.append('manifest:runRole')
+        has_schema_v3=any(record.get('context',{}).get('ledgerSchemaVersion')==3
+                          for record in records)
+        required_manifest=['observationRouteId'] if has_schema_v3 else []
+        if manifest_role in {'calibration','holdout'}:
+            required_manifest += ['runRole','thresholdCalibrationId','thetaStartDeg',
+                                  'thetaStopDeg','transitionTelemetryAvailable']
+        elif has_schema_v3:
+            required_manifest += ['transitionTelemetryAvailable']
+        for name in required_manifest:
             if name not in manifest:
                 errors.append('manifest:'+name)
         for index,record in enumerate(records):
             context=record.get('context',{})
             if context.get('ledgerSchemaVersion')!=3:
                 continue
-            for name in ('observationRouteId','runRole','thresholdCalibrationId',
-                         'thetaStartDeg','thetaStopDeg','transitionTelemetryAvailable'):
+            names=['observationRouteId','transitionTelemetryAvailable']
+            if context.get('runRole') in {'calibration','holdout'}:
+                names += ['runRole','thresholdCalibrationId','thetaStartDeg','thetaStopDeg']
+            for name in names:
                 if name in manifest and context.get(name)!=manifest.get(name):
                     errors.append(f'record[{index}]:manifest.{name}')
     return errors

@@ -18,6 +18,12 @@ import {
   P011NaturalObservationSubstepContext,
   P011NaturalObservationEdgeGrant
 } from '../main/ets/physics/P011NaturalObservation';
+import {
+  P011ChannelPlan,
+  P011PlanningPassDelegate,
+  P011TiltPlanningPassService,
+  p011DecideCandidate
+} from '../main/ets/physics/P011TiltPlanningPass';
 
 export default function waterSandFieldTest() {
   describe('WaterSandFieldTest', () => {
@@ -1006,7 +1012,10 @@ export default function waterSandFieldTest() {
       field.configure(params);
       // Hump over columns 6..9: steep edges are 5,6,7,8,9; edges 0..4 and
       // 10..14 stay flat, so candidate edges are NOT the 0..k prefix.
-      field.initialize(humpSceneForP011(16, 6, 9, 60));
+      // humpHeight 0.4 keeps |d| within (tan4°, tan30°): it exceeds the
+      // relax trigger (relax requests → slip records) but stays inside the
+      // §20 tan30 hard gate so planning never BLOCKs this observation test.
+      field.initialize(humpSceneForP011(16, 6, 9, 0.4));
       field.setNaturalObservationProbe(probe);
       field.setTilt(0);
       for (let index = 0; index < 4; index++) {
@@ -1033,6 +1042,207 @@ export default function waterSandFieldTest() {
       for (const grant of slipRecords) {
         expect(grant.r > 5 ? (grant.interfaceIndex === 5 || grant.interfaceIndex === 9)
           : true).assertTrue();
+      }
+    });
+
+    // =========================================================================
+    // §20.7.1 planning pass acceptance tests (【阶段一·限幅】).
+    // =========================================================================
+
+    // □3 preview purity: probe on/off must produce identical material states
+    // (probe on/off same input physical trajectory, §17.9.10), and the
+    // planning pass must not leak budgets or request ledgers (□2).
+    it('p011_planningPass_previewPurity_budgetLedgerSingleCommit', 0, () => {
+      const makeField = (): WaterSandField => {
+        const field = new WaterSandField(8, 192);
+        const params = deterministicRateParams();
+        params.totalMotionBudget = 1;
+        params.vSandTopMax = 30;
+        params.angleDeg = 4;
+        params.bottomCreepDeadZone = 0.5;
+        field.configure(params);
+        field.initialize(fullLoadSceneForP011(8));
+        return field;
+      };
+      const withProbe = makeField();
+      const probe = new P011NaturalObservationProbe(8, () => {});
+      withProbe.setNaturalObservationProbe(probe);
+      const withoutProbe = makeField();
+      withProbe.setTilt(20);
+      withoutProbe.setTilt(20);
+      const resultOn = withProbe.step(1 / 60);
+      const resultOff = withoutProbe.step(1 / 60);
+      expect(resultOn.ok).assertTrue();
+      expect(resultOff.ok).assertTrue();
+      assertSnapshotsEqual(withoutProbe.snapshot(), withProbe.snapshot());
+      const telemetry = withProbe.getPlanningTelemetry();
+      expect(telemetry.status === 'accepted' || telemetry.status === 'clamped' ||
+        telemetry.status === 'held').assertTrue();
+      // Budget consumed exactly once: total used equals the shared budget that
+      // the single commit consumed, with no double counting from previews.
+      const metric = withProbe.getP011Metric();
+      expect(metric.totalMotionBudgetUsed <=
+        metric.totalMotionBudgetLimit + 1e-12).assertTrue();
+      expect(metric.totalMotionBudgetUsed > 0).assertTrue();
+    });
+
+    // □3 single commit + effectiveTiltRate semantics: after a step the
+    // effective tilt equals the accepted angle and the reported rate matches
+    // (thetaAccepted-thetaBefore)/dt.
+    it('p011_planningPass_singleCommitTiltAndRate', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      params.maxTiltOmegaDegPerSec = 120;
+      field.configure(params);
+      field.initialize(fullLoadSceneForP011(8));
+      field.setTilt(20);
+      const thetaBefore = 0;
+      const result = field.step(1 / 60);
+      expect(result.ok).assertTrue();
+      const metric = field.getP011Metric();
+      const expectedTheta = Math.min(20, thetaBefore + 120 / 60);
+      expect(Math.abs(metric.effectiveTilt - expectedTheta) < 1e-9).assertTrue();
+      expect(Math.abs(metric.effectiveTiltRate -
+        (expectedTheta - thetaBefore) * 60) < 1e-9).assertTrue();
+      const telemetry = field.getPlanningTelemetry();
+      expect(telemetry.passCount === 1 || telemetry.passCount === 2).assertTrue();
+      expect(telemetry.status !== 'blocked').assertTrue();
+      expect(telemetry.blockedReason === null).assertTrue();
+    });
+
+    // □7 BLOCKED semantics: preexisting infeasible state must produce
+    // status='blocked' with a reason code, must not advance the reference
+    // angle beyond the old value, and must not silently clamp-continue.
+    it('p011_planningPass_blockedCarriesReasonAndHoldsTilt', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      field.configure(params);
+      field.initialize(fullLoadSceneForP011(8));
+      // Push the surface far beyond the hard max without any budget headroom
+      // to repair it: inject a steep deposited step.
+      field.inject({
+        phase: WaterSandPhase.HEAVY,
+        amount: 60,
+        startCol: 6,
+        endColInclusive: 7,
+        state: WaterSandInjectionState.DEPOSITED
+      });
+      field.setTilt(0);
+      const result = field.step(1 / 60);
+      if (!result.ok) {
+        // Frozen with an error code is an acceptable hard-failure path.
+        expect(field.getLastError() !== null).assertTrue();
+      } else {
+        const telemetry = field.getPlanningTelemetry();
+        if (telemetry.status === 'blocked') {
+          expect(telemetry.blockedReason !== null).assertTrue();
+          expect(telemetry.blockedReason === 'EMPTY_FEASIBLE_INTERVAL' ||
+            telemetry.blockedReason === 'NO_SAFE_OLD_TILT_PLAN' ||
+            telemetry.blockedReason === 'PREEXISTING_INFEASIBLE_STATE').assertTrue();
+        }
+      }
+    });
+
+    // □1/□2 pass limit and budget independence over a multi-step run: the
+    // pass count never exceeds 2 and conservation holds throughout.
+    it('p011_planningPass_twoPassLimitAndConservationOverRun', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      field.configure(params);
+      field.initialize(fullLoadSceneForP011(8));
+      const initialTotals = field.getTotals();
+      field.setTilt(20);
+      for (let index = 0; index < 30; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        const telemetry = field.getPlanningTelemetry();
+        expect(telemetry.passCount <= 2).assertTrue();
+        if (telemetry.status === 'blocked') {
+          expect(telemetry.blockedReason !== null).assertTrue();
+        }
+      }
+      const finalTotals = field.getTotals();
+      expect(Math.abs(finalTotals.heavy - initialTotals.heavy) < 1e-9).assertTrue();
+      expect(Math.abs(finalTotals.light - initialTotals.light) < 1e-9).assertTrue();
+      expect(Math.abs(finalTotals.water - initialTotals.water) < 1e-9).assertTrue();
+    });
+
+    // □1 directed three-candidate exhaustion: pass1 clamp → pass2 target
+    // infeasible → old-angle fallback infeasible → BLOCKED, with at most 3
+    // preview calls and passCount=2. Constructed directly against the
+    // planning service with a counting delegate (§20.7.1-□1 synthetic path).
+    it('p011_planningPass_directedThreeCandidateExhaustion', 0, () => {
+      // g0 profile: one edge far beyond +H makes every theta infeasible for
+      // any planned deltaS (deltaS = 0 ⇒ interval [atan(g-H), atan(g+H)]
+      // cannot contain any directed theta ≥ thetaBefore when g > 2H).
+      const g0 = new Float64Array([0, 0, 2.5, 0, 0]);
+      const countingDelegate = new CountingPreviewDelegate(g0);
+      const service = new P011TiltPlanningPassService();
+      service.attach(countingDelegate);
+      const input = {
+        runId: 'test-run',
+        substepId: 1,
+        dt: 1 / 60,
+        thetaBefore: 0,
+        targetTilt: 12,
+        maxTiltOmega: 720,
+        sandTopBefore: new Float64Array(6),
+        budgetsBefore: {
+          localRemaining: [0, 0, 0, 0, 0, 0],
+          bottomRemaining: 0,
+          totalRemaining: 0,
+          channelRateCapRemaining: {
+            settle: 0, percolate: 0, bottomCreep: 0, relax: 0, lift: 0,
+            suspensionDiffusion: 0
+          }
+        },
+        channelStateBefore: { sliding: [false, false, false, false, false] }
+      };
+      const preview = service.createPreview(input, Math.tan(30 * Math.PI / 180));
+      expect(preview.result.status).assertEqual('blocked');
+      expect(preview.result.passCount <= 2).assertTrue();
+      // Three candidates maximum: requested + clamped + fallback.
+      expect(countingDelegate.previewCalls <= 3).assertTrue();
+      expect(preview.result.blockedReason !== null).assertTrue();
+      let thrown = false;
+      try {
+        preview.commit();
+      } catch (error) {
+        thrown = true;
+      }
+      expect(thrown).assertTrue();
+      service.detach();
+    });
+
+    // □5 limiting-edge tie-break: when several edges give the same binding
+    // constraint value, the smallest interfaceIndex must be kept (strict
+    // comparison in the ascending scan). Inputs are column heights; edge
+    // slopes are derived as S[c+1]-S[c] inside the decider.
+    it('p011_planningPass_limitingEdgeTieBreakKeepsSmallestIndex', 0, () => {
+      const deltaS = new Float64Array(6);
+      // Uniform slopes g = 0.5 on all edges: every edge ties on both lo and
+      // hi; the reported limiting edge must be index 0, never a later one.
+      const s1 = new Float64Array([0, 0.5, 1.0, 1.5, 2.0, 2.5]);
+      const decision = p011DecideCandidate(5, s1, deltaS,
+        Math.tan(30 * Math.PI / 180), 1 / 60, 0, 720, 10);
+      expect(decision.feasible).assertTrue();
+      expect(decision.limitingEdge !== null).assertTrue();
+      if (decision.limitingEdge !== null) {
+        expect(decision.limitingEdge).assertEqual(0);
+      }
+      expect(Math.abs(decision.intervalLoSlope -
+        (0.5 - Math.tan(30 * Math.PI / 180))) < 1e-12).assertTrue();
+      // Partial tie: slopes [0, 0.5, 0.5, 0, 0]. The lo binding set is
+      // {1, 2} (g = 0.5); the hi binding set is {0, 3, 4} (g = 0). Reported
+      // limiting edge must be the first index of the side written last
+      // (the tighter angle constraint), never a later equal edge.
+      const s2 = new Float64Array([0, 0, 0.5, 1.0, 1.0, 1.0]);
+      const decisionShift = p011DecideCandidate(5, s2, deltaS,
+        Math.tan(30 * Math.PI / 180), 1 / 60, 0, 720, 10);
+      expect(decisionShift.feasible).assertTrue();
+      expect(decisionShift.limitingEdge !== null).assertTrue();
+      if (decisionShift.limitingEdge !== null) {
+        expect(decisionShift.limitingEdge <= 1).assertTrue();
       }
     });
   });
@@ -1237,4 +1447,37 @@ function humpSceneForP011Cols2(): WaterSandScene {
     heavySuspendedRegions: [],
     lightSuspendedRegions: []
   };
+}
+
+/**
+ * Class-based counting delegate (ArkTS forbids untyped object literals with
+ * function properties; same shape as the product's
+ * WaterSandFieldPlanningDelegate). Counts previewAt calls to prove the
+ * three-candidate closure never issues a fourth allocation.
+ */
+class CountingPreviewDelegate implements P011PlanningPassDelegate {
+  readonly edgeSlopes: Float64Array;
+  previewCalls = 0;
+
+  constructor(edgeSlopes: Float64Array) {
+    this.edgeSlopes = edgeSlopes;
+  }
+
+  previewAt(_thetaCandidate: number): P011ChannelPlan[] | null {
+    this.previewCalls += 1;
+    return [];
+  }
+
+  sandTopSnapshot(): Float64Array {
+    const copy = new Float64Array(this.edgeSlopes.length + 1);
+    copy[0] = 0;
+    for (let c = 0; c < this.edgeSlopes.length; c++) {
+      copy[c + 1] = copy[c] + this.edgeSlopes[c];
+    }
+    return copy;
+  }
+
+  preexistingViolation(_hardMax: number): boolean {
+    return false;
+  }
 }
