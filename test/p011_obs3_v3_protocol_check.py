@@ -1,0 +1,746 @@
+#!/usr/bin/env python3
+"""Observation-3 v3 protocol gate (preregistration-v1, METHOD_FROZEN).
+
+Implements docs/observation-protocol-P011-v3-preregistration-v1.md
+sections 2-8 as a static analysis channel. Independent of the v1/v2
+checkers; nothing here weakens safety gates, moves the search window,
+authorizes capture, or produces threshold estimates.
+
+Section mapping:
+  s2  data identity & decision-time contract - per-attempt/per-edge
+      fields, decisionG/R/Alpha at the pre-branch sampling point,
+      executed-vs-configured threshold identity.
+  s3  nine platforms & eight legs - leg identity from the pre-registered
+      schedule, half-open boundary ownership, command step 100 ms /
+      angular step 0.05 / 0.10 deg, peak-grid divisibility.
+  s4  shadow audit support - peak grid constant, SHADOW_SAFE /
+      SHADOW_COVERED predicates, EXECUTION_ENVELOPE_UNRESOLVED,
+      SHADOW_PREDICTED_CENSOR.
+  s5  sample eligibility, bracket formula, 3-point monotone window,
+      first-transition-per-(runId, segmentId, fixedEdge), 0.5 deg width
+      gate (wide events recorded BRACKET_TOO_WIDE, never split).
+  s6  frozen statistical gates as constants (34 runs, 30 states / 10
+      runs per main cell, 3-per-run cap, 20 events / 5 runs, 24 sub
+      cells, bootstrap seed 20261019, CI gates, threshold relation).
+  s7  coverage matrix (13+ column definitions, source=shadow|pilot
+      isomorphic tables).
+  s8  honest output & censoring discipline - v3 right-censoring new
+      definition (platform arrival no longer required), STOP
+      nine-way subcodes, pilot three-dimension verdict.
+"""
+import argparse
+import json
+import math
+from pathlib import Path
+
+PROTOCOL_ID = "p011-observation3-v3"
+PROTOCOL_REVISION = "preregistration-v1"
+
+# --- s3 frozen激励序列 constants -------------------------------------------
+PLATFORM_SEQUENCE = [0.0, 15.0, None, 15.0, 0.0, -15.0, None, -15.0, 0.0]
+# H2/H6 are the A-peak platforms; A is bound per-candidate from the manifest
+# peak grid, never defaulted to 30 / 29.9.
+PLATFORM_HOLD_MS = 5100.0
+COMMAND_STEP_MS = 100.0
+RATE_PRIMARY_DEG_PER_S = 0.5
+RATE_SENSITIVITY_DEG_PER_S = 1.0
+ANGULAR_STEP = {RATE_PRIMARY_DEG_PER_S: 0.05, RATE_SENSITIVITY_DEG_PER_S: 0.10}
+PEAK_GRID = [round(15.1 + 0.1 * i, 1) for i in range(149)]  # 15.1 .. 29.9
+
+LEGS = {
+    "L1": ("H0", "H1", "increase"),
+    "L2": ("H1", "H2", "increase"),
+    "L3": ("H2", "H3", "decrease"),
+    "L4": ("H3", "H4", "decrease"),
+    "L5": ("H4", "H5", "decrease"),
+    "L6": ("H5", "H6", "decrease"),
+    "L7": ("H6", "H7", "increase"),
+    "L8": ("H7", "H8", "increase"),
+}
+
+# --- s4/s5 tolerance constants ---------------------------------------------
+PLATFORM_IDENTITY_TOLERANCE_DEG = 0.20
+ANGLE_NUMERIC_TOLERANCE_DEG = 1e-9
+RATE_TOLERANCE_DEG_PER_S = 1e-9
+PLATFORM_RANGE_TOLERANCE_DEG = 1e-6
+STABILITY_WINDOW_MS = 200.0
+STABILITY_MIN_SUBSTEPS = 3
+BRACKET_MAX_WIDTH_DEG = 0.5
+
+# --- s6 frozen statistical gates (inherited unchanged) ----------------------
+STATS = {
+    "runsPerCandidatePair": 34,
+    "fitRuns": 24,
+    "holdoutRuns": 10,
+    "minRunsPerDirectionPerGroup": 5,
+    "mainCellMinStateSamples": 30,
+    "mainCellMinRuns": 10,
+    "maxStatesPerRunPerCell": 3,
+    "minQualifiedEventsPerDirectionPerType": 20,
+    "minRunsPerDirectionPerType": 5,
+    "subCellCount": 24,
+    "subCellMinStateSamples": 30,
+    "subCellMinRuns": 10,
+    "bootstrapIterations": 10000,
+    "bootstrapSeed": 20261019,
+    "ciPercentiles": [2.5, 97.5],
+    "ciWidthMaxDeg": 2.0,
+    "fitHoldoutEstimateDiffMaxDeg": 1.0,
+    "holdoutOutsideFitCIRateMax": 0.05,
+    "subCellMisjudgmentRateMax": 0.05,
+    "startLowerAboveStopUpper": True,
+    "pointSeparationMinNoiseUnits": 2.0,
+    "startUpperCIBelowDeg": 30.0,
+    "sigmaNoiseFactor": 1.4826,
+    "primaryRateDegPerS": RATE_PRIMARY_DEG_PER_S,
+    "sensitivityRateDegPerS": RATE_SENSITIVITY_DEG_PER_S,
+    "sensitivityIndependentRunsIfConfirmed": 68,
+}
+
+# --- s8 output codes (none produce point estimates) -------------------------
+CODE_RIGHT_CENSORED_AT_TAN30 = "RIGHT_CENSORED_AT_TAN30"
+CODE_STOP_TRANSITION_UNOBSERVED = "STOP_TRANSITION_UNOBSERVED"
+STOP_SUBCODES = (
+    "NEVER_ACTIVE",
+    "STOP_BEFORE_ELIGIBLE_SEGMENT",
+    "STILL_ACTIVE_AT_END",
+    "ONLY_NEUTRAL_ZERO_ENDPOINT",
+    "ONLY_PLANNER_HOLD_OR_CLAMP",
+    "ONLY_BUDGET_GUARD_OR_STOCK_LIMITED",
+    "BRACKET_TOO_WIDE",
+    "NONMONOTONE_LOCAL_WINDOW",
+    "CONTINUITY_MISSING",
+)
+CODE_START_OUTSIDE_ELIGIBLE_WINDOW = "START_OUTSIDE_ELIGIBLE_WINDOW"
+CODE_PLATFORM_UNREACHED = "PLATFORM_UNREACHED"
+CODE_PLATFORM_UNSTABLE = "PLATFORM_UNSTABLE"
+CODE_TELEMETRY_INCOMPLETE = "TELEMETRY_INCOMPLETE"
+CODE_RUN_INVALID_HARD_GATE = "RUN_INVALID_HARD_GATE"
+CODE_EXECUTION_IDENTITY_MISMATCH = "EXECUTION_THRESHOLD_IDENTITY_MISMATCH"
+CODE_UNOBSERVABLE = "UNOBSERVABLE"
+CODE_EXECUTION_ENVELOPE_UNRESOLVED = "EXECUTION_ENVELOPE_UNRESOLVED"
+CODE_SHADOW_PREDICTED_CENSOR = "SHADOW_PREDICTED_CENSOR"
+CODE_BRACKET_TOO_WIDE = "BRACKET_TOO_WIDE"
+CODE_NONMONOTONE_LOCAL_WINDOW = "NONMONOTONE_LOCAL_WINDOW"
+
+MAIN_CELLS = ("start/+", "start/-", "stop/+", "stop/-")
+COVERAGE_STATUSES = (
+    "OBSERVED", "NOT_OBSERVED", "UNDEFINED",
+    "PROVEN_UNREACHABLE_IN_REGISTERED_CLASS", "UNKNOWN",
+)
+
+
+def read_json(path):
+    text = Path(path).read_text(encoding="utf-8-sig").strip() if path else ""
+    return json.loads(text) if text else {}
+
+
+def read_records(path):
+    with Path(path).open("r", encoding="utf-8") as stream:
+        for line in stream:
+            if line.strip():
+                yield json.loads(line)
+
+
+def finite(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def decision_alpha(decision_r):
+    """s2: decisionAlpha = atan(abs(decisionR)) in degrees (r normalized) or
+    atan(abs(d)/dx) when r is a length; the ledger's `r` field is treated as
+    the normalized residual per the existing checker convention."""
+    if not finite(decision_r):
+        return None
+    return math.degrees(math.atan(abs(float(decision_r))))
+
+
+def executed_identity_ok(context, manifest):
+    """s2: executed thresholds must exist, match configured values, and carry
+    implementation identity. Merely copying the manifest into logs is not
+    enough: stateMachineVersion/sourceCommit/sourceFileSha256/buildSha256
+    must be present. Absence -> EXECUTION_THRESHOLD_IDENTITY_MISMATCH."""
+    executed = context.get("executedThresholds")
+    configured = (manifest.get("calibrationProtocol", {}) or {}).get(
+        "configuredThresholds") or manifest.get("configuredThresholds")
+    if not isinstance(executed, dict):
+        return False, "executedThresholdsMissing"
+    for field in ("thetaStartDeg", "thetaStopDeg", "slopeStart", "slopeStop"):
+        if not finite(executed.get(field)):
+            return False, f"executedFieldMissing:{field}"
+    for field in ("stateMachineVersion", "sourceCommit", "sourceFileSha256", "buildSha256"):
+        if not executed.get(field):
+            return False, f"executionIdentityMissing:{field}"
+    if isinstance(configured, dict):
+        for key in ("thetaStartDeg", "thetaStopDeg"):
+            if finite(configured.get(key)) and finite(executed.get(key)):
+                if abs(float(configured[key]) - float(executed[key])) > ANGLE_NUMERIC_TOLERANCE_DEG:
+                    return False, f"configuredExecutedMismatch:{key}"
+    return True, None
+
+
+def leg_from_schedule(context, schedule_bindings):
+    """s3: leg identity comes from the pre-registered schedule binding
+    (commandSequence -> segmentId/legId), never re-segmented from observed
+    transitions. Returns (legId, phaseKind) or (None, None)."""
+    seq = context.get("commandSequence")
+    if seq is None:
+        seq = context.get("sequence")
+    binding = schedule_bindings.get(str(seq)) if schedule_bindings else None
+    if isinstance(binding, dict):
+        return binding.get("legId"), binding.get("phaseKind")
+    # Fall back to ledger-carried fields if the manifest did not bind;
+    # absence is surfaced as telemetry-incomplete by the caller.
+    return context.get("legId"), context.get("phaseKind")
+
+
+class PlatformWindow:
+    """s3/s5 stable-accepted-platform window (same semantics as v2,
+    retained for platform diagnostics; v3 does not require platforms for
+    start events)."""
+
+    def __init__(self):
+        self.window = []
+
+    def reset(self):
+        self.window = []
+
+    def feed(self, effective, rate, time_ms, substep, consistent):
+        if not (finite(effective) and finite(rate) and finite(time_ms)):
+            self.reset()
+            return "off"
+        effective = float(effective)
+        near = None
+        for t in [0.0, 15.0, -15.0, 30.0, -30.0]:
+            if abs(effective - t) <= PLATFORM_IDENTITY_TOLERANCE_DEG:
+                near = t
+                break
+        if near is None or not consistent or abs(float(rate)) > RATE_TOLERANCE_DEG_PER_S:
+            self.reset()
+            return "off"
+        if self.window:
+            if not (isinstance(substep, int) and substep == self.window[-1][2] + 1
+                    and abs(effective - self.window[-1][1]) <= PLATFORM_IDENTITY_TOLERANCE_DEG):
+                self.reset()
+        self.window.append((float(time_ms), effective, substep))
+        if len(self.window) > 4096:
+            self.window = self.window[-2048:]
+        if len(self.window) >= STABILITY_MIN_SUBSTEPS:
+            span = self.window[-1][0] - self.window[0][0]
+            tilts = [w[1] for w in self.window]
+            if span >= STABILITY_WINDOW_MS and (max(tilts) - min(tilts)) <= PLATFORM_RANGE_TOLERANCE_DEG:
+                return "stable"
+        return "candidate"
+
+
+def endpoint_planner_clear(edge, context):
+    """s5.2: no planner clamp/hold/reject/rollback at the endpoint.
+    thetaRequested must equal thetaAccepted (1e-9 deg); explicit
+    plannerHold/requestRejected/rollback flags must be falsy when present.
+    Missing theta fields mean UNVERIFIABLE -> not clear."""
+    theta_req = context.get("thetaRequested")
+    theta_acc = context.get("thetaAccepted")
+    if not (finite(theta_req) and finite(theta_acc)):
+        return False
+    if abs(float(theta_req) - float(theta_acc)) > ANGLE_NUMERIC_TOLERANCE_DEG:
+        return False
+    for flag in ("plannerHold", "requestRejected", "rollback"):
+        value = context.get(flag)
+        if value is True:
+            return False
+    return True
+
+
+def endpoint_clip_clear(edge):
+    """s5.2: no budget/guard/stock/capacity clipping ambiguity at the
+    endpoint. requested>granted marks budget clipping; explicit guard or
+    stock/capacity flags count too. requested=0 & granted=0 is a real stop
+    with budgetScale possibly null - NOT treated as limiting."""
+    requested = edge.get("requested")
+    granted = edge.get("granted")
+    if finite(requested) and finite(granted):
+        if float(requested) > 1e-12 and float(granted) + 1e-9 < float(requested):
+            return False
+    for flag in ("guardClipped", "stockLimited", "capacityClipped"):
+        if edge.get(flag) is True:
+            return False
+    return True
+
+
+def three_point_monotone(window_alphas, kind):
+    """s5.2: endpoints + the immediately preceding same-leg decision must be
+    monotone in the event direction (start non-decreasing, stop
+    non-increasing; equality allowed). Window is exactly the three adjacent
+    records - no forward search for favorable endpoints."""
+    if len(window_alphas) < 3:
+        return False
+    a0, a1, a2 = window_alphas[-3:]
+    if any(a is None for a in (a0, a1, a2)):
+        return False
+    if kind == "start":
+        return a0 <= a1 <= a2
+    return a0 >= a1 >= a2
+
+
+def analyze(ledger_path, manifest_path, source="pilot"):
+    manifest = read_json(manifest_path) if manifest_path else {}
+    records = list(read_records(ledger_path))
+    protocol_errors = []
+    notes = []
+
+    protocol = manifest.get("calibrationProtocol", {}) if isinstance(manifest, dict) else {}
+    if protocol.get("protocolId") != PROTOCOL_ID:
+        protocol_errors.append("protocolIdMissingOrMismatch")
+    if protocol.get("protocolRevision") != PROTOCOL_REVISION:
+        protocol_errors.append("protocolRevisionMissingOrMismatch")
+    schedule_hash = protocol.get("scheduleSha256")
+    if not isinstance(schedule_hash, str) or len(schedule_hash) != 64:
+        protocol_errors.append("scheduleSha256Missing")
+    configured = protocol.get("configuredThresholds")
+    if not isinstance(configured, dict) or not (finite(configured.get("thetaStartDeg"))
+                                                and finite(configured.get("thetaStopDeg"))):
+        protocol_errors.append("configuredThresholdsMissing")
+        configured = {}
+    else:
+        # s1 search window: start [25,30), stop [15,25], stop<start.
+        start_c, stop_c = float(configured["thetaStartDeg"]), float(configured["thetaStopDeg"])
+        if not (25.0 <= start_c < 30.0 and 15.0 <= stop_c <= 25.0 and stop_c < start_c):
+            protocol_errors.append("configuredThresholdsOutsideSearchWindow")
+
+    first_context = records[0].get("context", {}) if records else {}
+    if not (first_context.get("runRole") == "calibration"
+            and first_context.get("observationRouteId") == "natural-relax-hysteresis-v1"):
+        protocol_errors.append("notObservation3CalibrationRun")
+
+    # ---- s2 executed threshold identity (per run) ----
+    identity_ok, identity_reason = executed_identity_ok(first_context, manifest)
+    identity_mismatch = not identity_ok
+    if identity_mismatch:
+        notes.append(f"executionIdentity:{identity_reason}")
+
+    # ---- schedule bindings for leg identity (s3) ----
+    schedule_bindings = protocol.get("commandBindings") or manifest.get("commandBindings") or {}
+
+    # ---- Pass 1: platform windows & telemetry completeness ----
+    window = PlatformWindow()
+    telemetry_incomplete_records = 0
+    platform_reach = {k: {"stableRecords": 0, "firstStableMs": None,
+                          "acceptedMin": None, "acceptedMax": None,
+                          "plannerLimitedStableRecords": 0}
+                      for k in ("15", "30", "-15", "-30")}
+    substep_states = []
+    hard_gate_failed = False
+    for record in records:
+        context = record.get("context", {})
+        audit = record.get("audit", {})
+        code = audit.get("errorCode")
+        if code not in (None, 0, "0", 5, "5", "TILT_PLANNING_BLOCKED"):
+            hard_gate_failed = True
+        theta_req = context.get("thetaRequested")
+        theta_acc = context.get("thetaAccepted")
+        consistent = None
+        if theta_acc is None:
+            consistent = None
+        elif finite(theta_acc) and finite(context.get("effectiveTilt")):
+            consistent = abs(float(theta_acc) - float(context["effectiveTilt"])) <= ANGLE_NUMERIC_TOLERANCE_DEG
+        else:
+            consistent = False
+        if consistent is None:
+            telemetry_incomplete_records += 1
+        effective = context.get("effectiveTilt")
+        rate = context.get("effectiveTiltRate")
+        time_ms = float(context.get("physicsTime", 0.0)) * 1000.0 if finite(context.get("physicsTime")) else None
+        verdict = window.feed(effective, rate, time_ms or 0.0,
+                              context.get("substepId"), consistent is True)
+        accepted = float(effective) if finite(effective) else None
+        target = context.get("targetTilt")
+        key = None
+        if finite(target) and abs(float(target)) > ANGLE_NUMERIC_TOLERANCE_DEG and abs(float(target) - round(float(target) / 15.0) * 15.0) <= PLATFORM_IDENTITY_TOLERANCE_DEG:
+            key = str(int(round(float(target))))
+        state = {"stable": verdict == "stable", "accepted": accepted,
+                 "sign": ("+" if accepted > 0 else "-") if accepted is not None and accepted != 0 else None,
+                 "legId": None, "phaseKind": None}
+        leg_id, phase_kind = leg_from_schedule(context, schedule_bindings)
+        state["legId"] = leg_id
+        state["phaseKind"] = phase_kind
+        substep_states.append(state)
+        if key and verdict in ("stable", "candidate"):
+            reach = platform_reach.get(key)
+            if reach is not None:
+                if verdict == "stable":
+                    reach["stableRecords"] += 1
+                    if reach["firstStableMs"] is None:
+                        reach["firstStableMs"] = time_ms
+                    reach["acceptedMin"] = accepted if reach["acceptedMin"] is None else min(reach["acceptedMin"], accepted)
+                    reach["acceptedMax"] = accepted if reach["acceptedMax"] is None else max(reach["acceptedMax"], accepted)
+                    if theta_req is None or theta_acc is None or not (
+                            finite(theta_req) and finite(theta_acc)
+                            and abs(float(theta_req) - float(theta_acc)) <= ANGLE_NUMERIC_TOLERANCE_DEG):
+                        reach["plannerLimitedStableRecords"] += 1
+
+    # ---- Pass 2: state samples, cells, brackets (s5) ----
+    cells = {key: {"stateSamples": 0, "stateRuns": set(), "realTransitions": 0,
+                   "eligibleBrackets": 0, "cappedTransitions": 0,
+                   "perRunTransitions": {}, "censorCodes": [],
+                   "stopSubcode": None, "atRiskAlphaMax": None,
+                   "exclusions": {}, "brackets": []}
+             for key in MAIN_CELLS}
+    neutral_states = 0
+    first_bracket_keys = set()
+    prior_state = {}
+    prior_decisions = {}  # (runId, c, legId) -> deque of last alphas (3-point window)
+    wide_events = 0
+    nonmonotone_events = 0
+    continuity_missing = 0
+
+    for record, state in zip(records, substep_states):
+        context = record.get("context", {})
+        run_id = context.get("runId")
+        substep_id = context.get("substepId")
+        segment_id = state.get("legId") or context.get("segmentId")
+        hysteresis = record.get("relaxHysteresis", {})
+        edges = hysteresis.get("edges", []) if isinstance(hysteresis, dict) else []
+        if not isinstance(edges, list):
+            edges = []
+        for edge in edges:
+            if not isinstance(edge, dict):
+                continue
+            donor = edge.get("donor")
+            receiver = edge.get("receiver")
+            interface = edge.get("interfaceIndex")
+            if not (finite(donor) and finite(receiver) and finite(interface)):
+                continue
+            if abs(float(donor) - float(receiver)) == 1:
+                c = min(float(donor), float(receiver))
+                if float(interface) != c:
+                    continue  # directional donor index misused as edge identity
+            active_before = edge.get("activeBefore")
+            active_after = edge.get("activeAfter")
+            if not isinstance(active_before, bool):
+                continue
+            accepted = state["accepted"]
+            cell_sign = state["sign"] if state["stable"] else None
+            alpha = decision_alpha(edge.get("r"))
+            kind_state = "start" if not active_before else "stop"
+            if cell_sign:
+                cell = cells[f"{kind_state}/{cell_sign}"]
+                cell["stateSamples"] += 1
+                cell["stateRuns"].add(run_id)
+                # at-risk alpha maximum: start risk state = inactive, stop
+                # risk state = active (s7); both cells track their own state.
+                if alpha is not None:
+                    cell["atRiskAlphaMax"] = alpha if cell["atRiskAlphaMax"] is None else max(cell["atRiskAlphaMax"], alpha)
+            else:
+                neutral_states += 1
+            if not isinstance(active_after, bool):
+                continue
+            # Per-edge tracking: EVERY edge record updates both the prior
+            # state and the same-leg decision window (not only transitions),
+            # so bracket continuity and the 3-point window can span
+            # arbitrarily many committed non-transition substeps.
+            identity = (run_id, float(interface))
+            previous = prior_state.get(identity)
+            prior_state[identity] = (substep_id, active_before, active_after, alpha, state["stable"])
+            window_key = (run_id, float(interface), segment_id)
+            window_alphas = prior_decisions.setdefault(window_key, [])
+            window_alphas.append(alpha)
+            if len(window_alphas) > 3:
+                del window_alphas[0]
+            is_real_start = (not active_before) and active_after
+            is_real_stop = active_before and (not active_after)
+            if not (is_real_start or is_real_stop):
+                continue
+            kind = "start" if is_real_start else "stop"
+            if cell_sign is None:
+                continue
+            cell_key = f"{kind}/{cell_sign}"
+            cell = cells[cell_key]
+            cell["realTransitions"] += 1
+            run_count = cell["perRunTransitions"].setdefault(run_id, 0)
+            capped = run_count >= STATS["maxStatesPerRunPerCell"]
+            if capped:
+                cell["cappedTransitions"] += 1
+            else:
+                cell["perRunTransitions"][run_id] = run_count + 1
+            # s5.2 fixed exclusion order: identity/transaction -> segment/sign
+            # -> transition/width. All hit reasons retained.
+            reasons = []
+            if previous is None:
+                reasons.append("CONTINUITY_MISSING")
+            else:
+                prev_substep, prev_before, prev_after, prev_alpha, prev_stable = previous
+                if not (isinstance(substep_id, int) and prev_substep == substep_id - 1):
+                    reasons.append("CONTINUITY_MISSING")
+                if prev_after != active_before:
+                    reasons.append("CONTINUITY_MISSING")
+                if not prev_stable:
+                    reasons.append("PREV_ENDPOINT_NOT_ELIGIBLE")
+            if not state["stable"]:
+                # v3 allows ramp legs as eligible segments; "stable" here only
+                # marks stable-platform segments. Ramp eligibility is granted
+                # via leg identity + committed transaction, so absence of a
+                # platform does not disqualify; only missing leg identity does.
+                if not segment_id:
+                    reasons.append("SEGMENT_IDENTITY_MISSING")
+            if not segment_id:
+                reasons.append("SEGMENT_IDENTITY_MISSING")
+            if not endpoint_planner_clear(edge, context):
+                reasons.append("PLANNER_HOLD_OR_CLAMP")
+            if not endpoint_clip_clear(edge):
+                reasons.append("BUDGET_GUARD_OR_STOCK_LIMITED")
+            executed = context.get("executedThresholds") or {}
+            if kind == "start":
+                threshold = float(executed.get("thetaStartDeg", configured.get("thetaStartDeg", float("nan"))))
+                if not (finite(previous[3] if previous else None) and False):
+                    pass
+                if previous and previous[3] is not None and alpha is not None:
+                    if not (previous[3] < threshold <= alpha):
+                        reasons.append("START_NOT_CROSSED")
+                cross_ok = bool(previous and previous[3] is not None and alpha is not None
+                                and previous[3] < threshold <= alpha)
+            else:
+                threshold = float(executed.get("thetaStopDeg", configured.get("thetaStopDeg", float("nan"))))
+                if previous and previous[3] is not None and alpha is not None:
+                    if not (previous[3] > threshold >= alpha):
+                        reasons.append("STOP_NOT_CROSSED")
+                cross_ok = bool(previous and previous[3] is not None and alpha is not None
+                                and previous[3] > threshold >= alpha)
+            width_ok = False
+            if previous and previous[3] is not None and alpha is not None:
+                width = abs(alpha - previous[3])
+                if width > BRACKET_MAX_WIDTH_DEG:
+                    reasons.append("BRACKET_TOO_WIDE")
+                    wide_events += 1
+                else:
+                    width_ok = True
+            if not three_point_monotone(window_alphas[:-1] + [alpha], kind):
+                reasons.append("NONMONOTONE_LOCAL_WINDOW")
+                nonmonotone_events += 1
+            for reason in reasons:
+                cell["exclusions"][reason] = cell["exclusions"].get(reason, 0) + 1
+            if "CONTINUITY_MISSING" in reasons:
+                continuity_missing += 1
+            if reasons:
+                continue
+            if capped:
+                # s5.2 cap: the 4th+ transition per run per main cell keeps
+                # raw audit but never enters estimation/first-bracket bookkeeping.
+                continue
+            cell["eligibleBrackets"] += 1
+            bracket_key = (run_id, segment_id, float(interface))
+            if bracket_key not in first_bracket_keys:
+                first_bracket_keys.add(bracket_key)
+                cell["brackets"].append({
+                    "runId": run_id, "segmentId": segment_id,
+                    "fixedEdge": float(interface), "substepId": substep_id,
+                    "alphaPrevDeg": previous[3], "alphaNowDeg": alpha,
+                    "widthDeg": abs(alpha - previous[3]),
+                    "thresholdUsedDeg": threshold,
+                })
+
+    # ---- s6/s7 coverage matrix (pilot source) ----
+    matrix_rows = []
+    for main_key in MAIN_CELLS:
+        cell = cells[main_key]
+        required_states = STATS["mainCellMinStateSamples"]
+        state_count = cell["stateSamples"]
+        rows = [{
+            "cellId": main_key, "parentCell": None,
+            "residualSign": None, "noiseBand": None,
+            "atRiskPresent": state_count > 0,
+            "atRiskRecords": state_count,
+            "distinctRuns": len(cell["stateRuns"]),
+            "alphaMaxDeg": cell["atRiskAlphaMax"],
+            "trueEventCount": cell["realTransitions"],
+            "eligibleBracketCount": cell["eligibleBrackets"],
+            "stateSampleCount": state_count,
+            "cappedCount": cell["cappedTransitions"],
+            "runCount": len(cell["stateRuns"]),
+            "required": required_states,
+            "deficit": max(0, required_states - state_count),
+            "noiseDefinable": False,
+            "wNoiseSource": "UNDEFINED_NO_FIT_NOISE",
+            "exclusionCounts": cell["exclusions"],
+            "coverageStatus": ("OBSERVED" if cell["eligibleBrackets"] > 0
+                               else ("NOT_OBSERVED" if state_count > 0 else "UNKNOWN")),
+            "structuralAssessment": None,
+            "source": source,
+        }]
+        # 24 sub cells: residualSign x noiseBand placeholders (noise undefined
+        # without fit); rows retained even at zero records.
+        for rsign in ("d<0", "d>0"):
+            for band in ("near", "shoulder", "far"):
+                rows.append({
+                    "cellId": f"{main_key}|{rsign}|{band}", "parentCell": main_key,
+                    "residualSign": rsign, "noiseBand": band,
+                    "atRiskPresent": False, "atRiskRecords": 0,
+                    "distinctRuns": 0, "alphaMaxDeg": None,
+                    "trueEventCount": 0, "eligibleBracketCount": 0,
+                    "stateSampleCount": 0, "cappedCount": 0, "runCount": 0,
+                    "required": STATS["subCellMinStateSamples"], "deficit": STATS["subCellMinStateSamples"],
+                    "noiseDefinable": False, "wNoiseSource": "UNDEFINED_NO_FIT_NOISE",
+                    "exclusionCounts": {}, "coverageStatus": "UNDEFINED",
+                    "structuralAssessment": None, "source": source,
+                })
+        matrix_rows.extend(rows)
+
+    # ---- s8 censoring codes per cell ----
+    for key, cell in cells.items():
+        codes = []
+        sign = key.split("/")[1]
+        kind = key.split("/")[0]
+        big = platform_reach["30" if sign == "+" else "-30"]
+        if hard_gate_failed:
+            codes.append(CODE_RUN_INVALID_HARD_GATE)
+        if identity_mismatch:
+            codes.append(CODE_EXECUTION_IDENTITY_MISMATCH)
+        if telemetry_incomplete_records > 0:
+            codes.append(CODE_TELEMETRY_INCOMPLETE)
+        if kind == "stop":
+            if cell["realTransitions"] > 0 and cell["eligibleBrackets"] == 0:
+                codes.append(CODE_STOP_TRANSITION_UNOBSERVED)
+                exclusions = cell["exclusions"]
+                if exclusions.get("BRACKET_TOO_WIDE"):
+                    cell["stopSubcode"] = "BRACKET_TOO_WIDE"
+                elif exclusions.get("NONMONOTONE_LOCAL_WINDOW"):
+                    cell["stopSubcode"] = "NONMONOTONE_LOCAL_WINDOW"
+                elif exclusions.get("CONTINUITY_MISSING"):
+                    cell["stopSubcode"] = "CONTINUITY_MISSING"
+                elif exclusions.get("PLANNER_HOLD_OR_CLAMP"):
+                    cell["stopSubcode"] = "ONLY_PLANNER_HOLD_OR_CLAMP"
+                elif exclusions.get("BUDGET_GUARD_OR_STOCK_LIMITED"):
+                    cell["stopSubcode"] = "ONLY_BUDGET_GUARD_OR_STOCK_LIMITED"
+                elif cell["stateSamples"] == 0:
+                    cell["stopSubcode"] = "NEVER_ACTIVE"
+                else:
+                    cell["stopSubcode"] = "STILL_ACTIVE_AT_END"
+            elif cell["stateSamples"] == 0 and big["stableRecords"] == 0:
+                codes.append(CODE_STOP_TRANSITION_UNOBSERVED)
+                cell["stopSubcode"] = "NEVER_ACTIVE"
+        else:
+            if cell["realTransitions"] > 0 and cell["eligibleBrackets"] == 0:
+                codes.append(CODE_START_OUTSIDE_ELIGIBLE_WINDOW)
+        cell["censorCodes"] = codes
+
+    # s8 v3 right-censoring: four conditions must ALL hold; platform arrival
+    # is NOT required (ramp exposure qualifies). Conditions checked per start
+    # cell: (1) identity true + inactive risk state + complete legal committed
+    # segment + auditable alpha upper bound below candidate start + no
+    # qualified crossing start; (2) next planner/guard constraint evidence is
+    # explicitly the tan30 boundary (attempt/constraint/limitingEdge fields);
+    # (3) rejected attempts are not observation endpoints; (4) leg identity
+    # and sign complete. Condition (2) requires ledger evidence fields the
+    # current schema may not carry - absence means the code is NOT assigned.
+    for key in ("start/+", "start/-"):
+        cell = cells[key]
+        if key in ("start/+", "start/-") and cell["eligibleBrackets"] == 0:
+            tan30_bound_evidence = any(
+                (record.get("audit", {}) or {}).get("limitingReason") == "tan30"
+                or (record.get("audit", {}) or {}).get("plannerBound") == "tan30"
+                for record in records)
+            if (not identity_mismatch and not hard_gate_failed
+                    and cell["atRiskAlphaMax"] is not None
+                    and cell["atRiskAlphaMax"] < float(configured.get("thetaStartDeg", 30.0))
+                    and tan30_bound_evidence):
+                cell["censorCodes"].append(CODE_RIGHT_CENSORED_AT_TAN30)
+
+    # ---- s8 pilot three-dimension verdict ----
+    clean_pass = (not protocol_errors) and not hard_gate_failed and not identity_mismatch
+    reach_pass = all(platform_reach[k]["stableRecords"] > 0
+                     and platform_reach[k]["plannerLimitedStableRecords"] == 0
+                     for k in ("15", "30", "-15", "-30"))
+    coverage = ("FOUR_CELL_OBSERVED"
+                if all(cells[k]["eligibleBrackets"] >= 1 for k in MAIN_CELLS)
+                else "INCOMPLETE")
+
+    result = {
+        "schemaVersion": 3,
+        "testCase": "P011-OBS3-V3-PROTOCOL-GATE",
+        "protocolId": PROTOCOL_ID,
+        "protocolRevision": PROTOCOL_REVISION,
+        "analysisRole": "pilot",
+        "overall": "INVALID" if (hard_gate_failed or protocol_errors or identity_mismatch) else "PILOT_REPORT",
+        "thresholdVerdict": "NOT_EVALUATED",
+        "observedStartTransition": None,
+        "observedStopTransition": None,
+        "thetaStartEstimate": None,
+        "thetaStopEstimate": None,
+        "thetaStartCI": None,
+        "thetaStopCI": None,
+        "safetyMustPass": "UNCHANGED_AND_CHECKED_BY_EXISTING_SAFETY_CHECKERS",
+        "protocolMetadataErrors": protocol_errors,
+        "executionThresholdIdentity": {
+            "ok": not identity_mismatch,
+            "reason": identity_reason,
+            "mismatchCode": CODE_EXECUTION_IDENTITY_MISMATCH if identity_mismatch else None,
+        },
+        "telemetryIncompleteRecords": telemetry_incomplete_records,
+        "runInvalidHardGate": hard_gate_failed,
+        "platformReachability": {
+            "verdict": "PASS" if reach_pass else "FAIL",
+            "perPhase": platform_reach,
+            "note": "diagnostic only; v3 does not require platforms for start events",
+        },
+        "pilotCoverage": coverage,
+        "cells": {
+            key: {
+                "stateSamples": cell["stateSamples"],
+                "stateRunCount": len(cell["stateRuns"]),
+                "realTransitions": cell["realTransitions"],
+                "eligibleBrackets": cell["eligibleBrackets"],
+                "cappedTransitions": cell["cappedTransitions"],
+                "perRunTransitions": dict(sorted(cell["perRunTransitions"].items())),
+                "atRiskAlphaMaxDeg": cell["atRiskAlphaMax"],
+                "censorCodes": cell["censorCodes"],
+                "stopUnobservedSubcode": cell["stopSubcode"],
+                "exclusionCounts": cell["exclusions"],
+                "firstBrackets": cell["brackets"][:8],
+            }
+            for key, cell in cells.items()
+        },
+        "coverageMatrix": matrix_rows,
+        "statsGates": STATS,
+        "codeCatalog": {
+            "RIGHT_CENSORED_AT_TAN30": "v3: four conditions all required; platform arrival not required; ramp exposure qualifies; never a calibration PASS",
+            "STOP_TRANSITION_UNOBSERVED": "nine subcodes: " + ", ".join(STOP_SUBCODES),
+            "START_OUTSIDE_ELIGIBLE_WINDOW": "start only outside eligible ramp/platform segments",
+            "PLATFORM_UNREACHED": "diagnostic; platforms not mandatory for starts in v3",
+            "PLATFORM_UNSTABLE": "arrived but window never qualified",
+            "TELEMETRY_INCOMPLETE": "missing decision/planner/continuity evidence; unknown is not no-transition",
+            "RUN_INVALID_HARD_GATE": "whole run quarantined",
+            "EXECUTION_THRESHOLD_IDENTITY_MISMATCH": "configured/executed/state-machine identity failure + UNOBSERVABLE",
+            "EXECUTION_ENVELOPE_UNRESOLVED": "no peak A on the frozen grid satisfies SHADOW_SAFE && SHADOW_COVERED",
+            "SHADOW_PREDICTED_CENSOR": "shadow-visible censoring; never substitutes real-run exposure evidence",
+            "BRACKET_TOO_WIDE": "width > 0.5 deg; wide events recorded, never split",
+            "NONMONOTONE_LOCAL_WINDOW": "3-point window fails event-direction monotonicity",
+        },
+        "frozenConstants": {
+            "peakGrid": {"min": PEAK_GRID[0], "max": PEAK_GRID[-1], "points": len(PEAK_GRID)},
+            "legs": LEGS,
+            "commandStepMs": COMMAND_STEP_MS,
+            "angularStepByRate": ANGULAR_STEP,
+            "bracketMaxWidthDeg": BRACKET_MAX_WIDTH_DEG,
+        },
+        "notes": notes,
+    }
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--ledger", type=Path, required=True)
+    parser.add_argument("--manifest", type=Path, default=None)
+    parser.add_argument("--source", choices=["pilot", "shadow"], default="pilot")
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    result = analyze(args.ledger, args.manifest, source=args.source)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(json.dumps({k: result[k] for k in (
+        "overall", "thresholdVerdict", "pilotCoverage",
+        "platformReachability")}, ensure_ascii=False, default=str))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
