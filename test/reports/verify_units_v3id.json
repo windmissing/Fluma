@@ -1,0 +1,254 @@
+{
+  "execution": "actual-product-ets-via-bundled-typescript",
+  "results": [
+    {
+      "name": "p011_planningPass_directedThreeCandidateExhaustion",
+      "status": "PASS",
+      "error": "status=blocked passCount=2 previewCalls=2",
+      "previewCalls": 2,
+      "passCount": 2
+    },
+    {
+      "name": "p011_planningPass_verifyConsistencyChannel",
+      "status": "PASS",
+      "error": "ok=true mismatch=false minusZero=true nan=false"
+    },
+    {
+      "name": "P011_ledgerContextSamplesAfterTiltUpdate",
+      "status": "PASS"
+    },
+    {
+      "name": "P011_MODE02_resetInputPreservesMaterialAndRunIdentity",
+      "status": "PASS"
+    },
+    {
+      "name": "canonicalLedger_derivesExternalState",
+      "status": "PASS"
+    },
+    {
+      "name": "conservation_randomOperationSequence",
+      "status": "PASS"
+    },
+    {
+      "name": "percolationV2_crossExchangeHasNonZeroQ",
+      "status": "PASS"
+    },
+    {
+      "name": "percolationV2_pairSortingHasNonZeroR",
+      "status": "PASS"
+    },
+    {
+      "name": "separationProfile_matchesIndependentReference",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_consistentAcross30_60_120Hz",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_bindsSharedSubstepFlux",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_bindsShallowWaterSettling",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_validatesSandTopMaxRange",
+      "status": "PASS"
+    },
+    {
+      "name": "separation_singlePhaseReturnsNull",
+      "status": "PASS"
+    },
+    {
+      "name": "dormant_zeroSubstepStepResult",
+      "status": "PASS"
+    },
+    {
+      "name": "frameHook_emitsDormantFrame",
+      "status": "PASS"
+    },
+    {
+      "name": "thickGeometry_tilt68MovesWithoutCapacityOverflow",
+      "status": "PASS"
+    },
+    {
+      "name": "bottomCreep_tiltMovesLowerLayers",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_routeAndHooksAreSubstepAligned",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_bottomCreepUsesDirectionAndIndependentBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_phaseBalancedSplitKeepsHeavyShareAndTelemetry",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_commandSignFlipResetsPhaseAndReversesDisplacement",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_negativeTiltReversesBottomCreep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_totalMotionBudgetClipsBottomCreep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_totalBudgetExhaustionScalesRequestsProportionally",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_multiChannelTotalBudgetScalesAllRequestsProportionally",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_fullLoadPercolationKeepsBottomBudgetIsolated",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_deadZoneClearsBottomCreepRate",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_velocityGainDoesNotOverrideShapeRateCap",
+      "status": "PASS"
+    },
+    {
+      "name": "shake_peakAndRestResidual",
+      "status": "PASS"
+    },
+    {
+      "name": "invert180_preservesConservationAndPhaseOrder",
+      "status": "PASS"
+    },
+    {
+      "name": "failedInjection_restoresCanonicalState",
+      "status": "PASS"
+    },
+    {
+      "name": "copyStateTo_rejectsInvalidSchema",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_transitionTelemetry_budgetLimitedEdgeKeepsActive",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_transitionTelemetry_edgeIdentityIsNotSlotIndex",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_previewPurity_budgetLedgerSingleCommit",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_singleCommitTiltAndRate",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_blockedCarriesReasonAndHoldsTilt",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_twoPassLimitAndConservationOverRun",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_directedThreeCandidateExhaustion",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_limitingEdgeTieBreakKeepsSmallestIndex",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ninePhaseMapping_assignsAllPlateauPhases",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ninePhaseMapping_legacySevenPhaseBackwardCompatible",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ledgerSchemaV3_plannerFieldsPresent",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_nonWorseningOnViolatingEdge",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_zeroInfluenceEdgeDoesNotRestrictGrant",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_ledgerRefundRestoresBudgets",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_telemetryFieldsReal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_settleDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_settleZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_relaxDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_relaxZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_bottomCreepDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_bottomCreepZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_liftDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_liftZeroInterventionWhenLegal",
+      "status": "PASS"
+    }
+  ],
+  "blockedSemantics": {
+    "status": "blocked",
+    "blockedReason": "PREEXISTING_INFEASIBLE_STATE",
+    "passCount": 1,
+    "okFalse": true,
+    "errorCode": 5
+  },
+  "passed": 59,
+  "failed": 0
+}

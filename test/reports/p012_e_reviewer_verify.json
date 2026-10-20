@@ -1,0 +1,86 @@
+{
+  "execution": "actual-product-ets-via-bundled-typescript",
+  "results": [
+    {
+      "name": "p012_adapter_longRun_neverConservationFails",
+      "status": "PASS",
+      "error": "conservationFails=0"
+    },
+    {
+      "name": "p012_adapter_injectHOnlyBreakAndRecover",
+      "status": "PASS",
+      "error": "reason=6 recovered=true"
+    },
+    {
+      "name": "p012_adapter_injectLOnlyBreak",
+      "status": "PASS",
+      "error": "reason=7"
+    },
+    {
+      "name": "p012_renderer_drawBudget_worst60Frames",
+      "status": "PASS",
+      "error": "worstDraws=9 budget=16"
+    },
+    {
+      "name": "p012_renderer_deterministicSameSeed",
+      "status": "PASS",
+      "error": "styleCounts=7/7"
+    },
+    {
+      "name": "p012_offBranchDecision_table",
+      "status": "PASS",
+      "error": "decision table mismatch"
+    },
+    {
+      "name": "p012_adapter_slotIsolation",
+      "status": "PASS",
+      "error": "bh0Before=50 pairValid=true"
+    },
+    {
+      "name": "pair_valid_afterTwoSteps_conservationHolds",
+      "status": "PASS"
+    },
+    {
+      "name": "inject_breaksPair_andRebuildsBaselineNextFrame",
+      "status": "PASS"
+    },
+    {
+      "name": "sameSnapshot_zeroAdvection_validPair",
+      "status": "PASS"
+    },
+    {
+      "name": "notFiniteSnapshot_returnsNullView_clearsPair",
+      "status": "PASS"
+    },
+    {
+      "name": "frameGapOver100ms_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "epochChange_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "serialGap_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "runIdentityChange_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "adapterSlots_doNotAliasPageSnapshot",
+      "status": "PASS"
+    },
+    {
+      "name": "kahanTotals_matchFieldGetTotals",
+      "status": "PASS"
+    },
+    {
+      "name": "renderer_drawBudget_within16_offBranchDecision",
+      "status": "PASS"
+    }
+  ],
+  "passed": 18,
+  "failed": 0
+}
