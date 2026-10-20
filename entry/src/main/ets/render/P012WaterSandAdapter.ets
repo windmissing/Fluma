@@ -81,10 +81,12 @@ export class P012MaterialFrameView {
   depositedLAt(c: number): number { return this.slot.depositedL[c]; }
 }
 
-/** 本帧处理的公开结果：curr 视图 + 配对结论（prev 仅供 adapter 内部使用） */
+/** 本帧处理的公开结果：curr 视图 + prev 视图 + 配对结论（§5.2 运动代理输入） */
 export interface P012AdapterResult {
   /** 本帧（curr）只读视图；curr 非有限时为 null（保留最后合法显示由 renderer 决定） */
   curr: P012MaterialFrameView | null;
+  /** 前一帧（prev）只读视图；无合法基线时为 null（首帧/断配对后重建基线） */
+  prev: P012MaterialFrameView | null;
   /** prev+curr 配对是否有效（无效时 renderer 冻结运动类状态） */
   pair: P012PairDecision;
   /** 守恒检查明细（H/L 独立） */
@@ -130,10 +132,14 @@ export class P012WaterSandAdapter {
     if (!this.validateSnapshotFinite(snapshot)) {
       this.lastDecision = { valid: false, reason: P012InvalidReason.NOT_FINITE };
       this.hasPrev = false;
-      return { curr: null, pair: this.lastDecision, conservation: null };
+      return { curr: null, prev: null, pair: this.lastDecision, conservation: null };
     }
     const curr = this.currIndex === 0 ? this.slotA : this.slotB;
     const prev = this.currIndex === 0 ? this.slotB : this.slotA;
+    // prev 仅在本次更新前已有合法基线时持有真实前帧数据（首帧/断配对后为旧基线）
+    const prevValid = this.hasPrev;
+    const prevView: P012MaterialFrameView | null =
+      prevValid ? new P012MaterialFrameView(prev) : null;
     this.copyInto(curr, snapshot, context);
     const conservation = this.conservationAgainstPrev(curr, prev);
     // ── 配对状态机（§3.2 配对要求 + §3.3 规则 2/5）──
@@ -165,7 +171,12 @@ export class P012WaterSandAdapter {
     // 但本帧 pair 无效 → renderer 冻结运动并重置 UV 连续性。
     this.currIndex = 1 - this.currIndex;
     this.hasPrev = true;
-    return { curr: new P012MaterialFrameView(curr), pair: decision, conservation };
+    return {
+      curr: new P012MaterialFrameView(curr),
+      prev: prevView,
+      pair: decision,
+      conservation
+    };
   }
 
   /** 最近一次配对结论（供 renderer 诊断） */

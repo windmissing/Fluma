@@ -33,7 +33,11 @@ const hypium = {
 };
 const originalLoad = Module._load;
 Module._load = function(name, parent, main) {
-  return name === '@ohos/hypium' ? hypium : originalLoad.call(this, name, parent, main);
+  if (name === '@ohos/hypium') return hypium;
+  if (name === '@ohos.hilog' || name === '@ohos/hilog') {
+    return { default: { info: () => {}, error: () => {}, warn: () => {}, debug: () => {} } };
+  }
+  return originalLoad.call(this, name, parent, main);
 };
 require.extensions['.ets'] = (mod, filename) => mod._compile(ts.transpileModule(
   fs.readFileSync(filename, 'utf8'), { compilerOptions: {
@@ -43,11 +47,14 @@ require.extensions['.ets'] = (mod, filename) => mod._compile(ts.transpileModule(
 const physics = require('../entry/src/main/ets/physics/WaterSandField.ets');
 const adapterMod = require('../entry/src/main/ets/render/P012WaterSandAdapter.ets');
 const rendererMod = require('../entry/src/main/ets/render/P012WaterSandRenderer.ets');
+const motionMod = require('../entry/src/main/ets/render/P012MaterialMotionCache.ets');
 const typesMod = require('../entry/src/main/ets/render/P012RenderTypes.ets');
 const { WaterSandField } = physics;
 const { P012WaterSandAdapter } = adapterMod;
 const { P012WaterSandRenderer, p012ShouldUseP012Renderer } = rendererMod;
-const { P012AppearanceTier, P012InvalidReason, P012_E_BATCH_DRAW_BUDGET } = typesMod;
+const { P012MaterialMotionCache } = motionMod;
+const { P012AppearanceTier, P012InvalidReason, P012_E_BATCH_DRAW_BUDGET,
+  P012_FIRST_TIER_DRAW_BUDGET, P012_B_BATCH_DRAW_BUDGET } = typesMod;
 
 function fullScene(cols) {
   return {
@@ -391,6 +398,242 @@ function makeContext(over) {
     name: 'p012_adapter_slotIsolation',
     status: ok ? 'PASS' : 'FAIL',
     error: `bh0Before=${bh0Before} pairValid=${r2.pair.valid}`
+  });
+})();
+
+// □I EAB-batch: B grain draw budget + grain-only-in-EAB + determinism + motion cache.
+function makeCountingCanvas(sink) {
+  sink.draws = 0; sink.fillRects = 0; sink.styles = [];
+  const counted = ['fill', 'stroke', 'fillRect', 'strokeRect', 'drawImage'];
+  const noop = ['save', 'restore', 'beginPath', 'closePath', 'clip',
+    'translate', 'rotate', 'rect', 'moveTo', 'lineTo'];
+  return new Proxy({}, {
+    get(_t, prop) {
+      if (counted.includes(prop)) {
+        return () => {
+          sink.draws++;
+          if (prop === 'fillRect') { sink.fillRects++; }
+        };
+      }
+      if (noop.includes(prop)) { return () => {}; }
+      if (prop === 'createLinearGradient') { return () => ({ addColorStop: () => {} }); }
+      if (prop === 'createPattern') { return () => ({ _pattern: true }); }
+      return undefined;
+    },
+    set(_t, prop, value) {
+      if (prop === 'fillStyle') { sink.styles.push(`${value}`); }
+      return true;
+    }
+  });
+}
+
+(function eabMotionCache() {
+  const cols = 32;
+  const field = new WaterSandField(cols, 192);
+  field.initialize(fullScene(cols));
+  field.step(1 / 60);
+  const adapter = new P012WaterSandAdapter(cols, 192);
+  const r0 = adapter.update(field.snapshot(), makeContext());
+  // 冻结：valid=false → isValid=false，mean 偏移=0
+  const mc = new P012MaterialMotionCache(cols);
+  mc.update(r0.curr, r0.curr, false, 6, 256);
+  const freezeOk = mc.isValid === false &&
+    Math.abs(mc.meanDeltaXPx(true)) < 1e-9 &&
+    Math.abs(mc.meanDeltaXPx(false)) < 1e-9;
+  // 同快照零平流（valid=true）
+  const r1 = adapter.update(field.snapshot(), makeContext());
+  mc.update(r0.curr, r1.curr, true, 6, 256);
+  const zeroOk = mc.isValid === true &&
+    Math.abs(mc.meanDeltaXPx(true)) < 1e-9;
+  // 净搬运产生非零偏移（倾斜两步）
+  field.setTilt(24);
+  field.step(1 / 60);
+  const r2 = adapter.update(field.snapshot(), makeContext());
+  mc.update(r1.curr, r2.curr, true, 6, 256);
+  const advectOk = mc.isValid === true &&
+    Math.abs(mc.meanDeltaXPx(true)) > 0 &&
+    mc.meanDeltaXPx(true) >= 0 && mc.meanDeltaXPx(true) < 256;
+  results.push({
+    name: 'p012_eab_motionCache_freezeZeroAdvect',
+    status: (freezeOk && zeroOk) ? 'PASS' : 'FAIL',
+    error: `freezeOk=${freezeOk} zeroOk=${zeroOk}`
+  });
+  results.push({
+    name: 'p012_eab_motionCache_netTransportAdvect',
+    status: advectOk ? 'PASS' : 'FAIL',
+    error: `advectOk=${advectOk}`
+  });
+})();
+
+(function eabDrawBudget() {
+  const sink = {};
+  const ctx = makeCountingCanvas(sink);
+  const cols = 128;
+  const field = new WaterSandField(cols, 192);
+  field.initialize(fullScene(cols));
+  field.setTilt(15);
+  field.inject({ phase: 1, amount: 60, startCol: 20, endColInclusive: 60, state: 1 });
+  field.step(1 / 60);
+  const renderer = new P012WaterSandRenderer(cols, 192);
+  let worstEAB = 0;
+  let worstEA = 0;
+  let fillRectEA = -1;
+  let fillRectEAB = -1;
+  for (let i = 0; i < 60; i++) {
+    field.step(1 / 60);
+    sink.draws = 0; sink.fillRects = 0;
+    renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EA }));
+    worstEA = Math.max(worstEA, sink.draws);
+    fillRectEA = sink.fillRects;
+    sink.draws = 0; sink.fillRects = 0;
+    renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EAB }));
+    worstEAB = Math.max(worstEAB, sink.draws);
+    fillRectEAB = sink.fillRects;
+  }
+  // 第一梯队合计 ≤112；总 ≤160
+  results.push({
+    name: 'p012_eab_drawBudget_firstTierWorst60',
+    status: worstEAB <= P012_FIRST_TIER_DRAW_BUDGET ? 'PASS' : 'FAIL',
+    error: `worstEAB=${worstEAB} budget=${P012_FIRST_TIER_DRAW_BUDGET}`
+  });
+  // B 颗粒仅 EAB 档出现：EAB 比 EA 多 3 个 fillRect（三带各 1）
+  results.push({
+    name: 'p012_eab_grainOnlyInEAB',
+    status: (fillRectEAB - fillRectEA === 3) ? 'PASS' : 'FAIL',
+    error: `fillRectEA=${fillRectEA} fillRectEAB=${fillRectEAB}`
+  });
+})();
+
+(function eabDeterminism() {
+  const stylesA = [];
+  const stylesB = [];
+  const mk = (sink) => makeCountingCanvas(sink);
+  const cols = 128;
+  const field = new WaterSandField(cols, 192);
+  field.initialize(fullScene(cols));
+  field.setTilt(15);
+  field.step(1 / 60);
+  const r1 = new P012WaterSandRenderer(cols, 192);
+  const r2 = new P012WaterSandRenderer(cols, 192);
+  const snap = field.snapshot();
+  const sA = {}; const sB = {};
+  r1.render(mk(sA), snap, makeContext({ appearanceTier: P012AppearanceTier.EAB }));
+  r2.render(mk(sB), snap, makeContext({ appearanceTier: P012AppearanceTier.EAB }));
+  const same = sA.styles.length === sB.styles.length &&
+    sA.styles.every((v, i) => v === sB.styles[i]);
+  results.push({
+    name: 'p012_eab_deterministicSameSeed',
+    status: same ? 'PASS' : 'FAIL',
+    error: `styleCounts=${sA.styles.length}/${sB.styles.length}`
+  });
+})();
+
+// Regression: grain tile must be filled across the WHOLE tile.
+// buildValueNoiseTile once hardcoded P012_A_TILE=64 as its size, so the 256²
+// grain tile was only filled in its top-left 64×64 (93.75% constant) and the
+// B-tier grain rendered as flat base colour (measured on-device hfH≈0.035).
+(function eabGrainTileCoverage() {
+  const cols = 128;
+  const renderer = new P012WaterSandRenderer(cols, 192);
+  const tiles = {
+    H: renderer.grainTileH,
+    L: renderer.grainTileL,
+    M: renderer.grainTileM
+  };
+  const TILE = Math.round(Math.sqrt(tiles.H.length));
+  const QUAD = 64;                       // legacy buggy fill size
+  let worstQuadStd = Infinity;
+  let minOverallStd = Infinity;
+  for (const key of Object.keys(tiles)) {
+    const t = tiles[key];
+    const n = t.length;
+    let mean = 0;
+    for (let i = 0; i < n; i++) mean += t[i];
+    mean /= n;
+    let varSum = 0;
+    for (let i = 0; i < n; i++) varSum += (t[i] - mean) * (t[i] - mean);
+    const std = Math.sqrt(varSum / n);
+    minOverallStd = Math.min(minOverallStd, std);
+    // every QUAD×QUAD quadrant (incl. the previously-dead 3 quadrants) must vary
+    for (let qy = 0; qy < TILE; qy += QUAD) {
+      for (let qx = 0; qx < TILE; qx += QUAD) {
+        let qm = 0; let qc = 0;
+        for (let y = qy; y < qy + QUAD; y++) {
+          for (let x = qx; x < qx + QUAD; x++) { qm += t[y * TILE + x]; qc++; }
+        }
+        qm /= qc;
+        let qv = 0;
+        for (let y = qy; y < qy + QUAD; y++) {
+          for (let x = qx; x < qx + QUAD; x++) {
+            const d = t[y * TILE + x] - qm; qv += d * d;
+          }
+        }
+        worstQuadStd = Math.min(worstQuadStd, Math.sqrt(qv / qc));
+      }
+    }
+  }
+  const coverageOk = worstQuadStd > 0.05;
+  results.push({
+    name: 'p012_eab_grainTile_fullCoverage',
+    status: coverageOk ? 'PASS' : 'FAIL',
+    error: `tile=${TILE} worstQuadrantStd=${worstQuadStd.toFixed(4)} minOverallStd=${minOverallStd.toFixed(4)}`
+  });
+
+  // Rendered-luminance std the grain contributes over a sand-sized area
+  // (pattern repeat of the tile; sigma×tile offsets on the heavy base).
+  // B 档语义（§5.1）：Y = Ybase + alpha·sigmaG·nG，nG 单位方差 →
+  // 颗粒有效亮度标准差 = P012_B_GRAIN_ALPHA × P012_B_SIGMA = 0.55×20 = 11，
+  // 与 E 档基色大尺度 std（on-device 实测 ~13，低频，与颗粒不相关）按方差合成。
+  const heavy = { r: 145, g: 168, b: 111 };
+  const SIGMA = 20;
+  const ALPHA = 0.55;
+  const BASE_STD = 13;               // E 档沙基色大尺度 std（实测口径）
+  const t = tiles.H;
+  const W = 400, H = 120;
+  let lumMean = 0; const lum = new Float64Array(W * H);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const v = t[(y % TILE) * TILE + (x % TILE)];
+      const r = Math.max(0, Math.min(255, heavy.r + ALPHA * SIGMA * v));
+      const g = Math.max(0, Math.min(255, heavy.g + ALPHA * SIGMA * v));
+      const b = Math.max(0, Math.min(255, heavy.b + ALPHA * SIGMA * v));
+      const L = 0.299 * r + 0.587 * g + 0.114 * b;
+      lum[y * W + x] = L; lumMean += L;
+    }
+  }
+  lumMean /= (W * H);
+  let lv = 0;
+  for (let i = 0; i < lum.length; i++) lv += (lum[i] - lumMean) * (lum[i] - lumMean);
+  const lumStd = Math.sqrt(lv / lum.length);
+  // horizontal neighbour roughness (hfH proxy) must be clearly non-zero
+  let hfSum = 0; let hfN = 0;
+  for (let y = 0; y < H; y++) {
+    for (let x = 1; x < W; x++) { hfSum += Math.abs(lum[y * W + x] - lum[y * W + x - 1]); hfN++; }
+  }
+  const hfH = hfSum / hfN;
+  const totalStd = Math.sqrt(BASE_STD * BASE_STD + lumStd * lumStd);
+  results.push({
+    name: 'p012_eab_grainTile_lumStdContribution',
+    status: (totalStd >= 15 && hfH >= 0.8) ? 'PASS' : 'FAIL',
+    error: `grainStd=${lumStd.toFixed(2)} hfH=${hfH.toFixed(3)} totalStd(vs base ${BASE_STD})=${totalStd.toFixed(1)}`
+  });
+
+  // Unit-variance semantics (§5.1): every tile std≈1 and clipped to ±P012_B_GRAIN_CLIP.
+  let worstStdDev = 0; let worstAbs = 0;
+  for (const key of Object.keys(tiles)) {
+    const tt = tiles[key];
+    let m2 = 0;
+    for (let i = 0; i < tt.length; i++) m2 += tt[i];
+    m2 /= tt.length;
+    let v2 = 0;
+    for (let i = 0; i < tt.length; i++) v2 += (tt[i] - m2) * (tt[i] - m2);
+    worstStdDev = Math.max(worstStdDev, Math.abs(Math.sqrt(v2 / tt.length) - 1));
+    for (let i = 0; i < tt.length; i++) worstAbs = Math.max(worstAbs, Math.abs(tt[i]));
+  }
+  results.push({
+    name: 'p012_eab_grainTile_unitVarianceClipped',
+    status: (worstStdDev < 0.1 && worstAbs <= 2.5 + 1e-9) ? 'PASS' : 'FAIL',
+    error: `worstStdDev=${worstStdDev.toFixed(4)} worstAbs=${worstAbs.toFixed(4)}`
   });
 })();
 

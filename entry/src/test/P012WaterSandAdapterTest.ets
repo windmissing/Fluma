@@ -5,6 +5,7 @@
 import { describe, it, expect } from '@ohos/hypium';
 import { WaterSandField, WaterSandScene, WaterSandRegion } from '../main/ets/physics/WaterSandField';
 import { P012WaterSandAdapter, P012MaterialFrameView } from '../main/ets/render/P012WaterSandAdapter';
+import { P012MaterialMotionCache } from '../main/ets/render/P012MaterialMotionCache';
 import { P012AppearanceTier, P012FrameContext, P012InvalidReason,
   P012_E_BATCH_DRAW_BUDGET } from '../main/ets/render/P012RenderTypes';
 import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../main/ets/render/P012WaterSandRenderer';
@@ -40,7 +41,26 @@ function makeContext(over?: Partial<P012FrameContext>): P012FrameContext {
     canonicalEvidence: false
   };
   if (over !== undefined) {
-    Object.assign(ctx, over);
+    if (over.fieldEpoch !== undefined) ctx.fieldEpoch = over.fieldEpoch;
+    if (over.continuityEpoch !== undefined) ctx.continuityEpoch = over.continuityEpoch;
+    if (over.geometryEpoch !== undefined) ctx.geometryEpoch = over.geometryEpoch;
+    if (over.frameSerial !== undefined) ctx.frameSerial = over.frameSerial;
+    if (over.sampleTimeMs !== undefined) ctx.sampleTimeMs = over.sampleTimeMs;
+    if (over.frameDeltaMs !== undefined) ctx.frameDeltaMs = over.frameDeltaMs;
+    if (over.inputMode !== undefined) ctx.inputMode = over.inputMode;
+    if (over.sourceKind !== undefined) ctx.sourceKind = over.sourceKind;
+    if (over.physicalRouteId !== undefined) ctx.physicalRouteId = over.physicalRouteId;
+    if (over.runIdentity !== undefined) ctx.runIdentity = over.runIdentity;
+    if (over.boxX !== undefined) ctx.boxX = over.boxX;
+    if (over.boxY !== undefined) ctx.boxY = over.boxY;
+    if (over.boxW !== undefined) ctx.boxW = over.boxW;
+    if (over.boxH !== undefined) ctx.boxH = over.boxH;
+    if (over.pixelRatio !== undefined) ctx.pixelRatio = over.pixelRatio;
+    if (over.visualInverted !== undefined) ctx.visualInverted = over.visualInverted;
+    if (over.appearanceTier !== undefined) ctx.appearanceTier = over.appearanceTier;
+    if (over.renderSeed !== undefined) ctx.renderSeed = over.renderSeed;
+    if (over.configRevision !== undefined) ctx.configRevision = over.configRevision;
+    if (over.canonicalEvidence !== undefined) ctx.canonicalEvidence = over.canonicalEvidence;
   }
   return ctx;
 }
@@ -231,6 +251,51 @@ export default function p012WaterSandAdapterTest() {
       expect(p012ShouldUseP012Renderer(renderer, P012AppearanceTier.E, false)).assertFalse();
       // draw 预算常量（E-batch ≤16）
       expect(P012_E_BATCH_DRAW_BUDGET <= 16).assertTrue();
+    });
+
+    it('motionCache_freezeWhenInvalid_zeroAdvection', 0, () => {
+      const cols = 16;
+      const field = new WaterSandField(cols, 192);
+      field.initialize(fullScene(cols));
+      field.step(1 / 60);
+      const adapter = new P012WaterSandAdapter(cols, 192);
+      const r0 = adapter.update(field.snapshot(), makeContext());
+      expect(r0.curr !== null).assertTrue();
+      const mc = new P012MaterialMotionCache(cols);
+      // valid=false → 冻结：isValid=false，mean 偏移=0
+      mc.update(r0.curr!, r0.curr!, false, 5, 256);
+      expect(mc.isValid).assertFalse();
+      expect(mc.meanDeltaXPx(true)).assertEqual(0);
+      expect(mc.meanDeltaXPx(false)).assertEqual(0);
+      // 同快照（无搬运）→ 即使 valid=true 也应零平流（deltaX=0）
+      const r1 = adapter.update(field.snapshot(), makeContext());
+      expect(r1.pair.valid).assertTrue();
+      mc.update(r0.curr!, r1.curr!, true, 5, 256);
+      expect(mc.isValid).assertTrue();
+      expect(Math.abs(mc.meanDeltaXPx(true)) < 1e-9).assertTrue();
+      expect(Math.abs(mc.meanDeltaXPx(false)) < 1e-9).assertTrue();
+    });
+
+    it('motionCache_netTransport_producesAdvection', 0, () => {
+      const cols = 16;
+      const field = new WaterSandField(cols, 192);
+      field.initialize(fullScene(cols));
+      field.setTilt(22);
+      field.step(1 / 60);
+      const adapter = new P012WaterSandAdapter(cols, 192);
+      const r0 = adapter.update(field.snapshot(), makeContext());
+      // 第二步搬运（倾斜使重/轻相横移）
+      field.step(1 / 60);
+      const r1 = adapter.update(field.snapshot(), makeContext());
+      expect(r1.pair.valid).assertTrue();
+      const mc = new P012MaterialMotionCache(cols);
+      mc.update(r0.curr!, r1.curr!, true, 6, 256);
+      expect(mc.isValid).assertTrue();
+      // 净搬运应产生非零纹理平流偏移（材料滚动代理）
+      expect(Math.abs(mc.meanDeltaXPx(true)) > 0).assertTrue();
+      // 偏移 bounded 在 [0,tilePx)
+      const off = mc.meanDeltaXPx(true);
+      expect(off >= 0 && off < 256).assertTrue();
     });
   });
 }

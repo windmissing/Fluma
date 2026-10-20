@@ -6,9 +6,12 @@
 // 预算：E 档 draw ≤16；A 档新增 ≤48（EA 合计 ≤64）；CPU 0.25+0.35ms（待真机验证）。
 import { WaterSandSnapshot, WaterSandField } from '../physics/WaterSandField';
 import { P012WaterSandAdapter, P012MaterialFrameView } from './P012WaterSandAdapter';
+import { P012MaterialMotionCache } from './P012MaterialMotionCache';
+import hilog from '@ohos.hilog';
 import {
   P012FrameContext, P012AppearanceTier, P012_APPEARANCE_ROUTE_ID,
-  P012_E_BATCH_DRAW_BUDGET, P012_A_BATCH_DRAW_BUDGET
+  P012_E_BATCH_DRAW_BUDGET, P012_A_BATCH_DRAW_BUDGET,
+  P012_B_BATCH_DRAW_BUDGET, P012_FIRST_TIER_DRAW_BUDGET
 } from './P012RenderTypes';
 
 /** 预计算材质色阶（设计稿 §3.1：重沙浅黄绿 / 轻沙暖浅 / 水体近薄荷白） */
@@ -93,6 +96,28 @@ const P012_A_ALPHA_TIERS = 12;
 /** 云雾带绘制分组：16 组（每组 8 列，§4.3 共用缓存噪声裁片） */
 const P012_A_GROUPS = 16;
 
+/** ── B 档颗粒参数（算法稿 §5.1）── */
+/** 颗粒 tile 尺寸（px，可平铺）；64×64 spark 之外另立 256² 主颗粒 tile */
+const P012_GRAIN_TILE = 256;
+/** 颗粒亮度偏移幅度（sigmaG，0-255 量级；设计稿候选 18~22）。
+ *  语义：nG 为单位方差零均值噪声（截幅 ±P012_B_GRAIN_CLIP），
+ *  故 Ygrain = Ymaterial + sigmaG·nG 的实际标准差就是 sigmaG 量级。 */
+const P012_B_SIGMA = 20;
+/** 颗粒叠加强度（§5.1 加性模型 Y=Ymaterial+sigmaG·nG 的等效缩放：
+ *  alpha 复合 = base + alpha·delta → 等效 sigmaG = alpha×20 = 15 级，
+ *  沙体 lumStd 锚点 ≥15（冻结附录 §4）；位图纯不透明，强度走 globalAlpha）。
+ *  注：s94 消融证明把 alpha 烘焙进位图像素会被 pattern 采样按 1/alpha
+ *  放大并钳位（0.55 → ×1.82 饱和白），故强度一律走 globalAlpha。 */
+const P012_B_GRAIN_ALPHA = 0.75;
+/** 细粒特征尺度（px，1~2 为主；盒滤波半径 = ceil(px/2)） */
+const P012_B_FINE_PX = 2;
+/** 团簇 envelope 特征尺度（px，3~5 弱团） */
+const P012_B_ENV_PX = 4;
+/** 团簇 envelope 调制幅度（弱团：out = g·(1 + amp·env)） */
+const P012_B_ENV_AMP = 0.4;
+/** 单位方差归一化后的截幅（有限范围，§5.1"被截到有限范围"） */
+const P012_B_GRAIN_CLIP = 2.5;
+
 /** renderer 对外生命周期接口（architecture §1 模块表） */
 export class P012WaterSandRenderer {
   private readonly adapter: P012WaterSandAdapter;
@@ -115,6 +140,17 @@ export class P012WaterSandRenderer {
   private readonly fogLut: Float64Array = new Float64Array(65);
   /** A 档帧间相位（静止不动；可信运动估计属 EAB-batch 运动代理） */
   private aPhaseX: number = 0;
+  /** ── B 档资源（EAB-batch）：3 张 256² 颗粒 tile + 对应 ImageBitmap（on-device）── */
+  /** 零均值归一化颗粒亮度偏移 tile（重/轻/混三套种子/对比度）；值域约 [-1,1] */
+  private readonly grainTileH: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
+  private readonly grainTileL: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
+  private readonly grainTileM: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
+  /** 预着色颗粒 ImageBitmap（on-device 经 OffscreenCanvas 生成；Node/canvas 缺失为 null） */
+  private grainBitmapH: ImageBitmap | null = null;
+  private grainBitmapL: ImageBitmap | null = null;
+  private grainBitmapM: ImageBitmap | null = null;
+  /** ── 运动代理（D-B2：相净搬运位移代理 + 连续 UV 平流）── */
+  private readonly motionCache: P012MaterialMotionCache;
   private readonly cols: number;
   private readonly capacity: number;
   /** 最近一次 draw 提交计数（性能预检只读钩子；不进遥测） */
@@ -122,6 +158,8 @@ export class P012WaterSandRenderer {
   /** 最近一次 adapter 配对结论（只读诊断） */
   lastPairValid: boolean = false;
   private disposed: boolean = false;
+  /** 一次性诊断日志闸门（避免逐帧刷日志） */
+  private grainDiagLogged: boolean = false;
 
   constructor(cols: number, capacity: number) {
     this.cols = cols;
@@ -132,10 +170,15 @@ export class P012WaterSandRenderer {
     this.smoothBh = new Float64Array(cols);
     this.smoothMixStart = new Float64Array(cols);
     this.scratch = new Float64Array(cols);
+    this.motionCache = new P012MaterialMotionCache(cols);
     this.buildShadeLut();
     this.buildSparkTile(20261020);
     this.buildMottleTiles(20261021);
     this.buildFogLut();
+    this.grainTileH = this.buildGrainTile(20261022);
+    this.grainTileL = this.buildGrainTile(20261023);
+    this.grainTileM = this.buildGrainTile(20261024);
+    this.buildGrainBitmaps();
   }
 
   /** 外观路线身份（独立视觉/性能证据 manifest 用） */
@@ -169,6 +212,11 @@ export class P012WaterSandRenderer {
     const boxW = frameContext.boxW;
     const boxH = frameContext.boxH;
     const colW = boxW / n;
+    // ── 运动代理（§5.2）：配对有效且有 prev 视图才更新；否则冻结 ──
+    const motionValid = result.pair.valid && result.prev !== null;
+    this.motionCache.update(
+      result.prev !== null ? result.prev : view,
+      view, motionValid, colW, P012_GRAIN_TILE);
     const heightToY = (h: number): number =>
       boxY + (this.capacity - Math.max(0, Math.min(this.capacity, h))) * boxH / this.capacity;
     ctx.save();
@@ -207,6 +255,11 @@ export class P012WaterSandRenderer {
     //    用 8 档游程近似逐列光照（run 合并相邻同档列，draw 计数受控）
     //    A 档启用时沙顶 3px 硬描边语义由界面过渡带取代（P-012 分支无硬描边）
     drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
+    // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
+    //      createPattern(repeat) 全局平流偏移填充；跟随材料净搬运、无缝、无贴纸。
+    if (tier === P012AppearanceTier.EAB) {
+      drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxH);
+    }
     // 4) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
     ctx.beginPath();
     ctx.moveTo(boxX, heightToY(this.smoothWaterTop[0]));
@@ -235,6 +288,7 @@ export class P012WaterSandRenderer {
   /** 生命周期：清连续性配对（reset/inject/invert/后台恢复时页面通知） */
   resetContinuity(): void {
     this.adapter.dispose();
+    this.motionCache.reset();
   }
 
   /** dispose：断开全部引用（aboutToDisappear 调用；幂等） */
@@ -253,6 +307,11 @@ export class P012WaterSandRenderer {
   /** E-batch draw 预算断言（单测钩子：≤16 次提交） */
   withinDrawBudget(): boolean {
     return this.lastDrawCount <= P012_E_BATCH_DRAW_BUDGET;
+  }
+
+  /** 第一梯队 E/A/B 合计 draw 预算断言（单测钩子：≤112 次提交） */
+  withinFirstTierDrawBudget(): boolean {
+    return this.lastDrawCount <= P012_FIRST_TIER_DRAW_BUDGET;
   }
 
   // ───────────────────────── private ─────────────────────────
@@ -294,9 +353,12 @@ export class P012WaterSandRenderer {
     this.buildValueNoiseTile(this.mottleN2, (seed | 0) + 2, 56);
   }
 
-  /** 单尺度 value-noise tile：白噪声 → 盒滤波 → 去均值 → 归一到 [-1,1] */
+  /** 单尺度 value-noise tile：白噪声 → 盒滤波 → 去均值 → 归一到 [-1,1]
+   *  尺寸由 out.length 推导（mottle tile=64、grain tile=256 共用本函数）；
+   *  早期版本硬编码 P012_A_TILE=64，导致 256² grain tile 仅左上 64×64 被填充、
+   *  其余 93.75% 为常数 → 颗粒贴图近乎纯色（hfH≈0）。 */
   private buildValueNoiseTile(out: Float64Array, seed: number, featurePx: number): void {
-    const size = P012_A_TILE;
+    const size = Math.max(1, Math.round(Math.sqrt(out.length)));
     let state = seed | 0;
     const next = (): number => {
       state = (Math.imul(state, 1664525) + 1013904223) | 0;
@@ -352,6 +414,280 @@ export class P012WaterSandRenderer {
     const t = Math.max(0, Math.min(4, tau));
     const idx = Math.round(t * 16);
     return this.fogLut[idx];
+  }
+
+  // ───────────────────────── B 档颗粒（EAB-batch，§5.1） ─────────────────────────
+
+  /** 颗粒专用 value-noise tile（B 档，§5.1）：
+   *  与 A 档 mottle 共用 buildValueNoiseTile 的生成段，但归一化语义不同——
+   *  A 档峰值归一化（mottle 幅度 a1/a2 已按峰值标定，不可动）；
+   *  B 档按 §5.1 要求**单位方差、零均值**并截幅 ±P012_B_GRAIN_CLIP，
+   *  使 sigmaG·nG 的实际亮度标准差就是 sigmaG 量级（18~22 级）。
+   *  盒滤波为真盒（步长 1，非 mottle 的稀疏 X 采样）→ 相邻像素真实相关。 */
+  private buildGrainNoise(out: Float64Array, seed: number, featurePx: number): void {
+    const size = Math.max(1, Math.round(Math.sqrt(out.length)));
+    let state = seed | 0;
+    const next = (): number => {
+      state = (Math.imul(state, 1664525) + 1013904223) | 0;
+      return ((state >>> 8) & 0xffffff) / 0xffffff;
+    };
+    const white: Float64Array = new Float64Array(size * size);
+    for (let i = 0; i < white.length; i++) {
+      white[i] = next() * 2 - 1;
+    }
+    // 真盒滤波（步长 1；环形索引保可平铺）
+    const r = Math.max(1, Math.round(featurePx / 2));
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        let sum = 0;
+        let cnt = 0;
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            const yy = (y + dy + size) % size;
+            const xx = (x + dx + size) % size;
+            sum += white[yy * size + xx];
+            cnt++;
+          }
+        }
+        out[y * size + x] = sum / cnt;
+      }
+    }
+    // 单位方差 + 零均值
+    let mean = 0;
+    for (let i = 0; i < out.length; i++) {
+      mean += out[i];
+    }
+    mean /= out.length;
+    let varSum = 0;
+    for (let i = 0; i < out.length; i++) {
+      varSum += (out[i] - mean) * (out[i] - mean);
+    }
+    const inv = 1 / Math.max(1e-9, Math.sqrt(varSum / out.length));
+    for (let i = 0; i < out.length; i++) {
+      out[i] = (out[i] - mean) * inv;
+    }
+    // 截幅到有限范围（§5.1）。顺序：先去均值后截幅——反序会让边界值
+    // 被减负均值推出截幅之外（2.5+|mean|）。截幅后不再方差缩放。
+    let mean2 = 0;
+    for (let i = 0; i < out.length; i++) {
+      mean2 += out[i];
+    }
+    mean2 /= out.length;
+    for (let i = 0; i < out.length; i++) {
+      out[i] -= mean2;
+    }
+    for (let i = 0; i < out.length; i++) {
+      out[i] = Math.max(-P012_B_GRAIN_CLIP, Math.min(P012_B_GRAIN_CLIP, out[i]));
+    }
+  }
+
+  /** 颗粒 tile：双细粒 tile 混合（减平铺）+ 团簇 envelope（3-5px 弱团），
+   *  零均值单位方差归一化到 [-clip,clip]；确定性 LCG 种子（不调用/消耗物理随机源）。 */
+  private buildGrainTile(seed: number): Float64Array {
+    const size = P012_GRAIN_TILE;
+    const fineA = new Float64Array(size * size);
+    const fineB = new Float64Array(size * size);
+    const env = new Float64Array(size * size);
+    this.buildGrainNoise(fineA, (seed | 0) + 11, P012_B_FINE_PX);   // 细粒 A（~2px）
+    this.buildGrainNoise(fineB, (seed | 0) + 23, P012_B_FINE_PX);   // 细粒 B（~2px，异种子）
+    this.buildGrainNoise(env, (seed | 0) + 37, P012_B_ENV_PX);      // 团簇 envelope（3-5px）
+    const out = new Float64Array(size * size);
+    let mean = 0;
+    for (let i = 0; i < out.length; i++) {
+      const g = 0.5 * fineA[i] + 0.5 * fineB[i];   // 双 tile 混合
+      const e = 1 + P012_B_ENV_AMP * env[i];        // 团簇 envelope 调制
+      out[i] = g * e;
+      mean += out[i];
+    }
+    mean /= out.length;
+    let varSum = 0;
+    for (let i = 0; i < out.length; i++) {
+      varSum += (out[i] - mean) * (out[i] - mean);
+    }
+    const inv = 1 / Math.max(1e-9, Math.sqrt(varSum / out.length));
+    for (let i = 0; i < out.length; i++) {
+      out[i] = (out[i] - mean) * inv;
+    }
+    // 包络乘积会超出细粒各自截幅 → 终 tile 再去均值 + 截幅（顺序同
+    // buildGrainNoise：先均值后截幅；不再方差缩放）。
+    let mean3 = 0;
+    for (let i = 0; i < out.length; i++) {
+      mean3 += out[i];
+    }
+    mean3 /= out.length;
+    for (let i = 0; i < out.length; i++) {
+      out[i] -= mean3;
+    }
+    for (let i = 0; i < out.length; i++) {
+      out[i] = Math.max(-P012_B_GRAIN_CLIP, Math.min(P012_B_GRAIN_CLIP, out[i]));
+    }
+    return out;
+  }
+
+  /** 生成 3 张预着色颗粒 ImageBitmap（on-device）；Node/canvas 缺失则 bitmap=null。 */
+  private buildGrainBitmaps(): void {
+    let ocKind = 'none';
+    try {
+      if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
+        hilog.info(0x0000, 'P012', 'grain: OffscreenCanvas undefined/null');
+        return;
+      }
+      ocKind = 'class';
+    } catch (e) {
+      hilog.error(0x0000, 'P012', 'grain: typeof OffscreenCanvas threw: ' + JSON.stringify(e));
+      return;
+    }
+    hilog.info(0x0000, 'P012', 'grain: OffscreenCanvas ' + ocKind + ' present, building bitmaps');
+    const p = this.palette;
+    this.grainBitmapH = this.makeGrainBitmap(this.grainTileH, p.heavyR, p.heavyG, p.heavyB);
+    this.grainBitmapL = this.makeGrainBitmap(this.grainTileL, p.lightR, p.lightG, p.lightB);
+    this.grainBitmapM = this.makeGrainBitmap(this.grainTileM,
+      (p.lightR + p.heavyR) * 0.5, (p.lightG + p.heavyG) * 0.5, (p.lightB + p.heavyB) * 0.5);
+    hilog.info(0x0000, 'P012', 'grain: bitmaps H=' + (this.grainBitmapH === null ? 'null' : 'ok') +
+      ' L=' + (this.grainBitmapL === null ? 'null' : 'ok') +
+      ' M=' + (this.grainBitmapM === null ? 'null' : 'ok'));
+  }
+
+  /** 单张颗粒 tile → ImageBitmap（基色 + sigmaG·tile 偏移；稀疏亮粒在 tile 之外不加，
+   *  由 E 档 spark tile 承担）。on-device 经 OffscreenCanvas/putImageData/transfer。 */
+  private makeGrainBitmap(tile: Float64Array, baseR: number, baseG: number, baseB: number): ImageBitmap | null {
+    const size = P012_GRAIN_TILE;
+    try {
+      const off = new OffscreenCanvas(size, size);
+      const octx = off.getContext('2d');
+      if (octx === null || octx === undefined) {
+        hilog.error(0x0000, 'P012', 'grain: getContext(2d) returned null/undefined');
+        return null;
+      }
+      const img = octx.createImageData(size, size);
+      const data = img.data;
+      // alpha 不烘焙：CanvasPattern 采样会把烘焙了半透明 alpha 的像素颜色
+      // 按 1/alpha 放大并钳位（s94 消融实测：alpha=140 → 颜色 ×1.82 饱和
+      // 到 255，混合/轻沙带整片变白）。改为位图纯不透明（alpha=255），
+      // 叠加强度（P012_B_GRAIN_ALPHA）由 drawSandGrain 的 ctx.globalAlpha 控制
+      // （save/restore 作用域内自动恢复）。
+      const pxAlpha = 255;
+      for (let i = 0; i < size * size; i++) {
+        const delta = tile[i] * P012_B_SIGMA;   // 颗粒亮度偏移（lumStd 主来源）
+        data[i * 4] = this.clamp255(baseR + delta);
+        data[i * 4 + 1] = this.clamp255(baseG + delta);
+        data[i * 4 + 2] = this.clamp255(baseB + delta);
+        data[i * 4 + 3] = pxAlpha;
+      }
+      octx.putImageData(img, 0, 0);
+      const bmp = off.transferToImageBitmap();
+      hilog.info(0x0000, 'P012', 'grain: makeGrainBitmap ok=' + (bmp === null ? 'null' : 'ok'));
+      return bmp;
+    } catch (e) {
+      hilog.error(0x0000, 'P012', 'grain: makeGrainBitmap threw: ' + JSON.stringify(e));
+      return null;
+    }
+  }
+
+  private clamp255(v: number): number {
+    return Math.max(0, Math.min(255, Math.round(v)));
+  }
+
+  /** 单带顶部屏幕 y（heightToY 映射）：kind 0=重沙顶(bh) 1=轻沙顶(bh+bl) 2=混合带顶(sandTop) */
+  private bandTopY(kind: number, c: number, heightToY: (h: number) => number): number {
+    if (kind === 0) {
+      return heightToY(this.smoothBh[c]);
+    }
+    if (kind === 1) {
+      return heightToY(this.smoothMixStart[c]);
+    }
+    return heightToY(this.smoothSandTop[c]);
+  }
+
+  /** 单带底部屏幕 y：kind 0=容器底(heightToY(0)) 1=重沙顶(bh) 2=轻沙顶(bh+bl) */
+  private bandBottomY(kind: number, c: number, heightToY: (h: number) => number): number {
+    if (kind === 0) {
+      return heightToY(0);
+    }
+    if (kind === 1) {
+      return heightToY(this.smoothBh[c]);
+    }
+    return heightToY(this.smoothMixStart[c]);
+  }
+
+  /**
+   * B 档粉质颗粒（算法稿 §5.1）：三带各自 clip 到沙区曲线 Path，再以 createPattern
+   * (repeat) + translate(全局平流偏移) 填充整片沙区。全局偏移（mean UV）→ 各列共享
+   * 同一连续 pattern → 无缝、无跨列拼缝；结构预留 16 组供未来 D 各向异性。
+   * 颗粒仅在 E 已提亮沙色之上叠加（globalAlpha=P012_B_GRAIN_ALPHA），保留部分 E 光照。
+   * 返回 draw 提交次数（3 次 fillRect，远低于 B 档 ≤48 预算）。
+   */
+  private drawSandGrain(ctx: CanvasRenderingContext2D, view: P012MaterialFrameView,
+    heightToY: (h: number) => number, colW: number,
+    boxX: number, boxY: number, boxH: number): number {
+    const n = this.cols;
+    const tilePx = P012_GRAIN_TILE;
+    const offH = this.motionCache.meanDeltaXPx(true);
+    const offL = this.motionCache.meanDeltaXPx(false);
+    const offM = (offH + offL) * 0.5;
+    const bands: P012GrainBand[] = [
+      { kind: 0, off: offH, bitmap: this.grainBitmapH },
+      { kind: 1, off: offL, bitmap: this.grainBitmapL },
+      { kind: 2, off: offM, bitmap: this.grainBitmapM }
+    ];
+    let draws = 0;
+    for (let bi = 0; bi < bands.length; bi++) {
+      const b = bands[bi];
+      ctx.save();
+      // clip 到该带沙区曲线 Path（保证颗粒不越过层边界/界面）
+      ctx.beginPath();
+      ctx.moveTo(boxX, this.bandTopY(b.kind, 0, heightToY));
+      for (let c = 1; c < n; c++) {
+        ctx.lineTo(boxX + c * colW, this.bandTopY(b.kind, c, heightToY));
+      }
+      for (let c = n - 1; c >= 0; c--) {
+        ctx.lineTo(boxX + (c + 1) * colW, this.bandBottomY(b.kind, c, heightToY));
+      }
+      ctx.closePath();
+      ctx.clip();
+      // 全局平流偏移（纹理随材料净搬运滚动）
+      ctx.translate(b.off, 0);
+      // 颗粒叠加强度 0.55（§5.1 "作用于 E 已提亮的材质"）：位图纯不透明，
+      // 强度走 globalAlpha；restore() 自动恢复，不影响后续描边。
+      ctx.globalAlpha = P012_B_GRAIN_ALPHA;
+      if (b.bitmap !== null) {
+        const pat = ctx.createPattern(b.bitmap, 'repeat');
+        if (pat !== null) {
+          ctx.fillStyle = pat;
+        } else {
+          ctx.fillStyle = 'rgba(0,0,0,0)';
+          if (!this.grainDiagLogged) {
+            this.grainDiagLogged = true;
+            hilog.error(0x0000, 'P012', 'grain: createPattern returned null (band ' + b.kind + ')');
+          }
+        }
+      } else {
+        // Node / 无 bitmap：fallback 仍计一次 draw（真实设备走 pattern 路径）
+        ctx.fillStyle = 'rgba(0,0,0,0)';
+        if (!this.grainDiagLogged) {
+          this.grainDiagLogged = true;
+          hilog.error(0x0000, 'P012', 'grain: bitmap null, fallback no-fill (band ' + b.kind + ')');
+        }
+      }
+      const fullW = n * colW;
+      ctx.fillRect(boxX - tilePx, boxY - tilePx, fullW + 2 * tilePx, boxH + 2 * tilePx);
+      draws++;
+      ctx.restore();
+    }
+    if (!this.grainDiagLogged) {
+      this.grainDiagLogged = true;
+      hilog.info(0x0000, 'P012', 'grain: pattern fill path used (all bands ok)');
+      // 带几何一次性诊断（定位"白带/无颗粒"覆盖区）：中心列各边界屏幕 y
+      const cm = n >> 1;
+      hilog.info(0x0000, 'P012', 'grain: geom col=' + cm +
+        ' sandTopY=' + heightToY(this.smoothSandTop[cm]).toFixed(1) +
+        ' mixStartY=' + heightToY(this.smoothMixStart[cm]).toFixed(1) +
+        ' bhY=' + heightToY(this.smoothBh[cm]).toFixed(1) +
+        ' waterTopY=' + heightToY(this.smoothWaterTop[cm]).toFixed(1) +
+        ' bottomY=' + (boxY + boxH).toFixed(1) +
+        ' offH=' + offH.toFixed(2) + ' offL=' + offL.toFixed(2));
+    }
+    return draws;
   }
 
   /** 悬浮浓度 q（clamp [0,1]，水深≤eps 时 0；不改库存）——A 档共用 */
@@ -721,4 +1057,11 @@ class P012SandBand {
   top: (c: number) => number = (c: number): number => c;
   bottom: (c: number) => number = (c: number): number => c;
   kind: number = 0;
+}
+
+/** B 档颗粒单带描述（显式接口：kind/offset/bitmap；禁止匿名对象字面量） */
+interface P012GrainBand {
+  kind: number;
+  off: number;
+  bitmap: ImageBitmap | null;
 }

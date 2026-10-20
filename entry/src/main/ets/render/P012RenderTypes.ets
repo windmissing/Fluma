@@ -99,6 +99,13 @@ export const P012_E_BATCH_DRAW_BUDGET = 16;
 export const P012_A_BATCH_DRAW_BUDGET = 48;
 /** EA-batch：E+A 合计 draw 预算（16+48=64；公共容器绘制含于 E 侧） */
 export const P012_EA_BATCH_DRAW_BUDGET = 64;
+/** EAB-batch：B 档颗粒新增 draw 预算（算法稿 §8.2：B 档 ≤48；v1 三带全局
+ *  平流 pattern fillRect 实际仅 3，结构预留 16 组×3 材质供未来 D 各向异性） */
+export const P012_B_BATCH_DRAW_BUDGET = 48;
+/** EAB-batch：第一梯队 E+A+B 合计 draw 预算（16+48+48=112；公共容器另列） */
+export const P012_EAB_BATCH_DRAW_BUDGET = 112;
+/** 第一梯队含公共合计上限（≤160 中 112 留给 E/A/B 三档绘制） */
+export const P012_FIRST_TIER_DRAW_BUDGET = P012_EAB_BATCH_DRAW_BUDGET;
 
 /** 显示帧间隔阈值：超过即视为 v1 视觉连续性中断（§3.2） */
 export const P012_FRAME_GAP_MS = 100;
