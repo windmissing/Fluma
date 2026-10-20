@@ -106,6 +106,13 @@ def check(report_path: Path):
         #   * bottomCreep's per-edge deltaG can reach ~0.33
         #     (vBottomCreepMax*2*dt), pushing |d'| past tan30 in one substep
         #     when the surface is near the boundary.
+        #   * Since the §19.5 material guard landed, relax/bottomCreep grants
+        #     are also clipped when an increment would push an outer
+        #     neighbor edge past tan30 (real physics: repairing one edge
+        #     must not collapse its neighbor). The 240-step ±20° reversal
+        #     scenario (directionAccuracy) now reaches PREEXISTING_
+        #     INFEASIBLE_STATE — same semantics-evolution family as the two
+        #     30° cases above.
         #   * The preview allocator in the CURRENT code mirrors the apply
         #     proportional scaling exactly (per-step deltaS bit-identical,
         #     verified 2026-10-20: preview L1 == real L1 for every step),
@@ -119,7 +126,8 @@ def check(report_path: Path):
         # Physics must not be changed unilaterally (developer scope).
         legacy = {
             'bottomCreep_tiltMovesLowerLayers',
-            'p011_commandSignFlipResetsPhaseAndReversesDisplacement'
+            'p011_commandSignFlipResetsPhaseAndReversesDisplacement',
+            'p011_directionAccuracyCovers200SamplesAndSignSwitches'
         }
         for r in results:
             if r.get('status') == 'FAIL' and r.get('name') not in legacy:

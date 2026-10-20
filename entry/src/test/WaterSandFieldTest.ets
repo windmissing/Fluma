@@ -16,7 +16,8 @@ import {
 import {
   P011NaturalObservationProbe,
   P011NaturalObservationSubstepContext,
-  P011NaturalObservationEdgeGrant
+  P011NaturalObservationEdgeGrant,
+  P011NaturalObservationRecord
 } from '../main/ets/physics/P011NaturalObservation';
 import {
   P011ChannelPlan,
@@ -24,6 +25,10 @@ import {
   P011TiltPlanningPassService,
   p011DecideCandidate
 } from '../main/ets/physics/P011TiltPlanningPass';
+import {
+  P011GuardLedgerRefund,
+  p011GuardAdmit
+} from '../main/ets/physics/P011MaterialGuard';
 
 export default function waterSandFieldTest() {
   describe('WaterSandFieldTest', () => {
@@ -1244,6 +1249,108 @@ export default function waterSandFieldTest() {
       if (decisionShift.limitingEdge !== null) {
         expect(decisionShift.limitingEdge <= 1).assertTrue();
       }
+    });
+
+    // =========================================================================
+    // §19.5 pre-commit material guard tests.
+    // =========================================================================
+
+    // Closed-form admission: legal state passes full grant; a grant that
+    // would push an edge past ±H is clipped to the exact maximum.
+    it('p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax', 0, () => {
+      const H = Math.tan(30 * Math.PI / 180);
+      // Edge residual 0.5 (legal, slack 0.0774); influence -1 per unit grant
+      // (grant reduces the residual). Full grant of 0.05 keeps 0.45 ✓.
+      const pass = p011GuardAdmit(0.05,
+        [{ residual: 0.5, influence: -1 }], H);
+      expect(pass.accepted).assertEqual(0.05);
+      expect(pass.rejected).assertEqual(0);
+      expect(pass.allLegalBefore).assertTrue();
+      // Same edge with +1 influence (grant worsens): max admissible is
+      // (H - d)/k = 0.0774; requesting 0.2 clips to 0.0774.
+      const clipped = p011GuardAdmit(0.2,
+        [{ residual: 0.5, influence: 1 }], H);
+      expect(Math.abs(clipped.accepted - (H - 0.5)) < 1e-12).assertTrue();
+      expect(Math.abs(clipped.rejected - (0.2 - (H - 0.5))) < 1e-12).assertTrue();
+    });
+
+    // Violating state: non-worsening branch. An already-violating edge
+    // (|d| > H) admits only grants that do not increase |d|; a grant that
+    // would worsen it is rejected entirely (interval intersect [0, q]).
+    it('p011_materialGuard_nonWorseningOnViolatingEdge', 0, () => {
+      const H = Math.tan(30 * Math.PI / 180);
+      // Edge d = 0.7 (violating), influence +1 (worsens): allowed |d'|<=0.7
+      // → q <= 0. Request 0.3 → accepted 0.
+      const worsen = p011GuardAdmit(0.3,
+        [{ residual: 0.7, influence: 1 }], H);
+      expect(worsen.accepted).assertEqual(0);
+      expect(worsen.rejected).assertEqual(0.3);
+      expect(worsen.allLegalBefore).assertFalse();
+      // influence -1 (repairs): |0.7 - q| <= 0.7 → q <= 1.4; full pass.
+      const repair = p011GuardAdmit(0.3,
+        [{ residual: 0.7, influence: -1 }], H);
+      expect(repair.accepted).assertEqual(0.3);
+      expect(repair.allLegalBefore).assertFalse();
+    });
+
+    // k = 0 edge: the increment does not change this edge's slope, so the
+    // edge never restricts q (d'(q) = d is constant; a violating edge
+    // stays exactly as violating as before — non-worsening holds trivially).
+    it('p011_materialGuard_zeroInfluenceEdgeDoesNotRestrictGrant', 0, () => {
+      const H = Math.tan(30 * Math.PI / 180);
+      const outcome = p011GuardAdmit(0.5,
+        [{ residual: 0.9, influence: 0 }], H);
+      expect(outcome.accepted).assertEqual(0.5);
+      expect(outcome.rejected).assertEqual(0);
+      expect(outcome.allLegalBefore).assertFalse();
+    });
+
+    // Ledger refund: rejected part returns to local remaining and leaves
+    // used consistent (used+remaining invariant with the accepted grant).
+    it('p011_materialGuard_ledgerRefundRestoresBudgets', 0, () => {
+      const localRemaining = new Float64Array([1, 1]);
+      const localUsed = new Float64Array([0.5, 0.5]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0, 1], 0.3);
+      expect(Math.abs(localRemaining[0] - 1.3) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1.3) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[0] - 0.2) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[1] - 0.2) < 1e-12).assertTrue();
+    });
+
+    // Field-level: guard telemetry is real. A scenario where relax would
+    // push an outer neighbor edge past tan30 must produce nonzero
+    // hardGuard evidence in the ledger record (rejected/clipped fields).
+    it('p011_materialGuard_telemetryFieldsReal', 0, () => {
+      const settleRecords: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(8, record => {
+        settleRecords.push(record);
+      });
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      field.configure(params);
+      field.initialize(fullLoadSceneForP011(8));
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(20);
+      for (let index = 0; index < 10; index++) {
+        const result = field.step(1 / 60);
+        if (!result.ok) {
+          break;
+        }
+      }
+      expect(settleRecords.length > 0).assertTrue();
+      // hardGuardAvailable must be real (true) on relax slip records now,
+      // not the previous constant false.
+      let sawSlipWithGuard = false;
+      for (const record of settleRecords) {
+        for (const slip of record.slip) {
+          if (slip.hardGuardAvailable === true) {
+            sawSlipWithGuard = true;
+          }
+        }
+      }
+      expect(sawSlipWithGuard).assertTrue();
     });
   });
 }

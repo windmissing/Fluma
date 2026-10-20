@@ -56,6 +56,8 @@ export interface P011NaturalObservationColumnGrant {
   allowed: number[];
   heavy: number[];
   light: number[];
+  /** §19.5 material-guard clipped amount per column (0 when not clipped). */
+  hardGuardClipped: number[];
 }
 
 export interface P011NaturalObservationPercolationGrant {
@@ -220,7 +222,8 @@ function emptyColumnGrant(count: number): P011NaturalObservationColumnGrant {
     requested: new Array<number>(count).fill(0),
     allowed: new Array<number>(count).fill(0),
     heavy: new Array<number>(count).fill(0),
-    light: new Array<number>(count).fill(0)
+    light: new Array<number>(count).fill(0),
+    hardGuardClipped: new Array<number>(count).fill(0)
   };
 }
 
@@ -336,7 +339,7 @@ export class P011NaturalObservationProbe {
   }
 
   recordSettle(column: number, requested: number, allowed: number,
-    heavy: number, light: number): void {
+    heavy: number, light: number, hardGuardClipped?: number): void {
     if (column < 0 || column >= this.cols) {
       return;
     }
@@ -344,6 +347,8 @@ export class P011NaturalObservationProbe {
     this.settle.allowed[column] = allowed;
     this.settle.heavy[column] = heavy;
     this.settle.light[column] = light;
+    this.settle.hardGuardClipped[column] = hardGuardClipped === undefined
+      ? 0 : hardGuardClipped;
   }
 
   recordPercolate(column: number, requested: number, allowed: number,
@@ -360,7 +365,7 @@ export class P011NaturalObservationProbe {
   }
 
   recordLift(column: number, requested: number, allowed: number,
-    heavy: number, light: number): void {
+    heavy: number, light: number, hardGuardClipped?: number): void {
     if (column < 0 || column >= this.cols) {
       return;
     }
@@ -368,6 +373,8 @@ export class P011NaturalObservationProbe {
     this.lift.allowed[column] = allowed;
     this.lift.heavy[column] = heavy;
     this.lift.light[column] = light;
+    this.lift.hardGuardClipped[column] = hardGuardClipped === undefined
+      ? 0 : hardGuardClipped;
   }
 
   recordSlip(grant: P011NaturalObservationEdgeGrantBase): void {

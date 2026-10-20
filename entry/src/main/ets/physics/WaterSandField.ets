@@ -24,6 +24,12 @@ import {
   P011_PLANNING_PASS_TAN_HARD_MAX,
   p011PreviewCommitConsistent
 } from './P011TiltPlanningPass';
+import {
+  P011GuardEdgeConstraint,
+  P011GuardLedgerRefund,
+  P011GuardOutcome,
+  p011GuardAdmit
+} from './P011MaterialGuard';
 
 /** P-011 v2.14 §20: scalar state saved/restored around planning previews. */
 class PlanningScalars {
@@ -1543,6 +1549,86 @@ export class WaterSandField {
   }
 
   // ==========================================================================
+  // P-011 §19.5 pre-commit material guard: runs before each individual
+  // material increment of every named writer; clips the granted amount via
+  // closed-form edge-interval intersection (legal state keeps every edge
+  // within ±H; violating edges are non-worsening) and refunds the rejected
+  // part to the local/bottom/total budget ledgers. No ceiling changes, no
+  // physics changes, no re-issue.
+  // ==========================================================================
+
+  private static readonly MATERIAL_GUARD_HARD_MAX = Math.tan(30 * Math.PI / 180);
+
+  private materialGuardHardMax(): number {
+    return WaterSandField.MATERIAL_GUARD_HARD_MAX;
+  }
+
+  /** Signed residual of edge e against the committed effectiveTilt. */
+  private materialGuardResidual(edge: number): number {
+    return this.sandTopScratch[edge + 1] - this.sandTopScratch[edge] -
+      Math.tan(this.effectiveTilt * Math.PI / 180);
+  }
+
+  /**
+   * Build the closed-form constraints for one increment and admit it.
+   * deltaColumns maps column -> signed per-unit-grant S change (e.g.
+   * {donor: -1, receiver: +1}). Every edge whose slope changes with the
+   * grant — for pair moves the up to three adjacent edges, for column
+   * moves the up to two adjacent edges (§19.5 table) — is constrained.
+   */
+  private materialGuardAdmitIncrement(
+    requested: number,
+    deltaColumns: Map<number, number>): P011GuardOutcome {
+    if (requested <= 0) {
+      return { accepted: 0, rejected: 0, allLegalBefore: true,
+        limitingEdge: null };
+    }
+    // Collect the set of affected edges: any edge adjacent to a moved column.
+    const affected = new Set<number>();
+    for (const column of deltaColumns.keys()) {
+      if (column - 1 >= 0 && column - 1 < this.cols - 1) {
+        affected.add(column - 1);
+      }
+      if (column >= 0 && column < this.cols - 1) {
+        affected.add(column);
+      }
+    }
+    const constraints: P011GuardEdgeConstraint[] = [];
+    for (const edge of affected) {
+      // Per-unit-grant slope influence: (dS[e+1]-dS[e]) per unit grant.
+      const influence = (deltaColumns.get(edge + 1) ?? 0) -
+        (deltaColumns.get(edge) ?? 0);
+      constraints.push({
+        residual: this.materialGuardResidual(edge),
+        influence: influence
+      });
+    }
+    return p011GuardAdmit(requested, constraints, this.materialGuardHardMax());
+  }
+
+  /**
+   * Refund the guard-rejected part of a clipped increment to the budget
+   * ledgers (§19.5 four-layer write-back): local (both endpoints for pair
+   * moves), bottom (creepBottom only), and total. Used ledgers are reduced
+   * by the same amount so used+remaining matches the final accepted grant.
+   */
+  private materialGuardRefund(rejected: number, localColumns: number[],
+    bottomChannel: boolean): void {
+    if (rejected <= 0) {
+      return;
+    }
+    const refund = new P011GuardLedgerRefund(this.substepMotionBudgetRemaining,
+      this.substepMotionBudgetUsed);
+    refund.refundLocal(localColumns, rejected);
+    this.totalMotionBudgetRemaining += rejected;
+    this.totalMotionBudgetUsed = Math.max(0, this.totalMotionBudgetUsed - rejected);
+    if (bottomChannel) {
+      this.bottomCreepBudgetUsed = Math.max(0, this.bottomCreepBudgetUsed - rejected);
+      // bottomCreepBudgetLimit is not a "remaining" ledger: used stays <= limit.
+    }
+  }
+
+  // ==========================================================================
   // P-011 v2.14 §20: two-pass planning pass with dynamic tilt feasibility.
   // §20.6.1 candidate closure {thetaRequested, theta1, theta0}; §20.6.2 fixed
   // channel order settle→percolate→bottomCreep→relax→lift with (rank, index)
@@ -2112,7 +2198,10 @@ export class WaterSandField {
         heavy: 0,
         light: 0,
         activeBefore: true,
-        activeAfter: false
+        activeAfter: false,
+        hardGuardRejected: 0,
+        hardGuardClipped: 0,
+        hardGuardAvailable: true
       });
     }
   }
@@ -2174,7 +2263,20 @@ export class WaterSandField {
       if (originalRequested <= EPS) {
         continue;
       }
-      const allowed = this.clipSubstepMotion(c, -1, originalRequested);
+      let allowed = this.clipSubstepMotion(c, -1, originalRequested);
+      // §19.5 pre-commit guard: settle increases S in this column; admit the
+      // increment against the two adjacent edges before writing material.
+      let guardClipped = 0;
+      if (allowed > EPS) {
+        const deltaColumns = new Map<number, number>();
+        deltaColumns.set(c, 1);
+        const guardOutcome = this.materialGuardAdmitIncrement(allowed, deltaColumns);
+        if (guardOutcome.rejected > 0) {
+          guardClipped = guardOutcome.rejected;
+          this.materialGuardRefund(guardOutcome.rejected, [c], false);
+          allowed = guardOutcome.accepted;
+        }
+      }
       const scale = allowed / Math.max(originalRequested, EPS);
       const heavy = desiredHeavy * scale;
       const light = desiredLight * scale;
@@ -2183,7 +2285,8 @@ export class WaterSandField {
       this.suspL[c] -= light;
       this.ml[c] += light;
       if (this.naturalObservationProbe !== null) {
-        this.naturalObservationProbe.recordSettle(c, originalRequested, allowed, heavy, light);
+        this.naturalObservationProbe.recordSettle(c, originalRequested, allowed, heavy, light,
+          guardClipped);
       }
     }
     this.updateSandTop();
@@ -2287,7 +2390,7 @@ export class WaterSandField {
       // P-011 observation ①b fix A: slipRequest* slots are compacted candidates;
       // the physical edge identity is min(donor, receiver), never the slot index.
       const edge = donor < receiver ? donor : receiver;
-      const amount = this.clipSubstepMotion(donor, receiver, requested);
+      let amount = this.clipSubstepMotion(donor, receiver, requested);
       const activeBefore = this.naturalObservationSlidingBefore[edge] !== 0;
       // P-011 observation ①b fix B: active state follows the transition contract
       // requested>0 <-> requested=0 (algorithm-P011.md v2.10 edge contract:
@@ -2295,6 +2398,21 @@ export class WaterSandField {
       const activeAfter = requested > EPS;
       this.naturalObservationSlipSeen[edge] = 1;
       this.naturalObservationSlidingAfter[edge] = activeAfter ? 1 : 0;
+      // §19.5 pre-commit guard: relax moves S donor->receiver; the affected
+      // edge set (central + both outer neighbors) is derived inside the
+      // admission helper from the per-column delta map.
+      let guardRejected = 0;
+      if (amount > EPS) {
+        const relaxDelta = new Map<number, number>();
+        relaxDelta.set(donor, -1);
+        relaxDelta.set(receiver, 1);
+        const relaxGuard = this.materialGuardAdmitIncrement(amount, relaxDelta);
+        if (relaxGuard.rejected > 0) {
+          guardRejected = relaxGuard.rejected;
+          this.materialGuardRefund(relaxGuard.rejected, [donor, receiver], false);
+          amount = relaxGuard.accepted;
+        }
+      }
       if (requested > EPS && amount <= EPS) {
         this.naturalObservationProbe?.recordSlip({
           interfaceIndex: edge,
@@ -2306,7 +2424,10 @@ export class WaterSandField {
           heavy: 0,
           light: 0,
           activeBefore: activeBefore,
-          activeAfter: activeAfter
+          activeAfter: activeAfter,
+          hardGuardRejected: guardRejected,
+          hardGuardClipped: 0,
+          hardGuardAvailable: true
         });
       }
       if (amount <= EPS) {
@@ -2328,7 +2449,10 @@ export class WaterSandField {
           heavy: split.heavy,
           light: split.light,
           activeBefore: activeBefore,
-          activeAfter: activeAfter
+          activeAfter: activeAfter,
+          hardGuardRejected: guardRejected,
+          hardGuardClipped: guardRejected > 0 && amount > EPS ? guardRejected : 0,
+          hardGuardAvailable: true
         });
         this.recordNaturalTopSplit(edge, donor, amount, donorBhBefore, donorBlBefore,
           donorMhBefore, donorMlBefore, split);
@@ -2446,8 +2570,22 @@ export class WaterSandField {
         ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
         : this.capacity - this.sandTopScratch[receiver];
       const independentGrant = requested * independentScale;
-      const amount = this.clipBottomCreepMotion(
+      let amount = this.clipBottomCreepMotion(
         Math.max(0, Math.min(independentGrant, donorDeposited, receiverCapacity)));
+      // §19.5 pre-commit guard: creepBottom moves S donor->receiver; refund
+      // also touches the bottom ledger (bottom is a creep-only channel).
+      let guardRejected = 0;
+      if (amount > EPS) {
+        const creepDelta = new Map<number, number>();
+        creepDelta.set(donor, -1);
+        creepDelta.set(receiver, 1);
+        const creepGuard = this.materialGuardAdmitIncrement(amount, creepDelta);
+        if (creepGuard.rejected > 0) {
+          guardRejected = creepGuard.rejected;
+          this.materialGuardRefund(creepGuard.rejected, [donor, receiver], true);
+          amount = creepGuard.accepted;
+        }
+      }
       if (amount <= EPS) {
         if (requested > EPS && this.naturalObservationProbe !== null) {
           this.naturalObservationProbe.recordBottomCreep({
@@ -2458,7 +2596,10 @@ export class WaterSandField {
             requested: requested,
             allowed: 0,
             heavy: 0,
-            light: 0
+            light: 0,
+            hardGuardRejected: guardRejected,
+            hardGuardClipped: 0,
+            hardGuardAvailable: true
           });
         }
         continue;
@@ -2494,7 +2635,10 @@ export class WaterSandField {
           requested: requested,
           allowed: amount,
           heavy: split.heavy,
-          light: split.light
+          light: split.light,
+          hardGuardRejected: guardRejected,
+          hardGuardClipped: guardRejected > 0 && amount > EPS ? guardRejected : 0,
+          hardGuardAvailable: true
         });
         this.naturalObservationProbe.recordBottomSplit({
           channel: 'bottom',
@@ -2572,10 +2716,28 @@ export class WaterSandField {
       if (originalRequested <= EPS) {
         continue;
       }
-      const amount = this.clipSubstepMotion(c, -1, originalRequested);
+      let amount = this.clipSubstepMotion(c, -1, originalRequested);
       if (amount <= EPS) {
         if (this.naturalObservationProbe !== null) {
-          this.naturalObservationProbe.recordLift(c, originalRequested, 0, 0, 0);
+          this.naturalObservationProbe.recordLift(c, originalRequested, 0, 0, 0, 0);
+        }
+        continue;
+      }
+      // §19.5 pre-commit guard: lift decreases S in this column; admit the
+      // increment against the two adjacent edges before writing material.
+      let guardClipped = 0;
+      const liftDelta = new Map<number, number>();
+      liftDelta.set(c, -1);
+      const liftGuard = this.materialGuardAdmitIncrement(amount, liftDelta);
+      if (liftGuard.rejected > 0) {
+        guardClipped = liftGuard.rejected;
+        this.materialGuardRefund(liftGuard.rejected, [c], false);
+        amount = liftGuard.accepted;
+      }
+      if (amount <= EPS) {
+        if (this.naturalObservationProbe !== null) {
+          this.naturalObservationProbe.recordLift(c, originalRequested, 0, 0, 0,
+            guardClipped);
         }
         continue;
       }
@@ -2586,7 +2748,7 @@ export class WaterSandField {
       const split = this.splitTopV2(c, amount);
       if (this.naturalObservationProbe !== null) {
         this.naturalObservationProbe.recordLift(c, originalRequested, amount,
-          split.heavy, split.light);
+          split.heavy, split.light, guardClipped);
         this.recordNaturalTopSplit(null, c, amount, donorBhBefore, donorBlBefore,
           donorMhBefore, donorMlBefore, split);
       }

@@ -323,6 +323,9 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
             (sample for sample in samples if sample["linearSlopeDeg"] >= 27.0), None
         )
         convergence[phase] = {
+            "applicablePhase": "phase-2",
+            "deferred": True,
+            "deferredBasis": "docs/priority.md 2026-10-20 phase-boundary ruling: SLIP-02 package DEFERRED / NOT VALIDATED; measurements still recorded as diagnostics",
             "captureCount": len(samples),
             "finalLinearSlopeDeg": final["linearSlopeDeg"] if final else None,
             "finalSlopeR2": final["rSquared"] if final else None,
@@ -334,8 +337,21 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
         }
 
     result = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "testCase": "P011-SLIP-FORMAL",
+        "phaseApplicability": {
+            "phase1MustPass": [
+                "hardConstraint (tan30, with 45-degree reference-line exemption)",
+                "observationContract",
+                "tiltLedgerAlignment",
+                "budget",
+                "phaseEndpoint safety invariants (suspension<=5%, finite values, conservation, inventory, capacity)",
+            ],
+            "phase2Deferred": [
+                "convergence (SLIP-02: slope 30+/-2deg, R2>=0.90, target-based t90<=5100ms)",
+            ],
+            "basis": "docs/priority.md 2026-10-20 phase-boundary ruling; SLIP-02 package is DEFERRED / NOT VALIDATED, not PASS",
+        },
         "routeId": first_context.get("observationRouteId", "natural-observation-v2.10"),
         "observationRunRole": first_context.get("runRole"),
         "thresholdCalibrationId": first_context.get("thresholdCalibrationId"),
@@ -453,14 +469,26 @@ def write_report(result, report_path):
     ]
     for phase, item in result["convergence"].items():
         first_ms = item["targetBasedFirst27DegRelativeMs"]
+        final_slope = item["finalLinearSlopeDeg"]
         lines.append(
-            "| " + phase + " | " + format(item["finalLinearSlopeDeg"], ".6f") + " | "
+            "| " + phase + " | "
+            + ("null" if final_slope is None else format(final_slope, ".6f")) + " | "
             + str(item["slopeWithin30PlusMinus2"]).lower() + " | "
             + str(item["rSquaredAtLeast090"]).lower() + " | "
             + ("null" if first_ms is None else format(first_ms, ".0f")) + " | "
             + str(item["targetBasedT90Within5100ms"]).lower() + " |"
         )
-    lines += ["", "Full machine-readable result: `test/artifacts/p011-slip-formal-v1/formal-checker-output.json`.", ""]
+    lines += [
+        "",
+        "## Phase applicability",
+        "",
+        "- SLIP-02 convergence package (slope 30+/-2 deg, R2>=0.90, target-based t90<=5100ms): **DEFERRED / NOT VALIDATED, applicable phase 2** (docs/priority.md 2026-10-20 phase-boundary ruling).",
+        "- Convergence results above are diagnostics for phase-2 reachability audit; they do not block phase-1 completion and are not PASS.",
+        "- Safety invariants (conservation, inventory, capacity, budget, finite values, ledger alignment) are NOT deferred; they remain phase-1 MUST-PASS.",
+        "",
+        "Full machine-readable result: `test/artifacts/p011-slip-formal-v1/formal-checker-output.json`.",
+        "",
+    ]
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text("\n".join(lines), encoding="utf-8")
 

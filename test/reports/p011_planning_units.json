@@ -105,7 +105,8 @@
     },
     {
       "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
-      "status": "PASS"
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
     },
     {
       "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
@@ -178,6 +179,26 @@
     {
       "name": "p011_planningPass_limitingEdgeTieBreakKeepsSmallestIndex",
       "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_nonWorseningOnViolatingEdge",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_zeroInfluenceEdgeDoesNotRestrictGrant",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_ledgerRefundRestoresBudgets",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_telemetryFieldsReal",
+      "status": "PASS"
     }
   ],
   "blockedSemantics": {
@@ -187,6 +208,6 @@
     "okFalse": true,
     "errorCode": 5
   },
-  "passed": 41,
-  "failed": 2
+  "passed": 45,
+  "failed": 3
 }
