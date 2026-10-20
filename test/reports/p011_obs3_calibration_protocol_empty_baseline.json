@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "testCase": "P011-OBS3-CALIBRATION-PROTOCOL",
+  "overall": "INCOMPLETE",
+  "thresholdVerdict": "NOT_EVALUATED",
+  "baselineKind": "empty-red-protocol-baseline",
+  "runRole": null,
+  "protocolMetadataErrors": [
+    "new-protocol schedule has not yet been supplied to tester",
+    "schedule hash, platform tolerance, and platform hold duration are not registered"
+  ],
+  "observedScheduleTargets": [],
+  "platformRecordCounts": {
+    "+15": 0,
+    "+30": 0,
+    "-15": 0,
+    "-30": 0
+  },
+  "maxObservedAlphaDeg": null,
+  "tan30CensorApplies": null,
+  "cellStatus": {
+    "start/+": "INCOMPLETE / DESIGN_PENDING_OBSERVATION",
+    "start/-": "INCOMPLETE / DESIGN_PENDING_OBSERVATION",
+    "stop/+": "STOP_TRANSITION_UNOBSERVED",
+    "stop/-": "STOP_TRANSITION_UNOBSERVED"
+  },
+  "rawRealTransitions": {
+    "start/+": 0,
+    "start/-": 0,
+    "stop/+": 0,
+    "stop/-": 0
+  },
+  "platformBracketCandidateTransitions": {
+    "start/+": 0,
+    "start/-": 0,
+    "stop/+": 0,
+    "stop/-": 0
+  },
+  "safetyMustPass": "UNCHANGED; NOT_ASSESSED_BY_THIS_EMPTY_BASELINE",
+  "sampleAndFitPolicy": "unchanged; no fit/holdout evidence or minimums are satisfied"
+}
