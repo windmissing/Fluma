@@ -2417,3 +2417,98 @@ R2 四项整改复核（对照外部评审初核）：
 4. 阶段一·B 的完成判定链：限幅实现（§22 CONDITIONAL_PASS）+ 材料 guard（本节 PASS_WITH_DEFECT）+ R-3 修复（待 developer）+ tester 真机验证（待执行）——R-3 修复完成前，B 线「零违约」声明以 fail-safe 口径成立（越界 run 必 invalid），完整口径待修复后闭合。
 
 变更记录：2026-10-20，依据 manager 三任务合并评审指令新增 §23。B·续 PASS_WITH_DEFECT（R-3 预演-guard 集成缝隙已定性并出 a/b 方案）；R2 PASS 可 commit（白名单三用例裁决=维持+directionAccuracy 绑定 R-3 修复）；P-012 APPROVED_WITH_CONDITIONS（P1-P4）。三处收口：本节（②）+ 滴答任务 ①③ 结论。
+
+## 24. 滑移收敛修正 relax-correction-weighted-v1：算法稿评审 + 工程落地方案（2026-10-20）
+
+**状态：算法稿 `APPROVED`（1 项语义澄清转 manager）+ 工程方案 `READY_FOR_DEVELOPER`（排期在 R-3 修复 commit 之后）。**
+
+评审对象：`docs/algorithm-P011-relax-correction-v1.md`（designer）。评审方法：数学复核（下降证明 Lipschitz 论证、均匀场 D=0 边界、加权分配算例）+ 代码对接面核对（guard API 拼写/通道顺序/账本结构/预留落点）。
+
+### 24.1 算法稿评审
+
+| 评审项 | 判定 | 说明 |
+|---|---|---|
+| 预算语义裁决（§1） | **APPROVED，转 manager 确认** | 「独立建账+优先预留+全额计 total」与 300/s 硬上限相容（ordinaryUsed+correctionUsed≤300dt 不变）；「额外额度 300+R」被正确拒绝。**转 manager**：任务原文「独立于 total 300/s」若指后者，须先裁决总预算定义——本工程方案按前者（预留）落地，若 manager 改判后者则本方案作废重设计 |
+| 单笔下降证明（§3） | **APPROVED** | 数学复核：E=0.5Σmax(0,\|r\|−h)² 沿单笔线性路径的方向导数 = Σe·sign(r)·k，D=−dE/dq 定义正确；e·sign(r)·k 的 Lipschitz ≤1 论证成立 → E(q)≤E(0)−Dq+Kq²/2，q≤D/K 给出 E 降 ≥Dq/2；K=6/dx²（内部边）核算正确；截至 qDescent 后任何缩减保留下降性，正确 |
+| 均匀场失效边界（§3 末） | **APPROVED** | 内部三边同号等 e 时 Σk=0 → D=0，权重 e²·γ 不解决通量抵消——设计稿如实声明不承诺、报 CORRECTION_STALLED，诚实且必要（§8.12 的空间抵消问题本方案只部分处理） |
+| 量化预期（§8） | **APPROVED** | 1.28 倍上界推导保守合理（只取消竞争，未含新截断）；明确「不是收敛证明」；加权算例标注「只演示分配器」——无过度承诺 |
+| guard API 对接（§5） | **APPROVED** | `p011GuardAdmit(requested, constraints, slopeHardMax)` 拼写与实际导出一致（P011MaterialGuard.ets:51）；`limitingEdge` 返回数组位置需 affectedEdgeIds 映射的提醒正确且必要 |
+| 四层回写表（§6） | **APPROVED** | correction 不动 bottom、local 双端、total 一次；channelRateCap=0 现状被正确识别为需新增真实账本 |
+| 与 R-3 的关系（§7） | **APPROVED** | 明确要求预演/apply 共享同一预留+排序+guard+退款算法——与 §23.1 R-3-a 的 shadow 镜像路线一致 |
+
+### 24.2 工程落地方案
+
+**接入点与调用链**（applyMotionChannels 内 relax 槽位替换）：
+
+```text
+step loop
+  planAndCommitTilt（不变，但其 previewAt 委托的 shadow 镜像需同步扩展，见协同项）
+  beginNaturalObservation + substep(collect)（不变）
+  verifyPreviewCommitConsistency（不变）
+  restoreMotionSnapshot
+  computeCorrectionReservation(substepDt)     // 新增：候选角下计算 u/R_limit/p/P_i
+  scale = min(1, (B−R_limit)/max(ordinaryRequested, EPS))  // 普通通道可用 total 缩减
+  beginMotionApplication(substepDt, scale)
+  applyMotionChannels:
+    settle / percolate / bottomCreep   // 不变（local 可用量 L_i−P_i 经预留表传入）
+    relaxAngle → applyCorrectionSlot   // 替换：冻结 (−w, edgeId) 序逐笔执行
+    lift                                // 不变
+  ledgerReconciliation（A-1，扩展 correction 分列）
+```
+
+**接口契约**（新增，均放 P011MaterialGuard.ets 或新文件 P011RelaxCorrection.ets——建议后者，职责独立）：
+
+```ts
+// P011RelaxCorrection.ets（新文件，纯函数+账本，不 import ArkUI）
+export interface P011CorrectionCandidate {
+  edge: number;              // 物理边号
+  donor: number; receiver: number;
+  r: number; e: number;      // 残差/超角量（当前 shadow S 下）
+  d: number; k: number;      // 净贡献导数/二阶系数
+  qNatural: number; qDescent: number; guardAdmissible: number;
+  u: number;                 // min(全部 cap, L/degree)
+  w: number;                 // e²·γ
+  p: number;                 // 封顶加权分配结果
+}
+export function p011CorrectionReserve(
+  sandTop: Float64Array,        // 当前（shadow 或真实）S
+  effectiveTiltDeg: number,     // accepted tilt
+  params: P011CorrectionParams, // h=tan(angleDeg)（现行）, maxAvalancheFlux, vSandTopMax, dt 由调用方传入
+  budgets: { localRemaining: Float64Array; totalRemaining: number },
+  stockReader: (col: number) => { donorStock: number; receiverCapacity: number }
+): P011CorrectionReservation;   // { candidates, R_limit, P_i: Float64Array, order: number[] }
+export function p011CorrectionAllocate(candidates, rLimit): void; // 封顶加权：u/w 升序扫描，无二分
+// apply 侧逐笔：复用 p011GuardConstraintsForDelta + p011GuardAdmit（与 apply guard 同一推导）
+```
+
+**correction 账本与四层回写集成**：
+
+1. 新增 `correctionBudgetUsed/Remaining/Requested/Clipped` 四标量 + `correctionReservation` 结构（含 P_i 数组），生命周期对齐 beginSubstepMotionBudget/reset。
+2. `P011ExistingChannelId` 增加 `'correction'`（rank=6，suspensionDiffusion=5 之后）——影响面：`P011ExistingChannelRateCapRemaining` 加 correction 字段、`p011ChannelRank` 加分支、allocatePreviewPlans 加 correction 槽位镜像。
+3. guard 拒绝回写：现有 `materialGuardRefund(rejected, [donor, receiver], false)` 已覆盖 local+total；correction 账本回写新增一行 `correctionRemaining += rejected; correctionUsed −= rejected`——不重复退 local/total（设计稿 §6 表格的「另列」要求）。
+4. 遥测：`P011NaturalObservationAudit` 增加 `correctionRequested/Granted/Rejected/StalledCount` 字段；ledger schema 不升版本（字段向后兼容追加），checker 对旧 run 的缺失字段按 0 容忍。
+
+**与 R-3-a 预演镜像的协同实现顺序（关键）**：
+
+1. **先 R-3 后 correction**（排期硬约束）：R-3-a 的 shadow 镜像（6 数组+split 公式+逐笔重算 S）是 correction 预演的地基——correction 的预留计算（u/R/p）与逐笔执行都必须在 shadow 状态上复现，若 R-3 未 commit 先做 correction，两套改动在同一函数内冲突，review 成本翻倍。
+2. correction 落地时 `allocatePreviewPlans` 的扩展点：在 relax 槽位镜像处先调 `p011CorrectionReserve`（读 shadow 数组），普通通道槽位的 totalScale 用 `1−R/B` 折算（与真实侧 `(B−R)/requested` 等价），correction 槽位逐笔 guard 镜像与 apply 共用同一 `p011CorrectionApplyOnce` 纯函数（含逐笔重算 D/K 与库存重验）——满足设计稿 §7「共享同一算法」与 §20.6.4 单一推导要求。
+3. `verifyPreviewCommitConsistency` 的 committed 侧重算自动包含 correction（同一分配器函数），无需改比对逻辑；plans 数组多一个 correction 条目，`p011PreviewCommitConsistent` 按 channelId 逐项比较已覆盖。
+
+**路线身份与观测**：新 route `relax-correction-weighted-v1`（观测 record 的 observationRouteId 显式传入，不复用 natural-observation-v2.10）；A/B/C/D 对照矩阵（设计稿 §9 表）由 tester 按 RED 先行落用例；route 隔离规则照旧——旧 run 不追认、checker 不共享绿色阈值。
+
+### 24.3 实现排期建议（交 manager 排期）
+
+| 顺序 | 任务 | 依赖 | 验收 |
+|---|---|---|---|
+| 1 | R-3-a 修复 commit（已在工作区，56/0 全绿待提交） | 无 | §23.1 R-3 验收三件套 |
+| 2 | correction 工程实现（P011RelaxCorrection.ets + WaterSandField 接入 + 预演扩展 + 遥测字段） | ① | Node 通道含 correction 用例全绿；A/B/C/D 对照矩阵 RED 转绿；verify 每 substep PASS |
+| 3 | tester 对照矩阵正式 run + 效果报告（E/maxResidual/ΔE_relax/挤占代价） | ② | 设计稿 §9 验证表全项；CORRECTION_STALLED 如实报告 |
+| 4 | manager 裁决是否转正路线 | ③ | 效果证据充分后裁决；不达标则回退原 relax 路线（route 开关） |
+
+### 24.4 次要评审意见（交 designer 修订，不阻塞工程）
+
+1. §4.1 的 `maxAvalancheFlux` 「场景历史 80/s、引擎默认 24/s」——建议在设计稿标注当前 run 配置实际值来源（冻结配置字段名），避免实现时读错。
+2. §3 的 γ 定义 `γ[c]=max(0,D[c])/(2e[c]/dx)` 在 e[c]→0⁺ 时发散（D>0 但 e→0 时 γ→∞）——w=e²γ=e·D·dx/2 则收敛，故 w 良定义；建议设计稿注明 w 用后一等价式计算，避免实现者直接算 γ 再乘 e² 引入数值问题。
+3. §8 算例的「未饱和解 0.1230769」建议附一步推导（λ=5/(40×16+10×1)=5/650），方便 tester 复核。
+
+变更记录：2026-10-20，依据 manager【architect·工程设计】任务新增 §24。算法稿 APPROVED（预算语义一项转 manager 确认）；工程方案 READY_FOR_DEVELOPER（排期= R-3 commit 之后）；接口契约/账本集成/预演协同/排期表落盘。

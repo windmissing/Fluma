@@ -2,7 +2,29 @@
 
 > 维护人：manager。一轮聚焦最多 1~3 个高优先级问题。
 
-## 2026-10-20 P-011 观测③平台可达性矛盾裁决（当前生效）
+## 2026-10-20 P-011 观测③ v2 pilot 停机与 v3 识别方向批准（当前生效）
+
+> 日期：2026-10-20。依据 `docs/effect-report-P011-obs3v2-pilot-run1.md`（v2 clean pilot 报告）与 `docs/observation3-v3-identification-redesign-v1.md`（designer 识别策略重论证）。v2 pilot（run `p011-run-1792472946390-3`，构建 891370d）三维判定：clean=INVALID（5 条边 tan30 违约，量级 1.25e-7 浮点 epsilon，seq2020 回摆段，非豁免相位 → 按预注册稿 §6 隔离整 run）、platformReachability=PARTIAL（±15° 恰 15.0000° 极稳 PASS；±30° 每子步 `TILT_PLANNING_BLOCKED` 物理冻结 ~29.88°，完全不可达）、pilotCoverage=INCOMPLETE（四 cell 全 0 合格 bracket；459 个原始 start 全部发生于 ramp 段）。run 证据保留于 `test/artifacts/p011-obs3v2-20261020/run-001/`。
+
+1. **v2 pilot 判定确认**：run-001 维持 INVALID，不进入 fit/holdout，不追认；观测③维持 `BLOCKED / DESIGN_PENDING_OBSERVATION`。effector 按执行单停止扩批、照实报告、未改 schedule/物理/用例——纪律执行合格。
+2. **接受 v3 复核结论（根因层缺陷）**：designer 对照 source-manifest SHA-256 复核构建源码确认 `EXECUTION_THRESHOLD_IDENTITY_MISMATCH`——该构建 relaxAngle 实际由 `tan(angleDeg=4°)` 驱动，候选阈值 28°/22.911° 未进入状态机；ledger 复核 459 个原始 start 的 alpha 实测 4.0°~14.3°，全部为旧请求态诊断事件，非双阈值观测。v2 pilot 的"start/stop"数据不构成对任何候选阈值的检验。
+3. **批准 v3 方向 2 进入新协议设计**：稳定平台 + 安全提交 ramp 联合激励。保持原搜索窗 `thetaStart∈[25°,30°)`、`thetaStop∈[15°,25°]` 与全部安全/统计门槛不变；新资格规则允许受控、完整提交、无 hold/回滚/裁剪歧义的 ramp 转折纳入标定（ramp leg 预注册、决策残差可得、bracket 宽 ≤0.5° 采样分辨率）；建议序列 `0→+15→+A→+15→0→−15→−A→−15→0`（峰值 A 由修复后 planner+guard 影子审计确定，不是固定 30°）。否决方向 1（滞后窗口不能合法制造 active）、方向 3（搜索窗迁移无证据支持，为 manager 保留事项）、方向 4 降为后备（当前无 stop 半份证据）。
+   - **速率档口径**：0.5°/s 主档必须独立满足 34run/pair 及全部 cell 门槛；1.0°/s 敏感性档作为可行性审计项纳入 v3 协议，若要求两档各自独立确认则须各自足额（最低 68run/pair），本裁决不预授权任何扩批。
+   - **估计对象声明（随协议冻结）**：v3 manifest 必须分列 `configuredThresholds` / `executedThresholds` 及状态机实现版本/代码 hash；给软件预设候选后重现该阈值转换只证明执行语义可复核，不得自证材料「天然阈值」或候选最优；候选优选仍按独立行为/效果判据与 holdout 验证。
+   - **右删失新定义纳入 v3 协议**：仅当新 v3 存在完整合法风险暴露、alpha 上界受 tan30 安全约束截断且未穿过候选 start 时，方可记 `RIGHT_CENSORED_AT_TAN30`（附实际 alpha 上界、风险状态、planner 原因），不产生点估计，不将缺样本本身当右删失。
+4. **结构性缺失预案**：v3 预演/试采必须输出可达覆盖矩阵（风险状态、alpha 范围、真事件端点、噪声层可定义性）。若某噪声子 cell 在现有机制下结构性缺失，交回 manager 裁决实验激励/验收适用范围；禁止默默合并 cell 或删除难采层。manager 届时裁决选项限于：调整实验激励、上报用户决策验收适用范围变更、或维持 INCOMPLETE 如实报告；不自动降门槛。
+5. **执行身份整改路由（先于任何新 pilot）**：designer 冻结 v3 协议及候选估计对象（configured/executed thresholds 分列、decision 时点字段、transitionReason）→ architect 核对真正双角状态机、decision 时点与 planner 事务语义 → developer 补齐执行与遥测（相名映射九相 + ledger schema v3 增补 thetaAccepted/requestRejected/plannerHold，任务已建）→ tester 核验执行身份/完整性/新资格过滤 → effector 待 manager 新 pilot 批准。
+   - **采集侧修复并行启动**：任务 6ad6fb88（九相映射 + schema v3 planner 字段）按任务卡「无论识别策略怎么改都得修」定性**立即执行**，不等待 architect 方案；其产出并入 developer 身份整改交付。v3 新序列（含 A 段）的相位映射增量在 designer 冻结协议后叠加，v2 九相向后兼容照做。
+   - **新 pilot 批准前置**：须身份整改全链（designer→architect→developer）完成、tester 核验通过、v3 协议冻结且覆盖矩阵预演方案就位后，manager 另行单独批准；本裁决不授权任何新采集。
+6. **非目标**：本裁决不放宽 tan30/planning 闸门、不移动搜索窗、不追认 v2 pilot 标定资格、不预断 v3 可辨识性。若 v3 预演显示原统计门槛在可达域内不可满足，交 manager 另行裁决，不自动降门槛。
+7. **本轮调度指令（2026-10-20 下午启动）**：
+   - **designer（立即，先行）**：输入 `docs/observation3-v3-identification-redesign-v1.md` §4（工程/观测契约草案）与 §5（统计门槛）。任务：将 §4 草案升格为正式 v3 协议（含 §4.1 身份字段、§4.2 ramp bracket 资格、§4.3 序列与速率档、§5 门槛与覆盖矩阵预演方案、估计对象声明与右删失新定义），冻结后输出候选估计对象清单；不实现代码、不授权采集。
+   - **developer（并行，任务卡 6ad6fb88）**：输入任务卡与 `P011NaturalObservation.ets:261-286`、calibration checker 缺字段清单。任务：九相映射更新（protocolId 区分向后兼容）+ ledger schema v3 增补 thetaAccepted/requestRejected/plannerHold + 单测 + commit。完成标准按任务卡；不改物理、不改闸门。
+   - **architect（等待 designer 协议冻结）**：核对真正双角状态机、decision 时点、planner 事务语义与 developer schema v3 字段的一致性。
+   - **tester（等待 architect 核对）**：核验执行身份、相名/完整性、硬安全与新 ramp 资格过滤的 checker 落地。
+   - **effector**：待 manager 新 pilot 批准，本轮无动作；继续停扩批纪律。
+
+## 2026-10-20 P-011 观测③平台可达性矛盾裁决（历史；v2 pilot 结果已由上条更新）
 
 > 日期：2026-10-20。依据 `docs/effect-report-P011-recalib3-gate-run1.md`。835e663 基线的阶段一 MUST-PASS 全部通过：164,084 条边 0 tan30 违约、A-1 对账 0 不匹配、账本对齐 0、边身份 0 错位；本次失败仅由 deferred SLIP-02 收敛包驱动。与此同时，4b1f635 planning pass 将运行时 `thetaAccepted` 限制在约 29.9°，冻结 ±45° schedule 因而没有 ±45° 稳定平台或有效 bracket。
 
@@ -155,7 +177,7 @@
 | P2 | P-008 | OPEN | designer → architect → developer | G2+G3 主线闭环后推进 | percolationRate 参数化与干湿门控 |
 | P0 | P-009 | IN_PROGRESS | architect → tester | 立即并行，不阻塞 v2 基线提交 | WS_SNAPSHOT 4KB hilog 截断，阻塞 E2E 客观验收 |
 | P2 | P-010 | CLOSED | architect | 2026-10-15 manager 复核通过 | architecture §10 已包含“本节预算接口已被 §11 v2.2 取代”导航提示 |
-| P0 | P-011 | IN_PROGRESS（slip-overshoot-v2 条件性不可达，转 lift/settle/suspension 离线审计） | **designer（离线可达性审计）∥ tester（target-based t90 + 拟合优度/稳定终点口径）→ architect → developer → reviewer → tester → effector → designer独立复盘 → manager** | 维持 `30°±2°`、`5.1s`、预算与几何不变；重沙另行排期 | 相邻输运缺口约 66 倍；不得用瞬态悬沙或仅 OLS 斜率放行 |
+| P0 | P-011 | IN_PROGRESS（观测③ v3 方向 2 已批准；执行身份整改链启动，v2 pilot 维持 INVALID） | **designer（v3 协议冻结）∥ developer（采集侧修复 6ad6fb88）→ architect → tester → effector（待新 pilot 批准）** | 身份整改全链完成 + tester 核验 + 协议冻结 + 覆盖矩阵预演方案就位 → manager 另批新 pilot | EXECUTION_THRESHOLD_IDENTITY_MISMATCH 根因确认；搜索窗与统计门槛不变；ramp 新资格已批；结构性缺失交 manager 裁决 |
 
 状态说明：OPEN → IN_PROGRESS（designer 已开工）→ VALIDATING（测试中）→ CLOSED（双测试达标，designer 验证通过）
 
@@ -370,6 +392,8 @@
 | P-010 | 2026-10-15 | `docs/architecture-P003-P005.md` §10 已加入“本节预算接口已被 §11 v2.2 取代；本节仅保留为历史设计记录”的导航提示 |
 
 ## 变更记录
+
+- 2026-10-20：原因：【观测③·v3】外部评审验收 designer 识别策略重论证。manager 三项裁定：① 批准方向 2（稳定平台+安全提交 ramp 联合激励）进入新协议设计，搜索窗 [25°,30°)/[15°,25°] 与全部安全/统计门槛不变，ramp leg 预注册/决策残差时点/0.5° bracket 分辨率冻结，序列 0→+15→+A→+15→0→−15→−A→−15→0（A 由影子审计定）；② 确认 EXECUTION_THRESHOLD_IDENTITY_MISMATCH 根因（构建实际 tan(4°) 驱动、候选未进状态机），执行身份整改路由生效：designer 协议冻结 ∥ developer 采集侧修复（6ad6fb88，立即）→ architect → tester → effector 待批；③ 结构性缺失预案：预演覆盖矩阵若显示子 cell 结构性缺失，交 manager 裁决（限调整激励/上报用户/维持 INCOMPLETE 三选），禁默默合并。补全速率档、估计对象声明、右删失新定义三项口径；新 pilot 批准前置=身份整改全链+tester 核验+协议冻结+覆盖矩阵方案。
 
 - 2026-10-19：原因：architect 复核确认 slip-overshoot-v2 相邻输运下界与 raster 口径。manager 接受条件性不可达，维持 30°±2°/5.1s/预算不变，改路由 designer 做 lift/settle/suspension 离线可达性审计、tester 修正 target-based t90 与拟合优度/稳定终点口径；本轮不授权新观测或实现。
 

@@ -75,8 +75,7 @@
     },
     {
       "name": "bottomCreep_tiltMovesLowerLayers",
-      "status": "FAIL",
-      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+      "status": "PASS"
     },
     {
       "name": "p011_routeAndHooksAreSubstepAligned",
@@ -92,8 +91,7 @@
     },
     {
       "name": "p011_commandSignFlipResetsPhaseAndReversesDisplacement",
-      "status": "FAIL",
-      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+      "status": "PASS"
     },
     {
       "name": "p011_negativeTiltReversesBottomCreep",
@@ -105,8 +103,7 @@
     },
     {
       "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
-      "status": "FAIL",
-      "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+      "status": "PASS"
     },
     {
       "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
@@ -199,6 +196,38 @@
     {
       "name": "p011_materialGuard_telemetryFieldsReal",
       "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_settleDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_settleZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_relaxDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_relaxZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_bottomCreepDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_bottomCreepZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_liftDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_liftZeroInterventionWhenLegal",
+      "status": "PASS"
     }
   ],
   "blockedSemantics": {
@@ -208,6 +237,6 @@
     "okFalse": true,
     "errorCode": 5
   },
-  "passed": 45,
-  "failed": 3
+  "passed": 56,
+  "failed": 0
 }

@@ -1904,6 +1904,12 @@ max_j F[j] = tan(phi) * N*N/8       (central edge, N even)
 
 Designer 建议先把上述新 protocol、平台判定容差、四 cell 统计和删失输出形成版本化预注册稿，交 tester 同步 checker/test-cases 审核；再由 effector 按获批 schedule 执行 clean pilot。clean pilot 只判定平台可达和 bracket yield，不解封 holdout 或宣称标定完成。若双侧 start/stop brackets 在既定 run 配额内无法满足，报告相应 cell 的删失/无转换证据并维持 `BLOCKED / NOT_CALIBRATED`；不得扩大样本量或改阈值，本轮授权之外的替代机制/目标需 manager 另行裁决。
 
+## 8.17 滑移收敛修正速率预写设计（2026-10-20）
+
+状态：`DESIGN_ONLY / NOT_IMPLEMENTED / NOT_VALIDATED`。§19.5 材料 guard 已随891370d入库，设计前置解除；完整方案见 [algorithm-P011-relax-correction-v1.md](algorithm-P011-relax-correction-v1.md)。路线 `relax-correction-weighted-v1`：修正预算独立建账、从既有300/s中优先预留，采用超角深度平方×三边净贡献的封顶加权；每笔仍经 `p011GuardAdmit` 联合中央与两邻边闭式预演，截断后同步回写local/total/correction，bottom不被修正通道扣用。
+
+“额外叠加在300/s之外”与现行总量硬约束冲突，未获本稿授权；不以通道改名漏记真实搬运。架构§23.1的R-3预演/guard集成缺陷须在接入时对齐，不能把guard已入库写成全链路无缺陷。这里只登记新设计，不改§8.12历史归因、不宣称5.1秒全宽收敛、不改变阈值标定或阶段二目标边界。
+
 ## 11.1 预研：论文 252 `f_sl` 列标量律与论文 254 Janssen 压强修正
 
 **类型：挂账行动项预研；状态 `DESIGN_ONLY / NOT_CALIBRATED`。不实现、不改现有默认 `percolationRate=6/s`，不改变 P-003/P-005 既有验收。** 目标是提供保持列标量、现有 `q/r` 守恒拆分和预算账本的候选 rate 闭合，并登记深沙压强边界。理论来源为 `D:\mdbooks\ReadPapers\src\252.md` 的 Trewhela `f_sl` 律及 `D:\mdbooks\ReadPapers\src\254.md` 的准二维 Janssen 结果；论文 254 本地笔记仍为初读，以下 Janssen 用法只属预研。
