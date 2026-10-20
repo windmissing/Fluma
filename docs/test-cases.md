@@ -651,7 +651,7 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 4. **新阶段一 A/B/C 标准**（来自裁决第 1~3 条）：
    - **A（双角滞回/状态机）**：逐边 start/hold/stop 语义、真实 active 转换、限流不误报 stop、物理边身份与遥测对齐全部通过；按既定 fit/holdout、CI、样本数门槛完成 `thetaStart/thetaStop` 估计，不填默认阈值；`thetaStop` 映射 ±45° 全局窗口的适配检查延期阶段二；标定③继续 `BLOCKED`。
    - **B（安全限幅与提交 guard）**：每提交子步按实际接受参考角检查全边 `|ΔS−tan(effectiveTiltAccepted)|<=tan30°` 零违约；只允许完整事务可行时提交；可行域为空必须不提交并记录 `hold/BLOCKED` 原因；预算、守恒、库存、容量、账本对齐保持现行 MUST-PASS；无限 hold 不算收敛或体验通过。
-   - **C（现有机制效果）**：分别验证 ±15° 静止回归无新增运动/越界、滑移方向与 active/stop 及预算裁剪语义正确、有可复核用户可见的局部渐进斜坡响应（raster/录像可见证据支持，非零 grant 不算通过）；报告全宽 OLS 坡度、R²、通量与 run 时间作诊断/能力记录；守恒、库存、容量、预算、±15° 安全检查不得退化。
+   - **C（现有机制效果）**：分别验证 ±15° 静止回归无新增运动/越界（稳定保持段按 §11.1.1 的 `start=0 + 表面变化有界` 判定，不要求既有 tan4 relax 停工）、滑移方向与 active/stop 及预算裁剪语义正确、有可复核用户可见的局部渐进斜坡响应（raster/录像可见证据支持，非零 grant 不算通过）；报告全宽 OLS 坡度、R²、通量与 run 时间作诊断/能力记录；守恒、库存、容量、预算、±15° 安全检查不得退化。
 
 **移出阶段一 MUST-PASS（DEFERRED / NOT VALIDATED，阶段二）**：
 
@@ -664,6 +664,20 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 - **判定标准**：对每子步全部 127 边，`|S[c+1]-S[c]-tan(effectiveTilt_committed)|<=tan30°`；总违约数必须为 0。禁止使用下一子步或上一相位 `context.effectiveTilt` 作为提交倾角。
 - **豁免范围（2026-10-20 manager 裁决）**：仅 `positiveOvershoot`、`positiveOvershootReturn`、`negativeOvershoot`、`negativeOvershootReturn` 四个相位（±45° 稳定平台及其 overshoot/return 子步）豁免上述 tan30 参考线形式判定；依据见 `docs/priority.md`「±45° 补采 gate 几何冲突裁决」。`0°`（baseline/return）、`±15°`（positive）及所有其它相位照旧执行 tan30 判定，不得放宽。豁免 ≠ 坡度达标、≠ 无物理越界、≠ run 自动合格；有限值、守恒、库存、容量、预算、账本对齐、边身份与 stop 语义闸门在豁免子步仍完整执行。
 - **分类**：MUST-PASS。
+
+#### 11.1.1 ±15° 稳定保持段静止回归口径（2026-10-20 designer 裁决，DEVIATION-1）
+
+依据本次用户授权裁决及 [预验证报告 §2](preverify-P011-c-plus-slip-v1.md)，澄清 §11.0 C 的稳定保持段判定。**当前 thick、`angleDeg=4°` 机制中，±15°平台上持续的 relax 请求及非零实际 grant 是预期的残差修正行为，不单独判 DEVIATION/FAIL；不要求 `relaxTriggered=false`、`relaxRequestedTotal=0` 或 `relaxAppliedTotal=0`。** 输入角保持不变不等于材料已无残差；已有滑移持续工作也不等于新增 start。本裁决不改机制、不降低 start 死区门槛，不证明材料完全静止或双角标定完成。
+
+- **取段与身份**：分别检查+15°和−15°，使用已冻结的实际接受平台识别口径：目标与accepted角相差≤0.20°、速率数值静止（≤1e-9°/s）、连续≥3个提交子步且跨度≥200ms、窗口角极差≤1e-6°；不得用target、planner冻结或无提交墙钟时间充当平台。到达/ramp、平台进入、保持段分列，不能按是否发生start事后选段。缺少任一符号、真实状态链或合法稳定窗口，记 `INCOMPLETE/BLOCKED`，不得以空样本给PASS。
+- **start死区，MUST-PASS**：稳定保持段全部127边真实 `inactive→active` 的转换数必须严格为 **0**，逐子步核验activeBefore/After及前后连续性；任何1次新增start即FAIL，不以比例、平均、持续时间或已有grant抵消。平台开始时已active的边可以继续修正，但须保留入段状态及此前转换记录，不把它伪装成平台新start或删去其历史。
+- **表面有界，MUST-PASS**：为避免 `max|ΔS|` 歧义，同时列明空间坡差与时间位移，全部采用原始128列S和同子步actual accepted角，不用平滑raster替代：
+  1. 空间：`max_c |(S_after[c+1]−S_after[c])/dx − tan(thetaAccepted)| ≤ tan30°`，按SLIP-01零违约；dx=1时可推得 `max_c |S_after[c+1]−S_after[c]| ≤ tan30°+|tan(thetaAccepted)|`。恰15°时右端约0.845299，不把0.173等本次观测值临时设成新阈值，也不误用 `|ΔS|≤tan30°` 代替倾角参考约束。
+  2. 时间：`max_c |S_after[c]−S_before[c]|` 逐提交子步核验现有 **HG-04** 的≤0.5列且变化速度≤30列/秒（即≤`min(0.5,30*physicsDt)`）；帧内多子步分别检查，不把相邻列高差当成时间位移。local/bottom/total额度与现行数值契约原值保持，不新增epsilon或追加额度。
+- **既有安全与终点检查仍必过**：SLIP-03的守恒/库存/容量/有限值、每相位末1s坡度变化≤1°及终点悬沙≤5%，SLIP-04全部预算与对账、逐writer guard均不豁免。持续relax若引发任一超限，照常FAIL；`start=0`不能掩盖表面跳变、持续失稳或越界。
+- **报告字段与适用边界**：每符号列稳定记录数/时长、入段active数、真实start/stop数、relax请求/实际量、空间最大坡差、最大倾角残差、时间最大单步位移/速度及末1s稳定指标；相对平台首帧的累计形变另作诊断，不称“零运动”。预验证135/135持续请求、均值request≈12.09/grant≈2.88只按本条重新归类为机制预期，**不追认正式PASS**。其旧tan4请求状态不能冒充v3已执行的双角状态；未来真双角路线若出现与自身start/stop/请求契约不一致的非零grant，仍判机制/身份缺陷，不能套用本条豁免。
+
+结论：本静止回归子项采用 **`两个符号各自 start=0 + 表面空间/时间变化有界 + 全部既有安全/终点闸门通过`**；relax非零本身不构成违约。此前“稳定保持段relax grant必须为0”的解释在当前tan4路线不适用。tester据此核对正式报告/检查器口径；本次仅更新用例文档，未修改checker或采集证据。
 
 ### 11.2 TC-P011-SLIP-02 ±45° raster 收敛与 target-based t90
 

@@ -2512,3 +2512,61 @@ export function p011CorrectionAllocate(candidates, rLimit): void; // 封顶加�
 3. §8 算例的「未饱和解 0.1230769」建议附一步推导（λ=5/(40×16+10×1)=5/650），方便 tester 复核。
 
 变更记录：2026-10-20，依据 manager【architect·工程设计】任务新增 §24。算法稿 APPROVED（预算语义一项转 manager 确认）；工程方案 READY_FOR_DEVELOPER（排期= R-3 commit 之后）；接口契约/账本集成/预演协同/排期表落盘。
+
+## 25. 观测③ v3 执行身份整改：工程核对结论（5 项清单，2026-10-20）
+
+**状态：核对完成——1 项 PASS、4 项 GAP（含 2 项结构性缺口）。整改链对齐 v3 协议（`observation-protocol-P011-v3-preregistration-v1.md`，METHOD_FROZEN）尚有实质距离；GAP-1/GAP-2 为采集前必须完成的阻断项。**
+
+核对对象：commit `d78335b`（R-3-a）+ `5e60f2d`（采集侧修复：九相映射+schema v3 planner 字段）当前 HEAD。核对方法：逐项代码追踪（relaxAngle 判据/active 判定/字段接线/schedule 映射）+ Node 通道重跑（59/0）+ python 套件重跑（40/40）+ v3 协议逐条对照。
+
+### 25.1 五项清单逐项结论
+
+**□1 真正双角状态机 —— GAP（结构性缺口，未开始）**
+
+- 现状：`relaxAngle()` 判据仍是 `tan(params.angleDeg)`=tan(4°) 单阈值（:2517 一带）；active 判定仍是 `activeAfter = requested > EPS` 代理（:2653）；`naturalObservationSliding[]` 是观测影子数组（只被 recordSlip 读写），不是驱动物理的状态机；`setNaturalObservationRunMetadata` 接收 thetaStartDeg/thetaStopDeg 但只写入遥测 context，不进任何判据。
+- 即 **v2 的 EXECUTION_THRESHOLD_IDENTITY_MISMATCH 根因未修**——候选阈值仍未进入状态机。§19（v2.12 工程方案）的 `P011RelaxHysteresis.ets`（`p011RelaxHysteresisNextActive` 三态状态机）已设计未实现；当前构建的 start/stop 转折记录仍将是旧请求态诊断，不满足 v3 协议 §2.1「状态翻转必须来自运行状态机」。
+- 整改项（阻断采集）：实现 §19.3 三态状态机（sliding[] 驱动 relax 请求资格，start/stop 独立阈值，active 保持），接入 relaxAngle 的候选筛选；`executedThresholds` 由状态机实际读取值产生（协议 §1 表）。
+
+**□2 decision 时点 —— GAP（字段层未实现）**
+
+- 现状：ledger 无 `decisionG/decisionR/decisionAlpha/decisionOrdinal/thresholdUsed/transitionReason` 任何字段（grep 全空）；现有 slip 记录的 `d/r` 在 `completeEdgeGrant` 里由 **stateBefore** 计算（P011NaturalObservation.ets:417 一带 residualForEdge(stateBefore,...)），apply 后由 refreshEdgeGrantsAfterApply 更新 dAfter——两者都不是「状态机读残差选分支之前」的取值点。
+- v3 协议 §2.1 要求：decision 取值点=状态机实际读残差、选择分支之前；若前面已有其它 writer 写入须反映当时真实材料状态；decisionOrdinal 标同一步内顺序；同边多次判定全部登记。
+- 整改项：依赖 □1 状态机落地后在每次判定处记录（decision 时点由状态机调用点自然定义）；字段进 ledger schema（向后兼容追加）。
+
+**□3 planner 事务语义 —— GAP（部分实现）**
+
+- 已有：planner 状态机（P011TiltPlanningPass）具备 proposal(thetaRequested)/accepted/blocked/clamped/held 语义、commit 单次、BLOCKED 不冻结可继续（invalid continuation）；`getPlanningTelemetry()` 暴露 status/reason/passCount/fallback/limitingEdge。
+- 缺口：①**无 attemptId/commitStatus/rollbackReason 任何 attempt 层字段**（grep 全空）——v3 协议 §2.1 attempt 表要求逐 attempt 可审计，BLOCKED 无子步也须有独立 attempt 结果；②`thetaRequested`（真实本步 proposal）不在 ledger context（只有 thetaAccepted）；③被回滚预演的状态隔离已由 R-3-a shadow 管线保证（预演在 shadow 数组上，不写真实 sliding/材料）✓——此子项 PASS；④受限边 limitingEdge 已有但按 constraints 数组位（§24 已记 affectedEdgeIds 映射要求）。
+- 整改项：attempt 记录层（attemptId 生成 + BLOCKED/clamped attempt 也落账）+ thetaRequested 进 context + limitingEdge 物理边映射。
+
+**□4 schema v3 字段与协议一致性 —— PASS（已核对部分）+ 1 项语义缺口**
+
+- PASS 部分：`thetaAccepted/requestRejected/plannerHold` 三字段接线正确（:1192-1199）——null=lastPlanningStatus 空 ✓；rejected=blocked|clamped|held（accepted 不含）✓；hold=held ✓ 与协议 §2.1 及任务书语义完全一致；`thetaAccepted==effectiveTilt` 有专测（p011_ledgerSchemaV3_plannerFieldsPresent）。
+- 缺口：**configured/executed 分列**——协议要求 manifest 层 `configuredThresholds`（candidate manifest 输入）与 `executedThresholds`（状态机实际读取+stateMachineVersion/hash）分列；现状两者混用 context 的 thetaStartDeg/thetaStopDeg（即 configured 的复制），无 executed 独立身份。依赖 □1 落地后才能产生真实 executed 值。
+- 另注（tester 侧，developer 已在 commit message 自述）：checker 的 PHASES/OVERSHOOT_PHASES 仍是七相名，需 tester 在下个 pilot 前加九相名。
+
+**□5 R-3 预演-guard 集成保真 —— PASS**
+
+- d78335b 完整交付 R-3-a：共享 `p011GuardConstraintsForDelta` 单一推导；shadow 管线（6 数组+split 公式镜像+relax early-return gate 镜像+逐笔 recomputeShadowS）；白名单三用例移出后全绿。
+- 本核对独立重跑：Node 通道 59/0（含 5e60f2d 新增 3 用例）、python 40/40、checker PASS。commit 自述的 240 步穿透场景 240/240 + preview==apply bit-identical（0 mismatch）在 §23.1 评审时已独立复现。**在当前 HEAD 下 shadow 位精确维持。**
+
+### 25.2 结构性发现：5e60f2d 修复的是 v2 schedule，非 v3 schedule
+
+**GAP-A（重要澄清，非缺陷）**：5e60f2d 实现的 `nine-phase-30-v2` schedule 是 **v2 预注册协议**的九相序列 `0/+15/0/+30/0/−15/0/−30/0`（每相一条命令、commandSequence 1-9）；**v3 协议**的平台序列是 `0→+15→+A→+15→0→−15→−A→−15→0`（A 参数化 15.1~29.9 网格、八条 ramp leg、每 leg 100ms 步进数十条命令）——**序列结构、A 参数化、leg 粒度三者均不同**。当前实现的 scheduleId 选择器只覆盖 v1/v2 两个固定 schedule，对 v3 的 A_selected（影子审计产出）无映射能力。
+- 定性：这不是 5e60f2d 的实现错误——它修复的是 v2 pilot 的采集缺陷（任务书「九相映射参数化」表述与实现范围一致：参数化指 scheduleId 选择，非 A 参数化）；但**v3 正式 run 需要新的 schedule 通道**（A 值命令序列 + leg/segment 语义 + 平台 hold 5100ms + 与协议 §3.2 的半开区间归属）。
+- 整改项（阻断 v3 采集）：新增 v3 schedule 通道——A 作为 schedule 参数传入，phase 映射按平台序（H0..H8），legId/segmentId 进 ledger（协议 §2.1 attempt 表），命令生成按 §3.2（100ms 步进、n=|T1−T0|/(0.1v) 整数校验）。此项与 □1 状态机同为采集前阻断项。
+
+### 25.3 遗留风险清单与整改路由
+
+| # | 项 | 性质 | 阻断级别 | 路由 |
+|---|---|---|---|---|
+| GAP-1 | 双角状态机未实现（EXECUTION_THRESHOLD_IDENTITY_MISMATCH 根因未修） | 结构性缺口 | **阻断采集** | developer（§19.3 设计已冻结，直接可实现） |
+| GAP-2 | v3 schedule 通道缺失（A 参数化+八 leg+5100ms hold） | 结构性缺口 | **阻断 v3 采集**（不阻断 v2 复采） | developer（新增，需 architect 出接口契约——建议随 GAP-1 一并设计） |
+| GAP-3 | decision 字段层（decisionG/R/Alpha/Ordinal/thresholdUsed/transitionReason） | 字段缺口 | 阻断采集（依赖 GAP-1） | developer（随 GAP-1 落地） |
+| GAP-4 | attempt 审计层（attemptId/commitStatus/rollbackReason/thetaRequested/limitingEdge 物理边映射） | 字段缺口 | 阻断「BLOCKED 无子步也须有独立 attempt 结果」核验 | developer（planner 侧小改） |
+| GAP-5 | configured/executed 分列 | 语义缺口 | 依赖 GAP-1 | developer（manifest+context 字段） |
+| GAP-6 | checker 九相 phase 名（PHASES/OVERSHOOT_PHASES） | tester 侧 | 阻断下个 pilot 判定 | tester（developer 已自述移交） |
+
+**结论**：□5（R-3 保真）与 □4 已实现部分确认 PASS；□1/□2/□3 存在实质缺口，其中 GAP-1（状态机）与 GAP-2（v3 schedule）是采集前的两个结构性阻断项。观测③ v3 的执行绑定（协议 §9「实现」行：真双角状态机、逐 decision 读取、planner+guard 事务一致）**尚未达成**——当前代码具备 planner 事务骨架与 guard/预演保真，但身份整改的核心（状态机驱动）未动工。建议 manager 将 GAP-1+GAP-2+GAP-3+GAP-4 打包为「v3 执行身份实现」单一 developer 任务（§19.3 已有设计，工作量可控），完成后 architect 复核+tester 核验再进 pilot。
+
+变更记录：2026-10-20，依据 manager【观测③·v3身份】任务新增 §25。五项清单：□5 PASS、□4 PASS（1 语义缺口）、□1/□2/□3 GAP；结构性发现 GAP-A（5e60f2d=v2 schedule 修复，v3 schedule 通道缺失）；整改路由表落盘。
