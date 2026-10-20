@@ -915,6 +915,19 @@ export class WaterSandField {
         }
         this.beginMotionApplication(substepDt, scale);
         errorCode = this.applyMotionChannels(substepDt);
+        if (errorCode === null && this.naturalObservationProbe !== null) {
+          // Manager ruling A-1 ledger reconciliation: clipped must satisfy
+          // abs(clipped - (requested - used)) <= 1e-9 per substep. Recompute
+          // both ledger fields from their same-source request/used pairs so
+          // the reported amounts cover every clip layer (independent bottom
+          // scale, stock/capacity caps, total proportional scale). This only
+          // rewrites telemetry fields; budget ceilings and physics grants
+          // are untouched.
+          this.bottomCreepBudgetClipped = Math.max(0,
+            this.bottomCreepBudgetRequested - this.bottomCreepBudgetUsed);
+          this.totalMotionBudgetClipped = Math.max(0,
+            this.naturalObservationTotalRequested - this.totalMotionBudgetUsed);
+        }
       }
       if (errorCode !== null) {
         this.finishNaturalObservation(errorCode);
