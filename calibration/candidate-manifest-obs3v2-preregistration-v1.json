@@ -1,0 +1,61 @@
+{
+  "protocolId": "p011-observation3-v2",
+  "protocolRevision": "preregistration-v1",
+  "analysisRole": "pilot",
+  "candidates": [
+    {
+      "candidateId": "cand-28-22911",
+      "pairId": "pair-28-22911",
+      "thresholdCalibrationId": "hysteresis-calib-v1",
+      "thetaStartDeg": 28.0,
+      "thetaStopDeg": 22.911,
+      "unit": "degree",
+      "routeId": "natural-relax-hysteresis-v1",
+      "searchWindow": {
+        "thetaStartDeg": "[25,30)",
+        "thetaStopDeg": "[15,25]"
+      },
+      "initialState": {
+        "preset": "thick",
+        "cols": 128,
+        "capacity": 192,
+        "vSandTopMax": 28,
+        "seed": 20261016
+      },
+      "device": "62T0225B10010020",
+      "build": {
+        "gitCommit": "891370d731eef32bf813f52910fa5a82439df2ed",
+        "hapPath": "entry-default-p011-obs3v2-891370d-signed.hap",
+        "hapSha256": "c9867dac82cd9689bdbb97187b3f9ae195ef3f3a57c9e80eedbf3cbaadf62d6f"
+      },
+      "protocol": {
+        "scheduleSha256": "685be2bcbfdc14e261d86e3a105fc9a383a386709c02b96613f48f46504fe5a4",
+        "scheduleTargets": [
+          0,
+          15,
+          0,
+          30,
+          0,
+          -15,
+          0,
+          -30,
+          0
+        ],
+        "holdMsPerPhase": 5100,
+        "platformToleranceDeg": 0.2,
+        "runnerSha256": "893a992865bf8e81b6ad02d70237edbbc1da32fa7de0b9fc9b1f5573b0fea64f",
+        "runnerPath": "tools/run_p011_obs3v2_ninephase.ps1"
+      }
+    }
+  ],
+  "randomization": {
+    "status": "NOT_STARTED",
+    "seed": 20261019,
+    "note": "pilot slot analysisRole=pilot; formal 34-run layer randomization frozen before batch, never during"
+  },
+  "exclusionRules": "preregistration-v1 sections 4-6 (platform window, first-transition, safety, censoring)",
+  "checkerVersions": {
+    "safety": "p011_slip_formal_check.py schemaVersion 2",
+    "calibration": "p011_calibration_protocol_check.py schemaVersion 1"
+  }
+}
