@@ -7,9 +7,20 @@
 export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
 export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 3;
 
+// Command-schedule identifiers for phase-name mapping. The legacy v1
+// schedule is the seven-phase 45° plateau sequence (0/+15/0/+45/0/-45/0);
+// the observation-3 v2 schedule is the nine-phase 30° sequence
+// (0/+15/0/+30/0/-15/0/-30/0, holdMs 5100, input sequence = phaseIndex+1).
+export const P011_SCHEDULE_SEVEN_PHASE_45_V1 = 'seven-phase-45-v1';
+export const P011_SCHEDULE_NINE_PHASE_30_V2 = 'nine-phase-30-v2';
+
 export type P011NaturalObservationPhaseName =
   'baseline' | 'positive' | 'positiveReturn' | 'positiveOvershoot' |
-  'positiveOvershootReturn' | 'negativeOvershoot' | 'negativeOvershootReturn' | 'unknown';
+  'positiveOvershootReturn' | 'negativeOvershoot' | 'negativeOvershootReturn' | 'unknown' |
+  // Observation-3 v2 nine-phase schedule (0/+15/0/+30/0/-15/0/-30/0):
+  // plateau phases named by sign and magnitude tier (low = ±15, high = ±30).
+  'positiveLow' | 'positiveLowReturn' | 'positiveHigh' | 'positiveHighReturn' |
+  'negativeLow' | 'negativeLowReturn' | 'negativeHigh' | 'negativeHighReturn';
 
 export type P011NaturalObservationRunRole = 'calibration' | 'holdout';
 
@@ -49,6 +60,13 @@ export interface P011NaturalObservationSubstepContext {
   thetaStartDeg: number | null;
   thetaStopDeg: number | null;
   transitionTelemetryAvailable: boolean;
+  // Schema v3 supplement (observation-3 v2 remediation): planner visibility
+  // so the calibration checker can separate planner holds from ramps and
+  // count request rejections from the ledger alone (pre-registration §4.2
+  // bracket-eligibility filtering no longer needs rate/tolerance proxies).
+  thetaAccepted: number | null;
+  requestRejected: boolean | null;
+  plannerHold: boolean | null;
 }
 
 export interface P011NaturalObservationColumnGrant {
@@ -260,8 +278,44 @@ function transitionTypeFor(activeBefore: boolean, activeAfter: boolean):
 
 export function p011NaturalObservationPhaseForCommand(
   commandSequence: number,
-  targetTilt: number
+  targetTilt: number,
+  scheduleId: string | null
 ): P011NaturalObservationPhaseName {
+  if (scheduleId === P011_SCHEDULE_NINE_PHASE_30_V2) {
+    // Nine-phase v2: seq1=+15, seq3=+30, seq5=-15, seq7=-30, others = 0.
+    // Baseline is the leading zero command (seq must be 1 per the frozen
+    // schedule; input sequence = phaseIndex + 1).
+    if (commandSequence === 1 && Math.abs(targetTilt) < 1e-9) {
+      return 'baseline';
+    }
+    if (commandSequence === 2 && Math.abs(targetTilt - 15) < 1e-9) {
+      return 'positiveLow';
+    }
+    if (commandSequence === 3 && Math.abs(targetTilt) < 1e-9) {
+      return 'positiveLowReturn';
+    }
+    if (commandSequence === 4 && Math.abs(targetTilt - 30) < 1e-9) {
+      return 'positiveHigh';
+    }
+    if (commandSequence === 5 && Math.abs(targetTilt) < 1e-9) {
+      return 'positiveHighReturn';
+    }
+    if (commandSequence === 6 && Math.abs(targetTilt + 15) < 1e-9) {
+      return 'negativeLow';
+    }
+    if (commandSequence === 7 && Math.abs(targetTilt) < 1e-9) {
+      return 'negativeLowReturn';
+    }
+    if (commandSequence === 8 && Math.abs(targetTilt + 30) < 1e-9) {
+      return 'negativeHigh';
+    }
+    if (commandSequence === 9 && Math.abs(targetTilt) < 1e-9) {
+      return 'negativeHighReturn';
+    }
+    return 'unknown';
+  }
+  // Legacy seven-phase 45° schedule (default for null/unknown schedule ids):
+  // seq2=+15, seq4=+45, seq6=-45, zero elsewhere.
   if (commandSequence === 1 && Math.abs(targetTilt) < 1e-9) {
     return 'baseline';
   }

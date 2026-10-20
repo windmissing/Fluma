@@ -1,4 +1,8 @@
-import { P011NaturalObservationRunRole } from './P011NaturalObservation';
+import {
+  P011NaturalObservationRunRole,
+  P011_SCHEDULE_NINE_PHASE_30_V2,
+  P011_SCHEDULE_SEVEN_PHASE_45_V1
+} from './P011NaturalObservation';
 
 export type P011TiltWantWarning =
   | 'INVALID_WSTILT'
@@ -11,7 +15,9 @@ export type P011TiltWantWarning =
   | 'MISSING_THETA_START_DEG'
   | 'MISSING_THETA_STOP_DEG'
   | 'INVALID_THETA_START_DEG'
-  | 'INVALID_THETA_STOP_DEG';
+  | 'INVALID_THETA_STOP_DEG'
+  | 'INVALID_SCHEDULE_ID'
+  | 'MISSING_SCHEDULE_ID';
 
 export interface P011TiltWantCommand {
   sequence: number;
@@ -21,6 +27,11 @@ export interface P011TiltWantCommand {
   thresholdCalibrationId: string | null;
   thetaStartDeg: number | null;
   thetaStopDeg: number | null;
+  // Observation-3 v2: command schedule identifier for the phase-name
+  // mapping (nine-phase 30° v2 or legacy seven-phase 45° v1). Null keeps
+  // the legacy mapping. Optional so existing v1 runner payloads parse
+  // unchanged.
+  scheduleId: string | null;
 }
 
 export interface P011TiltWantParseResult {
@@ -94,10 +105,21 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
   } else if (!thetaStopProvided) {
     warnings.push('MISSING_THETA_STOP_DEG');
   }
+  const scheduleIdText = parameters === undefined ||
+    parameters.scheduleid === undefined
+    ? '' : `${parameters.scheduleid}`.trim();
+  let scheduleId: string | null = null;
+  if (scheduleIdText === P011_SCHEDULE_NINE_PHASE_30_V2 ||
+    scheduleIdText === P011_SCHEDULE_SEVEN_PHASE_45_V1) {
+    scheduleId = scheduleIdText;
+  } else if (scheduleIdText !== '') {
+    warnings.push('INVALID_SCHEDULE_ID');
+  }
   if (warnings.some((warning) => warning !== 'MISSING_P011_RUN_ROLE' &&
     warning !== 'MISSING_THRESHOLD_CALIBRATION_ID' &&
     warning !== 'MISSING_THETA_START_DEG' &&
-    warning !== 'MISSING_THETA_STOP_DEG')) {
+    warning !== 'MISSING_THETA_STOP_DEG' &&
+    warning !== 'MISSING_SCHEDULE_ID')) {
     return { command: null, warnings };
   }
   return {
@@ -108,7 +130,8 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
       observationRunRole,
       thresholdCalibrationId,
       thetaStartDeg: optionalFiniteNumber(parameters, 'thetastartdeg'),
-      thetaStopDeg: optionalFiniteNumber(parameters, 'thetastopdeg')
+      thetaStopDeg: optionalFiniteNumber(parameters, 'thetastopdeg'),
+      scheduleId
     },
     warnings
   };
@@ -132,6 +155,12 @@ export function decodeP011TiltWant(encoded: string | undefined,
     }
     if (command.thetaStopDeg === undefined) {
       command.thetaStopDeg = null;
+    }
+    if (command.scheduleId === undefined) {
+      command.scheduleId = null;
+    } else if (command.scheduleId !== P011_SCHEDULE_NINE_PHASE_30_V2 &&
+      command.scheduleId !== P011_SCHEDULE_SEVEN_PHASE_45_V1) {
+      return null;
     }
     if (!Number.isInteger(command.sequence) || command.sequence !== sequence ||
       !Number.isFinite(command.targetTilt) || command.targetTilt < -89 ||

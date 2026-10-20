@@ -544,6 +544,7 @@ export class WaterSandField {
   private naturalObservationThresholdCalibrationId: string | null = null;
   private naturalObservationThetaStartDeg: number | null = null;
   private naturalObservationThetaStopDeg: number | null = null;
+  private naturalObservationScheduleId: string | null = null;
   private naturalObservationSliding: Uint8Array;
   private naturalObservationSlidingBefore: Uint8Array;
   private naturalObservationSlidingAfter: Uint8Array;
@@ -1112,6 +1113,17 @@ export class WaterSandField {
     this.naturalObservationThetaStopDeg = thetaStopDeg;
   }
 
+  // Observation-3 v2 remediation: the command schedule identifier selects the
+  // phase-name mapping table (nine-phase 30° v2 vs legacy seven-phase 45° v1).
+  // Null keeps the legacy mapping (backward compatible).
+  setNaturalObservationScheduleId(scheduleId: string | null): void {
+    this.naturalObservationScheduleId = scheduleId;
+  }
+
+  getNaturalObservationScheduleId(): string | null {
+    return this.naturalObservationScheduleId;
+  }
+
   private naturalObservationState(): P011NaturalObservationState {
     this.updateSandTop();
     return {
@@ -1148,7 +1160,8 @@ export class WaterSandField {
       commandSequence: this.p011InputSequence,
       commandPhaseId: this.commandPhaseId,
       commandPhaseSign: this.commandPhaseSign,
-      phaseD: p011NaturalObservationPhaseForCommand(this.p011InputSequence, this.targetTilt),
+      phaseD: p011NaturalObservationPhaseForCommand(this.p011InputSequence,
+        this.targetTilt, this.naturalObservationScheduleId),
       targetTilt: this.targetTilt,
       effectiveTilt: this.effectiveTilt,
       effectiveTiltRate: this.effectiveTiltRate,
@@ -1157,7 +1170,16 @@ export class WaterSandField {
       thresholdCalibrationId: this.naturalObservationThresholdCalibrationId,
       thetaStartDeg: this.naturalObservationThetaStartDeg,
       thetaStopDeg: this.naturalObservationThetaStopDeg,
-      transitionTelemetryAvailable: true
+      transitionTelemetryAvailable: true,
+      // Schema v3 supplement: planner visibility per substep.
+      thetaAccepted: this.lastPlanningStatus === null
+        ? null : this.lastPlanningCommittedTheta,
+      requestRejected: this.lastPlanningStatus === null
+        ? null : (this.lastPlanningStatus === 'blocked' ||
+          this.lastPlanningStatus === 'clamped' ||
+          this.lastPlanningStatus === 'held'),
+      plannerHold: this.lastPlanningStatus === null
+        ? null : this.lastPlanningStatus === 'held'
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
     this.naturalObservationRelaxRequestedTotal = 0;

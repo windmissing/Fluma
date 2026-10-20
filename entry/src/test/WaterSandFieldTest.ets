@@ -17,7 +17,11 @@ import {
   P011NaturalObservationProbe,
   P011NaturalObservationSubstepContext,
   P011NaturalObservationEdgeGrant,
-  P011NaturalObservationRecord
+  P011NaturalObservationRecord,
+  P011NaturalObservationPhaseName,
+  P011_SCHEDULE_NINE_PHASE_30_V2,
+  P011_SCHEDULE_SEVEN_PHASE_45_V1,
+  p011NaturalObservationPhaseForCommand
 } from '../main/ets/physics/P011NaturalObservation';
 import {
   P011ChannelPlan,
@@ -1249,6 +1253,68 @@ export default function waterSandFieldTest() {
       if (decisionShift.limitingEdge !== null) {
         expect(decisionShift.limitingEdge <= 1).assertTrue();
       }
+    });
+
+    // Observation-3 v2 remediation: nine-phase schedule phase mapping.
+    it('p011_ninePhaseMapping_assignsAllPlateauPhases', 0, () => {
+      // Frozen v2 schedule 0/+15/0/+30/0/-15/0/-30/0, sequence = phaseIndex+1.
+      const expected: P011NaturalObservationPhaseName[] = [
+        'baseline', 'positiveLow', 'positiveLowReturn', 'positiveHigh',
+        'positiveHighReturn', 'negativeLow', 'negativeLowReturn',
+        'negativeHigh', 'negativeHighReturn'
+      ];
+      const targets = [0, 15, 0, 30, 0, -15, 0, -30, 0];
+      for (let index = 0; index < expected.length; index++) {
+        const phase = p011NaturalObservationPhaseForCommand(index + 1,
+          targets[index], P011_SCHEDULE_NINE_PHASE_30_V2);
+        expect(phase).assertEqual(expected[index]);
+      }
+      // Off-schedule sequence/target combinations stay unknown.
+      expect(p011NaturalObservationPhaseForCommand(2, 45,
+        P011_SCHEDULE_NINE_PHASE_30_V2)).assertEqual('unknown');
+      expect(p011NaturalObservationPhaseForCommand(10, 0,
+        P011_SCHEDULE_NINE_PHASE_30_V2)).assertEqual('unknown');
+    });
+
+    it('p011_ninePhaseMapping_legacySevenPhaseBackwardCompatible', 0, () => {
+      // Legacy schedule (null or explicit v1 id) keeps the seven-phase map.
+      expect(p011NaturalObservationPhaseForCommand(1, 0, null)).assertEqual('baseline');
+      expect(p011NaturalObservationPhaseForCommand(2, 15, null)).assertEqual('positive');
+      expect(p011NaturalObservationPhaseForCommand(4, 45, null))
+        .assertEqual('positiveOvershoot');
+      expect(p011NaturalObservationPhaseForCommand(6, -45, null))
+        .assertEqual('negativeOvershoot');
+      expect(p011NaturalObservationPhaseForCommand(4, 45,
+        P011_SCHEDULE_SEVEN_PHASE_45_V1)).assertEqual('positiveOvershoot');
+      // The nine-phase targets do NOT map under the legacy schedule.
+      expect(p011NaturalObservationPhaseForCommand(4, 30, null)).assertEqual('unknown');
+    });
+
+    // Schema v3 supplement: planner fields land in every ledger context.
+    it('p011_ledgerSchemaV3_plannerFieldsPresent', 0, () => {
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(8, record => {
+        records.push(record);
+      });
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      field.configure(params);
+      field.initialize(thickSceneForP011(8));
+      field.setNaturalObservationProbe(probe);
+      field.setNaturalObservationScheduleId(P011_SCHEDULE_NINE_PHASE_30_V2);
+      field.setTilt(15);
+      const result = field.step(1 / 60);
+      expect(result.ok).assertTrue();
+      expect(records.length > 0).assertTrue();
+      const context = records[records.length - 1].context;
+      // Planner ran this substep (planning pass active): fields are non-null.
+      expect(context.thetaAccepted !== null).assertTrue();
+      expect(context.requestRejected !== null).assertTrue();
+      expect(context.plannerHold !== null).assertTrue();
+      // thetaAccepted equals the committed angle.
+      expect(Math.abs(context.thetaAccepted! - context.effectiveTilt) < 1e-9)
+        .assertTrue();
     });
 
     // =========================================================================

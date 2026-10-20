@@ -1267,6 +1267,7 @@ struct SandCanvas {
             p011TiltWant.thetaStartDeg,
             p011TiltWant.thetaStopDeg
           );
+          ws.setNaturalObservationScheduleId(p011TiltWant.scheduleId);
           inputSource = 'script';
           inputCommandTime = p011TiltWant.commandTime;
           p011ScriptHasEvent = true;
