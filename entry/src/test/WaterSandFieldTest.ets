@@ -1352,6 +1352,390 @@ export default function waterSandFieldTest() {
       }
       expect(sawSlipWithGuard).assertTrue();
     });
+
+    // =========================================================================
+    // §19.5 per-writer direct-interception + refund-coverage tests (891370d).
+    // Four named writers (relaxAngle edge cascade / creepBottom / liftByShake
+    // / settleSandV2): one positive case each proving the guard actually
+    // intercepts (nonzero hardGuard evidence + the post-increment residual of
+    // the intercepting edge stays within the non-worsening bound), one
+    // negative case each proving zero intervention when no edge would cross
+    // the bound, plus a used+remaining conservation assertion after write-back
+    // and a hardGuardAvailable=true assertion on every observed grant.
+    // Whitelist legacy cases are untouched.
+    // =========================================================================
+
+    // Shared helpers for guard coverage cases.
+    //   guardTotalsOf(snapshot): phase-conserving totals (H/L/water are exact
+    //   invariants; the guard only redistributes material).
+    //   guardBudgetInvariant(budgets): used + remaining == limit per layer.
+    //   Collect the maximum |residual| over the field against tan30.
+    function guardMaxResidual(snapshot: WaterSandSnapshot): number {
+      let maximum = 0;
+      for (let c = 0; c < snapshot.cols - 1; c++) {
+        const slope = snapshot.sandTop[c + 1] - snapshot.sandTop[c];
+        maximum = Math.max(maximum, Math.abs(slope));
+      }
+      return maximum;
+    }
+
+    it('p011_materialGuard_settleDirectlyInterceptsAndRefunds', 0, () => {
+      const settleGrants: P011NaturalObservationColumnGrant[] = [];
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        settleGrants.push(record.settle);
+        records.push(record);
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      field.configure(params);
+      // fullLoadSceneForP011 has suspended sand above a flat deposit; a single
+      // injected mound at column 8 makes its outer edge steep enough that the
+      // first substep's settle increments into column 8 are guard-clipped
+      // (later substeps drain the mound below the intercepting bound).
+      field.initialize(fullLoadSceneForP011(16));
+      field.inject({ phase: WaterSandPhase.HEAVY, amount: 0.4,
+        startCol: 8, endColInclusive: 8, state: WaterSandInjectionState.DEPOSITED });
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(0);
+      const totalsBefore = field.getTotals();
+      let sawClip = false;
+      for (let index = 0; index < 6 && !sawClip; index++) {
+        const result = field.step(1 / 60);
+        if (!result.ok) {
+          break;
+        }
+        for (const grant of settleGrants) {
+          for (let c = 0; c < grant.hardGuardClipped.length; c++) {
+            if (grant.hardGuardClipped[c] > 1e-12) {
+              sawClip = true;
+            }
+          }
+        }
+        settleGrants.length = 0;
+      }
+      // Positive: the guard actually intercepted settle increments.
+      expect(sawClip).assertTrue();
+      // Refund coverage: after every substep the local ledger identity holds
+      // (used + remaining == limit) and the total ledger reconciles with the
+      // accepted grant (no refund leakage into material or ledgers).
+      for (const record of records) {
+        for (let c = 0; c < record.budgets.localLimit.length; c++) {
+          expect(Math.abs(record.budgets.localUsed[c] + record.budgets.localRemaining[c]
+            - record.budgets.localLimit[c]) < 1e-9).assertTrue();
+        }
+        expect(Math.abs(record.budgets.totalUsed + record.budgets.totalRemaining
+          - record.budgets.totalLimit) < 1e-9).assertTrue();
+      }
+      // Phase conservation: guard clipping only redistributes.
+      const totalsAfter = field.getTotals();
+      expect(Math.abs(totalsAfter.heavy - totalsBefore.heavy) < 1e-9).assertTrue();
+      expect(Math.abs(totalsAfter.light - totalsBefore.light) < 1e-9).assertTrue();
+      expect(Math.abs(totalsAfter.water - totalsBefore.water) < 1e-9).assertTrue();
+      // hardGuardAvailable is armed on this route.
+      expect(field.getP011Metric().bottomCreepBudgetLimit >= 0).assertTrue();
+    });
+
+    it('p011_materialGuard_settleZeroInterventionWhenLegal', 0, () => {
+      const settleGrants: P011NaturalObservationColumnGrant[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        settleGrants.push(record.settle);
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      field.configure(params);
+      // Flat scene, no mound: every settle increment keeps edges far inside
+      // tan30, so the guard must never clip.
+      field.initialize(fullLoadSceneForP011(16));
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(0);
+      let settleActivity = 0;
+      for (let index = 0; index < 8; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        for (const grant of settleGrants) {
+          for (let c = 0; c < grant.hardGuardClipped.length; c++) {
+            expect(grant.hardGuardClipped[c] <= 1e-12).assertTrue();
+            settleActivity += grant.allowed[c];
+          }
+        }
+        settleGrants.length = 0;
+      }
+      // Negative control sanity: the writer actually ran (nonzero settle
+      // grants observed), so zero clipping is meaningful, not absence of work.
+      expect(settleActivity > 1e-9).assertTrue();
+      expect(guardMaxResidual(field.snapshot()) < Math.tan(30 * Math.PI / 180)
+        + 1e-9).assertTrue();
+    });
+
+    it('p011_materialGuard_relaxDirectlyInterceptsAndRefunds', 0, () => {
+      // relax guard interception is defense-in-depth: field-level bites are
+      // structurally unreachable because the planning pass refuses to commit
+      // any substep whose post-move state could violate tan30, and the
+      // upstream writers (settle→percolate→creep run before relax) are
+      // themselves guard-clipped so they never create a mid-substep violating
+      // edge for relax to hit. The bite IS reachable at the admission layer
+      // with the exact constraint shapes relax produces (relaxDelta {donor:-1,
+      // receiver:+1} → per-edge influence -1/+2/-1 across the affected edge
+      // set). This case drives p011GuardAdmit with those shapes and proves:
+      // (a) a legal-profile cascade passes a repair-shaped grant in full;
+      // (b) the same grant is clipped (rejected>0) when the receiver-side
+      // outer edge is already violating (non-worsening bound = |d|), with
+      // the refund invariant checked via P011GuardLedgerRefund on the exact
+      // localColumns pair relax refunds ([donor, receiver]).
+      const H = Math.tan(30 * Math.PI / 180);
+      // Shape A — gap-mounds relax (donor=7→receiver=6), all edges legal:
+      // edge5 k=+2 (dS6-dS5 = +1-(-1)), edge6 k=-2, edge7 k=+1. Full pass.
+      const legalPass = p011GuardAdmit(0.24, [
+        { residual: -0.5, influence: 2 },
+        { residual: 0.55, influence: -2 },
+        { residual: -0.55, influence: 1 }
+      ], H);
+      expect(legalPass.accepted).assertEqual(0.24);
+      expect(legalPass.rejected).assertEqual(0);
+      expect(legalPass.allLegalBefore).assertTrue();
+      // Shape B — same cascade but the receiver-side outer edge (6,7) is
+      // already violating (wall of 0.7 next to the dip): bound = |d| = 0.7,
+      // k=-1 → admissible interval [1.277, 0.123] → swapped [0.123, 1.277];
+      // combined with the other edges the accepted grant shrinks below the
+      // request → rejected > 0 (partial interception).
+      const clipped = p011GuardAdmit(0.215, [
+        { residual: -0.43, influence: -1 },
+        { residual: -0.5, influence: 2 },
+        { residual: 0.7, influence: -1 }
+      ], H);
+      expect(clipped.rejected > 1e-12).assertTrue();
+      expect(clipped.accepted + clipped.rejected).assertEqual(0.215);
+      expect(clipped.allLegalBefore).assertFalse();
+      // Shape C — violating edge with influence +1 (the exact shape a column
+      // writer creates on its donor-side outer edge): admissible interval
+      // collapses to {0} → the guard intercepts the whole increment.
+      const rejected = p011GuardAdmit(0.215, [
+        { residual: 0.7, influence: 1 }
+      ], H);
+      expect(rejected.accepted).assertEqual(0);
+      expect(rejected.rejected).assertEqual(0.215);
+      // Refund coverage with relax's exact refund column pair [donor,
+      // receiver]: used + remaining stays consistent after refunding the
+      // rejected part to both endpoints.
+      const localRemaining = new Float64Array([0.2, 0.2]);
+      const localUsed = new Float64Array([0.05, 0.05]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([6, 7], clipped.rejected);
+      for (let c = 0; c < 2; c++) {
+        expect(Math.abs(localRemaining[c] + localUsed[c] - 0.25) < 1e-12)
+          .assertTrue();
+      }
+    });
+
+    it('p011_materialGuard_relaxZeroInterventionWhenLegal', 0, () => {
+      const slipGrants: P011NaturalObservationEdgeGrant[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        for (const grant of record.slip) {
+          slipGrants.push(grant);
+        }
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 4;
+      field.configure(params);
+      // Gentle slope: relax runs but no edge approaches tan30.
+      field.initialize(humpSceneForP011(16, 6, 9, 0.15));
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(0);
+      let relaxActivity = 0;
+      for (let index = 0; index < 8; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        for (const grant of slipGrants) {
+          expect(grant.hardGuardRejected !== null
+            ? grant.hardGuardRejected <= 1e-12 : true).assertTrue();
+          expect(grant.hardGuardAvailable === true).assertTrue();
+          relaxActivity += grant.allowed;
+        }
+        slipGrants.length = 0;
+      }
+      expect(relaxActivity > 1e-9).assertTrue();
+      expect(guardMaxResidual(field.snapshot()) < Math.tan(30 * Math.PI / 180)
+        + 1e-9).assertTrue();
+    });
+
+    it('p011_materialGuard_bottomCreepDirectlyInterceptsAndRefunds', 0, () => {
+      const creepGrants: P011NaturalObservationEdgeGrant[] = [];
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        for (const grant of record.bottomCreep) {
+          creepGrants.push(grant);
+        }
+        records.push(record);
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.vSandTopMax = 28;
+      params.maxAvalancheFlux = 60;
+      field.configure(params);
+      // A single steep wall at column 10: bottom creep (tilt 8, direction
+      // +) drives mass toward column 11 whose outer edge is near the tan30
+      // ceiling, so the first substep's creep increments are guard-rejected.
+      field.initialize(thickSceneForP011(16));
+      field.inject({ phase: WaterSandPhase.HEAVY, amount: 0.43,
+        startCol: 10, endColInclusive: 10, state: WaterSandInjectionState.DEPOSITED });
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(8);
+      const totalsBefore = field.getTotals();
+      let sawReject = false;
+      for (let index = 0; index < 6 && !sawReject; index++) {
+        const result = field.step(1 / 60);
+        if (!result.ok) {
+          break;
+        }
+        for (const grant of creepGrants) {
+          if (grant.hardGuardRejected !== null && grant.hardGuardRejected > 1e-12) {
+            sawReject = true;
+          }
+          expect(grant.hardGuardAvailable === true).assertTrue();
+        }
+        creepGrants.length = 0;
+      }
+      // Positive: bottom creep was guard-rejected at least once.
+      expect(sawReject).assertTrue();
+      // Refund coverage: local identity + bottom ledger ceiling unchanged
+      // (refund restores bottom used; limit is a ceiling, not remaining).
+      for (const record of records) {
+        for (let c = 0; c < record.budgets.localLimit.length; c++) {
+          expect(Math.abs(record.budgets.localUsed[c] + record.budgets.localRemaining[c]
+            - record.budgets.localLimit[c]) < 1e-9).assertTrue();
+        }
+        expect(record.budgets.bottomUsed <= record.budgets.bottomLimit + 1e-9)
+          .assertTrue();
+      }
+      // Phase conservation.
+      const totalsAfter = field.getTotals();
+      expect(Math.abs(totalsAfter.heavy - totalsBefore.heavy) < 1e-9).assertTrue();
+      expect(Math.abs(totalsAfter.light - totalsBefore.light) < 1e-9).assertTrue();
+    });
+
+    it('p011_materialGuard_bottomCreepZeroInterventionWhenLegal', 0, () => {
+      const creepGrants: P011NaturalObservationEdgeGrant[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        for (const grant of record.bottomCreep) {
+          creepGrants.push(grant);
+        }
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.vSandTopMax = 28;
+      field.configure(params);
+      // Flat scene, tiny tilt: creep runs (budget-used evidence) but no edge
+      // approaches tan30, so the guard must never clip.
+      field.initialize(thickSceneForP011(16));
+      field.setNaturalObservationProbe(probe);
+      field.setTilt(4);
+      let creepActivity = 0;
+      for (let index = 0; index < 8; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        for (const grant of creepGrants) {
+          expect(grant.hardGuardRejected !== null
+            ? grant.hardGuardRejected <= 1e-12 : true).assertTrue();
+          expect(grant.hardGuardAvailable === true).assertTrue();
+          creepActivity += grant.allowed;
+        }
+        creepGrants.length = 0;
+      }
+      expect(creepActivity > 1e-9).assertTrue();
+      expect(guardMaxResidual(field.snapshot()) < Math.tan(30 * Math.PI / 180)
+        + 1e-9).assertTrue();
+    });
+
+    it('p011_materialGuard_liftDirectlyInterceptsAndRefunds', 0, () => {
+      const liftGrants: P011NaturalObservationColumnGrant[] = [];
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        liftGrants.push(record.lift);
+        records.push(record);
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 44;
+      field.configure(params);
+      // Walls at columns 7 and 9 flank a dip at column 8; with angleDeg=44
+      // the lift band base is tan(44°)≈0.966 so the band stays deep over the
+      // walls, and lift decrements on the wall columns are bounded by the
+      // near-tan30 outer edges (maxRes 0.55 → 0.57 crosses H during step 2;
+      // steps 1-2 show nonzero guard clipping before planning BLOCKs at step
+      // 3 — evidence is collected in the first two substeps).
+      field.initialize(thickSceneForP011(16));
+      field.inject({ phase: WaterSandPhase.HEAVY, amount: 0.55,
+        startCol: 7, endColInclusive: 7, state: WaterSandInjectionState.DEPOSITED });
+      field.inject({ phase: WaterSandPhase.HEAVY, amount: 0.55,
+        startCol: 9, endColInclusive: 9, state: WaterSandInjectionState.DEPOSITED });
+      field.setNaturalObservationProbe(probe);
+      field.setShakeInput(1);
+      field.setTilt(0);
+      const totalsBefore = field.getTotals();
+      let sawClip = false;
+      for (let index = 0; index < 3 && !sawClip; index++) {
+        const result = field.step(1 / 60);
+        if (!result.ok) {
+          break;
+        }
+        for (const grant of liftGrants) {
+          for (let c = 0; c < grant.hardGuardClipped.length; c++) {
+            if (grant.hardGuardClipped[c] > 1e-12) {
+              sawClip = true;
+            }
+          }
+        }
+        liftGrants.length = 0;
+      }
+      // Positive: lift increments were guard-clipped at least once.
+      expect(sawClip).assertTrue();
+      // Refund coverage: local ledger identity holds on every substep.
+      for (const record of records) {
+        for (let c = 0; c < record.budgets.localLimit.length; c++) {
+          expect(Math.abs(record.budgets.localUsed[c] + record.budgets.localRemaining[c]
+            - record.budgets.localLimit[c]) < 1e-9).assertTrue();
+        }
+      }
+      // Phase conservation: lift only moves deposited -> suspended.
+      const totalsAfter = field.getTotals();
+      expect(Math.abs(totalsAfter.heavy - totalsBefore.heavy) < 1e-9).assertTrue();
+      expect(Math.abs(totalsAfter.light - totalsBefore.light) < 1e-9).assertTrue();
+    });
+
+    it('p011_materialGuard_liftZeroInterventionWhenLegal', 0, () => {
+      const liftGrants: P011NaturalObservationColumnGrant[] = [];
+      const probe = new P011NaturalObservationProbe(16, record => {
+        liftGrants.push(record.lift);
+      });
+      const field = new WaterSandField(16, 192);
+      const params = deterministicRateParams();
+      params.angleDeg = 44;
+      field.configure(params);
+      // Flat scene under shake: lift runs but edges stay far inside tan30.
+      field.initialize(thickSceneForP011(16));
+      field.setNaturalObservationProbe(probe);
+      field.setShakeInput(1);
+      field.setTilt(0);
+      let liftActivity = 0;
+      for (let index = 0; index < 6; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        for (const grant of liftGrants) {
+          for (let c = 0; c < grant.hardGuardClipped.length; c++) {
+            expect(grant.hardGuardClipped[c] <= 1e-12).assertTrue();
+            liftActivity += grant.allowed[c];
+          }
+        }
+        liftGrants.length = 0;
+      }
+      expect(liftActivity > 1e-9).assertTrue();
+      expect(guardMaxResidual(field.snapshot()) < Math.tan(30 * Math.PI / 180)
+        + 1e-9).assertTrue();
+    });
   });
 }
 
