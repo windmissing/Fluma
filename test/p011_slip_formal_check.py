@@ -9,6 +9,16 @@ from p011_v210_natural_observation_check import validate_observation_contract
 
 
 TAN_30 = math.tan(math.radians(30.0))
+# Phase-name groups. The v1 seven-phase 45-degree schedule keeps the legacy
+# names; the observation-3 v2 nine-phase 30-degree schedule (5e60f2d mapping
+# in P011NaturalObservation.ets) emits the low/high tier names. GAP-6: the
+# safety checker groups ledger records by context.phaseD - without the v2
+# names a v2/v3 pilot's +30/-30 segments would fall outside every named
+# group and epsilon-level tan30 violations there would escape the per-phase
+# audit (the same class of issue as the 5 violations counted in the v2
+# pilot). Adding names is bookkeeping only: NO new tan30 exemption is
+# created - SKIP_TAN30_PHASES keeps exactly the four v1 45-degree phases,
+# because v2/v3 have no platform exemption by ruling.
 OVERSHOOT_PHASES = ("positiveOvershoot", "negativeOvershoot")
 SKIP_TAN30_PHASES = (
     "positiveOvershoot",
@@ -16,6 +26,35 @@ SKIP_TAN30_PHASES = (
     "negativeOvershoot",
     "negativeOvershootReturn",
 )
+# v1 seven-phase schedule (0/+15/0/+45/0/-45/0): legacy names.
+PHASES_V1_SEVEN_PHASE_45 = (
+    "baseline",
+    "positive",
+    "positiveReturn",
+    "positiveOvershoot",
+    "positiveOvershootReturn",
+    "negativeOvershoot",
+    "negativeOvershootReturn",
+)
+# v2 nine-phase 30-degree schedule (0/+15/0/+30/0/-15/0/-30/0): low = +-15,
+# high = +-30; zero-return phases carry the sign of the platform they return
+# from (P011NaturalObservation.ets p011NaturalObservationPhaseForCommand).
+PHASES_V2_NINE_PHASE_30 = (
+    "baseline",
+    "positiveLow",
+    "positiveLowReturn",
+    "positiveHigh",
+    "positiveHighReturn",
+    "negativeLow",
+    "negativeLowReturn",
+    "negativeHigh",
+    "negativeHighReturn",
+)
+# All recognized phase names for phaseD grouping; v3 leg/segment semantics
+# reserve the same names (a v3 run maps its legs onto these plateau phases
+# plus segmentId - unknown phaseD values stay visible as their own group and
+# never silently join a named phase).
+KNOWN_PHASES = PHASES_V1_SEVEN_PHASE_45 + PHASES_V2_NINE_PHASE_30
 EPS = 1e-9
 
 
@@ -158,6 +197,7 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
     record_count = 0
     first_context = {}
     records = []
+    result_meta = {}
 
     with ledger_path.open("r", encoding="utf-8") as file:
         for line in file:
@@ -171,6 +211,8 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
             record_count += 1
             context = record["context"]
             phase = context["phaseD"]
+            if phase not in KNOWN_PHASES and "unknownPhaseD" not in result_meta:
+                result_meta.setdefault("unknownPhaseD", set()).add(phase)
             sequence = int(context["sequence"])
             metric = metrics.get(sequence)
             if metric is None:
@@ -338,6 +380,12 @@ def analyze(ledger_path, hilog_path, raster_manifest_path, output_path):
 
     result = {
         "schemaVersion": 2,
+        "knownPhases": {
+            "v1SevenPhase45": list(PHASES_V1_SEVEN_PHASE_45),
+            "v2NinePhase30": list(PHASES_V2_NINE_PHASE_30),
+            "unrecognizedPhaseDValues": sorted(result_meta.get("unknownPhaseD", set())),
+            "exemptionNote": "SKIP_TAN30_PHASES unchanged: only the four v1 45-degree phases; v2/v3 phases carry no exemption",
+        },
         "testCase": "P011-SLIP-FORMAL",
         "phaseApplicability": {
             "phase1MustPass": [
