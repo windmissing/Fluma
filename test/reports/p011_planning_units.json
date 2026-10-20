@@ -178,6 +178,30 @@
       "status": "PASS"
     },
     {
+      "name": "p011_ninePhaseMapping_assignsAllPlateauPhases",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ninePhaseMapping_legacySevenPhaseBackwardCompatible",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ledgerSchemaV3_plannerFieldsPresent",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_cappedWeightedAllocationFillsReservation",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_uniformInteriorEdgesExcluded",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_ledgerAndGuardsInApply",
+      "status": "PASS"
+    },
+    {
       "name": "p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax",
       "status": "PASS"
     },
@@ -228,6 +252,54 @@
     {
       "name": "p011_materialGuard_liftZeroInterventionWhenLegal",
       "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_threeStateTransitionFunction",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_paramInvariantThrows",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_requestedFormula",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_candidateRunProducesDecisionAndExecutedFields",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_legacyRunKeepsPreV3Behavior",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_budgetLimitedEdgeStaysActive",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_donorReceiverOrientationFeedsRequested",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_scheduleV3_generationAndCsvContract",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_scheduleV3_segmentPhaseMapping",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_attempt_blockedSubstepLandsAttemptRecord",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_attempt_attemptIdsUniquePerSubstep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_tiltWant_v3FieldsParseAndValidate",
+      "status": "PASS"
     }
   ],
   "blockedSemantics": {
@@ -237,6 +309,6 @@
     "okFalse": true,
     "errorCode": 5
   },
-  "passed": 56,
+  "passed": 74,
   "failed": 0
 }

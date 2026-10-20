@@ -2,6 +2,26 @@ import { describe, it, expect } from '@ohos/hypium';
 import { P011InputModeState, transitionP011InputMode, acceptP011SensorSample,
   selectP011Input, canP011GestureOwnInput } from '../main/ets/physics/P011InputMode';
 import { WaterSandField } from '../main/ets/physics/WaterSandField';
+import { P011TiltWantCommand } from '../main/ets/physics/P011TiltWant';
+
+// Build a P011TiltWantCommand for input-mode (sensor/gesture) tests. The v3
+// schedule/execution-identity fields are irrelevant to input-mode scenarios,
+// so they are left null — matching a legacy (non-schedule) command payload.
+// GAP-5 / v2 extended the command contract with these required (nullable)
+// fields; this helper keeps existing input-mode tests compiling without
+// changing their intent.
+function cmd(sequence: number, targetTilt: number, commandTime: number): P011TiltWantCommand {
+  return {
+    sequence: sequence,
+    targetTilt: targetTilt,
+    commandTime: commandTime,
+    observationRunRole: null,
+    thresholdCalibrationId: null,
+    thetaStartDeg: null,
+    thetaStopDeg: null,
+    scheduleId: null
+  };
+}
 
 function initial(): P011InputModeState {
   return { testMode: false, useSensor: true, scriptTargetTilt: null, consumedSequence: 0,
@@ -22,7 +42,7 @@ export default function p011InputModeTest() {
           noisy = acceptP011SensorSample(noisy, n - 50, 50 - n, q * 100 + n, 0.35);
           expect(JSON.stringify(noisy)).assertEqual(before);
         }
-        const command = { sequence: q, targetTilt: targets[q - 1], commandTime: q * 100 };
+        const command = cmd(q, targets[q - 1], q * 100);
         const a = selectP011Input(clean, q, command);
         const b = selectP011Input(noisy, q, command);
         expect(JSON.stringify(a)).assertEqual(JSON.stringify(b));
@@ -37,7 +57,7 @@ export default function p011InputModeTest() {
       const baseline = state;
       state.forceInvert = true;
       state.wasForceInvert = true;
-      const selected = selectP011Input(state, 7, { sequence: 7, targetTilt: 40, commandTime: 100 });
+      const selected = selectP011Input(state, 7, cmd(7, 40, 100));
       expect(selected.source).assertEqual('sensor');
       expect(selected.freshScriptCommand).assertEqual(null);
       expect(selected.state.forceInvert).assertFalse();
@@ -71,7 +91,7 @@ export default function p011InputModeTest() {
         expect(state.tiltX + state.lastTiltX + state.sensorGx + state.sensorGy +
           state.gestureHoldUntil + state.lastSensorCommandTime + state.lastTiltCommandTime).assertEqual(0);
         expect(state.forceInvert || state.wasForceInvert || state.hasFreshSensorSample).assertFalse();
-        expect(selectP011Input(state, n, { sequence: n, targetTilt: 20, commandTime: 42 })
+        expect(selectP011Input(state, n, cmd(n, 20, 42))
           .freshScriptCommand).assertEqual(null);
       }
     });
@@ -85,7 +105,7 @@ export default function p011InputModeTest() {
         expect(mode.changed).assertFalse();
         expect(mode.state).assertEqual(previous);
         const selection = selectP011Input(mode.state, q,
-          { sequence: q, targetTilt: targets[q - 1], commandTime: 100 * q });
+          cmd(q, targets[q - 1], 100 * q));
         expect(selection.freshScriptCommand?.sequence).assertEqual(q);
         expect(selection.targetTilt).assertEqual(targets[q - 1]);
         state = selection.state;
@@ -96,13 +116,13 @@ export default function p011InputModeTest() {
       expect(selectP011Input(state, 6, null).source).assertEqual('idle');
       state = transitionP011InputMode(state, true, 7, 7).state;
       expect(state.consumedSequence).assertEqual(6);
-      expect(selectP011Input(state, 7, { sequence: 7, targetTilt: 25, commandTime: 700 })
+      expect(selectP011Input(state, 7, cmd(7, 25, 700))
         .freshScriptCommand?.sequence).assertEqual(7);
     });
 
     it('MODE03_07_freshCallbackRecoversAndBothSignsMapThroughSameChain', 0, () => {
       let state = transitionP011InputMode(initial(), true, 0, 0).state;
-      state = selectP011Input(state, 1, { sequence: 1, targetTilt: 20, commandTime: 10 }).state;
+      state = selectP011Input(state, 1, cmd(1, 20, 10)).state;
       state = transitionP011InputMode(state, false, 1, 0).state;
       expect(selectP011Input(state, 1, null).source).assertEqual('idle');
       state = acceptP011SensorSample(state, -2, 8, 125, 1);
@@ -120,15 +140,15 @@ export default function p011InputModeTest() {
         let trace = '';
         for (let q = 1; q <= 100; q++) {
           const selection = selectP011Input(state, q,
-            { sequence: q, targetTilt: (q % 3 - 1) * 15, commandTime: q * 100 });
+            cmd(q, (q % 3 - 1) * 15, q * 100));
           state = selection.state;
           trace += JSON.stringify(selection);
         }
         traces.push(trace);
-        state = selectP011Input(state, 101, { sequence: 101, targetTilt: NaN, commandTime: 100 }).state;
+        state = selectP011Input(state, 101, cmd(101, NaN, 100)).state;
         expect(state.consumedSequence).assertEqual(101);
         state.forceInvert = true;
-        expect(selectP011Input(state, 102, { sequence: 102, targetTilt: 30, commandTime: 200 })
+        expect(selectP011Input(state, 102, cmd(102, 30, 200))
           .freshScriptCommand).assertEqual(null);
         expect(canP011GestureOwnInput(state)).assertFalse();
       }
@@ -146,7 +166,7 @@ export default function p011InputModeTest() {
         // The normalized angle uses the same signed mapping as SandCanvas's sensor branch.
         const angle = Math.atan2(-experience.sensorGx, experience.sensorGy) * 180 / Math.PI;
         const simulated = selectP011Input(simulation, q,
-          { sequence: q, targetTilt: angle, commandTime: q * 100 });
+          cmd(q, angle, q * 100));
         simulation = simulated.state;
         const sensed = selectP011Input(experience, q, null);
         experience = sensed.state;
