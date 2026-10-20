@@ -639,15 +639,36 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 
 > 本节只固化客观验收；不替代 TC-P011-01~04。正式校验器为 `test/p011_slip_formal_check.py`，报告为 `docs/test-report-P011-slip-v1.md`。
 
+### 11.0 阶段一验收清单（2026-10-20 阶段边界裁决改版）
+
+> 依据 `docs/priority.md` 2026-10-20「P-011 阶段边界复议裁决」第 4/6/7 条制定。SLIP-02 整包移出阶段一 MUST-PASS；本清单取代此前「SLIP 全 PASS 才算阶段一完成」的旧口径。阶段一不得标记 P-011 CLOSED，也不得写成 SLIP 全 PASS。
+
+**阶段一 MUST-PASS（缺一不可）**：
+
+1. **SLIP-01（豁免口径）**：逐边 tan30 硬约束，按 §11.1 的 ±45° 四相位参考线形式豁免执行；0°/±15° 及其它相位照旧，豁免子步安全闸门完整执行。
+2. **SLIP-03 安全部分**：守恒、库存、容量、有限值、终点悬沙 `<=5%`、每相位最后 1s 坡度稳定（`<=1°`）——不延期，阶段一继续生效。
+3. **SLIP-04 全部**：local/bottom/total 预算上限原值、clipping 对账 `<=1e-9`、三类预算超额为 0、账本对齐零缺失零错配——不延期。
+4. **新阶段一 A/B/C 标准**（来自裁决第 1~3 条）：
+   - **A（双角滞回/状态机）**：逐边 start/hold/stop 语义、真实 active 转换、限流不误报 stop、物理边身份与遥测对齐全部通过；按既定 fit/holdout、CI、样本数门槛完成 `thetaStart/thetaStop` 估计，不填默认阈值；`thetaStop` 映射 ±45° 全局窗口的适配检查延期阶段二；标定③继续 `BLOCKED`。
+   - **B（安全限幅与提交 guard）**：每提交子步按实际接受参考角检查全边 `|ΔS−tan(effectiveTiltAccepted)|<=tan30°` 零违约；只允许完整事务可行时提交；可行域为空必须不提交并记录 `hold/BLOCKED` 原因；预算、守恒、库存、容量、账本对齐保持现行 MUST-PASS；无限 hold 不算收敛或体验通过。
+   - **C（现有机制效果）**：分别验证 ±15° 静止回归无新增运动/越界、滑移方向与 active/stop 及预算裁剪语义正确、有可复核用户可见的局部渐进斜坡响应（raster/录像可见证据支持，非零 grant 不算通过）；报告全宽 OLS 坡度、R²、通量与 run 时间作诊断/能力记录；守恒、库存、容量、预算、±15° 安全检查不得退化。
+
+**移出阶段一 MUST-PASS（DEFERRED / NOT VALIDATED，阶段二）**：
+
+- **SLIP-02 整包**：`30°±2°` 收敛、`R²>=0.90`、target-based `t90<=5100ms` 及适用的 ±45° 终点稳定/悬沙收敛约束——不以 FAIL 阻断阶段一完成，原始测量继续记录（诊断/能力数据），供阶段二可达性审计使用；`DEFERRED` 不是 PASS。
+
 ### 11.1 TC-P011-SLIP-01 逐边 tan30 硬约束
 
 - **前置条件**：完整七相 ledger；每个子步有同 `sequence/frameId/substepId/physicsTime` 的 `P011_METRIC.effectiveTilt` post-update 快照。
 - **输入**：每个提交物理子步的 `stateBefore.S` 与 `stateAfter.S`。
 - **判定标准**：对每子步全部 127 边，`|S[c+1]-S[c]-tan(effectiveTilt_committed)|<=tan30°`；总违约数必须为 0。禁止使用下一子步或上一相位 `context.effectiveTilt` 作为提交倾角。
+- **豁免范围（2026-10-20 manager 裁决）**：仅 `positiveOvershoot`、`positiveOvershootReturn`、`negativeOvershoot`、`negativeOvershootReturn` 四个相位（±45° 稳定平台及其 overshoot/return 子步）豁免上述 tan30 参考线形式判定；依据见 `docs/priority.md`「±45° 补采 gate 几何冲突裁决」。`0°`（baseline/return）、`±15°`（positive）及所有其它相位照旧执行 tan30 判定，不得放宽。豁免 ≠ 坡度达标、≠ 无物理越界、≠ run 自动合格；有限值、守恒、库存、容量、预算、账本对齐、边身份与 stop 语义闸门在豁免子步仍完整执行。
 - **分类**：MUST-PASS。
 
 ### 11.2 TC-P011-SLIP-02 ±45° raster 收敛与 target-based t90
 
+- **适用阶段**：**阶段二（DEFERRED / NOT VALIDATED，2026-10-20 裁决）**。依据 `docs/priority.md` 2026-10-20「P-011 阶段边界复议裁决」第 4/6 条：整个 SLIP-02 目标包（含 `30°±2°` 收敛、`R²>=0.90`、target-based `t90<=5100ms` 及适用的 ±45° 终点稳定/悬沙约束）移至阶段二可达性审计之后，不以 FAIL 阻断阶段一完成，移出阶段一 MUST-PASS；但仍须持续列为 `DEFERRED / NOT VALIDATED`，**不是 PASS**。
+- **测量要求保留**：本用例不删除、测量要求不删除——raster 全宽轮廓解析、OLS 坡度/R²/RMSE、target-based t90 等原始测量在阶段一继续记录，作为诊断/能力数据供阶段二可达性审计使用。
 - **前置条件**：`positiveOvershoot` 与 `negativeOvershoot` 的 raster 全宽轮廓均可解析。
 - **输入**：相位内所有 raster 样本。
 - **判定标准**：相位最后一次 raster 全宽 OLS 线性坡度 ∈ `30°±2°`，`R²>=0.90`，并报告 RMSE（rad/column）；`t90` 为 target-based 首次线性坡度达到 `27°`（30° 目标的 90%）的相对时间，且 `<=5100ms`。禁止以本相位实测终值的 90% 计算 t90。
@@ -658,19 +679,36 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 - **前置条件**：七相 ledger 完整，初始沉积沙总量取首子步 `stateBefore` 的 `bh+bl` 总和。
 - **输入**：每相位最后 1s ledger 状态与相位终点 `suspH+suspL`。
 - **判定标准**：每相位最后 1s OLS 坡度变化 `<=1°`；相位终点 `suspH+suspL<=0.05×初始沉积沙总量`。
-- **分类**：MUST-PASS。
+- **适用阶段**：**不延期，阶段一继续生效**。守恒、库存、容量、预算、有限值等安全不变量按 2026-10-20 阶段边界裁决不随 SLIP-02 目标包延期；其中「每相位最后 1s 坡度稳定」作为安全/稳定不变量在阶段一继续执行，±45° 相位的收敛达标（30°±2°）归属 SLIP-02 阶段二口径。
+- **分类**：MUST-PASS（安全不变量部分）。
 
 ### 11.4 TC-P011-SLIP-04 预算与账本对齐
 
 - **前置条件**：完整 ledger 与同子步 `P011_METRIC`。
 - **输入**：逐子步 `budgets`、audit 预算超额字段、`context.effectiveTilt`、同子步 metric post-update `effectiveTilt`。
-- **判定标准**：local/bottom/total 预算全程原值，不放宽、不追加：`localUsed<=localLimit`；`bottomUsed<=min(bottomRequested,bottomLimit)`；`totalUsed<=min(totalRequested,totalLimit)`；clipping/relax/三类预算超额为 0。ledger `context.effectiveTilt` 与同子步 `P011_METRIC.effectiveTilt` 均为 `updateTilt()` 后参考，并绑定同一子步身份字段；缺失或身份错配数为 0。
+- **判定标准**：local/bottom/total 预算上限全程原值，不放宽、不追加：`localUsed<=localLimit`；`bottomUsed<=min(bottomRequested,bottomLimit)`；`totalUsed<=min(totalRequested,totalLimit)`。每子步还须满足 `abs(bottomClipped-(bottomRequested-bottomUsed))<=1e-9` 与 `abs(totalClipped-(totalRequested-totalUsed))<=1e-9`；clipping 是共享预算竞争下的设计内行为。relax 可正常工作，不要求 `relaxAppliedTotal==0`；其合法性由预算上限、SLIP-01 tan30 约束与 §19.5 writer guard 分别检查。三类预算超额仍须为 0。ledger `context.effectiveTilt` 与同子步 `P011_METRIC.effectiveTilt` 均为 `updateTilt()` 后参考，并绑定同一子步身份字段；缺失或身份错配数为 0。
+- **适用阶段**：**不延期，阶段一继续生效**。预算上限、clipping 对账、三类预算超额、账本对齐等全部安全不变量按 2026-10-20 阶段边界裁决不随 SLIP-02 目标包延期，阶段一 MUST-PASS 保持原值。
 - **分类**：MUST-PASS。
 
 ### 11.5 v1 历史证据 RED 基线
 
 - **输入**：`test/artifacts/p011-slip-overshoot-v1/`（只读）。
-- **预期**：正式口径暴露硬约束违约、raster 未收敛、target-based t90 缺失与旧 `slope90TimeMs` 口径缺陷；允许预算对账本身通过。该结果是预期 RED，不得以放宽标准转绿。
+- **历史旧口径结果**：旧 checker 把 `relaxAppliedTotal==0` 和 `clipped==0` 当作 MUST-PASS，导致 1,738 个子步被记为预算违约；其中 relax 在 ±45° 崩塌段正常工作，clipping 也发生于倾斜阶段的共享预算竞争。该历史计数仅说明旧判定口径，不代表真实预算越界。
+- **修订口径重算**：预算 MUST-PASS 改为原预算上限 + clipping 对账（误差 `<=1e-9`）+ 三类预算超额为 0；不因 relax 工作或发生裁剪而失败。刷新后的实际 checker 结果见 `docs/test-report-P011-slip-v1.md`，硬坡度、raster 收敛、target-based t90 等其它 RED 项保持独立判定。
+- **豁免不溯及既往（2026-10-20）**：上述 ±45° 参考线形式判定豁免不追认 run-001/002 的旧判定，也不重写历史结论；历史报告中的 FAIL 记录原样保留，新旧判定结果在 `docs/test-report-P011-slip-v1.md` 中并列可查。
+
+### 11.6 KNOWN_FAIL / DEFERRED_TO_PHASE_2 legacy FAIL 台账（2026-10-20，C-2 路由）
+
+> 依据 `docs/priority.md` 2026-10-20「P-011 阶段一·B CONDITIONAL_PASS 裁决」第 3 条（C-2）。完整台账（定性、证据、纪律、阶段二重测计划）见独立清单 `docs/known-fails-P011-v1.md`。要点：2 个 legacy FAIL（`bottomCreep_tiltMovesLowerLayers`、`p011_commandSignFlipResetsPhaseAndReversesDisplacement`）为新闸门如实暴露的旧引擎真实 tan30 违约，不归因于 4b1f635 新回归；阶段一维持文档化 FAIL 并在总验收报告中明示。不放宽 tan30 判据、不改场景参数/测试期望、不删除失败证据、不删除 checker 白名单标记；阶段二由 tester/designer 结合 B·续 guard 与候选机制复核重测。它们不阻断【阶段一·B】实现完成，但未裁定前不得声称已解决。
+
+### 11.7 TC-P011-OBS3-CALIBRATION 新 protocol clean pilot 可观测性
+
+- **适用 run**：观测③ calibration run；新 protocol 必须预注册 schedule `0/+15/0/+30/0/-15/0/-30/0`、schedule SHA256、各平台 hold 时长、平台角容差、候选阈值身份、排除规则与随机化方案。旧 ±45° schedule/run 仅作历史证据，不计入新 protocol 的 fit/holdout 或 clean pilot bracket。
+- **平台定义**：仅以逐子步实际 `effectiveTilt` 及其 rate 判定平台；目标角或命令相位不能代替 accepted plateau。平台容差必须从冻结 manifest 读取；缺失时报告 `INCOMPLETE / PROTOCOL_METADATA_MISSING`，不得由 checker 自选容差。ramp、非零 rate、planner hold、请求拒绝、平台容差外样本均不属于平台。
+- **真实 bracket**：start 只接受真实同边 `activeBefore=false → activeAfter=true`；stop 只接受真实同边 `activeBefore=true → activeAfter=false`。需为同 run、同候选、同物理 edge 的紧邻连续有效子步，且前后实测 `alpha=atan(abs(d)/dx)` 跨过候选阈值。必须记录 request/grant/budgetScale、effective/accepted angle 及拒绝/限流状态。`holdActive`/`holdInactive`、平台到达或结束、reset、数据断档均不是转换。预算限流（含 grant=0）期间不得构造 stop/bracket；planner hold 或拒绝请求期间出现的 transition 只能列原始遥测，不能列合格 bracket。
+- **删失与 run 级状态**：若 start 搜索上端无真实越阈 start，且安全可提交样本最大实际 `alpha` 约为 29.9°，该 start cell 标 `RIGHT_CENSORED_AT_TAN30`，整体标 `INCOMPLETE`；这不是阈值 FAIL、PASS、点估计或“阈值高于上限”的证据。无真实 stop 时标 `STOP_TRANSITION_UNOBSERVED`，不得以 hold/限流补 stop。cell 样本不足标 `INCOMPLETE / DESIGN_PENDING_OBSERVATION`；四 cell（`start/+`、`start/-`、`stop/+`、`stop/-`）分开统计。
+- **验收边界**：clean pilot 仅审查 schedule/平台可达性、真实 bracket yield、右删失及拒绝/限流归因；`thresholdVerdict=NOT_EVALUATED`，不得判阈值 PASS/FAIL。hard tan30、逐边安全、守恒、库存、容量、预算、ledger/telemetry 对账仍由既有 safety checker 原样 MUST-PASS；本用例不豁免、不改变任何安全门槛。既有独立 run 数、每方向/每候选转换数、分层 cell 样本下限、run-cluster CI、fit/holdout 隔离与误判率标准全部不变。clean pilot 不计入 fit/holdout，也不授权扩样或改阈值。
+- **checker/证据**：`test/p011_calibration_protocol_check.py` 输出 calibration 可观测性与 `INCOMPLETE`/删失分类；协议 metadata 缺失、planner telemetry 缺失必须显式列出，不得猜值。已有 `p011_slip_formal_check.py` 及安全 checker 继续独立执行；checker 适配不得降低 safety MUST-PASS、样本门槛、CI 或 holdout 标准。
 
 ## 12. 观测①b：激活逐边转折遥测交付验收（2026-10-19，架构冻结）
 

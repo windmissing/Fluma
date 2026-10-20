@@ -1,56 +1,78 @@
-# P011 SLIP 正式用例基线报告（slip-v1 历史证据）
+# P-011 SLIP formal RED baseline
 
-- 日期：2026-10-19
-- 被测代码 commit：`130a52c74e8964fb024677b672cad1965f5cf1db`
-- 校验器 SHA-256：`fdbc3424f34231522f4d29b1225dcab3bbe763215899c66c1d79535cef974dc9`
-- 被测对象：`test/artifacts/p011-slip-overshoot-v1/`（只读历史证据，不修改物理代码）
-- 正式校验器：`test/p011_slip_formal_check.py`
-- 判定 JSON：`test/artifacts/p011-slip-formal-v1/formal-checker-output.json`
-- 结论：`FAIL`（RED 基线）
+- Verdict: **FAIL**
+- Evidence: historical read-only `slip-overshoot-v1` run
+- Budget rule: unchanged local/bottom/total ceilings; reconcile clipped with requested-used within 1e-9; relax activity is permitted.
 
-## MUST-PASS 结果
+## Budget
 
-### 1. 逐边 tan30 硬约束
+- Violating substeps: 756
+- Bottom clipped/requested/used mismatches: 742
+- Total clipped/requested/used mismatches: 486
+- Current violations are accounting mismatches; the historical prior-rule count of 1,738 included the invalid relax-zero and clipping-zero requirements.
 
-- 口径：每个提交子步全部 127 边，`|S[c+1]-S[c]-tan(effectiveTilt_committed)|<=tan30°`。
-- `effectiveTilt_committed` 取同一 `sequence/frameId/substepId` 的 `P011_METRIC.effectiveTilt`（post-update）。
-- 实测：检查 `319024` 边，违约子步 `484`，违约边 `59413`。
-- 判定：**FAIL**。
-- 首个违约：`{"recordIndex": 1456, "sequence": 1457, "phase": "positiveOvershoot", "edgeIndex": 126, "delta": 0.1390415789497581, "committedEffectiveTiltDeg": 36.0, "expectedTan": 0.7265425280053608, "violationTan": 0.5875009490556027, "limitTan30": 0.5773502691896257}`。
+## Hard slope constraint
 
-### 2. 预算逐子步对账
+- Checked edges: 319024
+- Violating substeps: 484
+- Violating edges: 59413
 
-- 实测：违约子步 `1738`；判定：**FAIL**。
-- 口径：local/bottom/total 均不放宽、不追加；clipping 与 relax 必须为 0。
+## Overshoot convergence
 
-### 3. effectiveTilt pre/post 同子步账本对齐
+| Phase | Final slope (deg) | 30 +/- 2 deg | R2 >= 0.90 | First 27 deg time (ms) | t90 <= 5100 ms |
+|---|---:|---|---|---:|---|
+| positiveOvershoot | 0.226404 | false | false | null | false |
+| negativeOvershoot | 0.523789 | false | false | null | false |
 
-- pre：ledger `context.effectiveTilt`；post：同子步 `P011_METRIC.effectiveTilt`。
-- 实测：缺 post 快照 `0`；身份错配 `0`。
-- 判定：**PASS**。
+Full machine-readable result: `test/artifacts/p011-slip-formal-v1/formal-checker-output.json`.
 
-## 相位终点稳定性
+## 2026-10-20 新口径重测（±45° tan30 参考线形式判定豁免）
 
-| 相位 | 最后1s斜率变化° | <=1° | 终点 suspH+suspL | <=5%初始沉积沙 | 判定 |
-|---|---:|---|---:|---|---|
-| baseline | 0.000000 | true | 0.000000 | true | PASS |
-| positive | 0.026823 | true | 270.724945 | true | PASS |
-| positiveReturn | 0.000483 | true | 0.682054 | true | PASS |
-| positiveOvershoot | 0.065818 | true | 282.228961 | true | PASS |
-| positiveOvershootReturn | 0.004031 | true | 6.371000 | true | PASS |
-| negativeOvershoot | 0.047340 | true | 227.035312 | true | PASS |
-| negativeOvershootReturn | 0.013946 | true | 15.430404 | true | PASS |
+- 被测代码 commit：`e2f02a15720a181107dd169b017127bc85c64ca4`。
+- 裁决依据：`docs/priority.md` 2026-10-20「±45° 补采 gate 几何冲突裁决」。
+- checker：`test/p011_slip_formal_check.py`。豁免仅作用于 `positiveOvershoot`、`positiveOvershootReturn`、`negativeOvershoot`、`negativeOvershootReturn` 四相位的 `|ΔS−tan(effectiveTilt)|≤tan30°` 参考线形式判定；0°/±15° 与其它相位照旧。豁免子步仍完整执行有限值、守恒、库存、容量、预算、账本对齐、边身份与 stop 语义闸门。
+- **明文声明**：豁免 ≠ 坡度达标、≠ 无物理越界、≠ run 自动合格。豁免只是把「参考线形式判定」从 ±45° 平台子步移除，材料侧约束全部保留。
+- 旧判定审计保留：本文件上方历史结论与旧数值原样保留，不追认、不重写；新旧结果并列可查。
 
-## ±45° 相位收敛与 target-based t90
+| Run | 硬坡度（新口径） | 豁免子步/边 | 预算违约子步 | 收敛 30°±2° | R²≥0.90 | t90≤5100ms | 终点稳定 | 悬沙≤5% | 账本对齐 | 观察 contract | 总判定 |
+|---|---|---:|---:|---|---|---|---|---|---|---|---|
+| v212 run-001 | PASS（0 违约边） | 1077 / 136779 | 717（bottom 对账 704，total 对账 469） | FAIL（+0.117° / −0.506°） | FAIL（0.0003 / 0.309） | FAIL（均未达 27°） | PASS | PASS | PASS | PASS | **FAIL** |
+| v212 run-002 | PASS（0 违约边） | 1083 / 137541 | 679（bottom 对账 666，total 对账 445） | FAIL（+0.146° / −0.481°） | FAIL（0.0005 / 0.319） | FAIL（均未达 27°） | PASS | PASS | PASS | PASS | **FAIL** |
+| v212-relax-hysteresis calibration | PASS（0 违约边） | 1085 / 137795 | 657（bottom 对账 644，total 对账 443） | FAIL（+0.170° / −0.449°） | FAIL（0.0007 / 0.284） | FAIL（均未达 27°） | PASS | PASS | PASS | PASS | **FAIL** |
 
-| 相位 | 终点 OLS 坡度° | R² | RMSE rad/col | 30°±2° | R²>=0.90 | 首次27°相对时间ms | t90<=5100ms | 判定 |
-|---|---:|---:|---:|---|---|---:|---|---|
-| positiveOvershoot | 0.226404 | 0.001293 | 4.057967939 | false | false | null | false | FAIL |
-| negativeOvershoot | 0.523789 | 0.301096 | 0.514645250 | false | false | null | false | FAIL |
+- 机器可读结果（追加，不覆盖旧文件）：
+  - `test/artifacts/p011-v212-recalib-20261020/run-001/formal-checker-output-ruling-20261020.json`
+  - `test/artifacts/p011-v212-recalib-20261020/run-002/formal-checker-output-ruling-20261020.json`
+  - `test/artifacts/p011-v212-relax-hysteresis/calibration/formal-checker-output-ruling-20261020.json`
+- 结论：新口径下 tan30 参考线形式违约清零（此前 run-001/002 45° 平台系统性失败的指标被豁免），但三份 run 的总判定仍为 FAIL：预算 clipping 对账违约未清零，±45° raster 收敛、R² 与 target-based t90 仍未达标。按裁决，只有修订后适用 hard-gate 全部通过才可进入补采候选池，因此三份 run 均不具备补采资格。
 
-## RED 基线摘要
+## 2026-10-20 阶段适用性说明（阶段边界复议裁决，标签更新不改数值）
 
-1. 逐边 tan30 硬约束失败：不能采用 v1 checker 中滞后 `context.effectiveTilt` 的旧采样口径；正式口径改用同子步 post-update 快照。
-2. ±45° raster 未收敛到 30°±2°，且没有 target-based 首次 27° t90 记录；旧 `slope90TimeMs` 以本相位实测终值为基准，不得转正。
-3. 相位终点稳定性和悬沙预算纳入 MUST-PASS；本次逐相位实测值见上表。
-4. 本报告只固化客观用例与 RED 基线，不修改业务物理、预算、几何或既有门槛。
+- 裁决依据：`docs/priority.md` 2026-10-20「P-011 阶段边界复议裁决」第 4/6/7 条。
+- 本节仅更新判定标签与适用阶段，**不运行新测试、不修改任何历史数值**；上方 2026-10-20 新口径重测三行结果与所有旧结论原样保留、并列可查。
+- **SLIP-02 整包 → 阶段二（DEFERRED / NOT VALIDATED）**：`30°±2°` 收敛、`R²>=0.90`、target-based `t90<=5100ms` 及适用的 ±45° 终点稳定/悬沙收敛约束移出阶段一 MUST-PASS，不以 FAIL 阻断阶段一完成；原始测量继续记录，作为阶段二可达性审计的诊断/能力数据。`DEFERRED` 不是 PASS。
+- **SLIP-01（豁免口径）→ 阶段一 MUST-PASS 保留**。
+- **SLIP-03 安全部分 → 阶段一 MUST-PASS 保留**：守恒、库存、容量、有限值、终点悬沙 `<=5%`、最后 1s 坡度稳定不延期；±45° 收敛达标归属 SLIP-02 阶段二口径。
+- **SLIP-04 全部 → 阶段一 MUST-PASS 保留**：预算上限、clipping 对账、预算超额、账本对齐不延期。
+- **新阶段一 A/B/C 标准**接入总验收：A 双角滞回/状态机、B 安全限幅与提交 guard、C 现有机制效果（详见 `docs/test-cases.md` §11.0）。
+- checker 同步更新：`test/p011_slip_formal_check.py` schemaVersion 1→2，JSON 输出新增 `phaseApplicability` 顶层节与 `convergence[*].applicablePhase/deferred/deferredBasis` 标记字段；报告模板新增「Phase applicability」节。合成 ledger 验证输出见 `test/artifacts/p011-slip-formal-v1/formal-checker-output-phase-tag-verify.json` 与同名 `.md`（验证运行仅确认新字段落盘，不构成新的正式测试结果）。
+- 阶段一完成判定改用 `docs/test-cases.md` §11.0 阶段一验收清单；阶段一不得标记 P-011 CLOSED，也不得写成 SLIP 全 PASS。
+
+### 2026-10-20 新口径 checker 重测三历史 run（schemaVersion 2，deferred 标记生效）
+
+- checker：`test/p011_slip_formal_check.py`（schemaVersion 2，带 deferred 标记）。三份历史 run 用更新后 checker 全量重跑，新输出文件（追加，不覆盖旧文件）：
+  - `test/artifacts/p011-v212-recalib-20261020/run-001/formal-checker-output-phase-tag-20261020.json`
+  - `test/artifacts/p011-v212-recalib-20261020/run-002/formal-checker-output-phase-tag-20261020.json`
+  - `test/artifacts/p011-v212-relax-hysteresis/calibration/formal-checker-output-phase-tag-20261020.json`
+- **数值一致性验证**：新输出剥除新增标签字段（`phaseApplicability`、`convergence[*].applicablePhase/deferred/deferredBasis`）后与旧 `formal-checker-output-ruling-20261020.json` 逐键比对，三份 run 均 identical——deferred 标记只加标签、不改任何闸门判定与实测数值。
+- **deferred 字段落位确认**：三份 run 输出 JSON 中 `phaseApplicability.phase2Deferred = ["convergence (SLIP-02: slope 30+/-2deg, R2>=0.90, target-based t90<=5100ms)"]`，`convergence[*].applicablePhase="phase-2"`、`deferred=true` 均正确出现。
+
+| Run | 硬坡度（阶段一） | 预算对账（阶段一） | 账本对齐 | 终点稳定/悬沙（阶段一） | SLIP-02 收敛 30°±2° | SLIP-02 R²≥0.90 | SLIP-02 t90≤5100ms | SLIP-02 判定 | 总判定 |
+|---|---|---|---|---|---|---|---|---|---|
+| v212 run-001 | PASS（0 违约边） | FAIL（717 子步；bottom 对账 704，total 对账 469） | PASS | PASS（7/7 相位） | FAIL（+0.1166° / −0.5061°） | FAIL（0.0003 / 0.3092） | FAIL（均未达 27°） | **DEFERRED（阶段二，不计入阶段一判定）** | **FAIL（阶段一口径）** |
+| v212 run-002 | PASS（0 违约边） | FAIL（679 子步；bottom 对账 666，total 对账 445） | PASS | PASS（7/7 相位） | FAIL（+0.1457° / −0.4809°） | FAIL（0.0005 / 0.3190） | FAIL（均未达 27°） | **DEFERRED（阶段二，不计入阶段一判定）** | **FAIL（阶段一口径）** |
+| v212-relax-hysteresis calibration | PASS（0 违约边） | FAIL（657 子步；bottom 对账 644，total 对账 443） | PASS | PASS（7/7 相位） | FAIL（+0.1702° / −0.4487°） | FAIL（0.0007 / 0.2840） | FAIL（均未达 27°） | **DEFERRED（阶段二，不计入阶段一判定）** | **FAIL（阶段一口径）** |
+
+- 表列口径说明：**总判定 = 阶段一口径 FAIL**，唯一未过的阶段一闸门是预算 clipping 对账；SLIP-02 三项（收敛/R²/t90）实测数字照录但按裁决标 DEFERRED、**不计入阶段一判定**——若不计 deferred 项，三 run 的阶段一硬门槛（SLIP-01/03/04 安全不变量）中仅预算对账未过。
+- DEFERRED 不改变 FAIL 语义：SLIP-02 仍不是 PASS，实测值（坡度远低于 30°±2°、R² 远低于 0.90、t90 未达 27°）原样保留，供阶段二 designer 可达性审计使用。
+- 补采资格结论不变：三份 run 预算对账违约未清零，按裁决仍不具备补采候选池资格；本节重测仅更新标签与口径呈现，不产生新的补采资格。
