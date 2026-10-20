@@ -1,6 +1,7 @@
 import {
   P011NaturalObservationRunRole,
   P011_SCHEDULE_NINE_PHASE_30_V2,
+  P011_SCHEDULE_NINE_PHASE_30_V3,
   P011_SCHEDULE_SEVEN_PHASE_45_V1
 } from './P011NaturalObservation';
 
@@ -17,7 +18,13 @@ export type P011TiltWantWarning =
   | 'INVALID_THETA_START_DEG'
   | 'INVALID_THETA_STOP_DEG'
   | 'INVALID_SCHEDULE_ID'
-  | 'MISSING_SCHEDULE_ID';
+  | 'MISSING_SCHEDULE_ID'
+  // Observation-3 v3 additions (GAP-2/5).
+  | 'INVALID_V3_LEG_ID'
+  | 'INVALID_V3_PHASE_KIND'
+  | 'INVALID_EXEC_SOURCE_COMMIT'
+  | 'INVALID_EXEC_SOURCE_FILE_SHA256'
+  | 'INVALID_EXEC_BUILD_SHA256';
 
 export interface P011TiltWantCommand {
   sequence: number;
@@ -32,6 +39,17 @@ export interface P011TiltWantCommand {
   // the legacy mapping. Optional so existing v1 runner payloads parse
   // unchanged.
   scheduleId: string | null;
+  // Observation-3 v3 (GAP-2): schedule segment binding of THIS command —
+  // legId (L1..L8, null on platform rows), segmentId (H0..H8 / L1..L8) and
+  // phaseKind. Optional so v2-era payloads parse unchanged.
+  v3LegId?: string | null;
+  v3SegmentId?: string | null;
+  v3PhaseKind?: 'platform' | 'ramp' | null;
+  // Observation-3 v3 (GAP-5): execution identity for executedThresholds.
+  // Optional; absent keeps whatever the field instance already holds.
+  execSourceCommit?: string | null;
+  execSourceFileSha256?: string | null;
+  execBuildSha256?: string | null;
 }
 
 export interface P011TiltWantParseResult {
@@ -110,10 +128,64 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
     ? '' : `${parameters.scheduleid}`.trim();
   let scheduleId: string | null = null;
   if (scheduleIdText === P011_SCHEDULE_NINE_PHASE_30_V2 ||
+    scheduleIdText === P011_SCHEDULE_NINE_PHASE_30_V3 ||
     scheduleIdText === P011_SCHEDULE_SEVEN_PHASE_45_V1) {
     scheduleId = scheduleIdText;
   } else if (scheduleIdText !== '') {
     warnings.push('INVALID_SCHEDULE_ID');
+  }
+  // Observation-3 v3 segment binding (optional; validated only when the
+  // v3 schedule is selected).
+  const v3LegText = parameters === undefined || parameters.v3legid === undefined
+    ? null : `${parameters.v3legid}`.trim();
+  const v3SegmentText = parameters === undefined || parameters.v3segmentid === undefined
+    ? null : `${parameters.v3segmentid}`.trim();
+  const v3PhaseKindText = parameters === undefined ||
+    parameters.v3phasekind === undefined
+    ? null : `${parameters.v3phasekind}`.trim();
+  let v3LegId: string | null = null;
+  let v3SegmentId: string | null = null;
+  let v3PhaseKind: 'platform' | 'ramp' | null = null;
+  if (scheduleId === P011_SCHEDULE_NINE_PHASE_30_V3) {
+    if (v3SegmentText !== null) {
+      if (!/^[HL][0-9]$/.test(v3SegmentText)) {
+        warnings.push('INVALID_V3_LEG_ID');
+      } else {
+        v3SegmentId = v3SegmentText;
+      }
+    }
+    if (v3LegText !== null && v3LegText !== '') {
+      if (!/^L[1-8]$/.test(v3LegText)) {
+        warnings.push('INVALID_V3_LEG_ID');
+      } else {
+        v3LegId = v3LegText;
+      }
+    }
+    if (v3PhaseKindText !== null) {
+      if (v3PhaseKindText !== 'platform' && v3PhaseKindText !== 'ramp') {
+        warnings.push('INVALID_V3_PHASE_KIND');
+      } else {
+        v3PhaseKind = v3PhaseKindText;
+      }
+    }
+  }
+  // Execution identity (optional, GAP-5).
+  const execText = (key: string): string | null => {
+    const raw = parameters === undefined || parameters[key] === undefined
+      ? null : `${parameters[key]}`.trim();
+    return raw === null || raw.length === 0 ? null : raw;
+  };
+  const execSourceCommit = execText('execsourcecommit');
+  const execSourceFileSha256 = execText('execsourcefilesha256');
+  const execBuildSha256 = execText('execbuildsha256');
+  if (execSourceCommit !== null && !/^[0-9a-fA-F]{6,64}$/.test(execSourceCommit)) {
+    warnings.push('INVALID_EXEC_SOURCE_COMMIT');
+  }
+  if (execSourceFileSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execSourceFileSha256)) {
+    warnings.push('INVALID_EXEC_SOURCE_FILE_SHA256');
+  }
+  if (execBuildSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execBuildSha256)) {
+    warnings.push('INVALID_EXEC_BUILD_SHA256');
   }
   if (warnings.some((warning) => warning !== 'MISSING_P011_RUN_ROLE' &&
     warning !== 'MISSING_THRESHOLD_CALIBRATION_ID' &&
@@ -131,7 +203,13 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
       thresholdCalibrationId,
       thetaStartDeg: optionalFiniteNumber(parameters, 'thetastartdeg'),
       thetaStopDeg: optionalFiniteNumber(parameters, 'thetastopdeg'),
-      scheduleId
+      scheduleId,
+      v3LegId,
+      v3SegmentId,
+      v3PhaseKind,
+      execSourceCommit,
+      execSourceFileSha256,
+      execBuildSha256
     },
     warnings
   };
@@ -159,8 +237,29 @@ export function decodeP011TiltWant(encoded: string | undefined,
     if (command.scheduleId === undefined) {
       command.scheduleId = null;
     } else if (command.scheduleId !== P011_SCHEDULE_NINE_PHASE_30_V2 &&
+      command.scheduleId !== P011_SCHEDULE_NINE_PHASE_30_V3 &&
       command.scheduleId !== P011_SCHEDULE_SEVEN_PHASE_45_V1) {
       return null;
+    }
+    if (command.v3LegId === undefined) {
+      command.v3LegId = null;
+    }
+    if (command.v3SegmentId === undefined) {
+      command.v3SegmentId = null;
+    }
+    if (command.v3PhaseKind === undefined) {
+      command.v3PhaseKind = null;
+    } else if (command.v3PhaseKind !== 'platform' && command.v3PhaseKind !== 'ramp') {
+      return null;
+    }
+    if (command.execSourceCommit === undefined) {
+      command.execSourceCommit = null;
+    }
+    if (command.execSourceFileSha256 === undefined) {
+      command.execSourceFileSha256 = null;
+    }
+    if (command.execBuildSha256 === undefined) {
+      command.execBuildSha256 = null;
     }
     if (!Number.isInteger(command.sequence) || command.sequence !== sequence ||
       !Number.isFinite(command.targetTilt) || command.targetTilt < -89 ||

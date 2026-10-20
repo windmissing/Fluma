@@ -53,6 +53,15 @@ export interface P011CorrectionParams {
   totalBudget: number;
   /** Substep dt (diagnostics only). */
   dt: number;
+  /**
+   * GAP-1 (observation-3 v3): per-edge eligibility mask from the
+   * dual-threshold state machine (1 = eligible). Null/absent keeps the
+   * legacy |r| > h eligibility for every edge. When present, an edge enters
+   * the candidate set only if BOTH the machine marks it active AND |r| > h
+   * still holds (the guard/budget shape of the correction channel is
+   * unchanged; only the eligibility gate widens or narrows).
+   */
+  slidingEligible?: Uint8Array | null;
 }
 
 /** One candidate correction edge, computed on the reservation snapshot. */
@@ -144,6 +153,12 @@ export function p011CorrectionReserve(
   const degree = new Int32Array(cols);
 
   for (let edge = 0; edge < edgeCount; edge++) {
+    // GAP-1: candidate runs gate eligibility on the state machine's active
+    // set; legacy runs (null mask) keep the pure |r| > h trigger.
+    if (params.slidingEligible !== null && params.slidingEligible !== undefined &&
+      edge < params.slidingEligible.length && params.slidingEligible[edge] === 0) {
+      continue;
+    }
     const r = view.sandTop[edge + 1] - view.sandTop[edge] - tanTilt;
     if (Math.abs(r) <= params.relaxBoundSlope) {
       continue; // not an eligible relax edge under the existing trigger

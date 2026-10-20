@@ -1326,6 +1326,18 @@ struct SandCanvas {
             p011TiltWant.thetaStopDeg
           );
           ws.setNaturalObservationScheduleId(p011TiltWant.scheduleId);
+          // Observation-3 v3 (GAP-2/5): schedule segment binding and
+          // execution identity flow with the command.
+          ws.setP011CurrentCommandSegment(p011TiltWant.v3LegId ?? null,
+            p011TiltWant.v3SegmentId ?? null, p011TiltWant.v3PhaseKind ?? null);
+          if (p011TiltWant.execSourceCommit !== null ||
+            p011TiltWant.execSourceFileSha256 !== null ||
+            p011TiltWant.execBuildSha256 !== null) {
+            ws.setNaturalObservationExecutionIdentity(
+              p011TiltWant.execSourceCommit ?? null,
+              p011TiltWant.execSourceFileSha256 ?? null,
+              p011TiltWant.execBuildSha256 ?? null);
+          }
           inputSource = 'script';
           inputCommandTime = p011TiltWant.commandTime;
           p011ScriptHasEvent = true;

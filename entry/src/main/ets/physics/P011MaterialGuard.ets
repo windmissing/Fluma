@@ -153,6 +153,33 @@ export function p011GuardConstraintsForDelta(
 }
 
 /**
+ * GAP-4 (§24.4 affectedEdgeIds): the physical interface indices behind a
+ * constraint list, in the SAME order p011GuardConstraintsForDelta produced
+ * them. p011GuardAdmit's limitingEdge is the position in the constraints
+ * array; mapping it through this list yields the physical edge id. The
+ * helper re-derives the affected set with the identical rule so callers
+ * cannot drift from the constraint builder.
+ */
+export function p011GuardAffectedEdgesForDelta(
+  deltaColumns: Map<number, number>,
+  edgeCount: number): number[] {
+  const affected = new Set<number>();
+  for (const column of deltaColumns.keys()) {
+    if (column - 1 >= 0 && column - 1 < edgeCount) {
+      affected.add(column - 1);
+    }
+    if (column >= 0 && column < edgeCount) {
+      affected.add(column);
+    }
+  }
+  const edges: number[] = [];
+  for (const edge of affected) {
+    edges.push(edge);
+  }
+  return edges;
+}
+
+/**
  * Budget ledger refund after a guard clip (§19.5 four-layer write-back).
  * The rejected part (granted - accepted) returns to local remaining (both
  * endpoints for pair moves, single endpoint for column moves), bottom

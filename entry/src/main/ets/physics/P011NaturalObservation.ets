@@ -13,6 +13,11 @@ export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 3;
 // (0/+15/0/+30/0/-15/0/-30/0, holdMs 5100, input sequence = phaseIndex+1).
 export const P011_SCHEDULE_SEVEN_PHASE_45_V1 = 'seven-phase-45-v1';
 export const P011_SCHEDULE_NINE_PHASE_30_V2 = 'nine-phase-30-v2';
+// Observation-3 v3 (GAP-2): parameterized nine-platform/eight-leg schedule
+// 0 -> +15 -> +A -> +15 -> 0 -> -15 -> -A -> -15 -> 0 with 5100 ms holds and
+// 100 ms ramp commands. legId/segmentId come from the schedule binding in
+// the ledger context (substepContext.legId/segmentId/phaseKindV3).
+export const P011_SCHEDULE_NINE_PHASE_30_V3 = 'nine-phase-30-v3';
 
 export type P011NaturalObservationPhaseName =
   'baseline' | 'positive' | 'positiveReturn' | 'positiveOvershoot' |
@@ -26,6 +31,41 @@ export type P011NaturalObservationRunRole = 'calibration' | 'holdout';
 
 export type P011NaturalObservationEdgeTransitionType =
   'start' | 'stop' | 'holdActive' | 'holdInactive' | 'unavailable';
+
+// Protocol v3 §2.1 transitionReason vocabulary — mirrors
+// P011RelaxHysteresisTransitionReason (declared independently so the
+// observation schema does not import the state machine module).
+export type P011NaturalObservationTransitionReason =
+  'START_THRESHOLD_CROSSED'
+  | 'STOP_THRESHOLD_CROSSED'
+  | 'HOLD_INACTIVE'
+  | 'HOLD_ACTIVE';
+
+/** Protocol v3 §2.1 thresholdUsed — the branch the decision consulted. */
+export interface P011NaturalObservationThresholdUsed {
+  branch: 'start' | 'stop';
+  angleDeg: number;
+  slopeLimit: number;
+  comparator: '>=' | '<=';
+}
+
+/**
+ * Protocol v3 §2.1 executedThresholds — the values the running state machine
+ * actually read, plus implementation identity (state machine version, source
+ * commit, per-file SHA-256, build SHA-256). Null on legacy runs (no candidate
+ * thresholds configured); checkers treat a candidate run with null
+ * executedThresholds as EXECUTION_THRESHOLD_IDENTITY_MISMATCH.
+ */
+export interface P011NaturalObservationExecutedThresholds {
+  thetaStartDeg: number;
+  thetaStopDeg: number;
+  slopeStart: number;
+  slopeStop: number;
+  stateMachineVersion: string;
+  sourceCommit: string;
+  sourceFileSha256: string;
+  buildSha256: string;
+}
 
 export interface P011NaturalObservationState {
   bh: number[];
@@ -67,6 +107,24 @@ export interface P011NaturalObservationSubstepContext {
   thetaAccepted: number | null;
   requestRejected: boolean | null;
   plannerHold: boolean | null;
+  // Observation-3 v3 (GAP-3/4/5 additions, backward-compatible: all fields
+  // are optional so v2-era writers stay valid).
+  // Real per-step proposal from the planner (GAP-4): thetaRequested is the
+  // omega-capped target the pass actually evaluated, distinct from the raw
+  // command targetTilt above.
+  thetaRequested?: number | null;
+  // v3 schedule binding (GAP-2): leg/platform identity of THIS command from
+  // the pre-registered schedule, never re-segmented from transitions.
+  legId?: string | null;
+  segmentId?: string | null;
+  phaseKindV3?: 'platform' | 'ramp' | null;
+  // Attempt audit layer (GAP-4): every substep (committed, blocked or
+  // rolled back) carries an attempt identity and outcome.
+  attemptId?: string | null;
+  commitStatus?: 'committed' | 'blocked' | 'rolled_back' | 'rejected' | null;
+  rollbackReason?: string | null;
+  // Executed threshold identity (GAP-5): null on legacy runs.
+  executedThresholds?: P011NaturalObservationExecutedThresholds | null;
 }
 
 export interface P011NaturalObservationColumnGrant {
@@ -140,6 +198,15 @@ export interface P011RelaxHysteresisEdgeObservation {
   hardGuardRejected: number | null;
   hardGuardClipped: number | null;
   hardGuardAvailable: boolean;
+  // Protocol v3 §2.1 decision-time fields (GAP-3): sampled at the state
+  // machine's read-residual-pick-branch point, NOT at stateBefore nor after
+  // apply. Null on legacy runs (state machine off).
+  decisionG?: number | null;
+  decisionR?: number | null;
+  decisionAlpha?: number | null;
+  decisionOrdinal?: number | null;
+  thresholdUsed?: P011NaturalObservationThresholdUsed | null;
+  transitionReason?: P011NaturalObservationTransitionReason | null;
 }
 
 export interface P011RelaxHysteresisObservation {
@@ -151,6 +218,27 @@ export interface P011RelaxHysteresisObservation {
   hardGuardAvailable: boolean;
   maxResidualBefore: number;
   maxResidualAfter: number;
+  // True when the dual-threshold state machine drove this substep's relax
+  // eligibility (candidate run); false on legacy single-bound runs.
+  hysteresisActive?: boolean;
+}
+
+/**
+ * GAP-4 material-guard evidence per substep: per-writer totals plus the
+ * physical-edge mapping of every guard limitingEdge (constraints-array
+ * position -> physical interfaceIndex, §24.4 affectedEdgeIds requirement).
+ */
+export interface P011NaturalObservationMaterialGuardEvidence {
+  /** Writer channel name (settle/percolate/bottomCreep/relax/lift/correction). */
+  channel: string;
+  /** Physical edge whose constraint bound the accepted grant (smallest on
+   * ties), or null when the guard did not clip. */
+  limitingEdge: number | null;
+  /** All physical edges inspected for this increment, same order as the
+   * constraint array the guard saw. */
+  affectedEdgeIds: number[];
+  rejected: number;
+  clipped: number;
 }
 
 export interface P011NaturalObservationSplitRecord {
@@ -231,6 +319,10 @@ export interface P011NaturalObservationRecord {
   splits: P011NaturalObservationSplitRecord[];
   budgets: P011NaturalObservationBudgets;
   audit: P011NaturalObservationAudit;
+  // GAP-4: per-writer guard evidence with physical-edge mapping. Absent on
+  // records written before this field existed (optional for backward
+  // compatibility with stored v2 ledgers).
+  materialGuard?: P011NaturalObservationMaterialGuardEvidence[];
 }
 
 export type P011NaturalObservationSink = (record: P011NaturalObservationRecord) => void;
@@ -340,6 +432,105 @@ export function p011NaturalObservationPhaseForCommand(
   return 'unknown';
 }
 
+/**
+ * v3 segment-id -> phase-name mapping. Platforms carry the nine-phase names;
+ * ramp legs inherit the ORIGIN platform's name (L* departs from H*):
+ * L1<-H0, L2<-H1, ..., L8<-H7 (protocol §3.1 leg table).
+ */
+export function p011NaturalObservationPhaseForV3Segment(
+  segmentId: string | null
+): P011NaturalObservationPhaseName {
+  return segmentPhase(segmentId);
+}
+
+function segmentPhase(segmentId: string | null): P011NaturalObservationPhaseName {
+  switch (segmentId) {
+    case 'H0':
+      return 'baseline';
+    case 'H1':
+      return 'positiveLow';
+    case 'H2':
+      return 'positiveHigh';
+    case 'H3':
+      return 'positiveLowReturn';
+    case 'H4':
+      return 'positiveHighReturn';
+    case 'H5':
+      return 'negativeLow';
+    case 'H6':
+      return 'negativeHigh';
+    case 'H7':
+      return 'negativeLowReturn';
+    case 'H8':
+      return 'negativeHighReturn';
+    // Ramp legs inherit the origin platform's phase name.
+    case 'L1':
+      return 'baseline';
+    case 'L2':
+      return 'positiveLow';
+    case 'L3':
+      return 'positiveHigh';
+    case 'L4':
+      return 'positiveLowReturn';
+    case 'L5':
+      return 'positiveHighReturn';
+    case 'L6':
+      return 'negativeLow';
+    case 'L7':
+      return 'negativeHigh';
+    case 'L8':
+      return 'negativeLowReturn';
+    default:
+      return 'unknown';
+  }
+}
+
+/**
+ * One decision sample as recorded by the field (GAP-3).
+ *
+ * Declared as a class (not an interface) so the field can construct it via
+ * `new` instead of an object literal. ArkTS strict mode rejects object
+ * literals whose contextual type crosses module boundaries while carrying
+ * nested interface-typed fields (arkts-no-untyped-obj-literals), and the
+ * decision value's thresholdUsed/transitionReason come from the independent
+ * P011RelaxHysteresis module types. A class sidesteps the literal rule;
+ * parameter assignment still uses structural typing across the two identical
+ * shapes.
+ */
+export class P011RelaxHysteresisDecisionSample {
+  interfaceIndex: number;
+  decisionOrdinal: number;
+  decisionG: number;
+  decisionR: number;
+  decisionAlpha: number;
+  activeBefore: boolean;
+  activeAfter: boolean;
+  transitionReason: P011NaturalObservationTransitionReason;
+  thresholdUsed: P011NaturalObservationThresholdUsed;
+
+  constructor(
+    interfaceIndex: number,
+    decisionOrdinal: number,
+    decisionG: number,
+    decisionR: number,
+    decisionAlpha: number,
+    activeBefore: boolean,
+    activeAfter: boolean,
+    transitionReason: P011NaturalObservationTransitionReason,
+    thresholdUsed: P011NaturalObservationThresholdUsed
+  ) {
+    this.interfaceIndex = interfaceIndex;
+    this.decisionOrdinal = decisionOrdinal;
+    this.decisionG = decisionG;
+    this.decisionR = decisionR;
+    this.decisionAlpha = decisionAlpha;
+    this.activeBefore = activeBefore;
+    this.activeAfter = activeAfter;
+    this.transitionReason = transitionReason;
+    this.thresholdUsed = thresholdUsed;
+  }
+}
+
 export class P011NaturalObservationProbe {
   private readonly cols: number;
   private readonly sink: P011NaturalObservationSink;
@@ -358,6 +549,15 @@ export class P011NaturalObservationProbe {
   private relaxAppliedTotal = 0;
   private lastContext: P011NaturalObservationSubstepContext | null = null;
   private lastAudit: P011NaturalObservationAudit | null = null;
+  // GAP-3: per-edge decision records captured at the state machine's
+  // sampling point; keyed by physical edge index, ordered by insertion
+  // (decisionOrdinal). Cleared every beginSubstep.
+  private decisions: Map<number, P011RelaxHysteresisDecisionSample[]> = new Map();
+  // GAP-4: per-writer material-guard evidence rows.
+  private materialGuardEvidence: P011NaturalObservationMaterialGuardEvidence[] = [];
+  // GAP-1 visibility flag: whether the dual-threshold state machine drove
+  // this substep (candidate run) or the legacy single-bound path ran.
+  private hysteresisActiveThisSubstep = false;
 
   constructor(cols: number, sink: P011NaturalObservationSink) {
     if (!Number.isInteger(cols) || cols < 2) {
@@ -386,6 +586,34 @@ export class P011NaturalObservationProbe {
     this.relaxTriggered = false;
     this.relaxRequestedTotal = 0;
     this.relaxAppliedTotal = 0;
+    this.decisions = new Map();
+    this.materialGuardEvidence = [];
+    this.hysteresisActiveThisSubstep = false;
+  }
+
+  /**
+   * GAP-3: record one state-machine decision at its sampling point. Multiple
+   * decisions for the same edge (e.g. collect + apply boundaries) are all
+   * retained in order; decisionOrdinal is the 1-based position within the
+   * substep for that edge.
+   */
+  recordDecision(sample: P011RelaxHysteresisDecisionSample): void {
+    const list = this.decisions.get(sample.interfaceIndex);
+    if (list === undefined) {
+      this.decisions.set(sample.interfaceIndex, [sample]);
+    } else {
+      list.push(sample);
+    }
+  }
+
+  /** GAP-1 visibility: mark this substep as state-machine driven. */
+  markHysteresisActive(): void {
+    this.hysteresisActiveThisSubstep = true;
+  }
+
+  /** GAP-4: record per-writer guard evidence with physical-edge mapping. */
+  recordMaterialGuardEvidence(evidence: P011NaturalObservationMaterialGuardEvidence): void {
+    this.materialGuardEvidence.push(evidence);
   }
 
   recordSuspensionDiffusion(grant: P011NaturalObservationEdgeGrantBase): void {
@@ -504,10 +732,13 @@ export class P011NaturalObservationProbe {
       bottomCreep: this.bottomCreep,
       splits: this.splits,
       budgets: budgets,
-      audit: completeAudit
+      audit: completeAudit,
+      materialGuard: this.materialGuardEvidence
     });
     this.context = null;
     this.stateBefore = null;
+    this.decisions = new Map();
+    this.materialGuardEvidence = [];
   }
 
   private completeEdgeGrant(grant: P011NaturalObservationEdgeGrantBase):
@@ -520,6 +751,11 @@ export class P011NaturalObservationProbe {
     const hasTransitionTelemetry = grant.activeBefore !== undefined &&
       grant.activeAfter !== undefined &&
       grant.activeBefore !== null && grant.activeAfter !== null;
+    // GAP-3: attach the first decision sample of this edge (the state
+    // machine's read-residual-pick-branch point) to the slip grant record.
+    const decisionList = this.decisions.get(grant.interfaceIndex);
+    const decision = decisionList === undefined || decisionList.length === 0
+      ? null : decisionList[0];
     return {
       interfaceIndex: grant.interfaceIndex,
       donor: grant.donor,
@@ -585,6 +821,11 @@ export class P011NaturalObservationProbe {
       maxResidualAfter = Math.max(maxResidualAfter, Math.abs(dAfter));
       allGuardAvailable = allGuardAvailable &&
         (slip !== undefined && slip.hardGuardAvailable === true);
+      // GAP-3: the decision sample of this edge (state machine sampling
+      // point); null on legacy runs.
+      const decisionList = this.decisions.get(index);
+      const decision = decisionList === undefined || decisionList.length === 0
+        ? null : decisionList[0];
       edges.push({
         interfaceIndex: index,
         d: d,
@@ -599,7 +840,13 @@ export class P011NaturalObservationProbe {
         budgetScale: requested > 0 ? granted / requested : null,
         hardGuardRejected: slip === undefined ? null : slip.hardGuardRejected,
         hardGuardClipped: slip === undefined ? null : slip.hardGuardClipped,
-        hardGuardAvailable: slip !== undefined && slip.hardGuardAvailable === true
+        hardGuardAvailable: slip !== undefined && slip.hardGuardAvailable === true,
+        decisionG: decision === null ? null : decision.decisionG,
+        decisionR: decision === null ? null : decision.decisionR,
+        decisionAlpha: decision === null ? null : decision.decisionAlpha,
+        decisionOrdinal: decision === null ? null : decision.decisionOrdinal,
+        thresholdUsed: decision === null ? null : decision.thresholdUsed,
+        transitionReason: decision === null ? null : decision.transitionReason
       });
     }
     let hardGuardRejected: number | null = null;
@@ -628,7 +875,8 @@ export class P011NaturalObservationProbe {
       hardGuardClipped: hardGuardClipped,
       hardGuardAvailable: allGuardAvailable,
       maxResidualBefore: maxResidualBefore,
-      maxResidualAfter: maxResidualAfter
+      maxResidualAfter: maxResidualAfter,
+      hysteresisActive: this.hysteresisActiveThisSubstep
     };
   }
 

@@ -5,12 +5,15 @@
 import {
   P011NaturalObservationAudit,
   P011NaturalObservationBudgets,
+  P011NaturalObservationExecutedThresholds,
   P011NaturalObservationProbe,
   P011NaturalObservationRunRole,
   P011NaturalObservationState,
+  P011RelaxHysteresisDecisionSample,
   P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
   P011_NATURAL_OBSERVATION_ROUTE_ID,
-  p011NaturalObservationPhaseForCommand
+  p011NaturalObservationPhaseForCommand,
+  p011NaturalObservationPhaseForV3Segment
 } from './P011NaturalObservation';
 import {
   P011ChannelPlan,
@@ -28,6 +31,7 @@ import {
   P011GuardLedgerRefund,
   P011GuardOutcome,
   p011GuardAdmit,
+  p011GuardAffectedEdgesForDelta,
   p011GuardConstraintsForDelta
 } from './P011MaterialGuard';
 import {
@@ -38,6 +42,14 @@ import {
   p011CorrectionApplyOnce,
   p011CorrectionReserve
 } from './P011RelaxCorrection';
+import {
+  P011RelaxHysteresisThresholds,
+  P011RelaxHysteresisNextActiveResult,
+  P011_RELAX_HYSTERESIS_VERSION,
+  p011RelaxHysteresisNextActive,
+  p011RelaxHysteresisRequested,
+  p011RelaxHysteresisThresholds as deriveHysteresisThresholds
+} from './P011RelaxHysteresis';
 
 /**
  * §24 relax-correction-weighted-v1 view/ledger adapters. ArkTS forbids
@@ -745,6 +757,27 @@ export class WaterSandField {
   private naturalObservationSlidingBefore: Uint8Array;
   private naturalObservationSlidingAfter: Uint8Array;
   private naturalObservationSlipSeen: Uint8Array;
+  // ── GAP-1 dual-threshold state machine state ──
+  // Physically effective sliding[] (drives relax eligibility; distinct from
+  // the observation-shadow arrays above which only mirror it into records).
+  // reset/initialize clears it; budget clipping never does (§19.4-2/3).
+  private relaxSliding: Uint8Array;
+  private relaxHysteresisThresholds: P011RelaxHysteresisThresholds | null = null;
+  // ── GAP-4 attempt audit ──
+  private p011AttemptCounter = 0;
+  // ── GAP-5 executed identity (bound once per run via want) ──
+  private naturalObservationExecSourceCommit: string | null = null;
+  private naturalObservationExecSourceFileSha256: string | null = null;
+  private naturalObservationExecBuildSha256: string | null = null;
+  // ── GAP-2 v3 schedule binding for the CURRENT command ──
+  private p011CurrentLegId: string | null = null;
+  private p011CurrentSegmentId: string | null = null;
+  private p011CurrentPhaseKindV3: 'platform' | 'ramp' | null = null;
+  // ── GAP-4 attempt outcome of the current substep ──
+  private p011CurrentAttemptId: string | null = null;
+  private p011CurrentCommitStatus: 'committed' | 'blocked' | 'rolled_back'
+    | 'rejected' | null = null;
+  private p011CurrentRollbackReason: string | null = null;
 
   constructor(cols: number, capacity: number) {
     if (!Number.isInteger(cols) || !Number.isInteger(capacity) || cols < 2 || capacity < 2) {
@@ -785,6 +818,8 @@ export class WaterSandField {
     this.naturalObservationSlidingBefore = new Uint8Array(cols - 1);
     this.naturalObservationSlidingAfter = new Uint8Array(cols - 1);
     this.naturalObservationSlipSeen = new Uint8Array(cols - 1);
+    this.relaxSliding = new Uint8Array(cols - 1);
+    this.relaxDecisionOrdinals = new Int32Array(cols - 1);
     this.backup = this.createEmptySnapshot();
     this.motionSnapshot = this.createEmptySnapshot();
     this.planningPassService.attach(this.planningDelegate);
@@ -861,6 +896,8 @@ export class WaterSandField {
     this.naturalObservationSlidingBefore.fill(0);
     this.naturalObservationSlidingAfter.fill(0);
     this.naturalObservationSlipSeen.fill(0);
+    // §19.4-3: reset / geometry rebuild clears the physical sliding state.
+    this.relaxSliding.fill(0);
     this.fillRegions(this.waterTop, scene.waterRegions, false);
     this.fillRegions(this.bh, scene.heavyDepositedRegions, true);
     this.fillRegions(this.bl, scene.lightDepositedRegions, true);
@@ -1099,6 +1136,14 @@ export class WaterSandField {
       this.lastP011DirectionCorrect = true;
       const planningError = this.planAndCommitTilt(substepDt);
       let errorCode: WaterSandErrorCode | null = planningError;
+      if (errorCode !== null) {
+        // GAP-4: a BLOCKED substep still emits an auditable attempt record —
+        // begin/finish the observation with the blocked outcome so the
+        // ledger carries attemptId/commitStatus='blocked'/rollbackReason and
+        // the v3 checker can verify "BLOCKED attempts also land in the
+        // ledger". State is identical before/after (nothing committed).
+        this.beginNaturalObservation(substepDt);
+      }
       if (errorCode === null) {
         this.beginNaturalObservation(substepDt);
         errorCode = this.substep(substepDt);
@@ -1313,6 +1358,86 @@ export class WaterSandField {
     this.naturalObservationThresholdCalibrationId = thresholdCalibrationId;
     this.naturalObservationThetaStartDeg = thetaStartDeg;
     this.naturalObservationThetaStopDeg = thetaStopDeg;
+    this.applyRelaxHysteresisConfiguration();
+  }
+
+  /**
+   * GAP-5: bind the execution identity (source commit / per-file SHA-256 /
+   * build SHA-256) that executedThresholds reports. Callers supply these
+   * from the run manifest; the state machine version is the compiled-in
+   * P011_RELAX_HYSTERESIS_VERSION constant.
+   */
+  setNaturalObservationExecutionIdentity(sourceCommit: string | null,
+    sourceFileSha256: string | null, buildSha256: string | null): void {
+    this.naturalObservationExecSourceCommit = sourceCommit;
+    this.naturalObservationExecSourceFileSha256 = sourceFileSha256;
+    this.naturalObservationExecBuildSha256 = buildSha256;
+  }
+
+  /**
+   * GAP-2: bind the v3 schedule segment identity of the CURRENT command.
+   * Called from the want path (SandCanvas) when a schedule-driven command is
+   * consumed; legId/segmentId/phaseKind flow into every ledger context of
+   * the substeps executing that command. Nulls clear the binding.
+   */
+  setP011CurrentCommandSegment(legId: string | null, segmentId: string | null,
+    phaseKind: 'platform' | 'ramp' | null): void {
+    this.p011CurrentLegId = legId;
+    this.p011CurrentSegmentId = segmentId;
+    this.p011CurrentPhaseKindV3 = phaseKind;
+  }
+
+  /**
+   * GAP-1: derive the state machine thresholds from the configured candidate
+   * (thetaStartDeg/thetaStopDeg). When both are present the dual-threshold
+   * state machine is armed; when absent (legacy run) it stays off and the
+   * pre-v3.1 relax behavior (single tan(angleDeg) bound + requested>EPS
+   * active proxy) runs bit-for-bit unchanged. Parameter invariant violations
+   * throw P011RelaxHysteresisParamError — construction/config failure, never
+   * a silent default (§19.9). thetaHardMaxDeg is fixed at 30 (tan30 hard
+   * gate); no new physics threshold is introduced.
+   */
+  private applyRelaxHysteresisConfiguration(): void {
+    const start = this.naturalObservationThetaStartDeg;
+    const stop = this.naturalObservationThetaStopDeg;
+    if (start === null || stop === null) {
+      this.relaxHysteresisThresholds = null;
+      return;
+    }
+    this.relaxHysteresisThresholds = deriveHysteresisThresholds({
+      thetaStartDeg: start,
+      thetaStopDeg: stop,
+      thetaHardMaxDeg: 30
+    });
+  }
+
+  /** True when the dual-threshold state machine drives relax eligibility. */
+  relaxHysteresisEnabled(): boolean {
+    return this.relaxHysteresisThresholds !== null;
+  }
+
+  /**
+   * GAP-5: executedThresholds as the state machine actually read them (the
+   * same object the transition function uses), with implementation identity.
+   * Null on legacy runs.
+   */
+  private executedThresholdsForLedger(): P011NaturalObservationExecutedThresholds | null {
+    const thresholds = this.relaxHysteresisThresholds;
+    if (thresholds === null) {
+      return null;
+    }
+    const start = this.naturalObservationThetaStartDeg as number;
+    const stop = this.naturalObservationThetaStopDeg as number;
+    return {
+      thetaStartDeg: start,
+      thetaStopDeg: stop,
+      slopeStart: thresholds.slopeStart,
+      slopeStop: thresholds.slopeStop,
+      stateMachineVersion: P011_RELAX_HYSTERESIS_VERSION,
+      sourceCommit: this.naturalObservationExecSourceCommit ?? '',
+      sourceFileSha256: this.naturalObservationExecSourceFileSha256 ?? '',
+      buildSha256: this.naturalObservationExecBuildSha256 ?? ''
+    };
   }
 
   // Observation-3 v2 remediation: the command schedule identifier selects the
@@ -1350,6 +1475,11 @@ export class WaterSandField {
     this.naturalObservationSlidingBefore.set(this.naturalObservationSliding);
     this.naturalObservationSlidingAfter.fill(0);
     this.naturalObservationSlipSeen.fill(0);
+    const scheduleId = this.naturalObservationScheduleId;
+    const phaseD = scheduleId === 'nine-phase-30-v3'
+      ? p011NaturalObservationPhaseForV3Segment(this.p011CurrentSegmentId)
+      : p011NaturalObservationPhaseForCommand(this.p011InputSequence,
+        this.targetTilt, scheduleId);
     this.naturalObservationProbe.beginSubstep({
       observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
       ledgerSchemaVersion: P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
@@ -1362,8 +1492,7 @@ export class WaterSandField {
       commandSequence: this.p011InputSequence,
       commandPhaseId: this.commandPhaseId,
       commandPhaseSign: this.commandPhaseSign,
-      phaseD: p011NaturalObservationPhaseForCommand(this.p011InputSequence,
-        this.targetTilt, this.naturalObservationScheduleId),
+      phaseD: phaseD,
       targetTilt: this.targetTilt,
       effectiveTilt: this.effectiveTilt,
       effectiveTiltRate: this.effectiveTiltRate,
@@ -1381,7 +1510,17 @@ export class WaterSandField {
           this.lastPlanningStatus === 'clamped' ||
           this.lastPlanningStatus === 'held'),
       plannerHold: this.lastPlanningStatus === null
-        ? null : this.lastPlanningStatus === 'held'
+        ? null : this.lastPlanningStatus === 'held',
+      // Observation-3 v3 (GAP-2/4/5): real per-step proposal, v3 schedule
+      // segment binding, attempt audit identity and executed thresholds.
+      thetaRequested: this.lastPlanningThetaRequested,
+      legId: this.p011CurrentLegId,
+      segmentId: this.p011CurrentSegmentId,
+      phaseKindV3: this.p011CurrentPhaseKindV3,
+      attemptId: this.p011CurrentAttemptId,
+      commitStatus: this.p011CurrentCommitStatus,
+      rollbackReason: this.p011CurrentRollbackReason,
+      executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
     this.naturalObservationRelaxRequestedTotal = 0;
@@ -1414,7 +1553,14 @@ export class WaterSandField {
       return;
     }
     if (errorCode === null) {
-      this.naturalObservationSliding.set(this.naturalObservationSlidingAfter);
+      // GAP-1: candidate runs persist the state machine's own array (the
+      // machine was advanced during the collect scan); legacy runs keep the
+      // requested>EPS mirror semantics.
+      if (this.relaxHysteresisThresholds !== null) {
+        this.naturalObservationSliding.set(this.relaxSliding);
+      } else {
+        this.naturalObservationSliding.set(this.naturalObservationSlidingAfter);
+      }
     }
     const after = this.naturalObservationState();
     let finite = true;
@@ -1628,6 +1774,9 @@ export class WaterSandField {
     this.bottomCreepBudgetLimit = this.params.vBottomCreepMax * substepDt;
     this.bottomCreepBudgetUsed = 0;
     this.bottomCreepBudgetClipped = 0;
+    // GAP-3: decision order is substep-local (decisionOrdinal restarts at 1
+    // for every substep; cross-substep continuity is via substepId).
+    this.relaxDecisionOrdinals.fill(0);
     if (collectRequests) {
       this.settleRequestAmounts.fill(0);
       this.percolationRequestAmounts.fill(0);
@@ -1778,12 +1927,19 @@ export class WaterSandField {
   private computeCorrectionReservation(substepDt: number): void {
     this.correctionReservation = null;
     this.correctionStalledCount = 0;
+    const hysteresis = this.relaxHysteresisThresholds;
     const params: P011CorrectionParams = {
-      relaxBoundSlope: Math.tan(this.params.angleDeg * Math.PI / 180),
+      // GAP-1: candidate runs use the state machine's STOP bound as the
+      // correction channel's residual bound (§19.3 requested formula);
+      // legacy keeps tan(angleDeg).
+      relaxBoundSlope: hysteresis !== null
+        ? hysteresis.slopeStop
+        : Math.tan(this.params.angleDeg * Math.PI / 180),
       maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
       localBudget: this.params.vSandTopMax * substepDt,
       totalBudget: this.params.totalMotionBudget * substepDt,
-      dt: substepDt
+      dt: substepDt,
+      slidingEligible: hysteresis !== null ? this.relaxSliding : null
     };
     const view = this.correctionStockView();
     const reservation = p011CorrectionReserve(view, params,
@@ -1826,6 +1982,7 @@ export class WaterSandField {
     };
     const view = this.correctionStockView();
     const ledger: P011CorrectionLedger = new LiveCorrectionLedger(this);
+    const hysteresisActive = this.relaxHysteresisThresholds !== null;
     let appliedTotal = 0;
     let stalled = 0;
     for (const index of reservation.order) {
@@ -1840,11 +1997,16 @@ export class WaterSandField {
         }
       }
       const edge = candidate.edge;
-      const activeBefore = this.naturalObservationSlidingBefore[edge] !== 0;
+      const activeBefore = hysteresisActive
+        ? (this.relaxSliding[edge] !== 0)
+        : this.naturalObservationSlidingBefore[edge] !== 0;
       this.naturalObservationSlipSeen[edge] = 1;
-      // Transition semantics: budget-limited/rejected edges stay active
-      // (requested>0 ↔ =0 contract, obs①b fix B).
-      const activeAfter = candidate.p > EPS;
+      // Transition semantics: on candidate runs the state machine owns the
+      // state (a budget-limited or guard-rejected edge STAYS active — the
+      // next collect boundary re-evaluates; §19.5 "budget-limited active
+      // edges stay active"). Legacy keeps the requested>0 <-> requested=0
+      // contract (obs①b fix B).
+      const activeAfter = hysteresisActive ? activeBefore : candidate.p > EPS;
       this.naturalObservationSlidingAfter[edge] = activeAfter ? 1 : 0;
       if (outcome.accepted > EPS) {
         const donor = candidate.donor;
@@ -1964,7 +2126,35 @@ export class WaterSandField {
     // coefficients, so the mirror cannot drift from the real guard.
     const constraints = p011GuardConstraintsForDelta(deltaColumns,
       (edge: number): number => this.materialGuardResidual(edge), this.cols - 1);
-    return p011GuardAdmit(requested, constraints, this.materialGuardHardMax());
+    const outcome = p011GuardAdmit(requested, constraints, this.materialGuardHardMax());
+    this.recordMaterialGuardEvidence('guard', deltaColumns, requested, outcome);
+    return outcome;
+  }
+
+  /**
+   * GAP-4 (§24.4 affectedEdgeIds): record per-writer guard evidence with
+   * the physical-edge mapping. p011GuardAdmit reports limitingEdge as a
+   * constraints-array position; the same-order physical ids come from
+   * p011GuardAffectedEdgesForDelta (identical set-derivation rule).
+   */
+  private recordMaterialGuardEvidence(channel: string,
+    deltaColumns: Map<number, number>, requested: number,
+    outcome: P011GuardOutcome): void {
+    const probe = this.naturalObservationProbe;
+    if (probe === null || outcome.rejected <= 0) {
+      return;
+    }
+    const affected = p011GuardAffectedEdgesForDelta(deltaColumns, this.cols - 1);
+    const limitingPhysical = outcome.limitingEdge !== null &&
+      outcome.limitingEdge < affected.length
+      ? affected[outcome.limitingEdge] : null;
+    probe.recordMaterialGuardEvidence({
+      channel: channel,
+      limitingEdge: limitingPhysical,
+      affectedEdgeIds: affected,
+      rejected: outcome.rejected,
+      clipped: Math.max(0, requested - outcome.accepted)
+    });
   }
 
   /**
@@ -1997,6 +2187,10 @@ export class WaterSandField {
   // ==========================================================================
 
   private planningScalarsBefore: PlanningScalars = new PlanningScalars();
+  // GAP-1: the preview's relaxAngle collect pass advances the physical
+  // sliding[] state machine; the discarded preview must not leak those
+  // transitions into the authoritative collect (preview purity, §20.7-□2).
+  private planningSlidingBackup: Uint8Array = new Uint8Array(0);
 
   private savePlanningScalars(): void {
     this.planningScalarsBefore.targetShapeRequestRate = this.targetShapeRequestRate;
@@ -2038,6 +2232,12 @@ export class WaterSandField {
     const substepDt = this.lastPlanningSubstepDt;
     const probe = this.naturalObservationProbe;
     this.savePlanningScalars();
+    // GAP-1 preview purity: snapshot the state machine before the preview's
+    // collect pass can advance it; restore in the finally block.
+    if (this.planningSlidingBackup.length !== this.relaxSliding.length) {
+      this.planningSlidingBackup = new Uint8Array(this.relaxSliding.length);
+    }
+    this.planningSlidingBackup.set(this.relaxSliding);
     this.naturalObservationProbe = null;
     this.planningPreviewActive = true;
     this.effectiveTilt = thetaCandidate;
@@ -2063,6 +2263,8 @@ export class WaterSandField {
       this.planningPreviewActive = false;
       this.naturalObservationProbe = probe;
       this.restorePlanningScalars();
+      // GAP-1 preview purity: discard the preview's state machine transitions.
+      this.relaxSliding.set(this.planningSlidingBackup);
       // Reset every request ledger so the authoritative collect (which runs
       // after planning and no longer passes through beginSubstepMotionBudget)
       // starts from the same clean state the step loop originally created.
@@ -2122,12 +2324,16 @@ export class WaterSandField {
     // to the real computeCorrectionReservation post-restoreMotionSnapshot),
     // computed before the ordinary totalScale so the ordinary channels can
     // be folded by (B - R) exactly like the real step loop.
+    const correctionHysteresis = this.relaxHysteresisThresholds;
     const correctionParams: P011CorrectionParams = {
-      relaxBoundSlope: Math.tan(this.params.angleDeg * Math.PI / 180),
+      relaxBoundSlope: correctionHysteresis !== null
+        ? correctionHysteresis.slopeStop
+        : Math.tan(this.params.angleDeg * Math.PI / 180),
       maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
       localBudget: this.params.vSandTopMax * substepDt,
       totalBudget: this.params.totalMotionBudget * substepDt,
-      dt: substepDt
+      dt: substepDt,
+      slidingEligible: correctionHysteresis !== null ? this.relaxSliding : null
     };
     const headCorrectionView: P011CorrectionStockView =
       new S0CorrectionStockView(this);
@@ -2545,6 +2751,12 @@ export class WaterSandField {
   private planAndCommitTilt(dt: number): WaterSandErrorCode | null {
     const thetaBefore = this.effectiveTilt;
     this.lastPlanningSubstepDt = dt;
+    // GAP-4: every planning evaluation is one attempt. attemptId is
+    // monotonic per field instance and unique per substep.
+    this.p011AttemptCounter += 1;
+    this.p011CurrentAttemptId = `${this.p011RunId}-a${this.p011AttemptCounter}`;
+    this.p011CurrentRollbackReason = null;
+    this.p011CurrentCommitStatus = 'committed';
     const rateCapRemaining: P011ExistingChannelRateCapRemaining = {
       settle: 0,
       percolate: 0,
@@ -2593,6 +2805,9 @@ export class WaterSandField {
       this.effectiveTilt = thetaBefore;
       this.effectiveTiltRate = 0;
       this.lastError = WaterSandErrorCode.TILT_PLANNING_BLOCKED;
+      // GAP-4: the blocked attempt still lands in the ledger.
+      this.p011CurrentCommitStatus = 'blocked';
+      this.p011CurrentRollbackReason = result.blockedReason;
       return WaterSandErrorCode.TILT_PLANNING_BLOCKED;
     }
     // Commit the accepted angle, then verify preview/commit exact equality
@@ -2604,6 +2819,13 @@ export class WaterSandField {
     this.effectiveTiltRate = (result.thetaAccepted - thetaBefore) / Math.max(dt, EPS);
     this.lastPlanningCommittedPlans = result.plans;
     this.lastPlanningCommittedTheta = result.thetaAccepted;
+    // GAP-4 attempt semantics: clamped (committed at a smaller feasible
+    // angle) and held (committed at the old angle) are real commits —
+    // substeps do run — so all non-blocked statuses map to 'committed'.
+    // The clamped-vs-held distinction is deliberately NOT carried here; it
+    // lands in the ledger's requestRejected / plannerHold fields, which is
+    // where the attempt audit reads it (P011NaturalObservation ledger).
+    this.p011CurrentCommitStatus = 'committed';
     return null;
   }
 
@@ -2641,6 +2863,10 @@ export class WaterSandField {
       this.lastPlanningStatus = 'blocked';
       this.lastPlanningBlockedReason = 'PREVIEW_COMMIT_MISMATCH';
       this.lastError = WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+      // GAP-4: the mismatched attempt is rolled back (restoreBackup in the
+      // step loop discards its material effects).
+      this.p011CurrentCommitStatus = 'rolled_back';
+      this.p011CurrentRollbackReason = 'PREVIEW_COMMIT_MISMATCH';
       return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
     }
     return null;
@@ -2804,13 +3030,81 @@ export class WaterSandField {
     );
   }
 
+  /**
+   * GAP-3: record one state-machine decision at its sampling point (inside
+   * relaxAngle's collect scan, reading the CURRENT material state). The
+   * observation mirror (naturalObservationSlidingBefore/After) is updated
+   * by the caller-side scan so slip records reflect the machine's output
+   * (fixing the v2 requested>EPS proxy).
+   */
+  private recordRelaxDecision(edge: number, deviation: number, activeBefore: boolean,
+    decision: P011RelaxHysteresisNextActiveResult): void {
+    const probe = this.naturalObservationProbe;
+    if (probe === null) {
+      return;
+    }
+    probe.markHysteresisActive();
+    const decisionG = this.sandTopScratch[edge + 1] - this.sandTopScratch[edge];
+    const tu = decision.thresholdUsed;
+    const sample = new P011RelaxHysteresisDecisionSample(
+      edge,
+      this.relaxDecisionOrdinals[edge] + 1,
+      decisionG,
+      deviation,
+      Math.atan(Math.abs(deviation)) * 180 / Math.PI,
+      activeBefore,
+      decision.activeAfter,
+      decision.transitionReason,
+      {
+        branch: tu.branch,
+        angleDeg: tu.angleDeg,
+        slopeLimit: tu.slopeLimit,
+        comparator: tu.comparator
+      }
+    );
+    this.relaxDecisionOrdinals[edge] += 1;
+    probe.recordDecision(sample);
+  }
+
+  /** Per-substep decision order counters (cleared in beginSubstepMotionBudget). */
+  private relaxDecisionOrdinals: Int32Array = new Int32Array(0);
+
   private recordNaturalRelaxInactiveEdges(): void {
     if (this.naturalObservationProbe === null) {
       return;
     }
+    const hysteresisActive = this.relaxHysteresisThresholds !== null;
     for (let index = 0; index < this.cols - 1; index++) {
-      if (this.naturalObservationSlipSeen[index] !== 0 ||
-        this.naturalObservationSlidingBefore[index] === 0) {
+      if (this.naturalObservationSlipSeen[index] !== 0) {
+        continue;
+      }
+      if (hysteresisActive) {
+        // Candidate runs: the machine owns the state. An edge the machine
+        // holds active but that produced no correction candidate this
+        // substep records holdActive (NOT a stop — budget/stock limits are
+        // not stop events, §19.5). Edges the machine released record stop
+        // via the slidingBefore/After mirror.
+        const activeBefore = this.naturalObservationSlidingBefore[index] !== 0;
+        const activeAfter = this.relaxSliding[index] !== 0;
+        this.naturalObservationSlidingAfter[index] = activeAfter ? 1 : 0;
+        this.naturalObservationProbe.recordSlip({
+          interfaceIndex: index,
+          donor: index,
+          receiver: index + 1,
+          directionSign: 0,
+          requested: 0,
+          allowed: 0,
+          heavy: 0,
+          light: 0,
+          activeBefore: activeBefore,
+          activeAfter: activeAfter,
+          hardGuardRejected: 0,
+          hardGuardClipped: 0,
+          hardGuardAvailable: true
+        });
+        continue;
+      }
+      if (this.naturalObservationSlidingBefore[index] === 0) {
         continue;
       }
       this.naturalObservationProbe.recordSlip({
@@ -2960,6 +3254,7 @@ export class WaterSandField {
   }
 
   private relaxAngle(dt: number): void {
+    const hysteresis = this.relaxHysteresisThresholds;
     const limit = Math.tan(this.params.angleDeg * Math.PI / 180);
     const targetSlope = Math.tan(this.effectiveTilt * Math.PI / 180);
     let maximumDeviation = 0;
@@ -2967,10 +3262,14 @@ export class WaterSandField {
       const deviation = this.sandTopScratch[c + 1] - this.sandTopScratch[c] - targetSlope;
       maximumDeviation = Math.max(maximumDeviation, Math.abs(deviation));
     }
-    if (maximumDeviation <= limit) {
-      this.recordNaturalRelaxInactiveEdges();
-      this.recordNaturalRelaxSummary(0);
-      return;
+    const legacyTrigger = maximumDeviation <= limit;
+    if (hysteresis === null) {
+      // LEGACY path (no candidate thresholds): pre-v3.1 behavior unchanged.
+      if (legacyTrigger) {
+        this.recordNaturalRelaxInactiveEdges();
+        this.recordNaturalRelaxSummary(0);
+        return;
+      }
     }
     const maxFlux = this.params.maxAvalancheFlux * dt;
     if (this.collectingTotalMotionRequests) {
@@ -2980,19 +3279,53 @@ export class WaterSandField {
         const c = index;
         const next = c + 1;
         const deviation = this.sandTopScratch[next] - this.sandTopScratch[c] - targetSlope;
-        if (Math.abs(deviation) <= limit) {
-          continue;
-        }
-        candidateCount += 1;
+        let activeBefore = false;
+        let activeAfter = false;
+        let naturalAmount = 0;
+        // Donor/receiver orientation (shared by both branches):
+        // deviation > 0 means the RIGHT column is too high -> donor = next,
+        // receiver = c; deviation < 0 -> donor = c, receiver = next.
         const donor = deviation > 0 ? next : c;
         const receiver = deviation > 0 ? c : next;
-        const excess = Math.abs(deviation) - limit;
-        const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
-        const receiverCapacity = this.waterTop[receiver] > EPS
-          ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
-          : this.capacity - this.sandTopScratch[receiver];
-        const naturalAmount = Math.min(excess / 2, maxFlux,
-          this.sandTopScratch[donor], receiverCapacity);
+        if (hysteresis !== null) {
+          // GAP-1: the state machine owns eligibility. The decision sampling
+          // point is HERE — reading the residual and picking the branch on
+          // the CURRENT material state (post settle/percolate/creep within
+          // the same collect pass), before any relax material moves.
+          activeBefore = this.relaxSliding[index] !== 0;
+          const decision = p011RelaxHysteresisNextActive(activeBefore, deviation,
+            hysteresis, this.naturalObservationThetaStartDeg as number,
+            this.naturalObservationThetaStopDeg as number);
+          activeAfter = decision.activeAfter;
+          this.recordRelaxDecision(index, deviation, activeBefore, decision);
+          this.relaxSliding[index] = activeAfter ? 1 : 0;
+          // Mirror the machine state into the observation arrays so slip
+          // records and the edge ledger see exactly the machine's output.
+          this.naturalObservationSlidingBefore[index] = activeBefore ? 1 : 0;
+          this.naturalObservationSlidingAfter[index] = activeAfter ? 1 : 0;
+          if (activeAfter) {
+            const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
+            const receiverCapacity = this.waterTop[receiver] > EPS
+              ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
+              : this.capacity - this.sandTopScratch[receiver];
+            naturalAmount = p011RelaxHysteresisRequested(deviation, hysteresis,
+              dt, this.params.maxAvalancheFlux, this.sandTopScratch[donor],
+              receiverCapacity);
+            candidateCount += 1;
+          }
+        } else {
+          if (Math.abs(deviation) <= limit) {
+            continue;
+          }
+          candidateCount += 1;
+          const excess = Math.abs(deviation) - limit;
+          const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
+          const receiverCapacity = this.waterTop[receiver] > EPS
+            ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
+            : this.capacity - this.sandTopScratch[receiver];
+          naturalAmount = Math.min(excess / 2, maxFlux,
+            this.sandTopScratch[donor], receiverCapacity);
+        }
         requestedTotal += Math.max(0, naturalAmount);
         this.totalMotionBudgetRequested += Math.max(0, naturalAmount);
         if (naturalAmount > EPS && this.slipRequestCount < this.slipRequestAmounts.length) {
@@ -3007,6 +3340,8 @@ export class WaterSandField {
       this.recordNaturalRelaxSummary(0);
       return;
     }
+    // Apply branch (legacy only; the §24 apply chain routes relax through
+    // applyCorrectionSlot). Kept bit-for-bit from the pre-v3.1 code.
     let appliedTotal = 0;
     for (let index = 0; index < this.slipRequestCount; index++) {
       const requested = this.slipRequestAmounts[index];
