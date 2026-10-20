@@ -115,6 +115,44 @@ export function p011GuardAdmit(requested: number,
 }
 
 /**
+ * Build the closed-form constraint list for one candidate increment from a
+ * per-column delta map (column -> signed per-unit-grant S change, e.g.
+ * {donor: -1, receiver: +1} for pair moves or {c: 1} for settle). This is
+ * the single derivation shared by the apply-side guard wrapper and the
+ * preview allocator's guard mirror (§23.1 R-3-a): both must derive the
+ * affected-edge set and per-edge influence coefficients identically.
+ *
+ * residualOf(edge) supplies the signed residual (S[e+1]-S[e])-tan(theta) of
+ * the edge at the moment of the decision; the caller controls which S
+ * snapshot it reads (apply side: the live sandTopScratch; preview side: the
+ * shadow S derived from substepSandTopBefore).
+ */
+export function p011GuardConstraintsForDelta(
+  deltaColumns: Map<number, number>,
+  residualOf: (edge: number) => number,
+  edgeCount: number): P011GuardEdgeConstraint[] {
+  const affected = new Set<number>();
+  for (const column of deltaColumns.keys()) {
+    if (column - 1 >= 0 && column - 1 < edgeCount) {
+      affected.add(column - 1);
+    }
+    if (column >= 0 && column < edgeCount) {
+      affected.add(column);
+    }
+  }
+  const constraints: P011GuardEdgeConstraint[] = [];
+  for (const edge of affected) {
+    const influence = (deltaColumns.get(edge + 1) ?? 0) -
+      (deltaColumns.get(edge) ?? 0);
+    constraints.push({
+      residual: residualOf(edge),
+      influence: influence
+    });
+  }
+  return constraints;
+}
+
+/**
  * Budget ledger refund after a guard clip (§19.5 four-layer write-back).
  * The rejected part (granted - accepted) returns to local remaining (both
  * endpoints for pair moves, single endpoint for column moves), bottom

@@ -25,10 +25,10 @@ import {
   p011PreviewCommitConsistent
 } from './P011TiltPlanningPass';
 import {
-  P011GuardEdgeConstraint,
   P011GuardLedgerRefund,
   P011GuardOutcome,
-  p011GuardAdmit
+  p011GuardAdmit,
+  p011GuardConstraintsForDelta
 } from './P011MaterialGuard';
 
 /** P-011 v2.14 §20: scalar state saved/restored around planning previews. */
@@ -1583,26 +1583,11 @@ export class WaterSandField {
       return { accepted: 0, rejected: 0, allLegalBefore: true,
         limitingEdge: null };
     }
-    // Collect the set of affected edges: any edge adjacent to a moved column.
-    const affected = new Set<number>();
-    for (const column of deltaColumns.keys()) {
-      if (column - 1 >= 0 && column - 1 < this.cols - 1) {
-        affected.add(column - 1);
-      }
-      if (column >= 0 && column < this.cols - 1) {
-        affected.add(column);
-      }
-    }
-    const constraints: P011GuardEdgeConstraint[] = [];
-    for (const edge of affected) {
-      // Per-unit-grant slope influence: (dS[e+1]-dS[e]) per unit grant.
-      const influence = (deltaColumns.get(edge + 1) ?? 0) -
-        (deltaColumns.get(edge) ?? 0);
-      constraints.push({
-        residual: this.materialGuardResidual(edge),
-        influence: influence
-      });
-    }
+    // Shared derivation (§23.1 R-3-a): the apply side and the preview
+    // allocator's guard mirror use the same affected-edge set and influence
+    // coefficients, so the mirror cannot drift from the real guard.
+    const constraints = p011GuardConstraintsForDelta(deltaColumns,
+      (edge: number): number => this.materialGuardResidual(edge), this.cols - 1);
     return p011GuardAdmit(requested, constraints, this.materialGuardHardMax());
   }
 
@@ -1715,47 +1700,121 @@ export class WaterSandField {
   private lastPlanningSubstepDt = 0;
 
   /**
-   * Shadow allocation of the collected requests, mirroring the authoritative
-   * apply-phase caps in the fixed channel order (§20.6.2): each channel's own
-   * rate/local/stock caps first, then the shared total budget with the
-   * proportional scale, exactly like clipSubstepMotion/clipTotalMotion.
-   */
-  /**
-   * Shadow allocation of the collected requests, exactly mirroring the
-   * authoritative apply-phase clip semantics (§20.6.2): each request is first
-   * capped by its own local/stock/capacity limits (clipSubstepMotion's local
-   * stage), then the shared total budget clips it as
-   * min(locallyAllowed, locallyAllowed * totalScale, totalRemaining) — the
-   * exact formula of clipTotalMotion(locallyAllowed, locallyAllowed). Channel
-   * order settle → percolate → bottomCreep → relax → lift matches
-   * applyMotionChannels; the bottomCreep independent budget is applied first
-   * exactly as in creepBottomRequests.
+   * Shadow allocation of the collected requests — the single §20.6.4 pure
+   * planning function shared by the preview and the verify pass, exactly
+   * mirroring the authoritative apply-phase semantics (§20.6.2 channel
+   * order settle → percolate → bottomCreep → relax → lift, clipSubstepMotion
+   * local caps first, then clipTotalMotion's
+   * min(locallyAllowed, requestedForTotal * totalScale, totalRemaining),
+   * bottomCreep's independent budget first) plus the §19.5 guard mirror per
+   * §23.1 R-3-a: every candidate grant is admitted with the same
+   * closed-form interval intersection used by materialGuardAdmitIncrement
+   * (shared derivation p011GuardConstraintsForDelta), and the rejected part
+   * is refunded to the shadow local/total/bottom ledgers exactly like
+   * materialGuardRefund.
+   *
+   * The mirror runs against shadow copies of the material arrays
+   * (bh/bl/mh/ml/suspH/suspL plus a recomputed surface) and reproduces the
+   * whole apply-chain state evolution, because the real apply's per-channel
+   * decisions read evolved state: percolate reads post-settle mh/ml,
+   * creepBottom reads post-settle suspension and post-percolate deposited
+   * stock, relax's early-return gate reads the post-creep surface, and the
+   * guard residuals read whatever the preceding grants have already moved.
+   * Split formulas (splitTopV2 / splitBottomPhaseBalanced) are replicated
+   * exactly and the shadow surface is recomputed from the layer sums
+   * (recomputeShadowS, same formula as updateSandTop) after every material
+   * write, because equal-sum shortcuts drift in floating point and flip
+   * boundary-equality gates such as relax's maximumDeviation == tan(30°).
+   * This closes the R-3 gap (preview promised a repair that the apply's
+   * guard clipped away while tilt advanced) at the source: the preview's
+   * promised deltaG is bit-identical to what the real apply produces.
+   *
+   * Both invocations (preview at thetaCandidate, verify at thetaAccepted)
+   * read the same post-collect request ledgers and the same S0, so they are
+   * bit-identical.
    */
   private allocatePreviewPlans(substepDt: number): P011ChannelPlan[] {
     const cols = this.cols;
     const plans: P011ChannelPlan[] = [];
     const localRemaining = new Float64Array(cols);
     localRemaining.fill(this.params.vSandTopMax * substepDt);
+    const localUsed = new Float64Array(cols);
     let bottomRemaining = this.params.vBottomCreepMax * substepDt;
     let totalRemaining = this.params.totalMotionBudget * substepDt;
     const totalRequested = Math.max(0, this.totalMotionBudgetRequested);
     const totalScale = totalRequested <= this.params.totalMotionBudget * substepDt
       ? 1 : this.params.totalMotionBudget * substepDt / Math.max(totalRequested, EPS);
 
-    // clipTotalMotion shadow: allowed = min(locallyAllowed,
-    // locallyAllowed * totalScale, totalRemaining); clipped accumulates
-    // locallyAllowed - allowed exactly like the real ledger.
-    const clipTotal = (locallyAllowed: number): number => {
+    // Shadow material arrays: initialize from the live post-collect state.
+    const shadowS = new Float64Array(cols);
+    shadowS.set(this.substepSandTopBefore);
+    const shadowBh = new Float64Array(cols);
+    shadowBh.set(this.bh);
+    const shadowBl = new Float64Array(cols);
+    shadowBl.set(this.bl);
+    const shadowMh = new Float64Array(cols);
+    shadowMh.set(this.mh);
+    const shadowMl = new Float64Array(cols);
+    shadowMl.set(this.ml);
+    const shadowSuspH = new Float64Array(cols);
+    shadowSuspH.set(this.suspH);
+    const shadowSuspL = new Float64Array(cols);
+    shadowSuspL.set(this.suspL);
+    const slopeHardMax = this.materialGuardHardMax();
+    // Bit-exact updateSandTop mirror: recompute S from the full layer sums,
+    // never by delta addition (the real apply's updateSandTop recomputes
+    // S = bh+bl+mh+ml after each material write; delta adds accumulate
+    // different float rounding and diverge from the real surface on
+    // boundary-equality gates like the relax maximumDeviation check).
+    const recomputeShadowS = (): void => {
+      for (let c = 0; c < cols; c++) {
+        shadowS[c] = shadowBh[c] + shadowBl[c] + shadowMh[c] + shadowMl[c];
+      }
+    };
+    // Guard mirror residual against the shadow surface and candidate tilt.
+    const guardResidual = (edge: number): number =>
+      shadowS[edge + 1] - shadowS[edge] -
+      Math.tan(this.effectiveTilt * Math.PI / 180);
+    // Guard mirror admission + shadow ledger refund (local/total; the creep
+    // block additionally refunds the bottom ledger).
+    const guardAdmit = (granted: number,
+      deltaColumns: Map<number, number>): number => {
+      if (granted <= EPS) {
+        return granted;
+      }
+      const constraints = p011GuardConstraintsForDelta(deltaColumns,
+        guardResidual, cols - 1);
+      const outcome = p011GuardAdmit(granted, constraints, slopeHardMax);
+      const rejected = outcome.rejected;
+      if (rejected > 0) {
+        for (const column of deltaColumns.keys()) {
+          if (column >= 0 && column < cols) {
+            localRemaining[column] += rejected;
+            localUsed[column] = Math.max(0, localUsed[column] - rejected);
+          }
+        }
+        totalRemaining += rejected;
+      }
+      return outcome.accepted;
+    };
+
+    // clipTotalMotion shadow (two-arg form): allowed =
+    // min(locallyAllowed, requestedForTotal * totalScale, totalRemaining).
+    const clipTotal = (locallyAllowed: number, requestedForTotal: number): number => {
       const locally = Math.max(0, locallyAllowed);
-      const allowed = Math.min(locally, locally * totalScale, totalRemaining);
+      const requested = Math.max(0, requestedForTotal);
+      const totalAllowed = Math.min(requested * totalScale, totalRemaining);
+      const allowed = Math.min(locally, totalAllowed);
       totalRemaining -= allowed;
       return allowed;
     };
-    // clipSubstepMotion shadow for single-column channels (target === -1).
+    // clipSubstepMotion shadow for single-column channels (target === -1):
+    // clipTotalMotion(locallyAllowed, locallyAllowed).
     const clipLocal = (source: number, requested: number): number => {
       const locally = Math.max(0, Math.min(requested, localRemaining[source]));
-      const allowed = clipTotal(locally);
+      const allowed = clipTotal(locally, locally);
       localRemaining[source] -= allowed;
+      localUsed[source] += allowed;
       return allowed;
     };
     // clipSubstepMotion shadow for two-column channels (relax).
@@ -1763,9 +1822,11 @@ export class WaterSandField {
       requested: number): number => {
       const locally = Math.max(0, Math.min(requested, localRemaining[donor],
         localRemaining[receiver]));
-      const allowed = clipTotal(locally);
+      const allowed = clipTotal(locally, locally);
       localRemaining[donor] -= allowed;
       localRemaining[receiver] -= allowed;
+      localUsed[donor] += allowed;
+      localUsed[receiver] += allowed;
       return allowed;
     };
 
@@ -1794,45 +1855,97 @@ export class WaterSandField {
       return plan;
     };
 
-    // --- settle: column ascending (apply order), local then total ---
+    // --- settle: column ascending. The apply recomputes desiredHeavy/
+    // desiredLight from the current suspension and depth, grants
+    // clipSubstepMotion + guard, and splits by scale — mirror all of it and
+    // advance the shadow mh/ml/susp stocks (needed by percolate's q/r and
+    // creep's receiver-capacity reads). Every settle guard decision sees the
+    // channel-start surface (the apply calls updateSandTop only after the
+    // whole loop), so shadowS stays frozen during this loop. ---
     {
       const deltaS = new Float64Array(cols);
       let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
       for (let c = 0; c < cols; c++) {
-        const requested = this.settleRequestAmounts[c];
-        if (requested <= EPS) {
+        const originalRequested = this.settleRequestAmounts[c];
+        if (originalRequested <= EPS) {
           continue;
         }
-        requestedTotal += requested;
-        const allowed = clipLocal(c, requested);
+        requestedTotal += originalRequested;
+        // Re-derive the heavy/light split exactly like the apply branch
+        // (desired from the current — post-diffuse — suspension and depth).
+        const depth = Math.max(this.waterTop[c] - shadowS[c], EPS);
+        const desiredHeavy = shadowSuspH[c] *
+          Math.min(1, this.params.heavySettleSpeed * substepDt / depth);
+        const desiredLight = shadowSuspL[c] *
+          Math.min(1, this.params.lightSettleSpeed * substepDt / depth);
+        let allowed = clipLocal(c, originalRequested);
+        if (allowed > EPS) {
+          const deltaColumns = new Map<number, number>();
+          deltaColumns.set(c, 1);
+          allowed = guardAdmit(allowed, deltaColumns);
+        }
+        const scale = allowed / Math.max(originalRequested, EPS);
+        const heavy = desiredHeavy * scale;
+        const light = desiredLight * scale;
+        shadowSuspH[c] -= heavy;
+        shadowMh[c] += heavy;
+        shadowSuspL[c] -= light;
+        shadowMl[c] += light;
         grantedTotal += allowed;
         totalUse += allowed;
         deltaS[c] += allowed;
       }
+      // Mirror the apply's end-of-loop updateSandTop (recompute from layer sums).
+      recomputeShadowS();
       plans.push(makePlan('settle', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
-    // --- percolate: S-invariant; no local ledger, total clips on requested ---
+    // --- percolate: S-invariant. The apply re-derives through/pair from the
+    // post-settle layers and clips as clipTotalMotion(requested,
+    // originalRequested); q/r reshuffle the shadow stocks (bh += q+r,
+    // bl += r-q, mh -= q+r, ml += q-r). No guard: ΔS = 0. ---
     {
       const deltaS = new Float64Array(cols);
       let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
       for (let c = 0; c < cols; c++) {
-        const requested = this.percolationRequestAmounts[c];
-        if (requested <= EPS) {
+        const originalRequested = this.percolationRequestAmounts[c];
+        if (originalRequested <= EPS) {
           continue;
         }
-        requestedTotal += requested;
-        const allowed = clipTotal(requested);
+        const through = Math.min(shadowMh[c], shadowBl[c]);
+        const pair = Math.min(shadowMh[c], shadowMl[c]);
+        const budget = this.params.percolationRate * substepDt * (through + pair);
+        const requested = Math.min(0.5 * through + 0.5 * pair, budget);
+        requestedTotal += originalRequested;
+        const allowed = clipTotal(requested, originalRequested);
+        const q = Math.min(through, 0.5 * through, allowed);
+        const r = Math.min(pair, 0.5 * pair, Math.max(0, allowed - q),
+          shadowMh[c] - q);
+        shadowMh[c] -= q + r;
+        shadowBh[c] += q + r;
+        shadowBl[c] += r - q;
+        shadowMl[c] += q - r;
         grantedTotal += allowed;
         totalUse += allowed;
-        // deltaS stays zero: percolate is S-invariant.
+        // deltaS stays zero: percolate is S-invariant in exact arithmetic.
       }
+      // The apply phase calls updateSandTop after the percolate loop: the
+      // layer reshuffle (mh→bh, bl↔ml) re-rounds the layer sums, so the
+      // recomputed surface differs in floating point from the pre-channel
+      // value even though the exact sum is unchanged. Recompute here too,
+      // or boundary-equality gates downstream (relax maximumDeviation) see
+      // a different float than the real apply.
+      recomputeShadowS();
       plans.push(makePlan('percolate', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
-    // --- bottomCreep: independent bottom budget, then shared total ---
+    // --- bottomCreep: independent bottom budget, then shared total, then
+    // the guard mirror. Stock reads use the shadow arrays (post-settle
+    // suspension, post-percolate deposited stock, shadow surface); the
+    // shadow stock advances per applied grant exactly like the apply's
+    // per-grant material writes + updateSandTop. ---
     {
       const deltaS = new Float64Array(cols);
       let requestedTotal = 0;
@@ -1841,6 +1954,13 @@ export class WaterSandField {
       let totalUse = 0;
       const independentScale = this.bottomCreepBudgetRequested <= EPS
         ? 0 : Math.min(1, bottomRemaining / Math.max(this.bottomCreepBudgetRequested, EPS));
+      // The real creep's split reads phaseHeavyActual/phaseLightActual which
+      // its own loop updates after every applied grant; mirror those
+      // accumulators so each split sees the same residuals the real loop
+      // sees (frozen at-entry values drift the biased share).
+      let shadowPhaseHeavyActual = this.phaseHeavyActual;
+      let shadowPhaseLightActual = this.phaseLightActual;
+      const creepDirectionSign = this.bottomCreepDirection > 0 ? 1 : -1;
       for (let index = 0; index < this.bottomCreepRequestCount; index++) {
         const requested = this.bottomCreepRequestAmounts[index];
         const donor = this.bottomCreepRequestDonors[index];
@@ -1849,30 +1969,89 @@ export class WaterSandField {
           continue;
         }
         requestedTotal += requested;
-        const donorDeposited = this.bh[donor] + this.bl[donor];
-        const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
+        const donorDeposited = shadowBh[donor] + shadowBl[donor];
+        const receiverSuspension = shadowSuspH[receiver] + shadowSuspL[receiver];
         const receiverCapacity = this.waterTop[receiver] > EPS
-          ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
-          : this.capacity - this.sandTopScratch[receiver];
+          ? this.waterTop[receiver] - shadowS[receiver] - receiverSuspension
+          : this.capacity - shadowS[receiver];
         const independentGrant = Math.max(0, Math.min(requested * independentScale,
           donorDeposited, receiverCapacity, bottomRemaining));
-        const allowed = clipTotal(independentGrant);
+        let allowed = clipTotal(independentGrant, independentGrant);
+        if (allowed > EPS) {
+          const deltaColumns = new Map<number, number>();
+          deltaColumns.set(donor, -1);
+          deltaColumns.set(receiver, 1);
+          const beforeGuard = allowed;
+          allowed = guardAdmit(allowed, deltaColumns);
+          if (beforeGuard - allowed > 0) {
+            // materialGuardRefund also returns the rejected part to the
+            // bottom ledger (creep-only channel).
+            bottomRemaining += beforeGuard - allowed;
+          }
+        }
         bottomRemaining -= allowed;
         grantedTotal += allowed;
         bottomUse += allowed;
         totalUse += allowed;
         deltaS[donor] -= allowed;
         deltaS[receiver] += allowed;
+        // Mirror the apply's exact material writes + updateSandTop: the real
+        // creep splits the amount via splitBottomPhaseBalanced (phase-biased
+        // heavy share clamped to [0.35, 0.65], then proportional fallbacks
+        // within the donor's deposited stock), subtracts from the donor's
+        // bh/bl and adds to the receiver's bh/bl, then recomputes S from the
+        // layer sums. Replicating the exact split keeps the recomputed
+        // shadowS bit-identical to the real surface (equal-sum shortcuts
+        // drift on boundary-equality gates like the relax maxDeviation).
+        const creepDeposited = Math.max(shadowBh[donor] + shadowBl[donor], EPS);
+        const creepBaseShare = Math.max(P011_HEAVY_SHARE_MIN,
+          Math.min(P011_HEAVY_SHARE_MAX, shadowBh[donor] / creepDeposited));
+        const creepBiasedShare = Math.max(P011_HEAVY_SHARE_MIN,
+          Math.min(P011_HEAVY_SHARE_MAX,
+            creepBaseShare + P011_HEAVY_SHARE_BIAS *
+              (this.phaseHeavyIdeal - shadowPhaseHeavyActual -
+                (this.phaseLightIdeal - shadowPhaseLightActual))));
+        let creepHeavy = Math.min(allowed * creepBiasedShare, shadowBh[donor], allowed);
+        let creepLight = Math.min(allowed - creepHeavy, shadowBl[donor]);
+        let creepRemainder = allowed - creepHeavy - creepLight;
+        const creepExtraHeavy = Math.min(creepRemainder, shadowBh[donor] - creepHeavy);
+        creepHeavy += creepExtraHeavy;
+        creepRemainder -= creepExtraHeavy;
+        const creepExtraLight = Math.min(creepRemainder, shadowBl[donor] - creepLight);
+        creepLight += creepExtraLight;
+        shadowBh[donor] -= creepHeavy;
+        shadowBl[donor] -= creepLight;
+        shadowBh[receiver] += creepHeavy;
+        shadowBl[receiver] += creepLight;
+        shadowPhaseHeavyActual += creepDirectionSign * creepHeavy;
+        shadowPhaseLightActual += creepDirectionSign * creepLight;
+        recomputeShadowS();
       }
       plans.push(makePlan('bottomCreep', requestedTotal, grantedTotal, bottomUse,
         totalUse, deltaS));
     }
-    // --- relax: slip requests in collect order, local pair then total ---
+    // --- relax: slip requests in collect order (static), local pair then
+    // total, then the guard mirror; shadow surface advances per applied
+    // grant (updateSandTop inside the apply loop). The apply phase re-checks
+    // maximumDeviation at its own entry — on the post-settle/post-creep
+    // surface, which the creep repairs may have brought back within the
+    // relax trigger limit; in that case the whole apply loop early-returns
+    // and every collected slip request is silently dropped. Mirror that
+    // exact gate: when the shadow surface's maximum deviation is within the
+    // limit at relax-apply entry, the relax channel grants nothing. ---
     {
       const deltaS = new Float64Array(cols);
       let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
+      const relaxLimit = Math.tan(this.params.angleDeg * Math.PI / 180);
+      const relaxTargetSlope = Math.tan(this.effectiveTilt * Math.PI / 180);
+      let relaxMaxDeviation = 0;
+      for (let c = 0; c < cols - 1; c++) {
+        const deviation = shadowS[c + 1] - shadowS[c] - relaxTargetSlope;
+        relaxMaxDeviation = Math.max(relaxMaxDeviation, Math.abs(deviation));
+      }
+      if (relaxMaxDeviation > relaxLimit) {
       for (let index = 0; index < this.slipRequestCount; index++) {
         const requested = this.slipRequestAmounts[index];
         const donor = this.slipRequestDonors[index];
@@ -1881,15 +2060,46 @@ export class WaterSandField {
           continue;
         }
         requestedTotal += requested;
-        const allowed = clipLocalPair(donor, receiver, requested);
+        let allowed = clipLocalPair(donor, receiver, requested);
+        if (allowed > EPS) {
+          const deltaColumns = new Map<number, number>();
+          deltaColumns.set(donor, -1);
+          deltaColumns.set(receiver, 1);
+          allowed = guardAdmit(allowed, deltaColumns);
+        }
         grantedTotal += allowed;
         totalUse += allowed;
         deltaS[donor] -= allowed;
         deltaS[receiver] += allowed;
+        // Mirror splitTopV2 + material write + updateSandTop exactly: the
+        // real relax takes a proportional slice of the donor's mixed layers
+        // (mh/ml scaled by fromMix/mixTotal), then the light and heavy
+        // deposited layers as fallbacks, and adds the split to the
+        // receiver's mh/ml; S is then recomputed from layer sums.
+        const mixAvail = shadowMh[donor] + shadowMl[donor];
+        const fromMix = Math.min(allowed, mixAvail);
+        const mixScale = fromMix / Math.max(mixAvail, EPS);
+        let relaxHeavy = shadowMh[donor] * mixScale;
+        let relaxLight = shadowMl[donor] * mixScale;
+        let relaxRemaining = allowed - fromMix;
+        const relaxFromLight = Math.min(relaxRemaining, shadowBl[donor]);
+        relaxLight += relaxFromLight;
+        relaxRemaining -= relaxFromLight;
+        const relaxFromHeavy = Math.min(relaxRemaining, shadowBh[donor]);
+        relaxHeavy += relaxFromHeavy;
+        shadowMh[donor] -= shadowMh[donor] * mixScale;
+        shadowMl[donor] -= shadowMl[donor] * mixScale;
+        shadowBl[donor] -= relaxFromLight;
+        shadowBh[donor] -= relaxFromHeavy;
+        shadowMh[receiver] += relaxHeavy;
+        shadowMl[receiver] += relaxLight;
+        recomputeShadowS();
+      }
       }
       plans.push(makePlan('relax', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
-    // --- lift: column ascending, local then total ---
+    // --- lift: column ascending, static request, local then total, then
+    // the guard mirror; shadow surface advances per applied grant. ---
     {
       const deltaS = new Float64Array(cols);
       let requestedTotal = 0;
@@ -1901,17 +2111,40 @@ export class WaterSandField {
           continue;
         }
         requestedTotal += requested;
-        const allowed = clipLocal(c, requested);
+        let allowed = clipLocal(c, requested);
+        if (allowed > EPS) {
+          const deltaColumns = new Map<number, number>();
+          deltaColumns.set(c, -1);
+          allowed = guardAdmit(allowed, deltaColumns);
+        }
         grantedTotal += allowed;
         totalUse += allowed;
         deltaS[c] -= allowed;
+        // Mirror splitTopV2 + updateSandTop exactly (proportional mixed
+        // slice first, then bl/bh fallbacks).
+        const liftMixAvail = shadowMh[c] + shadowMl[c];
+        const liftFromMix = Math.min(allowed, liftMixAvail);
+        const liftMixScale = liftFromMix / Math.max(liftMixAvail, EPS);
+        let liftHeavy = shadowMh[c] * liftMixScale;
+        let liftLight = shadowMl[c] * liftMixScale;
+        let liftRemaining = allowed - liftFromMix;
+        const liftFromLight = Math.min(liftRemaining, shadowBl[c]);
+        liftLight += liftFromLight;
+        liftRemaining -= liftFromLight;
+        const liftFromHeavy = Math.min(liftRemaining, shadowBh[c]);
+        liftHeavy += liftFromHeavy;
+        shadowMh[c] -= shadowMh[c] * liftMixScale;
+        shadowMl[c] -= shadowMl[c] * liftMixScale;
+        shadowBl[c] -= liftFromLight;
+        shadowBh[c] -= liftFromHeavy;
+        recomputeShadowS();
       }
       plans.push(makePlan('lift', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
     return plans;
   }
 
-  /**
+/**
    * Replace the unconditional updateTilt commit (§20.3: the reference angle
    * must not be committed before grants/audit). Runs the two-pass planning
    * control law and leaves the field in the state selected by the single

@@ -95,43 +95,17 @@ def check(report_path: Path):
 
     totals = {'passed': report.get('passed'), 'failed': report.get('failed')}
     if totals['failed'] not in (0, None):
-        # Whitelisted legacy cases — TEMPORARY, pending architect/designer
-        # decision (review F-②, PIPELINE step-⑤ escalation). Root cause per
-        # reviewer F-① and developer reproduction (2026-10-20):
-        #   * The 30° tilt scenarios drive a real surface slope whose residual
-        #     exceeds tan30 (measured 0.5965~0.6307 > H=0.5774 after the real
-        #     apply with planning disabled). The legacy engine never failed
-        #     because audit() does not check the tan30 invariant — it is only
-        #     a probe telemetry field plus a Python-checker-level gate.
-        #   * bottomCreep's per-edge deltaG can reach ~0.33
-        #     (vBottomCreepMax*2*dt), pushing |d'| past tan30 in one substep
-        #     when the surface is near the boundary.
-        #   * Since the §19.5 material guard landed, relax/bottomCreep grants
-        #     are also clipped when an increment would push an outer
-        #     neighbor edge past tan30 (real physics: repairing one edge
-        #     must not collapse its neighbor). The 240-step ±20° reversal
-        #     scenario (directionAccuracy) now reaches PREEXISTING_
-        #     INFEASIBLE_STATE — same semantics-evolution family as the two
-        #     30° cases above.
-        #   * The preview allocator in the CURRENT code mirrors the apply
-        #     proportional scaling exactly (per-step deltaS bit-identical,
-        #     verified 2026-10-20: preview L1 == real L1 for every step),
-        #     so the earlier "full-grant preview vs scaled apply" gap no
-        #     longer exists; the BLOCKED is a faithful exposure of a real
-        #     hard-gate violation, not a false positive.
-        # Candidate resolutions (reviewer F-②, needs architect/designer):
-        #   a) preview allocation scaled like apply — already done in code;
-        #   b) leave a margin in the hard-gate feasibility interval;
-        #   c) retune the 30° scenario test parameters.
-        # Physics must not be changed unilaterally (developer scope).
-        legacy = {
-            'bottomCreep_tiltMovesLowerLayers',
-            'p011_commandSignFlipResetsPhaseAndReversesDisplacement',
-            'p011_directionAccuracyCovers200SamplesAndSignSwitches'
-        }
+        # R-3-a completion (architect ruling 2026-10-20): the shadow-pipeline
+        # preview (guard mirror + full material-state evolution + bit-exact
+        # updateSandTop recompute) closed the preview-apply divergence at the
+        # source. All three formerly whitelisted legacy cases now PASS
+        # unconditionally (directionAccuracy per acceptance criterion ①; the
+        # two 30° cases as verified side effects of the shadow visibility
+        # fix — their PASS was re-confirmed after whitelist removal). The
+        # whitelist is therefore removed: any failure is a hard error.
         for r in results:
-            if r.get('status') == 'FAIL' and r.get('name') not in legacy:
-                errors.append(f'non-legacy failure: {r.get("name")}')
+            if r.get('status') == 'FAIL':
+                errors.append(f'failing case: {r.get("name")}')
     return errors
 
 
