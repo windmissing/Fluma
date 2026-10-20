@@ -1,5 +1,51 @@
 # Gap 清单（目标 vs 现状）
 
+## 2026-10-20 P-011 观测③平台可达性矛盾裁决（当前生效）
+
+> 日期：2026-10-20。依据 `docs/effect-report-P011-recalib3-gate-run1.md` 与 designer §8.16。维护人：manager。裁决：采用方案 3，重定义观测③为 ±15°/±30° 可达平台标定，±45° 留待阶段二；批准单 run clean pilot，不批准后续扩批。
+
+- **安全基线已验证**：835e663 gate run 阶段一 MUST-PASS 全部 PASS（164,084 边 tan30 违约 0、A-1 对账不匹配 0、账本错位 0、边身份错位 0）；run 因 deferred SLIP-02 被 checker 汇总为 FAIL 不改变这些分项 PASS。阈值标定仍未通过/未完成。
+- **结构性缺口**：planning pass 将运行时 accepted tilt 限制在约 ±29.9°，冻结 ±45° 协议不能形成要求的平台/bracket。保留 planning guard 与 tan30 安全 MUST-PASS；明确拒绝在标定 run 添加 capture-mode bypass。
+- **designer 结论已复核**：±15°不能独自激励 `thetaStart∈[25°,30°)`；±30°可能触及搜索窗低段，约29.9° accepted ceiling 会使未触发的高端候选右删失。右删失样本必须标 `RIGHT_CENSORED_AT_TAN30`，不产生点估计/校准 PASS；真实 stop 必须是同边连续 bracket 上的 active true→false，hold、拒绝请求、限流、run-end 均不算 stop。
+- **后续路由**：effector 发布全新 protocol/schedule 并重新预注册（不得复用旧 34-run 分层/随机化）→ tester 同步 checker/cases、验证平台稳定与 bracket/删失识别 → 仅运行单 run clean pilot。manager 审查 pilot 的平台/bracket yield 后另行决定是否扩批。
+- **样本与状态**：旧 ±45° protocol 的 run-001 证据保留但不计入新 protocol；观测③整体保持 `BLOCKED（尚无合格 bracket/阈值估计）`，仅 clean pilot 获授权，fit/holdout 扩批仍冻结。阶段一安全结果独立记为 PASS；SLIP-02 ±45° 目标仍 `DEFERRED / NOT VALIDATED`，归阶段二。
+
+## 2026-10-20 P-011 阶段一·B commit 4b1f635 评审裁决（当前生效）
+
+> 日期：2026-10-20。依据 `docs/architecture-P011.md` §22。维护人：manager。
+
+- **B 实现**：`CONDITIONAL_PASS`，七项限幅 checklist 全 PASS；倾角可行域闸门 + preview/apply 镜像一致 + 子步核验获接受为当前已交付保护。其范围不包含 §19.5 全通道逐 writer 拦截。
+- **B·续（OPEN / IN_PROGRESS）**：补齐全通道 pre-commit 材料 guard、违规态 non-worsening、四层预算回写，以及 `hardGuardAvailable` telemetry/checker。与 A/C 验证并行执行，但必须在阶段一总验收前完成、评审并进入集成安全验证。
+- **legacy FAIL（KNOWN_FAIL / DEFERRED_TO_PHASE_2）**：`bottomCreep_tiltMovesLowerLayers` 与 `p011_commandSignFlip...` 是新闸门暴露的既有 tan30 违约，不认定为 commit 4b1f635 回归。阶段一维持其文档化 FAIL，作为已知 legacy 例外单独列示；不放宽 tan30 判据、不改场景参数/测试期望、不删除失败证据。阶段二由 tester/designer 结合 B·续及候选机制复核并重测，处理完成前不能声称这两项已解决。
+- **总体验收语义**：本裁决只允许将【阶段一·B】实现标记为条件性完成，不自动放行阶段一整体完成；B·续仍是阶段一总验收 gate。已知 legacy FAIL 不阻断 B 实现完成，但须在总验收报告中明示并保留原始失败。
+- **路由**：developer 实现 B·续；architect 复审；tester 同步用例/checker 并验证逐 writer 拦截、各 writer 影响边、四层预算回写及 telemetry。三线与 A/C 验证并行，B·续完成后再做阶段一集成验收。
+
+## 2026-10-20 P-011 阶段边界复议裁决（当前生效）
+
+> 日期：2026-10-20。依据 designer `docs/review-basis-P011-stage-boundary-v1.md`、`docs/algorithm-P011.md` §8.15。维护人：manager。状态：`IN_PROGRESS`。
+
+- **阶段一·A（状态机/标定）**：完成逐边 start/hold/stop、限流语义、边身份、遥测对齐及原始 fit/holdout/CI/样本门槛。实测阈值和置信区间照常报告；`thetaStop` 对 ±45° 全局目标窗的映射检查推迟阶段二。标定③因合格 run 与样本不足仍 `BLOCKED`。
+- **阶段一·B（安全）**：所有实际提交角度的逐边 tan30 约束、可行事务提交/不可行时 hold 或 BLOCKED、守恒/库存/容量/预算和账本对齐仍为 MUST-PASS。不得以未追随到 ±45° 为由判阶段一安全失败，也不得将 hold 当作收敛通过。
+- **阶段一·C（现有机制行为）**：完成 ±15° 静止回归、滑移方向/active/stop/限流语义，以及有 raster/录像证据的局部渐进可见响应；记录全宽坡度、R²、通量与时长。非零 grant 不算可见效果。C 不含 ±45° 全宽坡面收敛目标。
+- **阶段一·验证/总完成**：A/B/C 分项通过并满足所有剩余 MUST-PASS 方可报告“阶段一完成”；不能报告 P-011 CLOSED 或 SLIP 全 PASS。±45° 的 30°±2°、target-based t90≤5100ms、R²≥0.90 联合 SLIP-02 目标包连同阶段性收敛验收延期至阶段二可达性审计后，状态 `DEFERRED / NOT VALIDATED`；测量继续保留。守恒/库存/容量/预算/有限值等安全约束不延期。
+- **阶段二**：开端由 designer 先审计全部相关通道的可达性，涵盖相邻表面输运、lift/settle、悬浮输运/库存、一阶矩、共享预算、稳定终点与悬沙≤5%；先证明构造或必要条件，再决定方案 3。方案 3 保持候选，不提前实现，也不预判必达。
+- **状态映射**：阶段一目标阻断关系解除；SLIP-02 仍延期且未验证；相邻输运路线的 `slip-overshoot-v2` 继续 `BLOCKED（条件性不可达）`；v2.14 继续 `BLOCKED / DESIGN_NOT_CALIBRATED`；观测③继续 `BLOCKED（合格 run/样本不足）`，run-001/002 仍排除。补采资格 gate 豁免不影响运行时安全 guard。
+- **路由**：tester 更新 checker、`test-cases.md` 与报告的适用阶段，保留测量并把 SLIP-02 标记延期；designer 更新算法复议状态，并在阶段二开端承担全通道可达性审计，之后交 architect 评审。
+
+## 2026-10-20 P-011 ±45° 补采 gate 停机记录（资格口径仍生效；原因解释已纠正）
+
+> 日期：2026-10-20。来源：`docs/effect-report-P011-recalib-gate-run1.md` 的 run-001/002 复测；依据 `docs/algorithm-P011.md` §8.13/§8.14 与 `docs/architecture-P011.md` §21。manager 裁决：短期修订 ±45° 平台形式 gate、保留转折数据补采；中期由 designer 量化复议目标/机制能力；悬浮平流方案 3 保持阶段二排期。
+
+> 适用性更新：上方 2026-10-20 阶段边界裁决已接受设计复议并纠正停机报告的几何解释。下列形式 gate 豁免仍是补采资格规则；阶段一实际提交的安全检查仍按已接受参考角执行。阶段一延期 SLIP-02，不代表验收数值被取消。
+
+> 维护人：manager。状态：`IN_PROGRESS`；标定仍 `BLOCKED`，直至修订后的 gate、样本及有效 run 条件达成。
+
+- **停机证据**：e2f02a1 复测证明边身份与 stop 状态修复有效，但原补采 checker 在 ±45° 平台未通过参考线形式 gate；该结果解释为当前相邻表面输运能力/窗口不足，不能据此声称 30° 同向线性沙面与 45° 参考几何本身不相容。相邻输运的平坦场一阶矩上界为 0.501627°；此上界不覆盖含升降/悬沙的全部机制。
+- **判据边界**：tester 将稳定 ±45° 平台及其 overshoot/return 子步从 `|ΔS−tan(±45°)|≤tan30°` 形式判定中豁免；0°/±15° 与其他适用子步继续原 tan30 判定。其余守恒、库存、容量、预算、账本/字段、边身份、stop 语义闸门仍全部生效。豁免仅表示不以 45° 参考线形式指标否决标定 run，不表示坡度达标、无物理越界或 run 自动合格。转折事件筛选、fit/holdout 规则及样本门槛不变，旧 run-001/002 仍 invalid/excluded。
+- **目标复议**：designer 根据 §8.13/§8.14 量化限幅+guard 与实测机制能力的关系，给出 ±45° 收敛目标是否推迟及阶段路线建议；不把机制能力缺口交由重复采集解决。方案 3 不提前实现，仍按阶段二评估。
+- **构建前置**：developer 需认领主工作区两份 WIP 源文件、修复当前 10 个 ArkTS 编译错误并形成可审阅提交，作为下一次补采前置条件②；不得与干净 e2f02a1 基线混同。
+- **路由**：tester 先同步 checker 与 `docs/test-cases.md` 并输出修订后 RED/验证报告；developer 处理 WIP 构建；两项就绪后 effector 方可按冻结 schedule 恢复单 run gate 采集。designer 的机制/目标复议并行推进。
+
 ## 2026-10-19 场景二沙种类扩展需求（待 manager 裁决）
 
 > 日期：2026-10-19。来源：用户在对话中直接提出。需求原义：场景二（水中沙）需要细化；沙子的种类不一定是 2 种，可能是 1 种或更多种；优先处理 1 种和 2 种的情况。沙子的重力属性也可以由用户指定；优先级为：（1）1 种轻沙；（2）2 种沙，一轻一重。

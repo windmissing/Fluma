@@ -1586,6 +1586,18 @@ requested[c] = min(excess*dx/2,
 
 **状态：协议已预注册，待观测数据；本节定义方法，不代表已经获得 `thetaStart/thetaStop`。** 数据到手后按以下顺序执行。分析前冻结 ledger schema/source identity、候选阈值网格、schedule、噪声定义、随机种子和排除规则；看过 holdout 结果后不得改阈值、分层边界、CI 或排除规则。任何偏离都须标为新 protocol/version，重新采集独立 holdout。
 
+#### 1.0 规范性筛选：稳定平台、首转折与来源完整性
+
+本筛选是双角度标定协议的组成部分，适用于 `thetaStart/thetaStop` 的转换 bracket 与转换残差分位数；不得将其降格为看数后的可选分析建议。
+
+1. **±45°稳定平台定义**：只从 `positiveOvershoot` / `negativeOvershoot` phase 取平台数据。当前记录与紧邻的前一有效记录必须处于同一 phase、`substepId` 连续，且 `targetTilt`、`effectiveTilt` 均等于该 phase 的 `+45°/-45°`；两条记录的 `effectiveTiltRate` 均须为 `0`。不满足任一条件的 ramp、参考线回摆、切换边界记录全部排除于转换拟合与转换残差分位数之外。平台首条记录因无平台内前序 bracket，不作为转换样本。
+2. **每边首转折**：在每个 run、方向 phase、物理 edge 内，按 `substepId` 排序，只取稳定平台中的首个有效 `start` 或 `stop` 转换；同一 edge 在该 phase 后续的重复翻转不再进入阈值估计或转换残差分位数。此规则按事件顺序排除回摆后反复翻转造成的长尾，不按残差大小裁切。残差分位数固定报告 `alpha=atan(abs(r))` 的 P10/P50/P90，并按正负倾角方向及 start/stop 分开；不足以估计分位数时报告 `insufficientEvidence`，不外推。
+3. **边身份完整性**：每条物理边 grant 的 `interfaceIndex` 必须等于 `min(donor,receiver)`，且 `abs(donor-receiver)=1`；转换 bracket 的前后记录必须关联到同一物理 edge，不能只以数组槽位相同作为身份依据。字段不一致、grant/状态无法按物理 edge 对齐或 edge 集合缺失时，该转换不得计数；若缺陷系统性影响该 run，则该 run 不进入任何 fit/holdout threshold 估计，保留作诊断证据。
+4. **限流不构成 stop**：只有真实状态 `activeBefore=true → activeAfter=false` 且由停止条件触发，才是 stop。`requested>granted`、`granted=0` 或预算受限本身不得清除 active；若出现预算受限时转成 inactive/stop，该事件及该 run 标记为遥测无效，不能用其 stop 样本估参。
+5. 以上转换资格还须满足本节原有的连续子步、字段有限、run/候选身份完整及 hard-gate 条件。逐边状态样本的 24-cell 覆盖按第 4 节定义计数；转换 bracket 与 residual quantile 则额外应用本节稳定平台和每边首转折过滤。两类样本不得混为同一分母。
+
+本规则在复核 `p011-run-1792420248512-3` 时被正式纳入协议：ledger 序列化槽位 `interfaceIndex=124` 在稳定平台内先记录 stop、后又记录 `r=1.398352976` 的 start；按“每个已验证物理 edge 首转折”规则，后续翻转不进入拟合/分位数。由于该 run 的 donor/receiver 与 interfaceIndex 存在身份冲突，不能据此断言该数值对应的物理 edge 已验证；它仅说明协议必须按事件顺序排除后续重复翻转，不能按残差大小单独剔除。
+
 #### 1. 转折样本与单事件估计量
 
 1. 从 `relaxStateTransitions` 只接受真实 `start`/`stop` 事件；必须有同 run、同 edge、相邻有效子步的前序样本，且 `effectiveTilt`、`d/r`、状态与实际 grant 对齐。缺失前序样本、substep gap、reset/几何变化、非有限量或已发生 hard-gate violation 的 run 不得用于阈值拟合；保留在失败审计中。
@@ -1848,6 +1860,49 @@ max_j F[j] = tan(phi) * N*N/8       (central edge, N even)
 结论是：**30°±2°的阈值映射可解析到停止残差中心22.911°，但真实转折角尚未标定；当前预算/速率不足以在5.1s内通过相邻输运形成全宽30°线性坡面。** 把 `maxTiltOmega` 降低或加入动态可行域只能避免参考线跨过hard band，不能增加最大edge flux，也不能令均匀边grant产生足够坡度散度。现有可见 raster `0.23°/0.52°`、t90 `6.5s` 与目标相差甚远。
 
 因此本方案不应以“已完成经验标定/READY_FOR_ARCHITECT”送审。可交 architect 的仅是数学审计和明确的条件性BLOCKED结论，请其复核下界假设及 raster metric 是否确为全宽回归；如保持当前相邻输运、80/s edge cap、300/s total cap 与5.1s硬时限，则路线必须判不可达，交 manager 决定是否调整目标口径/响应时限/路线。未经 manager 授权，不调整预算、几何、硬阈值或体验目标。若要经验标定双角阈值，先需由独立 observation route 提供逐边状态转换 ledger 与独立holdout；当前tester已停止且本轮没有此类新观测，故不得虚构观测值。
+
+## 8.15 2026-10-20 机制能力与阶段边界复议（manager 已批准）
+
+**状态：MANAGER_APPROVED。裁决日期：2026-10-20。** 依据 [priority.md「阶段边界复议裁决」](priority.md)，复议已通过；完整量化依据、裁决回执及阶段二审计大纲见 [review-basis-P011-stage-boundary-v1.md](review-basis-P011-stage-boundary-v1.md)。本状态表示阶段边界获批，不表示物理方案已验证或正式审计已启动。
+
+新增必要条件：128列、dx=1、仅相邻守恒表面输运时，`D=174752`，`|m1-m0|<=B/D`；赠予5.1s全部总额度1530且从平坦场出发，OLS坡度仍至多0.501627°。达到28°至少需92,917.29单位净通量，是该额度的60.73倍。限幅和guard可提高安全性、改变实际效率，却不能增加这一路线的额度上界；含lift/settle/悬沙的全通道须另计垂向表面一阶矩，不能据此宣称所有策略无解。
+
+**生效结论：** ±45°输入的30°±2°、target-based t90≤5100ms、R²≥0.90联合目标包，连同适用的±45°终点稳定/悬沙约束，移至阶段二可达性审计之后，标记 `DEFERRED / NOT VALIDATED`；不再以未达该包阻断阶段一。目标数值及原始测量保留，方案3仍为阶段二候选，先审计、再决定是否进入方案设计。
+
+**阶段一新完成边界（覆盖本文件 §8.11/§12 中旧阶段适用说明，历史推导保留）：**
+
+- A：逐边start/hold/stop、真实active转换、限流不误报stop、物理边身份及遥测对齐通过；按原fit/holdout、CI和样本数门槛完成阈值估计。`thetaStop` 对±45°目标窗口 `[20.563°,25.093°]` 的映射适配延期至阶段二；不得填默认值。
+- B：每个提交子步按实际接受参考角检查全边tan30零违约，只提交完整可行事务。可行域为空或回退不合法则不提交，记录hold/BLOCKED、未接受角度及最紧边；不要求为证明安全追随到±45°，无限hold不算体验或收敛通过。补采gate豁免不豁免运行时guard。
+- C：分别验证±15°静止回归无新增运动/越界、滑移方向及active/stop/裁剪语义、raster或录像可复核的用户可见局部渐进斜坡响应；全宽OLS、R²、通量与run时间继续作诊断。非零grant不能替代可见效果。
+- A/B/C须各有独立结果，逐边安全、有限值、守恒、库存、容量、total/local/bottom预算及遥测/账本一致性继续MUST-PASS。阶段一完成不等于P-011 CLOSED或SLIP全PASS；SLIP-03/04的安全不变量不延期。
+
+**保留状态：** 相邻表面输运路线仍为 `BLOCKED（条件性不可达）`；v2.14限幅方案仍为 `BLOCKED / DESIGN_NOT_CALIBRATED`，待其自身omega/真机证据解除；观测③在合格run/样本不足期间仍为BLOCKED，旧run-001/002不追认。0.17°～0.45°仍不视为固定常量或精确5.1s端点，原始口径局限保留。
+
+**阶段二任务已领取：** designer负责全通道可达性审计；当前仅登记大纲，状态 `REGISTERED / NOT_STARTED（等待阶段一完成）`。覆盖相邻输运、lift/settle、悬浮输运与库存、表面一阶矩、共享预算、稳定终点及悬沙≤5%；正式审计在阶段一完成后启动，审计通过后再交architect评审，不提前实现方案3。
+
+## 8.16 观测③可达平台复议：±15°/±30°，±45°延期
+
+**状态：DESIGN_REVIEW / PROTOCOL_REQUIRED。** 本节依据 2026-10-20 gate run 报告及 manager 对观测③的裁决，定义可识别性边界和新 protocol 的验收口径；不改运行时 planning/tan30 闸门、不改 `thetaStart∈[25°,30°)` 或 `thetaStop∈[15°,25°]` 搜索窗、不改样本量，也不授权采集。±45°行为延期阶段二。原 v1 schedule/artifacts 保留为历史记录；新 schedule 必须作为新 protocol 版本预注册后才可使用。
+
+### 可识别性判断
+
+旧协议把稳定平台定义为 `targetTilt==effectiveTilt==±45°`。835e663 基线上 planning pass 把 `thetaAccepted` 限在约 ±29.9°，所以旧协议下 ±45°平台样本数必为零，不能把 planner 的稳定 hold、拒绝请求或 `targetTilt` 命令值称作平台。新 protocol 必须按**实际接受的 `effectiveTilt` 稳定平台**取样，并同时保留 `targetTilt`、`thetaAccepted`、拒绝/钳位遥测、`effectiveTiltRate` 和连续子步；平台角需落在预注册容差内且 rate 为零。安全 guard 始终按已接受状态工作，绝不以标定身份豁免。
+
+在现有 tan30 可行域内，`±15°` 平台的平坦初态残差约为15°，低于整个 `thetaStart∈[25°,30°)` 窗口，故它是静止/停止观察平台，不能单独提供该起动窗的激励。自然形成的局部残差若进入起动窗仍可形成事件，但必须按实测 `r` bracket 认定，不能由平台命令角推定。±30°平台从平坦初态开始时残差接近30°，因此原则上可触及起动窗低段；但 hard gate 使安全可提交样本满足 `alpha=atan(r)≤30°`，平台规划又约在29.9°封顶。若候选阈值高于本 run 可达的最大有效残差，未发生 start 是**右删失/无激励**，不构成阈值失败、阈值大于上限的证据或 bracket。若真实 start 事件发生在稳定接受平台内，且前后相邻有效样本跨过阈值，才可用于估计；在 ramp、planner hold、越过/拒绝角度请求期间发生的事件不得冒充平台 bracket。
+
+停止角窗为15°至25°。±15°平台在残差实际下降到候选 stop 窗时可提供 stop 激励；±30°平台上的渐进输运也可能产生 stop。两者都以真实 `activeBefore=true → activeAfter=false` 为必要条件，并以同一物理 edge、连续子步上的前后 `alpha` 形成 bracket。阶段结束、run reset、planner hold（`requestedAngle!=thetaAccepted`）、请求被拒绝、预算限流（包括 `granted=0`）或数据中断均不是 stop；限流期间应保持 active。若 ±15°到达时状态已 inactive，平台静止本身不是 stop 事件。单侧符号/单方向数据也不能靠镜像假设补成另一侧证据。
+
+### 新 protocol 的可判定识别门槛
+
+每个 fit/holdout 集合必须独立报告以下四个 cell：`start/+`、`start/-`、`stop/+`、`stop/-`。每个转换 bracket 必须来自平台内、同一 run/候选/物理 edge、连续有效 `substepId` 的紧邻两条记录；记录实际 `alpha=atan(abs(d)/dx)`、前后 active、request/grant/budgetScale、accepted angle 及 planner 限流/拒绝状态。以 run 为统计簇，不把子步数当独立 run。原协议的每方向/每阈值独立 run 数、转换数、CI、噪声分辨率、holdout 和误判率门槛原样沿用；任一 cell 不足即 `INCOMPLETE / DESIGN_PENDING_OBSERVATION`，禁止跨 cell、跨 run、跨符号合并补齐。
+
+对每个 cell，给出 bracket 覆盖的残差范围和最大实际可达 `alpha`。只有真实转换 brackets 对候选阈值形成双侧覆盖，且 run-cluster 95% CI 满足原门槛，才可称为双侧可识别。若 `thetaStart` 上端没有越阈值 start，但全部安全样本止于约29.9°，标记 `RIGHT_CENSORED_AT_TAN30`；不能报告点估计或宣称通过。若 `thetaStop` 无真实 stop，仅可报告 `STOP_TRANSITION_UNOBSERVED`，不能把 hold/限流/平台结束补成 stop。若一个符号 cell 无转换，即使另一个符号充分也保持未识别。fit 与 holdout 均需具备相同适用 cell；holdout 不参与阈值选择。
+
+### Protocol / schedule 建议
+
+采用新版本的对称平台序列，覆盖 `0 / +15 / 0 / +30 / 0 / -15 / 0 / -30 / 0`，各平台 hold 时长沿用已注册值；schedule hash、平台角容差、planner 接受平台识别规则、阈值候选 manifest、排除规则和随机化方案须在采集前冻结。该序列让±15°提供 stop/静止观察、±30°提供起动窗的最大安全激励，并使正负方向可分别计数。实际 accepted plateau 约29.9°时，可用于其下方发生的真实 bracket；未覆盖的近30°部分保持右删失。不得调高 planning 上限以追求完整搜索窗，也不得通过拟合排除安全闸门拒绝的样本来声称识别成功。
+
+Designer 建议先把上述新 protocol、平台判定容差、四 cell 统计和删失输出形成版本化预注册稿，交 tester 同步 checker/test-cases 审核；再由 effector 按获批 schedule 执行 clean pilot。clean pilot 只判定平台可达和 bracket yield，不解封 holdout 或宣称标定完成。若双侧 start/stop brackets 在既定 run 配额内无法满足，报告相应 cell 的删失/无转换证据并维持 `BLOCKED / NOT_CALIBRATED`；不得扩大样本量或改阈值，本轮授权之外的替代机制/目标需 manager 另行裁决。
 
 ## 11.1 预研：论文 252 `f_sl` 列标量律与论文 254 Janssen 压强修正
 

@@ -2201,4 +2201,219 @@ plans[i].deltaSandTopByColumn[c] === committed deltaSandTopByColumn[c]
 
 比较前须把 `-0` 规范化为 `0`，并显式拒绝 `NaN`。若任一项不一致，立即置 `PREVIEW_COMMIT_MISMATCH`，冻结本子步，执行 `restoreBackup()`，保留 preview 与 commit 两套诊断账本，不允许用后续子步或额外 correction 修复。该路径与 §20.4 的 `PREVIEW_COMMIT_MISMATCH` 行为一致。
 
+### 20.7 实现验收 checklist：【阶段一·限幅】planning pass 实现（2026-10-19）
+
+**状态：`CHECKLIST_PREPUBLISHED`。** 本节把 §20.2/§20.4/§20.6 的实现义务提前转为【阶段一·限幅】（planning pass 实现）的交付验收 checklist，供 developer 在实现授权下达后按此交付、一次写对。它是验收口径，不是实现授权：`maxTiltOmega` 仍未标定，§20 顶部的 `BLOCKED / DESIGN_NOT_CALIBRATED` 状态由标定流程解除后才可开始实现；实现完成不自动解除该状态，也不替代 §20.5 的 omega 扫描与真机 P95 T90 `<=100ms` 验收。七项全部 MUST-PASS，逐项勾选。
+
+#### 20.7.1 验收 checklist
+
+- [ ] **□1 两轮 pass 上限**：最多两轮三候选，无第三轮搜索；三候选均不可行则 BLOCKED。
+  - 判定口径：候选角集合封闭为三元集 `C={thetaRequested, theta1, theta0}`（§20.6.1）；每子步 planning pass 次数 `<=2`，候选分配次数 `<=3`（pass 1 一次 + pass 2 内目标候选与旧角度回退各一次，pass 2 两候选共用同一 pass 编号）。代码中不得存在任何第三轮循环、重试、追加候选角或围绕 `theta0`~`theta1` 区间的再搜索路径；三候选均不可提交时唯一合法输出是 `status='blocked'`，不得以第四候选或放宽区间继续。
+  - 验证：合成输入构造「pass 1 clamp → pass 2 目标候选不可行 → 旧角度回退亦不可行」序列，断言 `passCount<=2`、无第四次分配、结果为 BLOCKED 且携带 §20.4 全量证据。
+
+- [ ] **□2 B0 独立副本**：pass 间/候选间预算不串接，每候选独立预算副本。
+  - 判定口径：pass 1 与 pass 2 均从同一 `budgetsBefore` 快照（B0）的**独立副本**起算（§20.2/§20.3）；pass 1 的扣账在 pass 2 启动前整体丢弃；pass 2 内目标候选与旧角度回退各自使用独立 B0 副本，不共享累计器。预演不得改动真实 local/bottom/total/channelRateCap 累计器、`sliding[]` 或方向滞回状态；最终 commit 只消费选中候选的 grant，累计一次真实 `requested/granted/clipped`，无重复扣账、无被拒额度结转、无 correction channel、无 relax/total 预算叠加。
+  - 验证：合成多候选序列后断言真实四层预算账本只反映最终 commit 的那一份；pass 1 诊断账本中的 grants 不出现在任何真实累计器。
+
+- [ ] **□3 单次 commit**：只提交最终选中候选，其余丢弃无副作用。
+  - 判定口径：每子步对倾角与材料的提交恰好一次，且只执行最终选中候选的 `thetaAccepted` 与 `plans`（§20.2 时序、§20.6.4）。被丢弃的 pass 1/未选中 pass 2 候选只允许作为 Probe 诊断记录（§20.3：pass 1/被丢弃 pass 2 只能作诊断，不能记成实际 grant），`discard()` 零副作用；commit 后 `effectiveTilt=thetaAccepted`、`effectiveTiltRate=(thetaAccepted-thetaBefore)/dt`，子步 context/stateBefore/选中计划/实际 grant/stateAfter/audit 共享同一 `runId/substepId`；`updateTilt` 不得在 grants/audit 之前单独提交参考角。
+  - 验证：同输入下 probe on/off 物理轨迹一致；ledger 中每个子步恰好一组真实 grants；丢弃候选只出现在诊断字段。
+
+- [ ] **□4 通道顺序不重排**：settle→percolate→bottomCreep→relax→lift 复用现有事务顺序。
+  - 判定口径：预演与提交复用现行 `WaterSandField` application 事务的单一权威通道顺序（§20.6.2）；`suspensionDiffusion` 若单独表示仍属 collect 阶段既有非 total 通道，不得插入或重排 apply 顺序。实现不得在 planning pass 内另设优先级、按候选角切换顺序或按通道重要性重排。
+  - 验证：planning pass 的 plans 遍历顺序与 `applyMotionChannels`（`WaterSandField.ets:1396` 起）现行顺序逐通道一致；合成断言不出现任何重排变体。
+
+- [ ] **□5 优先键字典序**：(channelRank, columnIndex/interfaceIndex) 纯整数+固定枚举，禁浮点排序/按请求量排序。
+  - 判定口径：请求分配与 tie-break 只按 `(channelRank, columnIndex)`（边通道 `(channelRank, interfaceIndex)`）字典序遍历（§20.6.2/§20.6.3）；键值完全由整数与固定枚举组成，不比较浮点数值、不按请求量排序、不依赖排序稳定性；比例缩放余量不重新排序、不二次分配，未授予部分记 `clipped/rejected`；`limitingEdge` 并列时取 `interfaceIndex` 最小者。同输入下任意两次运行产生逐项相同的 `plannedGrant/budgetUse/deltaSandTopByColumn`。
+  - 验证：构造请求量并列/接近的合成序列，重复运行断言分配逐项确定一致；代码审查无 `sort()`/浮点比较出现在分配路径。
+
+- [ ] **□6 preview/commit 精确相等**：thetaAccepted/plannedGrant/budgetUse/deltaSandTopByColumn 逐项 `===`，`-0` 规范化+NaN 拒绝。
+  - 判定口径：preview 与 commit 共享同一份纯规划函数，不复制两套相似逻辑（§20.6.4）；四组量逐项精确相等、不使用容差，比较前 `-0` 规范化为 `0`、显式拒绝 `NaN`。任一不一致即 `PREVIEW_COMMIT_MISMATCH`：冻结本子步、`restoreBackup()`、保留 preview 与 commit 两套诊断账本，不得用后续子步或 correction 修复。
+  - 验证：合成构造预演/提交分歧（含 `+0/-0` 与 `NaN` 注入）断言全部触发 `PREVIEW_COMMIT_MISMATCH` 且状态冻结；正常路径断言逐项 `===` 通过。
+
+- [ ] **□7 BLOCKED 语义**：带 reasonCode + run 不得满足零越界验收，不得静默 clamp 继续。
+  - 判定口径：BLOCKED 携带 §20.4 全量证据——`reasonCode`（`EMPTY_FEASIBLE_INTERVAL`/`NO_SAFE_OLD_TILT_PLAN`/`PREEXISTING_INFEASIBLE_STATE`/`PREVIEW_COMMIT_MISMATCH` 等）、`runId/substepId`、theta requested/accepted、最紧边、`g/deltaG/r`、通道 grants、预算剩余与拒绝量。发生 BLOCKED 的 run 不得满足「零越界」验收；调用层若选择继续，必须作为同一 run 的明确 invalid continuation 记录，不得抹除阻断事件；不得把角度偷偷 clamp 到任意值后继续，不得把 BLOCKED 降级为可忽略 warning。
+  - 验证：合成触发各 reasonCode 场景断言证据字段完整；正式 checker（`p011_slip_formal_check.py` 硬约束口径）对含 BLOCKED 的 run 判 FAIL，不得因后续子步恢复而放行。
+
+#### 20.7.2 Developer 交付要求（通知）
+
+1. 实现授权下达后按 §20.7.1 七项 checklist 交付；七项全部勾选后才可提交限幅实现的合成测试证据，之后才进入 §20.5 的 omega 扫描与真机验收。
+2. 实现落点：替换 `P011TiltPlanningPass.ets` 现有骨架（当前 `createPreview()` 返回阻断结果、`commit()` 抛 `P011_PLANNING_PASS_BLOCKED`，`P011TiltPlanningPass.ets:94-107`），接口签名沿用 §20.1/§20.3 契约；接入点为 `WaterSandField` 子步循环倾角更新处（现行 `updateTilt` 调用点 `WaterSandField.ets:796` 一带，最终落点以实现方案为准）。观测①b 遥测（§19.13）继续有效，两任务可并行但不互相修改对方的验收口径。
+3. 任何一项不满足即 BLOCKED 返工；不得通过放宽口径、隐藏第三轮搜索、静默 clamp 或修改 checker 判定转绿。
+4. 本 checklist 不授权：标定/填入 `maxTiltOmega` 点值、放宽 `tan30°`/预算/几何、跳过真机 P95 验收、修改 §19.13 观测①b 的四项口径。
+
 变更记录：2026-10-19，依据 `algorithm-P011.md` §8.13 增加 v2.14 architect 对接材料。仅补充两轮可行域预演、现有通道/预算接口与 BLOCKED 事务语义；无代码、测试用例或硬门槛变更。状态保持 `BLOCKED / DESIGN_NOT_CALIBRATED`。
+
+变更记录：2026-10-19，依据 manager【architect·⑤】任务新增 §20.7。仅落盘【阶段一·限幅】实现验收 checklist 与 developer 交付指令；不修改代码、既有测试用例或历史结论。§20 顶部 `BLOCKED / DESIGN_NOT_CALIBRATED` 状态不变，待 `maxTiltOmega` 标定流程解除。
+
+## 21. SLIP checker 口径对齐审查：test-cases §11 vs architecture §19.7 对照表（2026-10-19）
+
+**状态：审查完成，修订建议待 designer/tester 认领。** 依据 manager【architect·⑥】任务：SLIP 真机验证前审查两套 checker 体系的口径一致性，避免两套结论打架导致验证返工。
+
+审查对象与定位：**体系 A** = test-cases.md §11 四条 MUST-PASS（正式校验器 `test/p011_slip_formal_check.py`，服务七相 SLIP 真机验证，证据 route `natural-observation-v2.10`）；**体系 B** = architecture §19.7 七项 checker 检查（规划中的 `test/p011_v212_relax_hysteresis_check.py`，服务 v2.12 双角标定校准/holdout run，route `natural-relax-hysteresis-v1`）。两者是**不同 run 类型**的 checker（SLIP 验证 run vs v2.12 标定 run），不是同一 run 的两套判据；对齐审查的目的是保证共享口径（tan30、预算、守恒、账本对齐）在两边语义一致、无矛盾，而不是要求逐项相同。体系 A 的 `p011_slip_formal_check.py` 复用 `p011_v210_natural_observation_check.py` 的 `validate_observation_contract()`（:262），后者对 schema v3 记录执行 B 体系的 runRole/阈值契约校验——两体系在实现层已发生耦合，口径一致性直接影响 SLIP 验证。
+
+### 21.1 口径对照表
+
+分类：**一致**（两边语义相同）/ **不一致**（两边语义矛盾）/ **单边缺失**（只有一边有，另一边按设计不需要或应补齐）。
+
+| # | 口径项 | 体系 A（§11 / slip_formal_check） | 体系 B（§19.7 / v212 checker） | 分类 |
+|---|---|---|---|---|
+| 1 | tan30 硬约束·边集 | SLIP-01：每提交子步全部 127 边（`len(S)-1`，S 长度由 ledger 决定，实测 128 列） | §19.7.4.6「守恒、stock、capacity 与 tan30° hard gate」；§18.5 同口径表述「完整 sandTop 的 \|ΔS−tan(effectiveTilt)\|<=tan30°」 | **一致** |
+| 2 | tan30 硬约束·倾角口径 | SLIP-01：committed tilt 取同子步 `P011_METRIC.effectiveTilt` post-update 快照（`sequence/frameId/substepId` 身份绑定）；缺失 post 快照时该子步全部边计违约（`missingSameSubstepPostTilt`），禁止用 context 旧值替代 | §19.7 未显式写倾角快照口径；§18.5/§19.4.1 要求「`effectiveTilt`、`stateBefore`、grant 与 audit 必须使用同一子步快照」，语义等价但未规定 committed tilt 的 metric 绑定方式 | **基本一致，B 侧表述欠精确**（无实质矛盾；建议 B 侧 checker 落地时直接复用 A 侧 metric 身份绑定实现） |
+| 3 | tan30 硬约束·判定用状态 | SLIP-01：`stateAfter.S`（`after["S"][i+1]-after["S"][i]`，提交后状态）；§11.1 文字同时提及 stateBefore.S 与 stateAfter.S 作输入，实现只检 after | §18.5「完整 sandTop 的 \|ΔS−tan(effectiveTilt)\|」未区分 before/after；§19.5 hard guard 是**逐 writer 提交前**检查（admission），A 是**子步提交后**审计（audit）——guard 与 audit 是互补双层不是重复 | **一致（互补关系）**；注意 A 的 §11.1 文字「输入 stateBefore.S 与 stateAfter.S」与实现（只检 after）有文字性出入，建议 tester 澄清文字 |
+| 4 | t90 口径 | SLIP-02：target-based，raster 全宽 OLS 线性坡度首次 `>=27°`（30° 目标的 90%）的相对时间，`<=5100ms`；明确禁止 relative-final 口径 | §19.7 无 t90（B 是标定 checker，不判收敛速度）；v2.11 §18.5.4 有另一口径 `t90 P95<=100ms`（heavy interface 响应，量纲与对象不同，不冲突） | **单边缺失（设计内）**——B 不需要 t90；但须注意 §18.5 的 100ms P95 与 SLIP-02 的 5100ms t90 是**两个不同指标**，报告与 checker 不得混用名称 |
+| 5 | raster 收敛 | SLIP-02：±45° 相位最后一次 raster 全宽 OLS ∈ 30°±2°，`R²>=0.90`，报告 RMSE | §19.7 无 raster 收敛判定；标定候选筛选按 §8.11 用 raster 30°±2° 联合筛选（algorithm 层） | **单边缺失（设计内）** |
+| 6 | raster 表面检测方法 | A 实现 `raster_surface()`：亮度>35 且非蓝色主导（`not(blue>red and blue>green)`）——**检测沙表面任意颜色** | v210 checker `raster()`：以 `#24571F` 为中心欧氏距离<=70 的**绿色带**——检测重沙边界 | **不一致（对象不同，需显式声明）**：A 检测「整体沙面」用于 OLS 坡度，B 检测「重沙界面」用于 A_B 位移；两者服务不同指标，**不是矛盾**，但两套 checker 都叫 "raster"，SLIP 验证与 v2.12 标定若共用采集 manifest，须在报告中显式区分表面/界面两个口径，防止误用对方实现 |
+| 7 | 预算对账·三层上限 | SLIP-04：`localUsed<=localLimit`；`bottomUsed<=min(bottomRequested,bottomLimit)`；`totalUsed<=min(totalRequested,totalLimit)` | §19.7.4.5「local/total/bottom 预算不越界」；v210 checker 实现 `bottomBudgetExcess/totalBudgetExcess/maxLocalBudgetExcess<=1e-9`（audit 超额字段口径） | **一致**（A 逐子步对账 + B audit 超额零容差，语义同为不越界；两边 EPS 均 1e-9，v1 证据中 88 个 1e-15 量级浮点尾差两边均放行，无冲突） |
+| 8 | 预算对账·clipping 零要求 | SLIP-04：`bottomClipped==0 且 totalClipped==0`（逐子步） | §19.7 无 clipped==0 要求；v210 checker 不检查 clipped；v2.11 §18.6 明确「预算不足→q 裁剪，记录 clipped 量，**不是错误**」 | **不一致（A 侧过严，与物理预期矛盾）**：v1 证据实证——`totalClipped>0` 971 子步、`bottomClipped>0` 742 子步，全部集中在 ±15°/±45° 倾斜相位（baseline 为 0）；总预算 `300*dt` 在多通道竞争下裁剪是**预算机制的设计内行为**（§8.12 归因已确认「total cap 只有 5.0 且用满」是常态），`clipped==0` 意味着要求所有通道请求永不超过预算余量，与共享预算的裁剪语义直接矛盾。**修订建议 A-1（交 tester）**：SLIP-04 的 clipping 零要求改为「clipped 量正确记账」（`bottomUsed<=bottomLimit`、`totalUsed<=totalLimit` 已由上限检查覆盖，clipped 字段只做对账验证：`clipped==requested−used` 在数值精度内成立），删除 `clipped==0` 判定；若 manager 坚持零裁剪，须先证明该要求与共享预算设计不矛盾，否则 SLIP 正式验证结构性无法通过 |
+| 9 | 预算对账·relax 零要求 | SLIP-04：`relaxAppliedTotal==0`（audit 字段） | §19.7 无此要求；v210 checker 不检查 relaxAppliedTotal；§17/§18 体系将 relax 视为正常纠偏通道（`relaxRequestedTotal/relaxAppliedTotal` 仅作诊断） | **不一致（A 侧与崩塌物理预期矛盾，重大）**：v1 证据实证——`relaxAppliedTotal>0` 共 1738/2512 子步，其中 ±45° 相位（positiveOvershoot 270/270、negativeOvershoot 208/208）**全部子步** relax>0；§8.12 归因明确 relax 是「把 residual 往零推」的纠偏项，超角倾角下崩塌搬运必然触发 relax 通道。`relaxAppliedTotal==0` 等价于要求超角相位中崩塌通道零工作——与 SLIP-02 要验证的「±45° 崩塌收敛到 30°」目标**自相矛盾**（崩塌不工作就不可能收敛）。RED 基线中 1738 个预算违约子步全部来自该要求（`relaxOk=false`），属预期 RED 的口径部分而非物理缺陷证据。**修订建议 A-2（交 tester，SLIP 验证前必须裁决）**：删除 `relaxAppliedTotal==0` 判定；relax 合法性已由上限检查（total<=300dt）与 tan30 硬约束（SLIP-01）联合保证，无信息损失；若保留该要求，SLIP 正式验证**必然结构性 FAIL**，两套 checker 结论打架的直接来源 |
+| 10 | 账本对齐 | SLIP-04：ledger `context.effectiveTilt` 与同子步 `P011_METRIC.effectiveTilt` 身份绑定（`sequence/frameId/substepId`），缺失或错配数=0；`missingPostTiltSubsteps` 同时计入 hard 约束（缺失即全边违约） | §19.7 未显式列出；§17.9.9/P011-TaskC 已修复 context 采样移至 updateTilt 后；v210 checker `validate()` 不做 metric 身份比对（`P011_OBS_METRIC` 心跳只数数量） | **单边缺失（B 侧应补齐）**——B 侧 checker 落地时建议复用 A 的 metric 身份比对；对 v2.12 标定 run，转折事件的 `effectiveTilt` 快照对齐同样关键（bracket 样本有效性依赖） |
+| 11 | 守恒 | SLIP-04 未显式判守恒；A 通过 `validate_observation_contract()` 复用 B 体系 v210 checker 的 `validate()`（其中 `audit.conservation is True` 逐子步检查）——**实现层已覆盖**，但 §11 文字未列出 | §19.7.4.6「守恒、stock、capacity」显式列出；v210 checker 实现 `audit.finite/range/capacity/stock/conservation` 五项全 True | **一致（A 文字遗漏，实现已覆盖）**：**修订建议 A-3（交 tester）**：test-cases §11.4 判定标准补写「`audit.finite/range/capacity/stock/conservation` 全 True（经 `validate_observation_contract` 覆盖）」，使文字与实现一致，避免读者误判 SLIP 不查守恒 |
+| 12 | 容量/stock | 同上：A 实现层经 v210 `validate()` 覆盖（`capacity/stock`），§11 文字未列 | §19.7.4.6 显式；v210 checker 实现 | **一致（同 #11，文字遗漏）** |
+| 13 | 有限值 | 同上：`finite` 经 v210 `validate()` 覆盖；A 自身 hard 约束遍历中 `float()` 遇 NaN 会使 `error>tan30` 成立而计违约（隐式拒绝） | §19.7 经「参数不变量」与 v210 `finite` 覆盖 | **一致** |
+| 14 | 相位终点稳定与悬沙 | SLIP-03：每相位最后 1s OLS 坡度变化<=1°；相位终点 `suspH+suspL<=0.05×初始沉积沙`（初始总量取首子步 stateBefore 的 bh+bl） | §19.7 无（标定 run 判定走 §8.11 标定协议的 hard-gate violation 与样本门槛） | **单边缺失（设计内）** |
+| 15 | 转折遥测契约 | A 经 `validate_observation_contract()` 执行 B 体系的 runRole/thresholdCalibrationId/thetaStartDeg/thetaStopDeg 校验（schema v3 时） | §19.7.4.1~4.3、4.7（参数不变量、状态转换语义、方向、限流保持、无 ROI、置信区间） | **一致（共享实现）**；注意 §19.13.3 已裁定：SLIP 验证 run `runRole=null`，`validate_observation_contract` 的 v3 分支对 SLIP run 不适用——**实现细节差异**：当前 `validate_observation_contract()` 对所有 schema v3 记录要求 `runRole∈{calibration,holdout}`，SLIP 观测①b run 升级 schema v3 后 `runRole=null` 会被判 `:runRole` 错误。**修订建议 B-1（交 tester，观测①b 交付前）**：`validate_observation_contract()` 增加 runRole 判别——`runRole=null` 时跳过 runRole/thresholdCalibrationId/theta 字段校验（保留 `transitionTelemetryAvailable` 校验），仅 `runRole∈{calibration,holdout}` 时执行全量校验；否则 SLIP 正式 run（schema v3 + runRole=null）在该函数下结构性 FAIL，与 §19.13.3 裁决冲突 |
+| 16 | route 隔离 | A 默认 route `natural-observation-v2.10`（取首 record context），`OBSERVATION_ROUTES` 接受 v2.10 与 v2.12 两个 route | B 专属 route `natural-relax-hysteresis-v1` + artifact 前缀 `p011-v212`，校准/holdout 分离 | **一致（隔离设计）**；建议 A 在结果 JSON 中显式断言单 route（当前只透传首 record 值，混 route 不报错）——**修订建议 A-4（交 tester，低优先级）** |
+| 17 | 判定聚合 | A：overall = hard ∧ contract ∧ alignment ∧ budget ∧ convergence(±45°) ∧ phaseEndpoint(全部七相)；任何一项 FAIL 即整体 FAIL | B：§19.7.5「任何 hard gate、预算、守恒或 holdout 失败均判 invalid」 | **一致（全 AND 语义）** |
+
+### 21.2 审查结论
+
+1. **结构性矛盾 1 处（必须修订）**：#9 `relaxAppliedTotal==0`——与 SLIP-02 的崩塌收敛目标自相矛盾，±45° 相位 relax 全程工作（v1 实证 1738/2512 子步），保留则 SLIP 正式验证结构性 FAIL（修订建议 A-2）。
+2. **口径过严 1 处（应修订）**：#8 `clipped==0`——与共享预算裁剪语义矛盾（v1 实证 971/742 子步裁剪，全部在倾斜相位），改为「clipped 记账正确」（修订建议 A-1）。
+3. **实现层冲突 1 处（观测①b 交付前必须修订）**：#15 `validate_observation_contract()` 对 schema v3 一律要求 `runRole∈{calibration,holdout}`，与 §19.13.3 裁决（SLIP 验证 run `runRole=null` 不适用该分支）冲突，SLIP+观测①b 正式 run 会结构性 FAIL（修订建议 B-1）。
+4. **文字遗漏 1 处**：#11/#12 守恒/容量/stock 在 A 实现层已覆盖但 §11 文字未列（修订建议 A-3，纯文字澄清）。
+5. **表述欠精确 2 处**：#2 B 侧倾角快照口径、#3 A 侧 §11.1 before/after 文字——均无实质矛盾，随对应 checker 落地/文字维护时顺带澄清。
+6. **设计内单边缺失（无需修订）**：#4/#5/#14（B 是标定 checker 不判收敛）、#10（B 侧落地时建议补 metric 身份比对）。
+7. **同名异义提醒**：#6 两套 checker 的 "raster" 检测对象不同（A=沙表面亮度法，B=重沙界面绿色带），共用 manifest 时必须在报告中显式区分；#4 中 SLIP t90（5100ms 收敛）与 v2.11 P95 t90（100ms 响应）是两个不同指标。
+
+修订建议去向：A-1/A-2/A-3/A-4 交 **tester**（`test/p011_slip_formal_check.py` 与 test-cases §11 维护方）；B-1 交 **tester**（`p011_v210_natural_observation_check.py` 维护方，观测①b 交付前）；涉及 #9 的口径裁决若 tester 认为超出授权（改动 MUST-PASS 判定标准），升级 **manager** 裁决后执行；**designer** 无需变更（#9 的算法侧语义——relax 为正常通道——在 §8.12 归因与 §17/§18 体系中已明确，无算法文档矛盾）。
+
+变更记录：2026-10-19，依据 manager【architect·⑥】任务新增 §21。仅落盘口径对照表与修订建议；不修改代码、checker 实现或既有测试用例。修订建议待 tester（及必要时的 manager）认领后执行。
+
+## 22. 【阶段一·B】验收评审：commit 4b1f635 限幅实现（2026-10-20）
+
+**状态：`CONDITIONAL_PASS`——七项 checklist 全部通过；运行时全通道 pre-commit guard 未在本 commit 交付（对照裁决 B 完成标准的唯一实质缺口，见 R-1）；2 个文档化 legacy FAIL 已升级至 architect 裁决（R-2）。【阶段一·B】标记实现完成的前提见 §22.4。**
+
+评审对象：commit `4b1f6355c730b062cae044ac73cfa1def7694bd1`（10 文件 +1842/-114）。评审方法：逐行 diff 审查（P011TiltPlanningPass.ets 全量、WaterSandField.ets 规划接入全量、测试全量、checker 全量）+ 证据独立重跑（Node 1:1 通道、p011_planning_pass_check.py、python p011 套件 40/40）+ 关键语义代码追踪（preview 纯度恢复链、collect/apply 分支、bottomClipped/totalClipped 账本语义、saveBackup 快照覆盖面）。
+
+### 22.1 §20.7.1 七项 checklist 逐项核对
+
+| 项 | 判定 | 核对证据 |
+|---|---|---|
+| □1 两轮 pass 上限 | **PASS** | `createPreview` 控制流封闭于 {thetaRequested→theta1→theta0 回退→BLOCKED}，无任何第三轮/第四候选路径；Node 证据 `directedThreeCandidateExhaustion`：status=blocked、passCount=2、**previewCalls=2**（≤3）；ArkTS 侧同名用例 + counting delegate 同步覆盖 |
+| □2 B0 独立副本 | **PASS** | `previewChannelPlansAt` 每候选独立 `beginSubstepMotionBudget` 全新 local/bottom/total 副本；apply 后 `beginSubstepMotionBudget` 重置请求账本杜绝预演残留串接；`previewPurity_budgetLedgerSingleCommit` 验证 totalUsed 单次计入（>0 且 ≤limit，无双计数）；12 个 PlanningScalars 逐项 save/restore |
+| □3 单次 commit | **PASS** | step 循环中 `planAndCommitTilt` 替换无条件 `updateTilt`，`updateTilt` 无残留调用点（仅保留私有定义）；`effectiveTilt=thetaAccepted` 单次写入；preview 纯度：probe 分离 + `restoreBackup`（覆盖 waterTop/bh/bl/mh/ml/suspH/suspL 全部被污染字段）+ 请求账本重置；probe on/off snapshot 相等用例 PASS；`singleCommitTiltAndRate` 验证 effectiveTiltRate=(thetaAccepted−thetaBefore)/dt |
+| □4 通道顺序不重排 | **PASS** | `allocatePreviewPlans` 顺序 settle→percolate→bottomCreep→relax→lift 与 `applyMotionChannels` 逐通道一致（grep 验证）；suspensionDiffusion 留在 collect（S-invariant，deltaS=0）符合 §20.2 注记；bottomCreep 先独立预算后共享 total，镜像 `creepBottomRequests` 的 independentScale 语义 |
+| □5 优先键字典序 | **PASS** | 分配遍历用固定列号/槽号升序（整数索引 for 循环），无 sort()、无浮点比较、无按请求量排序；limitingEdge tie-break 用严格比较保留最小 interfaceIndex（升序扫描 + `>`/`<`），`limitingEdgeTieBreakKeepsSmallestIndex` 用例覆盖全平局与部分平局两种构型 |
+| □6 preview/commit 精确相等 | **PASS** | `p011PreviewCommitConsistent` 逐项 `===`：thetaAccepted、granted/clipped/rejected、budgetUse 四字段、deltaSandTopByColumn 逐列；`normalizeZero(-0)→0`、`Number.isFinite` 显式拒 NaN；`verifyConsistencyChannel` 用例覆盖正例/grant 分歧/-0 归一/NaN 拒绝四路径；产品侧 `verifyPreviewCommitConsistency` 在权威 collect 后用同一 `allocatePreviewPlans` 纯函数重算并比对，mismatch → `PREVIEW_COMMIT_MISMATCH` 冻结子步（restoreBackup + frozen） |
+| □7 BLOCKED 语义 | **PASS** | 四个 reasonCode 常量齐备；BLOCKED 时 `TILT_PLANNING_BLOCKED` → step `ok=false`（run 级 invalid），参考角保持 thetaBefore、`effectiveTiltRate=0`，**不 freeze**（允许调用层显式 invalid continuation，与 §20.4「恢复运行须记为同一 run 的 invalid continuation」一致——注意与 §20.4 表格「不提交倾角和材料状态」语义吻合：不提交≠冻结引擎）；证据经 `getPlanningTelemetry()` 全量暴露（status/blockedReason/passCount/fallbackUsed/thetaRequested/limitingEdge）；Node 证据 `blockedSemantics`：status=blocked、reason=PREEXISTING_INFEASIBLE_STATE、okFalse=true、errorCode=5 |
+
+两处实现口径偏离已核定为合规自适应而非违约：（a）候选角可行区间引入 `P011_PLANNING_PASS_ANGLE_EPS=1e-9` 角度域容差——§20.6.4 的精确相等只约束 plan 比较，区间交须吸收 atan 往返浮点噪声，否则已提交边界角会被伪拒绝（commit 注释已声明该边界，comparator 本身保持零容差）；（b）`blockedResult` 对 NO_SAFE_OLD_TILT_PLAN/PREEXISTING 置 `fallbackUsed=true`——§20.3 该字段语义为「回退路径被评估」，证据可追溯性不受损。
+
+### 22.2 Pre-commit guard 完备性审查（任务第 2 步）
+
+**裁决（R-1，实质缺口）：本 commit 交付的是「倾角可行性闸门」，不是 §19.5/裁决 B 定义的全通道 pre-commit 材料提交 guard。**
+
+1. **已交付**：`planAndCommitTilt` 在子步首对 S0 全边检查 tan30（preexistingViolation + 可行域交集），倾角与材料由可行域联合判定——这覆盖了 §8.12 定性的首因「tilt 参考先越线」。BLOCKED 时不提交倾角与材料，与 §20.4 语义一致。
+2. **未交付**：§19.5 的逐 writer 闭式 grant 拦截（relaxAngle 边级联三边预演、creepBottom/liftByShake/settleSandV2 受影响边闭式区间、违规态 non-worsening 分支、guard 截断后四层预算回写）。现状：材料增量在 apply 后才由 `audit(true)`（probe 开启时 `finishNaturalObservation` 的 `range` 字段）审计 tan30——**审计≠拦截**，与 v2.10 行为相同；checker 侧的 `hardGuardAvailable` 字段因此恒 false。这正是 commit message 自述的已知冲突根因：30° 场景中 bottomCreep 单边 deltaG 可达 ~0.33（vBottomCreepMax·2·dt），把贴边残差推过 tan30，旧引擎从不拦截，新倾角闸门如实暴露。
+3. **运行时 gate 与补采 gate 豁免确认分离**：checker `SKIP_TAN30_PHASES`（±45° 平台及其 return 子步豁免参考线形式判定）明确引用 priority.md 2026-10-20 裁决，且该裁决明文「豁免仅用于标定 run 资格，不豁免阶段一实际提交的安全 guard」；实现侧 `planAndCommitTilt` 的 tan30 检查**无任何相位豁免**（对 ±45° 目标同样执行可行域检查，不可行即 clamp/BLOCKED）——两套口径未混用，合规。
+4. **五 writer 清单对照**：settle（clipLocal 预演 ✓）、percolate（S-invariant 登记 ✓）、bottomCreep（独立预算+total 镜像 ✓）、relax（clipLocalPair ✓）、lift（clipLocal ✓）、suspensionDiffusion（S-invariant ✓）——**预演侧**全 writer 已接入（□含 deltaG 合并完整性）；**提交侧拦截**全 writer 未接入（上述第 2 点）。裁决 B 完成标准「每个提交子步按实际接受参考角检查全边 |ΔS−tan(effectiveTiltAccepted)|≤tan30°，零违约；只允许在完整事务可行时提交」——倾角侧满足，材料提交侧依赖预演≈真实的镜像等价性（commit 声称 preview L1 与 real L1 逐步 bit-identical，本评审通过 `verifyPreviewCommitConsistency` 的每子步强制比对接受该论证），但 §19.5 要求的逐笔 writer 拦截仍未落地。
+
+### 22.3 测试证据复核（任务第 3 步）
+
+1. **验证方法可信度：高**。Node 1:1 通道（`run_p011_planning_units.cjs`）经 TypeScript 编译器加载**真实产品 ArkTS 源文件**（WaterSandField.ets + P011TiltPlanningPass.ets），非复刻逻辑；本评审独立重跑：41 PASS / 2 FAIL 与 commit 证据一致，`blockedSemantics` 字段完整复现；`p011_planning_pass_check.py` 重跑 PASS；python p011 套件 40/40 OK（本评审重跑确认）。
+2. **用例覆盖核对**：不可行域 hold（directed exhaustion，g0=2.5>2H 构型逼出三候选穷尽）✓；最紧边 tie-break（全平局+部分平局两构型）✓；-0/NaN 比较器 ✓；preview 纯度（probe on/off snapshot 相等）✓；预算单次计入 ✓；单 commit 倾角/速率语义 ✓；BLOCKED 证据字段（run 级 invalid、不 freeze、参考角保持）✓；30 步多子步 run 守恒+passCount≤2 ✓。§20.7.1 七项全部有对应用例。
+3. **2 个 legacy FAIL 的定性（R-2，升级裁决）**：`bottomCreep_tiltMovesLowerLayers` 与 `p011_commandSignFlip...` 在 30° 倾角场景失败——**不是限幅实现的缺陷，而是新闸门如实暴露了旧引擎从未拦截的真实 tan30 违约**（本评审独立验证：e2f02a1 时代 `audit()` 无 tan30 检查，v1 证据 484 违约子步坐实该违约真实存在；checker 已将其列入白名单并按 PIPELINE step-5 升级）。**architect 裁决：该暴露是 §20 闸门的正确行为，不得为恢复测试绿色而放宽闸门。** 处置归 manager/designer：按 commit 列出的候选——(a) 预演已与 apply 等价（已做）；(b) 可行域留 margin（改判据，须 manager 授权）；(c) 重调 30° 测试场景参数（改测试期望，须 tester 授权）。在裁决落位前这两个用例保持文档化 FAIL，不阻塞【阶段一·B】实现完成判定（它们是旧物理行为暴露，非新实现回归）。
+4. **测试资产完整性**：checker 对 41/2 的白名单边界正确（仅认 2 个具名 legacy，任何其它 FAIL 即判 FAIL）；`test_p011_transition_telemetry.py` 新增 3 个 runRole 判别用例（§21 B-1 落地）+ observation①b 回归（edgeIdentity hump 调至 0.4 避开闸门，同时保住 tan4 触发语义，合规）。
+
+### 22.4 评审结论与出口
+
+**判定：`CONDITIONAL_PASS`。【阶段一·B】标记实现完成，附两项条件：**
+
+- **C-1（R-1，交 manager 排期）**：全通道 pre-commit 材料提交 guard（§19.5 逐 writer 闭式拦截 + 四层预算回写）未在本 commit 范围内。裁决 B 完成标准中「零违约提交」当前由「倾角可行域闸门 + 预演/apply 镜像等价 + 每子步 verify 比对」间接保证（材料增量若与预演偏离即 PREVIEW_COMMIT_MISMATCH 冻结），工程上成立；但 §19.5 的直接逐笔拦截作为独立防线仍未交付。建议作为【阶段一·B·续】单独任务排期（`P011TiltPlanningPass` 的 `hardGuardAvailable` 证据字段与 checker 白名单逻辑届时同步落地），不与限幅实现混同验收。
+- **C-2（R-2，交 manager/designer 裁决）**：2 个 30° 场景 legacy FAIL 的处置（margin vs 场景重调 vs 维持文档化 FAIL）。裁决落位前不得改闸门、不得删用例。
+
+次要发现（不阻塞，随下一提交清理）：`planningPreviewActive` 标志只写不读（:501/:1582/:1603），是死代码——probe 分离 + backup 恢复 + 请求账本重置已完整覆盖预演隔离，建议删除该标志或补上消费点；`allocatePreviewPlans` 头部有重复的文档注释块（两段 shadow-allocation 说明）。
+
+**与 A 线汇合进 developer 收尾的前提**：A 线（双角滞回标定）状态不受本 commit 影响（`natural-relax-hysteresis` route 与标定协议未动）；B 线实现完成即按裁决 B 完成标准进入 tester 验证（真机 run + SLIP checker 修订口径），本评审不改变 v2.14 `BLOCKED / DESIGN_NOT_CALIBRATED` 状态（maxTiltOmega 仍未标定，§20.7 预发布条件继续适用）。
+
+变更记录：2026-10-20，依据 manager【阶段一·B·评审】任务新增 §22。评审 commit 4b1f635：七项 checklist 全 PASS（证据独立重跑确认），guard 完备性认定为倾角闸门已交付/全通道材料拦截未交付（C-1），2 个 legacy FAIL 定性为如实暴露并升级裁决（C-2）。判定 CONDITIONAL_PASS，【阶段一·B】实现完成。
+
+## 23. 【阶段一·B·续】复审 + R2 正式评审 + P-012 架构评审（2026-10-20）
+
+**状态：B·续 `PASS_WITH_DEFECT`（R-3 已定性+已出工程裁决）；R2 `PASS / 可 commit`（白名单三用例裁决=m 维持白名单+单列 R-3 缺陷任务）；P-012 设计稿 `READY_FOR_ARCHITECT→APPROVED_WITH_CONDITIONS`（4 项条件）。**
+
+本节收口三项评审：commit `891370d`（B·续 材料 guard）、R2 整改正式评审（含 F-② 白名单裁决）、P-012 渲染设计稿架构评审。评审方法同 §22：逐行 diff + 证据独立重跑（Node 1:1 通道 45/3 复现、checker PASS、python 40/40）+ 根因数值复现（directionAccuracy 用例 step 27 穿透机制逐边追踪）。
+
+### 23.1 B·续复审：commit 891370d（§19.5 材料 guard）
+
+逐项核对结果：
+
+| 项 | 判定 | 证据 |
+|---|---|---|
+| 闭式区间求交 | **PASS** | `p011GuardAdmit`：`-L<=d+k*q<=L`（合法边 L=H、违规边 L=\|d\| 即 non-worsening），k 符号交换端点，k=0 不约束（d'=d 平凡 non-worsening），与 [0,q] 相交取上端，无迭代二分——与 §19.5 公式逐项一致；`k=0 且 \|d\|>L` 判不可行整笔拒绝，边界正确 |
+| 受影响边集 | **PASS** | `materialGuardAdmitIncrement` 从 deltaColumns 推导：列 c 的移动约束边 c-1 与 c（列型 writer：settle/lift 两邻边）；donor/receiver 双列移动约束中央边+两条外侧邻边（pair 型：relax/bottomCreep）——与 §19.5 writer 表一致 |
+| 四层预算回写 | **PASS（含说明）** | `materialGuardRefund`：local 双端点（pair）/单端点（column）回补 remaining 并同步减 used；total 回补；bottom 仅 creep。channelRateCap 当前引擎无此层账本（=0），由 per-writer 遥测覆盖——与 §19.5 四层要求在**现有账本结构**下等价，无缺失层 |
+| percolate S-invariant 登记 | **PASS（按实现形态）** | percolate 不设数值 guard（ΔS=0 无需拦截），继续经 `recordPercolate` 全量遥测登记（requested/allowed/q/r）——§19.5 表格「作为一个受事务跟踪的 writer 登记」以遥测登记形式满足；**注意**：S-invariant 的显式登记字段（`SInvariant=true`、逐列 deltaS=0）未新增，属设计稿表述与实现的形态差异，遥测数据可推导等价信息，不构成缺口 |
+| 五 writer 拦截覆盖 | **PASS** | settle（:2263 两邻边）/relax（:2398 中央+外侧）/bottomCreep（:2570 同 relax+bottom 回写）/lift（:2716 两邻边）/percolate（豁免+登记）——全部在 clip 之后、材料写入之前调用；`hardGuardAvailable=true` + `hardGuardRejected/hardGuardClipped` 真实值进 ledger（`telemetryFieldsReal` 用例验证非恒 false） |
+| 预算对账（A-1 落地） | **PASS** | apply 成功后 `bottomClipped=max(0,R-U)`、`totalClipped=max(0,R-U)` 同源重算（:921-934），覆盖独立 bottom 缩放/库存容量/total 比例三层；独立验证 v1 证据 mismatch 742/486 的根因（旧 clipped 语义不同源）与修复正确性 |
+| relaxAppliedTotal 真实值 | **PASS** | `recordRelaxAngle(..., appliedTotal)` 接线真实 apply 量（此前恒 0），probe 侧 :401 落账 |
+| guard 截断不改 active 语义 | **PASS** | `activeAfter=requested>EPS`（fix B 契约）在 guard 裁剪后保持——guard 拒绝不误报 stop |
+
+**R-3（新发现缺陷，本评审定位根因并出工程裁决）：预演不建模 guard 裁剪 → 倾角闸门可被穿透一步。**
+
+数值复现（directionAccuracy 场景，8 列 thick、±20° 交替 240 步、totalBudget=1000）：
+
+```text
+step 27：tilt -16→-19.93（planStatus=clamped，预演承诺修复 deltaG>0）
+  实际 apply：edge6 的 relax grant req=0.0141 → allowed=0（hardGuardRejected=0.0141，guard 拒绝）
+  S 不动 → edge6 残差 0.5297→0.6056 越过 H=0.5774（越界纯由 tilt 前进贡献）
+step 28：PREEXISTING_INFEASIBLE_STATE → run invalid（fail-safe 生效）
+```
+
+机制：planning pass 的预演分配器（`allocatePreviewPlans`）镜像 clip 语义但**不镜像 §19.5 guard**；预演承诺的修复性 deltaG 在实际 apply 中被 guard 裁到 0，`verifyPreviewCommitConsistency` 用同一分配器重算 committed 侧（两边都不知道 guard），比对一致 → `PREVIEW_COMMIT_MISMATCH` 不触发 → 穿透未被捕。**严重度：中**——fail-safe 在下一子步拦截（不产生静默持续越界，零越界验收不放过该 run），但 run 会报废且证据只在 telemetry。
+
+**工程裁决（R-3-a，交 developer，授权范围：预演侧）**：把 guard 闭式准入纳入预演分配器——`allocatePreviewPlans` 对每笔候选 grant 逐边执行与 `materialGuardAdmitIncrement` 相同的闭式区间求交后再计入 plans（预演本来就是纯函数，加入 guard 镜像不改变纯度；这使预演 deltaG 与实际 apply 逐步一致，穿透在源头消除）。**替代方案（R-3-b，若 a 的预演复杂度不可接受）**：commit 后增加「实际 apply 后残差复检」——`applyMotionChannels` 返回后若任一边 \|d\|>H 且该子步 planning 状态非 blocked，则置 `PREVIEW_COMMIT_MISMATCH` 语义的 `GUARD_COMMIT_MISMATCH`（冻结本子步而非等待下一子步 PREEXISTING）。a 优先（预演保真优于事后捕获）；两者都不改物理、不放宽阈值。修复后 `p011_directionAccuracyCovers200SamplesAndSignSwitches` 预期恢复 PASS（其 ±20° 反转序列将不再穿透）；另两个 30° 用例见 §23.2。
+
+**B·续判定：`PASS_WITH_DEFECT`。** §19.5 交付本体（闭式拦截+回写+登记）全部正确且证据可复现；R-3 是 §20 预演与 §19.5 guard 的**集成缝隙**（两个各自正确的机制组合出的窗口），不否定 B·续交付本身，作为独立缺陷任务（含 a/b 方案与验收：穿透场景数值复现转 PASS + 白名单可移除 directionAccuracy）。
+
+### 23.2 R2 正式评审 + F-② 白名单裁决
+
+R2 四项整改复核（对照外部评审初核）：
+
+| 整改项 | 判定 | 证据 |
+|---|---|---|
+| F-① 白名单根因注释 | **PASS** | `p011_planning_pass_check.py:95-127` 注释完整（根因/预演等价声明/升级路径），891370d 追加 guard 语义演化说明 |
+| F-② 口径冲突上报 | **PASS（本节裁决）** | 见下 |
+| F-③ edgeIdentity 恢复 | **PASS** | hump=0.4 构型下 `p011_transitionTelemetry_edgeIdentityIsNotSlotIndex` PASS（Node 45/3 内） |
+| G CountingPreviewDelegate 类化 | **PASS** | ArkTS 禁 object literal 带函数属性，类化实现与产品 delegate 同构 |
+
+**F-② 裁决：三用例全部维持白名单（方案 m），不选 b（margin）/c（场景重调），方向上以 R-3-a 修复替代：**
+
+1. `bottomCreep_tiltMovesLowerLayers` / `p011_commandSignFlip...`：§22 R-2 已定性为旧引擎真实越界的如实暴露；**margin（b）被否决**——在可行域或 guard 留 margin 等于放宽 tan30 判据（用 H'=H-ε 判定、H 提交），违反「不放宽硬门槛」红线；**场景重调（c）被否决**——把 30° 测试参数调到不越界等于删除「30° 倾角下 guard 行为」的测试覆盖，掩耳盗铃。维持白名单+文档化，其语义冲突的**根治**由阶段二机制能力审计（priority.md 裁决 5）处理：现有机制在 30° 参考下能否合法工作是阶段二问题，不是本阶段 checker 问题。
+2. `p011_directionAccuracyCovers200SamplesAndSignSwitches`（891370d 新增白名单）：**根因已升级为 R-3 缺陷**（§23.1 数值复现：不是 30° 场景，是 ±20° 反转下预演-实际分歧穿透）——它留在白名单的条件是 R-3 未修复；**R-3-a 落地后必须移出白名单并恢复 PASS**（这是 R-3 修复任务的验收项，防止白名单永久化）。checker 注释已正确标注该语义演化，合规。
+3. 白名单纪律：三个用例均为「旧物理行为暴露」非新实现回归；checker 只认具名白名单，任何其它 FAIL 判 FAIL——边界正确。
+
+**R2 判定：`PASS / 可 commit`。** 891370d 已入库（835e663+891370d 两个 commit），被测 hash 以 git 记录为准，后续观测 run 绑定该 hash。commit message 自述证据与本评审独立重跑全部一致（45/3、checker PASS、40/40）。
+
+### 23.3 P-012 渲染设计稿架构评审（docs/algorithm-P012-render-v1.md）
+
+设计稿质量高：五维度方案/数据来源/预算/验收锚点齐备，落地顺序 E→A→B→C→D 与 effector 优先级一致，两条纪律红线（只读物理场、外观/物理验收隔离）贯穿。本地事实核对：`renderWaterSand` 入口（SandCanvas.ets:1517）、`WaterSandSnapshot` 字段清单（无速度场——设计稿如实声明并给出 §5.2 库存重分布代理）、SV-05/06/07 定义（TEST_PLAN_T1_T4.md:263-265）、Canvas2D 接口声明均属实。
+
+**`APPROVED_WITH_CONDITIONS`，4 项条件（工程化时必须解决）：**
+
+- **P1（集成点）**：设计稿 §11 已列 architect 待办——只读 adapter 与渲染入口细化（`renderWaterSand` 分支替换 vs 独立 renderer 类）、TypedArray/bitmap 生命周期归属、D 方向 atlas 实现档位。落 engineering 方案时按 architecture 文档体系新增 `architecture-P012.md`，不混入 P-011 文档。
+- **P2（数据面确认）**：§5.2 相总量守恒校验需要前后快照的 `M_H/M_L` 总和比对——`getTotals()` 是 field 方法，renderer 只拿 snapshot 时须在 adapter 内对数组求和实现（O(128) 可接受）；设计稿「前后两份只读相库存快照」的持有与生命周期（§9 已列）在工程方案中细化到字段级。
+- **P3（性能预算口径）**：CPU ≤1.50ms/帧 + ≤160 绘制 + ≤4MiB 是设计预算；工程方案须定义配对测量的执行主体（真机 FPS/帧时 P50/P95 采集脚本）与 `PERF_BLOCKED` 上报路径。当前 FPS 52-60 的基线采集须在外观 OFF 档完成，作为后续每档对照。
+- **P4（验收资产冻结）**：§10.2 承认 effector 测量脚本/ROI 未附——工程化前必须冻结测量附表（Y/HF_h/maxGrad/row-mean 口径 + ROI 坐标），对参考帧与 OFF 档同口径重算基线，否则 E/A/B 各档验收数字不可比。此项可由 effector 出附表、tester 复核。
+
+其余核对无保留：hybrid 接入边界（独立 adapter+证据标签+缺失字段 N/A）、生命周期分支（reset/切换/反转/倒立/DPI）、防作弊条款（不得以噪声截图认定运动、不得换指标）完备。E 的「去 127 上限+T(x)=x/(1+x) 肩部」、A 的 smoothstep 宽度换算（0.6084×wFull）、B 的 16 组裁片近似平流均为设计稿内已论证的合理工程取舍。
+
+### 23.4 结论与路由
+
+1. **B·续**：`PASS_WITH_DEFECT`——R-3 缺陷任务派 developer（方案 a 优先，验收=directionAccuracy 移出白名单恢复 PASS + 穿透数值复现转绿），修复 commit 后本节补记；tester 补直接拦截用例（manager 任务已列）。
+2. **R2**：`PASS`，commit 已入库（HEAD=891370d），后续观测绑定此 hash。
+3. **P-012**：`APPROVED_WITH_CONDITIONS`——P1-P4 随 `architecture-P012.md` 工程化解决；第一梯队（E+A+B）先行，C/D 按设计稿顺序跟进；SV-05/06/07 与量化锚点验收口径以设计稿 §10 为准。
+4. 阶段一·B 的完成判定链：限幅实现（§22 CONDITIONAL_PASS）+ 材料 guard（本节 PASS_WITH_DEFECT）+ R-3 修复（待 developer）+ tester 真机验证（待执行）——R-3 修复完成前，B 线「零违约」声明以 fail-safe 口径成立（越界 run 必 invalid），完整口径待修复后闭合。
+
+变更记录：2026-10-20，依据 manager 三任务合并评审指令新增 §23。B·续 PASS_WITH_DEFECT（R-3 预演-guard 集成缝隙已定性并出 a/b 方案）；R2 PASS 可 commit（白名单三用例裁决=维持+directionAccuracy 绑定 R-3 修复）；P-012 APPROVED_WITH_CONDITIONS（P1-P4）。三处收口：本节（②）+ 滴答任务 ①③ 结论。
