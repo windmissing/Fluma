@@ -156,7 +156,7 @@
 | P-007 | slopeLimit 姿态修正设计条件已清零：v2.4 §18 明确 `|d - tan(effectiveTiltDeg)| > tan(α)`，且 `α` 为“崩塌角”；仍缺 developer 实现、倾斜边界/守恒/直立回归的正式验证报告 | `docs/algorithm-P003-P005.md` §18；`docs/test-report-P003-P005.md` | G2+G3 主线 | IN_PROGRESS |
 | P-008 | percolationRate 固定为 `6/s`，未按密度差/黏度参数化，且缺少干湿门控 | `docs/algorithm-P003-P005.md` §16.2；外部复核 2026-10-14 | G2+G3 主线 | OPEN |
 | P-009 | WS_SNAPSHOT 超 4KB 被真机 hilog 截断，阻塞 E2E 客观验收；需确认快照分片输出或文件落盘方案 | 真机复核 2026-10-14 | G2+G3 主线 | IN_PROGRESS |
-| P-011 | `slip-overshoot-v2` 在相邻输运、现有 80/s edge cap、300/s total cap 与 5.1s 时限下条件性不可达；需改做 lift/settle/suspension 离线可达性审计，并修正 target-based t90、OLS 拟合优度与稳定终点口径 | architect 对 `docs/algorithm-P011.md` §8.14 与 `test/p011_slip_overshoot_check.py` 的复核；`docs/retro-P011-v2.14.md`；现有 `ledger.ndjson` | G2.1 表层滑移与安息角；G2.2 堆积轮廓；G3 动态连续响应 | IN_PROGRESS（替代路线离线审计；重沙押后） |
+| P-011 | 观测③ v2 pilot 标定失效（三层根因）：clean=INVALID（5 边 tan30 违约）、±30° 平台 TILT_PLANNING_BLOCKED 不可达、EXECUTION_THRESHOLD_IDENTITY_MISMATCH——构建 relaxAngle 实际由 tan(4°) 驱动，候选阈值未进状态机，459 个 start 均为旧请求态诊断。v3 方向 2（平台+安全 ramp 联合激励）已批，执行身份整改链进行中 | `docs/effect-report-P011-obs3v2-pilot-run1.md`；`docs/observation3-v3-identification-redesign-v1.md`（SHA-256 复核 + ledger 只读诊断） | G2.1 表层滑移与安息角；G2.2 堆积轮廓；G3 动态连续响应 | IN_PROGRESS（v3 身份整改： designer 冻结协议 ∥ developer 采集侧修复 → architect → tester；effector 待新 pilot 批准；观测③标定本身维持 BLOCKED / INCOMPLETE） |
 
 > 2026-10-16 P-011 阈值裁定：主观验收以 `docs/effect-cases.md` P-011 的 **0~10 分、及格线 6** 为准；`docs/algorithm-P011.md` §3.7 与 `docs/architecture-P011.md` §9.2 中的 `3.5/5` 表述需由 designer/architect 在闭环前同步修正，避免双测判定口径漂移。
 
@@ -195,6 +195,8 @@
 > 2026-10-13 阻塞项：`docs/algorithm-P003-P005.md` §3.3 的 `hl[c] -= q; hs[c] += q` 会破坏重沙/轻沙分相守恒，违反 P-003 的最高优先级不变量。architect 已在 `docs/architecture-P003-P005.md` §0.1 标注，developer 不得实现该公式；需 designer 先修订算法，再由 architect 同步工程方案。P-005 不因此阻塞：tester/effector 可先编写用例，并把三相守恒作为硬断言，用于暴露该类公式错误。
 
 ## 变更记录
+
+- 2026-10-20：原因：【观测③·v3】manager 裁决。批准方向 2（稳定平台+安全提交 ramp 联合激励）进入新协议设计，搜索窗与全部安全/统计门槛不变；确认 EXECUTION_THRESHOLD_IDENTITY_MISMATCH 根因并启动执行身份整改链（designer 协议冻结 ∥ developer 采集侧修复 6ad6fb88 → architect → tester → effector 待批）；结构性缺失预案生效（子 cell 缺失交 manager 三选一裁决，禁默默合并）。P-011 gap 描述从 slip-overshoot 审计更新为 v3 身份整改主线；观测③标定状态维持 BLOCKED / INCOMPLETE。
 
 - 2026-10-19：原因：architect 复核确认 slip-overshoot-v2 条件性不可达与 checker 口径缺陷。manager 接受下界结论，维持 30°±2°/5.1s/预算不变，新增 P-011-D 替代路线离线审计，明确稳定终点、target-based t90、OLS 拟合优度与零物理改动观测边界。
 
