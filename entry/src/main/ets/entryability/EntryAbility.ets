@@ -52,6 +52,20 @@ export default class EntryAbility extends UIAbility {
         hilog.info(this.hilogDomain, this.hilogTag, 'want param wssandtopmax=%{public}f', sandTopMax);
       }
     }
+    // P-012 E-batch：外观 want 参数（p012tier 0..3；p012seed >=0）
+    if (params && params.p012tier !== undefined) {
+      const tier = parseInt(`${params.p012tier}`);
+      if (Number.isInteger(tier) && tier >= 0 && tier <= 3) {
+        AppStorage.setOrCreate('p012tier', tier);
+        hilog.info(this.hilogDomain, this.hilogTag, 'want param p012tier=%{public}d', tier);
+      }
+    }
+    if (params && params.p012seed !== undefined) {
+      const p012Seed = parseInt(`${params.p012seed}`);
+      if (Number.isInteger(p012Seed) && p012Seed >= 0) {
+        AppStorage.setOrCreate('p012seed', p012Seed);
+      }
+    }
   }
 
   onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {

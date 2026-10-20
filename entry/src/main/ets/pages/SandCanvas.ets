@@ -24,6 +24,9 @@ import {
 import { P011InputModeState, P011ModeRequestSource, P011InputSelection,
   transitionP011InputMode, acceptP011SensorSample, selectP011Input,
   canP011GestureOwnInput } from '../physics/P011InputMode';
+// P-012 E-batch：表现层独立 renderer + 薄分发（architecture-P012.md §9.2）
+import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../render/P012WaterSandRenderer';
+import { P012AppearanceTier, P012FrameContext } from '../render/P012RenderTypes';
 
 /** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
 class MyFrameCallback extends FrameCallback {
@@ -79,6 +82,8 @@ class PanelParams {
   percolationRate: number = 6;
   mixBandPx: number = 1.5;
   shakeInput: number = 0;
+  /** P-012 E-batch：外观档位镜像（builder 刷新用） */
+  p012Tier: number = 0;
 }
 
 interface LiquidWantCommand {
@@ -173,6 +178,22 @@ function panelSheetBuilder(params: PanelParams) {
         }
         params.owner.resetField();
       })
+
+    if (params.renderMode === MODE_WATERSAND) {
+      Button(params.p012Tier === 0 ? '外观:OFF(原渲染)'
+        : params.p012Tier === 1 ? '外观:E(光照色调)'
+        : params.p012Tier === 2 ? '外观:E+A(云雾)'
+        : '外观:E+A+B(颗粒)')
+        .fontSize(12)
+        .width('100%')
+        .backgroundColor(params.p012Tier > 0 ? '#00695C' : '#455A64')
+        .onClick(() => {
+          if (params.owner === null) {
+            return;
+          }
+          params.owner.cycleP012AppearanceTier();
+        })
+    }
 
     Text(`流速: ${params.flowSpeed}`).fontSize(13).fontColor('#CCCCCC').width('100%')
     Slider({ value: params.flowSpeed, min: 1, max: 6, step: 1 })
@@ -301,6 +322,25 @@ struct SandCanvas {
   private naturalObservationStore: P011NaturalObservationStore | null = null;
   private naturalObservationStoreLogged: boolean = false;
   private waterSandVisualInverted: boolean = false;
+  // ── P-012 E-batch 薄分发状态（§9.2：全部为分发与 epoch 递增，材质逻辑零侵入） ──
+  /** P-012 独立 renderer（延迟创建：首次启用非 OFF 档时构造） */
+  private p012Renderer: P012WaterSandRenderer | null = null;
+  /** 外观档位（OFF/E/EA/EAB）；OFF 时走原 renderWaterSand（canonical） */
+  @State p012AppearanceTier: number = P012AppearanceTier.OFF;
+  /** 外观配置代次（tier/seed 变化时递增，进 frameContext） */
+  private p012ConfigRevision: number = 0;
+  /** 外观独立随机种子（不调用/消耗物理随机源） */
+  private p012RenderSeed: number = 20261020;
+  /** 物理实例代次（reset/initField 递增） */
+  private p012FieldEpoch: number = 0;
+  /** 连续性代次（invert180/mode boundary 递增） */
+  private p012ContinuityEpoch: number = 0;
+  /** 几何代次（initField 重算 box 时递增） */
+  private p012GeometryEpoch: number = 0;
+  /** 页面帧采样序号（每帧 render 前 +1） */
+  private p012FrameSerial: number = 0;
+  /** 单调时间源（sampleTimeMs） */
+  private p012LastSampleTimeMs: number = 0;
   private waterRenderA: Float64Array = new Float64Array(0);
   private waterRenderB: Float64Array = new Float64Array(0);
   private waterRenderC: Float64Array = new Float64Array(0);
@@ -337,6 +377,7 @@ struct SandCanvas {
     this.sheetParams.mixBandPx = this.mixBandPx;
     this.sheetParams.shakeInput = this.renderMode === MODE_LIQUID
       ? this.liquidShakeInput : this.waterSandShakeInput;
+    this.sheetParams.p012Tier = this.p012AppearanceTier;
     this.sheetContent.update(this.sheetParams);
   }
 
@@ -398,6 +439,17 @@ struct SandCanvas {
     if (wsSandTopMax !== undefined && wsSandTopMax > 0 && wsSandTopMax <= 30) {
       this.waterSandVSandTopMax = wsSandTopMax;
     }
+    // P-012 E-batch：外观 want 参数（p012tier：0=OFF 1=E 2=EA 3=EAB；p012seed）
+    const p012Tier = AppStorage.get<number>('p012tier');
+    const p012Seed = AppStorage.get<number>('p012seed');
+    if (p012Seed !== undefined && Number.isInteger(p012Seed) && p012Seed >= 0) {
+      this.p012RenderSeed = p012Seed;
+    }
+    if (p012Tier !== undefined && Number.isInteger(p012Tier) &&
+      p012Tier >= P012AppearanceTier.OFF && p012Tier <= P012AppearanceTier.EAB) {
+      // 经 setP012AppearanceTier：非 OFF 档时创建 renderer（延迟创建入口）
+      this.setP012AppearanceTier(p012Tier, 'want');
+    }
     console.info(`[ForceInvert] aboutToAppear: testMode=${this.testMode} forceInvert=${this.forceInvert} useSensor=${this.useSensor} renderMode=${this.renderMode}`);
     try {
       sensor.on(sensor.SensorId.ACCELEROMETER, (data: sensor.AccelerometerResponse) => {
@@ -424,6 +476,9 @@ struct SandCanvas {
 
   aboutToDisappear(): void {
     this.frameCb.owner = null;
+    // P-012 E-batch：断帧回调后释放表现层资源（dispose 幂等）
+    this.p012Renderer?.dispose();
+    this.p012Renderer = null;
     this.stopLiquidController();
     try {
       sensor.off(sensor.SensorId.ACCELEROMETER);
@@ -1028,6 +1083,9 @@ struct SandCanvas {
     this.setupNaturalObservation(this.waterSandField);
     this.waterSandSnapshot = this.waterSandField.snapshot();
     this.waterSandVisualInverted = false;
+    // P-012 E-batch：物理重建 → fieldEpoch 递增 + 断配对（不改物理逻辑）
+    this.p012FieldEpoch++;
+    this.p012Renderer?.resetContinuity();
     this.lastWaterSandMetricTime = Date.now();
     this.logWaterSand(`WS_EVENT init ${JSON.stringify({
       preset: this.waterSandPreset,
@@ -1286,6 +1344,9 @@ struct SandCanvas {
         if (visualInverted !== this.waterSandVisualInverted) {
           ws.invert180();
           this.waterSandVisualInverted = visualInverted;
+          // P-012 E-batch：倒立事件只跟随既有视觉变换并断配对（不二次 invert）
+          this.p012ContinuityEpoch++;
+          this.p012Renderer?.resetContinuity();
           const drift = ws.getDrift();
           this.logWaterSand(`WS_EVENT invert180 ${JSON.stringify({
             count: 1,
@@ -1384,7 +1445,15 @@ struct SandCanvas {
         } else {
           ws.copyStateTo(this.waterSandSnapshot);
         }
-        this.renderWaterSand(this.ctx, this.waterSandSnapshot);
+        // P-012 E-batch 薄分发（§9.2）：一次帧只走一个完整渲染分支，禁止叠加；
+        // canonicalEvidence（物理证据采集 wssnapshot=true）强制 OFF 分支。
+        if (p012ShouldUseP012Renderer(this.p012Renderer,
+          this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled)) {
+          this.p012Renderer?.render(this.ctx, this.waterSandSnapshot,
+            this.buildP012FrameContext());
+        } else {
+          this.renderWaterSand(this.ctx, this.waterSandSnapshot);
+        }
         if (this.testMode) {
           this.logWaterSand(`WS_FRAME ${JSON.stringify(
             waterSandFrameHookPayload(frameDeltaMs, stepResult)
@@ -1513,6 +1582,62 @@ struct SandCanvas {
     const green = Math.round(lightGreen * (1 - heavyShare) + heavyGreen * heavyShare);
     const blue = Math.round(lightBlue * (1 - heavyShare) + heavyBlue * heavyShare);
     return `rgb(${red},${green},${blue})`;
+  }
+
+  /** P-012 E-batch：构造 frameContext（复用页面既有字段，不新建事件源） */
+  private buildP012FrameContext(): P012FrameContext {
+    const sampleTimeMs = Date.now();
+    const frameDeltaMs = this.p012LastSampleTimeMs > 0
+      ? sampleTimeMs - this.p012LastSampleTimeMs : 16.7;
+    this.p012LastSampleTimeMs = sampleTimeMs;
+    this.p012FrameSerial++;
+    return {
+      fieldEpoch: this.p012FieldEpoch,
+      continuityEpoch: this.p012ContinuityEpoch,
+      geometryEpoch: this.p012GeometryEpoch,
+      frameSerial: this.p012FrameSerial,
+      sampleTimeMs: sampleTimeMs,
+      frameDeltaMs: frameDeltaMs,
+      inputMode: this.testMode ? 'TEST' : 'EXPERIENCE',
+      sourceKind: this.testMode ? 'script' : 'sensor',
+      physicalRouteId: this.waterSandParams.routeId,
+      runIdentity: this.waterSandField?.getP011RunId() ?? '',
+      boxX: this.boxX,
+      boxY: this.boxY,
+      boxW: this.boxW,
+      boxH: this.boxH,
+      pixelRatio: 1,
+      visualInverted: this.waterSandVisualInverted,
+      appearanceTier: this.p012AppearanceTier as P012AppearanceTier,
+      renderSeed: this.p012RenderSeed,
+      configRevision: this.p012ConfigRevision,
+      canonicalEvidence: this.waterSandSnapshotEnabled
+    };
+  }
+
+  /** P-012 E-batch：外观档位循环（OFF→E→EA→EAB→OFF；面板按钮）。
+   *  延迟创建 renderer；OFF→非 OFF 重新建基线（不跨 OFF 累计）；切 OFF 不释放
+   *  静态 tile（确定性资源可复用），仅断配对。 */
+  cycleP012AppearanceTier(): void {
+    const next = (this.p012AppearanceTier + 1) % 4;
+    this.setP012AppearanceTier(next, 'panel');
+  }
+
+  setP012AppearanceTier(tier: number, source: string): void {
+    const clipped = Math.max(P012AppearanceTier.OFF, Math.min(P012AppearanceTier.EAB, tier));
+    if (clipped !== this.p012AppearanceTier) {
+      this.p012AppearanceTier = clipped;
+      this.p012ConfigRevision++;
+      // 从 OFF 重新启用：先重建运动配对，不能跨 OFF 时段累计
+      this.p012Renderer?.resetContinuity();
+    }
+    if (clipped !== P012AppearanceTier.OFF && this.p012Renderer === null) {
+      // 延迟创建：首次启用非 OFF 档时构造（aboutToAppear 时 waterSandField 可能
+      // 尚未 initField，但 renderer 只依赖 cols/capacity 常量）
+      this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
+    }
+    console.info(`[P012] appearanceTier -> ${clipped} (source=${source})`);
+    this.syncSheet();
   }
 
   private renderWaterSand(ctx: CanvasRenderingContext2D, snapshot: WaterSandSnapshot): void {

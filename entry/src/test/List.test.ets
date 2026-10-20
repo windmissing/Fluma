@@ -9,6 +9,7 @@ import heightFieldTest from './HeightFieldTest';
 import waterSandFieldTest from './WaterSandFieldTest';
 import liquidCAFieldTest from './LiquidCAFieldTest';
 import p011InputModeTest from './P011InputModeTest';
+import p012WaterSandAdapterTest from './P012WaterSandAdapterTest';
 
 export default function abilityTest() {
   describe('ActsAbilityTest', () => {
@@ -29,4 +30,5 @@ export default function abilityTest() {
   waterSandFieldTest();
   liquidCAFieldTest();
   p011InputModeTest();
+  p012WaterSandAdapterTest();
 }
