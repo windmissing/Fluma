@@ -252,6 +252,129 @@ function makeContext(over) {
   });
 })();
 
+// □G EA-batch: A-tier mist layer draw budget + fog alpha bound + determinism.
+(function eaBatchMistBudget() {
+  const draws = [];
+  const fills = [];
+  const ctx = new Proxy({}, {
+    get(_t, prop) {
+      if (prop === 'fill' || prop === 'stroke' || prop === 'fillRect' || prop === 'strokeRect') {
+        return () => { draws.push(prop); };
+      }
+      if (prop === 'save' || prop === 'restore' || prop === 'beginPath' ||
+        prop === 'closePath' || prop === 'clip') {
+        return () => {};
+      }
+      if (prop === 'moveTo' || prop === 'lineTo' || prop === 'translate' || prop === 'rotate' ||
+        prop === 'rect') {
+        return () => {};
+      }
+      if (prop === 'createLinearGradient') {
+        return () => ({ addColorStop: () => {} });
+      }
+      return undefined;
+    },
+    set(_t, prop, value) {
+      if (prop === 'fillStyle' && typeof value === 'string' && value.startsWith('rgba(232,240,236')) {
+        fills.push(value);
+      }
+      return true;
+    }
+  });
+  const cols = 128;
+  const field = new WaterSandField(cols, 192);
+  field.initialize(fullScene(cols));
+  field.setTilt(15);
+  // 悬浮注入：让水体雾 tau > 0（suspended state=1）
+  field.inject({ phase: 1, amount: 60, startCol: 20, endColInclusive: 60, state: 1 });
+  field.step(1 / 60);
+  const renderer = new P012WaterSandRenderer(cols, 192);
+  let worst = 0;
+  let worstTotal = 0;
+  let alphaOk = true;
+  for (let i = 0; i < 60; i++) {
+    field.step(1 / 60);
+    draws.length = 0;
+    fills.length = 0;
+    renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EA }));
+    worst = Math.max(worst, draws.length - 0);
+    // total draws include E pass; A mist uses rgba(232,240,236) fills only
+    worstTotal = Math.max(worstTotal, draws.length);
+    for (const f of fills) {
+      const m = /rgba\(232,240,236,([0-9.]+)\)/.exec(f);
+      // 水体雾上限 0.78（标定后）；界面带 0.55——两者都经此色提交，用 0.78 上界
+      if (m && parseFloat(m[1]) > 0.78 + 1e-9) {
+        alphaOk = false;
+      }
+    }
+  }
+  results.push({
+    name: 'p012_ea_mistDrawBudget_worst60Frames',
+    status: worstTotal <= 64 ? 'PASS' : 'FAIL',
+    error: `worstTotalDraws=${worstTotal} (E+A budget 64)`
+  });
+  results.push({
+    name: 'p012_ea_fogAlphaBound',
+    status: alphaOk ? 'PASS' : 'FAIL',
+    error: alphaOk ? '' : 'fog alpha exceeded 0.55'
+  });
+  // E tier regression: tier=E must not emit any mist fills
+  draws.length = 0;
+  fills.length = 0;
+  renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.E }));
+  const eMistFills = fills.length;
+  renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EA }));
+  const eaMistFills = fills.length;
+  results.push({
+    name: 'p012_ea_mistOnlyInEATier',
+    status: eMistFills === 0 && eaMistFills > 0 ? 'PASS' : 'FAIL',
+    error: `eMist=${eMistFills} eaMist=${eaMistFills}`
+  });
+})();
+
+// □H EA determinism: same seed two renderers → same fill sequences.
+(function eaDeterminism() {
+  const fillsA = [];
+  const fillsB = [];
+  const mk = (sink) => new Proxy({}, {
+    get(_t, prop) {
+      if (prop === 'fill' || prop === 'stroke' || prop === 'fillRect' || prop === 'strokeRect') {
+        return () => {};
+      }
+      if (prop === 'save' || prop === 'restore' || prop === 'beginPath' ||
+        prop === 'closePath' || prop === 'clip') {
+        return () => {};
+      }
+      if (prop === 'moveTo' || prop === 'lineTo' || prop === 'translate' || prop === 'rotate' ||
+        prop === 'rect') {
+        return () => {};
+      }
+      if (prop === 'createLinearGradient') {
+        return () => ({ addColorStop: () => {} });
+      }
+      return undefined;
+    },
+    set(_t, prop, value) { if (prop === 'fillStyle') { sink.push(`${value}`); } return true; }
+  });
+  const cols = 128;
+  const field = new WaterSandField(cols, 192);
+  field.initialize(fullScene(cols));
+  field.setTilt(15);
+  field.step(1 / 60);
+  const r1 = new P012WaterSandRenderer(cols, 192);
+  const r2 = new P012WaterSandRenderer(cols, 192);
+  const snap = field.snapshot();
+  r1.render(mk(fillsA), snap, makeContext({ appearanceTier: P012AppearanceTier.EA }));
+  r2.render(mk(fillsB), snap, makeContext({ appearanceTier: P012AppearanceTier.EA }));
+  const same = fillsA.length === fillsB.length &&
+    fillsA.every((v, i) => v === fillsB[i]);
+  results.push({
+    name: 'p012_ea_deterministicSameSeed',
+    status: same ? 'PASS' : 'FAIL',
+    error: `fillCounts=${fillsA.length}/${fillsB.length}`
+  });
+})();
+
 // □F adapter slot isolation: page snapshot mutation must not leak into slots.
 (function slotIsolation() {
   const cols = 16;

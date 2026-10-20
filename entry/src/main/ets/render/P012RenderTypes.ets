@@ -95,6 +95,10 @@ export interface P012ConservationCheck {
 
 /** 渲染层 draw 预算（E-batch：E 档合计 ≤16 次 fill/stroke 提交） */
 export const P012_E_BATCH_DRAW_BUDGET = 16;
+/** EA-batch：A 档云雾新增 draw 预算（算法稿 §8.2：A 档 ≤48） */
+export const P012_A_BATCH_DRAW_BUDGET = 48;
+/** EA-batch：E+A 合计 draw 预算（16+48=64；公共容器绘制含于 E 侧） */
+export const P012_EA_BATCH_DRAW_BUDGET = 64;
 
 /** 显示帧间隔阈值：超过即视为 v1 视觉连续性中断（§3.2） */
 export const P012_FRAME_GAP_MS = 100;

@@ -1,13 +1,14 @@
-// P-012 表现层渲染器——E 档：光照与色调映射（algorithm-P012-render-v1.md §3）
-// 问题 ID：P-012；方案版本：p012-render-material-v1（E-batch）
-// 职责：帧绘制编排（E 色调/伪法向光照/液面高光/亮粒 tile），拥有 adapter。
+// P-012 表现层渲染器——E 档：光照与色调映射 + A 档：云雾/界面光学过渡
+// 问题 ID：P-012；方案版本：p012-render-material-v1（E-batch → EA-batch）
+// 职责：帧绘制编排（E 色调/伪法向光照/液面高光/亮粒 tile；A 界面散射带/
+//   两尺度斑驳/水体雾），拥有 adapter。
 // 红线：只读物理场；一次帧只选一个完整渲染分支；不进入物理 checker。
-// 预算：E 档 draw ≤16（P012_E_BATCH_DRAW_BUDGET）；CPU 目标 ≤0.25ms/帧（待真机验证）。
+// 预算：E 档 draw ≤16；A 档新增 ≤48（EA 合计 ≤64）；CPU 0.25+0.35ms（待真机验证）。
 import { WaterSandSnapshot, WaterSandField } from '../physics/WaterSandField';
 import { P012WaterSandAdapter, P012MaterialFrameView } from './P012WaterSandAdapter';
 import {
   P012FrameContext, P012AppearanceTier, P012_APPEARANCE_ROUTE_ID,
-  P012_E_BATCH_DRAW_BUDGET
+  P012_E_BATCH_DRAW_BUDGET, P012_A_BATCH_DRAW_BUDGET
 } from './P012RenderTypes';
 
 /** 预计算材质色阶（设计稿 §3.1：重沙浅黄绿 / 轻沙暖浅 / 水体近薄荷白） */
@@ -57,6 +58,41 @@ const P012_SPARK_TILE = 64;
 const P012_SPARK_COVERAGE = 0.012;   // 0.5%~2% 取中值
 const P012_SPARK_GAIN = 0.5;         // 亮粒提亮幅度（<=T 肩部内）
 
+/** ── A 档云雾参数（算法稿 §4）── */
+/** 界面过渡全宽 wFull：10-90% 宽 = 0.6084·wFull，目标 24~48px → wFull≈40~79 */
+const P012_A_WFULL_PX = 56;
+/** smoothstep 邻近系数：0.6084（10-90% / wFull） */
+const P012_A_SMOOTHSTEP_1090 = 0.6084;
+/** 两尺度 tile 尺寸（px）：细团 12~24 / 大团 40~80 → tile 用其公约尺度采样 */
+const P012_A_TILE = 64;              // tile 逻辑尺寸（一个周期）
+/** 斑驳调制幅度：mottle = 1 + a1·n1 + a2·n2（n1 细团/n2 大团，零均值归一化）。
+ *  标定依据（test/calib_p012_tau_static.cjs）：a1/a2 = 1.3/1.0 使 mottle
+ *  std≈0.35；经 stretch 线性拉伸 + 加性调制后水体 std 达 15+。 */
+const P012_A_MOTTLE_A1 = 1.3;
+const P012_A_MOTTLE_A2 = 1.0;
+/** tauOptical 峰值（界面附近有限支撑的材质散射，非永久悬沙） */
+const P012_A_TAU_INTERFACE = 1.35;
+/** 悬浮浓度→水体雾 tau 系数（qH/qL clamp [0,1]） */
+const P012_A_KH = 0.9;
+const P012_A_KL = 0.7;
+/** 雾最大 alpha：水体雾（静止斑驳主体）0.78 / 界面带 0.55（设计稿 §4.2 候选值）。
+ *  标定依据（test/calib_p012_tau_static.cjs）：alpha 上限 0.55 时水体 std 天花板
+ *  ≈10.8（range 30.8 × 钟形形状因子 0.35），无法达到 P4 锚点 std>15；
+ *  0.78 时实测仿真 std=15.3（参考帧 20~42 的下界）。 */
+const P012_A_FOG_ALPHA_MAX = 0.78;
+/** 界面带雾 alpha 上限（设计候选值 0.55：界面是散射过渡不是浓雾遮盖） */
+const P012_A_BAND_ALPHA_MAX = 0.55;
+/** 静止水介质静态斑驳（q=0 时的低对比光照斑驳，§4.2"清水静态明暗"）：
+ *  tauStatic = TAU_STATIC_BASE + TAU_STATIC_AMP·(stretch(mottle)-1)
+ *  stretch=2.2 线性拉伸（clamp [0.2,2.0]）拉开 value-noise 钟形分布。 */
+const P012_A_TAU_STATIC_BASE = 0.55;
+const P012_A_TAU_STATIC_AMP = 1.8;
+const P012_A_MOTTLE_STRETCH = 2.2;
+/** A 档 alpha 档数（固定档合并 Path 控 draw；量化步 0.78/12≈0.065） */
+const P012_A_ALPHA_TIERS = 12;
+/** 云雾带绘制分组：16 组（每组 8 列，§4.3 共用缓存噪声裁片） */
+const P012_A_GROUPS = 16;
+
 /** renderer 对外生命周期接口（architecture §1 模块表） */
 export class P012WaterSandRenderer {
   private readonly adapter: P012WaterSandAdapter;
@@ -71,6 +107,14 @@ export class P012WaterSandRenderer {
   private readonly shadeLut: Float64Array = new Float64Array(P012_LUT_STEPS + 1);
   /** 亮粒 tile（沙面稀疏亮粒；64×64，值域 [0,1]，0=无颗粒） */
   private readonly sparkTile: Float64Array = new Float64Array(P012_SPARK_TILE * P012_SPARK_TILE);
+  /** ── A 档资源（EA-batch）── */
+  /** 两尺度零均值噪声 tile：n1 细团（12~24px）/ n2 大团（40~80px），值域约 [-1,1] */
+  private readonly mottleN1: Float64Array = new Float64Array(P012_A_TILE * P012_A_TILE);
+  private readonly mottleN2: Float64Array = new Float64Array(P012_A_TILE * P012_A_TILE);
+  /** alphaFog LUT：tau∈[0,4] → 1-exp(-tau)（§4.2 预计算） */
+  private readonly fogLut: Float64Array = new Float64Array(65);
+  /** A 档帧间相位（静止不动；可信运动估计属 EAB-batch 运动代理） */
+  private aPhaseX: number = 0;
   private readonly cols: number;
   private readonly capacity: number;
   /** 最近一次 draw 提交计数（性能预检只读钩子；不进遥测） */
@@ -90,6 +134,8 @@ export class P012WaterSandRenderer {
     this.scratch = new Float64Array(cols);
     this.buildShadeLut();
     this.buildSparkTile(20261020);
+    this.buildMottleTiles(20261021);
+    this.buildFogLut();
   }
 
   /** 外观路线身份（独立视觉/性能证据 manifest 用） */
@@ -149,11 +195,19 @@ export class P012WaterSandRenderer {
     ctx.closePath();
     ctx.fill();
     drawCount++;
-    // 2) 沙体三带：重沙带（bh 以下）/ 轻沙带（mixStart→bh）/ 混合带（sandTop→mixStart）
+    // 2) A 档水体雾（EA-batch，算法稿 §4.2）：悬浮浓度 q + 静态水介质斑驳。
+    //    只画水体区（sandTop 以上）；界面过渡带在沙体之后画（见步骤 5）。
+    const tier = frameContext.appearanceTier;
+    if (tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) {
+      drawCount += this.drawWaterFog(ctx, view, heightToY, colW,
+        boxX, boxY, boxW, boxH);
+    }
+    // 3) 沙体三带：重沙带（bh 以下）/ 轻沙带（mixStart→bh）/ 混合带（sandTop→mixStart）
     //    逐列伪法向光照：s = d(sandTop)/dx（屏幕单位），L = La + Ld·max(dot(n,l),0)
     //    用 8 档游程近似逐列光照（run 合并相邻同档列，draw 计数受控）
+    //    A 档启用时沙顶 3px 硬描边语义由界面过渡带取代（P-012 分支无硬描边）
     drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
-    // 3) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
+    // 4) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
     ctx.beginPath();
     ctx.moveTo(boxX, heightToY(this.smoothWaterTop[0]));
     for (let c = 1; c < n; c++) {
@@ -163,7 +217,13 @@ export class P012WaterSandRenderer {
     ctx.lineWidth = 5;
     ctx.stroke();
     drawCount++;
-    // 4) 容器边框（与原渲染一致的白框）
+    // 5) A 档界面光学过渡带（沙体之后绘制）：sandTop 两侧 ±halfW 内
+    //    smoothstep 包络雾——沙侧上缘被雾柔和覆盖，消除沙体 fillRect 的硬边。
+    if (tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) {
+      drawCount += this.drawInterfaceBand(ctx, view, heightToY, colW,
+        boxX, boxY, boxW, boxH);
+    }
+    // 6) 容器边框（与原渲染一致的白框）
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
     ctx.lineWidth = 3;
     ctx.strokeRect(boxX, boxY, boxW, boxH);
@@ -219,6 +279,247 @@ export class P012WaterSandRenderer {
         ? 0.4 + P012_SPARK_GAIN * next()
         : 0;
     }
+  }
+
+  /**
+   * A 档两尺度零均值噪声 tile（算法稿 §4.2）：
+   * n1 细团（12~24px 特征尺度）/ n2 大团（40~80px）。
+   * 用多八度 value-noise：白噪声 → 盒滤波降采样到目标尺度 → 去均值归一化。
+   * 错开固定相位（n2 偏移半个周期）；确定性（LCG 种子，不用物理随机源）。
+   */
+  private buildMottleTiles(seed: number): void {
+    // n1：细团——特征尺度 16px（12~24 中值）→ tile 64px 含 4 个周期
+    this.buildValueNoiseTile(this.mottleN1, (seed | 0) + 1, 16);
+    // n2：大团——特征尺度 56px（40~80 中值）→ tile 64px 接近 1 个周期
+    this.buildValueNoiseTile(this.mottleN2, (seed | 0) + 2, 56);
+  }
+
+  /** 单尺度 value-noise tile：白噪声 → 盒滤波 → 去均值 → 归一到 [-1,1] */
+  private buildValueNoiseTile(out: Float64Array, seed: number, featurePx: number): void {
+    const size = P012_A_TILE;
+    let state = seed | 0;
+    const next = (): number => {
+      state = (Math.imul(state, 1664525) + 1013904223) | 0;
+      return ((state >>> 8) & 0xffffff) / 0xffffff;
+    };
+    const white: Float64Array = new Float64Array(size * size);
+    for (let i = 0; i < white.length; i++) {
+      white[i] = next() * 2 - 1;
+    }
+    // 盒滤波半径 = featurePx/2（可平铺：环形索引）
+    const r = Math.max(1, Math.round(featurePx / 2));
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        let sum = 0;
+        let cnt = 0;
+        for (let dy = -r; dy <= r; dy += 2) {
+          for (let dx = -r; dx <= r; dx += 2) {
+            const yy = (y + dy + size) % size;
+            const xx = (x + dx + size) % size;
+            sum += white[yy * size + xx];
+            cnt++;
+          }
+        }
+        out[y * size + x] = sum / cnt;
+      }
+    }
+    // 去均值 + 归一化到 [-1,1]
+    let mean = 0;
+    for (let i = 0; i < out.length; i++) {
+      mean += out[i];
+    }
+    mean /= out.length;
+    let maxAbs = 1e-9;
+    for (let i = 0; i < out.length; i++) {
+      out[i] -= mean;
+      maxAbs = Math.max(maxAbs, Math.abs(out[i]));
+    }
+    for (let i = 0; i < out.length; i++) {
+      out[i] /= maxAbs;
+    }
+  }
+
+  /** alphaFog LUT：tau∈[0,4] → 1-exp(-tau)，64 档（§4.2 预计算，热路径零 exp） */
+  private buildFogLut(): void {
+    for (let i = 0; i <= 64; i++) {
+      const tau = i / 16;
+      this.fogLut[i] = 1 - Math.exp(-tau);
+    }
+  }
+
+  /** fogLut 采样：tau clamp [0,4] */
+  private fogAlpha(tau: number): number {
+    const t = Math.max(0, Math.min(4, tau));
+    const idx = Math.round(t * 16);
+    return this.fogLut[idx];
+  }
+
+  /** 悬浮浓度 q（clamp [0,1]，水深≤eps 时 0；不改库存）——A 档共用 */
+  private suspQ(susp: number, c: number): number {
+    const depth = this.smoothSandTop[c] - this.smoothWaterTop[c];
+    return depth > 1e-6 ? Math.max(0, Math.min(1, susp / depth)) : 0;
+  }
+
+  /** 斑驳采样：两尺度 tile 按屏幕坐标平铺（aPhaseX 静止=0；EAB 运动代理接手） */
+  private mottleAt(xPx: number, yPx: number): number {
+    const tx = ((Math.floor(xPx) % P012_A_TILE) + P012_A_TILE) % P012_A_TILE;
+    const ty = ((Math.floor(yPx) % P012_A_TILE) + P012_A_TILE) % P012_A_TILE;
+    const n1 = this.mottleN1[ty * P012_A_TILE + tx];
+    const n2 = this.mottleN2[ty * P012_A_TILE + tx];
+    return 1 + P012_A_MOTTLE_A1 * n1 + P012_A_MOTTLE_A2 * n2;
+  }
+
+  /** A 档 alpha 档矩形统一提交：每档一个合并 Path（fog 浅薄荷偏白） */
+  private fillFogTiers(ctx: CanvasRenderingContext2D, tierRects: number[][],
+    alphaStep: number, budget: number): number {
+    let draws = 0;
+    const fogR = 232;
+    const fogG = 240;
+    const fogB = 236;
+    for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
+      if (tierRects[t].length === 0) {
+        continue;
+      }
+      const a = (t + 0.5) * alphaStep;
+      ctx.beginPath();
+      for (let i = 0; i < tierRects[t].length; i += 4) {
+        ctx.rect(tierRects[t][i], tierRects[t][i + 1],
+          tierRects[t][i + 2], tierRects[t][i + 3]);
+      }
+      ctx.fillStyle = `rgba(${fogR},${fogG},${fogB},${a.toFixed(3)})`;
+      ctx.fill();
+      draws++;
+      if (draws >= budget) {
+        break;   // 预算保护
+      }
+    }
+    return draws;
+  }
+
+  /** 静止水介质静态斑驳（q=0 时的低对比光照斑驳，§4.2"清水静态明暗"）：
+   *  tauStatic = TAU_STATIC_BASE + TAU_STATIC_AMP·(stretch(mottle)-1)
+   *  stretch=2.2 线性拉伸（clamp [0.2,2.0]）拉开 value-noise 钟形分布。 */
+  private staticTau(mottle: number): number {
+    const stretched = Math.max(0.2, Math.min(2.0,
+      1 + (mottle - 1) * P012_A_MOTTLE_STRETCH));
+    return Math.max(0, P012_A_TAU_STATIC_BASE +
+      P012_A_TAU_STATIC_AMP * (stretched - 1));
+  }
+
+  /**
+   * A 档水体雾（算法稿 §4.2，沙体之前绘制）：16 组 × 每组 8 列竖条带，
+   * 组内竖向 8px 段采样 tau（qH/qL 悬浮 + 静止水介质斑驳 staticTau）。
+   * q 归零时保留静态斑驳（设计 §4.2），不制造持续漂浮粒子。
+   */
+  private drawWaterFog(ctx: CanvasRenderingContext2D, view: P012MaterialFrameView,
+    heightToY: (h: number) => number, colW: number,
+    boxX: number, boxY: number, boxW: number, boxH: number): number {
+    const n = this.cols;
+    const halfW = P012_A_WFULL_PX / 2;
+    const alphaStep = P012_A_FOG_ALPHA_MAX / P012_A_ALPHA_TIERS;
+    const tierRects: number[][] = [];
+    for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
+      tierRects.push([]);
+    }
+    const segH = 8;   // 竖向采样段高（px）
+    // 逐列计算（不按组代表列：组边界会有水平硬跳变，maxGrad<8 锚点无法达成；
+    // 128 列 × 每列 ~40 段 = O(5000) 次采样远低于预算，draw 数只取决于档数）
+    for (let c = 0; c < n; c++) {
+      const qH = this.suspQ(view.suspHAt(c), c);
+      const qL = this.suspQ(view.suspLAt(c), c);
+      const gTopY = heightToY(this.smoothWaterTop[c]);
+      const gIfaceY = heightToY(this.smoothSandTop[c]);
+      const xPx = boxX + (c + 0.5) * colW;
+      for (let y = Math.ceil(gTopY); y < gIfaceY; y += segH) {
+        const yMid = y + segH / 2;
+        // tauOptical：界面附近有限支撑（半宽内峰值 → 线性衰减到 0）
+        const dist = Math.abs(gIfaceY - yMid);
+        const tauOpt = dist < halfW
+          ? P012_A_TAU_INTERFACE * (1 - dist / halfW) : 0;
+        // 静止水介质斑驳（加性调制 + 拉伸）
+        const mot = this.mottleAt(xPx - this.aPhaseX, yMid);
+        const tauStatic = this.staticTau(mot);
+        const tau = Math.max(0, tauOpt + P012_A_KH * qH + P012_A_KL * qL + tauStatic);
+        let alpha = this.fogAlpha(tau);
+        if (alpha <= 0.004) {
+          continue;
+        }
+        alpha = Math.min(P012_A_FOG_ALPHA_MAX, alpha);
+        const tierIdx = Math.min(P012_A_ALPHA_TIERS - 1,
+          Math.floor(alpha / alphaStep));
+        const segBot = Math.min(gIfaceY, y + segH);
+        tierRects[tierIdx].push(boxX + c * colW, y, colW, segBot - y);
+      }
+    }
+    return this.fillFogTiers(ctx, tierRects, alphaStep, P012_A_BATCH_DRAW_BUDGET);
+  }
+
+  /**
+   * A 档界面光学过渡带（算法稿 §4.1，沙体之后绘制）：
+   * sandTop 两侧 ±halfW 内 smoothstep 包络（t=clamp((d+wFull/2)/wFull,0,1)，
+   * waterWeight=t²(3-2t)），雾覆盖沙侧上缘 → 沙面到水体连续渐变无硬边。
+   * 逐列 4 段采样，与水体雾同 alpha 档合并提交。
+   */
+  private drawInterfaceBand(ctx: CanvasRenderingContext2D, view: P012MaterialFrameView,
+    heightToY: (h: number) => number, colW: number,
+    boxX: number, boxY: number, boxW: number, boxH: number): number {
+    const n = this.cols;
+    const wFull = P012_A_WFULL_PX;
+    const halfW = wFull / 2;
+    // 界面带 alpha 上限守设计候选值 0.55（散射过渡，不是浓雾遮盖）
+    const alphaStep = P012_A_BAND_ALPHA_MAX / P012_A_ALPHA_TIERS;
+    // 预计算逐列 q（列内 8 段共享）
+    const qHArr = new Float64Array(n);
+    const qLArr = new Float64Array(n);
+    for (let c = 0; c < n; c++) {
+      qHArr[c] = this.suspQ(view.suspHAt(c), c);
+      qLArr[c] = this.suspQ(view.suspLAt(c), c);
+    }
+    const tierRects: number[][] = [];
+    for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
+      tierRects.push([]);
+    }
+    for (let c = 0; c < n; c++) {
+      const xPx = boxX + (c + 0.5) * colW;
+      const ifaceY = heightToY(this.smoothSandTop[c]);
+      // 带范围：sandTop 上方 halfW（水侧）→ 下方 quarterW（沙侧收尾）
+      const bandTop = ifaceY - halfW;
+      const bandBot = ifaceY + wFull * 0.25;
+      // 8 段采样（maxGrad<8 锚点：段内 alpha 阶梯 ≤2.2 亮度/段）；
+      // 顶部 ramp 渐入：第一段乘 (s+0.5)/8 防带顶硬起始
+      const segH = (bandBot - bandTop) / 8;
+      const qH = qHArr[c];
+      const qL = qLArr[c];
+      for (let s = 0; s < 8; s++) {
+        const yTop = bandTop + segH * s;
+        const yMid = yTop + segH / 2;
+        // d：到 S 的法向距离（正=水侧，负=沙侧）
+        const d = ifaceY - yMid;
+        const t = Math.max(0, Math.min(1, (d + halfW) / wFull));
+        const rampIn = Math.min(1, (s + 0.5) / 2.5);   // 前 2 段渐入
+        const waterWeight = t * t * (3 - 2 * t) * rampIn;
+        if (waterWeight <= 0.01) {
+          continue;
+        }
+        const mot = this.mottleAt(xPx - this.aPhaseX, yMid);
+        // 沙侧（d<0）：waterWeight 已随 smoothstep 衰减，雾色向沙色过渡
+        const tau = Math.max(0, (P012_A_TAU_INTERFACE * waterWeight +
+          P012_A_KH * qH * waterWeight + P012_A_KL * qL * waterWeight) * mot);
+        let alpha = this.fogAlpha(tau);
+        if (alpha <= 0.004) {
+          continue;
+        }
+        alpha = Math.min(P012_A_BAND_ALPHA_MAX, alpha);
+        const tierIdx = Math.min(P012_A_ALPHA_TIERS - 1,
+          Math.floor(alpha / alphaStep));
+        const segTop = Math.max(bandTop, yTop);
+        const segBot = Math.min(bandBot, yTop + segH);
+        if (segBot > segTop) {
+          tierRects[tierIdx].push(boxX + c * colW, segTop, colW, segBot - segTop);
+        }
+      }
+    }
+    return this.fillFogTiers(ctx, tierRects, alphaStep, P012_A_BATCH_DRAW_BUDGET);
   }
 
   /** 显示 profile：4 遍 3 点移动平均（与原 renderWaterSand 完全一致的平滑） */
