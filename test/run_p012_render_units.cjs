@@ -517,6 +517,24 @@ function makeCountingCanvas(sink) {
     status: ((clipsEAB - clipsEA === 3) && imgEAB > 0 && imgEA === 0) ? 'PASS' : 'FAIL',
     error: `clipEA=${clipsEA} clipEAB=${clipsEAB} imgEA=${imgEA} imgEAB=${imgEAB}`
   });
+  // B 档颗粒净增量 ≤48（P012_B_BATCH_DRAW_BUDGET）。
+  // 2026-10-21 审核发现：clip+drawImage 改造后平铺边界四周各外扩一整圈
+  // 冗余 tile（那是 v1 pattern 采样留余量的做法，drawImage 是 1:1 直贴不需要），
+  // 净增量达66 > 48，而该常量此前被 import 却从未使用，故静默超标。
+  // 已改为精确边界（只摆覆盖 clip 包围盒的 tile，像素输出不变）+ 新增本断言。
+  results.push({
+    name: 'p012_eab_grainWithinBBatchBudget',
+    status: (worstEAB - worstEA <= P012_B_BATCH_DRAW_BUDGET) ? 'PASS' : 'FAIL',
+    error: `grainDelta=${worstEAB - worstEA} budget=${P012_B_BATCH_DRAW_BUDGET} ` +
+           `drawImageWorst=${imgEAB}`
+  });
+  // 渲染器自身钩子（供页面侧性能预检复用，须与上面同口径）
+  results.push({
+    name: 'p012_eab_withinBBatchDrawBudgetHook',
+    status: renderer.withinBBatchDrawBudget() ? 'PASS' : 'FAIL',
+    error: `lastDrawCount=${renderer.lastDrawCount} ea=${renderer.lastDrawCountEa} ` +
+           `budget=${P012_B_BATCH_DRAW_BUDGET}`
+  });
 })();
 
 (function eabDeterminism() {

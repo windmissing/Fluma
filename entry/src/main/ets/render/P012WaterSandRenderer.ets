@@ -117,8 +117,6 @@ const P012_B_ENV_PX = 4;
 const P012_B_ENV_AMP = 0.4;
 /** 单位方差归一化后的截幅（有限范围，§5.1"被截到有限范围"） */
 const P012_B_GRAIN_CLIP = 2.5;
-/** 预合成层几何容差（px）：帧间漂移低于此值时复用缓存层 */
-const P012_GRAIN_LAYER_TOL_PX = 0.5;
 
 /** renderer 对外生命周期接口（architecture §1 模块表） */
 export class P012WaterSandRenderer {
@@ -157,6 +155,8 @@ export class P012WaterSandRenderer {
   private readonly capacity: number;
   /** 最近一次 draw 提交计数（性能预检只读钩子；不进遥测） */
   lastDrawCount: number = 0;
+  /** 最近一次 E/A 档（无颗粒）draw 提交计数，作为 B 档颗粒预算的基线 */
+  lastDrawCountEa: number = 0;
   /** 最近一次 adapter 配对结论（只读诊断） */
   lastPairValid: boolean = false;
   private disposed: boolean = false;
@@ -258,7 +258,8 @@ export class P012WaterSandRenderer {
     //    A 档启用时沙顶 3px 硬描边语义由界面过渡带取代（P-012 分支无硬描边）
     drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
-    //      createPattern(repeat) 全局平流偏移填充；跟随材料净搬运、无缝、无贴纸。
+    //      drawImage(256² 颗粒 tile) 按全局平流偏移精确平铺；跟随材料净搬运、
+    //      无缝、无贴纸。
     if (tier === P012AppearanceTier.EAB) {
       drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
     }
@@ -285,6 +286,10 @@ export class P012WaterSandRenderer {
     drawCount++;
     ctx.restore();
     this.lastDrawCount = drawCount;
+    // 记录无颗粒基线（E/A 档）：B 档颗粒预算钩子用它算净增量
+    if (tier !== P012AppearanceTier.EAB) {
+      this.lastDrawCountEa = drawCount;
+    }
   }
 
   /** 生命周期：清连续性配对（reset/inject/invert/后台恢复时页面通知） */
@@ -314,6 +319,13 @@ export class P012WaterSandRenderer {
   /** 第一梯队 E/A/B 合计 draw 预算断言（单测钩子：≤112 次提交） */
   withinFirstTierDrawBudget(): boolean {
     return this.lastDrawCount <= P012_FIRST_TIER_DRAW_BUDGET;
+  }
+
+  /** B 档颗粒自身新增 draw 预算断言（单测钩子：≤48 次提交）。
+   *  取EAB 总额与 EA 总额之差（两者渲染路径除颗粒外完全一致），即颗粒净增量。
+   *  lastDrawCountEa 为最近一帧 E/A 档（无颗粒）的提交数。 */
+  withinBBatchDrawBudget(): boolean {
+    return (this.lastDrawCount - this.lastDrawCountEa) <= P012_B_BATCH_DRAW_BUDGET;
   }
 
   // ───────────────────────── private ─────────────────────────
@@ -701,10 +713,15 @@ export class P012WaterSandRenderer {
       // dx 取整到整数像素：drawImage 的小数目标坐标会触发双线性重采样
       // （会平滑掉颗粒噪声、压低 hfH 锚点），整数坐标为 1:1 直贴。
       const off = Math.round(b.off);
-      const k0 = Math.floor((boxX - P012_GRAIN_TILE - off) / P012_GRAIN_TILE);
-      const k1 = Math.ceil((boxX + boxW - off) / P012_GRAIN_TILE);
-      const j0 = Math.floor((minY - P012_GRAIN_TILE) / P012_GRAIN_TILE);
-      const j1 = Math.ceil(maxY / P012_GRAIN_TILE);
+      // 精确平铺边界：只摆能覆盖 [boxX, boxX+boxW] × [minY, maxY] 的 tile，
+      // 不像v1 那样四周各外扩一整圈（外扩只是给pattern 采样留余量，
+      // drawImage 是 1:1 直贴，外扩纯属无效提交）。
+      //   横向：需 tile左边界 ≤ boxX 且 右边界 ≥ boxX+boxW
+      //   纵向：需 tile 上边界 ≤ minY 且 下边界 ≥ maxY
+      const k0 = Math.floor((boxX - off) / P012_GRAIN_TILE);
+      const k1 = Math.floor((boxX + boxW - off) / P012_GRAIN_TILE);
+      const j0 = Math.floor(minY / P012_GRAIN_TILE);
+      const j1 = Math.ceil(maxY / P012_GRAIN_TILE) - 1;
       for (let k = k0; k <= k1; k++) {
         const dx = off + k * P012_GRAIN_TILE;
         for (let j = j0; j <= j1; j++) {
@@ -729,7 +746,6 @@ export class P012WaterSandRenderer {
     }
     return draws;
   }
-
 
   /** 悬浮浓度 q（clamp [0,1]，水深≤eps 时 0；不改库存）——A 档共用 */
   private suspQ(susp: number, c: number): number {
