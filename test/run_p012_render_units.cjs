@@ -772,7 +772,8 @@ function makeCountingCanvas(sink) {
     });
   })();
 
-  // ④ λ 换算一致性：λpx = λ_material × pxPerMaterial；层高不变多帧相位零漂移
+  // ④ λ 换算一致性：λpx = H/k（k=ceil(256/原始λpx)，H=256）→ 与
+  //    P012_C_LAMBDA_MATERIAL×pxPerMaterial 偏差 <1/k；多帧同快照相位零漂移
   (function test4() {
     const renderer = new P012WaterSandRenderer(cols, 192);
     const pxPerMaterial = 900 / 192;   // boxH/capacity
@@ -787,13 +788,20 @@ function makeCountingCanvas(sink) {
       boxW: 640, boxH: 900
     }));
     const lamPx = renderer.stratLamPx;
-    const expect = 24 * pxPerMaterial;   // P012_C_LAMBDA_MATERIAL
-    // 第二帧同快照：相位不变（stratLamPx 不变、warp 不变 → 确定性）
+    const raw = 24 * pxPerMaterial;                       // 原始 λpx
+    const k = Math.max(1, Math.ceil(256 / raw));
+    const expect = 256 / k;                               // H/k 对齐
+    const aligned = Math.abs(lamPx - expect) < 1e-9;
+    const withinTol = Math.abs(lamPx - raw) / raw <= 1 / k + 1e-9;  // 偏差 <1/k
+    // 第二帧同快照：λpx 不变（确定性）
     const lamPx2 = renderer.stratLamPx;
+    // 无缝性：λpx 整除位图高（平铺相位连续的结构保证）
+    const seamless = Math.abs(256 / lamPx - Math.round(256 / lamPx)) < 1e-9;
     results.push({
       name: 'p012_c_lambdaScaleConsistent',
-      status: (Math.abs(lamPx - expect) < 1e-9 && lamPx2 === lamPx) ? 'PASS' : 'FAIL',
-      error: `lamPx=${lamPx.toFixed(3)} expect=${expect.toFixed(3)} stable=${lamPx2 === lamPx}`
+      status: (aligned && withinTol && lamPx2 === lamPx && seamless) ? 'PASS' : 'FAIL',
+      error: `lamPx=${lamPx.toFixed(3)} expect(H/k)=${expect.toFixed(3)} raw=${raw.toFixed(3)} ` +
+             `aligned=${aligned} withinTol=${withinTol} seamless=${seamless} stable=${lamPx2 === lamPx}`
     });
   })();
 
@@ -812,6 +820,7 @@ function makeCountingCanvas(sink) {
   })();
 
   // ⑥ 消融 strat：draw 计数不含 C（strat 跳过时 drawImage 少于 off）
+  //    + C 净增量预算断言（§11.4：draw ≤16；首版 27 超标回炉的回归闸）
   (function test6() {
     const renderer = new P012WaterSandRenderer(cols, 192);
     const stubBitmap = { _stub: true, width: 64, height: 256 };
@@ -828,10 +837,16 @@ function makeCountingCanvas(sink) {
       appearanceTier: P012AppearanceTier.EAB,
       ablation: typesMod.P012Ablation.STRAT
     });
+    const delta = off.draws - strat.draws;
     results.push({
       name: 'p012_c_ablateStrat_skipsStratLayer',
-      status: (off.draws - strat.draws > 0) ? 'PASS' : 'FAIL',
-      error: `drawsOff=${off.draws} drawsStrat=${strat.draws} delta=${off.draws - strat.draws}`
+      status: (delta > 0) ? 'PASS' : 'FAIL',
+      error: `drawsOff=${off.draws} drawsStrat=${strat.draws} delta=${delta}`
+    });
+    results.push({
+      name: 'p012_c_drawBudget_within16',
+      status: delta <= 16 ? 'PASS' : 'FAIL',
+      error: `cDelta=${delta} budget=16 (C1 drawImage + C3 fillRect)`
     });
   })();
 

@@ -141,8 +141,9 @@ const P012_C_AMP_ORDERED = 6;
 const P012_C_AMP_MIX = 3;
 /** C1 叠加强度（globalAlpha：位图灰度 128±deltaY 与底色 source-over） */
 const P012_C_ALPHA = 0.5;
-/** C3 低频明暗带数/带（设计稿 2–4 宽块，复用 E shadeLut，零新缓存） */
-const P012_C3_BANDS = 3;
+/** C3 低频明暗带数/带（设计稿 2–4 宽块；取 2 控 draw 预算：2×3 带=6 ≤16
+ *  扣除 C1 drawImage 后的余量；复用 E shadeLut，零新缓存） */
+const P012_C3_BANDS = 2;
 /** C3 明暗带叠加强度 */
 const P012_C3_ALPHA = 0.10;
 /** bandNoise 纵向特征尺度盒滤波半径（px；非等间距带纹的相邻周期不规则度） */
@@ -975,7 +976,9 @@ export class P012WaterSandRenderer {
       ' M=' + (this.stratBitmapM === null ? 'null' : 'ok'));
   }
 
-  /** 单张 C 位图：64×256 灰度（横向 warp 相位 × 纵向深度相位） */
+  /** 单张 C 位图：64×256 灰度（横向 warp 相位 × 纵向深度相位）。
+   *  λpx = H/k（k=ceil(256/λpx原始)）→ u∈[0,H) 相位∈[0,k) 整数圈
+   *  → 环形噪声表线性插值在 u=H 与 u=0 处同相位 → 平铺严格无缝。 */
   private makeStratBitmap(noise: Float64Array, amp: number): ImageBitmap | null {
     const w = P012_C_BITMAP_W;
     const h = P012_C_BITMAP_H;
@@ -994,10 +997,11 @@ export class P012WaterSandRenderer {
         for (let u = 0; u < h; u++) {
           // 深度相位（周期数）：u/λpx + warp
           const phase = u / this.stratLamPx + warpCycles;
-          // 带边界 envelope（位图纵向边缘 cos² 衰减，半宽 = λpx 的 1/2）
+          // 带边界 envelope（位图纵向边缘线性衰减，半宽 = λpx/2）
           const edge = Math.min(u, h - 1 - u) / (this.stratLamPx * 0.5);
           const env = Math.max(0, Math.min(1, edge));
-          const delta = env * amp * this.stratNoiseAt(noise, phase * this.stratLamPx);
+          // 连续噪声：相位（周期数）→ 表相位（表长=1 噪声周期 256 相位单位）
+          const delta = env * amp * this.stratNoiseAt(noise, phase);
           const gray = this.clamp255(128 + delta);
           const idx = (u * w + v) * 4;
           data[idx] = gray;
@@ -1100,7 +1104,11 @@ export class P012WaterSandRenderer {
         }
       }
       segTotal += segs.length;
-      // 每段：带曲线 clip + drawImage 平铺（横向采样偏移 = warp/warpRange×64）
+      // 每段 1 drawImage/纵向块：源 = 位图 (v, 0, 1, H) 单列（warp 相位列），
+      // 目标 = 段宽 × H 纵向块（横向拉伸源 1px 列 = 无损复制——源列内像素
+      // 纵向 1:1；纵向按 H 平铺覆盖带高，λpx=H/k 保证相位无缝）。
+      // draw 计数 = 段数 × ceil(带高/H)，位图宽 64 不再进入平铺循环
+      // （首版按位图宽 64 循环平铺 + sx 不重置 bug → 净增量 27 > 预算 16）。
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(boxX, this.bandTopY(b.kind, 0, heightToY));
@@ -1114,31 +1122,27 @@ export class P012WaterSandRenderer {
       ctx.clip();
       ctx.globalAlpha = P012_C_ALPHA;
       const yTop = Math.floor(minY);
-      const yRows = Math.ceil(maxY) - yTop;
+      const yBot = Math.ceil(maxY);
       for (let si = 0; si < segs.length; si++) {
         const s = segs[si];
-        // 横向采样偏移：warp 相位（周期数）→ 位图 v 轴 px（v/64=warp/warpRange）
+        // 横向采样列：warp 相位（周期数）→ 位图 v 轴 px（v/64 = warp/warpRange）
         const dv = s[2] / P012_C_WARP_RANGE * P012_C_BITMAP_W;
-        const sx = ((Math.floor(dv) % P012_C_BITMAP_W) + P012_C_BITMAP_W) % P012_C_BITMAP_W;
-        // 平铺该段 x 范围（横向取位图 [sx, sx+segW) 区段，不足处从左缘续）
-        let x = s[0];
-        while (x < s[1] - 0.5) {
-          const availW = Math.min(s[1] - x, P012_C_BITMAP_W - sx);
-          // 源矩形（位图内），目标 1:1 直贴（整数坐标防重采样）
-          const dx = Math.round(x);
-          const dw = Math.max(1, Math.round(x + availW) - dx);
-          ctx.drawImage(tile, sx, 0, Math.min(P012_C_BITMAP_W - sx, dw),
-            P012_C_BITMAP_H, dx, yTop, Math.min(P012_C_BITMAP_W - sx, dw), yRows);
+        const sx = ((Math.round(dv) % P012_C_BITMAP_W) + P012_C_BITMAP_W) % P012_C_BITMAP_W;
+        const dx = Math.round(s[0]);
+        const dw = Math.max(1, Math.round(s[1]) - dx);
+        // 纵向按位图高 H 平铺（相位无缝）
+        for (let y = yTop; y < yBot; y += P012_C_BITMAP_H) {
+          const dh = Math.min(P012_C_BITMAP_H, yBot - y);
+          ctx.drawImage(tile, sx, 0, 1, P012_C_BITMAP_H, dx, y, dw, dh);
           draws++;
-          x += availW;
         }
       }
-      // C3 低频明暗带（C1 基底之上，2–4 个；shadeLut 采样按子区坡度）
+      // C3 低频明暗带（C1 基底之上，每带 2 个；shadeLut 采样按子区深度，
+      // 零新缓存；2×3 带=6 fillRect 从 C 的 16 draw 预算出——3×3=9 会超）
       if (P012_C3_BANDS > 0) {
-        const cm = n >> 1;
         const subH = (maxY - minY) / P012_C3_BANDS;
         for (let k = 0; k < P012_C3_BANDS; k++) {
-          // 子区中心列的 shade（复用 E 档 8 档光照 LUT；带内深度越浅越亮）
+          // 子区 shade（复用 E 档 8 档光照 LUT；带内深度越浅越亮）
           const shadeIdx = Math.max(0, Math.min(P012_LUT_STEPS,
             Math.round((1 - (k + 0.5) / P012_C3_BANDS) * P012_LUT_STEPS)));
           const shade = this.shadeLut[shadeIdx];
