@@ -34,6 +34,11 @@ require.extensions['.ets'] = (mod, filename) => mod._compile(ts.transpileModule(
   }}).outputText, filename);
 require('../entry/src/test/P011InputModeTest.ets').default();
 require('../entry/src/test/WaterSandFieldTest.ets').default();
+// §26.4/§26.5 player cases ride the input channel (want-parameter parse,
+// dispatch order, drift, lifecycle, metadata arming) so the regression
+// runner covers them (10 cases; was previously verified by a standalone
+// runner only).
+require('../entry/src/test/P011SchedulePlayerTest.ets').default();
 const output = {execution: 'actual-product-ets-via-bundled-typescript', results,
   passed: results.filter(r => r.status === 'PASS').length,
   failed: results.filter(r => r.status === 'FAIL').length};
