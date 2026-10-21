@@ -511,6 +511,128 @@ def test_coverage_matrix():
           and result["statsGates"]["subCellCount"] == 24)
 
 
+def test_schedule_timing_gate():
+    """s3.2 input-timing gate (drift consumption ruling): actual accepted
+    intervals judged per domain; drift marker is telemetry only."""
+    # Baseline: commands every 100ms with drift 60ms (marker would fire) -
+    # the marker must NOT disqualify anything.
+    def timing_records(gaps, kinds=None, targets=None, drift=60.0):
+        records = []
+        t = 0.0
+        seq = 0
+        for gi, gap in enumerate(gaps):
+            seq += 1
+            kind = kinds[gi] if kinds else "ramp"
+            target = targets[gi] if targets else 15.0 + 0.05 * gi
+            t += gap
+            rec_ctx = base_context(seq, target=target, leg="L2",
+                                   phase_kind=kind, seq=seq)
+            rec_ctx["physicsTime"] = t / 1000.0  # seconds, gate expects s
+            records.append({
+                "context": rec_ctx,
+                "relaxHysteresis": {"edges": []},
+                "audit": {"errorCode": None},
+            })
+        # inject drift after building (base_context has no drift field)
+        for rec in records:
+            rec["context"]["scheduleDriftMs"] = drift
+            rec["context"]["scheduleDriftExceeded"] = drift > 50
+            rec["context"]["phaseKindV3"] = rec["context"].get("phaseKind")
+        return records
+
+    # A: marker fires (drift 60 > 50) but intervals in-band -> no breach.
+    s, breach = v3.schedule_timing_gate(
+        timing_records([100.0] * 5), {})
+    check("marker is telemetry only: in-band intervals not disqualified",
+          s["breachedCommands"] == 0 and s["driftMarkerRecords"] == 5
+          and s["gate"] == "actualAcceptedInterval",
+          f"summary={json.dumps(s)[:200]} breach={breach}")
+
+    # B: catch-up fabrication - interval 40ms (< 50 floor) -> breach.
+    s, breach = v3.schedule_timing_gate(
+        timing_records([100.0, 40.0, 100.0, 100.0]), {})
+    check("catch-up interval (<50ms) disqualified",
+          any(any(c.startswith(v3.SCHEDULE_INTERVAL_CODE + ":catchUp")
+                  for c in codes) for codes in breach.values()),
+          f"breach={breach}")
+
+    # C: stalled digestion - interval 220ms (> 200 band) -> breach.
+    s, breach = v3.schedule_timing_gate(
+        timing_records([100.0, 220.0, 100.0, 100.0]), {})
+    check("stalled interval (>200ms) disqualified",
+          any(v3.SCHEDULE_INTERVAL_CODE in codes for codes in breach.values()),
+          f"breach={breach}")
+
+    # D: hold domain - platform->ramp gap 5090ms in [4000,6200] passes;
+    # 6500ms breaches.
+    s, breach = v3.schedule_timing_gate(
+        timing_records([0.0, 5100.0, 100.0, 100.0],
+                       kinds=["platform", "ramp", "ramp", "ramp"]), {})
+    check("hold domain in-band passes",
+          s["breachedCommands"] == 0 and s["acceptedIntervalHoldMs"]["n"] == 1,
+          f"summary={json.dumps(s['acceptedIntervalHoldMs'])} breach={breach}")
+    s, breach = v3.schedule_timing_gate(
+        timing_records([0.0, 6500.0, 100.0, 100.0],
+                       kinds=["platform", "ramp", "ramp", "ramp"]), {})
+    check("hold domain overstayed (>6200ms) disqualified",
+          any(":hold" in c for codes in breach.values() for c in codes),
+          f"breach={breach}")
+
+    # E: coalescing span - one skipped command (2 angular steps, 0.10 deg)
+    # allowed; three steps (0.15 deg) breach.
+    ok_targets = [15.0, 15.1, 15.15, 15.2]  # deltas 0.10/0.05/0.05
+    s, breach = v3.schedule_timing_gate(
+        timing_records([100.0] * 4, targets=ok_targets), {})
+    check("coalescing k=2 (one skipped command) allowed",
+          s["breachedCommands"] == 0, f"breach={breach}")
+    bad_targets = [15.0, 15.15, 15.2, 15.25]  # first delta 0.15 = 3 steps
+    s, breach = v3.schedule_timing_gate(
+        timing_records([100.0] * 4, targets=bad_targets), {})
+    check("coalescing k=3 breached",
+          any(v3.SCHEDULE_COMMAND_GAP_CODE in codes
+              for codes in breach.values()), f"breach={breach}")
+
+    # F: end-to-end - a stop bracket whose endpoint substep is driven by a
+    # breached command (catch-up 40ms interval) loses eligibility with the
+    # timing code in exclusionCounts. Geometry per make_stop_sequence:
+    # alphaPrev=23.2 -> alphaNow=22.7 crosses 22.911 (width 0.5).
+    records = []
+    t_ms = 0.0
+    for i in range(25):
+        t_ms += 40.0 if i == 3 else (500.0 if i == 0 else 100.0)
+        eff = 15.0
+        seq = i + 1
+        ctx = base_context(i, target=15.0, leg="L2", phase_kind="ramp", seq=seq)
+        ctx["physicsTime"] = t_ms / 1000.0
+        ctx["effectiveTilt"] = eff
+        ctx["thetaRequested"] = eff
+        ctx["thetaAccepted"] = eff
+        ctx["phaseKindV3"] = "ramp"
+        ctx["scheduleDriftMs"] = 60.0
+        ctx["scheduleDriftExceeded"] = True
+        if i == 2:
+            before, after = True, True
+            r_val = math.tan(math.radians(23.2))
+        elif i == 3:
+            before, after = True, False
+            r_val = math.tan(math.radians(22.7))
+        else:
+            before, after = False, False
+            r_val = math.tan(math.radians(23.2))
+        records.append({
+            "context": ctx,
+            "relaxHysteresis": {"edges": [base_edge(i, before, after, r_val)]},
+            "audit": {"errorCode": None},
+        })
+    result = run_analyze(records, make_manifest())
+    cell = result["cells"]["stop/+"]
+    check("breached command propagates to bracket exclusion",
+          cell["realTransitions"] >= 1
+          and any(v3.SCHEDULE_INTERVAL_CODE in k
+                  for k in cell["exclusionCounts"]),
+          f"exclusions={cell['exclusionCounts']}")
+
+
 def main():
     test_platform_window()
     test_legs()
@@ -521,6 +643,7 @@ def main():
     test_pilot_dimensions()
     test_per_run_cap()
     test_coverage_matrix()
+    test_schedule_timing_gate()
     print(f"PASS={PASS} FAIL={FAIL}")
     for failure in FAILURES:
         print("  FAIL:", failure)

@@ -67,6 +67,27 @@ STABILITY_WINDOW_MS = 200.0
 STABILITY_MIN_SUBSTEPS = 3
 BRACKET_MAX_WIDTH_DEG = 0.5
 
+# --- s3.2 input-timing gate (drift consumption ruling, 2026-10-21) ----------
+# Ruling: docs/drift-consumption-ruling-P011-obs3-v1.md. The gate judges
+# ACTUAL ACCEPTED INTERVALS between consecutively digested schedule commands
+# (per protocol s3.2), NOT the absolute scheduleDriftMs which carries a
+# session-start constant offset and frame quantization. The >50ms marker
+# (SCHEDULE_DRIFT_EXCEEDED) is telemetry only - NEVER a disqualification.
+# Command-level breaches invalidate the brackets of the substeps they drove.
+SCHEDULE_TIMING = {
+    # ramp -> ramp (adjacent commands inside one leg; ideal COMMAND_STEP_MS)
+    "rampRamp": {"minMs": 50.0, "maxMs": 200.0},
+    # platform -> ramp (hold end entering a leg; ideal PLATFORM_HOLD_MS)
+    "platformRamp": {"minMs": 4000.0, "maxMs": 6200.0},
+    # slow-frame coalescing: adjacent digested commands may span at most 2
+    # angular steps (one skipped command); more = digestion stall.
+    "maxAngularStepMultiplier": 2,
+    # intervals below this are treated as catch-up fabrication
+    "catchUpFloorMs": 50.0,
+}
+SCHEDULE_INTERVAL_CODE = "SCHEDULE_INTERVAL_OUT_OF_BAND"
+SCHEDULE_COMMAND_GAP_CODE = "SCHEDULE_COMMAND_GAP_EXCEEDED"
+
 # --- s6 frozen statistical gates (inherited unchanged) ----------------------
 STATS = {
     "runsPerCandidatePair": 34,
@@ -267,6 +288,140 @@ def endpoint_clip_clear(edge):
     return True
 
 
+def schedule_timing_gate(records, schedule_bindings):
+    """s3.2 input-timing gate over ACTUAL ACCEPTED INTERVALS (drift
+    consumption ruling 2026-10-21). Returns (summary, breach) where breach
+    maps commandSequence -> list of breach codes for commands whose substeps
+    lose bracket eligibility. scheduleDriftMs is summarized but NEVER judged:
+    the >50ms marker is telemetry, not a censoring condition."""
+    # First/last digested substep physicsTime per command sequence.
+    first_sub = {}
+    last_sub = {}
+    drift_of = {}
+    target_of = {}
+    kind_of = {}
+    for record in records:
+        context = record.get("context", {})
+        seq = context.get("commandSequence")
+        if not (isinstance(seq, int) and context.get("scheduleDriftMs") is not None):
+            continue
+        t = context.get("physicsTime")
+        if not finite(t):
+            continue
+        # Unit normalization: device ledgers carry wall-clock physicsTime in
+        # ms (epoch-scale, >1e10); synthetic/Node 1:1 ledgers use seconds.
+        # Normalize everything to ms.
+        t = float(t) * 1000.0 if abs(float(t)) < 1e10 else float(t)
+        if seq not in first_sub or t < first_sub[seq]:
+            first_sub[seq] = t
+        if seq not in last_sub or t > last_sub[seq]:
+            last_sub[seq] = t
+        drift_of.setdefault(seq, context.get("scheduleDriftMs"))
+        target_of.setdefault(seq, context.get("targetTilt"))
+        kind_of.setdefault(seq, context.get("phaseKindV3"))
+    seqs = sorted(first_sub)
+
+    # Angular step for coalescing span checks: prefer the manifest binding,
+    # fall back to the observed minimum in-leg target delta.
+    rate = None
+    proto = None
+    bindings = schedule_bindings if isinstance(schedule_bindings, dict) else {}
+    observed_rate = bindings.get("rateDegPerSec")
+    if finite(observed_rate) and float(observed_rate) in ANGULAR_STEP:
+        rate = float(observed_rate)
+    else:
+        deltas = []
+        for a, b in zip(seqs, seqs[1:]):
+            if kind_of.get(a) == "ramp" and kind_of.get(a) == kind_of.get(b):
+                ta, tb = target_of.get(a), target_of.get(b)
+                if finite(ta) and finite(tb):
+                    d = abs(float(tb) - float(ta))
+                    if 1e-9 < d < 0.5:
+                        deltas.append(d)
+        if deltas:
+            rate = min(ANGULAR_STEP, key=lambda r: abs(ANGULAR_STEP[r] - min(deltas)))
+    angular_step = ANGULAR_STEP.get(rate, ANGULAR_STEP[RATE_PRIMARY_DEG_PER_S]) if rate else None
+
+    drifts_all = sorted(drift_of[s] for s in seqs if drift_of.get(s) is not None)
+    marker_count = 0
+    for record in records:
+        context = record.get("context", {})
+        if context.get("scheduleDriftExceeded") is True:
+            marker_count += 1
+
+    # dt distribution summary (for the s4.1 dt-trajectory registration).
+    dts = []
+    for a, b in zip(seqs, seqs[1:]):
+        pass
+    prev_t = None
+    for record in records:
+        context = record.get("context", {})
+        t = context.get("physicsTime")
+        if finite(t):
+            t = float(t) * 1000.0 if abs(float(t)) < 1e10 else float(t)  # -> ms
+            if prev_t is not None and t > prev_t:
+                dts.append(round(t - prev_t, 1))
+            prev_t = t
+
+    breach = {}
+    ramp_gaps = []
+    hold_gaps = []
+    for a, b in zip(seqs, seqs[1:]):
+        gap = first_sub[b] - first_sub[a]
+        kind_a = kind_of.get(a)
+        kind_b = kind_of.get(b)
+        codes = []
+        if kind_a == "ramp" and kind_b == "ramp":
+            ramp_gaps.append(gap)
+            band = SCHEDULE_TIMING["rampRamp"]
+            if gap < SCHEDULE_TIMING["catchUpFloorMs"]:
+                codes.append(SCHEDULE_INTERVAL_CODE + ":catchUp")
+            elif not (band["minMs"] <= gap <= band["maxMs"]):
+                codes.append(SCHEDULE_INTERVAL_CODE)
+            # coalescing span: target delta within one leg must be
+            # <= multiplier * angular step (1 skipped command allowed).
+            if angular_step:
+                ta, tb = target_of.get(a), target_of.get(b)
+                if finite(ta) and finite(tb):
+                    steps = abs(float(tb) - float(ta)) / angular_step
+                    if steps > SCHEDULE_TIMING["maxAngularStepMultiplier"] + 1e-9:
+                        codes.append(SCHEDULE_COMMAND_GAP_CODE)
+        elif kind_a == "platform" and kind_b == "ramp":
+            hold_gaps.append(gap)
+            band = SCHEDULE_TIMING["platformRamp"]
+            if not (band["minMs"] <= gap <= band["maxMs"]):
+                codes.append(SCHEDULE_INTERVAL_CODE + ":hold")
+        if codes:
+            breach[b] = codes
+
+    def pct(vals, p):
+        if not vals:
+            return None
+        v = sorted(vals)
+        return round(v[min(int(len(v) * p), len(v) - 1)], 1)
+
+    summary = {
+        "digestedCommands": len(seqs),
+        "driftMs": {"p50": pct(drifts_all, 0.5), "p95": pct(drifts_all, 0.95),
+                    "max": drifts_all[-1] if drifts_all else None},
+        "driftMarkerRecords": marker_count,
+        "acceptedIntervalRampMs": {"p50": pct(ramp_gaps, 0.5), "p95": pct(ramp_gaps, 0.95),
+                                   "min": min(ramp_gaps) if ramp_gaps else None,
+                                   "max": max(ramp_gaps) if ramp_gaps else None,
+                                   "n": len(ramp_gaps)},
+        "acceptedIntervalHoldMs": {"p50": pct(hold_gaps, 0.5),
+                                   "min": min(hold_gaps) if hold_gaps else None,
+                                   "max": max(hold_gaps) if hold_gaps else None,
+                                   "n": len(hold_gaps)},
+        "dtIntervalMs": {"p50": pct(dts, 0.5), "p95": pct(dts, 0.95),
+                         "over40msRatio": round(sum(1 for d in dts if d > 40.0) / len(dts), 4) if dts else None},
+        "breachedCommands": sum(1 for codes in breach.values() if codes),
+        "gate": "actualAcceptedInterval",
+        "driftRole": "telemetryOnly",
+    }
+    return summary, breach
+
+
 def three_point_monotone(window_alphas, kind):
     """s5.2: endpoints + the immediately preceding same-leg decision must be
     monotone in the event direction (start non-decreasing, stop
@@ -378,6 +533,10 @@ def analyze(ledger_path, manifest_path, source="pilot"):
                             and abs(float(theta_req) - float(theta_acc)) <= ANGLE_NUMERIC_TOLERANCE_DEG):
                         reach["plannerLimitedStableRecords"] += 1
 
+    # ---- s3.2 input-timing gate over actual accepted intervals ----
+    schedule_timing, timing_breach = schedule_timing_gate(records, schedule_bindings)
+    breach_by_seq = timing_breach
+
     # ---- Pass 2: state samples, cells, brackets (s5) ----
     cells = {key: {"stateSamples": 0, "stateRuns": set(), "realTransitions": 0,
                    "eligibleBrackets": 0, "cappedTransitions": 0,
@@ -465,6 +624,14 @@ def analyze(ledger_path, manifest_path, source="pilot"):
             # s5.2 fixed exclusion order: identity/transaction -> segment/sign
             # -> transition/width. All hit reasons retained.
             reasons = []
+            # Input-timing gate (s3.2 ruling): a bracket endpoint substep
+            # driven by a schedule command that breached the accepted-interval
+            # band or the coalescing-span cap loses eligibility. The drift
+            # marker itself is NOT a reason (telemetry only).
+            seq_breaches = breach_by_seq.get(context.get("commandSequence"))
+            if seq_breaches:
+                for code in seq_breaches:
+                    reasons.append(code)
             if previous is None:
                 reasons.append("CONTINUITY_MISSING")
             else:
@@ -682,6 +849,7 @@ def analyze(ledger_path, manifest_path, source="pilot"):
             "note": "diagnostic only; v3 does not require platforms for start events",
         },
         "pilotCoverage": coverage,
+        "scheduleTiming": schedule_timing,
         "cells": {
             key: {
                 "stateSamples": cell["stateSamples"],
