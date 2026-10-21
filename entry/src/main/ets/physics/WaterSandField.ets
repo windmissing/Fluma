@@ -10,6 +10,7 @@ import {
   P011NaturalObservationRunRole,
   P011NaturalObservationState,
   P011RelaxHysteresisDecisionSample,
+  P011_CORRECTION_ROUTE_ID,
   P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
   P011_NATURAL_OBSERVATION_ROUTE_ID,
   p011NaturalObservationPhaseForCommand,
@@ -753,6 +754,9 @@ export class WaterSandField {
   private naturalObservationThetaStartDeg: number | null = null;
   private naturalObservationThetaStopDeg: number | null = null;
   private naturalObservationScheduleId: string | null = null;
+  // D-1 explicit route isolation: the physics-apply route binding (null or
+  // natural-relax-hysteresis-v1 keeps the legacy relaxAngle apply).
+  private naturalObservationRouteId: string | null = null;
   private naturalObservationSliding: Uint8Array;
   private naturalObservationSlidingBefore: Uint8Array;
   private naturalObservationSlidingAfter: Uint8Array;
@@ -1156,14 +1160,24 @@ export class WaterSandField {
       if (errorCode === null) {
         this.restoreMotionSnapshot();
         this.lastBottomFlux = 0;
-        // §24 correction reservation on the candidate-angle snapshot: the
-        // ordinary channels' shared total budget is folded by the reserved
-        // amount R_limit (B − R), equivalent to (B−R)/requested scaling.
-        this.computeCorrectionReservation(substepDt);
-        const ordinaryBudget = this.totalMotionBudgetLimit -
-          this.correctionReservation!.rLimit;
-        const scale = this.totalMotionBudgetRequested <= ordinaryBudget
-          ? 1 : ordinaryBudget / Math.max(this.totalMotionBudgetRequested, EPS);
+        // D-1 route isolation: the §24 correction reservation (and the
+        // B − R_limit fold of the ordinary budget) only exists on runs that
+        // explicitly bind P011_CORRECTION_ROUTE_ID with the state machine
+        // armed. Every other run uses the pre-correction budget scaling,
+        // bit-for-bit as 5e60f2d.
+        let scale: number;
+        if (this.correctionRouteActive()) {
+          this.computeCorrectionReservation(substepDt);
+          const ordinaryBudget = this.totalMotionBudgetLimit -
+            this.correctionReservation!.rLimit;
+          scale = this.totalMotionBudgetRequested <= ordinaryBudget
+            ? 1 : ordinaryBudget / Math.max(this.totalMotionBudgetRequested, EPS);
+        } else {
+          this.correctionReservation = null;
+          this.correctionStalledCount = 0;
+          scale = this.totalMotionBudgetRequested <= this.totalMotionBudgetLimit
+            ? 1 : this.totalMotionBudgetLimit / this.totalMotionBudgetRequested;
+        }
         if (this.naturalObservationProbe !== null) {
           this.naturalObservationTotalRequested = this.totalMotionBudgetRequested;
         }
@@ -1447,6 +1461,29 @@ export class WaterSandField {
     this.naturalObservationScheduleId = scheduleId;
   }
 
+  /**
+   * D-1 (Option A + explicit route isolation): bind the physics-apply route
+   * this run executes. Only an explicit P011_CORRECTION_ROUTE_ID binding —
+   * on top of the armed dual-threshold state machine — admits the §24
+   * correction allocator (applyCorrectionSlot). Every other value (or null)
+   * keeps the pre-correction relaxAngle apply semantics for ALL runs,
+   * including candidate natural-relax-hysteresis-v1 runs: the v3 identity
+   * is not an implicit correction switch.
+   */
+  setNaturalObservationRouteId(routeId: string | null): void {
+    this.naturalObservationRouteId = routeId;
+  }
+
+  getNaturalObservationRouteId(): string | null {
+    return this.naturalObservationRouteId;
+  }
+
+  /** True only when BOTH gate conditions hold (necessary + sufficient). */
+  correctionRouteActive(): boolean {
+    return this.relaxHysteresisThresholds !== null &&
+      this.naturalObservationRouteId === P011_CORRECTION_ROUTE_ID;
+  }
+
   getNaturalObservationScheduleId(): string | null {
     return this.naturalObservationScheduleId;
   }
@@ -1481,7 +1518,8 @@ export class WaterSandField {
       : p011NaturalObservationPhaseForCommand(this.p011InputSequence,
         this.targetTilt, scheduleId);
     this.naturalObservationProbe.beginSubstep({
-      observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
+      observationRouteId: this.naturalObservationRouteId !== null
+        ? this.naturalObservationRouteId : P011_NATURAL_OBSERVATION_ROUTE_ID,
       ledgerSchemaVersion: P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
       runId: this.p011RunId,
       frameId: this.p011FrameId,
@@ -1798,6 +1836,15 @@ export class WaterSandField {
     this.totalMotionBudgetUsed = 0;
     this.totalMotionBudgetClipped = 0;
     this.totalMotionBudgetRequested = 0;
+    // D-1 route isolation: the correction sub-ledgers are substep-local and
+    // only meaningful on explicitly-routed correction runs; reset them every
+    // substep either way.
+    this.correctionBudgetUsed = 0;
+    this.correctionBudgetRemaining = 0;
+    this.correctionBudgetRequested = 0;
+    this.correctionBudgetClipped = 0;
+    this.correctionReservation = null;
+    this.correctionStalledCount = 0;
     this.collectingTotalMotionRequests = collectRequests;
     this.totalMotionBudgetScale = collectRequests ? 1 : totalMotionScale;
   }
@@ -1908,10 +1955,18 @@ export class WaterSandField {
     if (creepError !== null) {
       return creepError;
     }
-    // §24 relax-correction-weighted-v1: the relax slot's budget allocation
-    // is replaced by the reservation-first correction sub-channel (the
-    // ordinary relaxAngle path remains for the collect phase).
-    this.applyCorrectionSlot(dt);
+    // D-1 route isolation: the §24 reservation-first correction sub-channel
+    // replaces the relax slot's budget allocation ONLY on runs that
+    // explicitly bind P011_CORRECTION_ROUTE_ID with the state machine armed
+    // (necessary + sufficient, manager ruling 2026-10-21). Every other run —
+    // legacy defaults, SLIP verification, observation ①b, and v3 candidate
+    // natural-relax-hysteresis-v1 runs — keeps the pre-correction
+    // relaxAngle apply semantics (bit-for-bit 5e60f2d).
+    if (this.correctionRouteActive()) {
+      this.applyCorrectionSlot(dt);
+    } else {
+      this.relaxAngle(dt);
+    }
     this.liftByShake(dt);
     this.updateSandTop();
     return this.audit(true);
@@ -2320,30 +2375,39 @@ export class WaterSandField {
     let bottomRemaining = this.params.vBottomCreepMax * substepDt;
     let totalRemaining = this.params.totalMotionBudget * substepDt;
     const totalRequested = Math.max(0, this.totalMotionBudgetRequested);
-    // 24 correction reservation on the HEAD shadow state (identical inputs
-    // to the real computeCorrectionReservation post-restoreMotionSnapshot),
-    // computed before the ordinary totalScale so the ordinary channels can
-    // be folded by (B - R) exactly like the real step loop.
-    const correctionHysteresis = this.relaxHysteresisThresholds;
-    const correctionParams: P011CorrectionParams = {
-      relaxBoundSlope: correctionHysteresis !== null
-        ? correctionHysteresis.slopeStop
-        : Math.tan(this.params.angleDeg * Math.PI / 180),
-      maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
-      localBudget: this.params.vSandTopMax * substepDt,
-      totalBudget: this.params.totalMotionBudget * substepDt,
-      dt: substepDt,
-      slidingEligible: correctionHysteresis !== null ? this.relaxSliding : null
-    };
-    const headCorrectionView: P011CorrectionStockView =
-      new S0CorrectionStockView(this);
-    headCorrectionView.sandTop.set(this.substepSandTopBefore);
-    const shadowReservation = p011CorrectionReserve(headCorrectionView,
-      correctionParams, this.materialGuardHardMax(), this.totalMotionBudgetRequested);
-    const ordinaryBudget = this.params.totalMotionBudget * substepDt -
-      shadowReservation.rLimit;
-    const totalScale = totalRequested <= ordinaryBudget
-      ? 1 : ordinaryBudget / Math.max(totalRequested, EPS);
+    // D-1 route isolation: the §24 correction reservation mirror (and the
+    // B − R fold) exists only on explicitly-routed correction runs; every
+    // other run mirrors the pre-correction relax slot and total scaling,
+    // bit-for-bit as 5e60f2d.
+    const correctionRouteActive = this.correctionRouteActive();
+    let shadowReservation: P011CorrectionReservation | null = null;
+    let correctionParams: P011CorrectionParams | null = null;
+    let totalScale: number;
+    if (correctionRouteActive) {
+      const correctionHysteresis = this.relaxHysteresisThresholds;
+      correctionParams = {
+        relaxBoundSlope: correctionHysteresis !== null
+          ? correctionHysteresis.slopeStop
+          : Math.tan(this.params.angleDeg * Math.PI / 180),
+        maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
+        localBudget: this.params.vSandTopMax * substepDt,
+        totalBudget: this.params.totalMotionBudget * substepDt,
+        dt: substepDt,
+        slidingEligible: correctionHysteresis !== null ? this.relaxSliding : null
+      };
+      const headCorrectionView: P011CorrectionStockView =
+        new S0CorrectionStockView(this);
+      headCorrectionView.sandTop.set(this.substepSandTopBefore);
+      shadowReservation = p011CorrectionReserve(headCorrectionView,
+        correctionParams, this.materialGuardHardMax(), this.totalMotionBudgetRequested);
+      const ordinaryBudget = this.params.totalMotionBudget * substepDt -
+        shadowReservation.rLimit;
+      totalScale = totalRequested <= ordinaryBudget
+        ? 1 : ordinaryBudget / Math.max(totalRequested, EPS);
+    } else {
+      totalScale = totalRequested <= this.params.totalMotionBudget * substepDt
+        ? 1 : this.params.totalMotionBudget * substepDt / Math.max(totalRequested, EPS);
+    }
 
     // Shadow material arrays: initialize from the live post-collect state.
     const shadowS = new Float64Array(cols);
@@ -2630,21 +2694,22 @@ export class WaterSandField {
       plans.push(makePlan('bottomCreep', requestedTotal, grantedTotal, bottomUse,
         totalUse, deltaS));
     }
-    // --- 24 correction slot mirror: the apply chain replaced relaxAngle's
-    // budget allocation with the reservation-first correction sub-channel,
-    // so the mirror does the same on the shadow arrays: reserve with
+    // --- relax/correction slot mirror (D-1 route isolated). On explicitly
+    // routed correction runs the apply chain replaced relaxAngle's budget
+    // allocation with the reservation-first correction sub-channel, so the
+    // mirror does the same on the shadow arrays: reserve with
     // p011CorrectionReserve (stock view over the shadow layers), then
     // execute the frozen (-w, edgeId) order with the SAME
     // p011CorrectionApplyOnce the real apply uses, debiting the shadow
     // ledgers and writing splitTopV2-exact material so recomputeShadowS
-    // stays bit-identical to the real apply's updateSandTop. The
-    // reservation is computed on the HEAD shadow state (S0 + post-diffuse
-    // layers) which is exactly the state the real
-    // computeCorrectionReservation sees after restoreMotionSnapshot, so
-    // R_limit matches bit-for-bit; the per-candidate re-verification then
-    // runs on the EVOLVED shadow (post-settle/percolate/creep) exactly like
-    // the real apply slot re-derives on the live field. ---
-    {
+    // stays bit-identical to the real apply's updateSandTop. On every other
+    // run the mirror replicates the pre-correction relax slot
+    // bit-for-bit (5e60f2d): slip requests in collect order (static),
+    // local pair then total, then the guard mirror; the apply-phase
+    // maximumDeviation re-check at relax-apply entry is mirrored exactly —
+    // when the shadow surface's maximum deviation is within the limit the
+    // relax channel grants nothing. ---
+    if (shadowReservation !== null && correctionParams !== null) {
       const deltaS = new Float64Array(cols);
       let grantedTotal = 0;
       let totalUse = 0;
@@ -2694,6 +2759,60 @@ export class WaterSandField {
         }
       }
       plans.push(makePlan('correction', requestedTotal, grantedTotal, 0, totalUse, deltaS));
+    } else {
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let totalUse = 0;
+      const relaxLimit = Math.tan(this.params.angleDeg * Math.PI / 180);
+      const relaxTargetSlope = Math.tan(this.effectiveTilt * Math.PI / 180);
+      let relaxMaxDeviation = 0;
+      for (let c = 0; c < cols - 1; c++) {
+        const deviation = shadowS[c + 1] - shadowS[c] - relaxTargetSlope;
+        relaxMaxDeviation = Math.max(relaxMaxDeviation, Math.abs(deviation));
+      }
+      if (relaxMaxDeviation > relaxLimit) {
+        for (let index = 0; index < this.slipRequestCount; index++) {
+          const requested = this.slipRequestAmounts[index];
+          const donor = this.slipRequestDonors[index];
+          const receiver = this.slipRequestReceivers[index];
+          if (requested <= EPS) {
+            continue;
+          }
+          requestedTotal += requested;
+          let allowed = clipLocalPair(donor, receiver, requested);
+          if (allowed > EPS) {
+            const deltaColumns = new Map<number, number>();
+            deltaColumns.set(donor, -1);
+            deltaColumns.set(receiver, 1);
+            allowed = guardAdmit(allowed, deltaColumns);
+          }
+          grantedTotal += allowed;
+          totalUse += allowed;
+          deltaS[donor] -= allowed;
+          deltaS[receiver] += allowed;
+          // Mirror splitTopV2 + material write + updateSandTop exactly.
+          const mixAvail = shadowMh[donor] + shadowMl[donor];
+          const fromMix = Math.min(allowed, mixAvail);
+          const mixScale = fromMix / Math.max(mixAvail, EPS);
+          let relaxHeavy = shadowMh[donor] * mixScale;
+          let relaxLight = shadowMl[donor] * mixScale;
+          let relaxRemaining = allowed - fromMix;
+          const relaxFromLight = Math.min(relaxRemaining, shadowBl[donor]);
+          relaxLight += relaxFromLight;
+          relaxRemaining -= relaxFromLight;
+          const relaxFromHeavy = Math.min(relaxRemaining, shadowBh[donor]);
+          relaxHeavy += relaxFromHeavy;
+          shadowMh[donor] -= shadowMh[donor] * mixScale;
+          shadowMl[donor] -= shadowMl[donor] * mixScale;
+          shadowBl[donor] -= relaxFromLight;
+          shadowBh[donor] -= relaxFromHeavy;
+          shadowMh[receiver] += relaxHeavy;
+          shadowMl[receiver] += relaxLight;
+          recomputeShadowS();
+        }
+      }
+      plans.push(makePlan('relax', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
     // --- lift: column ascending, static request, local then total, then
     // the guard mirror; shadow surface advances per applied grant. ---
@@ -3340,8 +3459,12 @@ export class WaterSandField {
       this.recordNaturalRelaxSummary(0);
       return;
     }
-    // Apply branch (legacy only; the §24 apply chain routes relax through
-    // applyCorrectionSlot). Kept bit-for-bit from the pre-v3.1 code.
+    // Apply branch (relaxAngle's own apply — the pre-correction semantics).
+    // D-1 route isolation: this branch runs for every run that did NOT
+    // explicitly bind P011_CORRECTION_ROUTE_ID (legacy defaults, SLIP
+    // verification, observation ①b, and v3 candidate
+    // natural-relax-hysteresis-v1 runs); the correction route replaces this
+    // slot via applyCorrectionSlot in applyMotionChannels.
     let appliedTotal = 0;
     for (let index = 0; index < this.slipRequestCount; index++) {
       const requested = this.slipRequestAmounts[index];

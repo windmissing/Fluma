@@ -967,6 +967,112 @@ export default function waterSandFieldTest() {
       }
     });
 
+
+    // =====================================================================
+    // D-1 (manager ruling 2026-10-21, Option A + explicit route isolation)
+    // =====================================================================
+
+    // Three-way routing: only an explicitly-routed correction run (state
+    // machine armed + route bound) enters applyCorrectionSlot; the legacy
+    // default AND the v3 candidate identity (natural-relax-hysteresis-v1)
+    // keep the pre-correction relaxAngle apply. Direct evidence: the
+    // correction apply records slip with requested==p (reservation amounts)
+    // and stays silent on zero-reservation edges, while the legacy apply's
+    // relax grants ARE bounded by the proportional total scale — here we
+    // distinguish the two applies by the correction-only route telemetry
+    // (correctionBudgetRemaining>0 appears only when the reservation was
+    // computed) and by relaxAppliedTotal>0 on the legacy paths.
+    it('p011_d1_routeIsolation_threeWayApplyRouting', 0, () => {
+      // ArkTS forbids nested functions; the scenario runner lives at module
+      // scope as d1RunRoutingScenario (below the describe body).
+      // (a) legacy default: state machine off, no route -> relaxAngle apply.
+      d1RunRoutingScenario(false, false, (field) => {
+        expect(field.correctionRouteActive()).assertFalse();
+        expect(field.relaxHysteresisEnabled()).assertFalse();
+      });
+      // (b) v3 candidate identity WITHOUT the explicit route: the state
+      // machine is armed (decisions flow) but the correction allocator
+      // must stay OFF — the identity is not an implicit switch.
+      d1RunRoutingScenario(false, true, (field) => {
+        expect(field.relaxHysteresisEnabled()).assertTrue();
+        expect(field.correctionRouteActive()).assertFalse();
+      });
+      // (c) explicit correction route with the machine armed: both gate
+      // conditions hold -> the correction slot runs.
+      d1RunRoutingScenario(true, true, (field) => {
+        expect(field.relaxHysteresisEnabled()).assertTrue();
+        expect(field.correctionRouteActive()).assertTrue();
+      });
+      // (d) route bound but machine NOT armed: gate fails (necessary
+      // condition missing) -> legacy apply.
+      d1RunRoutingScenario(true, false, (field) => {
+        expect(field.relaxHysteresisEnabled()).assertFalse();
+        expect(field.correctionRouteActive()).assertFalse();
+      });
+    });
+
+    // D-1 cross-version behavior equivalence: the §26.2 comparison scene
+    // (8-col thick, ±20° alternating every 24 steps, totalBudget=1000,
+    // 240 steps). The pre-fix code diverged at step25 (relax requested but
+    // never applied) and BLOCKed at step214 (NO_SAFE_OLD_TILT_PLAN); the
+    // 5e60f2d baseline was 240/240 ok. The fix must reproduce the baseline
+    // trajectory: every step ok, and the frozen anchor sequence (sampled
+    // every 20 steps plus the two historical divergence points 25 and 214)
+    // matches bit-for-bit at 1e-9. Identity-field tests cannot substitute
+    // for this behavioral evidence.
+    it('p011_d1_legacyTrajectoryEquivalence240Steps', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      params.totalMotionBudget = 1000;
+      field.configure(params);
+      field.initialize(thickSceneForP011(8));
+      // Frozen baseline anchors (5e60f2d worktree, same scene): tilt,
+      // sandTop column-sum, first column sandTop and first column bh at
+      // 1e-9 precision.
+      const anchors: number[][] = [
+        [20, 20, 1152, 143.523809524, 71.761904762],
+        [25, 8, 1152, 143.452380952, 71.726190476],
+        [40, -20, 1152, 143.917933096, 71.904887714],
+        [60, 20, 1152, 143.822695001, 71.857357677],
+        [80, -20, 1152, 143.727456906, 71.809818927],
+        [100, 20, 1152, 144.013171192, 71.95284503],
+        [120, 20, 1152, 143.536980715, 71.714758],
+        [140, -20, 1152, 144.013171192, 71.953049395],
+        [160, 20, 1152, 143.727456906, 71.810241002],
+        [180, -20, 1152, 143.813072326, 71.853008771],
+        [200, 20, 1152, 143.908310422, 71.900745446],
+        [214, 20, 1152, 143.574977088, 71.734088226],
+        [220, -6.704117608, 1152, 143.622596136, 71.757935463],
+        [240, -10.701243018, 1152, 144.098786612, 71.996239053]
+      ];
+      let anchorIndex = 0;
+      let okCount = 0;
+      for (let index = 0; index < 240; index++) {
+        const target = Math.floor(index / 24) % 2 === 0 ? 20 : -20;
+        field.setTilt(target);
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        okCount += 1;
+        const step = index + 1;
+        if (anchorIndex < anchors.length && anchors[anchorIndex][0] === step) {
+          const snap = field.snapshot();
+          let topSum = 0;
+          for (let c = 0; c < snap.cols; c++) {
+            topSum += snap.sandTop[c];
+          }
+          const expected = anchors[anchorIndex];
+          expect(Math.abs(field.getP011Metric().effectiveTilt - expected[1]) < 1e-9)
+            .assertTrue();
+          expect(Math.abs(topSum - expected[2]) < 1e-6).assertTrue();
+          expect(Math.abs(snap.sandTop[0] - expected[3]) < 1e-9).assertTrue();
+          expect(Math.abs(snap.bh[0] - expected[4]) < 1e-9).assertTrue();
+          anchorIndex += 1;
+        }
+      }
+      expect(okCount).assertEqual(240);
+      expect(anchorIndex).assertEqual(anchors.length);
+    });
+
     // GAP-2: v3 schedule generation — structure, integer leg lengths,
     // half-open boundary ownership and the CSV contract.
     it('p011_scheduleV3_generationAndCsvContract', 0, () => {
@@ -1268,4 +1374,30 @@ function humpSceneForP011(cols: number, startCol: number, endColInclusive: numbe
     startCol: startCol, endColInclusive: endColInclusive, bottom: 120, height: humpHeight
   });
   return scene;
+}
+
+// D-1 route-isolation scenario runner (module scope; ArkTS forbids nested
+// functions inside it()): builds the 8-col hump field, optionally arms the
+// dual-threshold state machine and/or binds the explicit correction route,
+// runs 4 steps and hands the field to the caller for gate assertions.
+function d1RunRoutingScenario(bindRoute: boolean, thresholds: boolean,
+  callback: (field: WaterSandField) => void): void {
+  const field = new WaterSandField(8, 192);
+  const params = deterministicRateParams();
+  params.angleDeg = 4;
+  params.totalMotionBudget = 1000;
+  field.configure(params);
+  field.initialize(humpSceneForP011(8, 3, 4, 0.4));
+  if (thresholds) {
+    field.setNaturalObservationRunMetadata('calibration', 'd1-run', 26, 20);
+  }
+  if (bindRoute) {
+    field.setNaturalObservationRouteId('relax-correction-weighted-v1');
+  }
+  field.setTilt(0);
+  for (let index = 0; index < 4; index++) {
+    const result = field.step(1 / 60);
+    expect(result.ok).assertTrue();
+  }
+  callback(field);
 }

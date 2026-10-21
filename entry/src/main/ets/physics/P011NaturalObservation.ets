@@ -7,6 +7,15 @@
 export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
 export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 3;
 
+// D-1 (2026-10-21 manager ruling, Option A + explicit route isolation):
+// the §24 correction allocator is gated behind BOTH (a) the dual-threshold
+// state machine being armed (necessary) and (b) the run explicitly binding
+// this route id (sufficient). The v3 state-machine identity alone must NOT
+// act as an implicit switch for the correction apply route; every legacy /
+// default / natural-relax-hysteresis-v1 run keeps the pre-correction
+// relaxAngle apply semantics bit-for-bit.
+export const P011_CORRECTION_ROUTE_ID = 'relax-correction-weighted-v1';
+
 // Command-schedule identifiers for phase-name mapping. The legacy v1
 // schedule is the seven-phase 45° plateau sequence (0/+15/0/+45/0/-45/0);
 // the observation-3 v2 schedule is the nine-phase 30° sequence
