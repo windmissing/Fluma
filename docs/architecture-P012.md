@@ -253,3 +253,74 @@ if (this.p012Renderer !== null && this.p012TierReady &&
 工程稿质量高，数值全部复核无误，模块边界/资源归属/测量口径可直接开发。唯一前置风险是性能采集链路（§9.1 NOTE），tester 预检先行。两处小修订（不阻塞）：①§2 frameContext 的 `canonicalEvidence` 建议明确来源枚举（wssnapshot 标志/tester 采集入口/手动开关，三者任一为真即强制 OFF）；②§3.1 slot 字段表补 `waterTopRaw` 在 waterLevel 动态下的每帧刷新说明（已含于 8 数组，建议显式点名避免遗漏）。
 
 变更记录：2026-10-20，依据 manager【architect·工程设计】任务新增 §9。架构稿评审 APPROVED（性能预检 1 项 NOTE）；薄分发改造/分批切分/任务分解落盘；状态 READY_FOR_DEVELOPER（第一梯队 E/A/B），交 manager 审后路由 developer。
+
+## 10. EAB PERF_BLOCKED 归因与工程修复方案（2026-10-21）
+
+**状态：归因结论=【实现方案问题】（分支 A）。§10 工程方案落盘，developer PERF 修复任务解锁。视觉逐位一致为硬约束：本节全部手段不触碰 §5.1 材质模型（加性颗粒 `Y=base+sigma·nG`、tile 平铺、三带 clip、全局平流偏移均不变）。**
+
+依据：`dev-report-P012-EAB-batch-v1.md` §4.5/§7（PERF_BLOCKED：tier3 EAB 12/12/11 fps vs tier0-2 持平 30-60）、architecture §9.3 EAB-batch DoD ④、algorithm §5.3 预算口径。归因方法：成本模型估算（提交面积×每像素采样成本）+ 三候选收益上界 + 与 66ms/帧净增的量级核对。
+
+### 10.1 归因分析
+
+**成本模型**（与实测吻合）：
+
+| 成本项 | 当前实现 | 估算 |
+|---|---|---|
+| pattern fill 光栅 | 每帧 3 带 × fillRect(1443×1611)≈2.33Mpx = **6.98Mpx 提交**；clip 后有效面积仅 ~0.84Mpx（沙区），冗余率 ~8.3× | ~4ns/px 采样+混合 × 6.98Mpx ≈ 28ms/带量级，三带占 66ms 净增的大头 ✓ |
+| createPattern | 每帧 3 次（对象创建+256²纹理上传 256KB/次） | ~1-3ms/帧 |
+| 254 点 Path clip | 每带一次软件光栅化 | O(点数×带宽)，次要 |
+
+**判定依据**：
+1. **算法层没有要求这个执行方式**——§5.1 的加性模型是逐输出像素的数学定义，不规定「对整盒+512px 冗余提交 pattern fill」；tile 平铺、clip 区域、fillRect 参数全部是执行策略。算法预算（CPU O(128) 差分、≤48 draw）本实现完全满足（3 draw），说明预算口径没有预期光栅成本，但这属于预算口径未覆盖的**执行层低效**，不是材质模型的结构性成本。
+2. **候选收益上界足够覆盖 3× 差距**：候选 2（包围盒收紧）单项即把提交面积 6.98→~0.7Mpx（8-10×），光栅成本 66ms→~7-9ms；叠加候选 1 后残量 <5ms，tier3 从 12fps → 45fps+，远超 ≥30fps 目标。工程手段富余量 ~4×。
+3. **排除分支 B 的证据**：若是算法方案问题（材质模型太贵），则最小正确实现（精确包围盒+缓存 pattern）仍应超预算——但包围盒后的有效面积 0.84Mpx 本身就是 E/EA 档同量级（EA 持平 OFF），说明「沙区大小的 pattern 采样」本身可承受，冗余才是问题。
+
+### 10.2 修复方案组合与实施顺序
+
+**第一步（1+2 并行，预期收回全部差距）：**
+
+- **F1 pattern 缓存**：三带 `CanvasPattern` 构造一次复用（成员字段，`grainBitmap*` 不变则不重建）；`createPattern` null 的 fallback 路径保留。收益 ~1-3ms/帧 + 消除每帧纹理上传。
+- **F2 包围盒收紧**：每带 fillRect 从整盒 `(boxX−256, boxY−256, fullW+512, boxH+512)` 改为该带列包围盒——遍历 128 列对该带 `bandTopY/bandBottomY` 取 min/max（已有平滑曲线数据，O(128) 廉价），fillRect 改为 `(boxX, minTopY, fullW, maxBotY−minTopY)` 并向外扩 tilePx 一圈（保证 pattern 平铺周期覆盖）；**空带跳过**（如 `bl` 全 0 时轻沙带 band 高度≤0，直接 continue 不 save/clip/fill）。**视觉逐位一致性论证**：clip Path 不变，fillRect 只是缩小了「clip 之前提交的矩形」；clip 裁剪后输出像素集合与原先严格相同（原整盒 fill 被 clip 裁剩的就是包围盒∩曲线区域），pattern 采样相位由 translate 决定与 fillRect 原点无关——逐位一致成立。
+- **回退策略**：F2 的包围盒计算若出现带边界 NaN/非有限（曲线异常），回退到整盒 fillRect（保留旧参数路径），并在一次性日志记录；不因几何异常丢带。
+
+**第二步（仅当 1+2 后 tier3 仍 <30fps 时启用）：**
+
+- **F3 离屏预合成**：颗粒层（三带 clip+pattern 合成的结果）预合成到盒尺寸离屏画布，每帧 `drawImage(offscreen, dx, 0)` + translate 提交；平流偏移或几何变化（带曲线 min/max 或 UV 变化超过阈值）时才重合成。静止态退化为单次 blit（~0.29Mpx，2-4ms）。**这是结构性兜底，不是首选**——改动面大（离屏生命周期），且 1+2 的富余量大概率用不到它。
+
+### 10.3 离屏画布生命周期与接口（F3 预置设计，F1/F2 不需要）
+
+若启用 F3：离屏画布归属 `P012MaterialTextureCache`（§4 资源表新增一行）；创建时机=首次 EAB 渲染；重建时机=`geometryEpoch` 变化（DPI/尺寸）或 `fieldEpoch` 变化（物理场重建）；释放=appearanceTier 降档离开 EAB 或 renderer.dispose。`continuityEpoch`（reset/注入/模式切换）只清平流偏移历史、不重建离屏画布（几何未变）。重建峰值计入 §4 的 8MiB 上限（盒尺寸 ARGB ≈ 931×311×4 ≈ 1.16MiB，远低于上限）。
+
+### 10.4 逐项消融 want 参数定义（替代已删的 s94 renderSeed 钩子）
+
+新增两个独立 want 参数（不占用渲染种子；EntryAbility 解析块照 `p012tier` 模式追加）：
+
+| 参数 | 取值 | 语义 | 用途 |
+|---|---|---|---|
+| `p012ablate` | `off`/`grain`/`fog`/`spark`（字符串） | 消融开关：`grain`=跳过颗粒层、`fog`=跳过雾层、`spark`=跳过亮粒、`off`=全部启用（默认） | 成本隔离：分别量化各层贡献 |
+| `p012fillbox` | `full`/`tight`（字符串） | fillRect 策略：`tight`=F2 包围盒（默认，交付后）、`full`=旧整盒（A/B 回归对照） | 验证 F2 前后视觉逐位一致+性能对比 |
+
+AppStorage 键名同名；renderer 读取处集中在 drawSandGrain 入口（单点分支）；参数非法值=忽略并用默认（与 p012tier 同容错风格）。这两个参数属**外观诊断域**，不进物理 checker/遥测。
+
+### 10.5 验收口径
+
+1. **tier3 ≥30fps 判定细则**：`tools/run_p012_perf_ladder.py` 同相位（25s 冻结静置后）三帧 FPS 窗口全部 ≥30；对照 tier0 OFF 同相位窗口无下降趋势（EAB 帧时增量 = EAB 帧时 − OFF 帧时 ≤ 33ms − OFF 帧时，即总帧时不超 33ms 预算的 60fps 档）。修复后需重跑 §4.3 的 3 对 OFF/ON 配对块（PERF 数据）。
+2. **锚点逐位一致或差异可解释**：修复后 `run_p012_eab_pairs.py` 的锚点测量须与 §4.1 表逐位一致（F1/F2 理论上逐位一致——同 pattern 同 clip 同输出像素）；若实测有差异，解释边界限定为：抗锯齿边缘半像素（fillRect 原点变化导致的亚像素重采样差异，允许 ±1 灰度级的带边界单像素列差异），沙区内部测量 ROI 必须逐位一致。超出该边界的差异=修复引入回归，不接受。
+3. **消融验证**：`p012fillbox=full` vs `tight` 同场景截图 ROI 逐位比对（除带边界亚像素列）+ FPS 对比（预期 8-10×）；`p012ablate=grain` 复现 tier2 水平（确认颗粒层就是唯一成本源）。
+
+### 10.6 风险清单
+
+| 风险 | 缓解 |
+|---|---|
+| pattern 缓存失效时机：bitmap 重建（tier 升降档、种子变化）后缓存 pattern 悬挂旧位图 | 缓存键=(bitmap 引用)；`makeGrainBitmap` 重建处置空 pattern 缓存；dispose 释放 |
+| ArkTS createPattern 返回 null 的时机与旧版不同 | fallback 路径保留（透明填充+一次性日志），不因缓存改变 null 语义 |
+| 包围盒的曲线异常（NaN/空带） | F2 回退整盒路径；空带跳过前先验证带高度>0（`maxBotY−minTopY>0`） |
+| 离屏画布内存（若 F3） | §4 的 8MiB 峰值上限内（1.16MiB/画布）；TextureCache 唯一持有 |
+| 亚像素差异争议 | §10.5-2 的解释边界预先冻结；测量 ROI 排除带边界 ±1px 列 |
+| F1+F2 后仍不达标 | F3 兜底已预置（§10.3）；若 F3 仍不达标则重新归因（届时再评估是否分支 B） |
+
+### 10.7 结论
+
+**归因：实现方案问题（分支 A）**——成本在执行层（8.3× 光栅冗余 + 每帧 pattern 重建），不在 §5.1 材质模型；工程手段（F1+F2）收益上界 ~10×，对 3× 差距有 4× 富余。修复方案 F1/F2 先行（视觉逐位一致可证），F3 预置兜底；消融 want 参数（p012ablate/p012fillbox）替代 renderSeed 钩子；验收口径与回退策略冻结。**developer PERF 修复任务（6ad7fe32e4b0a2dfeb1e1b92）解锁。**
+
+变更记录：2026-10-21，依据 manager【P-012·PERF归因】任务新增 §10。归因=实现方案问题（成本模型+收益上界论证）；F1/F2/F3 方案、消融参数、验收口径、风险清单落盘；分支 B 不触发。

@@ -13,6 +13,22 @@ export enum P012AppearanceTier {
 /** 外观技术路线身份（与物理 routeId 完全隔离，仅进配置/视觉证据 manifest） */
 export const P012_APPEARANCE_ROUTE_ID = 'p012-render-material-v1';
 
+/** §10.4 逐项消融开关：off=全部启用（默认）/ grain=跳过颗粒层 /
+ *  fog=跳过雾层 / spark=跳过亮粒。外观诊断域，不进物理 checker/遥测。 */
+export enum P012Ablation {
+  OFF = 0,
+  GRAIN = 1,
+  FOG = 2,
+  SPARK = 3
+}
+
+/** §10.4 fillRect 策略：tight=精确平铺边界（默认，交付后）/
+ *  full=旧整盒外扩一整圈（v1 A/B 回归对照）。 */
+export enum P012FillBox {
+  TIGHT = 0,
+  FULL = 1
+}
+
 /** adapter 校验失败原因（INVALID_RENDER_INPUT 细分，不回写物理） */
 export enum P012InvalidReason {
   NONE = 0,
@@ -73,6 +89,10 @@ export interface P012FrameContext {
   renderSeed: number;
   /** 外观配置代次（tier/seed 变化时递增） */
   configRevision: number;
+  /** §10.4 消融开关（want p012ablate；默认 OFF=全部启用） */
+  ablation: P012Ablation;
+  /** §10.4 fillRect 策略（want p012fillbox；默认 TIGHT） */
+  fillBox: P012FillBox;
   /** 物理证据采集强制 OFF（wssnapshot 标志/采集入口/手动开关任一为真） */
   canonicalEvidence: boolean;
 }

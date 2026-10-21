@@ -27,7 +27,7 @@ import { P011InputModeState, P011ModeRequestSource, P011InputSelection,
   canP011GestureOwnInput } from '../physics/P011InputMode';
 // P-012 E-batch：表现层独立 renderer + 薄分发（architecture-P012.md §9.2）
 import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../render/P012WaterSandRenderer';
-import { P012AppearanceTier, P012FrameContext } from '../render/P012RenderTypes';
+import { P012AppearanceTier, P012FrameContext, P012Ablation, P012FillBox } from '../render/P012RenderTypes';
 
 /** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
 class MyFrameCallback extends FrameCallback {
@@ -337,6 +337,10 @@ struct SandCanvas {
   private p012ConfigRevision: number = 0;
   /** 外观独立随机种子（不调用/消耗物理随机源） */
   private p012RenderSeed: number = 20261020;
+  /** §10.4 消融开关（want p012ablate；默认 OFF=全部启用） */
+  private p012Ablation: P012Ablation = P012Ablation.OFF;
+  /** §10.4 fillRect 策略（want p012fillbox；默认 TIGHT） */
+  private p012FillBox: P012FillBox = P012FillBox.TIGHT;
   /** 物理实例代次（reset/initField 递增） */
   private p012FieldEpoch: number = 0;
   /** 连续性代次（invert180/mode boundary 递增） */
@@ -455,6 +459,21 @@ struct SandCanvas {
       p012Tier >= P012AppearanceTier.OFF && p012Tier <= P012AppearanceTier.EAB) {
       // 经 setP012AppearanceTier：非 OFF 档时创建 renderer（延迟创建入口）
       this.setP012AppearanceTier(p012Tier, 'want');
+    }
+    // §10.4 消融参数（AppStorage 字符串；非法值已在 EntryAbility 过滤，
+    // 这里再防御一次：不认识的值不覆盖默认）
+    const p012Ablate = AppStorage.get<string>('p012ablate');
+    if (p012Ablate === 'off' || p012Ablate === 'grain' ||
+      p012Ablate === 'fog' || p012Ablate === 'spark') {
+      this.p012Ablation = P012Ablation[p012Ablate === 'off' ? 'OFF'
+        : p012Ablate === 'grain' ? 'GRAIN'
+        : p012Ablate === 'fog' ? 'FOG' : 'SPARK'];
+      console.info(`[P012] ablation -> ${p012Ablate} (want)`);
+    }
+    const p012FillBox = AppStorage.get<string>('p012fillbox');
+    if (p012FillBox === 'full' || p012FillBox === 'tight') {
+      this.p012FillBox = p012FillBox === 'full' ? P012FillBox.FULL : P012FillBox.TIGHT;
+      console.info(`[P012] fillbox -> ${p012FillBox} (want)`);
     }
     console.info(`[ForceInvert] aboutToAppear: testMode=${this.testMode} forceInvert=${this.forceInvert} useSensor=${this.useSensor} renderMode=${this.renderMode}`);
     try {
@@ -1753,6 +1772,8 @@ struct SandCanvas {
       appearanceTier: this.p012AppearanceTier as P012AppearanceTier,
       renderSeed: this.p012RenderSeed,
       configRevision: this.p012ConfigRevision,
+      ablation: this.p012Ablation,
+      fillBox: this.p012FillBox,
       canonicalEvidence: this.waterSandSnapshotEnabled
     };
   }

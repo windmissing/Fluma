@@ -78,6 +78,8 @@ function makeContext(over) {
     visualInverted: false,
     appearanceTier: P012AppearanceTier.E,
     renderSeed: 20261020, configRevision: 1,
+    ablation: typesMod.P012Ablation.OFF,
+    fillBox: typesMod.P012FillBox.TIGHT,
     canonicalEvidence: false
   };
   return Object.assign(ctx, over || {});
@@ -558,6 +560,125 @@ function makeCountingCanvas(sink) {
     name: 'p012_eab_deterministicSameSeed',
     status: same ? 'PASS' : 'FAIL',
     error: `styleCounts=${sA.styles.length}/${sB.styles.length}`
+  });
+})();
+
+// □§10.4 消融 want 参数：p012ablate（off/grain/fog/spark）× p012fillbox（full/tight）
+// 判据（draw 分支计数）：
+//   · ablation=GRAIN（EAB 档）→ drawImage 提交数归零（颗粒层跳过），
+//     与 EA 档 baseline 的 clip 数一致（少 3 次带 clip）
+//   · ablation=FOG（EA 档）→ draw 总数比 off 明显下降（水体雾 12 档 +
+//     界面带绘制消失），且下降量 > 0
+//   · ablation=SPARK（E 档）→ spark 3 档 alpha fill 消失（draw 总数下降，
+//     bandColor 列级提亮退化 gain=1 不影响计数，靠 style 序列可再核）
+//   · fillBox=FULL（EAB 档）→ drawImage 提交数比 TIGHT 多（外扩一整圈），
+//     但输出像素集合不变（styles 序列与 TIGHT 完全一致——fillStyle 不受
+//     平铺边界影响）
+(function ablationWantParams() {
+  const cols = 128;
+  const field = new WaterSandField(cols, 192);
+  field.initialize(fullScene(cols));
+  field.setTilt(15);
+  field.step(1 / 60);
+  const renderer = new P012WaterSandRenderer(cols, 192);
+  const stubBitmap = { _stub: true, width: 256, height: 256 };
+  renderer.grainBitmapH = stubBitmap;
+  renderer.grainBitmapL = stubBitmap;
+  renderer.grainBitmapM = stubBitmap;
+
+  const measure = (over) => {
+    const sink = {};
+    renderer.render(makeCountingCanvas(sink), field.snapshot(), makeContext(over));
+    return { draws: sink.draws, clips: sink.clips, images: sink.drawImages,
+      fillRects: sink.fillRects, styles: sink.styles.slice() };
+  };
+
+  // ── GRAIN 消融 ──
+  const eabOff = measure({ appearanceTier: P012AppearanceTier.EAB });
+  const eabGrain = measure({
+    appearanceTier: P012AppearanceTier.EAB,
+    ablation: typesMod.P012Ablation.GRAIN
+  });
+  // 带的实际 clip 数场景相关（空带高度≤0.5 直接跳过不 clip），不能硬编码：
+  // 判据=drawImage 归零 + clip 严格减少（至少 1 条非空带被跳过）
+  results.push({
+    name: 'p012_ablate_grain_skipsGrainLayer',
+    status: (eabGrain.images === 0 && eabOff.images > 0 &&
+      eabOff.clips > eabGrain.clips) ? 'PASS' : 'FAIL',
+    error: `imgOff=${eabOff.images} imgAblated=${eabGrain.images} ` +
+           `clipOff=${eabOff.clips} clipAblated=${eabGrain.clips}`
+  });
+
+  // ── FOG 消融（水体雾 + 界面带一并跳过）──
+  const eaOff = measure({ appearanceTier: P012AppearanceTier.EA });
+  const eaFog = measure({
+    appearanceTier: P012AppearanceTier.EA,
+    ablation: typesMod.P012Ablation.FOG
+  });
+  results.push({
+    name: 'p012_ablate_fog_skipsFogLayers',
+    status: (eaOff.draws - eaFog.draws > 0) ? 'PASS' : 'FAIL',
+    error: `drawsOff=${eaOff.draws} drawsAblated=${eaFog.draws} ` +
+           `delta=${eaOff.draws - eaFog.draws}`
+  });
+
+  // ── SPARK 消融（spark 3 档 alpha fill 消失）──
+  const eOff = measure({ appearanceTier: P012AppearanceTier.E });
+  const eSpark = measure({
+    appearanceTier: P012AppearanceTier.E,
+    ablation: typesMod.P012Ablation.SPARK
+  });
+  // spark fill 数 = 活跃 alpha 档数（1..3）；E 档同场景下两者唯一差异就是 spark
+  results.push({
+    name: 'p012_ablate_spark_skipsSparkFill',
+    status: (eOff.draws - eSpark.draws > 0 &&
+      eOff.draws - eSpark.draws <= 3) ? 'PASS' : 'FAIL',
+    error: `drawsOff=${eOff.draws} drawsAblated=${eSpark.draws} ` +
+           `delta=${eOff.draws - eSpark.draws}`
+  });
+
+  // ── FILLBOX 对照（FULL 比 TIGHT 多提交，styles 序列逐项一致）──
+  const tight = measure({
+    appearanceTier: P012AppearanceTier.EAB,
+    fillBox: typesMod.P012FillBox.TIGHT
+  });
+  const full = measure({
+    appearanceTier: P012AppearanceTier.EAB,
+    fillBox: typesMod.P012FillBox.FULL
+  });
+  const stylesSame = tight.styles.length === full.styles.length &&
+    tight.styles.every((v, i) => v === full.styles[i]);
+  results.push({
+    name: 'p012_fillbox_full_submitsMoreDraws',
+    status: (full.images > tight.images && full.images >= tight.images) ? 'PASS' : 'FAIL',
+    error: `imgTight=${tight.images} imgFull=${full.images}`
+  });
+  results.push({
+    name: 'p012_fillbox_full_pixelEquivalentStyles',
+    status: stylesSame ? 'PASS' : 'FAIL',
+    error: `stylesTight=${tight.styles.length} stylesFull=${full.styles.length} same=${stylesSame}`
+  });
+
+  // ── 非法值容错：want 侧过滤在 EntryAbility/SandCanvas，renderer 侧字段
+  //    缺省（undefined）时 render() 必须不抛错并等价 OFF/TIGHT（旧 frameContext
+  //    兼容），三态=合法值生效/非法字段忽略/缺省走默认。 ──
+  let legacyOk = true;
+  let legacyErr = '';
+  try {
+    const sink = {};
+    const legacyCtx = makeContext({ appearanceTier: P012AppearanceTier.EAB });
+    delete legacyCtx.ablation;
+    delete legacyCtx.fillBox;
+    renderer.render(makeCountingCanvas(sink), field.snapshot(), legacyCtx);
+    legacyOk = sink.drawImages > 0;
+  } catch (e) {
+    legacyOk = false;
+    legacyErr = `${e}`;
+  }
+  results.push({
+    name: 'p012_ablate_legacyContextDefaults',
+    status: legacyOk ? 'PASS' : 'FAIL',
+    error: legacyErr
   });
 })();
 

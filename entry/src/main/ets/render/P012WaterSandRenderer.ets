@@ -11,7 +11,8 @@ import hilog from '@ohos.hilog';
 import {
   P012FrameContext, P012AppearanceTier, P012_APPEARANCE_ROUTE_ID,
   P012_E_BATCH_DRAW_BUDGET, P012_A_BATCH_DRAW_BUDGET,
-  P012_B_BATCH_DRAW_BUDGET, P012_FIRST_TIER_DRAW_BUDGET
+  P012_B_BATCH_DRAW_BUDGET, P012_FIRST_TIER_DRAW_BUDGET,
+  P012Ablation, P012FillBox
 } from './P012RenderTypes';
 
 /** 预计算材质色阶（设计稿 §3.1：重沙浅黄绿 / 轻沙暖浅 / 水体近薄荷白） */
@@ -162,6 +163,11 @@ export class P012WaterSandRenderer {
   private disposed: boolean = false;
   /** 一次性诊断日志闸门（避免逐帧刷日志） */
   private grainDiagLogged: boolean = false;
+  /** §10.4 本帧消融开关（render() 入口从 frameContext.ablation 读入；
+   *  外观诊断域：grain/fog/spark 分别跳过对应层，OFF=全部启用） */
+  private frameAblation: P012Ablation = P012Ablation.OFF;
+  /** §10.4 本帧 fillRect 策略（TIGHT=精确平铺边界；FULL=旧整盒对照） */
+  private frameFillBox: P012FillBox = P012FillBox.TIGHT;
 
   constructor(cols: number, capacity: number) {
     this.cols = cols;
@@ -198,6 +204,9 @@ export class P012WaterSandRenderer {
       return;
     }
     let drawCount = 0;
+    // §10.4 消融开关/fillRect 策略：单点读入，各绘制点只读该状态
+    this.frameAblation = frameContext.ablation;
+    this.frameFillBox = frameContext.fillBox;
     const result = this.adapter.update(snapshot, frameContext);
     this.lastPairValid = result.pair.valid;
     const view = result.curr;
@@ -247,8 +256,10 @@ export class P012WaterSandRenderer {
     drawCount++;
     // 2) A 档水体雾（EA-batch，算法稿 §4.2）：悬浮浓度 q + 静态水介质斑驳。
     //    只画水体区（sandTop 以上）；界面过渡带在沙体之后画（见步骤 5）。
+    //    §10.4 消融：ablation=FOG 时跳过雾层（水体雾 + 界面带同属 A 档雾层）。
     const tier = frameContext.appearanceTier;
-    if (tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) {
+    if ((tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
+      this.frameAblation !== P012Ablation.FOG) {
       drawCount += this.drawWaterFog(ctx, view, heightToY, colW,
         boxX, boxY, boxW, boxH);
     }
@@ -259,8 +270,8 @@ export class P012WaterSandRenderer {
     drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
     //      drawImage(256² 颗粒 tile) 按全局平流偏移精确平铺；跟随材料净搬运、
-    //      无缝、无贴纸。
-    if (tier === P012AppearanceTier.EAB) {
+    //      无缝、无贴纸。§10.4 消融：ablation=GRAIN 时跳过颗粒层。
+    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN) {
       drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
     }
     // 4) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
@@ -275,7 +286,9 @@ export class P012WaterSandRenderer {
     drawCount++;
     // 5) A 档界面光学过渡带（沙体之后绘制）：sandTop 两侧 ±halfW 内
     //    smoothstep 包络雾——沙侧上缘被雾柔和覆盖，消除沙体 fillRect 的硬边。
-    if (tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) {
+    //    §10.4 消融：与步骤 2 同属 A 档雾层，ablation=FOG 时一并跳过。
+    if ((tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
+      this.frameAblation !== P012Ablation.FOG) {
       drawCount += this.drawInterfaceBand(ctx, view, heightToY, colW,
         boxX, boxY, boxW, boxH);
     }
@@ -713,15 +726,23 @@ export class P012WaterSandRenderer {
       // dx 取整到整数像素：drawImage 的小数目标坐标会触发双线性重采样
       // （会平滑掉颗粒噪声、压低 hfH 锚点），整数坐标为 1:1 直贴。
       const off = Math.round(b.off);
-      // 精确平铺边界：只摆能覆盖 [boxX, boxX+boxW] × [minY, maxY] 的 tile，
-      // 不像v1 那样四周各外扩一整圈（外扩只是给pattern 采样留余量，
-      // drawImage 是 1:1 直贴，外扩纯属无效提交）。
-      //   横向：需 tile左边界 ≤ boxX 且 右边界 ≥ boxX+boxW
-      //   纵向：需 tile 上边界 ≤ minY 且 下边界 ≥ maxY
-      const k0 = Math.floor((boxX - off) / P012_GRAIN_TILE);
-      const k1 = Math.floor((boxX + boxW - off) / P012_GRAIN_TILE);
-      const j0 = Math.floor(minY / P012_GRAIN_TILE);
-      const j1 = Math.ceil(maxY / P012_GRAIN_TILE) - 1;
+      // §10.4 fillRect 策略：
+      //   TIGHT（默认）：精确平铺边界——只摆能覆盖 [boxX, boxX+boxW] ×
+      //     [minY, maxY] 的 tile。drawImage 是 1:1 直贴，不像 pattern 采样
+      //     需要四周外扩余量，外扩纯属无效提交（被 clip 裁掉）。
+      //   FULL（对照）：v1 旧口径——四周各外扩一整圈 tile。输出像素集合与
+      //     TIGHT 严格相同（外扩 tile 全部被带曲线 clip 裁掉），仅 draw 提交
+      //     数不同，用于 §10.5 消融验证「视觉逐位一致 + 性能对比」。
+      let k0 = Math.floor((boxX - off) / P012_GRAIN_TILE);
+      let k1 = Math.floor((boxX + boxW - off) / P012_GRAIN_TILE);
+      let j0 = Math.floor(minY / P012_GRAIN_TILE);
+      let j1 = Math.ceil(maxY / P012_GRAIN_TILE) - 1;
+      if (this.frameFillBox === P012FillBox.FULL) {
+        k0 -= 1;
+        k1 += 1;
+        j0 -= 1;
+        j1 += 1;
+      }
       for (let k = k0; k <= k1; k++) {
         const dx = off + k * P012_GRAIN_TILE;
         for (let j = j0; j <= j1; j++) {
@@ -1010,6 +1031,10 @@ export class P012WaterSandRenderer {
     // 亮粒 tile 叠加（稀疏柔亮粒；作用于已提亮材质，clip 在沙区 Path 内）。
     // draw 预算控制：不逐 tile 块 fillRect（最坏可到数十次），改为 3 个固定
     // alpha 档 → 每档把命中 tile 合并为一个 Path 一次 fill（合计 ≤3 draw + clip 1）。
+    // §10.4 消融：ablation=SPARK 时整段跳过（连 clip 一起省）。
+    if (this.frameAblation === P012Ablation.SPARK) {
+      return draws;
+    }
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(boxX, heightToY(this.smoothSandTop[0]));
@@ -1081,8 +1106,10 @@ export class P012WaterSandRenderer {
       b = lb + (hb - lb) * shade;
     }
     // 亮粒采样（列级相位：列 × 每列 1 采样 → 低频，高频由 tile 平铺补）
-    const spark = this.sparkTile[(col % P012_SPARK_TILE) * P012_SPARK_TILE +
-      (col % P012_SPARK_TILE)];
+    // §10.4 消融：ablation=SPARK 时提亮系数退化为 1（不加亮粒）
+    const spark = this.frameAblation === P012Ablation.SPARK ? 0
+      : this.sparkTile[(col % P012_SPARK_TILE) * P012_SPARK_TILE +
+        (col % P012_SPARK_TILE)];
     const gain = spark > 0 ? 1 + P012_SPARK_GAIN * spark * 0.3 : 1;
     r = Math.min(248, r * gain);
     g = Math.min(248, g * gain);

@@ -7,7 +7,7 @@ import { WaterSandField, WaterSandScene, WaterSandRegion } from '../main/ets/phy
 import { P012WaterSandAdapter, P012MaterialFrameView } from '../main/ets/render/P012WaterSandAdapter';
 import { P012MaterialMotionCache } from '../main/ets/render/P012MaterialMotionCache';
 import { P012AppearanceTier, P012FrameContext, P012InvalidReason,
-  P012_E_BATCH_DRAW_BUDGET } from '../main/ets/render/P012RenderTypes';
+  P012_E_BATCH_DRAW_BUDGET, P012Ablation, P012FillBox } from '../main/ets/render/P012RenderTypes';
 import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../main/ets/render/P012WaterSandRenderer';
 
 function region(startCol: number, endCol: number, bottom: number, height: number): WaterSandRegion {
@@ -38,6 +38,8 @@ function makeContext(over?: Partial<P012FrameContext>): P012FrameContext {
     visualInverted: false,
     appearanceTier: P012AppearanceTier.E,
     renderSeed: 20261020, configRevision: 1,
+    ablation: P012Ablation.OFF,
+    fillBox: P012FillBox.TIGHT,
     canonicalEvidence: false
   };
   if (over !== undefined) {
@@ -60,6 +62,8 @@ function makeContext(over?: Partial<P012FrameContext>): P012FrameContext {
     if (over.appearanceTier !== undefined) ctx.appearanceTier = over.appearanceTier;
     if (over.renderSeed !== undefined) ctx.renderSeed = over.renderSeed;
     if (over.configRevision !== undefined) ctx.configRevision = over.configRevision;
+    if (over.ablation !== undefined) ctx.ablation = over.ablation;
+    if (over.fillBox !== undefined) ctx.fillBox = over.fillBox;
     if (over.canonicalEvidence !== undefined) ctx.canonicalEvidence = over.canonicalEvidence;
   }
   return ctx;
