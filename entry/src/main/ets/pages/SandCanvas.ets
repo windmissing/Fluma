@@ -1120,6 +1120,17 @@ struct SandCanvas {
           ? runRole : null;
         wsField.setNaturalObservationRunMetadata(role, calibrationId,
           thetaStart, thetaStop);
+        // §26.6: arm the execution identity together with the metadata
+        // (the parse-level XOR binding guarantees the triple is complete
+        // whenever metadata is armed).
+        const execCommit = AppStorage.get<string>('p011ScheduleExecSourceCommit');
+        const execFileSha = AppStorage.get<string>('p011ScheduleExecSourceFileSha256');
+        const execBuildSha = AppStorage.get<string>('p011ScheduleExecBuildSha256');
+        if (execCommit !== undefined && execFileSha !== undefined &&
+          execBuildSha !== undefined) {
+          wsField.setNaturalObservationExecutionIdentity(
+            execCommit, execFileSha, execBuildSha);
+        }
       }
     }
     const started = this.p011SchedulePlayer.start(peakADeg, rateDegPerSec, nowMs);

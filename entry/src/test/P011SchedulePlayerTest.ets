@@ -51,6 +51,22 @@ function d1ScheduleWantParams(peak: string, rate: string, runRole: string | null
   return params;
 }
 
+// §26.6 helper: add the execution-identity triple to schedule want params
+// (null argument omits that key).
+function d1ScheduleAddIdentity(params: Record<string, Object>, commit: string | null,
+  fileSha: string | null, buildSha: string | null): Record<string, Object> {
+  if (commit !== null) {
+    params['execsourcecommit'] = commit;
+  }
+  if (fileSha !== null) {
+    params['execsourcefilesha256'] = fileSha;
+  }
+  if (buildSha !== null) {
+    params['execbuildsha256'] = buildSha;
+  }
+  return params;
+}
+
 export default function p011SchedulePlayerTest() {
   describe('p011SchedulePlayerTest', () => {
     // --- want parameter parse ------------------------------------------
@@ -232,8 +248,11 @@ export default function p011SchedulePlayerTest() {
     it('p011_schedulePlayer_metadataArmingFiveScenarios', 0, () => {
       const base = d1ScheduleWantParams('20', '0.5', null, null, null, null);
       // (1) Complete legal group -> metadata carried (armed before start).
-      const full = d1ScheduleWantParams('20', '0.5', 'calibration',
-        'cand-pair-9', '26', '20');
+      // §26.6: the formal-run shape now REQUIRES the identity triple with
+      // the metadata group (XOR binding); arm both.
+      const full = d1ScheduleAddIdentity(
+        d1ScheduleWantParams('20', '0.5', 'calibration', 'cand-pair-9', '26', '20'),
+        '69345cc', 'a'.repeat(64), 'b'.repeat(64));
       const armed = parseP011ScheduleWant(full);
       expect(armed.warnings.length === 0).assertTrue();
       expect(armed.metadata !== null).assertTrue();
@@ -270,8 +289,9 @@ export default function p011SchedulePlayerTest() {
       // (5) correction route parameter is orthogonal (D-1): the schedule
       // arming never binds it — the parse result has no route surface and
       // the field stays null unless p011route flows its own channel.
-      const withRoute = d1ScheduleWantParams('20', '0.5', 'calibration',
-        'cand-pair-9', '26', '20');
+      const withRoute = d1ScheduleAddIdentity(
+        d1ScheduleWantParams('20', '0.5', 'calibration', 'cand-pair-9', '26', '20'),
+        '69345cc', 'a'.repeat(64), 'b'.repeat(64));
       withRoute['p011route'] = 'relax-correction-weighted-v1';
       const routeParsed = parseP011ScheduleWant(withRoute);
       // metadata still arms; route is NOT part of the schedule result.
@@ -319,6 +339,103 @@ export default function p011SchedulePlayerTest() {
         first.context.executedThresholds !== undefined) {
         expect(Math.abs(first.context.executedThresholds.thetaStartDeg - 26) < 1e-12)
           .assertTrue();
+      }
+    });
+
+    // --- §26.6 execution-identity arming (five scenarios) ---------------
+
+    it('p011_schedulePlayer_execIdentityArmingFiveScenarios', 0, () => {
+      // (1) Both groups complete -> armed with the identity triple.
+      const both = d1ScheduleAddIdentity(
+        d1ScheduleWantParams('20', '0.5', 'calibration', 'cand-pair-9', '26', '20'),
+        '69345cc', 'a'.repeat(64), 'b'.repeat(64));
+      const armed = parseP011ScheduleWant(both);
+      expect(armed.warnings.length === 0).assertTrue();
+      expect(armed.metadata !== null).assertTrue();
+      expect(armed.execIdentity !== null).assertTrue();
+      if (armed.execIdentity !== null) {
+        expect(armed.execIdentity.execSourceCommit).assertEqual('69345cc');
+        expect(armed.execIdentity.execSourceFileSha256).assertEqual('a'.repeat(64));
+        expect(armed.execIdentity.execBuildSha256).assertEqual('b'.repeat(64));
+      }
+      // (2) Metadata present, identity absent -> XOR binding rejects.
+      const noIdentity = d1ScheduleWantParams('20', '0.5', 'calibration',
+        'cand-pair-9', '26', '20');
+      const rejectedMissing = parseP011ScheduleWant(noIdentity);
+      expect(rejectedMissing.metadata === null).assertTrue();
+      expect(rejectedMissing.execIdentity === null).assertTrue();
+      expect(rejectedMissing.warnings.includes('SCHEDULE_GROUP_BINDING_MISMATCH'))
+        .assertTrue();
+      // (3a) Identity partial (missing build sha) -> rejected.
+      const partial = d1ScheduleAddIdentity(
+        d1ScheduleWantParams('20', '0.5', 'calibration', 'cand-pair-9', '26', '20'),
+        '69345cc', 'a'.repeat(64), null);
+      const rejectedPartial = parseP011ScheduleWant(partial);
+      expect(rejectedPartial.warnings
+        .includes('MISSING_SCHEDULE_EXEC_IDENTITY')).assertTrue();
+      expect(rejectedPartial.metadata === null).assertTrue();
+      // (3b) Identity invalid (short sha) -> rejected.
+      const invalid = d1ScheduleAddIdentity(
+        d1ScheduleWantParams('20', '0.5', 'calibration', 'cand-pair-9', '26', '20'),
+        '69345cc', 'a'.repeat(32), 'b'.repeat(64));
+      const rejectedInvalid = parseP011ScheduleWant(invalid);
+      expect(rejectedInvalid.warnings
+        .includes('INVALID_SCHEDULE_EXEC_IDENTITY')).assertTrue();
+      // (4) Both groups absent -> pure smoke, LEGACY semantics.
+      const smoke = parseP011ScheduleWant(
+        d1ScheduleWantParams('20', '0.5', null, null, null, null));
+      expect(smoke.warnings.length === 0).assertTrue();
+      expect(smoke.metadata === null).assertTrue();
+      expect(smoke.execIdentity === null).assertTrue();
+      // (5) Identity present, metadata absent -> XOR binding rejects.
+      const identityOnly = d1ScheduleAddIdentity(
+        d1ScheduleWantParams('20', '0.5', null, null, null, null),
+        '69345cc', 'a'.repeat(64), 'b'.repeat(64));
+      const rejectedIdentityOnly = parseP011ScheduleWant(identityOnly);
+      expect(rejectedIdentityOnly.warnings
+        .includes('SCHEDULE_GROUP_BINDING_MISMATCH')).assertTrue();
+      expect(rejectedIdentityOnly.metadata === null).assertTrue();
+      expect(rejectedIdentityOnly.execIdentity === null).assertTrue();
+    });
+
+    // §26.6 field-level evidence: an armed identity triple flows into the
+    // FIRST record's executedThresholds (sourceCommit / both SHAs non-empty
+    // — the ?? '' fallback is no longer touched on the normal path).
+    it('p011_schedulePlayer_identityArmsExecutedThresholdsOnFirstRecord', 0, () => {
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(8, record => {
+        records.push(record);
+      });
+      const field = new WaterSandField(8, 192);
+      const params = defaultWaterSandParams();
+      params.heavyDiffusion = 0;
+      params.lightDiffusion = 0;
+      params.waterLevelRate = 0.001;
+      params.angleDeg = 4;
+      field.configure(params);
+      field.initialize({
+        waterRegions: [{ startCol: 0, endColInclusive: 7, bottom: 144, height: 38 }],
+        heavyDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 0, height: 72 }],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 72, height: 48 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      });
+      field.setNaturalObservationProbe(probe);
+      // §26.5+§26.6 arming order: metadata then identity, both before any
+      // step() — mirroring the runner wiring.
+      field.setNaturalObservationRunMetadata('calibration', 'cand-pair-9', 26, 20);
+      field.setNaturalObservationExecutionIdentity('69345cc',
+        'a'.repeat(64), 'b'.repeat(64));
+      field.setTilt(0);
+      const result = field.step(1 / 60);
+      expect(result.ok).assertTrue();
+      expect(records.length > 0).assertTrue();
+      const executed = records[0].context.executedThresholds;
+      expect(executed !== null && executed !== undefined).assertTrue();
+      if (executed !== null && executed !== undefined) {
+        expect(executed.sourceCommit).assertEqual('69345cc');
+        expect(executed.sourceFileSha256).assertEqual('a'.repeat(64));
+        expect(executed.buildSha256).assertEqual('b'.repeat(64));
       }
     });
   });

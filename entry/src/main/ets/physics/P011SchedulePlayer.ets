@@ -36,7 +36,7 @@ import { P011ScheduleV3, P011ScheduleV3Command, p011BuildScheduleV3,
   P011_V3_RATE_PRIMARY_DEG_PER_S, P011_V3_RATE_SENSITIVITY_DEG_PER_S
 } from './P011ScheduleV3';
 import { P011RelaxHysteresisParamError } from './P011RelaxHysteresis';
-import { validateP011RunMetadataGroup } from './P011TiltWant';
+import { validateP011RunMetadataGroup, validateP011ExecIdentityGroup } from './P011TiltWant';
 
 /** Drift marker threshold (§26.4 decision 2): > 50 ms flags the attempt. */
 export const P011_SCHEDULE_DRIFT_MARKER_MS = 50;
@@ -49,7 +49,13 @@ export type P011ScheduleWantWarning =
   // §26.5 fail-closed metadata arming: a partial or invalid four-parameter
   // group rejects the whole schedule want.
   | 'MISSING_SCHEDULE_METADATA'
-  | 'INVALID_SCHEDULE_METADATA';
+  | 'INVALID_SCHEDULE_METADATA'
+  // §26.6 fail-closed execution-identity arming: the identity triple is a
+  // second optional group, and the two groups must appear together or not
+  // at all (group XOR binding).
+  | 'MISSING_SCHEDULE_EXEC_IDENTITY'
+  | 'INVALID_SCHEDULE_EXEC_IDENTITY'
+  | 'SCHEDULE_GROUP_BINDING_MISMATCH';
 
 export interface P011ScheduleWantParseResult {
   /** peakADeg:rate binding; null when the parameter is absent. */
@@ -59,6 +65,9 @@ export interface P011ScheduleWantParseResult {
   // §26.5 metadata arming: the validated four-parameter group (all-null on
   // pure smoke, i.e. a schedule want without the metadata parameters).
   metadata: P011RunMetadataArming | null;
+  // §26.6 execution identity: the validated triple (non-null iff metadata
+  // is non-null — the XOR binding rejects any other combination).
+  execIdentity: P011ExecIdentityArming | null;
 }
 
 /** §26.5: validated run metadata carried by the schedule want. */
@@ -67,6 +76,13 @@ export interface P011RunMetadataArming {
   thresholdCalibrationId: string;
   thetaStartDeg: number;
   thetaStopDeg: number;
+}
+
+/** §26.6: validated execution identity carried by the schedule want. */
+export interface P011ExecIdentityArming {
+  execSourceCommit: string;
+  execSourceFileSha256: string;
+  execBuildSha256: string;
 }
 
 /**
@@ -79,14 +95,16 @@ export function parseP011ScheduleWant(
   parameters: Record<string, Object> | undefined): P011ScheduleWantParseResult {
   const warnings: P011ScheduleWantWarning[] = [];
   if (parameters === undefined || parameters.p011schedule === undefined) {
-    return { peakADeg: null, rateDegPerSec: null, warnings, metadata: null };
+    return { peakADeg: null, rateDegPerSec: null, warnings, metadata: null,
+      execIdentity: null };
   }
   const text = `${parameters.p011schedule}`.trim();
   const match = /^([+-]?(?:\d+(?:\.\d*)?|\.\d+)):([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/
     .exec(text);
   if (match === null) {
     warnings.push('INVALID_P011SCHEDULE_FORMAT');
-    return { peakADeg: null, rateDegPerSec: null, warnings, metadata: null };
+    return { peakADeg: null, rateDegPerSec: null, warnings, metadata: null,
+      execIdentity: null };
   }
   const peakADeg = parseFloat(match[1]);
   const rateDegPerSec = parseFloat(match[2]);
@@ -128,7 +146,41 @@ export function parseP011ScheduleWant(
       thetaStopDeg: group.thetaStopDeg as number
     };
   }
-  return { peakADeg, rateDegPerSec, warnings, metadata };
+  // §26.6 execution-identity group: independent second group, same shared
+  // validator family (commit 6..64 hex, file/build SHA 64 hex — the wstilt
+  // path uses the identical rules).
+  const execText = (key: string): string | null => {
+    const raw = parameters[key] === undefined
+      ? null : `${parameters[key]}`.trim();
+    return raw === null || raw.length === 0 ? null : raw;
+  };
+  const identityGroup = validateP011ExecIdentityGroup(
+    execText('execsourcecommit'), execText('execsourcefilesha256'),
+    execText('execbuildsha256'));
+  let execIdentity: P011ExecIdentityArming | null = null;
+  if (identityGroup.warning !== null) {
+    warnings.push(identityGroup.warning);
+  } else if (!identityGroup.allAbsent) {
+    execIdentity = {
+      execSourceCommit: identityGroup.execSourceCommit as string,
+      execSourceFileSha256: identityGroup.execSourceFileSha256 as string,
+      execBuildSha256: identityGroup.execBuildSha256 as string
+    };
+  }
+  // §26.6 group XOR binding (point 3): the metadata group and the identity
+  // group must appear TOGETHER or not at all. Formal run with a missing
+  // identity would produce executedThresholds with empty identity strings
+  // (EXECUTION_THRESHOLD_IDENTITY_MISMATCH); identity without metadata
+  // would have nowhere to land (the machine is not armed). Both rejected
+  // here — the third-stoppage state dies at the entry point.
+  const metadataPresent = metadata !== null;
+  const identityPresent = execIdentity !== null;
+  if (metadataPresent !== identityPresent) {
+    warnings.push('SCHEDULE_GROUP_BINDING_MISMATCH');
+    metadata = null;
+    execIdentity = null;
+  }
+  return { peakADeg, rateDegPerSec, warnings, metadata, execIdentity };
 }
 
 /** One dispatched schedule command with its drift evidence. */

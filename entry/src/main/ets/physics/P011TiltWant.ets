@@ -121,6 +121,54 @@ export function validateP011RunMetadataGroup(
     allAbsent: false, warning: null };
 }
 
+/**
+ * §26.6: shared regex validation for the execution-identity triple
+ * (execsourcecommit / execsourcefilesha256 / execbuildsha256). Both the
+ * wstilt path and the schedule arming call THIS function so the commit
+ * (6..64 hex) and SHA (64 hex) rules can never drift between channels.
+ * Group semantics mirror the metadata group: all absent (null everything)
+ * or all present and valid; a partial group reports MISSING, an invalid
+ * member reports INVALID.
+ */
+export interface P011ExecIdentityValidation {
+  execSourceCommit: string | null;
+  execSourceFileSha256: string | null;
+  execBuildSha256: string | null;
+  /** true when all three are absent. */
+  allAbsent: boolean;
+  warning: 'MISSING_SCHEDULE_EXEC_IDENTITY' | 'INVALID_SCHEDULE_EXEC_IDENTITY' | null;
+}
+
+export function validateP011ExecIdentityGroup(execSourceCommit: string | null,
+  execSourceFileSha256: string | null,
+  execBuildSha256: string | null): P011ExecIdentityValidation {
+  const commitProvided = execSourceCommit !== null && execSourceCommit.length > 0;
+  const fileShaProvided = execSourceFileSha256 !== null &&
+    execSourceFileSha256.length > 0;
+  const buildShaProvided = execBuildSha256 !== null && execBuildSha256.length > 0;
+  const providedCount = (commitProvided ? 1 : 0) + (fileShaProvided ? 1 : 0) +
+    (buildShaProvided ? 1 : 0);
+  if (providedCount === 0) {
+    return { execSourceCommit: null, execSourceFileSha256: null,
+      execBuildSha256: null, allAbsent: true, warning: null };
+  }
+  if (providedCount < 3) {
+    return { execSourceCommit: null, execSourceFileSha256: null,
+      execBuildSha256: null, allAbsent: false,
+      warning: 'MISSING_SCHEDULE_EXEC_IDENTITY' };
+  }
+  const commitOk = /^[0-9a-fA-F]{6,64}$/.test(execSourceCommit as string);
+  const fileShaOk = /^[0-9a-fA-F]{64}$/.test(execSourceFileSha256 as string);
+  const buildShaOk = /^[0-9a-fA-F]{64}$/.test(execBuildSha256 as string);
+  if (!commitOk || !fileShaOk || !buildShaOk) {
+    return { execSourceCommit: null, execSourceFileSha256: null,
+      execBuildSha256: null, allAbsent: false,
+      warning: 'INVALID_SCHEDULE_EXEC_IDENTITY' };
+  }
+  return { execSourceCommit, execSourceFileSha256, execBuildSha256,
+    allAbsent: false, warning: null };
+}
+
 function optionalFiniteNumber(parameters: Record<string, Object> | undefined,
   key: string): number | null {
   if (parameters === undefined || parameters[key] === undefined) {
@@ -242,14 +290,21 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
   const execSourceCommit = execText('execsourcecommit');
   const execSourceFileSha256 = execText('execsourcefilesha256');
   const execBuildSha256 = execText('execbuildsha256');
-  if (execSourceCommit !== null && !/^[0-9a-fA-F]{6,64}$/.test(execSourceCommit)) {
-    warnings.push('INVALID_EXEC_SOURCE_COMMIT');
-  }
-  if (execSourceFileSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execSourceFileSha256)) {
-    warnings.push('INVALID_EXEC_SOURCE_FILE_SHA256');
-  }
-  if (execBuildSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execBuildSha256)) {
-    warnings.push('INVALID_EXEC_BUILD_SHA256');
+  // §26.6: delegate to the shared validator (same regexes the schedule
+  // arming uses — one rule source); map its group verdict back onto the
+  // wstilt per-field warnings.
+  const execIdentity = validateP011ExecIdentityGroup(execSourceCommit,
+    execSourceFileSha256, execBuildSha256);
+  if (execIdentity.warning === 'INVALID_SCHEDULE_EXEC_IDENTITY') {
+    if (execSourceCommit !== null && !/^[0-9a-fA-F]{6,64}$/.test(execSourceCommit)) {
+      warnings.push('INVALID_EXEC_SOURCE_COMMIT');
+    }
+    if (execSourceFileSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execSourceFileSha256)) {
+      warnings.push('INVALID_EXEC_SOURCE_FILE_SHA256');
+    }
+    if (execBuildSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execBuildSha256)) {
+      warnings.push('INVALID_EXEC_BUILD_SHA256');
+    }
   }
   // correction route wiring (optional; only the frozen correction route id
   // is a legal binding — anything non-empty that is not the correction id

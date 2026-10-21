@@ -131,6 +131,20 @@ export default class EntryAbility extends UIAbility {
         AppStorage.setOrCreate('p011ScheduleThetaStopDeg', null);
         AppStorage.setOrCreate('p011ScheduleMetadataArmed', false);
       }
+      // §26.6: carry the execution-identity triple (non-null iff metadata
+      // is armed — the parse-level XOR binding guarantees it).
+      if (scheduleParsed.execIdentity !== null) {
+        AppStorage.setOrCreate('p011ScheduleExecSourceCommit',
+          scheduleParsed.execIdentity.execSourceCommit);
+        AppStorage.setOrCreate('p011ScheduleExecSourceFileSha256',
+          scheduleParsed.execIdentity.execSourceFileSha256);
+        AppStorage.setOrCreate('p011ScheduleExecBuildSha256',
+          scheduleParsed.execIdentity.execBuildSha256);
+      } else {
+        AppStorage.setOrCreate('p011ScheduleExecSourceCommit', null);
+        AppStorage.setOrCreate('p011ScheduleExecSourceFileSha256', null);
+        AppStorage.setOrCreate('p011ScheduleExecBuildSha256', null);
+      }
       this.p011ScheduleWantSequence++;
       AppStorage.setOrCreate('p011ScheduleWantSeq', this.p011ScheduleWantSequence);
       hilog.info(this.hilogDomain, this.hilogTag,
