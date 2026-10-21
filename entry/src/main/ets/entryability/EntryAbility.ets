@@ -8,6 +8,7 @@ import { LiquidCAEventPayload, LiquidInputSource } from '../physics/LiquidCAType
 import { LiquidCATelemetry } from '../physics/LiquidCATelemetry';
 import { nextP011TimeMs } from '../physics/WaterSandField';
 import { P011TiltWantCommand, parseP011TiltWant } from '../physics/P011TiltWant';
+import { parseP011ScheduleWant } from '../physics/P011SchedulePlayer';
 
 export default class EntryAbility extends UIAbility {
   hilogTag: string = 'EntryAbility';
@@ -15,6 +16,7 @@ export default class EntryAbility extends UIAbility {
   private liquidTelemetry: LiquidCATelemetry = new LiquidCATelemetry();
   private wantCommandSequence: number = 0;
   private p011TiltWantSequence: number = 0;
+  private p011ScheduleWantSequence: number = 0;
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onCreate');
@@ -78,6 +80,23 @@ export default class EntryAbility extends UIAbility {
     // P-011 dual-input-v1: identity travels with mode; publish mode before this Want's tilt.
     const tiltCommand = this.parseP011Want(parameters, parsed.renderMode, parsed.testMode, parsed.forceInvert);
     const tiltSequence = tiltCommand === null ? 0 : tiltCommand.sequence;
+    // v3 schedule player entry (§26.4): p011schedule=peakADeg:rate. Parsed
+    // here, consumed by SandCanvas which owns the player instance. Warnings
+    // go to hilog only; an illegal value never arms a player.
+    const scheduleParsed = parseP011ScheduleWant(parameters);
+    for (const scheduleWarning of scheduleParsed.warnings) {
+      hilog.warn(this.hilogDomain, this.hilogTag,
+        'P011_SCHEDULE_WARNING %{public}s', scheduleWarning);
+    }
+    if (scheduleParsed.peakADeg !== null && scheduleParsed.rateDegPerSec !== null) {
+      AppStorage.setOrCreate('p011SchedulePeakADeg', scheduleParsed.peakADeg);
+      AppStorage.setOrCreate('p011ScheduleRate', scheduleParsed.rateDegPerSec);
+      this.p011ScheduleWantSequence++;
+      AppStorage.setOrCreate('p011ScheduleWantSeq', this.p011ScheduleWantSequence);
+      hilog.info(this.hilogDomain, this.hilogTag,
+        'P011_SCHEDULE want peak=%{public}f rate=%{public}f',
+        scheduleParsed.peakADeg, scheduleParsed.rateDegPerSec);
+    }
     AppStorage.setOrCreate('rendermode', parsed.renderMode);
     AppStorage.setOrCreate('testmode', parsed.testMode);
     AppStorage.setOrCreate('forceinvert', false);

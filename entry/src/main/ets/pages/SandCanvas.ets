@@ -11,6 +11,7 @@ import { ComponentContent } from '@ohos.arkui.node';
 import { BusinessError } from '@ohos.base';
 import hilog from '@ohos.hilog';
 import { decodeP011TiltWant } from '../physics/P011TiltWant';
+import { P011SchedulePlayer } from '../physics/P011SchedulePlayer';
 import common from '@ohos.app.ability.common';
 import {
   P011NaturalObservationProbe,
@@ -278,6 +279,11 @@ struct SandCanvas {
   private liquidWantCommandSeq: number = 0;
   private p011TiltWantConsumedSeq: number = 0;
   private p011ScriptTargetTilt: number | null = null;
+  // v3 schedule player (§26.4): command generator only — dispatched targets
+  // flow through the existing setTilt + planner/guard path. Mutual
+  // exclusion with single commands is enforced at the consumption points.
+  private p011SchedulePlayer: P011SchedulePlayer = new P011SchedulePlayer();
+  private p011ScheduleWantConsumedSeq: number = 0;
   private waterSandSnapshot: WaterSandSnapshot | null = null;
   private waterSandParams: WaterSandParams = defaultWaterSandParams();
   private boxX: number = 0;
@@ -476,6 +482,9 @@ struct SandCanvas {
 
   aboutToDisappear(): void {
     this.frameCb.owner = null;
+    // §26.4 risk 1: clear the schedule player's activation flag on exit —
+    // a crashed/abandoned player must never permanently reject commands.
+    this.p011SchedulePlayer.forceStop();
     // P-012 E-batch：断帧回调后释放表现层资源（dispose 幂等）
     this.p012Renderer?.dispose();
     this.p012Renderer = null;
@@ -590,6 +599,10 @@ struct SandCanvas {
   }
 
   resetField(): void {
+    // §26.4 risk 1: reset tears the schedule player down (mutual-exclusion
+    // deadlock window) and clears the drift binding on the field.
+    this.p011SchedulePlayer.forceStop();
+    this.waterSandField?.setP011ScheduleDrift(null);
     if (this.renderMode === MODE_LIQUID) {
       if (this.liquidController !== null) {
         this.liquidController.reset(this.liquidSeed, LiquidInputSource.PANEL);
@@ -1024,11 +1037,99 @@ struct SandCanvas {
 
   private consumeP011TiltWant(): P011InputSelection {
     const sequence = AppStorage.get<number>('p011TiltWantCommandSeq') ?? 0;
+    // §26.4 decision 1 (mutual exclusion): while the schedule player is
+    // active a fresh single command is NOT consumed and does NOT advance
+    // its sequence — the rejection is hilog-only (a rejected command never
+    // became an input; nothing to ledger).
+    if (this.p011SchedulePlayer.isActive() && sequence > this.p011TiltWantConsumedSeq) {
+      hilog.warn(0x0000, 'SandCanvas',
+        'P011 want SCHEDULE_ACTIVE_COMMAND_REJECTED seq=%{public}d', sequence);
+      this.p011TiltWantConsumedSeq = sequence;
+      AppStorage.setOrCreate('p011TiltWantConsumedSeq', sequence);
+      const held = this.readInputModeState();
+      return { state: held, source: held.scriptTargetTilt !== null ? 'script' : 'gesture',
+        targetTilt: held.scriptTargetTilt, freshScriptCommand: null };
+    }
     const command = decodeP011TiltWant(AppStorage.get<string>('p011TiltWantCommand'),
       sequence, this.p011TiltWantConsumedSeq);
     const selection = selectP011Input(this.readInputModeState(), sequence, command);
     this.writeInputModeState(selection.state);
     return selection;
+  }
+
+  /**
+   * §26.4: consume a pending p011schedule want (peakADeg:rate). Symmetric
+   * mutual exclusion — a schedule want arriving while a single command
+   * holds the session (script target active) is rejected hilog-only, never
+   * started. Returns true when the player started this call.
+   */
+  private consumeP011ScheduleWant(nowMs: number): boolean {
+    const seq = AppStorage.get<number>('p011ScheduleWantSeq') ?? 0;
+    if (seq <= this.p011ScheduleWantConsumedSeq) {
+      return false;
+    }
+    this.p011ScheduleWantConsumedSeq = seq;
+    const state = this.readInputModeState();
+    const singleCommandSession = state.scriptTargetTilt !== null;
+    if (singleCommandSession || this.p011SchedulePlayer.isActive()) {
+      hilog.warn(0x0000, 'SandCanvas',
+        'P011 schedule SCHEDULE_ACTIVE_COMMAND_REJECTED seq=%{public}d', seq);
+      return false;
+    }
+    const peakADeg = AppStorage.get<number>('p011SchedulePeakADeg');
+    const rateDegPerSec = AppStorage.get<number>('p011ScheduleRate');
+    if (peakADeg === undefined || rateDegPerSec === undefined) {
+      return false;
+    }
+    const started = this.p011SchedulePlayer.start(peakADeg, rateDegPerSec, nowMs);
+    if (started) {
+      hilog.info(0x0000, 'SandCanvas',
+        'P011 schedule player START peak=%{public}f rate=%{public}f t0=%{public}f',
+        peakADeg, rateDegPerSec, nowMs);
+    }
+    return started;
+  }
+
+  /**
+   * §26.4: player tick — dispatch every due schedule command through the
+   * EXISTING input path: setTilt target override + segment binding + input
+   * sequence + drift on the attempt layer. No planner bypass; the substep
+   * pipeline runs exactly as for want commands.
+   */
+  private tickP011SchedulePlayer(nowMs: number,
+    setDispatchedCommand: (targetTilt: number, inputSequence: number,
+      commandTime: number) => void): void {
+    if (!this.p011SchedulePlayer.isActive()) {
+      return;
+    }
+    const ws = this.waterSandField;
+    if (ws === null) {
+      this.p011SchedulePlayer.forceStop();
+      return;
+    }
+    const dispatches = this.p011SchedulePlayer.tick(nowMs);
+    for (const dispatch of dispatches) {
+      const command = dispatch.command;
+      // segment identity flows exactly like a v3 want command binding.
+      ws.setP011CurrentCommandSegment(
+        command.phaseKind === 'ramp' ? command.legId : null,
+        command.segmentId, command.phaseKind);
+      ws.setP011ScheduleDrift(dispatch.driftMs);
+      ws.setTilt(command.targetTiltDeg);
+      const inputSequence = ws.nextP011InputSequence();
+      setDispatchedCommand(command.targetTiltDeg, inputSequence,
+        dispatch.actualDispatchMs);
+      // Every dispatch logs its drift (the rhythm-evidence stream); the
+      // exceeded marker rides on top when > 50 ms.
+      hilog.info(0x0000, 'SandCanvas',
+        'P011 SCHEDULE_DISPATCH cmd=%{public}d off=%{public}d driftMs=%{public}f',
+        command.commandSequence, command.offsetMs, dispatch.driftMs);
+      if (dispatch.driftExceeded) {
+        hilog.warn(0x0000, 'SandCanvas',
+          'P011 SCHEDULE_DRIFT_EXCEEDED cmd=%{public}d driftMs=%{public}f',
+          command.commandSequence, dispatch.driftMs);
+      }
+    }
   }
 
   private initField(): void {
@@ -1158,6 +1259,21 @@ struct SandCanvas {
     }
     this.lastTime = now;
     const frameDeltaMs = previousFrameTime > 0 ? now - previousFrameTime : 16.7;
+    // §26.4: schedule want entry (mutual-exclusion checked inside) and the
+    // player tick on the monotonic Date.now() clock. Dispatched commands
+    // override the script target through the same variable the want path
+    // uses, so the physics substep pipeline is untouched.
+    let scheduleDispatchTilt: number | null = null;
+    let scheduleDispatchSequence = 0;
+    if (this.renderMode === MODE_WATERSAND) {
+      this.consumeP011ScheduleWant(now);
+      this.tickP011SchedulePlayer(now, (targetTilt, inputSequence): void => {
+        scheduleDispatchTilt = targetTilt;
+        scheduleDispatchSequence = inputSequence;
+        this.p011ScriptTargetTilt = targetTilt;
+        this.tiltX = targetTilt;
+      });
+    }
     const p011Selection = this.renderMode === MODE_WATERSAND ? this.consumeP011TiltWant() : null;
     if (p011Selection !== null && p011Selection.targetTilt !== null) {
       this.tiltX = p011Selection.targetTilt;
@@ -1350,6 +1466,15 @@ struct SandCanvas {
           p011ScriptCommandTime = p011TiltWant.commandTime;
           p011ScriptAcceptedTime = nextP011TimeMs();
           p011ScriptTargetTilt = p011TiltWant.targetTilt;
+        } else if (scheduleDispatchTilt !== null) {
+          // §26.4: a schedule-player command dispatched this frame — the
+          // input identity is the player's (script source, dispatch time,
+          // the input sequence the tick already allocated).
+          inputSource = 'script';
+          inputCommandTime = nextP011TimeMs();
+          p011ScriptHasEvent = true;
+          p011InputSequence = scheduleDispatchSequence;
+          p011ScriptTargetTilt = scheduleDispatchTilt;
         } else if (this.p011ScriptTargetTilt !== null && this.testMode && !this.forceInvert) {
           this.tiltX = this.p011ScriptTargetTilt;
         } else {

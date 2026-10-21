@@ -8,6 +8,7 @@ import sandGridTest from './SandGridTest';
 import heightFieldTest from './HeightFieldTest';
 import waterSandFieldTest from './WaterSandFieldTest';
 import liquidCAFieldTest from './LiquidCAFieldTest';
+import p011SchedulePlayerTest from '../../../test/P011SchedulePlayerTest';
 import p012WaterSandAdapterTest from '../../../test/P012WaterSandAdapterTest';
 
 export default function abilityTest() {
@@ -28,5 +29,6 @@ export default function abilityTest() {
   heightFieldTest();
   waterSandFieldTest();
   liquidCAFieldTest();
+  p011SchedulePlayerTest();
   p012WaterSandAdapterTest();
 }

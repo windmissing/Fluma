@@ -132,6 +132,14 @@ export interface P011NaturalObservationSubstepContext {
   attemptId?: string | null;
   commitStatus?: 'committed' | 'blocked' | 'rolled_back' | 'rejected' | null;
   rollbackReason?: string | null;
+  // v3 schedule player drift (§26.4 decision 2): actualDispatch −
+  // scheduledOffset of the driving schedule command, recorded never chased.
+  // Optional so pre-player runs parse unchanged (no schema bump). Null on
+  // substeps not driven by a schedule command.
+  scheduleDriftMs?: number | null;
+  // True when scheduleDriftMs exceeded the 50 ms marker threshold — a
+  // marker for the checker, not an error.
+  scheduleDriftExceeded?: boolean | null;
   // Executed threshold identity (GAP-5): null on legacy runs.
   executedThresholds?: P011NaturalObservationExecutedThresholds | null;
 }

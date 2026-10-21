@@ -16,6 +16,7 @@ import {
   p011NaturalObservationPhaseForCommand,
   p011NaturalObservationPhaseForV3Segment
 } from './P011NaturalObservation';
+import { P011_SCHEDULE_DRIFT_MARKER_MS } from './P011SchedulePlayer';
 import {
   P011ChannelPlan,
   P011ExistingBudgetSnapshot,
@@ -777,6 +778,9 @@ export class WaterSandField {
   private p011CurrentLegId: string | null = null;
   private p011CurrentSegmentId: string | null = null;
   private p011CurrentPhaseKindV3: 'platform' | 'ramp' | null = null;
+  // §26.4 decision 2: schedule player dispatch drift on the attempt layer.
+  private p011ScheduleDriftMs: number | null = null;
+  private p011ScheduleDriftExceeded = false;
   // ── GAP-4 attempt outcome of the current substep ──
   private p011CurrentAttemptId: string | null = null;
   private p011CurrentCommitStatus: 'committed' | 'blocked' | 'rolled_back'
@@ -1402,6 +1406,19 @@ export class WaterSandField {
   }
 
   /**
+   * §26.4 decision 2: record the driving schedule command's dispatch drift
+   * (actual − scheduled, monotonic clock) on the attempt layer. Null clears
+   * the binding (single-command / gesture substeps carry null). The player
+   * records, never chases; the checker consumes the field under the
+   * existing input-timing gates.
+   */
+  setP011ScheduleDrift(driftMs: number | null): void {
+    this.p011ScheduleDriftMs = driftMs;
+    this.p011ScheduleDriftExceeded = driftMs !== null &&
+      driftMs > P011_SCHEDULE_DRIFT_MARKER_MS;
+  }
+
+  /**
    * GAP-1: derive the state machine thresholds from the configured candidate
    * (thetaStartDeg/thetaStopDeg). When both are present the dual-threshold
    * state machine is armed; when absent (legacy run) it stays off and the
@@ -1558,6 +1575,11 @@ export class WaterSandField {
       attemptId: this.p011CurrentAttemptId,
       commitStatus: this.p011CurrentCommitStatus,
       rollbackReason: this.p011CurrentRollbackReason,
+      // §26.4 decision 2: schedule drift rides the attempt layer (null on
+      // non-schedule-driven substeps).
+      scheduleDriftMs: this.p011ScheduleDriftMs,
+      scheduleDriftExceeded: this.p011ScheduleDriftExceeded
+        ? true : null,
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
