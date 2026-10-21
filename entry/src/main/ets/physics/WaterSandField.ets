@@ -2046,6 +2046,9 @@ export class WaterSandField {
   private applyCorrectionSlot(substepDt: number): void {
     const reservation = this.correctionReservation;
     if (reservation === null || reservation.candidates.length === 0) {
+      // D-1b: zero-activity substep — the four telemetry fields still land
+      // (all zeros) so every correction-route substep closes its books.
+      this.naturalObservationProbe?.recordCorrectionSlot(0, 0, 0, 0);
       this.recordNaturalRelaxInactiveEdges();
       this.recordNaturalRelaxSummary(0);
       return;
@@ -2062,6 +2065,12 @@ export class WaterSandField {
     const hysteresisActive = this.relaxHysteresisThresholds !== null;
     let appliedTotal = 0;
     let stalled = 0;
+    // D-1b telemetry: requested = candidates entering the slot; granted =
+    // moves with accepted > EPS; rejected = cancelled / refused-with-reason
+    // / admitted-nothing moves. Closure: requested == granted + rejected.
+    const requestedCount = reservation.candidates.length;
+    let grantedCount = 0;
+    let rejectedCount = 0;
     for (const index of reservation.order) {
       const candidate = reservation.candidates[index];
       const outcome = p011CorrectionApplyOnce(reservation, index, view,
@@ -2072,6 +2081,11 @@ export class WaterSandField {
           outcome.reason === 'GUARD_REJECTED') {
           stalled += 1;
         }
+      }
+      if (outcome.accepted > EPS) {
+        grantedCount += 1;
+      } else {
+        rejectedCount += 1;
       }
       const edge = candidate.edge;
       const activeBefore = hysteresisActive
@@ -2152,6 +2166,9 @@ export class WaterSandField {
       }
     }
     this.correctionStalledCount = stalled;
+    // D-1b: land the four telemetry counts on the audit layer.
+    this.naturalObservationProbe?.recordCorrectionSlot(requestedCount,
+      grantedCount, rejectedCount, stalled);
     this.recordNaturalRelaxInactiveEdges();
     this.recordNaturalRelaxSummary(appliedTotal);
   }

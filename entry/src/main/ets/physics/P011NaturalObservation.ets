@@ -319,6 +319,19 @@ export interface P011NaturalObservationAudit {
   relaxTriggered: boolean;
   relaxRequestedTotal: number;
   relaxAppliedTotal: number;
+  // D-1b correction telemetry (§24.2 item 4): per-substep counts of the
+  // correction slot's apply loop. requested = candidates entering the slot
+  // this substep; granted = moves with accepted > EPS; rejected = moves the
+  // budget/stock/guard refused (cancelled, refused with a reason, or
+  // admitted nothing); stalled = edges flagged NO_POSITIVE_LOCAL_
+  // CONTRIBUTION / DIRECTION_REVERSED / GUARD_REJECTED. Closure identity:
+  // requested == granted + rejected. Optional so pre-D-1b records parse
+  // unchanged (the checker tolerates absence on old runs; every NEW
+  // correction-route substep carries all four).
+  correctionRequested?: number;
+  correctionGranted?: number;
+  correctionRejected?: number;
+  correctionStalledCount?: number;
   errorCode: string | null;
 }
 
@@ -564,6 +577,11 @@ export class P011NaturalObservationProbe {
   private relaxTriggered = false;
   private relaxRequestedTotal = 0;
   private relaxAppliedTotal = 0;
+  // D-1b correction slot telemetry (per substep; undefined = not recorded).
+  private correctionRequested: number | undefined = undefined;
+  private correctionGranted: number | undefined = undefined;
+  private correctionRejected: number | undefined = undefined;
+  private correctionStalledCount: number | undefined = undefined;
   private lastContext: P011NaturalObservationSubstepContext | null = null;
   private lastAudit: P011NaturalObservationAudit | null = null;
   // GAP-3: per-edge decision records captured at the state machine's
@@ -603,6 +621,13 @@ export class P011NaturalObservationProbe {
     this.relaxTriggered = false;
     this.relaxRequestedTotal = 0;
     this.relaxAppliedTotal = 0;
+    // D-1b correction telemetry resets per substep (undefined marks
+    // "not recorded this substep" — non-correction runs leave it unset and
+    // the ledger writer nulls the fields).
+    this.correctionRequested = undefined;
+    this.correctionGranted = undefined;
+    this.correctionRejected = undefined;
+    this.correctionStalledCount = undefined;
     this.decisions = new Map();
     this.materialGuardEvidence = [];
     this.hysteresisActiveThisSubstep = false;
@@ -700,6 +725,21 @@ export class P011NaturalObservationProbe {
     this.relaxAppliedTotal = appliedTotal;
   }
 
+  /**
+   * D-1b: record the correction slot's per-substep telemetry counts
+   * (requested / granted / rejected / stalled). Closure identity:
+   * requested == granted + rejected (every candidate move is either
+   * admitted or refused). Called from applyCorrectionSlot on every
+   * correction-route substep, including zero-candidate ones (all zeros).
+   */
+  recordCorrectionSlot(requested: number, granted: number, rejected: number,
+    stalledCount: number): void {
+    this.correctionRequested = requested;
+    this.correctionGranted = granted;
+    this.correctionRejected = rejected;
+    this.correctionStalledCount = stalledCount;
+  }
+
   finishSubstep(stateAfter: P011NaturalObservationState,
     budgets: P011NaturalObservationBudgets,
     audit: P011NaturalObservationAudit): void {
@@ -733,6 +773,12 @@ export class P011NaturalObservationProbe {
       relaxTriggered: this.relaxTriggered,
       relaxRequestedTotal: this.relaxRequestedTotal,
       relaxAppliedTotal: this.relaxAppliedTotal,
+      // D-1b: correction slot counts (undefined on non-correction substeps
+      // serializes as absent — old-run parsers keep working).
+      correctionRequested: this.correctionRequested,
+      correctionGranted: this.correctionGranted,
+      correctionRejected: this.correctionRejected,
+      correctionStalledCount: this.correctionStalledCount,
       errorCode: audit.errorCode
     };
     this.lastAudit = completeAudit;

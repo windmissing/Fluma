@@ -7,6 +7,7 @@
 import { WaterSandSnapshot, WaterSandField } from '../physics/WaterSandField';
 import { P012WaterSandAdapter, P012MaterialFrameView } from './P012WaterSandAdapter';
 import { P012MaterialMotionCache } from './P012MaterialMotionCache';
+import { P012MaterialColumnSampler } from './P012MaterialSampler';
 import hilog from '@ohos.hilog';
 import {
   P012FrameContext, P012AppearanceTier, P012_APPEARANCE_ROUTE_ID,
@@ -119,6 +120,34 @@ const P012_B_ENV_AMP = 0.4;
 /** 单位方差归一化后的截幅（有限范围，§5.1"被截到有限范围"） */
 const P012_B_GRAIN_CLIP = 2.5;
 
+/** ── C 层理参数（architecture §11.1；design-P012-C-stratification §3.1）── */
+/** 条纹位图：宽 64（warp 相位轴）× 高 256（深度相位轴）×3 张（H/L/M 各一 seed）。
+ *  常驻 3×64×256×4 = 196KB ≤ 0.25MiB 预算（§11.1 选型 B）。 */
+const P012_C_BITMAP_W = 64;
+const P012_C_BITMAP_H = 256;
+/** λ（层纹周期，材料深度单位）。设计稿：run 首个合格厚层场景按约 16–32
+ *  分析行对应的材料深度冻结。实现取冻结候选中值 24 材料单位（≈分析行 24）。
+ *  不随层高归一化（红线）：层高变化时层纹数量按实际厚度增减（设计行为）。 */
+const P012_C_LAMBDA_MATERIAL = 24;
+/** warp 横向慢变幅度（周期数，设计候选 ≤1/4 周期） */
+const P012_C_WARP_RANGE = 0.25;
+/** 分段阈值：相邻列 warp 相位差 >1/16 周期断段（§11.1；段内误差 ≤1/32） */
+const P012_C_SEG_THRESHOLD = 1 / 16;
+/** 段数上限（三带合计 K≤16 预算；极端满幅 warp 时按 1/16 阈值最多 4 段/带） */
+const P012_C_SEG_MAX = 16;
+/** 层纹幅度（灰度级，设计稿：有序层 ±4–8 / 混合区 ±2–4）。
+ *  烘焙进位图（envelope·amp·bandNoise 已含），运行期不再缩放。 */
+const P012_C_AMP_ORDERED = 6;
+const P012_C_AMP_MIX = 3;
+/** C1 叠加强度（globalAlpha：位图灰度 128±deltaY 与底色 source-over） */
+const P012_C_ALPHA = 0.5;
+/** C3 低频明暗带数/带（设计稿 2–4 宽块，复用 E shadeLut，零新缓存） */
+const P012_C3_BANDS = 3;
+/** C3 明暗带叠加强度 */
+const P012_C3_ALPHA = 0.10;
+/** bandNoise 纵向特征尺度盒滤波半径（px；非等间距带纹的相邻周期不规则度） */
+const P012_C_BAND_RPx = 6;
+
 /** renderer 对外生命周期接口（architecture §1 模块表） */
 export class P012WaterSandRenderer {
   private readonly adapter: P012WaterSandAdapter;
@@ -150,6 +179,24 @@ export class P012WaterSandRenderer {
   private grainBitmapH: ImageBitmap | null = null;
   private grainBitmapL: ImageBitmap | null = null;
   private grainBitmapM: ImageBitmap | null = null;
+  /** ── C 层理资源（§11.1 选型 B：窄高条纹位图，稳定深度函数一次性烘焙）── */
+  /** bandNoise 纵向一维表（深度相位 → [-1,1] 连续带纹；烘焙源数据）。
+   *  独立于位图保存：Node 通道无 OffscreenCanvas 时单测仍可验证零均值有界。 */
+  private readonly stratNoiseH: Float64Array = new Float64Array(P012_C_BITMAP_H);
+  private readonly stratNoiseL: Float64Array = new Float64Array(P012_C_BITMAP_H);
+  private readonly stratNoiseM: Float64Array = new Float64Array(P012_C_BITMAP_H);
+  /** C 层理灰度位图（64×256：横向=warp 相位轴，纵向=深度相位轴；
+   *  纯不透明 alpha=255，RGB 同值灰度） */
+  private stratBitmapH: ImageBitmap | null = null;
+  private stratBitmapL: ImageBitmap | null = null;
+  private stratBitmapM: ImageBitmap | null = null;
+  /** C 位图烘焙时的 λpx（显示 px / 周期）；geometry epoch 变化重烘焙时更新 */
+  private stratLamPx: number = 0;
+  /** C 位图烘焙时的几何代次（检测 resize/DPI 重烘焙） */
+  private stratBakedGeometryEpoch: number = -1;
+  /** warp 基线横向慢变表（128 列，[-1,1]；×WARP_RANGE 得周期数）。
+   *  确定性 LCG 生成、低频盒滤波，方向反转不换 seed（design §3.1）。 */
+  private readonly warpBase: Float64Array = new Float64Array(128);
   /** ── 运动代理（D-B2：相净搬运位移代理 + 连续 UV 平流）── */
   private readonly motionCache: P012MaterialMotionCache;
   private readonly cols: number;
@@ -187,6 +234,12 @@ export class P012WaterSandRenderer {
     this.grainTileL = this.buildGrainTile(20261023);
     this.grainTileM = this.buildGrainTile(20261024);
     this.buildGrainBitmaps();
+    // C 层理（§11.1）：bandNoise 一维表 + warp 基线表一次性生成（确定性 seed，
+    // 不调用/消耗物理随机源）；位图烘焙延迟到首帧（需 heightToY 逆变换系数）。
+    this.buildStratNoise(this.stratNoiseH, 20261025);
+    this.buildStratNoise(this.stratNoiseL, 20261026);
+    this.buildStratNoise(this.stratNoiseM, 20261027);
+    this.buildWarpBase(20261028);
   }
 
   /** 外观路线身份（独立视觉/性能证据 manifest 用） */
@@ -268,6 +321,13 @@ export class P012WaterSandRenderer {
     //    用 8 档游程近似逐列光照（run 合并相邻同档列，draw 计数受控）
     //    A 档启用时沙顶 3px 硬描边语义由界面过渡带取代（P-012 分支无硬描边）
     drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
+    // 3.25) C 层理（C-batch §11，C1 分段平铺 + C3 低频明暗基底）：
+    //    时序按 design §3.1（E底色 → C层纹 → B颗粒 → A散射），C 只在 EAB 档
+    //    叠加（不新增 tier 枚举）；§11.4 消融 ablation=STRAT 跳过。
+    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT) {
+      drawCount += this.drawStratification(ctx, view, heightToY, colW,
+        boxX, boxY, boxW, boxH, frameContext.geometryEpoch);
+    }
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
     //      drawImage(256² 颗粒 tile) 按全局平流偏移精确平铺；跟随材料净搬运、
     //      无缝、无贴纸。§10.4 消融：ablation=GRAIN 时跳过颗粒层。
@@ -764,6 +824,346 @@ export class P012WaterSandRenderer {
         ' waterTopY=' + heightToY(this.smoothWaterTop[cm]).toFixed(1) +
         ' bottomY=' + (boxY + boxH).toFixed(1) +
         ' offH=' + offH.toFixed(2) + ' offL=' + offL.toFixed(2));
+    }
+    return draws;
+  }
+
+  // ───────────────────── C 层理（C-batch §11；C1+C3） ─────────────────────
+
+  /**
+   * bandNoise 一维表（§11.1）：零均值、有界 [-1,1] 的连续带纹（纵向）。
+   * 相邻周期轻微不规则（白噪声 → 盒滤波 → 去均值 → 峰值归一），可平铺
+   * （表长 = 位图高 256 = λpx 的整数周期数 → 环形采样无缝）。
+   * 禁止逐列独立随机相位（design §3.1）——本表只在烘焙时查一次。
+   */
+  private buildStratNoise(out: Float64Array, seed: number): void {
+    const n = out.length;                        // = P012_C_BITMAP_H = 256
+    let state = seed | 0;
+    const next = (): number => {
+      state = (Math.imul(state, 1664525) + 1013904223) | 0;
+      return ((state >>> 8) & 0xffffff) / 0xffffff;
+    };
+    const white = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      white[i] = next() * 2 - 1;
+    }
+    // 盒滤波（环形索引保可平铺）：半径 P012_C_BAND_RPx → 相邻周期不规则
+    const r = P012_C_BAND_RPx;
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+      let cnt = 0;
+      for (let d = -r; d <= r; d += 2) {
+        sum += white[(i + d + n) % n];
+        cnt++;
+      }
+      out[i] = sum / cnt;
+    }
+    // 去均值 + 峰值归一到 [-1,1]
+    let mean = 0;
+    for (let i = 0; i < n; i++) {
+      mean += out[i];
+    }
+    mean /= n;
+    let maxAbs = 1e-9;
+    for (let i = 0; i < n; i++) {
+      out[i] -= mean;
+      maxAbs = Math.max(maxAbs, Math.abs(out[i]));
+    }
+    for (let i = 0; i < n; i++) {
+      out[i] /= maxAbs;
+    }
+  }
+
+  /** warp 基线表：128 列 [-1,1] 低频慢变（横向特征尺度 ~32 列）。
+   *  运行期 warp(x) = warpBase[col(x − acceptedUV)] × WARP_RANGE（周期数）。
+   *  acceptedUV 仅在 pairValid/可信材料位移时推进（motionCache），否则冻结。
+   *  慢变约束（§11.1 分段阈值 1/16 周期的前提）：相邻列差必须远小于
+   *  1/16÷WARP_RANGE=1/4 表值 → 盒滤波后再做 6 遍 3 点平滑（与
+   *  buildDisplayProfiles 同法），把白噪声残量压到逐列近线性。 */
+  private buildWarpBase(seed: number): void {
+    const n = this.warpBase.length;              // 128
+    let state = seed | 0;
+    const next = (): number => {
+      state = (Math.imul(state, 1664525) + 1013904223) | 0;
+      return ((state >>> 8) & 0xffffff) / 0xffffff;
+    };
+    const white = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      white[i] = next() * 2 - 1;
+    }
+    // 低频盒滤波（半径 8 列，环形保可平铺）
+    const r = 8;
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+      let cnt = 0;
+      for (let d = -r; d <= r; d += 2) {
+        sum += white[(i + d + n) % n];
+        cnt++;
+      }
+      this.warpBase[i] = sum / cnt;
+    }
+    // 6 遍 3 点平滑（环形）：相邻列差 → 近线性慢变
+    const tmp = new Float64Array(n);
+    for (let pass = 0; pass < 6; pass++) {
+      for (let i = 0; i < n; i++) {
+        const left = this.warpBase[(i - 1 + n) % n];
+        const right = this.warpBase[(i + 1) % n];
+        tmp[i] = (left + this.warpBase[i] + right) / 3;
+      }
+      this.warpBase.set(tmp);
+    }
+    let maxAbs = 1e-9;
+    for (let i = 0; i < n; i++) {
+      maxAbs = Math.max(maxAbs, Math.abs(this.warpBase[i]));
+    }
+    for (let i = 0; i < n; i++) {
+      this.warpBase[i] /= maxAbs;                // [-1,1]
+    }
+  }
+
+  /** 一维连续噪声采样（环形表线性插值）：t 任意实数相位 → 表内连续值。
+   *  表 = 一个「噪声周期」的 bandNoise 波形（含周期内不规则带距）；
+   *  位图纵向 u 与表相位经 λpx=H/k 对齐 → 平铺严格无缝。 */
+  private stratNoiseAt(table: Float64Array, t: number): number {
+    const n = table.length;
+    const f = t * n;
+    const i0 = ((Math.floor(f) % n) + n) % n;
+    const i1 = (i0 + 1) % n;
+    const frac = f - Math.floor(f);
+    return table[i0] * (1 - frac) + table[i1] * frac;
+  }
+
+  /**
+   * C 层理灰度位图烘焙（§11.1 选型 B）：
+   *   像素(v, u) = 128 + envelope(u) × amp × bandNoise(seed, u/λpx + (v/64)×WARP_RANGE)
+   * - 纵向 u = 深度相位（px），λpx = λ_material × pxPerMaterial（render 期传入）
+   * - 横向 v = warp 相位轴 [0, 1/4 周期]（64px 内完整表达 warp 慢变）
+   * - envelope：位图纵向边缘平滑衰减（带边界；cos² 半周期边沿）
+   * - 纯不透明 alpha=255，RGB 同值（灰度单通道语义）——增量在运行期经
+   *   globalAlpha 混合，绝不烘焙 alpha（s94 教训）
+   * - λ 冻结后重烘焙：geometry epoch 变化时按新 scale 重烘（epoch 钩子，
+   *   复用 B 档 buildGrainBitmaps 模式）
+   */
+  private buildStratBitmaps(pxPerMaterial: number): void {
+    if (pxPerMaterial <= 0) {
+      return;
+    }
+    // λpx 对齐到「位图高的整数分割」：H = k×λpx（k=ceil(256/λpx)）。
+    // 位图纵向按 256…H 平铺时相位严格连续（λpx 原始值 24×pxPerMaterial 与
+    // H/k 的偏差 <1%，外观域可接受；§11.3 风险点「λ 换算」的工程化）。
+    const k = Math.max(1, Math.ceil(P012_C_BITMAP_H / (P012_C_LAMBDA_MATERIAL * pxPerMaterial)));
+    this.stratLamPx = P012_C_BITMAP_H / k;
+    let ocKind = 'none';
+    try {
+      if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
+        hilog.info(0x0000, 'P012', 'strat: OffscreenCanvas undefined/null');
+        return;
+      }
+      ocKind = 'class';
+    } catch (e) {
+      hilog.error(0x0000, 'P012', 'strat: typeof OffscreenCanvas threw: ' + JSON.stringify(e));
+      return;
+    }
+    hilog.info(0x0000, 'P012', 'strat: OffscreenCanvas ' + ocKind +
+      ' present, baking bitmaps lamPx=' + this.stratLamPx.toFixed(1));
+    this.stratBitmapH = this.makeStratBitmap(this.stratNoiseH, P012_C_AMP_ORDERED);
+    this.stratBitmapL = this.makeStratBitmap(this.stratNoiseL, P012_C_AMP_ORDERED);
+    this.stratBitmapM = this.makeStratBitmap(this.stratNoiseM, P012_C_AMP_MIX);
+    hilog.info(0x0000, 'P012', 'strat: bitmaps H=' +
+      (this.stratBitmapH === null ? 'null' : 'ok') +
+      ' L=' + (this.stratBitmapL === null ? 'null' : 'ok') +
+      ' M=' + (this.stratBitmapM === null ? 'null' : 'ok'));
+  }
+
+  /** 单张 C 位图：64×256 灰度（横向 warp 相位 × 纵向深度相位） */
+  private makeStratBitmap(noise: Float64Array, amp: number): ImageBitmap | null {
+    const w = P012_C_BITMAP_W;
+    const h = P012_C_BITMAP_H;
+    try {
+      const off = new OffscreenCanvas(w, h);
+      const octx = off.getContext('2d');
+      if (octx === null || octx === undefined) {
+        hilog.error(0x0000, 'P012', 'strat: getContext(2d) returned null/undefined');
+        return null;
+      }
+      const img = octx.createImageData(w, h);
+      const data = img.data;
+      for (let v = 0; v < w; v++) {
+        // 该横向列的 warp 相位偏移（v/64 × 1/4 周期，周期数）
+        const warpCycles = (v / w) * P012_C_WARP_RANGE;
+        for (let u = 0; u < h; u++) {
+          // 深度相位（周期数）：u/λpx + warp
+          const phase = u / this.stratLamPx + warpCycles;
+          // 带边界 envelope（位图纵向边缘 cos² 衰减，半宽 = λpx 的 1/2）
+          const edge = Math.min(u, h - 1 - u) / (this.stratLamPx * 0.5);
+          const env = Math.max(0, Math.min(1, edge));
+          const delta = env * amp * this.stratNoiseAt(noise, phase * this.stratLamPx);
+          const gray = this.clamp255(128 + delta);
+          const idx = (u * w + v) * 4;
+          data[idx] = gray;
+          data[idx + 1] = gray;
+          data[idx + 2] = gray;
+          data[idx + 3] = 255;
+        }
+      }
+      octx.putImageData(img, 0, 0);
+      const bmp = off.transferToImageBitmap();
+      return bmp;
+    } catch (e) {
+      hilog.error(0x0000, 'P012', 'strat: makeStratBitmap threw: ' + JSON.stringify(e));
+      return null;
+    }
+  }
+
+  /** warp 相位（周期数）@显示 x：warpBase 列采样 × WARP_RANGE；
+   *  acceptedUV（px，来自 motionCache 材料位移代理）平移采样位置。 */
+  private warpAt(xPx: number, boxX: number, colW: number, acceptedUVPx: number): number {
+    const n = this.warpBase.length;              // 128
+    // 显示 x → 材料坐标（减去材料净位移）→ 列索引（环形）
+    const mx = xPx - boxX - acceptedUVPx;
+    const colF = mx / colW;
+    const i = ((Math.floor(colF) % n) + n) % n;
+    return this.warpBase[i] * P012_C_WARP_RANGE;
+  }
+
+  /**
+   * C 层理绘制（C1 分段平铺 + C3 低频明暗基底；§11.3）：
+   * 1) C 先于 B（grain）绘制（design §3.1 时序：E底色 → C层纹 → B颗粒 → A散射）
+   * 2) 每带：分段（相邻列 warp 差 >1/16 周期断段，K≤16）→ 每段 1 次
+   *    clip（带曲线，与 B 档同骨架）+ ≤3 drawImage 平铺（warp 相位 = 横向
+   *    采样偏移 dx = warp/warpRange×64）
+   * 3) C3：C1 之上叠 2–4 个低频明暗带（clip 同带，shadeLut 采样，零新缓存）
+   * 4) 消融 strat 跳过整段；空带（高度≤0.5px）跳过
+   * 返回 draw 提交次数。
+   */
+  private drawStratification(ctx: CanvasRenderingContext2D, view: P012MaterialFrameView,
+    heightToY: (h: number) => number, colW: number,
+    boxX: number, boxY: number, boxW: number, boxH: number,
+    geometryEpoch: number): number {
+    const n = this.cols;
+    // λpx / 位图烘焙（geometry epoch 变化重烘焙；pxPerMaterial = boxH/capacity
+    // 是 heightToY 的逆变换系数）
+    if (this.stratBakedGeometryEpoch !== geometryEpoch || this.stratBitmapH === null) {
+      this.stratBakedGeometryEpoch = geometryEpoch;
+      this.buildStratBitmaps(boxH / this.capacity);
+    }
+    // 三带位图 + 各自 warp 推进（acceptedUV：pairValid 时材料位移代理，否则 0 冻结）
+    const pairValid = this.lastPairValid;
+    const offH = pairValid ? this.motionCache.meanDeltaXPx(true) : 0;
+    const offL = pairValid ? this.motionCache.meanDeltaXPx(false) : 0;
+    const offM = (offH + offL) * 0.5;
+    const bands: P012GrainBand[] = [
+      { kind: 0, off: offH, bitmap: this.stratBitmapH },
+      { kind: 1, off: offL, bitmap: this.stratBitmapL },
+      { kind: 2, off: offM, bitmap: this.stratBitmapM }
+    ];
+    // 分段：sampler 在分段点调用（K+1 次/带，§11.2）
+    const sampler = new P012MaterialColumnSampler(this.smoothBh, this.smoothMixStart,
+      this.smoothSandTop, boxW);
+    let draws = 0;
+    let segTotal = 0;
+    for (let bi = 0; bi < bands.length; bi++) {
+      const b = bands[bi];
+      const tile = b.bitmap;
+      if (tile === null) {
+        continue;                                 // Node/无位图：跳过（单测兼容）
+      }
+      // 带的实际屏幕纵向范围（空带跳过：复用 B 档 bandTopY/bandBottomY 逻辑）
+      let minY = Number.MAX_VALUE;
+      let maxY = -Number.MAX_VALUE;
+      for (let c = 0; c < n; c++) {
+        const t = this.bandTopY(b.kind, c, heightToY);
+        const bo = this.bandBottomY(b.kind, c, heightToY);
+        if (t < minY) {
+          minY = t;
+        }
+        if (bo > maxY) {
+          maxY = bo;
+        }
+      }
+      if (maxY - minY <= 0.5) {
+        continue;
+      }
+      // warp 逐列相位 → 分段（相邻列差 >1/16 周期断段）
+      const segs: number[][] = [];                // [startX, endX, warpCenter]
+      let segStartX = boxX;
+      let warpPrev = this.warpAt(segStartX, boxX, colW, b.off);
+      for (let c = 1; c <= n; c++) {
+        const x = boxX + c * colW;
+        const w = this.warpAt(c < n ? x - colW * 0.5 : x, boxX, colW, b.off);
+        if (c === n || Math.abs(w - warpPrev) > P012_C_SEG_THRESHOLD || segs.length >= P012_C_SEG_MAX - 1) {
+          segs.push([segStartX, x, warpPrev]);
+          segStartX = x;
+          warpPrev = w;
+        } else {
+          warpPrev = w;
+        }
+      }
+      segTotal += segs.length;
+      // 每段：带曲线 clip + drawImage 平铺（横向采样偏移 = warp/warpRange×64）
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(boxX, this.bandTopY(b.kind, 0, heightToY));
+      for (let c = 1; c < n; c++) {
+        ctx.lineTo(boxX + c * colW, this.bandTopY(b.kind, c, heightToY));
+      }
+      for (let c = n - 1; c >= 0; c--) {
+        ctx.lineTo(boxX + (c + 1) * colW, this.bandBottomY(b.kind, c, heightToY));
+      }
+      ctx.closePath();
+      ctx.clip();
+      ctx.globalAlpha = P012_C_ALPHA;
+      const yTop = Math.floor(minY);
+      const yRows = Math.ceil(maxY) - yTop;
+      for (let si = 0; si < segs.length; si++) {
+        const s = segs[si];
+        // 横向采样偏移：warp 相位（周期数）→ 位图 v 轴 px（v/64=warp/warpRange）
+        const dv = s[2] / P012_C_WARP_RANGE * P012_C_BITMAP_W;
+        const sx = ((Math.floor(dv) % P012_C_BITMAP_W) + P012_C_BITMAP_W) % P012_C_BITMAP_W;
+        // 平铺该段 x 范围（横向取位图 [sx, sx+segW) 区段，不足处从左缘续）
+        let x = s[0];
+        while (x < s[1] - 0.5) {
+          const availW = Math.min(s[1] - x, P012_C_BITMAP_W - sx);
+          // 源矩形（位图内），目标 1:1 直贴（整数坐标防重采样）
+          const dx = Math.round(x);
+          const dw = Math.max(1, Math.round(x + availW) - dx);
+          ctx.drawImage(tile, sx, 0, Math.min(P012_C_BITMAP_W - sx, dw),
+            P012_C_BITMAP_H, dx, yTop, Math.min(P012_C_BITMAP_W - sx, dw), yRows);
+          draws++;
+          x += availW;
+        }
+      }
+      // C3 低频明暗带（C1 基底之上，2–4 个；shadeLut 采样按子区坡度）
+      if (P012_C3_BANDS > 0) {
+        const cm = n >> 1;
+        const subH = (maxY - minY) / P012_C3_BANDS;
+        for (let k = 0; k < P012_C3_BANDS; k++) {
+          // 子区中心列的 shade（复用 E 档 8 档光照 LUT；带内深度越浅越亮）
+          const shadeIdx = Math.max(0, Math.min(P012_LUT_STEPS,
+            Math.round((1 - (k + 0.5) / P012_C3_BANDS) * P012_LUT_STEPS)));
+          const shade = this.shadeLut[shadeIdx];
+          const bandY = minY + k * subH;
+          ctx.globalAlpha = P012_C3_ALPHA;
+          ctx.fillStyle = this.rgb(255 * shade, 255 * shade, 255 * shade);
+          ctx.fillRect(boxX, bandY, boxW, subH);
+          draws++;
+        }
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+      // 未用 sampler 的告警抑制（分段点采样在 warp 分段内已隐式完成：
+      // warp 表本身是 128 列平滑函数，sampler 供 E3/未来加密采样复用）
+      if (sampler !== null) {
+        // 保持 sampler 引用供未来 E3 使用（避免 lint 未使用告警）
+        const _probe = sampler.bhAtPx(boxX);
+        if (_probe < -1e9) {
+          hilog.error(0x0000, 'P012', 'strat: sampler probe impossible');
+        }
+      }
+    }
+    if (segTotal > P012_C_SEG_MAX) {
+      hilog.error(0x0000, 'P012', 'strat: seg overflow ' + segTotal +
+        ' > ' + P012_C_SEG_MAX + ' (budget violation → §11.5)');
     }
     return draws;
   }

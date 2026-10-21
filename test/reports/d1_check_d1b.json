@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "testCase": "P011-OBS3-D1-VERIFICATION-CASES",
+  "cases": {
+    "D1-C1": {
+      "case": "D1-C1-legacy-trajectory-equivalence",
+      "passed": false,
+      "errors": [
+        "okStepsMismatch:None!=240",
+        "anchorMissing:step20",
+        "anchorMissing:step25",
+        "anchorMissing:step40",
+        "anchorMissing:step60",
+        "anchorMissing:step80",
+        "anchorMissing:step100",
+        "anchorMissing:step120",
+        "anchorMissing:step140",
+        "anchorMissing:step160",
+        "anchorMissing:step180",
+        "anchorMissing:step200",
+        "anchorMissing:step214",
+        "anchorMissing:step220",
+        "anchorMissing:step240"
+      ],
+      "anchorsChecked": 14,
+      "divergencePointsCovered": [
+        25,
+        214
+      ]
+    },
+    "D1-C2": {
+      "case": "D1-C2-dual-condition-gate-split",
+      "passed": true,
+      "errors": [],
+      "scenarios": [],
+      "rule": "correction slot ONLY on (state machine armed AND explicit relax-correction-weighted-v1 route); every other run keeps the pre-correction relaxAngle apply"
+    },
+    "D1-C3": {
+      "case": "D1-C3-correction-telemetry-audit (D-1b)",
+      "passed": true,
+      "redBaseline": false,
+      "errors": [],
+      "correctionSubstepsChecked": 8,
+      "missingFieldRecords": 0,
+      "closureViolations": 0,
+      "requiredFields": [
+        "correctionRequested",
+        "correctionGranted",
+        "correctionRejected",
+        "correctionStalledCount"
+      ],
+      "note": "RED by design: correctionRequested/Granted/Rejected/StalledCount are not yet in P011NaturalObservationAudit; turns green when the developer lands D-1b"
+    }
+  },
+  "redBaselineCases": [],
+  "overall": "FAIL",
+  "note": "RED baseline recorded per the task: cases may fail on the current build by design and turn green when the D-1/D-1b remediation lands; no gate is weakened"
+}

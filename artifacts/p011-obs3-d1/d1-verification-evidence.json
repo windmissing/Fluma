@@ -1,0 +1,149 @@
+{
+  "runner": "p011_obs3_d1_verification_runner",
+  "execution": "actual-product-ets-via-bundled-typescript",
+  "baselineCommit": "5e60f2d",
+  "okSteps": 240,
+  "blockedSteps": [],
+  "anchors": [
+    {
+      "step": 20,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.52380952380963,
+      "bh0": 71.76190476190482
+    },
+    {
+      "step": 25,
+      "effectiveTilt": 8,
+      "sandTopSum": 1152,
+      "sandTop0": 143.45238095238108,
+      "bh0": 71.72619047619054
+    },
+    {
+      "step": 40,
+      "effectiveTilt": -20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.91793309643157,
+      "bh0": 71.90488771356273
+    },
+    {
+      "step": 60,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.8226950011935,
+      "bh0": 71.85735767706005
+    },
+    {
+      "step": 80,
+      "effectiveTilt": -20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.7274569059554,
+      "bh0": 71.80981892668267
+    },
+    {
+      "step": 100,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152,
+      "sandTop0": 144.0131711916697,
+      "bh0": 71.95284502996918
+    },
+    {
+      "step": 120,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.53698071547922,
+      "bh0": 71.71475799956352
+    },
+    {
+      "step": 140,
+      "effectiveTilt": -20,
+      "sandTopSum": 1152,
+      "sandTop0": 144.0131711916697,
+      "bh0": 71.95304939452392
+    },
+    {
+      "step": 160,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152.0000000000002,
+      "sandTop0": 143.72745690595536,
+      "bh0": 71.8102410020382
+    },
+    {
+      "step": 180,
+      "effectiveTilt": -20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.81307232629928,
+      "bh0": 71.85300877069663
+    },
+    {
+      "step": 200,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.9083104215373,
+      "bh0": 71.9007454464008
+    },
+    {
+      "step": 214,
+      "effectiveTilt": 20,
+      "sandTopSum": 1152,
+      "sandTop0": 143.57497708820398,
+      "bh0": 71.7340882260138
+    },
+    {
+      "step": 220,
+      "effectiveTilt": -6.704117607619618,
+      "sandTopSum": 1152,
+      "sandTop0": 143.62259613582302,
+      "bh0": 71.75793546324559
+    },
+    {
+      "step": 240,
+      "effectiveTilt": -10.701243017589103,
+      "sandTopSum": 1152,
+      "sandTop0": 144.09878661201344,
+      "bh0": 71.9962390527386
+    }
+  ],
+  "routeScenarios": [
+    {
+      "scenario": "a-legacy-default",
+      "observationRouteId": null,
+      "stateMachineArmed": false,
+      "correctionRouteActive": false,
+      "sawRequestedWithoutApplied": false,
+      "correctionSlotRan": false,
+      "relaxRequestedTotal": 0.27538803067686896,
+      "relaxAppliedTotal": 0.2753880306762949
+    },
+    {
+      "scenario": "b-candidate-natural-route",
+      "observationRouteId": null,
+      "stateMachineArmed": true,
+      "correctionRouteActive": false,
+      "sawRequestedWithoutApplied": false,
+      "correctionSlotRan": false,
+      "relaxRequestedTotal": 0,
+      "relaxAppliedTotal": 0
+    },
+    {
+      "scenario": "c-explicit-correction-route",
+      "observationRouteId": "relax-correction-weighted-v1",
+      "stateMachineArmed": true,
+      "correctionRouteActive": true,
+      "sawRequestedWithoutApplied": false,
+      "correctionSlotRan": true,
+      "relaxRequestedTotal": 0,
+      "relaxAppliedTotal": 0
+    },
+    {
+      "scenario": "d-route-bound-machine-off",
+      "observationRouteId": "relax-correction-weighted-v1",
+      "stateMachineArmed": false,
+      "correctionRouteActive": false,
+      "sawRequestedWithoutApplied": false,
+      "correctionSlotRan": false,
+      "relaxRequestedTotal": 0.27538803067686896,
+      "relaxAppliedTotal": 0.2753880306762949
+    }
+  ]
+}

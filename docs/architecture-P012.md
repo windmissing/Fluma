@@ -324,3 +324,94 @@ AppStorage 键名同名；renderer 读取处集中在 drawSandGrain 入口（单
 **归因：实现方案问题（分支 A）**——成本在执行层（8.3× 光栅冗余 + 每帧 pattern 重建），不在 §5.1 材质模型；工程手段（F1+F2）收益上界 ~10×，对 3× 差距有 4× 富余。修复方案 F1/F2 先行（视觉逐位一致可证），F3 预置兜底；消融 want 参数（p012ablate/p012fillbox）替代 renderSeed 钩子；验收口径与回退策略冻结。**developer PERF 修复任务（6ad7fe32e4b0a2dfeb1e1b92）解锁。**
 
 变更记录：2026-10-21，依据 manager【P-012·PERF归因】任务新增 §10。归因=实现方案问题（成本模型+收益上界论证）；F1/F2/F3 方案、消融参数、验收口径、风险清单落盘；分支 B 不触发。
+
+## 11. C 层理工程方案（2026-10-21，依据 design-P012-C-stratification-anchors-v1.md）
+
+**状态：C1 工程方案 `READY_FOR_DEVELOPER`。设计稿已给定的项（伪代码时序/复杂度 O(128+K)/K≤16/预算 ≤16 draw、CPU 配对增量 P95≤0.15ms、常驻 ≤0.25MiB/bandNoise 语义/C 先于 B/A/非负权重线性插值保层序）确认可行，不重设计；本节只做 designer 留给 architect 的三件事：缓存表示选型、采样接口定义、ArkTS/Canvas 可行性翻译。**
+
+### 11.1 缓存表示选型（三件事之一）
+
+**选定：窄高「条纹位图 + drawImage 平铺」（位图预生成），逐帧零像素重生成。** 候选对比：
+
+| 表示 | 判定 | 理由 |
+|---|---|---|
+| **A. 纵向 1D bandNoise 表（Float64Array）+ 逐帧逐列 fillStyle 计算** | 否决 | 每帧对 ~沙区像素做 JS 数值计算（bandNoise/phase/envelope）——正是设计稿「逐帧无全屏像素重生成」禁止的形态；且 Canvas2D 无逐像素写回通道（putImageData 全屏重建更贵） |
+| **B. 窄高条纹位图 + drawImage 平铺（选定）** | **选定** | bandNoise 是**稳定深度函数**（seed 固定、phase=depth/λ+warp，不随帧变）→ 可一次性烘焙进位图；运行期只是「平铺 + 逐带 clip + globalAlpha」——与 B 档 grain 的 s99 优化路径完全同构（已实测 32/32/33fps），零新风险。位图按 256px 高周期烘焙（λ 冻结后 λpx=λ_material×scale），宽 64px（warp 是横向慢变，64px 内可完整表达）；三材质三张（H/L/M 各一 seed），常驻 3×64×256×4=196KB ≤0.25MiB 预算 ✓ |
+| C. 逐帧 OffscreenCanvas 重合成 | 否决 | 每帧全屏 putImageData/drawImage 链 = 设计稿禁止的全屏重生成；且引入离屏生命周期管理，B 已证明不需要 |
+
+**烘焙细节**：位图像素 = `deltaY(u_mod) = envelope·amplitude·bandNoise(seed, u_mod/λpx)`，u_mod∈[0,256)；位图**灰度单通道语义、纯不透明**（alpha=255，RGB 同值——增量在运行期经 globalAlpha 混合，吸取 s94 教训绝不烘焙 alpha）；运行期 `ctx.globalAlpha = amplitude_scene / 255`（envelope 的带边界平滑衰减烘焙在位图纵向边缘，幅度换算在 alpha 一侧）。**λ 冻结后重烘焙**：λ_material 在 run 首个合格厚层场景冻结（设计稿 §3.1），DPI/几何 epoch 变化时按新 scale 重烘焙位图（复用 B 档 buildGrainBitmaps 的 epoch 钩子模式）。
+
+**warp 的处理（关键差异）**：grain 的平流是**全局平移**（一个 off 值）；C 的 warp 是**逐列慢变相位**——位图平铺只能给全局平移，逐列相位必须由**多段平铺**近似：把 128 列按 warp 相位分段（相邻列 warp 差 >1/16 周期即断段，K≤16 段上限），每段用该段中心列的 warp 相位做 drawImage 的 x 偏移。段内相位误差 ≤1/32 周期（肉眼不可辨），段数 K 由 warp 幅度 ≤1/4 周期的设计约束自然封顶：极端满幅 warp 时 128 列相位跨度 1/4 周期 → 按 1/16 阈值最多 4 段/带，三带 ≤12 段 ≤ K≤16 预算 ✓。
+
+### 11.2 采样接口定义（三件事之二：MaterialColumnSampler，C/E3 共享）
+
+新增 renderer 内部类（放 P012WaterSandRenderer.ets 或独立文件 P012MaterialSampler.ets——建议独立，E3 将复用）：
+
+```ts
+// P012MaterialSampler.ets（新文件，纯函数式，只读）
+export class P012MaterialColumnSampler {
+  // 输入：smooth 数组（renderer 已有：smoothBh/smoothMixStart/smoothSandTop，
+  // 每帧 updateSmoothed 后传入）——已是 128 列平滑值
+  constructor(bh: Float64Array, mixStart: Float64Array, sandTop: Float64Array) {}
+
+  /** 任意显示 x（px）处的连续材料层高。非负权重线性插值保层序：
+   * t = (x/colW - floor) ∈ [0,1)；bh(x) = bh[i]·(1-t) + bh[i+1]·t；
+   * mixStart/sandTop 同式。非负(1-t,t)权重 → 厚度与边界单调线性 →
+   * 层序保序（bottomH ≤ mixStart(x) ≤ bh(x) ≤ sandTop(x) 逐点保持）。 */
+  bhAtPx(x: number): number;
+  mixStartAtPx(x: number): number;
+  sandTopAtPx(x: number): number;
+}
+```
+
+- **与 E3 的共享边界**：接口只做「显示 x → 连续层高」一层（C 着色与 E3 雾 alpha 都需要）；C 不等 E3 交付（设计稿 §4 明示），E3 复用时直接 import，禁止第二套插值实现。
+- **采样密度**：C 用逐段平铺（11.1），段内不采样——sampler 只在**分段点**调用（K+1 次/带），O(128+K) 中 128 是 smooth 数组既有更新成本，K 是段边界采样。不引入 O(128r) 的加密采样。
+- **物理列 128 不变**：sampler 是光学着色专用，轮廓绘制仍用逐列 fillRect（drawSandColumns 不改）。
+
+### 11.3 ArkTS/Canvas 可行性确认（三件事之三）
+
+1. **OffscreenCanvas 烘焙**：`makeGrainBitmap` 先例（:580-611）证明 OffscreenCanvas/createImageData/putImageData/transferToImageBitmap 链路可用——C 位图烘焙同一模式，纯增量复制，可行性 PASS。
+2. **drawImage 平铺**：drawSandGrain s99 版（:712-745）证明 clip+整数坐标 drawImage 平铺达 32/33fps——C 复用同骨架（bandTopY/bandBottomY/带曲线 clip/整数化偏移全部现成），可行性 PASS。
+3. **globalAlpha 混合**：B 档 P012_B_GRAIN_ALPHA 先例；C 用同法（位图不透明 + alpha 控制增量幅度），且 |deltaY|≤8 的设计上限 → alpha ≤8/255≈0.031，混合成本极低，PASS。
+4. **不构造 128×层数 Path**：分段平铺天然回避——每段一个 clip（带曲线）+ ≤3 drawImage/段，Path 点数仍 2×128（与 B 档相同），PASS。
+5. **C3 与 E 缓存复用审计（三件事之 2）**：C3（宽明暗块作 C1 低频基底）**复用 E 档 shadeLut 光照**——C3 的 2–4 宽块本质是「按 mixStart/bh/sandTop 分域的粗粒度光照分区」，E 的 8 档 shade 已按坡度分域；C3 实现为「在 C1 位图之上叠 2–4 个低频明暗矩形带（clip 同带）」即可，**不新建缓存**（零额外位图，2–4 draw 从 C 的 16 draw 预算出）。审计结论：可行且零复用成本，但 C3 不单独验收（设计稿 §3 已定，只作 C1 基底）。
+6. **风险点（新增）**：C 位图高度 256px 是显示 px；λ 冻结值是材料深度单位 → 烘焙时需 scale 换算（λpx = λ_material × heightToY 的逆变换系数）。若 scale 在 run 中途变化（resize/DPI），epoch 钩子重烘焙（11.1 已列）。**呼吸风险**：λ 不随层高归一化（设计稿红线），层高变化时层纹数量按实际厚度增减——这是设计行为不是 bug，单测覆盖。
+
+### 11.4 成本核算方式（三配对组合归因接口）
+
+照 §10.4 消融模式新增 want 参数 `p012ablate` 枚举加 `strat`（跳过 C 层理）——C 的配对归因（设计稿 §5 表）全部通过现有消融机制执行：
+
+| 配对 | 执行方式 | 归因输出 |
+|---|---|---|
+| EAB ↔ EAB+C | `p012ablate=strat` vs `off`，同 build/seed/输入 | C 净增量：draw、CPU P95（配对块）、帧时 |
+| EAB+C 内部 C1/C3 | C3 是 C1 的叠加子层，无独立开关（设计稿定位）；如需诊断，临时 build 常量（不进 want） | C1 vs C1+C3 的幅值差异（效果域，非性能域） |
+| EAB+C ↔ EAB+C+E3 | E3 交付后补测（设计稿 §5 第 3/4 行） | 共享 sampler 收益（本节 11.2 预置） |
+
+帧时统计沿用 §7.3 配对块（P50/P95）+ §10.5 口径；C 自身 draw 计数进 `lastDrawCount` 现有链路（无需新遥测）。
+
+### 11.5 预算违规重排裁决入口（三件事之 3：流程约定）
+
+developer 实现后若 C 增量 **P95>0.15ms 或 draw>16**：**停下回 architect，不得自行优化绕过**。重排流程（约定）：
+1. developer 报告违规数据（配对块 JSON + draw 计数），注明形态（段数超标/烘焙重入/drawImage 次数）；
+2. architect 按形态重排：段数超标→warp 分段阈值 1/16→1/8（视觉 trade-off 评估）；drawImage 超标→段合并策略/位图加宽减少横向平铺数；烘焙重入→epoch 粒度调整；
+3. 重排后出修订段（本节追加），developer 按修订实现；
+4. **禁止的绕过**：减物理列、跳 step、隐藏关 B/A、降帧求过、把 C 移到 OFF 分支渲染（设计稿 §5 红线照抄）。
+
+### 11.6 风险与单测范围
+
+| 风险 | 处置 |
+|---|---|
+| warp 分段阈值导致的可见段缝 | 段边界两侧 drawImage 用同一位图同相位中心 → 相位连续（无跳变），仅 alpha 混合叠加处可能有半像素重采样——单测断言段边界列的采样相位连续 |
+| λ 换算错误（材料深度 vs 显示 px） | 单测：同 seed/λ 下位图周期与 heightToY 逆变换一致；层高不变时层纹间距稳定（多帧差分零漂移） |
+| 位图烘焙 alpha 事故（s94 复发） | 单测断言位图 alpha 通道全 255；增量只经 globalAlpha |
+| C 档开关与消融交叉 | want 参数 `strat` 与 tier 无 EAB 时 C 不激活（C 只在 EAB 档上叠加——appearanceTier 仍为 EAB，C 由消融开关控制，不新增 tier 枚举） |
+| 空带/薄带 | bandTopY/bandBottomY 现有逻辑复用（高度≤0.5px 跳过）；INSUFFICIENT_LAYER_SUPPORT 按设计稿 §6 由 effector 登记场景 |
+| epoch 断配对 | resetContinuity 现有钩子 + 位图重烘焙挂 geometry epoch——单测：reset 后 C 层纹 seed 不变（材料身份不变）、相位基线不变 |
+
+单测清单（Node 通道，照 run_p011_planning_units.cjs 模式）：①sampler 线性插值保层序（含边界 x=0/x=boxW）；②bandNoise 位图零均值有界（烘焙后统计验证）；③分段连续性（段边界相位连续）；④λ 换算一致性；⑤位图 alpha=255 全检；⑥消融 strat 跳过 C（draw 计数不含 C）；⑦epoch 断配对后 seed/相位稳定；⑧空带跳过。
+
+### 11.7 结论
+
+三件事完成：**缓存=窄高位图+分段 drawImage 平铺**（与 B 档 s99 同构，零新风险）；**采样=MaterialColumnSampler 非负权重线性插值**（独立文件，E3 复用预置）；**ArkTS 可行性=确认**（OffscreenCanvas/drawImage/globalAlpha/整数坐标全部有交付先例）。C3 复用 E shadeLut 零新缓存。消融走 `p012ablate=strat` 现有机制；预算违规回 architect 重排流程已约定（11.5）。**developer C 实现任务解锁**（任务书 PIPELINE 第 (2) 步完成）。
+
+变更记录：2026-10-21，依据 manager【P-012·C层理工程】任务新增 §11。设计稿三件事落盘：缓存表示选型（位图+分段平铺）/采样接口（P012MaterialColumnSampler 契约）/ArkTS 可行性确认（三先例）+C3 复用审计/成本归因接口（消融 strat）/预算违规重排流程约定。C 锚点冻结前置（设计稿 §2.2/§6）不在本节范围，归 tester/effector。

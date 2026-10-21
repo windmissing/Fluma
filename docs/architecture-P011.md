@@ -2570,3 +2570,149 @@ export function p011CorrectionAllocate(candidates, rLimit): void; // 封顶加�
 **结论**：□5（R-3 保真）与 □4 已实现部分确认 PASS；□1/□2/□3 存在实质缺口，其中 GAP-1（状态机）与 GAP-2（v3 schedule）是采集前的两个结构性阻断项。观测③ v3 的执行绑定（协议 §9「实现」行：真双角状态机、逐 decision 读取、planner+guard 事务一致）**尚未达成**——当前代码具备 planner 事务骨架与 guard/预演保真，但身份整改的核心（状态机驱动）未动工。建议 manager 将 GAP-1+GAP-2+GAP-3+GAP-4 打包为「v3 执行身份实现」单一 developer 任务（§19.3 已有设计，工作量可控），完成后 architect 复核+tester 核验再进 pilot。
 
 变更记录：2026-10-20，依据 manager【观测③·v3身份】任务新增 §25。五项清单：□5 PASS、□4 PASS（1 语义缺口）、□1/□2/□3 GAP；结构性发现 GAP-A（5e60f2d=v2 schedule 修复，v3 schedule 通道缺失）；整改路由表落盘。
+
+## 26. 观测③ v3 身份实现复核：§25 四项 GAP 转 PASS 判定（2026-10-21）
+
+**状态：复核完成——GAP-1/2/3/4/5 中 4 项转 PASS（GAP-5 部分），1 项重大偏差（D-1：LEGACY 位精确不成立 + §24 预留未授权提前激活）。转 PASS 附偏差记录，D-1 交 manager 裁决。**
+
+复核对象：commit `bb3063a`（实现）+ `0b7cfd2`（测试）+ `58bb01e`（文档）。复核方法：逐行代码审查（状态机/decision 采样/attempt 层/schedule 通道）+ 独立重跑（Node 74/0、python 40/40）+ **跨版本行为对比**（新 HEAD vs 5e60f2d worktree，同场景 240 步定点锚点序列）。
+
+### 26.1 五项清单复核结论
+
+**□1 执行身份 —— PASS**
+
+- `P011RelaxHysteresis.ets` 按冻结设计实现：tan 空间阈值推导（`p011RelaxHysteresisThresholds`，不变量 `0≤stop<start≤hardMax≤30` 违规抛错）；三态转换 `p011RelaxHysteresisNextActive`（start `r>=slopeStart`、stop `r<=slopeStop`、hold）；请求公式 `max(0,r−slopeStop)/2` 截断 maxFlux/stock/capacity——与 §19.3 接口契约逐项一致。
+- **状态机实际驱动**：`relaxAngle` collect 分支中 `relaxSliding[index]` 驱动资格（:3290-3315），候选阈值经 `applyRelaxHysteresisConfiguration` 进入 `relaxHysteresisThresholds`，状态机读取的就是该对象——**v2 的 EXECUTION_THRESHOLD_IDENTITY_MISMATCH 根因已修**。
+- `executedThresholdsForLedger()` 读 `this.relaxHysteresisThresholds`（状态机同一对象，:1424-1425）+ stateMachineVersion/sourceCommit/sourceFileSha256/buildSha256（`setNaturalObservationExecutionIdentity`）；LEGACY（无候选）返回 null ✓；候选 run 若 executed 为 null 即 MISMATCH，checker 可判。
+
+**□2 决策时点 —— PASS**
+
+- `recordRelaxDecision` 在 `relaxAngle` collect 扫描内、`p011RelaxHysteresisNextActive` 判定处调用（:3296-3300）——取值点=读残差选分支之前，且反映同 collect pass 内 settle/percolate/creep 已写入后的当前材料状态（`sandTopScratch`），非 stateBefore 非 apply 后 ✓。
+- 字段齐备：decisionG（signed slope）/decisionR（signed residual）/decisionAlpha=atan(|R|)·180/π/decisionOrdinal（per-edge per-substep 递增，`relaxDecisionOrdinals` 在 beginSubstepMotionBudget 清零）/thresholdUsed{branch,angleDeg,slopeLimit,comparator}/transitionReason（四值冻结词汇表）——协议 §2.1 每边 decision 表全字段落地。
+
+**□3 attempt 审计 —— PASS**
+
+- `p011AttemptCounter` 单调递增，attemptId=`{runId}-a{n}`；commitStatus 三态 committed/blocked/rolled_back；**BLOCKED 子步也落账**（step 循环 :1140-1144：planningError 非空时仍调 beginNaturalObservation，ledger 带 attemptId/commitStatus='blocked'/rollbackReason）✓ 协议「BLOCKED 无子步也须有独立 attempt 结果」满足。
+- materialGuard 物理边映射：`p011GuardAffectedEdgesForDelta`（新导出）+ guard 证据带 affectedEdgeIds 同序 ✓。
+- 预演回滚状态隔离：`planningSlidingBackup` 快照在 previewChannelPlansAt 的 finally 恢复（:2237-2267）——**manager 要求的独立确认1**：该模式与 §20.7-□2 的预演纯度要求一致（probe 分离+backup 恢复+请求账本重置三件套齐备，状态机数组新增第四件）✓。
+
+**□4 schedule 通道 —— PASS**
+
+- `P011ScheduleV3.ets`：九平台 `0→+15→+A→+15→0→−15→−A→−15→0`（H0..H8/L1..L8）、A 为参数（0<A<30 构造校验，无 30/29.9 默认）、冻结速率 0.5/1.0、leg 长度整除校验、5100ms hold、半开区间归属（leg 起点 marker 命令在 T0、第 n 步终点命令开平台）、CSV 契约（§9 列序/无 BOM/LF/末行 LF/禁止科学计数法）——协议 §3 全项落地。
+- 与 5e60f2d 的 v1/v2 选择器并存（`P011_SCHEDULE_NINE_PHASE_30_V3` 新常量，v1/v2 映射不动）；segment 绑定经 `setP011CurrentCommandSegment` 进每条 ledger context ✓。
+- `p011ScheduleV3ToCsv`/`p011ScheduleV3BindCommand` 纯函数，可独立测试（0b7cfd2 有 CSV 契约用例）。
+
+**□5 无越权改动 —— PASS（planning pass）/ 偏差（LEGACY 行为，见 D-1）**
+
+- planning pass 模块 diff=33 行，全部为 §24 预授权的类型扩展（`'correction'` 通道枚举+rank=6+RateCapRemaining 字段），无控制流改动 ✓。
+- 物理常量零改动：angleDeg/totalMotionBudget=300/vSandTopMax=28/maxAvalancheFlux/vBottomCreepMax=10/MATERIAL_GUARD_HARD_MAX 全部原值 ✓；epsilon 无放宽 ✓。
+- Node 74/0（13 新用例全绿）、python 40/40 独立重跑确认。
+
+### 26.2 偏差记录（D-1，重大，交 manager 裁决）
+
+**LEGACY 位精确不成立：§24 correction 分配器在 LEGACY run 也无条件激活，改变了旧 relax apply 行为。**
+
+数值证据（跨版本对比，5e60f2d worktree vs 新 HEAD，同场景 8 列 thick、±20° 交替、totalBudget=1000）：
+
+```text
+5e60f2d 基线：240/240 步全 ok
+新 HEAD LEGACY：238/240，step214 BLOCKED（NO_SAFE_OLD_TILT_PLAN）
+定点锚点序列对比：首个分歧 step25——
+  新代码 relaxRequestedTotal=0.040196 但 relaxAppliedTotal=0.000000，slip allowed 全 0
+```
+
+机制：`applyMotionChannels` 中 relax 槽位被 `applyCorrectionSlot` **无条件替换**（:1911-1914 注释「the ordinary relaxAngle path remains for the collect phase」）；`computeCorrectionReservation` 在 LEGACY（`slidingEligible=null`）时仍以 `|r|>tan(angleDeg)` 入池全部超差边（P011RelaxCorrection.ets:158-164「legacy runs keep the pure |r|>h trigger」），预留+加权分配器替换了旧的比例缩放 apply——**旧 relax apply 分支成为死代码**（:3343 注释自认「legacy only...Kept bit-for-bit」但实际不可达）。
+
+偏差定性：
+1. **与任务书「LEGACY 位保持真位精确」直接矛盾**——manager 要求的独立确认3 不通过。developer 的 LEGACY 测试（`p011_hysteresis_legacyRunKeepsPreV3Behavior`）只验短场景单步的遥测身份字段（executedThresholds=null、无 decision 字段），**未做行为轨迹对比**，所以测试绿但行为已变。
+2. **与 §24.3 排期矛盾**：§24 明确「correction 工程实现排期在 R-3 修复 commit 之后」且为独立路线（`relax-correction-weighted-v1`，route 隔离、A/B/C/D 对照矩阵、效果报告后 manager 裁决转正）——bb3063a 把 §24 实现混入 v3 身份整改提交并**在 LEGACY 路径默认激活**，跳过了路线验证与裁决（对照矩阵未跑、效果报告未出、无 route 开关）。
+3. 影响面：所有非候选 run（含 SLIP 正式验证、观测①b 补采、既有回归）的 relax apply 语义已变；step214 的 BLOCKED 是新行为（预留挤占普通通道额度，可行域更紧）。
+4. **次要偏差（D-1b）**：§24.2 第 4 条约定的 correction 遥测字段（correctionRequested/Granted/Rejected/StalledCount 进 P011NaturalObservationAudit）未实现（audit keys 无 correction 字段），correction 行为目前只部分可观测（relaxAppliedTotal 反映 apply，但预留/拒绝/停滞无账面）。
+
+**裁决选项（交 manager）**：
+- **Option A（推荐，最小整改）**：correction 槽位加资格门——`relaxHysteresisThresholds !== null`（候选 run）才走 applyCorrectionSlot，LEGACY 走旧 relax apply 分支（恢复其可达性）。correction 路线按 §24.3 排期独立验证后再议默认开关。改动量小（applyMotionChannels 一处分支+死代码复活），恢复 LEGACY 位精确后 D-1 解除。
+- **Option B**：接受 LEGACY 行为变化，为 §24 路线补交对照矩阵+效果报告追认（工作量大，且与「效果报告后裁决转正」的纪律不符——先上车后补票）。
+
+### 26.3 §25 清单状态更新与解锁建议
+
+| §25 项 | 原状态 | 复核后 |
+|---|---|---|
+| □1 双角状态机 | GAP | **PASS**（根因已修，executed 同源） |
+| □2 decision 时点 | GAP | **PASS**（采样点+全字段落地） |
+| □3 attempt 审计 | GAP | **PASS**（三态落账+BLOCKED attempt+物理边映射+预览纯度四件套） |
+| □4 schema v3 字段 | PASS+configured/executed 缺口 | **PASS**（executedThresholds 落地；configured 在 manifest 侧由 checker 核对） |
+| □5 R-3 保真 | PASS | **PASS**（shadow 位精确在 74/0 下维持） |
+
+**解锁建议**：v3 身份本体（GAP-1..5）复核通过，tester 核验 6ad709d6 可按此范围解锁；**但 D-1（LEGACY 行为变更+§24 未授权激活）建议在 tester 核验前由 manager 裁决**——Option A 整改后 LEGACY 回归基线才稳定，否则 tester 的核验对象是一个行为已漂移的构建。GAP-6（checker 九相名）仍归 tester。
+
+变更记录：2026-10-21，依据 manager【观测③·v3复核】任务新增 §26。四项 GAP 转 PASS（附偏差 D-1：LEGACY 位精确不成立——§24 correction 分配器未经授权在 LEGACY 激活且改变 apply 语义，跨版本对比 step25 分歧/step214 BLOCKED 实证；D-1b correction 遥测字段未落地）。Option A/B 裁决交 manager。
+
+**D-1 状态更新（2026-10-21）：RESOLVED。** 依据 manager 裁决（Option A + 显式路线隔离），developer 整改 commit `742efa6`（+验证用例 `55d18ae`）落地。architect 收缩范围复核（route 身份设计 + 实现边界两点，其余验收 manager 已实跑覆盖——四场景证据+240 锚点+Node 81/81）：
+
+1. **route 身份设计确认 PASS**：`P011_CORRECTION_ROUTE_ID='relax-correction-weighted-v1'` 常量 + 双条件门 `correctionRouteActive() = relaxHysteresisThresholds !== null（必要） ∧ naturalObservationRouteId === P011_CORRECTION_ROUTE_ID（充分）`——与 §24 路线隔离语义完全一致。身份边界正交性确认：v3 状态机（collect 域，`hysteresis !== null` 分支）与 correction 分配（apply 域，`correctionRouteActive()` 门）无耦合——natural-relax-hysteresis-v1 候选 run 只获得状态机身份（decision 字段/executedThresholds），不隐式获得 correction 分配器；correction route 反向也不依赖观测身份（armed 机器即可，manifest 层另行绑定 candidate）。ledger `observationRouteId` 随显式绑定记录（correction run 记 `relax-correction-weighted-v1`，其余默认 `natural-relax-hysteresis-v1`），checker 可按 route 分池。
+
+2. **实现边界抽查 PASS**：apply 分流落点在 `applyMotionChannels` 的 relax 槽位（`if (correctionRouteActive()) applyCorrectionSlot else relaxAngle`）；预算折叠隔离在 step 循环 scale 计算（correction run 折 B−R_limit，其余原 totalLimit 比例）；**settle/percolate/creep/lift 四个 writer 通道函数体零 diff**（grep diff 确认）；shadow 镜像同步分流（correction 槽位镜像/旧 relax 槽位镜像，verify 一致性比对自动覆盖）。LEGACY 240 步轨迹与 5e60f2d 基线锚点序列逐位一致（本复核上轮独立重跑：240/240 + 无分歧，含 step25/step214 历史分歧点）。
+
+遗留（不阻断）：①正式 correction run 的 runner 侧 route 绑定（want 参数→SandCanvas→setNaturalObservationRouteId 接线）尚未交付——是 correction A/B 对照 run 的前置，属该路线任务范围；②D-1b（correction 遥测字段）按裁决单独处理（55d18ae 已含 RED 基线）。
+
+**D-1 解除，tester v3 核验（6ad709d6）解锁。**
+
+### 26.4 v3 播放器接口决策（2026-10-21，轻量版）
+
+背景：EXECUTION_CHANNEL_BLOCKED 裁决选项 1（want 传 `p011schedule=peakADeg:rate`，应用内 `p011BuildScheduleV3` 自驱 100ms 节拍）。两个接口决策如下：
+
+**决策 1·与 want 单命令通道并存 = 互斥（播放中拒绝单命令，不中断）。**
+- 理由：v3 采集 run 的资格依赖「无外部输入」（协议 §5.1/bracket 资格「no reset/source switch」）；单命令打断会制造未预注册的输入源，整 run 报废。拒绝优于中断：中断语义（部分执行+中断标记）需要 ledger 新增生命周期事件与 checker 分支，收益为零（协议没有定义任何「被打断的 v3 run」的合格用途）。
+- 行为：播放器激活期间收到 p011TiltWant 单命令 → 不消费、不推进 sequence，回 warning（want 解析层加 `SCHEDULE_ACTIVE_COMMAND_REJECTED`），ledger 不产生新 command 记录；播放器结束后恢复正常。反向：单命令先到、播放 want 后到 → 播放 want 同样被拒（testmode 单命令会话进行中不接受 schedule），两侧对称。
+- 记账：拒绝事件只进 want 解析 warning 日志（hilog），不进物理 ledger——被拒绝的命令从未成为输入，无「已执行部分」需要记账。
+
+**决策 2·节拍漂移 = 只记录不追赶，漂移进 attempt 层新字段。**
+- 理由：协议 §3.2 要求「实际接受时间/间隔照实记录并执行既有输入时序闸门」——追赶（catch-up）会用跳步伪造节拍，正是「设备执行不能用多等数秒冒充 5100ms hold」要防的；如实带漂移标记让 checker 按既有闸门判命令资格。
+- 实现：每条 schedule 命令记录 `scheduledOffsetMs` 与 `actualDispatchMs`；attempt 层新增 `scheduleDriftMs = actual − scheduled`（单字段，随既有 attempt 落账路径，无 schema 升版）；阈值 >50ms 时同 attempt 附 `SCHEDULE_DRIFT_EXCEEDED` 标记（非 error）。checker 侧由 tester 按既有输入时序闸门消费 drift 字段（哪些 drift 水平取消 bracket 资格是 checker 判定域，不在播放器内拦）。
+
+**附带确认·planner 闸门 = schedule 命令逐条照常过 planner+guard，无直驱旁路。**
+- 理由：①影子审计（协议 §4.1）背书的是「该 A/初态/dt 集合在含 planner+guard 的真实执行代码下安全」——但审计绑定具体初态/dt 集合，真机执行仍有运行时差异（调度、温控、实际 dt 轨迹），运行时闸门是最后防线；②「直驱」意味着旁路 planAndCommitTilt，那会让 ledger 的 planner 字段（thetaAccepted/requestRejected/plannerHold）失真，checker 对账（§25 清单 3/4）全部失效；③实现上零成本——播放器只替换命令来源（setTilt 目标），物理步进路径不变，planner 每子步照跑。
+- 结论：播放器=命令发生器，不是执行模式。clamped/held/BLOCKED 照常出现且如实落账——这正是影子审计要对照的真机行为。
+
+风险清单（3 项）：
+1. **互斥拒绝的死锁窗口**：播放器异常退出（未清激活标志）会永久拒绝单命令——播放器状态必须挂生命周期（reset/退出清理），测试覆盖「播放器崩溃后单命令恢复」。
+2. **drift 字段的消费口径**：tester 需在 checker 里定义 drift 阈值（哪些命令因 drift 失格）——本决策只产出数据，判定口径归 tester 任务，防止两处定义漂移。
+3. **100ms 节拍与帧率耦合**：播放器节拍用单调时钟（非帧计数），低帧率（<10fps）时段可能出现单帧多命令——setTilt 是目标覆盖语义（最后一条生效），中间命令无物理子步消化；这是既有 want 语义的自然延伸，可接受，但 drift 字段会如实反映该窗口。
+
+变更记录：2026-10-21，依据 manager【观测③·v3播放器方案】任务新增 §26.4（轻量）。决策 1=互斥拒绝；决策 2=只记录不追赶+scheduleDriftMs 字段；附带确认=逐条过 planner+guard 无直驱。developer 播放器任务（6ad8476f…8cda）解锁。
+
+### 26.5 schedule 模式 metadata 武装路径工程语义（2026-10-21）
+
+补 §26.4 盲区（来源 effect-report-P011-obs3v3-pilot-v2.md §5）：metadata 唯一设置点在 `freshScriptCommand`（要求 wstilt 被消费），纯 schedule want 到不了；带 wstilt 撞 §26.4 互斥——两条路都到不了 metadata，正式 pilot 必 INVALID。**developer 移交方案确认采纳**：`p011schedule` want 解析成功时从同 want 独立参数（`p011runrole/thresholdcalibrationid/thetastartdeg/thetastopdeg`）直接武装，复用既有 `setNaturalObservationRunMetadata`，零 schema 变更。五点工程语义：
+
+1. **武装时序**：metadata 四参数随 `p011schedule` want 一起解析、在 `player.start()` **之前**设置（先武装后启动——播放器启动时状态机已 armed，首个子步即产生 executedThresholds/decision 字段）。与互斥窗口的关系确认：metadata 设置走 setter 直通车，不经 freshScriptCommand 消费路径，**不受 SCHEDULE_ACTIVE_COMMAND_REJECTED 影响**；互斥门只拦「tilt 命令消费」（wstilt），不拦「run 身份配置」——两者正交。
+
+2. **参数校验语义（fail-closed，照既有 warning 体系）**：四参数全部可选但**成组校验**——缺任一或任一非法（thetastartdeg 非有限/不满足 0≤stop<start≤30、p011runrole 非 calibration|holdout、thresholdcalibrationid 空串）时**整个 schedule want 拒绝启动**（播放器不 armed，AppStorage 序列不推进），warning 枚举照 P011TiltWant 既有命名风格（`INVALID_SCHEDULE_METADATA`/`MISSING_SCHEDULE_METADATA`，hilog 输出）。理由：半武装（播放器跑起来但 executedThresholds=null）就是 pilot-v2 报废的根因，fail-closed 把该状态在入口处消灭；「照常启动+部分 metadata」的容错没有合格用途。纯 smoke（不带四参数）仍是合法形态——此时 runRole=null/阈值 null=LEGACY 语义，用于执行链验证（见第 4 点）。
+
+3. **与 D-1 双条件门关系确认**：schedule 武装只触碰 `setNaturalObservationRunMetadata`（候选阈值→`applyRelaxHysteresisConfiguration`→armed 状态机→executedThresholds），**不触碰 `setNaturalObservationRouteId`**——correction 路线仍由独立参数 `p011route` 显式绑定（D-1 后续接线已就位），默认 null=旧 apply。correction 路线状态不受本变更影响（保持 CANDIDATE）；v3 候选 run（armed+无 correction route）走旧 relaxAngle apply——与 §26 D-1 RESOLVED 的正交性完全一致。
+
+4. **smoke/正式 run 区分**：沿用 pilot-v2 报告先例——诊断性 smoke = 不带四参数的纯 schedule want（LEGACY 语义，runRole=null）；正式 run = 四参数成组武装（runRole=calibration|holdout）。**不新增 runRole 枚举值**（协议 `analysisRole=pilot/fit/holdout` 是 manifest 层分析身份，不进 ledger runRole）；smoke 的 runId 在报告中显式标记诊断性、不占 fit/holdout 槽位——报告纪律沿用 v2/v3 pilot 惯例，checker 不需要新字段识别 smoke（runRole=null 天然隔离：v210 checker 的 v3 分支只对 runRole∈{calibration,holdout} 全量校验，null 走观测分支）。
+
+5. **风险清单 + 单测范围**：
+   - 风险①先启动后武装的竞态：若实现顺序颠倒，播放器首个平台的子步以 LEGACY 跑——单测断言「schedule want 处理完成后 relaxHysteresisEnabled()===true（带参数）且首个 ledger record 的 executedThresholds 非空」。
+   - 风险②四参数与单命令路径的重复设置：freshScriptCommand 与 schedule 武装都可能调 setNaturalObservationRunMetadata——后写覆盖先写，语义一致（同 run 重复武装同值无害，异值=want 层配置冲突，warning 提示但以最后到达为准，符合既有 AppStorage 单写者惯例）。
+   - 风险③校验漂移：本节四参数校验与 P011TiltWant 既有四参数校验（:120-126 INVALID/MISSING 模式）必须同规则——建议抽共享校验函数，防两处阈值范围将来漂移。
+   - 单测范围：①成组合法→armed+播放器启动；②缺一参→拒绝启动（播放器 null）；③非法值（stop≥start）→拒绝；④纯 smoke（零参数）→启动+LEGACY；⑤correction route 参数不随 schedule 武装（p011route=null）。
+
+变更记录：2026-10-21，依据 manager【观测③·§26.5】任务新增。方案=developer 移交方案确认采纳（schedule want 独立参数直接武装，零 schema 变更）；五点语义（时序先启动/校验 fail-closed/D-1 正交/smoke=零参数 LEGACY/风险与单测）落盘。developer 实现任务解锁。
+
+### 26.6 schedule want 身份三参数武装语义（§26.5 追加，2026-10-21）
+
+来源：第三次停机 `SCHEDULE_EXEC_IDENTITY_NOT_CARRIED`（effect-report-P011-obs3v3-pilot-v3.md §5）——69345cc 武装只覆盖 metadata 四参数；身份三参数（`execsourcecommit/execsourcefilesha256/execbuildsha256`）仍只在 wstilt 路径解析（P011TiltWant:242-251），schedule run 的 `executedThresholds.sourceCommit/双 SHA` 落空串（`executedThresholdsForLedger` 的 `?? ''` 兜底，WaterSandField:1468-1470）→ checker 判 `EXECUTION_THRESHOLD_IDENTITY_MISMATCH`。修复与 §26.5 完全同模式，四点确认：
+
+1. **成组可选解析**：身份三参数在 `parseP011ScheduleWant` 内作为独立第二组，照 metadata 组同模式 fail-closed——全无=allAbsent 合法；缺任一（partial）→ `MISSING_SCHEDULE_EXEC_IDENTITY` 拒绝整个 want；全有→逐项正则校验（commit `/^[0-9a-fA-F]{6,64}$/`、文件/构建 SHA `/^[0-9a-fA-F]{64}$/`，与 wstilt 路径同规则），非法 → `INVALID_SCHEDULE_EXEC_IDENTITY`。正则抽共享校验函数（照 §26.5 风险③先例，放 P011TiltWant，两侧共用防漂移）。
+
+2. **武装调用**：SandCanvas 武装块（现 :1116-1123 metadata armed 分支）内随 `setNaturalObservationRunMetadata` 一并调用 `wsField.setNaturalObservationExecutionIdentity(commit, fileSha, buildSha)`——接口已存在（WaterSandField:1388，签名 `(string|null)×3`），wstilt 路径 :1495-1498 已有调用先例；成组校验通过后三参数必然全非空，直接调用。AppStorage 键照 metadata 四键模式：EntryAbility 写 `p011ScheduleExecSourceCommit/ExecSourceFileSha256/ExecBuildSha256`，SandCanvas 读。
+
+3. **空/缺省语义（组间绑定规则，核心）**：两组必须**同现或同缺**——`metadata 全有 ∧ 身份全有` = 正式 run 合法启动（executedThresholds 三字段非空）；`两组全无` = 纯 smoke，runRole=null/阈值 null → executedThresholds=null（身份字段根本不落账），LEGACY 同前 ✓；`metadata 全有 ∧ 身份全无` = **拒绝**（正式 run 身份缺省必然产出 MISMATCH INVALID run——第三次停机的状态在入口消灭，fail-closed 原则的第二次应用）；`身份全有 ∧ metadata 全无` = **拒绝**（武装身份但状态机不 armed，executedThresholds 恒 null 身份无处落账，无合格用途）。
+
+4. **校验次序**：两组校验独立执行（纯函数无副作用，warning 各自收集），组间绑定（XOR 拒绝）在两组校验之后、`player.start()` 之前判定；任一 warning 或绑定失败 → 播放器不 armed、AppStorage 序列不推进（与 §26.5 第 2 点同口径）。次序本身无语义，绑定规则必须显式实现为上述第 3 点的四种组合枚举。
+
+单测追加（照 §26.5 五场景模式）：①两组全有→armed+三身份字段非空；②metadata 有+身份缺→拒绝；③身份 partial/非法→拒绝；④两组全无→smoke 启动+executedThresholds=null；⑤身份有+metadata 无→拒绝。`?? ''` 兜底保留不动（防御性默认，正常路径不再触达）。
+
+变更记录：2026-10-21，依据 manager【观测③·§26.5追加】任务新增（第三次停机修复依据，manager 16:1x 批准追加确认形式）。四点语义：成组 fail-closed/武装块一并调用/组间同现或同缺（fail-closed 第二次应用）/绑定在 start 前显式判定。developer 实现任务（6ad87955…e58 后或合并）解锁。

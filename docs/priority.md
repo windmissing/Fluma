@@ -2,6 +2,44 @@
 
 > 维护人：manager。一轮聚焦最多 1~3 个高优先级问题。
 
+## 2026-10-21 P-012 第一梯队 E/A/B 交付闭环（当前生效）
+
+> 依据：本次用户转达的 manager 已验收裁决；[designer 正式判定 §6](retro-P012-first-tier-signoff-v1.md)、[S1 正式 SV 回执](sv-receipt-P012-S1-v1.md)、[Q2 全锚点映射表](anchor-mapping-P012-v1.md)（两份回执已入库 `7a15067`），以及 [tester 独立复验](test-report-P012-v1.md)。本条由 designer 按本次明确授权追加回写。
+
+| 交付/后续项 | 状态 | 范围与路由 |
+|---|---|---|
+| P-012 第一梯队 E/A/B，`p012-render-material-v1` watersand | **VALIDATED / CLOSED** | s99性能34–60fps通过既定窗口口径；S1正式SV=4/3/4；Q2映射收口。此前EAB性能退化`PERF_BLOCKED`解除 |
+| C层理 / D流痕 | **UNLOCKED / 待 manager 调度 / NOT_VALIDATED** | 第一梯队依赖解除，后续依C→D顺序及各自验收排期；本条不是已实现或通过声明 |
+| Q1 hfH参考带可比性 | **HF_COMPARABILITY_REVIEW_PENDING / NON_BLOCKING_FOR_EAB_SIGNOFF** | 独立轨道，由manager路由tester/effector按附表§5处理；不撤销1–2参考带，不记Q1已关闭 |
+| p012ablate/p012fillbox | **OPEN / NON_BLOCKING** | developer诊断工具后续项、tester交付后补跑；不影响本次交付闭环 |
+
+关闭范围仅为第一梯队E/A/B，不将P-012整体、C/D、hybrid或P-011写成CLOSED。Q2确认 `<8` 为实现侧段阶梯口径，冻结验收采用逐像素 `≤30量级`，16.3满足后者；不将16.3写为通过<8，不改评分或附表。原复盘§3“三项齐备”依赖按本次裁决更新为S1/Q2关闭、Q1独立非阻断；历史判定保留。SV-06的3分仍为可接受档，雾带块状提升属于后续优化，已通过的门槛转入维持项。
+
+## 2026-10-21 P-012 渲染现状 vs G2 差距排期建议（当前建议）
+
+> 依据：`docs/gap.md`「渲染现状 vs G2 目标差距（2026-10-21）」及 `docs/goals.md` G2.7。仅盘点和排期建议，不启动实现；效果优先于效率。
+
+| 顺序 | 项目 | 建议排期 / 路由 | 状态边界 |
+|---|---|---|---|
+| 1 | C 层理 | 作为下一档效果工作先行；designer 明确可见效果与验收锚点，再进入后续实现、effector 验证。 | `UNLOCKED / NOT_VALIDATED`，未验收前不写成完成。 |
+| 2 | D 流痕 | 排在 C 之后；先完成动态流痕效果定义，再接续验证。 | `UNLOCKED / NOT_VALIDATED`；遵守 C→D。 |
+| 3 | 顶光立体感 | 作为新的效果维度开题，先定义受光/背光表现与评测指标；与 C/D 协调，不挤占已关闭项的验收结论。 | 未开题；尚无验收状态。 |
+| 4 | 雾带连续悬浮感 | 作为 SV-06 由 3 向 4 的后续提质候选，效果与帧时一起评估。 | SV-06=3 仍是可接受且已通过；不回开 E/A/B。 |
+| 5 | 沙丘形态 / 画面占比 | 先协调场景初态及物理分选测量，并与 P-011 观测③标定链对齐后再排效果复核。 | 属目标差距，不改变 P-011 已裁决状态或口径。 |
+| 6 | `fpsP95≥100` 归因 | 效果工作之后安排 developer 归因；核对 G2.7 窗口口径、Canvas2D 逐帧绘制瓶颈及可能的预合成/硬件加速方向。归因报告后由 manager 决定是否立项或升级为 P-013 级议题。 | 仅建议排位；当前 34–60fps 与目标约差 2–3 倍。可达性未定，不启动实现。 |
+
+本次排期建议不改变任何已冻结口径或已 CLOSED 项状态；100fps 的架构归因是待排路由，不代表已认定必须改架构或必然可达。
+
+## 2026-10-21 P-011 D-1 correction 越权激活裁决（当前生效）
+
+> 日期：2026-10-21。依据 `docs/architecture-P011.md` §26.2、§24.2–24.3，以及 v3 preregistration 的路线身份定义。裁决选择 **其他：Option A 加显式路线隔离**。
+
+1. **LEGACY 位精确恢复**：developer 为 correction apply 加资格门；非候选 LEGACY 路径必须恢复旧 `relaxAngle` apply 语义，按 architect 建议用 `relaxHysteresisThresholds !== null` 排除普通 LEGACY。需补跨版本多步轨迹回归，覆盖 step25 首个分歧点、step214 BLOCKED 差异及完整 240-step 锚点序列；身份字段测试不能替代行为等价证据。
+2. **显式隔离 correction 路线**：`relaxHysteresisThresholds !== null` 是 correction 候选运行的必要条件，但不是充分条件。只有显式启用并记录 `observationRouteId=relax-correction-weighted-v1` 的 correction 实验 run 才可进入 `applyCorrectionSlot`；`natural-relax-hysteresis-v1`、SLIP 正式验证、观测①b 和所有 LEGACY/默认 run 继续旧 apply。不得把 v3 状态机身份作为 correction 的隐式开关。correction 路线仍是候选，未完成 §24.3 A/B/C/D 对照矩阵和效果报告、未经理裁决前不转正、不默认启用。
+3. **D-1b 遥测**：`correctionRequested/Granted/Rejected/StalledCount` 缺项不阻断恢复 LEGACY，也不阻断隔离后的 v3 身份核验；但在 correction 路线的对照 run 前，必须补进 audit/ledger/checker 并验证账本闭合，否则 correction 效果报告不具备放行资格。
+4. **复核顺序与路由**：developer 先实现 LEGACY 回退 + 显式 route gate，并补轨迹等价与 correction/非 correction 分流测试；architect 复核路线身份和 apply 落点；tester 在修复构建上重跑 legacy 轨迹及 v3 核验（原 6ad709d6 核验对象不得直接沿用为修复后结论）。D-1 修复通过后可解锁 v3 tester 链路；correction 路线另外按 §24.3 RED 对照用例 → 工程/遥测 → A/B/C/D 实验 → 效果报告 → manager 是否转正的顺序执行。
+5. **状态**：D-1 `OPEN / BLOCKING_FOR_V3_TESTER_SIGNOFF`，直至行为轨迹等价证据通过；D-1b `OPEN / BLOCKING_FOR_CORRECTION_VALIDATION`；correction 路线 `CANDIDATE / NOT_PROMOTED`。本裁决不追认已经发生的 LEGACY 行为差异，不改阈值、预算、安全 gate 或历史 run。
+
 ## 2026-10-20 P-011 观测③ v2 pilot 停机与 v3 识别方向批准（当前生效）
 
 > 日期：2026-10-20。依据 `docs/effect-report-P011-obs3v2-pilot-run1.md`（v2 clean pilot 报告）与 `docs/observation3-v3-identification-redesign-v1.md`（designer 识别策略重论证）。v2 pilot（run `p011-run-1792472946390-3`，构建 891370d）三维判定：clean=INVALID（5 条边 tan30 违约，量级 1.25e-7 浮点 epsilon，seq2020 回摆段，非豁免相位 → 按预注册稿 §6 隔离整 run）、platformReachability=PARTIAL（±15° 恰 15.0000° 极稳 PASS；±30° 每子步 `TILT_PLANNING_BLOCKED` 物理冻结 ~29.88°，完全不可达）、pilotCoverage=INCOMPLETE（四 cell 全 0 合格 bracket；459 个原始 start 全部发生于 ramp 段）。run 证据保留于 `test/artifacts/p011-obs3v2-20261020/run-001/`。
