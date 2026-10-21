@@ -1100,6 +1100,28 @@ struct SandCanvas {
     if (peakADeg === undefined || rateDegPerSec === undefined) {
       return false;
     }
+    // §26.5: arm the run metadata BEFORE player.start() so the state
+    // machine is armed when the first platform substep runs (the first
+    // ledger record then carries executedThresholds/decision fields). The
+    // setter path is a direct flight — it does NOT go through
+    // freshScriptCommand consumption and is unaffected by the mutual
+    // exclusion gate. Route binding is orthogonal (D-1): schedule arming
+    // never touches setNaturalObservationRouteId.
+    const metadataArmed = AppStorage.get<boolean>('p011ScheduleMetadataArmed');
+    if (metadataArmed === true) {
+      const runRole = AppStorage.get<string>('p011ScheduleRunRole');
+      const calibrationId = AppStorage.get<string>('p011ScheduleCalibrationId');
+      const thetaStart = AppStorage.get<number>('p011ScheduleThetaStartDeg');
+      const thetaStop = AppStorage.get<number>('p011ScheduleThetaStopDeg');
+      const wsField = this.waterSandField;
+      if (runRole !== undefined && calibrationId !== undefined &&
+        thetaStart !== undefined && thetaStop !== undefined && wsField !== null) {
+        const role = runRole === 'calibration' || runRole === 'holdout'
+          ? runRole : null;
+        wsField.setNaturalObservationRunMetadata(role, calibrationId,
+          thetaStart, thetaStop);
+      }
+    }
     const started = this.p011SchedulePlayer.start(peakADeg, rateDegPerSec, nowMs);
     if (started) {
       hilog.info(0x0000, 'SandCanvas',

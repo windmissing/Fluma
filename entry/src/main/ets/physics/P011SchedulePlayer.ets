@@ -36,6 +36,7 @@ import { P011ScheduleV3, P011ScheduleV3Command, p011BuildScheduleV3,
   P011_V3_RATE_PRIMARY_DEG_PER_S, P011_V3_RATE_SENSITIVITY_DEG_PER_S
 } from './P011ScheduleV3';
 import { P011RelaxHysteresisParamError } from './P011RelaxHysteresis';
+import { validateP011RunMetadataGroup } from './P011TiltWant';
 
 /** Drift marker threshold (§26.4 decision 2): > 50 ms flags the attempt. */
 export const P011_SCHEDULE_DRIFT_MARKER_MS = 50;
@@ -44,13 +45,28 @@ export type P011ScheduleWantWarning =
   | 'INVALID_P011SCHEDULE_FORMAT'
   | 'INVALID_P011SCHEDULE_PEAK'
   | 'INVALID_P011SCHEDULE_RATE'
-  | 'SCHEDULE_BUILD_FAILED';
+  | 'SCHEDULE_BUILD_FAILED'
+  // §26.5 fail-closed metadata arming: a partial or invalid four-parameter
+  // group rejects the whole schedule want.
+  | 'MISSING_SCHEDULE_METADATA'
+  | 'INVALID_SCHEDULE_METADATA';
 
 export interface P011ScheduleWantParseResult {
   /** peakADeg:rate binding; null when the parameter is absent. */
   peakADeg: number | null;
   rateDegPerSec: number | null;
   warnings: P011ScheduleWantWarning[];
+  // §26.5 metadata arming: the validated four-parameter group (all-null on
+  // pure smoke, i.e. a schedule want without the metadata parameters).
+  metadata: P011RunMetadataArming | null;
+}
+
+/** §26.5: validated run metadata carried by the schedule want. */
+export interface P011RunMetadataArming {
+  runRole: 'calibration' | 'holdout';
+  thresholdCalibrationId: string;
+  thetaStartDeg: number;
+  thetaStopDeg: number;
 }
 
 /**
@@ -63,14 +79,14 @@ export function parseP011ScheduleWant(
   parameters: Record<string, Object> | undefined): P011ScheduleWantParseResult {
   const warnings: P011ScheduleWantWarning[] = [];
   if (parameters === undefined || parameters.p011schedule === undefined) {
-    return { peakADeg: null, rateDegPerSec: null, warnings };
+    return { peakADeg: null, rateDegPerSec: null, warnings, metadata: null };
   }
   const text = `${parameters.p011schedule}`.trim();
   const match = /^([+-]?(?:\d+(?:\.\d*)?|\.\d+)):([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/
     .exec(text);
   if (match === null) {
     warnings.push('INVALID_P011SCHEDULE_FORMAT');
-    return { peakADeg: null, rateDegPerSec: null, warnings };
+    return { peakADeg: null, rateDegPerSec: null, warnings, metadata: null };
   }
   const peakADeg = parseFloat(match[1]);
   const rateDegPerSec = parseFloat(match[2]);
@@ -81,7 +97,38 @@ export function parseP011ScheduleWant(
     rateDegPerSec !== P011_V3_RATE_SENSITIVITY_DEG_PER_S) {
     warnings.push('INVALID_P011SCHEDULE_RATE');
   }
-  return { peakADeg, rateDegPerSec, warnings };
+  // §26.5 fail-closed metadata arming: the four optional parameters are
+  // validated as a GROUP through the shared validator (same rules as the
+  // wstilt path — no drift). Partial/invalid group rejects the whole want.
+  const runRoleText = parameters.p011runrole === undefined
+    ? '' : `${parameters.p011runrole}`.trim();
+  const calibrationId = parameters.thresholdcalibrationid === undefined
+    ? null : `${parameters.thresholdcalibrationid}`.trim();
+  const startText = parameters.thetastartdeg === undefined
+    ? null : `${parameters.thetastartdeg}`.trim();
+  const stopText = parameters.thetastopdeg === undefined
+    ? null : `${parameters.thetastopdeg}`.trim();
+  const numeric = (t: string | null): number | null => {
+    if (t === null || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(t)) {
+      return null;
+    }
+    const v = parseFloat(t);
+    return Number.isFinite(v) ? v : null;
+  };
+  const group = validateP011RunMetadataGroup(runRoleText, calibrationId,
+    numeric(startText), numeric(stopText));
+  let metadata: P011RunMetadataArming | null = null;
+  if (group.warning !== null) {
+    warnings.push(group.warning);
+  } else if (!group.allAbsent) {
+    metadata = {
+      runRole: group.runRole as 'calibration' | 'holdout',
+      thresholdCalibrationId: group.thresholdCalibrationId as string,
+      thetaStartDeg: group.thetaStartDeg as number,
+      thetaStopDeg: group.thetaStopDeg as number
+    };
+  }
+  return { peakADeg, rateDegPerSec, warnings, metadata };
 }
 
 /** One dispatched schedule command with its drift evidence. */

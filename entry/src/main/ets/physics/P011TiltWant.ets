@@ -67,6 +67,60 @@ export interface P011TiltWantParseResult {
   warnings: P011TiltWantWarning[];
 }
 
+/**
+ * §26.5 risk 3: shared validation for the four run-metadata parameters
+ * (p011runrole / thresholdcalibrationid / thetastartdeg / thetastopdeg).
+ * Both parse paths (wstilt single command and p011schedule arming) call
+ * THIS function so the threshold-range and enum rules can never drift.
+ * Group semantics: all four present and valid, or all absent (null
+ * everything). A partial or invalid group reports which warning fired.
+ */
+export interface P011RunMetadataValidation {
+  runRole: P011NaturalObservationRunRole | null;
+  thresholdCalibrationId: string | null;
+  thetaStartDeg: number | null;
+  thetaStopDeg: number | null;
+  /** true when all four are absent (pure smoke / LEGACY semantics). */
+  allAbsent: boolean;
+  /** Non-empty when the group is partial or invalid (fail-closed signal). */
+  warning: 'MISSING_SCHEDULE_METADATA' | 'INVALID_SCHEDULE_METADATA' | null;
+}
+
+export function validateP011RunMetadataGroup(
+  runRoleText: string, thresholdCalibrationId: string | null,
+  thetaStartDeg: number | null, thetaStopDeg: number | null): P011RunMetadataValidation {
+  const runRoleProvided = runRoleText !== '';
+  const calibrationProvided = thresholdCalibrationId !== null &&
+    thresholdCalibrationId.length > 0;
+  const startProvided = thetaStartDeg !== null;
+  const stopProvided = thetaStopDeg !== null;
+  const providedCount = (runRoleProvided ? 1 : 0) + (calibrationProvided ? 1 : 0) +
+    (startProvided ? 1 : 0) + (stopProvided ? 1 : 0);
+  if (providedCount === 0) {
+    return { runRole: null, thresholdCalibrationId: null, thetaStartDeg: null,
+      thetaStopDeg: null, allAbsent: true, warning: null };
+  }
+  if (providedCount < 4) {
+    return { runRole: null, thresholdCalibrationId: null, thetaStartDeg: null,
+      thetaStopDeg: null, allAbsent: false, warning: 'MISSING_SCHEDULE_METADATA' };
+  }
+  // All four present — validate each (same rules as the wstilt path).
+  let runRole: P011NaturalObservationRunRole | null = null;
+  if (runRoleText === 'calibration' || runRoleText === 'holdout') {
+    runRole = runRoleText;
+  }
+  const start = thetaStartDeg as number;
+  const stop = thetaStopDeg as number;
+  const thresholdsValid = Number.isFinite(start) && Number.isFinite(stop) &&
+    stop >= 0 && start > stop && start <= 30;
+  if (runRole === null || !calibrationProvided || !thresholdsValid) {
+    return { runRole: null, thresholdCalibrationId: null, thetaStartDeg: null,
+      thetaStopDeg: null, allAbsent: false, warning: 'INVALID_SCHEDULE_METADATA' };
+  }
+  return { runRole, thresholdCalibrationId, thetaStartDeg, thetaStopDeg,
+    allAbsent: false, warning: null };
+}
+
 function optionalFiniteNumber(parameters: Record<string, Object> | undefined,
   key: string): number | null {
   if (parameters === undefined || parameters[key] === undefined) {

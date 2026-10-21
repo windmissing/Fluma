@@ -99,17 +99,38 @@ export default class EntryAbility extends UIAbility {
     // P-011 dual-input-v1: identity travels with mode; publish mode before this Want's tilt.
     const tiltCommand = this.parseP011Want(parameters, parsed.renderMode, parsed.testMode, parsed.forceInvert);
     const tiltSequence = tiltCommand === null ? 0 : tiltCommand.sequence;
-    // v3 schedule player entry (§26.4): p011schedule=peakADeg:rate. Parsed
-    // here, consumed by SandCanvas which owns the player instance. Warnings
-    // go to hilog only; an illegal value never arms a player.
+    // v3 schedule player entry (§26.4/§26.5): p011schedule=peakADeg:rate with
+    // the optional four-parameter run-metadata group (fail-closed: a partial
+    // or invalid group rejects the whole schedule want). Parsed here,
+    // consumed by SandCanvas which owns the player instance. Warnings go to
+    // hilog only; an illegal value never arms a player.
     const scheduleParsed = parseP011ScheduleWant(parameters);
     for (const scheduleWarning of scheduleParsed.warnings) {
       hilog.warn(this.hilogDomain, this.hilogTag,
         'P011_SCHEDULE_WARNING %{public}s', scheduleWarning);
     }
-    if (scheduleParsed.peakADeg !== null && scheduleParsed.rateDegPerSec !== null) {
+    if (scheduleParsed.peakADeg !== null && scheduleParsed.rateDegPerSec !== null &&
+      scheduleParsed.warnings.length === 0) {
       AppStorage.setOrCreate('p011SchedulePeakADeg', scheduleParsed.peakADeg);
       AppStorage.setOrCreate('p011ScheduleRate', scheduleParsed.rateDegPerSec);
+      // §26.5: carry the validated metadata group (null on pure smoke) so
+      // SandCanvas can arm BEFORE player.start().
+      if (scheduleParsed.metadata !== null) {
+        AppStorage.setOrCreate('p011ScheduleRunRole', scheduleParsed.metadata.runRole);
+        AppStorage.setOrCreate('p011ScheduleCalibrationId',
+          scheduleParsed.metadata.thresholdCalibrationId);
+        AppStorage.setOrCreate('p011ScheduleThetaStartDeg',
+          scheduleParsed.metadata.thetaStartDeg);
+        AppStorage.setOrCreate('p011ScheduleThetaStopDeg',
+          scheduleParsed.metadata.thetaStopDeg);
+        AppStorage.setOrCreate('p011ScheduleMetadataArmed', true);
+      } else {
+        AppStorage.setOrCreate('p011ScheduleRunRole', null);
+        AppStorage.setOrCreate('p011ScheduleCalibrationId', null);
+        AppStorage.setOrCreate('p011ScheduleThetaStartDeg', null);
+        AppStorage.setOrCreate('p011ScheduleThetaStopDeg', null);
+        AppStorage.setOrCreate('p011ScheduleMetadataArmed', false);
+      }
       this.p011ScheduleWantSequence++;
       AppStorage.setOrCreate('p011ScheduleWantSeq', this.p011ScheduleWantSequence);
       hilog.info(this.hilogDomain, this.hilogTag,

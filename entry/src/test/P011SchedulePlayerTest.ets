@@ -2,6 +2,8 @@ import { describe, it, expect } from '@ohos/hypium';
 import { parseP011ScheduleWant, P011SchedulePlayer,
   P011_SCHEDULE_DRIFT_MARKER_MS
 } from '../main/ets/physics/P011SchedulePlayer';
+import { WaterSandField, defaultWaterSandParams } from '../main/ets/physics/WaterSandField';
+import { P011NaturalObservationProbe, P011NaturalObservationRecord } from '../main/ets/physics/P011NaturalObservation';
 import { P011ScheduleV3, p011BuildScheduleV3, p011ScheduleV3ToCsv,
   P011_V3_COMMAND_STEP_MS, P011_V3_PLATFORM_HOLD_MS
 } from '../main/ets/physics/P011ScheduleV3';
@@ -22,6 +24,29 @@ function wantParams(schedule: string | null): Record<string, Object> {
   const params: Record<string, Object> = {};
   if (schedule !== null) {
     params['p011schedule'] = schedule;
+  }
+  return params;
+}
+
+
+// §26.5 test helper: schedule want parameters with the optional metadata
+// group; null arguments omit the parameter.
+function d1ScheduleWantParams(peak: string, rate: string, runRole: string | null,
+  calibrationId: string | null, start: string | null,
+  stop: string | null): Record<string, Object> {
+  const params: Record<string, Object> = {};
+  params['p011schedule'] = `${peak}:${rate}`;
+  if (runRole !== null) {
+    params['p011runrole'] = runRole;
+  }
+  if (calibrationId !== null) {
+    params['thresholdcalibrationid'] = calibrationId;
+  }
+  if (start !== null) {
+    params['thetastartdeg'] = start;
+  }
+  if (stop !== null) {
+    params['thetastopdeg'] = stop;
   }
   return params;
 }
@@ -199,6 +224,101 @@ export default function p011SchedulePlayerTest() {
       expect(replayed.length).assertEqual(body.length);
       for (let index = 0; index < body.length; index++) {
         expect(replayed[index]).assertEqual(body[index]);
+      }
+    });
+
+    // --- §26.5 metadata arming -------------------------------------------
+
+    it('p011_schedulePlayer_metadataArmingFiveScenarios', 0, () => {
+      const base = d1ScheduleWantParams('20', '0.5', null, null, null, null);
+      // (1) Complete legal group -> metadata carried (armed before start).
+      const full = d1ScheduleWantParams('20', '0.5', 'calibration',
+        'cand-pair-9', '26', '20');
+      const armed = parseP011ScheduleWant(full);
+      expect(armed.warnings.length === 0).assertTrue();
+      expect(armed.metadata !== null).assertTrue();
+      if (armed.metadata !== null) {
+        expect(armed.metadata.runRole).assertEqual('calibration');
+        expect(armed.metadata.thresholdCalibrationId).assertEqual('cand-pair-9');
+        expect(Math.abs(armed.metadata.thetaStartDeg - 26) < 1e-12).assertTrue();
+        expect(Math.abs(armed.metadata.thetaStopDeg - 20) < 1e-12).assertTrue();
+      }
+      // (2) Missing one of four (no thetastopdeg) -> whole want rejected.
+      const partial = d1ScheduleWantParams('20', '0.5', 'calibration',
+        'cand-pair-9', '26', null);
+      const rejectedPartial = parseP011ScheduleWant(partial);
+      expect(rejectedPartial.metadata === null).assertTrue();
+      expect(rejectedPartial.warnings.includes('MISSING_SCHEDULE_METADATA'))
+        .assertTrue();
+      // (3) Invalid value (stop >= start) -> rejected.
+      const invalid = d1ScheduleWantParams('20', '0.5', 'calibration',
+        'cand-pair-9', '20', '26');
+      const rejectedInvalid = parseP011ScheduleWant(invalid);
+      expect(rejectedInvalid.metadata === null).assertTrue();
+      expect(rejectedInvalid.warnings.includes('INVALID_SCHEDULE_METADATA'))
+        .assertTrue();
+      // (3b) Invalid runRole enum -> rejected.
+      const badRole = d1ScheduleWantParams('20', '0.5', 'pilot',
+        'cand-pair-9', '26', '20');
+      const rejectedRole = parseP011ScheduleWant(badRole);
+      expect(rejectedRole.warnings.includes('INVALID_SCHEDULE_METADATA'))
+        .assertTrue();
+      // (4) Pure smoke (no metadata params) -> legal, LEGACY semantics.
+      const smoke = parseP011ScheduleWant(base);
+      expect(smoke.warnings.length === 0).assertTrue();
+      expect(smoke.metadata === null).assertTrue();
+      // (5) correction route parameter is orthogonal (D-1): the schedule
+      // arming never binds it — the parse result has no route surface and
+      // the field stays null unless p011route flows its own channel.
+      const withRoute = d1ScheduleWantParams('20', '0.5', 'calibration',
+        'cand-pair-9', '26', '20');
+      withRoute['p011route'] = 'relax-correction-weighted-v1';
+      const routeParsed = parseP011ScheduleWant(withRoute);
+      // metadata still arms; route is NOT part of the schedule result.
+      expect(routeParsed.metadata !== null).assertTrue();
+    });
+
+    // §26.5 risk 1 (arming before start): a field armed via the metadata
+    // group must have the state machine armed BEFORE the first substep —
+    // proven here at the field level (the runner wiring calls the setter
+    // before player.start; the field evidence is executedThresholds on the
+    // very first record).
+    it('p011_schedulePlayer_armedBeforeStartFirstRecordCarriesThresholds', 0, () => {
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(8, record => {
+        records.push(record);
+      });
+      const field = new WaterSandField(8, 192);
+      const params = defaultWaterSandParams();
+      params.heavyDiffusion = 0;
+      params.lightDiffusion = 0;
+      params.waterLevelRate = 0.001;
+      params.angleDeg = 4;
+      field.configure(params);
+      field.initialize({
+        waterRegions: [{ startCol: 0, endColInclusive: 7, bottom: 144, height: 38 }],
+        heavyDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 0, height: 72 }],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 72, height: 48 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      });
+      field.setNaturalObservationProbe(probe);
+      // §26.5 arming order: metadata FIRST, then the player would start —
+      // at the field level this is setNaturalObservationRunMetadata before
+      // any step() call.
+      field.setNaturalObservationRunMetadata('calibration', 'cand-pair-9', 26, 20);
+      expect(field.relaxHysteresisEnabled()).assertTrue();
+      field.setTilt(0);
+      const result = field.step(1 / 60);
+      expect(result.ok).assertTrue();
+      expect(records.length > 0).assertTrue();
+      const first = records[0];
+      expect(first.context.executedThresholds !== null &&
+        first.context.executedThresholds !== undefined).assertTrue();
+      if (first.context.executedThresholds !== null &&
+        first.context.executedThresholds !== undefined) {
+        expect(Math.abs(first.context.executedThresholds.thetaStartDeg - 26) < 1e-12)
+          .assertTrue();
       }
     });
   });
