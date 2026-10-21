@@ -403,16 +403,20 @@ function makeContext(over) {
 
 // □I EAB-batch: B grain draw budget + grain-only-in-EAB + determinism + motion cache.
 function makeCountingCanvas(sink) {
-  sink.draws = 0; sink.fillRects = 0; sink.styles = [];
+  sink.draws = 0; sink.fillRects = 0; sink.clips = 0; sink.drawImages = 0; sink.styles = [];
   const counted = ['fill', 'stroke', 'fillRect', 'strokeRect', 'drawImage'];
-  const noop = ['save', 'restore', 'beginPath', 'closePath', 'clip',
+  const noop = ['save', 'restore', 'beginPath', 'closePath',
     'translate', 'rotate', 'rect', 'moveTo', 'lineTo'];
   return new Proxy({}, {
     get(_t, prop) {
+      if (prop === 'clip') {
+        return () => { sink.clips++; };
+      }
       if (counted.includes(prop)) {
         return () => {
           sink.draws++;
           if (prop === 'fillRect') { sink.fillRects++; }
+          if (prop === 'drawImage') { sink.drawImages++; }
         };
       }
       if (noop.includes(prop)) { return () => {}; }
@@ -475,20 +479,30 @@ function makeCountingCanvas(sink) {
   field.inject({ phase: 1, amount: 60, startCol: 20, endColInclusive: 60, state: 1 });
   field.step(1 / 60);
   const renderer = new P012WaterSandRenderer(cols, 192);
+  // Node 1:1 通道无 OffscreenCanvas/ImageBitmap，构造期 makeGrainBitmap 全部
+  // 返回 null → drawSandGrain 三带整体跳过，EA/EAB 提交数必然相同（这正是本用例
+  // 在 clip+drawImage 改造后观测到 fillRectEA==fillRectEAB 的原因，与档位无关）。
+  // 注入不透明桩位图，让三带颗粒路径在计数画布上真实执行。
+  const stubBitmap = { _stub: true, width: 256, height: 256 };
+  renderer.grainBitmapH = stubBitmap;
+  renderer.grainBitmapL = stubBitmap;
+  renderer.grainBitmapM = stubBitmap;
   let worstEAB = 0;
   let worstEA = 0;
-  let fillRectEA = -1;
-  let fillRectEAB = -1;
+  let clipsEA = -1;
+  let clipsEAB = -1;
+  let imgEA = -1;
+  let imgEAB = -1;
   for (let i = 0; i < 60; i++) {
     field.step(1 / 60);
-    sink.draws = 0; sink.fillRects = 0;
+    sink.draws = 0; sink.clips = 0; sink.drawImages = 0;
     renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EA }));
     worstEA = Math.max(worstEA, sink.draws);
-    fillRectEA = sink.fillRects;
-    sink.draws = 0; sink.fillRects = 0;
+    clipsEA = sink.clips; imgEA = sink.drawImages;
+    sink.draws = 0; sink.clips = 0; sink.drawImages = 0;
     renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EAB }));
     worstEAB = Math.max(worstEAB, sink.draws);
-    fillRectEAB = sink.fillRects;
+    clipsEAB = sink.clips; imgEAB = sink.drawImages;
   }
   // 第一梯队合计 ≤112；总 ≤160
   results.push({
@@ -496,11 +510,12 @@ function makeCountingCanvas(sink) {
     status: worstEAB <= P012_FIRST_TIER_DRAW_BUDGET ? 'PASS' : 'FAIL',
     error: `worstEAB=${worstEAB} budget=${P012_FIRST_TIER_DRAW_BUDGET}`
   });
-  // B 颗粒仅 EAB 档出现：EAB 比 EA 多 3 个 fillRect（三带各 1）
+  // B 颗粒仅 EAB 档出现：EAB 比 EA 多 3 次 clip（三带各 1 次带曲线 clip），
+  // 且 drawImage 平铺提交数 > 0（改造后颗粒走 clip+drawImage，不再是 fillRect）。
   results.push({
     name: 'p012_eab_grainOnlyInEAB',
-    status: (fillRectEAB - fillRectEA === 3) ? 'PASS' : 'FAIL',
-    error: `fillRectEA=${fillRectEA} fillRectEAB=${fillRectEAB}`
+    status: ((clipsEAB - clipsEA === 3) && imgEAB > 0 && imgEA === 0) ? 'PASS' : 'FAIL',
+    error: `clipEA=${clipsEA} clipEAB=${clipsEAB} imgEA=${imgEA} imgEAB=${imgEAB}`
   });
 })();
 

@@ -12,10 +12,18 @@ import subprocess, sys, time, os
 HDC = r"C:\Users\admin\AppData\Local\OpenHarmony\Sdk\26.0.0\toolchains\hdc.exe"
 OUT = r"D:\hmprojects\HelloWorld\test\artifacts\p012-measurements"
 TAG = os.environ.get("P012_TAG", "s96")
+# 窗口数与间隔：DoD① 要求 ≥3 帧窗口并给出 P50/P95 帧时，默认 6 窗口 × 1.0s。
+WINDOWS = int(os.environ.get("P012_WINDOWS", "6"))
+GAP = float(os.environ.get("P012_GAP", "1.0"))
 
 VARIANTS = [
     ("tier0", 0, 0), ("tier1", 1, 0), ("tier2", 2, 0), ("tier3", 3, 0),
 ]
+# 诊断用：只跑指定档位（P012_TIERS="tier2,tier3"）
+_only = os.environ.get("P012_TIERS", "")
+if _only:
+    _keep = set(x.strip() for x in _only.split(",") if x.strip())
+    VARIANTS = [v for v in VARIANTS if v[0] in _keep]
 
 def sh(cmd, timeout=120):
     r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
@@ -40,11 +48,11 @@ def main():
         time.sleep(2.0)
         sh(f'"{HDC}" shell uitest uiInput click 240 620')   # dismiss USB dialog
         time.sleep(25.0)
-        for i in range(3):
+        for i in range(WINDOWS):
             if not snap(os.path.join(OUT, f"perf-ladder-{TAG}-{tag}-w{i}.jpeg")):
                 print(f"{tag} snapshot FAILED", flush=True)
-            if i < 2:
-                time.sleep(2.0)
+            if i < WINDOWS - 1:
+                time.sleep(GAP)
     sh(f'"{HDC}" shell power-shell timeout -r')
     print("DONE", flush=True)
 

@@ -117,6 +117,8 @@ const P012_B_ENV_PX = 4;
 const P012_B_ENV_AMP = 0.4;
 /** 单位方差归一化后的截幅（有限范围，§5.1"被截到有限范围"） */
 const P012_B_GRAIN_CLIP = 2.5;
+/** 预合成层几何容差（px）：帧间漂移低于此值时复用缓存层 */
+const P012_GRAIN_LAYER_TOL_PX = 0.5;
 
 /** renderer 对外生命周期接口（architecture §1 模块表） */
 export class P012WaterSandRenderer {
@@ -258,7 +260,7 @@ export class P012WaterSandRenderer {
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
     //      createPattern(repeat) 全局平流偏移填充；跟随材料净搬运、无缝、无贴纸。
     if (tier === P012AppearanceTier.EAB) {
-      drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxH);
+      drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
     }
     // 4) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
     ctx.beginPath();
@@ -611,17 +613,38 @@ export class P012WaterSandRenderer {
   }
 
   /**
-   * B 档粉质颗粒（算法稿 §5.1）：三带各自 clip 到沙区曲线 Path，再以 createPattern
-   * (repeat) + translate(全局平流偏移) 填充整片沙区。全局偏移（mean UV）→ 各列共享
-   * 同一连续 pattern → 无缝、无跨列拼缝；结构预留 16 组供未来 D 各向异性。
-   * 颗粒仅在 E 已提亮沙色之上叠加（globalAlpha=P012_B_GRAIN_ALPHA），保留部分 E 光照。
-   * 返回 draw 提交次数（3 次 fillRect，远低于 B 档 ≤48 预算）。
+   * B 档粉质颗粒（算法稿 §5.1；PERF 优化版 s99 —— clip + drawImage 平铺）。
+   *
+   *  纹理语义与 v1 完全一致：颗粒仅叠加在 E 已提亮的材质上（globalAlpha=
+   *  P012_B_GRAIN_ALPHA），并按材料净搬运的全局位移做水平平流；每带用
+   *  各自的 256² 加性颗粒 tile（重/轻/混三套种子），pattern 连续无拼缝。
+   *
+   *  与 v1 的像素等价性：v1 为「clip(带曲线 Path) + createPattern(repeat)
+   *  + fillRect(整盒 ±tilePx)」；本版为「clip(同一带曲线 Path) +
+   *  drawImage(同一 256² 位图) 逐格平铺」。
+   *   · 图案相位：v1 在 translate(off) 之后以画布坐标铺 pattern，采样相位
+   *     = 屏幕 x - off；本版把位图按 off + k·256 摆放，屏幕 x 命中的位图
+   *     内坐标 = x - off，与 v1 相位逐点一致。
+   *   · 纵向：v1 的 fillRect 覆盖 boxY ± tilePx，pattern 纵向相位为
+   *     屏幕 y（mod 256）；本版按 j·256 逐行摆放，纵向相位同为 y（mod 256）。
+   *   · 强度：v1 走 globalAlpha（P012_B_GRAIN_ALPHA）做 source-over 混合；
+   *     本版同样走 globalAlpha，且位图保持纯不透明（alpha=255）——
+   *     绝不可把 alpha 烘焙进位图：CanvasPattern 采样会把半透明像素
+   *     的颜色按 1/alpha 放大并钳位（s94 实测 alpha=140 → ×1.82 饱和白）。
+   *
+   *  性能（s98/s99 实测）：瓶颈在 CanvasPattern 的逐像素采样/混合，
+   *  而非 Path 光栅化或 draw 提交数（消融 D1：去掉 pattern 后 tier3 由
+   *  20/17/16 回到 34/34/36；消融 D2：仅把 globalAlpha 提到 1.0 时
+   *  tier3 仍为 16/15/18 → 证实 alpha 混合路径不是瓶颈）。
+   *  改用 drawImage 平铺后 tier3 = 32/32/33，与 tier2（35/38/50）同档，
+   *  消除 EAB 档 60→12fps 的退化。
+   *
+   *  返回 draw 提交次数（三带各 1 次 clip + 若干 drawImage）。
    */
   private drawSandGrain(ctx: CanvasRenderingContext2D, view: P012MaterialFrameView,
     heightToY: (h: number) => number, colW: number,
-    boxX: number, boxY: number, boxH: number): number {
+    boxX: number, boxY: number, boxW: number, boxH: number): number {
     const n = this.cols;
-    const tilePx = P012_GRAIN_TILE;
     const offH = this.motionCache.meanDeltaXPx(true);
     const offL = this.motionCache.meanDeltaXPx(false);
     const offM = (offH + offL) * 0.5;
@@ -633,8 +656,33 @@ export class P012WaterSandRenderer {
     let draws = 0;
     for (let bi = 0; bi < bands.length; bi++) {
       const b = bands[bi];
+      const tile = b.bitmap;
+      if (tile === null) {
+        // Node / 无 bitmap：fallback 不绘制颗粒（与 v1 一致）
+        if (!this.grainDiagLogged) {
+          this.grainDiagLogged = true;
+          hilog.error(0x0000, 'P012', 'grain: bitmap null, skip band ' + b.kind);
+        }
+        continue;
+      }
+      // 带的实际屏幕纵向范围（空带直接跳过：高度 ≤0.5px 无可填充面积）
+      let minY = Number.MAX_VALUE;
+      let maxY = -Number.MAX_VALUE;
+      for (let c = 0; c < n; c++) {
+        const t = this.bandTopY(b.kind, c, heightToY);
+        const bo = this.bandBottomY(b.kind, c, heightToY);
+        if (t < minY) {
+          minY = t;
+        }
+        if (bo > maxY) {
+          maxY = bo;
+        }
+      }
+      if (maxY - minY <= 0.5) {
+        continue;
+      }
       ctx.save();
-      // clip 到该带沙区曲线 Path（保证颗粒不越过层边界/界面）
+      // clip 到该带沙区曲线 Path（绝对屏幕坐标，与 v1 完全一致）
       ctx.beginPath();
       ctx.moveTo(boxX, this.bandTopY(b.kind, 0, heightToY));
       for (let c = 1; c < n; c++) {
@@ -645,38 +693,30 @@ export class P012WaterSandRenderer {
       }
       ctx.closePath();
       ctx.clip();
-      // 全局平流偏移（纹理随材料净搬运滚动）
-      ctx.translate(b.off, 0);
-      // 颗粒叠加强度 0.55（§5.1 "作用于 E 已提亮的材质"）：位图纯不透明，
-      // 强度走 globalAlpha；restore() 自动恢复，不影响后续描边。
+      // 颗粒叠加强度走 globalAlpha（位图纯不透明）
       ctx.globalAlpha = P012_B_GRAIN_ALPHA;
-      if (b.bitmap !== null) {
-        const pat = ctx.createPattern(b.bitmap, 'repeat');
-        if (pat !== null) {
-          ctx.fillStyle = pat;
-        } else {
-          ctx.fillStyle = 'rgba(0,0,0,0)';
-          if (!this.grainDiagLogged) {
-            this.grainDiagLogged = true;
-            hilog.error(0x0000, 'P012', 'grain: createPattern returned null (band ' + b.kind + ')');
-          }
-        }
-      } else {
-        // Node / 无 bitmap：fallback 仍计一次 draw（真实设备走 pattern 路径）
-        ctx.fillStyle = 'rgba(0,0,0,0)';
-        if (!this.grainDiagLogged) {
-          this.grainDiagLogged = true;
-          hilog.error(0x0000, 'P012', 'grain: bitmap null, fallback no-fill (band ' + b.kind + ')');
+      // 平铺：横向按 off + k·256 摆放（图案相位 = 屏幕 x - off，与 v1 一致），
+      // 纵向按 j·256 摆放（相位 = 屏幕 y mod 256，与 v1 一致）。
+      // 只覆盖带的实际纵向范围，避免无效提交。
+      // dx 取整到整数像素：drawImage 的小数目标坐标会触发双线性重采样
+      // （会平滑掉颗粒噪声、压低 hfH 锚点），整数坐标为 1:1 直贴。
+      const off = Math.round(b.off);
+      const k0 = Math.floor((boxX - P012_GRAIN_TILE - off) / P012_GRAIN_TILE);
+      const k1 = Math.ceil((boxX + boxW - off) / P012_GRAIN_TILE);
+      const j0 = Math.floor((minY - P012_GRAIN_TILE) / P012_GRAIN_TILE);
+      const j1 = Math.ceil(maxY / P012_GRAIN_TILE);
+      for (let k = k0; k <= k1; k++) {
+        const dx = off + k * P012_GRAIN_TILE;
+        for (let j = j0; j <= j1; j++) {
+          ctx.drawImage(tile, dx, j * P012_GRAIN_TILE, P012_GRAIN_TILE, P012_GRAIN_TILE);
+          draws++;
         }
       }
-      const fullW = n * colW;
-      ctx.fillRect(boxX - tilePx, boxY - tilePx, fullW + 2 * tilePx, boxH + 2 * tilePx);
-      draws++;
       ctx.restore();
     }
     if (!this.grainDiagLogged) {
       this.grainDiagLogged = true;
-      hilog.info(0x0000, 'P012', 'grain: pattern fill path used (all bands ok)');
+      hilog.info(0x0000, 'P012', 'grain: drawImage tile path used (all bands ok)');
       // 带几何一次性诊断（定位"白带/无颗粒"覆盖区）：中心列各边界屏幕 y
       const cm = n >> 1;
       hilog.info(0x0000, 'P012', 'grain: geom col=' + cm +
@@ -689,6 +729,7 @@ export class P012WaterSandRenderer {
     }
     return draws;
   }
+
 
   /** 悬浮浓度 q（clamp [0,1]，水深≤eps 时 0；不改库存）——A 档共用 */
   private suspQ(susp: number, c: number): number {
