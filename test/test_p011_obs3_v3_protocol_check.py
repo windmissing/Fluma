@@ -633,6 +633,97 @@ def test_schedule_timing_gate():
           f"exclusions={cell['exclusionCounts']}")
 
 
+def test_pre_expansion_rulings():
+    """Pre-expansion rulings (2026-10-21): ramp cell attribution by
+    preregistered leg sign; post-schedule tail truncation."""
+    # Ramp start inside L2 (+): attributed to start/+ even though the
+    # platform window is off (A-platform 18.7 is not a near-label).
+    records = []
+    t_ms = 0.0
+    for i in range(30):
+        t_ms += 100.0
+        eff = min(18.7, 0.187 * (i + 1))
+        rate = 0.0 if eff >= 18.7 else 0.5
+        ctx = base_context(i, target=18.7, leg="L2", phase_kind="ramp", seq=i + 1)
+        ctx["physicsTime"] = t_ms / 1000.0
+        ctx["effectiveTilt"] = eff
+        ctx["thetaRequested"] = eff
+        ctx["thetaAccepted"] = eff
+        ctx["phaseKindV3"] = "ramp"
+        if i == 19:
+            before, after = False, True   # real start inside ramp L2
+            r_val = math.tan(math.radians(20.0))
+        elif i == 18:
+            before, after = False, False
+            r_val = math.tan(math.radians(19.5))
+        elif i == 20:
+            before, after = True, True
+            r_val = math.tan(math.radians(20.5))
+        else:
+            before, after = False, False
+            r_val = math.tan(math.radians(19.0))
+        # donor/receiver omitted (ledger schema v3 optionality, v4 pilot)
+        edge = {"interfaceIndex": 3.0, "donor": None, "receiver": None,
+                "activeBefore": before, "activeAfter": after,
+                "requested": 0.05, "granted": 0.05, "r": r_val,
+                "transitionType": "start" if i == 19 else None}
+        records.append({"context": ctx,
+                        "relaxHysteresis": {"edges": [edge]},
+                        "audit": {"errorCode": None}})
+    result = run_analyze(records, make_manifest())
+    cell = result["cells"]["start/+"]
+    check("ramp start attributed by preregistered leg sign (+L2)",
+          cell["realTransitions"] >= 1,
+          f"cell={json.dumps(cell)[:200]}")
+    # Sign mismatch: L5 (preregistered -) with observed + -> excluded.
+    records2 = []
+    t_ms = 0.0
+    for i in range(30):
+        t_ms += 100.0
+        eff = -min(18.7, 0.187 * (i + 1))
+        ctx = base_context(i, target=-18.7, leg="L5", phase_kind="ramp", seq=i + 1)
+        ctx["physicsTime"] = t_ms / 1000.0
+        ctx["effectiveTilt"] = eff
+        ctx["thetaRequested"] = eff
+        ctx["thetaAccepted"] = eff
+        ctx["phaseKindV3"] = "ramp"
+        # simulate a bogus positive-transition record: eff positive on L5
+        if i == 19:
+            ctx["effectiveTilt"] = 5.0
+            ctx["thetaRequested"] = 5.0
+            ctx["thetaAccepted"] = 5.0
+            before, after = False, True
+        elif i == 18:
+            before, after = False, False
+        elif i == 20:
+            before, after = True, True
+        else:
+            before, after = False, False
+        r_val = math.tan(math.radians(10.0 if i == 19 else 8.0))
+        edge = {"interfaceIndex": 3.0, "donor": None, "receiver": None,
+                "activeBefore": before, "activeAfter": after,
+                "requested": 0.05, "granted": 0.05, "r": r_val,
+                "transitionType": "start" if i == 19 else None}
+        records2.append({"context": ctx,
+                         "relaxHysteresis": {"edges": [edge]},
+                         "audit": {"errorCode": None}})
+    result2 = run_analyze(records2, make_manifest())
+    got_mismatch = any("RAMP_SIGN_MISMATCH" in k or k == "NEUTRAL_ZERO_CROSSING"
+                       for cell2 in result2["cells"].values()
+                       for k in cell2["exclusionCounts"])
+    neg_clean = result2["cells"]["start/-"]["realTransitions"] == 0
+    check("ramp sign mismatch excluded (not silently counted)",
+          got_mismatch and neg_clean,
+          f"exclusions={ {k: c['exclusionCounts'] for k, c in result2['cells'].items()} }")
+    # Post-schedule: last records beyond schedule end never enter cells.
+    # Use the stop geometry with the schedule end computed from peakA.
+    result3 = run_analyze(records, make_manifest())
+    ps = result3["postSchedule"]
+    check("postSchedule block present with code",
+          ps["code"] == "POST_SCHEDULE" and "scheduleEndMs" in ps,
+          f"postSchedule={json.dumps(ps)[:160]}")
+
+
 def main():
     test_platform_window()
     test_legs()
@@ -644,6 +735,7 @@ def main():
     test_per_run_cap()
     test_coverage_matrix()
     test_schedule_timing_gate()
+    test_pre_expansion_rulings()
     print(f"PASS={PASS} FAIL={FAIL}")
     for failure in FAILURES:
         print("  FAIL:", failure)

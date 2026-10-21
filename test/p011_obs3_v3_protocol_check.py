@@ -88,6 +88,22 @@ SCHEDULE_TIMING = {
 SCHEDULE_INTERVAL_CODE = "SCHEDULE_INTERVAL_OUT_OF_BAND"
 SCHEDULE_COMMAND_GAP_CODE = "SCHEDULE_COMMAND_GAP_EXCEEDED"
 
+# --- pre-expansion ruling (2026-10-21, docs/pre-expansion-ruling-P011-obs3-v1.md) ---
+# Ruling 1: ramp legs ARE eligible segments (protocol s5.2 "same
+# preregistered ramp leg OR same eligible stable-platform segment"). Ramp
+# transitions are assigned to a +/- cell by the PREREGISTERED leg sign
+# (s3.1 table), never by the observed accepted sign (no cross-zero split
+# inside one leg). Zero-accepted records stay neutral. Ramp records with
+# no leg identity take SEGMENT_IDENTITY_MISSING instead of silent skip.
+RAMP_LEG_SIGN = {"L1": "+", "L2": "+", "L3": "+", "L4": "+",
+                 "L5": "-", "L6": "-", "L7": "-", "L8": "-"}
+CODE_RAMP_SIGN_MISMATCH = "RAMP_SIGN_MISMATCH"
+# Ruling 2: post-schedule tail truncation - records after the player's
+# schedule end are excluded from samples/brackets/platform windows and
+# counted as postScheduleRecords (diagnostics kept, data not deleted).
+POST_SCHEDULE_TOLERANCE_MS = 200.0
+CODE_POST_SCHEDULE = "POST_SCHEDULE"
+
 # --- s6 frozen statistical gates (inherited unchanged) ----------------------
 STATS = {
     "runsPerCandidatePair": 34,
@@ -212,7 +228,10 @@ def leg_from_schedule(context, schedule_bindings):
         return binding.get("legId"), binding.get("phaseKind")
     # Fall back to ledger-carried fields if the manifest did not bind;
     # absence is surfaced as telemetry-incomplete by the caller.
-    return context.get("legId"), context.get("phaseKind")
+    # phaseKindV3 is the ledger key (GAP-2 schema); phaseKind accepted for
+    # synthetic ledgers.
+    return (context.get("legId"),
+            context.get("phaseKindV3") or context.get("phaseKind"))
 
 
 class PlatformWindow:
@@ -537,6 +556,39 @@ def analyze(ledger_path, manifest_path, source="pilot"):
     schedule_timing, timing_breach = schedule_timing_gate(records, schedule_bindings)
     breach_by_seq = timing_breach
 
+    # ---- Ruling 2: post-schedule tail truncation ----
+    # scheduleEndMs = first command dispatch + theoretical duration
+    # T = 9*5100ms + 4*A/v*1000 (A/v from the manifest schedule binding,
+    # fallback to the observed peak); tolerance covers last-command drift.
+    first_dispatch_ms = None
+    for record in records:
+        context = record.get("context", {})
+        if context.get("commandSequence") == 1 and finite(context.get("physicsTime")):
+            t = float(context["physicsTime"])
+            first_dispatch_ms = t if abs(t) > 1e10 else t * 1000.0
+            break
+    peak_a = bindings_rate = None
+    proto_cfg = manifest.get("calibrationProtocol", {}) if isinstance(manifest, dict) else {}
+    peak_a = proto_cfg.get("peakADeg")
+    if not finite(peak_a):
+        peak_a = manifest.get("peakADeg")
+    if not finite(peak_a):
+        # derive from observed |target| maximum inside ramp legs
+        mx = 0.0
+        for record in records:
+            context = record.get("context", {})
+            if context.get("phaseKindV3") == "ramp" and finite(context.get("targetTilt")):
+                mx = max(mx, abs(float(context["targetTilt"])))
+        peak_a = mx if mx > 0 else None
+    bindings_rate = proto_cfg.get("rateDegPerSec") or manifest.get("rateDegPerSec")
+    if not finite(bindings_rate):
+        bindings_rate = RATE_PRIMARY_DEG_PER_S
+    schedule_end_ms = None
+    if first_dispatch_ms is not None and finite(peak_a) and float(peak_a) > 0:
+        theory_s = 9 * (PLATFORM_HOLD_MS / 1000.0) + 4 * float(peak_a) / float(bindings_rate)
+        schedule_end_ms = first_dispatch_ms + theory_s * 1000.0
+    post_schedule_count = 0
+
     # ---- Pass 2: state samples, cells, brackets (s5) ----
     cells = {key: {"stateSamples": 0, "stateRuns": set(), "realTransitions": 0,
                    "eligibleBrackets": 0, "cappedTransitions": 0,
@@ -557,6 +609,15 @@ def analyze(ledger_path, manifest_path, source="pilot"):
         run_id = context.get("runId")
         substep_id = context.get("substepId")
         segment_id = state.get("legId") or context.get("segmentId")
+        # Ruling 2: post-schedule tail exclusion (diagnostics kept).
+        is_post_schedule = False
+        if schedule_end_ms is not None and finite(context.get("physicsTime")):
+            t = float(context["physicsTime"])
+            t_ms = t if abs(t) > 1e10 else t * 1000.0
+            is_post_schedule = t_ms > schedule_end_ms + POST_SCHEDULE_TOLERANCE_MS
+        if is_post_schedule:
+            post_schedule_count += 1
+        phase_kind = state.get("phaseKind") or context.get("phaseKindV3")
         hysteresis = record.get("relaxHysteresis", {})
         edges = hysteresis.get("edges", []) if isinstance(hysteresis, dict) else []
         if not isinstance(edges, list):
@@ -567,18 +628,36 @@ def analyze(ledger_path, manifest_path, source="pilot"):
             donor = edge.get("donor")
             receiver = edge.get("receiver")
             interface = edge.get("interfaceIndex")
-            if not (finite(donor) and finite(receiver) and finite(interface)):
+            if not finite(interface):
                 continue
-            if abs(float(donor) - float(receiver)) == 1:
-                c = min(float(donor), float(receiver))
-                if float(interface) != c:
+            # Edge identity: interfaceIndex is the primary key (protocol s5.1
+            # "same edge uses interfaceIndex"). donor/receiver are optional
+            # in ledger schema v3 (v4 pilot emits None); when present they
+            # must be adjacent and consistent with the fixed-edge identity.
+            if finite(donor) and finite(receiver):
+                if abs(float(donor) - float(receiver)) != 1:
+                    continue
+                if float(interface) != min(float(donor), float(receiver)):
                     continue  # directional donor index misused as edge identity
             active_before = edge.get("activeBefore")
             active_after = edge.get("activeAfter")
             if not isinstance(active_before, bool):
                 continue
             accepted = state["accepted"]
-            cell_sign = state["sign"] if state["stable"] else None
+            # Ruling 1 cell attribution: stable-platform segments keep the
+            # observed accepted sign; ramp legs take the PREREGISTERED leg
+            # sign (s3.1 table) - no cross-zero split inside one leg.
+            if state["stable"]:
+                cell_sign = state["sign"]
+            elif phase_kind == "ramp" and segment_id in RAMP_LEG_SIGN:
+                cell_sign = RAMP_LEG_SIGN[segment_id]
+                # a ramp record whose observed sign contradicts the
+                # preregistered leg sign is excluded (reserved code)
+                if accepted is not None and accepted != 0 \
+                        and ("+" if accepted > 0 else "-") != cell_sign:
+                    cell_sign = None  # falls to neutral; transition excluded below
+            else:
+                cell_sign = None
             alpha = decision_alpha(edge.get("r"))
             kind_state = "start" if not active_before else "stop"
             if cell_sign:
@@ -610,10 +689,37 @@ def analyze(ledger_path, manifest_path, source="pilot"):
             if not (is_real_start or is_real_stop):
                 continue
             kind = "start" if is_real_start else "stop"
+            # Ruling 1: transitions without an attributable cell (neutral
+            # zero, sign mismatch, or missing leg identity) are recorded in
+            # the nearest main cell's exclusion bookkeeping instead of a
+            # silent skip, so the denominator is auditable.
             if cell_sign is None:
+                if is_post_schedule:
+                    target_cell = cells[f"{kind}/+"]
+                    target_cell["exclusions"][CODE_POST_SCHEDULE] = \
+                        target_cell["exclusions"].get(CODE_POST_SCHEDULE, 0) + 1
+                elif phase_kind == "ramp":
+                    # ramp record: distinguish missing identity vs sign issue
+                    anchor = cells[f"{kind}/+"]
+                    if not segment_id:
+                        anchor["exclusions"]["SEGMENT_IDENTITY_MISSING"] = \
+                            anchor["exclusions"].get("SEGMENT_IDENTITY_MISSING", 0) + 1
+                    elif segment_id in RAMP_LEG_SIGN:
+                        anchor["exclusions"][CODE_RAMP_SIGN_MISMATCH] = \
+                            anchor["exclusions"].get(CODE_RAMP_SIGN_MISMATCH, 0) + 1
+                    else:
+                        anchor["exclusions"]["NEUTRAL_ZERO_CROSSING"] = \
+                            anchor["exclusions"].get("NEUTRAL_ZERO_CROSSING", 0) + 1
+                else:
+                    neutral_states += 1
                 continue
             cell_key = f"{kind}/{cell_sign}"
             cell = cells[cell_key]
+            # Ruling 2: post-schedule transitions never enter the cells.
+            if is_post_schedule:
+                cell["exclusions"][CODE_POST_SCHEDULE] = \
+                    cell["exclusions"].get(CODE_POST_SCHEDULE, 0) + 1
+                continue
             cell["realTransitions"] += 1
             run_count = cell["perRunTransitions"].setdefault(run_id, 0)
             capped = run_count >= STATS["maxStatesPerRunPerCell"]
@@ -813,9 +919,20 @@ def analyze(ledger_path, manifest_path, source="pilot"):
 
     # ---- s8 pilot three-dimension verdict ----
     clean_pass = (not protocol_errors) and not hard_gate_failed and not identity_mismatch
+    # Ruling (pre-expansion): reachability is judged over platforms the
+    # schedule ACTUALLY contains. A < 30 deg means the +/-30 platforms do
+    # not exist by design (protocol s3.1 "A strictly < 30"), so their
+    # absence is NOT_IN_SCHEDULE, not a FAIL.
+    schedule_peak = peak_a if finite(peak_a) else None
+    required_platforms = ["15", "-15"]
+    not_in_schedule = []
+    if schedule_peak is not None and float(schedule_peak) >= 30.0:
+        required_platforms += ["30", "-30"]
+    else:
+        not_in_schedule = ["30", "-30"]
     reach_pass = all(platform_reach[k]["stableRecords"] > 0
                      and platform_reach[k]["plannerLimitedStableRecords"] == 0
-                     for k in ("15", "30", "-15", "-30"))
+                     for k in required_platforms)
     coverage = ("FOUR_CELL_OBSERVED"
                 if all(cells[k]["eligibleBrackets"] >= 1 for k in MAIN_CELLS)
                 else "INCOMPLETE")
@@ -846,7 +963,15 @@ def analyze(ledger_path, manifest_path, source="pilot"):
         "platformReachability": {
             "verdict": "PASS" if reach_pass else "FAIL",
             "perPhase": platform_reach,
-            "note": "diagnostic only; v3 does not require platforms for start events",
+            "requiredPlatforms": required_platforms,
+            "notInSchedule": not_in_schedule,
+            "note": "diagnostic only; v3 does not require platforms for start events; +/-30 required only when schedule peak A >= 30 deg (pre-expansion ruling)",
+        },
+        "postSchedule": {
+            "scheduleEndMs": schedule_end_ms,
+            "toleranceMs": POST_SCHEDULE_TOLERANCE_MS,
+            "excludedRecords": post_schedule_count,
+            "code": CODE_POST_SCHEDULE,
         },
         "pilotCoverage": coverage,
         "scheduleTiming": schedule_timing,
