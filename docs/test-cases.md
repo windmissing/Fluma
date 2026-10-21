@@ -767,6 +767,18 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 - **RED 基线证据**：`test/artifacts/p011-obs3-d1/d1-verification-evidence.json`（runner 产出：240 步轨迹锚点实测值+四场景 gate/路由观测）与 `d1-verification-result.json`（checker 判定：overall=RED_BASELINE，redBaselineCases=[D1-C3]）。运行命令：`node test/run_p011_obs3_d1_verification.cjs <evidence.json>` + `python test/p011_obs3_d1_verification_check.py --evidence <evidence.json> [--ledger <corr-ledger.ndjson>] --output <result.json>`。
 - **边界**：只写用例与 checker 断言，不改产品代码、不降门槛、不授权采集；LEGACY 基线锚点为冻结值，禁止随实现漂移改锚点（漂移=行为变更，须走 D-1 复审而非改测试）。整改交付后本用例直接跑绿即 = v3核验第 6 项核验点提前就位；architect 复核与 tester 修复构建重跑仍按裁决第 4 条串行执行。
 
+### 11.11 TC-P011-OBS3-V3-VERIFY 观测③ v3 核验（五项清单 + D-1 整改核验，2026-10-21 执行完毕）
+
+> 核验对象 commit `742efa6`（D-1 整改构建）；**原核验结论已废弃并在 742efa6 上全部重跑**（被测构建行为漂移）。报告：`docs/verification-report-P011-obs3-v3-d1-v1.md`。六项结论：全 PASS（D-1b 遥测按裁决定位如实记录 RED，不阻断）。
+
+- **核验 1 执行身份 PASS**：checker 区分 configured/executed 且要求实现身份四字段；候选 run 实测 `executedThresholds{26,20}` 与配置一致、实现身份齐备——v2 根因（阈值未进状态机）确认已修；decision 字段（decisionG/R/Alpha/Ordinal/thresholdUsed/transitionReason）实测 70/70 边完整。
+- **核验 2 相名/完整性 PASS**：`P011ScheduleV3.ets` 九平台+八 leg+半开区间+CSV 契约落地（runner 内单测绿）；九相执行证据按 ±15/±30 相分列，无记录相位如实报 UNREACHED/UNSTABLE，第 9 回零段由 baseline/*Return 相位名承载。
+- **核验 3 硬安全 PASS**：全部 MUST-PASS 原样生效（safety checker schemaVersion 2 判定不变、runner 76/76）；BLOCKED attempt 可审计实测（attemptId/commitStatus='blocked'/rollbackReason='PREEXISTING_INFEASIBLE_STATE'/planner telemetry 在账）。
+- **核验 4 新 ramp 资格过滤 PASS**：预注册 leg、bracket ≤0.5°（TOO_WIDE 不切分）、首转折、3 点单调窗口、决策残差非空全部在 checker 实现；合成单测 38/38（742efa6 重跑）。
+- **核验 5 输出规则 PASS**：codeCatalog 12 码分支齐全（含 v3 新码 EXECUTION_IDENTITY_MISMATCH/ENVELOPE_UNRESOLVED/SHADOW_PREDICTED_CENSOR）；身份失败传播实测（四 cell 携带 mismatch 码、overall=INVALID）；全部不产点估计。
+- **核验 6 D-1 整改 PASS（D-1b 如实记录）**：D1-C1 轨迹对比（240/240+14 锚点含 step25/step214）PASS；D1-C2 四场景分流 PASS（缺陷签名零命中）；D1-C3（D-1b 四遥测字段）如实记录 RED——按裁决第 3 条不阻断本核验，转绿前 correction 效果报告不放行。
+- **遗留**：D-1b 遥测四字段落 audit（developer，correction 效果报告放行前置）。本核验不追认历史 run、不发布阈值估计；pilot 待 manager 批准。
+
 > 本节为 manager 观测①b 任务的验收 checklist 备注与交叉引用；完整判定口径、代码锚点、工程边界与交付要求见 `architecture-P011.md` §19.13。四项 MUST-PASS，全部勾选后才可提交正式七相 run 冻结证据。
 
 - [ ] **□1 转折记录字段完整**：正式七相 run ledger `slip[]` 每条边记录 activeBefore/activeAfter/transitionType(start|stop)/effectiveTilt/残差 r 全部非空有效，transitionType 与状态组合一致。
