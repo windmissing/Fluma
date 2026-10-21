@@ -1326,6 +1326,11 @@ struct SandCanvas {
             p011TiltWant.thetaStopDeg
           );
           ws.setNaturalObservationScheduleId(p011TiltWant.scheduleId);
+          // correction route wiring (D-1 follow-up): the explicitly bound
+          // apply route travels with the command; null keeps the legacy
+          // apply. Wiring only — activation still requires the armed state
+          // machine (correctionRouteActive dual-condition gate).
+          ws.setNaturalObservationRouteId(p011TiltWant.correctionRouteId ?? null);
           // Observation-3 v3 (GAP-2/5): schedule segment binding and
           // execution identity flow with the command.
           ws.setP011CurrentCommandSegment(p011TiltWant.v3LegId ?? null,

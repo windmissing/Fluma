@@ -1,5 +1,6 @@
 import {
   P011NaturalObservationRunRole,
+  P011_CORRECTION_ROUTE_ID,
   P011_SCHEDULE_NINE_PHASE_30_V2,
   P011_SCHEDULE_NINE_PHASE_30_V3,
   P011_SCHEDULE_SEVEN_PHASE_45_V1
@@ -24,7 +25,10 @@ export type P011TiltWantWarning =
   | 'INVALID_V3_PHASE_KIND'
   | 'INVALID_EXEC_SOURCE_COMMIT'
   | 'INVALID_EXEC_SOURCE_FILE_SHA256'
-  | 'INVALID_EXEC_BUILD_SHA256';
+  | 'INVALID_EXEC_BUILD_SHA256'
+  // correction route wiring (D-1 follow-up): the p011route want parameter
+  // only accepts the explicitly frozen correction route id.
+  | 'INVALID_P011_ROUTE';
 
 export interface P011TiltWantCommand {
   sequence: number;
@@ -50,6 +54,12 @@ export interface P011TiltWantCommand {
   execSourceCommit?: string | null;
   execSourceFileSha256?: string | null;
   execBuildSha256?: string | null;
+  // correction route wiring (D-1 follow-up): the explicitly bound physics
+  // apply route. Only 'relax-correction-weighted-v1' (P011_CORRECTION_ROUTE
+  // _ID) is accepted; null/absent keeps the default legacy apply. Wiring
+  // only — binding the route does NOT by itself activate the correction
+  // allocator (the dual-threshold state machine must also be armed).
+  correctionRouteId?: string | null;
 }
 
 export interface P011TiltWantParseResult {
@@ -187,6 +197,17 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
   if (execBuildSha256 !== null && !/^[0-9a-fA-F]{64}$/.test(execBuildSha256)) {
     warnings.push('INVALID_EXEC_BUILD_SHA256');
   }
+  // correction route wiring (optional; only the frozen correction route id
+  // is a legal binding — anything non-empty that is not the correction id
+  // is rejected so a typo can never silently run a different route).
+  const routeText = parameters === undefined || parameters.p011route === undefined
+    ? '' : `${parameters.p011route}`.trim();
+  let correctionRouteId: string | null = null;
+  if (routeText === P011_CORRECTION_ROUTE_ID) {
+    correctionRouteId = routeText;
+  } else if (routeText !== '') {
+    warnings.push('INVALID_P011_ROUTE');
+  }
   if (warnings.some((warning) => warning !== 'MISSING_P011_RUN_ROLE' &&
     warning !== 'MISSING_THRESHOLD_CALIBRATION_ID' &&
     warning !== 'MISSING_THETA_START_DEG' &&
@@ -209,7 +230,8 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
       v3PhaseKind,
       execSourceCommit,
       execSourceFileSha256,
-      execBuildSha256
+      execBuildSha256,
+      correctionRouteId
     },
     warnings
   };
@@ -260,6 +282,12 @@ export function decodeP011TiltWant(encoded: string | undefined,
     }
     if (command.execBuildSha256 === undefined) {
       command.execBuildSha256 = null;
+    }
+    if (command.correctionRouteId === undefined) {
+      command.correctionRouteId = null;
+    } else if (command.correctionRouteId !== null &&
+      command.correctionRouteId !== P011_CORRECTION_ROUTE_ID) {
+      return null;
     }
     if (!Number.isInteger(command.sequence) || command.sequence !== sequence ||
       !Number.isFinite(command.targetTilt) || command.targetTilt < -89 ||

@@ -1265,6 +1265,37 @@ export default function waterSandFieldTest() {
       }
     });
 
+    // correction route wiring (D-1 follow-up): the p011route want parameter
+    // carries the explicit correction route binding through
+    // want -> SandCanvas -> setNaturalObservationRouteId. Pure wiring — the
+    // bind alone never activates the allocator (dual-condition gate).
+    it('p011_tiltWant_correctionRouteBindingParsesAndValidates', 0, () => {
+      const base = d1RouteWantParams(null);
+      // (a) Legal value: the frozen correction route id binds.
+      const parsed = parseP011TiltWant(d1RouteWantParams(
+        'relax-correction-weighted-v1'), 4, true, false, 1, 1000);
+      expect(parsed.command !== null).assertTrue();
+      expect(parsed.warnings.length === 0).assertTrue();
+      if (parsed.command !== null) {
+        expect(parsed.command.correctionRouteId)
+          .assertEqual('relax-correction-weighted-v1');
+      }
+      // (b) Illegal value: rejected with INVALID_P011_ROUTE (a typo can
+      // never silently run a different route).
+      const rejected = parseP011TiltWant(d1RouteWantParams(
+        'relax-correction-v2'), 4, true, false, 2, 1001);
+      expect(rejected.command === null).assertTrue();
+      expect(rejected.warnings.includes('INVALID_P011_ROUTE')).assertTrue();
+      // (c) Absent parameter: null route (legacy apply, zero behavior
+      // difference — the wiring is purely additive).
+      const noRoute = parseP011TiltWant(base, 4, true, false, 3, 1002);
+      expect(noRoute.command !== null).assertTrue();
+      if (noRoute.command !== null) {
+        expect(noRoute.command.correctionRouteId === null ||
+          noRoute.command.correctionRouteId === undefined).assertTrue();
+      }
+    });
+
   });
 }
 
@@ -1374,6 +1405,23 @@ function humpSceneForP011(cols: number, startCol: number, endColInclusive: numbe
     startCol: startCol, endColInclusive: endColInclusive, bottom: 120, height: humpHeight
   });
   return scene;
+}
+
+
+// correction route wiring test helper (module scope): want parameters for
+// the p011route parse cases. route null omits the parameter entirely.
+function d1RouteWantParams(route: string | null): Record<string, Object> {
+  const params: Record<string, Object> = {
+    'wstilt': '15',
+    'p011runrole': 'calibration',
+    'thresholdcalibrationid': 'corr-ab-1',
+    'thetastartdeg': '26',
+    'thetastopdeg': '20'
+  };
+  if (route !== null) {
+    params['p011route'] = route;
+  }
+  return params;
 }
 
 // D-1 route-isolation scenario runner (module scope; ArkTS forbids nested
