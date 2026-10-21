@@ -1,6 +1,6 @@
-# P-012 渲染观感测量口径冻结附表 v2 草案（拟建，Q1 revision）
+# P-012 渲染观感测量口径冻结附表 v2（待生效，Q1 revision）
 
-- **日期**：2026-10-21；责任：effector（拟稿）/ tester（复核）；designer 审口径，**manager 裁决后方冻结生效**——本文件是草案，不生成生效附表。
+- **日期**：2026-10-21；责任：effector（拟稿）/ tester（复核）；**manager 裁决后方冻结生效**——当前状态 READY_TO_ACTIVATE（见 [Q1 生效材料包](q1-activation-package-P012-v1.md)），manager 裁决前本文件不作为生效附表使用。
 - **依据**：[Q1 方案 §3](design-P012-Q1-hfH-comparability-v1.md)（用户 16:34 批准实施范围）；[输入 manifest v1](q1-input-manifest-P012-v1.md)。
 - **范围纪律**：本 revision **仅**变更 Q1 的尺度/ROI/参考带；v1 其余全部指标、阈值、SV 量表、≥0.8 原生下限、其它锚点**原样保留**（双轨兼容列见 §5）。
 - **冻结顺序纪律**（方案 §3.3）：先冻结算子/几何/mask/主参考集/报告规则 → 再用参考出描述带；**EAB 数据不参与定带**。本草案不含任何新参考带数值——数值在算子冻结后由参考集生成，另行评审。
@@ -58,6 +58,7 @@
 
 ## 7. 草案状态与流转
 
-- 状态：**DRAFT / PENDING_DESIGNER_REVIEW / PENDING_MANAGER_RULING**。
-- 流转：designer 审口径 → manager 裁决（①实施范围已批，本草案为口径细化）→ 冻结生效（版本 v2.0）→ tester 实现算子 → 参考带生成 → designer 复核 → manager 记录 Q1 状态。
+- 状态：**READY_TO_ACTIVATE / PENDING_MANAGER_RULING**（2026-10-21 tester 整理生效材料包后自 DRAFT 变更；designer 口径已随方案批准时审过，全部前置收口——见 [Q1 生效材料包](q1-activation-package-P012-v1.md)）。
+- 前置收口确认：manifest 50 条目 + mask/几何终稿双签（effector 标注 + tester 独立复验四帧全过）；算子自测 7/7；G0 原生复现 6/6 精确 + 50 条目全量 0 SHA 失配；v1 脚本 SHA-256 不变；参考带零预填。
+- 流转：**manager 裁决生效**（版本 v2.0）→ G1 主尺度静态出数（s99w 三对+参考四帧）→ 参考带生成（仅参考集，EAB 不参与定带）→ designer 复核 → manager 决定 Q1 关闭/真实差距/不可辨识三分支。
 - 本草案不修改 v1 附表、SV 分数、原 ≥0.8 下限、物理 checker 或遥测；不追溯重开第一梯队。
