@@ -757,6 +757,16 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 
 ## 12. 观测①b：激活逐边转折遥测交付验收（2026-10-19，架构冻结）
 
+### 11.10 TC-P011-OBS3-D1 观测③ D-1 整改核验用例（LEGACY 轨迹对比+双条件资格门分流，2026-10-21 RED 基线先行）
+
+> 依据 manager D-1 裁决（priority.md 2026-10-21「D-1 correction 越权激活裁决」：Option A + 显式路线隔离）与 architecture-P011 §26.2 跨版本对比方法。checker：`test/p011_obs3_d1_verification_check.py`；证据 runner：`test/run_p011_obs3_d1_verification.cjs`（Node 1:1 通道，纯 checker 层，真机不涉及）。本用例为【观测③·v3核验】6ad709d6 第 6 项核验点的前置就位：RED 基线如实记录，整改交付后直接跑绿。
+
+- **D1-C1 LEGACY 轨迹对比（§26.2 方法复用）**：LEGACY run（无候选阈值）240 步同场景（8 列 thick、±20° 每 24 步交替、totalBudget=1000）必须 240/240 全 ok、零 BLOCKED，且 14 个定点锚点（每 20 步采样 + step25 首个历史分歧点 + step214 历史 BLOCKED 点）与 5e60f2d 冻结基线逐值一致（effectiveTilt/sandTop[0]/bh[0] 容差 1e-9，sandTop 列和容差 1e-6）。锚点数值冻结于 checker 与 runner 双侧；任一锚点偏差即 RED。**当前构建实测：240/240 ok、14 锚点全过（D1-C1 PASS）**——developer 的 Option A 整改（correctionRouteActive 资格门）已落工作区，轨迹等价已恢复。
+- **D1-C2 双条件资格门分流（裁决第 2 条）**：四场景断言 apply 路线归属——(a) LEGACY 默认（状态机 off+无 route）→ legacy relaxAngle apply；(b) 候选 run（`natural-relax-hysteresis-v1` 身份、状态机 armed 但**未绑定** correction route）→ 同样 legacy apply（**v3 身份不是 correction 的隐式开关**）；(c) 显式 correction route（`observationRouteId=relax-correction-weighted-v1` **且**候选阈值 armed）→ 才走 `applyCorrectionSlot`（必要+充分双条件）；(d) route 绑定但状态机 off → legacy apply（必要条件缺失）。legacy 路线附加语义断言：requested>0 必须伴随 applied 流（D-1 缺陷签名 requested>0/allowed=0 在 legacy 路线出现即 FAIL）；correction 路线断言 slot 实际运行。**当前构建实测：四场景全 PASS**。
+- **D1-C3 correction 遥测进 audit（D-1b，RED 基线）**：correction route run 的每个已提交子步 audit 必须携带 `correctionRequested/Granted/Rejected/StalledCount` 四字段且满足闭合恒等式 `requested==granted+rejected`（1e-9）。**当前构建实测：`P011NaturalObservationAudit` 无这四个字段 → RED_BASELINE（by design）**；developer 补齐 D-1b 后本用例转绿，correction 效果报告方具备放行资格（裁决第 3 条）。
+- **RED 基线证据**：`test/artifacts/p011-obs3-d1/d1-verification-evidence.json`（runner 产出：240 步轨迹锚点实测值+四场景 gate/路由观测）与 `d1-verification-result.json`（checker 判定：overall=RED_BASELINE，redBaselineCases=[D1-C3]）。运行命令：`node test/run_p011_obs3_d1_verification.cjs <evidence.json>` + `python test/p011_obs3_d1_verification_check.py --evidence <evidence.json> [--ledger <corr-ledger.ndjson>] --output <result.json>`。
+- **边界**：只写用例与 checker 断言，不改产品代码、不降门槛、不授权采集；LEGACY 基线锚点为冻结值，禁止随实现漂移改锚点（漂移=行为变更，须走 D-1 复审而非改测试）。整改交付后本用例直接跑绿即 = v3核验第 6 项核验点提前就位；architect 复核与 tester 修复构建重跑仍按裁决第 4 条串行执行。
+
 > 本节为 manager 观测①b 任务的验收 checklist 备注与交叉引用；完整判定口径、代码锚点、工程边界与交付要求见 `architecture-P011.md` §19.13。四项 MUST-PASS，全部勾选后才可提交正式七相 run 冻结证据。
 
 - [ ] **□1 转折记录字段完整**：正式七相 run ledger `slip[]` 每条边记录 activeBefore/activeAfter/transitionType(start|stop)/effectiveTilt/残差 r 全部非空有效，transitionType 与状态组合一致。
