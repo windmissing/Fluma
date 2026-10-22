@@ -116,29 +116,48 @@ export class P012E3NoiseField {
    * ——任意两次烘焙的同名格点值来自同一 gridHash）。
    */
   bakeCoverage(x0: number, y0: number, widthPx: number, heightPx: number): void {
-    const w = Math.max(1, Math.ceil(widthPx));
-    const h = Math.max(1, Math.ceil(heightPx));
+    // bakedPx=2：N1 为低频噪声（16/48px 尺度），2px 采样步长 + 双线性
+    // 读回的边界插值差 ~2e-3（N1 幅值 std 0.30 的 0.7%，视觉不可辨）；
+    // 计算量比 1px 步长降 4 倍（真机 ArkTS 烘焙循环实测 ~436ms → ~110ms，
+    // s123/s124 帧时定位）。
+    const px = P012E3NoiseField.BAKE_PX;
+    const w = Math.max(1, Math.ceil(widthPx / px));
+    const h = Math.max(1, Math.ceil(heightPx / px));
     const field = new Float32Array(w * h);
     for (let j = 0; j < h; j++) {
-      const y = y0 + j;
+      const y = y0 + j * px;
       for (let i = 0; i < w; i++) {
-        field[j * w + i] = this.computeDirect(x0 + i, y);
+        field[j * w + i] = this.computeDirect(x0 + i * px, y);
       }
     }
     this.baked = field;
     this.bakedX0 = x0;
     this.bakedY0 = y0;
-    this.bakedW = w;
-    this.bakedH = h;
-    this.bakedPx = 1;
+    this.bakedW = w * px;
+    this.bakedH = h * px;
+    this.bakedPx = px;
   }
 
   /**
    * 平流补边（§12.3：禁止重播种）：新裸露侧补一列格点带，另一侧丢弃。
    * 实现为按新窗口重算（格点 hash 决定同格点永远同值 → 重算即无缝，
    * 且免去滚动拷贝的边界处理；成本 O(新窗口) 与补边等价）。
+   * 窗口未变时跳过（e3DrawFogBuffers 每帧无条件调用——phase 静止时
+   * 零成本短路）。
    */
+  /** 烘焙采样步长（px/格）——与 bakeCoverage 保持一致 */
+  private static readonly BAKE_PX = 2;
+
   shiftAndBake(newX0: number, y0: number, widthPx: number, heightPx: number): void {
+    const w = Math.ceil(widthPx / P012E3NoiseField.BAKE_PX);
+    const h = Math.ceil(heightPx / P012E3NoiseField.BAKE_PX);
+    if (this.baked !== null &&
+      Math.abs(this.bakedX0 - newX0) < 0.5 &&
+      Math.abs(this.bakedY0 - y0) < 0.5 &&
+      Math.floor(this.bakedW / this.bakedPx) >= w &&
+      Math.floor(this.bakedH / this.bakedPx) >= h) {
+      return;                       // 同窗口：无需重烘
+    }
     this.bakeCoverage(newX0, y0, widthPx, heightPx);
   }
 

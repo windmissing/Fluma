@@ -1269,24 +1269,29 @@ function makeCountingCanvas(sink) {
       error: `phaseZero=${phaseZero} dirtyBoth=${dirtyBoth}` });
   })();
 
-  // ⑨ 补边无缝：bake 两次不同窗口，重叠区采样一致（阈值 1e-6：烘焙场
-  //    为 Float32 存储，与 computeDirect 的 Float64 有 ~1e-7 量级存储差，
-  //    这是精度语义不是缝——补边无缝指同格点同值）
+  // ⑨ 补边无缝：bake 两次不同窗口，重叠区采样一致。bakedPx=4 后窗口
+  //    边界外走 computeDirect、窗口内走 4px 网格双线性——两者差是
+  //    网格分辨率语义（~px²·曲率项），不是缝；缝的判定=窗口内两次
+  //    烘焙的重叠区逐位一致。改为：对照两次烘焙都在窗口内的重叠段
+  //    （x∈[64,224)，两次都在覆盖内）+ 全段差上界 0.01（插值语义）。
   (function t9() {
     const f = new P012E3NoiseField(20261020);
     f.bakeCoverage(0, 0, 256, 64);
     const ref = [];
     for (let x = 32; x < 224; x++) { ref.push(f.sample(x, 32)); }
     f.shiftAndBake(64, 0, 256, 64);            // 移 64px（补边语义）
-    let ok = true;
-    let worst = 0;
+    let overlapWorst = 0;                       // 窗口内重叠段（x∈[64,224)）
+    let allWorst = 0;
     for (let i = 0; i < ref.length; i++) {
-      const d = Math.abs(f.sample(32 + i, 32) - ref[i]);
-      worst = Math.max(worst, d);
-      if (d > 1e-6) { ok = false; break; }
+      const v = f.sample(32 + i, 32);
+      const d = Math.abs(v - ref[i]);
+      allWorst = Math.max(allWorst, d);
+      if (32 + i >= 64) { overlapWorst = Math.max(overlapWorst, d); }
     }
+    const ok = overlapWorst <= 1e-6 && allWorst <= 0.01;
     results.push({ name: 'p012_e3_shiftSeamless', status: ok ? 'PASS' : 'FAIL',
-      error: `overlapMaxDiff=${worst.toExponential(2)} (Float32 存储精度语义, 阈 1e-6)` });
+      error: `overlapMaxDiff=${overlapWorst.toExponential(2)} (重叠区逐位) ` +
+             `edgeMaxDiff=${allWorst.toExponential(2)} (边界插值语义≤0.01)` });
   })();
 
   // ⑩ buffer 宽高与 boxW/boxH 等比：height = round(width*boxH/boxW)

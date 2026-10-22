@@ -152,8 +152,11 @@ const P012_C3_ALPHA = 0.10;
 const P012_C_BAND_RPx = 6;
 
 /** ── E3 网格感消除参数（architecture §12；algorithm-E3 §3）── */
-/** I2 缓冲宽（主档 256；384 备选构造定档，运行期不切换——设计稿红线） */
-const P012_E3_BUFFER_W = 256;
+/** I2 缓冲宽。原 256 在真机 ArkTS 上烘焙循环 ~950ms/帧（s123 实测，
+ *  方法调用密集的双层循环比 Node 慢两个数量级）——降到 64（雾为低频
+ *  视觉带宽，64 宽采样后 12 档量化已无可见差异），循环量降 16 倍。
+ *  384 备选构造定档、运行期不切换——设计稿红线不变。 */
+const P012_E3_BUFFER_W = 64;
 /** 平流相位脏阈值（px）：|aPhaseX - buffer.sampleU| > 此值 → 重烘 */
 const P012_E3_PHASE_EPS = 0.5;
 /** N1 等效 mottle 幅值（定标前置报告 calib-e3-noise-v1：N1 std 0.31 ×
@@ -337,21 +340,24 @@ export class P012WaterSandRenderer {
       ctx.translate(-cx, -cy);
     }
     // 1) 水体带（waterTop→sandTop）：基色→深水端线性渐变 + 深度调制（1 draw）
-    const gradWater = ctx.createLinearGradient(0, boxY, 0, boxY + boxH);
-    gradWater.addColorStop(0, this.rgb(this.palette.waterR, this.palette.waterG, this.palette.waterB));
-    gradWater.addColorStop(1, this.rgb(this.palette.waterDeepR, this.palette.waterDeepG, this.palette.waterDeepB));
-    ctx.fillStyle = gradWater;
-    ctx.beginPath();
-    ctx.moveTo(boxX, heightToY(this.smoothWaterTop[0]));
-    for (let c = 1; c < n; c++) {
-      ctx.lineTo(boxX + c * colW, heightToY(this.smoothWaterTop[c]));
+    //    F1 消融：ablation=DYN 跳过静态层（底色渐变/雾/高光/层理/颗粒/边框）
+    if (this.frameAblation !== P012Ablation.DYN) {
+      const gradWater = ctx.createLinearGradient(0, boxY, 0, boxY + boxH);
+      gradWater.addColorStop(0, this.rgb(this.palette.waterR, this.palette.waterG, this.palette.waterB));
+      gradWater.addColorStop(1, this.rgb(this.palette.waterDeepR, this.palette.waterDeepG, this.palette.waterDeepB));
+      ctx.fillStyle = gradWater;
+      ctx.beginPath();
+      ctx.moveTo(boxX, heightToY(this.smoothWaterTop[0]));
+      for (let c = 1; c < n; c++) {
+        ctx.lineTo(boxX + c * colW, heightToY(this.smoothWaterTop[c]));
+      }
+      for (let c = n - 1; c >= 0; c--) {
+        ctx.lineTo(boxX + (c + 1) * colW, heightToY(this.smoothSandTop[c]));
+      }
+      ctx.closePath();
+      ctx.fill();
+      drawCount++;
     }
-    for (let c = n - 1; c >= 0; c--) {
-      ctx.lineTo(boxX + (c + 1) * colW, heightToY(this.smoothSandTop[c]));
-    }
-    ctx.closePath();
-    ctx.fill();
-    drawCount++;
     // 2) A 档水体雾（EA-batch，算法稿 §4.2）：悬浮浓度 q + 静态水介质斑驳。
     //    只画水体区（sandTop 以上）；界面过渡带在沙体之后画（见步骤 5）。
     //    §10.4 消融：ablation=FOG 时跳过雾层（水体雾 + 界面带同属 A 档雾层）。
@@ -359,7 +365,8 @@ export class P012WaterSandRenderer {
     //    ablation=E3I2 回旧 fillFogTiers 12 档路径（消融对照）。
     const tier = frameContext.appearanceTier;
     if ((tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
-      this.frameAblation !== P012Ablation.FOG) {
+      this.frameAblation !== P012Ablation.FOG &&
+      this.frameAblation !== P012Ablation.DYN) {
       if (this.frameAblation !== P012Ablation.E3I2) {
         drawCount += this.e3DrawFogBuffers(ctx, heightToY, colW,
           boxX, boxY, boxW, boxH, view, false);
@@ -376,26 +383,31 @@ export class P012WaterSandRenderer {
     // 3.25) C 层理（C-batch §11，C1 分段平铺 + C3 低频明暗基底）：
     //    时序按 design §3.1（E底色 → C层纹 → B颗粒 → A散射），C 只在 EAB 档
     //    叠加（不新增 tier 枚举）；§11.4 消融 ablation=STRAT 跳过。
-    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT) {
+    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT &&
+      this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawStratification(ctx, view, heightToY, colW,
         boxX, boxY, boxW, boxH, frameContext.geometryEpoch);
     }
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
     //      drawImage(256² 颗粒 tile) 按全局平流偏移精确平铺；跟随材料净搬运、
     //      无缝、无贴纸。§10.4 消融：ablation=GRAIN 时跳过颗粒层。
-    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN) {
+    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN &&
+      this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
     }
     // 4) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
-    ctx.beginPath();
-    ctx.moveTo(boxX, heightToY(this.smoothWaterTop[0]));
-    for (let c = 1; c < n; c++) {
-      ctx.lineTo(boxX + c * colW, heightToY(this.smoothWaterTop[c]));
+    //    F1 消融：DYN 跳过
+    if (this.frameAblation !== P012Ablation.DYN) {
+      ctx.beginPath();
+      ctx.moveTo(boxX, heightToY(this.smoothWaterTop[0]));
+      for (let c = 1; c < n; c++) {
+        ctx.lineTo(boxX + c * colW, heightToY(this.smoothWaterTop[c]));
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 5;
+      ctx.stroke();
+      drawCount++;
     }
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.lineWidth = 5;
-    ctx.stroke();
-    drawCount++;
     // 5) A 档界面光学过渡带（沙体之后绘制）：sandTop 两侧 ±halfW 内
     //    smoothstep 包络雾——沙侧上缘被雾柔和覆盖，消除沙体 fillRect 的硬边。
     //    §10.4 消融：与步骤 2 同属 A 档雾层，ablation=FOG 时一并跳过。
@@ -411,11 +423,13 @@ export class P012WaterSandRenderer {
           boxX, boxY, boxW, boxH);
       }
     }
-    // 6) 容器边框（与原渲染一致的白框）
-    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(boxX, boxY, boxW, boxH);
-    drawCount++;
+    // 6) 容器边框（与原渲染一致的白框；F1 消融 DYN 跳过）
+    if (this.frameAblation !== P012Ablation.DYN) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(boxX, boxY, boxW, boxH);
+      drawCount++;
+    }
     ctx.restore();
     this.lastDrawCount = drawCount;
     // 记录无颗粒基线（E/A 档）：B 档颗粒预算钩子用它算净增量
@@ -1457,7 +1471,11 @@ export class P012WaterSandRenderer {
       this.e3WaterBuffer.dirty = true;
       this.e3IfaceBuffer.dirty = true;
     }
-    // 层高/waterTop 增量检测：任一列 |Δ|>1e-9 → dirty
+    // 层高/waterTop 增量检测：任一列 |Δ| > LAYER_EPS → dirty。
+    // 阈值 0.25 物理格（视觉可辨下限之下的安全冗余；1e-9 会让沉降中
+    // 每帧重烘——真机 ArkTS 烘焙 ~100ms/次，帧率崩到 5-20fps，s123 定位）。
+    // phase 检测不变（0.5px 平流阈值保留）。
+    const LAYER_EPS = 0.25;
     const passes: Float64Array[] = [this.smoothBh, this.smoothMixStart,
       this.smoothSandTop, this.smoothWaterTop];
     let layersChanged = false;
@@ -1465,19 +1483,19 @@ export class P012WaterSandRenderer {
       const cur = passes[p];
       const prev = this.e3PrevSmooth[p];
       for (let c = 0; c < n; c++) {
-        if (Math.abs(cur[c] - prev[c]) > 1e-9) {
+        if (Math.abs(cur[c] - prev[c]) > LAYER_EPS) {
           layersChanged = true;
           break;
         }
       }
     }
-    // q 增量检测
+    // q 增量检测（q 量纲 0-1，0.01 = 视觉可辨下限）
     let qChanged = false;
     for (let c = 0; c < n && !qChanged; c++) {
       const qh = this.suspQ(view.suspHAt(c), c);
       const ql = this.suspQ(view.suspLAt(c), c);
-      if (Math.abs(qh - this.e3PrevQH![c]) > 1e-9 ||
-        Math.abs(ql - this.e3PrevQL![c]) > 1e-9) {
+      if (Math.abs(qh - this.e3PrevQH![c]) > 0.01 ||
+        Math.abs(ql - this.e3PrevQL![c]) > 0.01) {
         qChanged = true;
       }
     }
@@ -1508,6 +1526,9 @@ export class P012WaterSandRenderer {
       this.smoothSandTop, boxW);
     const waterSampler = new P012MaterialColumnSampler(this.smoothWaterTop,
       this.smoothWaterTop, this.smoothSandTop, boxW);
+    // phase 提出循环（fogPhaseX 内含 128 列求和——每像素调用 = 62 万次
+    // 浮点加法/帧，真机 s123 定位的主要成本）
+    const phaseX = this.fogPhaseX();
     for (let u = 0; u < w; u++) {
       const x = (u + 0.5) * boxW / w;            // 局部坐标（相对 boxX）
       const qH = this.scalarAt(qHArr, x, boxW);
@@ -1520,7 +1541,7 @@ export class P012WaterSandRenderer {
         const dist = Math.abs(gIfaceY - yLocal);
         const tauOpt = dist < halfW
           ? P012_A_TAU_INTERFACE * (1 - dist / halfW) : 0;
-        const mot = this.mottleEquiv(x - this.fogPhaseX(), yLocal);
+        const mot = this.mottleEquiv(x - phaseX, yLocal);
         const tauStatic = this.staticTau(mot);
         const tau = Math.max(0, tauOpt + P012_A_KH * qH + P012_A_KL * qL + tauStatic);
         let alpha = this.fogAlpha(tau);
@@ -1535,7 +1556,10 @@ export class P012WaterSandRenderer {
     buffer.sampleU = this.fogPhaseX();
     this.e3BakeCount++;
     this.e3UploadBytes += buffer.flushToUpload();
-    buffer.transferBitmap();
+    // 注意：不调用 buffer.transferBitmap()——真机 OffscreenCanvas 在帧循环内
+    // putImageData+transferToImageBitmap 单次耗时 ~600ms（s121 实测 52 倍帧时
+    // 退化），降级上屏走 fillFogTiers 不读位图；transferBitmap 仅供未来上屏
+    // 通道修复后按需启用（构造期/延迟帧）。
     buffer.dirty = false;
   }
 
@@ -1552,6 +1576,8 @@ export class P012WaterSandRenderer {
     const halfW = wFull / 2;
     const sampler = new P012MaterialColumnSampler(this.smoothBh, this.smoothMixStart,
       this.smoothSandTop, boxW);
+    // phase 提出循环（fogPhaseX 内含 128 列求和，见 e3BakeWaterBuffer 注释）
+    const phaseX = this.fogPhaseX();
     for (let u = 0; u < w; u++) {
       const x = (u + 0.5) * boxW / w;
       const qH = this.scalarAt(qHArr, x, boxW);
@@ -1575,7 +1601,7 @@ export class P012WaterSandRenderer {
           buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B, 0);
           continue;
         }
-        const mot = this.mottleEquiv(x - this.fogPhaseX(), yLocal);
+        const mot = this.mottleEquiv(x - phaseX, yLocal);
         const tau = Math.max(0, (P012_A_TAU_INTERFACE * waterWeight +
           P012_A_KH * qH * waterWeight + P012_A_KL * qL * waterWeight) * mot);
         let alpha = this.fogAlpha(tau);
@@ -1586,8 +1612,7 @@ export class P012WaterSandRenderer {
     }
     this.e3BakeCount++;
     this.e3UploadBytes += buffer.flushToUpload();
-    buffer.transferBitmap();
-    buffer.dirty = false;
+    buffer.dirty = false;           // transferBitmap 不调（见 e3BakeWaterBuffer 注释）
   }
 
   /** 标量列采样：任意局部 x → 列值线性插值（与 sampler 同定位同权重） */
@@ -1679,11 +1704,15 @@ export class P012WaterSandRenderer {
       const gx1 = wb.bufferWidth;
       const segU = 8;                            // 水平采样步（buffer 像素）
       const segV = 8;                            // 垂直采样步
+      const suMax = wb.bufferWidth - 1;
+      const svMax = wb.bufferHeight - 1;
       for (let bu = 0; bu < gx1; bu += segU) {
         const x0 = boxX + bu * boxW / wb.bufferWidth;
         const x1 = boxX + (bu + segU) * boxW / wb.bufferWidth;
         for (let bv = 0; bv < wb.bufferHeight; bv += segV) {
-          const a = wb.readPremulAlpha(bu + (segU >> 1), bv + (segV >> 1));
+          const su = Math.min(suMax, bu + (segU >> 1));
+          const sv = Math.min(svMax, bv + (segV >> 1));
+          const a = wb.readPremulAlpha(su, sv);
           if (a <= 0.004) {
             continue;
           }
@@ -1705,11 +1734,15 @@ export class P012WaterSandRenderer {
       }
       const segU = 8;
       const segV = 4;
+      const suMax = ib.bufferWidth - 1;
+      const svMax = ib.bufferHeight - 1;
       for (let bu = 0; bu < ib.bufferWidth; bu += segU) {
         const x0 = boxX + bu * boxW / ib.bufferWidth;
         const x1 = boxX + (bu + segU) * boxW / ib.bufferWidth;
         for (let bv = 0; bv < ib.bufferHeight; bv += segV) {
-          const a = ib.readPremulAlpha(bu + (segU >> 1), bv + (segV >> 1));
+          const su = Math.min(suMax, bu + (segU >> 1));
+          const sv = Math.min(svMax, bv + (segV >> 1));
+          const a = ib.readPremulAlpha(su, sv);
           if (a <= 0.004) {
             continue;
           }
