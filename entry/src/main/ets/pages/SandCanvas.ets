@@ -1283,14 +1283,20 @@ struct SandCanvas {
     }
     // preregistration §1: bind the matrix variant and the correction
     // route for schedule-driven runs (B/C/D explicitly bind the route;
-    // without it the cvar is inert — route gate priority).
-    const scheduleCvar = AppStorage.get<string>('p011ScheduleCvar');
-    if (scheduleCvar !== undefined && scheduleCvar !== '') {
-      ws?.setCorrectionVariant(scheduleCvar as 'A' | 'B' | 'C' | 'D');
-    }
-    const scheduleRoute = AppStorage.get<string>('p011ScheduleRoute');
-    if (scheduleRoute !== undefined && scheduleRoute !== '') {
-      ws?.setNaturalObservationRouteId(scheduleRoute);
+    // without it the cvar is inert — route gate priority). NOTE: this
+    // function has NO ws local — the field instance is this.waterSandField
+    // (the same trap §26.5 fixed for the metadata arming block).
+    const scheduleField = this.waterSandField;
+    if (scheduleField !== null) {
+      const scheduleCvar = AppStorage.get<string>('p011ScheduleCvar');
+      if (scheduleCvar !== undefined && scheduleCvar !== '') {
+        scheduleField.setCorrectionVariant(
+          scheduleCvar as 'A' | 'B' | 'C' | 'D');
+      }
+      const scheduleRoute = AppStorage.get<string>('p011ScheduleRoute');
+      if (scheduleRoute !== undefined && scheduleRoute !== '') {
+        scheduleField.setNaturalObservationRouteId(scheduleRoute);
+      }
     }
     // §26.5: arm the run metadata BEFORE player.start() so the state
     // machine is armed when the first platform substep runs (the first
