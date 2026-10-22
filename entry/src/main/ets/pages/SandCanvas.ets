@@ -428,6 +428,8 @@ struct SandCanvas {
   private waterRenderD: Float64Array = new Float64Array(0);
   private waterRenderE: Float64Array = new Float64Array(0);
   private lastWaterSandMetricTime: number = 0;
+  /** 临时诊断帧计数（s129b 帧时定位，定位后移除） */
+  private p012DiagFrameCount: number = 0;
   private lastWaterSandTilt: number | null = null;
   private lastWaterSandDormant: boolean | null = null;
   private lastTiltCommandTime: number = 0;
@@ -1314,7 +1316,17 @@ struct SandCanvas {
         }
       }
     }
-    const started = this.p011SchedulePlayer.start(peakADeg, rateDegPerSec, nowMs);
+    // preregistration §4: build the conditioning prefix when the want
+    // asked for one (G1/G2/G0); 'none'/absent keeps the pilot's
+    // same-initial-state degraded path untouched.
+    const conditioningKind = AppStorage.get<string>('p011ScheduleConditioning');
+    let prefix: P011ConditioningSpec | null = null;
+    if (conditioningKind === 'G1' || conditioningKind === 'G2' ||
+      conditioningKind === 'G0') {
+      prefix = p011BuildConditioningPrefix(conditioningKind);
+    }
+    const started = this.p011SchedulePlayer.start(peakADeg, rateDegPerSec,
+      nowMs, prefix);
     if (started) {
       hilog.info(0x0000, 'SandCanvas',
         'P011 schedule player START peak=%{public}f rate=%{public}f t0=%{public}f',
@@ -1878,6 +1890,12 @@ struct SandCanvas {
           if (this.waterSandSnapshotEnabled) {
             this.logWaterSandSnapshot();
           }
+        }
+        // 临时诊断（s129b）：帧内分段计时（定位 render 外 150ms）
+        this.p012DiagFrameCount = (this.p012DiagFrameCount || 0) + 1;
+        if (this.p012DiagFrameCount % 120 === 1) {
+          console.info(`[FDIAG] ft=${frameDeltaMs} phys=${stepResult.physicsTimeMs} ` +
+            `frameT=${Date.now() - now}`);
         }
       }
       this.getUIContext().postFrameCallback(this.frameCb);
