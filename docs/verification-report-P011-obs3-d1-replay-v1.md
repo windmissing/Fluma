@@ -143,7 +143,7 @@ designer §3.2 三个可复查窗口逐位复现：
 
 | 制品 | SHA256（前 16 位） |
 |---|---|
-| `test/p011_obs3_d1_eligibility_replay.py` | 见 commit 记录 |
+| `test/p011_obs3_d1_eligibility_replay.py` | `6cb6882b19fc338c90483b44947379dee074205c8e87cdc2ef8fba34dae468e1` |
 | `test/reports/d1_replay_pilot_v1.json`（pilot 重放+43 stop 明细） | — |
 | `test/reports/d1_replay_diff_summary.json`（34 run 新旧差异汇总） | — |
 | `test/reports/d1_replay_p011-v3expansion-run-NNN.json`（34 份无明细重放） | — |
