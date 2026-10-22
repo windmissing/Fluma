@@ -153,6 +153,16 @@ export default class EntryAbility extends UIAbility {
         'P011_SCHEDULE_WARNING INVALID_P011_CVAR');
     }
     AppStorage.setOrCreate('p011ScheduleCvar', cvarValid ? rawCvar : '');
+    // preregistration §1: the correction route binding for schedule runs
+    // (B/C/D must explicitly bind the route; A leaves it unbound).
+    const rawRoute = parameters === undefined || parameters.p011route === undefined
+      ? '' : `${parameters.p011route}`.trim();
+    const routeValid = rawRoute === '' || rawRoute === 'relax-correction-weighted-v1';
+    if (!routeValid) {
+      hilog.warn(this.hilogDomain, this.hilogTag,
+        'P011_SCHEDULE_WARNING INVALID_P011_ROUTE');
+    }
+    AppStorage.setOrCreate('p011ScheduleRoute', routeValid ? rawRoute : '');
     // preregistration §4: conditioning prefix for schedule-driven matrix
     // runs (G1/G2/G0 strata). 'none'/absent = no prefix.
     const rawConditioning = parameters === undefined ||

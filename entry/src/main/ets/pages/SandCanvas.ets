@@ -428,8 +428,6 @@ struct SandCanvas {
   private waterRenderD: Float64Array = new Float64Array(0);
   private waterRenderE: Float64Array = new Float64Array(0);
   private lastWaterSandMetricTime: number = 0;
-  /** 临时诊断帧计数（s129b 帧时定位，定位后移除） */
-  private p012DiagFrameCount: number = 0;
   private lastWaterSandTilt: number | null = null;
   private lastWaterSandDormant: boolean | null = null;
   private lastTiltCommandTime: number = 0;
@@ -1283,6 +1281,17 @@ struct SandCanvas {
     if (peakADeg === undefined || rateDegPerSec === undefined) {
       return false;
     }
+    // preregistration §1: bind the matrix variant and the correction
+    // route for schedule-driven runs (B/C/D explicitly bind the route;
+    // without it the cvar is inert — route gate priority).
+    const scheduleCvar = AppStorage.get<string>('p011ScheduleCvar');
+    if (scheduleCvar !== undefined && scheduleCvar !== '') {
+      ws?.setCorrectionVariant(scheduleCvar as 'A' | 'B' | 'C' | 'D');
+    }
+    const scheduleRoute = AppStorage.get<string>('p011ScheduleRoute');
+    if (scheduleRoute !== undefined && scheduleRoute !== '') {
+      ws?.setNaturalObservationRouteId(scheduleRoute);
+    }
     // §26.5: arm the run metadata BEFORE player.start() so the state
     // machine is armed when the first platform substep runs (the first
     // ledger record then carries executedThresholds/decision fields). The
@@ -1890,12 +1899,6 @@ struct SandCanvas {
           if (this.waterSandSnapshotEnabled) {
             this.logWaterSandSnapshot();
           }
-        }
-        // 临时诊断（s129b）：帧内分段计时（定位 render 外 150ms）
-        this.p012DiagFrameCount = (this.p012DiagFrameCount || 0) + 1;
-        if (this.p012DiagFrameCount % 120 === 1) {
-          console.info(`[FDIAG] ft=${frameDeltaMs} phys=${stepResult.physicsTimeMs} ` +
-            `frameT=${Date.now() - now}`);
         }
       }
       this.getUIContext().postFrameCallback(this.frameCb);
