@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@ohos/hypium';
-import { parseP011ScheduleWant, P011SchedulePlayer,
+import { parseP011ScheduleWant, P011SchedulePlayer, p011BuildConditioningPrefix,
   P011_SCHEDULE_DRIFT_MARKER_MS
 } from '../main/ets/physics/P011SchedulePlayer';
 import { WaterSandField, defaultWaterSandParams } from '../main/ets/physics/WaterSandField';
@@ -437,6 +437,53 @@ export default function p011SchedulePlayerTest() {
         expect(executed.sourceFileSha256).assertEqual('a'.repeat(64));
         expect(executed.buildSha256).assertEqual('b'.repeat(64));
       }
+    });
+// Conditioning prefix: G1/G2/G0 commands precede the formal schedule;
+    // the formal H0 follows the prefix seamlessly (offset shift).
+    it('p011_conditioning_prefixRunsBeforeFormalSchedule', 0, () => {
+      const prefix = p011BuildConditioningPrefix('G1');
+      expect(prefix !== null).assertTrue();
+      if (prefix !== null) {
+        expect(prefix.commands.length > 10).assertTrue();
+        expect(prefix.durationMs > 4000).assertTrue();
+        // First command: hold 0. Last command: hold 0 (seamless H0 handoff).
+        expect(prefix.commands[0].targetTiltDeg === 0).assertTrue();
+        expect(prefix.commands[prefix.commands.length - 1].targetTiltDeg === 0)
+          .assertTrue();
+        // Prefix targets reach both +15 and -15.
+        let sawPlus = false;
+        let sawMinus = false;
+        for (const command of prefix.commands) {
+          if (command.targetTiltDeg === 15) {
+            sawPlus = true;
+          }
+          if (command.targetTiltDeg === -15) {
+            sawMinus = true;
+          }
+        }
+        expect(sawPlus && sawMinus).assertTrue();
+        // 'none' produces no prefix.
+        expect(p011BuildConditioningPrefix('none') === null).assertTrue();
+      }
+      // Player with prefix: at t0 only the prefix H0 dispatches; the
+      // formal H0 waits until prefix.durationMs later.
+      const player = new P011SchedulePlayer();
+      expect(player.start(20, 0.5, 0, p011BuildConditioningPrefix('G2')))
+        .assertTrue();
+      const atT0 = player.tick(0);
+      expect(atT0.length === 1).assertTrue();
+      expect(atT0[0].command.segmentId).assertEqual('CND_H0');
+      const midPrefix = player.tick(1500);
+      expect(midPrefix.length > 0).assertTrue();
+      for (const dispatch of midPrefix) {
+        expect(dispatch.command.segmentId.startsWith('CND_')).assertTrue();
+      }
+      // Pilot path unaffected: no prefix, H0 at offset 0 as before.
+      const plain = new P011SchedulePlayer();
+      expect(plain.start(20, 0.5, 0)).assertTrue();
+      const plainT0 = plain.tick(0);
+      expect(plainT0.length === 1).assertTrue();
+      expect(plainT0[0].command.segmentId).assertEqual('H0');
     });
   });
 }

@@ -111,7 +111,8 @@ export default class EntryAbility extends UIAbility {
     if (params && params.p012ablate !== undefined) {
       const ablate = `${params.p012ablate}`;
       if (ablate === 'off' || ablate === 'grain' || ablate === 'fog' ||
-        ablate === 'spark' || ablate === 'strat' || ablate === 'e3i2' || ablate === 'e3n1') {
+        ablate === 'spark' || ablate === 'strat' || ablate === 'e3i2' ||
+        ablate === 'e3n1' || ablate === 'dyn') {
         AppStorage.setOrCreate('p012ablate', ablate);
         hilog.info(this.hilogDomain, this.hilogTag, 'want param p012ablate=%{public}s', ablate);
       }
@@ -140,6 +141,32 @@ export default class EntryAbility extends UIAbility {
     // or invalid group rejects the whole schedule want). Parsed here,
     // consumed by SandCanvas which owns the player instance. Warnings go to
     // hilog only; an illegal value never arms a player.
+    // preregistration §1: p011cvar for the schedule path (the wstilt
+    // path parses it in P011TiltWant). Validated; illegal rejects the
+    // schedule want downstream (stored as '' and checked by SandCanvas).
+    const rawCvar = parameters === undefined || parameters.p011cvar === undefined
+      ? '' : `${parameters.p011cvar}`.trim().toUpperCase();
+    const cvarValid = rawCvar === '' || rawCvar === 'A' || rawCvar === 'B' ||
+      rawCvar === 'C' || rawCvar === 'D';
+    if (!cvarValid) {
+      hilog.warn(this.hilogDomain, this.hilogTag,
+        'P011_SCHEDULE_WARNING INVALID_P011_CVAR');
+    }
+    AppStorage.setOrCreate('p011ScheduleCvar', cvarValid ? rawCvar : '');
+    // preregistration §4: conditioning prefix for schedule-driven matrix
+    // runs (G1/G2/G0 strata). 'none'/absent = no prefix.
+    const rawConditioning = parameters === undefined ||
+      parameters.p011conditioning === undefined
+      ? 'none' : `${parameters.p011conditioning}`.trim().toUpperCase();
+    const conditioningValid = rawConditioning === 'none' ||
+      rawConditioning === 'G1' || rawConditioning === 'G2' ||
+      rawConditioning === 'G0';
+    if (!conditioningValid) {
+      hilog.warn(this.hilogDomain, this.hilogTag,
+        'P011_SCHEDULE_WARNING INVALID_P011_CONDITIONING');
+    }
+    AppStorage.setOrCreate('p011ScheduleConditioning',
+      conditioningValid ? rawConditioning : 'none');
     const scheduleParsed = parseP011ScheduleWant(parameters);
     for (const scheduleWarning of scheduleParsed.warnings) {
       hilog.warn(this.hilogDomain, this.hilogTag,

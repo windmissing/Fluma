@@ -28,7 +28,9 @@ export type P011TiltWantWarning =
   | 'INVALID_EXEC_BUILD_SHA256'
   // correction route wiring (D-1 follow-up): the p011route want parameter
   // only accepts the explicitly frozen correction route id.
-  | 'INVALID_P011_ROUTE';
+  | 'INVALID_P011_ROUTE'
+  // correction matrix variant (preregistration §1): p011cvar ∈ {A,B,C,D}.
+  | 'INVALID_P011_CVAR';
 
 export interface P011TiltWantCommand {
   sequence: number;
@@ -60,6 +62,9 @@ export interface P011TiltWantCommand {
   // only — binding the route does NOT by itself activate the correction
   // allocator (the dual-threshold state machine must also be armed).
   correctionRouteId?: string | null;
+  // Matrix variant (§1): 'A'|'B'|'C'|'D' (default 'D' when the route is
+  // bound; inert when unbound — the route gate has priority).
+  correctionVariant?: 'A' | 'B' | 'C' | 'D';
 }
 
 export interface P011TiltWantParseResult {
@@ -317,6 +322,17 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
   } else if (routeText !== '') {
     warnings.push('INVALID_P011_ROUTE');
   }
+  // Matrix variant (preregistration §1): p011cvar ∈ {A,B,C,D}. Default
+  // 'D' (the current weighted behavior); illegal values reject the want.
+  const cvarText = parameters === undefined || parameters.p011cvar === undefined
+    ? 'D' : `${parameters.p011cvar}`.trim().toUpperCase();
+  let correctionVariant: 'A' | 'B' | 'C' | 'D' = 'D';
+  if (cvarText === 'A' || cvarText === 'B' || cvarText === 'C' ||
+    cvarText === 'D') {
+    correctionVariant = cvarText;
+  } else {
+    warnings.push('INVALID_P011_CVAR');
+  }
   if (warnings.some((warning) => warning !== 'MISSING_P011_RUN_ROLE' &&
     warning !== 'MISSING_THRESHOLD_CALIBRATION_ID' &&
     warning !== 'MISSING_THETA_START_DEG' &&
@@ -340,7 +356,8 @@ export function parseP011TiltWant(parameters: Record<string, Object> | undefined
       execSourceCommit,
       execSourceFileSha256,
       execBuildSha256,
-      correctionRouteId
+      correctionRouteId,
+      correctionVariant
     },
     warnings
   };
@@ -397,6 +414,10 @@ export function decodeP011TiltWant(encoded: string | undefined,
     } else if (command.correctionRouteId !== null &&
       command.correctionRouteId !== P011_CORRECTION_ROUTE_ID) {
       return null;
+    }
+    if (command.correctionVariant !== 'A' && command.correctionVariant !== 'B' &&
+      command.correctionVariant !== 'C' && command.correctionVariant !== 'D') {
+      command.correctionVariant = 'D';
     }
     if (!Number.isInteger(command.sequence) || command.sequence !== sequence ||
       !Number.isFinite(command.targetTilt) || command.targetTilt < -89 ||
