@@ -82,6 +82,27 @@ export function p011RelaxHysteresisThresholds(
   };
 }
 
+/**
+ * §27.1: the ACTIVE threshold configuration — the single object every
+ * consumer reads (state machine collect branch, planner preview mirror,
+ * real apply, executedThresholdsForLedger). Lives as a private field on
+ * WaterSandField (same instance, no cross-object sync seam). dual-*=non
+ * null; legacy-single=null (relaxHysteresisThresholds derived from it).
+ */
+export interface P011ActiveThresholdConfig {
+  thetaStartDeg: number;
+  thetaStopDeg: number;
+  /** tan derivatives (deriveHysteresisThresholds output). */
+  slopeStart: number;
+  slopeStop: number;
+  relaxMode: 'dual-user-configured' | 'dual-protocol' | 'legacy-single';
+  /** §27.4: monotonic per-configure revision (identity event). */
+  configRevision: number;
+  thresholdSource: 'factory-recommended' | 'user' | 'protocol-candidate' | 'legacy';
+  /** 'v1' — only meaningful for factory-recommended. */
+  recommendationVersion: string | null;
+}
+
 /** Protocol v3 §2.1 thresholdUsed — which branch the decision consulted. */
 export interface P011RelaxHysteresisThresholdUsed {
   branch: 'start' | 'stop';

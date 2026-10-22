@@ -57,6 +57,12 @@ function thickScene(cols) {
 function baseParams() {
   const p = defaultWaterSandParams();
   p.heavyDiffusion = 0; p.lightDiffusion = 0; p.waterLevelRate = 0.001;
+  // §27: the product default is dual now; this generator verifies D-1
+  // route semantics where the baseline is LEGACY — declare it explicitly.
+  p.relaxMode = 'legacy-single';
+  p.thetaStartDeg = undefined;
+  p.thetaStopDeg = undefined;
+  p.thresholdSource = 'legacy';
   return p;
 }
 
@@ -129,6 +135,13 @@ function runScenario(armMachine, bindCorrectionRoute) {
   const field = new WaterSandField(8, 192);
   const params = baseParams();
   params.angleDeg = 4;
+  if (armMachine) {
+    // §27: the pair rides configure (config domain).
+    params.relaxMode = 'dual-user-configured';
+    params.thetaStartDeg = 26;
+    params.thetaStopDeg = 20;
+    params.thresholdSource = 'user';
+  }
   field.configure(params);
   field.initialize(thickScene(8));
   // Inject a hump so edges cross the start threshold when armed.

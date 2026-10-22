@@ -3,6 +3,7 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import Want from '@ohos.app.ability.Want';
 import window from '@ohos.window';
 import hilog from '@ohos.hilog';
+import preferences from '@ohos.data.preferences';
 import { LiquidCAWantCommand, parseLiquidCAWant } from '../physics/LiquidCAWant';
 import { LiquidCAEventPayload, LiquidInputSource } from '../physics/LiquidCATypes';
 import { LiquidCATelemetry } from '../physics/LiquidCATelemetry';
@@ -20,6 +21,40 @@ export default class EntryAbility extends UIAbility {
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onCreate');
+    // §27.6: load the persisted threshold pair. A corrupt/illegal pair is
+    // dropped with a warning and the 26/20 session default stays. The
+    // promise resolves before onWindowStageCreate loads the page content
+    // (loadContent queues behind the ability event loop), so SandCanvas
+    // sees the restored pair at initField time.
+    preferences.getPreferences(this.context, {
+      name: 'p011_threshold_pair'
+    }).then((prefs: preferences.Preferences): void => {
+      AppStorage.setOrCreate('p011Preferences', prefs);
+      const stored = prefs.getSync('p011.thetaPair', '') as string;
+      if (stored.length === 0) {
+        return;
+      }
+      const parsed = JSON.parse(stored) as Record<string, Object>;
+      const start = parsed.start as number;
+      const stop = parsed.stop as number;
+      const source = parsed.source as string;
+      if (Number.isFinite(start) && Number.isFinite(stop) &&
+        0 <= stop && stop < start && start <= 30) {
+        AppStorage.setOrCreate('p011PersistedThetaStart', start);
+        AppStorage.setOrCreate('p011PersistedThetaStop', stop);
+        AppStorage.setOrCreate('p011PersistedThetaSource', source);
+        hilog.info(this.hilogDomain, this.hilogTag,
+          'P011_THETA_PAIR restored start=%{public}f stop=%{public}f',
+          start, stop);
+      } else {
+        hilog.warn(this.hilogDomain, this.hilogTag,
+          'P011_THETA_PAIR dropped illegal persisted pair');
+      }
+    }).catch((): void => {
+      // First launch or storage failure — session default 26/20 stays.
+      hilog.warn(this.hilogDomain, this.hilogTag,
+        'P011_THETA_PAIR preferences unavailable');
+    });
     this.applyWant(want.parameters, false);
     const params = want.parameters;
     if (params && params.wspreset !== undefined) {

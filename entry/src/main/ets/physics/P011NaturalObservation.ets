@@ -74,6 +74,11 @@ export interface P011NaturalObservationExecutedThresholds {
   sourceCommit: string;
   sourceFileSha256: string;
   buildSha256: string;
+  // §27.4: the active threshold config's revision (backward-compatible
+  // addition — absent on pre-§27 ledgers).
+  configRevision?: number;
+  // §27.1: which source configured the pair.
+  thresholdSource?: 'factory-recommended' | 'user' | 'protocol-candidate' | 'legacy';
 }
 
 export interface P011NaturalObservationState {
@@ -137,6 +142,10 @@ export interface P011NaturalObservationSubstepContext {
   // Optional so pre-player runs parse unchanged (no schema bump). Null on
   // substeps not driven by a schedule command.
   scheduleDriftMs?: number | null;
+  // §27.4: active threshold config revision at this substep (0 = pre-
+  // configure; increments on every configure). Optional, backward
+  // compatible.
+  configRevision?: number;
   // True when scheduleDriftMs exceeded the 50 ms marker threshold — a
   // marker for the checker, not an error.
   scheduleDriftExceeded?: boolean | null;

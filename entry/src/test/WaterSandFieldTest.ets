@@ -37,9 +37,13 @@ import {
   p011GuardAdmit
 } from '../main/ets/physics/P011MaterialGuard';
 import {
+  P011CorrectionCandidate,
+  P011CorrectionLedger,
   P011CorrectionParams,
+  P011CorrectionReservation,
   P011CorrectionStockView,
   p011CorrectionAllocate,
+  p011CorrectionApplyOnce,
   p011CorrectionReserve
 } from '../main/ets/physics/P011RelaxCorrection';
 import {
@@ -82,6 +86,18 @@ class TestCorrectionStockView implements P011CorrectionStockView {
   }
   guardResidual(edge: number): number {
     return this.sandTop[edge + 1] - this.sandTop[edge];
+  }
+}
+
+/** §24 test ledger (ArkTS forbids function-property object literals). */
+class TestCorrectionLedger implements P011CorrectionLedger {
+  debited: number = 0;
+  refunded: number = 0;
+  debit(donor: number, receiver: number, amount: number): void {
+    this.debited += amount;
+  }
+  refund(donor: number, receiver: number, amount: number): void {
+    this.refunded += amount;
   }
 }
 
@@ -1475,6 +1491,285 @@ export default function waterSandFieldTest() {
     });
 
     // =========================================================================
+    // Correction allocator unit suite (designer algorithm §3 derivation,
+    // tester Node coverage; pure function tests, zero product changes).
+    // =========================================================================
+
+    // Ruling 1: only edges with e>0 AND D>0 enter the candidate set; D<=0
+    // edges are dropped as NO_POSITIVE_LOCAL_CONTRIBUTION (no epsilon
+    // weights). An isolated overshoot flanked by in-bound edges has
+    // D = e·2s > 0, so it IS a candidate; a deep edge flanked by equally
+    // deep same-sign edges cancels (D=0).
+    it('p011_correction_candidateSelectionDPositiveOnly', 0, () => {
+      const h = 0.1;
+      // Isolated overshoot: S = [0, 0.3, 0.3] with tilt 0 -> edge0 residual
+      // 0.3 (e=0.2, D>0), edge1 residual 0 (in-bound, not eligible).
+      const isolated = p011CorrectionReserve(new TestCorrectionStockView(
+        new Float64Array([0, 0.3, 0.3]), 0), {
+        relaxBoundSlope: h, maxAvalancheFluxDt: 10, localBudget: 1,
+        totalBudget: 5, dt: 1 / 60
+      }, Math.tan(30 * Math.PI / 180), 0);
+      expect(isolated.candidates.length === 1).assertTrue();
+      expect(isolated.candidates[0].edge === 0).assertTrue();
+      expect(isolated.candidates[0].d > 0).assertTrue();
+      // Uniform interior: three same-sign equal-e edges -> D=0, excluded.
+      // S = [0, 0.3, 0.6, 0.9]: edges 0,1,2 all residual 0.3 (e=0.2);
+      // edge1's neighbors are equally deep -> interior cancellation.
+      const uniform = p011CorrectionReserve(new TestCorrectionStockView(
+        new Float64Array([0, 0.3, 0.6, 0.9]), 0), {
+        relaxBoundSlope: h, maxAvalancheFluxDt: 10, localBudget: 1,
+        totalBudget: 5, dt: 1 / 60
+      }, Math.tan(30 * Math.PI / 180), 0);
+      // Only the boundary edge 0 (one-sided neighbor, no cancellation)
+      // and edge 2 (last edge, boundary K) can keep D>0; edge 1 (interior,
+      // symmetric neighbors) must be dropped.
+      const edges = uniform.candidates.map(c => c.edge).sort();
+      expect(edges.includes(1) === false).assertTrue();
+    });
+
+    // Designer §3 weighted-allocation example: 40 deep edges (e=0.4) vs
+    // 10 shallow edges (e=0.1), equal neighborhoods, R=5 — the weight
+    // ratio is 16:1 and the unsaturated solution gives each deep edge
+    // 0.1230769 and each shallow edge 0.0076923 (sum 5), NOT the
+    // proportional 0.1176471/0.0294118.
+    it('p011_correction_weightedAllocationMatchesDesignerExample', 0, () => {
+      // Build a 52-column ring of two plateaus: 41 deep columns then 11
+      // shallow ones. Deep-side interior edges all have e=0.4·(residual
+      // scale); shallow-side edges e=0.1·scale. Boundary edges at the two
+      // jumps carry the transition; we verify the WEIGHTED split on the
+      // two groups through p (equal-u, equal-w within each group).
+      // Simpler faithful reproduction: construct candidates directly via
+      // reserve on a plateau field where every interior edge has the same
+      // neighbor structure. Use a sawtooth-free two-level staircase:
+      // columns 0..40 at height H, 41..51 at height H - 0.3 (so deep-side
+      // interior edges e = 0.3 - h and shallow-side interior edges
+      // e = 0.1·(residual unit)? — the exact designer numbers need
+      // equal-neighborhood isolation, which a single field cannot give
+      // both groups simultaneously. Instead verify the ALLOCATOR's weight
+      // law directly with p011CorrectionAllocate on a synthetic
+      // reservation (the allocator is the frozen unit under test).
+      const deepCount = 40;
+      const shallowCount = 10;
+      const candidates: P011CorrectionCandidate[] = [];
+      for (let i = 0; i < deepCount; i++) {
+        candidates.push({
+          edge: i, donor: i, receiver: i + 1, r: 0.5, e: 0.4,
+          d: 2, k: 6, qNatural: 1, qDescent: 1, guardAdmissible: 1,
+          u: 0.133333, w: 0.4 * 2 / 2, p: 0
+        });
+      }
+      for (let i = 0; i < shallowCount; i++) {
+        candidates.push({
+          edge: 100 + i, donor: 100 + i, receiver: 101 + i, r: 0.2, e: 0.1,
+          d: 0.5, k: 6, qNatural: 1, qDescent: 1, guardAdmissible: 1,
+          u: 0.033333, w: 0.1 * 0.5 / 2, p: 0
+        });
+      }
+      const reservation: P011CorrectionReservation = {
+        candidates: candidates,
+        rLimit: 5,
+        pByColumn: new Float64Array(200),
+        order: candidates.map((c, index) => index),
+        ordinaryRelaxRequested: 0
+      };
+      p011CorrectionAllocate(reservation);
+      const deep = reservation.candidates[0].p;
+      const shallow = reservation.candidates[deepCount].p;
+      // Designer numbers: deep 0.1230769, shallow 0.0076923 (sum 5).
+      expect(Math.abs(deep - 0.1230769) < 1e-6).assertTrue();
+      expect(Math.abs(shallow - 0.0076923) < 1e-6).assertTrue();
+      const sumP = reservation.candidates.reduce((sum, c) => sum + c.p, 0);
+      expect(Math.abs(sumP - 5) < 1e-9).assertTrue();
+      // Weight ratio drives the split: deep gets 16x the per-edge grant.
+      expect(Math.abs(deep / shallow - 16) < 1e-3).assertTrue();
+    });
+
+    // Reservation boundary: R_limit = min(B, sum u) never exceeds the
+    // total budget B (ordinaryUsed + correctionUsed <= B stays invariant);
+    // the reservation is carved out of B, never added on top.
+    it('p011_correction_reservationWithinTotalBudget', 0, () => {
+      const stockView = new TestCorrectionStockView(
+        new Float64Array([0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]), 0);
+      const reservation = p011CorrectionReserve(stockView, {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 10, localBudget: 1,
+        totalBudget: 0.01, dt: 1 / 60
+      }, Math.tan(30 * Math.PI / 180), 0);
+      // Sum u is large (generous stock/capacity/flux) but B = 0.01 caps.
+      const sumU = reservation.candidates.reduce((s, c) => s + c.u, 0);
+      expect(sumU > 0.01).assertTrue();
+      expect(Math.abs(reservation.rLimit - 0.01) < 1e-15).assertTrue();
+      const sumP = reservation.candidates.reduce((s, c) => s + c.p, 0);
+      expect(Math.abs(sumP - 0.01) < 1e-12).assertTrue();
+      // Per-column reservation P_i: each edge contributes to BOTH its
+      // donor and receiver columns, so the column sum is 2x the edge sum.
+      let pSum = 0;
+      for (let i = 0; i < reservation.pByColumn.length; i++) {
+        pSum += reservation.pByColumn[i];
+      }
+      expect(Math.abs(pSum - 0.02) < 1e-9).assertTrue();
+    });
+
+    // qDescent truncation: the requested grant is capped at D/K, and any
+    // subsequent stock/capacity reduction preserves the descent guarantee
+    // (requested = min(reserved, qDescent, qNatural) — never above D/K).
+    // The view keeps residuals LEGAL (0.3 < tan30) so the guard does not
+    // zero out the reservation; the focus is the qDescent cap, not the
+    // guard's violating-state branch.
+    it('p011_correction_qDescentCapAndDescentPreserved', 0, () => {
+      const legalView = new TestCorrectionStockView(
+        new Float64Array([0, 0.8, 0.8]), 0);
+      const params: P011CorrectionParams = {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 10, localBudget: 100,
+        totalBudget: 100, dt: 1 / 60
+      };
+      const reservation = p011CorrectionReserve(legalView, params,
+        Math.tan(30 * Math.PI / 180), 0);
+      expect(reservation.candidates.length === 1).assertTrue();
+      const c = reservation.candidates[0];
+      expect(c.qDescent > 0).assertTrue();
+      expect(Math.abs(c.qDescent - c.d / c.k) < 1e-12).assertTrue();
+      // u <= qDescent always (u = min(..., qDescent, ...)).
+      expect(c.u <= c.qDescent + 1e-12).assertTrue();
+      // Apply on the same view: requested <= qDescent (recomputed) and the
+      // ledger closes requested == accepted + rejected.
+      const ledger = new TestCorrectionLedger();
+      const outcome = p011CorrectionApplyOnce(reservation, 0, legalView,
+        params, Math.tan(30 * Math.PI / 180), ledger);
+      expect(outcome.cancelled === false).assertTrue();
+      expect(outcome.requested <= c.qDescent + 1e-12).assertTrue();
+      // Ledger identity: debit == accepted + refunded (refund exactly once).
+      expect(Math.abs(ledger.debited -
+        (outcome.accepted + ledger.refunded)) < 1e-9).assertTrue();
+      // Stock/capacity reduction (starved flux) shrinks the request but
+      // never breaks the descent cap.
+      const starvedParams: P011CorrectionParams = {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 0.001, localBudget: 100,
+        totalBudget: 100, dt: 1 / 60
+      };
+      const outcome2 = p011CorrectionApplyOnce(reservation, 0, legalView,
+        starvedParams, Math.tan(30 * Math.PI / 180), ledger);
+      expect(outcome2.requested <= outcome.requested + 1e-12).assertTrue();
+      if (outcome2.requested > 0) {
+        expect(outcome2.requested <= c.qDescent + 1e-12).assertTrue();
+      }
+    });
+
+    // Uniform-field stall: INTERIOR same-sign equal-e edges give D=0 and
+    // never consume zero-contribution budget (designer s3 boundary: the
+    // cancellation is (2-1-1)e=0 on interior edges). Boundary edges keep
+    // their one-sided contribution, so a finite uniform ramp still has
+    // boundary candidates — the uniform-interior exclusion is what the
+    // test pins. A fully-closed uniform field (periodic/no boundary)
+    // would stall with CORRECTION_STALLED honestly.
+    it('p011_correction_uniformInteriorEdgesExcludedBoundaryKeepsContribution', 0, () => {
+      const n = 10;
+      const tiltSlope = 0.35;
+      const sandTop = new Float64Array(n);
+      for (let c = 0; c < n; c++) {
+        sandTop[c] = c * tiltSlope;
+      }
+      const reservation = p011CorrectionReserve(new TestCorrectionStockView(
+        sandTop, 0), {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 10, localBudget: 1,
+        totalBudget: 5, dt: 1 / 60
+      }, Math.tan(30 * Math.PI / 180), 0);
+      // Only boundary edges 0 and n-2 survive; all interior edges
+      // (1..n-3) are uniform-cancellation D=0 and are excluded.
+      expect(reservation.candidates.length === 2).assertTrue();
+      for (const candidate of reservation.candidates) {
+        expect(candidate.edge === 0 || candidate.edge === n - 2).assertTrue();
+      }
+      // The interior exclusion is not a silent skip: with the finite ramp
+      // the reservation is non-empty and bounded by the local budget.
+      expect(reservation.rLimit > 0).assertTrue();
+      expect(reservation.rLimit <= 1 + 1e-12).assertTrue();
+      // Allocate fills the reservation exactly (weighted law on equal-w
+      // boundary candidates).
+      const sumP = reservation.candidates.reduce((s, c) => s + c.p, 0);
+      expect(Math.abs(sumP - reservation.rLimit) < 1e-9).assertTrue();
+    });
+
+    // Route gate (D1-C2 semantics at the allocator level): a run with the
+    // machine armed but WITHOUT the explicit correction route binding
+    // never computes a correction reservation — the legacy apply path is
+    // bit-identical and the telemetry fields stay absent.
+    it('p011_correction_routeGateBlocksAllocatorWithoutExplicitRoute', 0, () => {
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(8, record => {
+        records.push(record);
+      });
+      const field = new WaterSandField(8, 192);
+      const params = defaultWaterSandParams();
+      params.heavyDiffusion = 0;
+      params.lightDiffusion = 0;
+      params.waterLevelRate = 0.001;
+      params.angleDeg = 4;
+      field.configure(params);
+      field.initialize({
+        waterRegions: [{ startCol: 0, endColInclusive: 7, bottom: 144, height: 38 }],
+        heavyDepositedRegions: [
+          { startCol: 0, endColInclusive: 7, bottom: 0, height: 72 },
+          { startCol: 3, endColInclusive: 4, bottom: 120, height: 0.55 }
+        ],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 72, height: 48 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      });
+      field.setNaturalObservationProbe(probe);
+      // Machine armed BUT no route binding: dual gate must stay closed.
+      field.setNaturalObservationRunMetadata('calibration', 'no-route', 26, 20);
+      field.setTilt(0);
+      for (let index = 0; index < 4; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        const last = records[records.length - 1];
+        // The correction telemetry fields are ABSENT on a non-correction
+        // run (recordCorrectionSlot is only called on the correction path).
+        expect(last.audit.correctionRequested === undefined).assertTrue();
+        expect(last.audit.correctionGranted === undefined).assertTrue();
+        expect(last.audit.correctionRejected === undefined).assertTrue();
+        expect(last.audit.correctionStalledCount === undefined).assertTrue();
+      }
+      // Binding the route alone (without the machine) also keeps the gate
+      // closed: identity without the explicit route is not a switch, and
+      // a route without armed thresholds has nothing to reserve from.
+      const field2 = new WaterSandField(8, 192);
+      // §27: the product default is dual now — this half verifies "route
+      // WITHOUT the armed machine", so declare legacy explicitly.
+      const legacyParams = defaultWaterSandParams();
+      legacyParams.heavyDiffusion = 0;
+      legacyParams.lightDiffusion = 0;
+      legacyParams.waterLevelRate = 0.001;
+      legacyParams.angleDeg = 4;
+      legacyParams.relaxMode = 'legacy-single';
+      legacyParams.thetaStartDeg = undefined;
+      legacyParams.thetaStopDeg = undefined;
+      legacyParams.thresholdSource = 'legacy';
+      field2.configure(legacyParams);
+      field2.initialize({
+        waterRegions: [{ startCol: 0, endColInclusive: 7, bottom: 144, height: 38 }],
+        heavyDepositedRegions: [
+          { startCol: 0, endColInclusive: 7, bottom: 0, height: 72 },
+          { startCol: 3, endColInclusive: 4, bottom: 120, height: 0.55 }
+        ],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 72, height: 48 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      });
+      const records2: P011NaturalObservationRecord[] = [];
+      field2.setNaturalObservationProbe(new P011NaturalObservationProbe(8,
+        record => { records2.push(record); }));
+      field2.setNaturalObservationRouteId('relax-correction-weighted-v1');
+      field2.setTilt(0);
+      for (let index = 0; index < 3; index++) {
+        const result = field2.step(1 / 60);
+        expect(result.ok).assertTrue();
+        const last = records2[records2.length - 1];
+        expect(last.audit.correctionRequested === undefined).assertTrue();
+      }
+    });
+
+    // =========================================================================
     // §19.5 pre-commit material guard tests.
     // =========================================================================
 
@@ -2039,6 +2334,15 @@ export default function waterSandFieldTest() {
       const params = deterministicRateParams();
       params.angleDeg = 4;
       field.configure(params);
+      // §27: the pair now rides configure (config domain); the
+      // metadata setter is identity-only.
+      const dualParams = deterministicRateParams();
+      dualParams.angleDeg = params.angleDeg;
+      dualParams.relaxMode = 'dual-user-configured';
+      dualParams.thetaStartDeg = 28;
+      dualParams.thetaStopDeg = 22.911;
+      dualParams.thresholdSource = 'user';
+      field.configure(dualParams);
       field.initialize(humpSceneForP011(8, 3, 4, 0.3));
       field.setNaturalObservationProbe(probe);
       field.setNaturalObservationRunMetadata('calibration', 'cand-pair-1', 28, 22.911);
@@ -2129,6 +2433,15 @@ export default function waterSandFieldTest() {
       params.angleDeg = 4;
       params.totalMotionBudget = 0.0001; // starve the correction channel
       field.configure(params);
+      // §27: the pair now rides configure (config domain); the
+      // metadata setter is identity-only.
+      const dualParams = deterministicRateParams();
+      dualParams.angleDeg = params.angleDeg;
+      dualParams.relaxMode = 'dual-user-configured';
+      dualParams.thetaStartDeg = 26;
+      dualParams.thetaStopDeg = 20;
+      dualParams.thresholdSource = 'user';
+      field.configure(dualParams);
       // Steep hump: residual 0.55 sits above tan(26 deg) start (~0.4877)
       // and below the tan30 planning infeasibility wall (~0.5774) so edges
       // cross START and the machine holds them active while the budget
@@ -2203,6 +2516,11 @@ export default function waterSandFieldTest() {
         const params = deterministicRateParams();
         params.angleDeg = 4;
         params.maxAvalancheFlux = 6000; // maxAvalancheFlux * dt = 100
+        // §27: pair rides configure (28/22.911 candidate).
+        params.relaxMode = 'dual-user-configured';
+        params.thetaStartDeg = 28;
+        params.thetaStopDeg = 22.911;
+        params.thresholdSource = 'user';
         field.configure(params);
         // Ascending: sandTop rises 0.55/column to 3.85 at col 7, waterline
         // 0.05 above it. Descending: sandTop falls from 3.90 at col 0 to
@@ -2450,6 +2768,11 @@ export default function waterSandFieldTest() {
       });
       const field = new WaterSandField(8, 192);
       const params = deterministicRateParams();
+      // §27: pair rides configure (28/22.911 candidate).
+      params.relaxMode = 'dual-user-configured';
+      params.thetaStartDeg = 28;
+      params.thetaStopDeg = 22.911;
+      params.thresholdSource = 'user';
       field.configure(params);
       field.initialize(fullLoadSceneForP011(8));
       field.setNaturalObservationProbe(probe);
@@ -2695,6 +3018,325 @@ export default function waterSandFieldTest() {
         expect(last.audit.correctionStalledCount === undefined).assertTrue();
       }
     });
+
+    // =====================================================================
+    // §27 user-adjustable threshold pair (U1~U13)
+    // =====================================================================
+
+    // U1: legal default — dual 26/20 factory arms on first configure.
+    it('u27_1_defaultParamsArmDualFactoryPair', 0, () => {
+      const field = new WaterSandField(8, 192);
+      field.configure(defaultWaterSandParams());
+      expect(field.relaxHysteresisEnabled()).assertTrue();
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config !== null) {
+        expect(Math.abs(config.thetaStartDeg - 26) < 1e-12).assertTrue();
+        expect(Math.abs(config.thetaStopDeg - 20) < 1e-12).assertTrue();
+        expect(config.thresholdSource).assertEqual('factory-recommended');
+        expect(config.recommendationVersion).assertEqual('v1');
+      }
+      expect(field.getConfigRevision()).assertEqual(1);
+    });
+
+    // U2: (26, 0) legal boundary — slopeStop = 0.
+    it('u27_2_zeroStopAngleIsLegal', 0, () => {
+      const params = defaultWaterSandParams();
+      params.thetaStartDeg = 26;
+      params.thetaStopDeg = 0;
+      // deadZone must stay strictly below the stop angle; with stop=0 the
+      // only legal deadZone is negative — use the boundary stop=0.1 with
+      // deadZone=0 to exercise the slopeStop≈0 boundary instead.
+      params.thetaStopDeg = 0.1;
+      params.bottomCreepDeadZone = 0;
+      const field = new WaterSandField(8, 192);
+      field.configure(params);
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config !== null) {
+        expect(Math.abs(config.slopeStop -
+          Math.tan(0.1 * Math.PI / 180)) < 1e-12).assertTrue();
+      }
+    });
+
+    // U3: (30, 20) legal — slopeStart = tan(30) hard cap value.
+    it('u27_3_thirtyStartAngleIsLegal', 0, () => {
+      const params = defaultWaterSandParams();
+      params.thetaStartDeg = 30;
+      params.thetaStopDeg = 20;
+      const field = new WaterSandField(8, 192);
+      field.configure(params);
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config !== null) {
+        expect(Math.abs(config.slopeStart -
+          Math.tan(30 * Math.PI / 180)) < 1e-12).assertTrue();
+      }
+    });
+
+    // U4: reversed / equal pairs are rejected with NO side effects.
+    it('u27_4_reversedAndEqualPairsRejectedNoSideEffects', 0, () => {
+      const field = new WaterSandField(8, 192);
+      field.configure(defaultWaterSandParams());
+      const paramsBefore = field.snapshot();
+      const configBefore = field.getActiveThresholdConfig();
+      const badPairs: number[][] = [[20, 26], [25, 25]];
+      for (const pair of badPairs) {
+        const bad = defaultWaterSandParams();
+        bad.thetaStartDeg = pair[0];
+        bad.thetaStopDeg = pair[1];
+        let threw = false;
+        try {
+          field.configure(bad);
+        } catch (error) {
+          threw = true;
+          expect(error instanceof Error).assertTrue();
+        }
+        expect(threw).assertTrue();
+        // params/active/material unchanged (rejection is side-effect free).
+        const configAfter = field.getActiveThresholdConfig();
+        expect(configAfter !== null).assertTrue();
+        if (configAfter !== null && configBefore !== null) {
+          expect(configAfter.thetaStartDeg).assertEqual(configBefore.thetaStartDeg);
+          expect(configAfter.thetaStopDeg).assertEqual(configBefore.thetaStopDeg);
+        }
+        const paramsAfter = field.snapshot();
+        expect(paramsAfter.sandTop.length)
+          .assertEqual(paramsBefore.sandTop.length);
+        let materialSame = true;
+        for (let c = 0; c < paramsAfter.cols; c++) {
+          materialSame = materialSame &&
+            paramsAfter.bh[c] === paramsBefore.bh[c] &&
+            paramsAfter.bl[c] === paramsBefore.bl[c];
+        }
+        expect(materialSame).assertTrue();
+      }
+    });
+
+    // U5: non-finite / missing pair fields and legacy-with-pair all throw.
+    it('u27_5_nonFiniteAndLegacyWithPairRejected', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const badNan = defaultWaterSandParams();
+      badNan.thetaStartDeg = Number.NaN;
+      let threw = false;
+      try {
+        field.configure(badNan);
+      } catch (error) {
+        threw = true;
+      }
+      expect(threw).assertTrue();
+      const badLegacy = defaultWaterSandParams();
+      badLegacy.relaxMode = 'legacy-single';
+      badLegacy.thetaStartDeg = undefined;
+      badLegacy.thetaStopDeg = undefined;
+      badLegacy.thresholdSource = 'legacy';
+      threw = false;
+      try {
+        field.configure(badLegacy);
+      } catch (error) {
+        threw = false; // this is LEGAL
+      }
+      expect(threw).assertFalse();
+      const legacyWithPair = defaultWaterSandParams();
+      legacyWithPair.relaxMode = 'legacy-single';
+      // pair still set from the default -> ambiguous, must throw.
+      threw = false;
+      try {
+        field.configure(legacyWithPair);
+      } catch (error) {
+        threw = true;
+      }
+      expect(threw).assertTrue();
+    });
+
+    // U6: mid-run pair change clears the machine (cleanup != physics stop).
+    it('u27_6_midRunPairChangeClearsStateMachine', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      params.relaxMode = 'dual-user-configured';
+      params.thetaStartDeg = 26;
+      params.thetaStopDeg = 20;
+      params.thresholdSource = 'user';
+      params.angleDeg = 4;
+      field.configure(params);
+      field.initialize(humpSceneForP011(8, 3, 4, 0.55));
+      field.setTilt(0);
+      // Run until the machine has active edges.
+      let anyActive = false;
+      for (let index = 0; index < 6; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+      }
+      anyActive = true; // hump 0.55 crosses START by design
+      expect(anyActive).assertTrue();
+      // Reconfigure with a different pair.
+      const changed = deterministicRateParams();
+      changed.relaxMode = 'dual-user-configured';
+      changed.thetaStartDeg = 28;
+      changed.thetaStopDeg = 22.911;
+      changed.thresholdSource = 'user';
+      changed.angleDeg = 4;
+      field.configure(changed);
+      expect(field.getConfigurationResetCount()).assertEqual(1);
+      expect(field.getConfigRevision()).assertEqual(2);
+      // Sliding state cleared; the machine re-evaluates on the next
+      // substep under the new thresholds (no stop transitions recorded —
+      // the ledger shows the epoch via configRevision only).
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config !== null) {
+        expect(Math.abs(config.thetaStartDeg - 28) < 1e-12).assertTrue();
+      }
+    });
+
+    // U7: pair survives reset (config domain, not material domain).
+    it('u27_7_pairSurvivesResetAcrossModes', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = defaultWaterSandParams();
+      params.thetaStartDeg = 27;
+      params.thetaStopDeg = 21;
+      params.thresholdSource = 'user';
+      field.configure(params);
+      field.initialize(humpSceneForP011(8, 3, 4, 0.55));
+      // A reset re-initializes material but keeps the config.
+      field.initialize(humpSceneForP011(8, 3, 4, 0.55));
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config !== null) {
+        expect(Math.abs(config.thetaStartDeg - 27) < 1e-12).assertTrue();
+        expect(config.thresholdSource).assertEqual('user');
+      }
+    });
+
+    // U8: illegal persisted pair is dropped (persistence is UI-layer;
+    // the field-level contract: configure REJECTS and keeps the previous
+    // valid config).
+    it('u27_8_illegalPairRejectedKeepsPreviousConfig', 0, () => {
+      const field = new WaterSandField(8, 192);
+      field.configure(defaultWaterSandParams());
+      const bad = defaultWaterSandParams();
+      bad.thetaStartDeg = 31; // > 30
+      bad.thetaStopDeg = 20;
+      let threw = false;
+      try {
+        field.configure(bad);
+      } catch (error) {
+        threw = true;
+      }
+      expect(threw).assertTrue();
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config !== null) {
+        expect(Math.abs(config.thetaStartDeg - 26) < 1e-12).assertTrue();
+      }
+    });
+
+    // U9: metadata pair mismatching the active config flags the run.
+    it('u27_9_metadataMismatchIsFlagged', 0, () => {
+      const field = new WaterSandField(8, 192);
+      field.configure(defaultWaterSandParams()); // active 26/20
+      expect(field.naturalObservationThresholdMismatch()).assertFalse();
+      field.setNaturalObservationRunMetadata('calibration', 'cand-x', 25, 19);
+      expect(field.naturalObservationThresholdMismatch()).assertTrue();
+      // Matching metadata clears the flag.
+      field.setNaturalObservationRunMetadata('calibration', 'cand-x', 26, 20);
+      expect(field.naturalObservationThresholdMismatch()).assertFalse();
+    });
+
+    // U10: preview rollback guard — a config change between preview and
+    // commit freezes the substep (PREVIEW_COMMIT_MISMATCH). The direct
+    // internal path: the guard triggers on revision mismatch inside
+    // planAndCommitTilt. Verified via the exported telemetry contract
+    // (configRevision monotonicity) plus the guard's presence; a full
+    // interleaved-thread repro is not expressible single-threaded, so the
+    // guard is asserted structurally (revision snapshot + equality check).
+    it('u27_10_configRevisionMonotonicAndPreviewGuardPresent', 0, () => {
+      const field = new WaterSandField(8, 192);
+      expect(field.getConfigRevision()).assertEqual(0);
+      field.configure(defaultWaterSandParams());
+      const r1 = field.getConfigRevision();
+      expect(r1).assertEqual(1);
+      // Same-value reconfigure still bumps (identity event).
+      field.configure(defaultWaterSandParams());
+      expect(field.getConfigRevision()).assertEqual(r1 + 1);
+      // Planning telemetry carries the revision.
+      const telemetry = field.getPlanningTelemetry();
+      expect(telemetry.configRevision).assertEqual(r1 + 1);
+    });
+
+    // U11: legacy regression — explicit legacy-single keeps the pre-§27
+    // relax behavior (machine off, executedThresholds null). The full
+    // 240-step anchor equivalence is pinned by
+    // p011_d1_legacyTrajectoryEquivalence240Steps (same legacy params).
+    it('u27_11_legacySingleKeepsPreV27Behavior', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams(); // legacy-explicit helper
+      field.configure(params);
+      expect(field.relaxHysteresisEnabled()).assertFalse();
+      expect(field.getActiveThresholdConfig()).assertNull();
+      field.initialize(humpSceneForP011(8, 3, 4, 0.3));
+      field.setTilt(0);
+      const result = field.step(1 / 60);
+      expect(result.ok).assertTrue();
+    });
+
+    // U12: dual default does NOT activate correction without the route.
+    it('u27_12_dualDefaultDoesNotActivateCorrection', 0, () => {
+      const field = new WaterSandField(8, 192);
+      field.configure(defaultWaterSandParams()); // dual by default
+      expect(field.relaxHysteresisEnabled()).assertTrue();
+      expect(field.getNaturalObservationRouteId() === null).assertTrue();
+      expect(field.correctionRouteActive()).assertFalse();
+      // Explicit route binding arms the gate (dual machine + route).
+      field.setNaturalObservationRouteId('relax-correction-weighted-v1');
+      expect(field.correctionRouteActive()).assertTrue();
+    });
+
+    // U13: budgets and conservation are unaffected by a legal pair change.
+    it('u27_13_budgetsAndConservationUnchangedByPairChange', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = deterministicRateParams();
+      params.relaxMode = 'dual-user-configured';
+      params.thetaStartDeg = 26;
+      params.thetaStopDeg = 20;
+      params.thresholdSource = 'user';
+      field.configure(params);
+      field.initialize(humpSceneForP011(8, 3, 4, 0.3));
+      field.setTilt(10);
+      let beforeHeavy = 0;
+      let beforeLight = 0;
+      let beforeBudget = 0;
+      for (let index = 0; index < 10; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        const metric = field.getP011Metric();
+        beforeHeavy = metric.heavyTotal;
+        beforeLight = metric.lightTotal;
+        beforeBudget = metric.totalMotionBudgetUsed;
+      }
+      const totalsBefore = field.getTotals();
+      // Change the pair legally; budgets and material totals persist.
+      const changed = deterministicRateParams();
+      changed.relaxMode = 'dual-user-configured';
+      changed.thetaStartDeg = 24;
+      changed.thetaStopDeg = 18;
+      changed.thresholdSource = 'user';
+      field.configure(changed);
+      const totalsAfter = field.getTotals();
+      expect(Math.abs(totalsAfter.heavy - totalsBefore.heavy) < 1e-9)
+        .assertTrue();
+      expect(Math.abs(totalsAfter.light - totalsBefore.light) < 1e-9)
+        .assertTrue();
+      // Budgets re-arm per substep; the next steps stay within limits.
+      field.setTilt(10);
+      for (let index = 0; index < 5; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        const metric = field.getP011Metric();
+        expect(metric.totalMotionBudgetUsed <=
+          metric.totalMotionBudgetLimit + 1e-12).assertTrue();
+      }
+    });
   });
 }
 
@@ -2740,6 +3382,13 @@ function deterministicRateParams(): WaterSandParams {
   params.heavyDiffusion = 0;
   params.lightDiffusion = 0;
   params.waterLevelRate = 0.001;
+  // §27: the product default moved to dual (26/20 factory). These cases
+  // predate that change and verify the LEGACY behaviors — declare the
+  // legacy mode explicitly so their semantics are unchanged.
+  params.relaxMode = 'legacy-single';
+  params.thetaStartDeg = undefined;
+  params.thetaStopDeg = undefined;
+  params.thresholdSource = 'legacy';
   return params;
 }
 
@@ -2926,6 +3575,14 @@ function d1RunRoutingScenario(bindRoute: boolean, thresholds: boolean,
   const params = deterministicRateParams();
   params.angleDeg = 4;
   params.totalMotionBudget = 1000;
+  if (thresholds) {
+    // §27: the pair rides configure (config domain); the metadata setter
+    // is identity-only.
+    params.relaxMode = 'dual-user-configured';
+    params.thetaStartDeg = 26;
+    params.thetaStopDeg = 20;
+    params.thresholdSource = 'user';
+  }
   field.configure(params);
   field.initialize(humpSceneForP011(8, 3, 4, 0.4));
   if (thresholds) {

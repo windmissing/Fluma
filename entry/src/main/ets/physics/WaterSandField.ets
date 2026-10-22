@@ -50,7 +50,8 @@ import {
   P011_RELAX_HYSTERESIS_VERSION,
   p011RelaxHysteresisNextActive,
   p011RelaxHysteresisRequested,
-  p011RelaxHysteresisThresholds as deriveHysteresisThresholds
+  p011RelaxHysteresisThresholds as deriveHysteresisThresholds,
+  P011ActiveThresholdConfig
 } from './P011RelaxHysteresis';
 
 /**
@@ -317,6 +318,15 @@ export interface WaterSandParams {
   directionHoldTime: number;
   inputSmoothingAlpha: number;
   maxTiltOmegaDegPerSec: number;
+  // §27.1-27.2: the active threshold pair + mode. 'legacy-single' keeps
+  // the pre-§27 relax behavior (single tan(angleDeg) bound); dual-* arms
+  // the dual-threshold state machine from configure() — the drive source
+  // moved from the observation domain to the config domain (§27 red line:
+  // probe/telemetry must never set physics thresholds).
+  relaxMode?: 'dual-user-configured' | 'dual-protocol' | 'legacy-single';
+  thetaStartDeg?: number;
+  thetaStopDeg?: number;
+  thresholdSource?: 'factory-recommended' | 'user' | 'protocol-candidate' | 'legacy';
 }
 
 export interface WaterSandRegion {
@@ -400,6 +410,8 @@ export interface P011PlanningTelemetry {
   fallbackUsed: boolean;
   thetaRequested: number;
   limitingEdge: number | null;
+  // §27.4: config revision at telemetry read time.
+  configRevision?: number;
 }
 
 export interface WaterSandStepResult {
@@ -575,7 +587,15 @@ export function defaultWaterSandParams(): WaterSandParams {
     bottomCreepDeadZone: 1,
     directionHoldTime: 80,
     inputSmoothingAlpha: 0.6,
-    maxTiltOmegaDegPerSec: 720
+    maxTiltOmegaDegPerSec: 720,
+    // §27.3 product default chain: first configure arms the dual
+    // thresholds (26/20 factory-recommended) — independent of probe/
+    // observation. Callers that need the pre-§27 legacy behavior pass
+    // relaxMode='legacy-single' explicitly (U11 keeps that entrance).
+    relaxMode: 'dual-user-configured',
+    thetaStartDeg: 26,
+    thetaStopDeg: 20,
+    thresholdSource: 'factory-recommended'
   };
 }
 
@@ -768,6 +788,14 @@ export class WaterSandField {
   // reset/initialize clears it; budget clipping never does (§19.4-2/3).
   private relaxSliding: Uint8Array;
   private relaxHysteresisThresholds: P011RelaxHysteresisThresholds | null = null;
+  // §27.1: the active threshold config (dual-*=non null, legacy-single
+  // null); relaxHysteresisThresholds is derived from it. §27.4/27.5:
+  // revision + epoch bookkeeping; §27.3: metadata mismatch flag.
+  private activeThresholdConfig: P011ActiveThresholdConfig | null = null;
+  private configRevision = 0;
+  private configurationEpoch = 0;
+  private configurationResetCount = 0;
+  private naturalObservationMetadataMismatch = false;
   // ── GAP-4 attempt audit ──
   private p011AttemptCounter = 0;
   // ── GAP-5 executed identity (bound once per run via want) ──
@@ -853,15 +881,73 @@ export class WaterSandField {
       params.maxTiltOmegaDegPerSec <= 0) {
       throw new WaterSandParamError('invalid WaterSandParams');
     }
+    // §27.2 stage 1: relaxMode / thresholdSource enums + pair presence.
+    const relaxMode = params.relaxMode === undefined
+      ? 'legacy-single' : params.relaxMode;
+    const thresholdSource = params.thresholdSource === undefined
+      ? 'legacy' : params.thresholdSource;
+    if (relaxMode !== 'dual-user-configured' && relaxMode !== 'dual-protocol' &&
+      relaxMode !== 'legacy-single') {
+      throw new WaterSandParamError('invalid relaxMode: ' + `${params.relaxMode}`);
+    }
+    if (thresholdSource !== 'factory-recommended' && thresholdSource !== 'user' &&
+      thresholdSource !== 'protocol-candidate' && thresholdSource !== 'legacy') {
+      throw new WaterSandParamError('invalid thresholdSource');
+    }
+    const pairStart = params.thetaStartDeg ?? null;
+    const pairStop = params.thetaStopDeg ?? null;
+    if (relaxMode === 'legacy-single') {
+      if (pairStart !== null || pairStop !== null) {
+        // §27.2: legacy carrying a pair is an ambiguity — reject outright.
+        throw new WaterSandParamError(
+          'invalid threshold pair: legacy-single must not carry thetaStartDeg/thetaStopDeg');
+      }
+    } else {
+      if (pairStart === null || pairStop === null) {
+        throw new WaterSandParamError(
+          'invalid threshold pair: dual mode requires both thetaStartDeg and thetaStopDeg');
+      }
+    }
+    // §27.1: dual mode re-targets the bottomCreepDeadZone invariant at
+    // thetaStopDeg (the dead zone must sit below the sliding stop angle;
+    // legacy keeps the angleDeg check unchanged).
+    const deadZoneCeiling = relaxMode === 'legacy-single'
+      ? params.angleDeg : (pairStop as number);
+    if (params.bottomCreepDeadZone >= deadZoneCeiling) {
+      throw new WaterSandParamError(
+        'invalid WaterSandParams: bottomCreepDeadZone must stay below the active stop angle');
+    }
     const values: number[] = [params.angleDeg, params.heavySettleSpeed, params.lightSettleSpeed,
       params.percolationRate, params.waterLevelRate, params.heavyDiffusion, params.lightDiffusion,
       params.shakeDecay, params.shakeRampRate, params.heavyLiftRate, params.lightLiftRate,
       params.vSandTopMax, params.totalMotionBudget, params.maxAvalancheFlux, params.avalanchePasses,
       params.bottomCreepRate, params.vBottomCreepMax, params.bottomCreepVelocityGain, params.bottomCreepDeadZone,
       params.directionHoldTime, params.inputSmoothingAlpha, params.maxTiltOmegaDegPerSec];
+    if (pairStart !== null) {
+      values.push(pairStart);
+    }
+    if (pairStop !== null) {
+      values.push(pairStop);
+    }
     for (const value of values) {
       if (!finite(value)) {
         throw new WaterSandParamError('non-finite WaterSandParams value');
+      }
+    }
+    // §27.2 stage 3: pair derivation (0<=stop<start<=30 by the frozen
+    // invariant) BEFORE any state copy — a rejection leaves everything
+    // untouched. Rethrown as WaterSandParamError so the app layer catches
+    // one exception type (UI maps the structured message).
+    if (relaxMode !== 'legacy-single') {
+      try {
+        deriveHysteresisThresholds({
+          thetaStartDeg: pairStart as number,
+          thetaStopDeg: pairStop as number,
+          thetaHardMaxDeg: 30
+        });
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : 'unknown';
+        throw new WaterSandParamError('invalid threshold pair: ' + reason);
       }
     }
     this.params = {
@@ -887,8 +973,87 @@ export class WaterSandField {
       bottomCreepDeadZone: params.bottomCreepDeadZone,
       directionHoldTime: params.directionHoldTime,
       inputSmoothingAlpha: params.inputSmoothingAlpha,
-      maxTiltOmegaDegPerSec: params.maxTiltOmegaDegPerSec
+      maxTiltOmegaDegPerSec: params.maxTiltOmegaDegPerSec,
+      relaxMode: relaxMode,
+      thetaStartDeg: pairStart === null ? undefined : pairStart,
+      thetaStopDeg: pairStop === null ? undefined : pairStop,
+      thresholdSource: thresholdSource
     };
+    // §27.2-27.3: the copy block succeeded — derive the active config and
+    // bump the revision (a reconfigure is an identity event even when the
+    // pair is unchanged).
+    this.applyThresholdConfigFromParams(relaxMode, pairStart, pairStop,
+      thresholdSource);
+  }
+
+  /**
+   * §27.3 path B: derive activeThresholdConfig from the just-copied params
+   * (config domain — the ONLY place physics thresholds get set; the
+   * observation-domain setter no longer touches them). legacy-single ->
+   * null config and null state machine; dual-* -> derive + assemble.
+   * Called at the end of configure(); onConfigurationChanged fires only
+   * when the pair actually changed mid-run (27.5).
+   */
+  private applyThresholdConfigFromParams(relaxMode: 'dual-user-configured' |
+    'dual-protocol' | 'legacy-single', pairStart: number | null,
+    pairStop: number | null, thresholdSource: 'factory-recommended' | 'user' |
+    'protocol-candidate' | 'legacy'): void {
+    const previousConfig = this.activeThresholdConfig;
+    if (relaxMode === 'legacy-single') {
+      this.relaxHysteresisThresholds = null;
+      this.activeThresholdConfig = null;
+    } else {
+      const derived = deriveHysteresisThresholds({
+        thetaStartDeg: pairStart as number,
+        thetaStopDeg: pairStop as number,
+        thetaHardMaxDeg: 30
+      });
+      this.relaxHysteresisThresholds = derived;
+      this.activeThresholdConfig = {
+        thetaStartDeg: pairStart as number,
+        thetaStopDeg: pairStop as number,
+        slopeStart: derived.slopeStart,
+        slopeStop: derived.slopeStop,
+        relaxMode: relaxMode,
+        configRevision: 0,
+        thresholdSource: thresholdSource,
+        recommendationVersion: thresholdSource === 'factory-recommended'
+          ? 'v1' : null
+      };
+    }
+    // §27.4: every successful configure bumps the revision (identity
+    // event; same-value reconfigures stay traceable in the ledger).
+    this.configRevision += 1;
+    if (this.activeThresholdConfig !== null) {
+      this.activeThresholdConfig.configRevision = this.configRevision;
+    }
+    // §27.5: mid-run pair change -> epoch cleanup (first configure /
+    // same-value reconfigure / legacy declaration do NOT fire — material
+    // untouched, no phantom CONFIGURATION_RESET).
+    if (previousConfig !== null && this.activeThresholdConfig !== null &&
+      (previousConfig.thetaStartDeg !== this.activeThresholdConfig.thetaStartDeg ||
+        previousConfig.thetaStopDeg !== this.activeThresholdConfig.thetaStopDeg)) {
+      this.onConfigurationChanged();
+    }
+  }
+
+  /**
+   * §27.5 epoch cleanup: the running pair changed — clear the state
+   * machine and its observation mirrors, drop the correction reservation
+   * cache, open a new configurationEpoch. Cleanup is NOT a physics stop
+   * (no stop transitions recorded); material, budgets, run identity and
+   * the accepted tilt are all preserved (ΔV=0).
+   */
+  private onConfigurationChanged(): void {
+    this.relaxSliding.fill(0);
+    this.naturalObservationSliding.fill(0);
+    this.naturalObservationSlidingBefore.fill(0);
+    this.naturalObservationSlidingAfter.fill(0);
+    this.naturalObservationSlipSeen.fill(0);
+    this.relaxDecisionOrdinals.fill(0);
+    this.correctionReservation = null;
+    this.configurationEpoch += 1;
+    this.configurationResetCount += 1;
   }
 
   initialize(scene: WaterSandScene): void {
@@ -1376,7 +1541,90 @@ export class WaterSandField {
     this.naturalObservationThresholdCalibrationId = thresholdCalibrationId;
     this.naturalObservationThetaStartDeg = thetaStartDeg;
     this.naturalObservationThetaStopDeg = thetaStopDeg;
-    this.applyRelaxHysteresisConfiguration();
+    // §27.3 path A: identity ONLY — the physics thresholds live in the
+    // config domain (configure). The metadata pair is cross-checked
+    // against the active config; a mismatch flags the run (the schedule
+    // arming entrance and applyProtocolThresholdPair refuse to start).
+    this.naturalObservationMetadataMismatch =
+      thetaStartDeg !== null && thetaStopDeg !== null &&
+      this.activeThresholdConfig !== null &&
+      (this.activeThresholdConfig.thetaStartDeg !== thetaStartDeg ||
+        this.activeThresholdConfig.thetaStopDeg !== thetaStopDeg);
+  }
+
+  /** §27.3: true when the metadata pair disagrees with the active config. */
+  naturalObservationThresholdMismatch(): boolean {
+    return this.naturalObservationMetadataMismatch;
+  }
+
+  /**
+   * §27.3 path C: dual-protocol adapter — the experiment entrance routes
+   * the manifest pair through the FULL configure transaction (config
+   * domain). Refuses when the metadata pair mismatches the active config
+   * or the active mode is not dual-protocol. configure() rejections
+   * propagate to the caller (refuse, never clamp).
+   */
+  applyProtocolThresholdPair(thetaStartDeg: number, thetaStopDeg: number): boolean {
+    if (this.naturalObservationMetadataMismatch ||
+      this.activeThresholdConfig === null ||
+      this.activeThresholdConfig.relaxMode !== 'dual-protocol') {
+      return false;
+    }
+    const next = this.currentParamsCopy();
+    next.relaxMode = 'dual-protocol';
+    next.thetaStartDeg = thetaStartDeg;
+    next.thetaStopDeg = thetaStopDeg;
+    next.thresholdSource = 'protocol-candidate';
+    this.configure(next);
+    return true;
+  }
+
+  /** Current params as a mutable copy (UI/protocol reconfigure base). */
+  private currentParamsCopy(): WaterSandParams {
+    return {
+      routeId: this.params.routeId,
+      angleDeg: this.params.angleDeg,
+      heavySettleSpeed: this.params.heavySettleSpeed,
+      lightSettleSpeed: this.params.lightSettleSpeed,
+      percolationRate: this.params.percolationRate,
+      waterLevelRate: this.params.waterLevelRate,
+      heavyDiffusion: this.params.heavyDiffusion,
+      lightDiffusion: this.params.lightDiffusion,
+      shakeDecay: this.params.shakeDecay,
+      shakeRampRate: this.params.shakeRampRate,
+      heavyLiftRate: this.params.heavyLiftRate,
+      lightLiftRate: this.params.lightLiftRate,
+      vSandTopMax: this.params.vSandTopMax,
+      totalMotionBudget: this.params.totalMotionBudget,
+      maxAvalancheFlux: this.params.maxAvalancheFlux,
+      avalanchePasses: this.params.avalanchePasses,
+      bottomCreepRate: this.params.bottomCreepRate,
+      vBottomCreepMax: this.params.vBottomCreepMax,
+      bottomCreepVelocityGain: this.params.bottomCreepVelocityGain,
+      bottomCreepDeadZone: this.params.bottomCreepDeadZone,
+      directionHoldTime: this.params.directionHoldTime,
+      inputSmoothingAlpha: this.params.inputSmoothingAlpha,
+      maxTiltOmegaDegPerSec: this.params.maxTiltOmegaDegPerSec,
+      relaxMode: this.params.relaxMode,
+      thetaStartDeg: this.params.thetaStartDeg,
+      thetaStopDeg: this.params.thetaStopDeg,
+      thresholdSource: this.params.thresholdSource
+    };
+  }
+
+  /** §27.4: the active config revision (0 before the first configure). */
+  getConfigRevision(): number {
+    return this.configRevision;
+  }
+
+  /** §27.1: read-only view of the active threshold config (null=legacy). */
+  getActiveThresholdConfig(): P011ActiveThresholdConfig | null {
+    return this.activeThresholdConfig;
+  }
+
+  /** §27.5: how many mid-run pair changes this field instance saw. */
+  getConfigurationResetCount(): number {
+    return this.configurationResetCount;
   }
 
   /**
@@ -1418,30 +1666,6 @@ export class WaterSandField {
       driftMs > P011_SCHEDULE_DRIFT_MARKER_MS;
   }
 
-  /**
-   * GAP-1: derive the state machine thresholds from the configured candidate
-   * (thetaStartDeg/thetaStopDeg). When both are present the dual-threshold
-   * state machine is armed; when absent (legacy run) it stays off and the
-   * pre-v3.1 relax behavior (single tan(angleDeg) bound + requested>EPS
-   * active proxy) runs bit-for-bit unchanged. Parameter invariant violations
-   * throw P011RelaxHysteresisParamError — construction/config failure, never
-   * a silent default (§19.9). thetaHardMaxDeg is fixed at 30 (tan30 hard
-   * gate); no new physics threshold is introduced.
-   */
-  private applyRelaxHysteresisConfiguration(): void {
-    const start = this.naturalObservationThetaStartDeg;
-    const stop = this.naturalObservationThetaStopDeg;
-    if (start === null || stop === null) {
-      this.relaxHysteresisThresholds = null;
-      return;
-    }
-    this.relaxHysteresisThresholds = deriveHysteresisThresholds({
-      thetaStartDeg: start,
-      thetaStopDeg: stop,
-      thetaHardMaxDeg: 30
-    });
-  }
-
   /** True when the dual-threshold state machine drives relax eligibility. */
   relaxHysteresisEnabled(): boolean {
     return this.relaxHysteresisThresholds !== null;
@@ -1454,20 +1678,21 @@ export class WaterSandField {
    */
   private executedThresholdsForLedger(): P011NaturalObservationExecutedThresholds | null {
     const thresholds = this.relaxHysteresisThresholds;
-    if (thresholds === null) {
+    const config = this.activeThresholdConfig;
+    if (thresholds === null || config === null) {
       return null;
     }
-    const start = this.naturalObservationThetaStartDeg as number;
-    const stop = this.naturalObservationThetaStopDeg as number;
     return {
-      thetaStartDeg: start,
-      thetaStopDeg: stop,
+      thetaStartDeg: config.thetaStartDeg,
+      thetaStopDeg: config.thetaStopDeg,
       slopeStart: thresholds.slopeStart,
       slopeStop: thresholds.slopeStop,
       stateMachineVersion: P011_RELAX_HYSTERESIS_VERSION,
       sourceCommit: this.naturalObservationExecSourceCommit ?? '',
       sourceFileSha256: this.naturalObservationExecSourceFileSha256 ?? '',
-      buildSha256: this.naturalObservationExecBuildSha256 ?? ''
+      buildSha256: this.naturalObservationExecBuildSha256 ?? '',
+      configRevision: config.configRevision,
+      thresholdSource: config.thresholdSource
     };
   }
 
@@ -1580,6 +1805,8 @@ export class WaterSandField {
       scheduleDriftMs: this.p011ScheduleDriftMs,
       scheduleDriftExceeded: this.p011ScheduleDriftExceeded
         ? true : null,
+      // §27.4: the active config revision this substep ran under.
+      configRevision: this.configRevision,
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
@@ -2908,6 +3135,11 @@ export class WaterSandField {
    */
   private planAndCommitTilt(dt: number): WaterSandErrorCode | null {
     const thetaBefore = this.effectiveTilt;
+    // §27.4: snapshot the config revision at planning entry. The preview
+    // channel's plans are only valid under THIS revision; a configure that
+    // lands between preview and commit invalidates them (the new pair's
+    // plans must be re-derived). Verified at the commit boundary below.
+    const previewConfigRevision = this.configRevision;
     this.lastPlanningSubstepDt = dt;
     // GAP-4: every planning evaluation is one attempt. attemptId is
     // monotonic per field instance and unique per substep.
@@ -2948,6 +3180,20 @@ export class WaterSandField {
     input.sandTopBefore.set(this.substepSandTopBefore);
     const preview = this.planningPassService.createPreview(input,
       P011_PLANNING_PASS_TAN_HARD_MAX);
+    // §27.4 rollback guard: a config change during the preview window
+    // invalidates the plans — freeze the substep instead of committing
+    // stale-threshold plans (same freeze semantics as §20.4 BLOCKED).
+    if (this.configRevision !== previewConfigRevision) {
+      preview.discard();
+      this.effectiveTilt = thetaBefore;
+      this.effectiveTiltRate = 0;
+      this.lastError = WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+      this.lastPlanningStatus = 'blocked';
+      this.lastPlanningBlockedReason = 'PREVIEW_CONFIG_REVISION_CHANGED';
+      this.p011CurrentCommitStatus = 'blocked';
+      this.p011CurrentRollbackReason = 'PREVIEW_CONFIG_REVISION_CHANGED';
+      return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+    }
     const result = preview.result;
     this.lastPlanningStatus = result.status;
     this.lastPlanningBlockedReason = result.blockedReason;
@@ -3037,7 +3283,8 @@ export class WaterSandField {
       passCount: this.lastPlanningPassCount,
       fallbackUsed: this.lastPlanningFallbackUsed,
       thetaRequested: this.lastPlanningThetaRequested,
-      limitingEdge: this.lastPlanningLimitingEdge
+      limitingEdge: this.lastPlanningLimitingEdge,
+      configRevision: this.configRevision
     };
   }
 

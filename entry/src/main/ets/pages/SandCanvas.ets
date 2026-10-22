@@ -10,6 +10,7 @@ import { FrameCallback } from '@ohos.arkui.UIContext';
 import { ComponentContent } from '@ohos.arkui.node';
 import { BusinessError } from '@ohos.base';
 import hilog from '@ohos.hilog';
+import preferences from '@ohos.data.preferences';
 import { decodeP011TiltWant } from '../physics/P011TiltWant';
 import { P011SchedulePlayer } from '../physics/P011SchedulePlayer';
 import common from '@ohos.app.ability.common';
@@ -85,6 +86,13 @@ class PanelParams {
   shakeInput: number = 0;
   /** P-012 E-batch：外观档位镜像（builder 刷新用） */
   p012Tier: number = 0;
+  /** §27: 滑移起停角草稿/已应用镜像（builder 刷新用） */
+  thetaStartDraft: number = 26.0;
+  thetaStopDraft: number = 20.0;
+  thetaAppliedStart: number = 26.0;
+  thetaAppliedStop: number = 20.0;
+  thresholdError: string | null = null;
+  thresholdLocked: boolean = false;
 }
 
 interface LiquidWantCommand {
@@ -243,6 +251,60 @@ function panelSheetBuilder(params: PanelParams) {
           params.owner.setWaterSandShakeInput(value);
           }
         })
+
+      // §27: 滑移起停角（仅水沙模式；草稿→应用，schedule 运行中锁定）
+      if (params.renderMode === MODE_WATERSAND) {
+        Text(`\u6ED1\u79FB\u8D77\u52A8\u89D2: ${params.thetaStartDraft.toFixed(1)}\u00B0`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.thetaStartDraft, min: 1, max: 30, step: 0.1 })
+          .blockColor('#7E9CD8').selectedColor('#7E9CD8')
+          .enabled(!params.thresholdLocked)
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setThetaStartDraft(value);
+            }
+          })
+        Text(`\u6ED1\u79FB\u505C\u6B62\u89D2: ${params.thetaStopDraft.toFixed(1)}\u00B0`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.thetaStopDraft, min: 0, max: 29.9, step: 0.1 })
+          .blockColor('#7E9CD8').selectedColor('#7E9CD8')
+          .enabled(!params.thresholdLocked)
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setThetaStopDraft(value);
+            }
+          })
+        if (params.thresholdLocked) {
+          Text('\u5B9E\u9A8C\u8FD0\u884C\u4E2D\uFF0C\u7ED3\u675F\u540E\u53EF\u8C03\u6574')
+            .fontSize(12).fontColor('#B08080').width('100%')
+        }
+        if (params.thresholdError !== null) {
+          Text(params.thresholdError as string)
+            .fontSize(12).fontColor('#E08080').width('100%')
+        }
+        Text(`\u5DF2\u5E94\u7528: ${params.thetaAppliedStart.toFixed(1)}/${params.thetaAppliedStop.toFixed(1)}\u00B0`)
+          .fontSize(12).fontColor('#9AB0A0').width('100%')
+        Row({ space: 8 }) {
+          Button('\u5E94\u7528')
+            .fontSize(13).height(32)
+            .enabled(!params.thresholdLocked)
+            .onClick(() => {
+              if (params.owner !== null) {
+                params.owner.applyThresholdPairDraft();
+              }
+            })
+          Button('\u6062\u590D\u63A8\u8350')
+            .fontSize(13).height(32)
+            .enabled(!params.thresholdLocked)
+            .onClick(() => {
+              if (params.owner !== null) {
+                params.owner.resetThresholdToRecommended();
+              }
+            })
+        }
+        .width('100%')
+        .justifyContent(FlexAlign.Start)
+      }
     }
   }
   .width('100%')
@@ -257,6 +319,14 @@ struct SandCanvas {
   @State flowSpeed: number = 3;      // 每帧模拟步数（预留，当前 rAF 单步）
   @State mixBandPx: number = 1.5;
   @State waterSandShakeInput: number = 0;
+  // §27: threshold pair draft/applied state + persistence bookkeeping.
+  @State thetaStartDraft: number = 26.0;
+  @State thetaStopDraft: number = 20.0;
+  @State thetaAppliedStart: number = 26.0;
+  @State thetaAppliedStop: number = 20.0;
+  @State thresholdError: string | null = null;
+  private pendingThetaPair: string | null = null;
+  private thetaPairPersistAt: number = 0;
   private tiltX: number = 0;
   private lastTiltX: number = 0;
   private gestureHoldUntil: number = 0;
@@ -384,6 +454,13 @@ struct SandCanvas {
     this.sheetParams.renderMode = this.renderMode;
     this.sheetParams.flowSpeed = this.flowSpeed;
     this.sheetParams.percolationRate = this.waterSandParams.percolationRate;
+    // §27 mirrors.
+    this.sheetParams.thetaStartDraft = this.thetaStartDraft;
+    this.sheetParams.thetaStopDraft = this.thetaStopDraft;
+    this.sheetParams.thetaAppliedStart = this.thetaAppliedStart;
+    this.sheetParams.thetaAppliedStop = this.thetaAppliedStop;
+    this.sheetParams.thresholdError = this.thresholdError;
+    this.sheetParams.thresholdLocked = this.p011SchedulePlayer.isActive();
     this.sheetParams.mixBandPx = this.mixBandPx;
     this.sheetParams.shakeInput = this.renderMode === MODE_LIQUID
       ? this.liquidShakeInput : this.waterSandShakeInput;
@@ -682,6 +759,104 @@ struct SandCanvas {
       }
     }
     this.syncSheet();
+  }
+
+  // §27: draft setters (UI slider callbacks — draft only, no configure).
+  setThetaStartDraft(value: number): void {
+    this.thetaStartDraft = Math.round(value * 10) / 10;
+    this.syncSheet();
+  }
+
+  setThetaStopDraft(value: number): void {
+    this.thetaStopDraft = Math.round(value * 10) / 10;
+    this.syncSheet();
+  }
+
+  /**
+   * §27.6: apply the draft pair through the full configure transaction.
+   * Returns null on success; an error text on rejection (no clamp, the
+   * other draft control is untouched). Persisted via preferences (debounced).
+   */
+  applyThresholdPairDraft(): void {
+    const error = this.applyThresholdPair(this.thetaStartDraft, this.thetaStopDraft);
+    this.thresholdError = error;
+    if (error === null) {
+      this.thetaAppliedStart = this.thetaStartDraft;
+      this.thetaAppliedStop = this.thetaStopDraft;
+    }
+    this.syncSheet();
+  }
+
+  applyThresholdPair(start: number, stop: number): string | null {
+    const next = this.waterSandParams;
+    next.relaxMode = 'dual-user-configured';
+    next.thetaStartDeg = start;
+    next.thetaStopDeg = stop;
+    next.thresholdSource = 'user';
+    try {
+      this.waterSandField?.configure(next);
+      // Persist the applied pair (debounced; failure does not block UI).
+      this.persistThetaPair(start, stop, 'user');
+      return null;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '配置失败';
+      // Map the structured reasons to readable text.
+      if (message.includes('stop < start') || message.includes('stop>=start')) {
+        return '停止角必须小于起动角';
+      }
+      if (message.includes('non-finite')) {
+        return '数值无效';
+      }
+      if (message.includes('bottomCreepDeadZone')) {
+        return '停止角必须大于死区(1°)';
+      }
+      return '参数无效：' + message;
+    }
+  }
+
+  /** §27.6: restore the factory-recommended pair (26/20). */
+  resetThresholdToRecommended(): void {
+    this.thetaStartDraft = 26.0;
+    this.thetaStopDraft = 20.0;
+    const error = this.applyThresholdPair(26.0, 20.0);
+    if (error === null) {
+      const next = this.waterSandParams;
+      next.thresholdSource = 'factory-recommended';
+      this.waterSandField?.configure(next);
+      this.persistThetaPair(26.0, 20.0, 'factory-recommended');
+      this.thetaAppliedStart = 26.0;
+      this.thetaAppliedStop = 20.0;
+    }
+    this.thresholdError = error;
+    this.syncSheet();
+  }
+
+  /** §27.6: persist the applied pair (500 ms debounce). */
+  private persistThetaPair(start: number, stop: number, source: string): void {
+    this.pendingThetaPair = JSON.stringify({
+      start: start, stop: stop, source: source
+    });
+    this.thetaPairPersistAt = Date.now() + 500;
+  }
+
+  /** §27.6: flush the debounced pair write (failure does not block UI). */
+  private flushThetaPairPersist(): void {
+    const payload = this.pendingThetaPair;
+    this.pendingThetaPair = null;
+    if (payload === null) {
+      return;
+    }
+    try {
+      const prefs = AppStorage.get<object>('p011Preferences');
+      if (prefs !== undefined) {
+        (prefs as preferences.Preferences)
+          .putSync('p011.thetaPair', payload);
+        (prefs as preferences.Preferences).flush();
+      }
+    } catch (error) {
+      hilog.warn(this.hilogDomain, 'SandCanvas',
+        'P011_THETA_PAIR persist failed (applied, not saved)');
+    }
   }
 
   setLiquidShakeInput(value: number): void {
@@ -1226,6 +1401,22 @@ struct SandCanvas {
     this.fluidField = ff;
     this.waterSandField = new WaterSandField(this.waterSandCols, this.waterSandCapacity);
     this.waterSandParams = defaultWaterSandParams();
+    // §27.6: restore the persisted pair (illegal values were dropped at
+    // load; absent keys keep the 26/20 factory default).
+    const persistedStart = AppStorage.get<number>('p011PersistedThetaStart');
+    const persistedStop = AppStorage.get<number>('p011PersistedThetaStop');
+    if (persistedStart !== undefined && persistedStop !== undefined) {
+      this.waterSandParams.thetaStartDeg = persistedStart;
+      this.waterSandParams.thetaStopDeg = persistedStop;
+      const persistedSource = AppStorage.get<string>('p011PersistedThetaSource');
+      this.waterSandParams.thresholdSource =
+        persistedSource === 'factory-recommended' || persistedSource === 'user'
+          ? persistedSource : 'user';
+      this.thetaStartDraft = persistedStart;
+      this.thetaStopDraft = persistedStop;
+      this.thetaAppliedStart = persistedStart;
+      this.thetaAppliedStop = persistedStop;
+    }
     this.waterSandParams.vSandTopMax = this.waterSandVSandTopMax;
     if (this.waterSandPreset === 'thick') {
       this.waterSandParams.angleDeg = 4;
@@ -1311,6 +1502,10 @@ struct SandCanvas {
       }
     }
     this.lastTime = now;
+    // §27.6: debounced preferences write (500 ms after the last apply).
+    if (this.pendingThetaPair !== null && now >= this.thetaPairPersistAt) {
+      this.flushThetaPairPersist();
+    }
     const frameDeltaMs = previousFrameTime > 0 ? now - previousFrameTime : 16.7;
     // §26.4: schedule want entry (mutual-exclusion checked inside) and the
     // player tick on the monotonic Date.now() clock. Dispatched commands
