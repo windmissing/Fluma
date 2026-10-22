@@ -1702,8 +1702,13 @@ export class P012WaterSandRenderer {
       }
       const gx0 = 0;
       const gx1 = wb.bufferWidth;
-      const segU = 8;                            // 水平采样步（buffer 像素）
-      const segV = 8;                            // 垂直采样步
+      // 上屏降采样步长自适应（E3 std 超界归因修复）：目标显示块 ≈8px。
+      // 原 segU/segV=8 是 256 宽 buffer 的值（256/8=32 列块）；BUFFER_W 降到
+      // 64 后沿用 8 只剩 8 列块（显示块 33px 平色大块，上屏档位从 12 塌缩到
+      // 5——s132 设备 pxStd 9.38/13.71=0.684 超警戒带的直接机制，归因回执
+      // 证据③）。按 buffer 宽等比缩放：seg = max(1, round(bufW/32))。
+      const segU = Math.max(1, Math.round(wb.bufferWidth / 32));
+      const segV = Math.max(1, Math.round(wb.bufferHeight / 38));
       const suMax = wb.bufferWidth - 1;
       const svMax = wb.bufferHeight - 1;
       for (let bu = 0; bu < gx1; bu += segU) {
@@ -1732,8 +1737,10 @@ export class P012WaterSandRenderer {
       for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
         tierRects.push([]);
       }
-      const segU = 8;
-      const segV = 4;
+      // 上屏降采样步长自适应（同 water 段；原 segU=8/segV=4 是 256 宽值，
+      // 64 宽下水平仅 8 列块——见 water 段注释与归因回执证据③）
+      const segU = Math.max(1, Math.round(ib.bufferWidth / 32));
+      const segV = Math.max(1, Math.round(ib.bufferHeight / 76));
       const suMax = ib.bufferWidth - 1;
       const svMax = ib.bufferHeight - 1;
       for (let bu = 0; bu < ib.bufferWidth; bu += segU) {
