@@ -2281,7 +2281,18 @@ export class WaterSandField {
       return;
     }
     const params: P011CorrectionParams = {
-      relaxBoundSlope: Math.tan(this.params.angleDeg * Math.PI / 180),
+      // preregistration-P011-correction-matrix-v1.md §2.4 (h-consistency
+      // fix): the apply slot MUST read the SAME bound the reservation and
+      // the shadow mirror read — the state machine's STOP slope on dual
+      // runs (tan20 for the 26/20 pair). Reading tan(angleDeg) here (the
+      // legacy engine angle, tan4) split reserve/apply semantics: the
+      // reservation admitted under tan20 while the apply evaluated under
+      // tan4. Legacy never reaches this slot (the route gate requires the
+      // armed machine), but the ternary keeps both sides expression-
+      // identical to computeCorrectionReservation (:2239).
+      relaxBoundSlope: this.relaxHysteresisThresholds !== null
+        ? this.relaxHysteresisThresholds.slopeStop
+        : Math.tan(this.params.angleDeg * Math.PI / 180),
       maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
       localBudget: this.params.vSandTopMax * substepDt,
       totalBudget: this.params.totalMotionBudget * substepDt,

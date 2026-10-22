@@ -1441,6 +1441,69 @@ export default function waterSandFieldTest() {
       }
     });
 
+
+    // preregistration §2.4 h-consistency guard: within one correction
+    // route run, the apply slot's relaxBoundSlope MUST equal the
+    // reservation's (hysteresis.slopeStop = tan20 on the 26/20 pair). The
+    // historical bug read tan(angleDeg)=tan4 in the apply slot — the
+    // reserve admitted under tan20 while the apply evaluated under tan4.
+    // Behavioral signature of the fix: an edge whose residual sits
+    // BETWEEN tan4 and tan20 gets admitted by the reservation AND fully
+    // granted by the apply (no phantom rejections from the tighter h).
+    it('p011_correction_applySlotUsesReservationSlopeStop', 0, () => {
+      const records: P011NaturalObservationRecord[] = [];
+      const probe = new P011NaturalObservationProbe(8, record => {
+        records.push(record);
+      });
+      const field = new WaterSandField(8, 192);
+      const params = defaultWaterSandParams();
+      params.heavyDiffusion = 0;
+      params.lightDiffusion = 0;
+      params.waterLevelRate = 0.001;
+      // engine angle 4 -> tan4 ≈ 0.0699; the 26/20 pair's slopeStop =
+      // tan20 ≈ 0.3640. A hump of 0.5 sits between them: under tan20 the
+      // reservation admits the flanks; under the buggy tan4 the apply
+      // slot would treat nearly everything as overshoot.
+      params.angleDeg = 4;
+      params.totalMotionBudget = 100;
+      params.relaxMode = 'dual-user-configured';
+      params.thetaStartDeg = 26;
+      params.thetaStopDeg = 20;
+      params.thresholdSource = 'user';
+      field.configure(params);
+      field.initialize({
+        waterRegions: [{ startCol: 0, endColInclusive: 7, bottom: 144, height: 38 }],
+        heavyDepositedRegions: [
+          { startCol: 0, endColInclusive: 7, bottom: 0, height: 72 },
+          { startCol: 3, endColInclusive: 4, bottom: 120, height: 0.5 }
+        ],
+        lightDepositedRegions: [{ startCol: 0, endColInclusive: 7, bottom: 72, height: 48 }],
+        heavySuspendedRegions: [],
+        lightSuspendedRegions: []
+      });
+      field.setNaturalObservationProbe(probe);
+      field.setNaturalObservationRunMetadata('calibration', 'corr-hfix', 26, 20);
+      field.setNaturalObservationRouteId('relax-correction-weighted-v1');
+      field.setTilt(0);
+      let sawGranted = false;
+      for (let index = 0; index < 6; index++) {
+        const result = field.step(1 / 60);
+        expect(result.ok).assertTrue();
+        const last = records[records.length - 1];
+        const requested = last.audit.correctionRequested as number;
+        const granted = last.audit.correctionGranted as number;
+        const rejected = last.audit.correctionRejected as number;
+        // closure still holds.
+        expect(Math.abs(requested - (granted + rejected)) < 1e-12).assertTrue();
+        if (granted > 0) {
+          sawGranted = true;
+        }
+      }
+      // The reservation's candidates are granted under the SAME bound —
+      // no systematic rejection from a split h.
+      expect(sawGranted).assertTrue();
+    });
+
     // =====================================================================
     // §27 user-adjustable threshold pair (U1~U13)
     // =====================================================================
