@@ -1361,10 +1361,25 @@ struct SandCanvas {
   }
 
   private initField(): void {
+    // 几何代次（§epoch 修复 2026-10-22）：box 实际变化时递增——render 侧
+    // stratBakedGeometryEpoch !== geometryEpoch 触发 C 层理位图按新
+    // pxPerMaterial=boxH/capacity 重烘焙（λpx=H/k 对齐依赖此值）。
+    // 同尺寸 reset（box 不变）不递增：幂等，避免无谓重烘。
+    const prevBoxW = this.boxW;
+    const prevBoxH = this.boxH;
+    const prevBoxX = this.boxX;
+    const prevBoxY = this.boxY;
     this.boxW = Math.floor(this.canvasW * 0.72);
     this.boxH = Math.floor(this.canvasH * 0.42);
     this.boxX = Math.floor((this.canvasW - this.boxW) / 2);
     this.boxY = Math.floor((this.canvasH - this.boxH) / 2);
+    if (this.boxW !== prevBoxW || this.boxH !== prevBoxH ||
+      this.boxX !== prevBoxX || this.boxY !== prevBoxY) {
+      this.p012GeometryEpoch++;
+      console.info(`[P012] geometryEpoch -> ${this.p012GeometryEpoch} ` +
+        `(box ${prevBoxW}x${prevBoxH}@${prevBoxX},${prevBoxY} -> ` +
+        `${this.boxW}x${this.boxH}@${this.boxX},${this.boxY})`);
+    }
     const cols = Math.floor(this.boxW / this.cellPx);
     const rows = Math.floor(this.boxH / this.cellPx);
     this.field = new SandGrid(cols, rows);

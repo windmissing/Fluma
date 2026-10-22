@@ -917,6 +917,51 @@ function makeCountingCanvas(sink) {
       error: err
     });
   })();
+
+  // ⑨（epoch 修复 2026-10-22）geometryEpoch 变化 → 重烘焙触发；
+  //    epoch 恒定 → 不重烘（幂等）。λpx 随 boxH（pxPerMaterial）变化。
+  //    判据：stratLamPx 在 boxH 变化后按 H/k 公式重算；同 epoch 复渲染不变。
+  (function test9() {
+    const renderer = new P012WaterSandRenderer(cols, 192);
+    const stubBitmap = { _stub: true, width: 64, height: 256 };
+    renderer.stratBitmapH = stubBitmap;
+    renderer.stratBitmapL = stubBitmap;
+    renderer.stratBitmapM = stubBitmap;
+    const ctx = makeCountingCanvas({});
+    // 帧一：boxH=900 → 首烘焙（stratBakedGeometryEpoch 从 -1 变 1）
+    renderer.render(ctx, field.snapshot(), makeContext({
+      appearanceTier: P012AppearanceTier.EAB, boxW: 640, boxH: 900
+    }));
+    const lam1 = renderer.stratLamPx;
+    const bakedEpoch1 = renderer.stratBakedGeometryEpoch;
+    // 帧二：同几何（epoch 同）→ 不重烘（λpx 不变）
+    renderer.render(ctx, field.snapshot(), makeContext({
+      appearanceTier: P012AppearanceTier.EAB, boxW: 640, boxH: 900
+    }));
+    const lam2 = renderer.stratLamPx;
+    const idempotent = lam2 === lam1;
+    // 帧三：几何变化（boxH 900→1200 → pxPerMaterial 变）+ epoch 递增 → 重烘
+    const rawPx = 24 * (1200 / 192);
+    const k = Math.max(1, Math.ceil(256 / rawPx));
+    const expectLam = 256 / k;
+    renderer.render(ctx, field.snapshot(), makeContext({
+      appearanceTier: P012AppearanceTier.EAB, boxW: 640, boxH: 1200,
+      geometryEpoch: 2
+    }));
+    const lam3 = renderer.stratLamPx;
+    const rebaked = Math.abs(lam3 - expectLam) < 1e-9 && lam3 !== lam1;
+    results.push({
+      name: 'p012_c_geometryEpoch_rebake',
+      status: (bakedEpoch1 === 1 && rebaked) ? 'PASS' : 'FAIL',
+      error: `bakedEpoch1=${bakedEpoch1} lam(900)=${lam1.toFixed(2)} ` +
+             `lam(1200)=${lam3.toFixed(2)} expect=${expectLam.toFixed(2)} rebaked=${rebaked}`
+    });
+    results.push({
+      name: 'p012_c_geometryEpoch_idempotent',
+      status: idempotent ? 'PASS' : 'FAIL',
+      error: `lam1=${lam1.toFixed(2)} lam2=${lam2.toFixed(2)} same=${idempotent}`
+    });
+  })();
 })();
 
 // Regression: grain tile must be filled across the WHOLE tile.
