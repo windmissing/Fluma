@@ -111,7 +111,7 @@ export default class EntryAbility extends UIAbility {
     if (params && params.p012ablate !== undefined) {
       const ablate = `${params.p012ablate}`;
       if (ablate === 'off' || ablate === 'grain' || ablate === 'fog' ||
-        ablate === 'spark' || ablate === 'strat') {
+        ablate === 'spark' || ablate === 'strat' || ablate === 'e3i2' || ablate === 'e3n1') {
         AppStorage.setOrCreate('p012ablate', ablate);
         hilog.info(this.hilogDomain, this.hilogTag, 'want param p012ablate=%{public}s', ablate);
       }

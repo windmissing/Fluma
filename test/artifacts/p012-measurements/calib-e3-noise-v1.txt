@@ -1,0 +1,12 @@
+=== N1 定标前置报告（多种子实测，§12.4）===
+采样域：921x1099（=显示盒）+ 余量 64 → 985x1163，步长 1px
+
+seed=20261020: mean=-0.0093 std=0.3098 clampHi=0.000% clampLo=0.000%
+seed=20261021: mean=0.0156 std=0.3052 clampHi=0.000% clampLo=0.000%
+seed=20261022: mean=0.0006 std=0.3079 clampHi=0.000% clampLo=0.000%
+seed=20261023: mean=-0.0104 std=0.3015 clampHi=0.000% clampLo=0.000%
+
+=== 对照与重定标 ===
+N1(原种子) std=0.3098
+旧 mottle 实测 std=0.5494（EA 标定链，calib-tau-static 报告）
+等效 mottle（1+1.63·N1）std=0.5050 vs 旧 0.5494 → 比例 0.919

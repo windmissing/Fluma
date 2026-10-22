@@ -14,14 +14,18 @@ export enum P012AppearanceTier {
 export const P012_APPEARANCE_ROUTE_ID = 'p012-render-material-v1';
 
 /** §10.4 逐项消融开关：off=全部启用（默认）/ grain=跳过颗粒层 /
- *  fog=跳过雾层 / spark=跳过亮粒 / strat=跳过 C 层理（§11.4）。
+ *  fog=跳过雾层 / spark=跳过亮粒 / strat=跳过 C 层理（§11.4）/
+ *  e3i2=跳过 I2 光学缓冲回旧 12 档雾路径（§12.5）/
+ *  e3n1=N1 噪声场回退旧 64 取模 mottle（§12.5）。
  *  外观诊断域，不进物理 checker/遥测。 */
 export enum P012Ablation {
   OFF = 0,
   GRAIN = 1,
   FOG = 2,
   SPARK = 3,
-  STRAT = 4
+  STRAT = 4,
+  E3I2 = 5,
+  E3N1 = 6
 }
 
 /** §10.4 fillRect 策略：tight=精确平铺边界（默认，交付后）/

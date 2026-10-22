@@ -8,6 +8,8 @@ import { WaterSandSnapshot, WaterSandField } from '../physics/WaterSandField';
 import { P012WaterSandAdapter, P012MaterialFrameView } from './P012WaterSandAdapter';
 import { P012MaterialMotionCache } from './P012MaterialMotionCache';
 import { P012MaterialColumnSampler } from './P012MaterialSampler';
+import { P012E3NoiseField } from './P012E3Noise';
+import { P012E3FogBuffer } from './P012E3FogBuffers';
 import hilog from '@ohos.hilog';
 import {
   P012FrameContext, P012AppearanceTier, P012_APPEARANCE_ROUTE_ID,
@@ -149,6 +151,28 @@ const P012_C3_ALPHA = 0.10;
 /** bandNoise 纵向特征尺度盒滤波半径（px；非等间距带纹的相邻周期不规则度） */
 const P012_C_BAND_RPx = 6;
 
+/** ── E3 网格感消除参数（architecture §12；algorithm-E3 §3）── */
+/** I2 缓冲宽（主档 256；384 备选构造定档，运行期不切换——设计稿红线） */
+const P012_E3_BUFFER_W = 256;
+/** 平流相位脏阈值（px）：|aPhaseX - buffer.sampleU| > 此值 → 重烘 */
+const P012_E3_PHASE_EPS = 0.5;
+/** N1 等效 mottle 幅值（定标前置报告 calib-e3-noise-v1：N1 std 0.31 ×
+ *  1.63 = 0.505 vs 旧 mottle 0.5494，比例 0.919 ∈ [0.90,1.10] 界内，
+ *  等效幅值沿用旧链 1.63 = sqrt(1.3²+1.0²) 归一） */
+const P012_E3_MOTTLE_EQUIV_AMP = 1.63;
+/** N1 场烘焙余量（px，素材周期上界 64） */
+const P012_E3_NOISE_MARGIN = 64;
+/** 纯 alpha 诊断图开关（debug build 常量，不进 want/产品；§12.5-2） */
+const P012_E3_DEBUG_ALPHA_ONLY = false;
+/** 雾色（fillFogTiers 与 E3 I2 烘焙共用；rgb(232,240,236)） */
+const P012_FOG_R = 232;
+const P012_FOG_G = 240;
+const P012_FOG_B = 236;
+/** 旧 drawInterfaceBand 的 8 段渐入段高（E3 iface 烘焙 ramp 对齐用） */
+function segHRamp8(bandH: number): number {
+  return bandH / 8;
+}
+
 /** renderer 对外生命周期接口（architecture §1 模块表） */
 export class P012WaterSandRenderer {
   private readonly adapter: P012WaterSandAdapter;
@@ -198,6 +222,21 @@ export class P012WaterSandRenderer {
   /** warp 基线横向慢变表（128 列，[-1,1]；×WARP_RANGE 得周期数）。
    *  确定性 LCG 生成、低频盒滤波，方向反转不换 seed（design §3.1）。 */
   private readonly warpBase: Float64Array = new Float64Array(128);
+  /** ── E3 资源（§12：I2 双缓冲 + N1 噪声场 + 失效检测快照）── */
+  /** N1 渲染专用噪声场（连续，无 64 周期；e3n1 消融时不用） */
+  private e3Noise: P012E3NoiseField | null = null;
+  /** I2 水体雾缓冲（waterTop..sandTop 域） */
+  private e3WaterBuffer: P012E3FogBuffer | null = null;
+  /** I2 界面带缓冲（sandTop±halfW 域） */
+  private e3IfaceBuffer: P012E3FogBuffer | null = null;
+  /** 失效检测：上一帧 smooth 数组快照（层高/waterTop 增量比较） */
+  private readonly e3PrevSmooth: Float64Array[] = [];
+  /** 失效检测：上一帧 q 列快照 */
+  private e3PrevQH: Float64Array | null = null;
+  private e3PrevQL: Float64Array | null = null;
+  /** I2 烘焙/上传计数（单测钩子：静止态零重烘焙断言） */
+  e3BakeCount: number = 0;
+  e3UploadBytes: number = 0;
   /** ── 运动代理（D-B2：相净搬运位移代理 + 连续 UV 平流）── */
   private readonly motionCache: P012MaterialMotionCache;
   private readonly cols: number;
@@ -241,6 +280,11 @@ export class P012WaterSandRenderer {
     this.buildStratNoise(this.stratNoiseL, 20261026);
     this.buildStratNoise(this.stratNoiseM, 20261027);
     this.buildWarpBase(20261028);
+    // E3（§12.4/12.1）：N1 场（渲染专用种子）+ I2 双缓冲（宽档 256，
+    // boxW/boxH 变化时在 render 帧首重建）。快照数组初始化。
+    this.e3Noise = new P012E3NoiseField(20261020);
+    this.e3PrevSmooth.push(new Float64Array(cols), new Float64Array(cols),
+      new Float64Array(cols), new Float64Array(cols));
   }
 
   /** 外观路线身份（独立视觉/性能证据 manifest 用） */
@@ -311,11 +355,18 @@ export class P012WaterSandRenderer {
     // 2) A 档水体雾（EA-batch，算法稿 §4.2）：悬浮浓度 q + 静态水介质斑驳。
     //    只画水体区（sandTop 以上）；界面过渡带在沙体之后画（见步骤 5）。
     //    §10.4 消融：ablation=FOG 时跳过雾层（水体雾 + 界面带同属 A 档雾层）。
+    //    §12 E3：默认走 I2 光学缓冲（连续雾，无 64 周期/12 档阶梯）；
+    //    ablation=E3I2 回旧 fillFogTiers 12 档路径（消融对照）。
     const tier = frameContext.appearanceTier;
     if ((tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
       this.frameAblation !== P012Ablation.FOG) {
-      drawCount += this.drawWaterFog(ctx, view, heightToY, colW,
-        boxX, boxY, boxW, boxH);
+      if (this.frameAblation !== P012Ablation.E3I2) {
+        drawCount += this.e3DrawFogBuffers(ctx, heightToY, colW,
+          boxX, boxY, boxW, boxH, view, false);
+      } else {
+        drawCount += this.drawWaterFog(ctx, view, heightToY, colW,
+          boxX, boxY, boxW, boxH);
+      }
     }
     // 3) 沙体三带：重沙带（bh 以下）/ 轻沙带（mixStart→bh）/ 混合带（sandTop→mixStart）
     //    逐列伪法向光照：s = d(sandTop)/dx（屏幕单位），L = La + Ld·max(dot(n,l),0)
@@ -348,10 +399,17 @@ export class P012WaterSandRenderer {
     // 5) A 档界面光学过渡带（沙体之后绘制）：sandTop 两侧 ±halfW 内
     //    smoothstep 包络雾——沙侧上缘被雾柔和覆盖，消除沙体 fillRect 的硬边。
     //    §10.4 消融：与步骤 2 同属 A 档雾层，ablation=FOG 时一并跳过。
+    //    §12 E3：默认走 I2 interface buffer（e3DrawFogBuffers 第二次调用，
+    //    只画界面带）；E3I2 消融回旧 12 档。
     if ((tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
       this.frameAblation !== P012Ablation.FOG) {
-      drawCount += this.drawInterfaceBand(ctx, view, heightToY, colW,
-        boxX, boxY, boxW, boxH);
+      if (this.frameAblation !== P012Ablation.E3I2) {
+        drawCount += this.e3DrawFogBuffers(ctx, heightToY, colW,
+          boxX, boxY, boxW, boxH, view, true);
+      } else {
+        drawCount += this.drawInterfaceBand(ctx, view, heightToY, colW,
+          boxX, boxY, boxW, boxH);
+      }
     }
     // 6) 容器边框（与原渲染一致的白框）
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
@@ -366,10 +424,23 @@ export class P012WaterSandRenderer {
     }
   }
 
-  /** 生命周期：清连续性配对（reset/inject/invert/后台恢复时页面通知） */
+  /** 生命周期：清连续性配对（reset/inject/invert/后台恢复时页面通知）。
+   *  §12.6：aPhaseX 清零 + I2 双 buffer dirty（防旧场景纹理相位泄漏）；
+   *  N1 场不重建（seed 与格点 hash 绑定，泄漏的是相位不是纹理）。 */
   resetContinuity(): void {
     this.adapter.dispose();
     this.motionCache.reset();
+    this.aPhaseX = 0;
+    if (this.e3WaterBuffer !== null) {
+      this.e3WaterBuffer.dirty = true;
+    }
+    if (this.e3IfaceBuffer !== null) {
+      this.e3IfaceBuffer.dirty = true;
+    }
+    // 快照基线置 NaN：下帧必触发重烘（层高比较 |Δ|>1e-9 对 NaN 恒真）
+    for (let p = 0; p < 4; p++) {
+      this.e3PrevSmooth[p].fill(NaN);
+    }
   }
 
   /** dispose：断开全部引用（aboutToDisappear 调用；幂等） */
@@ -1191,9 +1262,9 @@ export class P012WaterSandRenderer {
   private fillFogTiers(ctx: CanvasRenderingContext2D, tierRects: number[][],
     alphaStep: number, budget: number): number {
     let draws = 0;
-    const fogR = 232;
-    const fogG = 240;
-    const fogB = 236;
+    const fogR = P012_FOG_R;
+    const fogG = P012_FOG_G;
+    const fogB = P012_FOG_B;
     for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
       if (tierRects[t].length === 0) {
         continue;
@@ -1338,6 +1409,321 @@ export class P012WaterSandRenderer {
       }
     }
     return this.fillFogTiers(ctx, tierRects, alphaStep, P012_A_BATCH_DRAW_BUDGET);
+  }
+
+  // ─────────────────── E3 I2 光学缓冲（§12.1-12.3） ───────────────────
+
+  /**
+   * N1 等效 mottle（§12.4 接入点）：e3n1 消融回旧 64 取模 mottleAt；
+   *  默认走 N1 场连续采样（无 64 周期）。等效幅值 1.63（定标前置报告）。
+   *  平流相位 aPhaseX：pairValid 时由 motionCache 材料净位移推进（与 B 档
+   *  颗粒同一代理；旧 mottleAt 注释「运动代理接手」从未接线，E3 顺手补上
+   *  ——雾斑驳跟随材料横向搬运）。烘焙循环用 fogPhaseX() 取本帧相位。
+   */
+  private mottleEquiv(xPx: number, yPx: number): number {
+    if (this.frameAblation === P012Ablation.E3N1 || this.e3Noise === null) {
+      return this.mottleAt(xPx, yPx);           // I1 消融档（旧路径）
+    }
+    const n = this.e3Noise.sample(xPx, yPx);
+    return 1 + P012_E3_MOTTLE_EQUIV_AMP * n;
+  }
+
+  /** 雾平流相位（E3）：pairValid 时取 motionCache 重相净位移（与 B 档 offH
+   *  同源）；断配对冻结（保持 aPhaseX 旧值，不跨失效帧累计）。 */
+  private fogPhaseX(): number {
+    return this.lastPairValid ? this.motionCache.meanDeltaXPx(true) : this.aPhaseX;
+  }
+
+  /**
+   * I2 失效检测（§12.3 矩阵）：层高/q/phase 任一变化 → dirty；
+   * scale/尺寸变化 → buffer 重建。返回 [waterDirty, ifaceDirty]。
+   * 静止态全命中 → 双 false（零烘焙零上传）。
+   */
+  private e3Invalidate(view: P012MaterialFrameView, boxW: number, boxH: number): boolean[] {
+    const n = this.cols;
+    // scale 检测：缓冲宽高与 box 不匹配 → 重建（含首帧）
+    if (this.e3WaterBuffer === null || this.e3IfaceBuffer === null ||
+      Math.abs(this.e3WaterBuffer.height -
+        Math.round(P012_E3_BUFFER_W * boxH / boxW)) > 0) {
+      this.e3WaterBuffer = new P012E3FogBuffer(P012_E3_BUFFER_W, boxW, boxH);
+      this.e3IfaceBuffer = new P012E3FogBuffer(P012_E3_BUFFER_W, boxW, boxH);
+      this.e3PrevQH = new Float64Array(n);
+      this.e3PrevQL = new Float64Array(n);
+      // 重建后全 dirty（首次比较基线也重置）
+      this.e3PrevSmooth[0].fill(NaN);
+      this.e3PrevSmooth[1].fill(NaN);
+      this.e3PrevSmooth[2].fill(NaN);
+      this.e3PrevSmooth[3].fill(NaN);
+      this.e3WaterBuffer.dirty = true;
+      this.e3IfaceBuffer.dirty = true;
+    }
+    // 层高/waterTop 增量检测：任一列 |Δ|>1e-9 → dirty
+    const passes: Float64Array[] = [this.smoothBh, this.smoothMixStart,
+      this.smoothSandTop, this.smoothWaterTop];
+    let layersChanged = false;
+    for (let p = 0; p < 4 && !layersChanged; p++) {
+      const cur = passes[p];
+      const prev = this.e3PrevSmooth[p];
+      for (let c = 0; c < n; c++) {
+        if (Math.abs(cur[c] - prev[c]) > 1e-9) {
+          layersChanged = true;
+          break;
+        }
+      }
+    }
+    // q 增量检测
+    let qChanged = false;
+    for (let c = 0; c < n && !qChanged; c++) {
+      const qh = this.suspQ(view.suspHAt(c), c);
+      const ql = this.suspQ(view.suspLAt(c), c);
+      if (Math.abs(qh - this.e3PrevQH![c]) > 1e-9 ||
+        Math.abs(ql - this.e3PrevQL![c]) > 1e-9) {
+        qChanged = true;
+      }
+    }
+    // phase 检测：water-fog 跟 aPhaseX；interface 静止相位（不随平流）
+    const phaseChangedWater = Math.abs(this.fogPhaseX() - this.e3WaterBuffer.sampleU) >
+      P012_E3_PHASE_EPS;
+    if (layersChanged || qChanged) {
+      this.e3WaterBuffer.dirty = true;
+      this.e3IfaceBuffer.dirty = true;
+    } else if (phaseChangedWater) {
+      this.e3WaterBuffer.dirty = true;
+    }
+    return [this.e3WaterBuffer.dirty, this.e3IfaceBuffer.dirty];
+  }
+
+  /**
+   * I2 烘焙：water-fog 缓冲（§12.1 采样循环）。
+   * 逐样本：局部 x（sampler 契约）→ sandTop/waterTop 连续层高 → q 标量
+   * 插值 → N1 场（平流相位）→ fogAlpha（既有 65 点 LUT，零改动）。
+   */
+  private e3BakeWaterBuffer(view: P012MaterialFrameView, buffer: P012E3FogBuffer,
+    heightToY: (h: number) => number, boxW: number, boxH: number,
+    qHArr: Float64Array, qLArr: Float64Array): void {
+    const w = buffer.width;
+    const h = buffer.height;
+    const halfW = P012_A_WFULL_PX / 2;
+    const sampler = new P012MaterialColumnSampler(this.smoothBh, this.smoothMixStart,
+      this.smoothSandTop, boxW);
+    const waterSampler = new P012MaterialColumnSampler(this.smoothWaterTop,
+      this.smoothWaterTop, this.smoothSandTop, boxW);
+    for (let u = 0; u < w; u++) {
+      const x = (u + 0.5) * boxW / w;            // 局部坐标（相对 boxX）
+      const qH = this.scalarAt(qHArr, x, boxW);
+      const qL = this.scalarAt(qLArr, x, boxW);
+      const gTopY = this.pxOfHeight(waterSampler, x, boxH);
+      const gIfaceY = this.pxOfHeightSampler(sampler, x, boxH, 2);
+      for (let v = 0; v < h; v++) {
+        const yLocal = (v + 0.5) * boxH / h;     // 局部 y（相对 boxY）
+        // 世界 y（N1 场采样坐标 = 屏幕 y 语义，局部即可——场与显示同尺度）
+        const dist = Math.abs(gIfaceY - yLocal);
+        const tauOpt = dist < halfW
+          ? P012_A_TAU_INTERFACE * (1 - dist / halfW) : 0;
+        const mot = this.mottleEquiv(x - this.fogPhaseX(), yLocal);
+        const tauStatic = this.staticTau(mot);
+        const tau = Math.max(0, tauOpt + P012_A_KH * qH + P012_A_KL * qL + tauStatic);
+        let alpha = this.fogAlpha(tau);
+        alpha = Math.min(P012_A_FOG_ALPHA_MAX, alpha);
+        if (alpha <= 0.004 || yLocal < gTopY || yLocal >= gIfaceY) {
+          buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B, 0);
+        } else {
+          buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B, alpha);
+        }
+      }
+    }
+    buffer.sampleU = this.fogPhaseX();
+    this.e3BakeCount++;
+    this.e3UploadBytes += buffer.flushToUpload();
+    buffer.transferBitmap();
+    buffer.dirty = false;
+  }
+
+  /**
+   * I2 烘焙：interface 缓冲（sandTop±halfW 域，沙体之后绘制）。
+   * alpha 上限守设计候选 0.55（与旧 drawInterfaceBand 同界）。
+   */
+  private e3BakeIfaceBuffer(view: P012MaterialFrameView, buffer: P012E3FogBuffer,
+    heightToY: (h: number) => number, boxW: number, boxH: number,
+    qHArr: Float64Array, qLArr: Float64Array): void {
+    const w = buffer.width;
+    const h = buffer.height;
+    const wFull = P012_A_WFULL_PX;
+    const halfW = wFull / 2;
+    const sampler = new P012MaterialColumnSampler(this.smoothBh, this.smoothMixStart,
+      this.smoothSandTop, boxW);
+    for (let u = 0; u < w; u++) {
+      const x = (u + 0.5) * boxW / w;
+      const qH = this.scalarAt(qHArr, x, boxW);
+      const qL = this.scalarAt(qLArr, x, boxW);
+      const ifaceY = this.pxOfHeightSampler(sampler, x, boxH, 2);
+      const bandTop = ifaceY - halfW;
+      const bandBot = ifaceY + wFull * 0.25;
+      for (let v = 0; v < h; v++) {
+        const yLocal = (v + 0.5) * boxH / h;
+        const d = ifaceY - yLocal;
+        if (yLocal < bandTop || yLocal >= bandBot) {
+          buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B, 0);
+          continue;
+        }
+        const t = Math.max(0, Math.min(1, (d + halfW) / wFull));
+        // 顶部 ramp 渐入（对齐旧 drawInterfaceBand 的 (s+0.5)/2.5 段语义：
+        // 前 2.5/8 段高内线性渐入到 1）
+        const rampIn = Math.min(1, (yLocal - bandTop) / (bandBot - bandTop) * 2.5);
+        const waterWeight = t * t * (3 - 2 * t) * rampIn;
+        if (waterWeight <= 0.01) {
+          buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B, 0);
+          continue;
+        }
+        const mot = this.mottleEquiv(x - this.fogPhaseX(), yLocal);
+        const tau = Math.max(0, (P012_A_TAU_INTERFACE * waterWeight +
+          P012_A_KH * qH * waterWeight + P012_A_KL * qL * waterWeight) * mot);
+        let alpha = this.fogAlpha(tau);
+        alpha = Math.min(P012_A_BAND_ALPHA_MAX, alpha);
+        buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B,
+          alpha > 0.004 ? alpha : 0);
+      }
+    }
+    this.e3BakeCount++;
+    this.e3UploadBytes += buffer.flushToUpload();
+    buffer.transferBitmap();
+    buffer.dirty = false;
+  }
+
+  /** 标量列采样：任意局部 x → 列值线性插值（与 sampler 同定位同权重） */
+  private scalarAt(arr: Float64Array, x: number, boxW: number): number {
+    const n = arr.length;
+    const colW = boxW / n;
+    const cx = Math.max(0, Math.min(n - 1e-6, x / colW));
+    const i = Math.floor(cx);
+    const t = cx - i;
+    if (i >= n - 1) {
+      return arr[n - 1];
+    }
+    return arr[i] * (1 - t) + arr[i + 1] * t;
+  }
+
+  /** 采样器高度 → 局部 y（px，相对 boxY）：heightToY 局部版（boxX=0 基） */
+  private pxOfHeightSampler(sampler: P012MaterialColumnSampler, x: number,
+    boxH: number, which: number): number {
+    const hVal = which === 2 ? sampler.sandTopAtPx(x)
+      : (which === 0 ? sampler.bhAtPx(x) : sampler.mixStartAtPx(x));
+    return (this.capacity - Math.max(0, Math.min(this.capacity, hVal))) *
+      boxH / this.capacity;
+  }
+
+  /** waterTop 专用：借用 sampler 接口（第一列数组即 waterTop） */
+  private pxOfHeight(waterSampler: P012MaterialColumnSampler, x: number,
+    boxH: number): number {
+    return this.pxOfHeightSampler(waterSampler, x, boxH, 0);
+  }
+
+  /**
+   * I2 绘制（§12.1 提交）：失效检测 + 按需烘焙（两 buffer 一次完成）；
+   * 绘制按 ifaceOnly 分流——false=水体雾（沙体前），true=界面带（沙体后，
+   * 与旧 drawInterfaceBand 时序一致）。每 buffer 一次 clip（层域曲线）+
+   * 九参 drawImage（双线性硬件缩放）+ smoothing high。draw≤2/次 ≤6 预算 ✓。
+   * e3i2 消融时调用方直接走旧 12 档路径（本方法不进）。
+   */
+  private e3DrawFogBuffers(ctx: CanvasRenderingContext2D,
+    heightToY: (h: number) => number, colW: number,
+    boxX: number, boxY: number, boxW: number, boxH: number,
+    view: P012MaterialFrameView, ifaceOnly: boolean): number {
+    // 失效检测先行（首帧在此创建双 buffer；后取引用）
+    const dirties = this.e3Invalidate(view, boxW, boxH);
+    const wb = this.e3WaterBuffer!;
+    const ib = this.e3IfaceBuffer!;
+    const n = this.cols;
+    const qHArr = new Float64Array(n);
+    const qLArr = new Float64Array(n);
+    for (let c = 0; c < n; c++) {
+      qHArr[c] = this.suspQ(view.suspHAt(c), c);
+      qLArr[c] = this.suspQ(view.suspLAt(c), c);
+    }
+    if (dirties[0]) {
+      this.e3BakeWaterBuffer(view, wb, heightToY, boxW, boxH, qHArr, qLArr);
+    }
+    if (dirties[1]) {
+      this.e3BakeIfaceBuffer(view, ib, heightToY, boxW, boxH, qHArr, qLArr);
+    }
+    // 快照更新（失效检测基线）
+    this.e3PrevSmooth[0].set(this.smoothBh);
+    this.e3PrevSmooth[1].set(this.smoothMixStart);
+    this.e3PrevSmooth[2].set(this.smoothSandTop);
+    this.e3PrevSmooth[3].set(this.smoothWaterTop);
+    this.e3PrevQH!.set(qHArr);
+    this.e3PrevQL!.set(qLArr);
+    // N1 场覆盖维护（§12.3：补边不重播种；覆盖 [−margin−aPhaseX, boxW+margin−aPhaseX]）
+    if (this.e3Noise !== null) {
+      const needX0 = -this.fogPhaseX() - P012_E3_NOISE_MARGIN;
+      const needW = boxW + 2 * P012_E3_NOISE_MARGIN;
+      this.e3Noise.shiftAndBake(needX0, 0, needW, boxH);
+    }
+    // 绘制（按 ifaceOnly 分流）——**平台降级路径**（2026-10-22 取证）：
+    // ArkTS 真机 OffscreenCanvas 在帧循环内 putImageData 产出全白（与
+    // 内容/alpha/尺寸无关，构造期调用正常——makeGrainBitmap 先例），
+    // I2 的 RGBA 位图上屏链不可用。降级：I2 计算面全保留（N1 连续雾场、
+    // 256×303 采样、失效缓存），上屏改「buffer 降采样 12 档矩形带 +
+    // fillFogTiers 提交器」（与旧路径同 draw 预算；E3 的 N1 收益保留，
+    // I2 视觉连续收益待 architect 重排上屏通道后恢复）。
+    // 取证链：s112-s116 五轮真机诊断（E3BUF 日志）+ Node 通道对照。
+    let draws = 0;
+    if (!ifaceOnly) {
+      // 水体雾：waterTop..sandTop 域，buffer premul alpha → 12 档矩形带
+      const tierRects: number[][] = [];
+      const alphaStep = P012_A_FOG_ALPHA_MAX / P012_A_ALPHA_TIERS;
+      for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
+        tierRects.push([]);
+      }
+      const gx0 = 0;
+      const gx1 = wb.bufferWidth;
+      const segU = 8;                            // 水平采样步（buffer 像素）
+      const segV = 8;                            // 垂直采样步
+      for (let bu = 0; bu < gx1; bu += segU) {
+        const x0 = boxX + bu * boxW / wb.bufferWidth;
+        const x1 = boxX + (bu + segU) * boxW / wb.bufferWidth;
+        for (let bv = 0; bv < wb.bufferHeight; bv += segV) {
+          const a = wb.readPremulAlpha(bu + (segU >> 1), bv + (segV >> 1));
+          if (a <= 0.004) {
+            continue;
+          }
+          const alpha = Math.min(P012_A_FOG_ALPHA_MAX, a);
+          const tierIdx = Math.min(P012_A_ALPHA_TIERS - 1,
+            Math.floor(alpha / alphaStep));
+          const y0 = boxY + bv * boxH / wb.bufferHeight;
+          const y1 = boxY + (bv + segV) * boxH / wb.bufferHeight;
+          tierRects[tierIdx].push(x0, y0, x1 - x0, y1 - y0);
+        }
+      }
+      draws += this.fillFogTiers(ctx, tierRects, alphaStep, P012_A_BATCH_DRAW_BUDGET);
+    } else {
+      // 界面带：sandTop±(halfW..quarterW) 域，同降级提交
+      const tierRects: number[][] = [];
+      const alphaStep = P012_A_BAND_ALPHA_MAX / P012_A_ALPHA_TIERS;
+      for (let t = 0; t < P012_A_ALPHA_TIERS; t++) {
+        tierRects.push([]);
+      }
+      const segU = 8;
+      const segV = 4;
+      for (let bu = 0; bu < ib.bufferWidth; bu += segU) {
+        const x0 = boxX + bu * boxW / ib.bufferWidth;
+        const x1 = boxX + (bu + segU) * boxW / ib.bufferWidth;
+        for (let bv = 0; bv < ib.bufferHeight; bv += segV) {
+          const a = ib.readPremulAlpha(bu + (segU >> 1), bv + (segV >> 1));
+          if (a <= 0.004) {
+            continue;
+          }
+          const alpha = Math.min(P012_A_BAND_ALPHA_MAX, a);
+          const tierIdx = Math.min(P012_A_ALPHA_TIERS - 1,
+            Math.floor(alpha / alphaStep));
+          const y0 = boxY + bv * boxH / ib.bufferHeight;
+          const y1 = boxY + (bv + segV) * boxH / ib.bufferHeight;
+          tierRects[tierIdx].push(x0, y0, x1 - x0, y1 - y0);
+        }
+      }
+      draws += this.fillFogTiers(ctx, tierRects, alphaStep, P012_A_BATCH_DRAW_BUDGET);
+    }
+    return draws;
   }
 
   /** 显示 profile：4 遍 3 点移动平均（与原 renderWaterSand 完全一致的平滑） */

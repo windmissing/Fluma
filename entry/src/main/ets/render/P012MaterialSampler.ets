@@ -8,8 +8,11 @@
 // 共享边界（§11.2）：C 在分段点调用（K+1 次/带）；E3 未来雾 alpha/材质密度
 //   采样直接 import 本类，禁止第二套插值实现。
 // 保层序证明（非负权重线性插值）：t∈[0,1)、权重 (1-t,t) 非负 →
-//   每条边界曲线是列值的凸组合 → 逐点保持 bottomH ≤ mixStart(x) ≤ bh(x)
-//   ≤ sandTop(x)（因列级 smooth 数组本身满足该序，凸组合保序）。
+//   每条边界曲线是列值的凸组合 → 逐点保持 0 ≤ bh(x) ≤ mixStart(x)
+//   ≤ sandTop(x)（因 smoothMixStart = bh + bl ≥ bh，列级 smooth 数组
+//   本身满足该序，凸组合保序）。E3 设计稿 §4 勘误：早期注释误写为
+//   mixStart ≤ bh，与 buildDisplayProfiles 的赋值（smoothMixStart[c] =
+//   bh+bl）不符——以代码实际层序为准。
 
 /** 插值定位结果（ArkTS 禁止数组解构，用显式类） */
 class P012SamplerSplit {

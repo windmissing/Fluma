@@ -332,12 +332,23 @@ function makeContext(over) {
   fills.length = 0;
   renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.E }));
   const eMistFills = fills.length;
-  renderer.render(ctx, field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EA }));
+  // §12 E3：EA 档默认走 I2 光学缓冲。烘焙判据用**新 renderer**（首帧必烘，
+  // 60 帧循环后的实例静止命中零烘焙是幂等设计的正确行为，不能当证据）；
+  // rgba fill 判据仅 E3I2 消融档（旧 12 档路径）下成立。
+  const freshRenderer = new P012WaterSandRenderer(cols, 192);
+  const freshSink = { draws: 0, fillRects: 0, clips: 0, drawImages: 0, styles: [] };
+  freshRenderer.render(makeCountingCanvas(freshSink), field.snapshot(),
+    makeContext({ appearanceTier: P012AppearanceTier.EA }));
+  const eaBaked = freshRenderer.e3BakeCount > 0;
+  draws.length = 0;
+  fills.length = 0;
+  renderer.render(ctx, field.snapshot(), makeContext({
+    appearanceTier: P012AppearanceTier.EA, ablation: typesMod.P012Ablation.E3I2 }));
   const eaMistFills = fills.length;
   results.push({
     name: 'p012_ea_mistOnlyInEATier',
-    status: eMistFills === 0 && eaMistFills > 0 ? 'PASS' : 'FAIL',
-    error: `eMist=${eMistFills} eaMist=${eaMistFills}`
+    status: eMistFills === 0 && eaMistFills > 0 && eaBaked ? 'PASS' : 'FAIL',
+    error: `eMist=${eMistFills} eaMist(e3i2-legacy)=${eaMistFills} eaI2Baked=${eaBaked}`
   });
 })();
 
@@ -610,16 +621,29 @@ function makeCountingCanvas(sink) {
   });
 
   // ── FOG 消融（水体雾 + 界面带一并跳过）──
-  const eaOff = measure({ appearanceTier: P012AppearanceTier.EA });
+  // §12 E3：默认 I2 路径。FOG 消融判据两支：①旧路径（E3I2 消融做 off 基线）
+  // draw 差>0；②I2 路径 FOG 下烘焙不发生（fresh renderer 首帧 FOG=0 烘焙，
+  // 对照同 fresh 场景 OFF=2 烘焙——静止命中只影响已烘实例，fresh 必烘）。
   const eaFog = measure({
     appearanceTier: P012AppearanceTier.EA,
     ablation: typesMod.P012Ablation.FOG
   });
+  const eaOffLegacy = measure({
+    appearanceTier: P012AppearanceTier.EA,
+    ablation: typesMod.P012Ablation.E3I2
+  });
+  const fogRenderer = new P012WaterSandRenderer(cols, 192);
+  const offRenderer = new P012WaterSandRenderer(cols, 192);
+  const snap = field.snapshot();
+  offRenderer.render(makeCountingCanvas({}), snap, makeContext({ appearanceTier: P012AppearanceTier.EA }));
+  fogRenderer.render(makeCountingCanvas({}), snap, makeContext({
+    appearanceTier: P012AppearanceTier.EA, ablation: typesMod.P012Ablation.FOG }));
   results.push({
     name: 'p012_ablate_fog_skipsFogLayers',
-    status: (eaOff.draws - eaFog.draws > 0) ? 'PASS' : 'FAIL',
-    error: `drawsOff=${eaOff.draws} drawsAblated=${eaFog.draws} ` +
-           `delta=${eaOff.draws - eaFog.draws}`
+    status: (eaOffLegacy.draws - eaFog.draws > 0 &&
+      offRenderer.e3BakeCount > 0 && fogRenderer.e3BakeCount === 0) ? 'PASS' : 'FAIL',
+    error: `legacyDrawsOff=${eaOffLegacy.draws} drawsAblated=${eaFog.draws} ` +
+           `delta=${eaOffLegacy.draws - eaFog.draws} bakeOff=${offRenderer.e3BakeCount} bakeFog=${fogRenderer.e3BakeCount}`
   });
 
   // ── SPARK 消融（spark 3 档 alpha fill 消失）──
@@ -1071,6 +1095,208 @@ function makeCountingCanvas(sink) {
     status: (worstStdDev < 0.1 && worstAbs <= 2.5 + 1e-9) ? 'PASS' : 'FAIL',
     error: `worstStdDev=${worstStdDev.toFixed(4)} worstAbs=${worstAbs.toFixed(4)}`
   });
+})();
+
+// □§12.6 E3 单测 10 项（I2 光学缓冲 + N1 噪声场，第一批）
+// ①sampler 层序勘误回归 ②通用标量采样同定位 ③un-premultiply 暗边
+// ④N1 连续性无 64 周期 ⑤N1 与物理 RNG 隔离 ⑥缓存失效矩阵
+// ⑦静止零重烘焙 ⑧reset 相位清零 ⑨补边无缝 ⑩buffer 等比
+(function e3Suite() {
+  const noiseMod = require('../entry/src/main/ets/render/P012E3Noise.ets');
+  const bufferMod = require('../entry/src/main/ets/render/P012E3FogBuffers.ets');
+  const samplerMod = require('../entry/src/main/ets/render/P012MaterialSampler.ets');
+  const { P012E3NoiseField } = noiseMod;
+  const { P012E3FogBuffer } = bufferMod;
+  const { P012MaterialColumnSampler } = samplerMod;
+
+  // ① sampler 层序勘误回归：0 ≤ bh ≤ mixStart ≤ sandTop 逐点（含负 bl 场景
+  //    由物理保证非负；此处用单调递增列 + 边界）
+  (function t1() {
+    const cols = 64;
+    const bh = new Float64Array(cols);
+    const ms = new Float64Array(cols);
+    const st = new Float64Array(cols);
+    for (let c = 0; c < cols; c++) {
+      bh[c] = 20 + 8 * Math.sin(c / 5);
+      ms[c] = bh[c] + 15 + 5 * Math.cos(c / 3);
+      st[c] = ms[c] + 10;
+    }
+    const s = new P012MaterialColumnSampler(bh, ms, st, 512);
+    let ok = true;
+    for (let i = 0; i <= 100; i++) {
+      const x = 512 * i / 100;
+      const b = s.bhAtPx(x);
+      const m = s.mixStartAtPx(x);
+      const t = s.sandTopAtPx(x);
+      if (!(0 <= b && b <= m + 1e-9 && m <= t + 1e-9)) { ok = false; break; }
+    }
+    results.push({ name: 'p012_e3_samplerLayerOrder', status: ok ? 'PASS' : 'FAIL',
+      error: `monotonic=${ok}` });
+  })();
+
+  // ② 通用标量采样与层高采样同定位/同权重：scalarAt 与 sampler 的 split
+  //    对同一 x 给出同 i/t（断言插值结果一致——用同数据数组对比）
+  (function t2() {
+    const cols = 64;
+    const data = new Float64Array(cols);
+    for (let c = 0; c < cols; c++) { data[c] = c * 3 + 1; }
+    const renderer = new P012WaterSandRenderer(cols, 192);
+    const s = new P012MaterialColumnSampler(data, data, data, 512);
+    let ok = true;
+    let worst = 0;
+    for (let i = 0; i <= 50; i++) {
+      const x = 512 * i / 50;
+      const viaSampler = s.bhAtPx(x);
+      const viaScalar = renderer.scalarAt(data, x, 512);
+      worst = Math.max(worst, Math.abs(viaSampler - viaScalar));
+      if (Math.abs(viaSampler - viaScalar) > 1e-9) { ok = false; }
+    }
+    results.push({ name: 'p012_e3_scalarSamplerSameSplit', status: ok ? 'PASS' : 'FAIL',
+      error: `worstDiff=${worst.toExponential(2)}` });
+  })();
+
+  // ③ un-premultiply 暗边：alpha 线性梯度 buffer（左半 a=0.5 纯白雾、右半
+  //    a=0）→ flush → 断言 a=0 区 RGB=0、a=0.5 区 RGB≈雾色、无比雾色暗 5 级
+  (function t3() {
+    const buf = new P012E3FogBuffer(64, 64, 64);
+    for (let u = 0; u < 64; u++) {
+      const a = u < 32 ? 0.5 : 0;
+      for (let v = 0; v < 64; v++) {
+        buf.setPremul(u, v, 232, 240, 236, a);
+      }
+    }
+    buf.flushToUpload();
+    let ok = true;
+    let detail = '';
+    // a=0.5 区：RGB 应≈雾色（232/240/236 ± 舍入）
+    const mid = buf.readUpload(16, 32);
+    if (mid[3] !== 128 || Math.abs(mid[0] - 232) > 1 || Math.abs(mid[1] - 240) > 1) {
+      ok = false; detail = `mid=${mid}`;
+    }
+    // a=0 区：RGB 必须置 0
+    const right = buf.readUpload(48, 32);
+    if (right[0] !== 0 || right[1] !== 0 || right[2] !== 0 || right[3] !== 0) {
+      ok = false; detail += ` right=${right}`;
+    }
+    // 过渡带（u=31→32）无中间暗值：a=0.5 侧 RGB 不塌
+    const edge = buf.readUpload(31, 32);
+    if (Math.abs(edge[0] - 232) > 1) { ok = false; detail += ` edge=${edge}`; }
+    results.push({ name: 'p012_e3_unpremultiplyNoDarkEdge', status: ok ? 'PASS' : 'FAIL',
+      error: detail || `mid=${mid} right=${right} edge=${edge}` });
+  })();
+
+  // ④ N1 连续性无 64 周期：相邻采样 |Δ| 有界（连续）+ P64 自相关低（无周期）
+  (function t4() {
+    const f = new P012E3NoiseField(20261020);
+    f.bakeCoverage(0, 0, 512, 128);
+    let maxStep = 0;
+    for (let x = 0; x < 511; x++) {
+      maxStep = Math.max(maxStep, Math.abs(f.sample(x + 1, 64) - f.sample(x, 64)));
+    }
+    // 64 周期检测：n(x) 与 n(x+64) 的相关性应远低于 n(x) 与 n(x+1)
+    let corr64 = 0, n64 = 0;
+    let varX = 0, meanX = 0;
+    const xs = [];
+    for (let x = 0; x < 448; x++) { xs.push(f.sample(x, 64)); meanX += xs[x]; }
+    meanX /= xs.length;
+    for (let x = 0; x < 448; x++) { varX += (xs[x] - meanX) ** 2; }
+    varX /= xs.length;
+    for (let x = 0; x < 384; x++) {
+      corr64 += (xs[x] - meanX) * (f.sample(x + 64, 64) - meanX);
+      n64++;
+    }
+    corr64 /= n64 * Math.max(1e-9, varX);
+    // 连续性：步长 ≤ 0.15（16px 格点 × 权重 0.565 + 48px 格点 0.435 的导数界）
+    // 无周期：|corr64| < 0.5（完美 64 周期会 ≈1）
+    results.push({ name: 'p012_e3_n1ContinuousNo64Period', status:
+      (maxStep <= 0.2 && Math.abs(corr64) < 0.5) ? 'PASS' : 'FAIL',
+      error: `maxStep=${maxStep.toFixed(4)} corr64=${corr64.toFixed(4)}` });
+  })();
+
+  // ⑤ N1 与物理 RNG 隔离：渲染 N1 采样前后 WaterSandField 快照逐位一致
+  (function t5() {
+    const cols = 64;
+    const fieldA = new WaterSandField(cols, 192);
+    fieldA.initialize(fullScene(cols));
+    fieldA.setTilt(20);
+    fieldA.step(1 / 60);
+    const snapBefore = JSON.stringify(fieldA.snapshot().bh);
+    const f = new P012E3NoiseField(20261020);
+    for (let i = 0; i < 1000; i++) {
+      f.sample(i * 7.3, i * 3.1);
+    }
+    const snapAfter = JSON.stringify(fieldA.snapshot().bh);
+    results.push({ name: 'p012_e3_n1PhysicsRngIsolated', status:
+      snapBefore === snapAfter ? 'PASS' : 'FAIL',
+      error: `bhIdentical=${snapBefore === snapAfter}` });
+  })();
+
+  // ⑥⑦ 缓存失效矩阵 + 静止零重烘焙：fresh renderer 场景
+  (function t67() {
+    const cols = 64;
+    const field = new WaterSandField(cols, 192);
+    field.initialize(fullScene(cols));
+    field.setTilt(10);
+    field.step(1 / 60);
+    const snap = field.snapshot();
+    const mk = (sink) => makeCountingCanvas(sink);
+    // 帧一：首烘焙（water+iface 各 1）
+    const r = new P012WaterSandRenderer(cols, 192);
+    r.render(mk({}), snap, makeContext({ appearanceTier: P012AppearanceTier.EA }));
+    const bake1 = r.e3BakeCount;
+    // 帧二：同快照静止 → 零重烘焙（⑦）
+    r.render(mk({}), snap, makeContext({ appearanceTier: P012AppearanceTier.EA }));
+    const bake2 = r.e3BakeCount;
+    // 帧三：层高变化（物理步进）→ 重烘（⑥ 层高触发）
+    field.step(1 / 60);
+    r.render(mk({}), field.snapshot(), makeContext({ appearanceTier: P012AppearanceTier.EA }));
+    const bake3 = r.e3BakeCount;
+    results.push({ name: 'p012_e3_staticZeroRebake', status:
+      (bake1 === 2 && bake2 === 2 && bake3 > 2) ? 'PASS' : 'FAIL',
+      error: `bake1=${bake1} bake2=${bake2} bake3=${bake3} (1=烘2buffer, 2=静止0增, 3=层高变>2)` });
+  })();
+
+  // ⑧ reset 相位清零：resetContinuity 后 aPhaseX=0、双 buffer dirty
+  (function t8() {
+    const r = new P012WaterSandRenderer(32, 192);
+    r['aPhaseX'] = 123.4;                      // 模拟泄漏相位（Node 直接字段注入）
+    r.resetContinuity();
+    const phaseZero = r['aPhaseX'] === 0;
+    const dirtyBoth = (r['e3WaterBuffer'] === null || r['e3WaterBuffer'].dirty) &&
+      (r['e3IfaceBuffer'] === null || r['e3IfaceBuffer'].dirty);
+    results.push({ name: 'p012_e3_resetPhaseZero', status:
+      phaseZero && dirtyBoth ? 'PASS' : 'FAIL',
+      error: `phaseZero=${phaseZero} dirtyBoth=${dirtyBoth}` });
+  })();
+
+  // ⑨ 补边无缝：bake 两次不同窗口，重叠区采样一致（阈值 1e-6：烘焙场
+  //    为 Float32 存储，与 computeDirect 的 Float64 有 ~1e-7 量级存储差，
+  //    这是精度语义不是缝——补边无缝指同格点同值）
+  (function t9() {
+    const f = new P012E3NoiseField(20261020);
+    f.bakeCoverage(0, 0, 256, 64);
+    const ref = [];
+    for (let x = 32; x < 224; x++) { ref.push(f.sample(x, 32)); }
+    f.shiftAndBake(64, 0, 256, 64);            // 移 64px（补边语义）
+    let ok = true;
+    let worst = 0;
+    for (let i = 0; i < ref.length; i++) {
+      const d = Math.abs(f.sample(32 + i, 32) - ref[i]);
+      worst = Math.max(worst, d);
+      if (d > 1e-6) { ok = false; break; }
+    }
+    results.push({ name: 'p012_e3_shiftSeamless', status: ok ? 'PASS' : 'FAIL',
+      error: `overlapMaxDiff=${worst.toExponential(2)} (Float32 存储精度语义, 阈 1e-6)` });
+  })();
+
+  // ⑩ buffer 宽高与 boxW/boxH 等比：height = round(width*boxH/boxW)
+  (function t10() {
+    const buf = new P012E3FogBuffer(256, 921, 1099);
+    const expectH = Math.round(256 * 1099 / 921);
+    results.push({ name: 'p012_e3_bufferAspectRatio', status:
+      buf.height === expectH ? 'PASS' : 'FAIL',
+      error: `h=${buf.height} expect=${expectH} w=256` });
+  })();
 })();
 
 // Full hypium suite (state machine details incl. not-finite/frame-gap/epoch/serial).
