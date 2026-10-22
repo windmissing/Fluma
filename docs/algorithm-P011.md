@@ -2018,3 +2018,16 @@ z >> ell_J  => p_eff,J → rhoEffBulk*g*ell_J   // 深层应力饱和
 | 安息角启动/保持/停止响应（覆盖角度转折区） | residual 高于观测标定的起动角时开始滑；进入起动与停止角之间保持此前 active 状态；active 时 residual 低于停止角后停止。停止后不在阈值附近逐步反复启停。角度值来自逐边观测，不以“容器角度约 30°/20°”替代 residual 转折。 | 对逐边事件按同 run、相邻有效 substep bracket；检查 start、hold、stop 次序与 request/grant。active 不得仅因 grant=0 被重标为 stop；报告阈值置信区间、预算限流样本及转折可分辨性。停止后的最后 1s OLS 坡度变化 `≤1°`，终点悬沙 `≤初始沉积沙总量的5%`。 | **SLIP-01**（硬坡度）+ **SLIP-03**（末段稳定与悬沙）+ **SLIP-04**（预算与账本）；状态转折字段采用逐边 `relaxStateTransitions` 观测契约。 |
 
 **执行顺序**：先确认 ledger 与 raster 同子步、同倾角且覆盖完整；再独立评估 ±15°静止和 ±45°崩塌；随后按逐边事件确定 start/stop 行为与速率-超角关系；最后才调速率/倾角限速并重跑全部 SLIP 门槛。每次只改变一个已有参数族并保留同输入 RED 基线。任一轮若硬坡度、守恒或预算失败，立即判该候选不合格；不能以视觉改善抵消硬约束失败。SLIP-01~04 是现行正式客观用例编号，本方案只引用，不改写测试定义。
+
+## 2026-10-21 23:06修订：路径5参数外置与标定语义分离
+
+用户已裁决：先不针对场景标定，将起停角作为用户可调参数继续推进。完整方案落于[algorithm-P011-user-threshold-config-v1.md](algorithm-P011-user-threshold-config-v1.md)，实现方案待manager验收；本节追加，不改写上文算法/标定历史。
+
+- 产品模式thetaStart/thetaStop为配置，出厂推荐26°/20°，明确“非标定值、用户可调”；通过WaterSandParams/configure成对finite及 `0≤stop<start≤30` 校验，非法拒绝，禁止clamp。角度含义仍为局部沙面相对重力的残差角，不是手机角。
+- §19.6/原标定协议“不填默认值”继续禁止用默认值替代不足的统计估计。本次推荐配置与标定输出分字段、分状态：configured/executed记实际值，estimate/CI仍null，calibrationStatus=NOT_CALIBRATED。未来正式标定的搜索窗、34run、四cell/24层、CI及holdout纪律原样保留，协议不删除。
+- 配置事务在子步边界原子切换并清路线私有状态，材料库存和既有额度不因调参变化；配置版本覆盖preview/apply/遥测。产品source为factory-recommended或user，thresholdCalibrationId为user-configured并另记唯一配置身份；元数据不再作为物理阈值开关。
+- 本次不改tan30、planner、全writer guard、冻结预算、H/L守恒、库存/容量/有限值；不启用correction。新双角推荐默认单列新行为基线，显式legacy回归保持旧契约。
+- §8.15及旧阶段一·A的“必须先完成场景双角统计估计”依赖按用户裁决替换为**执行链验证完成＋参数机制就绪**。已有执行成果保留，场景标定DEFERRED/NOT_CALIBRATED且不阻断阶段一；执行机制和B/C仍须实际验收后由manager评估CLOSED，不是本文已闭环。
+- correction A/B/C/D固定26°/20°推荐值及统一来源，A为双角下原relax分配；不混入旧单角基线或其他用户pair。±45°全宽目标包继续按阶段二延期裁决，现有安全门槛不延期。
+
+当前交付为设计文档与阶段边界登记，未实现参数UI/配置通道、未运行新验收、未改变旧run结论。

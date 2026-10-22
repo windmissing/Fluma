@@ -1,0 +1,471 @@
+{
+  "execution": "actual-product-ets-via-bundled-typescript",
+  "results": [
+    {
+      "name": "MODE01_testRejectsOneHundredSensorSamplesExactly",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE01_03_experienceRejectsScriptAndGestureAndForceInvert",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE02_06_tenRoundTripsClearAllInputOnlyState",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE05_coldHotFirstEnvelopeAndSameModePreserveCommands",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE03_07_freshCallbackRecoversAndBothSignsMapThroughSameChain",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE04_repeatedDeterministicCommandTraceAndInvalidWatermark",
+      "status": "PASS"
+    },
+    {
+      "name": "MODE07_equivalentNormalizedInputsShareExactPhysicsTrajectory",
+      "status": "PASS"
+    },
+    {
+      "name": "P011_ledgerContextSamplesAfterTiltUpdate",
+      "status": "PASS"
+    },
+    {
+      "name": "P011_MODE02_resetInputPreservesMaterialAndRunIdentity",
+      "status": "PASS"
+    },
+    {
+      "name": "canonicalLedger_derivesExternalState",
+      "status": "PASS"
+    },
+    {
+      "name": "conservation_randomOperationSequence",
+      "status": "PASS"
+    },
+    {
+      "name": "percolationV2_crossExchangeHasNonZeroQ",
+      "status": "PASS"
+    },
+    {
+      "name": "percolationV2_pairSortingHasNonZeroR",
+      "status": "PASS"
+    },
+    {
+      "name": "separationProfile_matchesIndependentReference",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_consistentAcross30_60_120Hz",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_bindsSharedSubstepFlux",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_bindsShallowWaterSettling",
+      "status": "PASS"
+    },
+    {
+      "name": "rateBudget_validatesSandTopMaxRange",
+      "status": "PASS"
+    },
+    {
+      "name": "separation_singlePhaseReturnsNull",
+      "status": "PASS"
+    },
+    {
+      "name": "dormant_zeroSubstepStepResult",
+      "status": "PASS"
+    },
+    {
+      "name": "frameHook_emitsDormantFrame",
+      "status": "PASS"
+    },
+    {
+      "name": "thickGeometry_tilt68MovesWithoutCapacityOverflow",
+      "status": "PASS"
+    },
+    {
+      "name": "bottomCreep_tiltMovesLowerLayers",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_routeAndHooksAreSubstepAligned",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_bottomCreepUsesDirectionAndIndependentBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_phaseBalancedSplitKeepsHeavyShareAndTelemetry",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_commandSignFlipResetsPhaseAndReversesDisplacement",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_negativeTiltReversesBottomCreep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_totalMotionBudgetClipsBottomCreep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_totalBudgetExhaustionScalesRequestsProportionally",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_multiChannelTotalBudgetScalesAllRequestsProportionally",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_fullLoadPercolationKeepsBottomBudgetIsolated",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_deadZoneClearsBottomCreepRate",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_velocityGainDoesNotOverrideShapeRateCap",
+      "status": "PASS"
+    },
+    {
+      "name": "shake_peakAndRestResidual",
+      "status": "PASS"
+    },
+    {
+      "name": "invert180_preservesConservationAndPhaseOrder",
+      "status": "PASS"
+    },
+    {
+      "name": "failedInjection_restoresCanonicalState",
+      "status": "PASS"
+    },
+    {
+      "name": "copyStateTo_rejectsInvalidSchema",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_transitionTelemetry_budgetLimitedEdgeKeepsActive",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_transitionTelemetry_edgeIdentityIsNotSlotIndex",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_previewPurity_budgetLedgerSingleCommit",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_singleCommitTiltAndRate",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_blockedCarriesReasonAndHoldsTilt",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_twoPassLimitAndConservationOverRun",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_directedThreeCandidateExhaustion",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_planningPass_limitingEdgeTieBreakKeepsSmallestIndex",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ninePhaseMapping_assignsAllPlateauPhases",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ninePhaseMapping_legacySevenPhaseBackwardCompatible",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_ledgerSchemaV3_plannerFieldsPresent",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_cappedWeightedAllocationFillsReservation",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_uniformInteriorEdgesExcluded",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_ledgerAndGuardsInApply",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_candidateSelectionDPositiveOnly",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_weightedAllocationMatchesDesignerExample",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_reservationWithinTotalBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_qDescentCapAndDescentPreserved",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_uniformInteriorEdgesExcludedBoundaryKeepsContribution",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_routeGateBlocksAllocatorWithoutExplicitRoute",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_nonWorseningOnViolatingEdge",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_zeroInfluenceEdgeDoesNotRestrictGrant",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_ledgerRefundRestoresBudgets",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_telemetryFieldsReal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_settleDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_settleZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_relaxDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_relaxZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_bottomCreepDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_bottomCreepZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_liftDirectlyInterceptsAndRefunds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_materialGuard_liftZeroInterventionWhenLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_threeStateTransitionFunction",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_paramInvariantThrows",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_requestedFormula",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_candidateRunProducesDecisionAndExecutedFields",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_legacyRunKeepsPreV3Behavior",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_budgetLimitedEdgeStaysActive",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_hysteresis_donorReceiverOrientationFeedsRequested",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d1_routeIsolation_threeWayApplyRouting",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d1_legacyTrajectoryEquivalence240Steps",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_scheduleV3_generationAndCsvContract",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_scheduleV3_segmentPhaseMapping",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_attempt_blockedSubstepLandsAttemptRecord",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_attempt_attemptIdsUniquePerSubstep",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_tiltWant_v3FieldsParseAndValidate",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_tiltWant_correctionRouteBindingParsesAndValidates",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d1b_correctionTelemetryFourFieldsCloseLedger",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d1b_legacyAuditOmitsCorrectionFields",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_correction_applySlotUsesReservationSlopeStop",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_1_defaultParamsArmDualFactoryPair",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_2_zeroStopAngleIsLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_3_thirtyStartAngleIsLegal",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_4_reversedAndEqualPairsRejectedNoSideEffects",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_5_nonFiniteAndLegacyWithPairRejected",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_6_midRunPairChangeClearsStateMachine",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_7_pairSurvivesResetAcrossModes",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_8_illegalPairRejectedKeepsPreviousConfig",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_9_metadataMismatchIsFlagged",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_10_configRevisionMonotonicAndPreviewGuardPresent",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_11_legacySingleKeepsPreV27Behavior",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_12_dualDefaultDoesNotActivateCorrection",
+      "status": "PASS"
+    },
+    {
+      "name": "u27_13_budgetsAndConservationUnchangedByPairChange",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_wantParseThreeStates",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_dispatchesInOrderOnClock",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_slowFrameDispatchesMultipleInOrder",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_driftRecordedNeverChased",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_finishLiftsMutualExclusion",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_forceStopRecoversSingleCommands",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_invalidStartStaysInactive",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_replayMatchesFrozenCsv",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_metadataArmingFiveScenarios",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_armedBeforeStartFirstRecordCarriesThresholds",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_execIdentityArmingFiveScenarios",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_schedulePlayer_identityArmsExecutedThresholdsOnFirstRecord",
+      "status": "PASS"
+    }
+  ],
+  "passed": 116,
+  "failed": 0
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "testCase": "P011-OBS3-D1-VERIFICATION-CASES",
+  "cases": {
+    "D1-C1": {
+      "case": "D1-C1-legacy-trajectory-equivalence",
+      "passed": true,
+      "errors": [],
+      "anchorsChecked": 14,
+      "divergencePointsCovered": [
+        25,
+        214
+      ]
+    },
+    "D1-C2": {
+      "case": "D1-C2-dual-condition-gate-split",
+      "passed": true,
+      "errors": [],
+      "scenarios": [
+        {
+          "scenario": "a-legacy-default",
+          "observationRouteId": null,
+          "stateMachineArmed": false,
+          "expectedApplyRoute": "legacy",
+          "observedApplyRoute": "legacy",
+          "inferredFromGateFlags": true,
+          "passed": true,
+          "relaxRequestedTotal": 0.27538803067686896,
+          "relaxAppliedTotal": 0.2753880306762949
+        },
+        {
+          "scenario": "b-candidate-natural-route",
+          "observationRouteId": null,
+          "stateMachineArmed": true,
+          "expectedApplyRoute": "legacy",
+          "observedApplyRoute": "legacy",
+          "inferredFromGateFlags": true,
+          "passed": true,
+          "relaxRequestedTotal": 0,
+          "relaxAppliedTotal": 0
+        },
+        {
+          "scenario": "c-explicit-correction-route",
+          "observationRouteId": "relax-correction-weighted-v1",
+          "stateMachineArmed": true,
+          "expectedApplyRoute": "correction",
+          "observedApplyRoute": "correction",
+          "inferredFromGateFlags": true,
+          "passed": true,
+          "correctionSlotRan": true
+        },
+        {
+          "scenario": "d-route-bound-machine-off",
+          "observationRouteId": "relax-correction-weighted-v1",
+          "stateMachineArmed": false,
+          "expectedApplyRoute": "legacy",
+          "observedApplyRoute": "legacy",
+          "inferredFromGateFlags": true,
+          "passed": true,
+          "relaxRequestedTotal": 0.27538803067686896,
+          "relaxAppliedTotal": 0.2753880306762949
+        }
+      ],
+      "rule": "correction slot ONLY on (state machine armed AND explicit relax-correction-weighted-v1 route); every other run keeps the pre-correction relaxAngle apply"
+    },
+    "D1-C3": {
+      "case": "D1-C3-correction-telemetry-audit (D-1b)",
+      "passed": false,
+      "redBaseline": true,
+      "errors": [],
+      "correctionSubstepsChecked": 0,
+      "missingFieldRecords": 0,
+      "closureViolations": 0,
+      "requiredFields": [
+        "correctionRequested",
+        "correctionGranted",
+        "correctionRejected",
+        "correctionStalledCount"
+      ],
+      "note": "RED by design: correctionRequested/Granted/Rejected/StalledCount are not yet in P011NaturalObservationAudit; turns green when the developer lands D-1b"
+    }
+  },
+  "redBaselineCases": [
+    "D1-C3-correction-telemetry-audit (D-1b)"
+  ],
+  "overall": "RED_BASELINE",
+  "note": "RED baseline recorded per the task: cases may fail on the current build by design and turn green when the D-1/D-1b remediation lands; no gate is weakened"
+}

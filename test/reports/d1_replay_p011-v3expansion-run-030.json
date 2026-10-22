@@ -1,0 +1,157 @@
+{
+ "schemaVersion": 1,
+ "tool": "p011_obs3_d1_eligibility_replay",
+ "basis": "design-P011-obs3-calibration-data-path-v1 §4.1 (1A) + §3.1 five fixes",
+ "fixesApplied": [
+  "prev-endpoint-stable-forcing",
+  "prev-endpoint-clear",
+  "per-endpoint-nonzero-sign",
+  "state-event-denominator",
+  "platform-window-A + physicsTime-unit"
+ ],
+ "ledger": "D:\\hmprojects\\HelloWorld\\test\\artifacts\\p011-v3expansion-20261021\\p011-v3expansion-run-030\\ledger-trimmed.ndjson",
+ "diagnostics": {
+  "neutralZeroTransitions": 0,
+  "signMismatchNeutral": 0,
+  "postScheduleTransitions": 0,
+  "peakADeg": 18.69999999999999,
+  "scheduleEndMs": 1792637068315.0,
+  "breachedCommands": {}
+ },
+ "cells": {
+  "start/+": {
+   "rawTransitions": 16,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 236140,
+   "exclusions": {
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 16,
+    "BRACKET_TOO_WIDE": 5
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  },
+  "start/-": {
+   "rawTransitions": 26,
+   "eligibleTransitions": 1,
+   "retainedBrackets": 1,
+   "stateSamples": 222236,
+   "exclusions": {
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 25,
+    "BRACKET_TOO_WIDE": 1
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  },
+  "stop/+": {
+   "rawTransitions": 15,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 3382,
+   "exclusions": {
+    "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 15,
+    "NONMONOTONE_LOCAL_WINDOW": 15
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  },
+  "stop/-": {
+   "rawTransitions": 26,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 5983,
+   "exclusions": {
+    "NONMONOTONE_LOCAL_WINDOW": 25,
+    "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 21,
+    "BRACKET_TOO_WIDE": 2
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  }
+ },
+ "diff": {
+  "start/+": {
+   "realTransitions": {
+    "old": 7,
+    "new": 16
+   },
+   "eligibleBrackets": {
+    "old": 0,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 7,
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 7
+    },
+    "new": {
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 16,
+     "BRACKET_TOO_WIDE": 5
+    }
+   }
+  },
+  "start/-": {
+   "realTransitions": {
+    "old": 19,
+    "new": 26
+   },
+   "eligibleBrackets": {
+    "old": 1,
+    "new": 1
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 18,
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 18,
+     "BRACKET_TOO_WIDE": 1
+    },
+    "new": {
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 25,
+     "BRACKET_TOO_WIDE": 1
+    }
+   }
+  },
+  "stop/+": {
+   "realTransitions": {
+    "old": 15,
+    "new": 15
+   },
+   "eligibleBrackets": {
+    "old": 0,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 15,
+     "NONMONOTONE_LOCAL_WINDOW": 15
+    },
+    "new": {
+     "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 15,
+     "NONMONOTONE_LOCAL_WINDOW": 15
+    }
+   }
+  },
+  "stop/-": {
+   "realTransitions": {
+    "old": 26,
+    "new": 26
+   },
+   "eligibleBrackets": {
+    "old": 0,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 26,
+     "NONMONOTONE_LOCAL_WINDOW": 25,
+     "BRACKET_TOO_WIDE": 2
+    },
+    "new": {
+     "NONMONOTONE_LOCAL_WINDOW": 25,
+     "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 21,
+     "BRACKET_TOO_WIDE": 2
+    }
+   }
+  }
+ }
+}

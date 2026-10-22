@@ -191,3 +191,21 @@ N=128，候选构造/三边guard为O(N)，封顶加权与顺序排序O(N log N)�
 | 效果与代价 | 同输入报告E/maxResidual/raster局部响应、各通道被挤占量、未用预留、P95计算耗时/FPS；有改善证据才升级VALIDATED，±45°目标仍延期 |
 
 交接结论：设计现已可评审；额外叠加在300/s之外的修正预算不满足原硬约束，保留为明确未授权分支。所选预留方案与891370d逐笔guard/四层回写一致，新增真实channel账；接入时须同步处理R-3预演保真及路线身份，不能仅改一个budget系数就宣布收敛修复。
+
+## 10. 2026-10-21 23:06补充：固定推荐双角的对照基线
+
+依据用户“先不针对场景标定、起停角用户可调”的裁决及[参数外置设计](algorithm-P011-user-threshold-config-v1.md)§6，后续§9的A/B/C/D统一冻结 **thetaStart=26°、thetaStop=20°**，`thresholdSource=factory-recommended`、`thresholdCalibrationId=user-configured`，并记录独立configRevision/configId及实现hash。来源为推荐配置，**非标定结果**；估计/CI继续null。
+
+A=双角推荐配置下原relax分配，B=仅预留，C=预留+e²，D=预留+e²×净贡献，既定对照因素不变。四组保持相同材料/几何/初态/输入/dt/其余参数及配置边界，不在组间调角。旧tan4等legacy单角轨迹另作明确标识的参考，不能充当A来混算双角启用收益。若改pair，另建完整矩阵，不与26/20合并。
+
+场景标定不再是该对照的等待项；工程/遥测接线、route显式隔离、guard及四层预算闭合、R-3保真和正式效果验证依赖全部保留。用户参数机制就绪不代表correction转正，也不允许叠加到300/s之外。当前补充只更新对照设计，不宣布新矩阵已跑或授权真机采集。
+
+## 11. 2026-10-22补充：A/B/C/D预期产出预注册
+
+完整测量/效果/样本/止损定义见 [preregistration-P011-correction-matrix-v1.md](preregistration-P011-correction-matrix-v1.md)。状态 `PREREGISTRATION_PENDING_MANAGER / NO_CAPTURE_AUTHORIZATION`；不更改§9/§10算法因素，全部新数值门槛为待manager批准提案。
+
+四组统一提取全边E/maxResidual、固定accepted角的slot级ΔE_relax、实际搬运效率、普通通道代价、候选计数与需求时间两种停滞率、raster/录像、帧时及全安全账。D-1b四字段是**笔数**而非搬运量；必须补齐或闭合重放slot快照、预留金额与候选过滤前风险集合，不能用整步E变化代替relax贡献。采前另核对reserve/apply均使用tan20，不能把遥测齐全视为参数一致性已证明。
+
+提案主效果为G1竞争场D相对A整段残差能量时间均值下降≥10%且配对95%CI下界>0；G2邻边/热点场另验稳健性；普通通道挤占、倾角接受、帧时、原适用主观项均有非劣/及格约束，任何硬失败不可抵消。建议每组G1/G2各12run、G0控制3run、pilot3run，总120run；以18.7°峰值的时长情景估设备占用约8.35h，含20%缓冲约10.02h，实际峰值须采前审计冻结。
+
+结构性停滞/无激励/身份或测量缺失按独立状态报告；任一组硬失败停批。结论只覆盖26/20推荐配置与注册场景，不外推其他用户pair或材料。文档落盘不等于采集授权或路线转正。

@@ -1,0 +1,173 @@
+{
+ "schemaVersion": 1,
+ "tool": "p011_obs3_d1_eligibility_replay",
+ "basis": "design-P011-obs3-calibration-data-path-v1 §4.1 (1A) + §3.1 five fixes",
+ "fixesApplied": [
+  "prev-endpoint-stable-forcing",
+  "prev-endpoint-clear",
+  "per-endpoint-nonzero-sign",
+  "state-event-denominator",
+  "platform-window-A + physicsTime-unit"
+ ],
+ "ledger": "D:\\hmprojects\\HelloWorld\\test\\artifacts\\p011-v3expansion-20261021\\p011-v3expansion-run-026\\ledger-trimmed.ndjson",
+ "diagnostics": {
+  "neutralZeroTransitions": 0,
+  "signMismatchNeutral": 0,
+  "postScheduleTransitions": 0,
+  "peakADeg": 18.69999999999999,
+  "scheduleEndMs": 1792635872655.0,
+  "breachedCommands": {
+   "497": [
+    "SCHEDULE_INTERVAL_OUT_OF_BAND"
+   ],
+   "580": [
+    "SCHEDULE_INTERVAL_OUT_OF_BAND"
+   ],
+   "959": [
+    "SCHEDULE_INTERVAL_OUT_OF_BAND"
+   ]
+  }
+ },
+ "cells": {
+  "start/+": {
+   "rawTransitions": 18,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 237178,
+   "exclusions": {
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 18,
+    "BRACKET_TOO_WIDE": 5
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  },
+  "start/-": {
+   "rawTransitions": 27,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 222330,
+   "exclusions": {
+    "PREV_ENDPOINT_SIGN_NEUTRAL_OR_MISMATCH": 1,
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 26,
+    "BRACKET_TOO_WIDE": 1,
+    "NONMONOTONE_LOCAL_WINDOW": 1
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  },
+  "stop/+": {
+   "rawTransitions": 17,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 3233,
+   "exclusions": {
+    "NONMONOTONE_LOCAL_WINDOW": 16,
+    "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 17
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  },
+  "stop/-": {
+   "rawTransitions": 27,
+   "eligibleTransitions": 0,
+   "retainedBrackets": 0,
+   "stateSamples": 6016,
+   "exclusions": {
+    "NONMONOTONE_LOCAL_WINDOW": 26,
+    "BRACKET_TOO_WIDE": 1,
+    "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 23
+   },
+   "reasonRows": [],
+   "bracketRows": []
+  }
+ },
+ "diff": {
+  "start/+": {
+   "realTransitions": {
+    "old": 8,
+    "new": 18
+   },
+   "eligibleBrackets": {
+    "old": 0,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 8,
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 8,
+     "NONMONOTONE_LOCAL_WINDOW": 1
+    },
+    "new": {
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 18,
+     "BRACKET_TOO_WIDE": 5
+    }
+   }
+  },
+  "start/-": {
+   "realTransitions": {
+    "old": 20,
+    "new": 27
+   },
+   "eligibleBrackets": {
+    "old": 1,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 19,
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 19,
+     "BRACKET_TOO_WIDE": 1,
+     "NONMONOTONE_LOCAL_WINDOW": 1
+    },
+    "new": {
+     "PREV_ENDPOINT_SIGN_NEUTRAL_OR_MISMATCH": 1,
+     "BUDGET_GUARD_OR_STOCK_LIMITED": 26,
+     "BRACKET_TOO_WIDE": 1,
+     "NONMONOTONE_LOCAL_WINDOW": 1
+    }
+   }
+  },
+  "stop/+": {
+   "realTransitions": {
+    "old": 17,
+    "new": 17
+   },
+   "eligibleBrackets": {
+    "old": 0,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 17,
+     "NONMONOTONE_LOCAL_WINDOW": 16
+    },
+    "new": {
+     "NONMONOTONE_LOCAL_WINDOW": 16,
+     "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 17
+    }
+   }
+  },
+  "stop/-": {
+   "realTransitions": {
+    "old": 27,
+    "new": 27
+   },
+   "eligibleBrackets": {
+    "old": 0,
+    "new": 0
+   },
+   "exclusions": {
+    "old": {
+     "PREV_ENDPOINT_NOT_ELIGIBLE": 27,
+     "NONMONOTONE_LOCAL_WINDOW": 26,
+     "BRACKET_TOO_WIDE": 1
+    },
+    "new": {
+     "NONMONOTONE_LOCAL_WINDOW": 26,
+     "BRACKET_TOO_WIDE": 1,
+     "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 23
+    }
+   }
+  }
+ }
+}

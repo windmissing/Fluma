@@ -2716,3 +2716,146 @@ export function p011CorrectionAllocate(candidates, rLimit): void; // 封顶加�
 单测追加（照 §26.5 五场景模式）：①两组全有→armed+三身份字段非空；②metadata 有+身份缺→拒绝；③身份 partial/非法→拒绝；④两组全无→smoke 启动+executedThresholds=null；⑤身份有+metadata 无→拒绝。`?? ''` 兜底保留不动（防御性默认，正常路径不再触达）。
 
 变更记录：2026-10-21，依据 manager【观测③·§26.5追加】任务新增（第三次停机修复依据，manager 16:1x 批准追加确认形式）。四点语义：成组 fail-closed/武装块一并调用/组间同现或同缺（fail-closed 第二次应用）/绑定在 start 前显式判定。developer 实现任务（6ad87955…e58 后或合并）解锁。
+
+## 27. 双角用户可调参数工程方案（2026-10-22，依据 algorithm-P011-user-threshold-config-v1.md）
+
+**状态：`READY_FOR_DEVELOPER`。设计稿已给定项（三模式语义/安全域 0≤stop<start≤30/拒绝不 clamp/生效事务时序/thresholdCalibrationId 四场景表/correction A 组=双角推荐基线/UI 文案）确认可行不重设计；本节落八件工程细节。核心结构变化一句话：`relaxHysteresisThresholds` 的驱动源从观测域（`setNaturalObservationRunMetadata` 隐式调用 :1379）迁到配置域（`configure()` 事务）——落实设计稿红线「不得让 probe/遥测决定物理阈值」。**
+
+### 27.1 字段归属落地（八件事之 1）
+
+**activeThresholdConfig = WaterSandField 私有字段组合（不建独立类）。** 理由：状态机（relaxAngle collect 分支）、planner preview（shadow 镜像）、真实 apply、`executedThresholdsForLedger()` 四个读者全部在同一实例内；独立类会引入跨对象同步缝（§24/R-3 的教训——预演与 apply 必须读**同一对象**，任何复制即分歧源）。类型定义放 P011RelaxHysteresis.ets（与 derive 同文件）：
+
+```ts
+// P011RelaxHysteresis.ets 追加
+export interface P011ActiveThresholdConfig {
+  thetaStartDeg: number;
+  thetaStopDeg: number;
+  slopeStart: number;          // tan 派生（deriveHysteresisThresholds 产物）
+  slopeStop: number;
+  relaxMode: 'dual-user-configured' | 'dual-protocol' | 'legacy-single';
+  configRevision: number;      // 见 27.4
+  thresholdSource: 'factory-recommended' | 'user' | 'protocol-candidate' | 'legacy';
+  recommendationVersion: string | null;  // 'v1'（仅 factory-recommended）
+}
+// WaterSandField 私有：activeThresholdConfig: P011ActiveThresholdConfig | null
+//   dual-*=非 null；legacy-single=null（relaxHysteresisThresholds 同步 null）
+// relaxHysteresisThresholds 字段保留，由 activeThresholdConfig 派生赋值——
+//   状态机/collect 分支零改动（读同一对象）
+```
+
+**thetaStartDeg 与 angleDeg 共存语义**：`angleDeg` 保持全部既有消费者语义（LEGACY relaxTrigger :2521、`bottomCreepDeadZone < angleDeg` 校验 :853 等，一字不改）；dual 模式下它仅作为这些**非 relax 判据**的参数继续存在，relax 资格判据换状态机（`hysteresis !== null` 分支已存在 :2523）。产品 UI 不暴露 angleDeg；`bottomCreepDeadZone` 校验在 dual 模式下改用 `thetaStopDeg`（死区必须低于滑动停止角才有意义——若 `deadZone >= thetaStopDeg` 抛 WaterSandParamError；legacy 模式维持 angleDeg 校验不动）。
+
+### 27.2 configure 校验扩展（八件事之 2）
+
+插入位置（现有 :837-880 结构内，三段式）：
+1. **范围 if 追加**：`relaxMode` 非三枚举值之一 → 抛；`dual-user-configured`/`dual-protocol` 下 `thetaStartDeg`/`thetaStopDeg` 为 null/undefined → 抛；`legacy-single` 下两者**非 null** → 抛（禁歧义态：legacy 带 pair = 哪个生效说不清）。
+2. **finite 列表追加**：dual 模式下 `thetaStartDeg, thetaStopDeg` 进 `values` 数组（legacy 下跳过——null 不进 finite 检查）。
+3. **成对派生校验**（finite 循环后、复制块前）：dual 模式调 `deriveHysteresisThresholds({thetaStartDeg, thetaStopDeg, thetaHardMaxDeg: 30})`——不变量 0≤stop<start≤30 由该函数既有校验保证（P011RelaxHysteresis.ets:73-77），抛 `P011RelaxHysteresisParamError`；configure 捕获后**rethrow 为 `WaterSandParamError('invalid threshold pair: ' + 原因)`**（应用层只 catch 一种异常，UI 转可读文案）。**拒绝语义**：任何一步抛错 → `this.params`/activeThresholdConfig/材料状态/持久化全部不变（现有先例就是先全检后复制，天然满足）。
+4. **复制块追加**：三字段进逐字段复制（现有显式列举模式 :876-880 照抄）。
+
+### 27.3 applyRelaxHysteresisConfiguration 拆分（八件事之 3）
+
+三条路径、两个公开入口+一个删除：
+
+```ts
+// 路径 A（元数据，改）：只记身份，不再触碰物理阈值
+setNaturalObservationRunMetadata(runRole, calibrationId, thetaStartDeg, thetaStopDeg) {
+  // 四字段照旧写入（ledger 身份用），【删除 :1379 的 applyRelaxHysteresisConfiguration 调用】
+  // 新增一致性校验：若 thetaStartDeg 非 null 且与 activeThresholdConfig 不一致
+  //   → 置 naturalObservationMetadataMismatch = true（实验启动处拒绝，见路径 C）
+}
+
+// 路径 B（配置，新私有）：configure() 复制块之后调用
+private applyThresholdConfigFromParams(source: P011ActiveThresholdConfig['thresholdSource']): void {
+  // legacy-single → activeThresholdConfig = null; relaxHysteresisThresholds = null
+  // dual-* → deriveHysteresisThresholds(params.pair) → 组装 activeThresholdConfig
+  //   （configRevision 递增 + onConfigurationChanged()，见 27.4/27.5）
+}
+
+// 路径 C（dual-protocol 适配器，新公开）：实验入口显式走完整 configure 事务
+applyProtocolThresholdPair(thetaStartDeg: number, thetaStopDeg: number): boolean {
+  // 前置：metadataMismatch 已置位或 active 模式非 dual-protocol → return false（拒绝启动）
+  // 构造完整 params（当前值 + 新 pair + relaxMode='dual-protocol'）→ this.configure(params)
+  // 返回 true；configure 抛错由调用方 catch（拒绝，不 clamp）
+}
+```
+
+产品默认链：`defaultWaterSandParams()` 返回 `relaxMode='dual-user-configured'`、26/20、`thresholdSource='factory-recommended'`——**首次 configure 即双角生效，与 probe/观测完全无关**。观测 run 的 metadata pair 与 active 不一致时：schedule 武装处（§26.5/26.6 入口）与 `applyProtocolThresholdPair` 双重拒绝，报 `THRESHOLD_METADATA_MISMATCH`（hilog，不启动）。
+
+### 27.4 configRevision 机制（八件事之 4）
+
+- **生成规则**：WaterSandField 实例字段 `configRevision: number`，构造时 0；**每次 configure() 成功执行完复制块 + applyThresholdConfigFromParams 后递增 1**（无论 pair 是否变化——「重配置」本身是身份事件；同值重配也进 ledger 可追溯）。产品首次 configure → revision 1。
+- **携带**：`WaterSandSnapshot` 无需带（快照是材料态）；**ledger context、`getPlanningTelemetry()`、`executedThresholds` 扩展字段 `configRevision`**（executedThresholds 已在 schema v3.1 结构内追加，向后兼容）。
+- **旧 preview 不可回滚覆盖**：planning pass 的 preview 通道在 `previewChannelPlansAt` 入口快照 `previewConfigRevision = this.configRevision`；commit 路径（planAndCommitTilt 的最终 apply）前校验 `this.configRevision === previewConfigRevision`，不等 → `PREVIEW_COMMIT_MISMATCH`（复用既有冻结子步语义，§20.4 路径）——新参数下旧 preview 自动作废，无回滚通道。运行期配置变更本身走子步边界排队（27.5），正常不触发；此校验是并发防线。
+
+### 27.5 新 epoch 清理边界（八件事之 5）
+
+新私有方法 `onConfigurationChanged()`——**仅在运行中 pair 实际变化**时被 `applyThresholdConfigFromParams` 调用（首次 configure / 同值重配 / legacy 声明不触发：材料未受影响，无伪 CONFIGURATION_RESET）：
+
+| 清理（配 CONFIGURATION_RESET 计数，进 ledger audit） | 保留 |
+|---|---|
+| `relaxSliding.fill(0)`（状态机全部回 inactive，首子步按新阈值评估） | bh/bl/mh/ml/suspH/suspL/waterTop（材料状态，ΔV=0） |
+| `naturalObservationSliding/Before/After/SlipSeen.fill(0)` | 预算 used/守恒累计（不重发额度） |
+| `relaxDecisionOrdinals.fill(0)` | acceptedTilt/输入模式/时间推进 |
+| `correctionReservation = null`（预留缓存） | 观测 run 身份字段（runRole/calibrationId/执行身份三参数） |
+| planning preview 全量丢弃（27.4 revision 校验自动覆盖） | 历史已落账 ledger（不重写） |
+
+对接点：与既有 `beginSubstepMotionBudget` 的清理（:903 `fill(0)` 模式）同风格；**调用时序 = 当前子步完整结束、下一子步开始前**（configure 从 UI 回调进来时，若 `step()` 正在执行——单线程 ArkTS 下 UI 回调与帧回调互斥，天然满足；仍加 `pendingConfigApply` 队列标志防未来并发）。TEST/EXPERIENCE 模式切换的既有清理（reset 路径）不因本变更改变——配置 pair 跨模式保持（设计稿 §2.3 表）。
+
+### 27.6 UI 接口（八件事之 6）
+
+owner（SandCanvas）新增三回调，照 `setWaterSandPercolationRate` 先例（:661-664 改 params 字段 + configure 重入）：
+
+```ts
+// SandCanvas.ets
+@State waterSandThetaStart: number = 26.0;   // 草稿+已应用值（应用成功后回写）
+@State waterSandThetaStop: number = 20.0;
+applyThresholdPair(start: number, stop: number): string | null {
+  // 返回 null=成功；返回错误文案=失败（不 clamp、不动另一控件）
+  // try { 改 waterSandParams.pair → configure(params) → 回写 @State → return null }
+  // catch (e) { return 错误文案（反序→"停止角必须小于起动角"等 §4 文案）}
+}
+resetThresholdToRecommended(): void { applyThresholdPair(26.0, 20.0) + source=factory-recommended }
+```
+
+- **面板控件**：MODE_WATERSAND 分支下（:183 先例）两个步进控件（`步距 0.1°`，TextInput+Stepper 或 Slider step:0.1——建议 Slider，onChange 只改草稿 @State，**按钮「应用」才调 applyThresholdPair**）+「恢复推荐」按钮。
+- **TEST/EXPERIENCE 共用**：pair 存 SandCanvas 实例字段（两模式同一实例），面板条件 `renderMode === MODE_WATERSAND` 两模式都命中——天然共用。
+- **schedule 锁定**：`this.p011SchedulePlayer.isActive()` 时控件 `.enabled(false)` + 文案「实验运行中，结束后可调整」（isActive 判定先例 :1094）。
+- **持久化**：新增 `@ohos.data.preferences`（项目首个持久化——EntryAbility onCreate 读 / onChange 防抖写；键 `p011.thetaPair`（JSON `{start, stop, source, revision}`）；损坏/非法 pair → 丢弃并保持 26/20 会话默认 + 冷启动提示（设计稿 §2.3 末行语义）。写入失败 ≠ 已保存——UI 提示区分（「已应用（保存失败，可重试）」）。
+
+### 27.7 单测范围（八件事之 7，断言级）
+
+Node 通道（run_p011_planning_units.cjs 模式）+ ArkTS 单测（WaterSandFieldTest.ets）：
+
+| # | 用例 | 断言 |
+|---|---|---|
+| U1 | 合法默认 | `defaultWaterSandParams()` → configure 成功；`relaxHysteresisEnabled()===true`；executedThresholds.pair=(26,20)；source='factory-recommended'；revision=1 |
+| U2 | 0 停止角 | (26, 0) 合法（边界）：configure 成功，slopeStop=0 |
+| U3 | 30 起动角 | (30, 20) 合法：slopeStart=tan30=硬上限值 |
+| U4 | 反序/相等 | (20,26)/(25,25) → WaterSandParamError；params/active/材料快照逐字段不变（拒绝无副作用） |
+| U5 | 非 finite/缺字段 | (NaN,20)/(undefined,20) → 抛错；legacy-single 带 pair → 抛错 |
+| U6 | 活跃时配置变化 | 先跑到 sliding 有 active 边 → configure 新 pair → `relaxSliding` 全 0、correctionReservation=null、ledger audit 含 CONFIGURATION_RESET=1、**无 stop transition 记录产生**（清理≠物理 stop） |
+| U7 | reset/模式切换 | pair 与 source 跨 reset 保持；模式切换后同一 pair；材料按既有 reset 行为 |
+| U8 | 非法持久化恢复 | preferences 注入 `{"start":31,"stop":20}` → 丢弃、26/20 会话默认、hilog 警告 |
+| U9 | metadata 不一致拒绝 | active=(26,20) + metadata pair=(25,19) → schedule 武装拒绝（THRESHOLD_METADATA_MISMATCH，播放器 null） |
+| U10 | preview 防回滚 | 构造 revision 变更于 preview 与 commit 之间（直接调内部路径）→ PREVIEW_COMMIT_MISMATCH 冻结 |
+| U11 | legacy 回归 | relaxMode='legacy-single' + angleDeg=4 → relaxHysteresisEnabled()===false、executedThresholds=null、轨迹与 5e60f2d 基线锚点序列逐位一致（复用 D-1 验证资产） |
+| U12 | correction 不随阈值激活 | dual-user-configured + 无 p011route → correctionRouteActive()===false（D-1 双条件门回归） |
+| U13 | 预算/守恒不变 | 合法 pair 变更前后同 dt 步进：total used 速率上限/bottom 上限/H-L 守恒逐项不变 |
+
+### 27.8 风险清单（八件事之 8）
+
+| 风险 | 缓解 + 单测 | 退出条件 |
+|---|---|---|
+| 元数据拆分后观测 run 武装路径断裂（v3 pilot 依赖 metadata→状态机链路） | §26.5/26.6 的 schedule want 路径改为：metadata 四参数照旧走 setter（身份），**pair 生效由 configure 先行**——正式 pilot want 模板追加 relaxMode+pair 参数组（runner 侧 effector 同步）；smoke（零参数）在产品默认下天然双角（非 LEGACY）——**smoke 语义变化**：executedThresholds 非空（26/20 factory），不再是 LEGACY null；checker 分支按 source='factory-recommended' 放行 | smoke2 真机复跑 executedThresholds=(26,20) 非 null |
+| 产品默认行为变化（LEGACY→双角 26/20）被误当 bug | 设计稿 §5 已声明是授权行为变化；发布构建版本号变更；U11 保留 legacy 显式回归入口 | legacy 锚点序列逐位一致 |
+| 持久化引入首个异步 I/O | preferences 读在 onCreate（阻塞首帧前完成）；写防抖 500ms；失败不阻塞 UI | U8 |
+| 观测域残留隐式驱动（拆分不彻底） | grep 断言：setNaturalObservationRunMetadata 函数体内无 applyRelaxHysteresisConfiguration 调用（单测或 code review checklist） | reviewer 签字 |
+| UI configure 重入异常文案 | WaterSandParamError message 携带结构化原因（'stop>=start' 等），UI 映射 §4 文案表 | U4/U5 |
+| correction A/B 基线混入 | correction 对照矩阵 runner 冻结 `relaxMode=dual-user-configured`+26/20+factory 显式声明（A 组=双角推荐原 relax，非 tan4）；换用户 pair 另开矩阵（设计稿 §6） | 矩阵 manifest 含 thresholdConfigId |
+
+### 27.9 结论与路由
+
+八件工程细节全部落盘：字段归属=实例内组合（同对象四读者）/configure 三段式校验+异常统一/三路径拆分（metadata 断链、configure 主链、protocol 显式适配器）/configRevision 单调递增+preview 防回滚/清理边界表（清状态机与预留、保材料与预算）/UI 三回调+preferences 持久化+schedule 锁定/13 项断言级单测/6 项风险。**两项重要语义变化提前声明**：①产品默认从 LEGACY 转双角 26/20（授权行为变化，legacy 留显式回归入口）；②v3 pilot/smoke 的 want 模板需同步（runner 侧 effector 任务，27.8 第 1 行）。developer 实现任务解锁；effector runner 模板同步与 tester 用例登记（§7 契约）并行排期。
+
+变更记录：2026-10-22，依据 manager【P-011·参数外置工程】任务新增 §27。设计稿八件事落盘：字段归属/configure 扩展/职责拆分/configRevision/epoch 清理边界/UI 接口/断言级单测/风险清单。核心结构变化=阈值驱动源从观测域迁到配置域。

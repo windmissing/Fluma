@@ -1,0 +1,239 @@
+{
+  "execution": "actual-product-ets-via-bundled-typescript",
+  "results": [
+    {
+      "name": "p012_adapter_longRun_neverConservationFails",
+      "status": "PASS",
+      "error": "conservationFails=0"
+    },
+    {
+      "name": "p012_adapter_injectHOnlyBreakAndRecover",
+      "status": "PASS",
+      "error": "reason=6 recovered=true"
+    },
+    {
+      "name": "p012_adapter_injectLOnlyBreak",
+      "status": "PASS",
+      "error": "reason=7"
+    },
+    {
+      "name": "p012_renderer_drawBudget_worst60Frames",
+      "status": "PASS",
+      "error": "worstDraws=9 budget=16"
+    },
+    {
+      "name": "p012_renderer_deterministicSameSeed",
+      "status": "PASS",
+      "error": "styleCounts=7/7"
+    },
+    {
+      "name": "p012_offBranchDecision_table",
+      "status": "PASS",
+      "error": "decision table mismatch"
+    },
+    {
+      "name": "p012_ea_mistDrawBudget_worst60Frames",
+      "status": "PASS",
+      "error": "worstTotalDraws=32 (E+A budget 64)"
+    },
+    {
+      "name": "p012_ea_fogAlphaBound",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "name": "p012_ea_mistOnlyInEATier",
+      "status": "PASS",
+      "error": "eMist=0 eaMist=23"
+    },
+    {
+      "name": "p012_ea_deterministicSameSeed",
+      "status": "PASS",
+      "error": "fillCounts=30/30"
+    },
+    {
+      "name": "p012_adapter_slotIsolation",
+      "status": "PASS",
+      "error": "bh0Before=50 pairValid=true"
+    },
+    {
+      "name": "p012_eab_motionCache_freezeZeroAdvect",
+      "status": "PASS",
+      "error": "freezeOk=true zeroOk=true"
+    },
+    {
+      "name": "p012_eab_motionCache_netTransportAdvect",
+      "status": "PASS",
+      "error": "advectOk=true"
+    },
+    {
+      "name": "p012_eab_drawBudget_firstTierWorst60",
+      "status": "PASS",
+      "error": "worstEAB=52 budget=112"
+    },
+    {
+      "name": "p012_eab_grainOnlyInEAB",
+      "status": "PASS",
+      "error": "clipEA=1 clipEAB=4 imgEA=0 imgEAB=20"
+    },
+    {
+      "name": "p012_eab_grainWithinBBatchBudget",
+      "status": "PASS",
+      "error": "grainDelta=20 budget=48 drawImageWorst=20"
+    },
+    {
+      "name": "p012_eab_withinBBatchDrawBudgetHook",
+      "status": "PASS",
+      "error": "lastDrawCount=52 ea=32 budget=48"
+    },
+    {
+      "name": "p012_eab_deterministicSameSeed",
+      "status": "PASS",
+      "error": "styleCounts=30/30"
+    },
+    {
+      "name": "p012_ablate_grain_skipsGrainLayer",
+      "status": "PASS",
+      "error": "imgOff=12 imgAblated=0 clipOff=3 clipAblated=1"
+    },
+    {
+      "name": "p012_ablate_fog_skipsFogLayers",
+      "status": "PASS",
+      "error": "drawsOff=32 drawsAblated=9 delta=23"
+    },
+    {
+      "name": "p012_ablate_spark_skipsSparkFill",
+      "status": "PASS",
+      "error": "drawsOff=9 drawsAblated=6 delta=3"
+    },
+    {
+      "name": "p012_fillbox_full_submitsMoreDraws",
+      "status": "PASS",
+      "error": "imgTight=12 imgFull=40"
+    },
+    {
+      "name": "p012_fillbox_full_pixelEquivalentStyles",
+      "status": "PASS",
+      "error": "stylesTight=30 stylesFull=30 same=true"
+    },
+    {
+      "name": "p012_ablate_legacyContextDefaults",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "name": "p012_c_sampler_preservesLayerOrder",
+      "status": "PASS",
+      "error": "orderOk=true edgeOk=true"
+    },
+    {
+      "name": "p012_c_bandNoise_zeroMeanBounded",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "name": "p012_c_segmentPhaseContinuous",
+      "status": "PASS",
+      "error": "maxColWarpJump=0.0451 cycles threshold=0.0625"
+    },
+    {
+      "name": "p012_c_lambdaScaleConsistent",
+      "status": "PASS",
+      "error": "lamPx=85.333 expect(H/k)=85.333 raw=112.500 aligned=true withinTol=true seamless=true stable=true"
+    },
+    {
+      "name": "p012_c_bitmapAlphaOpaqueOrSkipped",
+      "status": "PASS",
+      "error": "Node channel: bitmap null (skipped, on-device alpha=255 baked)"
+    },
+    {
+      "name": "p012_c_ablateStrat_skipsStratLayer",
+      "status": "PASS",
+      "error": "drawsOff=38 drawsStrat=32 delta=6"
+    },
+    {
+      "name": "p012_c_drawBudget_within16",
+      "status": "PASS",
+      "error": "cDelta=6 budget=16 (C1 drawImage + C3 fillRect)"
+    },
+    {
+      "name": "p012_c_epochBreak_seedPhaseStable",
+      "status": "PASS",
+      "error": "warpTableStableAfterReset=true"
+    },
+    {
+      "name": "p012_c_emptyBandSkipped",
+      "status": "PASS",
+      "error": ""
+    },
+    {
+      "name": "p012_eab_grainTile_fullCoverage",
+      "status": "PASS",
+      "error": "tile=256 worstQuadrantStd=0.8918 minOverallStd=0.9622"
+    },
+    {
+      "name": "p012_eab_grainTile_lumStdContribution",
+      "status": "PASS",
+      "error": "grainStd=10.47 hfH=6.765 totalStd(vs base 13)=16.7"
+    },
+    {
+      "name": "p012_eab_grainTile_unitVarianceClipped",
+      "status": "PASS",
+      "error": "worstStdDev=0.0378 worstAbs=2.5000"
+    },
+    {
+      "name": "pair_valid_afterTwoSteps_conservationHolds",
+      "status": "PASS"
+    },
+    {
+      "name": "inject_breaksPair_andRebuildsBaselineNextFrame",
+      "status": "PASS"
+    },
+    {
+      "name": "sameSnapshot_zeroAdvection_validPair",
+      "status": "PASS"
+    },
+    {
+      "name": "notFiniteSnapshot_returnsNullView_clearsPair",
+      "status": "PASS"
+    },
+    {
+      "name": "frameGapOver100ms_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "epochChange_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "serialGap_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "runIdentityChange_breaksPair",
+      "status": "PASS"
+    },
+    {
+      "name": "adapterSlots_doNotAliasPageSnapshot",
+      "status": "PASS"
+    },
+    {
+      "name": "kahanTotals_matchFieldGetTotals",
+      "status": "PASS"
+    },
+    {
+      "name": "renderer_drawBudget_within16_offBranchDecision",
+      "status": "PASS"
+    },
+    {
+      "name": "motionCache_freezeWhenInvalid_zeroAdvection",
+      "status": "PASS"
+    },
+    {
+      "name": "motionCache_netTransport_producesAdvection",
+      "status": "PASS"
+    }
+  ],
+  "passed": 49,
+  "failed": 0
+}

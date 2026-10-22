@@ -1,0 +1,138 @@
+{
+ "runsReplayed": 34,
+ "elapsedSec": 949.6,
+ "oldCheckerAgg": {
+  "start/+": {
+   "real": 260,
+   "elig": 0,
+   "excl": {
+    "PREV_ENDPOINT_NOT_ELIGIBLE": 260,
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 260,
+    "NONMONOTONE_LOCAL_WINDOW": 9
+   }
+  },
+  "start/-": {
+   "real": 651,
+   "elig": 14,
+   "excl": {
+    "PREV_ENDPOINT_NOT_ELIGIBLE": 622,
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 630,
+    "BRACKET_TOO_WIDE": 33,
+    "NONMONOTONE_LOCAL_WINDOW": 18
+   }
+  },
+  "stop/+": {
+   "real": 549,
+   "elig": 0,
+   "excl": {
+    "PREV_ENDPOINT_NOT_ELIGIBLE": 549,
+    "NONMONOTONE_LOCAL_WINDOW": 532,
+    "SCHEDULE_INTERVAL_OUT_OF_BAND": 1
+   }
+  },
+  "stop/-": {
+   "real": 903,
+   "elig": 0,
+   "excl": {
+    "PREV_ENDPOINT_NOT_ELIGIBLE": 903,
+    "NONMONOTONE_LOCAL_WINDOW": 879,
+    "BRACKET_TOO_WIDE": 46,
+    "SCHEDULE_INTERVAL_OUT_OF_BAND": 2
+   }
+  }
+ },
+ "fixedReplayAgg": {
+  "start/+": {
+   "raw": 583,
+   "elig": 0,
+   "excl": {
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 583,
+    "BRACKET_TOO_WIDE": 170,
+    "NONMONOTONE_LOCAL_WINDOW": 2
+   }
+  },
+  "start/-": {
+   "raw": 889,
+   "elig": 11,
+   "excl": {
+    "BUDGET_GUARD_OR_STOCK_LIMITED": 868,
+    "BRACKET_TOO_WIDE": 33,
+    "NONMONOTONE_LOCAL_WINDOW": 12,
+    "PREV_ENDPOINT_SIGN_NEUTRAL_OR_MISMATCH": 10,
+    "PREV_ENDPOINT_NOT_SAME_SEGMENT": 1
+   }
+  },
+  "stop/+": {
+   "raw": 549,
+   "elig": 0,
+   "excl": {
+    "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 549,
+    "NONMONOTONE_LOCAL_WINDOW": 532,
+    "SCHEDULE_INTERVAL_OUT_OF_BAND": 1
+   }
+  },
+  "stop/-": {
+   "raw": 903,
+   "elig": 0,
+   "excl": {
+    "NONMONOTONE_LOCAL_WINDOW": 879,
+    "BRACKET_TOO_WIDE": 46,
+    "PREV_BUDGET_GUARD_OR_STOCK_LIMITED": 745,
+    "SCHEDULE_INTERVAL_OUT_OF_BAND": 2
+   }
+  }
+ },
+ "runsRunsByCellWithEligible": {
+  "start/+": 0,
+  "start/-": 11,
+  "stop/+": 0,
+  "stop/-": 0
+ },
+ "byRole": {
+  "fit": {
+   "start/+": {
+    "raw": 410,
+    "elig": 0,
+    "runs_with_elig": 0
+   },
+   "start/-": {
+    "raw": 628,
+    "elig": 9,
+    "runs_with_elig": 9
+   },
+   "stop/+": {
+    "raw": 386,
+    "elig": 0,
+    "runs_with_elig": 0
+   },
+   "stop/-": {
+    "raw": 636,
+    "elig": 0,
+    "runs_with_elig": 0
+   }
+  },
+  "holdout": {
+   "start/+": {
+    "raw": 173,
+    "elig": 0,
+    "runs_with_elig": 0
+   },
+   "start/-": {
+    "raw": 261,
+    "elig": 2,
+    "runs_with_elig": 2
+   },
+   "stop/+": {
+    "raw": 163,
+    "elig": 0,
+    "runs_with_elig": 0
+   },
+   "stop/-": {
+    "raw": 267,
+    "elig": 0,
+    "runs_with_elig": 0
+   }
+  }
+ },
+ "roleNote": "fit/holdout split by frozen randomization permutation (first 24 = fit, last 10 = holdout); no residual or threshold information computed for either group"
+}
