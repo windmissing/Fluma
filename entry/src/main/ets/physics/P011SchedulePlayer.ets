@@ -33,7 +33,8 @@
  */
 
 import { P011ScheduleV3, P011ScheduleV3Command, p011BuildScheduleV3,
-  P011_V3_RATE_PRIMARY_DEG_PER_S, P011_V3_RATE_SENSITIVITY_DEG_PER_S
+  P011_V3_RATE_PRIMARY_DEG_PER_S, P011_V3_RATE_SENSITIVITY_DEG_PER_S,
+  P011_V3_COMMAND_STEP_MS
 } from './P011ScheduleV3';
 import { P011RelaxHysteresisParamError } from './P011RelaxHysteresis';
 import { validateP011RunMetadataGroup, validateP011ExecIdentityGroup } from './P011TiltWant';
@@ -83,6 +84,89 @@ export interface P011ExecIdentityArming {
   execSourceCommit: string;
   execSourceFileSha256: string;
   execBuildSha256: string;
+}
+
+/**
+ * preregistration-P011-correction-matrix-v1.md §4 (G1/G2/G0 strata): a
+ * CONDITIONING PREFIX injected before the formal schedule — a short
+ * 0 -> +15 -> 0 -> -15 -> 0 tilt sequence (platform holds) that drives
+ * the field from the reset state toward the stratum's working initial
+ * state before the formal run's first command. The formal schedule then
+ * starts seamlessly (its H0 command follows the prefix's final 0 hold).
+ * 'none' (default) = no prefix — the pilot's same-initial-state degraded
+ * path is unaffected.
+ */
+export type P011ConditioningPrefix = 'none' | 'G1' | 'G2' | 'G0';
+
+/** Conditioning prefix spec: injected commands + total duration. */
+export interface P011ConditioningSpec {
+  kind: P011ConditioningPrefix;
+  commands: P011ScheduleV3Command[];
+  durationMs: number;
+}
+
+/**
+ * Build the conditioning prefix commands: 0(hold) -> +15(hold) -> 0(hold)
+ * -> -15(hold) -> 0(hold), 1000 ms per hold, 1 deg/s ramps between (the
+ * ramp steps ride the same 100 ms command grid). The sequence tilts the
+ * field in both directions once — enough to develop the competitive /
+ * hot-spot working state before the formal run starts.
+ */
+export function p011BuildConditioningPrefix(
+  kind: P011ConditioningPrefix): P011ConditioningSpec | null {
+  if (kind === 'none') {
+    return null;
+  }
+  const commands: P011ScheduleV3Command[] = [];
+  const holdMs = 1000;
+  const rampRate = 1.0; // deg/s
+  const stepMs = P011_V3_COMMAND_STEP_MS;
+  let offset = 0;
+  let sequence = 0;
+  const push = (targetTiltDeg: number, phase: string): void => {
+    sequence += 1;
+    commands.push({
+      commandSequence: sequence,
+      offsetMs: offset,
+      segmentId: 'CND_' + phase,
+      phaseKind: 'platform',
+      legId: '',
+      targetTiltDeg: targetTiltDeg,
+      rateDegPerSec: 0
+    });
+  };
+  const rampTo = (target: number, from: number): void => {
+    const steps = Math.max(1, Math.round(Math.abs(target - from) /
+      (rampRate * stepMs / 1000)));
+    for (let index = 1; index <= steps; index++) {
+      sequence += 1;
+      const value = from + (target - from) * index / steps;
+      commands.push({
+        commandSequence: sequence,
+        offsetMs: offset,
+        segmentId: 'CND_R',
+        phaseKind: 'ramp',
+        legId: 'CND_R',
+        targetTiltDeg: Math.round(value * 10) / 10,
+        rateDegPerSec: rampRate
+      });
+      offset += stepMs;
+    }
+  };
+  const hold = (tilt: number, phase: string): void => {
+    push(tilt, phase);
+    offset += holdMs;
+  };
+  hold(0, 'H0');
+  rampTo(15, 0);
+  hold(15, 'H15');
+  rampTo(0, 15);
+  hold(0, 'HZ');
+  rampTo(-15, 0);
+  hold(-15, 'Hm15');
+  rampTo(0, -15);
+  hold(0, 'HE');
+  return { kind: kind, commands: commands, durationMs: offset };
 }
 
 /**
@@ -209,6 +293,9 @@ export class P011SchedulePlayer {
   private startWallMs = 0;
   private nextIndex = 0;
   private stateValue: P011SchedulePlayerState = 'inactive';
+  // preregistration §4: conditioning prefix state (null = no prefix).
+  private conditioning: P011ConditioningSpec | null = null;
+  private conditioningDone = false;
 
   getState(): P011SchedulePlayerState {
     return this.stateValue;
@@ -218,8 +305,14 @@ export class P011SchedulePlayer {
     return this.stateValue === 'playing';
   }
 
-  /** Build and start. Returns false (and stays inactive) on invalid A/rate. */
-  start(peakADeg: number, rateDegPerSec: number, startWallMs: number): boolean {
+  /**
+   * Build and start. Returns false (and stays inactive) on invalid A/rate.
+   * The optional conditioning prefix (preregistration §4) runs FIRST —
+   * its commands dispatch on the same clock, and the formal schedule's
+   * offsets are shifted by the prefix duration so H0 follows seamlessly.
+   */
+  start(peakADeg: number, rateDegPerSec: number, startWallMs: number,
+    conditioning: P011ConditioningSpec | null = null): boolean {
     try {
       this.schedule = p011BuildScheduleV3(peakADeg, rateDegPerSec);
     } catch (error) {
@@ -232,6 +325,8 @@ export class P011SchedulePlayer {
       throw new P011RelaxHysteresisParamError(
         `v3 schedule build failed unexpectedly: ${message}`);
     }
+    this.conditioning = conditioning;
+    this.conditioningDone = conditioning === null;
     this.startWallMs = startWallMs;
     this.nextIndex = 0;
     this.stateValue = 'playing';
@@ -247,6 +342,8 @@ export class P011SchedulePlayer {
     this.schedule = null;
     this.nextIndex = 0;
     this.stateValue = 'inactive';
+    this.conditioning = null;
+    this.conditioningDone = false;
   }
 
   /**
@@ -261,6 +358,31 @@ export class P011SchedulePlayer {
       return [];
     }
     const dispatches: P011ScheduleDispatch[] = [];
+    // Conditioning prefix first: its offsets start at t0; the formal
+    // schedule's commands are all shifted by the prefix duration.
+    if (this.conditioning !== null && !this.conditioningDone) {
+      for (const command of this.conditioning.commands) {
+        const dueAt = this.startWallMs + command.offsetMs;
+        if (nowMs < dueAt) {
+          // Prefix still running — the formal schedule has not started.
+          return dispatches;
+        }
+        const driftMs = nowMs - dueAt;
+        dispatches.push({
+          command,
+          scheduledOffsetMs: command.offsetMs,
+          actualDispatchMs: nowMs,
+          driftMs,
+          driftExceeded: driftMs > P011_SCHEDULE_DRIFT_MARKER_MS
+        });
+      }
+      this.conditioningDone = true;
+      // Shift the formal schedule's clock origin to after the prefix.
+      this.startWallMs += this.conditioning.durationMs;
+      if (dispatches.length > 0) {
+        return dispatches;
+      }
+    }
     while (this.nextIndex < schedule.commands.length) {
       const command = schedule.commands[this.nextIndex];
       const dueAt = this.startWallMs + command.offsetMs;

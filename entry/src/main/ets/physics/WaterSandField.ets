@@ -44,6 +44,7 @@ import {
   p011CorrectionApplyOnce,
   p011CorrectionReserve
 } from './P011RelaxCorrection';
+import { P011CorrectionVariant } from './P011RelaxCorrection';
 import {
   P011RelaxHysteresisThresholds,
   P011RelaxHysteresisNextActiveResult,
@@ -778,6 +779,8 @@ export class WaterSandField {
   // D-1 explicit route isolation: the physics-apply route binding (null or
   // natural-relax-hysteresis-v1 keeps the legacy relaxAngle apply).
   private naturalObservationRouteId: string | null = null;
+  // preregistration §1 matrix variant (route gate has priority).
+  private correctionVariant: P011CorrectionVariant = 'D';
   private naturalObservationSliding: Uint8Array;
   private naturalObservationSlidingBefore: Uint8Array;
   private naturalObservationSlidingAfter: Uint8Array;
@@ -1716,6 +1719,22 @@ export class WaterSandField {
     this.naturalObservationRouteId = routeId;
   }
 
+  /**
+   * Matrix variant (preregistration §1): A/B/C/D selection for the
+   * correction slot's allocation law. ROUTE GATE HAS PRIORITY — the
+   * variant only takes effect on runs that explicitly bind
+   * P011_CORRECTION_ROUTE_ID with the machine armed; with the route
+   * unbound (variant A by definition) this parameter is inert and the
+   * original relax path runs.
+   */
+  setCorrectionVariant(variant: P011CorrectionVariant): void {
+    this.correctionVariant = variant;
+  }
+
+  getCorrectionVariant(): P011CorrectionVariant {
+    return this.correctionVariant;
+  }
+
   getNaturalObservationRouteId(): string | null {
     return this.naturalObservationRouteId;
   }
@@ -1807,6 +1826,11 @@ export class WaterSandField {
         ? true : null,
       // §27.4: the active config revision this substep ran under.
       configRevision: this.configRevision,
+      // preregistration §1: the correction matrix variant this substep's
+      // allocator ran under ('A' on runs without the route binding —
+      // cvar is inert there by definition).
+      correctionVariant: this.correctionRouteActive()
+        ? this.correctionVariant : 'A',
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
@@ -2243,6 +2267,7 @@ export class WaterSandField {
       localBudget: this.params.vSandTopMax * substepDt,
       totalBudget: this.params.totalMotionBudget * substepDt,
       dt: substepDt,
+      variant: this.correctionVariant,
       slidingEligible: hysteresis !== null ? this.relaxSliding : null
     };
     const view = this.correctionStockView();
@@ -2296,7 +2321,8 @@ export class WaterSandField {
       maxAvalancheFluxDt: this.params.maxAvalancheFlux * substepDt,
       localBudget: this.params.vSandTopMax * substepDt,
       totalBudget: this.params.totalMotionBudget * substepDt,
-      dt: substepDt
+      dt: substepDt,
+      variant: this.correctionVariant
     };
     const view = this.correctionStockView();
     const ledger: P011CorrectionLedger = new LiveCorrectionLedger(this);
@@ -2670,7 +2696,8 @@ export class WaterSandField {
         localBudget: this.params.vSandTopMax * substepDt,
         totalBudget: this.params.totalMotionBudget * substepDt,
         dt: substepDt,
-        slidingEligible: correctionHysteresis !== null ? this.relaxSliding : null
+        slidingEligible: correctionHysteresis !== null ? this.relaxSliding : null,
+        variant: this.correctionVariant
       };
       const headCorrectionView: P011CorrectionStockView =
         new S0CorrectionStockView(this);

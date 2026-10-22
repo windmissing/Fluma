@@ -146,6 +146,10 @@ export interface P011NaturalObservationSubstepContext {
   // configure; increments on every configure). Optional, backward
   // compatible.
   configRevision?: number;
+  // preregistration-P011-correction-matrix-v1.md §1: the correction
+  // matrix variant the allocator ran under ('A' on route-unbound runs).
+  // Optional, backward compatible.
+  correctionVariant?: 'A' | 'B' | 'C' | 'D';
   // True when scheduleDriftMs exceeded the 50 ms marker threshold — a
   // marker for the checker, not an error.
   scheduleDriftExceeded?: boolean | null;

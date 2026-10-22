@@ -1822,7 +1822,152 @@ export default function waterSandFieldTest() {
           metric.totalMotionBudgetLimit + 1e-12).assertTrue();
       }
     });
+    // preregistration-P011-correction-matrix-v1.md §1 variants (A/B/C/D)
+    // =====================================================================
 
+    // Four-state behavior + route-gate priority + variant ledger fields.
+    it('p011_cvar_fourVariantsAndRouteGatePriority', 0, () => {
+      // Route-gate priority: p011cvar without the route binding is inert —
+      // variant A by definition (the original relax path runs).
+      const fieldA = new WaterSandField(8, 192);
+      const paramsA = deterministicRateParams();
+      paramsA.relaxMode = 'dual-user-configured';
+      paramsA.thetaStartDeg = 26;
+      paramsA.thetaStopDeg = 20;
+      paramsA.thresholdSource = 'user';
+      paramsA.angleDeg = 4;
+      fieldA.configure(paramsA);
+      fieldA.setCorrectionVariant('C'); // cvar WITHOUT route — inert
+      fieldA.initialize(humpSceneForP011(8, 3, 4, 0.55));
+      const recordsA: P011NaturalObservationRecord[] = [];
+      fieldA.setNaturalObservationProbe(new P011NaturalObservationProbe(8,
+        record => { recordsA.push(record); }));
+      fieldA.setTilt(0);
+      for (let index = 0; index < 4; index++) {
+        const result = fieldA.step(1 / 60);
+        expect(result.ok).assertTrue();
+      }
+      expect(fieldA.correctionRouteActive()).assertFalse();
+      const lastA = recordsA[recordsA.length - 1];
+      // Ledger reports 'A' on route-unbound runs (cvar inert).
+      expect(lastA.context.correctionVariant).assertEqual('A');
+      // No correction telemetry on the original relax path.
+      expect(lastA.audit.correctionRequested === undefined).assertTrue();
+
+      // Route-bound variants: B/C/D each run the correction slot and land
+      // the variant field.
+      for (const variant of ['B', 'C', 'D'] as const) {
+        const field = new WaterSandField(8, 192);
+        const params = deterministicRateParams();
+        params.relaxMode = 'dual-user-configured';
+        params.thetaStartDeg = 26;
+        params.thetaStopDeg = 20;
+        params.thresholdSource = 'user';
+        params.angleDeg = 4;
+        field.configure(params);
+        field.setCorrectionVariant(variant);
+        field.initialize(humpSceneForP011(8, 3, 4, 0.55));
+        const records: P011NaturalObservationRecord[] = [];
+        field.setNaturalObservationProbe(new P011NaturalObservationProbe(8,
+          record => { records.push(record); }));
+        field.setNaturalObservationRouteId('relax-correction-weighted-v1');
+        field.setTilt(0);
+        for (let index = 0; index < 4; index++) {
+          const result = field.step(1 / 60);
+          expect(result.ok).assertTrue();
+        }
+        expect(field.correctionRouteActive()).assertTrue();
+        const last = records[records.length - 1];
+        // Variant lands on the ledger context.
+        expect(last.context.correctionVariant).assertEqual(variant);
+        // D-1b telemetry still present on every correction substep.
+        expect(last.audit.correctionRequested !== undefined).assertTrue();
+        const requested = last.audit.correctionRequested as number;
+        const granted = last.audit.correctionGranted as number;
+        const rejected = last.audit.correctionRejected as number;
+        expect(Math.abs(requested - (granted + rejected)) < 1e-12).assertTrue();
+      }
+    });
+
+    // B/C degraded semantics: the allocator skips the weighted law but
+    // KEEPS the reservation waterline + refunds (ledger identity).
+    it('p011_cvar_bDegradedKeepsReservationAndRefunds', 0, () => {
+      // Pure-function level: B fills the reservation in candidate order
+      // with full grants; the waterline rLimit and the ledger contract
+      // (debit == accepted + refunded exactly once) stay intact.
+      const n = 4;
+      const sandTop = new Float64Array(n);
+      sandTop[0] = 0; sandTop[1] = 0.6; sandTop[2] = 0.2; sandTop[3] = 0.5;
+      const params: P011CorrectionParams = {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 10, localBudget: 0.2,
+        totalBudget: 0.3, dt: 1 / 60, variant: 'B'
+      };
+      const reservation = p011CorrectionReserve(new TestCorrectionStockView(
+        sandTop, 0), params, Math.tan(30 * Math.PI / 180), 0);
+      expect(reservation.candidates.length > 0).assertTrue();
+      // B distribution: candidate order, full grants within rLimit.
+      let sumP = 0;
+      let sawPartial = false;
+      for (const c of reservation.candidates) {
+        expect(c.p <= c.u + 1e-12).assertTrue();
+        sumP += c.p;
+        if (c.p > 0 && c.p < c.u - 1e-12) {
+          sawPartial = true;
+        }
+      }
+      expect(Math.abs(sumP - reservation.rLimit) < 1e-9).assertTrue();
+      // In-order fill: the first candidates saturate; the tail starves
+      // (or all saturate when rLimit == sumU).
+      if (reservation.rLimit < reservation.candidates.reduce(
+        (s, c) => s + c.u, 0) - 1e-12) {
+        expect(sawPartial).assertTrue();
+      }
+      // The apply loop keeps its ledger contract under B.
+      let debited = 0;
+      let refunded = 0;
+      const ledger = new TestCorrectionLedger();
+      for (let index = 0; index < reservation.candidates.length; index++) {
+        p011CorrectionApplyOnce(reservation, index,
+          new TestCorrectionStockView(sandTop, 0), params,
+          Math.tan(30 * Math.PI / 180), ledger);
+      }
+      expect(Math.abs(ledger.debited - (ledger.refunded +
+        reservation.candidates.reduce((s, c) => s + c.p, 0))) < 1e-9 ||
+        ledger.refunded === 0).assertTrue();
+    });
+
+    // C weight semantics: w = e²·dx/2 (no net-contribution D factor).
+    it('p011_cvar_cWeightIsESquared', 0, () => {
+      const n = 3;
+      const sandTop = new Float64Array(n);
+      sandTop[0] = 0; sandTop[1] = 0.5; sandTop[2] = 0;
+      const view = new TestCorrectionStockView(sandTop, 0);
+      const paramsC: P011CorrectionParams = {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 10, localBudget: 100,
+        totalBudget: 100, dt: 1 / 60, variant: 'C'
+      };
+      const resC = p011CorrectionReserve(view, paramsC,
+        Math.tan(30 * Math.PI / 180), 0);
+      const paramsD: P011CorrectionParams = {
+        relaxBoundSlope: 0.1, maxAvalancheFluxDt: 10, localBudget: 100,
+        totalBudget: 100, dt: 1 / 60, variant: 'D'
+      };
+      const resD = p011CorrectionReserve(view, paramsD,
+        Math.tan(30 * Math.PI / 180), 0);
+      // Same candidate set; the C weights differ from D on multi-edge
+      // scenes (C ignores which direction actually helps).
+      expect(resC.candidates.length === resD.candidates.length).assertTrue();
+      if (resC.candidates.length > 0) {
+        const cC = resC.candidates[0];
+        const cD = resD.candidates[0];
+        // w_C = e²·dx/2 vs w_D = e·D·dx/2 — both positive; D weight
+        // equals the current behavior (e·d/2).
+        expect(Math.abs(cD.w - cD.e * cD.d / 2) < 1e-15).assertTrue();
+        expect(Math.abs(cC.w - cC.e * cC.e / 2) < 1e-15).assertTrue();
+      }
+    });
+
+    
   });
 }
 

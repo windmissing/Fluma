@@ -12,7 +12,8 @@ import { BusinessError } from '@ohos.base';
 import hilog from '@ohos.hilog';
 import preferences from '@ohos.data.preferences';
 import { decodeP011TiltWant } from '../physics/P011TiltWant';
-import { P011SchedulePlayer } from '../physics/P011SchedulePlayer';
+import { P011SchedulePlayer, p011BuildConditioningPrefix,
+  P011ConditioningPrefix, P011ConditioningSpec } from '../physics/P011SchedulePlayer';
 import common from '@ohos.app.ability.common';
 import {
   P011NaturalObservationProbe,
@@ -542,13 +543,14 @@ struct SandCanvas {
     const p012Ablate = AppStorage.get<string>('p012ablate');
     if (p012Ablate === 'off' || p012Ablate === 'grain' || p012Ablate === 'fog' ||
       p012Ablate === 'spark' || p012Ablate === 'strat' ||
-      p012Ablate === 'e3i2' || p012Ablate === 'e3n1') {
+      p012Ablate === 'e3i2' || p012Ablate === 'e3n1' || p012Ablate === 'dyn') {
       this.p012Ablation = P012Ablation[p012Ablate === 'off' ? 'OFF'
         : p012Ablate === 'grain' ? 'GRAIN'
         : p012Ablate === 'fog' ? 'FOG'
         : p012Ablate === 'spark' ? 'SPARK'
         : p012Ablate === 'strat' ? 'STRAT'
-        : p012Ablate === 'e3i2' ? 'E3I2' : 'E3N1'];
+        : p012Ablate === 'e3i2' ? 'E3I2'
+        : p012Ablate === 'dyn' ? 'DYN' : 'E3N1'];
       console.info(`[P012] ablation -> ${p012Ablate} (want)`);
     }
     const p012FillBox = AppStorage.get<string>('p012fillbox');
@@ -1713,6 +1715,9 @@ struct SandCanvas {
           // apply. Wiring only — activation still requires the armed state
           // machine (correctionRouteActive dual-condition gate).
           ws.setNaturalObservationRouteId(p011TiltWant.correctionRouteId ?? null);
+          // preregistration §1: the matrix variant travels with the want;
+          // inert without the route binding (route gate priority).
+          ws.setCorrectionVariant(p011TiltWant.correctionVariant ?? 'D');
           // Observation-3 v3 (GAP-2/5): schedule segment binding and
           // execution identity flow with the command.
           ws.setP011CurrentCommandSegment(p011TiltWant.v3LegId ?? null,

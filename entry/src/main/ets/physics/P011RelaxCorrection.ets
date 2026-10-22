@@ -1,3 +1,4 @@
+
 /**
  * P-011 relax-correction-weighted-v1 (architecture §24, designer algorithm
  * doc v1): an independent, reservation-first, contribution-weighted budget
@@ -40,6 +41,17 @@ import {
   p011GuardAdmit,
   p011GuardConstraintsForDelta
 } from './P011MaterialGuard';
+/**
+ * preregistration-P011-correction-matrix-v1.md §1 variants:
+ *  A — dual 26/20 original relax, NO dedicated reservation (route unbound)
+ *  B — reservation only: in-reservation full grants in candidate order,
+ *      no e-squared weighting, no net-contribution sort (DEGRADED
+ *      allocator — keeps the reservation waterline and the refunds)
+ *  C — reservation + e-squared weight (w = e^2 * dx/2, no D factor)
+ *  D — reservation + e^2 x net contribution (w = e*D*dx/2 — the current
+ *      relax-correction-weighted-v1 behavior)
+ */
+export type P011CorrectionVariant = 'A' | 'B' | 'C' | 'D';
 
 /** Frozen correction parameters passed by the caller per substep. */
 export interface P011CorrectionParams {
@@ -62,6 +74,8 @@ export interface P011CorrectionParams {
    * unchanged; only the eligibility gate widens or narrows).
    */
   slidingEligible?: Uint8Array | null;
+  /** Matrix variant (§1): default 'D' = current weighted behavior. */
+  variant?: P011CorrectionVariant;
 }
 
 /** One candidate correction edge, computed on the reservation snapshot. */
@@ -216,7 +230,11 @@ export function p011CorrectionReserve(
       qDescent: qDescent,
       guardAdmissible: guardAdmissible,
       u: 0,
-      w: e * d / 2, // w = e·D·dx/2 (stable product form of e²γ)
+      // §1 variant weight: D = e·D·dx/2 (stable product form of e²γ with
+      // the net-contribution factor); C = e·e·dx/2 (e² without D —
+      // allocate by overshoot magnitude only); B keeps the computed
+      // value but the B allocator ignores weights entirely.
+      w: params.variant === 'C' ? e * e / 2 : e * d / 2,
       p: 0
     });
     degree[donor] += 1;
@@ -268,7 +286,8 @@ export function p011CorrectionReserve(
  * item takes p = λ·w with the same single λ and the sweep stops. No
  * bisection, single pass.
  */
-export function p011CorrectionAllocate(reservation: P011CorrectionReservation): void {
+export function p011CorrectionAllocate(reservation: P011CorrectionReservation,
+  variant: P011CorrectionVariant = 'D'): void {
   const candidates = reservation.candidates;
   if (candidates.length === 0) {
     return;
@@ -280,6 +299,24 @@ export function p011CorrectionAllocate(reservation: P011CorrectionReservation): 
     c.p = 0;
   }
   if (rLimit <= 0) {
+    return;
+  }
+  if (variant === 'B') {
+    // §1 B semantics (degraded allocator, NOT a bypass): fill the
+    // reservation waterline with FULL grants in the candidate order the
+    // reservation collected (edge ascending — the pre-sort order), no
+    // e² weighting and no net-contribution sort. The reservation
+    // waterline and the refunds still apply (applyOnce keeps its ledger
+    // contract); only the distribution law changes.
+    let remainingB = rLimit;
+    for (const c of candidates) {
+      if (remainingB <= 0) {
+        break;
+      }
+      const grant = Math.min(c.u, remainingB);
+      c.p = grant;
+      remainingB -= grant;
+    }
     return;
   }
   // Active set sorted by u/w ascending (saturate cheapest weight first).
