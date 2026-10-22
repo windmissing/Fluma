@@ -3400,6 +3400,62 @@ export default function waterSandFieldTest() {
           metric.totalMotionBudgetLimit + 1e-12).assertTrue();
       }
     });
+    // U14 (§7 tester checklist item 10): three-state transition semantics
+    // with a USER-configured pair — equality at both thresholds and the
+    // hold band between them. Pins that the config plumbing (configure →
+    // activeThresholdConfig → derived slopes) feeds the SAME comparator
+    // chain as the protocol pair (no UI-rounding off-by-epsilon): start
+    // fires at exactly r==slopeStart (>=), stop fires at exactly
+    // r==slopeStop (<=), mid-band holds the previous state both ways.
+    it('u27_14_threeStateSemanticsWithUserPair', 0, () => {
+      const field = new WaterSandField(8, 192);
+      const params = defaultWaterSandParams();
+      params.relaxMode = 'dual-user-configured';
+      params.thetaStartDeg = 26;
+      params.thetaStopDeg = 20;
+      params.thresholdSource = 'user';
+      field.configure(params);
+      const config = field.getActiveThresholdConfig();
+      expect(config !== null).assertTrue();
+      if (config === null) {
+        return;
+      }
+      const thresholds = p011RelaxHysteresisThresholds({
+        thetaStartDeg: config.thetaStartDeg,
+        thetaStopDeg: config.thetaStopDeg,
+        thetaHardMaxDeg: 30
+      });
+      const start = config.slopeStart;
+      const stop = config.slopeStop;
+      expect(Math.abs(start - Math.tan(26 * Math.PI / 180)) < 1e-12)
+        .assertTrue();
+      expect(Math.abs(stop - Math.tan(20 * Math.PI / 180)) < 1e-12)
+        .assertTrue();
+      // Equality AT start: inactive -> active (comparator >=).
+      const atStart = p011RelaxHysteresisNextActive(false, start,
+        thresholds, config.thetaStartDeg, config.thetaStopDeg);
+      expect(atStart.activeAfter).assertTrue();
+      expect(atStart.transitionReason).assertEqual('START_THRESHOLD_CROSSED');
+      // Just below start: hold inactive.
+      expect(p011RelaxHysteresisNextActive(false, start * (1 - 1e-9),
+        thresholds, config.thetaStartDeg, config.thetaStopDeg).activeAfter)
+        .assertFalse();
+      // Equality AT stop: active -> inactive (comparator <=).
+      const atStop = p011RelaxHysteresisNextActive(true, stop,
+        thresholds, config.thetaStartDeg, config.thetaStopDeg);
+      expect(atStop.activeAfter).assertFalse();
+      expect(atStop.transitionReason).assertEqual('STOP_THRESHOLD_CROSSED');
+      // Just above stop: hold active.
+      expect(p011RelaxHysteresisNextActive(true, stop * (1 + 1e-9),
+        thresholds, config.thetaStartDeg, config.thetaStopDeg).activeAfter)
+        .assertTrue();
+      // Between thresholds: hysteresis holds the previous state.
+      const mid = (start + stop) / 2;
+      expect(p011RelaxHysteresisNextActive(true, mid, thresholds,
+        config.thetaStartDeg, config.thetaStopDeg).activeAfter).assertTrue();
+      expect(p011RelaxHysteresisNextActive(false, mid, thresholds,
+        config.thetaStartDeg, config.thetaStopDeg).activeAfter).assertFalse();
+    });
   });
 }
 
