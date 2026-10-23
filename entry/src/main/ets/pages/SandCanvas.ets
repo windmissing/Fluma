@@ -1429,6 +1429,18 @@ struct SandCanvas {
       if (scheduleRoute !== undefined && scheduleRoute !== '') {
         scheduleField.setNaturalObservationRouteId(scheduleRoute);
       }
+      // S4 §1.4: arm deep-creep params when the want carried p011s4 (the
+      // route binding rides the SAME single route field — S4 claims it
+      // only when no correction route was bound).
+      const s4K = AppStorage.get<number>('p011S4KDeep');
+      const s4Mu = AppStorage.get<number>('p011S4MuY');
+      const s4H = AppStorage.get<number>('p011S4HMin');
+      if (s4K !== undefined && s4Mu !== undefined && s4H !== undefined) {
+        scheduleField.setDeepCreepParams({ kDeep: s4K, muY: s4Mu, hMin: s4H });
+        if (scheduleRoute === undefined || scheduleRoute === '') {
+          scheduleField.setNaturalObservationRouteId('deep-creep-bh-v1');
+        }
+      }
     }
     // §26.5: arm the run metadata BEFORE player.start() so the state
     // machine is armed when the first platform substep runs (the first

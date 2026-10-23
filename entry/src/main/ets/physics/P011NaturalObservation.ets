@@ -584,6 +584,16 @@ export class P011RelaxHysteresisDecisionSample {
   }
 }
 
+/** S4 deep-creep per-pair evidence (§1.3 registration). */
+export interface P011DeepCreepEvidence {
+  edge: number;
+  requested: number;
+  granted: number;
+  q: number;
+  drive: number;
+  reason: string | null;
+}
+
 export class P011NaturalObservationProbe {
   private readonly cols: number;
   private readonly sink: P011NaturalObservationSink;
@@ -755,6 +765,18 @@ export class P011NaturalObservationProbe {
    * admitted or refused). Called from applyCorrectionSlot on every
    * correction-route substep, including zero-candidate ones (all zeros).
    */
+  /** S4 deep-creep registration telemetry (§1.3 — percolate precedent,
+   * registration only, no guard interception). */
+  recordDeepCreepEvidence(evidence: P011DeepCreepEvidence): void {
+    // Stored for the calibration sweep via the probe's raw accessors;
+    // the ledger integration (if any) lands with the S4 calibration
+    // freeze — the offline prototype reads it through a page-side hook.
+    this.deepCreepEvidence.push(evidence);
+  }
+
+  /** S4: the evidence buffer (bounded — the sweep drains it). */
+  deepCreepEvidence: P011DeepCreepEvidence[] = [];
+
   recordCorrectionSlot(requested: number, granted: number, rejected: number,
     stalledCount: number): void {
     this.correctionRequested = requested;

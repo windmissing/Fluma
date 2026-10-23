@@ -179,6 +179,33 @@ export default class EntryAbility extends UIAbility {
     }
     AppStorage.setOrCreate('p011ScheduleConditioning',
       conditioningValid ? rawConditioning : 'none');
+    // S4 §1.4: deep-creep arming via p011s4 = 'deep:<k_deep>:<mu_y>:<hMin>'
+    // (three-segment, independent from p011route; illegal values reject).
+    if (parameters && parameters.p011s4 !== undefined) {
+      const s4 = `${parameters.p011s4}`.trim();
+      const parts = s4.split(':');
+      if (parts.length === 4 && parts[0] === 'deep') {
+        const kDeep = Number(parts[1]);
+        const muY = Number(parts[2]);
+        const hMin = Number(parts[3]);
+        if (Number.isFinite(kDeep) && Number.isFinite(muY) &&
+          Number.isFinite(hMin) && kDeep > 0 && kDeep <= 0.2 &&
+          muY >= 0 && muY <= 0.5 && hMin >= 0.5 && hMin <= 2) {
+          AppStorage.setOrCreate('p011S4KDeep', kDeep);
+          AppStorage.setOrCreate('p011S4MuY', muY);
+          AppStorage.setOrCreate('p011S4HMin', hMin);
+          hilog.info(this.hilogDomain, this.hilogTag,
+            'want param p011s4 k=%{public}f mu=%{public}f hMin=%{public}f',
+            kDeep, muY, hMin);
+        } else {
+          hilog.warn(this.hilogDomain, this.hilogTag,
+            'P011_S4_WARNING INVALID_P011_S4_PARAMS');
+        }
+      } else if (s4 !== '') {
+        hilog.warn(this.hilogDomain, this.hilogTag,
+          'P011_S4_WARNING INVALID_P011_S4_FORMAT');
+      }
+    }
     const scheduleParsed = parseP011ScheduleWant(parameters);
     for (const scheduleWarning of scheduleParsed.warnings) {
       hilog.warn(this.hilogDomain, this.hilogTag,

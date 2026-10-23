@@ -15,7 +15,12 @@ export type P011ExistingChannelId =
   'settle' | 'percolate' | 'bottomCreep' | 'relax' | 'lift' | 'suspensionDiffusion' |
   // §24 relax-correction-weighted-v1: independent reservation-first budget
   // sub-channel replacing the relax slot's budget allocation.
-  'correction';
+  'correction' |
+  // S4 deep-creep (architecture-P011-S4-deep-creep-v1.md §1.1): the
+  // bh-interface potential-gradient reverse-exchange channel. Rank 6;
+  // correction shifts to 7 (rank is a pure lexicographic tool — preview
+  // ordering only, never in the ledger).
+  'deepCreep';
 
 export interface P011ExistingRequestShape {
   requested: number;
@@ -42,6 +47,9 @@ export interface P011ExistingChannelRateCapRemaining {
   lift: number;
   suspensionDiffusion: number;
   correction: number;
+  /** S4 §1.2: booked but NOT capped in the first version (observe then
+   * calibrate — the cap candidate lands after the sweep). */
+  deepCreep: number;
 }
 
 export interface P011ExistingBudgetSnapshot {
@@ -127,10 +135,12 @@ export function p011ChannelRank(id: P011ExistingChannelId): number {
       return 4;
     case 'suspensionDiffusion':
       return 5;
+    case 'deepCreep':
+      return 6;
     case 'correction':
-      return 6;
+      return 7;
     default:
-      return 6;
+      return 7;
   }
 }
 

@@ -346,6 +346,28 @@ export interface WaterSandScene {
   lightSuspendedRegions: WaterSandRegion[];
 }
 
+/** S4 deep-creep params (§3.1; calibrated via the 60-combo sweep). */
+export interface P011DeepCreepParams {
+  /** Rate coefficient (q_req ∝ k·dt·D). */
+  kDeep: number;
+  /** Yield gate coefficient (D_raw −= μ_y·p_eff). */
+  muY: number;
+  /** Minimum layer thickness for both endpoints (material units). */
+  hMin: number;
+}
+
+/** S4 attribution counters (ArkTS: no untyped record literals). */
+export class P011DeepCreepAttribution {
+  noDrive: number = 0;
+  noInventory: number = 0;
+  budgetClipped: number = 0;
+  totalUsed: number = 0;
+}
+
+/** S4 §1.4: the deep-creep route id (mutually exclusive with the
+ * correction route — one route binding per run). */
+export const P011_DEEP_CREEP_ROUTE_ID = 'deep-creep-bh-v1';
+
 /** falling-sand gesture request: page-routed per-column amounts (§1.1). */
 export interface P011GestureSandRequest {
   perColumnHeavy: Float64Array;
@@ -794,6 +816,14 @@ export class WaterSandField {
   private naturalObservationRouteId: string | null = null;
   // preregistration §1 matrix variant (route gate has priority).
   private correctionVariant: P011CorrectionVariant = 'D';
+  // S4 §1.4: deep-creep params (null = channel OFF, bit-identical to
+  // the pre-S4 behavior on every existing run).
+  private deepCreepParams: P011DeepCreepParams | null = null;
+  // S4 telemetry attribution counters (per substep, reset each call).
+  private deepCreepNoDrive = 0;
+  private deepCreepNoInventory = 0;
+  private deepCreepBudgetClipped = 0;
+  private deepCreepTotalUsed = 0;
   private naturalObservationSliding: Uint8Array;
   private naturalObservationSlidingBefore: Uint8Array;
   private naturalObservationSlidingAfter: Uint8Array;
@@ -2086,6 +2116,53 @@ export class WaterSandField {
     return this.correctionVariant;
   }
 
+  /**
+   * S4 §1.4 double gate (correction D-1 precedent): the route binding
+   * (sufficient) + armed params (necessary). Either missing = full
+   * bypass, bit-identical to the current HEAD.
+   */
+  deepCreepRouteActive(): boolean {
+    return this.naturalObservationRouteId === P011_DEEP_CREEP_ROUTE_ID &&
+      this.deepCreepParams !== null;
+  }
+
+  /**
+   * S4 §5 (S-5): arm the deep-creep params. Fail-closed validation
+   * (§27.2 precedent): non-finite/negative/out-of-domain values REJECT
+   * the call (no clamping); kDeep ∈ (0, 0.2], muY ∈ [0, 0.5],
+   * hMin ∈ [0.5, 2].
+   */
+  setDeepCreepParams(params: P011DeepCreepParams | null): void {
+    if (params === null) {
+      this.deepCreepParams = null;
+      return;
+    }
+    if (!finite(params.kDeep) || !finite(params.muY) ||
+      !finite(params.hMin) || params.kDeep <= 0 || params.kDeep > 0.2 ||
+      params.muY < 0 || params.muY > 0.5 ||
+      params.hMin < 0.5 || params.hMin > 2) {
+      throw new WaterSandParamError(
+        'invalid deep-creep params: kDeep in (0,0.2], muY in [0,0.5], hMin in [0.5,2]');
+    }
+    this.deepCreepParams = {
+      kDeep: params.kDeep, muY: params.muY, hMin: params.hMin
+    };
+  }
+
+  getDeepCreepParams(): P011DeepCreepParams | null {
+    return this.deepCreepParams;
+  }
+
+  /** S4 telemetry: last substep's attribution counters. */
+  getDeepCreepAttribution(): P011DeepCreepAttribution {
+    const result = new P011DeepCreepAttribution();
+    result.noDrive = this.deepCreepNoDrive;
+    result.noInventory = this.deepCreepNoInventory;
+    result.budgetClipped = this.deepCreepBudgetClipped;
+    result.totalUsed = this.deepCreepTotalUsed;
+    return result;
+  }
+
   getNaturalObservationRouteId(): string | null {
     return this.naturalObservationRouteId;
   }
@@ -2592,6 +2669,13 @@ export class WaterSandField {
     if (creepError !== null) {
       return creepError;
     }
+    // S4 §1.1: deepCreep sits AFTER bottomCreep and BEFORE relax/
+    // correction — its ΔS=0 reverse exchanges leave the sandTop residual
+    // the relax slot reads untouched (pure budget competition, no state
+    // coupling).
+    if (this.deepCreepRouteActive()) {
+      this.applyDeepCreep(dt);
+    }
     // D-1 route isolation: the §24 reservation-first correction sub-channel
     // replaces the relax slot's budget allocation ONLY on runs that
     // explicitly bind P011_CORRECTION_ROUTE_ID with the state machine armed
@@ -2876,6 +2960,169 @@ export class WaterSandField {
       affectedEdgeIds: affected,
       rejected: outcome.rejected,
       clipped: Math.max(0, requested - outcome.accepted)
+    });
+  }
+
+  /**
+   * S4 deepCreep §2.1-2.4: the bh-interface reverse-exchange channel.
+   * Candidate edges by potential gradient D = max(0, (ρH−ρL)·g·Δbh −
+   * μ_y·p_eff); top-K (K=4) by D descending with lexicographic
+   * tie-break; q four-fold min truncation (rate → potential Δbh/2 →
+   * donor bh → receiver-side bl) + budget (dual-end local, 2q ≤ total);
+   * each pair commits as an atomic four-element micro-transaction
+   * (computed fully before any write). Telemetry per pair via
+   * recordDeepCreep (registration, no materialGuardAdmit — ΔS=0).
+   */
+  private applyDeepCreep(dt: number): void {
+    const params = this.deepCreepParams;
+    if (params === null) {
+      return;
+    }
+    this.deepCreepNoDrive = 0;
+    this.deepCreepNoInventory = 0;
+    this.deepCreepBudgetClipped = 0;
+    let substepUsed = 0;
+    // (ρH−ρL)·g engine constant (the potential-form given; not swept).
+    const driveConst = 1.0;
+    const K = 4;
+    // Candidate generation: adjacent pairs, D descending.
+    const edgeCount = this.cols - 1;
+    const candidates: number[] = [];
+    const drives: number[] = [];
+    const rawQ: number[] = [];
+    for (let e = 0; e < edgeCount; e++) {
+      // Donor = the HIGH-bh side (the design's i/j are donor/receiver
+      // roles, not left/right: the reverse exchange moves heavy sand
+      // downhill on the interface, so the donor is whichever endpoint
+      // holds more bh; Δbh in the potential form is the donor-minus-
+      // receiver difference — direction-free by |·|).
+      const i = this.bh[e] >= this.bh[e + 1] ? e : e + 1;
+      const j = i === e ? e + 1 : e;
+      const deltaBh = this.bh[i] - this.bh[j];
+      const pEff = (this.sandTopScratch[i] + this.sandTopScratch[j]) / 2;
+      const dRaw = driveConst * deltaBh - params.muY * pEff;
+      const d = Math.max(0, dRaw);
+      if (d <= 0 || deltaBh <= 2 * EPS ||
+        this.bh[i] <= params.hMin || this.bl[j] <= params.hMin) {
+        if (dRaw <= 0 && deltaBh > 2 * EPS) {
+          this.deepCreepNoDrive += 1;
+        } else if (deltaBh > 2 * EPS &&
+          (this.bh[i] <= params.hMin || this.bl[j] <= params.hMin)) {
+          this.deepCreepNoInventory += 1;
+        }
+        continue;
+      }
+      candidates.push(e);
+      drives.push(d);
+      rawQ.push(0);
+    }
+    // Top-K by D descending, lexicographic tie-break (edge ascending).
+    const order = candidates.map((e, index) => index)
+      .sort((a, b) => {
+        const dd = drives[b] - drives[a];
+        if (dd !== 0) {
+          return dd;
+        }
+        return candidates[a] - candidates[b];
+      });
+    const picked = order.slice(0, K);
+    // Lexicographic processing (edge ascending) — deterministic serial
+    // budget competition (§2.4).
+    picked.sort((a, b) => candidates[a] - candidates[b]);
+    for (const index of picked) {
+      const e = candidates[index];
+      // Direction-free donor selection (same rule as generation).
+      const i = this.bh[e] >= this.bh[e + 1] ? e : e + 1;
+      const j = i === e ? e + 1 : e;
+      const d = drives[index];
+      // Four-fold min truncation in the FIXED order (rate → potential →
+      // donor bh → receiver-side bl), then budget (§2.2).
+      let q = params.kDeep * dt * d;
+      const deltaBh = this.bh[i] - this.bh[j];
+      q = Math.min(q, deltaBh / 2);
+      q = Math.min(q, this.bh[i]);
+      q = Math.min(q, this.bl[j]);
+      if (q <= EPS) {
+        continue;
+      }
+      const localI = this.substepMotionBudgetRemaining[i];
+      const localJ = this.substepMotionBudgetRemaining[j];
+      const totalRemaining = this.totalMotionBudgetRemaining;
+      let clipped = false;
+      if (2 * q > totalRemaining) {
+        q = totalRemaining / 2;
+        clipped = true;
+      }
+      if (q > localI) {
+        q = localI;
+        clipped = true;
+      }
+      if (q > localJ) {
+        q = localJ;
+        clipped = true;
+      }
+      if (q <= EPS) {
+        if (clipped) {
+          this.deepCreepBudgetClipped += 1;
+        }
+        continue;
+      }
+      // Atomic micro-transaction: compute all four new values + the
+      // internal validity checks BEFORE any write (§2.4). No partial
+      // writes; no saveBackup needed (four array elements, computed
+      // then written).
+      const newBhI = this.bh[i] - q;
+      const newBhJ = this.bh[j] + q;
+      const newBlJ = this.bl[j] - q;
+      const newBlI = this.bl[i] + q;
+      const sI = this.sandTopScratch[i];
+      const sJ = this.sandTopScratch[j];
+      const valid = newBhI >= -EPS && newBhJ >= -EPS &&
+        newBlI >= -EPS && newBlJ >= -EPS &&
+        newBhI <= sI + EPS && newBhJ <= sJ + EPS &&
+        newBlI <= sI - newBhI + EPS && newBlJ <= sJ - newBhJ + EPS &&
+        newBhI >= newBhJ - EPS; // no interface inversion
+      if (!valid) {
+        this.deepCreepNoInventory += 1;
+        this.recordDeepCreep(i, params.kDeep * dt * d, 0, 0, d, 'INVALID');
+        continue;
+      }
+      // Commit: four elements + ledgers (2q total, q per endpoint local,
+      // cap booking).
+      this.bh[i] = newBhI;
+      this.bh[j] = newBhJ;
+      this.bl[j] = newBlJ;
+      this.bl[i] = newBlI;
+      this.substepMotionBudgetRemaining[i] -= q;
+      this.substepMotionBudgetUsed[i] += q;
+      this.substepMotionBudgetRemaining[j] -= q;
+      this.substepMotionBudgetUsed[j] += q;
+      this.totalMotionBudgetRemaining -= 2 * q;
+      this.totalMotionBudgetUsed += 2 * q;
+      substepUsed += 2 * q;
+      this.deepCreepTotalUsed += 2 * q;
+      this.recordDeepCreep(i, params.kDeep * dt * d, q, q, d, null);
+    }
+    if (substepUsed > 0) {
+      this.updateSandTop();
+    }
+  }
+
+  /** S4 §1.3: registration-style telemetry (percolate precedent) — no
+   * materialGuardAdmit (ΔS=0 channel; the guard only speaks sandTop). */
+  private recordDeepCreep(edge: number, requested: number, granted: number,
+    q: number, drive: number, reason: string | null): void {
+    const probe = this.naturalObservationProbe;
+    if (probe === null) {
+      return;
+    }
+    probe.recordDeepCreepEvidence({
+      edge: edge,
+      requested: requested,
+      granted: granted,
+      q: q,
+      drive: drive,
+      reason: reason
     });
   }
 
@@ -3556,7 +3803,8 @@ export class WaterSandField {
       relax: 0,
       lift: 0,
       suspensionDiffusion: 0,
-      correction: 0
+      correction: 0,
+      deepCreep: 0
     };
     const budgetsBefore: P011ExistingBudgetSnapshot = {
       localRemaining: Array.from(this.substepMotionBudgetRemaining),
