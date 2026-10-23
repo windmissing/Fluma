@@ -1,0 +1,69 @@
+# P-011 手势掉沙纵向观感：三路线算法语义与裁决建议 v1
+
+日期：2026-10-23。责任：designer。状态：**DESIGN_ONLY / MANAGER_ROUTE_DECISION_PENDING**。输入：[手势沙源注入设计](algorithm-P011-gesture-sand-source-v1.md) §2/§3/§5、[水云雾与沙颗粒效果锚定](p012-water-cloud-sand-demand-anchor-v1.md)、`WaterSandField.ets` 现行 canonical ledger 与 `settleSandV2`。只比较纵向掉落机制；滑动=掉沙、EXPERIENCE 手机传感器=倾斜、TEST script/Want=模拟倾斜的交互裁决不重开。本稿不改实现、测试、冻结锚点或 108-run 批的物理构建。
+
+## 1. 共同约束与可见目标
+
+现行每列库存是 `bh/bl/mh/ml/suspH/suspL`，没有粒子或悬沙的纵向位置。`settleSandV2` 用 `suspPhase×min(1,settleSpeed×dt/depth)` 申请沉降，并受 local/total 预算与 §19.5 沙面 guard 限制。因此“把沙放进 susp”不等于“有颗粒从指尖沿路径落下”。三路线均只允许**已准入**的手势沙源产生可见效果；`NO_WATER`、`CAPACITY_BLOCKED`、`admitted=0` 时不出现喷流。外源准入仍按原设计保水、按重轻比例原子提交；`IH/IL` 仅累计实际准入量，不为每个可视点再次加库存。
+
+共同观感目标：可见细粒从有效触点附近向当前重力下方移动，在当前水面与沙面之间连续，触及沙面后消失、形成局部沉降或散为真实悬浮；沙区仍是颗粒/层理，水区仍是近白斑驳云雾。轨迹不能是一根不透明白线或盖住沙粒与 E3 雾带的亮块。候选观测为接触到首粒延迟、连续滑动漏段率、轨迹到沙面交点误差、粒子消失与实际 `settle grant` 的时差、遮挡正确率、物理相量守恒及同构建帧时；**数值阈值待效果试采预注册，当前不冻结**。
+
+## 2. A：物理在途库存，1D 列扩展
+
+**表示**：不能只加 `fallH[c]/fallL[c]/fallY[c]` 一个平均高度；连续手势会使同列不同年龄沙包同时存在，合成单一 `fallY` 将把新包和旧包错误地同时落地。至少用每列有界 cohort `fallPhase[c,k], fallY[c,k]`（可带 `fallV[c,k]`），候选 `K=4`；满槽时仅同相、近高度包质量加权合并，合并保持总量和一阶位置矩，不能凭空丢量。它仍是**列内包团，不是自由粒子**，细粒外观须由只读渲染按包团质量生成。`fallY` 以当前重力底部为 0 的材料高度坐标；初始高度由有效触点映射并裁在水面以下、沙面以上，触点落在沙区时不得画穿过沙层的长轨迹。
+
+**动力学**：首版复用 `heavySettleSpeed=64`、`lightSettleSpeed=38` 的量纲作为在途终端速度候选，`vY_phase=−settleSpeed_phase×max(0,cos(effectiveTilt))`，不再额外对同一 cohort 施用旧比例式 `settleSandV2`，避免一次质量经历两套自由下落计时。对当前视图翻转/倒置，先由生命周期变换重新映射 `fallY` 与重力底部，再推进；不得把旧屏幕坐标当重力坐标。**首版不做跨列偏移**：倾斜仅影响列内下落投影，沙包仍在出生列，因此在大倾角下不会呈斜抛轨迹，是 A 的明确观感限制。若后来加入 `vX∝sin(effectiveTilt)`，每次过列是保守的相量搬运，必须进 local/total 预算、preview/apply 账本及容量审计，不能以“只是画面移动”免预算；这已显著靠近 C 的工程量。
+
+**落底**：当 `fallY≤sandTop[c]`，向 `mh/ml` 申请 `q`，先检查该子步 local/total 预算，再以 `ΔS[c]=+q` 逐笔联合预演受影响两边并按 §19.5 截断，最后回写四层预算账本。若 grant `<q`，余量停在沙面之上的 `fall` 接触队列，画成细小滞留/散开的真实在途量；后续子步重试或按明定规则转入 `susp`，**不能先删在途量、也不能不受 guard 直接写 `mh/ml`**。新源入 `fall` 的事件本身 `ΔS=0`、不占场内搬运预算；落底 grant 则占用。`percolateHeavyConservative` 沿现有次序处理已落入 `mh/ml` 的部分。接触队列堆满时源容量准入应收缩，不能无限累积。
+
+**账本与链路**：
+
+```text
+VH_actual = Σ(bh + mh + suspH + Σk fallH[c,k])
+VL_actual = Σ(bl + ml + suspL + Σk fallL[c,k])
+VH_expected = VH0 + IH ; VL_expected = VL0 + IL
+```
+
+在途量**加入 actual，不再另加 expected**；`expected` 已在手势沙源准入时加一次。水相仍按源事务保水，逐列 `waterVolume[c]=max(0,waterTop[c]−S[c]−suspH[c]−suspL[c]−Σk fallMass[c,k])`，并审 `S+susp+fall+water≤H` 与非负（同一颗粒不能同时算 susp 与 fall）。`depositedFraction` 分母用累计期望，分子只计 `bh+mh` 等沉积层；`t90` 在活动源 epoch 内无效。snapshot/schema、`getTotals/audit/copyStateTo`、P-012 adapter 相量配对、checker、invert/reset、preview/apply 都需扩展。26/20 双角状态机仍只读真实 `S` 与有效 tilt；在途运动不伪造滑移 start/stop，落底增 `S` 时必须经 tan30 guard。旧无源 run 的 `fall=0`，须做逐位或容差等价回归；108-run 统计提取完成前不能合入共享物理构建。
+
+## 3. B：已准入事件驱动的渲染喷流，物理不变
+
+**身份**：沿用已验收沙源设计，双相外源一次性写 `suspH/suspL` 并记录 `InjectionReceipt`。P-012 只读 `admittedH/L`、触点路径、物理快照和 source epoch，创建**无体积的视觉 tracer**；tracer 的出现/消失不写 `WaterSandField`，不进 checker、库存或 P-011 物理遥测。每个事件固定 seed 和相身份；累计视觉点数不等于相体积，也不能把 tracer 落地作为沉降 grant 记账。`admitted=0` 不生成；部分准入的视觉密度按实际量缩放。
+
+**运动与观感**：tracer 自触点在水区内的合法起点出发，沿显示重力方向缓慢下降；候选旅行时间按起点到当前沙面深度除以对应 `heavy/lightSettleSpeed` 定标，再限在约 `0.3–2.5s` 的**效果扫描域**。颗粒候选 1–2 显示像素、暖浅/浅黄绿两相颜色，数量按已准入量有上界地抽样（候选同时存活 `≤256` 个），透明度和密度沿水深轻微衰减；这些值都待真机效果/帧时定标。粒子只作细点/短丝，避免大块高 alpha 白雾：已有 E3 水雾 std/连续性与 B 沙粒 HF、SV-06/07 必须配对回归。P-012 renderer 已有只读物理和 routeId 隔离；喷流的视觉源事件作为**外观输入**版本化，不得用它改变物理场。
+
+**水面/沙面遮蔽**：按每帧只读 `waterTop(x)`、`sandTop(x)` 连续采样，喷流先受水面/容器 mask 裁剪，沙面以 `sandTop` 为真实终止界；沙体绘制保持现有层次，粒子在进入界面雾带时柔和衰减，在沙 mask 内完全不可见。倾斜/倒置按同一显示重力变换重投影，不能靠屏幕固定竖线。到达沙面时只消失或形成短暂**不计库存**的接触闪烁；若 `settle grant=0`，不得画出永久新增沙堆。物理沙面可能先于 tracer 到达而增加，或 tracer 已消失但 guard 尚未准许沉积，这是 B **无法保证到达时刻与质量一一对应**的根本限制；应在真机录像中测两者时差，差异明显则该路线对“真实下落”不合格，不用假造沙面修饰。
+
+**生命周期与成本**：只读环形 receipt 队列含 `sourceId/sequence/admitted/phase/seed/x/y/time`；reset/invert/模式切换/页面离开清 tracer，外源物理账本仍按既有规则；延迟读取不能重放过期事件。旧无源物理 checker/schema 和 26/20 链不变。每帧按有效视觉点数 `O(Nvis)` 更新/绘制，候选 `Nvis≤256` 是成本扫描域；需记录 draw calls、P50/P95 与 E3 帧时，必要时合并同色同区段绘制。若被拒注入仍有 tracer，直接判路由 bug。108-run 批内只能在**隔离的外观构建**试验，不能改变正式批物理二进制、脚本或参考帧身份。
+
+## 4. C：上层真粒子 + 下层 1D 高度场混合
+
+**表示与注入**：上层每粒子携带 `id,phase,mass,x,y,vx,vy,sourceId`，是 **canonical 物理库存**，不是 B 的 tracer。触点沙源先经过与既有设计同一原子容量/保水准入，实际 `aH/aL` 按预注册的颗粒质量包 `m_i` 拆成粒子；尾数保留为一个小质量粒子或同相包，绝不四舍五入丢库存。材料坐标 y 从重力底部量，物理 `x` 连续映射到 128 列；不把 128 列物理床偷偷升分辨率。粒子在水体内受重力方向推进，例如候选阻尼终速 `v_phase≈settleSpeed_phase`、`vx=v_phase sin(effectiveTilt)`、`vy=−v_phase cos(effectiveTilt)`，子步限制跨列/跨床的最大步长并在交界做连续碰撞；这个速度是**新模型候选**，不是现行比例式沉降已标定的粒子速度。传感器/TEST 命令都只通过既有 effectiveTilt 入口，26/20 双角状态机仍只判床面边残差。
+
+**落底及摇起**：对粒子当前 x 查询只读床面 `S(x)`，与 `S` 交叉时向碰撞列 `mh/ml` 提交真实质量。按相/列/子步聚合，但需保留逐笔可追溯 ID 与先后次序：先 local/total 预算，再以 `ΔS[c]=+q` 经 §19.5 逐笔 guard 联合预演左右边；被截断余量继续作为接触粒子或显式转入 `susp`，两种都只计一次库存。**C 路线的目标行为是 `liftByShake` 扬起真粒子**：保留现行非 C 路线不变；C route 下沿用 `splitTopV2`、local/total 扣额、`ΔS[c]=−q` guard、逐相配比和预演镜像，把准入量写入粒子池而非 `susp`，**不能既增加粒子又增加 `susp`**。粒子池满而转入 `susp` 时仍是同一笔已准入 lift，不二次扣额。粒子跨列运动是保守搬运，需定义并计入邻列 local/total 预算与容量预演；跨列后重新核算该列的在途占用与水量，按原保水约束调水面，预算用尽时水平位移等待或受限，不能给上层开未经批准的免费传输通道。垂直位置更新本身不改列相量，但碰撞/跨列/扬起每个离散相量操作都要对账；预算归属与现有 correction 路线的共享额度须由 architect 核对。
+
+**账本与性能退化**：
+
+```text
+VH_actual = Σ(bh + mh + suspH) + Σparticle(phase=H) mass
+VL_actual = Σ(bl + ml + suspL) + Σparticle(phase=L) mass
+VH_expected = VH0 + IH ; VL_expected = VL0 + IL
+```
+
+在途粒子加在 `actual` 中，`expected` 仍只因外源准入增加一次。悬沙/在途/沉积的指标须分报；原 `suspensionFraction` 与终点“悬沙≤5%”不能偷偷忽略在途粒子，正式口径需协议 revision。snapshot/schema、checker、P-012 只读 adapter、`getTotals/audit`、水面容量、preview/apply、reset/invert、休眠条件、t90、source epoch 均要扩展；旧无源数据不迁移成“曾有粒子”的假历史。候选活粒子上限 `Nmax=512`，真实成本 `O(Nmax)`/子步查询+碰撞+可能的绘制提交，ArkTS 真机解释开销使桌面基准不足以裁决帧时；数值和上限**待效果/性能定标，非冻结**。满额时先确定性合并同相/近列/近高度粒子为带质量的有限包，继续守恒并降低 draw；包槽仍满则新准入量进入现有 `susp` 作为列均值降级（同时标记 `PARTICLE_DEGRADED_TO_COLUMN`），或缩小准入，不能删除已准入质量、悄悄提高上限或无限排队。降级部分不冒称有真粒子轨迹。
+
+**渲染与批次**：P-012 继续按原 1D 高度场画沉积沙、水体和 E3 云雾；另以只读粒子快照开有界 Canvas2D 细粒绘制层，水/界面/沙 mask 裁剪，落底后由床面材质纹理承接，不能重复画同一库存或以白亮粒掩盖云雾。Canvas2D 单粒 draw 数、排序和 RS 合成需真机配对；若帧时不达标先降级粒子数量/合并绘制，而不减少物理 128 列或跳物理 step。**108-run 正式批内冻结物理实现和测量身份**；C 的物理实现须等该批采集与统计提取完成后单开 route/build/pilot，不用新 schema 重解释旧批。此路线带来最多连锁改动，不能因用户提出就视为已批准或已可达。
+
+## 5. 对比、推荐与 manager 裁决点
+
+| 维度 | A：列内在途包团 | B：只读渲染喷流 | C：真粒子+高度场 |
+|---|---|---|---|
+| 从指尖到沙面 | 有真实纵向库存和落底时刻；按列成束，首版大倾角横漂缺失，细粒仍由渲染代理 | 细粒轨迹最容易做；到达与真实 `settle grant` 可能错时，明确是视觉 tracer | 轨迹、碰撞、落底均为真实状态，最符合“粒子落沙”直觉，效果仍须实测 |
+| 工程量 | 中高：K cohort、落底队列、guard/预算镜像、snapshot/checker | 低到中：receipt 路由、只读 Canvas 层、遮挡和生命周期 | 高：粒子池/碰撞/跨列/扬起、预算与 guard、双状态 snapshot/checker |
+| 状态量/预算 | `O(128K)`，在途入账；落底扣 local/total、跨列若启用另扣 | 无新物理状态/预算；视觉点有上界，不计质量 | `O(Nmax)` + 可能的聚合包；落底、跨列、扬起均要明确定价 |
+| 既有验收链 | schema/守恒/终点/26-20 回归需 revision；108-run 后才能物理试点 | 物理基线与 26/20 不变；仅外观身份和有源效果增量验证 | snapshot/checker/预算/终点语义大改；108-run 后另批验证 |
+| 主要失败形态 | 单列包团像雨帘；合并后到达时刻失真 | 落地特效与真实沙面增长错位、雾与喷流混成白团 | 真机粒子成本、守恒/guard 漏项或预算竞争导致物理回归 |
+
+**推荐 manager 本轮选择 B 作为掉沙观感首版**：用户当前要求是“看见从指尖落到沙面”，不是要求每一可见粒子成为独立物理对象；B 可与已验收的外源注入语义解耦，保住正在进行的 108-run 物理冻结，并最快获得真机主观证据。该推荐附**硬诚实条件**：不得宣称 tracer 是物理粒子；`admitted=0` 零喷流；若录像显示“喷流已落但沙面长期无增长”或“沙面先升后粒子才到”的错时不可接受，B 不得签收。让 effector 先做完整手势录像（静置、倾斜、满容拒注、雾带交界），记录上述错位与 E3/B/C 观感；若明显不合格，再交 manager 裁决 C 的物理路线，物理变更只在 108-run 统计提取后另开批。A 可作预算受限时的中间研究，但需承受 snapshot/checker 变更，却仍无法自然给出细粒横漂，**暂不推荐立项**。
+
+若 manager 把“每颗可见沙都是真库存且受倾斜/摇起影响”确定为产品硬需求，则**直接选 C 作为目标路线**，B 仅可做隔离的视觉原型，不能拿 B 验收代替 C；C 的时间表仍受 108-run 冻结约束。本稿给的是算法推荐而非 manager 批准，不授权 architect/developer 开始实现。选路后 architect 任务 `6adabe34…bd9c` 再细化模块、snapshot/预算接口与性能采集方案。
