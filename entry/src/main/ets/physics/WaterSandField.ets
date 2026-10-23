@@ -1273,6 +1273,12 @@ export class WaterSandField {
    * for dropped events would have shown as no-ops anyway — physics
    * never fabricates admission).
    */
+  /** D3 lifecycle: drop all staged requests (page reset/invert/leave). */
+  clearGestureSandQueue(): void {
+    this.gestureSandQueue = [];
+    this.lastGestureInputTime = 0;
+  }
+
   stageGestureSand(request: P011GestureSandRequest): void {
     this.gestureSandQueue.push(request);
     if (this.gestureSandQueue.length > 8) {

@@ -29,6 +29,7 @@ import { P011InputModeState, P011ModeRequestSource, P011InputSelection,
   canP011GestureOwnInput } from '../physics/P011InputMode';
 // P-012 E-batch：表现层独立 renderer + 薄分发（architecture-P012.md §9.2）
 import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../render/P012WaterSandRenderer';
+import { P011GestureSandRequest } from '../physics/WaterSandField';
 import {
   P012AppearanceTier, P012FrameContext, P012Ablation, P012FillBox,
   P012AppearanceParams, p012FactoryAppearance, validateP012AppearanceParams,
@@ -717,6 +718,7 @@ struct SandCanvas {
     // a crashed/abandoned player must never permanently reject commands.
     this.p011SchedulePlayer.forceStop();
     // P-012 E-batch：断帧回调后释放表现层资源（dispose 幂等）
+    this.clearFallingSand();
     this.p012Renderer?.dispose();
     this.p012Renderer = null;
     this.stopLiquidController();
@@ -814,6 +816,7 @@ struct SandCanvas {
   }
 
   cycleRenderMode(): void {
+    this.clearFallingSand();
     if (this.renderMode === MODE_LIQUID) {
       this.stopLiquidController();
     }
@@ -1607,6 +1610,9 @@ struct SandCanvas {
     // P-012 E-batch：物理重建 → fieldEpoch 递增 + 断配对（不改物理逻辑）
     this.p012FieldEpoch++;
     this.p012Renderer?.resetContinuity();
+    // falling-sand D3: reset also drops the staged injection queue.
+    this.waterSandField?.clearGestureSandQueue();
+    this.lastPanRouteTime = 0;
     this.lastWaterSandMetricTime = Date.now();
     this.logWaterSand(`WS_EVENT init ${JSON.stringify({
       preset: this.waterSandPreset,
@@ -2167,6 +2173,146 @@ struct SandCanvas {
     const green = Math.round(lightGreen * (1 - heavyShare) + heavyGreen * heavyShare);
     const blue = Math.round(lightBlue * (1 - heavyShare) + heavyBlue * heavyShare);
     return `rgb(${red},${green},${blue})`;
+  }
+
+  // =========================================================================
+  // falling-sand D3: Pan -> per-column routing -> physics queue -> receipt
+  // -> tracer feed (algorithm-P011-gesture-sand-source-v1 §2 candidates:
+  // rate 8 unit/s, radius 2 columns, H/L share 0.5, triangular kernel —
+  // all PENDING effect calibration, hardcoded per the task brief).
+  // =========================================================================
+
+  /** Candidate: sand supply rate per second while a finger moves. */
+  private static readonly SAND_RATE_UNITS_PER_S = 8;
+  /** Candidate: routing kernel radius in columns. */
+  private static readonly SAND_RADIUS_COLS = 2;
+  /** Candidate: heavy share of the routed amount. */
+  private static readonly SAND_HEAVY_SHARE = 0.5;
+  /** Gesture session id (increments per Pan gesture). */
+  private gestureSourceId = 0;
+  /** Event sequence within the current gesture. */
+  private gestureSequence = 0;
+  /** Last event local position (offset fallback when fingerList empty). */
+  private lastPanLocalX = 0;
+  private lastPanLocalY = 0;
+  /** Last routed event time (ms) for the rate integration. */
+  private lastPanRouteTime = 0;
+
+  /**
+   * Gate three conditions (B design §4): water-sand render mode + the
+   * touch point lands inside the physics canvas box + the panel is not
+   * open (panel-area swipes must not inject). Returns the routed request
+   * or null when gated.
+   */
+  private gestureSandGate(localX: number, localY: number): boolean {
+    if (this.renderMode !== MODE_WATERSAND) {
+      return false;
+    }
+    if (localX < this.boxX || localX > this.boxX + this.boxW ||
+      localY < this.boxY || localY > this.boxY + this.boxH) {
+      return false;
+    }
+    if (this.showPanel) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Route one Pan update into the physics injection queue: touch -> column
+   * center, triangular kernel over ±2 columns, rate-integrated amount
+   * (8 unit/s by the event dt), H/L split 0.5. The queue consumes ≤1
+   * request per substep (physics side); the receipt returns through
+   * consumePendingGestureSand inside step() — the page feeds the tracer
+   * from the stage path (see stageGestureSandAndFeed).
+   */
+  private routeGestureSand(localX: number, localY: number,
+    timestampMs: number): void {
+    // Book-keep the position for the offset fallback.
+    this.lastPanLocalX = localX;
+    this.lastPanLocalY = localY;
+    if (!this.gestureSandGate(localX, localY)) {
+      return;
+    }
+    const now = timestampMs > 0 ? timestampMs : Date.now();
+    if (this.lastPanRouteTime <= 0) {
+      this.lastPanRouteTime = now;
+      return; // first event: establish the rate clock, no amount yet
+    }
+    const dtSec = Math.max(0, Math.min(1, (now - this.lastPanRouteTime) / 1000));
+    this.lastPanRouteTime = now;
+    if (dtSec <= 0) {
+      return;
+    }
+    const field = this.waterSandField;
+    if (field === null) {
+      return;
+    }
+    const cols = this.waterSandCols;
+    // Touch -> column (continuous), then the triangular kernel.
+    const colF = (localX - this.boxX) / this.boxW * cols;
+    const center = Math.floor(colF);
+    const qH = new Float64Array(cols);
+    const qL = new Float64Array(cols);
+    const total = SandCanvas.SAND_RATE_UNITS_PER_S * dtSec;
+    const radius = SandCanvas.SAND_RADIUS_COLS;
+    let kernelSum = 0;
+    const weights: number[] = [];
+    for (let d = -radius; d <= radius; d++) {
+      const w = radius + 1 - Math.abs(d); // triangular: 1,2,3,2,1
+      weights.push(w);
+      kernelSum += w;
+    }
+    for (let i = 0; i < weights.length; i++) {
+      const c = center - radius + i;
+      if (c < 0 || c >= cols) {
+        continue;
+      }
+      const share = weights[i] / kernelSum;
+      qH[c] = total * SandCanvas.SAND_HEAVY_SHARE * share;
+      qL[c] = total * (1 - SandCanvas.SAND_HEAVY_SHARE) * share;
+    }
+    this.gestureSequence += 1;
+    this.stageGestureSandAndFeed({
+      perColumnHeavy: qH,
+      perColumnLight: qL,
+      sourceId: this.gestureSourceId,
+      sequence: this.gestureSequence,
+      inputTime: now,
+      x: localX,
+      y: localY,
+      seed: (this.gestureSourceId * 100003 + this.gestureSequence) >>> 0
+    });
+  }
+
+  /**
+   * Stage to the physics queue AND keep a page-side mirror so the tracer
+   * can be fed with the eventual admission. The physics queue returns
+   * receipts synchronously from injectGestureSand when consumed; for the
+   * page feed we use the DIRECT call here (the queue path stays for the
+   * D3-following frame consumption when the field steps).
+   */
+  private stageGestureSandAndFeed(request: P011GestureSandRequest): void {
+    const field = this.waterSandField;
+    if (field === null) {
+      return;
+    }
+    // Direct transaction: immediate receipt (the substep-time queue is
+    // the bounded fallback for burst recovery; the direct call keeps the
+    // tracer latency ≤1 frame as the B design §1.3 requires).
+    const receipt = field.injectGestureSand(request);
+    if (receipt !== null) {
+      this.p012Renderer?.sandTracer.feed(receipt,
+        this.boxW / Math.max(1, this.waterSandCols));
+    }
+  }
+
+  /** D3 lifecycle: clear the tracer + the physics queue (§4 hooks). */
+  private clearFallingSand(): void {
+    this.p012Renderer?.sandTracer.clear();
+    this.waterSandField?.clearGestureSandQueue();
+    this.lastPanRouteTime = 0;
+    this.gestureSequence = 0;
   }
 
   /** P-012 E-batch：构造 frameContext（复用页面既有字段，不新建事件源） */
@@ -2883,22 +3029,27 @@ struct SandCanvas {
         })
     )
     .gesture(
+      // falling-sand D3 (user 2026-10-23 08:59 ruling): Pan = sand drop,
+      // tilt belongs to the SENSOR ONLY. The old Pan->tiltX mapping is
+      // retired (algorithm-P011-gesture-sand-source-v1 §4); automated
+      // tilt still reaches the field through the script/want command
+      // channel (freshScriptCommand), which this gesture never touched.
       PanGesture()
         .onActionUpdate((e: GestureEvent) => {
-          if (!canP011GestureOwnInput(this.readInputModeState())) {
-            return;
-          }
-          this.gestureHoldUntil = Date.now() + 2500;
-          this.lastTiltCommandTime = nextP011TimeMs();
-          // 映射系数 0.4：200px 满行程 ≈ 80°，比旧 0.3 跟手 33%
-          this.tiltX = Math.max(-80, Math.min(80, e.offsetX * this.gestureSensitivity));
+          this.routeGestureSand(e.fingerList.length > 0
+            ? e.fingerList[0].localX : e.offsetX + this.lastPanLocalX,
+            e.fingerList.length > 0
+              ? e.fingerList[0].localY : e.offsetY + this.lastPanLocalY,
+            e.timestamp);
         })
         .onActionEnd(() => {
-          if (!canP011GestureOwnInput(this.readInputModeState())) {
-            return;
-          }
-          // TEST never restores sensor ownership on gesture end.
-          this.useSensor = !this.testMode;
+          // Gesture end: the staged material flies out naturally — the
+          // already-fed tracer points are NOT recalled (raise-hand
+          // semantics, B design §4). No state to restore.
+        })
+        .onActionCancel(() => {
+          // Same as end: no recall of fed points; the queue keeps what
+          // was staged (physics consumes it on the next substeps).
         })
     )
   }
