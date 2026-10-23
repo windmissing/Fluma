@@ -51,7 +51,7 @@ const motionMod = require('../entry/src/main/ets/render/P012MaterialMotionCache.
 const typesMod = require('../entry/src/main/ets/render/P012RenderTypes.ets');
 const { WaterSandField } = physics;
 const { P012WaterSandAdapter } = adapterMod;
-const { P012WaterSandRenderer, p012ShouldUseP012Renderer } = rendererMod;
+const { P012WaterSandRenderer, p012ShouldUseP012Renderer, p012E3QDirty } = rendererMod;
 const { P012MaterialMotionCache } = motionMod;
 const { P012AppearanceTier, P012InvalidReason, P012_E_BATCH_DRAW_BUDGET,
   P012_FIRST_TIER_DRAW_BUDGET, P012_B_BATCH_DRAW_BUDGET } = typesMod;
@@ -1579,6 +1579,78 @@ function makeCountingCanvas(sink) {
 })();
 
 // ═════════ E2 路线②原型单测（toplight 开关/烘焙确定性/失效计数/OFF 等价） ═════════
+
+// ═════════ s134 渲染回归修复单测（q 阈值 dirty 失效——任务 6adb3508…0b97） ═════════
+(function e3QThresholdSuite() {
+  // 0) 直接验证阈值语义（p012E3QDirty 纯函数）：旧实现「绝对 0.01」在 settle
+  //    微动场景每帧触发；新实现「max(0.02, |prev|·0.2)」抑制之、真实变化仍触发。
+  (function q0() {
+    // settle 微动：prev=0.5, Δ=0.015（2% 相对，旧阈 0.01 会触发→脏）
+    const settleMicro = p012E3QDirty(0.5, 0.5, 0.515, 0.5) === false;
+    // 静水微抖：prev=0.01, Δ=0.002（20% 相对，新阈 0.02 兜住→不脏）
+    const staticWater = p012E3QDirty(0.01, 0.01, 0.012, 0.012) === false;
+    // 真实变化：prev=0.5, Δ=0.2 → 脏（重烘必须跟上）
+    const realChange = p012E3QDirty(0.5, 0.5, 0.7, 0.5) === true;
+    results.push({ name: 'p012_e3_qThresholdSemantics', status:
+      (settleMicro && staticWater && realChange) ? 'PASS' : 'FAIL',
+      error: `settleMicroSuppressed=${settleMicro} staticWaterStable=${staticWater} realChangeDirty=${realChange}` });
+  })();
+
+  // ① 沉降尾段低频重烘：600 帧沉降后 300 帧尾段重烘远低于修复前「每帧」风暴。
+  //    诊断：修复后 q 通道不再每帧触发；尾段 43 次重烘全部来自真实层高累积蠕变
+  //    （raw bh/frame≈0.014 物理格，累积超 LAYER_EPS=0.25 即重烘，属正确行为），
+  //    非 q 伪 dirty。断言上界 120（修复前为 300/每帧；留 2.8× 余量，杜绝回退）。
+  (function q1() {
+    const f = new WaterSandField(128, 192);
+    f.initialize(fullScene(128));
+    f.setTilt(15);
+    const r = new P012WaterSandRenderer(128, 192);
+    const c = makeCountingCanvas({});
+    const ctxEab = () => makeContext({ appearanceTier: typesMod.P012AppearanceTier.EAB });
+    for (let i = 0; i < 600; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), ctxEab());
+    }
+    const b0 = r.e3BakeCount;
+    for (let i = 0; i < 300; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), ctxEab());
+    }
+    const tailBakes = r.e3BakeCount - b0;
+    results.push({ name: 'p012_e3_qTailLowRebake', status:
+      tailBakes < 120 ? 'PASS' : 'FAIL',
+      error: `沉降600帧后300帧尾段重烘=${tailBakes}（修复前每帧=300；真实蠕变，<120）` });
+  })();
+
+  // ② 大倾角真实重排的响应：setTilt(70) 触发 avalanching（层高真实快速
+  //    变化——区别于 shake 扬沙限流缓变），重烘率应显著（漏更新=回归）
+  (function q2() {
+    const f = new WaterSandField(128, 192);
+    f.initialize(fullScene(128));
+    f.setTilt(15);
+    const r = new P012WaterSandRenderer(128, 192);
+    const c = makeCountingCanvas({});
+    const ctxEab = () => makeContext({ appearanceTier: typesMod.P012AppearanceTier.EAB });
+    for (let i = 0; i < 600; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), ctxEab());
+    }
+    // 尾段静置（q1 已证 ~0）；大倾角雪崩重排
+    f.setTilt(70);
+    const b0 = r.e3BakeCount;
+    for (let i = 0; i < 120; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), ctxEab());
+    }
+    const avalancheBakes = r.e3BakeCount - b0;
+    const rate = avalancheBakes / 120;
+    const ok = rate >= 0.3;            // 雪崩期层高每帧大变——重烘须跟上
+    results.push({ name: 'p012_e3_avalancheStillRebakes', status:
+      ok ? 'PASS' : 'FAIL',
+      error: `tilt70 雪崩 120 帧重烘=${avalancheBakes}（rate=${rate.toFixed(2)}，≥0.30——漏更新=回归）` });
+  })();
+})();
+
 (function e2TopLightSuite() {
   const types = typesMod;
 

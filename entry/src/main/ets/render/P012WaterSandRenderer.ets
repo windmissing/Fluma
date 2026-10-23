@@ -192,6 +192,22 @@ function segHRamp8(bandH: number): number {
 }
 
 /** renderer 对外生命周期接口（architecture §1 模块表） */
+/**
+ * E3 悬沙 q 阈值脏检测（★s134 渲染回归修复，任务 6adb3508…0b97）。
+ * 抽成模块级纯函数以便单测直接验证阈值语义。
+ * 判据：|q - prev| > max(0.02, |prev|·0.2) 即脏。
+ *   · 绝对 0.02 保底：q≤0.02 的静水不抖；
+ *   · 相对 20%：小 q 微动不触发，真实悬浮变化（q>0.1）仍快响应；
+ *   · 取代旧实现「绝对 0.01」，旧实现在 settle 缓变场景每帧触发（q 帧间差
+ *     常 >0.01 → E3 双 buffer 每帧重烘 → 热态 126ms/帧）。
+ * H/L 独立判定（重相/轻相各自阈值，互不连坐）。
+ */
+export function p012E3QDirty(prevH: number, prevL: number, qh: number, ql: number): boolean {
+  const epsH = Math.max(0.02, Math.abs(prevH) * 0.2);
+  const epsL = Math.max(0.02, Math.abs(prevL) * 0.2);
+  return Math.abs(qh - prevH) > epsH || Math.abs(ql - prevL) > epsL;
+}
+
 export class P012WaterSandRenderer {
   private readonly adapter: P012WaterSandAdapter;
   private readonly palette: P012Palette = p012DefaultPalette();
@@ -1871,13 +1887,22 @@ export class P012WaterSandRenderer {
         }
       }
     }
-    // q 增量检测（q 量纲 0-1，0.01 = 视觉可辨下限）
+    // q 增量检测（q 量纲 0-1 悬沙浓度比）。
+    // ★s134 渲染回归修复（任务 6adb3508…0b97）：原绝对阈 0.01 对 settle 类
+    // 缓变场景每帧触发（thick preset 持续扬沙下 susp 缓变+sandTop/waterTop
+    // 微变 → q 帧间差常 >0.01 → E3 双 buffer 每帧重烘 → 热态 126ms/帧）。
+    // 修法=LAYER_EPS 的 q 侧等价物：
+    // ① 阈值取「绝对 0.02 与相对 prev 的 20%」较大者（小 q 微抖不触发；
+    //   真实悬浮变化 q>0.1 时相对 20% 仍快响应，q≤0.02 的静水保持稳定）；
+    // ② q 快照只在重烘后更新（原无条件更新使小增量永不累计——与层高
+    //   e3PrevSmooth 同语义修法：脏了才记账）。
+    // q 阈不护雾带质量：重烘由「层高 or q or phase」任一驱动，真实沉降
+    // （层高变化 >0.25）仍立即重烘；此处只拦 settle 微动的伪 dirty。
     let qChanged = false;
     for (let c = 0; c < n && !qChanged; c++) {
       const qh = this.suspQ(view.suspHAt(c), c);
       const ql = this.suspQ(view.suspLAt(c), c);
-      if (Math.abs(qh - this.e3PrevQH![c]) > 0.01 ||
-        Math.abs(ql - this.e3PrevQL![c]) > 0.01) {
+      if (p012E3QDirty(this.e3PrevQH![c], this.e3PrevQL![c], qh, ql)) {
         qChanged = true;
       }
     }
@@ -2054,13 +2079,20 @@ export class P012WaterSandRenderer {
       this.e3BakeIfaceBuffer(view, ib, heightToY, boxW, boxH, qHArr, qLArr);
     }
     // 快照更新（失效检测基线）
-    this.e3PrevSmooth[0].set(this.smoothBh);
-    this.e3PrevSmooth[1].set(this.smoothMixStart);
-    this.e3PrevSmooth[2].set(this.smoothSandTop);
-    this.e3PrevSmooth[3].set(this.smoothWaterTop);
-    this.e3PrevQH!.set(qHArr);
-    this.e3PrevQL!.set(qLArr);
-    // N1 场覆盖维护（§12.3：补边不重播种；覆盖 [−margin−aPhaseX, boxW+margin−aPhaseX]）
+    // ★s134 渲染回归修复（任务 6adb3508…0b97）第二处：原四层高+q 基线
+    // 均无条件更新——增量永不累计（帧间差缓变 <阈值但累计已远超，tilt70
+    // 雪崩 120 帧累计 1.51 物理格却零重烘=雾纹理滞后真沙形）。改为
+    // 「重烘后记账」：层高与 q 基线只在 dirty 烘焙后更新，缓变累计语义
+    // 恢复（每帧 0.012 的缓变 ~20 帧累计超 0.25 即触发；真实快变首帧
+    // 即超阈）。smooth 序列低通特性保证记账滞后不振荡。
+    if (dirties[0] || dirties[1]) {
+      this.e3PrevSmooth[0].set(this.smoothBh);
+      this.e3PrevSmooth[1].set(this.smoothMixStart);
+      this.e3PrevSmooth[2].set(this.smoothSandTop);
+      this.e3PrevSmooth[3].set(this.smoothWaterTop);
+      this.e3PrevQH!.set(qHArr);
+      this.e3PrevQL!.set(qLArr);
+    }    // N1 场覆盖维护（§12.3：补边不重播种；覆盖 [−margin−aPhaseX, boxW+margin−aPhaseX]）
     if (this.e3Noise !== null) {
       const needX0 = -this.fogPhaseX() - P012_E3_NOISE_MARGIN;
       const needW = boxW + 2 * P012_E3_NOISE_MARGIN;
