@@ -143,7 +143,8 @@ export default function waterSandFieldTest() {
         field.step(1 / 60);
       }
       const snapshot = field.snapshot();
-      expect(snapshot.schemaVersion).assertEqual(2);
+      // S3: schema 3 (optional moisture block).
+      expect(snapshot.schemaVersion).assertEqual(3);
       for (let c = 0; c < snapshot.cols; c++) {
         expect(Math.abs(snapshot.hs[c] - snapshot.bh[c] - snapshot.mh[c]) < 1e-12).assertTrue();
         expect(Math.abs(snapshot.hl[c] - snapshot.bl[c] - snapshot.ml[c]) < 1e-12).assertTrue();

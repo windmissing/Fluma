@@ -30,6 +30,7 @@ import { P011InputModeState, P011ModeRequestSource, P011InputSelection,
 // P-012 E-batch：表现层独立 renderer + 薄分发（architecture-P012.md §9.2）
 import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../render/P012WaterSandRenderer';
 import { P011GestureSandRequest } from '../physics/WaterSandField';
+import { defaultP011MoistureParams } from '../physics/P011Moisture';
 import {
   P012AppearanceTier, P012FrameContext, P012Ablation, P012FillBox,
   P012AppearanceParams, p012FactoryAppearance, validateP012AppearanceParams,
@@ -1428,6 +1429,28 @@ struct SandCanvas {
       const scheduleRoute = AppStorage.get<string>('p011ScheduleRoute');
       if (scheduleRoute !== undefined && scheduleRoute !== '') {
         scheduleField.setNaturalObservationRouteId(scheduleRoute);
+      }
+      // S3 M-6: arm the moisture model when the want carried p011s3.
+      const s3K = AppStorage.get<number>('p011S3K');
+      const s3Q = AppStorage.get<number>('p011S3QRef');
+      if (s3K !== undefined && s3Q !== undefined) {
+        const moistureParams = defaultP011MoistureParams();
+        moistureParams.k = s3K === 16 ? 16 : 8;
+        moistureParams.qRef = s3Q;
+        scheduleField.setMoistureParams(moistureParams);
+        if (scheduleRoute === undefined || scheduleRoute === '') {
+          scheduleField.setNaturalObservationRouteId('s3-moisture-profile-v1');
+        }
+      }
+      // S3 M-5: execute a staged water transaction once.
+      const waterOp = AppStorage.get<string>('p011WaterOp');
+      const waterAmount = AppStorage.get<number>('p011WaterAmount');
+      if (waterOp !== undefined && waterAmount !== undefined) {
+        if (waterOp === 'add') {
+          scheduleField.addWater(waterAmount);
+        } else if (waterOp === 'drain') {
+          scheduleField.drainWater(waterAmount);
+        }
       }
       // S4 §1.4: arm deep-creep params when the want carried p011s4 (the
       // route binding rides the SAME single route field — S4 claims it

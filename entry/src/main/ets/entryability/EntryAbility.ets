@@ -206,6 +206,48 @@ export default class EntryAbility extends UIAbility {
           'P011_S4_WARNING INVALID_P011_S4_FORMAT');
       }
     }
+    // S3 §M-6: moisture arming via p011s3 = 'moisture:<k>:<q_ref>'
+    // (three-segment; k in {8,16}, qRef in (0,1)).
+    if (parameters && parameters.p011s3 !== undefined) {
+      const s3 = `${parameters.p011s3}`.trim();
+      const parts = s3.split(':');
+      if (parts.length === 3 && parts[0] === 'moisture') {
+        const kTier = Number(parts[1]);
+        const qRef = Number(parts[2]);
+        if ((kTier === 8 || kTier === 16) && Number.isFinite(qRef) &&
+          qRef > 0 && qRef < 1) {
+          AppStorage.setOrCreate('p011S3K', kTier);
+          AppStorage.setOrCreate('p011S3QRef', qRef);
+          hilog.info(this.hilogDomain, this.hilogTag,
+            'want param p011s3 k=%{public}d qRef=%{public}f', kTier, qRef);
+        } else {
+          hilog.warn(this.hilogDomain, this.hilogTag,
+            'P011_S3_WARNING INVALID_P011_S3_PARAMS');
+        }
+      } else if (s3 !== '') {
+        hilog.warn(this.hilogDomain, this.hilogTag,
+          'P011_S3_WARNING INVALID_P011_S3_FORMAT');
+      }
+    }
+    // S3 §M-5: runtime water ops via p011water = 'add:<amount>' or
+    // 'drain:<amount>' (staged once; the page executes on arming).
+    if (parameters && parameters.p011water !== undefined) {
+      const w = `${parameters.p011water}`.trim();
+      const parts = w.split(':');
+      if (parts.length === 2 && (parts[0] === 'add' || parts[0] === 'drain')) {
+        const amount = Number(parts[1]);
+        if (Number.isFinite(amount) && amount > 0) {
+          AppStorage.setOrCreate('p011WaterOp', parts[0]);
+          AppStorage.setOrCreate('p011WaterAmount', amount);
+        } else {
+          hilog.warn(this.hilogDomain, this.hilogTag,
+            'P011_S3_WARNING INVALID_P011_WATER_AMOUNT');
+        }
+      } else if (w !== '') {
+        hilog.warn(this.hilogDomain, this.hilogTag,
+          'P011_S3_WARNING INVALID_P011_WATER_FORMAT');
+      }
+    }
     const scheduleParsed = parseP011ScheduleWant(parameters);
     for (const scheduleWarning of scheduleParsed.warnings) {
       hilog.warn(this.hilogDomain, this.hilogTag,

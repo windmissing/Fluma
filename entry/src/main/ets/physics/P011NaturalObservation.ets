@@ -9,7 +9,10 @@ export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
 // context.sourceInjectedH/sourceInjectedL/sourceEpoch; old runs parse
 // with the fields absent (checker treats absent as 0 — same backward-
 // compatible pattern as every prior revision).
-export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 4;
+// v5 (S3 moisture, architecture-P011-S3-moisture §6.1): adds the
+// context.moisture block and the independent wetnessCrossed flag;
+// absent = pre-v5 run (same tolerance pattern).
+export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 5;
 
 // D-1 (2026-10-21 manager ruling, Option A + explicit route isolation):
 // the §24 correction allocator is gated behind BOTH (a) the dual-threshold
@@ -96,6 +99,22 @@ export interface P011NaturalObservationState {
   waterTop: number[];
 }
 
+/** S3 §6.1: the moisture ledger block (schema v5). */
+export interface P011MoistureLedgerBlock {
+  modelVersion: string;
+  q: number;
+  qRef: number;
+  k: number;
+  sMin: number;
+  sMean: number;
+  sMax: number;
+  edgeThetaStartMin: number;
+  edgeThetaStartMax: number;
+  edgeThetaStopMin: number;
+  edgeThetaStopMax: number;
+  thresholdCause: 'moisture' | 'reference';
+}
+
 export interface P011NaturalObservationSubstepContext {
   observationRouteId: string;
   ledgerSchemaVersion: number;
@@ -160,6 +179,10 @@ export interface P011NaturalObservationSubstepContext {
   sourceInjectedH?: number;
   sourceInjectedL?: number;
   sourceEpoch?: number;
+  // S3 moisture (schema v5): the block + the independent wetness-crossed
+  // flag. Absent = pre-v5/OFF run.
+  moisture?: P011MoistureLedgerBlock;
+  wetnessCrossed?: boolean;
   // True when scheduleDriftMs exceeded the 50 ms marker threshold — a
   // marker for the checker, not an error.
   scheduleDriftExceeded?: boolean | null;

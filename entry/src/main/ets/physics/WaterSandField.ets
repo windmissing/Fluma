@@ -15,7 +15,7 @@ import {
   P011_NATURAL_OBSERVATION_ROUTE_ID,
   p011NaturalObservationPhaseForCommand,
   p011NaturalObservationPhaseForV3Segment
-} from './P011NaturalObservation';
+, P011MoistureLedgerBlock } from './P011NaturalObservation';
 import { P011_SCHEDULE_DRIFT_MARKER_MS } from './P011SchedulePlayer';
 import {
   P011ChannelPlan,
@@ -45,6 +45,11 @@ import {
   p011CorrectionReserve
 } from './P011RelaxCorrection';
 import { P011InjectionReceipt } from '../render/P012SandTracer';
+import { P011MoistureParams, defaultP011MoistureParams,
+  P011_MOISTURE_MODEL_VERSION, P011_MOISTURE_ROUTE_ID,
+  p011MoistureMixed, p011MoistureDelta, p011MoistureRefSaturation,
+  p011MoistureClipDelta, p011MoistureDeltaWindow
+} from './P011Moisture';
 import { P011CorrectionVariant } from './P011RelaxCorrection';
 import {
   P011RelaxHysteresisThresholds,
@@ -356,6 +361,45 @@ export interface P011DeepCreepParams {
   hMin: number;
 }
 
+/** S3: the ledger block implementation (ArkTS: interfaces need class
+ * implementations — no untyped literals). */
+class P011MoistureLedgerBlockImpl implements P011MoistureLedgerBlock {
+  modelVersion: string = '';
+  q: number = 0;
+  qRef: number = 0;
+  k: number = 0;
+  sMin: number = 0;
+  sMean: number = 0;
+  sMax: number = 0;
+  edgeThetaStartMin: number = 0;
+  edgeThetaStartMax: number = 0;
+  edgeThetaStopMin: number = 0;
+  edgeThetaStopMax: number = 0;
+  thresholdCause: 'moisture' | 'reference' = 'reference';
+}
+
+/** S3: the per-edge threshold pair (slopes for the state machine +
+ * degrees for telemetry; ArkTS class — no object literals). */
+export class P011EdgeThetaPair implements P011RelaxHysteresisThresholds {
+  slopeStart: number = 0;
+  slopeStop: number = 0;
+  slopeHardMax: number = 0;
+  thetaStartDeg: number = 0;
+  thetaStopDeg: number = 0;
+}
+
+/** S3 water-transaction receipt (§2.1 — runtime ops, NOT the legacy
+ * inject which defines new scenes and resets baselines). */
+export class P011WaterTransactionReceipt {
+  op: 'add' | 'drain' = 'add';
+  requested: number = 0;
+  admitted: number = 0;
+  rejectedReason: string | null = null;
+  waterBefore: number = 0;
+  waterAfter: number = 0;
+  revision: number = 0;
+}
+
 /** S4 attribution counters (ArkTS: no untyped record literals). */
 export class P011DeepCreepAttribution {
   noDrive: number = 0;
@@ -573,7 +617,7 @@ export function waterSandFrameHookPayload(
 }
 
 export interface WaterSandSnapshot {
-  schemaVersion: 2;
+  schemaVersion: 3;
   cols: number;
   capacity: number;
   waterTop: Float64Array;
@@ -586,6 +630,13 @@ export interface WaterSandSnapshot {
   hs: Float64Array;
   hl: Float64Array;
   sandTop: Float64Array;
+  // S3 moisture (schemaVersion 3 optional block — OFF runs leave these
+  // undefined; old consumers zero-break). s is a PROXY profile, never a
+  // water ledger (red line).
+  moistureField?: Float32Array;
+  moistureOccupancy?: Float32Array;
+  moistureK?: number;
+  moistureModelVersion?: string;
 }
 
 const EPS = 1e-9;
@@ -819,6 +870,21 @@ export class WaterSandField {
   // S4 §1.4: deep-creep params (null = channel OFF, bit-identical to
   // the pre-S4 behavior on every existing run).
   private deepCreepParams: P011DeepCreepParams | null = null;
+  // S3 moisture state (128×K, null = moisture route OFF — bit-exact
+  // legacy behavior on every existing run).
+  private moistureField: Float32Array | null = null;
+  private moistureOccupancy: Float32Array | null = null;
+  private moistureRevision = 0;
+  private moistureParams: P011MoistureParams | null = null;
+  private moistureK = 8;
+  // Per-edge derived threshold caches (fwd = donor is the LEFT column;
+  // rev = donor is the RIGHT column — the direction flip rule §4.1).
+  private edgeThetaStartFwd = new Float64Array(0);
+  private edgeThetaStopFwd = new Float64Array(0);
+  private edgeThetaStartRev = new Float64Array(0);
+  private edgeThetaStopRev = new Float64Array(0);
+  // Water-transaction net (baseline never resets — §2.2-3 rule).
+  private waterTransactionNet = 0;
   // S4 telemetry attribution counters (per substep, reset each call).
   private deepCreepNoDrive = 0;
   private deepCreepNoInventory = 0;
@@ -1130,6 +1196,12 @@ export class WaterSandField {
     this.initialWater = totals.water;
     this.initialHeavy = totals.heavy;
     this.initialLight = totals.light;
+    // S3: moisture state resets with the scene (mode switches keep s —
+    // the design's continuity ruling; run/reset rebuilds).
+    this.moistureField = null;
+    this.moistureOccupancy = null;
+    this.moistureRevision = 0;
+    this.waterTransactionNet = 0;
     // gesture-sand-inject §3: source counters/queue reset with the scene.
     this.sourceInjectedHeavy = 0;
     this.sourceInjectedLight = 0;
@@ -1676,6 +1748,13 @@ export class WaterSandField {
       // substep backup (the injection carries its own transaction
       // backup; a failed injection leaves the substep untouched).
       this.consumePendingGestureSand(substepDt);
+      // S3 §3.1: the moisture refresh at the substep top, BEFORE the
+      // backup/planner — pure derived caches; the planner preview and
+      // the apply channels then share ONE frozen edge-pair set for the
+      // whole substep (single writer per substep = the freeze).
+      if (this.moistureRouteActive()) {
+        this.refreshMoisture();
+      }
       this.saveBackup();
       this.updateSandTop();
       this.beginSubstepMotionBudget(substepDt, true, 1);
@@ -2154,6 +2233,325 @@ export class WaterSandField {
   }
 
   /**
+   * S3 M-6: the moisture double gate (S4/correction precedent): the
+   * route binding + armed params. Either missing = full bypass,
+   * bit-identical to the pre-S3 behavior on every existing run.
+   */
+  moistureRouteActive(): boolean {
+    return this.naturalObservationRouteId === P011_MOISTURE_ROUTE_ID &&
+      this.moistureParams !== null;
+  }
+
+  /**
+   * S3 M-5/M-6: arm the moisture model (fail-closed — §27.2 precedent).
+   * Rejects when the local-pair feasibility window is EMPTY for the
+   * CURRENT base pair (thetaStopBase <= deadzone), non-finite params,
+   * or an illegal K tier. Rejection leaves ZERO state change.
+   */
+  setMoistureParams(params: P011MoistureParams | null): void {
+    if (params === null) {
+      this.moistureParams = null;
+      this.moistureField = null;
+      this.moistureOccupancy = null;
+      return;
+    }
+    const kOk = params.k === 8 || params.k === 16;
+    const finiteOk = finite(params.sBase0) && finite(params.sBaseSlope) &&
+      finite(params.betaSlope) && finite(params.qRef) &&
+      params.qRef > 0 && params.qRef < 1 && finite(params.aC) &&
+      finite(params.aB) && finite(params.tTop) && params.tTop > 0;
+    if (!kOk || !finiteOk) {
+      throw new WaterSandParamError(
+        'invalid moisture params: k in {8,16}, finite profile, qRef in (0,1)');
+    }
+    // Feasibility window for the CURRENT dual pair (empty -> reject).
+    const base = this.activeThresholdConfig;
+    const stopBase = base !== null ? base.thetaStopDeg
+      : this.params.angleDeg;
+    const startBase = base !== null ? base.thetaStartDeg
+      : this.params.angleDeg + 6;
+    const window = p011MoistureDeltaWindow(stopBase, startBase,
+      this.params.bottomCreepDeadZone);
+    if (window.hi < window.lo) {
+      throw new WaterSandParamError(
+        'moisture infeasible for the current base pair (stop <= deadzone)');
+    }
+    this.moistureParams = params;
+    this.moistureK = params.k;
+    if (this.moistureField === null ||
+      this.moistureField.length !== this.cols * params.k) {
+      this.moistureField = new Float32Array(this.cols * params.k);
+      this.moistureOccupancy = new Float32Array(this.cols * params.k);
+    }
+    this.refreshMoisture();
+  }
+
+  getMoistureParams(): P011MoistureParams | null {
+    return this.moistureParams;
+  }
+
+  /** S3 §6.1: assemble the moisture ledger block (null when OFF). */
+  private buildMoistureLedgerBlock(): P011MoistureLedgerBlock | undefined {
+    if (!this.moistureRouteActive() || this.moistureField === null ||
+      this.moistureOccupancy === null || this.moistureParams === null) {
+      return undefined;
+    }
+    const totals = this.getTotals();
+    const vs = totals.heavy + totals.light;
+    const q = totals.water / Math.max(totals.water + vs, 1e-9);
+    // Occupied-bin statistics.
+    let sMin = 1;
+    let sMax = 0;
+    let sSum = 0;
+    let sCount = 0;
+    const K = this.moistureK;
+    const s = this.moistureField;
+    const m = this.moistureOccupancy;
+    for (let i = 0; i < s.length; i++) {
+      if (m[i] > 0) {
+        sMin = Math.min(sMin, s[i]);
+        sMax = Math.max(sMax, s[i]);
+        sSum += s[i];
+        sCount += 1;
+      }
+    }
+    if (sCount === 0) {
+      sMin = 0;
+    }
+    // Edge-pair ranges.
+    let aMin = Infinity;
+    let aMax = -Infinity;
+    let oMin = Infinity;
+    let oMax = -Infinity;
+    let anyDelta = false;
+    for (let e = 0; e < this.cols - 1; e++) {
+      aMin = Math.min(aMin, this.edgeThetaStartFwd[e], this.edgeThetaStartRev[e]);
+      aMax = Math.max(aMax, this.edgeThetaStartFwd[e], this.edgeThetaStartRev[e]);
+      oMin = Math.min(oMin, this.edgeThetaStopFwd[e], this.edgeThetaStopRev[e]);
+      oMax = Math.max(oMax, this.edgeThetaStopFwd[e], this.edgeThetaStopRev[e]);
+      if (Math.abs(this.edgeThetaStartFwd[e]) > 0 ||
+        Math.abs(this.edgeThetaStopFwd[e]) > 0) {
+        anyDelta = anyDelta || this.edgeThetaStartFwd[e] !== 26 ||
+          this.edgeThetaStopFwd[e] !== 20;
+      }
+    }
+    const block = new P011MoistureLedgerBlockImpl();
+    block.modelVersion = P011_MOISTURE_MODEL_VERSION;
+    block.q = q;
+    block.qRef = this.moistureParams.qRef;
+    block.k = K;
+    block.sMin = sMin;
+    block.sMean = sCount > 0 ? sSum / sCount : 0;
+    block.sMax = sMax;
+    block.edgeThetaStartMin = aMin === Infinity ? 0 : aMin;
+    block.edgeThetaStartMax = aMax === -Infinity ? 0 : aMax;
+    block.edgeThetaStopMin = oMin === Infinity ? 0 : oMin;
+    block.edgeThetaStopMax = oMax === -Infinity ? 0 : oMax;
+    block.thresholdCause = anyDelta ? 'moisture' : 'reference';
+    return block;
+  }
+
+  /**
+   * S3 M-3: the six-step refresh (§3.1) — runs at the SUBSTEP TOP
+   * (before saveBackup/planner) when the route is active. Pure derived
+   * caches: writes s/m/edgeTheta only; the material arrays are read-only
+   * here. moistureRevision++ is the freeze point (the planner and the
+   * apply channels then share ONE frozen set of edge arrays for the
+   * whole substep — no version check needed in single-threaded code).
+   */
+  refreshMoisture(): void {
+    const params = this.moistureParams;
+    if (params === null || this.moistureField === null ||
+      this.moistureOccupancy === null) {
+      return;
+    }
+    const K = this.moistureK;
+    // a+b. Water fraction q from the live totals.
+    const totals = this.getTotals();
+    const vs = totals.heavy + totals.light;
+    const q = totals.water / Math.max(totals.water + vs, 1e-9);
+    // μ_shake from the existing shakeEnergy scalar.
+    const mu = params.muShakeMax *
+      Math.max(0, Math.min(1, this.shakeEnergy));
+    // c+d. Occupancy + mixed saturation per (column, bin).
+    const m = this.moistureOccupancy;
+    const s = this.moistureField;
+    for (let c = 0; c < this.cols; c++) {
+      const sTop = this.sandTopScratch[c];
+      const binH = sTop / K;
+      for (let k = 0; k < K; k++) {
+        const zLo = k * binH;
+        const zHi = (k + 1) * binH;
+        // Occupancy fraction of the bin covered by sand (0..1).
+        const covered = sTop <= 0 ? 0
+          : Math.max(0, Math.min(binH, sTop - zLo)) / Math.max(binH, 1e-9);
+        const idx = c * K + k;
+        m[idx] = covered;
+        if (covered > 0) {
+          const zCenter = (zLo + Math.min(zHi, sTop)) / 2 / Math.max(sTop, 1e-9);
+          s[idx] = p011MoistureMixed(zCenter, q, mu, params);
+        } else {
+          s[idx] = 0;
+        }
+      }
+    }
+    // e. Per-edge donor-surface saturation -> C/B -> Δ -> clip -> both
+    // directions (fwd: donor = left column; rev: donor = right column).
+    const edgeCount = this.cols - 1;
+    if (this.edgeThetaStartFwd.length !== edgeCount) {
+      this.edgeThetaStartFwd = new Float64Array(edgeCount);
+      this.edgeThetaStopFwd = new Float64Array(edgeCount);
+      this.edgeThetaStartRev = new Float64Array(edgeCount);
+      this.edgeThetaStopRev = new Float64Array(edgeCount);
+    }
+    const base = this.activeThresholdConfig;
+    const stopBase = base !== null ? base.thetaStopDeg
+      : this.params.angleDeg;
+    const startBase = base !== null ? base.thetaStartDeg
+      : this.params.angleDeg + 6;
+    const window = p011MoistureDeltaWindow(stopBase, startBase,
+      this.params.bottomCreepDeadZone);
+    for (let e = 0; e < edgeCount; e++) {
+      const sFwd = this.edgeSurfaceSaturation(e);
+      const sRev = this.edgeSurfaceSaturation(e + 1);
+      const sFwdRef = p011MoistureRefSaturation(sFwd, q, params);
+      const sRevRef = p011MoistureRefSaturation(sRev, q, params);
+      const dFwd = p011MoistureClipDelta(
+        p011MoistureDelta(sFwd, sFwdRef, params), window.lo, window.hi);
+      const dRev = p011MoistureClipDelta(
+        p011MoistureDelta(sRev, sRevRef, params), window.lo, window.hi);
+      this.edgeThetaStartFwd[e] = startBase + dFwd;
+      this.edgeThetaStopFwd[e] = stopBase + dFwd;
+      this.edgeThetaStartRev[e] = startBase + dRev;
+      this.edgeThetaStopRev[e] = stopBase + dRev;
+    }
+    // f. Revision freeze point.
+    this.moistureRevision += 1;
+  }
+
+  /**
+   * §4.1 donor-surface saturation: the occupancy-weighted mean of the
+   * donor column's bins within tTop material units of the sand top
+   * (the surface window — deep bins don't dilute a dry surface).
+   */
+  private edgeSurfaceSaturation(donor: number): number {
+    const params = this.moistureParams;
+    const s = this.moistureField;
+    const m = this.moistureOccupancy;
+    if (params === null || s === null || m === null) {
+      return 0;
+    }
+    const K = this.moistureK;
+    const sTop = this.sandTopScratch[donor];
+    const binH = sTop / K;
+    let acc = 0;
+    let wsum = 0;
+    for (let k = 0; k < K; k++) {
+      const zCenter = (k + 0.5) * binH;
+      if (sTop - zCenter <= params.tTop) {
+        const idx = donor * K + k;
+        const w = m[idx];
+        acc += s[idx] * w;
+        wsum += w;
+      }
+    }
+    return wsum > 0 ? acc / wsum : 0;
+  }
+
+  /**
+   * S3 M-5: addWater — a runtime transaction with partial admission
+   * (λ semantics, the gesture-inject precedent). Uniform lift of
+   * waterTop proportional to the per-column headroom; the baseline
+   * NEVER resets (waterTransactionNet accumulates; expectedWater =
+   * initialWater + net). Zero admission = zero state change.
+   */
+  addWater(requested: number): P011WaterTransactionReceipt | null {
+    return this.waterTransaction(requested, true);
+  }
+
+  /** S3 M-5: drainWater — the mirror transaction (uniform lower). */
+  drainWater(requested: number): P011WaterTransactionReceipt | null {
+    return this.waterTransaction(requested, false);
+  }
+
+  private waterTransaction(requested: number,
+    add: boolean): P011WaterTransactionReceipt | null {
+    if (!finite(requested) || requested <= 0) {
+      return null;
+    }
+    this.saveBackup();
+    let capacity = 0;
+    for (let c = 0; c < this.cols; c++) {
+      if (add) {
+        capacity += Math.max(0, this.capacity - this.waterTop[c]);
+      } else {
+        const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+        capacity += Math.max(0, this.waterTop[c] - t);
+      }
+    }
+    const admitted = Math.min(requested, capacity);
+    const reason = admitted <= 0
+      ? (add ? 'CAPACITY_FULL' : 'INSUFFICIENT_WATER') : null;
+    if (admitted > 0) {
+      // Uniform distribution weighted by the per-column headroom (keeps
+      // the relative shape; ΣΔ = admitted exactly).
+      const perCol = new Float64Array(this.cols);
+      for (let c = 0; c < this.cols; c++) {
+        perCol[c] = add
+          ? Math.max(0, this.capacity - this.waterTop[c])
+          : Math.max(0, this.waterTop[c] - this.sandTopScratch[c] -
+            this.suspH[c] - this.suspL[c]);
+      }
+      const sum = perCol.reduce((a, b) => a + b, 0);
+      if (sum > 0) {
+        for (let c = 0; c < this.cols; c++) {
+          this.waterTop[c] += (add ? 1 : -1) * admitted * perCol[c] / sum;
+        }
+      }
+      this.waterTransactionNet += (add ? 1 : -1) * admitted;
+      if (this.moistureRouteActive()) {
+        this.refreshMoisture();
+      }
+    } else {
+      this.restoreBackup();
+    }
+    const receipt = new P011WaterTransactionReceipt();
+    receipt.op = add ? 'add' : 'drain';
+    receipt.requested = requested;
+    receipt.admitted = admitted;
+    receipt.rejectedReason = reason;
+    receipt.waterBefore = this.gestureWaterBefore;
+    receipt.waterAfter = this.getTotals().water;
+    receipt.revision = this.moistureRevision;
+    return receipt;
+  }
+
+  /** S3: the current water-transaction net (baseline delta). */
+  getWaterTransactionNet(): number {
+    return this.waterTransactionNet;
+  }
+
+  /** S3: read-only per-edge pair access (planner/apply consumers). */
+  getEdgeThetaPair(edge: number,
+    donorIsLeft: boolean): P011EdgeThetaPair | null {
+    if (!this.moistureRouteActive() || edge < 0 ||
+      edge >= this.cols - 1) {
+      return null;
+    }
+    const start = donorIsLeft
+      ? this.edgeThetaStartFwd[edge] : this.edgeThetaStartRev[edge];
+    const stop = donorIsLeft
+      ? this.edgeThetaStopFwd[edge] : this.edgeThetaStopRev[edge];
+    const pair = new P011EdgeThetaPair();
+    pair.slopeStart = Math.tan(start * Math.PI / 180);
+    pair.slopeStop = Math.tan(stop * Math.PI / 180);
+    pair.slopeHardMax = Math.tan(30 * Math.PI / 180);
+    pair.thetaStartDeg = start;
+    pair.thetaStopDeg = stop;
+    return pair;
+  }
+
+  /**
    * S4 dormant-wake probe: does ANY adjacent pair still carry a
    * potential drive (D>0 with stocks)? Cheap O(cols) scan mirroring the
    * applyDeepCreep generation rule — used ONLY by the dormant judgment.
@@ -2287,6 +2685,9 @@ export class WaterSandField {
       sourceInjectedH: this.sourceInjectedHeavy,
       sourceInjectedL: this.sourceInjectedLight,
       sourceEpoch: this.sourceEpoch,
+      // S3 §6.1 (schema v5): the moisture block (ON runs only).
+      moisture: this.buildMoistureLedgerBlock(),
+      wetnessCrossed: this.moistureRouteActive() ? false : undefined,
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
@@ -2445,6 +2846,11 @@ export class WaterSandField {
 
   getDrift(): WaterSandDrift {
     const totals = this.getTotals();
+    // S3 §2.2-3: the water baseline = initial + cumulative transaction
+    // net (runtime water ops never reset the baseline — the same ruling
+    // as the gesture injection; the legacy inject() keeps its own
+    // reset semantics, untouched).
+    const expectedWater = this.initialWater + this.waterTransactionNet;
     // gesture-sand-inject §3: the expected baseline is the run-initial
     // amount PLUS cumulative gesture admission (never reset — unlike
     // the legacy inject() which resets initial*; injected amounts are
@@ -2453,7 +2859,7 @@ export class WaterSandField {
     const expectedHeavy = this.initialHeavy + this.sourceInjectedHeavy;
     const expectedLight = this.initialLight + this.sourceInjectedLight;
     return {
-      water: Math.abs(totals.water - this.initialWater) / Math.max(this.initialWater, EPS),
+      water: Math.abs(totals.water - expectedWater) / Math.max(expectedWater, EPS),
       heavy: Math.abs(totals.heavy - expectedHeavy) / Math.max(expectedHeavy, EPS),
       light: Math.abs(totals.light - expectedLight) / Math.max(expectedLight, EPS)
     };
@@ -2512,7 +2918,11 @@ export class WaterSandField {
   }
 
   copyStateTo(target: WaterSandSnapshot): void {
-    if (target.schemaVersion !== 2 || target.cols !== this.cols || target.capacity !== this.capacity) {
+    // S3: accept schema 2 (legacy consumers create v2 targets — the
+    // optional moisture block is skipped on those) and 3.
+    const schemaNum = target.schemaVersion as number;
+    if ((schemaNum !== 2 && schemaNum !== 3) ||
+      target.cols !== this.cols || target.capacity !== this.capacity) {
       throw new WaterSandSnapshotError('snapshot schema, cols, or capacity mismatch');
     }
     if (target.waterTop.length !== this.cols || target.bh.length !== this.cols ||
@@ -4366,6 +4776,24 @@ export class WaterSandField {
         // receiver = c; deviation < 0 -> donor = c, receiver = next.
         const donor = deviation > 0 ? next : c;
         const receiver = deviation > 0 ? c : next;
+        // S3 M-4: per-edge threshold pair (the moisture local-dual). When
+        // the moisture route is OFF this is null and the GLOBAL pair runs
+        // (bit-exact legacy). When ON: the edge's donor direction picks
+        // the frozen Fwd/Rev pair — p011RelaxHysteresisNextActive and
+        // p011RelaxHysteresisRequested signatures unchanged (already
+        // parameterized); only the argument source moves. relaxSliding
+        // ownership is untouched (per-edge active persists across
+        // substeps; the pair only sets the threshold values).
+        const moisturePair = this.moistureRouteActive()
+          ? this.getEdgeThetaPair(index, deviation <= 0) : null;
+        const effectiveHysteresis: P011RelaxHysteresisThresholds =
+          moisturePair !== null ? moisturePair : hysteresis!;
+        const effectiveStart: number = moisturePair !== null
+          ? moisturePair.thetaStartDeg
+          : this.naturalObservationThetaStartDeg as number;
+        const effectiveStop: number = moisturePair !== null
+          ? moisturePair.thetaStopDeg
+          : this.naturalObservationThetaStopDeg as number;
         if (hysteresis !== null) {
           // GAP-1: the state machine owns eligibility. The decision sampling
           // point is HERE — reading the residual and picking the branch on
@@ -4373,8 +4801,7 @@ export class WaterSandField {
           // the same collect pass), before any relax material moves.
           activeBefore = this.relaxSliding[index] !== 0;
           const decision = p011RelaxHysteresisNextActive(activeBefore, deviation,
-            hysteresis, this.naturalObservationThetaStartDeg as number,
-            this.naturalObservationThetaStopDeg as number);
+            effectiveHysteresis, effectiveStart, effectiveStop);
           activeAfter = decision.activeAfter;
           this.recordRelaxDecision(index, deviation, activeBefore, decision);
           this.relaxSliding[index] = activeAfter ? 1 : 0;
@@ -4387,7 +4814,7 @@ export class WaterSandField {
             const receiverCapacity = this.waterTop[receiver] > EPS
               ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
               : this.capacity - this.sandTopScratch[receiver];
-            naturalAmount = p011RelaxHysteresisRequested(deviation, hysteresis,
+            naturalAmount = p011RelaxHysteresisRequested(deviation, effectiveHysteresis,
               dt, this.params.maxAvalancheFlux, this.sandTopScratch[donor],
               receiverCapacity);
             candidateCount += 1;
@@ -5067,7 +5494,14 @@ export class WaterSandField {
 
   private createEmptySnapshot(): WaterSandSnapshot {
     return {
-      schemaVersion: 2,
+      schemaVersion: 3,
+      moistureField: this.moistureField === null ? undefined
+        : new Float32Array(this.moistureField),
+      moistureOccupancy: this.moistureOccupancy === null ? undefined
+        : new Float32Array(this.moistureOccupancy),
+      moistureK: this.moistureField === null ? undefined : this.moistureK,
+      moistureModelVersion: this.moistureField === null ? undefined
+        : P011_MOISTURE_MODEL_VERSION,
       cols: this.cols,
       capacity: this.capacity,
       waterTop: new Float64Array(this.cols),

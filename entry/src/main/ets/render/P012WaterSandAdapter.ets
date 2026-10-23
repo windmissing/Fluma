@@ -193,8 +193,11 @@ export class P012WaterSandAdapter {
   // ───────────────────────── private ─────────────────────────
 
   private validateSnapshotFinite(snapshot: WaterSandSnapshot): boolean {
-    if (snapshot.schemaVersion !== 2 || snapshot.cols !== this.cols ||
-      snapshot.capacity !== this.capacity) {
+    // S3: accept schema 2 and 3 (v3 adds the OPTIONAL moisture block —
+    // the renderer never reads it; the v2 contract holds).
+    const schemaNum = snapshot.schemaVersion as number;
+    if ((schemaNum !== 2 && schemaNum !== 3) ||
+      snapshot.cols !== this.cols || snapshot.capacity !== this.capacity) {
       return false;
     }
     const arrays: Float64Array[] = [snapshot.bh, snapshot.bl, snapshot.mh, snapshot.ml,
