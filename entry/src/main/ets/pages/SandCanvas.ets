@@ -667,14 +667,16 @@ struct SandCanvas {
     const p012Ablate = AppStorage.get<string>('p012ablate');
     if (p012Ablate === 'off' || p012Ablate === 'grain' || p012Ablate === 'fog' ||
       p012Ablate === 'spark' || p012Ablate === 'strat' ||
-      p012Ablate === 'e3i2' || p012Ablate === 'e3n1' || p012Ablate === 'dyn') {
+      p012Ablate === 'e3i2' || p012Ablate === 'e3n1' || p012Ablate === 'dyn' ||
+      p012Ablate === 'toplight') {
       this.p012Ablation = P012Ablation[p012Ablate === 'off' ? 'OFF'
         : p012Ablate === 'grain' ? 'GRAIN'
         : p012Ablate === 'fog' ? 'FOG'
         : p012Ablate === 'spark' ? 'SPARK'
         : p012Ablate === 'strat' ? 'STRAT'
         : p012Ablate === 'e3i2' ? 'E3I2'
-        : p012Ablate === 'dyn' ? 'DYN' : 'E3N1'];
+        : p012Ablate === 'dyn' ? 'DYN'
+        : p012Ablate === 'toplight' ? 'TOPLIGHT' : 'E3N1'];
       console.info(`[P012] ablation -> ${p012Ablate} (want)`);
     }
     const p012FillBox = AppStorage.get<string>('p012fillbox');

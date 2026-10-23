@@ -153,6 +153,19 @@ const P012_C3_ALPHA = 0.10;
 const P012_C_BAND_RPx = 6;
 
 /** ── E3 网格感消除参数（architecture §12；algorithm-E3 §3）── */
+/** ── E2 路线②原型参数（algorithm-P012-E2-top-light-opening-v1 §2；hardcode 候选值，不进面板）── */
+/** 宽面坡度低通 σ（光学宽面尺度，材料深度单位；开题扫描域候选中值）。
+ *  不得改物理表面——只在显示空间对 smoothSandTop 低通。 */
+const P012_E2_SIGMA = 6.0;
+/** 深度衰减 ℓ（ellLight，材料深度单位）：整片坡面向沙体内部衰减的可读深度 */
+const P012_E2_ELL = 24.0;
+/** Lface 界（clamp）：Lmin/Lmax（开题 §2 公式） */
+const P012_E2_LMIN = 0.80;
+const P012_E2_LMAX = 1.12;
+/** 光照图深度分辨率（z 方向档数；128 列 × Z_STEPS 双语义图） */
+const P012_E2_Z_STEPS = 256;
+/** sandTop 形状变化重烘阈值（显示 px；§5「sandTop 形状变更→重算法线/光照图」） */
+const P012_E2_SHAPE_EPS_PX = 2.0;
 /** I2 缓冲宽。原 256 在真机 ArkTS 上烘焙循环 ~950ms/帧（s123 实测，
  *  方法调用密集的双层循环比 Node 慢两个数量级）——降到 64（雾为低频
  *  视觉带宽，64 宽采样后 12 档量化已无可见差异），循环量降 16 倍。
@@ -241,6 +254,13 @@ export class P012WaterSandRenderer {
   /** I2 烘焙/上传计数（单测钩子：静止态零重烘焙断言） */
   e3BakeCount: number = 0;
   e3UploadBytes: number = 0;
+  /** ── E2 路线②原型：预烘焙光照图（128×Z_STEPS 单 float/格，Lface×w(z) 合成的 Lmat）── */
+  /** 光照图（cols×Z_STEPS）：lightMap[c*Z+z] = Lmat(x_c, z)；长度 0=未分配（首帧构造） */
+  private e2LightMap: Float64Array = new Float64Array(0);
+  /** 上次烘焙的 sandTop 基线（形状变化检测） */
+  private e2PrevSandTop: Float64Array = new Float64Array(0);
+  /** 烘焙计数（单测钩子：静止零重烘/形状变化重烘断言） */
+  e2BakeCount: number = 0;
   /** ── 运动代理（D-B2：相净搬运位移代理 + 连续 UV 平流）── */
   private readonly motionCache: P012MaterialMotionCache;
   private readonly cols: number;
@@ -337,6 +357,8 @@ export class P012WaterSandRenderer {
     const boxW = frameContext.boxW;
     const boxH = frameContext.boxH;
     const colW = boxW / n;
+    // E2 原型：pxPerMaterial 缓存（光照图形状阈值/深度换算用）
+    this.pxPerMaterialCache = boxH > 0 ? boxH / this.capacity : 0;
     // ── 运动代理（§5.2）：配对有效且有 prev 视图才更新；否则冻结 ──
     const motionValid = result.pair.valid && result.prev !== null;
     this.motionCache.update(
@@ -649,6 +671,81 @@ export class P012WaterSandRenderer {
   getAppearanceConfigRevision(): number {
     return this.activeAppearance.configRevision;
   }
+
+  // ───────────── E2 路线②原型：预烘焙光照图（algorithm-P012-E2 §2/§4-②/§5）─────────────
+
+  /**
+   * E2 光照图烘焙（§2 公式）：
+   * 1) 宽面坡度 p_b(x)=∂x G_σ*S（σ 光学宽面尺度——对 smoothSandTop 低通，
+   *    不改物理表面）；
+   * 2) 截面法线 n(x)=normalize(-p_b,0,1)（1D 截面风格代理，开题已登记）；
+   * 3) Lambert：Lface(x)=clamp(La+Ld·max(0,n·ℓ), Lmin, Lmax)（复用既有
+   *    P012_LIGHT_X/Y/Z 光向——含横向分量，反向坡面可区分）；
+   * 4) 深度衰减合成：Lmat(x,z)=1+w(z)·(Lface(x)-Lref)，w(z)=exp(-z/ℓ)，
+   *    z=显示沙面到该深度的材料深度；Lref=1（同画面参考漫反射，防无条件提亮）。
+   * 失效：sandTop 形状变化 >P012_E2_SHAPE_EPS_PX（§5：形状变更→重烘；
+   * 不为颗粒相位/雾浓度重烘坡面光照）。
+   */
+  private e2EnsureLightMap(): void {
+    const n = this.cols;
+    if (this.e2LightMap.length !== n * P012_E2_Z_STEPS) {
+      this.e2LightMap = new Float64Array(n * P012_E2_Z_STEPS);
+      this.e2PrevSandTop = new Float64Array(n);
+      this.e2PrevSandTop.fill(NaN);       // 首帧必烘
+    }
+    // 形状变化检测（显示 px 域）
+    let shapeChanged = false;
+    for (let c = 0; c < n && !shapeChanged; c++) {
+      const px = this.smoothSandTop[c] * this.pxPerMaterialCache;
+      if (!Number.isFinite(this.e2PrevSandTop[c]) ||
+        Math.abs(px - this.e2PrevSandTop[c]) > P012_E2_SHAPE_EPS_PX) {
+        shapeChanged = true;
+      }
+    }
+    if (!shapeChanged && this.e2BakeCount > 0) {
+      return;                             // 静止/微变：零重烘（§5 静置零无故重烘）
+    }
+    // 1) G_σ 低通（σ 材料深度单位 → 离散核半径；简单盒滤波×2 近似高斯）
+    const rad = Math.max(1, Math.round(P012_E2_SIGMA));
+    const low = new Float64Array(n);
+    for (let c = 0; c < n; c++) {
+      let sum = 0;
+      let cnt = 0;
+      for (let k = -rad; k <= rad; k++) {
+        const cc = Math.max(0, Math.min(n - 1, c + k));
+        sum += this.smoothSandTop[cc];
+        cnt++;
+      }
+      low[c] = sum / cnt;
+    }
+    // 2)+3)+4) 逐列 Lface → 逐深度 Lmat（z=材料深度单位，w(z)=exp(-z/ℓ)）
+    for (let c = 0; c < n; c++) {
+      const left = low[Math.max(0, c - 1)];
+      const right = low[Math.min(n - 1, c + 1)];
+      // 宽面坡度（材料深度/列）：∂x G_σ*S（相邻列差/2，材料单位）
+      const pb = (right - left) / 2;
+      const inv = 1 / Math.sqrt(pb * pb + 1);
+      const dot = (-pb * inv) * P012_LIGHT_X + (inv) * P012_LIGHT_Z;
+      const lit = P012_AMBIENT + P012_DIFFUSE * Math.max(0, dot);
+      const lface = Math.max(P012_E2_LMIN, Math.min(P012_E2_LMAX, lit));
+      for (let z = 0; z < P012_E2_Z_STEPS; z++) {
+        const wz = Math.exp(-z / P012_E2_ELL);
+        this.e2LightMap[c * P012_E2_Z_STEPS + z] = 1 + wz * (lface - 1);
+      }
+      this.e2PrevSandTop[c] = this.smoothSandTop[c] * this.pxPerMaterialCache;
+    }
+    this.e2BakeCount++;
+  }
+
+  /** E2 光照图采样：列 c、深度 z（材料单位）→ Lmat（TOPLIGHT ON 用） */
+  private e2SampleLight(c: number, z: number): number {
+    const zz = Math.max(0, Math.min(P012_E2_Z_STEPS - 1, Math.round(z)));
+    const v = this.e2LightMap[c * P012_E2_Z_STEPS + zz];
+    return Number.isFinite(v) ? v : 1;
+  }
+
+  /** pxPerMaterial 缓存（e2 烘焙的形状阈值与深度换算用；render 期更新） */
+  private pxPerMaterialCache: number = 0;
 
   /** effectiveλ 只读钩子（§13.7.3 双登记的 effective 侧；几何未定时 = 名义值） */
   getEffectiveStrataLambda(): number {
@@ -2007,8 +2104,33 @@ export class P012WaterSandRenderer {
     const colPx = colW;                       // 每列屏幕宽（px）
     const bottomY = boxY + boxH;
     let draws = 0;
+    // E2 路线②原型（TOPLIGHT ON）：预烘焙光照图替代 shadeLut 档位查询。
+    // 采样 z=带中点深度（游程按列合并结构下带内取中点——同列同带单档，
+    // 带间深度差仍产生光照分层；任务书「同列同带插值」的最小实现）。
+    const useTopLight = this.frameAblation === P012Ablation.TOPLIGHT;
+    if (useTopLight) {
+      this.e2EnsureLightMap();
+    }
     // 逐列光照档（0..7）：s = (S[c+1]-S[c-1])/(2·colPx) 屏幕单位坡度
-    const shadeOf = (c: number): number => {
+    // E2 TOPLIGHT：z=带中点深度（band kind 决定）——重沙最深/轻沙中/混合最浅
+    const shadeOf = (c: number, bandKind: number): number => {
+      if (useTopLight) {
+        // 带中点材料深度（capacity 归一）：重沙带 z≈capacity-bh[c]+带半高，
+        // 简化取三带中点深度的代表值（带内深度衰减是低频连续——中点代表）
+        let zMid: number;
+        if (bandKind === 0) {
+          zMid = this.capacity - this.smoothBh[c] * 0.5;
+        } else if (bandKind === 1) {
+          zMid = this.capacity - this.smoothBh[c] - (this.smoothMixStart[c] - this.smoothBh[c]) * 0.5;
+        } else {
+          zMid = this.capacity - this.smoothMixStart[c] - (this.smoothSandTop[c] - this.smoothMixStart[c]) * 0.5;
+        }
+        const lmat = this.e2SampleLight(c, zMid);
+        // Lmat → shade 档语义（bandColor 的 shade 参数：0=基色 1=提亮）
+        const idx = Math.max(0, Math.min(P012_LUT_STEPS,
+          Math.round(lmat * P012_LUT_STEPS)));
+        return this.shadeLut[idx];
+      }
       const left = this.smoothSandTop[Math.max(0, c - 1)];
       const right = this.smoothSandTop[Math.min(n - 1, c + 1)];
       const s = (right - left) / (2 * colPx * (boxH / this.capacity));
@@ -2043,7 +2165,7 @@ export class P012WaterSandRenderer {
       let runStart = -1;
       let runShade = -1;
       for (let c = 0; c <= n; c++) {
-        const shade = c < n ? shadeOf(c) : -1;
+        const shade = c < n ? shadeOf(c, band.kind) : -1;
         const sameRun = runStart >= 0 && c < n &&
           Math.abs(shade - runShade) < 1 / P012_LUT_STEPS;
         if (sameRun) {

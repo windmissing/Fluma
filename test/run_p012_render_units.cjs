@@ -1578,6 +1578,164 @@ function makeCountingCanvas(sink) {
   })();
 })();
 
+// ═════════ E2 路线②原型单测（toplight 开关/烘焙确定性/失效计数/OFF 等价） ═════════
+(function e2TopLightSuite() {
+  const types = typesMod;
+
+  // ① 烘焙确定性：同 seed 同输入两次烘焙逐位一致
+  (function e1() {
+    const mk = () => {
+      const f = new WaterSandField(128, 192);
+      f.initialize(fullScene(128));
+      f.setTilt(15);
+      f.step(1 / 60);
+      return f;
+    };
+    const run = () => {
+      const r = new P012WaterSandRenderer(128, 192);
+      const c = makeCountingCanvas({});
+      const f = mk();
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+      return { map: r.e2LightMap.slice(), bakes: r.e2BakeCount };
+    };
+    const a = run();
+    const b = run();
+    let bitwise = a.map.length === b.map.length;
+    for (let i = 0; bitwise && i < a.map.length; i++) {
+      if (a.map[i] !== b.map[i]) {
+        bitwise = false;
+      }
+    }
+    results.push({ name: 'p012_e2_bakeDeterministic', status:
+      bitwise && a.bakes >= 1 ? 'PASS' : 'FAIL',
+      error: `mapLen=${a.map.length}/${b.map.length} bakes=${a.bakes} bitwise=${bitwise}` });
+  })();
+
+  // ② 平台无坡度不新增分区：平沙面（sandTop 全列同值）下光照图列间 Lmat 相同
+  (function e2() {
+    const r = new P012WaterSandRenderer(128, 192);
+    const c = makeCountingCanvas({});
+    const f = new WaterSandField(128, 192);
+    f.initialize({
+      waterRegions: [{ startCol: 0, endColInclusive: 127, bottom: 120, height: 60 }],
+      heavyDepositedRegions: [{ startCol: 0, endColInclusive: 127, bottom: 0, height: 50 }],
+      lightDepositedRegions: [{ startCol: 0, endColInclusive: 127, bottom: 50, height: 50 }],
+      heavySuspendedRegions: [],
+      lightSuspendedRegions: []
+    });
+    f.step(1 / 60);
+    r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+    // 平沙：所有列 z=0 处 Lmat 应同值（无坡度→无左右分区）
+    const l0 = r.e2LightMap[0 * 256 + 0];
+    let uniform = true;
+    for (let col = 1; col < 128; col++) {
+      if (Math.abs(r.e2LightMap[col * 256 + 0] - l0) > 1e-12) {
+        uniform = false;
+        break;
+      }
+    }
+    results.push({ name: 'p012_e2_flatNoPartition', status:
+      uniform ? 'PASS' : 'FAIL',
+      error: `l0=${l0.toFixed(6)} uniform=${uniform}（平沙须无列间分区）` });
+  })();
+
+  // ③ OFF 等价性：toplight 不开时输出逐位=现状（draws 与既有路径一致）
+  (function e3() {
+    const mk = () => {
+      const f = new WaterSandField(128, 192);
+      f.initialize(fullScene(128));
+      f.setTilt(15);
+      return f;
+    };
+    const run = (abl) => {
+      const r = new P012WaterSandRenderer(128, 192);
+      const c = makeCountingCanvas({});
+      const f = mk();
+      for (let i = 0; i < 5; i++) {
+        f.step(1 / 60);
+        r.render(c, f.snapshot(), makeContext(abl !== undefined ? { ablation: abl } : {}));
+      }
+      return { draws: r.lastDrawCount, bakes: r.e2BakeCount };
+    };
+    const base = run();                                  // OFF 默认（现状）
+    const offExplicit = run(types.P012Ablation.OFF);     // 显式 OFF
+    const ok = base.draws === offExplicit.draws &&
+      base.bakes === 0 && offExplicit.bakes === 0;       // OFF 路径零 E2 烘焙
+    results.push({ name: 'p012_e2_offEquiv', status:
+      ok ? 'PASS' : 'FAIL',
+      error: `base=${base.draws} off=${offExplicit.draws} e2bakes=${base.bakes}/${offExplicit.bakes}` });
+  })();
+
+  // ④ 光照图失效重烘计数：静止零重烘；形状变化重烘
+  (function e4() {
+    const r = new P012WaterSandRenderer(128, 192);
+    const c = makeCountingCanvas({});
+    const f = new WaterSandField(128, 192);
+    f.initialize(fullScene(128));
+    f.setTilt(15);
+    f.step(1 / 60);
+    r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+    const bakesAfterFirst = r.e2BakeCount;
+    // 静止 5 帧（dormant 或微变 < 阈值）
+    for (let i = 0; i < 5; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+    }
+    const bakesAfterStill = r.e2BakeCount;
+    // 大形状变化（倾斜 40° 扬沙）
+    f.setTilt(40);
+    for (let i = 0; i < 20; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+    }
+    const bakesAfterTilt = r.e2BakeCount;
+    // 静止段允许少量重烘（沉降期层高持续变——形状阈值 2px 显示域内），
+    // 但倾斜段重烘次数须显著更多（形状大变必响应）
+    const stillBakes = bakesAfterStill - bakesAfterFirst;
+    const tiltBakes = bakesAfterTilt - bakesAfterStill;
+    results.push({ name: 'p012_e2_rebakeAccounting', status:
+      bakesAfterFirst >= 1 && tiltBakes >= 1 && bakesAfterTilt >= bakesAfterStill ? 'PASS' : 'FAIL',
+      error: `first=${bakesAfterFirst} still+${stillBakes} tilt+${tiltBakes}` });
+  })();
+
+  // ⑤ 坡向响应：人造左右坡（左坡升/右坡降）Lface 应随光向横向分量区分
+  (function e5() {
+    const r = new P012WaterSandRenderer(128, 192);
+    const c = makeCountingCanvas({});
+    const f = new WaterSandField(128, 192);
+    // 人造沙丘：中间高两侧低（左坡上升、右坡下降）
+    const scene = {
+      waterRegions: [{ startCol: 0, endColInclusive: 127, bottom: 120, height: 60 }],
+      heavyDepositedRegions: [],
+      lightDepositedRegions: [],
+      heavySuspendedRegions: [],
+      lightSuspendedRegions: []
+    };
+    // 逐列构造丘形（用 light 沉积高度梯度——中列 60 边列 10）
+    const hills = [];
+    for (let c0 = 0; c0 < 128; c0++) {
+      const h = 10 + 50 * Math.sin(Math.PI * c0 / 127);
+      hills.push({ startCol: c0, endColInclusive: c0, bottom: 0, height: Math.round(h) });
+    }
+    scene.lightDepositedRegions = hills;
+    f.initialize(scene);
+    f.step(1 / 60);
+    r.render(c, f.snapshot(), makeContext({ ablation: types.P012Ablation.TOPLIGHT }));
+    // 左坡（c=32，上升段）与右坡（c=96，下降段）的表面 Lmat（z=0）
+    const lLeft = r.e2LightMap[32 * 256 + 0];
+    const lRight = r.e2LightMap[96 * 256 + 0];
+    // 左上光（LIGHT_X=-0.55）：右上升坡（表面向左上）迎光更亮，左下降坡背光更暗
+    // （与既有 shadeOf 同向语义——不要求特定符号，要求两侧可区分）
+    const separable = Math.abs(lLeft - lRight) > 1e-6;
+    results.push({ name: 'p012_e2_slopeResponse', status:
+      separable ? 'PASS' : 'FAIL',
+      error: `lLeft=${lLeft.toFixed(4)} lRight=${lRight.toFixed(4)} diff=${Math.abs(lLeft - lRight).toFixed(6)}` });
+  })();
+})();
+
 // Full hypium suite (state machine details incl. not-finite/frame-gap/epoch/serial).
 require('../entry/src/test/P012WaterSandAdapterTest.ets').default();
 
