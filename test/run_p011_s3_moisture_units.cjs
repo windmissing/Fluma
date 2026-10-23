@@ -332,7 +332,7 @@ describe('S3 moisture (§9.2 fourteen cases)', () => {
     assert.ok(perMs < 0.06, `refreshMoisture ${perMs}ms`);
   });
 
-  // 13) wetnessCrossed is an independent field (schema v5 presence).
+  // 13) wetnessCrossed is an independent field (schema presence).
   it('s3_wetnessCrossedIndependentField', 0, () => {
     const field = makeField();
     arm(field);
@@ -341,8 +341,11 @@ describe('S3 moisture (§9.2 fourteen cases)', () => {
     // The context assembly exposes wetnessCrossed separately from
     // transitionReason (which keeps its frozen four-value vocabulary).
     // Structural check: the ledger block type has the field.
+    // Schema history: v5 introduced wetnessCrossed; v6 (advection
+    // stage-a) appended the P011AdvectionEvidence/Moments blocks — the
+    // moisture fields are unchanged, so the pin tracks the live version.
     const moistureMod = require('../entry/src/main/ets/physics/P011NaturalObservation.ets');
-    assert.ok(moistureMod.P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION === 5);
+    assert.ok(moistureMod.P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION === 6);
   });
 
   // 14) Schema compatibility: OFF runs carry no moisture block; the

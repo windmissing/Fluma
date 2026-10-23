@@ -1452,6 +1452,20 @@ struct SandCanvas {
           scheduleField.drainWater(waterAmount);
         }
       }
+      // Plan-3 stage a (advection A-3): arm when the want carried p011adv.
+      const advGain = AppStorage.get<number>('p011AdvGain');
+      const advK = AppStorage.get<number>('p011AdvKDrag');
+      const advU = AppStorage.get<number>('p011AdvUCap');
+      const advC = AppStorage.get<number>('p011AdvCap');
+      if (advGain !== undefined && advK !== undefined && advU !== undefined &&
+        advC !== undefined) {
+        scheduleField.setAdvectionParams({
+          advectionGain: advGain, kDrag: advK, uCap: advU, channelRateCap: advC
+        });
+        if (scheduleRoute === undefined || scheduleRoute === '') {
+          scheduleField.setNaturalObservationRouteId('suspension-advection-v1');
+        }
+      }
       // S4 §1.4: arm deep-creep params when the want carried p011s4 (the
       // route binding rides the SAME single route field — S4 claims it
       // only when no correction route was bound).

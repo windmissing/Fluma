@@ -20,7 +20,12 @@ export type P011ExistingChannelId =
   // bh-interface potential-gradient reverse-exchange channel. Rank 6;
   // correction shifts to 7 (rank is a pure lexicographic tool — preview
   // ordering only, never in the ledger).
-  'deepCreep';
+  'deepCreep' |
+  // P-011 plan-3 stage-a (architecture-P011-advection-v1.md §1.1): the
+  // suspension advection channel — directed transport of EXISTING
+  // suspension under four budget layers (S-invariant). Rank 8 (after
+  // correction's 7); rank stays a lexicographic preview tool only.
+  'advection';
 
 export interface P011ExistingRequestShape {
   requested: number;
@@ -50,6 +55,10 @@ export interface P011ExistingChannelRateCapRemaining {
   /** S4 §1.2: booked but NOT capped in the first version (observe then
    * calibrate — the cap candidate lands after the sweep). */
   deepCreep: number;
+  /** Advection §1.3: the channel rate cap IS a real truncation dimension
+   * (the fifth q_admit min term — designer §2), unlike S4's observe-only
+   * booking. */
+  advection: number;
 }
 
 export interface P011ExistingBudgetSnapshot {
@@ -139,8 +148,10 @@ export function p011ChannelRank(id: P011ExistingChannelId): number {
       return 6;
     case 'correction':
       return 7;
+    case 'advection':
+      return 8;
     default:
-      return 7;
+      return 8;
   }
 }
 

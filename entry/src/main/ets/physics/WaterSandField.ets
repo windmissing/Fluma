@@ -50,6 +50,7 @@ import { P011MoistureParams, defaultP011MoistureParams,
   p011MoistureMixed, p011MoistureDelta, p011MoistureRefSaturation,
   p011MoistureClipDelta, p011MoistureDeltaWindow
 } from './P011Moisture';
+import { P011AdvectionLedgerBlock, P011AdvectionSubstepMoments } from './P011NaturalObservation';
 import { P011CorrectionVariant } from './P011RelaxCorrection';
 import {
   P011RelaxHysteresisThresholds,
@@ -361,6 +362,30 @@ export interface P011DeepCreepParams {
   hMin: number;
 }
 
+/** Advection §5.1: the ledger block implementation class. */
+class P011AdvectionLedgerBlockImpl implements P011AdvectionLedgerBlock {
+  routeId: string = '';
+  gain: number = 0;
+  kDrag: number = 0;
+  uCap: number = 0;
+  channelRateCap: number = 0;
+  perSubstep: P011AdvectionSubstepMoments = new P011AdvectionSubstepMomentsImpl();
+}
+
+/** Advection §5.1: the substep-moments implementation class. */
+class P011AdvectionSubstepMomentsImpl implements P011AdvectionSubstepMoments {
+  MdepH: number = 0;
+  MdepL: number = 0;
+  MsuspH: number = 0;
+  MsuspL: number = 0;
+  RMH: number = 0;
+  RML: number = 0;
+  diffusionFluxH: number = 0;
+  diffusionFluxL: number = 0;
+  advectionFluxH: number = 0;
+  advectionFluxL: number = 0;
+}
+
 /** S3: the ledger block implementation (ArkTS: interfaces need class
  * implementations — no untyped literals). */
 class P011MoistureLedgerBlockImpl implements P011MoistureLedgerBlock {
@@ -411,6 +436,24 @@ export class P011DeepCreepAttribution {
 /** S4 §1.4: the deep-creep route id (mutually exclusive with the
  * correction route — one route binding per run). */
 export const P011_DEEP_CREEP_ROUTE_ID = 'deep-creep-bh-v1';
+
+/** Advection §1.1: the route id (stage a). Mutually exclusive with S4
+ * deepCreep and correction (setNaturalObservationRouteId is a single-value
+ * field); concurrent activation needs explicit manager authorization. */
+export const P011_ADVECTION_ROUTE_ID = 'suspension-advection-v1';
+
+/** Advection params (§6.1 A-3; candidates PENDING calibration — red line). */
+export interface P011AdvectionParams {
+  /** Drag coefficient: u_e = clip(kDrag·F_e, ±uCap). Candidate. */
+  kDrag: number;
+  /** Velocity cap (material units / substep-second). Candidate. */
+  uCap: number;
+  /** Channel rate cap per substep-second (units of suspension). Candidate. */
+  channelRateCap: number;
+  /** Master gain. gain=0 is BIT-EXACT OFF (request generation skipped —
+   * identical to the route-unbound state; §1.1 designer requirement). */
+  advectionGain: number;
+}
 
 /** falling-sand gesture request: page-routed per-column amounts (§1.1). */
 export interface P011GestureSandRequest {
@@ -885,6 +928,14 @@ export class WaterSandField {
   private edgeThetaStopRev = new Float64Array(0);
   // Water-transaction net (baseline never resets — §2.2-3 rule).
   private waterTransactionNet = 0;
+  // Advection (plan-3 stage a): params (null = route OFF) + the channel
+  // cap pool (reset per substep) + telemetry accumulators.
+  private advectionParams: P011AdvectionParams | null = null;
+  private advectionChannelCapRemaining = 0;
+  private advectionTelemetryActive = false;
+  private advectionFluxH = 0;
+  private advectionFluxL = 0;
+  private advectionLastMs = 0;
   // S4 telemetry attribution counters (per substep, reset each call).
   private deepCreepNoDrive = 0;
   private deepCreepNoInventory = 0;
@@ -1828,6 +1879,8 @@ export class WaterSandField {
           this.totalMotionBudgetClipped = Math.max(0,
             this.naturalObservationTotalRequested - this.totalMotionBudgetUsed);
         }
+        // Advection §5.1: the R_M reconciliation at substep end.
+        this.advectionEndOfSubstep();
       }
       if (errorCode !== null) {
         this.finishNaturalObservation(errorCode);
@@ -2290,6 +2343,26 @@ export class WaterSandField {
     return this.moistureParams;
   }
 
+  /** Advection §5.1: assemble the advection ledger block (undefined when
+   * the route is OFF — pre-v6 consumers see no block). */
+  private buildAdvectionLedgerBlock(): P011AdvectionLedgerBlock | undefined {
+    const params = this.advectionParams;
+    if (!this.advectionRouteActive() || params === null) {
+      return undefined;
+    }
+    const block = new P011AdvectionLedgerBlockImpl();
+    block.routeId = P011_ADVECTION_ROUTE_ID;
+    block.gain = params.advectionGain;
+    block.kDrag = params.kDrag;
+    block.uCap = params.uCap;
+    block.channelRateCap = params.channelRateCap;
+    const probe = this.naturalObservationProbe;
+    const moments = probe !== null && probe.lastAdvectionMoments !== null
+      ? probe.lastAdvectionMoments : this.computeAdvectionMoments();
+    block.perSubstep = moments;
+    return block;
+  }
+
   /** S3 §6.1: assemble the moisture ledger block (null when OFF). */
   private buildMoistureLedgerBlock(): P011MoistureLedgerBlock | undefined {
     if (!this.moistureRouteActive() || this.moistureField === null ||
@@ -2551,6 +2624,438 @@ export class WaterSandField {
     return pair;
   }
 
+  // =========================================================================
+  // P-011 plan-3 stage a: the suspension advection channel
+  // (architecture-P011-advection-v1.md §1.2-1.4). Seventh writer channel,
+  // S-invariant (suspH/suspL column pairs reshuffled; bh/bl/mh/ml and
+  // sandTop untouched -> guard registration only, no materialGuardAdmit).
+  // Slot position (§1.2): AFTER saveMotionSnapshot, BEFORE settleSandV2 —
+  // all edges read the SAME frozen suspension snapshot (request
+  // generation), while the admission chain debits RUNTIME residuals
+  // (serial per-note; two-level anti-oversell).
+  // =========================================================================
+
+  /** §1.1: double gate (S4/correction precedent) — route + params. */
+  advectionRouteActive(): boolean {
+    return this.naturalObservationRouteId === P011_ADVECTION_ROUTE_ID &&
+      this.advectionParams !== null;
+  }
+
+  /**
+   * §A-3 (fail-closed, §27.2 precedent): kDrag/uCap/channelRateCap must be
+   * finite and > 0; gain in [0, 1]. Out-of-domain REJECTS (no clamp).
+   * gain=0 arms the route but generates ZERO requests (bit-exact OFF —
+   * §1.1: identical to unbound, pinned by the isolation test).
+   */
+  setAdvectionParams(params: P011AdvectionParams | null): void {
+    if (params === null) {
+      this.advectionParams = null;
+      return;
+    }
+    if (!finite(params.kDrag) || !finite(params.uCap) ||
+      !finite(params.channelRateCap) || !finite(params.advectionGain) ||
+      params.kDrag <= 0 || params.uCap <= 0 || params.channelRateCap <= 0 ||
+      params.advectionGain < 0 || params.advectionGain > 1) {
+      throw new WaterSandParamError(
+        'invalid advection params: kDrag/uCap/channelRateCap > 0, gain in [0,1]');
+    }
+    this.advectionParams = {
+      kDrag: params.kDrag,
+      uCap: params.uCap,
+      channelRateCap: params.channelRateCap,
+      advectionGain: params.advectionGain
+    };
+  }
+
+  getAdvectionParams(): P011AdvectionParams | null {
+    return this.advectionParams;
+  }
+
+  /** §5.2: last substep's channel telemetry (test/offline use). */
+  getAdvectionFluxes(): number[] {
+    return [this.advectionFluxH, this.advectionFluxL, this.advectionLastMs];
+  }
+
+  /** §5.1: the per-substep domain moments (deposited/suspension, both
+   * phases). O(N) — the §5.2 cost ruling (negligible; gated by the
+   * telemetry switch so OFF runs pay zero). */
+  private computeAdvectionMoments(): P011AdvectionSubstepMoments {
+    const moments = new P011AdvectionSubstepMomentsImpl();
+    let mdepH = 0;
+    let mdepL = 0;
+    let msuspH = 0;
+    let msuspL = 0;
+    for (let c = 0; c < this.cols; c++) {
+      mdepH += c * (this.bh[c] + this.mh[c]);
+      mdepL += c * (this.bl[c] + this.ml[c]);
+      msuspH += c * this.suspH[c];
+      msuspL += c * this.suspL[c];
+    }
+    moments.MdepH = mdepH;
+    moments.MdepL = mdepL;
+    moments.MsuspH = msuspH;
+    moments.MsuspL = msuspL;
+    // R_M (§5.1): [Mdep(t+dt)+Msusp(t+dt)] − [Mdep(t)+Msusp(t)] −
+    // advection signed flux − other transport — computed by the caller
+    // which owns the previous-substep snapshot; zero here.
+    moments.RMH = 0;
+    moments.RML = 0;
+    const probe = this.naturalObservationProbe;
+    moments.diffusionFluxH = probe !== null ? probe.lastDiffusionFluxH : 0;
+    moments.diffusionFluxL = probe !== null ? probe.lastDiffusionFluxL : 0;
+    moments.advectionFluxH = this.advectionFluxH;
+    moments.advectionFluxL = this.advectionFluxL;
+    return moments;
+  }
+
+  /** Previous-substep moments for the R_M reconciliation (§5.1). */
+  private advectionPrevMdepH = 0;
+  private advectionPrevMdepL = 0;
+  private advectionPrevMsuspH = 0;
+  private advectionPrevMsuspL = 0;
+  private advectionPrevAdvectionFluxH = 0;
+  private advectionPrevAdvectionFluxL = 0;
+  private advectionPrevDiffusionFluxH = 0;
+  private advectionPrevDiffusionFluxL = 0;
+
+  /**
+   * §5.1 R_M reconciliation + the telemetry switch + the previous-moment
+   * roll. Called once per substep END (from the step loop when the
+   * advection route is active): computes this substep's moments, derives
+   * R_M against the previous snapshot, pushes the diffusion fluxes to the
+   * probe, and rolls the previous snapshot forward.
+   */
+  private advectionEndOfSubstep(): void {
+    if (!this.advectionRouteActive()) {
+      return;
+    }
+    const probe = this.naturalObservationProbe;
+    // Track the legacy diffusion signed fluxes per substep: wrap
+    // diffuseSuspension's telemetry accumulation here (the diffusion
+    // evidence is recorded per note during the substep; summing per
+    // substep keeps R_M's separate column exact).
+    const moments = this.computeAdvectionMoments();
+    // R_M,p (stage-a suspension-domain scope, §5.1): the slot-boundary
+    // identity — post-slot susp moment − pre-slot susp moment − signed
+    // advection flux == 0 exactly (the diffusion ran before the slot and
+    // is inside the pre/post boundary; its separate column stays in the
+    // moments for the ledger reader). The whole-substep formula would
+    // need otherPhaseTransport (the cross-column deposited writers);
+    // stage a excludes them by scope (b's certificate re-derives the
+    // full form).
+    moments.RMH = this.advectionSlotRMH;
+    moments.RML = this.advectionSlotRML;
+    if (probe !== null) {
+      probe.lastAdvectionMoments = moments;
+    }
+    // Roll the previous snapshot (the whole-substep moments for the
+    // ledger reader; R_M itself is the slot-scope value above).
+    this.advectionPrevMdepH = moments.MdepH;
+    this.advectionPrevMdepL = moments.MdepL;
+    this.advectionPrevMsuspH = moments.MsuspH;
+    this.advectionPrevMsuspL = moments.MsuspL;
+    this.advectionPrevAdvectionFluxH = moments.advectionFluxH;
+    this.advectionPrevAdvectionFluxL = moments.advectionFluxL;
+    this.advectionPrevDiffusionFluxH = moments.diffusionFluxH;
+    this.advectionPrevDiffusionFluxL = moments.diffusionFluxL;
+  }
+
+  /**
+   * §1.4 advectionSlot — the full pseudocode. Called at the SAME slot in
+   * both phases: collect mode (substep) right after saveMotionSnapshot
+   * (reads the frozen snapshot), apply mode (applyMotionChannels) at the
+   * chain top BEFORE settleSandV2 (reads the restored state — restore puts
+   * the arrays back to the snapshot content, so both phases read the same
+   * suspension state; requests generated during collect are re-derived
+   * here identically).
+   */
+  // Scratch buffers reused across substeps (perf: zero per-substep
+  // allocation in the hot path; resized only when the field geometry
+  // changes — configure/initialize paths reset their length).
+  private advUEdgeBuf = new Float64Array(0);
+  private advNuEdgeBuf = new Float64Array(0);
+  private advReqHBuf = new Float64Array(0);
+  private advReqLBuf = new Float64Array(0);
+  private advOutHBuf = new Float64Array(0);
+  private advOutLBuf = new Float64Array(0);
+
+  private advectionSlot(dt: number): void {
+    const params = this.advectionParams;
+    if (params === null || params.advectionGain <= 0) {
+      return; // route OFF or gain=0: bit-exact skip (no requests, no ledger)
+    }
+    const cols = this.cols;
+    const edgeCount = cols - 1;
+    const start = Date.now();
+    // Telemetry accumulators reset per substep.
+    this.advectionFluxH = 0;
+    this.advectionFluxL = 0;
+    this.advectionChannelCapRemaining = params.channelRateCap * dt;
+    if (this.advUEdgeBuf.length !== edgeCount) {
+      this.advUEdgeBuf = new Float64Array(edgeCount);
+      this.advNuEdgeBuf = new Float64Array(edgeCount);
+      this.advReqHBuf = new Float64Array(edgeCount);
+      this.advReqLBuf = new Float64Array(edgeCount);
+    }
+    if (this.advOutHBuf.length !== cols) {
+      this.advOutHBuf = new Float64Array(cols);
+      this.advOutLBuf = new Float64Array(cols);
+    }
+    const uEdge = this.advUEdgeBuf;
+    const nuEdge = this.advNuEdgeBuf;
+    const reqH = this.advReqHBuf;
+    const reqL = this.advReqLBuf;
+    uEdge.fill(0);
+    nuEdge.fill(0);
+    reqH.fill(0);
+    reqL.fill(0);
+    const outSumH = this.advOutHBuf;
+    const outSumL = this.advOutLBuf;
+    outSumH.fill(0);
+    outSumL.fill(0);
+    // theta_eff = the PLANNER-ACCEPTED angle (read-only — §1.2: not the
+    // command angle; assert-by-test that u_e's sign follows effectiveTilt).
+    const tanAccepted = Math.tan(this.effectiveTilt * Math.PI / 180);
+    // §5.1 slot-boundary moment capture (pre-slot): the stage-a R_M scope
+    // is the SUSPENSION domain reconciled at the slot boundaries — the
+    // deposited cross-column writers (settle/percolate/creep/relax) run
+    // after this slot and are EXCLUDED by construction.
+    let slotPreMsuspH = 0;
+    let slotPreMsuspL = 0;
+    for (let c = 0; c < cols; c++) {
+      slotPreMsuspH += c * this.suspH[c];
+      slotPreMsuspL += c * this.suspL[c];
+    }
+    // ── Request generation (frozen snapshot read — same array object in
+    //    both phases: collect reads motionSnapshot post-save, apply reads
+    //    the restored live arrays; content identical).
+    for (let e = 0; e < edgeCount; e++) {
+      const gE = this.sandTopScratch[e + 1] - this.sandTopScratch[e];
+      const fE = tanAccepted - gE;
+      let uE = params.kDrag * fE;
+      if (uE > params.uCap) {
+        uE = params.uCap;
+      }
+      if (uE < -params.uCap) {
+        uE = -params.uCap;
+      }
+      uEdge[e] = uE;
+      // CFL <= 1 (dx = 1 column): nu = min(1, |u|·dt).
+      const nu = Math.min(1, Math.abs(uE) * dt);
+      nuEdge[e] = nu;
+    }
+    // Per-phase requests from the SAME suspension state this slot entry
+    // sees (collect: motionSnapshot arrays; apply: the live post-restore
+    // arrays). Reading via the live arrays is equivalent because the apply
+    // chain restores the snapshot before entering — but in COLLECT mode
+    // the live arrays ARE the post-diffusion state that was just snap-
+    // shotted, so reading live here is the same content. (The snapshot
+    // exists so APPLY can restore after the collect writes; slot-order
+    // guarantees we run before any of this substep's other writers either
+    // way.)
+    const suspHRef = this.suspH;
+    const suspLRef = this.suspL;
+    for (let e = 0; e < edgeCount; e++) {
+      const nu = nuEdge[e];
+      if (nu <= EPS) {
+        continue;
+      }
+      // donor/receiver by sign: u>0 transports toward +c (donor=e,
+      // receiver=e+1); u<0 toward -c (donor=e+1, receiver=e).
+      const donor = uEdge[e] > 0 ? e : e + 1;
+      reqH[e] = nu * suspHRef[donor] * params.advectionGain;
+      reqL[e] = nu * suspLRef[donor] * params.advectionGain;
+    }
+    // ── Snapshot-level donor oversell scaling (§1.2): for each column,
+    //    Σ q_out over its out-edges; if > the snapshot stock, scale each
+    //    out-edge request by stock/Σ (proportional + deterministic).
+    for (let e = 0; e < edgeCount; e++) {
+      if (reqH[e] <= EPS && reqL[e] <= EPS) {
+        continue;
+      }
+      const donor = uEdge[e] > 0 ? e : e + 1;
+      outSumH[donor] += reqH[e];
+      outSumL[donor] += reqL[e];
+    }
+    for (let e = 0; e < edgeCount; e++) {
+      if (reqH[e] <= EPS && reqL[e] <= EPS) {
+        continue;
+      }
+      const donor = uEdge[e] > 0 ? e : e + 1;
+      if (outSumH[donor] > suspHRef[donor] + EPS) {
+        const scale = suspHRef[donor] / Math.max(outSumH[donor], EPS);
+        reqH[e] *= scale;
+      }
+      if (outSumL[donor] > suspLRef[donor] + EPS) {
+        const scale = suspLRef[donor] / Math.max(outSumL[donor], EPS);
+        reqL[e] *= scale;
+      }
+    }
+    // ── Admission chain (serial per note, runtime residuals — §1.2/§1.3).
+    //    Edge order fixed ascending (dictionary order §20.6.2); phase
+    //    order H then L. Each note: q = min(request, donor runtime stock,
+    //    receiver suspension capacity, channel cap, both locals, total);
+    //    six-part idempotency requested = granted + 5 clip classes.
+    //    Atomic micro-transaction: all four validity checks computed
+    //    before any write (S4 §2.4 precedent); a failed note skips whole.
+    for (let e = 0; e < edgeCount; e++) {
+      if (reqH[e] <= EPS && reqL[e] <= EPS) {
+        continue;
+      }
+      const donor = uEdge[e] > 0 ? e : e + 1;
+      const receiver = uEdge[e] > 0 ? e + 1 : e;
+      // Phase H then L (fixed order).
+      for (let phase = 0; phase < 2; phase++) {
+        const isHeavy = phase === 0;
+        const requested = isHeavy ? reqH[e] : reqL[e];
+        if (requested <= EPS) {
+          continue;
+        }
+        // Five-part min + the requested itself.
+        const donorStock = isHeavy ? this.suspH[donor] : this.suspL[donor];
+        const receiverCapacity = this.suspensionCapacity(receiver);
+        const channelRemaining = this.advectionChannelCapRemaining;
+        const localDonor = this.substepMotionBudgetRemaining[donor];
+        const localReceiver = this.substepMotionBudgetRemaining[receiver];
+        const totalRemaining = this.totalMotionBudgetRemaining;
+        let granted = requested;
+        let clipInventory = 0;
+        let clipCapacity = 0;
+        let clipChannel = 0;
+        let clipLocal = 0;
+        let clipTotal = 0;
+        if (granted > donorStock) {
+          clipInventory = granted - donorStock;
+          granted = donorStock;
+        }
+        if (granted > receiverCapacity) {
+          clipCapacity += granted - receiverCapacity;
+          granted = receiverCapacity;
+        }
+        if (granted > channelRemaining) {
+          clipChannel = granted - channelRemaining;
+          granted = channelRemaining;
+        }
+        if (granted > localDonor || granted > localReceiver) {
+          const localMin = Math.min(localDonor, localReceiver);
+          if (granted > localMin) {
+            clipLocal = granted - localMin;
+            granted = localMin;
+          }
+        }
+        if (granted > totalRemaining) {
+          clipTotal = granted - totalRemaining;
+          granted = totalRemaining;
+        }
+        if (granted < 0) {
+          granted = 0;
+        }
+        // Internal validity (micro-transaction, computed before writes):
+        // finite + non-negative both ends + S+U_H+U_L <= waterTop at the
+        // receiver (designer §2 capacity constraint — suspensionCapacity
+        // already enforces it; the belt-and-braces re-check is the audit).
+        const newDonor = (isHeavy ? this.suspH[donor] : this.suspL[donor]) - granted;
+        const newReceiverSuspH = this.suspH[receiver] + (isHeavy ? granted : 0);
+        const newReceiverSuspL = this.suspL[receiver] + (isHeavy ? 0 : granted);
+        const receiverTotal = this.sandTopScratch[receiver] +
+          newReceiverSuspH + newReceiverSuspL;
+        const valid = finite(newDonor) && finite(newReceiverSuspH) &&
+          finite(newReceiverSuspL) && newDonor >= -EPS &&
+          newReceiverSuspH >= -EPS && newReceiverSuspL >= -EPS &&
+          receiverTotal <= this.waterTop[receiver] + EPS;
+        if (!valid || granted <= EPS) {
+          if (!valid) {
+            this.recordAdvectionNote(e, isHeavy, uEdge[e], nuEdge[e],
+              requested, 0, clipInventory, clipCapacity, clipChannel,
+              clipLocal, clipTotal, 'INVALID');
+          }
+          continue;
+        }
+        // Commit: two suspension cells + four budget layers (no bottom —
+        // §1.3: bottom is never debited; total debits q ONCE per note —
+        // the real displacement is q, H/L notes independent).
+        if (isHeavy) {
+          this.suspH[donor] = newDonor;
+          this.suspH[receiver] = newReceiverSuspH;
+        } else {
+          this.suspL[donor] = newDonor;
+          this.suspL[receiver] = newReceiverSuspL;
+        }
+        this.substepMotionBudgetRemaining[donor] -= granted;
+        this.substepMotionBudgetUsed[donor] += granted;
+        this.substepMotionBudgetRemaining[receiver] -= granted;
+        this.substepMotionBudgetUsed[receiver] += granted;
+        this.totalMotionBudgetRemaining -= granted;
+        this.totalMotionBudgetUsed += granted;
+        this.advectionChannelCapRemaining -= granted;
+        // Telemetry: per-note evidence + the signed edge flux.
+        const signed = granted * (uEdge[e] > 0 ? 1 : -1);
+        if (isHeavy) {
+          this.advectionFluxH += signed;
+        } else {
+          this.advectionFluxL += signed;
+        }
+        this.recordAdvectionNote(e, isHeavy, uEdge[e], nuEdge[e],
+          requested, granted, clipInventory, clipCapacity, clipChannel,
+          clipLocal, clipTotal, null);
+        // Six-part idempotency (§1.3 assertion, computed here so any
+        // dispatch-order bug fails loudly at runtime).
+        const residual = requested - (granted + clipInventory + clipCapacity +
+          clipChannel + clipLocal + clipTotal);
+        if (Math.abs(residual) > 1e-9) {
+          throw new WaterSandParamError(
+            `advection idempotency violated: residual ${residual}`);
+        }
+      }
+    }
+    this.advectionLastMs = Date.now() - start;
+    // §5.1 slot-boundary (post-slot): R_M = post − pre − advectionFlux −
+    // diffusionFlux (diffusion ran BEFORE this slot — its flux belongs to
+    // the same suspension domain; the pre-slot capture already includes
+    // the diffusion result, so the diffusion term is NOT subtracted here;
+    // the §5.1 full-form accounting with the diffusion separate column
+    // happens in advectionEndOfSubstep across the WHOLE substep boundary,
+    // where the settle's same-column dep<->susp transfer cancels in
+    // dMdep+dMsusp and only the cross-column deposited writers — excluded
+    // by the slot scope — would appear).
+    let slotPostMsuspH = 0;
+    let slotPostMsuspL = 0;
+    for (let c = 0; c < cols; c++) {
+      slotPostMsuspH += c * this.suspH[c];
+      slotPostMsuspL += c * this.suspL[c];
+    }
+    this.advectionSlotRMH = slotPostMsuspH - slotPreMsuspH -
+      this.advectionFluxH;
+    this.advectionSlotRML = slotPostMsuspL - slotPreMsuspL -
+      this.advectionFluxL;
+  }
+
+  /** §5.1: the slot-scope R_M residuals (suspension domain only). */
+  private advectionSlotRMH = 0;
+  private advectionSlotRML = 0;
+  private recordAdvectionNote(edge: number, isHeavy: boolean, u: number,
+    nu: number, requested: number, granted: number, clipInventory: number,
+    clipCapacity: number, clipChannel: number, clipLocal: number,
+    clipTotal: number, reason: string | null): void {
+    if (this.naturalObservationProbe === null || !this.advectionTelemetryActive) {
+      return;
+    }
+    this.naturalObservationProbe.recordAdvectionEvidence({
+      edge: edge,
+      phase: isHeavy ? 'H' : 'L',
+      u: u,
+      nu: nu,
+      requested: requested,
+      granted: granted,
+      clipInventory: clipInventory,
+      clipCapacity: clipCapacity,
+      clipChannel: clipChannel,
+      clipLocal: clipLocal,
+      clipTotal: clipTotal,
+      reason: reason
+    });
+  }
+
   /**
    * S4 dormant-wake probe: does ANY adjacent pair still carry a
    * potential drive (D>0 with stocks)? Cheap O(cols) scan mirroring the
@@ -2688,6 +3193,8 @@ export class WaterSandField {
       // S3 §6.1 (schema v5): the moisture block (ON runs only).
       moisture: this.buildMoistureLedgerBlock(),
       wetnessCrossed: this.moistureRouteActive() ? false : undefined,
+      // Advection §5.1 (schema v6): the advection block (ON runs only).
+      advection: this.buildAdvectionLedgerBlock(),
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
@@ -2995,6 +3502,13 @@ export class WaterSandField {
     this.correctionStalledCount = 0;
     this.collectingTotalMotionRequests = collectRequests;
     this.totalMotionBudgetScale = collectRequests ? 1 : totalMotionScale;
+    // Advection §5.2: telemetry switch (ON only when the route is armed —
+    // OFF runs pay zero) + the per-substep diffusion flux reset.
+    this.advectionTelemetryActive = this.advectionRouteActive();
+    if (this.naturalObservationProbe !== null) {
+      this.naturalObservationProbe.lastDiffusionFluxH = 0;
+      this.naturalObservationProbe.lastDiffusionFluxL = 0;
+    }
   }
 
   private beginMotionApplication(substepDt: number, totalMotionScale: number): void {
@@ -3084,6 +3598,10 @@ export class WaterSandField {
     if (this.collectingTotalMotionRequests) {
       this.saveMotionSnapshot();
     }
+    // Plan-3 stage a (advection §1.2): AFTER the motion snapshot, BEFORE
+    // settle — all edges read the frozen suspension state; newly settled
+    // material joins advection next substep (no teleport).
+    this.advectionSlot(dt);
     this.settleSandV2(dt);
     this.percolateHeavyConservative(dt);
     const creepError = this.creepBottom(dt);
@@ -3097,6 +3615,11 @@ export class WaterSandField {
   }
 
   private applyMotionChannels(dt: number): WaterSandErrorCode | null {
+    // Plan-3 stage a (advection §1.2): apply-chain top, before settle —
+    // restoreMotionSnapshot already put the arrays back to the snapshot
+    // content, so this reads the SAME suspension state the collect-side
+    // slot generated from (preview/apply same-order, §1.4).
+    this.advectionSlot(dt);
     this.settleSandV2(dt);
     this.percolateHeavyConservative(dt);
     const creepError = this.creepBottom(dt);
@@ -3868,6 +4391,132 @@ export class WaterSandField {
       return plan;
     };
 
+    // --- advection (plan-3 stage a §1.4): shadow mirror at the SAME slot
+    // (before settle), same order (edge ascending, H then L), same rules
+    // (five-part min + runtime residuals). S-invariant: deltaS all zero —
+    // the guard registration signature. The shadow suspH/suspL are the
+    // R-3-a six-array set (zero new arrays); the shadow channel cap pool
+    // mirrors the real one. gain=0 / route OFF: zero-request skip (the
+    // plan still lands with all-zero fields so the preview/commit
+    // comparator sees the same plan list shape). ---
+    {
+      const advParams = this.advectionParams;
+      const deltaS = new Float64Array(cols);
+      let requestedTotal = 0;
+      let grantedTotal = 0;
+      let channelUse = 0;
+      if (advParams !== null && advParams.advectionGain > 0 &&
+        this.naturalObservationRouteId === P011_ADVECTION_ROUTE_ID) {
+        let shadowChannelRemaining = advParams.channelRateCap * substepDt;
+        const shadowTanAccepted =
+          Math.tan(this.effectiveTilt * Math.PI / 180);
+        // Request generation from the SAME suspension content the real
+        // collect-side slot saw (shadow arrays initialized from the live
+        // post-collect susp arrays — the collect pass ran advectionSlot
+        // AFTER saveMotionSnapshot, so the snapshot content equals the
+        // post-collect live arrays the shadow was seeded from... NOTE:
+        // collect-side advectionSlot WROTE the live arrays after the
+        // snapshot; the shadow seeds from substepSandTopBefore-era arrays.
+        // The preview runs BEFORE the authoritative collect (theta not yet
+        // committed), so the shadow seeds equal the pre-collect state —
+        // the same source the real collect derives from. Consistent.)
+        const advUEdge = new Float64Array(cols - 1);
+        const advNuEdge = new Float64Array(cols - 1);
+        const advReqH = new Float64Array(cols - 1);
+        const advReqL = new Float64Array(cols - 1);
+        for (let e = 0; e < cols - 1; e++) {
+          const gE = shadowS[e + 1] - shadowS[e];
+          const fE = shadowTanAccepted - gE;
+          let uE = advParams.kDrag * fE;
+          if (uE > advParams.uCap) {
+            uE = advParams.uCap;
+          }
+          if (uE < -advParams.uCap) {
+            uE = -advParams.uCap;
+          }
+          advUEdge[e] = uE;
+          advNuEdge[e] = Math.min(1, Math.abs(uE) * substepDt);
+        }
+        for (let e = 0; e < cols - 1; e++) {
+          const nu = advNuEdge[e];
+          if (nu <= EPS) {
+            continue;
+          }
+          const donor = advUEdge[e] > 0 ? e : e + 1;
+          advReqH[e] = nu * shadowSuspH[donor] * advParams.advectionGain;
+          advReqL[e] = nu * shadowSuspL[donor] * advParams.advectionGain;
+        }
+        // Donor oversell scaling (snapshot-level, same rule).
+        const advOutH = new Float64Array(cols);
+        const advOutL = new Float64Array(cols);
+        for (let e = 0; e < cols - 1; e++) {
+          if (advReqH[e] <= EPS && advReqL[e] <= EPS) {
+            continue;
+          }
+          const donor = advUEdge[e] > 0 ? e : e + 1;
+          advOutH[donor] += advReqH[e];
+          advOutL[donor] += advReqL[e];
+        }
+        for (let e = 0; e < cols - 1; e++) {
+          if (advReqH[e] <= EPS && advReqL[e] <= EPS) {
+            continue;
+          }
+          const donor = advUEdge[e] > 0 ? e : e + 1;
+          if (advOutH[donor] > shadowSuspH[donor] + EPS) {
+            advReqH[e] *= shadowSuspH[donor] / Math.max(advOutH[donor], EPS);
+          }
+          if (advOutL[donor] > shadowSuspL[donor] + EPS) {
+            advReqL[e] *= shadowSuspL[donor] / Math.max(advOutL[donor], EPS);
+          }
+        }
+        // Admission chain (same order/rules; shadow ledgers).
+        for (let e = 0; e < cols - 1; e++) {
+          if (advReqH[e] <= EPS && advReqL[e] <= EPS) {
+            continue;
+          }
+          const donor = advUEdge[e] > 0 ? e : e + 1;
+          const receiver = advUEdge[e] > 0 ? e + 1 : e;
+          for (let phase = 0; phase < 2; phase++) {
+            const isHeavy = phase === 0;
+            const requested = isHeavy ? advReqH[e] : advReqL[e];
+            if (requested <= EPS) {
+              continue;
+            }
+            requestedTotal += requested;
+            const donorStock = isHeavy ? shadowSuspH[donor] : shadowSuspL[donor];
+            const receiverCapacity = Math.max(0,
+              this.waterTop[receiver] - shadowS[receiver] -
+              shadowSuspH[receiver] - shadowSuspL[receiver]);
+            let granted = Math.min(requested, donorStock, receiverCapacity,
+              shadowChannelRemaining, localRemaining[donor],
+              localRemaining[receiver], totalRemaining);
+            if (granted < 0) {
+              granted = 0;
+            }
+            if (granted <= EPS) {
+              continue;
+            }
+            if (isHeavy) {
+              shadowSuspH[donor] -= granted;
+              shadowSuspH[receiver] += granted;
+            } else {
+              shadowSuspL[donor] -= granted;
+              shadowSuspL[receiver] += granted;
+            }
+            localRemaining[donor] -= granted;
+            localUsed[donor] += granted;
+            localRemaining[receiver] -= granted;
+            localUsed[receiver] += granted;
+            totalRemaining -= granted;
+            shadowChannelRemaining -= granted;
+            grantedTotal += granted;
+            channelUse += granted;
+          }
+        }
+      }
+      plans.push(makePlan('advection', requestedTotal, grantedTotal, 0,
+        grantedTotal, deltaS));
+    }
     // --- settle: column ascending. The apply recomputes desiredHeavy/
     // desiredLight from the current suspension and depth, grants
     // clipSubstepMotion + guard, and splits by scale — mirror all of it and
@@ -4238,7 +4887,8 @@ export class WaterSandField {
       lift: 0,
       suspensionDiffusion: 0,
       correction: 0,
-      deepCreep: 0
+      deepCreep: 0,
+      advection: 0
     };
     const budgetsBefore: P011ExistingBudgetSnapshot = {
       localRemaining: Array.from(this.substepMotionBudgetRemaining),
@@ -4495,6 +5145,11 @@ export class WaterSandField {
     if (this.naturalObservationProbe === null || !this.collectingTotalMotionRequests) {
       return;
     }
+    // Advection §5.1: accumulate the SIGNED per-substep diffusion fluxes
+    // (donor->receiver positive toward +c) — the R_M separate column.
+    const sign = donor < receiver ? 1 : -1;
+    this.naturalObservationProbe.lastDiffusionFluxH += sign * heavy;
+    this.naturalObservationProbe.lastDiffusionFluxL += sign * light;
     this.naturalObservationProbe.recordSuspensionDiffusion({
       interfaceIndex: interfaceIndex,
       donor: donor,

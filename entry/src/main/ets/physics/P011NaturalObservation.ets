@@ -12,7 +12,11 @@ export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
 // v5 (S3 moisture, architecture-P011-S3-moisture §6.1): adds the
 // context.moisture block and the independent wetnessCrossed flag;
 // absent = pre-v5 run (same tolerance pattern).
-export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 5;
+// v6 (plan-3 stage a advection, architecture-P011-advection-v1 §5): adds
+// context.advection (routeId/gain/kDrag/uCap/channelRateCap + per-substep
+// domain moments Mdep/Msusp/R_M + diffusionFlux/advectionFlux separated)
+// and per-note advection evidence via the probe. Absent = pre-v6 run.
+export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 6;
 
 // D-1 (2026-10-21 manager ruling, Option A + explicit route isolation):
 // the §24 correction allocator is gated behind BOTH (a) the dual-threshold
@@ -99,6 +103,35 @@ export interface P011NaturalObservationState {
   waterTop: number[];
 }
 
+/** Advection §5.1: the per-substep domain-moment block (schema v6). */
+export interface P011AdvectionSubstepMoments {
+  /** Deposited moment Σ c·(bh+mh) / Σ c·(bl+ml). */
+  MdepH: number;
+  MdepL: number;
+  /** Suspension moment Σ c·susp_p. */
+  MsuspH: number;
+  MsuspL: number;
+  /** Moment reconciliation residuals (§5.1 formula). */
+  RMH: number;
+  RML: number;
+  /** Legacy diffusion signed edge-flux sums (separate column — §5.2). */
+  diffusionFluxH: number;
+  diffusionFluxL: number;
+  /** Advection signed edge-flux sums. */
+  advectionFluxH: number;
+  advectionFluxL: number;
+}
+
+/** Advection §5.1: the context-level advection block (schema v6). */
+export interface P011AdvectionLedgerBlock {
+  routeId: string;
+  gain: number;
+  kDrag: number;
+  uCap: number;
+  channelRateCap: number;
+  perSubstep: P011AdvectionSubstepMoments;
+}
+
 /** S3 §6.1: the moisture ledger block (schema v5). */
 export interface P011MoistureLedgerBlock {
   modelVersion: string;
@@ -183,6 +216,8 @@ export interface P011NaturalObservationSubstepContext {
   // flag. Absent = pre-v5/OFF run.
   moisture?: P011MoistureLedgerBlock;
   wetnessCrossed?: boolean;
+  // Plan-3 stage a (schema v6): the advection block. Absent = pre-v6/OFF.
+  advection?: P011AdvectionLedgerBlock;
   // True when scheduleDriftMs exceeded the 50 ms marker threshold — a
   // marker for the checker, not an error.
   scheduleDriftExceeded?: boolean | null;
@@ -607,6 +642,23 @@ export class P011RelaxHysteresisDecisionSample {
   }
 }
 
+/** Advection per-note evidence (plan-3 stage a §5; registration only —
+ * S-invariant channel, no guard interception). */
+export interface P011AdvectionEvidence {
+  edge: number;
+  phase: 'H' | 'L';
+  u: number;
+  nu: number;
+  requested: number;
+  granted: number;
+  clipInventory: number;
+  clipCapacity: number;
+  clipChannel: number;
+  clipLocal: number;
+  clipTotal: number;
+  reason: string | null;
+}
+
 /** S4 deep-creep per-pair evidence (§1.3 registration). */
 export interface P011DeepCreepEvidence {
   edge: number;
@@ -799,6 +851,25 @@ export class P011NaturalObservationProbe {
 
   /** S4: the evidence buffer (bounded — the sweep drains it). */
   deepCreepEvidence: P011DeepCreepEvidence[] = [];
+
+  /** Advection §5: per-note evidence buffer (bounded — tests drain). */
+  advectionEvidence: P011AdvectionEvidence[] = [];
+
+  /** Advection §5: the last substep's diffusion signed fluxes (the R_M
+   * separate column — the field pushes these per substep). */
+  lastDiffusionFluxH = 0;
+  lastDiffusionFluxL = 0;
+
+  recordAdvectionEvidence(evidence: P011AdvectionEvidence): void {
+    this.advectionEvidence.push(evidence);
+    if (this.advectionEvidence.length > 4096) {
+      this.advectionEvidence.shift();
+    }
+  }
+
+  /** Advection §5.1: the last substep's reconciled moments (the field
+   * pushes these at substep end). */
+  lastAdvectionMoments: P011AdvectionSubstepMoments | null = null;
 
   recordCorrectionSlot(requested: number, granted: number, rejected: number,
     stalledCount: number): void {

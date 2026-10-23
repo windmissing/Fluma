@@ -248,6 +248,36 @@ export default class EntryAbility extends UIAbility {
           'P011_S3_WARNING INVALID_P011_WATER_FORMAT');
       }
     }
+    // Plan-3 stage a (advection §6.1 A-3): arming via
+    // p011adv = 'adv:<gain>:<kDrag>:<uCap>:<cap>' (five segments; gain in
+    // [0,1], kDrag/uCap/cap > 0; illegal values reject the whole want).
+    if (parameters && parameters.p011adv !== undefined) {
+      const adv = `${parameters.p011adv}`.trim();
+      const parts = adv.split(':');
+      if (parts.length === 5 && parts[0] === 'adv') {
+        const gain = Number(parts[1]);
+        const kDrag = Number(parts[2]);
+        const uCap = Number(parts[3]);
+        const cap = Number(parts[4]);
+        if (Number.isFinite(gain) && Number.isFinite(kDrag) &&
+          Number.isFinite(uCap) && Number.isFinite(cap) &&
+          gain >= 0 && gain <= 1 && kDrag > 0 && uCap > 0 && cap > 0) {
+          AppStorage.setOrCreate('p011AdvGain', gain);
+          AppStorage.setOrCreate('p011AdvKDrag', kDrag);
+          AppStorage.setOrCreate('p011AdvUCap', uCap);
+          AppStorage.setOrCreate('p011AdvCap', cap);
+          hilog.info(this.hilogDomain, this.hilogTag,
+            'want param p011adv gain=%{public}f k=%{public}f cap=%{public}f',
+            gain, kDrag, cap);
+        } else {
+          hilog.warn(this.hilogDomain, this.hilogTag,
+            'P011_ADV_WARNING INVALID_P011_ADV_PARAMS');
+        }
+      } else if (adv !== '') {
+        hilog.warn(this.hilogDomain, this.hilogTag,
+          'P011_ADV_WARNING INVALID_P011_ADV_FORMAT');
+      }
+    }
     const scheduleParsed = parseP011ScheduleWant(parameters);
     for (const scheduleWarning of scheduleParsed.warnings) {
       hilog.warn(this.hilogDomain, this.hilogTag,
