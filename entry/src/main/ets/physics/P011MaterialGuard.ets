@@ -198,15 +198,44 @@ export class P011GuardLedgerRefund {
     this.localUsed = localUsed;
   }
 
+  /**
+   * §28 refund-risk fix (option b — refund only what was ACTUALLY
+   * debited): the latent defect had bottom-creep refunds crediting
+   * localRemaining unconditionally even though creepBottom never debits
+   * local — a pure budget increase (never triggered historically: the
+   * guard only rejects "k=0 && edge already violating" grants, which the
+   * bottom request evolution never produced; plan-3's advection channel
+   * raises the construction probability, hence the pre-fix). Per column
+   * the refund is now capped by the column's own used amount: each column
+   * refunds min(share, localUsed[c]) so used+remaining closes EXACTLY and
+   * un-debited columns refund zero. (Semantics change: the refund can no
+   * longer exceed the actual local debit — no admission rule changes.)
+   */
   refundLocal(columns: number[], amount: number): void {
     if (amount <= 0) {
       return;
     }
+    if (columns.length === 0) {
+      return;
+    }
+    const share = amount / columns.length;
+    let unrefundable = 0;
     for (const c of columns) {
       if (c >= 0 && c < this.localRemaining.length) {
-        this.localRemaining[c] += amount;
-        this.localUsed[c] = Math.max(0, this.localUsed[c] - amount);
+        const refundable = Math.min(share, this.localUsed[c]);
+        this.localRemaining[c] += refundable;
+        this.localUsed[c] -= refundable;
+        unrefundable += share - refundable;
+      } else {
+        unrefundable += share;
       }
+    }
+    // The unrefundable part is NOT redistributed: those columns never
+    // held the debit, so crediting others would re-create the pure
+    // increase. It silently vanishes (conservative — the caller's
+    // rejected amount exceeded the actual local debit).
+    if (unrefundable > 0) {
+      // Intentionally no-op; documented for the reader.
     }
   }
 }

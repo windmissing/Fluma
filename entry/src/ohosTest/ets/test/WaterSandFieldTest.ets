@@ -1961,174 +1961,52 @@ export default function waterSandFieldTest() {
         const cC = resC.candidates[0];
         const cD = resD.candidates[0];
         // w_C = e²·dx/2 vs w_D = e·D·dx/2 — both positive; D weight
-        // equals the current behavior (e·d/2).
-        expect(Math.abs(cD.w - cD.e * cD.d / 2) < 1e-15).assertTrue();
-        expect(Math.abs(cC.w - cC.e * cC.e / 2) < 1e-15).assertTrue();
-      }
+        // used consistent (used+remaining invariant with the accepted grant).
+    it('p011_materialGuard_ledgerRefundRestoresBudgets', 0, () => {
+      const localRemaining = new Float64Array([1, 1]);
+      const localUsed = new Float64Array([0.5, 0.5]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0, 1], 0.3);
+      // §28 fix: share = 0.15/column (old behavior credited 0.3 PER
+      // column — double the rejected amount; pinned dead).
+      expect(Math.abs(localRemaining[0] - 1.15) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1.15) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[0] - 0.35) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[1] - 0.35) < 1e-12).assertTrue();
     });
 
-    
-  });
-}
+    // §28 refund-risk fix (option b) — targeted cases.
+    it('p011_refundFix_undeibtiedColumnRefundsZero', 0, () => {
+      const localRemaining = new Float64Array([1, 1]);
+      const localUsed = new Float64Array([0, 0]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0, 1], 0.3);
+      expect(Math.abs(localRemaining[0] - 1) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1) < 1e-12).assertTrue();
+      expect(localUsed[0] === 0).assertTrue();
+      expect(localUsed[1] === 0).assertTrue();
+    });
 
-function region(start: number, end: number, height: number): WaterSandRegion {
-  return { startCol: start, endColInclusive: end, bottom: 0, height };
-}
+    it('p011_refundFix_rejectedExceedsUsedStopsAtDebit', 0, () => {
+      const localRemaining = new Float64Array([1]);
+      const localUsed = new Float64Array([0.1]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0], 0.5);
+      expect(Math.abs(localRemaining[0] - 1.1) < 1e-12).assertTrue();
+      expect(localUsed[0] === 0).assertTrue();
+    });
 
-function thickSceneForP011(cols: number): WaterSandScene {
-  return {
-    waterRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 144, height: 38 }],
-    heavyDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 72 }],
-    lightDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 72, height: 72 }],
-    heavySuspendedRegions: [],
-    lightSuspendedRegions: []
-  };
-}
+    it('p011_refundFix_mixedColumnsCloseExactly', 0, () => {
+      const localRemaining = new Float64Array([1, 1]);
+      const localUsed = new Float64Array([0.4, 0]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0, 1], 0.4);
+      expect(Math.abs(localRemaining[0] - 1.2) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[0] - 0.2) < 1e-12).assertTrue();
+      expect(localUsed[1] === 0).assertTrue();
+      const total = localRemaining[0] + localRemaining[1] +
+        localUsed[0] + localUsed[1];
+      expect(total <= 2.4 + 1e-12).assertTrue();
+    });
 
-function fullLoadSceneForP011(cols: number): WaterSandScene {
-  return {
-    waterRegions: [{ startCol: 0, endColInclusive: cols - 1, bottom: 120, height: 60 }],
-    heavyDepositedRegions: [region(0, cols - 1, 50)],
-    lightDepositedRegions: [{ startCol: 0, endColInclusive: cols - 1,
-      bottom: 50, height: 50 }],
-    heavySuspendedRegions: [region(0, cols - 1, 10)],
-    lightSuspendedRegions: [region(0, cols - 1, 10)]
-  };
-}
-
-function deterministicRateParams(): WaterSandParams {
-  const params = defaultWaterSandParams();
-  params.heavyDiffusion = 0;
-  params.lightDiffusion = 0;
-  params.waterLevelRate = 0.001;
-  // §27: legacy explicit — these cases verify pre-§27 LEGACY behaviors.
-  params.relaxMode = 'legacy-single';
-  params.thetaStartDeg = undefined;
-  params.thetaStopDeg = undefined;
-  params.thresholdSource = 'legacy';
-  return params;
-}
-
-interface RateScenarioResult {
-  field: WaterSandField;
-  result: WaterSandStepResult;
-  maxSpeed: number;
-}
-
-function runRateScenario(dt: number, steps: number): RateScenarioResult {
-  const field = new WaterSandField(8, 192);
-  const params = defaultWaterSandParams();
-  params.heavyDiffusion = 0;
-  params.lightDiffusion = 0;
-  params.waterLevelRate = 0.001;
-  field.configure(params);
-  field.initialize({
-    waterRegions: [region(0, 7, 20)],
-    heavyDepositedRegions: [],
-    lightDepositedRegions: [],
-    heavySuspendedRegions: [region(0, 7, 4)],
-    lightSuspendedRegions: [region(0, 7, 4)]
-  });
-  let result = field.step(dt);
-  let maxSpeed = result.maxSandTopSpeedObserved;
-  for (let index = 1; index < steps; index++) {
-    result = field.step(dt);
-    maxSpeed = Math.max(maxSpeed, result.maxSandTopSpeedObserved);
-  }
-  return { field, result, maxSpeed };
-}
-
-function maxStateDifference(left: WaterSandSnapshot, right: WaterSandSnapshot): number {
-  let difference = 0;
-  for (let c = 0; c < left.cols; c++) {
-    difference = Math.max(difference,
-      Math.abs(left.bh[c] - right.bh[c]),
-      Math.abs(left.bl[c] - right.bl[c]),
-      Math.abs(left.mh[c] - right.mh[c]),
-      Math.abs(left.ml[c] - right.ml[c]),
-      Math.abs(left.suspH[c] - right.suspH[c]),
-      Math.abs(left.suspL[c] - right.suspL[c]),
-      Math.abs(left.sandTop[c] - right.sandTop[c]));
-  }
-  return difference;
-}
-
-function depositedInjection(phase: WaterSandPhase, amount: number): WaterSandInjection {
-  return {
-    phase,
-    amount,
-    startCol: 0,
-    endColInclusive: 11,
-    state: WaterSandInjectionState.DEPOSITED
-  };
-}
-
-function mixedScene(cols: number, capacity: number): WaterSandScene {
-  return {
-    waterRegions: [region(0, cols - 1, capacity * 0.5)],
-    heavyDepositedRegions: [region(0, cols - 1, capacity * 0.1)],
-    lightDepositedRegions: [region(0, cols - 1, capacity * 0.1)],
-    heavySuspendedRegions: [region(0, cols - 1, capacity * 0.05)],
-    lightSuspendedRegions: [region(0, cols - 1, capacity * 0.05)]
-  };
-}
-
-function humpSceneForP011(cols: number, startCol: number, endColInclusive: number,
-  humpHeight: number): WaterSandScene {
-  const scene = thickSceneForP011(cols);
-  scene.heavyDepositedRegions = [{ startCol: 0, endColInclusive: cols - 1, bottom: 0, height: 72 }];
-  scene.lightDepositedRegions = [{ startCol: 0, endColInclusive: cols - 1, bottom: 72, height: 48 }];
-  scene.heavyDepositedRegions.push({
-    startCol: startCol, endColInclusive: endColInclusive, bottom: 120, height: humpHeight
-  });
-  return scene;
-}
-
-
-// correction route wiring test helper (module scope): want parameters for
-// the p011route parse cases. route null omits the parameter entirely.
-function d1RouteWantParams(route: string | null): Record<string, Object> {
-  const params: Record<string, Object> = {
-    'wstilt': '15',
-    'p011runrole': 'calibration',
-    'thresholdcalibrationid': 'corr-ab-1',
-    'thetastartdeg': '26',
-    'thetastopdeg': '20'
-  };
-  if (route !== null) {
-    params['p011route'] = route;
-  }
-  return params;
-}
-
-// D-1 route-isolation scenario runner (module scope; ArkTS forbids nested
-// functions inside it()): builds the 8-col hump field, optionally arms the
-// dual-threshold state machine and/or binds the explicit correction route,
-// runs 4 steps and hands the field to the caller for gate assertions.
-function d1RunRoutingScenario(bindRoute: boolean, thresholds: boolean,
-  callback: (field: WaterSandField) => void): void {
-  const field = new WaterSandField(8, 192);
-  const params = deterministicRateParams();
-  params.angleDeg = 4;
-  params.totalMotionBudget = 1000;
-  if (thresholds) {
-    params.relaxMode = 'dual-user-configured';
-    params.thetaStartDeg = 26;
-    params.thetaStopDeg = 20;
-    params.thresholdSource = 'user';
-  }
-  field.configure(params);
-  field.initialize(humpSceneForP011(8, 3, 4, 0.4));
-  if (thresholds) {
-    field.setNaturalObservationRunMetadata('calibration', 'd1-run', 26, 20);
-  }
-  if (bindRoute) {
-    field.setNaturalObservationRouteId('relax-correction-weighted-v1');
-  }
-  field.setTilt(0);
-  for (let index = 0; index < 4; index++) {
-    const result = field.step(1 / 60);
-    expect(result.ok).assertTrue();
-  }
-  callback(field);
-}

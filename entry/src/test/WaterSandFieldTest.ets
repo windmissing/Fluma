@@ -1830,10 +1830,47 @@ export default function waterSandFieldTest() {
       const localUsed = new Float64Array([0.5, 0.5]);
       const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
       refund.refundLocal([0, 1], 0.3);
-      expect(Math.abs(localRemaining[0] - 1.3) < 1e-12).assertTrue();
-      expect(Math.abs(localRemaining[1] - 1.3) < 1e-12).assertTrue();
+      // §28 fix: share = 0.15/column (old behavior credited 0.3 PER
+      // column — double the rejected amount; pinned dead).
+      expect(Math.abs(localRemaining[0] - 1.15) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1.15) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[0] - 0.35) < 1e-12).assertTrue();
+      expect(Math.abs(localUsed[1] - 0.35) < 1e-12).assertTrue();
+    });
+
+    // §28 refund-risk fix (option b) — targeted cases.
+    it('p011_refundFix_undeibtiedColumnRefundsZero', 0, () => {
+      const localRemaining = new Float64Array([1, 1]);
+      const localUsed = new Float64Array([0, 0]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0, 1], 0.3);
+      expect(Math.abs(localRemaining[0] - 1) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1) < 1e-12).assertTrue();
+      expect(localUsed[0] === 0).assertTrue();
+      expect(localUsed[1] === 0).assertTrue();
+    });
+
+    it('p011_refundFix_rejectedExceedsUsedStopsAtDebit', 0, () => {
+      const localRemaining = new Float64Array([1]);
+      const localUsed = new Float64Array([0.1]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0], 0.5);
+      expect(Math.abs(localRemaining[0] - 1.1) < 1e-12).assertTrue();
+      expect(localUsed[0] === 0).assertTrue();
+    });
+
+    it('p011_refundFix_mixedColumnsCloseExactly', 0, () => {
+      const localRemaining = new Float64Array([1, 1]);
+      const localUsed = new Float64Array([0.4, 0]);
+      const refund = new P011GuardLedgerRefund(localRemaining, localUsed);
+      refund.refundLocal([0, 1], 0.4);
+      expect(Math.abs(localRemaining[0] - 1.2) < 1e-12).assertTrue();
+      expect(Math.abs(localRemaining[1] - 1) < 1e-12).assertTrue();
       expect(Math.abs(localUsed[0] - 0.2) < 1e-12).assertTrue();
-      expect(Math.abs(localUsed[1] - 0.2) < 1e-12).assertTrue();
+      expect(localUsed[1] === 0).assertTrue();
+      const total = localRemaining[0] + localRemaining[1] +
+        localUsed[0] + localUsed[1];
+      expect(total <= 2.4 + 1e-12).assertTrue();
     });
 
     // Field-level: guard telemetry is real. A scenario where relax would
