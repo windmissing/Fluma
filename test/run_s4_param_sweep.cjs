@@ -20,10 +20,17 @@ const { WaterSandField, defaultWaterSandParams,
 
 const COLS = 128;
 const CAP = 512;
-const RUN_SECONDS = 120;
+const RUN_SECONDS = 300;
 const DT = 1 / 60;
-const K_GRID = [0.002, 0.005, 0.01, 0.02, 0.05];
-const MU_GRID = [0, 0.1, 0.25, 0.5];
+// Sweep v2: the dormant-freeze diagnosis (v1 ran ONE step per combo)
+// landed; the k grid now spans across the exploration window — from the
+// v1 top (0.05) up two decades (1.0) plus finer steps in the promising
+// band. mu_y > 0 stays in the grid for the p_eff-normalization evidence.
+// In-domain only (fail-closed cap kDeep ≤ 0.2); k > 0.2 needs the
+// architect's domain revision — covered by the mechanism-domain
+// analysis in the v2 report instead of live runs.
+const K_GRID = [0.01, 0.02, 0.05, 0.1, 0.2];
+const MU_GRID = [0, 0.1];
 const HMIN_GRID = [0.5, 1.0, 2.0];
 // pxPerMaterial from the device geometry (192-cap box ≈ 80 display px
 // per material unit — the task doc's calibration constant).
@@ -228,7 +235,7 @@ const domain = results.filter(r => r.perturbed.amplitudePx >= 2 &&
 const failed = results.filter(r => r.uniform.gate === 'FAIL');
 
 const report = {
-  suite: 's4_param_sweep',
+  suite: 's4_param_sweep_v2',
   seed: 20261023,
   runSeconds: RUN_SECONDS,
   combos: results.length,
@@ -253,7 +260,7 @@ const report = {
   }))
 };
 fs.mkdirSync(path.join(__dirname, 'reports'), { recursive: true });
-fs.writeFileSync(path.join(__dirname, 'reports', 's4-sweep-v1.json'),
+fs.writeFileSync(path.join(__dirname, 'reports', 's4-sweep-v2.json'),
   JSON.stringify(report, null, 2));
 console.log('\\n=== SUMMARY ===');
 console.log(`combos: ${results.length}`);

@@ -2153,6 +2153,30 @@ export class WaterSandField {
     return this.deepCreepParams;
   }
 
+  /**
+   * S4 dormant-wake probe: does ANY adjacent pair still carry a
+   * potential drive (D>0 with stocks)? Cheap O(cols) scan mirroring the
+   * applyDeepCreep generation rule — used ONLY by the dormant judgment.
+   */
+  private deepCreepHasDrive(): boolean {
+    const params = this.deepCreepParams;
+    if (params === null) {
+      return false;
+    }
+    for (let e = 0; e < this.cols - 1; e++) {
+      const i = this.bh[e] >= this.bh[e + 1] ? e : e + 1;
+      const j = i === e ? e + 1 : e;
+      const deltaBh = this.bh[i] - this.bh[j];
+      const pEff = (this.sandTopScratch[i] + this.sandTopScratch[j]) / 2;
+      const dRaw = deltaBh - params.muY * pEff;
+      if (dRaw > EPS && deltaBh > 2 * EPS &&
+        this.bh[i] > params.hMin && this.bl[j] > params.hMin) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /** S4 telemetry: last substep's attribution counters. */
   getDeepCreepAttribution(): P011DeepCreepAttribution {
     const result = new P011DeepCreepAttribution();
@@ -4900,6 +4924,18 @@ export class WaterSandField {
     const suspensionFraction = suspended / Math.max(this.initialHeavy + this.initialLight, EPS);
     this.dormant = suspensionFraction <= 0.001 && this.shakeEnergy <= EPS &&
       this.maxSlopeDeg() <= this.params.angleDeg + 0.01 && this.waterAmplitude() <= 0.01;
+    // S4 sweep-2 diagnosis (2026-10-23): the dormant judgment observes
+    // ONLY the surface layers (suspension/shake/slope/water) — a field
+    // with an active deep-creep drive (D>0 interface gradient with the
+    // route armed) was being marked dormant after ONE step and the whole
+    // 120 s sweep silently froze (first-round v1: every combo ran
+    // exactly one step). The deep drive is real pending work, not
+    // stillness: while the S4 route is active, dormant stays false.
+    // (Scheduling-layer correctness fix, NOT a channel-mechanism change:
+    // applyDeepCreep itself is untouched.)
+    if (this.deepCreepRouteActive() && this.deepCreepHasDrive()) {
+      this.dormant = false;
+    }
   }
 
   private audit(checkDrift: boolean): WaterSandErrorCode | null {
