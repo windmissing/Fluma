@@ -668,7 +668,7 @@ struct SandCanvas {
     if (p012Ablate === 'off' || p012Ablate === 'grain' || p012Ablate === 'fog' ||
       p012Ablate === 'spark' || p012Ablate === 'strat' ||
       p012Ablate === 'e3i2' || p012Ablate === 'e3n1' || p012Ablate === 'dyn' ||
-      p012Ablate === 'toplight') {
+      p012Ablate === 'toplight' || p012Ablate === 'tracer') {
       this.p012Ablation = P012Ablation[p012Ablate === 'off' ? 'OFF'
         : p012Ablate === 'grain' ? 'GRAIN'
         : p012Ablate === 'fog' ? 'FOG'
@@ -676,6 +676,7 @@ struct SandCanvas {
         : p012Ablate === 'strat' ? 'STRAT'
         : p012Ablate === 'e3i2' ? 'E3I2'
         : p012Ablate === 'dyn' ? 'DYN'
+        : p012Ablate === 'tracer' ? 'TRACER'
         : p012Ablate === 'toplight' ? 'TOPLIGHT' : 'E3N1'];
       console.info(`[P012] ablation -> ${p012Ablate} (want)`);
     }
@@ -2197,7 +2198,18 @@ struct SandCanvas {
       configRevision: this.p012ConfigRevision,
       ablation: this.p012Ablation,
       fillBox: this.p012FillBox,
-      canonicalEvidence: this.waterSandSnapshotEnabled
+      canonicalEvidence: this.waterSandSnapshotEnabled,
+      // falling-sand B-route §2.1: display gravity unit vector
+      // R(tilt)·(0,+1) derived from the SAME tilt state the physics
+      // consumes (this.tiltX — sensor/script/gesture all write it);
+      // forceInvert negates (180°). No second attitude source.
+      gravityDirX: Math.sin(this.tiltX * Math.PI / 180) *
+        (this.forceInvert ? -1 : 1),
+      gravityDirY: Math.cos(this.tiltX * Math.PI / 180) *
+        (this.forceInvert ? -1 : 1),
+      // §3: tracer product switch — the TRACER ablation is the
+      // anchor-measure OFF arm (renderer checks both).
+      sandTracerEnabled: this.p012Ablation !== P012Ablation.TRACER
     };
   }
 

@@ -31,7 +31,10 @@ export enum P012Ablation {
   E3I2 = 5,
   E3N1 = 6,
   DYN = 7,
-  TOPLIGHT = 8
+  TOPLIGHT = 8,
+  // falling-sand B-route: the tracer spray layer (anchor-measure OFF arm;
+  // default ON — product tier).
+  TRACER = 9
 }
 
 /** §10.4 fillRect 策略：tight=精确平铺边界（默认，交付后）/
@@ -107,6 +110,15 @@ export interface P012FrameContext {
   fillBox: P012FillBox;
   /** 物理证据采集强制 OFF（wssnapshot 标志/采集入口/手动开关任一为真） */
   canonicalEvidence: boolean;
+  /** falling-sand B-route §2.1: display-space gravity unit vector,
+   *  R(tilt)·(0,+1), derived from the SAME attitude source as the
+   *  sensor path (no second attitude source). 180° invert negates it. */
+  gravityDirX: number;
+  gravityDirY: number;
+  /** §3 tracer layer switch (default true=product; ablation=TRACER is
+   *  the anchor-measure OFF arm — shared mechanism with existing
+   *  ablations). */
+  sandTracerEnabled: boolean;
 }
 
 /** adapter 校验结论（布尔化：pairValid 才允许运动类计算，E 静态材质不受限） */

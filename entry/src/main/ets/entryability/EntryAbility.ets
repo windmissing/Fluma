@@ -105,7 +105,8 @@ export default class EntryAbility extends UIAbility {
     }
     // P-012 §10.4 消融 want 参数（外观诊断域，不进物理 checker/遥测）：
     //   p012ablate：off=全部启用（默认）/ grain=跳过颗粒层 / fog=跳过雾层 /
-    //               spark=跳过亮粒 / strat=跳过 C 层理（§11.4）
+    //               spark=跳过亮粒 / strat=跳过 C 层理（§11.4）/
+    //               tracer=跳过掉沙喷流层（B-route 锚点测量 OFF 臂）
     //   p012fillbox：tight=精确平铺边界（默认）/ full=旧整盒（v1 对照）
     // 非法值忽略用默认（与 p012tier 同容错风格）。
     if (params && params.p012ablate !== undefined) {
@@ -113,7 +114,7 @@ export default class EntryAbility extends UIAbility {
       if (ablate === 'off' || ablate === 'grain' || ablate === 'fog' ||
         ablate === 'spark' || ablate === 'strat' || ablate === 'e3i2' ||
         ablate === 'e3n1' || ablate === 'dyn' ||
-        ablate === 'toplight') {
+        ablate === 'toplight' || ablate === 'tracer') {
         AppStorage.setOrCreate('p012ablate', ablate);
         hilog.info(this.hilogDomain, this.hilogTag, 'want param p012ablate=%{public}s', ablate);
       }

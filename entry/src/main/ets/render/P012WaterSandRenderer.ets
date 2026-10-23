@@ -8,6 +8,7 @@ import { WaterSandSnapshot, WaterSandField } from '../physics/WaterSandField';
 import { P012WaterSandAdapter, P012MaterialFrameView } from './P012WaterSandAdapter';
 import { P012MaterialMotionCache } from './P012MaterialMotionCache';
 import { P012MaterialColumnSampler } from './P012MaterialSampler';
+import { P012SandTracer, P012TracerOcclusionView, P012TracerDrawContext } from './P012SandTracer';
 import { P012E3NoiseField } from './P012E3Noise';
 import { P012E3FogBuffer } from './P012E3FogBuffers';
 import hilog from '@ohos.hilog';
@@ -277,6 +278,15 @@ export class P012WaterSandRenderer {
   /** §10.4 本帧消融开关（render() 入口从 frameContext.ablation 读入；
    *  外观诊断域：grain/fog/spark 分别跳过对应层，OFF=全部启用） */
   private frameAblation: P012Ablation = P012Ablation.OFF;
+  // falling-sand B-route §3: the tracer spray (renderer-bystander; fed by
+  // the page from injection receipts; occluded per frame).
+  readonly sandTracer: P012SandTracer = new P012SandTracer();
+  // Tracer occlusion sampler cache — rebuilt ONLY when boxW changes (the
+  // underlying smooth* arrays are stable references; occlusion VALUES are
+  // sampled per frame, this cache is geometry-only, not data caching).
+  private cachedTracerSampler: P012MaterialColumnSampler | null = null;
+  private cachedTracerBoxW = -1;
+  private cachedTracerColW = 1;
   /** §10.4 本帧 fillRect 策略（TIGHT=精确平铺边界；FULL=旧整盒对照） */
   private frameFillBox: P012FillBox = P012FillBox.TIGHT;
   /** ── §13 参数可调化：active 外观配置 + staging（帧边界原子切换）── */
@@ -357,6 +367,13 @@ export class P012WaterSandRenderer {
     const boxW = frameContext.boxW;
     const boxH = frameContext.boxH;
     const colW = boxW / n;
+    // B-route: tracer sampler geometry cache (rebuild on boxW change only).
+    if (this.cachedTracerBoxW !== boxW) {
+      this.cachedTracerBoxW = boxW;
+      this.cachedTracerColW = colW;
+      this.cachedTracerSampler = new P012MaterialColumnSampler(
+        this.smoothBh, this.smoothMixStart, this.smoothSandTop, boxW);
+    }
     // E2 原型：pxPerMaterial 缓存（光照图形状阈值/深度换算用）
     this.pxPerMaterialCache = boxH > 0 ? boxH / this.capacity : 0;
     // ── 运动代理（§5.2）：配对有效且有 prev 视图才更新；否则冻结 ──
@@ -429,6 +446,14 @@ export class P012WaterSandRenderer {
     if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN &&
       this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
+    }
+    // 3.75) falling-sand B-route §3: tracer 喷流（B 颗粒之后、液面高光之前）
+    //       —— 全程水区（遮蔽保证），不遮挡沙；ablation=TRACER 跳过
+    //       （锚点测量 OFF 臂）。≤2 draw（H/L 群）。
+    if (frameContext.sandTracerEnabled &&
+      this.frameAblation !== P012Ablation.TRACER) {
+      drawCount += this.drawSandTracers(ctx, view, heightToY,
+        colW, boxX, boxY, boxW, boxH, frameContext);
     }
     // 4) 液面高光：沿 waterTop 的宽软带（§3.1 柔和高光，alpha≤0.12）（1 draw）
     //    F1 消融：DYN 跳过
@@ -757,12 +782,65 @@ export class P012WaterSandRenderer {
     return this.activeAppearance;
   }
 
+  /**
+   * 3.75 slot: advance + draw the tracer spray. The tracer updates on
+   * the renderer's frame clock (dt from frameContext), moves along the
+   * display gravity vector, and is occluded per point by the three
+   * segments (waterTop clip / fog band smoothstep / sandTop hide — all
+   * sampled THIS frame, never cached).
+   */
+  private drawSandTracers(ctx: CanvasRenderingContext2D,
+    view: P012MaterialFrameView,
+    heightToY: (h: number) => number, colW: number, boxX: number,
+    boxY: number, boxW: number, boxH: number,
+    frameContext: P012FrameContext): number {
+    const dtSeconds = frameContext.frameDeltaMs / 1000;
+    const occlusion = new RendererTracerOcclusion(this, heightToY);
+    this.sandTracer.update(dtSeconds, frameContext.gravityDirX,
+      frameContext.gravityDirY, occlusion);
+    if (this.sandTracer.activeCount() === 0) {
+      return 0;
+    }
+    const drawCtx = new RendererTracerDrawContext(ctx);
+    // Candidate colors: heavy = deep sand tone, light = pale sand tone
+    // (tuning NOT frozen — pending effect calibration).
+    return this.sandTracer.draw(drawCtx, occlusion,
+      'rgba(196,168,120,1.0)', 'rgba(226,208,168,1.0)', 2.0);
+  }
+
+  /** B-route: sampler access for the file-scope occlusion adapter
+   * (geometry-cached; data sampled per frame). */
+  get tracerSamplerRef(): P012MaterialColumnSampler {
+    return this.cachedTracerSampler as P012MaterialColumnSampler;
+  }
+
+  /** waterTop at display x (linear column interpolation, matching the
+   * sampler's split semantics). */
+  tracerWaterTopAtPx(x: number): number {
+    const s = x / this.cachedTracerColW;
+    const cx = Math.max(0, Math.min(this.cols - 1e-6, s));
+    let i = Math.floor(cx);
+    let frac = cx - i;
+    if (i >= this.cols - 1) {
+      i = this.cols - 2;
+      frac = 1;
+    }
+    if (this.cols <= 1) {
+      return this.smoothWaterTop[0];
+    }
+    return this.smoothWaterTop[i] * (1 - frac) +
+      this.smoothWaterTop[i + 1] * frac;
+  }
+
   /** 生命周期：清连续性配对（reset/inject/invert/后台恢复时页面通知）。
    *  §12.6：aPhaseX 清零 + I2 双 buffer dirty（防旧场景纹理相位泄漏）；
    *  N1 场不重建（seed 与格点 hash 绑定，泄漏的是相位不是纹理）。 */
   resetContinuity(): void {
     this.adapter.dispose();
     this.motionCache.reset();
+    // B-route §4: reset/invert clears all in-flight tracers (the ring
+    // rides along — bounded, never replayed).
+    this.sandTracer.clear();
     this.aPhaseX = 0;
     if (this.e3WaterBuffer !== null) {
       this.e3WaterBuffer.dirty = true;
@@ -782,6 +860,7 @@ export class P012WaterSandRenderer {
       return;
     }
     this.disposed = true;
+    this.sandTracer.clear();
     this.adapter.dispose();
   }
 
@@ -2306,4 +2385,62 @@ interface P012GrainBand {
   kind: number;
   off: number;
   bitmap: ImageBitmap | null;
+}
+
+
+/** B-route §2.3: occlusion view bound to the renderer's display
+ * profiles (ArkTS: interfaces need class implementations, no object
+ * literals with function properties). */
+class RendererTracerOcclusion implements P012TracerOcclusionView {
+  private readonly owner: P012WaterSandRenderer;
+  private readonly heightToYFn: (h: number) => number;
+  readonly fogBandHalfPx: number;
+
+  constructor(owner: P012WaterSandRenderer, heightToY: (h: number) => number) {
+    this.owner = owner;
+    this.heightToYFn = heightToY;
+    this.fogBandHalfPx = P012_A_WFULL_PX / 2;
+  }
+
+  sandTopAtPx(x: number): number {
+    return this.owner.tracerSamplerRef.sandTopAtPx(x);
+  }
+
+  waterTopAtPx(x: number): number {
+    return this.owner.tracerWaterTopAtPx(x);
+  }
+
+  heightToY(h: number): number {
+    return this.heightToYFn(h);
+  }
+}
+
+/** B-route §3: draw-context adapter (CanvasRenderingContext2D is not
+ * structurally assignable to the tracer's minimal surface under ArkTS). */
+class RendererTracerDrawContext implements P012TracerDrawContext {
+  private readonly ctx: CanvasRenderingContext2D;
+
+  constructor(ctx: CanvasRenderingContext2D) {
+    this.ctx = ctx;
+  }
+
+  get fillStyle(): string {
+    return `${this.ctx.fillStyle}`;
+  }
+
+  set fillStyle(value: string) {
+    this.ctx.fillStyle = value;
+  }
+
+  get globalAlpha(): number {
+    return this.ctx.globalAlpha;
+  }
+
+  set globalAlpha(value: number) {
+    this.ctx.globalAlpha = value;
+  }
+
+  fillRect(x: number, y: number, w: number, h: number): void {
+    this.ctx.fillRect(x, y, w, h);
+  }
 }
