@@ -5,6 +5,12 @@
       "workers": [
         "./src/main/ets/physics/P011NaturalObservationWorker.ets"
       ]
+    },
+    "externalNativeOptions": {
+      "path": "./src/main/cpp/CMakeLists.txt",
+      "arguments": "",
+      "cppFlags": "",
+      "abiFilters": ["arm64-v8a"]
     }
   },
   "targets": [
