@@ -15,7 +15,8 @@ import {
   P012FrameContext, P012AppearanceTier, P012_APPEARANCE_ROUTE_ID,
   P012_E_BATCH_DRAW_BUDGET, P012_A_BATCH_DRAW_BUDGET,
   P012_B_BATCH_DRAW_BUDGET, P012_FIRST_TIER_DRAW_BUDGET,
-  P012Ablation, P012FillBox
+  P012Ablation, P012FillBox,
+  P012AppearanceParams, p012FactoryAppearance, validateP012AppearanceParams
 } from './P012RenderTypes';
 
 /** 预计算材质色阶（设计稿 §3.1：重沙浅黄绿 / 轻沙暖浅 / 水体近薄荷白） */
@@ -200,9 +201,9 @@ export class P012WaterSandRenderer {
   private aPhaseX: number = 0;
   /** ── B 档资源（EAB-batch）：3 张 256² 颗粒 tile + 对应 ImageBitmap（on-device）── */
   /** 零均值归一化颗粒亮度偏移 tile（重/轻/混三套种子/对比度）；值域约 [-1,1] */
-  private readonly grainTileH: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
-  private readonly grainTileL: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
-  private readonly grainTileM: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
+  private grainTileH: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
+  private grainTileL: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
+  private grainTileM: Float64Array = new Float64Array(P012_GRAIN_TILE * P012_GRAIN_TILE);
   /** 预着色颗粒 ImageBitmap（on-device 经 OffscreenCanvas 生成；Node/canvas 缺失为 null） */
   private grainBitmapH: ImageBitmap | null = null;
   private grainBitmapL: ImageBitmap | null = null;
@@ -258,6 +259,14 @@ export class P012WaterSandRenderer {
   private frameAblation: P012Ablation = P012Ablation.OFF;
   /** §10.4 本帧 fillRect 策略（TIGHT=精确平铺边界；FULL=旧整盒对照） */
   private frameFillBox: P012FillBox = P012FillBox.TIGHT;
+  /** ── §13 参数可调化：active 外观配置 + staging（帧边界原子切换）── */
+  /** 当前生效外观（六参数默认 = s133 冻结基线；f=c=1 恢复逐位一致） */
+  private activeAppearance: P012AppearanceParams = p012FactoryAppearance();
+  /** 待切换外观（§13.3：最多一个；render 入口消费后置 null） */
+  private stagedAppearance: P012AppearanceParams | null = null;
+  /** 外观烘焙计数（单测③重烘焙矩阵断言：fine/sigma→颗粒组+1，λ/强度→层纹组+1） */
+  grainBakeCount: number = 0;
+  stratBakeCount: number = 0;
 
   constructor(cols: number, capacity: number) {
     this.cols = cols;
@@ -305,6 +314,10 @@ export class P012WaterSandRenderer {
       return;
     }
     let drawCount = 0;
+    // §13.3 帧边界原子切换：staged → active（applyAppearance 后的首帧生效）
+    this.consumeStagedAppearance();
+    const appF = this.activeAppearance.fogDensityScale;
+    const appC = this.activeAppearance.clearMottleContrast;
     // §10.4 消融开关/fillRect 策略：单点读入，各绘制点只读该状态
     this.frameAblation = frameContext.ablation;
     this.frameFillBox = frameContext.fillBox;
@@ -436,6 +449,215 @@ export class P012WaterSandRenderer {
     if (tier !== P012AppearanceTier.EAB) {
       this.lastDrawCountEa = drawCount;
     }
+  }
+
+  // ───────────── §13 参数可调化：applyAppearance（架构 §13.7.5 资源接口签名）─────────────
+
+  /**
+   * 应用外观配置（§13.3 草稿→校验→应用生命周期）。
+   * 返回 null=成功（staged 待帧边界切换）；返回原因串=拒绝整包（维持旧包）。
+   * 唯一消费点：f/c 进雾链、幅度 scale 进层理、fine/sigma 进颗粒烘焙（§13.7.2）。
+   * pxPerMaterial ≤0 时跳过 λ 去重表校验（首帧几何未定场景，几何定值后
+   * buildStratBitmaps 用 effectiveλ 兜底）。
+   */
+  applyAppearance(next: P012AppearanceParams, pxPerMaterial: number): string | null {
+    const err = validateP012AppearanceParams(next, pxPerMaterial);
+    if (err !== null) {
+      return err;                       // 拒绝整包：不 clamp 不部分应用
+    }
+    // diff 检测（§13.7.5-2）：无变化直接成功
+    const cur = this.activeAppearance;
+    if (next.grainFeaturePx === cur.grainFeaturePx &&
+      next.grainSigma === cur.grainSigma &&
+      next.fogDensityScale === cur.fogDensityScale &&
+      next.strataLambdaMaterial === cur.strataLambdaMaterial &&
+      next.strataStrengthScale === cur.strataStrengthScale &&
+      next.clearMottleContrast === cur.clearMottleContrast) {
+      // 仅 source/configRevision 变化（恢复推荐等）——只更新元数据
+      this.stagedAppearance = next;
+      return null;
+    }
+    // 按重烘焙矩阵 stage（§13.4）：staging 阶段在应用回调内同步完成重活；
+    // 任一步失败 → 维持旧包返回错误串（§13.3 失败分支）
+    try {
+      if (next.grainFeaturePx !== cur.grainFeaturePx ||
+        next.grainSigma !== cur.grainSigma) {
+        this.stageGrain(next);          // fine/sigma → 三张 256² 颗粒位图组
+      }
+      if (next.strataLambdaMaterial !== cur.strataLambdaMaterial ||
+        next.strataStrengthScale !== cur.strataStrengthScale) {
+        this.stageStrata(next, pxPerMaterial);   // λ/强度 → 三张 64×256 层纹组
+      }
+      // f/c → E3 雾缓冲失效（不触发 B/C 位图重烘——§13.4 矩阵保证）
+      if (next.fogDensityScale !== cur.fogDensityScale ||
+        next.clearMottleContrast !== cur.clearMottleContrast) {
+        if (this.e3WaterBuffer !== null) {
+          this.e3WaterBuffer.dirty = true;
+        }
+        if (this.e3IfaceBuffer !== null) {
+          this.e3IfaceBuffer.dirty = true;
+        }
+      }
+    } catch (e) {
+      // staging 失败：staged 置空（staging 区资源交 GC），维持 active
+      this.stagedAppearance = null;
+      return `外观资源烘焙失败：${JSON.stringify(e)}`;
+    }
+    this.stagedAppearance = next;       // 最多一个待替换包（§13.3：新包覆盖旧 staging）
+    return null;
+  }
+
+  /** 颗粒组 staging：同 seed 重生成 tile（保归一化/截幅/envelope=2×fine 关系） */
+  private stageGrain(next: P012AppearanceParams): void {
+    const prevFine = this.activeAppearance.grainFeaturePx;
+    if (next.grainFeaturePx !== prevFine) {
+      // fine 档变化：重生成 tile（盒滤波半径 R=fine/2；envelope=2×fine）
+      this.grainTileH = this.buildGrainTileFine(20261022, next.grainFeaturePx);
+      this.grainTileL = this.buildGrainTileFine(20261023, next.grainFeaturePx);
+      this.grainTileM = this.buildGrainTileFine(20261024, next.grainFeaturePx);
+    }
+    // sigma 变化或 fine 变化都重烘位图（delta = tile×sigma 在位图内）
+    this.buildGrainBitmapsFor(this.activeAppearance.grainSigma !== next.grainSigma
+      ? next.grainSigma : this.activeAppearance.grainSigma);
+    this.grainBakeCount++;
+  }
+
+  /** 层纹组 staging：λ 重算 effectiveλ（整周期对齐）+ 幅度 scale 重烘 */
+  private stageStrata(next: P012AppearanceParams, pxPerMaterial: number): void {
+    // λ 与强度都烘进位图（幅度一致性优先——§13.4 矩阵注记）
+    this.buildStratBitmapsFor(next.strataLambdaMaterial,
+      next.strataStrengthScale, pxPerMaterial);
+    this.stratBakeCount++;
+  }
+
+  /** buildGrainTile 的参数化版（fine 档 → 盒滤波半径 R=fine/2；envelope=2×fine）。
+   *  候选稿 §2.1「不靠降分辨率模拟粗颗粒」——同 seed 重生成，保留归一化链。 */
+  private buildGrainTileFine(seed: number, finePx: number): Float64Array {
+    const size = P012_GRAIN_TILE;
+    const fineA = new Float64Array(size * size);
+    const fineB = new Float64Array(size * size);
+    const env = new Float64Array(size * size);
+    const envPx = 2 * finePx;           // envelope = 2×fine（候选稿 §2）
+    this.buildGrainNoise(fineA, (seed | 0) + 11, finePx);
+    this.buildGrainNoise(fineB, (seed | 0) + 23, finePx);
+    this.buildGrainNoise(env, (seed | 0) + 37, envPx);
+    const out = new Float64Array(size * size);
+    let mean = 0;
+    for (let i = 0; i < out.length; i++) {
+      const g = 0.5 * fineA[i] + 0.5 * fineB[i];
+      const e = 1 + P012_B_ENV_AMP * env[i];
+      out[i] = g * e;
+      mean += out[i];
+    }
+    mean /= out.length;
+    let varSum = 0;
+    for (let i = 0; i < out.length; i++) {
+      varSum += (out[i] - mean) * (out[i] - mean);
+    }
+    const inv = 1 / Math.max(1e-9, Math.sqrt(varSum / out.length));
+    let mean3 = 0;
+    for (let i = 0; i < out.length; i++) {
+      out[i] = (out[i] - mean) * inv;
+      mean3 += out[i];
+    }
+    mean3 /= out.length;
+    for (let i = 0; i < out.length; i++) {
+      out[i] -= mean3;
+    }
+    for (let i = 0; i < out.length; i++) {
+      out[i] = Math.max(-P012_B_GRAIN_CLIP, Math.min(P012_B_GRAIN_CLIP, out[i]));
+    }
+    return out;
+  }
+
+  /** buildGrainBitmaps 的参数化版（sigma 直接替换常量位） */
+  private buildGrainBitmapsFor(sigma: number): void {
+    try {
+      if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
+        return;                          // Node 通道：tile 已更新，bitmap 留 null
+      }
+    } catch (e) {
+      return;
+    }
+    const p = this.palette;
+    this.grainBitmapH = this.makeGrainBitmapFor(this.grainTileH, sigma, p.heavyR, p.heavyG, p.heavyB);
+    this.grainBitmapL = this.makeGrainBitmapFor(this.grainTileL, sigma, p.lightR, p.lightG, p.lightB);
+    this.grainBitmapM = this.makeGrainBitmapFor(this.grainTileM, sigma,
+      (p.lightR + p.heavyR) * 0.5, (p.lightG + p.heavyG) * 0.5, (p.lightB + p.heavyB) * 0.5);
+  }
+
+  /** makeGrainBitmap 的参数化版 */
+  private makeGrainBitmapFor(tile: Float64Array, sigma: number,
+    baseR: number, baseG: number, baseB: number): ImageBitmap | null {
+    const size = P012_GRAIN_TILE;
+    try {
+      const off = new OffscreenCanvas(size, size);
+      const octx = off.getContext('2d');
+      if (octx === null || octx === undefined) {
+        return null;
+      }
+      const img = octx.createImageData(size, size);
+      const data = img.data;
+      for (let i = 0; i < size * size; i++) {
+        const delta = tile[i] * sigma;
+        data[i * 4] = this.clamp255(baseR + delta);
+        data[i * 4 + 1] = this.clamp255(baseG + delta);
+        data[i * 4 + 2] = this.clamp255(baseB + delta);
+        data[i * 4 + 3] = 255;
+      }
+      octx.putImageData(img, 0, 0);
+      return off.transferToImageBitmap();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /** buildStratBitmaps 的参数化版（nominal λ + 强度 scale；整周期对齐不动） */
+  private buildStratBitmapsFor(nominalLambda: number, strengthScale: number,
+    pxPerMaterial: number): void {
+    if (pxPerMaterial <= 0) {
+      return;                            // 几何未定：延迟到首帧 buildStratBitmaps 兜底
+    }
+    const k = Math.max(1, Math.ceil(P012_C_BITMAP_H / (nominalLambda * pxPerMaterial)));
+    this.stratLamPx = P012_C_BITMAP_H / k;
+    try {
+      if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
+        return;                          // Node 通道：stratLamPx 已更新即可
+      }
+    } catch (e) {
+      return;
+    }
+    const ampOrdered = P012_C_AMP_ORDERED * strengthScale;
+    const ampMixed = P012_C_AMP_MIX * strengthScale;
+    this.stratBitmapH = this.makeStratBitmap(this.stratNoiseH, ampOrdered);
+    this.stratBitmapL = this.makeStratBitmap(this.stratNoiseL, ampOrdered);
+    this.stratBitmapM = this.makeStratBitmap(this.stratNoiseM, ampMixed);
+  }
+
+  /** 帧边界消费 staging（render 入口调用；§13.3 原子切换） */
+  private consumeStagedAppearance(): void {
+    if (this.stagedAppearance === null) {
+      return;
+    }
+    this.activeAppearance = this.stagedAppearance;
+    this.stagedAppearance = null;
+    // 旧位图引用已在上一次 stage 中被覆盖（无引用交 GC）；
+    // E3 雾缓冲 dirty 已在 applyAppearance 标记（若 f/c 变化）。
+  }
+
+  /** 外观配置只读钩子（UI 显示/持久化/manifest 用） */
+  getAppearanceConfigRevision(): number {
+    return this.activeAppearance.configRevision;
+  }
+
+  /** effectiveλ 只读钩子（§13.7.3 双登记的 effective 侧；几何未定时 = 名义值） */
+  getEffectiveStrataLambda(): number {
+    return this.stratLamPx > 0 ? this.stratLamPx : this.activeAppearance.strataLambdaMaterial;
+  }
+
+  /** 当前 active 外观（只读副本语义：调用方不得回写） */
+  get activeAppearanceParams(): P012AppearanceParams {
+    return this.activeAppearance;
   }
 
   /** 生命周期：清连续性配对（reset/inject/invert/后台恢复时页面通知）。
@@ -1037,28 +1259,9 @@ export class P012WaterSandRenderer {
     // λpx 对齐到「位图高的整数分割」：H = k×λpx（k=ceil(256/λpx)）。
     // 位图纵向按 256…H 平铺时相位严格连续（λpx 原始值 24×pxPerMaterial 与
     // H/k 的偏差 <1%，外观域可接受；§11.3 风险点「λ 换算」的工程化）。
-    const k = Math.max(1, Math.ceil(P012_C_BITMAP_H / (P012_C_LAMBDA_MATERIAL * pxPerMaterial)));
-    this.stratLamPx = P012_C_BITMAP_H / k;
-    let ocKind = 'none';
-    try {
-      if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
-        hilog.info(0x0000, 'P012', 'strat: OffscreenCanvas undefined/null');
-        return;
-      }
-      ocKind = 'class';
-    } catch (e) {
-      hilog.error(0x0000, 'P012', 'strat: typeof OffscreenCanvas threw: ' + JSON.stringify(e));
-      return;
-    }
-    hilog.info(0x0000, 'P012', 'strat: OffscreenCanvas ' + ocKind +
-      ' present, baking bitmaps lamPx=' + this.stratLamPx.toFixed(1));
-    this.stratBitmapH = this.makeStratBitmap(this.stratNoiseH, P012_C_AMP_ORDERED);
-    this.stratBitmapL = this.makeStratBitmap(this.stratNoiseL, P012_C_AMP_ORDERED);
-    this.stratBitmapM = this.makeStratBitmap(this.stratNoiseM, P012_C_AMP_MIX);
-    hilog.info(0x0000, 'P012', 'strat: bitmaps H=' +
-      (this.stratBitmapH === null ? 'null' : 'ok') +
-      ' L=' + (this.stratBitmapL === null ? 'null' : 'ok') +
-      ' M=' + (this.stratBitmapM === null ? 'null' : 'ok'));
+    // §13：λ/强度从 activeAppearance 读（参数可调化；默认 = s133 常量基线）
+    this.buildStratBitmapsFor(this.activeAppearance.strataLambdaMaterial,
+      this.activeAppearance.strataStrengthScale, pxPerMaterial);
   }
 
   /** 单张 C 位图：64×256 灰度（横向 warp 相位 × 纵向深度相位）。
@@ -1301,10 +1504,13 @@ export class P012WaterSandRenderer {
 
   /** 静止水介质静态斑驳（q=0 时的低对比光照斑驳，§4.2"清水静态明暗"）：
    *  tauStatic = TAU_STATIC_BASE + TAU_STATIC_AMP·(stretch(mottle)-1)
-   *  stretch=2.2 线性拉伸（clamp [0.2,2.0]）拉开 value-noise 钟形分布。 */
+   *  stretch=2.2 线性拉伸（clamp [0.2,2.0]）拉开 value-noise 钟形分布。
+   *  §13.7.2 c 参数（clearMottleContrast 倍率，唯一实现点）：
+   *  z(c,m) = clamp(1 + 2.2·c·(m-1), 0.2, 2.0)；c=1 恢复 s133 逐位基线。 */
   private staticTau(mottle: number): number {
+    const c = this.activeAppearance.clearMottleContrast;
     const stretched = Math.max(0.2, Math.min(2.0,
-      1 + (mottle - 1) * P012_A_MOTTLE_STRETCH));
+      1 + (mottle - 1) * P012_A_MOTTLE_STRETCH * c));
     return Math.max(0, P012_A_TAU_STATIC_BASE +
       P012_A_TAU_STATIC_AMP * (stretched - 1));
   }
@@ -1343,7 +1549,7 @@ export class P012WaterSandRenderer {
         const mot = this.mottleAt(xPx - this.aPhaseX, yMid);
         const tauStatic = this.staticTau(mot);
         const tau = Math.max(0, tauOpt + P012_A_KH * qH + P012_A_KL * qL + tauStatic);
-        let alpha = this.fogAlpha(tau);
+        let alpha = this.fogAlpha(this.activeAppearance.fogDensityScale * tau);
         if (alpha <= 0.004) {
           continue;
         }
@@ -1408,7 +1614,7 @@ export class P012WaterSandRenderer {
         // 沙侧（d<0）：waterWeight 已随 smoothstep 衰减，雾色向沙色过渡
         const tau = Math.max(0, (P012_A_TAU_INTERFACE * waterWeight +
           P012_A_KH * qH * waterWeight + P012_A_KL * qL * waterWeight) * mot);
-        let alpha = this.fogAlpha(tau);
+        let alpha = this.fogAlpha(this.activeAppearance.fogDensityScale * tau);
         if (alpha <= 0.004) {
           continue;
         }
@@ -1544,7 +1750,7 @@ export class P012WaterSandRenderer {
         const mot = this.mottleEquiv(x - phaseX, yLocal);
         const tauStatic = this.staticTau(mot);
         const tau = Math.max(0, tauOpt + P012_A_KH * qH + P012_A_KL * qL + tauStatic);
-        let alpha = this.fogAlpha(tau);
+        let alpha = this.fogAlpha(this.activeAppearance.fogDensityScale * tau);
         alpha = Math.min(P012_A_FOG_ALPHA_MAX, alpha);
         if (alpha <= 0.004 || yLocal < gTopY || yLocal >= gIfaceY) {
           buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B, 0);
@@ -1604,7 +1810,7 @@ export class P012WaterSandRenderer {
         const mot = this.mottleEquiv(x - phaseX, yLocal);
         const tau = Math.max(0, (P012_A_TAU_INTERFACE * waterWeight +
           P012_A_KH * qH * waterWeight + P012_A_KL * qL * waterWeight) * mot);
-        let alpha = this.fogAlpha(tau);
+        let alpha = this.fogAlpha(this.activeAppearance.fogDensityScale * tau);
         alpha = Math.min(P012_A_BAND_ALPHA_MAX, alpha);
         buffer.setPremul(u, v, P012_FOG_R, P012_FOG_G, P012_FOG_B,
           alpha > 0.004 ? alpha : 0);

@@ -29,7 +29,11 @@ import { P011InputModeState, P011ModeRequestSource, P011InputSelection,
   canP011GestureOwnInput } from '../physics/P011InputMode';
 // P-012 E-batch：表现层独立 renderer + 薄分发（architecture-P012.md §9.2）
 import { P012WaterSandRenderer, p012ShouldUseP012Renderer } from '../render/P012WaterSandRenderer';
-import { P012AppearanceTier, P012FrameContext, P012Ablation, P012FillBox } from '../render/P012RenderTypes';
+import {
+  P012AppearanceTier, P012FrameContext, P012Ablation, P012FillBox,
+  P012AppearanceParams, p012FactoryAppearance, validateP012AppearanceParams,
+  P012_APPEARANCE_SCHEMA_VERSION, P012_STYLE_FAMILY_ID
+} from '../render/P012RenderTypes';
 
 /** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
 class MyFrameCallback extends FrameCallback {
@@ -94,6 +98,15 @@ class PanelParams {
   thetaAppliedStop: number = 20.0;
   thresholdError: string | null = null;
   thresholdLocked: boolean = false;
+  /** §13 参数可调化：六参数外观草稿镜像（builder 刷新用） */
+  appGrainFeaturePx: number = 2;
+  appGrainSigma: number = 20;
+  appFogDensity: number = 1.0;
+  appStrataLambda: number = 24;
+  appStrataStrength: number = 1.0;
+  appMottleContrast: number = 1.0;
+  appearanceError: string | null = null;
+  appearanceAppliedNote: string = '';
 }
 
 interface LiquidWantCommand {
@@ -203,6 +216,92 @@ function panelSheetBuilder(params: PanelParams) {
           }
           params.owner.cycleP012AppearanceTier();
         })
+
+      // ── §13 参数可调化：画面质感区（仅改外观；草稿滑动零副作用，应用时整包校验） ──
+      if (params.p012Tier === 3) {
+        Text('画面质感（仅改变外观）')
+          .fontSize(13).fontColor('#7EC8B4').width('100%')
+        Button(params.appGrainFeaturePx === 2 ? '颗粒粗细: 细(2px)'
+          : params.appGrainFeaturePx === 4 ? '颗粒粗细: 中(4px)' : '颗粒粗细: 粗(6px)')
+          .fontSize(12).width('100%').backgroundColor('#37474F')
+          .onClick(() => {
+            if (params.owner === null) {
+              return;
+            }
+            params.owner.cycleAppGrainFeature();
+          })
+        Text(`颗粒对比: ${params.appGrainSigma}`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.appGrainSigma, min: 12, max: 24, step: 1 })
+          .blockColor('#8D6E63').selectedColor('#8D6E63')
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setAppGrainSigma(value);
+            }
+          })
+        Text(`水雾浓度: ${params.appFogDensity.toFixed(2)}`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.appFogDensity, min: 0.5, max: 1, step: 0.05 })
+          .blockColor('#4FC3F7').selectedColor('#4FC3F7')
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setAppFogDensity(value);
+            }
+          })
+        Text(`层理疏密(λ): ${params.appStrataLambda.toFixed(1)}`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.appStrataLambda, min: 16, max: 32, step: 0.1 })
+          .blockColor('#A1887F').selectedColor('#A1887F')
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setAppStrataLambda(value);
+            }
+          })
+        Text(`层理强度: ${params.appStrataStrength.toFixed(2)}`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.appStrataStrength, min: 0.5, max: 1.3333, step: 0.01 })
+          .blockColor('#BCAAA4').selectedColor('#BCAAA4')
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setAppStrataStrength(value);
+            }
+          })
+        Text(`清水斑驳: ${params.appMottleContrast.toFixed(2)}`)
+          .fontSize(13).fontColor('#CCCCCC').width('100%')
+        Slider({ value: params.appMottleContrast, min: 0.5, max: 1.25, step: 0.05 })
+          .blockColor('#80DEEA').selectedColor('#80DEEA')
+          .onChange((value: number) => {
+            if (params.owner !== null) {
+              params.owner.setAppMottleContrast(value);
+            }
+          })
+        if (params.appearanceError !== null) {
+          Text(params.appearanceError as string)
+            .fontSize(12).fontColor('#E08080').width('100%')
+        }
+        if (params.appearanceAppliedNote !== '') {
+          Text(params.appearanceAppliedNote)
+            .fontSize(12).fontColor('#9AB0A0').width('100%')
+        }
+        Row({ space: 8 }) {
+          Button('应用质感')
+            .fontSize(13).height(32)
+            .onClick(() => {
+              if (params.owner !== null) {
+                params.owner.applyAppearanceDraft();
+              }
+            })
+          Button('恢复推荐')
+            .fontSize(13).height(32)
+            .onClick(() => {
+              if (params.owner !== null) {
+                params.owner.resetAppearanceToFactory();
+              }
+            })
+        }
+        .width('100%')
+        .justifyContent(FlexAlign.Start)
+      }
     }
 
     Text(`流速: ${params.flowSpeed}`).fontSize(13).fontColor('#CCCCCC').width('100%')
@@ -328,6 +427,22 @@ struct SandCanvas {
   @State thresholdError: string | null = null;
   private pendingThetaPair: string | null = null;
   private thetaPairPersistAt: number = 0;
+  // ── §13 参数可调化：六参数外观草稿/已应用（草稿滑动零副作用，应用时整包校验） ──
+  @State appGrainFeaturePx: number = 2;          // 草稿（档位索引 0/1/2 ↔ 2/4/6）
+  @State appGrainSigma: number = 20;
+  @State appFogDensity: number = 1.0;
+  @State appStrataLambda: number = 24;
+  @State appStrataStrength: number = 1.0;
+  @State appMottleContrast: number = 1.0;
+  @State appearanceError: string | null = null;
+  @State appearanceAppliedNote: string = '';
+  /** 应用成功待持久化（防抖 500ms，同 §27.6 模式） */
+  private pendingAppearance: string | null = null;
+  private appearancePersistAt: number = 0;
+  /** onCreate 读到合法持久化外观但 renderer 未建（OFF 档冷启）——建后恢复 */
+  private pendingAppearanceRestore: boolean = false;
+  /** 持久化恢复暂存包（restoreAppearanceFromPrefs 填，renderer 创建时消费） */
+  private pendingRestorePkg: P012AppearanceParams | null = null;
   private tiltX: number = 0;
   private lastTiltX: number = 0;
   private gestureHoldUntil: number = 0;
@@ -466,6 +581,15 @@ struct SandCanvas {
     this.sheetParams.shakeInput = this.renderMode === MODE_LIQUID
       ? this.liquidShakeInput : this.waterSandShakeInput;
     this.sheetParams.p012Tier = this.p012AppearanceTier;
+    // §13 外观草稿镜像
+    this.sheetParams.appGrainFeaturePx = this.appGrainFeaturePx;
+    this.sheetParams.appGrainSigma = this.appGrainSigma;
+    this.sheetParams.appFogDensity = this.appFogDensity;
+    this.sheetParams.appStrataLambda = this.appStrataLambda;
+    this.sheetParams.appStrataStrength = this.appStrataStrength;
+    this.sheetParams.appMottleContrast = this.appMottleContrast;
+    this.sheetParams.appearanceError = this.appearanceError;
+    this.sheetParams.appearanceAppliedNote = this.appearanceAppliedNote;
     this.sheetContent.update(this.sheetParams);
   }
 
@@ -558,6 +682,8 @@ struct SandCanvas {
       this.p012FillBox = p012FillBox === 'full' ? P012FillBox.FULL : P012FillBox.TIGHT;
       console.info(`[P012] fillbox -> ${p012FillBox} (want)`);
     }
+    // §13.3：外观持久化恢复（校验失败丢弃用推荐值；renderer 未建则暂存）
+    this.restoreAppearanceFromPrefs();
     console.info(`[ForceInvert] aboutToAppear: testMode=${this.testMode} forceInvert=${this.forceInvert} useSensor=${this.useSensor} renderMode=${this.renderMode}`);
     try {
       sensor.on(sensor.SensorId.ACCELEROMETER, (data: sensor.AccelerometerResponse) => {
@@ -1553,6 +1679,10 @@ struct SandCanvas {
     if (this.pendingThetaPair !== null && now >= this.thetaPairPersistAt) {
       this.flushThetaPairPersist();
     }
+    // §13.3: 外观持久化防抖（同 §27.6 模式）
+    if (this.pendingAppearance !== null && now >= this.appearancePersistAt) {
+      this.flushAppearancePersist();
+    }
     const frameDeltaMs = previousFrameTime > 0 ? now - previousFrameTime : 16.7;
     // §26.4: schedule want entry (mutual-exclusion checked inside) and the
     // player tick on the monotonic Date.now() clock. Dispatched commands
@@ -2077,8 +2207,210 @@ struct SandCanvas {
       // 延迟创建：首次启用非 OFF 档时构造（aboutToAppear 时 waterSandField 可能
       // 尚未 initField，但 renderer 只依赖 cols/capacity 常量）
       this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
+      // §13.3：renderer 延迟创建后恢复持久化外观（草稿镜像已在 aboutToAppear 记）
+      if (this.pendingAppearanceRestore) {
+        this.pendingAppearanceRestore = false;
+        const pkg = this.buildRestorePackage();
+        if (pkg !== null) {
+          this.p012Renderer.applyAppearance(pkg, this.appearancePxPerMaterial());
+          console.info('[P012] appearance restored on renderer create');
+        }
+      }
     }
     console.info(`[P012] appearanceTier -> ${clipped} (source=${source})`);
+    this.syncSheet();
+  }
+
+  // ───────────── §13 参数可调化：外观配置入口（architecture §13.1 剥离点）─────────────
+
+  /** 当前几何的 pxPerMaterial（λ 去重表与 effectiveλ 用；box 未定返 0 跳过校验） */
+  private appearancePxPerMaterial(): number {
+    if (this.boxH <= 0 || this.waterSandCapacity <= 0) {
+      return 0;
+    }
+    return this.boxH / this.waterSandCapacity;
+  }
+
+  /**
+   * §13.1 单入口提交：appearance 剥离后走 renderer.applyAppearance（渲染通道），
+   * physics 域走既有 WaterSandField.configure——零 appearance 泄漏进物理配置。
+   * 外观应用不触发物理路线清理（对比：waterSandParams.configure 会清物理状态）。
+   */
+  private commitScreenConfig(appearance: P012AppearanceParams): string | null {
+    if (this.p012Renderer === null) {
+      // renderer 未建（OFF 档）：只存草稿态元数据，待启用时生效
+      this.appearanceAppliedNote = '外观已记录（渲染未启用，切换外观档后生效）';
+      return null;
+    }
+    const err = this.p012Renderer.applyAppearance(appearance, this.appearancePxPerMaterial());
+    if (err === null) {
+      this.p012ConfigRevision++;
+      // 持久化（防抖 500ms，§13.3）
+      this.pendingAppearance = JSON.stringify(appearance);
+      this.appearancePersistAt = Date.now() + 500;
+      const factory = p012FactoryAppearance();
+      const isExploratory = appearance.fogDensityScale !== factory.fogDensityScale ||
+        appearance.clearMottleContrast !== factory.clearMottleContrast;
+      this.appearanceAppliedNote = isExploratory
+        ? '已应用（探索配置：雾/斑驳参数未锚点验证）' : '已应用';
+    }
+    return err;
+  }
+
+  /** 草稿整包构造（六字段 + 元数据；revision 由 renderer 侧递增语义决定） */
+  private buildAppearanceDraftPackage(): P012AppearanceParams {
+    const cur = this.p012Renderer !== null
+      ? this.p012Renderer.activeAppearanceParams : p012FactoryAppearance();
+    return {
+      schemaVersion: P012_APPEARANCE_SCHEMA_VERSION,
+      styleFamilyId: P012_STYLE_FAMILY_ID,
+      rendererVersion: cur.rendererVersion,
+      grainFeaturePx: this.appGrainFeaturePx,
+      grainSigma: Math.round(this.appGrainSigma),
+      fogDensityScale: Math.round(this.appFogDensity * 20) / 20,
+      strataLambdaMaterial: Math.round(this.appStrataLambda * 10) / 10,
+      strataStrengthScale: Math.round(this.appStrataStrength * 100) / 100,
+      clearMottleContrast: Math.round(this.appMottleContrast * 20) / 20,
+      source: 'user',
+      configRevision: cur.configRevision + 1
+    };
+  }
+
+  /** 「应用」按钮：草稿→整包校验→commit（§13.3；非法显示边界保留草稿） */
+  applyAppearanceDraft(): void {
+    const pkg = this.buildAppearanceDraftPackage();
+    const err = this.commitScreenConfig(pkg);
+    if (err !== null) {
+      this.appearanceError = err;
+      this.appearanceAppliedNote = '';
+    } else {
+      this.appearanceError = null;
+    }
+    this.syncSheet();
+  }
+
+  /** 「恢复推荐」按钮：恢复 s133 冻结基线整包（§13.3 恢复推荐） */
+  resetAppearanceToFactory(): void {
+    const factory = p012FactoryAppearance();
+    const cur = this.p012Renderer !== null
+      ? this.p012Renderer.activeAppearanceParams : factory;
+    const pkg: P012AppearanceParams = {
+      schemaVersion: factory.schemaVersion,
+      styleFamilyId: factory.styleFamilyId,
+      rendererVersion: factory.rendererVersion,
+      grainFeaturePx: factory.grainFeaturePx,
+      grainSigma: factory.grainSigma,
+      fogDensityScale: factory.fogDensityScale,
+      strataLambdaMaterial: factory.strataLambdaMaterial,
+      strataStrengthScale: factory.strataStrengthScale,
+      clearMottleContrast: factory.clearMottleContrast,
+      source: 'factory-recommended',
+      configRevision: cur.configRevision + 1
+    };
+    const err = this.commitScreenConfig(pkg);
+    if (err !== null) {
+      this.appearanceError = err;
+    } else {
+      this.appearanceError = null;
+      // 草稿镜像同步回推荐值
+      this.appGrainFeaturePx = factory.grainFeaturePx;
+      this.appGrainSigma = factory.grainSigma;
+      this.appFogDensity = factory.fogDensityScale;
+      this.appStrataLambda = factory.strataLambdaMaterial;
+      this.appStrataStrength = factory.strataStrengthScale;
+      this.appMottleContrast = factory.clearMottleContrast;
+    }
+    this.syncSheet();
+  }
+
+  /** 防抖持久化落盘（frame 循环里调用，同 §27.6 flushThetaPairPersist 模式） */
+  private flushAppearancePersist(): void {
+    const payload = this.pendingAppearance;
+    this.pendingAppearance = null;
+    if (payload === null) {
+      return;
+    }
+    try {
+      const prefs = AppStorage.get<object>('p011Preferences');
+      if (prefs !== undefined) {
+        (prefs as preferences.Preferences).putSync('p012.appearance', payload);
+        (prefs as preferences.Preferences).flush();
+      }
+    } catch (error) {
+      console.info('[P012] appearance persist failed (applied, not saved)');
+    }
+  }
+
+  /** onCreate 恢复：校验失败丢弃用推荐值+提示（§13.3 持久化读语义） */
+  private restoreAppearanceFromPrefs(): void {
+    try {
+      const prefs = AppStorage.get<object>('p011Preferences');
+      if (prefs === undefined) {
+        return;
+      }
+      const raw = (prefs as preferences.Preferences).getSync('p012.appearance', '') as string;
+      if (raw === '' || raw === null) {
+        return;                          // 冷启动无记录 → factory（renderer 默认即 factory）
+      }
+      const parsed = JSON.parse(raw) as P012AppearanceParams;
+      const err = validateP012AppearanceParams(parsed, this.appearancePxPerMaterial());
+      if (err !== null) {
+        console.info(`[P012] appearance persist rejected: ${err}（用版本化推荐）`);
+        return;
+      }
+      // renderer 可能未建（OFF 档冷启）：草稿镜像先记，renderer 建后首帧前 commit
+      this.appGrainFeaturePx = parsed.grainFeaturePx;
+      this.appGrainSigma = parsed.grainSigma;
+      this.appFogDensity = parsed.fogDensityScale;
+      this.appStrataLambda = parsed.strataLambdaMaterial;
+      this.appStrataStrength = parsed.strataStrengthScale;
+      this.appMottleContrast = parsed.clearMottleContrast;
+      if (this.p012Renderer !== null) {
+        this.p012Renderer.applyAppearance(parsed, this.appearancePxPerMaterial());
+      } else {
+        // OFF 档冷启：暂存待 renderer 创建时恢复
+        this.pendingAppearanceRestore = true;
+        this.pendingRestorePkg = parsed;
+      }
+    } catch (error) {
+      console.info('[P012] appearance restore failed（用版本化推荐）');
+    }
+  }
+
+  /** renderer 创建时消费的恢复包 */
+  private buildRestorePackage(): P012AppearanceParams | null {
+    return this.pendingRestorePkg;
+  }
+
+  // ── §13 草稿 setter（滑动只改 @State，零物理/渲染副作用——§13.3 草稿态） ──
+  cycleAppGrainFeature(): void {
+    this.appGrainFeaturePx = this.appGrainFeaturePx === 2 ? 4
+      : this.appGrainFeaturePx === 4 ? 6 : 2;
+    this.syncSheet();
+  }
+
+  setAppGrainSigma(v: number): void {
+    this.appGrainSigma = Math.max(12, Math.min(24, Math.round(v)));
+    this.syncSheet();
+  }
+
+  setAppFogDensity(v: number): void {
+    this.appFogDensity = Math.max(0.5, Math.min(1, Math.round(v * 20) / 20));
+    this.syncSheet();
+  }
+
+  setAppStrataLambda(v: number): void {
+    this.appStrataLambda = Math.max(16, Math.min(32, Math.round(v * 10) / 10));
+    this.syncSheet();
+  }
+
+  setAppStrataStrength(v: number): void {
+    this.appStrataStrength = Math.max(0.5, Math.min(4 / 3, Math.round(v * 100) / 100));
+    this.syncSheet();
+  }
+
+  setAppMottleContrast(v: number): void {
+    this.appMottleContrast = Math.max(0.5, Math.min(1.25, Math.round(v * 20) / 20));
     this.syncSheet();
   }
 

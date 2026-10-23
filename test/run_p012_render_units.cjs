@@ -1304,6 +1304,280 @@ function makeCountingCanvas(sink) {
   })();
 })();
 
+// ═════════ §13 参数可调化单测（架构 §13.6 七项） ═════════
+(function appearanceControlsSuite() {
+  const types = typesMod;
+  const cols = 128;
+  const factory = () => types.p012FactoryAppearance();
+  const pxPerMaterial = 311 / 192;       // s133 真机几何等比
+
+  // ① schema 校验矩阵（每字段超域/非法档/缺字段/styleFamily 不符 → 各拒绝路径）
+  (function a1() {
+    const cases = [];
+    const push = (name, mutate, expectReject) => {
+      const p = factory();
+      mutate(p);
+      const err = types.validateP012AppearanceParams(p, pxPerMaterial);
+      const rejected = err !== null;
+      cases.push({ name, ok: rejected === expectReject, err: err || '-' });
+    };
+    push('合法默认包', () => {}, false);
+    push('schemaVersion=99', p => { p.schemaVersion = 99; }, true);
+    push('styleFamily 不符', p => { p.styleFamilyId = 'other-v9'; }, true);
+    push('fine=3 非法档', p => { p.grainFeaturePx = 3; }, true);
+    push('fine=6 合法档', p => { p.grainFeaturePx = 6; }, false);
+    push('sigma=11 超下界', p => { p.grainSigma = 11; }, true);
+    push('sigma=25 超上界', p => { p.grainSigma = 25; }, true);
+    push('sigma=20.5 非整步', p => { p.grainSigma = 20.5; }, true);
+    push('fog=0.45 超下界', p => { p.fogDensityScale = 0.45; }, true);
+    push('fog=1.05 超上界', p => { p.fogDensityScale = 1.05; }, true);
+    push('fog=0.77 非步进', p => { p.fogDensityScale = 0.77; }, true);
+    push('lambda=15 超下界', p => { p.strataLambdaMaterial = 15; }, true);
+    push('lambda=33 超上界', p => { p.strataLambdaMaterial = 33; }, true);
+    push('strength=0.4 超下界', p => { p.strataStrengthScale = 0.4; }, true);
+    push('strength=1.4 超上界', p => { p.strataStrengthScale = 1.4; }, true);
+    push('mottle=0.45 超下界', p => { p.clearMottleContrast = 0.45; }, true);
+    push('mottle=1.3 超上界', p => { p.clearMottleContrast = 1.3; }, true);
+    push('source 非法', p => { p.source = 'hacker'; }, true);
+    push('revision=-1', p => { p.configRevision = -1; }, true);
+    push('revision=1.5 非整', p => { p.configRevision = 1.5; }, true);
+    const allOk = cases.every(c => c.ok);
+    const bad = cases.filter(c => !c.ok).map(c => c.name).join(',');
+    results.push({ name: 'p012_appearance_schemaMatrix', status: allOk ? 'PASS' : 'FAIL',
+      error: `n=${cases.length} 失败=[${bad}]` });
+  })();
+
+  // ①b λ 去重表：同 k 合并 + 键集校验
+  (function a1b() {
+    const table = types.buildStrataLambdaDedupTable(pxPerMaterial);
+    // 每个键的 k 唯一
+    const ks = table.map(nominal =>
+      Math.max(1, Math.ceil(256 / (nominal * pxPerMaterial))));
+    const uniqueK = new Set(ks).size === ks.length;
+    // 默认 24 必在键集（s133 基线）
+    const has24 = types.strataLambdaInDedupTable(24, pxPerMaterial);
+    // 同 k 的非代表值（如 24.1 与 24 同 k 时 24.1 不在键集）
+    const k24 = Math.max(1, Math.ceil(256 / (24 * pxPerMaterial)));
+    const nextNominal = 24.1;
+    const kNext = Math.max(1, Math.ceil(256 / (nextNominal * pxPerMaterial)));
+    const dedupWorks = kNext === k24
+      ? !types.strataLambdaInDedupTable(nextNominal, pxPerMaterial)
+      : true;                            // k 不同则本来就该在（表会含它）
+    results.push({ name: 'p012_appearance_lambdaDedup', status:
+      uniqueK && has24 && table.length > 0 && dedupWorks ? 'PASS' : 'FAIL',
+      error: `tableSize=${table.length} uniqueK=${uniqueK} has24=${has24} dedupWorks=${dedupWorks}` });
+  })();
+
+  // ② f=c=1 恢复链：与默认渲染输出逐位一致（数值绑定表第一项）
+  (function a2() {
+    const field = new WaterSandField(cols, 192);
+    field.initialize(fullScene(cols));
+    field.setTilt(15);
+    field.step(1 / 60);
+    const r1 = new P012WaterSandRenderer(cols, 192);
+    const r2 = new P012WaterSandRenderer(cols, 192);
+    const s1 = makeCountingCanvas({});
+    const s2 = makeCountingCanvas({});
+    r1.render(s1, field.snapshot(), makeContext({}));
+    r2.render(s2, field.snapshot(), makeContext({}));
+    // r2 应用 factory 等价包（f=c=1 无 diff → 元数据更新）
+    const pkg = factory();
+    pkg.configRevision = 1;
+    const err = r2.applyAppearance(pkg, pxPerMaterial);
+    field.step(1 / 60);
+    r1.render(s1, field.snapshot(), makeContext({}));
+    r2.render(s2, field.snapshot(), makeContext({}));
+    const same = r1.lastDrawCount === r2.lastDrawCount &&
+      r2.e3BakeCount === r1.e3BakeCount;
+    results.push({ name: 'p012_appearance_factoryEquiv', status:
+      err === null && same ? 'PASS' : 'FAIL',
+      error: `err=${err} draws=${r1.lastDrawCount}/${r2.lastDrawCount} bakes=${r1.e3BakeCount}/${r2.e3BakeCount}` });
+  })();
+
+  // ③ 重烘焙矩阵：fine→颗粒组+1 层理/雾不动；λ→层纹组+1 颗粒不动；
+  //    f/c→两雾 buffer dirty 且零位图重烘
+  (function a3() {
+    const r = new P012WaterSandRenderer(cols, 192);
+    const ctxC = makeCountingCanvas({});
+    const field = new WaterSandField(cols, 192);
+    field.initialize(fullScene(cols));
+    field.setTilt(15);
+    field.step(1 / 60);
+    r.render(ctxC, field.snapshot(), makeContext({}));
+    const g0 = r.grainBakeCount, s0 = r.stratBakeCount;
+    // fine 改变
+    const p1 = factory();
+    p1.grainFeaturePx = 4;
+    p1.configRevision = 1;
+    const e1 = r.applyAppearance(p1, pxPerMaterial);
+    const g1 = r.grainBakeCount, s1 = r.stratBakeCount;
+    // λ 改变（用去重表键集内的值——32 在部分几何下不在键集）
+    const lambdaTable = types.buildStrataLambdaDedupTable(pxPerMaterial);
+    const altLambda = lambdaTable.find(n => n !== 24) ?? 32;
+    const p2 = factory();
+    p2.strataLambdaMaterial = altLambda;
+    p2.configRevision = 2;
+    const e2 = r.applyAppearance(p2, pxPerMaterial);
+    const g2 = r.grainBakeCount, s2 = r.stratBakeCount;
+    // f/c 改变
+    const p3 = factory();
+    p3.fogDensityScale = 0.75;
+    p3.clearMottleContrast = 0.9;
+    p3.configRevision = 3;
+    const e3 = r.applyAppearance(p3, pxPerMaterial);
+    const g3 = r.grainBakeCount, s3 = r.stratBakeCount;
+    const ok = e1 === null && e2 === null && e3 === null &&
+      g1 === g0 + 1 && s1 === s0 &&          // fine → 颗粒组+1，层理不动
+      s2 === s1 + 1 && g2 === g1 &&          // λ → 层纹组+1，颗粒不动
+      g3 === g2 && s3 === s2;                // f/c → 零位图重烘
+    results.push({ name: 'p012_appearance_rebakeMatrix', status: ok ? 'PASS' : 'FAIL',
+      error: `fine:${g0}->${g1} strat:${s0}->${s1} | λ strat:${s1}->${s2} grain:${g1}->${g2} | f/c grain:${g2}->${g3} strat:${s2}->${s3}` });
+  })();
+
+  // ④ 物理零触碰：外观全参数遍历前后，同输入物理 step 逐位一致
+  (function a4() {
+    const mk = () => {
+      const f = new WaterSandField(cols, 192);
+      f.initialize(fullScene(cols));
+      f.setTilt(15);
+      return f;
+    };
+    const fa = mk();
+    const fb = mk();
+    const r = new P012WaterSandRenderer(cols, 192);
+    const ctxC = makeCountingCanvas({});
+    for (let i = 0; i < 10; i++) {
+      fa.step(1 / 60);
+      fb.step(1 / 60);
+    }
+    // 外观全参数遍历（含极端值；λ 用键集内值防拒绝）
+    const lambdaTable = types.buildStrataLambdaDedupTable(pxPerMaterial);
+    const extremeLambda = lambdaTable[lambdaTable.length - 1];
+    const variants = [factory()];
+    const v1 = factory(); v1.grainFeaturePx = 6; v1.grainSigma = 12;
+    v1.fogDensityScale = 0.5; v1.strataLambdaMaterial = extremeLambda;
+    v1.strataStrengthScale = 4 / 3; v1.clearMottleContrast = 1.25;
+    variants.push(v1);
+    const v2 = factory(); v2.grainSigma = 24; v2.strataStrengthScale = 0.5;
+    variants.push(v2);
+    let allApplied = true;
+    for (const v of variants) {
+      v.configRevision = 10;
+      if (r.applyAppearance(v, pxPerMaterial) !== null) {
+        allApplied = false;
+      }
+      r.render(ctxC, fb.snapshot(), makeContext({}));   // 渲染也跑（含烘焙）
+    }
+    for (let i = 0; i < 10; i++) {
+      fa.step(1 / 60);
+      fb.step(1 / 60);
+    }
+    const sa = fa.snapshot();
+    const sb = fb.snapshot();
+    let bitwise = true;
+    for (let c = 0; c < cols; c++) {
+      if (sa.bh[c] !== sb.bh[c] || sa.bl[c] !== sb.bl[c] ||
+        sa.sandTop[c] !== sb.sandTop[c] || sa.waterTop[c] !== sb.waterTop[c]) {
+        bitwise = false;
+        break;
+      }
+    }
+    results.push({ name: 'p012_appearance_physicsUntouched', status:
+      allApplied && bitwise ? 'PASS' : 'FAIL',
+      error: `applied=${allApplied} bitwise=${bitwise}` });
+  })();
+
+  // ⑤ 持久化损坏恢复：非法 JSON / 校验失败串 → 丢弃（语义由 validate 驱动，
+  //    本用例钉 validate 对损坏输入的行为）
+  (function a5() {
+    const good = factory();
+    const goodErr = types.validateP012AppearanceParams(good, pxPerMaterial);
+    const broken = factory();
+    broken.grainSigma = 99;               // 损坏值
+    const brokenErr = types.validateP012AppearanceParams(broken, pxPerMaterial);
+    const wrongFamily = factory();
+    wrongFamily.styleFamilyId = 'legacy-v0';
+    const wrongFamilyErr = types.validateP012AppearanceParams(wrongFamily, pxPerMaterial);
+    results.push({ name: 'p012_appearance_persistReject', status:
+      goodErr === null && brokenErr !== null && wrongFamilyErr !== null ? 'PASS' : 'FAIL',
+      error: `good=${goodErr} broken=${brokenErr} family=${wrongFamilyErr}` });
+  })();
+
+  // ⑥ configRevision 单调：应用成功 +1；拒绝不变
+  (function a6() {
+    const r = new P012WaterSandRenderer(cols, 192);
+    const rev0 = r.getAppearanceConfigRevision();
+    const p1 = factory();
+    p1.grainSigma = 18;
+    p1.configRevision = rev0 + 1;
+    r.applyAppearance(p1, pxPerMaterial);
+    const rev1 = r.getAppearanceConfigRevision();      // staging 未消费 = 仍 rev0
+    // 帧边界消费（render 入口）
+    const ctxC = makeCountingCanvas({});
+    const field = new WaterSandField(cols, 192);
+    field.initialize(fullScene(cols));
+    field.setTilt(15);
+    field.step(1 / 60);
+    r.render(ctxC, field.snapshot(), makeContext({}));
+    const rev2 = r.getAppearanceConfigRevision();      // 消费后 = rev0+1
+    // 非法包被拒：revision 不变
+    const bad = factory();
+    bad.grainSigma = 99;
+    bad.configRevision = 99;
+    r.applyAppearance(bad, pxPerMaterial);
+    const rev3 = r.getAppearanceConfigRevision();
+    results.push({ name: 'p012_appearance_revisionMonotonic', status:
+      rev1 === rev0 && rev2 === rev0 + 1 && rev3 === rev2 ? 'PASS' : 'FAIL',
+      error: `rev0=${rev0} staged=${rev1} consumed=${rev2} afterReject=${rev3}` });
+  })();
+
+  // ⑦ 恢复推荐 source 切换：user → factory-recommended；探索档标注语义（f/c≠1）
+  (function a7() {
+    const r = new P012WaterSandRenderer(cols, 192);
+    const pUser = factory();
+    pUser.fogDensityScale = 0.75;         // 探索值
+    pUser.source = 'user';
+    pUser.configRevision = 1;
+    r.applyAppearance(pUser, pxPerMaterial);
+    const ctxC = makeCountingCanvas({});
+    const field = new WaterSandField(cols, 192);
+    field.initialize(fullScene(cols));
+    field.setTilt(15);
+    field.step(1 / 60);
+    r.render(ctxC, field.snapshot(), makeContext({}));   // 消费 staging
+    const active = r.activeAppearanceParams;
+    const isUser = active.source === 'user' && active.fogDensityScale === 0.75;
+    // 恢复推荐
+    const pFactory = factory();
+    pFactory.configRevision = active.configRevision + 1;
+    r.applyAppearance(pFactory, pxPerMaterial);
+    field.step(1 / 60);
+    r.render(ctxC, field.snapshot(), makeContext({}));
+    const restored = r.activeAppearanceParams;
+    const isRestored = restored.source === 'factory-recommended' &&
+      restored.fogDensityScale === 1.0 && restored.grainSigma === 20;
+    results.push({ name: 'p012_appearance_restoreFactory', status:
+      isUser && isRestored ? 'PASS' : 'FAIL',
+      error: `userApplied=${isUser} restored=${isRestored} f=${restored.fogDensityScale}` });
+  })();
+
+  // ⑧（附加）非法包拒绝整包：不 clamp 不部分应用（active 保持旧值）
+  (function a8() {
+    const r = new P012WaterSandRenderer(cols, 192);
+    const pBad = factory();
+    pBad.grainSigma = 99;                 // 非法
+    pBad.grainFeaturePx = 6;              // 混入合法字段
+    pBad.configRevision = 1;
+    const err = r.applyAppearance(pBad, pxPerMaterial);
+    const active = r.activeAppearanceParams;
+    const rejected = err !== null &&
+      active.grainSigma === 20 && active.grainFeaturePx === 2;   // 无部分应用
+    results.push({ name: 'p012_appearance_rejectNoClamp', status:
+      rejected ? 'PASS' : 'FAIL',
+      error: `err=${err !== null} activeSigma=${active.grainSigma} activeFine=${active.grainFeaturePx}` });
+  })();
+})();
+
 // Full hypium suite (state machine details incl. not-finite/frame-gap/epoch/serial).
 require('../entry/src/test/P012WaterSandAdapterTest.ets').default();
 

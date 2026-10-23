@@ -138,3 +138,162 @@ export const P012_FIRST_TIER_DRAW_BUDGET = P012_EAB_BATCH_DRAW_BUDGET;
 
 /** 显示帧间隔阈值：超过即视为 v1 视觉连续性中断（§3.2） */
 export const P012_FRAME_GAP_MS = 100;
+
+// ───────────── §13 参数可调化：P012AppearanceParams schema（architecture §13.2/13.7）─────────────
+
+/** schema 版本（迁移失败→丢弃用版本化推荐） */
+export const P012_APPEARANCE_SCHEMA_VERSION = 1;
+/** 风格族 ID（不匹配→拒绝整包） */
+export const P012_STYLE_FAMILY_ID = 'soft-water-sand-v1';
+/** E3 验证构建绑定的版本串（s133 = 9d11849 构建 hash 前缀） */
+export const P012_APPEARANCE_RENDERER_VERSION = 's133-9d11849';
+
+/** 六字段外观参数（§13.2 schema；域与步长冻结，禁 clamp——非法拒绝整包） */
+export interface P012AppearanceParams {
+  schemaVersion: number;
+  styleFamilyId: string;
+  rendererVersion: string;
+  /** 颗粒粗细：三档离散 {2,4,6}（盒滤波半径 R=1/2/3） */
+  grainFeaturePx: number;
+  /** 颗粒对比：[12,24] 步长 1，默认 20 */
+  grainSigma: number;
+  /** 水雾浓度倍率：[0.5,1] 步长 0.05，默认 1；cap=0.78 只读不随 f 变 */
+  fogDensityScale: number;
+  /** 层理疏密（名义 λ，材料深度单位）：[16,32] 默认 24——控件档按 effectiveλ 去重 */
+  strataLambdaMaterial: number;
+  /** 层理强度倍率：[0.5,4/3] 默认 1（ampOrdered=6·s / ampMixed=3·s） */
+  strataStrengthScale: number;
+  /** 清水斑驳对比倍率：[0.5,1.25] 步长 0.05，默认 1 */
+  clearMottleContrast: number;
+  source: 'factory-recommended' | 'user' | 'preset';
+  /** 应用成功单调 +1（§27.4 模式） */
+  configRevision: number;
+}
+
+/** 页面聚合配置：physics 与 appearance 两域，物理 configure 前必须剥离 appearance（§13.1） */
+export interface WaterSandScreenConfig {
+  physics: Record<string, Object>;
+  appearance: P012AppearanceParams;
+}
+
+/** 工厂推荐外观包（六参数默认 = s133 冻结基线，§13.7.1 数值绑定表） */
+export function p012FactoryAppearance(): P012AppearanceParams {
+  return {
+    schemaVersion: P012_APPEARANCE_SCHEMA_VERSION,
+    styleFamilyId: P012_STYLE_FAMILY_ID,
+    rendererVersion: P012_APPEARANCE_RENDERER_VERSION,
+    grainFeaturePx: 2,
+    grainSigma: 20,
+    fogDensityScale: 1.0,
+    strataLambdaMaterial: 24,
+    strataStrengthScale: 1.0,
+    clearMottleContrast: 1.0,
+    source: 'factory-recommended',
+    configRevision: 0
+  };
+}
+
+/**
+ * λ 同 k 去重表（§13.7.3 控制层去重——不动 lambdaPx 对齐算法）。
+ * 对名义域 [16,32] 以 0.1 步进枚举，按 effectiveλ 的整周期数 k 分组，
+ * 每组取代表名义值。**默认值 24 强制为所在组代表**（§13.7.4-1「默认值域
+ * = 锚点已验域」：默认配置必须通过自身校验，否则恢复推荐会被拒绝）。
+ * UI 只暴露去重后档位，避免「滑动无变化」。pxPerMaterial 为当前几何定值。
+ */
+export function buildStrataLambdaDedupTable(pxPerMaterial: number): number[] {
+  // 先按 k 分组（保留组员列表）
+  const groups = new Map<number, number[]>();
+  for (let v = 16; v <= 32.0001; v += 0.1) {
+    const nominal = Math.round(v * 10) / 10;
+    const k = Math.max(1, Math.ceil(256 / (nominal * pxPerMaterial)));
+    if (!groups.has(k)) {
+      groups.set(k, []);
+    }
+    groups.get(k)!.push(nominal);
+  }
+  // 默认值 24 所在组：代表改为 24（若 24 在域内）
+  const kDefault = Math.max(1, Math.ceil(256 / (24 * pxPerMaterial)));
+  if (groups.has(kDefault)) {
+    const members = groups.get(kDefault)!;
+    members.sort((a, b) => Math.abs(a - 24) - Math.abs(b - 24));
+    if (members.length > 0) {
+      // 组代表 = 最接近 24 的成员（即 24 本身，24 ∈ [16,32] 且 0.1 步进可达）
+      const def = members[0];
+      groups.set(kDefault, [def, ...members.filter(m => m !== def)]);
+    }
+  }
+  // 每组取第一个成员（代表）
+  const keys: number[] = [];
+  for (const members of groups.values()) {
+    keys.push(members[0]);
+  }
+  keys.sort((a, b) => a - b);
+  return keys;
+}
+
+/** λ 名义值是否属于去重表键集（validate 用） */
+export function strataLambdaInDedupTable(nominal: number, pxPerMaterial: number): boolean {
+  const table = buildStrataLambdaDedupTable(pxPerMaterial);
+  for (const k of table) {
+    if (Math.abs(k - nominal) < 1e-9) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * schema 校验（§13.2 fail-closed）：返回 null=合法；返回原因串=拒绝整包
+ * （UI 显示边界与原因，不 clamp 不部分应用）。pxPerMaterial 为当前几何
+ * 定值（λ 去重表键集校验用）；传 0 跳过去重表校验（Node 单测便捷路径）。
+ * α 不入首版：持久化 JSON 出现 alpha 字段由调用侧整包拒绝（前向防御，
+ * 本函数只校验接口字段本身）。
+ */
+export function validateP012AppearanceParams(p: P012AppearanceParams,
+  pxPerMaterial: number): string | null {
+  if (p === null || p === undefined) {
+    return 'appearance 参数缺失';
+  }
+  if (p.schemaVersion !== P012_APPEARANCE_SCHEMA_VERSION) {
+    return `schemaVersion=${p.schemaVersion} 不受支持（当前 ${P012_APPEARANCE_SCHEMA_VERSION}）`;
+  }
+  if (p.styleFamilyId !== P012_STYLE_FAMILY_ID) {
+    return `styleFamilyId='${p.styleFamilyId}' 不匹配（须 '${P012_STYLE_FAMILY_ID}'）`;
+  }
+  if (p.grainFeaturePx !== 2 && p.grainFeaturePx !== 4 && p.grainFeaturePx !== 6) {
+    return `grainFeaturePx=${p.grainFeaturePx} 非法（离散档 {2,4,6}）`;
+  }
+  if (!Number.isFinite(p.grainSigma) || p.grainSigma < 12 || p.grainSigma > 24 ||
+    Math.abs(p.grainSigma - Math.round(p.grainSigma)) > 1e-9) {
+    return `grainSigma=${p.grainSigma} 非法（[12,24] 步长 1）`;
+  }
+  if (!Number.isFinite(p.fogDensityScale) || p.fogDensityScale < 0.5 - 1e-9 ||
+    p.fogDensityScale > 1.0 + 1e-9 ||
+    Math.abs(p.fogDensityScale / 0.05 - Math.round(p.fogDensityScale / 0.05)) > 1e-6) {
+    return `fogDensityScale=${p.fogDensityScale} 非法（[0.5,1] 步长 0.05）`;
+  }
+  if (!Number.isFinite(p.strataLambdaMaterial) || p.strataLambdaMaterial < 16 - 1e-9 ||
+    p.strataLambdaMaterial > 32 + 1e-9) {
+    return `strataLambdaMaterial=${p.strataLambdaMaterial} 非法（名义 [16,32]）`;
+  }
+  if (pxPerMaterial > 0 && !strataLambdaInDedupTable(p.strataLambdaMaterial, pxPerMaterial)) {
+    return `strataLambdaMaterial=${p.strataLambdaMaterial} 不在去重表键集（同 k 已有代表档）`;
+  }
+  if (!Number.isFinite(p.strataStrengthScale) || p.strataStrengthScale < 0.5 - 1e-9 ||
+    p.strataStrengthScale > 4 / 3 + 1e-9) {
+    return `strataStrengthScale=${p.strataStrengthScale} 非法（[0.5,4/3]）`;
+  }
+  if (!Number.isFinite(p.clearMottleContrast) || p.clearMottleContrast < 0.5 - 1e-9 ||
+    p.clearMottleContrast > 1.25 + 1e-9 ||
+    Math.abs(p.clearMottleContrast / 0.05 - Math.round(p.clearMottleContrast / 0.05)) > 1e-6) {
+    return `clearMottleContrast=${p.clearMottleContrast} 非法（[0.5,1.25] 步长 0.05）`;
+  }
+  if (p.source !== 'factory-recommended' && p.source !== 'user' && p.source !== 'preset') {
+    return `source='${p.source}' 非法`;
+  }
+  if (!Number.isFinite(p.configRevision) || p.configRevision < 0 ||
+    Math.floor(p.configRevision) !== p.configRevision) {
+    return `configRevision=${p.configRevision} 非法（非负整数）`;
+  }
+  return null;
+}
