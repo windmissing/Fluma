@@ -1968,6 +1968,9 @@ struct SandCanvas {
         if (this.waterSandPreset === 'thick') {
           ws.setShakeInput(Math.min(1, Math.abs(effectiveTilt) / 90));
         }
+        // P-012 帧时三段拆分埋点（P-013 立项前置；纯计时不改逻辑）：
+        // physMs=物理 substeps、renderMs=Canvas draw 提交（含 P012 render 全链）
+        const segPhysT0 = Date.now();
         const stepResult = this.testMode
           ? ws.step(frameDeltaMs / 1000, (metric, bottom) => {
             if (p011HasEvent && p011PhysicsTime === 0) {
@@ -1977,6 +1980,7 @@ struct SandCanvas {
             this.logNaturalObservationHeartbeat(metric);
           })
           : ws.step(frameDeltaMs / 1000);
+        const segPhysMs = Date.now() - segPhysT0;
         if (p011HasEvent && stepResult.dormant) {
           ws.emitP011NoopTelemetry((metric, bottom) => {
             if (p011PhysicsTime === 0) {
@@ -2019,6 +2023,8 @@ struct SandCanvas {
         }
         // P-012 E-batch 薄分发（§9.2）：一次帧只走一个完整渲染分支，禁止叠加；
         // canonicalEvidence（物理证据采集 wssnapshot=true）强制 OFF 分支。
+        // 三段拆分：renderMs=draw 提交耗时（P012 renderer 含烘焙/E3 全链）
+        const segRenderT0 = Date.now();
         if (p012ShouldUseP012Renderer(this.p012Renderer,
           this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled)) {
           this.p012Renderer?.render(this.ctx, this.waterSandSnapshot,
@@ -2026,10 +2032,16 @@ struct SandCanvas {
         } else {
           this.renderWaterSand(this.ctx, this.waterSandSnapshot);
         }
+        const segRenderMs = Date.now() - segRenderT0;
         if (this.testMode) {
+          // presentMs：呈现等待段 = 本帧处理完成到下帧 vsync 的等待
+          // （postFrameCallback 回调返回后的空转；上帧完成时刻基准）
+          const presentMs = Math.max(0, frameDeltaMs - segPhysMs - segRenderMs);
           this.logWaterSand(`WS_FRAME ${JSON.stringify(
             waterSandFrameHookPayload(frameDeltaMs, stepResult)
-          )}`);
+          )} seg=${JSON.stringify({
+            physMs: segPhysMs, renderMs: segRenderMs, presentMs
+          })}`);
         }
         if (now - this.lastWaterSandMetricTime >= 250) {
           this.lastWaterSandMetricTime = now;
