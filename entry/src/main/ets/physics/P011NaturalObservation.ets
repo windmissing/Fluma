@@ -5,7 +5,11 @@
 
 // P-011 v2.12 §19: observation identity is independent from the physics route.
 export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
-export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 3;
+// v4 (falling-sand injection, gesture-sand-inject-phys §3): adds
+// context.sourceInjectedH/sourceInjectedL/sourceEpoch; old runs parse
+// with the fields absent (checker treats absent as 0 — same backward-
+// compatible pattern as every prior revision).
+export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 4;
 
 // D-1 (2026-10-21 manager ruling, Option A + explicit route isolation):
 // the §24 correction allocator is gated behind BOTH (a) the dual-threshold
@@ -150,6 +154,12 @@ export interface P011NaturalObservationSubstepContext {
   // matrix variant the allocator ran under ('A' on route-unbound runs).
   // Optional, backward compatible.
   correctionVariant?: 'A' | 'B' | 'C' | 'D';
+  // gesture-sand-inject-phys §3 (schema v4): cumulative injected phase
+  // amounts + the injection epoch (increments per successful injection;
+  // t90 windows restart). Absent = 0 on pre-v4 runs.
+  sourceInjectedH?: number;
+  sourceInjectedL?: number;
+  sourceEpoch?: number;
   // True when scheduleDriftMs exceeded the 50 ms marker threshold — a
   // marker for the checker, not an error.
   scheduleDriftExceeded?: boolean | null;

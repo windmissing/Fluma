@@ -44,6 +44,7 @@ import {
   p011CorrectionApplyOnce,
   p011CorrectionReserve
 } from './P011RelaxCorrection';
+import { P011InjectionReceipt } from '../render/P012SandTracer';
 import { P011CorrectionVariant } from './P011RelaxCorrection';
 import {
   P011RelaxHysteresisThresholds,
@@ -343,6 +344,18 @@ export interface WaterSandScene {
   lightDepositedRegions: WaterSandRegion[];
   heavySuspendedRegions: WaterSandRegion[];
   lightSuspendedRegions: WaterSandRegion[];
+}
+
+/** falling-sand gesture request: page-routed per-column amounts (§1.1). */
+export interface P011GestureSandRequest {
+  perColumnHeavy: Float64Array;
+  perColumnLight: Float64Array;
+  sourceId: number;
+  sequence: number;
+  inputTime: number;
+  x: number;
+  y: number;
+  seed: number;
 }
 
 export interface WaterSandInjection {
@@ -1087,6 +1100,12 @@ export class WaterSandField {
     this.initialWater = totals.water;
     this.initialHeavy = totals.heavy;
     this.initialLight = totals.light;
+    // gesture-sand-inject §3: source counters/queue reset with the scene.
+    this.sourceInjectedHeavy = 0;
+    this.sourceInjectedLight = 0;
+    this.sourceEpoch = 0;
+    this.gestureSandQueue = [];
+    this.lastGestureInputTime = 0;
     this.simulationTime = 0;
     this.t90Heavy = -1;
     this.t90Light = -1;
@@ -1232,6 +1251,323 @@ export class WaterSandField {
     this.initialLight = totals.light;
   }
 
+  // =========================================================================
+  // falling-sand B-route physics injection (architecture-P011-gesture-sand-
+  // inject-phys-v1.md §1-§4). Independent from the legacy inject() (discrete
+  // scene events, resets the conservation baseline); this is the per-gesture
+  // ATOMIC transaction with the B-side receipt contract.
+  // =========================================================================
+
+  /** Page-staged queue (≤1 consumed per substep; FIFO by inputTime). */
+  private gestureSandQueue: P011GestureSandRequest[] = [];
+  /** Cumulative admitted amounts (ledger v4; zero on no-source runs). */
+  private sourceInjectedHeavy = 0;
+  private sourceInjectedLight = 0;
+  /** Increments on every successful injection (t90 epoch). */
+  private sourceEpoch = 0;
+
+  /**
+   * Stage a page-routed request (D3 wiring calls this from the Pan
+   * handler). The queue is bounded (≤8) — a stalled page must not grow
+   * the physics debt unboundedly; overflow drops OLDEST (the receipts
+   * for dropped events would have shown as no-ops anyway — physics
+   * never fabricates admission).
+   */
+  stageGestureSand(request: P011GestureSandRequest): void {
+    this.gestureSandQueue.push(request);
+    if (this.gestureSandQueue.length > 8) {
+      this.gestureSandQueue.shift();
+    }
+  }
+
+  /**
+   * Consume at most ONE staged request (called at the top of each
+   * physics substep, BEFORE saveBackup — the injection carries its own
+   * transaction-level backup). Δt clamp: a request whose inputTime is
+   * older than 1/30 s relative to the last consumed event gets scaled
+   * down (anti-burst on frame recovery, algorithm §2).
+   */
+  consumePendingGestureSand(substepDt: number): void {
+    if (this.gestureSandQueue.length === 0) {
+      return;
+    }
+    const request = this.gestureSandQueue.shift() as P011GestureSandRequest;
+    // Δt clamp vs the last consumed inputTime (per sourceId).
+    let scale = 1;
+    if (this.lastGestureInputTime > 0 && request.inputTime > this.lastGestureInputTime) {
+      const dtSec = (request.inputTime - this.lastGestureInputTime) / 1000;
+      if (dtSec > 1 / 30) {
+        scale = (1 / 30) / dtSec;
+      }
+    }
+    this.lastGestureInputTime = Math.max(this.lastGestureInputTime,
+      request.inputTime);
+    if (scale < 1) {
+      const qH = new Float64Array(this.cols);
+      const qL = new Float64Array(this.cols);
+      for (let c = 0; c < this.cols; c++) {
+        qH[c] = request.perColumnHeavy[c] * scale;
+        qL[c] = request.perColumnLight[c] * scale;
+      }
+      this.injectGestureSand({
+        perColumnHeavy: qH, perColumnLight: qL,
+        sourceId: request.sourceId, sequence: request.sequence,
+        inputTime: request.inputTime, x: request.x, y: request.y,
+        seed: request.seed
+      });
+    } else {
+      this.injectGestureSand(request);
+    }
+  }
+
+  private lastGestureInputTime = 0;
+
+  /**
+   * The gesture injection ATOMIC transaction (§2.1 six steps). Returns
+   * the B-contract receipt (admitted amounts + rejection reason), or
+   * null when the request is entirely zero (the page feeds nothing).
+   */
+  injectGestureSand(request: P011GestureSandRequest): P011InjectionReceipt | null {
+    // 0. Precheck: finite/non-negative/length; all-zero -> null.
+    let sumH = 0;
+    let sumL = 0;
+    if (request.perColumnHeavy.length !== this.cols ||
+      request.perColumnLight.length !== this.cols) {
+      return null;
+    }
+    for (let c = 0; c < this.cols; c++) {
+      const qH = request.perColumnHeavy[c];
+      const qL = request.perColumnLight[c];
+      if (!finite(qH) || !finite(qL) || qH < 0 || qL < 0) {
+        return null;
+      }
+      sumH += qH;
+      sumL += qL;
+    }
+    if (sumH <= 0 && sumL <= 0) {
+      return null;
+    }
+    // 1. Transaction backup + free-water invariant snapshot (the η
+    // lift keeps the water ABOVE the material surface exactly constant;
+    // ΣwaterTop grows by the injected volume — that is displacement,
+    // not drift).
+    let freeWaterSnapshot = 0;
+    for (let c = 0; c < this.cols; c++) {
+      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      freeWaterSnapshot += Math.max(0, this.waterTop[c] - t);
+    }
+    this.gestureWaterBefore = freeWaterSnapshot;
+    this.saveBackup();
+    // 2. Route recheck: at least one requested column must be wet.
+    let anyWet = false;
+    for (let c = 0; c < this.cols; c++) {
+      if ((request.perColumnHeavy[c] > 0 || request.perColumnLight[c] > 0) &&
+        this.waterTop[c] - this.sandTopScratch[c] > EPS) {
+        anyWet = true;
+        break;
+      }
+    }
+    if (!anyWet) {
+      this.restoreBackup();
+      return this.gestureReceipt(request, 0, 0, 'NO_WATER');
+    }
+    // 3. Unified λ admission (trial 1 -> global bound -> eta solve ->
+    //    halve on failure, ≤8 retries, λmin 1e-4).
+    let lambda = 1;
+    let admitted = false;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const aH = new Float64Array(this.cols);
+      const aL = new Float64Array(this.cols);
+      for (let c = 0; c < this.cols; c++) {
+        aH[c] = request.perColumnHeavy[c] * lambda;
+        aL[c] = request.perColumnLight[c] * lambda;
+      }
+      // 3b. Global wet-capacity bound (necessary condition, algorithm
+      // §3): Σ(H - max(waterTop, S+susp)) over requested columns.
+      let bound = 0;
+      let want = 0;
+      for (let c = 0; c < this.cols; c++) {
+        if (request.perColumnHeavy[c] > 0 || request.perColumnLight[c] > 0) {
+          const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+          bound += Math.max(0, this.capacity - Math.max(this.waterTop[c], t));
+          want += aH[c] + aL[c];
+        }
+      }
+      if (want > bound + EPS) {
+        // Scale λ by the global bound (still just necessary).
+        const globalScale = want <= EPS ? 1 : Math.min(1, bound / want);
+        lambda *= globalScale;
+        if (lambda < 1e-4) {
+          break;
+        }
+        continue;
+      }
+      // 3c. Trial write + η solve + audit.
+      for (let c = 0; c < this.cols; c++) {
+        this.suspH[c] += aH[c];
+        this.suspL[c] += aL[c];
+      }
+      const etaOk = this.solveInjectionWaterTop(aH, aL);
+      const auditOk = etaOk && this.gestureInjectionAudit();
+      if (auditOk) {
+        // 5. Commit.
+        let totalH = 0;
+        let totalL = 0;
+        for (let c = 0; c < this.cols; c++) {
+          totalH += aH[c];
+          totalL += aL[c];
+        }
+        this.sourceInjectedHeavy += totalH;
+        this.sourceInjectedLight += totalL;
+        this.sourceEpoch += 1;
+        this.dormant = false; // injected material is in flight
+        // §3: t90 windows are invalid across an injection — restart the
+        // observation (only resets markers that have not fired yet).
+        if (this.t90Heavy < 0 && this.sourceEpoch > 1) {
+          this.t90Heavy = -1;
+        }
+        this.updateSandTop();
+        return this.gestureReceipt(request, totalH, totalL, null);
+      }
+      // 6. Audit/eta failure -> rollback, halve λ, retry.
+      this.restoreBackup();
+      lambda *= 0.5;
+      if (lambda < 1e-4) {
+        break;
+      }
+    }
+    // λ exhausted: full rollback + CAPACITY_BLOCKED (admitted may be ~0).
+    this.restoreBackup();
+    return this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED');
+  }
+
+  /** Assemble the B-contract receipt (nine fields, §1.2). */
+  private gestureReceipt(request: P011GestureSandRequest,
+    admittedH: number, admittedL: number,
+    rejectedReason: string | null): P011InjectionReceipt {
+    return {
+      sourceId: request.sourceId,
+      sequence: request.sequence,
+      admittedH: admittedH,
+      admittedL: admittedL,
+      requestedH: this.arraySum(request.perColumnHeavy),
+      requestedL: this.arraySum(request.perColumnLight),
+      rejectedReason: rejectedReason,
+      x: request.x,
+      y: request.y,
+      inputTime: request.inputTime,
+      seed: request.seed
+    };
+  }
+
+  private arraySum(values: Float64Array): number {
+    let sum = 0;
+    for (let i = 0; i < values.length; i++) {
+      sum += values[i];
+    }
+    return sum;
+  }
+
+  /**
+   * §2.2 η lift solve: construct waterTop' = min(H, max(T, waterTop+η))
+   * with T = S + susp (including the trial injection), so Σ(waterTop'−T)
+   * equals the pre-injection free-water volume Vw (displacement keeps the
+   * water total EXACTLY constant). Monotone bisection on η ∈ [0, capacity]
+   * (min(H,·) truncates, never inverts). Returns false when the solved
+   * η still truncates a column at H (local wet-capacity infeasible — the
+   * caller halves λ).
+   */
+  private solveInjectionWaterTop(aH: Float64Array, aL: Float64Array): boolean {
+    const cols = this.cols;
+    const tArr = new Float64Array(cols);
+    for (let c = 0; c < cols; c++) {
+      tArr[c] = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+    }
+    // Target: the PRE-inJECTION free water (gestureWaterBefore — snap-
+    // shot before the trial write). The trial suspension sits in TArr;
+    // the lift must restore the free-water volume the injection
+    // displaced (objective(0) is short by exactly Σ(aH+aL)).
+    const freeWater = this.gestureWaterBefore;
+    // Objective at η: Σ max(0, min(H, max(T, waterTop+η)) − T).
+    const objective = (eta: number): number => {
+      let sum = 0;
+      for (let c = 0; c < cols; c++) {
+        const lifted = Math.min(this.capacity,
+          Math.max(tArr[c], this.waterTop[c] + eta));
+        sum += lifted - tArr[c];
+      }
+      return sum;
+    };
+    if (Math.abs(objective(0) - freeWater) < 1e-9) {
+      return true; // η=0 already conserves (no lift needed)
+    }
+    let low = 0;
+    let high = this.capacity;
+    for (let iter = 0; iter < 64; iter++) {
+      const mid = (low + high) / 2;
+      if (objective(mid) < freeWater) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+      if (high - low < 1e-9) {
+        break;
+      }
+    }
+    const eta = (low + high) / 2;
+    if (Math.abs(objective(eta) - freeWater) > 1e-6) {
+      return false; // solve failed (discontinuous truncation region)
+    }
+    // Write + verify no column truncated at H (local infeasible).
+    let truncated = false;
+    for (let c = 0; c < cols; c++) {
+      const lifted = Math.min(this.capacity,
+        Math.max(tArr[c], this.waterTop[c] + eta));
+      if (lifted >= this.capacity - EPS && this.waterTop[c] + eta > this.capacity + EPS) {
+        truncated = true;
+      }
+      this.waterTop[c] = lifted;
+    }
+    return !truncated;
+  }
+
+  /**
+   * §2.1-4 audit chain: finite/range, phase conservation, water total
+   * EXACTLY unchanged (the η construction), per-column capacity.
+   * (sandTop is untouched — ΔS=0 by construction, no new tan30 edges.)
+   */
+  private gestureInjectionAudit(): boolean {
+    for (let c = 0; c < this.cols; c++) {
+      if (!finite(this.suspH[c]) || !finite(this.suspL[c]) ||
+        !finite(this.waterTop[c]) || this.suspH[c] < 0 ||
+        this.suspL[c] < 0 || this.waterTop[c] < 0) {
+        return false;
+      }
+      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      if (this.waterTop[c] < t - EPS || this.waterTop[c] > this.capacity + EPS) {
+        return false;
+      }
+    }
+    // Free water (above the material surface) must be EXACTLY the
+    // pre-injection free water (η displacement; ΣwaterTop grows by the
+    // injected volume — that is the sand pushing water up, not drift).
+    let freeWaterNow = 0;
+    for (let c = 0; c < this.cols; c++) {
+      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      freeWaterNow += Math.max(0, this.waterTop[c] - t);
+    }
+    if (Math.abs(freeWaterNow - this.gestureWaterBefore) > 1e-6) {
+      return false;
+    }
+    return true;
+  }
+
+  /** Pre-injection FREE water (Σ max(0, waterTop−T)) — the invariant
+   * the η lift preserves (displacement: the injected sand occupies
+   * volume; the free water above T stays EXACTLY constant; ΣwaterTop
+   * grows by the injected amount, which is correct, not drift). */
+  private gestureWaterBefore = 0;
+
   invert180(): void {
     if (this.frozen) {
       return;
@@ -1280,7 +1616,12 @@ export class WaterSandField {
     }
     this.p011FrameId += 1;
     if (this.dormant && Math.abs(this.targetTilt - this.effectiveTilt) <= EPS &&
-      this.shakeEnergy <= EPS && this.shakeInput <= EPS) {
+      this.shakeEnergy <= EPS && this.shakeInput <= EPS &&
+      // falling-sand §1.2: a pending gesture request WAKES the field —
+      // the dormant fast-path must not swallow queued injections (the
+      // page staged real material; skipping the substep would silently
+      // drop it).
+      this.gestureSandQueue.length === 0) {
       result.dormant = true;
       result.physicsTimeMs = Date.now() - start;
       this.lastPhysicsTimeMs = result.physicsTimeMs;
@@ -1295,6 +1636,10 @@ export class WaterSandField {
     this.substepBudgetUsedMax = 0;
     this.substepBudgetClipped = false;
     for (let index = 0; index < substeps; index++) {
+      // falling-sand §1.2: consume ≤1 staged gesture request BEFORE the
+      // substep backup (the injection carries its own transaction
+      // backup; a failed injection leaves the substep untouched).
+      this.consumePendingGestureSand(substepDt);
       this.saveBackup();
       this.updateSandTop();
       this.beginSubstepMotionBudget(substepDt, true, 1);
@@ -1831,6 +2176,10 @@ export class WaterSandField {
       // cvar is inert there by definition).
       correctionVariant: this.correctionRouteActive()
         ? this.correctionVariant : 'A',
+      // gesture-sand-inject §3 (schema v4): cumulative source amounts.
+      sourceInjectedH: this.sourceInjectedHeavy,
+      sourceInjectedL: this.sourceInjectedLight,
+      sourceEpoch: this.sourceEpoch,
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
@@ -1989,10 +2338,17 @@ export class WaterSandField {
 
   getDrift(): WaterSandDrift {
     const totals = this.getTotals();
+    // gesture-sand-inject §3: the expected baseline is the run-initial
+    // amount PLUS cumulative gesture admission (never reset — unlike
+    // the legacy inject() which resets initial*; injected amounts are
+    // NOT drift). No-source runs: sourceInjected* = 0, identical to the
+    // historical formula.
+    const expectedHeavy = this.initialHeavy + this.sourceInjectedHeavy;
+    const expectedLight = this.initialLight + this.sourceInjectedLight;
     return {
       water: Math.abs(totals.water - this.initialWater) / Math.max(this.initialWater, EPS),
-      heavy: Math.abs(totals.heavy - this.initialHeavy) / Math.max(this.initialHeavy, EPS),
-      light: Math.abs(totals.light - this.initialLight) / Math.max(this.initialLight, EPS)
+      heavy: Math.abs(totals.heavy - expectedHeavy) / Math.max(expectedHeavy, EPS),
+      light: Math.abs(totals.light - expectedLight) / Math.max(expectedLight, EPS)
     };
   }
 
@@ -2017,8 +2373,10 @@ export class WaterSandField {
       driftWater: drift.water,
       driftHeavy: drift.heavy,
       driftLight: drift.light,
-      depositedHeavyFraction: depositedHeavy / Math.max(this.initialHeavy, EPS),
-      depositedLightFraction: depositedLight / Math.max(this.initialLight, EPS),
+      depositedHeavyFraction: depositedHeavy /
+        Math.max(this.initialHeavy + this.sourceInjectedHeavy, EPS),
+      depositedLightFraction: depositedLight /
+        Math.max(this.initialLight + this.sourceInjectedLight, EPS),
       suspensionFraction: suspended / totalSand,
       lowerHeavyShare: profile.lowerHeavyShare,
       upperHeavyShare: profile.upperHeavyShare,
