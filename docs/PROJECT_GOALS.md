@@ -89,3 +89,22 @@
 4. **M4 全场景回归**：两场景 × 三操作（旋转/倒立/摇晃）的连拍录制 + 视觉验证套件固化。
 
 【分工】本会话仅产出本目标文档；开发由开发会话执行并自验；测试判定由测试智能体执行。里程碑条目由对应智能体认领。
+
+---
+
+## 六、理论依据（2026-10-22 补录）
+
+本项目宏观连续介质近似（高度场 + 崩塌/滑移通道 + 守恒预算）的物理设计决策与颗粒物质力学的下述文献同源。参考实现位于本机 `D:/projects/`（sand6-master / OpenFOAM-muI-main / so-bogus-main），本节登记对应关系供后续答辩与参数对标使用；不表示代码级复用（平台 ArkTS 128 列高度场 vs C++ MPM/OpenFOAM，架构不同）。
+
+| 本项目设计决策 | 理论来源 | 参考实现锚点 |
+|---|---|---|
+| tan30° 安息角硬门槛（§8 不变量 `r[c]≤tan(30°)`） | Drucker-Prager 屈服 / μ(I) 流变的准静态极限 μ_s（Jop et al. 2005；GDR MiDi 2004） | sand6 `src/mono/PhaseSolver.cc:214`（μ(I)=μ+Δμ/(1+I₀/I)）；场景 `scenes/collapse.2d.conf`（mu=0.4、I0=0.4） |
+| 26/20 双角状态机（start/stop 迟滞，`natural-relax-hysteresis-v1`） | 屈服转变的非光滑处理——sticking/sliding 分支是 Coulomb 摩擦问题的标准结构 | so-bogus `src/Extra/Soc/LocalSOCSolver.impl.hpp:300-380`（take-off/sticking/sliding 三态 + Fischer-Burmeister 半光滑牛顿 + 枚举回退，Daviet et al. 2011） |
+| 静止零抖动（零操作静止帧） | 正则化/光滑化方法在静止端产生蠕行（非光滑方法回避此问题） | sand6 源码注释实证："PG without infinity norm leads to creeping at end of simulation"（PhaseSolver.cc） |
+| 场景二：双沙分选（重沉轻浮、流动中分层堆积） | Barker, Rauter, Maguire, Johnson & Gray 2021《Coupling rheology and segregation in granular flows》JFM 909 A22——μ(I)+分选耦合理论 | OpenFOAM-muI（README 明确以此为科学基础；Barker & Gray 2017 正则化为其前置） |
+| 翻转塌落/重排（±45° 崩塌、90° 翻转） | 水耦合沙柱塌落的连续介质模拟 | sand6 `scenes/collapse.water.2d.conf`（流体耦合：fluidVolMass、stokesFactor、Richardson-Zaki 修正）；`hourglass.conf`/`dune.2d.conf` 为流沙画装置的物理原型场景 |
+| 出厂推荐 26°/20°（factory-recommended，非标定值） | 跨典型颗粒材料的 μ_s 区间对标：tan26°≈0.488（粗颗粒/天然沙范围）、tan20°≈0.364（接近玻璃珠 μ_s≈0.38，Jop 2005） | 上表 sand6 μ(I) 实现的参数面 |
+
+引用链：De Saxce & Feng 1998 → Daviet et al. 2011（so-bogus 求解器）→ Daviet & Bertails-Descoubes 2016/2017（sand6 MPM）→ Barker & Gray 2017 / Barker et al. 2021（OpenFOAM-muI 正则化与分选耦合，与前一支平行的理论路线）。
+
+【边界】本节为设计答辩与参数对标材料，不改变任何已冻结的验收口径、预算或硬门槛；26/20 的 `factory-recommended` 身份与 `NOT_CALIBRATED` 状态不因文献对标改变（对标 ≠ 标定）。

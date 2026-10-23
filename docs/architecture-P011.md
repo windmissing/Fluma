@@ -2859,3 +2859,55 @@ Node 通道（run_p011_planning_units.cjs 模式）+ ArkTS 单测（WaterSandFie
 八件工程细节全部落盘：字段归属=实例内组合（同对象四读者）/configure 三段式校验+异常统一/三路径拆分（metadata 断链、configure 主链、protocol 显式适配器）/configRevision 单调递增+preview 防回滚/清理边界表（清状态机与预留、保材料与预算）/UI 三回调+preferences 持久化+schedule 锁定/13 项断言级单测/6 项风险。**两项重要语义变化提前声明**：①产品默认从 LEGACY 转双角 26/20（授权行为变化，legacy 留显式回归入口）；②v3 pilot/smoke 的 want 模板需同步（runner 侧 effector 任务，27.8 第 1 行）。developer 实现任务解锁；effector runner 模板同步与 tester 用例登记（§7 契约）并行排期。
 
 变更记录：2026-10-22，依据 manager【P-011·参数外置工程】任务新增 §27。设计稿八件事落盘：字段归属/configure 扩展/职责拆分/configRevision/epoch 清理边界/UI 接口/断言级单测/风险清单。核心结构变化=阈值驱动源从观测域迁到配置域。
+
+## 28. 方案 3 起沙/落沙事务性核验：§2.2 退款风险 + guard 回滚语义（2026-10-22）
+
+**状态：核验完成——①§2.2 退款风险【静态确认存在、动态四个构造场景未触发、v1 证据 2512 子步恒等式全过】→ 定性为「潜伏缺陷，低触发概率但非零」；②「已起沙未落沙」中间态【现有机制完全覆盖，无事务性缺口】；③方案 3 立项前机制前置清单 6 项落盘。审计移交项闭环。**
+
+核验对象：`phase2-reachability-audit-P011-v1.md` §2.2（designer 移交「developer/architect 先解释/核验」——此前未建，本节补）。核验方法：静态代码路径追踪（clipBottomCreepMotion/materialGuardRefund/P011GuardLedgerRefund/creepBottom 逐行）+ 动态构造实证（Node 通道五场景）+ 历史证据全量复核（v1 ledger 2512 子步恒等式）。
+
+### 28.1 §2.2 退款风险的静态确认与动态未触发
+
+**静态路径确认（审计发现属实）**：
+
+`creepBottom`（:3960-3995）的 guard 拒绝分支调用 `materialGuardRefund(rejected, [donor, receiver], true)`（:3992，bottomChannel=true）；而 `refund.refundLocal(localColumns, rejected)`（:2533）无条件执行 `localRemaining += rejected; localUsed -= rejected`。**关键事实链**：creepBottom 从不扣 local（awk 全函数体 grep 零 local 写入——§2.2 审计的「不扣普通local（当前实现）」属实）；因此 bottom guard 拒绝时 refundLocal 退的是**从未扣过的账**——若该列 settle 已用 local s>0，退款后 `used+remaining = limit + rejected - max(0, s-rejected)`，可超 limit（最坏 rejected 全额超）；若 used < rejected，`localUsed` 被 max(0,·) 钳到 0，`remaining = limit - used + rejected > limit`——**纯增额成立，审计的静态构造成立**。
+
+**动态未触发（四个构造场景 + 历史证据）**：
+
+| 场景 | 结果 |
+|---|---|
+| 厚层 25° 正常预算 200 步 | guard 拒绝 0，恒等式 0 违规 |
+| 紧预算（total=5）+29° 300 步 | 同上 |
+| bottom 参数拉满（vBottomCreepMax=12/rate=5/gain=3）+紧预算 400 步，6000 条 bottom 记录 | guard 拒绝 0 |
+| R-3 同构 ±20° 交替（历史上唯一已知 guard 拒绝场景）240 步 | guard 拒绝 0 |
+| **v1 证据 ledger（2512 子步，含 1738 relax>0/971 totalClipped——真实七相 run）** | **local/bottom/total 恒等式全过（worst excess=0.000000000）** |
+
+**未触发的机制解释**：`materialGuardAdmitIncrement` 的拒绝条件（P011MaterialGuard.ets:79-85）是「k=0（该 grant 对违规边无修复作用）且 |d|>bound」——即 **guard 只拒绝「落在已违规边上且救不了它的 grant」**。bottom creep 的 grant 在到达 guard 前已被 `independentScale`（bottom 预算缩放）与 `clipBottomCreepMotion`（total 缩放）双重压小，且其 delta 方向（donor→receiver 的 S 平移）在正常演化中要么修复残差要么 k≠0 可求区间——「k=0 且边已违规」需要 bottom 请求恰好落在一条与本笔无关的违规边上，正常运行（含预算极度压紧）不产生该构型。v1 证据的 guard 字段（旧 schema 无 hardGuardRejected）与 R-3 修复后的当前代码（shadow 镜像使预演即含 guard，BLOCKED 前置）都进一步压低了该路径的可达性。
+
+**定性**：**潜伏缺陷（latent defect），非当前活跃 bug**。触发需要「已违规边 + bottom 请求 k=0 命中」的特定构型，当前全部测试资产未出现；但静态路径存在意味着任意未来场景（尤其方案 3 引入新通道/新构型后）可能踩中。**修复建议（一行级，交 developer 随下次物理提交带上）**：`materialGuardRefund` 的 refundLocal 调用按通道条件化——bottom 通道（bottomChannel=true 且调用方为 creepBottom）跳过 refundLocal（creepBottom 不扣 local，无账可退）；或者更彻底：refundLocal 增加「该列本子步曾扣过 local」的前置检查（localUsed>0 才退，且退额 min(rejected, localUsed)——保证退款不超过先前实际扣额，即 §2.2 审计要求的语义）。**修复前该路径的账本恒等式仍由 fail-safe 兜底**（audit 的 range/finiteness 检查会在材料越界时报错，但 local 超限不在 audit 范围——这正是风险所在：超限的 local 不会报错，只是让后续通道多花额度）。
+
+### 28.2 「已起沙未落沙」中间态的事务性核验
+
+**结论：现有机制完全覆盖，无事务性缺口。** 逐项：
+
+1. **起沙（lift）的事务性**：`liftByShake` 的 guard 路径（:4141 `materialGuardRefund(liftGuard.rejected, [c], false)`）——refundLocal=false 走 settle 同款语义（lift 扣 local，:4141 前的 clipLocal 已扣），拒绝量退的是**已扣的账**，恒等式保持。suspH/suspL 增量与 bh/bl 扣减在同一笔 grant 内成对发生（splitTopV2 的比例分配），**不存在「悬沙已加但沉积未扣」的半笔状态**——lift 的写材料在 guard admit 之后一次完成。
+2. **落沙（settle）的事务性**：settle 的 guard（:3638 refundLocal=false）同款——每笔 deposit 的 suspH/suspL 扣减与 ml/mh 增加同笔原子。
+3. **方案 3 的 advection 项若被预算 clip**：advection 是**悬沙相内搬运**（suspH/suspL 双列增减，ΔS=0，不触碰沉积库存）——按审计 §2.1 表的提议账本（双端各 q 计 local、每相每边合计计 total），clip 掉的 q 只是**不搬运**，起沙量与落沙量各自闭合于 lift/settle 通道内部，**不存在跨通道的未闭合量**。一阶矩分域核算：Mdep 由 settle/lift 的成对写保持（沉积域内动量守恒）；Msusp 由 advection 的 donor/receiver 成对写保持（悬浮域内）；两域之间的交换只在 lift/settle 的原子笔内发生——**Mdep+Msusp 总量恒等由分相守恒既有账本覆盖**（H/L 各自守恒是最高不变量）。
+4. **BLOCKED/预算不足下的归退**：方案 3 的「平流未完成」两种形态——a) 预算 clip：q 缩小或归零，悬沙留在原地（suspH/suspL 不动），**无归退需求**（起沙已完成，材料在悬浮域合法存在，等待后续子步的落沙/平流）；b) guard 拒绝：退款退的是该笔 advection 的预算扣账（双端 local+total），材料未动，**无归退需求**。两种形态都不产生「必须回滚起沙」的压力——起沙→悬浮→落沙是**跨子步的合法生命周期**，不是必须单子步闭合的事务。这正是 §2.1 审计表「候选suspension-advection 提议双端各q」设计的正确性基础。
+
+### 28.3 方案 3 立项前机制前置清单
+
+| # | 前置项 | 依据 | 责任 |
+|---|---|---|---|
+| P-1 | **§2.2 退款修复落地**（refundLocal 条件化或按实际扣额退款）+ 修复后恒等式单测（构造「settle 用 local + bottom guard 拒绝」的单元级用例——动态场景难触发，须单测直造） | §28.1 定性：潜伏缺陷在方案 3 新构型下可达性升高 | developer（可并入下次物理提交，无需单独立项） |
+| P-2 | advection 通道的账本身份（新 channel 分列：双端 local、每相每边 total、channelRateCap 层补真实账本）——照 §24 correction 的四层回写模式 | 审计 §2.1 表「立项后必须由 architect 落入预演/实际统一账本」 | architect（方案 3 工程设计时，含 R-3-a shadow 镜像扩展——advection 的 guard/账本必须进预演） |
+| P-3 | 起沙来源的独立设计与批准（审计 §4 已证：现有 shake/lift 不能作为方案 3 的合法起沙来源——「不能只截取其中一包宣称全链证书」） | 审计 §4 机制B | designer（新机制设计，非本核验范围） |
+| P-4 | lift 起沙链的逐笔 shadow 轨迹证书（accepted 角/每相库存与矩/各层扣退账/最紧边/phase 形状/尾段悬沙）——审计 §207 下一步③ | 审计结论 | developer+tester（立项后） |
+| P-5 | Msusp/Mdep 一阶矩分域遥测（ledger schema 追加，向后兼容）——验证 28.2-3 的分域闭合 | 本节 28.2 | developer（随 P-2） |
+| P-6 | guard 的 advection 语义定义：ΔS=0 的搬运是否需要 guard（提议：受影响边集登记制，同 percolate 的 S-invariant 先例——不设数值 guard 但全量遥测） | §28.2-3 的 advection 特性 | architect（P-2 同批） |
+
+### 28.4 结论
+
+审计移交的三个问题全部闭环：①§2.2 退款风险**静态确认存在**（refundLocal 退未扣账的纯增额路径）但**动态未触发**（四构造场景+v1 证据 2512 子步恒等式全过；触发需「已违规边+k=0 命中」特定构型）——定性潜伏缺陷，修复一行级（refundLocal 条件化），随下次物理提交；②「已起沙未落沙」中间态**无事务性缺口**（lift/settle 原子笔、advection 是悬沙域内搬运不跨域、两种未完成形态都无归退需求——跨子步合法生命周期）；③方案 3 前置清单 6 项（退款修复/账本身份/起沙来源/轨迹证书/分域遥测/guard 语义）已列，P-1 可先行不占排期，P-2/P-6 归本角色方案 3 工程设计时一并交付。
+
+变更记录：2026-10-22，依据 manager【P-011·退款风险核验】任务新增 §28。核验方法=静态路径+四动态构造+v1 证据全量；退款风险定性潜伏缺陷（修复建议一行级）；起沙/落沙事务性无缺口；前置清单 6 项。审计 §207 下一步①闭环。

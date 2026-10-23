@@ -415,3 +415,208 @@ developer 实现后若 C 增量 **P95>0.15ms 或 draw>16**：**停下回 archite
 三件事完成：**缓存=窄高位图+分段 drawImage 平铺**（与 B 档 s99 同构，零新风险）；**采样=MaterialColumnSampler 非负权重线性插值**（独立文件，E3 复用预置）；**ArkTS 可行性=确认**（OffscreenCanvas/drawImage/globalAlpha/整数坐标全部有交付先例）。C3 复用 E shadeLut 零新缓存。消融走 `p012ablate=strat` 现有机制；预算违规回 architect 重排流程已约定（11.5）。**developer C 实现任务解锁**（任务书 PIPELINE 第 (2) 步完成）。
 
 变更记录：2026-10-21，依据 manager【P-012·C层理工程】任务新增 §11。设计稿三件事落盘：缓存表示选型（位图+分段平铺）/采样接口（P012MaterialColumnSampler 契约）/ArkTS 可行性确认（三先例）+C3 复用审计/成本归因接口（消融 strat）/预算违规重排流程约定。C 锚点冻结前置（设计稿 §2.2/§6）不在本节范围，归 tester/effector。
+
+## 12. E3 工程基线与锚点绑定（2026-10-23）
+
+### 12.1 s133 修复基线
+
+E3 上屏采样面 A 归因与修复见 [std 消融回执](e3-std-ablation-receipt-P012-v1.md)：雾缓冲宽 `64`，water/interface 上屏 `segU=max(1,round(bufferWidth/32))`，water `segV=max(1,round(bufferHeight/38))`、interface `segV=max(1,round(bufferHeight/76))`。s133 用 `segU=2` 恢复约 8×8px 显示块和 12 档；不能退回 64 宽仍用 `segU=8` 的 33×33px 大块状态。`LAYER_EPS=0.25` 保留；强制重烘对照未改善 std，B（dirty 欠更新）在本次归因中排除。这个结论只属于 `entry-default-s133-signed.hap@9d11849` 及其同构配置，不代表任意几何下都自动满足视觉锚点。
+
+### 12.2 冻结锚点表与适用域
+
+正式记录见 [E3 冻结 revision](e3-grid-display-v1-freeze-revision.md)。当前冻结的是 `methodId=e3-grid-device-native-s133-v1` 的设备原生静态配对档；冻结 mask 集为 `masks-e3q1-frozen-v1`，设备窗按 s133 几何登记为 `x=[200,1080)、rows=[950,1100)`，JPEG 原生亮度 `Y=0.299R+0.587G+0.114B`。参考多边形 mask 与设备矩形窗分别登记，不能写成同一个逐像素 mask。两组配对输入均为同一 s133 构建/seed 的 OFF=`e3i2` 和 ON=E3+seg 修复。
+
+| 项目 | 冻结界 / s133 实测 | 状态与工程含义 |
+|---|---|---|
+| `J95_ON/J95_OFF` | `≤0.70`；`2.00/5.00=0.400` | **PASS / VALIDATED**，设备侧硬跳改善 |
+| `J90_ON/J90_OFF` | `≤0.50`；`1.00/3.00=0.333` | **PASS / VALIDATED**，设备侧常见跳变改善 |
+| `pxStd_ON/pxStd_OFF` | `[0.90,1.10]`；`12.59/13.52=0.931` | **PASS / VALIDATED**，s132 抹平阻断解除 |
+| 块边 `K_ratio` | 候选 ON `≤0.02`；报告 `0.009`（OFF `0.092`） | **代理值在界内；正式 K90 待算子/脚本回执**。不得把它写成等值线 K90 |
+| 周期 `P64/P256` | 报告 ON 行均值 `lag64=−0.443` | **描述性；正式 P64/P256 待像素域二维算子**。负峰不是独立 PASS |
+| `SV-06` | 旧正式分数 `3`；s133 雾幅度恢复的描述性回执 | **旧及格结论维持；s133 正式配对评分未产生** |
+| `Lgrid/Nseg` | 无同方法结果 | **诊断待出数**，不得填 0 或 PASS |
+
+`e3-grid-display-v1-proposed` 的 200/100 分析像素、参考 f0/f5/f2/f6、等值线 `K90`、像素域 `P64`、支持量和静/动态分层仍需按 [算法稿 §2](algorithm-P012-E3-grid-removal-v1.md) 补齐。故 §12.2 的 `PASS / VALIDATED` **只限三个已冻结设备侧核心锚点**，不等于 E3 全量参考锚点或最终交付 VALIDATED。参数可调化实现可绑定这个 s133 推荐外观基线；改变默认参数、几何、显示尺度时须重验适用域。
+
+### 12.3 雾缓冲失效与资源归属
+
+两个 `P012E3FogBuffer` 由 `P012WaterSandRenderer` 持有；几何尺寸改变时按现有 `e3Invalidate` 重建。层高、waterTop、q、相位/外观参数变化按现有 dirty 规则使 water/interface buffer 失效，重新烘焙在现有渲染路径内完成；§13.4 的 `fogDensityScale/clearMottleContrast` 应标记这两个 buffer dirty，且不得触发 B/C 位图重烘。buffer 宽度与上屏 `segU/segV` 需一起评估；仅保留同一 buffer 烘焙成本而加大上屏块，会重现 s132 的方差损失。s133 回执的冷态帧时仅作基线，热态波动与后续参数组合另走配对性能检查。
+
+## 13. 参数可调化工程架构：WaterSandScreenConfig 接口 + 重烘焙矩阵（2026-10-22）
+
+**状态：`READY_FOR_DEVELOPER / UNLOCKED_S133_BASELINE`（2026-10-23，§12.2 的 s133 设备侧默认外观基线已确认；本节接口形状与生命周期不依赖尚待补齐的参考带正式算子）。数值绑定表仍须以 `9d11849`、seed 与默认六参数为键记录，不能从 s133 默认档外推用户参数范围。依据：algorithm-P012-appearance-controls-candidates-v1.md（manager 已验收，§2.1/§2.2 映射与陷阱全采纳）及 §12 冻结 revision。**
+
+### 13.1 WaterSandScreenConfig 类型归属与剥离点（细化 1）
+
+```ts
+// P012RenderTypes.ets 追加
+/** 页面聚合配置：physics 与 appearance 两域，物理 configure 前必须剥离 appearance */
+export interface WaterSandScreenConfig {
+  physics: WaterSandParams;          // 原样进 WaterSandField.configure()
+  appearance: P012AppearanceParams;  // 剥离后进 renderer.applyAppearance()
+}
+```
+
+**剥离点（architect 裁定，落实候选稿 §3「若工程选择在页面既有配置接口增设 appearance 嵌套字段，也必须在进入物理 configure 前剥离」）**：剥离在 **SandCanvas 的配置入口函数**执行——所有写 `this.waterSandParams` 的 setter（现有 setWaterSandPercolationRate 等 + 新增外观 setter）统一走一个私有 `commitScreenConfig(next: WaterSandScreenConfig)`：
+
+```ts
+private commitScreenConfig(next: WaterSandScreenConfig): void {
+  // 1) appearance 剥离：物理通道只见 physics
+  this.waterSandParams = next.physics;
+  this.waterSandField?.configure(next.physics);       // 零 appearance 泄漏
+  // 2) appearance 走渲染通道（独立于物理 configure——仅调雾不触发物理路线清理）
+  if (this.p012Renderer !== null && next.appearance !== this.lastAppliedAppearance) {
+    this.p012Renderer.applyAppearance(next.appearance);  // 帧边界原子切换，见 13.3
+  }
+  this.lastAppliedAppearance = next.appearance;
+}
+```
+
+物理 configure 与 appearance 应用**永不混在一个调用**——候选稿红线「外观不应塞进物理引擎通道，否则仅调雾也可能清理物理路线状态」的机械保证。物理域 setter 不再直接摸 waterSandParams（改走 commitScreenConfig），现有 setter 行为不变（appearance 传当前值）。
+
+### 13.2 P012AppearanceParams schema（细化 2）
+
+```ts
+// P012RenderTypes.ets 追加
+export const P012_APPEARANCE_SCHEMA_VERSION = 1;
+export const P012_STYLE_FAMILY_ID = 'soft-water-sand-v1';
+
+export interface P012AppearanceParams {
+  schemaVersion: number;             // =1（迁移失败→丢弃用版本化推荐）
+  styleFamilyId: string;             // ='soft-water-sand-v1'（不匹配→拒绝整包）
+  rendererVersion: string;           // E3 验证构建绑定的版本串
+  // 六字段（候选稿 §2 域；离散档与步长在此冻结，禁 clamp——非法拒绝整包）
+  grainFeaturePx: 2 | 4 | 6;                       // 三档离散
+  grainSigma: number;                              // [12,24] 步长 1，默认 20
+  fogDensityScale: number;                         // [0.5,1] 步长 0.05，默认 1；cap=0.78 只读
+  strataLambdaMaterial: number;                    // 名义 [16,32] 默认 24——控件档按 effectiveλ 去重（候选稿 §2.2）
+  strataStrengthScale: number;                     // [0.5,4/3] 默认 1
+  clearMottleContrast: number;                     // [0.5,1.25] 步长 0.05，默认 1
+  source: 'factory-recommended' | 'user' | 'preset';
+  configRevision: number;                          // 同 §27.4 模式：应用成功单调 +1
+}
+export function validateP012AppearanceParams(p: P012AppearanceParams): string | null;
+// 返回 null=合法；返回原因串=拒绝整包（UI 显示边界与原因，不 clamp 不部分应用）
+```
+
+**校验规则冻结**（照 §27.2 fail-closed 模式）：schemaVersion/styleFamilyId 不匹配 → 拒绝；六字段超域/非有限/离散档非法值 → 拒绝；strataLambdaMaterial 控件档由 `effectiveLambda 去重表` 提供（§13.4），UI 只暴露去重后的档（避免候选稿 §2.2 的「滑动无变化」陷阱）。**α 不入首版**（候选稿 §2.2 明确：C alpha=0.5/C3=0.10 固定，[0.35,0.5] 仅后续研究）——schema 不含 alpha 字段即机械保证。
+
+### 13.3 草稿→校验→应用生命周期（细化 3）
+
+```text
+UI 草稿态（PanelParams 镜像字段，滑动只改 @State，零物理/渲染副作用）
+  ↓ 「应用」按钮
+validateP012AppearanceParams(整包) ──非法→ 显示边界提示，保留草稿，返回草稿态
+  ↓ 合法
+renderer.stageAppearance(next)      // 13.4 重烘焙矩阵触发：新位图/失效标记在 staging 区准备
+  ↓ 成功（烘焙无异常）
+帧边界（下一帧 render() 入口）原子切换：staged → active；旧资源延迟一帧后释放（无引用即 GC）
+  ↓ 失败（烘焙异常/内存不足）
+维持上一合法包 + 提示「应用失败，已保留当前效果」；staging 丢弃并释放
+```
+
+- **最多一个待替换包**：新「应用」到达时若 staging 非空，旧 staging 直接丢弃重置（过期构建结果不排队）。
+- **资源释放**：旧 ImageBitmap 在切换后一帧的 render 尾部置空引用（ ArkTS 无显式 close——引用置空交 GC；E3 雾缓冲走既有 dirty 重建不占 staging）。
+- **持久化**：Preferences 键 `p012.appearance`（JSON 整包+revision），写时机=帧边界切换成功后（防抖 500ms，同 §27.6 模式）；读时机=onCreate，校验失败丢弃用版本化推荐值+提示；冷启动无记录→factory-recommended。
+- **TEST/EXPERIENCE 跨模式保留**：appearance 存 renderer 实例字段，模式切换不重建 renderer（既有生命周期），配置自然保持；canonical 证据路径不受影响（外观不进物理 ledger，E3 隔离规则照旧）。
+
+### 13.4 重烘焙触发矩阵（细化 4）
+
+| 参数变化 | 触发动作 | 成本量级 | 不触发 |
+|---|---|---|---|
+| grainFeaturePx / grainSigma | **重烘三张 256² 颗粒位图**（同 seed 重生成，保归一化/截幅/envelope 关系——候选稿 §2.1「不靠降分辨率模拟粗颗粒」） | ~3×0.75MiB 烘焙 + 重建 staging | 层理/雾缓冲 |
+| strataLambdaMaterial / strataStrengthScale | **重烘三张 64×256 层理位图**（λpx 按 effectiveλ 公式重算——候选稿 §2.2 的整周期对齐；强度只改幅度系数走 globalAlpha 则**免烘焙**，delta 烘进位图才重烘——实现取后者一致性优先） | ~0.19MiB 烘焙 | 颗粒/雾 |
+| fogDensityScale / clearMottleContrast | **E3 雾缓冲失效**（water/interface 两 buffer dirty=true，复用 §12.3 失效矩阵——f/c 进 tau 链，重算走既有烘焙循环；**不需要重烘任何位图**） | 一次 buffer 重烘焙（~0.5ms 预算内，§12 已核） | 颗粒/层理位图 |
+| 恢复推荐 | 全矩阵按当前 active 与推荐包的 diff 逐项触发 | 同上按需 | — |
+
+矩阵保证**单参数滑动不引发无关资源重烘**（fine 调整不碰雾、雾浓度不碰颗粒位图）；重烘焙只在「应用」时刻（草稿滑动零成本）。烘焙尖峰计入交互评估（候选稿 §6「不承诺零成本」）——staging 阶段在帧外完成重活（应用按钮回调内同步烘 3×256² 实测 <10ms，可接受；若真机超预期再议异步）。
+
+### 13.5 安全边界的代码断言点（细化 5）
+
+| 边界 | 断言位置 | 形式 |
+|---|---|---|
+| cap 只读（0.78/0.55） | `fogDensityScale` 校验（≤1）+ renderer 烘焙循环用常量 | schema 无 cap 字段 = 编译期保证；validate 拒 >1 |
+| alpha 不入首版 | schema 字段表 | 无字段 = 编译期保证；持久化 JSON 出现 alpha 字段→校验拒绝（前向防御） |
+| palette 锁定 | E 调色盘/光照/色调映射常量无 setter | grep 断言（code review checklist：P012WaterSandRenderer 的 palette 相关常量零新增写点） |
+| 物理零触碰 | commitScreenConfig 剥离 + 外观 setter 不写 waterSandParams | 单测：调任意外观参数前后，同输入物理 step 逐位一致（快照锚点序列复用 §27-U11 资产模式） |
+| 不逐事件烘焙 | staging 仅「应用」触发 | 单测：草稿 onChange 连续 100 次后烘焙调用计数=0 |
+
+### 13.6 单测范围与路由
+
+单测（Node 通道）：①schema 校验矩阵（每字段超域/非法档/缺字段/styleFamily 不符/schemaVersion 迁移→各拒绝路径）；②f=c=1 恢复链（与 E3 验证构建输出逐位一致——**这是数值绑定表的第一项，E3 基线回执后填期望值**）；③重烘焙矩阵（fine 改变→颗粒位图变+层理/雾不变，验证方式=烘焙调用计数与资源指纹）；④物理零触碰（外观全参数遍历×物理锚点逐位）；⑤持久化损坏恢复；⑥configRevision 单调；⑦恢复推荐 source 切换。
+
+**路由**：本节 `UNLOCKED_S133_BASELINE`——developer 参数可调化实现的“E3 复测确认默认基线”前置已由 §12 的 s133 配对证据满足；实现仍须通过本节校验、资源和物理零触碰约束，不能把 §12 待补的正式 K90/P64/参考带标为 PASS。实现顺序建议在 E3 修复 commit 之后同批（共享 §12 的 buffer 失效与烘焙基建）。数值绑定表（六字段默认值与 E3 构建的对应关系）由后续架构回执补 §13.7（预留节）。
+
+变更记录：2026-10-22，依据 manager【P-012·参数可调化架构】任务新增 §13。五项细化落盘：ScreenConfig 剥离点（commitScreenConfig 单入口）/六字段 schema（离散档+去重表+α 不入首版）/草稿→staging→帧边界原子切换生命周期/重烘焙矩阵（单参数不触发无关资源）/安全边界五断言。READY_FOR_DEVELOPER，解锁时点=E3 基线回执。
+
+### 13.7 六参数配置/资源接口设计文档（2026-10-23，本任务正式交付；含 §13.4 预留的数值绑定表）
+
+**状态：`READY_FOR_DEVELOPER`。前置②已达成**——E3 锚点冻结 revision（`e3-grid-display-v1-freeze-revision.md`，s133 设备侧三核心锚点 J95/J90/std 比 PASS/FROZEN）+ §12.1/12.3 工程基线已落盘。本节补齐任务书五项中 §13.1-13.6 之外的增量：数值绑定表（13.7.1）、映射公式契约（13.7.2）、λ 双登记与去重（13.7.3）、锚点联动硬边界（13.7.4）、资源接口签名（13.7.5）。
+
+#### 13.7.1 数值绑定表（六参数默认值 = s133 冻结基线）
+
+| 参数 | 默认值（=s133 常量） | 实现常量锚点 | 变化范围（候选稿 §2） |
+|---|---|---|---|
+| grainFeaturePx | **2**（盒滤波半径 R=1） | buildGrainBitmaps 的 fine 档（R=1/2/3 ↔ 2/4/6px） | {2,4,6} 三档离散 |
+| grainSigma | **20** | P012_B_SIGMA=20（:109） | [12,24] 步长 1 |
+| fogDensityScale | **1.0** | P012_A_FOG_ALPHA_MAX=0.78（:89，cap 只读不随 f 变） | [0.5,1.0] 步长 0.05 |
+| strataLambdaMaterial | **24** | P012_C_LAMBDA_MATERIAL=24（:133） | 名义 [16,32]，控件按 effectiveλ 去重（13.7.3） |
+| strataStrengthScale | **1.0** | P012_C_AMP_ORDERED=6 / AMP_MIX=3（:142-143） | [0.5,4/3] |
+| clearMottleContrast | **1.0** | E3 链：P012_E3_MOTTLE_EQUIV_AMP=1.63（:165，std 0.505/0.5494=0.919 界内） | [0.5,1.25] 步长 0.05 |
+
+**全部默认值绑定 `entry-default-s133-signed.hap@9d11849` 构建基线**（f=c=1、六参数全默认 = s133 已冻结输出，逐位一致——单测②的期望值锚定此构建）。rendererVersion 字段绑定该构建 hash（`b0c67920…24d6f3`）。
+
+#### 13.7.2 映射公式契约（renderer 侧唯一实现点）
+
+```ts
+// P012WaterSandRenderer.applyAppearance(next: P012AppearanceParams) 内（唯一消费点，禁第二实现）：
+// ① f/c 进雾链（复用 E3 既有 fogLut/bake 循环，零新传递函数）：
+z(c, m)   = clamp(1 + P012_A_MOTTLE_STRETCH * c * (m - 1), 0.2, 2.0)   // m = n1Field.sample(...)
+tauStatic = max(0, P012_A_TAU_STATIC_BASE + P012_A_TAU_STATIC_AMP * (z - 1))
+tauWater  = 既有悬浮光学项 + tauStatic
+alphaWater    = min(0.78, fogAlpha(f * tauWater))        // cap 只读（:89 常量）
+alphaInterface = 既有界面路径（0.55 上限，首版不随 f/c 改）   // 候选稿 §2.1 红线
+// ② 层理幅度：
+ampOrdered = P012_C_AMP_ORDERED * strataStrengthScale    // 默认 6×1=6（s133 基线）
+ampMixed   = P012_C_AMP_MIX * strataStrengthScale        // 保留 1:2 弱化关系
+// ③ 颗粒：
+fine 档 → 盒滤波半径 R = grainFeaturePx/2（2↔R1、4↔R2、6↔R3），同 seed 重生成 tile，
+  保留归一化/截幅/envelope=2×fine 关系（候选稿 §2.1「不靠降分辨率模拟粗颗粒」）
+sigma = grainSigma 直接替换 P012_B_SIGMA 常量位（烘焙时读取）
+```
+
+**契约纪律**：f=c=1、全默认必须恢复 s133 逐位输出（候选稿 §2.1「恢复同构建推荐链」）；公式内的 clamp(0.2,2.0) 与 min(0.78,·) 是**算法行为**，与 schema 校验的拒绝语义分开（候选稿 §3「公式内有限颜色截幅是算法行为，与输入拒绝区分」）。
+
+#### 13.7.3 λ 双登记与同 k 去重
+
+有效周期公式（候选稿 §2.2 实证陷阱）：`lambdaPx = 256 / max(1, ceil(256 / (lambdaMaterial * pxPerMaterial)))`，pxPerMaterial = boxH/capacity（每构建几何定值）。**去重表在 schema 校验层生成**：对名义域 [16,32] 枚举 0.1 步进，计算每点的 (lambdaPx, k=256/lambdaPx)，**k 相同的名义值合并为一个控件档**（UI 只暴露去重后档位，避免「滑动无变化」）；`validateP012AppearanceParams` 同时校验「名义值 ∈ 去重表键集」。**requested/effective 双登记**：appearance 配置对象只存名义值；烘焙时派生 effectiveλ 并随外观测量 manifest 输出两者+k+pxPerMaterial（候选稿 §2.2「候选观测同时登记 requested/effective λ、几何比例与周期数 k」）。对齐算法不改（候选稿「不得未评审就修改对齐算法」）——去重在控制层，不动 `lambdaPx` 公式。
+
+#### 13.7.4 与 E3 锚点的联动硬边界
+
+1. **默认值域 = 锚点已验域**：六参数默认组合（全 s133 基线）是唯一 PASS/FROZEN 的外观配置——参数可调化实现的推荐配置必须恒等于该组合。
+2. **防抹平 std 比 [0.90,1.10] 作为 fog/mottle 可调域的登记边界**：该界当前只对「f=c=1 的 OFF/ON 配对」冻结；**f/c 离开 1.0 即离开已验域**——按任务书第 4 项裁定：面板暴露的 [0.5,1]/[0.5,1.25] 域**允许探索**（候选稿 §5 的研究语义），但每个出厂/推荐档位若含 f≠1 或 c≠1，须先补该档位的 OFF/ON std 配对（tester 冻结侧另行排期）；首版 UI 在 f/c≠1 时标注「探索配置（未锚点验证）」。**不在 schema 层禁 f/c≠1**——锚点约束是验证域问题不是合法性问题，禁了就与研究语义冲突（候选稿 §5 的探索端点 0.5/1.25 全部合法）。
+3. **单轴变更重验矩阵**（developer 交付时随附，非本节冻结）：fine/sigma/λ/强度 各档 × 物理零触碰断言已有；J95/J90/std 比的逐档复验属 tester 锚点适用域 revision（候选稿 §2「上线前应通过参数化锚点适用域 revision」）——**实现解锁不等待该矩阵**（探索档标注机制已隔离风险），但正式推荐/预设档发布前必须补齐。
+4. **segU/segV 不入六参数**：§12.1 的上屏分段（segU=2 等）是 E3 修复基线的组成部分，属 rendererVersion 绑定项（构建 hash），不是用户可调参数——schema 不暴露，防「调 seg 复现 s132 退化」。
+
+#### 13.7.5 资源接口签名（renderer 侧）
+
+```ts
+// P012WaterSandRenderer 追加
+applyAppearance(next: P012AppearanceParams): string | null {
+  // 1) validate（复用 validateP012AppearanceParams）→ 非 null 返回错误串（拒绝整包）
+  // 2) diff 检测（对 lastApplied 逐字段）→ 无变化 return null 直接成功
+  // 3) 按重烘焙矩阵 stage：fine/sigma → 颗粒位图组；λ/强度 → 层纹位图组；
+  //    f/c → 两雾 buffer dirty=true（§12.3：不得触发 B/C 位图重烘）
+  // 4) staging 成功 → 帧边界切换（§13.3）；失败 → 释放 staging、维持旧包、返回错误串
+}
+getAppearanceConfigRevision(): number;      // UI 显示/持久化用
+getEffectiveStrataLambda(): number;         // 诊断/manifest 输出（13.7.3 双登记的 effective 侧）
+```
+
+**成本标注**（§13.4 矩阵的帧时补充）：颗粒组重烘 ~3×256² 烘焙（同步 <10ms 量级，§13.4）；层纹组 ~0.19MiB；f/c 仅 buffer 重烘焙（§12.3 既有路径，热帧 ≤0.5ms 预算内）。**buffer 宽度与 segU/segV 是构建绑定，不随参数变**（13.7.4-4）。
+
+#### 13.7.6 路由与解锁声明
+
+本节补齐后 §13 全量 READY_FOR_DEVELOPER：**【参数可调化实现】（6ad9ea60…c3a）三前置全部达成**——①E3 复测 ✅（s133 std 0.931）；②锚点 revision ✅（`e3-grid-display-v1-freeze-revision.md` 三核心锚点 PASS/FROZEN + §12.1/12.3 工程基线）；③配置接口细化 ✅（§13.1-13.6 + 本节）。developer 实现任务解锁；实现顺序建议 E3 基线 commit 之后同批（共享雾 buffer 失效基建）。单测⑦项清单见 §13.6，期望值锚定 s133 构建基线。
+
+变更记录：2026-10-23，依据 manager【P-012·配置接口细化】任务新增 §13.7。五项增量落盘：数值绑定表（六默认值=s133 常量+构建 hash）/映射公式契约（f/c 雾链+层理幅度+颗粒档，唯一实现点）/λ 双登记+同 k 去重（控制层去重不动对齐算法）/锚点联动硬边界（默认域=已验域、f/c≠1 标注探索、segU/segV 不暴露）/资源接口签名（applyAppearance diff-staging-切换）。

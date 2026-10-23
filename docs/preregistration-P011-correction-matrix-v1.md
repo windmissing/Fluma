@@ -2,6 +2,8 @@
 
 日期：2026-10-22。责任：designer。状态：**DESIGN_ONLY / PREREGISTRATION_PENDING_MANAGER / NO_CAPTURE_AUTHORIZATION**。本稿定义采前方法；新增收益/非劣/止损数值须manager批准并绑定manifest后才冻结执行，不授权真机采集，不预设correction转正。
 
+> **2026-10-23 正式批解释口径追加（不改写下方历史设计）**：conditioning Q3 未激发 G1/G2/G0 差异，用户批准 108-run 批按“27 个配对 block、单一 working state”解释。正式统计与 G2/G0 假设失效清单以 [conditioning 统计修订 v1](correction-matrix-conditioning-statistics-revision-P011-v1.md) 为准；本稿 §4–§6 的三场景设计意图及旧门槛保留作历史，不可再把本批标签当独立场景。
+
 依据：[correction算法§3–10](algorithm-P011-relax-correction-v1.md)、[参数外置方案§6](algorithm-P011-user-threshold-config-v1.md)、[architecture§24.3/§27](architecture-P011.md)、[数据路径成本账本§7](design-P011-obs3-calibration-data-path-v1.md)。本实验是分配策略对照，不是观测③的阈值标定；其run数不代替或降低旧标定的34run/四cell/24层门槛。
 
 ## 1. 比较对象与采前冻结
