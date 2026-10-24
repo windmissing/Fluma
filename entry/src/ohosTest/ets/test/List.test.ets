@@ -1,4 +1,5 @@
 import { describe, it, expect } from '@ohos/hypium';
+import p011ParticleM1Test from './P011ParticleM1Test';
 import particleTest from './ParticleTest';
 import physicsConfigTest from './PhysicsConfigTest';
 import spatialHashTest from './SpatialHashTest';
@@ -12,6 +13,7 @@ import p011SchedulePlayerTest from '../../../test/P011SchedulePlayerTest';
 import p012WaterSandAdapterTest from '../../../test/P012WaterSandAdapterTest';
 
 export default function abilityTest() {
+  p011ParticleM1Test();
   describe('ActsAbilityTest', () => {
     it('assertContain', 0, () => {
       let a: string = 'abc';
