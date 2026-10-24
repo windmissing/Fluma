@@ -1651,6 +1651,124 @@ function makeCountingCanvas(sink) {
   })();
 })();
 
+// ═════════ s136 定点修复单测（phase 代理稳定化 + 噪声场维护门控——任务 6adc5132…9065e） ═════════
+(function e3PhaseStabilizationSuite() {
+  const mcMod = require('../entry/src/main/ets/render/P012MaterialMotionCache.ets');
+  const { P012MaterialMotionCache } = mcMod;
+  const { P012FrameSlot, P012MaterialFrameView } = adapterMod;
+
+  function massView(arr) {
+    const cols = arr.length;
+    const slot = new P012FrameSlot(cols);
+    slot.massH.set(arr);
+    slot.massL.set(arr);
+    return new P012MaterialFrameView(slot);
+  }
+  function block(cols, a, b, val) {
+    const arr = new Float64Array(cols);
+    for (let c = a; c <= b && c < cols; c++) arr[c] = val;
+    return arr;
+  }
+
+  // 0) 死区/settle 稳定：零运动（prev==curr）→ globalPhasePx 恒 0，无数值伪累计
+  (function t0() {
+    const cols = 64;
+    const mc = new P012MaterialMotionCache(cols);
+    const flat = new Float64Array(cols).fill(100);
+    for (let f = 0; f < 100; f++) {
+      mc.update(massView(flat), massView(flat), true, 5, 256);
+    }
+    const zero = mc.globalPhasePx(true) === 0;
+    results.push({ name: 'p012_e3_phaseZeroMotionStable', status:
+      zero ? 'PASS' : 'FAIL',
+      error: `零运动100帧后globalPhasePx=${mc.globalPhasePx(true)}（须=0）` });
+  })();
+
+  // ① 真实搬运累计 + 平滑：定常平移（块右移 1 列，重复配对）每帧同 δx，
+  //    globalPhasePx 线性累计且无跳变（治本=未 wrap 累加）
+  (function t1() {
+    const cols = 64;
+    const mc = new P012MaterialMotionCache(cols);
+    const prev = block(cols, 30, 40, 100);
+    const curr = block(cols, 31, 41, 100);
+    const pv = massView(prev);
+    const cv = massView(curr);
+    const deltas = [];
+    for (let f = 0; f < 100; f++) {
+      const before = mc.globalPhasePx(true);
+      mc.update(pv, cv, true, 5, 256);
+      deltas.push(mc.globalPhasePx(true) - before);
+    }
+    const gp = mc.globalPhasePx(true);
+    let maxDelta = 0;
+    for (const d of deltas) maxDelta = Math.max(maxDelta, Math.abs(d));
+    // 累计显著（跟踪真实搬运）+ 每帧增量一致（平滑，无 wrap 跳变）
+    const accumulated = gp > 10;
+    let smooth = true;
+    for (const d of deltas) if (Math.abs(d - deltas[0]) > 1e-6) smooth = false;
+    results.push({ name: 'p012_e3_phaseGenuineAccumulates', status:
+      (accumulated && smooth && maxDelta < 5) ? 'PASS' : 'FAIL',
+      error: `globalPhasePx=${gp.toFixed(2)} maxDelta=${maxDelta.toFixed(3)} accumulated=${accumulated} smooth=${smooth}` });
+  })();
+
+  // ② wrap 边界不跳变：强平移（块右移 20 列，重复配对）使逐列 UV 多次跨 256
+  //    边界；globalPhasePx 必须平滑（max 单帧增量<5px），旧 mean(uv) 则跳变。
+  (function t2() {
+    const cols = 64;
+    const mc = new P012MaterialMotionCache(cols);
+    const prev = block(cols, 30, 40, 100);
+    const curr = block(cols, 50, 60, 100);
+    const pv = massView(prev);
+    const cv = massView(curr);
+    let gpPrev = 0, muPrev = 0, gpMax = 0, muMax = 0;
+    for (let f = 0; f < 300; f++) {
+      mc.update(pv, cv, true, 5, 256);
+      const gp = mc.globalPhasePx(true);
+      const mu = mc.meanDeltaXPx(true);
+      if (f > 0) {
+        gpMax = Math.max(gpMax, Math.abs(gp - gpPrev));
+        muMax = Math.max(muMax, Math.abs(mu - muPrev));
+      }
+      gpPrev = gp; muPrev = mu;
+    }
+    // 新代理平滑（无 wrap 跳变）；旧 mean(uv) 在 wrap 处跳变
+    const gpSmooth = gpMax < 5;
+    const muJumpy = muMax > gpMax + 20;
+    results.push({ name: 'p012_e3_phaseWrapNoJump', status:
+      (gpSmooth && muJumpy) ? 'PASS' : 'FAIL',
+      error: `gpMax=${gpMax.toFixed(3)} muMax=${muMax.toFixed(2)} gpSmooth=${gpSmooth} muJumpy=${muJumpy}` });
+  })();
+
+  // ③ 噪声场维护门控 + 离线重烘率量化：settle 尾段噪声场重烘≈0（旧 s136 真机
+  //    63% 帧 @133ms 主因=110ms 全量重烘）；缓冲重烘仅余真实层高蠕变。
+  (function t3() {
+    const f = new WaterSandField(128, 192);
+    f.initialize(fullScene(128));
+    f.setTilt(15);
+    const r = new P012WaterSandRenderer(128, 192);
+    const c = makeCountingCanvas({});
+    const ctxEab = () => makeContext({ appearanceTier: typesMod.P012AppearanceTier.EAB });
+    for (let i = 0; i < 600; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), ctxEab());
+    }
+    const nb0 = r.e3Noise.bakeCount;
+    const b0 = r.e3BakeCount;
+    for (let i = 0; i < 300; i++) {
+      f.step(1 / 60);
+      r.render(c, f.snapshot(), ctxEab());
+    }
+    const noiseTail = r.e3Noise.bakeCount - nb0;
+    const bufTail = r.e3BakeCount - b0;
+    results.push({ name: 'p012_e3_noiseSettleRebakeLow', status:
+      noiseTail < 5 ? 'PASS' : 'FAIL',
+      error: `settle尾段300帧噪声重烘=${noiseTail}（旧63%@133ms；治本+门控→≈0）` });
+    results.push({ name: 'p012_e3_bufferSettleRebakeLow', status:
+      bufTail < 120 ? 'PASS' : 'FAIL',
+      error: `settle尾段300帧缓冲重烘=${bufTail}（真实层高蠕变，<120）` });
+  })();
+})();
+
 (function e2TopLightSuite() {
   const types = typesMod;
 

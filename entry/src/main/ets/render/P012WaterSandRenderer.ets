@@ -180,6 +180,13 @@ const P012_E3_PHASE_EPS = 0.5;
 const P012_E3_MOTTLE_EQUIV_AMP = 1.63;
 /** N1 场烘焙余量（px，素材周期上界 64） */
 const P012_E3_NOISE_MARGIN = 64;
+/**
+ * N1 场覆盖维护门控（保底）：窗口平移量 < 此值（px）跳过 shiftAndBake。
+ * 与内部 0.5px 短路互补——phase 代理稳定化（治本）后残余亚视觉位移也不
+ * 触发 110ms 全量重烘；genuine 搬运每移动 GATE px 才重烘一次（≤2px 滞后
+ * 落在 64px 余量内，视觉不可辨）。settle 场景 → 零重烘。
+ */
+const P012_E3_NOISE_GATE_PX = 2;
 /** 纯 alpha 诊断图开关（debug build 常量，不进 want/产品；§12.5-2） */
 const P012_E3_DEBUG_ALPHA_ONLY = false;
 /** 雾色（fillFogTiers 与 E3 I2 烘焙共用；rgb(232,240,236)） */
@@ -259,6 +266,8 @@ export class P012WaterSandRenderer {
   /** ── E3 资源（§12：I2 双缓冲 + N1 噪声场 + 失效检测快照）── */
   /** N1 渲染专用噪声场（连续，无 64 周期；e3n1 消融时不用） */
   private e3Noise: P012E3NoiseField | null = null;
+  /** N1 场覆盖维护门控：上次实际烘焙的窗口 x0（null=未烘焙/需强制） */
+  private e3NoiseX0: number | null = null;
   /** I2 水体雾缓冲（waterTop..sandTop 域） */
   private e3WaterBuffer: P012E3FogBuffer | null = null;
   /** I2 界面带缓冲（sandTop±halfW 域） */
@@ -858,6 +867,7 @@ export class P012WaterSandRenderer {
     // rides along — bounded, never replayed).
     this.sandTracer.clear();
     this.aPhaseX = 0;
+    this.e3NoiseX0 = null;
     if (this.e3WaterBuffer !== null) {
       this.e3WaterBuffer.dirty = true;
     }
@@ -1843,7 +1853,7 @@ export class P012WaterSandRenderer {
   /** 雾平流相位（E3）：pairValid 时取 motionCache 重相净位移（与 B 档 offH
    *  同源）；断配对冻结（保持 aPhaseX 旧值，不跨失效帧累计）。 */
   private fogPhaseX(): number {
-    return this.lastPairValid ? this.motionCache.meanDeltaXPx(true) : this.aPhaseX;
+    return this.lastPairValid ? this.motionCache.globalPhasePx(true) : this.aPhaseX;
   }
 
   /**
@@ -1868,6 +1878,7 @@ export class P012WaterSandRenderer {
       this.e3PrevSmooth[3].fill(NaN);
       this.e3WaterBuffer.dirty = true;
       this.e3IfaceBuffer.dirty = true;
+      this.e3NoiseX0 = null;          // 几何变化→窗口尺寸可能变化→强制重烘
     }
     // 层高/waterTop 增量检测：任一列 |Δ| > LAYER_EPS → dirty。
     // 阈值 0.25 物理格（视觉可辨下限之下的安全冗余；1e-9 会让沉降中
@@ -2093,10 +2104,16 @@ export class P012WaterSandRenderer {
       this.e3PrevQH!.set(qHArr);
       this.e3PrevQL!.set(qLArr);
     }    // N1 场覆盖维护（§12.3：补边不重播种；覆盖 [−margin−aPhaseX, boxW+margin−aPhaseX]）
+    // 保底门控：窗口平移 < P012_E3_NOISE_GATE_PX 跳过（治本稳定化后残余亚视觉
+    // 位移不触发 110ms 全量重烘；genuine 搬运按 GATE 步距重烘，滞后落在余量内）。
     if (this.e3Noise !== null) {
       const needX0 = -this.fogPhaseX() - P012_E3_NOISE_MARGIN;
       const needW = boxW + 2 * P012_E3_NOISE_MARGIN;
-      this.e3Noise.shiftAndBake(needX0, 0, needW, boxH);
+      if (this.e3NoiseX0 === null ||
+        Math.abs(needX0 - this.e3NoiseX0) >= P012_E3_NOISE_GATE_PX) {
+        this.e3Noise.shiftAndBake(needX0, 0, needW, boxH);
+        this.e3NoiseX0 = needX0;
+      }
     }
     // 绘制（按 ifaceOnly 分流）——**平台降级路径**（2026-10-22 取证）：
     // ArkTS 真机 OffscreenCanvas 在帧循环内 putImageData 产出全白（与

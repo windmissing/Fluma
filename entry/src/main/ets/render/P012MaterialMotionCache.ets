@@ -31,6 +31,20 @@ export class P012MaterialMotionCache {
   private tilePx: number = 256;
   /** 最近一次更新是否有效（驱动冻结/重建） */
   private lastValid: boolean = false;
+  /**
+   * 全局平流相位（雾代理）——未 wrap 的累计净搬运（px），重相/轻相各一。
+   * 取代旧 mean(uv) 的「逐列 wrap 均值」：settle 下单列 UV 跨越 tile 边界使
+   * 均值跳变（实测 phaseDelta 量子化于 {0,92,162,210}px）→ fogPhaseX 每帧跳
+   * → E3 双缓冲每帧 dirty（20ms）+ 噪声场窗口每帧平移（110ms 全量重烘）。
+   * 治本=在「未 wrap 的累计量」上计算后单次取用，绝不对均值施加 wrap。
+   * 死区（②）抑制亚视觉增量累计；近空列钳幅（③）抑制 mbar→0 放大污染。
+   */
+  private globalPhaseHpx: number = 0;
+  private globalPhaseLpx: number = 0;
+  /** 近空列 deltaX 钳幅（px）：mbar→eps 时 deltaX 被放大，钳住防污染全局均值 */
+  private static readonly DX_CLAMP_PX = 4;
+  /** 亚视觉增量死区（px/帧）：低于此的逐帧净搬运不累计（抑制 settle 微抖） */
+  private static readonly PHASE_DEADZONE_PX = 0.25;
 
   constructor(cols: number) {
     this.cols = cols;
@@ -97,6 +111,27 @@ export class P012MaterialMotionCache {
       u = ((u % tp) + tp) % tp;
       uv[c] = u;
     }
+    // ⑤ 全局平流相位（雾代理，未 wrap）：mean(δx·colW) 累计。deltaX 本身不 wrap，
+    //   故均值无跳变；近空列钳幅（③）+ 亚视觉增量死区（②）双保险。
+    //   这是 fogPhaseX 的真实来源——取代旧 mean(uv) 的 wrap 均值（跳变源）。
+    let sumPx = 0;
+    for (let c = 0; c < n; c++) {
+      let dxPx = deltaX[c] * colW;
+      if (dxPx > P012MaterialMotionCache.DX_CLAMP_PX) {
+        dxPx = P012MaterialMotionCache.DX_CLAMP_PX;
+      } else if (dxPx < -P012MaterialMotionCache.DX_CLAMP_PX) {
+        dxPx = -P012MaterialMotionCache.DX_CLAMP_PX;
+      }
+      sumPx += dxPx;
+    }
+    const incrPx = sumPx / n;
+    if (Math.abs(incrPx) > P012MaterialMotionCache.PHASE_DEADZONE_PX) {
+      if (heavy) {
+        this.globalPhaseHpx += incrPx;
+      } else {
+        this.globalPhaseLpx += incrPx;
+      }
+    }
   }
 
   /** B 档（无 D）：全局平流偏移 = 沙区 mean(UV)（px）。所有列共享 → 无缝。 */
@@ -111,6 +146,15 @@ export class P012MaterialMotionCache {
       s += uv[c];
     }
     return s / n;
+  }
+
+  /**
+   * 全局平流相位（雾代理，未 wrap）——E3 fogPhaseX 改用此值（治本修复）。
+   * 返回累计净搬运（px），settle 亚视觉增量被死区抑制→稳定；真实搬运累计→
+   * 平滑驱动雾流。不 wrap：wrap 会破坏连续漂移并引发跳变（旧 mean(uv) 之弊）。
+   */
+  globalPhasePx(heavy: boolean): number {
+    return heavy ? this.globalPhaseHpx : this.globalPhaseLpx;
   }
 
   /** D 档未来：第 g 组中心列偏移（px）—— 各列独立偏移支撑 16 组局部各向异性 */
@@ -139,6 +183,8 @@ export class P012MaterialMotionCache {
     this.deltaXL.fill(0);
     this.uvHpx.fill(0);
     this.uvLpx.fill(0);
+    this.globalPhaseHpx = 0;
+    this.globalPhaseLpx = 0;
     this.lastValid = false;
   }
 }

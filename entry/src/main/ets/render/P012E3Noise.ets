@@ -38,6 +38,8 @@ function gridHash(i: number, j: number, seed: number): number {
 export class P012E3NoiseField {
   /** 渲染专用种子（已 XOR 混合） */
   readonly seed: number;
+  /** 实际烘焙次数（含首次；短路跳过不计）——离线重烘率量化用 */
+  bakeCount = 0;
   /** 细尺度格点尺寸（px，世界坐标） */
   private readonly scale1Px: number;
   /** 粗尺度格点尺寸（px） */
@@ -136,6 +138,7 @@ export class P012E3NoiseField {
     this.bakedW = w * px;
     this.bakedH = h * px;
     this.bakedPx = px;
+    this.bakeCount++;
   }
 
   /**
