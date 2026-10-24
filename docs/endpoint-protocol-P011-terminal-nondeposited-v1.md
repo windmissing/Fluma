@@ -10,7 +10,9 @@
 | `protocolRevision` | `endpoint-terminal-nondeposited-v1` |
 | `endpointMetricRevision` | `terminal-nondeposited-v1.1`（报告字段取值，见 §6.1） |
 | `endpointAuthority` | `APPROVED` |
+| `endpointFieldAlignment` | `ALIGNED`（依 `docs/decision-P011-endpoint-field-alignment-v1.md` §1 A1–A3 的字段名唯一落点；对齐证据=该裁定 + 本稿 commit `69e27b9` + architect 字段稿 `docs/architecture-P011-endpoint-fields-revision-v1.md`） |
 | 依据裁决 | `docs/decision-P011-terminal-nondeposited-fraction-v1.md`（用户 2026-10-24 批准，5 项逐条裁定 + 配套规定） |
+| 依据字段对齐裁定 | `docs/decision-P011-endpoint-field-alignment-v1.md`（manager 裁定：§1 字段名唯一落点 A1–A3；§2 采纳本稿 §5.3 结论；§4 tester 侧修正要求 T1–T3） |
 | 依据设计 | `docs/design-P011-terminal-nondeposited-fraction-v1.md` §7（v1.1 定稿） |
 | 依据预注册 | `docs/preregistration-P011-dual-field-particle-v1.md`（CONS/BUD/LIFE/SRC/GES estimand **原样保留**，本 revision 不改一个字） |
 | 依据字段权威 | `docs/architecture-P011-dual-field-particle-v1.md` §5.6（v7 `particles` 块、七类事件字段名） |
@@ -118,8 +120,8 @@ SLIP 各相位**不额外要求 `shake=0`**：现行 `pages/SandCanvas.ets` 在 
 ### 3.2 连接键与 phase occurrence 身份
 
 - 连接键：`(runId, sequence, frameId, substepId)`。
-- `phase occurrence` 用**命令/阶段身份**区分（`context.phaseOccurrenceId`：同一 `phaseD` 的第 n 次出现），不把重复同名 phase 拼接为一个组。现行 checker 按 `context.phaseD` 分组，重复同名相位会被合并——实现须改用 occurrence 身份分组。
-- 字段名 `phaseOccurrenceId` 由 architect 在字段 revision 中登记；若 architect 另定名，须出对齐结论并同步本 revision 的 §11 用例条目。
+- `phase occurrence` 用**命令/阶段身份**区分（`context.endpointPhaseOccurrenceId`：同一 `phaseD` 的第 n 次出现），不把重复同名 phase 拼接为一个组。现行 checker 按 `context.phaseD` 分组，重复同名相位会被合并——实现须改用 occurrence 身份分组。
+- 字段名 `context.endpointPhaseOccurrenceId` 已由 architect 字段稿与 manager 对齐裁定（§1 A1）统一为唯一落点；语义与本节原描述完全一致（区分同名重复相位、缺失记 `INCOMPLETE`）。
 
 ### 3.3 时钟契约
 
@@ -201,10 +203,10 @@ C 实现后若 `getTotals()` 纳入粒子桶，同名 live 值的分母将变为
 
 | 字段 | 定义 | 用途 |
 |---|---|---|
-| `legacySuspOnly.recomputed` | 按**历史分母语义** `A_hist = D+U` 重算的 `U/max(A_hist,EPS)` | 与历史 run 逐位对照 |
-| `wsMetricSuspensionFractionLive` | 现行代码路径实测发射值 | C run 内的现况披露 |
+| `legacyEndpointFraction` | 历史分母语义：`U/R`，`R` = 该 case 的历史分母（SLIP 用 `R_SLIP`；WS 用 `A_hist = D+U`） | 与历史 run 逐位对照（SLIP 对应现行 SLIP-03 悬沙判据，WS 对应现行 WS-08 残余判据）；`R≤0` 记 `INVALID_DENOMINATOR` |
+| `legacyMetricSuspensionFraction` | 现行代码路径实测：`U/max(A,EPS)`，`A = D+U+P` | C run 内的现况披露 |
 
-两者在 C run 中**必然不同**，这不是双算失败，而是引入第三桶的必然结果；报告须分别标注，禁止互为别名、禁止任一单独放行。
+两者在 C run 中**必然不同**，这不是双算失败，而是引入第三桶的必然结果；报告须分别标注，禁止互为别名、禁止任一单独放行。（边界说明：无真实粒子层即 `P=0` 且两者分母口径一致时，数值可以相同，此时 legacy 与新口径一致，不构成双算失败；上述禁止项一律不变。）
 
 ### 5.4 回算与历史报告
 
@@ -227,7 +229,8 @@ C 实现后若 `getTotals()` 纳入粒子桶，同名 live 值的分母将变为
 | `endpointStatus` | string | `PASS`/`FAIL`/`NOT_IMPLEMENTED`/`INVALID_LEDGER`/`INVALID_BASELINE`/`INVALID_DENOMINATOR`/`INCOMPLETE` |
 | `endpointWindowStatus` | string | `PASS`/`FAIL`/`INCOMPLETE`/`NOT_IMPLEMENTED` |
 | `endpointStatusDetail` | object | 缺失字段路径 / 失败闸门 / 不可观测项，分开列 |
-| `legacySuspOnly` | object | legacy 口径原判定 + 原分母 + 原 PASS/FAIL + 身份 `legacy-susp-only` |
+| `legacyEndpointFraction` | number | 历史分母语义复算值 `U/R`（`R` = 该 case 历史分母：SLIP `R_SLIP`；WS `A_hist=D+U`）；同块披露原分母、legacy 原 PASS/FAIL 与身份 `legacy-susp-only` |
+| `legacyMetricSuspensionFraction` | number | 现行代码路径实测值 `U/max(A,EPS)`（`A = D+U+P`）；同块披露原分母、legacy 原 PASS/FAIL 与身份 `legacy-susp-only` |
 | `endpointDiagnosis` | object | `PERSISTENT_PARTICLE_RESIDUE` / `NOT_OBSERVABLE` 等诊断码与依据 |
 
 ### 6.2 遥测字段（native 采集 → architect 登记）
@@ -241,7 +244,7 @@ C 实现后若 `getTotals()` 纳入粒子桶，同名 live 值的分母将变为
 | `context.particleRouteActive` / `particleRouteId` | `context` | 粒子路由身份 | 必登 | 缺失 → 按未实现处理；关闭时出现粒子字段 → `LEAKAGE` |
 | `context.endpointSampleElapsedMs` | `context` | 成功提交后、相对 run 起点的单调实际 elapsed（ms） | 必登（末窗判定前提） | 缺失 → 新口径 `NOT_IMPLEMENTED`；legacy 继续输出 |
 | `context.integratedPhysicsSeconds` | `context` | `ΣphysicsDt`，**仅诊断** | 可选 | 缺失 → 记 `NOT_OBSERVABLE`，不参与判定 |
-| `context.phaseOccurrenceId` | `context` | 相位 occurrence 身份（区分同名重复相位） | 必登（SLIP 分组前提） | 缺失 → 新口径 `INCOMPLETE`（分组不可信） |
+| `context.endpointPhaseOccurrenceId` | `context` | 相位 occurrence 身份（区分同名重复相位） | 必登（SLIP 分组前提） | 缺失 → 新口径 `INCOMPLETE`（分组不可信） |
 | `context.sourceInjectedH/L` / `sourceEpoch` | `context` | 现制 schema v4 字段 | 已在位 | — |
 | `audit.heavyTotalBefore` / `lightTotalBefore` | `audit` | `VH0/VL0` 取值来源（首条记录） | 已在位 | 缺失 → `INVALID_BASELINE` |
 | `particleEvents[]`（七类） | `context.particleEvents` | 逐笔可溯（`particleId` 全链） | 必登（原子性/余量判定） | 缺失 → `NOT_IMPLEMENTED` |
@@ -270,7 +273,7 @@ C 实现后若 `getTotals()` 纳入粒子桶，同名 live 值的分母将变为
 | N7 | 窗口资格：覆盖完整 1s + `sourceEpoch` 恒定 | 资格校验 | 不足 → `INCOMPLETE`（`ENDPOINT_NOT_QUIET`） |
 | N8 | 状态码分流（§4.2 六码）+ 失败闸门与不可观测项分列 | 输出 | 不得把缺字段当 0、不得把硬闸门失败藏在效果项里 |
 | N9 | `R ≤ 0` → `INVALID_DENOMINATOR` | 分母校验 | 不以 EPS 替代 |
-| N10 | `legacySuspOnly` 块（旧判据 + 原分母 + 原 PASS/FAIL + 身份标记） | 输出 | 与新判据并列输出 |
+| N10 | `legacyEndpointFraction` + `legacyMetricSuspensionFraction` 两字段（旧判据 + 原分母 + 原 PASS/FAIL + 身份标记） | 输出 | 与新判据并列输出 |
 | N11 | 回算值标 `RETROSPECTIVE_DIAGNOSTIC` | 输出 | 仅当原账本具备真实粒子摘要与同子步时间戳 |
 
 ### 7.3 正式判定口径
@@ -346,6 +349,14 @@ C 实现后若 `getTotals()` 纳入粒子桶，同名 live 值的分母将变为
 
 本 revision 的可执行用例条目登记在 `docs/test-cases.md` **§14**（`TC-P011-ENDPOINT-01..08`），字段名与版本号与本 revision 一致（`protocolRevision=endpoint-terminal-nondeposited-v1`、`endpointMetricRevision=terminal-nondeposited-v1.1`）。
 
+字段名唯一落点（依 `docs/decision-P011-endpoint-field-alignment-v1.md` §1 A1–A3，本 revision 与 architect 字段稿一致，`endpointFieldAlignment=ALIGNED`）：
+
+| 语义 | 字段名 | 出现位置 |
+|---|---|---|
+| 相位 occurrence 身份 | `context.endpointPhaseOccurrenceId` | §3.2、§6.2、§14 用例条目 |
+| legacy 双算·历史分母语义复算（`U/R`） | `legacyEndpointFraction` | §5.3、§6.1、§14 用例条目 |
+| legacy 双算·现行代码路径实测（`U/max(A,EPS)`，`A=D+U+P`） | `legacyMetricSuspensionFraction` | §5.3、§6.1、§14 用例条目 |
+
 ## 12. 资产索引与交接
 
 | 资产 | 路径 | 用途 |
@@ -365,4 +376,8 @@ C 实现后若 `getTotals()` 纳入粒子桶，同名 live 值的分母将变为
 ## 13. 追加记录
 
 - 2026-10-24：v1 首次发布。依据用户 2026-10-24 裁决（5 项逐条裁定）与 designer §7.1–§7.5 定稿，冻结分子 `U+P`（含 `state=2`）、分母（各自历史分母不变）、阈值 5%（`epsMass=1e-9`）、末 1s 每子步质量窗、固定终点（SLIP 每相位最后已提交子步 / WS-08 满 8.0s）、post-commit 同子步采样与连接键、单调实际 elapsed 时钟、五类状态码分流、同 run 双算与 `legacy-susp-only` 身份、九项不涉及项。本 revision 不含 estimand 变更。
-- 2026-10-24（补充冻结，§5.3）：现制 `WS_METRIC.suspensionFraction` 的历史分母为 `A_hist = D+U`（`getTotals()` 不含粒子桶）；C 实现后同名 live 值分母将变为 `D+U+P`，故双算须分列 `legacySuspOnly.recomputed` 与 `wsMetricSuspensionFractionLive`，两者在 C run 中必然不同。此点裁决与设计稿未显式写明，按裁决第 1/4 条（保留旧公式旧名、不得混名）与源码事实推出并冻结；如 architect 字段 revision 给出相反结论，须走对齐结论并同步修订本节。
+- 2026-10-24（补充冻结，§5.3）：现制 `WS_METRIC.suspensionFraction` 的历史分母为 `A_hist = D+U`（`getTotals()` 不含粒子桶）；C 实现后同名 live 值分母将变为 `D+U+P`，故双算须分列两个 legacy 量（该两字段名已按下方末条统一为 `legacyEndpointFraction` 与 `legacyMetricSuspensionFraction`，语义未变），两者在 C run 中必然不同。此点裁决与设计稿未显式写明，按裁决第 1/4 条（保留旧公式旧名、不得混名）与源码事实推出并冻结；manager 对齐裁定 §2 已复核源码并采纳该结论。
+- 2026-10-24（字段名统一，依 manager 对齐裁定 `docs/decision-P011-endpoint-field-alignment-v1.md` §1 A1–A3，**语义未变**）：`context.phaseOccurrenceId` → `context.endpointPhaseOccurrenceId`；`legacySuspOnly.recomputed` → `legacyEndpointFraction`（定义 `U/R`，`R` 为该 case 历史分母：SLIP `R_SLIP`、WS `A_hist`）；`wsMetricSuspensionFractionLive` → `legacyMetricSuspensionFraction`（定义 `U/max(A,EPS)`，`A=D+U+P`）；§6.1 的 `legacySuspOnly` 整块按此拆为上述两个具名字段（块内「原分母/原 PASS-FAIL/身份 `legacy-susp-only`」随更名保留内容）。登记项：§0 身份表新增 `endpointFieldAlignment=ALIGNED`（证据=该裁定 + 本稿 commit `69e27b9` + architect 字段稿 `docs/architecture-P011-endpoint-fields-revision-v1.md`）；§11 增补字段名唯一落点表；`docs/test-cases.md` §14 同步改名。
+  - **定义澄清（随对齐裁定，非口径变更）**：`legacyEndpointFraction` 对 SLIP 明确为 `U/R_SLIP`（即现行 SLIP-03 悬沙判据所用分母），WS 侧仍为 `U/A_hist`（`A_hist=D+U`）——两者都是各自 case 的历史分母语义；新口径判定式 `M/R`、阈值、末窗、状态码一律逐字未动。
+  - **逐字未改动**：§1 分子细则 M1–M8、§2 固定终点与末 1s 窗、§4 状态分类与判定顺序、§8 九项不涉及项、§10 十条自检反例；§7 checker 适配 N1–N11 的判定要求未动，仅 N10 的字段引用随 §6.1 更名同步（原 `legacySuspOnly` 块 → 两个具名字段，N10 的内容与原条相同），该处已就地改名并在此登记。
+  - **§5.3 核心结论保留不变**：C run 中两个 legacy 量必然不同（引入第三桶的必然结果，不是双算失败）；禁止互为别名、禁止任一单独放行、报告须分别标注。
