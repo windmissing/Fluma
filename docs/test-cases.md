@@ -821,3 +821,62 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 - **安全闸门继承（零豁免）**：tan30（≤tan30+1e-9 引擎容差）、逐 writer guard、local/bottom/total 预算、守恒 1e-9、库存、容量、有限值、账本对齐、边身份、stop 语义由既有 safety checker 原样执行；不改冻结阈值（26/20 双角为 factory-recommended 用户可配值；`gestureSandRate`/`Nmax`/速度律/观测点阈值一律非冻结，试采后另稿）。
 - **红线**：不用 B tracer 视觉点冒充 C 的守恒/落床/扬沙证据；不改冻结阈值、不追认旧 route 结果、不用新 schema 重解释 108-run 旧批；不自行放宽门槛、不删不利规则；资料缺失不补造；本组不授权采集，C 的 route/build/pilot 须 architect 验收 + manager 批准后单开。
 - **证据通道**：账本级闸门 `python test/p011_dual_field_gate_check.py --ledger <ledger.ndjson> --output <out.json>`（路由身份/泄漏守卫/守恒恒等式/原子性/预算闭合/来源分账断言，字段缺失输出 NOT_IMPLEMENTED 及缺失清单）；合成自测 `python test/test_p011_dual_field_gate_check.py`；字段级单测（C 实现后建 Node 1:1 通道，参照 `test/run_p011_gesture_inject_units.cjs`）；设备级场景（真机 ledger+可选录像交叉）。
+
+## 14. P-011 终点未沉积沙比例 endpoint protocol revision 用例条目（2026-10-24 发布）
+
+> 依据 `docs/endpoint-protocol-P011-terminal-nondeposited-v1.md`（`protocolId=p011-endpoint-terminal-nondeposited` / `protocolRevision=endpoint-terminal-nondeposited-v1` / `endpointMetricRevision=terminal-nondeposited-v1.1` / `endpointAuthority=APPROVED`，METHOD_FROZEN / NOT_IMPLEMENTED / NOT_VALIDATED / DUAL_KALIBER_MANDATORY / NO_CAPTURE_AUTHORIZATION），上游为用户 2026-10-24 裁决 `docs/decision-P011-terminal-nondeposited-fraction-v1.md` 与 designer 定稿 `docs/design-P011-terminal-nondeposited-fraction-v1.md` §7。字段名权威 `docs/architecture-P011-dual-field-particle-v1.md` §5.6/§1.2。**本节为新增并行条目**：现行 `TC-P011-SLIP-03` / `TC-WS-08` / `TC-WS-09` 条目原样有效，不改写；协议落地前双口径并报，任一单口径不单独放行。
+
+### 14.0 冻结口径速查（条目判据均引用此处，不重复定义）
+
+| 项 | 冻结值 |
+|---|---|
+| 分子 | `M = U + P`；`U = Σ(stateAfter.suspH)+Σ(stateAfter.suspL)`；`P = particles.massH + particles.massL`（= `pState∈{1,2}` 求和；`state=0` 不计） |
+| 分子细则 | `DEGRADE`/`TO_SUSP` 累计量永不入分子；`MERGE` 只计现存包一次；`LAND` 只扣 `granted`（余量留 `state=2` 仍计 `P`）；摘要与逐粒不同加；B tracer 不计 |
+| 分母 | SLIP：`R_SLIP` = run 首子步 `stateBefore` 的 `Σ(bh+bl)`，整 run 冻结；WS：`E = VH0+VL0+IH+IL`（`VH0/VL0` 取首条 `audit.heavyTotalBefore`/`lightTotalBefore`） |
+| 阈值 | 5%（不变），`epsMass = 1e-9` material-volume unit（绝对容差，复用现 SLIP checker `EPS`） |
+| 判定式 | `M(k) ≤ 0.05×R + epsMass`，末 1s 窗内**每个已提交子步**均须达标 |
+| 固定终点 t_e | SLIP：每相位 occurrence 的最后一个已提交子步；WS-08：shake-off 生效后满 8.0s 的最后一个已提交子步 |
+| 末 1s 窗 | `[t_e−1000ms, t_e]` 闭区间，按单调实际 elapsed（`context.endpointSampleElapsedMs`）选取；覆盖不足或 `sourceEpoch` 变化 → `INCOMPLETE` |
+| 采样身份 | post-commit 同子步读 `stateAfter` + `particles`；连接键 `(runId, sequence, frameId, substepId)`；相位 occurrence 身份 `context.phaseOccurrenceId` |
+| 状态码 | `NOT_IMPLEMENTED(missing_field)` / `INVALID_LEDGER` / `INVALID_BASELINE` / `INVALID_DENOMINATOR` / `INCOMPLETE`；诊断码 `PERSISTENT_PARTICLE_RESIDUE` / `NOT_OBSERVABLE`；均不得记 PASS |
+| 双算 | 同 run 同时算 legacy（`U`，原分母，原 PASS/FAIL，标 `legacy-susp-only`）与新口径（`M/R` + 末窗）；正式判定用 `M/R`，**不得**用显示分项之和 `M/E`；报告并列 `R`/`E`/`U`/`P`/`M` 及各自比例 |
+| 报告字段 | `endpointMetricRevision` / `endpointAuthority` / `endpointReferenceKind`（`SLIP_INITIAL_BH_BL`/`EXPECTED_TOTAL`）/ `endpointReferenceMass` / `endpointFraction` / `windowPeakFraction` / `massWindowPass` / `endpointStatus` / `endpointWindowStatus` / `endpointStatusDetail` / `legacySuspOnly` / `endpointDiagnosis` |
+
+### 14.1 用例条目
+
+| 用例 ID | 覆盖 | 门类 | 判定要点 | 今日状态（缺哪个遥测字段） |
+|---|---|---|---|---|
+| TC-P011-ENDPOINT-01 | SLIP-03 相位终点未沉积比例（新口径） | MUST-PASS | 每相位 occurrence 的 t_e 处 `M(t_e)/R_SLIP ≤ 0.05 + epsMass/R_SLIP`；`R_SLIP` 取首子步 `stateBefore` 的 `Σ(bh+bl)` 且整 run 不变；正式判定用 `M/R_SLIP` 不用 `M/E` | NOT_IMPLEMENTED（缺 `context.particles.massH/massL`） |
+| TC-P011-ENDPOINT-02 | WS-08 静置 8s 终点未沉积比例（新口径） | MUST-PASS | t_e = shake-off 生效后满 8.0s 的最后一个已提交子步；`M(t_e)/E ≤ 0.05 + epsMass/E`；`E = VH0+VL0+IH+IL`（准入只增一次） | NOT_IMPLEMENTED（缺 `context.particles.massH/massL`） |
+| TC-P011-ENDPOINT-03 | 末 1s 质量窗（每子步达标） | MUST-PASS | 窗内每子步 `M(k) ≤ 0.05×R+1e-9`；输出 `windowPeakFraction` 与 `endpointFraction` 且二者不得互替；单步低谷不得蒙混（反例 §10 第 3 行）；`sourceEpoch` 恒定 | NOT_IMPLEMENTED（缺 `context.endpointSampleElapsedMs` + `context.particles.*`） |
+| TC-P011-ENDPOINT-04 | 双算与报告身份 | MUST-PASS | 同 run 同时输出 legacy 与新口径；legacy 标 `legacy-susp-only` 并保留原 PASS/FAIL 与原分母；`legacySuspOnly.recomputed`（历史分母 `A_hist=D+U`）与 `wsMetricSuspensionFractionLive`（现行代码路径）分列，二者在 C run 中必然不同，禁止互为别名 | NOT_IMPLEMENTED（checker 未实现双算；判据归 tester，实现归 developer） |
+| TC-P011-ENDPOINT-05 | 采样身份与 elapsed 覆盖 | MUST-PASS | post-commit 同子步读取；连接键 `(runId, sequence, frameId, substepId)` 可核；相位 occurrence 分组不拼接同名重复相位；窗按单调实际 elapsed 选取，不用 `sum(physicsDt)`、不用 250ms `WS_METRIC` 抽样替代；覆盖不足记 `INCOMPLETE` | NOT_IMPLEMENTED（缺 `context.endpointSampleElapsedMs` + `context.phaseOccurrenceId`） |
+| TC-P011-ENDPOINT-06 | 分子语义不变量 | MUST-PASS | `state=2` 计入 `P`、`state=0` 不计；`DEGRADE`/`TO_SUSP` 累计量不入分子；`MERGE` 不重复计；`LAND` 只扣 `granted`（余量留 `state=2`）；摘要与逐粒和一致（不一致 → `INVALID_LEDGER`） | NOT_IMPLEMENTED（缺 `context.particles.*` + `context.particleEvents[]`） |
+| TC-P011-ENDPOINT-07 | 状态分类与判定顺序 | MUST-PASS | 先过守恒/库存/容量/guard/预算/有限值/账本对齐/边身份硬闸门，再判效果终点；五码分流各自可触发；`R≤0` → `INVALID_DENOMINATOR`；失败闸门与不可观测项分开记录；硬闸门失败不得用 5% PASS 掩盖 | NOT_IMPLEMENTED（checker 未实现状态码分流） |
+| TC-P011-ENDPOINT-08 | 滞留诊断与不落结论 | TIERED（诊断，不产放行结论） | 终点仍有 `state=2` → 报 `PERSISTENT_PARTICLE_RESIDUE` 交 manager 审查；逐粒滞留时长因架构稿不存 age → 记 `NOT_OBSERVABLE`，**不得**宣称长期不落已排除；5% 数值 PASS 不替代其余出口条件 | NOT_IMPLEMENTED（缺 `context.particles.byState.CONTACT_WAIT`；逐粒年龄字段 rev1 不存在→该子项长期 `NOT_OBSERVABLE`） |
+
+### 14.2 不涉及项（本节条目一律不触碰）
+
+- `TC-WS-08` 的 `peakSusp ≥ 0.5` —— 另案裁决与另起 revision（卡 `6adc64ffe4b017ab33dccb43`），不以 `peak(U+P)/E` 替代；
+- `TC-WS-09` 的采样段（静置 10s、末段 5s）不变，新末 1s 窗嵌在既定末段内；
+- `SLIP-02/03/04` 的 `30°±2°` / target-based `t90≤5100ms` / `R²≥0.90` 与全部安全闸门不动；新残余 PASS 不得追认 SLIP-02 或 P-011 CLOSED；
+- `DUALFIELD-*` 16 例 estimand 与 GES 五观测点零改动，不另造通用 5% PASS；
+- `DUALFIELD-CONS-04` 沉降 t90 口径不动（实现缺口由 developer 按 CONS-04 修）；
+- P-012 `E2`/`E4` 不从本指标推出 PASS，`E4` 沙丘 mask 只取真实沉积床层；
+- 历史报告结论不改、不追认、不推翻；本节不含任何 estimand 变更（变更须另起 revision）。
+
+### 14.3 现行 checker 适配摘要（不改代码，实现归 developer）
+
+SLIP 侧 `test/p011_slip_formal_check.py`：**保留不动**——`initial_deposit_total`（= `R_SLIP`，语义已正确）、tan30 判据与 `SKIP_TAN30_PHASES` 豁免、四层预算、守恒/库存/容量/有限值、边身份、收敛诊断块、SLIP-03 legacy 原公式与原 PASS/FAIL。
+
+**需新增**（判据与落点详见 revision §7.2）：每子步 `M=U+P` 聚合与分子细则校验（M1–M8）、固定终点按 occurrence 身份选取、末 1s 窗按 elapsed 另取、窗内逐子步达标判定、`endpointFraction`/`windowPeakFraction` 输出、窗口资格（覆盖 + `sourceEpoch` 恒定）、五码状态分流、`R≤0` 判定、`legacySuspOnly` 块、回算标 `RETROSPECTIVE_DIAGNOSTIC`。
+
+**易错点**：末 1s 有两个窗——legacy 窗（`physicsTime` 选取，服务冻结的坡度稳定与 legacy 悬沙判定，样本选择必须保持现行实现不变）与新质量窗（`endpointSampleElapsedMs` 选取），两者样本集可能不同，须分别披露，禁止合并成一个「最后 1s」。
+
+**迁移期**：legacy 照常输出；新口径缺 `particles` 或 `endpointSampleElapsedMs` 时输出 `NOT_IMPLEMENTED(missing_field)` 并列缺失字段路径；任一单口径都不单独放行；不得向旧账本补造 v7 字段，不得用结构 `P=0` 冒充实测粒子质量。
+
+### 14.4 证据通道与交接
+
+- 判定协议权威：`docs/endpoint-protocol-P011-terminal-nondeposited-v1.md`（本节字段名与版本号与之逐字一致）。
+- checker 适配对象：`test/p011_slip_formal_check.py`（SLIP 侧）、WS 侧残余项采集（`pages/SandCanvas.ets` `WS_METRIC`）；实现后由 tester 按本节条目出双报告（legacy + 新口径并报），designer 验证，manager 确认适用范围。
+- 交接链：architect 字段 revision 对齐（`6adc64ffe4b017ab33dccb44`）→ developer 实现（`6adc6513e4b017ab33dccdb0`）→ tester 双报告 → designer 验证 → manager 确认适用范围。
