@@ -24,6 +24,6 @@
 
 构建：DevEco bundled hvigorw，`--mode module -p module=entry@default -p properties.enableSignTask=false assembleHap --no-daemon`；JAVA_HOME=jbr 并将其 bin 加入 PATH，DEVECO_SDK_HOME=DevEco/sdk。BUILD SUCCESSFUL（13.868s），零错误，有既有编译警告。首次缺 Java PATH 导致 spawn java ENOENT，修正环境后通过。日志 `.codex/local-test/dc1-build.log`。
 
-运行验证待补：Node 已实际执行产品 ETS 物理路径；检测到真机 62T0225B10010020 正运行应用，为遵守共享设备串行规则，已请求确认设备可占用，尚未安装或操作。因此尚不声称完成真机启动/页面冒烟或长时注入验收。
+运行验证分工（2026-10-24 用户明确）：developer 负责开发和不依赖真机的测试自验；其他智能体负责真机端到端验证。Node 已实际执行产品 ETS 物理路径，离线自验及构建完成；未安装或操作真机，不声称完成真机启动/页面冒烟或长时注入验收。真机验证作为下游交接事项，不再等待 developer 占用设备。
 
 仅提交本卡相关文件，不包含其他在途文档/渲染修改；D1 仍须 manager 验收后解锁。
