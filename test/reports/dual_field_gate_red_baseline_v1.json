@@ -1,0 +1,197 @@
+{
+ "protocolId": "p011-dual-field-particle-v1",
+ "protocolRevision": "preregistration-v1",
+ "ledger": "D:\\hmprojects\\HelloWorld\\test\\artifacts\\p011-corr-matrix-formal-108-20261022\\corr-formal-G1-b01-A-r025\\ledger-trimmed.ndjson",
+ "cases": {
+  "DUALFIELD-CONS-01": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particles.count",
+    "particles.massH",
+    "particles.massL",
+    "stateAfter.bh",
+    "stateAfter.mh",
+    "stateAfter.suspH",
+    "stateAfter.bl",
+    "stateAfter.ml",
+    "stateAfter.suspL",
+    "audit.heavyTotalBefore"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-CONS-02": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents",
+    "particles.massH",
+    "particles.massL"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-CONS-03": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-CONS-04": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particles.count",
+    "context.sourceEpoch",
+    "context.depositedHeavyFraction",
+    "context.depositedLightFraction",
+    "context.t90Heavy"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-BUD-01": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents",
+    "budgets.localUsed",
+    "budgets.totalUsed"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-BUD-02": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-BUD-03": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents",
+    "particles.capacityUsed",
+    "particles.capacityLimit",
+    "particles.degraded.massH",
+    "particles.degraded.massL"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-LIFE-01": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particles.count",
+    "particleEvents"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-LIFE-02": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particles.count",
+    "context.sourceEpoch"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-LIFE-03": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particles.count",
+    "particles.massH",
+    "particles.massL"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-LIFE-04b": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "particleRouteActive (route C run)"
+   ],
+   "detail": "route C not implemented; no C run to pair against the legacy baseline"
+  },
+  "DUALFIELD-SRC-01": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particles.bySourceKind.GESTURE_EXTERNAL.massH",
+    "particles.bySourceKind.GESTURE_EXTERNAL.massL",
+    "particles.bySourceKind.SHAKE_LIFT.massH",
+    "particles.bySourceKind.SHAKE_LIFT.massL",
+    "particles.massH",
+    "particles.massL"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-SRC-02": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents",
+    "context.sourceInjectedH",
+    "context.sourceInjectedL"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-SRC-03": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-GES-01": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "TIERED",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents",
+    "context.physicsTime"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-GES-02": {
+   "status": "NOT_IMPLEMENTED",
+   "gate": "MUST-PASS",
+   "missingFields": [
+    "context.particleRouteActive",
+    "particleEvents"
+   ],
+   "detail": "route C (dual-field particle layer) not implemented in this ledger's build"
+  },
+  "DUALFIELD-LIFE-04a": {
+   "status": "PASS",
+   "gate": "MUST-PASS",
+   "detail": "route-OFF guard: no particle fields on a route-closed ledger (legacy path bit-equivalence precondition)"
+  }
+ },
+ "routeActive": false,
+ "leakage": {
+  "status": "CLEAR",
+  "strayFields": []
+ },
+ "overall": "RED_BASELINE",
+ "summary": {
+  "note": "RED baseline: route C not implemented. Executable today: leakage guard + LIFE-04a. All particle cases NOT_IMPLEMENTED with exact missing field paths."
+ }
+}

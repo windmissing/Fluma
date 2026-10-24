@@ -787,3 +787,37 @@ TC-P011-V28-00的ROI就绪与heavy物理门槛必须分别输出：roiReady只�
 - [ ] **□4 物理逻辑与参数零改动**：relaxAngle 判据、local/bottom/total 预算、全部物理常量逐字不变；probe=null 同输入状态序列等价。
 
 验证资产：`test/p011_v210_natural_observation_check.py`（`validate()` 承载 □1/□3 合成校验）、`test/test_p011_transition_telemetry.py`（合成 ledger 转折契约用例）。正式 run 的 □2 专项计数在 ledger 冻结后执行，计数口径详见 architecture §19.13.1。
+
+## 13. P-011 路线 C 双场粒子 DUALFIELD-* 客观用例（2026-10-24 预注册，RED 基线）
+
+> 依据 `docs/preregistration-P011-dual-field-particle-v1.md`（`protocolId=p011-dual-field-particle-v1` / `revision=preregistration-v1`，METHOD_FROZEN / NOT_IMPLEMENTED / NO_CAPTURE_AUTHORIZATION）与 `design-P011-falling-sand-vertical-routes-v1.md` §4/§6；路线 C 为用户 2026-10-24 选型（真实活动粒子 + 128 列高度场，手势掉沙与摇晃扬沙共同架构）。可执行闸门：`test/p011_dual_field_gate_check.py`；合成自测：`test/test_p011_dual_field_gate_check.py`（36 断言全绿）。真实归档账本 RED 基线证据：`test/reports/dual_field_gate_red_baseline_v1.json`。
+
+- **守恒组（DUALFIELD-CONS-01..04）**：三相+粒子守恒恒等式 `VH_actual = Σ(bh+mh+suspH) + Σ_particle(H) mass`、`VH_expected = VH0 + sourceInjectedH`（外源只增一次），逐子步 drift≤1e-9；susp↔粒子交换原子性（互斥双计检测）；落床部分授予余量滞留不丢不双计（`granted+remainder==requested`）；depositedFraction 分母=累计期望、t90 跨 epoch 无效。
+- **预算组（DUALFIELD-BUD-01..03）**：LAND/CROSS_COLUMN/LIFT 四层计费逐层可审计（local `28·dt` → bottom `10·dt` → total `300·dt` → §19.5 tan30 guard 联合预演）；跨列 300/s 上限且无免费传输通道；满额链（确定性合并保总量+一阶矩 → susp 列均值降级 + `PARTICLE_DEGRADED_TO_COLUMN` 旗标）质量闭合。`Nmax=512` 为候选非冻结值。
+- **生命周期组（DUALFIELD-LIFE-01..04）**：reset/invert 粒子重映射与清理；模式切换（TEST↔EXPERIENCE）/手势清理后已提交账本保留；snapshot/checker 扩展且旧数据不假迁移；旧无源 run 等价回归（04a 关闭守卫今日可执行期望 PASS；04b 配对锚点待 C 实现交付时由 tester+developer 共同冻结，漂移=行为变更走复审）。
+- **来源分账组（DUALFIELD-SRC-01..03）**：`sourceKind=GESTURE_EXTERNAL|SHAKE_LIFT` 两入口不混账（`bySourceKind` 闭合、LIFT 禁触 IH/IL）；admitted=0 零粒子生成；被拒注入零粒子。
+- **场景组（DUALFIELD-GES-01..02）**：手势掉沙累积全链五观测点（首粒延迟/漏段率/交点误差/消失与 settle grant 时差/床面增长=准入沉积）；TEST 与 EXPERIENCE 同一物理角与触点路径。TIERED 阈值待效果试采后另稿冻结，本组不冻结任何观感数值。
+
+| 用例 ID | 组 | 覆盖 | 门类 | 今日 RED 状态 |
+|---|---|---|---|---|
+| DUALFIELD-CONS-01 | 守恒 | §3 三相+粒子守恒恒等式（per-substep drift≤1e-9） | MUST-PASS | NOT_IMPLEMENTED（缺 `particles` 块） |
+| DUALFIELD-CONS-02 | 守恒 | susp↔粒子互斥原子性（事件账本双计检测） | MUST-PASS | NOT_IMPLEMENTED（缺 `particleEvents`） |
+| DUALFIELD-CONS-03 | 守恒 | 落床部分授予余量滞留不丢不双计 | MUST-PASS | NOT_IMPLEMENTED（缺 `particleEvents`） |
+| DUALFIELD-CONS-04 | 守恒 | depositedFraction 分母=累计期望+t90 epoch 无效 | MUST-PASS | NOT_IMPLEMENTED（缺 `particles`/epoch 联动字段） |
+| DUALFIELD-BUD-01 | 预算 | LAND/CROSS/LIFT 四层计费逐层可审计 | MUST-PASS | NOT_IMPLEMENTED（缺事件预算字段） |
+| DUALFIELD-BUD-02 | 预算 | 跨列 300/s 上限+无免费传输通道 | MUST-PASS | NOT_IMPLEMENTED（缺 `CROSS_COLUMN` 事件） |
+| DUALFIELD-BUD-03 | 预算 | 满额合并→降级链质量闭合（PARTICLE_DEGRADED_TO_COLUMN） | MUST-PASS | NOT_IMPLEMENTED（缺 `MERGE/DEGRADE` 事件） |
+| DUALFIELD-LIFE-01 | 生命周期 | reset/invert 粒子重映射与清理 | MUST-PASS | NOT_IMPLEMENTED（缺粒子层） |
+| DUALFIELD-LIFE-02 | 生命周期 | 模式切换/手势清理/已提交账本保留 | MUST-PASS | NOT_IMPLEMENTED（缺粒子层） |
+| DUALFIELD-LIFE-03 | 生命周期 | snapshot/checker 扩展+旧数据不假迁移 | MUST-PASS | NOT_IMPLEMENTED（缺 schema v7） |
+| DUALFIELD-LIFE-04 | 生命周期 | 旧无源 run 等价回归（04a 关闭守卫可执行；04b 配对等价） | MUST-PASS | **04a 今日可执行（期望 PASS）**；04b NOT_IMPLEMENTED |
+| DUALFIELD-SRC-01 | 来源分账 | sourceKind 两入口不混账 | MUST-PASS | NOT_IMPLEMENTED（缺 `bySourceKind`） |
+| DUALFIELD-SRC-02 | 来源分账 | admitted=0 零粒子生成 | MUST-PASS | NOT_IMPLEMENTED（缺粒子层） |
+| DUALFIELD-SRC-03 | 来源分账 | 被拒注入零粒子 | MUST-PASS | NOT_IMPLEMENTED（缺粒子层） |
+| DUALFIELD-GES-01 | 场景 | 全链五观测点（TEST 构造触摸） | TIERED（阈值待试采冻结） | BLOCKED（缺粒子层+真机/seg3 计时，等 s134 修复构建 6adb3508/6adb7038 或附数据污染声明） |
+| DUALFIELD-GES-02 | 场景 | TEST/EXPERIENCE 同一物理角与触点路径 | MUST-PASS（路径同一性） | BLOCKED（缺粒子层+双模式真机对照） |
+
+- **RED 基线规则**：NOT_IMPLEMENTED 须列确切缺失字段路径（不用渲染像素/tracer 点数/视觉估计冒充）；BLOCKED 依赖真机采集或 seg3 计时修复（等修复构建或附数据污染声明）；路线关闭守卫（`particleRouteActive` 缺失或 false 时任何粒子字段出现即 LEAKAGE FAIL）今日可执行；任何用例转绿必须逐粒子/逐笔可溯源（事件 `particleId` 全链可追），不接受只有聚合量的 PASS。
+- **安全闸门继承（零豁免）**：tan30（≤tan30+1e-9 引擎容差）、逐 writer guard、local/bottom/total 预算、守恒 1e-9、库存、容量、有限值、账本对齐、边身份、stop 语义由既有 safety checker 原样执行；不改冻结阈值（26/20 双角为 factory-recommended 用户可配值；`gestureSandRate`/`Nmax`/速度律/观测点阈值一律非冻结，试采后另稿）。
+- **红线**：不用 B tracer 视觉点冒充 C 的守恒/落床/扬沙证据；不改冻结阈值、不追认旧 route 结果、不用新 schema 重解释 108-run 旧批；不自行放宽门槛、不删不利规则；资料缺失不补造；本组不授权采集，C 的 route/build/pilot 须 architect 验收 + manager 批准后单开。
+- **证据通道**：账本级闸门 `python test/p011_dual_field_gate_check.py --ledger <ledger.ndjson> --output <out.json>`（路由身份/泄漏守卫/守恒恒等式/原子性/预算闭合/来源分账断言，字段缺失输出 NOT_IMPLEMENTED 及缺失清单）；合成自测 `python test/test_p011_dual_field_gate_check.py`；字段级单测（C 实现后建 Node 1:1 通道，参照 `test/run_p011_gesture_inject_units.cjs`）；设备级场景（真机 ledger+可选录像交叉）。
