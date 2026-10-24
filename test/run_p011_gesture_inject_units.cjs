@@ -343,6 +343,52 @@ describe('injectGestureSand (gesture-sand-inject-phys §6.2)', () => {
     assert.ok(epoch2 === epoch1 + 1, `epoch ${epoch2} vs ${epoch1}+1`);
   });
 
+  it('p011_gsi_t90RestartsBothPhaseMarkersAtSuccessfulSourceEpoch', 0, () => {
+    const field = makeField();
+    const first = field.injectGestureSand(request(0.2, 0.2, 11, 1000));
+    assert.ok(first && first.admittedH > 0 && first.admittedL > 0);
+    field.t90Heavy = 4.25;
+    field.t90Light = 7.5;
+    const oldEpoch = field.sourceEpoch;
+    const second = field.injectGestureSand(request(0.2, 0.2, 12, 1016));
+    assert.ok(second && second.admittedH > 0 && second.admittedL > 0);
+    assert.equal(field.sourceEpoch, oldEpoch + 1);
+    assert.equal(field.t90Heavy, -1);
+    assert.equal(field.t90Light, -1);
+  });
+
+  it('p011_gsi_t90UsesCumulativeExpectedMassAndExcludesSuspension', 0, () => {
+    const field = makeField();
+    const initial = field.initialHeavy;
+    field.sourceInjectedHeavy = 2000;
+    field.sourceInjectedLight = 2000;
+    field.bh.fill(initial * 0.92 / COLS);
+    field.bl.fill(field.initialLight * 0.92 / COLS);
+    // If suspended mass were counted as deposited, the result would cross 90%.
+    field.suspH.fill(20);
+    field.suspL.fill(20);
+    field.updateMetrics(1 / 60);
+    assert.equal(field.t90Heavy, -1);
+    assert.equal(field.t90Light, -1);
+    field.bh.fill((initial + field.sourceInjectedHeavy) * 0.91 / COLS);
+    field.bl.fill((field.initialLight + field.sourceInjectedLight) * 0.91 / COLS);
+    field.updateMetrics(1 / 60);
+    assert.equal(field.t90Heavy, field.simulationTime);
+    assert.equal(field.t90Light, field.simulationTime);
+  });
+
+  it('p011_gsi_t90NoSourceRunRetainsInitialBaselineBehavior', 0, () => {
+    const field = makeField();
+    field.bh.fill(field.initialHeavy * 0.91 / COLS);
+    field.bl.fill(field.initialLight * 0.91 / COLS);
+    const expectedTime = field.simulationTime + 1 / 60;
+    field.updateMetrics(1 / 60);
+    assert.equal(field.sourceInjectedHeavy, 0);
+    assert.equal(field.sourceInjectedLight, 0);
+    assert.equal(field.t90Heavy, expectedTime);
+    assert.equal(field.t90Light, expectedTime);
+  });
+
 });
 
 // 10) Legacy inject regression: the old interface keeps its exact

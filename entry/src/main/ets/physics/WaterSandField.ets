@@ -1606,11 +1606,10 @@ export class WaterSandField {
         this.sourceInjectedLight += totalL;
         this.sourceEpoch += 1;
         this.dormant = false; // injected material is in flight
-        // §3: t90 windows are invalid across an injection — restart the
-        // observation (only resets markers that have not fired yet).
-        if (this.t90Heavy < 0 && this.sourceEpoch > 1) {
-          this.t90Heavy = -1;
-        }
+        // CONS-04: a successful injection starts a new settling epoch for
+        // both phases. Any t90 observed before this source epoch is invalid.
+        this.t90Heavy = -1;
+        this.t90Light = -1;
         this.updateSandTop();
         return this.gestureReceipt(request, totalH, totalL, null);
       }
@@ -6135,10 +6134,12 @@ export class WaterSandField {
       depositedLight += this.bl[c] + this.ml[c];
       suspended += this.suspH[c] + this.suspL[c];
     }
-    if (this.t90Heavy < 0 && depositedHeavy / Math.max(this.initialHeavy, EPS) >= 0.9) {
+    if (this.t90Heavy < 0 && depositedHeavy /
+      Math.max(this.initialHeavy + this.sourceInjectedHeavy, EPS) >= 0.9) {
       this.t90Heavy = this.simulationTime;
     }
-    if (this.t90Light < 0 && depositedLight / Math.max(this.initialLight, EPS) >= 0.9) {
+    if (this.t90Light < 0 && depositedLight /
+      Math.max(this.initialLight + this.sourceInjectedLight, EPS) >= 0.9) {
       this.t90Light = this.simulationTime;
     }
     const suspensionFraction = suspended / Math.max(this.initialHeavy + this.initialLight, EPS);
