@@ -15,6 +15,7 @@
 | 执行脚本 | `test/p011_endpoint_protocol_v1_execution.py`（tester 侧，只读实现与归档，不改实现） |
 | 证据文件 | `test/reports/endpoint_protocol_v1_execution.json` |
 | 一致性核对 | `docs/endpoint-conformance-report-P011-terminal-nondeposited-v1.md`（判定口径类 45 条：43 条一致，2 条指向同一枚举级缺陷 D-1；报告字段级另计 D-2～D-6） |
+| **补充证据版本** | `docs/endpoint-dual-report-P011-terminal-nondeposited-v1-supplement1.md` —— 并行实现提交 `8e498c5` 后，本报告 §2.1 的 `missingFields` 6 类 / `reportMissingFields` 37 项变为现值 **7 类 / 38 项**，缺陷状态 D-1/D-3/D-5 已修复、D-4 部分推进、D-2/D-6 已裁定待实施。本报告正文数字**不回改**（22:45 时点真实值），现值以补充版本为准；三项主结论经重跑复核全部未变 |
 
 **三类身份标注规则（本报告逐处使用）**：
 
@@ -63,7 +64,7 @@
 | 覆盖/资格原因 | `CLOCK_DOMAIN_MISMATCH`、`ENDPOINT_NOT_QUIET`、`FIXED_END_NOT_PROVEN`、`INVALID_COMMITTED_ORDINAL`、`INVALID_SOURCE_EPOCH`、`MISSING_PHASE_OCCURRENCE`、`WINDOW_LEFT_BOUNDARY_NOT_PROVEN` |
 | 新口径数值 | **未产出**（缺端点字段与粒子摘要，不做任何补造；`endpointFraction`/`windowPeakFraction`/`massWindowPass` 均为 null） |
 | 身份 | `RETROSPECTIVE_DIAGNOSTIC`（回算候选）+ 协议身份 `terminal-nondeposited-v1`/`APPROVED`（口径已批准但**未生效**） |
-| 报告必填元数据 | `reportMissingFields` 共 **37** 项（`reportIdentityStatus=INCOMPLETE`）——按协议不得以空串或 0 掩盖 |
+| 报告必填元数据 | `reportMissingFields` 共 **37** 项（`reportIdentityStatus=INCOMPLETE`）——按协议不得以空串或 0 掩盖（**22:45 时点值**；并行提交 `8e498c5` 后现值为 **38** 项，见补充版本 `docs/endpoint-dual-report-P011-terminal-nondeposited-v1-supplement1.md` §1.1；本报告正文不回改） |
 
 **这一格的关键事实**：该 run 的旧口径 7 个相位全部 PASS，但同一 run 的既有硬闸门（tan30）失败（59413 条越界边），故按协议 §4.1「硬闸门失败不得用 5% PASS 掩盖」，该 run **整体不合格**；新口径状态取 `INVALID_LEDGER`（硬闸门优先于 `NOT_IMPLEMENTED`）。这正是协议要求的「先过硬闸门再判效果终点」在真实数据上的体现。
 
