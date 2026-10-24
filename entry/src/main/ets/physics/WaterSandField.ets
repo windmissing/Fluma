@@ -6043,14 +6043,22 @@ export class WaterSandField {
       }
     }
     if (checkDrift) {
-      const totals = this.getTotals();
-      const driftWater = Math.abs(totals.water - this.initialWater) /
-        Math.max(this.initialWater, EPS);
-      const driftHeavy = Math.abs(totals.heavy - this.initialHeavy) /
-        Math.max(this.initialHeavy, EPS);
-      const driftLight = Math.abs(totals.light - this.initialLight) /
-        Math.max(this.initialLight, EPS);
-      if (driftWater >= DRIFT_LIMIT || driftHeavy >= DRIFT_LIMIT || driftLight >= DRIFT_LIMIT) {
+      // D-C1 fix (route C §0.2, 2026-10-24): the drift denominators MUST
+      // use the same expected baseline as getDrift() — heavy/light:
+      // initial + cumulative sourceInjected*; water: initialWater +
+      // waterTransactionNet (gesture-sand-inject §3, the accepted
+      // design). The pre-fix code compared against the raw initial*
+      // values, so cumulative gesture admission counted as "drift":
+      // once Σadmitted crossed DRIFT_LIMIT the substep audit returned
+      // UNKNOWN and the step loop froze the field permanently (only
+      // reset recovered). getDrift() is the single authority; this path
+      // now delegates to it so the two can never diverge again.
+      // DRIFT_LIMIT and every judgment stay untouched — this is a
+      // baseline-formula correction, not a threshold relaxation.
+      // No-source runs (sourceInjected*=0, waterTransactionNet=0)
+      // degenerate to the historical formula bit-for-bit.
+      const drift = this.getDrift();
+      if (drift.water >= DRIFT_LIMIT || drift.heavy >= DRIFT_LIMIT || drift.light >= DRIFT_LIMIT) {
         this.lastError = WaterSandErrorCode.UNKNOWN;
         return WaterSandErrorCode.UNKNOWN;
       }

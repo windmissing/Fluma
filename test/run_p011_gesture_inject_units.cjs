@@ -364,6 +364,78 @@ describe('injectGestureSand legacy regression (fixed)', () => {
   });
 });
 
+// D-C1 / D0 (2026-10-24): accepted expected-baseline audit regression.
+describe('D-C1 audit expected baseline', () => {
+  it('sustained admission above 0.1 percent keeps stepping', 0, () => {
+    const field = makeField();
+    const initial = field.getTotals();
+    for (let i = 0; i < 60; i++) {
+      assert.ok(field.injectGestureSand(request(0.4, 0.4, i + 1, 1000 + i * 16)));
+    }
+    const totals = field.getTotals();
+    assert.ok((totals.heavy - initial.heavy) / initial.heavy > 0.001);
+    assert.ok((totals.light - initial.light) / initial.light > 0.001);
+    for (let i = 0; i < 120; i++) {
+      const result = field.step(1 / 60);
+      assert.equal(result.ok, true, JSON.stringify(result));
+      assert.equal(result.stepped, true);
+    }
+  });
+
+  it('audit and metrics consume identical drift values for all phases', 0, () => {
+    // Node transpilation exposes TS-private members; no product test hook.
+    for (const phase of ['water', 'heavy', 'light']) {
+      const field = makeField();
+      for (let i = 0; i < 60; i++) field.injectGestureSand(request(0.4, 0.4, i + 1));
+      field.waterTransactionNet = 32;
+      field.waterTop[0] += 32;
+      assert.equal(field.audit(true), null);
+      const expected = phase === 'water' ? field.initialWater + field.waterTransactionNet :
+        field['initial' + phase[0].toUpperCase() + phase.slice(1)] +
+        field['sourceInjected' + phase[0].toUpperCase() + phase.slice(1)];
+      const conservedTotals = field.getTotals();
+      for (const ratio of [0.0005, 0.0015]) {
+        // Inject a controlled ledger discrepancy, without changing water
+        // displacement/capacity (separate invariants checked by audit).
+        field.getTotals = () => ({ ...conservedTotals, [phase]: expected * (1 + ratio) });
+        const drift = field.getDrift();
+        assert.ok(Math.abs(drift[phase] - ratio) < 1e-12, `${phase}: ${drift[phase]} vs ${ratio}`);
+        const metrics = field.getMetrics();
+        assert.equal(metrics.driftWater, drift.water);
+        assert.equal(metrics.driftHeavy, drift.heavy);
+        assert.equal(metrics.driftLight, drift.light);
+        assert.equal(field.audit(true), ratio < 0.001 ? null : physics.WaterSandErrorCode.UNKNOWN);
+      }
+    }
+  });
+
+  it('no-source runs match historical audit bit for bit', 0, () => {
+    const current = makeField();
+    const legacy = makeField();
+    const originalAudit = legacy.audit;
+    const realNow = Date.now;
+    Date.now = () => 0; // wall-clock instrumentation is not physical state
+    legacy.audit = function(checkDrift) {
+      const inventory = originalAudit.call(this, false);
+      if (inventory !== null || !checkDrift) return inventory;
+      const totals = this.getTotals();
+      for (const phase of ['water', 'heavy', 'light']) {
+        const initial = this['initial' + phase[0].toUpperCase() + phase.slice(1)];
+        if (Math.abs(totals[phase] - initial) / Math.max(initial, 1e-9) >= 0.001) {
+          this.lastError = physics.WaterSandErrorCode.UNKNOWN;
+          return this.lastError;
+        }
+      }
+      return null;
+    };
+    try { for (let i = 0; i < 120; i++) {
+      assert.deepEqual(current.step(1 / 60), legacy.step(1 / 60));
+      assert.equal(snapshotState(current), snapshotState(legacy));
+      assert.deepEqual(current.getMetrics(), legacy.getMetrics());
+    } } finally { Date.now = realNow; }
+  });
+});
+
 const failed = results.filter(r => r.status === 'FAIL');
 console.log(JSON.stringify({
   suite: 'run_p011_gesture_inject_units',
