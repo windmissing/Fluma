@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import unittest
 from pathlib import Path
 import sys
@@ -20,6 +21,7 @@ def fixture(case='TC-WS-08', times=None, u=40, p=40):
         records.append(dict(context=dict(runId='r',sequence=i+1,frameId=1,substepId=i+1,physicsDt=1/60,
             physicsTime=100000+i,commandSequence=1,commitStatus='committed',phaseD='same-name',
             particleRouteActive=True,particleRouteId='dual-field-particle-v1',sourceInjectedH=0,sourceInjectedL=0,sourceEpoch=0,
+            externalAdmissionCount=0,
             endpointFieldRevision='p011-endpoint-fields-v1',endpointSampleStage='POST_COMMIT',endpointSampleElapsedMs=t,
             endpointClockId='r:startup-elapsed-v1',endpointPhaseOccurrenceId='occ-1',endpointCommittedOrdinal=i+1,
             integratedPhysicsSeconds=(i+1)/60,shakeInput=0,resetCount=0,invertCount=0,routeChangeCount=0,modeChangeCount=0),
@@ -101,7 +103,7 @@ class EndpointTests(unittest.TestCase):
         self.assertEqual(self.row(data)['endpointStatus'],'NOT_IMPLEMENTED')
         for mutate in [lambda r:r['context'].update(endpointClockId='other'),
                        lambda r:r['context'].update(endpointPhaseOccurrenceId=None),
-                       lambda r:r['context'].update(sourceEpoch=1),
+                       lambda r:r['context'].update(sourceEpoch=1,externalAdmissionCount=1),
                        lambda r:r['context'].update(invertCount=1)]:
             data=fixture();mutate(data[0][-1]);self.assertEqual(self.row(data)['endpointStatus'],'INCOMPLETE')
     def test_missing_ordinal_and_duplicate_key_and_failed_attempt(self):
@@ -145,6 +147,45 @@ class EndpointTests(unittest.TestCase):
         self.assertEqual(self.row(data)['endpointStatus'],'INVALID_BASELINE')
         data=fixture();data[0][-1]['context']['endpointSampleElapsedMs']=float('nan')
         self.assertEqual(self.row(data)['endpointStatus'],'INVALID_LEDGER')
+
+    def test_evidence_mode_enum_and_retrospective_identity(self):
+        data=fixture();data[1]['evidenceMode']='CANDIDATE'
+        report=analyze_endpoint(*data)
+        self.assertEqual(report['status'],'CANDIDATE_ONLY')
+        self.assertEqual(report['occurrences'][0]['evidenceClassification'],'CANDIDATE')
+        data=fixture();data[1]['evidenceMode']='RETROSPECTIVE_DIAGNOSTIC'
+        report=analyze_endpoint(*data)
+        self.assertEqual(report['status'],'RETROSPECTIVE_DIAGNOSTIC')
+        self.assertEqual(report['occurrences'][0]['evidenceClassification'],'RETROSPECTIVE_DIAGNOSTIC')
+        self.assertNotEqual(report['status'],'CANDIDATE_ONLY')
+        data=fixture();data[1]['evidenceMode']='CANDIDATE_WITH_RETRO'
+        report=analyze_endpoint(*data)
+        self.assertEqual(report['status'],'INCOMPLETE')
+        self.assertEqual(report['occurrences'][0]['endpointStatus'],'INCOMPLETE')
+        self.assertIn('INVALID_EVIDENCE_MODE',report['occurrences'][0]['endpointStatusDetail']['incomplete'])
+
+    def test_protocol_hash_and_endpoint_sample_stage_are_reported(self):
+        data=fixture();report=analyze_endpoint(*data);row=report['occurrences'][0]
+        source=Path(__file__).resolve().parents[1]/'docs/endpoint-protocol-P011-terminal-nondeposited-v1.md'
+        self.assertEqual(report['protocolSourceHash'],hashlib.sha256(source.read_bytes()).hexdigest())
+        self.assertEqual(report['protocolSourceHashAlgorithm'],'SHA-256')
+        self.assertTrue(row['protocolSourceHash'])
+        self.assertEqual(row['endpointSampleStage'],'POST_COMMIT')
+
+    def test_external_admission_count_matches_source_epoch_and_missing_is_not_fabricated(self):
+        data=fixture();data[0][-1]['context']['sourceEpoch']=2
+        data[0][-1]['context']['externalAdmissionCount']=2
+        row=self.row(data)
+        self.assertEqual(row['externalAdmissionCount'],2)
+        self.assertNotIn('context.externalAdmissionCount',row['missingFields'])
+        data=fixture();data[0][-1]['context']['externalAdmissionCount']=1
+        self.assertEqual(self.row(data)['endpointStatus'],'INVALID_LEDGER')
+        data=fixture()
+        for record in data[0]: record['context'].pop('externalAdmissionCount')
+        row=self.row(data)
+        self.assertEqual(row['endpointStatus'],'NOT_IMPLEMENTED')
+        self.assertIn('externalAdmissionCount',row['reportMissingFields'])
+        self.assertIn('context.externalAdmissionCount',row['missingFields'])
 
 
 if __name__=='__main__':unittest.main()

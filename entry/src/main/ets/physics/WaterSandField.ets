@@ -3429,6 +3429,7 @@ export class WaterSandField {
         this.endpointSampler.integratedPhysicsSeconds, this.endpointSampler.clock.clockId,
         errorCode === null ? this.endpointSampleError : 'PHYSICAL_COMMIT_FAILED',
         this.sourceInjectedHeavy, this.sourceInjectedLight, this.sourceEpoch,
+        this.sourceEpoch,
         this.shakeInput, this.endpointInvertCount, this.endpointRouteChanges,
         this.endpointCaptureMode === null ? null : this.endpointModeChanges);
     }

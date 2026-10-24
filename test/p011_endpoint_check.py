@@ -14,6 +14,17 @@ EPS = 1e-9
 FIELD = 'p011-endpoint-fields-v1'
 PROTOCOL = 'endpoint-terminal-nondeposited-v1'
 ROUTE = 'dual-field-particle-v1'
+PROTOCOL_SOURCE_RELATIVE_PATH = 'docs/endpoint-protocol-P011-terminal-nondeposited-v1.md'
+EVIDENCE_MODES = ('CANDIDATE', 'RETROSPECTIVE_DIAGNOSTIC')
+
+
+def protocol_source_hash():
+    """SHA-256 over the exact checked-in protocol bytes, including line endings."""
+    path = Path(__file__).resolve().parents[1] / PROTOCOL_SOURCE_RELATIVE_PATH
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
 
 
 def finite(value):
@@ -133,10 +144,20 @@ def analyze_endpoint(records, manifest, safety=None):
     records = [r for r in records if r.get('kind') != 'DORMANT_STATE_RECHECK']
     run = manifest.get('runId')
     missing, hard, baseline_errors, incomplete = [], [], [], []
+    evidence_mode = manifest.get('evidenceMode', 'CANDIDATE')
+    evidence_mode_valid = isinstance(evidence_mode, str) and evidence_mode in EVIDENCE_MODES
+    evidence_mode_error = None if evidence_mode_valid else 'INVALID_EVIDENCE_MODE'
+    source_hash = protocol_source_hash()
+    if evidence_mode_error is not None:
+        incomplete.append(evidence_mode_error)
     report = dict(endpointFieldRevision=FIELD, endpointMetricRevision='terminal-nondeposited-v1.1',
                   endpointProtocolId='p011-endpoint-terminal-nondeposited', endpointProtocolRevision=PROTOCOL,
                   endpointAuthority='APPROVED', endpointFieldAlignment='ALIGNED',
-                  endpointProtocolEffective=False, evidenceMode=manifest.get('evidenceMode', 'CANDIDATE'),
+                  endpointProtocolEffective=False, evidenceMode=evidence_mode,
+                  evidenceClassification=evidence_mode if evidence_mode_valid else 'INVALID',
+                  evidenceModeError=evidence_mode_error,
+                  protocolSourceHash=source_hash, protocolSourceHashAlgorithm='SHA-256',
+                  protocolSourcePath=PROTOCOL_SOURCE_RELATIVE_PATH,
                   runId=run, formalReleaseAuthorized=False,
                   applicabilityReasons=['FORMAL_RELEASE_NOT_AUTHORIZED'], occurrences=[])
     if not records:
@@ -242,6 +263,14 @@ def analyze_endpoint(records, manifest, safety=None):
             all_ordinals.append(ordinal)
         if not isinstance(c.get('sourceEpoch'), int) or c['sourceEpoch'] < 0:
             incomplete.append('INVALID_SOURCE_EPOCH')
+        admission_count = c.get('externalAdmissionCount')
+        if admission_count is None:
+            missing.append('context.externalAdmissionCount')
+        elif (not isinstance(admission_count, int) or isinstance(admission_count, bool) or
+              admission_count < 0):
+            hard.append('INVALID_EXTERNAL_ADMISSION_COUNT')
+        elif isinstance(c.get('sourceEpoch'), int) and admission_count != c['sourceEpoch']:
+            hard.append('EXTERNAL_ADMISSION_COUNT_EPOCH_MISMATCH')
         try:
             quantities = mass(record)
             ih, il = c.get('sourceInjectedH'), c.get('sourceInjectedL')
@@ -317,6 +346,8 @@ def analyze_endpoint(records, manifest, safety=None):
                                             r['context'].get('sourceInjectedL', 0) for r, _ in committed):
             local_incomplete.append('SLIP_EXTERNAL_ADMISSION_REQUIRES_RERUN')
         row = dict(occurrence, runId=run, endpointMetricRevision=report['endpointMetricRevision'],
+                   evidenceMode=evidence_mode,
+                   evidenceClassification=evidence_mode if evidence_mode_valid else 'INVALID',
                    endpointReferenceKind='SLIP_INITIAL_BH_BL' if case == 'TC-P011-SLIP-03' else 'EXPECTED_TOTAL',
                    legacyEndpointReferenceKind='SLIP_INITIAL_BH_BL' if case == 'TC-P011-SLIP-03' else 'HISTORICAL_DEPOSIT_PLUS_SUSP',
                    legacyReportIdentity='legacy-susp-only', endpointThresholdFraction=0.05, endpointEpsMass=EPS,
@@ -417,11 +448,17 @@ def analyze_endpoint(records, manifest, safety=None):
                   'ledgerPath ledgerHash scheduleId scheduleHash renderSeed inputScriptHash commandPhaseId segmentId '
                   'sourceEpoch sourceInjectedH sourceInjectedL resetCount invertCount routeChangeCount modeChangeCount '
                   'externalAdmissionCount endpointClockId endpointClockApi endpointClockResolutionMs runStartClockMs '
+                  'endpointSampleStage protocolSourceHash '
                   'phaseStartElapsedMs phaseEndElapsedMs shakeOffEffectiveElapsedMs initialBaselineCommitKey '
                   'initialBaselineStateHash boundaryEvidencePaths dormantRecheckPaths particleResidueEvidencePaths '
                   'residueObservedDurationMs otherCaseGatesStatus managerApplicabilityDecision effectReportPath objectiveReportPath').split()
         for name in fields:
             row.setdefault(name, context.get(name, occurrence.get(name, manifest.get(name))))
+        # This identity is computed from the protocol source file itself; a
+        # manifest or ledger value cannot substitute another document hash.
+        row['protocolSourceHash'] = source_hash
+        row['protocolSourceHashAlgorithm'] = 'SHA-256'
+        row['protocolSourcePath'] = PROTOCOL_SOURCE_RELATIVE_PATH
         row['reportMissingFields'] = [name for name in fields if row.get(name) is None]
         row['reportIdentityStatus'] = 'INCOMPLETE' if row['reportMissingFields'] else 'COMPLETE'
         row['endpointFieldRevision']=FIELD
@@ -440,7 +477,12 @@ def analyze_endpoint(records, manifest, safety=None):
         row['missingCommittedOrdinalsTruncated']=count_missing>10000
         row['inputEligibilityStatus']='INCOMPLETE' if local_incomplete else 'ELIGIBLE'
         report['occurrences'].append(row)
-    report['status'] = 'CANDIDATE_ONLY' if report['occurrences'] else ('INVALID_BASELINE' if baseline_errors else 'INCOMPLETE')
+    if evidence_mode_error is not None:
+        report['status'] = 'INCOMPLETE'
+    elif evidence_mode == 'RETROSPECTIVE_DIAGNOSTIC':
+        report['status'] = 'RETROSPECTIVE_DIAGNOSTIC' if report['occurrences'] else 'INCOMPLETE'
+    else:
+        report['status'] = 'CANDIDATE_ONLY' if report['occurrences'] else ('INVALID_BASELINE' if baseline_errors else 'INCOMPLETE')
     return report
 
 

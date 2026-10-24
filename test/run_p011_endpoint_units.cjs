@@ -55,6 +55,17 @@ test('real field two substeps same frame stamp POST_COMMIT, cumulative dt exactl
   assert.equal(records[1].context.integratedPhysicsSeconds,1/30);
   assert.ok(records.every(r=>r.context.endpointSampleStage==='POST_COMMIT'));
 });
+test('externalAdmissionCount is sourced from successful injection epoch in post-commit context',()=>{
+  const f=field(),records=[];f.setNaturalObservationProbe(new P011NaturalObservationProbe(128,r=>records.push(r)));
+  f.setEndpointSampling({clockId:f.getP011RunId()+':startup-elapsed-v1',nowElapsedMs:()=>1000},phase(f));
+  const heavy=new Float64Array(128),light=new Float64Array(128);heavy[60]=0.1;light[60]=0.1;
+  const receipt=f.injectGestureSand({perColumnHeavy:heavy,perColumnLight:light,sourceId:1,sequence:1,
+    inputTime:1000,x:500,y:100,seed:17});
+  assert.ok(receipt && receipt.admittedH>0 && receipt.admittedL>0);
+  assert.equal(f.sourceEpoch,1);assert.equal(f.step(1/60).ok,true);
+  assert.equal(records.length,1);assert.equal(records[0].context.externalAdmissionCount,1);
+  assert.equal(records[0].context.externalAdmissionCount,records[0].context.sourceEpoch);
+});
 test('failed physical audit records attempt without stamp/ordinal/integration advance',()=>{
   const f=field(),records=[];f.setNaturalObservationProbe(new P011NaturalObservationProbe(128,r=>records.push(r)));
   f.setEndpointSampling({clockId:'fixture',nowElapsedMs:()=>0},phase(f));

@@ -229,6 +229,9 @@ export interface P011NaturalObservationSubstepContext {
   sourceInjectedH?: number;
   sourceInjectedL?: number;
   sourceEpoch?: number;
+  // Successful external admission transaction count. This is the existing
+  // sourceEpoch counter: it increments once per admitted injectGestureSand.
+  externalAdmissionCount?: number;
   // S3 moisture (schema v5): the block + the independent wetness-crossed
   // flag. Absent = pre-v5/OFF run.
   moisture?: P011MoistureLedgerBlock;
@@ -695,6 +698,7 @@ export class P011NaturalObservationProbe {
   stampEndpointObservation(stamp: P011EndpointPostCommitStamp | null,
     integrated: number, clockId: string, error: string | null,
     sourceH: number, sourceL: number, sourceEpoch: number,
+    externalAdmissionCount: number,
     shakeInput: number, invertCount: number, routeChangeCount: number, modeChangeCount: number | null): void {
     const context = this.context;
     if (context === null) return;
@@ -710,6 +714,7 @@ export class P011NaturalObservationProbe {
     context.integratedPhysicsSeconds = integrated; context.endpointClockId = clockId;
     context.endpointSampleError = error;
     context.sourceInjectedH = sourceH; context.sourceInjectedL = sourceL; context.sourceEpoch = sourceEpoch;
+    context.externalAdmissionCount = externalAdmissionCount;
     context.shakeInput = shakeInput; context.resetCount = 0; context.invertCount = invertCount;
     context.routeChangeCount = routeChangeCount; context.modeChangeCount = modeChangeCount;
   }
