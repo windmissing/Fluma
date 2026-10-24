@@ -4,6 +4,8 @@
  */
 
 // P-011 v2.12 §19: observation identity is independent from the physics route.
+import { P011EndpointPostCommitStamp, P011EndpointLedgerCapture, P011EndpointParticleSummary,
+  P011_ENDPOINT_FIELD_REVISION } from './P011EndpointMetrics';
 export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
 // v4 (falling-sand injection, gesture-sand-inject-phys §3): adds
 // context.sourceInjectedH/sourceInjectedL/sourceEpoch; old runs parse
@@ -149,6 +151,21 @@ export interface P011MoistureLedgerBlock {
 }
 
 export interface P011NaturalObservationSubstepContext {
+  endpointFieldRevision?: string;
+  endpointSampleStage?: 'POST_COMMIT' | null;
+  endpointSampleElapsedMs?: number | null;
+  integratedPhysicsSeconds?: number;
+  endpointClockId?: string;
+  endpointPhaseOccurrenceId?: string | null;
+  endpointCommittedOrdinal?: number | null;
+  endpointSampleError?: string | null;
+  shakeInput?: number;
+  resetCount?: number;
+  invertCount?: number;
+  routeChangeCount?: number;
+  modeChangeCount?: number | null;
+  particleRouteId?: string | null;
+  particleRouteActive?: boolean;
   observationRouteId: string;
   ledgerSchemaVersion: number;
   runId: string;
@@ -434,6 +451,10 @@ export interface P011NaturalObservationRecord {
   // records written before this field existed (optional for backward
   // compatibility with stored v2 ledgers).
   materialGuard?: P011NaturalObservationMaterialGuardEvidence[];
+  particles?: P011EndpointParticleSummary | null;
+  particleEvents?: string[];
+  particleStateSnapshot?: string | null;
+  particleCommittedSubstepId?: number | null;
 }
 
 export type P011NaturalObservationSink = (record: P011NaturalObservationRecord) => void;
@@ -670,6 +691,34 @@ export interface P011DeepCreepEvidence {
 }
 
 export class P011NaturalObservationProbe {
+  private endpointLedgerCapture: P011EndpointLedgerCapture | null = null;
+  stampEndpointObservation(stamp: P011EndpointPostCommitStamp | null,
+    integrated: number, clockId: string, error: string | null,
+    sourceH: number, sourceL: number, sourceEpoch: number,
+    shakeInput: number, invertCount: number, routeChangeCount: number, modeChangeCount: number | null): void {
+    const context = this.context;
+    if (context === null) return;
+    if (stamp !== null && (stamp.key.runId !== context.runId || stamp.key.sequence !== context.sequence ||
+      stamp.key.frameId !== context.frameId || stamp.key.substepId !== context.substepId)) {
+      throw new Error('ENDPOINT_COMMIT_KEY_MISMATCH');
+    }
+    context.endpointFieldRevision = P011_ENDPOINT_FIELD_REVISION;
+    context.endpointSampleStage = stamp === null ? null : 'POST_COMMIT';
+    context.endpointSampleElapsedMs = stamp === null ? null : stamp.endpointSampleElapsedMs;
+    context.endpointCommittedOrdinal = stamp === null ? null : stamp.key.committedOrdinal;
+    context.endpointPhaseOccurrenceId = stamp === null ? null : stamp.phase.occurrenceId;
+    context.integratedPhysicsSeconds = integrated; context.endpointClockId = clockId;
+    context.endpointSampleError = error;
+    context.sourceInjectedH = sourceH; context.sourceInjectedL = sourceL; context.sourceEpoch = sourceEpoch;
+    context.shakeInput = shakeInput; context.resetCount = 0; context.invertCount = invertCount;
+    context.routeChangeCount = routeChangeCount; context.modeChangeCount = modeChangeCount;
+  }
+  attachEndpointLedgerCapture(capture: P011EndpointLedgerCapture): void {
+    if (this.context === null) return;
+    this.endpointLedgerCapture = capture;
+    this.context.particleRouteId = capture.routeId;
+    this.context.particleRouteActive = capture.particleRouteActive;
+  }
   private readonly cols: number;
   private readonly sink: P011NaturalObservationSink;
   private context: P011NaturalObservationSubstepContext | null = null;
@@ -716,6 +765,7 @@ export class P011NaturalObservationProbe {
   beginSubstep(context: P011NaturalObservationSubstepContext,
     stateBefore: P011NaturalObservationState): void {
     this.context = context;
+    this.endpointLedgerCapture = null;
     this.lastContext = context;
     this.stateBefore = stateBefore;
     this.settle = emptyColumnGrant(this.cols);
@@ -935,7 +985,11 @@ export class P011NaturalObservationProbe {
       splits: this.splits,
       budgets: budgets,
       audit: completeAudit,
-      materialGuard: this.materialGuardEvidence
+      materialGuard: this.materialGuardEvidence,
+      particles: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.particles,
+      particleEvents: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.particleEvents,
+      particleStateSnapshot: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.poolSnapshot,
+      particleCommittedSubstepId: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.committedSubstepId
     });
     this.context = null;
     this.stateBefore = null;

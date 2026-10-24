@@ -2,6 +2,11 @@
  * WaterSandField - P-003/P-005 scene 2 three-phase column model, algorithm v2.2.
  * Canonical ledger: waterTop/bh/bl/mh/ml/suspH/suspL; hs/hl/sandTop are derived.
  */
+import { P011EndpointClock, P011EndpointPhaseIdentity, P011EndpointSampler,
+  P011EndpointPostCommitStamp, P011EndpointMassFractions, P011EndpointCommitKey, P011_ENDPOINT_FIELD_REVISION,
+  P011EndpointLedgerCapture, P011EndpointByStateValue, P011EndpointParticleStateMass,
+  P011EndpointParticleSummary, p011EndpointMassFractions } from './P011EndpointMetrics';
+import { P011ParticleField, P011ParticleByState, P011ParticleStateMass, P011_PARTICLE_ROUTE_ID } from './P011ParticleField';
 import {
   P011NaturalObservationAudit,
   P011NaturalObservationBudgets,
@@ -498,7 +503,11 @@ export interface WaterSandSeparationProfile {
   separationRatio: number | null;
 }
 
-export interface WaterSandMetrics {
+export interface WaterSandMetrics extends P011EndpointMassFractions {
+  endpointFieldRevision: string;
+  sourceEpoch: number;
+  metricCommitKey: P011EndpointCommitKey | null;
+  legacyMetricSuspensionFraction: number;
   ledgerVersion: 2;
   driftWater: number;
   driftHeavy: number;
@@ -817,6 +826,18 @@ export class WaterSandField {
   private lastP011PhysicsTime = 0;
   private lastP011PhysicsDt = 0;
   private p011RunId = nextP011RunId();
+  private endpointSampler: P011EndpointSampler | null = null;
+  private endpointPhase: P011EndpointPhaseIdentity | null = null;
+  private endpointStamp: P011EndpointPostCommitStamp | null = null;
+  private endpointSampleError: string | null = null;
+  private endpointCaptureMode: 'TEST' | 'EXPERIENCE' | null = null;
+  private endpointModeChanges = 0;
+  private endpointInvertCount = 0;
+  private endpointRouteChanges = 0;
+  private endpointStampedSourceEpoch = -1;
+  private endpointParticlePool: P011ParticleField | null = null;
+  private endpointParticleRouteActive = false;
+  private endpointParticleEvents: string[] = [];
   private p011SampleSequence = 0;
   private p011InputSequence = 0;
   private p011FrameId = 0;
@@ -1293,6 +1314,11 @@ export class WaterSandField {
     this.lastP011PhysicsTime = 0;
     this.lastP011PhysicsDt = 0;
     this.p011RunId = nextP011RunId();
+    this.endpointSampler = null; this.endpointPhase = null;
+    this.endpointStamp = null; this.endpointSampleError = null;
+    this.endpointCaptureMode = null; this.endpointModeChanges = 0;
+    this.endpointInvertCount = 0; this.endpointRouteChanges = 0; this.endpointStampedSourceEpoch = -1;
+    this.endpointParticlePool = null; this.endpointParticleRouteActive = false; this.endpointParticleEvents = [];
     this.p011SampleSequence = 0;
     this.p011InputSequence = 0;
     this.p011FrameId = 0;
@@ -1731,6 +1757,7 @@ export class WaterSandField {
     if (this.frozen) {
       return;
     }
+    if (this.endpointSampler !== null) this.endpointInvertCount++;
     const newWaterTop = new Float64Array(this.cols);
     const newSuspH = new Float64Array(this.cols);
     const newSuspL = new Float64Array(this.cols);
@@ -1899,6 +1926,7 @@ export class WaterSandField {
         result.errorColumn = this.firstInvalidColumn();
         break;
       }
+      if (this.naturalObservationProbe === null) this.recordEndpointCommit(substepDt);
       this.finishNaturalObservation(null);
       result.stepped = true;
       result.substeps++;
@@ -2043,6 +2071,71 @@ export class WaterSandField {
 
   getP011RunId(): string {
     return this.p011RunId;
+  }
+  // Opt-in only, before a run's first substep. The caller must use this
+  // same elapsed clock for schedule dispatch/effect/boundary evidence.
+  setEndpointSampling(clock: P011EndpointClock | null, phase: P011EndpointPhaseIdentity | null): void {
+    if (clock === null) {
+      this.endpointSampler = null; this.endpointPhase = null; this.endpointStamp = null; return;
+    }
+    if (this.p011SubstepId !== 0 || this.sourceEpoch !== 0 || phase === null) {
+      throw new Error('INVALID_ENDPOINT_RUN_START');
+    }
+    this.endpointSampler = new P011EndpointSampler(this.p011RunId, clock);
+    this.endpointPhase = phase; this.endpointStamp = null; this.endpointSampleError = null;
+  }
+  setEndpointPhaseIdentity(phase: P011EndpointPhaseIdentity): void { this.endpointPhase = phase; }
+  getShakeInput(): number { return this.shakeInput; }
+  endpointCurrentPhaseIdentity(occurrenceId: string): P011EndpointPhaseIdentity {
+    return { occurrenceId: occurrenceId, commandSequence: this.p011InputSequence,
+      commandPhaseId: this.commandPhaseId, segmentId: this.p011CurrentSegmentId };
+  }
+  bindEndpointOccurrence(occurrenceId: string, commandSequence: number,
+    commandPhaseId: number, segmentId: string | null): void {
+    if (!occurrenceId || commandSequence !== this.p011InputSequence || commandPhaseId !== this.commandPhaseId ||
+      segmentId !== this.p011CurrentSegmentId) throw new Error('ENDPOINT_PHASE_IDENTITY_MISMATCH');
+    this.endpointPhase = { occurrenceId: occurrenceId, commandSequence: commandSequence,
+      commandPhaseId: commandPhaseId, segmentId: segmentId };
+  }
+  // Endpoint-only read binding: D2 remains the owner of live route changes.
+  setEndpointParticlePool(pool: P011ParticleField | null, routeActive: boolean): void {
+    if (this.p011SubstepId !== 0 || this.sourceEpoch !== 0) throw new Error('INVALID_ENDPOINT_PARTICLE_BINDING');
+    this.endpointParticlePool = pool;
+    this.endpointParticleRouteActive = routeActive;
+  }
+  setEndpointParticleEvents(events: string[]): void { this.endpointParticleEvents = events.slice(); }
+  // Evidence-only notification from a new endpoint capture controller.
+  // An unbound mode remains unknown; it is not silently assumed TEST.
+  setEndpointCaptureMode(mode: 'TEST' | 'EXPERIENCE'): void {
+    if (mode !== 'TEST' && mode !== 'EXPERIENCE') throw new Error('INVALID_ENDPOINT_MODE');
+    if (this.endpointCaptureMode !== null && mode !== this.endpointCaptureMode) this.endpointModeChanges++;
+    this.endpointCaptureMode = mode;
+  }
+  private recordEndpointCommit(physicsDt: number): void {
+    this.endpointStamp = null; this.endpointSampleError = null;
+    const sampler = this.endpointSampler; const phase = this.endpointPhase;
+    if (sampler === null) return;
+    const key: P011EndpointCommitKey = { runId: this.p011RunId, sequence: this.p011SampleSequence + 1,
+      frameId: this.p011FrameId, substepId: this.p011SubstepId + 1,
+      attemptId: this.p011CurrentAttemptId, committedOrdinal: sampler.committedOrdinal + 1 };
+    if (this.naturalObservationProbe !== null) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
+    try {
+      if (phase === null || phase.commandSequence !== this.p011InputSequence || phase.commandPhaseId !== this.commandPhaseId) {
+        if (this.naturalObservationProbe === null) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
+        this.endpointSampleError = 'ENDPOINT_PHASE_IDENTITY_MISMATCH'; return;
+      }
+      if (this.naturalObservationProbe === null) {
+        this.endpointStamp = sampler.stampEndpointPostCommit(key, physicsDt, phase, sampler.clock);
+      } else {
+        const elapsed = sampler.clock.nowElapsedMs();
+        if (!Number.isFinite(elapsed) || elapsed < 0) throw new Error('INVALID_ENDPOINT_CLOCK');
+        this.endpointStamp = sampler.stampRecordedPostCommit(key, elapsed, phase);
+      }
+      this.endpointStampedSourceEpoch = this.sourceEpoch;
+    } catch (error) {
+      if (sampler.committedOrdinal < key.committedOrdinal) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
+      this.endpointSampleError = error instanceof Error ? error.message : 'ENDPOINT_SAMPLE_UNAVAILABLE';
+    }
   }
 
   setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void {
@@ -2229,6 +2322,7 @@ export class WaterSandField {
    * is not an implicit correction switch.
    */
   setNaturalObservationRouteId(routeId: string | null): void {
+    if (this.endpointSampler !== null && routeId !== this.naturalObservationRouteId) this.endpointRouteChanges++;
     this.naturalObservationRouteId = routeId;
   }
 
@@ -3197,6 +3291,23 @@ export class WaterSandField {
       advection: this.buildAdvectionLedgerBlock(),
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
+    if (this.endpointSampler !== null) {
+      const pool = this.endpointParticlePool;
+      let particles: P011EndpointParticleSummary | null = null;
+      if (pool !== null) {
+        const totals = pool.totals();
+        const byState: P011ParticleByState = pool.endpointByState();
+        particles = new P011EndpointParticleSummary(totals.count, totals.heavy, totals.light,
+          new P011EndpointByStateValue(new P011EndpointParticleStateMass(byState.FLYING.count,
+            byState.FLYING.massH, byState.FLYING.massL), new P011EndpointParticleStateMass(
+            byState.CONTACT_WAIT.count, byState.CONTACT_WAIT.massH, byState.CONTACT_WAIT.massL)));
+      }
+      const capture = new P011EndpointLedgerCapture(
+        this.endpointParticleRouteActive ? P011_PARTICLE_ROUTE_ID : null,
+        this.endpointParticleRouteActive, particles, this.endpointParticleEvents.slice(),
+        pool === null ? null : JSON.stringify(pool.snapshot()), this.p011SubstepId + 1);
+      this.naturalObservationProbe.attachEndpointLedgerCapture(capture);
+    }
     this.naturalObservationRelaxCandidateCount = 0;
     this.naturalObservationRelaxRequestedTotal = 0;
   }
@@ -3238,6 +3349,7 @@ export class WaterSandField {
       }
     }
     const after = this.naturalObservationState();
+    if (errorCode === null) this.recordEndpointCommit(this.naturalObservationPhysicsDt);
     let finite = true;
     let range = true;
     let capacity = true;
@@ -3313,6 +3425,14 @@ export class WaterSandField {
       relaxAppliedTotal: 0,
       errorCode: errorCode === null ? null : `${errorCode}`
     };
+    if (this.endpointSampler !== null) {
+      probe.stampEndpointObservation(errorCode === null ? this.endpointStamp : null,
+        this.endpointSampler.integratedPhysicsSeconds, this.endpointSampler.clock.clockId,
+        errorCode === null ? this.endpointSampleError : 'PHYSICAL_COMMIT_FAILED',
+        this.sourceInjectedHeavy, this.sourceInjectedLight, this.sourceEpoch,
+        this.shakeInput, this.endpointInvertCount, this.endpointRouteChanges,
+        this.endpointCaptureMode === null ? null : this.endpointModeChanges);
+    }
     probe.finishSubstep(after, budgets, audit);
     this.naturalObservationStateBefore = null;
   }
@@ -3388,7 +3508,25 @@ export class WaterSandField {
     const totalSand = Math.max(totals.heavy + totals.light, EPS);
     const phaseOrderScore = profile.lowerHeavyShare === null || profile.upperHeavyShare === null
       ? 0 : profile.lowerHeavyShare - profile.upperHeavyShare;
+    const particleMissing = this.naturalObservationRouteId === 'dual-field-particle-v1';
+    const endpoint = p011EndpointMassFractions(depositedHeavy + depositedLight, suspended,
+      particleMissing ? null : 0,
+      this.initialHeavy + this.initialLight + this.sourceInjectedHeavy + this.sourceInjectedLight,
+      particleMissing ? 'NOT_IMPLEMENTED' : 'STRUCTURAL_ZERO_OFF');
+    let metricKey: P011EndpointCommitKey | null = null;
+    if (this.endpointStamp !== null && !this.frozen && this.endpointStampedSourceEpoch === this.sourceEpoch &&
+      this.endpointStamp.key.substepId === this.p011SubstepId) {
+      const k = this.endpointStamp.key;
+      metricKey = { runId: k.runId, sequence: k.sequence, frameId: k.frameId,
+        substepId: k.substepId, attemptId: k.attemptId, committedOrdinal: k.committedOrdinal };
+    }
     return {
+      endpointFieldRevision: P011_ENDPOINT_FIELD_REVISION, sourceEpoch: this.sourceEpoch, metricCommitKey: metricKey,
+      depositedMass: endpoint.depositedMass, suspendedMass: endpoint.suspendedMass,
+      particleMass: endpoint.particleMass, expectedMass: endpoint.expectedMass, actualMass: endpoint.actualMass,
+      depositedFraction: endpoint.depositedFraction, suspFraction: endpoint.suspFraction,
+      airborneFraction: endpoint.airborneFraction, particleEvidenceKind: endpoint.particleEvidenceKind,
+      legacyMetricSuspensionFraction: suspended / Math.max(totals.heavy + totals.light, EPS),
       ledgerVersion: 2,
       driftWater: drift.water,
       driftHeavy: drift.heavy,

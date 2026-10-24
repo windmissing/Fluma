@@ -1872,6 +1872,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument('--suite-input', action='append', type=Path, default=[])
     parser.add_argument('--suite-role', action='append', default=[])
+    parser.add_argument('--endpoint-ledger', type=Path)
+    parser.add_argument('--endpoint-manifest', type=Path)
+    parser.add_argument('--endpoint-safety-report', type=Path)
     return parser.parse_args()
 
 
@@ -1927,6 +1930,17 @@ def check_file_inputs(paths: list[Path], roles: list[str], route: str, single=Fa
                 'capturePath': precheck.get('capturePath')}
 
 
+def append_endpoint_diagnostics(result, args):
+    if args.endpoint_manifest is None:
+        return
+    if args.endpoint_ledger is None:
+        raise ValueError('--endpoint-ledger is required with --endpoint-manifest')
+    from p011_endpoint_check import check_files
+    safety = json.loads(args.endpoint_safety_report.read_text(encoding='utf-8')) if args.endpoint_safety_report else None
+    result['endpointDiagnostics'] = check_files(args.endpoint_ledger, args.endpoint_manifest, safety)
+    result['endpointCombinedStatus'] = 'FORMAL_RELEASE_NOT_AUTHORIZED'
+
+
 def main() -> int:
     args = parse_args()
     if args.self_check:
@@ -1940,12 +1954,13 @@ def main() -> int:
                 for index, path in enumerate(args.suite_input)
             ]
             result = check_file_inputs(args.suite_input, suite_roles, args.route_id)
+            append_endpoint_diagnostics(result, args)
             write_json(args.json, result)
             write_markdown(args.markdown, result)
             print('overall: ' + result['overall'])
             print(f'JSON: {args.json}')
             print(f'Markdown: {args.markdown}')
-            return 0 if result['overall'] == 'PASS' else 1
+            return 0 if result['overall'] == 'PASS' and args.endpoint_manifest is None else 1
         if args.input is None:
             print("--input is required unless --self-check is used", file=sys.stderr)
             return 2
@@ -1964,14 +1979,15 @@ def main() -> int:
             result = check_file_inputs([args.input], [BEHAVIOR_ROLE], args.route_id, single=True)
         else:
             result = check(sys.stdin.read(), args.route_id)
+    append_endpoint_diagnostics(result, args)
     write_json(args.json, result)
     write_markdown(args.markdown, result)
     print(f"overall: {result['overall']}")
     print(f"JSON: {args.json}")
     print(f"Markdown: {args.markdown}")
     if args.self_check:
-        return 0 if result["overall"] == "PASS" else 1
-    return 0 if result["overall"] == "PASS" else 1
+        return 0 if result["overall"] == "PASS" and args.endpoint_manifest is None else 1
+    return 0 if result["overall"] == "PASS" and args.endpoint_manifest is None else 1
 
 
 if __name__ == "__main__":

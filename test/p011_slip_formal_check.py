@@ -547,12 +547,25 @@ def main():
     parser.add_argument("--raster-manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--report", type=Path)
+    parser.add_argument('--endpoint-manifest', type=Path)
     args = parser.parse_args()
     result = analyze(args.ledger, args.hilog, args.raster_manifest, args.output)
+    if args.endpoint_manifest is not None:
+        from p011_endpoint_check import check_files
+        import hashlib
+        hard_names = ('hardConstraint', 'observationContract', 'tiltLedgerAlignment', 'budget')
+        failures = [n for n in hard_names if result.get(n, {}).get('passed') is not True]
+        safety = dict(passed=not failures, failures=failures,
+                      ledgerHash=hashlib.sha256(args.ledger.read_bytes()).hexdigest())
+        result['endpointDiagnostics'] = check_files(args.ledger, args.endpoint_manifest, safety)
+        result['endpointCombinedStatus'] = 'FORMAL_RELEASE_NOT_AUTHORIZED'
+        # Existing convergence/slope/legacy verdict and sample windows stay
+        # byte-for-byte in their original fields; no protocol auto-release.
+        args.output.write_text(json.dumps(result, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
     if args.report is not None:
         write_report(result, args.report)
     print(json.dumps(result, indent=2, ensure_ascii=False))
-    return 0 if result["overall"] == "PASS" else 1
+    return 0 if result["overall"] == "PASS" and args.endpoint_manifest is None else 1
 
 
 if __name__ == "__main__":
