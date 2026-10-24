@@ -132,9 +132,12 @@ def counterexamples():
                     windowPeakFraction=r['windowPeakFraction']),
         verdictMatches=('PASS' if r['legacyEndpointResult'] == 'PASS' else 'FAIL') == 'PASS'
                       and r['endpointStatus'] == 'FAIL',
-        note=('Table legacy column is written as U/E=4.025%. The aligned A2 definition '
-              '(裁定 §1, protocol §5.3) is U/(D+U) -> 4.0894%. The verdicts (legacy PASS / '
-              'new FAIL) are unchanged; the printed percentage differs. See defect list D-1.')))
+        note=('Table legacy column is written as U/E=4.025%, which is the A3 quantity '
+              'legacyMetricSuspensionFraction = U/(D+U+P) = U/E. The A2 quantity '
+              'legacyEndpointFraction = U/(D+U) = 322/7872 -> 4.0904%. The verdicts '
+              '(legacy PASS / new FAIL) are unchanged; only the printed percentage of '
+              'the A2 quantity was mistyped. See defect list D-7 and '
+              'docs/endpoint-errata-P011-terminal-nondeposited-v1.md.')))
 
     # --- §10 row 2: R_SLIP=7000, E=8000, M=375 -> formal verdict M/R_SLIP FAIL -----
     row = run_case('TC-P011-SLIP-03', 1000, [0, 500, 1000], 4000, 4000, 0, 0,

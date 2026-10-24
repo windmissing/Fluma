@@ -129,7 +129,7 @@
 | D-4 | `endpointSampleStage` 账本侧有值、checker 也校验，但报告行未回填该字段（architect §6「实际末样本」组要求） | `P011NaturalObservation.ets:706`、checker `:193/:208` 校验 vs 报告行无该键 | 报告读者无法从报告本身判断样本是否 post-commit | developer（报告行回填一行） |
 | D-5 | `externalAdmissionCount` 无产出点，恒进 `reportMissingFields`（architect §6「阶段/源身份」组要求） | checker `:419` 仅有元组项；ArkTS 无写入 | 正式 run 的报告必填元数据恒缺 | developer（产出计数） |
 | D-6 | `particleEvents` 仅校验存在性，不校验七类事件内容与守恒/原子性的关联 | checker `:214-215` | 事件级溯源只到「有事件数组」，未到「逐笔自洽」；原子性目前靠粒子层事务保证 | developer（补事件级断言，或在字段 revision 中明确该职责在粒子层） |
-| D-7 | 协议 §10 第 1 行「旧口径 `U/E=4.025%`」与裁定 A2（WS 历史分母 = `D+U`）不一致：按 A2 应为 `U/(D+U)=4.0894%` | 协议 §10 第 1 行 vs §5.3 A2 定义；实测 R1 `legacyEndpointFraction=4.0904%`、`legacyMetricSuspensionFraction=4.025%` | **结论不变**（legacy PASS / 新 FAIL），但示例表两列数值口径混用（`U/E` 与 `U/(D+U)`），易被误读为两个不同 legacy 量 | tester（协议侧文本勘误，须另起 revision；本卡不改冻结内容） |
+| D-7 | 协议 §10 第 1 行「旧口径 `U/E=4.025%`」与裁定 A2（WS 历史分母 = `D+U`）不一致：按 A2 应为 `U/(D+U)=4.0904%`（322/7872） | 协议 §10 第 1 行 vs §5.3 A2/A3 定义；实测 R1 `legacyEndpointFraction=4.0904%`、`legacyMetricSuspensionFraction=4.025%` | **结论不变**（legacy PASS / 新 FAIL），但示例表两列数值口径混用（`U/E` 与 `U/(D+U)`），易被误读为两个不同 legacy 量 | tester（协议侧文本勘误，另起 revision：`docs/endpoint-errata-P011-terminal-nondeposited-v1.md`，revision `endpoint-terminal-nondeposited-v1-errata1`；本卡不回改已发布协议文件） |
 
 ## 4. 结论
 
@@ -139,3 +139,13 @@
 - 缺陷清单已按事实与证据登记，转 manager 转 developer；tester 不代改实现、不改判据。
 
 **交办建议**：D-1～D-6 转 developer（其中 D-2 需 architect 先出字段对齐结论）；D-7 由 tester 另起 protocol revision 勘误。协议生效前置清单见 `docs/endpoint-dual-report-P011-terminal-nondeposited-v1.md` §4。
+
+## 5. 勘误记录（2026-10-24，后加）
+
+| 编号 | 位置 | 勘误前 | 勘误后 | 依据 | 影响面 |
+|---|---|---|---|---|---|
+| E-2.1 | 本报告 §3 缺陷表 **D-7** 行的 A2 数值 | `U/(D+U)=4.0894%` | `U/(D+U)=4.0904%（322/7872）` | `322/7872 = 0.040904471544715444`；实测 R1 `legacyEndpointFraction=4.090447154471544` | 无——D-7 的结论（结论不变、须另起 revision）与缺陷归属不变 |
+| E-1 | 协议 §10 示例表第 1 行（协议侧，另起 revision，不回改已发布文件） | 旧口径单列 `U/E=4.025%` | A2 `U/(D+U)=4.0904%` PASS 与 A3 `U/(D+U+P)=U/E=4.025%` PASS 两量分列 | 裁定 §1 A2/A3、协议 §5.3 | 无判定变化 |
+| E-3 | `docs/endpoint-dual-report-P011-terminal-nondeposited-v1.md` §4.2 P4 行 | `28/30 实质条款一致` | 本报告 §4 口径：45 条中 43 条一致、2 条指向 D-1 | 本报告 §1.1–§1.5 节点表逐节点复算 | 无——P4 仍「已满足」 |
+
+勘误主文件：`docs/endpoint-errata-P011-terminal-nondeposited-v1.md`（revision `endpoint-terminal-nondeposited-v1-errata1`）。三项均为文本与标注勘误；本报告 §4 的结论、缺陷清单 D-1～D-7 的判定与归属、以及协议—实现一致性结论**全部不变**；已发布协议文件未回改。

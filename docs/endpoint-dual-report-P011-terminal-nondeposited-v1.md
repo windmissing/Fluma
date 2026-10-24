@@ -131,7 +131,7 @@ Run B 全部为合成夹具，**不得作为任何设备级效果结论**；其�
 | P1 | 协议 revision 发布且字段名与裁定唯一落点一致 | **已满足** | `69e27b9` + `a3ca53c`；`endpointFieldAlignment=ALIGNED`（tester 侧） |
 | P2 | architect 字段 revision 完成 R1–R3 并与 tester 稿字段名一致 | **未满足**（architect 卡 `6adc64ff…ccb44` 仍开放；rev2 已写 ALIGNED 待其正式提交） | architect |
 | P3 | 实现落地并通过交付自测 | **已满足**（Python 17/17、Node 8/8） | commit `c73ed63` |
-| P4 | 一致性核对无未决的判定口径差异 | **已满足**（28/30 实质条款一致；D-1/D-2 为字段级/枚举级） | 本报告 §1、§3 |
+| P4 | 一致性核对无未决的判定口径差异 | **已满足**（判定口径类 **45 条**中 **43 条完全一致**，另 **2 条指向同一枚举级缺陷 D-1**；D-2 为字段级命名、D-3～D-6 为报告元数据/事件级缺口，均不改变终点数值判定。计数依据=一致性报告 §1.1–§1.5 节点表逐节点复算 9+11+6+8+11=45，见一致性报告 §4；本报告 §1/§3 原写的「28/30 实质条款」为初稿计数，无对应节点口径，已按勘误 `docs/endpoint-errata-P011-terminal-nondeposited-v1.md` §3 更正） | 一致性报告 §1.1–§1.5、§4；本报告 §1、§3 |
 | P5 | D-1～D-6 缺陷修复或经 manager 裁定豁免 | **未满足** | developer；manager 裁定 |
 | P6 | 一次符合协议采集口径的**设备 run**：同一时钟域、同 run 起点单调实际 elapsed、post-commit 同子步 `stateAfter`+`particles`、occurrence 身份、manifest 预声明固定边界、休眠只读复核证据 | **未满足**（尚无端点字段的设备 run；真机队列由 effector 独占，需 manager 排队） | manager 排队列 → effector 采集 → tester 出双报告 |
 | P7 | 该设备 run 的路线专属双报告（旧/新口径并报、硬闸门与不可观测项分列、`reportMissingFields` 齐备） | **未满足**（本报告 §2.1 的新口径为 `NOT_IMPLEMENTED`/`INVALID_LEDGER`，非该 run 的合格双报告） | tester |
@@ -163,3 +163,15 @@ Run B 全部为合成夹具，**不得作为任何设备级效果结论**；其�
 | 字段 revision | `docs/architecture-P011-endpoint-fields-revision-v1.md`（rev2） |
 | 对齐裁定 | `docs/decision-P011-endpoint-field-alignment-v1.md` |
 | 批准记录 | `docs/decision-P011-terminal-nondeposited-fraction-v1.md` |
+| 协议勘误 revision（2026-10-24 后加） | `docs/endpoint-errata-P011-terminal-nondeposited-v1.md`（`endpoint-terminal-nondeposited-v1-errata1`） |
+
+## 7. 勘误记录（2026-10-24，后加）
+
+| 编号 | 位置 | 勘误前 | 勘误后 | 依据 | 影响面 |
+|---|---|---|---|---|---|
+| E-3 | 本报告 §4.2 **P4** 行的条款计数 | `28/30 实质条款一致` | 判定口径类 **45 条**中 **43 条完全一致**、2 条指向同一枚举级缺陷 D-1；并注明计数依据=一致性报告 §1.1–§1.5 节点表复算 9+11+6+8+11=45 | 一致性报告 §4；`docs/priority.md` 的逐节点复核 | **无**——P4 仍「已满足」（D-1 枚举级、D-2 字段级命名、D-3～D-6 元数据/事件级，均不改变终点数值判定）；前置清单其余各项状态不变 |
+| E-2.1 | 一致性报告 §3 D-7 行的 A2 数值 | `4.0894%` | `4.0904%`（322/7872） | `322/7872 = 0.040904471544715444` | 无 |
+| E-2.2/E-2.3 | 执行脚本与本报告 §2.2 所引 JSON 的 R1 `note` | `4.0894%`；缺陷指针 `D-1` | `4.0904%` + A2/A3 完整表述；指针 `D-7` | 同上 | 无（`verdictMatches` 仍 10/10） |
+| E-1 | 协议 §10 示例表第 1 行（协议侧，另起 revision，不回改已发布文件） | 旧口径单列 `U/E=4.025%` | A2 `U/(D+U)=4.0904%` PASS 与 A3 `U/(D+U+P)=U/E=4.025%` PASS 两量分列 | 裁定 §1 A2/A3、协议 §5.3 | 无判定变化 |
+
+勘误主文件：`docs/endpoint-errata-P011-terminal-nondeposited-v1.md`。本报告 §2 的双算数值（含真实 run 的 legacy 逐位一致 7/7）、§3 的三类身份标注、§4.2 的 P1–P9 状态**全部不变**；已发布协议文件未回改。
