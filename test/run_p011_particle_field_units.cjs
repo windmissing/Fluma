@@ -20,6 +20,7 @@ function seed(mass=0.1, phase=0, x=60.5, y=200, vx=0, vy=-64) {
   return {mass, phase, x, y, vx, vy, sourceKind:0, sourceId:1};
 }
 const results=[];
+const negativeControls=[]; // manager R9: retain old pair-refund differences
 function test(name, fn) {try {fn(); results.push({name,status:'PASS'});}
 catch(e) {results.push({name,status:'FAIL',error:e.stack});}}
 function plan(pool, id=identity, limit=4096) {
@@ -413,7 +414,7 @@ test('B seed-repeatability and rejected source identity/invalid cap are explicit
   const r=requestB(e,'degrade',0.1,slot); r.sourceId=99;
   assert.equal(e.sink.apply(r,e.pool).committed,false); assert.deepEqual(e.pool.snapshot(),before);
 });
-test('B budget stub matches actual clipSubstepMotion and refunds across local/scale/total grid',()=>{
+test('R9 reserve matches real clip grid; adapter refund vs rev1; legacy pair is known-incompatible',()=>{
   const {WaterSandField}=require('../entry/src/main/ets/physics/WaterSandField.ets');
   for(const scale of [0,0.13,0.5,1]) for(const local of [0,0.07,0.2,1])
   for(const total of [0,0.03,0.4,5]) for(const target of [-1,61]) {
@@ -428,7 +429,17 @@ test('B budget stub matches actual clipSubstepMotion and refunds across local/sc
     assert.equal(e.budgets.totalRemaining,field.totalMotionBudgetRemaining);
     const refund=actual*0.4; e.budgets.refund(ticket.ticketId,refund);
     field.materialGuardRefund(refund,target<0?[60]:[60,61],false);
-    assert.deepEqual(e.budgets.localRemaining,field.substepMotionBudgetRemaining);
+    if(target<0) assert.deepEqual(e.budgets.localRemaining,field.substepMotionBudgetRemaining);
+    else {
+      near(e.budgets.localRemaining[60]-field.substepMotionBudgetRemaining[60],refund/2);
+      near(e.budgets.localRemaining[61]-field.substepMotionBudgetRemaining[61],refund/2);
+      near(e.budgets.localUsed[60],actual-refund);
+      near(e.budgets.localUsed[61],actual-refund);
+      if(refund>0) negativeControls.push({scale,local,total,reserved:actual,refund,
+        adapterSourceRefund:refund,adapterTargetRefund:refund,
+        legacySourceRefund:refund/2,legacyTargetRefund:refund/2,
+        sourceDifference:refund/2,targetDifference:refund/2});
+    }
     near(e.budgets.totalRemaining,field.totalMotionBudgetRemaining);
     near(e.budgets.totalUsed,field.totalMotionBudgetUsed);
   }
@@ -477,5 +488,5 @@ test('B 600s six-transaction sandbox: in-flight conservation/capacity/budgets ev
 });
 const failed=results.filter(r=>r.status==='FAIL');
 console.log(JSON.stringify({suite:'p011_particle_D1_AB',passed:results.length-failed.length,
-  failed:failed.length,results,pending:'D2 real WaterSandField integration is not claimed'},null,2));
+  failed:failed.length,results,negativeControls,pending:'D2 real WaterSandField integration is not claimed'},null,2));
 if(failed.length) process.exitCode=1;

@@ -7,11 +7,13 @@ import { P011ParticleField, P011ParticleParams, P011ParticleFieldView,
   P011ParticlePoolPatch, P011ParticlePlan, P011ParticleDisposition } from './P011ParticleField';
 import { p011GuardAdmit, p011GuardConstraintsForDelta,
   p011GuardAffectedEdgesForDelta } from './P011MaterialGuard';
+import { P011ParticleRefundAdapter, P011ParticleRefundReceiptBuffer } from './P011ParticleRefundAdapter';
 
 export interface P011ParticleBudgetState {
   localRemaining: Float64Array; localUsed: Float64Array;
   totalRemaining: number; totalUsed: number;
   tickets: P011ParticleBudgetTicket[]; closed: number[]; nextId: number;
+  refundReceipt: P011ParticleRefundReceiptBuffer;
 }
 
 export class P011ParticlePrototypeBudget implements P011ParticleBudgetSink {
@@ -25,6 +27,8 @@ export class P011ParticlePrototypeBudget implements P011ParticleBudgetSink {
   private nextId = 1;
   readonly substepId: number;
   readonly scale: number;
+  readonly refundReceipt = new P011ParticleRefundReceiptBuffer();
+  readonly refundAdapter: P011ParticleRefundAdapter;
 
   constructor(cols: number, dt: number, scale: number, substepId: number) {
     if (!Number.isFinite(dt) || dt <= 0 || !Number.isFinite(scale) || scale < 0 || scale > 1) {
@@ -33,6 +37,7 @@ export class P011ParticlePrototypeBudget implements P011ParticleBudgetSink {
     this.localRemaining = new Float64Array(cols); this.localRemaining.fill(28 * dt);
     this.localUsed = new Float64Array(cols); this.totalRemaining = 300 * dt;
     this.substepId = substepId; this.scale = scale;
+    this.refundAdapter = new P011ParticleRefundAdapter(this, substepId);
   }
   reserve(r: P011ParticleRequest): P011ParticleBudgetTicket {
     if (r.substepId !== this.substepId || r.column < 0 || r.column >= this.localRemaining.length ||
@@ -50,29 +55,25 @@ export class P011ParticlePrototypeBudget implements P011ParticleBudgetSink {
     const l = Math.min(r.requested, this.localRemaining[r.column],
       target >= 0 ? this.localRemaining[target] : Infinity);
     const reserved = Math.min(l, l * this.scale, this.totalRemaining);
+    const ticket: P011ParticleBudgetTicket = { ticketId: this.nextId, requestKey: r.requestKey,
+      substepId: r.substepId, source: r.column, target: target,
+      requested: r.requested, localAllowed: l, reserved: reserved, refunded: 0 };
+    this.refundAdapter.registerTicket(ticket);
     this.localRemaining[r.column] -= reserved; this.localUsed[r.column] += reserved;
     if (target >= 0) { this.localRemaining[target] -= reserved; this.localUsed[target] += reserved; }
     this.totalRemaining -= reserved; this.totalUsed += reserved;
-    const ticket: P011ParticleBudgetTicket = { ticketId: this.nextId++, requestKey: r.requestKey,
-      substepId: r.substepId, source: r.column, target: target,
-      requested: r.requested, localAllowed: l, reserved: reserved, refunded: 0 };
+    this.nextId++;
     this.tickets.push(ticket);
     return this.copyTicket(ticket);
   }
   refund(ticketId: number, amount: number): void {
     const t = this.ticket(ticketId);
-    if (!Number.isFinite(amount) || amount < 0 || amount > t.reserved - t.refunded) {
-      throw new Error('PARTICLE_OVER_REFUND');
-    }
+    this.refundAdapter.refundParticleTicket(ticketId, amount, this.refundReceipt);
     t.refunded += amount;
-    this.localRemaining[t.source] += amount; this.localUsed[t.source] -= amount;
-    if (t.target >= 0) { this.localRemaining[t.target] += amount; this.localUsed[t.target] -= amount; }
-    this.totalRemaining += amount; this.totalUsed -= amount;
   }
   close(ticketId: number, committed: number): void {
     const t = this.ticket(ticketId);
-    if (!Number.isFinite(committed) || committed < 0 ||
-      Math.abs(t.reserved - t.refunded - committed) > 1e-9) throw new Error('PARTICLE_TICKET_UNBALANCED');
+    this.refundAdapter.closeParticleTicket(ticketId, committed, this.refundReceipt);
     this.closed.add(ticketId);
   }
   private ticket(id: number): P011ParticleBudgetTicket {
@@ -88,16 +89,22 @@ export class P011ParticlePrototypeBudget implements P011ParticleBudgetSink {
       localAllowed: t.localAllowed, reserved: t.reserved, refunded: t.refunded };
   }
   snapshot(): P011ParticleBudgetState {
+    const receipt = new P011ParticleRefundReceiptBuffer(); receipt.copyFrom(this.refundReceipt);
     return { localRemaining: this.localRemaining.slice(), localUsed: this.localUsed.slice(),
       totalRemaining: this.totalRemaining, totalUsed: this.totalUsed,
       tickets: this.tickets.map((t: P011ParticleBudgetTicket): P011ParticleBudgetTicket => this.copyTicket(t)),
-      closed: Array.from(this.closed), nextId: this.nextId };
+      closed: Array.from(this.closed), nextId: this.nextId, refundReceipt: receipt };
   }
   restore(s: P011ParticleBudgetState): void {
     this.localRemaining.set(s.localRemaining); this.localUsed.set(s.localUsed);
     this.totalRemaining = s.totalRemaining; this.totalUsed = s.totalUsed;
     this.tickets = s.tickets.map((t: P011ParticleBudgetTicket): P011ParticleBudgetTicket => this.copyTicket(t));
     this.closed = new Set<number>(s.closed); this.nextId = s.nextId;
+    this.refundAdapter.resetForRestore();
+    for (let i = 0; i < this.tickets.length; i++) {
+      this.refundAdapter.registerTicket(this.tickets[i], this.closed.has(this.tickets[i].ticketId));
+    }
+    this.refundReceipt.copyFrom(s.refundReceipt);
   }
 }
 

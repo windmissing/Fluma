@@ -250,6 +250,9 @@ export class P011ParticleField implements P011ParticleAtomicPool {
   private mergeRecords: P011ParticleMergeRecord[] = [];
   private birthRecords: P011ParticleBirthRecord[] = [];
   private representationRecords: P011ParticleRepresentationRecord[] = [];
+  private transactionScratch: P011ParticleField | null = null;
+  private transactionBefore: P011ParticleSnapshot | null = null;
+  private transactionAfter: P011ParticleSnapshot | null = null;
 
   constructor(cols: number, nmax: number = P011_PARTICLE_NMAX_DEFAULT) {
     if (!Number.isInteger(cols) || cols <= 0 || !Number.isInteger(nmax) || nmax <= 0) {
@@ -431,13 +434,20 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     if (grant.grantedHeavy < 0 || grant.grantedLight < 0 || amount > request.requested + 1e-9) {
       throw new Error('PARTICLE_INVALID_GRANT');
     }
-    const before = this.snapshot();
-    const scratch = new P011ParticleField(this.cols, this.nmax);
+    this.warmUpTransactions();
+    const before = this.transactionBefore;
+    const after = this.transactionAfter;
+    const scratch = this.transactionScratch;
+    if (before === null || after === null || scratch === null) throw new Error('PARTICLE_NOT_CONFIGURED');
+    this.copyStateTo(before);
     scratch.copySnapshot(before);
     scratch.stepSeed = this.stepSeed;
+    scratch.mergeRecords.length = 0; scratch.birthRecords.length = 0;
+    scratch.representationRecords.length = 0;
     if (!scratch.edit(request, grant, this.params, this.view)) return null;
+    scratch.copyStateTo(after);
     this.patch = new P011ParticlePreparedPatch(this.nextPatchId++, request.requestKey,
-      this.stepId, before, scratch.snapshot());
+      this.stepId, before, after);
     this.patch.merges = scratch.mergeRecords;
     this.patch.births = scratch.birthRecords;
     this.patch.actions = scratch.representationRecords;
@@ -616,6 +626,26 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       colParticleMassH: this.colParticleMassH.slice(),
       colParticleMassL: this.colParticleMassL.slice()
     };
+  }
+
+  // Call before the transaction loop. Diagnostic snapshot() still returns
+  // an owned copy; production adapters can reuse copyStateTo() buffers.
+  warmUpTransactions(): void {
+    if (this.transactionScratch !== null) return;
+    this.transactionScratch = new P011ParticleField(this.cols, this.nmax);
+    this.transactionBefore = this.snapshot(); this.transactionAfter = this.snapshot();
+  }
+  copyStateTo(out: P011ParticleSnapshot): void {
+    if (out.nmax !== this.nmax || out.cols !== this.cols || out.pMass.length !== this.nmax ||
+      out.freeSlots.length !== this.nmax || out.colParticleMassH.length !== this.cols) {
+      throw new Error('PARTICLE_INVALID_SIZE');
+    }
+    out.liveCount = this.liveCount; out.freeCount = this.freeCount; out.nextId = this.nextId;
+    out.pMass.set(this.pMass); out.pX.set(this.pX); out.pY.set(this.pY);
+    out.pVx.set(this.pVx); out.pVy.set(this.pVy); out.pPhase.set(this.pPhase);
+    out.pSource.set(this.pSource); out.pState.set(this.pState); out.pId.set(this.pId);
+    out.pSourceId.set(this.pSourceId); out.freeSlots.set(this.freeSlots);
+    out.colParticleMassH.set(this.colParticleMassH); out.colParticleMassL.set(this.colParticleMassL);
   }
 
   private cache(phase: number): Float64Array {
