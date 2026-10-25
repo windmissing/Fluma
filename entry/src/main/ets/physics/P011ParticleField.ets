@@ -1,5 +1,17 @@
 // P-011 D1-A / dual-field-particle-v1 (2026-10-24).
 // Isolated M1 foundations. No field, renderer, budget or guard ownership.
+export class P011ParticleStateMass {
+  count: number; massH: number; massL: number;
+  constructor(count: number, massH: number, massL: number) {
+    this.count = count; this.massH = massH; this.massL = massL;
+  }
+}
+export class P011ParticleByState {
+  FLYING: P011ParticleStateMass; CONTACT_WAIT: P011ParticleStateMass;
+  constructor(flying: P011ParticleStateMass, contactWait: P011ParticleStateMass) {
+    this.FLYING = flying; this.CONTACT_WAIT = contactWait;
+  }
+}
 export const P011_PARTICLE_ROUTE_ID = 'dual-field-particle-v1';
 export const P011_PARTICLE_NMAX_DEFAULT = 512; // candidate, NOT calibrated
 export const P011_PARTICLE_HEAVY = 0;
@@ -324,6 +336,26 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     }
     for (let i = 0; i < this.nmax; i++) if (this.pState[i] === 2) resting++;
     return { heavy: heavy, light: light, count: this.liveCount, resting: resting };
+  }
+  endpointByState(): P011ParticleByState {
+    const flying = new P011ParticleStateMass(0, 0, 0);
+    const contactWait = new P011ParticleStateMass(0, 0, 0);
+    const result = new P011ParticleByState(flying, contactWait);
+    for (let i = 0; i < this.nmax; i++) {
+      if (this.pState[i] === 0) continue;
+      if ((this.pState[i] !== 1 && this.pState[i] !== 2) ||
+        (this.pPhase[i] !== 0 && this.pPhase[i] !== 1) || !Number.isFinite(this.pMass[i]) || this.pMass[i] <= 0) {
+        throw new Error('INVALID_LEDGER');
+      }
+      const group = this.pState[i] === 1 ? result.FLYING : result.CONTACT_WAIT;
+      group.count++;
+      if (this.pPhase[i] === 0) group.massH += this.pMass[i]; else group.massL += this.pMass[i];
+    }
+    const totals = this.totals();
+    if (result.FLYING.count + result.CONTACT_WAIT.count !== totals.count ||
+      Math.abs(result.FLYING.massH + result.CONTACT_WAIT.massH - totals.heavy) > 1e-9 ||
+      Math.abs(result.FLYING.massL + result.CONTACT_WAIT.massL - totals.light) > 1e-9) throw new Error('INVALID_LEDGER');
+    return result;
   }
 
   reset(): void {
