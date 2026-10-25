@@ -67,6 +67,9 @@ export interface P013RendererState extends P013ControlResult {
   telemetryLiveCount: number;
 }
 export interface P013FrameResult extends P013ControlResult {
+  nativeTypedByteLength?: number;
+  nativeTypedByteOffset?: number;
+  nativeBufferByteLength?: number;
   frameId: number;
   snapshotId: number;
   uploadedFrameId: number;

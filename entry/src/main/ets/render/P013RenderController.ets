@@ -373,6 +373,10 @@ export class P013RenderController {
       const callStart = p013NowMs();
       this.attemptCount++;
       const result = native.drawFrame(f, this.adapter.data, this.light);
+      if (f.frameId === 1 || result.code === 100) console.info(`WS_EVENT p013_tdata_boundary ${JSON.stringify({
+        frameId: f.frameId, length: this.adapter.data.length, byteLength: this.adapter.data.byteLength,
+        byteOffset: this.adapter.data.byteOffset, nativeByteLength: result.nativeTypedByteLength,
+        nativeByteOffset: result.nativeTypedByteOffset, nativeBufferBytes: result.nativeBufferByteLength, errorStage: result.errorStage })}`);
       this.drawCallMs = p013NowMs() - callStart;
       this.lastResult = result;
       this.recordAttempt(start, result.code, controlCostMs);

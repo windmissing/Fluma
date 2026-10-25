@@ -136,6 +136,7 @@ inline Status Validate(const FrameInput& f, const LightParams& l,
   return Status::OK;
 }
 struct Telemetry {
+  size_t nativeTypedByteLength = 0, nativeTypedByteOffset = 0, nativeBufferByteLength = 0;
   bool compositionProfile = false;
   uint64_t probeSourceHash = 0;
   FrameInput frame{};

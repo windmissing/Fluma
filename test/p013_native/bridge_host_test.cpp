@@ -110,7 +110,8 @@ napi_status napi_get_typedarray_info(napi_env, napi_value v,
                                      napi_typedarray_type* t, size_t* n,
                                      void** d, napi_value* b, size_t* off) {
   *t = v->arrayType;
-  *n = v->length;
+  // OpenHarmony returns ByteLength (unlike standard Node element count).
+  *n = v->length * 4;
   *off = v->offset;
   *b = v->buffer;
   *d = v->buffer->bytes.data() + v->offset;
@@ -302,7 +303,18 @@ int main() {
     data[i * 4 + 3] = 40;
   }
   auto draw = [&] { return Call(p013::DrawFrame, {frame, view, light}); };
-  CHECK(Read(draw(), "code") == 0);
+  // T41 root-cause regression: 512 Float32 elements report 2048 bytes.
+  auto boundary = draw();
+  CHECK(Read(boundary, "code") == 0);
+  CHECK(Read(boundary, "nativeTypedByteLength") == 2048);
+  CHECK(Read(boundary, "nativeTypedByteOffset") == 16);
+  void* oversizedData = nullptr; const char* oversizedStage = "NONE";
+  view->length = 2048;
+  CHECK(!p013::TypedView(nullptr,view,napi_float32_array,512,oversizedData,oversizedStage));
+  CHECK(std::string(oversizedStage) == "DUAL_TYPED_LENGTH");
+  view->length = 512;
+  CHECK(Read(boundary, "nativeBufferByteLength") == (512+8)*4);
+
   CHECK(gpuData[0] == 80 && gpuData[1] == 160 && gpuData[4] == 80.125f &&
         gpuData[508] == 95.875f);
   CHECK(!p013::g.egl.current);

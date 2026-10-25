@@ -250,6 +250,10 @@ struct P013P1G0Probe {
       ellLightMaterial: 24, lightX: -0.55, lightY: -0.55, lightZ: 0.63, sigmaCandidate: 6
     } as P013LightParams;
     const result: P013FrameResult = native.drawFrame(f, this.tdata, light);
+    if (f.frameId === 1 || result.code === 100) console.info(`WS_EVENT p013_tdata_boundary ${JSON.stringify({
+      frameId: f.frameId, length: this.tdata.length, byteLength: this.tdata.byteLength,
+      byteOffset: this.tdata.byteOffset, nativeByteLength: result.nativeTypedByteLength,
+      nativeByteOffset: result.nativeTypedByteOffset, nativeBufferBytes: result.nativeBufferByteLength, errorStage: result.errorStage })}`);
     if (this.useTexture && (result.swapSucceeded || result.code >= 200) && this.frameCount % 60 === 0) {
       const profile = native.queryCompositionProfile();
       const readback = result.swapSucceeded ? native.captureProbe(profile.frameToken,

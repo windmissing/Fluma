@@ -312,6 +312,9 @@ napi_value Result(napi_env e, const Telemetry& t) {
   Put(e, o, "eglError", static_cast<double>(t.eglError));
   Put(e, o, "glError", static_cast<double>(t.glError));
   Put(e, o, "recoveryRequired", t.recoveryRequired);
+  Put(e, o, "nativeTypedByteLength", static_cast<double>(t.nativeTypedByteLength));
+  Put(e, o, "nativeTypedByteOffset", static_cast<double>(t.nativeTypedByteOffset));
+  Put(e, o, "nativeBufferByteLength", static_cast<double>(t.nativeBufferByteLength));
   Put(e, o, "errorStage", t.errorStage);
   return o;
 }
@@ -379,7 +382,7 @@ bool TypedView(napi_env e,napi_value v,napi_typedarray_type expected,size_t expe
  if(napi_is_typedarray(e,v,&typed)!=napi_ok||!typed){stage="DUAL_NOT_TYPEDARRAY";return false;}
  if(napi_get_typedarray_info(e,v,&type,&count,&data,&buffer,&offset)!=napi_ok){stage="DUAL_TYPED_INFO";return false;}
  if(type!=expected){stage="DUAL_TYPED_TYPE";return false;}
- if(count!=expectedCount){stage="DUAL_TYPED_LENGTH";return false;}
+ if(expectedCount>SIZE_MAX/4 || count!=expectedCount*4){stage="DUAL_TYPED_LENGTH";return false;}
  if(!data||napi_is_detached_arraybuffer(e,buffer,&detached)!=napi_ok||detached){stage="DUAL_BUFFER_DETACHED";return false;}
  if(napi_get_arraybuffer_info(e,buffer,&base,&bytes)!=napi_ok||!base||offset>bytes||expectedCount*4>bytes-offset||offset%4!=0||data!=static_cast<unsigned char*>(base)+offset){stage="DUAL_BUFFER_RANGE";return false;}
  return true;
@@ -484,7 +487,8 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
     if (napi_get_typedarray_info(e, a[1], &type, &length, &data, &buffer, &offset) != napi_ok)
       typedStage = "TDATA_INFO";
     else if (type != napi_float32_array) typedStage = "TDATA_TYPE";
-    else if (length != kFloats) typedStage = "TDATA_LENGTH";
+    // Ark NAPI returns bytes; kFloats remains the exact element contract.
+    else if (length != kFloats * sizeof(float)) typedStage = "TDATA_LENGTH";
     else if (!data) typedStage = "TDATA_DATA";
     else if (napi_is_detached_arraybuffer(e, buffer, &detached) != napi_ok)
       typedStage = "TDATA_DETACH_QUERY";
@@ -499,6 +503,8 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
   }
   const double lockStart = NowMs();
   std::unique_lock<std::mutex> lock(g.mutex);
+  t.nativeTypedByteLength = length; t.nativeTypedByteOffset = offset;
+  t.nativeBufferByteLength = bytes;
   t.lifecycleLockWaitMs = NowMs() - lockStart;
   t.compositionProfile = g.egl.composition;
   t.frame = f;
@@ -721,7 +727,7 @@ napi_value CaptureProbe(napi_env e,napi_callback_info info) {
   napi_value buffer=nullptr;bool detached=false,isTyped=false;
   if(valid)valid=napi_is_typedarray(e,a[1],&isTyped)==napi_ok && isTyped &&
     napi_get_typedarray_info(e,a[1],&type,&count,&data,&buffer,&offset)==napi_ok &&
-    type==napi_float32_array && count==12 && data &&
+    type==napi_float32_array && count==12*sizeof(float) && data &&
     napi_is_detached_arraybuffer(e,buffer,&detached)==napi_ok && !detached &&
     napi_get_arraybuffer_info(e,buffer,&base,&bytes)==napi_ok && base && offset<=bytes &&
     12*sizeof(float)<=bytes-offset && offset%sizeof(float)==0 && data==static_cast<unsigned char*>(base)+offset;
@@ -814,6 +820,9 @@ napi_value Drain(napi_env e, napi_callback_info) {
       Put(e,o,"shaderHash",probeHash);Put(e,o,"shaderHashAlgorithm","FNV1A64");
       Put(e,o,"compositionRevision","P013_P1_TEXTURE_STACK_V1");
     } else Put(e, o, "shaderHash", kP013ShaderHash);
+    Put(e, o, "nativeTypedByteLength", static_cast<double>(t.nativeTypedByteLength));
+    Put(e, o, "nativeTypedByteOffset", static_cast<double>(t.nativeTypedByteOffset));
+    Put(e, o, "nativeBufferByteLength", static_cast<double>(t.nativeBufferByteLength));
     Put(e, o, "errorStage", t.errorStage);
     char hash[24]{};
     std::snprintf(hash, sizeof(hash), "%016llx",
