@@ -217,6 +217,35 @@ describe('falling-sand D3 structural (Pan-retirement)', () => {
     assert.ok(!block.includes('useSensor'),
       'Pan handler must not flip useSensor (sensor owns tilt)');
   });
+
+  it('p011_panFallbackRejectsMissingFingerAndResetsGestureBoundary', 0, () => {
+    const src = fs.readFileSync('entry/src/main/ets/pages/SandCanvas.ets', 'utf8');
+    const start = src.indexOf('PanGesture()');
+    const end = src.indexOf('.onActionCancel', start);
+    const block = src.slice(start, end + 500);
+    assert.ok(block.includes('e.fingerList.length === 0'));
+    assert.ok(!block.includes('e.offsetX + this.lastPanLocalX'));
+    assert.ok(block.includes('.onActionStart(() =>'));
+    assert.ok(block.includes('this.resetPanGestureBoundary()'));
+    assert.ok(src.includes('WS_EVENT pan_update'));
+    assert.ok(src.includes('localX: this.panLastLocalX'));
+  });
+
+  it('p011_wantShakeRoutesToWaterSandAndFieldTelemetryIncludesSourceLedger', 0, () => {
+    const page = fs.readFileSync('entry/src/main/ets/pages/SandCanvas.ets', 'utf8');
+    const field = fs.readFileSync('entry/src/main/ets/physics/WaterSandField.ets', 'utf8');
+    const wantAt = page.indexOf('this.waterSandShakeInput = this.liquidShakeInput;');
+    assert.ok(wantAt >= 0);
+    assert.ok(page.slice(wantAt, wantAt + 400).includes('this.setWaterSandShakeInput'));
+    const assembly = fs.readFileSync('entry/src/main/ets/physics/P011DeviceRunAssembly.ets', 'utf8');
+    assert.ok(page.includes('p011ApplyDeviceShake(this.waterSandField, this.deviceCapture'));
+    assert.ok(assembly.includes('field.setShakeInput(value)'));
+    assert.ok(page.includes("source: 'WANT'"));
+    assert.ok(field.includes('sourceInjectedHeavy: this.sourceInjectedHeavy'));
+    assert.ok(field.includes('sourceInjectedLight: this.sourceInjectedLight'));
+    assert.ok(field.includes('setGestureSandEventSink'));
+    assert.ok(field.includes('setShakeLiftEventSink'));
+  });
 });
 
 const failed = results.filter(r => r.status === 'FAIL');

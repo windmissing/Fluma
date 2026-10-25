@@ -1,3 +1,4 @@
+import { p011ShakeOnlyWant } from '../physics/P011DeviceRunAssembly';
 import UIAbility from '@ohos.app.ability.UIAbility';
 import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import Want from '@ohos.app.ability.Want';
@@ -134,6 +135,29 @@ export default class EntryAbility extends UIAbility {
   }
 
   private applyWant(parameters: Record<string, Object> | undefined, isNewWant: boolean): void {
+    // Partial stop/update must not inherit parse defaults for mode/seed/test identity.
+    const shakeOnly = isNewWant ? p011ShakeOnlyWant(parameters) : null;
+    if (shakeOnly !== null) {
+      if (!Number.isFinite(shakeOnly)) { hilog.warn(this.hilogDomain, this.hilogTag, 'INVALID_SHAKE'); return; }
+      this.wantCommandSequence++;
+      const command: LiquidCAWantCommand = { shakeOnly: true, shake: shakeOnly,
+        renderMode: 4, testMode: false, forceInvert: false, seed: 0, cellPx: 4, caseId: '', warnings: [] };
+      AppStorage.setOrCreate('liquidWantCommand', JSON.stringify(command));
+      AppStorage.setOrCreate('liquidWantCommandSeq', this.wantCommandSequence);
+      return;
+    }
+    if (!isNewWant) {
+      AppStorage.setOrCreate('p011ParticleRequested', false);
+      AppStorage.setOrCreate('p011DeviceCapture', false);
+    }
+    if (parameters !== undefined && parameters.p011particle !== undefined) {
+      const requested = `${parameters.p011particle}` === '1';
+      if (requested || `${parameters.p011particle}` === '0') AppStorage.setOrCreate('p011ParticleRequested', requested);
+      else hilog.warn(this.hilogDomain, this.hilogTag, 'INVALID_P011_PARTICLE');
+    }
+    if (parameters !== undefined && parameters.p011capture !== undefined)
+      AppStorage.setOrCreate('p011DeviceCapture', `${parameters.p011capture}` === '1');
+    AppStorage.setOrCreate('p011ShakeExplicit', parameters !== undefined && parameters.shake !== undefined);
     const parsed = parseLiquidCAWant(parameters, isNewWant);
     // P-011 dual-input-v1: identity travels with mode; publish mode before this Want's tilt.
     const tiltCommand = this.parseP011Want(parameters, parsed.renderMode, parsed.testMode, parsed.forceInvert);

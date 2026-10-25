@@ -10,6 +10,7 @@ export interface LiquidCAWantParams {
 }
 
 export interface LiquidCAWantCommand {
+  shakeOnly?: boolean;
   p011TiltWantSequence?: number;
   renderMode: number;
   testMode: boolean;

@@ -1,3 +1,8 @@
+import { P011ParticleRouteResult } from '../physics/P011ParticleM2Field';
+import { p011AssembleDeviceCapture, p011ArmDeviceParticleRoute, p011BindDevicePhase, p011ApplyDeviceShake } from '../physics/P011DeviceRunAssembly';
+import { P011EndpointStartupClock } from '../physics/P011EndpointStartupClock';
+import { P011EndpointCaptureSession } from '../physics/P011EndpointCaptureSession';
+import { P011ExternalAdmissionRecord } from '../physics/P011ExternalAdmissions';
 import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
 import { P012ParticleRenderSnapshot } from '../render/P012RenderTypes';
 import { P011GestureRateClock } from '../physics/P011GestureRateClock';
@@ -137,6 +142,7 @@ class PanelParams {
 }
 
 interface LiquidWantCommand {
+  shakeOnly?: boolean;
   p011TiltWantSequence?: number;
   renderMode: number;
   testMode: boolean;
@@ -544,6 +550,8 @@ struct SandCanvas {
   private waterSandVSandTopMax: number = 28;
   private waterSandSnapshotEnabled: boolean = false;
   private naturalObservationProbe: P011NaturalObservationProbe | null = null;
+  private deviceCapture: P011EndpointCaptureSession | null = null;
+  private explicitShakeControl: boolean = false;
   private naturalObservationStore: P011NaturalObservationStore | null = null;
   private naturalObservationStoreLogged: boolean = false;
   private waterSandVisualInverted: boolean = false;
@@ -781,6 +789,8 @@ struct SandCanvas {
     this.naturalObservationStore = null;
     this.naturalObservationProbe = null;
     this.waterSandField?.setNaturalObservationProbe(null);
+    this.waterSandField?.setExternalAdmissionEventSink(null);
+    this.deviceCapture = null;
     observationStore?.close().catch((): void => {
     });
     if (this.sheetContent !== null) {
@@ -930,10 +940,15 @@ struct SandCanvas {
   }
 
   setWaterSandShakeInput(value: number): void {
+    this.explicitShakeControl = true;
     this.waterSandShakeInput = Math.max(0, Math.min(1, value));
     // Route panel shake input directly to the active WaterSand field.
     if (this.renderMode === MODE_WATERSAND) {
-      this.waterSandField?.setShakeInput(this.waterSandShakeInput);
+      if (this.waterSandField !== null) {
+        const boundary = p011ApplyDeviceShake(this.waterSandField, this.deviceCapture, this.waterSandShakeInput);
+        this.logWaterSand(`WS_EVENT shake_effective ${JSON.stringify({runId: this.waterSandField.getP011RunId(),
+          input: this.waterSandShakeInput, boundary: boundary, source: 'PANEL_OR_WANT'})}`);
+      }
       if (this.waterSandShakeInput > 0) {
         this.logWaterSand(`WS_EVENT shake ${JSON.stringify({
           input: this.waterSandShakeInput,
@@ -1087,7 +1102,7 @@ struct SandCanvas {
   }
 
   private setupNaturalObservation(ws: WaterSandField): void {
-    if (!this.waterSandSnapshotEnabled) {
+    if (!this.waterSandSnapshotEnabled && AppStorage.get<boolean>('p011DeviceCapture') !== true) {
       return;
     }
     const previousStore = this.naturalObservationStore;
@@ -1098,6 +1113,12 @@ struct SandCanvas {
     previousStore?.close().catch((): void => {
     });
     const pendingRecords: P011NaturalObservationRecord[] = [];
+    const pendingAdmissions: P011ExternalAdmissionRecord[] = [];
+    ws.setExternalAdmissionEventSink((record: P011ExternalAdmissionRecord): void => {
+      const store = this.naturalObservationStore;
+      if (store === null) pendingAdmissions.push(record);
+      else store.appendAdmission(record);
+    });
     const runId = ws.getP011RunId();
     const probe = new P011NaturalObservationProbe(ws.cols, (record) => {
       const store = this.naturalObservationStore;
@@ -1121,11 +1142,15 @@ struct SandCanvas {
         store.append(record);
       }
       pendingRecords.length = 0;
+      for (const admission of pendingAdmissions) store.appendAdmission(admission);
+      pendingAdmissions.length = 0;
       if (!this.naturalObservationStoreLogged) {
         this.naturalObservationStoreLogged = true;
         this.logWaterSand(`P011_OBS_STORE ${JSON.stringify({
           observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
           runId: runId,
+          admissionFilePath: store.admissionFilePath,
+          endpointClockId: this.deviceCapture?.clock.clockId ?? null,
           filePath: store.filePath
         })}`);
         this.logWaterSand(`P011_RASTER_LAYOUT ${JSON.stringify({
@@ -1143,7 +1168,9 @@ struct SandCanvas {
         })}`);
       }
     }).catch((error: Error) => {
+      if (this.waterSandField !== ws || this.naturalObservationProbe !== probe) return;
       ws.setNaturalObservationProbe(null);
+      ws.setExternalAdmissionEventSink(null);
       this.naturalObservationProbe = null;
       this.logWaterSand(`P011_OBS_ERROR ${JSON.stringify({
         observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
@@ -1326,6 +1353,11 @@ struct SandCanvas {
     }
     this.liquidWantCommandSeq = sequence;
     const command = JSON.parse(rawCommand) as LiquidWantCommand;
+    if (command.shakeOnly === true) {
+      if (this.renderMode === MODE_WATERSAND) this.setWaterSandShakeInput(command.shake);
+      else if (this.renderMode === MODE_LIQUID) this.setLiquidShakeInput(command.shake);
+      return;
+    }
     this.applyInputMode(command.testMode, 'want', command.p011TiltWantSequence ?? 0);
     this.liquidCaseId = command.caseId;
     this.liquidTelemetry.setTestMode(this.testMode);
@@ -1344,7 +1376,7 @@ struct SandCanvas {
     }
     this.waterSandShakeInput = this.liquidShakeInput;
     if (this.renderMode === MODE_WATERSAND) {
-      this.waterSandField?.setShakeInput(this.waterSandShakeInput);
+      this.setWaterSandShakeInput(this.waterSandShakeInput);
       if (this.waterSandShakeInput > 0) {
         this.logWaterSand(`WS_EVENT shake ${JSON.stringify({
           input: this.waterSandShakeInput, boundary: true, source: 'WANT'
@@ -1575,8 +1607,9 @@ struct SandCanvas {
       conditioningKind === 'G0') {
       prefix = p011BuildConditioningPrefix(conditioningKind);
     }
-    const started = this.p011SchedulePlayer.start(peakADeg, rateDegPerSec,
-      nowMs, prefix);
+    const started = this.deviceCapture !== null
+      ? this.deviceCapture.startSchedule(this.p011SchedulePlayer, peakADeg, rateDegPerSec, prefix)
+      : this.p011SchedulePlayer.start(peakADeg, rateDegPerSec, nowMs, prefix);
     if (started) {
       hilog.info(0x0000, 'SandCanvas',
         'P011 schedule player START peak=%{public}f rate=%{public}f t0=%{public}f',
@@ -1602,7 +1635,8 @@ struct SandCanvas {
       this.p011SchedulePlayer.forceStop();
       return;
     }
-    const dispatches = this.p011SchedulePlayer.tick(nowMs);
+    const dispatches = this.deviceCapture !== null
+      ? this.deviceCapture.tickSchedule(this.p011SchedulePlayer) : this.p011SchedulePlayer.tick(nowMs);
     for (const dispatch of dispatches) {
       const command = dispatch.command;
       // segment identity flows exactly like a v3 want command binding.
@@ -1709,9 +1743,23 @@ struct SandCanvas {
     this.waterSandField.configure(this.waterSandParams);
     this.waterSandField.initialize(this.waterSandScene(this.waterSandPreset, this.waterSandCols));
     this.installWaterSandTelemetryHooks();
-    this.waterSandField.setShakeInput(this.renderMode === MODE_WATERSAND
-      ? this.waterSandShakeInput : 0);
+    this.deviceCapture = null;
+    if (AppStorage.get<boolean>('p011ParticleRequested') === true) {
+      const conflictingWant = AppStorage.get<number>('p011S3K') !== undefined ||
+        AppStorage.get<number>('p011S4KDeep') !== undefined || AppStorage.get<number>('p011AdvGain') !== undefined ||
+        (AppStorage.get<string>('p011ScheduleRoute') ?? '') !== '';
+      const armed: P011ParticleRouteResult = conflictingWant ? {ok: false, code: 'ROUTE_CONFLICT', active: false}
+        : p011ArmDeviceParticleRoute(this.waterSandField);
+      this.logWaterSand(`WS_EVENT particle_route ${JSON.stringify(armed)}`);
+    }
+    if (this.waterSandSnapshotEnabled || AppStorage.get<boolean>('p011DeviceCapture') === true) {
+      this.deviceCapture = p011AssembleDeviceCapture(this.waterSandField,
+        new P011EndpointStartupClock(this.waterSandField.getP011RunId()), this.testMode ? 'TEST' : 'EXPERIENCE');
+    }
     this.setupNaturalObservation(this.waterSandField);
+    this.explicitShakeControl = AppStorage.get<boolean>('p011ShakeExplicit') === true;
+    p011ApplyDeviceShake(this.waterSandField, this.deviceCapture,
+      this.renderMode === MODE_WATERSAND ? this.waterSandShakeInput : 0);
     this.waterSandSnapshot = this.waterSandField.snapshot();
     this.waterSandVisualInverted = false;
     // P-012 E-batch：物理重建 → fieldEpoch 递增 + 断配对（不改物理逻辑）
@@ -1987,7 +2035,8 @@ struct SandCanvas {
           // apply route travels with the command; null keeps the legacy
           // apply. Wiring only — activation still requires the armed state
           // machine (correctionRouteActive dual-condition gate).
-          ws.setNaturalObservationRouteId(p011TiltWant.correctionRouteId ?? null);
+          if (!ws.particleRouteActive() || p011TiltWant.correctionRouteId !== undefined && p011TiltWant.correctionRouteId !== null)
+            ws.setNaturalObservationRouteId(p011TiltWant.correctionRouteId ?? null);
           // preregistration §1: the matrix variant travels with the want;
           // inert without the route binding (route gate priority).
           ws.setCorrectionVariant(p011TiltWant.correctionVariant ?? 'D');
@@ -2079,7 +2128,11 @@ struct SandCanvas {
           p011AcceptedTime = p011ScriptAcceptedTime;
           p011TargetTilt = p011ScriptTargetTilt;
         }
-        if (this.waterSandPreset === 'thick') {
+        if (this.deviceCapture !== null) {
+          this.deviceCapture.field.setEndpointCaptureMode(this.testMode ? 'TEST' : 'EXPERIENCE');
+          p011BindDevicePhase(ws, this.deviceCapture);
+        }
+        if (this.waterSandPreset === 'thick' && !this.explicitShakeControl) {
           ws.setShakeInput(Math.min(1, Math.abs(effectiveTilt) / 90));
         }
         // P-012 帧时三段拆分埋点（P-013 立项前置；纯计时不改逻辑）：

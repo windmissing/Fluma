@@ -1,0 +1,49 @@
+{
+  "suite": "T43 device capture assembly / real worker with platform doubles",
+  "results": [
+    {
+      "name": "fresh run arms real STARTUP clock before first substep; phase/key/peak available",
+      "status": "PASS"
+    },
+    {
+      "name": "phase follows actual accepted tilt/input identities, no fabricated sequence",
+      "status": "PASS"
+    },
+    {
+      "name": "shake-on/off same physical path keeps run/baseline; real OFF boundary provides 7-8s window",
+      "status": "PASS"
+    },
+    {
+      "name": "partial stop accepts zero without mode/seed defaults and invalid values reject",
+      "status": "PASS"
+    },
+    {
+      "name": "real page Want consumer takes shake-only branch before all mode/reset mutations",
+      "status": "PASS"
+    },
+    {
+      "name": "real Ability publishes partial shake envelope without parsing defaults, including platform metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "page cold ordering installs capture+raw sink before initial shake, binds phase before step",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit route arms M2/schema4; no-op is idempotent and conflicts preserve existing route",
+      "status": "PASS"
+    },
+    {
+      "name": "real worker writes full long UTF8 ledger and independent admissions despite short writes",
+      "status": "PASS"
+    },
+    {
+      "name": "actual successful admissions stream independently and recompute summary from complete raw file",
+      "status": "PASS"
+    },
+    {
+      "name": "ready failure rejects create; zero-write and close-count mismatch cannot claim complete",
+      "status": "PASS"
+    }
+  ]
+}

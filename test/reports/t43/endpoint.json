@@ -1,0 +1,43 @@
+{
+  "suite": "p011_endpoint_native",
+  "passed": 9,
+  "failed": 0,
+  "results": [
+    {
+      "name": "three displayed fractions use E; missing C P remains null; invalid E not EPS PASS",
+      "status": "PASS"
+    },
+    {
+      "name": "clock adapter uses actual STARTUP ms; equal ms allowed; no guessed resolution",
+      "status": "PASS"
+    },
+    {
+      "name": "sampler duplicate/backward clock rejection and immutable same-ms commit identity",
+      "status": "PASS"
+    },
+    {
+      "name": "real field two substeps same frame stamp POST_COMMIT, cumulative dt exactly once",
+      "status": "PASS"
+    },
+    {
+      "name": "externalAdmissionCount is sourced from successful injection epoch in post-commit context",
+      "status": "PASS"
+    },
+    {
+      "name": "failed physical audit records attempt without stamp/ordinal/integration advance",
+      "status": "PASS"
+    },
+    {
+      "name": "reset clears sampling; disabled writer leaves old ledger fields absent",
+      "status": "PASS"
+    },
+    {
+      "name": "legacy suspensionFraction formula is unchanged; explicit C missing summary not fabricated",
+      "status": "PASS"
+    },
+    {
+      "name": "byState uses exact positive remainder, ignores empty slots and checks cache closure",
+      "status": "PASS"
+    }
+  ]
+}
