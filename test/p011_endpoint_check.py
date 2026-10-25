@@ -660,6 +660,10 @@ def analyze_endpoint(records, manifest, safety=None):
         # Required report metadata is never fabricated. Missing artifact
         # identity is distinct from the raw numerical candidate result.
         context = selected[-1][0]['context'] if selected else {}
+        # D-4: the checked ledger sample owns these report values. An
+        # occurrence/manifest placeholder must not mask a missing sample.
+        row['endpointSampleStage'] = context.get('endpointSampleStage')
+        row['externalAdmissionCount'] = context.get('externalAdmissionCount')
         fields = ('routeId particleRouteActive particleEvidenceKind buildCommit sourceTreeHash packageHash '
                   'ledgerPath ledgerHash scheduleId scheduleHash renderSeed inputScriptHash commandPhaseId segmentId '
                   'sourceEpoch sourceInjectedH sourceInjectedL resetCount invertCount routeChangeCount modeChangeCount '

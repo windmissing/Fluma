@@ -256,6 +256,15 @@ class EndpointTests(unittest.TestCase):
         self.assertEqual(report['protocolSourceHashAlgorithm'],'SHA-256')
         self.assertTrue(row['protocolSourceHash'])
         self.assertEqual(row['endpointSampleStage'],'POST_COMMIT')
+        self.assertNotIn('endpointSampleStage',row['reportMissingFields'])
+        self.assertNotIn('protocolSourceHash',row['reportMissingFields'])
+        self.assertNotIn('externalAdmissionCount',row['reportMissingFields'])
+        data=fixture();data[1]['occurrences'][0]['endpointSampleStage']='UNTRUSTED_PLACEHOLDER'
+        self.assertEqual(self.row(data)['endpointSampleStage'],'POST_COMMIT')
+        data=fixture();data[0][-1]['context'].pop('endpointSampleStage')
+        row=self.row(data)
+        self.assertIsNone(row['endpointSampleStage'])
+        self.assertIn('endpointSampleStage',row['reportMissingFields'])
 
     def test_external_admission_count_matches_source_epoch_and_missing_is_not_fabricated(self):
         data=fixture();data[0][-1]['context']['sourceEpoch']=2
