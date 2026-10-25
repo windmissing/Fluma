@@ -1,0 +1,61 @@
+{
+  "buildSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "paramsHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "inputHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "ledgerHash": "5a64b32a5ea897d8b9f5fe5303ee05bc5b52e5a2fd67317eb436269f1b2b8b68",
+  "endpointClockId": "clock",
+  "runId": "r",
+  "shakeOnEventId": "on",
+  "shakeOffEventId": "off",
+  "shakeOnEffectiveElapsedMs": 100,
+  "shakeOffEffectiveElapsedMs": 3100,
+  "peakShakeInputEvents": [
+    {
+      "eventId": "on",
+      "runId": "r",
+      "peakInputCommitOrder": 1,
+      "effectiveElapsedMs": 100,
+      "endpointClockId": "clock",
+      "value": 1,
+      "kind": "SHAKE_ON",
+      "shakeOnEventId": "on",
+      "caseOccurrenceId": "case"
+    },
+    {
+      "eventId": "off",
+      "runId": "r",
+      "peakInputCommitOrder": 100,
+      "effectiveElapsedMs": 3100,
+      "endpointClockId": "clock",
+      "value": 0,
+      "kind": "SHAKE_OFF",
+      "shakeOnEventId": "on",
+      "caseOccurrenceId": "case"
+    }
+  ],
+  "legacy250msSamples": [
+    {
+      "suspensionFraction": 0.8
+    },
+    {
+      "suspensionFraction": 0.3
+    },
+    {
+      "suspensionFraction": 0.28
+    }
+  ],
+  "legacy250msCommitKeys": [
+    {
+      "runId": "r",
+      "sequence": 2,
+      "frameId": 2,
+      "substepId": 2
+    },
+    {
+      "runId": "r",
+      "sequence": 4,
+      "frameId": 4,
+      "substepId": 4
+    }
+  ]
+}

@@ -707,6 +707,7 @@ def analyze_endpoint(records, manifest, safety=None):
         report['status'] = 'RETROSPECTIVE_DIAGNOSTIC' if report['occurrences'] else 'INCOMPLETE'
     else:
         report['status'] = 'CANDIDATE_ONLY' if report['occurrences'] else ('INVALID_BASELINE' if baseline_errors else 'INCOMPLETE')
+    report['peakNonDeposited'] = analyze_peak_nondeposited(records, manifest)
     return report
 
 
@@ -720,6 +721,11 @@ def check_files(ledger_path, manifest_path, safety=None):
     report = analyze_endpoint([json.loads(line) for line in raw.decode('utf-8').splitlines() if line.strip()], manifest, safety)
     report.update(ledgerPath=str(ledger_path), ledgerHash=actual_hash, scheduleHash=manifest.get('scheduleHash'))
     return report
+
+
+def analyze_peak_nondeposited(records, manifest):
+    from p011_peak_check import check_peak
+    return check_peak(records, manifest)
 
 
 def main():

@@ -9,6 +9,7 @@ import { P011EndpointClock, P011EndpointPhaseIdentity, P011EndpointSampler,
   p011EndpointMassFractions } from './P011EndpointMetrics';
 import { P011ParticleField, P011ParticleByState, P011ParticleStateMass, P011_PARTICLE_ROUTE_ID,
   P011ParticleParams, P011ParticleSnapshot, particleRouteEnabled } from './P011ParticleField';
+import { P011PeakSampler, P011PeakConsumption, P011PeakSummary, P011PeakInputEvent, P011_PEAK_FIELD_REVISION } from './P011PeakMetrics';
 import { P011ParticleM2FieldBinding, P011ParticleRouteResult, P011ParticleRouteCode, serializeP011ParticleSnapshot, serializeP011ParticleEvent } from './P011ParticleM2Field';
 import {
   P011NaturalObservationAudit,
@@ -857,6 +858,8 @@ export class WaterSandField {
   private lastP011PhysicsTime = 0;
   private lastP011PhysicsDt = 0;
   private p011RunId = nextP011RunId();
+  private peakSampler: P011PeakSampler | null = null;
+  private peakConsumedInput: P011PeakConsumption | null = null;
   private endpointSampler: P011EndpointSampler | null = null;
   private endpointPhase: P011EndpointPhaseIdentity | null = null;
   private endpointStamp: P011EndpointPostCommitStamp | null = null;
@@ -1382,6 +1385,7 @@ export class WaterSandField {
     this.lastP011PhysicsTime = 0;
     this.lastP011PhysicsDt = 0;
     this.p011RunId = nextP011RunId();
+    this.peakSampler = null; this.peakConsumedInput = null;
     this.endpointSampler = null; this.endpointPhase = null;
     this.endpointStamp = null; this.endpointSampleError = null;
     this.endpointCaptureMode = null; this.endpointModeChanges = 0;
@@ -1451,7 +1455,10 @@ export class WaterSandField {
     if (!finite(value)) {
       throw new WaterSandParamError('shake input must be finite');
     }
-    this.shakeInput = Math.max(0, Math.min(1, value));
+    const accepted = Math.max(0, Math.min(1, value));
+    if (this.peakSampler !== null) this.peakSampler.accept(accepted, value,
+      this.endpointPhase === null ? '' : this.endpointPhase.occurrenceId);
+    this.shakeInput = accepted;
     this.dormant = false;
   }
 
@@ -1969,6 +1976,7 @@ export class WaterSandField {
       if (this.moistureRouteActive()) {
         this.refreshMoisture();
       }
+      this.peakConsumedInput = this.peakSampler === null ? null : this.peakSampler.consume();
       this.saveBackup();
       this.updateSandTop();
       this.beginSubstepMotionBudget(substepDt, true, 1);
@@ -2218,13 +2226,36 @@ export class WaterSandField {
   // same elapsed clock for schedule dispatch/effect/boundary evidence.
   setEndpointSampling(clock: P011EndpointClock | null, phase: P011EndpointPhaseIdentity | null): void {
     if (clock === null) {
-      this.endpointSampler = null; this.endpointPhase = null; this.endpointStamp = null; return;
+      this.endpointSampler = null; this.endpointPhase = null; this.endpointStamp = null; this.peakSampler = null; return;
     }
     if (this.p011SubstepId !== 0 || this.sourceEpoch !== 0 || phase === null) {
       throw new Error('INVALID_ENDPOINT_RUN_START');
     }
     this.endpointSampler = new P011EndpointSampler(this.p011RunId, clock);
+    this.peakSampler = new P011PeakSampler(this.p011RunId, clock);
     this.endpointPhase = phase; this.endpointStamp = null; this.endpointSampleError = null;
+  }
+  getPeakShakeInputEvents(): P011PeakInputEvent[] {
+    return this.peakSampler === null ? [] : this.peakSampler.inputEvents();
+  }
+  getPeakSummary(): P011PeakSummary | null {
+    return this.peakSampler === null ? null : this.peakSampler.summary();
+  }
+  private recordPeakCommit(): void {
+    const sampler = this.peakSampler, stamp = this.endpointStamp, input = this.peakConsumedInput;
+    if (sampler === null || stamp === null || input === null) return;
+    let dh = 0, dl = 0, uh = 0, ul = 0;
+    for (let c = 0; c < this.cols; c++) {
+      dh += this.bh[c] + this.mh[c]; dl += this.bl[c] + this.ml[c]; uh += this.suspH[c]; ul += this.suspL[c];
+    }
+    const pool = this.particleRouteActive() && this.particleBinding !== null ? this.particleBinding.pool.totals() : null;
+    if (!this.particleRouteActive() || this.sourceEpoch !== 0 || this.endpointInvertCount !== 0 ||
+      this.endpointRouteChanges !== 0 || this.endpointModeChanges !== 0) sampler.invalidate();
+    const order = sampler.commit(stamp.key, stamp.endpointSampleElapsedMs, input,
+      { DH: dh, DL: dl, UH: uh, UL: ul, PH: pool === null ? 0 : pool.heavy, PL: pool === null ? 0 : pool.light,
+        EH: this.initialHeavy + this.sourceInjectedHeavy, EL: this.initialLight + this.sourceInjectedLight });
+    if (this.naturalObservationProbe !== null) this.naturalObservationProbe.stampPeakConsumption(order,
+      input.eventId, input.shakeOnEventId, input.value, sampler.summary());
   }
   setEndpointPhaseIdentity(phase: P011EndpointPhaseIdentity): void { this.endpointPhase = phase; }
   getShakeInput(): number { return this.shakeInput; }
@@ -2274,6 +2305,7 @@ export class WaterSandField {
         this.endpointStamp = sampler.stampRecordedPostCommit(key, elapsed, phase);
       }
       this.endpointStampedSourceEpoch = this.sourceEpoch;
+      this.recordPeakCommit();
     } catch (error) {
       if (sampler.committedOrdinal < key.committedOrdinal) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
       this.endpointSampleError = error instanceof Error ? error.message : 'ENDPOINT_SAMPLE_UNAVAILABLE';

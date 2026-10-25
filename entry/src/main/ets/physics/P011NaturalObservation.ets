@@ -4,6 +4,7 @@
  */
 
 // P-011 v2.12 §19: observation identity is independent from the physics route.
+import { P011PeakSummary, P011_PEAK_FIELD_REVISION } from './P011PeakMetrics';
 import { P011EndpointPostCommitStamp, P011EndpointLedgerCapture, P011EndpointParticleSummary,
   P011_ENDPOINT_FIELD_REVISION } from './P011EndpointMetrics';
 export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
@@ -171,6 +172,17 @@ export interface P011MoistureLedgerBlock {
 }
 
 export interface P011NaturalObservationSubstepContext {
+  peakFieldRevision?: string;
+  peakInputCommitOrder?: number;
+  peakConsumedShakeInputEventId?: string | null;
+  peakConsumedShakeOnEventId?: string | null;
+  peakConsumedShakeInputValue?: number;
+  shakeOnEventId?: string | null;
+  shakeOffEventId?: string | null;
+  shakeOnEffectiveElapsedMs?: number | null;
+  shakeOffEffectiveElapsedMs?: number | null;
+  peakWindowStartElapsedMs?: number | null;
+  peakWindowEndElapsedMs?: number | null;
   endpointFieldRevision?: string;
   endpointSampleStage?: 'POST_COMMIT' | null;
   endpointSampleElapsedMs?: number | null;
@@ -740,6 +752,20 @@ export class P011NaturalObservationProbe {
     context.externalAdmissionCount = externalAdmissionCount;
     context.shakeInput = shakeInput; context.resetCount = 0; context.invertCount = invertCount;
     context.routeChangeCount = routeChangeCount; context.modeChangeCount = modeChangeCount;
+  }
+  stampPeakConsumption(order: number, eventId: string | null, onId: string | null,
+    value: number, summary: P011PeakSummary): void {
+    if (this.context === null) return;
+    this.context.peakFieldRevision = P011_PEAK_FIELD_REVISION;
+    this.context.peakInputCommitOrder = order;
+    this.context.peakConsumedShakeInputEventId = eventId;
+    this.context.peakConsumedShakeOnEventId = onId;
+    this.context.peakConsumedShakeInputValue = value;
+    this.context.shakeOnEventId = summary.shakeOnEventId; this.context.shakeOffEventId = summary.shakeOffEventId;
+    this.context.shakeOnEffectiveElapsedMs = summary.shakeOnEffectiveElapsedMs;
+    this.context.shakeOffEffectiveElapsedMs = summary.shakeOffEffectiveElapsedMs;
+    this.context.peakWindowStartElapsedMs = summary.peakWindowStartElapsedMs;
+    this.context.peakWindowEndElapsedMs = summary.peakWindowEndElapsedMs;
   }
   attachEndpointLedgerCapture(capture: P011EndpointLedgerCapture): void {
     if (this.context === null) return;

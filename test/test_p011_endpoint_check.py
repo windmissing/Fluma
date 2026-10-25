@@ -282,4 +282,41 @@ class EndpointTests(unittest.TestCase):
         self.assertIn('context.externalAdmissionCount',row['missingFields'])
 
 
+    def test_peak_checker_same_commit_sum_and_missing_boundaries_never_pass(self):
+        from p011_endpoint_check import analyze_peak_nondeposited
+        data=fixture(times=[100, 200, 3100], u=0, p=0)
+        records=data[0]
+        for i, r in enumerate(records):
+            r['context'].update(peakFieldRevision='p011-peak-fields-v1', peakInputCommitOrder=i+2,
+                peakConsumedShakeInputEventId='on', peakConsumedShakeOnEventId='on',
+                peakConsumedShakeInputValue=1, endpointSampleElapsedMs=[100, 200, 3100][i],
+                endpointSampleStage='POST_COMMIT', commitStatus='committed', sourceInjectedH=0, sourceInjectedL=0)
+            r['stateAfter']['bh']=[900]; r['stateAfter']['bl']=[1000]
+            r['stateAfter']['suspH']=[100 if i == 0 else 0]; r['stateAfter']['suspL']=[0]
+            r['particles'].update(count=0,massH=0,massL=0,byState=dict(FLYING=dict(count=0,massH=0,massL=0),CONTACT_WAIT=dict(count=0,massH=0,massL=0)),bySourceKind=dict(GESTURE_EXTERNAL=dict(count=0,massH=0,massL=0),SHAKE_LIFT=dict(count=0,massH=0,massL=0)),pMass=[],pPhase=[],pState=[])
+            if i == 1:
+                r['stateAfter']['bh']=[900]
+                r['particles'].update(count=2, massH=100, massL=0,
+                    byState=dict(FLYING=dict(count=2,massH=100,massL=0), CONTACT_WAIT=dict(count=0,massH=0,massL=0)),
+                    bySourceKind=dict(GESTURE_EXTERNAL=dict(count=0,massH=0,massL=0),SHAKE_LIFT=dict(count=2,massH=100,massL=0)),
+                    pMass=[50,50], pPhase=[0,0], pState=[1,1])
+        # Complete the physical-input evidence required by the frozen peak protocol.
+        for r in records:
+            r['particleStateSnapshot'] = {n: r['particles'][n] for n in ('pMass','pPhase','pState')}
+        records[-1]['stateAfter']['bh'] = [1000]
+        manifest=dict(buildSha256='a'*64,paramsHash='b'*64,inputHash='c'*64,ledgerHash='d'*64,endpointClockId='r:startup-elapsed-v1',runId='r', shakeOnEventId='on', shakeOnEffectiveElapsedMs=100,
+            shakeOffEventId='off', shakeOffEffectiveElapsedMs=3200,
+            peakShakeInputEvents=[dict(eventId='on',runId='r',peakInputCommitOrder=1,
+                effectiveElapsedMs=100,value=1,kind='SHAKE_ON',shakeOnEventId='on',endpointClockId='r:startup-elapsed-v1',caseOccurrenceId='occ-1'),
+                dict(eventId='off',runId='r',peakInputCommitOrder=5,
+                effectiveElapsedMs=3200,value=0,kind='SHAKE_OFF',shakeOnEventId='on',endpointClockId='r:startup-elapsed-v1',caseOccurrenceId='occ-1')])
+        result=analyze_peak_nondeposited(records, manifest)
+        self.assertAlmostEqual(result['peakNonDepositedFraction'], 0.05)
+        self.assertEqual(result['peakInputCommitOrder'], 2)
+        self.assertEqual(result['peakStatus'], 'FAIL')
+        manifest.pop('shakeOffEventId')
+        result=analyze_peak_nondeposited(records, manifest)
+        self.assertEqual(result['peakStatus'], 'NOT_IMPLEMENTED')
+        self.assertIn('manifest.shakeOffEventId', result['missingFields'])
+
 if __name__=='__main__':unittest.main()

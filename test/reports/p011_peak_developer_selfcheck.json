@@ -1,0 +1,154 @@
+{
+  "task": "6adcd3e6e4b06ee357206d26",
+  "date": "2026-10-25",
+  "scope": "peak sampler, streaming peak, independent checker, same-ledger dual caliber; developer non-device validation",
+  "basis": [
+    "peak-protocol-P011-ws08-peak-nondeposited-v1 §§1-6,9",
+    "architecture-P011-peak-fields-revision-v1 consumption identity, common-clock/order and candidate report fields"
+  ],
+  "peakProtocolEffective": false,
+  "formalReleaseAuthorized": false,
+  "evidenceClassification": "CANDIDATE_DIAGNOSTIC",
+  "fixtureNotice": "Synthetic counterexample only. Build/params/input identity strings identify one fixture, not a captured device build or validated physical improvement.",
+  "dualFixture": "test/reports/p011_peak_dual_fixture/comparison.json",
+  "pythonTests": {
+    "peak": 13,
+    "endpoint": 25,
+    "failed": 0
+  },
+  "nodeTests": {
+    "passed": 8,
+    "failed": 0,
+    "summary": {
+      "peakFieldRevision": "p011-peak-fields-v1",
+      "peakMethodId": "peakNonDepositedFraction",
+      "peakProtocolId": "p011-ws08-peak-nondeposited",
+      "peakProtocolRevision": "ws08-peak-nondeposited-v1",
+      "peakAuthority": "APPROVED",
+      "peakProtocolEffective": false,
+      "evidenceClassification": "CANDIDATE_DIAGNOSTIC",
+      "peakWindowStartElapsedMs": 100,
+      "peakWindowEndElapsedMs": 3100,
+      "shakeOnEventId": "run:shake:1",
+      "shakeOffEventId": "run:shake:5",
+      "shakeOnEffectiveElapsedMs": 100,
+      "shakeOffEffectiveElapsedMs": 3100,
+      "peakWindowSampleCount": 2,
+      "peakNonDepositedFraction": 0.52,
+      "peakNonDepositedHeavyFraction": 0.52,
+      "peakNonDepositedLightFraction": null,
+      "peakCommitKey": {
+        "runId": "run",
+        "sequence": 1,
+        "frameId": 1,
+        "substepId": 1,
+        "attemptId": "a1",
+        "committedOrdinal": 1
+      },
+      "peakStockMass": 520,
+      "peakReferenceMass": 1000,
+      "peakSampleElapsedMs": 100,
+      "peakInputCommitOrder": 2,
+      "peakStatus": "PASS",
+      "peakScore": 6,
+      "legacyPeakHistoricalReference": 0.52,
+      "legacyPeakLiveFormula": 0.52,
+      "sameReferenceSuspOnlyPeak": 0.52
+    }
+  },
+  "endpointNode": {
+    "suite": "p011_endpoint_native",
+    "passed": 9,
+    "failed": 0,
+    "results": [
+      {
+        "name": "three displayed fractions use E; missing C P remains null; invalid E not EPS PASS",
+        "status": "PASS"
+      },
+      {
+        "name": "clock adapter uses actual STARTUP ms; equal ms allowed; no guessed resolution",
+        "status": "PASS"
+      },
+      {
+        "name": "sampler duplicate/backward clock rejection and immutable same-ms commit identity",
+        "status": "PASS"
+      },
+      {
+        "name": "real field two substeps same frame stamp POST_COMMIT, cumulative dt exactly once",
+        "status": "PASS"
+      },
+      {
+        "name": "externalAdmissionCount is sourced from successful injection epoch in post-commit context",
+        "status": "PASS"
+      },
+      {
+        "name": "failed physical audit records attempt without stamp/ordinal/integration advance",
+        "status": "PASS"
+      },
+      {
+        "name": "reset clears sampling; disabled writer leaves old ledger fields absent",
+        "status": "PASS"
+      },
+      {
+        "name": "legacy suspensionFraction formula is unchanged; explicit C missing summary not fabricated",
+        "status": "PASS"
+      },
+      {
+        "name": "byState uses exact positive remainder, ignores empty slots and checks cache closure",
+        "status": "PASS"
+      }
+    ]
+  },
+  "frozenProtocolExecutions": {
+    "peak": "8/8 MATCH",
+    "endpoint": "10/10 MATCH"
+  },
+  "regressions": {
+    "planning": {
+      "passed": 106,
+      "failed": 0
+    },
+    "gesture_inject": {
+      "passed": 18,
+      "failed": 0
+    },
+    "input": {
+      "passed": 124,
+      "failed": 0
+    },
+    "s3_moisture": {
+      "passed": 14,
+      "failed": 0
+    },
+    "s4_deep_creep": {
+      "passed": 10,
+      "failed": 0
+    },
+    "advection": {
+      "passed": 9,
+      "failed": 0
+    },
+    "particle_field": {
+      "passed": 33,
+      "failed": 0
+    },
+    "render": {
+      "passed": 82,
+      "failed": 0
+    },
+    "tracer": {
+      "passed": 9,
+      "failed": 0
+    }
+  },
+  "build": {
+    "status": "PASS",
+    "log": "test/reports/p011_peak_build.log",
+    "task": "default@CompileArkTS"
+  },
+  "failedItems": [],
+  "unresolvedItems": [
+    "Device E2E and protocol activation belong to separate tester/effector/manager work.",
+    "Archived ledger without accepted-input events or full P/window remains NOT_IMPLEMENTED."
+  ]
+}
