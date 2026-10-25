@@ -30,8 +30,8 @@ export class P013DualFieldAdapter {
       if ((pool.pState[i] !== 1 && pool.pState[i] !== 2) || pool.pPhase[i] > 1 ||
         !Number.isFinite(pool.pMass[i]) || pool.pMass[i] <= 0 ||
         !Number.isFinite(Math.fround(pool.pX[i])) || !Number.isFinite(Math.fround(pool.pY[i])) ||
-        pool.pX[i] < 0 || pool.pX[i] >= 128 || pool.pY[i] < 0 || pool.pY[i] > field.capacity ||
-        !Number.isInteger(pool.pId[i]) || pool.pId[i] < 1) return 'INVALID_PARTICLE';
+        Math.fround(pool.pX[i]) < 0 || Math.fround(pool.pX[i]) >= 128 || Math.fround(pool.pY[i]) < 0 || Math.fround(pool.pY[i]) > field.capacity ||
+        !Number.isInteger(pool.pId[i]) || pool.pId[i] < 1 || pool.pId[i] > 0xffffffff) return 'INVALID_PARTICLE';
       for (let j = 0; j < i; j++) if (pool.pState[j] !== 0 && pool.pId[j] === pool.pId[i]) return 'DUPLICATE_ID';
       count++;
     }

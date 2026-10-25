@@ -1,0 +1,626 @@
+{
+  "task": "t49",
+  "date": "2026-10-25",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "checks": {
+    "dualField": {
+      "suite": "T20 dual field packet/publication",
+      "results": [
+        {
+          "name": "schema4 publication copies field and pool under one authoritative token, read does not publish",
+          "status": "PASS"
+        },
+        {
+          "name": "external admission between steps publishes once; zero/reject do not publish",
+          "status": "PASS"
+        },
+        {
+          "name": "live holes compress in stable slot order, state2/ID preserved; no input mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "schema2/3, mismatched bed token and bad live count reject complete packets",
+          "status": "PASS"
+        },
+        {
+          "name": "Float64 overflow, invalid phase/state, duplicate IDs and mass reject without partial upload",
+          "status": "PASS"
+        },
+        {
+          "name": "restore creates new epoch; invert is one publication and coordinates mirror only in physics",
+          "status": "PASS"
+        },
+        {
+          "name": "route conflict and nonpositive step leave publication unchanged; visual ablation only marks packet",
+          "status": "PASS"
+        },
+        {
+          "name": "rolled-back step leaves the last complete publication and particle bytes unchanged",
+          "status": "PASS"
+        },
+        {
+          "name": "full pool compresses every slot into fixed upload storage without dropping inventory",
+          "status": "PASS"
+        },
+        {
+          "name": "T49 Float32 column-boundary overflow and ID truncation reject without packet writes",
+          "status": "PASS"
+        },
+        {
+          "name": "T49 empty bed -> real falling particles -> LAND bed and particle removal share one packet",
+          "status": "PASS"
+        }
+      ]
+    },
+    "host": "native bridge and lifecycle PASS",
+    "p0": {
+      "suite": "P013 P0 product adapter/CPU/controller",
+      "results": [
+        {
+          "name": "profiles match actual Canvas DISPLAY_4X3_V1 for every channel/column",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid input leaves reusable 2048B packet unchanged",
+          "status": "PASS"
+        },
+        {
+          "name": "Float32Array with nonzero byteOffset carries exactly 512 floats",
+          "status": "PASS"
+        },
+        {
+          "name": "flat fixture neutral reference and no sand outside mask",
+          "status": "PASS"
+        },
+        {
+          "name": "180 degree and non-fullscreen box maps the identical material point",
+          "status": "PASS"
+        },
+        {
+          "name": "depth approaches 1 across H/L/M without material-boundary jumps",
+          "status": "PASS"
+        },
+        {
+          "name": "mirrored light and mirrored two slopes exchange the sign about fixture reference",
+          "status": "PASS"
+        },
+        {
+          "name": "empty sand and one-column edge ramp preserve continuous sampler mask",
+          "status": "PASS"
+        },
+        {
+          "name": "binding is first accessed in XComponent onLoad, never during construction or pre-load controls",
+          "status": "PASS"
+        },
+        {
+          "name": "onLoad may precede native window readiness; retry initializes only after window callback",
+          "status": "PASS"
+        },
+        {
+          "name": "controller baseline never calls bridge; overlay uses one buffer and new IDs",
+          "status": "PASS"
+        },
+        {
+          "name": "ON->OFF and ON->baseline submit transparent clear before removing layer",
+          "status": "PASS"
+        },
+        {
+          "name": "swap failure preserves fault telemetry and removes diagnostic layer",
+          "status": "PASS"
+        },
+        {
+          "name": "stale geometry hides old heatmap, consumes frame ID and retries with a new one",
+          "status": "PASS"
+        },
+        {
+          "name": "background gates calls; resume reuses owner; disposal is idempotent",
+          "status": "PASS"
+        },
+        {
+          "name": "same native session remount keeps increasing IDs; canonical evidence resets mode",
+          "status": "PASS"
+        },
+        {
+          "name": "controller ring is bounded, reports loss, and drains immutable copies",
+          "status": "PASS"
+        },
+        {
+          "name": "unrecoverable bridge/drain/release exceptions never escape into the Canvas ticker",
+          "status": "PASS"
+        },
+        {
+          "name": "nearest-rank summaries keep null for unavailable metrics",
+          "status": "PASS"
+        },
+        {
+          "name": "native telemetry staging is bounded and joins native plus controller loss",
+          "status": "PASS"
+        }
+      ]
+    },
+    "composition": {
+      "suite": "T34 composition offline",
+      "results": [
+        {
+          "name": "P0 legacy draw command sequence equals prepared background+foreground, adapter updates once",
+          "status": "PASS"
+        },
+        {
+          "name": "analytic color controls discriminate linear8, sRGB and double encoding",
+          "status": "PASS"
+        },
+        {
+          "name": "unsupported profile restores complete Canvas mode and releases native",
+          "status": "PASS"
+        },
+        {
+          "name": "prepared token mismatch never submits a new native frame",
+          "status": "PASS"
+        },
+        {
+          "name": "default profile never enables a probe or substitutes a material shader",
+          "status": "PASS"
+        },
+        {
+          "name": "dual success consumes one published packet and ablation keeps real inventory",
+          "status": "PASS"
+        }
+      ]
+    },
+    "render": {
+      "execution": "actual-product-ets-via-bundled-typescript",
+      "results": [
+        {
+          "name": "p012_adapter_longRun_neverConservationFails",
+          "status": "PASS",
+          "error": "conservationFails=0"
+        },
+        {
+          "name": "p012_adapter_injectHOnlyBreakAndRecover",
+          "status": "PASS",
+          "error": "reason=6 recovered=true"
+        },
+        {
+          "name": "p012_adapter_injectLOnlyBreak",
+          "status": "PASS",
+          "error": "reason=7"
+        },
+        {
+          "name": "p012_renderer_drawBudget_worst60Frames",
+          "status": "PASS",
+          "error": "worstDraws=9 budget=16"
+        },
+        {
+          "name": "p012_renderer_deterministicSameSeed",
+          "status": "PASS",
+          "error": "styleCounts=7/7"
+        },
+        {
+          "name": "p012_offBranchDecision_table",
+          "status": "PASS",
+          "error": "decision table mismatch"
+        },
+        {
+          "name": "p012_ea_mistDrawBudget_worst60Frames",
+          "status": "PASS",
+          "error": "worstTotalDraws=32 (E+A budget 64)"
+        },
+        {
+          "name": "p012_ea_fogAlphaBound",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_ea_mistOnlyInEATier",
+          "status": "PASS",
+          "error": "eMist=0 eaMist(e3i2-legacy)=23 eaI2Baked=true"
+        },
+        {
+          "name": "p012_ea_deterministicSameSeed",
+          "status": "PASS",
+          "error": "fillCounts=30/30"
+        },
+        {
+          "name": "p012_adapter_slotIsolation",
+          "status": "PASS",
+          "error": "bh0Before=50 pairValid=true"
+        },
+        {
+          "name": "p012_eab_motionCache_freezeZeroAdvect",
+          "status": "PASS",
+          "error": "freezeOk=true zeroOk=true"
+        },
+        {
+          "name": "p012_eab_motionCache_netTransportAdvect",
+          "status": "PASS",
+          "error": "advectOk=true"
+        },
+        {
+          "name": "p012_eab_drawBudget_firstTierWorst60",
+          "status": "PASS",
+          "error": "worstEAB=52 budget=112"
+        },
+        {
+          "name": "p012_eab_grainOnlyInEAB",
+          "status": "PASS",
+          "error": "clipEA=1 clipEAB=4 imgEA=0 imgEAB=20"
+        },
+        {
+          "name": "p012_eab_grainWithinBBatchBudget",
+          "status": "PASS",
+          "error": "grainDelta=20 budget=48 drawImageWorst=20"
+        },
+        {
+          "name": "p012_eab_withinBBatchDrawBudgetHook",
+          "status": "PASS",
+          "error": "lastDrawCount=52 ea=32 budget=48"
+        },
+        {
+          "name": "p012_eab_deterministicSameSeed",
+          "status": "PASS",
+          "error": "styleCounts=30/30"
+        },
+        {
+          "name": "p012_ablate_grain_skipsGrainLayer",
+          "status": "PASS",
+          "error": "imgOff=12 imgAblated=0 clipOff=3 clipAblated=1"
+        },
+        {
+          "name": "p012_ablate_fog_skipsFogLayers",
+          "status": "PASS",
+          "error": "legacyDrawsOff=32 drawsAblated=9 delta=23 bakeOff=2 bakeFog=0"
+        },
+        {
+          "name": "p012_ablate_spark_skipsSparkFill",
+          "status": "PASS",
+          "error": "drawsOff=9 drawsAblated=6 delta=3"
+        },
+        {
+          "name": "p012_fillbox_full_submitsMoreDraws",
+          "status": "PASS",
+          "error": "imgTight=12 imgFull=40"
+        },
+        {
+          "name": "p012_fillbox_full_pixelEquivalentStyles",
+          "status": "PASS",
+          "error": "stylesTight=30 stylesFull=30 same=true"
+        },
+        {
+          "name": "p012_ablate_legacyContextDefaults",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_c_sampler_preservesLayerOrder",
+          "status": "PASS",
+          "error": "orderOk=true edgeOk=true"
+        },
+        {
+          "name": "p012_c_bandNoise_zeroMeanBounded",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_c_segmentPhaseContinuous",
+          "status": "PASS",
+          "error": "maxColWarpJump=0.0451 cycles threshold=0.0625"
+        },
+        {
+          "name": "p012_c_lambdaScaleConsistent",
+          "status": "PASS",
+          "error": "lamPx=85.333 expect(H/k)=85.333 raw=112.500 aligned=true withinTol=true seamless=true stable=true"
+        },
+        {
+          "name": "p012_c_bitmapAlphaOpaqueOrSkipped",
+          "status": "PASS",
+          "error": "Node channel: bitmap null (skipped, on-device alpha=255 baked)"
+        },
+        {
+          "name": "p012_c_ablateStrat_skipsStratLayer",
+          "status": "PASS",
+          "error": "drawsOff=38 drawsStrat=32 delta=6"
+        },
+        {
+          "name": "p012_c_drawBudget_within16",
+          "status": "PASS",
+          "error": "cDelta=6 budget=16 (C1 drawImage + C3 fillRect)"
+        },
+        {
+          "name": "p012_c_epochBreak_seedPhaseStable",
+          "status": "PASS",
+          "error": "warpTableStableAfterReset=true"
+        },
+        {
+          "name": "p012_c_emptyBandSkipped",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_c_geometryEpoch_rebake",
+          "status": "PASS",
+          "error": "bakedEpoch1=1 lam(900)=85.33 lam(1200)=128.00 expect=128.00 rebaked=true"
+        },
+        {
+          "name": "p012_c_geometryEpoch_idempotent",
+          "status": "PASS",
+          "error": "lam1=85.33 lam2=85.33 same=true"
+        },
+        {
+          "name": "p012_eab_grainTile_fullCoverage",
+          "status": "PASS",
+          "error": "tile=256 worstQuadrantStd=0.8918 minOverallStd=0.9622"
+        },
+        {
+          "name": "p012_eab_grainTile_lumStdContribution",
+          "status": "PASS",
+          "error": "grainStd=10.47 hfH=6.765 totalStd(vs base 13)=16.7"
+        },
+        {
+          "name": "p012_eab_grainTile_unitVarianceClipped",
+          "status": "PASS",
+          "error": "worstStdDev=0.0378 worstAbs=2.5000"
+        },
+        {
+          "name": "p012_e3_samplerLayerOrder",
+          "status": "PASS",
+          "error": "monotonic=true"
+        },
+        {
+          "name": "p012_e3_scalarSamplerSameSplit",
+          "status": "PASS",
+          "error": "worstDiff=0.00e+0"
+        },
+        {
+          "name": "p012_e3_unpremultiplyNoDarkEdge",
+          "status": "PASS",
+          "error": "mid=232,240,236,128 right=0,0,0,0 edge=232,240,236,128"
+        },
+        {
+          "name": "p012_e3_n1ContinuousNo64Period",
+          "status": "PASS",
+          "error": "maxStep=0.0783 corr64=0.0326"
+        },
+        {
+          "name": "p012_e3_n1PhysicsRngIsolated",
+          "status": "PASS",
+          "error": "bhIdentical=true"
+        },
+        {
+          "name": "p012_e3_staticZeroRebake",
+          "status": "PASS",
+          "error": "bake1=2 bake2=2 bake3=4 (1=烘2buffer, 2=静止0增, 3=层高变>2)"
+        },
+        {
+          "name": "p012_e3_resetPhaseZero",
+          "status": "PASS",
+          "error": "phaseZero=true dirtyBoth=true"
+        },
+        {
+          "name": "p012_e3_shiftSeamless",
+          "status": "PASS",
+          "error": "overlapMaxDiff=0.00e+0 (重叠区逐位) edgeMaxDiff=6.53e-3 (边界插值语义≤0.01)"
+        },
+        {
+          "name": "p012_e3_bufferAspectRatio",
+          "status": "PASS",
+          "error": "h=305 expect=305 w=256"
+        },
+        {
+          "name": "p012_appearance_schemaMatrix",
+          "status": "PASS",
+          "error": "n=20 失败=[]"
+        },
+        {
+          "name": "p012_appearance_lambdaDedup",
+          "status": "PASS",
+          "error": "tableSize=6 uniqueK=true has24=true dedupWorks=true"
+        },
+        {
+          "name": "p012_appearance_factoryEquiv",
+          "status": "PASS",
+          "error": "err=null draws=9/9 bakes=0/0"
+        },
+        {
+          "name": "p012_appearance_rebakeMatrix",
+          "status": "PASS",
+          "error": "fine:0->1 strat:0->0 | λ strat:0->1 grain:1->1 | f/c grain:1->1 strat:1->1"
+        },
+        {
+          "name": "p012_appearance_physicsUntouched",
+          "status": "PASS",
+          "error": "applied=true bitwise=true"
+        },
+        {
+          "name": "p012_appearance_persistReject",
+          "status": "PASS",
+          "error": "good=null broken=grainSigma=99 非法（[12,24] 步长 1） family=styleFamilyId='legacy-v0' 不匹配（须 'soft-water-sand-v1'）"
+        },
+        {
+          "name": "p012_appearance_revisionMonotonic",
+          "status": "PASS",
+          "error": "rev0=0 staged=0 consumed=1 afterReject=1"
+        },
+        {
+          "name": "p012_appearance_restoreFactory",
+          "status": "PASS",
+          "error": "userApplied=true restored=true f=1"
+        },
+        {
+          "name": "p012_appearance_rejectNoClamp",
+          "status": "PASS",
+          "error": "err=true activeSigma=20 activeFine=2"
+        },
+        {
+          "name": "p012_e3_qThresholdSemantics",
+          "status": "PASS",
+          "error": "settleMicroSuppressed=true staticWaterStable=true realChangeDirty=true"
+        },
+        {
+          "name": "p012_e3_qTailLowRebake",
+          "status": "PASS",
+          "error": "沉降600帧后300帧尾段重烘=44（修复前每帧=300；真实蠕变，<120）"
+        },
+        {
+          "name": "p012_e3_avalancheStillRebakes",
+          "status": "PASS",
+          "error": "tilt70 雪崩 120 帧重烘=76（rate=0.63，≥0.30——漏更新=回归）"
+        },
+        {
+          "name": "p012_e3_phaseZeroMotionStable",
+          "status": "PASS",
+          "error": "零运动100帧后globalPhasePx=0（须=0）"
+        },
+        {
+          "name": "p012_e3_phaseGenuineAccumulates",
+          "status": "PASS",
+          "error": "globalPhasePx=75.00 maxDelta=0.750 accumulated=true smooth=true"
+        },
+        {
+          "name": "p012_e3_phaseWrapNoJump",
+          "status": "PASS",
+          "error": "gpMax=1.938 muMax=69.09 gpSmooth=true muJumpy=true"
+        },
+        {
+          "name": "p012_e3_noiseSettleRebakeLow",
+          "status": "PASS",
+          "error": "settle尾段300帧噪声重烘=0（旧63%@133ms；治本+门控→≈0）"
+        },
+        {
+          "name": "p012_e3_bufferSettleRebakeLow",
+          "status": "PASS",
+          "error": "settle尾段300帧缓冲重烘=44（真实层高蠕变，<120）"
+        },
+        {
+          "name": "p012_e2_bakeDeterministic",
+          "status": "PASS",
+          "error": "mapLen=32768/32768 bakes=1 bitwise=true"
+        },
+        {
+          "name": "p012_e2_flatNoPartition",
+          "status": "PASS",
+          "error": "l0=0.944500 uniform=true（平沙须无列间分区）"
+        },
+        {
+          "name": "p012_e2_offEquiv",
+          "status": "PASS",
+          "error": "base=9 off=9 e2bakes=0/0"
+        },
+        {
+          "name": "p012_e2_rebakeAccounting",
+          "status": "PASS",
+          "error": "first=1 still+0 tilt+1"
+        },
+        {
+          "name": "p012_e2_slopeResponse",
+          "status": "PASS",
+          "error": "lLeft=0.9754 lRight=0.8663 diff=0.109124"
+        },
+        {
+          "name": "pair_valid_afterTwoSteps_conservationHolds",
+          "status": "PASS"
+        },
+        {
+          "name": "inject_breaksPair_andRebuildsBaselineNextFrame",
+          "status": "PASS"
+        },
+        {
+          "name": "sameSnapshot_zeroAdvection_validPair",
+          "status": "PASS"
+        },
+        {
+          "name": "notFiniteSnapshot_returnsNullView_clearsPair",
+          "status": "PASS"
+        },
+        {
+          "name": "frameGapOver100ms_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "epochChange_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "serialGap_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "runIdentityChange_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "adapterSlots_doNotAliasPageSnapshot",
+          "status": "PASS"
+        },
+        {
+          "name": "kahanTotals_matchFieldGetTotals",
+          "status": "PASS"
+        },
+        {
+          "name": "renderer_drawBudget_within16_offBranchDecision",
+          "status": "PASS"
+        },
+        {
+          "name": "motionCache_freezeWhenInvalid_zeroAdvection",
+          "status": "PASS"
+        },
+        {
+          "name": "motionCache_netTransport_producesAdvection",
+          "status": "PASS"
+        }
+      ],
+      "passed": 82,
+      "failed": 0
+    },
+    "tracer": {
+      "suite": "run_p012_tracer_units",
+      "passed": 9,
+      "failed": 0,
+      "results": [
+        {
+          "name": "p012_tracer_receiptCorrespondenceAndZeroOnRejection",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_partialAdmissionScalesByAdmitted",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_travelTimeClampBoundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_lifecycleClearsAndGestureKeepsPoints",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_hundredReceiptBurstRespectsUpperBound",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_drawCallsWithinBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_heavyArrivesBeforeLight",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_occlusionThreeSegments_positioned",
+          "status": "PASS"
+        },
+        {
+          "name": "p012_tracer_drawCallsWithinBudget_positioned",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "build": "test/reports/t48-t49-t51-build.log",
+  "physicalThresholdsChanged": false,
+  "implementation": "Reuses e9e2be4 T20 native bed/particle pass and TEXTURE production path, adds Float32 upload-domain/uint32 ID rejection, proves empty->real particle->LAND same-publication render packing; no shader integration or tracer double draw.",
+  "limits": [
+    "No new device visual or GPU performance claim.",
+    "Existing renderer/G0 diagnostics remain independent of full P1 material."
+  ]
+}
