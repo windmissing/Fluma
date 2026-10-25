@@ -1,0 +1,839 @@
+{
+  "executionId": "p013-cpu-reference-execution-v1",
+  "referenceId": "P013_P1_RECIPE_ANALYTIC_V1",
+  "referenceSha256": "d214aa447f9f186eba159fd6953f2b42874420926a1b01b7c0977b940f1d63a6",
+  "geometry": {
+    "cols": 128,
+    "boxWidthCanvasPx": 128,
+    "boxHeightCanvasPx": 256,
+    "capacity": 256,
+    "nativeScaleX": 1,
+    "nativeScaleY": 1
+  },
+  "versions": {
+    "materialRecipeVersion": "P1_ALBEDO_DELTA_V1",
+    "slopeKernelVersion": "E2_GAUSS_COL6_R18_P1_V2",
+    "zOriginVersion": 1
+  },
+  "kernel": {
+    "length": 37,
+    "recomputedSum": 1.0000000000000002,
+    "publishedSum": 1.0000000000000002,
+    "sumCheck": true,
+    "symmetric": true,
+    "peakAtZero": true,
+    "truncatedVariance": 35.240624301084985
+  },
+  "fixtureChecks": [
+    {
+      "check": "F1-flat: all pb exactly 0",
+      "ok": true,
+      "maxAbsPb": 0.0,
+      "detail": "constant S invariant through display + Gaussian + slope"
+    },
+    {
+      "check": "F1-flat: pb32 all zero (no float noise)",
+      "ok": true,
+      "nonzeroColumns": []
+    },
+    {
+      "check": "F2-ramp c=0",
+      "column": 0,
+      "recomputedPb64": 0.047385794656442215,
+      "publishedPb": 0.047385794656442215,
+      "pbMatch": true,
+      "recomputedPb32": 0.047385793179273605,
+      "publishedPb32": 0.047385793179273605,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.047332683729371244,
+        0.0,
+        0.9988791804072078
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.047332682257163985,
+        0.0,
+        0.9988791804769694
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=1",
+      "column": 1,
+      "recomputedPb64": 0.10134662147899576,
+      "publishedPb": 0.10134662147899576,
+      "pbMatch": true,
+      "recomputedPb32": 0.10134661942720413,
+      "publishedPb32": 0.10134661942720413,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.10083012429950357,
+        0.0,
+        0.9949036566591494
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.10083012227892225,
+        0.0,
+        0.9949036568639286
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=22",
+      "column": 22,
+      "recomputedPb64": 0.19999908624895824,
+      "publishedPb": 0.19999908624895824,
+      "pbMatch": true,
+      "recomputedPb32": 0.19999907910823822,
+      "publishedPb32": 0.19999907910823822,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.19611527359313582,
+        0.0,
+        0.9805808479995362
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.1961152668603899,
+        0.0,
+        0.9805808493460791
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=23",
+      "column": 23,
+      "recomputedPb64": 0.20000000000000284,
+      "publishedPb": 0.20000000000000284,
+      "pbMatch": true,
+      "recomputedPb32": 0.20000000298023224,
+      "publishedPb32": 0.20000000298023224,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.1961161351381867,
+        0.0,
+        0.9805806756909197
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.19611613794814378,
+        0.0,
+        0.9805806751289282
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=64",
+      "column": 64,
+      "recomputedPb64": 0.19999999999998863,
+      "publishedPb": 0.19999999999998863,
+      "pbMatch": true,
+      "recomputedPb32": 0.20000000298023224,
+      "publishedPb32": 0.20000000298023224,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.19611613513817333,
+        0.0,
+        0.9805806756909224
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.19611613794814378,
+        0.0,
+        0.9805806751289282
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=104",
+      "column": 104,
+      "recomputedPb64": 0.20000000000000995,
+      "publishedPb": 0.20000000000000995,
+      "pbMatch": true,
+      "recomputedPb32": 0.20000000298023224,
+      "publishedPb32": 0.20000000298023224,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.1961161351381934,
+        0.0,
+        0.9805806756909182
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.19611613794814378,
+        0.0,
+        0.9805806751289282
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=126",
+      "column": 126,
+      "recomputedPb64": 0.10134662147899576,
+      "publishedPb": 0.10134662147899576,
+      "pbMatch": true,
+      "recomputedPb32": 0.10134661942720413,
+      "publishedPb32": 0.10134661942720413,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.10083012429950357,
+        0.0,
+        0.9949036566591494
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.10083012227892225,
+        0.0,
+        0.9949036568639286
+      ],
+      "ok": true
+    },
+    {
+      "check": "F2-ramp c=127",
+      "column": 127,
+      "recomputedPb64": 0.04738579465644932,
+      "publishedPb": 0.04738579465644932,
+      "pbMatch": true,
+      "recomputedPb32": 0.047385793179273605,
+      "publishedPb32": 0.047385793179273605,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.04733268372937832,
+        0.0,
+        0.9988791804072074
+      ],
+      "normalFromPb32Match": true,
+      "recomputedNormalFromPb32": [
+        -0.047332682257163985,
+        0.0,
+        0.9988791804769694
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=41",
+      "column": 41,
+      "recomputedPb64": 4.568755304745764e-05,
+      "publishedPb": 4.568755304745764e-05,
+      "pbMatch": true,
+      "recomputedPb32": 4.568755321088247e-05,
+      "publishedPb32": 4.568755321088247e-05,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -4.5687552999774626e-05,
+        0.0,
+        0.9999999989563237
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=42",
+      "column": 42,
+      "recomputedPb64": 0.00025703728942971793,
+      "publishedPb": 0.00025703728942971793,
+      "pbMatch": true,
+      "recomputedPb32": 0.0002570372889749706,
+      "publishedPb32": 0.0002570372889749706,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.0002570372809387269,
+        0.0,
+        0.9999999669659176
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=43",
+      "column": 43,
+      "recomputedPb64": 0.0008258165491525915,
+      "publishedPb": 0.0008258165491525915,
+      "pbMatch": true,
+      "recomputedPb32": 0.0008258165325969458,
+      "publishedPb32": 0.0008258165325969458,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.000825816267560452,
+        0.0,
+        0.999999659013688
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=62",
+      "column": 62,
+      "recomputedPb64": 0.031151152748513766,
+      "publishedPb": 0.031151152748513766,
+      "pbMatch": true,
+      "recomputedPb32": 0.03115115314722061,
+      "publishedPb32": 0.03115115314722061,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.031136049289052406,
+        0.0,
+        0.9995151556803277
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=63",
+      "column": 63,
+      "recomputedPb64": 0.01618533041693837,
+      "publishedPb": 0.01618533041693837,
+      "pbMatch": true,
+      "recomputedPb32": 0.016185330227017403,
+      "publishedPb32": 0.016185330227017403,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        -0.016183210838970955,
+        0.0,
+        0.9998690432686381
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=64",
+      "column": 64,
+      "recomputedPb64": -1.4210854715202004e-14,
+      "publishedPb": -1.4210854715202004e-14,
+      "pbMatch": true,
+      "recomputedPb32": -1.4210854715202004e-14,
+      "publishedPb32": -1.4210854715202004e-14,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        1.4210854715202004e-14,
+        0.0,
+        1.0
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=65",
+      "column": 65,
+      "recomputedPb64": -0.01618533041693837,
+      "publishedPb": -0.01618533041693837,
+      "pbMatch": true,
+      "recomputedPb32": -0.016185330227017403,
+      "publishedPb32": -0.016185330227017403,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        0.016183210838970955,
+        0.0,
+        0.9998690432686381
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=66",
+      "column": 66,
+      "recomputedPb64": -0.03115115274850666,
+      "publishedPb": -0.03115115274850666,
+      "pbMatch": true,
+      "recomputedPb32": -0.03115115314722061,
+      "publishedPb32": -0.03115115314722061,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        0.03113604928904531,
+        0.0,
+        0.9995151556803279
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=85",
+      "column": 85,
+      "recomputedPb64": -0.0008258165491525915,
+      "publishedPb": -0.0008258165491525915,
+      "pbMatch": true,
+      "recomputedPb32": -0.0008258165325969458,
+      "publishedPb32": -0.0008258165325969458,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        0.000825816267560452,
+        0.0,
+        0.999999659013688
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=86",
+      "column": 86,
+      "recomputedPb64": -0.00025703728942971793,
+      "publishedPb": -0.00025703728942971793,
+      "pbMatch": true,
+      "recomputedPb32": -0.0002570372889749706,
+      "publishedPb32": -0.0002570372889749706,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        0.0002570372809387269,
+        0.0,
+        0.9999999669659176
+      ],
+      "ok": true
+    },
+    {
+      "check": "F3-rawImpulse c=87",
+      "column": 87,
+      "recomputedPb64": -4.568755305456307e-05,
+      "publishedPb": -4.568755305456307e-05,
+      "pbMatch": true,
+      "recomputedPb32": -4.568755321088247e-05,
+      "publishedPb32": -4.568755321088247e-05,
+      "pb32Match": true,
+      "normalMatch": true,
+      "recomputedNormal": [
+        4.568755300688005e-05,
+        0.0,
+        0.9999999989563237
+      ],
+      "ok": true
+    },
+    {
+      "check": "F4-postDisplayImpulse c=63",
+      "column": 63,
+      "recomputedPb64": 0.01800228755409705,
+      "publishedPb": 0.01800228755409705,
+      "pbMatch": true,
+      "recomputedPb32": 0.018002288416028023,
+      "publishedPb32": 0.018002288416028023,
+      "pb32Match": true,
+      "ok": true
+    },
+    {
+      "check": "F4-postDisplayImpulse c=64",
+      "column": 64,
+      "recomputedPb64": 0.0,
+      "publishedPb": 0,
+      "pbMatch": true,
+      "recomputedPb32": 0.0,
+      "publishedPb32": 0,
+      "pb32Match": true,
+      "ok": true
+    },
+    {
+      "check": "F4-postDisplayImpulse c=65",
+      "column": 65,
+      "recomputedPb64": -0.01800228755409705,
+      "publishedPb": -0.01800228755409705,
+      "pbMatch": true,
+      "recomputedPb32": -0.018002288416028023,
+      "publishedPb32": -0.018002288416028023,
+      "pb32Match": true,
+      "ok": true
+    },
+    {
+      "check": "F5-layerRearrange: all pb exactly 0",
+      "ok": true,
+      "maxAbsPb": 0.0,
+      "detail": "constant S invariant through display + Gaussian + slope"
+    },
+    {
+      "check": "F5-layerRearrange: pb32 all zero (no float noise)",
+      "ok": true,
+      "nonzeroColumns": []
+    },
+    {
+      "check": "F6-mirrorRamp: pb exactly negates F2",
+      "ok": true,
+      "worstAbsSum": 0.0
+    },
+    {
+      "check": "F6-mirrorRamp: n.z unchanged vs F2",
+      "ok": true,
+      "worstNzDiff": 0.0
+    },
+    {
+      "check": "F2-ramp: interior c=23..104 pb64 == 0.2",
+      "ok": true,
+      "maxInteriorDev": 2.5590640717609858e-14
+    },
+    {
+      "check": "F2-ramp: edge columns decay away from 0.2 (not forced)",
+      "ok": true,
+      "edgePb": {
+        "0": 0.047385794656442215,
+        "1": 0.10134662147899576,
+        "22": 0.19999908624895824,
+        "105": 0.19999908624897245,
+        "126": 0.10134662147899576,
+        "127": 0.04738579465644932
+      }
+    },
+    {
+      "check": "F3-rawImpulse: pb[63]>0, pb[64] numeric 0, pb[65]<0",
+      "ok": true,
+      "pb63": 0.01618533041693837,
+      "pb64": -1.4210854715202004e-14,
+      "pb65": -0.01618533041693837
+    },
+    {
+      "check": "F4-postDisplayImpulse: pb[63]>0, pb[64]==0, pb[65]<0",
+      "ok": true,
+      "pb63": 0.01800228755409705,
+      "pb64": 0.0,
+      "pb65": -0.01800228755409705
+    },
+    {
+      "check": "F3/F4 magnitudes differ (display four-pass changes the pulse)",
+      "ok": true,
+      "f3Pb63": 0.01618533041693837,
+      "f4Pb63": 0.01800228755409705
+    },
+    {
+      "check": "F3 analytic v-kernel pb[63] (d=-1)",
+      "column": 63,
+      "analyticValue": 0.016185330416942055,
+      "pipelineValue": 0.01618533041693837,
+      "publishedValue": 0.01618533041693837,
+      "ok": true
+    },
+    {
+      "check": "F3 analytic v-kernel pb[64] (d=0)",
+      "column": 64,
+      "analyticValue": 6.938893903907228e-17,
+      "pipelineValue": -1.4210854715202004e-14,
+      "publishedValue": -1.4210854715202004e-14,
+      "ok": true
+    },
+    {
+      "check": "F3 analytic v-kernel pb[65] (d=1)",
+      "column": 65,
+      "analyticValue": -0.01618533041694209,
+      "pipelineValue": -0.01618533041693837,
+      "publishedValue": -0.01618533041693837,
+      "ok": true
+    },
+    {
+      "check": "F4: pb[63] == 5*(w0-w2) and pb[65] == -5*(w0-w2)",
+      "ok": true,
+      "value": 0.018002287554096386,
+      "recomputed": 0.01800228755409705
+    },
+    {
+      "check": "S-only invariance: pb depends on S alone (waterTop absent from pipeline)",
+      "ok": true
+    }
+  ],
+  "colorChecks": [
+    {
+      "check": "Q table byte=0",
+      "byte": 0,
+      "recomputedLinear": 0.0,
+      "publishedLinear": 0,
+      "linearMatch": true,
+      "recomputedQ": 0.0,
+      "publishedQ": 0,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=111",
+      "byte": 111,
+      "recomputedLinear": 0.1589608350608804,
+      "publishedLinear": 0.1589608350608804,
+      "linearMatch": true,
+      "recomputedQ": 0.18900527072646744,
+      "publishedQ": 0.18900527072646744,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=128",
+      "byte": 128,
+      "recomputedLinear": 0.21586050011389926,
+      "publishedLinear": 0.21586050011389926,
+      "linearMatch": true,
+      "recomputedQ": 0.2752832884266815,
+      "publishedQ": 0.2752832884266815,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=145",
+      "byte": 145,
+      "recomputedLinear": 0.2831487404299921,
+      "publishedLinear": 0.2831487404299921,
+      "linearMatch": true,
+      "recomputedQ": 0.3949895276738922,
+      "publishedQ": 0.3949895276738922,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=168",
+      "byte": 168,
+      "recomputedLinear": 0.39157247774972326,
+      "publishedLinear": 0.39157247774972326,
+      "linearMatch": true,
+      "recomputedQ": 0.6435811389686772,
+      "publishedQ": 0.6435811389686772,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=181",
+      "byte": 181,
+      "recomputedLinear": 0.4620769996544071,
+      "publishedLinear": 0.4620769996544071,
+      "linearMatch": true,
+      "recomputedQ": 0.859002123645098,
+      "publishedQ": 0.859002123645098,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=182",
+      "byte": 182,
+      "recomputedLinear": 0.467783796112159,
+      "publishedLinear": 0.467783796112159,
+      "linearMatch": true,
+      "recomputedQ": 0.8789356518929654,
+      "publishedQ": 0.8789356518929654,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=196",
+      "byte": 196,
+      "recomputedLinear": 0.5520114015120001,
+      "publishedLinear": 0.5520114015120001,
+      "linearMatch": true,
+      "recomputedQ": 1.2321996661858945,
+      "publishedQ": 1.2321996661858945,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=216",
+      "byte": 216,
+      "recomputedLinear": 0.6866853124353135,
+      "publishedLinear": 0.6866853124353135,
+      "linearMatch": true,
+      "recomputedQ": 2.1916792914265835,
+      "publishedQ": 2.1916792914265835,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=248",
+      "byte": 248,
+      "recomputedLinear": 0.938685728457888,
+      "publishedLinear": 0.938685728457888,
+      "linearMatch": true,
+      "recomputedQ": 15.309416630892823,
+      "publishedQ": 15.309416630892823,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=254",
+      "byte": 254,
+      "recomputedLinear": 0.9911020971138298,
+      "publishedLinear": 0.9911020971138298,
+      "linearMatch": true,
+      "recomputedQ": 111.38603216880189,
+      "publishedQ": 111.38603216880189,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q table byte=255",
+      "byte": 255,
+      "recomputedLinear": 1.0,
+      "publishedLinear": 1,
+      "linearMatch": true,
+      "recomputedQ": 4095.0,
+      "publishedQ": 4095,
+      "qMatch": true,
+      "ok": true
+    },
+    {
+      "check": "Q cap: byte 255 -> L=1-1/4096, Q=4095",
+      "ok": true,
+      "protectedL": 0.999755859375,
+      "qAt255": 4095.0
+    },
+    {
+      "check": "C1 neutral: Q(128/255) reference",
+      "ok": true,
+      "value": 0.2752832884266815
+    },
+    {
+      "check": "C3 block shadeIdx=48",
+      "shadeIdx": 48,
+      "recomputedShade": 0.8062539403120994,
+      "publishedShade": 0.8062539403120994,
+      "shadeMatch": true,
+      "recomputedByte": 206,
+      "publishedByte": 206,
+      "byteMatch": true,
+      "recomputedQ": 1.6123749830222691,
+      "publishedQ": 1.6123749830222691,
+      "qMatch": true,
+      "deltaC3": 0.13370916945955877,
+      "ok": true
+    },
+    {
+      "check": "C3 block shadeIdx=16",
+      "shadeIdx": 16,
+      "recomputedShade": 0.6244082498155039,
+      "publishedShade": 0.6244082498155039,
+      "shadeMatch": true,
+      "recomputedByte": 159,
+      "publishedByte": 159,
+      "byteMatch": true,
+      "recomputedQ": 0.5306998454952045,
+      "publishedQ": 0.5306998454952045,
+      "qMatch": true,
+      "deltaC3": 0.02554165570685231,
+      "ok": true
+    },
+    {
+      "check": "C3 deltas ~ (0.13370916946, 0.02554165571)",
+      "ok": true,
+      "deltas": [
+        0.13370916945955877,
+        0.02554165570685231
+      ]
+    },
+    {
+      "check": "Rbase palette low end bytes match reference",
+      "ok": true,
+      "heavy": [
+        145,
+        168,
+        111
+      ],
+      "light": [
+        216,
+        196,
+        150
+      ]
+    },
+    {
+      "check": "M grainBase zero-noise bytes (181,182,131)",
+      "ok": true,
+      "recomputed": [
+        181,
+        182,
+        131
+      ],
+      "rawMixed": [
+        180.5,
+        182.0,
+        130.5
+      ]
+    },
+    {
+      "check": "Float32 quantization gap bounded (ULP-scale)",
+      "ok": true,
+      "worstPb64ToPb32Gap": 7.140720015286206e-09
+    }
+  ],
+  "redBaselineScan": {
+    "artifactScan": {
+      "identityTokens": [
+        "P1_ALBEDO_DELTA_V1",
+        "E2_GAUSS_COL6_R18_P1_V2",
+        "P013_P1_MATERIAL_COUPLING_YCODE_V1",
+        "LIN_SRGB_REINHARD_V1",
+        "materialRecipeVersion",
+        "peakNonDepositedFraction"
+      ],
+      "formalArchive": {
+        "label": "formal-archive",
+        "scannedFiles": 3463,
+        "textFilesScanned": 919,
+        "binarySkipped": 2544,
+        "namePatternHits": [
+          "test/artifacts/p013-measurements/p013-s137-rss-curve.txt",
+          "test/artifacts/p013-measurements/p013-s137-run-hilog.txt",
+          "test/artifacts/p013-measurements/p013-s137-run.jpeg",
+          "test/artifacts/p013-measurements/p013-s137-telemetry-hilog.txt",
+          "test/artifacts/p013-measurements/p013-telemetry-run.log",
+          "test/artifacts/p013-p0-developer-20261024/p013-host-result.txt",
+          "test/artifacts/p013-p0-developer-20261024/p013-p0-build.log",
+          "test/artifacts/p013-p0-developer-20261024/p013-p0-units.json",
+          "test/artifacts/p013-p0-developer-20261024/p013-p012-regression.json",
+          "test/artifacts/p013-p0-developer-20261024/p013-sign.log"
+        ],
+        "contentHits": []
+      },
+      "parallelScratch": {
+        "label": "parallel-session-scratch-uncommitted",
+        "scannedFiles": 914,
+        "textFilesScanned": 854,
+        "binarySkipped": 60,
+        "namePatternHits": [
+          ".codex/local-test/P011MaterialGuard.ts",
+          ".codex/local-test/p013-app-log.txt",
+          ".codex/local-test/p013-current.jpeg",
+          ".codex/local-test/p013-gpu-result.txt",
+          ".codex/local-test/p013-host-result.txt",
+          ".codex/local-test/p013-lifecycle-result.txt",
+          ".codex/local-test/p013-native-build.log",
+          ".codex/local-test/p013-native-config.log",
+          ".codex/local-test/p013-p0-build.log",
+          ".codex/local-test/p013-p0-runtime-hilog.txt",
+          ".codex/local-test/p013-p0-signed.hap",
+          ".codex/local-test/p013-p0-units.json",
+          ".codex/local-test/p013-p012-regression.json",
+          ".codex/local-test/p013-ref-layout.json",
+          ".codex/local-test/p013-reference.jpeg",
+          ".codex/local-test/p013-runtime-current.txt",
+          ".codex/local-test/p013-runtime-layout.json",
+          ".codex/local-test/p013-sign.log",
+          ".codex/local-test/p013-source-before.json",
+          ".codex/local-test/p013-source-current.json",
+          ".codex/local-test/p013-ws-layout.json",
+          ".codex/local-test/p013-ws-layout2.json",
+          ".codex/local-test/appserver-api/v2/McpElicitationSingleSelectEnumSchema.ts",
+          ".codex/local-test/appserver-api/v2/McpElicitationTitledSingleSelectEnumSchema.ts",
+          ".codex/local-test/appserver-api/v2/McpElicitationUntitledSingleSelectEnumSchema.ts",
+          ".codex/local-test/p013-host/p013_bridge.exe",
+          ".codex/local-test/p013-host/p013_bridge.exp",
+          ".codex/local-test/p013-host/p013_bridge.lib",
+          ".codex/local-test/p013-host/p013_lifecycle.exe",
+          ".codex/local-test/p013-host/sdk/p013_shader_sources.h",
+          ".codex/local-test/p013-native/p013_gpu",
+          ".codex/local-test/p013-native/p013_lifecycle",
+          ".codex/local-test/p013-native/p013_shader_sources.h"
+        ],
+        "contentHits": []
+      }
+    },
+    "conclusion": "NO_P1_MATERIAL_ARTIFACT",
+    "note": "Content-level evidence is decisive: zero text file in either tree contains any frozen P1 identity token. Formal-archive name hits are P0-skeleton-era telemetry logs under test/artifacts/p013-measurements/ (RSS curves, hilog, skeleton screenshots), not P1 material bundles or GLES composite frames. Parallel-session scratch contains bridge and lifecycle C++ experiments (G2 scope, uncommitted, no grain/strata assets, no GLES material pass, no diagnostic grid), which are not consumable by the five-quantity definitions and are not archived evidence."
+  },
+  "summary": {
+    "totalChecks": 58,
+    "passed": 58,
+    "failed": 0,
+    "allMatch": true,
+    "failedChecks": []
+  },
+  "notes": [
+    "Synthetic recomputation from reference inputs, not a device or GPU measurement; no tolerance is frozen by this execution.",
+    "pb32 comparisons are exact Float32 identity, not tolerance.",
+    "The analytic v-kernel cross-check independently derives pb[64+d]=5*(v[d+1]-v[d-1]) without reusing the pipeline code."
+  ]
+}

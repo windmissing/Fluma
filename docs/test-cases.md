@@ -940,3 +940,64 @@ SLIP 侧 `test/p011_slip_formal_check.py`：**保留不动**——`initial_depos
 - 执行证据：`test/reports/peak_protocol_v1_execution.json`（执行器 `test/p011_peak_protocol_v1_execution.py`；分档边界、8/8 反例、可达性、归档勘查、legacy 行为、双算归因链；合成算例非测量）。
 - RED 基线：`docs/peak-red-baseline-P011-ws08-peak-nondeposited-v1.md`（新量 `NOT_IMPLEMENTED`，缺字段清单 7 项；`OBSERVED_SAMPLED_MAX` 不可用——现存归档 0 个 shake 事件）。
 - 交接链：manager 验收 → architect 登记独立 peak 字段 revision → developer 实现采样/流式峰值/checker → tester 同账本双报告（legacy + 新量，归因分离）→ designer 效果验证 → manager 宣布 `peakProtocolEffective`。真机需求由 manager 交 effector 串行排队（本卡不占设备）。
+
+## 16. P-013 P1 材质耦合 CPU fixture 与五量用例条目（2026-10-25 登记，RED 基线）
+
+> 依据 `docs/architecture-P013-p1-material-composite-v1.md` rev2（manager 22:30 验收）§4.2/§5.2/§5.4/§9/§10、`docs/design-P013-p1-material-recipe-slope-confirmation-v1.md`（designer 签收，manager 21:55 验收）§3.1/§7、`docs/reference-P013-p1-material-recipe-v1.json`（`P013_P1_RECIPE_ANALYTIC_V1`，SHA-256 `d214aa447f9f186eba159fd6953f2b42874420926a1b01b7c0977b940f1d63a6`）。用例登记：`docs/p013-p1-cpu-fixture-and-coupling-test-registration-v1.md`；RED 基线：`docs/p013-p1-material-coupling-red-baseline-v1.md`；执行证据：`test/reports/p013_cpu_reference_execution.json`（58/58 MATCH，合成复算非测量；RED 取证双树内容级扫描：正式归档 919 文本 + 并行工作区 854 文本，P1 身份 token 0 命中）。**本节为独立条目**：CPU fixture 属合成层（可执行），五量属真机/GL 层（NOT_IMPLEMENTED），两层不互相追认；`[0.8,1.2]`/`8–20/255` 仍只是旧扫描域；未冻结数值一律 `MEASURED_NOT_CALIBRATED`，不记 VALIDATED；本卡不宣布 G1 解冻。
+
+### 16.0 冻结口径速查（条目判据均引用此处，不重复定义）
+
+| 项 | 冻结值 |
+|---|---|
+| 运行时版本 | `materialRecipeVersion=P1_ALBEDO_DELTA_V1` / `slopeKernelVersion=E2_GAUSS_COL6_R18_P1_V2` / `zOriginVersion=1` / `colorPipelineVersion=LIN_SRGB_REINHARD_V1` / `textureSamplingVersion=P1_TEXEL_CANVAS_PX_V1` / `strataSamplingVersion=CONTINUOUS_COLUMN_WARP_V1` / `T_dataLayoutVersion=2` |
+| 坡度管线 | 逐字沿 `buildDisplayProfiles` 四遍三点平均（[1,4,10,16,19,16,10,4,1]/81）→ 只读 S_D 做 37 项 Gaussian（σx=6 列、Rx=18、一次归一化）→ 列点差分 pb64=(S_G[c+1]−S_G[c−1])·sy/(2dx)，端点仍除 2dx → 上传前 Float32 量化 → shader 只对上传 pb 连续列插值；深度方向 σz=0 恒等 |
+| 几何 | N=128；boxW=128 Canvas px、boxH=capacity=256 → dx=sy=1；S=bh+bl+mh+ml；waterTop 只进深度（`zMaterial=interpolate(S_D,x)−h(y)`）不进坡度 |
+| 取色/基线 | 低端 palette H=(145,168,111)/L=(216,196,150)；M grainBase 零噪声字节 (181,182,131)（raw 混合 (180.5,182,130.5)）；`round_nonnegative=floor(v+0.5)`；先乘 gain 再 clamp248 再 round；C1 中性 128/255；C3 块 shadeIdx [48,16]→字节 [206,159] |
+| 五量方法 | `methodId=P013_P1_MATERIAL_COUPLING_YCODE_V1`；`Ycode=0.2126·R8+0.7152·G8+0.0722·B8`（8bit sRGB 显示码）；CPU 沿唯一色彩链出 sRGB 再用同一 Ycode；`Ylinear` 只作诊断 |
+| 状态分流 | `EMPTY_ROI` / `INSUFFICIENT_SUPPORT` / `UNDEFINED_RATIO` + 原始量；不加 EPS、不默认比值为 1 |
+| 精度边界 | CPU 参考消费实际上传 Float32 包、同坐标/同 mask/同 fH/warp；Float32 量化（L1）/shader 算术（L2）/读回截图（L3）三类误差分层测量；容差由 manager 冻结，本节不新冻 |
+
+### 16.1 CPU fixture 用例条目（合成层，可执行）
+
+| 用例 ID | 覆盖 | 门类 | 判定要点 | 期望值来源 | 今日状态 |
+|---|---|---|---|---|---|
+| TC-P013-FIX-01 | 常数 fixture | MUST-PASS | bh=20/bl=20/mh=ml=12→S=64；所有列 pb=0、n=(0,0,1)；pb32 亦精确 0（不接受浮点尾差） | 参考 JSON `fixtures.flat` | 合成复算 MATCH（58/58 中本项全列零断言） |
+| TC-P013-FIX-02 | 线性坡面内域 | MUST-PASS | bh[c]=20+0.2c→S=64+0.2c；c=23…104 pb64=0.2（复算最大偏离 2.56e-14）、pb32=0.20000000298023224；n(pb32)≈(−0.19611613794814378,0,0.9805806751289282) | `fixtures.ramp.selectedExpected`（c=23/64/104） | 合成复算 MATCH |
+| TC-P013-FIX-03 | 同坡面边缘 | MUST-PASS | c0/127 pb64≈0.047385794656442215、c1/126≈0.10134662147899576、c22/105≈0.19999908624895824；**端点不得硬改成 0.2**（端点仍除 2dx、复制端列不重归一化，衰减即冻结规则） | `fixtures.ramp.selectedExpected`（c=0/1/22/126/127） | 合成复算 MATCH |
+| TC-P013-FIX-04 | raw 脉冲 | MUST-PASS | S=100+10δ64；pb64[63]≈+0.01618533041693837、[64] 数值零、[65]≈−0.01618533041693837；肩部 c62=0.031151152748513766 等逐值一致；normal 左右相反、中心竖直 | `fixtures.rawImpulse.selectedExpected`（11 点） | 合成复算 MATCH |
+| TC-P013-FIX-05 | Gaussian 单元隔离 | MUST-PASS | **已显示** S_D=100+10δ64 只做 Gaussian；pb64[63]=5(w0−w2)≈0.01800228755409705、[64] 精确 0、[65] 取负；与 FIX-04 必须不同（实测差 11.2%，用于区分漏做/重复做 DISPLAY） | `fixtures.postDisplayImpulse` + `gaussian.summary` | 合成复算 MATCH |
+| TC-P013-FIX-06 | 内部层重排 | MUST-PASS | bh=40+2δ64、bl=20−2δ64→S 恒 100；pb 全 0、n=(0,0,1)；**不得由 bh 峰产生宽面法线**（"只给 bh 不够确定法线"反例） | designer 稿 §3.1 表第 6 行（输入由登记稿固定） | 合成复算 MATCH |
+| TC-P013-FIX-07 | 脉冲独立解析对拍 | MUST-PASS | 内域组合核 v=w⊗displayKernel，`pb[64+d]=5·(v[d+1]−v[d−1])`；解析值/管线复算值/JSON 发布值三方一致（实测最大相对差 2.3e-13）；不复用管线代码，防两份共用实现同一错误 | 参考 JSON + designer 稿 §3.1 末段 | 合成复算 MATCH |
+| TC-P013-FIX-08 | 镜像坡面（附加反例） | TIERED（反例） | FIX-02 输入取负；pb 逐列精确取负（a+b==0.0）、nz 不变（差 <1e-15） | designer 稿 §3.1（正/负坡镜像 pb 反号、nz 不变） | 合成复算 MATCH |
+| TC-P013-FIX-09 | 常数层（Q 表/C3/palette/M 基线） | MUST-PASS | Q 按 `L=min(EOTF(c),1−1/4096)`、`Q=L/(1−L)`：byte255→L=0.999755859375、Q=4095，byte254→Q=111.38603216880189，byte248→Q=15.309416630892823；C1 中性 Q(128/255)=0.2752832884266815；C3 shadeIdx[48,16]→字节[206,159]→δC3=(0.13370916945955877, 0.02554165570685231)；palette 低端 H=(145,168,111)/L=(216,196,150)；M 零噪声字节 (181,182,131)（raw 混合 (180.5,182,130.5)，先 round raw 会改变旧资产字节） | 参考 JSON `colors` 节 | 合成复算 MATCH |
+
+### 16.2 五量用例条目（真机/GL 层，NOT_IMPLEMENTED）
+
+| 用例 ID | 覆盖 | 门类 | 判定要点 | 今日 RED 状态（缺什么） |
+|---|---|---|---|---|
+| TC-P013-MCP-01 | `R_B(Ω)` 亮/暗分开 | TIERED | `A_B^t=sqrt(mean_Ω(H_B(I_B^t)^2))`、`b^t=median_Ω Ycode(F,t,B关,C固定)`、`N_B=A/b`、`R_B=N_ON/N_OFF`；H_B=I−G_B*I，σB=active grainFeaturePx×Canvas→native 等比尺度、R=ceil(3σB)，ROI 内缩支持半径；亮/暗分开报 | NOT_IMPLEMENTED（无 P1 OFF/ON 渲染产物、无诊断格；`[0.8,1.2]` 仅旧扫描域不作 PASS 线） |
+| TC-P013-MCP-02 | dark 绝对幅度族 | TIERED | 固定 Ωdark 报 `darkBOn/Off=A_B^ON/OFF` 及 CPU 值；C 去趋势层纹 RMS `darkCOn/Off`；保留 C1 prominence/周期/row-mean；不设最小幅度 PASS 线 | NOT_IMPLEMENTED（同 MCP-01） |
+| TC-P013-MCP-03 | `Q_couple,B`/`Q_couple,C` | TIERED | `Q_X^t=A_X^t(Ωlit)/A_X^t(Ωdark)`、`D_X=Q_ON/Q_OFF`、各 A 绝对值及 CPU 预测；B/C 频带不混用；不规定 Q>1、不凭单比值推结构 | NOT_IMPLEMENTED（CPU 预测需先有 P1 shader 配方实现） |
+| TC-P013-MCP-04 | `C_band` 连续性向量 | TIERED | B/C OFF 隔离臂：固定 x 同材质内扫 z，报 Y_ON−Y_OFF、CPU 曲线、相邻 native px 梯度/残差；x 横扫列边界 ±1px 与列中央匹配支持 g_edge=P95(abs(ΔxY))、g_mid 及比值；真 H/L 边界单列排除；C3 样式边界仅全材质臂标记另报、不得删去 | NOT_IMPLEMENTED（隔离臂与完整 C 臂均无产物） |
+| TC-P013-MCP-05 | `ΔY_face`/`ΔΔY` | TIERED | 匹配材质/z/遮挡迎背光 ROI 中位 Y 差；报 ΔΔY=ON−OFF、CPU 预期、参考目标距离、ROI 材质构成与像素数；光向镜像对拍；平沙不新增伪左右差；8–20/255 不转 PASS 线 | NOT_IMPLEMENTED（同 MCP-01） |
+
+### 16.3 不涉及项（本节条目一律不触碰）
+
+- CPU fixture 的合成复算结果**不**作为 P1 实现正确性、GPU 一致性或效果证据（两层不互相追认）；
+- `E3` J95/J90/std 锚点与 E/A/B CLOSED 状态不动；GLES 身份下重采分子分母（阈值不改）属 G5；
+- `[0.8,1.2]`/`8–20/255`/C3 两档块值等旧扫描域不升级为冻结 PASS 线；
+- designer 签收稿的 fixture 期望值、公式、版本号不改（只登记用例）；
+- 参考 JSON 只读引用；更正须由 designer 另版并重发；
+- P-011 全部协议/用例（endpoint、peak、SLIP、DUALFIELD）不在本节范围；
+- 不使用真机（本卡纯 Node/Python 离线通道；真机归 effector 串行队列）。
+
+### 16.4 G1 解冻前置核对结论（引用登记稿 §4）
+
+rev2 §9 切片 2 的 G1 前置 = rev2 manager 验收（**已满足**，22:30）+ tester 登记 CPU fixture/材质耦合用例及 RED 基线（**已满足**：本节 16.1/16.2 + 两份 docs + 执行证据 58/58）；**仍缺**：G0 真机 probe（sRGB attachment、三层 z序/透明/输入透传；当前真机队列首位为掉沙 V1-V4 返修复测）与 manager 的 G1 实施授权。本节不自行宣布 G1 解冻。
+
+### 16.5 证据通道与交接
+
+- 判定口径权威：`docs/p013-p1-cpu-fixture-and-coupling-test-registration-v1.md`（本节字段名与版本号与之逐字一致）。
+- 执行证据：`test/reports/p013_cpu_reference_execution.json`（执行器 `test/p013_cpu_reference_execution.py`；fixture 58/58、解析对拍三方一致、Q/C3 常数层、归档 RED 取证 919 文本/0 身份 token；合成复算非测量）。
+- RED 基线：`docs/p013-p1-material-coupling-red-baseline-v1.md`（五量 NOT_IMPLEMENTED + 缺失项清单 + 测量前置六条件；双树取证：正式归档与并行工作区文本各 919/854 个，P1 身份 token 0 命中；并行工作区 p013 文件经核对为 G2 桥接/生命周期本地实验，非五量估计对象）。
+- 交接链：manager 建 G0 probe 卡（effector 队列）→ G0 过后 manager 放行 G1 实施 → developer 交付六图导出/shader CPU 参考/七版本身份 → tester/effector 按前置六条件采五量与重复性分布 → designer 审效果 → manager 冻结数值线（此前一律 `MEASURED_NOT_CALIBRATED`）。
