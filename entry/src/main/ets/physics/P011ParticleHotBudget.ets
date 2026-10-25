@@ -31,6 +31,7 @@ export class P011ParticleHotRefundReceipt {
       this.netLocalUsed.buffer === this.storage[3] && this.netLocalUsed.length === 2 &&
       this.netLocalDelta.buffer === this.storage[4] && this.netLocalDelta.length === 2;
   }
+  coldBuffers(): ArrayBuffer[] { return this.storage; }
   copyFromHot(a: P011ParticleHotRefundReceipt): void {
     this.ownerId = a.ownerId; this.stepEpoch = a.stepEpoch; this.ticketToken = a.ticketToken; this.requestOrdinal = a.requestOrdinal;
     this.requested = a.requested; this.amount = a.amount; this.totalReserved = a.totalReserved; this.totalRefunded = a.totalRefunded;
@@ -47,6 +48,7 @@ export interface P011ParticleHotBudgetSink {
   closeInto(ticketToken: number, committed: number, receipt: P011ParticleHotRefundReceipt): number;
 }
 export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
+  private readonly storage: ArrayBuffer[];
   readonly work: P011ParticleHotWorkspace;
   readonly localRemaining: Float64Array; readonly localUsed: Float64Array;
   readonly beforeRemaining: Float64Array; readonly beforeUsed: Float64Array;
@@ -66,6 +68,15 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
     this.tokens = new Float64Array(work.requestCapacity); this.reserved = new Float64Array(work.requestCapacity);
     this.refunded = new Float64Array(work.requestCapacity); this.closed = new Uint8Array(work.requestCapacity);
     this.requests = new P011ParticleHotPlanBuffer(work.requestCapacity, 1, 2 * work.requestCapacity);
+    this.storage = [this.localRemaining.buffer, this.localUsed.buffer, this.beforeRemaining.buffer, this.beforeUsed.buffer,
+      this.tokens.buffer, this.reserved.buffer, this.refunded.buffer, this.closed.buffer];
+  }
+  coldBuffers(): ArrayBuffer[] { return this.storage.concat(this.requests.coldBuffers()); }
+  storageValidHot(): boolean {
+    return this.localRemaining.buffer === this.storage[0] && this.localUsed.buffer === this.storage[1] &&
+      this.beforeRemaining.buffer === this.storage[2] && this.beforeUsed.buffer === this.storage[3] &&
+      this.tokens.buffer === this.storage[4] && this.reserved.buffer === this.storage[5] &&
+      this.refunded.buffer === this.storage[6] && this.closed.buffer === this.storage[7] && this.requests.storageValidHot();
   }
   beginHot(epoch: number, dt: number): number {
     if (this.epoch !== 0 || !Number.isSafeInteger(epoch) || epoch <= 0 || !Number.isFinite(dt) || dt <= 0) return 4;
@@ -100,6 +111,7 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
   reserveInto(expectedStepEpoch: number, plan: P011ParticleHotPlanBuffer, row: number,
     receipt: P011ParticleHotTicketReceipt): number {
     if (this.epoch !== expectedStepEpoch || this.epoch !== this.work.stepEpoch || this.work.active !== 1) return 4;
+    if (!this.storageValidHot()) return 3;
     const valid = validateParticleHotRequest(this.work, plan, row); if (valid !== 0) return valid;
     if (!(receipt instanceof P011ParticleHotTicketReceipt)) return 3;
     const kind = plan.kind[row]; const c = plan.column[row]; const target = kind === 3 ? plan.targetColumn[row] : -1;
@@ -132,6 +144,7 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
   }
   refundInto(token: number, amount: number, out: P011ParticleHotRefundReceipt): number {
     const i = this.slotHot(token); if (i < 0) return 4;
+    if (!this.storageValidHot()) return 3;
     if (!(out instanceof P011ParticleHotRefundReceipt) || !out.storageValidHot()) return 3;
     if (!Number.isFinite(amount) || amount < 0 || amount > this.reserved[i] - this.refunded[i]) return 2;
     const c = this.requests.column[i], t = this.requests.kind[i] === 3 ? this.requests.targetColumn[i] : -1;
@@ -145,6 +158,7 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
   }
   closeInto(token: number, committed: number, out: P011ParticleHotRefundReceipt): number {
     const i = this.slotHot(token); if (i < 0) return 4;
+    if (!this.storageValidHot()) return 3;
     if (!(out instanceof P011ParticleHotRefundReceipt) || !out.storageValidHot()) return 3;
     if (!Number.isFinite(committed) || committed < 0 || Math.abs(this.reserved[i] - this.refunded[i] - committed) > 1e-9) return 13;
     this.closed[i] = 1; this.openCount--; this.fillHot(i, 0, committed, true, out); return 0;

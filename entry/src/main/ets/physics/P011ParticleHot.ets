@@ -1,6 +1,6 @@
 // P-011 D1-R3 S0/S1: fixed-capacity HOT workspace and pure dual collect.
 // This module deliberately has no renderer or WaterSandField dependency.
-import { P011ParticleField, P011ParticleParams, P011ParticleSnapshot } from './P011ParticleField';
+import { P011ParticleField, P011ParticleParams, P011ParticleSnapshot, particleSnapshotBufferAtHot } from './P011ParticleField';
 import { P011ParticleHotBudgetAdapter } from './P011ParticleHotBudget';
 
 export const P011_HOT_OK = 0;
@@ -49,6 +49,7 @@ export interface P011ParticleHotCommitSink {
 export interface P011ParticleHotSinkCheckpoint {
   saveOutsHot(): void;
   restoreOutsHot(): void;
+  buffersValidHot(): boolean;
 }
 
 export class P011ParticleHotPlanBuffer {
@@ -112,6 +113,7 @@ export class P011ParticleHotPlanBuffer {
       this.motionVy.buffer === this.storage[22] && this.motionVy.byteOffset === 0 && this.motionVy.length === this.motionCapacity &&
       this.lineage.buffer === this.storage[23] && this.lineage.byteOffset === 0 && this.lineage.length === this.lineageCapacity;
   }
+  coldBuffers(): ArrayBuffer[] { return this.storage; }
 }
 
 export class P011ParticleHotResultBuffer {
@@ -150,10 +152,12 @@ export class P011ParticleHotResultBuffer {
       this.poolClipped.buffer === this.storage[12] && this.poolClipped.length === this.capacity &&
       this.massAfter.buffer === this.storage[13] && this.massAfter.length === this.capacity;
   }
+  coldBuffers(): ArrayBuffer[] { return this.storage; }
 }
 
 // Fixed action/event rows. Births and merges are staged here before publish.
 export class P011ParticleHotEventBuffer {
+  private readonly storage: ArrayBuffer[];
   readonly capacity: number; readonly lineageCapacity: number;
   count = 0; lineageCount = 0;
   ownerId = 0; runToken = 0; stepEpoch = 0; substepId = 0; attemptToken = 0;
@@ -194,10 +198,56 @@ export class P011ParticleHotEventBuffer {
     this.guardAllLegal = new Uint8Array(capacity); this.guardAccepted = new Float64Array(capacity);
     this.guardRejectedAmount = new Float64Array(capacity); this.guardEdgeId = new Int32Array(3 * capacity);
     this.guardResidual = new Float64Array(3 * capacity); this.guardInfluence = new Float64Array(3 * capacity);
+    this.storage = [this.kind.buffer, this.phase.buffer, this.sourceKind.buffer, this.flag.buffer, this.remainderDisposition.buffer, this.particleId.buffer, this.sourceId.buffer, this.requestOrdinal.buffer, this.column.buffer, this.targetColumn.buffer, this.lineageStart.buffer, this.lineageLength.buffer, this.lineage.buffer, this.requested.buffer, this.granted.buffer, this.remainder.buffer, this.massBefore.buffer, this.massAfter.buffer, this.x.buffer, this.y.buffer, this.vx.buffer, this.vy.buffer, this.deltaS.buffer, this.budgetLocal.buffer, this.budgetTotal.buffer, this.budgetBottom.buffer, this.budgetClipped.buffer, this.guardRejected.buffer, this.capacityClipped.buffer, this.poolClipped.buffer, this.toSuspH.buffer, this.toSuspL.buffer, this.guardCount.buffer, this.guardLimitingEdge.buffer, this.guardAllLegal.buffer, this.guardAccepted.buffer, this.guardRejectedAmount.buffer, this.guardEdgeId.buffer, this.guardResidual.buffer, this.guardInfluence.buffer];
+  }
+  coldBuffers(): ArrayBuffer[] { return this.storage; }
+  storageValidHot(): boolean {
+    return this.kind.buffer === this.storage[0] && this.kind.length === this.capacity &&
+      this.phase.buffer === this.storage[1] && this.phase.length === this.capacity &&
+      this.sourceKind.buffer === this.storage[2] && this.sourceKind.length === this.capacity &&
+      this.flag.buffer === this.storage[3] && this.flag.length === this.capacity &&
+      this.remainderDisposition.buffer === this.storage[4] && this.remainderDisposition.length === this.capacity &&
+      this.particleId.buffer === this.storage[5] && this.particleId.length === this.capacity &&
+      this.sourceId.buffer === this.storage[6] && this.sourceId.length === this.capacity &&
+      this.requestOrdinal.buffer === this.storage[7] && this.requestOrdinal.length === this.capacity &&
+      this.column.buffer === this.storage[8] && this.column.length === this.capacity &&
+      this.targetColumn.buffer === this.storage[9] && this.targetColumn.length === this.capacity &&
+      this.lineageStart.buffer === this.storage[10] && this.lineageStart.length === this.capacity &&
+      this.lineageLength.buffer === this.storage[11] && this.lineageLength.length === this.capacity &&
+      this.lineage.buffer === this.storage[12] && this.lineage.length === this.lineageCapacity &&
+      this.requested.buffer === this.storage[13] && this.requested.length === this.capacity &&
+      this.granted.buffer === this.storage[14] && this.granted.length === this.capacity &&
+      this.remainder.buffer === this.storage[15] && this.remainder.length === this.capacity &&
+      this.massBefore.buffer === this.storage[16] && this.massBefore.length === this.capacity &&
+      this.massAfter.buffer === this.storage[17] && this.massAfter.length === this.capacity &&
+      this.x.buffer === this.storage[18] && this.x.length === this.capacity &&
+      this.y.buffer === this.storage[19] && this.y.length === this.capacity &&
+      this.vx.buffer === this.storage[20] && this.vx.length === this.capacity &&
+      this.vy.buffer === this.storage[21] && this.vy.length === this.capacity &&
+      this.deltaS.buffer === this.storage[22] && this.deltaS.length === this.capacity &&
+      this.budgetLocal.buffer === this.storage[23] && this.budgetLocal.length === this.capacity &&
+      this.budgetTotal.buffer === this.storage[24] && this.budgetTotal.length === this.capacity &&
+      this.budgetBottom.buffer === this.storage[25] && this.budgetBottom.length === this.capacity &&
+      this.budgetClipped.buffer === this.storage[26] && this.budgetClipped.length === this.capacity &&
+      this.guardRejected.buffer === this.storage[27] && this.guardRejected.length === this.capacity &&
+      this.capacityClipped.buffer === this.storage[28] && this.capacityClipped.length === this.capacity &&
+      this.poolClipped.buffer === this.storage[29] && this.poolClipped.length === this.capacity &&
+      this.toSuspH.buffer === this.storage[30] && this.toSuspH.length === this.capacity &&
+      this.toSuspL.buffer === this.storage[31] && this.toSuspL.length === this.capacity &&
+      this.guardCount.buffer === this.storage[32] && this.guardCount.length === this.capacity &&
+      this.guardLimitingEdge.buffer === this.storage[33] && this.guardLimitingEdge.length === this.capacity &&
+      this.guardAllLegal.buffer === this.storage[34] && this.guardAllLegal.length === this.capacity &&
+      this.guardAccepted.buffer === this.storage[35] && this.guardAccepted.length === this.capacity &&
+      this.guardRejectedAmount.buffer === this.storage[36] && this.guardRejectedAmount.length === this.capacity &&
+      this.guardEdgeId.buffer === this.storage[37] && this.guardEdgeId.length === 3 * this.capacity &&
+      this.guardResidual.buffer === this.storage[38] && this.guardResidual.length === 3 * this.capacity &&
+      this.guardInfluence.buffer === this.storage[39] && this.guardInfluence.length === 3 * this.capacity;
   }
 }
 
 export class P011ParticleHotWorkspace {
+  private readonly bufferBindings: ArrayBuffer[]; private readonly bufferBytes: number[];
+  readonly fieldBinding: ArrayBuffer[];
   readonly ownerId: number; readonly pool: P011ParticleField; readonly params: P011ParticleParams;
   readonly planA: P011ParticleHotPlanBuffer; readonly planB: P011ParticleHotPlanBuffer;
   readonly results: P011ParticleHotResultBuffer;
@@ -219,6 +269,10 @@ export class P011ParticleHotWorkspace {
   readonly patchOriginal: P011ParticleHotPlanBuffer;
   stagedYActive = 0; stagedY = 0;
   readonly events: P011ParticleHotEventBuffer;
+  readonly sealedPlan: P011ParticleHotPlanBuffer; readonly sealedResults: P011ParticleHotResultBuffer;
+  committedPageToken = 0;
+  coldRunToken = 0; coldRunId = '';
+  pageSourceH = 0; pageSourceL = 0; pageSourceEpoch = 0;
   readonly validationRows: Int32Array; readonly auditMassH: Float64Array; readonly auditMassL: Float64Array;
   readonly auditSlots: Uint8Array;
   budget: P011ParticleHotBudgetAdapter | null = null;
@@ -226,7 +280,7 @@ export class P011ParticleHotWorkspace {
   sinkCheckpoint: P011ParticleHotSinkCheckpoint | null = null;
   stepExternalH = 0; stepExternalL = 0;
   readonly hotContractVersion = 1;
-  failureStatus = 0; failureOrdinal = 0; failureAttemptToken = 0;
+  failureStatus = 0; failureOrdinal = 0; failureAttemptToken = 0; applying = 0;
   field: P011ParticleHotFieldBuffer | null = null;
   patchPlan: P011ParticleHotPlanBuffer | null = null; patchRow = -1;
   requestCapacity: number; motionCapacity: number; eventCapacity: number; lineageCapacity: number;
@@ -280,9 +334,81 @@ export class P011ParticleHotWorkspace {
     this.patchRequest = new P011ParticleHotPlanBuffer(1, 1, 2);
     this.patchOriginal = new P011ParticleHotPlanBuffer(1, 1, 2);
     this.events = new P011ParticleHotEventBuffer(config.eventCapacity, config.lineageCapacity);
+    this.sealedPlan = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity);
+    this.sealedResults = new P011ParticleHotResultBuffer(config.requestCapacity);
     this.validationRows = new Int32Array(config.requestCapacity + 1);
     this.auditMassH = new Float64Array(config.cols); this.auditMassL = new Float64Array(config.cols);
     this.auditSlots = new Uint8Array(config.nmax);
+    this.bufferBindings = []; this.bufferBytes = [];
+    this.fieldBinding = [this.frozenWaterTop.buffer, this.frozenBh.buffer, this.frozenBl.buffer, this.frozenMh.buffer,
+      this.frozenMl.buffer, this.frozenSuspH.buffer, this.frozenSuspL.buffer, this.frozenSurface.buffer];
+    this.registerColdBuffers([this.frozenWaterTop.buffer, this.frozenBh.buffer, this.frozenBl.buffer, this.frozenMh.buffer, this.frozenMl.buffer, this.frozenSuspH.buffer, this.frozenSuspL.buffer, this.frozenSurface.buffer, this.order.buffer, this.seenEpoch.buffer, this.seenEpochBefore.buffer, this.fieldBeforeWaterTop.buffer, this.fieldBeforeBh.buffer, this.fieldBeforeBl.buffer, this.fieldBeforeMh.buffer, this.fieldBeforeMl.buffer, this.fieldBeforeSuspH.buffer, this.fieldBeforeSuspL.buffer, this.fieldBeforeSurface.buffer, this.eventKind.buffer, this.eventParticleId.buffer, this.eventSourceId.buffer, this.eventColumn.buffer, this.eventTargetColumn.buffer, this.eventRequested.buffer, this.eventGranted.buffer, this.validationRows.buffer, this.auditMassH.buffer, this.auditMassL.buffer, this.auditSlots.buffer]);
+    for (let i = 0; i < 13; i++) this.registerColdBuffers([particleSnapshotBufferAtHot(this.frozenPool, i)]);
+    for (let i = 0; i < 13; i++) this.registerColdBuffers([particleSnapshotBufferAtHot(this.patchBefore, i)]);
+    for (let i = 0; i < 13; i++) this.registerColdBuffers([particleSnapshotBufferAtHot(this.patchAfter, i)]);
+    for (let i = 0; i < 13; i++) this.registerColdBuffers([particleSnapshotBufferAtHot(this.patchScratch, i)]);
+    this.registerColdBuffers(this.pool.hotCanonicalBuffers());
+    this.registerColdBuffers(this.planA.coldBuffers()); this.registerColdBuffers(this.planB.coldBuffers());
+    this.registerColdBuffers(this.seenRequests.coldBuffers()); this.registerColdBuffers(this.patchRequest.coldBuffers());
+    this.registerColdBuffers(this.patchOriginal.coldBuffers()); this.registerColdBuffers(this.results.coldBuffers());
+    this.registerColdBuffers(this.events.coldBuffers()); this.registerColdBuffers(this.patchActions.coldBuffers());
+    this.registerColdBuffers(this.sealedPlan.coldBuffers()); this.registerColdBuffers(this.sealedResults.coldBuffers());
+  }
+  // COLD registration only. Dynamic shape and capacity never change in HOT.
+  registerColdBuffers(buffers: ArrayBuffer[]): void {
+    if (this.active !== 0) throw new Error('PARTICLE_HOT_REGISTRATION_BUSY');
+    for (let i = 0; i < buffers.length; i++) {
+      if (this.ownsBufferHot(buffers[i])) throw new Error('PARTICLE_HOT_BUFFER_ALIAS');
+      this.bufferBindings.push(buffers[i]); this.bufferBytes.push(buffers[i].byteLength);
+    }
+  }
+  ownsBufferHot(buffer: ArrayBuffer): boolean {
+    for (let i = 0; i < this.bufferBindings.length; i++) if (buffer === this.bufferBindings[i]) return true;
+    return false;
+  }
+  storageValidHot(): boolean {
+    for (let i = 0; i < this.bufferBindings.length; i++) if (this.bufferBindings[i].byteLength !== this.bufferBytes[i]) return false;
+    for (let i = 0; i < 13; i++) {
+      if (particleSnapshotBufferAtHot(this.frozenPool, i) !== this.bufferBindings[30 + i] ||
+        particleSnapshotBufferAtHot(this.patchBefore, i) !== this.bufferBindings[43 + i] ||
+        particleSnapshotBufferAtHot(this.patchAfter, i) !== this.bufferBindings[56 + i] ||
+        particleSnapshotBufferAtHot(this.patchScratch, i) !== this.bufferBindings[69 + i]) return false;
+    }
+    return this.frozenWaterTop.buffer === this.bufferBindings[0] &&
+      this.frozenBh.buffer === this.bufferBindings[1] &&
+      this.frozenBl.buffer === this.bufferBindings[2] &&
+      this.frozenMh.buffer === this.bufferBindings[3] &&
+      this.frozenMl.buffer === this.bufferBindings[4] &&
+      this.frozenSuspH.buffer === this.bufferBindings[5] &&
+      this.frozenSuspL.buffer === this.bufferBindings[6] &&
+      this.frozenSurface.buffer === this.bufferBindings[7] &&
+      this.order.buffer === this.bufferBindings[8] &&
+      this.seenEpoch.buffer === this.bufferBindings[9] &&
+      this.seenEpochBefore.buffer === this.bufferBindings[10] &&
+      this.fieldBeforeWaterTop.buffer === this.bufferBindings[11] &&
+      this.fieldBeforeBh.buffer === this.bufferBindings[12] &&
+      this.fieldBeforeBl.buffer === this.bufferBindings[13] &&
+      this.fieldBeforeMh.buffer === this.bufferBindings[14] &&
+      this.fieldBeforeMl.buffer === this.bufferBindings[15] &&
+      this.fieldBeforeSuspH.buffer === this.bufferBindings[16] &&
+      this.fieldBeforeSuspL.buffer === this.bufferBindings[17] &&
+      this.fieldBeforeSurface.buffer === this.bufferBindings[18] &&
+      this.eventKind.buffer === this.bufferBindings[19] &&
+      this.eventParticleId.buffer === this.bufferBindings[20] &&
+      this.eventSourceId.buffer === this.bufferBindings[21] &&
+      this.eventColumn.buffer === this.bufferBindings[22] &&
+      this.eventTargetColumn.buffer === this.bufferBindings[23] &&
+      this.eventRequested.buffer === this.bufferBindings[24] &&
+      this.eventGranted.buffer === this.bufferBindings[25] &&
+      this.validationRows.buffer === this.bufferBindings[26] &&
+      this.auditMassH.buffer === this.bufferBindings[27] &&
+      this.auditMassL.buffer === this.bufferBindings[28] &&
+      this.auditSlots.buffer === this.bufferBindings[29] &&
+      this.pool.storageValidForHot() && this.planA.storageValidHot() && this.planB.storageValidHot() &&
+      this.seenRequests.storageValidHot() && this.patchRequest.storageValidHot() && this.patchOriginal.storageValidHot() &&
+      this.results.storageValidHot() && this.events.storageValidHot() && this.patchActions.storageValidHot() &&
+      this.sealedPlan.storageValidHot() && this.sealedResults.storageValidHot() &&
+      (this.sinkCheckpoint === null || this.sinkCheckpoint.buffersValidHot());
   }
   get activePatchState(): number { return this.patchState; }
   get requestCount(): number { return this.planA.requestCount; }
@@ -292,6 +418,11 @@ export class P011ParticleHotWorkspace {
   get lineageCount(): number { return this.events.lineageCount; }
   get hotStatus(): number { return this.lastStatus; }
   copyStateToHot(out: P011ParticleSnapshot): number {
+    for (let i = 0; i < 13; i++) {
+      const buffer = particleSnapshotBufferAtHot(out, i);
+      if (this.ownsBufferHot(buffer)) return this.lastStatus = 3;
+      if (this.field !== null) for (let j = 0; j < 8; j++) if (buffer === this.fieldBinding[j]) return this.lastStatus = 3;
+    }
     if (out.nmax !== this.nmax || out.cols !== this.cols || out.pMass.length !== this.nmax ||
       out.pX.length !== this.nmax || out.pY.length !== this.nmax || out.pVx.length !== this.nmax ||
       out.pVy.length !== this.nmax || out.pPhase.length !== this.nmax || out.pSource.length !== this.nmax ||
@@ -303,6 +434,26 @@ export class P011ParticleHotWorkspace {
 }
 
 function validCapacity(n: number): boolean { return Number.isSafeInteger(n) && n > 0; }
+function fieldBufferAtHot(f: P011ParticleHotFieldBuffer, i: number): ArrayBuffer {
+  switch (i) {
+    case 0: return f.waterTop.buffer;
+    case 1: return f.bh.buffer;
+    case 2: return f.bl.buffer;
+    case 3: return f.mh.buffer;
+    case 4: return f.ml.buffer;
+    case 5: return f.suspH.buffer;
+    case 6: return f.suspL.buffer;
+    default: return f.surface.buffer;
+  }
+}
+function fieldStorageValidHot(work: P011ParticleHotWorkspace, f: P011ParticleHotFieldBuffer, bound: boolean): boolean {
+  for (let i = 0; i < 8; i++) {
+    const buffer = fieldBufferAtHot(f, i);
+    if (buffer.byteLength !== work.cols * 8 || work.ownsBufferHot(buffer) || (bound && buffer !== work.fieldBinding[i])) return false;
+    for (let j = 0; j < i; j++) if (buffer === fieldBufferAtHot(f, j)) return false;
+  }
+  return true;
+}
 function validParams(p: P011ParticleParams): boolean {
   return Number.isSafeInteger(p.nmax) && p.nmax > 0 && Number.isFinite(p.massPackage) && p.massPackage > 0 &&
     Number.isFinite(p.terminalSpeedHeavy) && Number.isFinite(p.terminalSpeedLight) &&
@@ -328,7 +479,9 @@ export function warmUpHot(work: P011ParticleHotWorkspace): number {
 export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {
   if (work.configured !== 1) return work.lastStatus = P011_HOT_NOT_CONFIGURED;
   if (work.active !== 0) return work.lastStatus = P011_HOT_STEP_BUSY;
+  if (work.pageBacklog !== 0) return work.lastStatus = P011_HOT_JOURNAL_OVERFLOW;
   const f = input.field; const c = work.cols;
+  if (!work.storageValidHot() || !fieldStorageValidHot(work, f, false)) return work.lastStatus = 3;
   if (!Number.isSafeInteger(input.runToken) || input.runToken <= 0 || !Number.isSafeInteger(input.substepId) || input.substepId < 0 ||
     !Number.isSafeInteger(input.attemptToken) || input.attemptToken <= 0 || !Number.isFinite(input.dt) || input.dt <= 0 ||
     !Number.isFinite(input.effectiveTiltRad) || !Number.isSafeInteger(input.seed) ||
@@ -365,6 +518,7 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
   work.frozenMh.set(f.mh); work.frozenMl.set(f.ml); work.frozenSuspH.set(f.suspH); work.frozenSuspL.set(f.suspL);
   work.frozenSurface.set(f.surface);
   work.field = f;
+  for (let i = 0; i < 8; i++) work.fieldBinding[i] = fieldBufferAtHot(f, i);
   work.fieldBeforeWaterTop.set(f.waterTop); work.fieldBeforeBh.set(f.bh); work.fieldBeforeBl.set(f.bl);
   work.fieldBeforeMh.set(f.mh); work.fieldBeforeMl.set(f.ml); work.fieldBeforeSuspH.set(f.suspH);
   work.fieldBeforeSuspL.set(f.suspL); work.fieldBeforeSurface.set(f.surface);
@@ -401,6 +555,7 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
     field.sourceInjectedH = work.sourceInjectedH; field.sourceInjectedL = work.sourceInjectedL; field.sourceEpoch = work.sourceEpoch;
   }
   work.activePatchToken = 0; work.activePatchStepEpoch = 0; work.activePatchOrdinal = 0; work.patchState = 0;
+  work.applying = 0;
   work.patchPlan = null; work.patchRow = -1; work.patchActions.count = 0; work.patchActions.lineageCount = 0;
   work.seenEpoch.set(work.seenEpochBefore);
   work.events.count = 0; work.events.lineageCount = 0; work.stepExternalH = 0; work.stepExternalL = 0;
@@ -413,14 +568,47 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
 export function finishStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
   if (work.activePatchToken !== 0) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
+  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) return work.lastStatus = 3;
   if (work.budget !== null) {
     if (work.planA.consumed !== 1 || work.results.resultCount !== work.planA.requestCount || !work.budget.allClosedHot()) {
       return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
     }
     const audit = auditParticleHot(work); if (audit !== 0) return work.lastStatus = audit;
+    if (nextLeaseToken > Number.MAX_SAFE_INTEGER) { work.tokenExhausted = 1; return work.lastStatus = 14; }
     const status = work.budget.finishHot(expectedStepEpoch); if (status !== 0) return work.lastStatus = status;
+    sealEvidenceHot(work);
   }
   work.active = 0; work.lastStatus = P011_HOT_OK; return P011_HOT_OK;
+}
+
+function sealEvidenceHot(work: P011ParticleHotWorkspace): void {
+  const a = work.planA, b = work.sealedPlan;
+  b.ownerId = a.ownerId; b.runToken = a.runToken; b.stepEpoch = a.stepEpoch; b.substepId = a.substepId;
+  b.attemptToken = a.attemptToken; b.paramsRevision = a.paramsRevision; b.inputRevision = a.inputRevision;
+  b.seed = a.seed; b.dt = a.dt; b.effectiveTiltRad = a.effectiveTiltRad;
+  b.requestCount = a.requestCount; b.motionCount = a.motionCount; b.totalRequested = a.totalRequested;
+  b.valid = a.valid; b.consumed = a.consumed;
+  for (let i = 0; i < a.requestCount; i++) {
+    b.kind[i] = a.kind[i]; b.phase[i] = a.phase[i]; b.sourceKind[i] = a.sourceKind[i]; b.column[i] = a.column[i]; b.targetColumn[i] = a.targetColumn[i]; b.particleId[i] = a.particleId[i]; b.sourceId[i] = a.sourceId[i]; b.substep[i] = a.substep[i]; b.ordinal[i] = a.ordinal[i]; b.requested[i] = a.requested[i]; b.totalWeight[i] = a.totalWeight[i]; b.predictedX[i] = a.predictedX[i]; b.predictedY[i] = a.predictedY[i]; b.predictedVx[i] = a.predictedVx[i]; b.predictedVy[i] = a.predictedVy[i]; b.mergeStart[i] = a.mergeStart[i]; b.mergeCount[i] = a.mergeCount[i];
+    for (let j = 0; j < a.mergeCount[i]; j++) b.lineage[a.mergeStart[i] + j] = a.lineage[a.mergeStart[i] + j];
+  }
+  for (let i = 0; i < a.motionCount; i++) {
+    b.motionParticleId[i] = a.motionParticleId[i]; b.motionColumn[i] = a.motionColumn[i]; b.motionX[i] = a.motionX[i]; b.motionY[i] = a.motionY[i]; b.motionVx[i] = a.motionVx[i]; b.motionVy[i] = a.motionVy[i];
+  }
+  const r = work.results, s = work.sealedResults;
+  s.ownerId = r.ownerId; s.stepEpoch = r.stepEpoch; s.resultCount = r.resultCount; s.status = r.status;
+  for (let i = 0; i < r.resultCount; i++) {
+    s.committed[i] = r.committed[i]; s.disposition[i] = r.disposition[i]; s.released[i] = r.released[i]; s.rowStatus[i] = r.rowStatus[i]; s.guardIndex[i] = r.guardIndex[i]; s.eventBegin[i] = r.eventBegin[i]; s.eventCount[i] = r.eventCount[i]; s.granted[i] = r.granted[i]; s.remainder[i] = r.remainder[i]; s.budgetClipped[i] = r.budgetClipped[i]; s.guardRejected[i] = r.guardRejected[i]; s.capacityClipped[i] = r.capacityClipped[i]; s.poolClipped[i] = r.poolClipped[i]; s.massAfter[i] = r.massAfter[i];
+  }
+  work.pool.transferHotState(work.patchAfter, false);
+  const f = work.field;
+  if (f !== null) {
+    work.fieldBeforeWaterTop.set(f.waterTop); work.fieldBeforeBh.set(f.bh); work.fieldBeforeBl.set(f.bl);
+    work.fieldBeforeMh.set(f.mh); work.fieldBeforeMl.set(f.ml); work.fieldBeforeSuspH.set(f.suspH); work.fieldBeforeSuspL.set(f.suspL);
+    work.fieldBeforeSurface.set(f.surface); work.pageSourceH = f.sourceInjectedH;
+    work.pageSourceL = f.sourceInjectedL; work.pageSourceEpoch = f.sourceEpoch;
+  }
+  work.committedPageToken = allocateParticleHotLease(); work.pageBacklog = 1;
 }
 
 // Numeric operation codes are fixed by this module and converted to legacy strings only by cold export.
@@ -464,18 +652,22 @@ function sortActive(work: P011ParticleHotWorkspace): number {
       order[count++] = i;
     }
   }
+  sortOrderHot(order, count, pool);
+  for (let i = 1; i < count; i++) if (pool.pId[order[i - 1]] === pool.pId[order[i]]) return -1;
+  return count;
+}
+function sortOrderHot(order: Int32Array, count: number, pool: P011ParticleSnapshot): void {
   for (let i = Math.floor(count / 2) - 1; i >= 0; i--) siftDown(order, i, count - 1, pool);
   for (let end = count - 1; end > 0; end--) {
     const t = order[0]; order[0] = order[end]; order[end] = t; siftDown(order, 0, end - 1, pool);
   }
-  for (let i = 1; i < count; i++) if (pool.pId[order[i - 1]] === pool.pId[order[i]]) return -1;
-  return count;
 }
 
 export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
   destination: P011ParticleHotPlanBuffer): number {
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
   if (destination !== work.planA && destination !== work.planB) return work.lastStatus = P011_HOT_INVALID_BUFFER;
+  if (work.planA.consumed !== 0 || work.applying !== 0) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
   if (!destination.storageValidHot()) return work.lastStatus = P011_HOT_INVALID_BUFFER;
   const count = sortActive(work);
   if (count < 0) { destination.valid = 0; return work.lastStatus = P011_HOT_INVALID_INPUT; }
@@ -660,8 +852,10 @@ function requestIdentityHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPl
     p.runToken !== work.runToken || p.substepId !== work.substepId || p.attemptToken !== work.attemptToken ||
     p.paramsRevision !== work.paramsRevision || p.inputRevision !== work.inputRevision || p.seed !== work.seed ||
     p.dt !== work.dt || p.effectiveTiltRad !== work.effectiveTiltRad || p.consumed !== 0) return P011_HOT_STALE_HANDLE;
-  if ((p !== work.planA && p !== work.planB) || !planValuesValidHot(p) || !Number.isInteger(row) || row < 0 || row >= p.requestCount ||
+  if ((p !== work.planA && p !== work.planB) || (work.applying !== 1 && !planValuesValidHot(p)) ||
+    !Number.isInteger(row) || row < 0 || row >= p.requestCount ||
     (p.kind[row] === P011_HOT_KIND_MERGE ? p.mergeCount[row] !== 2 : p.mergeCount[row] !== 0)) return P011_HOT_INVALID_INPUT;
+  if (work.applying === 1 && !sameRequestHot(p, row, work.planB, row)) return P011_HOT_IDENTITY_MISMATCH;
   const ordinal = p.ordinal[row];
   if (work.seenEpoch[ordinal] === work.stepEpoch) {
     return sameRequestHot(p, row, work.seenRequests, ordinal - 1) ? P011_HOT_DUPLICATE_REQUEST : P011_HOT_IDENTITY_MISMATCH;
@@ -787,6 +981,7 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
   if (work.activePatchToken !== 0) { work.lastStatus = P011_HOT_PATCH_BUSY; work.patchBusyCount++; return 0; }
   const valid = requestIdentityHot(work, plan, row);
   if (valid !== 0) { work.lastStatus = valid; return 0; }
+  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) { work.lastStatus = 3; return 0; }
   if (!Number.isFinite(grantedHeavy) || !Number.isFinite(grantedLight) || grantedHeavy < 0 || grantedLight < 0 ||
     grantedHeavy + grantedLight > plan.requested[row] + 1e-9 || !Number.isInteger(dispositionCode) || dispositionCode < 1 || dispositionCode > 6) {
     work.lastStatus = P011_HOT_INVALID_INPUT; return 0;
@@ -865,11 +1060,12 @@ export function auditParticleHot(work: P011ParticleHotWorkspace): number {
       p.pSourceId[i] === 0 || !Number.isFinite(p.pMass[i]) || p.pMass[i] <= 0 || !Number.isFinite(p.pX[i]) ||
       p.pX[i] < 0 || p.pX[i] >= work.cols || !Number.isFinite(p.pY[i]) || p.pY[i] < 0 || p.pY[i] > work.capacity ||
       !Number.isFinite(p.pVx[i]) || !Number.isFinite(p.pVy[i])) return 13;
-    for (let j = 0; j < i; j++) if (p.pState[j] !== 0 && p.pId[j] === p.pId[i]) return 13;
-    const c = Math.floor(p.pX[i]); live++;
+    const c = Math.floor(p.pX[i]); work.order[live++] = i;
     if (p.pPhase[i] === 0) work.auditMassH[c] += p.pMass[i]; else work.auditMassL[c] += p.pMass[i];
   }
   if (live !== p.liveCount) return 13;
+  sortOrderHot(work.order, live, p);
+  for (let i = 1; i < live; i++) if (p.pId[work.order[i - 1]] === p.pId[work.order[i]]) return 13;
   let beforeH = 0; let beforeL = 0; let afterH = 0; let afterL = 0;
   for (let c = 0; c < work.cols; c++) {
     const sand = f.bh[c] + f.bl[c] + f.mh[c] + f.ml[c];
@@ -900,9 +1096,11 @@ function failApplyHot(work: P011ParticleHotWorkspace, epoch: number, code: numbe
 export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
   plan: P011ParticleHotPlanBuffer, sink: P011ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = 4;
+  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) return work.lastStatus = 3;
   if (plan !== work.planA || sink !== work.commitSink || results !== work.results || !results.storageValidHot()) return work.lastStatus = 3;
   if (plan.consumed !== 0) return work.lastStatus = 15;
   if (compareParticlePlansHot(plan, work.planB) !== 0) return failApplyHot(work, expectedStepEpoch, 12, 0, 1);
+  work.applying = 1;
   work.validationRows.fill(0);
   for (let i = 0; i < plan.requestCount; i++) {
     const valid = requestIdentityHot(work, plan, i); if (valid !== 0) return failApplyHot(work, expectedStepEpoch, valid, plan.ordinal[i], 1);
@@ -937,5 +1135,5 @@ export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedSt
   }
   const moved = work.pool.transferHotState(p, true); if (moved !== 0) return failApplyHot(work, expectedStepEpoch, moved, 0, 4);
   const audit = auditParticleHot(work); if (audit !== 0) return failApplyHot(work, expectedStepEpoch, audit, 0, 5);
-  plan.consumed = 1; results.status = 0; return work.lastStatus = 0;
+  work.applying = 0; plan.consumed = 1; results.status = 0; return work.lastStatus = 0;
 }

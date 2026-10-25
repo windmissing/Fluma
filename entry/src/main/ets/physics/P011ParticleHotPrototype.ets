@@ -11,6 +11,7 @@ export class P011ParticleHotGuardBuffer {
   private readonly edgesBuffer = this.edgeId.buffer;
   private readonly residualBuffer = this.residual.buffer;
   private readonly influenceBuffer = this.influence.buffer;
+  coldBuffers(): ArrayBuffer[] { return [this.edgesBuffer, this.residualBuffer, this.influenceBuffer]; }
   storageValidHot(): boolean {
     return this.edgeId.buffer === this.edgesBuffer && this.residual.buffer === this.residualBuffer &&
       this.influence.buffer === this.influenceBuffer && this.edgeId.length === 3 && this.residual.length === 3 && this.influence.length === 3;
@@ -80,12 +81,23 @@ export class P011ParticleHotPrototypeSink implements P011ParticleHotCommitSink {
   private readonly beforeTicket = new P011ParticleHotTicketReceipt();
   private readonly beforeRefund = new P011ParticleHotRefundReceipt();
   private readonly beforeGuard = new P011ParticleHotGuardBuffer();
+  private readonly ticketBinding = this.ticket;
+  private readonly refundBinding = this.refund;
+  private readonly guardBinding = this.guard;
   failAfterPublish = 0;
   constructor(work: P011ParticleHotWorkspace, scale: number = 1) {
     if (work.active !== 0 || work.commitSink !== null) throw new Error('PARTICLE_HOT_ALREADY_BOUND');
     this.work = work;
     this.budget = new P011ParticleHotBudgetAdapter(work, scale); work.budget = this.budget; work.commitSink = this;
     work.sinkCheckpoint = this;
+    work.registerColdBuffers(this.budget.coldBuffers()); work.registerColdBuffers(this.refund.coldBuffers());
+    work.registerColdBuffers(this.guard.coldBuffers()); work.registerColdBuffers(this.beforeRefund.coldBuffers());
+    work.registerColdBuffers(this.beforeGuard.coldBuffers());
+  }
+  buffersValidHot(): boolean {
+    return this.work.budget === this.budget && this.work.commitSink === this && this.ticket === this.ticketBinding &&
+      this.refund === this.refundBinding && this.guard === this.guardBinding && this.budget.storageValidHot() &&
+      this.refund.storageValidHot() && this.guard.storageValidHot() && this.beforeRefund.storageValidHot() && this.beforeGuard.storageValidHot();
   }
   saveOutsHot(): void {
     this.beforeTicket.copyFromHot(this.ticket); this.beforeRefund.copyFromHot(this.refund); this.beforeGuard.copyFromHot(this.guard);

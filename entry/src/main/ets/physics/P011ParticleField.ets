@@ -85,6 +85,24 @@ export interface P011ParticleSnapshot {
 export interface P011ParticleHotTransactionStorage {
   before: P011ParticleSnapshot; after: P011ParticleSnapshot; scratch: P011ParticleSnapshot;
 }
+export function particleSnapshotBufferAtHot(s: P011ParticleSnapshot, i: number): ArrayBuffer {
+  switch (i) {
+    case 0: return s.pMass.buffer;
+    case 1: return s.pX.buffer;
+    case 2: return s.pY.buffer;
+    case 3: return s.pVx.buffer;
+    case 4: return s.pVy.buffer;
+    case 5: return s.pPhase.buffer;
+    case 6: return s.pSource.buffer;
+    case 7: return s.pState.buffer;
+    case 8: return s.pId.buffer;
+    case 9: return s.pSourceId.buffer;
+    case 10: return s.freeSlots.buffer;
+    case 11: return s.colParticleMassH.buffer;
+    case 12: return s.colParticleMassL.buffer;
+    default: return s.pMass.buffer;
+  }
+}
 
 export type P011ParticleOp = 'spawn' | 'lift' | 'deposit' | 'crossing' | 'degrade' | 'merge';
 export interface P011ParticleRequest {
@@ -187,6 +205,7 @@ export interface P011ParticleSeed {
 export interface P011ParticleTotals {
   heavy: number; light: number; count: number; resting: number;
 }
+export interface P011ParticleSourceTotals { count: number; massH: number; massL: number; }
 
 function requireFinite(value: number): void {
   if (!Number.isFinite(value)) throw new Error('PARTICLE_NON_FINITE');
@@ -236,6 +255,7 @@ export function validateParticleRequest(r: P011ParticleRequest, cols: number): v
 // Canonical pool only. These local primitives do not publish field events;
 // D1-B must coordinate pool+field changes atomically before production use.
 export class P011ParticleField implements P011ParticleAtomicPool {
+  private readonly hotCanonicalBinding: ArrayBuffer[];
   private readonly pMass: Float64Array;
   private readonly pX: Float64Array;
   private readonly pY: Float64Array;
@@ -282,6 +302,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     this.freeSlots = new Int32Array(nmax);
     this.colParticleMassH = new Float64Array(cols);
     this.colParticleMassL = new Float64Array(cols);
+    this.hotCanonicalBinding = [this.pMass.buffer, this.pX.buffer, this.pY.buffer, this.pVx.buffer, this.pVy.buffer, this.pPhase.buffer, this.pSource.buffer, this.pState.buffer, this.pId.buffer, this.pSourceId.buffer, this.freeSlots.buffer, this.colParticleMassH.buffer, this.colParticleMassL.buffer];
     for (let i = 0; i < nmax; i++) this.freeSlots[i] = nmax - 1 - i;
   }
 
@@ -339,6 +360,52 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     }
     for (let i = 0; i < this.nmax; i++) if (this.pState[i] === 2) resting++;
     return { heavy: heavy, light: light, count: this.liveCount, resting: resting };
+  }
+  particleMassAt(column: number): number {
+    if (!Number.isInteger(column) || column < 0 || column >= this.cols) return 0;
+    return this.colParticleMassH[column] + this.colParticleMassL[column];
+  }
+  particleMassHAt(column: number): number {
+    return Number.isInteger(column) && column >= 0 && column < this.cols ? this.colParticleMassH[column] : 0;
+  }
+  particleMassLAt(column: number): number {
+    return Number.isInteger(column) && column >= 0 && column < this.cols ? this.colParticleMassL[column] : 0;
+  }
+  particleIdAtSlot(slot: number): number {
+    return Number.isInteger(slot) && slot >= 0 && slot < this.nmax && this.pState[slot] !== 0
+      ? this.pId[slot] : 0;
+  }
+  sourceTotals(sourceKind: number): P011ParticleSourceTotals {
+    const result: P011ParticleSourceTotals = { count: 0, massH: 0, massL: 0 };
+    for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 && this.pSource[i] === sourceKind) {
+      result.count++;
+      if (this.pPhase[i] === 0) result.massH += this.pMass[i]; else result.massL += this.pMass[i];
+    }
+    return result;
+  }
+  auditBasic(): boolean {
+    let count = 0; let heavy = 0; let light = 0;
+    for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0) {
+      if ((this.pState[i] !== 1 && this.pState[i] !== 2) || (this.pPhase[i] !== 0 && this.pPhase[i] !== 1) ||
+        (this.pSource[i] !== 0 && this.pSource[i] !== 1) || !Number.isFinite(this.pMass[i]) || this.pMass[i] <= 0 ||
+        !Number.isFinite(this.pX[i]) || this.pX[i] < 0 || this.pX[i] >= this.cols ||
+        !Number.isFinite(this.pY[i]) || this.pY[i] < 0 || !Number.isFinite(this.pVx[i]) || !Number.isFinite(this.pVy[i]) ||
+        this.pId[i] === 0 || this.pSourceId[i] === 0) return false;
+      count++;
+      if (this.pPhase[i] === 0) heavy += this.pMass[i]; else light += this.pMass[i];
+    }
+    const totals = this.totals();
+    return count === totals.count && Math.abs(heavy - totals.heavy) <= 1e-9 &&
+      Math.abs(light - totals.light) <= 1e-9 && totals.count + this.freeCount === this.nmax;
+  }
+  invert180(capacity: number): void {
+    if (this.patch !== null || !Number.isFinite(capacity) || capacity <= 0) throw new Error('PARTICLE_INVALID_INPUT');
+    this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);
+    for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0) {
+      this.pX[i] = this.cols - 1 - this.pX[i]; this.pY[i] = capacity - this.pY[i];
+      this.pVx[i] = -this.pVx[i]; this.pVy[i] = -this.pVy[i];
+      this.cache(this.pPhase[i])[Math.floor(this.pX[i])] += this.pMass[i];
+    }
   }
   endpointByState(): P011ParticleByState {
     const flying = new P011ParticleStateMass(0, 0, 0);
@@ -688,6 +755,22 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       colParticleMassH: this.colParticleMassH, colParticleMassL: this.colParticleMassL };
   }
   // HOT numeric copy boundary. All expected errors precede the first write.
+  hotCanonicalBuffers(): ArrayBuffer[] { return this.hotCanonicalBinding; }
+  storageValidForHot(): boolean {
+    return this.pMass.buffer === this.hotCanonicalBinding[0] &&
+      this.pX.buffer === this.hotCanonicalBinding[1] &&
+      this.pY.buffer === this.hotCanonicalBinding[2] &&
+      this.pVx.buffer === this.hotCanonicalBinding[3] &&
+      this.pVy.buffer === this.hotCanonicalBinding[4] &&
+      this.pPhase.buffer === this.hotCanonicalBinding[5] &&
+      this.pSource.buffer === this.hotCanonicalBinding[6] &&
+      this.pState.buffer === this.hotCanonicalBinding[7] &&
+      this.pId.buffer === this.hotCanonicalBinding[8] &&
+      this.pSourceId.buffer === this.hotCanonicalBinding[9] &&
+      this.freeSlots.buffer === this.hotCanonicalBinding[10] &&
+      this.colParticleMassH.buffer === this.hotCanonicalBinding[11] &&
+      this.colParticleMassL.buffer === this.hotCanonicalBinding[12];
+  }
   transferHotState(s: P011ParticleSnapshot, restore: boolean): number {
     if (this.patch !== null) return 6;
     if (s.nmax !== this.nmax || s.cols !== this.cols || s.pMass.length !== this.nmax ||
@@ -695,6 +778,12 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       s.pVy.length !== this.nmax || s.pPhase.length !== this.nmax || s.pSource.length !== this.nmax ||
       s.pState.length !== this.nmax || s.pId.length !== this.nmax || s.pSourceId.length !== this.nmax ||
       s.freeSlots.length !== this.nmax || s.colParticleMassH.length !== this.cols || s.colParticleMassL.length !== this.cols) return 3;
+    if (!this.storageValidForHot()) return 3;
+    for (let i = 0; i < 13; i++) {
+      const buffer = particleSnapshotBufferAtHot(s, i);
+      for (let j = 0; j < 13; j++) if (buffer === this.hotCanonicalBinding[j]) return 3;
+      for (let j = 0; j < i; j++) if (buffer === particleSnapshotBufferAtHot(s, j)) return 3;
+    }
     if (restore) this.copySnapshot(s);
     else {
       s.liveCount = this.liveCount; s.freeCount = this.freeCount; s.nextId = this.nextId;
