@@ -1,0 +1,58 @@
+{
+  "task": "6adc52e4e4b0e6ce82a12a86",
+  "scope": "P011 D2 isolated particle integration prototype",
+  "acceptance": "INCOMPLETE: do not treat developer smoke tests as the complete architecture section 8 acceptance suite",
+  "deviceTests": "not run, per task scope",
+  "checks": {
+    "m2": {
+      "passed": 14,
+      "failed": 0,
+      "coverage": "13 integration smoke cases plus gesture/shake phase inventory closure"
+    },
+    "gesture": {
+      "passed": 18,
+      "failed": 0
+    },
+    "planning": {
+      "passed": 106,
+      "failed": 0
+    },
+    "input": {
+      "passed": 124,
+      "failed": 0
+    },
+    "s3": {
+      "passed": 14,
+      "failed": 0
+    },
+    "s4": {
+      "passed": 10,
+      "failed": 0
+    },
+    "tracer": {
+      "passed": 9,
+      "failed": 0
+    },
+    "render": {
+      "status": "FAIL",
+      "error": "P012MaterialMotionCache.computePhase dereferences null material view (massHAt)"
+    }
+  },
+  "build": {
+    "command": "hvigorw assembleHap --mode module -p product=default -p buildMode=debug --no-daemon",
+    "status": "FAIL",
+    "errors": [
+      "SandCanvas.ets:64 missing frame callback class declaration",
+      "P013P1G0Probe.ets imports missing P013RenderTypes"
+    ],
+    "isolatedCompileProbe": "dependency installation did not complete; no compiler PASS claimed"
+  },
+  "remaining": [
+    "Full section 8 and section 13.6 real-sink acceptance coverage is not established by these smoke checks",
+    "M2 currently reuses the HOT prototype sink against canonical arrays; dedicated production guard/clip adapter boundary still needs conformance review",
+    "Gesture and lift birth packetization/merge/degrade event completeness need the frozen source-event acceptance checks",
+    "Planner comparison currently checks legacy plans after replaying particles; independent particle grant/refund projection acceptance remains unproven",
+    "Complete product build and render regression must pass before task completion"
+  ],
+  "commitScope": "particle integration only; other-task shakeSource and peak edits excluded"
+}

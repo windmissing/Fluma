@@ -26,13 +26,33 @@ export class P011EndpointByStateValue {
     this.FLYING = flying; this.CONTACT_WAIT = contactWait;
   }
 }
+export class P011EndpointParticleSourceMass {
+  count: number; massH: number; massL: number;
+  constructor(count: number = 0, massH: number = 0, massL: number = 0) {
+    this.count = count; this.massH = massH; this.massL = massL;
+  }
+}
+export class P011EndpointParticleSourceKind {
+  GESTURE_EXTERNAL: P011EndpointParticleSourceMass; SHAKE_LIFT: P011EndpointParticleSourceMass;
+  constructor(gesture: P011EndpointParticleSourceMass = new P011EndpointParticleSourceMass(),
+    shake: P011EndpointParticleSourceMass = new P011EndpointParticleSourceMass()) {
+    this.GESTURE_EXTERNAL = gesture; this.SHAKE_LIFT = shake;
+  }
+}
 export class P011EndpointParticleSummary {
   count: number;
   massH: number;
   massL: number;
   byState: P011EndpointByStateValue;
-  constructor(count: number, massH: number, massL: number, byState: P011EndpointByStateValue) {
+  bySourceKind: P011EndpointParticleSourceKind;
+  capacityUsed: number; capacityLimit: number; degraded: P011EndpointParticleSourceMass;
+  constructor(count: number, massH: number, massL: number, byState: P011EndpointByStateValue,
+    bySourceKind: P011EndpointParticleSourceKind = new P011EndpointParticleSourceKind(),
+    capacityUsed: number = 0, capacityLimit: number = 0,
+    degraded: P011EndpointParticleSourceMass = new P011EndpointParticleSourceMass()) {
     this.count = count; this.massH = massH; this.massL = massL; this.byState = byState;
+    this.bySourceKind = bySourceKind; this.capacityUsed = capacityUsed;
+    this.capacityLimit = capacityLimit; this.degraded = degraded;
   }
 }
 export class P011EndpointLedgerCapture {

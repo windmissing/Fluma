@@ -18,7 +18,10 @@ export const P011_NATURAL_OBSERVATION_ROUTE_ID = 'natural-relax-hysteresis-v1';
 // context.advection (routeId/gain/kDrag/uCap/channelRateCap + per-substep
 // domain moments Mdep/Msusp/R_M + diffusionFlux/advectionFlux separated)
 // and per-note advection evidence via the probe. Absent = pre-v6 run.
-export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 6;
+// v7 (dual-field particle M2, architecture-P011-dual-field-particle-v1 §5.6):
+// adds canonical particle pool/source/capacity/degrade summaries and the
+// committed per-substep particle event stream. Absent remains pre-v7.
+export const P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION = 7;
 
 // D-1 (2026-10-21 manager ruling, Option A + explicit route isolation):
 // the §24 correction allocator is gated behind BOTH (a) the dual-threshold

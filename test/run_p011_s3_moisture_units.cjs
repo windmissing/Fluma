@@ -345,7 +345,7 @@ describe('S3 moisture (§9.2 fourteen cases)', () => {
     // stage-a) appended the P011AdvectionEvidence/Moments blocks — the
     // moisture fields are unchanged, so the pin tracks the live version.
     const moistureMod = require('../entry/src/main/ets/physics/P011NaturalObservation.ets');
-    assert.ok(moistureMod.P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION === 6);
+    assert.ok(moistureMod.P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION === 7);
   });
 
   // 14) Schema compatibility: OFF runs carry no moisture block; the

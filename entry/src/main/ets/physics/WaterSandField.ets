@@ -5,8 +5,11 @@
 import { P011EndpointClock, P011EndpointPhaseIdentity, P011EndpointSampler,
   P011EndpointPostCommitStamp, P011EndpointMassFractions, P011EndpointCommitKey, P011_ENDPOINT_FIELD_REVISION,
   P011EndpointLedgerCapture, P011EndpointByStateValue, P011EndpointParticleStateMass,
-  P011EndpointParticleSummary, p011EndpointMassFractions } from './P011EndpointMetrics';
-import { P011ParticleField, P011ParticleByState, P011ParticleStateMass, P011_PARTICLE_ROUTE_ID } from './P011ParticleField';
+  P011EndpointParticleSummary, P011EndpointParticleSourceKind, P011EndpointParticleSourceMass,
+  p011EndpointMassFractions } from './P011EndpointMetrics';
+import { P011ParticleField, P011ParticleByState, P011ParticleStateMass, P011_PARTICLE_ROUTE_ID,
+  P011ParticleParams, P011ParticleSnapshot, particleRouteEnabled } from './P011ParticleField';
+import { P011ParticleM2FieldBinding, P011_PARTICLE_M2_ROUTE_CONFLICT } from './P011ParticleM2Field';
 import {
   P011NaturalObservationAudit,
   P011NaturalObservationBudgets,
@@ -504,6 +507,8 @@ export interface WaterSandSeparationProfile {
 }
 
 export interface WaterSandMetrics extends P011EndpointMassFractions {
+  sourceInjectedHeavy: number;
+  sourceInjectedLight: number;
   endpointFieldRevision: string;
   sourceEpoch: number;
   metricCommitKey: P011EndpointCommitKey | null;
@@ -669,7 +674,7 @@ export function waterSandFrameHookPayload(
 }
 
 export interface WaterSandSnapshot {
-  schemaVersion: 3;
+  schemaVersion: number;
   cols: number;
   capacity: number;
   waterTop: Float64Array;
@@ -689,6 +694,7 @@ export interface WaterSandSnapshot {
   moistureOccupancy?: Float32Array;
   moistureK?: number;
   moistureModelVersion?: string;
+  particleState?: P011ParticleSnapshot | null;
 }
 
 const EPS = 1e-9;
@@ -838,6 +844,12 @@ export class WaterSandField {
   private endpointParticlePool: P011ParticleField | null = null;
   private endpointParticleRouteActive = false;
   private endpointParticleEvents: string[] = [];
+  // D2 owns the only production route gate and binds M1's fixed-buffer HOT
+  // executor directly to these canonical field arrays. Null is route OFF.
+  private particleBinding: P011ParticleM2FieldBinding | null = null;
+  private particleRouteId: string | null = null;
+  private particleParams: P011ParticleParams | null = null;
+  private particleBackup: P011ParticleSnapshot | null = null;
   private p011SampleSequence = 0;
   private p011InputSequence = 0;
   private p011FrameId = 0;
@@ -862,6 +874,7 @@ export class WaterSandField {
   // and suppresses telemetry so discarded passes leave zero side effects.
   private planningPassService = new P011TiltPlanningPassService();
   private planningPreviewActive = false;
+  private particlePreviewApplied = false;
   private lastPlanningStatus: string | null = null;
   private lastPlanningBlockedReason: string | null = null;
   private lastPlanningPassCount = 0;
@@ -1260,6 +1273,10 @@ export class WaterSandField {
     this.fillRegions(this.bl, scene.lightDepositedRegions, true);
     this.fillRegions(this.suspH, scene.heavySuspendedRegions, true);
     this.fillRegions(this.suspL, scene.lightSuspendedRegions, true);
+    if (this.particleBinding !== null) {
+      this.particleBinding.reset();
+      if (this.particleBackup !== null) this.particleBinding.pool.copyStateTo(this.particleBackup);
+    }
     this.updateSandTop();
     const totals = this.getTotals();
     if (this.audit(false) !== null) {
@@ -1318,7 +1335,8 @@ export class WaterSandField {
     this.endpointStamp = null; this.endpointSampleError = null;
     this.endpointCaptureMode = null; this.endpointModeChanges = 0;
     this.endpointInvertCount = 0; this.endpointRouteChanges = 0; this.endpointStampedSourceEpoch = -1;
-    this.endpointParticlePool = null; this.endpointParticleRouteActive = false; this.endpointParticleEvents = [];
+    this.endpointParticlePool = this.particleBinding === null ? null : this.particleBinding.pool;
+    this.endpointParticleRouteActive = this.particleRouteActive(); this.endpointParticleEvents = [];
     this.p011SampleSequence = 0;
     this.p011InputSequence = 0;
     this.p011FrameId = 0;
@@ -1512,6 +1530,17 @@ export class WaterSandField {
    * the B-contract receipt (admitted amounts + rejection reason), or
    * null when the request is entirely zero (the page feeds nothing).
    */
+  private gestureSandEventSink: ((receipt: P011InjectionReceipt) => void) | null = null;
+  private shakeLiftEventSink: ((lifted: number, columns: number) => void) | null = null;
+
+  /** Cold-path telemetry hooks installed by SandCanvas; no payload allocation in physics HOT loops. */
+  setGestureSandEventSink(sink: ((receipt: P011InjectionReceipt) => void) | null): void {
+    this.gestureSandEventSink = sink;
+  }
+
+  setShakeLiftEventSink(sink: ((lifted: number, columns: number) => void) | null): void {
+    this.shakeLiftEventSink = sink;
+  }
   injectGestureSand(request: P011GestureSandRequest): P011InjectionReceipt | null {
     // 0. Precheck: finite/non-negative/length; all-zero -> null.
     let sumH = 0;
@@ -1527,17 +1556,6 @@ export class WaterSandField {
         return null;
       }
       sumH += qH;
-  private gestureSandEventSink: ((receipt: P011InjectionReceipt) => void) | null = null;
-  private shakeLiftEventSink: ((lifted: number, columns: number) => void) | null = null;
-
-  /** Cold-path telemetry hooks installed by SandCanvas; no payload allocation in physics HOT loops. */
-  setGestureSandEventSink(sink: ((receipt: P011InjectionReceipt) => void) | null): void {
-    this.gestureSandEventSink = sink;
-  }
-
-  setShakeLiftEventSink(sink: ((lifted: number, columns: number) => void) | null): void {
-    this.shakeLiftEventSink = sink;
-  }
       sumL += qL;
     }
     if (sumH <= 0 && sumL <= 0) {
@@ -1549,16 +1567,21 @@ export class WaterSandField {
     // not drift).
     let freeWaterSnapshot = 0;
     for (let c = 0; c < this.cols; c++) {
-      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
+        (this.particleRouteActive() && this.particleBinding !== null
+          ? this.particleBinding.pool.particleMassAt(c) : 0);
       freeWaterSnapshot += Math.max(0, this.waterTop[c] - t);
     }
     this.gestureWaterBefore = freeWaterSnapshot;
+    const particleEventStart = this.endpointParticleEvents.length;
     this.saveBackup();
     // 2. Route recheck: at least one requested column must be wet.
     let anyWet = false;
     for (let c = 0; c < this.cols; c++) {
       if ((request.perColumnHeavy[c] > 0 || request.perColumnLight[c] > 0) &&
-        this.waterTop[c] - this.sandTopScratch[c] > EPS) {
+        this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c] -
+          (this.particleRouteActive() && this.particleBinding !== null
+            ? this.particleBinding.pool.particleMassAt(c) : 0) > EPS) {
         anyWet = true;
         break;
       }
@@ -1584,7 +1607,9 @@ export class WaterSandField {
       let want = 0;
       for (let c = 0; c < this.cols; c++) {
         if (request.perColumnHeavy[c] > 0 || request.perColumnLight[c] > 0) {
-          const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+          const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
+            (this.particleRouteActive() && this.particleBinding !== null
+              ? this.particleBinding.pool.particleMassAt(c) : 0);
           bound += Math.max(0, this.capacity - Math.max(this.waterTop[c], t));
           want += aH[c] + aL[c];
         }
@@ -1604,7 +1629,37 @@ export class WaterSandField {
         this.suspL[c] += aL[c];
       }
       const etaOk = this.solveInjectionWaterTop(aH, aL);
-      const auditOk = etaOk && this.gestureInjectionAudit();
+      let auditOk = etaOk && this.gestureInjectionAudit();
+      if (auditOk) {
+        if (this.particleRouteActive() && this.particleBinding !== null && this.particleParams !== null) {
+          for (let c = 0; c < this.cols; c++) {
+            this.suspH[c] -= aH[c]; this.suspL[c] -= aL[c];
+            const y = this.sandTopScratch[c] + this.particleParams.contactEps;
+            if (aH[c] > 0) {
+              const slot = this.particleBinding.seed(aH[c], c + 0.5, y,
+              this.particleParams.terminalSpeedHeavy * Math.sin(this.effectiveTilt * Math.PI / 180),
+              -this.particleParams.terminalSpeedHeavy * Math.cos(this.effectiveTilt * Math.PI / 180),
+              0, 0, request.sourceId);
+              if (slot < 0) auditOk = false;
+              else this.endpointParticleEvents.push(JSON.stringify({ kind: 'SPAWN', particleId:
+                this.particleBinding.pool.particleIdAtSlot(slot), phase: 0, mass: aH[c], sourceKind: 'GESTURE_EXTERNAL',
+                x: c + 0.5, y: y, sourceId: request.sourceId, requested: request.perColumnHeavy[c], admitted: aH[c] }));
+            }
+            if (aL[c] > 0) {
+              const slot = this.particleBinding.seed(aL[c], c + 0.5, y,
+              this.particleParams.terminalSpeedLight * Math.sin(this.effectiveTilt * Math.PI / 180),
+              -this.particleParams.terminalSpeedLight * Math.cos(this.effectiveTilt * Math.PI / 180),
+              1, 0, request.sourceId);
+              if (slot < 0) auditOk = false;
+              else this.endpointParticleEvents.push(JSON.stringify({ kind: 'SPAWN', particleId:
+                this.particleBinding.pool.particleIdAtSlot(slot), phase: 1, mass: aL[c], sourceKind: 'GESTURE_EXTERNAL',
+                x: c + 0.5, y: y, sourceId: request.sourceId, requested: request.perColumnLight[c], admitted: aL[c] }));
+            }
+          }
+          this.updateSandTop();
+          auditOk = auditOk && this.gestureInjectionAudit();
+        }
+      }
       if (auditOk) {
         // 5. Commit.
         let totalH = 0;
@@ -1626,6 +1681,7 @@ export class WaterSandField {
       }
       // 6. Audit/eta failure -> rollback, halve λ, retry.
       this.restoreBackup();
+      this.endpointParticleEvents.length = particleEventStart;
       lambda *= 0.5;
       if (lambda < 1e-4) {
         break;
@@ -1633,6 +1689,7 @@ export class WaterSandField {
     }
     // λ exhausted: full rollback + CAPACITY_BLOCKED (admitted may be ~0).
     this.restoreBackup();
+    this.endpointParticleEvents.length = particleEventStart;
     return this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED'));
   }
 
@@ -1683,7 +1740,9 @@ export class WaterSandField {
     const cols = this.cols;
     const tArr = new Float64Array(cols);
     for (let c = 0; c < cols; c++) {
-      tArr[c] = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      tArr[c] = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
+        (this.particleRouteActive() && this.particleBinding !== null
+          ? this.particleBinding.pool.particleMassAt(c) : 0);
     }
     // Target: the PRE-inJECTION free water (gestureWaterBefore — snap-
     // shot before the trial write). The trial suspension sits in TArr;
@@ -1745,7 +1804,9 @@ export class WaterSandField {
         this.suspL[c] < 0 || this.waterTop[c] < 0) {
         return false;
       }
-      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
+        (this.particleRouteActive() && this.particleBinding !== null
+          ? this.particleBinding.pool.particleMassAt(c) : 0);
       if (this.waterTop[c] < t - EPS || this.waterTop[c] > this.capacity + EPS) {
         return false;
       }
@@ -1755,7 +1816,9 @@ export class WaterSandField {
     // injected volume — that is the sand pushing water up, not drift).
     let freeWaterNow = 0;
     for (let c = 0; c < this.cols; c++) {
-      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c];
+      const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
+        (this.particleRouteActive() && this.particleBinding !== null
+          ? this.particleBinding.pool.particleMassAt(c) : 0);
       freeWaterNow += Math.max(0, this.waterTop[c] - t);
     }
     if (Math.abs(freeWaterNow - this.gestureWaterBefore) > 1e-6) {
@@ -1783,7 +1846,9 @@ export class WaterSandField {
       const waterVolume = this.getWaterVolume(c);
       newSuspH[mirrored] = this.bh[c] + this.mh[c] + this.suspH[c];
       newSuspL[mirrored] = this.bl[c] + this.ml[c] + this.suspL[c];
-      newWaterTop[mirrored] = waterVolume + newSuspH[mirrored] + newSuspL[mirrored];
+      const particleMass = this.particleRouteActive() && this.particleBinding !== null
+        ? this.particleBinding.pool.particleMassAt(c) : 0;
+      newWaterTop[mirrored] = waterVolume + newSuspH[mirrored] + newSuspL[mirrored] + particleMass;
     }
     this.waterTop.set(newWaterTop);
     this.bh.fill(0);
@@ -1792,6 +1857,9 @@ export class WaterSandField {
     this.ml.fill(0);
     this.suspH.set(newSuspH);
     this.suspL.set(newSuspL);
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      this.particleBinding.pool.invert180(this.capacity);
+    }
     this.updateSandTop();
     this.shakeEnergy = Math.max(this.shakeEnergy, 0.8);
   }
@@ -1818,7 +1886,8 @@ export class WaterSandField {
       return result;
     }
     this.p011FrameId += 1;
-    if (this.dormant && Math.abs(this.targetTilt - this.effectiveTilt) <= EPS &&
+    if (this.dormant && !(this.particleRouteActive() && this.particleBinding !== null && this.particleBinding.liveCount > 0) &&
+      Math.abs(this.targetTilt - this.effectiveTilt) <= EPS &&
       this.shakeEnergy <= EPS && this.shakeInput <= EPS &&
       // falling-sand §1.2: a pending gesture request WAKES the field —
       // the dormant fast-path must not swallow queued injections (the
@@ -1879,7 +1948,7 @@ export class WaterSandField {
         this.beginNaturalObservation(substepDt);
         errorCode = this.substep(substepDt);
       }
-      if (errorCode === null) {
+      if (errorCode === null && !this.particleRouteActive()) {
         // §20.6.4: verify the authoritative collect against the preview plans
         // before any material is applied; mismatch freezes the substep.
         errorCode = this.verifyPreviewCommitConsistency(substepDt);
@@ -1986,6 +2055,11 @@ export class WaterSandField {
       water += this.getWaterVolume(c);
       heavy += this.bh[c] + this.mh[c] + this.suspH[c];
       light += this.bl[c] + this.ml[c] + this.suspL[c];
+    }
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      const particleTotals = this.particleBinding.pool.totals();
+      heavy += particleTotals.heavy;
+      light += particleTotals.light;
     }
     return { water, heavy, light };
   }
@@ -2339,8 +2413,55 @@ export class WaterSandField {
    * is not an implicit correction switch.
    */
   setNaturalObservationRouteId(routeId: string | null): void {
+    // A live particle inventory cannot be orphaned by switching its unique
+    // route gate. The caller can retry after the pool has drained.
+    if (this.particleBinding !== null && this.particleBinding.liveCount > 0 &&
+      routeId !== P011_PARTICLE_ROUTE_ID) return;
     if (this.endpointSampler !== null && routeId !== this.naturalObservationRouteId) this.endpointRouteChanges++;
     this.naturalObservationRouteId = routeId;
+    this.endpointParticlePool = this.particleBinding === null ? null : this.particleBinding.pool;
+    this.endpointParticleRouteActive = this.particleRouteActive();
+  }
+
+  /** D2 route contract: activation requires the exact route id and params;
+   * unloading a non-empty pool is rejected without changing either value. */
+  setParticleRoute(routeId: string | null, params: P011ParticleParams | null): number {
+    if (routeId === null && params === null) {
+      if (this.particleBinding !== null && this.particleBinding.liveCount > 0) return 1;
+      this.particleBinding = null; this.particleBackup = null;
+      this.particleRouteId = null; this.particleParams = null;
+      this.endpointParticlePool = null; this.endpointParticleRouteActive = false;
+      return 0;
+    }
+    if (this.naturalObservationRouteId !== null && this.naturalObservationRouteId !== P011_PARTICLE_ROUTE_ID) {
+      return P011_PARTICLE_M2_ROUTE_CONFLICT;
+    }
+    if (routeId !== P011_PARTICLE_ROUTE_ID || params === null || params.nmax <= 0 ||
+      this.cols !== 128 || this.particleBinding !== null && this.particleBinding.liveCount > 0) return 2;
+    const chosen: P011ParticleParams = { massPackage: params.massPackage, nmax: params.nmax,
+      terminalSpeedHeavy: params.terminalSpeedHeavy, terminalSpeedLight: params.terminalSpeedLight,
+      dragHeavy: params.dragHeavy, dragLight: params.dragLight, liftSpeedHeavy: params.liftSpeedHeavy,
+      liftSpeedLight: params.liftSpeedLight, liftSpread: params.liftSpread,
+      mergeColRadius: params.mergeColRadius, mergeHeightRadius: params.mergeHeightRadius,
+      contactEps: params.contactEps, channelRateCap: params.channelRateCap };
+    try {
+      this.particleBinding = new P011ParticleM2FieldBinding(this.cols, this.capacity,
+        this.waterTop, this.bh, this.bl, this.mh, this.ml, this.suspH, this.suspL,
+        this.sandTopScratch, chosen);
+      this.particleBackup = this.particleBinding.pool.snapshot();
+      this.backup.particleState = this.particleBinding.pool.snapshot();
+      this.motionSnapshot.particleState = this.particleBinding.pool.snapshot();
+    } catch (_error) { this.particleBinding = null; this.particleBackup = null; return 2; }
+    this.particleRouteId = routeId; this.particleParams = chosen;
+    this.endpointParticlePool = this.particleBinding.pool;
+    this.endpointParticleRouteActive = this.particleRouteActive();
+    return 0;
+  }
+
+  particleRouteActive(): boolean {
+    return this.naturalObservationRouteId === P011_PARTICLE_ROUTE_ID &&
+      particleRouteEnabled(this.particleRouteId, this.particleParams) &&
+      this.particleBinding !== null;
   }
 
   /**
@@ -3314,16 +3435,32 @@ export class WaterSandField {
       if (pool !== null) {
         const totals = pool.totals();
         const byState: P011ParticleByState = pool.endpointByState();
+        const gesture = pool.sourceTotals(0);
+        const shake = pool.sourceTotals(1);
+        const degraded = new P011EndpointParticleSourceMass(0, 0, 0);
+        if (this.particleBinding !== null) {
+          const events = this.particleBinding.work.events;
+          for (let i = 0; i < events.count; i++) if (events.kind[i] === 5) {
+            degraded.count++;
+            if (events.phase[i] === 0) degraded.massH += events.granted[i];
+            else degraded.massL += events.granted[i];
+          }
+        }
         particles = new P011EndpointParticleSummary(totals.count, totals.heavy, totals.light,
           new P011EndpointByStateValue(new P011EndpointParticleStateMass(byState.FLYING.count,
             byState.FLYING.massH, byState.FLYING.massL), new P011EndpointParticleStateMass(
-            byState.CONTACT_WAIT.count, byState.CONTACT_WAIT.massH, byState.CONTACT_WAIT.massL)));
+            byState.CONTACT_WAIT.count, byState.CONTACT_WAIT.massH, byState.CONTACT_WAIT.massL)),
+          new P011EndpointParticleSourceKind(
+            new P011EndpointParticleSourceMass(gesture.count, gesture.massH, gesture.massL),
+            new P011EndpointParticleSourceMass(shake.count, shake.massH, shake.massL)),
+          totals.count, pool.nmax, degraded);
       }
       const capture = new P011EndpointLedgerCapture(
         this.endpointParticleRouteActive ? P011_PARTICLE_ROUTE_ID : null,
         this.endpointParticleRouteActive, particles, this.endpointParticleEvents.slice(),
         pool === null ? null : JSON.stringify(pool.snapshot()), this.p011SubstepId + 1);
       this.naturalObservationProbe.attachEndpointLedgerCapture(capture);
+      this.endpointParticleEvents.length = 0;
     }
     this.naturalObservationRelaxCandidateCount = 0;
     this.naturalObservationRelaxRequestedTotal = 0;
@@ -3526,11 +3663,12 @@ export class WaterSandField {
     const totalSand = Math.max(totals.heavy + totals.light, EPS);
     const phaseOrderScore = profile.lowerHeavyShare === null || profile.upperHeavyShare === null
       ? 0 : profile.lowerHeavyShare - profile.upperHeavyShare;
-    const particleMissing = this.naturalObservationRouteId === 'dual-field-particle-v1';
+    const particleActive = this.particleRouteActive() && this.particleBinding !== null;
+    const particleTotals = particleActive ? this.particleBinding!.pool.totals() : null;
     const endpoint = p011EndpointMassFractions(depositedHeavy + depositedLight, suspended,
-      particleMissing ? null : 0,
+      particleTotals === null ? 0 : particleTotals.heavy + particleTotals.light,
       this.initialHeavy + this.initialLight + this.sourceInjectedHeavy + this.sourceInjectedLight,
-      particleMissing ? 'NOT_IMPLEMENTED' : 'STRUCTURAL_ZERO_OFF');
+      particleTotals === null ? 'STRUCTURAL_ZERO_OFF' : 'CANONICAL');
     let metricKey: P011EndpointCommitKey | null = null;
     if (this.endpointStamp !== null && !this.frozen && this.endpointStampedSourceEpoch === this.sourceEpoch &&
       this.endpointStamp.key.substepId === this.p011SubstepId) {
@@ -3540,6 +3678,7 @@ export class WaterSandField {
     }
     return {
       endpointFieldRevision: P011_ENDPOINT_FIELD_REVISION, sourceEpoch: this.sourceEpoch, metricCommitKey: metricKey,
+      sourceInjectedHeavy: this.sourceInjectedHeavy, sourceInjectedLight: this.sourceInjectedLight,
       depositedMass: endpoint.depositedMass, suspendedMass: endpoint.suspendedMass,
       particleMass: endpoint.particleMass, expectedMass: endpoint.expectedMass, actualMass: endpoint.actualMass,
       depositedFraction: endpoint.depositedFraction, suspFraction: endpoint.suspFraction,
@@ -3584,7 +3723,7 @@ export class WaterSandField {
     // S3: accept schema 2 (legacy consumers create v2 targets — the
     // optional moisture block is skipped on those) and 3.
     const schemaNum = target.schemaVersion as number;
-    if ((schemaNum !== 2 && schemaNum !== 3) ||
+    if ((schemaNum !== 2 && schemaNum !== 3 && schemaNum !== 4) ||
       target.cols !== this.cols || target.capacity !== this.capacity) {
       throw new WaterSandSnapshotError('snapshot schema, cols, or capacity mismatch');
     }
@@ -3608,6 +3747,37 @@ export class WaterSandField {
       target.hl[c] = this.bl[c] + this.ml[c];
       target.sandTop[c] = target.hs[c] + target.hl[c];
     }
+    if (schemaNum === 4 && target.particleState !== undefined && target.particleState !== null) {
+      if (this.particleRouteActive() && this.particleBinding !== null) {
+        this.particleBinding.pool.copyStateTo(target.particleState);
+      } else {
+        const state = target.particleState;
+        state.liveCount = 0; state.freeCount = state.nmax; state.nextId = 1;
+        state.pMass.fill(0); state.pX.fill(0); state.pY.fill(0); state.pVx.fill(0); state.pVy.fill(0);
+        state.pPhase.fill(0); state.pSource.fill(0); state.pState.fill(0); state.pId.fill(0); state.pSourceId.fill(0);
+        state.colParticleMassH.fill(0); state.colParticleMassL.fill(0);
+        for (let i = 0; i < state.nmax; i++) state.freeSlots[i] = state.nmax - 1 - i;
+      }
+    }
+  }
+
+  /** Restore schema 3 as a structural zero particle field; schema 4 restores
+   * the full SoA pool when a particle route is armed. */
+  restoreFromSnapshot(source: WaterSandSnapshot): void {
+    const version = source.schemaVersion as number;
+    if ((version !== 3 && version !== 4) || source.cols !== this.cols || source.capacity !== this.capacity ||
+      source.waterTop.length !== this.cols || source.bh.length !== this.cols || source.bl.length !== this.cols ||
+      source.mh.length !== this.cols || source.ml.length !== this.cols || source.suspH.length !== this.cols ||
+      source.suspL.length !== this.cols) throw new WaterSandSnapshotError('snapshot schema, cols, or capacity mismatch');
+    this.waterTop.set(source.waterTop); this.bh.set(source.bh); this.bl.set(source.bl);
+    this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      if (version === 4 && source.particleState !== undefined && source.particleState !== null) {
+        this.particleBinding.pool.restoreSnapshot(source.particleState);
+      } else this.particleBinding.pool.reset();
+      if (this.particleBackup !== null) this.particleBinding.pool.copyStateTo(this.particleBackup);
+    }
+    this.updateSandTop();
   }
 
   getLastError(): WaterSandErrorCode | null {
@@ -3695,8 +3865,6 @@ export class WaterSandField {
     this.bh.set(this.motionSnapshot.bh);
     this.bl.set(this.motionSnapshot.bl);
     this.mh.set(this.motionSnapshot.mh);
-      sourceInjectedHeavy: this.sourceInjectedHeavy,
-      sourceInjectedLight: this.sourceInjectedLight,
     this.ml.set(this.motionSnapshot.ml);
     this.suspH.set(this.motionSnapshot.suspH);
     this.suspL.set(this.motionSnapshot.suspL);
@@ -3769,10 +3937,35 @@ export class WaterSandField {
     this.relaxAngle(dt);
     this.liftByShake(dt);
     this.updateSandTop();
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      this.particleBinding.registerRun(this.p011RunId);
+      const particleStatus = this.particleBinding.beginCollect(dt, this.effectiveTilt * Math.PI / 180,
+        this.p011SubstepId + 1, this.p011SubstepId + 1, this.sourceInjectedHeavy,
+        this.sourceInjectedLight, this.sourceEpoch);
+      if (particleStatus !== 0) return WaterSandErrorCode.UNKNOWN;
+      this.totalMotionBudgetRequested += this.particleBinding.requested();
+    }
     return this.audit(true);
   }
 
   private applyMotionChannels(dt: number): WaterSandErrorCode | null {
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      const totalBefore = this.totalMotionBudgetRemaining;
+      const status = this.particleBinding.apply(this.totalMotionBudgetScale,
+        this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
+        this.totalMotionBudgetRemaining);
+      if (status !== 0) return WaterSandErrorCode.UNKNOWN;
+      this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
+      this.totalMotionBudgetUsed += totalBefore - this.totalMotionBudgetRemaining;
+      this.updateSandTop();
+      // Verify against the accepted-angle preview after the particle chain
+      // head has consumed the same shared budgets and field delta. This keeps
+      // the planner mirror and live commit in the same channel order.
+      this.particlePreviewApplied = true;
+      const consistencyError = this.verifyPreviewCommitConsistency(dt);
+      this.particlePreviewApplied = false;
+      if (consistencyError !== null) return consistencyError;
+    }
     // Plan-3 stage a (advection §1.2): apply-chain top, before settle —
     // restoreMotionSnapshot already put the arrays back to the snapshot
     // content, so this reads the SAME suspension state the collect-side
@@ -3805,7 +3998,15 @@ export class WaterSandField {
     }
     this.liftByShake(dt);
     this.updateSandTop();
-    return this.audit(true);
+    const auditError = this.audit(true);
+    if (auditError !== null) return auditError;
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      const evidence = this.particleBinding.exportCommittedEvidence();
+      for (let i = 0; i < evidence.events.length; i++) {
+        this.endpointParticleEvents.push(JSON.stringify(evidence.events[i]));
+      }
+    }
+    return null;
   }
 
   /**
@@ -4339,12 +4540,37 @@ export class WaterSandField {
       this.beginSubstepMotionBudget(substepDt, true, 1);
       const collectError = this.substep(substepDt);
       if (collectError === null) {
+        if (this.particleRouteActive() && this.particleBinding !== null &&
+          this.particleBinding.active) {
+          // Planning collect has executed the legacy channels to derive their
+          // requests. The real apply chain starts with particles from the
+          // frozen S0 snapshot, so reset the field before mirroring its head.
+          this.restoreMotionSnapshot();
+          const totalLimit = this.params.totalMotionBudget * substepDt;
+          const scale = this.totalMotionBudgetRequested <= totalLimit ? 1
+            : totalLimit / Math.max(this.totalMotionBudgetRequested, EPS);
+          this.beginMotionApplication(substepDt, scale);
+          const beforeTotal = this.totalMotionBudgetRemaining;
+          const particleStatus = this.particleBinding.apply(scale,
+            this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
+            this.totalMotionBudgetRemaining);
+          if (particleStatus !== 0) {
+            plans = null;
+          } else {
+            this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
+            this.totalMotionBudgetUsed += beforeTotal - this.totalMotionBudgetRemaining;
+            this.updateSandTop(); this.particlePreviewApplied = true;
+            plans = this.allocatePreviewPlans(substepDt);
+          }
+        } else {
         plans = this.allocatePreviewPlans(substepDt);
+        }
       }
       this.restoreBackup();
       this.updateSandTop();
     } finally {
       this.planningPreviewActive = false;
+      this.particlePreviewApplied = false;
       this.naturalObservationProbe = probe;
       this.restorePlanningScalars();
       // GAP-1 preview purity: discard the preview's state machine transitions.
@@ -4403,6 +4629,11 @@ export class WaterSandField {
     const localUsed = new Float64Array(cols);
     let bottomRemaining = this.params.vBottomCreepMax * substepDt;
     let totalRemaining = this.params.totalMotionBudget * substepDt;
+    if (this.particlePreviewApplied) {
+      localRemaining.set(this.substepMotionBudgetRemaining);
+      localUsed.set(this.substepMotionBudgetUsed);
+      totalRemaining = this.totalMotionBudgetRemaining;
+    }
     const totalRequested = Math.max(0, this.totalMotionBudgetRequested);
     // D-1 route isolation: the §24 correction reservation mirror (and the
     // B − R fold) exists only on explicitly-routed correction runs; every
@@ -4441,7 +4672,7 @@ export class WaterSandField {
 
     // Shadow material arrays: initialize from the live post-collect state.
     const shadowS = new Float64Array(cols);
-    shadowS.set(this.substepSandTopBefore);
+    shadowS.set(this.particlePreviewApplied ? this.sandTopScratch : this.substepSandTopBefore);
     const shadowBh = new Float64Array(cols);
     shadowBh.set(this.bh);
     const shadowBl = new Float64Array(cols);
@@ -5963,6 +6194,8 @@ export class WaterSandField {
 
   private liftByShake(dt: number): void {
     const requestEnergy = this.shakeEnergy;
+    let liftedTotal = 0;
+    let liftedColumns = 0;
     if (!this.collectingTotalMotionRequests) {
       if (this.shakeInput > EPS) {
         const target = Math.max(0, Math.min(1, this.shakeInput));
@@ -5986,8 +6219,10 @@ export class WaterSandField {
       const desired = requestEnergy * band * dt *
         (this.params.heavyLiftRate * surfaceHeavyShare +
           this.params.lightLiftRate * (1 - surfaceHeavyShare));
+      const particleMass = this.particleRouteActive() && this.particleBinding !== null
+        ? this.particleBinding.pool.particleMassAt(c) : 0;
       const capacity = this.waterTop[c] - this.sandTopScratch[c] + desired -
-        this.suspH[c] - this.suspL[c];
+        this.suspH[c] - this.suspL[c] - particleMass;
       const requested = Math.max(0, Math.min(desired, this.sandTopScratch[c], capacity));
       if (this.collectingTotalMotionRequests) {
         const amount = requested;
@@ -6035,9 +6270,37 @@ export class WaterSandField {
         this.recordNaturalTopSplit(null, c, amount, donorBhBefore, donorBlBefore,
           donorMhBefore, donorMlBefore, split);
       }
-      this.suspH[c] += split.heavy;
-      this.suspL[c] += split.light;
+      if (this.particleRouteActive() && this.particleBinding !== null && this.particleParams !== null) {
+        const particleSourceId = Math.max(1, this.p011SubstepId + 1);
+        const contact = this.sandTopScratch[c] + this.particleParams.contactEps;
+        if (split.heavy > 0) {
+          const slot = this.particleBinding.seed(split.heavy, c + 0.5, contact, 0,
+            this.particleParams.liftSpeedHeavy, 0, 1, particleSourceId);
+          if (slot < 0) this.suspH[c] += split.heavy;
+          else this.endpointParticleEvents.push(JSON.stringify({ kind: 'LIFT', particleId:
+            this.particleBinding.pool.particleIdAtSlot(slot), phase: 0, mass: split.heavy,
+            sourceKind: 'SHAKE_LIFT', fromLayer: 'surface', column: c, requested: originalRequested,
+            granted: amount }));
+        }
+        if (split.light > 0) {
+          const slot = this.particleBinding.seed(split.light, c + 0.5, contact, 0,
+            this.particleParams.liftSpeedLight, 1, 1, particleSourceId);
+          if (slot < 0) this.suspL[c] += split.light;
+          else this.endpointParticleEvents.push(JSON.stringify({ kind: 'LIFT', particleId:
+            this.particleBinding.pool.particleIdAtSlot(slot), phase: 1, mass: split.light,
+            sourceKind: 'SHAKE_LIFT', fromLayer: 'surface', column: c, requested: originalRequested,
+            granted: amount }));
+        }
+      } else {
+        this.suspH[c] += split.heavy;
+        this.suspL[c] += split.light;
+      }
+      liftedTotal += amount;
+      liftedColumns++;
       this.updateSandTop();
+    }
+    if (liftedTotal > EPS && this.shakeLiftEventSink !== null) {
+      this.shakeLiftEventSink(liftedTotal, liftedColumns);
     }
   }
 
@@ -6166,6 +6429,9 @@ export class WaterSandField {
     const suspensionFraction = suspended / Math.max(this.initialHeavy + this.initialLight, EPS);
     this.dormant = suspensionFraction <= 0.001 && this.shakeEnergy <= EPS &&
       this.maxSlopeDeg() <= this.params.angleDeg + 0.01 && this.waterAmplitude() <= 0.01;
+    if (this.particleRouteActive() && this.particleBinding !== null && this.particleBinding.liveCount > 0) {
+      this.dormant = false;
+    }
     // S4 sweep-2 diagnosis (2026-10-23): the dormant judgment observes
     // ONLY the surface layers (suspension/shake/slope/water) — a field
     // with an active deep-creep drive (D>0 interface gradient with the
@@ -6194,9 +6460,11 @@ export class WaterSandField {
         this.lastError = WaterSandErrorCode.NEGATIVE_VALUE;
         return WaterSandErrorCode.NEGATIVE_VALUE;
       }
+      const particleMass = this.particleRouteActive() && this.particleBinding !== null
+        ? this.particleBinding.pool.particleMassAt(c) : 0;
       const total = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c] +
-        this.suspH[c] + this.suspL[c] + this.getWaterVolume(c);
-      if (total > this.capacity + 1e-7 || this.suspH[c] + this.suspL[c] >
+        this.suspH[c] + this.suspL[c] + particleMass + this.getWaterVolume(c);
+      if (total > this.capacity + 1e-7 || this.suspH[c] + this.suspL[c] + particleMass >
         this.waterTop[c] - this.sandTopScratch[c] + EPS) {
         this.lastError = WaterSandErrorCode.CAPACITY_OVERFLOW;
         return WaterSandErrorCode.CAPACITY_OVERFLOW;
@@ -6227,7 +6495,9 @@ export class WaterSandField {
   }
 
   private getWaterVolume(c: number): number {
-    return Math.max(0, this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c]);
+    const particles = this.particleRouteActive() && this.particleBinding !== null
+      ? this.particleBinding.pool.particleMassAt(c) : 0;
+    return Math.max(0, this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c] - particles);
   }
 
   private maxSlopeDeg(): number {
@@ -6236,9 +6506,6 @@ export class WaterSandField {
       maximum = Math.max(maximum, Math.abs(this.sandTopScratch[c + 1] - this.sandTopScratch[c]));
     }
     return Math.atan(maximum) * 180 / Math.PI;
-    if (liftedTotal > EPS && this.shakeLiftEventSink !== null) {
-      this.shakeLiftEventSink(liftedTotal, liftedColumns);
-    }
   }
 
   private maxCurvature(): number {
@@ -6320,7 +6587,7 @@ export class WaterSandField {
 
   private createEmptySnapshot(): WaterSandSnapshot {
     return {
-      schemaVersion: 3,
+      schemaVersion: 4,
       moistureField: this.moistureField === null ? undefined
         : new Float32Array(this.moistureField),
       moistureOccupancy: this.moistureOccupancy === null ? undefined
@@ -6339,7 +6606,8 @@ export class WaterSandField {
       suspL: new Float64Array(this.cols),
       hs: new Float64Array(this.cols),
       hl: new Float64Array(this.cols),
-      sandTop: new Float64Array(this.cols)
+      sandTop: new Float64Array(this.cols),
+      particleState: this.particleBinding === null ? null : this.particleBinding.pool.snapshot()
     };
   }
 
@@ -6351,6 +6619,9 @@ export class WaterSandField {
     this.backup.ml.set(this.ml);
     this.backup.suspH.set(this.suspH);
     this.backup.suspL.set(this.suspL);
+    if (this.particleBinding !== null && this.particleBackup !== null) {
+      this.particleBinding.pool.copyStateTo(this.particleBackup);
+    }
   }
 
   private restoreBackup(): void {
@@ -6361,6 +6632,11 @@ export class WaterSandField {
     this.ml.set(this.backup.ml);
     this.suspH.set(this.backup.suspH);
     this.suspL.set(this.backup.suspL);
+    if (this.particleBinding !== null && this.particleBackup !== null) {
+      this.particleBinding.rollback();
+      this.particleBinding.pool.restoreSnapshot(this.particleBackup);
+      this.particleBinding.discardCommittedPage();
+    }
     this.updateSandTop();
   }
 

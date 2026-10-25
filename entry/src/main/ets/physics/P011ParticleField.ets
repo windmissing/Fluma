@@ -402,7 +402,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     if (this.patch !== null || !Number.isFinite(capacity) || capacity <= 0) throw new Error('PARTICLE_INVALID_INPUT');
     this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);
     for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0) {
-      this.pX[i] = this.cols - 1 - this.pX[i]; this.pY[i] = capacity - this.pY[i];
+      this.pX[i] = Math.min(this.cols - Number.EPSILON * this.cols, Math.max(0, this.cols - this.pX[i])); this.pY[i] = capacity - this.pY[i];
       this.pVx[i] = -this.pVx[i]; this.pVy[i] = -this.pVy[i];
       this.cache(this.pPhase[i])[Math.floor(this.pX[i])] += this.pMass[i];
     }
