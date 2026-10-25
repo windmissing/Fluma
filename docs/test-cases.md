@@ -1001,3 +1001,74 @@ rev2 §9 切片 2 的 G1 前置 = rev2 manager 验收（**已满足**，22:30）
 - 执行证据：`test/reports/p013_cpu_reference_execution.json`（执行器 `test/p013_cpu_reference_execution.py`；fixture 58/58、解析对拍三方一致、Q/C3 常数层、归档 RED 取证 919 文本/0 身份 token；合成复算非测量）。
 - RED 基线：`docs/p013-p1-material-coupling-red-baseline-v1.md`（五量 NOT_IMPLEMENTED + 缺失项清单 + 测量前置六条件；双树取证：正式归档与并行工作区文本各 919/854 个，P1 身份 token 0 命中；并行工作区 p013 文件经核对为 G2 桥接/生命周期本地实验，非五量估计对象）。
 - 交接链：manager 建 G0 probe 卡（effector 队列）→ G0 过后 manager 放行 G1 实施 → developer 交付六图导出/shader CPU 参考/七版本身份 → tester/effector 按前置六条件采五量与重复性分布 → designer 审效果 → manager 冻结数值线（此前一律 `MEASURED_NOT_CALIBRATED`）。
+
+## 17. P-013 G2 上传器客观用例条目（2026-10-25 登记与冻结，RED 基线）
+
+> 依据 `docs/tester-T53-g2-uploader-cases-registration-v1.md`（登记稿，字段名与期望码与之逐字一致）。上游：T45 裁决 `docs/decision-P013-T45-material-rollout-v1.md` §2「T：G2 测试先行」/§3/§4 与工程契约 `docs/architecture-P013-p1-material-composite-v1.md` rev2 §4.3/§4.4/§6/§7/§8/§9。执行证据：`test/reports/p053_g2_uploader_case_check.json`（执行器 `test/p053_g2_uploader_case_check.py`；23/23 NOT_IMPLEMENTED；T09 保全 0 违例；条款追溯 0 缺口）。**本节为独立追加条目**：不改 §16 T09 CPU fixture/五量条目，不改任何冻结判据；G2 未实现能力如实记 NOT_IMPLEMENTED / RED，不记 VALIDATED，不宣布 G1/G2 通过。
+
+### 17.0 冻结口径速查（条目判据均引用此处，不重复定义）
+
+| 项 | 冻结值 |
+|---|---|
+| 状态 | TEST_REGISTRATION_ONLY / NOT_IMPLEMENTED / NOT_CALIBRATED / NOT_VALIDATED / G2_NOT_UNFROZEN |
+| 期望码指派 | 包级校验失败→400 `MATERIAL_PACKET_INVALID`；配置修订不符→402 `ASSET_REVISION_MISMATCH`；资产未就绪→401 `ASSET_NOT_READY`；不新建错误码；实现用其它既有码→FAIL 并附实际码交裁定 |
+| 接口（T33/rev2 §6） | `stageMaterialBundle(desc,grainRgba,strataRgba)` / `pumpMaterialUploads(byteBudget)` / `canActivate(generation,contextEpoch)` / `activateMaterial(generation,frameToken)` / `discardMaterialStage(assetGeneration)` |
+| stage 状态枚举 | `CPU_STAGED｜UPLOADING｜READY｜ACTIVE｜FAILED｜DISCARDED` |
+| 字节契约 | grain=786432、strata=196608、有效总计=983040；pump 每 tick ≤65536 且只提交完整行（grain 行 1024B / strata 行 256B）；byteBudget=正整数且 ≤65536 |
+| 双代规则 | 最多一代 active + 一代 pending；覆盖 pending 先显式 DISCARDED；stage/上传/校验失败不动 active；context 重建后从 CPU 缓存重传、READY 前退 Canvas |
+| 原子性 | 一帧边界同 FrameToken 切换纹理/palette/uniform/fog/配置 revision；旧 active 保留至在途旧帧结束；部分代就绪激活被拒绝（401） |
+| 回退 | draw/profile/swap 失败同 tick 完整 Canvas 旧路径 + 关闭整块 GLES；禁止只隐藏一层 |
+| T09 保全 | TC-P013-FIX-01..09 与 TC-P013-MCP-01..05、参考 JSON（SHA-256 `d214aa44…f63a6`）、T09 执行器一条不改；执行器每次运行复核 |
+
+### 17.1 Stage 校验类条目
+
+| TC-P013-G2-A01 | 缺字段 | MUST-PASS | desc 缺任一 metadata 必填字段 → receipt.state=FAILED、errorCode=400、errorStage=metadata、active 不动 | T45 §2/§3.1；rev2 §6 | NOT_IMPLEMENTED（缺 bridge stageMaterialBundle/receipt 类型/400） |
+| TC-P013-G2-A02 | 未知版本 | MUST-PASS | 七版本任一取值不在登记表 → FAILED/400/version；不推断缺省值 | rev2 §4.4/§6 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A03 | 七版本不齐 | MUST-PASS | desc 未携带全部七项版本身份 → FAILED/400/version | rev2 §4.4 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A04 | 配置修订不符 | MUST-PASS | appearanceConfigRevision 不符 → FAILED/402/appearanceConfigRevision；码语义分歧交裁定 | T45 §2；rev2 §6/§7 | NOT_IMPLEMENTED（缺 402 枚举） |
+| TC-P013-G2-A05 | 身份不符 | MUST-PASS | materialBundleId/assetGeneration 身份冲突 → FAILED/400/identity；hash 基于实际字节与生成参数 | T45 §2；rev2 §4.3 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A06 | 精确字节数不符 | MUST-PASS | grain≠786432 / strata≠196608 / 总≠983040 → FAILED/400/byteLength | T45 §2；rev2 §4.3/§6 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A07 | byteOffset/byteLength 越界 | MUST-PASS | TypedArray 视图越界或元素类型不匹配 → FAILED/400/byteOffset；只接受匹配元素类型/长度/有效 buffer | T45 §2；rev2 §6 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A08 | SHA256 不符 | MUST-PASS | 整包字节 SHA256 与 desc 登记值不符 → FAILED/400/hash | T45 §2/§3.1 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A09 | alpha 非法 | MUST-PASS | 任一像素 alpha≠255 → FAILED/400/alpha；alpha 固定 255 无预乘 | T45 §2；rev2 §4.3 | NOT_IMPLEMENTED（同 A01 面） |
+| TC-P013-G2-A10 | context epoch 不匹配 | MUST-PASS | stage 时 contextEpoch 与当前 surface/context 不符 → FAILED/400/contextEpoch | T45 §2；rev2 §6 | NOT_IMPLEMENTED（同 A01 面） |
+
+### 17.2 双代与生命周期类条目
+
+| TC-P013-G2-B01 | pending 被取代报告 DISCARDED | MUST-PASS | 新 stage 覆盖 pending：被取代代 state=DISCARDED、activeGeneration 不变、资源释放、active 仍可画 | T45 §2/§3.1；rev2 §6 | NOT_IMPLEMENTED（缺 stage/discard 接口与 receipt） |
+| TC-P013-G2-B02 | stage 失败不动 active | MUST-PASS | 失败 stage 后 activeGeneration 不变且 active 代仍可绘制；pending 槽为空或保留失败条目 | T45 §2/§3.4 | NOT_IMPLEMENTED（缺 draw 入口与 receipt） |
+| TC-P013-G2-B03 | 双代上限不变量 | MUST-PASS | ≤1 active + ≤1 pending；materialTextureLiveCount ≤4；无每帧 glGen/compile | T45 §3.1；rev2 §6 | NOT_IMPLEMENTED（缺遥测字段） |
+| TC-P013-G2-B04 | 上下文重建后 CPU 缓存恢复 | MUST-PASS | CPU 缓存不归零；重传确认 READY 才切回；旧 epoch 帧拒绝；READY 前退 Canvas | T45 §2/§3.4；rev2 §6/§7 | NOT_IMPLEMENTED（缺 controller/回退路径） |
+
+### 17.3 Pump 预算类条目
+
+| TC-P013-G2-C01 | ≤65536B/tick 且只完整行 | MUST-PASS | 单次 uploadedBytes ≤65536；chunk 为完整行整数倍（1024/256）；无半行跨 tick；上传期间 active 继续绘制 | T45 §2/§3.2；rev2 §6 | NOT_IMPLEMENTED（缺 pumpMaterialUploads） |
+| TC-P013-G2-C02 | byteBudget 域校验 | MUST-PASS | 正整数且 ≤65536；0/负/小数/65537 → 拒绝、uploadedBytes=0、pending 不损 | rev2 §6 | NOT_IMPLEMENTED（缺 pump 入口） |
+| TC-P013-G2-C03 | 全部成功才 READY | MUST-PASS | 未传完 state=UPLOADING；全部资源与 metadata 通过才 READY | T45 §2/§3.2 | NOT_IMPLEMENTED（缺 receipt 状态机） |
+| TC-P013-G2-C04 | epoch 失配废弃 pending | MUST-PASS | pump 时 contextEpoch 已变 → pending DISCARDED、等待重新 stage、不对失配上下文上传 | T45 §2/§3.2 | NOT_IMPLEMENTED（缺 epoch 校验） |
+
+### 17.4 激活原子性反例条目
+
+| TC-P013-G2-D01 | 部分代就绪即激活被拒绝 | MUST-PASS（反例） | grain 就绪/strata、palette 未就绪 → canActivate=false、activate 拒绝（401）、active 不变、无混代帧 | T45 §2/§4；rev2 §6 | NOT_IMPLEMENTED（缺 canActivate/activateMaterial/401） |
+| TC-P013-G2-D02 | 旧 active 保留至旧帧结束 | MUST-PASS | 一帧边界同 FrameToken 原子切换整代；旧代在途旧帧结束后回收；帧只引用单一 generation | T45 §2/§3.3；rev2 §6/§7 | NOT_IMPLEMENTED（缺 activate/draw 与代遥测） |
+| TC-P013-G2-D03 | 上传失败保留旧 active | MUST-PASS | GL 失败（300 系列附 stage）→ 旧 active 与旧配置保持、失败代不被任何帧引用、pending FAILED/DISCARDED | T45 §2/§3.4；rev2 §7 | NOT_IMPLEMENTED（缺失败回滚路径） |
+
+### 17.5 回退反例条目
+
+| TC-P013-G2-E01 | draw 失败整块回退 | MUST-PASS（反例） | 同 tick drawLegacyFull 全量重画 + 关闭整块 GLES；只隐藏一层判 FAIL；fallbackReason 遥测记录 | T45 §2/§4；rev2 §7 | NOT_IMPLEMENTED（缺 drawLegacyFull/controller/遥测） |
+| TC-P013-G2-E02 | profile/swap 失败整块回退 | MUST-PASS（反例） | 同 tick 整块回退；不假设透明 clear 成功；不留空帧/双层残影；fallbackReason 遥测记录 | T45 §2/§4；rev2 §7 | NOT_IMPLEMENTED（同 E01 面） |
+
+### 17.6 不涉及项（本节条目一律不触碰）
+
+- 不改算法、纹理尺寸、物理路线或判线；不改冻结阈值与七版本身份；不新建数值容差线；
+- 不重定 T09 既有 fixture（§16 条目只保全不改写）；五量测量仍归 TC-P013-MCP-*；
+- 不改实现代码；不伪造运行结果；不宣称 VALIDATED；不宣布 G1/G2 通过；
+- 不使用真机（真机取证归 G5/effector 串行队列）；
+- P-011 全部协议/用例不在本节范围。
+
+### 17.7 证据通道与交接
+
+- 判定口径权威：`docs/tester-T53-g2-uploader-cases-registration-v1.md`（本节字段名/期望码与之逐字一致）。
+- 执行证据：`test/reports/p053_g2_uploader_case_check.json`（23 例期望契约 + 状态 + 逐例缺失符号清单；T09 保全哈希登记；条款 token 追溯 53 项全过；25 个实现面符号全缺）。
+- 交接链：manager 派 T54（G2 上传与接口）→ 实现面到位后 G2 运行器消费本 JSON `cases[].expectation` 逐例执行 → tester 出 G2 客观用例通过记录 → G3 材质 pass → G4 页面共存 → G5 真机双测。
+- 未决项交裁定：A04/A05 期望码语义边界（400/402）、byteBudget 拒绝时的 receipt.code 精确值、E 类回退遥测字段在 G4 落地后复核——均以修订版登记处理，实现侧不得单方面改判。

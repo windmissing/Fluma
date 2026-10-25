@@ -1,0 +1,1278 @@
+{
+ "executionId": "p053-g2-uploader-case-check-v1",
+ "generatedBy": "test/p053_g2_uploader_case_check.py",
+ "date": "2026-10-25",
+ "scope": "T53 G2 uploader objective-case registration; RED baseline only",
+ "status": "TEST_REGISTRATION_ONLY / NOT_IMPLEMENTED / NOT_CALIBRATED / NOT_VALIDATED / G2_NOT_UNFROZEN",
+ "preservation": [
+  {
+   "asset": "docs/reference-P013-p1-material-recipe-v1.json",
+   "status": "PASS",
+   "expected": "d214aa447f9f186eba159fd6953f2b42874420926a1b01b7c0977b940f1d63a6",
+   "actual": "d214aa447f9f186eba159fd6953f2b42874420926a1b01b7c0977b940f1d63a6"
+  },
+  {
+   "asset": "test/p013_cpu_reference_execution.py",
+   "status": "RECORDED",
+   "expected": null,
+   "actual": "764ed6ab3f1c717a912ccf6a9b724be77c9dfaa16becfe93b12b9d58b39f67e7",
+   "note": "first-run baseline recorded by this analyzer"
+  },
+  {
+   "asset": "docs/p013-p1-cpu-fixture-and-coupling-test-registration-v1.md",
+   "status": "RECORDED",
+   "expected": null,
+   "actual": "f1c369bb762d7318db1c9d819601d749700f2b5bb12ed1ec81a7229db173929f",
+   "note": "first-run baseline recorded by this analyzer"
+  },
+  {
+   "asset": "docs/test-cases.md §16 条目",
+   "status": "PASS",
+   "expected": "14 个 T09 用例 ID 全部在册",
+   "actual": "缺失: 无"
+  }
+ ],
+ "traceability": [
+  {
+   "token": "65,536",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "65536",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "983040",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "786432",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "196608",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "1024",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "P1_ALBEDO_DELTA_V1",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "E2_GAUSS_COL6_R18_P1_V2",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "LIN_SRGB_REINHARD_V1",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "P1_TEXEL_CANVAS_PX_V1",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "CONTINUOUS_COLUMN_WARP_V1",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "zOriginVersion",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "MATERIAL_PACKET_INVALID",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "ASSET_NOT_READY",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "ASSET_REVISION_MISMATCH",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "COLORSPACE_UNSUPPORTED",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "COMPOSITION_ORDER_BLOCKED",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "CPU_STAGED",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "UPLOADING",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "READY",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "ACTIVE",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "FAILED",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "DISCARDED",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "materialBundleId",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "assetGeneration",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "appearanceConfigRevision",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "renderSeed",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "geometryEpoch",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "paletteHash",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "grainHash",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "strataHash",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "inputEncoding",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "assetGeneratorVersion",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "materialRecipeVersion",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "colorPipelineVersion",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "effectiveLambdaMaterial",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "warpRangeCycles",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "surfaceEpoch",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "contextEpoch",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "stageMaterialBundle",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "pumpMaterialUploads",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "discardMaterialStage",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "byteOffset",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "DISCARDED",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "65,536",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "stageMaterialBundle",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "pumpMaterialUploads",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "canActivate",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "activateMaterial",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "discardMaterialStage",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "SHA256",
+   "document": "docs/decision-P013-T45-material-rollout-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "CanActivate",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  },
+  {
+   "token": "Activate(generation)",
+   "document": "docs/architecture-P013-p1-material-composite-v1.md",
+   "status": "PASS"
+  }
+ ],
+ "implementationSurface": {
+  "bridge_activateMaterial": {
+   "kind": "symbol",
+   "pattern": "activateMaterial",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 activateMaterial(generation, frameToken)"
+  },
+  "bridge_canActivate": {
+   "kind": "symbol",
+   "pattern": "canActivate",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 canActivate(generation, contextEpoch)"
+  },
+  "bridge_discardMaterialStage": {
+   "kind": "symbol",
+   "pattern": "discardMaterialStage",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 discardMaterialStage(assetGeneration)"
+  },
+  "bridge_drawMaterialFrame": {
+   "kind": "symbol",
+   "pattern": "drawMaterialFrame",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 drawMaterialFrame(frame, tdataV2, light, material)"
+  },
+  "bridge_pumpMaterialUploads": {
+   "kind": "symbol",
+   "pattern": "pumpMaterialUploads",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 pumpMaterialUploads(byteBudget)"
+  },
+  "bridge_stageMaterialBundle": {
+   "kind": "symbol",
+   "pattern": "stageMaterialBundle",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)"
+  },
+  "cmake_uploader_entry": {
+   "kind": "symbol",
+   "pattern": "material_uploader",
+   "present": false,
+   "hits": [],
+   "note": "cpp/CMakeLists.txt 新源码登记（扫描范围含 CMakeLists 文本另行单列）"
+  },
+  "controller_legacy_full": {
+   "kind": "symbol",
+   "pattern": "drawLegacyFull",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §7 回退路径 drawLegacyFull"
+  },
+  "ets_api_version_2": {
+   "kind": "symbol",
+   "pattern": "apiVersion\\s*[:=]\\s*2",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 新增类型含 apiVersion=2"
+  },
+  "ets_bundle_desc_type": {
+   "kind": "symbol",
+   "pattern": "P013MaterialBundleDesc",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 P013MaterialBundleDesc 元数据 + sessionId/surfaceEpoch/contextEpoch"
+  },
+  "ets_material_controller": {
+   "kind": "symbol",
+   "pattern": "P013MaterialController",
+   "present": false,
+   "hits": [],
+   "note": "T45 §2 ETS controller（P013MaterialController.ets）"
+  },
+  "ets_material_frame_input_type": {
+   "kind": "symbol",
+   "pattern": "P013MaterialFrameInput",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 P013MaterialFrameInput apiVersion=2 与七版本身份"
+  },
+  "ets_material_frame_result_type": {
+   "kind": "symbol",
+   "pattern": "P013MaterialFrameResult",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 P013MaterialFrameResult 必返代/版本分列"
+  },
+  "ets_material_params_type": {
+   "kind": "symbol",
+   "pattern": "P013MaterialParams",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 P013MaterialParams 三带/palette/强度/warp/λ/消融/坐标映射"
+  },
+  "ets_mode_4_5": {
+   "kind": "symbol",
+   "pattern": "GLES_SAND_COMPOSITE_(OFF|ON)",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 模式值 4=OFF / 5=ON"
+  },
+  "ets_stage_receipt_type": {
+   "kind": "symbol",
+   "pattern": "P013MaterialStageReceipt",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}"
+  },
+  "native_error_400": {
+   "kind": "symbol",
+   "pattern": "MATERIAL_PACKET_INVALID",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §7 新错误码 400"
+  },
+  "native_error_401": {
+   "kind": "symbol",
+   "pattern": "ASSET_NOT_READY",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §7 新错误码 401"
+  },
+  "native_error_402": {
+   "kind": "symbol",
+   "pattern": "ASSET_REVISION_MISMATCH",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §7 新错误码 402"
+  },
+  "native_error_403": {
+   "kind": "symbol",
+   "pattern": "COLORSPACE_UNSUPPORTED",
+   "present": true,
+   "hits": [
+    "entry/src/main/cpp/p013renderer/egl_context.cpp",
+    "entry/src/main/cpp/p013renderer/napi_bridge.cpp",
+    "entry/src/main/cpp/p013renderer/render_contract.h"
+   ],
+   "note": "rev2 §7 新错误码 403"
+  },
+  "native_error_404": {
+   "kind": "symbol",
+   "pattern": "COMPOSITION_ORDER_BLOCKED",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §7 新错误码 404"
+  },
+  "native_material_uploader": {
+   "kind": "file",
+   "pattern": "material_uploader\\.(cpp|h)",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §3/T45 §2 文件落点 entry/src/main/cpp/p013renderer/material_uploader.{h,cpp}"
+  },
+  "telemetry_fallback_reason": {
+   "kind": "symbol",
+   "pattern": "fallbackReason",
+   "present": true,
+   "hits": [
+    "entry/src/main/ets/render/P013RenderController.ets"
+   ],
+   "note": "rev2 §8 全链/恢复遥测 fallbackReason"
+  },
+  "telemetry_generation_fields": {
+   "kind": "symbol",
+   "pattern": "(pendingGeneration|activeGeneration)",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §8 CPU 资产遥测 pendingGeneration/activeGeneration"
+  },
+  "telemetry_pump_count": {
+   "kind": "symbol",
+   "pattern": "materialPumpCount",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §8 uploader 遥测"
+  },
+  "telemetry_texture_live": {
+   "kind": "symbol",
+   "pattern": "materialTextureLiveCount",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §8 uploader 遥测（活纹理对象 ≤4 数组）"
+  },
+  "telemetry_upload_fields": {
+   "kind": "symbol",
+   "pattern": "materialUploadBytes",
+   "present": false,
+   "hits": [],
+   "note": "rev2 §8 uploader 遥测 materialUploadBytes/materialPumpCount/materialTextureLiveCount"
+  }
+ },
+ "absentSurface": [
+  "bridge_activateMaterial",
+  "bridge_canActivate",
+  "bridge_discardMaterialStage",
+  "bridge_drawMaterialFrame",
+  "bridge_pumpMaterialUploads",
+  "bridge_stageMaterialBundle",
+  "cmake_uploader_entry",
+  "controller_legacy_full",
+  "ets_api_version_2",
+  "ets_bundle_desc_type",
+  "ets_material_controller",
+  "ets_material_frame_input_type",
+  "ets_material_frame_result_type",
+  "ets_material_params_type",
+  "ets_mode_4_5",
+  "ets_stage_receipt_type",
+  "native_error_400",
+  "native_error_401",
+  "native_error_402",
+  "native_error_404",
+  "native_material_uploader",
+  "telemetry_generation_fields",
+  "telemetry_pump_count",
+  "telemetry_texture_live",
+  "telemetry_upload_fields"
+ ],
+ "cases": [
+  {
+   "id": "TC-P013-G2-A01",
+   "cls": "A-stage-validation",
+   "title": "缺字段（metadata 必填字段缺失）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "metadata",
+    "activeUnchanged": true,
+    "pendingSlot": "failed-entry-or-empty",
+    "note": "stage 先验整包 metadata；失败不改变 ACTIVE 资源"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §6 P013MaterialBundleDesc 元数据 + sessionId/surfaceEpoch/contextEpoch",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §3.1；rev2 §6 \"stage先验整包metadata/字节hash/alpha255，失败不改变ACTIVE资源\""
+  },
+  {
+   "id": "TC-P013-G2-A02",
+   "cls": "A-stage-validation",
+   "title": "未知版本（七版本身份取值不在登记表）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "version",
+    "activeUnchanged": true,
+    "note": "native 遇未知版本拒绝，不自动推断缺省值"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_api_version_2",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_api_version_2",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §6 新增类型含 apiVersion=2",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "rev2 §4.4/§6 \"未知或不匹配的版本拒绝绘制，不推断缺省值\""
+  },
+  {
+   "id": "TC-P013-G2-A03",
+   "cls": "A-stage-validation",
+   "title": "七版本不齐（desc 未携带全部七项版本身份）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "version",
+    "activeUnchanged": true,
+    "note": "materialRecipe/slopeKernel/colorPipeline/textureSampling/strataSampling/T_dataLayout/zOrigin 七项须逐项精确匹配"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §6 P013MaterialBundleDesc 元数据 + sessionId/surfaceEpoch/contextEpoch",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "rev2 §4.4 七个版本身份登记表"
+  },
+  {
+   "id": "TC-P013-G2-A04",
+   "cls": "A-stage-validation",
+   "title": "配置修订不符（appearanceConfigRevision 不符）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 402,
+    "errorStage": "appearanceConfigRevision",
+    "activeUnchanged": true,
+    "note": "修订不符归入 ASSET_REVISION_MISMATCH；实现若用其它既有码，按实际码报告交裁定"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_402"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_402"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §7 新错误码 402"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"配置修订不符\"；rev2 §6/§7 错误码枚举"
+  },
+  {
+   "id": "TC-P013-G2-A05",
+   "cls": "A-stage-validation",
+   "title": "身份不符（materialBundleId/assetGeneration 身份冲突）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "identity",
+    "activeUnchanged": true,
+    "note": "hash 基于实际字节与生成参数，不以文件名当 hash；身份冲突整包拒绝"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §6 P013MaterialBundleDesc 元数据 + sessionId/surfaceEpoch/contextEpoch",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"身份不符\"；rev2 §4.3 metadata/hash 规则"
+  },
+  {
+   "id": "TC-P013-G2-A06",
+   "cls": "A-stage-validation",
+   "title": "精确字节数不符（grain≠786432 / strata≠196608 / 总≠983040）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "byteLength",
+    "activeUnchanged": true,
+    "receivedBytes": "actual",
+    "note": "有效总字节固定 983040，不接任意大纹理"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"长度错误\"；rev2 §4.3/§6 字节数契约"
+  },
+  {
+   "id": "TC-P013-G2-A07",
+   "cls": "A-stage-validation",
+   "title": "byteOffset/byteLength 越界（TypedArray 视图/元素类型不匹配）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "byteOffset",
+    "activeUnchanged": true,
+    "note": "只接受匹配元素类型/长度/有效 buffer，正确处理 byteOffset"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"TypedArray byteOffset/byteLength\"；rev2 §6 typedarray 规则"
+  },
+  {
+   "id": "TC-P013-G2-A08",
+   "cls": "A-stage-validation",
+   "title": "SHA256 不符",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "hash",
+    "activeUnchanged": true,
+    "note": "整包字节 SHA256 与 desc 登记值逐项核对"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"hash错误\"；T45 §3.1"
+  },
+  {
+   "id": "TC-P013-G2-A09",
+   "cls": "A-stage-validation",
+   "title": "alpha 非法（任一像素 alpha≠255）",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "alpha",
+    "activeUnchanged": true,
+    "note": "六图 alpha 固定 255；任一非 255 整包拒绝"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"alpha错误\"；rev2 §4.3 alpha255 无预乘"
+  },
+  {
+   "id": "TC-P013-G2-A10",
+   "cls": "A-stage-validation",
+   "title": "context epoch 不匹配",
+   "expectation": {
+    "receiptState": "FAILED",
+    "errorCode": 400,
+    "errorStage": "contextEpoch",
+    "activeUnchanged": true,
+    "note": "stage/帧必须同 contextEpoch；失配拒绝且不推断"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "ets_bundle_desc_type",
+    "native_error_400"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §6 P013MaterialBundleDesc 元数据 + sessionId/surfaceEpoch/contextEpoch",
+    "rev2 §7 新错误码 400"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第2条\"上下文epoch不匹配\"；rev2 §6 frame 同 epoch 规则"
+  },
+  {
+   "id": "TC-P013-G2-B01",
+   "cls": "B-generation-lifecycle",
+   "title": "pending 被新代取代须报告 DISCARDED",
+   "expectation": {
+    "supersededReceiptState": "DISCARDED",
+    "activeGenerationUnchanged": true,
+    "discardedResourcesReleased": true,
+    "note": "新申请覆盖 pending 先显式 DISCARDED，active 仍可画"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "bridge_discardMaterialStage",
+    "ets_stage_receipt_type",
+    "telemetry_generation_fields"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "bridge_discardMaterialStage",
+    "ets_stage_receipt_type",
+    "telemetry_generation_fields"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 discardMaterialStage(assetGeneration)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §8 CPU 资产遥测 pendingGeneration/activeGeneration"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第3条/§3.1；rev2 §6 \"新申请覆盖pending先显式DISCARDED\""
+  },
+  {
+   "id": "TC-P013-G2-B02",
+   "cls": "B-generation-lifecycle",
+   "title": "stage 失败不动 active（active 代继续可绘制）",
+   "expectation": {
+    "activeGenerationUnchanged": true,
+    "activeDrawableAfterFailure": true,
+    "pendingSlot": "failed-entry-or-empty",
+    "note": "stage/上传/校验失败保留旧 active"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "bridge_drawMaterialFrame",
+    "ets_material_frame_result_type"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type",
+    "bridge_drawMaterialFrame",
+    "ets_material_frame_result_type"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}",
+    "rev2 §6 drawMaterialFrame(frame, tdataV2, light, material)",
+    "rev2 §6 P013MaterialFrameResult 必返代/版本分列"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第3条\"active不受stage失败影响\"；T45 §3.4"
+  },
+  {
+   "id": "TC-P013-G2-B03",
+   "cls": "B-generation-lifecycle",
+   "title": "双代上限不变量（最多一代 active + 一代 pending）",
+   "expectation": {
+    "maxActiveGenerations": 1,
+    "maxPendingGenerations": 1,
+    "textureLiveCountMax": 4,
+    "note": "live texture 对象最多 4 个数组（两包×两对象），不用每帧 glGen/compile"
+   },
+   "requires": [
+    "bridge_stageMaterialBundle",
+    "telemetry_texture_live",
+    "telemetry_generation_fields"
+   ],
+   "missingSurface": [
+    "bridge_stageMaterialBundle",
+    "telemetry_texture_live",
+    "telemetry_generation_fields"
+   ],
+   "missingDetail": [
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §8 uploader 遥测（活纹理对象 ≤4 数组）",
+    "rev2 §8 CPU 资产遥测 pendingGeneration/activeGeneration"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §3.1；rev2 §6 双代持有规则"
+  },
+  {
+   "id": "TC-P013-G2-B04",
+   "cls": "B-generation-lifecycle",
+   "title": "上下文重建后从 CPU 缓存恢复",
+   "expectation": {
+    "cpuCacheRetained": true,
+    "reuploadRequiredBeforeReady": true,
+    "staleEpochFramesRejected": true,
+    "canvasFallbackUntilReady": true,
+    "note": "context 丢失保留 CPU 资产并重传，确认 READY 后再切回"
+   },
+   "requires": [
+    "bridge_pumpMaterialUploads",
+    "bridge_canActivate",
+    "ets_material_controller",
+    "controller_legacy_full",
+    "telemetry_upload_fields"
+   ],
+   "missingSurface": [
+    "bridge_pumpMaterialUploads",
+    "bridge_canActivate",
+    "ets_material_controller",
+    "controller_legacy_full",
+    "telemetry_upload_fields"
+   ],
+   "missingDetail": [
+    "rev2 §6 pumpMaterialUploads(byteBudget)",
+    "rev2 §6 canActivate(generation, contextEpoch)",
+    "T45 §2 ETS controller（P013MaterialController.ets）",
+    "rev2 §7 回退路径 drawLegacyFull",
+    "rev2 §8 uploader 遥测 materialUploadBytes/materialPumpCount/materialTextureLiveCount"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第3条\"上下文重建后从CPU缓存恢复\"；T45 §3.4；rev2 §6/§7"
+  },
+  {
+   "id": "TC-P013-G2-C01",
+   "cls": "C-pump-budget",
+   "title": "每 tick ≤65,536B 且只提交完整行",
+   "expectation": {
+    "maxBytesPerTick": 65536,
+    "completeRowsOnly": true,
+    "grainRowStride": 1024,
+    "strataRowStride": 256,
+    "note": "按完整像素行 chunk 上传；不允许半行/跨 tick 截断"
+   },
+   "requires": [
+    "bridge_pumpMaterialUploads",
+    "telemetry_upload_fields",
+    "telemetry_pump_count"
+   ],
+   "missingSurface": [
+    "bridge_pumpMaterialUploads",
+    "telemetry_upload_fields",
+    "telemetry_pump_count"
+   ],
+   "missingDetail": [
+    "rev2 §6 pumpMaterialUploads(byteBudget)",
+    "rev2 §8 uploader 遥测 materialUploadBytes/materialPumpCount/materialTextureLiveCount",
+    "rev2 §8 uploader 遥测"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第4条；T45 §3.2；rev2 §6 pump 规则"
+  },
+  {
+   "id": "TC-P013-G2-C02",
+   "cls": "C-pump-budget",
+   "title": "byteBudget 域校验（正整数且 ≤65536）",
+   "expectation": {
+    "acceptedDomain": "positive integer <= 65536",
+    "rejectedInputs": [
+     0,
+     -1,
+     1.5,
+     65537
+    ],
+    "onReject": {
+     "uploadedBytes": 0,
+     "pendingIntact": true
+    },
+    "note": "0/负/小数/超限拒绝且不产生上传；pending 可被后续合法 pump 继续"
+   },
+   "requires": [
+    "bridge_pumpMaterialUploads",
+    "ets_stage_receipt_type"
+   ],
+   "missingSurface": [
+    "bridge_pumpMaterialUploads",
+    "ets_stage_receipt_type"
+   ],
+   "missingDetail": [
+    "rev2 §6 pumpMaterialUploads(byteBudget)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "rev2 §6 \"byteBudget须正整数且≤65536\""
+  },
+  {
+   "id": "TC-P013-G2-C03",
+   "cls": "C-pump-budget",
+   "title": "全部上传成功才 READY",
+   "expectation": {
+    "partialState": "UPLOADING",
+    "allSuccessState": "READY",
+    "note": "只有全部资源和 metadata 通过后才进入 READY"
+   },
+   "requires": [
+    "bridge_pumpMaterialUploads",
+    "ets_stage_receipt_type"
+   ],
+   "missingSurface": [
+    "bridge_pumpMaterialUploads",
+    "ets_stage_receipt_type"
+   ],
+   "missingDetail": [
+    "rev2 §6 pumpMaterialUploads(byteBudget)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第4条；T45 §3.2"
+  },
+  {
+   "id": "TC-P013-G2-C04",
+   "cls": "C-pump-budget",
+   "title": "epoch 失配废弃 pending 并等待重新 stage",
+   "expectation": {
+    "onEpochMismatch": {
+     "pendingState": "DISCARDED",
+     "waitForRestage": true,
+     "uploadsAgainstStaleContext": 0
+    },
+    "note": "目标 surface/context epoch 失配则废弃 pending"
+   },
+   "requires": [
+    "bridge_pumpMaterialUploads",
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type"
+   ],
+   "missingSurface": [
+    "bridge_pumpMaterialUploads",
+    "bridge_stageMaterialBundle",
+    "ets_stage_receipt_type"
+   ],
+   "missingDetail": [
+    "rev2 §6 pumpMaterialUploads(byteBudget)",
+    "rev2 §6 stageMaterialBundle(desc, grainRgba, strataRgba)",
+    "rev2 §6 P013MaterialStageReceipt={code,assetGeneration,state,receivedBytes,uploadedBytes,totalBytes,activeGeneration,appearanceConfigRevision,contextEpoch,errorStage}"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第4条；T45 §3.2"
+  },
+  {
+   "id": "TC-P013-G2-D01",
+   "cls": "D-activation-atomicity",
+   "title": "部分代就绪即激活被拒绝（跨代画面反例）",
+   "expectation": {
+    "canActivateFalseWhenNotReady": true,
+    "activateRejectedCode": 401,
+    "activeUnchanged": true,
+    "mixedGenerationFrames": 0,
+    "note": "grain 新代已上传而 strata/palette 未就绪 → 拒绝激活"
+   },
+   "requires": [
+    "bridge_canActivate",
+    "bridge_activateMaterial",
+    "native_error_401",
+    "ets_material_frame_input_type"
+   ],
+   "missingSurface": [
+    "bridge_canActivate",
+    "bridge_activateMaterial",
+    "native_error_401",
+    "ets_material_frame_input_type"
+   ],
+   "missingDetail": [
+    "rev2 §6 canActivate(generation, contextEpoch)",
+    "rev2 §6 activateMaterial(generation, frameToken)",
+    "rev2 §7 新错误码 401",
+    "rev2 §6 P013MaterialFrameInput apiVersion=2 与七版本身份"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第5条；T45 §4 部分代激活反例；rev2 §6"
+  },
+  {
+   "id": "TC-P013-G2-D02",
+   "cls": "D-activation-atomicity",
+   "title": "旧 active 保留到在途旧帧结束后释放",
+   "expectation": {
+    "atomicSwitchAtFrameBoundary": true,
+    "switchSet": [
+     "textures",
+     "palette",
+     "uniform",
+     "fog",
+     "configRevision"
+    ],
+    "sameFrameToken": true,
+    "oldActiveReleasedAfterInflightFrames": true,
+    "note": "一帧边界同时切换整代；禁止按资源逐张激活"
+   },
+   "requires": [
+    "bridge_activateMaterial",
+    "bridge_drawMaterialFrame",
+    "ets_material_frame_result_type",
+    "telemetry_generation_fields"
+   ],
+   "missingSurface": [
+    "bridge_activateMaterial",
+    "bridge_drawMaterialFrame",
+    "ets_material_frame_result_type",
+    "telemetry_generation_fields"
+   ],
+   "missingDetail": [
+    "rev2 §6 activateMaterial(generation, frameToken)",
+    "rev2 §6 drawMaterialFrame(frame, tdataV2, light, material)",
+    "rev2 §6 P013MaterialFrameResult 必返代/版本分列",
+    "rev2 §8 CPU 资产遥测 pendingGeneration/activeGeneration"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第5条；T45 §3.3；rev2 §6/§7"
+  },
+  {
+   "id": "TC-P013-G2-D03",
+   "cls": "D-activation-atomicity",
+   "title": "上传/校验失败保留旧 active（无混代帧）",
+   "expectation": {
+    "activeUnchanged": true,
+    "failedGenerationNeverDrawn": true,
+    "pendingStateOnFailure": "FAILED-or-DISCARDED",
+    "note": "GL 上传失败回滚；旧 active 与旧配置保持"
+   },
+   "requires": [
+    "bridge_pumpMaterialUploads",
+    "bridge_activateMaterial",
+    "bridge_drawMaterialFrame",
+    "ets_material_frame_result_type"
+   ],
+   "missingSurface": [
+    "bridge_pumpMaterialUploads",
+    "bridge_activateMaterial",
+    "bridge_drawMaterialFrame",
+    "ets_material_frame_result_type"
+   ],
+   "missingDetail": [
+    "rev2 §6 pumpMaterialUploads(byteBudget)",
+    "rev2 §6 activateMaterial(generation, frameToken)",
+    "rev2 §6 drawMaterialFrame(frame, tdataV2, light, material)",
+    "rev2 §6 P013MaterialFrameResult 必返代/版本分列"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第5条；T45 §3.4；rev2 §7 失败发生在 staging 时保留旧 active"
+  },
+  {
+   "id": "TC-P013-G2-E01",
+   "cls": "E-fallback",
+   "title": "draw 失败同 tick 回退完整 Canvas 旧路径并关闭整块 GLES",
+   "expectation": {
+    "sameTickLegacyFullRedraw": true,
+    "entireGlesHidden": true,
+    "singleLayerHideForbidden": true,
+    "fallbackReasonTelemetry": true,
+    "note": "不得只隐藏一层造成 Canvas/GLES 重叠或空画面"
+   },
+   "requires": [
+    "controller_legacy_full",
+    "ets_material_controller",
+    "ets_mode_4_5",
+    "telemetry_fallback_reason"
+   ],
+   "missingSurface": [
+    "controller_legacy_full",
+    "ets_material_controller",
+    "ets_mode_4_5"
+   ],
+   "missingDetail": [
+    "rev2 §7 回退路径 drawLegacyFull",
+    "T45 §2 ETS controller（P013MaterialController.ets）",
+    "rev2 §6 模式值 4=OFF / 5=ON"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第6条；T45 §4 空窗/双绘反例；rev2 §7"
+  },
+  {
+   "id": "TC-P013-G2-E02",
+   "cls": "E-fallback",
+   "title": "profile/swap 失败同 tick 回退（不留空帧/双层残影）",
+   "expectation": {
+    "sameTickLegacyFullRedraw": true,
+    "entireGlesHidden": true,
+    "noTransparentClearAssumption": true,
+    "fallbackReasonTelemetry": true,
+    "note": "swap 失败不得假设透明 clear 成功；不等待失败 swap 再透明清屏"
+   },
+   "requires": [
+    "controller_legacy_full",
+    "ets_material_controller",
+    "ets_mode_4_5",
+    "telemetry_fallback_reason"
+   ],
+   "missingSurface": [
+    "controller_legacy_full",
+    "ets_material_controller",
+    "ets_mode_4_5"
+   ],
+   "missingDetail": [
+    "rev2 §7 回退路径 drawLegacyFull",
+    "T45 §2 ETS controller（P013MaterialController.ets）",
+    "rev2 §6 模式值 4=OFF / 5=ON"
+   ],
+   "status": "NOT_IMPLEMENTED",
+   "basis": "T45 §2 第6条；T45 §4；rev2 §7"
+  }
+ ],
+ "summary": {
+  "totalCases": 23,
+  "notImplemented": 23,
+  "surfacePresentAwaitingRunner": 0,
+  "byClass": {
+   "A-stage-validation": {
+    "label": "Stage 校验类",
+    "total": 10,
+    "notImplemented": 10,
+    "awaitingRunner": 0
+   },
+   "B-generation-lifecycle": {
+    "label": "双代与生命周期类",
+    "total": 4,
+    "notImplemented": 4,
+    "awaitingRunner": 0
+   },
+   "C-pump-budget": {
+    "label": "Pump 预算类",
+    "total": 4,
+    "notImplemented": 4,
+    "awaitingRunner": 0
+   },
+   "D-activation-atomicity": {
+    "label": "激活原子性反例",
+    "total": 3,
+    "notImplemented": 3,
+    "awaitingRunner": 0
+   },
+   "E-fallback": {
+    "label": "回退反例",
+    "total": 2,
+    "notImplemented": 2,
+    "awaitingRunner": 0
+   }
+  },
+  "preservationViolations": 0,
+  "traceabilityGaps": 0,
+  "redBaseline": "G2 uploader surface absent (material_uploader.{h,cpp}, bridge stageMaterialBundle/pumpMaterialUploads/canActivate/activateMaterial/discardMaterialStage, receipt/desc types, 400..404 codes, upload telemetry all missing); every registered case is NOT_IMPLEMENTED with a locatable missing list; no case result is fabricated."
+ },
+ "problems": []
+}
