@@ -880,3 +880,63 @@ SLIP 侧 `test/p011_slip_formal_check.py`：**保留不动**——`initial_depos
 - 判定协议权威：`docs/endpoint-protocol-P011-terminal-nondeposited-v1.md`（本节字段名与版本号与之逐字一致）。
 - checker 适配对象：`test/p011_slip_formal_check.py`（SLIP 侧）、WS 侧残余项采集（`pages/SandCanvas.ets` `WS_METRIC`）；实现后由 tester 按本节条目出双报告（legacy + 新口径并报），designer 验证，manager 确认适用范围。
 - 交接链：architect 字段 revision 对齐（`6adc64ffe4b017ab33dccb44`）→ developer 实现（`6adc6513e4b017ab33dccdb0`）→ tester 双报告 → designer 验证 → manager 确认适用范围。
+
+## 15. P-011 WS-08 摇晃未沉积沙峰值 peak protocol revision 用例条目（2026-10-25 预注册，RED 基线）
+
+> 依据 `docs/peak-protocol-P011-ws08-peak-nondeposited-v1.md`（`protocolId=p011-ws08-peak-nondeposited` / `protocolRevision=ws08-peak-nondeposited-v1` / `peakMethodId=peakNonDepositedFraction` / `peakMetricRevision=shake-peak-nondeposited-v1` / `peakAuthority=APPROVED` / `peakProtocolEffective=false`，METHOD_FROZEN / NOT_IMPLEMENTED / NOT_VALIDATED / DUAL_CALIBER_MANDATORY / NO_CAPTURE_AUTHORIZATION）。上游为用户五项裁决（manager 2026-10-24 23:55 下达：采纳候选 B、分子含全部活粒子含 state=2、分母用 E、固定 shake-on 后 3s 窗每提交采样、原 0.5 及格线与分档锚点迁移）与 designer 迁移设计稿 `docs/design-P011-ws08-peak-nondeposited-migration-v1.md`。执行证据：`test/reports/peak_protocol_v1_execution.json`（8/8 反例 MATCH）；RED 基线：`docs/peak-red-baseline-P011-ws08-peak-nondeposited-v1.md`。**本节为独立并行条目**：不改 §14 endpoint 条目、不改现行 `TC-WS-08`/`TC-WS-09`/`TC-P011-SLIP-03` 条目判据；协议落地前摇晃峰值子项双口径并报，任一单口径不单独放行。
+
+### 15.0 冻结口径速查（条目判据均引用此处，不重复定义）
+
+| 项 | 冻结值 |
+|---|---|
+| 主量 | `peakNonDepositedFraction = max_{k∈W} (U(k)+P(k))/E(k)`；同提交先求和再取 max；并列留最早提交键 |
+| 分子 | `M=U+P`；`U=Σ(stateAfter.suspH)+Σ(stateAfter.suspL)`；`P=particles.massH+particles.massL`（=`pState∈{1,2}` 求和；含 state=2 接触待准入；`state=0`、B tracer 不计；`DEGRADE`/`TO_SUSP` 累计量不入分子；`MERGE` 只计一次；`LAND` 只扣 granted） |
+| 分母 | `E=VH0+VL0+IH+IL`（`VH0/VL0` 取首条 `audit.heavyTotalBefore`/`lightTotalBefore`；WS-08 无外源时恒定、`sourceEpoch` 不变） |
+| 摇晃窗 | `W=[t_on, t_on+3000ms)` 左闭右开；成员=窗内实际消费该 shake-on 输入的全部成功提交子步；提前 off 或窗内输入非原 1.0 → 资格不符 |
+| 采样 | 每成功提交子步（post-commit 同子步读 `stateAfter`+`particles`）；连接键 `(runId, sequence, frameId, substepId)` + `context.endpointPhaseOccurrenceId`；时钟复用 `context.endpointSampleElapsedMs`；记录 `integratedPhysicsSeconds`；250ms 样本仅作 `OBSERVED_SAMPLED_MAX` 下界 |
+| 分档 | ≥0.90→10；≥0.75→8；≥0.50→6（及格）；≥0.35→4；≥0.20→2；<0.20→0；用未四舍五入值评分 |
+| 及格比较 | `M(peakCommitKey) ≥ 0.5×E`，不新增向下放宽容差；库存/分相守恒仍用各自 1e-9 容差 |
+| 分相 | `peakNonDepositedHeavyFraction`/`peakNonDepositedLightFraction`；某相 `E_phase=0` 记 `N/A`（不 EPS 造比例）；总量峰值提交同时记录 H/L；独立分相峰不相加；不新增分相通过阈值 |
+| 状态码 | `NOT_IMPLEMENTED(missing_field)` / `INVALID_LEDGER` / `INVALID_BASELINE` / `INVALID_DENOMINATOR` / `INCOMPLETE`；诊断码 `NOT_OBSERVABLE`；均不得记 PASS；硬闸门失败只留候选峰值诊断 |
+| 双算 | `legacyPeakSuspReported`（旧原字段/原样本/原窗口，标 `legacy-susp-only`）、`legacyPeakHistoricalReference`（同 W 逐子步 `h=U/(D+U)`）、`legacyPeakLiveFormula`（同 W 逐子步 `l=U/max(A,EPS)`）、`sameReferenceSuspOnlyPeak`（`max_W U/E`）；窗口/密度/分子分母效应分开归因 |
+| 可达性 | `M(k)=M0+cumAcceptedLift−cumSettledOrLanded`；必要条件 `M0+300·tau_W ≥ 0.5E`（`tau_W`=W 内成功子步 `ΣphysicsDt` 秒）；不暗增 300/s、不延长摇晃、不调低 0.5 |
+| 报告字段 | `peakProtocolId` / `peakProtocolRevision` / `peakMetricRevision` / `peakAuthority` / `peakProtocolEffective=false` / `peakWindowStartElapsedMs` / `peakWindowEndElapsedMs` / `shakeOnEffectiveElapsedMs` / `shakeOffEffectiveElapsedMs` / `peakWindowSampleCount` / `peakWindowCoverageStatus` / `missingFields` / `peakNonDepositedFraction` / `peakStockMass` / `peakReferenceMass` / `peakCommitKey` / `peakSampleElapsedMs` / `peakScore` / `peakStatus` / 分相两项 / 双算五项 / 初态响应三项 |
+
+### 15.1 用例条目
+
+| 用例 ID | 覆盖 | 门类 | 判定要点 | 今日 RED 状态（缺哪个遥测字段） |
+|---|---|---|---|---|
+| TC-P011-PEAK-01 | 摇晃窗固定 3s 与输入身份 | MUST-PASS | `t_on` 取输入链实际接受 shake-on 的单调 elapsed；`W=[t_on, t_on+3000ms)` 左闭右开；窗右边界 shake-off 后提交不纳入；提前 off 或窗内输入非原 1.0 → `INCOMPLETE`；预更新 shakeEnergy 不替代输入接受证据 | NOT_IMPLEMENTED（缺 `shakeOnEffectiveElapsedMs`/`shakeOffEffectiveElapsedMs` + 每子步输入消费身份） |
+| TC-P011-PEAK-02 | 每提交采样与连接键 | MUST-PASS | 窗内每个成功提交子步 post-commit 同子步采样；连接键 `(runId,sequence,frameId,substepId)` 可核 + `context.endpointPhaseOccurrenceId`；时钟用 `context.endpointSampleElapsedMs`；记录 `integratedPhysicsSeconds`（不代替 3s 实际时间）；断档/提前退出 → `INCOMPLETE`；冻结/回滚/漏记不当休眠、不伪造提交 | NOT_IMPLEMENTED（缺 `context.endpointSampleElapsedMs` + `context.endpointPhaseOccurrenceId` + `context.integratedPhysicsSeconds` + 峰值窗 occurrence manifest） |
+| TC-P011-PEAK-03 | 主量与分档判定 | MUST-PASS | `f(k)=(U+P)/E` 同提交求和后取 max；并列留最早提交键；分档 10/8/6/4/2/0；及格比较 `M≥0.5E` 无新容差；四舍五入不参与判定；单提交可为峰，异常尖峰先查守恒/身份不删除 | NOT_IMPLEMENTED（缺 `context.particles.massH/massL`） |
+| TC-P011-PEAK-04 | 分相诊断 | TIERED（诊断，不产放行结论） | `peakNonDepositedHeavyFraction`/`LightFraction`；某相 `E_phase=0` 记 `N/A`；总量峰值提交同时记录 H/L；独立分相峰不相加（反例：heavy 66.67%@t1 + light 49%@t2 ≠ 总量 52%@t3）；不新增分相阈值；heavy 几乎未扬起时登记"摇晃交融构成未达成" | NOT_IMPLEMENTED（缺 `context.particles.*` 分相质量） |
+| TC-P011-PEAK-05 | 双算与归因分离 | MUST-PASS | 同 run 同账本并报 `legacyPeakSuspReported`（全序列原身份，保留原 PASS/FAIL）/`legacyPeakHistoricalReference`（`D+U=0` 记 `INVALID_DENOMINATOR` 不阻断新量）/`legacyPeakLiveFormula`（EPS 钳位如实报告）/`sameReferenceSuspOnlyPeak`；`OBSERVED_SAMPLED_MAX` 仅作下界；窗口/密度/分子分母效应分开列，不得把旧峰与新峰之差全归因于物理改善；恒等式 `f−l=P/E`、`f−h=P·D/[E·(D+U)]` 仅守恒且 `D+U>0` 时成立 | NOT_IMPLEMENTED（checker 未实现双算；判据归 tester，实现归 developer） |
+| TC-P011-PEAK-06 | 初态/响应/滞留披露 | TIERED（诊断，不产放行结论） | `baselineNonDepositedFraction=M0/E`（shake-on 前最近可证 post-commit）；`M0≥50%` 时数值达标也不证明新增扬起，必须报净增量/LIFT；`peakNetIncreaseFraction=max_W((M−M0)/E)`；`cumulativeLiftGrantedMass` 与 guard/budget 拒绝；峰值 FLYING/CONTACT_WAIT 分项（`byState` 缺失记 `NOT_OBSERVABLE`，不宣称长期不落已排除）；不新增基线≤5%/最小 LIFT/寿命通过线 | NOT_IMPLEMENTED（缺 `context.particles.byState` + LIFT 事件账本；逐粒年龄字段不存在→长期不落子项长期 `NOT_OBSERVABLE`） |
+| TC-P011-PEAK-07 | 状态分类与判定顺序 | MUST-PASS | 顺序：路由身份（无外源、基线 E>0）→ 硬闸门 → 窗绑定与资格 → 字段完整性 → 账本/基线/分母 → 效果峰；五码分流各自可触发；`E≤0`→`INVALID_DENOMINATOR`；硬闸门失败不得用峰值 PASS 掩盖（只留候选诊断）；字段/资格/覆盖无效不打 0 分凑平均 | NOT_IMPLEMENTED（checker 未实现五码分流；安全闸门由既有 checker 原样执行） |
+| TC-P011-PEAK-08 | 与 endpoint 协议的边界 | MUST-PASS | 峰值不借用 endpoint 末 1s 最大值；endpoint 残余（shake-off 后满 8.0s 固定终点 + 末 1s 每提交达标）按已批准协议独立算；峰值 PASS 不签发整个 WS-08（生命周期/可见扬起/自然/无永久悬浮各按既有证据链）；停止后 8s 终点判定完全委托 endpoint 协议 | 可执行（边界核对，不依赖新字段）；数值结论仍 NOT_IMPLEMENTED |
+
+### 15.2 不涉及项（本节条目一律不触碰）
+
+- `TC-WS-08` 停止后 8s 终点残余与末 1s 质量窗——endpoint 协议（已批准），本峰值只委托、不重算、不借用其数值；
+- 旧 `peakSusp` 字段本身——保留原名、原公式、原样本与原窗口，标 `legacy-susp-only`；另案获批并完成独立协议/实现/验证后才替代 C 的峰值子项；
+- `SLIP-02/03/04` 的 `30°±2°` / target-based `t90≤5100ms` / `R²≥0.90` 与全部安全闸门不动；峰值 PASS 不得追认 SLIP-02 或 P-011 CLOSED；
+- `DUALFIELD-*` 16 例 estimand 与 GES 五观测点零改动；300 unit/s 预算值非冻结，本案只用作可达性上界输入；
+- P-012 `E2`/`E4` 不从本指标推出 PASS；
+- 历史报告结论（含 2026-10-13 RED 基线 `shake=BLOCKED`）不改、不追认、不推翻；本节不含任何 estimand 变更（变更须另起 revision）。
+
+### 15.3 现行 checker 适配摘要（不改代码，实现归 developer）
+
+适配对象 `test/water_sand_check.py::evaluate_shake()`（第 476–492 行）：现行 `peakSusp` 取**全序列** `max(WS_METRIC.suspensionFraction)`、`residual=values[-1]`、二元 `peak>=0.5 and residual<=0.05`、无 TIERED。**保留不动**：legacy 输出身份（`legacy-susp-only`）、原公式、原样本/原窗口、原 PASS/FAIL/BLOCKED、其余 evaluator。
+
+**需新增**（判据与落点详见 `docs/peak-adaptation-checklist-P011-ws08-peak-nondeposited-v1.md` 与 peak 协议 §2/§3）：固定 3s 窗与输入身份绑定、每提交采样、`M=U+P` 同提交求和、最早并列键、分档与 `M≥0.5E` 及格比较、分相诊断、五码分流、双算四 legacy 量 + `sameReferenceSuspOnlyPeak` + `OBSERVED_SAMPLED_MAX`、归因分离、可达性必要条件复算。
+
+**易错点**：①全序列 max 与固定窗峰是不同估计对象，不得互相追认（反例 P5）；②250ms 样本峰与全子步峰之差不得归因于物理改善（反例 P7 + 归因链）；③`M0≥50%` 时数值达标不证明新增扬起；④硬闸门失败时峰值只留候选诊断；⑤残余列不再由 shake 评估器产出（归 endpoint 协议）。
+
+**迁移期**：legacy 照常输出；新口径缺字段输出 `NOT_IMPLEMENTED(missing_field)` 并列确切路径；任一单口径不单独放行；不得向旧账本补造 v7 字段，不得用 250ms 旧数据冒充全子步峰值。
+
+### 15.4 证据通道与交接
+
+- 判定协议权威：`docs/peak-protocol-P011-ws08-peak-nondeposited-v1.md`（本节字段名与版本号与之逐字一致）。
+- 执行证据：`test/reports/peak_protocol_v1_execution.json`（执行器 `test/p011_peak_protocol_v1_execution.py`；分档边界、8/8 反例、可达性、归档勘查、legacy 行为、双算归因链；合成算例非测量）。
+- RED 基线：`docs/peak-red-baseline-P011-ws08-peak-nondeposited-v1.md`（新量 `NOT_IMPLEMENTED`，缺字段清单 7 项；`OBSERVED_SAMPLED_MAX` 不可用——现存归档 0 个 shake 事件）。
+- 交接链：manager 验收 → architect 登记独立 peak 字段 revision → developer 实现采样/流式峰值/checker → tester 同账本双报告（legacy + 新量，归因分离）→ designer 效果验证 → manager 宣布 `peakProtocolEffective`。真机需求由 manager 交 effector 串行排队（本卡不占设备）。

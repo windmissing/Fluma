@@ -1,0 +1,609 @@
+{
+  "executionId": "peak-protocol-v1-execution",
+  "protocolId": "p011-ws08-peak-nondeposited",
+  "protocolRevision": "ws08-peak-nondeposited-v1",
+  "peakMethodId": "peakNonDepositedFraction",
+  "peakMetricRevision": "shake-peak-nondeposited-v1",
+  "peakAuthority": "APPROVED",
+  "peakProtocolEffective": false,
+  "formalReleaseAuthorized": false,
+  "protocolSourcePath": "docs/peak-protocol-P011-ws08-peak-nondeposited-v1.md",
+  "protocolSourceHash": "3f043d404224b8290248d04ea600e5a7ac08b763625f28385d3c3063755ebfe9",
+  "protocolSourceHashAlgorithm": "SHA-256",
+  "note": "Tester-side execution of the frozen peak protocol on synthetic fixtures and archived artifacts. No device run exists for the peak field revision, so the new quantity on archived data is NOT_IMPLEMENTED; every candidate number below is synthetic and labelled as such. This script is not the production peak checker.",
+  "tierTable": {
+    "boundaryRows": [
+      {
+        "fraction": 0.9,
+        "expectedScore": 10,
+        "actualScore": 10,
+        "matches": true
+      },
+      {
+        "fraction": 0.8999999999,
+        "expectedScore": 8,
+        "actualScore": 8,
+        "matches": true
+      },
+      {
+        "fraction": 0.75,
+        "expectedScore": 8,
+        "actualScore": 8,
+        "matches": true
+      },
+      {
+        "fraction": 0.7499999999,
+        "expectedScore": 6,
+        "actualScore": 6,
+        "matches": true
+      },
+      {
+        "fraction": 0.5,
+        "expectedScore": 6,
+        "actualScore": 6,
+        "matches": true
+      },
+      {
+        "fraction": 0.4999999999,
+        "expectedScore": 4,
+        "actualScore": 4,
+        "matches": true
+      },
+      {
+        "fraction": 0.35,
+        "expectedScore": 4,
+        "actualScore": 4,
+        "matches": true
+      },
+      {
+        "fraction": 0.3499999999,
+        "expectedScore": 2,
+        "actualScore": 2,
+        "matches": true
+      },
+      {
+        "fraction": 0.2,
+        "expectedScore": 2,
+        "actualScore": 2,
+        "matches": true
+      },
+      {
+        "fraction": 0.1999999999,
+        "expectedScore": 0,
+        "actualScore": 0,
+        "matches": true
+      },
+      {
+        "fraction": 0.0,
+        "expectedScore": 0,
+        "actualScore": 0,
+        "matches": true
+      },
+      {
+        "fraction": 1.0,
+        "expectedScore": 10,
+        "actualScore": 10,
+        "matches": true
+      }
+    ],
+    "comparisonRows": [
+      {
+        "M": 500.0,
+        "E": 1000.0,
+        "expected": true,
+        "actual": true,
+        "matches": true
+      },
+      {
+        "M": 499.999999999999,
+        "E": 1000.0,
+        "expected": false,
+        "actual": false,
+        "matches": true
+      },
+      {
+        "M": 500.000000000001,
+        "E": 1000.0,
+        "expected": true,
+        "actual": true,
+        "matches": true
+      },
+      {
+        "M": 0.0,
+        "E": 1000.0,
+        "expected": false,
+        "actual": false,
+        "matches": true
+      }
+    ],
+    "allMatch": true
+  },
+  "counterexamples": [
+    {
+      "id": "P1",
+      "title": "representation undercount: E=1000, D=480, U=320, P=200",
+      "protocolExpected": {
+        "h": "40%",
+        "l": "32%",
+        "f": "52%",
+        "newTier": 6,
+        "newNumericallyPasses": true,
+        "oldQuantitiesFail": true
+      },
+      "actual": {
+        "h": 0.4,
+        "l": 0.32,
+        "f": 0.52,
+        "score": 6,
+        "passes": true
+      },
+      "verdictMatches": true,
+      "note": "Under the total-nondeposited target the old quantities read 40%/32% (false FAIL); under the old column-suspension semantics they remain correct old results and the historical report must not be rewritten."
+    },
+    {
+      "id": "P2",
+      "title": "degradation reward: 200 units DEGRADE from P into U",
+      "protocolExpected": {
+        "mUnchanged": true,
+        "oldChanged": true,
+        "newStays": "52%"
+      },
+      "actual": {
+        "beforeM": 520,
+        "afterM": 520,
+        "beforeF": 0.52,
+        "afterF": 0.52,
+        "beforeH": 0.4,
+        "afterH": 0.52,
+        "beforeL": 0.32,
+        "afterL": 0.52
+      },
+      "verdictMatches": true,
+      "note": "The old conclusion changes (h 40%->52%) while the new quantity is unchanged at 52%; a changed old value is not evidence of improved lifting."
+    },
+    {
+      "id": "P3",
+      "title": "adding per-commit maxima: k1 U=400/P=0, k2 U=0/P=400",
+      "protocolExpected": {
+        "correctPeak": "40% (FAIL, score 4)",
+        "crossCommitSum": "80% (false PASS)"
+      },
+      "actual": {
+        "k1F": 0.4,
+        "k2F": 0.4,
+        "correctPeak": 0.4,
+        "correctScore": 4,
+        "crossCommitSum": 0.8,
+        "correctPasses": false
+      },
+      "verdictMatches": true,
+      "note": "Sum on the same commit first, then take the max; never add maxima from different commits."
+    },
+    {
+      "id": "P4",
+      "title": "input-platform response lag: first commit 10%, platform 2.4s 55%",
+      "protocolExpected": {
+        "inputPeakTimeMethod": "10%",
+        "candidateB": "55%",
+        "bScore": 6
+      },
+      "actual": {
+        "firstF": 0.1,
+        "laterF": 0.55,
+        "windowPeak": 0.55,
+        "peakIsLaterCommit": true,
+        "bScore": 6,
+        "bPasses": true
+      },
+      "verdictMatches": true,
+      "note": "The input-peak-instant method (10%) and the stock peak (55%) are different estimands; neither may retro-approve the other."
+    },
+    {
+      "id": "P5",
+      "title": "full-sequence pollution: rest segment 80%, shake segment max 40%",
+      "protocolExpected": {
+        "fullSequenceMax": "80% (false PASS, score 8)",
+        "fixedWindow": "40% (FAIL, score 4)"
+      },
+      "actual": {
+        "restF": 0.8,
+        "shakeF": 0.4,
+        "fullSequenceMax": 0.8,
+        "fullSequenceScore": 8,
+        "fixedWindowPeak": 0.4,
+        "fixedWindowScore": 4,
+        "fixedWindowPasses": false
+      },
+      "verdictMatches": true,
+      "note": "A full-sequence max can falsely PASS; the formal peak only takes the fixed window. If M0 itself is >=50% the stock peak may numerically pass without proving new lifting; M0 / net increase / LIFT evidence must then be reported."
+    },
+    {
+      "id": "P6",
+      "title": "contact stock disguised as motion: U=20, P_state2=500",
+      "protocolExpected": {
+        "stockPeak": "52% (numerically passes, score 6)",
+        "misinterpretationRisk": "52% must not be read as flying/natural suspension"
+      },
+      "actual": {
+        "f": 0.52,
+        "score": 6,
+        "passes": true,
+        "state2ShareOfM": 0.9615384615384616,
+        "flyingShareOfM": 0.0
+      },
+      "verdictMatches": true,
+      "note": "The stock peak is correct but is not evidence of flight; the state split, lifecycle and subjective effect are reported separately and the peak alone never releases WS-08."
+    },
+    {
+      "id": "P7",
+      "title": "250ms sampling misses the peak: true substep peak 52%, samples max 48%",
+      "protocolExpected": {
+        "sampledMax": "48% (false FAIL, score 4)",
+        "perCommitPeak": "52% (PASS, score 6)"
+      },
+      "actual": {
+        "sampledMax": 0.48,
+        "sampledScore": 4,
+        "perCommitPeak": 0.52,
+        "perCommitScore": 6,
+        "perCommitPasses": true
+      },
+      "verdictMatches": true,
+      "note": "Sparse legacy sampling can falsely FAIL under the new target; the new quantity keeps every successful commit and never interpolates a peak."
+    },
+    {
+      "id": "P8",
+      "title": "higher only after stop: shake segment max 48%, post-off 55%",
+      "protocolExpected": {
+        "windowPeak": "48% (FAIL, score 4)",
+        "extendedWindow": "55% (must not be used)"
+      },
+      "actual": {
+        "shakeF": 0.48,
+        "postOffF": 0.55,
+        "windowPeak": 0.48,
+        "windowScore": 4,
+        "windowPasses": false,
+        "extendedWindowPeak": 0.55
+      },
+      "verdictMatches": true,
+      "note": "The window is never extended into the rest segment to find a PASS; the endpoint residual is computed independently under the approved endpoint protocol."
+    }
+  ],
+  "reachability": {
+    "identity": {
+      "M0": 470.0,
+      "cumAcceptedLiftInW": 115.0,
+      "cumSettledOrLandedInW": 403.0,
+      "peakM": 520,
+      "peakBoundHolds": true,
+      "tauW": 3.0,
+      "budgetHolds": true,
+      "identityHolds": true,
+      "identityMaxAbsResidual": 0.0
+    },
+    "necessary": {
+      "rows": [
+        {
+          "case": "M0=0, tau_W=3.0s -> most optimistic peak M <= 900 units; 50% then needs E <= 1800",
+          "maxEForFiftyPercent": 1800.0,
+          "value": 1800.0,
+          "matches": true
+        },
+        {
+          "case": "E=8000 -> required lift integration time (seconds)",
+          "requiredTau": 13.333333333333334,
+          "value": 13.333333333333334,
+          "matches": true
+        }
+      ],
+      "allMatch": true
+    },
+    "allMatch": true
+  },
+  "phaseSplit": {
+    "phaseZeroE": {
+      "EH": 1000.0,
+      "EL": 0.0,
+      "heavyFraction": 0.2,
+      "lightFraction": "N/A",
+      "lightReason": "E_L=0 -> N/A, no EPS ratio"
+    },
+    "totalPeak": {
+      "f": 0.52,
+      "elapsedMs": 4150.0,
+      "heavyF": 0.6666666666666666,
+      "lightF": 0.3
+    },
+    "independentPhasePeaks": {
+      "heavyF": 0.6666666666666666,
+      "heavyAtElapsedMs": 4150.0,
+      "lightF": 0.49,
+      "lightAtElapsedMs": 4200.0,
+      "sum": 1.1566666666666667
+    },
+    "rulesHold": true,
+    "note": "The independent phase peaks (heavy and light) sum to more than the total peak and occur at different commits; only the total peak commit records H/L sub-items simultaneously, and phase peaks are never added."
+  },
+  "redBaseline": {
+    "wsCheckJson": {
+      "available": true,
+      "entries": [
+        {
+          "name": "angle",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing maxSlopeDeg, maxCurvature"
+        },
+        {
+          "name": "conservation",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing driftWater, driftHeavy, driftLight"
+        },
+        {
+          "name": "fps",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing WS_FRAME samples (have 0, need 100)"
+        },
+        {
+          "name": "invert",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing WS_EVENT invert180, phaseOrderScore"
+        },
+        {
+          "name": "long_rest",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing bedDrift or timestamped WS_SNAPSHOT.sandTop"
+        },
+        {
+          "name": "settling",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing t90Heavy, t90Light"
+        },
+        {
+          "name": "shake",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing WS_EVENT shake, suspensionFraction"
+        },
+        {
+          "name": "sorting",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing separationRatio, lowerHeavyShare, upperHeavyShare"
+        },
+        {
+          "name": "water",
+          "status": "BLOCKED",
+          "note": "TODO(product-hook): missing waterSlopeDeg, waterAmplitudePx"
+        }
+      ],
+      "shakeEntry": {
+        "name": "shake",
+        "status": "BLOCKED",
+        "measured": {},
+        "threshold": {},
+        "evidence_count": 0,
+        "note": "TODO(product-hook): missing WS_EVENT shake, suspensionFraction"
+      }
+    },
+    "artifactScan": {
+      "filesScanned": 83,
+      "shakeEventsFound": 0,
+      "wsEventLinesFound": 191,
+      "wsMetricLinesFound": 1896,
+      "fileNames": [
+        "p011-20261016-formal-hap-sha256.txt",
+        "p011-20261016-formal-v27-rerun-raw.txt",
+        "p011-20261016-formal-v27-rerun-stderr.txt",
+        "p011-20261016-formal-v27-rerun2-raw.txt",
+        "p011-20261016-formal-v27-rerun2-stderr.txt",
+        "p011-20261016-formal-v27-rerun2-utf8.txt",
+        "p011-20261016-formal-v27-rerun3-raw.txt",
+        "p011-20261016-formal-v27-rerun3-stderr.txt",
+        "p011-20261016-formal-v27-rerun3-utf8.txt",
+        "p011-20261016-formal-v27-rerun4-sha256.txt",
+        "p011-20261016-formal-v27-rerun5-sha256.txt",
+        "p011-20261016-hilog-gesture-raw.txt",
+        "p011-20261016-hilog-gesture-utf8.txt",
+        "p011-20261016-hilog-gesture2-raw.txt",
+        "p011-20261016-hilog-gesture2-utf8.txt",
+        "p011-20261016-hilog-persist.txt",
+        "p011-20261016-hilog-raw.txt",
+        "p011-20261016-hilog-utf8.txt",
+        "p011-20261017-formal-hap-sha256.txt",
+        "p011-20261018-v272-hap-sha256.txt",
+        "p011-20261018-v273-hap-sha256.txt",
+        "p011-cap12x1000-88-raw.txt",
+        "p011-cap12x1000-seq-raw.txt",
+        "p011-cap12x320-88-raw.txt",
+        "p011-cap88-raw.txt",
+        "p011-capprobe-raw.txt",
+        "p011-cols10-85-raw.txt",
+        "p011-cols10-85-utf8.txt",
+        "p011-cols10-89-raw.txt",
+        "p011-cols10-89-utf8.txt",
+        "p011-cols12-85-raw.txt",
+        "p011-cols12-85-utf8.txt",
+        "p011-cols12-88-raw.txt",
+        "p011-cols12-88-utf8.txt",
+        "p011-cols12-89-raw.txt",
+        "p011-cols12-89-utf8.txt",
+        "p011-cols8-89-raw.txt",
+        "p011-cols8-89-utf8.txt",
+        "p011-cols9-89-raw.txt",
+        "p011-cols9-89-utf8.txt",
+        "p011-drag-test.txt",
+        "p011-final-v27-raw.txt",
+        "p011-forceinvert-raw.txt",
+        "p011-forceinvert-utf8.txt",
+        "p011-formal-signfix-raw.txt",
+        "p011-formal-wstilt-cap1000-raw.txt",
+        "p011-formal-wstilt-runs-cap1000-raw.txt",
+        "p011-layout2.txt",
+        "p011-long-test.txt",
+        "p011-panel-all-raw.txt",
+        "p011-panel-forceinvert.txt",
+        "p011-recalib-hap-sha256.txt",
+        "p011-short60-cols6-raw.txt",
+        "p011-short60-cols6-utf8.txt",
+        "p011-short60-raw.txt",
+        "p011-short60-utf8.txt",
+        "p011-short89-cols6-raw.txt",
+        "p011-short89-cols6-utf8.txt",
+        "p011-short89-raw.txt",
+        "p011-short89-utf8.txt",
+        "p011-single60-raw.txt",
+        "p011-single60-utf8.txt",
+        "p011-single89-raw.txt",
+        "p011-single89-utf8.txt",
+        "p011-swipe2000-test.txt",
+        "p011-thick10x1000-88-raw.txt",
+        "p011-thick6x1000-85-raw.txt",
+        "p011-wrap-test.txt",
+        "p011-wrap-test2.txt",
+        "p011-wstilt-final-raw.txt",
+        "p011-wstilt-final-utf8.txt",
+        "p011-wstilt-raw.txt",
+        "p011-wstilt-utf8.txt",
+        "p011-wstilt2-raw.txt",
+        "p011-wstilt2-utf8.txt",
+        "p011-wstilt3-raw.txt",
+        "p011-wstilt3-utf8.txt",
+        "p011-wstilt3p-raw.txt",
+        "p011-wstilt3p-utf8.txt",
+        "p011-wstilt4-raw.txt",
+        "p011-wstilt4-utf8.txt",
+        "p011-wstilt5-raw.txt",
+        "p011-wstilt5-utf8.txt"
+      ]
+    },
+    "slipLedger": {
+      "available": true,
+      "recordCount": 2512,
+      "routeId": "natural-observation-v2.10",
+      "phaseDs": [
+        "baseline",
+        "negativeOvershoot",
+        "negativeOvershootReturn",
+        "positive",
+        "positiveOvershoot",
+        "positiveOvershootReturn",
+        "positiveReturn"
+      ],
+      "hasParticlesBlock": false,
+      "hasEndpointSampleElapsedMs": false,
+      "hasEndpointPhaseOccurrenceId": false,
+      "hasIntegratedPhysicsSeconds": false,
+      "applicableToWs08Peak": false,
+      "reason": "SLIP-family tilt run without a shake-on input window and without the v7 particle/elapsed/occurrence fields; case family is TC-P011-SLIP-03, not TC-WS-08"
+    },
+    "newQuantityStatus": {
+      "status": "NOT_IMPLEMENTED",
+      "missingFields": [
+        "context.particles.massH/massL (+ pMass/pPhase/pState arrays, byState)",
+        "context.endpointSampleElapsedMs",
+        "context.endpointPhaseOccurrenceId",
+        "context.integratedPhysicsSeconds",
+        "shakeOnEffectiveElapsedMs / shakeOffEffectiveElapsedMs (on/off effective boundaries)",
+        "per-substep consumed shake-on input identity",
+        "peak window occurrence manifest (caseId, boundaries, coverage evidence)"
+      ],
+      "observedSampledMax": null,
+      "observedSampledMaxNote": "No archived run contains a shake event, so even the 250ms lower bound OBSERVED_SAMPLED_MAX is not available; the 2026-10-13 baseline recorded shake BLOCKED for exactly this reason.",
+      "formalReleaseAuthorized": false
+    },
+    "redStatus": "NOT_IMPLEMENTED"
+  },
+  "legacyCheckerBehavior": {
+    "legacyResult": {
+      "name": "shake",
+      "status": "PASS",
+      "measured": {
+        "peakSusp": 0.8,
+        "residualSusp": 0.03
+      },
+      "threshold": {
+        "peakSusp": ">= 0.5",
+        "residualSusp": "<= 0.05"
+      },
+      "evidenceCount": 8
+    },
+    "fixedWindowPeak": 0.42,
+    "fixedWindowScore": 4,
+    "fixedWindowPasses": false,
+    "fullSequenceTakesPreShakeValue": true,
+    "tieredScoringImplemented": false,
+    "note": "The delivered evaluate_shake() takes max over every WS_METRIC row in the whole sequence (pre-shake 0.80 included) and reports a binary PASS/FAIL without the TIERED anchors; under the frozen protocol the fixed window peak is 0.42 (score 4, FAIL). The residual column belongs to the endpoint protocol."
+  },
+  "dualCalculation": {
+    "ledger": {
+      "commits": 129,
+      "windowCommits": 60,
+      "samples": 33,
+      "inWindowSamples": 12,
+      "E": 1000.0,
+      "VH0": 600.0,
+      "VL0": 400.0,
+      "conservationHolds": true
+    },
+    "attributionChain": [
+      {
+        "step": "L1 legacyPeakSuspReported",
+        "definition": "full sequence, 250ms samples, h=U/(D+U)",
+        "value": 0.47,
+        "atElapsedMs": 0.0,
+        "effect": "baseline (legacy reported)"
+      },
+      {
+        "step": "L2 windowed samples",
+        "definition": "fixed W, 250ms samples, h=U/(D+U)",
+        "value": 0.415,
+        "atElapsedMs": 3500.0,
+        "effect": "window effect: 0.470000 -> 0.415000 (-5.5000 pp)"
+      },
+      {
+        "step": "L3 windowed per-commit",
+        "definition": "fixed W, every commit, h=U/(D+U)",
+        "value": 0.445,
+        "atElapsedMs": 4100.0,
+        "effect": "sampling-density effect: 0.415000 -> 0.445000 (3.0000 pp)"
+      },
+      {
+        "step": "N1 peakNonDepositedFraction",
+        "definition": "fixed W, every commit, (U+P)/E",
+        "value": 0.52,
+        "atElapsedMs": 4150.0,
+        "effect": "numerator/denominator effect: 0.445000 -> 0.520000 (7.5000 pp)"
+      }
+    ],
+    "legacyToNewGapPp": 5.000000000000004,
+    "newQuantity": {
+      "peakNonDepositedFraction": 0.52,
+      "peakStockMass": 520,
+      "peakReferenceMass": 1000.0,
+      "peakCommitElapsedMs": 4150.0,
+      "peakScore": 6,
+      "passes": true,
+      "heavyF": 0.6666666666666666,
+      "lightF": 0.3,
+      "suspFraction": 0.32,
+      "airborneFraction": 0.2,
+      "depositedFraction": 0.48
+    },
+    "legacyPeakSuspReported": 0.47,
+    "legacyPeakHistoricalReference": 0.445,
+    "legacyPeakLiveFormula": 0.445,
+    "sameReferenceSuspOnlyPeak": 0.445,
+    "observedSampledMax": 0.46,
+    "observedSampledMaxIsLowerBound": true,
+    "baselineNonDepositedFraction": 0.47,
+    "peakNetIncreaseFraction": 0.05,
+    "identityChecks": {
+      "fMinusL": 0.2,
+      "expectedPMinusE": 0.2,
+      "fMinusH": 0.12,
+      "expectedPPMinusEH": 0.12,
+      "fMinusLMatches": true,
+      "fMinusHMatches": true
+    },
+    "note": "Window, sampling-density and numerator/denominator effects are listed separately; the legacy-to-new gap must not be attributed to physical improvement. The sampled OBSERVED_SAMPLED_MAX is only a lower bound of the true per-commit peak."
+  }
+}
