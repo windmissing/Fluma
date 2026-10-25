@@ -346,6 +346,27 @@ export default class EntryAbility extends UIAbility {
     hilog.info(this.hilogDomain, this.hilogTag,
       'LiquidCA want rendermode=%{public}d testmode=%{public}d seed=%{public}d shake=%{public}f',
       parsed.renderMode, parsed.testMode ? 1 : 0, parsed.seed, parsed.shake);
+    // P-013 P1-G0 平台探针门（PROBE-ONLY：仅供真机取证，勿并入发布分支）
+    // p013g0=1 → 加载 pages/P013P1G0Probe；p013g0hit=default|transparent|none|block；
+    // p013g0diag=true|false → GLES 诊断 pass 开/关（关时 native 不绘制任何像素）。
+    // 必须置于 isNewWant 提前返回之前：onCreate 以 isNewWant=false 调用本方法。
+    if (parameters !== undefined && parameters.p013g0 !== undefined) {
+      AppStorage.setOrCreate('p013g0', `${parameters.p013g0}` === '1');
+      const hitRaw = parameters.p013g0hit === undefined ?
+        'default' : `${parameters.p013g0hit}`.trim();
+      const hit = hitRaw === 'transparent' || hitRaw === 'none' || hitRaw === 'block' ?
+        hitRaw : 'default';
+      AppStorage.setOrCreate('p013g0hit', hit);
+      AppStorage.setOrCreate('p013g0diag',
+        parameters.p013g0diag === undefined ? true : `${parameters.p013g0diag}` === 'true');
+      const libRaw = parameters.p013g0lib === undefined ?
+        'hello' : `${parameters.p013g0lib}`.trim();
+      AppStorage.setOrCreate('p013g0lib', libRaw === 'renderer' ? 'renderer' : 'hello');
+      hilog.info(this.hilogDomain, this.hilogTag,
+        'P013_G0 want enabled hit=%{public}s diag=%{public}d lib=%{public}s', hit,
+        AppStorage.get<boolean>('p013g0diag') ? 1 : 0,
+        AppStorage.get<string>('p013g0lib'));
+    }
     if (!isNewWant) {
       this.publishP011TiltWant(tiltCommand);
       return;
@@ -397,7 +418,10 @@ export default class EntryAbility extends UIAbility {
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onWindowStageCreate');
-    windowStage.loadContent('pages/SandCanvas', (err) => {
+    // P-013 P1-G0 平台探针页（PROBE-ONLY：勿并入发布分支）
+    const probePage: string = AppStorage.get<boolean>('p013g0') === true ?
+      'pages/P013P1G0Probe' : 'pages/SandCanvas';
+    windowStage.loadContent(probePage, (err) => {
       if (err.code) {
         hilog.error(this.hilogDomain, this.hilogTag, 'Failed to load the content. Cause: %{public}s', err.message);
         return;
