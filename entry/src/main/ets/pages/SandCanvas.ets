@@ -1,4 +1,7 @@
+import { P012ParticleRenderSnapshot } from '../render/P012RenderTypes';
 import { P011GestureRateClock } from '../physics/P011GestureRateClock';
+import { P013Mode } from '../render/P013RenderTypes';
+import { P013RenderController, p013NowMs } from '../render/P013RenderController';
 import { SandGrid } from '../physics/SandGrid';
 import { FluidField } from '../physics/FluidField';
 import { WaterSandField, WaterSandSnapshot, WaterSandParams, WaterSandScene, WaterSandRegion, WaterSandP011InputSource, WaterSandP011Metric, WaterSandP011Bottom, defaultWaterSandParams, nextP011TimeMs, waterSandFrameHookPayload } from '../physics/WaterSandField';
@@ -38,8 +41,6 @@ import {
   P012_APPEARANCE_SCHEMA_VERSION, P012_STYLE_FAMILY_ID
 } from '../render/P012RenderTypes';
 
-/** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
-class MyFrameCallback extends FrameCallback {
 interface P011GestureSandRequested {
   heavy: number;
   light: number;
@@ -60,6 +61,8 @@ interface P011ShakeLiftEvent {
   columns: number;
 }
 
+/** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
+class MyFrameCallback extends FrameCallback {
   owner: SandCanvas | null = null;
   onFrame(frameTimeInNano: number): void {
     if (this.owner !== null) {
@@ -494,6 +497,11 @@ struct SandCanvas {
   private p011SchedulePlayer: P011SchedulePlayer = new P011SchedulePlayer();
   private p011ScheduleWantConsumedSeq: number = 0;
   private waterSandSnapshot: WaterSandSnapshot | null = null;
+  // P-013 P0 v1: optional diagnostic overlay; existing ticker owns all frames.
+  private p013: P013RenderController = new P013RenderController();
+  @State p013Mode: number = P013Mode.CANVAS_BASELINE;
+  @State p013OverlayVisible: boolean = false;
+  @State p013FrameVisible: boolean = false;
   private waterSandParams: WaterSandParams = defaultWaterSandParams();
   private boxX: number = 0;
   private boxY: number = 0;
@@ -649,6 +657,7 @@ struct SandCanvas {
     const liquidStartShake = AppStorage.get<number>('liquidStartShake');
     if (liquidStartShake !== undefined && liquidStartShake >= 0 && liquidStartShake <= 1) {
       this.liquidShakeInput = liquidStartShake;
+      this.waterSandShakeInput = liquidStartShake;
     }
     const wsPreset = AppStorage.get<string>('wspreset');
     if (wsPreset !== undefined) {
@@ -736,9 +745,17 @@ struct SandCanvas {
 
   onPageHide(): void {
     this.resetPanGestureBoundary();
+    this.p013.setActive(false);
+    this.p013FrameVisible = false;
+    this.p013OverlayVisible = this.p013.isOverlay();
+  }
+
+  onPageShow(): void {
+    this.p013.setActive(true);
   }
 
   aboutToDisappear(): void {
+    this.p013.release();
     this.frameCb.owner = null;
     // §26.4 risk 1: clear the schedule player's activation flag on exit —
     // a crashed/abandoned player must never permanently reject commands.
@@ -912,6 +929,7 @@ struct SandCanvas {
 
   setWaterSandShakeInput(value: number): void {
     this.waterSandShakeInput = Math.max(0, Math.min(1, value));
+    // Route panel shake input directly to the active WaterSand field.
     if (this.renderMode === MODE_WATERSAND) {
       this.waterSandField?.setShakeInput(this.waterSandShakeInput);
       if (this.waterSandShakeInput > 0) {
@@ -1322,6 +1340,15 @@ struct SandCanvas {
         this.startLiquidController();
       }
     }
+    this.waterSandShakeInput = this.liquidShakeInput;
+    if (this.renderMode === MODE_WATERSAND) {
+      this.waterSandField?.setShakeInput(this.waterSandShakeInput);
+      if (this.waterSandShakeInput > 0) {
+        this.logWaterSand(`WS_EVENT shake ${JSON.stringify({
+          input: this.waterSandShakeInput, boundary: true, source: 'WANT'
+        })}`);
+      }
+    }
     if (this.renderMode === MODE_LIQUID && this.liquidController !== null) {
       this.liquidController.setCaseId(this.liquidCaseId);
       if (seedChanged) {
@@ -1342,15 +1369,6 @@ struct SandCanvas {
       if (this.fpsTime >= 500) {
         this.fps = Math.round(this.frameCount * 1000 / this.fpsTime);
         this.frameCount = 0;
-    this.waterSandShakeInput = this.liquidShakeInput;
-    if (this.renderMode === MODE_WATERSAND) {
-      this.waterSandField?.setShakeInput(this.waterSandShakeInput);
-      if (this.waterSandShakeInput > 0) {
-        this.logWaterSand(`WS_EVENT shake ${JSON.stringify({
-          input: this.waterSandShakeInput, boundary: true, source: 'WANT'
-        })}`);
-      }
-    }
         this.fpsTime = 0;
         this.displayInfo = `FPS=${this.fps}`;
       }
@@ -1662,6 +1680,7 @@ struct SandCanvas {
     }
     this.fluidField = ff;
     this.waterSandField = new WaterSandField(this.waterSandCols, this.waterSandCapacity);
+    this.installWaterSandTelemetryHooks();
     this.waterSandParams = defaultWaterSandParams();
     // §27.6: restore the persisted pair (illegal values were dropped at
     // load; absent keys keep the 26/20 factory default).
@@ -1682,12 +1701,14 @@ struct SandCanvas {
     this.waterSandParams.vSandTopMax = this.waterSandVSandTopMax;
     if (this.waterSandPreset === 'thick') {
       this.waterSandParams.angleDeg = 4;
-    this.installWaterSandTelemetryHooks();
       this.waterSandParams.maxAvalancheFlux = 80;
       this.waterSandParams.bottomCreepRate = 96;
     }
     this.waterSandField.configure(this.waterSandParams);
     this.waterSandField.initialize(this.waterSandScene(this.waterSandPreset, this.waterSandCols));
+    this.installWaterSandTelemetryHooks();
+    this.waterSandField.setShakeInput(this.renderMode === MODE_WATERSAND
+      ? this.waterSandShakeInput : 0);
     this.setupNaturalObservation(this.waterSandField);
     this.waterSandSnapshot = this.waterSandField.snapshot();
     this.waterSandVisualInverted = false;
@@ -1708,9 +1729,6 @@ struct SandCanvas {
       vH: this.waterSandParams.heavySettleSpeed,
       vL: this.waterSandParams.lightSettleSpeed,
       liftHRate: this.waterSandParams.heavyLiftRate,
-    this.installWaterSandTelemetryHooks();
-    this.waterSandField.setShakeInput(this.renderMode === MODE_WATERSAND
-      ? this.waterSandShakeInput : 0);
       liftLRate: this.waterSandParams.lightLiftRate,
       shakeRampRate: this.waterSandParams.shakeRampRate,
       vSandTopMax: this.waterSandParams.vSandTopMax,
@@ -2118,15 +2136,37 @@ struct SandCanvas {
         // P-012 E-batch 薄分发（§9.2）：一次帧只走一个完整渲染分支，禁止叠加；
         // canonicalEvidence（物理证据采集 wssnapshot=true）强制 OFF 分支。
         // 三段拆分：renderMs=draw 提交耗时（P012 renderer 含烘焙/E3 全链）
+        const p013ControlStart = this.p013.isOverlay() ? p013NowMs() : 0;
+        const p013Reference = this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE && !this.waterSandSnapshotEnabled;
+        const particleVisual = ws.particleRouteActive() && !this.waterSandSnapshotEnabled;
+        if ((p013Reference || particleVisual) && this.p012Renderer === null) {
+          this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
+        }
+        const p013Context = this.p013.isOverlay() || p013Reference ? this.buildP012FrameContext() : null;
+        const p013ControlCostMs = p013ControlStart > 0 ? p013NowMs() - p013ControlStart : 0;
         const segRenderT0 = Date.now();
         if (p012ShouldUseP012Renderer(this.p012Renderer,
-          this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled)) {
+          this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled) || p013Reference || particleVisual) {
           this.p012Renderer?.render(this.ctx, this.waterSandSnapshot,
-            this.buildP012FrameContext());
+            p013Context ?? this.buildP012FrameContext());
         } else {
           this.renderWaterSand(this.ctx, this.waterSandSnapshot);
         }
         const segRenderMs = Date.now() - segRenderT0;
+        // P-013 uses the same copied snapshot, after Canvas timing ends.
+        if (this.waterSandSnapshotEnabled) {
+          if (this.p013.mode !== P013Mode.CANVAS_BASELINE) {
+            this.p013.forceBaseline('CANONICAL_EVIDENCE');
+            this.p013Mode = P013Mode.CANVAS_BASELINE;
+          }
+          this.p013OverlayVisible = false;
+        } else if (this.p013.isOverlay() && p013Context !== null) {
+          this.p013.submit(this.waterSandSnapshot, p013Context,
+            this.canvasW, this.canvasH, frameTimeInNano, p013ControlCostMs);
+          this.p013FrameVisible = this.p013.diagnosticVisible;
+          this.p013Mode = this.p013.mode;
+          this.p013OverlayVisible = this.p013.isOverlay();
+        }
         if (this.testMode) {
           // presentMs：呈现等待段 = 本帧处理完成到下帧 vsync 的等待
           // （postFrameCallback 回调返回后的空转；上帧完成时刻基准）
@@ -2139,7 +2179,8 @@ struct SandCanvas {
         }
         if (now - this.lastWaterSandMetricTime >= 250) {
           this.lastWaterSandMetricTime = now;
-          this.logWaterSand(`WS_METRIC ${JSON.stringify(ws.getMetrics(this.cellPx))}`);
+          const metrics = ws.getMetrics(this.cellPx);
+          this.logWaterSand(`WS_METRIC ${JSON.stringify(metrics)}`);
           if (this.waterSandSnapshotEnabled) {
             this.logWaterSandSnapshot();
           }
@@ -2280,10 +2321,15 @@ struct SandCanvas {
   /** Event sequence within the current gesture. */
   private gestureSequence = 0;
   /** Last event local position (offset fallback when fingerList empty). */
+  private p012ParticleFrame: P012ParticleRenderSnapshot = new P012ParticleRenderSnapshot(512);
   private lastPanLocalX = 0;
   private lastPanLocalY = 0;
   /** Last routed event time (ms) for the rate integration. */
   private gestureRateClock: P011GestureRateClock = new P011GestureRateClock();
+  private panUpdateCount = 0;
+  private panLastLocalX = 0;
+  private panLastLocalY = 0;
+  private panLastEventAccepted = false;
 
   /**
    * Gate three conditions (B design §4): water-sand render mode + the
@@ -2318,9 +2364,15 @@ struct SandCanvas {
     // Book-keep the position for the offset fallback.
     this.lastPanLocalX = localX;
     this.lastPanLocalY = localY;
+    this.panLastLocalX = localX;
+    this.panLastLocalY = localY;
+    this.panUpdateCount++;
     if (!this.gestureSandGate(localX, localY)) {
+      this.panLastEventAccepted = false;
+      this.gestureRateClock.suspend();
       return;
     }
+    this.panLastEventAccepted = true;
     const now = timestampNs / 1000000;
     const dtSec = this.gestureRateClock.sample(timestampNs, 'ns');
     if (dtSec <= 0) {
@@ -2355,14 +2407,9 @@ struct SandCanvas {
       qL[c] = total * (1 - SandCanvas.SAND_HEAVY_SHARE) * share;
     }
     this.gestureSequence += 1;
-    this.panLastLocalX = localX;
-    this.panLastLocalY = localY;
-    this.panUpdateCount++;
     this.stageGestureSandAndFeed({
-      this.panLastEventAccepted = false;
       perColumnHeavy: qH,
       perColumnLight: qL,
-    this.panLastEventAccepted = true;
       sourceId: this.gestureSourceId,
       sequence: this.gestureSequence,
       inputTime: now,
@@ -2388,54 +2435,12 @@ struct SandCanvas {
     // the bounded fallback for burst recovery; the direct call keeps the
     // tracer latency ≤1 frame as the B design §1.3 requires).
     const receipt = field.injectGestureSand(request);
-    if (receipt !== null) {
+    if (receipt !== null && !field.particleRouteActive()) {
       this.p012Renderer?.sandTracer.feed(receipt,
         this.boxW / Math.max(1, this.waterSandCols));
     }
   }
 
-  /** D3 lifecycle: clear the tracer + the physics queue (§4 hooks). */
-  private clearFallingSand(): void {
-    this.p012Renderer?.sandTracer.clear();
-    this.waterSandField?.clearGestureSandQueue();
-    this.gestureRateClock.stop();
-    this.gestureSequence = 0;
-  }
-
-  /** P-012 E-batch：构造 frameContext（复用页面既有字段，不新建事件源） */
-  private buildP012FrameContext(): P012FrameContext {
-    const sampleTimeMs = Date.now();
-    const frameDeltaMs = this.p012LastSampleTimeMs > 0
-      ? sampleTimeMs - this.p012LastSampleTimeMs : 16.7;
-    this.p012LastSampleTimeMs = sampleTimeMs;
-    this.p012FrameSerial++;
-    return {
-      fieldEpoch: this.p012FieldEpoch,
-      continuityEpoch: this.p012ContinuityEpoch,
-      geometryEpoch: this.p012GeometryEpoch,
-      frameSerial: this.p012FrameSerial,
-      sampleTimeMs: sampleTimeMs,
-      frameDeltaMs: frameDeltaMs,
-      inputMode: this.testMode ? 'TEST' : 'EXPERIENCE',
-      sourceKind: this.testMode ? 'script' : 'sensor',
-      physicalRouteId: this.waterSandParams.routeId,
-      runIdentity: this.waterSandField?.getP011RunId() ?? '',
-      boxX: this.boxX,
-      boxY: this.boxY,
-      boxW: this.boxW,
-      boxH: this.boxH,
-      pixelRatio: 1,
-      visualInverted: this.waterSandVisualInverted,
-      appearanceTier: this.p012AppearanceTier as P012AppearanceTier,
-      renderSeed: this.p012RenderSeed,
-      configRevision: this.p012ConfigRevision,
-      ablation: this.p012Ablation,
-      fillBox: this.p012FillBox,
-      canonicalEvidence: this.waterSandSnapshotEnabled,
-      // falling-sand B-route §2.1: display gravity unit vector
-      // R(tilt)·(0,+1) derived from the SAME tilt state the physics
-      // consumes (this.tiltX — sensor/script/gesture all write it);
-      // forceInvert negates (180°). No second attitude source.
   private installWaterSandTelemetryHooks(): void {
     const field = this.waterSandField;
     if (field === null) {
@@ -2473,6 +2478,64 @@ struct SandCanvas {
     this.panLastEventAccepted = false;
   }
 
+  /** D3 lifecycle: clear the tracer + the physics queue (§4 hooks). */
+  private clearFallingSand(): void {
+    this.p012Renderer?.sandTracer.clear();
+    this.waterSandField?.clearGestureSandQueue();
+    this.gestureRateClock.stop();
+    this.gestureSequence = 0;
+  }
+
+  /** P-012 E-batch：构造 frameContext（复用页面既有字段，不新建事件源） */
+  private buildP012FrameContext(): P012FrameContext {
+    const field = this.waterSandField;
+    if (field !== null) {
+      const capacity = field.particleRenderCapacity();
+      if (capacity > this.p012ParticleFrame.capacity) this.p012ParticleFrame = new P012ParticleRenderSnapshot(capacity);
+      field.copyParticleRenderSnapshot(this.p012ParticleFrame);
+    } else { this.p012ParticleFrame.active = false; this.p012ParticleFrame.count = 0; }
+
+    const sampleTimeMs = Date.now();
+    const frameDeltaMs = this.p012LastSampleTimeMs > 0
+      ? sampleTimeMs - this.p012LastSampleTimeMs : 16.7;
+    this.p012LastSampleTimeMs = sampleTimeMs;
+    this.p012FrameSerial++;
+    return {
+      renderFrameId: this.p012FrameSerial,
+      physicsCommitId: this.waterSandSnapshot?.physicsCommitId,
+      particleSnapshot: this.p012ParticleFrame,
+      particleLayerEnabled: this.p012Ablation !== P012Ablation.TRACER,
+      fieldEpoch: this.p012FieldEpoch,
+      continuityEpoch: this.p012ContinuityEpoch,
+      geometryEpoch: this.p012GeometryEpoch,
+      frameSerial: this.p012FrameSerial,
+      sampleTimeMs: sampleTimeMs,
+      frameDeltaMs: frameDeltaMs,
+      inputMode: this.testMode ? 'TEST' : 'EXPERIENCE',
+      sourceKind: this.testMode ? 'script' : 'sensor',
+      physicalRouteId: this.waterSandParams.routeId,
+      runIdentity: this.waterSandField?.getP011RunId() ?? '',
+      boxX: this.boxX,
+      boxY: this.boxY,
+      boxW: this.boxW,
+      boxH: this.boxH,
+      pixelRatio: 1,
+      visualInverted: this.waterSandVisualInverted,
+      appearanceTier: this.p012ParticleFrame.active && !this.waterSandSnapshotEnabled &&
+        this.p012AppearanceTier === P012AppearanceTier.OFF ? P012AppearanceTier.E :
+        !this.waterSandSnapshotEnabled && this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE &&
+        this.p012AppearanceTier === P012AppearanceTier.OFF ? P012AppearanceTier.E : this.p012AppearanceTier as P012AppearanceTier,
+      renderSeed: this.p012RenderSeed,
+      configRevision: this.p012ConfigRevision,
+      ablation: this.waterSandSnapshotEnabled ? this.p012Ablation
+        : this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE ? P012Ablation.TOPLIGHT
+        : this.p013.isOverlay() ? P012Ablation.OFF : this.p012Ablation,
+      fillBox: this.p012FillBox,
+      canonicalEvidence: this.waterSandSnapshotEnabled,
+      // falling-sand B-route §2.1: display gravity unit vector
+      // R(tilt)·(0,+1) derived from the SAME tilt state the physics
+      // consumes (this.tiltX — sensor/script/gesture all write it);
+      // forceInvert negates (180°). No second attitude source.
       gravityDirX: Math.sin(this.tiltX * Math.PI / 180) *
         (this.forceInvert ? -1 : 1),
       gravityDirY: Math.cos(this.tiltX * Math.PI / 180) *
@@ -3108,6 +3171,24 @@ struct SandCanvas {
           this.frame();
         })
 
+      if (this.p013OverlayVisible && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
+        XComponent({id: 'p013_lmat_surface', type: XComponentType.SURFACE, libraryname: 'p013renderer'})
+          .width('100%').height('100%')
+          .opacity(this.p013FrameVisible ? 1 : 0)
+          .hitTestBehavior(HitTestMode.None)
+          .onLoad(() => { this.p013.onLoad(); })
+          .onDestroy(() => { this.p013.release(); this.p013FrameVisible = false; })
+      }
+      if (this.renderMode === MODE_WATERSAND && !this.waterSandSnapshotEnabled) {
+        Button(['Canvas 基线', 'Canvas 顶光参考', 'GLES 透明 OFF', 'GLES 光场诊断'][this.p013Mode])
+          .fontSize(12).position({x: 20, y: 85})
+          .onClick(() => {
+            this.p013.setMode(((this.p013Mode + 1) % 4) as P013Mode);
+            this.p013FrameVisible = this.p013.diagnosticVisible;
+            this.p013Mode = this.p013.mode;
+            this.p013OverlayVisible = this.p013.isOverlay();
+          })
+      }
       Text(this.displayInfo)
         .fontSize(16)
         .fontColor('#FFFFFF')
@@ -3182,19 +3263,19 @@ struct SandCanvas {
           this.gestureRateClock.begin();
         })
         .onActionEnd(() => {
+          this.logWaterSand(`WS_EVENT pan_end ${JSON.stringify({
+            updates: this.panUpdateCount, localX: this.panLastLocalX, localY: this.panLastLocalY
+          })}`);
+          this.resetPanGestureBoundary();
           // Gesture end: the staged material flies out naturally — the
           // already-fed tracer points are NOT recalled (raise-hand
           // semantics, B design §4). No state to restore.
         })
         .onActionCancel(() => {
+          this.resetPanGestureBoundary();
           // Same as end: no recall of fed points; the queue keeps what
           // was staged (physics consumes it on the next substeps).
         })
     )
   }
 }
-          this.logWaterSand(`WS_EVENT pan_end ${JSON.stringify({
-            updates: this.panUpdateCount, localX: this.panLastLocalX, localY: this.panLastLocalY
-          })}`);
-          this.resetPanGestureBoundary();
-          this.resetPanGestureBoundary();

@@ -1,3 +1,4 @@
+import { P011ParticleRenderProjection } from '../common/P011ParticleRenderProjection';
 // P-012 表现层公共类型（architecture-P012.md §2 frameContext + §3 slot 字段）
 // 问题 ID：P-012；方案版本：p012-render-material-v1（E-batch）
 // 红线：只读物理场——本文件不 import 任何物理模块，不使用 any。
@@ -73,6 +74,10 @@ export type P012SourceKind = 'sensor' | 'gesture' | 'script';
 
 /** 页面→renderer 的显示契约（§2；全部为页面既有字段的只读副本） */
 export interface P012FrameContext {
+  renderFrameId?: number;
+  physicsCommitId?: number;
+  particleSnapshot?: P012ParticleRenderSnapshot;
+  particleLayerEnabled?: boolean;
   /** 物理实例重建/reset/注入/倒立等既有处理点递增；只用于断开视觉配对 */
   fieldEpoch: number;
   /** 连续性代次（reset/inject/invert/后台断档） */
@@ -311,4 +316,19 @@ export function validateP012AppearanceParams(p: P012AppearanceParams,
     return `configRevision=${p.configRevision} 非法（非负整数）`;
   }
   return null;
+}
+
+/** Reused post-commit particle view; candidate capacity/appearance are not frozen. */
+export class P012ParticleRenderSnapshot implements P011ParticleRenderProjection {
+  physicsCommitId: number = 0; particleRevision: number = 0; routeId: string | null = null;
+  active: boolean = false; count: number = 0; capacity: number; cols: number = 128;
+  readonly x: Float64Array; readonly y: Float64Array;
+  readonly vx: Float32Array; readonly vy: Float32Array; readonly mass: Float64Array;
+  readonly phase: Uint8Array; readonly state: Uint8Array; readonly particleId: Uint32Array;
+  constructor(capacity: number) {
+    this.capacity = capacity; this.x = new Float64Array(capacity); this.y = new Float64Array(capacity);
+    this.vx = new Float32Array(capacity); this.vy = new Float32Array(capacity);
+    this.mass = new Float64Array(capacity); this.phase = new Uint8Array(capacity);
+    this.state = new Uint8Array(capacity); this.particleId = new Uint32Array(capacity);
+  }
 }

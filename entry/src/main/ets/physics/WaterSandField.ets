@@ -1,3 +1,4 @@
+import { P011ParticleRenderProjection } from '../common/P011ParticleRenderProjection';
 /**
  * WaterSandField - P-003/P-005 scene 2 three-phase column model, algorithm v2.2.
  * Canonical ledger: waterTop/bh/bl/mh/ml/suspH/suspL; hs/hl/sandTop are derived.
@@ -721,6 +722,7 @@ export interface WaterSandSnapshot {
   moistureK?: number;
   moistureModelVersion?: string;
   particleState?: P011ParticleSnapshot | null;
+  physicsCommitId?: number;
 }
 
 const EPS = 1e-9;
@@ -874,6 +876,7 @@ export class WaterSandField {
   private endpointParticleEvents: string[] = [];
   // D2 owns the only production route gate and binds M1's fixed-buffer HOT
   // executor directly to these canonical field arrays. Null is route OFF.
+  private renderPhysicsCommitId: number = 0;
   private particleBinding: P011ParticleM2FieldBinding | null = null;
   private particleRouteId: string | null = null;
   private particleParams: P011ParticleParams | null = null;
@@ -1299,6 +1302,7 @@ export class WaterSandField {
 
   initialize(scene: WaterSandScene): void {
     this.validateScene(scene);
+    this.renderPhysicsCommitId++;
     this.waterTop.fill(0);
     this.bh.fill(0);
     this.bl.fill(0);
@@ -1727,6 +1731,7 @@ export class WaterSandField {
         this.sourceInjectedHeavy += totalH;
         this.sourceInjectedLight += totalL;
         this.sourceEpoch += 1;
+        this.renderPhysicsCommitId++;
         this.dormant = false; // injected material is in flight
         // CONS-04: a successful injection starts a new settling epoch for
         // both phases. Any t90 observed before this source epoch is invalid.
@@ -1916,6 +1921,7 @@ export class WaterSandField {
     this.suspL.set(newSuspL);
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.particleBinding.pool.invert180(this.capacity);
+      this.renderPhysicsCommitId++;
     }
     this.updateSandTop();
     this.shakeEnergy = Math.max(this.shakeEnergy, 0.8);
@@ -2285,6 +2291,7 @@ export class WaterSandField {
     this.endpointCaptureMode = mode;
   }
   private recordEndpointCommit(physicsDt: number): void {
+    this.renderPhysicsCommitId++;
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
     if (sampler === null) return;
@@ -3873,6 +3880,16 @@ export class WaterSandField {
     return target;
   }
 
+  particleRenderCapacity(): number { return this.particleParams === null ? 0 : this.particleParams.nmax; }
+  copyParticleRenderSnapshot(out: P011ParticleRenderProjection): P011ParticleRenderProjection {
+    out.physicsCommitId = this.renderPhysicsCommitId;
+    out.particleRevision = this.renderPhysicsCommitId;
+    out.active = this.particleRouteActive();
+    out.routeId = out.active ? this.particleRouteId : null;
+    out.cols = this.cols; out.count = 0;
+    if (out.active && this.particleBinding !== null) this.particleBinding.pool.copyRenderProjection(out);
+    return out;
+  }
   copyStateTo(target: WaterSandSnapshot): void {
     // S3: accept schema 2 (legacy consumers create v2 targets — the
     // optional moisture block is skipped on those) and 3.
@@ -3889,6 +3906,7 @@ export class WaterSandField {
       throw new WaterSandSnapshotError('snapshot array length mismatch');
     }
     this.updateSandTop();
+    target.physicsCommitId = this.renderPhysicsCommitId;
     target.waterTop.set(this.waterTop);
     target.bh.set(this.bh);
     target.bl.set(this.bl);

@@ -1,3 +1,4 @@
+import { P011ParticleRenderProjection } from '../common/P011ParticleRenderProjection';
 // P-011 D1-A / dual-field-particle-v1 (2026-10-24).
 // Isolated M1 foundations. No field, renderer, budget or guard ownership.
 export class P011ParticleStateMass {
@@ -803,6 +804,23 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       s.colParticleMassH.set(this.colParticleMassH); s.colParticleMassL.set(this.colParticleMassL);
     }
     return 0;
+  }
+  copyRenderProjection(out: P011ParticleRenderProjection): void {
+    if (out.capacity < this.nmax || out.x.length < this.nmax || out.y.length < this.nmax ||
+      out.vx.length < this.nmax || out.vy.length < this.nmax || out.mass.length < this.nmax ||
+      out.phase.length < this.nmax || out.state.length < this.nmax || out.particleId.length < this.nmax)
+      throw new Error('PARTICLE_RENDER_CAPACITY');
+    let count = 0;
+    for (let i = 0; i < this.nmax; i++) {
+      if (this.pState[i] === 0) continue;
+      out.x[count] = this.pX[i]; out.y[count] = this.pY[i];
+      out.vx[count] = this.pVx[i]; out.vy[count] = this.pVy[i];
+      out.mass[count] = this.pMass[i]; out.phase[count] = this.pPhase[i];
+      out.state[count] = this.pState[i]; out.particleId[count] = this.pId[i];
+      count++;
+    }
+    out.capacity = this.nmax;
+    out.count = count;
   }
   copyStateTo(out: P011ParticleSnapshot): void {
     if (out.nmax !== this.nmax || out.cols !== this.cols || out.pMass.length !== this.nmax ||

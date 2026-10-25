@@ -1,3 +1,4 @@
+import { P012ParticleLayer, P012ParticleSampler, P012ParticleCanvas } from './P012ParticleLayer';
 // P-012 表现层渲染器——E 档：光照与色调映射 + A 档：云雾/界面光学过渡
 // 问题 ID：P-012；方案版本：p012-render-material-v1（E-batch → EA-batch）
 // 职责：帧绘制编排（E 色调/伪法向光照/液面高光/亮粒 tile；A 界面散射带/
@@ -363,6 +364,9 @@ export class P012WaterSandRenderer {
    * 帧入口（§2）：同步读取页面刚完成 copyStateTo 的完整快照。
    * OFF/canonicalEvidence 由页面薄分发决定，不会进入本方法。
    */
+  readonly particleLayer: P012ParticleLayer = new P012ParticleLayer();
+  private particleWasActive: boolean = false;
+  particlePresentedSource: string = 'NONE';
   render(ctx: CanvasRenderingContext2D, snapshot: WaterSandSnapshot,
     frameContext: P012FrameContext): void {
     if (this.disposed) {
@@ -475,8 +479,18 @@ export class P012WaterSandRenderer {
     // 3.75) falling-sand B-route §3: tracer 喷流（B 颗粒之后、液面高光之前）
     //       —— 全程水区（遮蔽保证），不遮挡沙；ablation=TRACER 跳过
     //       （锚点测量 OFF 臂）。≤2 draw（H/L 群）。
-    if (frameContext.sandTracerEnabled &&
+    const particles = frameContext.particleSnapshot;
+    const particleActive = particles !== undefined && particles.active;
+    if (particleActive && !this.particleWasActive) this.sandTracer.clear();
+    this.particleWasActive = particleActive;
+    this.particlePresentedSource = 'NONE';
+    if (particles !== undefined && particleActive) {
+      drawCount += this.particleLayer.draw(particles, frameContext, new RendererTracerOcclusion(this, heightToY),
+        new RendererTracerDrawContext(ctx), this.capacity);
+      if (this.particleLayer.drawnCount > 0) this.particlePresentedSource = 'C_PARTICLE';
+    } else if (frameContext.sandTracerEnabled &&
       this.frameAblation !== P012Ablation.TRACER) {
+      this.particlePresentedSource = 'B_TRACER';
       drawCount += this.drawSandTracers(ctx, view, heightToY,
         colW, boxX, boxY, boxW, boxH, frameContext);
     }
@@ -2440,7 +2454,7 @@ interface P012GrainBand {
 /** B-route §2.3: occlusion view bound to the renderer's display
  * profiles (ArkTS: interfaces need class implementations, no object
  * literals with function properties). */
-class RendererTracerOcclusion implements P012TracerOcclusionView {
+class RendererTracerOcclusion implements P012TracerOcclusionView, P012ParticleSampler {
   private readonly owner: P012WaterSandRenderer;
   private readonly heightToYFn: (h: number) => number;
   readonly fogBandHalfPx: number;
@@ -2466,7 +2480,7 @@ class RendererTracerOcclusion implements P012TracerOcclusionView {
 
 /** B-route §3: draw-context adapter (CanvasRenderingContext2D is not
  * structurally assignable to the tracer's minimal surface under ArkTS). */
-class RendererTracerDrawContext implements P012TracerDrawContext {
+class RendererTracerDrawContext implements P012TracerDrawContext, P012ParticleCanvas {
   private readonly ctx: CanvasRenderingContext2D;
 
   constructor(ctx: CanvasRenderingContext2D) {
