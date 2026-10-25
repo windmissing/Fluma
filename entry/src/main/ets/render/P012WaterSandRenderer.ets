@@ -1,3 +1,5 @@
+import { P013CanvasAssetExport, p013Sha256 } from './preparation/P013CanvasAssetExport';
+import { P013PreparedMetadata, P013PreparedBundle } from './preparation/P013MaterialPreparation';
 import { P012ParticleLayer, P012ParticleSampler, P012ParticleCanvas } from './P012ParticleLayer';
 // P-012 表现层渲染器——E 档：光照与色调映射 + A 档：云雾/界面光学过渡
 // 问题 ID：P-012；方案版本：p012-render-material-v1（E-batch → EA-batch）
@@ -217,6 +219,34 @@ export function p012E3QDirty(prevH: number, prevL: number, qh: number, ql: numbe
 }
 
 export class P012WaterSandRenderer {
+  private materialExportEnabled: boolean = false;
+  private materialExportScale: number = 0;
+  private readonly materialAssetExport: P013CanvasAssetExport = new P013CanvasAssetExport();
+  prepareMaterialAssetExport(pxPerMaterial: number): void {
+    if (!Number.isFinite(pxPerMaterial) || pxPerMaterial <= 0) throw new Error('MATERIAL_GEOMETRY');
+    this.materialExportEnabled = true; this.materialExportScale = pxPerMaterial;
+    this.buildGrainBitmapsFor(this.activeAppearance.grainSigma);
+    this.buildStratBitmapsFor(this.activeAppearance.strataLambdaMaterial,this.activeAppearance.strataStrengthScale,pxPerMaterial);
+  }
+  exportMaterialAssets(metadata: P013PreparedMetadata): P013PreparedBundle {
+    // Existing generators use fixed phase seeds 20261022..27, recorded in version.
+    metadata.assetGeneratorVersion = 'P012_CANVAS_SEEDS_20261022_27_V1';
+    metadata.assetGenerationParameters = JSON.stringify({grainSeeds:[20261022,20261023,20261024],
+      strataSeeds:[20261025,20261026,20261027],grainSigma:this.activeAppearance.grainSigma,
+      grainFeaturePx:this.activeAppearance.grainFeaturePx,strataStrengthScale:this.activeAppearance.strataStrengthScale,
+      nominalLambdaMaterial:this.activeAppearance.strataLambdaMaterial,pxPerMaterial:this.materialExportScale});
+    metadata.effectiveLambdaCanvasPx = this.stratLamPx;
+    metadata.effectiveLambdaMaterial = this.stratLamPx / this.materialExportScale;
+    metadata.warpRangeCycles = P012_C_WARP_RANGE;
+    const p = this.palette;
+    const palette = new Uint8Array([p.heavyR,p.heavyG,p.heavyB,p.lightR,p.lightG,p.lightB]);
+    metadata.paletteHash = p013Sha256(palette);
+    // Approved low-palette bundle only; never silently relabel a different palette.
+    if (palette[0]!==145 || palette[1]!==168 || palette[2]!==111 || palette[3]!==216 || palette[4]!==196 || palette[5]!==150)
+      throw new Error('MATERIAL_PALETTE_UNSUPPORTED');
+    return this.materialAssetExport.bundle(metadata);
+  }
+
   private readonly adapter: P012WaterSandAdapter;
   private readonly palette: P012Palette = p012DefaultPalette();
   /** 显示 mask 用的平滑 profile（承接既有平滑，绝不覆盖 mass/raw 边界） */
@@ -682,6 +712,7 @@ export class P012WaterSandRenderer {
 
   /** buildGrainBitmaps 的参数化版（sigma 直接替换常量位） */
   private buildGrainBitmapsFor(sigma: number): void {
+    this.materialAssetExport.clear('grain');
     try {
       if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
         return;                          // Node 通道：tile 已更新，bitmap 留 null
@@ -715,6 +746,7 @@ export class P012WaterSandRenderer {
         data[i * 4 + 2] = this.clamp255(baseB + delta);
         data[i * 4 + 3] = 255;
       }
+      if (this.materialExportEnabled) this.materialAssetExport.capture('grain', tile === this.grainTileH ? 0 : tile === this.grainTileL ? 1 : 2, data);
       octx.putImageData(img, 0, 0);
       return off.transferToImageBitmap();
     } catch (e) {
@@ -725,6 +757,7 @@ export class P012WaterSandRenderer {
   /** buildStratBitmaps 的参数化版（nominal λ + 强度 scale；整周期对齐不动） */
   private buildStratBitmapsFor(nominalLambda: number, strengthScale: number,
     pxPerMaterial: number): void {
+    this.materialAssetExport.clear('strata');
     if (pxPerMaterial <= 0) {
       return;                            // 几何未定：延迟到首帧 buildStratBitmaps 兜底
     }
@@ -1162,6 +1195,7 @@ export class P012WaterSandRenderer {
 
   /** 生成 3 张预着色颗粒 ImageBitmap（on-device）；Node/canvas 缺失则 bitmap=null。 */
   private buildGrainBitmaps(): void {
+    this.materialAssetExport.clear('grain');
     let ocKind = 'none';
     try {
       if (typeof OffscreenCanvas === 'undefined' || OffscreenCanvas === null) {
@@ -1210,6 +1244,7 @@ export class P012WaterSandRenderer {
         data[i * 4 + 2] = this.clamp255(baseB + delta);
         data[i * 4 + 3] = pxAlpha;
       }
+      if (this.materialExportEnabled) this.materialAssetExport.capture('grain', tile === this.grainTileH ? 0 : tile === this.grainTileL ? 1 : 2, data);
       octx.putImageData(img, 0, 0);
       const bmp = off.transferToImageBitmap();
       hilog.info(0x0000, 'P012', 'grain: makeGrainBitmap ok=' + (bmp === null ? 'null' : 'ok'));
@@ -1539,6 +1574,7 @@ export class P012WaterSandRenderer {
           data[idx + 3] = 255;
         }
       }
+      if (this.materialExportEnabled) this.materialAssetExport.capture('strata', noise === this.stratNoiseH ? 0 : noise === this.stratNoiseL ? 1 : 2, data);
       octx.putImageData(img, 0, 0);
       const bmp = off.transferToImageBitmap();
       return bmp;

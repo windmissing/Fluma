@@ -18,6 +18,7 @@ export class P013PreparedMetadata extends P013MaterialVersions {
   grainHash: string = '';
   strataHash: string = '';
   assetGeneratorVersion: string = '';
+  assetGenerationParameters?: string;
   grainWidth: number = 256;
   grainHeight: number = 256;
   strataWidth: number = 64;
@@ -32,8 +33,14 @@ export class P013PreparedMetadata extends P013MaterialVersions {
 export class P013PreparedBundle {
   readonly status: string = 'PREPARED_NOT_DEVICE_VALIDATED';
   readonly productEnabled: boolean = false;
-  constructor(readonly metadata: P013PreparedMetadata, readonly grain: Uint8Array,
-    readonly strata: Uint8Array, readonly contentFingerprint: string) {}
+  readonly metadata: P013PreparedMetadata;
+  readonly grain: Uint8Array;
+  readonly strata: Uint8Array;
+  readonly contentFingerprint: string;
+  constructor(metadata: P013PreparedMetadata, grain: Uint8Array,
+    strata: Uint8Array, contentFingerprint: string) {
+    this.metadata=metadata;this.grain=grain;this.strata=strata;this.contentFingerprint=contentFingerprint;
+  }
 }
 export function p013PreparationFingerprint(bytes: Uint8Array): string {
   // Content checksum for deterministic offline assembly, not a cryptographic hash.
