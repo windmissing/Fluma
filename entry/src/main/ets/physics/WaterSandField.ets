@@ -1527,6 +1527,17 @@ export class WaterSandField {
         return null;
       }
       sumH += qH;
+  private gestureSandEventSink: ((receipt: P011InjectionReceipt) => void) | null = null;
+  private shakeLiftEventSink: ((lifted: number, columns: number) => void) | null = null;
+
+  /** Cold-path telemetry hooks installed by SandCanvas; no payload allocation in physics HOT loops. */
+  setGestureSandEventSink(sink: ((receipt: P011InjectionReceipt) => void) | null): void {
+    this.gestureSandEventSink = sink;
+  }
+
+  setShakeLiftEventSink(sink: ((lifted: number, columns: number) => void) | null): void {
+    this.shakeLiftEventSink = sink;
+  }
       sumL += qL;
     }
     if (sumH <= 0 && sumL <= 0) {
@@ -1554,7 +1565,7 @@ export class WaterSandField {
     }
     if (!anyWet) {
       this.restoreBackup();
-      return this.gestureReceipt(request, 0, 0, 'NO_WATER');
+      return this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'NO_WATER'));
     }
     // 3. Unified λ admission (trial 1 -> global bound -> eta solve ->
     //    halve on failure, ≤8 retries, λmin 1e-4).
@@ -1611,7 +1622,7 @@ export class WaterSandField {
         this.t90Heavy = -1;
         this.t90Light = -1;
         this.updateSandTop();
-        return this.gestureReceipt(request, totalH, totalL, null);
+        return this.emitGestureSandReceipt(this.gestureReceipt(request, totalH, totalL, null));
       }
       // 6. Audit/eta failure -> rollback, halve λ, retry.
       this.restoreBackup();
@@ -1622,7 +1633,14 @@ export class WaterSandField {
     }
     // λ exhausted: full rollback + CAPACITY_BLOCKED (admitted may be ~0).
     this.restoreBackup();
-    return this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED');
+    return this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED'));
+  }
+
+  private emitGestureSandReceipt(receipt: P011InjectionReceipt): P011InjectionReceipt {
+    if (this.gestureSandEventSink !== null) {
+      this.gestureSandEventSink(receipt);
+    }
+    return receipt;
   }
 
   /** Assemble the B-contract receipt (nine fields, §1.2). */
@@ -3677,6 +3695,8 @@ export class WaterSandField {
     this.bh.set(this.motionSnapshot.bh);
     this.bl.set(this.motionSnapshot.bl);
     this.mh.set(this.motionSnapshot.mh);
+      sourceInjectedHeavy: this.sourceInjectedHeavy,
+      sourceInjectedLight: this.sourceInjectedLight,
     this.ml.set(this.motionSnapshot.ml);
     this.suspH.set(this.motionSnapshot.suspH);
     this.suspL.set(this.motionSnapshot.suspL);
@@ -6216,6 +6236,9 @@ export class WaterSandField {
       maximum = Math.max(maximum, Math.abs(this.sandTopScratch[c + 1] - this.sandTopScratch[c]));
     }
     return Math.atan(maximum) * 180 / Math.PI;
+    if (liftedTotal > EPS && this.shakeLiftEventSink !== null) {
+      this.shakeLiftEventSink(liftedTotal, liftedColumns);
+    }
   }
 
   private maxCurvature(): number {

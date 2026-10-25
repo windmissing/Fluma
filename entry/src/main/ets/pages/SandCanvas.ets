@@ -39,6 +39,26 @@ import {
 
 /** 帧回调适配：postFrameCallback 需要传入 FrameCallback 子类实例 */
 class MyFrameCallback extends FrameCallback {
+interface P011GestureSandRequested {
+  heavy: number;
+  light: number;
+}
+
+interface P011GestureSandEvent {
+  sourceId: number;
+  sequence: number;
+  inputTime: number;
+  requested: P011GestureSandRequested;
+  admittedH: number;
+  admittedL: number;
+  rejectedReason: string | null;
+}
+
+interface P011ShakeLiftEvent {
+  lifted: number;
+  columns: number;
+}
+
   owner: SandCanvas | null = null;
   onFrame(frameTimeInNano: number): void {
     if (this.owner !== null) {
@@ -1317,6 +1337,15 @@ struct SandCanvas {
       if (this.fpsTime >= 500) {
         this.fps = Math.round(this.frameCount * 1000 / this.fpsTime);
         this.frameCount = 0;
+    this.waterSandShakeInput = this.liquidShakeInput;
+    if (this.renderMode === MODE_WATERSAND) {
+      this.waterSandField?.setShakeInput(this.waterSandShakeInput);
+      if (this.waterSandShakeInput > 0) {
+        this.logWaterSand(`WS_EVENT shake ${JSON.stringify({
+          input: this.waterSandShakeInput, boundary: true, source: 'WANT'
+        })}`);
+      }
+    }
         this.fpsTime = 0;
         this.displayInfo = `FPS=${this.fps}`;
       }
@@ -1648,6 +1677,7 @@ struct SandCanvas {
     this.waterSandParams.vSandTopMax = this.waterSandVSandTopMax;
     if (this.waterSandPreset === 'thick') {
       this.waterSandParams.angleDeg = 4;
+    this.installWaterSandTelemetryHooks();
       this.waterSandParams.maxAvalancheFlux = 80;
       this.waterSandParams.bottomCreepRate = 96;
     }
@@ -1673,6 +1703,9 @@ struct SandCanvas {
       vH: this.waterSandParams.heavySettleSpeed,
       vL: this.waterSandParams.lightSettleSpeed,
       liftHRate: this.waterSandParams.heavyLiftRate,
+    this.installWaterSandTelemetryHooks();
+    this.waterSandField.setShakeInput(this.renderMode === MODE_WATERSAND
+      ? this.waterSandShakeInput : 0);
       liftLRate: this.waterSandParams.lightLiftRate,
       shakeRampRate: this.waterSandParams.shakeRampRate,
       vSandTopMax: this.waterSandParams.vSandTopMax,
@@ -2288,6 +2321,10 @@ struct SandCanvas {
       this.lastPanRouteTime = now;
       return; // first event: establish the rate clock, no amount yet
     }
+  private panUpdateCount = 0;
+  private panLastLocalX = 0;
+  private panLastLocalY = 0;
+  private panLastEventAccepted = false;
     const dtSec = Math.max(0, Math.min(1, (now - this.lastPanRouteTime) / 1000));
     this.lastPanRouteTime = now;
     if (dtSec <= 0) {
@@ -2322,9 +2359,14 @@ struct SandCanvas {
       qL[c] = total * (1 - SandCanvas.SAND_HEAVY_SHARE) * share;
     }
     this.gestureSequence += 1;
+    this.panLastLocalX = localX;
+    this.panLastLocalY = localY;
+    this.panUpdateCount++;
     this.stageGestureSandAndFeed({
+      this.panLastEventAccepted = false;
       perColumnHeavy: qH,
       perColumnLight: qL,
+    this.panLastEventAccepted = true;
       sourceId: this.gestureSourceId,
       sequence: this.gestureSequence,
       inputTime: now,
@@ -2398,6 +2440,42 @@ struct SandCanvas {
       // R(tilt)·(0,+1) derived from the SAME tilt state the physics
       // consumes (this.tiltX — sensor/script/gesture all write it);
       // forceInvert negates (180°). No second attitude source.
+  private installWaterSandTelemetryHooks(): void {
+    const field = this.waterSandField;
+    if (field === null) {
+      return;
+    }
+    field.setGestureSandEventSink((receipt) => {
+      const requested: P011GestureSandRequested = {
+        heavy: receipt.requestedH, light: receipt.requestedL
+      };
+      const event: P011GestureSandEvent = {
+        sourceId: receipt.sourceId, sequence: receipt.sequence,
+        inputTime: receipt.inputTime,
+        requested: requested,
+        admittedH: receipt.admittedH, admittedL: receipt.admittedL,
+        rejectedReason: receipt.rejectedReason
+      };
+      this.logWaterSand(`WS_EVENT gesture_sand ${JSON.stringify(event)}`);
+    });
+    field.setShakeLiftEventSink((lifted, columns) => {
+      const event: P011ShakeLiftEvent = { lifted: lifted, columns: columns };
+      this.logWaterSand(`WS_EVENT shake_lift ${JSON.stringify(event)}`);
+    });
+  }
+
+  private resetPanGestureBoundary(): void {
+    this.lastPanRouteTime = 0;
+    this.lastPanLocalX = 0;
+    this.lastPanLocalY = 0;
+    this.gestureSourceId++;
+    this.gestureSequence = 0;
+    this.panUpdateCount = 0;
+    this.panLastLocalX = 0;
+    this.panLastLocalY = 0;
+    this.panLastEventAccepted = false;
+  }
+
       gravityDirX: Math.sin(this.tiltX * Math.PI / 180) *
         (this.forceInvert ? -1 : 1),
       gravityDirY: Math.cos(this.tiltX * Math.PI / 180) *
@@ -3085,11 +3163,25 @@ struct SandCanvas {
       // channel (freshScriptCommand), which this gesture never touched.
       PanGesture()
         .onActionUpdate((e: GestureEvent) => {
-          this.routeGestureSand(e.fingerList.length > 0
-            ? e.fingerList[0].localX : e.offsetX + this.lastPanLocalX,
-            e.fingerList.length > 0
-              ? e.fingerList[0].localY : e.offsetY + this.lastPanLocalY,
-            e.timestamp);
+          if (e.fingerList.length === 0) {
+            this.panUpdateCount++;
+            this.panLastEventAccepted = false;
+            this.logWaterSand(`WS_EVENT pan_update ${JSON.stringify({
+              count: this.panUpdateCount, localX: this.panLastLocalX,
+              localY: this.panLastLocalY, coordinateSource: 'missing_finger', accepted: false
+            })}`);
+            return;
+          }
+          this.routeGestureSand(e.fingerList[0].localX,
+            e.fingerList[0].localY, e.timestamp);
+          this.logWaterSand(`WS_EVENT pan_update ${JSON.stringify({
+            count: this.panUpdateCount, localX: this.panLastLocalX,
+            localY: this.panLastLocalY, coordinateSource: 'finger_local',
+            accepted: this.panLastEventAccepted
+          })}`);
+        })
+        .onActionStart(() => {
+          this.resetPanGestureBoundary();
         })
         .onActionEnd(() => {
           // Gesture end: the staged material flies out naturally — the
@@ -3103,3 +3195,8 @@ struct SandCanvas {
     )
   }
 }
+          this.logWaterSand(`WS_EVENT pan_end ${JSON.stringify({
+            updates: this.panUpdateCount, localX: this.panLastLocalX, localY: this.panLastLocalY
+          })}`);
+          this.resetPanGestureBoundary();
+          this.resetPanGestureBoundary();

@@ -93,6 +93,51 @@ function snapshotState(field) {
 
 describe('injectGestureSand (gesture-sand-inject-phys §6.2)', () => {
 
+  it('emits one receipt event per admitted and rejected transaction; metrics expose cumulative admission', 0, () => {
+    const field = makeField();
+    const events = [];
+    field.setGestureSandEventSink(receipt => events.push(receipt));
+    const admitted = field.injectGestureSand(request(2, 3, 41));
+    assert.ok(admitted && admitted.admittedH > 0 && admitted.admittedL > 0);
+    const rejectedRequest = request(2, 3, 42);
+    for (let c = 0; c < COLS; c++) {
+      rejectedRequest.perColumnHeavy[c] = 0;
+      rejectedRequest.perColumnLight[c] = 0;
+    }
+    rejectedRequest.perColumnHeavy[0] = 2;
+    rejectedRequest.perColumnLight[0] = 3;
+    field.waterTop[0] = field.sandTopScratch[0];
+    const rejected = field.injectGestureSand(rejectedRequest);
+    assert.equal(rejected.rejectedReason, 'NO_WATER');
+    assert.equal(events.length, 2);
+    assert.equal(events[0].sequence, 41);
+    assert.equal(events[1].sequence, 42);
+    assert.equal(events[1].rejectedReason, 'NO_WATER');
+    const metrics = field.getMetrics();
+    assert.equal(metrics.sourceInjectedHeavy, admitted.admittedH);
+    assert.equal(metrics.sourceInjectedLight, admitted.admittedL);
+  });
+
+  it('shake lift telemetry reports actual lifted quantity and column count', 0, () => {
+    const field = makeField();
+    const events = [];
+    field.setShakeLiftEventSink((amount, columns) => events.push({ amount, columns }));
+    field.shakeEnergy = 0.8;
+    field.riseRequestAmounts.fill(0);
+    field.collectingTotalMotionRequests = false;
+    field.sandTopScratch.fill(1);
+    field.waterTop.fill(300);
+    field.mh.fill(0.5);
+    field.ml.fill(0.5);
+    field.riseRequestAmounts.fill(0.05);
+    field.substepMotionBudgetRemaining.fill(1);
+    field.totalMotionBudgetRemaining = 10;
+    field.liftByShake(1 / 60);
+    assert.equal(events.length, 1);
+    assert.ok(events[0].amount > 0);
+    assert.ok(events[0].columns > 0);
+  });
+
   // 1) Conservation closure: 50 random injections, drift < 1e-9,
   //    water total change == 0.
   it('p011_gsi_conservationClosure', 0, () => {
