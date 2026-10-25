@@ -1,6 +1,7 @@
 // P-011 D1-R3 S0/S1: fixed-capacity HOT workspace and pure dual collect.
 // This module deliberately has no renderer or WaterSandField dependency.
 import { P011ParticleField, P011ParticleParams, P011ParticleSnapshot } from './P011ParticleField';
+import { P011ParticleHotBudgetAdapter } from './P011ParticleHotBudget';
 
 export const P011_HOT_OK = 0;
 export const P011_HOT_NOT_CONFIGURED = 1;
@@ -36,6 +37,18 @@ export interface P011ParticleHotFieldBuffer {
   readonly mh: Float64Array; readonly ml: Float64Array;
   readonly suspH: Float64Array; readonly suspL: Float64Array; readonly surface: Float64Array;
   sourceInjectedH: number; sourceInjectedL: number; sourceEpoch: number;
+}
+export interface P011ParticleHotStepInput {
+  runToken: number; substepId: number; attemptToken: number; dt: number; effectiveTiltRad: number;
+  seed: number; paramsRevision: number; inputRevision: number; field: P011ParticleHotFieldBuffer;
+}
+export interface P011ParticleHotCommitSink {
+  applyInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, plan: P011ParticleHotPlanBuffer,
+    row: number, results: P011ParticleHotResultBuffer): number;
+}
+export interface P011ParticleHotSinkCheckpoint {
+  saveOutsHot(): void;
+  restoreOutsHot(): void;
 }
 
 export class P011ParticleHotPlanBuffer {
@@ -102,6 +115,7 @@ export class P011ParticleHotPlanBuffer {
 }
 
 export class P011ParticleHotResultBuffer {
+  readonly capacity: number; private readonly storage: ArrayBuffer[];
   ownerId = 0; stepEpoch = 0; resultCount = 0; status = P011_HOT_OK;
   readonly committed: Uint8Array; readonly disposition: Uint8Array; readonly released: Uint8Array;
   readonly rowStatus: Int32Array; readonly guardIndex: Int32Array;
@@ -110,6 +124,7 @@ export class P011ParticleHotResultBuffer {
   readonly budgetClipped: Float64Array; readonly guardRejected: Float64Array;
   readonly capacityClipped: Float64Array; readonly poolClipped: Float64Array; readonly massAfter: Float64Array;
   constructor(capacity: number) {
+    this.capacity = capacity;
     this.committed = new Uint8Array(capacity); this.disposition = new Uint8Array(capacity);
     this.released = new Uint8Array(capacity); this.rowStatus = new Int32Array(capacity);
     this.guardIndex = new Int32Array(capacity); this.eventBegin = new Int32Array(capacity);
@@ -117,12 +132,31 @@ export class P011ParticleHotResultBuffer {
     this.remainder = new Float64Array(capacity); this.budgetClipped = new Float64Array(capacity);
     this.guardRejected = new Float64Array(capacity); this.capacityClipped = new Float64Array(capacity);
     this.poolClipped = new Float64Array(capacity); this.massAfter = new Float64Array(capacity);
+    this.storage = [this.committed.buffer, this.disposition.buffer, this.released.buffer, this.rowStatus.buffer, this.guardIndex.buffer, this.eventBegin.buffer, this.eventCount.buffer, this.granted.buffer, this.remainder.buffer, this.budgetClipped.buffer, this.guardRejected.buffer, this.capacityClipped.buffer, this.poolClipped.buffer, this.massAfter.buffer];
+  }
+  storageValidHot(): boolean {
+    return this.committed.buffer === this.storage[0] && this.committed.length === this.capacity &&
+      this.disposition.buffer === this.storage[1] && this.disposition.length === this.capacity &&
+      this.released.buffer === this.storage[2] && this.released.length === this.capacity &&
+      this.rowStatus.buffer === this.storage[3] && this.rowStatus.length === this.capacity &&
+      this.guardIndex.buffer === this.storage[4] && this.guardIndex.length === this.capacity &&
+      this.eventBegin.buffer === this.storage[5] && this.eventBegin.length === this.capacity &&
+      this.eventCount.buffer === this.storage[6] && this.eventCount.length === this.capacity &&
+      this.granted.buffer === this.storage[7] && this.granted.length === this.capacity &&
+      this.remainder.buffer === this.storage[8] && this.remainder.length === this.capacity &&
+      this.budgetClipped.buffer === this.storage[9] && this.budgetClipped.length === this.capacity &&
+      this.guardRejected.buffer === this.storage[10] && this.guardRejected.length === this.capacity &&
+      this.capacityClipped.buffer === this.storage[11] && this.capacityClipped.length === this.capacity &&
+      this.poolClipped.buffer === this.storage[12] && this.poolClipped.length === this.capacity &&
+      this.massAfter.buffer === this.storage[13] && this.massAfter.length === this.capacity;
   }
 }
 
 // Fixed action/event rows. Births and merges are staged here before publish.
 export class P011ParticleHotEventBuffer {
+  readonly capacity: number; readonly lineageCapacity: number;
   count = 0; lineageCount = 0;
+  ownerId = 0; runToken = 0; stepEpoch = 0; substepId = 0; attemptToken = 0;
   readonly kind: Uint8Array; readonly phase: Uint8Array; readonly sourceKind: Uint8Array;
   readonly flag: Uint8Array; readonly remainderDisposition: Uint8Array;
   readonly particleId: Uint32Array; readonly sourceId: Uint32Array;
@@ -133,7 +167,14 @@ export class P011ParticleHotEventBuffer {
   readonly x: Float64Array; readonly y: Float64Array; readonly vx: Float64Array; readonly vy: Float64Array;
   readonly deltaS: Float64Array; readonly budgetLocal: Float64Array; readonly budgetTotal: Float64Array;
   readonly budgetBottom: Float64Array;
-  constructor(readonly capacity: number, readonly lineageCapacity: number) {
+  readonly budgetClipped: Float64Array; readonly guardRejected: Float64Array;
+  readonly capacityClipped: Float64Array; readonly poolClipped: Float64Array;
+  readonly toSuspH: Float64Array; readonly toSuspL: Float64Array;
+  readonly guardCount: Int32Array; readonly guardLimitingEdge: Int32Array; readonly guardAllLegal: Uint8Array;
+  readonly guardAccepted: Float64Array; readonly guardRejectedAmount: Float64Array;
+  readonly guardEdgeId: Int32Array; readonly guardResidual: Float64Array; readonly guardInfluence: Float64Array;
+  constructor(capacity: number, lineageCapacity: number) {
+    this.capacity = capacity; this.lineageCapacity = lineageCapacity;
     this.kind = new Uint8Array(capacity); this.phase = new Uint8Array(capacity); this.sourceKind = new Uint8Array(capacity);
     this.flag = new Uint8Array(capacity); this.remainderDisposition = new Uint8Array(capacity);
     this.particleId = new Uint32Array(capacity); this.sourceId = new Uint32Array(capacity);
@@ -146,6 +187,13 @@ export class P011ParticleHotEventBuffer {
     this.vx = new Float64Array(capacity); this.vy = new Float64Array(capacity); this.deltaS = new Float64Array(capacity);
     this.budgetLocal = new Float64Array(capacity); this.budgetTotal = new Float64Array(capacity);
     this.budgetBottom = new Float64Array(capacity);
+    this.budgetClipped = new Float64Array(capacity); this.guardRejected = new Float64Array(capacity);
+    this.capacityClipped = new Float64Array(capacity); this.poolClipped = new Float64Array(capacity);
+    this.toSuspH = new Float64Array(capacity); this.toSuspL = new Float64Array(capacity);
+    this.guardCount = new Int32Array(capacity); this.guardLimitingEdge = new Int32Array(capacity);
+    this.guardAllLegal = new Uint8Array(capacity); this.guardAccepted = new Float64Array(capacity);
+    this.guardRejectedAmount = new Float64Array(capacity); this.guardEdgeId = new Int32Array(3 * capacity);
+    this.guardResidual = new Float64Array(3 * capacity); this.guardInfluence = new Float64Array(3 * capacity);
   }
 }
 
@@ -168,6 +216,17 @@ export class P011ParticleHotWorkspace {
   readonly patchScratch: P011ParticleSnapshot; readonly patchActions: P011ParticleHotEventBuffer;
   readonly seenRequests: P011ParticleHotPlanBuffer;
   readonly patchRequest: P011ParticleHotPlanBuffer;
+  readonly patchOriginal: P011ParticleHotPlanBuffer;
+  stagedYActive = 0; stagedY = 0;
+  readonly events: P011ParticleHotEventBuffer;
+  readonly validationRows: Int32Array; readonly auditMassH: Float64Array; readonly auditMassL: Float64Array;
+  readonly auditSlots: Uint8Array;
+  budget: P011ParticleHotBudgetAdapter | null = null;
+  commitSink: P011ParticleHotCommitSink | null = null;
+  sinkCheckpoint: P011ParticleHotSinkCheckpoint | null = null;
+  stepExternalH = 0; stepExternalL = 0;
+  readonly hotContractVersion = 1;
+  failureStatus = 0; failureOrdinal = 0; failureAttemptToken = 0;
   field: P011ParticleHotFieldBuffer | null = null;
   patchPlan: P011ParticleHotPlanBuffer | null = null; patchRow = -1;
   requestCapacity: number; motionCapacity: number; eventCapacity: number; lineageCapacity: number;
@@ -219,7 +278,19 @@ export class P011ParticleHotWorkspace {
     this.patchActions = new P011ParticleHotEventBuffer(config.eventCapacity, config.lineageCapacity);
     this.seenRequests = new P011ParticleHotPlanBuffer(config.requestCapacity, 1, 2 * config.requestCapacity);
     this.patchRequest = new P011ParticleHotPlanBuffer(1, 1, 2);
+    this.patchOriginal = new P011ParticleHotPlanBuffer(1, 1, 2);
+    this.events = new P011ParticleHotEventBuffer(config.eventCapacity, config.lineageCapacity);
+    this.validationRows = new Int32Array(config.requestCapacity + 1);
+    this.auditMassH = new Float64Array(config.cols); this.auditMassL = new Float64Array(config.cols);
+    this.auditSlots = new Uint8Array(config.nmax);
   }
+  get activePatchState(): number { return this.patchState; }
+  get requestCount(): number { return this.planA.requestCount; }
+  get motionCount(): number { return this.planA.motionCount; }
+  get resultCount(): number { return this.results.resultCount; }
+  get eventCount(): number { return this.events.count; }
+  get lineageCount(): number { return this.events.lineageCount; }
+  get hotStatus(): number { return this.lastStatus; }
   copyStateToHot(out: P011ParticleSnapshot): number {
     if (out.nmax !== this.nmax || out.cols !== this.cols || out.pMass.length !== this.nmax ||
       out.pX.length !== this.nmax || out.pY.length !== this.nmax || out.pVx.length !== this.nmax ||
@@ -254,10 +325,7 @@ export function warmUpHot(work: P011ParticleHotWorkspace): number {
   return P011_HOT_OK;
 }
 
-export function beginStepHot(work: P011ParticleHotWorkspace, input: {
-  runToken: number; substepId: number; attemptToken: number; dt: number; effectiveTiltRad: number;
-  seed: number; paramsRevision: number; inputRevision: number; field: P011ParticleHotFieldBuffer;
-}): number {
+export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {
   if (work.configured !== 1) return work.lastStatus = P011_HOT_NOT_CONFIGURED;
   if (work.active !== 0) return work.lastStatus = P011_HOT_STEP_BUSY;
   const f = input.field; const c = work.cols;
@@ -283,6 +351,10 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: {
   if (work.stepEpoch >= Number.MAX_SAFE_INTEGER) return work.lastStatus = P011_HOT_TOKEN_EXHAUSTED;
   const poolStatus = work.pool.transferHotState(work.frozenPool, false);
   if (poolStatus !== P011_HOT_OK) return work.lastStatus = poolStatus;
+  if (work.budget !== null) {
+    const budgetStatus = work.budget.beginHot(work.stepEpoch + 1, input.dt);
+    if (budgetStatus !== 0) return work.lastStatus = budgetStatus;
+  }
   work.stepEpoch++;
   work.runToken = input.runToken; work.substepId = input.substepId; work.attemptToken = input.attemptToken;
   work.dt = input.dt; work.effectiveTiltRad = input.effectiveTiltRad; work.seed = input.seed;
@@ -297,6 +369,11 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: {
   work.fieldBeforeMh.set(f.mh); work.fieldBeforeMl.set(f.ml); work.fieldBeforeSuspH.set(f.suspH);
   work.fieldBeforeSuspL.set(f.suspL); work.fieldBeforeSurface.set(f.surface);
   work.active = 1; work.lastStatus = P011_HOT_OK; work.errorStageCode = 0;
+  work.events.count = 0; work.events.lineageCount = 0; work.stepExternalH = 0; work.stepExternalL = 0;
+  work.events.ownerId = work.ownerId; work.events.runToken = work.runToken; work.events.stepEpoch = work.stepEpoch;
+  work.events.substepId = work.substepId; work.events.attemptToken = work.attemptToken;
+  if (work.sinkCheckpoint !== null) work.sinkCheckpoint.saveOutsHot();
+  work.stagedYActive = 0;
   work.seenEpochBefore.set(work.seenEpoch);
   work.planA.requestCount = 0; work.planA.motionCount = 0; work.planA.totalRequested = 0;
   work.planB.requestCount = 0; work.planB.motionCount = 0; work.planB.totalRequested = 0;
@@ -313,6 +390,9 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
   const restored = work.pool.transferHotState(work.frozenPool, true);
   if (restored !== P011_HOT_OK) return work.lastStatus = restored;
+  if (work.budget !== null) {
+    const status = work.budget.rollbackHot(expectedStepEpoch); if (status !== 0) return work.lastStatus = status;
+  }
   const field = work.field;
   if (field !== null) {
     field.waterTop.set(work.fieldBeforeWaterTop); field.bh.set(work.fieldBeforeBh); field.bl.set(work.fieldBeforeBl);
@@ -323,6 +403,9 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
   work.activePatchToken = 0; work.activePatchStepEpoch = 0; work.activePatchOrdinal = 0; work.patchState = 0;
   work.patchPlan = null; work.patchRow = -1; work.patchActions.count = 0; work.patchActions.lineageCount = 0;
   work.seenEpoch.set(work.seenEpochBefore);
+  work.events.count = 0; work.events.lineageCount = 0; work.stepExternalH = 0; work.stepExternalL = 0;
+  work.results.committed.fill(0); work.results.eventCount.fill(0);
+  if (work.sinkCheckpoint !== null) work.sinkCheckpoint.restoreOutsHot();
   work.planA.consumed = 0; work.planB.consumed = 0; work.results.resultCount = 0;
   work.active = 0; work.rollbackCount++; work.lastStatus = P011_HOT_OK;
   return P011_HOT_OK;
@@ -330,6 +413,13 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
 export function finishStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
   if (work.activePatchToken !== 0) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
+  if (work.budget !== null) {
+    if (work.planA.consumed !== 1 || work.results.resultCount !== work.planA.requestCount || !work.budget.allClosedHot()) {
+      return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
+    }
+    const audit = auditParticleHot(work); if (audit !== 0) return work.lastStatus = audit;
+    const status = work.budget.finishHot(expectedStepEpoch); if (status !== 0) return work.lastStatus = status;
+  }
   work.active = 0; work.lastStatus = P011_HOT_OK; return P011_HOT_OK;
 }
 
@@ -542,7 +632,7 @@ function particleSlotHot(pool: P011ParticleSnapshot, id: number): number {
   for (let i = 0; i < pool.nmax; i++) if (pool.pState[i] !== 0 && pool.pId[i] === id) return i;
   return -1;
 }
-function sameRequestHot(a: P011ParticleHotPlanBuffer, i: number, b: P011ParticleHotPlanBuffer, j: number): boolean {
+export function sameRequestHot(a: P011ParticleHotPlanBuffer, i: number, b: P011ParticleHotPlanBuffer, j: number): boolean {
   if (a.kind[i] !== b.kind[j] || a.phase[i] !== b.phase[j] || a.sourceKind[i] !== b.sourceKind[j] ||
     a.column[i] !== b.column[j] || a.targetColumn[i] !== b.targetColumn[j] || a.particleId[i] !== b.particleId[j] ||
     a.sourceId[i] !== b.sourceId[j] || a.substep[i] !== b.substep[j] || a.ordinal[i] !== b.ordinal[j] ||
@@ -577,6 +667,9 @@ function requestIdentityHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPl
     return sameRequestHot(p, row, work.seenRequests, ordinal - 1) ? P011_HOT_DUPLICATE_REQUEST : P011_HOT_IDENTITY_MISMATCH;
   }
   return P011_HOT_OK;
+}
+export function validateParticleHotRequest(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {
+  return requestIdentityHot(work, p, row);
 }
 function actionCommonHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number, kind: number): number {
   const a = work.patchActions;
@@ -703,14 +796,15 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
   if (copied !== 0) { work.lastStatus = copied; return 0; }
   copyPoolHot(work.patchBefore, work.patchScratch);
   work.patchActions.count = 0; work.patchActions.lineageCount = 0;
-  const status = editPoolHot(work, plan, row, grantedHeavy, grantedLight, dispositionCode);
+  copyRequestRowHot(plan, row, work.patchOriginal, 0); copyRequestRowHot(plan, row, work.patchRequest, 0);
+  if (work.stagedYActive === 1) work.patchRequest.predictedY[0] = work.stagedY;
+  const status = editPoolHot(work, work.patchRequest, 0, grantedHeavy, grantedLight, dispositionCode);
   if (status !== 0) {
     work.patchActions.count = 0; work.patchActions.lineageCount = 0; work.lastStatus = status;
     if (status === 9 || status === 10) work.overflowCount++;
     return 0;
   }
   copyPoolHot(work.patchScratch, work.patchAfter);
-  copyRequestRowHot(plan, row, work.patchRequest, 0);
   const token = allocateParticleHotLease();
   work.activePatchToken = token; work.activePatchStepEpoch = work.stepEpoch; work.activePatchOrdinal = plan.ordinal[row];
   work.patchState = 1; work.patchPlan = plan; work.patchRow = row; work.lastStatus = 0;
@@ -742,10 +836,10 @@ export function discardPatchHot(work: P011ParticleHotWorkspace, token: number): 
 export function finishPatchHot(work: P011ParticleHotWorkspace, token: number): number {
   const valid = patchLeaseHot(work, token, 2); if (valid !== 0) return work.lastStatus = valid;
   const p = work.patchPlan; if (p === null) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
-  rememberRequestHot(work, work.patchRequest, 0); clearPatchHot(work); return work.lastStatus = 0;
+  rememberRequestHot(work, work.patchOriginal, 0); clearPatchHot(work); return work.lastStatus = 0;
 }
 
-function copyRequestRowHot(a: P011ParticleHotPlanBuffer, i: number, b: P011ParticleHotPlanBuffer, j: number): void {
+export function copyRequestRowHot(a: P011ParticleHotPlanBuffer, i: number, b: P011ParticleHotPlanBuffer, j: number): void {
   b.kind[j] = a.kind[i]; b.phase[j] = a.phase[i]; b.sourceKind[j] = a.sourceKind[i];
   b.column[j] = a.column[i]; b.targetColumn[j] = a.targetColumn[i]; b.particleId[j] = a.particleId[i];
   b.sourceId[j] = a.sourceId[i]; b.substep[j] = a.substep[i]; b.ordinal[j] = a.ordinal[i];
@@ -754,4 +848,94 @@ function copyRequestRowHot(a: P011ParticleHotPlanBuffer, i: number, b: P011Parti
   b.predictedVx[j] = a.predictedVx[i]; b.predictedVy[j] = a.predictedVy[i];
   b.mergeStart[j] = j * 2; b.mergeCount[j] = a.mergeCount[i];
   for (let k = 0; k < a.mergeCount[i]; k++) b.lineage[j * 2 + k] = a.lineage[a.mergeStart[i] + k];
+}
+
+export function auditParticleHot(work: P011ParticleHotWorkspace): number {
+  const f = work.field; if (f === null) return 1;
+  const p = work.patchScratch; const status = work.pool.transferHotState(p, false); if (status !== 0) return status;
+  work.auditMassH.fill(0); work.auditMassL.fill(0); work.auditSlots.fill(0);
+  if (p.freeCount < 0 || p.freeCount > p.nmax || p.liveCount + p.freeCount !== p.nmax) return 13;
+  for (let i = 0; i < p.freeCount; i++) {
+    const slot = p.freeSlots[i]; if (slot < 0 || slot >= p.nmax || work.auditSlots[slot] !== 0 || p.pState[slot] !== 0) return 13;
+    work.auditSlots[slot] = 1;
+  }
+  let live = 0;
+  for (let i = 0; i < p.nmax; i++) if (p.pState[i] !== 0) {
+    if (work.auditSlots[i] !== 0 || p.pState[i] > 2 || p.pPhase[i] > 1 || p.pSource[i] > 1 || p.pId[i] === 0 ||
+      p.pSourceId[i] === 0 || !Number.isFinite(p.pMass[i]) || p.pMass[i] <= 0 || !Number.isFinite(p.pX[i]) ||
+      p.pX[i] < 0 || p.pX[i] >= work.cols || !Number.isFinite(p.pY[i]) || p.pY[i] < 0 || p.pY[i] > work.capacity ||
+      !Number.isFinite(p.pVx[i]) || !Number.isFinite(p.pVy[i])) return 13;
+    for (let j = 0; j < i; j++) if (p.pState[j] !== 0 && p.pId[j] === p.pId[i]) return 13;
+    const c = Math.floor(p.pX[i]); live++;
+    if (p.pPhase[i] === 0) work.auditMassH[c] += p.pMass[i]; else work.auditMassL[c] += p.pMass[i];
+  }
+  if (live !== p.liveCount) return 13;
+  let beforeH = 0; let beforeL = 0; let afterH = 0; let afterL = 0;
+  for (let c = 0; c < work.cols; c++) {
+    const sand = f.bh[c] + f.bl[c] + f.mh[c] + f.ml[c];
+    if (!Number.isFinite(sand) || !Number.isFinite(f.bh[c]) || !Number.isFinite(f.bl[c]) ||
+      !Number.isFinite(f.mh[c]) || !Number.isFinite(f.ml[c]) || !Number.isFinite(f.suspH[c]) ||
+      !Number.isFinite(f.suspL[c]) || !Number.isFinite(f.waterTop[c]) || f.bh[c] < -1e-9 || f.bl[c] < -1e-9 ||
+      f.mh[c] < -1e-9 || f.ml[c] < -1e-9 || f.suspH[c] < -1e-9 || f.suspL[c] < -1e-9 ||
+      !Number.isFinite(p.colParticleMassH[c]) || !Number.isFinite(p.colParticleMassL[c]) ||
+      p.colParticleMassH[c] < -1e-9 || p.colParticleMassL[c] < -1e-9 ||
+      Math.abs(work.auditMassH[c] - p.colParticleMassH[c]) > 1e-9 || Math.abs(work.auditMassL[c] - p.colParticleMassL[c]) > 1e-9 ||
+      sand + f.suspH[c] + f.suspL[c] + p.colParticleMassH[c] + p.colParticleMassL[c] > f.waterTop[c] + 1e-9 ||
+      f.waterTop[c] > work.capacity) return 13;
+    beforeH += work.fieldBeforeBh[c] + work.fieldBeforeMh[c] + work.fieldBeforeSuspH[c] + work.frozenPool.colParticleMassH[c];
+    beforeL += work.fieldBeforeBl[c] + work.fieldBeforeMl[c] + work.fieldBeforeSuspL[c] + work.frozenPool.colParticleMassL[c];
+    afterH += f.bh[c] + f.mh[c] + f.suspH[c] + p.colParticleMassH[c];
+    afterL += f.bl[c] + f.ml[c] + f.suspL[c] + p.colParticleMassL[c];
+  }
+  if (work.budget !== null && work.budget.auditHot() !== 0) return 13;
+  return Math.abs(afterH - beforeH - work.stepExternalH) > 1e-9 || Math.abs(afterL - beforeL - work.stepExternalL) > 1e-9 ? 13 : 0;
+}
+function failApplyHot(work: P011ParticleHotWorkspace, epoch: number, code: number, ordinal: number, stage: number): number {
+  work.failureStatus = code; work.failureOrdinal = ordinal; work.failureAttemptToken = work.attemptToken;
+  const rolled = work.active === 1 ? rollbackStepHot(work, epoch) : 0;
+  work.errorStageCode = stage; work.results.status = code;
+  if (code === 7 || code === 8 || code === 9 || code === 10 || code === 11) work.overflowCount++;
+  return work.lastStatus = rolled === 0 ? code : rolled;
+}
+export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
+  plan: P011ParticleHotPlanBuffer, sink: P011ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {
+  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = 4;
+  if (plan !== work.planA || sink !== work.commitSink || results !== work.results || !results.storageValidHot()) return work.lastStatus = 3;
+  if (plan.consumed !== 0) return work.lastStatus = 15;
+  if (compareParticlePlansHot(plan, work.planB) !== 0) return failApplyHot(work, expectedStepEpoch, 12, 0, 1);
+  work.validationRows.fill(0);
+  for (let i = 0; i < plan.requestCount; i++) {
+    const valid = requestIdentityHot(work, plan, i); if (valid !== 0) return failApplyHot(work, expectedStepEpoch, valid, plan.ordinal[i], 1);
+    const ordinal = plan.ordinal[i]; const previous = work.validationRows[ordinal];
+    if (previous !== 0) return failApplyHot(work, expectedStepEpoch,
+      sameRequestHot(plan, i, plan, previous - 1) ? 15 : 16, ordinal, 1);
+    work.validationRows[ordinal] = i + 1;
+  }
+  if (work.budget !== null) work.budget.denominator = plan.totalRequested;
+  results.ownerId = work.ownerId; results.stepEpoch = expectedStepEpoch; results.resultCount = 0;
+  for (let i = 0; i < plan.requestCount; i++) {
+    const status = sink.applyInto(work, expectedStepEpoch, plan, i, results);
+    if (status !== 0) return failApplyHot(work, expectedStepEpoch, status, plan.ordinal[i], 2);
+    if (results.committed[i] !== 1 || !Number.isFinite(results.granted[i]) || results.granted[i] < 0 ||
+      !Number.isFinite(results.remainder[i]) || results.remainder[i] < 0 ||
+      !Number.isFinite(results.budgetClipped[i]) || results.budgetClipped[i] < 0 ||
+      !Number.isFinite(results.guardRejected[i]) || results.guardRejected[i] < 0 ||
+      !Number.isFinite(results.capacityClipped[i]) || results.capacityClipped[i] < 0 ||
+      !Number.isFinite(results.poolClipped[i]) || results.poolClipped[i] < 0 ||
+      Math.abs(plan.requested[i] - results.granted[i] - results.budgetClipped[i] - results.guardRejected[i] -
+        results.capacityClipped[i] - results.poolClipped[i]) > 1e-9) return failApplyHot(work, expectedStepEpoch, 13, plan.ordinal[i], 3);
+    results.resultCount++;
+  }
+  const p = work.patchScratch;
+  const copied = work.pool.transferHotState(p, false); if (copied !== 0) return failApplyHot(work, expectedStepEpoch, copied, 0, 4);
+  for (let i = 0; i < plan.motionCount; i++) {
+    const slot = particleSlotHot(p, plan.motionParticleId[i]);
+    if (slot < 0 || Math.floor(p.pX[slot]) !== plan.motionColumn[i] || Math.floor(plan.motionX[i]) !== plan.motionColumn[i]) {
+      return failApplyHot(work, expectedStepEpoch, 17, 0, 4);
+    }
+    p.pX[slot] = plan.motionX[i]; p.pY[slot] = plan.motionY[i]; p.pVx[slot] = plan.motionVx[i]; p.pVy[slot] = plan.motionVy[i];
+  }
+  const moved = work.pool.transferHotState(p, true); if (moved !== 0) return failApplyHot(work, expectedStepEpoch, moved, 0, 4);
+  const audit = auditParticleHot(work); if (audit !== 0) return failApplyHot(work, expectedStepEpoch, audit, 0, 5);
+  plan.consumed = 1; results.status = 0; return work.lastStatus = 0;
 }
