@@ -1,3 +1,4 @@
+import { P011ExternalAdmissionEvidence } from './P011ExternalAdmissions';
 /**
  * P-011 natural-observation-v2.10 zero-intrusion physics ledger.
  * The probe only copies state and records actual grants; it never mutates physics.
@@ -261,9 +262,10 @@ export interface P011NaturalObservationSubstepContext {
   sourceInjectedH?: number;
   sourceInjectedL?: number;
   sourceEpoch?: number;
-  // Successful external admission transaction count. This is the existing
-  // sourceEpoch counter: it increments once per admitted injectGestureSand.
-  externalAdmissionCount?: number;
+  // T39: successful receipt accumulator; healthy count equals epoch but
+  // provenance is independent. Null means a legacy restore has no history.
+  externalAdmissionCount?: number | null;
+  externalAdmissionEvidence?: P011ExternalAdmissionEvidence;
   // S3 moisture (schema v5): the block + the independent wetness-crossed
   // flag. Absent = pre-v5/OFF run.
   moisture?: P011MoistureLedgerBlock;
@@ -733,7 +735,7 @@ export class P011NaturalObservationProbe {
   stampEndpointObservation(stamp: P011EndpointPostCommitStamp | null,
     integrated: number, clockId: string, error: string | null,
     sourceH: number, sourceL: number, sourceEpoch: number,
-    externalAdmissionCount: number,
+    externalAdmissionCount: number | null,
     shakeInput: number, invertCount: number, routeChangeCount: number, modeChangeCount: number | null): void {
     const context = this.context;
     if (context === null) return;
@@ -752,6 +754,9 @@ export class P011NaturalObservationProbe {
     context.externalAdmissionCount = externalAdmissionCount;
     context.shakeInput = shakeInput; context.resetCount = 0; context.invertCount = invertCount;
     context.routeChangeCount = routeChangeCount; context.modeChangeCount = modeChangeCount;
+  }
+  stampExternalAdmissionEvidence(evidence: P011ExternalAdmissionEvidence): void {
+    if (this.context !== null) this.context.externalAdmissionEvidence = evidence;
   }
   stampPeakConsumption(order: number, eventId: string | null, onId: string | null,
     value: number, summary: P011PeakSummary): void {

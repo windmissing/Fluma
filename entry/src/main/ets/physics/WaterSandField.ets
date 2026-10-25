@@ -1,3 +1,5 @@
+import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
+  P011ExternalSourceSnapshot } from './P011ExternalAdmissions';
 import { P011ParticleRenderProjection } from '../common/P011ParticleRenderProjection';
 /**
  * WaterSandField - P-003/P-005 scene 2 three-phase column model, algorithm v2.2.
@@ -722,6 +724,8 @@ export interface WaterSandSnapshot {
   moistureK?: number;
   moistureModelVersion?: string;
   particleState?: P011ParticleSnapshot | null;
+  // T39: optional for historical schema3/4 snapshots, never inferred from epoch.
+  externalSourceState?: P011ExternalSourceSnapshot;
   physicsCommitId?: number;
 }
 
@@ -1343,6 +1347,7 @@ export class WaterSandField {
     this.sourceInjectedHeavy = 0;
     this.sourceInjectedLight = 0;
     this.sourceEpoch = 0;
+    this.externalAdmissions.reset();
     this.gestureSandQueue = [];
     this.lastGestureInputTime = 0;
     this.simulationTime = 0;
@@ -1524,6 +1529,15 @@ export class WaterSandField {
   private sourceInjectedLight = 0;
   /** Increments on every successful injection (t90 epoch). */
   private sourceEpoch = 0;
+  private readonly externalAdmissions: P011ExternalAdmissions = new P011ExternalAdmissions();
+
+  setExternalAdmissionEventSink(sink: ((record: P011ExternalAdmissionRecord) => void) | null): void {
+    this.externalAdmissions.setSink(sink);
+  }
+
+  getExternalAdmissionEvidence(): P011ExternalAdmissionEvidence {
+    return this.externalAdmissions.snapshot();
+  }
 
   /**
    * Stage a page-routed request (D3 wiring calls this from the Pan
@@ -1728,6 +1742,21 @@ export class WaterSandField {
           totalH += aH[c];
           totalL += aL[c];
         }
+        // T39: allocate/validate the successful receipt record before source
+        // publish; retries and rejected attempts never enter the accumulator.
+        let admission: P011ExternalAdmissionRecord;
+        let receipt: P011InjectionReceipt;
+        try {
+          admission = this.externalAdmissions.prepare(this.p011RunId, request.sourceId,
+            request.sequence, request.inputTime, totalH, totalL);
+          receipt = this.gestureReceipt(request, totalH, totalL, null);
+          if (!Number.isSafeInteger(this.sourceEpoch + 1)) throw new Error('SOURCE_EPOCH_OVERFLOW');
+          this.externalAdmissions.commit(admission);
+        } catch (error) {
+          this.restoreBackup();
+          this.endpointParticleEvents.length = particleEventStart;
+          throw new Error((error as Error).message);
+        }
         this.sourceInjectedHeavy += totalH;
         this.sourceInjectedLight += totalL;
         this.sourceEpoch += 1;
@@ -1738,7 +1767,8 @@ export class WaterSandField {
         this.t90Heavy = -1;
         this.t90Light = -1;
         this.updateSandTop();
-        return this.emitGestureSandReceipt(this.gestureReceipt(request, totalH, totalL, null));
+        this.externalAdmissions.exportLast();
+        return this.emitGestureSandReceipt(receipt);
       }
       // 6. Audit/eta failure -> rollback, halve λ, retry.
       this.restoreBackup();
@@ -3711,9 +3741,10 @@ export class WaterSandField {
         this.endpointSampler.integratedPhysicsSeconds, this.endpointSampler.clock.clockId,
         errorCode === null ? this.endpointSampleError : 'PHYSICAL_COMMIT_FAILED',
         this.sourceInjectedHeavy, this.sourceInjectedLight, this.sourceEpoch,
-        this.sourceEpoch,
+        this.externalAdmissions.count,
         this.shakeInput, this.endpointInvertCount, this.endpointRouteChanges,
         this.endpointCaptureMode === null ? null : this.endpointModeChanges);
+      probe.stampExternalAdmissionEvidence(this.externalAdmissions.snapshot());
     }
     if (this.endpointSampler !== null || this.particleRouteActive()) {
       const pool = this.endpointParticlePool;
@@ -3907,6 +3938,13 @@ export class WaterSandField {
     }
     this.updateSandTop();
     target.physicsCommitId = this.renderPhysicsCommitId;
+    if (target.externalSourceState === undefined) target.externalSourceState = new P011ExternalSourceSnapshot();
+    const sourceState = target.externalSourceState;
+    sourceState.initialWater = this.initialWater; sourceState.initialHeavy = this.initialHeavy;
+    sourceState.initialLight = this.initialLight;
+    sourceState.sourceInjectedH = this.sourceInjectedHeavy; sourceState.sourceInjectedL = this.sourceInjectedLight;
+    sourceState.sourceEpoch = this.sourceEpoch;
+    this.externalAdmissions.copyEvidenceTo(sourceState.admissions);
     target.waterTop.set(this.waterTop);
     target.bh.set(this.bh);
     target.bl.set(this.bl);
@@ -3941,6 +3979,9 @@ export class WaterSandField {
       source.waterTop.length !== this.cols || source.bh.length !== this.cols || source.bl.length !== this.cols ||
       source.mh.length !== this.cols || source.ml.length !== this.cols || source.suspH.length !== this.cols ||
       source.suspL.length !== this.cols) throw new WaterSandSnapshotError('snapshot schema, cols, or capacity mismatch');
+    if (source.externalSourceState !== undefined) {
+      this.externalAdmissions.validateSource(source.externalSourceState);
+    }
     this.waterTop.set(source.waterTop); this.bh.set(source.bh); this.bl.set(source.bl);
     this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);
     if (this.particleRouteActive() && this.particleBinding !== null) {
@@ -3948,6 +3989,18 @@ export class WaterSandField {
         this.particleBinding.pool.restoreSnapshot(source.particleState);
       } else this.particleBinding.pool.reset();
       if (this.particleBackup !== null) this.particleBinding.pool.copyStateTo(this.particleBackup);
+    }
+    const sourceState = source.externalSourceState;
+    if (sourceState === undefined) {
+      // Legacy fields remain usable for visual restore, but their admission
+      // history is unknown. Null count forces honest missing-data disclosure.
+      this.externalAdmissions.invalidateHistory();
+    } else {
+      this.initialWater = sourceState.initialWater; this.initialHeavy = sourceState.initialHeavy;
+      this.initialLight = sourceState.initialLight;
+      this.sourceInjectedHeavy = sourceState.sourceInjectedH; this.sourceInjectedLight = sourceState.sourceInjectedL;
+      this.sourceEpoch = sourceState.sourceEpoch;
+      this.externalAdmissions.restore(sourceState.admissions);
     }
     this.updateSandTop();
   }

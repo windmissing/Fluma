@@ -1,0 +1,2171 @@
+{
+  "task": "T39",
+  "taskId": "6adda513e4b06ee35727301a",
+  "date": "2026-10-25",
+  "basis": "architecture-P011-endpoint-fields-revision-v1 §9 + manager decision in T39",
+  "scope": "Developer implementation, compilation and non-device self-check. T40 independent validation remains separate.",
+  "semantics": {
+    "unit": "successful external admission transaction",
+    "authority": "prepared and atomically committed successful admission record accumulator, never copied from sourceEpoch",
+    "healthyInvariant": "count == sourceEpoch",
+    "noIncrement": [
+      "two phases/multiple columns count once",
+      "rejected or zero admission",
+      "trial/retry/rollback",
+      "internal lift/land/merge/degrade",
+      "receipt/export replay"
+    ],
+    "restore": "new source snapshot restores initial masses, IH/IL, epoch and admission evidence together; missing historical evidence leaves count null until explicit scene reset",
+    "rawHistory": "O(1) summary plus optional synchronous raw-record stream; absent stream is SUMMARY_ONLY, export failure is INCOMPLETE; checkpoint is not complete raw history"
+  },
+  "checks": {
+    "admissions-final": {
+      "suite": "p011_external_admissions",
+      "passed": 13,
+      "failed": 0,
+      "results": [
+        {
+          "name": "multi-column and two-phase transaction counts once with independent raw record",
+          "status": "PASS"
+        },
+        {
+          "name": "same source and request identity can be distinct successful transactions; replay does not recount",
+          "status": "PASS"
+        },
+        {
+          "name": "zero request, dry rejection and exhausted rollback do not publish admissions",
+          "status": "PASS"
+        },
+        {
+          "name": "failed lambda trial followed by success counts only the final admitted receipt",
+          "status": "PASS"
+        },
+        {
+          "name": "shake, step, invert, export and render snapshot reads do not count external sources",
+          "status": "PASS"
+        },
+        {
+          "name": "scene reset clears independent counts and masses with the source epoch",
+          "status": "PASS"
+        },
+        {
+          "name": "restore checkpoint restores initial masses, source amounts, epoch and receipt count as a group",
+          "status": "PASS"
+        },
+        {
+          "name": "legacy restore keeps count unknown, including later admissions, until an explicit scene reset",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid source checkpoint is rejected before field mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "epoch corruption is visible in the real writer: count is not copied from epoch",
+          "status": "PASS"
+        },
+        {
+          "name": "counter loss and duplicate publication corruption reach the writer unchanged for checker rejection",
+          "status": "PASS"
+        },
+        {
+          "name": "export failure is disclosed and cannot undo or double-count a successful transaction",
+          "status": "PASS"
+        },
+        {
+          "name": "prepared record is single-use and source overflow rolls back the field before publication",
+          "status": "PASS"
+        }
+      ],
+      "writerContexts": {
+        "healthy": {
+          "observationRouteId": "natural-relax-hysteresis-v1",
+          "ledgerSchemaVersion": 7,
+          "runId": "p011-run-1792911579683-3",
+          "frameId": 1,
+          "substepId": 1,
+          "sequence": 1,
+          "physicsTime": 1792911579696,
+          "physicsDt": 0.016666666666666666,
+          "commandSequence": 0,
+          "commandPhaseId": 0,
+          "commandPhaseSign": 0,
+          "phaseD": "unknown",
+          "targetTilt": 0,
+          "effectiveTilt": 0,
+          "effectiveTiltRate": 0,
+          "shakeEnergy": 0,
+          "runRole": null,
+          "thresholdCalibrationId": null,
+          "thetaStartDeg": null,
+          "thetaStopDeg": null,
+          "transitionTelemetryAvailable": true,
+          "thetaAccepted": 0,
+          "requestRejected": false,
+          "plannerHold": false,
+          "thetaRequested": 0,
+          "legId": null,
+          "segmentId": null,
+          "phaseKindV3": null,
+          "attemptId": "p011-run-1792911579683-3-a1",
+          "commitStatus": "committed",
+          "rollbackReason": null,
+          "scheduleDriftMs": null,
+          "scheduleDriftExceeded": null,
+          "configRevision": 1,
+          "correctionVariant": "A",
+          "sourceInjectedH": 0.2,
+          "sourceInjectedL": 0.2,
+          "sourceEpoch": 1,
+          "executedThresholds": {
+            "thetaStartDeg": 26,
+            "thetaStopDeg": 20,
+            "slopeStart": 0.48773258856586144,
+            "slopeStop": 0.36397023426620234,
+            "stateMachineVersion": "natural-relax-hysteresis-v1",
+            "sourceCommit": "",
+            "sourceFileSha256": "",
+            "buildSha256": "",
+            "configRevision": 1,
+            "thresholdSource": "factory-recommended"
+          },
+          "peakFieldRevision": "p011-peak-fields-v1",
+          "peakInputCommitOrder": 1,
+          "peakConsumedShakeInputEventId": null,
+          "peakConsumedShakeOnEventId": null,
+          "peakConsumedShakeInputValue": 0,
+          "shakeOnEventId": null,
+          "shakeOffEventId": null,
+          "shakeOnEffectiveElapsedMs": null,
+          "shakeOffEffectiveElapsedMs": null,
+          "peakWindowStartElapsedMs": null,
+          "peakWindowEndElapsedMs": null,
+          "endpointFieldRevision": "p011-endpoint-fields-v1",
+          "endpointSampleStage": "POST_COMMIT",
+          "endpointSampleElapsedMs": 1000,
+          "endpointCommittedOrdinal": 1,
+          "endpointPhaseOccurrenceId": "admission-test",
+          "integratedPhysicsSeconds": 0.016666666666666666,
+          "endpointClockId": "p011-run-1792911579683-3:startup-elapsed-v1",
+          "endpointSampleError": null,
+          "externalAdmissionCount": 1,
+          "shakeInput": 0,
+          "resetCount": 0,
+          "invertCount": 0,
+          "routeChangeCount": 0,
+          "modeChangeCount": null,
+          "externalAdmissionEvidence": {
+            "revision": "p011-external-admissions-v1",
+            "count": 1,
+            "admittedH": 0.2,
+            "admittedL": 0.2,
+            "observedTransactions": 1,
+            "lastRecord": {
+              "runId": "p011-run-1792911579683-3",
+              "admissionTransactionId": 1,
+              "sourceId": 7,
+              "sequence": 1,
+              "inputTime": 1001,
+              "admittedH": 0.2,
+              "admittedL": 0.2,
+              "cumulativeCount": 1
+            },
+            "rawHistoryStatus": "STREAMED",
+            "exportFailures": 0
+          },
+          "particleRouteId": null,
+          "particleRouteActive": false
+        },
+        "legacy": {
+          "observationRouteId": "natural-relax-hysteresis-v1",
+          "ledgerSchemaVersion": 7,
+          "runId": "p011-run-1792911579730-31",
+          "frameId": 1,
+          "substepId": 1,
+          "sequence": 1,
+          "physicsTime": 1792911579731,
+          "physicsDt": 0.016666666666666666,
+          "commandSequence": 0,
+          "commandPhaseId": 0,
+          "commandPhaseSign": 0,
+          "phaseD": "unknown",
+          "targetTilt": 0,
+          "effectiveTilt": 0,
+          "effectiveTiltRate": 0,
+          "shakeEnergy": 0,
+          "runRole": null,
+          "thresholdCalibrationId": null,
+          "thetaStartDeg": null,
+          "thetaStopDeg": null,
+          "transitionTelemetryAvailable": true,
+          "thetaAccepted": 0,
+          "requestRejected": false,
+          "plannerHold": false,
+          "thetaRequested": 0,
+          "legId": null,
+          "segmentId": null,
+          "phaseKindV3": null,
+          "attemptId": "p011-run-1792911579730-31-a1",
+          "commitStatus": "committed",
+          "rollbackReason": null,
+          "scheduleDriftMs": null,
+          "scheduleDriftExceeded": null,
+          "configRevision": 1,
+          "correctionVariant": "A",
+          "sourceInjectedH": 0.2,
+          "sourceInjectedL": 0.2,
+          "sourceEpoch": 1,
+          "executedThresholds": {
+            "thetaStartDeg": 26,
+            "thetaStopDeg": 20,
+            "slopeStart": 0.48773258856586144,
+            "slopeStop": 0.36397023426620234,
+            "stateMachineVersion": "natural-relax-hysteresis-v1",
+            "sourceCommit": "",
+            "sourceFileSha256": "",
+            "buildSha256": "",
+            "configRevision": 1,
+            "thresholdSource": "factory-recommended"
+          },
+          "peakFieldRevision": "p011-peak-fields-v1",
+          "peakInputCommitOrder": 1,
+          "peakConsumedShakeInputEventId": null,
+          "peakConsumedShakeOnEventId": null,
+          "peakConsumedShakeInputValue": 0,
+          "shakeOnEventId": null,
+          "shakeOffEventId": null,
+          "shakeOnEffectiveElapsedMs": null,
+          "shakeOffEffectiveElapsedMs": null,
+          "peakWindowStartElapsedMs": null,
+          "peakWindowEndElapsedMs": null,
+          "endpointFieldRevision": "p011-endpoint-fields-v1",
+          "endpointSampleStage": "POST_COMMIT",
+          "endpointSampleElapsedMs": 1000,
+          "endpointCommittedOrdinal": 1,
+          "endpointPhaseOccurrenceId": "admission-test",
+          "integratedPhysicsSeconds": 0.016666666666666666,
+          "endpointClockId": "p011-run-1792911579730-31:startup-elapsed-v1",
+          "endpointSampleError": null,
+          "externalAdmissionCount": null,
+          "shakeInput": 0,
+          "resetCount": 0,
+          "invertCount": 0,
+          "routeChangeCount": 0,
+          "modeChangeCount": null,
+          "externalAdmissionEvidence": {
+            "revision": "p011-external-admissions-v1",
+            "count": null,
+            "admittedH": null,
+            "admittedL": null,
+            "observedTransactions": 1,
+            "lastRecord": {
+              "runId": "p011-run-1792911579730-31",
+              "admissionTransactionId": 1,
+              "sourceId": 7,
+              "sequence": 1,
+              "inputTime": 1001,
+              "admittedH": 0.2,
+              "admittedL": 0.2,
+              "cumulativeCount": null
+            },
+            "rawHistoryStatus": "UNKNOWN",
+            "exportFailures": 0
+          },
+          "particleRouteId": null,
+          "particleRouteActive": false
+        },
+        "epochFault": {
+          "observationRouteId": "natural-relax-hysteresis-v1",
+          "ledgerSchemaVersion": 7,
+          "runId": "p011-run-1792911579734-41",
+          "frameId": 1,
+          "substepId": 1,
+          "sequence": 1,
+          "physicsTime": 1792911579735,
+          "physicsDt": 0.016666666666666666,
+          "commandSequence": 0,
+          "commandPhaseId": 0,
+          "commandPhaseSign": 0,
+          "phaseD": "unknown",
+          "targetTilt": 0,
+          "effectiveTilt": 0,
+          "effectiveTiltRate": 0,
+          "shakeEnergy": 0,
+          "runRole": null,
+          "thresholdCalibrationId": null,
+          "thetaStartDeg": null,
+          "thetaStopDeg": null,
+          "transitionTelemetryAvailable": true,
+          "thetaAccepted": 0,
+          "requestRejected": false,
+          "plannerHold": false,
+          "thetaRequested": 0,
+          "legId": null,
+          "segmentId": null,
+          "phaseKindV3": null,
+          "attemptId": "p011-run-1792911579734-41-a1",
+          "commitStatus": "committed",
+          "rollbackReason": null,
+          "scheduleDriftMs": null,
+          "scheduleDriftExceeded": null,
+          "configRevision": 1,
+          "correctionVariant": "A",
+          "sourceInjectedH": 0.2,
+          "sourceInjectedL": 0.2,
+          "sourceEpoch": 2,
+          "executedThresholds": {
+            "thetaStartDeg": 26,
+            "thetaStopDeg": 20,
+            "slopeStart": 0.48773258856586144,
+            "slopeStop": 0.36397023426620234,
+            "stateMachineVersion": "natural-relax-hysteresis-v1",
+            "sourceCommit": "",
+            "sourceFileSha256": "",
+            "buildSha256": "",
+            "configRevision": 1,
+            "thresholdSource": "factory-recommended"
+          },
+          "peakFieldRevision": "p011-peak-fields-v1",
+          "peakInputCommitOrder": 1,
+          "peakConsumedShakeInputEventId": null,
+          "peakConsumedShakeOnEventId": null,
+          "peakConsumedShakeInputValue": 0,
+          "shakeOnEventId": null,
+          "shakeOffEventId": null,
+          "shakeOnEffectiveElapsedMs": null,
+          "shakeOffEffectiveElapsedMs": null,
+          "peakWindowStartElapsedMs": null,
+          "peakWindowEndElapsedMs": null,
+          "endpointFieldRevision": "p011-endpoint-fields-v1",
+          "endpointSampleStage": "POST_COMMIT",
+          "endpointSampleElapsedMs": 1000,
+          "endpointCommittedOrdinal": 1,
+          "endpointPhaseOccurrenceId": "admission-test",
+          "integratedPhysicsSeconds": 0.016666666666666666,
+          "endpointClockId": "p011-run-1792911579734-41:startup-elapsed-v1",
+          "endpointSampleError": null,
+          "externalAdmissionCount": 1,
+          "shakeInput": 0,
+          "resetCount": 0,
+          "invertCount": 0,
+          "routeChangeCount": 0,
+          "modeChangeCount": null,
+          "externalAdmissionEvidence": {
+            "revision": "p011-external-admissions-v1",
+            "count": 1,
+            "admittedH": 0.2,
+            "admittedL": 0.2,
+            "observedTransactions": 1,
+            "lastRecord": {
+              "runId": "p011-run-1792911579734-41",
+              "admissionTransactionId": 1,
+              "sourceId": 7,
+              "sequence": 1,
+              "inputTime": 1001,
+              "admittedH": 0.2,
+              "admittedL": 0.2,
+              "cumulativeCount": 1
+            },
+            "rawHistoryStatus": "SUMMARY_ONLY",
+            "exportFailures": 0
+          },
+          "particleRouteId": null,
+          "particleRouteActive": false
+        },
+        "lost": {
+          "observationRouteId": "natural-relax-hysteresis-v1",
+          "ledgerSchemaVersion": 7,
+          "runId": "p011-run-1792911579736-44",
+          "frameId": 1,
+          "substepId": 1,
+          "sequence": 1,
+          "physicsTime": 1792911579737,
+          "physicsDt": 0.016666666666666666,
+          "commandSequence": 0,
+          "commandPhaseId": 0,
+          "commandPhaseSign": 0,
+          "phaseD": "unknown",
+          "targetTilt": 0,
+          "effectiveTilt": 0,
+          "effectiveTiltRate": 0,
+          "shakeEnergy": 0,
+          "runRole": null,
+          "thresholdCalibrationId": null,
+          "thetaStartDeg": null,
+          "thetaStopDeg": null,
+          "transitionTelemetryAvailable": true,
+          "thetaAccepted": 0,
+          "requestRejected": false,
+          "plannerHold": false,
+          "thetaRequested": 0,
+          "legId": null,
+          "segmentId": null,
+          "phaseKindV3": null,
+          "attemptId": "p011-run-1792911579736-44-a1",
+          "commitStatus": "committed",
+          "rollbackReason": null,
+          "scheduleDriftMs": null,
+          "scheduleDriftExceeded": null,
+          "configRevision": 1,
+          "correctionVariant": "A",
+          "sourceInjectedH": 0.2,
+          "sourceInjectedL": 0.2,
+          "sourceEpoch": 1,
+          "executedThresholds": {
+            "thetaStartDeg": 26,
+            "thetaStopDeg": 20,
+            "slopeStart": 0.48773258856586144,
+            "slopeStop": 0.36397023426620234,
+            "stateMachineVersion": "natural-relax-hysteresis-v1",
+            "sourceCommit": "",
+            "sourceFileSha256": "",
+            "buildSha256": "",
+            "configRevision": 1,
+            "thresholdSource": "factory-recommended"
+          },
+          "peakFieldRevision": "p011-peak-fields-v1",
+          "peakInputCommitOrder": 1,
+          "peakConsumedShakeInputEventId": null,
+          "peakConsumedShakeOnEventId": null,
+          "peakConsumedShakeInputValue": 0,
+          "shakeOnEventId": null,
+          "shakeOffEventId": null,
+          "shakeOnEffectiveElapsedMs": null,
+          "shakeOffEffectiveElapsedMs": null,
+          "peakWindowStartElapsedMs": null,
+          "peakWindowEndElapsedMs": null,
+          "endpointFieldRevision": "p011-endpoint-fields-v1",
+          "endpointSampleStage": "POST_COMMIT",
+          "endpointSampleElapsedMs": 1000,
+          "endpointCommittedOrdinal": 1,
+          "endpointPhaseOccurrenceId": "admission-test",
+          "integratedPhysicsSeconds": 0.016666666666666666,
+          "endpointClockId": "p011-run-1792911579736-44:startup-elapsed-v1",
+          "endpointSampleError": null,
+          "externalAdmissionCount": 0,
+          "shakeInput": 0,
+          "resetCount": 0,
+          "invertCount": 0,
+          "routeChangeCount": 0,
+          "modeChangeCount": null,
+          "externalAdmissionEvidence": {
+            "revision": "p011-external-admissions-v1",
+            "count": 0,
+            "admittedH": 0.2,
+            "admittedL": 0.2,
+            "observedTransactions": 1,
+            "lastRecord": {
+              "runId": "p011-run-1792911579736-44",
+              "admissionTransactionId": 1,
+              "sourceId": 7,
+              "sequence": 1,
+              "inputTime": 1001,
+              "admittedH": 0.2,
+              "admittedL": 0.2,
+              "cumulativeCount": 1
+            },
+            "rawHistoryStatus": "SUMMARY_ONLY",
+            "exportFailures": 0
+          },
+          "particleRouteId": null,
+          "particleRouteActive": false
+        },
+        "duplicate": {
+          "observationRouteId": "natural-relax-hysteresis-v1",
+          "ledgerSchemaVersion": 7,
+          "runId": "p011-run-1792911579738-47",
+          "frameId": 1,
+          "substepId": 1,
+          "sequence": 1,
+          "physicsTime": 1792911579739,
+          "physicsDt": 0.016666666666666666,
+          "commandSequence": 0,
+          "commandPhaseId": 0,
+          "commandPhaseSign": 0,
+          "phaseD": "unknown",
+          "targetTilt": 0,
+          "effectiveTilt": 0,
+          "effectiveTiltRate": 0,
+          "shakeEnergy": 0,
+          "runRole": null,
+          "thresholdCalibrationId": null,
+          "thetaStartDeg": null,
+          "thetaStopDeg": null,
+          "transitionTelemetryAvailable": true,
+          "thetaAccepted": 0,
+          "requestRejected": false,
+          "plannerHold": false,
+          "thetaRequested": 0,
+          "legId": null,
+          "segmentId": null,
+          "phaseKindV3": null,
+          "attemptId": "p011-run-1792911579738-47-a1",
+          "commitStatus": "committed",
+          "rollbackReason": null,
+          "scheduleDriftMs": null,
+          "scheduleDriftExceeded": null,
+          "configRevision": 1,
+          "correctionVariant": "A",
+          "sourceInjectedH": 0.2,
+          "sourceInjectedL": 0.2,
+          "sourceEpoch": 1,
+          "executedThresholds": {
+            "thetaStartDeg": 26,
+            "thetaStopDeg": 20,
+            "slopeStart": 0.48773258856586144,
+            "slopeStop": 0.36397023426620234,
+            "stateMachineVersion": "natural-relax-hysteresis-v1",
+            "sourceCommit": "",
+            "sourceFileSha256": "",
+            "buildSha256": "",
+            "configRevision": 1,
+            "thresholdSource": "factory-recommended"
+          },
+          "peakFieldRevision": "p011-peak-fields-v1",
+          "peakInputCommitOrder": 1,
+          "peakConsumedShakeInputEventId": null,
+          "peakConsumedShakeOnEventId": null,
+          "peakConsumedShakeInputValue": 0,
+          "shakeOnEventId": null,
+          "shakeOffEventId": null,
+          "shakeOnEffectiveElapsedMs": null,
+          "shakeOffEffectiveElapsedMs": null,
+          "peakWindowStartElapsedMs": null,
+          "peakWindowEndElapsedMs": null,
+          "endpointFieldRevision": "p011-endpoint-fields-v1",
+          "endpointSampleStage": "POST_COMMIT",
+          "endpointSampleElapsedMs": 1000,
+          "endpointCommittedOrdinal": 1,
+          "endpointPhaseOccurrenceId": "admission-test",
+          "integratedPhysicsSeconds": 0.016666666666666666,
+          "endpointClockId": "p011-run-1792911579738-47:startup-elapsed-v1",
+          "endpointSampleError": null,
+          "externalAdmissionCount": 2,
+          "shakeInput": 0,
+          "resetCount": 0,
+          "invertCount": 0,
+          "routeChangeCount": 0,
+          "modeChangeCount": null,
+          "externalAdmissionEvidence": {
+            "revision": "p011-external-admissions-v1",
+            "count": 2,
+            "admittedH": 0.2,
+            "admittedL": 0.2,
+            "observedTransactions": 1,
+            "lastRecord": {
+              "runId": "p011-run-1792911579738-47",
+              "admissionTransactionId": 1,
+              "sourceId": 7,
+              "sequence": 1,
+              "inputTime": 1001,
+              "admittedH": 0.2,
+              "admittedL": 0.2,
+              "cumulativeCount": 1
+            },
+            "rawHistoryStatus": "SUMMARY_ONLY",
+            "exportFailures": 0
+          },
+          "particleRouteId": null,
+          "particleRouteActive": false
+        }
+      }
+    },
+    "gesture_inject": {
+      "suite": "run_p011_gesture_inject_units",
+      "passed": 18,
+      "failed": 0,
+      "results": [
+        {
+          "name": "emits one receipt event per admitted and rejected transaction; metrics expose cumulative admission",
+          "status": "PASS"
+        },
+        {
+          "name": "shake lift telemetry reports actual lifted quantity and column count",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_conservationClosure",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_lambdaAdmissionKeepsPhaseRatio",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_noWaterZeroState",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_capacityBlocked",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_rollbackBitIdentical",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_queueFifoAndDtClamp",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_receiptContractMatchesB",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_schemaV4LedgerFields",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_t90EpochIncrements",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_t90RestartsBothPhaseMarkersAtSuccessfulSourceEpoch",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_t90UsesCumulativeExpectedMassAndExcludesSuspension",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_t90NoSourceRunRetainsInitialBaselineBehavior",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_gsi_legacyInjectBaselineResets",
+          "status": "PASS"
+        },
+        {
+          "name": "sustained admission above 0.1 percent keeps stepping",
+          "status": "PASS"
+        },
+        {
+          "name": "audit and metrics consume identical drift values for all phases",
+          "status": "PASS"
+        },
+        {
+          "name": "no-source runs match historical audit bit for bit",
+          "status": "PASS"
+        }
+      ]
+    },
+    "endpoint": {
+      "suite": "p011_endpoint_native",
+      "passed": 9,
+      "failed": 0,
+      "results": [
+        {
+          "name": "three displayed fractions use E; missing C P remains null; invalid E not EPS PASS",
+          "status": "PASS"
+        },
+        {
+          "name": "clock adapter uses actual STARTUP ms; equal ms allowed; no guessed resolution",
+          "status": "PASS"
+        },
+        {
+          "name": "sampler duplicate/backward clock rejection and immutable same-ms commit identity",
+          "status": "PASS"
+        },
+        {
+          "name": "real field two substeps same frame stamp POST_COMMIT, cumulative dt exactly once",
+          "status": "PASS"
+        },
+        {
+          "name": "externalAdmissionCount is sourced from successful injection epoch in post-commit context",
+          "status": "PASS"
+        },
+        {
+          "name": "failed physical audit records attempt without stamp/ordinal/integration advance",
+          "status": "PASS"
+        },
+        {
+          "name": "reset clears sampling; disabled writer leaves old ledger fields absent",
+          "status": "PASS"
+        },
+        {
+          "name": "legacy suspensionFraction formula is unchanged; explicit C missing summary not fabricated",
+          "status": "PASS"
+        },
+        {
+          "name": "byState uses exact positive remainder, ignores empty slots and checks cache closure",
+          "status": "PASS"
+        }
+      ]
+    },
+    "planning": {
+      "execution": "actual-product-ets-via-bundled-typescript",
+      "results": [
+        {
+          "name": "p011_planningPass_directedThreeCandidateExhaustion",
+          "status": "PASS",
+          "error": "status=blocked passCount=2 previewCalls=2",
+          "previewCalls": 2,
+          "passCount": 2
+        },
+        {
+          "name": "p011_planningPass_verifyConsistencyChannel",
+          "status": "PASS",
+          "error": "ok=true mismatch=false minusZero=true nan=false"
+        },
+        {
+          "name": "P011_ledgerContextSamplesAfterTiltUpdate",
+          "status": "PASS"
+        },
+        {
+          "name": "P011_MODE02_resetInputPreservesMaterialAndRunIdentity",
+          "status": "PASS"
+        },
+        {
+          "name": "canonicalLedger_derivesExternalState",
+          "status": "PASS"
+        },
+        {
+          "name": "conservation_randomOperationSequence",
+          "status": "PASS"
+        },
+        {
+          "name": "percolationV2_crossExchangeHasNonZeroQ",
+          "status": "PASS"
+        },
+        {
+          "name": "percolationV2_pairSortingHasNonZeroR",
+          "status": "PASS"
+        },
+        {
+          "name": "separationProfile_matchesIndependentReference",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_consistentAcross30_60_120Hz",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_bindsSharedSubstepFlux",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_bindsShallowWaterSettling",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_validatesSandTopMaxRange",
+          "status": "PASS"
+        },
+        {
+          "name": "separation_singlePhaseReturnsNull",
+          "status": "PASS"
+        },
+        {
+          "name": "dormant_zeroSubstepStepResult",
+          "status": "PASS"
+        },
+        {
+          "name": "frameHook_emitsDormantFrame",
+          "status": "PASS"
+        },
+        {
+          "name": "thickGeometry_tilt68MovesWithoutCapacityOverflow",
+          "status": "PASS"
+        },
+        {
+          "name": "bottomCreep_tiltMovesLowerLayers",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_routeAndHooksAreSubstepAligned",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_bottomCreepUsesDirectionAndIndependentBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_phaseBalancedSplitKeepsHeavyShareAndTelemetry",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_commandSignFlipResetsPhaseAndReversesDisplacement",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_negativeTiltReversesBottomCreep",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_totalMotionBudgetClipsBottomCreep",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_totalBudgetExhaustionScalesRequestsProportionally",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_multiChannelTotalBudgetScalesAllRequestsProportionally",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_fullLoadPercolationKeepsBottomBudgetIsolated",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_deadZoneClearsBottomCreepRate",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_velocityGainDoesNotOverrideShapeRateCap",
+          "status": "PASS"
+        },
+        {
+          "name": "shake_peakAndRestResidual",
+          "status": "PASS"
+        },
+        {
+          "name": "invert180_preservesConservationAndPhaseOrder",
+          "status": "PASS"
+        },
+        {
+          "name": "failedInjection_restoresCanonicalState",
+          "status": "PASS"
+        },
+        {
+          "name": "copyStateTo_rejectsInvalidSchema",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_transitionTelemetry_budgetLimitedEdgeKeepsActive",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_transitionTelemetry_edgeIdentityIsNotSlotIndex",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_previewPurity_budgetLedgerSingleCommit",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_singleCommitTiltAndRate",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_blockedCarriesReasonAndHoldsTilt",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_twoPassLimitAndConservationOverRun",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_directedThreeCandidateExhaustion",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_limitingEdgeTieBreakKeepsSmallestIndex",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_ninePhaseMapping_assignsAllPlateauPhases",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_ninePhaseMapping_legacySevenPhaseBackwardCompatible",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_ledgerSchemaV3_plannerFieldsPresent",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_cappedWeightedAllocationFillsReservation",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_uniformInteriorEdgesExcluded",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_ledgerAndGuardsInApply",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_candidateSelectionDPositiveOnly",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_weightedAllocationMatchesDesignerExample",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_reservationWithinTotalBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_qDescentCapAndDescentPreserved",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_uniformInteriorEdgesExcludedBoundaryKeepsContribution",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_routeGateBlocksAllocatorWithoutExplicitRoute",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_nonWorseningOnViolatingEdge",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_zeroInfluenceEdgeDoesNotRestrictGrant",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_ledgerRefundRestoresBudgets",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_refundFix_undeibtiedColumnRefundsZero",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_refundFix_rejectedExceedsUsedStopsAtDebit",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_refundFix_mixedColumnsCloseExactly",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_telemetryFieldsReal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_settleDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_settleZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_relaxDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_relaxZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_bottomCreepDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_bottomCreepZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_liftDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_liftZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_threeStateTransitionFunction",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_paramInvariantThrows",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_requestedFormula",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_candidateRunProducesDecisionAndExecutedFields",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_legacyRunKeepsPreV3Behavior",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_budgetLimitedEdgeStaysActive",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_donorReceiverOrientationFeedsRequested",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1_routeIsolation_threeWayApplyRouting",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1_legacyTrajectoryEquivalence240Steps",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_scheduleV3_generationAndCsvContract",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_scheduleV3_segmentPhaseMapping",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_attempt_blockedSubstepLandsAttemptRecord",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_attempt_attemptIdsUniquePerSubstep",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_tiltWant_v3FieldsParseAndValidate",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_tiltWant_correctionRouteBindingParsesAndValidates",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1b_correctionTelemetryFourFieldsCloseLedger",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1b_legacyAuditOmitsCorrectionFields",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_applySlotUsesReservationSlopeStop",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_1_defaultParamsArmDualFactoryPair",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_2_zeroStopAngleIsLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_3_thirtyStartAngleIsLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_4_reversedAndEqualPairsRejectedNoSideEffects",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_5_nonFiniteAndLegacyWithPairRejected",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_6_midRunPairChangeClearsStateMachine",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_7_pairSurvivesResetAcrossModes",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_8_illegalPairRejectedKeepsPreviousConfig",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_9_metadataMismatchIsFlagged",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_10_configRevisionMonotonicAndPreviewGuardPresent",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_11_legacySingleKeepsPreV27Behavior",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_12_dualDefaultDoesNotActivateCorrection",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_13_budgetsAndConservationUnchangedByPairChange",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_14_threeStateSemanticsWithUserPair",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_cvar_fourVariantsAndRouteGatePriority",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_cvar_bDegradedKeepsReservationAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_cvar_cWeightIsESquared",
+          "status": "PASS"
+        }
+      ],
+      "blockedSemantics": {
+        "status": "blocked",
+        "blockedReason": "PREEXISTING_INFEASIBLE_STATE",
+        "passCount": 1,
+        "okFalse": true,
+        "errorCode": 5
+      },
+      "passed": 106,
+      "failed": 0
+    },
+    "input": {
+      "execution": "actual-product-ets-via-bundled-typescript",
+      "results": [
+        {
+          "name": "MODE01_testRejectsOneHundredSensorSamplesExactly",
+          "status": "PASS"
+        },
+        {
+          "name": "MODE01_03_experienceRejectsScriptAndGestureAndForceInvert",
+          "status": "PASS"
+        },
+        {
+          "name": "MODE02_06_tenRoundTripsClearAllInputOnlyState",
+          "status": "PASS"
+        },
+        {
+          "name": "MODE05_coldHotFirstEnvelopeAndSameModePreserveCommands",
+          "status": "PASS"
+        },
+        {
+          "name": "MODE03_07_freshCallbackRecoversAndBothSignsMapThroughSameChain",
+          "status": "PASS"
+        },
+        {
+          "name": "MODE04_repeatedDeterministicCommandTraceAndInvalidWatermark",
+          "status": "PASS"
+        },
+        {
+          "name": "MODE07_equivalentNormalizedInputsShareExactPhysicsTrajectory",
+          "status": "PASS"
+        },
+        {
+          "name": "P011_ledgerContextSamplesAfterTiltUpdate",
+          "status": "PASS"
+        },
+        {
+          "name": "P011_MODE02_resetInputPreservesMaterialAndRunIdentity",
+          "status": "PASS"
+        },
+        {
+          "name": "canonicalLedger_derivesExternalState",
+          "status": "PASS"
+        },
+        {
+          "name": "conservation_randomOperationSequence",
+          "status": "PASS"
+        },
+        {
+          "name": "percolationV2_crossExchangeHasNonZeroQ",
+          "status": "PASS"
+        },
+        {
+          "name": "percolationV2_pairSortingHasNonZeroR",
+          "status": "PASS"
+        },
+        {
+          "name": "separationProfile_matchesIndependentReference",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_consistentAcross30_60_120Hz",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_bindsSharedSubstepFlux",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_bindsShallowWaterSettling",
+          "status": "PASS"
+        },
+        {
+          "name": "rateBudget_validatesSandTopMaxRange",
+          "status": "PASS"
+        },
+        {
+          "name": "separation_singlePhaseReturnsNull",
+          "status": "PASS"
+        },
+        {
+          "name": "dormant_zeroSubstepStepResult",
+          "status": "PASS"
+        },
+        {
+          "name": "frameHook_emitsDormantFrame",
+          "status": "PASS"
+        },
+        {
+          "name": "thickGeometry_tilt68MovesWithoutCapacityOverflow",
+          "status": "PASS"
+        },
+        {
+          "name": "bottomCreep_tiltMovesLowerLayers",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_routeAndHooksAreSubstepAligned",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_bottomCreepUsesDirectionAndIndependentBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_phaseBalancedSplitKeepsHeavyShareAndTelemetry",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_commandSignFlipResetsPhaseAndReversesDisplacement",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_negativeTiltReversesBottomCreep",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_totalMotionBudgetClipsBottomCreep",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_directionAccuracyCovers200SamplesAndSignSwitches",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_fullLoadKeepsBottomCreepIndependentBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_totalBudgetExhaustionScalesRequestsProportionally",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_multiChannelTotalBudgetScalesAllRequestsProportionally",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_fullLoadPercolationKeepsBottomBudgetIsolated",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_deadZoneClearsBottomCreepRate",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_velocityGainDoesNotOverrideShapeRateCap",
+          "status": "PASS"
+        },
+        {
+          "name": "shake_peakAndRestResidual",
+          "status": "PASS"
+        },
+        {
+          "name": "invert180_preservesConservationAndPhaseOrder",
+          "status": "PASS"
+        },
+        {
+          "name": "failedInjection_restoresCanonicalState",
+          "status": "PASS"
+        },
+        {
+          "name": "copyStateTo_rejectsInvalidSchema",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_transitionTelemetry_budgetLimitedEdgeKeepsActive",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_transitionTelemetry_edgeIdentityIsNotSlotIndex",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_previewPurity_budgetLedgerSingleCommit",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_singleCommitTiltAndRate",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_blockedCarriesReasonAndHoldsTilt",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_twoPassLimitAndConservationOverRun",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_directedThreeCandidateExhaustion",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_planningPass_limitingEdgeTieBreakKeepsSmallestIndex",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_ninePhaseMapping_assignsAllPlateauPhases",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_ninePhaseMapping_legacySevenPhaseBackwardCompatible",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_ledgerSchemaV3_plannerFieldsPresent",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_cappedWeightedAllocationFillsReservation",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_uniformInteriorEdgesExcluded",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_ledgerAndGuardsInApply",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_candidateSelectionDPositiveOnly",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_weightedAllocationMatchesDesignerExample",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_reservationWithinTotalBudget",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_qDescentCapAndDescentPreserved",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_uniformInteriorEdgesExcludedBoundaryKeepsContribution",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_routeGateBlocksAllocatorWithoutExplicitRoute",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_clipsGrantToKeepEdgeWithinHardMax",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_nonWorseningOnViolatingEdge",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_zeroInfluenceEdgeDoesNotRestrictGrant",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_ledgerRefundRestoresBudgets",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_refundFix_undeibtiedColumnRefundsZero",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_refundFix_rejectedExceedsUsedStopsAtDebit",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_refundFix_mixedColumnsCloseExactly",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_telemetryFieldsReal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_settleDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_settleZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_relaxDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_relaxZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_bottomCreepDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_bottomCreepZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_liftDirectlyInterceptsAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_materialGuard_liftZeroInterventionWhenLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_threeStateTransitionFunction",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_paramInvariantThrows",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_requestedFormula",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_candidateRunProducesDecisionAndExecutedFields",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_legacyRunKeepsPreV3Behavior",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_budgetLimitedEdgeStaysActive",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_hysteresis_donorReceiverOrientationFeedsRequested",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1_routeIsolation_threeWayApplyRouting",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1_legacyTrajectoryEquivalence240Steps",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_scheduleV3_generationAndCsvContract",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_scheduleV3_segmentPhaseMapping",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_attempt_blockedSubstepLandsAttemptRecord",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_attempt_attemptIdsUniquePerSubstep",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_tiltWant_v3FieldsParseAndValidate",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_tiltWant_correctionRouteBindingParsesAndValidates",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1b_correctionTelemetryFourFieldsCloseLedger",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_d1b_legacyAuditOmitsCorrectionFields",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_correction_applySlotUsesReservationSlopeStop",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_1_defaultParamsArmDualFactoryPair",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_2_zeroStopAngleIsLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_3_thirtyStartAngleIsLegal",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_4_reversedAndEqualPairsRejectedNoSideEffects",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_5_nonFiniteAndLegacyWithPairRejected",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_6_midRunPairChangeClearsStateMachine",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_7_pairSurvivesResetAcrossModes",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_8_illegalPairRejectedKeepsPreviousConfig",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_9_metadataMismatchIsFlagged",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_10_configRevisionMonotonicAndPreviewGuardPresent",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_11_legacySingleKeepsPreV27Behavior",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_12_dualDefaultDoesNotActivateCorrection",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_13_budgetsAndConservationUnchangedByPairChange",
+          "status": "PASS"
+        },
+        {
+          "name": "u27_14_threeStateSemanticsWithUserPair",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_cvar_fourVariantsAndRouteGatePriority",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_cvar_bDegradedKeepsReservationAndRefunds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_cvar_cWeightIsESquared",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_wantParseThreeStates",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_dispatchesInOrderOnClock",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_slowFrameDispatchesMultipleInOrder",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_driftRecordedNeverChased",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_finishLiftsMutualExclusion",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_forceStopRecoversSingleCommands",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_invalidStartStaysInactive",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_replayMatchesFrozenCsv",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_metadataArmingFiveScenarios",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_armedBeforeStartFirstRecordCarriesThresholds",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_execIdentityArmingFiveScenarios",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_schedulePlayer_identityArmsExecutedThresholdsOnFirstRecord",
+          "status": "PASS"
+        },
+        {
+          "name": "p011_conditioning_prefixRunsBeforeFormalSchedule",
+          "status": "PASS"
+        }
+      ],
+      "passed": 124,
+      "failed": 0
+    },
+    "particle_m2": {
+      "schemaVersion": 7,
+      "tests": 13,
+      "passed": 13,
+      "failed": []
+    },
+    "peak": {
+      "passed": 8,
+      "failed": 0,
+      "summary": {
+        "peakFieldRevision": "p011-peak-fields-v1",
+        "peakMethodId": "peakNonDepositedFraction",
+        "peakProtocolId": "p011-ws08-peak-nondeposited",
+        "peakProtocolRevision": "ws08-peak-nondeposited-v1",
+        "peakAuthority": "APPROVED",
+        "peakProtocolEffective": false,
+        "evidenceClassification": "CANDIDATE_DIAGNOSTIC",
+        "peakWindowStartElapsedMs": 100,
+        "peakWindowEndElapsedMs": 3100,
+        "shakeOnEventId": "run:shake:1",
+        "shakeOffEventId": "run:shake:5",
+        "shakeOnEffectiveElapsedMs": 100,
+        "shakeOffEffectiveElapsedMs": 3100,
+        "peakWindowSampleCount": 2,
+        "peakNonDepositedFraction": 0.52,
+        "peakNonDepositedHeavyFraction": 0.52,
+        "peakNonDepositedLightFraction": null,
+        "peakCommitKey": {
+          "runId": "run",
+          "sequence": 1,
+          "frameId": 1,
+          "substepId": 1,
+          "attemptId": "a1",
+          "committedOrdinal": 1
+        },
+        "peakStockMass": 520,
+        "peakReferenceMass": 1000,
+        "peakSampleElapsedMs": 100,
+        "peakInputCommitOrder": 2,
+        "peakStatus": "PASS",
+        "peakScore": 6,
+        "legacyPeakHistoricalReference": 0.52,
+        "legacyPeakLiveFormula": 0.52,
+        "sameReferenceSuspOnlyPeak": 0.52
+      }
+    },
+    "m2-transactions": {
+      "suite": "p011_m2_transactions",
+      "passed": 14,
+      "failed": 0,
+      "results": [
+        {
+          "name": "production reserve and guard invoked once; partial LAND leaves remainder",
+          "status": "PASS"
+        },
+        {
+          "name": "publish failure restores pool, field and real budgets",
+          "status": "PASS"
+        },
+        {
+          "name": "plan mismatch commits nothing",
+          "status": "PASS"
+        },
+        {
+          "name": "packetized gesture birth journal is mass-exact and no suspension double count",
+          "status": "PASS"
+        },
+        {
+          "name": "gesture+shake real substeps conserve both phases and include SHAKE_LIFT",
+          "status": "PASS"
+        },
+        {
+          "name": "architecture mirror invalid domain rejects before canonical writes",
+          "status": "PASS"
+        },
+        {
+          "name": "real reserve matches local-before-scale grid with bottom unchanged",
+          "status": "PASS"
+        },
+        {
+          "name": "crossing partial grant refunds each endpoint and total once",
+          "status": "PASS"
+        },
+        {
+          "name": "real guard rejects worsening deposition and refunds reservation",
+          "status": "PASS"
+        },
+        {
+          "name": "same-source full-pool births merge without mass loss",
+          "status": "PASS"
+        },
+        {
+          "name": "full incompatible pool degrades lifted mass without second debit",
+          "status": "PASS"
+        },
+        {
+          "name": "C OFF arming preserves canonical arrays bit-for-bit over inputs",
+          "status": "PASS"
+        },
+        {
+          "name": "independent particle projection detects grant drift",
+          "status": "PASS"
+        },
+        {
+          "name": "v7 journal and particle summary represent the post-commit pool",
+          "status": "PASS"
+        }
+      ]
+    },
+    "render": {
+      "execution": "actual-product-ets-via-bundled-typescript",
+      "results": [
+        {
+          "name": "p012_adapter_longRun_neverConservationFails",
+          "status": "PASS",
+          "error": "conservationFails=0"
+        },
+        {
+          "name": "p012_adapter_injectHOnlyBreakAndRecover",
+          "status": "PASS",
+          "error": "reason=6 recovered=true"
+        },
+        {
+          "name": "p012_adapter_injectLOnlyBreak",
+          "status": "PASS",
+          "error": "reason=7"
+        },
+        {
+          "name": "p012_renderer_drawBudget_worst60Frames",
+          "status": "PASS",
+          "error": "worstDraws=9 budget=16"
+        },
+        {
+          "name": "p012_renderer_deterministicSameSeed",
+          "status": "PASS",
+          "error": "styleCounts=7/7"
+        },
+        {
+          "name": "p012_offBranchDecision_table",
+          "status": "PASS",
+          "error": "decision table mismatch"
+        },
+        {
+          "name": "p012_ea_mistDrawBudget_worst60Frames",
+          "status": "PASS",
+          "error": "worstTotalDraws=32 (E+A budget 64)"
+        },
+        {
+          "name": "p012_ea_fogAlphaBound",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_ea_mistOnlyInEATier",
+          "status": "PASS",
+          "error": "eMist=0 eaMist(e3i2-legacy)=23 eaI2Baked=true"
+        },
+        {
+          "name": "p012_ea_deterministicSameSeed",
+          "status": "PASS",
+          "error": "fillCounts=30/30"
+        },
+        {
+          "name": "p012_adapter_slotIsolation",
+          "status": "PASS",
+          "error": "bh0Before=50 pairValid=true"
+        },
+        {
+          "name": "p012_eab_motionCache_freezeZeroAdvect",
+          "status": "PASS",
+          "error": "freezeOk=true zeroOk=true"
+        },
+        {
+          "name": "p012_eab_motionCache_netTransportAdvect",
+          "status": "PASS",
+          "error": "advectOk=true"
+        },
+        {
+          "name": "p012_eab_drawBudget_firstTierWorst60",
+          "status": "PASS",
+          "error": "worstEAB=52 budget=112"
+        },
+        {
+          "name": "p012_eab_grainOnlyInEAB",
+          "status": "PASS",
+          "error": "clipEA=1 clipEAB=4 imgEA=0 imgEAB=20"
+        },
+        {
+          "name": "p012_eab_grainWithinBBatchBudget",
+          "status": "PASS",
+          "error": "grainDelta=20 budget=48 drawImageWorst=20"
+        },
+        {
+          "name": "p012_eab_withinBBatchDrawBudgetHook",
+          "status": "PASS",
+          "error": "lastDrawCount=52 ea=32 budget=48"
+        },
+        {
+          "name": "p012_eab_deterministicSameSeed",
+          "status": "PASS",
+          "error": "styleCounts=30/30"
+        },
+        {
+          "name": "p012_ablate_grain_skipsGrainLayer",
+          "status": "PASS",
+          "error": "imgOff=12 imgAblated=0 clipOff=3 clipAblated=1"
+        },
+        {
+          "name": "p012_ablate_fog_skipsFogLayers",
+          "status": "PASS",
+          "error": "legacyDrawsOff=32 drawsAblated=9 delta=23 bakeOff=2 bakeFog=0"
+        },
+        {
+          "name": "p012_ablate_spark_skipsSparkFill",
+          "status": "PASS",
+          "error": "drawsOff=9 drawsAblated=6 delta=3"
+        },
+        {
+          "name": "p012_fillbox_full_submitsMoreDraws",
+          "status": "PASS",
+          "error": "imgTight=12 imgFull=40"
+        },
+        {
+          "name": "p012_fillbox_full_pixelEquivalentStyles",
+          "status": "PASS",
+          "error": "stylesTight=30 stylesFull=30 same=true"
+        },
+        {
+          "name": "p012_ablate_legacyContextDefaults",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_c_sampler_preservesLayerOrder",
+          "status": "PASS",
+          "error": "orderOk=true edgeOk=true"
+        },
+        {
+          "name": "p012_c_bandNoise_zeroMeanBounded",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_c_segmentPhaseContinuous",
+          "status": "PASS",
+          "error": "maxColWarpJump=0.0451 cycles threshold=0.0625"
+        },
+        {
+          "name": "p012_c_lambdaScaleConsistent",
+          "status": "PASS",
+          "error": "lamPx=85.333 expect(H/k)=85.333 raw=112.500 aligned=true withinTol=true seamless=true stable=true"
+        },
+        {
+          "name": "p012_c_bitmapAlphaOpaqueOrSkipped",
+          "status": "PASS",
+          "error": "Node channel: bitmap null (skipped, on-device alpha=255 baked)"
+        },
+        {
+          "name": "p012_c_ablateStrat_skipsStratLayer",
+          "status": "PASS",
+          "error": "drawsOff=38 drawsStrat=32 delta=6"
+        },
+        {
+          "name": "p012_c_drawBudget_within16",
+          "status": "PASS",
+          "error": "cDelta=6 budget=16 (C1 drawImage + C3 fillRect)"
+        },
+        {
+          "name": "p012_c_epochBreak_seedPhaseStable",
+          "status": "PASS",
+          "error": "warpTableStableAfterReset=true"
+        },
+        {
+          "name": "p012_c_emptyBandSkipped",
+          "status": "PASS",
+          "error": ""
+        },
+        {
+          "name": "p012_c_geometryEpoch_rebake",
+          "status": "PASS",
+          "error": "bakedEpoch1=1 lam(900)=85.33 lam(1200)=128.00 expect=128.00 rebaked=true"
+        },
+        {
+          "name": "p012_c_geometryEpoch_idempotent",
+          "status": "PASS",
+          "error": "lam1=85.33 lam2=85.33 same=true"
+        },
+        {
+          "name": "p012_eab_grainTile_fullCoverage",
+          "status": "PASS",
+          "error": "tile=256 worstQuadrantStd=0.8918 minOverallStd=0.9622"
+        },
+        {
+          "name": "p012_eab_grainTile_lumStdContribution",
+          "status": "PASS",
+          "error": "grainStd=10.47 hfH=6.765 totalStd(vs base 13)=16.7"
+        },
+        {
+          "name": "p012_eab_grainTile_unitVarianceClipped",
+          "status": "PASS",
+          "error": "worstStdDev=0.0378 worstAbs=2.5000"
+        },
+        {
+          "name": "p012_e3_samplerLayerOrder",
+          "status": "PASS",
+          "error": "monotonic=true"
+        },
+        {
+          "name": "p012_e3_scalarSamplerSameSplit",
+          "status": "PASS",
+          "error": "worstDiff=0.00e+0"
+        },
+        {
+          "name": "p012_e3_unpremultiplyNoDarkEdge",
+          "status": "PASS",
+          "error": "mid=232,240,236,128 right=0,0,0,0 edge=232,240,236,128"
+        },
+        {
+          "name": "p012_e3_n1ContinuousNo64Period",
+          "status": "PASS",
+          "error": "maxStep=0.0783 corr64=0.0326"
+        },
+        {
+          "name": "p012_e3_n1PhysicsRngIsolated",
+          "status": "PASS",
+          "error": "bhIdentical=true"
+        },
+        {
+          "name": "p012_e3_staticZeroRebake",
+          "status": "PASS",
+          "error": "bake1=2 bake2=2 bake3=4 (1=烘2buffer, 2=静止0增, 3=层高变>2)"
+        },
+        {
+          "name": "p012_e3_resetPhaseZero",
+          "status": "PASS",
+          "error": "phaseZero=true dirtyBoth=true"
+        },
+        {
+          "name": "p012_e3_shiftSeamless",
+          "status": "PASS",
+          "error": "overlapMaxDiff=0.00e+0 (重叠区逐位) edgeMaxDiff=6.53e-3 (边界插值语义≤0.01)"
+        },
+        {
+          "name": "p012_e3_bufferAspectRatio",
+          "status": "PASS",
+          "error": "h=305 expect=305 w=256"
+        },
+        {
+          "name": "p012_appearance_schemaMatrix",
+          "status": "PASS",
+          "error": "n=20 失败=[]"
+        },
+        {
+          "name": "p012_appearance_lambdaDedup",
+          "status": "PASS",
+          "error": "tableSize=6 uniqueK=true has24=true dedupWorks=true"
+        },
+        {
+          "name": "p012_appearance_factoryEquiv",
+          "status": "PASS",
+          "error": "err=null draws=9/9 bakes=0/0"
+        },
+        {
+          "name": "p012_appearance_rebakeMatrix",
+          "status": "PASS",
+          "error": "fine:0->1 strat:0->0 | λ strat:0->1 grain:1->1 | f/c grain:1->1 strat:1->1"
+        },
+        {
+          "name": "p012_appearance_physicsUntouched",
+          "status": "PASS",
+          "error": "applied=true bitwise=true"
+        },
+        {
+          "name": "p012_appearance_persistReject",
+          "status": "PASS",
+          "error": "good=null broken=grainSigma=99 非法（[12,24] 步长 1） family=styleFamilyId='legacy-v0' 不匹配（须 'soft-water-sand-v1'）"
+        },
+        {
+          "name": "p012_appearance_revisionMonotonic",
+          "status": "PASS",
+          "error": "rev0=0 staged=0 consumed=1 afterReject=1"
+        },
+        {
+          "name": "p012_appearance_restoreFactory",
+          "status": "PASS",
+          "error": "userApplied=true restored=true f=1"
+        },
+        {
+          "name": "p012_appearance_rejectNoClamp",
+          "status": "PASS",
+          "error": "err=true activeSigma=20 activeFine=2"
+        },
+        {
+          "name": "p012_e3_qThresholdSemantics",
+          "status": "PASS",
+          "error": "settleMicroSuppressed=true staticWaterStable=true realChangeDirty=true"
+        },
+        {
+          "name": "p012_e3_qTailLowRebake",
+          "status": "PASS",
+          "error": "沉降600帧后300帧尾段重烘=44（修复前每帧=300；真实蠕变，<120）"
+        },
+        {
+          "name": "p012_e3_avalancheStillRebakes",
+          "status": "PASS",
+          "error": "tilt70 雪崩 120 帧重烘=76（rate=0.63，≥0.30——漏更新=回归）"
+        },
+        {
+          "name": "p012_e3_phaseZeroMotionStable",
+          "status": "PASS",
+          "error": "零运动100帧后globalPhasePx=0（须=0）"
+        },
+        {
+          "name": "p012_e3_phaseGenuineAccumulates",
+          "status": "PASS",
+          "error": "globalPhasePx=75.00 maxDelta=0.750 accumulated=true smooth=true"
+        },
+        {
+          "name": "p012_e3_phaseWrapNoJump",
+          "status": "PASS",
+          "error": "gpMax=1.938 muMax=69.09 gpSmooth=true muJumpy=true"
+        },
+        {
+          "name": "p012_e3_noiseSettleRebakeLow",
+          "status": "PASS",
+          "error": "settle尾段300帧噪声重烘=0（旧63%@133ms；治本+门控→≈0）"
+        },
+        {
+          "name": "p012_e3_bufferSettleRebakeLow",
+          "status": "PASS",
+          "error": "settle尾段300帧缓冲重烘=44（真实层高蠕变，<120）"
+        },
+        {
+          "name": "p012_e2_bakeDeterministic",
+          "status": "PASS",
+          "error": "mapLen=32768/32768 bakes=1 bitwise=true"
+        },
+        {
+          "name": "p012_e2_flatNoPartition",
+          "status": "PASS",
+          "error": "l0=0.944500 uniform=true（平沙须无列间分区）"
+        },
+        {
+          "name": "p012_e2_offEquiv",
+          "status": "PASS",
+          "error": "base=9 off=9 e2bakes=0/0"
+        },
+        {
+          "name": "p012_e2_rebakeAccounting",
+          "status": "PASS",
+          "error": "first=1 still+0 tilt+1"
+        },
+        {
+          "name": "p012_e2_slopeResponse",
+          "status": "PASS",
+          "error": "lLeft=0.9754 lRight=0.8663 diff=0.109124"
+        },
+        {
+          "name": "pair_valid_afterTwoSteps_conservationHolds",
+          "status": "PASS"
+        },
+        {
+          "name": "inject_breaksPair_andRebuildsBaselineNextFrame",
+          "status": "PASS"
+        },
+        {
+          "name": "sameSnapshot_zeroAdvection_validPair",
+          "status": "PASS"
+        },
+        {
+          "name": "notFiniteSnapshot_returnsNullView_clearsPair",
+          "status": "PASS"
+        },
+        {
+          "name": "frameGapOver100ms_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "epochChange_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "serialGap_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "runIdentityChange_breaksPair",
+          "status": "PASS"
+        },
+        {
+          "name": "adapterSlots_doNotAliasPageSnapshot",
+          "status": "PASS"
+        },
+        {
+          "name": "kahanTotals_matchFieldGetTotals",
+          "status": "PASS"
+        },
+        {
+          "name": "renderer_drawBudget_within16_offBranchDecision",
+          "status": "PASS"
+        },
+        {
+          "name": "motionCache_freezeWhenInvalid_zeroAdvection",
+          "status": "PASS"
+        },
+        {
+          "name": "motionCache_netTransport_producesAdvection",
+          "status": "PASS"
+        }
+      ],
+      "passed": 82,
+      "failed": 0
+    }
+  },
+  "python": {
+    "total": 42,
+    "failed": 0,
+    "t39WriterCheckerCases": 4,
+    "endpoint": 25,
+    "peak": 13
+  },
+  "frozenEndpointProtocol": "10/10 MATCH; protocol/checker unchanged",
+  "build": {
+    "status": "PASS",
+    "command": "hvigorw --mode module -p product=default -p module=entry@default default@CompileArkTS",
+    "log": "test/reports/t39-build.log",
+    "environment": "shared workspace; concurrent T20 render projection fix remains outside this commit"
+  },
+  "device": "NOT_RUN per role and task",
+  "failureCorrection": "First build rejected untyped rethrow; changed to typed Error after restoring field. Final build passed. Initial test clock binding after admission violated existing run-start rule; fixture now binds before sources.",
+  "completion": "developer complete; T40 can run independently; T11 still requires T40 and its own device run"
+}
