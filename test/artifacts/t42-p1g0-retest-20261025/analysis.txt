@@ -1,0 +1,119 @@
+== P1-G0 补证复测 T42 分析: D:\hmprojects\HelloWorld\test\artifacts\t42-p1g0-retest-20261025
+-- canvas 逻辑宽: 365；盒坐标: (352, 649, 576, 779, 1280, 2598)
+
+-- ①帧提交 / ②sRGB 收据(A/B) / ⑤输入（逐臂日志判读）
+
+  [R0-hello-texture]
+    hello: frames=1560 native=1560 ready=True ok=True
+    ⇒ ①帧提交: PASS
+    输入 Down=2（hitMode=none）
+
+  [R1-renderer-texture]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=32 code0=32 swapTrue=32 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=2（hitMode=none）
+
+  [R2-renderer-surface]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=64 code0=64 swapTrue=64 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    输入 Down=2（hitMode=none）
+
+  [R3-renderer-texture-hittransparent]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=32 code0=32 swapTrue=32 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=3（hitMode=transparent）
+
+  [R4-renderer-texture-hitdefault]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=31 code0=31 swapTrue=31 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=3（hitMode=default）
+
+  [R5-renderer-texture-diagoff]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=25 code0=25 swapTrue=25 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=1（hitMode=none）
+
+  [R6-renderer-texture-surface10bg]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=50 code0=50 swapTrue=50 T_dataHash非零=True surfaceCreate=11 ctxCreate=11 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=11 surfaceDestroy=10 ctxCreate=11 ctxDestroy=10 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=1（hitMode=none）
+
+  [R7-renderer-texture-dyn]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=65 code0=65 swapTrue=65 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=7（hitMode=none）
+
+  [R8-renderer-texture-longrun]
+    tdata_boundary: length=512 byteLength=2048 nativeByteLength=2048 nativeBufferBytes=2048 errorStage=NONE → OK
+    遥测: n=106 code0=106 swapTrue=106 T_dataHash非零=True surfaceCreate=1 ctxCreate=1 errorStage=NONE
+    ⇒ ①帧提交: PASS
+    遥测: surfaceCreate=1 surfaceDestroy=0 ctxCreate=1 ctxDestroy=0 ctxLoss=0 stale=0 eglErr=12288 glErr=0
+    合成收据(请求时): code=0 status=PENDING req=SRGB errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK
+    读回头部(帧后): act=SRGB attach=GL_SRGB alphaSize=8 wctl=True/True drawFb=0 status=READY errStage=NONE
+    输入 Down=1（hitMode=none）
+
+-- ③z序 / ④透明 / ②C层（截图判读）
+   [R0-hello-texture-after-swipe] 盒区中心=(46, 51, 55) ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R0-hello-texture] 盒区中心=(46, 51, 55) ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R1-renderer-texture-after-swipe] 五带=[0, 10, 118, 188, 255] 盒上半=(0, 255, 255)
+        ②C层: PASS 五带=sRGB 编码期望 [0, 10, 118, 188, 255]（线性写入经 sRGB 写控制）
+        ④透明: PASS 盒上半棋盘透出（alpha=0 区正确合成）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R1-renderer-texture] 五带=[0, 10, 118, 188, 255] 盒上半=(0, 255, 255)
+        ②C层: PASS 五带=sRGB 编码期望 [0, 10, 118, 188, 255]（线性写入经 sRGB 写控制）
+        ④透明: PASS 盒上半棋盘透出（alpha=0 区正确合成）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R2-renderer-surface-after-swipe] 盒区中心=(125, 125, 125) ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R2-renderer-surface] 盒区中心=(125, 125, 125) ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R3-renderer-texture-hittransparent] 五带=[0, 10, 118, 188, 255] 盒上半=(0, 255, 255)
+        ②C层: PASS 五带=sRGB 编码期望 [0, 10, 118, 188, 255]（线性写入经 sRGB 写控制）
+        ④透明: PASS 盒上半棋盘透出（alpha=0 区正确合成）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R4-renderer-texture-hitdefault] 五带=[0, 10, 118, 188, 255] 盒上半=(0, 255, 255)
+        ②C层: PASS 五带=sRGB 编码期望 [0, 10, 118, 188, 255]（线性写入经 sRGB 写控制）
+        ④透明: PASS 盒上半棋盘透出（alpha=0 区正确合成）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R5-renderer-texture-diagoff] diag=off：探针按设计不画条纹；盒上半=(0, 255, 255)
+        ②C层: N/A（diagnosticEnabled=false，无条纹可采）
+        ④透明: PASS 盒区全透明（diag=off 不画条纹，棋盘透出）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R6-renderer-texture-surface10bg] 五带=[0, 10, 118, 188, 255] 盒上半=(0, 255, 255)
+        ②C层: PASS 五带=sRGB 编码期望 [0, 10, 118, 188, 255]（线性写入经 sRGB 写控制）
+        ④透明: PASS 盒上半棋盘透出（alpha=0 区正确合成）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+   [R7-renderer-texture-dyn-1] 五带=[0, 10, 118, 188, 255] 盒上半=(0, 255, 255)
+        ②C层: PASS 五带=sRGB 编码期望 [0, 10, 118, 188, 255]（线性写入经 sRGB 写控制）
+        ④透明: PASS 盒上半棋盘透出（alpha=0 区正确合成）  ③z序: PASS 洋红线穿盒可见（y=1384, fg 在 GLES 之上）
+
+-- 汇总
+  ①帧提交: PASS（全部臂 code=0/swap=true/draw_error=0）
+  ②sRGB : A/B 见各臂读回头部；C 层见五带判读
+  ③z序  : R0-hello-texture=PASS, R0-hello-texture-after-swipe=PASS, R1-renderer-texture=PASS, R1-renderer-texture-after-swipe=PASS, R2-renderer-surface=PASS, R2-renderer-surface-after-swipe=PASS, R3-renderer-texture-hittransparent=PASS, R4-renderer-texture-hitdefault=PASS, R5-renderer-texture-diagoff=PASS, R6-renderer-texture-surface10bg=PASS, R7-renderer-texture-dyn-1=PASS
+  ④透明  : R0-hello-texture=N/A, R0-hello-texture-after-swipe=N/A, R1-renderer-texture=PASS, R1-renderer-texture-after-swipe=PASS, R2-renderer-surface=N/A, R2-renderer-surface-after-swipe=N/A, R3-renderer-texture-hittransparent=PASS, R4-renderer-texture-hitdefault=PASS, R5-renderer-texture-diagoff=PASS, R6-renderer-texture-surface10bg=PASS, R7-renderer-texture-dyn-1=PASS
+  ⑤输入  : R0-hello-texture=2, R1-renderer-texture=2, R2-renderer-surface=2, R3-renderer-texture-hittransparent=3, R4-renderer-texture-hitdefault=3, R5-renderer-texture-diagoff=1, R6-renderer-texture-surface10bg=1, R7-renderer-texture-dyn=7, R8-renderer-texture-longrun=1
+
+-- ②sRGB 解析期望对照（T33 §4.3，MEASURED_NOT_CALIBRATED 容差未冻结）
+   线性 0.18 → 线性8bit≈46 / sRGB8bit≈118；线性 0.5 → 128 / 188
+   判读规则: 读回值与请求 colorspace/attachment 编码一致才计该层证据；截图近似不补 A/B。
+
+DONE

@@ -1,0 +1,23 @@
+[16:31:38] retest start
+[16:31:48] started arm lib=hello profile=texture hit=none diag=true
+[16:32:06] R0 shot+dump done
+[16:32:16] started arm lib=renderer profile=texture hit=none diag=true
+[16:32:38] R1 shot+dump done
+[16:32:48] started arm lib=renderer profile=surface hit=none diag=true
+[16:33:10] R2 shot+dump done
+[16:33:20] started arm lib=renderer profile=texture hit=transparent diag=true
+[16:33:41] R3 done
+[16:33:51] started arm lib=renderer profile=texture hit=default diag=true
+[16:34:12] R4 done
+[16:34:22] started arm lib=renderer profile=texture hit=none diag=false
+[16:34:38] R5 done
+[16:34:48] started arm lib=renderer profile=texture hit=none diag=true
+[16:35:40] R6 done
+[16:35:50] started arm lib=renderer profile=texture hit=none diag=true
+[16:36:32] R7 done
+[16:36:42] started arm lib=renderer profile=texture hit=none diag=true
+[16:36:48] R8 long-run start (90s)
+[16:37:19] R8 elapsed 30s
+[16:37:49] R8 elapsed 60s
+[16:38:19] R8 elapsed 90s
+[16:38:19] R8 done

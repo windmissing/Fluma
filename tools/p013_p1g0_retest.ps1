@@ -4,7 +4,7 @@
 #        R3 hit=transparent / R4 hit=default / R5 diag=off 同帧 ROI / R6 前后台 10 次 / R7 动态错帧
 $hdc = 'C:\Users\admin\AppData\Local\OpenHarmony\Sdk\26.0.0\toolchains\hdc.exe'
 $bundle = 'com.example.helloworld'
-$out = 'D:\hmprojects\HelloWorld\test\artifacts\p013-p1g0-retest-20261025'
+$out = 'D:\hmprojects\HelloWorld\test\artifacts\t42-p1g0-retest-20261025'
 Remove-Item Env:HTTP_PROXY -ErrorAction SilentlyContinue
 Remove-Item Env:HTTPS_PROXY -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $out | Out-Null
@@ -26,7 +26,7 @@ function Shot($n) {
   & $hdc file recv /data/local/tmp/r-$n.jpeg (Join-Path $out "$n.jpeg") | Out-Null
 }
 function Dump-G0($file) {
-  & $hdc shell 'hilog -x' 2>$null | Select-String 'P013G0|P013Hello|OnSurface|EGL init' | ForEach-Object { $_.Line } | Out-File (Join-Path $out $file) -Append
+  & $hdc shell 'hilog -x' 2>$null | Select-String 'P013G0|P013Hello|OnSurface|EGL init|WS_EVENT p013|Console' | ForEach-Object { $_.Line } | Out-File (Join-Path $out $file) -Append
 }
 
 # ---------- R0: hello + TEXTURE + hit=none（sRGB 基线 + z 序回归；hello 清屏色走纹理路径） ----------
@@ -118,4 +118,15 @@ for ($k = 1; $k -le 6; $k++) {
 Dump-G0 'R7-renderer-texture-dyn-g0.txt'
 Log-Step 'R7 done'
 Write-Output "R7 done"
+
+# ---------- R8: 长时 90s 持续帧（T42：有效帧持续性与无 1s 级间隙；H01 冻结门槛） ----------
+Start-Probe 'R8' 'renderer' 'texture' 'none' 'true'
+Log-Step 'R8 long-run start (90s)'
+for ($k = 1; $k -le 18; $k++) {
+  Start-Sleep -Seconds 5
+  if ($k % 6 -eq 0) { Log-Step ("R8 elapsed " + ($k * 5) + "s") }
+}
+Dump-G0 'R8-renderer-texture-longrun-g0.txt'
+Log-Step 'R8 done'
+Write-Output "R8 done"
 Write-Output "DONE"
