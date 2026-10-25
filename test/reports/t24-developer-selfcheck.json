@@ -1,0 +1,71 @@
+{
+  "task": "T24",
+  "scope": "Offline material preparation only; no product enablement",
+  "date": "2026-10-25",
+  "device": "NOT_RUN",
+  "build": "test/reports/t41-t24-build.log",
+  "checks": {
+    "material_preparation": {
+      "suite": "T24_material_preparation",
+      "passed": 11,
+      "failed": 0,
+      "results": [
+        {
+          "name": "six-layer schema exact lengths, deterministic owned bytes, product disabled",
+          "status": "PASS"
+        },
+        {
+          "name": "missing or wrong-size asset rejects without fallback synthesis",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown versions, bad layout, identity and nonopaque assets reject",
+          "status": "PASS"
+        },
+        {
+          "name": "published Q table and Q(255) cap",
+          "status": "PASS"
+        },
+        {
+          "name": "published C3 blocks use exact quantized bytes",
+          "status": "PASS"
+        },
+        {
+          "name": "neutral B/C increments vanish and OFF ignores light",
+          "status": "PASS"
+        },
+        {
+          "name": "one common light before ToneMap; final negative clamp only",
+          "status": "PASS"
+        },
+        {
+          "name": "negative coordinates positive-mod wrap and C continuous-warp texel phase",
+          "status": "PASS"
+        },
+        {
+          "name": "preparation has no production caller or shader embedding",
+          "status": "PASS"
+        },
+        {
+          "name": "layout2 packs 1536 floats with P0 row0, Gaussian slope and exact reserved zeros",
+          "status": "PASS"
+        },
+        {
+          "name": "layout2 matches signed-off flat/ramp/rawImpulse pb32 selections",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "status": "PREPARED_NOT_DEVICE_VALIDATED",
+  "productG1Released": false,
+  "pythonAssets": "3/3 PASS: deterministic SHA256 layer order/missing/corrupt/version/path cases",
+  "cpuReference": "58/58 MATCH, existing tester executor; shader not linked, no GPU validation",
+  "gaps": [
+    "Actual six production RGBA export before putImageData remains future G3 integration; no duplicate procedural generator was added.",
+    "Signed-off G0 draw/swap/sRGB evidence remains T42/designer prerequisite.",
+    "GLSL is a prepared function library, not compiled/linked product shader.",
+    "Production material stage/pump/activate API, double generations and Canvas fallback remain future G2/G3 cards.",
+    "Metadata declared asset hashes require SHA256 verification by the offline loader; ETS fingerprint is explicitly non-cryptographic."
+  ]
+}
