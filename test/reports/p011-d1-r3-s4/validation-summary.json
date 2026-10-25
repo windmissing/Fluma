@@ -1,0 +1,168 @@
+{
+  "verificationBaseCommit": "1511fbf",
+  "physicalScope": "isolated D1 M1; no M2 wiring or device",
+  "build": {
+    "isolatedArkTS": "PASS",
+    "sharedWorkspace": "FAILED_DURING_CONCURRENT_EDITS",
+    "isolatedCompiler": "bundled hvigor 6.26.8 CompileArkTS; explicit worker imports HOT and COLD export modules"
+  },
+  "unitSuites": {
+    "hot": {
+      "suite": "run_p011_particle_hot_units",
+      "passed": 11,
+      "failed": 0
+    },
+    "patch": {
+      "suite": "run_p011_particle_hot_patch_units",
+      "passed": 12,
+      "failed": 0
+    },
+    "sink": {
+      "suite": "run_p011_particle_hot_sink_units",
+      "passed": 14,
+      "failed": 0
+    },
+    "S4": {
+      "suite": "run_p011_particle_hot_s4_units",
+      "passed": 6,
+      "failed": 0
+    }
+  },
+  "isolatedRegression": {
+    "gesture": {
+      "passed": 16,
+      "failed": 0
+    },
+    "planning": {
+      "passed": 106,
+      "failed": 0
+    },
+    "input": {
+      "passed": 124,
+      "failed": 0
+    },
+    "render": {
+      "passed": 82,
+      "failed": 0
+    },
+    "tracer": {
+      "passed": 9,
+      "failed": 0
+    },
+    "s3": {
+      "passed": 14,
+      "failed": 0
+    },
+    "s4": {
+      "passed": 10,
+      "failed": 0
+    },
+    "advection": {
+      "passed": 8,
+      "failed": 0
+    },
+    "endpoint": {
+      "passed": 9,
+      "failed": 0
+    }
+  },
+  "sharedWorkspaceFailures": [
+    {
+      "suite": "planning",
+      "name": "canonicalLedger_derivesExternalState",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\n4 !== 3\n"
+    },
+    {
+      "suite": "input",
+      "name": "canonicalLedger_derivesExternalState",
+      "status": "FAIL",
+      "error": "Expected values to be strictly equal:\n\n4 !== 3\n"
+    },
+    {
+      "suite": "s3",
+      "name": "s3_performanceK8",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: refreshMoisture 0.07792515ms"
+    },
+    {
+      "suite": "s3",
+      "name": "s3_wetnessCrossedIndependentField",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(moistureMod.P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION === 6)\n"
+    },
+    {
+      "suite": "endpoint-native",
+      "name": "legacy suspensionFraction formula is unchanged; explicit C missing summary not fabricated",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== null\n\n    at D:\\hmprojects\\HelloWorld\\test\\run_p011_endpoint_units.cjs:88:67\n    at test (D:\\hmprojects\\HelloWorld\\test\\run_p011_endpoint_units.cjs:17:28)\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_p011_endpoint_units.cjs:83:1)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\n    at node:internal/main/run_main_module:28:49"
+    },
+    {
+      "suite": "run_p011_gesture_inject_units",
+      "name": "emits one receipt event per admitted and rejected transaction; metrics expose cumulative admission",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nundefined !== 2\n"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_conservationIdentity",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_momentLedgerRM",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_cflBound",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_sameSnapshotAntiOversell",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_sixPartIdempotency",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_directionSemantics",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "run_p011_advection_units",
+      "name": "adv_performanceOofN",
+      "status": "FAIL",
+      "error": "ReferenceError: donorStockBefore is not defined"
+    },
+    {
+      "suite": "render",
+      "status": "FAIL",
+      "error": "TypeError in P012MaterialMotionCache: null material view during concurrent M2 edits"
+    }
+  ],
+  "sourceSha256": {
+    "entry/src/main/ets/physics/P011ParticleField.ets": "f16f0b33fa4894c9cf04893c16df9a2186bb24e666a94a4b774f36718e1dd33b",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "895d795eb55f29acc2df5fcc8d8d6826d9c021db24fa47cb2d4d8102e14ddcd5",
+    "entry/src/main/ets/physics/P011ParticleHotBudget.ets": "f393429378558258602775746b1b43ea1b365f902b23fa0861c96f2a95c9f878",
+    "entry/src/main/ets/physics/P011ParticleHotEvidence.ets": "c135b69b349625a35c4fa1a349193c02193225b0a89905c236fcc38fd988fd55",
+    "entry/src/main/ets/physics/P011ParticleHotPrototype.ets": "ff8d3947d62dc266b6831355f5b34b633c224912cae729f4d9d8e5174b2f9ffb",
+    "entry/src/main/ets/physics/P011ParticlePrototype.ets": "34432e25219cd3e9ec248973a8ac4375aaf4db0fad618fec61316ee57407ccb3",
+    "entry/src/main/ets/physics/P011ParticleRefundAdapter.ets": "274cc91e58bc1c9524460a7f9d1dc85b40f40bb0bdba63b96d8e91773050ea5d"
+  },
+  "endpoint": {
+    "python": "24/0",
+    "nativeIsolated": "9/0",
+    "protocolCounterexamples": "10/10 MATCH"
+  }
+}

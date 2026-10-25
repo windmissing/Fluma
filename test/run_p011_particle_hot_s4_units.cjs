@@ -71,4 +71,13 @@ test('S4 full sandbox exercises all six transactions, merge/degrade, retained ta
   }
   assert.deepEqual([...seen].sort(),['SPAWN','LAND','CROSS_COLUMN','LIFT','DEGRADE','MERGE'].sort());
 });
+test('S4 replacing prepared after-image rejects publish before touching canonical pool',()=>{
+  const s=makeSandbox(8),f=fixture(s,'partial-land'),w=s.work;
+  w.pool.transferHotState(f.pool,true);for(const k of keys)s.field[k].set(f.field[k]);
+  assert.equal(hot.beginStepHot(w,s.input),0);hot.collectParticlePlanInto(w,w.stepEpoch,w.planA);
+  const token=hot.preparePatchHot(w,w.planA,0,.2,0,2);assert.ok(token>0);const before=w.pool.snapshot();
+  const saved=w.patchAfter.pMass;w.patchAfter.pMass=w.patchBefore.pMass;
+  assert.equal(hot.publishPatchHot(w,token),3);assert.deepEqual(w.pool.snapshot(),before);
+  w.patchAfter.pMass=saved;assert.equal(hot.discardPatchHot(w,token),0);
+});
 console.log(JSON.stringify({suite:'run_p011_particle_hot_s4_units',passed,failed:0}));

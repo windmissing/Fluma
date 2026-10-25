@@ -1008,7 +1008,9 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
 function patchLeaseHot(work: P011ParticleHotWorkspace, token: number, required: number): number {
   if (work.active !== 1 || !Number.isSafeInteger(token) || token <= 0 || token !== work.activePatchToken ||
     work.activePatchStepEpoch !== work.stepEpoch) { work.staleHandleRejectCount++; return P011_HOT_STALE_HANDLE; }
-  return work.patchState === required ? 0 : P011_HOT_INVALID_PATCH_STATE;
+  if (work.patchState !== required) return P011_HOT_INVALID_PATCH_STATE;
+  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) return P011_HOT_INVALID_BUFFER;
+  return P011_HOT_OK;
 }
 function clearPatchHot(work: P011ParticleHotWorkspace): void {
   work.activePatchToken = 0; work.activePatchStepEpoch = 0; work.activePatchOrdinal = 0;

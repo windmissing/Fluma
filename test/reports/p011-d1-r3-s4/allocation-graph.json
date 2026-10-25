@@ -1,0 +1,1407 @@
+{
+  "status": "ZERO_ALLOCATION",
+  "registryComplete": true,
+  "legacySiteCount": 60,
+  "legacyRegistry": [
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "beginStep",
+      "line": 453,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(identity)",
+      "id": "F01",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.beginStep"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "beginStep",
+      "line": 455,
+      "kind": "object-literal",
+      "text": "{ massPackage: params.massPackage, nmax: params.nmax,\n      terminalSpeedHeavy: params.terminalSpeedHeavy, ter",
+      "id": "F02",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.beginStep"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 471,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(plan.identity)",
+      "id": "F03",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.applyParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 472,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(plan.requests)",
+      "id": "F04",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.applyParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 473,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(plan.motions)",
+      "id": "F05",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.applyParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 482,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F06",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.applyParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 486,
+      "kind": "array-literal",
+      "text": "[result.requested, result.granted, result.remainder,\n        result.budgetClipped, result.guardRejected, resul",
+      "id": "F07",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.applyParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "checkpoint",
+      "line": 511,
+      "kind": "object-literal",
+      "text": "{ state: this.snapshot(), stepId: this.stepId, appliedKeys: Array.from(this.appliedKeys) }",
+      "id": "F08",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.checkpoint"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "checkpoint",
+      "line": 511,
+      "kind": "allocating-helper",
+      "text": "this.snapshot()",
+      "id": "F09",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.checkpoint"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "rollback",
+      "line": 515,
+      "kind": "constructor",
+      "text": "new Set<string>(checkpoint.appliedKeys)",
+      "id": "F10",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.rollback"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "prepare",
+      "line": 551,
+      "kind": "constructor",
+      "text": "new P011ParticlePreparedPatch(this.nextPatchId++, request.requestKey,\n      this.stepId, before, after)",
+      "id": "F11",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.prepare"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "mergePair",
+      "line": 610,
+      "kind": "object-literal",
+      "text": "{ kind: 'merge', index: this.mergeRecords.length }",
+      "id": "F12",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.mergePair"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "mergePair",
+      "line": 611,
+      "kind": "object-literal",
+      "text": "{ survivor: this.pId[a], absorbed: this.pId[b],\n      phase: this.pPhase[a], sourceKind: this.pSource[a], sour",
+      "id": "F13",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.mergePair"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "edit",
+      "line": 660,
+      "kind": "object-literal",
+      "text": "{ mass: packageMass, x: x,\n            y: r.kind === 'lift' ? low : Math.max(low, Math.min(high, r.predictedY)",
+      "id": "F14",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.edit"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "edit",
+      "line": 666,
+      "kind": "object-literal",
+      "text": "{ kind: 'birth', index: this.birthRecords.length }",
+      "id": "F15",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.edit"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "edit",
+      "line": 667,
+      "kind": "object-literal",
+      "text": "{ particleId: this.pId[slot], mass: birth.mass,\n            x: birth.x, y: birth.y, vx: birth.vx, vy: birth.vy",
+      "id": "F16",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.edit"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "record",
+      "line": 867,
+      "kind": "allocating-helper",
+      "text": "request.mergedIds.slice()",
+      "id": "F17",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleJournal.record"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "finish",
+      "line": 874,
+      "kind": "allocating-helper",
+      "text": "this.requests.slice(0, this.count)",
+      "id": "F18",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleJournal.finish"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "finish",
+      "line": 875,
+      "kind": "object-literal",
+      "text": "{ identity: this.identity, requestCount: this.count,\n      requests: active, totalRequested: this.totalRequest",
+      "id": "F19",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleJournal.finish"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "finish",
+      "line": 877,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(active)",
+      "id": "F20",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleJournal.finish"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 892,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F21",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 894,
+      "kind": "closure",
+      "text": "(a: number, b: number): number => frozenPool.pId[a] - frozenPool.pId[b]",
+      "id": "F22",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 897,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F23",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 898,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F24",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 899,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F25",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 919,
+      "kind": "object-literal",
+      "text": "{ particleId: frozenPool.pId[i], column: c, x: x,\n        y: Math.max(y, frozenField.sandTopAt(c) + params.con",
+      "id": "F26",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 924,
+      "kind": "object-literal",
+      "text": "{\n      requestKey: JSON.stringify([identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, co",
+      "id": "F27",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 925,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify([identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, contact ? -1 : target,",
+      "id": "F28",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 925,
+      "kind": "array-literal",
+      "text": "[identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, contact ? -1 : target, j]",
+      "id": "F29",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 936,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F30",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 944,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(motions)",
+      "id": "F31",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticleField.ets::P011ParticleField.collectParticlePlan",
+        "P011ParticleField.ets::collectParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "reserve",
+      "line": 58,
+      "kind": "object-literal",
+      "text": "{ ticketId: this.nextId, requestKey: r.requestKey,\n      substepId: r.substepId, source: r.column, target: tar",
+      "id": "P01",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeBudget.reserve"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "view",
+      "line": 167,
+      "kind": "constructor",
+      "text": "new P011ParticlePrototypeView(this)",
+      "id": "P02",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.view"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 181,
+      "kind": "allocating-helper",
+      "text": "this.snapshot()",
+      "id": "P03",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 181,
+      "kind": "allocating-helper",
+      "text": "this.pool.checkpoint()",
+      "id": "P04",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 189,
+      "kind": "object-literal",
+      "text": "{ ok: true, errorCode: null, results: results }",
+      "id": "P05",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 194,
+      "kind": "object-literal",
+      "text": "{ ok: false, errorCode: code, results: [] }",
+      "id": "P06",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 194,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "P07",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "guard",
+      "line": 198,
+      "kind": "constructor",
+      "text": "new Map<number, number>()",
+      "id": "P08",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.guard"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "guard",
+      "line": 200,
+      "kind": "closure",
+      "text": "(edge: number): number => this.sand(edge + 1) - this.sand(edge) -\n        Math.tan(this.identity.effectiveTilt",
+      "id": "P09",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.guard"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "guard",
+      "line": 204,
+      "kind": "object-literal",
+      "text": "{ accepted: decision.accepted, rejected: decision.rejected,\n      allLegalBefore: decision.allLegalBefore,\n   ",
+      "id": "P10",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.guard"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 244,
+      "kind": "allocating-helper",
+      "text": "this.snapshot()",
+      "id": "P11",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 254,
+      "kind": "allocating-helper",
+      "text": "this.pool.snapshot()",
+      "id": "P12",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 256,
+      "kind": "allocating-helper",
+      "text": "this.view()",
+      "id": "P13",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 257,
+      "kind": "allocating-helper",
+      "text": "this.view().freeSpaceAt(r.targetColumn)",
+      "id": "P14",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 257,
+      "kind": "allocating-helper",
+      "text": "this.view()",
+      "id": "P15",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 259,
+      "kind": "allocating-helper",
+      "text": "this.view().freeSpaceAt(c)",
+      "id": "P16",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 259,
+      "kind": "allocating-helper",
+      "text": "this.view()",
+      "id": "P17",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 295,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey,\n        substepId: r.substepId, ordinal: r.ordinal, kind: r.kind, particleId: r.pa",
+      "id": "P18",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 302,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey,\n        grantedHeavy: gh, grantedLight: gl, disposition: disposition }",
+      "id": "P19",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 325,
+      "kind": "allocating-helper",
+      "text": "this.pool.snapshot()",
+      "id": "P20",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 343,
+      "kind": "object-literal",
+      "text": "{ kind: 'MERGE', requestKey: r.requestKey, particleId: m.survivor,\n          sourceId: m.sourceId, phase: m.ph",
+      "id": "P21",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 347,
+      "kind": "array-literal",
+      "text": "[m.survivor, m.absorbed]",
+      "id": "P22",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 353,
+      "kind": "object-literal",
+      "text": "{ kind: 'SPAWN', requestKey: r.requestKey, particleId: b.particleId,\n          sourceId: b.sourceId, phase: b.",
+      "id": "P23",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 357,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "P24",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 362,
+      "kind": "object-literal",
+      "text": "{ kind: kind, requestKey: r.requestKey, particleId: r.particleId,\n        sourceId: r.sourceId, phase: r.phase",
+      "id": "P25",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 372,
+      "kind": "object-literal",
+      "text": "{ kind: 'DEGRADE', requestKey: r.requestKey, particleId: 0,\n        sourceId: r.sourceId, phase: r.phase, sour",
+      "id": "P26",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 375,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "P27",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 385,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey, committed: true, errorCode: null,\n        requested: r.requested, granted: granted",
+      "id": "P28",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 392,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey, committed: false, errorCode: `${error}`,\n        requested: r.requested, granted: ",
+      "id": "P29",
+      "Reachability": "COLD_DIAGNOSTIC_COMPAT",
+      "classification": "MIGRATED_TO_COLD",
+      "ownerNodes": [
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply"
+      ]
+    }
+  ],
+  "remainingSiteCount": 0,
+  "hotAllocationSites": [],
+  "unresolvedCalls": [],
+  "roots": [
+    "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+    "P011ParticleHot.ets::beginStepHot",
+    "P011ParticleHot.ets::checkpointHot",
+    "P011ParticleHot.ets::rollbackStepHot",
+    "P011ParticleHot.ets::finishStepHot",
+    "P011ParticleHot.ets::collectParticlePlanInto",
+    "P011ParticleHot.ets::compareParticlePlansHot",
+    "P011ParticleHot.ets::preparePatchHot",
+    "P011ParticleHot.ets::publishPatchHot",
+    "P011ParticleHot.ets::restorePatchHot",
+    "P011ParticleHot.ets::discardPatchHot",
+    "P011ParticleHot.ets::finishPatchHot",
+    "P011ParticleHot.ets::applyParticlePlanInto",
+    "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.reserveInto",
+    "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.refundInto",
+    "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.closeInto",
+    "P011ParticleHotPrototype.ets::guardAdmitInto"
+  ],
+  "reachableNodes": [
+    {
+      "key": "P011ParticleField.ets::particleSnapshotBufferAtHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleField.ets::P011ParticleField.copySnapshot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleField.ets::P011ParticleField.storageValidForHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleField.ets::P011ParticleField.transferHotState",
+      "edges": [
+        "P011ParticleField.ets::P011ParticleField.storageValidForHot",
+        "P011ParticleField.ets::particleSnapshotBufferAtHot",
+        "P011ParticleField.ets::P011ParticleField.copySnapshot"
+      ]
+    },
+    {
+      "key": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.sand",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.ownsBufferHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+      "edges": [
+        "P011ParticleField.ets::particleSnapshotBufferAtHot",
+        "P011ParticleField.ets::P011ParticleField.storageValidForHot",
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.buffersValidHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.activePatchState",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.requestCount",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.motionCount",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.resultCount",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.eventCount",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.lineageCount",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.hotStatus",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+      "edges": [
+        "P011ParticleField.ets::particleSnapshotBufferAtHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.ownsBufferHot",
+        "P011ParticleField.ets::P011ParticleField.transferHotState"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::fieldBufferAtHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::fieldStorageValidHot",
+      "edges": [
+        "P011ParticleHot.ets::fieldBufferAtHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.ownsBufferHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::beginStepHot",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::fieldStorageValidHot",
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.beginHot",
+        "P011ParticleHot.ets::fieldBufferAtHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.saveOutsHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::checkpointHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::rollbackStepHot",
+      "edges": [
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.rollbackHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.restoreOutsHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::finishStepHot",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::fieldStorageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.allClosedHot",
+        "P011ParticleHot.ets::auditParticleHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.finishHot",
+        "P011ParticleHot.ets::sealEvidenceHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::sealEvidenceHot",
+      "edges": [
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHot.ets::allocateParticleHotLease"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::beforeInOrder",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::siftDown",
+      "edges": [
+        "P011ParticleHot.ets::beforeInOrder"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::sortActive",
+      "edges": [
+        "P011ParticleHot.ets::sortOrderHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::sortOrderHot",
+      "edges": [
+        "P011ParticleHot.ets::siftDown"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::collectParticlePlanInto",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::sortActive",
+        "P011ParticleHot.ets::sandHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::compareParticlePlansHot",
+      "edges": [
+        "P011ParticleHot.ets::planValuesValidHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::sandHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::planValuesValidHot",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::allocateParticleHotLease",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::copyPoolHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::particleSlotHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::sameRequestHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::rememberRequestHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::requestIdentityHot",
+      "edges": [
+        "P011ParticleHot.ets::planValuesValidHot",
+        "P011ParticleHot.ets::sameRequestHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::validateParticleHotRequest",
+      "edges": [
+        "P011ParticleHot.ets::requestIdentityHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::actionCommonHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::mergePairHot",
+      "edges": [
+        "P011ParticleHot.ets::actionCommonHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::mergeOldestHot",
+      "edges": [
+        "P011ParticleHot.ets::mergePairHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::editPoolHot",
+      "edges": [
+        "P011ParticleHot.ets::mergeOldestHot",
+        "P011ParticleHot.ets::actionCommonHot",
+        "P011ParticleHot.ets::particleSlotHot",
+        "P011ParticleHot.ets::mergePairHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::preparePatchHot",
+      "edges": [
+        "P011ParticleHot.ets::requestIdentityHot",
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::fieldStorageValidHot",
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHot.ets::copyPoolHot",
+        "P011ParticleHot.ets::copyRequestRowHot",
+        "P011ParticleHot.ets::editPoolHot",
+        "P011ParticleHot.ets::allocateParticleHotLease"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::patchLeaseHot",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::fieldStorageValidHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::clearPatchHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::publishPatchHot",
+      "edges": [
+        "P011ParticleHot.ets::patchLeaseHot",
+        "P011ParticleField.ets::P011ParticleField.transferHotState"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::restorePatchHot",
+      "edges": [
+        "P011ParticleHot.ets::patchLeaseHot",
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHot.ets::clearPatchHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::discardPatchHot",
+      "edges": [
+        "P011ParticleHot.ets::patchLeaseHot",
+        "P011ParticleHot.ets::clearPatchHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::finishPatchHot",
+      "edges": [
+        "P011ParticleHot.ets::patchLeaseHot",
+        "P011ParticleHot.ets::rememberRequestHot",
+        "P011ParticleHot.ets::clearPatchHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::copyRequestRowHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHot.ets::auditParticleHot",
+      "edges": [
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHot.ets::sortOrderHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.auditHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::failApplyHot",
+      "edges": [
+        "P011ParticleHot.ets::rollbackStepHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHot.ets::applyParticlePlanInto",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::fieldStorageValidHot",
+        "P011ParticleHot.ets::compareParticlePlansHot",
+        "P011ParticleHot.ets::failApplyHot",
+        "P011ParticleHot.ets::requestIdentityHot",
+        "P011ParticleHot.ets::sameRequestHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.applyInto",
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticleHot.ets::particleSlotHot",
+        "P011ParticleHot.ets::auditParticleHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotTicketReceipt.copyFromHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.copyFromHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.beginHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.rollbackHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.allClosedHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.auditHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.finishHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.reserveInto",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::validateParticleHotRequest",
+        "P011ParticleHot.ets::sameRequestHot",
+        "P011ParticleHot.ets::allocateParticleHotLease",
+        "P011ParticleHot.ets::copyRequestRowHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.slotHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.refundInto",
+      "edges": [
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.slotHot",
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.fillHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.closeInto",
+      "edges": [
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.slotHot",
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.fillHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.fillHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.copyFromHot",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::sand",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::guardAdmitInto",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.sand",
+        "P011ParticleHotPrototype.ets::sand"
+      ]
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::clearEventRow",
+      "edges": []
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::copyAction",
+      "edges": [
+        "P011ParticleHotPrototype.ets::clearEventRow"
+      ]
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.buffersValidHot",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.saveOutsHot",
+      "edges": [
+        "P011ParticleHotBudget.ets::P011ParticleHotTicketReceipt.copyFromHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.copyFromHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.copyFromHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.restoreOutsHot",
+      "edges": [
+        "P011ParticleHotBudget.ets::P011ParticleHotTicketReceipt.copyFromHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.copyFromHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.copyFromHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.failHot",
+      "edges": [
+        "P011ParticleHot.ets::rollbackStepHot"
+      ]
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.applyInto",
+      "edges": [
+        "P011ParticleHot.ets::P011ParticleHotPlanBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotResultBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotEventBuffer.storageValidHot",
+        "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotRefundReceipt.storageValidHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.storageValidHot",
+        "P011ParticleHotPrototype.ets::P011ParticleHotGuardBuffer.storageValidHot",
+        "P011ParticleHot.ets::validateParticleHotRequest",
+        "P011ParticleField.ets::P011ParticleField.transferHotState",
+        "P011ParticlePrototype.ets::P011ParticlePrototypeSink.sand",
+        "P011ParticleHotPrototype.ets::sand",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.reserveInto",
+        "P011ParticleHotPrototype.ets::P011ParticleHotPrototypeSink.failHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.refundInto",
+        "P011ParticleHotPrototype.ets::guardAdmitInto",
+        "P011ParticleHot.ets::preparePatchHot",
+        "P011ParticleHot.ets::publishPatchHot",
+        "P011ParticleHot.ets::auditParticleHot",
+        "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.closeInto",
+        "P011ParticleHotPrototype.ets::copyAction",
+        "P011ParticleHotPrototype.ets::clearEventRow",
+        "P011ParticleHot.ets::finishPatchHot"
+      ]
+    }
+  ],
+  "nativeAllowlist": [
+    "Math.floor",
+    "Math.max",
+    "Math.min",
+    "Math.sin",
+    "Math.cos",
+    "Math.tan",
+    "Math.exp",
+    "Math.abs",
+    "Math.imul",
+    "Number.isSafeInteger",
+    "Number.isFinite",
+    "Number.isInteger",
+    "TypedArray.set (declared existing storage)",
+    "TypedArray.fill (declared existing storage)"
+  ]
+}

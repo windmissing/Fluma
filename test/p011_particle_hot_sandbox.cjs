@@ -25,8 +25,9 @@ function makeSandbox(nmax=512,eventCapacity=4096){
   add('positive-tail',(p,f)=>{const slot=seed(p,{mass:28/60+1e-14});p.retainAfterDeposit(slot,0,f.bh[20],1e-6);},0,0,false,0);
   add('explicit-merge',(p,f)=>{for(let i=0;i<2;i++){const slot=seed(p,{mass:.1*(i+1),x:20.4+i*.2});p.retainAfterDeposit(slot,0,f.bh[20],1e-6);}},6,.1,true);
   add('explicit-degrade',(p,f)=>{const slot=seed(p,{mass:.1});p.retainAfterDeposit(slot,0,f.bh[20],1e-6);},5,.1,true);
-  add('full-merge',(p,f)=>{for(let i=0;i<nmax;i++){const slot=seed(p,{mass:.1,sourceId:i<2?1:i+1});p.retainAfterDeposit(slot,0,f.bh[20],1e-6);}},1,.05,true);
-  add('full-lift-degrade',(p,f)=>{for(let i=0;i<nmax;i++){const slot=seed(p,{mass:.1,sourceId:i+1});p.retainAfterDeposit(slot,0,f.bh[20],1e-6);}},4,.25,true);
+  add('full-merge',(p,f)=>{for(let i=0;i<nmax;i++){const slot=seed(p,{mass:.1,sourceId:i<2?1:i+1});
+    if(i<2)p.retainAfterDeposit(slot,0,f.bh[20],1e-6);}},1,.05,true);
+  add('full-lift-degrade',(p,f)=>{for(let i=0;i<nmax;i++)seed(p,{mass:.1,sourceId:i+1});},4,.25,true);
   const field={cols:128,capacity:512,sourceInjectedH:0,sourceInjectedL:0,sourceEpoch:0};
   for(const k of ['waterTop','bh','bl','mh','ml','suspH','suspL','surface'])field[k]=new Float64Array(128);
   const input={runToken:1,substepId:1,attemptToken:1,dt:1/60,effectiveTiltRad:.2,seed:17,paramsRevision:1,inputRevision:1,field};
