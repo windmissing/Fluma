@@ -74,6 +74,7 @@ export type P012SourceKind = 'sensor' | 'gesture' | 'script';
 
 /** 页面→renderer 的显示契约（§2；全部为页面既有字段的只读副本） */
 export interface P012FrameContext {
+  dualFieldGpu?: boolean;
   renderFrameId?: number;
   physicsCommitId?: number;
   particleSnapshot?: P012ParticleRenderSnapshot;

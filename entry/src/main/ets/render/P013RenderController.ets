@@ -1,3 +1,6 @@
+import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
+import { P013DualFieldAdapter, P013DualFieldUploadSlot } from './P013DualFieldAdapter';
+import { P013DualFieldReceipt, P013DualFieldVisualParams } from './P013RenderTypes';
 import { P013CompositionProfile, P013CompositionReceipt } from './P013RenderTypes';
 // P-013 P0 v1: called only after the existing Canvas render, never owns a ticker.
 import p013renderer from 'libp013renderer.so';
@@ -77,6 +80,62 @@ export class P013RenderController {
       previous = current;
     }
     this.clockResolutionNs = Number.isFinite(minimum) ? minimum : 0;
+  }
+  private dualAdapter: P013DualFieldAdapter = new P013DualFieldAdapter();
+  private dualSlots: P013DualFieldUploadSlot[] = [];
+  private dualCursor: number = 0;
+  private dualVisual: P013DualFieldVisualParams = new P013DualFieldVisualParams();
+  lastPresentedCommit: number = 0;
+  dualFailure: string = '';
+  private lastDualLogMs: number = -1000;
+  lastDualReceipt: P013DualFieldReceipt | null = null;
+  submitDualField(stateSlot: P011PublishedRenderState, context: P012FrameContext,
+    width: number, height: number, frameTimeNs: number): P013DualFieldReceipt | null {
+    const native = this.native;
+    if (native === null || !this.loaded || !this.active || this.disposed) return null;
+    try {
+      let state = native.getState();
+      if (state.state === 'WAIT_WINDOW') return null;
+      if (this.frame.sessionId === 0) {
+        const init = native.init(this.componentId);
+        if (init.code !== 0) { this.dualFailure = `INIT_${init.code}`; return null; }
+        if (this.sessionId !== init.sessionId) { this.frameId = 0; this.sessionId = init.sessionId; }
+        this.frame.sessionId = init.sessionId; state = native.getState();
+      }
+      if (this.dualSlots.length === 0 || this.dualSlots[0].capacity !== stateSlot.particleCapacity) {
+        this.dualSlots = [new P013DualFieldUploadSlot(stateSlot.particleCapacity), new P013DualFieldUploadSlot(stateSlot.particleCapacity)];
+        this.dualCursor = 0;
+      }
+      const slot = this.dualSlots[this.dualCursor];
+      const packed = this.dualAdapter.packInto(stateSlot, context, slot);
+      if (packed !== 'OK') { this.dualFailure = packed; return null; }
+      const f = slot.frame;
+      const sw = state.widthPx > 0 ? state.widthPx : Math.round(width);
+      const sh = state.heightPx > 0 ? state.heightPx : Math.round(height);
+      const sx = sw / width, sy = sh / height;
+      if (!Number.isFinite(sx) || !Number.isFinite(sy) || sx <= 0 || sy <= 0 || Math.abs(sx - sy) > 1e-6) {
+        this.dualFailure = 'NONUNIFORM_SCALE'; return null;
+      }
+      f.sessionId = this.sessionId; f.frameId = ++this.frameId; f.snapshotId = ++this.snapshotId;
+      f.surfaceEpoch = state.surfaceEpoch; f.contextEpoch = state.contextEpoch; f.frameTimeNs = frameTimeNs;
+      f.surfaceWidthPx = sw; f.surfaceHeightPx = sh;
+      f.boxXPx = context.boxX * sx; f.boxYPx = context.boxY * sy;
+      f.boxWidthPx = context.boxW * sx; f.boxHeightPx = context.boxH * sy;
+      f.diagnosticEnabled = true;
+      this.dualVisual.radiusPx = sx;
+      const result = native.drawDualFieldFrame(f, slot.tdata, slot.particleXY, slot.particleMeta, this.dualVisual);
+      this.lastDualReceipt = result;
+      const now = p013NowMs();
+      if (now - this.lastDualLogMs >= 1000 || result.code >= 200) {
+        this.lastDualLogMs = now;
+        console.info(`WS_EVENT p013_dual_frame ${JSON.stringify(result)}`);
+      }
+      this.dualCursor = 1 - this.dualCursor;
+      this.diagnosticVisible = result.code === 0 && result.swapSucceeded;
+      this.dualFailure = this.diagnosticVisible ? '' : result.errorStage;
+      if (this.diagnosticVisible) this.lastPresentedCommit = stateSlot.physicsCommitId;
+      return result;
+    } catch (error) { this.dualFailure = 'DUAL_EXCEPTION'; this.diagnosticVisible = false; return null; }
   }
   requestComposition(profile: P013CompositionProfile): P013CompositionReceipt | null {
     const native = this.native;

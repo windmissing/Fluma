@@ -1,0 +1,41 @@
+{
+  "suite": "T20 read-only particle wiring",
+  "results": [
+    {
+      "name": "post-commit copy reuses buffers and cannot mutate live pool",
+      "status": "PASS"
+    },
+    {
+      "name": "FLYING coordinates and CONTACT_WAIT at bed remain visible",
+      "status": "PASS"
+    },
+    {
+      "name": "no age integration: repeat render identical and input bitwise unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "commit mismatch and visual ablation skip C without a tracer substitute",
+      "status": "PASS"
+    },
+    {
+      "name": "current frame sand/water masks are read anew; WAIT is never faded by flying fog",
+      "status": "PASS"
+    },
+    {
+      "name": "route OFF publishes empty projection and preserves old physical route",
+      "status": "PASS"
+    },
+    {
+      "name": "projection rejects insufficient capacity before writing arrays",
+      "status": "PASS"
+    },
+    {
+      "name": "real LAND uses same commit as bed, removes sprite and retains accumulated bed mass",
+      "status": "PASS"
+    },
+    {
+      "name": "published identity stays stable on reads and advances on legacy mutation/invert/restore",
+      "status": "PASS"
+    }
+  ]
+}

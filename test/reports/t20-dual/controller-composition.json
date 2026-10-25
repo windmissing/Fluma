@@ -1,0 +1,29 @@
+{
+  "suite": "T34 composition offline",
+  "results": [
+    {
+      "name": "P0 legacy draw command sequence equals prepared background+foreground, adapter updates once",
+      "status": "PASS"
+    },
+    {
+      "name": "analytic color controls discriminate linear8, sRGB and double encoding",
+      "status": "PASS"
+    },
+    {
+      "name": "unsupported profile restores complete Canvas mode and releases native",
+      "status": "PASS"
+    },
+    {
+      "name": "prepared token mismatch never submits a new native frame",
+      "status": "PASS"
+    },
+    {
+      "name": "default profile never enables a probe or substitutes a material shader",
+      "status": "PASS"
+    },
+    {
+      "name": "dual success consumes one published packet and ablation keeps real inventory",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { P011PublishedRenderState, P011RenderCopyStatus, P011RenderPublicationKind } from './P011PublishedRenderState';
 import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
   P011ExternalSourceSnapshot } from './P011ExternalAdmissions';
 import { P011ParticleRenderProjection } from '../common/P011ParticleRenderProjection';
@@ -881,6 +882,13 @@ export class WaterSandField {
   // D2 owns the only production route gate and binds M1's fixed-buffer HOT
   // executor directly to these canonical field arrays. Null is route OFF.
   private renderPhysicsCommitId: number = 0;
+  private renderStateEpoch: number = 0;
+  private renderPublicationKind: P011RenderPublicationKind = 'RESET';
+  private renderLedgerCommitKey: P011EndpointCommitKey | null = null;
+  private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {
+    this.renderPhysicsCommitId++; if (newEpoch) this.renderStateEpoch++;
+    this.renderPublicationKind = kind; this.renderLedgerCommitKey = null;
+  }
   private particleBinding: P011ParticleM2FieldBinding | null = null;
   private particleRouteId: string | null = null;
   private particleParams: P011ParticleParams | null = null;
@@ -1306,7 +1314,6 @@ export class WaterSandField {
 
   initialize(scene: WaterSandScene): void {
     this.validateScene(scene);
-    this.renderPhysicsCommitId++;
     this.waterTop.fill(0);
     this.bh.fill(0);
     this.bl.fill(0);
@@ -1408,6 +1415,7 @@ export class WaterSandField {
     this.frozen = false;
     this.dormant = false;
     this.lastError = null;
+    this.publishRenderState('RESET', true);
   }
 
   reset(scene?: WaterSandScene): void {
@@ -1513,7 +1521,7 @@ export class WaterSandField {
     this.initialWater = totals.water;
     this.initialHeavy = totals.heavy;
     this.initialLight = totals.light;
-    this.renderPhysicsCommitId++;
+    if (spec.amount > 0) this.publishRenderState('EXTERNAL_ADMISSION');
   }
 
   // =========================================================================
@@ -1761,7 +1769,7 @@ export class WaterSandField {
         this.sourceInjectedHeavy += totalH;
         this.sourceInjectedLight += totalL;
         this.sourceEpoch += 1;
-        this.renderPhysicsCommitId++;
+        if (totalH + totalL > 0) this.publishRenderState('EXTERNAL_ADMISSION');
         this.dormant = false; // injected material is in flight
         // CONS-04: a successful injection starts a new settling epoch for
         // both phases. Any t90 observed before this source epoch is invalid.
@@ -1953,7 +1961,7 @@ export class WaterSandField {
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.particleBinding.pool.invert180(this.capacity);
     }
-    this.renderPhysicsCommitId++;
+    this.publishRenderState('INVERT');
     this.updateSandTop();
     this.shakeEnergy = Math.max(this.shakeEnergy, 0.8);
   }
@@ -2322,7 +2330,7 @@ export class WaterSandField {
     this.endpointCaptureMode = mode;
   }
   private recordEndpointCommit(physicsDt: number): void {
-    this.renderPhysicsCommitId++;
+    this.publishRenderState('STEP');
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
     if (sampler === null) return;
@@ -2342,6 +2350,7 @@ export class WaterSandField {
         if (!Number.isFinite(elapsed) || elapsed < 0) throw new Error('INVALID_ENDPOINT_CLOCK');
         this.endpointStamp = sampler.stampRecordedPostCommit(key, elapsed, phase);
       }
+      this.renderLedgerCommitKey = this.endpointStamp === null ? null : this.endpointStamp.key;
       this.endpointStampedSourceEpoch = this.sourceEpoch;
       this.recordPeakCommit();
     } catch (error) {
@@ -2539,6 +2548,7 @@ export class WaterSandField {
     if (this.particleBinding !== null && this.particleBinding.liveCount > 0 &&
       routeId !== P011_PARTICLE_ROUTE_ID) return;
     if (this.endpointSampler !== null && routeId !== this.naturalObservationRouteId) this.endpointRouteChanges++;
+    if (routeId !== this.naturalObservationRouteId) this.publishRenderState('ROUTE_CHANGE');
     this.naturalObservationRouteId = routeId;
     this.endpointParticlePool = this.particleBinding === null ? null : this.particleBinding.pool;
     this.endpointParticleRouteActive = this.particleRouteActive();
@@ -2552,10 +2562,11 @@ export class WaterSandField {
   setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {
     if (this.particleBinding !== null && this.particleBinding.liveCount > 0) return this.particleRouteResult('BUSY_PARTICLES');
     if (params === null) {
-
+      if (this.particleBinding === null && this.particleParams === null && this.particleRouteId === null) return this.particleRouteResult('OK');
       this.particleBinding = null; this.particleBackup = null;
       this.particleRouteId = null; this.particleParams = null;
       this.endpointParticlePool = null; this.endpointParticleRouteActive = false;
+      this.publishRenderState('ROUTE_CHANGE');
       return this.particleRouteResult('OK');
     }
     if (this.naturalObservationRouteId !== null && this.naturalObservationRouteId !== P011_PARTICLE_ROUTE_ID ||
@@ -2581,6 +2592,7 @@ export class WaterSandField {
     this.particleRouteId = P011_PARTICLE_ROUTE_ID; this.particleParams = chosen;
     this.endpointParticlePool = this.particleBinding.pool;
     this.endpointParticleRouteActive = this.particleRouteActive();
+    this.publishRenderState('ROUTE_CHANGE');
     return this.particleRouteResult('OK');
   }
 
@@ -3912,6 +3924,25 @@ export class WaterSandField {
     return target;
   }
 
+  createPublishedRenderStateSlot(): P011PublishedRenderState {
+    return new P011PublishedRenderState(this.createEmptySnapshot());
+  }
+  copyPublishedRenderStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {
+    if (!this.particleRouteActive() || this.particleBinding === null) return 'ROUTE_INACTIVE';
+    if (out.field.schemaVersion !== 4 || out.field.particleState === undefined || out.field.particleState === null)
+      return 'SCHEMA_UNAVAILABLE';
+    if (out.field.particleState.nmax !== this.particleBinding.pool.nmax || out.field.cols !== this.cols ||
+      out.field.capacity !== this.capacity) return 'CAPACITY_MISMATCH';
+    if (!Number.isSafeInteger(this.renderPhysicsCommitId) || !Number.isSafeInteger(this.renderStateEpoch)) return 'INVALID_TOKEN';
+    // Synchronous UI call: no callback, step, collect, or consumer access before the full copy returns.
+    this.copyStateTo(out.field);
+    out.runId = this.p011RunId; out.stateEpoch = this.renderStateEpoch;
+    out.physicsCommitId = this.renderPhysicsCommitId; out.publicationKind = this.renderPublicationKind;
+    out.ledgerCommitKey = this.renderLedgerCommitKey;
+    out.routeId = this.particleRouteId; out.particleRouteActive = true;
+    out.particleCapacity = this.particleBinding.pool.nmax; out.liveCount = out.field.particleState.liveCount;
+    return 'OK';
+  }
   particleRenderCapacity(): number { return this.particleParams === null ? 0 : this.particleParams.nmax; }
   copyParticleRenderSnapshot(out: P011ParticleRenderProjection): P011ParticleRenderProjection {
     out.physicsCommitId = this.renderPhysicsCommitId;
@@ -4008,7 +4039,7 @@ export class WaterSandField {
       this.externalAdmissions.restore(sourceState.admissions);
     }
     this.updateSandTop();
-    this.renderPhysicsCommitId++;
+    this.publishRenderState('RESTORE', true);
   }
 
   getLastError(): WaterSandErrorCode | null {

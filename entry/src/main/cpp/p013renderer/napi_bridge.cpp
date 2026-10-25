@@ -16,6 +16,8 @@
 
 #include "egl_context.h"
 #include "composition_probe.h"
+#include "dualfield_pass.h"
+#include <vector>
 #include "p013_shader_sources.h"
 #include "shader_pass.h"
 #include "tdata_uploader.h"
@@ -30,6 +32,12 @@ struct Session {
   EglContext egl;
   ShaderPass shader;
   CompositionProbe probe;
+  DualFieldPass dual;
+  std::vector<float> dualXY;
+  std::vector<uint32_t> dualMeta;
+  std::string dualRun;
+  double dualStateEpoch=0, dualCommit=0;
+  bool dualBasic=false;
   TDataUploader uploader;
   std::unique_ptr<FrameStorage> storage;
   size_t head = 0, count = 0;
@@ -107,6 +115,7 @@ napi_value Control(napi_env e, Status code) {
   return o;
 }
 void ResetGpu() {
+  g.dual.Reset(false);
   g.probe.Reset();
   g.shader.Reset(false);
   g.uploader.Reset(false);
@@ -115,10 +124,11 @@ void Destroy(ResetReason reason) {
   // Normal owner teardown deletes names while current. Callback/error teardown
   // abandons registered names only when their owning context is destroyed.
   if (g.egl.state == State::READY && g.egl.active && !g.egl.current &&
-      (g.shader.Program() || g.uploader.Texture() || g.probe.Program())) {
+      (g.shader.Program() || g.uploader.Texture() || g.probe.Program() || g.dual.bed)) {
     SurfaceInfo info{};
     if (g.egl.EnsureCurrent({g.egl.surfaceEpoch, g.egl.width, g.egl.height},
                             info) == Status::OK) {
+      g.dual.Reset(true);
       g.probe.Reset(true);
       g.shader.Reset(true);
       g.uploader.Reset(true);
@@ -222,8 +232,10 @@ napi_value GetState(napi_env e, napi_callback_info) {
   Put(e, o, "nativeOwnedBytes",
       static_cast<double>(g.storage ? sizeof(FrameStorage) : 0));
   Put(e, o, "textureLiveCount", g.uploader.Texture() ? 1.0 : 0.0);
-  Put(e, o, "programLiveCount", (g.shader.Program() ? 1.0 : 0.0) + (g.probe.Program() ? 1.0 : 0.0));
-  Put(e, o, "vaoLiveCount", (g.shader.Vao() ? 1.0 : 0.0) + (g.probe.Vao() ? 1.0 : 0.0));
+  Put(e, o, "programLiveCount", (g.shader.Program() ? 1.0 : 0.0) + (g.probe.Program() ? 1.0 : 0.0) + (g.dual.bed ? 1.0 : 0.0) + (g.dual.particles ? 1.0 : 0.0));
+  Put(e, o, "vaoLiveCount", (g.shader.Vao() ? 1.0 : 0.0) + (g.probe.Vao() ? 1.0 : 0.0) + (g.dual.vao ? 1.0 : 0.0));
+  Put(e,o,"particleBufferLiveCount",(g.dual.xyBuffer ? 1.0 : 0.0)+(g.dual.metaBuffer ? 1.0 : 0.0));
+  Put(e,o,"particleStagingBytes",static_cast<double>((g.dualXY.capacity()+g.dualMeta.capacity())*4));
   Put(e, o, "telemetryLiveCount", static_cast<double>(g.count));
   Put(e, o, "textureAbandonCount",
       static_cast<double>(g.uploader.textureAbandonCount));
@@ -268,6 +280,8 @@ napi_value Release(napi_env e, napi_callback_info) {
   g.count = 0;
   g.head = 0;
   g.storage.reset();
+  g.dualBasic=false;g.dualRun.clear();g.dualStateEpoch=g.dualCommit=0;
+  std::vector<float>().swap(g.dualXY);std::vector<uint32_t>().swap(g.dualMeta);
   return Control(e, Status::OK);
 }
 void Save(const Telemetry& t) {
@@ -360,6 +374,83 @@ bool ParseLight(napi_env e, napi_value o, LightParams& l, const char*& stage) {
 #undef READ
   return ok;
 }
+bool TypedView(napi_env e,napi_value v,napi_typedarray_type expected,size_t expectedCount,void*& data,const char*& stage){
+ bool typed=false,detached=false;size_t count=0,offset=0,bytes=0;void* base=nullptr;napi_value buffer=nullptr;napi_typedarray_type type{};
+ if(napi_is_typedarray(e,v,&typed)!=napi_ok||!typed){stage="DUAL_NOT_TYPEDARRAY";return false;}
+ if(napi_get_typedarray_info(e,v,&type,&count,&data,&buffer,&offset)!=napi_ok){stage="DUAL_TYPED_INFO";return false;}
+ if(type!=expected){stage="DUAL_TYPED_TYPE";return false;}
+ if(count!=expectedCount){stage="DUAL_TYPED_LENGTH";return false;}
+ if(!data||napi_is_detached_arraybuffer(e,buffer,&detached)!=napi_ok||detached){stage="DUAL_BUFFER_DETACHED";return false;}
+ if(napi_get_arraybuffer_info(e,buffer,&base,&bytes)!=napi_ok||!base||offset>bytes||expectedCount*4>bytes-offset||offset%4!=0||data!=static_cast<unsigned char*>(base)+offset){stage="DUAL_BUFFER_RANGE";return false;}
+ return true;
+}
+bool ExactString(napi_env e,napi_value o,const char* name,const char* expected){napi_value v=nullptr;std::string text;return napi_get_named_property(e,o,name,&v)==napi_ok&&String(e,v,text)&&text==expected;}
+napi_value DrawDualFieldFrame(napi_env e,napi_callback_info info){
+ size_t n=5;napi_value a[5]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+ FrameInput f{};const char* stage="DUAL_ARGUMENT_COUNT";Status code=Status::OK;
+ double count=0,capacity=0,stateEpoch=0,commit=0,contextEpoch=0;bool enabled=false;std::string run;DualVisual visual{};
+ void* tdata=nullptr;void* xy=nullptr;void* meta=nullptr;
+ bool valid=n==5&&ParseFrame(e,a[0],f,stage);
+ if(valid){stage="DUAL_PACKET_VERSION";valid=ExactString(e,a[0],"dualFieldPacketRevision","P013_DUALFIELD_PACKET_V1")&&ExactString(e,a[0],"particleLayoutVersion","PARTICLE_XY_META_SOA_V1")&&ExactString(e,a[0],"renderPipelineId","DUALFIELD_BASIC_V1")&&ExactString(e,a[0],"colorPipelineVersion","BASIC_SRGB_DISPLAY_V1");}
+ if(valid){stage="DUAL_PUBLICATION";napi_value v=nullptr;valid=Number(e,a[0],"particleCount",count)&&Number(e,a[0],"particleCapacity",capacity)&&Number(e,a[0],"stateEpoch",stateEpoch)&&Number(e,a[0],"contextEpoch",contextEpoch)&&SafeInteger(contextEpoch)&&contextEpoch>=0&&Number(e,a[0],"physicsCommitId",commit)&&Boolean(e,a[0],"particleLayerEnabled",enabled)&&napi_get_named_property(e,a[0],"runId",&v)==napi_ok&&String(e,v,run)&&!run.empty()&&SafeInteger(count)&&SafeInteger(capacity)&&SafeInteger(stateEpoch)&&SafeInteger(commit)&&count>=0&&count<=capacity&&capacity>0&&capacity<=static_cast<double>(SIZE_MAX/16)&&stateEpoch>0&&commit>0;}
+ if(valid)valid=TypedView(e,a[1],napi_float32_array,kFloats,tdata,stage)&&TypedView(e,a[2],napi_float32_array,static_cast<size_t>(capacity)*2,xy,stage)&&TypedView(e,a[3],napi_uint32_array,static_cast<size_t>(capacity)*2,meta,stage);
+ if(valid){stage="DUAL_VISUAL";valid=ExactString(e,a[4],"visualRevision","P012_EXISTING_PHASE_CANDIDATES_V1")&&Number(e,a[4],"radiusPx",visual.radiusPx)&&std::isfinite(visual.radiusPx)&&visual.radiusPx>0;
+ const char* keys[]={"heavyR","heavyG","heavyB","lightR","lightG","lightB","particleHeavyR","particleHeavyG","particleHeavyB","particleLightR","particleLightG","particleLightB"};
+ for(size_t i=0;valid&&i<12;i++)valid=Number(e,a[4],keys[i],visual.colors[i])&&std::isfinite(visual.colors[i])&&visual.colors[i]>=0&&visual.colors[i]<=1;}
+ if(valid){stage="DUAL_PARTICLE_VALUE";auto* positions=static_cast<float*>(xy);auto* tags=static_cast<uint32_t*>(meta);
+ for(size_t i=0;valid&&i<static_cast<size_t>(count);i++){uint32_t tag=tags[2*i];uint32_t state=tag>>8;
+ valid=std::isfinite(positions[2*i])&&std::isfinite(positions[2*i+1])&&positions[2*i]>=0&&positions[2*i]<128&&positions[2*i+1]>=0&&positions[2*i+1]<=f.capacity&&(tag&0xffff0000u)==0&&(tag&255u)<=1&&(state==1||state==2)&&tags[2*i+1]>0;
+ for(size_t j=0;valid&&j<i;j++)valid=tags[2*j+1]!=tags[2*i+1];}}
+ std::lock_guard<std::mutex> lock(g.mutex);Telemetry t{};t.frame=f;code=Owner();
+ if(code==Status::OK&&!g.ownerBound)code=g.released?Status::RELEASED:Status::NOT_READY;
+ if(code==Status::OK&&f.sessionId!=g.id)code=Status::RELEASED;
+ if(code==Status::OK&&!valid)code=Status::INVALID_ARGUMENT;
+ if(code==Status::OK&&g.dual.epoch!=0&&contextEpoch!=g.egl.contextEpoch){code=Status::STALE_SURFACE;stage="DUAL_CONTEXT_EPOCH";}
+ if(code==Status::OK&&(!SafeInteger(f.frameId)||f.frameId<1))code=Status::INVALID_ARGUMENT;
+ if(code==Status::OK&&f.frameId<=g.attempt)code=Status::STALE_FRAME;
+ if(code==Status::OK&&g.dualRun==run&&(stateEpoch<g.dualStateEpoch||(stateEpoch==g.dualStateEpoch&&commit<g.dualCommit))){code=Status::STALE_FRAME;stage="DUAL_STALE_PUBLICATION";}
+ if(code==Status::OK){g.attempt=f.frameId;stage="DUAL_FIELD_VALIDATE";
+ std::array<float,kFloats> check{};std::memcpy(check.data(),tdata,sizeof(check));LightParams light{.85,.15,.8,1.12,1,24,-.55,-.55,.63,6};code=Validate(f,light,check);
+ if(code==Status::OK){
+  if(g.dualXY.size()!=static_cast<size_t>(capacity)*2){if(g.dual.epoch)Destroy(ResetReason::RELEASE);try { g.dualXY.resize(capacity*2);g.dualMeta.resize(capacity*2); } catch(const std::bad_alloc&) { code=Status::GL_RESOURCE_FAILED; }}
+  if(code!=Status::OK){napi_value result=Control(e,code);Put(e,result,"errorStage","DUAL_STAGING_CAPACITY");return result;}
+  std::memcpy(g.storage->staging.data(),check.data(),sizeof(check));
+  if(count){std::memcpy(g.dualXY.data(),xy,count*8);std::memcpy(g.dualMeta.data(),meta,count*8);}
+  if(!g.dualBasic){Destroy(ResetReason::RELEASE);code=g.egl.ConfigureComposition(true);g.dualBasic=code==Status::OK;}
+  if(code==Status::OK){SurfaceInfo si{};code=g.egl.EnsureCurrent({static_cast<uint64_t>(f.surfaceEpoch),static_cast<int>(f.surfaceWidthPx),static_cast<int>(f.surfaceHeightPx)},si);
+   if(code==Status::STALE_SURFACE)stage="DUAL_SURFACE_EPOCH";
+   if(code==Status::OK){if(g.uploader.epoch!=g.egl.contextEpoch)code=g.uploader.Create(g.egl.contextEpoch);
+    if(code==Status::OK)code=g.uploader.Upload(g.storage->staging.data(),f.frameId);
+    if(code==Status::OK){t.uploadedFrameId=f.frameId;code=g.dual.Draw(f,g.uploader.Texture(),g.dualXY.data(),g.dualMeta.data(),count,capacity,enabled,visual,g.egl.contextEpoch);t.glError=g.dual.error;}
+    if(code==Status::OK){t.submittedFrameId=f.frameId;code=g.egl.Swap(f.frameId);t.swapSucceeded=code==Status::OK;}
+   }
+   auto unbound=g.egl.Unbind();if(unbound!=Status::OK)code=unbound;
+  }
+ }
+ }
+ if(code==Status::OK&&t.swapSucceeded){g.lastSwap=f.frameId;g.dualRun=run;g.dualStateEpoch=stateEpoch;g.dualCommit=commit;}
+ t.code=code;t.state=g.egl.state;t.contextEpoch=g.egl.contextEpoch;t.lastSwapFrameId=g.lastSwap;
+ t.eglError=g.egl.error;t.recoveryRequired=static_cast<int>(code)>=200;
+ t.errorStage=code==Status::OK?"NONE":static_cast<int>(code)>=300&&code!=Status::COLORSPACE_UNSUPPORTED?"DUAL_GPU_PASS":static_cast<int>(code)>=200?g.egl.errorStage:stage;
+ g.lastError=code;
+ if(static_cast<int>(code)>=200){Destroy(ResetReason::FAILURE);g.egl.state=State::FAILED;}
+ napi_value result=Result(e,t);Put(e,result,"runId",run.c_str());Put(e,result,"stateEpoch",stateEpoch);Put(e,result,"physicsCommitId",commit);
+ Put(e,result,"renderPipelineId","DUALFIELD_BASIC_V1");Put(e,result,"particleCount",count);
+ Put(e,result,"particleUploadBytes",code==Status::OK&&enabled?count*16:0);
+ Put(e,result,"bufferAllocations",static_cast<double>(g.dual.bufferAllocations));
+ Put(e,result,"particleBufferBytes",static_cast<double>(g.dual.capacity*16));
+ Put(e,result,"particleCapacity",capacity);Put(e,result,"colorPipelineVersion","BASIC_SRGB_DISPLAY_V1");
+ char shaderHash[17]{};std::snprintf(shaderHash,sizeof(shaderHash),"%016llx",static_cast<unsigned long long>(g.dual.sourceHash));
+ Put(e,result,"shaderHash",shaderHash);Put(e,result,"shaderHashAlgorithm","FNV1A64");
+ size_t clipped=0;
+ if(valid)for(size_t i=0;i<static_cast<size_t>(count);i++){
+  const float* positions=static_cast<const float*>(xy);const double x=positions[2*i]/128*f.boxWidthPx;
+  const double y=positions[2*i+1]/f.capacity*f.boxHeightPx;
+  if(x<visual.radiusPx||x>f.boxWidthPx-visual.radiusPx||y<visual.radiusPx||y>f.boxHeightPx-visual.radiusPx)clipped++;
+ }
+ Put(e,result,"particleClippedCount",static_cast<double>(clipped));Put(e,result,"particleOffscreenCount",0.0);
+ return result;
+}
 napi_value DrawFrame(napi_env e, napi_callback_info info) {
   const double start = NowMs();
   Telemetry t{};
@@ -415,6 +506,7 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
   t.inputLight = l;
   t.ownerThreadId = static_cast<uint64_t>(syscall(SYS_gettid));
   Status code = Owner();
+  if (code == Status::OK && g.dualBasic) { code = Status::NOT_READY; t.errorStage = "DUAL_PROFILE_REQUIRES_DUAL_ABI"; }
   if (code == Status::OK && !g.ownerBound)
     code = g.released ? Status::RELEASED : Status::NOT_READY;
   if (code == Status::OK && f.sessionId != g.id) code = Status::RELEASED;
@@ -610,6 +702,7 @@ napi_value RequestComposition(napi_env e, napi_callback_info info) {
   std::lock_guard<std::mutex> lock(g.mutex);Status code=Owner();
   if(code==Status::OK && !g.ownerBound)code=Status::NOT_READY;
   if(code==Status::OK && !valid)code=Status::INVALID_ARGUMENT;
+  if(code==Status::OK && g.dualBasic)code=Status::SESSION_BUSY;
   if(code!=Status::OK)return CompositionReceipt(e,code,"COMPOSITION_PROFILE");
   // Full P1 material remains behind G1-G4; never present this color probe as material.
   if(!probe)return CompositionReceipt(e,Status::NOT_READY,"P1_MATERIAL_NOT_IMPLEMENTED");
@@ -773,6 +866,7 @@ EXTERN_C_START
 static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
   napi_property_descriptor d[] = {
+    {"drawDualFieldFrame", nullptr, DrawDualFieldFrame, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"requestComposition", nullptr, RequestComposition, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"queryCompositionProfile", nullptr, QueryComposition, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"captureProbe", nullptr, CaptureProbe, nullptr, nullptr, nullptr, napi_default, nullptr},{"init", nullptr, InitSession, nullptr,

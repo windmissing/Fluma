@@ -1,3 +1,4 @@
+import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
 import { P012ParticleRenderSnapshot } from '../render/P012RenderTypes';
 import { P011GestureRateClock } from '../physics/P011GestureRateClock';
 import { P013Mode } from '../render/P013RenderTypes';
@@ -2129,36 +2130,61 @@ struct SandCanvas {
             column: stepResult.errorColumn
           })}`);
         }
-        if (this.waterSandSnapshot === null) {
-          this.waterSandSnapshot = ws.snapshot();
-        } else {
-          ws.copyStateTo(this.waterSandSnapshot);
+        if (!ws.particleRouteActive() || this.waterSandSnapshotEnabled) {
+          if (this.waterSandSnapshot === null) this.waterSandSnapshot = ws.snapshot();
+          else ws.copyStateTo(this.waterSandSnapshot);
         }
         // P-012 E-batch 薄分发（§9.2）：一次帧只走一个完整渲染分支，禁止叠加；
         // canonicalEvidence（物理证据采集 wssnapshot=true）强制 OFF 分支。
         // 三段拆分：renderMs=draw 提交耗时（P012 renderer 含烘焙/E3 全链）
+        const dualActive = ws.particleRouteActive() && !this.waterSandSnapshotEnabled;
+        if (dualActive && (this.publishedField !== ws || this.publishedRenderState === null ||
+          this.publishedRenderState.particleCapacity !== ws.particleRenderCapacity())) {
+          this.publishedRenderState = ws.createPublishedRenderStateSlot(); this.publishedField = ws;
+        }
+        let dualCopyOk = false;
+        if (dualActive && this.publishedRenderState !== null) {
+          dualCopyOk = ws.copyPublishedRenderStateInto(this.publishedRenderState) === 'OK';
+          if (dualCopyOk) this.waterSandSnapshot = this.publishedRenderState.field;
+        }
+        if (!dualActive && this.dualFieldMounted) {
+          this.p013.forceBaseline('DUAL_ROUTE_EXIT'); this.p013Mode = P013Mode.CANVAS_BASELINE;
+          this.p013OverlayVisible = false;
+        }
+        this.dualFieldMounted = dualActive;
+        let dualDrawn = false;
+        const dualContext = dualActive ? this.buildP012FrameContext() : null;
+        if (dualActive && dualCopyOk && this.publishedRenderState !== null && dualContext !== null) {
+          const receipt = this.p013.submitDualField(this.publishedRenderState, dualContext,
+            this.canvasW, this.canvasH, frameTimeInNano);
+          dualDrawn = receipt !== null && receipt.code === 0 && receipt.swapSucceeded;
+        }
+        this.dualFieldVisible = dualDrawn;
+        if (dualContext !== null) dualContext.dualFieldGpu = dualDrawn;
+        if (this.waterSandSnapshot === null) this.waterSandSnapshot = ws.snapshot();
+        const renderSnapshot = this.waterSandSnapshot;
         const p013ControlStart = this.p013.isOverlay() ? p013NowMs() : 0;
         const p013Reference = this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE && !this.waterSandSnapshotEnabled;
         const particleVisual = ws.particleRouteActive() && !this.waterSandSnapshotEnabled;
         if ((p013Reference || particleVisual || this.p013.isOverlay()) && this.p012Renderer === null) {
           this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
         }
-        const p013Context = this.p013.isOverlay() || p013Reference ? this.buildP012FrameContext() : null;
+        const p013Context = dualContext ?? (this.p013.isOverlay() || p013Reference ? this.buildP012FrameContext() : null);
         const p013ControlCostMs = p013ControlStart > 0 ? p013NowMs() - p013ControlStart : 0;
         const segRenderT0 = Date.now();
         if (p012ShouldUseP012Renderer(this.p012Renderer,
           this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled) || p013Reference || particleVisual || this.p013.isOverlay()) {
           const frameContext = p013Context ?? this.buildP012FrameContext();
-          if (this.p013.isOverlay() && this.p012Renderer !== null) {
-            this.p012Renderer.prepareOnce(this.waterSandSnapshot, frameContext);
+          if ((this.p013.isOverlay() || dualDrawn) && this.p012Renderer !== null) {
+            this.p012Renderer.prepareOnce(renderSnapshot, frameContext);
             this.p012Renderer.renderBackground(this.ctx);
             this.p013ForegroundCtx.clearRect(0, 0, this.canvasW, this.canvasH);
             this.p012Renderer.renderForeground(this.p013ForegroundCtx);
           } else {
-            this.p012Renderer?.render(this.ctx, this.waterSandSnapshot, frameContext);
+            this.p012Renderer?.render(this.ctx, renderSnapshot, frameContext);
           }
         } else {
-          this.renderWaterSand(this.ctx, this.waterSandSnapshot);
+          this.renderWaterSand(this.ctx, renderSnapshot);
         }
         const segRenderMs = Date.now() - segRenderT0;
         // P-013 uses the same copied snapshot, after Canvas timing ends.
@@ -2168,14 +2194,14 @@ struct SandCanvas {
             this.p013Mode = P013Mode.CANVAS_BASELINE;
           }
           this.p013OverlayVisible = false;
-        } else if (this.p013.isOverlay() && p013Context !== null) {
-          this.p013.submitPreparedFrame(`${p013Context.fieldEpoch}:${p013Context.frameSerial}:${this.waterSandSnapshot.physicsCommitId ?? 0}`,
-            this.waterSandSnapshot, p013Context,
+        } else if (!dualActive && this.p013.isOverlay() && p013Context !== null) {
+          this.p013.submitPreparedFrame(`${p013Context.fieldEpoch}:${p013Context.frameSerial}:${renderSnapshot.physicsCommitId ?? 0}`,
+            renderSnapshot, p013Context,
             this.canvasW, this.canvasH, frameTimeInNano, p013ControlCostMs);
           this.p013FrameVisible = this.p013.diagnosticVisible;
           this.p013Mode = this.p013.mode;
           this.p013OverlayVisible = this.p013.isOverlay();
-          if (!this.p013.isOverlay()) this.p012Renderer?.render(this.ctx, this.waterSandSnapshot, p013Context);
+          if (!this.p013.isOverlay()) this.p012Renderer?.render(this.ctx, renderSnapshot, p013Context);
         }
         if (this.testMode) {
           // presentMs：呈现等待段 = 本帧处理完成到下帧 vsync 的等待
@@ -2331,6 +2357,10 @@ struct SandCanvas {
   /** Event sequence within the current gesture. */
   private gestureSequence = 0;
   /** Last event local position (offset fallback when fingerList empty). */
+  @State private dualFieldVisible: boolean = false;
+  @State private dualFieldMounted: boolean = false;
+  private publishedField: WaterSandField | null = null;
+  private publishedRenderState: P011PublishedRenderState | null = null;
   private p012ParticleFrame: P012ParticleRenderSnapshot = new P012ParticleRenderSnapshot(512);
   private lastPanLocalX = 0;
   private lastPanLocalY = 0;
@@ -2502,7 +2532,20 @@ struct SandCanvas {
     if (field !== null) {
       const capacity = field.particleRenderCapacity();
       if (capacity > this.p012ParticleFrame.capacity) this.p012ParticleFrame = new P012ParticleRenderSnapshot(capacity);
-      field.copyParticleRenderSnapshot(this.p012ParticleFrame);
+      const published = this.publishedRenderState;
+      const pool = published === null ? null : published.field.particleState;
+      if (field.particleRouteActive() && published !== null && pool !== undefined && pool !== null) {
+        const out = this.p012ParticleFrame;
+        out.physicsCommitId = published.physicsCommitId; out.particleRevision = published.physicsCommitId;
+        out.active = published.particleRouteActive; out.routeId = published.routeId;
+        out.cols = published.field.cols; out.capacity = pool.nmax; out.count = 0;
+        for (let i = 0; i < pool.nmax; i++) {
+          if (pool.pState[i] === 0) continue;
+          const j = out.count++;
+          out.x[j] = pool.pX[i]; out.y[j] = pool.pY[i]; out.vx[j] = pool.pVx[i]; out.vy[j] = pool.pVy[i];
+          out.mass[j] = pool.pMass[i]; out.phase[j] = pool.pPhase[i]; out.state[j] = pool.pState[i]; out.particleId[j] = pool.pId[i];
+        }
+      } else field.copyParticleRenderSnapshot(this.p012ParticleFrame);
     } else { this.p012ParticleFrame.active = false; this.p012ParticleFrame.count = 0; }
 
     const sampleTimeMs = Date.now();
@@ -3181,17 +3224,17 @@ struct SandCanvas {
           this.frame();
         })
 
-      if (this.p013OverlayVisible && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
+      if ((this.p013OverlayVisible || this.dualFieldMounted) && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
         XComponent({id: 'p013_lmat_surface', type: XComponentType.TEXTURE, libraryname: 'p013renderer'})
           .width('100%').height('100%')
-          .opacity(1).backgroundColor(Color.Transparent).zIndex(10)
+          .opacity(this.dualFieldMounted && !this.dualFieldVisible ? 0 : 1).backgroundColor(Color.Transparent).zIndex(10)
           .hitTestBehavior(HitTestMode.None)
           .onLoad(() => { this.p013.onLoad(); })
           .onDestroy(() => { this.p013.release(); this.p013FrameVisible = false; })
       }
-      if (this.p013OverlayVisible && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
+      if ((this.p013OverlayVisible || this.dualFieldMounted) && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
         Canvas(this.p013ForegroundCtx).width('100%').height('100%')
-          .zIndex(20).hitTestBehavior(HitTestMode.None)
+          .opacity(this.dualFieldMounted && !this.dualFieldVisible ? 0 : 1).zIndex(20).hitTestBehavior(HitTestMode.None)
       }
       if (this.renderMode === MODE_WATERSAND && !this.waterSandSnapshotEnabled) {
         Button(['Canvas 基线', 'Canvas 顶光参考', 'GLES 透明 OFF', 'GLES 光场诊断'][this.p013Mode])

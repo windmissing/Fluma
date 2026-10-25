@@ -220,6 +220,8 @@ static double Read(napi_value v, const char* key) {
   return v->fields.at(key)->number;
 }
 namespace p013 {
+Status DualFieldPass::Draw(const FrameInput&,GLuint,const float*,const uint32_t*,size_t count,size_t nmax,bool enabled,const DualVisual&,uint64_t generation){epoch=generation;capacity=nmax;uploadBytes=enabled?count*16:0;return Status::OK;}
+void DualFieldPass::Reset(bool){epoch=0;capacity=0;}
 void CompositionProbe::Reset(bool) { epoch=0;captured=false; }
 Status CompositionProbe::Draw(const FrameInput& f,uint64_t generation) {
   epoch=generation;frame=f;captured=true;sourceHash=1;points.fill(0);rgba.fill(0);linearRgba.fill(0);srgbRgba.fill(0);
@@ -514,6 +516,44 @@ int main() {
   CHECK(Call(p013::QueryComposition,{})->fields.at("profileStatus")->text=="P0_LEGACY");
   Call(p013::Release, {});
   CHECK(contexts == 0 && surfaces == 0);
+  // Separate dual ABI: valid offset views, full-capacity objects and effective prefix.
+  init=Call(p013::InitSession,{Text("test")});Set(frame,"sessionId",Read(init,"sessionId"));
+  Set(frame,"frameId",1);Set(frame,"surfaceEpoch",p013::g.egl.surfaceEpoch);
+  frame->fields["dualFieldPacketRevision"]=Text("P013_DUALFIELD_PACKET_V1");
+  frame->fields["particleLayoutVersion"]=Text("PARTICLE_XY_META_SOA_V1");
+  frame->fields["renderPipelineId"]=Text("DUALFIELD_BASIC_V1");
+  frame->fields["colorPipelineVersion"]=Text("BASIC_SRGB_DISPLAY_V1");
+  frame->fields["runId"]=Text("run-dual");Set(frame,"stateEpoch",1);Set(frame,"physicsCommitId",1);Set(frame,"contextEpoch",p013::g.egl.contextEpoch);
+  Set(frame,"particleCount",1);Set(frame,"particleCapacity",4);
+  napi_get_boolean(env,true,&b);frame->fields["particleLayerEnabled"]=b;
+  auto makeView=[&](napi_typedarray_type type){auto buf=Value();buf->bytes.resize(16+8*4);auto v=Value();v->typed=true;v->arrayType=type;v->length=8;v->offset=16;v->buffer=buf;return v;};
+  auto xy=makeView(napi_float32_array),meta=makeView(napi_uint32_array);
+  auto* positions=reinterpret_cast<float*>(xy->buffer->bytes.data()+16);positions[0]=64.5f;positions[1]=100;
+  auto* tags=reinterpret_cast<uint32_t*>(meta->buffer->bytes.data()+16);tags[0]=512;tags[1]=17;
+  auto visual=Value();visual->fields["visualRevision"]=Text("P012_EXISTING_PHASE_CANDIDATES_V1");Set(visual,"radiusPx",1);
+  for(auto key:{"heavyR","heavyG","heavyB","lightR","lightG","lightB","particleHeavyR","particleHeavyG","particleHeavyB","particleLightR","particleLightG","particleLightB"})Set(visual,key,.5);
+  for(size_t c=0;c<128;c++){data[4*c]=80;data[4*c+1]=160;data[4*c+2]=20;data[4*c+3]=40;}
+  auto dualDraw=[&](){return Call(p013::DrawDualFieldFrame,{frame,view,xy,meta,visual});};
+  CHECK(Read(dualDraw(),"code")==103); // switching profile creates a new surface generation
+  Set(frame,"surfaceEpoch",p013::g.egl.surfaceEpoch);Set(frame,"contextEpoch",p013::g.egl.contextEpoch);Set(frame,"frameId",2);
+  auto dualGood=dualDraw();CHECK(Read(dualGood,"code")==0 && Read(dualGood,"particleUploadBytes")==16);
+  Set(frame,"contextEpoch",p013::g.egl.contextEpoch);
+  CHECK(p013::g.dualXY[0]==64.5f && p013::g.dualMeta[0]==512);positions[0]=10;
+  CHECK(p013::g.dualXY[0]==64.5f); // no borrowed JS pointer retained
+  int dualId=3;
+  auto rejects=[&](const char* reason){Set(frame,"frameId",dualId++);auto r=dualDraw();return Read(r,"code")==100&&r->fields.at("errorStage")->text==reason;};
+  xy->arrayType=napi_float64_array;CHECK(rejects("DUAL_TYPED_TYPE"));xy->arrayType=napi_float32_array;
+  xy->length=6;CHECK(rejects("DUAL_TYPED_LENGTH"));xy->length=8;
+  xy->buffer->detached=true;CHECK(rejects("DUAL_BUFFER_DETACHED"));xy->buffer->detached=false;
+  xy->offset=20;CHECK(rejects("DUAL_BUFFER_RANGE"));xy->offset=16;
+  tags[0]=768;CHECK(rejects("DUAL_PARTICLE_VALUE"));tags[0]=512;
+  positions[0]=std::numeric_limits<float>::infinity();CHECK(rejects("DUAL_PARTICLE_VALUE"));positions[0]=64.5f;
+  frame->fields["particleLayoutVersion"]=Text("old");CHECK(rejects("DUAL_PACKET_VERSION"));frame->fields["particleLayoutVersion"]=Text("PARTICLE_XY_META_SOA_V1");
+  Set(frame,"particleCount",0);Set(frame,"frameId",dualId++);CHECK(Read(dualDraw(),"code")==0);
+  Set(frame,"contextEpoch",p013::g.egl.contextEpoch+1);Set(frame,"frameId",dualId++);
+  CHECK(Read(dualDraw(),"code")==103);Set(frame,"contextEpoch",p013::g.egl.contextEpoch);
+  Set(frame,"physicsCommitId",0);CHECK(rejects("DUAL_PUBLICATION"));Set(frame,"physicsCommitId",1);
+  Call(p013::Release,{});CHECK(contexts==0&&surfaces==0);
   std::puts(
       "PASS P013 actual bridge: offset Float32Array, "
       "length/detach/NaN/version/stale rejection, consumed IDs, wrong owner, "

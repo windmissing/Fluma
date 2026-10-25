@@ -482,11 +482,11 @@ export class P012WaterSandRenderer {
     //    逐列伪法向光照：s = d(sandTop)/dx（屏幕单位），L = La + Ld·max(dot(n,l),0)
     //    用 8 档游程近似逐列光照（run 合并相邻同档列，draw 计数受控）
     //    A 档启用时沙顶 3px 硬描边语义由界面过渡带取代（P-012 分支无硬描边）
-    if (stage !== 'foreground') drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
+    if (stage !== 'foreground' && !frameContext.dualFieldGpu) drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
     // 3.25) C 层理（C-batch §11，C1 分段平铺 + C3 低频明暗基底）：
     //    时序按 design §3.1（E底色 → C层纹 → B颗粒 → A散射），C 只在 EAB 档
     //    叠加（不新增 tier 枚举）；§11.4 消融 ablation=STRAT 跳过。
-    if (stage !== 'foreground' && tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT &&
+    if (stage !== 'foreground' && !frameContext.dualFieldGpu && tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT &&
       this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawStratification(ctx, view, heightToY, colW,
         boxX, boxY, boxW, boxH, frameContext.geometryEpoch);
@@ -494,7 +494,7 @@ export class P012WaterSandRenderer {
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
     //      drawImage(256² 颗粒 tile) 按全局平流偏移精确平铺；跟随材料净搬运、
     //      无缝、无贴纸。§10.4 消融：ablation=GRAIN 时跳过颗粒层。
-    if (stage !== 'foreground' && tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN &&
+    if (stage !== 'foreground' && !frameContext.dualFieldGpu && tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN &&
       this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
     }
@@ -507,11 +507,11 @@ export class P012WaterSandRenderer {
     if (particleActive && !this.particleWasActive) this.sandTracer.clear();
     this.particleWasActive = particleActive;
     this.particlePresentedSource = 'NONE';
-    if (particles !== undefined && particleActive) {
+    if (particles !== undefined && particleActive && !frameContext.dualFieldGpu) {
       drawCount += this.particleLayer.draw(particles, frameContext, new RendererTracerOcclusion(this, heightToY),
         new RendererTracerDrawContext(ctx), this.capacity);
       if (this.particleLayer.drawnCount > 0) this.particlePresentedSource = 'C_PARTICLE';
-    } else if (frameContext.sandTracerEnabled &&
+    } else if (!particleActive && frameContext.sandTracerEnabled &&
       this.frameAblation !== P012Ablation.TRACER) {
       this.particlePresentedSource = 'B_TRACER';
       drawCount += this.drawSandTracers(ctx, view, heightToY,

@@ -141,6 +141,8 @@ export interface P013TelemetryBatch {
   telemetryLiveCount: number;
 }
 export interface P013NativeRenderer {
+  drawDualFieldFrame(frame: P013DualFieldFrame, tdata: Float32Array, particleXY: Float32Array,
+    particleMeta: Uint32Array, visualParams: P013DualFieldVisualParams): P013DualFieldReceipt;
   requestComposition(profile: P013CompositionProfile): P013CompositionReceipt;
   queryCompositionProfile(): P013CompositionReceipt;
   captureProbe(frameToken: string, points: Float32Array): P013CompositionReceipt;
@@ -227,4 +229,27 @@ export interface P013CompositionReceipt extends P013ControlResult {
 /** Analytic expectations only; measured tolerances belong to tester, not the developer. */
 export function p013ProbeSrgb(linear: number): number {
   return linear <= 0.0031308 ? linear * 12.92 : 1.055 * Math.pow(linear, 1 / 2.4) - 0.055;
+}
+
+export class P013DualFieldFrame extends P013FrameInput {
+  dualFieldPacketRevision: string = 'P013_DUALFIELD_PACKET_V1';
+  particleLayoutVersion: string = 'PARTICLE_XY_META_SOA_V1';
+  renderPipelineId: string = 'DUALFIELD_BASIC_V1';
+  colorPipelineVersion: string = 'BASIC_SRGB_DISPLAY_V1';
+  runId: string = ''; stateEpoch: number = 0; physicsCommitId: number = 0;
+  contextEpoch: number = 0;
+  particleCount: number = 0; particleCapacity: number = 0;
+  particleLayerEnabled: boolean = true;
+}
+export class P013DualFieldVisualParams {
+  visualRevision: string = 'P012_EXISTING_PHASE_CANDIDATES_V1';
+  radiusPx: number = 1;
+  heavyR: number = 145 / 255; heavyG: number = 168 / 255; heavyB: number = 111 / 255;
+  lightR: number = 216 / 255; lightG: number = 196 / 255; lightB: number = 150 / 255;
+  particleHeavyR: number = 196 / 255; particleHeavyG: number = 168 / 255; particleHeavyB: number = 120 / 255;
+  particleLightR: number = 226 / 255; particleLightG: number = 208 / 255; particleLightB: number = 168 / 255;
+}
+export interface P013DualFieldReceipt extends P013FrameResult {
+  runId: string; stateEpoch: number; physicsCommitId: number;
+  renderPipelineId: string; particleCount: number; particleUploadBytes: number;
 }
