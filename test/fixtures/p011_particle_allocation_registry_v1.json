@@ -1,0 +1,487 @@
+{
+  "originalBaselineCommit": "ae3b8b9",
+  "recordedAgainstCommit": "89682d9",
+  "count": 60,
+  "sites": [
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "beginStep",
+      "line": 453,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(identity)",
+      "id": "F01"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "beginStep",
+      "line": 455,
+      "kind": "object-literal",
+      "text": "{ massPackage: params.massPackage, nmax: params.nmax,\n      terminalSpeedHeavy: params.terminalSpeedHeavy, ter",
+      "id": "F02"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 471,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(plan.identity)",
+      "id": "F03"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 472,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(plan.requests)",
+      "id": "F04"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 473,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(plan.motions)",
+      "id": "F05"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 482,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F06"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "applyParticlePlan",
+      "line": 486,
+      "kind": "array-literal",
+      "text": "[result.requested, result.granted, result.remainder,\n        result.budgetClipped, result.guardRejected, resul",
+      "id": "F07"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "checkpoint",
+      "line": 511,
+      "kind": "object-literal",
+      "text": "{ state: this.snapshot(), stepId: this.stepId, appliedKeys: Array.from(this.appliedKeys) }",
+      "id": "F08"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "checkpoint",
+      "line": 511,
+      "kind": "allocating-helper",
+      "text": "this.snapshot()",
+      "id": "F09"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "rollback",
+      "line": 515,
+      "kind": "constructor",
+      "text": "new Set<string>(checkpoint.appliedKeys)",
+      "id": "F10"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "prepare",
+      "line": 551,
+      "kind": "constructor",
+      "text": "new P011ParticlePreparedPatch(this.nextPatchId++, request.requestKey,\n      this.stepId, before, after)",
+      "id": "F11"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "mergePair",
+      "line": 610,
+      "kind": "object-literal",
+      "text": "{ kind: 'merge', index: this.mergeRecords.length }",
+      "id": "F12"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "mergePair",
+      "line": 611,
+      "kind": "object-literal",
+      "text": "{ survivor: this.pId[a], absorbed: this.pId[b],\n      phase: this.pPhase[a], sourceKind: this.pSource[a], sour",
+      "id": "F13"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "edit",
+      "line": 660,
+      "kind": "object-literal",
+      "text": "{ mass: packageMass, x: x,\n            y: r.kind === 'lift' ? low : Math.max(low, Math.min(high, r.predictedY)",
+      "id": "F14"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "edit",
+      "line": 666,
+      "kind": "object-literal",
+      "text": "{ kind: 'birth', index: this.birthRecords.length }",
+      "id": "F15"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "edit",
+      "line": 667,
+      "kind": "object-literal",
+      "text": "{ particleId: this.pId[slot], mass: birth.mass,\n            x: birth.x, y: birth.y, vx: birth.vx, vy: birth.vy",
+      "id": "F16"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "record",
+      "line": 867,
+      "kind": "allocating-helper",
+      "text": "request.mergedIds.slice()",
+      "id": "F17"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "finish",
+      "line": 874,
+      "kind": "allocating-helper",
+      "text": "this.requests.slice(0, this.count)",
+      "id": "F18"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "finish",
+      "line": 875,
+      "kind": "object-literal",
+      "text": "{ identity: this.identity, requestCount: this.count,\n      requests: active, totalRequested: this.totalRequest",
+      "id": "F19"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "finish",
+      "line": 877,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(active)",
+      "id": "F20"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 892,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F21"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 894,
+      "kind": "closure",
+      "text": "(a: number, b: number): number => frozenPool.pId[a] - frozenPool.pId[b]",
+      "id": "F22"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 897,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F23"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 898,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F24"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 899,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F25"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 919,
+      "kind": "object-literal",
+      "text": "{ particleId: frozenPool.pId[i], column: c, x: x,\n        y: Math.max(y, frozenField.sandTopAt(c) + params.con",
+      "id": "F26"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 924,
+      "kind": "object-literal",
+      "text": "{\n      requestKey: JSON.stringify([identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, co",
+      "id": "F27"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 925,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify([identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, contact ? -1 : target,",
+      "id": "F28"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 925,
+      "kind": "array-literal",
+      "text": "[identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, contact ? -1 : target, j]",
+      "id": "F29"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 936,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "F30"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "owner": "collectParticlePlan",
+      "line": 944,
+      "kind": "allocating-helper",
+      "text": "JSON.stringify(motions)",
+      "id": "F31"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "reserve",
+      "line": 58,
+      "kind": "object-literal",
+      "text": "{ ticketId: this.nextId, requestKey: r.requestKey,\n      substepId: r.substepId, source: r.column, target: tar",
+      "id": "P01"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "view",
+      "line": 167,
+      "kind": "constructor",
+      "text": "new P011ParticlePrototypeView(this)",
+      "id": "P02"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 181,
+      "kind": "allocating-helper",
+      "text": "this.snapshot()",
+      "id": "P03"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 181,
+      "kind": "allocating-helper",
+      "text": "this.pool.checkpoint()",
+      "id": "P04"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 189,
+      "kind": "object-literal",
+      "text": "{ ok: true, errorCode: null, results: results }",
+      "id": "P05"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 194,
+      "kind": "object-literal",
+      "text": "{ ok: false, errorCode: code, results: [] }",
+      "id": "P06"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "executeParticlePlan",
+      "line": 194,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "P07"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "guard",
+      "line": 198,
+      "kind": "constructor",
+      "text": "new Map<number, number>()",
+      "id": "P08"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "guard",
+      "line": 200,
+      "kind": "closure",
+      "text": "(edge: number): number => this.sand(edge + 1) - this.sand(edge) -\n        Math.tan(this.identity.effectiveTilt",
+      "id": "P09"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "guard",
+      "line": 204,
+      "kind": "object-literal",
+      "text": "{ accepted: decision.accepted, rejected: decision.rejected,\n      allLegalBefore: decision.allLegalBefore,\n   ",
+      "id": "P10"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 244,
+      "kind": "allocating-helper",
+      "text": "this.snapshot()",
+      "id": "P11"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 254,
+      "kind": "allocating-helper",
+      "text": "this.pool.snapshot()",
+      "id": "P12"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 256,
+      "kind": "allocating-helper",
+      "text": "this.view()",
+      "id": "P13"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 257,
+      "kind": "allocating-helper",
+      "text": "this.view().freeSpaceAt(r.targetColumn)",
+      "id": "P14"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 257,
+      "kind": "allocating-helper",
+      "text": "this.view()",
+      "id": "P15"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 259,
+      "kind": "allocating-helper",
+      "text": "this.view().freeSpaceAt(c)",
+      "id": "P16"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 259,
+      "kind": "allocating-helper",
+      "text": "this.view()",
+      "id": "P17"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 295,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey,\n        substepId: r.substepId, ordinal: r.ordinal, kind: r.kind, particleId: r.pa",
+      "id": "P18"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 302,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey,\n        grantedHeavy: gh, grantedLight: gl, disposition: disposition }",
+      "id": "P19"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 325,
+      "kind": "allocating-helper",
+      "text": "this.pool.snapshot()",
+      "id": "P20"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 343,
+      "kind": "object-literal",
+      "text": "{ kind: 'MERGE', requestKey: r.requestKey, particleId: m.survivor,\n          sourceId: m.sourceId, phase: m.ph",
+      "id": "P21"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 347,
+      "kind": "array-literal",
+      "text": "[m.survivor, m.absorbed]",
+      "id": "P22"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 353,
+      "kind": "object-literal",
+      "text": "{ kind: 'SPAWN', requestKey: r.requestKey, particleId: b.particleId,\n          sourceId: b.sourceId, phase: b.",
+      "id": "P23"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 357,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "P24"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 362,
+      "kind": "object-literal",
+      "text": "{ kind: kind, requestKey: r.requestKey, particleId: r.particleId,\n        sourceId: r.sourceId, phase: r.phase",
+      "id": "P25"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 372,
+      "kind": "object-literal",
+      "text": "{ kind: 'DEGRADE', requestKey: r.requestKey, particleId: 0,\n        sourceId: r.sourceId, phase: r.phase, sour",
+      "id": "P26"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 375,
+      "kind": "array-literal",
+      "text": "[]",
+      "id": "P27"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 385,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey, committed: true, errorCode: null,\n        requested: r.requested, granted: granted",
+      "id": "P28"
+    },
+    {
+      "file": "P011ParticlePrototype.ets",
+      "owner": "apply",
+      "line": 392,
+      "kind": "object-literal",
+      "text": "{ requestKey: r.requestKey, committed: false, errorCode: `${error}`,\n        requested: r.requested, granted: ",
+      "id": "P29"
+    }
+  ]
+}
