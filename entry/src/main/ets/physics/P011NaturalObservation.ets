@@ -479,6 +479,7 @@ export interface P011NaturalObservationRecord {
   eventLevelValidationOwnership: 'ENDPOINT_CHECKER';
   transactionLayerEventValidationRole: 'EMIT_AND_ATOMIC_COMMIT_ONLY';
   particleStateSnapshot?: string | null;
+  particleStateBeforeSnapshot?: string | null;
   particleCommittedSubstepId?: number | null;
 }
 
@@ -1017,6 +1018,7 @@ export class P011NaturalObservationProbe {
       particleEvents: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.particleEvents,
       eventLevelValidationOwnership: 'ENDPOINT_CHECKER',
       transactionLayerEventValidationRole: 'EMIT_AND_ATOMIC_COMMIT_ONLY',
+      particleStateBeforeSnapshot: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.poolBeforeSnapshot,
       particleStateSnapshot: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.poolSnapshot,
       particleCommittedSubstepId: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.committedSubstepId
     });

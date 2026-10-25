@@ -9,7 +9,7 @@ import { P011EndpointClock, P011EndpointPhaseIdentity, P011EndpointSampler,
   p011EndpointMassFractions } from './P011EndpointMetrics';
 import { P011ParticleField, P011ParticleByState, P011ParticleStateMass, P011_PARTICLE_ROUTE_ID,
   P011ParticleParams, P011ParticleSnapshot, particleRouteEnabled } from './P011ParticleField';
-import { P011ParticleM2FieldBinding, P011_PARTICLE_M2_ROUTE_CONFLICT } from './P011ParticleM2Field';
+import { P011ParticleM2FieldBinding, P011ParticleRouteResult, P011ParticleRouteCode, serializeP011ParticleSnapshot, serializeP011ParticleEvent } from './P011ParticleM2Field';
 import {
   P011NaturalObservationAudit,
   P011NaturalObservationBudgets,
@@ -875,6 +875,8 @@ export class WaterSandField {
   private particleRouteId: string | null = null;
   private particleParams: P011ParticleParams | null = null;
   private particleBackup: P011ParticleSnapshot | null = null;
+  private particleJournalBefore: P011ParticleSnapshot | null = null;
+  private particleEventBackupLength = 0;
   private p011SampleSequence = 0;
   private p011InputSequence = 0;
   private p011FrameId = 0;
@@ -1623,6 +1625,7 @@ export class WaterSandField {
     }
     this.gestureWaterBefore = freeWaterSnapshot;
     const particleEventStart = this.endpointParticleEvents.length;
+    if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.registerRun(this.p011RunId, this.p011SubstepId + 1);
     this.saveBackup();
     // 2. Route recheck: at least one requested column must be wet.
     let anyWet = false;
@@ -1683,16 +1686,15 @@ export class WaterSandField {
         if (this.particleRouteActive() && this.particleBinding !== null && this.particleParams !== null) {
           for (let c = 0; c < this.cols; c++) {
             this.suspH[c] -= aH[c]; this.suspL[c] -= aL[c];
-            const y = this.sandTopScratch[c] + this.particleParams.contactEps;
+            const y = Math.max(this.sandTopScratch[c] + this.particleParams.contactEps,
+              Math.min(request.y, this.waterTop[c] - this.particleParams.contactEps));
             if (aH[c] > 0) {
               const slot = this.particleBinding.seed(aH[c], c + 0.5, y,
               this.particleParams.terminalSpeedHeavy * Math.sin(this.effectiveTilt * Math.PI / 180),
               -this.particleParams.terminalSpeedHeavy * Math.cos(this.effectiveTilt * Math.PI / 180),
               0, 0, request.sourceId);
               if (slot < 0) auditOk = false;
-              else this.endpointParticleEvents.push(JSON.stringify({ kind: 'SPAWN', particleId:
-                this.particleBinding.pool.particleIdAtSlot(slot), phase: 0, mass: aH[c], sourceKind: 'GESTURE_EXTERNAL',
-                x: c + 0.5, y: y, sourceId: request.sourceId, requested: request.perColumnHeavy[c], admitted: aH[c] }));
+              else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
             }
             if (aL[c] > 0) {
               const slot = this.particleBinding.seed(aL[c], c + 0.5, y,
@@ -1700,9 +1702,7 @@ export class WaterSandField {
               -this.particleParams.terminalSpeedLight * Math.cos(this.effectiveTilt * Math.PI / 180),
               1, 0, request.sourceId);
               if (slot < 0) auditOk = false;
-              else this.endpointParticleEvents.push(JSON.stringify({ kind: 'SPAWN', particleId:
-                this.particleBinding.pool.particleIdAtSlot(slot), phase: 1, mass: aL[c], sourceKind: 'GESTURE_EXTERNAL',
-                x: c + 0.5, y: y, sourceId: request.sourceId, requested: request.perColumnLight[c], admitted: aL[c] }));
+              else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
             }
           }
           this.updateSandTop();
@@ -1883,6 +1883,7 @@ export class WaterSandField {
   private gestureWaterBefore = 0;
 
   invert180(): void {
+    if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.pool.validateInvert180(this.capacity);
     if (this.frozen) {
       return;
     }
@@ -2063,6 +2064,7 @@ export class WaterSandField {
       }
       if (this.naturalObservationProbe === null) this.recordEndpointCommit(substepDt);
       this.finishNaturalObservation(null);
+      if (this.naturalObservationProbe === null && this.particleRouteActive()) this.endpointParticleEvents.length = 0;
       result.stepped = true;
       result.substeps++;
       result.moved = this.changedSinceBackup() || result.moved;
@@ -2474,19 +2476,23 @@ export class WaterSandField {
 
   /** D2 route contract: activation requires the exact route id and params;
    * unloading a non-empty pool is rejected without changing either value. */
-  setParticleRoute(routeId: string | null, params: P011ParticleParams | null): number {
-    if (routeId === null && params === null) {
-      if (this.particleBinding !== null && this.particleBinding.liveCount > 0) return 1;
+  private particleRouteResult(code: P011ParticleRouteCode): P011ParticleRouteResult {
+    return { ok: code === 'OK', code: code, active: this.particleRouteActive() };
+  }
+  setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {
+    if (this.particleBinding !== null && this.particleBinding.liveCount > 0) return this.particleRouteResult('BUSY_PARTICLES');
+    if (params === null) {
+
       this.particleBinding = null; this.particleBackup = null;
       this.particleRouteId = null; this.particleParams = null;
       this.endpointParticlePool = null; this.endpointParticleRouteActive = false;
-      return 0;
+      return this.particleRouteResult('OK');
     }
-    if (this.naturalObservationRouteId !== null && this.naturalObservationRouteId !== P011_PARTICLE_ROUTE_ID) {
-      return P011_PARTICLE_M2_ROUTE_CONFLICT;
+    if (this.naturalObservationRouteId !== null && this.naturalObservationRouteId !== P011_PARTICLE_ROUTE_ID ||
+      this.advectionParams !== null || this.deepCreepParams !== null || this.moistureParams !== null) {
+      return this.particleRouteResult('ROUTE_CONFLICT');
     }
-    if (routeId !== P011_PARTICLE_ROUTE_ID || params === null || params.nmax <= 0 ||
-      this.cols !== 128 || this.particleBinding !== null && this.particleBinding.liveCount > 0) return 2;
+    if (params.nmax <= 0 || this.cols !== 128) return this.particleRouteResult('INVALID_PARAMS');
     const chosen: P011ParticleParams = { massPackage: params.massPackage, nmax: params.nmax,
       terminalSpeedHeavy: params.terminalSpeedHeavy, terminalSpeedLight: params.terminalSpeedLight,
       dragHeavy: params.dragHeavy, dragLight: params.dragLight, liftSpeedHeavy: params.liftSpeedHeavy,
@@ -2496,15 +2502,16 @@ export class WaterSandField {
     try {
       this.particleBinding = new P011ParticleM2FieldBinding(this.cols, this.capacity,
         this.waterTop, this.bh, this.bl, this.mh, this.ml, this.suspH, this.suspL,
-        this.sandTopScratch, chosen);
+        this.sandTopScratch, chosen, this);
       this.particleBackup = this.particleBinding.pool.snapshot();
+      this.particleJournalBefore = this.particleBinding.pool.snapshot();
       this.backup.particleState = this.particleBinding.pool.snapshot();
       this.motionSnapshot.particleState = this.particleBinding.pool.snapshot();
-    } catch (_error) { this.particleBinding = null; this.particleBackup = null; return 2; }
-    this.particleRouteId = routeId; this.particleParams = chosen;
+    } catch (_error) { return this.particleRouteResult('INVALID_PARAMS'); }
+    this.particleRouteId = P011_PARTICLE_ROUTE_ID; this.particleParams = chosen;
     this.endpointParticlePool = this.particleBinding.pool;
     this.endpointParticleRouteActive = this.particleRouteActive();
-    return 0;
+    return this.particleRouteResult('OK');
   }
 
   particleRouteActive(): boolean {
@@ -3535,39 +3542,6 @@ export class WaterSandField {
       advection: this.buildAdvectionLedgerBlock(),
       executedThresholds: this.executedThresholdsForLedger()
     }, state);
-    if (this.endpointSampler !== null) {
-      const pool = this.endpointParticlePool;
-      let particles: P011EndpointParticleSummary | null = null;
-      if (pool !== null) {
-        const totals = pool.totals();
-        const byState: P011ParticleByState = pool.endpointByState();
-        const gesture = pool.sourceTotals(0);
-        const shake = pool.sourceTotals(1);
-        const degraded = new P011EndpointParticleSourceMass(0, 0, 0);
-        if (this.particleBinding !== null) {
-          const events = this.particleBinding.work.events;
-          for (let i = 0; i < events.count; i++) if (events.kind[i] === 5) {
-            degraded.count++;
-            if (events.phase[i] === 0) degraded.massH += events.granted[i];
-            else degraded.massL += events.granted[i];
-          }
-        }
-        particles = new P011EndpointParticleSummary(totals.count, totals.heavy, totals.light,
-          new P011EndpointByStateValue(new P011EndpointParticleStateMass(byState.FLYING.count,
-            byState.FLYING.massH, byState.FLYING.massL), new P011EndpointParticleStateMass(
-            byState.CONTACT_WAIT.count, byState.CONTACT_WAIT.massH, byState.CONTACT_WAIT.massL)),
-          new P011EndpointParticleSourceKind(
-            new P011EndpointParticleSourceMass(gesture.count, gesture.massH, gesture.massL),
-            new P011EndpointParticleSourceMass(shake.count, shake.massH, shake.massL)),
-          totals.count, pool.nmax, degraded);
-      }
-      const capture = new P011EndpointLedgerCapture(
-        this.endpointParticleRouteActive ? P011_PARTICLE_ROUTE_ID : null,
-        this.endpointParticleRouteActive, particles, this.endpointParticleEvents.slice(),
-        pool === null ? null : JSON.stringify(pool.snapshot()), this.p011SubstepId + 1);
-      this.naturalObservationProbe.attachEndpointLedgerCapture(capture);
-      this.endpointParticleEvents.length = 0;
-    }
     this.naturalObservationRelaxCandidateCount = 0;
     this.naturalObservationRelaxRequestedTotal = 0;
   }
@@ -3650,6 +3624,14 @@ export class WaterSandField {
           Math.abs(after.S[c + 1] - after.S[c] - Math.tan(this.effectiveTilt * Math.PI / 180)));
       }
     }
+    if (this.particleRouteActive() && this.particleBinding !== null && this.particleBackup !== null) {
+      for (let c = 0; c < this.cols; c++) {
+        heavyBefore += this.particleBackup.colParticleMassH[c]; lightBefore += this.particleBackup.colParticleMassL[c];
+        heavyAfter += this.particleBinding.pool.particleMassHAt(c); lightAfter += this.particleBinding.pool.particleMassLAt(c);
+        capacity = capacity && after.S[c] + after.suspH[c] + after.suspL[c] + this.particleBinding.pool.particleMassAt(c) <= this.capacity + EPS;
+      }
+      finite = finite && this.particleBinding.pool.auditBasic();
+    }
     range = range && maxSandTopInvariantError <= Math.tan(30 * Math.PI / 180) + EPS;
     const conservation = Math.abs(waterAfter - waterBefore) <= 1e-6 &&
       Math.abs(heavyAfter - heavyBefore) <= 1e-6 &&
@@ -3693,6 +3675,39 @@ export class WaterSandField {
         this.sourceEpoch,
         this.shakeInput, this.endpointInvertCount, this.endpointRouteChanges,
         this.endpointCaptureMode === null ? null : this.endpointModeChanges);
+    }
+    if (this.endpointSampler !== null || this.particleRouteActive()) {
+      const pool = this.endpointParticlePool;
+      let particles: P011EndpointParticleSummary | null = null;
+      if (pool !== null) {
+        const totals = pool.totals();
+        const byState: P011ParticleByState = pool.endpointByState();
+        const gesture = pool.sourceTotals(0);
+        const shake = pool.sourceTotals(1);
+        const degraded = new P011EndpointParticleSourceMass(0, 0, 0);
+        if (this.particleBinding !== null) {
+          const events = this.particleBinding.work.events;
+          for (let i = 0; i < events.count; i++) if (events.kind[i] === 5) {
+            degraded.count++;
+            if (events.phase[i] === 0) degraded.massH += events.granted[i];
+            else degraded.massL += events.granted[i];
+          }
+        }
+        particles = new P011EndpointParticleSummary(totals.count, totals.heavy, totals.light,
+          new P011EndpointByStateValue(new P011EndpointParticleStateMass(byState.FLYING.count,
+            byState.FLYING.massH, byState.FLYING.massL), new P011EndpointParticleStateMass(
+            byState.CONTACT_WAIT.count, byState.CONTACT_WAIT.massH, byState.CONTACT_WAIT.massL)),
+          new P011EndpointParticleSourceKind(
+            new P011EndpointParticleSourceMass(gesture.count, gesture.massH, gesture.massL),
+            new P011EndpointParticleSourceMass(shake.count, shake.massH, shake.massL)),
+          totals.count, pool.nmax, degraded);
+      }
+      const capture = new P011EndpointLedgerCapture(
+        this.endpointParticleRouteActive ? P011_PARTICLE_ROUTE_ID : null,
+        this.endpointParticleRouteActive, particles, this.endpointParticleEvents.slice(),
+        pool === null ? null : serializeP011ParticleSnapshot(pool.snapshot()), this.p011SubstepId + 1, this.particleJournalBefore === null ? null : serializeP011ParticleSnapshot(this.particleJournalBefore));
+      probe.attachEndpointLedgerCapture(capture);
+      this.endpointParticleEvents.length = 0;
     }
     probe.finishSubstep(after, budgets, audit);
     this.naturalObservationStateBefore = null;
@@ -3769,12 +3784,13 @@ export class WaterSandField {
     const totalSand = Math.max(totals.heavy + totals.light, EPS);
     const phaseOrderScore = profile.lowerHeavyShare === null || profile.upperHeavyShare === null
       ? 0 : profile.lowerHeavyShare - profile.upperHeavyShare;
+    const particleDeclared = this.naturalObservationRouteId === P011_PARTICLE_ROUTE_ID || this.endpointParticleRouteActive;
     const particleActive = this.particleRouteActive() && this.particleBinding !== null;
     const particleTotals = particleActive ? this.particleBinding!.pool.totals() : null;
     const endpoint = p011EndpointMassFractions(depositedHeavy + depositedLight, suspended,
-      particleTotals === null ? 0 : particleTotals.heavy + particleTotals.light,
+      particleTotals === null ? particleDeclared ? null : 0 : particleTotals.heavy + particleTotals.light,
       this.initialHeavy + this.initialLight + this.sourceInjectedHeavy + this.sourceInjectedLight,
-      particleTotals === null ? 'STRUCTURAL_ZERO_OFF' : 'CANONICAL');
+      particleTotals === null ? particleDeclared ? 'NOT_IMPLEMENTED' : 'STRUCTURAL_ZERO_OFF' : 'CANONICAL');
     let metricKey: P011EndpointCommitKey | null = null;
     if (this.endpointStamp !== null && !this.frozen && this.endpointStampedSourceEpoch === this.sourceEpoch &&
       this.endpointStamp.key.substepId === this.p011SubstepId) {
@@ -3957,7 +3973,7 @@ export class WaterSandField {
     this.totalMotionBudgetScale = totalMotionScale;
   }
 
-  private saveMotionSnapshot(): void {
+  private saveMotionSnapshot(dt: number): void {
     this.motionSnapshot.waterTop.set(this.waterTop);
     this.motionSnapshot.bh.set(this.bh);
     this.motionSnapshot.bl.set(this.bl);
@@ -3968,6 +3984,13 @@ export class WaterSandField {
     if (this.shakeSourceRouteActive()) {
       this.motionSnapshot.shakeSourceH!.set(this.shakeSourceH);
       this.motionSnapshot.shakeSourceL!.set(this.shakeSourceL);
+    }
+    if (this.particleRouteActive() && this.particleBinding !== null) {
+      this.particleBinding.registerRun(this.p011RunId);
+      const particleStatus = this.particleBinding.beginCollect(dt, this.effectiveTilt * Math.PI / 180,
+        this.p011SubstepId + 1, this.p011SubstepId + 1, this.sourceInjectedHeavy,
+        this.sourceInjectedLight, this.sourceEpoch);
+      if (particleStatus !== 0) this.lastError = WaterSandErrorCode.UNKNOWN;
     }
     this.updateSandTop();
   }
@@ -3985,6 +4008,30 @@ export class WaterSandField {
       this.shakeSourceL.set(this.motionSnapshot.shakeSourceL!);
     }
     this.updateSandTop();
+  }
+
+  // D2 narrow host API: old channels retain their existing refund semantics.
+  internalParticleReserve(column: number, target: number, requested: number): number {
+    return this.clipSubstepMotion(column, target, requested);
+  }
+  internalParticleRefund(column: number, target: number, amount: number): void {
+    this.substepMotionBudgetRemaining[column] += amount;
+    this.substepMotionBudgetUsed[column] -= amount;
+    if (target >= 0) {
+      this.substepMotionBudgetRemaining[target] += amount;
+      this.substepMotionBudgetUsed[target] -= amount;
+    }
+    this.totalMotionBudgetRemaining += amount; this.totalMotionBudgetUsed -= amount;
+  }
+  internalParticleRestoreBudget(remaining: Float64Array, used: Float64Array,
+    totalRemaining: number, totalUsed: number): void {
+    this.substepMotionBudgetRemaining.set(remaining); this.substepMotionBudgetUsed.set(used);
+    this.totalMotionBudgetRemaining = totalRemaining; this.totalMotionBudgetUsed = totalUsed;
+  }
+  internalParticleGuard(column: number, sign: number, requested: number): number {
+    this.updateSandTop();
+    const delta = new Map<number, number>(); delta.set(column, sign);
+    return this.materialGuardAdmitIncrement(requested, delta).accepted;
   }
 
   private clipSubstepMotion(source: number, target: number, requested: number): number {
@@ -4038,7 +4085,8 @@ export class WaterSandField {
     this.waterLevel(dt);
     this.diffuseSuspension(dt);
     if (this.collectingTotalMotionRequests) {
-      this.saveMotionSnapshot();
+      this.saveMotionSnapshot(dt);
+      if (this.particleRouteActive() && this.particleBinding !== null && !this.particleBinding.active) return WaterSandErrorCode.UNKNOWN;
     }
     // Plan-3 stage a (advection §1.2): AFTER the motion snapshot, BEFORE
     // settle — all edges read the frozen suspension state; newly settled
@@ -4054,11 +4102,6 @@ export class WaterSandField {
     this.liftByShake(dt);
     this.updateSandTop();
     if (this.particleRouteActive() && this.particleBinding !== null) {
-      this.particleBinding.registerRun(this.p011RunId);
-      const particleStatus = this.particleBinding.beginCollect(dt, this.effectiveTilt * Math.PI / 180,
-        this.p011SubstepId + 1, this.p011SubstepId + 1, this.sourceInjectedHeavy,
-        this.sourceInjectedLight, this.sourceEpoch);
-      if (particleStatus !== 0) return WaterSandErrorCode.UNKNOWN;
       this.totalMotionBudgetRequested += this.particleBinding.requested();
     }
     return this.audit(true);
@@ -4072,8 +4115,11 @@ export class WaterSandField {
         this.totalMotionBudgetRemaining);
       if (status !== 0) return WaterSandErrorCode.UNKNOWN;
       this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
-      this.totalMotionBudgetUsed += totalBefore - this.totalMotionBudgetRemaining;
+      // Production particle adapter already debited the real total ledger.
       this.updateSandTop();
+      if (!this.particleBinding.projection.consistent(this.effectiveTilt, this.particleBinding.work)) {
+        return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+      }
       // Verify against the accepted-angle preview after the particle chain
       // head has consumed the same shared budgets and field delta. This keeps
       // the planner mirror and live commit in the same channel order.
@@ -4081,6 +4127,11 @@ export class WaterSandField {
       const consistencyError = this.verifyPreviewCommitConsistency(dt);
       this.particlePreviewApplied = false;
       if (consistencyError !== null) return consistencyError;
+      const evidence = this.particleBinding.exportCommittedEvidence();
+      for (let i = 0; i < evidence.events.length; i++) {
+        const row = serializeP011ParticleEvent(evidence.events[i], i);
+        if (row !== null) this.endpointParticleEvents.push(row);
+      }
     }
     // Plan-3 stage a (advection §1.2): apply-chain top, before settle —
     // restoreMotionSnapshot already put the arrays back to the snapshot
@@ -4116,12 +4167,6 @@ export class WaterSandField {
     this.updateSandTop();
     const auditError = this.audit(true);
     if (auditError !== null) return auditError;
-    if (this.particleRouteActive() && this.particleBinding !== null) {
-      const evidence = this.particleBinding.exportCommittedEvidence();
-      for (let i = 0; i < evidence.events.length; i++) {
-        this.endpointParticleEvents.push(JSON.stringify(evidence.events[i]));
-      }
-    }
     return null;
   }
 
@@ -4674,9 +4719,10 @@ export class WaterSandField {
             plans = null;
           } else {
             this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
-            this.totalMotionBudgetUsed += beforeTotal - this.totalMotionBudgetRemaining;
+            // Same production adapter is replayed against the preview snapshot.
+            this.particleBinding.projection.capture(thetaCandidate, this.particleBinding.work);
             this.updateSandTop(); this.particlePreviewApplied = true;
-            plans = this.allocatePreviewPlans(substepDt);
+          plans = this.allocatePreviewPlans(substepDt);
           }
         } else {
         plans = this.allocatePreviewPlans(substepDt);
@@ -5371,6 +5417,7 @@ export class WaterSandField {
    * held at thetaBefore and the substep is marked failed via lastPlanning*.
    */
   private planAndCommitTilt(dt: number): WaterSandErrorCode | null {
+    if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.projection.clear();
     const thetaBefore = this.effectiveTilt;
     // §27.4: snapshot the config revision at planning entry. The preview
     // channel's plans are only valid under THIS revision; a configure that
@@ -6414,25 +6461,20 @@ export class WaterSandField {
           donorMhBefore, donorMlBefore, split);
       }
       if (this.particleRouteActive() && this.particleBinding !== null && this.particleParams !== null) {
+        this.updateSandTop();
         const particleSourceId = Math.max(1, this.p011SubstepId + 1);
         const contact = this.sandTopScratch[c] + this.particleParams.contactEps;
         if (split.heavy > 0) {
           const slot = this.particleBinding.seed(split.heavy, c + 0.5, contact, 0,
             this.particleParams.liftSpeedHeavy, 0, 1, particleSourceId);
           if (slot < 0) this.suspH[c] += split.heavy;
-          else this.endpointParticleEvents.push(JSON.stringify({ kind: 'LIFT', particleId:
-            this.particleBinding.pool.particleIdAtSlot(slot), phase: 0, mass: split.heavy,
-            sourceKind: 'SHAKE_LIFT', fromLayer: 'surface', column: c, requested: originalRequested,
-            granted: amount }));
+          else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
         }
         if (split.light > 0) {
           const slot = this.particleBinding.seed(split.light, c + 0.5, contact, 0,
             this.particleParams.liftSpeedLight, 1, 1, particleSourceId);
           if (slot < 0) this.suspL[c] += split.light;
-          else this.endpointParticleEvents.push(JSON.stringify({ kind: 'LIFT', particleId:
-            this.particleBinding.pool.particleIdAtSlot(slot), phase: 1, mass: split.light,
-            sourceKind: 'SHAKE_LIFT', fromLayer: 'surface', column: c, requested: originalRequested,
-            granted: amount }));
+          else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
         }
       } else {
         this.suspH[c] += split.heavy;
@@ -6730,7 +6772,7 @@ export class WaterSandField {
 
   private createEmptySnapshot(): WaterSandSnapshot {
     return {
-      schemaVersion: 4,
+      schemaVersion: this.particleRouteActive() ? 4 : 3,
       moistureField: this.moistureField === null ? undefined
         : new Float32Array(this.moistureField),
       moistureOccupancy: this.moistureOccupancy === null ? undefined
@@ -6763,6 +6805,10 @@ export class WaterSandField {
   }
 
   private saveBackup(): void {
+    this.particleEventBackupLength = this.endpointParticleEvents.length;
+    if (this.particleRouteActive() && this.particleBinding !== null && this.particleJournalBefore !== null && this.endpointParticleEvents.length === 0) {
+      this.particleBinding.pool.copyStateTo(this.particleJournalBefore);
+    }
     this.backup.waterTop.set(this.waterTop);
     this.backup.bh.set(this.bh);
     this.backup.bl.set(this.bl);
@@ -6784,6 +6830,7 @@ export class WaterSandField {
   }
 
   private restoreBackup(): void {
+    this.endpointParticleEvents.length = this.particleEventBackupLength;
     this.waterTop.set(this.backup.waterTop);
     this.bh.set(this.backup.bh);
     this.bl.set(this.backup.bl);

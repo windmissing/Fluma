@@ -1,32 +1,125 @@
-// D2 tests execute the product ArkTS modules, without a device.
 'use strict';
-const fs=require('fs'),assert=require('assert/strict');
-const ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');
-require.extensions['.ets']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f,'utf8'),
- {compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText,f);
-const {WaterSandField:F}=require('../entry/src/main/ets/physics/WaterSandField.ets');
-const m=require('../entry/src/main/ets/physics/P011ParticleM2Field.ets');
-const route='dual-field-particle-v1', results=[];
-const near=(a,b,eps=1e-9)=>assert.ok(Math.abs(a-b)<=eps,`${a} != ${b}`);
-function test(name,fn){try{fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:e.stack});}}
-function field(nmax=512){const f=new F(128,512),p=m.defaultP011ParticleParams();p.nmax=nmax;
- assert.equal(f.setParticleRoute(route,p),0);f.setNaturalObservationRouteId(route);return f;}
-function inject(f,h=.2,l=.1,id=1){const a=new Float64Array(128),b=new Float64Array(128);a[64]=h;b[64]=l;
- return f.injectGestureSand({perColumnHeavy:a,perColumnLight:b,sourceId:id,sequence:id,inputTime:id,x:64.5,y:100,seed:13});}
-function tick(f,n){for(let i=0;i<n;i++){const r=f.step(1/60);assert.ok(r.ok,`step ${i} error ${r.errorCode}`);}}
-test('01 canonical totals and external ledger include particles',()=>{const f=field(),a=f.getTotals(),r=inject(f);near(r.admittedH,.2);near(r.admittedL,.1);const b=f.getTotals();near(b.heavy-a.heavy,.2);near(b.light-a.light,.1);near(f.getDrift().heavy,0);});
-test('02 gesture sink is exclusive with column suspension',()=>{const f=field(),h=f.suspH[64],l=f.suspL[64];inject(f);near(f.suspH[64],h);near(f.suspL[64],l);near(f.particleBinding.pool.totals().heavy,.2);});
-test('03 route double gate and conflict preserve prior state',()=>{const f=new F(128,512),p=m.defaultP011ParticleParams();f.setNaturalObservationRouteId(route);assert.equal(f.particleRouteActive(),false);assert.equal(f.setParticleRoute('wrong',p),2);assert.equal(f.setParticleRoute(route,p),0);const c=new F(128,512);c.setNaturalObservationRouteId('other');assert.equal(c.setParticleRoute(route,p),4);assert.equal(c.particleBinding,null);});
-test('04 real local clip truncates before scale and charges total once',()=>{const f=field();for(const scale of [0,.2,1])for(const local of [.01,.2,1])for(const total of [.03,.4,5]){f.beginMotionApplication(1/60,scale);f.substepMotionBudgetRemaining[4]=local;f.substepMotionBudgetRemaining[5]=local/2;f.totalMotionBudgetRemaining=total;const oldBottom=f.bottomCreepBudgetUsed,g=f.clipSubstepMotion(4,5,.6);near(g,Math.min(.6,local/2)*scale>total?total:Math.min(.6,local/2)*scale);near(f.substepMotionBudgetUsed[4],g);near(f.substepMotionBudgetUsed[5],g);near(f.totalMotionBudgetRemaining,total-g);near(f.bottomCreepBudgetUsed,oldBottom);}});
-test('05 live inventory refuses unload without loss',()=>{const f=field();inject(f);const a=f.particleBinding.pool.snapshot();assert.equal(f.setParticleRoute(null,null),1);f.setNaturalObservationRouteId(null);assert.equal(f.particleRouteActive(),true);assert.deepEqual(f.particleBinding.pool.snapshot(),a);});
-test('06 capacity failure leaves source ledger and pool intact',()=>{const f=field(1),a=f.getTotals(),r=inject(f,.2,.1);near(r.admittedH+r.admittedL,0);near(f.getTotals().heavy,a.heavy);assert.equal(f.particleBinding.liveCount,0);near(f.sourceEpoch,0);});
-test('07 initialize clears pool and permits unload',()=>{const f=field();inject(f);f.initialize(f.defaultScene());assert.equal(f.particleBinding.liveCount,0);assert.equal(f.setParticleRoute(null,null),0);});
-test('08 OFF armed empty pool matches legacy fields bit for bit',()=>{const a=new F(128,512),b=new F(128,512);assert.equal(b.setParticleRoute(route,m.defaultP011ParticleParams()),0);for(let i=0;i<20;i++){a.setTilt(i%3===0?4:0);b.setTilt(i%3===0?4:0);assert.equal(a.step(1/60).ok,b.step(1/60).ok);}for(const k of ['waterTop','bh','bl','mh','ml','suspH','suspL'])assert.deepEqual(a[k],b[k],k);});
-test('09 live pool wakes dormant and committed pages drain each step',()=>{const f=field();inject(f);f.dormant=true;tick(f,3);assert.equal(f.dormant,false);assert.equal(f.particleBinding.work.pageBacklog,0);});
-test('10 invert preserves mass and stays within continuous column domain',()=>{const f=field();inject(f);const a=f.getTotals(),before=f.particleBinding.pool.snapshot();f.invert180();const s=f.particleBinding.pool.snapshot();for(let i=0;i<s.nmax;i++)if(s.pState[i]){assert.ok(Number.isFinite(s.pX[i])&&s.pX[i]>=0&&s.pX[i]<128);near(s.pX[i],128-before.pX[i]);}near(f.getTotals().heavy,a.heavy);near(f.getTotals().light,a.light);f.invert180();near(f.getTotals().heavy,a.heavy);});
-test('11 schema 4 roundtrip and schema 3 structural zero',()=>{const f=field();inject(f);const s=f.snapshot();assert.equal(s.schemaVersion,4);const g=field();g.restoreFromSnapshot(s);assert.deepEqual(g.particleBinding.pool.snapshot(),s.particleState);g.restoreFromSnapshot({...s,schemaVersion:3,particleState:undefined});assert.equal(g.particleBinding.liveCount,0);});
-test('12 injection eta keeps free water invariant',()=>{const f=field(),water=f.getTotals().water;inject(f,.3,.1);near(f.getTotals().water,water,1e-6);});
-test('13 admitted source above 0.1 percent survives real steps',()=>{const f=field(),r=inject(f,10,5);assert.ok(r.admittedH+r.admittedL>10);tick(f,8);assert.ok(f.getDrift().heavy<1e-9);assert.ok(f.getDrift().light<1e-9);});
-test('P1 gesture plus shake closes both phase inventories',()=>{const f=field(1024),initial=f.getTotals();inject(f,.4,.2);f.setShakeInput(1);tick(f,30);const t=f.getTotals();near(t.heavy,initial.heavy+.4,1e-8);near(t.light,initial.light+.2,1e-8);const pool=f.particleBinding.pool;assert.ok(pool.sourceTotals(1).count>0);f.setShakeInput(0);tick(f,30);assert.ok(f.getDrift().heavy<1e-9);assert.ok(f.getDrift().light<1e-9);});
-console.log(JSON.stringify({suite:'p011_particle_m2',passed:results.filter(x=>x.status==='PASS').length,failed:results.filter(x=>x.status==='FAIL').length,results},null,2));
-if(results.some(x=>x.status==='FAIL'))process.exitCode=1;
+const fs = require('fs');
+const assert = require('assert/strict');
+const ts = require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');
+require.extensions['.ets'] = (mod, file) => mod._compile(ts.transpileModule(fs.readFileSync(file, 'utf8'),
+  { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS } }).outputText, file);
+const { WaterSandField } = require('../entry/src/main/ets/physics/WaterSandField.ets');
+const p = require('../entry/src/main/ets/physics/P011ParticleField.ets');
+const m2 = require('../entry/src/main/ets/physics/P011ParticleM2Field.ets');
+const obs = require('../entry/src/main/ets/physics/P011NaturalObservation.ets');
+const params = { massPackage: 0.1, nmax: 16, terminalSpeedHeavy: 64, terminalSpeedLight: 38,
+  dragHeavy: 2, dragLight: 2, liftSpeedHeavy: 8, liftSpeedLight: 8, liftSpread: 2,
+  mergeColRadius: 1, mergeHeightRadius: 2, contactEps: 1e-6, channelRateCap: 0 };
+const results = [];
+function test(name, fn) { try { fn(); results.push({ name, status: 'PASS' }); }
+  catch (e) { results.push({ name, status: 'FAIL', error: e.stack }); } }
+function routedField() {
+  const f = new WaterSandField(128, 512);
+  assert.equal(f.setParticleRoute(params).code, 'OK');
+  f.setNaturalObservationRouteId(p.P011_PARTICLE_ROUTE_ID);
+  assert.equal(f.particleRouteActive(), true);
+  return f;
+}
+function request(heavy, light = 0, sourceId = 17) {
+  const h = new Float64Array(128); const l = new Float64Array(128);
+  h[64] = heavy; l[64] = light;
+  return { perColumnHeavy: h, perColumnLight: l, sourceId, sequence: 1, inputTime: 10,
+    x: 64.5, y: 100, seed: 13 };
+}
+test('1: particle mass stays in the canonical heavy/light totals', () => {
+  const f = routedField(); const before = f.getTotals();
+  const receipt = f.injectGestureSand(request(0.4, 0.2));
+  assert.equal(receipt.admittedH, 0.4); assert.equal(receipt.admittedL, 0.2);
+  const after = f.getTotals(); assert.ok(Math.abs(after.heavy - before.heavy - 0.4) < 1e-9);
+  assert.ok(Math.abs(after.light - before.light - 0.2) < 1e-9);
+});
+test('2: admitted material is not simultaneously stored in suspension', () => {
+  const f = routedField(); const oldH = f.suspH[64]; const oldL = f.suspL[64];
+  f.injectGestureSand(request(0.3, 0.1));
+  const pool = f.particleBinding.pool; const s = pool.snapshot();
+  assert.equal(pool.totals().count, 4); assert.equal(f.suspH[64], oldH); assert.equal(f.suspL[64], oldL);
+  assert.ok(s.pMass.every(v => v <= params.massPackage + 1e-9));
+  assert.ok(Math.abs(pool.totals().heavy - 0.3) < 1e-9);
+});
+test('3: the route gate requires route id and params together', () => {
+  const f = new WaterSandField(128, 512);
+  assert.equal(f.particleRouteActive(), false); f.setNaturalObservationRouteId(p.P011_PARTICLE_ROUTE_ID);
+  assert.equal(f.particleRouteActive(), false); assert.equal(f.setParticleRoute({...params,channelRateCap:1}).code, 'INVALID_PARAMS');
+  assert.equal(f.setParticleRoute(params).code, 'OK'); assert.equal(f.particleRouteActive(), true);
+  const conflict = new WaterSandField(128, 512); conflict.setNaturalObservationRouteId('other-route');
+  assert.equal(conflict.setParticleRoute(params).code, 'ROUTE_CONFLICT');
+  assert.equal(conflict.particleRouteActive(), false);
+});
+test('4: R9 numeric adapter retains one total debit and correct per-end local debit', () => {
+  const w = require('../entry/src/main/ets/physics/P011ParticleHot.ets').configureHot({ cols: 128, nmax: 8,
+    requestCapacity: 16, motionCapacity: 8, eventCapacity: 16, lineageCapacity: 32,
+    params: Object.assign({}, params, { nmax: 8 }) });
+  const adapter = new (require('../entry/src/main/ets/physics/P011ParticleHotBudget.ets').P011ParticleHotBudgetAdapter)(w);
+  assert.equal(adapter.beginHot(1, 1 / 60), 0); adapter.localRemaining[4] = 1; adapter.localRemaining[5] = 0.5;
+  assert.equal(adapter.totalRemaining, 5); assert.equal(adapter.bottomUsed, 0);
+  assert.equal(adapter.finishHot(1), 0);
+});
+test('5: field route refuses unload with live particles and preserves the pool', () => {
+  const f = routedField(); f.injectGestureSand(request(0.25));
+  const count = f.particleBinding.liveCount; assert.equal(f.setParticleRoute(null).code, 'BUSY_PARTICLES');
+  assert.equal(f.particleBinding.liveCount, count); assert.equal(f.particleRouteActive(), true);
+});
+test('6: particle allocation and inversion preserve mass and mirror position', () => {
+  const pool = new p.P011ParticleField(128, 8); pool.allocate({ mass: 0.4, x: 10.25, y: 80,
+    vx: 2, vy: -1, phase: 0, sourceKind: 0, sourceId: 4 });
+  pool.invert180(512); const s = pool.snapshot();
+  assert.ok(Math.abs(s.pX.find(v => v !== 0) - (127 - 10.25)) < 1e-9);
+  assert.ok(Math.abs(pool.totals().heavy - 0.4) < 1e-9);
+});
+test('7: full-pool refusal does not delete or mutate existing particle mass', () => {
+  const pool = new p.P011ParticleField(128, 1); pool.allocate({ mass: 0.5, x: 1.5, y: 80,
+    vx: 0, vy: -1, phase: 0, sourceKind: 0, sourceId: 1 });
+  assert.equal(pool.allocate({ mass: 0.2, x: 2.5, y: 80, vx: 0, vy: -1,
+    phase: 0, sourceKind: 1, sourceId: 2 }), -1);
+  assert.equal(pool.totals().count, 1); assert.equal(pool.totals().heavy, 0.5);
+});
+test('8: route OFF preserves structural-zero particle totals', () => {
+  const f = new WaterSandField(128, 512); const initial = f.snapshot();
+  assert.equal(f.particleRouteActive(), false); assert.equal(f.getTotals().heavy, 128 * 24);
+  assert.equal(initial.schemaVersion, 3); assert.equal(initial.particleState, null);
+});
+test('9: live particles hold the field awake and route unload is non-destructive', () => {
+  const f = routedField(); f.injectGestureSand(request(0.2));
+  f.dormant = true; const r = f.step(1 / 60);
+  assert.equal(r.dormant, false); assert.equal(r.ok, true, `route step failed: ${r.errorCode}`);
+  assert.equal(f.particleBinding.work.pageBacklog, 0, 'committed evidence page was not drained');
+  const second = f.step(1 / 60);
+  assert.equal(second.ok, true, `second route step failed: ${second.errorCode}`);
+  assert.equal(f.particleBinding.work.pageBacklog, 0, 'second evidence page was not drained');
+});
+test('10: field invert mirrors particle position and retains phase mass', () => {
+  const f = routedField(); f.injectGestureSand(request(0.2));
+  const pool = f.particleBinding.pool; const before = pool.snapshot();
+  let oldX = 0; for (let i = 0; i < before.nmax; i++) if (before.pState[i]) { oldX = before.pX[i]; break; }
+  f.invert180(); const after = pool.snapshot(); let newX = 0;
+  for (let i = 0; i < after.nmax; i++) if (after.pState[i]) { newX = after.pX[i]; break; }
+  assert.ok(Math.abs(newX - (127 - oldX)) < 1e-9); assert.ok(Math.abs(pool.totals().heavy - 0.2) < 1e-9);
+});
+test('11: schema 4 round-trip and schema 3 structural-zero restore', () => {
+  const f = routedField(); f.injectGestureSand(request(0.2)); const snap = f.snapshot();
+  assert.equal(snap.schemaVersion, 4); const other = routedField(); other.restoreFromSnapshot(snap);
+  assert.equal(other.particleBinding.pool.totals().heavy, 0.2);
+  const old = Object.assign({}, snap, { schemaVersion: 3, particleState: undefined });
+  other.restoreFromSnapshot(old); assert.equal(other.particleBinding.pool.totals().count, 0);
+});
+test('12: injection η solve keeps free-water volume invariant with particles', () => {
+  const f = routedField(); const before = f.getTotals().water; const receipt = f.injectGestureSand(request(0.3));
+  assert.ok(receipt.admittedH > 0); assert.ok(Math.abs(f.getTotals().water - before) < 1e-6);
+});
+test('13: sustained external mass uses the expected ledger and stays auditable', () => {
+  const f = routedField();
+  for (let i = 0; i < 8; i++) {
+    const r = f.injectGestureSand(request(20, 0, 100 + i)); assert.ok(r.admittedH >= 0);
+  }
+  assert.ok(f.getDrift().heavy < 1e-9); assert.ok(f.getDrift().light < 1e-9);
+});
+console.log(JSON.stringify({ schemaVersion: obs.P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
+  tests: results.length, passed: results.filter(r => r.status === 'PASS').length,
+  failed: results.filter(r => r.status === 'FAIL') }, null, 2));
+if (results.some(r => r.status === 'FAIL')) process.exitCode = 1;

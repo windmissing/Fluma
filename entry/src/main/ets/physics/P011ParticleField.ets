@@ -398,11 +398,21 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     return count === totals.count && Math.abs(heavy - totals.heavy) <= 1e-9 &&
       Math.abs(light - totals.light) <= 1e-9 && totals.count + this.freeCount === this.nmax;
   }
-  invert180(capacity: number): void {
+  validateInvert180(capacity: number): void {
     if (this.patch !== null || !Number.isFinite(capacity) || capacity <= 0) throw new Error('PARTICLE_INVALID_INPUT');
+    // Architecture §5.2 is authoritative. Reject an out-of-domain mirror
+    // before the first write; do not replace the approved mapping by a clamp.
+    for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 &&
+      (this.cols - 1 - this.pX[i] < 0 || this.cols - 1 - this.pX[i] >= this.cols ||
+        capacity - this.pY[i] < 0 || capacity - this.pY[i] > capacity)) {
+      throw new Error('PARTICLE_INVERT_DOMAIN');
+    }
+  }
+  invert180(capacity: number): void {
+    this.validateInvert180(capacity);
     this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);
     for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0) {
-      this.pX[i] = Math.min(this.cols - Number.EPSILON * this.cols, Math.max(0, this.cols - this.pX[i])); this.pY[i] = capacity - this.pY[i];
+      this.pX[i] = this.cols - 1 - this.pX[i]; this.pY[i] = capacity - this.pY[i];
       this.pVx[i] = -this.pVx[i]; this.pVy[i] = -this.pVy[i];
       this.cache(this.pPhase[i])[Math.floor(this.pX[i])] += this.pMass[i];
     }

@@ -62,12 +62,14 @@ export class P011EndpointLedgerCapture {
   particleEvents: string[];
   poolSnapshot: string | null;
   committedSubstepId: number;
+  poolBeforeSnapshot: string | null;
   constructor(routeId: string | null, particleRouteActive: boolean,
     particles: P011EndpointParticleSummary | null, particleEvents: string[],
-    poolSnapshot: string | null, committedSubstepId: number) {
+    poolSnapshot: string | null, committedSubstepId: number, poolBeforeSnapshot: string | null = null) {
     this.routeId = routeId; this.particleRouteActive = particleRouteActive;
     this.particles = particles; this.particleEvents = particleEvents;
     this.poolSnapshot = poolSnapshot; this.committedSubstepId = committedSubstepId;
+    this.poolBeforeSnapshot = poolBeforeSnapshot;
   }
 }
 export interface P011EndpointPostCommitStamp {
