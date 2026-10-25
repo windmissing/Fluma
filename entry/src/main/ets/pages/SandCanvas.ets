@@ -3242,6 +3242,7 @@ struct SandCanvas {
       PanGesture()
         .onActionUpdate((e: GestureEvent) => {
           if (e.fingerList.length === 0) {
+            this.gestureRateClock.suspend();
             this.panUpdateCount++;
             this.panLastEventAccepted = false;
             this.logWaterSand(`WS_EVENT pan_update ${JSON.stringify({

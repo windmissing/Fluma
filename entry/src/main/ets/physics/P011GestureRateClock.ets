@@ -11,8 +11,9 @@ export class P011GestureRateClock {
     const now = unit === 'ns' ? timestamp / 1000000 : timestamp;
     if (!Number.isFinite(now) || now < 0) { this.suspend(); return 0; }
     const previous = this.previousMs;
+    if (previous >= 0 && now <= previous) return 0;
     this.previousMs = now;
-    if (previous < 0 || now <= previous) return 0;
+    if (previous < 0) return 0;
     return Math.min(1, (now - previous) / 1000);
   }
 }
