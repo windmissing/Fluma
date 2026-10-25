@@ -1,0 +1,92 @@
+== P1-G0 补证复测分析: D:\hmprojects\HelloWorld\test\artifacts\p013-p1g0-retest-20261025
+-- canvas 逻辑宽: 365（截图缩放据此换算）
+
+-- ①帧提交 / ②sRGB 收据 / ⑤输入（逐臂日志判读）
+
+  [R0-hello-texture]
+    hello: frames=1500 native=1500 ready=True ok=True
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=40 码分布={'100': 40}
+    输入 Down=4（hitMode=none）
+
+  [R1-renderer-texture]
+    hello: frames=1680 native=1680 ready=True ok=True
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=1947 码分布={'100': 1947}
+    合成收据: code=0 status=PENDING req=SRGB act=UNPROVEN attach=UNPROVEN alphaSize=-1 wctl=False/False errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK rbStatus=UNPROVEN
+    输入 Down=2（hitMode=none）
+
+  [R2-renderer-surface]
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=1967 码分布={'100': 1967}
+    输入 Down=2（hitMode=none）
+
+  [R3-renderer-texture-hittransparent]
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=1898 码分布={'100': 1898}
+    合成收据: code=0 status=PENDING req=SRGB act=UNPROVEN attach=UNPROVEN alphaSize=-1 wctl=False/False errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK rbStatus=UNPROVEN
+    输入 Down=3（hitMode=transparent）
+
+  [R4-renderer-texture-hitdefault]
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=1904 码分布={'100': 1904}
+    合成收据: code=0 status=PENDING req=SRGB act=UNPROVEN attach=UNPROVEN alphaSize=-1 wctl=False/False errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK rbStatus=UNPROVEN
+    输入 Down=3（hitMode=default）
+
+  [R5-renderer-texture-diagoff]
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=1466 码分布={'100': 1466}
+    合成收据: code=0 status=PENDING req=SRGB act=UNPROVEN attach=UNPROVEN alphaSize=-1 wctl=False/False errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK rbStatus=UNPROVEN
+    输入 Down=1（hitMode=none）
+
+  [R6-renderer-texture-surface10bg]
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=2761 码分布={'100': 2761}
+    合成收据: code=0 status=PENDING req=SRGB act=UNPROVEN attach=UNPROVEN alphaSize=-1 wctl=False/False errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK rbStatus=UNPROVEN
+    输入 Down=1（hitMode=none）
+
+  [R7-renderer-texture-dyn]
+    遥测: surfaceCreate=0 ctxCreate=0 code=100 swap=False T_dataHash=0000000000000000 eglErr=0 glErr=0
+    draw_error 次数=3997 码分布={'100': 3997}
+    合成收据: code=0 status=PENDING req=SRGB act=UNPROVEN attach=UNPROVEN alphaSize=-1 wctl=False/False errStage=NONE rbStage=PRE_SWAP_DEFAULT_BACK rbStatus=UNPROVEN
+    输入 Down=7（hitMode=none）
+
+-- ③z序 / ④透明（截图 C 层判读）
+   [R0-hello-texture-after-swipe] 非沙区=(47, 51, 54) 沙盒内=(46, 51, 55) GLES有内容=True
+        ④透明: UNPROVEN 非沙区既非棋盘也非纯黑: [(46, 51, 55), (46, 50, 53), (47, 51, 54), (46, 51, 55), (46, 51, 55)]  ③z序: PASS 前景洋红线穿沙盒可见（fg 在 GLES 之上）
+   [R0-hello-texture] 非沙区=(47, 51, 54) 沙盒内=(46, 51, 55) GLES有内容=True
+        ④透明: UNPROVEN 非沙区既非棋盘也非纯黑: [(46, 51, 55), (53, 57, 60), (47, 51, 54), (46, 51, 55), (46, 51, 55)]  ③z序: PASS 前景洋红线穿沙盒可见（fg 在 GLES 之上）
+   [R1-renderer-texture-after-swipe] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R1-renderer-texture] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R2-renderer-surface-after-swipe] 非沙区=(240, 240, 240) 沙盒内=(240, 240, 240) GLES有内容=True
+        ④透明: UNPROVEN 非沙区既非棋盘也非纯黑: [(240, 240, 240), (240, 240, 240), (240, 240, 240), (240, 240, 240), (240, 240, 240)]  ③z序: PASS 前景洋红线穿沙盒可见（fg 在 GLES 之上）
+   [R2-renderer-surface] 非沙区=(240, 240, 240) 沙盒内=(240, 240, 240) GLES有内容=True
+        ④透明: UNPROVEN 非沙区既非棋盘也非纯黑: [(240, 240, 240), (240, 240, 240), (240, 240, 240), (240, 240, 240), (240, 240, 240)]  ③z序: PASS 前景洋红线穿沙盒可见（fg 在 GLES 之上）
+   [R3-renderer-texture-hittransparent] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R4-renderer-texture-hitdefault] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R5-renderer-texture-diagoff] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R6-renderer-texture-surface10bg] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R7-renderer-texture-dyn-1] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R7-renderer-texture-dyn-2] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R7-renderer-texture-dyn-3] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R7-renderer-texture-dyn-4] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R7-renderer-texture-dyn-5] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+   [R7-renderer-texture-dyn-6] 非沙区=(255, 204, 0) 沙盒内=(0, 255, 255) GLES有内容=False
+        ④透明: PASS 棋盘透出（非沙区显透明合成）  ③z序: UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象
+
+-- ②sRGB 解析期望对照（T33 §4.3，MEASURED_NOT_CALIBRATED 容差未冻结）
+   线性 0.18 → 线性8bit≈46 / sRGB8bit≈118；线性 0.5 → 128 / 188
+   判读规则: 读回值与请求 colorspace/attachment 编码一致才计该层证据；截图近似不补 A/B。
+
+DONE

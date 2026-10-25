@@ -31,6 +31,8 @@ def evlines(path):
     out = {}
     for m in re.finditer(r'WS_EVENT (p013_g0_\w+) (\{.*?\})\s*$', t, re.M):
         out.setdefault(m.group(1), []).append(m.group(2))
+    # 非 JSON 事件（draw_error 等文本行）按出现次数计数
+    out['_draw_error_codes'] = re.findall(r'WS_EVENT p013_g0_draw_error code=(\d+)', t)
     return out
 
 
@@ -68,15 +70,12 @@ def is_black(c):
 
 
 def shot_pixel_verdict(path, label, canvas_w):
-    """③z 序 + ④透明 的 C 层判读。布局: 全屏棋盘底(24px 格) + 中央沙盒 + 左侧/中部洋红标记。"""
+    """③z 序 + ④透明 的 C 层判读。布局: 全屏棋盘底(24px 格) + 中央沙盒 + 左侧/中部洋红标记。
+    帧提交被拒时 GLES 区无内容：透明=空纹理透出（vacuous），z 序=无内容可判（UNPROVEN）。"""
     if not os.path.exists(path):
         print('   [%s] 缺截图' % label); return None
     img = load(path); H, W, _ = img.shape
-    sx = W / float(canvas_w) if canvas_w > 0 else 1.0   # logical px -> device px
-    # 沙盒: boxX=(W-bw)/2, boxY=0.25H, bw=0.45W, bh=0.30H（逻辑坐标换算）
-    bx0, by0 = (W - 0.45 * W) / 2 * sx, 0.25 * H * sx
-    bx1, by1 = bx0 + 0.45 * W * sx, by0 + 0.30 * H * sx
-    cx = int((bx0 + bx1) / 2)
+    sx = W / float(canvas_w) if canvas_w > 0 else 1.0
     # ④透明: 沙盒外（盒上方 y=0.12H）取 5 点棋盘采样
     oy = int(0.12 * H)
     outside = [px(img, int(W * f), oy) for f in (0.2, 0.35, 0.5, 0.65, 0.8)]
@@ -88,28 +87,34 @@ def shot_pixel_verdict(path, label, canvas_w):
         alpha_v = 'FAIL 非沙区纯黑（alpha 未合成或清屏不透明）'
     else:
         alpha_v = 'UNPROVEN 非沙区既非棋盘也非纯黑: %s' % (outside,)
-    # 沙盒内（应不透明沙体）: 盒中心 + 盒内四点
-    inside = [px(img, cx, int((by0 + by1) / 2)),
+    # 沙盒区（GLES 应渲染处）中心与四点: 有内容=非棋盘；无内容=棋盘透出
+    bx0 = (W - 0.45 * W) / 2 * sx; by0 = 0.25 * H
+    bx1 = bx0 + 0.45 * W * sx; by1 = by0 + 0.30 * H
+    inside = [px(img, int((bx0 + bx1) / 2), int((by0 + by1) / 2)),
               px(img, int(bx0 + 0.1 * (bx1 - bx0)), int(by0 + 0.2 * (by1 - by0))),
               px(img, int(bx1 - 0.1 * (bx1 - bx0)), int(by1 - 0.2 * (by1 - by0)))]
-    box_opaque = not any(is_cyan(c) or is_yellow(c) for c in inside)
-    # ③z 序: 洋红标记 = 左竖条(x<24 逻辑) + 中部横条(y=0.48H, x 15%-85%)
-    bar_col = int(12 * sx)
-    mag_left = [px(img, bar_col, int(H * f)) for f in (0.2, 0.4, 0.6, 0.8)]
-    mag_cross_box = any(is_magenta(px(img, int(W * f), int(0.48 * H)))
-                        for f in np.arange(0.30, 0.71, 0.05))
-    mag_outside = any(is_magenta(c) for c in mag_left)
-    if mag_cross_box and mag_outside:
-        z_v = 'PASS 前景洋红跨沙盒可见（fg 在 GLES 之上）'
-    elif mag_outside and not mag_cross_box:
+    gles_has_content = not any(is_cyan(c) or is_yellow(c) for c in inside)
+    # ③z 序: 逐行扫描找洋红横线（不假设 y=0.48H）
+    rows_with_mag = []
+    for yy in range(0, H, 6):
+        if any(is_magenta(px(img, xx, yy)) for xx in range(int(0.20 * W), int(0.80 * W), 24)):
+            rows_with_mag.append(yy)
+    mag_rows = [yy for yy in rows_with_mag if by0 < yy < by1]
+    mag_left = any(is_magenta(px(img, int(12 * sx), int(H * f))) for f in (0.2, 0.4, 0.6, 0.8))
+    if not gles_has_content:
+        z_v = 'UNPROVEN GLES 区无渲染内容（帧提交被拒），z 序无可判定对象'
+    elif mag_rows and mag_left:
+        z_v = 'PASS 前景洋红线穿沙盒可见（fg 在 GLES 之上）'
+    elif mag_left and not mag_rows:
         z_v = 'FAIL 洋红仅盒外可见，沙盒区被 GLES 覆盖'
-    elif not mag_outside:
-        z_v = 'FAIL 洋红条整体不可见（前景被完全覆盖或未绘制）'
+    elif not mag_left:
+        z_v = 'FAIL 洋红条整体不可见'
     else:
         z_v = 'UNPROVEN'
-    print('   [%s] 非沙区=%s 沙盒内=%s' % (label, outside[2], inside[0]))
-    print('        ④透明: %s（沙盒不透明=%s）  ③z序: %s' % (alpha_v, box_opaque, z_v))
-    return {'alpha': alpha_v.split()[0], 'zorder': z_v.split()[0], 'box_opaque': box_opaque}
+    print('   [%s] 非沙区=%s 沙盒内=%s GLES有内容=%s' % (label, outside[2], inside[0], gles_has_content))
+    print('        ④透明: %s  ③z序: %s' % (alpha_v, z_v))
+    return {'alpha': alpha_v.split()[0], 'zorder': z_v.split()[0],
+            'gles_has_content': gles_has_content}
 
 
 def main():
@@ -132,7 +137,7 @@ def main():
         # 帧提交
         tel = [jload(s) for s in ev.get('p013_g0_telemetry', [])]
         tel = [d for d in tel if d]
-        draws = ev.get('p013_g0_draw_error', [])
+        draw_codes = ev.get('_draw_error_codes', [])
         comps = [jload(s) for s in ev.get('p013_g0_composition', [])]
         comps = [d for d in comps if d]
         reads = [jload(s) for s in ev.get('p013_g0_color_readback', [])]
@@ -151,8 +156,10 @@ def main():
             print('    遥测: surfaceCreate=%s ctxCreate=%s code=%s swap=%s T_dataHash=%s eglErr=%s glErr=%s' %
                   (last.get('surfaceCreateCount'), last.get('contextCreateCount'), last.get('code'),
                    last.get('swapSucceeded'), last.get('T_dataHash'), last.get('eglError'), last.get('glError')))
-        if draws:
-            print('    draw_error 次数=%d 首条=%s' % (len(draws), draws[0][:80]))
+        if draw_codes:
+            from collections import Counter
+            dist = Counter(draw_codes)
+            print('    draw_error 次数=%d 码分布=%s' % (len(draw_codes), dict(dist)))
         else:
             print('    draw_error 次数=0')
         for d in comps:

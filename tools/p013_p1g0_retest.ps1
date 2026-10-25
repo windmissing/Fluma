@@ -8,6 +8,8 @@ $out = 'D:\hmprojects\HelloWorld\test\artifacts\p013-p1g0-retest-20261025'
 Remove-Item Env:HTTP_PROXY -ErrorAction SilentlyContinue
 Remove-Item Env:HTTPS_PROXY -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $out | Out-Null
+function Log-Step($msg) { $t = Get-Date -Format 'HH:mm:ss'; Write-Output "[$t] $msg"; Add-Content -Path (Join-Path $out 'run-console.log') -Value "[$t] $msg" }
+Log-Step 'retest start'
 
 function Start-Probe($arm, $lib, $profile, $hit, $diag) {
   & $hdc shell 'hilog -r' | Out-Null
@@ -15,6 +17,7 @@ function Start-Probe($arm, $lib, $profile, $hit, $diag) {
   Start-Sleep -Seconds 2
   & $hdc shell "aa start -a EntryAbility -b $bundle --ps p013g0 1 --ps p013g0lib $lib --ps p013g0profile $profile --ps p013g0hit $hit --ps p013g0diag $diag" | Out-Null
   Start-Sleep -Seconds 6
+  Log-Step "started arm lib=$lib profile=$profile hit=$hit diag=$diag"
   & $hdc shell 'uitest uiInput click 240 620' | Out-Null   # dismiss USB popup
   Start-Sleep -Seconds 6
 }
@@ -34,6 +37,7 @@ Shot 'R0-hello-texture'
 Start-Sleep -Seconds 2
 Dump-G0 'R0-hello-texture-g0.txt'
 Shot 'R0-hello-texture-after-swipe'
+Log-Step 'R0 shot+dump done'
 Write-Output "R0 done"
 
 # ---------- R1: renderer + TEXTURE + hit=none + diag=on（主臂：帧提交/合成收据/读回/z 序/透明） ----------
@@ -44,6 +48,7 @@ Shot 'R1-renderer-texture'
 Start-Sleep -Seconds 3
 Shot 'R1-renderer-texture-after-swipe'
 Dump-G0 'R1-renderer-texture-g0.txt'
+Log-Step 'R1 shot+dump done'
 Write-Output "R1 done"
 
 # ---------- R2: renderer + SURFACE + hit=none（SURFACE 对照臂：叠层结构差异取证） ----------
@@ -54,6 +59,7 @@ Shot 'R2-renderer-surface'
 Start-Sleep -Seconds 3
 Shot 'R2-renderer-surface-after-swipe'
 Dump-G0 'R2-renderer-surface-g0.txt'
+Log-Step 'R2 shot+dump done'
 Write-Output "R2 done"
 
 # ---------- R3: renderer + TEXTURE + hit=transparent（输入透传：期望 2 次 Down） ----------
@@ -64,6 +70,7 @@ Start-Sleep -Seconds 6
 Start-Sleep -Seconds 3
 Dump-G0 'R3-renderer-texture-hittransparent-g0.txt'
 Shot 'R3-renderer-texture-hittransparent'
+Log-Step 'R3 done'
 Write-Output "R3 done"
 
 # ---------- R4: renderer + TEXTURE + hit=default（输入负对照：期望 0 次 Down） ----------
@@ -74,6 +81,7 @@ Start-Sleep -Seconds 6
 Start-Sleep -Seconds 3
 Dump-G0 'R4-renderer-texture-hitdefault-g0.txt'
 Shot 'R4-renderer-texture-hitdefault'
+Log-Step 'R4 done'
 Write-Output "R4 done"
 
 # ---------- R5: renderer + TEXTURE + diag=off（与 R1 同静态帧比对非沙 ROI） ----------
@@ -81,6 +89,7 @@ Start-Probe 'R5' 'renderer' 'texture' 'none' 'false'
 Start-Sleep -Seconds 8
 Shot 'R5-renderer-texture-diagoff'
 Dump-G0 'R5-renderer-texture-diagoff-g0.txt'
+Log-Step 'R5 done'
 Write-Output "R5 done"
 
 # ---------- R6: 前后台 10 次循环（TEXTURE profile 生命周期回归） ----------
@@ -95,6 +104,7 @@ for ($k = 1; $k -le 10; $k++) {
 Start-Sleep -Seconds 3
 Dump-G0 'R6-renderer-texture-surface10bg-g0.txt'
 Shot 'R6-renderer-texture-surface10bg'
+Log-Step 'R6 done'
 Write-Output "R6 done"
 
 # ---------- R7: 动态错帧（连续 swipe + 密集连拍，帧 token 与交换时序） ----------
@@ -106,5 +116,6 @@ for ($k = 1; $k -le 6; $k++) {
   Shot ("R7-renderer-texture-dyn-" + $k)
 }
 Dump-G0 'R7-renderer-texture-dyn-g0.txt'
+Log-Step 'R7 done'
 Write-Output "R7 done"
 Write-Output "DONE"
