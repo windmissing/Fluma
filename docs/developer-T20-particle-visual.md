@@ -4,4 +4,10 @@
 
 页面按M2真实active快照切换；C active无论count=0或视觉ablation关闭均不feed/draw B tracer，切入清B视觉点；inactive保留B。真实粒子在材质后、高光/雾/容器边框前绘制；FLYING使用当帧水/沙/雾采样，CONTACT_WAIT不以飞行龄期淡出。沿用已有2px/相色候选，不作为定标。真实LAND全额后不再有sprite，同提交床层仍显示质量累积。C active时即使外观tier=OFF也使用基础E层床面及粒子；canonical旧臂保持原强制路径。粒子层显隐不改物理route。没有增加页面猜测route/want武装物理的入口，仍由M2既有显式接口武装，默认关闭；GLES迁移等待T37契约。
 
-验证：test/run_p012_particle_visual_units.cjs 8/8，含真实投影复用/防回写、位置/WAIT、重复帧无积分、失配/ablation、逐帧遮蔽、OFF、容量反例、平床真实LAND与床层同commit；M2既有27/27通过。hvigor default@CompileArkTS成功，零错误。日志.codex/local-test/t20-build.txt。真实粒子帧时/观感与容量定标交T30/T31，未占设备，未删除B类（仅active分支退出）。当前SandCanvas既有P013桥页面接线原先未入库，本次作为同页集成基线带入；hello/其他任务暂存不带入。
+验证：test/run_p012_particle_visual_units.cjs 9/9，含真实投影复用/防回写、位置/WAIT、重复帧无积分、失配/ablation、逐帧遮蔽、OFF、容量反例、平床真实LAND与床层同commit；M2既有13/13通过。hvigor default@CompileArkTS成功，零错误。日志.codex/local-test/t20-build.txt。真实粒子帧时/观感与容量定标交T30/T31，未占设备，未删除B类（仅active分支退出）。当前SandCanvas既有P013桥页面接线原先未入库，本次作为同页集成基线带入；hello/其他任务暂存不带入。
+
+补充回归：M1零import守卫发现新增公共类型依赖，已将M1拷贝入口改为纯typed-array参数，场外仍消费统一投影类型；未修改守卫或放宽测试。M1 33/33及T20 9/9通过。当前M2 runner输出13例，不与旧报告27例混计。
+
+发布身份还覆盖legacy inject、route-off倒立、snapshot restore；只读copy不推进身份，新增第9例验证。
+
+入库离线证据：test/reports/t20/visual.json、test/reports/t20/m1-regression.json。

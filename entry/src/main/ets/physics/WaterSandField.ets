@@ -1513,6 +1513,7 @@ export class WaterSandField {
     this.initialWater = totals.water;
     this.initialHeavy = totals.heavy;
     this.initialLight = totals.light;
+    this.renderPhysicsCommitId++;
   }
 
   // =========================================================================
@@ -1951,8 +1952,8 @@ export class WaterSandField {
     this.suspL.set(newSuspL);
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.particleBinding.pool.invert180(this.capacity);
-      this.renderPhysicsCommitId++;
     }
+    this.renderPhysicsCommitId++;
     this.updateSandTop();
     this.shakeEnergy = Math.max(this.shakeEnergy, 0.8);
   }
@@ -3918,7 +3919,11 @@ export class WaterSandField {
     out.active = this.particleRouteActive();
     out.routeId = out.active ? this.particleRouteId : null;
     out.cols = this.cols; out.count = 0;
-    if (out.active && this.particleBinding !== null) this.particleBinding.pool.copyRenderProjection(out);
+    if (out.active && this.particleBinding !== null) {
+      out.count = this.particleBinding.pool.copyRenderProjection(out.x, out.y, out.vx, out.vy,
+        out.mass, out.phase, out.state, out.particleId);
+      out.capacity = this.particleBinding.pool.nmax;
+    }
     return out;
   }
   copyStateTo(target: WaterSandSnapshot): void {
@@ -4003,6 +4008,7 @@ export class WaterSandField {
       this.externalAdmissions.restore(sourceState.admissions);
     }
     this.updateSandTop();
+    this.renderPhysicsCommitId++;
   }
 
   getLastError(): WaterSandErrorCode | null {
