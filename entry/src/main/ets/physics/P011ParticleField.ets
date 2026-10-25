@@ -82,6 +82,9 @@ export interface P011ParticleSnapshot {
   pId: Uint32Array; pSourceId: Uint32Array; freeSlots: Int32Array;
   colParticleMassH: Float64Array; colParticleMassL: Float64Array;
 }
+export interface P011ParticleHotTransactionStorage {
+  before: P011ParticleSnapshot; after: P011ParticleSnapshot; scratch: P011ParticleSnapshot;
+}
 
 export type P011ParticleOp = 'spawn' | 'lift' | 'deposit' | 'crossing' | 'degrade' | 'merge';
 export interface P011ParticleRequest {
@@ -666,6 +669,41 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     if (this.transactionScratch !== null) return;
     this.transactionScratch = new P011ParticleField(this.cols, this.nmax);
     this.transactionBefore = this.snapshot(); this.transactionAfter = this.snapshot();
+  }
+  // COLD binding only. Reuses the existing transaction pool and images;
+  // the borrowed wrapper allocates no second set of particle arrays.
+  bindHotTransactionStorage(): P011ParticleHotTransactionStorage {
+    this.warmUpTransactions();
+    const scratch = this.transactionScratch;
+    if (scratch === null || this.transactionBefore === null || this.transactionAfter === null) {
+      throw new Error('PARTICLE_NOT_CONFIGURED');
+    }
+    return { before: this.transactionBefore, after: this.transactionAfter, scratch: scratch.borrowHotState() };
+  }
+  private borrowHotState(): P011ParticleSnapshot {
+    return { nmax: this.nmax, cols: this.cols, liveCount: this.liveCount, freeCount: this.freeCount, nextId: this.nextId,
+      pMass: this.pMass, pX: this.pX, pY: this.pY, pVx: this.pVx, pVy: this.pVy,
+      pPhase: this.pPhase, pSource: this.pSource, pState: this.pState, pId: this.pId,
+      pSourceId: this.pSourceId, freeSlots: this.freeSlots,
+      colParticleMassH: this.colParticleMassH, colParticleMassL: this.colParticleMassL };
+  }
+  // HOT numeric copy boundary. All expected errors precede the first write.
+  transferHotState(s: P011ParticleSnapshot, restore: boolean): number {
+    if (this.patch !== null) return 6;
+    if (s.nmax !== this.nmax || s.cols !== this.cols || s.pMass.length !== this.nmax ||
+      s.pX.length !== this.nmax || s.pY.length !== this.nmax || s.pVx.length !== this.nmax ||
+      s.pVy.length !== this.nmax || s.pPhase.length !== this.nmax || s.pSource.length !== this.nmax ||
+      s.pState.length !== this.nmax || s.pId.length !== this.nmax || s.pSourceId.length !== this.nmax ||
+      s.freeSlots.length !== this.nmax || s.colParticleMassH.length !== this.cols || s.colParticleMassL.length !== this.cols) return 3;
+    if (restore) this.copySnapshot(s);
+    else {
+      s.liveCount = this.liveCount; s.freeCount = this.freeCount; s.nextId = this.nextId;
+      s.pMass.set(this.pMass); s.pX.set(this.pX); s.pY.set(this.pY); s.pVx.set(this.pVx); s.pVy.set(this.pVy);
+      s.pPhase.set(this.pPhase); s.pSource.set(this.pSource); s.pState.set(this.pState); s.pId.set(this.pId);
+      s.pSourceId.set(this.pSourceId); s.freeSlots.set(this.freeSlots);
+      s.colParticleMassH.set(this.colParticleMassH); s.colParticleMassL.set(this.colParticleMassL);
+    }
+    return 0;
   }
   copyStateTo(out: P011ParticleSnapshot): void {
     if (out.nmax !== this.nmax || out.cols !== this.cols || out.pMass.length !== this.nmax ||
