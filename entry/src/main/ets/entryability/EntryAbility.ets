@@ -361,6 +361,7 @@ export default class EntryAbility extends UIAbility {
         parameters.p013g0diag === undefined ? true : `${parameters.p013g0diag}` === 'true');
       const libRaw = parameters.p013g0lib === undefined ?
         'hello' : `${parameters.p013g0lib}`.trim();
+      AppStorage.setOrCreate('p013g0profile', `${parameters.p013g0profile ?? 'texture'}`.trim() === 'surface' ? 'surface' : 'texture');
       AppStorage.setOrCreate('p013g0lib', libRaw === 'renderer' ? 'renderer' : 'hello');
       hilog.info(this.hilogDomain, this.hilogTag,
         'P013_G0 want enabled hit=%{public}s diag=%{public}d lib=%{public}s', hit,

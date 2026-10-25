@@ -32,7 +32,7 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/p013renderer/glsl/e2_lmat.frag" P013_FRAG
 string(SHA256 P013_HASH "${P013_VERT}${P013_FRAG}")
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/p013_shader_sources.h"
  "#pragma once\nstatic constexpr const char* kP013Vertex=R\"P013(${P013_VERT})P013\";\nstatic constexpr const char* kP013Fragment=R\"P013(${P013_FRAG})P013\";\nstatic constexpr const char* kP013ShaderHash=\"${P013_HASH}\";\n")
-add_library(p013renderer SHARED p013renderer/napi_bridge.cpp p013renderer/egl_context.cpp
+add_library(p013renderer SHARED p013renderer/composition_probe.cpp p013renderer/napi_bridge.cpp p013renderer/egl_context.cpp
  p013renderer/shader_pass.cpp p013renderer/tdata_uploader.cpp)
 target_include_directories(p013renderer PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(p013renderer PUBLIC libace_napi.z.so libace_ndk.z.so libEGL.so libGLESv3.so libhilog_ndk.z.so)

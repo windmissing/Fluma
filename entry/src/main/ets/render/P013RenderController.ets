@@ -1,3 +1,4 @@
+import { P013CompositionProfile, P013CompositionReceipt } from './P013RenderTypes';
 // P-013 P0 v1: called only after the existing Canvas render, never owns a ticker.
 import p013renderer from 'libp013renderer.so';
 import systemDateTime from '@ohos.systemDateTime';
@@ -76,6 +77,25 @@ export class P013RenderController {
       previous = current;
     }
     this.clockResolutionNs = Number.isFinite(minimum) ? minimum : 0;
+  }
+  requestComposition(profile: P013CompositionProfile): P013CompositionReceipt | null {
+    const native = this.native;
+    if (!this.loaded || native === null) return null;
+    try {
+      const result = native.requestComposition(profile);
+      if (result.code !== 0) this.disableComposition(result.errorStage);
+      return result;
+    } catch (error) { this.disableComposition('COMPOSITION_EXCEPTION'); return null; }
+  }
+  disableComposition(reason: string): void { this.forceBaseline(reason); }
+  submitPreparedFrame(frameToken: string, snapshot: WaterSandSnapshot, context: P012FrameContext,
+    width: number, height: number, frameTimeNs: number, controlCostMs: number = 0): P013FrameResult | null {
+    // No second physics capture: caller owns the one prepared snapshot/token.
+    if (frameToken !== `${context.fieldEpoch}:${context.frameSerial}:${snapshot.physicsCommitId ?? 0}`) {
+      this.disableComposition('PREPARED_TOKEN_MISMATCH'); return null;
+    }
+    this.submit(snapshot, context, width, height, frameTimeNs, controlCostMs);
+    return this.lastResult;
   }
   isOverlay(): boolean {
     return this.mode === P013Mode.GLES_LMAT_DIAG_OFF || this.mode === P013Mode.GLES_LMAT_DIAG_ON;

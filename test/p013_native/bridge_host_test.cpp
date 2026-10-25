@@ -219,6 +219,13 @@ static napi_value Call(napi_callback fn, std::initializer_list<napi_value> a) {
 static double Read(napi_value v, const char* key) {
   return v->fields.at(key)->number;
 }
+namespace p013 {
+void CompositionProbe::Reset(bool) { epoch=0;captured=false; }
+Status CompositionProbe::Draw(const FrameInput& f,uint64_t generation) {
+  epoch=generation;frame=f;captured=true;sourceHash=1;points.fill(0);rgba.fill(0);linearRgba.fill(0);srgbRgba.fill(0);
+  return Status::OK;
+}
+}
 int main() {
   CHECK(lifecycle_test_main() == 0);
   auto* component = reinterpret_cast<OH_NativeXComponent*>(1);
@@ -466,6 +473,45 @@ int main() {
   uploadFailure = true;
   CHECK(Read(draw(), "code") == 301);
   uploadFailure = false;
+  // New profile is explicitly probe-only and isolated from P0.
+  auto profile=Value();
+  profile->fields["compositionRevision"]=Text("P013_P1_TEXTURE_STACK_V1");
+  profile->fields["componentType"]=Text("TEXTURE");
+  profile->fields["colorPipelineVersion"]=Text("LIN_SRGB_REINHARD_V1");
+  profile->fields["alphaMode"]=Text("BINARY_MASK");profile->fields["hitMode"]=Text("NONE");
+  napi_get_boolean(env,false,&b);profile->fields["probeOnly"]=b;
+  CHECK(Read(Call(p013::RequestComposition,{profile}),"code")==1 && !p013::g.egl.composition);
+  napi_get_boolean(env,true,&b);profile->fields["probeOnly"]=b;
+  profile->fields["alphaMode"]=Text("FRACTIONAL");
+  CHECK(Read(Call(p013::RequestComposition,{profile}),"code")==100);
+  profile->fields["alphaMode"]=Text("BINARY_MASK");
+  auto requested=Call(p013::RequestComposition,{profile});
+  CHECK(Read(requested,"code")==0 && p013::g.egl.composition);
+  const auto profileEpoch=p013::g.egl.surfaceEpoch;
+  CHECK(Read(Call(p013::RequestComposition,{profile}),"code")==0 && p013::g.egl.surfaceEpoch==profileEpoch);
+  Set(frame,"surfaceEpoch",profileEpoch);Set(frame,"frameId",nextId++);
+  CHECK(Read(draw(),"code")==0);
+  auto receipt=Call(p013::QueryComposition,{});
+  CHECK(receipt->fields.at("profileStatus")->text=="READY");
+  CHECK(receipt->fields.at("requestedColorSpace")->text=="SRGB");
+  CHECK(receipt->fields.at("attachmentEncoding")->text=="GL_SRGB");
+  auto probeBatch=Call(p013::Drain,{});
+  auto lastProbe=probeBatch->fields.at("records")->elements.back();
+  CHECK(lastProbe->fields.at("mode")->text=="G0_COLOR_PROBE_ON");
+  CHECK(lastProbe->fields.at("diagEncoding")->text=="G0_LINEAR_COLOR_BLOCKS_V1");
+  CHECK(lastProbe->fields.at("compositionRevision")->text=="P013_P1_TEXTURE_STACK_V1");
+  auto token=receipt->fields.at("frameToken");
+  view->length=12;std::memset(data,0,12*sizeof(float));
+  CHECK(Read(Call(p013::CaptureProbe,{token,view}),"code")==0);
+  CHECK(Read(Call(p013::CaptureProbe,{Text("old-token"),view}),"code")==102);
+  data[0]=1;CHECK(Read(Call(p013::CaptureProbe,{token,view}),"code")==100);data[0]=0;
+  p013::Changed(component,window);
+  CHECK(Read(Call(p013::CaptureProbe,{token,view}),"code")==102);
+  view->length=512;
+  Call(p013::Release, {});
+  CHECK(!p013::g.egl.composition);
+  CHECK(Read(Call(p013::InitSession,{Text("test")}),"code")==0);
+  CHECK(Call(p013::QueryComposition,{})->fields.at("profileStatus")->text=="P0_LEGACY");
   Call(p013::Release, {});
   CHECK(contexts == 0 && surfaces == 0);
   std::puts(

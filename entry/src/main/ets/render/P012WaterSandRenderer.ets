@@ -6,7 +6,7 @@ import { P012ParticleLayer, P012ParticleSampler, P012ParticleCanvas } from './P0
 // 红线：只读物理场；一次帧只选一个完整渲染分支；不进入物理 checker。
 // 预算：E 档 draw ≤16；A 档新增 ≤48（EA 合计 ≤64）；CPU 0.25+0.35ms（待真机验证）。
 import { WaterSandSnapshot, WaterSandField } from '../physics/WaterSandField';
-import { P012WaterSandAdapter, P012MaterialFrameView } from './P012WaterSandAdapter';
+import { P012WaterSandAdapter, P012MaterialFrameView, P012AdapterResult } from './P012WaterSandAdapter';
 import { P012MaterialMotionCache } from './P012MaterialMotionCache';
 import { P012MaterialColumnSampler } from './P012MaterialSampler';
 import { P012SandTracer, P012TracerOcclusionView, P012TracerDrawContext } from './P012SandTracer';
@@ -367,8 +367,29 @@ export class P012WaterSandRenderer {
   readonly particleLayer: P012ParticleLayer = new P012ParticleLayer();
   private particleWasActive: boolean = false;
   particlePresentedSource: string = 'NONE';
-  render(ctx: CanvasRenderingContext2D, snapshot: WaterSandSnapshot,
-    frameContext: P012FrameContext): void {
+  private preparedResult: P012AdapterResult | null = null;
+  private preparedContext: P012FrameContext | null = null;
+  private preparedSnapshot: WaterSandSnapshot | null = null;
+  prepareOnce(snapshot: WaterSandSnapshot, frameContext: P012FrameContext): void {
+    if (this.preparedContext === frameContext && this.preparedSnapshot === snapshot) return;
+    this.consumeStagedAppearance();
+    this.preparedResult = this.adapter.update(snapshot, frameContext);
+    this.preparedContext = frameContext; this.preparedSnapshot = snapshot;
+  }
+  renderBackground(ctx: CanvasRenderingContext2D): void {
+    if (this.preparedContext !== null && this.preparedSnapshot !== null)
+      this.renderPrepared(ctx, this.preparedSnapshot, this.preparedContext, 'background');
+  }
+  renderForeground(ctx: CanvasRenderingContext2D): void {
+    if (this.preparedContext !== null && this.preparedSnapshot !== null)
+      this.renderPrepared(ctx, this.preparedSnapshot, this.preparedContext, 'foreground');
+  }
+  render(ctx: CanvasRenderingContext2D, snapshot: WaterSandSnapshot, frameContext: P012FrameContext): void {
+    this.prepareOnce(snapshot, frameContext);
+    this.renderPrepared(ctx, snapshot, frameContext, 'legacy');
+  }
+  private renderPrepared(ctx: CanvasRenderingContext2D, snapshot: WaterSandSnapshot,
+    frameContext: P012FrameContext, stage: 'legacy' | 'background' | 'foreground'): void {
     if (this.disposed) {
       return;
     }
@@ -380,7 +401,8 @@ export class P012WaterSandRenderer {
     // §10.4 消融开关/fillRect 策略：单点读入，各绘制点只读该状态
     this.frameAblation = frameContext.ablation;
     this.frameFillBox = frameContext.fillBox;
-    const result = this.adapter.update(snapshot, frameContext);
+    const result = this.preparedResult;
+    if (result === null) return;
     this.lastPairValid = result.pair.valid;
     const view = result.curr;
     if (view === null) {
@@ -389,7 +411,7 @@ export class P012WaterSandRenderer {
       return;
     }
     // ── 显示 mask：承接既有平滑（4 遍 3 点平均），只用于显示几何 ──
-    this.buildDisplayProfiles(view);
+    if (stage !== 'foreground') this.buildDisplayProfiles(view);
     const n = this.cols;
     const boxX = frameContext.boxX;
     const boxY = frameContext.boxY;
@@ -407,7 +429,7 @@ export class P012WaterSandRenderer {
     this.pxPerMaterialCache = boxH > 0 ? boxH / this.capacity : 0;
     // ── 运动代理（§5.2）：配对有效且有 prev 视图才更新；否则冻结 ──
     const motionValid = result.pair.valid && result.prev !== null;
-    this.motionCache.update(
+    if (stage !== 'foreground') this.motionCache.update(
       result.prev !== null ? result.prev : view,
       view, motionValid, colW, P012_GRAIN_TILE);
     const heightToY = (h: number): number =>
@@ -422,7 +444,7 @@ export class P012WaterSandRenderer {
     }
     // 1) 水体带（waterTop→sandTop）：基色→深水端线性渐变 + 深度调制（1 draw）
     //    F1 消融：ablation=DYN 跳过静态层（底色渐变/雾/高光/层理/颗粒/边框）
-    if (this.frameAblation !== P012Ablation.DYN) {
+    if (stage !== 'foreground' && this.frameAblation !== P012Ablation.DYN) {
       const gradWater = ctx.createLinearGradient(0, boxY, 0, boxY + boxH);
       gradWater.addColorStop(0, this.rgb(this.palette.waterR, this.palette.waterG, this.palette.waterB));
       gradWater.addColorStop(1, this.rgb(this.palette.waterDeepR, this.palette.waterDeepG, this.palette.waterDeepB));
@@ -445,7 +467,7 @@ export class P012WaterSandRenderer {
     //    §12 E3：默认走 I2 光学缓冲（连续雾，无 64 周期/12 档阶梯）；
     //    ablation=E3I2 回旧 fillFogTiers 12 档路径（消融对照）。
     const tier = frameContext.appearanceTier;
-    if ((tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
+    if (stage !== 'foreground' && (tier === P012AppearanceTier.EA || tier === P012AppearanceTier.EAB) &&
       this.frameAblation !== P012Ablation.FOG &&
       this.frameAblation !== P012Ablation.DYN) {
       if (this.frameAblation !== P012Ablation.E3I2) {
@@ -460,11 +482,11 @@ export class P012WaterSandRenderer {
     //    逐列伪法向光照：s = d(sandTop)/dx（屏幕单位），L = La + Ld·max(dot(n,l),0)
     //    用 8 档游程近似逐列光照（run 合并相邻同档列，draw 计数受控）
     //    A 档启用时沙顶 3px 硬描边语义由界面过渡带取代（P-012 分支无硬描边）
-    drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
+    if (stage !== 'foreground') drawCount += this.drawSandColumns(ctx, view, heightToY, colW, boxX, boxY, boxH);
     // 3.25) C 层理（C-batch §11，C1 分段平铺 + C3 低频明暗基底）：
     //    时序按 design §3.1（E底色 → C层纹 → B颗粒 → A散射），C 只在 EAB 档
     //    叠加（不新增 tier 枚举）；§11.4 消融 ablation=STRAT 跳过。
-    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT &&
+    if (stage !== 'foreground' && tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.STRAT &&
       this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawStratification(ctx, view, heightToY, colW,
         boxX, boxY, boxW, boxH, frameContext.geometryEpoch);
@@ -472,13 +494,14 @@ export class P012WaterSandRenderer {
     // 3.5) B 档粉质颗粒（EAB-batch，算法稿 §5.1）：三带各自 clip 到沙区曲线 Path +
     //      drawImage(256² 颗粒 tile) 按全局平流偏移精确平铺；跟随材料净搬运、
     //      无缝、无贴纸。§10.4 消融：ablation=GRAIN 时跳过颗粒层。
-    if (tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN &&
+    if (stage !== 'foreground' && tier === P012AppearanceTier.EAB && this.frameAblation !== P012Ablation.GRAIN &&
       this.frameAblation !== P012Ablation.DYN) {
       drawCount += this.drawSandGrain(ctx, view, heightToY, colW, boxX, boxY, boxW, boxH);
     }
     // 3.75) falling-sand B-route §3: tracer 喷流（B 颗粒之后、液面高光之前）
     //       —— 全程水区（遮蔽保证），不遮挡沙；ablation=TRACER 跳过
     //       （锚点测量 OFF 臂）。≤2 draw（H/L 群）。
+    if (stage !== 'background') {
     const particles = frameContext.particleSnapshot;
     const particleActive = particles !== undefined && particles.active;
     if (particleActive && !this.particleWasActive) this.sandTracer.clear();
@@ -529,8 +552,9 @@ export class P012WaterSandRenderer {
       ctx.strokeRect(boxX, boxY, boxW, boxH);
       drawCount++;
     }
+    }
     ctx.restore();
-    this.lastDrawCount = drawCount;
+    this.lastDrawCount = stage === 'foreground' ? this.lastDrawCount + drawCount : drawCount;
     // 记录无颗粒基线（E/A 档）：B 档颗粒预算钩子用它算净增量
     if (tier !== P012AppearanceTier.EAB) {
       this.lastDrawCountEa = drawCount;
@@ -875,6 +899,7 @@ export class P012WaterSandRenderer {
    *  §12.6：aPhaseX 清零 + I2 双 buffer dirty（防旧场景纹理相位泄漏）；
    *  N1 场不重建（seed 与格点 hash 绑定，泄漏的是相位不是纹理）。 */
   resetContinuity(): void {
+    this.preparedResult = null; this.preparedContext = null; this.preparedSnapshot = null;
     this.adapter.dispose();
     this.motionCache.reset();
     // B-route §4: reset/invert clears all in-flight tracers (the ring

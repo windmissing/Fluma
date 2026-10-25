@@ -5,8 +5,14 @@
 #include <limits>
 
 #include "egl_context.h"
+#include <EGL/eglext.h>
+#include <GLES3/gl3.h>
 using namespace p013;
 static int fail = 0, contexts = 0, surfaces = 0, terminated = 0;
+static bool colorSupported = true, colorWriteEnabled = true, msaaConfig = false;
+static EGLint colorAlpha = 8, surfaceColor = EGL_GL_COLORSPACE_SRGB_KHR;
+static GLint attachmentColor = GL_SRGB;
+static bool requestedSrgb = false;
 static EGLint injectedError = EGL_BAD_ALLOC;
 static bool hit(int n) { return fail == n; }
 #define CHECK(x)                                       \
@@ -27,6 +33,19 @@ EGLDisplay eglGetDisplay(EGLNativeDisplayType) {
   return hit(1) ? EGL_NO_DISPLAY : reinterpret_cast<EGLDisplay>(1);
 }
 EGLBoolean eglInitialize(EGLDisplay, EGLint*, EGLint*) { return !hit(2); }
+const char* eglQueryString(EGLDisplay, EGLint name) {
+  return name == EGL_VERSION ? "1.4" : colorSupported ? "EGL_KHR_gl_colorspace" : "";
+}
+EGLBoolean eglGetConfigAttrib(EGLDisplay, EGLConfig, EGLint name, EGLint* value) {
+  *value = name == EGL_SAMPLE_BUFFERS || name == EGL_SAMPLES ? (msaaConfig ? 4 : 0) : name == EGL_ALPHA_SIZE ? colorAlpha : 8; return EGL_TRUE;
+}
+void glBindFramebuffer(GLenum, GLuint) {}
+void glGetIntegerv(GLenum, GLint* value) { *value = 0; }
+void glGetFramebufferAttachmentParameteriv(GLenum, GLenum, GLenum, GLint* value) { *value = attachmentColor; }
+const GLubyte* glGetString(GLenum) { return reinterpret_cast<const GLubyte*>("GL_EXT_sRGB_write_control"); }
+void glEnable(GLenum) {}
+GLboolean glIsEnabled(GLenum) { return colorWriteEnabled ? GL_TRUE : GL_FALSE; }
+GLenum glGetError() { return GL_NO_ERROR; }
 EGLBoolean eglChooseConfig(EGLDisplay, const EGLint*, EGLConfig* c, EGLint,
                            EGLint* n) {
   *c = reinterpret_cast<EGLConfig>(1);
@@ -40,7 +59,8 @@ EGLContext eglCreateContext(EGLDisplay, EGLConfig, EGLContext, const EGLint*) {
   return reinterpret_cast<EGLContext>(1);
 }
 EGLSurface eglCreateWindowSurface(EGLDisplay, EGLConfig, EGLNativeWindowType,
-                                  const EGLint*) {
+                                  const EGLint* attrs) {
+  requestedSrgb = attrs && attrs[0] == EGL_GL_COLORSPACE_KHR && attrs[1] == EGL_GL_COLORSPACE_SRGB_KHR;
   if (hit(6)) return EGL_NO_SURFACE;
   surfaces++;
   return reinterpret_cast<EGLSurface>(1);
@@ -48,8 +68,8 @@ EGLSurface eglCreateWindowSurface(EGLDisplay, EGLConfig, EGLNativeWindowType,
 EGLBoolean eglMakeCurrent(EGLDisplay, EGLSurface d, EGLSurface, EGLContext) {
   return !(hit(7) || (hit(10) && d == EGL_NO_SURFACE));
 }
-EGLBoolean eglQuerySurface(EGLDisplay, EGLSurface, EGLint, EGLint* v) {
-  *v = 64;
+EGLBoolean eglQuerySurface(EGLDisplay, EGLSurface, EGLint attribute, EGLint* v) {
+  *v = attribute == EGL_GL_COLORSPACE_KHR ? surfaceColor : 64;
   return !hit(8);
 }
 EGLBoolean eglSwapBuffers(EGLDisplay, EGLSurface) { return !hit(9); }
@@ -71,6 +91,22 @@ int main() {
   auto* component = reinterpret_cast<OH_NativeXComponent*>(1);
   void* oldWindow = reinterpret_cast<void*>(1);
   void* newWindow = reinterpret_cast<void*>(2);
+  // Explicit profile controls, unsupported paths, and original profile isolation.
+  for (int fault = 0; fault < 7; fault++) {
+    EglContext profile; SurfaceInfo pi{}; profile.OnWindowCreated(component,oldWindow);
+    const auto oldEpoch=profile.surfaceEpoch;
+    CHECK(profile.ConfigureComposition(true)==Status::OK && profile.surfaceEpoch>oldEpoch);
+    msaaConfig=fault==6;
+    colorWriteEnabled=fault!=5;
+    colorSupported=fault!=1; colorAlpha=fault==2?0:8;
+    surfaceColor=fault==3?EGL_GL_COLORSPACE_LINEAR_KHR:EGL_GL_COLORSPACE_SRGB_KHR;
+    attachmentColor=fault==4?GL_LINEAR:GL_SRGB;
+    auto code=profile.EnsureCurrent({profile.surfaceEpoch,64,64},pi);
+    if(fault==0){CHECK(code==Status::OK && requestedSrgb && profile.alphaSize==8);profile.Unbind();}
+    else CHECK(code==Status::COLORSPACE_UNSUPPORTED);
+    profile.Release();CHECK(contexts==0 && surfaces==0);
+  }
+  msaaConfig=false;colorWriteEnabled=true;colorSupported=true;colorAlpha=8;surfaceColor=EGL_GL_COLORSPACE_SRGB_KHR;attachmentColor=GL_SRGB;
   for (int stage = 1; stage <= 8; stage++) {
     EglContext e;
     e.OnWindowCreated(component, oldWindow);

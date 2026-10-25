@@ -475,6 +475,7 @@ struct SandCanvas {
   private fps: number = 0;
   private canvasW: number = 0;
   private canvasH: number = 0;
+  private p013ForegroundCtx: CanvasRenderingContext2D = new CanvasRenderingContext2D(new RenderingContextSettings(true));
   private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(new RenderingContextSettings(true));
   private lastTime: number = 0;
   private frameCount: number = 0;
@@ -2139,16 +2140,23 @@ struct SandCanvas {
         const p013ControlStart = this.p013.isOverlay() ? p013NowMs() : 0;
         const p013Reference = this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE && !this.waterSandSnapshotEnabled;
         const particleVisual = ws.particleRouteActive() && !this.waterSandSnapshotEnabled;
-        if ((p013Reference || particleVisual) && this.p012Renderer === null) {
+        if ((p013Reference || particleVisual || this.p013.isOverlay()) && this.p012Renderer === null) {
           this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
         }
         const p013Context = this.p013.isOverlay() || p013Reference ? this.buildP012FrameContext() : null;
         const p013ControlCostMs = p013ControlStart > 0 ? p013NowMs() - p013ControlStart : 0;
         const segRenderT0 = Date.now();
         if (p012ShouldUseP012Renderer(this.p012Renderer,
-          this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled) || p013Reference || particleVisual) {
-          this.p012Renderer?.render(this.ctx, this.waterSandSnapshot,
-            p013Context ?? this.buildP012FrameContext());
+          this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled) || p013Reference || particleVisual || this.p013.isOverlay()) {
+          const frameContext = p013Context ?? this.buildP012FrameContext();
+          if (this.p013.isOverlay() && this.p012Renderer !== null) {
+            this.p012Renderer.prepareOnce(this.waterSandSnapshot, frameContext);
+            this.p012Renderer.renderBackground(this.ctx);
+            this.p013ForegroundCtx.clearRect(0, 0, this.canvasW, this.canvasH);
+            this.p012Renderer.renderForeground(this.p013ForegroundCtx);
+          } else {
+            this.p012Renderer?.render(this.ctx, this.waterSandSnapshot, frameContext);
+          }
         } else {
           this.renderWaterSand(this.ctx, this.waterSandSnapshot);
         }
@@ -2161,11 +2169,13 @@ struct SandCanvas {
           }
           this.p013OverlayVisible = false;
         } else if (this.p013.isOverlay() && p013Context !== null) {
-          this.p013.submit(this.waterSandSnapshot, p013Context,
+          this.p013.submitPreparedFrame(`${p013Context.fieldEpoch}:${p013Context.frameSerial}:${this.waterSandSnapshot.physicsCommitId ?? 0}`,
+            this.waterSandSnapshot, p013Context,
             this.canvasW, this.canvasH, frameTimeInNano, p013ControlCostMs);
           this.p013FrameVisible = this.p013.diagnosticVisible;
           this.p013Mode = this.p013.mode;
           this.p013OverlayVisible = this.p013.isOverlay();
+          if (!this.p013.isOverlay()) this.p012Renderer?.render(this.ctx, this.waterSandSnapshot, p013Context);
         }
         if (this.testMode) {
           // presentMs：呈现等待段 = 本帧处理完成到下帧 vsync 的等待
@@ -2521,7 +2531,7 @@ struct SandCanvas {
       boxH: this.boxH,
       pixelRatio: 1,
       visualInverted: this.waterSandVisualInverted,
-      appearanceTier: this.p012ParticleFrame.active && !this.waterSandSnapshotEnabled &&
+      appearanceTier: (this.p012ParticleFrame.active || this.p013.isOverlay()) && !this.waterSandSnapshotEnabled &&
         this.p012AppearanceTier === P012AppearanceTier.OFF ? P012AppearanceTier.E :
         !this.waterSandSnapshotEnabled && this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE &&
         this.p012AppearanceTier === P012AppearanceTier.OFF ? P012AppearanceTier.E : this.p012AppearanceTier as P012AppearanceTier,
@@ -3163,7 +3173,7 @@ struct SandCanvas {
     Stack() {
       Canvas(this.ctx)
         .width('100%')
-        .height('100%')
+        .height('100%').zIndex(0)
         .onReady(() => {
           this.canvasW = this.ctx.width;
           this.canvasH = this.ctx.height;
@@ -3172,16 +3182,20 @@ struct SandCanvas {
         })
 
       if (this.p013OverlayVisible && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
-        XComponent({id: 'p013_lmat_surface', type: XComponentType.SURFACE, libraryname: 'p013renderer'})
+        XComponent({id: 'p013_lmat_surface', type: XComponentType.TEXTURE, libraryname: 'p013renderer'})
           .width('100%').height('100%')
-          .opacity(this.p013FrameVisible ? 1 : 0)
+          .opacity(1).backgroundColor(Color.Transparent).zIndex(10)
           .hitTestBehavior(HitTestMode.None)
           .onLoad(() => { this.p013.onLoad(); })
           .onDestroy(() => { this.p013.release(); this.p013FrameVisible = false; })
       }
+      if (this.p013OverlayVisible && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
+        Canvas(this.p013ForegroundCtx).width('100%').height('100%')
+          .zIndex(20).hitTestBehavior(HitTestMode.None)
+      }
       if (this.renderMode === MODE_WATERSAND && !this.waterSandSnapshotEnabled) {
         Button(['Canvas 基线', 'Canvas 顶光参考', 'GLES 透明 OFF', 'GLES 光场诊断'][this.p013Mode])
-          .fontSize(12).position({x: 20, y: 85})
+          .zIndex(30).fontSize(12).position({x: 20, y: 85})
           .onClick(() => {
             this.p013.setMode(((this.p013Mode + 1) % 4) as P013Mode);
             this.p013FrameVisible = this.p013.diagnosticVisible;
@@ -3189,13 +3203,13 @@ struct SandCanvas {
             this.p013OverlayVisible = this.p013.isOverlay();
           })
       }
-      Text(this.displayInfo)
+      Text(this.displayInfo).zIndex(30)
         .fontSize(16)
         .fontColor('#FFFFFF')
         .position({ x: 20, y: 40 })
 
 
-      Button(this.showPanel ? '收起' : '调参')
+      Button(this.showPanel ? '收起' : '调参').zIndex(30)
         .fontSize(14)
         .width(70)
         .height(36)

@@ -1,10 +1,11 @@
+import { P013CompositionProfile, P013CompositionReceipt, p013ProbeSrgb } from '../render/P013RenderTypes';
 // P-013 P1-G0 平台探针页（真机取证）
 // 五项探针：①surface 生命周期 ②sRGB attachment ③三层 z 序 ④透明 ⑤输入透传
 //
 // PROBE-ONLY：仅供 P-013 P1-G0 取证使用，严禁并入发布分支。
 //
 // 叠层顺序刻意镜像 P-013 真实集成（SandCanvas 末位追加 XComponent 为顶层）：
-//   Stack { Canvas bg(底色+sRGB 对照色块) ; Canvas fg(应用画布角色+触摸计数) ; XComponent(GLES 顶层) }
+//   Stack { Canvas bg(底色+sRGB 对照色块) ; XComponent TEXTURE ; Canvas fg(前景标记) }
 //
 // native 库二选一（want p013g0lib）：
 //   hello    → libp013hello.so：恒定清屏色 glClearColor(0.18,0.20,0.22,1.0)（P0a 已验证可用）
@@ -56,6 +57,9 @@ class P013G0FrameCallback extends FrameCallback {
 @Entry
 @Component
 struct P013P1G0Probe {
+  @State profileFailed: boolean = false;
+  @State useTexture: boolean = true;
+  private compositionRequested: boolean = false;
   @State status: string = '等待 XComponent onLoad';
   @State touchCount: number = 0;
   @State frameCount: number = 0;
@@ -93,6 +97,7 @@ struct P013P1G0Probe {
     this.diagOn = AppStorage.get<boolean>('p013g0diag') !== false;
     const hit = AppStorage.get<string>('p013g0hit');
     this.hitMode = hit !== undefined ? hit : 'default';
+    this.useTexture = AppStorage.get<string>('p013g0profile') !== 'surface';
     const lib = AppStorage.get<string>('p013g0lib');
     this.useHello = lib === undefined ? true : lib !== 'renderer';
     for (let c = 0; c < COLS; c++) {
@@ -204,6 +209,13 @@ struct P013P1G0Probe {
         ownerBound: state.ownerBound, active: state.active
       }));
     }
+    if (this.useTexture && !this.compositionRequested) {
+      const profile = new P013CompositionProfile(); profile.probeOnly = true;
+      const receipt = native.requestComposition(profile);
+      hilog.info(DOMAIN, TAG, 'WS_EVENT p013_g0_composition %{public}s', JSON.stringify(receipt));
+      if (receipt.code !== 0) { this.status = `Canvas fallback: ${receipt.errorStage}`; native.release(); this.nativeRef = null; this.profileFailed = true; return; }
+      this.compositionRequested = true; state = native.getState();
+    }
     const pxFactor: number = this.vp2pxFactor > 0 ? this.vp2pxFactor : 1.0;
     const surfW: number = state.widthPx > 0 ? state.widthPx : Math.round(this.canvasW * pxFactor);
     const surfH: number = state.heightPx > 0 ? state.heightPx : Math.round(this.canvasH * pxFactor);
@@ -238,6 +250,12 @@ struct P013P1G0Probe {
       ellLightMaterial: 24, lightX: -0.55, lightY: -0.55, lightZ: 0.63, sigmaCandidate: 6
     } as P013LightParams;
     const result: P013FrameResult = native.drawFrame(f, this.tdata, light);
+    if (this.useTexture && (result.swapSucceeded || result.code >= 200) && this.frameCount % 60 === 0) {
+      const profile = native.queryCompositionProfile();
+      const readback = result.swapSucceeded ? native.captureProbe(profile.frameToken,
+        new Float32Array(profile.probePoints)) : profile;
+      hilog.info(DOMAIN, TAG, 'WS_EVENT p013_g0_color_readback %{public}s', JSON.stringify(readback));
+    }
     this.frameCount++;
     this.lastCode = result.code;
     if (this.frameCount === 1) {
@@ -249,6 +267,7 @@ struct P013P1G0Probe {
       this.status = `frames=${this.frameCount} code=${result.code} swap=${result.swapSucceeded} ` +
         `eglErr=${result.eglError} glErr=${result.glError} diag=${this.diagOn} hit=${this.hitMode}`;
     }
+    if (this.useTexture && result.code >= 200) this.profileFailed = true;
     if (result.code !== 0) {
       hilog.warn(DOMAIN, TAG, 'WS_EVENT p013_g0_draw_error code=%{public}d frameId=%{public}d',
         result.code, result.frameId);
@@ -289,6 +308,19 @@ struct P013P1G0Probe {
   private drawBackground(ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = '#F0F0F0';
     ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    if (this.useTexture && !this.useHello) {
+      for (let y = 0; y < this.canvasH; y += 24) for (let x = 0; x < this.canvasW; x += 24) {
+        ctx.fillStyle = (Math.floor(x / 24) + Math.floor(y / 24)) % 2 === 0 ? '#00FFFF' : '#FFCC00';
+        ctx.fillRect(x, y, 24, 24);
+      }
+      const values: number[] = [0, 0.0031308, 0.18, 0.5, 1];
+      for (let i = 0; i < values.length; i++) {
+        const encoded = Math.round(p013ProbeSrgb(values[i]) * 255);
+        ctx.fillStyle = `rgb(${encoded},${encoded},${encoded})`;
+        ctx.fillRect(this.canvasW * (0.275 + i * 0.09), this.canvasH * 0.65, this.canvasW * 0.09, 24);
+      }
+      return;
+    }
     const hex = (v: number): string => v.toString(16).padStart(2, '0');
     ctx.fillStyle = '#' + hex(SRGB_R) + hex(SRGB_G) + hex(SRGB_B);
     ctx.fillRect(20, this.canvasH - 140, 240, 100);
@@ -299,6 +331,7 @@ struct P013P1G0Probe {
     ctx.fillStyle = '#FF00FF';
     ctx.fillRect(0, 0, 24, this.canvasH);
     ctx.fillRect(0, this.canvasH - 40, 300, 40);
+    ctx.fillRect(this.canvasW * 0.15, this.canvasH * 0.48, this.canvasW * 0.7, 8);
   }
 
   /** 首帧布局完成后绘制两层 Canvas */
@@ -334,19 +367,17 @@ struct P013P1G0Probe {
   build() {
     Stack() {
       Canvas(this.ctxBg)
+        .zIndex(0)
         .width('100%')
         .height('100%')
-      Canvas(this.ctxFg)
-        .width('100%')
-        .height('100%')
-        .onTouch((e: TouchEvent) => { this.handleTouch(e); })
+      if (!this.profileFailed) {
       XComponent({
         id: this.useHello ? HELLO_COMPONENT_ID : COMPONENT_ID,
-        type: XComponentType.SURFACE,
+        type: this.useTexture ? XComponentType.TEXTURE : XComponentType.SURFACE,
         libraryname: this.useHello ? 'p013hello' : 'p013renderer'
       })
         .width('100%')
-        .height('100%')
+        .height('100%').zIndex(10).opacity(1).backgroundColor(Color.Transparent)
         .hitTestBehavior(this.hitBehavior())
         .onLoad(() => {
           // 惰性取 native 绑定（必须在 XComponent 创建之后，见上方注释）
@@ -359,17 +390,25 @@ struct P013P1G0Probe {
           }
           this.status = 'XComponent onLoad（native 已挂接）';
         })
+      }
+      Canvas(this.ctxFg)
+        .zIndex(20).hitTestBehavior(HitTestMode.None)
+        .width('100%')
+        .height('100%')
+
       Column() {
         Text(this.status).fontSize(12).fontColor('#000000')
         Text(`touches=${this.touchCount} frames=${this.frameCount} code=${this.lastCode}`).fontSize(12).fontColor('#000000')
         Text(this.boxInfo).fontSize(10).fontColor('#333333')
       }
+      .zIndex(30)
       .alignItems(HorizontalAlign.Start)
       .position({ x: 16, y: 40 })
     }
     .width('100%')
     .height('100%')
     .backgroundColor('#F0F0F0')
+    .onTouch((e: TouchEvent) => { this.handleTouch(e); })
   }
 
   private hitBehavior(): HitTestMode {

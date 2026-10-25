@@ -24,6 +24,7 @@ enum class Status : int {
   SHADER_COMPILE_FAILED = 300,
   GL_RESOURCE_FAILED = 301,
   GL_DRAW_FAILED = 302,
+  COLORSPACE_UNSUPPORTED = 304,
   SWAP_FAILED = 303
 };
 enum class State {
@@ -135,6 +136,8 @@ inline Status Validate(const FrameInput& f, const LightParams& l,
   return Status::OK;
 }
 struct Telemetry {
+  bool compositionProfile = false;
+  uint64_t probeSourceHash = 0;
   FrameInput frame{};
   LightParams light{}, inputLight{};
   Status code = Status::NOT_READY;

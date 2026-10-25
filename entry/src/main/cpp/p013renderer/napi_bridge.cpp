@@ -15,6 +15,7 @@
 #include <thread>
 
 #include "egl_context.h"
+#include "composition_probe.h"
 #include "p013_shader_sources.h"
 #include "shader_pass.h"
 #include "tdata_uploader.h"
@@ -28,6 +29,7 @@ struct Session {
   std::mutex mutex;
   EglContext egl;
   ShaderPass shader;
+  CompositionProbe probe;
   TDataUploader uploader;
   std::unique_ptr<FrameStorage> storage;
   size_t head = 0, count = 0;
@@ -105,6 +107,7 @@ napi_value Control(napi_env e, Status code) {
   return o;
 }
 void ResetGpu() {
+  g.probe.Reset();
   g.shader.Reset(false);
   g.uploader.Reset(false);
 }
@@ -112,10 +115,11 @@ void Destroy(ResetReason reason) {
   // Normal owner teardown deletes names while current. Callback/error teardown
   // abandons registered names only when their owning context is destroyed.
   if (g.egl.state == State::READY && g.egl.active && !g.egl.current &&
-      (g.shader.Program() || g.uploader.Texture())) {
+      (g.shader.Program() || g.uploader.Texture() || g.probe.Program())) {
     SurfaceInfo info{};
     if (g.egl.EnsureCurrent({g.egl.surfaceEpoch, g.egl.width, g.egl.height},
                             info) == Status::OK) {
+      g.probe.Reset(true);
       g.shader.Reset(true);
       g.uploader.Reset(true);
       g.egl.Unbind();
@@ -218,14 +222,14 @@ napi_value GetState(napi_env e, napi_callback_info) {
   Put(e, o, "nativeOwnedBytes",
       static_cast<double>(g.storage ? sizeof(FrameStorage) : 0));
   Put(e, o, "textureLiveCount", g.uploader.Texture() ? 1.0 : 0.0);
-  Put(e, o, "programLiveCount", g.shader.Program() ? 1.0 : 0.0);
-  Put(e, o, "vaoLiveCount", g.shader.Vao() ? 1.0 : 0.0);
+  Put(e, o, "programLiveCount", (g.shader.Program() ? 1.0 : 0.0) + (g.probe.Program() ? 1.0 : 0.0));
+  Put(e, o, "vaoLiveCount", (g.shader.Vao() ? 1.0 : 0.0) + (g.probe.Vao() ? 1.0 : 0.0));
   Put(e, o, "telemetryLiveCount", static_cast<double>(g.count));
   Put(e, o, "textureAbandonCount",
       static_cast<double>(g.uploader.textureAbandonCount));
   Put(e, o, "programAbandonCount",
-      static_cast<double>(g.shader.programAbandonCount));
-  Put(e, o, "vaoAbandonCount", static_cast<double>(g.shader.vaoAbandonCount));
+      static_cast<double>(g.shader.programAbandonCount + g.probe.programAbandonCount));
+  Put(e, o, "vaoAbandonCount", static_cast<double>(g.shader.vaoAbandonCount + g.probe.vaoAbandonCount));
   return o;
 }
 napi_value SetActive(napi_env e, napi_callback_info info) {
@@ -405,6 +409,7 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
   const double lockStart = NowMs();
   std::unique_lock<std::mutex> lock(g.mutex);
   t.lifecycleLockWaitMs = NowMs() - lockStart;
+  t.compositionProfile = g.egl.composition;
   t.frame = f;
   t.light = l;
   t.inputLight = l;
@@ -462,14 +467,14 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
                                 static_cast<int>(f.surfaceHeightPx)},
                                si);
     if (code == Status::OK) {
-      if (g.shader.epoch != g.egl.contextEpoch) {
+      if (!g.egl.composition && g.shader.epoch != g.egl.contextEpoch) {
         ResetGpu();
         code =
             g.shader.Create({kP013Vertex, kP013Fragment}, g.egl.contextEpoch);
         if (code == Status::OK) code = g.uploader.Create(g.egl.contextEpoch);
         t.shaderBuildMs = g.shader.buildMs;
       }
-      if (code == Status::OK && f.diagnosticEnabled) {
+      if (code == Status::OK && f.diagnosticEnabled && !g.egl.composition) {
         code = g.uploader.Upload(g.storage->staging.data(),
                                  static_cast<uint64_t>(f.frameId));
         t.uploadCpuMs = g.uploader.uploadMs;
@@ -478,8 +483,10 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
       }
       if (code == Status::OK) {
         drawAttempted = true;
-        code = g.shader.Draw({f, l}, g.uploader.Texture());
-        t.glError = g.shader.error;
+        code = g.egl.composition ? g.probe.Draw(f, g.egl.contextEpoch)
+                                 : g.shader.Draw({f, l}, g.uploader.Texture());
+        t.probeSourceHash = g.probe.sourceHash;
+        t.glError = g.egl.composition ? g.probe.error : g.shader.error;
         if (code == Status::OK) t.submittedFrameId = f.frameId;
       }
       if (code == Status::OK) {
@@ -524,11 +531,11 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
   t.uploadCount = g.uploader.uploadCount;
   t.textureAllocCount = g.uploader.textureAllocCount;
   t.textureAbandonCount = g.uploader.textureAbandonCount;
-  t.programAbandonCount = g.shader.programAbandonCount;
-  t.vaoAbandonCount = g.shader.vaoAbandonCount;
+  t.programAbandonCount = g.shader.programAbandonCount + g.probe.programAbandonCount;
+  t.vaoAbandonCount = g.shader.vaoAbandonCount + g.probe.vaoAbandonCount;
   t.textureLiveCount = g.uploader.Texture() ? 1 : 0;
-  t.programLiveCount = g.shader.Program() ? 1 : 0;
-  t.vaoLiveCount = g.shader.Vao() ? 1 : 0;
+  t.programLiveCount = (g.shader.Program() ? 1 : 0) + (g.probe.Program() ? 1 : 0);
+  t.vaoLiveCount = (g.shader.Vao() ? 1 : 0) + (g.probe.Vao() ? 1 : 0);
   t.surfaceCreateCount = g.egl.surfaceCreateCount;
   t.surfaceDestroyCount = g.egl.surfaceDestroyCount;
   t.contextCreateCount = g.egl.contextCreateCount;
@@ -540,6 +547,101 @@ napi_value DrawFrame(napi_env e, napi_callback_info info) {
   t.bridgeCpuMs = NowMs() - start;
   Save(t);
   return result;
+}
+// G0 composition profile is explicit and separate from the unchanged P0 contract.
+std::string ProbeToken() {
+  if (!g.probe.captured) return "";
+  const auto& f = g.probe.frame;
+  return std::to_string(static_cast<uint64_t>(f.sessionId)) + ":" +
+    std::to_string(static_cast<uint64_t>(f.frameId)) + ":" +
+    std::to_string(static_cast<uint64_t>(f.snapshotId)) + ":" +
+    std::to_string(static_cast<uint64_t>(f.surfaceEpoch)) + ":" + std::to_string(g.probe.epoch);
+}
+napi_value CompositionReceipt(napi_env e, Status code, const char* stage) {
+  napi_value o = Control(e, code);
+  Put(e,o,"compositionRevision",g.egl.composition ? "P013_P1_TEXTURE_STACK_V1" : "P0_LEGACY");
+  Put(e,o,"requestedColorSpace",g.egl.composition ? "SRGB" : "LEGACY_UNSPECIFIED");
+  Put(e,o,"actualColorSpace",g.egl.actualColorSpace == 0x3089 ? "SRGB" : "UNPROVEN");
+  Put(e,o,"attachmentEncoding",g.egl.attachmentEncoding == GL_SRGB ? "GL_SRGB" : "UNPROVEN");
+  Put(e,o,"drawFramebuffer",static_cast<double>(g.egl.drawFramebuffer));
+  Put(e,o,"readFramebuffer",static_cast<double>(g.egl.readFramebuffer));
+  Put(e,o,"eglAlphaSize",static_cast<double>(g.egl.alphaSize));
+  Put(e,o,"srgbWriteControlSupported",g.egl.writeControlSupported);
+  Put(e,o,"srgbWriteEnabled",g.egl.srgbWriteEnabled);
+  Put(e,o,"profileStatus",code != Status::OK ? "UNPROVEN" : !g.egl.composition ? "P0_LEGACY" :
+    g.egl.state == State::READY && g.egl.attachmentEncoding == GL_SRGB ? "READY" : "PENDING");
+  Put(e,o,"errorStage",stage);
+  Put(e,o,"eglVersion",g.egl.eglVersion.c_str());Put(e,o,"eglExtensions",g.egl.eglExtensions.c_str());
+  Put(e,o,"glVersion",g.egl.glVersion.c_str());Put(e,o,"glExtensions",g.egl.glExtensions.c_str());
+  Put(e,o,"eglError",static_cast<double>(g.egl.error));Put(e,o,"glError",static_cast<double>(g.probe.error));
+  Put(e,o,"packAlignment",1.0);Put(e,o,"rowDirection","BOTTOM_UP");
+  Put(e,o,"viewportWidth",g.probe.frame.surfaceWidthPx);Put(e,o,"viewportHeight",g.probe.frame.surfaceHeightPx);
+  Put(e,o,"frameToken",ProbeToken().c_str());
+  Put(e,o,"physicalSnapshotHash","UNPROVEN_PROBE_HAS_NO_PHYSICS");
+  char hash[17]{};std::snprintf(hash,sizeof(hash),"%016llx",static_cast<unsigned long long>(g.probe.sourceHash));
+  Put(e,o,"shaderHash",hash);Put(e,o,"shaderHashAlgorithm","FNV1A64");
+  Put(e,o,"readbackStage","PRE_SWAP_DEFAULT_BACK");
+  Put(e,o,"readbackStatus",g.probe.captured ? "MEASURED_NOT_CALIBRATED" : "UNPROVEN");
+  napi_value points=nullptr, rgba=nullptr;
+  napi_create_array_with_length(e,g.probe.captured ? 12 : 0,&points);
+  napi_create_array_with_length(e,g.probe.captured ? 24 : 0,&rgba);
+  if(g.probe.captured) {
+    for(size_t i=0;i<12;i++){napi_value v; napi_create_double(e,g.probe.points[i],&v);napi_set_element(e,points,i,v);}
+    for(size_t i=0;i<24;i++){napi_value v; napi_create_double(e,g.probe.rgba[i],&v);napi_set_element(e,rgba,i,v);}
+  }
+  napi_value linear=nullptr,srgb=nullptr;
+  napi_create_array_with_length(e,g.probe.captured?24:0,&linear);napi_create_array_with_length(e,g.probe.captured?24:0,&srgb);
+  if(g.probe.captured)for(size_t i=0;i<24;i++){
+    napi_value v; napi_create_double(e,g.probe.linearRgba[i],&v);napi_set_element(e,linear,i,v);
+    napi_create_double(e,g.probe.srgbRgba[i],&v);napi_set_element(e,srgb,i,v);
+  }
+  napi_set_named_property(e,o,"linearRgba8",linear);napi_set_named_property(e,o,"srgbRgba8",srgb);
+  napi_set_named_property(e,o,"probePoints",points);napi_set_named_property(e,o,"rgba",rgba);
+  return o;
+}
+napi_value RequestComposition(napi_env e, napi_callback_info info) {
+  size_t n=1;napi_value a[1]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+  const char* names[]={"compositionRevision","componentType","colorPipelineVersion","alphaMode","hitMode"};
+  const char* values[]={"P013_P1_TEXTURE_STACK_V1","TEXTURE","LIN_SRGB_REINHARD_V1","BINARY_MASK","NONE"};
+  bool valid=n==1, probe=false;
+  for(size_t i=0;valid && i<5;i++){napi_value v=nullptr;std::string value;
+    valid=napi_get_named_property(e,a[0],names[i],&v)==napi_ok && String(e,v,value) && value==values[i];}
+  if(valid)valid=Boolean(e,a[0],"probeOnly",probe);
+  std::lock_guard<std::mutex> lock(g.mutex);Status code=Owner();
+  if(code==Status::OK && !g.ownerBound)code=Status::NOT_READY;
+  if(code==Status::OK && !valid)code=Status::INVALID_ARGUMENT;
+  if(code!=Status::OK)return CompositionReceipt(e,code,"COMPOSITION_PROFILE");
+  // Full P1 material remains behind G1-G4; never present this color probe as material.
+  if(!probe)return CompositionReceipt(e,Status::NOT_READY,"P1_MATERIAL_NOT_IMPLEMENTED");
+  if(!g.egl.composition){Destroy(ResetReason::RELEASE);code=g.egl.ConfigureComposition(true);}
+  return CompositionReceipt(e,code,code==Status::OK?"NONE":"COMPOSITION_SWITCH");
+}
+napi_value QueryComposition(napi_env e,napi_callback_info) {
+  std::lock_guard<std::mutex> lock(g.mutex);
+  Status code=Owner();if(code==Status::OK && static_cast<int>(g.lastError)>=200)code=g.lastError;
+  return CompositionReceipt(e,code,g.egl.errorStage);
+}
+napi_value CaptureProbe(napi_env e,napi_callback_info info) {
+  size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+  std::string token;bool valid=n==2 && String(e,a[0],token);
+  napi_typedarray_type type{};size_t count=0,offset=0,bytes=0;void* data=nullptr;void* base=nullptr;
+  napi_value buffer=nullptr;bool detached=false,isTyped=false;
+  if(valid)valid=napi_is_typedarray(e,a[1],&isTyped)==napi_ok && isTyped &&
+    napi_get_typedarray_info(e,a[1],&type,&count,&data,&buffer,&offset)==napi_ok &&
+    type==napi_float32_array && count==12 && data &&
+    napi_is_detached_arraybuffer(e,buffer,&detached)==napi_ok && !detached &&
+    napi_get_arraybuffer_info(e,buffer,&base,&bytes)==napi_ok && base && offset<=bytes &&
+    12*sizeof(float)<=bytes-offset && offset%sizeof(float)==0 && data==static_cast<unsigned char*>(base)+offset;
+  std::lock_guard<std::mutex> lock(g.mutex);Status code=Owner();
+  if(code!=Status::OK)return CompositionReceipt(e,code,"PROBE_OWNER");
+  if(!valid)return CompositionReceipt(e,Status::INVALID_ARGUMENT,"PROBE_POINTS");
+  if(!g.egl.composition || !g.probe.captured || token!=ProbeToken() ||
+    g.probe.frame.surfaceEpoch!=g.egl.surfaceEpoch || g.probe.epoch!=g.egl.contextEpoch ||
+    g.probe.frame.frameId!=g.lastSwap)
+    return CompositionReceipt(e,Status::STALE_FRAME,"PROBE_TOKEN");
+  for(size_t i=0;i<12;i++)if(static_cast<float*>(data)[i]!=g.probe.points[i])
+    return CompositionReceipt(e,Status::INVALID_ARGUMENT,"PROBE_POINTS_NOT_CAPTURED");
+  return CompositionReceipt(e,Status::OK,"NONE");
 }
 napi_value Drain(napi_env e, napi_callback_info) {
   std::lock_guard<std::mutex> lock(g.mutex);
@@ -608,12 +710,17 @@ napi_value Drain(napi_env e, napi_callback_info) {
     Put(e, o, "schemaVersion", 1.0);
     Put(e, o, "slopeKernelVersion", "E2_APPROX_P0");
     Put(e, o, "mode",
-        t.frame.diagnosticEnabled ? "GLES_LMAT_DIAG_ON" : "GLES_LMAT_DIAG_OFF");
-    Put(e, o, "diagEncoding", "DIAG_GRAY_V1");
-    Put(e, o, "profileKernel", "DISPLAY_4X3_V1");
-    Put(e, o, "maskRevision", "P013_CONTINUOUS_SAND_V1");
-    Put(e, o, "lightFrame", "CONTAINER_PRE_INVERT_V1");
-    Put(e, o, "shaderHash", kP013ShaderHash);
+        t.compositionProfile ? (t.frame.diagnosticEnabled ? "G0_COLOR_PROBE_ON" : "G0_COLOR_PROBE_OFF") :
+        (t.frame.diagnosticEnabled ? "GLES_LMAT_DIAG_ON" : "GLES_LMAT_DIAG_OFF"));
+    Put(e, o, "diagEncoding", t.compositionProfile ? "G0_LINEAR_COLOR_BLOCKS_V1" : "DIAG_GRAY_V1");
+    Put(e, o, "profileKernel", t.compositionProfile ? "G0_COLOR_BINARY_V1" : "DISPLAY_4X3_V1");
+    Put(e, o, "maskRevision", t.compositionProfile ? "G0_BINARY_BOX_V1" : "P013_CONTINUOUS_SAND_V1");
+    Put(e, o, "lightFrame", t.compositionProfile ? "UNUSED_PROBE" : "CONTAINER_PRE_INVERT_V1");
+    if(t.compositionProfile) {
+      char probeHash[17]{};std::snprintf(probeHash,sizeof(probeHash),"%016llx",static_cast<unsigned long long>(t.probeSourceHash));
+      Put(e,o,"shaderHash",probeHash);Put(e,o,"shaderHashAlgorithm","FNV1A64");
+      Put(e,o,"compositionRevision","P013_P1_TEXTURE_STACK_V1");
+    } else Put(e, o, "shaderHash", kP013ShaderHash);
     Put(e, o, "errorStage", t.errorStage);
     char hash[24]{};
     std::snprintf(hash, sizeof(hash), "%016llx",
@@ -665,7 +772,10 @@ napi_value Drain(napi_env e, napi_callback_info) {
 EXTERN_C_START
 static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
-  napi_property_descriptor d[] = {{"init", nullptr, InitSession, nullptr,
+  napi_property_descriptor d[] = {
+                                  {"requestComposition", nullptr, RequestComposition, nullptr, nullptr, nullptr, napi_default, nullptr},
+                                  {"queryCompositionProfile", nullptr, QueryComposition, nullptr, nullptr, nullptr, napi_default, nullptr},
+                                  {"captureProbe", nullptr, CaptureProbe, nullptr, nullptr, nullptr, napi_default, nullptr},{"init", nullptr, InitSession, nullptr,
                                    nullptr, nullptr, napi_default, nullptr},
                                   {"getState", nullptr, GetState, nullptr,
                                    nullptr, nullptr, napi_default, nullptr},

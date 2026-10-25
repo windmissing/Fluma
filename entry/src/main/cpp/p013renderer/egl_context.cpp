@@ -1,5 +1,28 @@
 #include "egl_context.h"
+#include <EGL/eglext.h>
+#include <GLES3/gl3.h>
+#include <cstring>
+#include <cstdlib>
 namespace p013 {
+namespace {
+bool HasExtension(const char* list, const char* name) {
+ if(!list)return false;const size_t length=std::strlen(name);
+ for(const char* p=list;(p=std::strstr(p,name));p+=length)
+  if((p==list || p[-1]==' ') && (p[length]==' ' || p[length]=='\0'))return true;
+ return false;
+}
+}
+
+Status EglContext::ConfigureComposition(bool enabled) {
+  if (current) return Status::SESSION_BUSY;
+  if (composition == enabled) return Status::OK;
+  DestroyUnbound(ResetReason::RELEASE);
+  composition = enabled; alphaSize = -1; actualColorSpace = attachmentEncoding = 0;
+  writeControlSupported = srgbWriteEnabled = false;
+  surfaceEpoch++; attemptedEpoch = UINT64_MAX; badWindow = recovered = false;
+  state = window ? State::WINDOW_AVAILABLE : State::WAIT_WINDOW;
+  return Status::OK;
+}
 void EglContext::Hint(OH_NativeXComponent* c, void* w) {
   // Hints never become authoritative frame dimensions.
   uint64_t x = 0, y = 0;
@@ -105,6 +128,15 @@ Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
       return Failure("getDisplay", Status::EGL_INIT_FAILED);
     if (!eglInitialize(display, nullptr, nullptr))
       return Failure("initialize", Status::EGL_INIT_FAILED);
+    if (composition) {
+      const char* extensions = eglQueryString(display, EGL_EXTENSIONS);
+      const char* version = eglQueryString(display, EGL_VERSION);
+      eglVersion = version ? version : "UNPROVEN";
+      eglExtensions = extensions ? extensions : "UNPROVEN";
+      if ((!HasExtension(extensions, "EGL_KHR_gl_colorspace")) &&
+          (!version || std::strtod(version, nullptr) < 1.5))
+        return Failure("COLORSPACE_EXTENSION", Status::COLORSPACE_UNSUPPORTED);
+    }
     const EGLint attrs[] = {EGL_SURFACE_TYPE,
                             EGL_WINDOW_BIT,
                             EGL_RED_SIZE,
@@ -119,7 +151,10 @@ Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
                             EGL_OPENGL_ES3_BIT,
                             EGL_NONE};
     EGLint count = 0;
-    if (!eglChooseConfig(display, attrs, &config, 1, &count) || count < 1)
+    const EGLint textureAttrs[] = {EGL_SURFACE_TYPE,EGL_WINDOW_BIT,EGL_RED_SIZE,8,EGL_GREEN_SIZE,8,
+      EGL_BLUE_SIZE,8,EGL_ALPHA_SIZE,8,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,
+      EGL_SAMPLE_BUFFERS,0,EGL_SAMPLES,0,EGL_NONE};
+    if (!eglChooseConfig(display, composition ? textureAttrs : attrs, &config, 1, &count) || count < 1)
       return Failure("chooseConfig", Status::EGL_INIT_FAILED);
     if (!eglBindAPI(EGL_OPENGL_ES_API))
       return Failure("bindAPI", Status::EGL_INIT_FAILED);
@@ -128,12 +163,33 @@ Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
     if (context == EGL_NO_CONTEXT)
       return Failure("createContext", Status::EGL_INIT_FAILED);
     contextCreateCount++;
+    if (composition) {
+      EGLint bits = 0;
+      for (EGLint channel : {EGL_RED_SIZE, EGL_GREEN_SIZE, EGL_BLUE_SIZE, EGL_ALPHA_SIZE}) {
+        if (!eglGetConfigAttrib(display, config, channel, &bits) || bits < 8)
+          return Failure("COLORSPACE_RGBA8", Status::COLORSPACE_UNSUPPORTED);
+        if (channel == EGL_ALPHA_SIZE) alphaSize = bits;
+      }
+    }
+    if (composition) {
+      EGLint buffers = -1, samples = -1;
+      if (!eglGetConfigAttrib(display, config, EGL_SAMPLE_BUFFERS, &buffers) ||
+          !eglGetConfigAttrib(display, config, EGL_SAMPLES, &samples) || buffers != 0 || samples != 0)
+        return Failure("COLORSPACE_MSAA", Status::COLORSPACE_UNSUPPORTED);
+    }
+    const EGLint colorAttrs[] = {EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_SRGB_KHR, EGL_NONE};
     surface = eglCreateWindowSurface(
         display, config, reinterpret_cast<EGLNativeWindowType>(window),
-        nullptr);
+        composition ? colorAttrs : nullptr);
     if (surface == EGL_NO_SURFACE)
       return Failure("createSurface", Status::EGL_INIT_FAILED);
     surfaceCreateCount++;
+    if (composition) {
+      EGLint space = 0;
+      if (!eglQuerySurface(display, surface, EGL_GL_COLORSPACE_KHR, &space) || space != EGL_GL_COLORSPACE_SRGB_KHR)
+        return Failure("COLORSPACE_SURFACE", Status::COLORSPACE_UNSUPPORTED);
+      actualColorSpace = space;
+    }
     contextEpoch++;
     initMs = NowMs() - t;
   }
@@ -143,6 +199,27 @@ Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
   current = true;
   currentOwner = std::this_thread::get_id();
   currentMs = NowMs() - mt;
+  if (composition) {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GLint draw = -1, read = -1, encoding = 0;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw);
+    glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read);
+    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_BACK, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &encoding);
+    attachmentEncoding = encoding; drawFramebuffer = draw; readFramebuffer = read;
+    if (draw != 0 || read != 0 || encoding != GL_SRGB || glGetError() != GL_NO_ERROR) {
+      Unbind(); return Failure("COLORSPACE_ATTACHMENT", Status::COLORSPACE_UNSUPPORTED);
+    }
+    const char* extensions = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+    const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+    glVersion = version ? version : "UNPROVEN";
+    glExtensions = extensions ? extensions : "UNPROVEN";
+    writeControlSupported = HasExtension(extensions, "GL_EXT_sRGB_write_control");
+    if (writeControlSupported) glEnable(0x8DB9); // GL_FRAMEBUFFER_SRGB_EXT, only with extension.
+    srgbWriteEnabled = !writeControlSupported || glIsEnabled(0x8DB9) == GL_TRUE;
+    if (!srgbWriteEnabled || glGetError() != GL_NO_ERROR) {
+      Unbind(); return Failure("COLORSPACE_WRITE_CONTROL", Status::COLORSPACE_UNSUPPORTED);
+    }
+  }
   QuerySize();
   if (width <= 0 || height <= 0) {
     Unbind();
@@ -199,6 +276,10 @@ void EglContext::DestroyUnbound(ResetReason) {
   surface = EGL_NO_SURFACE;
   context = EGL_NO_CONTEXT;
   config = nullptr;
+  alphaSize = -1; actualColorSpace = attachmentEncoding = 0;
+  drawFramebuffer = readFramebuffer = -1;
+  writeControlSupported = srgbWriteEnabled = false;
+  eglVersion.clear(); eglExtensions.clear(); glVersion.clear(); glExtensions.clear();
   width = height = 0;
 }
 Status EglContext::SetActive(bool value) {
@@ -216,6 +297,7 @@ Status EglContext::SetActive(bool value) {
 void EglContext::Release() {
   DestroyUnbound(ResetReason::RELEASE);
   state = State::RELEASED;
+  composition = false;
   active = false;
 }
 }  // namespace p013

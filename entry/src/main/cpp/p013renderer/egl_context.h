@@ -4,6 +4,7 @@
 #include <ace/xcomponent/native_interface_xcomponent.h>
 
 #include <thread>
+#include <string>
 
 #include "render_contract.h"
 namespace p013 {
@@ -18,6 +19,12 @@ struct SurfaceInfo {
 enum class ResetReason { BACKGROUND, DESTROYED, RELEASE, FAILURE };
 class EglContext {
  public:
+  Status ConfigureComposition(bool);
+  std::string eglVersion, eglExtensions, glVersion, glExtensions;
+  bool composition = false;
+  int drawFramebuffer = -1, readFramebuffer = -1;
+  int alphaSize = -1, actualColorSpace = 0, attachmentEncoding = 0;
+  bool writeControlSupported = false, srgbWriteEnabled = false;
   Status OnWindowCreated(OH_NativeXComponent*, void*);
   Status OnWindowChanged(OH_NativeXComponent*, void*);
   void OnWindowDestroyed(OH_NativeXComponent*, void*);

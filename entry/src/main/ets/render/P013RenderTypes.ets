@@ -141,6 +141,9 @@ export interface P013TelemetryBatch {
   telemetryLiveCount: number;
 }
 export interface P013NativeRenderer {
+  requestComposition(profile: P013CompositionProfile): P013CompositionReceipt;
+  queryCompositionProfile(): P013CompositionReceipt;
+  captureProbe(frameToken: string, points: Float32Array): P013CompositionReceipt;
   init(componentId: string): P013ControlResult;
   getState(): P013RendererState;
   setActive(active: boolean): P013ControlResult;
@@ -201,4 +204,27 @@ export interface P013Stats {
   p95: number | null;
   max: number | null;
   failCount: number;
+}
+
+/** G0 profile, separate from the seven material algorithm identities. */
+export class P013CompositionProfile {
+  compositionRevision: string = 'P013_P1_TEXTURE_STACK_V1';
+  componentType: string = 'TEXTURE'; colorPipelineVersion: string = 'LIN_SRGB_REINHARD_V1';
+  alphaMode: string = 'BINARY_MASK'; hitMode: string = 'NONE';
+  probeOnly: boolean = false;
+}
+export interface P013CompositionReceipt extends P013ControlResult {
+  compositionRevision: string; frameToken: string; physicalSnapshotHash: string;
+  requestedColorSpace: string; actualColorSpace: string; attachmentEncoding: string;
+  eglAlphaSize: number; srgbWriteControlSupported: boolean; srgbWriteEnabled: boolean;
+  profileStatus: string; errorStage: string; readbackStage: string; readbackStatus: string;
+  shaderHash: string; shaderHashAlgorithm: string;
+  probePoints: number[]; rgba: number[]; linearRgba8: number[]; srgbRgba8: number[];
+  eglVersion: string; eglExtensions: string; glVersion: string; glExtensions: string;
+  eglError: number; glError: number; packAlignment: number; rowDirection: string;
+  viewportWidth: number; viewportHeight: number; drawFramebuffer: number; readFramebuffer: number;
+}
+/** Analytic expectations only; measured tolerances belong to tester, not the developer. */
+export function p013ProbeSrgb(linear: number): number {
+  return linear <= 0.0031308 ? linear * 12.92 : 1.055 * Math.pow(linear, 1 / 2.4) - 0.055;
 }

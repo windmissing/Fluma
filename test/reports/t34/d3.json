@@ -1,0 +1,39 @@
+{
+  "suite": "run_p012_d3_wiring_units",
+  "passed": 8,
+  "failed": 0,
+  "results": [
+    {
+      "name": "p011_d3_routingKernelAndSplit",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d3_gateThreeConditions",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d3_cancelDoesNotRecallFedPoints",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d3_commandChannelStillWorks",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d3_endToEndReceiptFlow",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_d3_panHandlerHasNoTiltXWrite",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_panFallbackRejectsMissingFingerAndResetsGestureBoundary",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_wantShakeRoutesToWaterSandAndFieldTelemetryIncludesSourceLedger",
+      "status": "PASS"
+    }
+  ]
+}
