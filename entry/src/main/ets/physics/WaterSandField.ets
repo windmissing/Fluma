@@ -5612,6 +5612,7 @@ export class WaterSandField {
       const heavyDifference = this.suspH[c + 1] - this.suspH[c];
       const lightDifference = this.suspL[c + 1] - this.suspL[c];
       if (heavyDifference > 0) {
+        const donorStock = this.suspH[c + 1];
         const flux = Math.min(this.params.heavyDiffusion * dt, heavyDifference / 2,
           this.suspensionCapacity(c));
         this.suspH[c + 1] -= flux;
@@ -5619,6 +5620,7 @@ export class WaterSandField {
         this.moveShakeSourceLineage(this.shakeSourceH, c + 1, c, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c + 1, c, flux, 0);
       } else if (heavyDifference < 0) {
+        const donorStock = this.suspH[c];
         const flux = Math.min(this.params.heavyDiffusion * dt, -heavyDifference / 2,
           this.suspensionCapacity(c + 1));
         this.suspH[c] -= flux;
@@ -5627,6 +5629,7 @@ export class WaterSandField {
         this.recordNaturalSuspensionDiffusion(c, c, c + 1, flux, 0);
       }
       if (lightDifference > 0) {
+        const donorStock = this.suspL[c + 1];
         const flux = Math.min(this.params.lightDiffusion * dt, lightDifference / 2,
           this.suspensionCapacity(c));
         this.suspL[c + 1] -= flux;
@@ -5634,6 +5637,7 @@ export class WaterSandField {
         this.moveShakeSourceLineage(this.shakeSourceL, c + 1, c, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c + 1, c, 0, flux);
       } else if (lightDifference < 0) {
+        const donorStock = this.suspL[c];
         const flux = Math.min(this.params.lightDiffusion * dt, -lightDifference / 2,
           this.suspensionCapacity(c + 1));
         this.suspL[c] -= flux;
