@@ -1,0 +1,378 @@
+{
+ "executionId": "p038-peak-independent-verification-v1",
+ "role": "tester",
+ "mode": "READ_ONLY_INDEPENDENT_VERIFICATION",
+ "basis": [
+  "docs/peak-protocol-P011-ws08-peak-nondeposited-v1.md (frozen v1)",
+  "docs/architecture-P011-peak-fields-revision-v1.md (T07 rev2)",
+  "commit 41b90bf (T08 implementation), 61e5ac4 (T07 alignment)"
+ ],
+ "protocolSourceSha256": "3f043d404224b8290248d04ea600e5a7ac08b763625f28385d3c3063755ebfe9",
+ "verdict": "PASS",
+ "summary": {
+  "totalChecks": 46,
+  "matched": 46,
+  "layerA": 27,
+  "layerB": 15,
+  "layerC": 4
+ },
+ "layerAIndependentRecompute": [
+  {
+   "check": "fixture ledgerHash matches manifest",
+   "ok": true,
+   "manifestHash": "5a64b32a5ea897d8b9f5fe5303ee05bc5b52e5a2fd67317eb436269f1b2b8b68",
+   "actualHash": "5a64b32a5ea897d8b9f5fe5303ee05bc5b52e5a2fd67317eb436269f1b2b8b68"
+  },
+  {
+   "check": "peakWindowStartElapsedMs",
+   "ok": true,
+   "recomputed": 100,
+   "reported": 100
+  },
+  {
+   "check": "peakWindowEndElapsedMs",
+   "ok": true,
+   "recomputed": 3100,
+   "reported": 3100
+  },
+  {
+   "check": "peakWindowSampleCount",
+   "ok": true,
+   "recomputed": 3,
+   "reported": 3
+  },
+  {
+   "check": "peakNonDepositedFraction",
+   "ok": true,
+   "recomputed": 0.52,
+   "reported": 0.52
+  },
+  {
+   "check": "peakStockMass",
+   "ok": true,
+   "recomputed": 520,
+   "reported": 520
+  },
+  {
+   "check": "peakReferenceMass",
+   "ok": true,
+   "recomputed": 1000,
+   "reported": 1000
+  },
+  {
+   "check": "peakCommitKey",
+   "ok": true,
+   "recomputed": {
+    "runId": "r",
+    "sequence": 3,
+    "frameId": 3,
+    "substepId": 3
+   },
+   "reported": {
+    "runId": "r",
+    "sequence": 3,
+    "frameId": 3,
+    "substepId": 3
+   }
+  },
+  {
+   "check": "peakInputCommitOrder",
+   "ok": true,
+   "recomputed": 4,
+   "reported": 4
+  },
+  {
+   "check": "peakSampleElapsedMs",
+   "ok": true,
+   "recomputed": 200,
+   "reported": 200
+  },
+  {
+   "check": "peakMasses",
+   "ok": true,
+   "recomputed": {
+    "D": 480,
+    "U": 320,
+    "P": 200,
+    "M": 520,
+    "E": 1000,
+    "UH": 320,
+    "UL": 0,
+    "PH": 200,
+    "PL": 0,
+    "EH": 1000,
+    "EL": 0
+   },
+   "reported": {
+    "D": 480,
+    "U": 320,
+    "P": 200,
+    "M": 520,
+    "E": 1000,
+    "UH": 320,
+    "UL": 0,
+    "PH": 200,
+    "PL": 0,
+    "EH": 1000,
+    "EL": 0
+   }
+  },
+  {
+   "check": "peakStatus",
+   "ok": true,
+   "recomputed": "PASS",
+   "reported": "PASS"
+  },
+  {
+   "check": "peakScore",
+   "ok": true,
+   "recomputed": 6,
+   "reported": 6
+  },
+  {
+   "check": "peakNonDepositedHeavyFraction",
+   "ok": true,
+   "recomputed": 0.52,
+   "reported": 0.52
+  },
+  {
+   "check": "peakNonDepositedLightFraction",
+   "ok": true,
+   "recomputed": null,
+   "reported": null
+  },
+  {
+   "check": "heavyPhaseStatus",
+   "ok": true,
+   "recomputed": "OBSERVED",
+   "reported": "OBSERVED"
+  },
+  {
+   "check": "lightPhaseStatus",
+   "ok": true,
+   "recomputed": "N/A",
+   "reported": "N/A"
+  },
+  {
+   "check": "legacyPeakSuspReported",
+   "ok": true,
+   "recomputed": 0.8,
+   "reported": 0.8
+  },
+  {
+   "check": "legacyPeakHistoricalReference",
+   "ok": true,
+   "recomputed": 0.4,
+   "reported": 0.4
+  },
+  {
+   "check": "legacyPeakLiveFormula",
+   "ok": true,
+   "recomputed": 0.32,
+   "reported": 0.32
+  },
+  {
+   "check": "sameReferenceSuspOnlyPeak",
+   "ok": true,
+   "recomputed": 0.32,
+   "reported": 0.32
+  },
+  {
+   "check": "OBSERVED_SAMPLED_MAX",
+   "ok": true,
+   "recomputed": 0.48,
+   "reported": 0.48
+  },
+  {
+   "check": "common250ms (count/newPeak/historicalPeak)",
+   "ok": true,
+   "recomputed": {
+    "sampleCount": 2,
+    "newPeak": 0.48,
+    "historicalPeak": 0.35
+   },
+   "reported": {
+    "sampleCount": 2,
+    "newPeak": 0.48,
+    "historicalPeak": 0.35
+   }
+  },
+  {
+   "check": "baselineNonDepositedFraction",
+   "ok": true,
+   "recomputed": 0.8,
+   "reported": 0.8
+  },
+  {
+   "check": "differenceAttribution.windowEffect",
+   "ok": true,
+   "recomputed": 0.45000000000000007,
+   "reported": 0.45000000000000007
+  },
+  {
+   "check": "differenceAttribution.samplingDensityEffect",
+   "ok": true,
+   "recomputed": 0.040000000000000036,
+   "reported": 0.040000000000000036
+  },
+  {
+   "check": "differenceAttribution.numeratorDenominatorEffect",
+   "ok": true,
+   "recomputed": 0.13,
+   "reported": 0.13
+  }
+ ],
+ "layerBIndependentProbes": [
+  {
+   "check": "B1 tie: earliest commit identity reported (sequence 2, order 3)",
+   "ok": true,
+   "reportedKey": {
+    "runId": "r",
+    "sequence": 2,
+    "frameId": 2,
+    "substepId": 2
+   },
+   "reportedOrder": 3,
+   "fraction": 0.48
+  },
+  {
+   "check": "B2 same-ms: commit at t=on with later order sampled (f=0.52)",
+   "ok": true,
+   "fraction": 0.52,
+   "sampleCount": 1
+  },
+  {
+   "check": "B3 pre-input commit: order below on-event order excluded (INCOMPLETE, 0 samples)",
+   "ok": true,
+   "status": "INCOMPLETE",
+   "sampleCount": 0,
+   "reasons": [
+    "NO_ELIGIBLE_SAMPLES"
+   ]
+  },
+  {
+   "check": "B4 late off: window stays [100,3100), post-off record excluded (f=0.48)",
+   "ok": true,
+   "fraction": 0.48,
+   "windowEnd": 3100
+  },
+  {
+   "check": "B5 heavy N/A: EH=0 -> heavyPhaseStatus N/A, light OBSERVED (f=0.3)",
+   "ok": true,
+   "heavy": "N/A",
+   "light": "OBSERVED",
+   "fraction": 0.3,
+   "lightFraction": 0.3
+  },
+  {
+   "check": "B6 state=0 slot excluded from P; dead-slot mass counted -> INVALID_LEDGER",
+   "ok": true,
+   "correctExclusion": {
+    "status": "PASS",
+    "stock": 500
+   },
+   "deadSlotCounted": {
+    "status": "INVALID_LEDGER",
+    "hard": [
+     "INVALID_RECORD:PARTICLE_SUMMARY_MISMATCH"
+    ]
+   }
+  },
+  {
+   "check": "B7 coverage gap: ordinal jump detected -> INCOMPLETE (no false PASS)",
+   "ok": true,
+   "status": "INCOMPLETE",
+   "reasons": [
+    "COMMIT_COVERAGE_GAP"
+   ]
+  },
+  {
+   "check": "B8 exact half: M=0.5E exactly -> PASS score 6",
+   "ok": true,
+   "status": "PASS",
+   "score": 6,
+   "fraction": 0.5
+  },
+  {
+   "check": "B9 right boundary: t=end record with M=900 excluded, peak stays 0.48",
+   "ok": true,
+   "fraction": 0.48,
+   "sampleCount": 1
+  },
+  {
+   "check": "B10 pre-on: M=900 before window excluded (peak 0.3, baseline 0.9)",
+   "ok": true,
+   "fraction": 0.3,
+   "baseline": 0.9
+  },
+  {
+   "check": "B11 backward elapsed rejected -> INVALID_LEDGER",
+   "ok": true,
+   "status": "INVALID_LEDGER",
+   "hard": [
+    "ELAPSED_INVALID"
+   ]
+  },
+  {
+   "check": "B12 duplicate commit key rejected -> INVALID_LEDGER",
+   "ok": true,
+   "status": "INVALID_LEDGER",
+   "hard": [
+    "COMMIT_KEY_INVALID"
+   ]
+  },
+  {
+   "check": "B13 uncovered window -> INCOMPLETE",
+   "ok": true,
+   "status": "INCOMPLETE",
+   "reasons": [
+    "WINDOW_NOT_COVERED"
+   ]
+  },
+  {
+   "check": "B14 legacy reported kept raw (0.8) vs new fixed-window peak (0.4)",
+   "ok": true,
+   "legacyReported": 0.8,
+   "newPeak": 0.4,
+   "commonNew": 0.4
+  },
+  {
+   "check": "B15 consuming a later event rejected (INPUT_AFTER_COMMIT or mismatch)",
+   "ok": true,
+   "status": "INVALID_LEDGER",
+   "hard": [
+    "INPUT_AFTER_COMMIT"
+   ],
+   "reasons": [
+    "NO_ELIGIBLE_SAMPLES"
+   ]
+  }
+ ],
+ "layerCEvidenceCredibility": [
+  {
+   "check": "comparison.json protocolSourceHash equals recomputed SHA-256",
+   "ok": true,
+   "recomputed": "3f043d404224b8290248d04ea600e5a7ac08b763625f28385d3c3063755ebfe9",
+   "reported": "3f043d404224b8290248d04ea600e5a7ac08b763625f28385d3c3063755ebfe9"
+  },
+  {
+   "check": "developer selfcheck keeps peakProtocolEffective=false and formalReleaseAuthorized=false",
+   "ok": true
+  },
+  {
+   "check": "delivered node unit suite green (reuse, not reimplement)",
+   "ok": true,
+   "passed": 8,
+   "failed": 0
+  },
+  {
+   "check": "comparison.json declares CANDIDATE_DIAGNOSTIC and FORMAL_RELEASE_NOT_AUTHORIZED",
+   "ok": true
+  }
+ ],
+ "scopeNotes": [
+  "Layer A recomputes every delivered fixture quantity with formulas written from the frozen protocol text (not by calling the delivered checker).",
+  "Layer B probes exercise protocol clauses the delivered suite does not cover; probes run through the delivered checker to test its conformance.",
+  "No device, no implementation change, no judgement change; protocol formal effectiveness remains a separate manager decision."
+ ]
+}

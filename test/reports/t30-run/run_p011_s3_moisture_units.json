@@ -1,0 +1,63 @@
+{
+  "suite": "run_p011_s3_moisture_units",
+  "passed": 14,
+  "failed": 0,
+  "results": [
+    {
+      "name": "s3_offBitExactTrajectory",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_onDefaultEquivalentTrajectory",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_occupancyBoundaries",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_waterRejectionZeroInfluence",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_feasibilityWindowAndEmptyRejection",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_qMonotonicity",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_shakeKeepsWaterAmount",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_relaxSlidingPersistsUnderLocalPair",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_guardConstantsUntouched",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_shadowConsistencyOnRun",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_performanceK8",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_wetnessCrossedIndependentField",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_offRunsNoMoistureBlock",
+      "status": "PASS"
+    },
+    {
+      "name": "s3_partialAdmissionAndNet",
+      "status": "PASS"
+    }
+  ]
+}

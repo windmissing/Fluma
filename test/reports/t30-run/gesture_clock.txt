@@ -1,0 +1,33 @@
+{
+  "suite": "T36 gesture time/rate",
+  "results": [
+    {
+      "name": "ns and explicit ms adapters integrate the same 8 units over one second",
+      "status": "PASS"
+    },
+    {
+      "name": "first event never injects, including zero boot timestamp",
+      "status": "PASS"
+    },
+    {
+      "name": "long frame retains the existing one-second upper bound",
+      "status": "PASS"
+    },
+    {
+      "name": "end/cancel/hide stop late callbacks and restart has no retained dt",
+      "status": "PASS"
+    },
+    {
+      "name": "gate suspension does not accrue time outside canvas/panel",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid and backward timestamps cannot emit negative or catch-up bursts",
+      "status": "PASS"
+    },
+    {
+      "name": "page passes raw event timestamp once to ns adapter; all stop boundaries are wired",
+      "status": "PASS"
+    }
+  ]
+}
