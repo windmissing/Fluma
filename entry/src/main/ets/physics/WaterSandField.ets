@@ -3936,6 +3936,7 @@ export class WaterSandField {
     if (!Number.isSafeInteger(this.renderPhysicsCommitId) || !Number.isSafeInteger(this.renderStateEpoch)) return 'INVALID_TOKEN';
     // Synchronous UI call: no callback, step, collect, or consumer access before the full copy returns.
     this.copyStateTo(out.field);
+    out.effectiveTiltDeg = this.effectiveTilt;
     out.runId = this.p011RunId; out.stateEpoch = this.renderStateEpoch;
     out.physicsCommitId = this.renderPhysicsCommitId; out.publicationKind = this.renderPublicationKind;
     out.ledgerCommitKey = this.renderLedgerCommitKey;

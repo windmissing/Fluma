@@ -370,6 +370,9 @@ export default class EntryAbility extends UIAbility {
     hilog.info(this.hilogDomain, this.hilogTag,
       'LiquidCA want rendermode=%{public}d testmode=%{public}d seed=%{public}d shake=%{public}f',
       parsed.renderMode, parsed.testMode ? 1 : 0, parsed.seed, parsed.shake);
+    if (parameters !== undefined && parameters.emptysanddemo !== undefined) {
+      AppStorage.setOrCreate('emptySandDemo', `${parameters.emptysanddemo}` === '1');
+    }
     // P-013 P1-G0 平台探针门（PROBE-ONLY：仅供真机取证，勿并入发布分支）
     // p013g0=1 → 加载 pages/P013P1G0Probe；p013g0hit=default|transparent|none|block；
     // p013g0diag=true|false → GLES 诊断 pass 开/关（关时 native 不绘制任何像素）。
@@ -444,7 +447,7 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onWindowStageCreate');
     // P-013 P1-G0 平台探针页（PROBE-ONLY：勿并入发布分支）
-    const probePage: string = AppStorage.get<boolean>('p013g0') === true ?
+    const probePage: string = AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
       'pages/P013P1G0Probe' : 'pages/SandCanvas';
     windowStage.loadContent(probePage, (err) => {
       if (err.code) {
@@ -460,10 +463,12 @@ export default class EntryAbility extends UIAbility {
   }
 
   onForeground(): void {
+    AppStorage.setOrCreate('emptySandDemoForeground', true);
     hilog.info(this.hilogDomain, this.hilogTag, 'onForeground');
   }
 
   onBackground(): void {
+    AppStorage.setOrCreate('emptySandDemoForeground', false);
     hilog.info(this.hilogDomain, this.hilogTag, 'onBackground');
   }
 }
