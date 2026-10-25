@@ -1,3 +1,4 @@
+import { P011GestureRateClock } from '../physics/P011GestureRateClock';
 import { SandGrid } from '../physics/SandGrid';
 import { FluidField } from '../physics/FluidField';
 import { WaterSandField, WaterSandSnapshot, WaterSandParams, WaterSandScene, WaterSandRegion, WaterSandP011InputSource, WaterSandP011Metric, WaterSandP011Bottom, defaultWaterSandParams, nextP011TimeMs, waterSandFrameHookPayload } from '../physics/WaterSandField';
@@ -731,6 +732,10 @@ struct SandCanvas {
       });
     } catch (e) {
     }
+  }
+
+  onPageHide(): void {
+    this.resetPanGestureBoundary();
   }
 
   aboutToDisappear(): void {
@@ -1691,7 +1696,7 @@ struct SandCanvas {
     this.p012Renderer?.resetContinuity();
     // falling-sand D3: reset also drops the staged injection queue.
     this.waterSandField?.clearGestureSandQueue();
-    this.lastPanRouteTime = 0;
+    this.gestureRateClock.stop();
     this.lastWaterSandMetricTime = Date.now();
     this.logWaterSand(`WS_EVENT init ${JSON.stringify({
       preset: this.waterSandPreset,
@@ -2278,7 +2283,7 @@ struct SandCanvas {
   private lastPanLocalX = 0;
   private lastPanLocalY = 0;
   /** Last routed event time (ms) for the rate integration. */
-  private lastPanRouteTime = 0;
+  private gestureRateClock: P011GestureRateClock = new P011GestureRateClock();
 
   /**
    * Gate three conditions (B design §4): water-sand render mode + the
@@ -2309,24 +2314,15 @@ struct SandCanvas {
    * from the stage path (see stageGestureSandAndFeed).
    */
   private routeGestureSand(localX: number, localY: number,
-    timestampMs: number): void {
+    timestampNs: number): void {
     // Book-keep the position for the offset fallback.
     this.lastPanLocalX = localX;
     this.lastPanLocalY = localY;
     if (!this.gestureSandGate(localX, localY)) {
       return;
     }
-    const now = timestampMs > 0 ? timestampMs : Date.now();
-    if (this.lastPanRouteTime <= 0) {
-      this.lastPanRouteTime = now;
-      return; // first event: establish the rate clock, no amount yet
-    }
-  private panUpdateCount = 0;
-  private panLastLocalX = 0;
-  private panLastLocalY = 0;
-  private panLastEventAccepted = false;
-    const dtSec = Math.max(0, Math.min(1, (now - this.lastPanRouteTime) / 1000));
-    this.lastPanRouteTime = now;
+    const now = timestampNs / 1000000;
+    const dtSec = this.gestureRateClock.sample(timestampNs, 'ns');
     if (dtSec <= 0) {
       return;
     }
@@ -2402,7 +2398,7 @@ struct SandCanvas {
   private clearFallingSand(): void {
     this.p012Renderer?.sandTracer.clear();
     this.waterSandField?.clearGestureSandQueue();
-    this.lastPanRouteTime = 0;
+    this.gestureRateClock.stop();
     this.gestureSequence = 0;
   }
 
@@ -2465,7 +2461,8 @@ struct SandCanvas {
   }
 
   private resetPanGestureBoundary(): void {
-    this.lastPanRouteTime = 0;
+    this.waterSandField?.clearGestureSandQueue();
+    this.gestureRateClock.stop();
     this.lastPanLocalX = 0;
     this.lastPanLocalY = 0;
     this.gestureSourceId++;
@@ -3182,6 +3179,7 @@ struct SandCanvas {
         })
         .onActionStart(() => {
           this.resetPanGestureBoundary();
+          this.gestureRateClock.begin();
         })
         .onActionEnd(() => {
           // Gesture end: the staged material flies out naturally — the
