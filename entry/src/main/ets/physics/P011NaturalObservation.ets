@@ -125,6 +125,23 @@ export interface P011AdvectionSubstepMoments {
   /** Advection signed edge-flux sums. */
   advectionFluxH: number;
   advectionFluxL: number;
+  shakeLiftSourceId: number;
+  shakeLiftSourceH: number;
+  shakeLiftSourceL: number;
+  shakeSourceInTransitH: number;
+  shakeSourceInTransitL: number;
+  shakeSourceLandedH: number;
+  shakeSourceLandedL: number;
+  shakeSourceDegradedH: number;
+  shakeSourceDegradedL: number;
+  shakeSourceResidualH: number;
+  shakeSourceResidualL: number;
+  shakeLiftByColumnH: number[];
+  shakeLiftByColumnL: number[];
+  shakeSourceAdvectionH: number;
+  shakeSourceAdvectionL: number;
+  shakeSourceFlowH: number;
+  shakeSourceFlowL: number;
 }
 
 /** Advection §5.1: the context-level advection block (schema v6). */

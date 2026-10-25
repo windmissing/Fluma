@@ -392,6 +392,23 @@ class P011AdvectionSubstepMomentsImpl implements P011AdvectionSubstepMoments {
   diffusionFluxL: number = 0;
   advectionFluxH: number = 0;
   advectionFluxL: number = 0;
+  shakeLiftSourceId: number = 0;
+  shakeLiftSourceH: number = 0;
+  shakeLiftSourceL: number = 0;
+  shakeSourceInTransitH: number = 0;
+  shakeSourceInTransitL: number = 0;
+  shakeSourceLandedH: number = 0;
+  shakeSourceLandedL: number = 0;
+  shakeSourceDegradedH: number = 0;
+  shakeSourceDegradedL: number = 0;
+  shakeSourceResidualH: number = 0;
+  shakeSourceResidualL: number = 0;
+  shakeLiftByColumnH: number[] = [];
+  shakeLiftByColumnL: number[] = [];
+  shakeSourceAdvectionH: number = 0;
+  shakeSourceAdvectionL: number = 0;
+  shakeSourceFlowH: number = 0;
+  shakeSourceFlowL: number = 0;
 }
 
 /** S3: the ledger block implementation (ArkTS: interfaces need class
@@ -687,6 +704,14 @@ export interface WaterSandSnapshot {
   hs: Float64Array;
   hl: Float64Array;
   sandTop: Float64Array;
+  shakeSourceH?: Float64Array;
+  shakeSourceL?: Float64Array;
+  shakeSourceLiftedH?: number;
+  shakeSourceLiftedL?: number;
+  shakeSourceLandedH?: number;
+  shakeSourceLandedL?: number;
+  shakeSourceId?: number;
+  shakeSourceSequence?: number;
   // S3 moisture (schemaVersion 3 optional block — OFF runs leave these
   // undefined; old consumers zero-break). s is a PROXY profile, never a
   // water ledger (red line).
@@ -970,6 +995,16 @@ export class WaterSandField {
   private advectionFluxH = 0;
   private advectionFluxL = 0;
   private advectionLastMs = 0;
+  private shakeSourceH: Float64Array;
+  private shakeSourceL: Float64Array;
+  private shakeLiftStepH: Float64Array;
+  private shakeLiftStepL: Float64Array;
+  private shakeSourceLiftedH = 0;
+  private shakeSourceLiftedL = 0;
+  private shakeSourceLandedH = 0;
+  private shakeSourceLandedL = 0;
+  private shakeSourceId = 0;
+  private shakeSourceSequence = 0;
   // S4 telemetry attribution counters (per substep, reset each call).
   private deepCreepNoDrive = 0;
   private deepCreepNoInventory = 0;
@@ -1055,6 +1090,10 @@ export class WaterSandField {
     this.relaxDecisionOrdinals = new Int32Array(cols - 1);
     this.backup = this.createEmptySnapshot();
     this.motionSnapshot = this.createEmptySnapshot();
+    this.shakeSourceH = new Float64Array(cols);
+    this.shakeSourceL = new Float64Array(cols);
+    this.shakeLiftStepH = new Float64Array(cols);
+    this.shakeLiftStepL = new Float64Array(cols);
     this.planningPassService.attach(this.planningDelegate);
     this.initialize(this.defaultScene());
   }
@@ -1302,6 +1341,16 @@ export class WaterSandField {
     this.t90Light = -1;
     this.shakeEnergy = 0;
     this.shakeInput = 0;
+    this.shakeSourceH.fill(0);
+    this.shakeSourceL.fill(0);
+    this.shakeLiftStepH.fill(0);
+    this.shakeLiftStepL.fill(0);
+    this.shakeSourceLiftedH = 0;
+    this.shakeSourceLiftedL = 0;
+    this.shakeSourceLandedH = 0;
+    this.shakeSourceLandedL = 0;
+    this.shakeSourceId = 0;
+    this.shakeSourceSequence = 0;
     this.maxSandTopSubstepDeltaObserved = 0;
     this.maxSandTopSpeedObserved = 0;
     this.substepBudgetUsedMax = 0;
@@ -2917,11 +2966,21 @@ export class WaterSandField {
     let mdepL = 0;
     let msuspH = 0;
     let msuspL = 0;
+    let sourceTransitH = 0;
+    let sourceTransitL = 0;
+    let sourceFlowH = 0;
+    let sourceFlowL = 0;
+    const liftByColumnH = new Array<number>(this.cols);
+    const liftByColumnL = new Array<number>(this.cols);
     for (let c = 0; c < this.cols; c++) {
       mdepH += c * (this.bh[c] + this.mh[c]);
       mdepL += c * (this.bl[c] + this.ml[c]);
       msuspH += c * this.suspH[c];
       msuspL += c * this.suspL[c];
+      sourceTransitH += this.shakeSourceH[c];
+      sourceTransitL += this.shakeSourceL[c];
+      liftByColumnH[c] = this.shakeLiftStepH[c];
+      liftByColumnL[c] = this.shakeLiftStepL[c];
     }
     moments.MdepH = mdepH;
     moments.MdepL = mdepL;
@@ -2937,6 +2996,27 @@ export class WaterSandField {
     moments.diffusionFluxL = probe !== null ? probe.lastDiffusionFluxL : 0;
     moments.advectionFluxH = this.advectionFluxH;
     moments.advectionFluxL = this.advectionFluxL;
+    if (this.shakeSourceRouteActive()) {
+      moments.shakeLiftSourceId = this.shakeSourceId;
+      moments.shakeLiftSourceH = this.shakeSourceLiftedH;
+      moments.shakeLiftSourceL = this.shakeSourceLiftedL;
+      moments.shakeSourceInTransitH = sourceTransitH;
+      moments.shakeSourceInTransitL = sourceTransitL;
+      moments.shakeSourceLandedH = this.shakeSourceLandedH;
+      moments.shakeSourceLandedL = this.shakeSourceLandedL;
+      moments.shakeSourceDegradedH = 0;
+      moments.shakeSourceDegradedL = 0;
+      moments.shakeSourceResidualH = this.shakeSourceLiftedH -
+        sourceTransitH - this.shakeSourceLandedH;
+      moments.shakeSourceResidualL = this.shakeSourceLiftedL -
+        sourceTransitL - this.shakeSourceLandedL;
+      moments.shakeLiftByColumnH = liftByColumnH;
+      moments.shakeLiftByColumnL = liftByColumnL;
+      moments.shakeSourceAdvectionH = 0;
+      moments.shakeSourceAdvectionL = 0;
+      moments.shakeSourceFlowH = 0;
+      moments.shakeSourceFlowL = 0;
+    }
     return moments;
   }
 
@@ -2967,6 +3047,14 @@ export class WaterSandField {
     // evidence is recorded per note during the substep; summing per
     // substep keeps R_M's separate column exact).
     const moments = this.computeAdvectionMoments();
+    const sourceFlowH = Math.abs(this.advectionFluxH);
+    const sourceFlowL = Math.abs(this.advectionFluxL);
+    if (this.shakeSourceRouteActive()) {
+      moments.shakeSourceFlowH = sourceFlowH;
+      moments.shakeSourceFlowL = sourceFlowL;
+      moments.shakeSourceAdvectionH = this.advectionFluxH;
+      moments.shakeSourceAdvectionL = this.advectionFluxL;
+    }
     // R_M,p (stage-a suspension-domain scope, §5.1): the slot-boundary
     // identity — post-slot susp moment − pre-slot susp moment − signed
     // advection flux == 0 exactly (the diffusion ran before the slot and
@@ -2980,6 +3068,8 @@ export class WaterSandField {
     if (probe !== null) {
       probe.lastAdvectionMoments = moments;
     }
+    this.shakeLiftStepH.fill(0);
+    this.shakeLiftStepL.fill(0);
     // Roll the previous snapshot (the whole-substep moments for the
     // ledger reader; R_M itself is the slot-scope value above).
     this.advectionPrevMdepH = moments.MdepH;
@@ -3209,9 +3299,11 @@ export class WaterSandField {
         if (isHeavy) {
           this.suspH[donor] = newDonor;
           this.suspH[receiver] = newReceiverSuspH;
+          this.moveShakeSourceLineage(this.shakeSourceH, donor, receiver, granted, donorStock);
         } else {
           this.suspL[donor] = newDonor;
           this.suspL[receiver] = newReceiverSuspL;
+          this.moveShakeSourceLineage(this.shakeSourceL, donor, receiver, granted, donorStock);
         }
         this.substepMotionBudgetRemaining[donor] -= granted;
         this.substepMotionBudgetUsed[donor] += granted;
@@ -3260,6 +3352,20 @@ export class WaterSandField {
       this.advectionFluxH;
     this.advectionSlotRML = slotPostMsuspL - slotPreMsuspL -
       this.advectionFluxL;
+  }
+
+  private shakeSourceRouteActive(): boolean {
+    return this.advectionRouteActive() && !this.endpointParticleRouteActive;
+  }
+
+  private moveShakeSourceLineage(tags: Float64Array, donor: number, receiver: number,
+    amount: number, donorStockBefore: number): void {
+    if (!this.shakeSourceRouteActive() || amount <= EPS || donorStockBefore <= EPS) {
+      return;
+    }
+    const moved = Math.min(tags[donor], amount * tags[donor] / donorStockBefore);
+    tags[donor] -= moved;
+    tags[receiver] += moved;
   }
 
   /** §5.1: the slot-scope R_M residuals (suspension domain only). */
@@ -3831,6 +3937,8 @@ export class WaterSandField {
     // Advection §5.2: telemetry switch (ON only when the route is armed —
     // OFF runs pay zero) + the per-substep diffusion flux reset.
     this.advectionTelemetryActive = this.advectionRouteActive();
+    this.shakeLiftStepH.fill(0);
+    this.shakeLiftStepL.fill(0);
     if (this.naturalObservationProbe !== null) {
       this.naturalObservationProbe.lastDiffusionFluxH = 0;
       this.naturalObservationProbe.lastDiffusionFluxL = 0;
@@ -3857,6 +3965,10 @@ export class WaterSandField {
     this.motionSnapshot.ml.set(this.ml);
     this.motionSnapshot.suspH.set(this.suspH);
     this.motionSnapshot.suspL.set(this.suspL);
+    if (this.shakeSourceRouteActive()) {
+      this.motionSnapshot.shakeSourceH!.set(this.shakeSourceH);
+      this.motionSnapshot.shakeSourceL!.set(this.shakeSourceL);
+    }
     this.updateSandTop();
   }
 
@@ -3868,6 +3980,10 @@ export class WaterSandField {
     this.ml.set(this.motionSnapshot.ml);
     this.suspH.set(this.motionSnapshot.suspH);
     this.suspL.set(this.motionSnapshot.suspL);
+    if (this.shakeSourceRouteActive()) {
+      this.shakeSourceH.set(this.motionSnapshot.shakeSourceH!);
+      this.shakeSourceL.set(this.motionSnapshot.shakeSourceL!);
+    }
     this.updateSandTop();
   }
 
@@ -5500,12 +5616,14 @@ export class WaterSandField {
           this.suspensionCapacity(c));
         this.suspH[c + 1] -= flux;
         this.suspH[c] += flux;
+        this.moveShakeSourceLineage(this.shakeSourceH, c + 1, c, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c + 1, c, flux, 0);
       } else if (heavyDifference < 0) {
         const flux = Math.min(this.params.heavyDiffusion * dt, -heavyDifference / 2,
           this.suspensionCapacity(c + 1));
         this.suspH[c] -= flux;
         this.suspH[c + 1] += flux;
+        this.moveShakeSourceLineage(this.shakeSourceH, c, c + 1, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c, c + 1, flux, 0);
       }
       if (lightDifference > 0) {
@@ -5513,12 +5631,14 @@ export class WaterSandField {
           this.suspensionCapacity(c));
         this.suspL[c + 1] -= flux;
         this.suspL[c] += flux;
+        this.moveShakeSourceLineage(this.shakeSourceL, c + 1, c, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c + 1, c, 0, flux);
       } else if (lightDifference < 0) {
         const flux = Math.min(this.params.lightDiffusion * dt, -lightDifference / 2,
           this.suspensionCapacity(c + 1));
         this.suspL[c] -= flux;
         this.suspL[c + 1] += flux;
+        this.moveShakeSourceLineage(this.shakeSourceL, c, c + 1, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c, c + 1, 0, flux);
       }
     }
@@ -5732,6 +5852,14 @@ export class WaterSandField {
       const scale = allowed / Math.max(originalRequested, EPS);
       const heavy = desiredHeavy * scale;
       const light = desiredLight * scale;
+      if (this.shakeSourceRouteActive()) {
+        const sourceHeavy = heavy * this.shakeSourceH[c] / Math.max(this.suspH[c], EPS);
+        const sourceLight = light * this.shakeSourceL[c] / Math.max(this.suspL[c], EPS);
+        this.shakeSourceH[c] = Math.max(0, this.shakeSourceH[c] - sourceHeavy);
+        this.shakeSourceL[c] = Math.max(0, this.shakeSourceL[c] - sourceLight);
+        this.shakeSourceLandedH += sourceHeavy;
+        this.shakeSourceLandedL += sourceLight;
+      }
       this.suspH[c] -= heavy;
       this.mh[c] += heavy;
       this.suspL[c] -= light;
@@ -6193,6 +6321,7 @@ export class WaterSandField {
   }
 
   private liftByShake(dt: number): void {
+    const trackSource = this.shakeSourceRouteActive() && !this.collectingTotalMotionRequests;
     const requestEnergy = this.shakeEnergy;
     let liftedTotal = 0;
     let liftedColumns = 0;
@@ -6264,6 +6393,16 @@ export class WaterSandField {
       const donorMhBefore = this.mh[c];
       const donorMlBefore = this.ml[c];
       const split = this.splitTopV2(c, amount);
+      if (trackSource) {
+        this.shakeSourceH[c] += split.heavy;
+        this.shakeSourceL[c] += split.light;
+        this.shakeLiftStepH[c] += split.heavy;
+        this.shakeLiftStepL[c] += split.light;
+        this.shakeSourceLiftedH += split.heavy;
+        this.shakeSourceLiftedL += split.light;
+        this.shakeSourceSequence++;
+        this.shakeSourceId = this.shakeSourceSequence;
+      }
       if (this.naturalObservationProbe !== null) {
         this.naturalObservationProbe.recordLift(c, originalRequested, amount,
           split.heavy, split.light, guardClipped);
@@ -6604,6 +6743,14 @@ export class WaterSandField {
       ml: new Float64Array(this.cols),
       suspH: new Float64Array(this.cols),
       suspL: new Float64Array(this.cols),
+      shakeSourceH: new Float64Array(this.cols),
+      shakeSourceL: new Float64Array(this.cols),
+      shakeSourceLiftedH: 0,
+      shakeSourceLiftedL: 0,
+      shakeSourceLandedH: 0,
+      shakeSourceLandedL: 0,
+      shakeSourceId: 0,
+      shakeSourceSequence: 0,
       hs: new Float64Array(this.cols),
       hl: new Float64Array(this.cols),
       sandTop: new Float64Array(this.cols),
@@ -6619,6 +6766,14 @@ export class WaterSandField {
     this.backup.ml.set(this.ml);
     this.backup.suspH.set(this.suspH);
     this.backup.suspL.set(this.suspL);
+    this.backup.shakeSourceH!.set(this.shakeSourceH);
+    this.backup.shakeSourceL!.set(this.shakeSourceL);
+    this.backup.shakeSourceLiftedH = this.shakeSourceLiftedH;
+    this.backup.shakeSourceLiftedL = this.shakeSourceLiftedL;
+    this.backup.shakeSourceLandedH = this.shakeSourceLandedH;
+    this.backup.shakeSourceLandedL = this.shakeSourceLandedL;
+    this.backup.shakeSourceId = this.shakeSourceId;
+    this.backup.shakeSourceSequence = this.shakeSourceSequence;
     if (this.particleBinding !== null && this.particleBackup !== null) {
       this.particleBinding.pool.copyStateTo(this.particleBackup);
     }
@@ -6632,6 +6787,14 @@ export class WaterSandField {
     this.ml.set(this.backup.ml);
     this.suspH.set(this.backup.suspH);
     this.suspL.set(this.backup.suspL);
+    this.shakeSourceH.set(this.backup.shakeSourceH!);
+    this.shakeSourceL.set(this.backup.shakeSourceL!);
+    this.shakeSourceLiftedH = this.backup.shakeSourceLiftedH ?? 0;
+    this.shakeSourceLiftedL = this.backup.shakeSourceLiftedL ?? 0;
+    this.shakeSourceLandedH = this.backup.shakeSourceLandedH ?? 0;
+    this.shakeSourceLandedL = this.backup.shakeSourceLandedL ?? 0;
+    this.shakeSourceId = this.backup.shakeSourceId ?? 0;
+    this.shakeSourceSequence = this.backup.shakeSourceSequence ?? 0;
     if (this.particleBinding !== null && this.particleBackup !== null) {
       this.particleBinding.rollback();
       this.particleBinding.pool.restoreSnapshot(this.particleBackup);

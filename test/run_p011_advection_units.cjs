@@ -412,6 +412,35 @@ describe('advectionStageA', () => {
     }
   });
 
+  it('adv_shakeLiftSourceConservationAndRouteExclusion', 0, () => {
+    const field = makeField(null, null, { bh: 100, bl: 100 });
+    const probe = new obs.P011NaturalObservationProbe(COLS, () => {});
+    field.setNaturalObservationProbe(probe);
+    armAdv(field, 1.0, 0.5, 3.0, 120);
+    field.setShakeInput(1);
+    field.shakeEnergy = 1;
+    // liftByShake is called twice per substep in production: the collect pass
+    // fills riseRequestAmounts, the apply pass consumes it. This case drives
+    // the apply pass directly, so the request amounts must be seeded first
+    // (same fixture pattern as run_p011_gesture_inject_units.cjs).
+    field.riseRequestAmounts.fill(0.05);
+    field.substepMotionBudgetRemaining.fill(1);
+    field.totalMotionBudgetRemaining = 10;
+    field.liftByShake(1 / 60);
+    const lifted = field.shakeSourceLiftedH + field.shakeSourceLiftedL;
+    assert.ok(lifted > 0, 'shake lift source must be registered');
+    let sourceH = field.shakeSourceLiftedH;
+    let sourceL = field.shakeSourceLiftedL;
+    for (let c = 0; c < COLS; c++) { sourceH -= field.shakeSourceH[c]; sourceL -= field.shakeSourceL[c]; }
+    assert.ok(Math.abs(sourceH - field.shakeSourceLandedH) < EPS);
+    assert.ok(Math.abs(sourceL - field.shakeSourceLandedL) < EPS);
+    field.endpointParticleRouteActive = true;
+    const before = field.shakeSourceLiftedH + field.shakeSourceLiftedL;
+    field.liftByShake(1 / 60);
+    assert.equal(field.shakeSourceLiftedH + field.shakeSourceLiftedL, before,
+      'particle route must exclude suspension source ledger');
+  });
+
   // 8) Performance: 128 columns, suspension half-full, advectionSlot
   //    per substep < 0.05 ms (Node timing).
   //    Methodology: the slot is timed DIRECTLY in a microbenchmark loop.
