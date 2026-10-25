@@ -456,6 +456,8 @@ export interface P011NaturalObservationRecord {
   materialGuard?: P011NaturalObservationMaterialGuardEvidence[];
   particles?: P011EndpointParticleSummary | null;
   particleEvents?: string[];
+  eventLevelValidationOwnership: 'ENDPOINT_CHECKER';
+  transactionLayerEventValidationRole: 'EMIT_AND_ATOMIC_COMMIT_ONLY';
   particleStateSnapshot?: string | null;
   particleCommittedSubstepId?: number | null;
 }
@@ -993,6 +995,8 @@ export class P011NaturalObservationProbe {
       materialGuard: this.materialGuardEvidence,
       particles: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.particles,
       particleEvents: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.particleEvents,
+      eventLevelValidationOwnership: 'ENDPOINT_CHECKER',
+      transactionLayerEventValidationRole: 'EMIT_AND_ATOMIC_COMMIT_ONLY',
       particleStateSnapshot: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.poolSnapshot,
       particleCommittedSubstepId: this.endpointLedgerCapture === null ? undefined : this.endpointLedgerCapture.committedSubstepId
     });

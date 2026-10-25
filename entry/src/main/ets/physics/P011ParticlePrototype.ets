@@ -110,6 +110,9 @@ export class P011ParticlePrototypeBudget implements P011ParticleBudgetSink {
 
 export interface P011ParticlePrototypeEvent {
   kind: string; requestKey: string; particleId: number; sourceId: number;
+  substepId?: number;
+  eventLevelValidationOwnership?: 'ENDPOINT_CHECKER';
+  transactionLayerEventValidationRole?: 'EMIT_AND_ATOMIC_COMMIT_ONLY';
   phase: number; sourceKind: number; column: number; targetColumn: number;
   mass: number; requested: number; granted: number; remainder: number;
   budgetClipped: number; guardRejected: number; capacityClipped: number; poolClipped: number;
@@ -371,6 +374,13 @@ export class P011ParticlePrototypeSink implements P011ParticleCommitSink {
         mass: granted, requested: granted, granted: granted, remainder: 0, budgetClipped: 0,
         guardRejected: 0, capacityClipped: 0, poolClipped: 0, deltaS: 0, mergedIds: [],
         flag: 'PARTICLE_DEGRADED_TO_COLUMN' });
+      // Event construction and publication are atomic with the transaction;
+      // independent endpoint event-content validation belongs to the checker.
+      for (let eventIndex = begin; eventIndex < this.events.length; eventIndex++) {
+        this.events[eventIndex].substepId = this.identity.substepId;
+        this.events[eventIndex].eventLevelValidationOwnership = 'ENDPOINT_CHECKER';
+        this.events[eventIndex].transactionLayerEventValidationRole = 'EMIT_AND_ATOMIC_COMMIT_ONLY';
+      }
       this.pool.finishPatch(patch); this.applied.add(r.requestKey);
       return { requestKey: r.requestKey, committed: true, errorCode: null,
         requested: r.requested, granted: granted, remainder: r.requested - granted,

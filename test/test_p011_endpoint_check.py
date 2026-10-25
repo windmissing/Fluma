@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from p011_endpoint_check import analyze_endpoint, endpoint_state_hash, baseline_state_hash
+from p011_endpoint_check import analyze_endpoint, endpoint_state_hash, baseline_state_hash, validate_particle_events
 
 
 def fixture(case='TC-WS-08', times=None, u=40, p=40):
@@ -28,7 +28,9 @@ def fixture(case='TC-WS-08', times=None, u=40, p=40):
             stateBefore=dict(bh=[600],bl=[600],mh=[400],ml=[400],suspH=[0],suspL=[0]),
             stateAfter=dict(bh=[(2000-u-p)/2],bl=[(2000-u-p)/2],mh=[0],ml=[0],suspH=[u/2],suspL=[u/2]),
             audit=dict(heavyTotalBefore=1000,lightTotalBefore=1000,finite=True,stock=True,capacity=True,conservation=True,errorCode=None),
-            particles=particles,particleEvents=[],particleStateSnapshot='fixture-snapshot',particleCommittedSubstepId=i+1))
+            particles=particles,particleEvents=[],particleStateSnapshot='fixture-snapshot',particleCommittedSubstepId=i+1,
+            eventLevelValidationOwnership='ENDPOINT_CHECKER',
+            transactionLayerEventValidationRole='EMIT_AND_ATOMIC_COMMIT_ONLY'))
     key=dict(runId='r',sequence=1,frameId=1,substepId=1)
     occurrence=dict(caseId=case,endpointPhaseOccurrenceId='occ-1',phaseD='same-name',
                     endpointBoundaryElapsedMs=end,windowStartElapsedMs=end-1000,phaseStartElapsedMs=0,
@@ -98,6 +100,89 @@ class EndpointTests(unittest.TestCase):
         for r in data[0]:r['particles'].pop('byState')
         row=self.row(data);self.assertEqual(row['endpointStatus'],'PASS')
         self.assertEqual(row['particleResidueDiagnosticStatus'],'NOT_OBSERVABLE')
+        self.assertEqual(row['particleResidueDiagnosticCodes'],['NOT_OBSERVABLE'])
+
+    def test_d2_diagnostic_fields_have_one_consumer_name_and_no_fabricated_missing_values(self):
+        data=fixture();row=self.row(data)
+        self.assertEqual(row['particleResidueDiagnosticStatus'],'OBSERVED')
+        self.assertEqual(row['particleResidueDiagnosticCodes'],[])
+        self.assertNotIn('endpointDiagnosis',row)
+        data=fixture()
+        for record in data[0]:record.pop('particles')
+        row=self.row(data)
+        self.assertNotIn('particleResidueDiagnosticStatus',row)
+        self.assertNotIn('particleResidueDiagnosticCodes',row)
+        self.assertNotIn('particleResidueDiagnosticMeaning',row)
+        self.assertIn('particleResidueDiagnosticStatus',row['reportMissingFields'])
+        self.assertIn('particleResidueDiagnosticCodes',row['reportMissingFields'])
+        self.assertNotIn('endpointDiagnosis',row)
+
+    def test_d6_event_checker_accepts_enabled_transaction_schemas(self):
+        empty = dict(pId=[], pMass=[], pPhase=[], pState=[], pSource=[], pSourceId=[], pX=[], pY=[])
+        single = dict(pId=[1], pMass=[10.0], pPhase=[0], pState=[1], pSource=[0], pSourceId=[7], pX=[1.5], pY=[2.0])
+        cases = [
+            ('SPAWN', dict(kind='SPAWN', particleId=1, phase=0, mass=10, sourceKind='GESTURE_EXTERNAL',
+                x=1.5, y=2, sourceId=7, requested=10, admitted=10), empty, single),
+            ('LIFT', dict(kind='LIFT', particleId=1, phase=0, mass=10, fromLayer='bh', column=1,
+                requested=10, granted=10), empty, single),
+            ('LAND', dict(kind='LAND', particleId=1, phase=0, mass=10, column=1, requested=10,
+                granted=4, deltaS=4, remainder=6, remainderDisposition='RETAIN_PARTICLE'),
+                single, dict(pId=[1], pMass=[6.0], pPhase=[0], pState=[2], pSource=[0], pSourceId=[7], pX=[1.5], pY=[2.0])),
+            ('CROSS_COLUMN', dict(kind='CROSS_COLUMN', particleId=1, phase=0, mass=10, fromColumn=1,
+                toColumn=2, budget=dict(local=10, bottom=0, total=10), distance=1), single,
+                dict(pId=[1], pMass=[10.0], pPhase=[0], pState=[1], pSource=[0], pSourceId=[7], pX=[2.5], pY=[2.0])),
+            ('DEGRADE', dict(kind='DEGRADE', particleIds=[1], phase=0, mass=10, toColumn=1,
+                toSuspH=10, toSuspL=0, flag='PARTICLE_DEGRADED_TO_COLUMN'), single, empty),
+            ('MERGE', dict(kind='MERGE', particleIds=[1, 2], phase=0, massBefore=10, massAfter=10,
+                positionMomentPreserved=True),
+                dict(pId=[1, 2], pMass=[4.0, 6.0], pPhase=[0, 0], pState=[1, 1], pSource=[0, 0],
+                     pSourceId=[7, 7], pX=[1.0, 3.0], pY=[2.0, 2.0]),
+                dict(pId=[1], pMass=[10.0], pPhase=[0], pState=[1], pSource=[0], pSourceId=[7], pX=[2.2], pY=[2.0])),
+        ]
+        for kind, event, before, after in cases:
+            with self.subTest(kind=kind):
+                event.update(substepId=3, requestKey=kind + '-r3')
+                record = dict(context=dict(substepId=3, runId='r'), particleEvents=[event],
+                    particleStateBeforeSnapshot=before, particleStateSnapshot=after,
+                    eventLevelValidationOwnership='ENDPOINT_CHECKER',
+                    transactionLayerEventValidationRole='EMIT_AND_ATOMIC_COMMIT_ONLY')
+                missing=[]; hard=[]
+                validate_particle_events(record, 0, None, missing, hard)
+                self.assertEqual(missing, [])
+                self.assertEqual(hard, [])
+
+    def test_d6_event_checker_rejects_bad_mass_substep_and_merge_double_count(self):
+        before=dict(pId=[1, 2], pMass=[4.0, 6.0], pPhase=[0, 0], pState=[1, 1], pSource=[0, 0],
+                    pSourceId=[7, 7], pX=[1.0, 3.0], pY=[2.0, 2.0])
+        after=dict(pId=[1], pMass=[10.0], pPhase=[0], pState=[1], pSource=[0], pSourceId=[7], pX=[2.2], pY=[2.0])
+        base=dict(kind='MERGE', particleIds=[1, 2], phase=0, massBefore=10, massAfter=10,
+                  positionMomentPreserved=True, substepId=3, requestKey='merge-1')
+        def run(event):
+            record=dict(context=dict(substepId=3, runId='r'), particleEvents=[event],
+                particleStateBeforeSnapshot=before, particleStateSnapshot=after,
+                eventLevelValidationOwnership='ENDPOINT_CHECKER',
+                transactionLayerEventValidationRole='EMIT_AND_ATOMIC_COMMIT_ONLY')
+            missing=[]; hard=[]; validate_particle_events(record, 0, None, missing, hard)
+            return missing, hard
+        missing, hard=run(dict(base, substepId=4))
+        self.assertIn('PARTICLE_EVENT_SUBSTEP_MISMATCH:/records/0/particleEvents/0', hard)
+        missing, hard=run(dict(base, particleIds=[1, 1]))
+        self.assertIn('PARTICLE_EVENT_MERGE_IDS_INVALID:/records/0/particleEvents/0', hard)
+        land=dict(kind='LAND', particleId=1, phase=0, mass=10, column=1, requested=10,
+                  granted=8, deltaS=8, remainder=6, remainderDisposition='RETAIN_PARTICLE',
+                  substepId=3, requestKey='land-1')
+        missing, hard=run(land)
+        self.assertIn('PARTICLE_EVENT_LAND_MASS_CLOSURE:/records/0/particleEvents/0', hard)
+    def test_d6_to_susp_is_covered_as_disabled_path(self):
+        data=fixture()
+        record=data[0][-1]
+        record['particleEvents']=[dict(kind='TO_SUSP', particleId=1, phase=0, mass=1,
+            toColumn=0, suspDelta=1, reason='disabled-route', substepId=record['context']['substepId'])]
+        row=self.row(data)
+        self.assertEqual(row['endpointStatus'],'INVALID_LEDGER')
+        self.assertTrue(any(code.startswith('PARTICLE_EVENT_TO_SUSP_DISABLED:')
+                            for code in row['eventValidationFailures']))
+
     def test_missing_time_clock_phase_and_epoch_change(self):
         data=fixture();data[0][-1]['context'].pop('endpointSampleElapsedMs')
         self.assertEqual(self.row(data)['endpointStatus'],'NOT_IMPLEMENTED')

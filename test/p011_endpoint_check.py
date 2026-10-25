@@ -51,6 +51,212 @@ def baseline_state_hash(record):
     return hashlib.sha256(json.dumps(record['stateBefore'], sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
 
 
+PARTICLE_EVENT_FIELDS = {
+    'SPAWN': ('particleId', 'phase', 'mass', 'sourceKind', 'x', 'y', 'sourceId', 'requested', 'admitted'),
+    'LIFT': ('particleId', 'phase', 'mass', 'fromLayer', 'column', 'requested', 'granted'),
+    'LAND': ('particleId', 'phase', 'mass', 'column', 'requested', 'granted', 'deltaS',
+             'remainder', 'remainderDisposition'),
+    'CROSS_COLUMN': ('particleId', 'phase', 'mass', 'fromColumn', 'toColumn', 'budget', 'distance'),
+    'DEGRADE': ('particleIds', 'phase', 'mass', 'toColumn', 'toSuspH', 'toSuspL', 'flag'),
+    'MERGE': ('particleIds', 'phase', 'massBefore', 'massAfter', 'positionMomentPreserved'),
+    'TO_SUSP': ('particleId', 'phase', 'mass', 'toColumn', 'suspDelta', 'reason'),
+}
+
+
+def _pool_snapshot(record, pointer, missing, hard):
+    raw = record.get('particleStateSnapshot')
+    if raw is None:
+        missing.append(pointer + '/particleStateSnapshot')
+        return None
+    try:
+        value = json.loads(raw) if isinstance(raw, str) else raw
+    except (TypeError, json.JSONDecodeError):
+        hard.append('PARTICLE_EVENT_INVALID_POOL_SNAPSHOT:' + pointer)
+        return None
+    if not isinstance(value, dict):
+        hard.append('PARTICLE_EVENT_INVALID_POOL_SNAPSHOT:' + pointer)
+        return None
+    names = ('pId', 'pMass', 'pPhase', 'pState', 'pSource', 'pSourceId', 'pX', 'pY')
+    arrays = [value.get(name) for name in names]
+    if any(not isinstance(array, list) for array in arrays) or len({len(array) for array in arrays}) != 1:
+        missing.append(pointer + '/particleStateSnapshot/' + ' or '.join(names))
+        return None
+    return value
+
+
+def _live_particle(snapshot, particle_id):
+    if snapshot is None:
+        return None
+    for i, value in enumerate(snapshot['pId']):
+        if value == particle_id and snapshot['pState'][i] in (1, 2):
+            return dict(mass=snapshot['pMass'][i], phase=snapshot['pPhase'][i],
+                        state=snapshot['pState'][i], source=snapshot['pSource'][i],
+                        sourceId=snapshot['pSourceId'][i], x=snapshot['pX'][i], y=snapshot['pY'][i])
+    return None
+
+
+def validate_particle_events(record, record_index, previous_record, missing, hard):
+    """Independently check serialized event schema, commit identity, and particle-state deltas."""
+    pointer = f'/records/{record_index}'
+    raw_events = record.get('particleEvents')
+    if not isinstance(raw_events, list):
+        return
+    if record.get('eventLevelValidationOwnership') != 'ENDPOINT_CHECKER':
+        missing.append(pointer + '/eventLevelValidationOwnership')
+    if record.get('transactionLayerEventValidationRole') != 'EMIT_AND_ATOMIC_COMMIT_ONLY':
+        missing.append(pointer + '/transactionLayerEventValidationRole')
+    if not raw_events:
+        # Empty journals carry no particle transaction claim. The enclosing
+        # commit/snapshot identity is checked by the ordinary endpoint gate.
+        return
+    context = record.get('context', {})
+    committed_substep = context.get('substepId')
+    after = _pool_snapshot(record, pointer, missing, hard)
+    before = None
+    before_pointer = pointer + '/particleStateBeforeSnapshot'
+    if record.get('particleStateBeforeSnapshot') is not None:
+        before = _pool_snapshot(dict(particleStateSnapshot=record.get('particleStateBeforeSnapshot')),
+                                before_pointer, missing, hard)
+    elif previous_record is not None and previous_record.get('context', {}).get('runId') == context.get('runId'):
+        before = _pool_snapshot(previous_record, pointer + '/previousCommit', missing, hard)
+    else:
+        missing.append(before_pointer)
+    seen_request_keys = set()
+    for event_index, raw_event in enumerate(raw_events):
+        event_path = f'{pointer}/particleEvents/{event_index}'
+        try:
+            event = json.loads(raw_event) if isinstance(raw_event, str) else raw_event
+        except (TypeError, json.JSONDecodeError):
+            hard.append('PARTICLE_EVENT_INVALID_JSON:' + event_path)
+            continue
+        if not isinstance(event, dict):
+            hard.append('PARTICLE_EVENT_INVALID_SHAPE:' + event_path)
+            continue
+        kind = event.get('kind')
+        if kind not in PARTICLE_EVENT_FIELDS:
+            hard.append('PARTICLE_EVENT_UNKNOWN_KIND:' + event_path)
+            continue
+        absent = [name for name in PARTICLE_EVENT_FIELDS[kind] if name not in event]
+        if absent:
+            missing.extend(event_path + '/' + name for name in absent)
+            continue
+        if event.get('substepId') is None:
+            missing.append(event_path + '/substepId')
+        elif event.get('substepId') != committed_substep:
+            hard.append('PARTICLE_EVENT_SUBSTEP_MISMATCH:' + event_path)
+        request_key = event.get('requestKey')
+        if request_key is not None:
+            if request_key in seen_request_keys:
+                hard.append('PARTICLE_EVENT_DUPLICATE_REQUEST:' + event_path)
+            seen_request_keys.add(request_key)
+        if isinstance(event.get('phase'), bool) or event.get('phase') not in (0, 1):
+            hard.append('PARTICLE_EVENT_INVALID_PHASE:' + event_path)
+        numeric_fields = ('mass', 'requested', 'granted', 'admitted', 'deltaS', 'remainder',
+                          'distance', 'massBefore', 'massAfter', 'suspDelta', 'toSuspH', 'toSuspL')
+        for name in numeric_fields:
+            if name in event and (not finite(event[name]) or event[name] < 0):
+                hard.append('PARTICLE_EVENT_INVALID_MASS:' + event_path + '/' + name)
+        if kind == 'TO_SUSP':
+            # The current dual-field revision explicitly does not enable this
+            # schema-preserved path; a future route needs a new revision.
+            hard.append('PARTICLE_EVENT_TO_SUSP_DISABLED:' + event_path)
+            continue
+        if kind == 'LAND':
+            if abs(event['requested'] - event['granted'] - event['remainder']) > EPS or \
+               abs(event['deltaS'] - event['granted']) > EPS or \
+               abs(event['mass'] - event['requested']) > EPS:
+                hard.append('PARTICLE_EVENT_LAND_MASS_CLOSURE:' + event_path)
+            if event['remainder'] > EPS and event['remainderDisposition'] != 'RETAIN_PARTICLE':
+                hard.append('PARTICLE_EVENT_LAND_REMAINDER_DISPOSITION:' + event_path)
+            if event['remainder'] <= EPS and event['remainderDisposition'] != 'NONE':
+                hard.append('PARTICLE_EVENT_LAND_REMAINDER_DISPOSITION:' + event_path)
+            prior = _live_particle(before, event['particleId'])
+            current = _live_particle(after, event['particleId'])
+            if before is not None and prior is None:
+                hard.append('PARTICLE_EVENT_LAND_UNKNOWN_BEFORE:' + event_path)
+            elif prior is not None and (prior['phase'] != event['phase'] or abs(prior['mass'] - event['mass']) > EPS):
+                hard.append('PARTICLE_EVENT_LAND_BEFORE_MISMATCH:' + event_path)
+            if event['remainder'] > EPS and (current is None or current['state'] != 2 or
+                current['phase'] != event['phase'] or abs(current['mass'] - event['remainder']) > EPS):
+                hard.append('PARTICLE_EVENT_LAND_AFTER_MISMATCH:' + event_path)
+            if event['remainder'] <= EPS and current is not None:
+                hard.append('PARTICLE_EVENT_LAND_RELEASE_MISMATCH:' + event_path)
+        elif kind in ('SPAWN', 'LIFT'):
+            if kind == 'SPAWN' and abs(event['mass'] - event['admitted']) > EPS:
+                hard.append('PARTICLE_EVENT_SPAWN_ADMISSION_MISMATCH:' + event_path)
+            if kind == 'LIFT' and (event['granted'] > event['requested'] + EPS or event['mass'] + EPS < event['granted']):
+                hard.append('PARTICLE_EVENT_LIFT_GRANT_MISMATCH:' + event_path)
+            current = _live_particle(after, event['particleId'])
+            prior = _live_particle(before, event['particleId'])
+            if current is None or current['phase'] != event['phase'] or abs(current['mass'] - event['mass']) > EPS:
+                hard.append('PARTICLE_EVENT_BIRTH_AFTER_MISMATCH:' + event_path)
+            if prior is not None:
+                hard.append('PARTICLE_EVENT_BIRTH_ID_ALREADY_LIVE:' + event_path)
+        elif kind == 'CROSS_COLUMN':
+            if abs(event['fromColumn'] - event['toColumn']) != 1:
+                hard.append('PARTICLE_EVENT_CROSSING_NOT_ADJACENT:' + event_path)
+            budget = event.get('budget')
+            if not isinstance(budget, dict) or any(not finite(budget.get(name)) or budget[name] < 0
+                for name in ('local', 'bottom', 'total')):
+                missing.append(event_path + '/budget{local,bottom,total}')
+            prior = _live_particle(before, event['particleId'])
+            current = _live_particle(after, event['particleId'])
+            if prior is not None and (current is None or current['phase'] != event['phase'] or
+                abs(current['mass'] - event['mass']) > EPS or int(current['x']) != event['toColumn']):
+                hard.append('PARTICLE_EVENT_CROSSING_AFTER_MISMATCH:' + event_path)
+        elif kind == 'DEGRADE':
+            ids = event['particleIds']
+            if not isinstance(ids, list) or not ids or len(set(ids)) != len(ids):
+                hard.append('PARTICLE_EVENT_DEGRADE_IDS_INVALID:' + event_path)
+                continue
+            if event['flag'] != 'PARTICLE_DEGRADED_TO_COLUMN':
+                hard.append('PARTICLE_EVENT_DEGRADE_FLAG_INVALID:' + event_path)
+            if abs(event['mass'] - event['toSuspH'] - event['toSuspL']) > EPS:
+                hard.append('PARTICLE_EVENT_DEGRADE_SUSP_MISMATCH:' + event_path)
+            before_mass = 0.0
+            for particle_id in ids:
+                prior = _live_particle(before, particle_id); current = _live_particle(after, particle_id)
+                if before is not None and prior is None:
+                    hard.append('PARTICLE_EVENT_DEGRADE_UNKNOWN_BEFORE:' + event_path)
+                elif prior is not None:
+                    if prior['phase'] != event['phase']:
+                        hard.append('PARTICLE_EVENT_DEGRADE_PHASE_MISMATCH:' + event_path)
+                    before_mass += prior['mass']
+                if current is not None:
+                    hard.append('PARTICLE_EVENT_DEGRADE_STILL_LIVE:' + event_path)
+            if before is not None and abs(before_mass - event['mass']) > EPS:
+                hard.append('PARTICLE_EVENT_DEGRADE_MASS_MISMATCH:' + event_path)
+        elif kind == 'MERGE':
+            ids = event['particleIds']
+            if not isinstance(ids, list) or len(ids) < 2 or len(set(ids)) != len(ids):
+                hard.append('PARTICLE_EVENT_MERGE_IDS_INVALID:' + event_path)
+                continue
+            if abs(event['massBefore'] - event['massAfter']) > EPS or event['positionMomentPreserved'] is not True:
+                hard.append('PARTICLE_EVENT_MERGE_MASS_OR_MOMENT_INVALID:' + event_path)
+            before_mass = 0.0; before_x_moment = 0.0; before_y_moment = 0.0
+            for particle_id in ids:
+                prior = _live_particle(before, particle_id)
+                current = _live_particle(after, particle_id)
+                if prior is None:
+                    if before is not None: hard.append('PARTICLE_EVENT_MERGE_UNKNOWN_BEFORE:' + event_path)
+                    continue
+                if prior['phase'] != event['phase']:
+                    hard.append('PARTICLE_EVENT_MERGE_PHASE_MISMATCH:' + event_path)
+                before_mass += prior['mass']; before_x_moment += prior['mass'] * prior['x']; before_y_moment += prior['mass'] * prior['y']
+                if particle_id == ids[0]:
+                    if current is None or abs(current['mass'] - event['massAfter']) > EPS:
+                        hard.append('PARTICLE_EVENT_MERGE_SURVIVOR_MISMATCH:' + event_path)
+                elif current is not None:
+                    hard.append('PARTICLE_EVENT_MERGE_ABSORBED_STILL_LIVE:' + event_path)
+            if before is not None and abs(before_mass - event['massBefore']) > EPS:
+                hard.append('PARTICLE_EVENT_MERGE_MASS_MISMATCH:' + event_path)
+            survivor = _live_particle(after, ids[0])
+            if before is not None and survivor is not None and before_mass > 0 and (
+                abs(survivor['x'] * event['massAfter'] - before_x_moment) > EPS or
+                abs(survivor['y'] * event['massAfter'] - before_y_moment) > EPS):
+                hard.append('PARTICLE_EVENT_MERGE_MOMENT_MISMATCH:' + event_path)
+
+
 def held_at(record, elapsed, manifest, rechecks):
     c = record['context']
     for proof in rechecks:
@@ -203,6 +409,7 @@ def analyze_endpoint(records, manifest, safety=None):
     committed, failed_attempts, seen, last_ordinal, last_time = [], [], set(), None, None
     all_ordinals = []
     last_sources = None
+    previous_particle_record = None
     for index, record in enumerate(records):
         c = record.get('context', {})
         k = key_tuple(record)
@@ -234,6 +441,8 @@ def analyze_endpoint(records, manifest, safety=None):
             missing.append('particles')
         if not isinstance(record.get('particleEvents'), list):
             missing.append('particleEvents')
+        else:
+            validate_particle_events(record, index, previous_particle_record, missing, hard)
         if (record.get('particles') is not None and
             (record.get('particleStateSnapshot') is None or
              record.get('particleCommittedSubstepId') != c.get('substepId'))):
@@ -293,6 +502,7 @@ def analyze_endpoint(records, manifest, safety=None):
             else:
                 quantities['EH'] = quantities['EL'] = None
             committed.append((record, quantities))
+            previous_particle_record = record
         except KeyError as error:
             missing.append(str(error.args[0]))
         except (ValueError, TypeError) as error:
@@ -357,7 +567,7 @@ def analyze_endpoint(records, manifest, safety=None):
                    failedAttemptCount=len(failed_attempts), R_SLIP=r_slip, VH0=vh if finite(vh) else None, VL0=vl if finite(vl) else None,
                    endpointFraction=None, windowPeakFraction=None, massWindowPass=None,
                    legacyEndpointFraction=None, legacyMetricSuspensionFraction=None,
-                   endpointFractionDelta=None, particleResidueDiagnosticStatus='NOT_OBSERVABLE')
+                   endpointFractionDelta=None)
         invalid_denominator = False
         if selected and finite(vh) and finite(vl):
             endpoint, q = selected[-1]
@@ -435,12 +645,18 @@ def analyze_endpoint(records, manifest, safety=None):
                    hardGateStatus='FAIL' if hard else ('PASS' if safety and safety.get('passed') is True else 'INCOMPLETE'),
                    endpointStatusDetail=dict(missingFields=sorted(set(missing)), hardGateFailures=sorted(set(hard)),
                                              baselineErrors=baseline_errors, incomplete=sorted(set(local_incomplete))),
-                   particleResidueDiagnosticCodes=['NOT_OBSERVABLE'] if row['particleResidueDiagnosticStatus']=='NOT_OBSERVABLE' else [],
                    formalReleaseAuthorized=False)
+        row['eventLevelValidationOwnership'] = 'ENDPOINT_CHECKER'
+        row['eventValidationFailures'] = [failure for failure in hard if failure.startswith('PARTICLE_EVENT_')]
         row['longTermParticleResidueStatus'] = 'NOT_OBSERVABLE'
-        if selected and selected[-1][1]['byState'] and selected[-1][1]['byState']['CONTACT_WAIT']['count'] > 0:
-            row['particleResidueDiagnosticCodes'].append('PERSISTENT_PARTICLE_RESIDUE')
-            row['particleResidueDiagnosticMeaning'] = 'Endpoint CONTACT_WAIT present; no lifetime/permanent-suspension conclusion'
+        if selected:
+            by_state = selected[-1][1]['byState']
+            diagnostic_codes = ['NOT_OBSERVABLE'] if by_state is None else []
+            if by_state is not None and by_state['CONTACT_WAIT']['count'] > 0:
+                diagnostic_codes.append('PERSISTENT_PARTICLE_RESIDUE')
+                row['particleResidueDiagnosticMeaning'] = \
+                    'Endpoint CONTACT_WAIT present; no lifetime/permanent-suspension conclusion'
+            row['particleResidueDiagnosticCodes'] = diagnostic_codes
         # Required report metadata is never fabricated. Missing artifact
         # identity is distinct from the raw numerical candidate result.
         context = selected[-1][0]['context'] if selected else {}
@@ -460,6 +676,10 @@ def analyze_endpoint(records, manifest, safety=None):
         row['protocolSourceHashAlgorithm'] = 'SHA-256'
         row['protocolSourcePath'] = PROTOCOL_SOURCE_RELATIVE_PATH
         row['reportMissingFields'] = [name for name in fields if row.get(name) is None]
+        for diagnostic_field in ('particleResidueDiagnosticStatus', 'particleResidueDiagnosticCodes'):
+            if diagnostic_field not in row:
+                row['reportMissingFields'].append(diagnostic_field)
+        row['reportMissingFields'] = sorted(set(row['reportMissingFields']))
         row['reportIdentityStatus'] = 'INCOMPLETE' if row['reportMissingFields'] else 'COMPLETE'
         row['endpointFieldRevision']=FIELD
         row['endpointProtocolId']=report['endpointProtocolId'];row['endpointProtocolRevision']=PROTOCOL

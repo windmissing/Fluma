@@ -82,7 +82,9 @@ def make_records(case, end, times, vh, vl, ih, il, per_record, pstates=None,
             audit=dict(heavyTotalBefore=vh, lightTotalBefore=vl, finite=True, stock=True,
                        capacity=True, conservation=True, errorCode=None),
             particles=particles, particleEvents=(events if events is not None else []),
-            particleStateSnapshot='fixture-snapshot', particleCommittedSubstepId=i + 1))
+            particleStateSnapshot='fixture-snapshot', particleCommittedSubstepId=i + 1,
+            eventLevelValidationOwnership='ENDPOINT_CHECKER',
+            transactionLayerEventValidationRole='EMIT_AND_ATOMIC_COMMIT_ONLY'))
     return records
 
 
