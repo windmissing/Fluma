@@ -273,7 +273,9 @@ class EndpointTests(unittest.TestCase):
         self.assertEqual(row['externalAdmissionCount'],2)
         self.assertNotIn('context.externalAdmissionCount',row['missingFields'])
         data=fixture();data[0][-1]['context']['externalAdmissionCount']=1
-        self.assertEqual(self.row(data)['endpointStatus'],'INVALID_LEDGER')
+        row=self.row(data)
+        self.assertEqual(row['endpointStatus'],'INVALID_LEDGER')
+        self.assertIn('EXTERNAL_ADMISSION_COUNT_EPOCH_MISMATCH',row['hardGateFailures'])
         data=fixture()
         for record in data[0]: record['context'].pop('externalAdmissionCount')
         row=self.row(data)

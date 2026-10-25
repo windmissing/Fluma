@@ -13,7 +13,7 @@ run_block() {
   sleep 2
   local ABLARG=""
   if [ "$abl" = "toplight" ]; then ABLARG="--ps p012ablate toplight"; fi
-  "$HDC" shell aa start -a EntryAbility -b com.example.helloworld --ps rendermode 4 --ps p012tier 3 --ps p012seed 20261020 $ABLARG --ps testmode true > /dev/null 2>&1
+  "$HDC" shell aa start -a EntryAbility -b com.example.helloworld --ps rendermode 4 --ps p012tier 3 --ps p012ablate dyn --ps p012seed 20261020 $ABLARG --ps testmode true > /dev/null 2>&1
   sleep 3
   "$HDC" shell uitest uiInput click 240 620 > /dev/null 2>&1   # 关 USB 弹窗
   sleep 2

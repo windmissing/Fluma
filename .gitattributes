@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# P-013 embedded shader hashes must use the same LF bytes as CMake/GLSL.
+entry/src/main/cpp/p013renderer/glsl/* text eol=lf

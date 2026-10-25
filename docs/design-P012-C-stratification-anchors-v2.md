@@ -1,6 +1,6 @@
 # P-012 C 层理锚点提案 v2：S4 界面联动与冻结前置
 
-日期：2026-10-23。责任：designer。状态：**DESIGN_READY_FOR_MANAGER_REVIEW / ANCHOR_FREEZE_PENDING_REFERENCE_AND_DEVICE_BASELINE / NOT_VALIDATED**。承接 [v1 提案](design-P012-C-stratification-anchors-v1.md)，保留其历史数字与结论，不改 E/A/B `VALIDATED/CLOSED`、E3 已冻结锚点、SV 量表、物理 128 列或测试代码。C/D 为 `UNLOCKED / NOT_VALIDATED`。本稿只给候选方法与冻结所需证据；manager 验收后再排参考测量、正式锚点 revision 和实现。
+日期：2026-10-23；2026-10-24 补充冻结前证据状态与测量/渲染边界。责任：designer。状态：**DESIGN_READY_FOR_MANAGER_REVIEW / ANCHOR_FREEZE_PENDING_REFERENCE_AND_DEVICE_BASELINE / NOT_VALIDATED**。承接 [v1 提案](design-P012-C-stratification-anchors-v1.md)，保留其历史数字与结论，不改 E/A/B `VALIDATED/CLOSED`、E3 已冻结锚点、SV 量表、物理 128 列或测试代码。C/D 为 `UNLOCKED / NOT_VALIDATED`。本稿只给候选方法与冻结所需证据；manager 验收后再排参考测量、正式锚点 revision 和实现。
 
 ## 1. 新证据的精确含义
 
@@ -48,6 +48,27 @@ v1 的 `22–43` 显著极值/完整厚沙 ROI、`16.2–31.7` 个分析深度�
 
 **采样顺序建议：** manager 先验收本 v2 的候选口径 → effector/tester 离线重测目标参考，并采现有 C OFF 厚沙基线（后者占真机窗）→ tester 用独立合成 oracle 核验弯曲算子可辨识性 → designer 提交正式数值 revision → manager 冻结锚点/方法/mask → 路由 architect/developer 实现 → tester/effector 采同设备 OFF/ON、S4 四格、帧时与 SV，按冻结版验收 C/S4×C。若参考界面不可辨、厚沙支持不足或 S4 动态信号低于测量误差，则冻结保持 PENDING，并由 manager 决定补充参考/场景；不能先实现再用 ON 结果定线。
 
+### 4.1 当前证据盘点与冻结门
+
+本任务完成的是**冻结前方案与待办清单**；下表把可用输入与尚缺结果分开，避免把计划写成已有证据：
+
+| 证据项 | 当前已存在 | 冻结前缺口 / 出口 |
+|---|---|---|
+| S4 物理候选振幅 | `test/reports/s4-sweep-v2.json` 和 `report-P011-S4-sweep2-v1.md` 有 300s 离线 sweep。定向 5.41px 起伏在 `{kDeep=.1/.2, muY=0, hMin=.5}` 下末端振幅 4.68/4.38px；只说明候选物理驱动可见量级，并非 C 或联合效果结果。 | 使用被接受的 S4 物理方案/route 做四格配对和物理守恒、预算、`bh`时序独立报告；候选 sweep 本身不能冻结纹理跟随阈值。 |
+| 目标参考层纹 | `test/artifacts/p012-measurements/video1_frame{0,2,5,6}.json` 与目标帧素材已在库；v1 记录过早期 `22–43/54–81` 与冻结 v1 的 `rowOscCount=0` 差异。 | 尚无按同一 v2 注册法、相同 ROI/显示尺度/mask 的参考复测；需登记 `bh` 与内部纹线标注来源、双人重复误差、原生有效厚度，且解释旧指标差异。边界或厚度不可辨即保持待冻结。 |
+| 当前 C OFF 渲染基线 | EAB 报告及现有截图可作历史背景。 | 未见与目标厚沙 ROI 匹配的当前 C OFF 专项长窗基线；需同构图、设备、EAB+E3身份、厚沙支持、静止/慢倾/回正原始帧与 layer profile，排入 effector 真机队列。薄沙 EAB 数据不冒充厚沙分母。 |
+| C 实现后四格 | 当前没有可用于正式签收的 C ON 四格报告。 | 这是锚点冻结后的验证资产，不能反过来调冻结线；按 §3四格保存 snapshot/seed/routeId、原始图像和亚像素追踪。 |
+| 测量算子/独立 oracle | 本 v2 给出候选公式与分支，没有宣称已实现/已验证测量脚本。 | tester 在冻结前预注册并实现 methodId、边界/分带、合并顺序、mask、亚像素重复误差；用理想弯曲纹与固定屏幕纹两套独立合成 oracle 验证能区分“跟界面弯”与“屏幕贴纸”。 |
+| 真机窗口计划 | 由任务规则指定后续 effector 排队，designer 未占设备。 | manager 接受口径后由 effector 提交采集矩阵、设备/显示尺度、目标取帧、设备队列位置与回归项；在计划获排期前报告 `DEVICE_BASELINE_PENDING`，不写已采。 |
+
+**冻结门定义：** 锚点可在 C 实现前冻结，前提是目标参考同口径分布、C OFF厚沙基线、测量算子/合成 oracle、ROI/mask/设备尺度和容差提案都有可审查证据并经 manager 正式 revision。缺一项则状态保持 `ANCHOR_FREEZE_PENDING`。C ON/四格不属于设定自身数值线的前置数据，它们用于冻结后验收；但若参考的 `bh` 或层线本身不可识别，则必须先由 manager 裁定替代参考方法，不能拿应用物理数组补写目标图真值。
+
+### 4.2 弯曲层纹的独立测量步骤
+
+将 `ζ` 注册算子明确限定为**分析坐标**，不得与实现中的 C1 相位变换混称。C1 的渲染须按冻结方案从材料深度/层边界只读映射生成条纹；测试端另从物理 snapshot 获得 `b(x,t)=heightToY(bh(x,t))`，并从原生图像提取可追踪脊线 `y_j(x,t)`。对 H/L/M 分带分别用该带已冻结的材料边界定义 `z` 与 mask，再用 `ζ=z-b(x,t)`（靠近界面的 H 区按预注册 `w_H`）展开条纹，以比较各分带内部周期和显著层数。此展开只校正水平平均中的界面相位错开，不改变原始图像、画面条数或 C 输出。
+
+弯曲跟随必须在**原始显示坐标**另算：固定同一 stripe identity/seed 和同材质深度索引，按预注册的峰谷配对/亚像素拟合追踪 `y_j`，比较 `detrend(y_j)` 与 `detrend(b)` 的空间幅值、相关与相位；S4 动态则逐时刻对配对的 C ON/OFF 两份物理快照算 `Δy_j` 和 `Δb`。同一线的身份用冻结 seed/phase + 预定匹配窗维持，禁止每帧人工挑最有利脊线。只报告 registered extrema 不足以证明画面纹线真的弯；只有画面追踪和 `bh` 一致、且超过独立测量重复误差，才可进入候选跟随判定。理想弯曲与固定屏幕纹 oracle 必须分别落在各自预注册的分类分支；最终相关、相位、幅值误差仍从目标参考/重复性数据提出，由 manager 冻结。
+
 ## 5. C2/C3 处置与 C/D/E2 归属
 
 | 候选 | v2 裁定 | 重新开启条件 |
@@ -59,3 +80,9 @@ v1 的 `22–43` 显著极值/完整厚沙 ROI、`16.2–31.7` 个分析深度�
 D 流痕沿速度/前缘方向的各向异性、E2 顶光的迎背光整体塑形，与 C 的材料深度层纹分开测、分开归因。四格中固定 D OFF 与 E2 同档；若将来二者 ON，再做正交消融。C 不修改 D/E2 的冻结或候选口径，也不把物理 `bh` 起伏、顶光阴影或流束计入 C 的层纹极值。
 
 **本轮完成判断：** v2 已把 C1 的弯曲测量、S4×C 四格、不可辨识分支、参考/真机资产和 C2/C3 路线边界写成可执行提案；由于目标同口径测量、当前 C OFF 厚沙基线与独立合成 oracle 尚未齐备，状态维持 `ANCHOR_FREEZE_PENDING`，**不能写 `FROZEN` 或 `VALIDATED`**。C ON 构建与真机四格是冻结后的效果验证资产，不应倒置为设定锚点数字的依据。
+
+## 6. v2 补充记录（2026-10-24）
+
+- 补充 S4 sweep、目标 JSON、C OFF、C ON、算子 oracle 与设备计划的“已有/缺失/冻结出口”状态，避免将计划当作已采证据。
+- 明确 `ζ` 注册是测量分析，不自动等同 renderer 的 C1 纹理变换；弯曲跟随须同时提供原始显示坐标脊线与 `bh` 对拍，防 registered profile 自证循环。
+- 未改变任何候选阈值或 E3/E/A/B 锚点。当前结论仍是 `ANCHOR_FREEZE_PENDING / NOT_VALIDATED`，由 manager 验收口径后排参考复核与真机计划。

@@ -8,6 +8,7 @@ import { FrameCallback } from '@ohos.arkui.UIContext';
 /** native 模块接口（libp013hello.so 导出——ArkTS 侧显式类型声明） */
 declare interface P013HelloNative {
   isReady(): boolean;
+  setActive(active: boolean): boolean;
   drawFrame(): boolean;
   getFrameCount(): number;
 }
@@ -30,29 +31,44 @@ struct P013HelloSurface {
   @State status: string = 'surface 等待创建';
   private frameCb: P013FrameCallback = new P013FrameCallback();
   private frameCbStarted: boolean = false;
+  private pageActive: boolean = false;
 
   aboutToAppear(): void {
     this.frameCb.owner = this;
   }
 
   aboutToDisappear(): void {
-    // postFrameCallback 无法显式取消——页面销毁由 XComponent surface
-    // Destroyed 路径接管（tickFrame 内 isReady() 守卫使其自然空转）
+    // A queued callback exits without re-registering after hide/disposal.
+    this.pageActive = false;
+    (p013hello as P013HelloNative).setActive(false);
     this.frameCb.owner = null;
   }
 
   onPageShow(): void {
+    this.pageActive = true;
+    (p013hello as P013HelloNative).setActive(true);
     if (!this.frameCbStarted) {
       this.frameCbStarted = true;
       this.getUIContext().postFrameCallback(this.frameCb);
     }
   }
 
+  onPageHide(): void {
+    this.pageActive = false;
+    (p013hello as P013HelloNative).setActive(false);
+  }
+
   /** 每帧 tick：驱动 native hello 帧（清屏+swap）并刷新状态 */
   tickFrame(): void {
+    this.frameCbStarted = false;
+    if (!this.pageActive || this.frameCb.owner === null) {
+      return;
+    }
     const native = p013hello as P013HelloNative;
-    if (native.isReady()) {
-      const ok = native.drawFrame();
+    // Drawing owns lazy EGL creation; isReady remains a read-only EGL-ready query.
+    const ok = native.drawFrame();
+    this.ready = native.isReady();
+    if (this.ready) {
       this.frameCount = native.getFrameCount();
       this.ready = true;
       if (!ok) {
@@ -61,6 +77,7 @@ struct P013HelloSurface {
         this.status = `hello 帧运行中 #${this.frameCount}`;
       }
     }
+    this.frameCbStarted = true;
     this.getUIContext().postFrameCallback(this.frameCb);
   }
 

@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(p013hello SHARED
   hello/hello_surface.cpp
+  p013renderer/egl_context.cpp
 )
 
 target_link_libraries(p013hello PUBLIC

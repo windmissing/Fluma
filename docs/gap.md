@@ -1,5 +1,27 @@
 # Gap 清单（目标 vs 现状）
 
+## 2026-10-24 大角度新 route 登记（p011-external-tilt-transient-v1，当前生效）
+
+> 依据：用户已批准「外部姿态可造成受控短暂超临界」为新 route 的安全语义候选。登记明细见 `docs/priority.md` 同日同名章节。本节只记目标与现状的差距，不启动实现。
+
+| 项 | 内容 |
+|---|---|
+| 差距项 | 全宽 ±45° 沉积坡目标在 300/s 预算下不可达（全宽线性 28° 沉积坡一阶矩至少约 92,917，5.1 秒额度仅 1,530——条件性下界） |
+| 现状 | 旧 route（`natural-relax-hysteresis-v1`）与阶段一 CLOSED 不覆盖该目标；新 route `p011-external-tilt-transient-v1` 状态 `NOT_VALIDATED / NOT_IMPLEMENTED`，安全语义仍为候选 |
+| 目标 | 外部姿态输入下可控的短暂超临界，且不追认旧 route 结果、不放宽冻结阈值 |
+| 量级 | 条件性下界，不是「所有局部观感不可达」的结论，也不得外推为替代通道无解 |
+| 路由建议 | 按 A-G 门序推进：目标定义与证明 → 用例预注册（客观/主观）→ 算法复审 → 工程化复审 → 默认关闭实现 → 只读审核 → 阶段二路线判定。A-G 七卡当前整体 P3、B 卡暂停，三件事窗口后恢复 |
+| 待用户裁决 | ①±45° 目标的测量对象（局部崩塌坡面 / 全宽沉积面 / raster OLS）②300/s 全通道可达性与条件性下界 ③超临界恢复与水沙同角输入验证；未裁决前不改 `docs/goals.md` 与冻结阈值 |
+
+## 2026-10-23 P-003/P-005 范围分阶段裁决（当前生效）
+
+> 用户裁决：场景二先做水 + 一种沙；暂不考虑双沙/三相。完整 G2 最终目标仍保留。此裁决覆盖本文件早期将 P-003/P-005 直接描述为三相实现的当前排期范围，不改变历史记录。
+
+- **P-005（P0，测试前置）**：tester/effector 本轮只补单沙+水的客观/主观用例及 RED 基线；三相分选、重/轻沙比例、相间 percolation 指标留后续阶段。
+- **P-003（P0，单沙+水第一阶段）**：实现水和一种沙的相内沉降、沉积/悬浮转换、堆积与动态响应；分别保证水总量、沙总量守恒。悬浮与沉积属于同一沙相的位置/状态，不视作第三相。不得实现第二种沙或重/轻分选。
+- **后续阶段**：第一阶段客观/主观验收后，manager 再决定何时启用双沙/三相与 P-008；在此之前标记 `DEFERRED`，不宣称完整 G2 达成。
+- **依赖**：P-005 用例/基线 → designer 更新单沙算法 → architect 更新工程方案 → developer 实现 → reviewer 自动审核 → tester/effector 复测 → designer 判定。P-009 可并行。
+
 ## 渲染现状 vs G2 目标差距（2026-10-21）
 
 > 维护人：manager。依据 `docs/goals.md` G2/G2.7、P-012 第一梯队签收与 CLOSED 范围、`docs/effect-report-P012-v1.md`、`docs/test-report-P012-v1.md`、`docs/render-gap-analysis-P012-v1.md`。排序按用户要求：先效果、后效率。本节为差距盘点与排期建议，不启动实现。
@@ -172,13 +194,13 @@
 
 | 问题 ID | 描述 | 来源（哪份报告的哪项发现） | 影响的目标 | 状态 |
 |---|---|---|---|---|
-| P-003 | B3：WaterSandField 三相模型、第四渲染模式、面板与 Node 单测缺失；当前算法 v1 §3.3 存在分相守恒缺陷，developer 暂缓实现 | `docs/DESIGN_GAP_CLOSE.md` §四；`docs/architecture-P003-P005.md` §0.1；两份最新报告均无有效验收数据 | G2、G3 | IN_PROGRESS（BLOCKED） |
-| P-005 | 场景二测试用例与判定脚本缺口：`docs/test-cases.md`、`docs/effect-cases.md` 为占位；仓库无 WaterSandField/三相用例；`test/vv_s75_analysis.py` 等仅支持两相；无 VV-07/08/09、三相守恒、分选比、沉降时序、安息角、水面与主观观感用例；客观/主观用例可直接由 tester/effector 并行补齐 | `docs/test-cases.md`、`docs/effect-cases.md`、`test/TC_TEST_CASES.md`、`test/vv_s75_analysis.py`、`entry/src/ohosTest/ets/test/SandGridTest.ets` | G2、G3 | IN_PROGRESS |
+| P-003 | B3 第一阶段：水 + 一种沙；单沙沉降/堆积/悬浮状态及动态响应缺少独立算法闭环；双沙/三相分选延期 | `docs/DESIGN_GAP_CLOSE.md` §四；`docs/algorithm-P003-P005.md`；2026-10-23 用户范围裁决 | G2、G3 | IN_PROGRESS（单沙+水；三相 DEFERRED） |
+| P-005 | 场景二单沙+水客观/主观用例与判定脚本需补齐；测试覆盖水/沙各自守恒、沉降/堆积、安息角、水面、动态倾斜/摇晃恢复、视觉质量。双沙分选和三相专用判据暂不属于当前阶段 | `docs/test-cases.md`、`docs/effect-cases.md`、`test/TC_TEST_CASES.md`、`test/vv_s75_analysis.py`、2026-10-23 用户范围裁决 | G2、G3 | IN_PROGRESS（单沙+水 RED 前置） |
 | P-001 | B1/M1‘：场景一 SandGrid 液体规则已实现（s79），但 `docs/test-report.md` 与 `docs/effect-report.md` 仍无有效数据，未完成客观/主观闭环 | `docs/DESIGN_GAP_CLOSE.md` §二 v1.1；`docs/test-report.md` 报告 #1 无数据；`docs/effect-report.md` 报告 #1 无数据 | G1、G3 | OPEN |
 | P-002 | B2/M3：倒立渲染 `want` 直启路径已 PASS，面板路径与完整回归仍未闭环 | `test/reports/TC-09..10_s77r_independent_verify_report.md`；`docs/test-report.md`、`docs/effect-report.md` 均无有效数据 | G1、G3 | OPEN |
 | P-004 | B4：三相判定脚本扩展、全场景动态回归矩阵、TC/SV/VV 报告缺失 | `docs/DESIGN_GAP_CLOSE.md` §五；两份最新报告均无有效验收数据 | G1、G2、G3 | OPEN |
 | P-007 | slopeLimit 姿态修正设计条件已清零：v2.4 §18 明确 `|d - tan(effectiveTiltDeg)| > tan(α)`，且 `α` 为“崩塌角”；仍缺 developer 实现、倾斜边界/守恒/直立回归的正式验证报告 | `docs/algorithm-P003-P005.md` §18；`docs/test-report-P003-P005.md` | G2+G3 主线 | IN_PROGRESS |
-| P-008 | percolationRate 固定为 `6/s`，未按密度差/黏度参数化，且缺少干湿门控 | `docs/algorithm-P003-P005.md` §16.2；外部复核 2026-10-14 | G2+G3 主线 | OPEN |
+| P-008 | 双沙阶段的 percolationRate 参数化与干湿门控；因当前先做单沙+水，暂不适用 | `docs/algorithm-P003-P005.md` §16.2；2026-10-23 用户范围裁决 | G2+G3 后续阶段 | DEFERRED |
 | P-009 | WS_SNAPSHOT 超 4KB 被真机 hilog 截断，阻塞 E2E 客观验收；需确认快照分片输出或文件落盘方案 | 真机复核 2026-10-14 | G2+G3 主线 | IN_PROGRESS |
 | P-011 | 观测③ v2 pilot 标定失效（三层根因）：clean=INVALID（5 边 tan30 违约）、±30° 平台 TILT_PLANNING_BLOCKED 不可达、EXECUTION_THRESHOLD_IDENTITY_MISMATCH——构建 relaxAngle 实际由 tan(4°) 驱动，候选阈值未进状态机，459 个 start 均为旧请求态诊断。v3 方向 2（平台+安全 ramp 联合激励）已批，执行身份整改链进行中 | `docs/effect-report-P011-obs3v2-pilot-run1.md`；`docs/observation3-v3-identification-redesign-v1.md`（SHA-256 复核 + ledger 只读诊断） | G2.1 表层滑移与安息角；G2.2 堆积轮廓；G3 动态连续响应 | IN_PROGRESS（v3 身份整改： designer 冻结协议 ∥ developer 采集侧修复 → architect → tester；effector 待新 pilot 批准；观测③标定本身维持 BLOCKED / INCOMPLETE） |
 

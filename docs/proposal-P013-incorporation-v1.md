@@ -164,3 +164,11 @@ void main() {
 变更记录：2026-10-23，依据 manager【P-013·立项任务书】任务产出。五项工作：立项结构（双里程碑/五项非目标/P0-P3 范围）/P0 开工级细化（P0a hello-surface 前置对冲+六子项各带验收+GLSL 草案+叠层裁定 Canvas 上乘性增量层）/风险登记册（8 项：六交接点+首踩+混合冲突，各带缓解与残余）/帧时数据依赖条款（P0 不等数据/P1+ 校准）/验证体系衔接（双层补偿+跨栈重基线槽位+路线②复用声明）。
 
 **v1.1 变更记录（2026-10-23，依据 manager【P-013·立项书修订】任务）**：designer 效果目标设计 §2 发现两处不成立（跨 Surface 乘法违反 GL framebuffer attachment 语义 + ToneMap 结合律不等价），manager 已核实。修订内容：①§2.3 作废原跨 Surface 乘法方案，重写为 **c 独立光照诊断 pass 主线**（P0 验收收窄为光场正确性热图断言，合成移 P1）+ a 三端读回降级为并行证据项 + b 维持 P1 不提前；②§2.5 GLSL 输出改热图直出，暗面纹理断言移 P1；③T_data 三版本号登记（T_dataLayoutVersion=1/slopeKernelVersion=E2_APPROX_P0 不参与精确等价/zOriginVersion=1）——回应 designer「三种布局不得写作同一契约」；④R8 转化为 R8'（合成质量风险整体移 P1，色彩管理冻结清单归 P1 开工前）；⑤P0 人日重估 9-12（省跨 Surface 调试、增热图工具+读回脚本）、P1 增至 10-15（合成+色彩管理转入），总计 39-53 人日（+1，总量级不推翻）；⑥M1 判定明确归 P1 完成态（P0 不构成 M1 证据）。`P0_EFFECT_COMPOSITE_UNPROVEN` 阻塞解除（收窄方式）。仍为 PROPOSAL，P0 开工等 manager 正式立项批准。
+
+## 8. P1工程设计附件登记（2026-10-24）
+
+P0主体已由manager验收；其实现契约以 `architecture-P013-p0-skeleton-predesign-v1.md` 与实际验收记录为准，本立项书早期P0伪代码不替代该定稿。P1任务6adc861c…d612的独立交付为 [P1纹理耦合/完整沙区/色彩管理工程设计](architecture-P013-p1-material-composite-v1.md)。
+
+附件明确六图字节/采样与资源失效、P1 layout2/CPU坡度版本、线性Rmat×Lmat→ToneMap→sRGB输出、Canvas背景/GLES沙区/Canvas前景责任、双代配置激活与fallback、遥测/验证/实施切片。P0 layout1/E2_APPROX_P0/zOrigin1不被改写；P1 shader与API另分派。工程补全中的σ列域核与材质增量配方须designer确认，随后manager验收与tester用例先行；本登记不授权P1实施或预签M1/M2，不改变本书估算、P2/P3边界与冻结锚点。
+
+变更记录：2026-10-24，依据P1工程设计任务追加附件索引，保留立项历史；纯文书零代码。

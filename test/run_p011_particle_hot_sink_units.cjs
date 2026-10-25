@@ -9,6 +9,7 @@ const {P011ParticleHotTicketReceipt,P011ParticleHotRefundReceipt}=require('../en
 const legacy=require('../entry/src/main/ets/physics/P011ParticleField.ets');
 const {P011ParticlePrototypeSink,P011ParticlePrototypeBudget}=require('../entry/src/main/ets/physics/P011ParticlePrototype.ets');
 const guard=require('../entry/src/main/ets/physics/P011MaterialGuard.ets');
+const {registerParticleHotRun,exportParticleEvidence}=require('../entry/src/main/ets/physics/P011ParticleHotEvidence.ets');
 const params={massPackage:.1,nmax:8,terminalSpeedHeavy:64,terminalSpeedLight:38,dragHeavy:2,dragLight:2,
   liftSpeedHeavy:8,liftSpeedLight:8,liftSpread:2,mergeColRadius:1,mergeHeightRadius:2,contactEps:1e-6,channelRateCap:0};
 const arrays=['waterTop','bh','bl','mh','ml','suspH','suspL','surface'];
@@ -144,5 +145,40 @@ test('S3 guard matches cold closed form on boundaries, legal/non-worsening edges
     assert.equal(out.limitingEdge,expected.limitingEdge===null?-1:edges[expected.limitingEdge]);
     assert.deepEqual([...out.edgeId].slice(0,out.count),edges);
   }
+});
+test('S4 alias, detached buffer and replaced result/event bindings reject without canonical writes',()=>{
+  for(const corrupt of [s=>s.f.bh=s.f.bl,s=>s.f.bh=s.w.frozenBh,
+    s=>s.w.frozenPool.pMass=s.w.patchBefore.pMass,
+    s=>structuredClone(s.w.planA.requested.buffer,{transfer:[s.w.planA.requested.buffer]})]){
+    const s=setup();seed(s.w.pool);const before=s.w.pool.snapshot();corrupt(s);
+    assert.equal(hot.beginStepHot(s.w,s.input),3);assert.equal(s.w.stepEpoch,0);assert.equal(s.w.active,0);
+    assert.deepEqual(s.w.pool.snapshot(),before);
+  }
+  for(const corrupt of [s=>s.w.results.granted=s.f.bh,s=>s.w.events.massBefore=s.w.patchAfter.pMass]){
+    const s=setup();seed(s.w.pool);s.start();planFor(s.w,'deposit');const before=state(s);corrupt(s);
+    assert.equal(run(s),3);assert.deepEqual(state(s),before);assert.equal(s.w.results.resultCount,0);
+  }
+});
+test('S4 caller-owned snapshot output cannot alias canonical, frozen, patch or field storage',()=>{
+  const s=setup();seed(s.w.pool);s.start();const before=state(s),out=s.w.pool.snapshot();
+  assert.equal(s.w.copyStateToHot(out),0);
+  for(const internal of [s.w.frozenPool,s.w.patchBefore,s.w.patchAfter,s.w.patchScratch]){
+    assert.equal(s.w.copyStateToHot(internal),3);assert.deepEqual(state(s),before);
+  }
+  out.pMass=s.w.pool.pMass;assert.equal(s.w.copyStateToHot(out),3);assert.deepEqual(state(s),before);
+});
+test('S4 sealed page blocks overwrite and export is independent of later live pool/field/plan/out edits',()=>{
+  const s=setup();registerParticleHotRun(s.w,1,'sealed-run');seed(s.w.pool);s.start();planFor(s.w,'deposit');
+  assert.equal(run(s),0);const granted=s.w.results.granted[0],pool=s.w.pool.snapshot(),epoch=s.w.stepEpoch;
+  assert.equal(hot.finishStepHot(s.w,epoch),0);const token=s.w.committedPageToken;assert.ok(token>0);
+  s.w.planA.predictedY[0]=999;s.w.results.granted[0]=999;s.f.bh[20]=88;seed(s.w.pool,{sourceId:99,mass:.1});
+  assert.equal(hot.beginStepHot(s.w,s.input),9);assert.equal(s.w.stepEpoch,epoch);
+  const evidence=exportParticleEvidence(s.w,token);assert.equal(evidence.plan.requests[0].predictedY,30);
+  assert.equal(evidence.results[0].granted,granted);assert.deepEqual(evidence.pool,pool);assert.equal(evidence.field.bh[20],20);
+  assert.equal(evidence.events[0].eventLevelValidationOwnership,'ENDPOINT_CHECKER');assert.equal(s.w.pageBacklog,0);
+  assert.throws(()=>exportParticleEvidence(s.w,token),/STALE_PAGE/);
+  const live=s.w.pool.snapshot();evidence.pool.pMass.fill(0);evidence.field.bh.fill(0);assert.deepEqual(s.w.pool.snapshot(),live);
+  s.input.substepId++;s.input.attemptToken++;assert.equal(hot.beginStepHot(s.w,s.input),0);
+  assert.throws(()=>exportParticleEvidence(s.w,token),/STALE_PAGE/);
 });
 console.log(JSON.stringify({suite:'run_p011_particle_hot_sink_units',passed,failed:0}));
