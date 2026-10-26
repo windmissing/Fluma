@@ -591,6 +591,7 @@ export interface WaterSandStepResult {
 }
 
 export interface WaterSandP011Metric {
+  identityRevision?: string;
   routeId: string;
   runId: string;
   sequence: number;
@@ -2280,8 +2281,8 @@ export class WaterSandField {
     const totals = this.getTotals();
     this.updatePhaseShapeTelemetry();
     const heavyShare = this.lastBottomFlux > EPS ? this.lastHeavyFlux / this.lastBottomFlux : null;
-    this.p011SampleSequence += 1;
     return {
+      identityRevision: 'P011_COMMIT_IDENTITY_V2',
       routeId: this.params.routeId,
       runId: this.p011RunId,
       sequence: this.p011SampleSequence,
@@ -2411,7 +2412,7 @@ export class WaterSandField {
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
     if (sampler === null) return;
-    const key: P011EndpointCommitKey = { runId: this.p011RunId, sequence: this.p011SampleSequence + 1,
+    const key: P011EndpointCommitKey = { runId: this.p011RunId, sequence: this.p011SampleSequence, identityRevision: 'P011_COMMIT_IDENTITY_V2',
       frameId: this.p011FrameId, substepId: this.p011SubstepId + 1,
       attemptId: this.p011CurrentAttemptId, committedOrdinal: sampler.committedOrdinal + 1 };
     if (this.naturalObservationProbe !== null) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
@@ -3644,13 +3645,14 @@ export class WaterSandField {
       : p011NaturalObservationPhaseForCommand(this.p011InputSequence,
         this.targetTilt, scheduleId);
     this.naturalObservationProbe.beginSubstep({
+      identityRevision: 'P011_COMMIT_IDENTITY_V2',
       observationRouteId: this.naturalObservationRouteId !== null
         ? this.naturalObservationRouteId : P011_NATURAL_OBSERVATION_ROUTE_ID,
       ledgerSchemaVersion: P011_NATURAL_OBSERVATION_LEDGER_SCHEMA_VERSION,
       runId: this.p011RunId,
       frameId: this.p011FrameId,
       substepId: this.p011SubstepId + 1,
-      sequence: this.p011SampleSequence + 1,
+      sequence: this.p011SampleSequence,
       physicsTime: nextP011TimeMs(),
       physicsDt: substepDt,
       commandSequence: this.p011InputSequence,
@@ -5693,6 +5695,8 @@ export class WaterSandField {
     this.lastPlanningSubstepDt = dt;
     // GAP-4: every planning evaluation is one attempt. attemptId is
     // monotonic per field instance and unique per substep.
+    if (!Number.isSafeInteger(this.p011SampleSequence+1)) throw new Error('P011_LEDGER_SEQUENCE_OVERFLOW');
+    this.p011SampleSequence += 1;
     this.p011AttemptCounter += 1;
     this.p011CurrentAttemptId = `${this.p011RunId}-a${this.p011AttemptCounter}`;
     this.p011CurrentRollbackReason = null;

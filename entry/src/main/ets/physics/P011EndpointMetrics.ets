@@ -5,6 +5,7 @@ export const P011_ENDPOINT_PROTOCOL_ID = 'p011-endpoint-terminal-nondeposited';
 export const P011_ENDPOINT_PROTOCOL_REVISION = 'endpoint-terminal-nondeposited-v1';
 export interface P011EndpointClock { clockId: string; nowElapsedMs(): number; }
 export interface P011EndpointCommitKey {
+  identityRevision?: string;
   runId: string; sequence: number; frameId: number; substepId: number;
   attemptId: string | null; committedOrdinal: number;
 }
@@ -123,7 +124,7 @@ export class P011EndpointSampler {
     this.lastElapsed = elapsed;
     this.lastFrame = key.frameId;
     this.recordUnstampedCommit(key, physicsDt);
-    const frozenKey: P011EndpointCommitKey = { runId: key.runId, sequence: key.sequence,
+    const frozenKey: P011EndpointCommitKey = { identityRevision:key.identityRevision, runId: key.runId, sequence: key.sequence,
       frameId: key.frameId, substepId: key.substepId, attemptId: key.attemptId,
       committedOrdinal: key.committedOrdinal };
     const frozenPhase: P011EndpointPhaseIdentity = { occurrenceId: phase.occurrenceId,
@@ -135,9 +136,12 @@ export class P011EndpointSampler {
     phase: P011EndpointPhaseIdentity): P011EndpointPostCommitStamp {
     if (!Number.isFinite(elapsed) || elapsed < 0 || elapsed < this.lastElapsed ||
       key.runId !== this.runId || key.committedOrdinal !== this.committedOrdinal ||
+      (key.identityRevision === 'P011_COMMIT_IDENTITY_V2' && (this.recordedKey === null ||
+        key.sequence !== this.recordedKey.sequence || key.frameId !== this.recordedKey.frameId ||
+        key.substepId !== this.recordedKey.substepId || key.attemptId !== this.recordedKey.attemptId)) ||
       !phase.occurrenceId) throw new Error('INVALID_ENDPOINT_STAMP');
     this.lastElapsed = elapsed;
-    const frozenKey: P011EndpointCommitKey = { runId: key.runId, sequence: key.sequence,
+    const frozenKey: P011EndpointCommitKey = { identityRevision:key.identityRevision, runId: key.runId, sequence: key.sequence,
       frameId: key.frameId, substepId: key.substepId, attemptId: key.attemptId,
       committedOrdinal: key.committedOrdinal };
     const frozenPhase: P011EndpointPhaseIdentity = { occurrenceId: phase.occurrenceId,
@@ -150,14 +154,17 @@ export class P011EndpointSampler {
   }
   // A successful physical commit still advances integrated time when its
   // diagnostic clock/phase is unavailable. It must never gain a false stamp.
+  private recordedKey: P011EndpointCommitKey | null = null;
   recordUnstampedCommit(key: P011EndpointCommitKey, physicsDt: number): void {
     if (key.runId !== this.runId || key.committedOrdinal !== this.committedOrdinal + 1 ||
       !Number.isSafeInteger(key.sequence) || key.sequence < this.lastSequence ||
+      (key.identityRevision === 'P011_COMMIT_IDENTITY_V2' && key.sequence <= this.lastSequence) ||
       !Number.isSafeInteger(key.frameId) || !Number.isSafeInteger(key.substepId) ||
       (key.frameId === this.lastFrame ? key.substepId <= this.lastSubstep : key.frameId < this.lastFrame) ||
       !Number.isFinite(physicsDt) || physicsDt <= 0) {
       throw new Error('INVALID_ENDPOINT_COMMIT');
     }
+    this.recordedKey = {runId:key.runId,sequence:key.sequence,frameId:key.frameId,substepId:key.substepId,attemptId:key.attemptId,committedOrdinal:key.committedOrdinal,identityRevision:key.identityRevision};
     this.lastSequence = key.sequence; this.lastFrame = key.frameId; this.lastSubstep = key.substepId;
     this.integratedPhysicsSeconds += physicsDt; this.committedOrdinal++;
   }

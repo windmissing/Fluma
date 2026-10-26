@@ -10,6 +10,7 @@ export interface LiquidCAWantParams {
 }
 
 export interface LiquidCAWantCommand {
+  finishCaptureRequestId?: string;finishCaptureRunId?: string;finishCaptureGeneration?: number;
   shakeOnly?: boolean;
   p011TiltWantSequence?: number;
   renderMode: number;

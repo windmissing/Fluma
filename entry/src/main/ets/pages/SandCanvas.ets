@@ -142,6 +142,7 @@ class PanelParams {
 }
 
 interface LiquidWantCommand {
+  finishCaptureRequestId?: string;finishCaptureRunId?: string;finishCaptureGeneration?: number;
   shakeOnly?: boolean;
   p011TiltWantSequence?: number;
   renderMode: number;
@@ -552,6 +553,21 @@ struct SandCanvas {
   private naturalObservationProbe: P011NaturalObservationProbe | null = null;
   private deviceCapture: P011EndpointCaptureSession | null = null;
   private explicitShakeControl: boolean = false;
+  private sceneFrameStarted: boolean = false;
+  private captureFinished: boolean = false;
+  private captureFinishPromise: Promise<void> | null = null;
+  private captureFinishRequest: string = "";
+  private finishCapture(requestId: string): Promise<void> {
+    if(this.captureFinishPromise!==null)return requestId===this.captureFinishRequest ? this.captureFinishPromise : Promise.reject(new Error('OBS_FINISH_REQUEST_CONFLICT'));
+    const ws=this.waterSandField, store=this.naturalObservationStore;
+    if(store===null)return Promise.reject(new Error('OBS_STORE_NOT_READY_FOR_FINISH'));
+    this.captureFinished=true;this.captureFinishRequest=requestId;
+    ws?.setNaturalObservationProbe(null);ws?.setExternalAdmissionEventSink(null);ws?.clearGestureSandQueue();
+    const fence=store.inspect();
+    this.captureFinishPromise=store.finish(fence.runId,requestId,fence.storeGeneration);
+    this.captureFinishPromise.catch((e: Error): void => {this.logWaterSand('P011_OBS_FINISH_ERROR '+e.message);});
+    return this.captureFinishPromise;
+  }
   private naturalObservationStore: P011NaturalObservationStore | null = null;
   private naturalObservationStoreLogged: boolean = false;
   private waterSandVisualInverted: boolean = false;
@@ -766,7 +782,7 @@ struct SandCanvas {
 
   aboutToDisappear(): void {
     this.p013.release();
-    this.frameCb.owner = null;
+    this.frameCb.owner = null;this.sceneFrameStarted=false;
     // §26.4 risk 1: clear the schedule player's activation flag on exit —
     // a crashed/abandoned player must never permanently reject commands.
     this.p011SchedulePlayer.forceStop();
@@ -785,14 +801,14 @@ struct SandCanvas {
     this.writeInputModeState(transitionP011InputMode(disposedState, this.testMode,
       AppStorage.get<number>('p011TiltWantCommandSeq') ?? 0, 0).state);
     this.waterSandField?.resetInputState();
+    if(this.naturalObservationStore!==null)this.finishCapture(this.captureFinishRequest || 'dispose:'+this.naturalObservationStore.inspect().storeGeneration).catch((e: Error): void => {this.logWaterSand(e.message);});
     const observationStore = this.naturalObservationStore;
     this.naturalObservationStore = null;
     this.naturalObservationProbe = null;
     this.waterSandField?.setNaturalObservationProbe(null);
     this.waterSandField?.setExternalAdmissionEventSink(null);
     this.deviceCapture = null;
-    observationStore?.close().catch((): void => {
-    });
+    observationStore?.close().catch((e: Error): void => {this.logWaterSand('P011_OBS_CLOSE_ERROR '+e.message);});
     if (this.sheetContent !== null) {
       this.sheetContent.dispose();
     }
@@ -1102,6 +1118,7 @@ struct SandCanvas {
   }
 
   private setupNaturalObservation(ws: WaterSandField): void {
+    this.captureFinished=false;this.captureFinishPromise=null;this.captureFinishRequest="";
     if (!this.waterSandSnapshotEnabled && AppStorage.get<boolean>('p011DeviceCapture') !== true) {
       return;
     }
@@ -1110,19 +1127,22 @@ struct SandCanvas {
     this.naturalObservationProbe = null;
     this.naturalObservationStoreLogged = false;
     ws.setNaturalObservationProbe(null);
-    previousStore?.close().catch((): void => {
-    });
+    if(previousStore!==null){const fence=previousStore.inspect();
+      previousStore.finish(fence.runId,fence.requestId || 'reset:'+fence.storeGeneration,fence.storeGeneration)
+        .catch((e: Error): void => {this.logWaterSand('P011_OBS_CLOSE_ERROR '+e.message);});}
     const pendingRecords: P011NaturalObservationRecord[] = [];
     const pendingAdmissions: P011ExternalAdmissionRecord[] = [];
     ws.setExternalAdmissionEventSink((record: P011ExternalAdmissionRecord): void => {
       const store = this.naturalObservationStore;
-      if (store === null) pendingAdmissions.push(record);
+      if (store === null) {if(pendingAdmissions.length>=256)throw new Error('OBS_PENDING_ADMISSIONS_OVERFLOW');pendingAdmissions.push(record);}
       else store.appendAdmission(record);
     });
     const runId = ws.getP011RunId();
+    const captureRouteId=ws.particleRouteActive() ? 'dual-field-particle-v1' : P011_NATURAL_OBSERVATION_ROUTE_ID;
     const probe = new P011NaturalObservationProbe(ws.cols, (record) => {
       const store = this.naturalObservationStore;
       if (store === null) {
+        if(pendingRecords.length>=256){ws.setNaturalObservationProbe(null);this.logWaterSand('P011_OBS_ERROR pending overflow');return;}
         pendingRecords.push(record);
         return;
       }
@@ -1133,8 +1153,7 @@ struct SandCanvas {
     const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
     createP011NaturalObservationStore(context, runId).then((store) => {
       if (this.waterSandField !== ws || this.naturalObservationProbe !== probe) {
-        store.close().catch((): void => {
-        });
+        store.close().catch((e: Error): void => {this.logWaterSand('P011_OBS_CLOSE_ERROR '+e.message);});
         return;
       }
       this.naturalObservationStore = store;
@@ -1147,7 +1166,8 @@ struct SandCanvas {
       if (!this.naturalObservationStoreLogged) {
         this.naturalObservationStoreLogged = true;
         this.logWaterSand(`P011_OBS_STORE ${JSON.stringify({
-          observationRouteId: P011_NATURAL_OBSERVATION_ROUTE_ID,
+          observationRouteId: captureRouteId,
+          identityRevision:'P011_COMMIT_IDENTITY_V2',storeGeneration:store.inspect().storeGeneration,
           runId: runId,
           admissionFilePath: store.admissionFilePath,
           endpointClockId: this.deviceCapture?.clock.clockId ?? null,
@@ -1353,6 +1373,11 @@ struct SandCanvas {
     }
     this.liquidWantCommandSeq = sequence;
     const command = JSON.parse(rawCommand) as LiquidWantCommand;
+    if(command.finishCaptureRequestId !== undefined) {
+      const store=this.naturalObservationStore;
+      if(store===null || store.inspect().runId!==command.finishCaptureRunId || store.inspect().storeGeneration!==command.finishCaptureGeneration){this.logWaterSand('P011_OBS_FINISH_REJECTED identity');return;}
+      this.finishCapture(command.finishCaptureRequestId).catch((e: Error): void => {this.logWaterSand(e.message);});return;
+    }
     if (command.shakeOnly === true) {
       if (this.renderMode === MODE_WATERSAND) this.setWaterSandShakeInput(command.shake);
       else if (this.renderMode === MODE_LIQUID) this.setLiquidShakeInput(command.shake);
@@ -1686,13 +1711,7 @@ struct SandCanvas {
     this.field = new SandGrid(cols, rows);
     // 渗透速率用 SandGrid 默认值 sinkChance=0.022（Node 标定：约 40s 渗完，慢渗透）
 
-    // 静态背景
-    const ctx = this.ctx;
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, this.canvasH);
-    bgGrad.addColorStop(0, '#0a0a14');
-    bgGrad.addColorStop(1, '#1a1a2e');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+    // T68: scene background belongs to T56 shaders; no hidden Canvas draw.
 
     // 初始分层：蓝（轻）在上 25%~50%，绿（重）在下 50%~85%
     // 填充率 60%（留 40% 空气供流动，防 CA 密实锁死）
@@ -1812,9 +1831,15 @@ struct SandCanvas {
     this.needRedraw = true;
   }
 
+  private supportsNewPipelineScene(): boolean {return this.renderMode===MODE_WATERSAND;}
   frame(frameTimeInNano: number = Date.now() * 1000000): void {
     // P-011 dual-input-v1: complete mode envelope before consuming its optional tilt.
     this.processLiquidWantCommand();
+    if(this.captureFinished){this.getUIContext().postFrameCallback(this.frameCb);return;}
+    if(!this.supportsNewPipelineScene()){
+      this.displayInfo='NEWPIPE_FAULT_UNSUPPORTED_SCENE: shader scene implementation required';
+      this.getUIContext().postFrameCallback(this.frameCb);return;
+    }
     const f = this.field;
     if (f === null) {
       return;
@@ -2200,62 +2225,13 @@ struct SandCanvas {
           dualCopyOk = ws.copyPublishedRenderStateInto(this.publishedRenderState) === 'OK';
           if (dualCopyOk) this.waterSandSnapshot = this.publishedRenderState.field;
         }
-        if (!dualActive && this.dualFieldMounted) {
-          this.p013.forceBaseline('DUAL_ROUTE_EXIT'); this.p013Mode = P013Mode.CANVAS_BASELINE;
-          this.p013OverlayVisible = false;
-        }
         this.dualFieldMounted = dualActive;
-        let dualDrawn = false;
-        const dualContext = dualActive ? this.buildP012FrameContext() : null;
-        if (dualActive && dualCopyOk && this.publishedRenderState !== null && dualContext !== null) {
-          const receipt = this.p013.submitDualField(this.publishedRenderState, dualContext,
-            this.canvasW, this.canvasH, frameTimeInNano);
-          dualDrawn = receipt !== null && receipt.code === 0 && receipt.swapSucceeded;
-        }
-        this.dualFieldVisible = dualDrawn;
-        if (dualContext !== null) dualContext.dualFieldGpu = dualDrawn;
-        if (this.waterSandSnapshot === null) this.waterSandSnapshot = ws.snapshot();
-        const renderSnapshot = this.waterSandSnapshot;
-        const p013ControlStart = this.p013.isOverlay() ? p013NowMs() : 0;
-        const p013Reference = this.p013.mode === P013Mode.CANVAS_TOPLIGHT_REFERENCE && !this.waterSandSnapshotEnabled;
-        const particleVisual = ws.particleRouteActive() && !this.waterSandSnapshotEnabled;
-        if ((p013Reference || particleVisual || this.p013.isOverlay()) && this.p012Renderer === null) {
-          this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
-        }
-        const p013Context = dualContext ?? (this.p013.isOverlay() || p013Reference ? this.buildP012FrameContext() : null);
-        const p013ControlCostMs = p013ControlStart > 0 ? p013NowMs() - p013ControlStart : 0;
         const segRenderT0 = Date.now();
-        if (p012ShouldUseP012Renderer(this.p012Renderer,
-          this.p012AppearanceTier as P012AppearanceTier, this.waterSandSnapshotEnabled) || p013Reference || particleVisual || this.p013.isOverlay()) {
-          const frameContext = p013Context ?? this.buildP012FrameContext();
-          if ((this.p013.isOverlay() || dualDrawn) && this.p012Renderer !== null) {
-            this.p012Renderer.prepareOnce(renderSnapshot, frameContext);
-            this.p012Renderer.renderBackground(this.ctx);
-            this.p013ForegroundCtx.clearRect(0, 0, this.canvasW, this.canvasH);
-            this.p012Renderer.renderForeground(this.p013ForegroundCtx);
-          } else {
-            this.p012Renderer?.render(this.ctx, renderSnapshot, frameContext);
-          }
-        } else {
-          this.renderWaterSand(this.ctx, renderSnapshot);
-        }
-        const segRenderMs = Date.now() - segRenderT0;
-        // P-013 uses the same copied snapshot, after Canvas timing ends.
-        if (this.waterSandSnapshotEnabled) {
-          if (this.p013.mode !== P013Mode.CANVAS_BASELINE) {
-            this.p013.forceBaseline('CANONICAL_EVIDENCE');
-            this.p013Mode = P013Mode.CANVAS_BASELINE;
-          }
-          this.p013OverlayVisible = false;
-        } else if (!dualActive && this.p013.isOverlay() && p013Context !== null) {
-          this.p013.submitPreparedFrame(`${p013Context.fieldEpoch}:${p013Context.frameSerial}:${renderSnapshot.physicsCommitId ?? 0}`,
-            renderSnapshot, p013Context,
-            this.canvasW, this.canvasH, frameTimeInNano, p013ControlCostMs);
-          this.p013FrameVisible = this.p013.diagnosticVisible;
-          this.p013Mode = this.p013.mode;
-          this.p013OverlayVisible = this.p013.isOverlay();
-          if (!this.p013.isOverlay()) this.p012Renderer?.render(this.ctx, renderSnapshot, p013Context);
-        }
+        // T68: T56 owns the complete scene/FBO. A partial bed/particle swap is
+        // forbidden even when labelled FAULT; keep the surface unsubmitted.
+        this.dualFieldVisible=false;
+        this.displayInfo='NEWPIPE_FAULT: complete scene T56 NOT_IMPLEMENTED';
+        const segRenderMs=Date.now()-segRenderT0;
         if (this.testMode) {
           // presentMs：呈现等待段 = 本帧处理完成到下帧 vsync 的等待
           // （postFrameCallback 回调返回后的空转；上帧完成时刻基准）
@@ -2520,6 +2496,7 @@ struct SandCanvas {
    * D3-following frame consumption when the field steps).
    */
   private stageGestureSandAndFeed(request: P011GestureSandRequest): void {
+    if(this.captureFinished)return;
     const field = this.waterSandField;
     if (field === null) {
       return;
@@ -3267,37 +3244,20 @@ struct SandCanvas {
 
   build() {
     Stack() {
-      Canvas(this.ctx)
-        .width('100%')
-        .height('100%').zIndex(0)
-        .onReady(() => {
-          this.canvasW = this.ctx.width;
-          this.canvasH = this.ctx.height;
-          this.initField();
-          this.frame();
+      Stack() {}.width('100%').height('100%')
+        .onAreaChange((_old: Area, area: Area) => {
+          const w=Number(area.width),h=Number(area.height);
+          if(w>0&&h>0&&(w!==this.canvasW||h!==this.canvasH)){this.canvasW=w;this.canvasH=h;this.initField();if(!this.sceneFrameStarted){this.sceneFrameStarted=true;this.frame();}}
         })
-
-      if ((this.p013OverlayVisible || this.dualFieldMounted) && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
-        XComponent({id: 'p013_lmat_surface', type: XComponentType.TEXTURE, libraryname: 'p013renderer'})
-          .width('100%').height('100%')
-          .opacity(this.dualFieldMounted && !this.dualFieldVisible ? 0 : 1).backgroundColor(Color.Transparent).zIndex(10)
-          .hitTestBehavior(HitTestMode.None)
-          .onLoad(() => { this.p013.onLoad(); })
-          .onDestroy(() => { this.p013.release(); this.p013FrameVisible = false; })
-      }
-      if ((this.p013OverlayVisible || this.dualFieldMounted) && !this.waterSandSnapshotEnabled && this.renderMode === MODE_WATERSAND) {
-        Canvas(this.p013ForegroundCtx).width('100%').height('100%')
-          .opacity(this.dualFieldMounted && !this.dualFieldVisible ? 0 : 1).zIndex(20).hitTestBehavior(HitTestMode.None)
-      }
-      if (this.renderMode === MODE_WATERSAND && !this.waterSandSnapshotEnabled) {
-        Button(['Canvas 基线', 'Canvas 顶光参考', 'GLES 透明 OFF', 'GLES 光场诊断'][this.p013Mode])
-          .zIndex(30).fontSize(12).position({x: 20, y: 85})
-          .onClick(() => {
-            this.p013.setMode(((this.p013Mode + 1) % 4) as P013Mode);
-            this.p013FrameVisible = this.p013.diagnosticVisible;
-            this.p013Mode = this.p013.mode;
-            this.p013OverlayVisible = this.p013.isOverlay();
-          })
+      if (this.renderMode === MODE_WATERSAND) {
+        XComponent({id:'p013_lmat_surface',type:XComponentType.TEXTURE,libraryname:'p013renderer'})
+          .width('100%').height('100%').zIndex(10).hitTestBehavior(HitTestMode.None)
+          .onLoad(() => {this.p013.onLoad();})
+          .onDestroy(() => {this.p013.release();})
+        Text('纯新管线故障：完整场景待T56，未提交局部画面')
+          .zIndex(25).fontSize(12).fontColor('#B00020').position({x:20,y:85})
+        Button('结束采集').zIndex(30).position({x:20,y:112})
+          .onClick(() => {const store=this.naturalObservationStore;if(store!==null)this.finishCapture('ui:'+store.inspect().storeGeneration).catch((e: Error): void=>{this.logWaterSand(e.message);});})
       }
       Text(this.displayInfo).zIndex(30)
         .fontSize(16)

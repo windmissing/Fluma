@@ -1,0 +1,12 @@
+{
+  "suite": "T66_store",
+  "passed": 5,
+  "failed": 0,
+  "cases": [
+    "finish exact identity and request idempotency",
+    "separate written counters",
+    "strict dual stream closed fence",
+    "missing written acknowledgement rejects CLOSED",
+    "skipped written sequence fails closed"
+  ]
+}

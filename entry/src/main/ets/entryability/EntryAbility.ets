@@ -135,6 +135,18 @@ export default class EntryAbility extends UIAbility {
   }
 
   private applyWant(parameters: Record<string, Object> | undefined, isNewWant: boolean): void {
+    if(isNewWant && parameters?.p011finish !== undefined) {
+      for(const key of Object.keys(parameters)) {
+        if(key!=='p011finish'&&key!=='p011finishrun'&&key!=='p011finishgeneration'&&!key.startsWith('ohos.')) {
+          hilog.warn(this.hilogDomain,this.hilogTag,'INVALID_CAPTURE_FINISH_ENVELOPE');return;
+        }
+      }
+      const requestId=`${parameters.p011finish}`,runId=`${parameters.p011finishrun ?? ''}`,generation=Number(`${parameters.p011finishgeneration ?? ''}`);
+      if(!requestId||!runId||!Number.isSafeInteger(generation)||generation<1){hilog.warn(this.hilogDomain,this.hilogTag,'INVALID_CAPTURE_FINISH');return;}
+      const command: LiquidCAWantCommand={finishCaptureRequestId:requestId,finishCaptureRunId:runId,finishCaptureGeneration:generation,
+        renderMode:4,testMode:false,forceInvert:false,seed:0,cellPx:4,caseId:'',warnings:[],shake:0};
+      AppStorage.setOrCreate('liquidWantCommand',JSON.stringify(command));AppStorage.setOrCreate('liquidWantCommandSeq',++this.wantCommandSequence);return;
+    }
     // Partial stop/update must not inherit parse defaults for mode/seed/test identity.
     const shakeOnly = isNewWant ? p011ShakeOnlyWant(parameters) : null;
     if (shakeOnly !== null) {

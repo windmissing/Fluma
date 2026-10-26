@@ -173,6 +173,7 @@ export interface P011MoistureLedgerBlock {
 }
 
 export interface P011NaturalObservationSubstepContext {
+  identityRevision?: string;
   peakFieldRevision?: string;
   peakInputCommitOrder?: number;
   peakConsumedShakeInputEventId?: string | null;
