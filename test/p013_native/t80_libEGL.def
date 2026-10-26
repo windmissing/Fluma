@@ -1,0 +1,16 @@
+LIBRARY libEGL.dll
+EXPORTS
+eglBindAPI
+eglChooseConfig
+eglCreateContext
+eglCreatePbufferSurface
+eglDestroyContext
+eglDestroySurface
+eglGetDisplay
+eglGetError
+eglInitialize
+eglMakeCurrent
+eglQueryString
+eglTerminate
+eglGetCurrentSurface
+eglQuerySurface

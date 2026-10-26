@@ -1,0 +1,4 @@
+PASS T81 entry coverage: READY pending survives bind-402 refusal and still draws (same instance)
+PASS T81 entry coverage: activate after rebind refused 402, READY pending retained (same instance)
+PASS T81 entry coverage: rebind back + re-stage restores eligibility, drawMaterialFrame consumes fresh generation
+PASS T81 all per-entry same-instance sequencing checks; host NAPI stub boundary, no Ark/device claims

@@ -1,0 +1,265 @@
+{
+ "executionId": "t80-h1-target-matrix-v1",
+ "date": "2026-10-26",
+ "scope": "desktop ANGLE 2.1.18846 Intel UHD630 D3D11 offscreen; NOT device/presentation evidence",
+ "designBasis": "docs/analysis-T77-material-color-v1.md section 6.1",
+ "constantShader": {
+  "vertex": "gl_VertexID fullscreen triangle",
+  "fragment": "uniform vec4 uL; o=uL",
+  "Lvalues": [
+   0,
+   0.0031308,
+   0.18,
+   0.5,
+   1.0,
+   null
+  ],
+  "note": "L emitted by shader: 0, sRGB-knee 0.0031308, 0.18, 0.5, 1.0, and OETF(145/255)=0.215760... (C-side computed as 1.055*(145/255)^2.4-0.055, float32); i.e. the 6th constant is the sRGB-ENCODE of palette byte 145 treated as a linear light"
+ },
+ "expected": {
+  "linearWriteBack": [
+   0,
+   1,
+   46,
+   128,
+   255,
+   55
+  ],
+  "linearWriteBackFormula": "round-half of 255*L (L=0.0031308 -> 0.798 -> observed 1 fits)",
+  "srgbWriteBack": [
+   0,
+   10,
+   118,
+   188,
+   255,
+   128
+  ],
+  "srgbWriteBackNote": "GL spec float->unorm conversion is round-to-nearest: 255*OETF(0.5)=187.516 -> 188 expected, ANGLE observed 187 (truncation) — recorded as implementation rounding behavior, NOT a frozen tolerance"
+ },
+ "matrix": [
+  {
+   "id": "T1-default-pbuffer",
+   "surfaceQuery": "query=OK colorspace=12426",
+   "attachQuery": "GL_BACK_impl_read_format=0x32993",
+   "writeControl": "EXT_sRGB_write_control:NOT_SUPPORTED",
+   "state": "draw=0 read=0 dither=1 packAlign=4 packRow=0",
+   "err": "NONE",
+   "constantOutputs": [
+    [
+     0,
+     0,
+     0,
+     255
+    ],
+    [
+     1,
+     1,
+     1,
+     255
+    ],
+    [
+     46,
+     46,
+     46,
+     255
+    ],
+    [
+     128,
+     128,
+     128,
+     255
+    ],
+    [
+     255,
+     255,
+     255,
+     255
+    ],
+    [
+     55,
+     55,
+     55,
+     255
+    ]
+   ]
+  },
+  {
+   "id": "T2-srgb-pbuffer-SKIPPED: EGL_KHR_gl_colorspace NOT in display extensions",
+   "surfaceQuery": "",
+   "attachQuery": "",
+   "writeControl": "",
+   "state": "",
+   "err": "",
+   "constantOutputs": [
+    [
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "id": "T3-rgba8-fbo",
+   "surfaceQuery": "no-surface(FBO-only)",
+   "attachQuery": "attachment0=LINEAR",
+   "writeControl": "EXT_sRGB_write_control:",
+   "state": "draw=1 read=1 dither=1 packAlign=4 packRow=0 fboStatus=0x8cd5",
+   "err": "NONE",
+   "constantOutputs": [
+    [
+     0,
+     0,
+     0,
+     255
+    ],
+    [
+     1,
+     1,
+     1,
+     255
+    ],
+    [
+     46,
+     46,
+     46,
+     255
+    ],
+    [
+     128,
+     128,
+     128,
+     255
+    ],
+    [
+     255,
+     255,
+     255,
+     255
+    ],
+    [
+     55,
+     55,
+     55,
+     255
+    ]
+   ]
+  },
+  {
+   "id": "T4-srgb8alpha8-fbo",
+   "surfaceQuery": "no-surface(FBO-only)",
+   "attachQuery": "attachment0=SRGB",
+   "writeControl": "EXT_sRGB_write_control:",
+   "state": "draw=1 read=1 dither=1 packAlign=4 packRow=0 fboStatus=0x8cd5",
+   "err": "NONE",
+   "constantOutputs": [
+    [
+     0,
+     0,
+     0,
+     255
+    ],
+    [
+     10,
+     10,
+     10,
+     255
+    ],
+    [
+     118,
+     118,
+     118,
+     255
+    ],
+    [
+     187,
+     187,
+     187,
+     255
+    ],
+    [
+     255,
+     255,
+     255,
+     255
+    ],
+    [
+     128,
+     128,
+     128,
+     255
+    ]
+   ]
+  }
+ ],
+ "attribution": {
+  "T1-default-pbuffer": "LINEAR codes match 255*L exactly (0.18->46, 0.5->128, EOTF(145/255)->55) — confirms T77 H1 numeric signature at constant-shader level",
+  "T3-rgba8-fbo": "identical LINEAR codes, attachment queried LINEAR — consistent write-through",
+  "T4-srgb8alpha8-fbo": "sRGB codes match 255*OETF(L) with ONE exception: L=0.5 read 187 vs round-to-nearest 188 (truncation); all other points exact — the hardware encode path is active when attachment IS sRGB",
+  "T2": "EGL_KHR_gl_colorspace NOT in display extension list; SRGB pbuffer request unavailable — T55's sRGB pbuffer attribute silently degraded; colorspace query on T1 returned 0x308A (12426)",
+  "writeControl": "GL_EXT_sRGB_write_control NOT in GL extension list; the product's conditional enable is correct per GLES contract"
+ },
+ "conclusion": "default-pbuffer host chain reads back LINEAR codes while SRGB8_ALPHA8 FBO encodes properly; H1 target-chain hypothesis confirmed at constant-shader level on this ANGLE host; per-T77 section 7 routing: record backend capability failure; NOT generalized to device, no product change authorized by this evidence",
+ "gaps": [
+  "no eglSwapBuffers/presentation evidence (offscreen only)",
+  "T2 sRGB pbuffer unavailable on this host (extension absent) — device A/B/C (T57) still required",
+  "fractional-alpha blending probes not yet run (section 6.1 phase 2)",
+  "(88,78) F64/F32 baseByte probes not yet run (section 6.2) — separate follow-up"
+ ],
+ "observed": {
+  "T1-default-pbuffer": [
+   0,
+   1,
+   46,
+   128,
+   255,
+   55
+  ],
+  "T3-rgba8-fbo": [
+   0,
+   1,
+   46,
+   128,
+   255,
+   55
+  ],
+  "T4-srgb8alpha8-fbo": [
+   0,
+   10,
+   118,
+   187,
+   255,
+   128
+  ]
+ }
+}
