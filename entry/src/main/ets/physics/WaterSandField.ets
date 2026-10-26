@@ -976,6 +976,8 @@ export class WaterSandField {
   private zeroTargetSince = -1;
   private shakeInput = 0;
   private shakeEnergy = 0;
+  private poolDiagnosticRequestEnergy = 0;
+  private poolDiagnosticEnergyAfter = 0;
   private simulationTime = 0;
   private t90Heavy = -1;
   private t90Light = -1;
@@ -2054,6 +2056,31 @@ export class WaterSandField {
   private tiltTraceLast: P011TiltPreviewTrace | null = null;
   setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void { this.tiltTraceSink=sink; }
   getLastTiltPreviewTrace(): P011TiltPreviewTrace | null { return this.tiltTraceLast; }
+  setPoolProgressDiagnosticEnabled(enabled: boolean): void {
+    if(this.particleBinding!==null)this.particleBinding.work.diagnosticEnabled=enabled;
+  }
+  getPoolProgressDiagnostic(): string | null {
+    const b=this.particleBinding;if(b===null || !b.work.diagnosticEnabled)return null;
+    const w=b.work;
+    return JSON.stringify({revision:'P011_POOL_PROGRESS_DIAGNOSTIC_V1',runId:this.p011RunId,
+      attemptId:this.p011CurrentAttemptId,substepId:this.p011SubstepId,configRevision:this.configRevision,
+      mediumMode:this.mediumMode,shakeInput:this.shakeInput,shakeEnergy:this.shakeEnergy,
+      requestEnergy:this.poolDiagnosticRequestEnergy,energyAfter:this.poolDiagnosticEnergyAfter,
+      seedCalls:b.seedCalls,collectCalls:w.collectCalls,seedCollectMs:b.seedCollectMs,
+      seedApplyMs:b.seedApplyMs,seedFinishMs:b.seedFinishMs,
+      birthRequested:w.birthRequested,birthCompleted:w.birthCompleted,
+      mergeCalls:w.mergeCalls,mergeSuccess:w.mergeSuccess,mergeCandidateChecks:w.mergeCandidateChecks,
+      activeCount:w.diagnosticActiveCount,journalUsed:w.diagnosticJournalUsed,lineageUsed:w.diagnosticLineageUsed,
+      freeBefore:w.diagnosticFreeBefore,liveBefore:w.diagnosticLiveBefore,nextIdBefore:w.diagnosticNextIdBefore,
+      freeAfter:w.diagnosticFreeAfter,liveAfter:w.diagnosticLiveAfter,nextIdAfter:w.diagnosticNextIdAfter,
+      firstError:w.diagnosticFirstError,firstErrorStage:w.diagnosticFirstErrorStage,
+      liveCount:b.liveCount,freeCount:b.pool.freeSlotCount,nextId:b.pool.nextParticleId,
+      failureStatus:w.failureStatus,errorStageCode:w.errorStageCode,rollbackCount:w.rollbackCount});
+  }
+  getParticleEventTail(limit: number): string[] {
+    const count=Math.max(0,Math.min(8,Math.floor(limit)));
+    return this.endpointParticleEvents.slice(Math.max(0,this.endpointParticleEvents.length-count));
+  }
   step(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
     if(this.tiltTraceSink===null)return this.stepWithTiltTrace(dt,p011Hook);
     const sink=this.tiltTraceSink;
@@ -6706,6 +6733,7 @@ export class WaterSandField {
   private liftByShake(dt: number): void {
     const trackSource = this.shakeSourceRouteActive() && !this.collectingTotalMotionRequests;
     const requestEnergy = this.shakeEnergy;
+    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled)this.poolDiagnosticRequestEnergy=requestEnergy;
     let liftedTotal = 0;
     let liftedColumns = 0;
     let dryFreeSlots=this.particleBinding===null?0:this.particleBinding.pool.freeSlotCount;
@@ -6719,6 +6747,7 @@ export class WaterSandField {
         this.shakeEnergy *= Math.exp(-this.params.shakeDecay * dt);
       }
     }
+    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled)this.poolDiagnosticEnergyAfter=this.shakeEnergy;
     if (requestEnergy <= EPS) {
       return;
     }

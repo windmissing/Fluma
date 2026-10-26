@@ -293,6 +293,12 @@ export class P011ParticleHotWorkspace {
   activePatchToken = 0; activePatchStepEpoch = 0; activePatchOrdinal = 0; patchState = 0;
   errorStageCode = 0; rollbackCount = 0; staleHandleRejectCount = 0; patchBusyCount = 0;
   overflowCount = 0; tokenExhausted = 0; bufferIdentityChanged = 0; legacyColdCallCount = 0; pageBacklog = 0;
+  diagnosticEnabled = false; mergeCandidateChecks = 0; mergeCalls = 0; mergeSuccess = 0;
+  birthRequested = 0; birthCompleted = 0; collectCalls = 0;
+  diagnosticActiveCount = 0; diagnosticJournalUsed = 0; diagnosticLineageUsed = 0;
+  diagnosticFreeBefore = 0; diagnosticLiveBefore = 0; diagnosticNextIdBefore = 0;
+  diagnosticFreeAfter = 0; diagnosticLiveAfter = 0; diagnosticNextIdAfter = 0;
+  diagnosticFirstError = 0; diagnosticFirstErrorStage = 0;
   constructor(config: P011ParticleHotConfig, pool: P011ParticleField) {
     this.ownerId = nextOwnerId++; this.pool = pool;
     // Cold owned copy: caller edits cannot change a frozen step's predictor.
@@ -508,6 +514,9 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
   if (work.stepEpoch >= Number.MAX_SAFE_INTEGER) return work.lastStatus = P011_HOT_TOKEN_EXHAUSTED;
   const poolStatus = work.pool.transferHotState(work.frozenPool, false);
   if (poolStatus !== P011_HOT_OK) return work.lastStatus = poolStatus;
+  if(work.diagnosticEnabled){work.diagnosticFreeBefore=work.frozenPool.freeCount;
+    work.diagnosticLiveBefore=work.frozenPool.liveCount;work.diagnosticNextIdBefore=work.frozenPool.nextId;
+    work.diagnosticFirstError=0;work.diagnosticFirstErrorStage=0;}
   if (work.budget !== null) {
     const budgetStatus = work.budget.beginHot(work.stepEpoch + 1, input.dt);
     if (budgetStatus !== 0) return work.lastStatus = budgetStatus;
@@ -669,11 +678,13 @@ function sortOrderHot(order: Int32Array, count: number, pool: P011ParticleSnapsh
 
 export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
   destination: P011ParticleHotPlanBuffer): number {
+  if (work.diagnosticEnabled) work.collectCalls++;
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
   if (destination !== work.planA && destination !== work.planB) return work.lastStatus = P011_HOT_INVALID_BUFFER;
   if (work.planA.consumed !== 0 || work.applying !== 0) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
   if (!destination.storageValidHot()) return work.lastStatus = P011_HOT_INVALID_BUFFER;
   const count = sortActive(work);
+  if(work.diagnosticEnabled && count>=0)work.diagnosticActiveCount=count;
   if (count < 0) { destination.valid = 0; return work.lastStatus = P011_HOT_INVALID_INPUT; }
   const p = work.frozenPool; let deposits = 0; let crossings = 0; let motions = 0; let total = 0;
   // First pass counts output rows, so overflow is rejected before writing any plan row.
@@ -901,15 +912,28 @@ function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a
   return P011_HOT_OK;
 }
 function mergeOldestHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot): number {
-  let a = -1; let b = -1;
-  for (let i = 0; i < p.nmax; i++) if (p.pState[i] !== 0) {
-    for (let j = 0; j < p.nmax; j++) if (p.pState[j] !== 0 && p.pId[i] < p.pId[j] &&
-      p.pPhase[i] === p.pPhase[j] && p.pSource[i] === p.pSource[j] && p.pSourceId[i] === p.pSourceId[j] &&
-      p.pState[i] === p.pState[j] && Math.floor(p.pX[i]) === Math.floor(p.pX[j]) &&
-      Math.abs(p.pY[i] - p.pY[j]) <= work.params.mergeHeightRadius &&
-      (a < 0 || p.pId[i] < p.pId[a] || (p.pId[i] === p.pId[a] && p.pId[j] < p.pId[b]))) { a = i; b = j; }
+  if (work.diagnosticEnabled) work.mergeCalls++;
+  // Rebuild ID order from the current scratch pool after every merge. The old
+  // scan selected the lexicographically smallest legal (pId[a], pId[b]).
+  let afterId = 0;
+  for (let pass = 0; pass < p.nmax; pass++) {
+    let a = -1;
+    for (let i = 0; i < p.nmax; i++) if (p.pState[i] !== 0 && p.pId[i] > afterId &&
+      (a < 0 || p.pId[i] < p.pId[a])) a = i;
+    if (a < 0) break;
+    let b = -1;
+    for (let j = 0; j < p.nmax; j++) {
+      if (work.diagnosticEnabled) work.mergeCandidateChecks++;
+      if (p.pState[j] !== 0 && p.pId[a] < p.pId[j] &&
+        p.pPhase[a] === p.pPhase[j] && p.pSource[a] === p.pSource[j] && p.pSourceId[a] === p.pSourceId[j] &&
+        p.pState[a] === p.pState[j] && Math.floor(p.pX[a]) === Math.floor(p.pX[j]) &&
+        Math.abs(p.pY[a] - p.pY[j]) <= work.params.mergeHeightRadius &&
+        (b < 0 || p.pId[j] < p.pId[b])) b = j;
+    }
+    if (b >= 0) { const status = mergePairHot(work, p, a, b); if (status === 0 && work.diagnosticEnabled) work.mergeSuccess++; return status; }
+    afterId = p.pId[a];
   }
-  return a < 0 ? P011_HOT_INVALID_PATCH_STATE : mergePairHot(work, p, a, b);
+  return P011_HOT_INVALID_PATCH_STATE;
 }
 function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBuffer, row: number,
   gh: number, gl: number, disposition: number): number {
@@ -923,6 +947,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
       const mass = phase === 0 ? gh : gl; const count = Math.floor(mass / work.params.massPackage);
       const tail = mass - count * work.params.massPackage;
       const births = count + (tail > 0 ? 1 : 0);
+      if (work.diagnosticEnabled) work.birthRequested += births;
       if (!Number.isSafeInteger(births) || births > work.patchActions.capacity - work.patchActions.count) return P011_HOT_JOURNAL_OVERFLOW;
       for (let k = 0; k < births; k++) {
         if (p.freeCount === 0) {
@@ -947,6 +972,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
         p.pVy[slot] = dry && kind === 1 ? 0 : kind === 4 ? lift : -speed * Math.cos(work.effectiveTiltRad);
         p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];
         p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;
+        if (work.diagnosticEnabled) work.birthCompleted++;
         if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];
         if (actionCommonHot(work, p, slot, P011_HOT_KIND_SPAWN) < 0) return P011_HOT_JOURNAL_OVERFLOW;
       }
@@ -1099,6 +1125,7 @@ export function auditParticleHot(work: P011ParticleHotWorkspace): number {
   return Math.abs(afterH - beforeH - work.stepExternalH) > 1e-9 || Math.abs(afterL - beforeL - work.stepExternalL) > 1e-9 ? 13 : 0;
 }
 function failApplyHot(work: P011ParticleHotWorkspace, epoch: number, code: number, ordinal: number, stage: number): number {
+  if(work.diagnosticEnabled&&work.diagnosticFirstError===0){work.diagnosticFirstError=code;work.diagnosticFirstErrorStage=stage;}
   work.failureStatus = code; work.failureOrdinal = ordinal; work.failureAttemptToken = work.attemptToken;
   const rolled = work.active === 1 ? rollbackStepHot(work, epoch) : 0;
   work.errorStageCode = stage; work.results.status = code;
@@ -1146,6 +1173,9 @@ export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedSt
     p.pX[slot] = plan.motionX[i]; p.pY[slot] = plan.motionY[i]; p.pVx[slot] = plan.motionVx[i]; p.pVy[slot] = plan.motionVy[i];
   }
   const moved = work.pool.transferHotState(p, true); if (moved !== 0) return failApplyHot(work, expectedStepEpoch, moved, 0, 4);
+  if(work.diagnosticEnabled){work.diagnosticJournalUsed=work.patchActions.count;
+    work.diagnosticLineageUsed=work.patchActions.lineageCount;
+    work.diagnosticFreeAfter=p.freeCount;work.diagnosticLiveAfter=p.liveCount;work.diagnosticNextIdAfter=p.nextId;}
   const audit = auditParticleHot(work); if (audit !== 0) return failApplyHot(work, expectedStepEpoch, audit, 0, 5);
   work.applying = 0; plan.consumed = 1; results.status = 0; return work.lastStatus = 0;
 }

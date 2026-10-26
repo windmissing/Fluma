@@ -57,6 +57,7 @@ export class P011ParticleM2FieldBinding {
   private attemptToken = 0;
   private stepOpen = 0;
   private birthEventRows: string[] = [];
+  seedCalls = 0; seedCollectMs = 0; seedApplyMs = 0; seedFinishMs = 0;
   constructor(cols: number, capacity: number, waterTop: Float64Array, bh: Float64Array,
     bl: Float64Array, mh: Float64Array, ml: Float64Array, suspH: Float64Array,
     suspL: Float64Array, surface: Float64Array, params: P011ParticleParams, host: P011ParticleM2Host) {
@@ -74,9 +75,26 @@ export class P011ParticleM2FieldBinding {
   get pool(): P011ParticleField { return this.work.pool; }
   get liveCount(): number { return this.work.pool.totals().count; }
   get active(): boolean { return this.stepOpen !== 0; }
+  // The birth callers overwrite every effective row and motion count. The
+  // first collect still performs the original frozen-pool/predictor validation;
+  // the second collect had no consumed data beyond this plan identity header.
+  private collectBirthHeaders(): number {
+    const w = this.work;
+    const status = collectParticlePlanInto(w, w.stepEpoch, w.planA);
+    if (status !== 0) return status;
+    const a = w.planA, b = w.planB;
+    if (!b.storageValidHot()) return -1;
+    b.ownerId = a.ownerId; b.runToken = a.runToken; b.stepEpoch = a.stepEpoch;
+    b.substepId = a.substepId; b.attemptToken = a.attemptToken;
+    b.paramsRevision = a.paramsRevision; b.inputRevision = a.inputRevision;
+    b.seed = a.seed; b.dt = a.dt; b.effectiveTiltRad = a.effectiveTiltRad;
+    b.valid = 1; b.consumed = 0;
+    return 0;
+  }
   seed(mass: number, x: number, y: number, vx: number, vy: number,
     phase: number, sourceKind: number, sourceId: number): number {
     if (this.stepOpen !== 0 || this.work.pageBacklog !== 0) return -1;
+    if(this.work.diagnosticEnabled)this.seedCalls++;
     this.attemptToken++;
     const w = this.work;
     const tilt = sourceKind === 0 ? Math.atan2(vx, 0 - vy) : w.effectiveTiltRad;
@@ -84,8 +102,10 @@ export class P011ParticleM2FieldBinding {
       attemptToken: this.attemptToken, dt: 1 / 60, effectiveTiltRad: tilt, seed: sourceId,
       paramsRevision: 1, inputRevision: 1, field: this.field }) !== 0) return -1;
     this.stepOpen = 1;
-    if (collectParticlePlanInto(w, w.stepEpoch, w.planA) !== 0 ||
-      collectParticlePlanInto(w, w.stepEpoch, w.planB) !== 0) { this.rollback(); return -1; }
+    const collectStart=this.work.diagnosticEnabled?Date.now():0;
+    const collected=this.collectBirthHeaders();
+    if(this.work.diagnosticEnabled)this.seedCollectMs+=Date.now()-collectStart;
+    if (collected !== 0) { this.rollback(); return -1; }
     const a = w.planA, b = w.planB;
     a.requestCount = 1; a.motionCount = 0; a.totalRequested = 0;
     a.kind[0] = sourceKind === 0 ? 1 : 4; a.phase[0] = phase; a.sourceKind[0] = sourceKind;
@@ -96,10 +116,15 @@ export class P011ParticleM2FieldBinding {
     b.requestCount = 1; b.motionCount = 0; b.totalRequested = 0;
     copyRequestRowHot(a, 0, b, 0);
     this.sink.birthOnly = sourceKind === 1 ? 1 : 0;
+    const applyStart=this.work.diagnosticEnabled?Date.now():0;
     const applied = applyParticlePlanInto(w, w.stepEpoch, a, this.sink, w.results);
+    if(this.work.diagnosticEnabled)this.seedApplyMs+=Date.now()-applyStart;
     this.sink.birthOnly = 0;
     if (applied !== 0 || w.results.granted[0] !== mass) { this.rollback(); return -1; }
-    if (finishStepHot(w, w.stepEpoch) !== 0) { this.rollback(); return -1; }
+    const finishStart=this.work.diagnosticEnabled?Date.now():0;
+    const finished=finishStepHot(w, w.stepEpoch);
+    if(this.work.diagnosticEnabled)this.seedFinishMs+=Date.now()-finishStart;
+    if (finished !== 0) { this.rollback(); return -1; }
     this.stepOpen = 0;
     const evidence = this.exportCommittedEvidence();
     for (let i = 0; i < evidence.events.length; i++) { const row = serializeP011ParticleEvent(evidence.events[i], i); if (row !== null) this.birthEventRows.push(row); }
@@ -107,11 +132,15 @@ export class P011ParticleM2FieldBinding {
   }
   beginDryBatch(heavy: number, light: number, x: number, y: number, sourceId: number, seed: number, sourceKind: number = 0): boolean {
     if (this.stepOpen !== 0 || this.work.pageBacklog !== 0 || this.field.mediumMode !== 'DRY_AIR_V1') return false;
+    if(this.work.diagnosticEnabled)this.seedCalls++;
     this.attemptToken++; const w=this.work;
     if (beginStepHot(w,{runToken:this.runToken,substepId:w.substepId,attemptToken:this.attemptToken,
       dt:1/60,effectiveTiltRad:0,seed:seed,paramsRevision:1,inputRevision:1,field:this.field})!==0)return false;
     this.stepOpen=1;
-    if(collectParticlePlanInto(w,w.stepEpoch,w.planA)!==0 || collectParticlePlanInto(w,w.stepEpoch,w.planB)!==0){this.rollback();return false;}
+    const collectStart=this.work.diagnosticEnabled?Date.now():0;
+    const collected=this.collectBirthHeaders();
+    if(this.work.diagnosticEnabled)this.seedCollectMs+=Date.now()-collectStart;
+    if(collected!==0){this.rollback();return false;}
     const a=w.planA,b=w.planB;a.requestCount=0;a.motionCount=0;a.totalRequested=0;
     for(let phase=0;phase<2;phase++){
       const mass=phase===0?heavy:light;if(mass===0)continue;const row=a.requestCount++;
@@ -123,7 +152,9 @@ export class P011ParticleM2FieldBinding {
     b.requestCount=a.requestCount;b.motionCount=0;b.totalRequested=0;
     for(let row=0;row<a.requestCount;row++)copyRequestRowHot(a,row,b,row);
     this.sink.birthOnly=sourceKind===1?1:0;
+    const applyStart=this.work.diagnosticEnabled?Date.now():0;
     const applied=applyParticlePlanInto(w,w.stepEpoch,a,this.sink,w.results);this.sink.birthOnly=0;
+    if(this.work.diagnosticEnabled)this.seedApplyMs+=Date.now()-applyStart;
     if(applied!==0){this.rollback();return false;}
     for(let row=0;row<a.requestCount;row++)if(w.results.granted[row]!==a.requested[row]){this.rollback();return false;}
     return true;

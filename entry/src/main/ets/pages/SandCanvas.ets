@@ -2232,6 +2232,7 @@ struct SandCanvas {
           this.publishedRenderState=ws.createPublishedRenderStateSlot();this.publishedField=ws;
         }
         const segRenderT0=Date.now();
+        if(this.poolProgressTraceEnabled&&this.frameCount%60===0)this.tracePoolProgress('pool',ws.getPoolProgressDiagnostic()??'unavailable');
         const publication=this.publishedRenderState;
         if(publication!==null&&ws.copyPublishedSceneStateInto(publication)==='OK'){
           this.waterSandSnapshot=publication.field;
@@ -2410,6 +2411,14 @@ struct SandCanvas {
   private panLastLocalX = 0;
   private panLastLocalY = 0;
   private panLastEventAccepted = false;
+  private poolProgressTraceEnabled = false;
+  private poolProgressTraceRows = 0;
+  private tracePoolProgress(stage: string, detail: string): void {
+    if(!this.poolProgressTraceEnabled)return;
+    if(this.poolProgressTraceRows>=128){if(this.poolProgressTraceRows===128)this.logWaterSand('WS_EVENT pool_progress TRACE_INCOMPLETE dropped');this.poolProgressTraceRows=129;return;}
+    this.poolProgressTraceRows++;
+    this.logWaterSand('WS_EVENT pool_progress '+stage+' '+detail);
+  }
 
   /**
    * Gate three conditions (B design §4): water-sand render mode + the
@@ -2447,7 +2456,9 @@ struct SandCanvas {
     this.panLastLocalX = localX;
     this.panLastLocalY = localY;
     this.panUpdateCount++;
-    if (!this.gestureSandGate(localX, localY)) {
+    const gate=this.gestureSandGate(localX, localY);
+    this.tracePoolProgress('gate',`accepted=${gate} pan=${this.panUpdateCount} x=${localX} y=${localY}`);
+    if (!gate) {
       this.panLastEventAccepted = false;
       this.gestureRateClock.suspend();
       return;
@@ -2455,6 +2466,7 @@ struct SandCanvas {
     this.panLastEventAccepted = true;
     const now = timestampNs / 1000000;
     const dtSec = this.gestureRateClock.sample(timestampNs, 'ns');
+    this.tracePoolProgress('clock',`dtSec=${dtSec} active=${this.panLastEventAccepted} timeNs=${timestampNs}`);
     if (dtSec <= 0) {
       return;
     }
@@ -2487,6 +2499,7 @@ struct SandCanvas {
       qL[c] = total * (1 - SandCanvas.SAND_HEAVY_SHARE) * share;
     }
     this.gestureSequence += 1;
+    this.tracePoolProgress('request',`sourceId=${this.gestureSourceId} sequence=${this.gestureSequence} H=${total*SandCanvas.SAND_HEAVY_SHARE} L=${total*(1-SandCanvas.SAND_HEAVY_SHARE)}`);
     this.stageGestureSandAndFeed({
       perColumnHeavy: qH,
       perColumnLight: qL,
@@ -2507,15 +2520,19 @@ struct SandCanvas {
    * D3-following frame consumption when the field steps).
    */
   private stageGestureSandAndFeed(request: P011GestureSandRequest): void {
-    if(this.captureFinished)return;
+    if(this.captureFinished){this.tracePoolProgress('inject_skip','captureFinished');return;}
     const field = this.waterSandField;
     if (field === null) {
+      this.tracePoolProgress('inject_skip','field_null');
       return;
     }
     // Direct transaction: immediate receipt (the substep-time queue is
     // the bounded fallback for burst recovery; the direct call keeps the
     // tracer latency ≤1 frame as the B design §1.3 requires).
+    this.tracePoolProgress('inject_enter',`sequence=${request.sequence} sourceId=${request.sourceId}`);
+    const injectStart=Date.now();
     const receipt = field.injectGestureSand(request);
+    this.tracePoolProgress('inject_return',`sequence=${request.sequence} elapsedMs=${Date.now()-injectStart} receipt=${receipt===null?'null':receipt.rejectedReason??'accepted'} admittedH=${receipt?.admittedH??0} admittedL=${receipt?.admittedL??0}`);
     if (receipt !== null && !field.particleRouteActive()) {
       this.p012Renderer?.sandTracer.feed(receipt,
         this.boxW / Math.max(1, this.waterSandCols));
@@ -3243,6 +3260,9 @@ struct SandCanvas {
         Button(['基础全场景','P1 OFF 全场景','P1 ON 全场景'][this.scenePipeline])
           .onClick(() => {this.scenePipeline=(this.scenePipeline+1)%3;})
           .zIndex(25).fontSize(12).fontColor('#B00020').position({x:20,y:85})
+        Button('池诊断切换').onClick(() => {this.poolProgressTraceEnabled=!this.poolProgressTraceEnabled;
+          this.poolProgressTraceRows=0;this.waterSandField?.setPoolProgressDiagnosticEnabled(this.poolProgressTraceEnabled);})
+          .zIndex(25).fontSize(12).position({x:180,y:85})
         Button('结束采集').zIndex(30).position({x:20,y:112})
           .onClick(() => {const store=this.naturalObservationStore;if(store!==null)this.finishCapture('ui:'+store.inspect().storeGeneration).catch((e: Error): void=>{this.logWaterSand(e.message);});})
       }
