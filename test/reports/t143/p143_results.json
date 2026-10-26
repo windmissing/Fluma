@@ -1,0 +1,50 @@
+{
+ "executionId": "p143-base-strip-review-v1",
+ "date": "2026-10-26",
+ "target": "T114 1b2131f",
+ "results": [
+  {
+   "id": "T143-R1",
+   "name": "zero-byte-diff per native j × 3 layers: 6 own parameter groups (fractional box/mirror/spark/out-of-range slot) match the from-contract oracle exactly",
+   "status": "PASS",
+   "cases": 6,
+   "diffAt": -1
+  },
+  {
+   "id": "T143-R2",
+   "name": "descriptor: byteLength = 12W and payloadSha256 equals standard crypto digest",
+   "status": "PASS",
+   "byteLength": 1560,
+   "shaOK": true
+  },
+  {
+   "id": "T143-R3",
+   "name": "V2 scene packet route and palette original values carried (structure: scene_compositor uses V2_BASE_STRIP; evaluator consumes palette fields)",
+   "status": "PASS",
+   "v2": true,
+   "paletteInEval": true
+  },
+  {
+   "id": "T143-R4",
+   "name": "resource budget: uploader carries the 65536 total-upload budget and partial<4 constraint; native core test re-run PASS (t143_core.exe)",
+   "status": "PASS",
+   "budget": true,
+   "partial": true,
+   "coreRun": "T114 base strip core PASS"
+  },
+  {
+   "id": "T143-R5",
+   "name": "dual lease atomicity: failed swap commits neither resource / success commits both (t143_atomic.exe re-run PASS)",
+   "status": "PASS",
+   "dual": true,
+   "atomicRun": "T114 scene dual lease atomic PASS"
+  },
+  {
+   "id": "T143-R6",
+   "name": "explicit resource set: two CPU slots + two three-layer RGBA8UI textures declared; ETS-side reusable 12W scratch present (structure)",
+   "status": "PASS",
+   "twoTextures": true,
+   "scratch": true
+  }
+ ]
+}
