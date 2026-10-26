@@ -1,0 +1,247 @@
+{
+ "executionId": "p086-tilt-preview-evidence-v1",
+ "date": "2026-10-26",
+ "identity": {
+  "baseCommit": "50234fb (T85 trace interface)",
+  "treeDelta": "T56 114a7ee additive copyPublishedSceneStateInto only",
+  "traceRevision": "P011_TILT_PREVIEW_TRACE_V1"
+ },
+ "results": [
+  {
+   "id": "T86-A01",
+   "name": "step73 code5 retained with trace ON; trace status COMPLETE",
+   "status": "PASS",
+   "ok": false,
+   "errorCode": 5,
+   "substeps": 0,
+   "traceStatus": "COMPLETE",
+   "blockedReason": "NO_SAFE_OLD_TILT_PLAN",
+   "resultStatus": "blocked"
+  },
+  {
+   "id": "T86-B01",
+   "name": "actual preview call sequence with roles and stages (not passCount)",
+   "status": "PASS",
+   "sequence": [
+    "1:REQUESTED:PLANS_READY",
+    "2:OLD:PLANS_READY"
+   ],
+   "notExecuted": [
+    "CLAMPED:REQUESTED_INTERVAL_INFEASIBLE"
+   ]
+  },
+  {
+   "id": "T86-C01",
+   "name": "per-candidate decision detail with decisive-edge IEEE754 roundtrip",
+   "status": "PASS",
+   "candidates": [
+    {
+     "role": "REQUESTED",
+     "theta": 0,
+     "feasible": false,
+     "finalLo": null,
+     "finalHi": null,
+     "thetaClamped": null,
+     "candidateDifference": null,
+     "acceptedComparison": false,
+     "slopeLo": 4.440892098500626e-16,
+     "slopeHi": -4.440892098500626e-16,
+     "stepLo": -12,
+     "stepHi": 12,
+     "directedLo": 0,
+     "directedHi": 0,
+     "worstGNext": {
+      "column": 63,
+      "gNext": 0.5773502691896262,
+      "gNextHex": "3fe279a745903320",
+      "lo": 4.440892098500626e-16,
+      "loHex": "3cc0000000000000",
+      "hi": 1.154700538379252,
+      "hiHex": "3ff279a74590331e",
+      "cumulativeLo": 4.440892098500626e-16,
+      "cumulativeHi": 0.5773502691896257
+     },
+     "limitingEdges": [
+      {
+       "column": 0,
+       "gNext": 0,
+       "lo": -0.5773502691896257,
+       "hi": 0.5773502691896257,
+       "cumulativeLo": -0.5773502691896257,
+       "cumulativeHi": 0.5773502691896257,
+       "cumulativeLoEdge": 0,
+       "cumulativeHiEdge": 0
+      },
+      {
+       "column": 63,
+       "gNext": 0.5773502691896262,
+       "lo": 4.440892098500626e-16,
+       "hi": 1.154700538379252,
+       "cumulativeLo": 4.440892098500626e-16,
+       "cumulativeHi": 0.5773502691896257,
+       "cumulativeLoEdge": 63,
+       "cumulativeHiEdge": 0
+      },
+      {
+       "column": 64,
+       "gNext": -0.5773502691896262,
+       "lo": -1.154700538379252,
+       "hi": -4.440892098500626e-16,
+       "cumulativeLo": 4.440892098500626e-16,
+       "cumulativeHi": -4.440892098500626e-16,
+       "cumulativeLoEdge": 63,
+       "cumulativeHiEdge": 64
+      }
+     ]
+    },
+    {
+     "role": "OLD",
+     "theta": 0,
+     "feasible": false,
+     "finalLo": null,
+     "finalHi": null,
+     "thetaClamped": null,
+     "candidateDifference": null,
+     "acceptedComparison": false,
+     "slopeLo": 4.440892098500626e-16,
+     "slopeHi": -4.440892098500626e-16,
+     "stepLo": -12,
+     "stepHi": 12,
+     "directedLo": 0,
+     "directedHi": 0,
+     "worstGNext": {
+      "column": 63,
+      "gNext": 0.5773502691896262,
+      "gNextHex": "3fe279a745903320",
+      "lo": 4.440892098500626e-16,
+      "loHex": "3cc0000000000000",
+      "hi": 1.154700538379252,
+      "hiHex": "3ff279a74590331e",
+      "cumulativeLo": 4.440892098500626e-16,
+      "cumulativeHi": 0.5773502691896257
+     },
+     "limitingEdges": [
+      {
+       "column": 0,
+       "gNext": 0,
+       "lo": -0.5773502691896257,
+       "hi": 0.5773502691896257,
+       "cumulativeLo": -0.5773502691896257,
+       "cumulativeHi": 0.5773502691896257,
+       "cumulativeLoEdge": 0,
+       "cumulativeHiEdge": 0
+      },
+      {
+       "column": 63,
+       "gNext": 0.5773502691896262,
+       "lo": 4.440892098500626e-16,
+       "hi": 1.154700538379252,
+       "cumulativeLo": 4.440892098500626e-16,
+       "cumulativeHi": 0.5773502691896257,
+       "cumulativeLoEdge": 63,
+       "cumulativeHiEdge": 0
+      },
+      {
+       "column": 64,
+       "gNext": -0.5773502691896262,
+       "lo": -1.154700538379252,
+       "hi": -4.440892098500626e-16,
+       "cumulativeLo": 4.440892098500626e-16,
+       "cumulativeHi": -4.440892098500626e-16,
+       "cumulativeLoEdge": 63,
+       "cumulativeHiEdge": 64
+      }
+     ]
+    }
+   ],
+   "ieee": {
+    "column": 63,
+    "gNextHex": "3fe279a745903320",
+    "gNext": 0.5773502691896262,
+    "roundtrip": true,
+    "loRoundtrip": true,
+    "hiRoundtrip": true
+   },
+   "preexisting": {
+    "violated": false,
+    "residualsAround64": [
+     0,
+     0,
+     0,
+     0.5773502691896262,
+     -0.5773502691896262,
+     0,
+     0,
+     0
+    ],
+    "tolerance": 1e-12,
+    "s0_63_64_65": [
+     24,
+     24.577350269189626,
+     24
+    ]
+   }
+  },
+  {
+   "id": "T86-D01",
+   "name": "col63/col64 edge slopes vs tan30 hard max with hex provenance",
+   "status": "PASS",
+   "tan30": 0.5773502691896257,
+   "tan30Hex": "0000000000000000",
+   "col63": {
+    "s0Difference": 0.5773502691896262,
+    "deltaDifference": 0,
+    "gNext": 0.5773502691896262,
+    "lo": 4.440892098500626e-16,
+    "hi": 1.154700538379252,
+    "gNextHex": "3fe279a745903320"
+   },
+   "col64": {
+    "s0Difference": -0.5773502691896262,
+    "deltaDifference": 0,
+    "gNext": -0.5773502691896262,
+    "lo": -1.154700538379252,
+    "hi": -4.440892098500626e-16
+   },
+   "exceedsHardMax": {
+    "byGNext": false,
+    "note": "lo=gNext-H hi=gNext+H: see report"
+   },
+   "deltaS_63_64_65": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "T86-E01",
+   "name": "theta=5 contrast: accepted trace vs blocked trace decisive edges",
+   "status": "PASS",
+   "blocked": {
+    "step": 73,
+    "code": 5
+   },
+   "afterStep": {
+    "ok": true,
+    "errorCode": null
+   },
+   "acceptedTraceRoles": [
+    "REQUESTED:PLANS_READY"
+   ],
+   "acceptedTraceFeasible": [
+    {
+     "role": "REQUESTED",
+     "feasible": true,
+     "thetaClamped": 5,
+     "acceptedComparison": true
+    }
+   ]
+  },
+  {
+   "id": "T86-F01",
+   "name": "trace ON/OFF full 76-step state/result byte equivalence (independent recheck)",
+   "status": "PASS",
+   "firstDiff": null
+  }
+ ]
+}
