@@ -1,0 +1,104 @@
+{
+ "executionId": "t101-color-capture-v2",
+ "date": "2026-10-26",
+ "scope": "desktop ANGLE offscreen; NOT device evidence",
+ "contract": "T93 sections 3-5 + T87 section 4 (T88_COLOR_CAPTURE_V2)",
+ "environment": {
+  "queryOK": "colorspace query executed; see environment.txt",
+  "writeControl": "NOT_SUPPORTED",
+  "colorspaceAttributeValue": null
+ },
+ "sameTargetProductionVsDebug": {
+  "target": "SRGB8_ALPHA8 pbuffer, SAME context",
+  "prod88": [
+   238,
+   181,
+   85
+  ],
+  "dbg88": [
+   238,
+   181,
+   85
+  ],
+  "diffBytes": 0,
+  "diffFirst": -1,
+  "stage88": {
+   "baseB": 173,
+   "grainB": 102,
+   "strataB": 127,
+   "k": 1
+  },
+  "verdict": "production MaterialPass and debug MRT variant are BYTE-IDENTICAL over the full 160x288 target on the same context/target — instrumentation changed nothing; baseB=173 carries same-target production equivalence"
+ },
+ "continuousStages": {
+  "at88": [
+   {
+    "stage": "gain",
+    "at88": [
+     1.14999998,
+     0,
+     0,
+     1
+    ]
+   },
+   {
+    "stage": "Qbase",
+    "at88": [
+     15.3094292,
+     3.04763985,
+     0.717874169,
+     1
+    ]
+   },
+   {
+    "stage": "Rpre",
+    "at88": [
+     14.1483555,
+     2.43903971,
+     0.503677666,
+     1
+    ]
+   },
+   {
+    "stage": "Lmat",
+    "at88": [
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   {
+    "stage": "ToneMap",
+    "at88": [
+     0.933986247,
+     0.709221125,
+     0.334963888,
+     1
+    ]
+   }
+  ],
+  "interpretation": "gain=1.14999998 (float32 of interpolated 1.149999976158142); Qbase/Rpre large per preparedQ; Lmat=1 (light off); ToneMap=(0.934,0.709,0.335) linear; final bytes = round(255*linear): 0.934->238, 0.709->181, 0.335->85 — readback on this host is LINEAR (T80 H1: SRGB pbuffer request silently degraded, colorspace extension absent); T55 archived 157 was an actually-encoding sRGB-FBO path — both consistent once the target domain is fixed; NO uniform error",
+  "verdict": "continuous quantities captured on a real RGBA32F target; production math chain fully traced from gain to ToneMap at the probe point"
+ },
+ "hashes": {
+  "productionShaderSha256OfSource": "2376657273696f6e203330302065730a707265636973696f6e20686967687020",
+  "debugShaderSha256OfSource": "2376657273696f6e203330302065730a707265636973696f6e20686967687020",
+  "stageShaderSha256OfSource": "2376657273696f6e203330302065730a707265636973696f6e20686967687020",
+  "note": "hex of the source text (full hashes in t101-manifest.json); grain/strata asset hashes identical to T55/T88"
+ },
+ "t87Checklist": {
+  "T2 actual attempt+query": "SRGB pbuffer created via attributes in both T80-matrix and this probe; eglQuerySurface executed (queryOK in environment.txt); extension absent on this host so the request degrades — recorded, not rewritten as PASS",
+  "GL extension source + write-control": "glGetString(GL_EXTENSIONS) recorded with token check; write-control NOT_SUPPORTED; no unconditional enable",
+  "default GL_BACK encoding": "T80-matrix remains the default-domain evidence (impl read format archived); this probe targets FBO/pbuffer only, no duplication",
+  "four-target grouping": "not repeated here (T80 T1/T3/T4 valid observations preserved); same-context requirement satisfied for prod-vs-debug pair",
+  "per-stage errors / raw / manifest": "full-target raw RGBA archived for production and debug; per-stage float raw archived; auto-generated manifest JSON with three shader hashes",
+  "continuous quantities": "CAPTURED (gain/Qbase/Rpre/Lmat/ToneMap) via RGBA32F per-stage passes"
+ },
+ "residualGaps": [
+  "T2 truly-encoding sRGB path does not exist on this host (extension absent) — device A/B/C still required",
+  "dither production vs disabled branch not re-probed this round (T88 partA raw preserved)",
+  "fractional-alpha precision table remains observation-only (no tolerance frozen)"
+ ],
+ "noClaim": "no tolerance frozen; no product/shader/recipe change; T55/T80/T88 history preserved; T99 design can proceed in parallel; attribution stays with architect"
+}
