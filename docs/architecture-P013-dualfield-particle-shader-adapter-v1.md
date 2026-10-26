@@ -138,3 +138,8 @@ clipX=2*xNative/surfaceWidth-1; clipY=1-2*yNative/surfaceHeight
 本次方案已完成，直接交原T20与T34串行文件交接；无新增manager验收门。只新增本文、不改历史Canvas稿或T33已签收合同。GLES基础双场链现在可开发，完整材质独立推进；守恒、state2库存、镜像公式、Nmax/速度/源准入/预算、endpoint/peak协议及冻结指标均不变。没有设备或实现通过声明；算法/效果参数需要变化时交designer，不通过工程接口暗改数学。
 
 修订记录：2026-10-25，v1（T37），从T02实际schema4稀疏SoA与现P0桥出发，登记同态发布token、定容双SoA上传、基础/完整双出口、state2与tracer责任、线程/恢复和T20/T34串行任务书。旧稿历史Canvas首选由本文明确替代后端门序。
+
+
+## 2026-10-26 用户强制边界追补（T68）
+
+本文原有Canvas背景/前景、Canvas上屏和失败退路自本次要求起不适用于后续产品路径，显式由 [P013_NEWPIPE_ONLY_V1工程合同](architecture-P013-new-pipeline-only-revision-v1.md) §2–§8替代；原文保留作历史记录。后续仅XComponent+shader全场景，失败保持标明旧token的有效新管线帧或FAULT，不得调用Canvas或把旧帧伪装当前成功。本文其余已签收数学/物理只读/坐标/身份语义按新合同映射保留；不回改历史测试结论。

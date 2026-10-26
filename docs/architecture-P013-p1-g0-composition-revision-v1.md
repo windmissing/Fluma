@@ -168,3 +168,8 @@ A/B/C三层证据、原始图像和日志需有buildCommit/sourceTreeHash/packag
 - [GL_EXT_sRGB_write_control](https://registry.khronos.org/OpenGL/extensions/EXT/EXT_sRGB_write_control.txt)：扩展存在时写转换控制；不在无扩展环境调用其token。
 
 变更记录：2026-10-25，T33工程v1，新增明确TEXTURE叠层选型、二值alpha/同token/窗口契约、A/B/C色彩证据和反例、文件所有权与T34任务书；保持P1 rev2的已签收数学，不回写历史probe结论。纯方案，待manager签收与后续实测。
+
+
+## 2026-10-26 用户强制边界追补（T68）
+
+本文原有Canvas背景/前景、Canvas上屏和失败退路自本次要求起不适用于后续产品路径，显式由 [P013_NEWPIPE_ONLY_V1工程合同](architecture-P013-new-pipeline-only-revision-v1.md) §2–§8替代；原文保留作历史记录。后续仅XComponent+shader全场景，失败保持标明旧token的有效新管线帧或FAULT，不得调用Canvas或把旧帧伪装当前成功。本文其余已签收数学/物理只读/坐标/身份语义按新合同映射保留；不回改历史测试结论。
