@@ -1,0 +1,592 @@
+{
+ "artifact_dir": "D:/hmprojects/HelloWorld/test/artifacts/t74-touch-source-capture-20261026",
+ "build": {
+  "commit": "545f45e",
+  "tree_fingerprint": "5b34bc45ce9cc5b7",
+  "hap": "entry-default-s143-signed.hap",
+  "hap_sha256": "babc44c65f8fae41daecfd8f911b0bb53d01261a12d6e9c11bb1395061c9d440"
+ },
+ "arms": {
+  "R0": {
+   "arm": "R0",
+   "diag": {
+    "rows": 2138,
+    "chunks": 1161,
+    "dropped": 0,
+    "broken_lines": 0,
+    "kinds": {
+     "tick": 484,
+     "present": 484,
+     "sensor": 1170
+    },
+    "seq_gaps": []
+   },
+   "summaries": 8,
+   "L1_receive": {
+    "touch_events": 0,
+    "types": {},
+    "first": null,
+    "sample": []
+   },
+   "L2_start": {
+    "starts": 0,
+    "moves": 0,
+    "stops": 0,
+    "start_sample": [],
+    "stop_reasons": []
+   },
+   "L3_clock": {
+    "ticks": 484,
+    "sources": {
+     "none": 2,
+     "sensor": 482
+    },
+    "stale_hits": 0,
+    "max_stale_count": 0
+   },
+   "L4_request": {
+    "dry_requests": 0,
+    "wet_requests": 0,
+    "requested_total": 0,
+    "first": null,
+    "last": null
+   },
+   "L5_receipt": {
+    "dry_receipts": 0,
+    "reasons": {},
+    "admitted_total": 0,
+    "sample": []
+   },
+   "L6_publication": {
+    "summaries": 8,
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "last_metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "actualMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "last_effectiveTiltDeg": 29.999999999999996,
+    "last_input": {
+     "source": "sensor",
+     "sampleTimeMs": 2388158123.985797,
+     "valid": true,
+     "targetTiltDeg": 79.77954370130544,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.013588748710129614
+    },
+    "last_mediumMode": "DRY_AIR_V1"
+   },
+   "L7_render": {
+    "present_events": 484,
+    "codes": {
+     "-1": 1,
+     "0": 483
+    },
+    "swap_true": 483,
+    "failure_reasons": [],
+    "last": {
+     "kind": "present",
+     "time": 2388158326.817395,
+     "runId": "p011-run-1792995398130-3",
+     "commit": 968,
+     "frame": 484,
+     "code": 0,
+     "swap": true,
+     "reason": "",
+     "_seq": 2138
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "PASS",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "PASS"
+   },
+   "first_fail": "L1"
+  },
+  "R1": {
+   "arm": "R1",
+   "diag": {
+    "rows": 1916,
+    "chunks": 1040,
+    "dropped": 0,
+    "broken_lines": 0,
+    "kinds": {
+     "sensor": 1046,
+     "tick": 435,
+     "present": 435
+    },
+    "seq_gaps": []
+   },
+   "summaries": 7,
+   "L1_receive": {
+    "touch_events": 0,
+    "types": {},
+    "first": null,
+    "sample": []
+   },
+   "L2_start": {
+    "starts": 0,
+    "moves": 0,
+    "stops": 0,
+    "start_sample": [],
+    "stop_reasons": []
+   },
+   "L3_clock": {
+    "ticks": 435,
+    "sources": {
+     "sensor": 433,
+     "none": 2
+    },
+    "stale_hits": 0,
+    "max_stale_count": 0
+   },
+   "L4_request": {
+    "dry_requests": 0,
+    "wet_requests": 0,
+    "requested_total": 0,
+    "first": null,
+    "last": null
+   },
+   "L5_receipt": {
+    "dry_receipts": 0,
+    "reasons": {},
+    "admitted_total": 0,
+    "sample": []
+   },
+   "L6_publication": {
+    "summaries": 7,
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "last_metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "actualMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "last_effectiveTiltDeg": 29.999999999999996,
+    "last_input": {
+     "source": "sensor",
+     "sampleTimeMs": 2388181706.781735,
+     "valid": true,
+     "targetTiltDeg": 79.34730017720075,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.08100183534375702
+    },
+    "last_mediumMode": "DRY_AIR_V1"
+   },
+   "L7_render": {
+    "present_events": 435,
+    "codes": {
+     "0": 434,
+     "-1": 1
+    },
+    "swap_true": 434,
+    "failure_reasons": [],
+    "last": {
+     "kind": "present",
+     "time": 2388182160.066214,
+     "runId": "p011-run-1792995424758-3",
+     "commit": 858,
+     "frame": 429,
+     "code": 0,
+     "swap": true,
+     "reason": "",
+     "_seq": 1888
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "PASS",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "PASS"
+   },
+   "first_fail": "L1"
+  },
+  "R2": {
+   "arm": "R2",
+   "diag": {
+    "rows": 2099,
+    "chunks": 1135,
+    "dropped": 0,
+    "broken_lines": 0,
+    "kinds": {
+     "sensor": 1135,
+     "tick": 482,
+     "present": 482
+    },
+    "seq_gaps": []
+   },
+   "summaries": 7,
+   "L1_receive": {
+    "touch_events": 0,
+    "types": {},
+    "first": null,
+    "sample": []
+   },
+   "L2_start": {
+    "starts": 0,
+    "moves": 0,
+    "stops": 0,
+    "start_sample": [],
+    "stop_reasons": []
+   },
+   "L3_clock": {
+    "ticks": 482,
+    "sources": {
+     "sensor": 480,
+     "none": 2
+    },
+    "stale_hits": 0,
+    "max_stale_count": 0
+   },
+   "L4_request": {
+    "dry_requests": 0,
+    "wet_requests": 0,
+    "requested_total": 0,
+    "first": null,
+    "last": null
+   },
+   "L5_receipt": {
+    "dry_receipts": 0,
+    "reasons": {},
+    "admitted_total": 0,
+    "sample": []
+   },
+   "L6_publication": {
+    "summaries": 7,
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "last_metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "actualMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "last_effectiveTiltDeg": 29.999999999999996,
+    "last_input": {
+     "source": "sensor",
+     "sampleTimeMs": 2388204998.824391,
+     "valid": true,
+     "targetTiltDeg": 79.6731286178441,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.0032743675527181926
+    },
+    "last_mediumMode": "DRY_AIR_V1"
+   },
+   "L7_render": {
+    "present_events": 482,
+    "codes": {
+     "0": 481,
+     "-1": 1
+    },
+    "swap_true": 481,
+    "failure_reasons": [],
+    "last": {
+     "kind": "present",
+     "time": 2388207826.08417,
+     "runId": "p011-run-1792995448629-3",
+     "commit": 952,
+     "frame": 476,
+     "code": 0,
+     "swap": true,
+     "reason": "",
+     "_seq": 2072
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "PASS",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "PASS"
+   },
+   "first_fail": "L1"
+  },
+  "R3": {
+   "arm": "R3",
+   "diag": {
+    "rows": 2119,
+    "chunks": 1146,
+    "dropped": 0,
+    "broken_lines": 0,
+    "kinds": {
+     "sensor": 1145,
+     "tick": 487,
+     "present": 487
+    },
+    "seq_gaps": []
+   },
+   "summaries": 8,
+   "L1_receive": {
+    "touch_events": 0,
+    "types": {},
+    "first": null,
+    "sample": []
+   },
+   "L2_start": {
+    "starts": 0,
+    "moves": 0,
+    "stops": 0,
+    "start_sample": [],
+    "stop_reasons": []
+   },
+   "L3_clock": {
+    "ticks": 487,
+    "sources": {
+     "sensor": 485,
+     "none": 2
+    },
+    "stale_hits": 0,
+    "max_stale_count": 0
+   },
+   "L4_request": {
+    "dry_requests": 0,
+    "wet_requests": 0,
+    "requested_total": 0,
+    "first": null,
+    "last": null
+   },
+   "L5_receipt": {
+    "dry_receipts": 0,
+    "reasons": {},
+    "admitted_total": 0,
+    "sample": []
+   },
+   "L6_publication": {
+    "summaries": 8,
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "last_metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "actualMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "last_effectiveTiltDeg": 29.999999999999996,
+    "last_input": {
+     "source": "sensor",
+     "sampleTimeMs": 2388233591.500016,
+     "valid": true,
+     "targetTiltDeg": 79.85673152571898,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.01488619263853933
+    },
+    "last_mediumMode": "DRY_AIR_V1"
+   },
+   "L7_render": {
+    "present_events": 487,
+    "codes": {
+     "0": 486,
+     "-1": 1
+    },
+    "swap_true": 486,
+    "failure_reasons": [],
+    "last": {
+     "kind": "present",
+     "time": 2388233691.414361,
+     "runId": "p011-run-1792995474217-3",
+     "commit": 964,
+     "frame": 482,
+     "code": 0,
+     "swap": true,
+     "reason": "",
+     "_seq": 2097
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "PASS",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "PASS"
+   },
+   "first_fail": "L1"
+  },
+  "R4": {
+   "arm": "R4",
+   "diag": {
+    "rows": 3030,
+    "chunks": 1634,
+    "dropped": 0,
+    "broken_lines": 0,
+    "kinds": {
+     "sensor": 1644,
+     "tick": 693,
+     "present": 693
+    },
+    "seq_gaps": []
+   },
+   "summaries": 11,
+   "L1_receive": {
+    "touch_events": 0,
+    "types": {},
+    "first": null,
+    "sample": []
+   },
+   "L2_start": {
+    "starts": 0,
+    "moves": 0,
+    "stops": 0,
+    "start_sample": [],
+    "stop_reasons": []
+   },
+   "L3_clock": {
+    "ticks": 693,
+    "sources": {
+     "sensor": 688,
+     "none": 5
+    },
+    "stale_hits": 0,
+    "max_stale_count": 0
+   },
+   "L4_request": {
+    "dry_requests": 0,
+    "wet_requests": 0,
+    "requested_total": 0,
+    "first": null,
+    "last": null
+   },
+   "L5_receipt": {
+    "dry_receipts": 0,
+    "reasons": {},
+    "admitted_total": 0,
+    "sample": []
+   },
+   "L6_publication": {
+    "summaries": 11,
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "last_metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "actualMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "last_effectiveTiltDeg": 29.999999999999996,
+    "last_input": {
+     "source": "sensor",
+     "sampleTimeMs": 2388268062.227985,
+     "valid": true,
+     "targetTiltDeg": 79.47289611296239,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.01135279781398976
+    },
+    "last_mediumMode": "DRY_AIR_V1"
+   },
+   "L7_render": {
+    "present_events": 693,
+    "codes": {
+     "0": 692,
+     "-1": 1
+    },
+    "swap_true": 692,
+    "failure_reasons": [],
+    "last": {
+     "kind": "present",
+     "time": 2388269417.685161,
+     "runId": "p011-run-1792995500043-3",
+     "commit": 1367,
+     "frame": 687,
+     "code": 0,
+     "swap": true,
+     "reason": "",
+     "_seq": 3002
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "PASS",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "PASS"
+   },
+   "first_fail": "L1"
+  }
+ },
+ "screenshots": [
+  "R0-idle.jpeg",
+  "R1-after.jpeg",
+  "R1-holding.jpeg",
+  "R2-after.jpeg",
+  "R2-dragging.jpeg",
+  "R3-after.jpeg",
+  "R3-dragging.jpeg",
+  "R4-after-reset.jpeg",
+  "R4-bedded.jpeg"
+ ]
+}
