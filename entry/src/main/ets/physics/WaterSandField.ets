@@ -1,3 +1,4 @@
+import { P051DryRunConfig, P051DryRunResult, P051DryAdmissionRequest, P051DryAdmissionReceipt, P051_DRY_REVISION, P051_DRY_MEDIUM, P051_DRY_GRAVITY, p051DryRequestError } from './P051DryParticleAdmission';
 import { P011PublishedRenderState, P011RenderCopyStatus, P011RenderPublicationKind } from './P011PublishedRenderState';
 import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
   P011ExternalSourceSnapshot } from './P011ExternalAdmissions';
@@ -696,6 +697,7 @@ export function waterSandFrameHookPayload(
 }
 
 export interface WaterSandSnapshot {
+  mediumMode?: string; airDynamicsRevision?: string; birthPlacementRevision?: string; drySourceId?: number; dryLastSequence?: number; dryLastInputTime?: number;
   schemaVersion: number;
   cols: number;
   capacity: number;
@@ -781,6 +783,8 @@ function finite(value: number): boolean {
   return Number.isFinite(value);
 }
 
+export interface P051DryDiagnostics { mediumRevision: string; airDynamicsRevision: string; freeWaterTotal: number;
+ occupiedVolumeTotal: number; baselineStatus: string; sourceEpoch: number; externalAdmissionCount: number | null; }
 export class WaterSandField {
   readonly cols: number;
   readonly capacity: number;
@@ -819,6 +823,73 @@ export class WaterSandField {
   private backup: WaterSandSnapshot;
   private motionSnapshot: WaterSandSnapshot;
   private initialWater = 0;
+  private mediumMode: string = 'WET_COLUMN_V1';
+  private dryResetPending: boolean = false;
+  private drySourceId: number = 0; private dryLastSequence: number = 0; private dryLastInputTime: number = 0;
+  getMediumMode(): string { return this.mediumMode; }
+  getDryDiagnostics(): P051DryDiagnostics {
+    let occupied=0; for(let c=0;c<this.cols;c++)occupied+=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
+    const totals=this.getTotals();
+    return {mediumRevision:this.mediumMode,airDynamicsRevision:this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY',
+      freeWaterTotal:totals.water,occupiedVolumeTotal:occupied,baselineStatus:this.initialHeavy+this.initialLight+this.sourceInjectedHeavy+this.sourceInjectedLight===0?'EMPTY_BASELINE':'NONEMPTY',
+      sourceEpoch:this.sourceEpoch,externalAdmissionCount:this.externalAdmissions.count};
+  }
+  initializeDryParticleDemo(config: P051DryRunConfig): P051DryRunResult {
+    if(config.revision!==P051_DRY_REVISION || this.cols!==128 || !Number.isSafeInteger(config.sourceId)||config.sourceId<1||config.sourceId>0xffffffff)return {ok:false,code:'INVALID_CONFIG'};
+    if(this.particleBinding!==null && this.particleBinding.active)return {ok:false,code:'BUSY'};
+    if(this.advectionRouteActive()||this.deepCreepRouteActive()||this.correctionRouteActive()||this.moistureParams!==null||this.advectionParams!==null||this.deepCreepParams!==null||
+      (this.naturalObservationRouteId!==null && this.naturalObservationRouteId!==P011_PARTICLE_ROUTE_ID))return {ok:false,code:'MODE_CONFLICT'};
+    const params=config.particleParams;
+    let binding: P011ParticleM2FieldBinding;
+    try { binding=new P011ParticleM2FieldBinding(this.cols,this.capacity,this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL,this.sandTopScratch,params,this); }
+    catch(error){return {ok:false,code:'INVALID_PARAMS'};}
+    const backup=binding.pool.snapshot(), journal=binding.pool.snapshot(), b=binding.pool.snapshot(), m=binding.pool.snapshot();
+    this.particleBinding=binding;this.particleParams=binding.work.params;this.particleRouteId=P011_PARTICLE_ROUTE_ID;
+    this.naturalObservationRouteId=P011_PARTICLE_ROUTE_ID;this.endpointParticlePool=binding.pool;this.endpointParticleRouteActive=true;
+    this.particleBackup=backup;this.particleJournalBefore=journal;this.backup.particleState=b;this.motionSnapshot.particleState=m;
+    this.dryResetPending=true;this.drySourceId=config.sourceId;
+    this.initialize({waterRegions:[],heavyDepositedRegions:[],lightDepositedRegions:[],heavySuspendedRegions:[],lightSuspendedRegions:[]});
+    return {ok:true,code:'OK'};
+  }
+  injectDryGestureSand(request: P051DryAdmissionRequest): P051DryAdmissionReceipt {
+    const result: P051DryAdmissionReceipt={revision:P051_DRY_REVISION,runId:this.p011RunId,sourceId:request.sourceId,sequence:request.sequence,
+      requestedH:request.requestedH,requestedL:request.requestedL,admittedH:0,admittedL:0,lambda:0,x:request.x,y:request.y,
+      rejectedReason:null,admissionTransactionId:null,sourceEpoch:this.sourceEpoch,physicsCommitId:this.renderPhysicsCommitId};
+    if(this.mediumMode!==P051_DRY_MEDIUM||!this.particleRouteActive()||this.particleBinding===null||this.particleParams===null){result.rejectedReason='MODE_CONFLICT';return result;}
+    const binding=this.particleBinding;
+    if(this.frozen||binding.active||binding.work.pageBacklog!==0){result.rejectedReason='BUSY_OR_FROZEN';return result;}
+    const error=p051DryRequestError(request,this.drySourceId,this.dryLastSequence,this.dryLastInputTime,this.cols,this.capacity);
+    if(error!==null){result.rejectedReason=error;return result;}
+    this.updateSandTop();const c=Math.floor(request.x);
+    if(request.y<this.sandTopScratch[c]+this.particleParams.contactEps){result.rejectedReason='BIRTH_OCCLUDED';return result;}
+    const q=request.requestedH+request.requestedL;const free=Math.max(0,this.capacity-this.waterTop[c]);
+    let lambda=Math.min(1,free/q);const eventStart=this.endpointParticleEvents.length;
+    for(let attempt=0;attempt<8 && lambda>=1e-4;attempt++){
+      const h=request.requestedH*lambda,l=request.requestedL*lambda;
+      const nH=Math.floor(h/this.particleParams.massPackage),nL=Math.floor(l/this.particleParams.massPackage);
+      const slots=nH+(h-nH*this.particleParams.massPackage>0?1:0)+nL+(l-nL*this.particleParams.massPackage>0?1:0);
+      if(!finite(h+l)||(request.requestedH>0&&h===0)||(request.requestedL>0&&l===0)||slots>binding.pool.freeSlotCount||
+        binding.pool.nextParticleId+slots-1>0xffffffff||!Number.isSafeInteger(this.sourceEpoch+1)||!Number.isSafeInteger(this.renderPhysicsCommitId+1)) {lambda*=.5;continue;}
+      let admission: P011ExternalAdmissionRecord;
+      try {admission=this.externalAdmissions.prepare(this.p011RunId,request.sourceId,request.sequence,request.inputTimeMs,h,l);}
+      catch(e){result.rejectedReason='ADMISSION_PREPARE_FAILED';return result;}
+      this.saveBackup();binding.registerRun(this.p011RunId,this.p011SubstepId+1);
+      if(!binding.beginDryBatch(h,l,request.x,request.y,request.sourceId,request.seed)) {binding.rollback();this.restoreBackup();lambda*=.5;continue;}
+      this.updateSandTop();
+      if(this.audit(false)!==null){binding.rollback();this.restoreBackup();lambda*=.5;continue;}
+      if(!binding.finishDryBatch()){this.restoreBackup();lambda*=.5;continue;}
+      // All fallible prechecks precede this callback-free source/publication tail.
+      this.externalAdmissions.commit(admission);this.sourceInjectedHeavy+=h;this.sourceInjectedLight+=l;this.sourceEpoch++;
+      this.dryLastSequence=request.sequence;this.dryLastInputTime=request.inputTimeMs;this.dormant=false;this.t90Heavy=-1;this.t90Light=-1;
+      this.publishRenderState('EXTERNAL_ADMISSION');
+      result.admittedH=h;result.admittedL=l;result.lambda=lambda;result.sourceEpoch=this.sourceEpoch;
+      result.physicsCommitId=this.renderPhysicsCommitId;result.admissionTransactionId=admission.admissionTransactionId;
+      const evidence=binding.exportCommittedEvidence();
+      for(let i=0;i<evidence.events.length;i++){const row=serializeP011ParticleEvent(evidence.events[i],i);if(row!==null)this.endpointParticleEvents.push(row);}
+      this.externalAdmissions.exportLast();return result;
+    }
+    this.endpointParticleEvents.length=eventStart;result.rejectedReason='CAPACITY_BLOCKED';return result;
+  }
   private initialHeavy = 0;
   private initialLight = 0;
   private targetTilt = 0;
@@ -1314,6 +1385,10 @@ export class WaterSandField {
 
   initialize(scene: WaterSandScene): void {
     this.validateScene(scene);
+    this.mediumMode=this.dryResetPending?P051_DRY_MEDIUM:'WET_COLUMN_V1';this.dryResetPending=false;
+    this.dryLastSequence=0;this.dryLastInputTime=0;
+    if(this.mediumMode!==P051_DRY_MEDIUM)this.drySourceId=0;
+    if(this.particleBinding!==null)this.particleBinding.field.mediumMode=this.mediumMode;
     this.waterTop.fill(0);
     this.bh.fill(0);
     this.bl.fill(0);
@@ -1480,6 +1555,7 @@ export class WaterSandField {
   }
 
   inject(spec: WaterSandInjection): void {
+    if(this.mediumMode===P051_DRY_MEDIUM)throw new WaterSandParamError('MODE_CONFLICT');
     if (!finite(spec.amount) || spec.amount < 0) {
       throw new WaterSandParamError('injection amount must be finite and non-negative');
     }
@@ -1934,6 +2010,7 @@ export class WaterSandField {
   private gestureWaterBefore = 0;
 
   invert180(): void {
+    if(this.mediumMode===P051_DRY_MEDIUM)throw new WaterSandParamError('DRY_INVERT_UNSUPPORTED');
     if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.pool.validateInvert180(this.capacity);
     if (this.frozen) {
       return;
@@ -2543,6 +2620,7 @@ export class WaterSandField {
    * is not an implicit correction switch.
    */
   setNaturalObservationRouteId(routeId: string | null): void {
+    if(this.mediumMode===P051_DRY_MEDIUM && routeId!==P011_PARTICLE_ROUTE_ID)throw new WaterSandParamError('MODE_CONFLICT');
     // A live particle inventory cannot be orphaned by switching its unique
     // route gate. The caller can retry after the pool has drained.
     if (this.particleBinding !== null && this.particleBinding.liveCount > 0 &&
@@ -2560,6 +2638,7 @@ export class WaterSandField {
     return { ok: code === 'OK', code: code, active: this.particleRouteActive() };
   }
   setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {
+    if(this.mediumMode===P051_DRY_MEDIUM)return this.particleRouteResult('ROUTE_CONFLICT');
     if (this.particleBinding !== null && this.particleBinding.liveCount > 0) return this.particleRouteResult('BUSY_PARTICLES');
     if (params === null) {
       if (this.particleBinding === null && this.particleParams === null && this.particleRouteId === null) return this.particleRouteResult('OK');
@@ -2635,6 +2714,7 @@ export class WaterSandField {
    * hMin ∈ [0.5, 2].
    */
   setDeepCreepParams(params: P011DeepCreepParams | null): void {
+    if(this.mediumMode===P051_DRY_MEDIUM && params!==null)throw new WaterSandParamError('MODE_CONFLICT');
     if (params === null) {
       this.deepCreepParams = null;
       return;
@@ -2672,6 +2752,7 @@ export class WaterSandField {
    * or an illegal K tier. Rejection leaves ZERO state change.
    */
   setMoistureParams(params: P011MoistureParams | null): void {
+    if(this.mediumMode===P051_DRY_MEDIUM && params!==null)throw new WaterSandParamError('MODE_CONFLICT');
     if (params === null) {
       this.moistureParams = null;
       this.moistureField = null;
@@ -2919,6 +3000,7 @@ export class WaterSandField {
 
   private waterTransaction(requested: number,
     add: boolean): P011WaterTransactionReceipt | null {
+    if(this.mediumMode===P051_DRY_MEDIUM)throw new WaterSandParamError('MODE_CONFLICT');
     if (!finite(requested) || requested <= 0) {
       return null;
     }
@@ -3018,6 +3100,7 @@ export class WaterSandField {
    * §1.1: identical to unbound, pinned by the isolation test).
    */
   setAdvectionParams(params: P011AdvectionParams | null): void {
+    if(this.mediumMode===P051_DRY_MEDIUM && params!==null)throw new WaterSandParamError('MODE_CONFLICT');
     if (params === null) {
       this.advectionParams = null;
       return;
@@ -3792,6 +3875,8 @@ export class WaterSandField {
       probe.attachEndpointLedgerCapture(capture);
       this.endpointParticleEvents.length = 0;
     }
+    if(this.mediumMode===P051_DRY_MEDIUM){const dry=this.getDryDiagnostics();audit.mediumRevision=dry.mediumRevision;
+      audit.airDynamicsRevision=dry.airDynamicsRevision;audit.freeWaterTotal=dry.freeWaterTotal;audit.occupiedVolumeTotal=dry.occupiedVolumeTotal;}
     probe.finishSubstep(after, budgets, audit);
     this.naturalObservationStateBefore = null;
   }
@@ -3938,6 +4023,8 @@ export class WaterSandField {
     this.copyStateTo(out.field);
     out.effectiveTiltDeg = this.effectiveTilt;
     out.runId = this.p011RunId; out.stateEpoch = this.renderStateEpoch;
+    out.birthPlacementRevision=this.mediumMode===P051_DRY_MEDIUM?'DRY_POINT_V1':'WET_COLUMN_V1';
+    out.mediumMode=this.mediumMode;out.airDynamicsRevision=this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY';
     out.physicsCommitId = this.renderPhysicsCommitId; out.publicationKind = this.renderPublicationKind;
     out.ledgerCommitKey = this.renderLedgerCommitKey;
     out.routeId = this.particleRouteId; out.particleRouteActive = true;
@@ -3974,6 +4061,9 @@ export class WaterSandField {
       throw new WaterSandSnapshotError('snapshot array length mismatch');
     }
     this.updateSandTop();
+    target.birthPlacementRevision=this.mediumMode===P051_DRY_MEDIUM?'DRY_POINT_V1':'WET_COLUMN_V1';
+    target.mediumMode=this.mediumMode;target.airDynamicsRevision=this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY';
+    target.drySourceId=this.drySourceId;target.dryLastSequence=this.dryLastSequence;target.dryLastInputTime=this.dryLastInputTime;
     target.physicsCommitId = this.renderPhysicsCommitId;
     if (target.externalSourceState === undefined) target.externalSourceState = new P011ExternalSourceSnapshot();
     const sourceState = target.externalSourceState;
@@ -4019,6 +4109,12 @@ export class WaterSandField {
     if (source.externalSourceState !== undefined) {
       this.externalAdmissions.validateSource(source.externalSourceState);
     }
+    const mode=source.mediumMode ?? 'WET_COLUMN_V1';
+    if(mode!=='WET_COLUMN_V1' && mode!==P051_DRY_MEDIUM)throw new WaterSandSnapshotError('INVALID_MEDIUM');
+    if(mode!==P051_DRY_MEDIUM && (source.airDynamicsRevision===P051_DRY_GRAVITY||source.birthPlacementRevision==='DRY_POINT_V1'))throw new WaterSandSnapshotError('MISSING_DRY_MEDIUM');
+    if(mode===P051_DRY_MEDIUM)this.validateDrySnapshot(source);
+    this.mediumMode=mode;this.drySourceId=source.drySourceId ?? 0;this.dryLastSequence=source.dryLastSequence ?? 0;this.dryLastInputTime=source.dryLastInputTime ?? 0;
+    if(this.particleBinding!==null)this.particleBinding.field.mediumMode=mode;
     this.waterTop.set(source.waterTop); this.bh.set(source.bh); this.bl.set(source.bl);
     this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);
     if (this.particleRouteActive() && this.particleBinding !== null) {
@@ -4043,6 +4139,35 @@ export class WaterSandField {
     this.publishRenderState('RESTORE', true);
   }
 
+  private validateDrySnapshot(s: WaterSandSnapshot): void {
+    const p=s.particleState, e=s.externalSourceState;
+    if(s.airDynamicsRevision!==P051_DRY_GRAVITY || s.birthPlacementRevision!=='DRY_POINT_V1' || !Number.isSafeInteger(s.drySourceId)||s.drySourceId!<1||s.drySourceId!>0xffffffff||
+      !Number.isSafeInteger(s.dryLastSequence)||s.dryLastSequence!<0||!finite(s.dryLastInputTime!)||s.dryLastInputTime!<0||
+      !this.particleRouteActive()||this.particleBinding===null||p===undefined||p===null||e===undefined||
+      e.initialWater!==0||e.initialHeavy!==0||e.initialLight!==0||e.sourceEpoch!==e.admissions.count||
+      p.nmax!==this.particleBinding.pool.nmax||p.cols!==this.cols)throw new WaterSandSnapshotError('INVALID_DRY_IDENTITY');
+    const arrays=[p.pMass,p.pX,p.pY,p.pVx,p.pVy,p.pPhase,p.pSource,p.pState,p.pId,p.pSourceId,p.freeSlots];
+    for(let j=0;j<arrays.length;j++)if(arrays[j].length!==p.nmax)throw new WaterSandSnapshotError('INVALID_DRY_POOL');
+    if(p.colParticleMassH.length!==this.cols||p.colParticleMassL.length!==this.cols)throw new WaterSandSnapshotError('INVALID_DRY_CACHE');
+    const h=new Float64Array(this.cols),l=new Float64Array(this.cols),seen=new Uint8Array(p.nmax);let count=0,totalH=0,totalL=0;
+    if(!Number.isSafeInteger(p.freeCount)||p.freeCount<0||p.freeCount>p.nmax||!Number.isSafeInteger(p.nextId)||p.nextId<1||p.nextId>0x100000000)throw new WaterSandSnapshotError('INVALID_DRY_ALLOCATOR');
+    for(let j=0;j<p.freeCount;j++){const i=p.freeSlots[j];if(i<0||i>=p.nmax||seen[i]!==0||p.pState[i]!==0)throw new WaterSandSnapshotError('INVALID_DRY_FREE');seen[i]=1;}
+    for(let i=0;i<p.nmax;i++){
+      if(p.pState[i]===0)continue;
+      if(seen[i]!==0||(p.pState[i]!==1&&p.pState[i]!==2)||p.pPhase[i]>1||p.pSource[i]>1||!finite(p.pMass[i])||p.pMass[i]<=0||!finite(p.pX[i])||p.pX[i]<0||p.pX[i]>=this.cols||
+        !finite(p.pY[i])||p.pY[i]<0||p.pY[i]>this.capacity||!finite(p.pVx[i])||!finite(p.pVy[i])||p.pId[i]<1||p.pId[i]>=p.nextId||p.pSourceId[i]===0)throw new WaterSandSnapshotError('INVALID_DRY_PARTICLE');
+      for(let j=0;j<i;j++)if(p.pState[j]!==0&&p.pId[j]===p.pId[i])throw new WaterSandSnapshotError('DUPLICATE_DRY_ID');
+      const c=Math.floor(p.pX[i]);if(p.pPhase[i]===0)h[c]+=p.pMass[i];else l[c]+=p.pMass[i];count++;
+    }
+    if(count!==p.liveCount||count+p.freeCount!==p.nmax)throw new WaterSandSnapshotError('INVALID_DRY_COUNT');
+    for(let c=0;c<this.cols;c++){
+      const sand=s.bh[c]+s.bl[c]+s.mh[c]+s.ml[c];
+      if(!finite(sand)||s.bh[c]<0||s.bl[c]<0||s.mh[c]<0||s.ml[c]<0||s.suspH[c]!==0||s.suspL[c]!==0||!finite(s.waterTop[c])||s.waterTop[c]>this.capacity||
+        Math.abs(s.waterTop[c]-(sand+h[c]+l[c]))>EPS||Math.abs(h[c]-p.colParticleMassH[c])>EPS||Math.abs(l[c]-p.colParticleMassL[c])>EPS)throw new WaterSandSnapshotError('INVALID_DRY_ENVELOPE');
+      totalH+=s.bh[c]+s.mh[c]+h[c];totalL+=s.bl[c]+s.ml[c]+l[c];
+    }
+    if(!finite(totalH)||!finite(totalL)||!finite(e.sourceInjectedH)||!finite(e.sourceInjectedL)||Math.abs(totalH-e.sourceInjectedH)>1e-9||Math.abs(totalL-e.sourceInjectedL)>1e-9)throw new WaterSandSnapshotError('INVALID_DRY_SOURCE_TOTALS');
+  }
   getLastError(): WaterSandErrorCode | null {
     return this.lastError;
   }
@@ -4223,8 +4348,7 @@ export class WaterSandField {
 
   private substep(dt: number): WaterSandErrorCode | null {
     this.updateSandTop();
-    this.waterLevel(dt);
-    this.diffuseSuspension(dt);
+    if(this.mediumMode!==P051_DRY_MEDIUM){this.waterLevel(dt);this.diffuseSuspension(dt);}
     if (this.collectingTotalMotionRequests) {
       this.saveMotionSnapshot(dt);
       if (this.particleRouteActive() && this.particleBinding !== null && !this.particleBinding.active) return WaterSandErrorCode.UNKNOWN;
@@ -5177,7 +5301,7 @@ export class WaterSandField {
             requestedTotal += requested;
             const donorStock = isHeavy ? shadowSuspH[donor] : shadowSuspL[donor];
             const receiverCapacity = Math.max(0,
-              this.waterTop[receiver] - shadowS[receiver] -
+              (this.mediumMode===P051_DRY_MEDIUM?this.capacity:this.waterTop[receiver]) - shadowS[receiver] -
               shadowSuspH[receiver] - shadowSuspL[receiver]);
             let granted = Math.min(requested, donorStock, receiverCapacity,
               shadowChannelRemaining, localRemaining[donor],
@@ -5325,7 +5449,7 @@ export class WaterSandField {
         requestedTotal += requested;
         const donorDeposited = shadowBh[donor] + shadowBl[donor];
         const receiverSuspension = shadowSuspH[receiver] + shadowSuspL[receiver];
-        const receiverCapacity = this.waterTop[receiver] > EPS
+        const receiverCapacity = this.mediumMode===P051_DRY_MEDIUM ? this.dryReceiverCapacity(receiver,shadowS[receiver]) : this.waterTop[receiver] > EPS
           ? this.waterTop[receiver] - shadowS[receiver] - receiverSuspension
           : this.capacity - shadowS[receiver];
         const independentGrant = Math.max(0, Math.min(requested * independentScale,
@@ -6175,7 +6299,7 @@ export class WaterSandField {
           this.naturalObservationSlidingAfter[index] = activeAfter ? 1 : 0;
           if (activeAfter) {
             const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
-            const receiverCapacity = this.waterTop[receiver] > EPS
+            const receiverCapacity = this.mediumMode===P051_DRY_MEDIUM ? this.dryReceiverCapacity(receiver,this.sandTopScratch[receiver]) : this.waterTop[receiver] > EPS
               ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
               : this.capacity - this.sandTopScratch[receiver];
             naturalAmount = p011RelaxHysteresisRequested(deviation, effectiveHysteresis,
@@ -6190,7 +6314,7 @@ export class WaterSandField {
           candidateCount += 1;
           const excess = Math.abs(deviation) - limit;
           const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
-          const receiverCapacity = this.waterTop[receiver] > EPS
+          const receiverCapacity = this.mediumMode===P051_DRY_MEDIUM ? this.dryReceiverCapacity(receiver,this.sandTopScratch[receiver]) : this.waterTop[receiver] > EPS
             ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
             : this.capacity - this.sandTopScratch[receiver];
           naturalAmount = Math.min(excess / 2, maxFlux,
@@ -6370,7 +6494,7 @@ export class WaterSandField {
         continue;
       }
       const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
-      const receiverCapacity = this.waterTop[receiver] > EPS
+      const receiverCapacity = this.mediumMode===P051_DRY_MEDIUM ? this.dryReceiverCapacity(receiver,this.sandTopScratch[receiver]) : this.waterTop[receiver] > EPS
         ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
         : this.capacity - this.sandTopScratch[receiver];
       const requested = Math.min(maxFlux, donorDeposited, receiverCapacity);
@@ -6400,7 +6524,7 @@ export class WaterSandField {
       const directionSign = this.bottomCreepDirection > 0 ? 1 : -1;
       const donorDeposited = this.bh[donor] + this.bl[donor];
       const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];
-      const receiverCapacity = this.waterTop[receiver] > EPS
+      const receiverCapacity = this.mediumMode===P051_DRY_MEDIUM ? this.dryReceiverCapacity(receiver,this.sandTopScratch[receiver]) : this.waterTop[receiver] > EPS
         ? this.waterTop[receiver] - this.sandTopScratch[receiver] - receiverSuspension
         : this.capacity - this.sandTopScratch[receiver];
       const independentGrant = requested * independentScale;
@@ -6512,11 +6636,20 @@ export class WaterSandField {
     return null;
   }
 
+  private dryLiftSlots(column: number, amount: number): number {
+    if(this.particleParams===null)return Number.MAX_SAFE_INTEGER;
+    const mix=this.mh[column]+this.ml[column],fromMix=Math.min(amount,mix),scale=fromMix/Math.max(mix,EPS);
+    let h=this.mh[column]*scale,l=this.ml[column]*scale,remaining=amount-fromMix;
+    const fromLight=Math.min(remaining,this.bl[column]);l+=fromLight;remaining-=fromLight;h+=Math.min(remaining,this.bh[column]);
+    const pkg=this.particleParams.massPackage,nh=Math.floor(h/pkg),nl=Math.floor(l/pkg);
+    return nh+(h-nh*pkg>0?1:0)+nl+(l-nl*pkg>0?1:0);
+  }
   private liftByShake(dt: number): void {
     const trackSource = this.shakeSourceRouteActive() && !this.collectingTotalMotionRequests;
     const requestEnergy = this.shakeEnergy;
     let liftedTotal = 0;
     let liftedColumns = 0;
+    let dryFreeSlots=this.particleBinding===null?0:this.particleBinding.pool.freeSlotCount;
     if (!this.collectingTotalMotionRequests) {
       if (this.shakeInput > EPS) {
         const target = Math.max(0, Math.min(1, this.shakeInput));
@@ -6542,9 +6675,14 @@ export class WaterSandField {
           this.params.lightLiftRate * (1 - surfaceHeavyShare));
       const particleMass = this.particleRouteActive() && this.particleBinding !== null
         ? this.particleBinding.pool.particleMassAt(c) : 0;
-      const capacity = this.waterTop[c] - this.sandTopScratch[c] + desired -
+      const capacity = (this.mediumMode===P051_DRY_MEDIUM?this.capacity:this.waterTop[c]) - this.sandTopScratch[c] + desired -
         this.suspH[c] - this.suspL[c] - particleMass;
-      const requested = Math.max(0, Math.min(desired, this.sandTopScratch[c], capacity));
+      let requested = Math.max(0, Math.min(desired, this.sandTopScratch[c], capacity));
+      if(this.mediumMode===P051_DRY_MEDIUM && this.collectingTotalMotionRequests){
+        // Reserve representable births across the whole collect, no pool merge or invisible U fallback.
+        if(this.dryLiftSlots(c,requested)>dryFreeSlots)requested=0;
+        else dryFreeSlots-=this.dryLiftSlots(c,requested);
+      }
       if (this.collectingTotalMotionRequests) {
         const amount = requested;
         this.riseRequestAmounts[c] = amount;
@@ -6605,6 +6743,16 @@ export class WaterSandField {
         this.updateSandTop();
         const particleSourceId = Math.max(1, this.p011SubstepId + 1);
         const contact = this.sandTopScratch[c] + this.particleParams.contactEps;
+        if(this.mediumMode===P051_DRY_MEDIUM){
+          const ok=this.particleBinding.beginDryBatch(split.heavy,split.light,c+.5,contact,particleSourceId,particleSourceId,1);
+          if(!ok || !this.particleBinding.finishDryBatch()){
+            this.particleBinding.rollback();this.bh[c]=donorBhBefore;this.bl[c]=donorBlBefore;
+            this.mh[c]=donorMhBefore;this.ml[c]=donorMlBefore;
+            this.materialGuardRefund(amount,[c],false);this.updateSandTop();continue;
+          }
+          const evidence=this.particleBinding.exportCommittedEvidence();
+          for(let i=0;i<evidence.events.length;i++){const row=serializeP011ParticleEvent(evidence.events[i],i);if(row!==null)this.endpointParticleEvents.push(row);}
+        } else {
         if (split.heavy > 0) {
           const slot = this.particleBinding.seed(split.heavy, c + 0.5, contact, 0,
             this.particleParams.liftSpeedHeavy, 0, 1, particleSourceId);
@@ -6616,6 +6764,7 @@ export class WaterSandField {
             this.particleParams.liftSpeedLight, 1, 1, particleSourceId);
           if (slot < 0) this.suspL[c] += split.light;
           else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
+        }
         }
       } else {
         this.suspH[c] += split.heavy;
@@ -6788,6 +6937,8 @@ export class WaterSandField {
       }
       const particleMass = this.particleRouteActive() && this.particleBinding !== null
         ? this.particleBinding.pool.particleMassAt(c) : 0;
+      if(this.mediumMode===P051_DRY_MEDIUM && (this.suspH[c]!==0 || this.suspL[c]!==0 ||
+        Math.abs(this.waterTop[c]-(this.sandTopScratch[c]+particleMass))>EPS))return WaterSandErrorCode.CAPACITY_OVERFLOW;
       const total = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c] +
         this.suspH[c] + this.suspL[c] + particleMass + this.getWaterVolume(c);
       if (total > this.capacity + 1e-7 || this.suspH[c] + this.suspL[c] + particleMass >
@@ -6820,9 +6971,13 @@ export class WaterSandField {
     return null;
   }
 
+  private dryReceiverCapacity(c: number, sand: number): number {
+    return this.capacity-sand-(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
+  }
   private getWaterVolume(c: number): number {
     const particles = this.particleRouteActive() && this.particleBinding !== null
       ? this.particleBinding.pool.particleMassAt(c) : 0;
+    if(this.mediumMode===P051_DRY_MEDIUM)return Math.max(0,this.waterTop[c]-(this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+particles));
     return Math.max(0, this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c] - particles);
   }
 
@@ -6868,6 +7023,7 @@ export class WaterSandField {
   private updateSandTop(): void {
     for (let c = 0; c < this.cols; c++) {
       this.sandTopScratch[c] = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c];
+      if(this.mediumMode===P051_DRY_MEDIUM)this.waterTop[c]=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
     }
   }
 

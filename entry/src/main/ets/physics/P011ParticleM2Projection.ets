@@ -9,13 +9,14 @@ export class P011ParticleM2Projection {
   private readonly scratch: Float64Array;
   private cursor = 0;
   constructor(work: P011ParticleHotWorkspace) {
-    const size = 4 + work.requestCapacity * 16 + work.nmax * 11;
+    const size = 5 + work.requestCapacity * 16 + work.nmax * 11;
     this.scratch = new Float64Array(size);
     for (let i = 0; i < 8; i++) this.slots.push(new P011ParticleProjectionSlot(size));
   }
   clear(): void { for (let i = 0; i < this.slots.length; i++) this.slots[i].valid = false; this.cursor = 0; }
   private write(work: P011ParticleHotWorkspace, out: Float64Array): number {
     const p = work.planA, r = work.results, pool = work.patchAfter; let n = 0;
+    out[n++] = work.mediumMode==='DRY_AIR_V1'?1:0;
     out[n++] = p.requestCount; out[n++] = p.totalRequested; out[n++] = pool.liveCount; out[n++] = pool.nextId;
     for (let i = 0; i < p.requestCount; i++) {
       out[n++] = p.kind[i]; out[n++] = p.particleId[i]; out[n++] = p.sourceId[i]; out[n++] = p.column[i];

@@ -31,6 +31,7 @@ export class P011ParticleM2FieldBuffer implements P011ParticleHotFieldBuffer {
   readonly waterTop: Float64Array; readonly bh: Float64Array; readonly bl: Float64Array;
   readonly mh: Float64Array; readonly ml: Float64Array; readonly suspH: Float64Array;
   readonly suspL: Float64Array; readonly surface: Float64Array;
+  mediumMode: string = 'WET_COLUMN_V1';
   sourceInjectedH = 0; sourceInjectedL = 0; sourceEpoch = 0;
   constructor(cols: number, capacity: number, waterTop: Float64Array,
     bh: Float64Array, bl: Float64Array, mh: Float64Array, ml: Float64Array,
@@ -103,6 +104,34 @@ export class P011ParticleM2FieldBinding {
     const evidence = this.exportCommittedEvidence();
     for (let i = 0; i < evidence.events.length; i++) { const row = serializeP011ParticleEvent(evidence.events[i], i); if (row !== null) this.birthEventRows.push(row); }
     return 0;
+  }
+  beginDryBatch(heavy: number, light: number, x: number, y: number, sourceId: number, seed: number, sourceKind: number = 0): boolean {
+    if (this.stepOpen !== 0 || this.work.pageBacklog !== 0 || this.field.mediumMode !== 'DRY_AIR_V1') return false;
+    this.attemptToken++; const w=this.work;
+    if (beginStepHot(w,{runToken:this.runToken,substepId:w.substepId,attemptToken:this.attemptToken,
+      dt:1/60,effectiveTiltRad:0,seed:seed,paramsRevision:1,inputRevision:1,field:this.field})!==0)return false;
+    this.stepOpen=1;
+    if(collectParticlePlanInto(w,w.stepEpoch,w.planA)!==0 || collectParticlePlanInto(w,w.stepEpoch,w.planB)!==0){this.rollback();return false;}
+    const a=w.planA,b=w.planB;a.requestCount=0;a.motionCount=0;a.totalRequested=0;
+    for(let phase=0;phase<2;phase++){
+      const mass=phase===0?heavy:light;if(mass===0)continue;const row=a.requestCount++;
+      a.kind[row]=sourceKind===0?1:4;a.phase[row]=phase;a.sourceKind[row]=sourceKind;a.column[row]=Math.floor(x);a.targetColumn[row]=-1;
+      a.particleId[row]=0;a.sourceId[row]=sourceId;a.substep[row]=w.substepId;a.ordinal[row]=row+1;
+      a.requested[row]=mass;a.totalWeight[row]=0;a.predictedX[row]=x;a.predictedY[row]=y;
+      a.predictedVx[row]=0;a.predictedVy[row]=sourceKind===0?0:phase===0?w.params.liftSpeedHeavy:w.params.liftSpeedLight;a.mergeStart[row]=row*2;a.mergeCount[row]=0;
+    }
+    b.requestCount=a.requestCount;b.motionCount=0;b.totalRequested=0;
+    for(let row=0;row<a.requestCount;row++)copyRequestRowHot(a,row,b,row);
+    this.sink.birthOnly=sourceKind===1?1:0;
+    const applied=applyParticlePlanInto(w,w.stepEpoch,a,this.sink,w.results);this.sink.birthOnly=0;
+    if(applied!==0){this.rollback();return false;}
+    for(let row=0;row<a.requestCount;row++)if(w.results.granted[row]!==a.requested[row]){this.rollback();return false;}
+    return true;
+  }
+  finishDryBatch(): boolean {
+    if(this.stepOpen===0)return false;
+    if(finishStepHot(this.work,this.work.stepEpoch)!==0){this.rollback();return false;}
+    this.stepOpen=0;return true;
   }
   drainBirthEvents(): string[] {
     const rows = this.birthEventRows; this.birthEventRows = []; return rows;

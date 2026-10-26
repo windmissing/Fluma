@@ -182,7 +182,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     const copied = work.pool.transferHotState(work.patchScratch, false); if (copied !== 0) return copied;
     const target = kind === 3 ? p.targetColumn[row] : c;
     if (target < 0 || target >= work.cols) return 2;
-    const free = f.waterTop[target] - sand(work, target) - f.suspH[target] - f.suspL[target] -
+    const free = (f.mediumMode === 'DRY_AIR_V1' ? f.capacity : f.waterTop[target]) - sand(work, target) - f.suspH[target] - f.suspL[target] -
       work.patchScratch.colParticleMassH[target] - work.patchScratch.colParticleMassL[target];
     if ((kind === 1 || kind === 3) && free + 1e-9 < requested) { capacityClipped = requested; granted = 0; }
     else if (kind === 2 || kind === 3 || kind === 4 && this.birthOnly === 0) {
@@ -228,7 +228,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     f.surface[c] = sand(work, c);
     work.stagedYActive = kind === 2 || kind === 4 ? 1 : 0; work.stagedY = sand(work, c) + work.params.contactEps;
     let token = preparePatchHot(work, p, row, gh, gl, disposition);
-    if (token === 0 && work.lastStatus === 5 && kind === 4 && granted > 0) {
+    if (token === 0 && work.lastStatus === 5 && kind === 4 && granted > 0 && f.mediumMode !== 'DRY_AIR_V1') {
       disposition = 3; degraded = 1; token = preparePatchHot(work, p, row, gh, gl, disposition);
     } else if (token === 0 && work.lastStatus === 5 && kind === 1) {
       poolClipped = granted; granted = 0; gh = 0; gl = 0; disposition = 6;
@@ -245,6 +245,11 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) return this.failHot(10);
     const published = publishPatchHot(work, token); if (published !== 0) return this.failHot(published);
     if (kind === 1 || this.birthOnly === 1) { work.stepExternalH += gh; work.stepExternalL += gl; }
+    if (f.mediumMode === 'DRY_AIR_V1') {
+      const pool=work.pool;
+      f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);
+      if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);
+    }
     const audit = auditParticleHot(work); if (audit !== 0) return this.failHot(audit);
     if (this.failAfterPublish !== 0) return this.failHot(13);
     if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, granted, this.refund); if (closed !== 0) return this.failHot(closed); }

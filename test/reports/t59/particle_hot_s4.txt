@@ -1,0 +1,7 @@
+PASS S4 caller aliases, detached arrays and replaced event/results fail before canonical writes
+PASS S4 snapshot out rejects canonical/frozen/patch/field alias; owned copy stays independent
+PASS S4 evidence page prevents overwrite; export pins field/particle/plan/result and rejects old leases
+PASS S4 journal overflow and post-publish fault restore full buckets/outs/sidecar and allow new attempt
+PASS S4 full sandbox exercises all six transactions, merge/degrade, retained tail and partial budget
+PASS S4 replacing prepared after-image rejects publish before touching canonical pool
+{"suite":"run_p011_particle_hot_s4_units","passed":6,"failed":0}

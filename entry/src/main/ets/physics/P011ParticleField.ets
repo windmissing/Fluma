@@ -42,6 +42,7 @@ export function particleRouteEnabled(routeId: string | null,
 }
 
 export interface P011ParticleFieldView {
+  mediumMode?: string;
   sandTopAt(c: number): number;
   waterTopAt(c: number): number;
   suspAt(c: number): number;
@@ -54,10 +55,12 @@ export function freezeParticleFieldView(view: P011ParticleFieldView): P011Partic
   return new P011FrozenParticleView(view);
 }
 class P011FrozenParticleView implements P011ParticleFieldView {
+  readonly mediumMode: string;
   readonly cols: number; readonly capacity: number; readonly effectiveTiltRad: number;
   private sand: Float64Array; private water: Float64Array;
   private susp: Float64Array; private free: Float64Array;
   constructor(view: P011ParticleFieldView) {
+    this.mediumMode=view.mediumMode ?? 'WET_COLUMN_V1';
     this.cols = view.cols; this.capacity = view.capacity; this.effectiveTiltRad = view.effectiveTiltRad;
     this.sand = new Float64Array(view.cols); this.water = new Float64Array(view.cols);
     this.susp = new Float64Array(view.cols); this.free = new Float64Array(view.cols);
@@ -270,6 +273,8 @@ export class P011ParticleField implements P011ParticleAtomicPool {
   private readonly colParticleMassH: Float64Array;
   private readonly colParticleMassL: Float64Array;
   private liveCount = 0;
+  get freeSlotCount(): number { return this.freeCount; }
+  get nextParticleId(): number { return this.nextId; }
   private freeCount: number;
   private nextId = 1;
   readonly cols: number;
@@ -656,21 +661,22 @@ export class P011ParticleField implements P011ParticleAtomicPool {
         const count = Math.floor(mass / params.massPackage);
         const tail = mass - count * params.massPackage;
         for (let k = 0; k < count + (tail > 0 ? 1 : 0); k++) {
-          if (this.freeCount === 0 && !this.mergeOldest(params)) return false;
+          if (this.freeCount === 0 && (view.mediumMode === 'DRY_AIR_V1' || !this.mergeOldest(params))) return false;
           const packageMass = k < count ? params.massPackage : tail;
           // Counter-based deterministic jitter; no mutable/global RNG.
           const salt = (Math.imul(r.sourceId, 1664525) ^ Math.imul(r.ordinal + k + phase * 8191, 1013904223) ^ this.stepSeed) >>> 0;
           const jitter = (salt / 4294967296 - 0.5) * 0.999;
-          const x = r.column + 0.5 + jitter;
+          const dry=view.mediumMode==='DRY_AIR_V1';
+          const x = dry && r.kind==='spawn'?r.predictedX:r.column + 0.5 + jitter;
           const low = r.kind === 'lift' ? r.predictedY : view.sandTopAt(r.column) + params.contactEps;
-          const high = view.waterTopAt(r.column) - params.contactEps;
+          const high = dry?view.capacity:view.waterTopAt(r.column) - params.contactEps;
           if (high < low) return false;
           const speed = phase === 0 ? params.terminalSpeedHeavy : params.terminalSpeedLight;
           const lift = phase === 0 ? params.liftSpeedHeavy : params.liftSpeedLight;
           const birth: P011ParticleSeed = { mass: packageMass, x: x,
-            y: r.kind === 'lift' ? low : Math.max(low, Math.min(high, r.predictedY)),
-            vx: r.kind === 'lift' ? jitter * 2 * params.liftSpread : speed * Math.sin(view.effectiveTiltRad),
-            vy: r.kind === 'lift' ? lift : -speed * Math.cos(view.effectiveTiltRad),
+            y: dry&&r.kind==='spawn'?r.predictedY:r.kind === 'lift' ? low : Math.max(low, Math.min(high, r.predictedY)),
+            vx: dry&&r.kind==='spawn'?0:r.kind === 'lift' ? jitter * 2 * params.liftSpread : speed * Math.sin(view.effectiveTiltRad),
+            vy: dry&&r.kind==='spawn'?0:r.kind === 'lift' ? lift : -speed * Math.cos(view.effectiveTiltRad),
             phase: phase, sourceKind: r.sourceKind, sourceId: r.sourceId };
           const slot = this.allocate(birth);
           this.representationRecords.push({ kind: 'birth', index: this.birthRecords.length });
@@ -926,14 +932,15 @@ export function collectParticlePlan(identity: P011ParticleStepIdentity,
     const heavy = frozenPool.pPhase[i] === P011_PARTICLE_HEAVY;
     const speed = heavy ? params.terminalSpeedHeavy : params.terminalSpeedLight;
     const drag = heavy ? params.dragHeavy : params.dragLight;
-    const wet = frozenPool.pY[i] <= frozenField.waterTopAt(c);
+    const dry=frozenField.mediumMode==='DRY_AIR_V1';
+    const wet = !dry && frozenPool.pY[i] <= frozenField.waterTopAt(c);
     const blend = 1 - Math.exp(-drag * identity.dt);
     const vx = wet ? frozenPool.pVx[i] +
       (speed * Math.sin(identity.effectiveTiltRad) - frozenPool.pVx[i]) * blend :
-      frozenPool.pVx[i] * Math.exp(-0.01 * identity.dt);
+      dry ? frozenPool.pVx[i] * Math.exp(-0.01 * identity.dt) + 9.8*Math.sin(identity.effectiveTiltRad)*identity.dt : frozenPool.pVx[i] * Math.exp(-0.01 * identity.dt);
     const vy = wet ? frozenPool.pVy[i] +
       (-speed * Math.cos(identity.effectiveTiltRad) - frozenPool.pVy[i]) * blend :
-      frozenPool.pVy[i] - 9.8 * identity.dt; // candidate airborne model
+      frozenPool.pVy[i] - 9.8 * (dry?Math.cos(identity.effectiveTiltRad):1) * identity.dt; // candidate airborne model
     const x = Math.max(0, Math.min(frozenField.cols - 1e-9,
       Math.max(c - 1 + 1e-9, Math.min(c + 2 - 1e-9, x0 + vx * identity.dt))));
     const y = Math.min(frozenField.capacity, frozenPool.pY[i] + vy * identity.dt);

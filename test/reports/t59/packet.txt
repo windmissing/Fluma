@@ -1,0 +1,49 @@
+{
+  "suite": "T20 dual field packet/publication",
+  "results": [
+    {
+      "name": "schema4 publication copies field and pool under one authoritative token, read does not publish",
+      "status": "PASS"
+    },
+    {
+      "name": "external admission between steps publishes once; zero/reject do not publish",
+      "status": "PASS"
+    },
+    {
+      "name": "live holes compress in stable slot order, state2/ID preserved; no input mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "schema2/3, mismatched bed token and bad live count reject complete packets",
+      "status": "PASS"
+    },
+    {
+      "name": "Float64 overflow, invalid phase/state, duplicate IDs and mass reject without partial upload",
+      "status": "PASS"
+    },
+    {
+      "name": "restore creates new epoch; invert is one publication and coordinates mirror only in physics",
+      "status": "PASS"
+    },
+    {
+      "name": "route conflict and nonpositive step leave publication unchanged; visual ablation only marks packet",
+      "status": "PASS"
+    },
+    {
+      "name": "rolled-back step leaves the last complete publication and particle bytes unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "full pool compresses every slot into fixed upload storage without dropping inventory",
+      "status": "PASS"
+    },
+    {
+      "name": "T49 Float32 column-boundary overflow and ID truncation reject without packet writes",
+      "status": "PASS"
+    },
+    {
+      "name": "T49 empty bed -> real falling particles -> LAND bed and particle removal share one packet",
+      "status": "PASS"
+    }
+  ]
+}

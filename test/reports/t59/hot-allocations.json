@@ -1,0 +1,131 @@
+{
+  "status": "ZERO_ALLOCATION",
+  "scope": "complete isolated M1 HOT path; cold evidence export measured separately",
+  "simulatedSeconds": 600,
+  "completedSteps": 36000,
+  "wallMs": 32254.3684,
+  "static": {
+    "legacySiteCount": 60,
+    "remainingSiteCount": 0,
+    "reachableNodes": 80,
+    "registryComplete": true
+  },
+  "runtime": {
+    "traps": {
+      "constructor": 0,
+      "container": 0,
+      "serialization": 0,
+      "helper": 0,
+      "coldCall": 0
+    },
+    "fixedTypedArrayCount": 634,
+    "bufferIdentityChanges": 0,
+    "fixtures": [
+      {
+        "name": "flight",
+        "count": 3273
+      },
+      {
+        "name": "partial-land",
+        "count": 3273
+      },
+      {
+        "name": "cross",
+        "count": 3273
+      },
+      {
+        "name": "capacity-cross",
+        "count": 3273
+      },
+      {
+        "name": "spawn-tail",
+        "count": 3273
+      },
+      {
+        "name": "lift-two-refunds",
+        "count": 3273
+      },
+      {
+        "name": "positive-tail",
+        "count": 3273
+      },
+      {
+        "name": "explicit-merge",
+        "count": 3273
+      },
+      {
+        "name": "explicit-degrade",
+        "count": 3272
+      },
+      {
+        "name": "full-merge",
+        "count": 3272
+      },
+      {
+        "name": "full-lift-degrade",
+        "count": 3272
+      }
+    ]
+  },
+  "telemetry": {
+    "hotContractVersion": 1,
+    "ownerId": 1,
+    "stepEpoch": 36000,
+    "attemptToken": 36000,
+    "activePatchToken": 0,
+    "activePatchState": 0,
+    "requestCount": 3,
+    "motionCount": 0,
+    "resultCount": 3,
+    "eventCount": 3,
+    "lineageCount": 2,
+    "requestCapacity": 4096,
+    "eventCapacity": 4096,
+    "hotStatus": 0,
+    "errorStageCode": 0,
+    "rollbackCount": 0,
+    "staleHandleRejectCount": 0,
+    "patchBusyCount": 0,
+    "overflowCount": 0,
+    "tokenExhausted": 0,
+    "bufferIdentityChanged": 0,
+    "legacyColdCallCount": 0,
+    "pageBacklog": 0
+  },
+  "hotCpuMs": {
+    "p50": 0.25979999999981374,
+    "p95": 2.699299999999994,
+    "max": 36.47940000000017
+  },
+  "coldExportMs": {
+    "p50": 0.05980000000272412,
+    "p95": 0.6748999999981606,
+    "max": 20.314399999999296
+  },
+  "heapBefore": {
+    "rss": 142082048,
+    "heapTotal": 86618112,
+    "heapUsed": 57058496,
+    "external": 17009683,
+    "arrayBuffers": 15319166
+  },
+  "heapAfter": {
+    "rss": 164155392,
+    "heapTotal": 112582656,
+    "heapUsed": 87838160,
+    "external": 13086762,
+    "arrayBuffers": 6865005
+  },
+  "failureBranches": {
+    "journalOverflow": true,
+    "publishedAuditFailure": true,
+    "newAttemptRetry": true
+  },
+  "gc": {
+    "countObserved": 149,
+    "durationMs": 100.5883994102478,
+    "hotIntervalCountObserved": 1,
+    "note": "VM GC includes cold export and JIT/runtime activity; it does not establish explicit source allocations"
+  },
+  "limitation": "Node does not establish ArkTS device frame time or VM-internal allocation behavior"
+}

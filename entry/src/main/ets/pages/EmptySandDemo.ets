@@ -74,7 +74,7 @@ struct EmptySandDemo {
       const result = this.renderer.submitDualFieldSurfacePx(this.publication,context,ns,this.getUIContext().vp2px(1));
       if (this.serial % 60 === 0) console.info(`WS_EVENT empty_sand_demo ${JSON.stringify({
         input:input,config:this.gravityConfig.revision,physicsCommitId:this.publication.physicsCommitId,
-        effectiveTiltDeg:this.publication.effectiveTiltDeg,metrics:this.model.field.getMetrics()})}`);
+        effectiveTiltDeg:this.publication.effectiveTiltDeg,dry:this.model.field.getDryDiagnostics(),mediumMode:this.publication.mediumMode,metrics:this.model.field.getMetrics()})}`);
       this.status = result !== null && result.code === 0 && result.swapSucceeded ?
         '新管线：按住发沙，松手停止' : '新管线等待/拒绝：'+this.renderer.dualFailure;
     }

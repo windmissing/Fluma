@@ -32,6 +32,7 @@ export interface P011ParticleHotConfig {
 }
 
 export interface P011ParticleHotFieldBuffer {
+  mediumMode?: string;
   readonly cols: number; readonly capacity: number;
   readonly waterTop: Float64Array; readonly bh: Float64Array; readonly bl: Float64Array;
   readonly mh: Float64Array; readonly ml: Float64Array;
@@ -246,6 +247,7 @@ export class P011ParticleHotEventBuffer {
 }
 
 export class P011ParticleHotWorkspace {
+  mediumMode: string = 'WET_COLUMN_V1';
   private readonly bufferBindings: ArrayBuffer[]; private readonly bufferBytes: number[];
   readonly fieldBinding: ArrayBuffer[];
   readonly ownerId: number; readonly pool: P011ParticleField; readonly params: P011ParticleParams;
@@ -447,6 +449,7 @@ function fieldBufferAtHot(f: P011ParticleHotFieldBuffer, i: number): ArrayBuffer
   }
 }
 function fieldStorageValidHot(work: P011ParticleHotWorkspace, f: P011ParticleHotFieldBuffer, bound: boolean): boolean {
+  if(bound && (f.mediumMode ?? 'WET_COLUMN_V1')!==work.mediumMode)return false;
   for (let i = 0; i < 8; i++) {
     const buffer = fieldBufferAtHot(f, i);
     if (buffer.byteLength !== work.cols * 8 || work.ownsBufferHot(buffer) || (bound && buffer !== work.fieldBinding[i])) return false;
@@ -481,6 +484,7 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
   if (work.active !== 0) return work.lastStatus = P011_HOT_STEP_BUSY;
   if (work.pageBacklog !== 0) return work.lastStatus = P011_HOT_JOURNAL_OVERFLOW;
   const f = input.field; const c = work.cols;
+  if(f.mediumMode!==undefined && f.mediumMode!=='WET_COLUMN_V1' && f.mediumMode!=='DRY_AIR_V1')return work.lastStatus=P011_HOT_INVALID_INPUT;
   if (!work.storageValidHot() || !fieldStorageValidHot(work, f, false)) return work.lastStatus = 3;
   if (!Number.isSafeInteger(input.runToken) || input.runToken <= 0 || !Number.isSafeInteger(input.substepId) || input.substepId < 0 ||
     !Number.isSafeInteger(input.attemptToken) || input.attemptToken <= 0 || !Number.isFinite(input.dt) || input.dt <= 0 ||
@@ -511,7 +515,7 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
   work.stepEpoch++;
   work.runToken = input.runToken; work.substepId = input.substepId; work.attemptToken = input.attemptToken;
   work.dt = input.dt; work.effectiveTiltRad = input.effectiveTiltRad; work.seed = input.seed;
-  work.capacity = f.capacity;
+  work.capacity = f.capacity; work.mediumMode = f.mediumMode ?? 'WET_COLUMN_V1';
   work.paramsRevision = input.paramsRevision; work.inputRevision = input.inputRevision;
   work.sourceInjectedH = f.sourceInjectedH; work.sourceInjectedL = f.sourceInjectedL; work.sourceEpoch = f.sourceEpoch;
   work.frozenWaterTop.set(f.waterTop); work.frozenBh.set(f.bh); work.frozenBl.set(f.bl);
@@ -679,12 +683,13 @@ export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expected
     const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;
     const speed = heavy ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
     const drag = heavy ? work.params.dragHeavy : work.params.dragLight;
-    const wet = p.pY[i] <= work.frozenWaterTop[c];
+    const dry = work.mediumMode === 'DRY_AIR_V1';
+    const wet = !dry && p.pY[i] <= work.frozenWaterTop[c];
     const blend = 1 - Math.exp(-drag * work.dt);
     const vx = wet ? p.pVx[i] + (speed * Math.sin(work.effectiveTiltRad) - p.pVx[i]) * blend :
-      p.pVx[i] * Math.exp(-0.01 * work.dt);
+      dry ? p.pVx[i] * Math.exp(-0.01 * work.dt) + 9.8 * Math.sin(work.effectiveTiltRad) * work.dt : p.pVx[i] * Math.exp(-0.01 * work.dt);
     const vy = wet ? p.pVy[i] + (-speed * Math.cos(work.effectiveTiltRad) - p.pVy[i]) * blend :
-      p.pVy[i] - 9.8 * work.dt;
+      p.pVy[i] - 9.8 * (dry ? Math.cos(work.effectiveTiltRad) : 1) * work.dt;
     const x = Math.max(0, Math.min(work.cols - 1e-9,
       Math.max(c - 1 + 1e-9, Math.min(c + 2 - 1e-9, p.pX[i] + vx * work.dt))));
     const y = Math.min(work.capacity, p.pY[i] + vy * work.dt);
@@ -713,11 +718,12 @@ export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expected
       const i = work.order[j]; const c = Math.floor(p.pX[i]); const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;
       const speed = heavy ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
       const drag = heavy ? work.params.dragHeavy : work.params.dragLight;
-      const wet = p.pY[i] <= work.frozenWaterTop[c]; const blend = 1 - Math.exp(-drag * work.dt);
+      const dry = work.mediumMode === 'DRY_AIR_V1';
+    const wet = !dry && p.pY[i] <= work.frozenWaterTop[c]; const blend = 1 - Math.exp(-drag * work.dt);
       const vx = wet ? p.pVx[i] + (speed * Math.sin(work.effectiveTiltRad) - p.pVx[i]) * blend :
-        p.pVx[i] * Math.exp(-0.01 * work.dt);
+        dry ? p.pVx[i] * Math.exp(-0.01 * work.dt) + 9.8 * Math.sin(work.effectiveTiltRad) * work.dt : p.pVx[i] * Math.exp(-0.01 * work.dt);
       const vy = wet ? p.pVy[i] + (-speed * Math.cos(work.effectiveTiltRad) - p.pVy[i]) * blend :
-        p.pVy[i] - 9.8 * work.dt;
+        p.pVy[i] - 9.8 * (dry ? Math.cos(work.effectiveTiltRad) : 1) * work.dt;
       const x = Math.max(0, Math.min(work.cols - 1e-9,
         Math.max(c - 1 + 1e-9, Math.min(c + 2 - 1e-9, p.pX[i] + vx * work.dt))));
       const y = Math.min(work.capacity, p.pY[i] + vy * work.dt); const contact = p.pState[i] === 2 || y <= sandHot(work, c);
@@ -920,6 +926,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
       if (!Number.isSafeInteger(births) || births > work.patchActions.capacity - work.patchActions.count) return P011_HOT_JOURNAL_OVERFLOW;
       for (let k = 0; k < births; k++) {
         if (p.freeCount === 0) {
+          if (work.mediumMode === 'DRY_AIR_V1') return 5;
           const merged = mergeOldestHot(work, p); if (merged !== 0) return merged;
         }
         if (p.nextId > 4294967295) return P011_HOT_INVALID_INPUT;
@@ -928,15 +935,16 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
         const f = work.field; if (f === null) return P011_HOT_NOT_CONFIGURED;
         const sand = f.bh[c] + f.bl[c] + f.mh[c] + f.ml[c];
         const low = kind === 4 ? plan.predictedY[row] : sand + work.params.contactEps;
-        const high = f.waterTop[c] - work.params.contactEps;
+        const dry = work.mediumMode === 'DRY_AIR_V1';
+        const high = dry ? f.capacity : f.waterTop[c] - work.params.contactEps;
         if (high < low) return P011_HOT_INVALID_PATCH_STATE;
         const speed = phase === 0 ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
         const lift = phase === 0 ? work.params.liftSpeedHeavy : work.params.liftSpeedLight;
         const slot = p.freeSlots[--p.freeCount];
-        p.pMass[slot] = k < count ? work.params.massPackage : tail; p.pX[slot] = c + 0.5 + jitter;
-        p.pY[slot] = kind === 4 ? low : Math.max(low, Math.min(high, plan.predictedY[row]));
-        p.pVx[slot] = kind === 4 ? jitter * 2 * work.params.liftSpread : speed * Math.sin(work.effectiveTiltRad);
-        p.pVy[slot] = kind === 4 ? lift : -speed * Math.cos(work.effectiveTiltRad);
+        p.pMass[slot] = k < count ? work.params.massPackage : tail; p.pX[slot] = dry && kind === 1 ? plan.predictedX[row] : c + 0.5 + jitter;
+        p.pY[slot] = dry && kind === 1 ? plan.predictedY[row] : kind === 4 ? low : Math.max(low, Math.min(high, plan.predictedY[row]));
+        p.pVx[slot] = dry && kind === 1 ? 0 : kind === 4 ? jitter * 2 * work.params.liftSpread : speed * Math.sin(work.effectiveTiltRad);
+        p.pVy[slot] = dry && kind === 1 ? 0 : kind === 4 ? lift : -speed * Math.cos(work.effectiveTiltRad);
         p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];
         p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;
         if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];
@@ -1080,6 +1088,8 @@ export function auditParticleHot(work: P011ParticleHotWorkspace): number {
       Math.abs(work.auditMassH[c] - p.colParticleMassH[c]) > 1e-9 || Math.abs(work.auditMassL[c] - p.colParticleMassL[c]) > 1e-9 ||
       sand + f.suspH[c] + f.suspL[c] + p.colParticleMassH[c] + p.colParticleMassL[c] > f.waterTop[c] + 1e-9 ||
       f.waterTop[c] > work.capacity) return 13;
+    if (work.mediumMode === 'DRY_AIR_V1' && (f.suspH[c] !== 0 || f.suspL[c] !== 0 ||
+      Math.abs(f.waterTop[c] - sand - p.colParticleMassH[c] - p.colParticleMassL[c]) > 1e-9)) return 13;
     beforeH += work.fieldBeforeBh[c] + work.fieldBeforeMh[c] + work.fieldBeforeSuspH[c] + work.frozenPool.colParticleMassH[c];
     beforeL += work.fieldBeforeBl[c] + work.fieldBeforeMl[c] + work.fieldBeforeSuspL[c] + work.frozenPool.colParticleMassL[c];
     afterH += f.bh[c] + f.mh[c] + f.suspH[c] + p.colParticleMassH[c];

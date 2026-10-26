@@ -135,6 +135,7 @@ export interface P011ParticleExecutionResult {
 
 // A Node-replaceable complete field stage. No WaterSandField import or wiring.
 export class P011ParticlePrototypeSink implements P011ParticleCommitSink {
+  mediumMode: string = 'WET_COLUMN_V1';
   readonly bh: Float64Array; readonly bl: Float64Array;
   readonly mh: Float64Array; readonly ml: Float64Array;
   readonly suspH: Float64Array; readonly suspL: Float64Array;
@@ -302,7 +303,7 @@ export class P011ParticlePrototypeSink implements P011ParticleCommitSink {
       const grant: P011ParticleGrant = { requestKey: r.requestKey,
         grantedHeavy: gh, grantedLight: gl, disposition: disposition };
       patch = atomic.prepare(staged, grant);
-      if (patch === null && r.kind === 'lift' && granted > 0) {
+      if (patch === null && r.kind === 'lift' && granted > 0 && this.mediumMode !== 'DRY_AIR_V1') {
         grant.disposition = 'SUSP'; disposition = 'SUSP'; degraded = true;
         patch = atomic.prepare(staged, grant);
       } else if (patch === null && r.kind === 'spawn') {
@@ -321,6 +322,7 @@ export class P011ParticlePrototypeSink implements P011ParticleCommitSink {
       const count = mainCount + births.length + merges.length + (degraded ? 1 : 0);
       if (this.events.length + count > this.eventLimit) throw new Error('PARTICLE_JOURNAL_OVERFLOW');
       atomic.publish(patch); published = true;
+      if(this.mediumMode==='DRY_AIR_V1')for(let c=0;c<this.pool.cols;c++)this.waterTop[c]=this.sand(c)+this.suspH[c]+this.suspL[c]+this.pool.particleMassAt(c);
       this.audit();
       const after = this.pool.snapshot();
       for (let phase = 0; phase < 2; phase++) {
@@ -398,10 +400,12 @@ export class P011ParticlePrototypeSink implements P011ParticleCommitSink {
 }
 
 class P011ParticlePrototypeView implements P011ParticleFieldView {
+  readonly mediumMode: string;
   readonly cols: number; readonly capacity: number; readonly effectiveTiltRad: number;
   private sand: Float64Array; private water: Float64Array;
   private susp: Float64Array; private free: Float64Array;
   constructor(sink: P011ParticlePrototypeSink) {
+    this.mediumMode=sink.mediumMode;
     this.cols = sink.pool.cols; this.capacity = sink.capacity;
     this.effectiveTiltRad = sink.identity.effectiveTiltRad;
     this.sand = new Float64Array(this.cols); this.water = sink.waterTop.slice();
@@ -409,7 +413,7 @@ class P011ParticlePrototypeView implements P011ParticleFieldView {
     const particles = sink.pool.snapshot();
     for (let c = 0; c < this.cols; c++) {
       this.sand[c] = sink.sand(c); this.susp[c] = sink.suspH[c] + sink.suspL[c];
-      this.free[c] = this.water[c] - this.sand[c] - this.susp[c] -
+      this.free[c] = (this.mediumMode==='DRY_AIR_V1'?this.capacity:this.water[c]) - this.sand[c] - this.susp[c] -
         particles.colParticleMassH[c] - particles.colParticleMassL[c];
     }
   }

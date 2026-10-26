@@ -432,6 +432,7 @@ export interface P011NaturalObservationBudgets {
 }
 
 export interface P011NaturalObservationAudit {
+  mediumRevision?: string; airDynamicsRevision?: string; freeWaterTotal?: number; occupiedVolumeTotal?: number;
   finite: boolean;
   range: boolean;
   capacity: boolean;
@@ -1004,6 +1005,8 @@ export class P011NaturalObservationProbe {
       capacity: audit.capacity,
       stock: audit.stock,
       conservation: audit.conservation,
+      mediumRevision:audit.mediumRevision,airDynamicsRevision:audit.airDynamicsRevision,
+      freeWaterTotal:audit.freeWaterTotal,occupiedVolumeTotal:audit.occupiedVolumeTotal,
       waterTotalBefore: audit.waterTotalBefore,
       waterTotalAfter: audit.waterTotalAfter,
       heavyTotalBefore: audit.heavyTotalBefore,

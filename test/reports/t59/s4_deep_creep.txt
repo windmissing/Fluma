@@ -1,0 +1,47 @@
+{
+  "suite": "run_p011_s4_deep_creep_units",
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "s4_conservationPerPhase",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_symmetryGateUniformZeroFlux",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_qBoundedAndNoInversion",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_energyMonotoneNonIncreasing",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_budgetAccounting2q",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_atomicityNoPartialWrite",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_routeIsolationBitIdentical",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_shadowConsistencyRunCompletes",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_performanceUnderBudget",
+      "status": "PASS"
+    },
+    {
+      "name": "s4_attributionReasonsComplete",
+      "status": "PASS"
+    }
+  ]
+}

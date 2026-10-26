@@ -1,0 +1,31 @@
+{
+  "suite": "T51_T50_gravity_mapping",
+  "passed": 6,
+  "failed": 0,
+  "results": [
+    {
+      "name": "axis sign and tilt angles are physical targets at +-15/30, scale invariant",
+      "status": "PASS"
+    },
+    {
+      "name": "low projection holds direction, invalid/backward samples do not pollute EMA",
+      "status": "PASS"
+    },
+    {
+      "name": "direction and residual shake are separate; stop retains inclined target",
+      "status": "PASS"
+    },
+    {
+      "name": "angle clamps at physical +-89 and vector filtering handles wrap without invert",
+      "status": "PASS"
+    },
+    {
+      "name": "model consumes paired direction and shake before actual step; publication carries effective not target",
+      "status": "PASS"
+    },
+    {
+      "name": "stale input stops touch, hide clears shake and reset clears mapping history",
+      "status": "PASS"
+    }
+  ]
+}

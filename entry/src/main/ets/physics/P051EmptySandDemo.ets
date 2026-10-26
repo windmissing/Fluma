@@ -1,6 +1,7 @@
+import { P051DryAdmissionRequest, P051_DRY_REVISION } from './P051DryParticleAdmission';
 import { P051GravityInput } from './P051GravityInputAdapter';
 // T51 isolated demo model. Sensor direction mapping is owned by T50.
-import { WaterSandField, P011GestureSandRequest } from './WaterSandField';
+import { WaterSandField } from './WaterSandField';
 import { defaultP011ParticleParams } from './P011ParticleM2Field';
 import { P011GestureRateClock } from './P011GestureRateClock';
 import { P011PublishedRenderState } from './P011PublishedRenderState';
@@ -16,12 +17,8 @@ export class P051EmptySandDemo {
   constructor() { this.reset(); }
   reset(): void {
     this.stop();
-    this.field.initialize({waterRegions:[{startCol:0,endColInclusive:127,bottom:0,height:160}],
-      heavyDepositedRegions:[],lightDepositedRegions:[],heavySuspendedRegions:[],lightSuspendedRegions:[]});
-    const params = defaultP011ParticleParams();
-    const result = this.field.setParticleRoute(params);
-    if (!result.ok) throw new Error('DEMO_PARTICLE_ROUTE_'+result.code);
-    this.field.setNaturalObservationRouteId('dual-field-particle-v1');
+    const result=this.field.initializeDryParticleDemo({revision:P051_DRY_REVISION,sourceId:51,particleParams:defaultP011ParticleParams()});
+    if(!result.ok)throw new Error('DEMO_DRY_INIT_'+result.code);
     this.sequence = 0; this.failed=false;this.input=null;this.field.setTilt(0);this.field.setShakeInput(0);
   }
   start(x: number, y: number): void {
@@ -30,7 +27,7 @@ export class P051EmptySandDemo {
   }
   move(x: number, y: number): void {
     if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-    this.x = Math.max(0,Math.min(127.999,x)); this.y = Math.max(0,Math.min(256,y));
+    this.x = x; this.y = y;
   }
   stop(): void { this.touching = false; this.clock.stop(); this.field.clearGestureSandQueue(); }
   setActive(active: boolean): void { this.active = active; if (!active) { this.stop();this.field.setShakeInput(0);this.input=null; } }
@@ -45,11 +42,10 @@ export class P051EmptySandDemo {
     if (this.touching) {
       const seconds = this.clock.sample(frameTimeNs,'ns');
       if (seconds > 0) {
-        const h = new Float64Array(128), l = new Float64Array(128);
-        h[Math.floor(this.x)] = 8 * seconds;
-        const request: P011GestureSandRequest = {perColumnHeavy:h,perColumnLight:l,sourceId:51,
-          sequence:++this.sequence,inputTime:frameTimeNs/1000000,x:this.x,y:this.y,seed:51};
-        this.field.injectGestureSand(request);
+        const request: P051DryAdmissionRequest={revision:P051_DRY_REVISION,sourceId:51,sequence:++this.sequence,
+          inputTimeMs:frameTimeNs/1000000,x:this.x,y:this.y,seed:51,requestedH:8*seconds,requestedL:0};
+        const receipt=this.field.injectDryGestureSand(request);
+        if(receipt.rejectedReason!==null && receipt.rejectedReason!=='NO_OP')this.stop();
       }
     }
     const ok=this.field.step(Math.max(0,Math.min(1/30,dt))).ok;

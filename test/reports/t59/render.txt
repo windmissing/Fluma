@@ -1,0 +1,31 @@
+WS_EVENT p013_dual_frame {"code":0,"swapSucceeded":true,"errorStage":"NONE"}
+WS_EVENT p013_dual_geometry {"geometrySpace":"SURFACE_PX_V1","surfaceWidthPx":800,"surfaceHeightPx":480,"surfaceEpoch":2,"contextEpoch":1,"physicsCommitId":4,"projection":{"revision":"COLUMN_PRESERVING_F32_RENDER_V1","correctedCount":0,"maxXError":0,"maxYError":0,"firstSlot":-1,"sourceX":0,"roundedX":0,"projectedX":0}}
+{
+  "suite": "T62 offline repair (native boundary synthetic)",
+  "results": [
+    {
+      "name": "same legal T61 boundary inputs: raw rejects, opt-in projects inside original column; source immutable",
+      "status": "PASS"
+    },
+    {
+      "name": "all illegal authoritative predicates still reject atomically under opt-in",
+      "status": "PASS"
+    },
+    {
+      "name": "T61 fractional zero-surface startup old path remains RED; explicit prepare path GREEN same publication",
+      "status": "PASS"
+    },
+    {
+      "name": "prepare failure and lifecycle epoch race never draw or claim a new commit",
+      "status": "PASS"
+    },
+    {
+      "name": "true nonuniform legacy transform still refuses native draw",
+      "status": "PASS"
+    },
+    {
+      "name": "DEMO opts in; measurement and local touch share XComponent; density radius explicit",
+      "status": "PASS"
+    }
+  ]
+}
