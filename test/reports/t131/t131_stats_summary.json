@@ -1,0 +1,97 @@
+{
+ "192c": {
+  "runs": 5,
+  "uploadMs_p50_p95": [
+   0.138,
+   0.138
+  ],
+  "dispatchMs_p50_p95": [
+   0.37,
+   0.38
+  ],
+  "gpuFenceWaitMs_p50_p95": [
+   1.07,
+   1.599
+  ],
+  "readbackMs_p50_p95": [
+   0.005,
+   0.005
+  ]
+ },
+ "192h": {
+  "runs": 5,
+  "uploadMs_p50_p95": [
+   0.005,
+   0.006
+  ],
+  "dispatchMs_p50_p95": [
+   0.008,
+   0.014
+  ],
+  "gpuFenceWaitMs_p50_p95": [
+   0.295,
+   0.722
+  ],
+  "readbackMs_p50_p95": [
+   0.002,
+   0.004
+  ]
+ },
+ "512c": {
+  "runs": 5,
+  "uploadMs_p50_p95": [
+   0.135,
+   0.147
+  ],
+  "dispatchMs_p50_p95": [
+   0.008,
+   0.008
+  ],
+  "gpuFenceWaitMs_p50_p95": [
+   0.297,
+   0.69
+  ],
+  "readbackMs_p50_p95": [
+   0.002,
+   0.003
+  ]
+ },
+ "512h": {
+  "runs": 5,
+  "uploadMs_p50_p95": [
+   0.004,
+   0.005
+  ],
+  "dispatchMs_p50_p95": [
+   0.005,
+   0.007
+  ],
+  "gpuFenceWaitMs_p50_p95": [
+   0.271,
+   0.322
+  ],
+  "readbackMs_p50_p95": [
+   0.002,
+   0.003
+  ]
+ },
+ "4096h": {
+  "runs": 10,
+  "uploadMs_p50_p95": [
+   0.006,
+   0.009
+  ],
+  "dispatchMs_p50_p95": [
+   0.0065,
+   0.009
+  ],
+  "gpuFenceWaitMs_p50_p95": [
+   0.3175,
+   0.892
+  ],
+  "readbackMs_p50_p95": [
+   0.0195,
+   0.033
+  ]
+ }
+}
