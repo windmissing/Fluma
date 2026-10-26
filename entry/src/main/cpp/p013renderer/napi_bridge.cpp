@@ -194,6 +194,7 @@ void Cleanup(void*) {
   if (Owner() == Status::OK) {
     Destroy(ResetReason::RELEASE);
     g.egl.Release();
+    g.material.ClearSession();
     g.ownerBound = false;
     g.released = true;
     g.count = 0;
@@ -290,6 +291,7 @@ napi_value Release(napi_env e, napi_callback_info) {
   g.egl.Release();
   if (g.egl.current) return Control(e, Status::EGL_INIT_FAILED);
   g.ownerBound = false;
+  g.material.ClearSession();
   g.released = true;
   g.count = 0;
   g.head = 0;
@@ -412,7 +414,9 @@ napi_value MaterialResult(napi_env e,const MaterialReceipt& r){
  Put(e,o,"materialUploadBytes",double(r.uploadedBytes));Put(e,o,"materialPendingBytes",double(r.pendingBytes));
  Put(e,o,"materialPumpCount",double(r.pumpCount));Put(e,o,"materialTextureLiveCount",double(r.textureLiveCount));
  Put(e,o,"assetCpuBytes",double(r.cpuBytes));Put(e,o,"discardedGeneration",double(r.discardedGeneration));
- Put(e,o,"frameToken",r.frameToken.c_str());return o;
+ Put(e,o,"requestedAppearanceConfigRevision",double(r.requestedRevision));
+ Put(e,o,"boundAppearanceConfigRevision",double(r.boundRevision));Put(e,o,"bindingId",double(r.bindingId));
+ Put(e,o,"configurationDigest",r.configurationDigest.c_str());Put(e,o,"frameToken",r.frameToken.c_str());return o;
 }
 bool MaterialText(napi_env e,napi_value o,const char* key,std::string& value){
  napi_value v=nullptr;return napi_get_named_property(e,o,key,&v)==napi_ok&&String(e,v,value)&&!value.empty();
@@ -450,7 +454,14 @@ int ParseMaterial(napi_env e,napi_value v,MaterialDesc& d,double& session,const 
  if(napi_get_named_property(e,v,"grainBaseSrgb",&base)!=napi_ok||napi_get_array_length(e,base,&rows)!=napi_ok||rows!=3)return 400;
  for(uint32_t k=0;k<3;k++){napi_value row=nullptr;uint32_t cols=0;if(napi_get_element(e,base,k,&row)!=napi_ok||napi_get_array_length(e,row,&cols)!=napi_ok||cols!=3)return 400;
  for(uint32_t c=0;c<3;c++){napi_value n=nullptr;double x=0;if(napi_get_element(e,row,c,&n)!=napi_ok||napi_get_value_double(e,n,&x)!=napi_ok||!std::isfinite(x)||x<0||x>1)return 400;d.grainBase[k*3+c]=x;}}
- d.metadata=d.bundleId+":"+d.paletteHash+":"+d.generatorVersion;
+ napi_value parameters=nullptr;napi_valuetype parametersType;
+ if(napi_get_named_property(e,v,"assetGenerationParameters",&parameters)!=napi_ok||napi_typeof(e,parameters,&parametersType)!=napi_ok)return 400;
+ if(parametersType==napi_undefined)d.metadata="U";
+ else {
+  std::array<char,16385> text{};size_t length=0;
+  if(parametersType!=napi_string||napi_get_value_string_utf8(e,parameters,text.data(),text.size(),&length)!=napi_ok||!length||length>=text.size()-1)return 400;
+  d.metadata="S"+std::string(text.data(),length);
+ }
  return 0;
 }
 Status MaterialOwner(){auto code=Owner();if(code==Status::OK&&(!g.ownerBound||g.released))code=Status::NOT_READY;return code;}
@@ -463,13 +474,25 @@ bool MaterialBytes(napi_env e,napi_value v,size_t expected,void*& data,const cha
  napi_get_arraybuffer_info(e,buffer,&base,&bytes)!=napi_ok||!base||offset>bytes||expected>bytes-offset||data!=static_cast<uint8_t*>(base)+offset)return false;
  return true;
 }
+napi_value BindMaterialConfiguration(napi_env e,napi_callback_info info){
+ size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double session=0,revision=0;std::string digest;
+ bool valid=n==1&&Number(e,a[0],"sessionId",session)&&SafeInteger(session)&&session>0&&Number(e,a[0],"appearanceConfigRevision",revision)&&SafeInteger(revision)&&MaterialText(e,a[0],"configurationDigest",digest);
+ std::lock_guard<std::mutex> lock(g.mutex);MaterialConfigReceipt r;
+ auto owner=MaterialOwner();
+ if(owner!=Status::OK){r.code=int(owner);r.errorStage="owner";}
+ else if(!valid||session!=g.id){r.code=400;r.errorStage="configBinding";}
+ else r=g.material.BindConfiguration(uint64_t(session),uint64_t(revision),digest);
+ napi_value o=Object(e);Put(e,o,"code",double(r.code));Put(e,o,"sessionId",double(r.sessionId));Put(e,o,"bindingId",double(r.bindingId));Put(e,o,"appearanceConfigRevision",double(r.revision));Put(e,o,"configurationDigest",r.digest.c_str());Put(e,o,"errorStage",r.errorStage.c_str());return o;
+}
 napi_value StageMaterialBundle(napi_env e,napi_callback_info info){
  size_t n=3;napi_value a[3]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
  MaterialDesc d;double session=0;const char* stage="metadata";int code=n==3?ParseMaterial(e,a[0],d,session,stage):400;
  void* grain=nullptr;void* strata=nullptr;
- if(!code){stage="byteOffset";if(!MaterialBytes(e,a[1],kMaterialGrainBytes,grain,stage)||!MaterialBytes(e,a[2],kMaterialStrataBytes,strata,stage))code=400;}
+
  std::lock_guard<std::mutex> lock(g.mutex);auto owner=MaterialOwner();if(owner!=Status::OK){auto r=g.material.Inspect();r.code=int(owner);r.errorStage="owner";return MaterialResult(e,r);}
  if(!code&&(session!=g.id||d.surfaceEpoch!=g.egl.surfaceEpoch||d.contextEpoch!=g.egl.contextEpoch)){code=400;stage="contextEpoch";}
+ if(!code){auto binding=g.material.CheckConfiguration(d);if(binding.code)return MaterialResult(e,binding);}
+ if(!code){stage="byteOffset";if(!MaterialBytes(e,a[1],kMaterialGrainBytes,grain,stage)||!MaterialBytes(e,a[2],kMaterialStrataBytes,strata,stage))code=400;}
  if(code){auto r=g.material.Inspect();r.code=code;r.state="FAILED";r.errorStage=stage;r.assetGeneration=d.generation;return MaterialResult(e,r);}
  SurfaceInfo si{};auto current=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
  if(current!=Status::OK){auto r=g.material.Inspect();r.code=int(current);r.errorStage=g.egl.errorStage;return MaterialResult(e,r);}
@@ -478,10 +501,9 @@ napi_value StageMaterialBundle(napi_env e,napi_callback_info info){
  auto unbound=g.egl.Unbind();if(unbound!=Status::OK){r.code=int(unbound);r.errorStage="unbind";}return MaterialResult(e,r);
 }
 napi_value PumpMaterialUploads(napi_env e,napi_callback_info info){
- size_t n=1;napi_value a[1]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double budget=0;
- if(n!=1||napi_get_value_double(e,a[0],&budget)!=napi_ok||!SafeInteger(budget)||budget<1||budget>65536){
-  // Exact receipt code remains an explicit unresolved contract; do not invent one.
-  napi_throw_range_error(e,"P013_BUDGET_CONTRACT_PENDING","byteBudget must be an integer in [1,65536]; receipt code awaits architect");return nullptr;}
+ size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double budget=0;napi_valuetype type;
+ if(n!=1||napi_typeof(e,a[0],&type)!=napi_ok||type!=napi_number||napi_get_value_double(e,a[0],&budget)!=napi_ok||!SafeInteger(budget)||budget<1||budget>65536){
+  std::lock_guard<std::mutex> lock(g.mutex);return MaterialResult(e,g.material.InvalidBudget());}
  std::lock_guard<std::mutex> lock(g.mutex);auto owner=MaterialOwner();auto r=g.material.Inspect();
  if(owner!=Status::OK){r.code=int(owner);r.errorStage="owner";return MaterialResult(e,r);}
  SurfaceInfo si{};auto code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
@@ -1088,6 +1110,7 @@ static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
   napi_property_descriptor d[] = {
     {"drawMaterialFrame",nullptr,DrawMaterialFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"bindMaterialConfiguration", nullptr, BindMaterialConfiguration, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"stageMaterialBundle", nullptr, StageMaterialBundle, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"pumpMaterialUploads", nullptr, PumpMaterialUploads, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"canActivate", nullptr, CanActivateMaterial, nullptr,nullptr,nullptr,napi_default,nullptr},

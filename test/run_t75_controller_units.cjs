@@ -1,0 +1,7 @@
+const fs=require('fs'),a=require('assert/strict'),ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');require.extensions['.ets']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText,f);
+const {P013MaterialController:C}=require('../entry/src/main/ets/render/P013MaterialController.ets');
+let binds=0,budgets=[],fallbacks=0;const native={bindMaterialConfiguration:b=>(binds++,{...b,bindingId:1,code:b.configurationDigest==='bad'?402:0}),pumpMaterialUploads:b=>(budgets.push(b),{code:400,errorStage:'byteBudget',uploadedBytes:0,activeGeneration:4,pendingGeneration:5})};const c=new C(native),b={sessionId:1,appearanceConfigRevision:11,configurationDigest:'a'.repeat(64)};
+a.equal(c.bindMaterialConfiguration(b).code,0);const saved=c.lastBinding;a.equal(c.bindMaterialConfiguration({...b,configurationDigest:'bad'}).code,402);a.equal(c.lastBinding,saved);a.equal(binds,2);
+a.equal(c.pumpMaterialUploads(0).errorStage,'byteBudget');a.deepEqual(budgets,[0]);a.equal(c.activeGeneration,4);a.equal(c.pendingGeneration,5);
+a.throws(()=>c.fallback('f','failed',{drawLegacyFull:()=>fallbacks++,clearForeground:()=>fallbacks++,hideEntireGles:()=>fallbacks++}),/NEWPIPE_FAULT_NO_CANVAS/);a.equal(fallbacks,0);
+console.log(JSON.stringify({suite:'T75_controller',passed:3,failed:0,cases:['explicit independent binder and rejected rebind cache','structured invalid budget delegated to native','fault invokes no Canvas callback']},null,2));

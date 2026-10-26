@@ -1,5 +1,5 @@
 import { P013LightParams } from './P013RenderTypes';
-import { P013MaterialNative, P013MaterialBundleDesc, P013MaterialStageReceipt, P013MaterialFallback, P013MaterialFrameInput, P013MaterialParams, P013MaterialFrameResult } from './P013MaterialTypes';
+import { P013MaterialNative, P013MaterialConfigBinding, P013MaterialConfigReceipt, P013MaterialBundleDesc, P013MaterialStageReceipt, P013MaterialFallback, P013MaterialFrameInput, P013MaterialParams, P013MaterialFrameResult } from './P013MaterialTypes';
 // T54: injected native boundary permits offline testing; no ticker or page ownership.
 export class P013MaterialController {
   activeGeneration: number = 0; pendingGeneration: number = 0; fallbackReason: string = '';
@@ -17,7 +17,11 @@ export class P013MaterialController {
     return receipt;
   }
   private readonly native: P013MaterialNative;
+  lastBinding: P013MaterialConfigReceipt | null = null;
   constructor(native: P013MaterialNative) { this.native=native; }
+  bindMaterialConfiguration(binding: P013MaterialConfigBinding): P013MaterialConfigReceipt {
+    const result=this.native.bindMaterialConfiguration(binding);if(result.code===0)this.lastBinding=result;return result;
+  }
   private record(r: P013MaterialStageReceipt): P013MaterialStageReceipt {
     this.lastReceipt=r;this.activeGeneration=r.activeGeneration;
     this.pendingGeneration=r.pendingGeneration;
@@ -27,9 +31,6 @@ export class P013MaterialController {
     return this.record(this.native.stageMaterialBundle(desc,grain,strata));
   }
   pumpMaterialUploads(byteBudget: number): P013MaterialStageReceipt {
-    // Invalid-domain receipt is explicitly pending architect's code ruling.
-    if (!Number.isInteger(byteBudget) || byteBudget < 1 || byteBudget > 65536)
-      throw new Error('P013_BUDGET_CONTRACT_PENDING');
     return this.record(this.native.pumpMaterialUploads(byteBudget));
   }
   canActivate(generation: number, contextEpoch: number): boolean { return this.native.canActivate(generation,contextEpoch); }
@@ -40,8 +41,6 @@ export class P013MaterialController {
   // G4 must supply its real callbacks. Here only the isolated same-tick failure contract is implemented.
   fallback(frameToken: string, reason: string, target: P013MaterialFallback): void {
     this.fallbackReason=reason;
-    try { target.drawLegacyFull(frameToken); } finally {
-      try { target.clearForeground(); } finally { target.hideEntireGles(); }
-    }
+    throw new Error('NEWPIPE_FAULT_NO_CANVAS:'+frameToken+':'+reason);
   }
 }

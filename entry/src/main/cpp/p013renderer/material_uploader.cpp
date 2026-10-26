@@ -3,7 +3,8 @@
 #include <cstring>
 #include <cstdio>
 #include <new>
-#include <stdexcept>
+#include <cmath>
+#include <limits>
 namespace p013 {
 namespace {
 uint32_t R(uint32_t x,int n){return (x>>n)|(x<<(32-n));}
@@ -22,29 +23,65 @@ std::string MaterialSha256(const uint8_t* bytes,size_t n){
  }
  char out[65]{};for(int j=0;j<8;j++)std::snprintf(out+j*8,9,"%08x",h[j]);return out;
 }
+namespace {
+bool Digest(const std::string& s){return s.size()==64&&std::all_of(s.begin(),s.end(),[](char c){return (c>='0'&&c<='9')||(c>='a'&&c<='f');});}
+std::string Fingerprint(const MaterialDesc& d){
+ std::string bytes;
+ auto u=[&](uint64_t v){for(int i=0;i<8;i++)bytes.push_back(char(v>>(8*i)));};
+ auto text=[&](const std::string& t){u(t.size());bytes+=t;};
+ auto number=[&](double v){uint64_t bits=0;std::memcpy(&bits,&v,8);u(bits);};
+ text("P1_ALBEDO_DELTA_V1|E2_GAUSS_COL6_R18_P1_V2|LIN_SRGB_REINHARD_V1|P1_TEXEL_CANVAS_PX_V1|CONTINUOUS_COLUMN_WARP_V1|2|1|256|256|64|256|3|SRGB8_STRAIGHT_OPAQUE");
+ text(d.bundleId);text(d.grainHash);text(d.strataHash);text(d.metadata);text(d.paletteHash);text(d.generatorVersion);
+ u(d.revision);for(auto v:d.grainBase)number(v);number(d.lambdaMaterial);number(d.lambdaCanvas);number(d.warpRange);number(d.seed);number(d.geometryEpoch);
+ return MaterialSha256(reinterpret_cast<const uint8_t*>(bytes.data()),bytes.size());
+}
+}
+MaterialConfigReceipt MaterialUploader::BindConfiguration(uint64_t session,uint64_t revision,const std::string& digest){
+ MaterialConfigReceipt r;r.sessionId=boundSession_;r.bindingId=bindingId_;r.revision=boundRevision_;r.digest=boundDigest_;
+ if(!session||session>9007199254740991ULL||revision>9007199254740991ULL||!Digest(digest)){r.code=400;r.errorStage="configBinding";return r;}
+ if(bindingId_&&session!=boundSession_){r.code=400;r.errorStage="sessionId";return r;}
+ if(bindingId_&&revision==boundRevision_){if(digest!=boundDigest_){r.code=402;r.errorStage="appearanceConfigRevision";}return r;}
+ if(bindingId_==9007199254740991ULL){r.code=400;r.errorStage="bindingId";return r;}
+ boundSession_=session;boundRevision_=revision;boundDigest_=digest;++bindingId_;
+ r.sessionId=session;r.bindingId=bindingId_;r.revision=revision;r.digest=digest;return r;
+}
+MaterialReceipt MaterialUploader::CheckConfiguration(const MaterialDesc& d)const{
+ auto r=Receipt(nullptr,bindingId_?402:401,bindingId_?"appearanceConfigRevision":"configBinding");
+ r.assetGeneration=d.generation;r.requestedRevision=d.revision;r.appearanceConfigRevision=d.revision;r.state="FAILED";
+ if(bindingId_&&d.revision==boundRevision_){r.code=0;r.errorStage="NONE";}return r;
+}
+MaterialReceipt MaterialUploader::InvalidBudget()const{return Receipt(pending_?pending_.get():active_.get(),400,"byteBudget");}
+void MaterialUploader::ClearSession(){Drop(active_);Drop(pending_);boundSession_=bindingId_=boundRevision_=highWater_=pumps_=discarded_=0;boundDigest_.clear();}
 void MaterialUploader::Drop(std::unique_ptr<Generation>& g,bool current){if(g){gpu_.Delete(g->textures,current);g.reset();}}
 MaterialReceipt MaterialUploader::Receipt(const Generation* g,int code,const char* stage,size_t bytes)const{
- MaterialReceipt r;r.code=code;r.errorStage=stage;r.uploadedBytes=bytes;r.pumpCount=pumps_;r.discardedGeneration=discarded_;
+ MaterialReceipt r;r.boundRevision=boundRevision_;r.bindingId=bindingId_;r.configurationDigest=boundDigest_;r.requestedRevision=g?g->desc.revision:0;r.code=code;r.errorStage=stage;r.uploadedBytes=bytes;r.pumpCount=pumps_;r.discardedGeneration=discarded_;
  if(g){r.assetGeneration=g->desc.generation;r.appearanceConfigRevision=g->desc.revision;r.contextEpoch=g->desc.contextEpoch;r.state=g->state;r.receivedBytes=g->grain.size()+g->strata.size();r.pendingBytes=kMaterialBytes-g->uploaded;r.frameToken=g->token;}
  r.activeGeneration=active_?active_->desc.generation:0;r.pendingGeneration=pending_?pending_->desc.generation:0;
  for(auto* x:{active_.get(),pending_.get()})if(x){r.cpuBytes+=x->grain.size()+x->strata.size();for(auto t:x->textures)if(t)r.textureLiveCount++;}
  return r;
 }
 MaterialReceipt MaterialUploader::Stage(const MaterialDesc& d,const uint8_t* grain,size_t gn,const uint8_t* strata,size_t sn){
- auto failed=[&](const char* stage){auto r=Receipt(nullptr,400,stage);r.state="FAILED";r.assetGeneration=d.generation;return r;};
+ auto failed=[&](const char* stage){auto r=Receipt(nullptr,400,stage);r.state="FAILED";r.assetGeneration=d.generation;r.requestedRevision=d.revision;return r;};
  if(d.bundleId.empty()||!d.generation||d.metadata.empty())return failed("metadata");
+ auto configuration=CheckConfiguration(d);if(configuration.code)return configuration;
  if(!grain||!strata||gn!=kMaterialGrainBytes||sn!=kMaterialStrataBytes)return failed("byteLength");
  if(MaterialSha256(grain,gn)!=d.grainHash||MaterialSha256(strata,sn)!=d.strataHash)return failed("hash");
  for(size_t i=3;i<gn;i+=4)if(grain[i]!=255)return failed("alpha");
  for(size_t i=3;i<sn;i+=4)if(strata[i]!=255)return failed("alpha");
+ const auto fingerprint=Fingerprint(d);
+ for(auto* resident:{active_.get(),pending_.get()})if(resident&&resident->desc.generation==d.generation){
+  if(resident->fingerprint!=fingerprint||resident->bindingId!=bindingId_||resident->desc.surfaceEpoch!=d.surfaceEpoch||resident->desc.contextEpoch!=d.contextEpoch)return failed("identity");
+  return Receipt(resident);
+ }
+ if(d.generation<=highWater_)return failed("identity");
  // Validate and copy before replacing pending; a rejected stage cannot alter either generation.
  std::unique_ptr<Generation> next;
- try{next=std::make_unique<Generation>();next->desc=d;next->grain.assign(grain,grain+gn);next->strata.assign(strata,strata+sn);}catch(const std::bad_alloc&){return failed("allocation");}
- if(pending_){discarded_=pending_->desc.generation;Drop(pending_);}pending_=std::move(next);return Receipt(pending_.get());
+ try{next=std::make_unique<Generation>();next->desc=d;next->fingerprint=fingerprint;next->bindingId=bindingId_;next->bindingDigest=boundDigest_;next->grain.assign(grain,grain+gn);next->strata.assign(strata,strata+sn);}catch(const std::bad_alloc&){return failed("allocation");}
+ if(pending_){discarded_=pending_->desc.generation;Drop(pending_);}pending_=std::move(next);highWater_=d.generation;return Receipt(pending_.get());
 }
-MaterialReceipt MaterialUploader::Pump(size_t budget,uint64_t surface,uint64_t context){
- // Invalid-domain receipt code deliberately deferred to architect; bridge must not call this with invalid budget.
- if(!budget||budget>65536)throw std::invalid_argument("byteBudget receipt contract pending architect ruling");
+MaterialReceipt MaterialUploader::Pump(double requestedBudget,uint64_t surface,uint64_t context){
+ if(!std::isfinite(requestedBudget)||requestedBudget<1||requestedBudget>65536||std::floor(requestedBudget)!=requestedBudget)return InvalidBudget();
+ const size_t budget=static_cast<size_t>(requestedBudget);
  if(!pending_)return Receipt(nullptr,401,"ASSET_NOT_READY");
  auto& p=*pending_;
  if(p.desc.surfaceEpoch!=surface||p.desc.contextEpoch!=context){discarded_=p.desc.generation;Drop(pending_,p.desc.contextEpoch==context);auto r=Receipt(nullptr,400,"epoch");r.assetGeneration=discarded_;r.state="DISCARDED";return r;}
@@ -64,8 +101,9 @@ MaterialReceipt MaterialUploader::Pump(size_t budget,uint64_t surface,uint64_t c
  p.state=p.uploaded==kMaterialBytes?"READY":"UPLOADING";return Receipt(&p,0,"NONE",used);
 }
 bool MaterialUploader::TargetMatches(uint64_t surface,uint64_t context)const{return pending_&&pending_->desc.surfaceEpoch==surface&&pending_->desc.contextEpoch==context;}
-bool MaterialUploader::CanActivate(uint64_t generation,uint64_t epoch)const{return pending_&&pending_->state=="READY"&&pending_->desc.generation==generation&&pending_->desc.contextEpoch==epoch;}
+bool MaterialUploader::CanActivate(uint64_t generation,uint64_t epoch)const{return pending_&&pending_->state=="READY"&&pending_->desc.generation==generation&&pending_->desc.contextEpoch==epoch&&pending_->bindingId==bindingId_&&pending_->desc.revision==boundRevision_;}
 MaterialReceipt MaterialUploader::Activate(uint64_t generation,uint64_t epoch,const std::string& token){
+ if(pending_&&pending_->state=="READY"&&pending_->desc.generation==generation&&pending_->desc.contextEpoch==epoch&&pending_->bindingId!=bindingId_)return Receipt(pending_.get(),402,"appearanceConfigRevision");
  if(token.empty()||!CanActivate(generation,epoch))return Receipt(pending_.get(),401,"ASSET_NOT_READY");
  // NAPI calls are synchronous, owner/mutex serialized; all preceding draws have completed unbind.
  Drop(active_);active_=std::move(pending_);active_->state="ACTIVE";active_->token=token;return Receipt(active_.get());
@@ -74,8 +112,10 @@ MaterialReceipt MaterialUploader::Discard(uint64_t generation){if(pending_&&pend
 void MaterialUploader::Reset(bool current){if(active_)gpu_.Delete(active_->textures,current);if(pending_)gpu_.Delete(pending_->textures,current);if(pending_){discarded_=pending_->desc.generation;pending_.reset();}}
 MaterialReceipt MaterialUploader::Restore(uint64_t surface,uint64_t context){
  if(!active_)return Receipt(nullptr,401,"ASSET_NOT_READY");
- auto d=active_->desc;d.surfaceEpoch=surface;d.contextEpoch=context;
- return Stage(d,active_->grain.data(),active_->grain.size(),active_->strata.data(),active_->strata.size());
+ std::unique_ptr<Generation> next;
+ try{next=std::make_unique<Generation>(*active_);}catch(const std::bad_alloc&){return Receipt(active_.get(),400,"allocation");}
+ next->desc.surfaceEpoch=surface;next->desc.contextEpoch=context;next->textures={};next->uploaded=0;next->state="CPU_STAGED";
+ Drop(pending_);pending_=std::move(next);return Receipt(pending_.get());
 }
 MaterialReceipt MaterialUploader::Inspect()const{return Receipt(pending_?pending_.get():active_.get());}
 const MaterialDesc* MaterialUploader::PendingDesc()const{return pending_?&pending_->desc:nullptr;}

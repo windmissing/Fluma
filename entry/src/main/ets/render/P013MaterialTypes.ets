@@ -6,12 +6,20 @@ export class P013MaterialBundleDesc extends P013PreparedMetadata {
   apiVersion: number = 2; sessionId: number = 0; surfaceEpoch: number = 0; contextEpoch: number = 0;
 }
 export interface P013MaterialStageReceipt {
+  requestedAppearanceConfigRevision?: number; boundAppearanceConfigRevision?: number; bindingId?: number; configurationDigest?: string;
   code: number; assetGeneration: number; state: string; receivedBytes: number; uploadedBytes: number;
   totalBytes: number; activeGeneration: number; pendingGeneration: number; appearanceConfigRevision: number; contextEpoch: number;
   errorStage: string; materialUploadBytes: number; materialPendingBytes: number; materialPumpCount: number;
   materialTextureLiveCount: number; assetCpuBytes: number; discardedGeneration: number; frameToken: string;
 }
+export interface P013MaterialConfigBinding {
+  sessionId: number; appearanceConfigRevision: number; configurationDigest: string;
+}
+export interface P013MaterialConfigReceipt extends P013MaterialConfigBinding {
+  code: number; bindingId: number; errorStage: string;
+}
 export interface P013MaterialNative {
+  bindMaterialConfiguration(binding: P013MaterialConfigBinding): P013MaterialConfigReceipt;
   drawMaterialFrame(frame: P013MaterialFrameInput, tdataV2: Float32Array, light: P013LightParams,
     material: P013MaterialParams): P013MaterialFrameResult;
   stageMaterialBundle(desc: P013MaterialBundleDesc, grainRgba: Uint8Array, strataRgba: Uint8Array): P013MaterialStageReceipt;
