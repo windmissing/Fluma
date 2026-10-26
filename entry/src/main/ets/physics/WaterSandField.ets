@@ -4009,6 +4009,7 @@ export class WaterSandField {
     return target;
   }
 
+  getRenderPhysicsCommitId(): number { return this.renderPhysicsCommitId; }
   createPublishedRenderStateSlot(): P011PublishedRenderState {
     return new P011PublishedRenderState(this.createEmptySnapshot());
   }

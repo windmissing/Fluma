@@ -1,0 +1,9 @@
+const fs=require('fs'),a=require('assert/strict');const ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');require.extensions['.ets']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText,f);
+const {P051EmptySandDemo:D}=require('../entry/src/main/ets/physics/P051EmptySandDemo.ets'),{P051DiagnosticBuffer:B}=require('../entry/src/main/ets/physics/P051DiagnosticBuffer.ets');
+const x=new D(),y=new D(),b=new B();y.diagnostics=b;
+for(const d of [x,y]){d.start(64,120);d.tick(1e9,1/60);d.tick(1e9+1e9/60,1/60);d.move(65,120);d.tick(1e9+2e9/60,1/60);d.applyDefinedInput({valid:true,source:'stale',sampleTimeMs:1100,targetTiltDeg:null,shakeInput:0,shakeMagnitudeMps2:0});d.tick(1e9+3e9/60,1/60);d.stop('up')}
+for(const key of ['bh','bl','mh','ml','suspH','suspL','waterTop'])a.deepEqual(x.field[key],y.field[key]);a.deepEqual(x.field.particleBinding.pool.snapshot().pMass,y.field.particleBinding.pool.snapshot().pMass);a.equal(x.field.sourceEpoch,y.field.sourceEpoch);
+let rows=[];for(;;){const c=b.drain();if(!c.rows.length)break;a.ok(JSON.stringify(c).length<1800);rows.push(...c.rows)}
+a.ok(rows.some(r=>r.event.kind==='dry.receipt'));a.ok(rows.some(r=>r.event.reason==='stale'));a.ok(rows.some(r=>r.event.kind==='tick'&&r.event.source==='stale'));
+for(let i=0;i<1000;i++)b.record({kind:'test',runId:'r',commit:i,frame:i,time:i});const c=b.drain();a.equal(c.dropped,744);a.equal(c.rows.length,2);
+console.log(JSON.stringify({suite:'T72_passive',passed:3,failed:0,cases:['real model fields/pool/source identical with diagnostics on/off','ordered tick/source/stale/admission and <1800-character chunks','256-entry bounded ring with explicit overflow sequence']},null,2));

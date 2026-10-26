@@ -1,3 +1,4 @@
+import { P051DiagnosticBuffer } from '../physics/P051DiagnosticBuffer';
 import sensor from '@ohos.sensor';
 import { P051GravityInputAdapter, P051GravityConfig } from '../physics/P051GravityInputAdapter';
 // T51 independent page: real field+pool and T49 product GLES, never a probe.
@@ -13,12 +14,21 @@ class EmptySandFrame extends FrameCallback {
 @Entry
 @Component
 struct EmptySandDemo {
+  private diagnosticSensorCount: number = 0;
+  private diagnostics: P051DiagnosticBuffer = new P051DiagnosticBuffer();
+  private diagnostic(kind: string, time: number, source: string = '', x: number = 0, y: number = 0): void {
+    this.diagnostics.record({kind:kind,time:time,runId:this.model.field.getP011RunId(),commit:this.model.field.getRenderPhysicsCommitId(),frame:this.serial,source:source,x:x,y:y,sensorCount:this.diagnosticSensorCount});
+  }
+  private flushDiagnostics(): void {
+    for(let i=0;i<8;i++){const chunk=this.diagnostics.drain();if(chunk.rows.length===0)break;console.info(`WS_EVENT demo_diag ${JSON.stringify(chunk)}`);}
+  }
   private gravityConfig: P051GravityConfig = new P051GravityConfig();
   private gravity: P051GravityInputAdapter = new P051GravityInputAdapter(this.gravityConfig);
   private sensorActive: boolean = false;
   private readonly accelerometer = (data: sensor.AccelerometerResponse): void => {
     if (!this.running) return;
-    this.gravity.consumeAccelerometer(data.x,data.y,data.z,p013NowMs());
+    this.diagnosticSensorCount++;const now=p013NowMs();this.diagnostic('sensor',now,'sensor',data.x,data.y);
+    this.gravity.consumeAccelerometer(data.x,data.y,data.z,now);
   };
   private updateSensor(): void {
     if (this.running && !this.sensorActive) {
@@ -42,7 +52,12 @@ struct EmptySandDemo {
   @State private surfaceWidth: number = 320;
   @State private surfaceHeight: number = 480;
   @State private status: string = '等待新管线';
-  aboutToAppear(): void { this.callback.owner = this; }
+  aboutToAppear(): void {
+    this.callback.owner = this;this.model.diagnostics=this.diagnostics;
+    this.model.field.setGestureSandEventSink((receipt) => {
+      this.diagnostics.record({kind:'wet.receipt',time:p013NowMs(),runId:this.model.field.getP011RunId(),commit:this.model.field.getRenderPhysicsCommitId(),frame:this.serial,admitted:receipt.admittedH+receipt.admittedL,reason:receipt.rejectedReason ?? 'ACCEPTED'});
+    });
+  }
   private syncActive(): void {
     this.running = this.pageShown && this.foreground; this.previousNs = 0;
     this.model.setActive(this.running); this.renderer.setActive(this.running); this.updateSensor();
@@ -50,15 +65,16 @@ struct EmptySandDemo {
   }
   onPageShow(): void { this.pageShown = true; this.syncActive(); }
   onPageHide(): void { this.pageShown = false; this.syncActive(); }
-  aboutToDisappear(): void { this.onPageHide(); this.callback.owner = null; this.renderer.release(); }
+  aboutToDisappear(): void { this.onPageHide(); this.callback.owner = null; this.renderer.release();this.flushDiagnostics();this.model.field.setGestureSandEventSink(null); }
   private schedule(): void { if (this.running && !this.queued) { this.queued = true; this.getUIContext().postFrameCallback(this.callback); } }
   tick(ns: number): void {
     this.queued = false; if (!this.running) return;
     const dt = this.previousNs === 0 ? 0 : Math.min(1/30,(ns-this.previousNs)/1e9); this.previousNs = ns;
     const input=this.gravity.latest(p013NowMs());
     if (input !== null) this.model.applyDefinedInput(input);
+    this.model.diagnosticFrame=this.serial;
     const ok = this.model.tick(ns,dt);
-    if (!ok) { this.model.stop(); this.status = '物理提交失败：'+this.model.field.getLastError(); this.schedule(); return; }
+    if (!ok) { this.model.stop('page-physics-failed');this.flushDiagnostics(); this.status = '物理提交失败：'+this.model.field.getLastError(); this.schedule(); return; }
     if (this.model.field.copyPublishedRenderStateInto(this.publication) === 'OK') {
       const context: P012FrameContext = {
         physicsCommitId:this.publication.physicsCommitId,particleLayerEnabled:true,
@@ -72,16 +88,19 @@ struct EmptySandDemo {
         gravityDirY:Math.cos(this.publication.effectiveTiltDeg*Math.PI/180),sandTracerEnabled:false
       };
       const result = this.renderer.submitDualFieldSurfacePx(this.publication,context,ns,this.getUIContext().vp2px(1));
+      this.diagnostics.record({kind:'present',time:ns/1e6,runId:this.publication.runId,commit:this.publication.physicsCommitId,frame:this.serial,code:result?.code ?? -1,swap:result?.swapSucceeded ?? false,reason:this.renderer.dualFailure});
       if (this.serial % 60 === 0) console.info(`WS_EVENT empty_sand_demo ${JSON.stringify({
         input:input,config:this.gravityConfig.revision,physicsCommitId:this.publication.physicsCommitId,
         effectiveTiltDeg:this.publication.effectiveTiltDeg,dry:this.model.field.getDryDiagnostics(),mediumMode:this.publication.mediumMode,metrics:this.model.field.getMetrics()})}`);
       this.status = result !== null && result.code === 0 && result.swapSucceeded ?
         '新管线：按住发沙，松手停止' : '新管线等待/拒绝：'+this.renderer.dualFailure;
     }
-    this.schedule();
+    this.flushDiagnostics();this.schedule();
   }
   private touch(event: TouchEvent): void {
-    if (event.type === TouchType.Up || event.type === TouchType.Cancel) { this.model.stop(); return; }
+    this.model.setDiagnosticInputTime(event.timestamp/1e6);
+    this.diagnostic('touch',event.timestamp/1e6,`${event.type}`,event.touches.length?event.touches[0].x:0,event.touches.length?event.touches[0].y:0);
+    if (event.type === TouchType.Up || event.type === TouchType.Cancel) { this.model.stop(event.type===TouchType.Up?'up':'cancel');this.flushDiagnostics(); return; }
     if (event.touches.length === 0) return;
     const point = event.touches[0];
     const x = point.x/this.surfaceWidth*128, y = (1-point.y/this.surfaceHeight)*256;
