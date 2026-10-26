@@ -1,0 +1,980 @@
+{
+ "artifact_dir": "D:/hmprojects/HelloWorld/test/artifacts/t82-touch-fix-retest-20261026",
+ "build": {
+  "commit": "114a7ee",
+  "tree_fingerprint": "403b08514017b326",
+  "hap": "entry-default-s144-signed.hap",
+  "hap_sha256": "af049753c8dda7e169bcf0613f384b7affa3aa3cf1fb1fac7cd65ad64db31be8"
+ },
+ "arms": {
+  "R0": {
+   "arm": "R0",
+   "diag": {
+    "rows": 1865,
+    "dropped": 0,
+    "broken": 0,
+    "kinds": {
+     "tick": 420,
+     "present": 420,
+     "model.stop": 1,
+     "sensor": 1024
+    },
+    "summaries": 7
+   },
+   "L1": {
+    "receive": 0,
+    "downs": 0,
+    "ups": 0,
+    "geometry_ready": null,
+    "widthVp": [],
+    "heightVp": [],
+    "first": null
+   },
+   "L2": {
+    "maps": 0,
+    "map_sample": [],
+    "start_reasons": [],
+    "accepted_starts": 0,
+    "stop_reasons": [],
+    "model_start_reasons": []
+   },
+   "L3": {
+    "ticks": 420,
+    "stale": 0
+   },
+   "L4": {
+    "requests": 0,
+    "requested_total": 0,
+    "rate_check": null,
+    "first": null,
+    "x_range": [
+     null,
+     null
+    ],
+    "y_range": [
+     null,
+     null
+    ]
+   },
+   "L5": {
+    "receipts": 0,
+    "reasons": {},
+    "admitted_total": 0
+   },
+   "L6": {
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "tilt": 29.999999999999996,
+    "input": {
+     "source": "sensor",
+     "sampleTimeMs": 2394776262.038297,
+     "valid": true,
+     "targetTiltDeg": 79.80443604996401,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.01566359758462341
+    }
+   },
+   "L7_present": {
+    "presents": 420,
+    "codes": {
+     "-1": 1,
+     "0": 419
+    },
+    "stale_frames": 0,
+    "failure_reasons": [
+     "NOT_READY"
+    ]
+   },
+   "L7_pixels": {
+    "R0-idle.jpeg": {
+     "file": "R0-idle.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "04e9d0fa64"
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "N/A",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "N/A"
+   },
+   "first_fail": "L1"
+  },
+  "R1": {
+   "arm": "R1",
+   "diag": {
+    "rows": 2161,
+    "dropped": 0,
+    "broken": 0,
+    "kinds": {
+     "sensor": 1194,
+     "tick": 483,
+     "present": 483,
+     "model.stop": 1
+    },
+    "summaries": 7
+   },
+   "L1": {
+    "receive": 0,
+    "downs": 0,
+    "ups": 0,
+    "geometry_ready": null,
+    "widthVp": [],
+    "heightVp": [],
+    "first": null
+   },
+   "L2": {
+    "maps": 0,
+    "map_sample": [],
+    "start_reasons": [],
+    "accepted_starts": 0,
+    "stop_reasons": [],
+    "model_start_reasons": []
+   },
+   "L3": {
+    "ticks": 483,
+    "stale": 0
+   },
+   "L4": {
+    "requests": 0,
+    "requested_total": 0,
+    "rate_check": null,
+    "first": null,
+    "x_range": [
+     null,
+     null
+    ],
+    "y_range": [
+     null,
+     null
+    ]
+   },
+   "L5": {
+    "receipts": 0,
+    "reasons": {},
+    "admitted_total": 0
+   },
+   "L6": {
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "tilt": 29.999999999999996,
+    "input": {
+     "source": "sensor",
+     "sampleTimeMs": 2394799972.575328,
+     "valid": true,
+     "targetTiltDeg": 79.70160253133224,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.0050835413421441095
+    }
+   },
+   "L7_present": {
+    "presents": 483,
+    "codes": {
+     "0": 482,
+     "-1": 1
+    },
+    "stale_frames": 0,
+    "failure_reasons": [
+     "NOT_READY"
+    ]
+   },
+   "L7_pixels": {
+    "R1-holding.jpeg": {
+     "file": "R1-holding.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "03099552ef"
+    },
+    "R1-settled.jpeg": {
+     "file": "R1-settled.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "04e9d0fa64"
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "N/A",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "N/A"
+   },
+   "first_fail": "L1"
+  },
+  "R2": {
+   "arm": "R2",
+   "diag": {
+    "rows": 3155,
+    "dropped": 0,
+    "broken": 0,
+    "kinds": {
+     "sensor": 1227,
+     "tick": 950,
+     "present": 291,
+     "model.stop": 662,
+     "input.RECEIVE": 3,
+     "input.MAP": 2,
+     "model.start": 1,
+     "input.START": 1,
+     "model.move": 7,
+     "dry.request": 5,
+     "dry.receipt": 5,
+     "input.STOP": 1
+    },
+    "summaries": 5
+   },
+   "L1": {
+    "receive": 3,
+    "downs": 1,
+    "ups": 1,
+    "geometry_ready": true,
+    "widthVp": [
+     336.45713588169644
+    ],
+    "heightVp": [
+     578.8571428571429
+    ],
+    "first": {
+     "kind": "input.RECEIVE",
+     "reason": "",
+     "time": 2394819147.635,
+     "rawTimestamp": 2394819147635000,
+     "timestampUnit": "ns",
+     "runId": "p011-run-1793002069511-3",
+     "commit": 546,
+     "frame": 273,
+     "pageFrame": 273,
+     "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+     "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+     "source": "DOWN",
+     "geometryEpoch": 2,
+     "widthVp": 336.45713588169644,
+     "heightVp": 578.8571428571429,
+     "geometryReady": true,
+     "foreground": true,
+     "inputGeneration": 1,
+     "gestureId": 0,
+     "eventOrdinal": 1,
+     "pointerId": 0,
+     "changedCount": 1,
+     "touchCount": 1,
+     "x": 99.71428571428571,
+     "y": 164.57142857142858,
+     "_seq": 1189
+    }
+   },
+   "L2": {
+    "maps": 2,
+    "map_sample": [
+     {
+      "kind": "input.MAP",
+      "reason": "CHANGED",
+      "time": 2394819147.635,
+      "rawTimestamp": 2394819147635000,
+      "timestampUnit": "ns",
+      "runId": "p011-run-1793002069511-3",
+      "commit": 546,
+      "frame": 273,
+      "pageFrame": 273,
+      "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+      "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+      "source": "DOWN",
+      "geometryEpoch": 2,
+      "widthVp": 336.45713588169644,
+      "heightVp": 578.8571428571429,
+      "geometryReady": true,
+      "foreground": true,
+      "inputGeneration": 1,
+      "gestureId": 0,
+      "eventOrdinal": 1,
+      "pointerId": 0,
+      "changedCount": 1,
+      "touchCount": 1,
+      "x": 37.93478339516149,
+      "y": 183.21816386969397,
+      "_seq": 1190
+     },
+     {
+      "kind": "input.MAP",
+      "reason": "CHANGED",
+      "time": 2394819459.38,
+      "rawTimestamp": 2394819459380000,
+      "timestampUnit": "ns",
+      "runId": "p011-run-1793002069511-3",
+      "commit": 563,
+      "frame": 279,
+      "pageFrame": 279,
+      "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+      "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+      "source": "MOVE",
+      "geometryEpoch": 2,
+      "widthVp": 336.45713588169644,
+      "heightVp": 578.8571428571429,
+      "geometryReady": true,
+      "foreground": true,
+      "inputGeneration": 1,
+      "gestureId": 1,
+      "eventOrdinal": 8,
+      "pointerId": 0,
+      "changedCount": 1,
+      "touchCount": 1,
+      "x": 85.76087134321608,
+      "y": 183.21816386969397,
+      "_seq": 1237
+     }
+    ],
+    "start_reasons": [
+     "ACCEPTED"
+    ],
+    "accepted_starts": 1,
+    "stop_reasons": [
+     "UP"
+    ],
+    "model_start_reasons": [
+     "ACCEPTED"
+    ]
+   },
+   "L3": {
+    "ticks": 950,
+    "stale": 0
+   },
+   "L4": {
+    "requests": 5,
+    "requested_total": 1.8644961700439453,
+    "rate_check": {
+     "n": 4,
+     "median": 8.000381472882651,
+     "min": 4.79660308202354,
+     "max": 8.03221794665373
+    },
+    "first": {
+     "kind": "dry.request",
+     "runId": "p011-run-1793002069511-3",
+     "commit": 548,
+     "frame": 275,
+     "time": 2394819238.373435,
+     "x": 44.4565226608053,
+     "y": 183.21816386969397,
+     "sequence": 1,
+     "requested": 0.2671379127502441,
+     "_seq": 1202
+    },
+    "x_range": [
+     44.4565226608053,
+     73.80434935620244
+    ],
+    "y_range": [
+     183.21816386969397,
+     183.21816386969397
+    ]
+   },
+   "L5": {
+    "receipts": 5,
+    "reasons": {
+     "ACCEPTED": 5
+    },
+    "admitted_total": 1.8644961700439453
+   },
+   "L6": {
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "tilt": 29.999999999999996,
+    "input": {
+     "source": "sensor",
+     "sampleTimeMs": 2394817494.087672,
+     "valid": true,
+     "targetTiltDeg": 79.79899381916394,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.03146261993369566
+    }
+   },
+   "L7_present": {
+    "presents": 291,
+    "codes": {
+     "0": 290,
+     "-1": 1
+    },
+    "stale_frames": 0,
+    "failure_reasons": [
+     "NOT_READY"
+    ]
+   },
+   "L7_pixels": {
+    "R2-dragging.jpeg": {
+     "file": "R2-dragging.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "f2f8c676d2"
+    },
+    "R2-settled.jpeg": {
+     "file": "R2-settled.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "89535a1143"
+    }
+   },
+   "verdict": {
+    "L1": "PASS",
+    "L2": "PASS",
+    "L3": "PASS",
+    "L4": "PASS",
+    "L5": "PASS",
+    "L6": "FAIL",
+    "L7": "N/A"
+   },
+   "first_fail": "L6"
+  },
+  "R3": {
+   "arm": "R3",
+   "diag": {
+    "rows": 2234,
+    "dropped": 0,
+    "broken": 0,
+    "kinds": {
+     "tick": 510,
+     "model.stop": 20,
+     "sensor": 1213,
+     "present": 491
+    },
+    "summaries": 8
+   },
+   "L1": {
+    "receive": 0,
+    "downs": 0,
+    "ups": 0,
+    "geometry_ready": null,
+    "widthVp": [],
+    "heightVp": [],
+    "first": null
+   },
+   "L2": {
+    "maps": 0,
+    "map_sample": [],
+    "start_reasons": [],
+    "accepted_starts": 0,
+    "stop_reasons": [],
+    "model_start_reasons": []
+   },
+   "L3": {
+    "ticks": 510,
+    "stale": 0
+   },
+   "L4": {
+    "requests": 0,
+    "requested_total": 0,
+    "rate_check": null,
+    "first": null,
+    "x_range": [
+     null,
+     null
+    ],
+    "y_range": [
+     null,
+     null
+    ]
+   },
+   "L5": {
+    "receipts": 0,
+    "reasons": {},
+    "admitted_total": 0
+   },
+   "L6": {
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "tilt": 29.999999999999996,
+    "input": {
+     "source": "sensor",
+     "sampleTimeMs": 2394857136.551891,
+     "valid": true,
+     "targetTiltDeg": 79.91793835708306,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.044826898121134176
+    }
+   },
+   "L7_present": {
+    "presents": 491,
+    "codes": {
+     "-1": 1,
+     "0": 490
+    },
+    "stale_frames": 0,
+    "failure_reasons": [
+     "NOT_READY"
+    ]
+   },
+   "L7_pixels": {
+    "R3-rel0.jpeg": {
+     "file": "R3-rel0.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "008bf8b2e9"
+    },
+    "R3-rel1s.jpeg": {
+     "file": "R3-rel1s.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "008bf8b2e9"
+    },
+    "R3-rel3s.jpeg": {
+     "file": "R3-rel3s.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "c08b65680e"
+    },
+    "R3-rel8s.jpeg": {
+     "file": "R3-rel8s.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "008bf8b2e9"
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "N/A",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "N/A"
+   },
+   "first_fail": "L1"
+  },
+  "R4": {
+   "arm": "R4",
+   "diag": {
+    "rows": 4668,
+    "dropped": 0,
+    "broken": 0,
+    "kinds": {
+     "sensor": 2711,
+     "tick": 978,
+     "present": 978,
+     "model.stop": 1
+    },
+    "summaries": 16
+   },
+   "L1": {
+    "receive": 0,
+    "downs": 0,
+    "ups": 0,
+    "geometry_ready": null,
+    "widthVp": [],
+    "heightVp": [],
+    "first": null
+   },
+   "L2": {
+    "maps": 0,
+    "map_sample": [],
+    "start_reasons": [],
+    "accepted_starts": 0,
+    "stop_reasons": [],
+    "model_start_reasons": []
+   },
+   "L3": {
+    "ticks": 978,
+    "stale": 0
+   },
+   "L4": {
+    "requests": 0,
+    "requested_total": 0,
+    "rate_check": null,
+    "first": null,
+    "x_range": [
+     null,
+     null
+    ],
+    "y_range": [
+     null,
+     null
+    ]
+   },
+   "L5": {
+    "receipts": 0,
+    "reasons": {},
+    "admitted_total": 0
+   },
+   "L6": {
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 0,
+     "baselineStatus": "EMPTY_BASELINE",
+     "sourceEpoch": 0,
+     "externalAdmissionCount": 0
+    },
+    "metrics_subset": {
+     "particleMass": 0,
+     "depositedMass": 0,
+     "expectedMass": 0,
+     "sourceEpoch": 0,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": null,
+     "suspFraction": null,
+     "airborneFraction": null
+    },
+    "tilt": 29.999999999999996,
+    "input": {
+     "source": "sensor",
+     "sampleTimeMs": 2394914127.095797,
+     "valid": true,
+     "targetTiltDeg": 79.6926947653288,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.02533396578894555
+    }
+   },
+   "L7_present": {
+    "presents": 978,
+    "codes": {
+     "0": 977,
+     "-1": 1
+    },
+    "stale_frames": 0,
+    "failure_reasons": [
+     "NOT_READY"
+    ]
+   },
+   "L7_pixels": {
+    "R4-post-manual.jpeg": {
+     "file": "R4-post-manual.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "d3b5a5e864"
+    },
+    "R4-pre-manual.jpeg": {
+     "file": "R4-pre-manual.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "008bf8b2e9"
+    }
+   },
+   "verdict": {
+    "L1": "FAIL",
+    "L2": "N/A",
+    "L3": "N/A",
+    "L4": "N/A",
+    "L5": "N/A",
+    "L6": "N/A",
+    "L7": "N/A"
+   },
+   "first_fail": "L1"
+  },
+  "R5": {
+   "arm": "R5",
+   "diag": {
+    "rows": 2143,
+    "dropped": 0,
+    "broken": 0,
+    "kinds": {
+     "sensor": 1268,
+     "tick": 416,
+     "present": 416,
+     "model.stop": 9,
+     "input.RECEIVE": 4,
+     "input.MAP": 2,
+     "model.start": 2,
+     "input.START": 2,
+     "model.move": 10,
+     "dry.request": 6,
+     "dry.receipt": 6,
+     "input.STOP": 2
+    },
+    "summaries": 6
+   },
+   "L1": {
+    "receive": 4,
+    "downs": 2,
+    "ups": 2,
+    "geometry_ready": true,
+    "widthVp": [
+     336.45713588169644
+    ],
+    "heightVp": [
+     578.8571428571429
+    ],
+    "first": {
+     "kind": "input.RECEIVE",
+     "reason": "",
+     "time": 2394931109.772,
+     "rawTimestamp": 2394931109772000,
+     "timestampUnit": "ns",
+     "runId": "p011-run-1793002181447-3",
+     "commit": 544,
+     "frame": 272,
+     "pageFrame": 272,
+     "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+     "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+     "source": "DOWN",
+     "geometryEpoch": 2,
+     "widthVp": 336.45713588169644,
+     "heightVp": 578.8571428571429,
+     "geometryReady": true,
+     "foreground": true,
+     "inputGeneration": 1,
+     "gestureId": 0,
+     "eventOrdinal": 1,
+     "pointerId": 0,
+     "changedCount": 1,
+     "touchCount": 1,
+     "x": 128.28571428571428,
+     "y": 250.28571428571428,
+     "_seq": 1188
+    }
+   },
+   "L2": {
+    "maps": 2,
+    "map_sample": [
+     {
+      "kind": "input.MAP",
+      "reason": "CHANGED",
+      "time": 2394931109.772,
+      "rawTimestamp": 2394931109772000,
+      "timestampUnit": "ns",
+      "runId": "p011-run-1793002181447-3",
+      "commit": 544,
+      "frame": 272,
+      "pageFrame": 272,
+      "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+      "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+      "source": "DOWN",
+      "geometryEpoch": 2,
+      "widthVp": 336.45713588169644,
+      "heightVp": 578.8571428571429,
+      "geometryReady": true,
+      "foreground": true,
+      "inputGeneration": 1,
+      "gestureId": 0,
+      "eventOrdinal": 1,
+      "pointerId": 0,
+      "changedCount": 1,
+      "touchCount": 1,
+      "x": 48.804348837901166,
+      "y": 145.31095755182628,
+      "_seq": 1189
+     },
+     {
+      "kind": "input.MAP",
+      "reason": "CHANGED",
+      "time": 2394943578.75,
+      "rawTimestamp": 2394943578750000,
+      "timestampUnit": "ns",
+      "runId": "p011-run-1793002181447-3",
+      "commit": 756,
+      "frame": 377,
+      "pageFrame": 377,
+      "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+      "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+      "source": "DOWN",
+      "geometryEpoch": 2,
+      "widthVp": 336.45713588169644,
+      "heightVp": 578.8571428571429,
+      "geometryReady": true,
+      "foreground": true,
+      "inputGeneration": 5,
+      "gestureId": 1,
+      "eventOrdinal": 9,
+      "pointerId": 0,
+      "changedCount": 1,
+      "touchCount": 1,
+      "x": 48.804348837901166,
+      "y": 145.31095755182628,
+      "_seq": 1826
+     }
+    ],
+    "start_reasons": [
+     "ACCEPTED",
+     "ACCEPTED"
+    ],
+    "accepted_starts": 2,
+    "stop_reasons": [
+     "UP",
+     "UP"
+    ],
+    "model_start_reasons": [
+     "ACCEPTED",
+     "ACCEPTED"
+    ]
+   },
+   "L3": {
+    "ticks": 416,
+    "stale": 0
+   },
+   "L4": {
+    "requests": 6,
+    "requested_total": 2.9384297790527345,
+    "rate_check": {
+     "n": 5,
+     "median": 6.057902081751655,
+     "min": 0.035779528243686444,
+     "max": 7.999910992810406
+    },
+    "first": {
+     "kind": "dry.request",
+     "runId": "p011-run-1793002181447-3",
+     "commit": 546,
+     "frame": 274,
+     "time": 2394931177.956199,
+     "x": 52.065218470723075,
+     "y": 145.31095755182628,
+     "sequence": 1,
+     "requested": 0.26961249923706054,
+     "_seq": 1200
+    },
+    "x_range": [
+     52.065218470723075,
+     69.13043621582437
+    ],
+    "y_range": [
+     145.31095755182628,
+     145.31095755182628
+    ]
+   },
+   "L5": {
+    "receipts": 6,
+    "reasons": {
+     "ACCEPTED": 6
+    },
+    "admitted_total": 2.9384297790527345
+   },
+   "L6": {
+    "last_dry": {
+     "mediumRevision": "DRY_AIR_V1",
+     "airDynamicsRevision": "DRY_AIR_GRAVITY_V1",
+     "freeWaterTotal": 0,
+     "occupiedVolumeTotal": 1.5123075294494641,
+     "baselineStatus": "NONEMPTY",
+     "sourceEpoch": 4,
+     "externalAdmissionCount": 4
+    },
+    "metrics_subset": {
+     "particleMass": 1.5123075294494641,
+     "depositedMass": 0,
+     "expectedMass": 1.5123075294494628,
+     "sourceEpoch": 4,
+     "particleEvidenceKind": "CANONICAL",
+     "depositedFraction": 0,
+     "suspFraction": 0,
+     "airborneFraction": 1.0000000000000009
+    },
+    "tilt": 29.999999999999996,
+    "input": {
+     "source": "sensor",
+     "sampleTimeMs": 2394941774.061266,
+     "valid": true,
+     "targetTiltDeg": 79.82875448295756,
+     "shakeInput": 0,
+     "shakeMagnitudeMps2": 0.027853089010871475
+    }
+   },
+   "L7_present": {
+    "presents": 416,
+    "codes": {
+     "0": 415,
+     "-1": 1
+    },
+    "stale_frames": 0,
+    "failure_reasons": [
+     "NOT_READY"
+    ]
+   },
+   "L7_pixels": {
+    "R5-back-no-hold.jpeg": {
+     "file": "R5-back-no-hold.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "47612384e3"
+    },
+    "R5-new-down.jpeg": {
+     "file": "R5-new-down.jpeg",
+     "nonbg_px": 10000,
+     "dark_px": 10000,
+     "md5": "cde9548542"
+    }
+   },
+   "verdict": {
+    "L1": "PASS",
+    "L2": "PASS",
+    "L3": "PASS",
+    "L4": "PASS",
+    "L5": "PASS",
+    "L6": "PASS",
+    "L7": "PASS"
+   },
+   "first_fail": null
+  }
+ }
+}
