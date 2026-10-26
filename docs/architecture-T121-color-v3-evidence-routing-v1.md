@@ -1,5 +1,7 @@
 # T121 色彩V3常量、摘要与归档工程分流 v1
 
+2026-10-26 V4到件增补：T126已补真实raw、标准SHA及同SRGB生产/MRT全图等价；旧等待条件解除，最新增量分流见 [T121 V4](architecture-T121-color-v4-arrival-routing-v1.md)。下文保留V3历史归因，不将其缺项冒充V4仍未交。
+
 日期：2026-10-26。architect。原卡 `6adf3c1ce4b017ab3404b7cc`。不使用真机。消费T115 459bd4a报告、`t115.json/p115_results.json`、probe/driver/build脚本及T87/T105。**部分交付：目标编码点观察接受；真实SHA、生产/debug等价与raw归档缺关键证据，原卡看评论**。
 
 ## 1. 已到件与不应扩大部分
