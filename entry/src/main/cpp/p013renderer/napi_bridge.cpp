@@ -17,6 +17,7 @@
 #include "egl_context.h"
 #include "composition_probe.h"
 #include "dualfield_pass.h"
+#include "material_uploader.h"
 #include <vector>
 #include "p013_shader_sources.h"
 #include "shader_pass.h"
@@ -38,6 +39,8 @@ struct Session {
   std::string dualRun;
   double dualStateEpoch=0, dualCommit=0;
   bool dualBasic=false;
+  MaterialGlGpu materialGpu;
+  MaterialUploader material{materialGpu};
   TDataUploader uploader;
   std::unique_ptr<FrameStorage> storage;
   size_t head = 0, count = 0;
@@ -115,6 +118,7 @@ napi_value Control(napi_env e, Status code) {
   return o;
 }
 void ResetGpu() {
+  g.material.Reset(false);
   g.dual.Reset(false);
   g.probe.Reset();
   g.shader.Reset(false);
@@ -128,6 +132,7 @@ void Destroy(ResetReason reason) {
     SurfaceInfo info{};
     if (g.egl.EnsureCurrent({g.egl.surfaceEpoch, g.egl.width, g.egl.height},
                             info) == Status::OK) {
+      g.material.Reset(true);
       g.dual.Reset(true);
       g.probe.Reset(true);
       g.shader.Reset(true);
@@ -388,6 +393,117 @@ bool TypedView(napi_env e,napi_value v,napi_typedarray_type expected,size_t expe
  return true;
 }
 bool ExactString(napi_env e,napi_value o,const char* name,const char* expected){napi_value v=nullptr;std::string text;return napi_get_named_property(e,o,name,&v)==napi_ok&&String(e,v,text)&&text==expected;}
+// T54 G2: separate bridge surface, never changes P0 drawFrame semantics.
+napi_value MaterialResult(napi_env e,const MaterialReceipt& r){
+ auto o=Object(e);Put(e,o,"code",double(r.code));Put(e,o,"assetGeneration",double(r.assetGeneration));
+ Put(e,o,"state",r.state.c_str());Put(e,o,"receivedBytes",double(r.receivedBytes));
+ Put(e,o,"uploadedBytes",double(r.uploadedBytes));Put(e,o,"totalBytes",double(r.totalBytes));
+ Put(e,o,"pendingGeneration",double(r.pendingGeneration));Put(e,o,"activeGeneration",double(r.activeGeneration));Put(e,o,"appearanceConfigRevision",double(r.appearanceConfigRevision));
+ Put(e,o,"contextEpoch",double(r.contextEpoch));Put(e,o,"errorStage",r.errorStage.c_str());
+ Put(e,o,"materialUploadBytes",double(r.uploadedBytes));Put(e,o,"materialPendingBytes",double(r.pendingBytes));
+ Put(e,o,"materialPumpCount",double(r.pumpCount));Put(e,o,"materialTextureLiveCount",double(r.textureLiveCount));
+ Put(e,o,"assetCpuBytes",double(r.cpuBytes));Put(e,o,"discardedGeneration",double(r.discardedGeneration));
+ Put(e,o,"frameToken",r.frameToken.c_str());return o;
+}
+bool MaterialText(napi_env e,napi_value o,const char* key,std::string& value){
+ napi_value v=nullptr;return napi_get_named_property(e,o,key,&v)==napi_ok&&String(e,v,value)&&!value.empty();
+}
+int ParseMaterial(napi_env e,napi_value v,MaterialDesc& d,double& session,const char*& stage){
+ stage="version";double layout=0,z=0,api=0;
+ if(!ExactString(e,v,"materialRecipeVersion","P1_ALBEDO_DELTA_V1")||
+ !ExactString(e,v,"slopeKernelVersion","E2_GAUSS_COL6_R18_P1_V2")||
+ !ExactString(e,v,"colorPipelineVersion","LIN_SRGB_REINHARD_V1")||
+ !ExactString(e,v,"textureSamplingVersion","P1_TEXEL_CANVAS_PX_V1")||
+ !ExactString(e,v,"strataSamplingVersion","CONTINUOUS_COLUMN_WARP_V1")||
+ !Number(e,v,"T_dataLayoutVersion",layout)||layout!=2||!Number(e,v,"zOriginVersion",z)||z!=1||
+ !Number(e,v,"apiVersion",api)||api!=2)return 400;
+ stage="metadata";
+ double gen=0,rev=0,surface=0,context=0;
+ if(!Number(e,v,"sessionId",session)||!SafeInteger(session)||session<1||
+ !Number(e,v,"surfaceEpoch",surface)||!SafeInteger(surface)||surface<0||
+ !Number(e,v,"contextEpoch",context)||!SafeInteger(context)||context<1||
+ !Number(e,v,"assetGeneration",gen)||!SafeInteger(gen)||gen<1||
+ !Number(e,v,"appearanceConfigRevision",rev)||!SafeInteger(rev)||rev<0||
+ !Number(e,v,"geometryEpoch",d.geometryEpoch)||!SafeInteger(d.geometryEpoch)||d.geometryEpoch<0||
+ !Number(e,v,"renderSeed",d.seed)||!SafeInteger(d.seed)||
+ !MaterialText(e,v,"materialBundleId",d.bundleId)||!MaterialText(e,v,"paletteHash",d.paletteHash)||
+ !MaterialText(e,v,"grainHash",d.grainHash)||!MaterialText(e,v,"strataHash",d.strataHash)||
+ !MaterialText(e,v,"assetGeneratorVersion",d.generatorVersion))return 400;
+ d.generation=gen;d.revision=rev;d.surfaceEpoch=surface;d.contextEpoch=context;
+ const char* sizes[]={"grainWidth","grainHeight","strataWidth","strataHeight","layers"};
+ const double expected[]={256,256,64,256,3};
+ for(int i=0;i<5;i++){double value=0;if(!Number(e,v,sizes[i],value)||value!=expected[i])return 400;}
+ if(!ExactString(e,v,"inputEncoding","SRGB8_STRAIGHT_OPAQUE"))return 400;
+ if(!Number(e,v,"effectiveLambdaMaterial",d.lambdaMaterial)||!std::isfinite(d.lambdaMaterial)||d.lambdaMaterial<=0||
+ !Number(e,v,"effectiveLambdaCanvasPx",d.lambdaCanvas)||!std::isfinite(d.lambdaCanvas)||d.lambdaCanvas<=0||
+ !Number(e,v,"warpRangeCycles",d.warpRange)||!std::isfinite(d.warpRange)||d.warpRange<=0)return 400;
+ napi_value base=nullptr;uint32_t rows=0;
+ if(napi_get_named_property(e,v,"grainBaseSrgb",&base)!=napi_ok||napi_get_array_length(e,base,&rows)!=napi_ok||rows!=3)return 400;
+ for(uint32_t k=0;k<3;k++){napi_value row=nullptr;uint32_t cols=0;if(napi_get_element(e,base,k,&row)!=napi_ok||napi_get_array_length(e,row,&cols)!=napi_ok||cols!=3)return 400;
+ for(uint32_t c=0;c<3;c++){napi_value n=nullptr;double x=0;if(napi_get_element(e,row,c,&n)!=napi_ok||napi_get_value_double(e,n,&x)!=napi_ok||!std::isfinite(x)||x<0||x>1)return 400;d.grainBase[k*3+c]=x;}}
+ d.metadata=d.bundleId+":"+d.paletteHash+":"+d.generatorVersion;
+ return 0;
+}
+Status MaterialOwner(){auto code=Owner();if(code==Status::OK&&(!g.ownerBound||g.released))code=Status::NOT_READY;return code;}
+bool MaterialBytes(napi_env e,napi_value v,size_t expected,void*& data,const char*& stage){
+ bool typed=false,detached=false;size_t count=0,offset=0,bytes=0;void* base=nullptr;napi_value buffer=nullptr;napi_typedarray_type type{};
+ stage="byteOffset";
+ if(napi_is_typedarray(e,v,&typed)!=napi_ok||!typed||napi_get_typedarray_info(e,v,&type,&count,&data,&buffer,&offset)!=napi_ok||type!=napi_uint8_array)return false;
+ if(count!=expected){stage="byteLength";return false;}
+ if(!data||napi_is_detached_arraybuffer(e,buffer,&detached)!=napi_ok||detached||
+ napi_get_arraybuffer_info(e,buffer,&base,&bytes)!=napi_ok||!base||offset>bytes||expected>bytes-offset||data!=static_cast<uint8_t*>(base)+offset)return false;
+ return true;
+}
+napi_value StageMaterialBundle(napi_env e,napi_callback_info info){
+ size_t n=3;napi_value a[3]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+ MaterialDesc d;double session=0;const char* stage="metadata";int code=n==3?ParseMaterial(e,a[0],d,session,stage):400;
+ void* grain=nullptr;void* strata=nullptr;
+ if(!code){stage="byteOffset";if(!MaterialBytes(e,a[1],kMaterialGrainBytes,grain,stage)||!MaterialBytes(e,a[2],kMaterialStrataBytes,strata,stage))code=400;}
+ std::lock_guard<std::mutex> lock(g.mutex);auto owner=MaterialOwner();if(owner!=Status::OK){auto r=g.material.Inspect();r.code=int(owner);r.errorStage="owner";return MaterialResult(e,r);}
+ if(!code&&(session!=g.id||d.surfaceEpoch!=g.egl.surfaceEpoch||d.contextEpoch!=g.egl.contextEpoch)){code=400;stage="contextEpoch";}
+ if(code){auto r=g.material.Inspect();r.code=code;r.state="FAILED";r.errorStage=stage;r.assetGeneration=d.generation;return MaterialResult(e,r);}
+ SurfaceInfo si{};auto current=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
+ if(current!=Status::OK){auto r=g.material.Inspect();r.code=int(current);r.errorStage=g.egl.errorStage;return MaterialResult(e,r);}
+ if(d.contextEpoch!=g.egl.contextEpoch || d.surfaceEpoch!=g.egl.surfaceEpoch){g.egl.Unbind();auto r=g.material.Inspect();r.code=400;r.state="FAILED";r.errorStage="contextEpoch";return MaterialResult(e,r);}
+ auto r=g.material.Stage(d,static_cast<uint8_t*>(grain),kMaterialGrainBytes,static_cast<uint8_t*>(strata),kMaterialStrataBytes);
+ auto unbound=g.egl.Unbind();if(unbound!=Status::OK){r.code=int(unbound);r.errorStage="unbind";}return MaterialResult(e,r);
+}
+napi_value PumpMaterialUploads(napi_env e,napi_callback_info info){
+ size_t n=1;napi_value a[1]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double budget=0;
+ if(n!=1||napi_get_value_double(e,a[0],&budget)!=napi_ok||!SafeInteger(budget)||budget<1||budget>65536){
+  // Exact receipt code remains an explicit unresolved contract; do not invent one.
+  napi_throw_range_error(e,"P013_BUDGET_CONTRACT_PENDING","byteBudget must be an integer in [1,65536]; receipt code awaits architect");return nullptr;}
+ std::lock_guard<std::mutex> lock(g.mutex);auto owner=MaterialOwner();auto r=g.material.Inspect();
+ if(owner!=Status::OK){r.code=int(owner);r.errorStage="owner";return MaterialResult(e,r);}
+ SurfaceInfo si{};auto code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
+ if(code==Status::OK){
+  if(r.state=="ACTIVE" && !g.material.BindActive(g.egl.contextEpoch))r=g.material.Restore(g.egl.surfaceEpoch,g.egl.contextEpoch);
+  r=g.material.Pump(size_t(budget),g.egl.surfaceEpoch,g.egl.contextEpoch);auto unbound=g.egl.Unbind();if(unbound!=Status::OK){r.code=int(unbound);r.errorStage="unbind";}}
+ else{r.code=int(code);r.errorStage=g.egl.errorStage;}return MaterialResult(e,r);
+}
+napi_value CanActivateMaterial(napi_env e,napi_callback_info info){
+ size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double gen=0,epoch=0;
+ bool valid=n==2&&napi_get_value_double(e,a[0],&gen)==napi_ok&&napi_get_value_double(e,a[1],&epoch)==napi_ok&&SafeInteger(gen)&&SafeInteger(epoch)&&gen>0&&epoch>=0;
+ std::lock_guard<std::mutex> lock(g.mutex);napi_value result=nullptr;
+ napi_get_boolean(e,valid&&MaterialOwner()==Status::OK&&epoch==g.egl.contextEpoch&&g.material.TargetMatches(g.egl.surfaceEpoch,g.egl.contextEpoch)&&g.material.CanActivate(gen,epoch),&result);return result;
+}
+napi_value ActivateMaterial(napi_env e,napi_callback_info info){
+ size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double gen=0;std::string token;
+ bool valid=n==2&&napi_get_value_double(e,a[0],&gen)==napi_ok&&SafeInteger(gen)&&gen>0&&String(e,a[1],token)&&!token.empty();
+ std::lock_guard<std::mutex> lock(g.mutex);auto r=g.material.Inspect();auto code=MaterialOwner();
+ if(code!=Status::OK||!valid){r.code=code==Status::OK?400:int(code);r.errorStage="activation";return MaterialResult(e,r);}
+ SurfaceInfo si{};code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
+ if(code==Status::OK){if(!g.material.TargetMatches(g.egl.surfaceEpoch,g.egl.contextEpoch)){
+    r=g.material.Discard(gen);r.code=401;r.errorStage="epoch";
+  } else r=g.material.Activate(gen,g.egl.contextEpoch,token);auto u=g.egl.Unbind();if(u!=Status::OK){r.code=int(u);r.errorStage="unbind";}}
+ else{r.code=int(code);r.errorStage=g.egl.errorStage;}return MaterialResult(e,r);
+}
+napi_value DiscardMaterialStage(napi_env e,napi_callback_info info){
+ size_t n=1;napi_value a[1]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double gen=0;bool valid=n==1&&napi_get_value_double(e,a[0],&gen)==napi_ok&&SafeInteger(gen)&&gen>0;
+ std::lock_guard<std::mutex> lock(g.mutex);auto r=g.material.Inspect();auto code=MaterialOwner();
+ if(code!=Status::OK||!valid){r.code=code==Status::OK?400:int(code);r.errorStage="discard";return MaterialResult(e,r);}
+ SurfaceInfo si{};code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);if(code==Status::OK){r=g.material.Discard(gen);auto u=g.egl.Unbind();if(u!=Status::OK)r.code=int(u);}else r.code=int(code);return MaterialResult(e,r);
+}
 // T62: explicit geometry preparation, no draw/swap/physics publication.
 napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
  size_t n=2; napi_value a[2]{}; napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
@@ -898,6 +1014,11 @@ EXTERN_C_START
 static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
   napi_property_descriptor d[] = {
+    {"stageMaterialBundle", nullptr, StageMaterialBundle, nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"pumpMaterialUploads", nullptr, PumpMaterialUploads, nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"canActivate", nullptr, CanActivateMaterial, nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"activateMaterial", nullptr, ActivateMaterial, nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"discardMaterialStage", nullptr, DiscardMaterialStage, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"prepareDualFieldSurface", nullptr, PrepareDualFieldSurface, nullptr, nullptr, nullptr, napi_default, nullptr},
     {"drawDualFieldFrame", nullptr, DrawDualFieldFrame, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"requestComposition", nullptr, RequestComposition, nullptr, nullptr, nullptr, napi_default, nullptr},

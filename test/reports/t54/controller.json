@@ -1,0 +1,17 @@
+{
+  "suite": "T54 isolated controller (synthetic callbacks)",
+  "results": [
+    {
+      "name": "same-tick whole fallback callbacks ordered for draw/profile/swap, even legacy failure hides GLES",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid budget prevents native work; exact receipt contract deliberately not invented",
+      "status": "PASS"
+    },
+    {
+      "name": "receipt carries independent pending and active identities after stage failure",
+      "status": "PASS"
+    }
+  ]
+}

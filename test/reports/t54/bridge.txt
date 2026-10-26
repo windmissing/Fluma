@@ -1,0 +1,13 @@
+material_bridge_test.cpp
+egl_context.cpp
+material_uploader.cpp
+正在生成代码...
+  正在创建库 .codex\local-test\p013-host\p054_bridge.lib 和对象 .codex\local-test\p013-host\p054_bridge.exp
+PASS P013 lifecycle: eight partial-init faults, authoritative dimensions, background, stale callbacks, swap/context loss, bounded recovery, repeated release, frame contract
+PASS P013 actual bridge: offset Float32Array, length/detach/NaN/version/stale rejection, consumed IDs, wrong owner, no half upload, transparent OFF, swap failure, ring/drop, release/reinit
+PASS TC-P013-G2-A01 metadata required
+PASS TC-P013-G2-A02 A03 seven versions strict
+PASS TC-P013-G2-A06 A07 exact byte range/type/offset/detach
+PASS TC-P013-G2-A08 A09 actual SHA256 and alpha
+PASS TC-P013-G2-A10 context epoch strict
+PASS G2 actual five-entry bridge; synthetic NAPI/GPU boundary only

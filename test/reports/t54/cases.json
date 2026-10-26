@@ -1,0 +1,298 @@
+{
+  "scope": "G2 isolated implementation; synthetic opaque bytes, NAPI/GPU boundary; NOT_DEVICE_VALIDATED",
+  "cases": [
+    {
+      "id": "TC-P013-G2-A01",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "metadata",
+        "activeUnchanged": true,
+        "pendingSlot": "failed-entry-or-empty",
+        "note": "stage 先验整包 metadata；失败不改变 ACTIVE 资源"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A02",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "version",
+        "activeUnchanged": true,
+        "note": "native 遇未知版本拒绝，不自动推断缺省值"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A03",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "version",
+        "activeUnchanged": true,
+        "note": "materialRecipe/slopeKernel/colorPipeline/textureSampling/strataSampling/T_dataLayout/zOrigin 七项须逐项精确匹配"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A04",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 402,
+        "errorStage": "appearanceConfigRevision",
+        "activeUnchanged": true,
+        "note": "修订不符归入 ASSET_REVISION_MISMATCH；实现若用其它既有码，按实际码报告交裁定"
+      },
+      "status": "BLOCKED_CONTRACT",
+      "detail": "appearanceConfigRevision comparison authority unspecified (architect ruling requested)"
+    },
+    {
+      "id": "TC-P013-G2-A05",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "identity",
+        "activeUnchanged": true,
+        "note": "hash 基于实际字节与生成参数，不以文件名当 hash；身份冲突整包拒绝"
+      },
+      "status": "BLOCKED_CONTRACT",
+      "detail": "materialBundleId/generation conflict definition unspecified (architect ruling requested)"
+    },
+    {
+      "id": "TC-P013-G2-A06",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "byteLength",
+        "activeUnchanged": true,
+        "receivedBytes": "actual",
+        "note": "有效总字节固定 983040，不接任意大纹理"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A07",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "byteOffset",
+        "activeUnchanged": true,
+        "note": "只接受匹配元素类型/长度/有效 buffer，正确处理 byteOffset"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A08",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "hash",
+        "activeUnchanged": true,
+        "note": "整包字节 SHA256 与 desc 登记值逐项核对"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A09",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "alpha",
+        "activeUnchanged": true,
+        "note": "六图 alpha 固定 255；任一非 255 整包拒绝"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-A10",
+      "expectation": {
+        "receiptState": "FAILED",
+        "errorCode": 400,
+        "errorStage": "contextEpoch",
+        "activeUnchanged": true,
+        "note": "stage/帧必须同 contextEpoch；失配拒绝且不推断"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-B01",
+      "expectation": {
+        "supersededReceiptState": "DISCARDED",
+        "activeGenerationUnchanged": true,
+        "discardedResourcesReleased": true,
+        "note": "新申请覆盖 pending 先显式 DISCARDED，active 仍可画"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-B02",
+      "expectation": {
+        "activeGenerationUnchanged": true,
+        "activeDrawableAfterFailure": true,
+        "pendingSlot": "failed-entry-or-empty",
+        "note": "stage/上传/校验失败保留旧 active"
+      },
+      "status": "PARTIAL",
+      "detail": "active descriptor/textures retained; actual material draw belongs G3"
+    },
+    {
+      "id": "TC-P013-G2-B03",
+      "expectation": {
+        "maxActiveGenerations": 1,
+        "maxPendingGenerations": 1,
+        "textureLiveCountMax": 4,
+        "note": "live texture 对象最多 4 个数组（两包×两对象），不用每帧 glGen/compile"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-B04",
+      "expectation": {
+        "cpuCacheRetained": true,
+        "reuploadRequiredBeforeReady": true,
+        "staleEpochFramesRejected": true,
+        "canvasFallbackUntilReady": true,
+        "note": "context 丢失保留 CPU 资产并重传，确认 READY 后再切回"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-C01",
+      "expectation": {
+        "maxBytesPerTick": 65536,
+        "completeRowsOnly": true,
+        "grainRowStride": 1024,
+        "strataRowStride": 256,
+        "note": "按完整像素行 chunk 上传；不允许半行/跨 tick 截断"
+      },
+      "status": "PARTIAL",
+      "detail": "complete-row and 65536-byte limit proven; old active material draw requires G3"
+    },
+    {
+      "id": "TC-P013-G2-C02",
+      "expectation": {
+        "acceptedDomain": "positive integer <= 65536",
+        "rejectedInputs": [
+          0,
+          -1,
+          1.5,
+          65537
+        ],
+        "onReject": {
+          "uploadedBytes": 0,
+          "pendingIntact": true
+        },
+        "note": "0/负/小数/超限拒绝且不产生上传；pending 可被后续合法 pump 继续"
+      },
+      "status": "BLOCKED_CONTRACT",
+      "detail": "domain and zero-work/pending retention verified, exact receipt code unresolved; temporary explicit exception, not final contract"
+    },
+    {
+      "id": "TC-P013-G2-C03",
+      "expectation": {
+        "partialState": "UPLOADING",
+        "allSuccessState": "READY",
+        "note": "只有全部资源和 metadata 通过后才进入 READY"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-C04",
+      "expectation": {
+        "onEpochMismatch": {
+          "pendingState": "DISCARDED",
+          "waitForRestage": true,
+          "uploadsAgainstStaleContext": 0
+        },
+        "note": "目标 surface/context epoch 失配则废弃 pending"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-D01",
+      "expectation": {
+        "canActivateFalseWhenNotReady": true,
+        "activateRejectedCode": 401,
+        "activeUnchanged": true,
+        "mixedGenerationFrames": 0,
+        "note": "grain 新代已上传而 strata/palette 未就绪 → 拒绝激活"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-D02",
+      "expectation": {
+        "atomicSwitchAtFrameBoundary": true,
+        "switchSet": [
+          "textures",
+          "palette",
+          "uniform",
+          "fog",
+          "configRevision"
+        ],
+        "sameFrameToken": true,
+        "oldActiveReleasedAfterInflightFrames": true,
+        "note": "一帧边界同时切换整代；禁止按资源逐张激活"
+      },
+      "status": "PARTIAL",
+      "detail": "atomic owned generation+metadata/token proven; complete palette/uniform/fog consumption requires G3/G4"
+    },
+    {
+      "id": "TC-P013-G2-D03",
+      "expectation": {
+        "activeUnchanged": true,
+        "failedGenerationNeverDrawn": true,
+        "pendingStateOnFailure": "FAILED-or-DISCARDED",
+        "note": "GL 上传失败回滚；旧 active 与旧配置保持"
+      },
+      "status": "PASS_OFFLINE",
+      "detail": "Production native CPU/core/bridge paths executed with synthetic GPU/JS boundary; no device claim"
+    },
+    {
+      "id": "TC-P013-G2-E01",
+      "expectation": {
+        "sameTickLegacyFullRedraw": true,
+        "entireGlesHidden": true,
+        "singleLayerHideForbidden": true,
+        "fallbackReasonTelemetry": true,
+        "note": "不得只隐藏一层造成 Canvas/GLES 重叠或空画面"
+      },
+      "status": "PARTIAL",
+      "detail": "isolated same-tick callbacks proven; product page integration is G4"
+    },
+    {
+      "id": "TC-P013-G2-E02",
+      "expectation": {
+        "sameTickLegacyFullRedraw": true,
+        "entireGlesHidden": true,
+        "noTransparentClearAssumption": true,
+        "fallbackReasonTelemetry": true,
+        "note": "swap 失败不得假设透明 clear 成功；不等待失败 swap 再透明清屏"
+      },
+      "status": "PARTIAL",
+      "detail": "isolated same-tick callbacks proven; actual profile/swap/G4 presentation not tested"
+    }
+  ],
+  "summary": {
+    "PASS_OFFLINE": 15,
+    "PARTIAL": 5,
+    "BLOCKED_CONTRACT": 3
+  },
+  "pending": "A04/A05/exact C02 receipt ruling required before T54 completion/interface freeze",
+  "preservation": "T53 checker/case JSON and T09 fixtures not modified by this executor"
+}

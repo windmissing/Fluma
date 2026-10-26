@@ -111,7 +111,7 @@ napi_status napi_get_typedarray_info(napi_env, napi_value v,
                                      void** d, napi_value* b, size_t* off) {
   *t = v->arrayType;
   // OpenHarmony returns ByteLength (unlike standard Node element count).
-  *n = v->length * 4;
+  *n = v->length * (v->arrayType == napi_uint8_array ? 1 : 4);
   *off = v->offset;
   *b = v->buffer;
   *d = v->buffer->bytes.data() + v->offset;
@@ -198,6 +198,17 @@ int32_t OH_NativeXComponent_RegisterCallback(OH_NativeXComponent*,
   return 0;
 }
 }
+// G2 host boundary: fake GPU and JS arrays; production uploader logic remains real.
+namespace p013 {
+bool MaterialGlGpu::Create(std::array<uint32_t,2>& t){t={101,102};return true;}
+bool MaterialGlGpu::Upload(uint32_t,int,int,int,int,const uint8_t*){return !uploadFailure;}
+void MaterialGlGpu::Delete(std::array<uint32_t,2>& t,bool){t={};}
+}
+extern "C" {
+napi_status napi_get_array_length(napi_env,napi_value v,uint32_t* n){if(!v)return napi_invalid_arg;*n=static_cast<uint32_t>(v->elements.size());return napi_ok;}
+napi_status napi_get_element(napi_env,napi_value v,uint32_t i,napi_value* out){if(!v||i>=v->elements.size())return napi_invalid_arg;*out=v->elements[i];return napi_ok;}
+napi_status napi_throw_range_error(napi_env,const char*,const char*){return napi_ok;}
+}
 static napi_env env = reinterpret_cast<napi_env>(1);
 static napi_value Num(double x) {
   napi_value v;
@@ -229,7 +240,7 @@ Status CompositionProbe::Draw(const FrameInput& f,uint64_t generation) {
   return Status::OK;
 }
 }
-int main() {
+int RunP013BridgeBaseline() {
   CHECK(lifecycle_test_main() == 0);
   auto* component = reinterpret_cast<OH_NativeXComponent*>(1);
   void* window = reinterpret_cast<void*>(1);
@@ -573,3 +584,7 @@ int main() {
       "release/reinit");
   return 0;
 }
+
+#ifndef P013_MATERIAL_BRIDGE_TEST
+int main(){return RunP013BridgeBaseline();}
+#endif
