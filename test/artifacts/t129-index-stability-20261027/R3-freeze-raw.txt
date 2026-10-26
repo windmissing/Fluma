@@ -1,0 +1,18 @@
+﻿10-27 07:24:09.735  1417 33612 I C02D01/hiview/FreezeDetector: ProcessEvent: process event [AAFWK, THREAD_BLOCK_3S, 32663]
+10-27 07:24:09.845  1417 33612 I C02D01/hiview/FreezeDetector: InitHalfFreezeExtFile: get half file:[freeze_20261027072307_32663.txt, THREAD_BLOCK_3S]
+10-27 07:24:09.845  1417 33612 I C02D01/hiview/FreezeDetector: GetIfStreamByFilePath: merging file:/data/log/eventlog/THREAD_BLOCK_3S-32663-20261027072308.log.
+10-27 07:24:09.879  1417 33612 I C02D01/hiview/FreezeDetector: MergeFreezeExtFile: failed to get freeze cpu and stack file, eventName:THREAD_BLOCK_3S.
+10-27 07:24:09.883  1417 33612 I C02D11/hiview/Faultlogger_Base: AddFaultLog: Start saving Faultlog of Process:32663, Name:com.example.helloworld, Reason:THREAD_BLOCK_3S.
+10-27 07:24:09.890  1417 33612 I C02D10/hiview/ExtractRule: IsMatchPath: sourceFile is /data/log/faultlog/freeze/appfreezewarning-com.example.helloworld-20020226-20261027072308-1793056988259.tmp, name is /data/log/faultlog/freeze/, pattern is appfreezewarning-.{1,64}-\d+-\d+-\d+\.tmp.
+10-27 07:24:09.890  1417 33612 I C02D10/hiview/ExtractRule: IsMatchPath: desPath is /data/log/faultlog/freeze/appfreezewarning-com.example.helloworld-20020226-20261027072308-1793056988259.tmp.
+10-27 07:24:09.890  1417 33612 I C02D10/hiview/ExtractRule: ParseRule: ParseFile eventId APPFREEZE_WARNING, FeatureId 63_APPFREEZE_WARNING_01.
+10-27 07:24:09.892  1417 33612 I C02D10/hiview/FeatureAnalysis: AnalysisLog: <1793057049> begin analysis </data/log/faultlog/freeze/appfreezewarning-com.example.helloworld-20020226-20261027072308-1793056988259.tmp>, eventType is <APPFREEZE_WARNING>.
+10-27 07:24:10.032  1417 33612 I C02D11/hiview/FaultLogManager: RemoveOldFile: remove logFile /data/log/faultlog/freeze/appfreezewarning-com.example.helloworld-20020226-20261027072308-1793056988259.tmp.
+10-27 07:24:10.033  1417 33612 I C02D11/hiview/FaultLogManager: SaveFaultLogToFile: create log appfreezewarning-com.example.helloworld-20020226-20261027072308259.log
+10-27 07:24:10.033  1417 33612 I C02D11/hiview/Faultlogger_Base: Reason:THREAD_BLOCK_3S
+10-27 07:24:10.034  1417 33612 I C02D11/hiview/FaultLogDatabase: WriteEvent: SaveFaultLogInfo for event: APPFREEZE_WARNING, and result = 0
+10-27 07:24:10.034  1417 33612 I C02D11/hiview/Faultlogger: ReportAppFreezeToAppEvent: Start to report freezeJson !!!
+10-27 07:24:10.039  1417 33612 I C02D11/hiview/Faultlogger: ReportAppFreezeToAppEvent: Report FreezeJson Successfully!
+10-27 07:24:10.086  1417 33612 I C02D10/hiview/HiView-Engine: PackFaultLogs: start, id: 15561321451856290542, time: 1793057050070, RELIABILITY-APPFREEZE_WARNING
+10-27 07:24:10.092  1417 33612 I C02D10/hiview/HiView-Engine: PackFaultLogs: end, time:  1793057050092, RELIABILITY-APPFREEZE_WARNING
+10-27 07:24:10.101  1417 33612 I C02D10/hiview/Threshold-Guard: CheckAfterPacking: zip size: 6712, /data/log/logpack/faultlog/FAULT-BETA-RELIABILITY-APPFREEZE_WARNING-15561321451856290542-20261027072410-NORMAL-U0.zip, RELIABILITY-APPFREEZE_WARNING

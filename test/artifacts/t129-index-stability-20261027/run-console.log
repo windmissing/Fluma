@@ -1,0 +1,32 @@
+[07:21:00] T129 stability start (build a2e47d0, s148 4c4aa66b, tree f8832885f6ed7696)
+[07:21:02] R0 smoke
+[07:21:14] R0 started shake=0
+[07:21:30] R0 app PID=30471
+[07:21:31] R0 alive: no freeze for PID 30471
+[07:21:32] R0 done
+[07:21:32] R1 shake=1 + 3x swipe
+[07:21:44] R1 started shake=1
+[07:21:54] R1 swipe 1 done
+[07:22:00] R1 swipe 2 done
+[07:22:05] R1 swipe 3 done
+[07:22:48] R1 app PID=
+[07:22:50] R1 alive: no freeze for PID 
+[07:22:50] R1 done
+[07:22:50] R2 shake=0.6 + 1x swipe
+[07:23:02] R2 started shake=0.6
+[07:23:36] R2 app PID=
+[07:23:37] R2 alive: no freeze for PID 
+[07:23:38] R2 done
+[07:23:38] R3 shake=0 + 2x swipe + 30s deposition
+[07:23:49] R3 started shake=0
+[07:24:37] R3 app PID=32755
+[07:24:38] R3 alive: no freeze for PID 32755
+[07:24:38] R3 done
+[07:24:38] R4 finish -> CLOSED -> pull two streams -> manifest
+[07:24:48] R4 CLOSED: 011-v212-relax-hysteresis-p011-run-1793057021611-3.ndjson","admissionFilePath":"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793057021611-3-admissions.ndjson","records":264,"admissions":0,"status":"COMPLETE"}
+[07:24:48] R4 pulled ledger=0B admissions=0B
+[07:24:48] manifest:   File "C:\Users\admin\.workbuddy\binaries\python\versions\3.13.12\Lib\pathlib\_local.py", line 537, in open
+[07:24:48] manifest:     return io.open(self, mode, buffering, encoding, errors, newline)
+[07:24:48] manifest:            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[07:24:49] manifest: FileNotFoundError: [Errno 2] No such file or directory: 'D:\\hmprojects\\HelloWorld\\test\\artifacts\\t129-index-stability-20261027\\fence.json'
+[07:24:49] R4 done
