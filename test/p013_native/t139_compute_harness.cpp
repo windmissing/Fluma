@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <filesystem>
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -133,6 +134,10 @@ static std::string json(const Sample& s){std::ostringstream j;j<<std::fixed<<std
    <<",\"fenceWaitCpuMs\":"<<s.cpuFenceWaitMs<<",\"mapCpuMs\":"<<s.mapMs
    <<",\"attemptCpuMs\":"<<s.attemptMs<<",\"gpuRuntime\":null}";return j.str();}
 int main(int argc,char**argv){std::string dir=argc>1?argv[1]:".codex/local-test/t139";
+  std::error_code dirError;std::filesystem::create_directories(dir,dirError);
+  if(dirError){std::fprintf(stderr,"OUTPUT_DIR_FAILED %s\n",dirError.message().c_str());return 2;}
+  // Early context/compile/sync failure must never leave a prior run's JSON.
+  std::remove((dir+"/t139.json").c_str());
   std::string runId=argc>2?argv[2]:"T139_OFFLINE_HOST";Context c;double contextMs=0,compileMs=0;
   if(!create(c,contextMs)){std::fprintf(stderr,"EGL_CREATE_FAILED 0x%x\n",eglGetError());destroy(c);return 2;}
   GLint major=0,minor=0;glGetIntegerv(GL_MAJOR_VERSION,&major);glGetIntegerv(GL_MINOR_VERSION,&minor);
