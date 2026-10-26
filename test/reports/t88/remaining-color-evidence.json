@@ -1,0 +1,628 @@
+{
+ "executionId": "t88-remaining-color-evidence-v1",
+ "date": "2026-10-26",
+ "scope": "desktop ANGLE 2.1.18846 Intel UHD630 D3D11 offscreen; NOT device/presentation evidence",
+ "designBasis": [
+  "docs/analysis-T77-material-color-v1.md sections 6.1(phase2)/6.2",
+  "docs/architecture-P013-color-routing-revision-v1.md section 3"
+ ],
+ "partA": {
+  "alphaOver": {
+   "alphaOverRows": [
+    {
+     "target": "RGBA8_FBO_LINEAR",
+     "rows": [
+      {
+       "alpha": 0.0,
+       "over": [
+        64,
+        128,
+        191
+       ],
+       "backRef": [
+        64,
+        128,
+        191
+       ],
+       "frontRef": [
+        204,
+        102,
+        51
+       ],
+       "expectedLinear255": [
+        63.75,
+        127.5,
+        191.25
+       ]
+      },
+      {
+       "alpha": 0.25,
+       "over": [
+        99,
+        122,
+        156
+       ],
+       "backRef": [
+        64,
+        128,
+        191
+       ],
+       "frontRef": [
+        204,
+        102,
+        51
+       ],
+       "expectedLinear255": [
+        98.81,
+        121.12,
+        156.19
+       ]
+      },
+      {
+       "alpha": 0.333333,
+       "over": [
+        111,
+        119,
+        144
+       ],
+       "backRef": [
+        64,
+        128,
+        191
+       ],
+       "frontRef": [
+        204,
+        102,
+        51
+       ],
+       "expectedLinear255": [
+        110.5,
+        119.0,
+        144.5
+       ]
+      },
+      {
+       "alpha": 0.5,
+       "over": [
+        134,
+        115,
+        121
+       ],
+       "backRef": [
+        64,
+        128,
+        191
+       ],
+       "frontRef": [
+        204,
+        102,
+        51
+       ],
+       "expectedLinear255": [
+        133.88,
+        114.75,
+        121.12
+       ]
+      },
+      {
+       "alpha": 0.75,
+       "over": [
+        169,
+        108,
+        86
+       ],
+       "backRef": [
+        64,
+        128,
+        191
+       ],
+       "frontRef": [
+        204,
+        102,
+        51
+       ],
+       "expectedLinear255": [
+        168.94,
+        108.38,
+        86.06
+       ]
+      },
+      {
+       "alpha": 1.0,
+       "over": [
+        204,
+        102,
+        51
+       ],
+       "backRef": [
+        64,
+        128,
+        191
+       ],
+       "frontRef": [
+        204,
+        102,
+        51
+       ],
+       "expectedLinear255": [
+        204.0,
+        102.0,
+        51.0
+       ]
+      }
+     ]
+    },
+    {
+     "target": "SRGB8_ALPHA8_FBO",
+     "rows": [
+      {
+       "alpha": 0.0,
+       "over": [
+        137,
+        187,
+        225
+       ],
+       "expectedSrgb255": [
+        136.96,
+        187.52,
+        224.61
+       ],
+       "expectedLinear255BeforeEncode": [
+        63.75,
+        127.5,
+        191.25
+       ]
+      },
+      {
+       "alpha": 0.25,
+       "over": [
+        167,
+        183,
+        206
+       ],
+       "expectedSrgb255": [
+        167.21,
+        183.25,
+        205.3
+       ],
+       "expectedLinear255BeforeEncode": [
+        98.81,
+        121.12,
+        156.19
+       ]
+      },
+      {
+       "alpha": 0.333333,
+       "over": [
+        176,
+        181,
+        199
+       ],
+       "expectedSrgb255": [
+        175.85,
+        181.8,
+        198.31
+       ],
+       "expectedLinear255BeforeEncode": [
+        110.5,
+        119.0,
+        144.5
+       ]
+      },
+      {
+       "alpha": 0.5,
+       "over": [
+        192,
+        179,
+        183
+       ],
+       "expectedSrgb255": [
+        191.66,
+        178.86,
+        183.25
+       ],
+       "expectedLinear255BeforeEncode": [
+        133.88,
+        114.75,
+        121.12
+       ]
+      },
+      {
+       "alpha": 0.75,
+       "over": [
+        213,
+        174,
+        157
+       ],
+       "expectedSrgb255": [
+        212.59,
+        174.32,
+        157.07
+       ],
+       "expectedLinear255BeforeEncode": [
+        168.94,
+        108.38,
+        86.06
+       ]
+      },
+      {
+       "alpha": 1.0,
+       "over": [
+        231,
+        169,
+        123
+       ],
+       "expectedSrgb255": [
+        231.11,
+        169.62,
+        123.55
+       ],
+       "expectedLinear255BeforeEncode": [
+        204.0,
+        102.0,
+        51.0
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  "verdict": {
+   "linearFbo": "premultiplied over against the QUANTIZED UNORM8 back layer (64/255,128/255,191/255): five of six alphas byte-exact vs round(255*(a*F+(1-a)*backQ)); the single a=0.75 G channel lands exactly on the half boundary (108.500003) and reads 108 (half-up would be 109) — same implementation-rounding-at-half class as the T80 187/188 observation; recorded, no convention frozen",
+   "srgbFbo": "composite happened in LINEAR then encode-on-write once: readback = 255*OETF(linear) within ±1 at all six alphas — no double-encode, no 73-code-type anomaly",
+   "methodNote": "back opaque rows 8-72, front premultiplied over rows 40-72, references pure-B/pure-F; executor self-corrections during bring-up (scissor re-enable, over-region overlap) recorded in report",
+   "expectationModelNote": "first expectation model used unquantized double back values and showed +1 in two channels; modeling the UNORM8-quantized dst reproduces every byte exactly — recorded as executor-model correction, not a GPU anomaly"
+  }
+ },
+ "partB": {
+  "point88_78": {
+   "color": [
+    238,
+    181,
+    85
+   ],
+   "baseB": 173,
+   "grainB": 102,
+   "strataB": 127,
+   "k": 1
+  },
+  "neighborhood": [
+   {
+    "x": 86,
+    "y": 76,
+    "color": [
+     131,
+     100,
+     48
+    ],
+    "baseB": 150,
+    "grainB": 105,
+    "strataB": 127,
+    "k": 1
+   },
+   {
+    "x": 87,
+    "y": 76,
+    "color": [
+     239,
+     185,
+     94
+    ],
+    "baseB": 173,
+    "grainB": 125,
+    "strataB": 127,
+    "k": 1
+   },
+   {
+    "x": 88,
+    "y": 76,
+    "color": [
+     239,
+     185,
+     94
+    ],
+    "baseB": 173,
+    "grainB": 126,
+    "strataB": 130,
+    "k": 1
+   },
+   {
+    "x": 89,
+    "y": 76,
+    "color": [
+     201,
+     162,
+     93
+    ],
+    "baseB": 150,
+    "grainB": 166,
+    "strataB": 130,
+    "k": 1
+   },
+   {
+    "x": 90,
+    "y": 76,
+    "color": [
+     182,
+     147,
+     82
+    ],
+    "baseB": 150,
+    "grainB": 155,
+    "strataB": 130,
+    "k": 1
+   },
+   {
+    "x": 86,
+    "y": 77,
+    "color": [
+     131,
+     100,
+     48
+    ],
+    "baseB": 150,
+    "grainB": 105,
+    "strataB": 129,
+    "k": 1
+   },
+   {
+    "x": 87,
+    "y": 77,
+    "color": [
+     238,
+     184,
+     91
+    ],
+    "baseB": 173,
+    "grainB": 119,
+    "strataB": 129,
+    "k": 1
+   },
+   {
+    "x": 88,
+    "y": 77,
+    "color": [
+     238,
+     184,
+     93
+    ],
+    "baseB": 173,
+    "grainB": 123,
+    "strataB": 131,
+    "k": 1
+   },
+   {
+    "x": 89,
+    "y": 77,
+    "color": [
+     255,
+     215,
+     127
+    ],
+    "baseB": 150,
+    "grainB": 194,
+    "strataB": 131,
+    "k": 1
+   },
+   {
+    "x": 90,
+    "y": 77,
+    "color": [
+     255,
+     215,
+     127
+    ],
+    "baseB": 150,
+    "grainB": 194,
+    "strataB": 130,
+    "k": 1
+   },
+   {
+    "x": 86,
+    "y": 78,
+    "color": [
+     144,
+     113,
+     57
+    ],
+    "baseB": 150,
+    "grainB": 122,
+    "strataB": 130,
+    "k": 1
+   },
+   {
+    "x": 87,
+    "y": 78,
+    "color": [
+     238,
+     182,
+     87
+    ],
+    "baseB": 173,
+    "grainB": 108,
+    "strataB": 130,
+    "k": 1
+   },
+   {
+    "x": 88,
+    "y": 78,
+    "color": [
+     238,
+     181,
+     85
+    ],
+    "baseB": 173,
+    "grainB": 102,
+    "strataB": 127,
+    "k": 1
+   },
+   {
+    "x": 89,
+    "y": 78,
+    "color": [
+     163,
+     129,
+     70
+    ],
+    "baseB": 150,
+    "grainB": 140,
+    "strataB": 127,
+    "k": 1
+   },
+   {
+    "x": 90,
+    "y": 78,
+    "color": [
+     210,
+     170,
+     98
+    ],
+    "baseB": 150,
+    "grainB": 171,
+    "strataB": 129,
+    "k": 1
+   },
+   {
+    "x": 86,
+    "y": 79,
+    "color": [
+     164,
+     131,
+     70
+    ],
+    "baseB": 150,
+    "grainB": 141,
+    "strataB": 125,
+    "k": 1
+   },
+   {
+    "x": 87,
+    "y": 79,
+    "color": [
+     239,
+     185,
+     93
+    ],
+    "baseB": 173,
+    "grainB": 124,
+    "strataB": 125,
+    "k": 1
+   },
+   {
+    "x": 88,
+    "y": 79,
+    "color": [
+     238,
+     183,
+     91
+    ],
+    "baseB": 173,
+    "grainB": 117,
+    "strataB": 123,
+    "k": 1
+   },
+   {
+    "x": 89,
+    "y": 79,
+    "color": [
+     166,
+     133,
+     72
+    ],
+    "baseB": 150,
+    "grainB": 143,
+    "strataB": 123,
+    "k": 1
+   },
+   {
+    "x": 90,
+    "y": 79,
+    "color": [
+     202,
+     164,
+     94
+    ],
+    "baseB": 150,
+    "grainB": 167,
+    "strataB": 125,
+    "k": 1
+   },
+   {
+    "x": 86,
+    "y": 80,
+    "color": [
+     172,
+     138,
+     76
+    ],
+    "baseB": 150,
+    "grainB": 148,
+    "strataB": 126,
+    "k": 1
+   },
+   {
+    "x": 87,
+    "y": 80,
+    "color": [
+     239,
+     192,
+     106
+    ],
+    "baseB": 173,
+    "grainB": 149,
+    "strataB": 126,
+    "k": 1
+   },
+   {
+    "x": 88,
+    "y": 80,
+    "color": [
+     239,
+     187,
+     98
+    ],
+    "baseB": 173,
+    "grainB": 134,
+    "strataB": 126,
+    "k": 1
+   },
+   {
+    "x": 89,
+    "y": 80,
+    "color": [
+     163,
+     129,
+     70
+    ],
+    "baseB": 150,
+    "grainB": 140,
+    "strataB": 126,
+    "k": 1
+   },
+   {
+    "x": 90,
+    "y": 80,
+    "color": [
+     164,
+     131,
+     70
+    ],
+    "baseB": 150,
+    "grainB": 141,
+    "strataB": 128,
+    "k": 1
+   }
+  ],
+  "debugShaderHash": "897954e22d96ae53aba1da38d52fcb2bc9716efd11be494cb3f799481e293f68",
+  "floatTarget": "RGBA32UI MRT attachment COMPLETE (GL_EXT_color_buffer_float present); integer quantities captured integer-exact; continuous intermediates (gain/Rpre/Lmat/ToneMap) NOT captured this round — float render target for them feasible but not yet plumbed",
+  "verdict": "GPU baseByte.blue at (88,78) = 173 (integer-exact via RGBA32UI stage attachment). T77 section-5 prediction confirmed: the GPU binary32 path rounds 150*gain(1.149999976158142) to 173.0 (vs CPU double 172.4999964 -> 172). With base=173 the recomputed reference blue is 156.5342 -> quantized 157 = the archived T55 GPU byte. The FBO 1.956-code residual at this point is the 172-vs-173 baseByte rounding-branch divergence between the frozen double reference and the real GPU float pipeline.",
+  "crossChecks": "k=1 (L band) matches T77; grainB=102/strataB=127 archived for neighborhood; final color of the debug draw differs from archived T55 (238,181,85 vs 247,219,157) because the debug path uploads uniforms via a separate code path on an SRGB pbuffer MRT - stage integers are the evidence, final-color equivalence is NOT claimed"
+ },
+ "routing": "Per T84 section 4 row \"GPU baseByte/texel differ from frozen reference\": same inputs, precision/representation/rounding branch divergence -> designer must define local representation revision; NOT an engineering input error (inputs verified), NOT epsilon-able",
+ "gaps": [
+  "continuous GPU intermediates (gain/Rpre/Lmat/ToneMap) not captured (need float MRT plumbing)",
+  "final-color equivalence of debug path vs production pass not established (uniform upload path differs)",
+  "device A/B/C still required for any display-chain claim"
+ ],
+ "noClaim": "no tolerance frozen, no recipe change, no product change; T55/T80 history untouched"
+}
