@@ -201,7 +201,7 @@ int32_t OH_NativeXComponent_RegisterCallback(OH_NativeXComponent*,
 // G2 host boundary: fake GPU and JS arrays; production uploader logic remains real.
 namespace p013 {
 Status MaterialPass::Create(const ShaderSources&,uint64_t e){epoch=e;return Status::OK;}
-Status MaterialPass::Draw(const MaterialFrame&,const LightParams&,const MaterialParams&,const float*,const std::array<uint32_t,2>&){return uploadFailure?Status::GL_DRAW_FAILED:Status::OK;}
+Status MaterialPass::Draw(const MaterialFrame&,const LightParams&,const MaterialParams&,const float*,const std::array<uint32_t,2>&,uint32_t,int){return uploadFailure?Status::GL_DRAW_FAILED:Status::OK;}
 void MaterialPass::Reset(bool){epoch=0;}
 bool MaterialGlGpu::Create(std::array<uint32_t,2>& t){t={101,102};return true;}
 bool MaterialGlGpu::Upload(uint32_t,int,int,int,int,const uint8_t*){return !uploadFailure;}

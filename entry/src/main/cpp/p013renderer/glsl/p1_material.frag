@@ -2,8 +2,12 @@
 precision highp float;
 precision highp int;
 precision highp sampler2DArray;
+precision highp usampler2DArray;
 uniform sampler2D u_tdata;
 uniform sampler2DArray u_grain,u_strata;
+uniform highp usampler2DArray u_baseStrip;
+uniform bool u_useBaseStrip;
+uniform int u_viewportOriginX;
 uniform vec2 u_resolution;
 uniform vec4 u_box,u_canvasBox;
 uniform float u_capacity;
@@ -32,9 +36,17 @@ void main(){
  if(h<0.0||h>=d.r)return;
  int k=h<d.b?0:h<d.a?1:2;
  vec2 canvas=u_canvasBox.xy+q/u_box.zw*u_canvasBox.zw;
- float gain=u_sparkEnabled?r2.g:1.0;
- vec3 palette=k==0?u_palette[0]:k==1?u_palette[1]:mix(u_palette[1],u_palette[0],r1.g);
- vec3 baseByte=floor(clamp(palette*255.0*gain,vec3(0.0),vec3(248.0))+0.5);
+ vec3 baseByte;
+ if(u_useBaseStrip){
+   int j=int(floor(p.x))-u_viewportOriginX;
+   uvec4 baseTexel=texelFetch(u_baseStrip,ivec3(j,0,k),0);
+   if(baseTexel.a==uint(0))return;
+   baseByte=vec3(baseTexel.rgb);
+ }else{
+   float gain=u_sparkEnabled?r2.g:1.0;
+   vec3 palette=k==0?u_palette[0]:k==1?u_palette[1]:mix(u_palette[1],u_palette[0],r1.g);
+   baseByte=floor(clamp(palette*255.0*gain,vec3(0.0),vec3(248.0))+0.5);
+ }
  // Fixed seed/layer bytes are never re-baked by ablation or light switches.
  ivec2 grainXY=ivec2(positiveMod(int(floor(canvas.x-floor(u_offsets[k]+0.5))),256),positiveMod(int(floor(canvas.y)),256));
  vec3 grainByte=texelFetch(u_grain,ivec3(grainXY,k),0).rgb*255.0;

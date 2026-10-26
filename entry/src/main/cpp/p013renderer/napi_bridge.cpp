@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <climits>
 #include <cstdio>
 #include <cstring>
 #include <memory>
@@ -18,6 +19,7 @@
 #include "composition_probe.h"
 #include "dualfield_pass.h"
 #include "material_uploader.h"
+#include "base_strip_uploader.h"
 #include "material_pass.h"
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
 #include "scene_gpu.h"
@@ -47,6 +49,8 @@ struct Session {
   std::array<float,1536> materialData{};
   MaterialGlGpu materialGpu;
   MaterialUploader material{materialGpu};
+  BaseStripGlGpu baseStripGpu;
+  BaseStripUploader baseStrip{baseStripGpu};
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
   SceneCompositor scene;ScenePacket scenePacket;
   SceneGlGpu sceneGpu{egl,materialPass,dual,{kP013MaterialVertex,kP013MaterialFragment}};
@@ -133,6 +137,7 @@ void ResetGpu() {
 #endif
   g.materialPass.Reset(false);
   g.material.Reset(false);
+  g.baseStrip.Reset(false);
   g.dual.Reset(false);
   g.probe.Reset();
   g.shader.Reset(false);
@@ -158,6 +163,7 @@ void Destroy(ResetReason reason) {
 #endif
       g.materialPass.Reset(true);
       g.material.Reset(true);
+      g.baseStrip.Reset(true);
       g.dual.Reset(true);
       g.probe.Reset(true);
       g.shader.Reset(true);
@@ -215,6 +221,7 @@ void Cleanup(void*) {
     Destroy(ResetReason::RELEASE);
     g.egl.Release();
     g.material.ClearSession();
+    g.baseStrip.ClearSession(false);
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
     g.scene.ClearSession();
 #endif
@@ -315,6 +322,7 @@ napi_value Release(napi_env e, napi_callback_info) {
   if (g.egl.current) return Control(e, Status::EGL_INIT_FAILED);
   g.ownerBound = false;
   g.material.ClearSession();
+  g.baseStrip.ClearSession(false);
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
     g.scene.ClearSession();
 #endif
@@ -430,6 +438,73 @@ bool TypedView(napi_env e,napi_value v,napi_typedarray_type expected,size_t expe
  return true;
 }
 bool ExactString(napi_env e,napi_value o,const char* name,const char* expected){napi_value v=nullptr;std::string text;return napi_get_named_property(e,o,name,&v)==napi_ok&&String(e,v,text)&&text==expected;}
+Status MaterialOwner();
+bool Uint8View(napi_env e,napi_value v,size_t expected,void*& data){
+ bool typed=false,detached=false;size_t count=0,offset=0,bytes=0;void* base=nullptr;napi_value buffer=nullptr;napi_typedarray_type type{};
+ return napi_is_typedarray(e,v,&typed)==napi_ok&&typed&&
+  napi_get_typedarray_info(e,v,&type,&count,&data,&buffer,&offset)==napi_ok&&type==napi_uint8_array&&count==expected&&
+  data&&napi_is_detached_arraybuffer(e,buffer,&detached)==napi_ok&&!detached&&
+  napi_get_arraybuffer_info(e,buffer,&base,&bytes)==napi_ok&&base&&offset<=bytes&&expected<=bytes-offset&&
+  data==static_cast<uint8_t*>(base)+offset;
+}
+bool BaseString(napi_env e,napi_value o,const char* name,std::string& out){napi_value v=nullptr;
+ return napi_get_named_property(e,o,name,&v)==napi_ok&&String(e,v,out)&&!out.empty();}
+bool BaseNumber(napi_env e,napi_value o,const char* name,uint64_t& out){double n=0;
+ if(!Number(e,o,name,n)||!SafeInteger(n)||n<1)return false;out=uint64_t(n);return true;}
+bool ParseBaseStrip(napi_env e,napi_value v,BaseStripDesc& d){
+ double api=0,length=0,x=0,y=0,w=0,h=0;
+ if(!Number(e,v,"apiRevision",api)||api!=1||
+  !ExactString(e,v,"representation","P013_NATIVE_X_F64_BASEBYTE_V2")||
+  !ExactString(e,v,"evaluator","P1_FROZEN_F64_EVAL_V1")||
+  !ExactString(e,v,"paletteInputRevision","P1_ENCODED_PALETTE_F64_V1")||
+  !BaseNumber(e,v,"sessionId",d.session)||!BaseNumber(e,v,"stripSerial",d.serial)||
+  !BaseNumber(e,v,"stateEpoch",d.stateEpoch)||!BaseNumber(e,v,"physicsCommitId",d.commit)||
+  !BaseNumber(e,v,"configBindingId",d.bindingId)||!BaseNumber(e,v,"geometryEpoch",d.geometry)||
+  !BaseNumber(e,v,"contextEpoch",d.context)||!BaseNumber(e,v,"surfaceEpoch",d.surface)||
+  !BaseString(e,v,"frameToken",d.token)||!BaseString(e,v,"runId",d.run)||
+  !BaseString(e,v,"configDigest",d.digest)||!BaseString(e,v,"profileSha256",d.profileHash)||
+  !BaseString(e,v,"paletteHash",d.paletteHash)||!BaseString(e,v,"payloadSha256",d.payloadHash)||
+  !Number(e,v,"viewportOriginX",x)||!Number(e,v,"viewportOriginY",y)||
+  !Number(e,v,"width",w)||!Number(e,v,"height",h)||
+  !Number(e,v,"boxXPx",d.boxX)||!Number(e,v,"boxWidthPx",d.boxWidth)||
+  !Number(e,v,"byteLength",length)||!Boolean(e,v,"mirror",d.mirror)||
+  !Boolean(e,v,"sparkEnabled",d.spark)||!SafeInteger(x)||!SafeInteger(y)||
+  !SafeInteger(w)||w<1||w>INT32_MAX/12||!SafeInteger(h)||h<1||h>INT32_MAX||
+  !SafeInteger(length)||length!=w*12||x<INT32_MIN||x>INT32_MAX||y<INT32_MIN||y>INT32_MAX)return false;
+ d.originX=int(x);d.originY=int(y);d.width=int(w);d.height=int(h);return true;
+}
+void BaseStripResult(napi_env e,napi_value o,const BaseStripReceipt& r,bool status=true){
+ if(status){Put(e,o,"code",double(r.code));Put(e,o,"errorStage",r.stage);}Put(e,o,"activeStripSerial",double(r.activeSerial));
+ Put(e,o,"pendingStripSerial",double(r.pendingSerial));Put(e,o,"discardedSerial",double(r.discardedSerial));
+ Put(e,o,"baseStripUploadedBytes",double(r.uploadedBytes));Put(e,o,"baseStripPendingBytes",double(r.pendingBytes));
+ Put(e,o,"baseStripCpuBytes",double(r.cpuBytes));Put(e,o,"baseStripGpuBytes",double(r.gpuBytes));
+ Put(e,o,"baseStripTextureLiveCount",double(r.textureLiveCount));Put(e,o,"baseStripRestoreCount",double(r.restoreCount));
+ Put(e,o,"baseStripState",r.state);
+}
+napi_value StageBaseByteStrip(napi_env e,napi_callback_info info){
+ size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);BaseStripDesc d;void* bytes=nullptr;
+ bool valid=n==2&&ParseBaseStrip(e,a[0],d)&&Uint8View(e,a[1],size_t(d.width)*12,bytes);
+ std::lock_guard<std::mutex> lock(g.mutex);BaseStripReceipt r;
+ auto owner=MaterialOwner();if(owner!=Status::OK){r=g.baseStrip.Inspect();r.code=int(owner);r.stage="BASE_STRIP_OWNER";}
+ else if(!valid||d.session!=g.id||d.context!=g.egl.contextEpoch||d.surface!=g.egl.surfaceEpoch){r=g.baseStrip.Inspect();r.code=400;r.stage="BASE_STRIP_SOURCE";}
+ else {auto bound=g.material.Inspect();if(d.bindingId!=bound.bindingId||d.digest!=bound.configurationDigest){r=g.baseStrip.Inspect();r.code=402;r.stage="BASE_STRIP_CONFIG";}
+  else try{r=g.baseStrip.Stage(d,static_cast<const uint8_t*>(bytes),size_t(d.width)*12);}
+   catch(const std::bad_alloc&){r=g.baseStrip.Inspect();r.code=301;r.stage="BASE_STRIP_CPU_ALLOCATION";}}
+ auto o=Object(e);BaseStripResult(e,o,r);return o;
+}
+napi_value PumpBaseByteStripUploads(napi_env e,napi_callback_info info){
+ size_t n=1;napi_value a[1]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);double budget=0;napi_valuetype type;
+ bool valid=n==1&&napi_typeof(e,a[0],&type)==napi_ok&&type==napi_number&&
+  napi_get_value_double(e,a[0],&budget)==napi_ok&&SafeInteger(budget)&&budget>=1&&budget<=65536;
+ std::lock_guard<std::mutex> lock(g.mutex);BaseStripReceipt r=g.baseStrip.Inspect();
+ auto owner=MaterialOwner();if(owner!=Status::OK){r.code=int(owner);r.stage="BASE_STRIP_OWNER";}
+ else if(!valid){r.code=400;r.stage="BASE_STRIP_BUDGET";}
+ else {SurfaceInfo si{};auto status=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
+  if(status!=Status::OK){r.code=int(status);r.stage=g.egl.errorStage;}
+  else {r=g.baseStrip.Pump(budget,g.egl.surfaceEpoch,g.egl.contextEpoch);auto unbound=g.egl.Unbind();
+   if(unbound!=Status::OK){r.code=int(unbound);r.stage="BASE_STRIP_UNBIND";}}}
+ auto o=Object(e);BaseStripResult(e,o,r);return o;
+}
 // T54 G2: separate bridge surface, never changes P0 drawFrame semantics.
 napi_value MaterialResult(napi_env e,const MaterialReceipt& r){
  auto o=Object(e);Put(e,o,"code",double(r.code));Put(e,o,"assetGeneration",double(r.assetGeneration));
@@ -644,7 +719,7 @@ napi_value RegisterSceneConfiguration(napi_env e,napi_callback_info info){
  auto result=Control(e,Status(code));Put(e,result,"errorStage",code?"SCENE_CONFIG":"NONE");return result;
 }
 void SceneNullable(napi_env e,napi_value o,const char* key,const std::string& value){if(value.empty()){napi_value v=nullptr;napi_get_null(e,&v);napi_set_named_property(e,o,key,v);}else Put(e,o,key,value.c_str());}
-napi_value SceneSourceObject(napi_env e,const SceneSource& s){if(s.token.empty()){napi_value v=nullptr;napi_get_null(e,&v);return v;}auto o=Object(e);Put(e,o,"frameId",double(s.frameId));Put(e,o,"fieldEpoch",double(s.fieldEpoch));Put(e,o,"lightConfigRevision",double(s.lightRevision));Put(e,o,"routeId",s.route.c_str());Put(e,o,"mediumMode",s.medium.c_str());Put(e,o,"widthPx",double(s.width));Put(e,o,"heightPx",double(s.height));Put(e,o,"frameToken",s.token.c_str());Put(e,o,"runId",s.run.c_str());Put(e,o,"ledgerCommitKey",s.ledgerKey.c_str());Put(e,o,"stateEpoch",double(s.stateEpoch));Put(e,o,"physicsCommitId",double(s.commit));Put(e,o,"surfaceEpoch",double(s.surface));Put(e,o,"contextEpoch",double(s.context));Put(e,o,"geometryEpoch",double(s.geometry));Put(e,o,"continuityEpoch",double(s.continuity));Put(e,o,"generation",double(s.generation));Put(e,o,"configRevision",double(s.revision));return o;}
+napi_value SceneSourceObject(napi_env e,const SceneSource& s){if(s.token.empty()){napi_value v=nullptr;napi_get_null(e,&v);return v;}auto o=Object(e);Put(e,o,"frameId",double(s.frameId));Put(e,o,"fieldEpoch",double(s.fieldEpoch));Put(e,o,"lightConfigRevision",double(s.lightRevision));Put(e,o,"routeId",s.route.c_str());Put(e,o,"mediumMode",s.medium.c_str());Put(e,o,"widthPx",double(s.width));Put(e,o,"heightPx",double(s.height));Put(e,o,"frameToken",s.token.c_str());Put(e,o,"runId",s.run.c_str());Put(e,o,"ledgerCommitKey",s.ledgerKey.c_str());Put(e,o,"stateEpoch",double(s.stateEpoch));Put(e,o,"physicsCommitId",double(s.commit));Put(e,o,"surfaceEpoch",double(s.surface));Put(e,o,"contextEpoch",double(s.context));Put(e,o,"geometryEpoch",double(s.geometry));Put(e,o,"continuityEpoch",double(s.continuity));Put(e,o,"generation",double(s.generation));Put(e,o,"configRevision",double(s.revision));Put(e,o,"stripSerial",double(s.stripSerial));Put(e,o,"stripProfileHash",s.stripProfileHash.c_str());Put(e,o,"stripPayloadHash",s.stripPayloadHash.c_str());return o;}
 napi_value SceneResult(napi_env e,const SceneReceipt& r,const ScenePacket& p){
  auto o=Control(e,Status(r.code));Put(e,o,"renderContractRevision","P013_NEWPIPE_ONLY_V1");Put(e,o,"compositionRevision","P013_FULLFRAME_SHADER_V1");Put(e,o,"compositingDomain","LINEAR_DISPLAY_PREMULT_OVER_V1");
  Put(e,o,"requestedPipelineId",r.requested.pipeline.c_str());Put(e,o,"renderPipelineId",r.actualGeneration||r.current||r.staleSwap?r.lastGood.pipeline.c_str():"UNKNOWN");
@@ -654,6 +729,10 @@ napi_value SceneResult(napi_env e,const SceneReceipt& r,const ScenePacket& p){
  Put(e,o,"renderedGeneration",double(r.rendered.generation));Put(e,o,"renderedConfigRevision",double(r.rendered.revision));Put(e,o,"lastGoodGeneration",double(r.lastGood.generation));Put(e,o,"lastGoodConfigRevision",double(r.lastGood.revision));
  napi_set_named_property(e,o,"lastGoodSourceEpochs",SceneSourceObject(e,r.lastGood));napi_set_named_property(e,o,"renderedSource",SceneSourceObject(e,r.rendered));
  Put(e,o,"targetSurfaceEpoch",p.frame.surfaceEpoch);Put(e,o,"targetContextEpoch",double(p.contextEpoch));Put(e,o,"actualPresentationGeneration",double(r.actualGeneration));
+ Put(e,o,"requestedStripSerial",double(p.baseStripV2?p.baseStrip.serial:0));Put(e,o,"actualStripSerial",double(r.actualStripSerial));
+ Put(e,o,"requestedStripProfileHash",p.baseStripV2?p.baseStrip.profileHash.c_str():"");
+ Put(e,o,"requestedStripPayloadHash",p.baseStripV2?p.baseStrip.payloadHash.c_str():"");
+ auto base=g.baseStrip.Inspect();BaseStripResult(e,o,base,false);
  auto material=g.material.Inspect();Put(e,o,"activeGeneration",double(material.activeGeneration));Put(e,o,"pendingGeneration",double(material.pendingGeneration));Put(e,o,"materialTextureLiveCount",double(material.textureLiveCount));Put(e,o,"assetCpuBytes",double(material.cpuBytes));
  Put(e,o,"frameTextureLiveCount",double(bool(g.sceneGpu.targets.textures[0])+bool(g.sceneGpu.targets.textures[1])));Put(e,o,"frameFboLiveCount",double(bool(g.sceneGpu.targets.fbos[0])+bool(g.sceneGpu.targets.fbos[1])));Put(e,o,"frameTextureBytes",double(g.sceneGpu.targets.Bytes()));
  Put(e,o,"sceneAuxTextureLiveCount",double(bool(g.sceneGpu.layers.data)+bool(g.sceneGpu.layers.legacy)+bool(g.materialPass.DataTexture())));
@@ -661,15 +740,21 @@ napi_value SceneResult(napi_env e,const SceneReceipt& r,const ScenePacket& p){
  Put(e,o,"legacyTDataTextureLiveCount",double(bool(g.uploader.Texture())));
  Put(e,o,"particleCount",double(p.count));Put(e,o,"particleBufferBytes",double(g.dual.capacity*16));Put(e,o,"particlePresentedSource",p.particleEnabled&&p.count?"C_PARTICLE":"NONE");Put(e,o,"tracerDrawCount",0.);Put(e,o,"sceneShaderHash",g.sceneGpu.layers.sourceHash.c_str());Put(e,o,"sceneProgramLiveCount",double(bool(g.sceneGpu.layers.program)+bool(g.sceneGpu.layers.present)+bool(g.dual.bed)+bool(g.dual.particles)+bool(g.materialPass.Program())));Put(e,o,"materialShaderHash",kP013MaterialShaderHash);return o;
 }
-napi_value DrawNewPipelineFrame(napi_env e,napi_callback_info info){
+napi_value DrawNewPipelineFrameInternal(napi_env e,napi_callback_info info,bool v2){
  size_t n=5;napi_value a[5]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
- std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.scenePacket;p.frame={};p.token.clear();p.run.clear();p.ledgerKey.clear();p.route.clear();p.medium.clear();p.contextEpoch=p.stateEpoch=p.commit=p.requestedGeneration=0;p.count=0;p.capacity=1;
+ std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.scenePacket;p.frame={};p.token.clear();p.run.clear();p.ledgerKey.clear();p.route.clear();p.medium.clear();p.contextEpoch=p.stateEpoch=p.commit=p.requestedGeneration=0;p.count=0;p.capacity=1;p.baseStripV2=v2;p.baseStrip=BaseStripDesc{};
  const char* stage="SCENE_ARGUMENTS";void* data=nullptr;void* xy=nullptr;void* meta=nullptr;void* motion=nullptr;double context=0,state=0,commit=0,generation=0,count=0,capacity=0;std::string sourceFailure;
- bool valid=n==5&&ParseFrame(e,a[0],p.frame,stage)&&ExactString(e,a[0],"scenePacketRevision","P013_SCENE_PACKET_V1")&&ExactString(e,a[0],"renderContractRevision","P013_NEWPIPE_ONLY_V1")&&ExactString(e,a[0],"slopeKernelVersion","E2_GAUSS_COL6_R18_P1_V2");
+ bool valid=n==5&&ParseFrame(e,a[0],p.frame,stage)&&ExactString(e,a[0],"scenePacketRevision",v2?"P013_SCENE_PACKET_V2_BASE_STRIP":"P013_SCENE_PACKET_V1")&&ExactString(e,a[0],"renderContractRevision","P013_NEWPIPE_ONLY_V1")&&ExactString(e,a[0],"slopeKernelVersion","E2_GAUSS_COL6_R18_P1_V2");
  auto text=[&](const char* key,std::string& out){napi_value v=nullptr;if(napi_get_named_property(e,a[0],key,&v)!=napi_ok)return false;
   if(std::strcmp(key,"ledgerCommitKey")==0){napi_valuetype type;std::array<char,2049> text{};size_t length=0;if(napi_typeof(e,v,&type)!=napi_ok||type!=napi_string||napi_get_value_string_utf8(e,v,text.data(),text.size(),&length)!=napi_ok||length>=text.size()-1)return false;out.assign(text.data(),length);return true;}
   return String(e,v,out);};
  valid=valid&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"stateEpoch",state)&&SafeInteger(state)&&state>0&&Number(e,a[0],"physicsCommitId",commit)&&SafeInteger(commit)&&commit>0&&Number(e,a[0],"requestedGeneration",generation)&&SafeInteger(generation)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=SIZE_MAX/16&&count<=capacity&&Boolean(e,a[0],"particleLayerEnabled",p.particleEnabled)&&text("frameToken",p.token)&&text("runId",p.run)&&text("ledgerCommitKey",p.ledgerKey)&&text("routeId",p.route)&&text("mediumMode",p.medium)&&text("sourceFailure",sourceFailure);
+ if(valid&&v2&&sourceFailure.empty()){double serial=0;std::string profileHash,payloadHash;
+  valid=Number(e,a[0],"baseStripSerial",serial)&&SafeInteger(serial)&&serial>0&&
+   text("baseStripProfileHash",profileHash)&&text("baseStripPayloadHash",payloadHash);
+  const auto* desc=g.baseStrip.PendingDesc();if(valid&&desc&&desc->serial==uint64_t(serial)&&desc->profileHash==profileHash&&desc->payloadHash==payloadHash)p.baseStrip=*desc;
+  else {valid=false;stage="BASE_STRIP_PACKET";}
+ }
  if(valid){p.contextEpoch=uint64_t(context);p.stateEpoch=uint64_t(state);p.commit=uint64_t(commit);p.requestedGeneration=uint64_t(generation);p.count=size_t(count);p.capacity=size_t(capacity);
   stage="SCENE_TYPED_RANGE";valid=TypedView(e,a[1],napi_float32_array,kSceneDataFloats,data,stage)&&TypedView(e,a[2],napi_float32_array,p.capacity*2,xy,stage)&&TypedView(e,a[3],napi_uint32_array,p.capacity*2,meta,stage)&&SceneDoubleView(e,a[4],10,motion);
  }
@@ -678,6 +763,7 @@ napi_value DrawNewPipelineFrame(napi_env e,napi_callback_info info){
   if(p.frame.T_dataLayoutVersion!=2||Validate(f,light,check)!=Status::OK||p.contextEpoch!=g.egl.contextEpoch||p.frame.surfaceEpoch!=g.egl.surfaceEpoch||!(p.medium=="WET_COLUMN_V1"||p.medium=="DRY_AIR_V1")){code=100;stage="SCENE_SOURCE";}
  }
  if(!code){std::memcpy(p.data.data(),data,sizeof(p.data));std::memcpy(p.motion.data(),motion,sizeof(p.motion));
+  if(v2&&sourceFailure.empty()&&MaterialSha256(reinterpret_cast<const uint8_t*>(p.data.data()),1536*4)!=p.baseStrip.profileHash){code=402;stage="BASE_STRIP_PROFILE_HASH";}
   for(float v:p.data)if(!std::isfinite(v)){code=100;stage="SCENE_DATA";break;}
   for(double v:p.motion)if(!std::isfinite(v)||!std::isfinite(float(v))){code=100;stage="SCENE_MOTION";break;}
   const auto* positions=static_cast<const float*>(xy);const auto* tags=static_cast<const uint32_t*>(meta);
@@ -692,12 +778,14 @@ napi_value DrawNewPipelineFrame(napi_env e,napi_callback_info info){
   SurfaceInfo surface{};auto current=g.egl.EnsureCurrent({uint64_t(p.frame.surfaceEpoch),int(p.frame.surfaceWidthPx),int(p.frame.surfaceHeightPx)},surface);
   if(current!=Status::OK)receipt=g.scene.Reject(p,int(current),g.egl.errorStage,nullptr,false);
   else if(!sourceFailure.empty())receipt=g.scene.Reject(p,100,sourceFailure.c_str(),&g.sceneGpu,true);
-  else try{receipt=g.scene.Draw(p,g.material,g.sceneGpu);}catch(const std::bad_alloc&){receipt.code=301;receipt.state="FAULT";receipt.fault=receipt.stage="SCENE_CPU_ALLOCATION";}
+  else try{receipt=g.scene.Draw(p,g.material,g.sceneGpu,v2?&g.baseStrip:nullptr);}catch(const std::bad_alloc&){receipt.code=301;receipt.state="FAULT";receipt.fault=receipt.stage="SCENE_CPU_ALLOCATION";}
   auto unbound=g.egl.Unbind();if(unbound!=Status::OK){receipt.code=int(unbound);receipt.fault=receipt.stage="SCENE_UNBIND_AFTER_SWAP";receipt.state="FAULT";receipt.current=false;}
   if(int(current)>=200||int(unbound)>=200||receipt.code==201||receipt.code==202||receipt.code==303){Destroy(ResetReason::FAILURE);g.egl.state=State::FAILED;}
  }
  return SceneResult(e,receipt,p);
 }
+napi_value DrawNewPipelineFrame(napi_env e,napi_callback_info info){return DrawNewPipelineFrameInternal(e,info,false);}
+napi_value DrawNewPipelineFrameV2(napi_env e,napi_callback_info info){return DrawNewPipelineFrameInternal(e,info,true);}
 #endif
 napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
  size_t n=2; napi_value a[2]{}; napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
@@ -1211,6 +1299,9 @@ static napi_value Init(napi_env e, napi_value exports) {
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
     {"registerSceneConfiguration",nullptr,RegisterSceneConfiguration,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"drawNewPipelineFrame",nullptr,DrawNewPipelineFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"drawNewPipelineFrameV2",nullptr,DrawNewPipelineFrameV2,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"stageBaseByteStrip",nullptr,StageBaseByteStrip,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"pumpBaseByteStripUploads",nullptr,PumpBaseByteStripUploads,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
     {"drawMaterialFrame",nullptr,DrawMaterialFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"bindMaterialConfiguration", nullptr, BindMaterialConfiguration, nullptr,nullptr,nullptr,napi_default,nullptr},

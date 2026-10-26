@@ -38,8 +38,8 @@ Status MaterialPass::Create(const ShaderSources& sources,uint64_t context){
  if(!v||!f){if(v)glDeleteShader(v);if(f)glDeleteShader(f);errorStage="MATERIAL_COMPILE";Reset(true);return Status::SHADER_COMPILE_FAILED;}
  program_=glCreateProgram();glAttachShader(program_,v);glAttachShader(program_,f);glLinkProgram(program_);glDeleteShader(v);glDeleteShader(f);
  GLint linked=0;glGetProgramiv(program_,GL_LINK_STATUS,&linked);if(!linked){errorStage="MATERIAL_LINK";Reset(true);return Status::SHADER_COMPILE_FAILED;}
- const char* names[]={"u_tdata","u_grain","u_strata","u_resolution","u_box","u_canvasBox","u_capacity","u_visualInverted","u_lightEnabled","u_grainEnabled","u_strataEnabled","u_sparkEnabled","u_palette[0]","u_grainBase[0]","u_offsets","u_bandMin","u_bandMax","u_strengths","u_warpRange","u_lightDir","u_light","u_lightDepth"};
- for(size_t i=0;i<22;i++){uniforms_[i]=glGetUniformLocation(program_,names[i]);if(uniforms_[i]<0){errorStage="MATERIAL_UNIFORM";Reset(true);return Status::SHADER_COMPILE_FAILED;}}
+ const char* names[]={"u_tdata","u_grain","u_strata","u_resolution","u_box","u_canvasBox","u_capacity","u_visualInverted","u_lightEnabled","u_grainEnabled","u_strataEnabled","u_sparkEnabled","u_palette[0]","u_grainBase[0]","u_offsets","u_bandMin","u_bandMax","u_strengths","u_warpRange","u_lightDir","u_light","u_lightDepth","u_baseStrip","u_useBaseStrip","u_viewportOriginX"};
+ for(size_t i=0;i<25;i++){uniforms_[i]=glGetUniformLocation(program_,names[i]);if(i<22&&uniforms_[i]<0){errorStage="MATERIAL_UNIFORM";Reset(true);return Status::SHADER_COMPILE_FAILED;}}
  glGenVertexArrays(1,&vao_);glGenTextures(1,&dataTexture_);glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,dataTexture_);
  glTexStorage2D(GL_TEXTURE_2D,1,GL_RGBA32F,128,3);
  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
@@ -47,14 +47,16 @@ Status MaterialPass::Create(const ShaderSources& sources,uint64_t context){
  error=glGetError();if(error!=GL_NO_ERROR||!vao_||!dataTexture_){errorStage="MATERIAL_RESOURCE";Reset(true);return Status::GL_RESOURCE_FAILED;}
  textureAllocCount++;errorStage="NONE";return Status::OK;
 }
-Status MaterialPass::Draw(const MaterialFrame& m,const LightParams& l,const MaterialParams& p,const float* data,const std::array<uint32_t,2>& textures){
- if(!program_||!dataTexture_||!textures[0]||!textures[1]||epoch!=m.contextEpoch){errorStage="MATERIAL_NOT_READY";return Status::GL_RESOURCE_FAILED;}
+Status MaterialPass::Draw(const MaterialFrame& m,const LightParams& l,const MaterialParams& p,const float* data,const std::array<uint32_t,2>& textures,uint32_t baseStrip,int viewportOriginX){
+ if(!program_||!dataTexture_||!textures[0]||!textures[1]||epoch!=m.contextEpoch||
+   (baseStrip&& (uniforms_[22]<0||uniforms_[23]<0||uniforms_[24]<0))){errorStage="MATERIAL_NOT_READY";return Status::GL_RESOURCE_FAILED;}
  double t=NowMs();const auto& f=m.frame;
  glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,dataTexture_);glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);
  glPixelStorei(GL_UNPACK_ALIGNMENT,4);glPixelStorei(GL_UNPACK_ROW_LENGTH,0);glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
  glTexSubImage2D(GL_TEXTURE_2D,0,0,0,128,3,GL_RGBA,GL_FLOAT,data);error=glGetError();uploadMs=NowMs()-t;
  if(error!=GL_NO_ERROR){errorStage="MATERIAL_TDATA_UPLOAD";return Status::GL_RESOURCE_FAILED;}uploadCount++;
  glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_2D_ARRAY,textures[0]);glActiveTexture(GL_TEXTURE2);glBindTexture(GL_TEXTURE_2D_ARRAY,textures[1]);
+ glActiveTexture(GL_TEXTURE3);glBindTexture(GL_TEXTURE_2D_ARRAY,baseStrip);
  glViewport(0,0,GLsizei(f.surfaceWidthPx),GLsizei(f.surfaceHeightPx));glEnable(GL_BLEND);glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_ALPHA);glDisable(GL_DEPTH_TEST);glDisable(GL_STENCIL_TEST);glDisable(GL_SCISSOR_TEST);glDisable(GL_CULL_FACE);
  glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
  // T68 candidate sand layer: binary coverage over preserves previously drawn scene layers. Caller owns clears.
@@ -69,6 +71,9 @@ Status MaterialPass::Draw(const MaterialFrame& m,const LightParams& l,const Mate
  glUniform3f(uniforms_[15],p.bandMinYCanvasPx[0],p.bandMinYCanvasPx[1],p.bandMinYCanvasPx[2]);glUniform3f(uniforms_[16],p.bandMaxYCanvasPx[0],p.bandMaxYCanvasPx[1],p.bandMaxYCanvasPx[2]);
  glUniform3f(uniforms_[17],p.aB,p.aC,p.aC3);glUniform1f(uniforms_[18],p.warpRangeCycles);
  glUniform3f(uniforms_[19],l.lightX,l.lightY,l.lightZ);glUniform4f(uniforms_[20],l.la,l.ld,l.lmin,l.lmax);glUniform2f(uniforms_[21],l.lref,l.ellLightMaterial);
+ if(uniforms_[22]>=0)glUniform1i(uniforms_[22],3);
+ if(uniforms_[23]>=0)glUniform1i(uniforms_[23],baseStrip!=0);
+ if(uniforms_[24]>=0)glUniform1i(uniforms_[24],viewportOriginX);
  t=NowMs();glDrawArrays(GL_TRIANGLES,0,3);drawMs=NowMs()-t;error=glGetError();errorStage=error==GL_NO_ERROR?"NONE":"MATERIAL_DRAW";
  return error==GL_NO_ERROR?Status::OK:Status::GL_DRAW_FAILED;
 }

@@ -22,7 +22,7 @@ int ValidateMaterialFrame(const MaterialFrame&,const LightParams&,const Material
 class MaterialPass {
  public:
  Status Create(const ShaderSources&,uint64_t contextEpoch);
- Status Draw(const MaterialFrame&,const LightParams&,const MaterialParams&,const float*,const std::array<uint32_t,2>& textures);
+ Status Draw(const MaterialFrame&,const LightParams&,const MaterialParams&,const float*,const std::array<uint32_t,2>& textures,uint32_t baseStrip=0,int viewportOriginX=0);
  void Reset(bool contextCurrent);
  GLuint Program()const{return program_;} GLuint Vao()const{return vao_;} GLuint DataTexture()const{return dataTexture_;}
  uint64_t epoch=0,uploadCount=0,textureAllocCount=0;
@@ -31,6 +31,6 @@ class MaterialPass {
  private:
  GLuint Compile(GLenum,const char*);
  GLuint program_=0,vao_=0,dataTexture_=0;
- std::array<GLint,24> uniforms_{};
+ std::array<GLint,25> uniforms_{};
 };
 }

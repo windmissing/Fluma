@@ -6,6 +6,7 @@ import { P013LightParams } from './P013RenderTypes';
 import { P012FrameContext,P012AppearanceParams,p012FactoryAppearance,validateP012AppearanceParams } from './P012RenderTypes';
 import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
 import { p013Sha256 } from './preparation/P013CanvasAssetExport';
+import { P013BaseByteEvaluator,P013BaseStripDescriptor } from './preparation/P013BaseByteEvaluator';
 export class P013SceneController {
   readonly light: P013LightParams=new P013LightParams();
   readonly preparation: P013ScenePreparation=new P013ScenePreparation();
@@ -14,8 +15,10 @@ export class P013SceneController {
   private native: P013SceneNative|null=null;private active: boolean=true;private loaded: boolean=false;
   private session: number=0;private serial: number=0;private revision: number=0;private generation: number=0;private requestedGeneration: number=0;
   private configuredContext: number=-1;private configured: boolean=false;
-  private values: Float64Array=new Float64Array(51);private previous: Float64Array=new Float64Array(51);
+  private values: Float64Array=new Float64Array(57);private previous: Float64Array=new Float64Array(57);
   private configuredSurface: number=-1;private lastLogNs: number=0;
+  private baseEvaluator: P013BaseByteEvaluator=new P013BaseByteEvaluator();
+  private configBindingId: number=0;private configDigest: string='';
   constructor(native: P013SceneNative|null=null){this.native=native;this.loaded=native!==null;}
   onLoad(): void {this.native=nativeRenderer as P013SceneNative;this.loaded=true;this.session=0;this.configured=false;if(!this.active)this.native.setActive(false);}
   setActive(active: boolean): void {this.active=active;if(this.loaded)this.native?.setActive(active);}
@@ -35,8 +38,9 @@ export class P013SceneController {
       v[16]=context.ablation!==1&&context.ablation!==7?1:0;v[17]=context.ablation!==4&&context.ablation!==7?1:0;v[18]=context.ablation!==3&&context.ablation!==7?1:0;v[19]=scale;
       v.set([145/255,168/255,111/255,216/255,196/255,150/255,181/255,182/255,131/255],20);v.set([145/255,168/255,111/255,216/255,196/255,150/255],29);
       v.set([this.light.la,this.light.ld,this.light.lmin,this.light.lmax,this.light.lref,this.light.ellLightMaterial,this.light.lightX,this.light.lightY,this.light.lightZ,this.light.sigmaCandidate],35);
-      v[45]=app.grainFeaturePx;v[46]=app.grainSigma;v[47]=app.strataStrengthScale;v[48]=app.strataLambdaMaterial;v[49]=app.configRevision;v[50]=20261020;
-      let changed=!this.configured;for(let i=0;i<51;i++)if(i!==5&&v[i]!==this.previous[i])changed=true;
+      v[45]=app.grainFeaturePx;v[46]=app.grainSigma;v[47]=app.strataStrengthScale;v[48]=app.strataLambdaMaterial;v[49]=app.configRevision;v[50]=pipeline===0?20261020:20261026;
+      if(pipeline!==0)v.set([145,168,111,216,196,150],51);
+      let changed=!this.configured;for(let i=0;i<57;i++)if(i!==5&&v[i]!==this.previous[i])changed=true;
       const restore=this.configuredContext!==target.contextEpoch||this.configuredSurface!==target.surfaceEpoch;
       if(changed||restore){
         if(changed)this.revision++;v[5]=this.revision;
@@ -44,6 +48,7 @@ export class P013SceneController {
         const binding=native.bindMaterialConfiguration({sessionId:this.session,appearanceConfigRevision:this.revision,configurationDigest:digest});
         if(binding.code!==0){this.failure='CONFIG_BIND_'+binding.code;return null;}
         const registered=native.registerSceneConfiguration(binding,v);if(registered.code!==0){this.failure='SCENE_CONFIG_'+registered.code;return null;}
+        this.configBindingId=binding.bindingId;this.configDigest=digest;
         this.configurationFailure='';this.requestedGeneration=0;
         if(pipeline!==0){
           const assets=this.preparation.numeric.build(app,px,context.geometryEpoch,context.renderSeed);const d=assets.desc;
@@ -53,7 +58,6 @@ export class P013SceneController {
         }
         this.previous.set(v);this.configured=true;this.configuredContext=target.contextEpoch;this.configuredSurface=target.surfaceEpoch;
       }
-      if(pipeline!==0&&this.configurationFailure===''){const pump=native.pumpMaterialUploads(65536);if(pump.code!==0&&pump.code!==401)this.configurationFailure='PUMP_'+pump.code+'_'+pump.errorStage;}
       const f=this.frame;f.sessionId=this.session;f.frameId=++this.serial;f.snapshotId=state.physicsCommitId;f.surfaceEpoch=target.surfaceEpoch;f.contextEpoch=target.contextEpoch;
       f.fieldEpoch=context.fieldEpoch;f.geometryEpoch=context.geometryEpoch;f.continuityEpoch=context.continuityEpoch;f.appearanceConfigRevision=this.revision;f.lightConfigRevision=this.revision;f.frameTimeNs=timeNs;
       f.surfaceWidthPx=prepared.widthPx;f.surfaceHeightPx=prepared.heightPx;f.boxXPx=context.boxX*scale;f.boxYPx=context.boxY*scale;f.boxWidthPx=context.boxW*scale;f.boxHeightPx=context.boxH*scale;
@@ -63,7 +67,32 @@ export class P013SceneController {
       f.frameToken=state.runId+':'+state.stateEpoch+':'+state.physicsCommitId+':'+f.frameId;f.requestedGeneration=this.requestedGeneration;f.particleLayerEnabled=context.particleLayerEnabled!==false;
       f.sourceFailure=this.preparation.pack(state,context);if(f.sourceFailure==='OK')f.sourceFailure='';
       f.particleCount=this.preparation.count;f.particleCapacity=this.preparation.capacity;
-      const receipt=native.drawNewPipelineFrame(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion);
+      f.scenePacketRevision=pipeline===0?'P013_SCENE_PACKET_V1':'P013_SCENE_PACKET_V2_BASE_STRIP';
+      if(pipeline!==0&&f.sourceFailure===''){
+        const evaluator=this.baseEvaluator,profile=this.preparation.data;
+        if(!evaluator.evaluate(prepared.widthPx,0,f.boxXPx,f.boxWidthPx,f.visualInverted,v[18]!==0,profile)){
+          f.sourceFailure='BASE_REPRESENTATION_UNSUPPORTED';
+        }else{
+          const strip=new P013BaseStripDescriptor();strip.sessionId=this.session;strip.stripSerial=f.frameId;
+          strip.frameToken=f.frameToken;strip.runId=f.runId;strip.stateEpoch=f.stateEpoch;strip.physicsCommitId=f.physicsCommitId;
+          strip.configBindingId=this.configBindingId;strip.configDigest=this.configDigest;
+          strip.geometryEpoch=f.geometryEpoch;strip.contextEpoch=f.contextEpoch;strip.surfaceEpoch=f.surfaceEpoch;
+          strip.viewportOriginX=0;strip.viewportOriginY=0;strip.width=prepared.widthPx;strip.height=prepared.heightPx;
+          strip.boxXPx=f.boxXPx;strip.boxWidthPx=f.boxWidthPx;strip.mirror=f.visualInverted;strip.sparkEnabled=v[18]!==0;
+          evaluator.populateDescriptor(strip,profile);f.baseStripSerial=strip.stripSerial;
+          f.baseStripProfileHash=strip.profileSha256;f.baseStripPayloadHash=strip.payloadSha256;
+          const staged=native.stageBaseByteStrip(strip,evaluator.bytes);
+          if(staged.code!==0)f.sourceFailure='BASE_STAGE_'+staged.errorStage;
+          else {const pumped=native.pumpBaseByteStripUploads(65536);
+            if(pumped.code!==0)f.sourceFailure='BASE_PUMP_'+pumped.errorStage;
+            else if(this.configurationFailure===''){const spent=pumped.baseStripUploadedBytes-staged.baseStripUploadedBytes;
+              const staticBudget=65536-spent;if(staticBudget>0){const pump=native.pumpMaterialUploads(staticBudget);
+                if(pump.code!==0&&pump.code!==401)this.configurationFailure='PUMP_'+pump.code+'_'+pump.errorStage;}}
+          }
+        }
+      }
+      const receipt=pipeline===0?native.drawNewPipelineFrame(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion):
+        native.drawNewPipelineFrameV2(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion);
       this.lastReceipt=receipt;this.failure=receipt.currentFrameSucceeded?'':receipt.firstFailureStage;
       if(timeNs-this.lastLogNs>=1e9||receipt.presentationState!=='CURRENT'){this.lastLogNs=timeNs;console.info('WS_EVENT p013_scene '+JSON.stringify({run:state.runId,commit:state.physicsCommitId,frame:f.frameId,request:receipt.requestedFrameToken,actual:receipt.lastGoodFrameToken,state:receipt.presentationState,first:receipt.firstFailureStage,swap:receipt.requestedSwapSucceeded,staleSwap:receipt.staleSwapSucceeded,generation:receipt.actualPresentationGeneration,config:receipt.renderedConfigRevision,desiredConfig:this.revision,configurationFailure:this.configurationFailure}));}
       return receipt;

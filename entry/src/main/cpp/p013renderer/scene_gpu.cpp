@@ -19,7 +19,7 @@ Status SceneGlGpu::Layer(int layer,const ScenePacket& packet,const SceneConfigur
   std::array<float,1536> check{};std::copy(packet.data.begin(),packet.data.begin()+1536,check.begin());
   if(ValidateMaterialFrame(frame,c.Light(),params,check)!=0||lease->desc->revision!=c.revision||lease->desc->lambdaMaterial!=params.effectiveLambdaMaterial||lease->desc->lambdaCanvas!=params.effectiveLambdaCanvasPx||lease->desc->warpRange!=params.warpRangeCycles||lease->desc->grainBase!=params.grainBaseSrgb||lease->desc->seed!=c.values[3]||lease->desc->geometryEpoch!=c.values[4])return Status::INVALID_ARGUMENT;
   if(material.epoch!=packet.contextEpoch){auto code=material.Create(sources,packet.contextEpoch);if(code!=Status::OK)return code;}
-  return material.Draw(frame,c.Light(),params,packet.data.data(),*lease->textures);
+  return material.Draw(frame,c.Light(),params,packet.data.data(),*lease->textures,packet.baseStripV2?baseStripTexture:0,packet.baseStripV2?packet.baseStrip.originX:0);
  }
  if(layer==2||layer==3){
   DualVisual visual;visual.radiusPx=c.values[19];for(int i=0;i<6;i++){visual.colors[i]=c.values[29+i];visual.colors[i+6]=c.values[29+i];}

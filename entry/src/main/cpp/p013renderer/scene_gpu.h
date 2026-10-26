@@ -13,9 +13,11 @@ class SceneGlGpu final:public SceneGpu {
  Status Layer(int,const ScenePacket&,const SceneConfiguration&,const SceneLease*)override;
  Status Present(bool)override;
  Status Swap(uint64_t id)override{return egl.Swap(id);}
+ void SetBaseStripTexture(uint32_t texture)override{baseStripTexture=texture;}
  void CommitTargets() noexcept override {targets.Commit();}
  void Reset(bool current){targets.Reset(current);layers.Reset(current);}
  FullFrameTargets targets;SceneLayers layers;
  private:const char* stage="SCENE_TARGETS";EglContext& egl;MaterialPass& material;DualFieldPass& dual;ShaderSources sources;
+ uint32_t baseStripTexture=0;
 };
 }

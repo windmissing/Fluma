@@ -13,8 +13,8 @@ static napi_value View(napi_typedarray_type type,size_t count,size_t stride){aut
 int main(){
  CHECK(RunP013BridgeBaseline()==0);
  auto init=Call(p013::InitSession,{Text("test")});CHECK(Read(init,"code")==0);CHECK(Read(Call(p013::PrepareDualFieldSurface,{Num(Read(init,"sessionId")),Num(p013::g.egl.surfaceEpoch)}),"code")==0);
- auto values=View(napi_float64_array,51,8);auto* v=reinterpret_cast<double*>(values->buffer->bytes.data()+16);v[1]=3;v[3]=24;v[4]=v[5]=1;v[8]=v[9]=64;v[10]=v[11]=v[12]=v[19]=1;v[13]=v[14]=24;v[15]=.25;double light[]={.85,.15,.8,1.12,1,24,-.55,-.55,.63,6};for(int i=0;i<10;i++)v[35+i]=light[i];v[50]=20261020;
- auto binding=Value();Set(binding,"sessionId",Read(init,"sessionId"));Set(binding,"appearanceConfigRevision",1);binding->fields["configurationDigest"]=Text(p013::MaterialSha256(reinterpret_cast<uint8_t*>(v),51*8).c_str());auto bound=Call(p013::BindMaterialConfiguration,{binding});CHECK(Read(bound,"code")==0);
+ auto values=View(napi_float64_array,p013::kSceneConfigValues,8);auto* v=reinterpret_cast<double*>(values->buffer->bytes.data()+16);v[1]=3;v[3]=24;v[4]=v[5]=1;v[8]=v[9]=64;v[10]=v[11]=v[12]=v[19]=1;v[13]=v[14]=24;v[15]=.25;double light[]={.85,.15,.8,1.12,1,24,-.55,-.55,.63,6};for(int i=0;i<10;i++)v[35+i]=light[i];v[50]=20261020;
+ auto binding=Value();Set(binding,"sessionId",Read(init,"sessionId"));Set(binding,"appearanceConfigRevision",1);binding->fields["configurationDigest"]=Text(p013::MaterialSha256(reinterpret_cast<uint8_t*>(v),p013::kSceneConfigValues*8).c_str());auto bound=Call(p013::BindMaterialConfiguration,{binding});CHECK(Read(bound,"code")==0);
  auto reg=[&](){return Call(p013::RegisterSceneConfiguration,{bound,values});};CHECK(Read(reg(),"code")==0);
  values->offset=17;CHECK(Read(reg(),"code")==402);values->offset=16;v[12]=.9;CHECK(Read(reg(),"code")==400);v[12]=1;values->buffer->detached=true;CHECK(Read(reg(),"code")==402);values->buffer->detached=false;
  auto frame=Value();for(const char* key:{"sessionId","frameId","snapshotId","surfaceEpoch","fieldEpoch","geometryEpoch","continuityEpoch","appearanceConfigRevision","lightConfigRevision","frameTimeNs","surfaceWidthPx","surfaceHeightPx","boxXPx","boxYPx","boxWidthPx","boxHeightPx","capacity","T_dataLayoutVersion","zOriginVersion"})Set(frame,key,1);
@@ -31,5 +31,3 @@ int main(){
  CHECK(Read(Call(p013::Release,{}),"code")==0);CHECK(!p013::g.scene.Desired()&&!p013::g.scene.HasLastGood());
  std::puts("PASS T56 actual scene bridge: Float64 config hash/binding/range/detach, owned data, full frame source, stale token, source failure replay, pass failure, wrong owner, NaN, release; synthetic GPU boundary");return 0;
 }
-
-\n
