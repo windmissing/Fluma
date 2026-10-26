@@ -1,0 +1,107 @@
+{
+ "executionId": "p076-dev-delivery-verification-v1",
+ "date": "2026-10-26",
+ "generatedBy": "test/p076_dev_delivery_verification.cjs",
+ "independence": "Fresh probes from contract texts against real production files; developer suites not rerun as evidence; T75 native claims cross-checked via archived transcript re-parse plus independent budget math.",
+ "results": [
+  {
+   "id": "T76-75-01",
+   "name": "T75 bind: fresh binding accepted and cached only on code 0; rejected rebind (402) leaves cached receipt untouched",
+   "status": "PASS",
+   "bindsSeen": 2,
+   "cachedOnSuccessOnly": true
+  },
+  {
+   "id": "T76-75-02",
+   "name": "T75 invalid budget: structured 400/byteBudget/zero-upload delegated to native; controller must not translate or swallow; active/pending generation from receipt",
+   "status": "PASS",
+   "budgetsForwarded": 6,
+   "structuredReceipt": true
+  },
+  {
+   "id": "T76-75-03",
+   "name": "T75 fallback: NEWPIPE_FAULT_NO_CANVAS thrown; not a single Canvas callback invoked (background/foreground/legacy all untouched)",
+   "status": "PASS",
+   "canvasCallbacks": 0,
+   "faultIdentity": "NEWPIPE_FAULT_NO_CANVAS"
+  },
+  {
+   "id": "T76-75-04",
+   "name": "T75 native core transcript re-parse: 8 PASS lines present, no FAIL lines; complete-row budget math independently recomputed (budget 65536 -> 64 grain rows of 1024B)",
+   "status": "PASS",
+   "passMarkers": 16,
+   "completeRowMath": {
+    "budget": 65536,
+    "grainRowsPerPump": 64,
+    "strataRowsTotal": 768
+   }
+  },
+  {
+   "id": "T76-66-01",
+   "name": "T66 attempt identity P011_COMMIT_IDENTITY_V2: hook presence and extra getP011Metric calls leave the attempt key sequence identical and strictly monotone; physical arrays byte-identical",
+   "status": "PASS",
+   "rows": 10,
+   "identityRevision": "P011_COMMIT_IDENTITY_V2"
+  },
+  {
+   "id": "T76-66-02",
+   "name": "T66 store: written-continuity gate (skipped written sequence fails store, close rejects), CLOSED requires strict dual-stream equality, finish idempotent and old-generation refused",
+   "status": "PASS"
+  },
+  {
+   "id": "T76-66-03",
+   "name": "T66 manifest tool: COMPLETE only with strict fence (state/route/counts/last-identity); duplicated raw rows -> PREFIX_OR_MISMATCH; bytes/sha256/rawRows recomputed independently",
+   "status": "PASS"
+  },
+  {
+   "id": "T76-72-01",
+   "name": "T72 diagnostics on/off byte-identity: same touch schedule on two real models — fields, pool mass, sourceEpoch identical; events cover touch/tick/stale/dry-receipt/up-stop",
+   "status": "PASS",
+   "rows": 13,
+   "kinds": [
+    "model.start",
+    "model.move",
+    "tick",
+    "dry.request",
+    "dry.receipt",
+    "model.stop"
+   ]
+  },
+  {
+   "id": "T76-72-02",
+   "name": "T72 ring overflow: drop counter and sequence gap visible; drain yields at most 2 rows per call",
+   "status": "PASS",
+   "dropped": 744,
+   "survivors": 256,
+   "rowsPerDrain": 2
+  },
+  {
+   "id": "T76-72-03",
+   "name": "T72 dry/wet sink separation: dry admission does not trigger the wet gesture sink (fresh probe on real field)",
+   "status": "PASS",
+   "wetSinkCalls": 0,
+   "dryAdmitted": 0.1
+  },
+  {
+   "id": "T76-55-01",
+   "name": "T55/T75 entry coverage cross-check: bindMaterialConfiguration registered in the real napi bridge export table; T75 core covers Stage/Pump/Activate/CanActivate/Restore/ClearSession but bind-target refusal at 402 for a READY pending is exercised only in an isolated second uploader (isolation noted)",
+   "status": "PASS",
+   "bridgeExports": [
+    "bindMaterialConfiguration",
+    "pumpMaterialUploads",
+    "stageMaterialBundle"
+   ],
+   "coverageGap": "402-on-READY-pending-bind-refusal covered in isolated uploader only; same uploader-instance sequencing (activate then rebind) is exercised via bridge test instead"
+  }
+ ],
+ "gapsNotRunnableOffline": [
+  "real GPU upload/fsync timing (T75 native uses synthetic GPU boundary)",
+  "device lifecycle: Want finish path, UI attempt boundaries, real worker file IO (T66)",
+  "on-screen presentation of diagnostic rows (T72 log transport)"
+ ],
+ "summary": {
+  "total": 11,
+  "pass": 11,
+  "fail": 0
+ }
+}
