@@ -1,0 +1,93 @@
+{
+ "executionId": "p070-t63-archive-phase-analysis-v1",
+ "date": "2026-10-26",
+ "note": "T63 page logs no touch events (no Down/Move/Up/Cancel, no local coords, no model.start/move/stop logs); the only page signal is the 60-frame demo sample with the gravity input object",
+ "phaseStats": {
+  "start-events.txt": {
+   "eventKinds": {
+    "demo_gravity_config": 1,
+    "p013_dual_frame": 5,
+    "p013_dual_geometry": 5,
+    "empty_sand_demo": 1
+   },
+   "p013_dual_frame": 5,
+   "p013_dual_geometry": 5,
+   "demoSamples": 1,
+   "inputSourceDist": {
+    "sensor": 1
+   },
+   "zeroSourceSamples": 1,
+   "nonzeroSourceSamples": 0
+  },
+  "touch-events.txt": {
+   "eventKinds": {
+    "demo_gravity_config": 2,
+    "p013_dual_frame": 49,
+    "p013_dual_geometry": 49,
+    "empty_sand_demo": 15
+   },
+   "p013_dual_frame": 49,
+   "p013_dual_geometry": 49,
+   "demoSamples": 15,
+   "inputSourceDist": {
+    "sensor": 15
+   },
+   "zeroSourceSamples": 15,
+   "nonzeroSourceSamples": 0
+  },
+  "pre-manual-events.txt": {
+   "eventKinds": {
+    "demo_gravity_config": 2,
+    "p013_dual_frame": 76,
+    "p013_dual_geometry": 76,
+    "empty_sand_demo": 22
+   },
+   "p013_dual_frame": 76,
+   "p013_dual_geometry": 76,
+   "demoSamples": 22,
+   "inputSourceDist": {
+    "sensor": 22
+   },
+   "zeroSourceSamples": 22,
+   "nonzeroSourceSamples": 0
+  },
+  "manual-events.txt": {
+   "eventKinds": {
+    "demo_gravity_config": 2,
+    "p013_dual_frame": 101,
+    "p013_dual_geometry": 101,
+    "empty_sand_demo": 29
+   },
+   "p013_dual_frame": 101,
+   "p013_dual_geometry": 101,
+   "demoSamples": 29,
+   "inputSourceDist": {
+    "sensor": 29
+   },
+   "zeroSourceSamples": 29,
+   "nonzeroSourceSamples": 0
+  },
+  "final-events.txt": {
+   "eventKinds": {
+    "demo_gravity_config": 3,
+    "p013_dual_frame": 138,
+    "p013_dual_geometry": 138,
+    "empty_sand_demo": 39
+   },
+   "p013_dual_frame": 138,
+   "p013_dual_geometry": 138,
+   "demoSamples": 39,
+   "inputSourceDist": {
+    "sensor": 39
+   },
+   "zeroSourceSamples": 39,
+   "nonzeroSourceSamples": 0
+  }
+ },
+ "totalInputSourceDist": {
+  "sensor": 106
+ },
+ "touchRejectionReceipts": 0,
+ "touchEventLogs": "grep touch/TouchType over all five phase logs: 0 matches — the page never logged a single touch event",
+ "gestureSinkLogs": "no gesture_sand/NO_WATER receipt lines in any phase log (demo model does not install setGestureSandEventSink)"
+}

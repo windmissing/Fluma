@@ -1,0 +1,27 @@
+{
+ "executionId": "p070-t63-snapshot-model-check-v1",
+ "date": "2026-10-26",
+ "note": "A01/B03/D01 rerun against the EXACT 86366dd (T63 build) model bytes; the shared working tree has since diverged only by T58/T59 dry-demo work absent from the T63 build",
+ "results": [
+  {
+   "id": "T70-A01",
+   "name": "T63 exact bytes: legal positive still nonzero",
+   "status": "PASS",
+   "sourceInjectedHeavy": 15.866666666666678,
+   "particleMass": 15.866666666666578,
+   "firstNonzeroRow": 1
+  },
+  {
+   "id": "T70-D01",
+   "name": "T63 exact bytes: stale-on-every-tick zero-source signature reproduced",
+   "status": "PASS",
+   "sourceInjectedHeavy": 0,
+   "particleMass": 0
+  },
+  {
+   "id": "T70-B03",
+   "name": "T63 exact bytes: one stale input stops touching before injection",
+   "status": "PASS"
+  }
+ ]
+}

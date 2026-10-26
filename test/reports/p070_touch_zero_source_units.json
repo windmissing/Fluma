@@ -1,0 +1,76 @@
+{
+ "executionId": "p070-touch-zero-source-units-v1",
+ "date": "2026-10-26",
+ "generatedBy": "test/p070_touch_zero_source_units.cjs",
+ "modelIdentity": "P051EmptySandDemo / P051GravityInputAdapter / P011GestureRateClock from the shared working tree; T63 snapshot 86366dd model files are byte-identical to these (T63 build exported from 86366dd; working tree has not touched these files since)",
+ "results": [
+  {
+   "id": "T70-A01",
+   "name": "real model: touching with direct model coords yields nonzero source + particles + deposition (legal positive)",
+   "status": "PASS",
+   "sourceInjectedHeavy": 15.866666666666678,
+   "particleMass": 15.866666666666578,
+   "depositedMass": 0,
+   "firstNonzeroRow": 1,
+   "conclusion": "physics admission accepts touch-sourced sand; device zero must originate at the page event/coordination layer"
+  },
+  {
+   "id": "T70-B01",
+   "name": "adapter latest() fresh within 250ms (sensor 20ms cadence)",
+   "status": "PASS",
+   "source": "sensor",
+   "targetTiltDeg": null
+  },
+  {
+   "id": "T70-B02",
+   "name": "adapter latest() beyond 250ms -> source=stale, targetTiltDeg=null, valid=true",
+   "status": "PASS"
+  },
+  {
+   "id": "T70-B03",
+   "name": "one stale input stops touching (model.stop) before any injection",
+   "status": "PASS",
+   "sourceInjectedHeavy": 0,
+   "note": "mechanism: applyDefinedInput accepts valid=true stale objects; model.tick sees input.source===\"stale\" and calls stop()"
+  },
+  {
+   "id": "T70-C01",
+   "name": "touching=true with NO gravity input still injects (input===null never stops)",
+   "status": "PASS",
+   "sourceInjectedHeavy": 3.8666666666666654
+  },
+  {
+   "id": "T70-D01",
+   "name": "stale-on-every-tick keeps source/particles zero across 2s (device zero-source signature)",
+   "status": "PASS",
+   "sourceInjectedHeavy": 0,
+   "particleMass": 0,
+   "depositedMass": 0
+  },
+  {
+   "id": "T70-E01",
+   "name": "T63 device samples: input.source distribution (observation; sampling every 60 frames, not exhaustive)",
+   "status": "PASS",
+   "totalSamples": 106,
+   "sensor": 106,
+   "stale": 0,
+   "note": "all logged samples are source=sensor with fresh targetTilt (~77.6deg resting); no stale sample logged. The stale-stop mechanism is therefore NOT evidenced by these samples; the deciding device-side facts (touch event reception and sensor delivery during the 0-250ms boundary) remain missing."
+  }
+ ],
+ "chainVerdict": {
+  "physicsAdmission": "RULED OUT as sole cause (A01 positive path accepts touch sand)",
+  "staleStopMechanism": "REPRODUCED offline (B03/D01) but NOT evidenced on device (E01: all samples source=sensor)",
+  "pageEventReception": "DEVICE GAP: the demo page logs no touch events (no Down/Move/Up/Cancel counter, no local-coordinate logging); cannot distinguish event-not-delivered vs delivered-but-coordinate-mapped vs model-started-then-stopped",
+  "sensorDelivery": "DEVICE GAP: page logs config only; no per-sample counter to prove sensor.on delivered during the touch window"
+ },
+ "deviceEvidenceNeeds": [
+  "page-level touch event log (type/local x,y/timestamp)",
+  "sensor sample counter with timestamps",
+  "model.start/move/stop invocation log",
+  "one sample at serial%60 boundary during active touch with touching-state flag"
+ ],
+ "summary": {
+  "total": 7,
+  "pass": 7
+ }
+}
