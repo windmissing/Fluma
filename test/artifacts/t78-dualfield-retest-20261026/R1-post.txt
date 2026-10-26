@@ -1,0 +1,608 @@
+﻿10-26 16:20:05.376 49375 49375 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:05.376 49375 49375 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:05.505 49375 49375 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:05.505 49375 49375 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:05.521 49375 49375 W C01650/aa/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:05.572  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:05.581 10559 10867 W C04204/com.ohos.sceneboard/WMSScb: GetRSUIDirector: screenId is invalid, use default screenId: 0
+10-26 16:20:05.588  1417 49064 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessDied: NotifyProcessDied process:com.example.helloworld:49004
+10-26 16:20:05.590 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:05.594 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:05.596  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: FRAMEWORK, name: PROCESS_KILL
+10-26 16:20:05.596  1417  2199 E C02DA0/hiview/FaultLeakDetectorManager: ReportKillReason: uid: 20020226, bundleName: com.example.helloworld, reason: InvalidKillId, appRunningUniqueId: 6196104019960543808
+10-26 16:20:05.599  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:05.606 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.scene_board.off_personalization_feature, value false, defaultValue false
+10-26 16:20:05.607 10559 10559 I A01B01/com.ohos.sceneboard/HOME: EffectDisabledCheckerChain --> getTopActiveScene: no active scene, return DEFAULT_DESKTOP
+10-26 16:20:05.607 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: persist.sceneboard.aibar.enable, value true, defaultValue true
+10-26 16:20:05.608 54369 54369 E A000FF/board:EngineServiceAbility:110/ThemeEngine: [7.1.2-305]BaseExpression --> the expression is undefined, NOT support, the calc result will be default
+10-26 16:20:05.608 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: persist.sceneboard.aibar.enable, value true, defaultValue true
+10-26 16:20:05.610 10559 10559 W A04222/com.ohos.sceneboard/WMSMission: [Screen:0][Panel:1]getMissionProcessor null, fallback to empty default
+10-26 16:20:05.610 10559 10559 W A04222/com.ohos.sceneboard/WMSMission: [Screen:0][Panel:2]getMissionProcessor null, fallback to empty default
+10-26 16:20:05.614  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:05.625 10644 10644 I A00F00/com.huawei.hmos.aidataservice/170108416: DefaultDataPreMgr: dispatchMessage QueryAssistantLabelStatus
+10-26 16:20:05.625  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:05.642  1593 48957 I C0140D/display_engine_service/DE N DA: [a92ab50d3592717 0 0]D ConfigureGmpGamDegam<194>: FEATURE_GMP(3) input { frames:10 MODE_DEFAULT|0xb00(0/10) -> MODE_DEFAULT|0xb00(0/10) }
+10-26 16:20:05.975  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 72  0.
+10-26 16:20:06.000  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:06.288  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 LTPO 60 RS_ANIMATION 0.
+10-26 16:20:06.292 10559 10867 I C04200/com.ohos.sceneboard/WMS: SetDefaultRequestedOrientation id: 553 defaultRequestedOrientation: 0
+10-26 16:20:06.314  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:06.602  1417 49043 I C02DA0/hiview/FaultLeakDetectorManager: OnForegroundChanged: 0:com.ohos.sceneboard
+10-26 16:20:06.602  1417 49043 I C02DA0/hiview/FaultLeakDetectorManager: OnForegroundChanged: 1:com.ohos.sceneboard
+10-26 16:20:06.721  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[89.1/355, 89.0/248, 88.6/349, 87.6/247, 85.7/356, 84.1|2753313561], slux=88.00, flux=83.00, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:07.801 49402 49402 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:07.801 49402 49402 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:07.928 49402 49402 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:07.928 49402 49402 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:07.943 49402 49402 W C01650/aa/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:07.968  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: START_ABILITY
+10-26 16:20:07.988 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:08.006 10559 10867 I C0421B/com.ohos.sceneboard/WMSStartupPage: [a92ab10d37ead87 17ae356 10d26e9]GetEnableRemoveStartingWindowFromBMS: enable.remove.starting.window default false
+10-26 16:20:08.011 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: const.scene_board.off_personalization_feature, value false, defaultValue false
+10-26 16:20:08.012 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]EffectDisabledCheckerChain --> getTopActiveScene: no active scene, return DEFAULT_DESKTOP
+10-26 16:20:08.015 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: persist.sceneboard.aibar.enable, value true, defaultValue true
+10-26 16:20:08.015 54369 54369 E A000FF/board:EngineServiceAbility:110/ThemeEngine: [a92ab10d37ead87 1e6e2d4 380ca82][7.1.2-305]BaseExpression --> the expression is undefined, NOT support, the calc result will be default
+10-26 16:20:08.019 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:08.020 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:08.022  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: START_ABILITY
+10-26 16:20:08.027 10559 10867 W C04204/com.ohos.sceneboard/WMSScb: [a92ab10d37ead87 1fbcac3 10d26e9]GetRSUIDirector: screenId is invalid, use default screenId: 0
+10-26 16:20:08.029 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:08.030 10644 10644 I A00F00/com.huawei.hmos.aidataservice/170108416: [a92abe0bab418fe 3179df6 2177cf1]DefaultDataPreMgr: dispatchMessage NotifyDataItem
+10-26 16:20:08.032 10559 10559 I A01B01/com.ohos.sceneboard/HOME: [a92ab10d37ead87 10d26e9 269ea3d]CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:08.035 10559 10559 W A04222/com.ohos.sceneboard/WMSMission: [a92ab10d37ead87 10d26e9 269ea3d][Screen:0][Panel:1]getMissionProcessor null, fallback to empty default
+10-26 16:20:08.035 10559 10559 W A04222/com.ohos.sceneboard/WMSMission: [a92ab10d37ead87 10d26e9 269ea3d][Screen:0][Panel:2]getMissionProcessor null, fallback to empty default
+10-26 16:20:08.050  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:08.053  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: PROCESS_START
+10-26 16:20:08.058  1417 22517 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessCreate: notify create com.example.helloworld:49147, processType:1000
+10-26 16:20:08.082 49147 49147 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=default, errno=2
+10-26 16:20:08.082 49147 49147 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/liblayered_parameters_manager.z.so caller namespace : default
+10-26 16:20:08.111 10644 10644 I A00F00/com.huawei.hmos.aidataservice/170108416: DefaultDataPreMgr: dispatchMessage NotifyDataItem
+10-26 16:20:08.112 10644 10644 I A00F00/com.huawei.hmos.aidataservice/170108416: DefaultDataPreMgr: dispatchMessage NotifyDataItem
+10-26 16:20:08.116  1565 15608 I C02900/powermgr/PowerLock: P=1345U=7023T=65N=push_manager_service_defaultThread_58051B=TA=AD
+10-26 16:20:08.117  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: APP_FOREGROUND
+10-26 16:20:08.120  1565 15608 I C02900/powermgr/PowerLock: P=1345U=7023T=65N=push_manager_service_defaultThread_58051B=TA=RE
+10-26 16:20:08.120 49147 49147 I A00000/com.example.helloworld/EntryAbility: LiquidCA want rendermode=4 testmode=1 seed=0 shake=}f
+10-26 16:20:08.124 10559 10867 I C04202/com.ohos.sceneboard/WMSMain: InitSessionPropertyWhenConnect: [id: 553] requestedOrientation: 0, defaultRequestedOrientation: 0, userRequestedOrientation: 0, isWindowLimitsForcible: 0
+10-26 16:20:08.141 49147 49147 I C0420A/com.example.helloworld/WMSLife: Create: Window Create success [name:helloworld0, id:553], state:1, mode:1, enableDefaultDensity:0, displayId:0
+10-26 16:20:08.175 49147 49147 W C03F07/MUSL-LDSO: load /system/lib64/libtransform_interaction_ext.z.so failed, namespace=default, errno=2
+10-26 16:20:08.175 49147 49147 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/libtransform_interaction_ext.z.so caller namespace : default
+10-26 16:20:08.175 49147 49147 W C03900/com.example.helloworld/Ace: [(100000:100000:scope)] not found systemTheme in HapModuleInfo, loading default OHOS_THEME
+10-26 16:20:08.176  1593 49391 I C0140D/display_engine_service/DE N DA: [a92ab90d382336b 0 0]D ConfigureGmpGamDegam<194>: FEATURE_GMP(3) input { frames:10 MODE_DEFAULT|0xb00(0/10) -> MODE_DEFAULT|0xb00(0/10) }
+10-26 16:20:08.198 49147 49147 I C03F04/com.example.helloworld/MMG: [NMM:382]Tail:default/p013renderer
+10-26 16:20:08.249 49147 49147 I A00000/com.example.helloworld/WaterSand: WS_EVENT particle_route {"ok":true,"code":"OK","active":true}
+10-26 16:20:08.252 49147 49147 I A00000/com.example.helloworld/WaterSand: WS_EVENT init {"preset":"default","cols":128,"capacity":192,"ledgerVersion":2,"paramsVersion":"v2.7","routeId":"bottom-creep-v2.8-heavy-interface","vH":64,"vL":38,"liftHRate":36,"liftLRate":40,"shakeRampRate":8,"vSandTopMax":28,"totalMotionBudget":300,"bottomCreepRate":96,"vBottomCreepMax":10,"bottomCreepVelocityGain":36,"bottomCreepDeadZone":1,"directionHoldTime":80,"inputSmoothingAlpha":0.6,"boundary":true,"percolationRate":6}
+10-26 16:20:08.252 49147 49147 I A00000/com.example.helloworld/WaterSand: WS_EVENT tilt {"targetDeg":0,"effectiveDeg":0}
+10-26 16:20:08.380  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 72  0.
+10-26 16:20:08.446  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:08.645  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:09.121  1417 48217 I C02DA0/hiview/FaultLeakDetectorManager: OnForegroundChanged: 0:com.example.helloworld
+10-26 16:20:09.121  1417 48217 I C02DA0/hiview/FaultLeakDetectorManager: OnForegroundChanged: 1:com.example.helloworld
+10-26 16:20:10.026  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[82.9/246, 82.4/356, 81.5/246, 80.6/352, 80.1/247, 80.0|2753316914], slux=88.00, flux=80.10, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:10.028 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: persist.sceneboard.aibar.enable, value true, defaultValue true
+10-26 16:20:10.246 49147 49147 I A00000/com.example.helloworld/WaterSand: WS_EVENT shake_lift {"lifted":0.006038799913867224,"columns":128}
+10-26 16:20:10.331 49147 49147 I A03D00/com.example.helloworld/JSAPP: WS_EVENT p013_scene {"run":"p011-run-1793002808239-3","commit":6,"frame":1,"request":"p011-run-1793002808239-3:2:6:1","actual":"p011-run-1793002808239-3:2:6:1","state":"CURRENT","first":"NONE","swap":true,"staleSwap":false,"generation":0,"config":1,"desiredConfig":1,"configurationFailure":""}
+10-26 16:20:10.332 49147 49147 I A00000/com.example.helloworld/WaterSand: WS_FRAME {"frameTimeMs":16.7,"physicsTimeMs":1999,"substeps":2,"substepDt":0.00835,"maxSandTopSubstepDeltaObserved":0.019296162984404945,"maxSandTopSpeedObserved":2.310917722683227,"substepBudgetUsedMax":0.019296162984404945,"substepBudgetClipped":false,"dormant":false} seg={"physMs":1999,"renderMs":79,"presentMs":0}
+10-26 16:20:10.334 49147 49147 I A00000/com.example.helloworld/WaterSand: P011_OBS_STORE {"observationRouteId":"dual-field-particle-v1","identityRevision":"P011_COMMIT_IDENTITY_V2","storeGeneration":1,"runId":"p011-run-1793002808239-3","admissionFilePath":"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793002808239-3-admissions.ndjson","endpointClockId":"p011-run-1793002808239-3:startup-elapsed-v1","filePath":"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793002808239-3.ndjson"}
+10-26 16:20:10.334 49147 49147 I A00000/com.example.helloworld/WaterSand: P011_RASTER_LAYOUT {"runId":"p011-run-1793002808239-3","canvasWidth":365.7142857142857,"canvasHeight":742.2857142857143,"boxX":51,"boxY":215,"boxWidth":263,"boxHeight":311,"cols":128,"capacity":192,"pixelsPerColumn":2.0546875,"pixelsPerModelUnitY":1.6197916666666667}
+10-26 16:20:13.332  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[79.9/351, 79.9/247, 80.0/356, 80.0/246, 80.1/351, 80.1|2753320159], slux=88.00, flux=80.10, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:13.380  1417 49486 I C02D66/hiview/XPerf: [FaultHandlerBase::CollectByTypes] pid:49147 id:70050
+10-26 16:20:13.467 49532 49532 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:13.467 49532 49532 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:13.494 49532 49532 I C02D20/hidumper/DumperService: SetCmdArgs# hidumper cmd:hidumper -s WindowManagerService -a -w 553 -default , calllingUid=1201, calllingPid=49532, ppid:1417.
+10-26 16:20:13.509  1417 48503 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessCreate: notify create hidumper_service:49537, processType:2000
+10-26 16:20:13.567 49537 49537 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:13.567 49537 49537 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:13.678 49537 49537 W C01650/hidumper_service/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:13.715  1588 50791 I C04200/foundation/WMS: mock_session_manager_service.cpp GetSceneSessionManager: defaultWMSUserId=100
+10-26 16:20:14.137 49555 49555 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:14.137 49555 49555 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:14.214 10644 10644 I A00F00/com.huawei.hmos.aidataservice/170108416: DefaultDataPreMgr: dispatchMessage NotifyDataItem
+10-26 16:20:14.364 49555 49555 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:14.364 49555 49555 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:14.376 49555 49555 W C01650/uitest/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:14.437  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:15.048 49147 49147 I A00000/com.example.helloworld/WaterSand: WS_EVENT shake_lift {"lifted":0.04702820519897078,"columns":128}
+10-26 16:20:15.141  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:15.312 10638 10638 I A06666/.huawei.hmos.aidispatchservice/PafLog_CPP: [LogManager.cpp(ReleaseLog:238)] Default logService not need release
+10-26 16:20:15.717 49537 49537 I C02D20/hidumper_service/DumperService: GetData# SA name:WindowManagerService dump success, cmd:-w 553 -default , calllingPid=49532!
+10-26 16:20:15.721  1417 49486 I C02D66/hiview/XPerf: [FaultHandlerBase::CollectionDone] id:70050
+10-26 16:20:15.771  1417 49485 I C02D10/hiview/HiView-Engine: PackFaultLogs: start, id: 02476768250985610107, time: 1793002815757, PERFORMANCE-WHITE_SCREEN_DETECT_FAULT
+10-26 16:20:15.774  1417 49485 I C02D10/hiview/HiView-Engine: PackFaultLogs: end, time:  1793002815774, PERFORMANCE-WHITE_SCREEN_DETECT_FAULT
+10-26 16:20:15.783  1417 49485 I C02D10/hiview/Threshold-Guard: CheckAfterPacking: zip size: 651, /data/log/logpack/faultlog/FAULT-BETA-PERFORMANCE-WHITE_SCREEN_DETECT_FAULT-02476768250985610107-20261026162015-NORMAL-U0.zip, PERFORMANCE-WHITE_SCREEN_DETECT_FAULT
+10-26 16:20:16.335  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[80.0/356, 80.0/246, 80.0/351, 80.0/247, 80.0/356, 80.0|2753323162], slux=88.00, flux=80.10, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:19.641  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[79.8/247, 79.7/356, 79.7/246, 79.7/352, 79.7/245, 79.7|2753326515], slux=88.00, flux=79.60, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:20.705 49581 49581 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:20.705 49581 49581 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:20.939 49581 49581 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:20.939 49581 49581 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:20.954 49581 49581 W C01650/uitest/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:21.035  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:21.253 49147 49472 W C01310/com.example.helloworld/AppDfr: [appfreeze_inner.cpp757]NotifyAppFault:THREAD_BLOCK_3S, pid:49147, bundleName:com.example.helloworld currentTime:2026-10-26 16:20:21.253, processExit:1 appfreezeInfo:freeze_20261026162021_49147.txt enbleMainThreadSample:0.
+10-26 16:20:21.280  1588  1588 W C01310/foundation/AppDfr: [AMSI9660]submit NotifyAppFaultTask, eventName:THREAD_BLOCK_3S, bundleName:com.example.helloworld, endTime:2026-10-26 16:20:21.280, interval:21 ms, appfreezeInfo:freeze_20261026162021_49147.txt, enbleMainThreadSample:0
+10-26 16:20:21.280  1588 49439 W C01310/foundation/AppDfr: [appfreeze_manager.cpp299]NotifyAppFaultTask called, eventName:THREAD_BLOCK_3S, bundleName:com.example.helloworld, name_:AppfreezeManager80723, currentTime:2026-10-26 16:20:21.280, isInForeground:1
+10-26 16:20:21.444  1588 49439 I C02D11/foundation/DfxFaultLogger: FAULT_LOGGERD_CLIENT.RequestSdkDump :: pid: 49147, tid: 0, isJson: 1.
+10-26 16:20:21.444   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.sdkdump.server receive request from pid: 1588, clientType: 1
+10-26 16:20:21.444   584   584 I C02D11/faultloggerd/DfxFaultLogger: Receive dump request for pid:49147 tid:0.
+10-26 16:20:21.446   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.sdkdump.server has processed request for pid: 1588, clientType: 1, and retCode 0
+10-26 16:20:21.597 49591 49591 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:21.597 49591 49591 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:21.614 49591 49591 I C02D11/processdump/DfxFaultLogger: Start main function of processdump
+10-26 16:20:21.615 49591 49591 E C02D11/processdump/DfxFaultLogger: dumpCatchTargetTid(49147).
+10-26 16:20:21.629 49591 49591 I C02D11/processdump/DfxFaultLogger: start wait fork event happen
+10-26 16:20:21.661   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server receive request from pid: 49591, clientType: 2
+10-26 16:20:21.661   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server has processed request for pid: 49591, clientType: 2, and retCode 0
+10-26 16:20:21.693 49591 49591 I C02D11/processdump/DfxFaultLogger: wait for fork status 66943
+10-26 16:20:21.693 49591 49591 I C02D11/processdump/DfxFaultLogger: next child pid 49593
+10-26 16:20:21.696 49591 49591 I C02D11/processdump/DfxFaultLogger: start wait fork event happen
+10-26 16:20:21.730 49591 49591 I C02D11/processdump/DfxFaultLogger: wait for fork status 66943
+10-26 16:20:21.730 49591 49591 I C02D11/processdump/DfxFaultLogger: next child pid 49595
+10-26 16:20:21.731 49591 49591 I C02D11/processdump/DfxFaultLogger: unwind key thread dump start
+10-26 16:20:21.731 49591 49591 I C02D11/processdump/DfxFaultLogger: GetKeyThreadStack, unwind tid(49147) start.
+10-26 16:20:21.755 49591 49591 W C02D11/processdump/DfxFaultLogger: Unwinder::Impl::UnwindRemote, tid: 49595 running 23 ms
+10-26 16:20:21.780  1588  2524 E C01719/foundation/ffrt: 54:RunTimeOutCallback:493 [Serial_Queue_Timeout_Callback] process name:[/system/bin/sa_main], serial queue:[sq_dfx_freeze_task_queue_46], queueId:[46], serial task gid:[5612396], task name:[sq_dfx_freeze_task_queue_46_NotifyAppFaultTask_5612396], execution time exceeds[500000] us
+10-26 16:20:21.872 49591 49591 I C02D11/processdump/DfxFaultLogger: GetKeyThreadStack, unwind tid(49147) finish ret(1).
+10-26 16:20:21.872 49591 49591 I C02D11/processdump/DfxFaultLogger: WriteDumpRes: code=18, dataLen=3338
+10-26 16:20:21.872 49591 49591 I C02D11/processdump/DfxFaultLogger: Write main thread unsymbolic user stack done.
+10-26 16:20:21.872 49591 49591 I C02D11/processdump/DfxFaultLogger: unwind other thread dump start
+10-26 16:20:22.297 49591 49591 I C02D11/processdump/DfxFaultLogger: WriteDumpRes: code=0, dataLen=44571
+10-26 16:20:22.301   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server receive request from pid: 1588, clientType: 2
+10-26 16:20:22.301   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server has processed request for pid: 1588, clientType: 2, and retCode 0
+10-26 16:20:22.302   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server receive request from pid: 1588, clientType: 4
+10-26 16:20:22.302   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVICE :: OnRequest: HandleDumpStats
+10-26 16:20:22.302   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server has processed request for pid: 1588, clientType: 4, and retCode 0
+10-26 16:20:22.304   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server receive request from pid: 49591, clientType: 4
+10-26 16:20:22.304   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVICE :: OnRequest: HandleDumpStats
+10-26 16:20:22.304   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server has processed request for pid: 49591, clientType: 4, and retCode 0
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: Tid:49147, Name:mple.helloworld
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: state=R, utime=1334, stime=19, priority=-54, nice=-10, clk=100
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #00 pc 0000000000cd8bc0 /system/lib64/module/arkcompiler/stub.an
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #01 at collectParticlePlanInto entry (entry/src/main/ets/physics/P011ParticleHot.ets:718:47)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #02 at seed entry (entry/src/main/ets/physics/P011ParticleM2Field.ets:88:7)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #03 at liftByShake entry (entry/src/main/ets/physics/WaterSandField.ets:6816:45)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #04 at applyMotionChannels entry (entry/src/main/ets/physics/WaterSandField.ets:4466:10)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #05 at stepWithTiltTrace entry (entry/src/main/ets/physics/WaterSandField.ets:2184:26)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #06 at step entry (entry/src/main/ets/physics/WaterSandField.ets:2058:46)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #07 at frame entry (entry/src/main/ets/pages/SandCanvas.ets:2179:16)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #08 at onFrame entry (entry/src/main/ets/pages/SandCanvas.ets:76:18)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #09 pc 0000000000228544 /system/lib64/platformsdk/libark_jsruntime.so(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #10 pc 000000000043cf4c /system/lib64/platformsdk/libark_jsruntime.so(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #11 pc 00000000032bed30 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #12 pc 00000000018ad0a0 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #13 pc 00000000018ab28c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #14 pc 00000000013b129c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #15 pc 000000000099ea88 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #16 pc 000000000005c02c /system/lib64/platformsdk/libwmutil.z.so(facdb2832199ffbae6e1d23632a89a09)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #17 pc 000000000004542c /system/lib64/libvsync.z.so(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #18 pc 0000000000043ec0 /system/lib64/libvsync.z.so(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #19 pc 000000000003636c /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #20 pc 0000000000016268 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #21 pc 0000000000041210 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #22 pc 00000000000df398 /system/lib64/platformsdk/libappkit_native.z.so(40007672360966616902c944cedff514)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #23 pc 0000000000008160 /system/lib64/appspawn/appspawn/libappspawn_ace.z.so(d800edf07a74eae4cea5a71a44b44ae4)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #24 pc 000000000000d3d0 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #25 pc 000000000001ba84 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #26 pc 00000000000198cc /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #27 pc 0000000000018600 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #28 pc 0000000000017ee4 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #29 pc 0000000000014ff0 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #30 pc 00000000000149bc /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #31 pc 0000000000014bbc /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #32 pc 000000000001200c /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #33 pc 00000000000b5624 /system/lib/ld-musl-aarch64.so.1(21e050fdd50c80b2b821513a9cd16ccb)
+10-26 16:20:22.304 49591 49591 I C02D11/processdump/DfxFaultLogger: #34 pc 000000000000d070 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:22.304 49591 49591 W C02D11/processdump/DfxFaultLogger: Failed to fsync fd.
+10-26 16:20:22.313 49600 49600 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:22.313 49600 49600 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:22.339 49600 49600 W C01650/usage_report/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:22.375  1588 49439 W C01311/foundation/AppMS: [AMSI9558]name: THREAD_BLOCK_3S, faultType: 3, uid: 20020226, pid: 49147, bundleName: com.example.helloworld, processName: com.example.helloworld, faultData.forceExit:0, faultData.waitSaveState:0, isOccurException:0, stuckTimeout:0
+10-26 16:20:22.384  1417 49604 I C02D01/hiview/EventLogger: operator(): time:1793002822382 jsonExtraInfo is {"domain_":"AAFWK","name_":"THREAD_BLOCK_3S","type_":1,"time_":1793002822373,"tz_":"+0800","pid_":1588,"tid_":49439,"uid_":5523,"log_":0,"id_":"02030312316742900545","UID":20020226,"PID":49147,"TID":49147,"IS_FROZEN":0,"PACKAGE_NAME":"com.example.helloworld","PROCESS_NAME":"com.example.helloworld","MSG":"\nFault time:2026/10/26-16:20:21\nApp main thread is not response!\n\nMain handler dump start time: 2026-10-26 16:20:21.050\nmainHandler dump is:\n EventHandler dump begin curTime: 2026-10-26 16:20:21.050\n Event runner (Thread name = , Thread ID = 49147) is running\n Current Running: {}\n History event queue information:\n No. 0 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIFrontendActive, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 1 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIWindowFocus, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 2 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUISetOnWindowFocusedCallback, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 3 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.222, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIFrontendActive, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 4 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIWindowActivate, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 5 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.222, completeTime time = 2026-10-26 16:20:08.222, priority = Low, task name = ArkUIWindowRectChange, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 6 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.222, completeTime time = 2026-10-26 16:20:08.222, priority = Low, task name = ArkUIUpdateOriginAvoidAreaAndExecuteKeyboardAvoid, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 7 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.195, handle time = 2026-10-26 16:20:08.195, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIUpdateOriginAvoidAreaAndExecuteKeyboardAvoid, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 8 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.223, handle time = 2026-12-15 09:22:55.517, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:10.333, priority = VIP, task name = vSyncTask, caller = [event_queue.cpp(PostTaskForVsync:235)] }\n No. 9 : Event { send thread = 49446, send time = 2026-10-26 16:20:08.477, handle time = 2026-10-26 16:20:08.477, trigger time = 2026-10-26 16:20:10.333, completeTime time = 2026-10-26 16:20:10.333, priority = Immediate, task name = sensor EmitUvEventLoop2, caller = [native_event.cpp(SendEventByEventHandler:322)] }\n No. 10 : Event { send thread = 49446, send time = 2026-10-26 16:20:08.678, handle time = 2026-10-26 16:20:08.678, trigger time = 2026-10-26 16:20:10.333, completeTime time = 2026-10-26 16:20:10.333, priority = Immediate, task name = sensor EmitUvEventLoop3, caller = [native_event.cpp(SendEventByEventHan
+10-26 16:20:22.451  1588  2885 W C01311/foundation/AppMS: [AMSI9915]FaultDataBySA is: name: APP_INPUT_BLOCK, faultType: APP_FREEZE, uid: 20020226,pid: 49147, bundleName: com.example.helloworld, eventId: 624271, foreground: 1
+10-26 16:20:22.549 49147 49480 W C01310/com.example.helloworld/AppDfr: [appfreeze_inner.cpp757]NotifyAppFault:APP_INPUT_BLOCK, pid:49147, bundleName:com.example.helloworld currentTime:2026-10-26 16:20:22.549, processExit:1 appfreezeInfo:freeze_20261026162021_49147.txt enbleMainThreadSample:0.
+10-26 16:20:22.550  1588  1588 W C01300/foundation/AAFwk: [task_handler_wrap.cpp186]cancel task name: notifyFault:APP_INPUT_BLOCK49147-2395559229, taskId: 5612400, queueName: dfx_freeze_task_queue
+10-26 16:20:22.553  1588  1588 W C01310/foundation/AppDfr: [AMSI9660]submit NotifyAppFaultTask, eventName:APP_INPUT_BLOCK, bundleName:com.example.helloworld, endTime:2026-10-26 16:20:22.553, interval:2 ms, appfreezeInfo:freeze_20261026162021_49147.txt, enbleMainThreadSample:0
+10-26 16:20:22.555  1588 49439 W C01310/foundation/AppDfr: [appfreeze_manager.cpp299]NotifyAppFaultTask called, eventName:APP_INPUT_BLOCK, bundleName:com.example.helloworld, name_:AppfreezeManager80723, currentTime:2026-10-26 16:20:22.555, isInForeground:1
+10-26 16:20:22.606 49609 49609 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:22.606 49609 49609 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:22.691 49612 49612 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:22.691 49612 49612 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:22.721  1588 49439 I C02D11/foundation/DfxFaultLogger: FAULT_LOGGERD_CLIENT.RequestSdkDump :: pid: 49147, tid: 0, isJson: 1.
+10-26 16:20:22.721   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.sdkdump.server receive request from pid: 1588, clientType: 1
+10-26 16:20:22.721   584   584 I C02D11/faultloggerd/DfxFaultLogger: Receive dump request for pid:49147 tid:0.
+10-26 16:20:22.723   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.sdkdump.server has processed request for pid: 1588, clientType: 1, and retCode 0
+10-26 16:20:22.836 49615 49615 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:22.836 49615 49615 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:22.854 49615 49615 I C02D11/processdump/DfxFaultLogger: Start main function of processdump
+10-26 16:20:22.854 49615 49615 E C02D11/processdump/DfxFaultLogger: dumpCatchTargetTid(49147).
+10-26 16:20:22.867 49615 49615 I C02D11/processdump/DfxFaultLogger: start wait fork event happen
+10-26 16:20:22.892   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server receive request from pid: 49615, clientType: 2
+10-26 16:20:22.892   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server has processed request for pid: 49615, clientType: 2, and retCode 0
+10-26 16:20:22.916 49615 49615 I C02D11/processdump/DfxFaultLogger: wait for fork status 66943
+10-26 16:20:22.916 49615 49615 I C02D11/processdump/DfxFaultLogger: next child pid 49617
+10-26 16:20:22.918 49615 49615 I C02D11/processdump/DfxFaultLogger: start wait fork event happen
+10-26 16:20:22.945 49615 49615 I C02D11/processdump/DfxFaultLogger: wait for fork status 66943
+10-26 16:20:22.945 49615 49615 I C02D11/processdump/DfxFaultLogger: next child pid 49618
+10-26 16:20:22.946 49615 49615 I C02D11/processdump/DfxFaultLogger: unwind key thread dump start
+10-26 16:20:22.946 49615 49615 I C02D11/processdump/DfxFaultLogger: GetKeyThreadStack, unwind tid(49147) start.
+10-26 16:20:22.958  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[79.7/349, 79.7/251, 79.7/351, 79.8/245, 79.8/351, 79.7|2753329759], slux=88.00, flux=79.60, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:22.967 49615 49615 W C02D11/processdump/DfxFaultLogger: Unwinder::Impl::UnwindRemote, tid: 49618 running 21 ms
+10-26 16:20:23.053  1588  2524 E C01719/foundation/ffrt: 90:RunTimeOutCallback:493 [Serial_Queue_Timeout_Callback] process name:[/system/bin/sa_main], serial queue:[sq_dfx_freeze_task_queue_46], queueId:[46], serial task gid:[5612404], task name:[sq_dfx_freeze_task_queue_46_NotifyAppFaultTask_5612404], execution time exceeds[500000] us
+10-26 16:20:23.077 49615 49615 I C02D11/processdump/DfxFaultLogger: GetKeyThreadStack, unwind tid(49147) finish ret(1).
+10-26 16:20:23.077 49615 49615 I C02D11/processdump/DfxFaultLogger: WriteDumpRes: code=18, dataLen=3671
+10-26 16:20:23.077 49615 49615 I C02D11/processdump/DfxFaultLogger: Write main thread unsymbolic user stack done.
+10-26 16:20:23.077 49615 49615 I C02D11/processdump/DfxFaultLogger: unwind other thread dump start
+10-26 16:20:23.473 49615 49615 I C02D11/processdump/DfxFaultLogger: WriteDumpRes: code=0, dataLen=45080
+10-26 16:20:23.477   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server receive request from pid: 1588, clientType: 2
+10-26 16:20:23.477   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server has processed request for pid: 1588, clientType: 2, and retCode 0
+10-26 16:20:23.478   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server receive request from pid: 1588, clientType: 4
+10-26 16:20:23.478   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVICE :: OnRequest: HandleDumpStats
+10-26 16:20:23.478   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server has processed request for pid: 1588, clientType: 4, and retCode 0
+10-26 16:20:23.480   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server receive request from pid: 49615, clientType: 4
+10-26 16:20:23.480   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVICE :: OnRequest: HandleDumpStats
+10-26 16:20:23.480   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server has processed request for pid: 49615, clientType: 4, and retCode 0
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: Tid:49147, Name:mple.helloworld
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: state=R, utime=1449, stime=19, priority=-54, nice=-10, clk=100
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #00 pc 0000000000cd57a4 /system/lib64/module/arkcompiler/stub.an
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #01 at mergeOldestHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:908:67)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #02 at editPoolHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:930:26)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #03 at preparePatchHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:1004:18)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #04 at applyInto entry (entry/src/main/ets/physics/P011ParticleM2Sink.ets:230:17)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #05 at applyParticlePlanInto entry (entry/src/main/ets/physics/P011ParticleHot.ets:1127:25)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #06 at seed entry (entry/src/main/ets/physics/P011ParticleM2Field.ets:99:21)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #07 at liftByShake entry (entry/src/main/ets/physics/WaterSandField.ets:6822:45)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #08 at applyMotionChannels entry (entry/src/main/ets/physics/WaterSandField.ets:4466:10)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #09 at stepWithTiltTrace entry (entry/src/main/ets/physics/WaterSandField.ets:2184:26)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #10 at step entry (entry/src/main/ets/physics/WaterSandField.ets:2058:46)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #11 at frame entry (entry/src/main/ets/pages/SandCanvas.ets:2179:16)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #12 at onFrame entry (entry/src/main/ets/pages/SandCanvas.ets:76:18)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #13 pc 0000000000228544 /system/lib64/platformsdk/libark_jsruntime.so(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #14 pc 000000000043cf4c /system/lib64/platformsdk/libark_jsruntime.so(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #15 pc 00000000032bed30 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #16 pc 00000000018ad0a0 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #17 pc 00000000018ab28c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #18 pc 00000000013b129c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #19 pc 000000000099ea88 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #20 pc 000000000005c02c /system/lib64/platformsdk/libwmutil.z.so(facdb2832199ffbae6e1d23632a89a09)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #21 pc 000000000004542c /system/lib64/libvsync.z.so(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #22 pc 0000000000043ec0 /system/lib64/libvsync.z.so(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #23 pc 000000000003636c /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #24 pc 0000000000016268 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #25 pc 0000000000041210 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #26 pc 00000000000df398 /system/lib64/platformsdk/libappkit_native.z.so(40007672360966616902c944cedff514)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #27 pc 0000000000008160 /system/lib64/appspawn/appspawn/libappspawn_ace.z.so(d800edf07a74eae4cea5a71a44b44ae4)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #28 pc 000000000000d3d0 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #29 pc 000000000001ba84 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #30 pc 00000000000198cc /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #31 pc 0000000000018600 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #32 pc 0000000000017ee4 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #33 pc 0000000000014ff0 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #34 pc 00000000000149bc /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #35 pc 0000000000014bbc /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #36 pc 000000000001200c /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #37 pc 00000000000b5624 /system/lib/ld-musl-aarch64.so.1(21e050fdd50c80b2b821513a9cd16ccb)
+10-26 16:20:23.480 49615 49615 I C02D11/processdump/DfxFaultLogger: #38 pc 000000000000d070 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:23.480 49615 49615 W C02D11/processdump/DfxFaultLogger: Failed to fsync fd.
+10-26 16:20:23.559  1588 49439 W C01311/foundation/AppMS: [AMSI9558]name: APP_INPUT_BLOCK, faultType: 3, uid: 20020226, pid: 49147, bundleName: com.example.helloworld, processName: com.example.helloworld, faultData.forceExit:1, faultData.waitSaveState:0, isOccurException:0, stuckTimeout:0
+10-26 16:20:23.592  1417 49486 I C02DA0/hiview/FaultLeakDetectorUtil: SendLeakCmdInfo: cmd TYPE: pid=49147, cmdType=1, infoType=16, time=1793002823
+10-26 16:20:23.598  1417 49485 I C02D01/hiview/EventLogger: operator(): time:1793002823595 jsonExtraInfo is {"domain_":"AAFWK","name_":"APP_INPUT_BLOCK","type_":1,"time_":1793002823555,"tz_":"+0800","pid_":1588,"tid_":49439,"uid_":5523,"log_":0,"id_":"08675147432673850978","UID":20020226,"PID":49147,"IS_FROZEN":0,"PACKAGE_NAME":"com.example.helloworld","PROCESS_NAME":"com.example.helloworld","MSG":"\nFault time:2026/10/26-16:20:22\nUser input does not respond!FREEZE_HALF_HIVIEW_LOG write success\n\nMain handler dump start time: 2026-10-26 16:20:22.542\nmainHandler dump is:\n EventHandler dump begin curTime: 2026-10-26 16:20:22.542\n Event runner (Thread name = , Thread ID = 49147) is running\n Current Running: {}\n History event queue information:\n No. 0 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIFrontendActive, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 1 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIWindowFocus, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 2 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUISetOnWindowFocusedCallback, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 3 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIFrontendActive, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 4 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.194, handle time = 2026-10-26 16:20:08.194, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIWindowActivate, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 5 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.195, handle time = 2026-10-26 16:20:08.195, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIWindowRectChange, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 6 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.195, handle time = 2026-10-26 16:20:08.195, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIUpdateOriginAvoidAreaAndExecuteKeyboardAvoid, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 7 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.196, handle time = 2026-10-26 16:20:08.196, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:08.223, priority = Low, task name = ArkUIUpdateOriginAvoidAreaAndExecuteKeyboardAvoid, caller = [task_runner_adapter_impl.cpp(PostTask:35)] }\n No. 8 : Event { send thread = 49147, send time = 2026-10-26 16:20:08.223, handle time = 2026-12-15 09:22:55.517, trigger time = 2026-10-26 16:20:08.223, completeTime time = 2026-10-26 16:20:10.333, priority = VIP, task name = vSyncTask, caller = [event_queue.cpp(PostTaskForVsync:235)] }\n No. 9 : Event { send thread = 49446, send time = 2026-10-26 16:20:08.477, handle time = 2026-10-26 16:20:08.477, trigger time = 2026-10-26 16:20:10.333, completeTime time = 2026-10-26 16:20:10.333, priority = Immediate, task name = sensor EmitUvEventLoop2, caller = [native_event.cpp(SendEventByEventHandler:322)] }\n No. 10 : Event { send thread = 49446, send time = 2026-10-26 16:20:08.678, handle time = 2026-10-26 16:20:08.678, trigger time = 2026-10-26 16:20:10.333, completeTime time = 2026-10-26 16:20:10.333, priority = Immediate, task name = sensor EmitUvEventLoop3, caller = [native_event.cpp
+10-26 16:20:23.779 49629 49629 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:23.779 49629 49629 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:23.790  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: THREAD_BLOCK_3S
+10-26 16:20:23.871 49632 49632 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:23.871 49632 49632 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:23.947 49634 49634 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:23.947 49634 49634 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:24.063 49147 49480 W C01310/com.example.helloworld/AppDfr: [appfreeze_inner.cpp757]NotifyAppFault:THREAD_BLOCK_6S, pid:49147, bundleName:com.example.helloworld currentTime:2026-10-26 16:20:24.063, processExit:1 appfreezeInfo: enbleMainThreadSample:0.
+10-26 16:20:24.086 49637 49637 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:24.086 49637 49637 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:24.331  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:24.386 49640 49640 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:24.386 49640 49640 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:25.886 49656 49656 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:25.886 49656 49656 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:25.963  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[79.5/356, 79.5/245, 79.5/351, 79.5/247, 79.6/357, 79.6|2753332873], slux=88.00, flux=79.60, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:26.104 49656 49656 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:26.104 49656 49656 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:26.116 49656 49656 W C01650/uitest/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:26.174  1579 49196 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:26.801  1417 49485 I C02D11/hiview/DfxFaultLogger: FAULT_LOGGERD_CLIENT.RequestSdkDump :: pid: 49147, tid: 0, isJson: 0.
+10-26 16:20:26.802   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.sdkdump.server receive request from pid: 1417, clientType: 1
+10-26 16:20:26.802   584   584 I C02D11/faultloggerd/DfxFaultLogger: Receive dump request for pid:49147 tid:0.
+10-26 16:20:26.803   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.sdkdump.server has processed request for pid: 1417, clientType: 1, and retCode 0
+10-26 16:20:26.945 49664 49664 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:26.945 49664 49664 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:26.960 49664 49664 I C02D11/processdump/DfxFaultLogger: Start main function of processdump
+10-26 16:20:26.960 49664 49664 E C02D11/processdump/DfxFaultLogger: dumpCatchTargetTid(49147).
+10-26 16:20:26.970 49664 49664 I C02D11/processdump/DfxFaultLogger: start wait fork event happen
+10-26 16:20:27.022   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server receive request from pid: 49664, clientType: 2
+10-26 16:20:27.022   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server has processed request for pid: 49664, clientType: 2, and retCode 0
+10-26 16:20:27.029 49664 49664 I C02D11/processdump/DfxFaultLogger: wait for fork status 66943
+10-26 16:20:27.030 49664 49664 I C02D11/processdump/DfxFaultLogger: next child pid 49666
+10-26 16:20:27.031 49664 49664 I C02D11/processdump/DfxFaultLogger: start wait fork event happen
+10-26 16:20:27.055 49664 49664 I C02D11/processdump/DfxFaultLogger: wait for fork status 66943
+10-26 16:20:27.055 49664 49664 I C02D11/processdump/DfxFaultLogger: next child pid 49667
+10-26 16:20:27.056 49664 49664 I C02D11/processdump/DfxFaultLogger: unwind key thread dump start
+10-26 16:20:27.056 49664 49664 I C02D11/processdump/DfxFaultLogger: GetKeyThreadStack, unwind tid(49147) start.
+10-26 16:20:27.078 49664 49664 W C02D11/processdump/DfxFaultLogger: Unwinder::Impl::UnwindRemote, tid: 49667 running 21 ms
+10-26 16:20:27.184 49664 49664 I C02D11/processdump/DfxFaultLogger: GetKeyThreadStack, unwind tid(49147) finish ret(1).
+10-26 16:20:27.184 49664 49664 I C02D11/processdump/DfxFaultLogger: WriteDumpRes: code=18, dataLen=3671
+10-26 16:20:27.184 49664 49664 I C02D11/processdump/DfxFaultLogger: Write main thread unsymbolic user stack done.
+10-26 16:20:27.184 49664 49664 I C02D11/processdump/DfxFaultLogger: unwind other thread dump start
+10-26 16:20:27.547 49664 49664 I C02D11/processdump/DfxFaultLogger: WriteDumpRes: code=0, dataLen=33030
+10-26 16:20:27.551   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server receive request from pid: 1417, clientType: 2
+10-26 16:20:27.551   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server has processed request for pid: 1417, clientType: 2, and retCode 0
+10-26 16:20:27.553   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server receive request from pid: 1417, clientType: 4
+10-26 16:20:27.553   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVICE :: OnRequest: HandleDumpStats
+10-26 16:20:27.553   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.server has processed request for pid: 1417, clientType: 4, and retCode 0
+10-26 16:20:27.558   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server receive request from pid: 49664, clientType: 4
+10-26 16:20:27.558   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVICE :: OnRequest: HandleDumpStats
+10-26 16:20:27.558   584   584 I C02D11/faultloggerd/DfxFaultLogger: FAULT_LOGGER_SERVER :: faultloggerd.crash.server has processed request for pid: 49664, clientType: 4, and retCode 0
+10-26 16:20:27.559 49664 49664 I C02D11/processdump/DfxFaultLogger: Tid:49147, Name:mple.helloworld
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: state=R, utime=1852, stime=20, priority=-54, nice=-10, clk=100
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #00 pc 0000000000cd5790 /system/lib64/module/arkcompiler/stub.an
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #01 at mergeOldestHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:908:67)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #02 at editPoolHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:930:26)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #03 at preparePatchHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:1004:18)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #04 at applyInto entry (entry/src/main/ets/physics/P011ParticleM2Sink.ets:230:17)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #05 at applyParticlePlanInto entry (entry/src/main/ets/physics/P011ParticleHot.ets:1127:25)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #06 at seed entry (entry/src/main/ets/physics/P011ParticleM2Field.ets:99:21)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #07 at liftByShake entry (entry/src/main/ets/physics/WaterSandField.ets:6822:45)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #08 at applyMotionChannels entry (entry/src/main/ets/physics/WaterSandField.ets:4466:10)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #09 at stepWithTiltTrace entry (entry/src/main/ets/physics/WaterSandField.ets:2184:26)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #10 at step entry (entry/src/main/ets/physics/WaterSandField.ets:2058:46)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #11 at frame entry (entry/src/main/ets/pages/SandCanvas.ets:2179:16)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #12 at onFrame entry (entry/src/main/ets/pages/SandCanvas.ets:76:18)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #13 pc 0000000000228544 /system/lib64/platformsdk/libark_jsruntime.so(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #14 pc 000000000043cf4c /system/lib64/platformsdk/libark_jsruntime.so(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #15 pc 00000000032bed30 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #16 pc 00000000018ad0a0 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #17 pc 00000000018ab28c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #18 pc 00000000013b129c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #19 pc 000000000099ea88 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #20 pc 000000000005c02c /system/lib64/platformsdk/libwmutil.z.so(facdb2832199ffbae6e1d23632a89a09)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #21 pc 000000000004542c /system/lib64/libvsync.z.so(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #22 pc 0000000000043ec0 /system/lib64/libvsync.z.so(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #23 pc 000000000003636c /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #24 pc 0000000000016268 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #25 pc 0000000000041210 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #26 pc 00000000000df398 /system/lib64/platformsdk/libappkit_native.z.so(40007672360966616902c944cedff514)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #27 pc 0000000000008160 /system/lib64/appspawn/appspawn/libappspawn_ace.z.so(d800edf07a74eae4cea5a71a44b44ae4)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #28 pc 000000000000d3d0 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #29 pc 000000000001ba84 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #30 pc 00000000000198cc /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #31 pc 0000000000018600 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #32 pc 0000000000017ee4 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #33 pc 0000000000014ff0 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #34 pc 00000000000149bc /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #35 pc 0000000000014bbc /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #36 pc 000000000001200c /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #37 pc 00000000000b5624 /system/lib/ld-musl-aarch64.so.1(21e050fdd50c80b2b821513a9cd16ccb)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #38 pc 000000000000d070 /system/bin/appspawn(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: Timestamp:2026-10-26 16:20:26.803
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: Pid:49147
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: Uid:20020226
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: Process name:com.example.helloworld
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: Tid:49147, Name:mple.helloworld
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: state=R, utime=1852, stime=20, priority=-54, nice=-10, clk=100
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #00 pc 0000000000cd5790 /system/lib64/module/arkcompiler/stub.an(BCStub_HandleStaV8StwCopy+0)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #01 at mergeOldestHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:908:67)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #02 at editPoolHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:930:26)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #03 at preparePatchHot entry (entry/src/main/ets/physics/P011ParticleHot.ets:1004:18)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #04 at applyInto entry (entry/src/main/ets/physics/P011ParticleM2Sink.ets:230:17)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #05 at applyParticlePlanInto entry (entry/src/main/ets/physics/P011ParticleHot.ets:1127:25)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #06 at seed entry (entry/src/main/ets/physics/P011ParticleM2Field.ets:99:21)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #07 at liftByShake entry (entry/src/main/ets/physics/WaterSandField.ets:6822:45)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #08 at applyMotionChannels entry (entry/src/main/ets/physics/WaterSandField.ets:4466:10)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #09 at stepWithTiltTrace entry (entry/src/main/ets/physics/WaterSandField.ets:2184:26)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #10 at step entry (entry/src/main/ets/physics/WaterSandField.ets:2058:46)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #11 at frame entry (entry/src/main/ets/pages/SandCanvas.ets:2179:16)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #12 at onFrame entry (entry/src/main/ets/pages/SandCanvas.ets:76:18)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #13 pc 0000000000228544 /system/lib64/platformsdk/libark_jsruntime.so(panda::ecmascript::JSFunction::Call(panda::ecmascript::EcmaRuntimeCallInfo*)+876)(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #14 pc 000000000043cf4c /system/lib64/platformsdk/libark_jsruntime.so(panda::FunctionRef::Call(panda::ecmascript::EcmaVM const*, panda::Local<panda::JSValueRef>, panda::Local<panda::JSValueRef> const*, int, bool)+564)(a4b241c47cd820f1c655b2f048c3e55d)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #15 pc 00000000032bed30 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #16 pc 00000000018ad0a0 /system/lib64/platformsdk/libace_compatible.z.so(OHOS::Ace::NG::PipelineContext::FlushFrameCallback(unsigned long, unsigned long)+232)(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #17 pc 00000000018ab28c /system/lib64/platformsdk/libace_compatible.z.so(OHOS::Ace::NG::PipelineContext::FlushVsync(unsigned long, unsigned long)+884)(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #18 pc 00000000013b129c /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #19 pc 000000000099ea88 /system/lib64/platformsdk/libace_compatible.z.so(947131060d9ee237e2bb9e5a47c11969)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #20 pc 000000000005c02c /system/lib64/platformsdk/libwmutil.z.so(facdb2832199ffbae6e1d23632a89a09)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #21 pc 000000000004542c /system/lib64/libvsync.z.so(std::__h::__function::__func<OHOS::Rosen::VSyncCallBackListener::OnReadable(int)::$_0, std::__h::allocator<OHOS::Rosen::VSyncCallBackListener::OnReadable(int)::$_0>, void ()>::operator()()+892)(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #22 pc 0000000000043ec0 /system/lib64/libvsync.z.so(OHOS::Rosen::VSyncCallBackListener::OnReadable(int)+560)(1318fb0aea322b9f2b74568fd04cbb33)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #23 pc 000000000003636c /system/lib64/chipset-sdk-sp/libeventhandler.z.so(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #24 pc 0000000000016268 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(OHOS::AppExecFwk::(anonymous namespace)::EventRunnerImpl::Run()+2532)(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #25 pc 0000000000041210 /system/lib64/chipset-sdk-sp/libeventhandler.z.so(OHOS::AppExecFwk::EventRunner::Run()+380)(bca1b1753d408658b09509e670954e8e)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #26 pc 00000000000df398 /system/lib64/platformsdk/libappkit_native.z.so(OHOS::AppExecFwk::MainThread::Start()+304)(40007672360966616902c944cedff514)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #27 pc 0000000000008160 /system/lib64/appspawn/appspawn/libappspawn_ace.z.so(RunChildProcessor(AppSpawnContent*, AppSpawnClient*) (.cfi)+800)(d800edf07a74eae4cea5a71a44b44ae4)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #28 pc 000000000000d3d0 /system/bin/appspawn(AppSpawnChild+556)(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #29 pc 000000000001ba84 /system/bin/appspawn(ProcessPreFork+3284)(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #30 pc 00000000000198cc /system/bin/appspawn(OnReceiveRequest.cfi+14992)(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #31 pc 0000000000018600 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(HandleRecvMsg_+392)(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #32 pc 0000000000017ee4 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(HandleStreamEvent_+160)(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #33 pc 0000000000014ff0 /system/lib64/chipset-sdk-sp/libbegetutil.z.so(ProcessEvent+604)(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #34 pc 00000000000149bc /system/lib64/chipset-sdk-sp/libbegetutil.z.so(RunLoop_.llvm.9112305495285338252+684)(ddb9c3186899281272e0b444b2886c5a)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #35 pc 0000000000014bbc /system/bin/appspawn(AppSpawnRun.cfi+276)(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #36 pc 000000000001200c /system/bin/appspawn(main.cfi+4196)(6fd79c03968ef39884488f4e7daf3bc8)
+10-26 16:20:27.560 49664 49664 I C02D11/processdump/DfxFaultLogger: #37 pc 00000000000b5624 /system/lib/ld-musl-aarch64.so.1(libc_start_main_stage2+84)(21e050fdd50c80b2b821513a9cd16ccb)
+10-26 16:20:27.560 49664 49664 W C02D11/processdump/DfxFaultLogger: Failed to fsync fd.
+10-26 16:20:27.713  1417 49604 I C02D0D/hiview/hiperf: Client default init
+10-26 16:20:27.803 49674 49674 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:27.803 49674 49674 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:27.836 49673 49673 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:27.836 49673 49673 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:28.087 49679 49679 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:28.087 49679 49679 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:28.556  1588 35403 W C01311/foundation/AppMS: [AMSI9809]faultData: com.example.helloworld,pid: 49147 will exit because APP_INPUT_BLOCK
+10-26 16:20:28.559  1588 35403 W C01311/foundation/AppMS: [AMSI9791]Kill faultApp ret: 0, pid: 49147 errorName: APP_INPUT_BLOCK
+10-26 16:20:28.570  1579 49197 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 POWER_MODE 90  1624.
+10-26 16:20:28.578 10559 10867 W C04204/com.ohos.sceneboard/WMSScb: GetRSUIDirector: screenId is invalid, use default screenId: 0
+10-26 16:20:28.582 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:28.584  1417 49485 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessDied: NotifyProcessDied process:com.example.helloworld:49147
+10-26 16:20:28.585 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.product.providedDeviceFeatures, value , defaultValue 
+10-26 16:20:28.595 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.scene_board.off_personalization_feature, value false, defaultValue false
+10-26 16:20:28.596 10559 10559 I A01B01/com.ohos.sceneboard/HOME: EffectDisabledCheckerChain --> getTopActiveScene: no active scene, return DEFAULT_DESKTOP
+10-26 16:20:28.596 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: persist.sceneboard.aibar.enable, value true, defaultValue true
+10-26 16:20:28.597 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: persist.sceneboard.aibar.enable, value true, defaultValue true
+10-26 16:20:28.599 10559 10559 W A04222/com.ohos.sceneboard/WMSMission: [Screen:0][Panel:1]getMissionProcessor null, fallback to empty default
+10-26 16:20:28.599 10559 10559 W A04222/com.ohos.sceneboard/WMSMission: [Screen:0][Panel:2]getMissionProcessor null, fallback to empty default
+10-26 16:20:28.600 54369 54369 E A000FF/board:EngineServiceAbility:110/ThemeEngine: [7.1.2-305]BaseExpression --> the expression is undefined, NOT support, the calc result will be default
+10-26 16:20:28.612  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: FRAMEWORK, name: PROCESS_KILL
+10-26 16:20:28.615 10644 10644 I A00F00/com.huawei.hmos.aidataservice/170108416: DefaultDataPreMgr: dispatchMessage QueryAssistantLabelStatus
+10-26 16:20:28.625  1593 49391 I C0140D/display_engine_service/DE N DA: [a92abf0d4c90193 0 0]D ConfigureGmpGamDegam<194>: FEATURE_GMP(3) input { frames:10 MODE_DEFAULT|0xb00(0/10) -> MODE_DEFAULT|0xb00(0/10) }
+10-26 16:20:28.967  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[79.8/239, 79.8/362, 79.8/240, 79.8/357, 79.8/251, 79.9|2753335874], slux=88.00, flux=80.20, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:29.301 10559 10867 I C04200/com.ohos.sceneboard/WMS: SetDefaultRequestedOrientation id: 553 defaultRequestedOrientation: 0
+10-26 16:20:29.597  1417 49043 I C02DA0/hiview/FaultLeakDetectorManager: OnForegroundChanged: 0:com.ohos.sceneboard
+10-26 16:20:29.597  1417 49043 I C02DA0/hiview/FaultLeakDetectorManager: OnForegroundChanged: 1:com.ohos.sceneboard
+10-26 16:20:31.068 49754 49754 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:31.068 49754 49754 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:31.284 49754 49754 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:31.284 49754 49754 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:31.294 49754 49754 W C01650/uitest/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:31.408 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.scene_board.off_personalization_feature, value false, defaultValue false
+10-26 16:20:32.183  1417 49486 E C02D11/hiview/Faultlogger_Base: FaultloggerBase: constructor FaultloggerBase
+10-26 16:20:32.184  1417 49486 I C02D11/hiview/Faultlogger_Base: AddFaultLog: Start saving Faultlog of Process:49147, Name:com.example.helloworld, Reason:INPUT_EVENT_SOCKET_TIMEOUT.
+10-26 16:20:32.190  1417 49486 I C02D10/hiview/ExtractRule: IsMatchPath: sourceFile is /data/log/faultlog/freeze/syswarning-com.example.helloworld-6696-20261026162026-1793002826771.tmp, name is /data/log/faultlog/freeze/, pattern is syswarning-.*-\d+-\d+-\d+\.tmp.
+10-26 16:20:32.190  1417 49486 I C02D10/hiview/ExtractRule: IsMatchPath: desPath is /data/log/faultlog/freeze/syswarning-com.example.helloworld-6696-20261026162026-1793002826771.tmp.
+10-26 16:20:32.194  1417 49486 I C02D10/hiview/FeatureAnalysis: AnalysisLog: <1793002832> begin analysis </data/log/faultlog/freeze/syswarning-com.example.helloworld-6696-20261026162026-1793002826771.tmp>, eventType is <SYS_WARNING>.
+10-26 16:20:32.271  1565 49587 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[82.8/357, 82.8/241, 82.9/362, 82.9/240, 83.0/358, 83.0|2753339112], slux=88.00, flux=83.00, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:32.310  1417 49486 I C02D11/hiview/FaultLogManager: RemoveOldFile: remove logFile /data/log/faultlog/freeze/syswarning-com.example.helloworld-6696-20261026162026-1793002826771.tmp.
+10-26 16:20:32.312  1417 49486 I C02D11/hiview/FaultLogManager: SaveFaultLogToFile: create log syswarning-com.example.helloworld-6696-20261026162026771.log
+10-26 16:20:32.312  1417 49486 I C02D11/hiview/Faultlogger_Base: AddFaultLog: 
+10-26 16:20:32.312  1417 49486 I C02D11/hiview/Faultlogger_Base: Save Faultlog of Process:49147
+10-26 16:20:32.312  1417 49486 I C02D11/hiview/Faultlogger_Base: ModuleName:com.example.helloworld
+10-26 16:20:32.312  1417 49486 I C02D11/hiview/Faultlogger_Base: Reason:INPUT_EVENT_SOCKET_TIMEOUT
+10-26 16:20:32.313  1417 49486 I C02D11/hiview/FaultLogDatabase: WriteEvent: SaveFaultLogInfo for event: SYS_WARNING, and result = 0
+10-26 16:20:32.316  1417  1541 I C02D11/hiview/FaultloggerFilter: OnEvent: OnEvent handle SYS_WARNING
+10-26 16:20:32.320  1417  1541 I C02D11/hiview/FaultloggerFilter: OnEvent: SYS_WARNING is not need filter
+10-26 16:20:32.388  1417 49486 I C02D10/hiview/HiView-Engine: PackFaultLogs: start, id: 13996150228017639013, time: 1793002832367, RELIABILITY-SYS_WARNING
+10-26 16:20:32.422  1417 49486 I C02D10/hiview/HiView-Engine: PackFaultLogs: end, time:  1793002832422, RELIABILITY-SYS_WARNING
+10-26 16:20:32.432  1417 49486 I C02D10/hiview/Threshold-Guard: CheckAfterPacking: zip size: 56971, /data/log/logpack/faultlog/FAULT-BETA-RELIABILITY-SYS_WARNING-13996150228017639013-20261026162032-NORMAL-U0.zip, RELIABILITY-SYS_WARNING
+10-26 16:20:33.970  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 LTPO 72 RS_ANIMATION 0.
+10-26 16:20:34.024  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 LTPO 60 RS_ANIMATION 0.
+10-26 16:20:34.108 10559 10559 I A01B01/com.ohos.sceneboard/HOME: CommonUtils --> getSystemParameter key: const.scene_board.off_personalization_feature, value false, defaultValue false
+10-26 16:20:34.154  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:34.172  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: PROCESS_START
+10-26 16:20:34.218  1417 22517 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessCreate: notify create com.huawei.hmsapp.books:form:49782, processType:255
+10-26 16:20:34.218  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: PROCESS_START
+10-26 16:20:34.280  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: PROCESS_START
+10-26 16:20:34.286  1417 46585 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessCreate: notify create com.huawei.hmsapp.himovie:form:49796, processType:255
+10-26 16:20:34.337  1417 48503 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessCreate: notify create com.huawei.hmos.suggestion:form:49808, processType:255
+10-26 16:20:34.337  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: AAFWK, name: PROCESS_START
+10-26 16:20:34.359 49434 49434 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=default, errno=2
+10-26 16:20:34.359 49434 49434 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/liblayered_parameters_manager.z.so caller namespace : default
+10-26 16:20:34.359 49782 49782 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=default, errno=2
+10-26 16:20:34.359 49782 49782 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/liblayered_parameters_manager.z.so caller namespace : default
+10-26 16:20:34.360 49808 49808 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=default, errno=2
+10-26 16:20:34.360 49808 49808 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/liblayered_parameters_manager.z.so caller namespace : default
+10-26 16:20:34.370 49796 49796 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=default, errno=2
+10-26 16:20:34.370 49796 49796 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/liblayered_parameters_manager.z.so caller namespace : default
+10-26 16:20:34.437 49434 49434 I C03F04/uawei.hmsapp.totemweather:form/MMG: [NMM:382]Tail:default/paf_logger_2506301
+10-26 16:20:34.494 49434 49434 I C03F04/uawei.hmsapp.totemweather:form/MMG: [NMM:382]Tail:default/mmkv
+10-26 16:20:34.564 49434 49434 I C03F04/uawei.hmsapp.totemweather:form/MMG: [NMM:382]Tail:default/network-hwhttp
+10-26 16:20:34.566 49434 49434 I C03F04/uawei.hmsapp.totemweather:form/MMG: [NMM:382]Tail:default/network-restclient-service
+10-26 16:20:34.594 49434 49434 I A06666/uawei.hmsapp.totemweather:form/PafLog_CPP: [LogManager.cpp(SetDefaultLog:76)] defaultLog set success
+10-26 16:20:34.595 49434 49434 I A0E5A4/uawei.hmsapp.totemweather:form/Weather/WcsService : setCpListByModel from default, firstCpCode=10002, secondCpCode=10001
+10-26 16:20:34.609 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/flayout
+10-26 16:20:34.625 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/paf_logger_2506300
+10-26 16:20:34.662 49782 49782 I A06666/com.huawei.hmsapp.books:form/PafUiWidgetV2: PafCommon(BreakpointMonitor)_default:breakpointMonitor constructor
+10-26 16:20:34.662 49782 49782 I A06666/com.huawei.hmsapp.books:form/PafUiWidgetV2: PafCommon(avoidAreaChange):_default:avoidAreaChange constructor
+10-26 16:20:34.703 49796 49796 I C03F04/com.huawei.hmsapp.himovie:form/MMG: [NMM:382]Tail:default/flayout
+10-26 16:20:34.704 49434 49434 W C03F07/MUSL-LDSO: load libyundun.so failed, namespace=default no inherits, errno=2
+10-26 16:20:34.704 49434 49434 W C03F07/MUSL-LDSO: load libyundun.so failed, namespace=moduleNs_default, errno=2
+10-26 16:20:34.704 49434 49434 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libyundun.so caller namespace : moduleNs_default
+10-26 16:20:34.704 49434 49434 W C03F04/uawei.hmsapp.totemweather:form/MMG: [NMM:1512]key:default/yundun First: failed Error loading shared library libyundun.so: No such file or directory.Second: load module default/yundun failed..load  failed
+10-26 16:20:34.720 49796 49796 I C03F04/com.huawei.hmsapp.himovie:form/MMG: [NMM:382]Tail:default/paf_logger_2506300
+10-26 16:20:34.728 49434 49434 I A0E5A4/uawei.hmsapp.totemweather:form/Weather/EvntColl/HaInstance: default setAddress success
+10-26 16:20:34.746 49434 49831 I C04707/uawei.hmsapp.totemweather:form/HaNAPI: [a92ab10d52ac850 0 0]SetConfigOptions(Weather_default).
+10-26 16:20:34.748 49782 49782 I A06666/com.huawei.hmsapp.books:form/PafLog_CPP: [LogManager.cpp(SetDefaultLog:76)] defaultLog set success
+10-26 16:20:34.749 49434 49434 I A0E5A4/uawei.hmsapp.totemweather:form/Weather/Network/RcpHttpClient: [a92ab10d52ac850 0 0]init default rcp default session
+10-26 16:20:34.753  1578  1578 I C04707/hianalytics/HaService: [a92ab10d52ac850 0 0]InsertConfig, tag = Weather_default, code = 1661868412248436490
+10-26 16:20:34.758 49434 49831 W C04707/uawei.hmsapp.totemweather:form/HaClient: [a92ab10d52ac850 0 0]Weather_default: rejected common keys: co**xt,ev**er
+10-26 16:20:34.758 49434 49434 I A0E5A4/uawei.hmsapp.totemweather:form/Weather/EvntColl/HaInstance: [a92ab10d52ac850 0 0]config hiAnalytics 'Weather_default' finished
+10-26 16:20:34.760 49796 49796 I A06666/com.huawei.hmsapp.himovie:form/PafUiWidgetV2: PafCommon(BreakpointMonitor)_default:breakpointMonitor constructor
+10-26 16:20:34.760 49796 49796 I A06666/com.huawei.hmsapp.himovie:form/PafUiWidgetV2: PafCommon(avoidAreaChange):_default:avoidAreaChange constructor
+10-26 16:20:34.817 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/network-hwhttp
+10-26 16:20:34.829 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/network-restclient-service
+10-26 16:20:34.841 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/yundun
+10-26 16:20:34.894 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/network-filedownload-service
+10-26 16:20:34.906 49782 49782 I C03F04/com.huawei.hmsapp.books:form/MMG: [NMM:382]Tail:default/grsservice
+10-26 16:20:34.921 49782 49782 I A06666/com.huawei.hmsapp.books:form/HwBooks/DistFwkx/SafeSubscriber: []subscribe use default bundleName
+10-26 16:20:34.932 49796 49796 I C03F04/com.huawei.hmsapp.himovie:form/MMG: [NMM:382]Tail:default/network-hwhttp
+10-26 16:20:34.960 49796 49796 I C03F04/com.huawei.hmsapp.himovie:form/MMG: [NMM:382]Tail:default/network-restclient-service
+10-26 16:20:34.961 49782 49782 I A06666/com.huawei.hmsapp.books:form/HwBooks/DistFwkx/PreferenceUtil: getStoreSync not set context for PrivacyAgreementStore, use default context
+10-26 16:20:34.962 49782 49782 I A06666/com.huawei.hmsapp.books:form/HwBooks/DistFwkx/PreferenceUtil: getStoreSync not set context for identityStore, use default context
+10-26 16:20:35.005 49796 49796 I C03F04/com.huawei.hmsapp.himovie:form/MMG: [NMM:382]Tail:default/yundun
+10-26 16:20:35.225 49796 49796 I A06666/com.huawei.hmsapp.himovie:form/PafLog_CPP: [LogManager.cpp(SetDefaultLog:76)] defaultLog set success
+10-26 16:20:35.231 49796 49796 I A06666/com.huawei.hmsapp.himovie:form/himovie/DistFwkw/SafeSubscriber: []subscribe use default bundleName
+10-26 16:20:35.271 49796 49796 I A06666/com.huawei.hmsapp.himovie:form/himovie/DistFwkw/PreferenceUtil: getStoreSync not set context for PrivacyAgreementStore, use default context
+10-26 16:20:35.275  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[82.9/362, 82.9/241, 82.9/356, 82.9/241, 82.9/362, 83.0|2753342115], slux=88.00, flux=83.00, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:35.370 12552 49937 W C03F07/MUSL-LDSO: load /system/lib64/libtransform_interaction_ext.z.so failed, namespace=default, errno=2
+10-26 16:20:35.370 12552 49937 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/libtransform_interaction_ext.z.so caller namespace : default
+10-26 16:20:35.435 12552 49937 W C03900/com.ohos.formrenderservice/Ace: [(101953:101953:scope)] not found systemTheme in HapModuleInfo, loading default OHOS_THEME
+10-26 16:20:35.476  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 LTPO 60 RS_ANIMATION 0.
+10-26 16:20:35.543  1417  2199 I C02DA0/hiview/FaultLeakDetectorManager: OnEventListeningCallback: receive domain: GRAPHIC, name: HGM_VOTER_INFO
+10-26 16:20:35.630  1417 49486 W C02D01/hiview/FreezeDetector: SaveFreezeExtInfoToFile: create freezeExt file=/data/log/faultlog/freeze_ext/freeze-cpuinfo-ext-com.example.helloworld-20020226-20261026162035629 success.
+10-26 16:20:35.634  1417 49486 I C02D11/hiview/FaultlogBundleUtil: bundleName of uid:20020226 is com.example.helloworld
+10-26 16:20:35.634  1417 49486 I C02D11/hiview/Faultlogger_Base: AddFaultLog: Start saving Faultlog of Process:49147, Name:com.example.helloworld, Reason:APP_INPUT_BLOCK.
+10-26 16:20:35.636  1417 49486 I C02D11/hiview/FaultlogBundleUtil: The version of com.example.helloworld is 1.0.0
+10-26 16:20:35.640  1417 49486 I C02D10/hiview/ExtractRule: IsMatchPath: sourceFile is /data/log/faultlog/freeze/appfreeze-com.example.helloworld-20020226-20261026162023-1793002823555.tmp, name is /data/log/faultlog/freeze/, pattern is appfreeze-.*.tmp.
+10-26 16:20:35.640  1417 49486 I C02D10/hiview/ExtractRule: IsMatchPath: desPath is /data/log/faultlog/freeze/appfreeze-com.example.helloworld-20020226-20261026162023-1793002823555.tmp.
+10-26 16:20:35.641  1417 49486 I C02D10/hiview/ExtractRule: IsMatchPath: sourceFile is /data/log/faultlog/freeze/appfreeze-com.example.helloworld-20020226-20261026162023-1793002823555.tmp, name is /data/log/faultlog/faultlogger/, pattern is appfreeze-.*-\d+-\d+\.log.
+10-26 16:20:35.643  1417 49486 I C02D10/hiview/FeatureAnalysis: AnalysisLog: <1793002835> begin analysis </data/log/faultlog/freeze/appfreeze-com.example.helloworld-20020226-20261026162023-1793002823555.tmp>, eventType is <APP_FREEZE>.
+10-26 16:20:35.673  1579 48947 I C01407/render_service/hgm: LTPO-DEFAULT 0 -1 IDLE 60  0.
+10-26 16:20:35.898 49943 49943 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:35.898 49943 49943 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:36.118 49943 49943 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:20:36.118 49943 49943 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:20:36.156 49943 49943 W C01650/snapshot_display/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:20:36.189  1417 49486 I C02D11/hiview/FaultLogManager: RemoveOldFile: remove logFile /data/log/faultlog/freeze/appfreeze-com.example.helloworld-20020226-20261026162023-1793002823555.tmp.
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/FaultLogManager: SaveFaultLogToFile: create log appfreeze-com.example.helloworld-20020226-20261026162023555.log
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/Faultlogger_Base: AddFaultLog: 
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/Faultlogger_Base: Save Faultlog of Process:49147
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/Faultlogger_Base: ModuleName:com.example.helloworld
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/Faultlogger_Base: Reason:APP_INPUT_BLOCK
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/FaultLogDatabase: WriteEvent: SaveFaultLogInfo for event: APP_FREEZE, and result = 0
+10-26 16:20:36.190  1417 49486 I C02D11/hiview/Faultlogger: ReportAppFreezeToAppEvent: Start to report freezeJson !!!
+10-26 16:20:36.193  1417  1541 I C02D11/hiview/FaultloggerFilter: OnEvent: OnEvent handle APP_FREEZE
+10-26 16:20:36.196  1417  1541 I C02D11/hiview/FaultloggerFilter: OnEvent: APP_FREEZE is not need filter
+10-26 16:20:36.238  1417 49486 I C02D11/hiview/Faultlogger: MergeFreezeExtToLog: merged freeze-ext into temp file: /data/log/faultlog/freeze/appfreeze-merged-49147-20020226-1793002836228
+10-26 16:20:36.239  1417 49485 I C02D10/hiview/HiView-Engine: PackFaultLogs: start, id: 04191091707174087344, time: 1793002836227, RELIABILITY-APP_FREEZE
+10-26 16:20:36.246  1417 49486 I C02D11/hiview/Faultlogger: GetFreezeJsonCollector: load FreezeJsonFile.
+10-26 16:20:36.254  1417 49486 I C02D11/hiview/Faultlogger: RemoveMergedTempIfNeeded: removed merged temp file: /data/log/faultlog/freeze/appfreeze-merged-49147-20020226-1793002836228
+10-26 16:20:36.254  1417 49486 I C02D11/hiview/Faultlogger: ReportAppFreezeToAppEvent: Report FreezeJson Successfully!
+10-26 16:20:36.256  1417 49486 I C02D11/hiview/FaultloggerExt-Mgr: GetExtName: bundleName: com.example.helloworld, find extName failed
+10-26 16:20:36.256  1417 49486 I C02D11/hiview/FaultloggerExt-Mgr: OnFault: com.example.helloworld Unsupported faultlog abily
+10-26 16:20:36.256  1417 49486 W C057C3/hiview/IPCObjectStub: SendRequestInner: Stub(desc:*.IFaultLoggerService) code:0 cost:623ms
+10-26 16:20:36.371  1417 49485 I C02D10/hiview/HiView-Engine: PackFaultLogs: end, time:  1793002836371, RELIABILITY-APP_FREEZE
+10-26 16:20:36.375  1417 49485 I C02D10/hiview/Threshold-Guard: CheckAfterPacking: zip size: 333611, /data/log/logpack/faultlog/FAULT-BETA-RELIABILITY-APP_FREEZE-04191091707174087344-20261026162036-NORMAL-U0.zip, RELIABILITY-APP_FREEZE
+10-26 16:20:38.581  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.0/239, 82.9/364, 82.8/239, 82.8/358, 82.8/240, 82.8|2753345475], slux=88.00, flux=82.80, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:41.887  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.0/357, 83.0/241, 83.1/362, 83.1/239, 83.1/358, 83.0|2753348714], slux=88.00, flux=82.90, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:43.229 10638 10638 W C03F07/MUSL-LDSO: load absolute_path /system/lib64/platformsdk/libpowermgr_client.z.so: check ns accessible failed namespace=moduleNs_default.
+10-26 16:20:43.640  1417 49485 I C02DA0/hiview/FaultLeakDetectorUtil: SendLeakCmdInfo: cmd TYPE: pid=49808, cmdType=1, infoType=16, time=1793002843
+10-26 16:20:43.718  1417 49485 I C02DA0/hiview/FaultLeakDetectorUtil: SendLeakCmdInfo: cmd TYPE: pid=49796, cmdType=1, infoType=16, time=1793002843
+10-26 16:20:43.771  1417 49485 I C02DA0/hiview/FaultLeakDetectorUtil: SendLeakCmdInfo: cmd TYPE: pid=49782, cmdType=1, infoType=16, time=1793002843
+10-26 16:20:44.499  1417 49604 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessDied: NotifyProcessDied process:com.huawei.hmos.suggestion:form:49808
+10-26 16:20:44.723  1417 49604 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessDied: NotifyProcessDied process:com.huawei.hmsapp.totemweather:form:49434
+10-26 16:20:44.893  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.0/362, 83.1/238, 83.2/360, 83.3/239, 83.4/363, 83.5|2753351715], slux=88.00, flux=83.60, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:45.015  1417 49604 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessDied: NotifyProcessDied process:com.huawei.hmsapp.books:form:49782
+10-26 16:20:45.340  1417 49485 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessDied: NotifyProcessDied process:com.huawei.hmsapp.himovie:form:49796
+10-26 16:20:48.201  1565 49587 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.4/239, 83.3/361, 83.3/240, 83.3/358, 83.3/241, 83.4|2753355076], slux=88.00, flux=83.40, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:51.508  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.4/343, 83.4/240, 83.4/362, 83.4/243, 83.3/355, 83.3|2753358312], slux=88.00, flux=83.30, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:54.516  1565 49587 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.4/362, 83.4/240, 83.4/358, 83.4/239, 83.3/363, 83.3|2753361314], slux=88.00, flux=83.30, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:20:57.824  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.3/242, 83.4/361, 83.4/240, 83.5/357, 83.4/241, 83.4|2753364676], slux=88.00, flux=83.40, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:21:01.131  1565 48384 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.3/241, 83.3/361, 83.4/240, 83.4/357, 83.5/240, 83.4|2753368035], slux=88.00, flux=83.30, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:21:01.618 50081 50081 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:01.618 50081 50081 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:21:01.843 50081 50081 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:01.843 50081 50081 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:21:01.892 50081 50081 W C01650/snapshot_display/RdbManager: RdbManager:no instance, using default RdbManager
+10-26 16:21:02.347 50088 50088 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:02.347 50088 50088 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:21:02.393 50088 50088 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:02.393 50088 50088 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:21:04.148  1417 48503 I C02DA0/hiview/FaultLeakDetectorManager: NotifyProcessCreate: notify create deviceauth_service:50101, processType:2000
+10-26 16:21:04.204 50101 50101 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:04.204 50101 50101 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:21:04.438  1565 50060 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.5/355, 83.5/241, 83.4/362, 83.3/239, 83.3/359, 83.4|2753371272], slux=88.00, flux=83.50, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:21:07.445  1565 48954 I C02986/powermgr/DisplayPowerBrightness: PrintCurrentLuxLog, lux=[83.3/366, 83.4/236, 83.5/361, 83.6/238, 83.6/362, 83.5|2753374275], slux=88.00, flux=83.40, blux=0.21, oLux=88.00, bTh=314.00, bTh2=112.09, sbTh=223.60, dTh=18.80, dTh2=79.25, bt=1000, dt=1000, pxs=0, sz=35, bl=42, scene=DefaultMode, als=1, als1=0, color=1, pxa=0, locked=0, dl=36.60, IsFrontSensorCovered=0
+10-26 16:21:09.006 50158 50158 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:09.006 50158 50158 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
+10-26 16:21:09.043 50158 50158 W C03F07/MUSL-LDSO: load libfdleak_tracker.so failed, namespace=default, errno=2
+10-26 16:21:09.044 50158 50158 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for libfdleak_tracker.so caller namespace : default
