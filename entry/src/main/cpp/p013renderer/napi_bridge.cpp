@@ -399,7 +399,7 @@ napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
  if(code==Status::OK && (!valid || epoch<0)) code=Status::INVALID_ARGUMENT;
  if(code==Status::OK && (!g.ownerBound || session!=g.id || g.released)) code=Status::RELEASED;
  if(code==Status::OK && epoch!=g.egl.surfaceEpoch) code=Status::STALE_SURFACE;
- if(code==Status::OK && !g.dualBasic) {
+ if(code==Status::OK && (!g.dualBasic || !g.egl.composition)) {
    Destroy(ResetReason::RELEASE); code=g.egl.ConfigureComposition(true); g.dualBasic=code==Status::OK;
  }
  if(code==Status::OK) { SurfaceInfo si{}; code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
@@ -442,7 +442,7 @@ napi_value DrawDualFieldFrame(napi_env e,napi_callback_info info){
   if(code!=Status::OK){napi_value result=Control(e,code);Put(e,result,"errorStage","DUAL_STAGING_CAPACITY");return result;}
   std::memcpy(g.storage->staging.data(),check.data(),sizeof(check));
   if(count){std::memcpy(g.dualXY.data(),xy,count*8);std::memcpy(g.dualMeta.data(),meta,count*8);}
-  if(!g.dualBasic){Destroy(ResetReason::RELEASE);code=g.egl.ConfigureComposition(true);g.dualBasic=code==Status::OK;}
+  if(!g.dualBasic || !g.egl.composition){Destroy(ResetReason::RELEASE);code=g.egl.ConfigureComposition(true);g.dualBasic=code==Status::OK;}
   if(code==Status::OK){SurfaceInfo si{};code=g.egl.EnsureCurrent({static_cast<uint64_t>(f.surfaceEpoch),static_cast<int>(f.surfaceWidthPx),static_cast<int>(f.surfaceHeightPx)},si);
    if(code==Status::STALE_SURFACE)stage="DUAL_SURFACE_EPOCH";
    if(code==Status::OK){if(g.uploader.epoch!=g.egl.contextEpoch)code=g.uploader.Create(g.egl.contextEpoch);
