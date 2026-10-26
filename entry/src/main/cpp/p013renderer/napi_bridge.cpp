@@ -388,6 +388,29 @@ bool TypedView(napi_env e,napi_value v,napi_typedarray_type expected,size_t expe
  return true;
 }
 bool ExactString(napi_env e,napi_value o,const char* name,const char* expected){napi_value v=nullptr;std::string text;return napi_get_named_property(e,o,name,&v)==napi_ok&&String(e,v,text)&&text==expected;}
+// T62: explicit geometry preparation, no draw/swap/physics publication.
+napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
+ size_t n=2; napi_value a[2]{}; napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+ double session=0, epoch=0;
+ bool valid=n==2 && napi_get_value_double(e,a[0],&session)==napi_ok &&
+   napi_get_value_double(e,a[1],&epoch)==napi_ok && SafeInteger(session) && SafeInteger(epoch);
+ std::lock_guard<std::mutex> lock(g.mutex);
+ Status code=Owner();
+ if(code==Status::OK && (!valid || epoch<0)) code=Status::INVALID_ARGUMENT;
+ if(code==Status::OK && (!g.ownerBound || session!=g.id || g.released)) code=Status::RELEASED;
+ if(code==Status::OK && epoch!=g.egl.surfaceEpoch) code=Status::STALE_SURFACE;
+ if(code==Status::OK && !g.dualBasic) {
+   Destroy(ResetReason::RELEASE); code=g.egl.ConfigureComposition(true); g.dualBasic=code==Status::OK;
+ }
+ if(code==Status::OK) { SurfaceInfo si{}; code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);
+   const auto unbound=g.egl.Unbind(); if(unbound!=Status::OK)code=unbound; }
+ napi_value o=Control(e,code);
+ Put(e,o,"widthPx",static_cast<double>(g.egl.width)); Put(e,o,"heightPx",static_cast<double>(g.egl.height));
+ Put(e,o,"sizeSource",code==Status::OK?"EGL_QUERY_SURFACE":"UNAVAILABLE");
+ Put(e,o,"geometrySpace","SURFACE_PX_V1");
+ Put(e,o,"errorStage",code==Status::OK?"NONE":g.egl.errorStage);
+ return o;
+}
 napi_value DrawDualFieldFrame(napi_env e,napi_callback_info info){
  size_t n=5;napi_value a[5]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
  FrameInput f{};const char* stage="DUAL_ARGUMENT_COUNT";Status code=Status::OK;
@@ -875,6 +898,7 @@ EXTERN_C_START
 static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
   napi_property_descriptor d[] = {
+    {"prepareDualFieldSurface", nullptr, PrepareDualFieldSurface, nullptr, nullptr, nullptr, napi_default, nullptr},
     {"drawDualFieldFrame", nullptr, DrawDualFieldFrame, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"requestComposition", nullptr, RequestComposition, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"queryCompositionProfile", nullptr, QueryComposition, nullptr, nullptr, nullptr, napi_default, nullptr},

@@ -143,7 +143,11 @@ export interface P013TelemetryBatch {
   droppedTelemetry: number;
   telemetryLiveCount: number;
 }
+export interface P013SurfacePreparation extends P013ControlResult {
+  widthPx: number; heightPx: number; sizeSource: string; geometrySpace: string; errorStage: string;
+}
 export interface P013NativeRenderer {
+  prepareDualFieldSurface(sessionId: number, expectedSurfaceEpoch: number): P013SurfacePreparation;
   drawDualFieldFrame(frame: P013DualFieldFrame, tdata: Float32Array, particleXY: Float32Array,
     particleMeta: Uint32Array, visualParams: P013DualFieldVisualParams): P013DualFieldReceipt;
   requestComposition(profile: P013CompositionProfile): P013CompositionReceipt;

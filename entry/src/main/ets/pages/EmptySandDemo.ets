@@ -37,6 +37,7 @@ struct EmptySandDemo {
   @StorageLink('emptySandDemoForeground') @Watch('syncActive') private foreground: boolean = true;
   private pageShown: boolean = false;
   private running: boolean = false; private queued: boolean = false;
+  private geometryEpoch: number = 1;
   private previousNs: number = 0; private serial: number = 0;
   @State private surfaceWidth: number = 320;
   @State private surfaceHeight: number = 480;
@@ -61,7 +62,7 @@ struct EmptySandDemo {
     if (this.model.field.copyPublishedRenderStateInto(this.publication) === 'OK') {
       const context: P012FrameContext = {
         physicsCommitId:this.publication.physicsCommitId,particleLayerEnabled:true,
-        fieldEpoch:this.publication.stateEpoch,continuityEpoch:1,geometryEpoch:1,frameSerial:++this.serial,
+        fieldEpoch:this.publication.stateEpoch,continuityEpoch:1,geometryEpoch:this.geometryEpoch,frameSerial:++this.serial,
         sampleTimeMs:ns/1e6,frameDeltaMs:dt*1000,inputMode:'EXPERIENCE',sourceKind:'gesture',
         physicalRouteId:'dual-field-particle-v1',runIdentity:this.publication.runId,
         boxX:0,boxY:0,boxW:this.surfaceWidth,boxH:this.surfaceHeight,pixelRatio:1,visualInverted:false,
@@ -70,7 +71,7 @@ struct EmptySandDemo {
         gravityDirX:Math.sin(this.publication.effectiveTiltDeg*Math.PI/180),
         gravityDirY:Math.cos(this.publication.effectiveTiltDeg*Math.PI/180),sandTracerEnabled:false
       };
-      const result = this.renderer.submitDualField(this.publication,context,this.surfaceWidth,this.surfaceHeight,ns);
+      const result = this.renderer.submitDualFieldSurfacePx(this.publication,context,ns,this.getUIContext().vp2px(1));
       if (this.serial % 60 === 0) console.info(`WS_EVENT empty_sand_demo ${JSON.stringify({
         input:input,config:this.gravityConfig.revision,physicsCommitId:this.publication.physicsCommitId,
         effectiveTiltDeg:this.publication.effectiveTiltDeg,metrics:this.model.field.getMetrics()})}`);
@@ -95,10 +96,11 @@ struct EmptySandDemo {
       Button('重置为空场').onClick(() => { this.gravity.reset();this.model.reset(); this.publication=this.model.createPublication(); this.previousNs=0; })
       Stack() {
         XComponent({id:'p013_lmat_surface',type:XComponentType.TEXTURE,libraryname:'p013renderer'})
-          .width('100%').height('100%').onLoad(() => this.renderer.onLoad()).hitTestBehavior(HitTestMode.None)
-      }.width('92%').layoutWeight(1).backgroundColor('#E7E4DC').border({width:2,color:'#6B6B6B'})
-        .onAreaChange((_old: Area, area: Area) => { this.surfaceWidth=Number(area.width);this.surfaceHeight=Number(area.height); })
-        .onTouch((event: TouchEvent) => this.touch(event))
+          .width('100%').height('100%').onLoad(() => this.renderer.onLoad())
+          .onAreaChange((_old: Area, area: Area) => { this.surfaceWidth=Number(area.width);this.surfaceHeight=Number(area.height);this.geometryEpoch++; })
+          .onTouch((event: TouchEvent) => this.touch(event))
+      }.width('92%').layoutWeight(1).backgroundColor('#E7E4DC')
+
     }.width('100%').height('100%').padding({top:16,bottom:24}).backgroundColor('#F6F3EC')
   }
 }

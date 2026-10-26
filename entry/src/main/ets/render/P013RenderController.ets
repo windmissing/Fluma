@@ -1,3 +1,4 @@
+import { P013_COLUMN_PROJECTION } from './P013ParticleProjection';
 import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
 import { P013DualFieldAdapter, P013DualFieldUploadSlot } from './P013DualFieldAdapter';
 import { P013DualFieldReceipt, P013DualFieldVisualParams } from './P013RenderTypes';
@@ -89,8 +90,12 @@ export class P013RenderController {
   dualFailure: string = '';
   private lastDualLogMs: number = -1000;
   lastDualReceipt: P013DualFieldReceipt | null = null;
+  submitDualFieldSurfacePx(stateSlot: P011PublishedRenderState, context: P012FrameContext,
+    frameTimeNs: number, radiusPx: number): P013DualFieldReceipt | null {
+    return this.submitDualField(stateSlot, context, 0, 0, frameTimeNs, 'SURFACE_PX_V1', radiusPx);
+  }
   submitDualField(stateSlot: P011PublishedRenderState, context: P012FrameContext,
-    width: number, height: number, frameTimeNs: number): P013DualFieldReceipt | null {
+    width: number, height: number, frameTimeNs: number, geometrySpace: string = 'LOGICAL_V1', radiusPx: number = 1): P013DualFieldReceipt | null {
     const native = this.native;
     if (native === null || !this.loaded || !this.active || this.disposed) return null;
     try {
@@ -102,33 +107,56 @@ export class P013RenderController {
         if (this.sessionId !== init.sessionId) { this.frameId = 0; this.sessionId = init.sessionId; }
         this.frame.sessionId = init.sessionId; state = native.getState();
       }
+      const pixels = geometrySpace === 'SURFACE_PX_V1';
+      if (geometrySpace !== 'LOGICAL_V1' && !pixels) { this.dualFailure='GEOMETRY_VERSION'; return null; }
+      if (pixels) {
+        const prepared = native.prepareDualFieldSurface(this.sessionId, state.surfaceEpoch);
+        if (prepared.code !== 0 || prepared.sizeSource !== 'EGL_QUERY_SURFACE' ||
+          prepared.geometrySpace !== 'SURFACE_PX_V1' || !Number.isInteger(prepared.widthPx) ||
+          !Number.isInteger(prepared.heightPx) || prepared.widthPx <= 0 || prepared.heightPx <= 0) {
+          this.dualFailure = `WAIT_SURFACE_${prepared.code}_${prepared.errorStage}`; return null;
+        }
+        state = native.getState();
+        if (state.surfaceEpoch !== prepared.surfaceEpoch || state.contextEpoch !== prepared.contextEpoch ||
+          state.widthPx !== prepared.widthPx || state.heightPx !== prepared.heightPx) {
+          this.dualFailure='STALE_PREPARED_SURFACE'; return null;
+        }
+        if (!Number.isFinite(radiusPx) || radiusPx <= 0) { this.dualFailure='RADIUS_PX'; return null; }
+      }
       if (this.dualSlots.length === 0 || this.dualSlots[0].capacity !== stateSlot.particleCapacity) {
         this.dualSlots = [new P013DualFieldUploadSlot(stateSlot.particleCapacity), new P013DualFieldUploadSlot(stateSlot.particleCapacity)];
         this.dualCursor = 0;
       }
       const slot = this.dualSlots[this.dualCursor];
-      const packed = this.dualAdapter.packInto(stateSlot, context, slot);
-      if (packed !== 'OK') { this.dualFailure = packed; return null; }
+      const packed = this.dualAdapter.packInto(stateSlot, context, slot, pixels ? P013_COLUMN_PROJECTION : 'RAW_F32_V1');
+      if (packed !== 'OK') {
+        this.dualFailure = packed;
+        const now = p013NowMs();
+        if (now - this.lastDualLogMs >= 1000) { this.lastDualLogMs=now;
+          console.info(`WS_EVENT p013_dual_rejected ${JSON.stringify({reason:packed,runId:stateSlot.runId,stateEpoch:stateSlot.stateEpoch,physicsCommitId:stateSlot.physicsCommitId,particle:this.dualAdapter.lastRejected})}`); }
+        return null;
+      }
       const f = slot.frame;
       const sw = state.widthPx > 0 ? state.widthPx : Math.round(width);
       const sh = state.heightPx > 0 ? state.heightPx : Math.round(height);
-      const sx = sw / width, sy = sh / height;
+      const sx = pixels ? 1 : sw / width, sy = pixels ? 1 : sh / height;
       if (!Number.isFinite(sx) || !Number.isFinite(sy) || sx <= 0 || sy <= 0 || Math.abs(sx - sy) > 1e-6) {
         this.dualFailure = 'NONUNIFORM_SCALE'; return null;
       }
       f.sessionId = this.sessionId; f.frameId = ++this.frameId; f.snapshotId = ++this.snapshotId;
       f.surfaceEpoch = state.surfaceEpoch; f.contextEpoch = state.contextEpoch; f.frameTimeNs = frameTimeNs;
       f.surfaceWidthPx = sw; f.surfaceHeightPx = sh;
-      f.boxXPx = context.boxX * sx; f.boxYPx = context.boxY * sy;
-      f.boxWidthPx = context.boxW * sx; f.boxHeightPx = context.boxH * sy;
+      f.boxXPx = pixels ? 0 : context.boxX * sx; f.boxYPx = pixels ? 0 : context.boxY * sy;
+      f.boxWidthPx = pixels ? sw : context.boxW * sx; f.boxHeightPx = pixels ? sh : context.boxH * sy;
       f.diagnosticEnabled = true;
-      this.dualVisual.radiusPx = sx;
+      this.dualVisual.radiusPx = pixels ? radiusPx : sx;
       const result = native.drawDualFieldFrame(f, slot.tdata, slot.particleXY, slot.particleMeta, this.dualVisual);
       this.lastDualReceipt = result;
       const now = p013NowMs();
       if (now - this.lastDualLogMs >= 1000 || result.code >= 200) {
         this.lastDualLogMs = now;
         console.info(`WS_EVENT p013_dual_frame ${JSON.stringify(result)}`);
+        console.info(`WS_EVENT p013_dual_geometry ${JSON.stringify({geometrySpace:geometrySpace,surfaceWidthPx:sw,surfaceHeightPx:sh,surfaceEpoch:f.surfaceEpoch,contextEpoch:f.contextEpoch,physicsCommitId:f.physicsCommitId,projection:slot.projection})}`);
       }
       this.dualCursor = 1 - this.dualCursor;
       this.diagnosticVisible = result.code === 0 && result.swapSucceeded;

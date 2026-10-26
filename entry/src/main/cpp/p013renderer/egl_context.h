@@ -28,6 +28,7 @@ class EglContext {
   Status OnWindowCreated(OH_NativeXComponent*, void*);
   Status OnWindowChanged(OH_NativeXComponent*, void*);
   void OnWindowDestroyed(OH_NativeXComponent*, void*);
+  Status PrepareCurrent(uint64_t, SurfaceInfo&);
   Status EnsureCurrent(const SurfaceKey&, SurfaceInfo&);
   Status Swap(uint64_t);
   Status Unbind();

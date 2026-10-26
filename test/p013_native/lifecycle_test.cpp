@@ -184,6 +184,23 @@ int main() {
         Status::NOT_READY);
   broken.Release();
   CHECK(contexts == 0 && surfaces == 0);
+  // T62 real EGL preparation: no caller dimensions required, no swap.
+  EglContext prepared;
+  prepared.OnWindowCreated(component, oldWindow);
+  const auto pe = prepared.surfaceEpoch;
+  CHECK(prepared.width == 0 && prepared.height == 0);
+  CHECK(prepared.PrepareCurrent(pe, info) == Status::OK);
+  CHECK(info.width == 64 && info.height == 64 && prepared.current);
+  CHECK(prepared.Unbind() == Status::OK);
+  CHECK(prepared.EnsureCurrent({pe,63,64},info) == Status::STALE_SURFACE);
+  CHECK(!prepared.current);
+  CHECK(prepared.PrepareCurrent(pe+1,info) == Status::STALE_SURFACE);
+  prepared.SetActive(false);
+  CHECK(prepared.PrepareCurrent(pe,info) == Status::INACTIVE);
+  prepared.SetActive(true);
+  CHECK(prepared.PrepareCurrent(pe,info) == Status::OK);
+  CHECK(prepared.Unbind() == Status::OK);
+  prepared.Release();
   FrameInput f{};
   f.frameId = 1;
   f.surfaceWidthPx = 64;

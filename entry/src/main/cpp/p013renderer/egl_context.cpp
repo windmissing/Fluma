@@ -111,14 +111,14 @@ Status EglContext::Failure(const char* stage, Status fallback) {
   }
   return fallback;
 }
-Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
+Status EglContext::PrepareCurrent(uint64_t expectedEpoch, SurfaceInfo& info) {
   if (current) return Status::EGL_INIT_FAILED;
   initMs = currentMs = unbindMs = swapMs = 0;
   error = EGL_SUCCESS;
   errorStage = "NONE";
   if (!active) return Status::INACTIVE;
   if (!window || badWindow) return Status::NOT_READY;
-  if (key.epoch != surfaceEpoch) return Status::STALE_SURFACE;
+  if (expectedEpoch != surfaceEpoch) return Status::STALE_SURFACE;
   const double t = NowMs();
   if (context == EGL_NO_CONTEXT) {
     if (attemptedEpoch == surfaceEpoch) return Status::EGL_INIT_FAILED;
@@ -227,11 +227,16 @@ Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
     return Status::NOT_READY;
   }
   info = {width, height, surfaceEpoch};
-  if (key.width != width || key.height != height) {
-    Unbind();
-    return Status::STALE_SURFACE;
-  }
   state = State::READY;
+  return Status::OK;
+}
+Status EglContext::EnsureCurrent(const SurfaceKey& key, SurfaceInfo& info) {
+  const auto code = PrepareCurrent(key.epoch, info);
+  if (code != Status::OK) return code;
+  if (key.width != width || key.height != height) {
+    const auto unbound = Unbind();
+    return unbound == Status::OK ? Status::STALE_SURFACE : unbound;
+  }
   return Status::OK;
 }
 Status EglContext::Swap(uint64_t) {
