@@ -1,0 +1,95 @@
+{
+ "executionId": "p111-dyadic-oracle-v1",
+ "date": "2026-10-26",
+ "contract": "T104 sections 2/7 stage A",
+ "results": [
+  {
+   "id": "T111-OR-01",
+   "name": "oracle exactness: every finite binary64 (incl. subnormals, max) is exact at 2^-2148 alignment; order preserved",
+   "status": "PASS",
+   "bad": [],
+   "note": "min sh = 2148-1074-52 ≥ 0 for significand<<sh; max sh = 2148+971 covers 2^2048 products"
+  },
+  {
+   "id": "T111-OR-02",
+   "name": "residual compare exact: stored-value residual vs the RN-of-difference residual can differ; oracle decides on stored values",
+   "status": "PASS",
+   "exactResidualCommon": "23652119190070391354047095586896816339385582033142470207576083648537352870848503477460650691101013221929474972170665489405971059172335095198612822636560184135780408124576737864519385477393638601677480515528330045185985547220789040052380937427838646303873380970099480923908952412523810482344813021994648337145578685937613962397441604208446721143729370353739805621174179708218347071514482602057098128939915105306542779892270244778326492691821029805233045079728900510618861256387004366119589349704396442869845234796675877005089618298342093465205724862831306022744876447991636012867595090457045670560197760873435279818874911109592159902709262283964416",
+   "rnResidualCommon": "23652119190070391354047095586896816339385582033142470207576083648537352870848503477460650691101013221929474972170665489405971059172335095198612822636560184135780408124576737864519385477393638601677480515528330045185985547220789040052380937427838646303873380970099480923908952412523810482344813021994648337145578685937613962397441604208446721143729370353739805621174179708218347071514482602057098128939915105306542779892270244778326492691821029805233045079728900510618861256387004366119589349704396442869845234796675877005089618298342093465205724862831306022744876447991636012867595090457045670560197760873435279818874911109592159902709262283964416",
+   "same": true,
+   "aboveLoExact": true,
+   "rnAboveLo": true,
+   "residualDouble": 0.5773502691896262,
+   "residualDoubleHex": "3fe279a745903320",
+   "note": "T86 empty intersection came from comparing RN-computed residuals; the strict revision compares stored values exactly"
+  },
+  {
+   "id": "T111-OR-03",
+   "name": "ULP machinery: nextUp(tan30) distinct; exact dyadic product equals the double value bit-exactly for trivial inputs",
+   "status": "PASS",
+   "tan30": 0.5773502691896257,
+   "nextUp": 0.5773502691896258,
+   "ulp": 1.1102230246251565e-16
+  },
+  {
+   "id": "T111-OR-04",
+   "name": "4ULP identity: +4ULP slope remains inside the documented boundary; the actual T86 slope is beyond it; both exceed the exact hard max",
+   "status": "PASS",
+   "tan30": 0.5773502691896257,
+   "ulp": 1.1102230246251565e-16,
+   "within4": 0.5773502691896262,
+   "t86Slope": 0.5773502691896263,
+   "deltaT86": 5.551115123125783e-16,
+   "fourUlp": 4.440892098500626e-16,
+   "note": "strict revision refuses byte-identical re-admission of the old illegal initial state (T104 section 1); 4ULP was the T100 documented overshoot, T86 actual is 5 ULP"
+  },
+  {
+   "id": "T111-OR-05",
+   "name": "signed zero: +0 and -0 compare equal after normalization (directed gate on normalized ±0)",
+   "status": "PASS",
+   "note": "T104 §2: 定向门直接按规范化±0后的binary64顺序比较"
+  },
+  {
+   "id": "T111-OR-06",
+   "name": "subnormal ordering exact through integer representation (no FTZ loss in oracle)",
+   "status": "PASS",
+   "s1": 5e-324,
+   "s2": 1e-323
+  },
+  {
+   "id": "T111-OR-07",
+   "name": "capacity: max×max product sig bits fit; aligned units stay below 4200-bit ceiling (T104 §2)",
+   "status": "PASS",
+   "sigBits": 106,
+   "exp": "1942"
+  },
+  {
+   "id": "T111-OR-08",
+   "name": "non-finite inputs rejected by oracle decompression (no symbolic pass-through)",
+   "status": "PASS"
+  },
+  {
+   "id": "T111-OR-09",
+   "name": "whitelist: oracle exposes only fixed expressions (sum, two-input product); >2-input products must be rejected by the production module contract",
+   "status": "PASS",
+   "note": "production P011ExactDyadic must return ARITHMETIC_EXPRESSION_UNSUPPORTED for anything outside the whitelist (T104 §2)"
+  },
+  {
+   "id": "T111-RED-01",
+   "name": "RED baseline: P011ExactDyadic/P011StateCertificate absent; planning delegate V2 previewCandidate absent",
+   "status": "PASS",
+   "missing": [
+    "P011ExactDyadic.ets",
+    "P011StateCertificate.ets"
+   ],
+   "previewV2": false,
+   "verdict": "NOT_IMPLEMENTED (pre-test RED for T112 stage A); not a business-fix failure"
+  },
+  {
+   "id": "T111-FIX",
+   "name": "frozen oracle fixtures exported for T112 implementation comparison",
+   "status": "PASS",
+   "file": "p111_dyadic_fixtures.json"
+  }
+ ]
+}

@@ -1,0 +1,113 @@
+{
+ "executionId": "p113-base-strip-baseline-v1",
+ "date": "2026-10-26",
+ "contract": "T105 sections 2/7",
+ "expectedT88Point": {
+  "V2": 172,
+  "V1": 173
+ },
+ "results": [
+  {
+   "id": "T113-EV-01",
+   "name": "T88 point: frozen F64 evaluator gives 172; old F32-path gives 173 (both preserved, no tolerance)",
+   "status": "PASS",
+   "v2": 172,
+   "v1": 173,
+   "gainF32": 1.149999976158142,
+   "note": "T105 section 2: the old V1=173 remains the historical identity; V2=172 is the new frozen expectation"
+  },
+  {
+   "id": "T113-EV-02",
+   "name": "strip fixtures W=128/256/1178: byteLength = 12W each (three RGBA8UI layers)",
+   "status": "PASS",
+   "fixtures": [
+    {
+     "W": 128,
+     "byteLen": 1536,
+     "actual": 1536
+    },
+    {
+     "W": 256,
+     "byteLen": 3072,
+     "actual": 3072
+    },
+    {
+     "W": 1178,
+     "byteLen": 14136,
+     "actual": 14136
+    }
+   ]
+  },
+  {
+   "id": "T113-EV-03",
+   "name": "fractional box origin/width: validX semantics follow 0<=qx0<boxWidthPx (129 valid columns at boxXPx=16.5,W=384)",
+   "status": "PASS",
+   "validCount": 129
+  },
+  {
+   "id": "T113-EV-04",
+   "name": "mirror applied exactly once: mirrored strip is the horizontal flip of the unmapped strip",
+   "status": "PASS"
+  },
+  {
+   "id": "T113-EV-05",
+   "name": "valid boundaries: j=0..127 valid (r=0..127 interior), j>=128 invalid (RGB=0,A=0)",
+   "status": "PASS",
+   "at0": 216,
+   "at127": 216,
+   "at128": 0,
+   "at129": 0,
+   "expect": "outside-native-viewport edge valid flags"
+  },
+  {
+   "id": "T113-EV-06",
+   "name": "M/multi-pixel per-column semantics: strip is evaluated per native pixel (W=256 over boxWidth=256 gives 256 entries, not 128)",
+   "status": "PASS",
+   "note": "per-pixel eval; profile still indexed by model column i=floor(r)"
+  },
+  {
+   "id": "T113-EV-07",
+   "name": "spark: ON changes only the boosted column region (blue 150 base); OFF keeps base uniform",
+   "status": "PASS",
+   "affected": 248,
+   "unaffected": 172,
+   "boostExpected": 248
+  },
+  {
+   "id": "T113-EV-08",
+   "name": "boundary patterns: exact 1.15 gain hits the .5 half boundary (173); uploaded Float32 gain lands below it (172, the T88 V2 point); clamp 248; zero 0",
+   "status": "PASS",
+   "exact": "172.5",
+   "halfF64gain": 173,
+   "uploaded": 172,
+   "zero": 0,
+   "clampHi": 248,
+   "note": "T105 section 2: half-nextDown(.5) rounding effects inherit the F64 evaluator — this is the documented 172/173 branch pair"
+  },
+  {
+   "id": "T113-RED-01",
+   "name": "RED baseline: P013BaseByteEvaluator/base_strip_uploader/stageBaseByteStrip all absent",
+   "status": "PASS",
+   "missing": [
+    "P013BaseByteEvaluator.ets"
+   ],
+   "uploaderPresent": false,
+   "stageApiPresent": false,
+   "verdict": "NOT_IMPLEMENTED (pre-test RED for T114); not a business-fix failure"
+  },
+  {
+   "id": "T113-RES-01",
+   "name": "resource contract cases registered for T114: stage/pump 65536 total budget, packet hash, late-arrival discard, lease/context, 48W+12W scratch accounting",
+   "status": "PASS",
+   "cases": [
+    "stage BaseByteStrip descriptor immutability + payloadSha256 over valid bytes",
+    "pumpBaseByteStripUploads byteBudget<=65536 shared with static material (base-priority fixed policy)",
+    "late strip request discards un-leased PENDING with discardedSerial",
+    "acquire material+strip leases atomically; CommitSceneLeaseAfterSwap single commit; any failure aborts both",
+    "context loss invalidates GPU handles, CPU immutable retained, re-verify/restore before READY",
+    "counters baseStripTextureLiveCount<=2 separate from materialTextureLiveCount<=4",
+    "illegal budget (non-finite/<=0/>65536) -> 400, zero work, cursor unchanged"
+   ]
+  }
+ ]
+}

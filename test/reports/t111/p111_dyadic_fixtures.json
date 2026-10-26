@@ -1,0 +1,27 @@
+{
+ "revision": "T111_DYADIC_ORACLE_V1",
+ "commonShift": "2148",
+ "tan30": {
+  "value": 0.5773502691896257,
+  "hex": "3fe279a74590331c"
+ },
+ "tan30NextUp": {
+  "value": 0.5773502691896258,
+  "hex": "3fe279a74590331d"
+ },
+ "t86Slope": {
+  "value": 0.5773502691896263,
+  "hex": "3fe279a745903321"
+ },
+ "subnormals": [
+  5e-324,
+  1e-323
+ ],
+ "maxDouble": 1.7976931348623157e+308,
+ "whitelist": [
+  "residual-four-term-sum",
+  "two-input-product",
+  "rate-product",
+  "directed-zero"
+ ]
+}
