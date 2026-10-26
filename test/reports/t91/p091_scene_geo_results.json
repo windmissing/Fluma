@@ -1,0 +1,192 @@
+{
+ "executionId": "p091-scene-geo-regression-v1",
+ "date": "2026-10-26",
+ "identity": {
+  "base": "T56 114a7ee",
+  "note": "current tree = 114a7ee + T78/T82 report-only commits; scene sources untouched since 114a7ee"
+ },
+ "contract": "P013_SCENE_GEOMETRY_REGRESSION_V1",
+ "results": [
+  {
+   "id": "SCENE-GEO-01-A",
+   "name": "cold start: real prepared 800x480 px used for full-box packet (no caller guess)",
+   "status": "PASS",
+   "prepare": [
+    "prepare",
+    1,
+    1
+   ],
+   "surfaceWidthPx": 800,
+   "surfaceHeightPx": 480,
+   "boxWidthPx": 800,
+   "boxHeightPx": 480,
+   "frameToken": "p011-run-1793008179937-3:2:5:1"
+  },
+  {
+   "id": "SCENE-GEO-01-B",
+   "name": "zero-size prepared surface refused (null receipt, PREPARE failure identity)",
+   "status": "PASS",
+   "failure": "PREPARE_0_undefined"
+  },
+  {
+   "id": "SCENE-GEO-01-C",
+   "name": "NaN/zero scale refused with SCENE_SCALE identity",
+   "status": "PASS",
+   "failure": "SCENE_SCALE"
+  },
+  {
+   "id": "SCENE-GEO-02-A",
+   "name": "prepare failure -> null receipt, no scene draw call",
+   "status": "PASS",
+   "failure": "PREPARE_7_surface",
+   "log": [
+    "init",
+    "prepare"
+   ]
+  },
+  {
+   "id": "SCENE-GEO-02-B",
+   "name": "surface-epoch race after prepare -> STALE_PREPARED_SURFACE, no draw",
+   "status": "PASS",
+   "failure": "STALE_PREPARED_SURFACE"
+  },
+  {
+   "id": "SCENE-GEO-02-C",
+   "name": "draw-layer failure: receipt preserved, failure=firstFailureStage, no false CURRENT",
+   "status": "PASS",
+   "failure": "SCENE_MATERIAL",
+   "presentationState": "FAULT",
+   "lastGood": "old-good"
+  },
+  {
+   "id": "SCENE-GEO-02-D",
+   "name": "STALE with compatible LastGood: staleSwap=true distinct from requestedSwap",
+   "status": "PASS",
+   "presentationState": "STALE",
+   "staleSwap": true,
+   "requestedSwap": false,
+   "lastGood": "good1"
+  },
+  {
+   "id": "SCENE-GEO-03-A",
+   "name": "scene chain: legal Float64 right-boundary sources ACCEPTED via COLUMN_PRESERVING projection (source bytes unchanged)",
+   "status": "PASS",
+   "cases": [
+    {
+     "case": "midpoint 127.99999618530273",
+     "sourceFailure": "",
+     "sourceUnchanged": true
+    },
+    {
+     "case": "127.99999999",
+     "sourceFailure": "",
+     "sourceUnchanged": true
+    }
+   ],
+   "note": "T61 proved RAW revision rejects these; T89/T62 authorized the projection branch for the scene: pre-check only rejects sources already outside the domain in Float64"
+  },
+  {
+   "id": "SCENE-GEO-03-B",
+   "name": "illegal sources (NaN/domain/mass/state/id) each rejected, slot+publication unchanged",
+   "status": "PASS",
+   "cases": [
+    {
+     "case": "NaN x",
+     "sourceFailure": "INVALID_PARTICLE",
+     "unchanged": true
+    },
+    {
+     "case": "x out of domain",
+     "sourceFailure": "INVALID_PARTICLE",
+     "unchanged": true
+    },
+    {
+     "case": "y negative",
+     "sourceFailure": "INVALID_PARTICLE",
+     "unchanged": true
+    },
+    {
+     "case": "zero mass",
+     "sourceFailure": "INVALID_PARTICLE",
+     "unchanged": true
+    },
+    {
+     "case": "bad state",
+     "sourceFailure": "INVALID_PARTICLE",
+     "unchanged": true
+    },
+    {
+     "case": "bad id",
+     "sourceFailure": "INVALID_PARTICLE",
+     "unchanged": true
+    }
+   ]
+  },
+  {
+   "id": "SCENE-GEO-03-C",
+   "name": "control: restored legal source packs OK through the same chain",
+   "status": "PASS",
+   "sourceFailure": "",
+   "particleCount": 2
+  },
+  {
+   "id": "SCENE-GEO-04-A",
+   "name": "non-integer DPI: full-box packet uses real prepared px (640x1136), fractional scale not multiplied into full-box",
+   "status": "PASS",
+   "boxWidthPx": 640,
+   "boxHeightPx": 1136,
+   "scaleApplied": "prepared"
+  },
+  {
+   "id": "SCENE-GEO-04-B",
+   "name": "offset box with fractional DPI: box px = box*scale exactly (16*3.3=52.8, 32*3.3=105.6)",
+   "status": "PASS",
+   "boxXPx": 52.8,
+   "boxYPx": 105.6,
+   "boxWidthPx": 422.4,
+   "boxHeightPx": 844.8
+  },
+  {
+   "id": "SCENE-GEO-04-C",
+   "name": "column density identity: 128 columns over full-box px regardless of DPI",
+   "status": "PASS",
+   "note": "column count fixed at 128; px-per-column scales with DPI; authoritative inverse map verified in SCENE-GEO-04-B and T61"
+  },
+  {
+   "id": "SCENE-GEO-04-D",
+   "name": "publication identity: snapshotId/physicsCommitId/frameToken carry the same commit",
+   "status": "PASS",
+   "snapshotId": 5,
+   "physicsCommitId": 5,
+   "frameToken": "p011-run-1793008180122-12:2:5:1"
+  },
+  {
+   "id": "SCENE-GEO-05-A",
+   "name": "full-scene failure with no prior good frame: lastGood null, no local partial frame substitution",
+   "status": "PASS",
+   "presentationState": "FAULT",
+   "lastGood": null,
+   "requestedSwap": false,
+   "staleSwap": false
+  },
+  {
+   "id": "SCENE-GEO-05-B",
+   "name": "sourceFailure propagates to receipt without contaminating physical publication",
+   "status": "PASS",
+   "sourceFailure": "INVALID_PARTICLE"
+  },
+  {
+   "id": "SCENE-GEO-05-C",
+   "name": "receipt exposes requested/stale/lastGood/generation fields for T68 identity accounting",
+   "status": "PASS"
+  },
+  {
+   "id": "T62-HIST",
+   "name": "historical T62 string-assertion suite: FAIL retained, marked SUPERSEDED_BY_AUTHORIZED_SCENE_MIGRATION (manager adjudication, T89 section 4); expectations NOT edited green",
+   "status": "PASS",
+   "originalSuite": "test/run_p062_render_repair_units.cjs",
+   "originalStatus": "FAIL at case 6 (submitDualFieldSurfacePx string)",
+   "adjudication": "manager ruled old entry assertions inapplicable to authorized scene/独立输入迁移 (T89)"
+  }
+ ]
+}
