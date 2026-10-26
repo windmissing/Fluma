@@ -6,7 +6,11 @@ import { WaterSandField } from './WaterSandField';
 import { defaultP011ParticleParams } from './P011ParticleM2Field';
 import { P011GestureRateClock } from './P011GestureRateClock';
 import { P011PublishedRenderState } from './P011PublishedRenderState';
+export interface P051StartReceipt { accepted: boolean; reason: string; stopGeneration: number; }
 export class P051EmptySandDemo {
+  private stopped: number = 0;
+  get sourceHeld(): boolean { return this.touching; }
+  get stopGeneration(): number { return this.stopped; }
   diagnostics: P051DiagnosticBuffer | null = null;
   diagnosticFrame: number = 0; private diagnosticTime: number = 0; private diagnosticStaleCount: number = 0;
   private observe(kind: string, reason: string = '', x: number = this.x, y: number = this.y): void {
@@ -29,17 +33,25 @@ export class P051EmptySandDemo {
     this.sequence = 0; this.failed=false;this.input=null;this.field.setTilt(0);this.field.setShakeInput(0);
   }
   setDiagnosticInputTime(timeMs: number): void {this.diagnosticTime=timeMs;}
-  start(x: number, y: number): void {
-    if (!this.active || this.failed) return;
-    this.observe('model.start','',x,y);
-    this.move(x,y); this.touching = true; this.clock.begin();
+  start(x: number, y: number): P051StartReceipt {
+    const reason = !this.active ? 'INACTIVE' : this.failed ? 'FAILED' :
+      !Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x >= 128 || y < 0 || y > 256 ? 'OUT_OF_DOMAIN' :
+      this.touching ? 'ALREADY_HELD' : 'ACCEPTED';
+    this.observe('model.start',reason,x,y);
+    if (reason !== 'ACCEPTED') return {accepted:false,reason:reason,stopGeneration:this.stopped};
+    this.x=x;this.y=y;this.touching=true;this.clock.begin();
+    return {accepted:true,reason:reason,stopGeneration:this.stopped};
   }
   move(x: number, y: number): void {
-    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-    this.observe('model.move','',x,y);
-    this.x = x; this.y = y;
+    if (!this.touching) return;
+    if (!Number.isFinite(x) || !Number.isFinite(y) || x<0 || x>=128 || y<0 || y>256) { this.stop('OUT_OF_DOMAIN');return; }
+    this.observe('model.move','',x,y);this.x=x;this.y=y;
   }
-  stop(reason: string = 'unspecified'): void { this.observe('model.stop',reason); this.touching = false; this.clock.stop(); this.field.clearGestureSandQueue(); }
+  stop(reason: string = 'unspecified'): void {
+    this.observe('model.stop',reason);
+    if(this.touching)this.stopped++;
+    this.touching=false;this.clock.stop();this.field.clearGestureSandQueue();
+  }
   setActive(active: boolean): void { this.active = active; if (!active) { this.stop('inactive');this.field.setShakeInput(0);this.input=null; } }
   tick(frameTimeNs: number, dt: number): boolean {
     this.diagnosticTime=frameTimeNs/1000000;this.diagnosticFrame++;

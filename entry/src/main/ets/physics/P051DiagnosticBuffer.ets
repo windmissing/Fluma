@@ -1,5 +1,9 @@
 // T72 passive, bounded diagnostic stream. No clocks/setters/physics getters with side effects.
 export interface P051DiagnosticEvent {
+  inputRevision?: string; geometryEpoch?: number; inputGeneration?: number; gestureId?: number;
+  eventOrdinal?: number; pointerId?: number; changedCount?: number; touchCount?: number;
+  widthVp?: number; heightVp?: number; foreground?: boolean; geometryReady?: boolean;
+  rawTimestamp?: number; timestampUnit?: string; pageFrame?: number; sourceApiRevision?: string;
   kind: string; runId: string; commit: number; frame: number; time: number;
   x?: number; y?: number; source?: string; reason?: string; sequence?: number;
   staleCount?: number; sensorCount?: number; value?: number; requested?: number; admitted?: number; code?: number; swap?: boolean;

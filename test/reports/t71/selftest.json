@@ -1,0 +1,18 @@
+{
+  "suite": "T71 touch adapter real model",
+  "passed": 11,
+  "failed": 0,
+  "cases": [
+    "one Down/hold without Move produces real source; second Down does not restart clock",
+    "Move-only no source; non-primary Up ignored and primary Move searches ID",
+    "empty Cancel and ambiguous release fail closed",
+    "unmeasured/invalid/right boundary rejected; center and exact column map",
+    "missing primary stops; no handover",
+    "hide/reset/resize invalidate and require fresh Down",
+    "epoch change gate stops and stale internal stop synchronizes adapter",
+    "failed start never HELD, duplicate start does not reset clock",
+    "diagnostic enabled/disabled fields pool and identities identical",
+    "source success survives subsequent step failure; adapter observes failed model stop",
+    "release then long gap never catches up; fresh Down first sample zero"
+  ]
+}

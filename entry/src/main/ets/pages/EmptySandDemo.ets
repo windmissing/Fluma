@@ -1,3 +1,4 @@
+import { P051TouchSourceAdapter, P051InputGeometry, P051TouchPoint } from '../physics/P051TouchSourceAdapter';
 import { P051DiagnosticBuffer } from '../physics/P051DiagnosticBuffer';
 import sensor from '@ohos.sensor';
 import { P051GravityInputAdapter, P051GravityConfig } from '../physics/P051GravityInputAdapter';
@@ -41,6 +42,8 @@ struct EmptySandDemo {
     }
   }
   private model: P051EmptySandDemo = new P051EmptySandDemo();
+  private touchSource: P051TouchSourceAdapter = new P051TouchSourceAdapter(this.model,this.diagnostics);
+  private inputGeometry: P051InputGeometry = {revision:'P051_TOUCH_INPUT_ENGINEERING_V1',geometryEpoch:1,widthVp:0,heightVp:0,ready:false};
   private renderer: P013RenderController = new P013RenderController();
   private publication: P011PublishedRenderState = this.model.createPublication();
   private callback: EmptySandFrame = new EmptySandFrame();
@@ -60,6 +63,7 @@ struct EmptySandDemo {
   }
   private syncActive(): void {
     this.running = this.pageShown && this.foreground; this.previousNs = 0;
+    if(!this.running)this.touchSource.invalidate('PAGE_INACTIVE');
     this.model.setActive(this.running); this.renderer.setActive(this.running); this.updateSensor();
     if (this.running) this.schedule();
   }
@@ -73,7 +77,7 @@ struct EmptySandDemo {
     const input=this.gravity.latest(p013NowMs());
     if (input !== null) this.model.applyDefinedInput(input);
     this.model.diagnosticFrame=this.serial;
-    const ok = this.model.tick(ns,dt);
+    const ok = this.model.tick(ns,dt);this.touchSource.sync();
     if (!ok) { this.model.stop('page-physics-failed');this.flushDiagnostics(); this.status = '物理提交失败：'+this.model.field.getLastError(); this.schedule(); return; }
     if (this.model.field.copyPublishedRenderStateInto(this.publication) === 'OK') {
       const context: P012FrameContext = {
@@ -98,27 +102,36 @@ struct EmptySandDemo {
     this.flushDiagnostics();this.schedule();
   }
   private touch(event: TouchEvent): void {
-    this.model.setDiagnosticInputTime(event.timestamp/1e6);
-    this.diagnostic('touch',event.timestamp/1e6,`${event.type}`,event.touches.length?event.touches[0].x:0,event.touches.length?event.touches[0].y:0);
-    if (event.type === TouchType.Up || event.type === TouchType.Cancel) { this.model.stop(event.type===TouchType.Up?'up':'cancel');this.flushDiagnostics(); return; }
-    if (event.touches.length === 0) return;
-    const point = event.touches[0];
-    const x = point.x/this.surfaceWidth*128, y = (1-point.y/this.surfaceHeight)*256;
-    if (event.type === TouchType.Down) this.model.start(x,y);
-    else if (event.type === TouchType.Move) this.model.move(x,y);
+    const touches: P051TouchPoint[]=[],changed: P051TouchPoint[]=[];
+    for(const p of event.touches)touches.push({id:p.id,x:p.x,y:p.y});
+    for(const p of event.changedTouches)changed.push({id:p.id,x:p.x,y:p.y});
+    this.touchSource.handle({type:event.type===TouchType.Down?'DOWN':event.type===TouchType.Move?'MOVE':event.type===TouchType.Up?'UP':'CANCEL',
+      touches:touches,changedTouches:changed,timestamp:event.timestamp},this.inputGeometry,this.running,this.serial);
+    this.flushDiagnostics();
+  }
+  private measureInput(area: Area): void {
+    const w=Number(area.width),h=Number(area.height);
+    if(this.inputGeometry.ready && w===this.surfaceWidth && h===this.surfaceHeight)return;
+    this.touchSource.invalidate('GEOMETRY_CHANGED');
+    this.surfaceWidth=w;this.surfaceHeight=h;this.geometryEpoch++;
+    this.inputGeometry={revision:'P051_TOUCH_INPUT_ENGINEERING_V1',geometryEpoch:this.geometryEpoch,widthVp:w,heightVp:h,
+      ready:Number.isFinite(w)&&Number.isFinite(h)&&w>0&&h>0};
   }
   build() {
     Column({space:8}) {
       Text('空容器落沙 DEMO').fontSize(20)
       Text(this.status).fontSize(12)
       Text('倾斜/摇动影响重力方向；强度参数 NOT_CALIBRATED').fontSize(12)
-      Button('重置为空场').onClick(() => { this.gravity.reset();this.model.reset(); this.publication=this.model.createPublication(); this.previousNs=0; })
+      Button('重置为空场').onClick(() => { this.touchSource.invalidate('RESET');this.gravity.reset();this.model.reset(); this.publication=this.model.createPublication(); this.previousNs=0; })
       Stack() {
         XComponent({id:'p013_lmat_surface',type:XComponentType.TEXTURE,libraryname:'p013renderer'})
           .width('100%').height('100%').onLoad(() => this.renderer.onLoad())
-          .onAreaChange((_old: Area, area: Area) => { this.surfaceWidth=Number(area.width);this.surfaceHeight=Number(area.height);this.geometryEpoch++; })
+          .hitTestBehavior(HitTestMode.None)
+        // Input-only node: no background, opacity, texture, or drawing.
+        Stack() {}.width('100%').height('100%').hitTestBehavior(HitTestMode.Block)
           .onTouch((event: TouchEvent) => this.touch(event))
-      }.width('92%').layoutWeight(1).backgroundColor('#E7E4DC')
+      }.onAreaChange((_old: Area, area: Area) => this.measureInput(area))
+        .width('92%').layoutWeight(1)
 
     }.width('100%').height('100%').padding({top:16,bottom:24}).backgroundColor('#F6F3EC')
   }
