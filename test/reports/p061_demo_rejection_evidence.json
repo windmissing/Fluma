@@ -1,0 +1,571 @@
+{
+ "executionId": "p061-demo-rejection-evidence-v1",
+ "date": "2026-10-26",
+ "generatedBy": "test/p061_demo_rejection_evidence.cjs",
+ "scope": "T61 objective evidence for T52 F1/F2 rejection paths (T60 attribution §5)",
+ "status": "EVIDENCE_ONLY / NOT_A_FIX / NOT_A_PASS_OF_THE_PRODUCT / DEVICE_FACTS_ABSENT",
+ "sourceIdentity": {
+  "controllerSha256": "b401a91b4f9f7242125a3386d19df750eb1198f7af495ba08d4b3a9ae53449a0",
+  "adapterSha256": "cf6bbc3ef4cd0b1332341fbcbfce11a91497c4b82ba5f3b5369dee90b06d8634",
+  "demoModelSha256": "25c97740b63be97ee034340e889f30240a971b4aaf67f89c78921ae5f0317614",
+  "particleHotSha256": "895d795eb55f29acc2df5fcc8d8d6826d9c021db24fa47cb2d4d8102e14ddcd5",
+  "particleFieldSha256": "dbc67379ccf6a52e07c527362c19698e34fddf2540b3ed6b240324d89b27545c",
+  "napiBridgeSha256": "2e50e4342d6b02297f358467db1d993ac24227d15fa8156be07ccbcf7a085791",
+  "identityNote": "All six hashes match test/artifacts/t52-empty-sand-demo-20261025/source-sha256.txt and the current working tree; fixtures run the exact T52 build bytes."
+ },
+ "syntheticSurfaces": "All native sizes are stub values (marked per record). No 1280x2832 screen size is ever used as an XComponent surface size.",
+ "results": [
+  {
+   "id": "T61-F1-A01",
+   "name": "pre-surface + fractional logical Area rejects NONUNIFORM_SCALE before native draw, interlocked across frames",
+   "status": "PASS",
+   "kind": "F1-startup-interlock",
+   "synthetic": "logical Area values are synthetic; native sizes are stub pre-surface state",
+   "expectedSurfaceSize": "MISSING — device-only fact not recoverable from T52 artifacts",
+   "perFrame": [
+    {
+     "frame": 0,
+     "returnedNull": true,
+     "dualFailure": "NONUNIFORM_SCALE",
+     "nativeDrawCalled": false,
+     "drawCallsSoFar": 0,
+     "getStateCallsSoFar": 2,
+     "lastPresentedCommit": 0
+    },
+    {
+     "frame": 1,
+     "returnedNull": true,
+     "dualFailure": "NONUNIFORM_SCALE",
+     "nativeDrawCalled": false,
+     "drawCallsSoFar": 0,
+     "getStateCallsSoFar": 3,
+     "lastPresentedCommit": 0
+    },
+    {
+     "frame": 2,
+     "returnedNull": true,
+     "dualFailure": "NONUNIFORM_SCALE",
+     "nativeDrawCalled": false,
+     "drawCallsSoFar": 0,
+     "getStateCallsSoFar": 4,
+     "lastPresentedCommit": 0
+    },
+    {
+     "frame": 3,
+     "returnedNull": true,
+     "dualFailure": "NONUNIFORM_SCALE",
+     "nativeDrawCalled": false,
+     "drawCallsSoFar": 0,
+     "getStateCallsSoFar": 5,
+     "lastPresentedCommit": 0
+    },
+    {
+     "frame": 4,
+     "returnedNull": true,
+     "dualFailure": "NONUNIFORM_SCALE",
+     "nativeDrawCalled": false,
+     "drawCallsSoFar": 0,
+     "getStateCallsSoFar": 6,
+     "lastPresentedCommit": 0
+    }
+   ],
+   "conclusion": "Code path proven: width/height fallback rounds each axis independently; |sx−sy|>1e-6 rejects before native draw; EGL surface never created; next frame still widthPx=0 (interlock reproduced in real controller)"
+  },
+  {
+   "id": "T61-F1-B01",
+   "name": "matching integer surface/logical sizes pass scale gate and reach native draw",
+   "status": "PASS",
+   "kind": "F1-uniform-passthrough",
+   "synthetic": "stub reports post-surface EGL size",
+   "drawCalled": true,
+   "lastPresentedCommit": 4
+  },
+  {
+   "id": "T61-F1-C01",
+   "name": "true non-uniform logical/surface mismatch keeps NONUNIFORM_SCALE protection",
+   "status": "PASS",
+   "kind": "F1-nonuniform-guard",
+   "synthetic": "stub surface 800x480 vs logical 800x300"
+  },
+  {
+   "id": "T61-F1-D01",
+   "name": "fractional logical axes vs integer surface give unequal sx/sy (independent rounding), rejected before draw",
+   "status": "PASS",
+   "kind": "F1-rounding-gap",
+   "synthetic": "logical Area synthetic; surface size stubbed",
+   "sx": 1.0005002501250626,
+   "sy": 0.9991673605328893,
+   "ratioGap": 0.0013328895921732586,
+   "exceedsEps": true,
+   "drawCalled": false
+  },
+  {
+   "id": "T61-F1-E01",
+   "name": "bordered outer Stack measurement (804x484) vs real XComponent surface (800x480) rejected",
+   "status": "PASS",
+   "kind": "F1-node-mismatch",
+   "synthetic": "border deltas synthetic"
+  },
+  {
+   "id": "T61-F1-E02",
+   "name": "same-node content-area measurement passes and reaches draw",
+   "status": "PASS",
+   "kind": "F1-node-match",
+   "drawCalled": true
+  },
+  {
+   "id": "T61-F1-F01",
+   "name": "interlock clears only when a real surface size appears; until then every frame rejects",
+   "status": "PASS",
+   "kind": "F1-interlock-release",
+   "synthetic": "second frame simulates surface now available"
+  },
+  {
+   "id": "T61-F2-A01",
+   "name": "legal Float64 right-boundary sources (<128) fround to 128 and are rejected by the real adapter",
+   "status": "PASS",
+   "kind": "F2-float32-boundary",
+   "synthetic": "pool x values are synthetic probes on a real field publication",
+   "sourceLegalInFloat64": true,
+   "uploadDomainX": "[0,128)",
+   "midpointNote": "midpoint(127.99999237060547,128)=127.99999618530273; sources at/above it round to 128",
+   "rows": [
+    {
+     "x64": 127.99999999,
+     "xF32": 128,
+     "quantizesTo128": true,
+     "code": "INVALID_PARTICLE",
+     "rejected": true
+    },
+    {
+     "x64": 127.999999999,
+     "xF32": 128,
+     "quantizesTo128": true,
+     "code": "INVALID_PARTICLE",
+     "rejected": true
+    },
+    {
+     "x64": 127.9999999999,
+     "xF32": 128,
+     "quantizesTo128": true,
+     "code": "INVALID_PARTICLE",
+     "rejected": true
+    },
+    {
+     "x64": 127.99999618530273,
+     "xF32": 128,
+     "quantizesTo128": true,
+     "code": "INVALID_PARTICLE",
+     "rejected": true
+    }
+   ],
+   "publicationUnchanged": false,
+   "packetUnchanged": true,
+   "yDomain": "Y∈[0,512] closed; 256 is exactly representable in Float32 (no boundary gap on this fixture)",
+   "deviceFirstRejectedSlot": "MISSING — T52 artifacts contain no per-slot snapshot; device-only fact"
+  },
+  {
+   "id": "T61-F2-B01",
+   "name": "Y closed-domain boundary: y=512 and just-below values are legal (no Float32 gap at representable 512); y>512 rejected",
+   "status": "PASS",
+   "kind": "F2-y-boundary",
+   "synthetic": "y probes synthetic on real publication",
+   "rows": [
+    {
+     "y64": 512,
+     "yF32": 512,
+     "code": "OK",
+     "rejectedAsExpected": true
+    },
+    {
+     "y64": 511.9999999999999,
+     "yF32": 512,
+     "code": "OK",
+     "rejectedAsExpected": true
+    },
+    {
+     "y64": 511.99999999,
+     "yF32": 512,
+     "code": "OK",
+     "rejectedAsExpected": true
+    }
+   ],
+   "note": "capacity=512 in this fixture; the DEMO field is 256 — also exactly representable"
+  },
+  {
+   "id": "T61-F2-C01",
+   "name": "state neither 1 nor 2",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "state∈{1,2}",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 3,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C02",
+   "name": "phase > 1",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "phase≤1",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 2,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C03",
+   "name": "mass NaN",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "mass finite",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": null,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": null
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C04",
+   "name": "mass non-positive",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "mass>0",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C05",
+   "name": "x NaN",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "x finite",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": null,
+    "y64": 100,
+    "xF32": null,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C06",
+   "name": "x negative",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "x≥0",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": -0.5,
+    "y64": 100,
+    "xF32": -0.5,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C07",
+   "name": "x beyond 128 in Float64",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "fround(x)<128",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 128.5,
+    "y64": 100,
+    "xF32": 128.5,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C08",
+   "name": "y negative",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "y≥0",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": -1,
+    "xF32": 64.23646545410156,
+    "yF32": -1,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C09",
+   "name": "y beyond capacity",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "fround(y)≤capacity",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 600,
+    "xF32": 64.23646545410156,
+    "yF32": 600,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C10",
+   "name": "particleId 0",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "id≥1",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 0,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C11",
+   "name": "particleId beyond uint32",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "id≤0xffffffff",
+   "actualCode": "INVALID_PARTICLE",
+   "expectedReject": "INVALID_PARTICLE",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 0,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C12",
+   "name": "duplicate id across live slots",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "id unique among live slots",
+   "actualCode": "DUPLICATE_ID",
+   "expectedReject": "DUPLICATE_ID",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C13",
+   "name": "liveCount inconsistency",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "liveCount consistent",
+   "actualCode": "CAPACITY_MISMATCH",
+   "expectedReject": "CAPACITY_MISMATCH",
+   "firstRejectedSlot": 0,
+   "firstSlot": {
+    "pId": 1,
+    "state": 1,
+    "phase": 0,
+    "mass": 0.1,
+    "x64": 64.23646349661914,
+    "y64": 100,
+    "xF32": 64.23646545410156,
+    "yF32": 100,
+    "massF32": 0.10000000149011612
+   },
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-C14",
+   "name": "publication token mismatch rejects without packet writes",
+   "status": "PASS",
+   "kind": "F2-predicate",
+   "expectedPredicate": "field/context/publication commit equal",
+   "actualCode": "PUBLICATION_MISMATCH",
+   "publicationUnchanged": true,
+   "packetUnchanged": true
+  },
+  {
+   "id": "T61-F2-D01",
+   "name": "rejected pack leaves previous valid packet byte-identical; restored source repacks identically",
+   "status": "PASS",
+   "kind": "F2-packet-atomicity",
+   "packetUnchangedThroughRejection": true,
+   "repackIdentical": true,
+   "goodMetaDigest": "8dd0bc0e"
+  },
+  {
+   "id": "T61-F2-E01",
+   "name": "real-model rightward trajectory: does any particle reach the Float32 quantization boundary?",
+   "status": "PASS",
+   "kind": "F2-trajectory-probe",
+   "synthetic": "offline physics run, no device",
+   "reachedBoundary": null,
+   "maxObserved": {
+    "step": 399,
+    "maxX64": 127.99500493305806,
+    "maxXF32": 127.99500274658203
+   },
+   "note": "Observation probe, not a criterion: records whether the T60 §4.1 quantization family is reachable from normal DEMO dynamics on this fixture",
+   "rowsSampled": 399,
+   "lastRows": [
+    {
+     "step": 395,
+     "maxX64": 126.99500493305806,
+     "maxXF32": 126.99500274658203
+    },
+    {
+     "step": 396,
+     "maxX64": 127.99500493305806,
+     "maxXF32": 127.99500274658203
+    },
+    {
+     "step": 397,
+     "maxX64": 127.99500493305806,
+     "maxXF32": 127.99500274658203
+    },
+    {
+     "step": 398,
+     "maxX64": 127.99500493305806,
+     "maxXF32": 127.99500274658203
+    },
+    {
+     "step": 399,
+     "maxX64": 127.99500493305806,
+     "maxXF32": 127.99500274658203
+    }
+   ]
+  }
+ ],
+ "summary": {
+  "total": 25,
+  "pass": 25,
+  "fail": 0,
+  "error": 0,
+  "f1": {
+   "verdict": "T60 §3.1 startup-interlock path reproduced with the real controller: pre-surface state rejects NONUNIFORM_SCALE before native draw on every frame; uniform passthrough and guards behave as specified.",
+   "deviceSurfaceSize": "MISSING"
+  },
+  "f2": {
+   "verdict": "Every INVALID_PARTICLE OR-branch reproduced against the real adapter with first-slot provenance; legal Float64 right-boundary sources fround to 128 and are rejected; packets and publications byte-identical across rejections.",
+   "deviceFirstRejectedSlot": "MISSING"
+  },
+  "handoff": "T62 may implement the F1 geometry fix and the COLUMN_PRESERVING_F32_RENDER_V1 projection on the strength of these reproduced code paths; device confirmation of which branch fired on T52 remains a manager-gated device retest (T63)."
+ }
+}
