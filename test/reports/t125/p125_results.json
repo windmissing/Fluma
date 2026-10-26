@@ -1,0 +1,151 @@
+{
+ "executionId": "p125-dyadic-oracle-v2",
+ "date": "2026-10-26",
+ "targetModuleCommit": "db1be20",
+ "contract": "T120 sections 1/3 + T104 sections 2/7",
+ "results": [
+  {
+   "id": "T125-V2-01",
+   "name": "real bit patterns: H/nextUp/nextDown/T100raw/T111synthetic decode independently; ULP counts 0/+1/-1/+4/+5",
+   "status": "PASS",
+   "H_hex": "3fe279a74590331c",
+   "t100ULPs": 4,
+   "t111ULPs": 5,
+   "ulpH": 1.1102230246251565e-16,
+   "note": "T120 §1: raw T86 edge = 3320 (+4 ULP real); 3321 is the T111 synthetic (+5 ULP); 331d is the true nextUp"
+  },
+  {
+   "id": "T125-V2-02",
+   "name": "mechanical nextUp(H)=331d, nextDown(H)=331b (bit-exact, not synthetic H+5e-16)",
+   "status": "PASS",
+   "mechUp": "3fe279a74590331d",
+   "mechDown": "3fe279a74590331b"
+  },
+  {
+   "id": "T125-V2-03",
+   "name": "counterexample A: exact residual 1-2^-54 > nextDown(1) (must REJECT) while RN(1-2^-54)=1 hides the excess; exact and RN decisions differ on value identity",
+   "status": "PASS",
+   "exactResidualUnits": "40966672143876729871069096027944507364393590655076912357153106201744273647724686608802258958050897554326824895079895470042543851171580453583758585559057245322833539474206120308874569118019196740209889081112540624344008207086593407225629100018982300986911733129578480128185425101447008159471931643812571899354215121420242794942779208571223879138483161799737103383745975311498682818572344165628581982912172918325510127052014788708078902748527779313533692185457563799696738547939877728166136187281276645474639596431354352366195543797020691552546089697988368067948692188695413027969409372664453286389265147167676725809468026854490130714898041847939072",
+   "Hn": 0.9999999999999999,
+   "rnOfDiff": 1,
+   "note": "T120 §3 case 1: precise residual 1-2^-54 is greater than H; RN-first pipeline computes 1 and the excess disappears"
+  },
+  {
+   "id": "T125-V2-04",
+   "name": "counterexample B: exact 1-2^-54-2^-54 = nextDown(1) exactly → ACCEPT; RN-first double-rounding yields 1 → REJECT; the two predicates disagree",
+   "status": "PASS",
+   "exactEqH": true,
+   "rnResidual": 1,
+   "note": "T120 §3 case 2: distinguishes exact stored-value predicate from RN-then-subtract pipeline"
+  },
+  {
+   "id": "T125-V2-05",
+   "name": "real T86/T100 edge (+4 ULP raw) rejected under exact stored-value compare with hardMax=tan30(331c); no 4ULP allowance exists",
+   "status": "PASS",
+   "diffULPs": 5200308914369312,
+   "note": "T104 §8/T120 §1: 4ULP is a descriptive count of the historical overshoot, never an allowed domain"
+  },
+  {
+   "id": "T125-V2-06",
+   "name": "certifier four-term residual: edges exactly ±H legal; one edge +H+1ULP(2^-52) rejected (STRICT_EDGE) — exact boundary, no epsilon",
+   "status": "PASS",
+   "r1": "OK",
+   "r2": "STRICT_EDGE",
+   "r2firstEdge": 0,
+   "edgeExact": true,
+   "excessPositive": true,
+   "note": "expectations derived from independent BigInt oracle; base-1 binade used because ulp(24) is too coarse to store H exactly; snapshots taken because verifySandTop returns a shared certificate object"
+  },
+  {
+   "id": "T125-V2-07",
+   "name": "product materialization: 1×H=H exact equal; H×2=2H equal; 0.1×0.1 vs 0.01 decided by independent exact arithmetic (nonzero or zero per oracle, production must match)",
+   "status": "PASS",
+   "g1": 0,
+   "g2": 0,
+   "g3": 1,
+   "oracleG3": 1,
+   "note": "OR-03 gap closed: product is materialized and compared against the unit-aligned third operand"
+  },
+  {
+   "id": "T125-V2-08",
+   "name": "capacity edges: max×max in capacity (positive sign), subnormal×subnormal exact at −2148 exponent, 8-term worst-case sum OK",
+   "status": "PASS",
+   "gMax": 1,
+   "gSub": 1,
+   "g8": 0,
+   "note": "OR-07 gap closed: highest-bit/carry structure checked against real max inputs and the −2148 minimum exponent"
+  },
+  {
+   "id": "T125-V2-09",
+   "name": "non-finite rejected across sum/product/rate paths (NON_FINITE, no sign pass-through)",
+   "status": "PASS",
+   "gN1": "NON_FINITE",
+   "gN2": "NON_FINITE",
+   "gN3": "NON_FINITE"
+  },
+  {
+   "id": "T125-V2-10",
+   "name": "rate gate: exact |theta-before| vs omega×dt on boundary/inside/+1ULP/dt=0/omega=0/±0 — all signs match independent oracle",
+   "status": "PASS",
+   "signs": [
+    0,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0
+   ],
+   "oracle": [
+    0,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0
+   ],
+   "note": "OR-05/OR-09 gap closed: real boundary matrix, signed-zero targets, exact diff (not RN diff)"
+  },
+  {
+   "id": "T125-V2-11",
+   "name": "±0 normalization inside four-term sum: (+0)-(-0) and (-0)-(+0) both sign 0",
+   "status": "PASS",
+   "gz1": 0,
+   "gz2": 0
+  },
+  {
+   "id": "T125-V2-12",
+   "name": "whitelist boundary: unsupportedExpression() really returns ARITHMETIC_EXPRESSION_UNSUPPORTED (typed, not hardcoded true)",
+   "status": "PASS",
+   "code": "ARITHMETIC_EXPRESSION_UNSUPPORTED",
+   "note": "OR-09 gap closed: the whitelist rejection path is actually exercised"
+  },
+  {
+   "id": "T125-V2-13",
+   "name": "module identity: both strict-state files exist on disk AND load/instantiate (T112 db1be20 delivered); RED discipline distinguishes fs-absence from load-failure",
+   "status": "PASS",
+   "present": [
+    {
+     "f": "entry/src/main/ets/physics/P011ExactDyadic.ets",
+     "exists": true
+    },
+    {
+     "f": "entry/src/main/ets/physics/P011StateCertificate.ets",
+     "exists": true
+    }
+   ],
+   "loaded": true,
+   "note": "T120 §3: RED phase used bare require; future runs must classify fs-missing vs compile/load error"
+  },
+  {
+   "id": "T125-V2-14",
+   "name": "V1 frozen fixture preservation: fixture nextUp hex is the true 331d (the wrong 320 label was report text only); synthetic 3321 kept distinct from real raw 3320; V1 files untouched",
+   "status": "PASS",
+   "v1nextUp": "3fe279a74590331d",
+   "v1t86Slope": "3fe279a745903321",
+   "revision": "T111_DYADIC_ORACLE_V1",
+   "note": "T120 §1: fixture bit patterns were already correct raw values; only report text mislabeled them"
+  }
+ ]
+}

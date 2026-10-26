@@ -1,0 +1,45 @@
+{
+ "revision": "T125_DYADIC_ORACLE_V2",
+ "supersedesNotes": "T120 §1 identities; V1 fixtures preserved at test/reports/t111/",
+ "identities": {
+  "H": {
+   "hex": "3fe279a74590331c",
+   "ulpOffset": 0
+  },
+  "nextUp": {
+   "hex": "3fe279a74590331d",
+   "ulpOffset": 1
+  },
+  "nextDown": {
+   "hex": "3fe279a74590331b",
+   "ulpOffset": -1
+  },
+  "t100RawRealEdge": {
+   "hex": "3fe279a745903320",
+   "ulpOffset": 4,
+   "kind": "REAL_T86_T100_EDGE"
+  },
+  "t111Synthetic": {
+   "hex": "3fe279a745903321",
+   "ulpOffset": 5,
+   "kind": "T111_SYNTHETIC_H_PLUS_5E_MINUS16"
+  }
+ },
+ "counterexamples": {
+  "caseA": {
+   "Sright": 1,
+   "Sleft": "2^-54",
+   "u": 0,
+   "H": "nextDown(1)",
+   "verdict": "exact REJECT / RN hides excess"
+  },
+  "caseB": {
+   "Sright": 1,
+   "Sleft": "2^-54",
+   "u": "2^-54",
+   "H": "nextDown(1)",
+   "verdict": "exact ACCEPT(=H) / RN-first REJECT"
+  }
+ },
+ "commonShift": "2148"
+}
