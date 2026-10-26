@@ -1,3 +1,4 @@
+import { P011TiltPreviewTrace } from './P011TiltPreviewTrace';
 /**
  * P-011 architecture §20 / v2.14 dynamic tilt feasibility planning pass.
  * Implements the two-pass, three-candidate control law of §20.2/§20.6:
@@ -192,7 +193,7 @@ export interface P011CandidateDecision {
 export function p011DecideCandidate(thetaCandidate: number,
   g0: Float64Array, deltaS: Float64Array, hardMax: number,
   dt: number, thetaBefore: number, maxTiltOmega: number,
-  targetTilt: number): P011CandidateDecision {
+  targetTilt: number, trace: P011TiltPreviewTrace | null = null): P011CandidateDecision {
   const cols = g0.length;
   let loSlope = Number.NEGATIVE_INFINITY;
   let hiSlope = Number.POSITIVE_INFINITY;
@@ -201,6 +202,9 @@ export function p011DecideCandidate(thetaCandidate: number,
     const gNext = g0[c + 1] - g0[c] + (deltaS[c + 1] - deltaS[c]);
     const interval = p011EdgeSlopeInterval(gNext, hardMax);
     if (interval === null) {
+      trace?.edge(c,g0[c+1]-g0[c],deltaS[c+1]-deltaS[c],gNext,Number.NaN,Number.NaN,loSlope,hiSlope,c);
+      trace?.decision(Number.NaN,Number.NaN,thetaBefore-maxTiltOmega*dt,thetaBefore+maxTiltOmega*dt,
+        Math.min(thetaBefore,targetTilt),Math.max(thetaBefore,targetTilt),null,null,false,null,thetaCandidate,P011_PLANNING_PASS_ANGLE_EPS);
       return {
         feasible: false,
         thetaClamped: null,
@@ -219,8 +223,11 @@ export function p011DecideCandidate(thetaCandidate: number,
       hiSlope = interval[1];
       limitingEdge = c;
     }
+    trace?.edge(c,g0[c+1]-g0[c],deltaS[c+1]-deltaS[c],gNext,interval[0],interval[1],loSlope,hiSlope,limitingEdge);
   }
   if (!(loSlope <= hiSlope)) {
+    trace?.decision(loSlope,hiSlope,thetaBefore-maxTiltOmega*dt,thetaBefore+maxTiltOmega*dt,
+      Math.min(thetaBefore,targetTilt),Math.max(thetaBefore,targetTilt),null,null,false,null,thetaCandidate,P011_PLANNING_PASS_ANGLE_EPS);
     return {
       feasible: false,
       thetaClamped: null,
@@ -237,6 +244,7 @@ export function p011DecideCandidate(thetaCandidate: number,
   const loAngle = Math.max(Math.atan(loSlope) * 180 / Math.PI, stepLo, directedLo);
   const hiAngle = Math.min(Math.atan(hiSlope) * 180 / Math.PI, stepHi, directedHi);
   if (loAngle > hiAngle + P011_PLANNING_PASS_ANGLE_EPS) {
+    trace?.decision(loSlope,hiSlope,stepLo,stepHi,directedLo,directedHi,loAngle,hiAngle,false,null,thetaCandidate,P011_PLANNING_PASS_ANGLE_EPS);
     return {
       feasible: false,
       thetaClamped: null,
@@ -246,6 +254,7 @@ export function p011DecideCandidate(thetaCandidate: number,
     };
   }
   const clamped = Math.max(loAngle, Math.min(hiAngle, thetaCandidate));
+  trace?.decision(loSlope,hiSlope,stepLo,stepHi,directedLo,directedHi,loAngle,hiAngle,true,normalizeZero(clamped),thetaCandidate,P011_PLANNING_PASS_ANGLE_EPS);
   return {
     feasible: true,
     thetaClamped: normalizeZero(clamped),
@@ -345,6 +354,34 @@ function blockedResult(input: P011TiltFeasibilityInput, reason: string,
 }
 
 export class P011TiltPlanningPassService {
+  trace: P011TiltPreviewTrace | null = null;
+  private previewAt(delegate: P011PlanningPassDelegate, theta: number, role: string): P011ChannelPlan[] | null {
+    this.trace?.begin(role,theta);
+    return delegate.previewAt(theta);
+  }
+  private capturePlans(plans: P011ChannelPlan[], delta: Float64Array): void {
+    if(this.trace===null || this.trace.current===null)return;
+    try {this.trace.current.deltaS=Array.from(delta);
+      for(const p of plans)this.trace.current.channels.push({channelId:p.channelId,deltaSandTop:Array.from(p.deltaSandTopByColumn)});
+    }catch(e){this.trace.incomplete();}
+  }
+  private seal(result: P011TiltFeasibilityResult): void {
+    if(this.trace===null)return;
+    try {this.trace.resultStatus=result.status;this.trace.blockedReason=result.blockedReason;
+      for(const role of ['REQUESTED','CLAMPED','OLD']){
+        let executed=false;for(const c of this.trace.candidates)if(c.role===role)executed=true;
+        if(!executed){
+          const first=this.trace.candidates.length?this.trace.candidates[0]:null;
+          const reason=this.trace.candidates.length===0?'PREVIEW_GATE_'+result.blockedReason:
+            result.passCount===1?'REQUESTED_'+result.status:
+            role==='CLAMPED' && first!==null && first.decision!==null && !first.decision.feasible?'REQUESTED_INTERVAL_INFEASIBLE':
+            'PRIOR_CANDIDATE_'+result.status;
+          this.trace.notExecuted.push(role+':'+reason);
+        }
+      }
+      this.trace.current=null;
+    }catch(e){this.trace.incomplete();}
+  }
   private delegate: P011PlanningPassDelegate | null = null;
   private lastCommitted: P011PlanningPassPreview | null = null;
 
@@ -372,16 +409,18 @@ export class P011TiltPlanningPassService {
     const thetaRequested = input.targetTilt >= input.thetaBefore
       ? Math.min(input.targetTilt, input.thetaBefore + maxStep)
       : Math.max(input.targetTilt, input.thetaBefore - maxStep);
+    if(this.trace!==null)try{this.trace.requested=thetaRequested;}catch(e){this.trace.incomplete();}
     // PASS 1: preview at thetaRequested.
     const g0 = delegate.sandTopSnapshot();
-    const plans1 = delegate.previewAt(thetaRequested);
+    const plans1 = this.previewAt(delegate,thetaRequested,'REQUESTED');
     if (plans1 === null) {
       const result = blockedResult(input, P011_BLOCKED_NO_SAFE_OLD_TILT_PLAN, 1);
       return this.wrapBlocked(input, result);
     }
     const deltaS1 = this.combineDeltaS(plans1, g0.length);
+    this.capturePlans(plans1,deltaS1);
     const decision1 = p011DecideCandidate(thetaRequested, g0, deltaS1, hardMaxSlope,
-      input.dt, input.thetaBefore, input.maxTiltOmega, input.targetTilt);
+      input.dt, input.thetaBefore, input.maxTiltOmega, input.targetTilt, this.trace);
     if (decision1.feasible && decision1.thetaClamped !== null &&
       Math.abs(decision1.thetaClamped - thetaRequested) <= P011_PLANNING_PASS_ANGLE_EPS) {
       const result: P011TiltFeasibilityResult = {
@@ -401,11 +440,12 @@ export class P011TiltPlanningPassService {
     // PASS 1 clamped: theta1 candidate requires pass 2 replan (§20.2).
     if (decision1.feasible && decision1.thetaClamped !== null) {
       const theta1 = decision1.thetaClamped;
-      const plans2 = delegate.previewAt(theta1);
+      const plans2 = this.previewAt(delegate,theta1,'CLAMPED');
       if (plans2 !== null) {
         const deltaS2 = this.combineDeltaS(plans2, g0.length);
+    this.capturePlans(plans2,deltaS2);
         const decision2 = p011DecideCandidate(theta1, g0, deltaS2, hardMaxSlope,
-          input.dt, input.thetaBefore, input.maxTiltOmega, input.targetTilt);
+          input.dt, input.thetaBefore, input.maxTiltOmega, input.targetTilt, this.trace);
         if (decision2.feasible && decision2.thetaClamped !== null &&
           Math.abs(decision2.thetaClamped - theta1) <= P011_PLANNING_PASS_ANGLE_EPS) {
           const result: P011TiltFeasibilityResult = {
@@ -425,11 +465,12 @@ export class P011TiltPlanningPassService {
       }
     }
     // Old-angle fallback evaluated within pass 2 against a separate B0 copy.
-    const plansFallback = delegate.previewAt(input.thetaBefore);
+    const plansFallback = this.previewAt(delegate,input.thetaBefore,'OLD');
     if (plansFallback !== null) {
       const deltaSFallback = this.combineDeltaS(plansFallback, g0.length);
+    this.capturePlans(plansFallback,deltaSFallback);
       const decisionFallback = p011DecideCandidate(input.thetaBefore, g0, deltaSFallback,
-        hardMaxSlope, input.dt, input.thetaBefore, input.maxTiltOmega, input.targetTilt);
+        hardMaxSlope, input.dt, input.thetaBefore, input.maxTiltOmega, input.targetTilt, this.trace);
       if (decisionFallback.feasible && decisionFallback.thetaClamped !== null &&
         Math.abs(decisionFallback.thetaClamped - input.thetaBefore) <= P011_PLANNING_PASS_ANGLE_EPS) {
         const result: P011TiltFeasibilityResult = {
@@ -463,6 +504,7 @@ export class P011TiltPlanningPassService {
 
   private wrapCommitted(input: P011TiltFeasibilityInput,
     result: P011TiltFeasibilityResult): P011PlanningPassPreview {
+    this.seal(result);
     const preview = new P011PlanningPassPreviewHandle(this, input, result, true);
     this.lastCommitted = preview;
     return preview;
@@ -470,6 +512,7 @@ export class P011TiltPlanningPassService {
 
   private wrapBlocked(input: P011TiltFeasibilityInput,
     result: P011TiltFeasibilityResult): P011PlanningPassPreview {
+    this.seal(result);
     return new P011PlanningPassPreviewHandle(this, input, result, false);
   }
 

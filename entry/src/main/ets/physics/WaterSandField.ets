@@ -1,3 +1,4 @@
+import { P011TiltPreviewTrace, P011TiltPreviewTraceSink } from './P011TiltPreviewTrace';
 import { P051DryRunConfig, P051DryRunResult, P051DryAdmissionRequest, P051DryAdmissionReceipt, P051_DRY_REVISION, P051_DRY_MEDIUM, P051_DRY_GRAVITY, p051DryRequestError } from './P051DryParticleAdmission';
 import { P011PublishedRenderState, P011RenderCopyStatus, P011RenderPublicationKind } from './P011PublishedRenderState';
 import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
@@ -41,6 +42,7 @@ import {
   P011TiltFeasibilityInput,
   P011TiltPlanningPassService,
   P011_PLANNING_PASS_TAN_HARD_MAX,
+  P011_PLANNING_PASS_ANGLE_EPS,
   p011PreviewCommitConsistent
 } from './P011TiltPlanningPass';
 import {
@@ -1041,7 +1043,10 @@ export class WaterSandField {
     for (let c = 0; c + 1 < this.cols; c++) {
       const residual = this.substepSandTopBefore[c + 1] - this.substepSandTopBefore[c] -
         Math.tan(this.effectiveTilt * Math.PI / 180);
+      const trace=this.planningPassService.trace;
+      if(trace!==null)try{trace.preexistingResiduals.push(residual);}catch(e){trace.incomplete();}
       if (Math.abs(residual) > hardMax + 1e-12) {
+        if(trace!==null)trace.preexistingViolation=true;
         return true;
       }
     }
@@ -2044,7 +2049,24 @@ export class WaterSandField {
     this.shakeEnergy = Math.max(this.shakeEnergy, 0.8);
   }
 
+  private tiltTraceSink: P011TiltPreviewTraceSink | null = null;
+  private tiltTracePending: P011TiltPreviewTrace[] | null = null;
+  private tiltTraceLast: P011TiltPreviewTrace | null = null;
+  setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void { this.tiltTraceSink=sink; }
+  getLastTiltPreviewTrace(): P011TiltPreviewTrace | null { return this.tiltTraceLast; }
   step(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
+    if(this.tiltTraceSink===null)return this.stepWithTiltTrace(dt,p011Hook);
+    const sink=this.tiltTraceSink;
+    this.tiltTracePending=[];
+    try {return this.stepWithTiltTrace(dt,p011Hook);}
+    catch(e){if(this.tiltTracePending!==null)for(const trace of this.tiltTracePending)trace.incomplete();throw e as Error;}
+    finally {
+      const pending=this.tiltTracePending;this.tiltTracePending=null;this.planningPassService.trace=null;
+      // Delivery is after the normal step/rollback and preview finally blocks.
+      if(pending!==null)for(const trace of pending){this.tiltTraceLast=trace;try{sink(trace);}catch(e){trace.incomplete();}}
+    }
+  }
+  private stepWithTiltTrace(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
     const start = Date.now();
     const result: WaterSandStepResult = {
       ok: true,
@@ -4968,6 +4990,8 @@ export class WaterSandField {
       this.lastBottomSplitError = null;
       this.beginSubstepMotionBudget(substepDt, true, 1);
       const collectError = this.substep(substepDt);
+      this.planningPassService.trace?.stage(collectError===null?'COLLECT_READY':'COLLECT',collectError,
+        collectError===null?null:this.firstInvalidColumn(),null);
       if (collectError === null) {
         if (this.particleRouteActive() && this.particleBinding !== null &&
           this.particleBinding.active) {
@@ -4983,6 +5007,7 @@ export class WaterSandField {
           const particleStatus = this.particleBinding.apply(scale,
             this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
             this.totalMotionBudgetRemaining);
+          this.planningPassService.trace?.stage('PARTICLE',collectError,null,particleStatus);
           if (particleStatus !== 0) {
             plans = null;
           } else {
@@ -4990,6 +5015,10 @@ export class WaterSandField {
             // Same production adapter is replayed against the preview snapshot.
             this.particleBinding.projection.capture(thetaCandidate, this.particleBinding.work);
             this.updateSandTop(); this.particlePreviewApplied = true;
+            const trace=this.planningPassService.trace;
+            if(trace!==null && trace.current!==null)try {
+              for(let c=0;c<this.cols;c++)trace.current.particleDeltaSandTop.push(this.sandTopScratch[c]-this.substepSandTopBefore[c]);
+            }catch(e){trace.incomplete();}
           plans = this.allocatePreviewPlans(substepDt);
           }
         } else {
@@ -5012,6 +5041,8 @@ export class WaterSandField {
       // the preview's value and the apply phase double-counts preview requests.
       this.beginSubstepMotionBudget(substepDt, true, 1);
     }
+    if(plans!==null)this.planningPassService.trace?.stage('PLANS_READY',null,null,
+      this.particleRouteActive()?0:null);
     return plans;
   }
 
@@ -5734,8 +5765,21 @@ export class WaterSandField {
       channelStateBefore: channelStateBefore
     };
     input.sandTopBefore.set(this.substepSandTopBefore);
+    if(this.tiltTracePending!==null) {
+      let trace: P011TiltPreviewTrace | null = null;
+      try {
+        trace=new P011TiltPreviewTrace();trace.runId=this.p011RunId;trace.stateEpoch=this.renderStateEpoch;
+        trace.attemptId=this.p011CurrentAttemptId;trace.substepId=input.substepId;trace.configRevision=this.configRevision;
+        trace.dt=dt;trace.thetaBefore=thetaBefore;trace.target=this.targetTilt;
+        trace.maxTiltOmega=input.maxTiltOmega;trace.sampleSequence=this.p011SampleSequence;trace.frameId=this.p011FrameId;
+        trace.hardMax=P011_PLANNING_PASS_TAN_HARD_MAX;trace.angleEps=P011_PLANNING_PASS_ANGLE_EPS;trace.fieldEps=EPS;
+        trace.s0=Array.from(this.substepSandTopBefore);
+        this.tiltTracePending.push(trace);this.planningPassService.trace=trace;
+      }catch(e){trace?.incomplete();this.planningPassService.trace=null;}
+    }
     const preview = this.planningPassService.createPreview(input,
       P011_PLANNING_PASS_TAN_HARD_MAX);
+    this.planningPassService.trace=null;
     // §27.4 rollback guard: a config change during the preview window
     // invalidates the plans — freeze the substep instead of committing
     // stale-threshold plans (same freeze semantics as §20.4 BLOCKED).

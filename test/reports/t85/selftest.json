@@ -1,0 +1,14 @@
+{
+  "suite": "T85 read-only trace",
+  "passed": 7,
+  "failed": 0,
+  "cases": [
+    "real step73 failure retained, diagnostics ON/OFF all physical budgets IDs pool slots/sliding and commits identical",
+    "throwing sink marks incomplete after rollback and preserves result/state",
+    "default null does not allocate trace snapshots; detach keeps execution",
+    "REQUESTED CLAMPED OLD calls use real ordinal rather than passCount",
+    "decision trace preserves IEEE values and each real intersection; inconsistent slope fails without tolerance changes",
+    "actual field collect and particle failure stages are captured before finally restores scratch",
+    "physical exception is rethrown unchanged after trace marked incomplete"
+  ]
+}
