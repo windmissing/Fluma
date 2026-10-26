@@ -1,0 +1,137 @@
+{
+ "executionId": "p073-dry-air-verification-v1",
+ "date": "2026-10-26",
+ "generatedBy": "test/p073_dry_air_verification.cjs",
+ "independence": "Cases designed fresh from T58 design §8 (D01-D15); T59 developer self-check not reused as evidence; envelope/lambda/conservation recomputed independently from raw arrays.",
+ "targetIdentity": {
+  "t59Commit": "ddc694703eb984b8d8c7355919404d9f08884952",
+  "files": {
+   "entry/src/main/ets/physics/P051DryParticleAdmission.ets": "IDENTICAL_EOL_NORMALIZED",
+   "entry/src/main/ets/physics/P051EmptySandDemo.ets": "IDENTICAL_EOL_NORMALIZED",
+   "entry/src/main/ets/physics/WaterSandField.ets": "IDENTICAL_EOL_NORMALIZED",
+   "entry/src/main/ets/physics/P011ParticleM2Field.ets": "IDENTICAL_EOL_NORMALIZED",
+   "entry/src/main/ets/physics/P011ParticleHot.ets": "IDENTICAL_EOL_NORMALIZED",
+   "entry/src/main/ets/physics/P011ParticleField.ets": "IDENTICAL_EOL_NORMALIZED",
+   "entry/src/main/ets/physics/P011ParticleM2Sink.ets": "IDENTICAL_EOL_NORMALIZED"
+  },
+  "allMatch": true,
+  "note": "working-tree dry implementation is byte-identical to the T59 build"
+ },
+ "results": [
+  {
+   "id": "T73-D01",
+   "name": "dry cold start: W/H/L/P/U all zero, cold waterTop all-zero, no NaN, EMPTY_BASELINE, empty tick and reset",
+   "status": "PASS",
+   "resetClearsCount": true
+  },
+  {
+   "id": "T73-D02",
+   "name": "old wet injectGestureSand still NO_WATER on dry field (even with nonzero envelope); no bypass",
+   "status": "PASS",
+   "guard": "NO_WATER intact"
+  },
+  {
+   "id": "T73-D03",
+   "name": "air touch x=20.25,y=220: DRY_POINT placement pX/pY exact, zero initial velocity, no bed growth, W stays 0, envelope grows exactly by admitted mass, one publication",
+   "status": "PASS",
+   "born": 1,
+   "envelopeCol20": 0.1
+  },
+  {
+   "id": "T73-D04",
+   "name": "two-phase one request: both phases born at same point, IH/IL separate, epoch/count +1 each once; injected second-phase fault rolls back field/pool/allocator/source/publication completely",
+   "status": "PASS",
+   "bothPhases": true,
+   "rollbackClean": true
+  },
+  {
+   "id": "T73-D05",
+   "name": "unified lambda: near-full column admits H/L at the same lambda; one free slot with both phases positive rejects whole request; independent lambda math",
+   "status": "PASS",
+   "lambda": 0.25,
+   "wholeRequestReject": true
+  },
+  {
+   "id": "T73-D06",
+   "name": "invalid x/y/mass and Q=0: explicit rejection without clamping to water/bed; zero request is NO_OP with no state change",
+   "status": "PASS",
+   "rejectedAll": true
+  },
+  {
+   "id": "T73-D07",
+   "name": "completely dry birth -> continuous steps to LAND: W stays 0 through the whole trajectory, per-phase conservation holds, envelope consistent after crossing/landing",
+   "status": "PASS",
+   "steps": 403
+  },
+  {
+   "id": "T73-D08",
+   "name": "budget-less CONTACT_WAIT then budgeted step: state2 retained, inventory exact, no quality loss (independent state-chain check)",
+   "status": "PASS",
+   "state2Retained": true
+  },
+  {
+   "id": "T73-D09",
+   "name": "export sink failure records INCOMPLETE without revoking the committed admission; later physics step failure never revokes external success",
+   "status": "PASS",
+   "incompleteEvidence": true,
+   "noRevocation": true
+  },
+  {
+   "id": "T73-D10",
+   "name": "duplicate sequence rejected (identity), no catch-up after stop/background cycles in the real demo model; successful mass (not requested) enters E",
+   "status": "PASS",
+   "noCatchUp": true
+  },
+  {
+   "id": "T73-D11",
+   "name": "E=0: H-only/L-only/both-phase sources never reset initial baseline; drift finite with empty baseline; the other phase stays truly zero",
+   "status": "PASS",
+   "baselinesPreserved": true
+  },
+  {
+   "id": "T73-D12",
+   "name": "dry air acceleration follows accepted tilt (±15°) with correct signs; 0° degrades to legacy candidate; cold predictor matches both HOT collects",
+   "status": "PASS",
+   "parity": true
+  },
+  {
+   "id": "T73-D12b",
+   "name": "full-pool shake retains bed, refunds, never degrades to suspension (U stays 0)",
+   "status": "PASS",
+   "bedRetained": true
+  },
+  {
+   "id": "T73-D13",
+   "name": "dry snapshot round-trip restores medium/source/count/envelope; corrupt medium/envelope/missing fields refuse restore before any write",
+   "status": "PASS",
+   "roundTrip": true,
+   "refusals": 4
+  },
+  {
+   "id": "T73-D14",
+   "name": "mode gates: dry field rejects invert (DRY_INVERT_UNSUPPORTED), water writers (MODE_CONFLICT), route unload; wet field rejects dry injection; wet run state intact after each refusal",
+   "status": "PASS",
+   "gatesIntact": true
+  },
+  {
+   "id": "T73-D15",
+   "name": "dry publication (field+pool same commit, medium carried) passes the existing adapter with COLUMN_PRESERVING_F32_RENDER_V1; packet commit matches; no second render path introduced",
+   "status": "PASS",
+   "adapterPath": "COLUMN_PRESERVING_F32_RENDER_V1 (new pipeline only; no Canvas fallback exercised)"
+  },
+  {
+   "id": "T73-X01",
+   "name": "second admission grows envelope by exactly the second admitted mass and bumps publication again; rejected request does not bump physicsCommitId",
+   "status": "PASS",
+   "envelopeGrowth": 0.15,
+   "rejectionDoesNotPublish": true
+  }
+ ],
+ "summary": {
+  "total": 17,
+  "pass": 17,
+  "fail": 0,
+  "verdict": "ALL REGISTERED CASES PASS (offline objective layer)"
+ },
+ "boundaries": "Offline objective verification only; screen effect, device behavior and calibration NOT covered. Old endpoint/peak protocols untouched; dry medium applicability to those protocols remains a separate registration."
+}
