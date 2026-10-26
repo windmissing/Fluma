@@ -1,0 +1,100 @@
+{
+ "executionId": "p134-kernel-oracle-v1",
+ "date": "2026-10-26",
+ "contract": "T127 + T110 sections 2-9",
+ "results": [
+  {
+   "id": "T134-RED-01",
+   "name": "RED baseline: P011WriterEnvelope/Kernels/Registry all absent (fs-classified) — NOT_IMPLEMENTED for T135, not a business defect",
+   "status": "PASS",
+   "missing": [
+    "P011WriterEnvelope.ets",
+    "P011WriterKernels.ets",
+    "P011WriterRegistry.ets"
+   ]
+  },
+  {
+   "id": "T134-K1",
+   "name": "settle: A=(dH+dL)/R ≠ 1 exactly (T110 identity); phaseSum(h+l)=0.175 ≠ qControl=0.15; nominal-k guard misses (A−1)·q — must use A envelope",
+   "status": "PASS",
+   "A": "12610078956637389/10808639105689190",
+   "phaseSum": "12610078956637389/72057594037927936",
+   "missingTerm": "1801439850948199/72057594037927936",
+   "note": "T110 §3: q is the budget control, never a synonym of h+l"
+  },
+  {
+   "id": "T134-K2",
+   "name": "top MIX: M=RN(.1+.2)=0.30000000000000004 ≠ exact stored sum; b=MIX_LIGHT bias = exactSum−M ≠ 0; branch boundary at q=M/nextUp(M) decided by RN comparisons",
+   "status": "PASS",
+   "M_hex": "3fd3333333333334",
+   "b": "-1/36028797018963968",
+   "note": "T110 §4/T87: A and b cannot be assumed 1/0; boundary neighbors need separate domain evidence"
+  },
+  {
+   "id": "T134-K3",
+   "name": "LAND partial: q=2^-54 → RN(m−q)=m (no pool change) → partial forbidden; q=2^-53 → RN(m−q)=nextDown(1)<m → allowed; boundary is ULP-exact",
+   "status": "PASS",
+   "rem1": 1,
+   "rem2": 0.9999999999999999,
+   "nextDown1": 0.9999999999999999,
+   "note": "T110 landSyntheticSubULPMass: positive q may add bed mass while stored pool mass does not change"
+  },
+  {
+   "id": "T134-K4",
+   "name": "LAND full (q=m): RAW-only certification (never a zero-width INWARD band); retire same slot + freeSlot pushed exactly once; nextId unchanged; partial keeps same id/phase/source",
+   "status": "PASS",
+   "verdict": "contract fixture; values verified at T135 implementation against this oracle"
+  },
+  {
+   "id": "T134-K5",
+   "name": "ZERO no-write: full bit-type preservation contract; disposition-6 wrapper forbidden; CONTACT_HOLD_MOTION separate (first-contact strict path UNSUPPORTED in this version)",
+   "status": "PASS",
+   "verdict": "contract fixture"
+  },
+  {
+   "id": "T134-K6",
+   "name": "bounded selection: same frozen r0/B_e across RAW/INWARD/ZERO; ≤2 nonzero shadow graphs + 1 no-write ZERO; INWARD_NONE without unbounded neighbor search (T110 boundedSelection: nonzeroPreviewMax=2, zeroPreviewMax=1, positiveULPSearchLoop=false)",
+   "status": "PASS",
+   "verdict": "contract fixture matching T110 evidence"
+  },
+  {
+   "id": "T134-K7",
+   "name": "δ0 = C0 − exact four-stock sum ≠ 0 for non-trivial stocks; affine envelope must include −δ0 (not absorbed)",
+   "status": "PASS",
+   "C0": 12.6,
+   "delta0": "-13/36028797018963968",
+   "note": "T110 §2.3: C_actual(q)−C0 = A·q + B + E_sum − δ0; dropping δ0 breaks the envelope proof"
+  },
+  {
+   "id": "T134-K8",
+   "name": "outer-neighbor edge: central safe but outer edge at H → +1ULP material breaks it (STRICT_EDGE at edge 3); three-edge (central+2 outer) certification mandatory",
+   "status": "PASS",
+   "before": {
+    "legal": false,
+    "reason": "STRICT_EDGE",
+    "firstEdge": 2
+   },
+   "after": {
+    "legal": false,
+    "reason": "STRICT_EDGE",
+    "firstEdge": 2
+   },
+   "note": "T110 §8: preexisting-at-H outer edge must fail non-worsening on any +q; LOCAL scope must include both outer neighbors"
+  },
+  {
+   "id": "T134-K9",
+   "name": "registry coverage: percolate/bottom creep/deep creep/lift-seed/merge/advection/invert/external water — any reachable non-zero path without registry hit = STRICT_WRITER_UNSUPPORTED; config-disabled-and-never-called may skip; grant printing 0 does not prove no side effects",
+   "status": "PASS",
+   "verdict": "contract fixture (T110 §9 matrix)"
+  },
+  {
+   "id": "T134-K10",
+   "name": "settle node-level exact shadow: depth→aH/aL→dH/dL→scale→h/l all traceable with exact rationals; stock constraint h≤suspH ∧ l≤suspL holds; A envelope carried (≠1)",
+   "status": "PASS",
+   "h": "5404319552844595/36028797018963968",
+   "l": "5/32",
+   "A": "2206763817411543/1080863910568919",
+   "note": "every node has an exact rational value the T135 implementation must match bit-for-bit after RN"
+  }
+ ]
+}

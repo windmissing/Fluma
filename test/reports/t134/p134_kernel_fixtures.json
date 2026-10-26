@@ -1,0 +1,31 @@
+{
+ "revision": "T134_KERNEL_ORACLE_V1",
+ "settle": {
+  "R": "0.3",
+  "dH": "0.1",
+  "dL": "0.25",
+  "A_exact": "12610078956637389/10808639105689190",
+  "phaseSum": "0.175 ≠ q=0.15"
+ },
+ "topMIX": {
+  "MH": "0.1",
+  "ML": "0.2",
+  "M_hex": "3fd3333333333334",
+  "b": "exactSum − M ≠ 0"
+ },
+ "land": {
+  "m": 1,
+  "qForbidden": "2^-54 (RN(m−q)=m)",
+  "qAllowed": "2^-53 (RN(m−q)=nextDown(1))"
+ },
+ "bounded": {
+  "nonzeroPreviewMax": 2,
+  "zeroPreviewMax": 1,
+  "ulpLoop": false
+ },
+ "outerEdge": {
+  "H_hex": "3fe279a74590331c",
+  "scenario": "outer edge preexisting at H + 1ULP material → STRICT_EDGE"
+ },
+ "h_error": "δ0 = C0 − exact four-stock sum; envelope must carry −δ0"
+}
