@@ -1,0 +1,88 @@
+> hvigor [32mUP-TO-DATE :entry:default@PreBuild...  [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateMetadata...  [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 53 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MergeProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CreateBuildProfile...  [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 4 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgSdkInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 11 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MakePackInfo...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@SyscapTransform...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessRouterMap...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessShareConfig...  [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateLoaderJson...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CompileResource...  [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 3 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 193 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessLibs...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@DoNativeStrip...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CacheNativeLibs...  [39m
+> hvigor WARN: WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012E3FogBuffers.ets:44:27
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012E3FogBuffers.ets:44:62
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012E3FogBuffers.ets:126:18
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012E3FogBuffers.ets:126:53
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012WaterSandRenderer.ets:717:18
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012WaterSandRenderer.ets:717:53
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012WaterSandRenderer.ets:767:18
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012WaterSandRenderer.ets:767:53
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012WaterSandRenderer.ets:1201:18
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P012WaterSandRenderer.ets:1201:53
+ Classes cannot be used as objects (arkts-no-classes-as-obj)
+
+WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P013SceneController.ets:2:28
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/render/P013RenderController.ets:7:26
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/pages/P013HelloSurface.ets:5:23
+ Currently module for 'libp013hello.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/pages/P013P1G0Probe.ets:20:23
+ Currently module for 'libp013hello.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/pages/P013P1G0Probe.ets:21:26
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:33:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:37:6
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:41:14
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 6 s 369 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgModuleJson...  [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 701 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 10 s 40 ms [39m
+
+29 tasks in total: 12 executed, 17 up-to-date
