@@ -1,0 +1,33 @@
+{
+ "executionId": "p145-color-roundtrip-recheck-v1",
+ "date": "2026-10-27",
+ "target": "T144 a49f880",
+ "probeRevision": "T145_ROUNDTRIP_INDEPENDENT_V1",
+ "results": [
+  {
+   "id": "T145-R1",
+   "name": "T144 full-chain replay (fresh build+run after clearing stale output): status VALID, triRead=[128,128,128,255] actual default readback, sampled=55 via real sampler",
+   "ok": true
+  },
+  {
+   "id": "T145-R2",
+   "name": "own 4-gray matrix [0,64,128,200] -> [0,13,55,148] through SRGB8_ALPHA8 upload of actual bytes + sampler2D + LINEAR RGBA8 FBO; within 1 LSB of math EOTF (hardware LUT quantization, deltas recorded)",
+   "ok": true
+  },
+  {
+   "id": "T145-R3",
+   "name": "fixture full 6144B SHA-256 = 32870e76… (standard crypto); old 1536B prefix hash e86423b1… verified REVOKED_AS_FULL_FIXTURE_HASH (prefix identity preserved, not full-fixture identity)",
+   "ok": true
+  },
+  {
+   "id": "T145-R4",
+   "name": "T144 manifest cross-verified: fixture/files/exe/source SHA all match standard crypto recompute",
+   "ok": true
+  },
+  {
+   "id": "T145-R5",
+   "name": "stage integrity: all 13 stage errors NONE (vao/bindDefault/queries + 4×upload/draw/read), source texture bound, LINEAR FBO complete and bound, default=LINEAR, alpha 255 passthrough on all levels",
+   "ok": true
+  }
+ ]
+}
