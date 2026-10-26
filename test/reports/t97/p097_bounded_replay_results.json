@@ -1,0 +1,55 @@
+{
+ "executionId": "p097-bounded-replay-v1",
+ "date": "2026-10-26",
+ "identity": {
+  "newRev": "c0c58c3",
+  "oldRev": "067fd84"
+ },
+ "exactReplayStatus": "UNPROVEN (no archived initial pool/field snapshot in T78 artifacts)",
+ "results": [
+  {
+   "id": "T97-R3-NEW",
+   "name": "bounded R3 gesture replay (NEW): completed within external 60000ms timeout",
+   "status": "PASS",
+   "wallMs": 2265,
+   "childCode": 0,
+   "timedOut": false,
+   "steps": 1010,
+   "touchEvents": 505,
+   "lastStatus": null,
+   "poolSummary": {
+    "liveCount": 0,
+    "nextId": 1,
+    "freeCount": 512
+   },
+   "exactReplay": "UNPROVEN — T78 archive has no initial pool/field snapshot; this is a same-gesture-sequence bounded run from a fresh field"
+  },
+  {
+   "id": "T97-R3-OLD",
+   "name": "bounded R3 gesture replay (OLD): completed within external 60000ms timeout",
+   "status": "PASS",
+   "wallMs": 2057,
+   "childCode": 0,
+   "timedOut": false,
+   "steps": 1010,
+   "touchEvents": 505,
+   "lastStatus": null,
+   "poolSummary": {
+    "liveCount": 0,
+    "nextId": 1,
+    "freeCount": 512
+   },
+   "exactReplay": "UNPROVEN — T78 archive has no initial pool/field snapshot; this is a same-gesture-sequence bounded run from a fresh field"
+  },
+  {
+   "id": "T97-ZERO",
+   "name": "zero-source chain probe: touch chain runs bounded; source activation observed (gate->clock->request->inject)",
+   "status": "PASS",
+   "timedOut": false,
+   "zeroSourceSteps": 1,
+   "firstNonzeroStep": 1,
+   "liveCount": 238,
+   "note": "device zero-source attribution stays with T69/T82; this only records the chain behavior of the current build"
+  }
+ ]
+}

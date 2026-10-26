@@ -1,0 +1,56 @@
+{
+ "executionId": "p097-pool-equivalence-v1",
+ "date": "2026-10-26",
+ "identity": {
+  "newRev": "c0c58c3",
+  "oldRev": "067fd84 (c0c58c3 parent)"
+ },
+ "results": [
+  {
+   "id": "T97-EQ-N16-tail",
+   "name": "identical per-step pool/events/status NEW vs OLD (N16-tail, 60 steps)",
+   "status": "PASS",
+   "stepsCompared": 1,
+   "diffAt": null,
+   "totalMergesNew": 3,
+   "firstTraceStep": {
+    "ok": false,
+    "free": 0,
+    "live": 16
+   }
+  },
+  {
+   "id": "T97-EQ-N16-mix",
+   "name": "identical per-step pool/events/status NEW vs OLD (N16-mix, 60 steps)",
+   "status": "PASS",
+   "stepsCompared": 1,
+   "diffAt": null,
+   "totalMergesNew": 2,
+   "firstTraceStep": {
+    "ok": false,
+    "free": 0,
+    "live": 16
+   }
+  },
+  {
+   "id": "T97-EQ-N512-wide",
+   "name": "identical per-step pool/events/status NEW vs OLD (N512-wide, 40 steps)",
+   "status": "PASS",
+   "stepsCompared": 1,
+   "diffAt": null,
+   "totalMergesNew": 0,
+   "firstTraceStep": {
+    "ok": false,
+    "free": 0,
+    "live": 512
+   }
+  },
+  {
+   "id": "T97-DIAG",
+   "name": "diagnostic ON/OFF: physics identical over 40 steps; diagnostic string present when ON, null when OFF",
+   "status": "PASS",
+   "diagHead": "{\"revision\":\"P011_POOL_PROGRESS_DIAGNOSTIC_V1\",\"runId\":\"p011-run-1793012798633-15\",\"attemptId\":\"p011-run-1793012798633-15-a40\",\"substepId\":40,\"configRevision\":0"
+  }
+ ],
+ "firstMismatch": null
+}
