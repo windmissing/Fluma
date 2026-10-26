@@ -1,0 +1,44 @@
+{
+  "revision": "T144_COLOR_ROUNDTRIP_MANIFEST_V1",
+  "probeStatus": "VALID",
+  "sourceScope": "independent D chain only; prior T126 A/B production MRT raws remain their own evidence",
+  "fixture": {
+    "typedElementCount": 1536,
+    "bytesPerElement": 4,
+    "byteLength": 6144,
+    "sha256": "32870e766b0d501e17d0093edd00336969354dd2ebae141183b9233d3cccc353",
+    "oldV4PrefixHash": {
+      "sha256": "e86423b1369f4b7afe49b218f15188425a109368ec0cbbd1a320672625a15f53",
+      "coveredBytes": 1536,
+      "status": "REVOKED_AS_FULL_FIXTURE_HASH",
+      "reason": "V4 passed element count as byte count"
+    }
+  },
+  "files": [
+    {
+      "name": "flat_0_1_0_1_0_0_0.bin",
+      "byteLength": 6144,
+      "sha256": "32870e766b0d501e17d0093edd00336969354dd2ebae141183b9233d3cccc353"
+    },
+    {
+      "name": "roundtrip.json",
+      "byteLength": 569,
+      "sha256": "2fafffa931f3f8159e56de9168382ec36a3276adab9a07ead42cb2d58c17869c"
+    },
+    {
+      "name": "build.txt",
+      "byteLength": 36,
+      "sha256": "b731a1c61c5ea4d19ee0e4e6031c863f97e8e4fba9b95adb4727c74266d4f874"
+    },
+    {
+      "name": "run.txt",
+      "byteLength": 22,
+      "sha256": "39df69c998830fe00b3848f60940b36386d90617fa3c55279fc325da23029e5e"
+    }
+  ],
+  "nativeExecutable": {
+    "byteLength": 320000,
+    "sha256": "a03aa77bd86d507fa987956144bf7bf6379c1952ad039e7c3e2e924c6630fa0b"
+  },
+  "sourceSha256": "add4b194fd66a0de89872fc08274241bd892cfc1c6a340f67aba672e976f0f40"
+}
