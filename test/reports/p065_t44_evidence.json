@@ -1,0 +1,181 @@
+{
+ "executionId": "p065-t44-evidence-v1",
+ "date": "2026-10-26",
+ "generatedBy": "test/p065_store_lifecycle_units.cjs (lifecycle) + inline canonical re-analysis of T44 archives (documented in tester report)",
+ "inputs": {
+  "R0": "R0-store.ndjson (954 records, 0 invalid)",
+  "R1initial": "R1-store.ndjson (282 parsed + 1 truncated line)",
+  "R1final": "R1-store-final.ndjson (283 records, 0 invalid)",
+  "admissions": "R1-admissions-final.ndjson (27 rows)"
+ },
+ "identity": {
+  "fullCommitKeyUnique": true,
+  "uniqueSubstepIds": 283,
+  "uniqueAttemptIds": 283,
+  "uniqueFrameIds": 142,
+  "records": 283,
+  "maxSequence": 277
+ },
+ "sequenceDuplication": {
+  "duplicateSequences": {
+   "267": 7
+  },
+  "framesWithBothSubstepsSharingSequence": {
+   "134": [
+    267,
+    267
+   ],
+   "135": [
+    267,
+    267
+   ],
+   "136": [
+    267,
+    267
+   ]
+  },
+  "dupZoneRecords": [
+   {
+    "lineSort": 0,
+    "frameId": 134,
+    "substepId": 267,
+    "attemptId": "p011-run-1792975806102-3-a267",
+    "physicsTime": 1792975825603,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 267,
+    "elapsedMs": 19654,
+    "integratedSeconds": 4.425366666666657
+   },
+   {
+    "lineSort": 1,
+    "frameId": 134,
+    "substepId": 268,
+    "attemptId": "p011-run-1792975806102-3-a268",
+    "physicsTime": 1792975825929,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 268,
+    "elapsedMs": 19979,
+    "integratedSeconds": 4.442033333333324
+   },
+   {
+    "lineSort": 2,
+    "frameId": 135,
+    "substepId": 269,
+    "attemptId": "p011-run-1792975806102-3-a269",
+    "physicsTime": 1792975826313,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 269,
+    "elapsedMs": 20397,
+    "integratedSeconds": 4.458699999999991
+   },
+   {
+    "lineSort": 3,
+    "frameId": 135,
+    "substepId": 270,
+    "attemptId": "p011-run-1792975806102-3-a270",
+    "physicsTime": 1792975826703,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 270,
+    "elapsedMs": 20791,
+    "integratedSeconds": 4.475366666666657
+   },
+   {
+    "lineSort": 4,
+    "frameId": 136,
+    "substepId": 271,
+    "attemptId": "p011-run-1792975806102-3-a271",
+    "physicsTime": 1792975827939,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 271,
+    "elapsedMs": 22178,
+    "integratedSeconds": 4.492033333333324
+   },
+   {
+    "lineSort": 5,
+    "frameId": 136,
+    "substepId": 272,
+    "attemptId": "p011-run-1792975806102-3-a272",
+    "physicsTime": 1792975829325,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 272,
+    "elapsedMs": 23568,
+    "integratedSeconds": 4.50869999999999
+   },
+   {
+    "lineSort": 6,
+    "frameId": 137,
+    "substepId": 273,
+    "attemptId": "p011-run-1792975806102-3-a273",
+    "physicsTime": 1792975830093,
+    "dt": 0.016666666666666666,
+    "endpointOrdinal": 273,
+    "elapsedMs": 24370,
+    "integratedSeconds": 4.525366666666657
+   }
+  ],
+  "mechanics": "context.sequence = p011SampleSequence+1 captured at beginNaturalObservation; p011SampleSequence advances only inside getP011Metric (step-loop hook / noop telemetry). In frames 134-137 the counter froze across 6 substeps (wall-clock stall 19654-23568ms, ~swipe4/5 window); commit keys stay unique via (frameId,substepId,attemptId,committedOrdinal). Whether hook invocations were skipped on device is NOT determinable offline (no per-frame hook telemetry) -> open question for T64.",
+  "bothPullsContainTheDuplicates": "R1 initial and final pulls are byte-identical prefixes (282/283 lines); duplicates are producer-side, not transport"
+ },
+ "stateChain": {
+  "breaks": 27,
+  "externalAdmissionIncrements": 27,
+  "breaksExactlyAtAdmissions": true,
+  "maxSandMassDeltaAcrossBreaks": 1.7763568394002505e-15
+ },
+ "admissions": {
+  "rows": 27,
+  "tidMonotonic": true,
+  "cumulativeConsistent": true,
+  "sumH": 19.731137432098386,
+  "sumL": 19.731137432098386,
+  "sourceInjectedH": 19.731137432098386,
+  "sourceInjectedL": 19.731137432098386,
+  "exactEqualH": true,
+  "exactEqualL": true,
+  "evidenceCount": 27,
+  "rawHistoryStatus": "STREAMED",
+  "externalAdmissionCount": 27,
+  "sourceEpoch": 27,
+  "countEqualsEpoch": true,
+  "accumulation": "sequential += in file order (faithful to the device externalAdmissions accumulator); Python sum() is Neumaier-compensated since 3.12 and NOT used",
+  "note": "sequential re-accumulation of the 27 admission rows in original order reproduces sourceInjectedH/L bit-for-bit (19.731137432098386 both); T44 reported difference 3.55e-15 came from a compensated/other-order summation, not from the ledger"
+ },
+ "storeRouteMetadata": {
+  "storeMetadataObservationRouteId": "natural-relax-hysteresis-v1",
+  "ledgerContextObservationRouteId": "dual-field-particle-v1",
+  "ledgerParticleRouteId": "dual-field-particle-v1",
+  "constantP011_NATURAL_OBSERVATION_ROUTE_ID": "natural-relax-hysteresis-v1",
+  "diagnosis": "SandCanvas P011_OBS_STORE line prints the module constant P011_NATURAL_OBSERVATION_ROUTE_ID, not the run’s active route; the NDJSON context carries the actual route (dual-field-particle-v1). Metadata-vs-ledger mismatch is a logging-source discrepancy, not a route activation discrepancy."
+ },
+ "closedLifecycle": {
+  "closedReceiptsInArchivedLogs": 0,
+  "guardBehavior": "worker sends closed{sequence,admissions}; host requires equality with sent counts else OBS_STORE_INCOMPLETE; append-after-close -> OBS_STORE_APPEND_AFTER_CLOSE",
+  "lifecycleCallSite": "aboutToDisappear only (onPageHide does not close the store)"
+ },
+ "renderIdentity": {
+  "available": "no p013_dual_frame receipt, no renderer-selection/draw/swap/fallback/frameToken fields anywhere in T44 logs; T44 page did not surface NONUNIFORM_SCALE/INVALID_PARTICLE",
+  "verdict": "RENDER_IDENTITY_CHAIN_NOT_RECOVERABLE_FROM_T44_ARTIFACTS"
+ },
+ "r1InitialStream": {
+  "parsed": 282,
+  "invalid": [
+   {
+    "lineIndex": 282,
+    "error": "Expecting ',' delimiter: line 1 column 287975 (char 287974)",
+    "length": 287974
+   }
+  ],
+  "bytePrefixOfFinal": true,
+  "truncatedLine": {
+   "lineIndex": 282,
+   "error": "Expecting ',' delimiter: line 1 column 287975 (char 287974)",
+   "length": 287974
+  }
+ },
+ "deviceMissingFields": [
+  "per-frame hook-fire/sequence-increment telemetry",
+  "renderer selection / draw-swap / fallback / frameToken for T44 page",
+  "lifecycle events (Back/Home) reaching aboutToDisappear",
+  "worker-side written counts at close time"
+ ]
+}

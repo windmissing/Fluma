@@ -1,0 +1,39 @@
+{
+ "executionId": "p065-store-lifecycle-units-v1",
+ "date": "2026-10-26",
+ "generatedBy": "test/p065_store_lifecycle_units.cjs",
+ "harness": "REAL FileStore (entry/src/main/ets/physics/P011NaturalObservationStore.ets, unmodified) + worker-protocol stub mirroring real P011NaturalObservationWorker.ets message semantics; synthetic worker, no device",
+ "results": [
+  {
+   "id": "T65-F44C-A01",
+   "name": "close() resolves with matching counts (283 records / 27 admissions); CLOSED receipt content reproducible",
+   "status": "PASS",
+   "records": 283,
+   "admissions": 27,
+   "synthetic": "worker protocol stub mirrors real worker counting"
+  },
+  {
+   "id": "T65-F44C-B01",
+   "name": "host/worker count mismatch -> OBS_STORE_INCOMPLETE; close rejects; no CLOSED receipt",
+   "status": "PASS",
+   "error": "OBS_STORE_INCOMPLETE",
+   "deviceRelevance": "if the worker died or a postMessage was lost on device, this guard fires and CLOSED never prints — one candidate explanation for F44-C; device-side confirmation still missing"
+  },
+  {
+   "id": "T65-F44C-C01",
+   "name": "append during closing -> OBS_STORE_APPEND_AFTER_CLOSE (fail-closed, close rejects)",
+   "status": "PASS",
+   "note": "no throw to the physics caller; store marked failed and P011_OBS_ERROR logged instead of CLOSED"
+  },
+  {
+   "id": "T65-F44C-D01",
+   "name": "double close() returns the same promise (idempotent)",
+   "status": "PASS"
+  }
+ ],
+ "summary": {
+  "total": 4,
+  "pass": 4
+ },
+ "deviceGap": "Whether Back/Home on device ever reached aboutToDisappear (which calls observationStore.close()) is not determinable from T44 logs: no P011_OBS_ERROR and no P011_OBS_STORE_CLOSED appear, and no lifecycle telemetry exists. Either close() was never invoked (page not destroyed) or the worker died before replying — T64 must route; a device retest with lifecycle telemetry would discriminate."
+}
