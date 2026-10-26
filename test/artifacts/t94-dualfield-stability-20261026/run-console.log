@@ -1,0 +1,28 @@
+[19:19:41] T94 stability start (build 52a0700, s146 6350fc8b, abc 165f5868)
+[19:19:42] R0 smoke
+[19:19:54] R0 started shake=0
+[19:20:11] R0 alive, no freeze keywords
+[19:20:12] R0 done
+[19:20:12] R1 shake=1 + 3x swipe (T78 R1 sequence)
+[19:20:24] R1 started shake=1
+[19:20:33] R1 swipe 1 done, alive check
+[19:20:39] R1 swipe 2 done, alive check
+[19:20:45] R1 swipe 3 done, alive check
+[19:21:29] R1 FREEZE detected (113 lines)
+[19:21:30] R1 done
+[19:21:30] R2 shake=0.6 + 1x swipe (T78 R2 sequence)
+[19:21:42] R2 started shake=0.6
+[19:22:17] R2 FREEZE detected (131 lines)
+[19:22:17] R2 done
+[19:22:17] R3 shake=0 + 2x swipe + 25s deposition (T78 R3 sequence extended)
+[19:22:29] R3 started shake=0
+[19:23:14] R3 FREEZE detected (18 lines)
+[19:23:14] R3 done
+[19:23:14] R4 panel finish button -> CLOSED -> pull two streams
+[19:23:23] R4 CLOSED: 011-v212-relax-hysteresis-p011-run-1793013742752-3.ndjson","admissionFilePath":"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793013742752-3-admissions.ndjson","records":264,"admissions":0,"status":"COMPLETE"}
+[19:23:24] R4 pulled ledger=0 B admissions=0 B
+[19:23:24] manifest:   File "C:\Users\admin\.workbuddy\binaries\python\versions\3.13.12\Lib\pathlib\_local.py", line 537, in open
+[19:23:24] manifest:     return io.open(self, mode, buffering, encoding, errors, newline)
+[19:23:24] manifest:            ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[19:23:24] manifest: FileNotFoundError: [Errno 2] No such file or directory: 'D:\\hmprojects\\HelloWorld\\test\\artifacts\\t94-dualfield-stability-20261026\\fence.json'
+[19:23:24] R4 done
