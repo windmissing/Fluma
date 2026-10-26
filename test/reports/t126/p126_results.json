@@ -1,0 +1,181 @@
+{
+ "executionId": "t126-color-evidence-v4",
+ "date": "2026-10-26",
+ "revision": "T115_IDENTITY_CAPTURE_V4",
+ "contract": "T121 sections 2-5",
+ "preserved": "T115 v3 (459bd4a) raw/JSON/results untouched; old memory-only raws marked UNAVAILABLE and re-captured in this new run",
+ "results": [
+  {
+   "id": "T126-D01",
+   "name": "standard crypto known-answer vectors (empty/abc/multi-block) + same-length-different-content discrimination",
+   "status": "PASS",
+   "empty": "e3b0c44298fc1c14...",
+   "abc": "ba7816bf8f01cfea...",
+   "sameLenDiffers": true,
+   "note": "V3 tinysha returned the identical digest da5698be... for empty/24B/25B inputs (message word omitted); std crypto is the reference"
+  },
+  {
+   "id": "T126-D02",
+   "name": "every manifest digest recomputed by standard crypto over the actual archived bytes; byteLength matches file size",
+   "status": "PASS",
+   "files": [
+    {
+     "file": "t126-prod-srgb.rgba",
+     "len": 184320,
+     "declared": 184320,
+     "shaOK": true
+    },
+    {
+     "file": "t126-mrt-debug-srgb.rgba",
+     "len": 184320,
+     "declared": 184320,
+     "shaOK": true
+    },
+    {
+     "file": "t126-const-debug-srgb.rgba",
+     "len": 184320,
+     "declared": 184320,
+     "shaOK": true
+    }
+   ]
+  },
+  {
+   "id": "T126-D03",
+   "name": "native SHA implementation revision recorded (w[i] restored); raw .rgba files are actual byte dumps on disk",
+   "status": "PASS",
+   "impl": "SHA256_FIPS1804_WI_RESTORED_V1",
+   "files": [
+    "t126-prod-srgb.rgba",
+    "t126-mrt-debug-srgb.rgba",
+    "t126-const-debug-srgb.rgba"
+   ]
+  },
+  {
+   "id": "T126-A01",
+   "name": "production MaterialPass vs MRT debug variant (same material math + stage capture): byte-identical full-image on the SAME SRGB8_ALPHA8 attachment",
+   "status": "PASS",
+   "prod88": [
+    247,
+    219,
+    157
+   ],
+   "mrtDebug88": [
+    247,
+    219,
+    157
+   ],
+   "byteDiff": 0,
+   "mrtDiffField": 0,
+   "note": "T121 §1: V3 diff168676 was constant-vs-scene (different content); the MRT debug variant runs the same math so like-for-like equivalence is now evidenced with archived bytes"
+  },
+  {
+   "id": "T126-A02",
+   "name": "constant debug vs production: different by design (168676 bytes); both archived for inspection; point (88,78) still identical (sRGB write encoding)",
+   "status": "PASS",
+   "prod88": [
+    247,
+    219,
+    157
+   ],
+   "constDebug88": [
+    247,
+    219,
+    157
+   ],
+   "diff": 168676
+  },
+  {
+   "id": "T126-A03",
+   "name": "integer stage capture at (88,78): baseB/grainB/strataB/k from the REAL MRT attachment (RGBA32UI)",
+   "status": "PASS",
+   "stage": {
+    "baseB": 173,
+    "grainB": 102,
+    "strataB": 127,
+    "k": 1
+   },
+   "note": "baseB=173 consistent with T88 partB archived integer; not a constant-encoding assumption"
+  },
+  {
+   "id": "T126-B01",
+   "name": "independent RGBA8 FBO control: actual encoding queried = LINEAR",
+   "status": "PASS",
+   "enc": "LINEAR"
+  },
+  {
+   "id": "T126-C01",
+   "name": "default GL_BACK: encoding queried + controlled triangle actually drawn (drawError NONE) + readback + sRGB sample path executed (128=128)",
+   "status": "PASS",
+   "back": "SRGB",
+   "triangle": {
+    "actuallyDrawn": true,
+    "drawError": "NONE",
+    "readbackByte": 128,
+    "sampleByte": 128,
+    "sampleError": "NONE"
+   },
+   "note": "V3 wrote the literal string \"recorded\" without drawing; V4 executes the write-read-sample chain"
+  },
+  {
+   "id": "T126-E01",
+   "name": "fractional-alpha actually drawn: dst 128 encoded, front blend (ONE,ONE_MINUS_SRC_ALPHA, src alpha 0.25) → front byte 172; dither disabled branch verified",
+   "status": "PASS",
+   "back": 128,
+   "front": 172,
+   "ditherOff": 1,
+   "note": "front byte 172 is the measured result of an actual blended draw, not a hardcoded 128 (V3 defect); dst seed = EOTF(128/255)"
+  },
+  {
+   "id": "T126-F01",
+   "name": "constant matrix: correct EOTF-linearize (0.2831…), correct OETF-encode (0.7789…), historical wrong formula (0.2172…) — ids + F64 bit patterns independently recomputed",
+   "status": "PASS",
+   "eotf": {
+    "id": "correct-EOTF-linearize",
+    "value": 0.2831487404299921,
+    "hex": "e73903e51b1fd23f"
+   },
+   "oetf": {
+    "id": "correct-OETF-encode",
+    "value": 0.7788681486941016,
+    "hex": "003151e57cece83f"
+   },
+   "wrong": {
+    "id": "t80-historical-wrong-formula",
+    "value": 0.21716935993161873,
+    "hex": "3abe4ca134cccb3f"
+   },
+   "note": "T121 §2: V3 F01 only checked typeof/hex-length and mislabeled OETF as 0.215760; V4 asserts value+bits+id and separates the historical wrong id"
+  },
+  {
+   "id": "T126-F02",
+   "name": "uploaded palette Float32 bits recorded (24 bytes, 6 floats) with real digest",
+   "status": "PASS",
+   "bits": "9291113fa9a8283fdfdede3ed9d8583fc5c4443f9796163f"
+  },
+  {
+   "id": "T126-G01",
+   "name": "stage execution honesty: integer stage EXECUTED (real MRT capture); float stage NOT_RUN (continuous-stage pass not in this capture; T101 f32 bins remain that evidence)",
+   "status": "PASS",
+   "s": {
+    "integerStage": "EXECUTED",
+    "floatStage": "NOT_RUN",
+    "floatStageNote": "continuous-stage pass not in this capture; T101 f32 bins remain the float-stage evidence"
+   },
+   "note": "no placeholder hash anywhere; NOT_RUN stated explicitly per T121 §5.2"
+  },
+  {
+   "id": "T126-H01",
+   "name": "stageErrors is a typed object with per-stage fields (V3 was a single concatenated string)",
+   "status": "PASS",
+   "stageErrors": {
+    "srgbFboStatus": "0x8cd5",
+    "srgbEnc": "SRGB",
+    "prodDrawError": "NONE",
+    "prodReadError": "NONE",
+    "mrtComplete": "1",
+    "mrtDrawError": "NONE",
+    "dbgDrawError": "NONE"
+   }
+  }
+ ]
+}
