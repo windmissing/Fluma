@@ -1,0 +1,33 @@
+{
+ "revision": "T132_OUTWARD_ORACLE_V1",
+ "supersedes": "T125 fixtures reusable; this file adds outward/affine/local-contract fixtures",
+ "nextUp": {
+  "of0": "0000000000000001",
+  "ofMax": "7fefffffffffffff→Inf"
+ },
+ "overflowCase": {
+  "a": "1e308",
+  "b": "1e308",
+  "exact": "2e308",
+  "representable": false
+ },
+ "divide": {
+  "a": 1,
+  "b": 3,
+  "rn": 7.401486830834377e-17
+ },
+ "affineH": {
+  "H_hex": "3fe279a74590331c",
+  "B_equals_H_terms": "1 product + 5 scalars",
+  "B_abs_r0_terms": "2·r0 + a·q + b (≤8 terms)"
+ },
+ "eta": {
+  "halfUlpAt1": "2^-53",
+  "subnormalBound": "MIN_VALUE documented bound"
+ },
+ "t86Residual": {
+  "S64_hex": "403893cd3a2c8199",
+  "S63_hex": "4038000000000000",
+  "residualExcessULPs": 4
+ }
+}

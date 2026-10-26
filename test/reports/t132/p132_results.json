@@ -1,0 +1,85 @@
+{
+ "executionId": "p132-outward-oracle-v1",
+ "date": "2026-10-26",
+ "contract": "T127 sections 2/4/6",
+ "results": [
+  {
+   "id": "T132-RED-01",
+   "name": "RED baseline: P011OutwardArithmetic.ets / P011WriterEnvelope.ets absent (fs-classified, per T125 discipline)",
+   "status": "PASS",
+   "missing": [
+    "P011OutwardArithmetic.ets",
+    "P011WriterEnvelope.ets"
+   ],
+   "verdict": "NOT_IMPLEMENTED (pre-test RED for T133); not a business-fix failure"
+  },
+  {
+   "id": "T132-OA-01",
+   "name": "nextUp/nextDown: full boundaries incl ±0, subnormals, MAX_VALUE→Inf; DataView-style bit ops (no v+EPS*v)",
+   "status": "PASS",
+   "nextUpMax": true
+  },
+  {
+   "id": "T132-OA-02",
+   "name": "add/sub exact semantics: RN+one-neighbor envelope, ±0/subnormal preservation, overflow detected as non-representable",
+   "status": "PASS",
+   "overflowRepresentable": false,
+   "ovfNote": "1e308+1e308 exact = 2e308 > MAX_VALUE → RANGE_UNSUPPORTED expected"
+  },
+  {
+   "id": "T132-OA-03",
+   "name": "divide: RN(a/b) then exact(v*b−a) direction decision; zero denominator / zero-crossing divisor domain rejected by contract",
+   "status": "PASS",
+   "a": 1,
+   "b": 3,
+   "rnQ": 7.401486830834377e-17,
+   "cmp": -1,
+   "note": "contract: b=0 or divisor interval crossing 0 → RANGE/EXPRESSION rejection, never a fake 0"
+  },
+  {
+   "id": "T132-OA-04",
+   "name": "interval mul: exactly four endpoint combinations, outward min/max; add/sub takes corresponding ends",
+   "status": "PASS",
+   "mn": "-3/1",
+   "mx": "9/2"
+  },
+  {
+   "id": "T132-OA-05",
+   "name": "affine whitelist: B=H case = 1 product + 5 scalars fits; r0 repeated (|r0| case) = 2·r0 + a·q + b still ≤1 product + 7 scalars; >8 items must be rejected by contract",
+   "status": "PASS",
+   "lhs": "425053490888183723/576460752303423488",
+   "note": "T86 real residual is beyond H; the B=|r0| algebraic elimination keeps r0 twice, total ≤8 terms"
+  },
+  {
+   "id": "T132-OA-06",
+   "name": "η semantics: half-ULP at binade [1,2) = 2^-53 exact (ulp=2^-52 sanity); subnormal half-ULP unrepresentable → MIN_VALUE as evidenced upper bound (documented, not tolerance)",
+   "status": "PASS",
+   "halfUlp": 1.1102230246251565e-16,
+   "ulp": 2.220446049250313e-16
+  },
+  {
+   "id": "T132-OA-07",
+   "name": "shared-result snapshot discipline: T112 module confirmed to return a shared result object; T133 contract must snapshot {code,sign} before the next compare",
+   "status": "PASS",
+   "sharedResult": true,
+   "note": "carried from T125 §4 lesson; Outward module must either copy-on-return or document the same discipline"
+  },
+  {
+   "id": "T132-OA-08",
+   "name": "local non-worsening vs FINAL: preexisting violation far from changed columns → FINAL fails (STRICT_EDGE at 5), LOCAL scope must exclude it (boundMode/identity distinct fields)",
+   "status": "PASS",
+   "fSnap": {
+    "legal": false,
+    "reason": "STRICT_EDGE",
+    "firstEdge": 5
+   },
+   "localScopeNote": "LOCAL passes only over changed+adjacent edges; identity/boundMode must distinguish LOCAL from FINAL (T127 §4)"
+  },
+  {
+   "id": "T132-OA-09",
+   "name": "ZERO no-write contract frozen: same-bit-type preservation, no reserve/close ticket, no success LAND event, CONTACT_HOLD returns UNSUPPORTED instead of wrapping disposition",
+   "status": "PASS",
+   "verdict": "contract fixture for T133; implementation RED"
+  }
+ ]
+}
