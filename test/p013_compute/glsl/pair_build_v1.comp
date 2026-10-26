@@ -1,0 +1,26 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer HBlock {uvec4 h[];} H;
+layout(std430,binding=1) buffer TBlock {uvec4 t[];} T;
+uniform uint uLevel;
+bool lessKey(uvec4 a,uvec4 b){
+ if(a.z!=b.z)return a.z>b.z; // valid first; MAX_ID remains a real ID
+ if(a.x!=b.x)return a.x<b.x;
+ if(a.y!=b.y)return a.y<b.y;
+ return a.w<b.w;
+}
+void main(){uint j=gl_GlobalInvocationID.x,K=H.h[2].z;
+ if(j>=K)return;
+ uint m=1u<<uLevel,half=m>>1u,segment=(j/m)*m;
+ uint selfStart=segment+((j-segment)>=half?half:0u);
+ uint otherStart=segment+((j-segment)>=half?0u:half);
+ uvec4 x=T.t[(uLevel-1u)*K+j];
+ uint lo=0u,hi=half;
+ while(lo<hi){uint mid=lo+(hi-lo)/2u;
+  if(lessKey(T.t[(uLevel-1u)*K+otherStart+mid],x))lo=mid+1u;
+  else hi=mid;
+ }
+ uint destination=segment+(j-selfStart)+lo;
+ T.t[uLevel*K+destination]=x; // unique rank within this Y segment
+}

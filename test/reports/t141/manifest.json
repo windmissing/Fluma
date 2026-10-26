@@ -1,0 +1,134 @@
+{
+  "revision": "T141_OFFLINE_MANIFEST_V1",
+  "buildFlags": "/fp:strict /std:c++17",
+  "algorithm": "GPU_SEGMENTED_ID_PAIR_V1",
+  "wire": "P011_GPU_PAIR_WIRE_V1",
+  "t140ManifestSha256": "14c7043269a9e09cf0d186d6c98e62f9b7df62d9be06974176be259c249feee5",
+  "t140FixturePoolSha": {
+    "192": "0d3e9b6de5c22ba6f5c256aff46ab605524cd222b486c977df2b5b6451f4d720",
+    "512": "d7239a09e99e80697c9a571bf2aef22d6c7eb40248266a89b7c95fb5a53b5d2f"
+  },
+  "gpuExecution": [
+    {
+      "Nmax": 192,
+      "status": "GLES_31_REQUIRED",
+      "dispatchCount": 0
+    },
+    {
+      "Nmax": 512,
+      "status": "GLES_31_REQUIRED",
+      "dispatchCount": 0
+    }
+  ],
+  "shaderCompileStatus": "NOT_RUN_GLES31_UNAVAILABLE",
+  "nativeExecutable": {
+    "byteLength": 419840,
+    "sha256": "8be9d9cd22126c43fe53e0b1634737d9be8acf0622c4d74d10c22a6e1af2fe17"
+  },
+  "harmonyNativeModule": {
+    "byteLength": 379592,
+    "sha256": "868713258a982dc666013ebdb07606616394d6f9b2a8d7f6c31c0e176cf69ac4"
+  },
+  "files": [
+    {
+      "name": "pair_wire_v1.h",
+      "byteLength": 1133,
+      "sha256": "5eb711625c92408a7de419fff208337726dec13bab4fa58639d48cd1f71141f4"
+    },
+    {
+      "name": "pair_sha256_v1.h",
+      "byteLength": 2753,
+      "sha256": "154cf18fe5b2c1fe2831326faf0287dbcd83f420e4eea22a8dfe5d30a7db9faa"
+    },
+    {
+      "name": "pair_prepare_v1.h",
+      "byteLength": 2077,
+      "sha256": "8edfc7482f4b787703df7476b2fff7523aac949e2b4498bf9fae999d3d08a90b"
+    },
+    {
+      "name": "pair_prepare_v1.cpp",
+      "byteLength": 10502,
+      "sha256": "8607e8a71c2436906beb9c39b5e9426581b73e0ac4d4f2bdc4d6468142b5ae02"
+    },
+    {
+      "name": "pair_executor_v1.h",
+      "byteLength": 1356,
+      "sha256": "3f5cfc9b6eaf003be0ea153b6ac2fc247b556e87aacee0391f87167e159aaadb"
+    },
+    {
+      "name": "pair_executor_v1.cpp",
+      "byteLength": 12453,
+      "sha256": "d49dd282e30bddceea9d33393ee3017e1d6516a8b9edf1f4d738a9e671ea73e1"
+    },
+    {
+      "name": "pair_owner_v1.h",
+      "byteLength": 608,
+      "sha256": "2bfb9ae2cc70e7aa44ecb0342a5722d704bed5798ea6613a7ed006d6679c273c"
+    },
+    {
+      "name": "pair_owner_v1.cpp",
+      "byteLength": 3655,
+      "sha256": "719e88e808e3ff3c74e2f1a0b0d3e09a99f7606af24bcc3710a3f2129347b80a"
+    },
+    {
+      "name": "glsl/pair_build_v1.comp",
+      "byteLength": 891,
+      "sha256": "42a445b25e60977cfdac0d8363f820f591a551ad8cee2fa4b23a209c18b49f96"
+    },
+    {
+      "name": "glsl/pair_query_v1.comp",
+      "byteLength": 1393,
+      "sha256": "eb6c196584e805aaebda14220d580aae5c80181a8c6c594a01759460a864a1f8"
+    },
+    {
+      "name": "glsl/pair_reduce_v1.comp",
+      "byteLength": 1603,
+      "sha256": "cfff927aa61c5f469241ec26d6f026fd5328240e1f856e3e82ac8a9f6932548e"
+    },
+    {
+      "name": "pair_driver_v1.cpp",
+      "byteLength": 6869,
+      "sha256": "bfd3878c6271308f76e89f3f964e54fd7214047874c7b34643e7492fc27cfc96"
+    },
+    {
+      "name": "pair_binding_v1.cpp",
+      "byteLength": 8022,
+      "sha256": "b3f265349a27d7f128383dfd64a479f6f3aaf081d1a9ee173789ca61e01faa66"
+    },
+    {
+      "name": "ets/T141NativePairBinding.ets",
+      "byteLength": 895,
+      "sha256": "13c1ffe5074e1f93a9fc0cfb7782d2d60fe66aeb0124cb65d4c17c1b21d61c86"
+    },
+    {
+      "name": "CMakeLists.txt",
+      "byteLength": 1078,
+      "sha256": "b6cb3c4defcdf4e1cf2ff117d9f059304c0acf29768c662992de368ca73076bd"
+    },
+    {
+      "name": "build_t141.cmd",
+      "byteLength": 1645,
+      "sha256": "3b347cb96946f0f5c6db176bd7af645f46c1fb46d7360b4704007141479d6374"
+    },
+    {
+      "name": "tools/generate_hot_test_variant.cjs",
+      "byteLength": 3753,
+      "sha256": "8d4cd79e0353f3830bec4d61d59847656a8201343c2893e122314c8a0ff724e1"
+    },
+    {
+      "name": "tools/pack_t140_fixtures.cjs",
+      "byteLength": 1504,
+      "sha256": "14ace732a339613651ddc2c705ca59b192b477b158e6e164b5ae4adff7057f29"
+    },
+    {
+      "name": "run_variant_patch.cjs",
+      "byteLength": 2094,
+      "sha256": "d11fbcb7beedfa6eb72e4eff9f466a021a1d28a9139150f60ed90f309b7db71a"
+    },
+    {
+      "name": "run_t141_offline.cjs",
+      "byteLength": 3678,
+      "sha256": "9ec8ae0f8a188498ea890e28844a83126f72d65f03b0ee4353ba741da7d6bf29"
+    }
+  ]
+}

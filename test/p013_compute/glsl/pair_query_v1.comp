@@ -1,0 +1,33 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer HBlock {uvec4 h[];} H;
+layout(std430,binding=1) readonly buffer TBlock {uvec4 t[];} T;
+layout(std430,binding=2) readonly buffer QBlock {uvec4 q[];} Q;
+layout(std430,binding=3) writeonly buffer CBlock {uvec4 c[];} C;
+void inspectSegment(uint level,uint segment,uint idA,uint slotA,uint aRank,uint K,
+ inout uvec4 best0,inout uvec4 best1){
+ uint length=1u<<level,start=level*K+segment*length;
+ uint lo=start,hi=start+length,stop=hi;
+ while(lo<hi){uint mid=lo+(hi-lo)/2u,uId=T.t[mid].x;
+  bool invalid=T.t[mid].z==0u;
+  if(invalid||uId>idA)hi=mid;else lo=mid+1u;
+ }
+ // Hard segment-end clamp: the adjacent segment must never supply a false b.
+ if(lo>=stop)return;
+ uvec4 b=T.t[lo];if(b.z==0u||b.x<=idA)return;
+ if(best0.x==0u||b.x<best0.z){best0=uvec4(1u,idA,b.x,slotA);
+  best1=uvec4(b.y,aRank,b.w,0u);}
+}
+void main(){uint i=gl_GlobalInvocationID.x,K=H.h[2].z,n=H.h[2].y;
+ if(i>=K)return;
+ uvec4 q0=Q.q[i*2u],q1=Q.q[i*2u+1u];
+ uvec4 best0=uvec4(0u),best1=uvec4(0u);
+ if(i<n&&q1.w==1u){uint lo=q0.w+K,hi=q1.x+K,level=0u;
+  while(lo<hi){if((lo&1u)!=0u){inspectSegment(level,lo-(K>>level),q0.x,q0.y,q0.z,K,best0,best1);lo++;}
+   if((hi&1u)!=0u){hi--;inspectSegment(level,hi-(K>>level),q0.x,q0.y,q0.z,K,best0,best1);}
+   lo>>=1u;hi>>=1u;level++;
+  }
+ }
+ C.c[i*2u]=best0;C.c[i*2u+1u]=best1;
+}
