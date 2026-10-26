@@ -1,0 +1,57 @@
+{
+ "executionId": "p128-merge-index-differential-v1",
+ "date": "2026-10-26",
+ "target": "T123 469ee37",
+ "oracle": "legacy 52a0700 mergeOldestHot scan",
+ "results": [
+  {
+   "id": "T128-D1",
+   "name": "randomized differential vs legacy 52a0700 scan: pair identity identical across N∈{4..512}, sparsity, 2 phases, 2 sources, 4 sourceIds, radius {0,1e-9,0.25,2}, IDs incl. near-MAX",
+   "status": "PASS",
+   "cases": 280,
+   "fails": []
+  },
+  {
+   "id": "T128-D2",
+   "name": "no-match upper bound: adversarial same-group pool → legacy Θ(N²) candidate checks vs index ops bounded O(N log N); both answer no-match",
+   "status": "PASS",
+   "legacyChecks": 36864,
+   "indexOps": 7273,
+   "n": 192,
+   "bound": "sortComparisons+treeVisits+rangeQueries+aSelections ≤ 64N"
+  },
+  {
+   "id": "T128-D3",
+   "name": "consecutive merges: 6-step chain with live centroid drift; every step matches legacy pair selection (index rebuilt from current scratch each time)",
+   "status": "PASS",
+   "steps": 6
+  },
+  {
+   "id": "T128-D4",
+   "name": "rollback/restore: post-removal and post-restore finds both match legacy (rebuild semantics, no stale frozen index)",
+   "status": "PASS",
+   "pair1": [
+    0,
+    1
+   ],
+   "agree2": true,
+   "agree3": true
+  },
+  {
+   "id": "T128-D5",
+   "name": "invalid inputs: duplicate pId rejected (invalid=true), NaN coordinate rejected, negative radius rejected — never a silent wrong pair",
+   "status": "PASS",
+   "dupRejected": true,
+   "nanRejected": true,
+   "negRadius": true
+  },
+  {
+   "id": "T128-D6",
+   "name": "group-key completeness: differing state or sourceId separates particles regardless of radius (a=ID1/b=ID3 pattern, never ID1/ID2 easy case alone)",
+   "status": "PASS",
+   "state": true,
+   "sourceId": true,
+   "note": "T116 §5: the easy ID1/2 example must not stand in for full proof; state/sourceId in the group tuple verified"
+  }
+ ]
+}
