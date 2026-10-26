@@ -1,0 +1,169 @@
+{
+ "executionId": "p147-outward-independent-v1",
+ "date": "2026-10-27",
+ "target": "T133 e7cd4a1",
+ "seed": 3656748112,
+ "results": [
+  {
+   "id": "T147-D1",
+   "name": "nextUp/nextDown adjacency: ±0, subnormals, 1+ulp, MAX→+Inf (11 fixed points vs independent bit-walk)",
+   "status": "PASS",
+   "cases": 11
+  },
+  {
+   "id": "T147-D2a",
+   "name": "directed endpoints add/sub/mul: 225 fixed-seed samples match independent exact-rational oracle (direction & exact-value zero-width)",
+   "status": "PASS",
+   "matched": 225,
+   "bad": 0,
+   "firstBad": null
+  },
+  {
+   "id": "T147-D2b",
+   "name": "div endpoints: production direction INVERTED vs oracle (F1 defect — exact quotient above v but production emits downward endpoints); 75-sample evidence archived",
+   "status": "FAIL",
+   "matched": 4,
+   "mismatch": 70,
+   "decisiveCaseMatchesOracle": false,
+   "evidence": [
+    {
+     "a": 137307.4545288086,
+     "b": -0.000011015367480382565,
+     "v": -12465081602.891735,
+     "production": [
+      -12465081602.891735,
+      -12465081602.891733
+     ],
+     "oracle": [
+      -12465081602.891737,
+      -12465081602.891735
+     ],
+     "exactVBminusASign": 1,
+     "bSign": -1
+    },
+    {
+     "a": -5.6387022315251834e-8,
+     "b": -4.334790612015027e-7,
+     "v": 0.1300801523352943,
+     "production": [
+      0.1300801523352943,
+      0.13008015233529432
+     ],
+     "oracle": [
+      0.13008015233529427,
+      0.1300801523352943
+     ],
+     "exactVBminusASign": 1,
+     "bSign": -1
+    },
+    {
+     "a": 2.6799223413690925,
+     "b": -9.369056803709697e-7,
+     "v": -2860397.1536472826,
+     "production": [
+      -2860397.153647283,
+      -2860397.1536472826
+     ],
+     "oracle": [
+      -2860397.1536472826,
+      -2860397.153647282
+     ],
+     "exactVBminusASign": -1,
+     "bSign": -1
+    },
+    {
+     "a": 0.02006657551828539,
+     "b": 1045291.7492675781,
+     "v": 1.919710504971054e-8,
+     "production": [
+      1.919710504971054e-8,
+      1.9197105049710544e-8
+     ],
+     "oracle": [
+      1.9197105049710537e-8,
+      1.919710504971054e-8
+     ],
+     "exactVBminusASign": -1,
+     "bSign": 1
+    },
+    {
+     "a": 243726062.4375,
+     "b": 5.508179266033864e-7,
+     "v": 442480265557866.8,
+     "production": [
+      442480265557866.8,
+      442480265557866.9
+     ],
+     "oracle": [
+      442480265557866.75,
+      442480265557866.8
+     ],
+     "exactVBminusASign": -1,
+     "bSign": 1
+    }
+   ]
+  },
+  {
+   "id": "T147-D3",
+   "name": "rejection codes: overflow→RANGE (add/mul/sub/div-quotient), zero divide, NaN/Inf→NON_FINITE",
+   "status": "PASS"
+  },
+  {
+   "id": "T147-D4",
+   "name": "interval arithmetic: four-corner mul matches independent corner oracle (120 pairs), add endpoints exact, div crossing zero rejected",
+   "status": "PASS",
+   "matched": 112,
+   "zeroCross": "DIVIDE_BY_ZERO"
+  },
+  {
+   "id": "T147-D5",
+   "name": "eta: half-ULP at [1,2)=2^-53, [2,4)=2^-52, subnormal floor=MIN_VALUE (conservative upper bound)",
+   "status": "PASS"
+  },
+  {
+   "id": "T147-D6",
+   "name": "affine bound: 200 random (1 product + 1..7 scalars) match exact oracle; >7 terms & NaN scalar rejected; snapshot survives later call",
+   "status": "PASS",
+   "matched": 200
+  },
+  {
+   "id": "T147-D7",
+   "name": "LOCAL verifier: improving patch legal (ENTRY_H_OR_OLD_RESIDUAL, materialOnly); far-edge violation out of LOCAL scope; FINAL rejects at first edge whose after-slope >H (no entry exemption); smaller same-sign residual accepted; worsening/mismatch rejected",
+   "status": "PASS",
+   "improvingLocal": {
+    "legal": true,
+    "boundMode": "ENTRY_H_OR_OLD_RESIDUAL",
+    "materialOnly": true,
+    "reason": "OK",
+    "affectedCount": 2
+   },
+   "localVsFinal": {
+    "local": true,
+    "localReason": "OK",
+    "final": false,
+    "finalReason": "STRICT_EDGE",
+    "firstEdge": 0
+   },
+   "nonWorsening": {
+    "legal": true,
+    "boundMode": "ENTRY_H_OR_OLD_RESIDUAL"
+   },
+   "worsening": {
+    "legal": false,
+    "reason": "STRICT_EDGE",
+    "firstEdge": 0,
+    "mismatch": "BEFORE_MISMATCH"
+   }
+  },
+  {
+   "id": "T147-D8",
+   "name": "NoWrite: bit-level float preservation distinguishes ±0, NaN pattern kept; IDs exact; counters zero; CONTACT_HOLD returns UNSUPPORTED and forbids verify",
+   "status": "PASS"
+  },
+  {
+   "id": "T147-D9",
+   "name": "envelope: branch/node capacity, invalid branch (lo>hi, closed-open), op domain, non-finite, forward node reference all rejected with typed reasons",
+   "status": "PASS"
+  }
+ ]
+}
