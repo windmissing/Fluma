@@ -103,6 +103,30 @@ export class P011ExactDyadic {
     if(code!=='OK')return this.finish(code);
     code=this.load(c,true);return this.finish(code);
   }
+  // T133 finite whitelist: one optional signed product and at most seven
+  // signed binary64 scalar terms. Callers copy code/sign before the next call.
+  compareAffineBound(a: number,b: number,scalars: Float64Array,count: number,
+    productPolarity: number=1): P011ExactResult {
+    if(!this.environmentSupported)return this.finish('ARITHMETIC_ENV_UNSUPPORTED');
+    if(!Number.isSafeInteger(count)||count<0||count>7||count>scalars.length||
+      (productPolarity!==1&&productPolarity!==-1))return this.finish('ARITHMETIC_EXPRESSION_UNSUPPORTED');
+    this.reset();
+    if(!Number.isFinite(a)||!Number.isFinite(b))return this.finish('ARITHMETIC_EXPRESSION_UNSUPPORTED');
+    const ea=this.decode(a,this.left),eb=this.decode(b,this.right);
+    const product=this.product;product.fill(0);let carry=0;
+    for(let k=0;k<8;k++){
+      let n=carry;for(let i=0;i<4;i++){const j=k-i;if(j>=0&&j<4)n+=this.left[i]*this.right[j];}
+      product[k]=n%65536;carry=Math.floor(n/65536);
+    }
+    if(carry!==0)return this.finish('CERTIFICATE_CAPACITY');
+    let code=this.shifted(product,8,ea+eb+2148,((a<0)!==(b<0)?-1:1)*productPolarity);
+    if(code!=='OK')return this.finish(code);
+    for(let i=0;i<count;i++){
+      if(!Number.isFinite(scalars[i]))return this.finish('ARITHMETIC_EXPRESSION_UNSUPPORTED');
+      code=this.load(scalars[i],false);if(code!=='OK')return this.finish(code);
+    }
+    return this.finish('OK');
+  }
   compareRate(theta: number,before: number,omega: number,dt: number): P011ExactResult {
     if(!this.environmentSupported)return this.finish('ARITHMETIC_ENV_UNSUPPORTED');
     if(!Number.isFinite(theta)||!Number.isFinite(before)||!Number.isFinite(omega)||!Number.isFinite(dt))return this.finish('NON_FINITE');
