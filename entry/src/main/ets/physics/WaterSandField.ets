@@ -978,6 +978,11 @@ export class WaterSandField {
   private shakeEnergy = 0;
   private poolDiagnosticRequestEnergy = 0;
   private poolDiagnosticEnergyAfter = 0;
+  private poolDiagnosticOrigin: string = 'NONE';
+  private poolDiagnosticParentSequence = 0;
+  private poolDiagnosticLambdaAttempt = -1;
+  private poolDiagnosticLambda = 0;
+  private poolDiagnosticLiftPreview = false;
   private simulationTime = 0;
   private t90Heavy = -1;
   private t90Light = -1;
@@ -1764,7 +1769,13 @@ export class WaterSandField {
     //    halve on failure, ≤8 retries, λmin 1e-4).
     let lambda = 1;
     let admitted = false;
+    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
+      this.poolDiagnosticOrigin='GESTURE_SPAWN';this.poolDiagnosticParentSequence=request.sequence;
+    }
     for (let attempt = 0; attempt < 8; attempt++) {
+      if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
+        this.poolDiagnosticLambdaAttempt=attempt;this.poolDiagnosticLambda=lambda;
+      }
       const aH = new Float64Array(this.cols);
       const aL = new Float64Array(this.cols);
       for (let c = 0; c < this.cols; c++) {
@@ -2108,14 +2119,24 @@ export class WaterSandField {
   getPoolProgressDiagnostic(): string | null {
     const b=this.particleBinding;if(b===null || !b.work.diagnosticEnabled)return null;
     const w=b.work;
-    return JSON.stringify({revision:'P011_POOL_PROGRESS_DIAGNOSTIC_V1',runId:this.p011RunId,
+    return JSON.stringify({revision:'P011_POOL_PROGRESS_DIAGNOSTIC_V2',runId:this.p011RunId,
+      countersScope:'WORKSPACE_CUMULATIVE',lastOrigin:this.poolDiagnosticOrigin,
+      parentSequence:this.poolDiagnosticParentSequence,lambdaAttempt:this.poolDiagnosticLambdaAttempt,
+      lambda:this.poolDiagnosticLambda,liftPreview:this.poolDiagnosticLiftPreview,hotAttemptToken:w.attemptToken,
       attemptId:this.p011CurrentAttemptId,substepId:this.p011SubstepId,configRevision:this.configRevision,
       mediumMode:this.mediumMode,shakeInput:this.shakeInput,shakeEnergy:this.shakeEnergy,
       requestEnergy:this.poolDiagnosticRequestEnergy,energyAfter:this.poolDiagnosticEnergyAfter,
-      seedCalls:b.seedCalls,collectCalls:w.collectCalls,seedCollectMs:b.seedCollectMs,
+      seedCalls:b.seedCalls,collectCalls:w.collectCalls,seedCollectCalls:b.seedCollectCalls,
+      seedApplyCalls:b.seedApplyCalls,previewCollectCalls:b.previewCollectCalls,
+      authoritativeApplyCalls:b.authoritativeApplyCalls,seedCollectMs:b.seedCollectMs,
       seedApplyMs:b.seedApplyMs,seedFinishMs:b.seedFinishMs,
       birthRequested:w.birthRequested,birthCompleted:w.birthCompleted,
       mergeCalls:w.mergeCalls,mergeSuccess:w.mergeSuccess,mergeCandidateChecks:w.mergeCandidateChecks,
+      mergeIndexRebuilds:w.mergeIndex.rebuilds,mergeIndexASelections:w.mergeIndex.aSelections,
+      mergeSortComparisons:w.mergeIndex.sortComparisons,mergeTreeVisits:w.mergeIndex.treeVisits,
+      mergeRangeQueries:w.mergeIndex.rangeQueries,mergeIndexInvalid:w.mergeIndex.invalid,
+      mergeIndexCpuBytes:w.mergeIndex.groupOrder.byteLength+w.mergeIndex.idOrder.byteLength+
+        w.mergeIndex.position.byteLength+w.mergeIndex.minimum.byteLength,
       activeCount:w.diagnosticActiveCount,journalUsed:w.diagnosticJournalUsed,lineageUsed:w.diagnosticLineageUsed,
       freeBefore:w.diagnosticFreeBefore,liveBefore:w.diagnosticLiveBefore,nextIdBefore:w.diagnosticNextIdBefore,
       freeAfter:w.diagnosticFreeAfter,liveAfter:w.diagnosticLiveAfter,nextIdAfter:w.diagnosticNextIdAfter,
@@ -6787,7 +6808,10 @@ export class WaterSandField {
   private liftByShake(dt: number): void {
     const trackSource = this.shakeSourceRouteActive() && !this.collectingTotalMotionRequests;
     const requestEnergy = this.shakeEnergy;
-    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled)this.poolDiagnosticRequestEnergy=requestEnergy;
+    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
+      this.poolDiagnosticOrigin='SHAKE_LIFT';this.poolDiagnosticLiftPreview=this.collectingTotalMotionRequests;
+      this.poolDiagnosticRequestEnergy=requestEnergy;this.poolDiagnosticLambdaAttempt=-1;this.poolDiagnosticLambda=0;
+    }
     let liftedTotal = 0;
     let liftedColumns = 0;
     let dryFreeSlots=this.particleBinding===null?0:this.particleBinding.pool.freeSlotCount;

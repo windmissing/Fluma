@@ -2,6 +2,7 @@
 // This module deliberately has no renderer or WaterSandField dependency.
 import { P011ParticleField, P011ParticleParams, P011ParticleSnapshot, particleSnapshotBufferAtHot } from './P011ParticleField';
 import { P011ParticleHotBudgetAdapter } from './P011ParticleHotBudget';
+import { P011MergeExactIndex } from './P011MergeExactIndex';
 
 export const P011_HOT_OK = 0;
 export const P011_HOT_NOT_CONFIGURED = 1;
@@ -257,6 +258,7 @@ export class P011ParticleHotWorkspace {
   readonly frozenMh: Float64Array; readonly frozenMl: Float64Array;
   readonly frozenSuspH: Float64Array; readonly frozenSuspL: Float64Array; readonly frozenSurface: Float64Array;
   readonly order: Int32Array; readonly seenEpoch: Float64Array; readonly seenEpochBefore: Float64Array;
+  readonly mergeIndex: P011MergeExactIndex;
   readonly fieldBeforeWaterTop: Float64Array; readonly fieldBeforeBh: Float64Array;
   readonly fieldBeforeBl: Float64Array; readonly fieldBeforeMh: Float64Array; readonly fieldBeforeMl: Float64Array;
   readonly fieldBeforeSuspH: Float64Array; readonly fieldBeforeSuspL: Float64Array; readonly fieldBeforeSurface: Float64Array;
@@ -325,6 +327,7 @@ export class P011ParticleHotWorkspace {
     this.fieldBeforeMl = new Float64Array(config.cols); this.fieldBeforeSuspH = new Float64Array(config.cols);
     this.fieldBeforeSuspL = new Float64Array(config.cols); this.fieldBeforeSurface = new Float64Array(config.cols);
     this.order = new Int32Array(config.nmax); this.seenEpoch = new Float64Array(config.requestCapacity + 1);
+    this.mergeIndex = new P011MergeExactIndex(config.nmax);
     this.seenEpochBefore = new Float64Array(config.requestCapacity + 1);
     this.eventKind = new Uint8Array(config.eventCapacity); this.eventParticleId = new Uint32Array(config.eventCapacity);
     this.eventSourceId = new Uint32Array(config.eventCapacity); this.eventColumn = new Int32Array(config.eventCapacity);
@@ -362,6 +365,7 @@ export class P011ParticleHotWorkspace {
     this.registerColdBuffers(this.patchOriginal.coldBuffers()); this.registerColdBuffers(this.results.coldBuffers());
     this.registerColdBuffers(this.events.coldBuffers()); this.registerColdBuffers(this.patchActions.coldBuffers());
     this.registerColdBuffers(this.sealedPlan.coldBuffers()); this.registerColdBuffers(this.sealedResults.coldBuffers());
+    this.registerColdBuffers(this.mergeIndex.coldBuffers());
   }
   // COLD registration only. Dynamic shape and capacity never change in HOT.
   registerColdBuffers(buffers: ArrayBuffer[]): void {
@@ -918,27 +922,14 @@ function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a
 }
 function mergeOldestHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot): number {
   if (work.diagnosticEnabled) work.mergeCalls++;
-  // Rebuild ID order from the current scratch pool after every merge. The old
-  // scan selected the lexicographically smallest legal (pId[a], pId[b]).
-  let afterId = 0;
-  for (let pass = 0; pass < p.nmax; pass++) {
-    let a = -1;
-    for (let i = 0; i < p.nmax; i++) if (p.pState[i] !== 0 && p.pId[i] > afterId &&
-      (a < 0 || p.pId[i] < p.pId[a])) a = i;
-    if (a < 0) break;
-    let b = -1;
-    for (let j = 0; j < p.nmax; j++) {
-      if (work.diagnosticEnabled) work.mergeCandidateChecks++;
-      if (p.pState[j] !== 0 && p.pId[a] < p.pId[j] &&
-        p.pPhase[a] === p.pPhase[j] && p.pSource[a] === p.pSource[j] && p.pSourceId[a] === p.pSourceId[j] &&
-        p.pState[a] === p.pState[j] && Math.floor(p.pX[a]) === Math.floor(p.pX[j]) &&
-        Math.abs(p.pY[a] - p.pY[j]) <= work.params.mergeHeightRadius &&
-        (b < 0 || p.pId[j] < p.pId[b])) b = j;
-    }
-    if (b >= 0) { const status = mergePairHot(work, p, a, b); if (status === 0 && work.diagnosticEnabled) work.mergeSuccess++; return status; }
-    afterId = p.pId[a];
-  }
-  return P011_HOT_INVALID_PATCH_STATE;
+  // The index owns cold fixed buffers. Each call reads the current scratch;
+  // it never reuses a pairing after centroid or free-list mutation.
+  const found=work.mergeIndex.find(p,work.params.mergeHeightRadius);
+  if(!found)return P011_HOT_INVALID_PATCH_STATE;
+  const a=work.mergeIndex.selectedA,b=work.mergeIndex.selectedB;
+  const status=mergePairHot(work,p,a,b);
+  if(status===0&&work.diagnosticEnabled)work.mergeSuccess++;
+  return status;
 }
 function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBuffer, row: number,
   gh: number, gl: number, disposition: number): number {

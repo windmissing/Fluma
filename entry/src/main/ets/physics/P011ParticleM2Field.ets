@@ -68,6 +68,7 @@ export class P011ParticleM2FieldBinding {
   private stepOpen = 0;
   private birthEventRows: string[] = [];
   seedCalls = 0; seedCollectMs = 0; seedApplyMs = 0; seedFinishMs = 0;
+  seedCollectCalls = 0; seedApplyCalls = 0; previewCollectCalls = 0; authoritativeApplyCalls = 0;
   collectFailureEnabled = false;
   readonly collectFailure: P011CollectFirstFailure = new P011CollectFirstFailure();
   private collectEntry(dt: number,tiltRad: number,substepId: number,seed: number): void {
@@ -153,6 +154,7 @@ export class P011ParticleM2FieldBinding {
     this.stepOpen = 1;
     const collectStart=this.work.diagnosticEnabled?Date.now():0;
     const collected=this.collectBirthHeaders();
+    if(this.work.diagnosticEnabled)this.seedCollectCalls++;
     if(this.work.diagnosticEnabled)this.seedCollectMs+=Date.now()-collectStart;
     if (collected !== 0) { this.rollback(); return -1; }
     const a = w.planA, b = w.planB;
@@ -167,6 +169,7 @@ export class P011ParticleM2FieldBinding {
     this.sink.birthOnly = sourceKind === 1 ? 1 : 0;
     const applyStart=this.work.diagnosticEnabled?Date.now():0;
     const applied = applyParticlePlanInto(w, w.stepEpoch, a, this.sink, w.results);
+    if(this.work.diagnosticEnabled)this.seedApplyCalls++;
     if(this.work.diagnosticEnabled)this.seedApplyMs+=Date.now()-applyStart;
     this.sink.birthOnly = 0;
     if (applied !== 0 || w.results.granted[0] !== mass) { this.rollback(); return -1; }
@@ -188,6 +191,7 @@ export class P011ParticleM2FieldBinding {
     this.stepOpen=1;
     const collectStart=this.work.diagnosticEnabled?Date.now():0;
     const collected=this.collectBirthHeaders();
+    if(this.work.diagnosticEnabled)this.seedCollectCalls++;
     if(this.work.diagnosticEnabled)this.seedCollectMs+=Date.now()-collectStart;
     if(collected!==0){this.rollback();return false;}
     const a=w.planA,b=w.planB;a.requestCount=0;a.motionCount=0;a.totalRequested=0;
@@ -203,6 +207,7 @@ export class P011ParticleM2FieldBinding {
     this.sink.birthOnly=sourceKind===1?1:0;
     const applyStart=this.work.diagnosticEnabled?Date.now():0;
     const applied=applyParticlePlanInto(w,w.stepEpoch,a,this.sink,w.results);this.sink.birthOnly=0;
+    if(this.work.diagnosticEnabled)this.seedApplyCalls++;
     if(this.work.diagnosticEnabled)this.seedApplyMs+=Date.now()-applyStart;
     if(applied!==0){this.rollback();return false;}
     for(let row=0;row<a.requestCount;row++)if(w.results.granted[row]!==a.requested[row]){this.rollback();return false;}
@@ -232,8 +237,10 @@ export class P011ParticleM2FieldBinding {
     this.stepOpen = 1;
     const epoch = this.work.stepEpoch;
     const a=collectParticlePlanInto(this.work,epoch,this.work.planA);
+    if(this.work.diagnosticEnabled)this.previewCollectCalls++;
     if(a!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COLLECT_A',P011_PARTICLE_M2_STEP_FAILED,a,rollback);}
     const b=collectParticlePlanInto(this.work,epoch,this.work.planB);
+    if(this.work.diagnosticEnabled)this.previewCollectCalls++;
     if(b!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COLLECT_B',P011_PARTICLE_M2_STEP_FAILED,b,rollback);}
     const comparison=compareParticlePlansHot(this.work.planA,this.work.planB);
     if(comparison!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COMPARE',P011_PARTICLE_M2_STEP_FAILED,comparison,rollback);}
@@ -266,6 +273,7 @@ export class P011ParticleM2FieldBinding {
     budget.bindLiveBudget(localRemaining, localUsed, totalRemaining, 0);
     const epoch = this.work.stepEpoch;
     const status = applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results);
+    if(this.work.diagnosticEnabled)this.authoritativeApplyCalls++;
     if (status !== 0) { this.rollback(); return P011_PARTICLE_M2_STEP_FAILED; }
     if (finishStepHot(this.work, epoch) !== 0) { rollbackStepHot(this.work, epoch); this.stepOpen = 0; return P011_PARTICLE_M2_STEP_FAILED; }
     localRemaining.set(budget.localRemaining); localUsed.set(budget.localUsed);
