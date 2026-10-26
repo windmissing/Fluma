@@ -1,0 +1,35 @@
+{
+  "suite": "T55 G3 developer selfcheck",
+  "renderContractRevision": "P013_MATERIAL_ISOLATED_V1",
+  "historicalMapping": {
+    "oldCase": "T24 preparation has no production caller or shader embedding",
+    "status": "SUPERSEDED_BY_AUTHORIZED_G3_IMPLEMENTATION",
+    "reason": "T55 explicitly requires building signed-off helper in new shader; original test preserved unchanged"
+  },
+  "results": [
+    {
+      "name": "T24 math 10 cases unchanged; only stage-specific no-embedding historical assertion explicitly superseded",
+      "status": "PASS"
+    },
+    {
+      "name": "G3 embeds the same helper once; P0 files remain separate",
+      "status": "PASS"
+    },
+    {
+      "name": "typed layout2 versions/default OFF are distinct from P0 layout1",
+      "status": "PASS"
+    },
+    {
+      "name": "material controller retains last successful isolated token after failure, never calls Canvas fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "foreign generation/token success cannot replace previous successful identity",
+      "status": "PASS"
+    },
+    {
+      "name": "candidate pass owns no clear and has no runtime Canvas/readback dependency",
+      "status": "PASS"
+    }
+  ]
+}

@@ -51,6 +51,7 @@ class MaterialUploader {
  MaterialReceipt Restore(uint64_t surfaceEpoch,uint64_t contextEpoch);
  MaterialReceipt Inspect() const;
  const MaterialDesc* ActiveDesc() const;
+ const MaterialDesc* PendingDesc() const;
  const std::array<uint32_t,2>* BindActive(uint64_t contextEpoch) const;
  private:
  struct Generation { MaterialDesc desc; std::vector<uint8_t> grain,strata; std::array<uint32_t,2> textures{};

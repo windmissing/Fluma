@@ -1,0 +1,331 @@
+{
+  "status": "MEASURED_NOT_CALIBRATED",
+  "samplingRevision": "CONTINUOUS_COLUMN_WARP_V1",
+  "statement": "Discrete texel fetch after continuous warp is retained; C3 midpoint style step not removed or blurred",
+  "samples": [
+    {
+      "fixture": "flat_0_0_0_0_0_0_0",
+      "shape": "flat",
+      "on": 0,
+      "B": 0,
+      "C": 0,
+      "spark": 0,
+      "invert": 0,
+      "assets": "T48_REAL_BYTES",
+      "frameToken": "flat_0_0_0_0_0_0_0",
+      "sampleStage": "PRE_SWAP_READBACK",
+      "rgbCompared": 46080,
+      "opaquePixels": 15360,
+      "alphaMismatch": 0,
+      "transparentRgbMismatch": 0,
+      "maxCodeError": 5.684341886080802e-14,
+      "worstSample": {
+        "x": 26,
+        "y": 96,
+        "channel": 0,
+        "cpuCode": 198.00000000000006,
+        "gpuCode": 198
+      },
+      "rmsCodeError": 1.5412163497809636e-14,
+      "numericStatus": "MEASURED_NOT_CALIBRATED",
+      "readbackHash": "c6c5b08c3c0c65a8816c10c1bf1f37f699a51e6459b9a20f3f4ba088f9f11627",
+      "cPhaseAdjacentPixels": [
+        [
+          24,
+          216,
+          196,
+          150
+        ],
+        [
+          25,
+          216,
+          196,
+          150
+        ],
+        [
+          26,
+          216,
+          196,
+          150
+        ],
+        [
+          27,
+          216,
+          196,
+          150
+        ],
+        [
+          28,
+          216,
+          196,
+          150
+        ],
+        [
+          29,
+          216,
+          196,
+          150
+        ],
+        [
+          30,
+          216,
+          196,
+          150
+        ],
+        [
+          31,
+          216,
+          196,
+          150
+        ],
+        [
+          32,
+          216,
+          196,
+          150
+        ],
+        [
+          33,
+          216,
+          196,
+          150
+        ],
+        [
+          34,
+          216,
+          196,
+          150
+        ],
+        [
+          35,
+          216,
+          196,
+          150
+        ],
+        [
+          36,
+          216,
+          196,
+          150
+        ],
+        [
+          37,
+          216,
+          196,
+          150
+        ],
+        [
+          38,
+          216,
+          196,
+          150
+        ],
+        [
+          39,
+          216,
+          196,
+          150
+        ]
+      ],
+      "c3StyleBoundaryPixels": [
+        [
+          40,
+          73,
+          216,
+          196,
+          150
+        ],
+        [
+          40,
+          74,
+          216,
+          196,
+          150
+        ],
+        [
+          40,
+          75,
+          216,
+          196,
+          150
+        ],
+        [
+          40,
+          76,
+          216,
+          196,
+          150
+        ],
+        [
+          40,
+          77,
+          216,
+          196,
+          150
+        ]
+      ]
+    },
+    {
+      "fixture": "flat_0_0_1_0_0_0_0",
+      "shape": "flat",
+      "on": 0,
+      "B": 0,
+      "C": 1,
+      "spark": 0,
+      "invert": 0,
+      "assets": "T48_REAL_BYTES",
+      "frameToken": "flat_0_0_1_0_0_0_0",
+      "sampleStage": "PRE_SWAP_READBACK",
+      "rgbCompared": 46080,
+      "opaquePixels": 15360,
+      "alphaMismatch": 0,
+      "transparentRgbMismatch": 0,
+      "maxCodeError": 0.6729335395702947,
+      "worstSample": {
+        "x": 142,
+        "y": 119,
+        "channel": 0,
+        "cpuCode": 169.6729335395703,
+        "gpuCode": 169
+      },
+      "rmsCodeError": 0.2972380903195874,
+      "numericStatus": "MEASURED_NOT_CALIBRATED",
+      "readbackHash": "9aaec1dae89b117421e9dc88cef7935d74c440444bccf95d61945992b3812c43",
+      "cPhaseAdjacentPixels": [
+        [
+          24,
+          218,
+          200,
+          163
+        ],
+        [
+          25,
+          218,
+          200,
+          163
+        ],
+        [
+          26,
+          218,
+          200,
+          163
+        ],
+        [
+          27,
+          218,
+          200,
+          163
+        ],
+        [
+          28,
+          218,
+          200,
+          163
+        ],
+        [
+          29,
+          218,
+          200,
+          163
+        ],
+        [
+          30,
+          218,
+          200,
+          163
+        ],
+        [
+          31,
+          218,
+          200,
+          163
+        ],
+        [
+          32,
+          218,
+          200,
+          163
+        ],
+        [
+          33,
+          218,
+          200,
+          163
+        ],
+        [
+          34,
+          218,
+          200,
+          163
+        ],
+        [
+          35,
+          218,
+          200,
+          162
+        ],
+        [
+          36,
+          218,
+          200,
+          162
+        ],
+        [
+          37,
+          218,
+          200,
+          162
+        ],
+        [
+          38,
+          218,
+          200,
+          162
+        ],
+        [
+          39,
+          218,
+          200,
+          163
+        ]
+      ],
+      "c3StyleBoundaryPixels": [
+        [
+          40,
+          73,
+          216,
+          197,
+          154
+        ],
+        [
+          40,
+          74,
+          216,
+          197,
+          153
+        ],
+        [
+          40,
+          75,
+          216,
+          197,
+          152
+        ],
+        [
+          40,
+          76,
+          218,
+          199,
+          161
+        ],
+        [
+          40,
+          77,
+          218,
+          199,
+          161
+        ]
+      ]
+    }
+  ]
+}

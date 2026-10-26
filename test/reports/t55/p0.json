@@ -1,0 +1,85 @@
+{
+  "suite": "P013 P0 product adapter/CPU/controller",
+  "results": [
+    {
+      "name": "profiles match actual Canvas DISPLAY_4X3_V1 for every channel/column",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid input leaves reusable 2048B packet unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "Float32Array with nonzero byteOffset carries exactly 512 floats",
+      "status": "PASS"
+    },
+    {
+      "name": "flat fixture neutral reference and no sand outside mask",
+      "status": "PASS"
+    },
+    {
+      "name": "180 degree and non-fullscreen box maps the identical material point",
+      "status": "PASS"
+    },
+    {
+      "name": "depth approaches 1 across H/L/M without material-boundary jumps",
+      "status": "PASS"
+    },
+    {
+      "name": "mirrored light and mirrored two slopes exchange the sign about fixture reference",
+      "status": "PASS"
+    },
+    {
+      "name": "empty sand and one-column edge ramp preserve continuous sampler mask",
+      "status": "PASS"
+    },
+    {
+      "name": "binding is first accessed in XComponent onLoad, never during construction or pre-load controls",
+      "status": "PASS"
+    },
+    {
+      "name": "onLoad may precede native window readiness; retry initializes only after window callback",
+      "status": "PASS"
+    },
+    {
+      "name": "controller baseline never calls bridge; overlay uses one buffer and new IDs",
+      "status": "PASS"
+    },
+    {
+      "name": "ON->OFF and ON->baseline submit transparent clear before removing layer",
+      "status": "PASS"
+    },
+    {
+      "name": "swap failure preserves fault telemetry and removes diagnostic layer",
+      "status": "PASS"
+    },
+    {
+      "name": "stale geometry hides old heatmap, consumes frame ID and retries with a new one",
+      "status": "PASS"
+    },
+    {
+      "name": "background gates calls; resume reuses owner; disposal is idempotent",
+      "status": "PASS"
+    },
+    {
+      "name": "same native session remount keeps increasing IDs; canonical evidence resets mode",
+      "status": "PASS"
+    },
+    {
+      "name": "controller ring is bounded, reports loss, and drains immutable copies",
+      "status": "PASS"
+    },
+    {
+      "name": "unrecoverable bridge/drain/release exceptions never escape into the Canvas ticker",
+      "status": "PASS"
+    },
+    {
+      "name": "nearest-rank summaries keep null for unavailable metrics",
+      "status": "PASS"
+    },
+    {
+      "name": "native telemetry staging is bounded and joins native plus controller loss",
+      "status": "PASS"
+    }
+  ]
+}

@@ -78,6 +78,7 @@ MaterialReceipt MaterialUploader::Restore(uint64_t surface,uint64_t context){
  return Stage(d,active_->grain.data(),active_->grain.size(),active_->strata.data(),active_->strata.size());
 }
 MaterialReceipt MaterialUploader::Inspect()const{return Receipt(pending_?pending_.get():active_.get());}
+const MaterialDesc* MaterialUploader::PendingDesc()const{return pending_?&pending_->desc:nullptr;}
 const MaterialDesc* MaterialUploader::ActiveDesc()const{return active_?&active_->desc:nullptr;}
 const std::array<uint32_t,2>* MaterialUploader::BindActive(uint64_t epoch)const{return active_&&active_->desc.contextEpoch==epoch&&active_->textures[0]&&active_->textures[1]?&active_->textures:nullptr;}
 }

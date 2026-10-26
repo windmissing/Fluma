@@ -200,11 +200,16 @@ int32_t OH_NativeXComponent_RegisterCallback(OH_NativeXComponent*,
 }
 // G2 host boundary: fake GPU and JS arrays; production uploader logic remains real.
 namespace p013 {
+Status MaterialPass::Create(const ShaderSources&,uint64_t e){epoch=e;return Status::OK;}
+Status MaterialPass::Draw(const MaterialFrame&,const LightParams&,const MaterialParams&,const float*,const std::array<uint32_t,2>&){return uploadFailure?Status::GL_DRAW_FAILED:Status::OK;}
+void MaterialPass::Reset(bool){epoch=0;}
 bool MaterialGlGpu::Create(std::array<uint32_t,2>& t){t={101,102};return true;}
 bool MaterialGlGpu::Upload(uint32_t,int,int,int,int,const uint8_t*){return !uploadFailure;}
 void MaterialGlGpu::Delete(std::array<uint32_t,2>& t,bool){t={};}
 }
 extern "C" {
+void glClearColor(GLfloat,GLfloat,GLfloat,GLfloat){}
+void glClear(GLbitfield){}
 napi_status napi_get_array_length(napi_env,napi_value v,uint32_t* n){if(!v)return napi_invalid_arg;*n=static_cast<uint32_t>(v->elements.size());return napi_ok;}
 napi_status napi_get_element(napi_env,napi_value v,uint32_t i,napi_value* out){if(!v||i>=v->elements.size())return napi_invalid_arg;*out=v->elements[i];return napi_ok;}
 napi_status napi_throw_range_error(napi_env,const char*,const char*){return napi_ok;}

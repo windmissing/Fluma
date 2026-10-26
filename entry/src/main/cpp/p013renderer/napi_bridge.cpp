@@ -18,6 +18,7 @@
 #include "composition_probe.h"
 #include "dualfield_pass.h"
 #include "material_uploader.h"
+#include "material_pass.h"
 #include <vector>
 #include "p013_shader_sources.h"
 #include "shader_pass.h"
@@ -39,6 +40,8 @@ struct Session {
   std::string dualRun;
   double dualStateEpoch=0, dualCommit=0;
   bool dualBasic=false;
+  MaterialPass materialPass;
+  std::array<float,1536> materialData{};
   MaterialGlGpu materialGpu;
   MaterialUploader material{materialGpu};
   TDataUploader uploader;
@@ -118,6 +121,7 @@ napi_value Control(napi_env e, Status code) {
   return o;
 }
 void ResetGpu() {
+  g.materialPass.Reset(false);
   g.material.Reset(false);
   g.dual.Reset(false);
   g.probe.Reset();
@@ -128,10 +132,11 @@ void Destroy(ResetReason reason) {
   // Normal owner teardown deletes names while current. Callback/error teardown
   // abandons registered names only when their owning context is destroyed.
   if (g.egl.state == State::READY && g.egl.active && !g.egl.current &&
-      (g.shader.Program() || g.uploader.Texture() || g.probe.Program() || g.dual.bed)) {
+      (g.shader.Program() || g.uploader.Texture() || g.probe.Program() || g.dual.bed || g.materialPass.Program())) {
     SurfaceInfo info{};
     if (g.egl.EnsureCurrent({g.egl.surfaceEpoch, g.egl.width, g.egl.height},
                             info) == Status::OK) {
+      g.materialPass.Reset(true);
       g.material.Reset(true);
       g.dual.Reset(true);
       g.probe.Reset(true);
@@ -241,6 +246,10 @@ napi_value GetState(napi_env e, napi_callback_info) {
   Put(e, o, "vaoLiveCount", (g.shader.Vao() ? 1.0 : 0.0) + (g.probe.Vao() ? 1.0 : 0.0) + (g.dual.vao ? 1.0 : 0.0));
   Put(e,o,"particleBufferLiveCount",(g.dual.xyBuffer ? 1.0 : 0.0)+(g.dual.metaBuffer ? 1.0 : 0.0));
   Put(e,o,"particleStagingBytes",static_cast<double>((g.dualXY.capacity()+g.dualMeta.capacity())*4));
+  Put(e, o, "materialProgramLiveCount",g.materialPass.Program()?1.0:0.0);
+  Put(e, o, "materialTdataTextureLiveCount",g.materialPass.DataTexture()?1.0:0.0);
+  const auto materialState=g.material.Inspect();
+  Put(e,o,"materialTextureLiveCount",double(materialState.textureLiveCount));Put(e,o,"materialAssetCpuBytes",double(materialState.cpuBytes));
   Put(e, o, "telemetryLiveCount", static_cast<double>(g.count));
   Put(e, o, "textureAbandonCount",
       static_cast<double>(g.uploader.textureAbandonCount));
@@ -503,6 +512,70 @@ napi_value DiscardMaterialStage(napi_env e,napi_callback_info info){
  std::lock_guard<std::mutex> lock(g.mutex);auto r=g.material.Inspect();auto code=MaterialOwner();
  if(code!=Status::OK||!valid){r.code=code==Status::OK?400:int(code);r.errorStage="discard";return MaterialResult(e,r);}
  SurfaceInfo si{};code=g.egl.PrepareCurrent(g.egl.surfaceEpoch,si);if(code==Status::OK){r=g.material.Discard(gen);auto u=g.egl.Unbind();if(u!=Status::OK)r.code=int(u);}else r.code=int(code);return MaterialResult(e,r);
+}
+// T55 G3 complete material frame. Strictly isolated from P0 draw semantics.
+template<size_t N> bool MaterialArray(napi_env e,napi_value o,const char* key,std::array<double,N>& out){
+ napi_value a=nullptr;uint32_t length=0;if(napi_get_named_property(e,o,key,&a)!=napi_ok||napi_get_array_length(e,a,&length)!=napi_ok||length!=N)return false;
+ for(uint32_t i=0;i<N;i++){napi_value v=nullptr;if(napi_get_element(e,a,i,&v)!=napi_ok||napi_get_value_double(e,v,&out[i])!=napi_ok||!std::isfinite(out[i]))return false;}return true;
+}
+bool ParseMaterialParams(napi_env e,napi_value o,MaterialParams& p){
+ return MaterialArray(e,o,"paletteBaseSrgb",p.paletteBaseSrgb)&&MaterialArray(e,o,"grainBaseSrgb",p.grainBaseSrgb)&&
+ MaterialArray(e,o,"grainOffsetCanvasPx",p.grainOffsetCanvasPx)&&MaterialArray(e,o,"bandMinYCanvasPx",p.bandMinYCanvasPx)&&MaterialArray(e,o,"bandMaxYCanvasPx",p.bandMaxYCanvasPx)&&MaterialArray(e,o,"canvasBox",p.canvasBox)&&
+ Number(e,o,"canvasToSurfaceScaleX",p.canvasToSurfaceScaleX)&&Number(e,o,"canvasToSurfaceScaleY",p.canvasToSurfaceScaleY)&&
+ Number(e,o,"aB",p.aB)&&Number(e,o,"aC",p.aC)&&Number(e,o,"aC3",p.aC3)&&Number(e,o,"warpRangeCycles",p.warpRangeCycles)&&Number(e,o,"effectiveLambdaMaterial",p.effectiveLambdaMaterial)&&Number(e,o,"effectiveLambdaCanvasPx",p.effectiveLambdaCanvasPx)&&
+ Boolean(e,o,"grainEnabled",p.grainEnabled)&&Boolean(e,o,"strataEnabled",p.strataEnabled)&&Boolean(e,o,"sparkEnabled",p.sparkEnabled);
+}
+napi_value DrawMaterialFrame(napi_env e,napi_callback_info info){
+ size_t n=4;napi_value a[4]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+ MaterialFrame m;MaterialParams material;LightParams light{};const char* stage="MATERIAL_ARGUMENT";void* ptr=nullptr;
+ double api=0,generation=0,context=0;std::string token;
+ bool valid=n==4&&ParseFrame(e,a[0],m.frame,stage);
+ if(valid){stage="MATERIAL_VERSION";valid=Number(e,a[0],"apiVersion",api)&&api==2&&
+ ExactString(e,a[0],"materialRecipeVersion","P1_ALBEDO_DELTA_V1")&&ExactString(e,a[0],"slopeKernelVersion","E2_GAUSS_COL6_R18_P1_V2")&&
+ ExactString(e,a[0],"colorPipelineVersion","LIN_SRGB_REINHARD_V1")&&ExactString(e,a[0],"textureSamplingVersion","P1_TEXEL_CANVAS_PX_V1")&&ExactString(e,a[0],"strataSamplingVersion","CONTINUOUS_COLUMN_WARP_V1");}
+ if(valid){stage="MATERIAL_FRAME_IDENTITY";valid=Number(e,a[0],"assetGeneration",generation)&&SafeInteger(generation)&&generation>0&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&context>0&&Boolean(e,a[0],"lightEnabled",m.lightEnabled)&&MaterialText(e,a[0],"frameToken",token);}
+ if(valid){stage="MATERIAL_TDATA";valid=TypedView(e,a[1],napi_float32_array,1536,ptr,stage)&&ParseLight(e,a[2],light,stage)&&ParseMaterialParams(e,a[3],material);}
+ if(valid){m.assetGeneration=generation;m.contextEpoch=context;}
+ std::lock_guard<std::mutex> lock(g.mutex);Telemetry t{};t.frame=m.frame;
+ int code=int(MaterialOwner());
+ if(!code&&m.frame.sessionId!=g.id)code=int(Status::RELEASED);
+ if(!code&&!valid)code=400;
+ if(!code){std::memcpy(g.materialData.data(),ptr,1536*sizeof(float));stage="MATERIAL_VALUE";code=ValidateMaterialFrame(m,light,material,g.materialData);}
+ if(!code&&(m.frame.frameId<=g.attempt)){code=int(Status::STALE_FRAME);stage="MATERIAL_STALE_FRAME";}
+ if(!code&&(m.contextEpoch!=g.egl.contextEpoch||m.frame.surfaceEpoch!=g.egl.surfaceEpoch)){code=int(Status::STALE_SURFACE);stage="MATERIAL_EPOCH";}
+ if(!code&&!g.egl.composition){code=403;stage="MATERIAL_COLORSPACE";}
+ const bool activateReady=!code&&g.material.TargetMatches(g.egl.surfaceEpoch,g.egl.contextEpoch)&&g.material.CanActivate(m.assetGeneration,m.contextEpoch);
+ const auto* desc=activateReady?g.material.PendingDesc():g.material.ActiveDesc();
+ if(!code&&(!desc||desc->generation!=m.assetGeneration||(!activateReady&&!g.material.BindActive(m.contextEpoch)))){code=401;stage="ASSET_NOT_READY";}
+ if(!code&&(desc->revision!=m.frame.appearanceConfigRevision||desc->contextEpoch!=m.contextEpoch||desc->geometryEpoch!=m.frame.geometryEpoch)){code=402;stage="ASSET_REVISION_MISMATCH";}
+ if(!code){
+  uint8_t palette[6];bool match=true;for(int i=0;i<6;i++){double byte=material.paletteBaseSrgb[i]*255;palette[i]=uint8_t(std::floor(byte+.5));if(double(palette[i])/255!=material.paletteBaseSrgb[i])match=false;}
+  match=match&&MaterialSha256(palette,6)==desc->paletteHash&&material.grainBaseSrgb==desc->grainBase&&material.warpRangeCycles==desc->warpRange&&material.effectiveLambdaMaterial==desc->lambdaMaterial&&material.effectiveLambdaCanvasPx==desc->lambdaCanvas;
+  if(!match){code=402;stage="MATERIAL_CONFIG_GENERATION";}
+ }
+ if(!code){
+  g.attempt=m.frame.frameId;SurfaceInfo si{};
+  auto current=g.egl.EnsureCurrent({uint64_t(m.frame.surfaceEpoch),int(m.frame.surfaceWidthPx),int(m.frame.surfaceHeightPx)},si);code=int(current);
+  if(!code){
+   if(g.materialPass.epoch!=g.egl.contextEpoch){current=g.materialPass.Create({kP013MaterialVertex,kP013MaterialFragment},g.egl.contextEpoch);code=int(current);}
+   if(!code && activateReady){auto activated=g.material.Activate(m.assetGeneration,m.contextEpoch,token);code=activated.code;}
+   if(!code){glClearColor(0,0,0,0);glClear(GL_COLOR_BUFFER_BIT);current=g.materialPass.Draw(m,light,material,g.materialData.data(),*g.material.BindActive(m.contextEpoch));code=int(current);t.glError=g.materialPass.error;}
+   if(!code){t.uploadedFrameId=t.submittedFrameId=m.frame.frameId;current=g.egl.Swap(m.frame.frameId);code=int(current);t.swapSucceeded=!code;}
+  }
+  if(code)stage=g.materialPass.errorStage;
+  auto unbound=g.egl.Unbind();if(unbound!=Status::OK){code=int(unbound);stage="MATERIAL_UNBIND";}
+ }
+ if(!code&&t.swapSucceeded)g.lastSwap=m.frame.frameId;
+ t.code=static_cast<Status>(code);t.state=g.egl.state;t.contextEpoch=g.egl.contextEpoch;t.lastSwapFrameId=g.lastSwap;
+ t.eglError=g.egl.error;t.errorStage=code?stage:"NONE";g.lastError=t.code;Save(t);
+ auto result=Result(e,t);Put(e,result,"apiVersion",2.0);Put(e,result,"requestedGeneration",generation);Put(e,result,"activeGeneration",double(g.material.Inspect().activeGeneration));
+ Put(e,result,"assetGeneration",code?0:generation);Put(e,result,"appearanceConfigRevision",m.frame.appearanceConfigRevision);Put(e,result,"frameToken",token.c_str());
+ Put(e,result,"materialRecipeVersion","P1_ALBEDO_DELTA_V1");Put(e,result,"colorPipelineVersion","LIN_SRGB_REINHARD_V1");Put(e,result,"slopeKernelVersion","E2_GAUSS_COL6_R18_P1_V2");Put(e,result,"T_dataLayoutVersion",2.0);Put(e,result,"zOriginVersion",1.0);
+ Put(e,result,"shaderHash",kP013MaterialShaderHash);Put(e,result,"materialTdataBytes",!code?6144.0:0.0);Put(e,result,"stale",false);
+ Put(e,result,"renderContractRevision","P013_MATERIAL_ISOLATED_V1");Put(e,result,"sceneTransactionImplemented",false);
+ Put(e,result,"faultReason",code?stage:"NONE");
+ Put(e,result,"materialUploadCpuMs",g.materialPass.uploadMs);Put(e,result,"materialDrawCpuMs",g.materialPass.drawMs);
+ return result;
 }
 // T62: explicit geometry preparation, no draw/swap/physics publication.
 napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
@@ -1014,6 +1087,7 @@ EXTERN_C_START
 static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
   napi_property_descriptor d[] = {
+    {"drawMaterialFrame",nullptr,DrawMaterialFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"stageMaterialBundle", nullptr, StageMaterialBundle, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"pumpMaterialUploads", nullptr, PumpMaterialUploads, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"canActivate", nullptr, CanActivateMaterial, nullptr,nullptr,nullptr,napi_default,nullptr},

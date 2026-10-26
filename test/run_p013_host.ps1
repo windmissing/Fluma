@@ -16,5 +16,8 @@ Set-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 
 Add-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 'const char* kP013Vertex="host stub";'
 Add-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 'const char* kP013Fragment="host stub";'
 Add-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 'const char* kP013ShaderHash="HOST_BOUNDARY_DOUBLE_NOT_GPU";'
+Add-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 'const char* kP013MaterialVertex="host stub";'
+Add-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 'const char* kP013MaterialFragment="host stub";'
+Add-Content -Encoding utf8 -LiteralPath "$out/sdk/p013_shader_sources.h" -Value 'const char* kP013MaterialShaderHash="HOST_BOUNDARY_DOUBLE_NOT_GPU";'
 & cmd.exe /c test\run_p013_host.cmd
 if ($LASTEXITCODE -ne 0) { throw "P013 host selfcheck failed: $LASTEXITCODE" }

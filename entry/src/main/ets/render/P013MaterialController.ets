@@ -1,9 +1,23 @@
-import { P013MaterialNative, P013MaterialBundleDesc, P013MaterialStageReceipt, P013MaterialFallback } from './P013MaterialTypes';
+import { P013LightParams } from './P013RenderTypes';
+import { P013MaterialNative, P013MaterialBundleDesc, P013MaterialStageReceipt, P013MaterialFallback, P013MaterialFrameInput, P013MaterialParams, P013MaterialFrameResult } from './P013MaterialTypes';
 // T54: injected native boundary permits offline testing; no ticker or page ownership.
 export class P013MaterialController {
   activeGeneration: number = 0; pendingGeneration: number = 0; fallbackReason: string = '';
   lastReceipt: P013MaterialStageReceipt | null = null;
-  constructor(private native: P013MaterialNative) {}
+  lastFrameReceipt: P013MaterialFrameResult | null = null;
+  lastSuccessfulFrameToken: string = '';
+  drawMaterialFrame(frame: P013MaterialFrameInput, tdataV2: Float32Array, light: P013LightParams,
+    material: P013MaterialParams): P013MaterialFrameResult {
+    const receipt=this.native.drawMaterialFrame(frame,tdataV2,light,material);
+    if(receipt.requestedGeneration!==frame.assetGeneration || receipt.frameToken!==frame.frameToken ||
+      (receipt.code===0 && receipt.swapSucceeded && receipt.assetGeneration!==frame.assetGeneration))
+      throw new Error('MATERIAL_RECEIPT_IDENTITY');
+    this.lastFrameReceipt=receipt;
+    if(receipt.code===0 && receipt.swapSucceeded)this.lastSuccessfulFrameToken=frame.frameToken;
+    return receipt;
+  }
+  private readonly native: P013MaterialNative;
+  constructor(native: P013MaterialNative) { this.native=native; }
   private record(r: P013MaterialStageReceipt): P013MaterialStageReceipt {
     this.lastReceipt=r;this.activeGeneration=r.activeGeneration;
     this.pendingGeneration=r.pendingGeneration;
