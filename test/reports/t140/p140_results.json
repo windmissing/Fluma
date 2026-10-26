@@ -1,0 +1,103 @@
+{
+ "executionId": "p140-gpu-pair-oracle-v1",
+ "date": "2026-10-26",
+ "contract": "T137 sections 1-9",
+ "manifestSha": "68ce78c98772eca61174190786e3d4f2e2fe7453e9b4440eda2a61de9f3424c0",
+ "results": [
+  {
+   "id": "T140-GP-01",
+   "name": "group ranges equal legacy legal Y-set per a (all 5 group fields, exact F64 predicate)",
+   "status": "PASS"
+  },
+  {
+   "id": "T140-GP-02",
+   "name": "F64 predicate edge: subnormal counterexample (rounded y±r would miss), adjacent-ULP equal-Y, subtract-overflow→P false — original predicate retained, no F32 quantization",
+   "status": "PASS",
+   "P": true,
+   "roundedMiss": true,
+   "Pulp": true,
+   "Povf": false
+  },
+  {
+   "id": "T140-GP-03",
+   "name": "n=0/1 CPU_EMPTY_SHORTCUT identity; sparse active; 192 non-pow2 → K=256; full 512 → K=512",
+   "status": "PASS",
+   "K192": 256,
+   "K512": 512
+  },
+  {
+   "id": "T140-GP-04",
+   "name": "unsigned ordering across 0x80000000/MAX boundary (no signed flip, no id+1 overflow); duplicate ID cross-group detected at CPU precheck",
+   "status": "PASS",
+   "legacy": [
+    2,
+    2147483648
+   ],
+   "pair": true,
+   "dupRejected": true
+  },
+  {
+   "id": "T140-GP-05",
+   "name": "stable merge build: top layer equals independent key sort; every output written exactly once (no hole/dup); padding kept invalid with unique originalYRank",
+   "status": "PASS"
+  },
+  {
+   "id": "T140-GP-06",
+   "name": "range decomposition: ≤2h+1 disjoint aligned segments covering [L,R); query result equals legacy min-larger-id per a and global min pair",
+   "status": "PASS"
+  },
+  {
+   "id": "T140-GP-07",
+   "name": "global min pair / NO_PAIR identical to legacy full scan across 30 randomized pools (incl. no-match)",
+   "status": "PASS"
+  },
+  {
+   "id": "T140-GP-08",
+   "name": "serial merges with centroid drift: after each merge the rebuilt table+query still equals legacy; batch-merging stale pairs is contract-forbidden (rebuild per merge)",
+   "status": "PASS",
+   "merges": 5
+  },
+  {
+   "id": "T140-GP-10",
+   "name": "error/late/epoch contract frozen: wrong epoch / late result / context loss / timeout / map-fail → discard, keep error status + inputs; failed slot not reused until completion; no authority write on compute error",
+   "status": "PASS",
+   "verdict": "device-side cases for T142; contract frozen here"
+  },
+  {
+   "id": "T140-GP-11-192",
+   "name": "build comparisons O(Kh²): K=256 h=8 bound=9216 actual=16640",
+   "status": "PASS",
+   "buildBound": 9216,
+   "comparisons": 16640
+  },
+  {
+   "id": "T140-GP-11-512",
+   "name": "build comparisons O(Kh²): K=512 h=9 bound=23040 actual=41984",
+   "status": "PASS",
+   "buildBound": 23040,
+   "comparisons": 41984
+  },
+  {
+   "id": "T140-FIX-192",
+   "name": "frozen 192-particle fixture: legacy and segmented-oracle agree=true",
+   "status": "PASS",
+   "legacy": null,
+   "bestPair": null,
+   "poolSha": "0d3e9b6de5c22ba6..."
+  },
+  {
+   "id": "T140-FIX-512",
+   "name": "frozen 512-particle fixture: legacy and segmented-oracle agree=true",
+   "status": "PASS",
+   "legacy": [
+    16,
+    342
+   ],
+   "bestPair": [
+    16,
+    342
+   ],
+   "poolSha": "d7239a09e99e8069..."
+  }
+ ]
+}
