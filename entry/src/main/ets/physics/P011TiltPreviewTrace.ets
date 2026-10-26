@@ -18,6 +18,18 @@ export interface P011TraceCandidate {
   particleDeltaSandTop: number[]; channels: P011TraceChannel[]; deltaS: number[]; edges: P011TraceEdge[]; decision: P011TraceDecision | null;
 }
 export type P011TiltPreviewTraceSink = (trace: P011TiltPreviewTrace) => void;
+export interface P011FirstFailureEvidence {
+  origin: string; rawCode: number; m2Code: number; phase: string; rollbackCode: number;
+  predicate: string; failureIndex: number;
+  entryStepOpen: number; entryActive: number; entryEpoch: number; entryBudgetEpoch: number;
+  entryBudgetOpen: number; entryPageBacklog: number;
+  exitStepOpen: number; exitActive: number; exitEpoch: number; exitBudgetEpoch: number;
+  exitBudgetOpen: number; exitPageBacklog: number;
+  attemptToken: number; substepId: number; runToken: number; seed: number;
+  driftWater: number; driftHeavy: number; driftLight: number; driftLimit: number;
+  initialWater: number; initialHeavy: number; initialLight: number;
+  sourceHeavy: number; sourceLight: number; waterTransactionNet: number;
+}
 export class P011TiltPreviewTrace {
   readonly revision: string = 'P011_TILT_PREVIEW_TRACE_V1';
   status: string = 'COMPLETE';
@@ -27,6 +39,14 @@ export class P011TiltPreviewTrace {
   s0: number[] = []; preexistingResiduals: number[] = []; preexistingViolation: boolean = false;
   candidates: P011TraceCandidate[] = []; notExecuted: string[] = [];
   resultStatus: string = ''; blockedReason: string | null = null;
+  firstFailure: P011FirstFailureEvidence | null = null;
+  authoritativeBeforeDigest: string = ''; authoritativeAfterDigest: string = '';
+  commitBefore: number = 0; commitAfter: number = 0;
+  cleanupStepOpen: number = 0; cleanupActive: number = 0;
+  cleanupBudgetEpoch: number = 0; cleanupPageBacklog: number = 0;
+  recordFirstFailure(evidence: P011FirstFailureEvidence): void {
+    if(this.firstFailure===null)this.firstFailure=evidence;
+  }
   current: P011TraceCandidate | null = null;
   // All instrumentation is best effort; allocation/encoding errors cannot alter the decision.
   incomplete(): void { this.status='TRACE_INCOMPLETE'; }

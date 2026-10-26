@@ -17,6 +17,16 @@ export const P011_PARTICLE_M2_BUSY = 1;
 export const P011_PARTICLE_M2_INVALID_ROUTE = 2;
 export const P011_PARTICLE_M2_STEP_FAILED = 3;
 export const P011_PARTICLE_M2_ROUTE_CONFLICT = 4;
+export class P011CollectFirstFailure {
+  phase: string = 'NOT_RUN'; m2Code: number = 0; hotCode: number = 0; rollbackCode: number = 0;
+  predicate: string = ''; failureIndex: number = -1;
+  entryStepOpen: number = 0; entryActive: number = 0; entryEpoch: number = 0;
+  entryBudgetEpoch: number = 0; entryBudgetOpen: number = 0; entryPageBacklog: number = 0;
+  exitStepOpen: number = 0; exitActive: number = 0; exitEpoch: number = 0;
+  exitBudgetEpoch: number = 0; exitBudgetOpen: number = 0; exitPageBacklog: number = 0;
+  attemptToken: number = 0; runToken: number = 0; substepId: number = 0; seed: number = 0;
+  dt: number = 0; tiltRad: number = 0; paramsRevision: number = 1; inputRevision: number = 1;
+}
 
 export function defaultP011ParticleParams(): P011ParticleParams {
   return { massPackage: 0.1, nmax: 512, terminalSpeedHeavy: 64, terminalSpeedLight: 38,
@@ -58,6 +68,45 @@ export class P011ParticleM2FieldBinding {
   private stepOpen = 0;
   private birthEventRows: string[] = [];
   seedCalls = 0; seedCollectMs = 0; seedApplyMs = 0; seedFinishMs = 0;
+  collectFailureEnabled = false;
+  readonly collectFailure: P011CollectFirstFailure = new P011CollectFirstFailure();
+  private collectEntry(dt: number,tiltRad: number,substepId: number,seed: number): void {
+    if(!this.collectFailureEnabled)return;
+    const d=this.collectFailure,w=this.work,b=this.sink.budget;
+    d.phase='ENTRY';d.m2Code=0;d.hotCode=0;d.rollbackCode=0;
+    d.predicate='';d.failureIndex=-1;
+    d.entryStepOpen=this.stepOpen;d.entryActive=w.active;d.entryEpoch=w.stepEpoch;
+    d.entryBudgetEpoch=b.diagnosticEpoch;d.entryBudgetOpen=b.diagnosticOpenCount;d.entryPageBacklog=w.pageBacklog;
+    d.attemptToken=this.attemptToken;d.runToken=this.runToken;d.substepId=substepId;d.seed=seed;d.dt=dt;d.tiltRad=tiltRad;
+  }
+  private collectExit(phase: string,m2Code: number,hotCode: number,rollbackCode: number=0): number {
+    if(this.collectFailureEnabled){const d=this.collectFailure,w=this.work,b=this.sink.budget;
+      d.phase=phase;d.m2Code=m2Code;d.hotCode=hotCode;d.rollbackCode=rollbackCode;
+      d.predicate=phase==='BEGIN_HOT'?w.beginFailurePredicate:phase==='COMPARE'?this.compareFailurePredicate():'';
+      d.failureIndex=phase==='BEGIN_HOT'?w.beginFailureIndex:phase==='COMPARE'?this.compareFailureIndex():-1;
+      d.exitStepOpen=this.stepOpen;d.exitActive=w.active;d.exitEpoch=w.stepEpoch;
+      d.exitBudgetEpoch=b.diagnosticEpoch;d.exitBudgetOpen=b.diagnosticOpenCount;d.exitPageBacklog=w.pageBacklog;}
+    return m2Code;
+  }
+  private compareFailurePredicate(): string {
+    const a=this.work.planA,b=this.work.planB;
+    if(a.ownerId!==b.ownerId||a.stepEpoch!==b.stepEpoch||a.runToken!==b.runToken)return 'IDENTITY';
+    if(a.requestCount!==b.requestCount||a.motionCount!==b.motionCount)return 'COUNT';
+    for(let i=0;i<a.requestCount;i++){
+      if(a.kind[i]!==b.kind[i])return 'KIND';
+      if(a.particleId[i]!==b.particleId[i])return 'PARTICLE_ID';
+      if(a.requested[i]!==b.requested[i])return 'REQUESTED';
+      if(a.column[i]!==b.column[i]||a.targetColumn[i]!==b.targetColumn[i])return 'COLUMN';
+    }
+    return 'OTHER_PLAN_FIELD';
+  }
+  private compareFailureIndex(): number {
+    const a=this.work.planA,b=this.work.planB;
+    for(let i=0;i<Math.min(a.requestCount,b.requestCount);i++)if(a.kind[i]!==b.kind[i]||
+      a.particleId[i]!==b.particleId[i]||a.requested[i]!==b.requested[i]||
+      a.column[i]!==b.column[i]||a.targetColumn[i]!==b.targetColumn[i])return i;
+    return -1;
+  }
   constructor(cols: number, capacity: number, waterTop: Float64Array, bh: Float64Array,
     bl: Float64Array, mh: Float64Array, ml: Float64Array, suspH: Float64Array,
     suspL: Float64Array, surface: Float64Array, params: P011ParticleParams, host: P011ParticleM2Host) {
@@ -170,22 +219,25 @@ export class P011ParticleM2FieldBinding {
 
   beginCollect(dt: number, tiltRad: number, substepId: number, seed: number,
     sourceHeavy: number, sourceLight: number, sourceEpoch: number): number {
-    if (this.stepOpen !== 0) return P011_PARTICLE_M2_BUSY;
+    this.collectEntry(dt,tiltRad,substepId,seed);
+    if (this.stepOpen !== 0) return this.collectExit('ENTRY',P011_PARTICLE_M2_BUSY,0);
     this.attemptToken++;
-    if (!Number.isSafeInteger(this.attemptToken)) return P011_PARTICLE_M2_STEP_FAILED;
+    if(this.collectFailureEnabled)this.collectFailure.attemptToken=this.attemptToken;
+    if (!Number.isSafeInteger(this.attemptToken)) return this.collectExit('TOKEN',P011_PARTICLE_M2_STEP_FAILED,0);
     this.field.syncSources(sourceHeavy, sourceLight, sourceEpoch);
     const status = beginStepHot(this.work, { runToken: this.runToken, substepId: substepId,
       attemptToken: this.attemptToken, dt: dt, effectiveTiltRad: tiltRad, seed: seed,
       paramsRevision: 1, inputRevision: 1, field: this.field });
-    if (status !== 0) return P011_PARTICLE_M2_STEP_FAILED;
+    if (status !== 0) return this.collectExit('BEGIN_HOT',P011_PARTICLE_M2_STEP_FAILED,status);
     this.stepOpen = 1;
     const epoch = this.work.stepEpoch;
-    if (collectParticlePlanInto(this.work, epoch, this.work.planA) !== 0 ||
-      collectParticlePlanInto(this.work, epoch, this.work.planB) !== 0 ||
-      compareParticlePlansHot(this.work.planA, this.work.planB) !== 0) {
-      rollbackStepHot(this.work, epoch); this.stepOpen = 0; return P011_PARTICLE_M2_STEP_FAILED;
-    }
-    return 0;
+    const a=collectParticlePlanInto(this.work,epoch,this.work.planA);
+    if(a!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COLLECT_A',P011_PARTICLE_M2_STEP_FAILED,a,rollback);}
+    const b=collectParticlePlanInto(this.work,epoch,this.work.planB);
+    if(b!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COLLECT_B',P011_PARTICLE_M2_STEP_FAILED,b,rollback);}
+    const comparison=compareParticlePlansHot(this.work.planA,this.work.planB);
+    if(comparison!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COMPARE',P011_PARTICLE_M2_STEP_FAILED,comparison,rollback);}
+    return this.collectExit('READY',0,0);
   }
   requested(): number { return this.stepOpen === 0 ? 0 : this.work.planA.totalRequested; }
   get totalRemaining(): number { return this.sink.budget.totalRemaining; }

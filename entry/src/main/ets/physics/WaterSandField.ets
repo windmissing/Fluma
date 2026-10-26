@@ -1,4 +1,4 @@
-import { P011TiltPreviewTrace, P011TiltPreviewTraceSink } from './P011TiltPreviewTrace';
+import { P011TiltPreviewTrace, P011TiltPreviewTraceSink, P011FirstFailureEvidence } from './P011TiltPreviewTrace';
 import { P051DryRunConfig, P051DryRunResult, P051DryAdmissionRequest, P051DryAdmissionReceipt, P051_DRY_REVISION, P051_DRY_MEDIUM, P051_DRY_GRAVITY, p051DryRequestError } from './P051DryParticleAdmission';
 import { P011PublishedRenderState, P011RenderCopyStatus, P011RenderPublicationKind } from './P011PublishedRenderState';
 import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
@@ -2054,8 +2054,54 @@ export class WaterSandField {
   private tiltTraceSink: P011TiltPreviewTraceSink | null = null;
   private tiltTracePending: P011TiltPreviewTrace[] | null = null;
   private tiltTraceLast: P011TiltPreviewTrace | null = null;
-  setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void { this.tiltTraceSink=sink; }
+  setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void {
+    this.tiltTraceSink=sink;
+    if(this.particleBinding!==null)this.particleBinding.collectFailureEnabled=sink!==null;
+  }
   getLastTiltPreviewTrace(): P011TiltPreviewTrace | null { return this.tiltTraceLast; }
+  private readonly diagnosticBits: DataView = new DataView(new ArrayBuffer(8));
+  private diagnosticStateDigest(): string {
+    let h=2166136261;
+    const arrays: Float64Array[]=[this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL];
+    if(this.particleBinding!==null){const p=this.particleBinding.pool.snapshot();
+      arrays.push(p.pMass,p.pX,p.pY,p.pVx,p.pVy,p.colParticleMassH,p.colParticleMassL);
+      for(let i=0;i<p.nmax;i++){h=Math.imul(h^p.pId[i],16777619);h=Math.imul(h^p.pState[i],16777619);}
+      h=Math.imul(h^p.liveCount,16777619);h=Math.imul(h^p.freeCount,16777619);h=Math.imul(h^p.nextId,16777619);}
+    for(const a of arrays)for(let i=0;i<a.length;i++){
+      this.diagnosticBits.setFloat64(0,a[i],false);
+      h=Math.imul(h^this.diagnosticBits.getUint32(0,false),16777619);
+      h=Math.imul(h^this.diagnosticBits.getUint32(4,false),16777619);
+    }
+    return (h>>>0).toString(16).padStart(8,'0');
+  }
+  private sealSubstepDiagnostic(): void {
+    const pending=this.tiltTracePending;if(pending===null||pending.length===0)return;
+    const trace=pending[pending.length-1];trace.authoritativeAfterDigest=this.diagnosticStateDigest();
+    trace.commitAfter=this.renderPhysicsCommitId;
+    const b=this.particleBinding;if(b!==null){trace.cleanupStepOpen=b.active?1:0;trace.cleanupActive=b.work.active;
+      trace.cleanupBudgetEpoch=b.sink.budget.diagnosticEpoch;trace.cleanupPageBacklog=b.work.pageBacklog;}
+  }
+  private recordCollectFirstFailure(origin: string,rawCode: number,drift: WaterSandDrift | null=null): void {
+    const pending=this.tiltTracePending;
+    const trace=this.planningPassService.trace ?? (pending===null||pending.length===0?null:pending[pending.length-1]);
+    if(trace===null||trace.firstFailure!==null)return;
+    const d=this.particleBinding===null?null:this.particleBinding.collectFailure;
+    const e: P011FirstFailureEvidence={origin:origin,rawCode:rawCode,m2Code:d===null?0:d.m2Code,
+      phase:d===null?'NOT_RUN':d.phase,rollbackCode:d===null?0:d.rollbackCode,
+      predicate:d===null?'':d.predicate,failureIndex:d===null?-1:d.failureIndex,
+      entryStepOpen:d===null?0:d.entryStepOpen,entryActive:d===null?0:d.entryActive,
+      entryEpoch:d===null?0:d.entryEpoch,entryBudgetEpoch:d===null?0:d.entryBudgetEpoch,
+      entryBudgetOpen:d===null?0:d.entryBudgetOpen,entryPageBacklog:d===null?0:d.entryPageBacklog,
+      exitStepOpen:d===null?0:d.exitStepOpen,exitActive:d===null?0:d.exitActive,
+      exitEpoch:d===null?0:d.exitEpoch,exitBudgetEpoch:d===null?0:d.exitBudgetEpoch,
+      exitBudgetOpen:d===null?0:d.exitBudgetOpen,exitPageBacklog:d===null?0:d.exitPageBacklog,
+      attemptToken:d===null?0:d.attemptToken,substepId:d===null?0:d.substepId,runToken:d===null?0:d.runToken,
+      seed:d===null?0:d.seed,driftWater:drift===null?0:drift.water,
+      driftHeavy:drift===null?0:drift.heavy,driftLight:drift===null?0:drift.light,
+      driftLimit:DRIFT_LIMIT,initialWater:this.initialWater,initialHeavy:this.initialHeavy,initialLight:this.initialLight,
+      sourceHeavy:this.sourceInjectedHeavy,sourceLight:this.sourceInjectedLight,waterTransactionNet:this.waterTransactionNet};
+    trace.recordFirstFailure(e);
+  }
   setPoolProgressDiagnosticEnabled(enabled: boolean): void {
     if(this.particleBinding!==null)this.particleBinding.work.diagnosticEnabled=enabled;
   }
@@ -2240,11 +2286,13 @@ export class WaterSandField {
         result.ok = false;
         result.errorCode = errorCode;
         result.errorColumn = this.firstInvalidColumn();
+        if(this.tiltTracePending!==null)this.sealSubstepDiagnostic();
         break;
       }
       if (this.naturalObservationProbe === null) this.recordEndpointCommit(substepDt);
       this.finishNaturalObservation(null);
       if (this.naturalObservationProbe === null && this.particleRouteActive()) this.endpointParticleEvents.length = 0;
+      if(this.tiltTracePending!==null)this.sealSubstepDiagnostic();
       result.stepped = true;
       result.substeps++;
       result.moved = this.changedSinceBackup() || result.moved;
@@ -4318,7 +4366,8 @@ export class WaterSandField {
       const particleStatus = this.particleBinding.beginCollect(dt, this.effectiveTilt * Math.PI / 180,
         this.p011SubstepId + 1, this.p011SubstepId + 1, this.sourceInjectedHeavy,
         this.sourceInjectedLight, this.sourceEpoch);
-      if (particleStatus !== 0) this.lastError = WaterSandErrorCode.UNKNOWN;
+      if (particleStatus !== 0) {this.recordCollectFirstFailure('PARTICLE_BEGIN',this.particleBinding.collectFailure.hotCode);
+        this.lastError = WaterSandErrorCode.UNKNOWN;}
     }
     this.updateSandTop();
   }
@@ -4413,7 +4462,10 @@ export class WaterSandField {
     if(this.mediumMode!==P051_DRY_MEDIUM){this.waterLevel(dt);this.diffuseSuspension(dt);}
     if (this.collectingTotalMotionRequests) {
       this.saveMotionSnapshot(dt);
-      if (this.particleRouteActive() && this.particleBinding !== null && !this.particleBinding.active) return WaterSandErrorCode.UNKNOWN;
+      if (this.particleRouteActive() && this.particleBinding !== null && !this.particleBinding.active){
+        this.recordCollectFirstFailure('PARTICLE_BEGIN',this.particleBinding.collectFailure.hotCode);
+        return WaterSandErrorCode.UNKNOWN;
+      }
     }
     // Plan-3 stage a (advection §1.2): AFTER the motion snapshot, BEFORE
     // settle — all edges read the frozen suspension state; newly settled
@@ -4423,6 +4475,7 @@ export class WaterSandField {
     this.percolateHeavyConservative(dt);
     const creepError = this.creepBottom(dt);
     if (creepError !== null) {
+      this.recordCollectFirstFailure('CHANNEL',creepError);
       return creepError;
     }
     this.relaxAngle(dt);
@@ -5808,6 +5861,7 @@ export class WaterSandField {
         trace=new P011TiltPreviewTrace();trace.runId=this.p011RunId;trace.stateEpoch=this.renderStateEpoch;
         trace.attemptId=this.p011CurrentAttemptId;trace.substepId=input.substepId;trace.configRevision=this.configRevision;
         trace.dt=dt;trace.thetaBefore=thetaBefore;trace.target=this.targetTilt;
+        trace.commitBefore=this.renderPhysicsCommitId;trace.authoritativeBeforeDigest=this.diagnosticStateDigest();
         trace.maxTiltOmega=input.maxTiltOmega;trace.sampleSequence=this.p011SampleSequence;trace.frameId=this.p011FrameId;
         trace.hardMax=P011_PLANNING_PASS_TAN_HARD_MAX;trace.angleEps=P011_PLANNING_PASS_ANGLE_EPS;trace.fieldEps=EPS;
         trace.s0=Array.from(this.substepSandTopBefore);
@@ -7014,23 +7068,28 @@ export class WaterSandField {
       if (!finite(this.waterTop[c]) || !finite(this.bh[c]) || !finite(this.bl[c]) ||
         !finite(this.mh[c]) || !finite(this.ml[c]) || !finite(this.suspH[c]) ||
         !finite(this.suspL[c])) {
+        this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.NON_FINITE_VALUE);
         this.lastError = WaterSandErrorCode.NON_FINITE_VALUE;
         return WaterSandErrorCode.NON_FINITE_VALUE;
       }
       if (this.waterTop[c] < -EPS || this.bh[c] < -EPS || this.bl[c] < -EPS ||
         this.mh[c] < -EPS || this.ml[c] < -EPS || this.suspH[c] < -EPS ||
         this.suspL[c] < -EPS) {
+        this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.NEGATIVE_VALUE);
         this.lastError = WaterSandErrorCode.NEGATIVE_VALUE;
         return WaterSandErrorCode.NEGATIVE_VALUE;
       }
       const particleMass = this.particleRouteActive() && this.particleBinding !== null
         ? this.particleBinding.pool.particleMassAt(c) : 0;
       if(this.mediumMode===P051_DRY_MEDIUM && (this.suspH[c]!==0 || this.suspL[c]!==0 ||
-        Math.abs(this.waterTop[c]-(this.sandTopScratch[c]+particleMass))>EPS))return WaterSandErrorCode.CAPACITY_OVERFLOW;
+        Math.abs(this.waterTop[c]-(this.sandTopScratch[c]+particleMass))>EPS)){
+        this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.CAPACITY_OVERFLOW);
+        return WaterSandErrorCode.CAPACITY_OVERFLOW;}
       const total = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c] +
         this.suspH[c] + this.suspL[c] + particleMass + this.getWaterVolume(c);
       if (total > this.capacity + 1e-7 || this.suspH[c] + this.suspL[c] + particleMass >
         this.waterTop[c] - this.sandTopScratch[c] + EPS) {
+        this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.CAPACITY_OVERFLOW);
         this.lastError = WaterSandErrorCode.CAPACITY_OVERFLOW;
         return WaterSandErrorCode.CAPACITY_OVERFLOW;
       }
@@ -7052,6 +7111,7 @@ export class WaterSandField {
       // degenerate to the historical formula bit-for-bit.
       const drift = this.getDrift();
       if (drift.water >= DRIFT_LIMIT || drift.heavy >= DRIFT_LIMIT || drift.light >= DRIFT_LIMIT) {
+        this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.UNKNOWN,drift);
         this.lastError = WaterSandErrorCode.UNKNOWN;
         return WaterSandErrorCode.UNKNOWN;
       }

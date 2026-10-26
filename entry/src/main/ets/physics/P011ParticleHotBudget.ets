@@ -55,6 +55,8 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
   totalRemaining = 0; totalUsed = 0; readonly bottomUsed = 0;
   private beforeTotalRemaining = 0; private beforeTotalUsed = 0;
   private epoch = 0; private ticketCount = 0; private openCount = 0;
+  get diagnosticEpoch(): number {return this.epoch;}
+  get diagnosticOpenCount(): number {return this.openCount;}
   readonly tokens: Float64Array; readonly reserved: Float64Array; readonly refunded: Float64Array;
   readonly closed: Uint8Array; readonly requests: P011ParticleHotPlanBuffer;
   denominator = 0;

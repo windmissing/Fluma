@@ -299,6 +299,7 @@ export class P011ParticleHotWorkspace {
   diagnosticFreeBefore = 0; diagnosticLiveBefore = 0; diagnosticNextIdBefore = 0;
   diagnosticFreeAfter = 0; diagnosticLiveAfter = 0; diagnosticNextIdAfter = 0;
   diagnosticFirstError = 0; diagnosticFirstErrorStage = 0;
+  beginFailurePredicate: string = ''; beginFailureIndex = -1;
   constructor(config: P011ParticleHotConfig, pool: P011ParticleField) {
     this.ownerId = nextOwnerId++; this.pool = pool;
     // Cold owned copy: caller edits cannot change a frozen step's predictor.
@@ -486,12 +487,15 @@ export function warmUpHot(work: P011ParticleHotWorkspace): number {
 }
 
 export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {
-  if (work.configured !== 1) return work.lastStatus = P011_HOT_NOT_CONFIGURED;
-  if (work.active !== 0) return work.lastStatus = P011_HOT_STEP_BUSY;
-  if (work.pageBacklog !== 0) return work.lastStatus = P011_HOT_JOURNAL_OVERFLOW;
+  work.beginFailurePredicate='';work.beginFailureIndex=-1;
+  if (work.configured !== 1){work.beginFailurePredicate='NOT_CONFIGURED';return work.lastStatus = P011_HOT_NOT_CONFIGURED;}
+  if (work.active !== 0){work.beginFailurePredicate='ACTIVE';return work.lastStatus = P011_HOT_STEP_BUSY;}
+  if (work.pageBacklog !== 0){work.beginFailurePredicate='PAGE_BACKLOG';return work.lastStatus = P011_HOT_JOURNAL_OVERFLOW;}
   const f = input.field; const c = work.cols;
-  if(f.mediumMode!==undefined && f.mediumMode!=='WET_COLUMN_V1' && f.mediumMode!=='DRY_AIR_V1')return work.lastStatus=P011_HOT_INVALID_INPUT;
-  if (!work.storageValidHot() || !fieldStorageValidHot(work, f, false)) return work.lastStatus = 3;
+  if(f.mediumMode!==undefined && f.mediumMode!=='WET_COLUMN_V1' && f.mediumMode!=='DRY_AIR_V1'){
+    work.beginFailurePredicate='MEDIUM_MODE';return work.lastStatus=P011_HOT_INVALID_INPUT;}
+  if (!work.storageValidHot() || !fieldStorageValidHot(work, f, false)){
+    work.beginFailurePredicate='STORAGE_OR_BINDING';return work.lastStatus = 3;}
   if (!Number.isSafeInteger(input.runToken) || input.runToken <= 0 || !Number.isSafeInteger(input.substepId) || input.substepId < 0 ||
     !Number.isSafeInteger(input.attemptToken) || input.attemptToken <= 0 || !Number.isFinite(input.dt) || input.dt <= 0 ||
     !Number.isFinite(input.effectiveTiltRad) || !Number.isSafeInteger(input.seed) ||
@@ -500,7 +504,7 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
     f.ml.length !== c || f.suspH.length !== c || f.suspL.length !== c || f.surface.length !== c ||
     !Number.isFinite(f.sourceInjectedH) || f.sourceInjectedH < 0 || !Number.isFinite(f.sourceInjectedL) ||
     f.sourceInjectedL < 0 || !Number.isSafeInteger(f.sourceEpoch) || f.sourceEpoch < 0) {
-    return work.lastStatus = P011_HOT_INVALID_INPUT;
+    work.beginFailurePredicate='INPUT_SCALAR';return work.lastStatus = P011_HOT_INVALID_INPUT;
   }
   for (let col = 0; col < c; col++) {
     if (!Number.isFinite(f.waterTop[col]) || !Number.isFinite(f.bh[col]) || !Number.isFinite(f.bl[col]) ||
@@ -508,18 +512,19 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
       !Number.isFinite(f.suspL[col]) || !Number.isFinite(f.surface[col]) || f.waterTop[col] < 0 ||
       f.bh[col] < 0 || f.bl[col] < 0 || f.mh[col] < 0 || f.ml[col] < 0 || f.suspH[col] < 0 ||
       f.suspL[col] < 0 || !Number.isFinite(f.bh[col] + f.bl[col] + f.mh[col] + f.ml[col])) {
+      work.beginFailurePredicate='FIELD_COLUMN';work.beginFailureIndex=col;
       return work.lastStatus = P011_HOT_INVALID_INPUT;
     }
   }
-  if (work.stepEpoch >= Number.MAX_SAFE_INTEGER) return work.lastStatus = P011_HOT_TOKEN_EXHAUSTED;
+  if (work.stepEpoch >= Number.MAX_SAFE_INTEGER){work.beginFailurePredicate='STEP_EPOCH';return work.lastStatus = P011_HOT_TOKEN_EXHAUSTED;}
   const poolStatus = work.pool.transferHotState(work.frozenPool, false);
-  if (poolStatus !== P011_HOT_OK) return work.lastStatus = poolStatus;
+  if (poolStatus !== P011_HOT_OK){work.beginFailurePredicate='POOL_TRANSFER';return work.lastStatus = poolStatus;}
   if(work.diagnosticEnabled){work.diagnosticFreeBefore=work.frozenPool.freeCount;
     work.diagnosticLiveBefore=work.frozenPool.liveCount;work.diagnosticNextIdBefore=work.frozenPool.nextId;
     work.diagnosticFirstError=0;work.diagnosticFirstErrorStage=0;}
   if (work.budget !== null) {
     const budgetStatus = work.budget.beginHot(work.stepEpoch + 1, input.dt);
-    if (budgetStatus !== 0) return work.lastStatus = budgetStatus;
+    if (budgetStatus !== 0){work.beginFailurePredicate='BUDGET_BEGIN';return work.lastStatus = budgetStatus;}
   }
   work.stepEpoch++;
   work.runToken = input.runToken; work.substepId = input.substepId; work.attemptToken = input.attemptToken;
