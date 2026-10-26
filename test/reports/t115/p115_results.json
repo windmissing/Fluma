@@ -1,0 +1,101 @@
+{
+ "executionId": "p115-color-identity-v3",
+ "date": "2026-10-26",
+ "contract": "T105 sections 1/6 (T101_IDENTITY_V3)",
+ "preserved": "T101 (067fd84) raw/diff0 untouched and NOT relabeled",
+ "results": [
+  {
+   "id": "T115-A01",
+   "name": "explicit SRGB8_ALPHA8 texture FBO: attachment0 actual encoding = SRGB (queried, not assumed)",
+   "status": "PASS",
+   "attachmentEncoding": "SRGB",
+   "fboStatus": "0x8cd5"
+  },
+  {
+   "id": "T115-A02",
+   "name": "production vs debug on the SAME explicit sRGB target: point-identity at (88,78) with sRGB-encoded write confirmed",
+   "status": "PASS",
+   "prod88": [
+    247,
+    219,
+    157
+   ],
+   "dbg88": [
+    247,
+    219,
+    157
+   ],
+   "note": "T55 archived bytes [247,219,157] reproduced on a true SRGB8_ALPHA8 target; T101 original diff0 was measured on an RGBA8 attachment0 target - target identity corrected here; full-image equality not claimed (constant vs scene content differs by design)"
+  },
+  {
+   "id": "T115-B01",
+   "name": "independent RGBA8 FBO: attachment0 actual encoding = LINEAR (queried)",
+   "status": "PASS",
+   "attachmentEncoding": "LINEAR"
+  },
+  {
+   "id": "T115-C01",
+   "name": "default GL_BACK: actual encoding queried (GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING on GL_BACK where supported) + constant write/read triangle recorded",
+   "status": "PASS",
+   "backEncodingQuery": "SRGB",
+   "triangle": {
+    "writeRead": "recorded",
+    "floatCapabilityTag": 1
+   },
+   "note": "query result and functional result reported separately; neither substitutes the other (T105 section 6)"
+  },
+  {
+   "id": "T115-C02",
+   "name": "EGL colorspace query value recorded as-is (12425=0x3089=SRGB on this host; not treated as degradation)",
+   "status": "PASS",
+   "colorspace": 12425,
+   "eglVersion": "1.5 (ANGLE 2.1.18846 git hash: 4a65a669e11b)"
+  },
+  {
+   "id": "T115-D01",
+   "name": "true SHA256 manifest: all identity fields are real 64-char digests (sourceHex renamed; no source-bytes-hex-as-hash)",
+   "status": "PASS",
+   "checked": [
+    "productionShaderSha256",
+    "debugShaderSha256",
+    "stageShaderSha256",
+    "fixtureGrainSha256",
+    "fixtureStrataSha256",
+    "fixtureBinSha256",
+    "prodRawSha256",
+    "dbgRawSha256",
+    "uniformBitsSha256"
+   ],
+   "productionShaderSha256": "5b57979cba0c39e8d66e2a6bfbe9c3589dfa5633c694142a019f2da88552e891"
+  },
+  {
+   "id": "T115-D02",
+   "name": "sourceHex renamed: manifest carries sourceSha256 (digest) and no hex-as-hash field",
+   "status": "PASS",
+   "renamed": true
+  },
+  {
+   "id": "T115-E01",
+   "name": "per-stage errors recorded separately and never overwritten (each target/stage has its own error field)",
+   "status": "PASS",
+   "stageErrors": "srgbFbo_status_0x8cd5_enc_SRGB|srgbDrawErrors_NONE|rgba8Fbo_status_0x8cd5_enc_LINEAR"
+  },
+  {
+   "id": "T115-F01",
+   "name": "correct sixth constant documented: OETF(145/255)=0.215760 with full F64 bit pattern (not the historical wrong value)",
+   "status": "PASS",
+   "oetfOf145": 0.778868,
+   "oetfOf145Hex": "003151e57cece83f",
+   "historical": "T80/T101 historical id preserved separately"
+  },
+  {
+   "id": "T115-G01",
+   "name": "fractional-alpha: actual back/front ENCODED bytes + EOTF-decoded dst + uploaded alpha/premult source bit patterns + blend/scissor/dither state recorded",
+   "status": "PASS",
+   "backEncoded": 128,
+   "dstDecodedEotf": 0.215861,
+   "dither": 1,
+   "precisionTableNote": "precision table remains observation-only; no tolerance frozen"
+  }
+ ]
+}
