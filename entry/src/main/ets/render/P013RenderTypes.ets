@@ -1,5 +1,6 @@
 // P-013 P0 v1. Explicit synchronous bridge types; versions are evidence identity.
 export enum P013Mode {
+  NEWPIPE_FAULT = 4,
   CANVAS_BASELINE = 0,
   CANVAS_TOPLIGHT_REFERENCE = 1,
   GLES_LMAT_DIAG_OFF = 2,

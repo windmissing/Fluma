@@ -47,7 +47,7 @@ string(REPLACE "\r\n" "\n" P013_MATERIAL_FRAG "${P013_MATERIAL_FRAG}")
 string(SHA256 P013_MATERIAL_HASH "${P013_MATERIAL_VERT}${P013_MATERIAL_FRAG}")
 file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/p013_shader_sources.h"
  "static constexpr const char* kP013MaterialVertex=R\"P013(${P013_MATERIAL_VERT})P013\";\nstatic constexpr const char* kP013MaterialFragment=R\"P013(${P013_MATERIAL_FRAG})P013\";\nstatic constexpr const char* kP013MaterialShaderHash=\"${P013_MATERIAL_HASH}\";\n")
-add_library(p013renderer SHARED p013renderer/material_pass.cpp p013renderer/material_uploader.cpp p013renderer/dualfield_pass.cpp p013renderer/composition_probe.cpp p013renderer/napi_bridge.cpp p013renderer/egl_context.cpp
+add_library(p013renderer SHARED p013renderer/scene_compositor.cpp p013renderer/scene_gpu.cpp p013renderer/fullframe_targets.cpp p013renderer/scene_layers.cpp p013renderer/material_pass.cpp p013renderer/material_uploader.cpp p013renderer/dualfield_pass.cpp p013renderer/composition_probe.cpp p013renderer/napi_bridge.cpp p013renderer/egl_context.cpp
  p013renderer/shader_pass.cpp p013renderer/tdata_uploader.cpp)
 target_include_directories(p013renderer PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(p013renderer PUBLIC libace_napi.z.so libace_ndk.z.so libEGL.so libGLESv3.so libhilog_ndk.z.so)

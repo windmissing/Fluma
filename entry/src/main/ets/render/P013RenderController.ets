@@ -243,7 +243,7 @@ export class P013RenderController {
     this.pendingMode = null;
   }
   forceBaseline(reason: string): void {
-    this.mode = P013Mode.CANVAS_BASELINE;
+    this.mode = P013Mode.NEWPIPE_FAULT;
     this.pendingMode = null;
     this.fallbackReason = reason;
     this.release();
@@ -255,7 +255,7 @@ export class P013RenderController {
       this.failureTelemetry = null;
     }
     this.fallbackReason = reason;
-    this.mode = P013Mode.CANVAS_BASELINE;
+    this.mode = P013Mode.NEWPIPE_FAULT;
     this.pendingMode = null;
     this.release();
     console.error(`[P013] fallback=${reason}`);

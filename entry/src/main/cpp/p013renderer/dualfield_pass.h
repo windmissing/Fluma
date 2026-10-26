@@ -7,6 +7,7 @@ struct DualVisual { double radiusPx=1; std::array<double,12> colors{}; };
 class DualFieldPass {
  public:
   Status Draw(const FrameInput&, GLuint, const float*, const uint32_t*, size_t, size_t, bool, const DualVisual&, uint64_t);
+  Status DrawTarget(const FrameInput&, GLuint, const float*, const uint32_t*, size_t, size_t, bool, const DualVisual&, uint64_t, GLuint, bool, bool);
   void Reset(bool);
   uint64_t epoch=0;size_t capacity=0; GLenum error=0;
   GLuint bed=0, particles=0, vao=0, xyBuffer=0, metaBuffer=0;

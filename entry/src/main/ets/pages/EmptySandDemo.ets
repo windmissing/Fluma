@@ -1,4 +1,6 @@
 import { P051TouchSourceAdapter, P051InputGeometry, P051TouchPoint } from '../physics/P051TouchSourceAdapter';
+import { P013SceneController } from '../render/P013SceneController';
+import { p012FactoryAppearance } from '../render/P012RenderTypes';
 import { P051DiagnosticBuffer } from '../physics/P051DiagnosticBuffer';
 import sensor from '@ohos.sensor';
 import { P051GravityInputAdapter, P051GravityConfig } from '../physics/P051GravityInputAdapter';
@@ -44,7 +46,7 @@ struct EmptySandDemo {
   private model: P051EmptySandDemo = new P051EmptySandDemo();
   private touchSource: P051TouchSourceAdapter = new P051TouchSourceAdapter(this.model,this.diagnostics);
   private inputGeometry: P051InputGeometry = {revision:'P051_TOUCH_INPUT_ENGINEERING_V1',geometryEpoch:1,widthVp:0,heightVp:0,ready:false};
-  private renderer: P013RenderController = new P013RenderController();
+  private renderer: P013SceneController = new P013SceneController();
   private publication: P011PublishedRenderState = this.model.createPublication();
   private callback: EmptySandFrame = new EmptySandFrame();
   @StorageLink('emptySandDemoForeground') @Watch('syncActive') private foreground: boolean = true;
@@ -91,13 +93,13 @@ struct EmptySandDemo {
         gravityDirX:Math.sin(this.publication.effectiveTiltDeg*Math.PI/180),
         gravityDirY:Math.cos(this.publication.effectiveTiltDeg*Math.PI/180),sandTracerEnabled:false
       };
-      const result = this.renderer.submitDualFieldSurfacePx(this.publication,context,ns,this.getUIContext().vp2px(1));
-      this.diagnostics.record({kind:'present',time:ns/1e6,runId:this.publication.runId,commit:this.publication.physicsCommitId,frame:this.serial,code:result?.code ?? -1,swap:result?.swapSucceeded ?? false,reason:this.renderer.dualFailure});
+      const result = this.renderer.drawNewPipelineFrame(this.publication,context,p012FactoryAppearance(),0,ns,this.getUIContext().vp2px(1));
+      this.diagnostics.record({kind:'present',time:ns/1e6,runId:this.publication.runId,commit:this.publication.physicsCommitId,frame:this.serial,code:result?.code ?? -1,swap:result?.requestedSwapSucceeded ?? false,reason:this.renderer.failure});
       if (this.serial % 60 === 0) console.info(`WS_EVENT empty_sand_demo ${JSON.stringify({
         input:input,config:this.gravityConfig.revision,physicsCommitId:this.publication.physicsCommitId,
         effectiveTiltDeg:this.publication.effectiveTiltDeg,dry:this.model.field.getDryDiagnostics(),mediumMode:this.publication.mediumMode,metrics:this.model.field.getMetrics()})}`);
-      this.status = result !== null && result.code === 0 && result.swapSucceeded ?
-        '新管线：按住发沙，松手停止' : '新管线等待/拒绝：'+this.renderer.dualFailure;
+      this.status = result !== null && result.currentFrameSucceeded ?
+        '新管线：按住发沙，松手停止' : result?.presentationState==='STALE' ? 'STALE '+(result.lastGoodFrameToken ?? '')+'；'+result.firstFailureStage : '新管线故障：'+this.renderer.failure;
     }
     this.flushDiagnostics();this.schedule();
   }
@@ -133,6 +135,6 @@ struct EmptySandDemo {
       }.onAreaChange((_old: Area, area: Area) => this.measureInput(area))
         .width('92%').layoutWeight(1)
 
-    }.width('100%').height('100%').padding({top:16,bottom:24}).backgroundColor('#F6F3EC')
+    }.width('100%').height('100%').padding({top:16,bottom:24})
   }
 }

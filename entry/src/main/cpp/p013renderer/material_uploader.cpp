@@ -36,8 +36,21 @@ std::string Fingerprint(const MaterialDesc& d){
  return MaterialSha256(reinterpret_cast<const uint8_t*>(bytes.data()),bytes.size());
 }
 }
+bool MaterialUploader::AcquireSceneLease(uint64_t generation,uint64_t binding,const std::string& token,uint64_t surface,uint64_t context,SceneLease& lease){
+ if(sceneLeaseHeld_||token.empty())return false;
+ auto* g=pending_&&pending_->desc.generation==generation?pending_.get():active_&&active_->desc.generation==generation?active_.get():nullptr;
+ if(!g||g->bindingId!=binding||g->desc.contextEpoch!=context||g->desc.surfaceEpoch!=surface||!g->textures[0]||!g->textures[1])return false;
+ const bool pending=g==pending_.get();if(pending&&(g->state!="READY"||binding!=bindingId_||g->desc.revision!=boundRevision_))return false;
+ lease.desc=&g->desc;lease.textures=&g->textures;lease.bindingId=g->bindingId;lease.bindingDigest=g->bindingDigest;lease.frameToken=token;lease.pending=pending;sceneLeaseHeld_=true;return true;
+}
+void MaterialUploader::CommitSceneLeaseAfterSwap(SceneLease& lease) noexcept {
+ if(!sceneLeaseHeld_)return;
+ if(lease.pending){active_.swap(pending_);active_->state.swap(lease.committedState);active_->token.swap(lease.frameToken);Drop(pending_);}
+ sceneLeaseHeld_=false;lease.desc=nullptr;lease.textures=nullptr;
+}
+void MaterialUploader::AbortSceneLease(SceneLease& lease,const char*) noexcept {sceneLeaseHeld_=false;lease.desc=nullptr;lease.textures=nullptr;}
 MaterialConfigReceipt MaterialUploader::BindConfiguration(uint64_t session,uint64_t revision,const std::string& digest){
- MaterialConfigReceipt r;r.sessionId=boundSession_;r.bindingId=bindingId_;r.revision=boundRevision_;r.digest=boundDigest_;
+ MaterialConfigReceipt r;if(sceneLeaseHeld_){r.code=105;r.errorStage="sceneLease";return r;}r.sessionId=boundSession_;r.bindingId=bindingId_;r.revision=boundRevision_;r.digest=boundDigest_;
  if(!session||session>9007199254740991ULL||revision>9007199254740991ULL||!Digest(digest)){r.code=400;r.errorStage="configBinding";return r;}
  if(bindingId_&&session!=boundSession_){r.code=400;r.errorStage="sessionId";return r;}
  if(bindingId_&&revision==boundRevision_){if(digest!=boundDigest_){r.code=402;r.errorStage="appearanceConfigRevision";}return r;}
@@ -62,6 +75,7 @@ MaterialReceipt MaterialUploader::Receipt(const Generation* g,int code,const cha
 }
 MaterialReceipt MaterialUploader::Stage(const MaterialDesc& d,const uint8_t* grain,size_t gn,const uint8_t* strata,size_t sn){
  auto failed=[&](const char* stage){auto r=Receipt(nullptr,400,stage);r.state="FAILED";r.assetGeneration=d.generation;r.requestedRevision=d.revision;return r;};
+ if(sceneLeaseHeld_)return failed("sceneLease");
  if(d.bundleId.empty()||!d.generation||d.metadata.empty())return failed("metadata");
  auto configuration=CheckConfiguration(d);if(configuration.code)return configuration;
  if(!grain||!strata||gn!=kMaterialGrainBytes||sn!=kMaterialStrataBytes)return failed("byteLength");
@@ -80,6 +94,7 @@ MaterialReceipt MaterialUploader::Stage(const MaterialDesc& d,const uint8_t* gra
  if(pending_){discarded_=pending_->desc.generation;Drop(pending_);}pending_=std::move(next);highWater_=d.generation;return Receipt(pending_.get());
 }
 MaterialReceipt MaterialUploader::Pump(double requestedBudget,uint64_t surface,uint64_t context){
+ if(sceneLeaseHeld_)return Receipt(nullptr,105,"sceneLease");
  if(!std::isfinite(requestedBudget)||requestedBudget<1||requestedBudget>65536||std::floor(requestedBudget)!=requestedBudget)return InvalidBudget();
  const size_t budget=static_cast<size_t>(requestedBudget);
  if(!pending_)return Receipt(nullptr,401,"ASSET_NOT_READY");
@@ -104,13 +119,15 @@ bool MaterialUploader::TargetMatches(uint64_t surface,uint64_t context)const{ret
 bool MaterialUploader::CanActivate(uint64_t generation,uint64_t epoch)const{return pending_&&pending_->state=="READY"&&pending_->desc.generation==generation&&pending_->desc.contextEpoch==epoch&&pending_->bindingId==bindingId_&&pending_->desc.revision==boundRevision_;}
 MaterialReceipt MaterialUploader::Activate(uint64_t generation,uint64_t epoch,const std::string& token){
  if(pending_&&pending_->state=="READY"&&pending_->desc.generation==generation&&pending_->desc.contextEpoch==epoch&&pending_->bindingId!=bindingId_)return Receipt(pending_.get(),402,"appearanceConfigRevision");
+ if(sceneLeaseHeld_)return Receipt(nullptr,105,"sceneLease");
  if(token.empty()||!CanActivate(generation,epoch))return Receipt(pending_.get(),401,"ASSET_NOT_READY");
  // NAPI calls are synchronous, owner/mutex serialized; all preceding draws have completed unbind.
  Drop(active_);active_=std::move(pending_);active_->state="ACTIVE";active_->token=token;return Receipt(active_.get());
 }
-MaterialReceipt MaterialUploader::Discard(uint64_t generation){if(pending_&&pending_->desc.generation==generation){discarded_=generation;Drop(pending_);auto r=Receipt(nullptr);r.assetGeneration=generation;r.state="DISCARDED";return r;}return Receipt(nullptr,401,"ASSET_NOT_READY");}
+MaterialReceipt MaterialUploader::Discard(uint64_t generation){if(sceneLeaseHeld_)return Receipt(nullptr,105,"sceneLease");if(pending_&&pending_->desc.generation==generation){discarded_=generation;Drop(pending_);auto r=Receipt(nullptr);r.assetGeneration=generation;r.state="DISCARDED";return r;}return Receipt(nullptr,401,"ASSET_NOT_READY");}
 void MaterialUploader::Reset(bool current){if(active_)gpu_.Delete(active_->textures,current);if(pending_)gpu_.Delete(pending_->textures,current);if(pending_){discarded_=pending_->desc.generation;pending_.reset();}}
 MaterialReceipt MaterialUploader::Restore(uint64_t surface,uint64_t context){
+ if(sceneLeaseHeld_)return Receipt(nullptr,105,"sceneLease");
  if(!active_)return Receipt(nullptr,401,"ASSET_NOT_READY");
  std::unique_ptr<Generation> next;
  try{next=std::make_unique<Generation>(*active_);}catch(const std::bad_alloc&){return Receipt(active_.get(),400,"allocation");}

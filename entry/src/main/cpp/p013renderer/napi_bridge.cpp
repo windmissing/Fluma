@@ -19,6 +19,9 @@
 #include "dualfield_pass.h"
 #include "material_uploader.h"
 #include "material_pass.h"
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+#include "scene_gpu.h"
+#endif
 #include <vector>
 #include "p013_shader_sources.h"
 #include "shader_pass.h"
@@ -44,6 +47,10 @@ struct Session {
   std::array<float,1536> materialData{};
   MaterialGlGpu materialGpu;
   MaterialUploader material{materialGpu};
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+  SceneCompositor scene;ScenePacket scenePacket;
+  SceneGlGpu sceneGpu{egl,materialPass,dual,{kP013MaterialVertex,kP013MaterialFragment}};
+#endif
   TDataUploader uploader;
   std::unique_ptr<FrameStorage> storage;
   size_t head = 0, count = 0;
@@ -121,6 +128,9 @@ napi_value Control(napi_env e, Status code) {
   return o;
 }
 void ResetGpu() {
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+  g.scene.ResetGpu();g.sceneGpu.Reset(false);
+#endif
   g.materialPass.Reset(false);
   g.material.Reset(false);
   g.dual.Reset(false);
@@ -128,14 +138,24 @@ void ResetGpu() {
   g.shader.Reset(false);
   g.uploader.Reset(false);
 }
+bool SceneResourcesLive(){
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+ return g.sceneGpu.layers.program||g.sceneGpu.targets.textures[0];
+#else
+ return false;
+#endif
+}
 void Destroy(ResetReason reason) {
   // Normal owner teardown deletes names while current. Callback/error teardown
   // abandons registered names only when their owning context is destroyed.
   if (g.egl.state == State::READY && g.egl.active && !g.egl.current &&
-      (g.shader.Program() || g.uploader.Texture() || g.probe.Program() || g.dual.bed || g.materialPass.Program())) {
+      (g.shader.Program() || g.uploader.Texture() || g.probe.Program() || g.dual.bed || g.materialPass.Program() || SceneResourcesLive())) {
     SurfaceInfo info{};
     if (g.egl.EnsureCurrent({g.egl.surfaceEpoch, g.egl.width, g.egl.height},
                             info) == Status::OK) {
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+      g.scene.ResetGpu();g.sceneGpu.Reset(true);
+#endif
       g.materialPass.Reset(true);
       g.material.Reset(true);
       g.dual.Reset(true);
@@ -195,6 +215,9 @@ void Cleanup(void*) {
     Destroy(ResetReason::RELEASE);
     g.egl.Release();
     g.material.ClearSession();
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+    g.scene.ClearSession();
+#endif
     g.ownerBound = false;
     g.released = true;
     g.count = 0;
@@ -292,6 +315,9 @@ napi_value Release(napi_env e, napi_callback_info) {
   if (g.egl.current) return Control(e, Status::EGL_INIT_FAILED);
   g.ownerBound = false;
   g.material.ClearSession();
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+    g.scene.ClearSession();
+#endif
   g.released = true;
   g.count = 0;
   g.head = 0;
@@ -600,6 +626,79 @@ napi_value DrawMaterialFrame(napi_env e,napi_callback_info info){
  return result;
 }
 // T62: explicit geometry preparation, no draw/swap/physics publication.
+
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+bool SceneDoubleView(napi_env e,napi_value v,size_t count,void*& data){
+ napi_typedarray_type type;size_t bytes=0,offset=0,bufferBytes=0;napi_value buffer=nullptr;void* base=nullptr;bool detached=false;
+ return napi_get_typedarray_info(e,v,&type,&bytes,&data,&buffer,&offset)==napi_ok&&type==napi_float64_array&&bytes==count*8&&offset%8==0&&data&&
+ napi_is_detached_arraybuffer(e,buffer,&detached)==napi_ok&&!detached&&napi_get_arraybuffer_info(e,buffer,&base,&bufferBytes)==napi_ok&&base&&offset<=bufferBytes&&count*8<=bufferBytes-offset&&data==static_cast<uint8_t*>(base)+offset;
+}
+napi_value RegisterSceneConfiguration(napi_env e,napi_callback_info info){
+ size_t n=2;napi_value a[2]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);void* bytes=nullptr;double session=0,revision=0,binding=0;SceneConfiguration config;std::string digest;
+ bool valid=n==2&&Number(e,a[0],"sessionId",session)&&Number(e,a[0],"appearanceConfigRevision",revision)&&SafeInteger(revision)&&Number(e,a[0],"bindingId",binding)&&SafeInteger(binding)&&MaterialText(e,a[0],"configurationDigest",digest)&&SceneDoubleView(e,a[1],kSceneConfigValues,bytes);
+ std::lock_guard<std::mutex> lock(g.mutex);int code=int(MaterialOwner());
+ if(!code){auto bound=g.material.Inspect();if(!valid||session!=g.id||binding!=double(bound.bindingId)||revision!=double(bound.boundRevision)||digest!=bound.configurationDigest)code=402;
+  else if(MaterialSha256(static_cast<const uint8_t*>(bytes),kSceneConfigValues*8)!=digest)code=400;
+  else {std::memcpy(config.values.data(),bytes,kSceneConfigValues*8);config.bindingId=uint64_t(binding);config.revision=uint64_t(revision);config.digest=digest;try{if(!g.scene.Register(config))code=400;}catch(const std::bad_alloc&){code=301;}}
+ }
+ auto result=Control(e,Status(code));Put(e,result,"errorStage",code?"SCENE_CONFIG":"NONE");return result;
+}
+void SceneNullable(napi_env e,napi_value o,const char* key,const std::string& value){if(value.empty()){napi_value v=nullptr;napi_get_null(e,&v);napi_set_named_property(e,o,key,v);}else Put(e,o,key,value.c_str());}
+napi_value SceneSourceObject(napi_env e,const SceneSource& s){if(s.token.empty()){napi_value v=nullptr;napi_get_null(e,&v);return v;}auto o=Object(e);Put(e,o,"frameId",double(s.frameId));Put(e,o,"fieldEpoch",double(s.fieldEpoch));Put(e,o,"lightConfigRevision",double(s.lightRevision));Put(e,o,"routeId",s.route.c_str());Put(e,o,"mediumMode",s.medium.c_str());Put(e,o,"widthPx",double(s.width));Put(e,o,"heightPx",double(s.height));Put(e,o,"frameToken",s.token.c_str());Put(e,o,"runId",s.run.c_str());Put(e,o,"ledgerCommitKey",s.ledgerKey.c_str());Put(e,o,"stateEpoch",double(s.stateEpoch));Put(e,o,"physicsCommitId",double(s.commit));Put(e,o,"surfaceEpoch",double(s.surface));Put(e,o,"contextEpoch",double(s.context));Put(e,o,"geometryEpoch",double(s.geometry));Put(e,o,"continuityEpoch",double(s.continuity));Put(e,o,"generation",double(s.generation));Put(e,o,"configRevision",double(s.revision));return o;}
+napi_value SceneResult(napi_env e,const SceneReceipt& r,const ScenePacket& p){
+ auto o=Control(e,Status(r.code));Put(e,o,"renderContractRevision","P013_NEWPIPE_ONLY_V1");Put(e,o,"compositionRevision","P013_FULLFRAME_SHADER_V1");Put(e,o,"compositingDomain","LINEAR_DISPLAY_PREMULT_OVER_V1");
+ Put(e,o,"requestedPipelineId",r.requested.pipeline.c_str());Put(e,o,"renderPipelineId",r.actualGeneration||r.current||r.staleSwap?r.lastGood.pipeline.c_str():"UNKNOWN");
+ Put(e,o,"presentationState",r.state.c_str());Put(e,o,"faultReason",r.fault.c_str());Put(e,o,"firstFailureStage",r.stage.c_str());Put(e,o,"currentFrameSucceeded",r.current);Put(e,o,"requestedSwapSucceeded",r.requestedSwap);Put(e,o,"staleSwapSucceeded",r.staleSwap);Put(e,o,"displayPresentVerified",false);
+ Put(e,o,"requestedFrameToken",r.requested.token.c_str());Put(e,o,"requestedGeneration",double(r.requested.generation));Put(e,o,"requestedConfigRevision",double(r.requested.revision));
+ SceneNullable(e,o,"renderedFrameToken",r.rendered.token);SceneNullable(e,o,"lastGoodFrameToken",r.lastGood.token);
+ Put(e,o,"renderedGeneration",double(r.rendered.generation));Put(e,o,"renderedConfigRevision",double(r.rendered.revision));Put(e,o,"lastGoodGeneration",double(r.lastGood.generation));Put(e,o,"lastGoodConfigRevision",double(r.lastGood.revision));
+ napi_set_named_property(e,o,"lastGoodSourceEpochs",SceneSourceObject(e,r.lastGood));napi_set_named_property(e,o,"renderedSource",SceneSourceObject(e,r.rendered));
+ Put(e,o,"targetSurfaceEpoch",p.frame.surfaceEpoch);Put(e,o,"targetContextEpoch",double(p.contextEpoch));Put(e,o,"actualPresentationGeneration",double(r.actualGeneration));
+ auto material=g.material.Inspect();Put(e,o,"activeGeneration",double(material.activeGeneration));Put(e,o,"pendingGeneration",double(material.pendingGeneration));Put(e,o,"materialTextureLiveCount",double(material.textureLiveCount));Put(e,o,"assetCpuBytes",double(material.cpuBytes));
+ Put(e,o,"frameTextureLiveCount",double(bool(g.sceneGpu.targets.textures[0])+bool(g.sceneGpu.targets.textures[1])));Put(e,o,"frameFboLiveCount",double(bool(g.sceneGpu.targets.fbos[0])+bool(g.sceneGpu.targets.fbos[1])));Put(e,o,"frameTextureBytes",double(g.sceneGpu.targets.Bytes()));
+ Put(e,o,"sceneAuxTextureLiveCount",double(bool(g.sceneGpu.layers.data)+bool(g.sceneGpu.layers.legacy)+bool(g.materialPass.DataTexture())));
+ Put(e,o,"sceneAuxTextureBytes",double((g.sceneGpu.layers.data?8192:0)+(g.sceneGpu.layers.legacy?65536:0)+(g.materialPass.DataTexture()?6144:0)));
+ Put(e,o,"legacyTDataTextureLiveCount",double(bool(g.uploader.Texture())));
+ Put(e,o,"particleCount",double(p.count));Put(e,o,"particleBufferBytes",double(g.dual.capacity*16));Put(e,o,"particlePresentedSource",p.particleEnabled&&p.count?"C_PARTICLE":"NONE");Put(e,o,"tracerDrawCount",0.);Put(e,o,"sceneShaderHash",g.sceneGpu.layers.sourceHash.c_str());Put(e,o,"sceneProgramLiveCount",double(bool(g.sceneGpu.layers.program)+bool(g.sceneGpu.layers.present)+bool(g.dual.bed)+bool(g.dual.particles)+bool(g.materialPass.Program())));Put(e,o,"materialShaderHash",kP013MaterialShaderHash);return o;
+}
+napi_value DrawNewPipelineFrame(napi_env e,napi_callback_info info){
+ size_t n=5;napi_value a[5]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+ std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.scenePacket;p.frame={};p.token.clear();p.run.clear();p.ledgerKey.clear();p.route.clear();p.medium.clear();p.contextEpoch=p.stateEpoch=p.commit=p.requestedGeneration=0;p.count=0;p.capacity=1;
+ const char* stage="SCENE_ARGUMENTS";void* data=nullptr;void* xy=nullptr;void* meta=nullptr;void* motion=nullptr;double context=0,state=0,commit=0,generation=0,count=0,capacity=0;std::string sourceFailure;
+ bool valid=n==5&&ParseFrame(e,a[0],p.frame,stage)&&ExactString(e,a[0],"scenePacketRevision","P013_SCENE_PACKET_V1")&&ExactString(e,a[0],"renderContractRevision","P013_NEWPIPE_ONLY_V1")&&ExactString(e,a[0],"slopeKernelVersion","E2_GAUSS_COL6_R18_P1_V2");
+ auto text=[&](const char* key,std::string& out){napi_value v=nullptr;if(napi_get_named_property(e,a[0],key,&v)!=napi_ok)return false;
+  if(std::strcmp(key,"ledgerCommitKey")==0){napi_valuetype type;std::array<char,2049> text{};size_t length=0;if(napi_typeof(e,v,&type)!=napi_ok||type!=napi_string||napi_get_value_string_utf8(e,v,text.data(),text.size(),&length)!=napi_ok||length>=text.size()-1)return false;out.assign(text.data(),length);return true;}
+  return String(e,v,out);};
+ valid=valid&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"stateEpoch",state)&&SafeInteger(state)&&state>0&&Number(e,a[0],"physicsCommitId",commit)&&SafeInteger(commit)&&commit>0&&Number(e,a[0],"requestedGeneration",generation)&&SafeInteger(generation)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=SIZE_MAX/16&&count<=capacity&&Boolean(e,a[0],"particleLayerEnabled",p.particleEnabled)&&text("frameToken",p.token)&&text("runId",p.run)&&text("ledgerCommitKey",p.ledgerKey)&&text("routeId",p.route)&&text("mediumMode",p.medium)&&text("sourceFailure",sourceFailure);
+ if(valid){p.contextEpoch=uint64_t(context);p.stateEpoch=uint64_t(state);p.commit=uint64_t(commit);p.requestedGeneration=uint64_t(generation);p.count=size_t(count);p.capacity=size_t(capacity);
+  stage="SCENE_TYPED_RANGE";valid=TypedView(e,a[1],napi_float32_array,kSceneDataFloats,data,stage)&&TypedView(e,a[2],napi_float32_array,p.capacity*2,xy,stage)&&TypedView(e,a[3],napi_uint32_array,p.capacity*2,meta,stage)&&SceneDoubleView(e,a[4],10,motion);
+ }
+ int code=int(MaterialOwner());if(!code&&(!valid||p.frame.sessionId!=g.id))code=100;
+ if(!code){std::array<float,kFloats> check{};std::memcpy(check.data(),data,sizeof(check));auto f=p.frame;f.T_dataLayoutVersion=1;LightParams light{.85,.15,.8,1.12,1,24,-.55,-.55,.63,6};
+  if(p.frame.T_dataLayoutVersion!=2||Validate(f,light,check)!=Status::OK||p.contextEpoch!=g.egl.contextEpoch||p.frame.surfaceEpoch!=g.egl.surfaceEpoch||!(p.medium=="WET_COLUMN_V1"||p.medium=="DRY_AIR_V1")){code=100;stage="SCENE_SOURCE";}
+ }
+ if(!code){std::memcpy(p.data.data(),data,sizeof(p.data));std::memcpy(p.motion.data(),motion,sizeof(p.motion));
+  for(float v:p.data)if(!std::isfinite(v)){code=100;stage="SCENE_DATA";break;}
+  for(double v:p.motion)if(!std::isfinite(v)||!std::isfinite(float(v))){code=100;stage="SCENE_MOTION";break;}
+  const auto* positions=static_cast<const float*>(xy);const auto* tags=static_cast<const uint32_t*>(meta);
+  for(size_t i=0;!code&&i<p.count;i++){const auto tag=tags[2*i];if(!std::isfinite(positions[2*i])||!std::isfinite(positions[2*i+1])||positions[2*i]<0||positions[2*i]>=128||positions[2*i+1]<0||positions[2*i+1]>p.frame.capacity||(tag&0xffff0000u)||(tag&255u)>1||((tag>>8)!=1&&(tag>>8)!=2)||!tags[2*i+1]){code=100;stage="SCENE_PARTICLE";}
+   for(size_t j=0;!code&&j<i;j++)if(tags[2*j+1]==tags[2*i+1]){code=100;stage="SCENE_DUPLICATE_ID";}
+  }
+  if(!code)try{if(p.xy.size()!=p.capacity*2){p.xy.resize(p.capacity*2);p.meta.resize(p.capacity*2);}if(p.count){std::memcpy(p.xy.data(),xy,p.count*8);std::memcpy(p.meta.data(),meta,p.count*8);}}catch(const std::bad_alloc&){code=301;stage="SCENE_CPU_CAPACITY";}
+ }
+ SceneReceipt receipt;
+ if(code)receipt=g.scene.Reject(p,code,stage,nullptr,false);
+ else {
+  SurfaceInfo surface{};auto current=g.egl.EnsureCurrent({uint64_t(p.frame.surfaceEpoch),int(p.frame.surfaceWidthPx),int(p.frame.surfaceHeightPx)},surface);
+  if(current!=Status::OK)receipt=g.scene.Reject(p,int(current),g.egl.errorStage,nullptr,false);
+  else if(!sourceFailure.empty())receipt=g.scene.Reject(p,100,sourceFailure.c_str(),&g.sceneGpu,true);
+  else try{receipt=g.scene.Draw(p,g.material,g.sceneGpu);}catch(const std::bad_alloc&){receipt.code=301;receipt.state="FAULT";receipt.fault=receipt.stage="SCENE_CPU_ALLOCATION";}
+  auto unbound=g.egl.Unbind();if(unbound!=Status::OK){receipt.code=int(unbound);receipt.fault=receipt.stage="SCENE_UNBIND_AFTER_SWAP";receipt.state="FAULT";receipt.current=false;}
+  if(int(current)>=200||int(unbound)>=200||receipt.code==201||receipt.code==202||receipt.code==303){Destroy(ResetReason::FAILURE);g.egl.state=State::FAILED;}
+ }
+ return SceneResult(e,receipt,p);
+}
+#endif
 napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
  size_t n=2; napi_value a[2]{}; napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
  double session=0, epoch=0;
@@ -1109,6 +1208,10 @@ EXTERN_C_START
 static napi_value Init(napi_env e, napi_value exports) {
   using namespace p013;
   napi_property_descriptor d[] = {
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+    {"registerSceneConfiguration",nullptr,RegisterSceneConfiguration,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"drawNewPipelineFrame",nullptr,DrawNewPipelineFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
+#endif
     {"drawMaterialFrame",nullptr,DrawMaterialFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"bindMaterialConfiguration", nullptr, BindMaterialConfiguration, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"stageMaterialBundle", nullptr, StageMaterialBundle, nullptr,nullptr,nullptr,napi_default,nullptr},

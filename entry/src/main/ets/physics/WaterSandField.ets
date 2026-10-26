@@ -4056,6 +4056,16 @@ export class WaterSandField {
     out.particleCapacity = this.particleBinding.pool.nmax; out.liveCount = out.field.particleState.liveCount;
     return 'OK';
   }
+  // T56 read-only scene publication also supports the canonical field-only route.
+  copyPublishedSceneStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {
+    if(this.particleRouteActive())return this.copyPublishedRenderStateInto(out);
+    if(out.field.cols!==this.cols||out.field.capacity!==this.capacity)return 'CAPACITY_MISMATCH';
+    this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;
+    out.stateEpoch=this.renderStateEpoch;out.physicsCommitId=this.renderPhysicsCommitId;out.publicationKind=this.renderPublicationKind;out.ledgerCommitKey=this.renderLedgerCommitKey;
+    out.mediumMode=this.mediumMode;out.airDynamicsRevision=this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY';
+    out.birthPlacementRevision=this.mediumMode===P051_DRY_MEDIUM?'DRY_POINT_V1':'WET_COLUMN_V1';
+    out.routeId=this.params.routeId;out.particleRouteActive=false;out.particleCapacity=0;out.liveCount=0;return 'OK';
+  }
   particleRenderCapacity(): number { return this.particleParams === null ? 0 : this.particleParams.nmax; }
   copyParticleRenderSnapshot(out: P011ParticleRenderProjection): P011ParticleRenderProjection {
     out.physicsCommitId = this.renderPhysicsCommitId;

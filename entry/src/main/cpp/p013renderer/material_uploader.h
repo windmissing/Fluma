@@ -41,6 +41,8 @@ class MaterialGlGpu final: public MaterialGpu {
  bool Upload(uint32_t,int,int,int,int,const uint8_t*) override;
  void Delete(std::array<uint32_t,2>&,bool) override;
 };
+struct SceneLease { const MaterialDesc* desc=nullptr; const std::array<uint32_t,2>* textures=nullptr;
+ uint64_t bindingId=0;std::string bindingDigest,frameToken,committedState="ACTIVE";bool pending=false; };
 class MaterialUploader {
  public:
  explicit MaterialUploader(MaterialGpu& gpu):gpu_(gpu){}
@@ -48,6 +50,9 @@ class MaterialUploader {
  MaterialReceipt CheckConfiguration(const MaterialDesc&) const;
  MaterialReceipt InvalidBudget() const;
  void ClearSession();
+ bool AcquireSceneLease(uint64_t generation,uint64_t bindingId,const std::string& token,uint64_t surface,uint64_t context,SceneLease&);
+ void CommitSceneLeaseAfterSwap(SceneLease&) noexcept;
+ void AbortSceneLease(SceneLease&,const char*) noexcept;
  MaterialReceipt Stage(const MaterialDesc&,const uint8_t*,size_t,const uint8_t*,size_t);
  MaterialReceipt Pump(double,uint64_t surfaceEpoch,uint64_t contextEpoch);
  bool TargetMatches(uint64_t surfaceEpoch,uint64_t contextEpoch) const;
@@ -68,6 +73,7 @@ class MaterialUploader {
  MaterialReceipt Receipt(const Generation*,int=0,const char* = "NONE",size_t=0) const;
  void Drop(std::unique_ptr<Generation>&,bool=true);
  uint64_t boundSession_=0,bindingId_=0,boundRevision_=0,highWater_=0;std::string boundDigest_;
+ bool sceneLeaseHeld_=false;
  MaterialGpu& gpu_; std::unique_ptr<Generation> active_,pending_; uint64_t pumps_=0,discarded_=0;
 };
 }

@@ -21,7 +21,7 @@ export class P013ParticleRejection {
 export class P013DualFieldAdapter {
   lastRejected: P013ParticleRejection | null = null;
   private readonly profile: P013FrameAdapter = new P013FrameAdapter();
-  packInto(state: P011PublishedRenderState, context: P012FrameContext, out: P013DualFieldUploadSlot, projectionRevision: string = 'RAW_F32_V1'): string {
+  packInto(state: P011PublishedRenderState, context: P012FrameContext, out: P013DualFieldUploadSlot, projectionRevision: string = 'RAW_F32_V1', includeFieldProfiles: boolean = true): string {
     if (projectionRevision !== 'RAW_F32_V1' && projectionRevision !== P013_COLUMN_PROJECTION) return 'PROJECTION_VERSION';
     const project = projectionRevision === P013_COLUMN_PROJECTION;
     const diagnostic = new P013ProjectionDiagnostic(); diagnostic.revision = projectionRevision;
@@ -65,8 +65,8 @@ export class P013DualFieldAdapter {
     }
     this.lastRejected = null;
     if (count !== pool.liveCount) return 'LIVE_COUNT_MISMATCH';
-    if (!this.profile.pack(field)) return 'INVALID_FIELD';
-    out.tdata.set(this.profile.data); count = 0;
+    if(includeFieldProfiles){if (!this.profile.pack(field)) return 'INVALID_FIELD';out.tdata.set(this.profile.data);}
+    count = 0;
     for (let i = 0; i < pool.nmax; i++) {
       if (pool.pState[i] === 0) continue;
       out.particleXY[2 * count] = project ? p013ProjectX(pool.pX[i]) : pool.pX[i];

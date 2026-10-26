@@ -1,3 +1,4 @@
+import { P013SceneController } from '../render/P013SceneController';
 import { P011ParticleRouteResult } from '../physics/P011ParticleM2Field';
 import { p011AssembleDeviceCapture, p011ArmDeviceParticleRoute, p011BindDevicePhase, p011ApplyDeviceShake } from '../physics/P011DeviceRunAssembly';
 import { P011EndpointStartupClock } from '../physics/P011EndpointStartupClock';
@@ -483,8 +484,11 @@ struct SandCanvas {
   private fps: number = 0;
   private canvasW: number = 0;
   private canvasH: number = 0;
-  private p013ForegroundCtx: CanvasRenderingContext2D = new CanvasRenderingContext2D(new RenderingContextSettings(true));
-  private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(new RenderingContextSettings(true));
+  private get p013ForegroundCtx(): CanvasRenderingContext2D {throw new Error('NEWPIPE_FORBIDDEN_CANVAS');}
+  private get ctx(): CanvasRenderingContext2D {throw new Error('NEWPIPE_FORBIDDEN_CANVAS');}
+  private scene: P013SceneController = new P013SceneController();
+  private sceneAppearance: P012AppearanceParams = p012FactoryAppearance();
+  @State private scenePipeline: number = 0;
   private lastTime: number = 0;
   private frameCount: number = 0;
   private fpsTime: number = 0;
@@ -771,17 +775,17 @@ struct SandCanvas {
 
   onPageHide(): void {
     this.resetPanGestureBoundary();
-    this.p013.setActive(false);
+    this.scene.setActive(false);
     this.p013FrameVisible = false;
     this.p013OverlayVisible = this.p013.isOverlay();
   }
 
   onPageShow(): void {
-    this.p013.setActive(true);
+    this.scene.setActive(true);
   }
 
   aboutToDisappear(): void {
-    this.p013.release();
+    this.scene.release();
     this.frameCb.owner = null;this.sceneFrameStarted=false;
     // §26.4 risk 1: clear the schedule player's activation flag on exit —
     // a crashed/abandoned player must never permanently reject commands.
@@ -1306,6 +1310,10 @@ struct SandCanvas {
   }
 
   private async startLiquidController(): Promise<void> {
+    if (!this.supportsNewPipelineScene()) {
+      this.displayInfo = 'NEWPIPE_FAULT_UNSUPPORTED_SCENE: shader scene implementation required';
+      return;
+    }
     if (this.canvasW <= 0 || this.canvasH <= 0) {
       return;
     }
@@ -1439,6 +1447,10 @@ struct SandCanvas {
   }
 
   renderLiquidSnapshot(snapshot: LiquidRenderSnapshot, frame: LiquidCAFramePayload): void {
+    if (!this.supportsNewPipelineScene()) {
+      this.displayInfo = 'NEWPIPE_FAULT_UNSUPPORTED_SCENE: shader scene implementation required';
+      return;
+    }
     const ctx = this.ctx;
     const bgGrad = ctx.createLinearGradient(0, 0, 0, this.canvasH);
     bgGrad.addColorStop(0, '#0a0a14');
@@ -2215,22 +2227,21 @@ struct SandCanvas {
         // P-012 E-batch 薄分发（§9.2）：一次帧只走一个完整渲染分支，禁止叠加；
         // canonicalEvidence（物理证据采集 wssnapshot=true）强制 OFF 分支。
         // 三段拆分：renderMs=draw 提交耗时（P012 renderer 含烘焙/E3 全链）
-        const dualActive = ws.particleRouteActive() && !this.waterSandSnapshotEnabled;
-        if (dualActive && (this.publishedField !== ws || this.publishedRenderState === null ||
-          this.publishedRenderState.particleCapacity !== ws.particleRenderCapacity())) {
-          this.publishedRenderState = ws.createPublishedRenderStateSlot(); this.publishedField = ws;
+        const dualActive=ws.particleRouteActive();
+        if(this.publishedField!==ws||this.publishedRenderState===null||this.publishedRenderState.particleCapacity!==(dualActive?ws.particleRenderCapacity():0)){
+          this.publishedRenderState=ws.createPublishedRenderStateSlot();this.publishedField=ws;
         }
-        let dualCopyOk = false;
-        if (dualActive && this.publishedRenderState !== null) {
-          dualCopyOk = ws.copyPublishedRenderStateInto(this.publishedRenderState) === 'OK';
-          if (dualCopyOk) this.waterSandSnapshot = this.publishedRenderState.field;
-        }
-        this.dualFieldMounted = dualActive;
-        const segRenderT0 = Date.now();
-        // T68: T56 owns the complete scene/FBO. A partial bed/particle swap is
-        // forbidden even when labelled FAULT; keep the surface unsubmitted.
-        this.dualFieldVisible=false;
-        this.displayInfo='NEWPIPE_FAULT: complete scene T56 NOT_IMPLEMENTED';
+        const segRenderT0=Date.now();
+        const publication=this.publishedRenderState;
+        if(publication!==null&&ws.copyPublishedSceneStateInto(publication)==='OK'){
+          this.waterSandSnapshot=publication.field;
+          const context=this.buildP012FrameContext();context.physicsCommitId=publication.physicsCommitId;
+          const receipt=this.scene.drawNewPipelineFrame(publication,context,this.sceneAppearance,this.scenePipeline,frameTimeInNano,this.getUIContext().vp2px(1));
+          this.dualFieldVisible=receipt?.currentFrameSucceeded===true||receipt?.presentationState==='STALE';
+          this.displayInfo=receipt===null?'NEWPIPE_FAULT '+this.scene.failure:
+            receipt.presentationState+' request='+receipt.requestedFrameToken+' actual='+(receipt.lastGoodFrameToken ?? 'none')+' '+receipt.firstFailureStage;
+        }else{this.dualFieldVisible=false;this.displayInfo='NEWPIPE_FAULT SOURCE_PUBLICATION';}
+        this.dualFieldMounted=true;
         const segRenderMs=Date.now()-segRenderT0;
         if (this.testMode) {
           // presentMs：呈现等待段 = 本帧处理完成到下帧 vsync 的等待
@@ -2645,20 +2656,7 @@ struct SandCanvas {
       // 从 OFF 重新启用：先重建运动配对，不能跨 OFF 时段累计
       this.p012Renderer?.resetContinuity();
     }
-    if (clipped !== P012AppearanceTier.OFF && this.p012Renderer === null) {
-      // 延迟创建：首次启用非 OFF 档时构造（aboutToAppear 时 waterSandField 可能
-      // 尚未 initField，但 renderer 只依赖 cols/capacity 常量）
-      this.p012Renderer = new P012WaterSandRenderer(this.waterSandCols, this.waterSandCapacity);
-      // §13.3：renderer 延迟创建后恢复持久化外观（草稿镜像已在 aboutToAppear 记）
-      if (this.pendingAppearanceRestore) {
-        this.pendingAppearanceRestore = false;
-        const pkg = this.buildRestorePackage();
-        if (pkg !== null) {
-          this.p012Renderer.applyAppearance(pkg, this.appearancePxPerMaterial());
-          console.info('[P012] appearance restored on renderer create');
-        }
-      }
-    }
+    if(this.pendingAppearanceRestore){this.pendingAppearanceRestore=false;const restored=this.buildRestorePackage();if(restored!==null)this.commitScreenConfig(restored);}
     console.info(`[P012] appearanceTier -> ${clipped} (source=${source})`);
     this.syncSheet();
   }
@@ -2679,12 +2677,8 @@ struct SandCanvas {
    * 外观应用不触发物理路线清理（对比：waterSandParams.configure 会清物理状态）。
    */
   private commitScreenConfig(appearance: P012AppearanceParams): string | null {
-    if (this.p012Renderer === null) {
-      // renderer 未建（OFF 档）：只存草稿态元数据，待启用时生效
-      this.appearanceAppliedNote = '外观已记录（渲染未启用，切换外观档后生效）';
-      return null;
-    }
-    const err = this.p012Renderer.applyAppearance(appearance, this.appearancePxPerMaterial());
+    const err=validateP012AppearanceParams(appearance,this.appearancePxPerMaterial());
+    if(err===null)this.sceneAppearance=appearance;
     if (err === null) {
       this.p012ConfigRevision++;
       // 持久化（防抖 500ms，§13.3）
@@ -2701,8 +2695,7 @@ struct SandCanvas {
 
   /** 草稿整包构造（六字段 + 元数据；revision 由 renderer 侧递增语义决定） */
   private buildAppearanceDraftPackage(): P012AppearanceParams {
-    const cur = this.p012Renderer !== null
-      ? this.p012Renderer.activeAppearanceParams : p012FactoryAppearance();
+    const cur = this.sceneAppearance;
     return {
       schemaVersion: P012_APPEARANCE_SCHEMA_VERSION,
       styleFamilyId: P012_STYLE_FAMILY_ID,
@@ -2734,8 +2727,7 @@ struct SandCanvas {
   /** 「恢复推荐」按钮：恢复 s133 冻结基线整包（§13.3 恢复推荐） */
   resetAppearanceToFactory(): void {
     const factory = p012FactoryAppearance();
-    const cur = this.p012Renderer !== null
-      ? this.p012Renderer.activeAppearanceParams : factory;
+    const cur = this.sceneAppearance;
     const pkg: P012AppearanceParams = {
       schemaVersion: factory.schemaVersion,
       styleFamilyId: factory.styleFamilyId,
@@ -2807,13 +2799,7 @@ struct SandCanvas {
       this.appStrataLambda = parsed.strataLambdaMaterial;
       this.appStrataStrength = parsed.strataStrengthScale;
       this.appMottleContrast = parsed.clearMottleContrast;
-      if (this.p012Renderer !== null) {
-        this.p012Renderer.applyAppearance(parsed, this.appearancePxPerMaterial());
-      } else {
-        // OFF 档冷启：暂存待 renderer 创建时恢复
-        this.pendingAppearanceRestore = true;
-        this.pendingRestorePkg = parsed;
-      }
+      this.commitScreenConfig(parsed);
     } catch (error) {
       console.info('[P012] appearance restore failed（用版本化推荐）');
     }
@@ -3252,9 +3238,10 @@ struct SandCanvas {
       if (this.renderMode === MODE_WATERSAND) {
         XComponent({id:'p013_lmat_surface',type:XComponentType.TEXTURE,libraryname:'p013renderer'})
           .width('100%').height('100%').zIndex(10).hitTestBehavior(HitTestMode.None)
-          .onLoad(() => {this.p013.onLoad();})
-          .onDestroy(() => {this.p013.release();})
-        Text('纯新管线故障：完整场景待T56，未提交局部画面')
+          .onLoad(() => {this.scene.onLoad();})
+          .onDestroy(() => {this.scene.release();})
+        Button(['基础全场景','P1 OFF 全场景','P1 ON 全场景'][this.scenePipeline])
+          .onClick(() => {this.scenePipeline=(this.scenePipeline+1)%3;})
           .zIndex(25).fontSize(12).fontColor('#B00020').position({x:20,y:85})
         Button('结束采集').zIndex(30).position({x:20,y:112})
           .onClick(() => {const store=this.naturalObservationStore;if(store!==null)this.finishCapture('ui:'+store.inspect().storeGeneration).catch((e: Error): void=>{this.logWaterSand(e.message);});})
