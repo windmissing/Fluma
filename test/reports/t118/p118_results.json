@@ -1,0 +1,50 @@
+{
+ "executionId": "p118-t117-verify-v1",
+ "date": "2026-10-26",
+ "target": "T117 2c024c8",
+ "results": [
+  {
+   "id": "T118-V1",
+   "name": "category1 BUSY: entry records stepOpen/active residue; rollback restores entry",
+   "status": "PASS",
+   "busyCode": 1,
+   "phase": "READY"
+  },
+  {
+   "id": "T118-V2",
+   "name": "category2 BEGIN_HOT folding: Hot raw code + first predicate readable (not a folded 99)",
+   "status": "PASS",
+   "hotCode": 9,
+   "predicate": "PAGE_BACKLOG"
+  },
+  {
+   "id": "T118-V3",
+   "name": "category3 audit drift 99: getDrift three-way values + DRIFT_LIMIT readable; distinct from beginCollect failure",
+   "status": "PASS",
+   "code": 99,
+   "driftHeavy": 0.0013003901170351106,
+   "limit": 0.001
+  },
+  {
+   "id": "T118-V4",
+   "name": "switch field equivalence: diagnostics ON does not change field/pool/budget/ID sequence",
+   "status": "PASS",
+   "traces": 3
+  },
+  {
+   "id": "T118-V5",
+   "name": "first-failure freeze: recordFirstFailure writes once, later calls never overwrite",
+   "status": "PASS",
+   "frozen": true,
+   "freezeHeld": true
+  },
+  {
+   "id": "T118-V6",
+   "name": "cleanup fields: trace records cleanupStepOpen/Active/BudgetEpoch/PageBacklog; binding clean after steps",
+   "status": "PASS",
+   "sealed": true,
+   "cleanNow": true,
+   "traces": 2
+  }
+ ]
+}
