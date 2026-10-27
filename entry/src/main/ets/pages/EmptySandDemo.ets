@@ -33,6 +33,16 @@ struct EmptySandDemo {
   private failureTraceExported: boolean = false;
   private failureTraces: P011TiltPreviewTrace[] = [];
   private failureTraceDropped: number = 0;
+  private failureV2ExportedId: string | null = null;
+  private emitPhysicsFailureV2(): void {
+    try {
+      const bundle=this.model.exportPhysicsFailureV2();
+      const id=bundle?.firstFailure?.firstFailureId ?? null;
+      if(bundle===null||id===null||id===this.failureV2ExportedId)return;
+      console.info(`WS_EVENT first_physics_failure_v2 ${JSON.stringify(bundle)}`);
+      this.failureV2ExportedId=id;
+    }catch(e){console.info('WS_EVENT first_physics_failure_v2 EXPORT_FAILED');}
+  }
   private armFailureTrace(): void {
     if(!this.failureTraceEnabled)return;
     this.model.field.setTiltPreviewTraceSink((trace: P011TiltPreviewTrace): void => {
@@ -41,9 +51,11 @@ struct EmptySandDemo {
     });
   }
   private resetDemo(): void {
+    this.emitPhysicsFailureV2();
     this.touchSource.invalidate('RESET');this.gravity.reset();this.model.reset();
     this.model.field.setPoolProgressDiagnosticEnabled(true,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));
     this.failureTraceExported=false;this.failureTraces.length=0;this.failureTraceDropped=0;this.armFailureTrace();
+    this.failureV2ExportedId=null;
     this.publication=this.model.createPublication();this.previousNs=0;
   }
   private emitFirstCode5(input: P051GravityInput | null, dt: number, beforeCommit: number, beforePoolProgress: string | null): void {
@@ -100,6 +112,7 @@ struct EmptySandDemo {
   private readonly accelerometer = (data: sensor.AccelerometerResponse): void => {
     if (!this.running) return;
     this.diagnosticSensorCount++;const now=p013NowMs();this.lastRawSensor={x:data.x,y:data.y,z:data.z,timeMs:now};this.diagnostic('sensor',now,'sensor',data.x,data.y);
+    this.model.recordDiagnosticSensor(this.diagnosticSensorCount,data.x,data.y,data.z,now);
     this.gravity.consumeAccelerometer(data.x,data.y,data.z,now);
   };
   private updateSensor(): void {
@@ -154,8 +167,9 @@ struct EmptySandDemo {
     const beforeCommit=this.model.field.getRenderPhysicsCommitId();
     const beforePoolProgress=this.model.field.getPoolProgressDiagnostic();
     const ok = this.model.tick(ns,dt);this.touchSource.sync();
-    if (!ok) { this.emitFirstCode5(input,dt,beforeCommit,beforePoolProgress);this.model.stop('page-physics-failed');this.flushDiagnostics(); this.status = '物理提交失败：'+this.model.field.getLastError(); this.schedule(); return; }
+    if (!ok) { this.emitPhysicsFailureV2();this.emitFirstCode5(input,dt,beforeCommit,beforePoolProgress);this.model.stop('page-physics-failed');this.flushDiagnostics(); this.status = '物理提交失败：'+this.model.field.getLastError(); this.schedule(); return; }
     if (this.model.field.copyPublishedRenderStateInto(this.publication) === 'OK') {
+      this.model.recordDiagnosticPublication(this.publication.runId,this.publication.physicsCommitId,this.serial,this.publication.effectiveTiltDeg);
       const context: P012FrameContext = {
         physicsCommitId:this.publication.physicsCommitId,particleLayerEnabled:true,
         fieldEpoch:this.publication.stateEpoch,continuityEpoch:1,geometryEpoch:this.geometryEpoch,frameSerial:++this.serial,
