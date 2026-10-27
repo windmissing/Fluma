@@ -1,0 +1,109 @@
+{
+  "revision": "T172_V3_INDEPENDENT_V1",
+  "commitUnderTest": "961d837",
+  "executedAt": "2026-10-27T11:48:42.780Z",
+  "device": "NOT_RUN (offline per card)",
+  "gpuExecution": "NOT_RUN_HOST_STUBS_ONLY",
+  "spec": "T169 V1 §2-5 + developer-T171-gpu-isolated-v3-v1.md",
+  "total": 13,
+  "passed": 13,
+  "failed": 0,
+  "measurements": [
+    {
+      "fixture": "WET_192_64",
+      "route": "LEGACY_SCAN",
+      "poolSha256_hexConcat": "0ee7cf0ba5664c2625a37965e0ea47f4bd5778fd268c522fc5dd592784919a6e",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "pairChecked": 64
+    },
+    {
+      "fixture": "WET_192_64",
+      "route": "T123",
+      "poolSha256_hexConcat": "0ee7cf0ba5664c2625a37965e0ea47f4bd5778fd268c522fc5dd592784919a6e",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "pairChecked": 64
+    },
+    {
+      "fixture": "WET_192_64",
+      "route": "GPU",
+      "poolSha256_hexConcat": "0ee7cf0ba5664c2625a37965e0ea47f4bd5778fd268c522fc5dd592784919a6e",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "pairChecked": 64
+    },
+    {
+      "fixture": "WET_192_128",
+      "route": "LEGACY_SCAN",
+      "poolSha256_hexConcat": "05e898dfda7ef7739993a979019496633d0a44f10630cfe6fd3298b51ff5beca",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "pairChecked": 128
+    },
+    {
+      "fixture": "WET_192_128",
+      "route": "T123",
+      "poolSha256_hexConcat": "05e898dfda7ef7739993a979019496633d0a44f10630cfe6fd3298b51ff5beca",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "pairChecked": 128
+    },
+    {
+      "fixture": "WET_192_128",
+      "route": "GPU",
+      "poolSha256_hexConcat": "05e898dfda7ef7739993a979019496633d0a44f10630cfe6fd3298b51ff5beca",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "pairChecked": 128
+    },
+    {
+      "fixture": "WET_512_64",
+      "route": "LEGACY_SCAN",
+      "poolSha256_hexConcat": "098d89de667276e0e8de069fbf9d1b211ceda9064fd850d591952a4780aa0c2c",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "pairChecked": 64
+    },
+    {
+      "fixture": "WET_512_64",
+      "route": "T123",
+      "poolSha256_hexConcat": "098d89de667276e0e8de069fbf9d1b211ceda9064fd850d591952a4780aa0c2c",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "pairChecked": 64
+    },
+    {
+      "fixture": "WET_512_64",
+      "route": "GPU",
+      "poolSha256_hexConcat": "098d89de667276e0e8de069fbf9d1b211ceda9064fd850d591952a4780aa0c2c",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "pairChecked": 64
+    },
+    {
+      "fixture": "WET_512_128",
+      "route": "LEGACY_SCAN",
+      "poolSha256_hexConcat": "13f4cf38b4694027d5cb7c4185255c315c8e41ff821ccad3d651359f5fd128c3",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "pairChecked": 128
+    },
+    {
+      "fixture": "WET_512_128",
+      "route": "T123",
+      "poolSha256_hexConcat": "13f4cf38b4694027d5cb7c4185255c315c8e41ff821ccad3d651359f5fd128c3",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "pairChecked": 128
+    },
+    {
+      "fixture": "WET_512_128",
+      "route": "GPU",
+      "poolSha256_hexConcat": "13f4cf38b4694027d5cb7c4185255c315c8e41ff821ccad3d651359f5fd128c3",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "pairChecked": 128
+    }
+  ]
+}
