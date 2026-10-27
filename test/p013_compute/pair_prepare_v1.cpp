@@ -1,4 +1,5 @@
 #include "pair_prepare_v1.h"
+#include "pair_identity_v2.h"
 #include "pair_sha256_v1.h"
 #include <algorithm>
 #include <cmath>
@@ -137,6 +138,11 @@ PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const Reque
  const auto snapshotSha=snapshotDigest(f);shaWords(snapshotSha,w.data()+32);
  Sha256 payload;payload.update(slot.leaves.data(),size_t(slot.K)*sizeof(Leaf));
  payload.update(slot.queries.data(),size_t(slot.K)*sizeof(Query));const auto payloadSha=payload.finish();shaWords(payloadSha,w.data()+40);
+ slot.identityBytes.clear();
+ if(id.identityEncodingRevision==kIdentityEncodingV2){
+  if(!canonicalIdentityV2(head,id,radius,snapshotSha,payloadSha,slot.identityBytes))return PrepareStatus::INPUT_INVALID;
+  Sha256 identity;identity.update(slot.identityBytes.data(),slot.identityBytes.size());shaWords(identity.finish(),w.data()+48);
+ }else if(id.identityEncodingRevision=="T141_LEGACY_IDENTITY_ORDER_V1"){
  Sha256 identity;for(const char* revision:{"GPU_SEGMENTED_ID_PAIR_V1","CPU_RN64_MERGE_RANGE_V1",
    "P011_GPU_PAIR_WIRE_V1","P011_GPU_PAIR_PROTOTYPE_V1"})addString(identity,revision);
  addString(identity,id.runId);addString(identity,id.stateId);addString(identity,id.configId);
@@ -145,6 +151,7 @@ PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const Reque
  identity.u32(p.nmax);identity.u32(n);identity.u32(slot.K);identity.u32(slot.h);identity.u32(64);identity.u32(id.flags);
  identity.u64(bits64(radius));identity.update(snapshotSha.data(),32);identity.update(payloadSha.data(),32);
  addString(identity,id.buildManifestSha);shaWords(identity.finish(),w.data()+48);
+ }else return PrepareStatus::INPUT_INVALID;
  slot.result=Result();slot.result.w[0]=kResultMagic;slot.result.w[1]=1;
  out.leaves=slot.leaves.data();out.queries=slot.queries.data();out.header=&slot.header;
  out.n=n;out.K=slot.K;out.h=slot.h;out.radius=radius;out.identity=id;out.snapshot=&slot.frozen;

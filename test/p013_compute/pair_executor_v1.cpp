@@ -1,4 +1,5 @@
 #include "pair_executor_v1.h"
+#include "pair_sha256_v1.h"
 #include <EGL/egl.h>
 #include <GLES3/gl31.h>
 #include <algorithm>
@@ -19,7 +20,7 @@ using Clock=std::chrono::steady_clock;
 static double elapsed(Clock::time_point t){return std::chrono::duration<double,std::milli>(Clock::now()-t).count();}
 struct ContextSlot::Opaque {
  EGLDisplay display=EGL_NO_DISPLAY;EGLContext context=EGL_NO_CONTEXT;EGLSurface surface=EGL_NO_SURFACE;
- EGLConfig config=nullptr;GLuint programs[3]={};GLuint buffers[2][6]={{0}};
+ EGLConfig config=nullptr;bool displayInitialized=false;GLuint programs[3]={};GLuint buffers[2][6]={{0}};
  std::thread::id thread;uint32_t slotState[2]={0,0}; // 0 FREE,1 PREPARED,2 IN_FLIGHT,3 COMPLETED,4 QUARANTINED
  PFNGLMEMORYBARRIERPROC barrier=nullptr;PFNGLBUFFERSUBDATAPROC subData=nullptr;
  PFNGLGETINTEGER64VPROC get64=nullptr;PFNGLUNIFORM1UIPROC uniform1ui=nullptr;
@@ -33,45 +34,57 @@ static void* getProc(const char* name){
 #endif
 }
 static std::string readFile(const std::string& p){std::ifstream f(p,std::ios::binary);return f?std::string((std::istreambuf_iterator<char>(f)),{}):"";}
-static bool program(const std::string& path,GLuint& out,RequestDiagnostics& d){std::string code=readFile(path);
+static bool program(const std::string& path,GLuint& out,RequestDiagnostics& d,const std::string* expectedSha){std::string code=readFile(path);
  if(code.empty()){d.stage="SHADER_SOURCE";d.detail=path;return false;}
+ if(expectedSha){Sha256 sha;sha.update(code.data(),code.size());auto digest=sha.finish();static const char* hex="0123456789abcdef";std::string actual;for(auto b:digest){actual+=hex[b>>4];actual+=hex[b&15];}if(actual!=*expectedSha){d.stage="SHADER_SHA_MISMATCH";d.detail=path;return false;}}
  const char* src=code.c_str();GLuint shader=glCreateShader(GL_COMPUTE_SHADER);
- glShaderSource(shader,1,&src,nullptr);glCompileShader(shader);GLint ok=0;glGetShaderiv(shader,GL_COMPILE_STATUS,&ok);
- if(!ok){char log[2048]={};glGetShaderInfoLog(shader,2048,nullptr,log);d.stage="SHADER_COMPILE";d.detail=log;
+ glShaderSource(shader,1,&src,nullptr);glCompileShader(shader);GLint ok=0;glGetShaderiv(shader,GL_COMPILE_STATUS,&ok);d.preserveGlError(glGetError());
+ if(!ok){GLint length=0;glGetShaderiv(shader,GL_INFO_LOG_LENGTH,&length);std::string log(std::max(length,1),0);glGetShaderInfoLog(shader,GLsizei(log.size()),nullptr,&log[0]);d.stage="SHADER_COMPILE";d.detail=log;
   glDeleteShader(shader);return false;}
- out=glCreateProgram();glAttachShader(out,shader);glLinkProgram(out);glGetProgramiv(out,GL_LINK_STATUS,&ok);
- glDeleteShader(shader);if(!ok){char log[2048]={};glGetProgramInfoLog(out,2048,nullptr,log);
+ out=glCreateProgram();glAttachShader(out,shader);glLinkProgram(out);glGetProgramiv(out,GL_LINK_STATUS,&ok);d.preserveGlError(glGetError());
+ glDeleteShader(shader);if(!ok){GLint length=0;glGetProgramiv(out,GL_INFO_LOG_LENGTH,&length);std::string log(std::max(length,1),0);glGetProgramInfoLog(out,GLsizei(log.size()),nullptr,&log[0]);
   d.stage="PROGRAM_LINK";d.detail=log;return false;}
- d.rawGlError=glGetError();if(d.rawGlError){d.stage="PROGRAM_GL";return false;}return true;
+ d.preserveGlError(glGetError());if(d.rawGlError){d.stage="PROGRAM_GL";return false;}return true;
 }
 static uint32_t pow2(uint32_t x){uint32_t k=1;while(k<x&&k<=0x40000000u)k*=2;return k;}
-ContextSlot::ContextSlot():impl_(new Opaque()){}
-ContextSlot::~ContextSlot(){reset();delete impl_;}
-void ContextSlot::reset(){Opaque& o=*impl_;
- if(o.display!=EGL_NO_DISPLAY){if(o.context!=EGL_NO_CONTEXT&&o.surface!=EGL_NO_SURFACE){
-   eglMakeCurrent(o.display,o.surface,o.surface,o.context);
-   for(auto& slot:o.buffers)for(GLuint& b:slot)if(b){glDeleteBuffers(1,&b);b=0;}
-   for(GLuint& p:o.programs)if(p){glDeleteProgram(p);p=0;}
+ContextSlot::ContextSlot():impl_(new Opaque()){impl_->thread=std::this_thread::get_id();}
+ContextSlot::~ContextSlot(){RequestDiagnostics d;auto status=reset(&d);if(status!=ExecStatus::OK)std::fprintf(stderr,"T159_RESOURCE_RETIREMENT_UNCONFIRMED stage=%s gl=%u egl=%u buffers=%u\n",d.stage.c_str(),d.rawGlError,d.rawEglError,liveBuffers_);delete impl_;}
+uint32_t ContextSlot::slotState(uint32_t slot)const{return slot<2?impl_->slotState[slot]:4;}
+ExecStatus ContextSlot::reset(RequestDiagnostics* report){Opaque& o=*impl_;RequestDiagnostics d;
+ if(o.thread!=std::this_thread::get_id()){d.stage="RESET_WRONG_OWNER";d.resetStatus="WRONG_OWNER";if(report)*report=d;return ExecStatus::STALE;}
+ initialized_=false;quarantined_=true;bool failed=false;
+ auto eglFailure=[&](const char* stage){auto error=eglGetError();if(!d.rawEglError)d.rawEglError=uint32_t(error);if(d.stage=="NONE")d.stage=stage;failed=true;};
+ if(o.display!=EGL_NO_DISPLAY&&o.displayInitialized){
+  if(o.context!=EGL_NO_CONTEXT&&o.surface!=EGL_NO_SURFACE){
+   if(eglMakeCurrent(o.display,o.surface,o.surface,o.context)){
+    for(auto& slot:o.buffers)for(GLuint b:slot)if(b)glDeleteBuffers(1,&b);
+    for(GLuint p:o.programs)if(p)glDeleteProgram(p);
+    GLenum raw=glGetError();if(raw){d.preserveGlError(raw);d.stage="RESET_GL_DELETE";failed=true;}
+   }else eglFailure("RESET_MAKE_CURRENT");
   }
-  eglMakeCurrent(o.display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
-  if(o.surface!=EGL_NO_SURFACE)eglDestroySurface(o.display,o.surface);
-  if(o.context!=EGL_NO_CONTEXT)eglDestroyContext(o.display,o.context);
-  eglTerminate(o.display);
+  if(!eglMakeCurrent(o.display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT)){eglFailure("RESET_UNBIND");d.resetStatus="UNCONFIRMED";if(report)*report=d;return ExecStatus::GL_ERROR;}
+  if(o.context!=EGL_NO_CONTEXT){if(!eglDestroyContext(o.display,o.context)){eglFailure("RESET_DESTROY_CONTEXT");d.resetStatus="UNCONFIRMED";if(report)*report=d;return ExecStatus::GL_ERROR;}o.context=EGL_NO_CONTEXT;}
+  // Context invalidation is the retirement fence; only now may live GPU names be zeroed.
+  liveBuffers_=0;for(auto& slot:o.buffers)for(auto& b:slot)b=0;for(auto& program:o.programs)program=0;d.resourcesRetired=true;
+  if(o.surface!=EGL_NO_SURFACE){if(!eglDestroySurface(o.display,o.surface)){eglFailure("RESET_DESTROY_SURFACE");d.resetStatus="UNCONFIRMED";if(report)*report=d;return ExecStatus::GL_ERROR;}o.surface=EGL_NO_SURFACE;}
+  if(!eglTerminate(o.display)){eglFailure("RESET_TERMINATE");d.resetStatus="UNCONFIRMED";if(report)*report=d;return ExecStatus::GL_ERROR;}
  }
- o=Opaque();initialized_=false;quarantined_=false;owner_=0;liveBuffers_=0;nmax_=K_=h_=0;
+ o=Opaque();o.thread=std::this_thread::get_id();quarantined_=false;owner_=0;liveBuffers_=0;nmax_=K_=h_=0;
+ d.resourcesRetired=true;d.resetStatus=failed?"RETIRED_WITH_ERROR":"RETIRED";if(d.stage=="NONE")d.stage="RESET";if(report)*report=d;return failed?ExecStatus::GL_ERROR:ExecStatus::OK;
 }
-void ContextSlot::cancelOwner(uint64_t generation){if(owner_==generation){quarantined_=true;reset();}}
-ExecStatus ContextSlot::initialize(uint32_t nmax,const std::string& shaderDirectory,RequestDiagnostics& d){
- reset();d=RequestDiagnostics();if(!littleEndian()||nmax<2||nmax>4096)return ExecStatus::CAPACITY_UNSUPPORTED;
+void ContextSlot::cancelOwner(uint64_t generation){if(impl_->thread!=std::this_thread::get_id())return;if(owner_==generation){quarantined_=true;reset();}}
+ExecStatus ContextSlot::initialize(uint32_t nmax,const std::string& shaderDirectory,RequestDiagnostics& d,const std::array<std::string,3>* expectedShaderSha){
+ d=RequestDiagnostics();auto released=reset(&d);if(released!=ExecStatus::OK)return released;d=RequestDiagnostics();if(epoch_==UINT64_MAX){d.stage="CONTEXT_EPOCH_EXHAUSTED";return ExecStatus::CAPACITY_UNSUPPORTED;}if(!littleEndian()||nmax<2||nmax>4096)return ExecStatus::CAPACITY_UNSUPPORTED;
  Opaque& o=*impl_;o.thread=std::this_thread::get_id();o.display=eglGetDisplay(EGL_DEFAULT_DISPLAY);
- if(o.display==EGL_NO_DISPLAY||!eglInitialize(o.display,nullptr,nullptr)){d.stage="EGL_DISPLAY";return ExecStatus::ENV_UNSUPPORTED;}
+ if(o.display==EGL_NO_DISPLAY){d.stage="EGL_GET_DISPLAY";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}
+ if(!eglInitialize(o.display,nullptr,nullptr)){d.stage="EGL_INITIALIZE";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}o.displayInitialized=true;
  EGLint attrs[]={EGL_SURFACE_TYPE,EGL_PBUFFER_BIT,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,EGL_NONE};EGLint count=0;
- if(!eglChooseConfig(o.display,attrs,&o.config,1,&count)||count<1){d.stage="EGL_CONFIG";return ExecStatus::ENV_UNSUPPORTED;}
- eglBindAPI(EGL_OPENGL_ES_API);EGLint ca[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_NONE};
- o.context=eglCreateContext(o.display,o.config,EGL_NO_CONTEXT,ca);
+ if(!eglChooseConfig(o.display,attrs,&o.config,1,&count)||count<1){d.stage="EGL_CONFIG";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}
+ if(!eglBindAPI(EGL_OPENGL_ES_API)){d.stage="EGL_BIND_API";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}EGLint ca[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_NONE};
+ o.context=eglCreateContext(o.display,o.config,EGL_NO_CONTEXT,ca);if(o.context==EGL_NO_CONTEXT){d.stage="EGL_CONTEXT_CREATE";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}
  EGLint sa[]={EGL_WIDTH,16,EGL_HEIGHT,16,EGL_NONE};o.surface=eglCreatePbufferSurface(o.display,o.config,sa);
- if(o.context==EGL_NO_CONTEXT||o.surface==EGL_NO_SURFACE||
-  !eglMakeCurrent(o.display,o.surface,o.surface,o.context)){d.stage="EGL_CONTEXT";return ExecStatus::ENV_UNSUPPORTED;}
+ if(o.surface==EGL_NO_SURFACE){d.stage="EGL_PBUFFER_CREATE";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}
+ if(!eglMakeCurrent(o.display,o.surface,o.surface,o.context)){d.stage="EGL_MAKE_CURRENT";d.rawEglError=eglGetError();return ExecStatus::ENV_UNSUPPORTED;}
  GLint major=0,minor=0;glGetIntegerv(GL_MAJOR_VERSION,&major);glGetIntegerv(GL_MINOR_VERSION,&minor);
  if(major<3||(major==3&&minor<1)){d.stage="GLES_31_REQUIRED";return ExecStatus::ENV_UNSUPPORTED;}
  o.barrier=(PFNGLMEMORYBARRIERPROC)getProc("glMemoryBarrier");
@@ -94,7 +107,7 @@ ExecStatus ContextSlot::initialize(uint32_t nmax,const std::string& shaderDirect
   candidateBytes>uint64_t(maxBlock)||tableBytes>uint64_t(std::numeric_limits<GLsizeiptr>::max())||
   K_>UINT32_MAX/(h_+1)){d.stage="LIMITS";return ExecStatus::CAPACITY_UNSUPPORTED;}
  const char* names[3]={"pair_build_v1.comp","pair_query_v1.comp","pair_reduce_v1.comp"};
- for(int i=0;i<3;i++)if(!program(shaderDirectory+"/"+names[i],o.programs[i],d))return ExecStatus::GL_ERROR;
+ for(int i=0;i<3;i++)if(!program(shaderDirectory+"/"+names[i],o.programs[i],d,expectedShaderSha?&(*expectedShaderSha)[i]:nullptr))return ExecStatus::GL_ERROR;
  const uint64_t sizes[6]={256,tableBytes,queryBytes,candidateBytes,candidateBytes,128};
  for(int slot=0;slot<2;slot++)for(int i=0;i<6;i++){
   glGenBuffers(1,&o.buffers[slot][i]);if(!o.buffers[slot][i]){d.stage="BUFFER_GEN";return ExecStatus::GL_ERROR;}
@@ -102,7 +115,7 @@ ExecStatus ContextSlot::initialize(uint32_t nmax,const std::string& shaderDirect
   glBindBuffer(GL_SHADER_STORAGE_BUFFER,o.buffers[slot][i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(sizes[i]),nullptr,GL_DYNAMIC_DRAW);
   d.rawGlError=glGetError();if(d.rawGlError){d.stage="BUFFER_ALLOC";return ExecStatus::GL_ERROR;}
  }
- nmax_=nmax;initialized_=true;epoch_++;d.contextEpoch=uint32_t(epoch_);d.valid=true;return ExecStatus::OK;
+ nmax_=nmax;initialized_=true;epoch_++;d.contextEpoch=epoch_;d.valid=true;return ExecStatus::OK;
 }
 static void shortcut(const PreparedView& p,Result& r){r=Result();auto& w=r.w;const auto& h=p.header->w;
  w[0]=kResultMagic;w[1]=1;w[2]=kStatusNoPair;w[10]=0;
@@ -112,7 +125,7 @@ static void shortcut(const PreparedView& p,Result& r){r=Result();auto& w=r.w;con
 }
 ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIndex,Deadline deadline,
  Result& out,RequestDiagnostics& d){
- d=RequestDiagnostics();out=Result();auto begin=Clock::now();Opaque& o=*impl_;
+ d=RequestDiagnostics();d.contextEpoch=epoch_;out=Result();auto begin=Clock::now();Opaque& o=*impl_;
  if(!initialized_||quarantined_||o.thread!=std::this_thread::get_id()||slotIndex>1||
   p.identity.slotIndex!=slotIndex||p.identity.contextEpoch!=epoch_||p.K!=K_||
   p.header==nullptr||p.leaves==nullptr||p.queries==nullptr||o.slotState[slotIndex]!=0){d.stage="IDENTITY";return ExecStatus::STALE;}
@@ -121,7 +134,7 @@ ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIn
  if(p.n<2){shortcut(p,out);d.stage="CPU_EMPTY_SHORTCUT";d.valid=true;d.requestCpuMs=elapsed(begin);return ExecStatus::OK;}
  GLenum pre=glGetError();if(pre!=GL_NO_ERROR){d.stage="PREEXISTING_GL";d.rawGlError=pre;return ExecStatus::GL_ERROR;}
  o.slotState[slotIndex]=1;GLuint* b=o.buffers[slotIndex];auto fail=[&](ExecStatus s,const char* stage){
-  d.stage=stage;GLenum latest=glGetError();if(d.rawGlError==0)d.rawGlError=latest;
+  d.stage=stage;
   o.slotState[slotIndex]=4;quarantined_=true;return s;};
  auto uploadStart=Clock::now();const uint64_t tableOffset=0,queryBytes=uint64_t(K_)*sizeof(Query);
  const void* payloads[4]={p.header,p.leaves,p.queries,&out};const size_t bytes[4]={256,size_t(K_)*16,size_t(queryBytes),128};
@@ -130,7 +143,7 @@ ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIn
   GLenum err=glGetError();if(err){d.rawGlError=err;d.stage="UPLOAD";o.slotState[slotIndex]=4;quarantined_=true;return ExecStatus::GL_ERROR;}}
  d.uploadCpuMs=elapsed(uploadStart);
  for(int i=0;i<6;i++)glBindBufferBase(GL_SHADER_STORAGE_BUFFER,i,b[i]);
- if(glGetError()!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"BIND_BLOCKS");
+ if(d.preserveGlError(glGetError()))return fail(ExecStatus::GL_ERROR,"BIND_BLOCKS");
  o.slotState[slotIndex]=2;auto dispatchStart=Clock::now();uint32_t groups=(K_+63)/64;
  glUseProgram(o.programs[0]);GLint levelLoc=glGetUniformLocation(o.programs[0],"uLevel");
  for(uint32_t level=1;level<=h_;level++){
@@ -139,9 +152,9 @@ ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIn
   o.barrier(GL_SHADER_STORAGE_BARRIER_BIT);e=glGetError();if(e){d.rawGlError=e;return fail(ExecStatus::GL_ERROR,"BUILD_BARRIER");}
  }
  glUseProgram(o.programs[1]);glDispatchCompute(groups,1,1);d.dispatchCount++;
- if(glGetError()!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"QUERY_DISPATCH");
+ if(d.preserveGlError(glGetError()))return fail(ExecStatus::GL_ERROR,"QUERY_DISPATCH");
  o.barrier(GL_SHADER_STORAGE_BARRIER_BIT);
- if(glGetError()!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"QUERY_BARRIER");
+ if(d.preserveGlError(glGetError()))return fail(ExecStatus::GL_ERROR,"QUERY_BARRIER");
  uint32_t count=K_;glUseProgram(o.programs[2]);
  GLint countLoc=glGetUniformLocation(o.programs[2],"uCount");
  GLint dispatchLoc=glGetUniformLocation(o.programs[2],"uDispatchCount");
@@ -151,17 +164,17 @@ ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIn
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER,3,input);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,4,output);
   o.uniform1ui(countLoc,count);o.uniform1ui(finalLoc,final?1u:0u);
   o.uniform1ui(dispatchLoc,d.dispatchCount+1);glDispatchCompute(next,1,1);d.dispatchCount++;
-  if(glGetError()!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"REDUCE_DISPATCH");
-  if(!final){o.barrier(GL_SHADER_STORAGE_BARRIER_BIT);if(glGetError()!=GL_NO_ERROR)
+  if(d.preserveGlError(glGetError()))return fail(ExecStatus::GL_ERROR,"REDUCE_DISPATCH");
+  if(!final){o.barrier(GL_SHADER_STORAGE_BARRIER_BIT);if(d.preserveGlError(glGetError()))
     return fail(ExecStatus::GL_ERROR,"REDUCE_BARRIER");std::swap(input,output);}
   count=next;
  }while(count>1);
  d.dispatchCpuMs=elapsed(dispatchStart);
- o.barrier(GL_BUFFER_UPDATE_BARRIER_BIT);if(glGetError()!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"READ_BARRIER");
+ o.barrier(GL_BUFFER_UPDATE_BARRIER_BIT);if(d.preserveGlError(glGetError()))return fail(ExecStatus::GL_ERROR,"READ_BARRIER");
  GLsync fence=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);
- if(!fence||glGetError()!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"FENCE_CREATE");
+ if(d.preserveGlError(glGetError())||!fence)return fail(ExecStatus::GL_ERROR,"FENCE_CREATE");
  auto waitStart=Clock::now();glFlush();
- while(true){GLenum w=glClientWaitSync(fence,GL_SYNC_FLUSH_COMMANDS_BIT,10000000ull);d.waitCalls++;
+ while(true){GLenum w=glClientWaitSync(fence,GL_SYNC_FLUSH_COMMANDS_BIT,10000000ull);d.rawWaitReturn=w;d.waitCalls++;
   d.waitReturn=w==GL_ALREADY_SIGNALED?"ALREADY_SIGNALED":w==GL_CONDITION_SATISFIED?"CONDITION_SATISFIED":
    w==GL_TIMEOUT_EXPIRED?"TIMEOUT_EXPIRED":"WAIT_FAILED";
   GLenum e=glGetError();if(e||w==GL_WAIT_FAILED){d.rawGlError=e;glDeleteSync(fence);return fail(ExecStatus::WAIT_FAILED,"WAIT");}

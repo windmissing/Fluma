@@ -18,6 +18,7 @@ struct SnapshotView {
 };
 struct RequestIdentity {
  std::string runId,stateId,configId,buildManifestSha;
+ std::string identityEncodingRevision="T141_LEGACY_IDENTITY_ORDER_V1";
  uint64_t ownerGeneration=0,contextEpoch=0,payloadSerial=0,poolMutationSerial=0;
  uint64_t attemptSerial=0,substepSerial=0,requestSerial=0;
  uint32_t candidateRole=0,candidateOrdinal=0,slotIndex=0,flags=0;
@@ -31,6 +32,7 @@ struct CpuSlot {
  std::vector<uint32_t> fId,fSourceId;std::vector<int32_t> fFree;
  std::vector<uint8_t> freeSeen;
  SnapshotView frozen;
+ std::vector<uint8_t> identityBytes;
  Header header;Result result;uint32_t n=0;bool prepared=false;
  explicit CpuSlot(uint32_t capacity);
 };

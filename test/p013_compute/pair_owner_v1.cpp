@@ -4,7 +4,7 @@
 
 namespace p011gpu {
 static bool sameIdentity(const RequestIdentity& a,const RequestIdentity& b){
- return a.runId==b.runId&&a.stateId==b.stateId&&a.configId==b.configId&&
+ return a.identityEncodingRevision==b.identityEncodingRevision&&a.runId==b.runId&&a.stateId==b.stateId&&a.configId==b.configId&&
  a.buildManifestSha==b.buildManifestSha&&a.ownerGeneration==b.ownerGeneration&&
  a.contextEpoch==b.contextEpoch&&a.payloadSerial==b.payloadSerial&&
  a.poolMutationSerial==b.poolMutationSerial&&a.attemptSerial==b.attemptSerial&&
