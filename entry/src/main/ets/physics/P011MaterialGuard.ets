@@ -34,6 +34,65 @@ export interface P011GuardOutcome {
   limitingEdge: number | null;
 }
 
+// T174 / T170 §3: owned fixed storage for the M2 single-column host guard.
+// The generic Map/Set reference below remains unchanged for other writers.
+export class P011GuardNumericOutcome implements P011GuardOutcome {
+  accepted: number = 0; rejected: number = 0;
+  allLegalBefore: boolean = true; limitingEdge: number | null = null;
+}
+export class P011ParticleColumnGuardWorkspace {
+  readonly edgeId: Float64Array = new Float64Array(3);
+  readonly residual: Float64Array = new Float64Array(3);
+  readonly influence: Float64Array = new Float64Array(3);
+  readonly out: P011GuardNumericOutcome = new P011GuardNumericOutcome();
+  count: number = 0;
+  private readonly edgeBinding: ArrayBuffer = this.edgeId.buffer as ArrayBuffer;
+  private readonly residualBinding: ArrayBuffer = this.residual.buffer as ArrayBuffer;
+  private readonly influenceBinding: ArrayBuffer = this.influence.buffer as ArrayBuffer;
+  private readonly outBinding: P011GuardNumericOutcome = this.out;
+  storageValid(): boolean {
+    return this.edgeId.buffer === this.edgeBinding && this.edgeId.length === 3 &&
+      this.residual.buffer === this.residualBinding && this.residual.length === 3 &&
+      this.influence.buffer === this.influenceBinding && this.influence.length === 3 && this.out === this.outBinding;
+  }
+}
+
+/** Same RN operation sequence/early exits/ties as p011GuardAdmit, into owned out. */
+export function p011GuardAdmitNumericInto(requested: number, residual: Float64Array,
+  influence: Float64Array, count: number, slopeHardMax: number, out: P011GuardNumericOutcome): number {
+  if (!p011GuardArmed(slopeHardMax) || !Number.isFinite(requested) || requested <= 0) {
+    out.accepted = Math.max(0, Number.isFinite(requested) ? requested : 0);
+    out.rejected = 0; out.allLegalBefore = true; out.limitingEdge = null; return 0;
+  }
+  let qLo = 0; let qHi = Math.max(0, requested); let allLegal = true;
+  let limitingEdge: number | null = null;
+  for (let e = 0; e < count; e++) {
+    const d = residual[e], k = influence[e];
+    if (!Number.isFinite(d) || !Number.isFinite(k)) {
+      out.accepted = 0; out.rejected = requested; out.allLegalBefore = false; out.limitingEdge = e; return 0;
+    }
+    const legal = Math.abs(d) <= slopeHardMax;
+    if (!legal) allLegal = false;
+    const bound = legal ? slopeHardMax : Math.abs(d);
+    if (k === 0) {
+      if (Math.abs(d) > bound) {
+        out.accepted = 0; out.rejected = requested; out.allLegalBefore = allLegal; out.limitingEdge = e; return 0;
+      }
+      continue;
+    }
+    let lo = (-bound - d) / k; let hi = (bound - d) / k;
+    if (lo > hi) { const swap = lo; lo = hi; hi = swap; }
+    if (lo > qLo) { qLo = lo; limitingEdge = e; }
+    if (hi < qHi) { qHi = hi; limitingEdge = e; }
+  }
+  if (qLo > qHi) {
+    out.accepted = 0; out.rejected = requested; out.allLegalBefore = allLegal; out.limitingEdge = limitingEdge; return 0;
+  }
+  const accepted = Math.max(0, Math.min(requested, qHi));
+  out.accepted = accepted; out.rejected = Math.max(0, requested - accepted);
+  out.allLegalBefore = allLegal; out.limitingEdge = limitingEdge; return 0;
+}
+
 /** Whether the guard is armed: slopeHardMax tan(thetaHardMaxDeg), finite. */
 export function p011GuardArmed(slopeHardMax: number): boolean {
   return Number.isFinite(slopeHardMax) && slopeHardMax > 0;

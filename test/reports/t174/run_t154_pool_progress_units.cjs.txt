@@ -1,0 +1,9 @@
+PASS real successful seed measures three distinct audits and four actual birth packages
+PASS full-pool merge captures independent sort/tree/range workload
+PASS lambda retries and rollback retain actual per-seed deltas, bounded first32 and no fake finish audit
+PASS first long window captures original pool bytes once and remains frozen after mutation
+PASS missing clock and open spans export NOT_CAPTURED/null rather than measured zero
+PASS diagnostic on/off and throwing clock preserve field, budgets, pool and commits
+PASS invalid ID early exit retains error and does not invent sorting/audit completion
+PASS running long-span marker is partial, and a backwards clock is rejected
+T154 8/8 PASS

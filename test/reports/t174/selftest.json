@@ -1,0 +1,78 @@
+{
+  "revision": "T174_DEVELOPER_V1",
+  "passed": 9,
+  "failed": 0,
+  "numericCases": 11520,
+  "frozenCommit": "961d837",
+  "frozenSourceSha": {
+    "P011MaterialGuard.ets": "6c2133ffa3f5906640bc2a41c7dca67b52e80aa5eea2b3d58d93e4eadd9b42a9",
+    "WaterSandField.ets": "8adf4a579bf2549cd2e72451e2d94d11030cf80f6c8915cda3a374af256a0e24"
+  },
+  "measurements": [
+    {
+      "mode": "NORMAL",
+      "first": 1,
+      "second": 1,
+      "evidence": 1,
+      "pending": 0,
+      "result": 6,
+      "thrown": ""
+    },
+    {
+      "mode": "ROLLBACK",
+      "first": 1,
+      "second": 1,
+      "evidence": 1,
+      "pending": 0,
+      "result": 99,
+      "thrown": ""
+    },
+    {
+      "mode": "THROW",
+      "first": 1,
+      "second": 1,
+      "evidence": 1,
+      "pending": 0,
+      "thrown": "T174_HOST_THROW"
+    }
+  ],
+  "results": [
+    {
+      "name": "numeric Into matches frozen old RN/tie/early exits, signed zero and nonfinite cases",
+      "status": "PASS"
+    },
+    {
+      "name": "single-column host keeps update first, original edge order and bitwise outcomes",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary Q=2048 page preserves all evidence order without borrowing source slots",
+      "status": "PASS"
+    },
+    {
+      "name": "N probe rebinding and cold flush preserve target row ownership",
+      "status": "PASS"
+    },
+    {
+      "name": "real LAND/host guard NORMAL keeps both calls, refunds, state and failed evidence",
+      "status": "PASS"
+    },
+    {
+      "name": "real LAND/host guard ROLLBACK keeps both calls, refunds, state and failed evidence",
+      "status": "PASS"
+    },
+    {
+      "name": "real LAND/host guard THROW keeps both calls, refunds, state and failed evidence",
+      "status": "PASS"
+    },
+    {
+      "name": "N ON/OFF real LAND paths leave physical state bitwise equal",
+      "status": "PASS"
+    },
+    {
+      "name": "Hot Into methods contain no heap constructors/literals/closures and both cold callers finally flush",
+      "status": "PASS"
+    }
+  ],
+  "device": "NOT_RUN"
+}

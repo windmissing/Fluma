@@ -1,0 +1,18 @@
+PASS S3 spawn agrees with cold pool/field/budget/results/events
+PASS S3 deposit agrees with cold pool/field/budget/results/events
+PASS S3 crossing agrees with cold pool/field/budget/results/events
+PASS S3 lift agrees with cold pool/field/budget/results/events
+PASS S3 degrade agrees with cold pool/field/budget/results/events
+PASS S3 merge agrees with cold pool/field/budget/results/events
+PASS S3 capacity crossing preflight debits no budget and retains whole grain
+PASS S3 pool-full lift degrades once without extra budget debit; spawn refusal preserves mass
+PASS S3 numeric R9 multiple refunds debit each end and total once; old primitive rejected after close
+PASS S3 over-refund, stale epoch and aliased receipt refuse before every ledger/out write
+PASS S3 injected post-publish failure and journal overflow restore all canonical buckets and budgets
+PASS S3 rollback restores fixed ticket, refund and guard outs with the canonical checkpoint
+PASS S3 dual collect mismatch rolls back before sink/real denominator; motions apply after transactions
+PASS S3 guard matches cold closed form on boundaries, legal/non-worsening edges, signs and zero grants
+PASS S4 alias, detached buffer and replaced result/event bindings reject without canonical writes
+PASS S4 caller-owned snapshot output cannot alias canonical, frozen, patch or field storage
+PASS S4 sealed page blocks overwrite and export is independent of later live pool/field/plan/out edits
+{"suite":"run_p011_particle_hot_sink_units","passed":17,"failed":0}

@@ -1,0 +1,10 @@
+PASS C1 credit/debit reconstruction retains -2^-55 through Hot and audit(true)
+PASS C2 credit/debit reconstruction retains -2^-55 through Hot and audit(true)
+PASS waterTop exact -EPS boundary, signed zero and finite interior agree with audit(true)
+PASS below -EPS and nonfinite waterTop rejected; exact first-column evidence retained
+PASS six other components retain exact rejection even at -MIN_VALUE
+PASS raw sign observer still captures tolerated residue without inventing Hot failure
+PASS export order prioritizes failure/stages; full fragments and first latch unchanged
+PASS enabled versus disabled observation leaves identical source, arrays, pool, budgets and commit
+PASS J3 source constraints and existing audit EPS remain explicit
+{"passed":9,"failed":0}

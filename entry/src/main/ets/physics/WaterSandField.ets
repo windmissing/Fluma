@@ -50,6 +50,8 @@ import {
 import {
   P011GuardLedgerRefund,
   P011GuardOutcome,
+  P011ParticleColumnGuardWorkspace,
+  p011GuardAdmitNumericInto,
   p011GuardAdmit,
   p011GuardAffectedEdgesForDelta,
   p011GuardConstraintsForDelta
@@ -791,6 +793,7 @@ function finite(value: number): boolean {
 export interface P051DryDiagnostics { mediumRevision: string; airDynamicsRevision: string; freeWaterTotal: number;
  occupiedVolumeTotal: number; baselineStatus: string; sourceEpoch: number; externalAdmissionCount: number | null; }
 export class WaterSandField {
+  private readonly particleColumnGuardWorkspace: P011ParticleColumnGuardWorkspace = new P011ParticleColumnGuardWorkspace();
   readonly cols: number;
   readonly capacity: number;
 
@@ -2656,6 +2659,7 @@ export class WaterSandField {
   }
 
   setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void {
+    this.naturalObservationProbe?.flushParticleColumnGuardEvidence();
     this.naturalObservationProbe = probe;
     this.naturalObservationStateBefore = null;
   }
@@ -4536,8 +4540,36 @@ export class WaterSandField {
   }
   internalParticleGuard(column: number, sign: number, requested: number): number {
     this.updateSandTop();
-    const delta = new Map<number, number>(); delta.set(column, sign);
-    return this.materialGuardAdmitIncrement(requested, delta).accepted;
+    const w = this.particleColumnGuardWorkspace; w.count = 0;
+    if (requested <= 0) {
+      w.out.accepted = 0; w.out.rejected = 0; w.out.allLegalBefore = true; w.out.limitingEdge = null;
+      return 0;
+    }
+    if (!w.storageValid()) return NaN;
+    // Map/Set iteration canonicalized -0 keys to +0 in the reference.
+    const c = column === 0 ? 0 : column;
+    if (c - 1 >= 0 && c - 1 < this.cols - 1) {
+      const i = w.count++; w.edgeId[i] = c - 1;
+      w.residual[i] = this.materialGuardResidual(c - 1); w.influence[i] = sign - 0;
+    }
+    if (c >= 0 && c < this.cols - 1) {
+      const i = w.count++; w.edgeId[i] = c;
+      w.residual[i] = this.materialGuardResidual(c); w.influence[i] = 0 - sign;
+    }
+    p011GuardAdmitNumericInto(requested, w.residual, w.influence, w.count, this.materialGuardHardMax(), w.out);
+    const probe = this.naturalObservationProbe;
+    if (probe !== null && w.out.rejected > 0) {
+      const limiting = w.out.limitingEdge !== null && w.out.limitingEdge < w.count ? w.edgeId[w.out.limitingEdge] : null;
+      probe.recordParticleColumnGuardInto(w.count, w.edgeId[0], w.edgeId[1], limiting,
+        requested, w.out.accepted, w.out.rejected);
+    }
+    return w.out.accepted;
+  }
+
+  // T174 cold boundary: never invoked from the original Hot roots.
+  private flushParticleGuardEvidence(probe: P011NaturalObservationProbe | null): void {
+    probe?.flushParticleColumnGuardEvidence();
+    if (this.naturalObservationProbe !== probe) this.naturalObservationProbe?.flushParticleColumnGuardEvidence();
   }
 
   private clipSubstepMotion(source: number, target: number, requested: number): number {
@@ -4620,10 +4652,16 @@ export class WaterSandField {
   private applyMotionChannels(dt: number): WaterSandErrorCode | null {
     if (this.particleRouteActive() && this.particleBinding !== null) {
       const totalBefore = this.totalMotionBudgetRemaining;
+      const guardProbe = this.naturalObservationProbe;
+      this.flushParticleGuardEvidence(guardProbe);
+      let particleApplyStatus = 0;
+      try {
       const status = this.particleBinding.apply(this.totalMotionBudgetScale,
         this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
         this.totalMotionBudgetRemaining);
-      if (status !== 0) return WaterSandErrorCode.UNKNOWN;
+        particleApplyStatus = status;
+      } finally { this.flushParticleGuardEvidence(guardProbe); }
+      if (particleApplyStatus !== 0) return WaterSandErrorCode.UNKNOWN;
       this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
       // Production particle adapter already debited the real total ledger.
       this.updateSandTop();
@@ -5228,11 +5266,17 @@ export class WaterSandField {
             : totalLimit / Math.max(this.totalMotionBudgetRequested, EPS);
           this.beginMotionApplication(substepDt, scale);
           const beforeTotal = this.totalMotionBudgetRemaining;
+          const guardProbe = this.naturalObservationProbe;
+          this.flushParticleGuardEvidence(guardProbe);
+          let particleApplyStatus = 0;
+          try {
           const particleStatus = this.particleBinding.apply(scale,
             this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
             this.totalMotionBudgetRemaining);
-          this.planningPassService.trace?.stage('PARTICLE',collectError,null,particleStatus);
-          if (particleStatus !== 0) {
+            particleApplyStatus = particleStatus;
+          } finally { this.flushParticleGuardEvidence(guardProbe); }
+          this.planningPassService.trace?.stage('PARTICLE',collectError,null,particleApplyStatus);
+          if (particleApplyStatus !== 0) {
             plans = null;
           } else {
             this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;

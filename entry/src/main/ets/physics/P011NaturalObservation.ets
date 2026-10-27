@@ -808,6 +808,19 @@ export class P011NaturalObservationProbe {
   private decisions: Map<number, P011RelaxHysteresisDecisionSample[]> = new Map();
   // GAP-4: per-writer material-guard evidence rows.
   private materialGuardEvidence: P011NaturalObservationMaterialGuardEvidence[] = [];
+  // T174: one M2 apply span has at most Q=2048 rows, one host guard per row.
+  // The production cold caller empties this page before/after every apply.
+  // No borrowed arrays or mutable outcome objects are retained here.
+  private particleGuardCount: number = 0;
+  private particleGuardTarget: P011NaturalObservationMaterialGuardEvidence[] | null = null;
+  private readonly particleGuardEdgeCount: Uint8Array = new Uint8Array(2048);
+  private readonly particleGuardEdge0: Float64Array = new Float64Array(2048);
+  private readonly particleGuardEdge1: Float64Array = new Float64Array(2048);
+  private readonly particleGuardLimiting: Float64Array = new Float64Array(2048);
+  private readonly particleGuardHasLimiting: Uint8Array = new Uint8Array(2048);
+  private readonly particleGuardRequested: Float64Array = new Float64Array(2048);
+  private readonly particleGuardAccepted: Float64Array = new Float64Array(2048);
+  private readonly particleGuardRejected: Float64Array = new Float64Array(2048);
   // GAP-1 visibility flag: whether the dual-threshold state machine drove
   // this substep (candidate run) or the legacy single-bound path ran.
   private hysteresisActiveThisSubstep = false;
@@ -825,6 +838,7 @@ export class P011NaturalObservationProbe {
 
   beginSubstep(context: P011NaturalObservationSubstepContext,
     stateBefore: P011NaturalObservationState): void {
+    this.flushParticleColumnGuardEvidence();
     this.context = context;
     this.endpointLedgerCapture = null;
     this.lastContext = context;
@@ -874,7 +888,39 @@ export class P011NaturalObservationProbe {
 
   /** GAP-4: record per-writer guard evidence with physical-edge mapping. */
   recordMaterialGuardEvidence(evidence: P011NaturalObservationMaterialGuardEvidence): void {
+    this.flushParticleColumnGuardEvidence();
     this.materialGuardEvidence.push(evidence);
+  }
+
+  /** Hot numeric append only. Internal bounded-span contract: 0 <= count < Q. */
+  recordParticleColumnGuardInto(edgeCount: number, edge0: number, edge1: number,
+    limiting: number | null, requested: number, accepted: number, rejected: number): void {
+    const i = this.particleGuardCount;
+    if (i === 0) this.particleGuardTarget = this.materialGuardEvidence;
+    this.particleGuardEdgeCount[i] = edgeCount; this.particleGuardEdge0[i] = edge0;
+    this.particleGuardEdge1[i] = edge1; this.particleGuardHasLimiting[i] = limiting === null ? 0 : 1;
+    this.particleGuardLimiting[i] = limiting === null ? 0 : limiting;
+    this.particleGuardRequested[i] = requested; this.particleGuardAccepted[i] = accepted;
+    this.particleGuardRejected[i] = rejected; this.particleGuardCount = i + 1;
+  }
+
+  /** Cold boundary only: materialize in original order, including rollback evidence. */
+  flushParticleColumnGuardEvidence(): void {
+    const target = this.particleGuardTarget;
+    if (target === null || this.particleGuardCount === 0) return;
+    // A cold invariant failure must be explicit, never silently truncate a page.
+    // Valid production spans are bounded by the original Q=2048 plan capacity.
+    if (this.particleGuardCount > 2048) throw new Error('UNPROVEN_PARTICLE_GUARD_PAGE_CAPACITY');
+    for (let i = 0; i < this.particleGuardCount; i++) {
+      const affected: number[] = [];
+      if (this.particleGuardEdgeCount[i] > 0) affected.push(this.particleGuardEdge0[i]);
+      if (this.particleGuardEdgeCount[i] > 1) affected.push(this.particleGuardEdge1[i]);
+      target.push({channel: 'guard',
+        limitingEdge: this.particleGuardHasLimiting[i] === 0 ? null : this.particleGuardLimiting[i],
+        affectedEdgeIds: affected, rejected: this.particleGuardRejected[i],
+        clipped: Math.max(0, this.particleGuardRequested[i] - this.particleGuardAccepted[i])});
+    }
+    this.particleGuardCount = 0; this.particleGuardTarget = null;
   }
 
   recordSuspensionDiffusion(grant: P011NaturalObservationEdgeGrantBase): void {
@@ -993,6 +1039,7 @@ export class P011NaturalObservationProbe {
   finishSubstep(stateAfter: P011NaturalObservationState,
     budgets: P011NaturalObservationBudgets,
     audit: P011NaturalObservationAudit): void {
+    this.flushParticleColumnGuardEvidence();
     if (this.context === null || this.stateBefore === null) {
       return;
     }

@@ -1,0 +1,81 @@
+{
+  "suite": "T59 dry admission developer selfcheck",
+  "results": [
+    {
+      "id": "D01 cold/reset/empty denominator",
+      "status": "PASS"
+    },
+    {
+      "id": "D02 old wet NO_WATER unchanged even with nonzero occupied envelope",
+      "status": "PASS"
+    },
+    {
+      "id": "D03/D04 exact air point both phases one admission/commit",
+      "status": "PASS"
+    },
+    {
+      "id": "D04/D09 second phase fault rolls back arrays/allocator/cache/source/publication",
+      "status": "PASS"
+    },
+    {
+      "id": "D05 unified capacity lambda and two phases cannot consume one slot",
+      "status": "PASS"
+    },
+    {
+      "id": "D06 invalid coordinates/mass and NO_OP do not clamp or mutate",
+      "status": "PASS"
+    },
+    {
+      "id": "D07 continuous air through LAND keeps actual water zero and same-source totals",
+      "status": "PASS"
+    },
+    {
+      "id": "D08 zero budget CONTACT_WAIT then retried LAND preserves inventory",
+      "status": "PASS"
+    },
+    {
+      "id": "D09 export callback failure retains exactly one committed success",
+      "status": "PASS"
+    },
+    {
+      "id": "D09 failed later physics step never revokes external success",
+      "status": "PASS"
+    },
+    {
+      "id": "D10 duplicate sequence and model stop/background do not catch up",
+      "status": "PASS"
+    },
+    {
+      "id": "D11 source expected baseline for H only/L only/both never resets initial",
+      "status": "PASS"
+    },
+    {
+      "id": "D12 accepted tilt +/-15 dry air accel signs, wet zero-angle candidate unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "D12 full pool shake retains bed, refunds and never degrades to suspension",
+      "status": "PASS"
+    },
+    {
+      "id": "D12 cold predictor and both HOT collects use same dry medium/accepted vector",
+      "status": "PASS"
+    },
+    {
+      "id": "D08 full receiver blocks whole-particle crossing, leaves mass/column and budget identity",
+      "status": "PASS"
+    },
+    {
+      "id": "D13 dry snapshot restores all identities, corrupt medium/envelope refuses before writes",
+      "status": "PASS"
+    },
+    {
+      "id": "D14 wet/dry conflict and dry invert/water writer leave valid state intact",
+      "status": "PASS"
+    },
+    {
+      "id": "D15 same-commit dry publication goes through existing adapter projection",
+      "status": "PASS"
+    }
+  ]
+}

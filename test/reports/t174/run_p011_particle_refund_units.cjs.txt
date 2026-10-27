@@ -1,0 +1,72 @@
+{
+  "suite": "p011_particle_R9_refund",
+  "passed": 11,
+  "failed": 0,
+  "results": [
+    {
+      "name": "R9 pair WAIT: both endpoints refund 0.4, total once, CLOSED deltas zero",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 single guard partial refund: final net 0.3 is not incorrectly forced to zero",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 two legal partial refunds, zero refund, then positive over-refund rejected unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 malformed/NaN/negative/unfunded/closed operations have no partial ledger or receipt writes",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 short/aliased receipt rejects before ledger changes",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 expiry/ID generations and fixed sidecar overflow reject atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 close residual rejection preserves sidecar/output and copied ticket metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 adapter storage can be swapped; refund/close have no normal-path allocation syntax",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 legacy pair negative control retains exact 0.2/0.2 difference; total once",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 legacy split and conservative non-redistribution behavior remain pinned",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 legacy method bodies are unchanged from b9b3884 (normalized source hashes)",
+      "status": "PASS"
+    }
+  ],
+  "negativeControls": [
+    {
+      "requested": 1,
+      "reserved": 0.4,
+      "refund": 0.4,
+      "adapterNetLocal": [
+        0,
+        0
+      ],
+      "legacyNetLocal": [
+        0.2,
+        0.2
+      ],
+      "difference": [
+        0.2,
+        0.2
+      ],
+      "netTotal": 0
+    }
+  ],
+  "allocationScope": "adapter normal path only; not a whole-M1 zero-allocation claim"
+}

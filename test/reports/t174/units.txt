@@ -1,0 +1,10 @@
+PASS numeric Into matches frozen old RN/tie/early exits, signed zero and nonfinite cases
+PASS single-column host keeps update first, original edge order and bitwise outcomes
+PASS ordinary Q=2048 page preserves all evidence order without borrowing source slots
+PASS N probe rebinding and cold flush preserve target row ownership
+PASS real LAND/host guard NORMAL keeps both calls, refunds, state and failed evidence
+PASS real LAND/host guard ROLLBACK keeps both calls, refunds, state and failed evidence
+PASS real LAND/host guard THROW keeps both calls, refunds, state and failed evidence
+PASS N ON/OFF real LAND paths leave physical state bitwise equal
+PASS Hot Into methods contain no heap constructors/literals/closures and both cold callers finally flush
+{"passed":9,"failed":0,"numericCases":11520}
