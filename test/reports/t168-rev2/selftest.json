@@ -1,0 +1,234 @@
+{
+  "revision": "T168_DEVELOPER_ADAPTER_TESTS_V1",
+  "passed": 25,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "independentTester": "NOT_RUN_T155_OWNS",
+  "results": [
+    {
+      "id": "guard-external-array",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "nonnull-parameter",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "alias-reassignment",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "two-distinct-workspaces",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "evidence-independent",
+      "status": "PASS",
+      "profile": "PROGRESS_OFF_EVIDENCE_ON",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 52,
+      "allocationSites": 14,
+      "unresolved": 33
+    },
+    {
+      "id": "progress-unknown-clock",
+      "status": "PASS",
+      "profile": "PROGRESS_ON",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 92,
+      "allocationSites": 15,
+      "unresolved": 73
+    },
+    {
+      "id": "same-method-different-class",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "finally-allocation",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "finally-unknown-early-return",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "unknown-branch-allocation",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "index-real-dependency",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 63,
+      "allocationSites": 16,
+      "unresolved": 42
+    },
+    {
+      "id": "configuration-rebind",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 63,
+      "allocationSites": 15,
+      "unresolved": 42
+    },
+    {
+      "id": "cold-guard-reversed",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 63,
+      "allocationSites": 15,
+      "unresolved": 42
+    },
+    {
+      "id": "optional-null-arguments-skipped",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationSites": 0,
+      "unresolved": 0
+    },
+    {
+      "id": "optional-chain-then-outside",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "equivalent-if",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationSites": 0,
+      "unresolved": 0
+    },
+    {
+      "id": "equivalent-ternary",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationSites": 0,
+      "unresolved": 0
+    },
+    {
+      "id": "equivalent-early-return",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationSites": 0,
+      "unresolved": 0
+    },
+    {
+      "id": "returned-null-summary",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationSites": 0,
+      "unresolved": 0
+    },
+    {
+      "id": "callee-mutates-alias",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 2,
+      "allocationSites": 2,
+      "unresolved": 0
+    },
+    {
+      "id": "loop-fixpoint-alias",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 1,
+      "unresolved": 0
+    },
+    {
+      "id": "unresolved-dependency",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 63,
+      "allocationSites": 15,
+      "unresolved": 44
+    },
+    {
+      "id": "registry-missing-site",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 1,
+      "allocationSites": 0,
+      "unresolved": 0
+    },
+    {
+      "id": "unknown-profile",
+      "status": "PASS",
+      "profile": "UNKNOWN",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 61,
+      "allocationSites": 15,
+      "unresolved": 42
+    },
+    {
+      "id": "typedarray-spoof",
+      "status": "PASS",
+      "profile": "OFF_ALL",
+      "graphVerdict": "NOT_ZERO_ALLOCATION",
+      "remaining": 2,
+      "allocationSites": 1,
+      "unresolved": 1
+    }
+  ]
+}

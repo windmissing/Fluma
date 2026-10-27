@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto'),cp=require('node:child_process'),assert=require('node:assert/strict');
+const repo=path.resolve(__dirname,'../..'),out=path.join(repo,'test/reports/t168-rev2');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),json=f=>JSON.parse(fs.readFileSync(path.join(out,f),'utf8'));
+const gate=json('gate-summary.json'),graph=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(out,'off_all.json.gz'))));
+assert.equal(graph.status,'ZERO_ALLOCATION');assert.equal(graph.remainingSiteCount,0);assert.equal(graph.registryComplete,true);assert.equal(graph.rootManifest.length,24);assert.equal(graph.legacySiteCount,60);
+for(const row of graph.analysisInputManifest)assert.equal(sha(fs.readFileSync(row.file)),row.sha256,'CURRENT_TOOL_OR_CONTRACT_DIFFERS_FROM_TESTED_GRAPH: '+row.file);
+for(const row of graph.sourceManifest.files)assert.equal(sha(fs.readFileSync(path.join(graph.sourceManifest.sourceRoot,row.file))),row.sha256,'CURRENT_SOURCE_DIFFERS_FROM_GRAPH: '+row.file);
+const suites=['selftest.json','effect-selftest.json','original-t155-regression.json'].map(file=>{const r=json(file);assert.equal(r.failed,0,file);return {file,passed:r.passed,failed:r.failed};});
+assert.deepEqual(suites.map(x=>x.passed),[25,33,16]);
+const evidence=['gate-summary.json','selftest.json','effect-selftest.json','original-t155-regression.json','v1-reconciliation.json','build.txt'].map(file=>({file,sha256:sha(fs.readFileSync(path.join(out,file)))}));
+const hap=path.join(repo,'entry/build/default/outputs/default/entry-default-unsigned.hap'),build=fs.readFileSync(path.join(out,'build.txt'),'utf8');
+assert.ok(build.includes('00303116'));assert.ok(build.includes('BuildNativeWithCmake'));assert.ok(build.includes('CompileArkTS'));assert.ok(build.includes('PackageHap'));
+const tools=['test/tools/p011_hot_context_graph.cjs','test/tools/run_t168_gate_report.cjs','test/tools/archive_t168_v1_reconciliation.cjs','test/tools/finish_t168_delivery_manifest.cjs','test/run_t168_hot_context_graph_units.cjs','test/run_t168_rev2_effect_units.cjs','test/run_t168_original_t155_regression.cjs'].map(file=>({file,sha256:sha(fs.readFileSync(path.join(repo,file)))}));
+fs.writeFileSync(path.join(out,'delivery-manifest.json'),JSON.stringify({revision:'T168_REV2_DELIVERY',executedAt:new Date().toISOString(),gitHeadAtEvidence:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),device:'NOT_RUN',productStability:'NOT_RUN',independentT175:'NOT_RUN',businessFilesModifiedByThisCard:[],profiles:gate.profiles,suites,totalAssertions:suites.reduce((n,r)=>n+r.passed,0),tools,evidence,unsignedHap:{file:path.relative(repo,hap).replaceAll('\\','/'),sha256:sha(fs.readFileSync(hap)),bytes:fs.statSync(hap).size},build:{native:'PASS',arkTS:'UP_TO_DATE_PASS',packageHap:'UP_TO_DATE_PASS',assembleHap:'FAIL_EXISTING_SIGNHAP_00303116',signingConfigurationModified:false}},null,2)+'\n');
+console.log('T168 delivery manifest: 74 assertions PASS; OFF_ALL 0 remaining; no device; full assemble signature FAIL disclosed.');

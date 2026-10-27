@@ -1,0 +1,750 @@
+{
+  "profile": "PROGRESS_ON",
+  "status": "NOT_ZERO_ALLOCATION",
+  "staticSiteCount": 15,
+  "sites": [
+    {
+      "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.checkLong",
+      "file": "P011PoolProgressDiagnostic.ets",
+      "line": 122,
+      "kind": "constructor",
+      "text": "new Uint8Array(buffer)",
+      "phase": "HOT_THRESHOLD_CAPTURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 453,
+          "start": 37832,
+          "end": 37871,
+          "text": "copyPoolDiagnosticHot(this, out, false)",
+          "caller": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+          "callee": "P011ParticleHot.ets::copyPoolDiagnosticHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1243,
+          "start": 94199,
+          "end": 94220,
+          "text": "d?.endSpan(span,code)",
+          "caller": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.endSpan"
+        },
+        {
+          "file": "P011PoolProgressDiagnostic.ets",
+          "line": 98,
+          "start": 6523,
+          "end": 6542,
+          "text": "this.checkLong(row)",
+          "caller": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.endSpan",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.checkLong"
+        }
+      ]
+    },
+    {
+      "owner": "P011ParticleField.ets::P011ParticleField.totals",
+      "file": "P011ParticleField.ets",
+      "line": 367,
+      "kind": "object-literal",
+      "text": "{ heavy: heavy, light: light, count: this.liveCount, resting: resting }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 533,
+          "start": 43381,
+          "end": 43399,
+          "text": "work.pool.totals()",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011ParticleField.ets::P011ParticleField.totals"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 71,
+      "kind": "constructor",
+      "text": "new DataView(this.sources[i].buffer,\n          this.sources[i].byteOffset,this.sources[i].byteLength)",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        },
+        {
+          "file": "P011FieldColumnEvidenceV2.ets",
+          "line": 139,
+          "start": 7419,
+          "end": 7433,
+          "text": "this.arrays(f)",
+          "caller": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 73,
+      "kind": "constructor",
+      "text": "new Uint8Array(this.sources[i].buffer,\n          this.sources[i].byteOffset,this.cols*8)",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        },
+        {
+          "file": "P011FieldColumnEvidenceV2.ets",
+          "line": 139,
+          "start": 7419,
+          "end": 7433,
+          "text": "this.arrays(f)",
+          "caller": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 146,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 152,
+      "kind": "template-string",
+      "text": "`${this.bufferIds[i]}:${a.byteOffset}:${a.length}:${a.byteLength}`",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 156,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 156,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 158,
+      "kind": "constructor",
+      "text": "new Uint8Array(poolBuffers[i])",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 161,
+      "kind": "object-literal",
+      "text": "{revision:this.revision,column:col,badMask:mask,\n      valueText:valueText,rawBits:rawBits,sumBits:[this.numberBits(s1),this.numberBits(s2),\n        this.numberBits(s3)],finite:finite,negative:negative,sumFinite:Number.isFinite(s3),\n      f",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 162,
+      "kind": "array-literal",
+      "text": "[this.numberBits(s1),this.numberBits(s2),\n        this.numberBits(s3)]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    }
+  ],
+  "unresolvedExternalClock": [
+    {
+      "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now",
+      "file": "P011PoolProgressDiagnostic.ets",
+      "line": 70,
+      "start": 4703,
+      "end": 4715,
+      "text": "this.clock()",
+      "reason": "UNRESOLVED_CALL",
+      "contextKeys": [
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4f669e8e153281f56ae6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5be8e3de28d97c562ad2",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b68d88b21d214f37edc7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#23ea3ee3ed1ce08906cd",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2bd78425a5788a3520a9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#504147bf3c83403d7c91",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#6a76d32dd84cf7d3d5c4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#87e9ce80307777865886",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#64ff398ab70c6d79e15b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4cb37d64658ac4c81eef",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7ca0dc848e98a879331b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f57286d38143a7da1b26",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b8e26c60311b04b9f9bd",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#43a70c89658953f61f11",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#dc78d69559198fccbee6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3b908adc370af58e5731",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0c3016576e4a136a98a4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b62d212710102a6279e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5c8158453ea62efa4a92",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2930bdb410426fa8983f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#aedcec67921b0b121daf",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fc8e3c6a6bc7d7c39a2b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#05a3ba721f700a5c5ea7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e86fd14024728fccfb35",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#49fdfc1f8ba0aa4d19f7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#910fefa5abf76a1964cf",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#26d932047fb3dcda63fe",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2b9a1a3e7e0a8103539b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#606fe6e1814e78d54819",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7c3c843916d3fa18aba8",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#73086387ea0a09251019",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d805adc125b08f94f666",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0866f325637a49e2995c",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#617de38483b76f6e27e1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#77740517ab32312c7030",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cab937b065b0917fa252",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c2b296cd3eb9b9901766",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#701e8cee981f7b623dbb",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3b7261d4eb776a774435",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#816575e9f1194b667963",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d5a15843829fe18a8d7c",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#ca9e4c201dbdeb1177f9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e4c5065d488d5374c703",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b7a4a35b9a5a99cbc108",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9b85bf564d6176c624be",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#8de483e3181191801d9e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7411b26e0b0c71d7a693",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1159995ff962a69cedab",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#35495bf34f17883b737b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#bde4b8c39887332decca",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#49540a4b8946296dc08e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#dc399bf37c781c12eaf7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#092b69bea76145150223",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5eb86678590191ee0693",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#de94773a2fa342700552",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d82c49235aa6417b7a33",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#387c9bc5a93f34802141",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7b80f7deffc7e5542be8",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3c111e0999eecf1b2fed",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9d05515f0b27272d9fa2",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2b6fc034ac4116982bd6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e68e4b6a446e59ce52e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#dddf8ff1b8444772ea50",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#880b41daf95f1eb6f3a0",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fafc8fb4afa800c099be",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#65c9137755b3cd2f8aeb",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#ca987718c260fb0d6da6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b76c647ae3fe16c0c51f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0deb29c38d7ca38c5869",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#882779fb193c0a708714",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b3a0244d675fd85f89bb",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f68886cdbc58c656af8b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1accbc7bfe59d077cdca",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e0af8251450b98a19b03",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#09605b43b4eab2cd55dd",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#954575452d66812f6d7d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d202cddd79740109b1f6"
+      ],
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 453,
+          "start": 37832,
+          "end": 37871,
+          "text": "copyPoolDiagnosticHot(this, out, false)",
+          "caller": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+          "callee": "P011ParticleHot.ets::copyPoolDiagnosticHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1240,
+          "start": 93970,
+          "end": 94023,
+          "text": "d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ')",
+          "caller": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin"
+        },
+        {
+          "file": "P011PoolProgressDiagnostic.ets",
+          "line": 90,
+          "start": 6045,
+          "end": 6055,
+          "text": "this.now()",
+          "caller": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now"
+        }
+      ]
+    },
+    {
+      "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now",
+      "file": "P011PoolProgressDiagnostic.ets",
+      "line": 70,
+      "start": 4703,
+      "end": 4715,
+      "text": "this.clock()",
+      "reason": "UNKNOWN_CALL_OR_ALIAS_ESCAPE",
+      "contextKeys": [
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4f669e8e153281f56ae6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5be8e3de28d97c562ad2",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b68d88b21d214f37edc7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#23ea3ee3ed1ce08906cd",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2bd78425a5788a3520a9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#504147bf3c83403d7c91",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#6a76d32dd84cf7d3d5c4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#87e9ce80307777865886",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#64ff398ab70c6d79e15b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4cb37d64658ac4c81eef",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f57286d38143a7da1b26",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#43a70c89658953f61f11",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3b908adc370af58e5731",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0c3016576e4a136a98a4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b62d212710102a6279e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5c8158453ea62efa4a92",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2930bdb410426fa8983f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#aedcec67921b0b121daf",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fc8e3c6a6bc7d7c39a2b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#05a3ba721f700a5c5ea7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e86fd14024728fccfb35",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#49fdfc1f8ba0aa4d19f7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#910fefa5abf76a1964cf",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#26d932047fb3dcda63fe",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2b9a1a3e7e0a8103539b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#606fe6e1814e78d54819",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7c3c843916d3fa18aba8",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#73086387ea0a09251019",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d805adc125b08f94f666",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0866f325637a49e2995c",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#617de38483b76f6e27e1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#77740517ab32312c7030",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cab937b065b0917fa252",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c2b296cd3eb9b9901766",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#701e8cee981f7b623dbb",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3b7261d4eb776a774435",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#816575e9f1194b667963",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d5a15843829fe18a8d7c",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#ca9e4c201dbdeb1177f9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e4c5065d488d5374c703",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b7a4a35b9a5a99cbc108",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9b85bf564d6176c624be",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#8de483e3181191801d9e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7411b26e0b0c71d7a693",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1159995ff962a69cedab",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#35495bf34f17883b737b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#49540a4b8946296dc08e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#092b69bea76145150223",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#de94773a2fa342700552",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d82c49235aa6417b7a33",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3c111e0999eecf1b2fed",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9d05515f0b27272d9fa2",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2b6fc034ac4116982bd6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e68e4b6a446e59ce52e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#dddf8ff1b8444772ea50",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#880b41daf95f1eb6f3a0",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fafc8fb4afa800c099be",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#65c9137755b3cd2f8aeb",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#ca987718c260fb0d6da6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#882779fb193c0a708714",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b3a0244d675fd85f89bb",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f68886cdbc58c656af8b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1accbc7bfe59d077cdca",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e0af8251450b98a19b03",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#09605b43b4eab2cd55dd",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#954575452d66812f6d7d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d202cddd79740109b1f6"
+      ],
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 453,
+          "start": 37832,
+          "end": 37871,
+          "text": "copyPoolDiagnosticHot(this, out, false)",
+          "caller": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+          "callee": "P011ParticleHot.ets::copyPoolDiagnosticHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1240,
+          "start": 93970,
+          "end": 94023,
+          "text": "d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ')",
+          "caller": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin"
+        },
+        {
+          "file": "P011PoolProgressDiagnostic.ets",
+          "line": 90,
+          "start": 6045,
+          "end": 6055,
+          "text": "this.now()",
+          "caller": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now"
+        }
+      ]
+    }
+  ],
+  "runtimeAllocations": null,
+  "runtimeBytes": null,
+  "rss": null,
+  "elapsedMs": null
+}

@@ -58,6 +58,6 @@ if(process.argv.includes('--case')){
   if(r.status!==0){results.push({id:c.id,status:'FAIL',output:r.stdout+r.stderr});console.error('FAIL '+c.id);}
   else {results.push(JSON.parse(r.stdout));console.log('PASS '+c.id);}
  }
- fs.mkdirSync(path.join(repo,'test/reports/t168'),{recursive:true});fs.writeFileSync(path.join(repo,'test/reports/t168/selftest.json'),JSON.stringify({revision:'T168_DEVELOPER_ADAPTER_TESTS_V1',passed:results.filter(r=>r.status==='PASS').length,failed:results.filter(r=>r.status==='FAIL').length,device:'NOT_RUN',independentTester:'NOT_RUN_T155_OWNS',results},null,2)+'\n');
+ fs.mkdirSync(path.join(repo,'test/reports/t168-rev2'),{recursive:true});fs.writeFileSync(path.join(repo,'test/reports/t168-rev2/selftest.json'),JSON.stringify({revision:'T168_DEVELOPER_ADAPTER_TESTS_V1',passed:results.filter(r=>r.status==='PASS').length,failed:results.filter(r=>r.status==='FAIL').length,device:'NOT_RUN',independentTester:'NOT_RUN_T155_OWNS',results},null,2)+'\n');
  if(results.some(r=>r.status==='FAIL'))process.exitCode=1;
 }

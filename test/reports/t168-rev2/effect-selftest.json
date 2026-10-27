@@ -1,0 +1,304 @@
+{
+  "device": "NOT_RUN",
+  "passed": 33,
+  "failed": 0,
+  "results": [
+    {
+      "id": "baseline-fixed-array",
+      "status": "PASS",
+      "remaining": 0,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "fixed-oob",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 1,
+      "notImplemented": 0
+    },
+    {
+      "id": "fixed-unknown-index",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 1,
+      "notImplemented": 0
+    },
+    {
+      "id": "fixed-push",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 0,
+      "effects": 1,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "fixed-length",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 1,
+      "notImplemented": 0
+    },
+    {
+      "id": "fixed-escape",
+      "status": "PASS",
+      "remaining": 4,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 4,
+      "notImplemented": 0
+    },
+    {
+      "id": "super-virtual-derived",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 2,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "unknown-base-virtual-set",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 1,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "super-same-storage",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 1,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "local-map-primitive-escape",
+      "status": "PASS",
+      "remaining": 4,
+      "source": 1,
+      "effects": 1,
+      "proofGaps": 2,
+      "notImplemented": 0
+    },
+    {
+      "id": "local-map-workspace-escape",
+      "status": "PASS",
+      "remaining": 66,
+      "source": 17,
+      "effects": 5,
+      "proofGaps": 44,
+      "notImplemented": 0
+    },
+    {
+      "id": "local-set-growth",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 1,
+      "effects": 1,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "map-iterator-effect",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 1,
+      "effects": 1,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "spoof-get",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 2,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "spoof-set",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 2,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "closure-not-called",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 1,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "closure-called",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 2,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "local-callback",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 2,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "closure-scalar-escape",
+      "status": "PASS",
+      "remaining": 3,
+      "source": 1,
+      "effects": 0,
+      "proofGaps": 2,
+      "notImplemented": 0
+    },
+    {
+      "id": "closure-workspace-escape",
+      "status": "PASS",
+      "remaining": 65,
+      "source": 17,
+      "effects": 4,
+      "proofGaps": 44,
+      "notImplemented": 0
+    },
+    {
+      "id": "closure-workspace-write",
+      "status": "PASS",
+      "remaining": 61,
+      "source": 17,
+      "effects": 7,
+      "proofGaps": 36,
+      "notImplemented": 0
+    },
+    {
+      "id": "unknown-callback",
+      "status": "PASS",
+      "remaining": 1,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 1,
+      "notImplemented": 0
+    },
+    {
+      "id": "nested-string-result",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 0,
+      "effects": 2,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "nested-arguments",
+      "status": "PASS",
+      "remaining": 3,
+      "source": 1,
+      "effects": 2,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "iterator-close-0",
+      "status": "PASS",
+      "remaining": 4,
+      "source": 4,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "iterator-close-1",
+      "status": "PASS",
+      "remaining": 4,
+      "source": 4,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "iterator-close-2",
+      "status": "PASS",
+      "remaining": 5,
+      "source": 5,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "iterator-close-3",
+      "status": "PASS",
+      "remaining": 4,
+      "source": 4,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "iterator-zero",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 2,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "builtin-iteration",
+      "status": "PASS",
+      "remaining": 3,
+      "source": 1,
+      "effects": 2,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "unknown-iteration",
+      "status": "PASS",
+      "remaining": 2,
+      "source": 0,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 2
+    },
+    {
+      "id": "inherited-iterator-close",
+      "status": "PASS",
+      "remaining": 4,
+      "source": 4,
+      "effects": 0,
+      "proofGaps": 0,
+      "notImplemented": 0
+    },
+    {
+      "id": "closure-this-write",
+      "status": "PASS",
+      "remaining": 72,
+      "source": 18,
+      "effects": 7,
+      "proofGaps": 46,
+      "notImplemented": 0
+    }
+  ]
+}

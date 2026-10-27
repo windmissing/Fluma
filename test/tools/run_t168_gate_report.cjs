@@ -3,9 +3,9 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const {audit}=require('../probe_p011_particle_hot_graph.cjs');
 const {model}=require('./p011_hot_context_graph.cjs');
 const ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');
-const repo=path.resolve(__dirname,'../..'),out=path.join(repo,'test/reports/t168');fs.mkdirSync(out,{recursive:true});
+const repo=path.resolve(__dirname,'../..'),out=path.join(repo,'test/reports/t168-rev2');fs.mkdirSync(out,{recursive:true});
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const summary={revision:'T168_GATE_REPORT_V1',date:'2026-10-27',device:'NOT_RUN',runtimeEquivalence:'NOT_RUN_T155_OWNS',productStability:'NOT_RUN',profiles:{}};
+const summary={revision:'T168_GATE_REPORT_V2',date:'2026-10-27',device:'NOT_RUN',runtimeEquivalence:'NOT_RUN_T155_OWNS',productStability:'NOT_RUN',profiles:{}};
 function archive(name,result){const bytes=Buffer.from(JSON.stringify(result,null,2)+'\n'),compressed=zlib.gzipSync(bytes),file=path.join(out,name+'.json.gz');fs.writeFileSync(file,compressed);
  return {file:path.relative(repo,file).replaceAll('\\','/'),jsonBytes:bytes.length,gzipBytes:compressed.length,gzipSha256:hash(compressed),jsonSha256:hash(bytes)};}
 const legacy=audit();
@@ -16,12 +16,12 @@ assert.deepEqual(legacy,m.exports.audit());
 summary.legacyConservative={status:legacy.status,remaining:legacy.remainingSiteCount,unresolved:legacy.unresolvedCalls.length,allocationSites:legacy.hotAllocationSites.length,registryComplete:legacy.registryComplete,exactOriginalApiEquality:true,archive:archive('legacy-conservative',legacy)};
 for(const profile of ['OFF_ALL','PROGRESS_OFF_EVIDENCE_ON','PROGRESS_ON']){
  const r=audit({profile});
- summary.profiles[profile]={status:r.status,remaining:r.remainingSiteCount,allocationSites:r.allocationSites.length,unresolved:r.unresolvedCalls.length,issues:r.analysisIssues.length,registryComplete:r.registryComplete,legacySites:r.legacySiteCount,roots:r.rootManifest.length,contexts:r.reachableContexts.length,pruned:r.prunedBranches.length,productionHotPathZeroAllocation:r.productionHotPathZeroAllocation,archive:archive(profile.toLowerCase(),r)};
+ summary.profiles[profile]={status:r.status,remaining:r.remainingSiteCount,allocationEffects:r.allocationEffects.length,allocationSites:r.allocationSites.length,unresolved:r.unresolvedCalls.length,issues:r.analysisIssues.length,registryComplete:r.registryComplete,legacySites:r.legacySiteCount,roots:r.rootManifest.length,contexts:r.reachableContexts.length,pruned:r.prunedBranches.length,productionHotPathZeroAllocation:r.productionHotPathZeroAllocation,archive:archive(profile.toLowerCase(),r)};
  const table=r.allocationSites.map(a=>({owner:a.owner,file:a.file,line:a.line,kind:a.kind,text:a.text,
   phase:a.witness.some(w=>w.callee?.includes('captureFailure'))?'HOT_FAILURE':a.witness.some(w=>w.callee?.includes('checkLong'))?'HOT_THRESHOLD_CAPTURE':'OTHER_REACHABLE_SOURCE',
   trigger:'ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT',witness:a.witness}));
  fs.writeFileSync(path.join(out,profile.toLowerCase()+'-allocations.json'),JSON.stringify({profile,status:r.status,staticSiteCount:table.length,sites:table,unresolvedExternalClock:r.unresolvedCalls.filter(x=>x.text==='this.clock()'),runtimeAllocations:null,runtimeBytes:null,rss:null,elapsedMs:null},null,2)+'\n');
- if(profile==='OFF_ALL')fs.writeFileSync(path.join(out,'off-all-remaining.json'),JSON.stringify({status:r.status,registryComplete:r.registryComplete,allocationSites:r.allocationSites,unresolvedCalls:r.unresolvedCalls,analysisIssues:r.analysisIssues,sourceManifest:r.sourceManifest,rootManifest:r.rootManifest},null,2)+'\n');
+ if(profile==='OFF_ALL')fs.writeFileSync(path.join(out,'off-all-remaining.json'),JSON.stringify({status:r.status,registryComplete:r.registryComplete,layers:r.layers,havocProofs:r.havocProofs,storageProofs:r.storageProofs,allocationSites:r.allocationSites,unresolvedCalls:r.unresolvedCalls,analysisIssues:r.analysisIssues,sourceManifest:r.sourceManifest,rootManifest:r.rootManifest},null,2)+'\n');
  console.log(profile+' '+r.status+' remaining='+r.remainingSiteCount);
 }
 summary.productionHotPathZeroAllocation=summary.profiles.OFF_ALL.productionHotPathZeroAllocation;

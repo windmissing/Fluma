@@ -1,0 +1,160 @@
+{
+  "revision": "T168_REV2_DELIVERY",
+  "executedAt": "2026-10-27T12:34:53.294Z",
+  "gitHeadAtEvidence": "62bec6e6b18fb7b8cf74e5a963e6516396b3f73e",
+  "device": "NOT_RUN",
+  "productStability": "NOT_RUN",
+  "independentT175": "NOT_RUN",
+  "businessFilesModifiedByThisCard": [],
+  "profiles": {
+    "OFF_ALL": {
+      "status": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationEffects": 0,
+      "allocationSites": 0,
+      "unresolved": 0,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1032,
+      "pruned": 72,
+      "productionHotPathZeroAllocation": true,
+      "archive": {
+        "file": "test/reports/t168-rev2/off_all.json.gz",
+        "jsonBytes": 2937321,
+        "gzipBytes": 150327,
+        "gzipSha256": "ac7bf2bc244607cd316ab612aa6465efdbb69d78c881420191c633af7bd39689",
+        "jsonSha256": "c387471b7965d828b6ff02ff5b8db59ea2bca9f3ac5a2dfea6634589649b877e"
+      }
+    },
+    "PROGRESS_OFF_EVIDENCE_ON": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 52,
+      "allocationEffects": 5,
+      "allocationSites": 14,
+      "unresolved": 33,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1059,
+      "pruned": 71,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168-rev2/progress_off_evidence_on.json.gz",
+        "jsonBytes": 3208244,
+        "gzipBytes": 159948,
+        "gzipSha256": "d9465c85e6ccaf68fc28e14f476590856807d838052792fd246134e13bce26c7",
+        "jsonSha256": "7168c36cc952c57ccbf965eba76521cf626a3cf606e977521de191f28c1b753a"
+      }
+    },
+    "PROGRESS_ON": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 92,
+      "allocationEffects": 4,
+      "allocationSites": 15,
+      "unresolved": 73,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 2036,
+      "pruned": 28,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168-rev2/progress_on.json.gz",
+        "jsonBytes": 6802054,
+        "gzipBytes": 296684,
+        "gzipSha256": "f46f80ffd2546f8ac19435b4ff6e57da4157606b82d5eb4d7bfc5b2f725e6a83",
+        "jsonSha256": "71942e1ac019b7bdc52d760a5c94a9a252cae7a5d82d485e1432c5475e022ac3"
+      }
+    }
+  },
+  "suites": [
+    {
+      "file": "selftest.json",
+      "passed": 25,
+      "failed": 0
+    },
+    {
+      "file": "effect-selftest.json",
+      "passed": 33,
+      "failed": 0
+    },
+    {
+      "file": "original-t155-regression.json",
+      "passed": 16,
+      "failed": 0
+    }
+  ],
+  "totalAssertions": 74,
+  "tools": [
+    {
+      "file": "test/tools/p011_hot_context_graph.cjs",
+      "sha256": "e64f70ca07417e2a0c3f3b05783b5a1498ead4a9b655f6431ab0907fe7cabaad"
+    },
+    {
+      "file": "test/tools/run_t168_gate_report.cjs",
+      "sha256": "4a05586a5e9d1a7f7acc7704e09d68c80180f173ca87151f4fca9318dd0106ad"
+    },
+    {
+      "file": "test/tools/archive_t168_v1_reconciliation.cjs",
+      "sha256": "347c2898c1281c03f8d283fa53fe45ca1271b71c4538dd7dcfd3038b7e0d4611"
+    },
+    {
+      "file": "test/tools/finish_t168_delivery_manifest.cjs",
+      "sha256": "22972f721184fd3aa2ac2a3d76581c0b8b5298f9765088212419a8daf05f0169"
+    },
+    {
+      "file": "test/run_t168_hot_context_graph_units.cjs",
+      "sha256": "49b59a6726255a35af60329c864fc6b3a758d2088379686c794fc8d2734a36ee"
+    },
+    {
+      "file": "test/run_t168_rev2_effect_units.cjs",
+      "sha256": "3dfa5a7038b4aaf02d8f404e5fe96b16706ee6ddb1c68c1a77f47237257b29f2"
+    },
+    {
+      "file": "test/run_t168_original_t155_regression.cjs",
+      "sha256": "c8bf067c472ab9323923a09fbb0948d168eddb5547d11465e070ca7a3680d671"
+    }
+  ],
+  "evidence": [
+    {
+      "file": "gate-summary.json",
+      "sha256": "440c0734260e56e49c9601aecb3bc949499ce02ae695549c53788a416d96ae25"
+    },
+    {
+      "file": "selftest.json",
+      "sha256": "b51928b44e0b088ba9c0fea9f53b1c739e963e0322d4136b3e1a2e32db155f7a"
+    },
+    {
+      "file": "effect-selftest.json",
+      "sha256": "eb305be772b4781bdd5d4e67c9c4bc6b86baf7080f8747e182d82581ac781d27"
+    },
+    {
+      "file": "original-t155-regression.json",
+      "sha256": "e9b7ff680f4f0860650d0a7b25d1a895f185fc557b56e6aee4f149a73e4ab994"
+    },
+    {
+      "file": "v1-reconciliation.json",
+      "sha256": "ef4c6efb1d0c1d03dede66c35e8f9db56e1c2d19d5ca56bb01c872212b71b6ec"
+    },
+    {
+      "file": "build.txt",
+      "sha256": "2f5756628a40543d186b5f1c3961c33642708bf3fcf851f6c4e040c01fff7cd5"
+    }
+  ],
+  "unsignedHap": {
+    "file": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "sha256": "3d395b71926e3105617d67e9d3bf94049c1dd47e87c19231b617a574ca9dabfb",
+    "bytes": 4591992
+  },
+  "build": {
+    "native": "PASS",
+    "arkTS": "UP_TO_DATE_PASS",
+    "packageHap": "UP_TO_DATE_PASS",
+    "assembleHap": "FAIL_EXISTING_SIGNHAP_00303116",
+    "signingConfigurationModified": false
+  }
+}

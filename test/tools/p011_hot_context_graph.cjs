@@ -9,9 +9,18 @@ const ORIGINAL_FILES=['P011ParticleField.ets','P011ParticlePrototype.ets','P011P
  'P011ParticleHot.ets','P011ParticleHotBudget.ets','P011ParticleHotPrototype.ets','P011ParticleHotEvidence.ets'];
 const N={tag:'NULL'},U={tag:'UNKNOWN'},T={tag:'TRUE'},F={tag:'FALSE'},D={tag:'UNDEFINED'};
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
-const brief=v=>v.tag+(v.id?':'+v.id:'')+(v.type?':type='+v.type:'')+(v.proven?':ENTRY_PROVEN':'');
+const brief=v=>v.tag+(v.id?':'+v.id:'')+(v.type?':type='+v.type:'')+(v.proven?':ENTRY_PROVEN':'')+(v.dynamicClass?':class='+v.dynamicClass:'');
 const same=(a,b)=>brief(a)===brief(b);
-const join=(a,b)=>same(a,b)?a:U;
+const join=(a,b)=>{
+ if(same(a,b))return a;
+ // Preserve an object's identity through nullable/narrowed branch joins.
+ // Losing it to a scalar UNKNOWN used to lose derived-this on rollback.
+ if(a.tag==='REF'&&b.tag==='REF'&&a.id===b.id)return {...a,
+  type:[...new Set([...(a.type||'').split(' | '),...(b.type||'').split(' | ')])].sort().join(' | '),proven:Boolean(a.proven&&b.proven)};
+ if(a.tag==='REF'&&['NULL','UNDEFINED'].includes(b.tag))return {...a,type:[...new Set([...(a.type||'').split(' | '),b.tag==='NULL'?'null':'undefined'])].sort().join(' | ')};
+ if(b.tag==='REF'&&['NULL','UNDEFINED'].includes(a.tag))return join(b,a);
+ return U;
+};
 const truth=v=>v.tag==='NULL'||v.tag==='FALSE'||v.tag==='UNDEFINED'?false:v.tag==='TRUE'?true:v.tag==='REF'&&!/null|undefined/.test(v.type||'')?true:null;
 function typeName(checker,node){try{return checker.typeToString(checker.getTypeAtLocation(node));}catch{return 'unknown';}}
 function model(sourceRoot){
@@ -26,14 +35,14 @@ function model(sourceRoot){
  const program=ts.createProgram(virtual,{target:ts.ScriptTarget.ES2020,strictNullChecks:true,noEmit:true,skipLibCheck:true},host),checker=program.getTypeChecker();
  function fileId(sf){return path.relative(directory,sf.fileName).replaceAll('\\','/').replace(/\.ts$/,'.ets');}
  function keyOf(n){const sf=n.getSourceFile(),owner=ts.isClassDeclaration(n.parent)||ts.isInterfaceDeclaration(n.parent)?n.parent.name.text:ts.isObjectLiteralExpression(n.parent)?'object@'+n.parent.pos:'';
-  return fileId(sf)+'::'+(owner?owner+'.':'')+(n.name?.getText(sf)||'<anonymous>');}
+  return fileId(sf)+'::'+(owner?owner+'.':'')+(n.name?.getText(sf)||((ts.isArrowFunction(n)||ts.isFunctionExpression(n))?'closure@'+n.getStart():'<anonymous>'));}
  for(const sf of program.getSourceFiles())if(path.resolve(sf.fileName).startsWith(sourceBase+path.sep)){
   const file=fileId(sf);sources.set(file,sf);
   function walk(n){
    if(ts.isClassDeclaration(n))classes.push(n);
    if(ts.isObjectLiteralExpression(n))objects.push(n);
    if(ts.isInterfaceDeclaration(n))interfaces.set(n.name.text,n);
-   if((ts.isFunctionDeclaration(n)||ts.isMethodDeclaration(n)||ts.isGetAccessorDeclaration(n)||ts.isConstructorDeclaration(n))&&n.body)
+   if((ts.isFunctionDeclaration(n)||ts.isMethodDeclaration(n)||ts.isGetAccessorDeclaration(n)||ts.isConstructorDeclaration(n)||ts.isArrowFunction(n)||ts.isFunctionExpression(n))&&n.body)
     nodes.push({key:keyOf(n),node:n,file,owner:n.parent.name?.text||'',name:n.name?.getText(sf)||'<constructor>'});
    ts.forEachChild(n,walk);
   }walk(sf);
@@ -47,9 +56,26 @@ function model(sourceRoot){
  }
  function declarations(node){let sym=checker.getSymbolAtLocation(node);if(sym?.flags&ts.SymbolFlags.Alias)sym=checker.getAliasedSymbol(sym);
   return sym?.declarations||[];}
- function targets(node){return declarations(node).flatMap(d=>d.body?[d]:ts.isMethodSignature(d)?implementations(d):[]).map(d=>byNode.get(d)).filter(Boolean);}
+ function descends(c,name,seen=new Set()){
+  if(!c||seen.has(c))return false;if(c.name?.text===name)return true;seen.add(c);
+  return (c.heritageClauses||[]).filter(h=>h.token===ts.SyntaxKind.ExtendsKeyword).some(h=>h.types.some(t=>descends(classes.find(x=>x.name?.text===t.expression.getText()),name,seen)));
+ }
+ function targets(node,receiver=null,superCall=false){
+  const staticTargets=declarations(node).flatMap(d=>d.body?[d]:ts.isMethodSignature(d)?implementations(d):[]);
+  if(!superCall&&receiver?.dynamicClass&&node.text){const cls=classes.find(c=>c.name.text===receiver.dynamicClass);
+   const property=cls?checker.getTypeAtLocation(cls).getProperty(node.text):null;
+   if(property?.declarations?.some(d=>d.body))return property.declarations.filter(d=>d.body).map(d=>byNode.get(d)).filter(Boolean);
+  }
+  const virtual=[];
+  if(!superCall&&receiver&&!receiver.dynamicClass)for(const d of staticTargets)if(ts.isMethodDeclaration(d)&&ts.isClassDeclaration(d.parent)){
+   for(const cls of classes.filter(c=>descends(c,d.parent.name.text))){
+    const property=checker.getTypeAtLocation(cls).getProperty(d.name.getText());virtual.push(...(property?.declarations||[]).filter(p=>p.body));
+   }
+  }
+  return [...new Set([...staticTargets,...virtual])].map(d=>byNode.get(d)).filter(Boolean);
+ }
  function pos(n){const sf=n.getSourceFile(),p=sf.getLineAndCharacterOfPosition(n.getStart());return {file:fileId(sf),line:p.line+1,start:n.getStart(),end:n.end,text:n.getText().slice(0,240)};}
- return {directory,sources,nodes,classes,interfaces,checker,keyOf,targets,declarations,pos,byNode,program};
+ return {directory,sources,nodes,classes,interfaces,checker,keyOf,targets,declarations,pos,byNode,program,descends};
 }
 function factInventory(m){
  // Pin only configuration writes and their enclosing context, not entire methods or files.
@@ -74,7 +100,17 @@ function inventoryIdentity(items){return items.map(({file,owner,kind,text,contro
 function audit(options={}){
  const repo=path.resolve(__dirname,'../..'),sourceRoot=options.sourceRoot||path.join(repo,'entry/src/main/ets/physics');
  const profile=options.profile||'OFF_ALL',m=model(sourceRoot),checker=m.checker;
- const issues=[],allocations=new Map(),unresolved=new Map(),pruned=new Map(),contexts=new Map(),queue=[],edges=new Map(),returns=new Map(),outputs=new Map(),active=new Set();
+ const issues=[],allocations=new Map(),allocationEffects=new Map(),unresolved=new Map(),pruned=new Map(),contexts=new Map(),queue=[],edges=new Map(),returns=new Map(),outputs=new Map(),active=new Set(),storageProofs=new Map(),havocProofs=new Map();
+ // Monotone may-points-to graph: union across branches/contexts is conservative.
+ const objectValues=new Map(),points=new Map(),collectionValues=new Map(),closureValues=new Map();
+ function remember(v){if(v?.tag==='REF'&&v.id){objectValues.set(v.id,v);if(!points.has(v.id))points.set(v.id,new Set());}return v;}
+ function link(from,to){if(from?.tag!=='REF'||to?.tag!=='REF')return;remember(from);remember(to);points.get(from.id).add(to.id);}
+ function reachable(values){const out=new Set(),work=values.filter(v=>v?.tag==='REF').map(v=>v.id);while(work.length){const id=work.pop();if(out.has(id))continue;out.add(id);for(const next of points.get(id)||[])work.push(next);}return out;}
+ function tainted(s,v){return s.heap.has('!escaped')||s.heap.has('!taint:'+v.id);}
+ function builtinConstructor(n,names){
+  return ts.isIdentifier(n)&&names.includes(n.text)&&m.declarations(n).length>0&&m.declarations(n).every(d=>d.getSourceFile().isDeclarationFile);
+ }
+ function effect(item,n,kind,ctx){record(allocationEffects,item,n,{kind},ctx);}
  const usedFiles=new Set(ORIGINAL_FILES),facts=factInventory(m);
  const contractPath=options.factContractPath||path.join(repo,'test/fixtures/t168_profile_write_contract.json');
  let contract;try{contract=JSON.parse(fs.readFileSync(contractPath,'utf8'));}catch(e){issues.push({reason:'FACT_CONTRACT_MISSING',detail:e.message});}
@@ -100,11 +136,57 @@ function audit(options={}){
   if(type==='null')return N;if(type==='undefined'||type==='void')return D;
   if(type==='true')return T;if(type==='false')return F;
   if(type==='boolean'||type==='number'||type==='string'||type==='any'||type==='unknown'||type==='never'||/^[\d'"-]/.test(type))return {...U,type};
-  return {tag:'REF',id,type,proven};
+  return remember({tag:'REF',id,type,proven});
  }
  function typed(v){return /^(?:Float64Array|Float32Array|Uint8Array|Uint16Array|Uint32Array|Int8Array|Int16Array|Int32Array)(?:<.*>)?$/.test(v.type||'');}
+ const fixedArrays=new Map();
+ function fixedArray(node,base){
+  const declaration=m.declarations(node.name||node).find(d=>ts.isPropertyDeclaration(d));
+  if(!declaration||!ts.isClassDeclaration(declaration.parent)||!(ts.getCombinedModifierFlags(declaration)&ts.ModifierFlags.Readonly))return null;
+  const owner=declaration.parent.name.text,name=declaration.name.getText();
+  if(!(base.type||'').split(' | ').includes(owner))return null;
+  const key=m.keyOf(declaration);if(fixedArrays.has(key))return fixedArrays.get(key);
+  const cls=declaration.parent,ctor=cls.members.find(ts.isConstructorDeclaration),initializers=[];
+  if(declaration.initializer)initializers.push(declaration.initializer);
+  let unsafe=false;
+  function constructorScan(n){
+   if(ts.isBinaryExpression(n)&&ts.isPropertyAccessExpression(n.left)&&n.left.expression.kind===ts.SyntaxKind.ThisKeyword&&n.left.name.text===name){
+    if(n.operatorToken.kind===ts.SyntaxKind.EqualsToken)initializers.push(n.right);else unsafe=true;
+   }
+   if(ts.isPropertyAccessExpression(n)&&n.expression.kind===ts.SyntaxKind.ThisKeyword&&n.name.text===name){
+    const p=n.parent;
+    if(!(ts.isBinaryExpression(p)&&p.left===n)||p.operatorToken.kind!==ts.SyntaxKind.EqualsToken){
+     if(!(ts.isElementAccessExpression(p)&&p.expression===n)&&!(ts.isPropertyAccessExpression(p)&&p.expression===n&&p.name.text==='length'))unsafe=true;
+    }
+   }
+   ts.forEachChild(n,constructorScan);
+  }if(ctor?.body)constructorScan(ctor.body);
+  const init=initializers[0];
+  const info=!unsafe&&initializers.length===1&&ts.isArrayLiteralExpression(init)&&init.elements.every(e=>!ts.isSpreadElement(e)&&e.kind!==ts.SyntaxKind.OmittedExpression)?
+   {owner,field:name,length:init.elements.length,initializer:m.pos(init),declaration:m.pos(declaration),sha256:hash(init.getText()),kind:'COLD_OWNED_DENSE_DATA_ARRAY'}:null;
+  fixedArrays.set(key,info);return info;
+ }
+ function indexBounds(node){
+  if(ts.isParenthesizedExpression(node))return indexBounds(node.expression);
+  if(ts.isNumericLiteral(node)){const n=Number(node.text);return Number.isSafeInteger(n)?{min:n,max:n,witness:m.pos(node)}:null;}
+  if(!ts.isIdentifier(node))return null;
+  const symbol=checker.getSymbolAtLocation(node);
+  for(let loop=node.parent;loop;loop=loop.parent)if(ts.isForStatement(loop)&&loop.initializer&&ts.isVariableDeclarationList(loop.initializer)&&loop.initializer.declarations.length===1){
+   const d=loop.initializer.declarations[0],condition=loop.condition,step=loop.incrementor;
+   if(!ts.isIdentifier(d.name)||checker.getSymbolAtLocation(d.name)!==symbol||!d.initializer||!ts.isNumericLiteral(d.initializer)||!condition||!ts.isBinaryExpression(condition)||!ts.isIdentifier(condition.left)||checker.getSymbolAtLocation(condition.left)!==symbol||!ts.isNumericLiteral(condition.right))continue;
+   const start=Number(d.initializer.text),end=Number(condition.right.text),op=condition.operatorToken.kind;
+   const forward=step&&(ts.isPostfixUnaryExpression(step)||ts.isPrefixUnaryExpression(step))&&step.operator===ts.SyntaxKind.PlusPlusToken&&ts.isIdentifier(step.operand)&&checker.getSymbolAtLocation(step.operand)===symbol;
+   if(!forward||!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||![ts.SyntaxKind.LessThanToken,ts.SyntaxKind.LessThanEqualsToken].includes(op))continue;
+   let modified=false;
+   function scan(n){if(ts.isBinaryExpression(n)&&n.operatorToken.kind>=ts.SyntaxKind.FirstAssignment&&n.operatorToken.kind<=ts.SyntaxKind.LastAssignment&&ts.isIdentifier(n.left)&&checker.getSymbolAtLocation(n.left)===symbol)modified=true;
+    if((ts.isPostfixUnaryExpression(n)||ts.isPrefixUnaryExpression(n))&&ts.isIdentifier(n.operand)&&checker.getSymbolAtLocation(n.operand)===symbol)modified=true;
+    ts.forEachChild(n,scan);
+   }scan(loop.statement);
+   if(!modified)return {min:start,max:end-(op===ts.SyntaxKind.LessThanToken?1:0),witness:m.pos(loop),integerStep:1};
+  }return null;
+ }
  function place(item,node){return {owner:item.key,...m.pos(node)};}
- function record(map,item,node,data,ctx){const p=place(item,node),k=p.owner+':'+p.start+':'+(data.reason||data.kind||'');
+ function record(map,item,node,data,ctx){const p=place(item,node),k=p.owner+':'+p.start+':'+p.end+':'+(data.reason||data.kind||'');
   if(!map.has(k))map.set(k,{...p,...data,contextKeys:[],witness:ctx.trace});
   const out=map.get(k);if(!out.contextKeys.includes(ctx.key))out.contextKeys.push(ctx.key);
  }
@@ -119,33 +201,44 @@ function audit(options={}){
   const k=base.id+'.'+name;if(s.heap.has(k))return s.heap.get(k);
   const isWorkspace=/^P011ParticleHotWorkspace(?: \| null)?$/.test(base.type||'');
   const isIndex=base.type==='P011MergeExactIndex';
-  if(factsValid&&base.proven&&((isWorkspace&&['poolProgress','fieldColumnEvidenceV2','diagnosticEnabled'].includes(name))||(isIndex&&name==='diagnostic'))){
+  if(!tainted(s,base)&&factsValid&&base.proven&&((isWorkspace&&['poolProgress','fieldColumnEvidenceV2','diagnosticEnabled'].includes(name))||(isIndex&&name==='diagnostic'))){
    const entry=profileSlots[name];if(entry==='ON')return {...value(node,k,true),origin:'profile:'+profile+':'+k};
    if(entry)return {...entry,origin:'profile:'+profile+':'+k};
   }
   // Getters execute; do not treat a property-access as mere storage.
   const ds=m.declarations(node.name||node);const getters=ds.filter(d=>ts.isGetAccessorDeclaration(d)&&d.body);
   if(getters.length){for(const n of getters)enqueue(m.byNode.get(n),[],base,s,item,ctx,node);return U;}
-  return {...value(node,k,base.proven&&name==='mergeIndex'),origin:'property:'+k};
+  const result={...value(node,k,base.proven&&name==='mergeIndex'),origin:'property:'+k};
+  const array=fixedArray(node,base);if(array){result.fixedArray=array;result.builtin='Array';}
+  const decl=ds.find(d=>ts.isPropertyDeclaration(d));
+  if(decl?.initializer&&ts.isNewExpression(decl.initializer)&&builtinConstructor(decl.initializer.expression,['Map','Set'])&&
+    (ts.getCombinedModifierFlags(decl)&ts.ModifierFlags.Readonly)){
+   result.builtin=decl.initializer.expression.getText();result.coldContentsUnknown=true;
+  }
+  link(base,result);return remember(result);
  }
  function invalidate(s,item,node,ctx,values){
   const escaped=values.filter(v=>v.tag==='REF');
   if(escaped.length){unknown(item,node,'UNKNOWN_CALL_OR_ALIAS_ESCAPE',ctx);
-   // Unknown code can mutate through any alias. Invalidating all known slots is conservative.
-   for(const [k] of s.heap)s.heap.set(k,U);
-   s.heap.set('!escaped',U);
+   const affected=reachable(escaped),opaque=escaped.some(v=>v.coldContentsUnknown||(!v.local&&!v.proven&&!v.fixedArray&&!v.builtin&&!v.callable));
+   // Opaque roots may already carry hidden/shared aliases. Local objects only
+   // expose their transitive contents, never an unrelated Workspace by name.
+   if(opaque){for(const [k]of s.heap)s.heap.set(k,U);s.heap.set('!escaped',U);}
+   else for(const id of affected){s.heap.set('!taint:'+id,U);for(const k of s.heap.keys())if(k.startsWith(id+'.'))s.heap.set(k,U);}
+   record(havocProofs,item,node,{kind:opaque?'OPAQUE_SHARED_HAVOC':'REACHABLE_OBJECT_HAVOC',affected:[...affected],arguments:escaped.map(brief),preservedUnreachableEntryObjects:!opaque},ctx);
   }
  }
  function enqueue(target,args,self,s,item,parent,node){
   if(!target)return U;
   const paramValues=target.node.parameters.map((p,i)=>args[i]||value(p,`${parent.key}:${p.name.getText()}:unknown`));
-  const inherited=[...s.heap].filter(([k])=>k==='!escaped'||!k.startsWith('local:'));
+  const inherited=[...s.heap];
   const signature=target.key+'|this='+brief(self)+'|'+paramValues.map(brief).join(',')+'|slots='+inherited.map(([k,v])=>k+'='+brief(v)).sort().join(',');
   const key=target.key+'#'+hash(signature).slice(0,20);
   if(contexts.size>2500){unknown(item,node,'CONTEXT_LIMIT_FAIL_CLOSED',parent);return U;}
   if(!contexts.has(key)){
    const trace=[...parent.trace,{...m.pos(node),caller:item.key,callee:target.key}];
-   const c={key,item:target,args:paramValues,self,heap:inherited,trace};contexts.set(key,c);
+   const closure=closureValues.get(self?.id);
+   const c={key,item:target,args:paramValues,self:closure?.lexicalThis||self,captures:closure?.env,heap:inherited,trace};contexts.set(key,c);
   }
   edges.set(parent.key+'>'+key+':'+node.pos,{from:parent.key,to:key,site:place(item,node)});usedFiles.add(target.file);
   if(active.has(key)){unknown(item,node,'RECURSIVE_SUMMARY_NOT_PROVEN',parent);invalidate(s,item,node,parent,[self,...args]);return U;}
@@ -154,18 +247,30 @@ function audit(options={}){
   return returns.get(key)||U;
  }
  function assign(left,v,s,item,ctx){
-  if(ts.isIdentifier(left)){s.env.set(left.text,v);return;}
+  if(ts.isIdentifier(left)){
+   s.env.set(left.text,v);
+   for(const [id,c]of closureValues)if(c.env.has(left.text)){
+    c.env.set(left.text,join(c.env.get(left.text),v));link(objectValues.get(id),v);
+    unknown(item,left,'CAPTURED_BINDING_REASSIGNMENT_REQUIRES_LIVE_CELL',ctx);
+   }return;
+  }
   if(ts.isPropertyAccessExpression(left)){
    const base=expr(left.expression,s,item,ctx),name=left.name.text;
+   if(name==='prototype'||left.expression.getText().includes('.prototype')){unknown(item,left,'BUILTIN_PROTOTYPE_MUTATION',ctx);s.heap.set('!escaped',U);}
+   if(name==='length'&&base.fixedArray)unknown(item,left,'FIXED_ARRAY_LENGTH_MUTATION',ctx);
    if(['poolProgress','diagnosticEnabled','fieldColumnEvidenceV2','diagnostic'].includes(name))unknown(item,left,'HOT_CONFIGURATION_MUTATION',ctx);
    if(base.tag==='REF'){
-    const key=base.id+'.'+name;if(v.tag!=='UNKNOWN'||s.heap.has(key))s.heap.set(key,v);
+    const key=base.id+'.'+name;if(v.tag!=='UNKNOWN'||s.heap.has(key))s.heap.set(key,v);link(base,v);
    }else unknown(item,left,'UNKNOWN_ASSIGNMENT_RECEIVER',ctx);
    return;
   }
   if(ts.isElementAccessExpression(left)){
    const base=expr(left.expression,s,item,ctx);if(left.argumentExpression)expr(left.argumentExpression,s,item,ctx);
-   if(!typed(base))unknown(item,left,'COMPUTED_WRITE_ALIAS_NOT_PROVEN_TYPED_STORAGE',ctx);return;
+   if(!typed(base)){
+    const bounds=left.argumentExpression?indexBounds(left.argumentExpression):null;
+    if(base.fixedArray&&bounds&&bounds.min>=0&&bounds.max<base.fixedArray.length&&!tainted(s,base))record(storageProofs,item,left,{kind:'BOUNDED_EXISTING_ARRAY_ELEMENT_OVERWRITE',ownerStorage:base.fixedArray,indexBounds:bounds,valueEffect:'REFERENCE_OR_PRIMITIVE_SLOT_REPLACEMENT_NO_LENGTH_CHANGE'},ctx);
+    else unknown(item,left,'COMPUTED_WRITE_ALIAS_NOT_PROVEN_FIXED_STORAGE',ctx);
+   }link(base,v);return;
   }
   unknown(item,left,'UNSUPPORTED_ASSIGNMENT_TARGET',ctx);
  }
@@ -211,7 +316,7 @@ function audit(options={}){
   if(ts.isPropertyAccessExpression(n)){
    const base=expr(n.expression,s,item,ctx);
    if((n.questionDotToken||(n.flags&ts.NodeFlags.OptionalChain))&&(base.tag==='NULL'||base.tag==='UNDEFINED')){prune(item,n,'OPTIONAL_NULL_ACCESS',base,ctx);return D;}
-   if(s.heap.has('!escaped'))return value(n,'escaped:'+n.getText());
+   if(tainted(s,base))return value(n,'escaped:'+n.getText());
    return property(base,n.name.text,n,s,item,ctx);
   }
   if(ts.isElementAccessExpression(n)){const base=expr(n.expression,s,item,ctx);
@@ -267,24 +372,71 @@ function audit(options={}){
    // The native exemption is based on the checker receiver type, never a property name.
    if(pure)return U;
    if(receiver&&typed(receiver)&&ts.isPropertyAccessExpression(callee)&&['set','fill'].includes(callee.name.text))return U;
-   const target=m.targets(ts.isPropertyAccessExpression(callee)?callee.name:callee);
+   if(ts.isPropertyAccessExpression(callee)&&receiver&&!tainted(s,receiver)){
+    const name=callee.name.text,brand=receiver.builtin;
+    if(brand==='Iterator'&&name==='next'){effect(item,n,'BUILTIN_ITERATOR_RESULT',ctx);return U;}
+    // Brands come only from an actual lib declaration plus an owned new/readonly
+    // initializer. Same-named user methods never reach these summaries.
+    if(['Map','Set','Array'].includes(brand)){
+     if((brand==='Map'&&name==='set')||(brand==='Set'&&name==='add')||(brand==='Array'&&['push','unshift','splice'].includes(name))){
+      effect(item,n,brand+'_POTENTIAL_GROWTH',ctx);for(const arg of args)link(receiver,arg);
+      const previous=collectionValues.get(receiver.id);for(const arg of args)collectionValues.set(receiver.id,previous?join(previous,arg):arg);
+      return receiver;
+     }
+     if(['keys','values','entries'].includes(name)){
+      effect(item,n,brand+'_ITERATOR_CREATION',ctx);const iterator=remember({tag:'REF',id:'iterator:'+item.key+':'+n.pos,type:'Iterator',local:true,builtin:'Iterator'});link(iterator,receiver);return iterator;
+     }
+     if(brand==='Map'&&name==='get')return collectionValues.get(receiver.id)||U;
+     if(['has','delete','clear'].includes(name))return U;
+    }
+   }
+   if(receiver&&ts.isPropertyAccessExpression(callee)&&((receiver.type==='number'&&callee.name.text==='toString')||(receiver.type==='string'&&['padStart','padEnd','toString','slice','substring','concat'].includes(callee.name.text)))){
+    effect(item,n,'STRING_RESULT',ctx);return {...U,type:'string'};
+   }
+   const localCallable=!ts.isPropertyAccessExpression(callee)&&!ts.isElementAccessExpression(callee)?expr(callee,s,item,ctx):null;
+   if(localCallable?.callable){const closure=closureValues.get(localCallable.id);if(closure&&!tainted(s,localCallable))return enqueue(closure.target,args,localCallable,s,item,ctx,n);}
+   const target=m.targets(ts.isPropertyAccessExpression(callee)?callee.name:callee,receiver,ts.isPropertyAccessExpression(callee)&&callee.expression.kind===ts.SyntaxKind.SuperKeyword);
    if(!target.length){unknown(item,n,'UNRESOLVED_CALL',ctx);invalidate(s,item,n,ctx,[...(receiver?[receiver]:[]),...args]);return U;}
    let out=null;
    for(const to of target){const v=enqueue(to,args,receiver||U,s,item,ctx,n);out=out?join(out,v):v;}
    return out||U;
   }
   if(ts.isNewExpression(n)){
-   record(allocations,item,n,{kind:'constructor'},ctx);expr(n.expression,s,item,ctx);for(const a of n.arguments||[])expr(a,s,item,ctx);return value(n,'new:'+item.key+':'+n.pos);
+   record(allocations,item,n,{kind:'constructor'},ctx);expr(n.expression,s,item,ctx);const args=(n.arguments||[]).map(a=>expr(a,s,item,ctx));
+   const v=remember({...value(n,'new:'+item.key+':'+n.pos),local:true,dynamicClass:ts.isIdentifier(n.expression)?n.expression.text:undefined});
+   if(builtinConstructor(n.expression,['Map','Set','Array']))v.builtin=n.expression.text;
+   for(const a of args)link(v,a);
+   const cls=m.classes.find(c=>c.name?.text===v.dynamicClass),ctor=cls?.members.find(ts.isConstructorDeclaration);
+   if(cls)for(const p of cls.members)if(ts.isPropertyDeclaration(p)&&p.initializer){
+    const a=expr(p.initializer,s,item,{...ctx,self:v});link(v,a);s.heap.set(v.id+'.'+p.name.getText(),a);
+   }
+   if(ctor?.body)enqueue(m.byNode.get(ctor),args,v,s,item,ctx,n);
+   return v;
   }
   if(ts.isObjectLiteralExpression(n)){
    record(allocations,item,n,{kind:'object-literal'},ctx);
-   for(const p of n.properties){if(ts.isPropertyAssignment(p))expr(p.initializer,s,item,ctx);else if(ts.isShorthandPropertyAssignment(p))expr(p.name,s,item,ctx);else if(ts.isSpreadAssignment(p)){expr(p.expression,s,item,ctx);unknown(item,p,'SPREAD_OBJECT',ctx);}else unknown(item,p,'OBJECT_METHOD_OR_ACCESSOR',ctx);}
-   return value(n,'literal:'+item.key+':'+n.pos);
+   const v=remember({...value(n,'literal:'+item.key+':'+n.pos),local:true});
+   for(const p of n.properties){if(ts.isPropertyAssignment(p)||ts.isShorthandPropertyAssignment(p)){
+    const a=expr(ts.isPropertyAssignment(p)?p.initializer:p.name,s,item,ctx);link(v,a);s.heap.set(v.id+'.'+p.name.getText(),a);
+   }else if(ts.isSpreadAssignment(p)){link(v,expr(p.expression,s,item,ctx));unknown(item,p,'SPREAD_OBJECT',ctx);}else unknown(item,p,'OBJECT_METHOD_OR_ACCESSOR',ctx);}
+   return v;
   }
   if(ts.isArrayLiteralExpression(n)){
-   record(allocations,item,n,{kind:'array-literal'},ctx);for(const e of n.elements)expr(e,s,item,ctx);return value(n,'array:'+n.pos);
+   record(allocations,item,n,{kind:'array-literal'},ctx);const v=remember({...value(n,'array:'+n.pos),local:true,builtin:'Array'});for(const e of n.elements)link(v,expr(e,s,item,ctx));return v;
   }
-  if(ts.isArrowFunction(n)||ts.isFunctionExpression(n)){record(allocations,item,n,{kind:'closure'},ctx);unknown(item,n,'CLOSURE_BODY_NOT_MODELED',ctx);return U;}
+  if(ts.isArrowFunction(n)||ts.isFunctionExpression(n)){
+   record(allocations,item,n,{kind:'closure'},ctx);const v=remember({tag:'REF',id:'closure:'+item.key+':'+n.pos,type:'Function',local:true,callable:true});
+   const used=new Set();let usesThis=false;function capture(x){if(ts.isIdentifier(x))used.add(x.text);if(x.kind===ts.SyntaxKind.ThisKeyword)usesThis=true;ts.forEachChild(x,capture);}capture(n.body);
+   const captures=new Map([...s.env].filter(([k])=>used.has(k)));
+   const previous=closureValues.get(v.id);let lexicalThis=ts.isArrowFunction(n)?ctx.self:null;
+   if(previous){
+    for(const key of new Set([...previous.env.keys(),...captures.keys()]))captures.set(key,join(previous.env.get(key)||U,captures.get(key)||U));
+    if(lexicalThis&&previous.lexicalThis)lexicalThis=join(previous.lexicalThis,lexicalThis);
+    if([...captures].some(([k,a])=>!same(a,previous.env.get(k)||U))||(lexicalThis&&previous.lexicalThis&&!same(lexicalThis,previous.lexicalThis)))unknown(item,n,'NOT_IMPLEMENTED_ANALYZER:CLOSURE_CAPTURE_CONTEXT_JOIN',ctx);
+   }
+   closureValues.set(v.id,{target:m.byNode.get(n),env:captures,lexicalThis});
+   for(const a of captures.values())link(v,a);if(ts.isArrowFunction(n)&&usesThis)link(v,ctx.self);return v;
+  }
   if(ts.isTemplateExpression(n)){record(allocations,item,n,{kind:'template-string'},ctx);for(const p of n.templateSpans)expr(p.expression,s,item,ctx);return U;}
   unknown(item,n,'UNSUPPORTED_EXPRESSION:'+ts.SyntaxKind[n.kind],ctx);ts.forEachChild(n,c=>{if(ts.isExpressionNode(c))expr(c,s,item,ctx);});return U;
  }
@@ -315,6 +467,50 @@ function audit(options={}){
     let finalInput=merge(before,out);for(const exit of ctx.abrupt.slice(abruptStart))finalInput=merge(finalInput,exit);
     finalInput.completion='normal';out=statement(n.finallyBlock,finalInput,item,ctx);if(out.completion==='normal'){out.completion=completion;out.result=result;}}
    return out;
+  }
+  if(ts.isForOfStatement(n)){
+   const iterable=expr(n.expression,s,item,ctx);
+   // Unknown protocols remain a named analyzer limitation. Known local class
+   // protocols execute the real iterator/next/return bodies, including close.
+   const cls=m.classes.find(c=>c.name?.text===iterable.dynamicClass);
+   function methodOf(c,name,seen=new Set()){
+    if(!c||seen.has(c))return null;seen.add(c);
+    const own=c.members.find(p=>p.name?.getText()===name&&p.body);if(own)return own;
+    for(const clause of c.heritageClauses||[])if(clause.token===ts.SyntaxKind.ExtendsKeyword)for(const t of clause.types){
+     const parent=m.classes.find(x=>x.name?.text===t.expression.getText()),found=methodOf(parent,name,seen);if(found)return found;
+    }return null;
+   }
+   const start=methodOf(cls,'[Symbol.iterator]');
+   let iterator;
+   if(start)iterator=enqueue(m.byNode.get(start),[],iterable,s,item,ctx,n);
+   else if(['Map','Set','Array','Iterator'].includes(iterable.builtin)){
+    effect(item,n,'BUILTIN_FOR_OF_ITERATOR_CREATION',ctx);iterator=iterable;
+   }else unknown(item,n,'NOT_IMPLEMENTED_ANALYZER:ITERATOR_PROTOCOL',ctx);
+   function invoke(name,state,required){
+    const c=m.classes.find(c=>c.name?.text===iterator?.dynamicClass),method=methodOf(c,name);
+    if(method)return enqueue(m.byNode.get(method),[],iterator,state,item,ctx,n);
+    if(iterator?.builtin){if(name==='next')effect(item,n,'BUILTIN_ITERATOR_RESULT',ctx);return U;}
+    if(required)unknown(item,n,'NOT_IMPLEMENTED_ANALYZER:ITERATOR_'+name.toUpperCase(),ctx);return U;
+   }
+   let head=clone(s),converged=false;
+   for(let i=0;i<8;i++){
+    const step=clone(head),next=invoke('next',step,true);
+    const done=property(next,'done',n,step,item,ctx);
+    if(truth(done)===true){head=merge(head,step);converged=true;break;}
+    const element=property(next,'value',n,step,item,ctx);
+    if(ts.isVariableDeclarationList(n.initializer)&&n.initializer.declarations.length===1&&ts.isIdentifier(n.initializer.declarations[0].name))step.env.set(n.initializer.declarations[0].name.text,element);
+    else unknown(item,n,'NOT_IMPLEMENTED_ANALYZER:ITERATOR_BINDING',ctx);
+    const abruptStart=ctx.abrupt.length,exitStart=ctx.exits.length,body=statement(n.statement,step,item,ctx);
+    const abrupt=[...ctx.abrupt.slice(abruptStart),...ctx.exits.slice(exitStart),body];
+    for(const exit of abrupt)if(['break','return','throw'].includes(exit.completion))invoke('return',exit,false);
+    // A potentially throwing body also requires close; this conservative path
+    // includes calls whose JavaScript exception summary is unknown.
+    invoke('return',body,false);
+    body.completion='normal';const widened=merge(head,body);
+    if(stateId(widened)===stateId(head)){head=widened;converged=true;break;}head=widened;
+   }
+   if(!converged)unknown(item,n,'NOT_IMPLEMENTED_ANALYZER:ITERATOR_FIXPOINT',ctx);
+   head.completion='normal';return head;
   }
   if(ts.isForStatement(n)||ts.isWhileStatement(n)||ts.isDoStatement(n)){
    if(ts.isForStatement(n)&&n.initializer){if(ts.isVariableDeclarationList(n.initializer)){
@@ -352,7 +548,7 @@ function audit(options={}){
  const rootItems=m.nodes.filter(n=>ORIGINAL_FILES.includes(n.file)&&(ROOT_NAMES.includes(n.name)||(ts.isGetAccessorDeclaration(n.node)&&n.file==='P011ParticleHot.ets')));
  if(ROOT_NAMES.some(name=>!rootItems.some(n=>n.name===name)))issues.push({reason:'ROOT_MISSING'});
  for(const item of rootItems){
-  const self=ts.isMethodDeclaration(item.node)||ts.isGetAccessorDeclaration(item.node)?{tag:'REF',id:'root:'+item.key+':this',type:item.owner,proven:true}:U;
+  const self=ts.isMethodDeclaration(item.node)||ts.isGetAccessorDeclaration(item.node)?remember({tag:'REF',id:'root:'+item.key+':this',type:item.owner,dynamicClass:m.classes.some(c=>c.name?.text!==item.owner&&m.descends(c,item.owner))?undefined:item.owner,proven:true}):U;
   const args=item.node.parameters.map(p=>value(p,'root:'+item.key+':'+p.name.getText(),typeName(checker,p)==='P011ParticleHotWorkspace'));
   // Only a root Workspace argument carries the OFF assertion. An unrelated typed workspace
   // obtained later is not automatically null. Constructor-owned work paths need real proof.
@@ -363,9 +559,11 @@ function audit(options={}){
   if(processed++>=2500){issues.push({reason:'ANALYSIS_CONTEXT_LIMIT',remaining:queue.length});return;}
   const item=ctx.item;usedFiles.add(item.file);active.add(ctx.key);
   ctx.abrupt=[];ctx.exits=[];
-  const s={env:new Map(),heap:new Map(ctx.heap),completion:'normal',result:U};
+  const s={env:new Map(ctx.captures||[]),heap:new Map(ctx.heap),completion:'normal',result:U};
   for(let i=0;i<item.node.parameters.length;i++){const p=item.node.parameters[i];if(!ts.isIdentifier(p.name))unknown(item,p,'PARAMETER_DESTRUCTURING',ctx);else s.env.set(p.name.text,ctx.args[i]||U);}
-  const result=statement(item.node.body,s,item,ctx);let merged=result,returned=null;
+  const result=ts.isBlock(item.node.body)?statement(item.node.body,s,item,ctx):s;
+  if(!ts.isBlock(item.node.body)){result.result=expr(item.node.body,s,item,ctx);ctx.exits.push(clone(result));}
+  let merged=result,returned=null;
   for(const exit of ctx.exits){merged=merge(merged,exit);returned=returned?join(returned,exit.result):exit.result;}
   returns.set(ctx.key,returned||D);outputs.set(ctx.key,merged);active.delete(ctx.key);
  }
@@ -394,14 +592,16 @@ function audit(options={}){
  let commit='UNKNOWN',dirty='UNKNOWN';try{commit=cp.execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim();dirty=cp.execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:repo,encoding:'utf8'}).trim();}catch{}
  const sourceManifest=[...closure].sort().map(file=>{const p=path.join(m.directory,file);if(!fs.existsSync(p))return {file,status:'MISSING'};
   const bytes=fs.readFileSync(p);return {file,sha256:hash(bytes),bytes:bytes.length,newline:bytes.includes(Buffer.from('\r\n'))?'CRLF':'LF',hashScope:'WORKTREE_RAW_BYTES',parsedTextSha256:hash(m.sources.get(file)?.text||'')};});
- const remaining=allocations.size+unresolved.size+legacy.filter(s=>s.Reachability==='HOT_REACHABLE').length+issues.length;
- return {analysisRevision:'T168_CONTEXT_V1',scope:'Preserved original Hot roots/getters, actual local imports and resolved interface implementations; explicit source allocations only',
+ const remaining=allocations.size+allocationEffects.size+unresolved.size+legacy.filter(s=>s.Reachability==='HOT_REACHABLE').length+issues.length;
+ const unimplemented=x=>/NOT_IMPLEMENTED_ANALYZER:|NOT_MODELED|UNSUPPORTED_|OBJECT_METHOD_OR_ACCESSOR|REQUIRES_LIVE_CELL|FIXPOINT_NOT_REACHED|CONTEXT_LIMIT|RECURSIVE_SUMMARY_NOT_PROVEN/.test(x.reason);
+ return {analysisRevision:'T168_CONTEXT_V2',scope:'Preserved roots, source allocations, builtin allocation effects and fail-closed proof gaps',
   profile,status:complete&&remaining===0?'ZERO_ALLOCATION':'NOT_ZERO_ALLOCATION',remainingSiteCount:remaining,productionHotPathZeroAllocation:complete&&remaining===0,
   profileFacts:{assertion:profile,valid:factsValid&&profile!=='UNKNOWN',defaults:defaultProof,coldBoundary: cold,writeInventory:facts,sourceContract:contractPath,sourceContractSha256:fs.existsSync(contractPath)?hash(fs.readFileSync(contractPath)):null,limitations:'Entry assertions only; operation must not reconfigure. Approved AST write/control-flow fingerprints plus actual defaults are pinned, not arbitrary cold-program theorem proving. Raw configuration changes/unknown escapes fail closed; does not prove runtime GC/SDK implicit allocation.'},
   analysisInputManifest:[__filename,path.join(repo,'test/probe_p011_particle_hot_graph.cjs'),contractPath,registryPath].map(file=>({file,sha256:fs.existsSync(file)?hash(fs.readFileSync(file)):null})),
   sourceManifest:{commit,dirty,sourceRoot:m.directory,files:sourceManifest},rootManifest:rootItems.map(n=>({key:n.key,...m.pos(n.node)})),
-  legacyRegistry:legacy,legacySiteCount:legacy.length,registryComplete:complete,reachableContexts:[...contexts.values()].map(c=>({key:c.key,owner:c.item.key,parameters:c.args.map(brief),witness:c.trace})),
-  callEdges:[...edges.values()],prunedBranches:[...pruned.values()],allocationSites:[...allocations.values()],unresolvedCalls:[...unresolved.values()],analysisIssues:issues,
+  legacyRegistry:legacy,legacySiteCount:legacy.length,registryComplete:complete,reachableContexts:[...contexts.values()].map(c=>({key:c.key,owner:c.item.key,self:brief(c.self),parameters:c.args.map(brief),witness:c.trace})),
+  callEdges:[...edges.values()],prunedBranches:[...pruned.values()],storageProofs:[...storageProofs.values()],havocProofs:[...havocProofs.values()],allocationSites:[...allocations.values()],allocationEffects:[...allocationEffects.values()],unresolvedCalls:[...unresolved.values()],analysisIssues:issues,
+  layers:{SOURCE_ALLOCATIONS:[...allocations.values()],ALLOCATION_EFFECTS:[...allocationEffects.values()],PROOF_GAPS:[...unresolved.values()].filter(x=>!unimplemented(x)),NOT_IMPLEMENTED_ANALYZER:[...unresolved.values()].filter(unimplemented)},
   soundnessLimits:['External/unknown callbacks fail closed','Unsupported syntax fails closed','No unbounded numeric simulation; loop finite-domain fixpoint','Interface implementation set is local closed-source set; external implementations remain outside proof scope'],
   nativeRules:['Math numeric intrinsics (fixed original set)','Number validation intrinsics (fixed original set)','TypedArray.set/fill only after receiver checker type validation']};
 }

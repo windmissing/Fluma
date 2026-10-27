@@ -1,0 +1,89 @@
+{
+  "revision": "T168_GATE_REPORT_V2",
+  "date": "2026-10-27",
+  "device": "NOT_RUN",
+  "runtimeEquivalence": "NOT_RUN_T155_OWNS",
+  "productStability": "NOT_RUN",
+  "profiles": {
+    "OFF_ALL": {
+      "status": "ZERO_ALLOCATION",
+      "remaining": 0,
+      "allocationEffects": 0,
+      "allocationSites": 0,
+      "unresolved": 0,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1032,
+      "pruned": 72,
+      "productionHotPathZeroAllocation": true,
+      "archive": {
+        "file": "test/reports/t168-rev2/off_all.json.gz",
+        "jsonBytes": 2937321,
+        "gzipBytes": 150327,
+        "gzipSha256": "ac7bf2bc244607cd316ab612aa6465efdbb69d78c881420191c633af7bd39689",
+        "jsonSha256": "c387471b7965d828b6ff02ff5b8db59ea2bca9f3ac5a2dfea6634589649b877e"
+      }
+    },
+    "PROGRESS_OFF_EVIDENCE_ON": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 52,
+      "allocationEffects": 5,
+      "allocationSites": 14,
+      "unresolved": 33,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1059,
+      "pruned": 71,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168-rev2/progress_off_evidence_on.json.gz",
+        "jsonBytes": 3208244,
+        "gzipBytes": 159948,
+        "gzipSha256": "d9465c85e6ccaf68fc28e14f476590856807d838052792fd246134e13bce26c7",
+        "jsonSha256": "7168c36cc952c57ccbf965eba76521cf626a3cf606e977521de191f28c1b753a"
+      }
+    },
+    "PROGRESS_ON": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 92,
+      "allocationEffects": 4,
+      "allocationSites": 15,
+      "unresolved": 73,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 2036,
+      "pruned": 28,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168-rev2/progress_on.json.gz",
+        "jsonBytes": 6802054,
+        "gzipBytes": 296684,
+        "gzipSha256": "f46f80ffd2546f8ac19435b4ff6e57da4157606b82d5eb4d7bfc5b2f725e6a83",
+        "jsonSha256": "71942e1ac019b7bdc52d760a5c94a9a252cae7a5d82d485e1432c5475e022ac3"
+      }
+    }
+  },
+  "legacyConservative": {
+    "status": "NOT_ZERO_ALLOCATION",
+    "remaining": 35,
+    "unresolved": 34,
+    "allocationSites": 1,
+    "registryComplete": true,
+    "exactOriginalApiEquality": true,
+    "archive": {
+      "file": "test/reports/t168-rev2/legacy-conservative.json.gz",
+      "jsonBytes": 57308,
+      "gzipBytes": 4665,
+      "gzipSha256": "78ece7d635efaa96cde27395c815ebda79e8ae82f238a73a1d2e527b744fe554",
+      "jsonSha256": "8e888b5086b2015e4f670b35d70a9460a2364ff1d9f282111dc1a50a5009413e"
+    }
+  },
+  "productionHotPathZeroAllocation": true,
+  "delivery": "SOURCE_PROFILE_PROVEN"
+}

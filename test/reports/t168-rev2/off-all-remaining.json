@@ -1,0 +1,525 @@
+{
+  "status": "ZERO_ALLOCATION",
+  "registryComplete": true,
+  "layers": {
+    "SOURCE_ALLOCATIONS": [],
+    "ALLOCATION_EFFECTS": [],
+    "PROOF_GAPS": [],
+    "NOT_IMPLEMENTED_ANALYZER": []
+  },
+  "havocProofs": [],
+  "storageProofs": [
+    {
+      "owner": "P011ParticleHot.ets::beginStepHotBody",
+      "file": "P011ParticleHot.ets",
+      "line": 558,
+      "start": 45230,
+      "end": 45250,
+      "text": "work.fieldBinding[i]",
+      "kind": "BOUNDED_EXISTING_ARRAY_ELEMENT_OVERWRITE",
+      "ownerStorage": {
+        "owner": "P011ParticleHotWorkspace",
+        "field": "fieldBinding",
+        "length": 8,
+        "initializer": {
+          "file": "P011ParticleHot.ets",
+          "line": 363,
+          "start": 30585,
+          "end": 30785,
+          "text": "[this.frozenWaterTop.buffer, this.frozenBh.buffer, this.frozenBl.buffer, this.frozenMh.buffer,\r\n      this.frozenMl.buffer, this.frozenSuspH.buffer, this.frozenSuspL.buffer, this.frozenSurface.buffer]"
+        },
+        "declaration": {
+          "file": "P011ParticleHot.ets",
+          "line": 259,
+          "start": 21902,
+          "end": 21939,
+          "text": "readonly fieldBinding: ArrayBuffer[];"
+        },
+        "sha256": "17d10c102e0f07b863b5cf16eed13e1991d50aec55597134c6ca1910c9c5ee02",
+        "kind": "COLD_OWNED_DENSE_DATA_ARRAY"
+      },
+      "indexBounds": {
+        "min": 0,
+        "max": 7,
+        "witness": {
+          "file": "P011ParticleHot.ets",
+          "line": 558,
+          "start": 45202,
+          "end": 45276,
+          "text": "for (let i = 0; i < 8; i++) work.fieldBinding[i] = fieldBufferAtHot(f, i);"
+        },
+        "integerStep": 1
+      },
+      "valueEffect": "REFERENCE_OR_PRIMITIVE_SLOT_REPLACEMENT_NO_LENGTH_CHANGE",
+      "contextKeys": [
+        "P011ParticleHot.ets::beginStepHotBody#e07fe60034338366df4d"
+      ],
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        }
+      ]
+    }
+  ],
+  "allocationSites": [],
+  "unresolvedCalls": [],
+  "analysisIssues": [],
+  "sourceManifest": {
+    "commit": "62bec6e6b18fb7b8cf74e5a963e6516396b3f73e",
+    "dirty": "M .codex/PIPELINE.md\n M .codex/agents/architect.toml\n M .codex/agents/designer.toml\n M .codex/agents/manager.toml\n M docs/PROJECT_GOALS.md\n M docs/architecture-T176-scene-material-failure-routing-v1.md\n M docs/effect-cases.md\n M docs/gap.md\n M docs/goals.md\n M docs/priority.md\n M docs/task-registry.md\n M \"docs/\\345\\220\\216\\347\\273\\255\\345\\267\\245\\344\\275\\234\\346\\270\\205\\345\\215\\225.md\"\n M test/reports/endpoint_protocol_v1_execution.json\n M test/reports/p013_cpu_reference_execution.json\n M test/reports/t132/p132_results.json\n M test/reports/t134/p134_results.json\n M test/reports/t154/selftest.json\n M test/reports/t168/gate-summary.json\n M test/reports/t168/off-all-remaining.json\n M test/reports/t168/off_all.json.gz\n M test/reports/t168/progress_off_evidence_on.json.gz\n M test/reports/t168/progress_on.json.gz\n M test/reports/t85/selftest-traces.json\n M test/run_t168_hot_context_graph_units.cjs\n M test/tools/p011_hot_context_graph.cjs\n M test/tools/run_t168_gate_report.cjs",
+    "sourceRoot": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\ets\\physics",
+    "files": [
+      {
+        "file": "../common/P011ParticleRenderProjection.ets",
+        "sha256": "8e673f3aee5bef1a2a4fb01af0d6babb044cc5176023652cbb97f9207fb37078",
+        "bytes": 427,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "8e673f3aee5bef1a2a4fb01af0d6babb044cc5176023652cbb97f9207fb37078"
+      },
+      {
+        "file": "../render/P012SandTracer.ets",
+        "sha256": "cd734ad6cbdb49f775a8950bcc6d52ca002678c1e5d43ecf2ce8c0bd3a9ebf64",
+        "bytes": 14357,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "cd734ad6cbdb49f775a8950bcc6d52ca002678c1e5d43ecf2ce8c0bd3a9ebf64"
+      },
+      {
+        "file": "P011EndpointMetrics.ets",
+        "sha256": "666af6c24ed6060c945ff5f928e73f6353a08cc3123f92498ee61f6c1c9c4332",
+        "bytes": 9953,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "666af6c24ed6060c945ff5f928e73f6353a08cc3123f92498ee61f6c1c9c4332"
+      },
+      {
+        "file": "P011ExternalAdmissions.ets",
+        "sha256": "3411b4334855902f04799cda032deadbcc1e8ff827da8b59df632e42690d53fb",
+        "bytes": 8593,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "3411b4334855902f04799cda032deadbcc1e8ff827da8b59df632e42690d53fb"
+      },
+      {
+        "file": "P011FieldColumnEvidenceV2.ets",
+        "sha256": "513c183169f0c5780b8f4aabad1d0d70ee81b890a41385392faf370e9aa11849",
+        "bytes": 10927,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "513c183169f0c5780b8f4aabad1d0d70ee81b890a41385392faf370e9aa11849"
+      },
+      {
+        "file": "P011MaterialGuard.ets",
+        "sha256": "0ab97340dcaf815a62f2aced9712857cb17547ffe71e54f6f46a1d8221563259",
+        "bytes": 12360,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "0ab97340dcaf815a62f2aced9712857cb17547ffe71e54f6f46a1d8221563259"
+      },
+      {
+        "file": "P011MergeExactIndex.ets",
+        "sha256": "642df4452d1a558d19427fa8df8615f9a34a62a8aaf76a526db50219ea4b023f",
+        "bytes": 7198,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "642df4452d1a558d19427fa8df8615f9a34a62a8aaf76a526db50219ea4b023f"
+      },
+      {
+        "file": "P011Moisture.ets",
+        "sha256": "7f2f4c945cfdd39cc31922236afadfc6ebc992ee39d681b819deaac9a11b3ae4",
+        "bytes": 8304,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "7f2f4c945cfdd39cc31922236afadfc6ebc992ee39d681b819deaac9a11b3ae4"
+      },
+      {
+        "file": "P011NaturalObservation.ets",
+        "sha256": "75bb7afa319939517b179d28061cebdf411577350a9d9fa262bdd1fdaa8d6026",
+        "bytes": 50969,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "75bb7afa319939517b179d28061cebdf411577350a9d9fa262bdd1fdaa8d6026"
+      },
+      {
+        "file": "P011ParticleField.ets",
+        "sha256": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5",
+        "bytes": 52790,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5"
+      },
+      {
+        "file": "P011ParticleHot.ets",
+        "sha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+        "bytes": 94681,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12"
+      },
+      {
+        "file": "P011ParticleHotBudget.ets",
+        "sha256": "2480c3b2ada7ae6540f6011add46905e6d866838dad703761491377bb75540fb",
+        "bytes": 13272,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "2480c3b2ada7ae6540f6011add46905e6d866838dad703761491377bb75540fb"
+      },
+      {
+        "file": "P011ParticleHotEvidence.ets",
+        "sha256": "c135b69b349625a35c4fa1a349193c02193225b0a89905c236fcc38fd988fd55",
+        "bytes": 8050,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "c135b69b349625a35c4fa1a349193c02193225b0a89905c236fcc38fd988fd55"
+      },
+      {
+        "file": "P011ParticleHotPrototype.ets",
+        "sha256": "50769c438309f7caee594d2c9051690c28455b8c650351e239d65b3dc0513fe5",
+        "bytes": 16228,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "50769c438309f7caee594d2c9051690c28455b8c650351e239d65b3dc0513fe5"
+      },
+      {
+        "file": "P011ParticleM2Field.ets",
+        "sha256": "46747913fbc96b5d8e51530582967d1089a731ba44899de38f9a37b4e90c13f6",
+        "bytes": 23641,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "46747913fbc96b5d8e51530582967d1089a731ba44899de38f9a37b4e90c13f6"
+      },
+      {
+        "file": "P011ParticleM2Projection.ets",
+        "sha256": "725bc69e0b6949d5d1c8e61301694bfa5b4f495e048cd22b9fdd9316f9402ee2",
+        "bytes": 2981,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "725bc69e0b6949d5d1c8e61301694bfa5b4f495e048cd22b9fdd9316f9402ee2"
+      },
+      {
+        "file": "P011ParticleM2Sink.ets",
+        "sha256": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+        "bytes": 20420,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53"
+      },
+      {
+        "file": "P011ParticlePrototype.ets",
+        "sha256": "e5d2a7c391368b5e6913be663af0c81b521821a2a0f9bc53e35b78f5ebee4cd4",
+        "bytes": 25229,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "e5d2a7c391368b5e6913be663af0c81b521821a2a0f9bc53e35b78f5ebee4cd4"
+      },
+      {
+        "file": "P011ParticleRefundAdapter.ets",
+        "sha256": "274cc91e58bc1c9524460a7f9d1dc85b40f40bb0bdba63b96d8e91773050ea5d",
+        "bytes": 10263,
+        "newline": "LF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "274cc91e58bc1c9524460a7f9d1dc85b40f40bb0bdba63b96d8e91773050ea5d"
+      },
+      {
+        "file": "P011PeakMetrics.ets",
+        "sha256": "071045cd58f75bc4327d99166eb907b2cd6091b92cac3a3c8ad696c1c32ea9ef",
+        "bytes": 8534,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "071045cd58f75bc4327d99166eb907b2cd6091b92cac3a3c8ad696c1c32ea9ef"
+      },
+      {
+        "file": "P011PoolProgressDiagnostic.ets",
+        "sha256": "c92ad8bc4a42948a04570a95ecdc76aa3e4ba30b68a8b6595dfe239c0590f8a4",
+        "bytes": 11897,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "c92ad8bc4a42948a04570a95ecdc76aa3e4ba30b68a8b6595dfe239c0590f8a4"
+      },
+      {
+        "file": "P011PublishedRenderState.ets",
+        "sha256": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776",
+        "bytes": 1079,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776"
+      },
+      {
+        "file": "P011RelaxCorrection.ets",
+        "sha256": "09d6ddf8fcc489396c7e49df2c37e3e96b40f5115aaae2c3e99be68cb3808cde",
+        "bytes": 19439,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "09d6ddf8fcc489396c7e49df2c37e3e96b40f5115aaae2c3e99be68cb3808cde"
+      },
+      {
+        "file": "P011RelaxHysteresis.ets",
+        "sha256": "24d87ae2195410035d51396bba215b6b9a44131680bf0642763cdeb663088f93",
+        "bytes": 9152,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "24d87ae2195410035d51396bba215b6b9a44131680bf0642763cdeb663088f93"
+      },
+      {
+        "file": "P011SchedulePlayer.ets",
+        "sha256": "a6a5688256575cd7e90c228c40a992c4cac1daf7fa697c489a6923d52d87d110",
+        "bytes": 17024,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "a6a5688256575cd7e90c228c40a992c4cac1daf7fa697c489a6923d52d87d110"
+      },
+      {
+        "file": "P011ScheduleV3.ets",
+        "sha256": "b5814db7c836072977bfc8808928133e1cd1c4d5e2d9b05388b8bb0422f6cf1e",
+        "bytes": 9395,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "b5814db7c836072977bfc8808928133e1cd1c4d5e2d9b05388b8bb0422f6cf1e"
+      },
+      {
+        "file": "P011TiltPlanningPass.ets",
+        "sha256": "3a4b95a3a1e1f2fe1257bcfad3234cf3a416389a7032a252cf2664cce0a27e2d",
+        "bytes": 22381,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "3a4b95a3a1e1f2fe1257bcfad3234cf3a416389a7032a252cf2664cce0a27e2d"
+      },
+      {
+        "file": "P011TiltPreviewTrace.ets",
+        "sha256": "99946368181a5fc5fbbbb8f0103705a473e4a19bc6d1af2cb4043b139013fe25",
+        "bytes": 6651,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "99946368181a5fc5fbbbb8f0103705a473e4a19bc6d1af2cb4043b139013fe25"
+      },
+      {
+        "file": "P011TiltWant.ets",
+        "sha256": "5f3b005763d894c834e16cb7eaf05779396c7ecdcc3d8d63261dc1f9ff3a9ab3",
+        "bytes": 18520,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "5f3b005763d894c834e16cb7eaf05779396c7ecdcc3d8d63261dc1f9ff3a9ab3"
+      },
+      {
+        "file": "P051DryParticleAdmission.ets",
+        "sha256": "d7b830a1bd5d6f58f4eb8cead2ee1acee25f93d126bdfbaff6e6c4cb87db5197",
+        "bytes": 1751,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "d7b830a1bd5d6f58f4eb8cead2ee1acee25f93d126bdfbaff6e6c4cb87db5197"
+      },
+      {
+        "file": "WaterSandField.ets",
+        "sha256": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d",
+        "bytes": 353618,
+        "newline": "CRLF",
+        "hashScope": "WORKTREE_RAW_BYTES",
+        "parsedTextSha256": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d"
+      }
+    ]
+  },
+  "rootManifest": [
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.reserveInto",
+      "file": "P011ParticleHotBudget.ets",
+      "line": 113,
+      "start": 7694,
+      "end": 10047,
+      "text": "reserveInto(expectedStepEpoch: number, plan: P011ParticleHotPlanBuffer, row: number,\n    receipt: P011ParticleHotTicketReceipt): number {\n    if (this.epoch !== expectedStepEpoch || this.epoch !== this.work.stepEpoch || this.work.active !=="
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.refundInto",
+      "file": "P011ParticleHotBudget.ets",
+      "line": 147,
+      "start": 10350,
+      "end": 11539,
+      "text": "refundInto(token: number, amount: number, out: P011ParticleHotRefundReceipt): number {\n    const i = this.slotHot(token); if (i < 0) return 4;\n    if (!this.storageValidHot()) return 3;\n    if (!(out instanceof P011ParticleHotRefundReceipt)"
+    },
+    {
+      "key": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.closeInto",
+      "file": "P011ParticleHotBudget.ets",
+      "line": 161,
+      "start": 11542,
+      "end": 12052,
+      "text": "closeInto(token: number, committed: number, out: P011ParticleHotRefundReceipt): number {\n    const i = this.slotHot(token); if (i < 0) return 4;\n    if (!this.storageValidHot()) return 3;\n    if (!(out instanceof P011ParticleHotRefundReceip"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.activePatchState",
+      "file": "P011ParticleHot.ets",
+      "line": 434,
+      "start": 36410,
+      "end": 36468,
+      "text": "get activePatchState(): number { return this.patchState; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.requestCount",
+      "file": "P011ParticleHot.ets",
+      "line": 435,
+      "start": 36472,
+      "end": 36534,
+      "text": "get requestCount(): number { return this.planA.requestCount; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.motionCount",
+      "file": "P011ParticleHot.ets",
+      "line": 436,
+      "start": 36538,
+      "end": 36598,
+      "text": "get motionCount(): number { return this.planA.motionCount; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.resultCount",
+      "file": "P011ParticleHot.ets",
+      "line": 437,
+      "start": 36602,
+      "end": 36664,
+      "text": "get resultCount(): number { return this.results.resultCount; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.eventCount",
+      "file": "P011ParticleHot.ets",
+      "line": 438,
+      "start": 36668,
+      "end": 36722,
+      "text": "get eventCount(): number { return this.events.count; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.lineageCount",
+      "file": "P011ParticleHot.ets",
+      "line": 439,
+      "start": 36726,
+      "end": 36789,
+      "text": "get lineageCount(): number { return this.events.lineageCount; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.hotStatus",
+      "file": "P011ParticleHot.ets",
+      "line": 440,
+      "start": 36793,
+      "end": 36844,
+      "text": "get hotStatus(): number { return this.lastStatus; }"
+    },
+    {
+      "key": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+      "file": "P011ParticleHot.ets",
+      "line": 441,
+      "start": 36848,
+      "end": 37877,
+      "text": "copyStateToHot(out: P011ParticleSnapshot): number {\r\n    for (let i = 0; i < 13; i++) {\r\n      const buffer = particleSnapshotBufferAtHot(out, i);\r\n      if (this.ownsBufferHot(buffer)) return this.lastStatus = 3;\r\n      if (this.field !== "
+    },
+    {
+      "key": "P011ParticleHot.ets::checkpointHot",
+      "file": "P011ParticleHot.ets",
+      "line": 576,
+      "start": 46466,
+      "end": 46722,
+      "text": "export function checkpointHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {\r\n  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;\r\n  return work.lastStatus ="
+    },
+    {
+      "key": "P011ParticleHot.ets::rollbackStepHot",
+      "file": "P011ParticleHot.ets",
+      "line": 580,
+      "start": 46724,
+      "end": 48462,
+      "text": "export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {\r\n  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;\r\n  const restored = copyP"
+    },
+    {
+      "key": "P011ParticleHot.ets::compareParticlePlansHot",
+      "file": "P011ParticleHot.ets",
+      "line": 803,
+      "start": 61978,
+      "end": 63916,
+      "text": "export function compareParticlePlansHot(a: P011ParticleHotPlanBuffer, b: P011ParticleHotPlanBuffer): number {\r\n  if (a === b || !planValuesValidHot(a) || !planValuesValidHot(b) || a.ownerId !== b.ownerId || a.runToken !== b.runToken ||\r\n   "
+    },
+    {
+      "key": "P011ParticleHot.ets::preparePatchHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1036,
+      "start": 78980,
+      "end": 81070,
+      "text": "export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBuffer,\r\n  row: number, grantedHeavy: number, grantedLight: number, dispositionCode: number): number {\r\n  if (work.activePatchToken !== 0) { work.lastS"
+    },
+    {
+      "key": "P011ParticleHot.ets::publishPatchHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1076,
+      "start": 81856,
+      "end": 82217,
+      "text": "export function publishPatchHot(work: P011ParticleHotWorkspace, token: number): number {\r\n  const valid = patchLeaseHot(work, token, 1); if (valid !== 0) return work.lastStatus = valid;\r\n  const status = copyPoolDiagnosticHot(work, work.pat"
+    },
+    {
+      "key": "P011ParticleHot.ets::restorePatchHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1081,
+      "start": 82219,
+      "end": 82581,
+      "text": "export function restorePatchHot(work: P011ParticleHotWorkspace, token: number): number {\r\n  const valid = patchLeaseHot(work, token, 2); if (valid !== 0) return work.lastStatus = valid;\r\n  const status = copyPoolDiagnosticHot(work, work.pat"
+    },
+    {
+      "key": "P011ParticleHot.ets::discardPatchHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1086,
+      "start": 82583,
+      "end": 82823,
+      "text": "export function discardPatchHot(work: P011ParticleHotWorkspace, token: number): number {\r\n  const valid = patchLeaseHot(work, token, 1); if (valid !== 0) return work.lastStatus = valid;\r\n  clearPatchHot(work); return work.lastStatus = 0;\r\n}"
+    },
+    {
+      "key": "P011ParticleHot.ets::finishPatchHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1090,
+      "start": 82825,
+      "end": 83213,
+      "text": "export function finishPatchHot(work: P011ParticleHotWorkspace, token: number): number {\r\n  const valid = patchLeaseHot(work, token, 2); if (valid !== 0) return work.lastStatus = valid;\r\n  const p = work.patchPlan; if (p === null) return wor"
+    },
+    {
+      "key": "P011ParticleHot.ets::beginStepHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1214,
+      "start": 92238,
+      "end": 92807,
+      "text": "export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {\r\n  const d=work.poolProgress;let span=-1,code=-1;\r\n  if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=input.attemptToken;d.context.run"
+    },
+    {
+      "key": "P011ParticleHot.ets::collectParticlePlanInto",
+      "file": "P011ParticleHot.ets",
+      "line": 1222,
+      "start": 92811,
+      "end": 93326,
+      "text": "export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, destination: P011ParticleHotPlanBuffer): number {\r\n  const d=work.poolProgress;let span=-1,code=-1;\r\n  if(d!==null){d.epoch=work.stepEpoch;d."
+    },
+    {
+      "key": "P011ParticleHot.ets::finishStepHot",
+      "file": "P011ParticleHot.ets",
+      "line": 1230,
+      "start": 93330,
+      "end": 93772,
+      "text": "export function finishStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {\r\n  const d=work.poolProgress;let span=-1,code=-1;\r\n  if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;\r\n    span=d.begin("
+    },
+    {
+      "key": "P011ParticleHot.ets::applyParticlePlanInto",
+      "file": "P011ParticleHot.ets",
+      "line": 1246,
+      "start": 94229,
+      "end": 94678,
+      "text": "export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,\r\n  plan: P011ParticleHotPlanBuffer,sink: P011ParticleHotCommitSink,results: P011ParticleHotResultBuffer): number {\r\n  const d=work.poolProgress"
+    },
+    {
+      "key": "P011ParticleHotPrototype.ets::guardAdmitInto",
+      "file": "P011ParticleHotPrototype.ets",
+      "line": 28,
+      "start": 1833,
+      "end": 3705,
+      "text": "export function guardAdmitInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, column: number,\r\n  deltaSign: number, requested: number, out: P011ParticleHotGuardBuffer): number {\r\n  if (work.active !== 1 || work.stepEpoch !== exp"
+    }
+  ]
+}

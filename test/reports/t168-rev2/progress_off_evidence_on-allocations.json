@@ -1,0 +1,478 @@
+{
+  "profile": "PROGRESS_OFF_EVIDENCE_ON",
+  "status": "NOT_ZERO_ALLOCATION",
+  "staticSiteCount": 14,
+  "sites": [
+    {
+      "owner": "P011ParticleField.ets::P011ParticleField.totals",
+      "file": "P011ParticleField.ets",
+      "line": 367,
+      "kind": "object-literal",
+      "text": "{ heavy: heavy, light: light, count: this.liveCount, resting: resting }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 533,
+          "start": 43381,
+          "end": 43399,
+          "text": "work.pool.totals()",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011ParticleField.ets::P011ParticleField.totals"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 71,
+      "kind": "constructor",
+      "text": "new DataView(this.sources[i].buffer,\n          this.sources[i].byteOffset,this.sources[i].byteLength)",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        },
+        {
+          "file": "P011FieldColumnEvidenceV2.ets",
+          "line": 139,
+          "start": 7419,
+          "end": 7433,
+          "text": "this.arrays(f)",
+          "caller": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 73,
+      "kind": "constructor",
+      "text": "new Uint8Array(this.sources[i].buffer,\n          this.sources[i].byteOffset,this.cols*8)",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        },
+        {
+          "file": "P011FieldColumnEvidenceV2.ets",
+          "line": 139,
+          "start": 7419,
+          "end": 7433,
+          "text": "this.arrays(f)",
+          "caller": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 146,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 152,
+      "kind": "template-string",
+      "text": "`${this.bufferIds[i]}:${a.byteOffset}:${a.length}:${a.byteLength}`",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 156,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 156,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 158,
+      "kind": "constructor",
+      "text": "new Uint8Array(poolBuffers[i])",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 161,
+      "kind": "object-literal",
+      "text": "{revision:this.revision,column:col,badMask:mask,\n      valueText:valueText,rawBits:rawBits,sumBits:[this.numberBits(s1),this.numberBits(s2),\n        this.numberBits(s3)],finite:finite,negative:negative,sumFinite:Number.isFinite(s3),\n      f",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 162,
+      "kind": "array-literal",
+      "text": "[this.numberBits(s1),this.numberBits(s2),\n        this.numberBits(s3)]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    }
+  ],
+  "unresolvedExternalClock": [],
+  "runtimeAllocations": null,
+  "runtimeBytes": null,
+  "rss": null,
+  "elapsedMs": null
+}
