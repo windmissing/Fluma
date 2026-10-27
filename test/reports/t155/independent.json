@@ -1,0 +1,222 @@
+{
+  "revision": "T155_AUDIT_LOAD_INDEPENDENT_V1",
+  "executedAt": "2026-10-27T06:28:22.041Z",
+  "device": "NOT_RUN (offline per card)",
+  "spec": "T162 V2 §4/§5 + T116 V2§4",
+  "total": 20,
+  "passed": 20,
+  "failed": 0,
+  "staticItems": "NOT_RUN (probe T168 uncommitted; verdicts not claimed)",
+  "results": [
+    {
+      "name": "index sort terminates on full pool; comparisons bounded",
+      "status": "PASS",
+      "detail": {
+        "comparisons": 629,
+        "bound": 1120
+      }
+    },
+    {
+      "name": "index sparse pool: 0/1 live returns false without sorting",
+      "status": "PASS",
+      "detail": {
+        "comparisons": 0,
+        "rebuilds": 2
+      }
+    },
+    {
+      "name": "index identical-key sort terminates, invalid flag semantics",
+      "status": "PASS",
+      "detail": [
+        94,
+        false,
+        11,
+        10
+      ]
+    },
+    {
+      "name": "index invalid ID early exit with invalid=true, no sort completion claimed",
+      "status": "PASS",
+      "detail": {
+        "invalid": true
+      }
+    },
+    {
+      "name": "index duplicate ID rejected invalid=true",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "index NaN/negative radius rejected invalid=true",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "successful seed: per-source counters exact, lambda=1/attempt0, per-seed audit delta",
+      "status": "PASS",
+      "detail": {
+        "seedCalls": 1,
+        "audits": [
+          1,
+          1,
+          1
+        ],
+        "lambda": 1
+      }
+    },
+    {
+      "name": "lambda retry chain: 8 real attempts each with own rebuild, rollback, no fake finish audit",
+      "status": "PASS",
+      "detail": {
+        "seedCalls": 8,
+        "rebuilds": 8,
+        "lambda": 0.0078125
+      }
+    },
+    {
+      "name": "invalid-ID admission: early exit retains error, no invented sort/audit completion",
+      "status": "PASS",
+      "detail": {
+        "sortCollect": 0,
+        "auditFinish": 0
+      }
+    },
+    {
+      "name": "missing clock exports NOT_CAPTURED/null; error preserved on endSpan",
+      "status": "PASS",
+      "detail": {
+        "clock": "NOT_CAPTURED"
+      }
+    },
+    {
+      "name": "monotonic clock: stage start/end captured, monotonic, first-long window captured",
+      "status": "PASS",
+      "detail": {
+        "clock": "MONOTONIC_INJECTED_MS",
+        "startMs": 12.5,
+        "endMs": 37
+      }
+    },
+    {
+      "name": "backwards clock rejected CLOCK_INVALID, elapsed null",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "diagnostics off: no ring exported",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "ring bounded at 32 with dropped accounting on overflow",
+      "status": "PASS",
+      "detail": {
+        "ring": 32,
+        "dropped": 614
+      }
+    },
+    {
+      "name": "ring stays bounded, dropped grows across attempts",
+      "status": "PASS",
+      "detail": {
+        "dropped": 1260
+      }
+    },
+    {
+      "name": "first-long window captures original pool bytes once, frozen after mutation",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "diagnostic on/off equivalence incl. steps and throwing clock",
+      "status": "PASS",
+      "detail": {
+        "clockStatus": "CLOCK_UNAVAILABLE",
+        "stepsEq": true
+      }
+    },
+    {
+      "name": "adapter counterexample A/B source facts: captureFailure totals arg inside E guard; configure does not touch E",
+      "status": "PASS",
+      "detail": {
+        "hasTotalsArg": true,
+        "cfgNoE": true
+      }
+    },
+    {
+      "name": "legacy conservative probe retained (no-arg API, exit contract)",
+      "status": "PASS",
+      "detail": {
+        "remaining": 35,
+        "legacy": 60
+      }
+    },
+    {
+      "name": "OFF_ALL main-graph verdict: NOT_RUN (T168 probe not delivered/uncommitted)",
+      "status": "PASS",
+      "detail": {
+        "probeCommitted": false
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "fixture": "single successful seed",
+      "counters": {
+        "auditSinkRow": 1,
+        "auditApplyTail": 1,
+        "auditFinish": 1,
+        "auditOther": 0,
+        "sortCollectCalls": 1,
+        "sortAuditCalls": 3,
+        "sortComparisons": 21,
+        "sortSiftIterations": 15,
+        "hotPoolTransfers": 10,
+        "indexSortCalls": 0,
+        "indexComparisons": 0,
+        "indexSiftIterations": 0,
+        "indexTreeVisits": 0,
+        "indexRangeQueries": 0,
+        "seedCalls": 1,
+        "beginHotCalls": 1,
+        "collectCalls": 1,
+        "applyCalls": 1,
+        "finishCalls": 1,
+        "birthRequested": 4,
+        "indexRebuilds": 0,
+        "poolCopies": 12,
+        "fieldPoolCopyStateTo": 2,
+        "fieldPoolRestoreSnapshot": 0
+      }
+    },
+    {
+      "fixture": "8 lambda attempts on incompatible full pool",
+      "counters": {
+        "auditSinkRow": 8,
+        "auditApplyTail": 8,
+        "auditFinish": 0,
+        "auditOther": 0,
+        "sortCollectCalls": 8,
+        "sortAuditCalls": 16,
+        "sortComparisons": 2040,
+        "sortSiftIterations": 1080,
+        "hotPoolTransfers": 80,
+        "indexSortCalls": 16,
+        "indexComparisons": 1360,
+        "indexSiftIterations": 720,
+        "indexTreeVisits": 760,
+        "indexRangeQueries": 128,
+        "seedCalls": 8,
+        "beginHotCalls": 8,
+        "collectCalls": 8,
+        "applyCalls": 8,
+        "finishCalls": 0,
+        "birthRequested": 8,
+        "indexRebuilds": 8,
+        "poolCopies": 91,
+        "fieldPoolCopyStateTo": 2,
+        "fieldPoolRestoreSnapshot": 9
+      }
+    }
+  ]
+}
