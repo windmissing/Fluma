@@ -1,0 +1,1007 @@
+{
+  "revision": "T181_RUN_ATTRIBUTION_V1",
+  "date": "2026-10-27",
+  "method": "Read and regroup archived logs only; no test/device execution",
+  "decision": "B3_12_FAILURE_NOTIFICATIONS_BELONG_TO_OLD_PID_RUN; OLD_RUN_FIRST_RAW_FAILURE_NOT_CAPTURED",
+  "files": [
+    {
+      "path": "test/artifacts/t177-real-handheld-20261027/A-static.txt",
+      "bytes": 575458,
+      "sha256": "7b49e9ba1101ed06651763aaf30c4a19fd87016cd8682436dcd675a5b782bcce",
+      "groups": [
+        {
+          "pid": "26353",
+          "run": "p011-run-1793089813667-3",
+          "events": 38,
+          "maxDropped": 0,
+          "first": {
+            "line": 1,
+            "wall": "10-27 19:22:57.097",
+            "pid": "26353",
+            "sequence": 765782,
+            "event": {
+              "kind": "sensor",
+              "time": 2492913785.166578,
+              "runId": "p011-run-1793089813667-3",
+              "commit": 247607,
+              "frame": 123810,
+              "source": "sensor",
+              "x": -9.103242874145508,
+              "y": 1.6065475940704346,
+              "sensorCount": 518161
+            }
+          },
+          "last": {
+            "line": 25,
+            "wall": "10-27 19:22:57.516",
+            "pid": "26353",
+            "sequence": 765819,
+            "event": {
+              "kind": "present",
+              "time": 2492914216.641613,
+              "runId": "p011-run-1793089813667-3",
+              "commit": 247619,
+              "frame": 123816,
+              "code": 0,
+              "swap": true,
+              "reason": ""
+            }
+          },
+          "failureNotificationCount": 0,
+          "firstFailureNotification": null,
+          "lastFailureNotification": null,
+          "firstRawFailureCode": "NOT_CAPTURED",
+          "presentCounts": {
+            "0": 6
+          },
+          "starts": [],
+          "receiptCount": 0,
+          "admittedSum": 0,
+          "firstReceipt": null,
+          "lastReceipt": null
+        },
+        {
+          "pid": "21223",
+          "run": "p011-run-1793100180197-3",
+          "events": 1684,
+          "maxDropped": 0,
+          "first": {
+            "line": 121,
+            "wall": "10-27 19:23:00.211",
+            "pid": "21223",
+            "sequence": 1,
+            "event": {
+              "kind": "tick",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2,
+              "frame": 1,
+              "time": 2492916950.948886,
+              "source": "none",
+              "staleCount": 0,
+              "value": 0,
+              "reason": "active"
+            }
+          },
+          "last": {
+            "line": 1208,
+            "wall": "10-27 19:23:21.129",
+            "pid": "21223",
+            "sequence": 1684,
+            "event": {
+              "kind": "present",
+              "time": 2492937829.956578,
+              "runId": "p011-run-1793100180197-3",
+              "commit": 625,
+              "frame": 321,
+              "code": 0,
+              "swap": true,
+              "reason": ""
+            }
+          },
+          "failureNotificationCount": 0,
+          "firstFailureNotification": null,
+          "lastFailureNotification": null,
+          "firstRawFailureCode": "NOT_CAPTURED",
+          "presentCounts": {
+            "0": 320,
+            "-1": 1
+          },
+          "starts": [],
+          "receiptCount": 0,
+          "admittedSum": 0,
+          "firstReceipt": null,
+          "lastReceipt": null
+        }
+      ],
+      "metrics": [
+        {
+          "line": 337,
+          "wall": "10-27 19:23:03.538",
+          "pid": "21223",
+          "commit": 103,
+          "target": 79.8940258413359,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 574,
+          "wall": "10-27 19:23:07.527",
+          "pid": "21223",
+          "commit": 223,
+          "target": 80.02469106201521,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 762,
+          "wall": "10-27 19:23:11.625",
+          "pid": "21223",
+          "commit": 343,
+          "target": 79.76878990507858,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 948,
+          "wall": "10-27 19:23:15.647",
+          "pid": "21223",
+          "commit": 463,
+          "target": 79.79817933876761,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1136,
+          "wall": "10-27 19:23:19.706",
+          "pid": "21223",
+          "commit": 583,
+          "target": 79.84173374427809,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        }
+      ]
+    },
+    {
+      "path": "test/artifacts/t177-real-handheld-20261027/B-handheld.txt",
+      "bytes": 901061,
+      "sha256": "bd042f9d47fd5969e38f9f309625981d2f4c1993811f4ac3cb9bb565a1992b78",
+      "groups": [
+        {
+          "pid": "21223",
+          "run": "p011-run-1793100180197-3",
+          "events": 2897,
+          "maxDropped": 0,
+          "first": {
+            "line": 1,
+            "wall": "10-27 19:23:22.132",
+            "pid": "21223",
+            "sequence": 1754,
+            "event": {
+              "kind": "sensor",
+              "time": 2492938818.58361,
+              "runId": "p011-run-1793100180197-3",
+              "commit": 647,
+              "frame": 332,
+              "source": "sensor",
+              "x": -9.124360084533691,
+              "y": 1.5967217683792114,
+              "sensorCount": 1089
+            }
+          },
+          "last": {
+            "line": 1584,
+            "wall": "10-27 19:24:00.728",
+            "pid": "21223",
+            "sequence": 4650,
+            "event": {
+              "kind": "present",
+              "time": 2492977430.088661,
+              "runId": "p011-run-1793100180197-3",
+              "commit": 1611,
+              "frame": 814,
+              "code": 0,
+              "swap": true,
+              "reason": ""
+            }
+          },
+          "failureNotificationCount": 0,
+          "firstFailureNotification": null,
+          "lastFailureNotification": null,
+          "firstRawFailureCode": "NOT_CAPTURED",
+          "presentCounts": {
+            "0": 482
+          },
+          "starts": [],
+          "receiptCount": 0,
+          "admittedSum": 0,
+          "firstReceipt": null,
+          "lastReceipt": null
+        }
+      ],
+      "metrics": [
+        {
+          "line": 86,
+          "wall": "10-27 19:23:24.385",
+          "pid": "21223",
+          "commit": 703,
+          "target": 80.12523544843603,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 278,
+          "wall": "10-27 19:23:28.189",
+          "pid": "21223",
+          "commit": 823,
+          "target": 15.111421544518116,
+          "effective": 15.111421544518116,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 467,
+          "wall": "10-27 19:23:32.753",
+          "pid": "21223",
+          "commit": 943,
+          "target": -61.72976106870389,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 663,
+          "wall": "10-27 19:23:37.793",
+          "pid": "21223",
+          "commit": 1063,
+          "target": -61.44420625482316,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 869,
+          "wall": "10-27 19:23:42.802",
+          "pid": "21223",
+          "commit": 1183,
+          "target": -60.007857763530275,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1075,
+          "wall": "10-27 19:23:47.845",
+          "pid": "21223",
+          "commit": 1303,
+          "target": -60.71631688996451,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1268,
+          "wall": "10-27 19:23:52.851",
+          "pid": "21223",
+          "commit": 1423,
+          "target": -60.79017414358473,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1464,
+          "wall": "10-27 19:23:57.892",
+          "pid": "21223",
+          "commit": 1543,
+          "target": -61.10652087232485,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        }
+      ]
+    },
+    {
+      "path": "test/artifacts/t177-real-handheld-20261027/B2-handheld.txt",
+      "bytes": 1684436,
+      "sha256": "a236f1d174f3dd5d5a6a7109b7ca116bef975dbc64181b3980ae57aa7b77fc6b",
+      "groups": [
+        {
+          "pid": "21223",
+          "run": "p011-run-1793100180197-3",
+          "events": 5096,
+          "maxDropped": 1748,
+          "first": {
+            "line": 1,
+            "wall": "10-27 19:26:57.475",
+            "pid": "21223",
+            "sequence": 17514,
+            "event": {
+              "kind": "sensor",
+              "time": 2493154227.294703,
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1449,
+              "source": "sensor",
+              "x": -4.1624345779418945,
+              "y": 5.664154529571533,
+              "sensorCount": 11862
+            }
+          },
+          "last": {
+            "line": 3099,
+            "wall": "10-27 19:27:34.979",
+            "pid": "21223",
+            "sequence": 22609,
+            "event": {
+              "kind": "model.stop",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1450,
+              "time": 2493191734.909373,
+              "x": 92.59511061533867,
+              "y": 36.390918065153016,
+              "reason": "page-physics-failed"
+            }
+          },
+          "failureNotificationCount": 1593,
+          "firstFailureNotification": {
+            "line": 2,
+            "wall": "10-27 19:26:57.476",
+            "pid": "21223",
+            "sequence": 17516,
+            "event": {
+              "kind": "model.stop",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1450,
+              "time": 2493154234.109508,
+              "x": 92.59511061533867,
+              "y": 36.390918065153016,
+              "reason": "page-physics-failed"
+            }
+          },
+          "lastFailureNotification": {
+            "line": 3099,
+            "wall": "10-27 19:27:34.979",
+            "pid": "21223",
+            "sequence": 22609,
+            "event": {
+              "kind": "model.stop",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1450,
+              "time": 2493191734.909373,
+              "x": 92.59511061533867,
+              "y": 36.390918065153016,
+              "reason": "page-physics-failed"
+            }
+          },
+          "firstRawFailureCode": "NOT_CAPTURED",
+          "presentCounts": {},
+          "starts": [
+            {
+              "line": 173,
+              "wall": "10-27 19:26:58.800",
+              "pid": "21223",
+              "sequence": 17764,
+              "event": {
+                "kind": "input.START",
+                "reason": "FAILED",
+                "time": 2493155561.965,
+                "rawTimestamp": 2493155561965000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100180197-3",
+                "commit": 2890,
+                "frame": 1449,
+                "pageFrame": 1449,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 14,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 18,
+                "gestureId": 5,
+                "eventOrdinal": 30,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 73.64130587456135,
+                "y": 192.2685093780849
+              }
+            },
+            {
+              "line": 458,
+              "wall": "10-27 19:27:01.186",
+              "pid": "21223",
+              "sequence": 18205,
+              "event": {
+                "kind": "input.START",
+                "reason": "FAILED",
+                "time": 2493157950.124,
+                "rawTimestamp": 2493157950124000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100180197-3",
+                "commit": 2890,
+                "frame": 1449,
+                "pageFrame": 1449,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 14,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 18,
+                "gestureId": 5,
+                "eventOrdinal": 81,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 70.54347972338053,
+                "y": 183.21816386969397
+              }
+            },
+            {
+              "line": 574,
+              "wall": "10-27 19:27:02.195",
+              "pid": "21223",
+              "sequence": 18389,
+              "event": {
+                "kind": "input.START",
+                "reason": "FAILED",
+                "time": 2493158951.985,
+                "rawTimestamp": 2493158951985000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100180197-3",
+                "commit": 2890,
+                "frame": 1449,
+                "pageFrame": 1449,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 14,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 18,
+                "gestureId": 5,
+                "eventOrdinal": 84,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 93.61413237559552,
+                "y": 178.0691016781836
+              }
+            },
+            {
+              "line": 1737,
+              "wall": "10-27 19:27:17.070",
+              "pid": "21223",
+              "sequence": 20341,
+              "event": {
+                "kind": "input.START",
+                "reason": "FAILED",
+                "time": 2493173824.77,
+                "rawTimestamp": 2493173824770000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100180197-3",
+                "commit": 2890,
+                "frame": 1449,
+                "pageFrame": 1449,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 14,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 18,
+                "gestureId": 5,
+                "eventOrdinal": 153,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 70.54347972338053,
+                "y": 183.21816386969397
+              }
+            }
+          ],
+          "receiptCount": 0,
+          "admittedSum": 0,
+          "firstReceipt": null,
+          "lastReceipt": null
+        }
+      ],
+      "metrics": []
+    },
+    {
+      "path": "test/artifacts/t177-real-handheld-20261027/B3-handheld.txt",
+      "bytes": 1092909,
+      "sha256": "b2670fa528ff5939137b94ae49311c4171b69a5012842210f80bec287a7ee240",
+      "groups": [
+        {
+          "pid": "21223",
+          "run": "p011-run-1793100180197-3",
+          "events": 41,
+          "maxDropped": 1748,
+          "first": {
+            "line": 1,
+            "wall": "10-27 19:29:26.337",
+            "pid": "21223",
+            "sequence": 36037,
+            "event": {
+              "kind": "sensor",
+              "time": 2493303091.035641,
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1449,
+              "source": "sensor",
+              "x": 4.296069145202637,
+              "y": 7.623741626739502,
+              "sensorCount": 19305
+            }
+          },
+          "last": {
+            "line": 29,
+            "wall": "10-27 19:29:26.657",
+            "pid": "21223",
+            "sequence": 36077,
+            "event": {
+              "kind": "model.stop",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1450,
+              "time": 2493303413.14302,
+              "x": 92.59511061533867,
+              "y": 36.390918065153016,
+              "reason": "page-physics-failed"
+            }
+          },
+          "failureNotificationCount": 12,
+          "firstFailureNotification": {
+            "line": 2,
+            "wall": "10-27 19:29:26.337",
+            "pid": "21223",
+            "sequence": 36039,
+            "event": {
+              "kind": "model.stop",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1450,
+              "time": 2493303095.862006,
+              "x": 92.59511061533867,
+              "y": 36.390918065153016,
+              "reason": "page-physics-failed"
+            }
+          },
+          "lastFailureNotification": {
+            "line": 29,
+            "wall": "10-27 19:29:26.657",
+            "pid": "21223",
+            "sequence": 36077,
+            "event": {
+              "kind": "model.stop",
+              "runId": "p011-run-1793100180197-3",
+              "commit": 2890,
+              "frame": 1450,
+              "time": 2493303413.14302,
+              "x": 92.59511061533867,
+              "y": 36.390918065153016,
+              "reason": "page-physics-failed"
+            }
+          },
+          "firstRawFailureCode": "NOT_CAPTURED",
+          "presentCounts": {},
+          "starts": [],
+          "receiptCount": 0,
+          "admittedSum": 0,
+          "firstReceipt": null,
+          "lastReceipt": null
+        },
+        {
+          "pid": "24096",
+          "run": "p011-run-1793100569325-3",
+          "events": 3283,
+          "maxDropped": 0,
+          "first": {
+            "line": 125,
+            "wall": "10-27 19:29:29.341",
+            "pid": "24096",
+            "sequence": 1,
+            "event": {
+              "kind": "tick",
+              "runId": "p011-run-1793100569325-3",
+              "commit": 2,
+              "frame": 1,
+              "time": 2493306082.045799,
+              "source": "none",
+              "staleCount": 0,
+              "value": 0,
+              "reason": "active"
+            }
+          },
+          "last": {
+            "line": 2131,
+            "wall": "10-27 19:30:12.749",
+            "pid": "24096",
+            "sequence": 3283,
+            "event": {
+              "kind": "present",
+              "time": 2493349235.381593,
+              "runId": "p011-run-1793100569325-3",
+              "commit": 1047,
+              "frame": 516,
+              "code": 100,
+              "swap": false,
+              "reason": "SCENE_MATERIAL_DATA"
+            }
+          },
+          "failureNotificationCount": 0,
+          "firstFailureNotification": null,
+          "lastFailureNotification": null,
+          "firstRawFailureCode": "NOT_CAPTURED",
+          "presentCounts": {
+            "0": 506,
+            "100": 9,
+            "-1": 1
+          },
+          "starts": [
+            {
+              "line": 623,
+              "wall": "10-27 19:29:37.268",
+              "pid": "24096",
+              "sequence": 656,
+              "event": {
+                "kind": "input.START",
+                "reason": "ACCEPTED",
+                "time": 2493314014.41,
+                "rawTimestamp": 2493314014410000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100569325-3",
+                "commit": 258,
+                "frame": 129,
+                "pageFrame": 129,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 2,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 1,
+                "gestureId": 1,
+                "eventOrdinal": 1,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 70.54347972338053,
+                "y": 183.21816386969397
+              }
+            },
+            {
+              "line": 1388,
+              "wall": "10-27 19:29:53.210",
+              "pid": "24096",
+              "sequence": 1964,
+              "event": {
+                "kind": "input.START",
+                "reason": "ACCEPTED",
+                "time": 2493329931.423,
+                "rawTimestamp": 2493329931423000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100569325-3",
+                "commit": 762,
+                "frame": 381,
+                "pageFrame": 381,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 2,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 2,
+                "gestureId": 2,
+                "eventOrdinal": 4,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 70.54347972338053,
+                "y": 183.21816386969397
+              }
+            },
+            {
+              "line": 1404,
+              "wall": "10-27 19:29:53.439",
+              "pid": "24096",
+              "sequence": 1992,
+              "event": {
+                "kind": "input.START",
+                "reason": "ACCEPTED",
+                "time": 2493330183.929,
+                "rawTimestamp": 2493330183929000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100569325-3",
+                "commit": 770,
+                "frame": 385,
+                "pageFrame": 385,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 2,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 3,
+                "gestureId": 3,
+                "eventOrdinal": 7,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 49.14402275798678,
+                "y": 203.86179664363277
+              }
+            },
+            {
+              "line": 1703,
+              "wall": "10-27 19:30:00.736",
+              "pid": "24096",
+              "sequence": 2524,
+              "event": {
+                "kind": "input.START",
+                "reason": "ACCEPTED",
+                "time": 2493337354.811,
+                "rawTimestamp": 2493337354811000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100569325-3",
+                "commit": 913,
+                "frame": 452,
+                "pageFrame": 452,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 2,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 4,
+                "gestureId": 4,
+                "eventOrdinal": 19,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 28.75000059604646,
+                "y": 207.30503455083908
+              }
+            },
+            {
+              "line": 1992,
+              "wall": "10-27 19:30:09.202",
+              "pid": "24096",
+              "sequence": 3061,
+              "event": {
+                "kind": "input.START",
+                "reason": "ACCEPTED",
+                "time": 2493345931.861,
+                "rawTimestamp": 2493345931861000,
+                "timestampUnit": "ns",
+                "runId": "p011-run-1793100569325-3",
+                "commit": 1008,
+                "frame": 498,
+                "pageFrame": 498,
+                "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+                "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+                "source": "DOWN",
+                "geometryEpoch": 2,
+                "widthVp": 336.45713588169644,
+                "heightVp": 578.8571428571429,
+                "geometryReady": true,
+                "foreground": true,
+                "inputGeneration": 5,
+                "gestureId": 5,
+                "eventOrdinal": 26,
+                "pointerId": 0,
+                "changedCount": 1,
+                "touchCount": 1,
+                "x": 84.67391479894212,
+                "y": 214.12833168805528
+              }
+            }
+          ],
+          "receiptCount": 15,
+          "admittedSum": 11.209761119842529,
+          "firstReceipt": {
+            "line": 1412,
+            "wall": "10-27 19:29:53.560",
+            "pid": "24096",
+            "sequence": 2006,
+            "event": {
+              "kind": "dry.receipt",
+              "runId": "p011-run-1793100569325-3",
+              "commit": 773,
+              "frame": 387,
+              "time": 2493330271.493016,
+              "sequence": 1,
+              "admitted": 0.4445705986022949,
+              "reason": "ACCEPTED"
+            }
+          },
+          "lastReceipt": {
+            "line": 2018,
+            "wall": "10-27 19:30:09.793",
+            "pid": "24096",
+            "sequence": 3107,
+            "event": {
+              "kind": "dry.receipt",
+              "runId": "p011-run-1793100569325-3",
+              "commit": 1017,
+              "frame": 502,
+              "time": 2493346427.156689,
+              "sequence": 15,
+              "admitted": 1.6873597297668457,
+              "reason": "ACCEPTED"
+            }
+          }
+        }
+      ],
+      "metrics": [
+        {
+          "line": 403,
+          "wall": "10-27 19:29:33.069",
+          "pid": "24096",
+          "commit": 120,
+          "target": 35.365372104801075,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 585,
+          "wall": "10-27 19:29:36.665",
+          "pid": "24096",
+          "commit": 240,
+          "target": -30.04628505357341,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 786,
+          "wall": "10-27 19:29:40.678",
+          "pid": "24096",
+          "commit": 360,
+          "target": -34.225968461481415,
+          "effective": -29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 950,
+          "wall": "10-27 19:29:43.937",
+          "pid": "24096",
+          "commit": 480,
+          "target": -16.444888061884487,
+          "effective": -16.444888061884487,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1126,
+          "wall": "10-27 19:29:47.840",
+          "pid": "24096",
+          "commit": 600,
+          "target": 41.78457976431582,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1306,
+          "wall": "10-27 19:29:51.705",
+          "pid": "24096",
+          "commit": 720,
+          "target": -4.640041634753811,
+          "effective": -4.640041634753811,
+          "shake": 0,
+          "sourceEpoch": 0,
+          "particleMass": 0,
+          "depositedMass": 0
+        },
+        {
+          "line": 1555,
+          "wall": "10-27 19:29:56.780",
+          "pid": "24096",
+          "commit": 849,
+          "target": 50.736524758817986,
+          "effective": 29.999999999999996,
+          "shake": 0,
+          "sourceEpoch": 9,
+          "particleMass": 4.987938343048096,
+          "depositedMass": 0
+        },
+        {
+          "line": 1885,
+          "wall": "10-27 19:30:06.306",
+          "pid": "24096",
+          "commit": 972,
+          "target": 57.008797254263875,
+          "effective": 30.000000000000004,
+          "shake": 0,
+          "sourceEpoch": 12,
+          "particleMass": 7.56861835861206,
+          "depositedMass": 0
+        }
+      ]
+    }
+  ],
+  "console": {
+    "path": "test/artifacts/t177-real-handheld-20261027/run-console.log",
+    "bytes": 1114,
+    "sha256": "246a22bb0c2a694c1924587fe65f6f8fc83616e313335e8a5ae85be8ababec4f",
+    "text": "[19:22:54] T177 capture start (s150 f28ec28e in place from T95)\r\n[19:22:56] A: static baseline (sensor->tilt chain)\r\n[19:23:08] A demo started (device flat on desk)\r\n[19:23:21] A done\r\n[19:23:21] B: handheld window 120s - user tilts device; script auto-touches center periodically\r\n[19:23:25] B posture 1: tilt LEFT, script touches\r\n[19:23:33] B posture 1 done\r\n[19:23:33] B posture 2: back to upright\r\n[19:23:41] B posture 3: tilt RIGHT, script touches\r\n[19:23:49] B posture 3 done\r\n[19:24:00] B done\r\n[19:26:28] B rerun: small-displacement touch\r\n[19:26:55] B rerun: small-displacement touch\r\n[19:27:00] B2 posture 1: tilt LEFT + touch (small disp)\r\n[19:27:07] B2 posture 1 done\r\n[19:27:07] B2 posture 2: upright\r\n[19:27:16] B2 posture 3: tilt RIGHT + touch\r\n[19:27:23] B2 posture 3 done\r\n[19:27:34] B2 done\r\n[19:29:24] B3 cold restart + 3 postures\r\n[19:29:36] B3 demo cold-started (device flat, user ready)\r\n[19:29:36] B3 posture 1: tilt LEFT + touch\r\n[19:29:43] B3 posture 1 done\r\n[19:29:43] B3 posture 2: upright\r\n[19:29:52] B3 posture 3: tilt RIGHT + touch\r\n[19:29:59] B3 posture 3 done\r\n[19:30:12] B3 done\r\n"
+  },
+  "reportedInstallTime": {
+    "value": 1792130688871,
+    "unitIfUnix": "ms",
+    "utcIfUnixMs": "2026-10-16T06:04:48.871Z",
+    "beijingIfUnixMs": "2026-10-16 14:04:48.871 +08:00",
+    "proofOfPackageSha": false
+  },
+  "historicalPackage": {
+    "claimed": "s150 f28ec28e",
+    "independentPackageSourceBinding": "NOT_VERIFIED"
+  },
+  "oldTailIntervalMs": 317.2810139656067
+}

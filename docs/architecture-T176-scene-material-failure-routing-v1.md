@@ -89,7 +89,7 @@ native Reject旁路追加兼容失败mask（run/context/surface/geometry/continu
 | effector（真机、串行） | 有效诊断包+独立无阻断交付后只做一条空场控制与一条同T95拖动注入至首个SCENE_MATERIAL_DATA的短复现；启动立即锁PID/run/package/source，先取同frameToken首错sidecar/原bytes及完整receipt。能复现就停宽矩阵，必要时R2只作一次确认；若未复现如实留未触发/缺证，不能拿离线输入冒设备原因 |
 | 回architect/T176 | 根据innerReason+bits+来源mask确定修复点，工程问题先升工程规格再developer，设计域/新投影交designer；原用例不合理才带证据交manager，不预先放宽 |
 
-设备采集必须stdout/stderr/退出码/实际文件字节/hash归档，同run/substep/commit和frameToken关联，必要的fence/close按真实请求而非抓第一个历史CLOSED。当前run-console及analyze_t95.py未见于指定归档，R1 ledger/admissions亦未见；优先补既存文件/导出结果，不伪称已读完整账本。脚本Dump筛选会漏部分scene CURRENT和系统原日志，补证保存原日志，再派生过滤；PID行尾查活/空freeze文件只说明已检到范围，无完整会话外推。
+设备采集必须stdout/stderr/退出码/实际文件字节/hash归档，同run/substep/commit和frameToken关联，必要的fence/close按真实请求而非抓第一个历史CLOSED。2026-10-27 T181补正：run-console.log实际存在（上轮默认文件列表忽略.log，本轮已按LiteralPath读取）；记录R1/R2动作/末PID，R4明确CLOSED NOT FOUND及R1 store path not found。analyze_t95.py、R1 ledger/admissions仍未见；优先补既存文件/导出结果，不伪称已读完整账本。脚本Dump筛选会漏部分scene CURRENT和系统原日志，补证保存原日志，再派生过滤；PID行尾查活/空freeze文件只说明已检到范围，无完整会话外推。
 
 后续实际修复路由预先限定：
 
