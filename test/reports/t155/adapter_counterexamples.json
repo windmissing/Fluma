@@ -1,0 +1,130 @@
+{
+  "revision": "T155_ADAPTER_COUNTEREXAMPLES_V1",
+  "executedAt": "2026-10-27T07:34:53.741Z",
+  "spec": "T162 V2 §4.1 + independent variants",
+  "probe": "T168 6c0c654",
+  "total": 16,
+  "passed": 16,
+  "failed": 0,
+  "independence": "injection at collectParticlePlanInto (not beginStepHot), marker 777001, registry middle-site removal, classification-level assertions",
+  "results": [
+    {
+      "name": "guard-external-array reachable in collectParticlePlanInto",
+      "status": "PASS",
+      "detail": {
+        "alloc": 16
+      }
+    },
+    {
+      "name": "nonnull parameter binding propagates through helper",
+      "status": "PASS",
+      "detail": {
+        "alloc": 16
+      }
+    },
+    {
+      "name": "E ON: totals allocation reachable only under EVIDENCE profile",
+      "status": "PASS",
+      "detail": {
+        "on": true,
+        "captureCtx": true,
+        "offTotals": false
+      }
+    },
+    {
+      "name": "disable-path rebind invalidates profile proof",
+      "status": "PASS",
+      "detail": {
+        "issues": [
+          "CONFIGURATION_WRITE_INVENTORY_CHANGED",
+          "COLD_FACT_CONTROL_FLOW_CHANGED"
+        ]
+      }
+    },
+    {
+      "name": "cold guard reversal fails closed",
+      "status": "PASS",
+      "detail": {
+        "issues": [
+          "CONFIGURATION_WRITE_INVENTORY_CHANGED",
+          "COLD_FACT_CONTROL_FLOW_CHANGED"
+        ]
+      }
+    },
+    {
+      "name": "d=null: d?.m(new X()) arguments unreachable; separate new reachable",
+      "status": "PASS",
+      "detail": {
+        "argsPruned": true,
+        "sepReachable": true
+      }
+    },
+    {
+      "name": "if/ternary/early-return equivalent null-guards all prune",
+      "status": "PASS",
+      "detail": {
+        "ifP": true,
+        "tP": true,
+        "eP": true
+      }
+    },
+    {
+      "name": "finally allocation reachable after try-return",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "registry missing middle site fails complete",
+      "status": "PASS",
+      "detail": {
+        "complete": false
+      }
+    },
+    {
+      "name": "unknown call escape: post-escape slot reads not pruned (precise invalidation)",
+      "status": "PASS",
+      "detail": {
+        "escU": true,
+        "escapedRead": true
+      }
+    },
+    {
+      "name": "switch case allocation conservatively reachable",
+      "status": "PASS",
+      "detail": {
+        "alloc": 16
+      }
+    },
+    {
+      "name": "reassigned alias not pruned by original null",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "fake TypedArray-style set not exempted by name",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "unknown profile assertion retained",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "OFF_ALL main graph independent reproduction matches archived",
+      "status": "PASS",
+      "detail": {
+        "remaining": 81,
+        "archived": 81,
+        "status": "NOT_ZERO_ALLOCATION"
+      }
+    },
+    {
+      "name": "legacy conservative API unchanged (35 remaining, exit contract)",
+      "status": "PASS",
+      "detail": {
+        "remaining": 35
+      }
+    }
+  ]
+}

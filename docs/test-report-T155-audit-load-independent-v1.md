@@ -60,3 +60,20 @@
 ## 结论
 
 T155 动态独立验证 20/20 PASS：排序终止/比较计数（满/稀疏/同键/非法 ID 分列）、seed/audit 链真实分源次数与 λ/失败/rollback、attempt delta 与阶段计时/未捕获标记、冷 ring 容量/dropped、诊断开关物理等价全部成立。静态项 NOT_RUN（T168 未交付）。无新缺陷上报；未发现产品或诊断实现问题。
+
+## 追验（2026-10-27 晚，T168 6c0c654 交付后）
+
+T168 主门禁上下文适配器交付，本卡静态项前置解除，补独立验证：
+
+1. **探针独立复现**：`audit({profile:'OFF_ALL'})` → NOT_ZERO_ALLOCATION、remaining=81（15 显式分配+66 unresolved）、registry 60/60 完整、0 analysisIssues，与归档 gate-summary.json 逐字段一致；PROGRESS_OFF_EVIDENCE_ON/PROGRESS_ON 均 127 remaining；旧无参保守图 35 remaining 原样保留（exit 契约不变）。
+2. **T168 开发反例自测独立复跑**：`test/run_t168_hot_context_graph_units.cjs` 25/25 PASS。
+3. **T155 独立反例**（`test/p155_adapter_counterexamples.cjs`，16/16 PASS）：与开发自测的差异设计——注入位置在 collectParticlePlanInto（非 beginStepHot）、marker 777001、registry 删中间项（非尾项）、断言到分类字段与精确逃逸语义：
+   - guard 外数组/非空参数绑定/finally 分配/switch 分配均可达并分类记录；
+   - E ON profile 下 totals 对象字面量可达、OFF_ALL 不可达（E 独立于 P 的 profile 语义）；
+   - 配置反向重绑（CONFIGURATION_WRITE_INVENTORY_CHANGED）与冷函数守卫反转（COLD_FACT_CONTROL_FLOW_CHANGED）均 FAIL closed；
+   - `d?.m(new X())` 实参不可达（OPTIONAL_NULL_CALL_AND_ARGUMENTS 精确剪）而分离 `new X()` 可达；if/?:/早返三种等价 null-guard 全剪；
+   - **逃逸失效语义精确**：未知调用逃逸前已捕获局部值保持 NULL 被剪（未知代码不能改变已捕获值——正确），逃逸后新读取走 UNKNOWN 通道不剪（invalidate 不动点正确）；
+   - 伪 TypedArray set 不按名豁免；未知 profile 入口断言保留。
+4. **门禁结论**：OFF_ALL 主图零分配 NOT 达成（productionHotPathZeroAllocation=false），两类证据（真实 M2 闭包源级分配 internalParticleGuard new Map、分析精度缺口 Map/Set 迭代/for-of/closure 摘要 NOT_IMPLEMENTED）按 T168 报告归 architect 首次分流。**工具本身验证通过（fail-closed 无漏放实测），但零分配结论 FAIL 保留，不解除 T156 原静态前置，不宣门禁 PASS。**
+
+T155 卡状态维持"看评论"：动态 20/20 + 静态验证完成（工具正确性证实），但零分配门禁仍 FAIL 待 architect 分流，完整无阻断结论仍以门禁裁定为准。
