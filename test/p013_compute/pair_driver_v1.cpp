@@ -61,7 +61,7 @@ static Result simulatedResult(const PreparedView& p,bool found,uint32_t slotA,ui
  for(int i=0;i<8;i++)w[22+i]=h[48+i];w[30]=kDone;return r;
 }
 int main(int argc,char**argv){const std::string output=argc>1?argv[1]:".codex/local-test/t141/prototype.json";
- std::ostringstream report;report<<"{\"revision\":\"T141_PAIR_PROTOTYPE_V1\",\"runs\":[";
+ std::ostringstream report;report<<"{\"revision\":\"T157_PAIR_DRIVER_V2\",\"runs\":[";
  bool all=true;for(uint32_t cap:{192u,512u}){
   Pool pool(cap);if(argc>3&&!pool.loadFixture(argv[cap==192?2:3]))return 3;
   CpuSlot cpu(cap);PreparedView prepared;RequestIdentity id=identity(0,1,cap);
@@ -81,18 +81,18 @@ int main(int argc,char**argv){const std::string output=argc>1?argv[1]:".codex/lo
   owner.poolMutationSerial++;ownerOK=ownerOK&&verifyAndConsume(prepared,synthetic,owner,checked)==ConsumeStatus::STALE;
   owner.poolMutationSerial--;all=all&&ownerOK;
   ContextSlot gpu;RequestDiagnostics diagnostic;auto init=gpu.initialize(cap,"test/p013_compute/glsl",diagnostic);
-  std::string execution="NOT_RUN",pair="NOT_RUN";uint32_t dispatches=0;
+  std::string execution="NOT_RUN",pair="NOT_RUN",exec=execStatusName(init),consume="NOT_RUN",oracle="NOT_EVALUATED";uint32_t dispatches=0;
   if(init==ExecStatus::OK){id.contextEpoch=gpu.contextEpoch();
    prep=prepareExactRanges(pool.view,.5,id,cpu,prepared);
    Result result;auto done=gpu.executeIntegerPair(prepared,0,{std::chrono::steady_clock::now()+std::chrono::seconds(1)},result,diagnostic);
-   dispatches=diagnostic.dispatchCount;
+   dispatches=diagnostic.dispatchCount;exec=execStatusName(done);
    execution=done==ExecStatus::OK?"OK":"GPU_FAILED";
    if(done==ExecStatus::OK){CurrentOwnerState owner;owner.identity=id;owner.current=&pool.view;
     owner.poolMutationSerial=1;owner.active=true;VerifiedPair verified;
-    auto consumed=verifyAndConsume(prepared,result,owner,verified);
+    auto consumed=verifyAndConsume(prepared,result,owner,verified);consume=consumeStatusName(consumed);
     bool agree=(consumed==ConsumeStatus::OK&&oldFound&&verified.slotA==oldA&&verified.slotB==oldB)||
       (consumed==ConsumeStatus::NO_PAIR&&!oldFound);
-    pair=agree?"AGREE":"ORACLE_MISMATCH";all=all&&agree;}
+    oracle=agree?"AGREE":consumed==ConsumeStatus::ORACLE_MISMATCH?"ORACLE_MISMATCH":"NOT_EVALUATED";pair=oracle;all=all&&agree;}
    else all=false;
   }else execution=diagnostic.stage.empty()?"ENV_UNSUPPORTED":diagnostic.stage;
   all=all&&ranges;
@@ -101,7 +101,7 @@ int main(int argc,char**argv){const std::string output=argc>1?argv[1]:".codex/lo
    <<",\"rangeOracle\":"<<(ranges?"true":"false")<<",\"ownerProtocol\":"<<(ownerOK?"true":"false")
    <<",\"oldPairFound\":"<<(oldFound?"true":"false")
    <<",\"gpuExecution\":\""<<execution<<"\",\"pairOracle\":\""<<pair
-   <<"\",\"dispatchCount\":"<<dispatches<<",\"gpuRuntime\":null}";
+   <<"\",\"execStatus\":\""<<exec<<"\",\"consumeStatus\":\""<<consume<<"\",\"oracleVerdict\":\""<<oracle<<"\",\"stage\":\""<<diagnostic.stage<<"\",\"rawGlError\":"<<diagnostic.rawGlError<<",\"rawWaitReturn\":"<<diagnostic.rawWaitReturn<<",\"waitReturn\":\""<<diagnostic.waitReturn<<"\",\"dispatchCount\":"<<dispatches<<",\"gpuRuntime\":null}";
  }
  report<<"],\"allOfflineChecks\":"<<(all?"true":"false")<<"}\n";
  std::ofstream f(output,std::ios::binary);f<<report.str();

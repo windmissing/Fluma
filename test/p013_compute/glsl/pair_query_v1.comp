@@ -7,14 +7,14 @@ layout(std430,binding=2) readonly buffer QBlock {uvec4 q[];} Q;
 layout(std430,binding=3) writeonly buffer CBlock {uvec4 c[];} C;
 void inspectSegment(uint level,uint segment,uint idA,uint slotA,uint aRank,uint K,
  inout uvec4 best0,inout uvec4 best1){
- uint length=1u<<level,start=level*K+segment*length;
- uint lo=start,hi=start+length,stop=hi;
+ uint segLen=1u<<level,segStart=level*K+segment*segLen;
+ uint lo=segStart,hi=segStart+segLen,stopAt=hi;
  while(lo<hi){uint mid=lo+(hi-lo)/2u,uId=T.t[mid].x;
   bool invalid=T.t[mid].z==0u;
   if(invalid||uId>idA)hi=mid;else lo=mid+1u;
  }
  // Hard segment-end clamp: the adjacent segment must never supply a false b.
- if(lo>=stop)return;
+ if(lo>=stopAt)return;
  uvec4 b=T.t[lo];if(b.z==0u||b.x<=idA)return;
  if(best0.x==0u||b.x<best0.z){best0=uvec4(1u,idA,b.x,slotA);
   best1=uvec4(b.y,aRank,b.w,0u);}

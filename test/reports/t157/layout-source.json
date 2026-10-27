@@ -1,0 +1,12 @@
+{
+  "suite": "T157_shader_wire_source",
+  "passed": 4,
+  "failed": 0,
+  "execution": "SOURCE_EXPRESSION_EVALUATION_NOT_GPU",
+  "cases": [
+    "PAIR and NO_PAIR all32 words with distinct nonzero SHA tail",
+    "build/query match archived whole-word-renamed bytes",
+    "reduce R0..5 unchanged",
+    "failure handler never rereads consumed GL error"
+  ]
+}

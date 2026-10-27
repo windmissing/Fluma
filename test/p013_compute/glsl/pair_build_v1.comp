@@ -12,11 +12,11 @@ bool lessKey(uvec4 a,uvec4 b){
 }
 void main(){uint j=gl_GlobalInvocationID.x,K=H.h[2].z;
  if(j>=K)return;
- uint m=1u<<uLevel,half=m>>1u,segment=(j/m)*m;
- uint selfStart=segment+((j-segment)>=half?half:0u);
- uint otherStart=segment+((j-segment)>=half?0u:half);
+ uint m=1u<<uLevel,halfM=m>>1u,segment=(j/m)*m;
+ uint selfStart=segment+((j-segment)>=halfM?halfM:0u);
+ uint otherStart=segment+((j-segment)>=halfM?0u:halfM);
  uvec4 x=T.t[(uLevel-1u)*K+j];
- uint lo=0u,hi=half;
+ uint lo=0u,hi=halfM;
  while(lo<hi){uint mid=lo+(hi-lo)/2u;
   if(lessKey(T.t[(uLevel-1u)*K+otherStart+mid],x))lo=mid+1u;
   else hi=mid;

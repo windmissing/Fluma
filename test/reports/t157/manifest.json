@@ -1,0 +1,95 @@
+{
+  "revision": "T157_FORMAL_REPAIR_V1",
+  "date": "2026-10-27",
+  "wire": "P011_GPU_PAIR_WIRE_V1",
+  "architecture": "docs/architecture-T152-gpu-device-routing-v1.md",
+  "shaderExecution": "NOT_RUN_GLES31_UNAVAILABLE",
+  "sourceExpressionCheck": "NOT_GPU_EXECUTION",
+  "productionRouteChanged": false,
+  "files": [
+    {
+      "path": "test/p013_compute/glsl/pair_build_v1.comp",
+      "bytes": 897,
+      "sha256": "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd"
+    },
+    {
+      "path": "test/p013_compute/glsl/pair_query_v1.comp",
+      "bytes": 1406,
+      "sha256": "ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a"
+    },
+    {
+      "path": "test/p013_compute/glsl/pair_reduce_v1.comp",
+      "bytes": 2142,
+      "sha256": "3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9"
+    },
+    {
+      "path": "test/p013_compute/pair_wire_v1.h",
+      "bytes": 2026,
+      "sha256": "9bc54802759b14dc06b7ce6726717daf829138fe8a1337d87f57d3182fe51847"
+    },
+    {
+      "path": "test/p013_compute/wire_schema_v1.json",
+      "bytes": 465,
+      "sha256": "e1d301de8f95c5a223ff3ac09c9cafae0203a2cd7b35ae9598054417e3524b1e"
+    },
+    {
+      "path": "test/p013_compute/tools/generate_wire_schema.cjs",
+      "bytes": 1241,
+      "sha256": "58845756b9463bbe3e6bf3ea907fa03ed25d9935891a26a8507301982ebabfb1"
+    },
+    {
+      "path": "test/p013_compute/pair_executor_v1.h",
+      "bytes": 1801,
+      "sha256": "0a30337cd4b488e0502b8f02ccd7bc586af15c1c50ae32abfc48481e27efd367"
+    },
+    {
+      "path": "test/p013_compute/pair_executor_v1.cpp",
+      "bytes": 12634,
+      "sha256": "4818289ec84221e6f0a89aab2dbfa3e55228cd32cac15f42570c36faccedc045"
+    },
+    {
+      "path": "test/p013_compute/pair_owner_v1.h",
+      "bytes": 854,
+      "sha256": "80a1c13635e3ac20ce8fd36438d4ccff44d68a6c65c30cb9149f1ebb477046e8"
+    },
+    {
+      "path": "test/p013_compute/pair_owner_v1.cpp",
+      "bytes": 3655,
+      "sha256": "719e88e808e3ff3c74e2f1a0b0d3e09a99f7606af24bcc3710a3f2129347b80a"
+    },
+    {
+      "path": "test/p013_compute/pair_driver_v1.cpp",
+      "bytes": 7343,
+      "sha256": "d8d77af620c072e70f2741f73a8ece272817f7701456cfc3b0e2f930a853852a"
+    },
+    {
+      "path": "test/p013_compute/t157_layout_test.cpp",
+      "bytes": 4118,
+      "sha256": "3a678f43c44d7016dca1e2d961448c08d8c563478751068bdaedbc3ca3babf11"
+    },
+    {
+      "path": "test/p013_compute/run_t157_layout.cjs",
+      "bytes": 2466,
+      "sha256": "81cad68584a912cc4bae09a242ee3ce6dbd3ed76b55c6c226d71ad53e92d0feb"
+    },
+    {
+      "path": "test/p013_compute/build_t157.cmd",
+      "bytes": 610,
+      "sha256": "3c055ae2202d11924bd51687e520fe3a40e0e157acadddeaeb1ee9ef70348669"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".codex/local-test/t141/libp011_gpu_pair_prototype.so",
+      "kind": "ARM64_NATIVE_LIBRARY",
+      "bytes": 390640,
+      "sha256": "65945af7601f8194ac0eaff9d2db87adf4fcf8bb913304058546c25c949dfdf7"
+    },
+    {
+      "path": ".codex/local-test/t80-matrix/t141_pair.exe",
+      "kind": "WINDOWS_OFFLINE_DRIVER",
+      "bytes": 422400,
+      "sha256": "35f577bcc4f1abfd59031f10fefc2dc24f0c471cc70c3abc60ca029e46ca6c23"
+    }
+  ]
+}

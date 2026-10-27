@@ -6,10 +6,16 @@
 namespace p011gpu {
 enum class ExecStatus {OK,INPUT_INVALID,CAPACITY_UNSUPPORTED,ENV_UNSUPPORTED,GL_ERROR,TIMEOUT,
  WAIT_FAILED,MAP_FAILED,UNMAP_FAILED,STALE,CANCELLED,PROTOCOL_ERROR};
+inline const char* execStatusName(ExecStatus s){switch(s){
+#define CASE(X) case ExecStatus::X:return #X;
+ CASE(OK) CASE(INPUT_INVALID) CASE(CAPACITY_UNSUPPORTED) CASE(ENV_UNSUPPORTED) CASE(GL_ERROR) CASE(TIMEOUT) CASE(WAIT_FAILED) CASE(MAP_FAILED) CASE(UNMAP_FAILED) CASE(STALE) CASE(CANCELLED) CASE(PROTOCOL_ERROR)
+#undef CASE
+ }return "UNKNOWN";}
 struct RequestDiagnostics {
  std::string stage="NONE",detail="NONE",waitReturn="NOT_RUN";
- uint32_t rawGlError=0,dispatchCount=0,waitCalls=0,contextEpoch=0;
+ uint32_t rawGlError=0,rawWaitReturn=0,dispatchCount=0,waitCalls=0,contextEpoch=0;
  double uploadCpuMs=0,dispatchCpuMs=0,fenceWaitCpuMs=0,mapCpuMs=0,requestCpuMs=0;
+ void preserveGlError(uint32_t observed){if(rawGlError==0)rawGlError=observed;}
  bool gpuTimerMeasured=false,valid=false;
 };
 struct Deadline {std::chrono::steady_clock::time_point at;};
