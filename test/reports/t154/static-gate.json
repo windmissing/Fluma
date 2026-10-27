@@ -1,0 +1,240 @@
+{
+  "baselineCommit": "b21d0e582ef20e5d37a71089ce5eb0fe456d22eb",
+  "baseline": {
+    "status": "NOT_ZERO_ALLOCATION",
+    "unresolved": [
+      {
+        "owner": "P011ParticleHot.ets::beginStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 523,
+        "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\n          input.runToken,input.attemptToken,input.substepId,\n          work.pool.pa"
+      },
+      {
+        "owner": "P011ParticleHot.ets::mergeOldestHot",
+        "file": "P011ParticleHot.ets",
+        "line": 936,
+        "text": "work.mergeIndex.find(p,work.params.mergeHeightRadius)"
+      }
+    ]
+  },
+  "current": {
+    "status": "NOT_ZERO_ALLOCATION",
+    "unresolved": [
+      {
+        "owner": "P011ParticleHot.ets::beginStepHotBody",
+        "file": "P011ParticleHot.ets",
+        "line": 525,
+        "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool."
+      },
+      {
+        "owner": "P011ParticleHot.ets::beforeInOrder",
+        "file": "P011ParticleHot.ets",
+        "line": 664,
+        "text": "d?.increment(6)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::siftDown",
+        "file": "P011ParticleHot.ets",
+        "line": 672,
+        "text": "d.increment(7)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::siftDown",
+        "file": "P011ParticleHot.ets",
+        "line": 672,
+        "text": "d.cursor(root,end,parent,child,end+1)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 697,
+        "text": "d.input(pool)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 697,
+        "text": "d.cursor(Math.floor(count/2)-1,count-1,-1,-1,count)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 698,
+        "text": "d.begin(collect?'SORT_COLLECT':'SORT_AUDIT')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 698,
+        "text": "d.increment(collect?4:5)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 701,
+        "text": "d?.cursor(i,count-1,i,-1,count)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 704,
+        "text": "d?.cursor(0,end,0,-1,count)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::sortOrderHot",
+        "file": "P011ParticleHot.ets",
+        "line": 707,
+        "text": "d?.endSpan(span,0)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::mergeOldestHot",
+        "file": "P011ParticleHot.ets",
+        "line": 949,
+        "text": "work.mergeIndex.find(p,work.params.mergeHeightRadius)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::editPoolHot",
+        "file": "P011ParticleHot.ets",
+        "line": 969,
+        "text": "work.poolProgress?.increment(19,births)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::auditParticleHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1106,
+        "text": "d.begin(source==='SINK_ROW'?'AUDIT_SINK_ROW':source==='APPLY_TAIL'?'AUDIT_APPLY_TAIL':\r\n      source==='FINISH'?'AUDIT_FINISH':'AUDIT_OTHER')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::auditParticleHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1108,
+        "text": "d.increment(source==='SINK_ROW'?0:source==='APPLY_TAIL'?1:source==='FINISH'?2:3)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::auditParticleHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1109,
+        "text": "d?.endSpan(span,code)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::beginStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1213,
+        "text": "d.begin('BEGIN_HOT')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::beginStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1213,
+        "text": "d.increment(15)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::beginStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1215,
+        "text": "d.endSpan(span,code)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+        "file": "P011ParticleHot.ets",
+        "line": 1221,
+        "text": "d.begin('COLLECT')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+        "file": "P011ParticleHot.ets",
+        "line": 1221,
+        "text": "d.increment(16)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+        "file": "P011ParticleHot.ets",
+        "line": 1223,
+        "text": "d.endSpan(span,code)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::finishStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1229,
+        "text": "d.begin('FINISH')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::finishStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1229,
+        "text": "d.increment(18)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::finishStepHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1231,
+        "text": "d.endSpan(span,code)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1236,
+        "text": "d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1236,
+        "text": "d.increment(8)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1236,
+        "text": "d.increment(21)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1237,
+        "text": "d?.input(out)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1238,
+        "text": "d?.input(out)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+        "file": "P011ParticleHot.ets",
+        "line": 1239,
+        "text": "d?.endSpan(span,code)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+        "file": "P011ParticleHot.ets",
+        "line": 1245,
+        "text": "d.begin('APPLY')"
+      },
+      {
+        "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+        "file": "P011ParticleHot.ets",
+        "line": 1245,
+        "text": "d.increment(17)"
+      },
+      {
+        "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+        "file": "P011ParticleHot.ets",
+        "line": 1247,
+        "text": "d?.endSpan(span,code)"
+      }
+    ],
+    "hotAllocationSites": [
+      {
+        "owner": "P011ParticleField.ets::P011ParticleField.totals",
+        "kind": "object-literal",
+        "file": "P011ParticleField.ets",
+        "line": 367,
+        "text": "{ heavy: heavy, light: light, count: this.liveCount, resting: resting }"
+      }
+    ],
+    "remainingSiteCount": 35
+  },
+  "disposition": "STATIC_GATE_UNRESOLVED_REQUIRES_ARCHITECT_OR_TESTER_ADAPTER; NOT_A_ZERO_ALLOCATION_PASS"
+}

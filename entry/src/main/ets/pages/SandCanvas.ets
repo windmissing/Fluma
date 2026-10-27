@@ -1,3 +1,4 @@
+import systemDateTime from '@ohos.systemDateTime';
 import { P013SceneController } from '../render/P013SceneController';
 import { P011ParticleRouteResult } from '../physics/P011ParticleM2Field';
 import { p011AssembleDeviceCapture, p011ArmDeviceParticleRoute, p011BindDevicePhase, p011ApplyDeviceShake } from '../physics/P011DeviceRunAssembly';
@@ -3261,7 +3262,7 @@ struct SandCanvas {
           .onClick(() => {this.scenePipeline=(this.scenePipeline+1)%3;})
           .zIndex(25).fontSize(12).fontColor('#B00020').position({x:20,y:85})
         Button('池诊断切换').onClick(() => {this.poolProgressTraceEnabled=!this.poolProgressTraceEnabled;
-          this.poolProgressTraceRows=0;this.waterSandField?.setPoolProgressDiagnosticEnabled(this.poolProgressTraceEnabled);})
+          this.poolProgressTraceRows=0;this.waterSandField?.setPoolProgressDiagnosticEnabled(this.poolProgressTraceEnabled,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));})
           .zIndex(25).fontSize(12).position({x:180,y:85})
         Button('结束采集').zIndex(30).position({x:20,y:112})
           .onClick(() => {const store=this.naturalObservationStore;if(store!==null)this.finishCapture('ui:'+store.inspect().storeGeneration).catch((e: Error): void=>{this.logWaterSand(e.message);});})

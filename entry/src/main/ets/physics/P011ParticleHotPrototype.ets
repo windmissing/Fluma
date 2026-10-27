@@ -1,7 +1,7 @@
 // P-011 D1-R3 S3: complete isolated HOT sink. No page/renderer/real field binding.
 import { P011ParticleHotWorkspace, P011ParticleHotPlanBuffer, P011ParticleHotResultBuffer,
   P011ParticleHotCommitSink, P011ParticleHotEventBuffer, validateParticleHotRequest,
-  preparePatchHot, publishPatchHot, finishPatchHot, rollbackStepHot, auditParticleHot } from './P011ParticleHot';
+  preparePatchHot, publishPatchHot, finishPatchHot, rollbackStepHot, auditParticleHot, copyPoolDiagnosticHot } from './P011ParticleHot';
 import { P011ParticleHotBudgetAdapter, P011ParticleHotTicketReceipt,
   P011ParticleHotRefundReceipt } from './P011ParticleHotBudget';
 
@@ -118,7 +118,7 @@ export class P011ParticleHotPrototypeSink implements P011ParticleHotCommitSink {
     const c = p.column[row], kind = p.kind[row], requested = p.requested[row];
     let granted = requested, budgetClipped = 0, guardRejected = 0, capacityClipped = 0, poolClipped = 0;
     let ticketToken = 0; let degraded = 0; let guarded = 0; let disposition = 1;
-    const copied = work.pool.transferHotState(work.patchScratch, false); if (copied !== 0) return copied;
+    const copied = copyPoolDiagnosticHot(work,work.patchScratch, false); if (copied !== 0) return copied;
     const target = kind === 3 ? p.targetColumn[row] : c;
     if (target < 0 || target >= work.cols) return 2;
     const free = f.waterTop[target] - sand(work, target) - f.suspH[target] - f.suspL[target] -
@@ -181,7 +181,7 @@ export class P011ParticleHotPrototypeSink implements P011ParticleHotCommitSink {
     if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) return this.failHot(10);
     const published = publishPatchHot(work, token); if (published !== 0) return this.failHot(published);
     if (kind === 1) { work.stepExternalH += gh; work.stepExternalL += gl; }
-    const audit = auditParticleHot(work); if (audit !== 0) return this.failHot(audit);
+    const audit = auditParticleHot(work,'SINK_ROW'); if (audit !== 0) return this.failHot(audit);
     if (this.failAfterPublish !== 0) return this.failHot(13);
     if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, granted, this.refund); if (closed !== 0) return this.failHot(closed); }
     const begin = work.events.count;

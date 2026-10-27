@@ -144,7 +144,46 @@ export class P011ParticleM2FieldBinding {
     b.valid = 1; b.consumed = 0;
     return 0;
   }
-  seed(mass: number, x: number, y: number, vx: number, vy: number,
+  private dryProgressSpan: number=-1;
+  private diagnosticSeedInput(mass: number,x: number,y: number,vx: number,vy: number,
+    phase: number,sourceKind: number,seed: number): void {
+    const d=this.work.poolProgress;if(d===null)return;
+    d.nmax=this.work.nmax;d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;
+    d.epoch=this.work.stepEpoch;d.attemptToken=this.attemptToken+1;
+    d.context.runToken=this.runToken;d.context.ownerId=this.work.ownerId;
+    d.context.mass=mass;d.context.x=x;d.context.y=y;d.context.vx=vx;d.context.vy=vy;
+    d.context.column=Math.floor(x);d.context.phase=phase;d.context.sourceKind=sourceKind;d.context.seed=seed;
+  }
+  seed(mass: number,x: number,y: number,vx: number,vy: number,phase: number,sourceKind: number,sourceId: number): number {
+    const d=this.work.poolProgress;let span=-1,code=-1;
+    if(d!==null){this.diagnosticSeedInput(mass,x,y,vx,vy,phase,sourceKind,sourceId);
+      span=d.begin('SEED');d.increment(14);}
+    try{code=this.seedBody(mass,x,y,vx,vy,phase,sourceKind,sourceId);return code;}
+    finally{if(d!==null){d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;d.endSpan(span,code);}}
+  }
+  beginDryBatch(heavy: number,light: number,x: number,y: number,sourceId: number,seed: number,sourceKind: number=0): boolean {
+    const d=this.work.poolProgress;let ok=false;
+    if(d!==null){this.diagnosticSeedInput(heavy+light,x,y,0,0,-1,sourceKind,seed);
+      this.dryProgressSpan=d.begin('SEED_BATCH');d.increment(14);}
+    try{ok=this.beginDryBatchBody(heavy,light,x,y,sourceId,seed,sourceKind);return ok;}
+    finally{if(!ok&&d!==null){d.endSpan(this.dryProgressSpan,-1);this.dryProgressSpan=-1;}}
+  }
+  finishDryBatch(): boolean {
+    const d=this.work.poolProgress;let ok=false;
+    try{ok=this.finishDryBatchBody();return ok;}
+    finally{if(d!==null){d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;
+      d.endSpan(this.dryProgressSpan,ok?0:-1);this.dryProgressSpan=-1;}}
+  }
+  beginCollect(dt: number,tiltRad: number,substepId: number,seed: number,
+    sourceHeavy: number,sourceLight: number,sourceEpoch: number): number {
+    const d=this.work.poolProgress;let span=-1,code=-1;
+    if(d!==null){d.context.substepId=substepId;d.context.theta=tiltRad;d.context.seed=seed;
+      d.context.sourceEpoch=sourceEpoch;d.attemptToken=this.attemptToken+1;
+      d.nmax=this.work.nmax;d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;span=d.begin('COLLECT_ATTEMPT');}
+    try{code=this.beginCollectBody(dt,tiltRad,substepId,seed,sourceHeavy,sourceLight,sourceEpoch);return code;}
+    finally{d?.endSpan(span,code);}
+  }
+  private seedBody(mass: number, x: number, y: number, vx: number, vy: number,
     phase: number, sourceKind: number, sourceId: number): number {
     if (this.stepOpen !== 0 || this.work.pageBacklog !== 0) return -1;
     if(this.work.diagnosticEnabled)this.seedCalls++;
@@ -155,10 +194,10 @@ export class P011ParticleM2FieldBinding {
       attemptToken: this.attemptToken, dt: 1 / 60, effectiveTiltRad: tilt, seed: sourceId,
       paramsRevision: 1, inputRevision: 1, field: this.field }) !== 0) return -1;
     this.stepOpen = 1;
-    const collectStart=this.work.diagnosticEnabled?Date.now():0;
+    const collectStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const collected=this.collectBirthHeaders();
     if(this.work.diagnosticEnabled)this.seedCollectCalls++;
-    if(this.work.diagnosticEnabled)this.seedCollectMs+=Date.now()-collectStart;
+    if(this.work.diagnosticEnabled)this.seedCollectMs+=(this.work.poolProgress?.clockNow() ?? NaN)-collectStart;
     if (collected !== 0) { this.rollback(); return -1; }
     const a = w.planA, b = w.planB;
     a.requestCount = 1; a.motionCount = 0; a.totalRequested = 0;
@@ -170,32 +209,32 @@ export class P011ParticleM2FieldBinding {
     b.requestCount = 1; b.motionCount = 0; b.totalRequested = 0;
     copyRequestRowHot(a, 0, b, 0);
     this.sink.birthOnly = sourceKind === 1 ? 1 : 0;
-    const applyStart=this.work.diagnosticEnabled?Date.now():0;
+    const applyStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const applied = applyParticlePlanInto(w, w.stepEpoch, a, this.sink, w.results);
     if(this.work.diagnosticEnabled)this.seedApplyCalls++;
-    if(this.work.diagnosticEnabled)this.seedApplyMs+=Date.now()-applyStart;
+    if(this.work.diagnosticEnabled)this.seedApplyMs+=(this.work.poolProgress?.clockNow() ?? NaN)-applyStart;
     this.sink.birthOnly = 0;
     if (applied !== 0 || w.results.granted[0] !== mass) { this.rollback(); return -1; }
-    const finishStart=this.work.diagnosticEnabled?Date.now():0;
+    const finishStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const finished=finishStepHot(w, w.stepEpoch);
-    if(this.work.diagnosticEnabled)this.seedFinishMs+=Date.now()-finishStart;
+    if(this.work.diagnosticEnabled)this.seedFinishMs+=(this.work.poolProgress?.clockNow() ?? NaN)-finishStart;
     if (finished !== 0) { this.rollback(); return -1; }
     this.stepOpen = 0;
     const evidence = this.exportCommittedEvidence();
     for (let i = 0; i < evidence.events.length; i++) { const row = serializeP011ParticleEvent(evidence.events[i], i); if (row !== null) this.birthEventRows.push(row); }
     return 0;
   }
-  beginDryBatch(heavy: number, light: number, x: number, y: number, sourceId: number, seed: number, sourceKind: number = 0): boolean {
+  private beginDryBatchBody(heavy: number, light: number, x: number, y: number, sourceId: number, seed: number, sourceKind: number = 0): boolean {
     if (this.stepOpen !== 0 || this.work.pageBacklog !== 0 || this.field.mediumMode !== 'DRY_AIR_V1') return false;
     if(this.work.diagnosticEnabled)this.seedCalls++;
     this.attemptToken++; const w=this.work;
     if (beginStepHot(w,{runToken:this.runToken,substepId:w.substepId,attemptToken:this.attemptToken,
       dt:1/60,effectiveTiltRad:0,seed:seed,paramsRevision:1,inputRevision:1,field:this.field})!==0)return false;
     this.stepOpen=1;
-    const collectStart=this.work.diagnosticEnabled?Date.now():0;
+    const collectStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const collected=this.collectBirthHeaders();
     if(this.work.diagnosticEnabled)this.seedCollectCalls++;
-    if(this.work.diagnosticEnabled)this.seedCollectMs+=Date.now()-collectStart;
+    if(this.work.diagnosticEnabled)this.seedCollectMs+=(this.work.poolProgress?.clockNow() ?? NaN)-collectStart;
     if(collected!==0){this.rollback();return false;}
     const a=w.planA,b=w.planB;a.requestCount=0;a.motionCount=0;a.totalRequested=0;
     for(let phase=0;phase<2;phase++){
@@ -208,15 +247,15 @@ export class P011ParticleM2FieldBinding {
     b.requestCount=a.requestCount;b.motionCount=0;b.totalRequested=0;
     for(let row=0;row<a.requestCount;row++)copyRequestRowHot(a,row,b,row);
     this.sink.birthOnly=sourceKind===1?1:0;
-    const applyStart=this.work.diagnosticEnabled?Date.now():0;
+    const applyStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const applied=applyParticlePlanInto(w,w.stepEpoch,a,this.sink,w.results);this.sink.birthOnly=0;
     if(this.work.diagnosticEnabled)this.seedApplyCalls++;
-    if(this.work.diagnosticEnabled)this.seedApplyMs+=Date.now()-applyStart;
+    if(this.work.diagnosticEnabled)this.seedApplyMs+=(this.work.poolProgress?.clockNow() ?? NaN)-applyStart;
     if(applied!==0){this.rollback();return false;}
     for(let row=0;row<a.requestCount;row++)if(w.results.granted[row]!==a.requested[row]){this.rollback();return false;}
     return true;
   }
-  finishDryBatch(): boolean {
+  private finishDryBatchBody(): boolean {
     if(this.stepOpen===0)return false;
     if(finishStepHot(this.work,this.work.stepEpoch)!==0){this.rollback();return false;}
     this.stepOpen=0;return true;
@@ -225,7 +264,7 @@ export class P011ParticleM2FieldBinding {
     const rows = this.birthEventRows; this.birthEventRows = []; return rows;
   }
 
-  beginCollect(dt: number, tiltRad: number, substepId: number, seed: number,
+  private beginCollectBody(dt: number, tiltRad: number, substepId: number, seed: number,
     sourceHeavy: number, sourceLight: number, sourceEpoch: number): number {
     this.collectEntry(dt,tiltRad,substepId,seed);
     if (this.stepOpen !== 0) return this.collectExit('ENTRY',P011_PARTICLE_M2_BUSY,0);
@@ -283,6 +322,9 @@ export class P011ParticleM2FieldBinding {
     this.stepOpen = 0; return 0;
   }
   rollback(): void {
+    if(this.work.poolProgress!==null&&this.dryProgressSpan>=0){
+      this.work.poolProgress.endSpan(this.dryProgressSpan,-1);this.dryProgressSpan=-1;}
+
     if (this.work.active !== 0) rollbackStepHot(this.work, this.work.stepEpoch);
     this.stepOpen = 0;
   }

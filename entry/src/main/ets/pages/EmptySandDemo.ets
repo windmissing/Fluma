@@ -1,3 +1,4 @@
+import systemDateTime from '@ohos.systemDateTime';
 import { P051TouchSourceAdapter, P051InputGeometry, P051TouchPoint } from '../physics/P051TouchSourceAdapter';
 import { P013SceneController } from '../render/P013SceneController';
 import { p012FactoryAppearance } from '../render/P012RenderTypes';
@@ -41,7 +42,7 @@ struct EmptySandDemo {
   }
   private resetDemo(): void {
     this.touchSource.invalidate('RESET');this.gravity.reset();this.model.reset();
-    this.model.field.setPoolProgressDiagnosticEnabled(true);
+    this.model.field.setPoolProgressDiagnosticEnabled(true,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));
     this.failureTraceExported=false;this.failureTraces.length=0;this.failureTraceDropped=0;this.armFailureTrace();
     this.publication=this.model.createPublication();this.previousNs=0;
   }
@@ -127,7 +128,7 @@ struct EmptySandDemo {
   @State private status: string = '等待新管线';
   aboutToAppear(): void {
     this.callback.owner = this;this.model.diagnostics=this.diagnostics;
-    this.model.field.setPoolProgressDiagnosticEnabled(true);
+    this.model.field.setPoolProgressDiagnosticEnabled(true,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));
     this.armFailureTrace();
     this.model.field.setGestureSandEventSink((receipt) => {
       this.diagnostics.record({kind:'wet.receipt',time:p013NowMs(),runId:this.model.field.getP011RunId(),commit:this.model.field.getRenderPhysicsCommitId(),frame:this.serial,admitted:receipt.admittedH+receipt.admittedL,reason:receipt.rejectedReason ?? 'ACCEPTED'});

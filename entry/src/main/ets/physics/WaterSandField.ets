@@ -1,5 +1,6 @@
 import { P011TiltPreviewTrace, P011TiltPreviewTraceSink, P011FirstFailureEvidence } from './P011TiltPreviewTrace';
 import { P011FieldColumnEvidenceV2, P011FieldStageIdentity } from './P011FieldColumnEvidenceV2';
+import { P011PoolProgressDiagnostic, P011ProgressClock } from './P011PoolProgressDiagnostic';
 import { P051DryRunConfig, P051DryRunResult, P051DryAdmissionRequest, P051DryAdmissionReceipt, P051_DRY_REVISION, P051_DRY_MEDIUM, P051_DRY_GRAVITY, p051DryRequestError } from './P051DryParticleAdmission';
 import { P011PublishedRenderState, P011RenderCopyStatus, P011RenderPublicationKind } from './P011PublishedRenderState';
 import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
@@ -849,6 +850,7 @@ export class WaterSandField {
     catch(error){return {ok:false,code:'INVALID_PARAMS'};}
     const backup=binding.pool.snapshot(), journal=binding.pool.snapshot(), b=binding.pool.snapshot(), m=binding.pool.snapshot();
     this.particleBinding=binding;this.particleParams=binding.work.params;this.particleRouteId=P011_PARTICLE_ROUTE_ID;
+    this.configurePoolProgressDiagnostic();
     if(this.tiltTraceSink!==null){binding.collectFailureEnabled=true;
       binding.work.fieldColumnEvidenceV2=new P011FieldColumnEvidenceV2(this.cols);
       binding.work.fieldColumnEvidenceV2.bind(binding.field);}
@@ -872,6 +874,9 @@ export class WaterSandField {
     const q=request.requestedH+request.requestedL;const free=Math.max(0,this.capacity-this.waterTop[c]);
     let lambda=Math.min(1,free/q);const eventStart=this.endpointParticleEvents.length;
     for(let attempt=0;attempt<8 && lambda>=1e-4;attempt++){
+      if(binding.work.poolProgress!==null){this.poolDiagnosticOrigin='DRY_ADMISSION';
+        this.poolDiagnosticLambdaAttempt=attempt;this.poolDiagnosticLambda=lambda;
+        this.poolDiagnosticParentSequence=request.sequence;this.updatePoolProgressContext();}
       const h=request.requestedH*lambda,l=request.requestedL*lambda;
       const nH=Math.floor(h/this.particleParams.massPackage),nL=Math.floor(l/this.particleParams.massPackage);
       const slots=nH+(h-nH*this.particleParams.massPackage>0?1:0)+nL+(l-nL*this.particleParams.massPackage>0?1:0);
@@ -1406,6 +1411,7 @@ export class WaterSandField {
     this.dryLastSequence=0;this.dryLastInputTime=0;
     if(this.mediumMode!==P051_DRY_MEDIUM)this.drySourceId=0;
     if(this.particleBinding!==null)this.particleBinding.field.mediumMode=this.mediumMode;
+    if(this.poolProgressEnabled)this.configurePoolProgressDiagnostic();
     this.waterTop.fill(0);
     this.bh.fill(0);
     this.bl.fill(0);
@@ -1426,7 +1432,7 @@ export class WaterSandField {
     this.fillRegions(this.suspL, scene.lightSuspendedRegions, true);
     if (this.particleBinding !== null) {
       this.particleBinding.reset();
-      if (this.particleBackup !== null) this.particleBinding.pool.copyStateTo(this.particleBackup);
+      if (this.particleBackup !== null) this.copyParticleStateDiagnostic(this.particleBackup);
     }
     this.updateSandTop();
     const totals = this.getTotals();
@@ -1779,6 +1785,7 @@ export class WaterSandField {
     for (let attempt = 0; attempt < 8; attempt++) {
       if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
         this.poolDiagnosticLambdaAttempt=attempt;this.poolDiagnosticLambda=lambda;
+        this.updatePoolProgressContext();
       }
       const aH = new Float64Array(this.cols);
       const aL = new Float64Array(this.cols);
@@ -2154,13 +2161,49 @@ export class WaterSandField {
     }
     trace.recordFirstFailure(e);
   }
-  setPoolProgressDiagnosticEnabled(enabled: boolean): void {
-    if(this.particleBinding!==null)this.particleBinding.work.diagnosticEnabled=enabled;
+  private poolProgressEnabled: boolean=false;
+  private poolProgressClock: P011ProgressClock|null=null;
+  setPoolProgressDiagnosticEnabled(enabled: boolean,clock: P011ProgressClock|null=null): void {
+    this.poolProgressEnabled=enabled;this.poolProgressClock=clock;this.configurePoolProgressDiagnostic();
+  }
+  private copyParticleStateDiagnostic(snapshot: P011ParticleSnapshot,restore: boolean=false): void {
+    const b=this.particleBinding;if(b===null)return;
+    const d=b.work.poolProgress;let span=-1,code=-1;
+    if(d!==null){span=d.begin(restore?'FIELD_POOL_RESTORE':'FIELD_POOL_CHECKPOINT');
+      d.increment(21);d.increment(restore?23:22);}
+    if(restore)d?.input(snapshot);
+    try{if(restore)b.pool.restoreSnapshot(snapshot);else b.pool.copyStateTo(snapshot);code=0;
+      if(!restore)d?.input(snapshot);}
+    finally{d?.endSpan(span,code);}
+  }
+  private configurePoolProgressDiagnostic(): void {
+    const b=this.particleBinding;if(b===null)return;const w=b.work;
+    w.diagnosticEnabled=this.poolProgressEnabled;
+    if(!this.poolProgressEnabled){w.poolProgress=null;w.mergeIndex.diagnostic=null;return;}
+    const d=new P011PoolProgressDiagnostic(this.poolProgressClock,w.pool.hotCanonicalBuffers());
+    d.nmax=w.nmax;d.free=w.pool.freeSlotCount;d.live=w.nmax-d.free;
+    const p=w.params;
+    d.config.set([p.massPackage,p.nmax,p.terminalSpeedHeavy,p.terminalSpeedLight,p.dragHeavy,p.dragLight,
+      p.liftSpeedHeavy,p.liftSpeedLight,p.liftSpread,p.mergeColRadius,p.mergeHeightRadius,p.contactEps,p.channelRateCap,
+      b.field.cols,b.field.capacity,b.field.mediumMode==='DRY_AIR_V1'?1:0]);
+    w.poolProgress=d;w.mergeIndex.diagnostic=d;this.updatePoolProgressContext();
+  }
+  private updatePoolProgressContext(): void {
+    const d=this.particleBinding?.work.poolProgress;if(d===undefined||d===null)return;
+    const c=d.context,t=this.planningPassService.trace;
+    c.runId=this.p011RunId;c.stateEpoch=this.renderStateEpoch;c.configRevision=this.configRevision;
+    c.substepId=this.p011SubstepId+1;c.attemptId=this.p011CurrentAttemptId??'';
+    c.candidateRole=t?.current?.role??(this.planningPreviewActive?'NOT_CAPTURED':'AUTHORITATIVE');
+    c.callOrdinal=t?.current?.callOrdinal??0;c.theta=this.effectiveTilt*Math.PI/180;
+    c.preview=this.planningPreviewActive;c.lambdaAttempt=this.poolDiagnosticLambdaAttempt;
+    c.lambda=this.poolDiagnosticLambda;c.sourceEpoch=this.sourceEpoch;c.commit=this.renderPhysicsCommitId;
+    c.energyBefore=this.poolDiagnosticRequestEnergy;c.energyAfter=this.poolDiagnosticEnergyAfter;
+    c.parentSequence=this.poolDiagnosticParentSequence;
   }
   getPoolProgressDiagnostic(): string | null {
     const b=this.particleBinding;if(b===null || !b.work.diagnosticEnabled)return null;
     const w=b.work;
-    return JSON.stringify({revision:'P011_POOL_PROGRESS_DIAGNOSTIC_V2',runId:this.p011RunId,
+    const legacy=JSON.stringify({revision:'P011_POOL_PROGRESS_DIAGNOSTIC_V3',runId:this.p011RunId,
       countersScope:'WORKSPACE_CUMULATIVE',lastOrigin:this.poolDiagnosticOrigin,
       parentSequence:this.poolDiagnosticParentSequence,lambdaAttempt:this.poolDiagnosticLambdaAttempt,
       lambda:this.poolDiagnosticLambda,liftPreview:this.poolDiagnosticLiftPreview,hotAttemptToken:w.attemptToken,
@@ -2184,12 +2227,20 @@ export class WaterSandField {
       firstError:w.diagnosticFirstError,firstErrorStage:w.diagnosticFirstErrorStage,
       liveCount:b.liveCount,freeCount:b.pool.freeSlotCount,nextId:b.pool.nextParticleId,
       failureStatus:w.failureStatus,errorStageCode:w.errorStageCode,rollbackCount:w.rollbackCount});
+    return legacy.substring(0,legacy.length-1)+',"progressV3":'+(w.poolProgress?.exportJson()??'null')+'}';
   }
   getParticleEventTail(limit: number): string[] {
     const count=Math.max(0,Math.min(8,Math.floor(limit)));
     return this.endpointParticleEvents.slice(Math.max(0,this.endpointParticleEvents.length-count));
   }
   step(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
+    const d=this.particleBinding?.work.poolProgress;
+    if(d===undefined||d===null)return this.stepDiagnosticBody(dt,p011Hook);
+    this.updatePoolProgressContext();const span=d.begin('STEP');let code=-1;
+    try{const result=this.stepDiagnosticBody(dt,p011Hook);code=result.errorCode??0;return result;}
+    finally{d.endSpan(span,code);}
+  }
+  private stepDiagnosticBody(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
     if(this.tiltTraceSink===null)return this.stepWithTiltTrace(dt,p011Hook);
     const sink=this.tiltTraceSink;
     this.tiltTracePending=[];
@@ -2831,6 +2882,7 @@ export class WaterSandField {
       this.particleBinding = new P011ParticleM2FieldBinding(this.cols, this.capacity,
         this.waterTop, this.bh, this.bl, this.mh, this.ml, this.suspH, this.suspL,
         this.sandTopScratch, chosen, this);
+      this.configurePoolProgressDiagnostic();
       if(this.tiltTraceSink!==null){this.particleBinding.collectFailureEnabled=true;
         this.particleBinding.work.fieldColumnEvidenceV2=new P011FieldColumnEvidenceV2(this.cols);
         this.particleBinding.work.fieldColumnEvidenceV2.bind(this.particleBinding.field);}
@@ -4269,7 +4321,7 @@ export class WaterSandField {
     }
     if (schemaNum === 4 && target.particleState !== undefined && target.particleState !== null) {
       if (this.particleRouteActive() && this.particleBinding !== null) {
-        this.particleBinding.pool.copyStateTo(target.particleState);
+        this.copyParticleStateDiagnostic(target.particleState);
       } else {
         const state = target.particleState;
         state.liveCount = 0; state.freeCount = state.nmax; state.nextId = 1;
@@ -4302,9 +4354,9 @@ export class WaterSandField {
     this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);
     if (this.particleRouteActive() && this.particleBinding !== null) {
       if (version === 4 && source.particleState !== undefined && source.particleState !== null) {
-        this.particleBinding.pool.restoreSnapshot(source.particleState);
+        this.copyParticleStateDiagnostic(source.particleState,true);
       } else this.particleBinding.pool.reset();
-      if (this.particleBackup !== null) this.particleBinding.pool.copyStateTo(this.particleBackup);
+      if (this.particleBackup !== null) this.copyParticleStateDiagnostic(this.particleBackup);
     }
     const sourceState = source.externalSourceState;
     if (sourceState === undefined) {
@@ -4436,6 +4488,7 @@ export class WaterSandField {
     }
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.particleBinding.registerRun(this.p011RunId);
+      this.updatePoolProgressContext();
       this.observeFieldColumnV2('BEGIN_COLLECT_BEFORE','PARTICLE_BEGIN');
       const particleStatus = this.particleBinding.beginCollect(dt, this.effectiveTilt * Math.PI / 180,
         this.p011SubstepId + 1, this.p011SubstepId + 1, this.sourceInjectedHeavy,
@@ -6887,7 +6940,8 @@ export class WaterSandField {
         this.shakeEnergy *= Math.exp(-this.params.shakeDecay * dt);
       }
     }
-    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled)this.poolDiagnosticEnergyAfter=this.shakeEnergy;
+    if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
+      this.poolDiagnosticEnergyAfter=this.shakeEnergy;this.updatePoolProgressContext();}
     if (requestEnergy <= EPS) {
       return;
     }
@@ -7338,7 +7392,7 @@ export class WaterSandField {
   private saveBackup(): void {
     this.particleEventBackupLength = this.endpointParticleEvents.length;
     if (this.particleRouteActive() && this.particleBinding !== null && this.particleJournalBefore !== null && this.endpointParticleEvents.length === 0) {
-      this.particleBinding.pool.copyStateTo(this.particleJournalBefore);
+      this.copyParticleStateDiagnostic(this.particleJournalBefore);
     }
     this.backup.waterTop.set(this.waterTop);
     this.backup.bh.set(this.bh);
@@ -7356,7 +7410,7 @@ export class WaterSandField {
     this.backup.shakeSourceId = this.shakeSourceId;
     this.backup.shakeSourceSequence = this.shakeSourceSequence;
     if (this.particleBinding !== null && this.particleBackup !== null) {
-      this.particleBinding.pool.copyStateTo(this.particleBackup);
+      this.copyParticleStateDiagnostic(this.particleBackup);
     }
   }
 
@@ -7379,7 +7433,7 @@ export class WaterSandField {
     this.shakeSourceSequence = this.backup.shakeSourceSequence ?? 0;
     if (this.particleBinding !== null && this.particleBackup !== null) {
       this.particleBinding.rollback();
-      this.particleBinding.pool.restoreSnapshot(this.particleBackup);
+      this.copyParticleStateDiagnostic(this.particleBackup,true);
       this.particleBinding.discardCommittedPage();
     }
     this.updateSandTop();

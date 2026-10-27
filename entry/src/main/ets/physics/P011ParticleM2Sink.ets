@@ -1,7 +1,7 @@
 // P-011 D2: production transaction sink. M2 owns canonical field writes; M1 only prepares pool patches.
 import { P011ParticleHotWorkspace, P011ParticleHotPlanBuffer, P011ParticleHotResultBuffer,
   P011ParticleHotCommitSink, P011ParticleHotEventBuffer, validateParticleHotRequest,
-  preparePatchHot, publishPatchHot, finishPatchHot, rollbackStepHot, auditParticleHot } from './P011ParticleHot';
+  preparePatchHot, publishPatchHot, finishPatchHot, rollbackStepHot, auditParticleHot, copyPoolDiagnosticHot } from './P011ParticleHot';
 import { P011ParticleHotBudgetAdapter, P011ParticleHotTicketReceipt,
   P011ParticleHotRefundReceipt } from './P011ParticleHotBudget';
 
@@ -179,7 +179,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     const c = p.column[row], kind = p.kind[row], requested = p.requested[row];
     let granted = requested, budgetClipped = 0, guardRejected = 0, capacityClipped = 0, poolClipped = 0;
     let ticketToken = 0; let degraded = 0; let guarded = 0; let disposition = 1;
-    const copied = work.pool.transferHotState(work.patchScratch, false); if (copied !== 0) return copied;
+    const copied = copyPoolDiagnosticHot(work,work.patchScratch, false); if (copied !== 0) return copied;
     const target = kind === 3 ? p.targetColumn[row] : c;
     if (target < 0 || target >= work.cols) return 2;
     const free = (f.mediumMode === 'DRY_AIR_V1' ? f.capacity : f.waterTop[target]) - sand(work, target) - f.suspH[target] - f.suspL[target] -
@@ -250,7 +250,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);
       if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);
     }
-    const audit = auditParticleHot(work); if (audit !== 0) return this.failHot(audit);
+    const audit = auditParticleHot(work,'SINK_ROW'); if (audit !== 0) return this.failHot(audit);
     if (this.failAfterPublish !== 0) return this.failHot(13);
     if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, granted, this.refund); if (closed !== 0) return this.failHot(closed); }
     const begin = work.events.count;
