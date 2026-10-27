@@ -1,0 +1,706 @@
+{
+  "revision": "CW_ALLOCATION_LEDGER_A_V1",
+  "arrays": [
+    {
+      "name": "canonical.pool.pMass",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pX",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pY",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pVx",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pVy",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.colParticleMassH",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.colParticleMassL",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pPhase",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pSource",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pState",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.pSourceId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.freeSlots",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.prev",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.pool.next",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.W",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.bh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.mh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.S",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.eta",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.P",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.R",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "canonical.auditMass",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pMass",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pX",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pY",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pVx",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pVy",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.colParticleMassH",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.colParticleMassL",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pPhase",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pSource",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pState",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.pSourceId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.freeSlots",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.prev",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.pool.next",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.W",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.bh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.mh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.S",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.eta",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.P",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.R",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "sourceBefore.auditMass",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pMass",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pX",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pY",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pVx",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pVy",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.colParticleMassH",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.colParticleMassL",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pPhase",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pSource",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pState",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.pSourceId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.freeSlots",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.prev",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.pool.next",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.W",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.bh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.mh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.S",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.eta",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.P",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.R",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "stepBefore.auditMass",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pMass",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pX",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pY",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pVx",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pVy",
+      "type": "Float64Array",
+      "length": 512,
+      "byteLength": 4096,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.colParticleMassH",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.colParticleMassL",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pPhase",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pSource",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pState",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.pSourceId",
+      "type": "Uint32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.freeSlots",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.prev",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.pool.next",
+      "type": "Int32Array",
+      "length": 512,
+      "byteLength": 2048,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.W",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.bh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.mh",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.S",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.eta",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.P",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.R",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "work.auditMass",
+      "type": "Float64Array",
+      "length": 128,
+      "byteLength": 1024,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "source.queue20",
+      "type": "Float64Array",
+      "length": 1280,
+      "byteLength": 10240,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "source.dedup56",
+      "type": "Float64Array",
+      "length": 229376,
+      "byteLength": 1835008,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "source.events24",
+      "type": "Float64Array",
+      "length": 98304,
+      "byteLength": 786432,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "source.request20",
+      "type": "Float64Array",
+      "length": 20,
+      "byteLength": 160,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "source.receipt56",
+      "type": "Float64Array",
+      "length": 56,
+      "byteLength": 448,
+      "lifetime": "COLD_RUN_FIXED"
+    },
+    {
+      "name": "engine.auditMarks",
+      "type": "Uint8Array",
+      "length": 512,
+      "byteLength": 512,
+      "lifetime": "COLD_RUN_FIXED"
+    }
+  ],
+  "payloadBytes": 2802784,
+  "coldSnapshotExtraBytes": 2674176,
+  "queueRows": 64,
+  "dedupRows": 4096,
+  "eventRows": 4096,
+  "excluded": [
+    "JS_OBJECT_STRING_VIEW_HEADER_AND_ALIGNMENT_ENGINE_DEPENDENT",
+    "COLD_RETURN_OBJECTS_AND_CALLER_RETAINED_SNAPSHOTS",
+    "NO_NATIVE_GPU_DRIVER_RESOURCES_ALLOCATED_BY_A"
+  ],
+  "notImplemented": [
+    "B_HYDRAULICS_SEGMENTED_PARTICLES_GUARD_EVENTS_LINEAGE",
+    "C_PUBLICATION_RENDER_INPUT_PAGE",
+    "SNAPSHOT_RESTORE_NO_PARTIAL_RESTORE_API"
+  ]
+}

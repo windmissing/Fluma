@@ -1,0 +1,58 @@
+{
+  "scope": "T188_A_SOURCE_INVENTORY_ONLY",
+  "sourceManifest": [
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 10687,
+      "sha256": "5637ead4bdf74a7327e88c125524cf8d8a85ff617f9efaec6274a9c7a46ada73"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 13766,
+      "sha256": "be0f170ad59423c784c18577d0c7d36f0c4595bd4e2df8a6d2eb89447355f195"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterState.ets",
+      "bytes": 9701,
+      "sha256": "5f83a083b712f9152820384ad34c6a14787f6baebd1113669986bcded0b779f6"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterTypes.ets",
+      "bytes": 6688,
+      "sha256": "d50c6352afb006495946a2402d03e8094e1df5c8fd59e7c586286e32c24f66d8"
+    },
+    {
+      "path": "test/run_t188_clear_water_source_units.cjs",
+      "bytes": 14593,
+      "sha256": "adb05069a8e7abe4ab2e3557216de39c349d6fbf0e8bc04f1b6fe1891fbdc276"
+    },
+    {
+      "path": "test/compile_t188_clear_water_modules.py",
+      "bytes": 1745,
+      "sha256": "23730ec1a1e430babe9ad01a6f9e24b5d17e42398b042a1490dc1db6195bab75"
+    },
+    {
+      "path": "entry/build-profile.json5",
+      "bytes": 526,
+      "sha256": "f9465dd68c88732f8ee855da26a0e5b9d72fc601073ef6f1d406da20e699787b"
+    },
+    {
+      "path": "build-profile.json5",
+      "bytes": 1183,
+      "sha256": "5d860f84ce9ef2b3ba85041f7cb7b1227a64c75413025b9e493ee46c1ea7ef03"
+    }
+  ],
+  "forcedArkTSCompile": "PASS",
+  "nativeCompile": "PASS",
+  "PackageHap": "PASS",
+  "SignHap": "FAIL_EXISTING_00303116_PASSWORD_LENGTH",
+  "device": "NOT_RUN",
+  "B": "NOT_IMPLEMENTED",
+  "C": "NOT_IMPLEMENTED",
+  "unsignedArtifact": {
+    "path": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "bytes": 4670356,
+    "sha256": "2deaedc655c6f87c7f5859f6e19cbd7d8573f850557cca6829eaec122d1259b6",
+    "scope": "MAIN_APP_NO_CLEAR_WATER_ROUTE_INTEGRATION"
+  }
+}
