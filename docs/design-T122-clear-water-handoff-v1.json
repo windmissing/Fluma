@@ -1,0 +1,190 @@
+{
+  "revision": "T122_HANDOFF_V1",
+  "date": "2026-10-27",
+  "taskId": "6adf3c1de4b0e6ce82cd4117",
+  "route": "SINGLE_SAND_CLEAR_WATER_V1",
+  "currentGoal": 7,
+  "priority": "P3 after goals 1-6; compute goal 6 highest scheduling priority",
+  "kind": "designer artifact/contract handoff checks only; NOT product/device/test rerun",
+  "workspaceHeadAtHandoff": "75592aaa51acf6677f99acba78dff5c9f082b757",
+  "gitIdentityNote": "Workspace HEAD is context only, not historical T106 artifact commit. Final archive commit is reported in original task comments; manifest does not embed its own future commit/hash.",
+  "assets": [
+    {
+      "path": "docs/algorithm-single-sand-clear-water-v1.md",
+      "bytes": 26110,
+      "sha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808",
+      "gitBlobOid": "bdfa1fdadadc12eab942ddccef3a310a190279e2",
+      "gitBlobBytes": 26110,
+      "gitBlobSha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808"
+    },
+    {
+      "path": "docs/retro-T106-single-sand-clear-water-v1.md",
+      "bytes": 1590,
+      "sha256": "4176e5562053e2708964cbd07395dabbee1179ce8988888ec5bf5894835cc693",
+      "gitBlobOid": "051d6540bdbf0285aae52727e92b44b762e13792",
+      "gitBlobBytes": 1590,
+      "gitBlobSha256": "4176e5562053e2708964cbd07395dabbee1179ce8988888ec5bf5894835cc693"
+    },
+    {
+      "path": "docs/design-T106-single-sand-water-evidence-v1.json",
+      "bytes": 4990,
+      "sha256": "b71717a4c0a4d184bafb2d7007c572528049ba36449ca678ebe01ed3552aa9d0",
+      "gitBlobOid": "bedeab9a58aa9678a73895e6dba6a0b8778da76d",
+      "gitBlobBytes": 4836,
+      "gitBlobSha256": "d8febacfe800b5be60d5608d5737c2e37f5b652844c8fe70be151a26b9569247"
+    },
+    {
+      "path": "docs/algorithm-T122-single-sand-clear-water-handoff-v1.md",
+      "bytes": 9862,
+      "sha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6",
+      "gitBlobOid": "bb040369a80211aa50d63bc3f625e16ee22c1a02",
+      "gitBlobBytes": 9862,
+      "gitBlobSha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6"
+    },
+    {
+      "path": "docs/retro-T122-clear-water-handoff-v1.md",
+      "bytes": 1348,
+      "sha256": "f2d6ace5f8ae968e01f58d8d93fafd0c78904b5cb5b83e3a4e386fb1abb8800e",
+      "gitBlobOid": "4addbeaccdfe7a3564d72dcda2015ea3f455dd61",
+      "gitBlobBytes": 1348,
+      "gitBlobSha256": "f2d6ace5f8ae968e01f58d8d93fafd0c78904b5cb5b83e3a4e386fb1abb8800e"
+    }
+  ],
+  "historicalInputComparison": [
+    {
+      "path": "docs/goals.md",
+      "historicalSha256": "6e533b1d44862ff316278b216cb1a366e326cc666592d0e5120b30be53dffe4b",
+      "currentSha256": "2ea943a53ed1fdb4df06ff91e40b65be76e2a22db6f07d0b93ec394f8546cb3d",
+      "comparison": "CHANGED"
+    },
+    {
+      "path": "docs/PROJECT_GOALS.md",
+      "historicalSha256": "c003ad958f13922a3710158d34567fdb6df194123c75385711339a0b15818188",
+      "currentSha256": "d716b47f2f2c6d6a2c521b145202efbd9abe2d95d7edd9394f21ac586fa56350",
+      "comparison": "CHANGED"
+    },
+    {
+      "path": "docs/developer-T59-dry-air-demo.md",
+      "historicalSha256": "cd73d8eced2328fca8d2e41963ed3a24baaf142552757066fd40f6f4f99eb1d3",
+      "currentSha256": "cd73d8eced2328fca8d2e41963ed3a24baaf142552757066fd40f6f4f99eb1d3",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "docs/tester-T73-dry-air-verification-v1.md",
+      "historicalSha256": "4f49fae6eb9052e6d3442a51b233057f2fa4a012f912a5974d28ad44e6cf4b8f",
+      "currentSha256": "4f49fae6eb9052e6d3442a51b233057f2fa4a012f912a5974d28ad44e6cf4b8f",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "docs/developer-T56-new-pipeline-scene.md",
+      "historicalSha256": "970aa6ac284d7925a4a17c6f1cfab11513622735121b86304d2588ec7beb020f",
+      "currentSha256": "970aa6ac284d7925a4a17c6f1cfab11513622735121b86304d2588ec7beb020f",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "historicalSha256": "4fd86f08de032c70a090dd9d4e3e22a941240eb95314d44ac08468ada4200fe2",
+      "currentSha256": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d",
+      "comparison": "CHANGED"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "historicalSha256": "88d7fbdec4d92958a7f99c0d855d0b0b3b8e818a17d708b22a70c1b6e81552db",
+      "currentSha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+      "comparison": "CHANGED"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051TouchSourceAdapter.ets",
+      "historicalSha256": "4dd36d2e8dd320fd8c3a8004afb9aef7d3586332eedad3df20bfc5b30ca50864",
+      "currentSha256": "4dd36d2e8dd320fd8c3a8004afb9aef7d3586332eedad3df20bfc5b30ca50864",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011GestureRateClock.ets",
+      "historicalSha256": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af",
+      "currentSha256": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneTypes.ets",
+      "historicalSha256": "152b5f25a8f393489dc9bcb117bbc61e0d4675326b6867960d4a15416f94e40a",
+      "currentSha256": "d62a37574a047a89378b6990d7b8c74910d428993b139759243608023077bd45",
+      "comparison": "CHANGED"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "historicalSha256": "01809a5e4bab8fa422f3ebe1070a15ec9b403f3fb14a16bdbd59a1550f2c28a5",
+      "currentSha256": "01809a5e4bab8fa422f3ebe1070a15ec9b403f3fb14a16bdbd59a1550f2c28a5",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_layers.cpp",
+      "historicalSha256": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec",
+      "currentSha256": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec",
+      "comparison": "MATCH"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_compositor.cpp",
+      "historicalSha256": "20b855ba23af8c1f9692f3fa1cce71754668feef66c8018fe4f2925f6e73a2a1",
+      "currentSha256": "4ef443ec981962e7e1135cef6edc7e69ca3e17072e441a6214b65a322fe68dac",
+      "comparison": "CHANGED"
+    }
+  ],
+  "historicalEvidencePreserved": true,
+  "checks": {
+    "requiredArtifactsReadable": true,
+    "markdownLocalLinksResolve": true,
+    "codeFencesBalanced": true,
+    "cwCaseIdsComplete": [
+      "CW-01",
+      "CW-02",
+      "CW-03",
+      "CW-04",
+      "CW-05",
+      "CW-06",
+      "CW-07",
+      "CW-08",
+      "CW-09",
+      "CW-10",
+      "CW-11",
+      "CW-12",
+      "CW-13",
+      "CW-14",
+      "CW-15",
+      "CW-16",
+      "CW-17",
+      "CW-18"
+    ],
+    "interfaceVersionsPresent": [
+      "SINGLE_SAND_CLEAR_WATER_V1",
+      "SAND_WATER_SOURCE_V1",
+      "CLEAR_WATER_SCENE_V1",
+      "CLEAR_WATER_OPTICS_V1"
+    ],
+    "changedHistoricalInputs": 6,
+    "missingHistoricalInputs": 0
+  },
+  "handoff": {
+    "T107": {
+      "role": "architect",
+      "card": "6adf343de4b06ee35743c76a",
+      "consume": "T106 sections 3-7; T122 section 3",
+      "output": "docs/architecture-single-sand-clear-water-v1.md"
+    },
+    "T108": {
+      "role": "tester",
+      "card": "6adf343de4b06ee35743c76b",
+      "consume": "T106 section 8 CW-01..CW-18; T122 section 4",
+      "output": "docs/test-report-single-sand-clear-water-baseline-v1.md and independent tests/cases"
+    }
+  },
+  "notClaimed": [
+    "current source verified",
+    "product implementation complete",
+    "target-device or subjective effect pass",
+    "compute production migration",
+    "changed input SHA indicates product defect",
+    "T107/T108 status edited by designer"
+  ],
+  "assetDigestSemantics": "sha256/bytes refer to exact working-tree bytes at handoff; gitBlob* refer to staged normalized content archived in final commit, independently verifiable using git show COMMIT:path."
+}

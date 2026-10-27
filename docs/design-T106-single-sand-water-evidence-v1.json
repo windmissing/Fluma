@@ -1,0 +1,154 @@
+{
+  "revision": "T106_DESIGN_INVENTORY_AND_ARITHMETIC_V1",
+  "date": "2026-10-26",
+  "kind": "read-only source/report inventory plus exact-rational model illustrations; NOT target-six product tests",
+  "inputSha256": {
+    "docs/goals.md": "6e533b1d44862ff316278b216cb1a366e326cc666592d0e5120b30be53dffe4b",
+    "docs/PROJECT_GOALS.md": "c003ad958f13922a3710158d34567fdb6df194123c75385711339a0b15818188",
+    "docs/developer-T59-dry-air-demo.md": "cd73d8eced2328fca8d2e41963ed3a24baaf142552757066fd40f6f4f99eb1d3",
+    "docs/tester-T73-dry-air-verification-v1.md": "4f49fae6eb9052e6d3442a51b233057f2fa4a012f912a5974d28ad44e6cf4b8f",
+    "docs/developer-T56-new-pipeline-scene.md": "970aa6ac284d7925a4a17c6f1cfab11513622735121b86304d2588ec7beb020f",
+    "entry/src/main/ets/physics/WaterSandField.ets": "4fd86f08de032c70a090dd9d4e3e22a941240eb95314d44ac08468ada4200fe2",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "88d7fbdec4d92958a7f99c0d855d0b0b3b8e818a17d708b22a70c1b6e81552db",
+    "entry/src/main/ets/physics/P051TouchSourceAdapter.ets": "4dd36d2e8dd320fd8c3a8004afb9aef7d3586332eedad3df20bfc5b30ca50864",
+    "entry/src/main/ets/physics/P011GestureRateClock.ets": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af",
+    "entry/src/main/ets/render/P013SceneTypes.ets": "152b5f25a8f393489dc9bcb117bbc61e0d4675326b6867960d4a15416f94e40a",
+    "entry/src/main/ets/render/P013ScenePreparation.ets": "01809a5e4bab8fa422f3ebe1070a15ec9b403f3fb14a16bdbd59a1550f2c28a5",
+    "entry/src/main/cpp/p013renderer/scene_layers.cpp": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec",
+    "entry/src/main/cpp/p013renderer/scene_compositor.cpp": "20b855ba23af8c1f9692f3fa1cce71754668feef66c8018fe4f2925f6e73a2a1"
+  },
+  "route": "SINGLE_SAND_CLEAR_WATER_V1",
+  "examples": [
+    {
+      "name": "wet-to-empty-low-bed",
+      "donor": {
+        "S": "1",
+        "W": "4",
+        "P": "0",
+        "x": "0"
+      },
+      "receiver": {
+        "S": "1",
+        "W": "0",
+        "P": "0",
+        "x": "1"
+      },
+      "capacity": "10",
+      "kappaDt": "1/4",
+      "tanTheta": "0",
+      "q": "1",
+      "waterAfter": [
+        "3",
+        "1"
+      ],
+      "energyDelta": "-3",
+      "proof": "exact rational illustration of real arithmetic; not binary64 product execution"
+    },
+    {
+      "name": "dry-high-bed-blocks",
+      "donor": {
+        "S": "1",
+        "W": "2",
+        "P": "0",
+        "x": "0"
+      },
+      "receiver": {
+        "S": "4",
+        "W": "0",
+        "P": "0",
+        "x": "1"
+      },
+      "capacity": "10",
+      "kappaDt": "1/4",
+      "tanTheta": "0",
+      "q": "0",
+      "waterAfter": [
+        "2",
+        "0"
+      ],
+      "energyDelta": "0",
+      "proof": "exact rational illustration of real arithmetic; not binary64 product execution"
+    },
+    {
+      "name": "receiver-capacity-with-air-particle-reserve",
+      "donor": {
+        "S": "1",
+        "W": "6",
+        "P": "0",
+        "x": "0"
+      },
+      "receiver": {
+        "S": "1",
+        "W": "1",
+        "P": "7",
+        "x": "1"
+      },
+      "capacity": "10",
+      "kappaDt": "1",
+      "tanTheta": "0",
+      "q": "1",
+      "waterAfter": [
+        "5",
+        "2"
+      ],
+      "energyDelta": "-4",
+      "proof": "exact rational illustration of real arithmetic; not binary64 product execution"
+    },
+    {
+      "name": "fixed-tilt-head",
+      "donor": {
+        "S": "1",
+        "W": "3",
+        "P": "0",
+        "x": "0"
+      },
+      "receiver": {
+        "S": "1",
+        "W": "3",
+        "P": "0",
+        "x": "1"
+      },
+      "capacity": "10",
+      "kappaDt": "1/2",
+      "tanTheta": "1/2",
+      "q": "1/4",
+      "waterAfter": [
+        "11/4",
+        "13/4"
+      ],
+      "energyDelta": "-1/16",
+      "proof": "exact rational illustration of real arithmetic; not binary64 product execution"
+    }
+  ],
+  "landBedDisplacement": {
+    "S": "2",
+    "W": "3",
+    "P": "1",
+    "q": "1/4",
+    "S_after": "9/4",
+    "W_after": "3",
+    "P_after": "3/4",
+    "etaRise": "1/4"
+  },
+  "assumptions": [
+    "in-flight dilute point sand displaces no water",
+    "deposited bed is impermeable effective volume",
+    "overdamped local hydraulic relaxation without inertia",
+    "water source is column free-surface inlet, not resolved airborne droplets"
+  ],
+  "pendingCalibration": [
+    "water rates and request bounds",
+    "kappaW and head convergence response",
+    "wet drag and terminal speed",
+    "water optics and clarity",
+    "new integration errors if existing numeric contract does not cover"
+  ],
+  "notClaimed": [
+    "goal-six implemented",
+    "goal-six device verified",
+    "dense in-flight volume displacement",
+    "water-current advection of particles",
+    "full strict-state route enabled",
+    "first-five goals complete"
+  ]
+}
