@@ -1,0 +1,36 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer HBlock {uvec4 h[];} H;
+layout(std430,binding=3) readonly buffer InBlock {uvec4 inputC[];} I;
+layout(std430,binding=4) writeonly buffer OutBlock {uvec4 outputC[];} O;
+layout(std430,binding=5) writeonly buffer RBlock {uvec4 result[];} R;
+uniform uint uCount,uDispatchCount,uFinal;
+shared uvec4 a0[64];shared uvec4 a1[64];
+bool lessCandidate(uvec4 x,uvec4 y){
+ if(x.x!=y.x)return x.x>y.x;
+ if(x.x==0u)return false;
+ if(x.y!=y.y)return x.y<y.y;
+ if(x.z!=y.z)return x.z<y.z;
+ return x.w<y.w;
+}
+void main(){uint lane=gl_LocalInvocationID.x,idx=gl_GlobalInvocationID.x;
+ if(idx<uCount){a0[lane]=I.inputC[idx*2u];a1[lane]=I.inputC[idx*2u+1u];}
+ else{a0[lane]=uvec4(0u);a1[lane]=uvec4(0u);}
+ barrier(); // every lane, including padding, must participate
+ for(uint stride=32u;stride>0u;stride>>=1u){
+  if(lane<stride&&lessCandidate(a0[lane+stride],a0[lane])){
+   a0[lane]=a0[lane+stride];a1[lane]=a1[lane+stride];}
+  barrier();
+ }
+ if(lane!=0u)return;
+ if(uFinal==0u){O.outputC[gl_WorkGroupID.x*2u]=a0[0];O.outputC[gl_WorkGroupID.x*2u+1u]=a1[0];return;}
+ R.result[0]=uvec4(0x47505231u,1u,a0[0].x!=0u?1u:2u,0u);
+ R.result[1]=a0[0].x!=0u?uvec4(a0[0].y,a0[0].z,a0[0].w,a1[0].x):uvec4(0u);
+ R.result[2]=a0[0].x!=0u?uvec4(a1[0].y,a1[0].z,uDispatchCount,0u):uvec4(0u,0u,uDispatchCount,0u);
+ R.result[3]=H.h[7];
+ R.result[4]=uvec4(H.h[3].z,H.h[3].w,H.h[4].x,H.h[4].y);
+ R.result[5]=uvec4(H.h[4].z,H.h[4].w,H.h[12].x,H.h[12].y);
+ R.result[6]=H.h[12+1];
+ R.result[7]=uvec4(H.h[13+1].x,H.h[13+1].y,0x444f4e45u,0u);
+}
