@@ -1,5 +1,7 @@
 # T138 GPU确定配对原型工程 V1
 
+2026-10-27设备失败工程增补：wire V1权威偏移不变，shader identitySHA回显精确修订、命名与独立HAP/worker/owner部署接力见 [T152](architecture-T152-gpu-device-routing-v1.md)。不得松owner去接受错位回显；原型工程交付不等完整事务真机通过。
+
 2026-10-26；architect；原卡 `6adf6a09e4b017ab3407f962`。不使用真机，不运行测试，不实现业务。GPU路线当前最高调度优先；T123 CPU索引继续。消费T137全稿、离散模型和证据，T130、T136，以及当前T123/Hot接口。T137证据的11项输入SHA与本轮磁盘文件全部匹配；4916池等计数仅为designer模型结果，不是本轮重跑或设备结果。
 
 **ENGINEERING_READY_FOR_T141**：下文冻结隔离原型协议；T141仍按原任务等T139修订harness及T140独立oracle，不把本卡工程完成冒全部前置齐备。T137已有确定性、唯一写入、原RN64范围及最小pair证明，本次未发现需退designer的算法矛盾。生产route、renderer context及CPU权威事务不迁移。
