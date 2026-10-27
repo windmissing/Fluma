@@ -1,0 +1,37 @@
+{
+ "revision": "T164_DEVICE_ARCHIVE_V1",
+ "unsignedHap": {
+  "sha256": "49b45c024ea5935e96a306e16faf4572a654542cf72fcada95312e028c0c8db0",
+  "source": "T165 e2163d4 archive, byte-identical verified locally"
+ },
+ "signedHap": {
+  "sha256": "3f5636cb357d2e44d7195021dacdfeb1b1c42b0d14e12c8b8fd0d756c8f1aea8",
+  "path": ".codex/local-test/t159-project/entry-default-t164-signed.hap",
+  "note": "signed from T165 unsigned via dev-cert-chain.pem + entry-default.p7b localSign"
+ },
+ "sourceManifestSha256": "ed26af35c31751b057b5dcc9bb5128809ecd83801c9791b011bf4e3f2b2e174c",
+ "soSha256": "b53b415a3b9f84ce3801f976f41650f54d33b19abe04b67ac6f2c38797536524",
+ "t164DiagBinary": {
+  "sha256": "30e3f2acdaa29038a3c2c203c45b3df0a6c0895bc7b1fcd87a59a92e9561503c",
+  "source": "t164_device_diag.cpp = t142_device_diag.cpp with rep2<5 → rep2<24 (sample count only); compiled with OHOS NDK aarch64-unknown-linux-ohos-clang++"
+ },
+ "diagSourceSha256": "19235a9b99c6e96d5d5b5954866602ac8b94ebd730e8d41c713d87d7eb220faa",
+ "shaderSha": {
+  "build": "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd",
+  "query": "ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a",
+  "reduce": "3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9"
+ },
+ "deviceRunFiles": [
+  "t164gpu1-GPU.jsonl (steps=4 smoke, 3 req PAIR/AGREE)",
+  "t159-t164gpu32-GPU.jsonl",
+  "t159-t164t12332-T123.jsonl",
+  "t159-t164legacy32-LEGACY_SCAN.jsonl",
+  "t159-t164gpu512-GPU.jsonl",
+  "t164_diag_24b.json (24 samples/pool AGREE)"
+ ],
+ "environmentNotes": [
+  "selinux set Permissive for /data/local/tmp binary execution (hdc shell context); HAP worker run not affected",
+  "device t142/ shaders were stale (reduce cfff927a); refreshed from test/p013_compute/glsl (3e5520d1) before diag AGREE"
+ ],
+ "executedAt": "2026-10-27"
+}
