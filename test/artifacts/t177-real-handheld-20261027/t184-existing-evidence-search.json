@@ -1,0 +1,48 @@
+{
+ "retrieval": "T184 existing-evidence search (offline, no device re-run)",
+ "sources": [
+  {
+   "file": "A-static.txt",
+   "bytes": 575458,
+   "firstErrorAnchors": "NONE"
+  },
+  {
+   "file": "B-handheld.txt",
+   "bytes": 901061,
+   "firstErrorAnchors": "NONE"
+  },
+  {
+   "file": "B2-handheld.txt",
+   "bytes": 1684436,
+   "firstErrorAnchors": "NONE"
+  },
+  {
+   "file": "B3-handheld.txt",
+   "bytes": 1092909,
+   "firstErrorAnchors": "NONE"
+  },
+  {
+   "file": "device:/data/log/faultlog/faultlogger/ 2026102719*",
+   "result": "NO_FILES_IN_WINDOW"
+  },
+  {
+   "file": "device:/data/local/tmp/ t177*",
+   "result": "screenshots_only_no_hilog"
+  },
+  {
+   "file": "test/reports/t166/build-manifest.json",
+   "revision": "T166_BUILD_V1",
+   "baseCommit": "e2163d43578b31c7b1b701ae1b848788fd25551f",
+   "note": "T166 build manifest exists; T177 时段设备运行包身份=该 manifest 派生（s150 f28ec28e）"
+  }
+ ],
+ "installTimeErratum": {
+  "rawValue": 1792130688871,
+  "unit": "unknown(ms presumed)",
+  "ifUnixMsUTC": "2026-10-16T06:04:48.871Z",
+  "ifUnixMsBJT": "2026-10-16 14:04:48.871",
+  "t177ReportClaim": "2026-10-27 16:31 (INCORRECT interpretation)",
+  "resolution": "T181 已否证；installTime 语义未定（可能非 Unix ms 或非首次安装），保留原值不迎合结论；包身份改由 sha256+T166 manifest 链承担"
+ },
+ "firstErrorCode": "NOT_CAPTURED — 四 dump 无 first_code5_trace/getLastError/FIELD_COLUMN 锚点；设备无 T177 时段 faultlog；page-physics-failed 为 page 层通知不携带数字（T181 §2 确认），旧 run 首错原码在既存材料中不可恢复，须 T185 V2 诊断到件后 T187 窄补证"
+}

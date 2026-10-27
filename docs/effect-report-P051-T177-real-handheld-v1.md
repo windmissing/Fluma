@@ -4,6 +4,12 @@
 状态：**REAL_HANDHELD_EXECUTED / SENSOR_TO_GRAVITY_CHAIN_OBJECTIVE_PASS / VISUAL_FLOW_NOT_CONFIRMABLE (SCENE_MATERIAL_DATA) / NOT_A_PRODUCT_PASS**。  
 对比 T82/T95（手持项两次"未完成"）：本轮**真实手持已执行**（用户三姿态），传感器→重力方向链获得客观证据；主观目视确认因已知渲染缺陷未能达成——按任务卡"若阻碍观感则只交物理证据并报告缺口，整体不冒 PASS"如实处理。
 
+> **⚠️ T184 版本化勘误（2026-10-27，依据 T181 `67ce141`/`architecture-T181-handheld-run-identity-routing-v1.md`；原观察保留不删除，以下三点按勘误后口径读）：**
+> **E1（B3"瞬态失败自行恢复"不成立）**：B3 dump 开头 12 条 `page-physics-failed`（2493303095–413）属**旧进程 PID 21223 / 旧 run `p011-run-1793100180197-3`**（force-stop 前的 stop 通知重入 hilog 缓冲，hilog -r 清缓冲后 force-stop 会把停进程前旧日志重新写入）；新冷启 run `p011-run-1793100569325-3`（PID 24096）有效段内 page-physics-failed=0。"318ms 窗口自行恢复"是跨进程归属错误；旧 run 首错原码 NOT_CAPTURED（本卡四 dump 均无首错锚点，见 t184-existing-evidence-search.json），交 T185 V2→T187 窄补证。**"同 failed 对象自行恢复"无证据，旧失败是另一条真实物理失败。**
+> **E2（installTime 论证不成立）**：T177 §0 的"installTime=1792130688871 = 2026-10-27 16:31 与 T95 装机一致"解释错误——若按 Unix ms 换算该值为 2026-10-16 14:04:48.871（北京时间），字段语义未定。包身份改由 **s150 SHA256 `f28ec28e…` + T166 build-manifest.json 源 SHA 链**承担（已检索到件 `test/reports/t166/build-manifest.json`）。
+> **E3（传感器符号勘误）**：本卡 §2 "seg11-13 x≈−5.3 左倾 / seg18-20 x≈+7.4 右倾"的左右标注与 adapter 实际符号规则（`atan2(-filteredX, filteredY)`）不一致——新段负 target 附近 raw x 为**正**、正 target 附近为**负**。effectiveTilt 轨迹跟随三姿态的结论不变；**不得按本卡截图/console 文字重标传感器轴**，物理低端方向还需屏幕坐标与渲染坐标一致性证据（T181 §3）。
+> T177 原报告其余结论（真实手持执行、五次 START ACCEPTED、15 笔准入 11.21、目视流向未确认、SCENE_MATERIAL_DATA 阻碍观感）经 T181 复核**保留成立**。
+
 ## 0. 环境与执行
 
 | 项 | 值 |
