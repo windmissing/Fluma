@@ -1,0 +1,34 @@
+{
+ "revision": "T173_DEVICE_ARCHIVE_V1",
+ "executedAt": "2026-10-27",
+ "signedHap": {
+  "sha256": "ebd7cdfe269c72469314a231bb5fff59c7a9fd5608fbeb8b0e2365100bfdd4c2",
+  "path": ".codex/local-test/t171-project/entry-default-t173-signed.hap"
+ },
+ "unsignedHap": {
+  "sha256": "0092232bfbfda83565f2318a050b7b9e10b053573c940b392746b77e620b1191",
+  "source": "T171 961d837 generator output, verified byte-identical"
+ },
+ "buildManifestSha256Param": "0092232bfbfda83565f2318a050b7b9e10b053573c940b392746b77e620b1191",
+ "sourceManifestSha256": "ed26af35c31751b057b5dcc9bb5128809ecd83801c9791b011bf4e3f2b2e174c",
+ "shaderSha": {
+  "build": "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd",
+  "query": "ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a",
+  "reduce": "3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9"
+ },
+ "deviceRuns": [
+  "t173corr192",
+  "t173corr512",
+  "t173perf192",
+  "t173perf512",
+  "t173f_QUARANTINE_GL",
+  "t173f_STALE_REQUEST_HI",
+  "t173f_STALE_CONSUME_HI",
+  "t173f_SHADER",
+  "t173f_OWNER",
+  "t173micro"
+ ],
+ "mainProjectRestore": "entry-default-s139h-signed.hap reinstalled after tests",
+ "noPermissionChanges": true,
+ "noSelinuxModification": true
+}
