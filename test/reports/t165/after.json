@@ -1,0 +1,69 @@
+{
+  "revision": "T165_AFTER_V1",
+  "baseCommit": "3d3ddc355c1ef19b8cc990fe4dd4b70d99a594f1",
+  "artifacts": [
+    {
+      "file": ".codex/local-test/t163/t165-modules.abc",
+      "bytes": 949460,
+      "sha256": "1e24f94f7d18f413e248fb316937963b7ca5806281ec58d151e1683c520f99e7"
+    },
+    {
+      "file": ".codex/local-test/t163/t165-modules.pa",
+      "bytes": 3264326,
+      "sha256": "c7f37ead9018aae6bc569842fb8e2f45c385ae148d9d11b4d79ceb38f7ffabbe"
+    },
+    {
+      "file": ".codex/local-test/t159-project/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 3902213,
+      "sha256": "49b45c024ea5935e96a306e16faf4572a654542cf72fcada95312e028c0c8db0"
+    },
+    {
+      "file": ".codex/local-test/t159-project/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libp011_gpu_pair_prototype.so",
+      "bytes": 1548536,
+      "sha256": "b53b415a3b9f84ce3801f976f41650f54d33b19abe04b67ac6f2c38797536524"
+    },
+    {
+      "file": "test/p013_compute/tools/generate_transaction_project.cjs",
+      "bytes": 8196,
+      "sha256": "ef0f07fd81b91e1bec72067e80e6abd395f07de6131bdd8b8cf44e9c34237714"
+    },
+    {
+      "file": "test/p013_compute/ets/t159/T159EntryAbility.ets",
+      "bytes": 683,
+      "sha256": "678d2dcbfa3aa7fc1ada77633abb597d097ad106db158f759ad34d8a64902d17"
+    },
+    {
+      "file": "test/p013_compute/ets/t159/T159Index.ets",
+      "bytes": 362,
+      "sha256": "df2134bc91ac389f0d92d90e0ffa1884b602ee7f6d850b58e633690047d45a14"
+    },
+    {
+      "file": "test/p013_compute/ets/t159/T165PageLauncher.ets",
+      "bytes": 3482,
+      "sha256": "b81271c197a74b5099ce35c6904ffbd0c496fdf9a6108046664789c44921d9f4"
+    }
+  ],
+  "disassembly": [
+    {
+      "name": "com.example.helloworld.entry.ets.workers.T159PhysicsWorker",
+      "record": true,
+      "entry": true,
+      "previousRecord": true,
+      "previousEntry": true
+    },
+    {
+      "name": "com.example.helloworld.entry.ets.physics.T165PageLauncher",
+      "record": true,
+      "entry": true,
+      "previousRecord": false,
+      "previousEntry": false
+    }
+  ],
+  "compileArkTS": "PASS",
+  "native": "PASS",
+  "packageHap": "PASS",
+  "signHap": "EXISTING_PASSWORD_LENGTH_FAILURE",
+  "device": "NOT_RUN",
+  "timingRootCause": "HYPOTHESIS_ONLY",
+  "productionTouched": false
+}

@@ -42,7 +42,7 @@ patch(field,(r)=>{
  r('      const status = this.particleBinding.apply(this.totalMotionBudgetScale,','      t159Role(3);\n      const status = this.particleBinding.apply(this.totalMotionBudgetScale,');
  r('          const particleStatus = this.particleBinding.apply(scale,','          t159Role(4);\n          const particleStatus = this.particleBinding.apply(scale,');
 });
-for(const name of ['T159Metadata','T159Selector','T159Native'])copy(path.join(templates,name+'.ets'),path.join(ets,'physics',name+'.ets'));
+for(const name of ['T159Metadata','T159Selector','T159Native','T165PageLauncher'])copy(path.join(templates,name+'.ets'),path.join(ets,'physics',name+'.ets'));
 copy(path.join(templates,'T159PhysicsWorker.ets'),path.join(ets,'workers/T159PhysicsWorker.ets'));
 copy(path.join(templates,'T159EntryAbility.ets'),path.join(ets,'entryability/EntryAbility.ets'));
 copy(path.join(templates,'T159Index.ets'),path.join(ets,'pages/Index.ets'));

@@ -1,0 +1,74 @@
+{
+  "revision": "T159_OFFLINE_TRANSACTION_V2",
+  "cases": [
+    {
+      "nmax": 192,
+      "route": "LEGACY_SCAN",
+      "status": "PASS",
+      "selectorCalls": 0,
+      "roles": [],
+      "poolSha256": "7de2703f286ec7835df35ccd2bc1ca5443841c1d4678e6e07ec74cc647bc620a",
+      "beforeLive": 0,
+      "afterLive": 192
+    },
+    {
+      "nmax": 192,
+      "route": "T123",
+      "status": "PASS",
+      "selectorCalls": 0,
+      "roles": [],
+      "poolSha256": "7de2703f286ec7835df35ccd2bc1ca5443841c1d4678e6e07ec74cc647bc620a",
+      "beforeLive": 0,
+      "afterLive": 192
+    },
+    {
+      "nmax": 192,
+      "route": "GPU_INTERFACE_CPU_STAND_IN",
+      "status": "PASS",
+      "selectorCalls": 3,
+      "roles": [
+        1
+      ],
+      "poolSha256": "7de2703f286ec7835df35ccd2bc1ca5443841c1d4678e6e07ec74cc647bc620a",
+      "beforeLive": 0,
+      "afterLive": 192
+    },
+    {
+      "nmax": 512,
+      "route": "LEGACY_SCAN",
+      "status": "PASS",
+      "selectorCalls": 0,
+      "roles": [],
+      "poolSha256": "c82bd06f9f37837c6ff6ac848010260a5d409755632b4c541003af1ad3ccf84f",
+      "beforeLive": 0,
+      "afterLive": 512
+    },
+    {
+      "nmax": 512,
+      "route": "T123",
+      "status": "PASS",
+      "selectorCalls": 0,
+      "roles": [],
+      "poolSha256": "c82bd06f9f37837c6ff6ac848010260a5d409755632b4c541003af1ad3ccf84f",
+      "beforeLive": 0,
+      "afterLive": 512
+    },
+    {
+      "nmax": 512,
+      "route": "GPU_INTERFACE_CPU_STAND_IN",
+      "status": "PASS",
+      "selectorCalls": 3,
+      "roles": [
+        1
+      ],
+      "poolSha256": "c82bd06f9f37837c6ff6ac848010260a5d409755632b4c541003af1ad3ccf84f",
+      "beforeLive": 0,
+      "afterLive": 512
+    }
+  ],
+  "passed": 9,
+  "failed": 0,
+  "nativeWorkerExecution": "NOT_RUN",
+  "gpuExecution": "NOT_RUN",
+  "standIn": "INTERFACE_ONLY_NOT_GPU"
+}

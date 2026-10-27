@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "passed": 7,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "worker": "SDK_STUB_ONLY",
+  "results": [
+    {
+      "name": "loadContent pending + page ready cannot create Worker",
+      "status": "PASS"
+    },
+    {
+      "name": "loadContent complete waits for page; repeat page callbacks are one-shot",
+      "status": "PASS"
+    },
+    {
+      "name": "loadContent failure prevents configuration and launch",
+      "status": "PASS"
+    },
+    {
+      "name": "missing/invalid cold identity fails closed",
+      "status": "PASS"
+    },
+    {
+      "name": "resource failure cannot launch or silently retry",
+      "status": "PASS"
+    },
+    {
+      "name": "all route choices preserve cold config and diagnostic switch",
+      "status": "PASS"
+    },
+    {
+      "name": "page callback and generator register only isolated launcher",
+      "status": "PASS"
+    }
+  ]
+}
