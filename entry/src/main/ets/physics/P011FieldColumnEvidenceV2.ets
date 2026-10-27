@@ -184,10 +184,13 @@ export class P011FieldColumnEvidenceV2 {
       copy.commitCurrent=x.commitCurrent;copy.sourceEpoch=x.sourceEpoch;copy.poolEpoch=x.poolEpoch;
       copy.firstInvalidColumn=x.firstInvalidColumn;copy.legal=x.legal;rows.push(copy);
     }
-    return {revision:this.revision,status:this.failure===null?'NO_FAILURE':'CAPTURED',
+    // T166 / T146 §4: place failure details/window before raw snapshots.
+    // This is only export priority; a bounded transport can still truncate.
+    // The raw sign scan intentionally remains stricter than Hot waterTop EPS.
+    return {revision:this.revision,failure:this.failure,stages:rows,
+      status:this.failure===null?'NO_FAILURE':'CAPTURED',
       windowStatus:this.windowStatus,dropped:this.dropped,
       lastLegalBytesHex:this.lastLegalValid?this.bytesHex(this.lastLegalBytes):null,
-      firstIllegalBytesHex:this.firstIllegalValid?this.bytesHex(this.firstIllegalBytes):null,
-      stages:rows,failure:this.failure};
+      firstIllegalBytesHex:this.firstIllegalValid?this.bytesHex(this.firstIllegalBytes):null};
   }
 }

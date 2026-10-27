@@ -1,0 +1,13 @@
+PASS S2 spawn patch matches cold complete SoA and action order
+PASS S2 lift patch matches cold complete SoA and action order
+PASS S2 deposit patch matches cold complete SoA and action order
+PASS S2 crossing patch matches cold complete SoA and action order
+PASS S2 degrade patch matches cold complete SoA and action order
+PASS S2 merge patch matches cold complete SoA and action order
+PASS S2 discard/restore/finish preserve primitive old tokens and reject ABA/cross-owner/busy
+PASS S2 positive sub-EPS tail retained; exact zero alone releases
+PASS S2 pool-full merge during spawn preserves cold state and refuses unmatched source atomically
+PASS S2 journal and lineage overflow never publish partial pool or ID changes
+PASS S2 prepare pins request fields independently of later caller edits
+PASS S2 last safe lease is issued once; exhaustion refuses without recycling
+{"suite":"run_p011_particle_hot_patch_units","passed":12,"failed":0}

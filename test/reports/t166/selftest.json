@@ -1,0 +1,76 @@
+{
+  "revision": "T166_F1_SELFTEST_V1",
+  "passed": 9,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "reconstructions": [
+    {
+      "arm": "C1",
+      "x": 0.44466802978515624,
+      "masses": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.044668029785156216
+      ],
+      "residual": -2.7755575615628914e-17,
+      "residualBits": "bc80000000000000",
+      "hot": "OK",
+      "auditTrue": "OK"
+    },
+    {
+      "arm": "C2",
+      "x": 0.4449276657104492,
+      "masses": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.044927665710449205
+      ],
+      "residual": -2.7755575615628914e-17,
+      "residualBits": "bc80000000000000",
+      "hot": "OK",
+      "auditTrue": "OK"
+    }
+  ],
+  "results": [
+    {
+      "name": "C1 credit/debit reconstruction retains -2^-55 through Hot and audit(true)",
+      "status": "PASS"
+    },
+    {
+      "name": "C2 credit/debit reconstruction retains -2^-55 through Hot and audit(true)",
+      "status": "PASS"
+    },
+    {
+      "name": "waterTop exact -EPS boundary, signed zero and finite interior agree with audit(true)",
+      "status": "PASS"
+    },
+    {
+      "name": "below -EPS and nonfinite waterTop rejected; exact first-column evidence retained",
+      "status": "PASS"
+    },
+    {
+      "name": "six other components retain exact rejection even at -MIN_VALUE",
+      "status": "PASS"
+    },
+    {
+      "name": "raw sign observer still captures tolerated residue without inventing Hot failure",
+      "status": "PASS"
+    },
+    {
+      "name": "export order prioritizes failure/stages; full fragments and first latch unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "enabled versus disabled observation leaves identical source, arrays, pool, budgets and commit",
+      "status": "PASS"
+    },
+    {
+      "name": "J3 source constraints and existing audit EPS remain explicit",
+      "status": "PASS"
+    }
+  ]
+}

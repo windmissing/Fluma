@@ -28,6 +28,10 @@ export const P011_HOT_STEP_BUSY = 18;
 
 let nextOwnerId = 1;
 let nextLeaseToken = 1;
+// T166 / T146 §5 F1: waterTop alone follows WaterSandField.audit EPS.
+// Dry pool-cache credit/debit can leave -2^-55 without physical mass loss.
+// Other components retain the existing exact nonnegative predicate.
+const WATER_TOP_AUDIT_EPS = 1e-9;
 
 export interface P011ParticleHotConfig {
   cols: number; nmax: number; requestCapacity: number; motionCapacity: number;
@@ -517,7 +521,7 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
   for (let col = 0; col < c; col++) {
     if (!Number.isFinite(f.waterTop[col]) || !Number.isFinite(f.bh[col]) || !Number.isFinite(f.bl[col]) ||
       !Number.isFinite(f.mh[col]) || !Number.isFinite(f.ml[col]) || !Number.isFinite(f.suspH[col]) ||
-      !Number.isFinite(f.suspL[col]) || !Number.isFinite(f.surface[col]) || f.waterTop[col] < 0 ||
+      !Number.isFinite(f.suspL[col]) || !Number.isFinite(f.surface[col]) || f.waterTop[col] < -WATER_TOP_AUDIT_EPS ||
       f.bh[col] < 0 || f.bl[col] < 0 || f.mh[col] < 0 || f.ml[col] < 0 || f.suspH[col] < 0 ||
       f.suspL[col] < 0 || !Number.isFinite(f.bh[col] + f.bl[col] + f.mh[col] + f.ml[col])) {
       work.beginFailurePredicate='FIELD_COLUMN';work.beginFailureIndex=col;

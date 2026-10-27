@@ -1,0 +1,26 @@
+{
+  "revision": "T166_BUILD_V1",
+  "baseCommit": "e2163d43578b31c7b1b701ae1b848788fd25551f",
+  "native": "PASS",
+  "compileArkTS": "PASS",
+  "packageHap": "PASS",
+  "signHap": "EXISTING_00303116_PASSWORD_LENGTH",
+  "device": "NOT_RUN",
+  "artifacts": [
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "bytes": 94681,
+      "sha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011FieldColumnEvidenceV2.ets",
+      "bytes": 10927,
+      "sha256": "513c183169f0c5780b8f4aabad1d0d70ee81b890a41385392faf370e9aa11849"
+    },
+    {
+      "file": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 4573194,
+      "sha256": "6cd7cf587769ad1551f6946e1bdb2091b6886e83fdc803571aa9ce5eb003aa41"
+    }
+  ]
+}

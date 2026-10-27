@@ -1,0 +1,14 @@
+PASS all eight nonfinite causes retain their own mask bits
+PASS waterTop below audit EPS and six strict negative bits retain raw signs; -0 passes
+PASS finite negative surface does not fail the original predicate
+PASS [-EPS,0) remains audit-tolerated but Hot rejected with exact negative bit
+PASS finite components with left-associated overflow set bit15
+PASS first column wins; same-column multi-cause mask survives
+PASS NaN payload preserved from typed-array buffer and frozen before cleanup
+PASS window stores last legal and first illegal bytes, then stops replacing first
+PASS already invalid first stage is PREEXISTING_IN_WINDOW and ring is bounded
+PASS M2 and trace preserve first Hot evidence and explicit measurement flags
+PASS audit drift has measured provenance rather than FIELD_COLUMN default zero
+PASS diagnostics closed allocates no evidence; enabled probe is read-only
+PASS full evidence survives bounded transport fragments without bit loss
+T149 13/13 PASS

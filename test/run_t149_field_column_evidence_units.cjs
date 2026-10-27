@@ -20,11 +20,12 @@ test('all eight nonfinite causes retain their own mask bits',()=>{
     assert.equal(e.rawBits[i],'7ff0000000000000');
   }
 });
-test('seven strict negative bits and -0 behavior',()=>{
+test('waterTop below audit EPS and six strict negative bits retain raw signs; -0 passes',()=>{
   for(const [i,key] of ['waterTop','bh','bl','mh','ml','suspH','suspL'].entries()){
-    const f=field();f[key][4]=-Number.MIN_VALUE;const e=fail(f);
+    // T166 approved waterTop-only predicate revision; the raw sign mask is unchanged.
+    const f=field();f[key][4]=i===0?-2e-9:-Number.MIN_VALUE;const e=fail(f);
     assert.ok((e.badMask&(1<<(8+i)))!==0,`${key} negative`);
-    assert.equal(e.rawBits[i],'8000000000000001');
+    assert.equal(e.rawBits[i],i===0?'be212e0be826d695':'8000000000000001');
   }
   const f=field();f.bh[4]=-0;assert.equal(f.particleBinding.beginCollect(1/60,0,1,1,0,0,0),0);
   f.particleBinding.rollback();
