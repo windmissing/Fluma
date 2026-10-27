@@ -1,0 +1,425 @@
+{
+  "revision": "T167_FIELD_COLUMN_INDEPENDENT_V1",
+  "commitUnderTest": "1f8e16c",
+  "executedAt": "2026-10-27T06:19:11.949Z",
+  "device": "NOT_RUN (offline per card)",
+  "total": 46,
+  "passed": 46,
+  "failed": 0,
+  "oracle": {
+    "EPS": 1e-9,
+    "EPS_DOWN": -1.0000000000000003e-9,
+    "EPS_UP": -9.999999999999999e-10,
+    "method": "nextafter via DataView bit manipulation"
+  },
+  "results": [
+    {
+      "name": "residual C1 (residual=-4.85722573273506e-17, bits=bc8c000000000000)",
+      "status": "PASS",
+      "detail": {
+        "arm": "C1",
+        "x": 0.44466802978515624,
+        "masses": [
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.04466802978515624
+        ],
+        "residual": -4.85722573273506e-17,
+        "residualBits": "bc8c000000000000",
+        "auditNull": true,
+        "hotOk": true,
+        "residueKept": true,
+        "noEvidence": true,
+        "rollbackIdentity": true,
+        "expect": "ACCEPT"
+      }
+    },
+    {
+      "name": "residual C2 (residual=-2.0816681711721685e-17, bits=bc78000000000000)",
+      "status": "PASS",
+      "detail": {
+        "arm": "C2",
+        "x": 0.4449276657104492,
+        "masses": [
+          0.1,
+          0.1,
+          0.1,
+          0.1,
+          0.0449276657104492
+        ],
+        "residual": -2.0816681711721685e-17,
+        "residualBits": "bc78000000000000",
+        "auditNull": true,
+        "hotOk": true,
+        "residueKept": true,
+        "noEvidence": true,
+        "rollbackIdentity": true,
+        "expect": "ACCEPT"
+      }
+    },
+    {
+      "name": "residual D1 (residual=1.1102230246251565e-16, bits=3ca0000000000000)",
+      "status": "PASS",
+      "detail": {
+        "arm": "D1",
+        "x": 0.6449276657104492,
+        "masses": [
+          0.1,
+          0.1,
+          0.1,
+          0.3449276657104492
+        ],
+        "residual": 1.1102230246251565e-16,
+        "residualBits": "3ca0000000000000",
+        "auditNull": true,
+        "hotOk": true,
+        "residueKept": true,
+        "noEvidence": true,
+        "rollbackIdentity": true,
+        "expect": "ACCEPT"
+      }
+    },
+    {
+      "name": "residual D2 (residual=0, bits=0000000000000000)",
+      "status": "PASS",
+      "detail": {
+        "arm": "D2",
+        "x": 0.34466802978515626,
+        "masses": [
+          0.1,
+          0.1,
+          0.14466802978515625
+        ],
+        "residual": 0,
+        "residualBits": "0000000000000000",
+        "auditNull": true,
+        "hotOk": true,
+        "residueKept": true,
+        "noEvidence": true,
+        "rollbackIdentity": true,
+        "expect": "ACCEPT"
+      }
+    },
+    {
+      "name": "waterTop boundary exact -EPS v=-1e-9 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary interior (EPS..0) v=-9.999999999999999e-10 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary nextBelow -EPS v=-1.0000000000000003e-9 expect=REJECT",
+      "status": "PASS",
+      "detail": {
+        "audit": false,
+        "hot": 3
+      }
+    },
+    {
+      "name": "waterTop boundary mid -5e-10 v=-5e-10 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary -2^-55 v=-2.7755575615628914e-17 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary -MIN_VALUE v=-5e-324 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary -0 v=0 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary +0 v=0 expect=ACCEPT",
+      "status": "PASS",
+      "detail": {
+        "audit": true,
+        "hot": 0
+      }
+    },
+    {
+      "name": "waterTop boundary NaN v=NaN expect=REJECT",
+      "status": "PASS",
+      "detail": {
+        "audit": false,
+        "hot": 3
+      }
+    },
+    {
+      "name": "waterTop boundary +Inf v=Infinity expect=REJECT",
+      "status": "PASS",
+      "detail": {
+        "audit": false,
+        "hot": 3
+      }
+    },
+    {
+      "name": "waterTop boundary -Inf v=-Infinity expect=REJECT",
+      "status": "PASS",
+      "detail": {
+        "audit": false,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bh v=-5e-324 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bh v=-5e-10 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bh v=-1e-300 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bh -0 accepted",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six-component bl v=-5e-324 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bl v=-5e-10 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bl v=-1e-300 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component bl -0 accepted",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six-component mh v=-5e-324 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component mh v=-5e-10 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component mh v=-1e-300 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component mh -0 accepted",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six-component ml v=-5e-324 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component ml v=-5e-10 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component ml v=-1e-300 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component ml -0 accepted",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six-component suspH v=-5e-324 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component suspH v=-5e-10 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component suspH v=-1e-300 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component suspH -0 accepted",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "six-component suspL v=-5e-324 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component suspL v=-5e-10 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component suspL v=-1e-300 (audit-tolerated, Hot-rejected)",
+      "status": "PASS",
+      "detail": {
+        "auditTolerated": true,
+        "hot": 3
+      }
+    },
+    {
+      "name": "six-component suspL -0 accepted",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "first-column-wins: bh col4 beats waterTop col10",
+      "status": "PASS",
+      "detail": {
+        "col": 4
+      }
+    },
+    {
+      "name": "earliest waterTop bad column wins among same-component",
+      "status": "PASS",
+      "detail": {
+        "col": 3
+      }
+    },
+    {
+      "name": "raw-sign observer flags residue while Hot accepts (NO_FAILURE + LEGAL_TO_INVALID)",
+      "status": "PASS",
+      "detail": {
+        "hot": 0,
+        "status": "NO_FAILURE",
+        "window": "LEGAL_TO_INVALID"
+      }
+    },
+    {
+      "name": "export priority failure/stages first; 512B fragment round-trip; first-failure latch",
+      "status": "PASS",
+      "detail": {
+        "keyOrderOK": true,
+        "latched": true,
+        "fragments": 186
+      }
+    },
+    {
+      "name": "observation on/off equivalence incl. post-rollback cycles (source/bit-preserving)",
+      "status": "PASS",
+      "detail": {
+        "eq1": true,
+        "eq2": true,
+        "eq3": true,
+        "windowStatus": "PREEXISTING_IN_WINDOW"
+      }
+    },
+    {
+      "name": "source identity: WATER_TOP_AUDIT_EPS=1e-9 aligns audit EPS; export reorder comment present",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "patch scope: 1f8e16c product changes limited to Hot+EvidenceV2",
+      "status": "PASS",
+      "detail": {
+        "product": [
+          "entry/src/main/ets/physics/P011FieldColumnEvidenceV2.ets",
+          "entry/src/main/ets/physics/P011ParticleHot.ets"
+        ]
+      }
+    }
+  ]
+}
