@@ -1,0 +1,668 @@
+{
+  "revision": "T107_ENGINEERING_HANDOFF_V1",
+  "date": "2026-10-27",
+  "task": "6adf343de4b06ee35743c76a",
+  "goal": 7,
+  "priority": "P3 after goals 1-6; compute highest",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED_NOT_TESTED",
+  "designerCommit": "e1d0ec7",
+  "designerAssets": [
+    {
+      "path": "docs/algorithm-single-sand-clear-water-v1.md",
+      "worktreeBytes": 26110,
+      "worktreeSha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808",
+      "recordedWorktreeSha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808",
+      "worktreeMatchesRecord": true,
+      "recordedGitBlobSha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808",
+      "gitBlobAtHandoffSha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808",
+      "gitBlobMatchesRecord": true
+    },
+    {
+      "path": "docs/retro-T106-single-sand-clear-water-v1.md",
+      "worktreeBytes": 1590,
+      "worktreeSha256": "4176e5562053e2708964cbd07395dabbee1179ce8988888ec5bf5894835cc693",
+      "recordedWorktreeSha256": "4176e5562053e2708964cbd07395dabbee1179ce8988888ec5bf5894835cc693",
+      "worktreeMatchesRecord": true,
+      "recordedGitBlobSha256": "4176e5562053e2708964cbd07395dabbee1179ce8988888ec5bf5894835cc693",
+      "gitBlobAtHandoffSha256": "4176e5562053e2708964cbd07395dabbee1179ce8988888ec5bf5894835cc693",
+      "gitBlobMatchesRecord": true
+    },
+    {
+      "path": "docs/design-T106-single-sand-water-evidence-v1.json",
+      "worktreeBytes": 4990,
+      "worktreeSha256": "b71717a4c0a4d184bafb2d7007c572528049ba36449ca678ebe01ed3552aa9d0",
+      "recordedWorktreeSha256": "b71717a4c0a4d184bafb2d7007c572528049ba36449ca678ebe01ed3552aa9d0",
+      "worktreeMatchesRecord": true,
+      "recordedGitBlobSha256": "d8febacfe800b5be60d5608d5737c2e37f5b652844c8fe70be151a26b9569247",
+      "gitBlobAtHandoffSha256": "d8febacfe800b5be60d5608d5737c2e37f5b652844c8fe70be151a26b9569247",
+      "gitBlobMatchesRecord": true
+    },
+    {
+      "path": "docs/algorithm-T122-single-sand-clear-water-handoff-v1.md",
+      "worktreeBytes": 9862,
+      "worktreeSha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6",
+      "recordedWorktreeSha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6",
+      "worktreeMatchesRecord": true,
+      "recordedGitBlobSha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6",
+      "gitBlobAtHandoffSha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6",
+      "gitBlobMatchesRecord": true
+    },
+    {
+      "path": "docs/retro-T122-clear-water-handoff-v1.md",
+      "worktreeBytes": 1348,
+      "worktreeSha256": "f2d6ace5f8ae968e01f58d8d93fafd0c78904b5cb5b83e3a4e386fb1abb8800e",
+      "recordedWorktreeSha256": "f2d6ace5f8ae968e01f58d8d93fafd0c78904b5cb5b83e3a4e386fb1abb8800e",
+      "worktreeMatchesRecord": true,
+      "recordedGitBlobSha256": "f2d6ace5f8ae968e01f58d8d93fafd0c78904b5cb5b83e3a4e386fb1abb8800e",
+      "gitBlobAtHandoffSha256": "f2d6ace5f8ae968e01f58d8d93fafd0c78904b5cb5b83e3a4e386fb1abb8800e",
+      "gitBlobMatchesRecord": true
+    }
+  ],
+  "currentSourceManifest": [
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "sha256": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "sha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "sha256": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "sha256": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011GestureRateClock.ets",
+      "sha256": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "sha256": "01809a5e4bab8fa422f3ebe1070a15ec9b403f3fb14a16bdbd59a1550f2c28a5"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneTypes.ets",
+      "sha256": "d62a37574a047a89378b6990d7b8c74910d428993b139759243608023077bd45"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_compositor.cpp",
+      "sha256": "4ef443ec981962e7e1135cef6edc7e69ca3e17072e441a6214b65a322fe68dac"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_gpu.cpp",
+      "sha256": "083230a5ce5c5f10f3932591600f512fbd8fdceb114bb61490276fda59bb2fd0"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_layers.cpp",
+      "sha256": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec"
+    }
+  ],
+  "plan": {
+    "queueRows": 64,
+    "queueColumns": [
+      {
+        "offset": 0,
+        "byteOffset": 0,
+        "name": "runGeneration"
+      },
+      {
+        "offset": 1,
+        "byteOffset": 8,
+        "name": "configRev"
+      },
+      {
+        "offset": 2,
+        "byteOffset": 16,
+        "name": "geometryEpoch"
+      },
+      {
+        "offset": 3,
+        "byteOffset": 24,
+        "name": "inputGeneration"
+      },
+      {
+        "offset": 4,
+        "byteOffset": 32,
+        "name": "gestureId"
+      },
+      {
+        "offset": 5,
+        "byteOffset": 40,
+        "name": "sourceId"
+      },
+      {
+        "offset": 6,
+        "byteOffset": 48,
+        "name": "requestSeq"
+      },
+      {
+        "offset": 7,
+        "byteOffset": 56,
+        "name": "kind"
+      },
+      {
+        "offset": 8,
+        "byteOffset": 64,
+        "name": "x"
+      },
+      {
+        "offset": 9,
+        "byteOffset": 72,
+        "name": "y"
+      },
+      {
+        "offset": 10,
+        "byteOffset": 80,
+        "name": "requestedVolume"
+      },
+      {
+        "offset": 11,
+        "byteOffset": 88,
+        "name": "rawTimestamp"
+      },
+      {
+        "offset": 12,
+        "byteOffset": 96,
+        "name": "timestampUnit"
+      },
+      {
+        "offset": 13,
+        "byteOffset": 104,
+        "name": "seed"
+      },
+      {
+        "offset": 14,
+        "byteOffset": 112,
+        "name": "enqueueOrdinal"
+      },
+      {
+        "offset": 15,
+        "byteOffset": 120,
+        "name": "queueState"
+      },
+      {
+        "offset": 16,
+        "byteOffset": 128,
+        "name": "receiptIndex"
+      },
+      {
+        "offset": 17,
+        "byteOffset": 136,
+        "name": "normalizedTimeMs"
+      },
+      {
+        "offset": 18,
+        "byteOffset": 144,
+        "name": "clockWindowId"
+      },
+      {
+        "offset": 19,
+        "byteOffset": 152,
+        "name": "reserved0"
+      }
+    ],
+    "dedupRows": 4096,
+    "dedupColumns": [
+      {
+        "offset": 0,
+        "byteOffset": 0,
+        "name": "runGeneration"
+      },
+      {
+        "offset": 1,
+        "byteOffset": 8,
+        "name": "configRev"
+      },
+      {
+        "offset": 2,
+        "byteOffset": 16,
+        "name": "geometryEpoch"
+      },
+      {
+        "offset": 3,
+        "byteOffset": 24,
+        "name": "inputGeneration"
+      },
+      {
+        "offset": 4,
+        "byteOffset": 32,
+        "name": "gestureId"
+      },
+      {
+        "offset": 5,
+        "byteOffset": 40,
+        "name": "sourceId"
+      },
+      {
+        "offset": 6,
+        "byteOffset": 48,
+        "name": "requestSeq"
+      },
+      {
+        "offset": 7,
+        "byteOffset": 56,
+        "name": "kind"
+      },
+      {
+        "offset": 8,
+        "byteOffset": 64,
+        "name": "x"
+      },
+      {
+        "offset": 9,
+        "byteOffset": 72,
+        "name": "y"
+      },
+      {
+        "offset": 10,
+        "byteOffset": 80,
+        "name": "requestedVolume"
+      },
+      {
+        "offset": 11,
+        "byteOffset": 88,
+        "name": "rawTimestamp"
+      },
+      {
+        "offset": 12,
+        "byteOffset": 96,
+        "name": "timestampUnit"
+      },
+      {
+        "offset": 13,
+        "byteOffset": 104,
+        "name": "seed"
+      },
+      {
+        "offset": 14,
+        "byteOffset": 112,
+        "name": "enqueueOrdinal"
+      },
+      {
+        "offset": 15,
+        "byteOffset": 120,
+        "name": "queueState"
+      },
+      {
+        "offset": 16,
+        "byteOffset": 128,
+        "name": "receiptIndex"
+      },
+      {
+        "offset": 17,
+        "byteOffset": 136,
+        "name": "normalizedTimeMs"
+      },
+      {
+        "offset": 18,
+        "byteOffset": 144,
+        "name": "clockWindowId"
+      },
+      {
+        "offset": 19,
+        "byteOffset": 152,
+        "name": "reserved0"
+      },
+      {
+        "offset": 20,
+        "byteOffset": 160,
+        "name": "status"
+      },
+      {
+        "offset": 21,
+        "byteOffset": 168,
+        "name": "disposition"
+      },
+      {
+        "offset": 22,
+        "byteOffset": 176,
+        "name": "admitted"
+      },
+      {
+        "offset": 23,
+        "byteOffset": 184,
+        "name": "rejected"
+      },
+      {
+        "offset": 24,
+        "byteOffset": 192,
+        "name": "transactionIdOrInternalNull0"
+      },
+      {
+        "offset": 25,
+        "byteOffset": 200,
+        "name": "kindSuccessSeqOrInternalNull0"
+      },
+      {
+        "offset": 26,
+        "byteOffset": 208,
+        "name": "sourceCommit"
+      },
+      {
+        "offset": 27,
+        "byteOffset": 216,
+        "name": "physicsCommit"
+      },
+      {
+        "offset": 28,
+        "byteOffset": 224,
+        "name": "globalWaterBefore"
+      },
+      {
+        "offset": 29,
+        "byteOffset": 232,
+        "name": "globalWaterAfter"
+      },
+      {
+        "offset": 30,
+        "byteOffset": 240,
+        "name": "globalSandBefore"
+      },
+      {
+        "offset": 31,
+        "byteOffset": 248,
+        "name": "globalSandAfter"
+      },
+      {
+        "offset": 32,
+        "byteOffset": 256,
+        "name": "columnWaterBefore"
+      },
+      {
+        "offset": 33,
+        "byteOffset": 264,
+        "name": "columnWaterAfter"
+      },
+      {
+        "offset": 34,
+        "byteOffset": 272,
+        "name": "columnSandBefore"
+      },
+      {
+        "offset": 35,
+        "byteOffset": 280,
+        "name": "columnSandAfter"
+      },
+      {
+        "offset": 36,
+        "byteOffset": 288,
+        "name": "controlAdmitted"
+      },
+      {
+        "offset": 37,
+        "byteOffset": 296,
+        "name": "actualWaterDelta"
+      },
+      {
+        "offset": 38,
+        "byteOffset": 304,
+        "name": "actualSandDelta"
+      },
+      {
+        "offset": 39,
+        "byteOffset": 312,
+        "name": "waterSuccessCount"
+      },
+      {
+        "offset": 40,
+        "byteOffset": 320,
+        "name": "sandSuccessCount"
+      },
+      {
+        "offset": 41,
+        "byteOffset": 328,
+        "name": "I_water"
+      },
+      {
+        "offset": 42,
+        "byteOffset": 336,
+        "name": "I_sand"
+      },
+      {
+        "offset": 43,
+        "byteOffset": 344,
+        "name": "sourceLedgerRev"
+      },
+      {
+        "offset": 44,
+        "byteOffset": 352,
+        "name": "errorStage"
+      },
+      {
+        "offset": 45,
+        "byteOffset": 360,
+        "name": "reserved0_45"
+      },
+      {
+        "offset": 46,
+        "byteOffset": 368,
+        "name": "reserved0_46"
+      },
+      {
+        "offset": 47,
+        "byteOffset": 376,
+        "name": "reserved0_47"
+      },
+      {
+        "offset": 48,
+        "byteOffset": 384,
+        "name": "reserved0_48"
+      },
+      {
+        "offset": 49,
+        "byteOffset": 392,
+        "name": "reserved0_49"
+      },
+      {
+        "offset": 50,
+        "byteOffset": 400,
+        "name": "reserved0_50"
+      },
+      {
+        "offset": 51,
+        "byteOffset": 408,
+        "name": "reserved0_51"
+      },
+      {
+        "offset": 52,
+        "byteOffset": 416,
+        "name": "reserved0_52"
+      },
+      {
+        "offset": 53,
+        "byteOffset": 424,
+        "name": "reserved0_53"
+      },
+      {
+        "offset": 54,
+        "byteOffset": 432,
+        "name": "reserved0_54"
+      },
+      {
+        "offset": 55,
+        "byteOffset": 440,
+        "name": "reserved0_55"
+      }
+    ],
+    "nativeProfileColumns": [
+      {
+        "offset": 0,
+        "byteOffsetWithinColumn": 0,
+        "name": "S"
+      },
+      {
+        "offset": 1,
+        "byteOffsetWithinColumn": 8,
+        "name": "W"
+      },
+      {
+        "offset": 2,
+        "byteOffsetWithinColumn": 16,
+        "name": "eta"
+      },
+      {
+        "offset": 3,
+        "byteOffsetWithinColumn": 24,
+        "name": "P"
+      },
+      {
+        "offset": 4,
+        "byteOffsetWithinColumn": 32,
+        "name": "bh"
+      },
+      {
+        "offset": 5,
+        "byteOffsetWithinColumn": 40,
+        "name": "mh"
+      },
+      {
+        "offset": 6,
+        "byteOffsetWithinColumn": 48,
+        "name": "R"
+      },
+      {
+        "offset": 7,
+        "byteOffsetWithinColumn": 56,
+        "name": "wet"
+      }
+    ],
+    "profileBytes": 8192,
+    "queueBytes": 10240,
+    "dedupBytes": 1835008,
+    "nativeApi": "drawClearWaterSceneV3(frame,profile64,particleProof64,xy32,meta32,optics64)",
+    "particleProof64": {
+      "rowStrideBytes": 64,
+      "columns": [
+        "id",
+        "mass",
+        "x64",
+        "y64",
+        "vx64",
+        "vy64",
+        "sourceId",
+        "packedTag"
+      ],
+      "doubleStagingBytesAtK512": 65536,
+      "ordering": "strict increasing particle ID; unused tail zero; independent P reduction from original x64"
+    }
+  },
+  "testContracts": [
+    {
+      "id": "CW-01",
+      "owner": "T108 independent tester",
+      "target": "State/reset",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-02",
+      "owner": "T108 independent tester",
+      "target": "Source local water",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-03",
+      "owner": "T108 independent tester",
+      "target": "Source capacity and P reservation",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-04",
+      "owner": "T108 independent tester",
+      "target": "Particle source/air/wet/LAND",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-05",
+      "owner": "T108 independent tester",
+      "target": "Particle medium segmentation",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-06",
+      "owner": "T108 independent tester",
+      "target": "LAND and displaced head",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-07",
+      "owner": "T108 independent tester",
+      "target": "Hydraulic five bounds/energy",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-08",
+      "owner": "T108 independent tester",
+      "target": "Hydraulic walls/crest",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-09",
+      "owner": "T108 independent tester",
+      "target": "Accepted angle shared",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-10",
+      "owner": "T108 independent tester",
+      "target": "Internal crossing/bed capacity",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-11",
+      "owner": "T108 independent tester",
+      "target": "Invalid/resource rejection",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-12",
+      "owner": "T108 independent tester",
+      "target": "Idempotency and kind ledger",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-13",
+      "owner": "T108 independent tester",
+      "target": "Switch/clock/pointer lifecycle",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-14",
+      "owner": "T108 independent tester",
+      "target": "Background/reset/geometry",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-15",
+      "owner": "T108 independent tester",
+      "target": "Separate source/step rollback",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-16",
+      "owner": "T108 independent tester",
+      "target": "V3 optics and coherent publication",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-17",
+      "owner": "T108 independent tester",
+      "target": "Full scene failure/STALE",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "CW-18",
+      "owner": "T108 independent tester",
+      "target": "Bounded resources and workload",
+      "status": "NOT_RUN"
+    }
+  ],
+  "remainingDependencies": {
+    "development": "T108 pretest baseline before implementing related stage",
+    "device": "actual implementation + independent no-blocking result + valid package; device serialized",
+    "calibration": "kappa/rates/drag/settling/optics candidate values PENDING_CALIBRATION",
+    "sharedHunks": "Do not revert GPU/T174/T178 current edits"
+  }
+}
