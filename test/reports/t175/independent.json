@@ -1,0 +1,100 @@
+{
+  "revision": "T175_M2_GATE_INDEPENDENT_V1",
+  "executedAt": "2026-10-27T15:19:53.531Z",
+  "device": "NOT_RUN (offline per card)",
+  "commitsUnderTest": {
+    "t174": "c797ea9",
+    "t168": "0fd4a2e"
+  },
+  "frozenReference": "961d837",
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "results": [
+    {
+      "name": "frozen reference identity: git-object SHA re-derived, matches T174 archived",
+      "status": "PASS",
+      "detail": {
+        "P011MaterialGuard.ets": "6c2133ffa3f5906640bc2a41c7dca67b52e80aa5eea2b3d58d93e4eadd9b42a9",
+        "WaterSandField.ets": "8adf4a579bf2549cd2e72451e2d94d11030cf80f6c8915cda3a374af256a0e24",
+        "P011NaturalObservation.ets": "2f2cab36655e5cbb3a14f89cafce967cd0a4d7956d93e590f21ade41d1af2aee"
+      }
+    },
+    {
+      "name": "M2 six-transaction full-pipeline equality: frozen 961d837 tree vs current (state/budget/source/events/fails)",
+      "status": "PASS",
+      "detail": {
+        "oldSha": "6d6bdebc676af02c",
+        "newSha": "6d6bdebc676af02c",
+        "oldFails": 0,
+        "newFails": 0
+      }
+    },
+    {
+      "name": "fixed-array element store: literal still an allocation (no silent exemption)",
+      "status": "PASS",
+      "detail": {
+        "alloc": 1
+      }
+    },
+    {
+      "name": "super static base dispatch modeled (allocation gated on runtime value → conservative reachable)",
+      "status": "PASS",
+      "detail": {
+        "alloc": 2
+      }
+    },
+    {
+      "name": "closure construction allocates; body executes only on call",
+      "status": "PASS",
+      "detail": {
+        "ctorOnly": true,
+        "callExecuted": true
+      }
+    },
+    {
+      "name": "for-of with break: body allocations recorded, close path conservative",
+      "status": "PASS",
+      "detail": {
+        "alloc": 2,
+        "unresolved": 0
+      }
+    },
+    {
+      "name": "string coercion/padStart recorded as effects (no silent builtin exemption)",
+      "status": "PASS",
+      "detail": {
+        "unresolved": 0,
+        "alloc": 1
+      }
+    },
+    {
+      "name": "fake builtin set executes its body (allocation reachable)",
+      "status": "PASS",
+      "detail": {
+        "alloc": 2
+      }
+    },
+    {
+      "name": "OFF_ALL main graph independently reproduced: 24 roots/60 registry/0 remaining ZERO",
+      "status": "PASS",
+      "detail": {
+        "remaining": 0,
+        "roots": 24,
+        "archived": 0
+      }
+    },
+    {
+      "name": "legacy conservative unchanged: 35 remaining (archived not overwritten)",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "v1 81-remaining archive preserved at original-81/",
+      "status": "PASS",
+      "detail": {
+        "dir": 3
+      }
+    }
+  ]
+}
