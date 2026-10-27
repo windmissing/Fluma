@@ -1,0 +1,9 @@
+t171_binding_test.cpp
+pair_prepare_v1.cpp
+pair_owner_v1.cpp
+正在生成代码...
+PASS T159 binding: env/thread isolation, full64 original/context IDs, two slots, actual mutation+alias guard, detached typed view, stale hi-word, WAIT raw code/quarantine, failed retirement count, recovery generation, protocol classification, fail-closed owner exhaustion. NAPI/EXECUTOR=HOST_TEST_DOUBLES GPU=NOT_RUN
+PASS T171 real cold CAS near UINT64_MAX, no reset/rollover; real request-hi reject vs completed-result current-owner-hi STALE; one-shot owner plan; explicit-byte NUL logs; missing timing NaN->JSON null. GPU GL injection DEVICE_NOT_RUN.
+t171_shader_source_test.cpp
+PASS T171 actual private-file byte mutation -> real program read/SHA mismatch before GL compile; expected hash unchanged. No GPU execution claimed.
+pair_binding_v1.cpp

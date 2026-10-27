@@ -8,6 +8,7 @@
 #include <fstream>
 #include <limits>
 #include <sstream>
+#include <sys/stat.h>
 #include <thread>
 #ifdef _WIN32
 #define NOMINMAX
@@ -34,16 +35,33 @@ static void* getProc(const char* name){
 #endif
 }
 static std::string readFile(const std::string& p){std::ifstream f(p,std::ios::binary);return f?std::string((std::istreambuf_iterator<char>(f)),{}):"";}
-static bool program(const std::string& path,GLuint& out,RequestDiagnostics& d,const std::string* expectedSha){std::string code=readFile(path);
+// T171: always capture successful and failed compile/link logs. Capture errors
+// are separate from the first physical GL error; no synthetic GL error codes.
+static void captureLogV3(GLuint object,bool shader,ProgramDiagnosticsV3& p) {
+ constexpr GLint budget=4096;GLint length=0;
+ if(shader)glGetShaderiv(object,GL_INFO_LOG_LENGTH,&length);else glGetProgramiv(object,GL_INFO_LOG_LENGTH,&length);
+ GLenum error=glGetError();GLsizei returned=0;std::string text;
+ const GLint capped=std::max(1,std::min(length,budget));text.resize(size_t(capped));
+ if(!error){if(shader)glGetShaderInfoLog(object,capped,&returned,&text[0]);else glGetProgramInfoLog(object,capped,&returned,&text[0]);error=glGetError();}
+ const auto bytes=uint32_t(std::max(0,std::min(int(returned),capped)));text.resize(bytes);
+ const char* status=error?"CAPTURE_FAILED":bytes?"CAPTURED":"EMPTY";
+ if(shader){p.compileOriginalLength=uint32_t(std::max(0,length));p.compileReturnedBytes=bytes;p.compileLog=text;p.compileLogStatus=status;p.compileTruncated=length>budget;p.compileCaptureGlError=error;}
+ else {p.linkOriginalLength=uint32_t(std::max(0,length));p.linkReturnedBytes=bytes;p.linkLog=text;p.linkLogStatus=status;p.linkTruncated=length>budget;p.linkCaptureGlError=error;}
+}
+static bool program(const std::string& path,GLuint& out,RequestDiagnostics& d,const std::string* expectedSha,ProgramDiagnosticsV3& p){
+ struct stat fileStat{};if(::stat(path.c_str(),&fileStat)==0){p.sourceStatCaptured=true;p.sourceModifiedSeconds=fileStat.st_mtime;}
+ p.source=path;p.expectedSha=expectedSha?*expectedSha:"NOT_BOUND";std::string code=readFile(path);p.sourceBytes=uint32_t(code.size());
  if(code.empty()){d.stage="SHADER_SOURCE";d.detail=path;return false;}
- if(expectedSha){Sha256 sha;sha.update(code.data(),code.size());auto digest=sha.finish();static const char* hex="0123456789abcdef";std::string actual;for(auto b:digest){actual+=hex[b>>4];actual+=hex[b&15];}if(actual!=*expectedSha){d.stage="SHADER_SHA_MISMATCH";d.detail=path;return false;}}
+ Sha256 sha;sha.update(code.data(),code.size());auto digest=sha.finish();static const char* hex="0123456789abcdef";
+ for(auto b:digest){p.actualSha+=hex[b>>4];p.actualSha+=hex[b&15];}
+ if(expectedSha&&p.actualSha!=*expectedSha){d.stage="SHADER_SHA_MISMATCH";d.detail=path;return false;}
  const char* src=code.c_str();GLuint shader=glCreateShader(GL_COMPUTE_SHADER);
  glShaderSource(shader,1,&src,nullptr);glCompileShader(shader);GLint ok=0;glGetShaderiv(shader,GL_COMPILE_STATUS,&ok);d.preserveGlError(glGetError());
- if(!ok){GLint length=0;glGetShaderiv(shader,GL_INFO_LOG_LENGTH,&length);std::string log(std::max(length,1),0);glGetShaderInfoLog(shader,GLsizei(log.size()),nullptr,&log[0]);d.stage="SHADER_COMPILE";d.detail=log;
-  glDeleteShader(shader);return false;}
+ p.compileStatus=ok?"OK":"FAILED";captureLogV3(shader,true,p);
+ if(!ok){d.stage="SHADER_COMPILE";d.detail=p.compileLog;glDeleteShader(shader);return false;}
  out=glCreateProgram();glAttachShader(out,shader);glLinkProgram(out);glGetProgramiv(out,GL_LINK_STATUS,&ok);d.preserveGlError(glGetError());
- glDeleteShader(shader);if(!ok){GLint length=0;glGetProgramiv(out,GL_INFO_LOG_LENGTH,&length);std::string log(std::max(length,1),0);glGetProgramInfoLog(out,GLsizei(log.size()),nullptr,&log[0]);
-  d.stage="PROGRAM_LINK";d.detail=log;return false;}
+ p.linkStatus=ok?"OK":"FAILED";captureLogV3(out,false,p);glDeleteShader(shader);
+ if(!ok){d.stage="PROGRAM_LINK";d.detail=p.linkLog;return false;}
  d.preserveGlError(glGetError());if(d.rawGlError){d.stage="PROGRAM_GL";return false;}return true;
 }
 static uint32_t pow2(uint32_t x){uint32_t k=1;while(k<x&&k<=0x40000000u)k*=2;return k;}
@@ -53,6 +71,9 @@ uint32_t ContextSlot::slotState(uint32_t slot)const{return slot<2?impl_->slotSta
 ExecStatus ContextSlot::reset(RequestDiagnostics* report){Opaque& o=*impl_;RequestDiagnostics d;
  if(o.thread!=std::this_thread::get_id()){d.stage="RESET_WRONG_OWNER";d.resetStatus="WRONG_OWNER";if(report)*report=d;return ExecStatus::STALE;}
  initialized_=false;quarantined_=true;bool failed=false;
+#ifdef P011_GPU_TEST_INJECTION
+ testIllegalUpload_=false;
+#endif
  auto eglFailure=[&](const char* stage){auto error=eglGetError();if(!d.rawEglError)d.rawEglError=uint32_t(error);if(d.stage=="NONE")d.stage=stage;failed=true;};
  if(o.display!=EGL_NO_DISPLAY&&o.displayInitialized){
   if(o.context!=EGL_NO_CONTEXT&&o.surface!=EGL_NO_SURFACE){
@@ -107,7 +128,8 @@ ExecStatus ContextSlot::initialize(uint32_t nmax,const std::string& shaderDirect
   candidateBytes>uint64_t(maxBlock)||tableBytes>uint64_t(std::numeric_limits<GLsizeiptr>::max())||
   K_>UINT32_MAX/(h_+1)){d.stage="LIMITS";return ExecStatus::CAPACITY_UNSUPPORTED;}
  const char* names[3]={"pair_build_v1.comp","pair_query_v1.comp","pair_reduce_v1.comp"};
- for(int i=0;i<3;i++)if(!program(shaderDirectory+"/"+names[i],o.programs[i],d,expectedShaderSha?&(*expectedShaderSha)[i]:nullptr))return ExecStatus::GL_ERROR;
+ for(int i=0;i<3;i++){d.programs[i].source=shaderDirectory+"/"+names[i];d.programs[i].expectedSha=expectedShaderSha?(*expectedShaderSha)[i]:"NOT_BOUND";}
+ for(int i=0;i<3;i++)if(!program(shaderDirectory+"/"+names[i],o.programs[i],d,expectedShaderSha?&(*expectedShaderSha)[i]:nullptr,d.programs[i]))return ExecStatus::GL_ERROR;
  const uint64_t sizes[6]={256,tableBytes,queryBytes,candidateBytes,candidateBytes,128};
  for(int slot=0;slot<2;slot++)for(int i=0;i<6;i++){
   glGenBuffers(1,&o.buffers[slot][i]);if(!o.buffers[slot][i]){d.stage="BUFFER_GEN";return ExecStatus::GL_ERROR;}
@@ -126,6 +148,7 @@ static void shortcut(const PreparedView& p,Result& r){r=Result();auto& w=r.w;con
 ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIndex,Deadline deadline,
  Result& out,RequestDiagnostics& d){
  d=RequestDiagnostics();d.contextEpoch=epoch_;out=Result();auto begin=Clock::now();Opaque& o=*impl_;
+ struct RequestClockV3 {RequestDiagnostics& d;Clock::time_point begin;~RequestClockV3(){d.requestCpuMs=elapsed(begin);}} requestClockV3{d,begin};
  if(!initialized_||quarantined_||o.thread!=std::this_thread::get_id()||slotIndex>1||
   p.identity.slotIndex!=slotIndex||p.identity.contextEpoch!=epoch_||p.K!=K_||
   p.header==nullptr||p.leaves==nullptr||p.queries==nullptr||o.slotState[slotIndex]!=0){d.stage="IDENTITY";return ExecStatus::STALE;}
@@ -142,6 +165,17 @@ ExecStatus ContextSlot::executeIntegerPair(const PreparedView& p,uint32_t slotIn
   glBindBuffer(GL_SHADER_STORAGE_BUFFER,b[indices[i]]);o.subData(GL_SHADER_STORAGE_BUFFER,GLintptr(tableOffset),GLsizeiptr(bytes[i]),payloads[i]);
   GLenum err=glGetError();if(err){d.rawGlError=err;d.stage="UPLOAD";o.slotState[slotIndex]=4;quarantined_=true;return ExecStatus::GL_ERROR;}}
  d.uploadCpuMs=elapsed(uploadStart);
+#ifdef P011_GPU_TEST_INJECTION
+ if(testIllegalUpload_){
+  testIllegalUpload_=false;
+  // Real invalid target on the current owner GL thread, after successful upload.
+  glBindBuffer(0xffffffffu,b[0]);
+  GLenum injected=glGetError();d.preserveGlError(injected);
+  if(injected!=GL_NO_ERROR)return fail(ExecStatus::GL_ERROR,"TEST_ILLEGAL_UPLOAD_TARGET");
+  d.detail="INJECTION_NOT_OBSERVED";
+ }
+#endif
+
  for(int i=0;i<6;i++)glBindBufferBase(GL_SHADER_STORAGE_BUFFER,i,b[i]);
  if(d.preserveGlError(glGetError()))return fail(ExecStatus::GL_ERROR,"BIND_BLOCKS");
  o.slotState[slotIndex]=2;auto dispatchStart=Clock::now();uint32_t groups=(K_+63)/64;

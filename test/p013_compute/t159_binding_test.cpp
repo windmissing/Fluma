@@ -48,4 +48,5 @@ int main(){MockEnv env1,env2;auto e=&env1;State s(e),other(&env2);nextOwner=0x10
  fault=0;assert(str(reset(e,&stop),"status")=="RESET");auto old=s.generation;assert(str(configure(e,&start),"status")=="READY"&&s.generation>old);mutation++;fault=2;auto protocol=run(1);assert(str(protocol,"consumeStatus")=="PROTOCOL_ERROR"&&str(protocol,"oracleVerdict")=="NOT_EVALUATED");fault=0;reset(e,&stop);
  nextOwner=UINT64_MAX;assert(str(configure(e,&start),"errorCode")=="OWNER_GENERATION_EXHAUSTED");assert(nextOwner==UINT64_MAX);
  std::puts("PASS T159 binding: env/thread isolation, full64 original/context IDs, two slots, actual mutation+alias guard, detached typed view, stale hi-word, WAIT raw code/quarantine, failed retirement count, recovery generation, protocol classification, fail-closed owner exhaustion. NAPI/EXECUTOR=HOST_TEST_DOUBLES GPU=NOT_RUN");
+ return 0;
 }

@@ -1,0 +1,505 @@
+{
+  "revision": "T171_SOURCE_V3",
+  "sourceManifestSha256": "fac20656756675b6fb1b7a2ec12a4d0ddb3721777a3e414ff6e186d863195006",
+  "v2SourceManifest": {
+    "revision": "T159_SOURCE_V2",
+    "sourceManifestSha256": "6392b362a05deceaf567472c1d777f6a16d7d6b6e488455ced3351b50642bbb7",
+    "inputs": {
+      "AppScope/app.json5": "a45ed86286977c347a6ef255606686f2d12e3b5ca08df2d52893bc3f7a4f8742",
+      "AppScope/resources/base/element/string.json": "fe34f4a125ef963421b8ef3bc01be5312fd3ba790bc0574c638c3fc00489449b",
+      "AppScope/resources/base/media/app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
+      "hvigor/hvigor-config.json5": "941c4b1ed3bab8300e790e2b6280b316f48bcc4d7228fb08cb3fbfbf6c05996b",
+      "hvigorfile.ts": "facfdb5e596903506be8afc13fe28ccaf09bd464fe8fad5fb537d3b0a85ab2d7",
+      "build-profile.json5": "5d860f84ce9ef2b3ba85041f7cb7b1227a64c75413025b9e493ee46c1ea7ef03",
+      "oh-package.json5": "258c4269da06b575b982d664b64d082dd23d981d3a91e0ec6afb2adf57d1c6d6",
+      "oh-package-lock.json5": "c0ae5d982fd9c9a811136ada142eb75473f069244228844ac8bba7e97e815c0d",
+      "local.properties": "0407f9324018a22fc7c896ae1e9b56d10c50f871093757d543da8dd9eacc1275",
+      "entry/build-profile.json5": "f9465dd68c88732f8ee855da26a0e5b9d72fc601073ef6f1d406da20e699787b",
+      "entry/hvigorfile.ts": "8744274e42afe78c70cb01a80b660b35451f49de9b9807a2f99807b6c88d03dc",
+      "entry/oh-package.json5": "8b1119ca26d6d6372713f849c3adb36a57c9ad466694c4ac8b3766570986d66a",
+      "entry/src/main/cpp/CMakeLists.txt": "e1dae0026b9cb6b2167cf6dcc9c78a49cdf3c4152d4561ccdfa92c9ff8219617",
+      "entry/src/main/cpp/hello/hello_surface.cpp": "b16a406f8742d2feca3640aebbfe8e11e0ae6e2c524bf9071ff028c20f198f0e",
+      "entry/src/main/cpp/p013renderer/base_strip_uploader.cpp": "89311d9247def81107b97817c35df3f596e83f502da5f9cbbc6fb4453cfb95ed",
+      "entry/src/main/cpp/p013renderer/base_strip_uploader.h": "4a1ce264832e9cb6e3c9c3f361c03a49095be1eb230de86554db5729f884290d",
+      "entry/src/main/cpp/p013renderer/composition_probe.cpp": "5d40968f5865b078315341b31149bc7a6dc88214b6336409c097eadde1a4e7f6",
+      "entry/src/main/cpp/p013renderer/composition_probe.h": "be3a96a6ab20521d70200aeeddddbd29b8df1d3a4773d2c0c0d1ef1c2d626d88",
+      "entry/src/main/cpp/p013renderer/dualfield_pass.cpp": "c7859b6270c1f462bb2b26641522da1a3059115ff6f511820972ff8c42648143",
+      "entry/src/main/cpp/p013renderer/dualfield_pass.h": "8ed3845935e9f58cff17b5df03eb716e36e357655b9a00c102e20e942592c0a7",
+      "entry/src/main/cpp/p013renderer/egl_context.cpp": "1dfcb7daf7150cf3bda1f8e134d60ddbada5bd637872e6be85dbfc4cf2268728",
+      "entry/src/main/cpp/p013renderer/egl_context.h": "a04a3960fccd1b660344f7522151f7f9b9fc30523806f982f5babd0dac409df2",
+      "entry/src/main/cpp/p013renderer/fullframe_targets.cpp": "09a1c8ab2c37dae7a1873e4f729d612a33f9d9c27fb4744daf10eac33634dc9d",
+      "entry/src/main/cpp/p013renderer/fullframe_targets.h": "cc9048fcaeb8795737e3adeceadf0dac8fdc613ef8f7fd92f310eb487e4a7489",
+      "entry/src/main/cpp/p013renderer/glsl/e2_lmat.frag": "eb314eef5793c672b358a6e4a0bebcad5947f73045fc8553835efb1060cdb70a",
+      "entry/src/main/cpp/p013renderer/glsl/e2_lmat.vert": "322786bfc0f41e0027fc79d4b785f57b98ae41fe7c6b46384b6d3228f563227b",
+      "entry/src/main/cpp/p013renderer/glsl/p1_material.frag": "f78f821c18a2f807b89c4ffa0fe0b4b365b3402529feb72d3ea040a42cc94fab",
+      "entry/src/main/cpp/p013renderer/glsl/p1_material.vert": "efbd4e6f32dac6714c193a9c48bc37472a65314f97f02ffbfd97469d8fc063e0",
+      "entry/src/main/cpp/p013renderer/material_pass.cpp": "3e5ca2cc05951071e5b039775555bbc14454eb63876a274696c95096c3dccb8c",
+      "entry/src/main/cpp/p013renderer/material_pass.h": "1a8cca7b7fbc935c9fda04f5fedaf0ce7b84fd7430c0f0311837e42ac11a7f71",
+      "entry/src/main/cpp/p013renderer/material_uploader.cpp": "727b01f16a89a143c3bd71cf5311104ca05f581ab6e55a55071fe9d28ccff3c3",
+      "entry/src/main/cpp/p013renderer/material_uploader.h": "6cff40a2ada909bea33bdd2398c54683707c1eed8f1e38458e988add4554e61a",
+      "entry/src/main/cpp/p013renderer/napi_bridge.cpp": "a20e9bc35cb75b049082902e9583485df0150dd5313145db905a77dc5cf842e0",
+      "entry/src/main/cpp/p013renderer/napi_bridge.h": "6eac98f575fbaec169bd27d670673452f363c33473b88f5e506ef90137504845",
+      "entry/src/main/cpp/p013renderer/render_contract.h": "44c025188c5fe9f2a754bc029ab6fa30ebde07ddcc53f54e8f8bcfc3db3295e5",
+      "entry/src/main/cpp/p013renderer/scene_compositor.cpp": "4ef443ec981962e7e1135cef6edc7e69ca3e17072e441a6214b65a322fe68dac",
+      "entry/src/main/cpp/p013renderer/scene_compositor.h": "65ead68fb97c3c7fcf50d4f5749850896c6af8de18dbc370cf257ef4e89d2c75",
+      "entry/src/main/cpp/p013renderer/scene_gpu.cpp": "083230a5ce5c5f10f3932591600f512fbd8fdceb114bb61490276fda59bb2fd0",
+      "entry/src/main/cpp/p013renderer/scene_gpu.h": "29f6650d6a0e99e654aeb5229dafda4549323b3a57210cc37e52e49664280f6f",
+      "entry/src/main/cpp/p013renderer/scene_layers.cpp": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec",
+      "entry/src/main/cpp/p013renderer/scene_layers.h": "4d8ec0de83f56a949bf0c872199f0e80d7da13c388c623143636f77ad69eb044",
+      "entry/src/main/cpp/p013renderer/shader_pass.cpp": "98f62a916635b8ef6f890c32af20b98e80c21b8227080024d327a00b2136b648",
+      "entry/src/main/cpp/p013renderer/shader_pass.h": "13a7e262de85e5ae2992a881837a3abc938c5c5e5f8a10d46e9fa236b22e8d21",
+      "entry/src/main/cpp/p013renderer/tdata_uploader.cpp": "898eeb9d640df7c21ca34aab6376c981909b4b5f8d71dc55e574637a92a647b0",
+      "entry/src/main/cpp/p013renderer/tdata_uploader.h": "988698e5ebb6d35d8cc093e6c2a3106bbb960c9a096b481fc0e6e383e54dac9f",
+      "entry/src/main/ets/common/P011ParticleRenderProjection.ets": "8e673f3aee5bef1a2a4fb01af0d6babb044cc5176023652cbb97f9207fb37078",
+      "entry/src/main/ets/entryability/EntryAbility.ets": "0372c742c6e9676f7b0e1a9991370bf6137d2cfc75e1c35143babc3c49a15d49",
+      "entry/src/main/ets/pages/EmptySandDemo.ets": "ba633b247345d764879411754ab5ab1f2d717c2f7a955f2cf8667f2cae2161f5",
+      "entry/src/main/ets/pages/Index.ets": "cdf56e90ca2e3436dcbcf1c9a9350b37f4b605de97f886ff13c570af4ec03123",
+      "entry/src/main/ets/pages/P013HelloSurface.ets": "30b028a124fa1c43d47b54c1a5e01ca8354fa94cbe0ff12bf9b8994a40003504",
+      "entry/src/main/ets/pages/P013P1G0Probe.ets": "56c0c8686d32b531c4e0b195371d736462c2b0651d1f6fadb464e79df2de23e0",
+      "entry/src/main/ets/pages/SandCanvas.ets": "df749d4adb498e16d61e790129db31ed09a12fe28e296bd348354ca654242318",
+      "entry/src/main/ets/physics/Bounds.ets": "0382af32ddf927baf9a8d44ea15edb184d7169b1b8141b534a66fffb701e5704",
+      "entry/src/main/ets/physics/CollisionSolver.ets": "a0bc66089677f3a51a8bd926f2c2fcc54812dc294fdde2d0b1103dafdfd800d8",
+      "entry/src/main/ets/physics/FluidField.ets": "250112784f6892337b1df44449354b76944225a5ddb9e8080eab4d3ec23617bd",
+      "entry/src/main/ets/physics/HeightField.ets": "5338a95c858aa61fc36b13ee44974aea027be51bc3770e0cc0770da0e0f9dfba",
+      "entry/src/main/ets/physics/LiquidCAController.ets": "e5092df67f520acc44d44754c69e555f8898e4945deed1b67714ced8975d732e",
+      "entry/src/main/ets/physics/LiquidCAField.ets": "71ed2b3ad455271d8efa360fb9fc6e0718ff2bc6de2cd12f275451ec10e2053c",
+      "entry/src/main/ets/physics/LiquidCATelemetry.ets": "69ae0ca9979e1f41a590bea1b937bc32491afe7a829abb93a8c7d3667614ea74",
+      "entry/src/main/ets/physics/LiquidCATypes.ets": "a10a4ae41c64d6deff4b2e8ea8900d736490b0190f49f82142c18bfdd97ed824",
+      "entry/src/main/ets/physics/LiquidCAWant.ets": "e57ce68ce0742c85fd0370df5930f3d1f2410e79ae83caa718d28996d99d3465",
+      "entry/src/main/ets/physics/P011DeviceRunAssembly.ets": "62e76d7409426c5dca8cf98909130e2d32e30b2b054b1be785dedc58fc6b214c",
+      "entry/src/main/ets/physics/P011EndpointCaptureSession.ets": "8bdd41ac36f04f360a6cbf1a2e025fd6e77e286b4fb90ddd9659ae697eb37e1f",
+      "entry/src/main/ets/physics/P011EndpointMetrics.ets": "666af6c24ed6060c945ff5f928e73f6353a08cc3123f92498ee61f6c1c9c4332",
+      "entry/src/main/ets/physics/P011EndpointStartupClock.ets": "9a96bbe5f7dbcd3714921ee988315369cf152de9a16789a50c952e634441224d",
+      "entry/src/main/ets/physics/P011ExactDyadic.ets": "a0f20bad1be2127fda8877f97a012388f03d899220a8921f4b7078507705b06a",
+      "entry/src/main/ets/physics/P011ExternalAdmissions.ets": "3411b4334855902f04799cda032deadbcc1e8ff827da8b59df632e42690d53fb",
+      "entry/src/main/ets/physics/P011FieldColumnEvidenceV2.ets": "513c183169f0c5780b8f4aabad1d0d70ee81b890a41385392faf370e9aa11849",
+      "entry/src/main/ets/physics/P011GestureRateClock.ets": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af",
+      "entry/src/main/ets/physics/P011InputMode.ets": "37a00c50b85d39e9873cd51ec21376d25e2e5857d88dc5776c50abb2fdf9fa73",
+      "entry/src/main/ets/physics/P011MaterialGuard.ets": "961972e72808ed6b095a20c0cb5cd361072ae9f934464c3f4b6c13cae5754bb0",
+      "entry/src/main/ets/physics/P011MergeExactIndex.ets": "642df4452d1a558d19427fa8df8615f9a34a62a8aaf76a526db50219ea4b023f",
+      "entry/src/main/ets/physics/P011Moisture.ets": "7f2f4c945cfdd39cc31922236afadfc6ebc992ee39d681b819deaac9a11b3ae4",
+      "entry/src/main/ets/physics/P011NaturalObservation.ets": "2f2cab36655e5cbb3a14f89cafce967cd0a4d7956d93e590f21ade41d1af2aee",
+      "entry/src/main/ets/physics/P011NaturalObservationStore.ets": "bfafd83b7982340b5cda764cdf4be059d94d488b3cb95d06f476247a4a3a39e0",
+      "entry/src/main/ets/physics/P011OutwardArithmetic.ets": "957180cdc94d90b17db2ef48e49a2b55377e1ba7b802c73ec0d486ee99ce2ed9",
+      "entry/src/main/ets/physics/P011ParticleField.ets": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5",
+      "entry/src/main/ets/physics/P011ParticleHot.ets": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+      "entry/src/main/ets/physics/P011ParticleHotBudget.ets": "2480c3b2ada7ae6540f6011add46905e6d866838dad703761491377bb75540fb",
+      "entry/src/main/ets/physics/P011ParticleHotEvidence.ets": "c135b69b349625a35c4fa1a349193c02193225b0a89905c236fcc38fd988fd55",
+      "entry/src/main/ets/physics/P011ParticleHotPrototype.ets": "50769c438309f7caee594d2c9051690c28455b8c650351e239d65b3dc0513fe5",
+      "entry/src/main/ets/physics/P011ParticleM2Field.ets": "46747913fbc96b5d8e51530582967d1089a731ba44899de38f9a37b4e90c13f6",
+      "entry/src/main/ets/physics/P011ParticleM2Projection.ets": "725bc69e0b6949d5d1c8e61301694bfa5b4f495e048cd22b9fdd9316f9402ee2",
+      "entry/src/main/ets/physics/P011ParticleM2Sink.ets": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+      "entry/src/main/ets/physics/P011ParticlePrototype.ets": "e5d2a7c391368b5e6913be663af0c81b521821a2a0f9bc53e35b78f5ebee4cd4",
+      "entry/src/main/ets/physics/P011ParticleRefundAdapter.ets": "274cc91e58bc1c9524460a7f9d1dc85b40f40bb0bdba63b96d8e91773050ea5d",
+      "entry/src/main/ets/physics/P011PeakMetrics.ets": "071045cd58f75bc4327d99166eb907b2cd6091b92cac3a3c8ad696c1c32ea9ef",
+      "entry/src/main/ets/physics/P011PoolProgressDiagnostic.ets": "c92ad8bc4a42948a04570a95ecdc76aa3e4ba30b68a8b6595dfe239c0590f8a4",
+      "entry/src/main/ets/physics/P011PublishedRenderState.ets": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776",
+      "entry/src/main/ets/physics/P011RelaxCorrection.ets": "09d6ddf8fcc489396c7e49df2c37e3e96b40f5115aaae2c3e99be68cb3808cde",
+      "entry/src/main/ets/physics/P011RelaxHysteresis.ets": "24d87ae2195410035d51396bba215b6b9a44131680bf0642763cdeb663088f93",
+      "entry/src/main/ets/physics/P011SchedulePlayer.ets": "a6a5688256575cd7e90c228c40a992c4cac1daf7fa697c489a6923d52d87d110",
+      "entry/src/main/ets/physics/P011ScheduleV3.ets": "b5814db7c836072977bfc8808928133e1cd1c4d5e2d9b05388b8bb0422f6cf1e",
+      "entry/src/main/ets/physics/P011StateCertificate.ets": "49c5d38b00edb0abb4a13fd4de20a8671b00f1cfe2414ec72c1dc1e3b649ffc7",
+      "entry/src/main/ets/physics/P011TiltPlanningPass.ets": "3a4b95a3a1e1f2fe1257bcfad3234cf3a416389a7032a252cf2664cce0a27e2d",
+      "entry/src/main/ets/physics/P011TiltPreviewTrace.ets": "99946368181a5fc5fbbbb8f0103705a473e4a19bc6d1af2cb4043b139013fe25",
+      "entry/src/main/ets/physics/P011TiltWant.ets": "5f3b005763d894c834e16cb7eaf05779396c7ecdcc3d8d63261dc1f9ff3a9ab3",
+      "entry/src/main/ets/physics/P011WriterEnvelope.ets": "2112f37f9be48fa4abacfa1f3a11bf2fbe2ce8ff115a943c717f0b60de032952",
+      "entry/src/main/ets/physics/P011WriterKernels.ets": "3a81c04c9e5696941dba22f37d467b4ffc74e44dd3af20c2e6eb9b0696925c21",
+      "entry/src/main/ets/physics/P011WriterRegistry.ets": "362d0874eba9b27e0d05799046778d42ea14d4dd158d99c5fb6a6356761659be",
+      "entry/src/main/ets/physics/P011WriterRNGraph.ets": "4c14363e6049319c5eb52a47a2ecfa03cc4566d0d7a70b193088ce4582002d35",
+      "entry/src/main/ets/physics/P051DiagnosticBuffer.ets": "8a39da5d64a9ac1dcda0ecf79c56e865152ed3ef7e94245bdb738d8797b277e9",
+      "entry/src/main/ets/physics/P051DryParticleAdmission.ets": "d7b830a1bd5d6f58f4eb8cead2ee1acee25f93d126bdfbaff6e6c4cb87db5197",
+      "entry/src/main/ets/physics/P051EmptySandDemo.ets": "44a6b83604d4c881ce1d990989c733a0fc5c0abde6413d1f7770602876f5ed88",
+      "entry/src/main/ets/physics/P051GravityInputAdapter.ets": "62da969e8b3d79d7b470c8d34c8c4f575e8c02c08e778e1ad6a820a07411ed2f",
+      "entry/src/main/ets/physics/P051TouchSourceAdapter.ets": "4dd36d2e8dd320fd8c3a8004afb9aef7d3586332eedad3df20bfc5b30ca50864",
+      "entry/src/main/ets/physics/Particle.ets": "bbe01e9e83253c274af988a077f75b6442770450e071d757a1fff1aba58cda62",
+      "entry/src/main/ets/physics/PhysicsConfig.ets": "e451ec155e48df467f87d0922217b12a4075e19f9d511edca84d7e7c377a844a",
+      "entry/src/main/ets/physics/SandGrid.ets": "677904c521558a5e63f179ef5b6f441ec7d6d3d841c05f81b778e33ee2a82032",
+      "entry/src/main/ets/physics/SpatialHash.ets": "746fe06223d3b27b152deb8ee8e91307c279f761e5c5a65a8170b00b0aaad80b",
+      "entry/src/main/ets/physics/WaterSandField.ets": "992c530027ba836544546a6a06651611c3f38c51dec2b2c1fb11ba4cae3a1bfd",
+      "entry/src/main/ets/render/P012E3FogBuffers.ets": "8634ae9671c11e3788394414c7da8c3d04b860e8597bdce7392635a9d6f4c7d4",
+      "entry/src/main/ets/render/P012E3Noise.ets": "552f5142855defdec1ca1ca50790aaf3f1570eafeb4970290df8022429189335",
+      "entry/src/main/ets/render/P012MaterialMotionCache.ets": "61164558df972a7f248b2c7b01540b8a0321078302be8d7c7df349354db27a21",
+      "entry/src/main/ets/render/P012MaterialSampler.ets": "e8e19dd00b8326458e4aa089e95be485a443cfafbe2982bdaa4fa253f5b39231",
+      "entry/src/main/ets/render/P012ParticleLayer.ets": "e5f0335fef8b5b0904d134278fcc29e743544c65c4bb08182163e84032ceb7a6",
+      "entry/src/main/ets/render/P012RenderTypes.ets": "abf4fef5e4e7c094eb8391cb6e4603f467c7b97d7b48f2098499e0c9b36161d6",
+      "entry/src/main/ets/render/P012SandTracer.ets": "cd734ad6cbdb49f775a8950bcc6d52ca002678c1e5d43ecf2ce8c0bd3a9ebf64",
+      "entry/src/main/ets/render/P012WaterSandAdapter.ets": "980b5f0eea80280412b5be2849a760ee2023204509c80065e8e325cafd5fa4fa",
+      "entry/src/main/ets/render/P012WaterSandRenderer.ets": "e898fdac9d640a1bd009ab8687bf9b3b1ea71399ed11c04880385b7658c998bb",
+      "entry/src/main/ets/render/P013DualFieldAdapter.ets": "18f7d9df072ed5db71ab02c0f58ce1582d88e0fee7b561725136e0b6214cb864",
+      "entry/src/main/ets/render/P013FrameAdapter.ets": "23d4195c5c2b3e17d3ce123f0ea8f37bc8fbd0124c95131994291e8d4ba47f5a",
+      "entry/src/main/ets/render/P013MaterialController.ets": "1936f39687464964e5c8df4eb7150dc4ed7216932cd04934a38d69e84af63df0",
+      "entry/src/main/ets/render/P013MaterialTypes.ets": "9680bc3e29f551567d04f6ee5f3d761ba477068128d988bc05f3c1bbb922ef8b",
+      "entry/src/main/ets/render/P013ParticleProjection.ets": "b5df2463f59d0ab96522e88a70f8881348c4f4cd5ef675a10315b6ebbd82414d",
+      "entry/src/main/ets/render/P013RenderController.ets": "4579765e8f987d8bc8a834a7a15a6b158cd416e8f1d1471f2f4e0f5ff13ac447",
+      "entry/src/main/ets/render/P013RenderTypes.ets": "3f7b7d7c9e96548a35be1945094cee4d464638eba35ab19f203bb593a3ded768",
+      "entry/src/main/ets/render/P013SceneController.ets": "be8100e24a9a985d98dda970a0484c077ba77188e080beb17285f8411baacc03",
+      "entry/src/main/ets/render/P013ScenePreparation.ets": "01809a5e4bab8fa422f3ebe1070a15ec9b403f3fb14a16bdbd59a1550f2c28a5",
+      "entry/src/main/ets/render/P013SceneTypes.ets": "d62a37574a047a89378b6990d7b8c74910d428993b139759243608023077bd45",
+      "entry/src/main/ets/render/preparation/P013BaseByteEvaluator.ets": "96e344fc0f08fd7430017208d5ff909899570d5af07dddb5aafd97a9f9181ca3",
+      "entry/src/main/ets/render/preparation/P013CanvasAssetExport.ets": "811cdabda0a0011a9c5f69203291472fb7a19cce40352818766b45a959794b3a",
+      "entry/src/main/ets/render/preparation/P013MaterialDataPreparation.ets": "3c57135989d6afcc5be22f79a698461e0ce0a43a68f55276dc191c640844d2fc",
+      "entry/src/main/ets/render/preparation/P013MaterialPreparation.ets": "45dc988e44a5798d43dd974da6ac3b2bc2e6f0f814785cc8000c08c1026b2aa1",
+      "entry/src/main/ets/render/preparation/P013SceneNumericAssets.ets": "e20ac2a4a06cc85bad51dd6d5411fc396f717e63086f4ed6d0eb50ab183086e0",
+      "entry/src/main/ets/render/preparation/p1_material_functions.glsl": "0a3becd5a81ed2190fa4b8322bb9cf72248d50b0d0afbb90ba00ebf418cf5ff5",
+      "entry/src/main/ets/workers/LiquidCAWorker.ets": "e9a7557d647b69e0ff18d565ec19db27181eaf2b074714b6e312ae51accff1e8",
+      "entry/src/main/ets/workers/P011NaturalObservationWorker.ets": "dcee2845e9bab07b833624eb7e7c6238fca7ed957a800e907c50fda212e362ad",
+      "entry/src/main/module.json5": "a8440427f0347296fd42fe394534175f6a9452ce6d5e708db8d42880009983bd",
+      "entry/src/main/resources/base/element/color.json": "40dce2e2f49200e562eaad66d43f3212f4371cafd2c83c558c2cb6401434ef52",
+      "entry/src/main/resources/base/element/string.json": "6a42b94943ce0cc656e6ecd7c225da94fb3bc5a1bc2faf1e52c33476bebd4c1d",
+      "entry/src/main/resources/base/media/app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
+      "entry/src/main/resources/base/media/start_icon.svg": "e127c84c5e680548b9571479310d1944c6263ce8e28a2ec75129362a810c6191",
+      "entry/src/main/resources/base/profile/main_pages.json": "03a990c32e82d4078c22d99297d17a566fa1bc7b39e251fe9bd6ba79de9d6d6c",
+      "test/p013_compute/ets/t159/T159Metadata.ets": "27384afc58d0c203ed4b5845abe7f3a59ee9ca849108f28fa7e28ac93da7f31c",
+      "test/p013_compute/ets/t159/T159Selector.ets": "ecedaef3549546bfae6f8c2cdf2bef907fa9d37216dab40630e0ff4bd2199560",
+      "test/p013_compute/ets/t159/T159Native.ets": "4eba98cc2a5a67eff1fdc0b7b35c9d1e995c935c22709046f5c62703b976e494",
+      "test/p013_compute/ets/t159/T165PageLauncher.ets": "b81271c197a74b5099ce35c6904ffbd0c496fdf9a6108046664789c44921d9f4",
+      "test/p013_compute/ets/t159/T159PhysicsWorker.ets": "712961b899b8973e65381c93b907e67da3d675f835efbc304461f8c33419d719",
+      "test/p013_compute/ets/t159/T159EntryAbility.ets": "678d2dcbfa3aa7fc1ada77633abb597d097ad106db158f759ad34d8a64902d17",
+      "test/p013_compute/ets/t159/T159Index.ets": "df2134bc91ac389f0d92d90e0ffa1884b602ee7f6d850b58e633690047d45a14",
+      "test/p013_compute/pair_binding_v1.cpp": "acfd93f4ad28cdca78b6788e9b8aa17f91e8d5e351492d24a08d55d94c85e24e",
+      "test/p013_compute/pair_driver_v1.cpp": "d8d77af620c072e70f2741f73a8ece272817f7701456cfc3b0e2f930a853852a",
+      "test/p013_compute/pair_executor_v1.cpp": "eec3e90b2a6f136a73d70006b5a38c11d88a2ea7e15accefdf0b004623d6d260",
+      "test/p013_compute/pair_executor_v1.h": "5e4e8f98e37662cd2c7d61e9d31da52a9f3f8707f24af337a48776a82678862d",
+      "test/p013_compute/pair_identity_v2.h": "03226a62ba492d865409a41688c6f7ef0c8d137b9e384ccf71ff855db808c668",
+      "test/p013_compute/pair_owner_v1.cpp": "9d79af03a5b384c41bf7596fe8f10a8414a877bc2a729c589a72f9bcebba8bb6",
+      "test/p013_compute/pair_owner_v1.h": "80a1c13635e3ac20ce8fd36438d4ccff44d68a6c65c30cb9149f1ebb477046e8",
+      "test/p013_compute/pair_prepare_v1.cpp": "d1dba4704757961a16b0aca764d1117740bf1ea0e17fac7cce1cc0d83b215a78",
+      "test/p013_compute/pair_prepare_v1.h": "979eeac60cc52e4e9531664f361917e2943bedc8ca3b5b05b754fe5b6b5c9c75",
+      "test/p013_compute/pair_sha256_v1.h": "154cf18fe5b2c1fe2831326faf0287dbcd83f420e4eea22a8dfe5d30a7db9faa",
+      "test/p013_compute/pair_wire_v1.h": "9bc54802759b14dc06b7ce6726717daf829138fe8a1337d87f57d3182fe51847",
+      "test/p013_compute/glsl/pair_build_v1.comp": "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd",
+      "test/p013_compute/glsl/pair_query_v1.comp": "ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a",
+      "test/p013_compute/glsl/pair_reduce_v1.comp": "3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9",
+      "test/p013_compute/tools/generate_transaction_project.cjs": "ef0f07fd81b91e1bec72067e80e6abd395f07de6131bdd8b8cf44e9c34237714"
+    },
+    "changes": [
+      {
+        "file": "physics/P011ParticleHot.ets",
+        "originalSha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+        "generatedSha256": "52c972c4f6b319cf5afe1bca0db9b8642121471582d69c8c2dc8417a25f8f8d1",
+        "edits": [
+          [
+            "// P-011 D1-R3 S0/S1: fixed-capacity HOT workspace and pure dual collect.",
+            "import { t159Select } from './T159Selector';\nimport { t159Mutation } from './T159Metadata';\n// P-011 D1-R3 S0/S1: fixed-capacity HOT workspace and pure dual collect."
+          ],
+          [
+            "  const found=work.mergeIndex.find(p,work.params.mergeHeightRadius);\n  if(!found)return P011_HOT_INVALID_PATCH_STATE;\n  const a=work.mergeIndex.selectedA,b=work.mergeIndex.selectedB;",
+            "  const pair=t159Select(p,work.params.mergeHeightRadius,work);\n  if(pair.status==='ERROR')return P011_HOT_AUDIT_FAILED;\n  if(pair.status==='NO_PAIR')return P011_HOT_INVALID_PATCH_STATE;\n  const a=pair.slotA,b=pair.slotB;"
+          ],
+          [
+            "  to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);",
+            "  to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);\n  t159Mutation(to);"
+          ],
+          [
+            "  p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;",
+            "  p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;\n  t159Mutation(p);"
+          ],
+          [
+            "        if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];",
+            "        if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];\n        t159Mutation(p);"
+          ],
+          [
+            "  } else return P011_HOT_INVALID_INPUT;\n  return 0;\n}\n\nexport function preparePatchHot",
+            "  } else return P011_HOT_INVALID_INPUT;\n  t159Mutation(p);\n  return 0;\n}\n\nexport function preparePatchHot"
+          ]
+        ]
+      },
+      {
+        "file": "physics/P011ParticleM2Field.ets",
+        "originalSha256": "46747913fbc96b5d8e51530582967d1089a731ba44899de38f9a37b4e90c13f6",
+        "generatedSha256": "4d6dfa5fa2717554dad9450c79370b69644e3350aa0bb56e03731cbf492f485d",
+        "edits": [
+          [
+            "import { P011ParticleM2Projection }",
+            "import { t159Role } from './T159Metadata';\nimport { P011ParticleM2Projection }"
+          ],
+          [
+            "    phase: number, sourceKind: number, sourceId: number): number {",
+            "    phase: number, sourceKind: number, sourceId: number): number {\n    t159Role(1);"
+          ],
+          [
+            "sourceKind: number = 0): boolean {",
+            "sourceKind: number = 0): boolean {\n    t159Role(1);"
+          ],
+          [
+            "    sourceHeavy: number, sourceLight: number, sourceEpoch: number): number {",
+            "    sourceHeavy: number, sourceLight: number, sourceEpoch: number): number {\n    t159Role(2);"
+          ]
+        ]
+      },
+      {
+        "file": "physics/WaterSandField.ets",
+        "originalSha256": "992c530027ba836544546a6a06651611c3f38c51dec2b2c1fb11ba4cae3a1bfd",
+        "generatedSha256": "529fe525112ce7de2789bee25266225962a66100fc2cb4d1b79dc5aea2688d9f",
+        "edits": [
+          [
+            "import { P011TiltPreviewTrace,",
+            "import { t159Role } from './T159Metadata';\nimport { P011TiltPreviewTrace,"
+          ],
+          [
+            "      const status = this.particleBinding.apply(this.totalMotionBudgetScale,",
+            "      t159Role(3);\n      const status = this.particleBinding.apply(this.totalMotionBudgetScale,"
+          ],
+          [
+            "          const particleStatus = this.particleBinding.apply(scale,",
+            "          t159Role(4);\n          const particleStatus = this.particleBinding.apply(scale,"
+          ]
+        ]
+      }
+    ],
+    "shaderSha": [
+      "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd",
+      "ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a",
+      "3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9"
+    ],
+    "abi": "arm64-v8a",
+    "productionTouched": false
+  },
+  "inputs": {
+    "test/p013_compute/ets/t171/T171Evidence.ets": "05cd9dfe31e384f1a3940d474afcc0d0ae6dda70a67fdcb9a42b7e0898aa5790",
+    "test/p013_compute/ets/t171/T171Selector.ets": "f46faac9ca6dcc51b98cb75d36f1fdd72ca94cd55f557a1cf5c80aad4276b7c5",
+    "test/p013_compute/ets/t171/T171Metadata.ets": "188e3c05ccf11c344220f81419269feb224d7f170bdb445e067d9a2c76f36459",
+    "test/p013_compute/ets/t171/T171Native.ets": "2ccc4c7ddaed28f90e47211420b289184519712cbad6e1dfc5129271c69b978c",
+    "test/p013_compute/ets/t171/T171Protocol.ets": "4f5e5f5b5260aac5475547f6e9a0b0df9e13233b57a21440ecbcd7287266a9ea",
+    "test/p013_compute/ets/t171/T171Micro.ets": "1ee227f6a50a403a6d7b89ca1f7c8776ef6c41779dfd541ccb52c264f14c172f",
+    "test/p013_compute/ets/t171/T171Worker.ets": "93f983d97002abe9a981355b387f1b53f0a51cf673fe8bbc5738b2e707d19f58",
+    "test/p013_compute/ets/t171/T171PageLauncher.ets": "1d6ef49ba8a2d8ca7663c98efeff2d84e1313dae29fcbfa0a062acb1721b2777",
+    "test/p013_compute/pair_binding_v1.cpp": "acfd93f4ad28cdca78b6788e9b8aa17f91e8d5e351492d24a08d55d94c85e24e",
+    "test/p013_compute/pair_executor_v1.cpp": "eec3e90b2a6f136a73d70006b5a38c11d88a2ea7e15accefdf0b004623d6d260",
+    "test/p013_compute/pair_executor_v1.h": "5e4e8f98e37662cd2c7d61e9d31da52a9f3f8707f24af337a48776a82678862d",
+    "test/p013_compute/pair_prepare_v1.cpp": "d1dba4704757961a16b0aca764d1117740bf1ea0e17fac7cce1cc0d83b215a78",
+    "test/p013_compute/pair_prepare_v1.h": "979eeac60cc52e4e9531664f361917e2943bedc8ca3b5b05b754fe5b6b5c9c75",
+    "test/p013_compute/tools/generate_transaction_project_v3.cjs": "4122b94a7089c25cd114ff9ef50bcf5158f3e09141c4788e7aeef93de6477f98"
+  },
+  "edits": [
+    {
+      "file": "physics/P011ParticleHot.ets",
+      "from": "import { t159Select } from './T159Selector';",
+      "to": "import { t159Select } from './T159Selector';\nimport { t171Evidence } from './T171Evidence';",
+      "eol": "\r\n",
+      "originalSha256": "52c972c4f6b319cf5afe1bca0db9b8642121471582d69c8c2dc8417a25f8f8d1",
+      "generatedSha256": "96d51b1a8b72dc0a57ac892d673f25a7ee58c86004c3581948c4e2e04bd336a6"
+    },
+    {
+      "file": "physics/P011ParticleHot.ets",
+      "from": "try{code=finishStepHotBody(work,expectedStepEpoch);return code;}",
+      "to": "try{code=finishStepHotBody(work,expectedStepEpoch);if(code===0)t171Evidence.page(work);return code;}",
+      "eol": "\r\n",
+      "originalSha256": "96d51b1a8b72dc0a57ac892d673f25a7ee58c86004c3581948c4e2e04bd336a6",
+      "generatedSha256": "7a1f7a3b9f67131fa52a71a4aa25d49922ad37595fd44f0a21c6938d0ca1042b"
+    },
+    {
+      "file": "physics/P011ParticleHot.ets",
+      "from": "export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {",
+      "to": "export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {\n  t171Evidence.rollbackCalls++;",
+      "eol": "\r\n",
+      "originalSha256": "7a1f7a3b9f67131fa52a71a4aa25d49922ad37595fd44f0a21c6938d0ca1042b",
+      "generatedSha256": "fe354ab321e0ebedd2a4bcca9e8a07e3639b4e54728d4ce6b0d4df2fa99106d3"
+    },
+    {
+      "file": "physics/P011ParticleHot.ets",
+      "from": "export function auditParticleHot(work: P011ParticleHotWorkspace, source: string='OTHER'): number {",
+      "to": "export function auditParticleHot(work: P011ParticleHotWorkspace, source: string='OTHER'): number {\n  t171Evidence.auditCalls++;",
+      "eol": "\r\n",
+      "originalSha256": "fe354ab321e0ebedd2a4bcca9e8a07e3639b4e54728d4ce6b0d4df2fa99106d3",
+      "generatedSha256": "9f36f5d5fc39e6529f04faef350a71760791834d813b96e6035fe00f924499dd"
+    },
+    {
+      "file": "physics/WaterSandField.ets",
+      "from": "  private audit(checkDrift: boolean): WaterSandErrorCode | null {",
+      "to": "  // V3 cold archive, invoked only after the original transaction/step returns.\n  private t171Hex(buffer:ArrayBuffer,offset:number,length:number):string{\n    const bytes=new Uint8Array(buffer,offset,length);let out='';for(let i=0;i<bytes.length;i++)out+=bytes[i].toString(16).padStart(2,'0');return out;\n  }\n  t171ArchiveState(): string {\n    const snapshot=this.snapshot(),p=snapshot.particleState;const raw:string[]=[];\n    if(p!==undefined&&p!==null){\n      raw.push(this.t171Hex(p.pMass.buffer as ArrayBuffer,p.pMass.byteOffset,p.pMass.byteLength));\n      raw.push(this.t171Hex(p.pX.buffer as ArrayBuffer,p.pX.byteOffset,p.pX.byteLength));\n      raw.push(this.t171Hex(p.pY.buffer as ArrayBuffer,p.pY.byteOffset,p.pY.byteLength));\n      raw.push(this.t171Hex(p.pVx.buffer as ArrayBuffer,p.pVx.byteOffset,p.pVx.byteLength));\n      raw.push(this.t171Hex(p.pVy.buffer as ArrayBuffer,p.pVy.byteOffset,p.pVy.byteLength));\n      raw.push(this.t171Hex(p.pPhase.buffer as ArrayBuffer,p.pPhase.byteOffset,p.pPhase.byteLength));\n      raw.push(this.t171Hex(p.pSource.buffer as ArrayBuffer,p.pSource.byteOffset,p.pSource.byteLength));\n      raw.push(this.t171Hex(p.pState.buffer as ArrayBuffer,p.pState.byteOffset,p.pState.byteLength));\n      raw.push(this.t171Hex(p.pId.buffer as ArrayBuffer,p.pId.byteOffset,p.pId.byteLength));\n      raw.push(this.t171Hex(p.pSourceId.buffer as ArrayBuffer,p.pSourceId.byteOffset,p.pSourceId.byteLength));\n      raw.push(this.t171Hex(p.freeSlots.buffer as ArrayBuffer,p.freeSlots.byteOffset,p.freeSlots.byteLength));\n      raw.push(this.t171Hex(p.colParticleMassH.buffer as ArrayBuffer,p.colParticleMassH.byteOffset,p.colParticleMassH.byteLength));\n      raw.push(this.t171Hex(p.colParticleMassL.buffer as ArrayBuffer,p.colParticleMassL.byteOffset,p.colParticleMassL.byteLength));\n    }\n    const sourceBudget=new Float64Array([this.sourceInjectedHeavy,this.sourceInjectedLight,this.waterTransactionNet,this.sourceEpoch,this.totalMotionBudgetRemaining,this.totalMotionBudgetUsed,this.totalMotionBudgetClipped]);\n    return JSON.stringify({snapshot:snapshot,poolRawBytes:raw,sourceBudgetRaw:this.t171Hex(sourceBudget.buffer as ArrayBuffer,0,sourceBudget.byteLength),\n      localBudgetRaw:[this.t171Hex(this.substepMotionBudgetRemaining.buffer as ArrayBuffer,0,this.substepMotionBudgetRemaining.byteLength),this.t171Hex(this.substepMotionBudgetUsed.buffer as ArrayBuffer,0,this.substepMotionBudgetUsed.byteLength)],source:this.getExternalAdmissionEvidence(),drift:this.getDrift(),\n      localRemaining:this.substepMotionBudgetRemaining,localUsed:this.substepMotionBudgetUsed,\n      totalRemaining:this.totalMotionBudgetRemaining,totalUsed:this.totalMotionBudgetUsed,\n      totalClipped:this.totalMotionBudgetClipped,commit:this.renderPhysicsCommitId});\n  }\n  private audit(checkDrift: boolean): WaterSandErrorCode | null {",
+      "eol": "\r\n",
+      "originalSha256": "529fe525112ce7de2789bee25266225962a66100fc2cb4d1b79dc5aea2688d9f",
+      "generatedSha256": "c075b000db146033159b487fba29a361b80dcc93d3ec6db9fe60b4e532cc40b0"
+    },
+    {
+      "file": "physics/P011ParticleM2Sink.ets",
+      "from": "import { P011ParticleHotWorkspace,",
+      "to": "import { t171Evidence } from './T171Evidence';\nimport { P011ParticleHotWorkspace,",
+      "eol": "\r\n",
+      "originalSha256": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+      "generatedSha256": "10b587cf8ef7e3f6639beb645bd5433b547ab2be74803fe8a57b9877041b922a"
+    },
+    {
+      "file": "physics/P011ParticleM2Sink.ets",
+      "from": "    this.host.internalParticleRefund(out.localColumns[0], out.localCount === 2 ? out.localColumns[1] : -1, amount);",
+      "to": "    this.host.internalParticleRefund(out.localColumns[0], out.localCount === 2 ? out.localColumns[1] : -1, amount);\n    t171Evidence.refund(out);",
+      "eol": "\r\n",
+      "originalSha256": "10b587cf8ef7e3f6639beb645bd5433b547ab2be74803fe8a57b9877041b922a",
+      "generatedSha256": "70a9bd9c841c6341c1e0f554556c57165e193a6f359c85b36e90905f3e4c5d9e"
+    },
+    {
+      "file": "physics/WaterSandField.ets",
+      "from": "import { t159Role } from './T159Metadata';",
+      "to": "import { t159Role } from './T159Metadata';\nimport { t171Evidence } from './T171Evidence';",
+      "eol": "\r\n",
+      "originalSha256": "c075b000db146033159b487fba29a361b80dcc93d3ec6db9fe60b4e532cc40b0",
+      "generatedSha256": "89a81cf1e11a0c013b154e325d88d7bcc81c0cbc261d8f8dad889a0df0f53573"
+    },
+    {
+      "file": "physics/WaterSandField.ets",
+      "from": "    for (let attempt = 0; attempt < 8; attempt++) {",
+      "to": "    for (let attempt = 0; attempt < 8; attempt++) {\n      t171Evidence.lambdaCalls++;",
+      "eol": "\r\n",
+      "originalSha256": "89a81cf1e11a0c013b154e325d88d7bcc81c0cbc261d8f8dad889a0df0f53573",
+      "generatedSha256": "558d8cb3ae5efca7094df1324615f0d982c591e3949509f2c9538f9924e1328b"
+    }
+  ],
+  "fixtures": [
+    {
+      "parameters": {
+        "massPackage": 0.1,
+        "nmax": 192,
+        "terminalSpeedHeavy": 64,
+        "terminalSpeedLight": 38,
+        "dragHeavy": 3,
+        "dragLight": 2,
+        "liftSpeedHeavy": 8,
+        "liftSpeedLight": 8,
+        "liftSpread": 2,
+        "mergeColRadius": 1,
+        "mergeHeightRadius": 2,
+        "contactEps": 0.000001,
+        "channelRateCap": 0
+      },
+      "revision": "T171_HIGH_MERGE_FIXTURE_V3",
+      "fixtureId": "WET_192_64",
+      "nmax": 192,
+      "packages": 64,
+      "massPackage": 0.1,
+      "column": 64,
+      "sourceId": 17,
+      "x": 64.5,
+      "y": 100,
+      "seed": 13,
+      "sequences": [
+        1,
+        2
+      ],
+      "inputTimes": [
+        10,
+        11
+      ],
+      "stepsMax": 32,
+      "synthetic": true,
+      "fixtureSha256": "6d30a4dad2500f71fc38d1955dad5ec442480ece82f83c2e4016e6f88e974cbb"
+    },
+    {
+      "parameters": {
+        "massPackage": 0.1,
+        "nmax": 192,
+        "terminalSpeedHeavy": 64,
+        "terminalSpeedLight": 38,
+        "dragHeavy": 3,
+        "dragLight": 2,
+        "liftSpeedHeavy": 8,
+        "liftSpeedLight": 8,
+        "liftSpread": 2,
+        "mergeColRadius": 1,
+        "mergeHeightRadius": 2,
+        "contactEps": 0.000001,
+        "channelRateCap": 0
+      },
+      "revision": "T171_HIGH_MERGE_FIXTURE_V3",
+      "fixtureId": "WET_192_128",
+      "nmax": 192,
+      "packages": 128,
+      "massPackage": 0.1,
+      "column": 64,
+      "sourceId": 17,
+      "x": 64.5,
+      "y": 100,
+      "seed": 13,
+      "sequences": [
+        1,
+        2
+      ],
+      "inputTimes": [
+        10,
+        11
+      ],
+      "stepsMax": 32,
+      "synthetic": true,
+      "fixtureSha256": "5a2d085165b29c8ae55e57c628998eb5bee3a8c73fddacb2bf1941423146c7da"
+    },
+    {
+      "parameters": {
+        "massPackage": 0.1,
+        "nmax": 512,
+        "terminalSpeedHeavy": 64,
+        "terminalSpeedLight": 38,
+        "dragHeavy": 3,
+        "dragLight": 2,
+        "liftSpeedHeavy": 8,
+        "liftSpeedLight": 8,
+        "liftSpread": 2,
+        "mergeColRadius": 1,
+        "mergeHeightRadius": 2,
+        "contactEps": 0.000001,
+        "channelRateCap": 0
+      },
+      "revision": "T171_HIGH_MERGE_FIXTURE_V3",
+      "fixtureId": "WET_512_64",
+      "nmax": 512,
+      "packages": 64,
+      "massPackage": 0.1,
+      "column": 64,
+      "sourceId": 17,
+      "x": 64.5,
+      "y": 100,
+      "seed": 13,
+      "sequences": [
+        1,
+        2
+      ],
+      "inputTimes": [
+        10,
+        11
+      ],
+      "stepsMax": 32,
+      "synthetic": true,
+      "fixtureSha256": "d8b597d2548704dcd68314a9a5d1bc8f442736c186ca639433c73cc27fab0486"
+    },
+    {
+      "parameters": {
+        "massPackage": 0.1,
+        "nmax": 512,
+        "terminalSpeedHeavy": 64,
+        "terminalSpeedLight": 38,
+        "dragHeavy": 3,
+        "dragLight": 2,
+        "liftSpeedHeavy": 8,
+        "liftSpeedLight": 8,
+        "liftSpread": 2,
+        "mergeColRadius": 1,
+        "mergeHeightRadius": 2,
+        "contactEps": 0.000001,
+        "channelRateCap": 0
+      },
+      "revision": "T171_HIGH_MERGE_FIXTURE_V3",
+      "fixtureId": "WET_512_128",
+      "nmax": 512,
+      "packages": 128,
+      "massPackage": 0.1,
+      "column": 64,
+      "sourceId": 17,
+      "x": 64.5,
+      "y": 100,
+      "seed": 13,
+      "sequences": [
+        1,
+        2
+      ],
+      "inputTimes": [
+        10,
+        11
+      ],
+      "stepsMax": 32,
+      "synthetic": true,
+      "fixtureSha256": "dded02d3294179898964cba67235bbea482dd61fe8ad114d24df6ae5736c9ce6"
+    }
+  ],
+  "abi": "arm64-v8a",
+  "testMacro": "P011_GPU_TEST_INJECTION",
+  "productionTouched": false
+}

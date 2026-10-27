@@ -1,0 +1,231 @@
+{
+  "revision": "T171_DEVELOPER_OFFLINE_V3",
+  "passed": 10,
+  "failed": 0,
+  "measurements": [
+    {
+      "fixture": "WET_192_64",
+      "route": "LEGACY_SCAN",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        19.200000000000003,
+        6.4
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_192_64",
+      "route": "T123",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        19.200000000000003,
+        6.4
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_192_64",
+      "route": "GPU_INTERFACE_CPU_STAND_IN",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        19.200000000000003,
+        6.4
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_192_128",
+      "route": "LEGACY_SCAN",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        19.200000000000003,
+        12.8
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_192_128",
+      "route": "T123",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        19.200000000000003,
+        12.8
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_192_128",
+      "route": "GPU_INTERFACE_CPU_STAND_IN",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        19.200000000000003,
+        12.8
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_512_64",
+      "route": "LEGACY_SCAN",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        51.2,
+        6.4
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_512_64",
+      "route": "T123",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        51.2,
+        6.4
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_512_64",
+      "route": "GPU_INTERFACE_CPU_STAND_IN",
+      "selectorCalls": 64,
+      "mergeCommitted": 64,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        51.2,
+        6.4
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_512_128",
+      "route": "LEGACY_SCAN",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        51.2,
+        12.8
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_512_128",
+      "route": "T123",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        51.2,
+        12.8
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    },
+    {
+      "fixture": "WET_512_128",
+      "route": "GPU_INTERFACE_CPU_STAND_IN",
+      "selectorCalls": 128,
+      "mergeCommitted": 128,
+      "audits": 134,
+      "rollbackCalls": 0,
+      "pages": 66,
+      "admitted": [
+        51.2,
+        12.8
+      ],
+      "steps": 32,
+      "gpuExecution": "NOT_RUN"
+    }
+  ],
+  "results": [
+    {
+      "name": "all four fixtures are cold manifest-bound and original physical inputs remain fixed",
+      "status": "PASS"
+    },
+    {
+      "name": "protocol refuses invalid steps, hashes, oracle modes and arbitrary fault plans",
+      "status": "PASS"
+    },
+    {
+      "name": "performance plan has 3 warmups per route and six permutations each five blocks",
+      "status": "PASS"
+    },
+    {
+      "name": "retained context ordinals stay monotonic while per-attempt counts reset",
+      "status": "PASS"
+    },
+    {
+      "name": "test injection interface is absent from non-test preprocessed binding",
+      "status": "PASS"
+    },
+    {
+      "name": "WET_192_64 original public injection, three-route pair/F64/page/state equality",
+      "status": "PASS"
+    },
+    {
+      "name": "WET_192_128 original public injection, three-route pair/F64/page/state equality",
+      "status": "PASS"
+    },
+    {
+      "name": "WET_512_64 original public injection, three-route pair/F64/page/state equality",
+      "status": "PASS"
+    },
+    {
+      "name": "WET_512_128 original public injection, three-route pair/F64/page/state equality",
+      "status": "PASS"
+    },
+    {
+      "name": "V3 overlay is reversibly whitelisted and physical merge arithmetic is unchanged",
+      "status": "PASS"
+    }
+  ],
+  "gpuExecution": "NOT_RUN",
+  "faults": "HOST_DOUBLES_AND_SOURCE_ONLY_NOT_DEVICE"
+}

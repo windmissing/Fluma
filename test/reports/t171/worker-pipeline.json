@@ -1,0 +1,26 @@
+{
+  "passed": 2,
+  "failed": 0,
+  "results": [
+    {
+      "mode": "PERFORMANCE",
+      "status": "PASS",
+      "rows": 202,
+      "configures": 1,
+      "resets": 1,
+      "requests": 2112,
+      "backend": "SDK_NAPI_CPU_STAND_IN_ONLY"
+    },
+    {
+      "mode": "MICRO",
+      "status": "PASS",
+      "rows": 249,
+      "configures": 42,
+      "resets": 42,
+      "requests": 162,
+      "backend": "SDK_NAPI_CPU_STAND_IN_ONLY"
+    }
+  ],
+  "gpuExecution": "NOT_RUN",
+  "timing": "HOST_STUB_NOT_DEVICE_MEASUREMENT"
+}

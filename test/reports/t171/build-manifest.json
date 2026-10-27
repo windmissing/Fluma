@@ -1,0 +1,27 @@
+{
+  "revision": "T171_BUILD_V3",
+  "commitBase": "1a863f0de31bff237f73e4a3d1646655922bf43b",
+  "productionTouched": false,
+  "native": "PASS",
+  "compileArkTS": "PASS",
+  "packageHap": "PASS",
+  "signHap": "EXISTING_00303116_PASSWORD_LENGTH_FAILURE",
+  "device": "NOT_RUN",
+  "artifacts": [
+    {
+      "file": ".codex/local-test/t171-project/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 4049664,
+      "sha256": "0092232bfbfda83565f2318a050b7b9e10b053573c940b392746b77e620b1191"
+    },
+    {
+      "file": ".codex/local-test/t171-project/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libp011_gpu_pair_prototype.so",
+      "bytes": 1593216,
+      "sha256": "0860560faf076141d8af691c5b5e62d0eeb22d2e392bff55cf38758d72404663"
+    },
+    {
+      "file": ".codex/local-test/t171-project/t171-source-manifest.json",
+      "bytes": 37675,
+      "sha256": "598a10be13c63d8bffa20f5174a82b25fa14753d6bc1c83289304d617e6f0560"
+    }
+  ]
+}

@@ -13,19 +13,36 @@
 #include <thread>
 #include <cstdio>
 #include <cmath>
+#include <limits>
+#ifdef _WIN32
+#include <process.h>
+#else
+#include <unistd.h>
+#endif
 #ifndef T159_SOURCE_SHA
 #define T159_SOURCE_SHA "UNBOUND_TEST_BUILD"
 #endif
 namespace {
 using namespace p011gpu;
 std::atomic<uint64_t> nextOwner{1};
-static uint64_t allocateOwner(){uint64_t value=nextOwner.load();while(value!=UINT64_MAX){if(nextOwner.compare_exchange_weak(value,value+1))return value;}return 0;}
+#ifdef P011_GPU_TEST_INJECTION
+std::atomic<uint64_t> nextTestInstance{1};
+#endif
+static uint64_t allocateOwnerFrom(std::atomic<uint64_t>& allocator){uint64_t value=allocator.load();while(value!=UINT64_MAX){if(allocator.compare_exchange_weak(value,value+1))return value;}return 0;}
+static uint64_t allocateOwner(){return allocateOwnerFrom(nextOwner);}
 struct State {
  napi_env env;std::thread::id thread=std::this_thread::get_id();ContextSlot gpu;
  std::unique_ptr<CpuSlot> slots[2];uint64_t request=0,payload=0,mutation=0,generation=0;
  std::array<uint32_t,8> lastSnapshotSha{};std::array<const void*,13> lastPointers{};
  uint32_t ordinal[6]={},uses[2]={};std::string buildSha,runId,configId;
- RequestDiagnostics last,cleanup,firstFailure;bool ready=false,oracle=true,hasSnapshot=false;
+ std::array<ProgramDiagnosticsV3,3> programLogs;
+ double validationMs=-1,consumeMs=-1,wrapMs=-1;PrepareTimingV3 prepareTiming;
+#ifdef P011_GPU_TEST_INJECTION
+ uint64_t testInstance=allocateOwnerFrom(nextTestInstance);
+ std::atomic<uint64_t> testAllocator{UINT64_MAX-1};bool dedicatedAllocator=false,testConsumed=false;
+ std::string testPlan="NONE",testRunId;uint64_t originalHiIdentity=0,modifiedHiIdentity=0;
+#endif
+ RequestDiagnostics last,cleanup,firstFailure;bool ready=false,oracle=true,hasSnapshot=false,fullDump=true;
  explicit State(napi_env e):env(e){}
  void record(){if(firstFailure.stage=="NONE"&&last.stage!="NONE"&&!last.valid)firstFailure=last;}
  bool owner(napi_env e)const{return env==e&&thread==std::this_thread::get_id();}
@@ -39,12 +56,40 @@ static bool text(napi_env e,napi_value o,const char* key,std::string& out,size_t
 static void put(napi_env e,napi_value o,const char* k,const char* text){napi_value v;napi_create_string_utf8(e,text,NAPI_AUTO_LENGTH,&v);napi_set_named_property(e,o,k,v);}
 static void put(napi_env e,napi_value o,const char* k,double x){napi_value v;napi_create_double(e,x,&v);napi_set_named_property(e,o,k,v);}
 static void put(napi_env e,napi_value o,const char* k,bool x){napi_value v;napi_get_boolean(e,x,&v);napi_set_named_property(e,o,k,v);}
+static void logTextV3(napi_env e,napi_value o,const char* key,const std::string& text){napi_value v;napi_create_string_utf8(e,text.data(),text.size(),&v);napi_set_named_property(e,o,key,v);}
+static void logReportV3(napi_env e,napi_value out,const std::array<ProgramDiagnosticsV3,3>& logs){
+ for(size_t i=0;i<logs.size();i++){const auto& p=logs[i];napi_value o;napi_create_object(e,&o);
+  put(e,o,"source",p.source.c_str());put(e,o,"expectedSha",p.expectedSha.c_str());put(e,o,"actualSha",p.actualSha.c_str());put(e,o,"sourceBytes",double(p.sourceBytes));put(e,o,"sourceModifiedSeconds",double(p.sourceModifiedSeconds));put(e,o,"sourceStatStatus",p.sourceStatCaptured?"CAPTURED":"NOT_CAPTURED");
+  put(e,o,"compileStatus",p.compileStatus.c_str());put(e,o,"compileLogStatus",p.compileLogStatus.c_str());logTextV3(e,o,"compileLog",p.compileLog);
+  put(e,o,"compileReturnedBytes",double(p.compileReturnedBytes));put(e,o,"compileOriginalLength",double(p.compileOriginalLength));put(e,o,"compileTruncated",p.compileTruncated);put(e,o,"compileCaptureGlError",double(p.compileCaptureGlError));
+  put(e,o,"linkStatus",p.linkStatus.c_str());put(e,o,"linkLogStatus",p.linkLogStatus.c_str());logTextV3(e,o,"linkLog",p.linkLog);
+  put(e,o,"linkReturnedBytes",double(p.linkReturnedBytes));put(e,o,"linkOriginalLength",double(p.linkOriginalLength));put(e,o,"linkTruncated",p.linkTruncated);put(e,o,"linkCaptureGlError",double(p.linkCaptureGlError));
+  put(e,o,"missingReason",p.compileStatus=="NOT_RUN"?"STAGE_NOT_REACHED":"NONE");std::string key="program"+std::to_string(i);napi_set_named_property(e,out,key.c_str(),o);
+ }
+}
+static void timingV3(napi_env e,napi_value out,const char* key,double value){put(e,out,key,value<0?std::numeric_limits<double>::quiet_NaN():value);}
 static void put64(napi_env e,napi_value o,const char* key,uint64_t x){std::string lo=std::string(key)+"Lo",hi=std::string(key)+"Hi";put(e,o,lo.c_str(),double(uint32_t(x)));put(e,o,hi.c_str(),double(uint32_t(x>>32)));}
 static void bytes(napi_env e,napi_value o,const char* key,const void* source,size_t n,napi_typedarray_type type,size_t count){napi_value buffer,view;void* own=nullptr;if(napi_create_arraybuffer(e,n,&own,&buffer)!=napi_ok)return;if(n)std::memcpy(own,source,n);if(napi_create_typedarray(e,type,count,buffer,0,&view)==napi_ok)napi_set_named_property(e,o,key,view);}
 static napi_value reply(napi_env e,State* s,const char* status,const char* error,ExecStatus exec=ExecStatus::INPUT_INVALID,const char* consume="NOT_RUN",const char* oracle="NOT_EVALUATED",const VerifiedPair* pair=nullptr){
- napi_value out;napi_create_object(e,&out);put(e,out,"status",status);put(e,out,"errorCode",error);put(e,out,"execStatus",execStatusName(exec));put(e,out,"consumeStatus",consume);put(e,out,"oracleVerdict",oracle);put(e,out,"slotA",pair?double(pair->slotA):-1.);put(e,out,"slotB",pair?double(pair->slotB):-1.);put(e,out,"identityEncodingRevision",kIdentityEncodingV2);put(e,out,"nativeSourceBuildSha256",T159_SOURCE_SHA);put(e,out,"gpuRuntime","NOT_MEASURED");
- if(s){put64(e,out,"ownerGeneration",s->generation);put64(e,out,"contextEpoch",s->gpu.contextEpoch());put64(e,out,"requestSerial",s->request);put(e,out,"stage",s->last.stage.c_str());put(e,out,"detail",s->last.detail.c_str());put(e,out,"rawGlError",double(s->last.rawGlError));put(e,out,"rawEglError",double(s->last.rawEglError));put(e,out,"rawWaitReturn",double(s->last.rawWaitReturn));put(e,out,"waitReturn",s->last.waitReturn.c_str());put(e,out,"dispatchCount",double(s->last.dispatchCount));put(e,out,"requestCpuMs",s->last.requestCpuMs);put(e,out,"uploadCpuMs",s->last.uploadCpuMs);put(e,out,"dispatchCpuMs",s->last.dispatchCpuMs);put(e,out,"fenceWaitCpuMs",s->last.fenceWaitCpuMs);put(e,out,"mapCpuMs",s->last.mapCpuMs);put(e,out,"liveBuffers",double(s->gpu.liveBufferCount()));put(e,out,"peakBuffers",double(s->gpu.peakBufferCount()));put(e,out,"slot0State",double(s->gpu.slotState(0)));put(e,out,"slot1State",double(s->gpu.slotState(1)));put(e,out,"slot0Uses",double(s->uses[0]));put(e,out,"slot1Uses",double(s->uses[1]));put(e,out,"quarantined",s->gpu.quarantined());put(e,out,"cleanupStage",s->cleanup.stage.c_str());put(e,out,"cleanupRawGlError",double(s->cleanup.rawGlError));put(e,out,"cleanupRawEglError",double(s->cleanup.rawEglError));put(e,out,"resourcesRetired",s->cleanup.resourcesRetired);put(e,out,"firstFailureStage",s->firstFailure.stage.c_str());put(e,out,"firstFailureRawGlError",double(s->firstFailure.rawGlError));put(e,out,"firstFailureRawEglError",double(s->firstFailure.rawEglError));}
- return out;
+ auto replyStartV3=std::chrono::steady_clock::now();napi_value out;napi_create_object(e,&out);put(e,out,"status",status);put(e,out,"errorCode",error);put(e,out,"execStatus",execStatusName(exec));put(e,out,"consumeStatus",consume);put(e,out,"oracleVerdict",oracle);put(e,out,"slotA",pair?double(pair->slotA):-1.);put(e,out,"slotB",pair?double(pair->slotB):-1.);put(e,out,"identityEncodingRevision",kIdentityEncodingV2);put(e,out,"nativeSourceBuildSha256",T159_SOURCE_SHA);put(e,out,"gpuRuntime","NOT_MEASURED");
+ if(s){logReportV3(e,out,s->programLogs);timingV3(e,out,"nativeValidationCpuMs",s->validationMs);timingV3(e,out,"ownerConsumeCpuMs",s->consumeMs);
+ timingV3(e,out,"prepareValidateCpuMs",s->prepareTiming.validate);timingV3(e,out,"prepareFreezeCpuMs",s->prepareTiming.freeze);timingV3(e,out,"prepareSortCpuMs",s->prepareTiming.sort);timingV3(e,out,"prepareRangeCpuMs",s->prepareTiming.range);timingV3(e,out,"prepareHashPackCpuMs",s->prepareTiming.hashPack);
+#ifdef P011_GPU_TEST_INJECTION
+ put(e,out,"testInjectionRevision","P011_GPU_TEST_INJECTION_V3");put(e,out,"testPlan",s->testPlan.c_str());put(e,out,"testConsumed",s->testConsumed);put(e,out,"allocatorScope",s->dedicatedAllocator?"DEDICATED_EXHAUSTION_INSTANCE":"PROCESS_GLOBAL_MONOTONIC");
+#endif
+
+#ifdef P011_GPU_TEST_INJECTION
+
+#ifdef _WIN32
+ put(e,out,"testProcessId",double(_getpid()));
+#else
+ put(e,out,"testProcessId",double(getpid()));
+#endif
+ put64(e,out,"testInstance",s->testInstance);
+ put64(e,out,"testOriginalIdentity",s->originalHiIdentity);put64(e,out,"testModifiedIdentity",s->modifiedHiIdentity);
+#endif
+ put64(e,out,"ownerGeneration",s->generation);put64(e,out,"contextEpoch",s->gpu.contextEpoch());put64(e,out,"requestSerial",s->request);put(e,out,"stage",s->last.stage.c_str());put(e,out,"detail",s->last.detail.c_str());put(e,out,"rawGlError",double(s->last.rawGlError));put(e,out,"rawEglError",double(s->last.rawEglError));put(e,out,"rawWaitReturn",double(s->last.rawWaitReturn));put(e,out,"waitReturn",s->last.waitReturn.c_str());put(e,out,"dispatchCount",double(s->last.dispatchCount));timingV3(e,out,"requestCpuMs",s->last.requestCpuMs);timingV3(e,out,"uploadCpuMs",s->last.uploadCpuMs);timingV3(e,out,"dispatchCpuMs",s->last.dispatchCpuMs);timingV3(e,out,"fenceWaitCpuMs",s->last.fenceWaitCpuMs);timingV3(e,out,"mapCpuMs",s->last.mapCpuMs);put(e,out,"liveBuffers",double(s->gpu.liveBufferCount()));put(e,out,"peakBuffers",double(s->gpu.peakBufferCount()));put(e,out,"slot0State",double(s->gpu.slotState(0)));put(e,out,"slot1State",double(s->gpu.slotState(1)));put(e,out,"slot0Uses",double(s->uses[0]));put(e,out,"slot1Uses",double(s->uses[1]));put(e,out,"quarantined",s->gpu.quarantined());put(e,out,"cleanupStage",s->cleanup.stage.c_str());put(e,out,"cleanupRawGlError",double(s->cleanup.rawGlError));put(e,out,"cleanupRawEglError",double(s->cleanup.rawEglError));put(e,out,"resourcesRetired",s->cleanup.resourcesRetired);put(e,out,"firstFailureStage",s->firstFailure.stage.c_str());put(e,out,"firstFailureRawGlError",double(s->firstFailure.rawGlError));put(e,out,"firstFailureRawEglError",double(s->firstFailure.rawEglError));}
+ timingV3(e,out,"nativeReplyObjectCpuMs",std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-replyStartV3).count());put(e,out,"timingScope","LAST_SELECT_OR_NOT_RUN");return out;
 }
 static State* callState(napi_env e,napi_callback_info info,size_t& argc,napi_value* argv){void* data=nullptr;if(napi_get_cb_info(e,info,&argc,argv,nullptr,&data)!=napi_ok)return nullptr;auto* s=static_cast<State*>(data);return s&&s->owner(e)?s:nullptr;}
 static bool typed(napi_env e,napi_value o,const char* key,napi_typedarray_type want,size_t count,size_t stride,void*& ptr,size_t& bytes){napi_value v,buffer;bool array=false,detached=false;napi_typedarray_type type;size_t byteLength=0,offset=0,bufferBytes=0;void* base=nullptr;
@@ -74,34 +119,72 @@ static napi_value configure(napi_env e,napi_callback_info info){size_t argc=1;na
  uint32_t cap=0;std::string directory,build,run,config,source;bool oracle=false;std::array<std::string,3> shaders;std::array<uint8_t,32> decoded{};
  if(argc!=1||!integer(e,a[0],"nmax",cap)||cap<2||cap>4096||!text(e,a[0],"shaderDirectory",directory)||!text(e,a[0],"buildManifestSha256",build)||!decodeSha256(build,decoded)||!text(e,a[0],"sourceManifestSha256",source)||!decodeSha256(source,decoded)||source!=T159_SOURCE_SHA||!text(e,a[0],"runId",run)||run.empty()||!text(e,a[0],"configId",config,8192)||config.empty()||!boolean(e,a[0],"diagnosticOracle",oracle)||!text(e,a[0],"buildShaderSha256",shaders[0])||!text(e,a[0],"queryShaderSha256",shaders[1])||!text(e,a[0],"reduceShaderSha256",shaders[2]))return reply(e,s,"ERROR","CONFIG_ARGUMENTS");
  for(auto& sha:shaders)if(!decodeSha256(sha,decoded))return reply(e,s,"ERROR","SHADER_SHA_ARGUMENTS");
+#if defined(P011_GPU_TEST_INJECTION) && defined(T171_SHADER0_SHA)
+ if(shaders[0]!=T171_SHADER0_SHA||shaders[1]!=T171_SHADER1_SHA||shaders[2]!=T171_SHADER2_SHA)return reply(e,s,"ERROR","CONFIG_BUILD_SHADER_IDENTITY");
+#endif
+
+#ifdef P011_GPU_TEST_INJECTION
+ if(s->testPlan!="NONE"&&!s->testConsumed&&!s->testRunId.empty()&&s->testRunId!=run)return reply(e,s,"ERROR","TEST_PLAN_RUN_MISMATCH");
+#endif
  s->ready=false;auto reset=s->gpu.reset(&s->cleanup);if(reset!=ExecStatus::OK)return reply(e,s,"ERROR","RESET_UNCONFIRMED",reset);
  s->slots[0].reset();s->slots[1].reset();s->last=RequestDiagnostics();
  try{for(auto& slot:s->slots){slot.reset(new CpuSlot(cap));slot->identityBytes.reserve(12288);}}catch(const std::bad_alloc&){return reply(e,s,"ERROR","CPU_SLOT_ALLOCATION");}
- s->generation=allocateOwner();if(!s->generation)return reply(e,s,"ERROR","OWNER_GENERATION_EXHAUSTED");
- s->request=s->payload=s->mutation=0;s->hasSnapshot=false;s->buildSha=build;s->runId=run;s->configId=config;s->oracle=oracle;std::fill(std::begin(s->ordinal),std::end(s->ordinal),0);s->uses[0]=s->uses[1]=0;
- auto initialized=s->gpu.initialize(cap,directory,s->last,&shaders);if(initialized!=ExecStatus::OK){s->record();s->gpu.reset(&s->cleanup);return reply(e,s,"ERROR",s->last.stage.c_str(),initialized);}
+ s->generation=
+#ifdef P011_GPU_TEST_INJECTION
+ s->dedicatedAllocator?allocateOwnerFrom(s->testAllocator):
+#endif
+ allocateOwner();if(!s->generation)return reply(e,s,"ERROR","OWNER_GENERATION_EXHAUSTED");
+ s->request=s->payload=s->mutation=0;s->hasSnapshot=false;s->buildSha=build;s->runId=run;s->configId=config;s->oracle=oracle;s->fullDump=true;boolean(e,a[0],"fullDump",s->fullDump);std::fill(std::begin(s->ordinal),std::end(s->ordinal),0);s->uses[0]=s->uses[1]=0;
+ auto initialized=s->gpu.initialize(cap,directory,s->last,&shaders);s->programLogs=s->last.programs;if(initialized!=ExecStatus::OK){s->record();s->gpu.reset(&s->cleanup);return reply(e,s,"ERROR",s->last.stage.c_str(),initialized);}
  s->ready=true;return reply(e,s,"READY","NONE",ExecStatus::OK);
 }
 static napi_value select(napi_env e,napi_callback_info info){size_t argc=4;napi_value a[4];State* s=callState(e,info,argc,a);if(!s)return reply(e,nullptr,"ERROR","WRONG_OWNER",ExecStatus::STALE);if(argc!=4||!s->ready)return reply(e,s,"ERROR","BINDING_UNAVAILABLE",ExecStatus::STALE);
+ auto entryTimeV3=std::chrono::steady_clock::now();s->validationMs=s->consumeMs=-1;s->prepareTiming=PrepareTimingV3();
+#ifdef P011_GPU_TEST_INJECTION
+ if(s->testPlan=="STALE_REQUEST_HI"&&!s->testConsumed){
+  uint64_t original=0;if(words(e,a[2],"ownerGeneration",original)){s->testConsumed=true;s->originalHiIdentity=original;s->modifiedHiIdentity=original^(1ULL<<32);put64(e,a[2],"ownerGeneration",s->modifiedHiIdentity);}
+ }
+#endif
  SnapshotView pool;RequestIdentity id;double radius=0;if(!snapshot(e,a[0],pool)||napi_get_value_double(e,a[1],&radius)!=napi_ok||!identity(e,a[2],a[3],*s,id)||pool.nmax!=s->slots[0]->nmax)return reply(e,s,"ERROR","REQUEST_CONTEXT_OR_INPUT",ExecStatus::INPUT_INVALID);
+ s->validationMs=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-entryTimeV3).count();
  s->request=id.requestSerial;s->payload=id.payloadSerial;s->ordinal[id.candidateRole]=id.candidateOrdinal;auto& slot=*s->slots[id.slotIndex];PreparedView p;
- auto before=std::chrono::steady_clock::now();auto prepared=prepareExactRanges(pool,radius,id,slot,p);double prepareMs=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-before).count();
+ auto before=std::chrono::steady_clock::now();auto prepared=prepareExactRanges(pool,radius,id,slot,p,&s->prepareTiming);double prepareMs=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-before).count();
  if(prepared!=PrepareStatus::OK&&prepared!=PrepareStatus::NO_PAIR)return reply(e,s,"ERROR","PREPARE_FAILED");
  std::array<const void*,13> pointers={pool.mass,pool.x,pool.y,pool.vx,pool.vy,pool.phase,pool.source,pool.state,pool.id,pool.sourceId,pool.freeSlots,pool.colMassH,pool.colMassL};std::array<uint32_t,8> hash{};std::copy(slot.header.w.begin()+32,slot.header.w.begin()+40,hash.begin());
  if(s->hasSnapshot&&id.poolMutationSerial==s->mutation&&(hash!=s->lastSnapshotSha||pointers!=s->lastPointers))return reply(e,s,"ERROR","POOL_MUTATION_UNADVANCED",ExecStatus::STALE);
  s->mutation=id.poolMutationSerial;s->lastSnapshotSha=hash;s->lastPointers=pointers;s->hasSnapshot=true;
+#ifdef P011_GPU_TEST_INJECTION
+ if(s->testPlan=="QUARANTINE_GL"&&!s->testConsumed){s->testConsumed=s->gpu.armIllegalUploadV3();}
+#endif
  Result result;auto exec=s->gpu.executeIntegerPair(p,id.slotIndex,{std::chrono::steady_clock::now()+std::chrono::seconds(1)},result,s->last);s->uses[id.slotIndex]++;
  if(exec!=ExecStatus::OK){s->ready=false;s->record();auto out=reply(e,s,"ERROR",s->last.stage.c_str(),exec);put(e,out,"slotIndex",double(id.slotIndex));return out;}
  SnapshotView current;if(!snapshot(e,a[0],current)){s->ready=false;return reply(e,s,"ERROR","CURRENT_VIEW_STALE",exec,"STALE");}
- CurrentOwnerState owner;owner.identity=id;owner.current=&current;owner.poolMutationSerial=id.poolMutationSerial;owner.active=s->ready;owner.diagnosticOracle=s->oracle;VerifiedPair pair;auto consumed=verifyAndConsume(p,result,owner,pair);
- const bool accepted=consumed==ConsumeStatus::OK||consumed==ConsumeStatus::NO_PAIR;if(!accepted)s->ready=false;
- auto out=reply(e,s,consumed==ConsumeStatus::OK?"PAIR":consumed==ConsumeStatus::NO_PAIR?"NO_PAIR":"ERROR",accepted?"NONE":consumeStatusName(consumed),exec,consumeStatusName(consumed),s->oracle?(accepted?"AGREE":consumed==ConsumeStatus::ORACLE_MISMATCH?"ORACLE_MISMATCH":"NOT_EVALUATED"):"DISABLED",consumed==ConsumeStatus::OK?&pair:nullptr);
- put(e,out,"slotIndex",double(id.slotIndex));put(e,out,"prepareCpuMs",prepareMs);put(e,out,"cpuEmptyShortcut",p.n<2);put(e,out,"buildManifestSha256",s->buildSha.c_str());bytes(e,out,"headerWords",slot.header.w.data(),256,napi_uint32_array,64);bytes(e,out,"resultWords",result.w.data(),128,napi_uint32_array,32);if(s->oracle)bytes(e,out,"identityBytes",slot.identityBytes.data(),slot.identityBytes.size(),napi_uint8_array,slot.identityBytes.size());return out;
+ CurrentOwnerState owner;owner.identity=id;owner.current=&current;owner.poolMutationSerial=id.poolMutationSerial;owner.active=s->ready;owner.diagnosticOracle=s->oracle;
+#ifdef P011_GPU_TEST_INJECTION
+ if(s->testPlan=="STALE_CONSUME_HI"&&!s->testConsumed){s->testConsumed=true;s->originalHiIdentity=owner.identity.ownerGeneration;owner.identity.ownerGeneration^=(1ULL<<32);s->modifiedHiIdentity=owner.identity.ownerGeneration;}
+#endif
+ auto consumeStartV3=std::chrono::steady_clock::now();VerifiedPair pair;auto consumed=verifyAndConsume(p,result,owner,pair);s->consumeMs=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-consumeStartV3).count();
+ const bool accepted=consumed==ConsumeStatus::OK||consumed==ConsumeStatus::NO_PAIR;if(!accepted){s->ready=false;s->last.valid=false;s->last.stage=std::string("OWNER_CONSUME_")+consumeStatusName(consumed);s->record();}
+ auto wrapStartV3=std::chrono::steady_clock::now();auto out=reply(e,s,consumed==ConsumeStatus::OK?"PAIR":consumed==ConsumeStatus::NO_PAIR?"NO_PAIR":"ERROR",accepted?"NONE":consumeStatusName(consumed),exec,consumeStatusName(consumed),s->oracle?(accepted?"AGREE":consumed==ConsumeStatus::ORACLE_MISMATCH?"ORACLE_MISMATCH":"NOT_EVALUATED"):"DISABLED",consumed==ConsumeStatus::OK?&pair:nullptr);
+ put(e,out,"slotIndex",double(id.slotIndex));put(e,out,"prepareCpuMs",prepareMs);put(e,out,"cpuEmptyShortcut",p.n<2);put(e,out,"buildManifestSha256",s->buildSha.c_str());if(s->fullDump){bytes(e,out,"headerWords",slot.header.w.data(),256,napi_uint32_array,64);bytes(e,out,"resultWords",result.w.data(),128,napi_uint32_array,32);if(s->oracle)bytes(e,out,"identityBytes",slot.identityBytes.data(),slot.identityBytes.size(),napi_uint8_array,slot.identityBytes.size());}timingV3(e,out,"nativeReturnEncodeCpuMs",std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-wrapStartV3).count());return out;
 }
 static napi_value reset(napi_env e,napi_callback_info info){size_t n=0;State* s=callState(e,info,n,nullptr);if(!s)return reply(e,nullptr,"ERROR","WRONG_OWNER",ExecStatus::STALE);s->ready=false;auto status=s->gpu.reset(&s->cleanup);if(status==ExecStatus::OK){s->slots[0].reset();s->slots[1].reset();s->hasSnapshot=false;}return reply(e,s,status==ExecStatus::OK?"RESET":"ERROR",status==ExecStatus::OK?"NONE":"RESET_UNCONFIRMED",status);}
+#ifdef P011_GPU_TEST_INJECTION
+// Owner-thread-only cold plan, consumed once. No release symbol/interface exists.
+static napi_value armTestInjectionV3(napi_env e,napi_callback_info info){size_t n=1;napi_value a[1];State* s=callState(e,info,n,a);std::string revision,plan,run;
+ if(!s||n!=1||s->request!=0||s->testPlan!="NONE"||!text(e,a[0],"revision",revision)||revision!="P011_GPU_TEST_INJECTION_V3"||!text(e,a[0],"runId",run)||run.empty()||!text(e,a[0],"kind",plan))return reply(e,s,"ERROR","TEST_PLAN_INVALID");
+ if(plan!="QUARANTINE_GL"&&plan!="STALE_REQUEST_HI"&&plan!="STALE_CONSUME_HI"&&plan!="OWNER_EXHAUSTION")return reply(e,s,"ERROR","TEST_PLAN_KIND");
+ if((plan=="OWNER_EXHAUSTION"&&s->ready)||(!s->runId.empty()&&run!=s->runId))return reply(e,s,"ERROR","TEST_PLAN_OWNER_OR_PHASE");
+ s->testPlan=plan;s->testRunId=run;s->dedicatedAllocator=plan=="OWNER_EXHAUSTION";return reply(e,s,"ARMED","NONE");
+}
+#endif
 static void cleanup(void* data){auto* s=static_cast<State*>(data);s->ready=false;auto status=s->gpu.reset(&s->cleanup);if(status!=ExecStatus::OK)std::fprintf(stderr,"T159_CLEANUP_FAILED stage=%s gl=%u egl=%u live=%u\\n",s->cleanup.stage.c_str(),s->cleanup.rawGlError,s->cleanup.rawEglError,s->gpu.liveBufferCount());delete s;}
 static napi_value init(napi_env e,napi_value exports){auto* s=new State(e);napi_property_descriptor d[]={
- {"configure",nullptr,configure,nullptr,nullptr,nullptr,napi_default,s},{"selectPair",nullptr,select,nullptr,nullptr,nullptr,napi_default,s},{"reset",nullptr,reset,nullptr,nullptr,nullptr,napi_default,s}};napi_define_properties(e,exports,3,d);napi_add_env_cleanup_hook(e,cleanup,s);return exports;}
+ {"configure",nullptr,configure,nullptr,nullptr,nullptr,napi_default,s},{"selectPair",nullptr,select,nullptr,nullptr,nullptr,napi_default,s},{"reset",nullptr,reset,nullptr,nullptr,nullptr,napi_default,s}};napi_define_properties(e,exports,3,d);
+#ifdef P011_GPU_TEST_INJECTION
+ napi_property_descriptor testOnly[]={ {"armTestInjectionV3",nullptr,armTestInjectionV3,nullptr,nullptr,nullptr,napi_default,s} };napi_define_properties(e,exports,1,testOnly);
+#endif
+napi_add_env_cleanup_hook(e,cleanup,s);return exports;}
 static napi_module module={1,0,nullptr,init,"p011_gpu_pair_prototype",nullptr,{0}};
 }
 #ifdef _MSC_VER

@@ -1,3 +1,4 @@
+#include <chrono>
 #include "pair_prepare_v1.h"
 #include "pair_identity_v2.h"
 #include "pair_sha256_v1.h"
@@ -64,7 +65,10 @@ static void copyView(const SnapshotView& p,CpuSlot& slot){
  slot.frozen.sourceId=slot.fSourceId.data();slot.frozen.freeSlots=slot.fFree.data();
  slot.frozen.colMassH=slot.fColH.data();slot.frozen.colMassL=slot.fColL.data();
 }
-PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const RequestIdentity& id,CpuSlot& slot,PreparedView& out){
+PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const RequestIdentity& id,CpuSlot& slot,PreparedView& out,PrepareTimingV3* timing){
+ using ClockV3=std::chrono::steady_clock;auto timeV3=ClockV3::now();
+ auto phaseV3=[&](double& field){field=std::chrono::duration<double,std::milli>(ClockV3::now()-timeV3).count();timeV3=ClockV3::now();};
+ if(timing)*timing=PrepareTimingV3();
  slot.prepared=false;out=PreparedView();
  if(!environment())return PrepareStatus::ENV_UNSUPPORTED;
  if(!std::isfinite(radius)||radius<0||p.nmax==0||p.nmax!=slot.nmax||p.cols==0||p.cols>128||
@@ -105,13 +109,16 @@ PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const Reque
     slot.order[n]=i;slot.idOrder[n]=i;n++;}
  }
  if(n!=p.liveCount)return PrepareStatus::INPUT_INVALID;
+ if(timing)phaseV3(timing->validate);
  copyView(p,slot);const SnapshotView& f=slot.frozen;slot.n=n;
+ if(timing)phaseV3(timing->freeze);
  std::sort(slot.order.begin(),slot.order.begin()+n,[&](uint32_t a,uint32_t b){
   if(groupLess(f,a,b))return true;if(groupLess(f,b,a))return false;
   if(f.y[a]!=f.y[b])return f.y[a]<f.y[b];if(f.id[a]!=f.id[b])return f.id[a]<f.id[b];return a<b;});
  std::sort(slot.idOrder.begin(),slot.idOrder.begin()+n,[&](uint32_t a,uint32_t b){
   if(f.id[a]!=f.id[b])return f.id[a]<f.id[b];return a<b;});
  for(uint32_t i=1;i<n;i++)if(f.id[slot.idOrder[i]]==f.id[slot.idOrder[i-1]])return PrepareStatus::INPUT_INVALID;
+ if(timing)phaseV3(timing->sort);
  std::fill(slot.queries.begin(),slot.queries.end(),Query());
  for(uint32_t i=0;i<slot.K;i++)slot.leaves[i]=i<n?Leaf{f.id[slot.order[i]],slot.order[i],1,i}:Leaf{0,0,0,i};
  uint32_t G0=0;
@@ -127,6 +134,7 @@ PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const Reque
    slot.queries[a]=Query{f.id[slot.order[a]],slot.order[a],a,L,R,G0,G1,1};
   }G0=G1;
  }
+ if(timing)phaseV3(timing->range);
  Header& head=slot.header;head=Header();auto& w=head.w;
  w[0]=kHeaderMagic;w[1]=1;w[2]=256;w[3]=128;w[4]=w[5]=w[6]=1;w[7]=id.flags;
  w[8]=p.nmax;w[9]=n;w[10]=slot.K;w[11]=slot.h;
@@ -156,6 +164,7 @@ PrepareStatus prepareExactRanges(const SnapshotView& p,double radius,const Reque
  out.leaves=slot.leaves.data();out.queries=slot.queries.data();out.header=&slot.header;
  out.n=n;out.K=slot.K;out.h=slot.h;out.radius=radius;out.identity=id;out.snapshot=&slot.frozen;
  out.mutationAtFreeze=id.poolMutationSerial;slot.prepared=true;
+ if(timing)phaseV3(timing->hashPack);
  return n<2?PrepareStatus::NO_PAIR:PrepareStatus::OK;
 }
 }

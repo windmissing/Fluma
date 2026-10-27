@@ -1,0 +1,11 @@
+PASS all four fixtures are cold manifest-bound and original physical inputs remain fixed
+PASS protocol refuses invalid steps, hashes, oracle modes and arbitrary fault plans
+PASS performance plan has 3 warmups per route and six permutations each five blocks
+PASS retained context ordinals stay monotonic while per-attempt counts reset
+PASS test injection interface is absent from non-test preprocessed binding
+PASS WET_192_64 original public injection, three-route pair/F64/page/state equality
+PASS WET_192_128 original public injection, three-route pair/F64/page/state equality
+PASS WET_512_64 original public injection, three-route pair/F64/page/state equality
+PASS WET_512_128 original public injection, three-route pair/F64/page/state equality
+PASS V3 overlay is reversibly whitelisted and physical merge arithmetic is unchanged
+{"passed":10,"failed":0}

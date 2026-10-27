@@ -1,0 +1,108 @@
+> hvigor [32mFinished :entry:default@PreBuild... after 166 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 25 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 36 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 4 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 6 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgSdkInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 4 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@SyscapTransform...  [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 177 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 12 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 198 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 3 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 423 ms [39m
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/cpp/p013renderer/napi_bridge.cpp:751:442: warning: implicit conversion from 'unsigned long' to 'double' changes value from 1152921504606846975 to 1152921504606846976 [-Wimplicit-const-int-float-conversion]
+ valid=valid&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"stateEpoch",state)&&SafeInteger(state)&&state>0&&Number(e,a[0],"physicsCommitId",commit)&&SafeInteger(commit)&&commit>0&&Number(e,a[0],"requestedGeneration",generation)&&SafeInteger(generation)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=SIZE_MAX/16&&count<=capacity&&Boolean(e,a[0],"particleLayerEnabled",p.particleEnabled)&&text("frameToken",p.token)&&text("runId",p.run)&&text("ledgerCommitKey",p.ledgerKey)&&text("routeId",p.route)&&text("mediumMode",p.medium)&&text("sourceFailure",sourceFailure);
+                                                                                                                                                                                                                                                                                                                                                                                                                                               ~~~~~~~~~~^~~
+1 warning generated.
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 6 s 335 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 203 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 599 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 30 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/physics/T159Native.ets:2:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:33:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:37:6
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:41:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T159PhysicsWorker.ets:27:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T159PhysicsWorker.ets:29:49
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T159PhysicsWorker.ets:30:8
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T159PhysicsWorker.ets:31:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/physics/T171Native.ets:2:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T171Worker.ets:6:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T171Worker.ets:20:44
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t171-project/entry/src/main/ets/workers/T171Worker.ets:20:141
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 9 s 657 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 761 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 7 ms [39m
+> hvigor ERROR: Failed :entry:default@SignHap... 
+> hvigor ERROR: 00303116 Configuration Error
+Error Message: The length of the storePassword or keyPassword field in the signature configuration is less than 32. At file: D:\hmprojects\HelloWorld\.codex\local-test\t171-project\build-profile.json5
+
+* Try the following:
+  > Re-execute sign your app/atomic service automatically：clear the signingConfigs field in the D:\hmprojects\HelloWorld\.codex\local-test\t171-project\build-profile.json5 file and go to Project Structure > Project > Signing Configs and apply the signature material
+  > Verify if signingConfigs is overridden in the project-level and module-level hvigorfile.ts. If so, use the error message to ensure the configuration is correct.
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+> hvigor ERROR: BUILD FAILED in 17 s 205 ms 
+
+30 tasks in total: 27 executed, 3 up-to-date

@@ -40,7 +40,8 @@ struct PreparedView {const Leaf* leaves=nullptr;const Query* queries=nullptr;con
  uint32_t n=0,K=0,h=0;double radius=0;RequestIdentity identity;
  const SnapshotView* snapshot=nullptr;uint64_t mutationAtFreeze=0;
 };
-PrepareStatus prepareExactRanges(const SnapshotView&,double,const RequestIdentity&,CpuSlot&,PreparedView&);
+struct PrepareTimingV3 { double validate=-1,freeze=-1,sort=-1,range=-1,hashPack=-1; };
+PrepareStatus prepareExactRanges(const SnapshotView&,double,const RequestIdentity&,CpuSlot&,PreparedView&,PrepareTimingV3* timing=nullptr);
 // Test-side authority only; no pool write. Every result is checked again by owner.
 bool legacyPair(const SnapshotView&,double,uint32_t& slotA,uint32_t& slotB);
 bool sameGroup(const SnapshotView&,uint32_t,uint32_t);
