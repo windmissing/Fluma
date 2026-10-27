@@ -162,6 +162,7 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 | T157 | GPU信封与shader正式修复（b21d0e5） | 2026-10-27 |
 | T151 | FIELD_COLUMN原值真机补采（失败链定位：预览COLLECT期间col48，report P051-T151） | 2026-10-27 |
 | T159 | GPU完整事务测试包接线（c8dff53，离线9/9+生成项目构建全绿） | 2026-10-27 |
+| T161 | GPU修复后完整事务真机复测（566da9d，信封消费10/10 F-T142-1真机闭环；三路收益BLOCKED→T163/T164） | 2026-10-27 |
 | T158 | GPU真机采集器修订（cf1d416，6/6） | 2026-10-27 |
 | T160 | 支持纯核独立验证（620ad6e，15/15） | 2026-10-27 |
 | T42 | G0有效帧与复测（ef0e7a7，G0五项PASS） | 2026-10-25 |
@@ -417,4 +418,6 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 | T160 | 【T160·支持纯核实施独立验证】tester：逐node包络、INWARD与原子影子事务 | tester | P5 | 6adffd57e4b0e6ce82d5da1f |
 | T161 | 【T161·GPU修复后完整事务真机复测】tester：信封消费、三路收益与故障恢复 | tester | P5 | 6adffd57e4b0e6ce82d5da20 |
 | T162 | 【P-011·T154门禁分流】architect：诊断OFF控制流+门禁探针扩展方案+baseline路由 | architect | P5 | 6ae00c6d…9c6a |
+| T163 | 【P-011·worker abc打包修复】developer：T159生成项目Worker设备加载失败根因与生成器最小修复 | developer | P5 | 6ae0179b…c90a |
+| T164 | 【P-011·GPU三路收益真机复测】tester：完整attempt收益+注错四类+N相关性复核 | tester | P5 | 6ae017b3…cef8 |
 
