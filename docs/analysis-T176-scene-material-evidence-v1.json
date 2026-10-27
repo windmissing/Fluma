@@ -1,0 +1,1563 @@
+{
+  "revision": "T176_SCENE_MATERIAL_ARCHITECT_EVIDENCE_V1",
+  "date": "2026-10-27",
+  "status": "PARTIAL_CAUSE_PATH_IDENTIFIED_INNER_REASON_AND_DEVICE_BITS_NOT_CAPTURED",
+  "task": "6ae06c77e4b0e6ce82e0821d",
+  "method": "Read archived text and source; no physics/probe/device tests run",
+  "deviceExceptionInnerReason": "NOT_CAPTURED",
+  "rejectedPublicationBits": "NOT_CAPTURED",
+  "historicalHap": {
+    "name": "entry-default-s150-signed.hap",
+    "declaredSha256": "f28ec28e639e2d5b7ccec265b9023890664531819b8b98094ca8348c7c3bd726",
+    "declaredCommit": "a419f5a",
+    "declaredTree": "aee7374caa8ff7cb",
+    "independentHapToSourceVerification": "NOT_VERIFIED_PACKAGE_NOT_LOCATED_IN_CHECKED_ARCHIVE_PATHS"
+  },
+  "arms": [
+    {
+      "arm": "R0",
+      "pid": "23437",
+      "runIds": [
+        "p011-run-1793089625244-3"
+      ],
+      "raw": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+        "bytes": 648462,
+        "sha256": "61d1666b67f5f73017b2962f483c78ac4e2e6b15f308bc4c52c8986840537765"
+      },
+      "parseErrors": 0,
+      "foreignPidMessageCounts": {},
+      "presentCounts": {
+        "0": 368,
+        "-1": 1
+      },
+      "firstPresent": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+        "line": 54,
+        "wall": "10-27 16:27:05.257",
+        "pid": "23437",
+        "sequence": 2,
+        "event": {
+          "kind": "present",
+          "time": 2482361993.502015,
+          "runId": "p011-run-1793089625244-3",
+          "commit": 2,
+          "frame": 1,
+          "code": -1,
+          "swap": false,
+          "reason": "NOT_READY"
+        }
+      },
+      "firstMaterialFailure": null,
+      "lastMaterialFailure": null,
+      "lastSuccess": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+        "line": 1328,
+        "wall": "10-27 16:27:30.019",
+        "pid": "23437",
+        "sequence": 1972,
+        "event": {
+          "kind": "present",
+          "time": 2482386720.357514,
+          "runId": "p011-run-1793089625244-3",
+          "commit": 738,
+          "frame": 369,
+          "code": 0,
+          "swap": true,
+          "reason": ""
+        }
+      },
+      "firstInputStart": null,
+      "receipts": [],
+      "admittedSum": 0,
+      "sceneCapturedCount": 0,
+      "firstSceneMaterialFailure": null,
+      "lastScene": null,
+      "geometryStops": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 68,
+          "wall": "10-27 16:27:05.463",
+          "pid": "23437",
+          "sequence": 3,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089625244-3",
+            "commit": 2,
+            "frame": 1,
+            "time": 2482361993.502015,
+            "x": 64,
+            "y": 220,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        }
+      ],
+      "metrics": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 311,
+          "wall": "10-27 16:27:09.136",
+          "pid": "23437",
+          "commit": 120,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 56
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 529,
+          "wall": "10-27 16:27:12.961",
+          "pid": "23437",
+          "commit": 240,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 719,
+          "wall": "10-27 16:27:17.092",
+          "pid": "23437",
+          "commit": 360,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 906,
+          "wall": "10-27 16:27:21.132",
+          "pid": "23437",
+          "commit": 480,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 56
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 1088,
+          "wall": "10-27 16:27:25.170",
+          "pid": "23437",
+          "commit": 600,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 53
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-full.txt",
+          "line": 1287,
+          "wall": "10-27 16:27:29.277",
+          "pid": "23437",
+          "commit": 720,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 63
+        }
+      ],
+      "freezeFile": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R0-freeze.txt",
+        "bytes": 0,
+        "meaning": "filtered search result only; not whole-session proof"
+      }
+    },
+    {
+      "arm": "R1",
+      "pid": "24446",
+      "runIds": [
+        "p011-run-1793089653277-3"
+      ],
+      "raw": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "bytes": 1680175,
+        "sha256": "098c53c75385e1e00175e58d9a365c3cc034f3f3188628d5b5824fda5f678ddb"
+      },
+      "parseErrors": 0,
+      "foreignPidMessageCounts": {
+        "23437": 12
+      },
+      "presentCounts": {
+        "0": 244,
+        "100": 176,
+        "-1": 1
+      },
+      "firstPresent": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 82,
+        "wall": "10-27 16:27:33.292",
+        "pid": "24446",
+        "sequence": 2,
+        "event": {
+          "kind": "present",
+          "time": 2482390028.662961,
+          "runId": "p011-run-1793089653277-3",
+          "commit": 2,
+          "frame": 1,
+          "code": -1,
+          "swap": false,
+          "reason": "NOT_READY"
+        }
+      },
+      "firstMaterialFailure": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 938,
+        "wall": "10-27 16:27:52.002",
+        "pid": "24446",
+        "sequence": 1447,
+        "event": {
+          "kind": "present",
+          "time": 2482408573.759713,
+          "runId": "p011-run-1793089653277-3",
+          "commit": 492,
+          "frame": 243,
+          "code": 100,
+          "swap": false,
+          "reason": "SCENE_MATERIAL_DATA"
+        }
+      },
+      "lastMaterialFailure": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 4172,
+        "wall": "10-27 16:28:48.020",
+        "pid": "24446",
+        "sequence": 4383,
+        "event": {
+          "kind": "present",
+          "time": 2482459563.243261,
+          "runId": "p011-run-1793089653277-3",
+          "commit": 853,
+          "frame": 423,
+          "code": 100,
+          "swap": false,
+          "reason": "SCENE_MATERIAL_DATA"
+        }
+      },
+      "lastSuccess": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 1037,
+        "wall": "10-27 16:27:54.137",
+        "pid": "24446",
+        "sequence": 1598,
+        "event": {
+          "kind": "present",
+          "time": 2482410692.776064,
+          "runId": "p011-run-1793089653277-3",
+          "commit": 521,
+          "frame": 257,
+          "code": 0,
+          "swap": true,
+          "reason": ""
+        }
+      },
+      "firstInputStart": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 661,
+        "wall": "10-27 16:27:45.153",
+        "pid": "24446",
+        "sequence": 954,
+        "event": {
+          "kind": "input.START",
+          "reason": "ACCEPTED",
+          "time": 2482401914.399,
+          "rawTimestamp": 2482401914399000,
+          "timestampUnit": "ns",
+          "runId": "p011-run-1793089653277-3",
+          "commit": 360,
+          "frame": 180,
+          "pageFrame": 180,
+          "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+          "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+          "source": "DOWN",
+          "geometryEpoch": 2,
+          "widthVp": 336.45713588169644,
+          "heightVp": 578.8571428571429,
+          "geometryReady": true,
+          "foreground": true,
+          "inputGeneration": 1,
+          "gestureId": 1,
+          "eventOrdinal": 1,
+          "pointerId": 0,
+          "changedCount": 1,
+          "touchCount": 1,
+          "x": 37.93478339516149,
+          "y": 183.21816386969397
+        }
+      },
+      "receipts": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 668,
+          "wall": "10-27 16:27:45.275",
+          "pid": "24446",
+          "sequence": 966,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 363,
+            "frame": 182,
+            "time": 2482401985.50258,
+            "sequence": 1,
+            "admitted": 0.4497405548095703,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 673,
+          "wall": "10-27 16:27:45.352",
+          "pid": "24446",
+          "sequence": 975,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 366,
+            "frame": 183,
+            "time": 2482402051.877273,
+            "sequence": 2,
+            "admitted": 0.530997543334961,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 678,
+          "wall": "10-27 16:27:45.431",
+          "pid": "24446",
+          "sequence": 983,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 369,
+            "frame": 184,
+            "time": 2482402129.239127,
+            "sequence": 3,
+            "admitted": 0.618894832611084,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 684,
+          "wall": "10-27 16:27:45.511",
+          "pid": "24446",
+          "sequence": 992,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 372,
+            "frame": 185,
+            "time": 2482402206.602284,
+            "sequence": 4,
+            "admitted": 0.6189052543640137,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 840,
+          "wall": "10-27 16:27:49.242",
+          "pid": "24446",
+          "sequence": 1265,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 449,
+            "frame": 223,
+            "time": 2482405902.451649,
+            "sequence": 5,
+            "admitted": 0.533478256225586,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 847,
+          "wall": "10-27 16:27:49.409",
+          "pid": "24446",
+          "sequence": 1276,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 452,
+            "frame": 224,
+            "time": 2482406013.756805,
+            "sequence": 6,
+            "admitted": 0.8904412460327148,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 997,
+          "wall": "10-27 16:27:53.124",
+          "pid": "24446",
+          "sequence": 1530,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 507,
+            "frame": 251,
+            "time": 2482409711.074826,
+            "sequence": 7,
+            "admitted": 0.7119705276489258,
+            "reason": "ACCEPTED"
+          }
+        }
+      ],
+      "admittedSum": 4.354428215026855,
+      "sceneCapturedCount": 187,
+      "firstSceneMaterialFailure": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 939,
+        "wall": "10-27 16:27:52.095",
+        "pid": "24446",
+        "event": {
+          "run": "p011-run-1793089653277-3",
+          "commit": 494,
+          "frame": 243,
+          "request": "p011-run-1793089653277-3:2:494:243",
+          "actual": "p011-run-1793089653277-3:2:490:241",
+          "state": "FAULT",
+          "first": "SCENE_MATERIAL_DATA",
+          "swap": false,
+          "staleSwap": false,
+          "generation": 0,
+          "config": 0,
+          "desiredConfig": 2,
+          "configurationFailure": ""
+        }
+      },
+      "lastScene": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+        "line": 4232,
+        "wall": "10-27 16:28:49.088",
+        "pid": "24446",
+        "event": {
+          "run": "p011-run-1793089653277-3",
+          "commit": 875,
+          "frame": 433,
+          "request": "p011-run-1793089653277-3:2:875:433",
+          "actual": "p011-run-1793089653277-3:2:521:256",
+          "state": "FAULT",
+          "first": "SCENE_MATERIAL_DATA",
+          "swap": false,
+          "staleSwap": false,
+          "generation": 0,
+          "config": 0,
+          "desiredConfig": 5,
+          "configurationFailure": ""
+        }
+      },
+      "geometryStops": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 83,
+          "wall": "10-27 16:27:33.392",
+          "pid": "24446",
+          "sequence": 3,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 2,
+            "frame": 1,
+            "time": 2482390028.662961,
+            "x": 64,
+            "y": 220,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 940,
+          "wall": "10-27 16:27:52.095",
+          "pid": "24446",
+          "sequence": 1448,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 492,
+            "frame": 243,
+            "time": 2482408573.759713,
+            "x": 85.76087134321608,
+            "y": 183.21816386969397,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 948,
+          "wall": "10-27 16:27:52.242",
+          "pid": "24446",
+          "sequence": 1462,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 494,
+            "frame": 244,
+            "time": 2482408773.402345,
+            "x": 85.76087134321608,
+            "y": 183.21816386969397,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 1045,
+          "wall": "10-27 16:27:54.446",
+          "pid": "24446",
+          "sequence": 1611,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 523,
+            "frame": 258,
+            "time": 2482410909.370319,
+            "x": 85.76087134321608,
+            "y": 183.21816386969397,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 1052,
+          "wall": "10-27 16:27:54.701",
+          "pid": "24446",
+          "sequence": 1623,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089653277-3",
+            "commit": 525,
+            "frame": 259,
+            "time": 2482411075.980923,
+            "x": 85.76087134321608,
+            "y": 183.21816386969397,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        }
+      ],
+      "metrics": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 258,
+          "wall": "10-27 16:27:37.042",
+          "pid": "24446",
+          "commit": 120,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 460,
+          "wall": "10-27 16:27:41.017",
+          "pid": "24446",
+          "commit": 240,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 656,
+          "wall": "10-27 16:27:45.152",
+          "pid": "24446",
+          "commit": 360,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 56
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 915,
+          "wall": "10-27 16:27:51.486",
+          "pid": "24446",
+          "commit": 486,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 6,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 3.6424576873779295,
+          "expectedMass": 3.6424576873779295,
+          "actualMass": 3.6424576873779295,
+          "driftHeavy": 0,
+          "physicsTimeMs": 183
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 1699,
+          "wall": "10-27 16:28:04.639",
+          "pid": "24446",
+          "commit": 607,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 7,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 4.354428215026855,
+          "expectedMass": 4.354428215026855,
+          "actualMass": 4.354428215026855,
+          "driftHeavy": 0,
+          "physicsTimeMs": 257
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 2788,
+          "wall": "10-27 16:28:22.911",
+          "pid": "24446",
+          "commit": 727,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 7,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 4.354428215026857,
+          "expectedMass": 4.354428215026855,
+          "actualMass": 4.354428215026857,
+          "driftHeavy": 4.0794261650017693e-16,
+          "physicsTimeMs": 225
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-full.txt",
+          "line": 3880,
+          "wall": "10-27 16:28:41.960",
+          "pid": "24446",
+          "commit": 847,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 7,
+          "metricCommitKey": null,
+          "depositedMass": 1.1547005383792515,
+          "particleMass": 3.199727676647607,
+          "expectedMass": 4.354428215026855,
+          "actualMass": 4.354428215026859,
+          "driftHeavy": 8.158852330003539e-16,
+          "physicsTimeMs": 358
+        }
+      ],
+      "freezeFile": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-freeze.txt",
+        "bytes": 0,
+        "meaning": "filtered search result only; not whole-session proof"
+      }
+    },
+    {
+      "arm": "R2",
+      "pid": "24752",
+      "runIds": [
+        "p011-run-1793089732766-3"
+      ],
+      "raw": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "bytes": 1265228,
+        "sha256": "fec62529eef9578b621e7b2deca0a575d407254608f297f7a5930bebe586c9ed"
+      },
+      "parseErrors": 0,
+      "foreignPidMessageCounts": {
+        "24446": 9
+      },
+      "presentCounts": {
+        "0": 268,
+        "100": 74,
+        "-1": 1
+      },
+      "firstPresent": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 174,
+        "wall": "10-27 16:28:52.779",
+        "pid": "24752",
+        "sequence": 2,
+        "event": {
+          "kind": "present",
+          "time": 2482469519.709802,
+          "runId": "p011-run-1793089732766-3",
+          "commit": 2,
+          "frame": 1,
+          "code": -1,
+          "swap": false,
+          "reason": "NOT_READY"
+        }
+      },
+      "firstMaterialFailure": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 1452,
+        "wall": "10-27 16:29:18.007",
+        "pid": "24752",
+        "sequence": 1832,
+        "event": {
+          "kind": "present",
+          "time": 2482493931.270022,
+          "runId": "p011-run-1793089732766-3",
+          "commit": 549,
+          "frame": 270,
+          "code": 100,
+          "swap": false,
+          "reason": "SCENE_MATERIAL_DATA"
+        }
+      },
+      "lastMaterialFailure": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 2551,
+        "wall": "10-27 16:30:09.692",
+        "pid": "24752",
+        "sequence": 4414,
+        "event": {
+          "kind": "present",
+          "time": 2482541193.065294,
+          "runId": "p011-run-1793089732766-3",
+          "commit": 757,
+          "frame": 374,
+          "code": 100,
+          "swap": false,
+          "reason": "SCENE_MATERIAL_DATA"
+        }
+      },
+      "lastSuccess": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 1433,
+        "wall": "10-27 16:29:17.488",
+        "pid": "24752",
+        "sequence": 1801,
+        "event": {
+          "kind": "present",
+          "time": 2482493353.567024,
+          "runId": "p011-run-1793089732766-3",
+          "commit": 547,
+          "frame": 269,
+          "code": 0,
+          "swap": true,
+          "reason": ""
+        }
+      },
+      "firstInputStart": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 956,
+        "wall": "10-27 16:29:04.681",
+        "pid": "24752",
+        "sequence": 958,
+        "event": {
+          "kind": "input.START",
+          "reason": "ACCEPTED",
+          "time": 2482481399.059,
+          "rawTimestamp": 2482481399059000,
+          "timestampUnit": "ns",
+          "runId": "p011-run-1793089732766-3",
+          "commit": 362,
+          "frame": 181,
+          "pageFrame": 181,
+          "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+          "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+          "source": "DOWN",
+          "geometryEpoch": 2,
+          "widthVp": 336.45713588169644,
+          "heightVp": 578.8571428571429,
+          "geometryReady": true,
+          "foreground": true,
+          "inputGeneration": 1,
+          "gestureId": 1,
+          "eventOrdinal": 1,
+          "pointerId": 0,
+          "changedCount": 1,
+          "touchCount": 1,
+          "x": 37.93478339516149,
+          "y": 183.21816386969397
+        }
+      },
+      "receipts": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 963,
+          "wall": "10-27 16:29:04.785",
+          "pid": "24752",
+          "sequence": 970,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 365,
+            "frame": 183,
+            "time": 2482481502.355782,
+            "sequence": 1,
+            "admitted": 0.3557507286071777,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 967,
+          "wall": "10-27 16:29:04.857",
+          "pid": "24752",
+          "sequence": 977,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 368,
+            "frame": 184,
+            "time": 2482481557.789278,
+            "sequence": 2,
+            "admitted": 0.44346796798706056,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 972,
+          "wall": "10-27 16:29:04.936",
+          "pid": "24752",
+          "sequence": 986,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 371,
+            "frame": 185,
+            "time": 2482481635.393879,
+            "sequence": 3,
+            "admitted": 0.6208368072509766,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 977,
+          "wall": "10-27 16:29:05.016",
+          "pid": "24752",
+          "sequence": 995,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 374,
+            "frame": 186,
+            "time": 2482481713.000029,
+            "sequence": 4,
+            "admitted": 0.6208492012023926,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1086,
+          "wall": "10-27 16:29:07.652",
+          "pid": "24752",
+          "sequence": 1195,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 433,
+            "frame": 215,
+            "time": 2482484340.677854,
+            "sequence": 5,
+            "admitted": 0.712392967224121,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1091,
+          "wall": "10-27 16:29:07.780",
+          "pid": "24752",
+          "sequence": 1205,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 436,
+            "frame": 216,
+            "time": 2482484429.719254,
+            "sequence": 6,
+            "admitted": 0.7123311996459961,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1205,
+          "wall": "10-27 16:29:10.617",
+          "pid": "24752",
+          "sequence": 1403,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 481,
+            "frame": 238,
+            "time": 2482487266.183833,
+            "sequence": 7,
+            "admitted": 1.0678349838256835,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1312,
+          "wall": "10-27 16:29:13.497",
+          "pid": "24752",
+          "sequence": 1590,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 516,
+            "frame": 255,
+            "time": 2482490059.095224,
+            "sequence": 8,
+            "admitted": 1.6903685607910157,
+            "reason": "ACCEPTED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1409,
+          "wall": "10-27 16:29:16.258",
+          "pid": "24752",
+          "sequence": 1762,
+          "event": {
+            "kind": "dry.receipt",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 541,
+            "frame": 267,
+            "time": 2482492763.32556,
+            "sequence": 9,
+            "admitted": 1.6019331703186035,
+            "reason": "ACCEPTED"
+          }
+        }
+      ],
+      "admittedSum": 7.825765586853027,
+      "sceneCapturedCount": 113,
+      "firstSceneMaterialFailure": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 1441,
+        "wall": "10-27 16:29:17.701",
+        "pid": "24752",
+        "event": {
+          "run": "p011-run-1793089732766-3",
+          "commit": 551,
+          "frame": 270,
+          "request": "p011-run-1793089732766-3:2:551:270",
+          "actual": "p011-run-1793089732766-3:2:547:268",
+          "state": "FAULT",
+          "first": "SCENE_MATERIAL_DATA",
+          "swap": false,
+          "staleSwap": false,
+          "generation": 0,
+          "config": 0,
+          "desiredConfig": 2,
+          "configurationFailure": ""
+        }
+      },
+      "lastScene": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+        "line": 2549,
+        "wall": "10-27 16:30:09.692",
+        "pid": "24752",
+        "event": {
+          "run": "p011-run-1793089732766-3",
+          "commit": 775,
+          "frame": 382,
+          "request": "p011-run-1793089732766-3:2:775:382",
+          "actual": "p011-run-1793089732766-3:2:547:268",
+          "state": "FAULT",
+          "first": "SCENE_MATERIAL_DATA",
+          "swap": false,
+          "staleSwap": false,
+          "generation": 0,
+          "config": 0,
+          "desiredConfig": 3,
+          "configurationFailure": ""
+        }
+      },
+      "geometryStops": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 181,
+          "wall": "10-27 16:28:52.875",
+          "pid": "24752",
+          "sequence": 3,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 2,
+            "frame": 1,
+            "time": 2482469519.709802,
+            "x": 64,
+            "y": 220,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1452,
+          "wall": "10-27 16:29:18.007",
+          "pid": "24752",
+          "sequence": 1833,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 549,
+            "frame": 270,
+            "time": 2482493931.270022,
+            "x": 85.76087134321608,
+            "y": 183.21816386969397,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1465,
+          "wall": "10-27 16:29:18.263",
+          "pid": "24752",
+          "sequence": 1852,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089732766-3",
+            "commit": 551,
+            "frame": 271,
+            "time": 2482494264.556015,
+            "x": 85.76087134321608,
+            "y": 183.21816386969397,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        }
+      ],
+      "metrics": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 472,
+          "wall": "10-27 16:28:56.519",
+          "pid": "24752",
+          "commit": 120,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 756,
+          "wall": "10-27 16:29:00.506",
+          "pid": "24752",
+          "commit": 240,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 947,
+          "wall": "10-27 16:29:04.616",
+          "pid": "24752",
+          "commit": 360,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 58
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1216,
+          "wall": "10-27 16:29:10.910",
+          "pid": "24752",
+          "commit": 487,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 7,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 4.533463855743408,
+          "expectedMass": 4.533463855743408,
+          "actualMass": 4.533463855743408,
+          "driftHeavy": 0,
+          "physicsTimeMs": 185
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 1733,
+          "wall": "10-27 16:29:28.839",
+          "pid": "24752",
+          "commit": 609,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 9,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 7.825765586853027,
+          "expectedMass": 7.825765586853027,
+          "actualMass": 7.825765586853027,
+          "driftHeavy": 0,
+          "physicsTimeMs": 466
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-full.txt",
+          "line": 2319,
+          "wall": "10-27 16:29:58.095",
+          "pid": "24752",
+          "commit": 729,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 9,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 7.825765586853032,
+          "expectedMass": 7.825765586853027,
+          "actualMass": 7.825765586853032,
+          "driftHeavy": 5.674706262555509e-16,
+          "physicsTimeMs": 437
+        }
+      ],
+      "freezeFile": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-freeze.txt",
+        "bytes": 0,
+        "meaning": "filtered search result only; not whole-session proof"
+      }
+    },
+    {
+      "arm": "R3",
+      "pid": "26353",
+      "runIds": [
+        "p011-run-1793089813667-3"
+      ],
+      "raw": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+        "bytes": 1750062,
+        "sha256": "c5d69f88c46ba7166c4155e48ac1ae36415f222c9b649559fb7b1bf2b20bfc8a"
+      },
+      "parseErrors": 0,
+      "foreignPidMessageCounts": {
+        "24752": 9
+      },
+      "presentCounts": {
+        "0": 955,
+        "-1": 1
+      },
+      "firstPresent": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+        "line": 81,
+        "wall": "10-27 16:30:13.683",
+        "pid": "26353",
+        "sequence": 2,
+        "event": {
+          "kind": "present",
+          "time": 2482550423.636398,
+          "runId": "p011-run-1793089813667-3",
+          "commit": 2,
+          "frame": 1,
+          "code": -1,
+          "swap": false,
+          "reason": "NOT_READY"
+        }
+      },
+      "firstMaterialFailure": null,
+      "lastMaterialFailure": null,
+      "lastSuccess": {
+        "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+        "line": 3132,
+        "wall": "10-27 16:31:27.876",
+        "pid": "26353",
+        "sequence": 5618,
+        "event": {
+          "kind": "present",
+          "time": 2482624577.532369,
+          "runId": "p011-run-1793089813667-3",
+          "commit": 1899,
+          "frame": 956,
+          "code": 0,
+          "swap": true,
+          "reason": ""
+        }
+      },
+      "firstInputStart": null,
+      "receipts": [],
+      "admittedSum": 0,
+      "sceneCapturedCount": 0,
+      "firstSceneMaterialFailure": null,
+      "lastScene": null,
+      "geometryStops": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 82,
+          "wall": "10-27 16:30:13.782",
+          "pid": "26353",
+          "sequence": 3,
+          "event": {
+            "kind": "model.stop",
+            "runId": "p011-run-1793089813667-3",
+            "commit": 2,
+            "frame": 1,
+            "time": 2482550423.636398,
+            "x": 64,
+            "y": 220,
+            "reason": "GEOMETRY_CHANGED"
+          }
+        }
+      ],
+      "metrics": [
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 246,
+          "wall": "10-27 16:30:17.103",
+          "pid": "26353",
+          "commit": 107,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 54
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 438,
+          "wall": "10-27 16:30:21.065",
+          "pid": "26353",
+          "commit": 227,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 55
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 623,
+          "wall": "10-27 16:30:25.152",
+          "pid": "26353",
+          "commit": 347,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 54
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 815,
+          "wall": "10-27 16:30:29.196",
+          "pid": "26353",
+          "commit": 467,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 56
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 1002,
+          "wall": "10-27 16:30:33.236",
+          "pid": "26353",
+          "commit": 587,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 54
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 1193,
+          "wall": "10-27 16:30:37.966",
+          "pid": "26353",
+          "commit": 707,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 63
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 1385,
+          "wall": "10-27 16:30:43.006",
+          "pid": "26353",
+          "commit": 827,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 63
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 1581,
+          "wall": "10-27 16:30:48.047",
+          "pid": "26353",
+          "commit": 947,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 62
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 1773,
+          "wall": "10-27 16:30:53.056",
+          "pid": "26353",
+          "commit": 1067,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 63
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 1966,
+          "wall": "10-27 16:30:58.067",
+          "pid": "26353",
+          "commit": 1187,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 65
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 2158,
+          "wall": "10-27 16:31:03.105",
+          "pid": "26353",
+          "commit": 1307,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 63
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 2352,
+          "wall": "10-27 16:31:08.114",
+          "pid": "26353",
+          "commit": 1427,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 63
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 2548,
+          "wall": "10-27 16:31:13.154",
+          "pid": "26353",
+          "commit": 1547,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 62
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 2743,
+          "wall": "10-27 16:31:18.162",
+          "pid": "26353",
+          "commit": 1667,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 62
+        },
+        {
+          "file": "test/artifacts/t95-demo-unblock-retest-20261027/R3-full.txt",
+          "line": 2940,
+          "wall": "10-27 16:31:23.211",
+          "pid": "26353",
+          "commit": 1787,
+          "mediumMode": "DRY_AIR_V1",
+          "sourceEpoch": 0,
+          "metricCommitKey": null,
+          "depositedMass": 0,
+          "particleMass": 0,
+          "expectedMass": 0,
+          "actualMass": 0,
+          "driftHeavy": 0,
+          "physicsTimeMs": 68
+        }
+      ],
+      "freezeFile": null
+    }
+  ],
+  "images": [
+    {
+      "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-t45.jpeg",
+      "bytes": 120329,
+      "sha256": "887850782a01d0442070fa9a3aae7f120ee157e191f9a0a42cc5b6e9317538d2",
+      "visuallyInspected": true
+    },
+    {
+      "file": "test/artifacts/t95-demo-unblock-retest-20261027/R1-t0.jpeg",
+      "bytes": 120329,
+      "sha256": "887850782a01d0442070fa9a3aae7f120ee157e191f9a0a42cc5b6e9317538d2",
+      "visuallyInspected": false
+    },
+    {
+      "file": "test/artifacts/t95-demo-unblock-retest-20261027/R2-t45.jpeg",
+      "bytes": 120441,
+      "sha256": "77cfb5ba5cf0cbc82ed8610d178c996cff06cddd1e54e0f4f7c2126777b25889",
+      "visuallyInspected": false
+    }
+  ],
+  "sources": [
+    {
+      "file": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "bytes": 15342,
+      "rawSha256": "ba633b247345d764879411754ab5ab1f2d717c2f7a955f2cf8667f2cae2161f5"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P051EmptySandDemo.ets",
+      "bytes": 6083,
+      "rawSha256": "44a6b83604d4c881ce1d990989c733a0fc5c0abde6413d1f7770602876f5ed88"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "bytes": 351349,
+      "rawSha256": "992c530027ba836544546a6a06651611c3f38c51dec2b2c1fb11ba4cae3a1bfd"
+    },
+    {
+      "file": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "bytes": 5979,
+      "rawSha256": "01809a5e4bab8fa422f3ebe1070a15ec9b403f3fb14a16bdbd59a1550f2c28a5"
+    },
+    {
+      "file": "entry/src/main/ets/render/P013SceneController.ets",
+      "bytes": 10867,
+      "rawSha256": "be8100e24a9a985d98dda970a0484c077ba77188e080beb17285f8411baacc03"
+    },
+    {
+      "file": "entry/src/main/ets/render/P013FrameAdapter.ets",
+      "bytes": 3686,
+      "rawSha256": "23d4195c5c2b3e17d3ce123f0ea8f37bc8fbd0124c95131994291e8d4ba47f5a"
+    },
+    {
+      "file": "entry/src/main/ets/render/preparation/P013MaterialDataPreparation.ets",
+      "bytes": 3095,
+      "rawSha256": "3c57135989d6afcc5be22f79a698461e0ce0a43a68f55276dc191c640844d2fc"
+    },
+    {
+      "file": "entry/src/main/cpp/p013renderer/napi_bridge.cpp",
+      "bytes": 84828,
+      "rawSha256": "a20e9bc35cb75b049082902e9583485df0150dd5313145db905a77dc5cf842e0"
+    },
+    {
+      "file": "entry/src/main/cpp/p013renderer/scene_compositor.cpp",
+      "bytes": 9581,
+      "rawSha256": "4ef443ec981962e7e1135cef6edc7e69ca3e17072e441a6214b65a322fe68dac"
+    }
+  ]
+}
