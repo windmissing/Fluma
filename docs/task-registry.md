@@ -17,7 +17,7 @@
 | T08 | peak 实现（采样 + 流式峰值 + 双算对照） | developer | P5 | 6adcd3e6…d26 |
 | T09 | P1 CPU fixture + 五量 RED 基线（G1 解冻前置之二）·零交付待开工 | tester | P5 | 6adcc00b…0dda |
 | T10 | 掉沙 V1-V4 真机返修复测收尾（真机队列第 1 位） | effector | P5 | 6adcd2dd…cb99 |
-| T11 | P6 endpoint 合规设备 run（协议生效硬前置，真机队列第 2 位） | effector | P4 | 待建 |
+| T11 | 【T11·P6设备取证】effector：endpoint合规run与同账本peak双报 | effector | P4 | 6addadc4e4b06ee35727b319 |
 | T12 | S4 sweep 三轮（先冻结 μ_y 量纲定义） | developer | 0 | 6adcd331…a94b2 |
 | T13 | 方案3 b 起沙链 B-1/B-2/B-3（已落地待入库） | developer | P4 | 6adc6272…f9dd |
 | T14 | 大角度 B：±45° 三测量对象形式化 + 300/s 可达性账本 | designer | 0 | 6adb6d3d…649b |
@@ -29,8 +29,8 @@
 | T20 | 【T20·D4/D5粒子视觉接线】developer：真实粒子快照渲染、落床可见性与B tracer退出 | developer | P5 | 6adda102e4b017ab33e90fbf |
 | T21 | E2 出数 / 参数面板 / S3-S4 真机 | effector | — | 待建 |
 | T22 | 方案3 悬浮平流启动裁决 | manager | P3 | 6ad5f713…9cb2 |
-| T23 | P1 G1 解冻放行 | manager | P4 | 待建 |
-| T24 | P1 实施（G2–G5） | developer | — | 待建 |
+| T23 | 【T23·P1 G1放行裁决】designer：盘点G0必要证据、裁决可实施范围与门序 | designer | P4 | 6adda53be4b06ee357273211 |
+| T24 | 【T24·P1材质离线准备】developer：G2/G3资产与shader接线准备，禁止提前产品启用 | developer | P4 | 6addb2fee4b06ee357280248 |
 | T25 | 掉沙链主观验收闭环 | effector | — | 待建 |
 | T26 | goals.md 四子项变更落地 + 连带口径登记 | designer | 0 | 6ad9af6a…055b |
 | T27 | P-012 C 补采（层厚增减 mask 裁剪 + DPI 缩放呼吸检查） | effector | 0 | 6ad982ef…f0be |
@@ -42,8 +42,109 @@
 | T33 | G0叠层/alpha/色彩工程定案 | architect | P5 | 6add77dfe4b06ee35724fd94 |
 | T34 | G0叠层/alpha/色彩实现 | developer | P5 | 6add77dfe4b012783274cf8e |
 | T35 | G0补证复测 | effector | P5 | 6add77dfe4b06ee35724fd95 |
+| T53 | 【P-013·G2测试先行】tester：G2上传器客观用例登记与冻结 | tester | P5 | 6addcb9d…9981 |
+| T54 | 【P-013·G2上传与接口】developer：五接口+双代原子切换+限额pump | developer | P5 | 6addcbb3…87ae |
+| T55 | 【P-013·G3完整材质pass】developer：material_pass+shader+H/L/M沙区 | developer | P5 | 6addcbc0…d431 |
+| T56 | 【P-013·G4页面共存】developer：FrameToken共享+同代原子+整块回退 | developer | P4 | 6addcbd2…d6b1 |
+| T57 | 【P-013·G5真机双测】tester+effector：P1 OFF/ON+消融+黄金场景 | tester/effector | P4 | 6addcbe1…bde4 |
 
 ## 已关闭退役编号（不复用）
+
+2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
+
+2026-10-26：T59/T65/T70完成，新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T72 | 【T72·DEMO被动诊断接线】developer：触摸到准入、逐tick输入与同帧呈现证据 | developer | P5 | 6adeb1e9e4b01278329aa00f |
+| T73 | 【T73·干场独立客观验证】tester：DRY_AIR_V1零水、触点出生与倾角事务对照 | tester | P5 | 6adeb1e9e4b017ab33f703df |
+| T74 | 【T74·触摸零源设备补采】effector：干场候选事件链与新管线呈现逐级取证 | effector | P5 | 6adeb1e9e4b017ab33f703e0 |
+
+2026-10-26：T64/T63/T54按通知完成；新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T68 | 【T68·纯新管线合同修订】architect：移除Canvas回退及背景前景依赖 | architect | P5 | 6adeac6ee4b017ab33f636c4 |
+| T69 | 【T69·触摸零源归因】designer：T63事件到准入链分流与最小修复方案 | designer | P5 | 6adeac6ee4b03273ad764d35 |
+| T70 | 【T70·触摸零源客观补证】tester：事件接收、源请求及准入拒因逐级证据 | tester | P5 | 6adeac6ee4b03273ad764d36 |
+| T71 | 【T71·触摸零源最小修复】developer：按归因接通事件到真实粒子准入 | developer | P5 | 6adeac6ee4b03273ad764d37 |
+
+T56原卡标题改为【P-013·G4纯新管线集成】developer：背景沙区前景同FrameToken、同代原子生效与显式故障态；用户禁止Canvas回退。
+
+2026-10-26新增：T67 | 【T67·上传器合同裁定】architect：配置修订基准、身份冲突与非法budget返回码 | architect | P5 | 6adea928e4b06ee357347c76；T54部分交付待合同，未关闭。
+
+2026-10-26：T44/T62/T58按通知完成。T44失败/阻塞后续新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T64 | 【T64·T44失败分流】designer：无沙画面、缺CLOSED及重复sequence根因与修复路由 | designer | P5 | 6adea6ece4b06ee35734245f |
+| T65 | 【T65·T44失败客观补证】tester：渲染身份、收尾计数与原始账本唯一键 | tester | P5 | 6adea6ece4b017ab33f5712c |
+| T66 | 【T66·T44装配收尾修复】developer：按归因修复实际无沙路径与完整落盘身份 | developer | P5 | 6adea6ece4b0127832968f6f |
+
+2026-10-26：T61测试补证完成bb2b534，25/25PASS为反例证据而非产品PASS；T62修复解锁，T63仍等修复交付。
+
+2026-10-26：T60归因完成；新增T63 | 【T63·DEMO拒绘修复后复测】effector：有效帧、粒子落床累积及手持重力演示 | effector | P5 | 6ade9e08e4b0e6ce82bb1a90，等T62修复与T61回归后真机复测。
+
+2026-10-26测试报告闭环新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T60 | 【T60·DEMO拒绘归因】designer：NONUNIFORM_SCALE与INVALID_PARTICLE分流及最小修复方案 | designer | P5 | 6ade982ce4b017ab33f3c6b0 |
+| T61 | 【T61·DEMO拒绘客观补证】tester：逐帧尺寸比例与同提交粒子拒因复现 | tester | P5 | 6ade982ce4b03273ad73dd71 |
+| T62 | 【T62·DEMO拒绘最小修复】developer：按归因修复尺寸契约与粒子校验输入 | developer | P5 | 6ade982ce4b06ee357327073 |
+
+T52执行完成但产品FAIL，归因/修复另卡；T53登记完成，预期RED转T54实现。
+
+2026-10-25：T49/T48/T51/T50按用户通知完成。后续新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T58 | 【T58·干空容器准入方案】designer：无水外源粒子事务与空气触点出生接口 | designer | P5 | 6ade1b05e4b06ee3572f27d2 |
+| T59 | 【T59·干空容器DEMO补齐】developer：无水启动与空气触点真实粒子注入 | developer | P5 | 6ade1b05e4b03273ad708147 |
+
+2026-10-25用户空容器DEMO新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T49 | 【T49·新管线双场渲染】developer：同帧显示高度场沉积沙与真实粒子沙 | developer | P5 | 6addc96fe4b0e6ce82b176ec |
+| T50 | 【T50·摇晃重力交互定义】designer：空容器DEMO的传感器到重力方向映射 | designer | P5 | 6addc96fe4b03273ad6a83c9 |
+| T51 | 【T51·空容器触摸摇晃DEMO】developer：空场启动、触摸发沙、重力方向交互与新管线入口 | developer | P5 | 6addc96fe4b03273ad6a83ca |
+| T52 | 【T52·空容器DEMO效果验证】effector：触摸粒子落沙累积与摇晃重力方向真机演示 | effector | P5 | 6addc96fe4b0e6ce82b176ed |
+
+2026-10-25：T42完成（回执G0五项PASS）、T46归因完成（补证交T47）。新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T47 | 【T47·规划阻断补证】tester：step73最小复现、blockedReason与回滚逐值证据 | tester | P5 | 6addc614e4b017ab33eb33fe |
+| T48 | 【T48·真实材质资产导出】developer：复用Canvas生成字节，接T24六图离线资产契约 | developer | P4 | 6addc614e4b0e6ce82b14735 |
+
+2026-10-25全局盘点新增：T46 | 【T46·满池动态拒绝归因】designer：区分预期拒绝、算法缺陷与实现缺陷并给出修复路由 | designer | P5 | 6addc406e4b017ab33eb18dc。T25主观闭环范围并入T44，避免重复派工；T06已退役不列阻塞。
+
+2026-10-25新增接力（T11/T24/T41/T20已完成）：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T43 | 【T43·设备采集链装配修复】developer：采样身份、worker打包及停摇命令接通 | developer | P5 | 6addc1e3e4b01278327e57bb |
+| T44 | 【T44·双场产品与合规run复测】effector：真实粒子落床累积、停摇endpoint及peak双报 | effector | P5 | 6addc1e3e4b06ee357290762 |
+| T45 | 【T45·G0返修结果与材质推进裁决】designer：接T42结果拆分G2/G3实施门序 | designer | P4 | 6addc1e3e4b0e6ce82b10a78 |
+
+2026-10-25继续派工：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T41 | 【T41·G0帧长度返修】developer：定位TDATA_LENGTH两侧实值并最小修复 | developer | P5 | 6addb2fee4b01278327c0e67 |
+| T42 | 【T42·有效帧与G0复测】effector：返修后draw/swap、透明、合成与色彩补证 | effector | P5 | 6addb2fee4b0e6ce82b0093d |
+
+T23/T31/T35按用户通知完成，T40按滴答已完成同步；任务完成不自动等于指标通过。
+
+2026-10-25新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T39 | 【T39·O-2计数实现】developer：成功准入独立累计与epoch一致性故障检出 | developer | P5 | 6adda513e4b06ee35727301a |
+| T40 | 【T40·O-2口径补充与独立验证】tester：合法相等、独立计数来源和故障反例 | tester | P5 | 6adda513e4b0e6ce82af399e |
+
+T04 architect口径分析完成，原卡关闭；O-2实现转T39，补充与独立验证转T40。T37方案完成交T20。
 
 2026-10-25全局重排新增固定编号：
 
@@ -57,6 +158,17 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 
 | 编号 | task | 关闭时间 |
 |---|---|---|
+| T30 | 集成客观端到端验证（ddf8787） | 2026-10-25 |
+| T157 | GPU信封与shader正式修复（b21d0e5） | 2026-10-27 |
+| T158 | GPU真机采集器修订（cf1d416，6/6） | 2026-10-27 |
+| T160 | 支持纯核独立验证（620ad6e，15/15） | 2026-10-27 |
+| T42 | G0有效帧与复测（ef0e7a7，G0五项PASS） | 2026-10-25 |
+| T43 | 设备采集链装配修复（13c7690） | 2026-10-25 |
+| T45 | G0返修结果与材质推进裁决（decision-P013-T45-material-rollout-v1） | 2026-10-25 |
+| T38 | peak独立验证（ddf8787） | 2026-10-25 |
+| T39 | O-2计数实现（2f864f0） | 2026-10-25 |
+| T34 | G0合成开发；按滴答已完成登记 | 2026-10-25 |
+| T36 | 触摸速率修复；按滴答已完成登记 | 2026-10-25 |
 | T37 | 双场到GLES接口架构（6089f98，交原T20/T34接力） | 2026-10-25 |
 | T32 | 帧桥修复开发；按用户通知完成登记 | 2026-10-25 |
 | T07 | peak字段revision三项对齐（61e5ac4） | 2026-10-25 |
@@ -93,3 +205,214 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 3. 新卡入表时**取下一个未用的最大编号 +1**，退役编号不复用。
 4. 卡被关闭 → 在「已关闭退役编号」表补一行，编号退役。
 5. 用户按编号指代时（如「T05 验收」），直接查本表定位卡。
+
+
+2026-10-26：T136/T137/T114/T123/T121完成关闭；GPU最高优先原型接力，T128解锁。新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T138 | 【T138·GPU配对原型工程】architect：T137算法、SSBO布局与CPU权威事务 | architect | P5 | 6adf6a09e4b017ab3407f962 |
+| T139 | 【T139·compute隔离harness修订】developer：barrier、wait原码与持久资源计时 | developer | P5 | 6adf6a09e4b03273ad89454d |
+| T140 | 【T140·GPU配对独立oracle先行】tester：稳定merge、分段查询与逐pair基线 | tester | P5 | 6adf6a09e4b06ee35747d303 |
+| T141 | 【T141·GPU确定配对原型实现】developer：整数分段索引与完整merge请求 | developer | P5 | 6adf6a09e4b017ab3407f963 |
+| T142 | 【T142·GPU原型真机差分与收益】tester：完整事务、同步恢复与CPU索引对比 | tester | P5 | 6adf6a09e4b017ab3407f964 |
+| T143 | 【T143·整数条带独立交付复核】tester：零字节差、双租约与资源预算 | tester | P5 | 6adf6a09e4b03273ad894550 |
+| T144 | 【T144·色彩roundtrip探针修复】developer：真实纹理采样与完整fixture摘要 | developer | P5 | 6adf6a09e4b017ab3407f965 |
+| T145 | 【T145·色彩roundtrip定点复测】tester：实际采样链与6144B摘要 | tester | P5 | 6adf6a09e4b017ab3407f966 |
+
+
+2026-10-26：T131/T126/T118/T132/T134完成关闭，T119/T133解锁、T121可继续。新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T136 | 【T136·compute真机到件裁定】architect：能力边界、同步成本与GPU原型门 | architect | P5 | 6adf6602e4b0e6ce82d0734c |
+| T137 | 【T137·GPU确定配对算法证明】designer：整数分段索引、最小pair与串行事务 | designer | P5 | 6adf6602e4b03273ad88f511 |
+
+
+2026-10-26：T130/T117/T124/T125/T127完成关闭，T118解锁。新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T132 | 【T132·向外算术测试先行】tester：定向舍入、affine白名单与局部证书 | tester | P5 | 6adf48d1e4b0127832c37ab9 |
+| T133 | 【T133·向外算术与局部证书实现】developer：定容原语、affine与NoWrite框架 | developer | P5 | 6adf48d1e4b017ab34058d26 |
+| T134 | 【T134·严格纯核测试先行】tester：settle、top分支与CONTACT_WAIT LAND | tester | P5 | 6adf48d1e4b017ab34058d27 |
+| T135 | 【T135·严格态支持纯核实现】developer：settle、top与等待态LAND影子事务 | developer | P5 | 6adf48d1e4b03273ad86acdb |
+
+
+2026-10-26：compute shader从附注评估拆成独立性能路线：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T130 | 【T130·GPU计算性能路线】architect：compute shader任务边界、事务与收益判定 | architect | P5 | 6adf42e9e4b06ee35744ccae |
+| T131 | 【T131·真机compute能力探针】tester：GLES计算着色器、SSBO与同步成本 | tester | P5 | 6adf42e9e4b03273ad8646a7 |
+
+
+2026-10-26：T112/T120/T110完成关闭；T116/T121保留看评论待证。新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T123 | 【T123·粒子合并精确索引实现】developer：定容分组、Y范围最小ID与计数 | developer | P5 | 6adf424be4b017ab34051fa3 |
+| T124 | 【T124·设备复发证据纠正】tester：PID隔离、提前CLOSED与真实负载缺项 | tester | P5 | 6adf424be4b03273ad863bfe |
+| T125 | 【T125·dyadic独立测试V2】tester：真实位型、有效反例与基础模块验证 | tester | P5 | 6adf424be4b0127832c267fb |
+| T126 | 【T126·色彩证据V4重建】tester：标准SHA、真实raw与实际执行矩阵 | tester | P5 | 6adf424be4b03273ad863c01 |
+| T127 | 【T127·严格态逐核工程接力】architect：T110支持域、包络原语与分阶段接入 | architect | P5 | 6adf424be4b0127832c267ff |
+| T128 | 【T128·精确索引独立差分】tester：无匹配上界、连续merge与事务等价 | tester | P5 | 6adf424be4b0127832c26800 |
+| T129 | 【T129·精确索引设备稳定性复测】effector：PID分臂、调用负载与真实收尾 | effector | P5 | 6adf424be4b0e6ce82cdad2c |
+
+
+2026-10-26：T94/T109/T111/T113/T115/T106完成关闭，T112/T114解锁；失败回执改“看评论”。新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T116 | 【T116·池优化设备复发归因】architect：T94堆栈、真实负载与精确索引路由 | architect | P5 | 6adf3c1ce4b017ab3404b7c5 |
+| T117 | 【T117·COLLECT首错误原码诊断】developer：事务阶段、审计漂移与清理身份 | developer | P5 | 6adf3c1ce4b06ee3574451f5 |
+| T118 | 【T118·首错误诊断独立验证】tester：三类99、分片身份与副作用对照 | tester | P5 | 6adf3c1ce4b0127832c15f8f |
+| T119 | 【T119·设备首错误原码补采】effector：COLLECT99与AUDIT首因分离 | effector | P5 | 6adf3c1ce4b017ab3404b7c6 |
+| T120 | 【T120·严格态oracle到件核对】architect：ULP位型与测试合同一致性 | architect | P5 | 6adf3c1de4b03273ad85d1a8 |
+| T121 | 【T121·色彩V3到件分流】architect：常量对照范围、错误常量与归档缺口 | architect | P5 | 6adf3c1ce4b017ab3404b7cc |
+| T122 | 【T122·单沙明水方案交接补齐】designer：已完成方案文件与三线合同回执 | designer | P3 | 6adf3c1de4b0e6ce82cd4117 |
+
+
+2026-10-26：T97/T103/T104/T105完成关闭，T94解锁。新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T109 | 【T109·设备COLLECT失败归因】architect：beginCollect状态与首失败事务路由 | architect | P5 | 6adf3613e4b0127832c06d35 |
+| T110 | 【T110·严格态writer证明补篇】designer：操作图、舍入包络与分支域 | designer | P5 | 6adf3613e4b0e6ce82cce07b |
+| T111 | 【T111·严格态基础测试先行】tester：精确dyadic oracle与证书边界 | tester | P5 | 6adf3613e4b0127832c06d38 |
+| T112 | 【T112·严格态基础模块】developer：定容dyadic比较与状态证书框架 | developer | P5 | 6adf3613e4b03273ad857175 |
+| T113 | 【T113·整数条带测试先行】tester：原生像素F64零字节差与资源合同基线 | tester | P5 | 6adf3613e4b0127832c06d39 |
+| T114 | 【T114·原生像素整数条带实现】developer：F64求值、整数上传与scene双租约 | developer | P5 | 6adf3613e4b0e6ce82cce07c |
+| T115 | 【T115·色彩目标身份纠正补证】tester：同SRGB8附件对照与真实SHA清单 | tester | P5 | 6adf3613e4b017ab3404595a |
+
+
+2026-10-26：用户新增第六大目标单沙＋明水（排在前五目标之后），新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T106 | 【T106·单沙明水场景方案】designer：沙水耦合、清水渲染与掉沙掉水交互 | designer | P3 | 6adf343de4b06ee35743c769 |
+| T107 | 【T107·单沙明水工程方案】architect：双场水库存、同帧渲染与注入模式接口 | architect | P3 | 6adf343de4b06ee35743c76a |
+| T108 | 【T108·单沙明水测试先行】tester：水沙守恒、双注入切换与明水场景基线 | tester | P3 | 6adf343de4b06ee35743c76b |
+
+
+2026-10-26：T96/T98/T99/T100/T101/T102完成关闭；T97/T103解锁；新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T104 | 【T104·严格合法态工程落地】architect：真实patch证书与writer内缩接口 | architect | P5 | 6adf3250e4b06ee35743a638 |
+| T105 | 【T105·整数条带工程与色彩到件分流】architect：原生像素三带资源与T101证据 | architect | P5 | 6adf3250e4b017ab34041a9b |
+
+
+2026-10-26：T92/T93/T90/T91完成关闭；新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T96 | 【T96·粒子池同步热点优化】developer：等价选对短路、birthOnly与有界诊断 | developer | P5 | 6adf27a0e4b03273ad846e0e |
+| T97 | 【T97·池优化独立等价与有界执行】tester：对抗池、三臂轨迹与零源链 | tester | P5 | 6adf27a0e4b0e6ce82cbe08c |
+| T98 | 【T98·规划合法态数值修订】designer：安息角边界、零目标与容差一致性 | designer | P5 | 6adf27a0e4b017ab340363c8 |
+| T99 | 【T99·材质离散表示修订】designer：逐像素baseByte与F64／GPU边界 | designer | P5 | 6adf27a0e4b017ab340363c9 |
+| T100 | 【T100·规划对照证据纠正】tester：真实θ5轨迹与浮点辅助标签 | tester | P5 | 6adf27a0e4b03273ad846e0f |
+| T101 | 【T101·色彩采集精确续证】tester：同目标生产对照、连续量与缺失矩阵 | tester | P5 | 6adf27a0e4b017ab340363cb |
+| T102 | 【T102·设备首失败诊断导出】developer：code5有界trace与快照身份 | developer | P5 | 6adf27a0e4b0e6ce82cbe08d |
+| T103 | 【T103·DEMO首个code5设备补采】effector：候选trace、池状态与回滚 | effector | P5 | 6adf27a0e4b06ee35742e945 |
+
+
+2026-10-26：T82/T78按评论执行完成关闭（产品失败保留），T88完成关闭；T57实质阻塞。新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T92 | 【T92·双场主线程卡死归因】architect：shake-lift池合并与零源收据分流 | architect | P5 | 6adf1e5ee4b03273ad83857d |
+| T93 | 【T93·材质整数补证分流】architect：baseByte直证与采集修订缺口 | architect | P5 | 6adf1e5ee4b0127832bb7274 |
+| T94 | 【T94·双场卡死修复后复测】effector：三臂稳定性、真实注入与双流CLOSED | effector | P5 | 6adf1e5ee4b06ee357420099 |
+| T95 | 【T95·DEMO物理阻断后复测】effector：LAND长窗与手持重力缺口 | effector | P5 | 6adf1e5ee4b017ab3402929f |
+
+
+2026-10-26：T86/T87/T89/T56完成关闭；T82/T78/T57解锁。新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T90 | 【T90·规划机制到件分流】architect：空区间证据与安息角合同边界 | architect | P5 | 6adf0846e4b06ee3573f40a3 |
+| T91 | 【T91·新scene几何独立回归】tester：SCENE-GEO-01至05与历史断言版本化 | tester | P5 | 6adf0846e4b0e6ce82c849fb |
+
+
+2026-10-26：T71/T85/T80/T81按用户通知完成关闭，T86解锁；新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T87 | 【T87·色彩矩阵到件分流】architect：宿主目标能力与剩余色彩证据路由 | architect | P5 | 6adf041ee4b0127832b2c3fc |
+| T88 | 【T88·材质剩余色彩补证】tester：半透明合成与baseByte精度分叉 | tester | P5 | 6adf041ee4b06ee3573ec0b4 |
+| T89 | 【T89·渲染回归断言归因】architect：T62旧入口断言与新scene合同分流 | architect | P5 | 6adf041ee4b03273ad805146 |
+
+
+2026-10-26：T79/T83/T84按用户通知完成关闭（b71a015），T71解锁；新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T85 | 【T85·规划预览只读诊断】developer：候选调用链、通道增量与逐边区间 | developer | P5 | 6adef88fe4b0127832aed275 |
+| T86 | 【T86·规划预览机制补证】tester：step73候选序列与安息角区间证据 | tester | P5 | 6adef88fe4b0127832aed276 |
+
+
+2026-10-26最新归因路由调整：T79原卡改architect，完整标题为【T79·安息角规划阻断归因】architect：step73边界可行性与最小修复路由。已完成历史卡不重开。新增：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T83 | 【T83·触摸接线工程归因】architect：接收失败分流与输入节点工程文档 | architect | P5 | 6adef4bee4b03273ad7e4c91 |
+| T84 | 【T84·材质色彩工程分流】architect：目标编码与取整问题的工程设计用例路由 | architect | P5 | 6adef4bee4b0127832ada18c |
+
+
+2026-10-26：T47/T74/T76/T77按通知完成关闭；T71解锁。新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T79 | 【T79·安息角规划阻断归因】designer：step73边界可行性与最小修复路由 | designer | P5 | 6adef380e4b0127832ad40f3 |
+| T80 | 【T80·材质色彩客观补证】tester：目标编码矩阵与GPU取整中间量 | tester | P5 | 6adef380e4b017ab33fdad3b |
+| T81 | 【T81·最新材质桥执行补证】tester：T55桥入口与T75合并执行器覆盖缺口 | tester | P5 | 6adef380e4b0e6ce82c51e1e |
+| T82 | 【T82·触摸接线修复后DEMO复测】effector：真实注沙落床、停止边界与手持重力 | effector | P5 | 6adef380e4b06ee3573cc257 |
+
+
+2026-10-26：T72/T75/T66/T55按用户通知完成关闭；T74/T56解锁。新增固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T76 | 【T76·开发交付独立复核】tester：上传合同、采集收尾与被动诊断反例 | tester | P5 | 6adeedbce4b0127832ab72a4 |
+| T77 | 【T77·材质色彩差异归因】designer：默认pbuffer与SRGB8 FBO偏差及补证路由 | designer | P5 | 6adeedbce4b06ee3573c1957 |
+| T78 | 【T78·双场采集修复后复测】effector：完整新管线可见沙与双流CLOSED证据 | effector | P5 | 6adeedcee4b0127832ab780e |
+
+
+2026-10-26：T119/T138/T128/T133完成后接力（P5，不使用真机）：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T146 | 【T146·FIELD_COLUMN首错误归因】architect：现场分量、快照覆盖与前序写场 | architect | P5 | 6adf6d30e4b06ee357480fa9 |
+| T147 | 【T147·向外算术独立差分】tester：affine边界、局部证书与NoWrite | tester | P5 | 6adf6d30e4b06ee357480faa |
+
+2026-10-27：批量验收T129/T141/T145/T147后接力：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T148 | 【T148·向外除法与纯核缺口分流】architect：T147方向反例与T135实施接力 | architect | P5 | 6adfe799e4b03273ad8c38b6 |
+| T149 | 【T149·FIELD_COLUMN原值诊断V2】developer：分量bits、badMask与有限阶段窗口 | developer | P5 | 6adfe799e4b017ab340ad992 |
+| T150 | 【T150·FIELD_COLUMN诊断V2独立测试】tester：原bits、首错与观测无副作用 | tester | P5 | 6adfe799e4b017ab340ad993 |
+| T151 | 【T151·FIELD_COLUMN原值真机补采】effector：最后合法到首次非法的完整失败链 | effector | P5 | 6adfe799e4b0e6ce82d3c570 |
+
+2026-10-27：T142/T148交付与T116增量接力固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T152 | 【T152·GPU真机失败工程分流】architect：wire回显、shader编译与完整事务部署 | architect | P5 | 6adff62ce4b03273ad8d5fc0 |
+| T153 | 【T153·向外除法oracle纠正复测】tester：精确商包含、全样本与区间除法 | tester | P5 | 6adff62ce4b0127832d27964 |
+| T154 | 【T154·audit索引负载诊断】developer：真实乘数、阶段时钟与有界进度 | developer | P5 | 6adff62ce4b0127832d27965 |
+| T155 | 【T155·audit负载诊断独立测试】tester：排序终止、seed放大与观测等价 | tester | P5 | 6adff62ce4b06ee3574bf340 |
+| T156 | 【T156·真实负载与收尾窄补证】effector：PID锁定、先注入后finish与原码拉取 | effector | P5 | 6adff62ce4b0127832d2796a |
+
+2026-10-27：T152/T135/T153/T150完成接力固定编号：
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T157 | 【T157·GPU信封与shader正式修复】developer：SHA回显、避名与错误原码 | developer | P5 | 6adffd57e4b03273ad8e476e |
+| T158 | 【T158·GPU真机采集器修订】tester：合法JSON、请求身份与旧日志归档 | tester | P5 | 6adffd57e4b017ab340ce10e |
+| T159 | 【T159·GPU完整事务测试包接线】developer：Worker所有权、请求身份与可安装工程 | developer | P5 | 6adffd57e4b0127832d47f20 |
+| T160 | 【T160·支持纯核实施独立验证】tester：逐node包络、INWARD与原子影子事务 | tester | P5 | 6adffd57e4b0e6ce82d5da1f |
+| T161 | 【T161·GPU修复后完整事务真机复测】tester：信封消费、三路收益与故障恢复 | tester | P5 | 6adffd57e4b0e6ce82d5da20 |
+| T162 | 【P-011·T154门禁分流】architect：诊断OFF控制流+门禁探针扩展方案+baseline路由 | architect | P5 | 6ae00c6d…9c6a |
+
