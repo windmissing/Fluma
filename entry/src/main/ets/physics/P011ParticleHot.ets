@@ -3,6 +3,7 @@
 import { P011ParticleField, P011ParticleParams, P011ParticleSnapshot, particleSnapshotBufferAtHot } from './P011ParticleField';
 import { P011ParticleHotBudgetAdapter } from './P011ParticleHotBudget';
 import { P011MergeExactIndex } from './P011MergeExactIndex';
+import { P011FieldColumnEvidenceV2 } from './P011FieldColumnEvidenceV2';
 
 export const P011_HOT_OK = 0;
 export const P011_HOT_NOT_CONFIGURED = 1;
@@ -302,6 +303,7 @@ export class P011ParticleHotWorkspace {
   diagnosticFreeAfter = 0; diagnosticLiveAfter = 0; diagnosticNextIdAfter = 0;
   diagnosticFirstError = 0; diagnosticFirstErrorStage = 0;
   beginFailurePredicate: string = ''; beginFailureIndex = -1;
+  fieldColumnEvidenceV2: P011FieldColumnEvidenceV2 | null = null;
   constructor(config: P011ParticleHotConfig, pool: P011ParticleField) {
     this.ownerId = nextOwnerId++; this.pool = pool;
     // Cold owned copy: caller edits cannot change a frozen step's predictor.
@@ -517,6 +519,13 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
       f.bh[col] < 0 || f.bl[col] < 0 || f.mh[col] < 0 || f.ml[col] < 0 || f.suspH[col] < 0 ||
       f.suspL[col] < 0 || !Number.isFinite(f.bh[col] + f.bl[col] + f.mh[col] + f.ml[col])) {
       work.beginFailurePredicate='FIELD_COLUMN';work.beginFailureIndex=col;
+      if(work.fieldColumnEvidenceV2!==null)try{
+        work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,
+          input.runToken,input.attemptToken,input.substepId,
+          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,
+          work.pool.hotCanonicalBuffers(),work.pool.storageValidForHot(),
+          work.pool.totals().count,work.pool.freeSlotCount,work.pool.nextParticleId);
+      }catch(_e){work.fieldColumnEvidenceV2.windowStatus='CAPTURE_FAILED';}
       return work.lastStatus = P011_HOT_INVALID_INPUT;
     }
   }

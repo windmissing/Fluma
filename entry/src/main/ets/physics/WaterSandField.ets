@@ -1,4 +1,5 @@
 import { P011TiltPreviewTrace, P011TiltPreviewTraceSink, P011FirstFailureEvidence } from './P011TiltPreviewTrace';
+import { P011FieldColumnEvidenceV2, P011FieldStageIdentity } from './P011FieldColumnEvidenceV2';
 import { P051DryRunConfig, P051DryRunResult, P051DryAdmissionRequest, P051DryAdmissionReceipt, P051_DRY_REVISION, P051_DRY_MEDIUM, P051_DRY_GRAVITY, p051DryRequestError } from './P051DryParticleAdmission';
 import { P011PublishedRenderState, P011RenderCopyStatus, P011RenderPublicationKind } from './P011PublishedRenderState';
 import { P011ExternalAdmissions, P011ExternalAdmissionEvidence, P011ExternalAdmissionRecord,
@@ -848,6 +849,9 @@ export class WaterSandField {
     catch(error){return {ok:false,code:'INVALID_PARAMS'};}
     const backup=binding.pool.snapshot(), journal=binding.pool.snapshot(), b=binding.pool.snapshot(), m=binding.pool.snapshot();
     this.particleBinding=binding;this.particleParams=binding.work.params;this.particleRouteId=P011_PARTICLE_ROUTE_ID;
+    if(this.tiltTraceSink!==null){binding.collectFailureEnabled=true;
+      binding.work.fieldColumnEvidenceV2=new P011FieldColumnEvidenceV2(this.cols);
+      binding.work.fieldColumnEvidenceV2.bind(binding.field);}
     this.naturalObservationRouteId=P011_PARTICLE_ROUTE_ID;this.endpointParticlePool=binding.pool;this.endpointParticleRouteActive=true;
     this.particleBackup=backup;this.particleJournalBefore=journal;this.backup.particleState=b;this.motionSnapshot.particleState=m;
     this.dryResetPending=true;this.drySourceId=config.sourceId;
@@ -2065,9 +2069,32 @@ export class WaterSandField {
   private tiltTraceSink: P011TiltPreviewTraceSink | null = null;
   private tiltTracePending: P011TiltPreviewTrace[] | null = null;
   private tiltTraceLast: P011TiltPreviewTrace | null = null;
+  private readonly fieldStageIdentityV2: P011FieldStageIdentity={runId:'',stateEpoch:0,configRevision:0,
+    substepId:0,attemptId:'',candidateRole:'',callOrdinal:0,theta:0,commitBefore:0,
+    commitCurrent:0,sourceEpoch:0,writerStage:'',preview:false,poolEpoch:0};
   setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void {
     this.tiltTraceSink=sink;
-    if(this.particleBinding!==null)this.particleBinding.collectFailureEnabled=sink!==null;
+    if(this.particleBinding!==null){
+      this.particleBinding.collectFailureEnabled=sink!==null;
+      this.particleBinding.work.fieldColumnEvidenceV2=sink===null?null:
+        new P011FieldColumnEvidenceV2(this.cols);
+      this.particleBinding.work.fieldColumnEvidenceV2?.bind(this.particleBinding.field);
+    }
+  }
+  private observeFieldColumnV2(stage: string,writerStage: string): void {
+    const b=this.particleBinding;
+    if(this.tiltTraceSink===null||b===null||b.work.fieldColumnEvidenceV2===null)return;
+    const id=this.fieldStageIdentityV2,trace=this.planningPassService.trace;
+    id.runId=this.p011RunId;id.stateEpoch=this.renderStateEpoch;id.configRevision=this.configRevision;
+    id.substepId=this.p011SubstepId+1;id.attemptId=this.p011CurrentAttemptId ?? '';
+    id.candidateRole=trace?.current?.role ?? 'AUTHORITATIVE';
+    id.callOrdinal=trace?.current?.callOrdinal ?? 0;id.theta=this.effectiveTilt;
+    id.commitBefore=trace?.commitBefore ?? this.renderPhysicsCommitId;
+    id.commitCurrent=this.renderPhysicsCommitId;id.sourceEpoch=this.sourceEpoch;
+    id.writerStage=writerStage;id.preview=this.planningPreviewActive;
+    id.poolEpoch=b.work.stepEpoch;
+    try{b.work.fieldColumnEvidenceV2.observe(stage,b.field,id);}
+    catch(_e){b.work.fieldColumnEvidenceV2.windowStatus='OBSERVATION_FAILED';}
   }
   getLastTiltPreviewTrace(): P011TiltPreviewTrace | null { return this.tiltTraceLast; }
   private readonly diagnosticBits: DataView = new DataView(new ArrayBuffer(8));
@@ -2110,7 +2137,21 @@ export class WaterSandField {
       seed:d===null?0:d.seed,driftWater:drift===null?0:drift.water,
       driftHeavy:drift===null?0:drift.heavy,driftLight:drift===null?0:drift.light,
       driftLimit:DRIFT_LIMIT,initialWater:this.initialWater,initialHeavy:this.initialHeavy,initialLight:this.initialLight,
-      sourceHeavy:this.sourceInjectedHeavy,sourceLight:this.sourceInjectedLight,waterTransactionNet:this.waterTransactionNet};
+      sourceHeavy:this.sourceInjectedHeavy,sourceLight:this.sourceInjectedLight,waterTransactionNet:this.waterTransactionNet,
+      driftMeasured:drift!==null,rollbackExecuted:origin==='PARTICLE_BEGIN'&&d!==null&&d.rollbackExecuted,
+      driftSource:drift===null?'NOT_MEASURED':'AUDIT_GET_DRIFT',
+      rollbackSource:origin!=='PARTICLE_BEGIN'||d===null||!d.rollbackExecuted?'NOT_EXECUTED':'M2_COLLECT_ROLLBACK',
+      digestCoverage:'FNV32_FIELD7_PARTIAL_POOL_CORRELATION_ONLY'};
+    if(origin==='PARTICLE_BEGIN'&&d!==null&&d.predicate==='FIELD_COLUMN'){
+      const evidence=this.particleBinding?.work.fieldColumnEvidenceV2;
+      if(evidence!==null&&evidence!==undefined)try{
+        trace.fieldColumnEvidenceV2=evidence.exportEvidence();
+        if(trace.fieldColumnEvidenceV2.failure!==null&&this.particleBinding!==null)
+          trace.fieldColumnEvidenceV2.failure.surfaceIsSandTopScratch=
+            this.particleBinding.field.surface===this.sandTopScratch;
+      }
+      catch(_e){trace.incomplete();}
+    }
     trace.recordFirstFailure(e);
   }
   setPoolProgressDiagnosticEnabled(enabled: boolean): void {
@@ -2207,7 +2248,9 @@ export class WaterSandField {
       // falling-sand §1.2: consume ≤1 staged gesture request BEFORE the
       // substep backup (the injection carries its own transaction
       // backup; a failed injection leaves the substep untouched).
+      this.observeFieldColumnV2('GESTURE_BEFORE','GESTURE');
       this.consumePendingGestureSand(substepDt);
+      this.observeFieldColumnV2('GESTURE_AFTER','GESTURE');
       // S3 §3.1: the moisture refresh at the substep top, BEFORE the
       // backup/planner — pure derived caches; the planner preview and
       // the apply channels then share ONE frozen edge-pair set for the
@@ -2216,8 +2259,11 @@ export class WaterSandField {
         this.refreshMoisture();
       }
       this.peakConsumedInput = this.peakSampler === null ? null : this.peakSampler.consume();
+      this.observeFieldColumnV2('BACKUP_BEFORE','BACKUP');
       this.saveBackup();
+      this.observeFieldColumnV2('BACKUP_AFTER','BACKUP');
       this.updateSandTop();
+      this.observeFieldColumnV2('DERIVED_UPDATE_AFTER','UPDATE_SAND_TOP');
       this.beginSubstepMotionBudget(substepDt, true, 1);
       this.substepSandTopBefore.set(this.sandTopScratch);
       this.substepBhBefore.set(this.bh);
@@ -2276,6 +2322,7 @@ export class WaterSandField {
         }
         this.beginMotionApplication(substepDt, scale);
         errorCode = this.applyMotionChannels(substepDt);
+        this.observeFieldColumnV2('APPLY_END','MOTION_CHANNELS');
         if (errorCode === null && this.naturalObservationProbe !== null) {
           // Manager ruling A-1 ledger reconciliation: clipped must satisfy
           // abs(clipped - (requested - used)) <= 1e-9 per substep. Recompute
@@ -2310,8 +2357,10 @@ export class WaterSandField {
         if(this.tiltTracePending!==null)this.sealSubstepDiagnostic();
         break;
       }
+      this.observeFieldColumnV2('AUDIT_ACCEPTED_BEFORE_COMMIT','AUDIT');
       if (this.naturalObservationProbe === null) this.recordEndpointCommit(substepDt);
       this.finishNaturalObservation(null);
+      this.observeFieldColumnV2('COMMIT_FINISH','COMMIT');
       if (this.naturalObservationProbe === null && this.particleRouteActive()) this.endpointParticleEvents.length = 0;
       if(this.tiltTracePending!==null)this.sealSubstepDiagnostic();
       result.stepped = true;
@@ -2782,6 +2831,9 @@ export class WaterSandField {
       this.particleBinding = new P011ParticleM2FieldBinding(this.cols, this.capacity,
         this.waterTop, this.bh, this.bl, this.mh, this.ml, this.suspH, this.suspL,
         this.sandTopScratch, chosen, this);
+      if(this.tiltTraceSink!==null){this.particleBinding.collectFailureEnabled=true;
+        this.particleBinding.work.fieldColumnEvidenceV2=new P011FieldColumnEvidenceV2(this.cols);
+        this.particleBinding.work.fieldColumnEvidenceV2.bind(this.particleBinding.field);}
       this.particleBackup = this.particleBinding.pool.snapshot();
       this.particleJournalBefore = this.particleBinding.pool.snapshot();
       this.backup.particleState = this.particleBinding.pool.snapshot();
@@ -4384,13 +4436,16 @@ export class WaterSandField {
     }
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.particleBinding.registerRun(this.p011RunId);
+      this.observeFieldColumnV2('BEGIN_COLLECT_BEFORE','PARTICLE_BEGIN');
       const particleStatus = this.particleBinding.beginCollect(dt, this.effectiveTilt * Math.PI / 180,
         this.p011SubstepId + 1, this.p011SubstepId + 1, this.sourceInjectedHeavy,
         this.sourceInjectedLight, this.sourceEpoch);
+      this.observeFieldColumnV2('HOT_CHECKPOINT','PARTICLE_BEGIN');
       if (particleStatus !== 0) {this.recordCollectFirstFailure('PARTICLE_BEGIN',this.particleBinding.collectFailure.hotCode);
         this.lastError = WaterSandErrorCode.UNKNOWN;}
     }
     this.updateSandTop();
+    this.observeFieldColumnV2('BEGIN_COLLECT_AFTER','PARTICLE_BEGIN');
   }
 
   private restoreMotionSnapshot(): void {
@@ -4480,6 +4535,7 @@ export class WaterSandField {
 
   private substep(dt: number): WaterSandErrorCode | null {
     this.updateSandTop();
+    this.observeFieldColumnV2('SUBSTEP_UPDATE_AFTER','UPDATE_SAND_TOP');
     if(this.mediumMode!==P051_DRY_MEDIUM){this.waterLevel(dt);this.diffuseSuspension(dt);}
     if (this.collectingTotalMotionRequests) {
       this.saveMotionSnapshot(dt);
@@ -4566,6 +4622,7 @@ export class WaterSandField {
     }
     this.liftByShake(dt);
     this.updateSandTop();
+    this.observeFieldColumnV2('APPLY_AUDIT_BEFORE','MOTION_CHANNELS');
     const auditError = this.audit(true);
     if (auditError !== null) return auditError;
     return null;
@@ -5095,8 +5152,11 @@ export class WaterSandField {
       // The substep-start backup (saved by the step loop before planning) holds
       // the exact S0 material state; restore from it to discard any preview
       // mutation from an earlier candidate run.
+      this.observeFieldColumnV2('PREVIEW_RESTORE_BEFORE','PREVIEW_RESTORE');
       this.restoreBackup();
+      this.observeFieldColumnV2('PREVIEW_RESTORE_AFTER','PREVIEW_RESTORE');
       this.updateSandTop();
+      this.observeFieldColumnV2('PREVIEW_UPDATE_AFTER','UPDATE_SAND_TOP');
       this.lastBottomFlux = 0;
       this.lastBottomSplitError = null;
       this.beginSubstepMotionBudget(substepDt, true, 1);
@@ -5136,7 +5196,9 @@ export class WaterSandField {
         plans = this.allocatePreviewPlans(substepDt);
         }
       }
+      this.observeFieldColumnV2('PREVIEW_FINAL_RESTORE_BEFORE','PREVIEW_RESTORE');
       this.restoreBackup();
+      this.observeFieldColumnV2('PREVIEW_FINAL_RESTORE_AFTER','PREVIEW_RESTORE');
       this.updateSandTop();
     } finally {
       this.planningPreviewActive = false;

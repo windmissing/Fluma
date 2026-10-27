@@ -19,6 +19,7 @@ export const P011_PARTICLE_M2_STEP_FAILED = 3;
 export const P011_PARTICLE_M2_ROUTE_CONFLICT = 4;
 export class P011CollectFirstFailure {
   phase: string = 'NOT_RUN'; m2Code: number = 0; hotCode: number = 0; rollbackCode: number = 0;
+  rollbackExecuted: boolean = false;
   predicate: string = ''; failureIndex: number = -1;
   entryStepOpen: number = 0; entryActive: number = 0; entryEpoch: number = 0;
   entryBudgetEpoch: number = 0; entryBudgetOpen: number = 0; entryPageBacklog: number = 0;
@@ -75,6 +76,7 @@ export class P011ParticleM2FieldBinding {
     if(!this.collectFailureEnabled)return;
     const d=this.collectFailure,w=this.work,b=this.sink.budget;
     d.phase='ENTRY';d.m2Code=0;d.hotCode=0;d.rollbackCode=0;
+    d.rollbackExecuted=false;
     d.predicate='';d.failureIndex=-1;
     d.entryStepOpen=this.stepOpen;d.entryActive=w.active;d.entryEpoch=w.stepEpoch;
     d.entryBudgetEpoch=b.diagnosticEpoch;d.entryBudgetOpen=b.diagnosticOpenCount;d.entryPageBacklog=w.pageBacklog;
@@ -83,6 +85,7 @@ export class P011ParticleM2FieldBinding {
   private collectExit(phase: string,m2Code: number,hotCode: number,rollbackCode: number=0): number {
     if(this.collectFailureEnabled){const d=this.collectFailure,w=this.work,b=this.sink.budget;
       d.phase=phase;d.m2Code=m2Code;d.hotCode=hotCode;d.rollbackCode=rollbackCode;
+      d.rollbackExecuted=phase==='COLLECT_A'||phase==='COLLECT_B'||phase==='COMPARE';
       d.predicate=phase==='BEGIN_HOT'?w.beginFailurePredicate:phase==='COMPARE'?this.compareFailurePredicate():'';
       d.failureIndex=phase==='BEGIN_HOT'?w.beginFailureIndex:phase==='COMPARE'?this.compareFailureIndex():-1;
       d.exitStepOpen=this.stepOpen;d.exitActive=w.active;d.exitEpoch=w.stepEpoch;

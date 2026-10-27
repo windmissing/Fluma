@@ -1,4 +1,5 @@
 // Opt-in T85 evidence. No callbacks or physics references are retained in a trace.
+import { P011FieldEvidenceExportV2 } from './P011FieldColumnEvidenceV2';
 export interface P011TraceChannel { channelId: string; deltaSandTop: number[]; }
 export interface P011TraceEdge {
   column: number; s0Difference: number; deltaDifference: number; gNext: number;
@@ -29,6 +30,8 @@ export interface P011FirstFailureEvidence {
   driftWater: number; driftHeavy: number; driftLight: number; driftLimit: number;
   initialWater: number; initialHeavy: number; initialLight: number;
   sourceHeavy: number; sourceLight: number; waterTransactionNet: number;
+  driftMeasured: boolean; rollbackExecuted: boolean;
+  driftSource: string;rollbackSource: string;digestCoverage: string;
 }
 export class P011TiltPreviewTrace {
   readonly revision: string = 'P011_TILT_PREVIEW_TRACE_V1';
@@ -40,6 +43,7 @@ export class P011TiltPreviewTrace {
   candidates: P011TraceCandidate[] = []; notExecuted: string[] = [];
   resultStatus: string = ''; blockedReason: string | null = null;
   firstFailure: P011FirstFailureEvidence | null = null;
+  fieldColumnEvidenceV2: P011FieldEvidenceExportV2 | null = null;
   authoritativeBeforeDigest: string = ''; authoritativeAfterDigest: string = '';
   commitBefore: number = 0; commitAfter: number = 0;
   cleanupStepOpen: number = 0; cleanupActive: number = 0;
