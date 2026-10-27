@@ -1,0 +1,87 @@
+{
+ "executionId": "p150-field-column-v2-independent-v1",
+ "date": "2026-10-27",
+ "target": "T149 e3ee81f",
+ "results": [
+  {
+   "id": "T150-V1",
+   "name": "eight non-finite causes: each sets exactly its own finite bit; raw bits read back from buffer byte-for-byte (NaN payload + inf variants)",
+   "status": "PASS",
+   "detail": []
+  },
+  {
+   "id": "T150-V2",
+   "name": "seven strict negative bits (−MIN, bits 8000000000000001); −0 stock and finite negative surface do NOT trigger",
+   "status": "PASS"
+  },
+  {
+   "id": "T150-V3",
+   "name": "sum overflow: left-associated (bh+bl)+mh+ml overflow → exactly bit15, sumBits match independent recomputation, all components finite",
+   "status": "PASS",
+   "sumBits": [
+    "7ff0000000000000",
+    "7ff0000000000000",
+    "7ff0000000000000"
+   ],
+   "mask": 32768
+  },
+  {
+   "id": "T150-V4",
+   "name": "[-EPS,0) contract difference: audit tolerates (no failure) while Hot rejects with exact negative raw bits — both behaviors coexist, no criterion change",
+   "status": "PASS",
+   "auditCode": "null",
+   "rawBits": "be012e0be826d695"
+  },
+  {
+   "id": "T150-V5",
+   "name": "first invalid column (4) wins over later (9); same-column negative+nonfinite compose both bits",
+   "status": "PASS",
+   "mask": 544
+  },
+  {
+   "id": "T150-V6",
+   "name": "NaN payload (7ff8123456789abc) survives cleanup in frozen evidence; 13 pool canonical buffers hex-complete",
+   "status": "PASS",
+   "rawBits": "7ff8123456789abc"
+  },
+  {
+   "id": "T150-V7",
+   "name": "window: last-legal/first-illegal 8192B snapshots, first illegal not replaced; 35 observations → 32-entry ring, dropped=3, first entry S3; PREEXISTING_IN_WINDOW",
+   "status": "PASS",
+   "okWin": true,
+   "stable": true,
+   "ring": true
+  },
+  {
+   "id": "T150-V8",
+   "name": "trace: FIELD_COLUMN provenance driftMeasured=false/driftSource=NOT_MEASURED/rollbackExecuted=false; evidence frozen — later failure does not overwrite",
+   "status": "PASS"
+  },
+  {
+   "id": "T150-V9",
+   "name": "audit drift provenance: driftMeasured=true/driftSource=AUDIT_GET_DRIFT — distinct from FIELD_COLUMN default zeros",
+   "status": "PASS"
+  },
+  {
+   "id": "T150-V10",
+   "name": "diagnostics off → evidence null (no window allocation); on → observation is read-only: field arrays and pool snapshot byte-identical to off twin",
+   "status": "PASS"
+  },
+  {
+   "id": "T150-V11",
+   "name": "evidence export survives 997-byte bounded transport fragments: rawBits/badMask/bytes hex identical after reassembly",
+   "status": "PASS",
+   "fragments": 96
+  },
+  {
+   "id": "T150-V12",
+   "name": "stage identity: stage name, runId, poolEpoch, preview flag populated on observation rows",
+   "status": "PASS",
+   "sample": {
+    "stage": "ID_CHECK",
+    "runId": "p011-run-1793062777443-58",
+    "poolEpoch": 0
+   }
+  }
+ ]
+}
