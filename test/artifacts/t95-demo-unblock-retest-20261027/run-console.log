@@ -1,0 +1,33 @@
+[16:26:59] T95 retest start (build a419f5a, s150 f28ec28e, tree aee7374caa8ff7cb)
+[16:27:01] R0 smoke
+[16:27:12] R0 started
+[16:27:28] R0 app PID=23437
+[16:27:29] R0 alive: no freeze for PID 23437
+[16:27:30] R0 done
+[16:27:30] R1 J2: 4x swipe + 45s settle (LAND window)
+[16:27:40] R1 started
+[16:27:48] R1 swipe 1 done
+[16:27:52] R1 swipe 2 done
+[16:27:56] R1 swipe 3 done
+[16:27:59] R1 swipe 4 done
+[16:28:47] R1 app PID=24446
+[16:28:48] R1 alive: no freeze for PID 24446
+[16:28:49] R1 done
+[16:28:49] R2 J2 stress: 6x swipe + 45s settle
+[16:29:00] R2 started
+[16:29:06] R2 swipe 1 done
+[16:29:09] R2 swipe 2 done
+[16:29:12] R2 swipe 3 done
+[16:29:15] R2 swipe 4 done
+[16:29:17] R2 swipe 5 done
+[16:29:20] R2 swipe 6 done
+[16:30:08] R2 app PID=24752
+[16:30:09] R2 alive: no freeze for PID 24752
+[16:30:10] R2 done
+[16:30:10] R3 manual handheld window (~60s): tilt device, press-hold to pour, observe flow
+[16:30:20] R3 started
+[16:31:27] R3 done (manual observation window elapsed)
+[16:31:27] R4 finish -> CLOSED -> pull two streams
+[16:31:36] R4 CLOSED NOT FOUND (may be R3 page)
+[16:31:36] R1 store path not found
+[16:31:36] R4 done
