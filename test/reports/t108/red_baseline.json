@@ -1,0 +1,321 @@
+{
+  "revision": "T108_CLEAR_WATER_RED_BASELINE_V1",
+  "executedAt": "2026-10-27T12:30:40.900Z",
+  "spec": "T122 handoff §4 + algorithm-single-sand-clear-water-v1.md §8 CW-01..18",
+  "commitUnderTest": "current tree (no target-7 implementation; RED pre-test)",
+  "device": "NOT_RUN (offline per card)",
+  "summary": {
+    "total": 21,
+    "NOT_IMPLEMENTED": 19,
+    "PASS": 2,
+    "FAIL": 0
+  },
+  "missingSymbols": [
+    "SAND_WATER_SOURCE_V1 (注入API版本)",
+    "CLEAR_WATER_SCENE_V1 (同帧渲染版本)",
+    "CLEAR_WATER_OPTICS_V1 (透射光学)",
+    "显式 W 权威库存数组 (waterStock/realWater)",
+    "独立 mode 常量 (SINGLE_SAND_CLEAR_WATER)",
+    "SourceRequest/Receipt typed 接口",
+    "掉水双源入口 (injectWater)"
+  ],
+  "cwCases": [
+    {
+      "id": "CW-01",
+      "title": "新 run 全空 ΣW=ΣS=ΣP=0、L/U=0、无水 mask、medium 为新 mode",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-02",
+      "title": "干列连续加水只改该列 W、I_water 独立审计、不重置 initial",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-03",
+      "title": "湿列/满列/P 预留列局部准入或拒绝、rejected 可对账、无负 W",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-04",
+      "title": "掉沙触点出生→空气→入水→LAND 同 ID 可追、U=0、L=0、H 相守恒",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-05",
+      "title": "同初速度水/空气对照：跨面时间/湿时长/速度位移与解析式比对",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-06",
+      "title": "LAND q 后 W 不变、P 减 S 增、η 抬升、partial/full 身份正确",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-07",
+      "title": "纯水无源定角：每对通量 q 与 5 项上界、成对审计、平头零流",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-08",
+      "title": "干高床隔水/左右墙：无跨床瞬移、无墙外水损、head 残差量化",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-09",
+      "title": "θ=0 与正负倾角：head 趋同、accepted θ 同入物理与 shader",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-10",
+      "title": "床搬运/换列至满接收列：容量拒绝仍守恒、无伪成功",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-11",
+      "title": "注入失败族：pool 满/队列满/非法/NaN/旧 run/幂等冲突，库存身份不变",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-12",
+      "title": "幂等重试只计一次、正成功序号独立、零量拒绝不推进、water/sand 不串账",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-13",
+      "title": "按住切换/MOVE 风暴/次指针/UP CANCEL：旧代停止、新 DOWN 首采样 0",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-14",
+      "title": "后台/reset/几何代失效：待提交清理、已提交不消失、无时长补发",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-15",
+      "title": "step 审计失败与 source 事务失败分别注错：rollback 边界正确",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-16",
+      "title": "固定样本：水上原色/水中 T 混合/水下床可见/W=0 无覆盖/同 FrameToken",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-17",
+      "title": "shader/token/swap 失败：FAULT 或 STALE 完整 LastGood，禁 Canvas/混代",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    },
+    {
+      "id": "CW-18",
+      "title": "长时定容运行：队列/ID/源账/rollback/帧内分配/复杂度实测",
+      "status": "NOT_IMPLEMENTED",
+      "statusReason": "implementation symbols absent (pre-test RED)"
+    }
+  ],
+  "results": [
+    {
+      "id": "SYM",
+      "name": "target-7 implementation symbols",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "missing": [
+          "SAND_WATER_SOURCE_V1 (注入API版本)",
+          "CLEAR_WATER_SCENE_V1 (同帧渲染版本)",
+          "CLEAR_WATER_OPTICS_V1 (透射光学)",
+          "显式 W 权威库存数组 (waterStock/realWater)",
+          "独立 mode 常量 (SINGLE_SAND_CLEAR_WATER)",
+          "SourceRequest/Receipt typed 接口",
+          "掉水双源入口 (injectWater)"
+        ]
+      }
+    },
+    {
+      "id": "BASELINE",
+      "name": "legacy wet-chain injection/audit baseline (comparison only, NOT clear-water pass)",
+      "status": "PASS",
+      "detail": {
+        "receipt": {
+          "admittedH": 0.3,
+          "rejected": null
+        },
+        "auditOk": true,
+        "note": "旧链成功不推出目标7湿段/排水通过（CW-02/§4 明示）"
+      }
+    },
+    {
+      "id": "CW-01",
+      "name": "新 run 全空 ΣW=ΣS=ΣP=0、L/U=0、无水 mask、medium 为新 mode",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-02",
+      "name": "干列连续加水只改该列 W、I_water 独立审计、不重置 initial",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-03",
+      "name": "湿列/满列/P 预留列局部准入或拒绝、rejected 可对账、无负 W",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-04",
+      "name": "掉沙触点出生→空气→入水→LAND 同 ID 可追、U=0、L=0、H 相守恒",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-05",
+      "name": "同初速度水/空气对照：跨面时间/湿时长/速度位移与解析式比对",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-06",
+      "name": "LAND q 后 W 不变、P 减 S 增、η 抬升、partial/full 身份正确",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-07",
+      "name": "纯水无源定角：每对通量 q 与 5 项上界、成对审计、平头零流",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-08",
+      "name": "干高床隔水/左右墙：无跨床瞬移、无墙外水损、head 残差量化",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-09",
+      "name": "θ=0 与正负倾角：head 趋同、accepted θ 同入物理与 shader",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-10",
+      "name": "床搬运/换列至满接收列：容量拒绝仍守恒、无伪成功",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-11",
+      "name": "注入失败族：pool 满/队列满/非法/NaN/旧 run/幂等冲突，库存身份不变",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-12",
+      "name": "幂等重试只计一次、正成功序号独立、零量拒绝不推进、water/sand 不串账",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-13",
+      "name": "按住切换/MOVE 风暴/次指针/UP CANCEL：旧代停止、新 DOWN 首采样 0",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-14",
+      "name": "后台/reset/几何代失效：待提交清理、已提交不消失、无时长补发",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-15",
+      "name": "step 审计失败与 source 事务失败分别注错：rollback 边界正确",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-16",
+      "name": "固定样本：水上原色/水中 T 混合/水下床可见/W=0 无覆盖/同 FrameToken",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-17",
+      "name": "shader/token/swap 失败：FAULT 或 STALE 完整 LastGood，禁 Canvas/混代",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "CW-18",
+      "name": "长时定容运行：队列/ID/源账/rollback/帧内分配/复杂度实测",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "目标7 mode/API 未实现——预测试 RED，结束本轮归因；不虚报产品 FAIL"
+      }
+    },
+    {
+      "id": "REGL",
+      "name": "algorithm §9 counterexample list retained for implementation phase",
+      "status": "PASS",
+      "detail": {
+        "count": 12
+      }
+    }
+  ],
+  "calibrations": "PENDING_CALIBRATION: κ/rateWater/rateSand/一次上限/dragWet/settlingSpeed/sigmaWater/tint/高光/分段误差 — 测试仅输出测量值与候选 configRev，不贴既有门槛",
+  "notes": [
+    "dry 注入成功基线仅作实现后对照，非明水通过（CW-02 合同明示）",
+    "旧全局 levelWater 不是新邻接核 oracle",
+    "未实现 RED 归 developer/工程；本卡不虚报产品 FAIL 缺陷"
+  ]
+}

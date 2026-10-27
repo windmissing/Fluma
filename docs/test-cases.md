@@ -1072,3 +1072,13 @@ rev2 §9 切片 2 的 G1 前置 = rev2 manager 验收（**已满足**，22:30）
 - 执行证据：`test/reports/p053_g2_uploader_case_check.json`（23 例期望契约 + 状态 + 逐例缺失符号清单；T09 保全哈希登记；条款 token 追溯 53 项全过；25 个实现面符号全缺）。
 - 交接链：manager 派 T54（G2 上传与接口）→ 实现面到位后 G2 运行器消费本 JSON `cases[].expectation` 逐例执行 → tester 出 G2 客观用例通过记录 → G3 材质 pass → G4 页面共存 → G5 真机双测。
 - 未决项交裁定：A04/A05 期望码语义边界（400/402）、byteBudget 拒绝时的 receipt.code 精确值、E 类回退遥测字段在 G4 落地后复核——均以修订版登记处理，实现侧不得单方面改判。
+
+
+## 18. 目标7 单沙明水 CW-01..18 用例条目（2026-10-27 登记，RED 基线）
+
+- 来源：`docs/algorithm-T122-single-sand-clear-water-handoff-v1.md` §4 → `algorithm-single-sand-clear-water-v1.md` §8 CW-01..18（18 组合同逐字）。
+- 状态：**全部 NOT_IMPLEMENTED（预测试 RED）**——实现面符号全缺（SAND_WATER_SOURCE_V1 / CLEAR_WATER_SCENE_V1 / CLEAR_WATER_OPTICS_V1 / 显式 W 库存 / SINGLE_SAND_CLEAR_WATER mode / SourceRequest·Receipt / injectWater / FrameToken 同帧字段，8/8 缺）。
+- 用例格式（每组）：前置=目标7 mode/API 已实现；输入/期望输出/判定标准按 CW 表逐组；实现到位后由执行器 `test/p108_clear_water_red.cjs` 扩展逐组断言（当前仅符号核查+旧链对照基线）。
+- 参数：κ / rateWater / rateSand / 一次上限 / dragWet / settlingSpeed / sigmaWater / tint / 高光 / 分段误差 全部 PENDING_CALIBRATION——测试仅输出测量值与候选 configRev，不贴既有门槛标签。
+- 边界：dry 注入成功与旧 WET_COLUMN_V1 加水成功均不作为明水通过（CW-02 明示）；旧全局 levelWater 不是新邻接核 oracle；算法 §9 十二反例清单随实现保留核验。
+- 执行证据：`test/reports/t108/red_baseline.json`（2 PASS 符号外基线 / 19 NOT_IMPLEMENTED / 0 FAIL；缺符号清单 8 项）。
