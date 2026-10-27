@@ -1,0 +1,42 @@
+{
+  "revision": "T168_BUILD_V1",
+  "baseCommit": "27b90549e14dfc07b189144b218d7a700153c7d1",
+  "entryDiffAgainstApproved": "UNCHANGED",
+  "native": "PASS",
+  "compileArkTS": "UP_TO_DATE_PRIOR_T166_COMPILED_UNCHANGED_ENTRY",
+  "packageHap": "UP_TO_DATE",
+  "signHap": "EXISTING_00303116_PASSWORD_LENGTH",
+  "device": "NOT_RUN",
+  "artifacts": [
+    {
+      "file": "test/tools/p011_hot_context_graph.cjs",
+      "bytes": 35571,
+      "sha256": "7d5895d84a8f8419b6e26f5e2429df55b1a6b97aa4359815ffe176c71135d936"
+    },
+    {
+      "file": "test/tools/run_t168_gate_report.cjs",
+      "bytes": 5558,
+      "sha256": "d5d202d735773bc621eaf262ff8fdeb0796f9f4558fe14ac1a77353e66dd2733"
+    },
+    {
+      "file": "test/probe_p011_particle_hot_graph.cjs",
+      "bytes": 6237,
+      "sha256": "5e64c2d4e5c0e2ee54d15f0a108d13e5dd30ebb9f806a5100575401575da7906"
+    },
+    {
+      "file": "test/run_t168_hot_context_graph_units.cjs",
+      "bytes": 8303,
+      "sha256": "c12ffe98c1eca35500483da0206a0126200c531334b2212321098c427be454cc"
+    },
+    {
+      "file": "test/fixtures/t168_profile_write_contract.json",
+      "bytes": 58186,
+      "sha256": "788bb2dff36e9fa0a28c4f338970c611c37edf690415548190250f5a62d28822"
+    },
+    {
+      "file": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 4573194,
+      "sha256": "6cd7cf587769ad1551f6946e1bdb2091b6886e83fdc803571aa9ce5eb003aa41"
+    }
+  ]
+}

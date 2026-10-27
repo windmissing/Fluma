@@ -1,0 +1,86 @@
+{
+  "revision": "T168_GATE_REPORT_V1",
+  "date": "2026-10-27",
+  "device": "NOT_RUN",
+  "runtimeEquivalence": "NOT_RUN_T155_OWNS",
+  "productStability": "NOT_RUN",
+  "profiles": {
+    "OFF_ALL": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 81,
+      "allocationSites": 15,
+      "unresolved": 66,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1656,
+      "pruned": 75,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168/off_all.json.gz",
+        "jsonBytes": 5572405,
+        "gzipBytes": 245741,
+        "gzipSha256": "560c6f689b0bd4dba2fb1b5464f01f330c897c51ef0237c6cf7167995fa01ee4",
+        "jsonSha256": "548e90a401836e685e342177e761dcba1e8282b8f5f19900589d464f47d5db5d"
+      }
+    },
+    "PROGRESS_OFF_EVIDENCE_ON": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 127,
+      "allocationSites": 29,
+      "unresolved": 98,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1675,
+      "pruned": 74,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168/progress_off_evidence_on.json.gz",
+        "jsonBytes": 5689354,
+        "gzipBytes": 251199,
+        "gzipSha256": "1e9501de96f622a06ef4864aaf04f3aecb78b7f35925f49af75e525c2b0b93c5",
+        "jsonSha256": "24dbcdfff21ac8f37033db51507348d0a8e25d07e439c9788b2f3f52e7978729"
+      }
+    },
+    "PROGRESS_ON": {
+      "status": "NOT_ZERO_ALLOCATION",
+      "remaining": 127,
+      "allocationSites": 29,
+      "unresolved": 98,
+      "issues": 0,
+      "registryComplete": true,
+      "legacySites": 60,
+      "roots": 24,
+      "contexts": 1920,
+      "pruned": 22,
+      "productionHotPathZeroAllocation": false,
+      "archive": {
+        "file": "test/reports/t168/progress_on.json.gz",
+        "jsonBytes": 6083478,
+        "gzipBytes": 266589,
+        "gzipSha256": "65727af4ebf5f8447a4fe0fb7f99bc592ac81609c28cfe38a3bb983b52880cd7",
+        "jsonSha256": "194ac5ecf73849b1a3784188dd80ab3d1bdf503a01d1f8178b23dd24fde858a4"
+      }
+    }
+  },
+  "legacyConservative": {
+    "status": "NOT_ZERO_ALLOCATION",
+    "remaining": 35,
+    "unresolved": 34,
+    "allocationSites": 1,
+    "registryComplete": true,
+    "exactOriginalApiEquality": true,
+    "archive": {
+      "file": "test/reports/t168/legacy-conservative.json.gz",
+      "jsonBytes": 57308,
+      "gzipBytes": 4665,
+      "gzipSha256": "78ece7d635efaa96cde27395c815ebda79e8ae82f238a73a1d2e527b744fe554",
+      "jsonSha256": "8e888b5086b2015e4f670b35d70a9460a2364ff1d9f282111dc1a50a5009413e"
+    }
+  },
+  "productionHotPathZeroAllocation": false,
+  "delivery": "PARTIAL_FAIL_CLOSED_REQUIRES_ARCHITECT"
+}

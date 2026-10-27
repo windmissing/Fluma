@@ -1,0 +1,1557 @@
+{
+  "profile": "PROGRESS_ON",
+  "status": "NOT_ZERO_ALLOCATION",
+  "staticSiteCount": 29,
+  "sites": [
+    {
+      "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.checkLong",
+      "file": "P011PoolProgressDiagnostic.ets",
+      "line": 122,
+      "kind": "constructor",
+      "text": "new Uint8Array(buffer)",
+      "phase": "HOT_THRESHOLD_CAPTURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 453,
+          "start": 37832,
+          "end": 37871,
+          "text": "copyPoolDiagnosticHot(this, out, false)",
+          "caller": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+          "callee": "P011ParticleHot.ets::copyPoolDiagnosticHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1243,
+          "start": 94199,
+          "end": 94220,
+          "text": "d?.endSpan(span,code)",
+          "caller": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.endSpan"
+        },
+        {
+          "file": "P011PoolProgressDiagnostic.ets",
+          "line": 98,
+          "start": 6523,
+          "end": 6542,
+          "text": "this.checkLong(row)",
+          "caller": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.endSpan",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.checkLong"
+        }
+      ]
+    },
+    {
+      "owner": "P011ParticleField.ets::P011ParticleField.totals",
+      "file": "P011ParticleField.ets",
+      "line": 367,
+      "kind": "object-literal",
+      "text": "{ heavy: heavy, light: light, count: this.liveCount, resting: resting }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 533,
+          "start": 43381,
+          "end": 43399,
+          "text": "work.pool.totals()",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011ParticleField.ets::P011ParticleField.totals"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 71,
+      "kind": "constructor",
+      "text": "new DataView(this.sources[i].buffer,\n          this.sources[i].byteOffset,this.sources[i].byteLength)",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        },
+        {
+          "file": "P011FieldColumnEvidenceV2.ets",
+          "line": 139,
+          "start": 7419,
+          "end": 7433,
+          "text": "this.arrays(f)",
+          "caller": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 73,
+      "kind": "constructor",
+      "text": "new Uint8Array(this.sources[i].buffer,\n          this.sources[i].byteOffset,this.cols*8)",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        },
+        {
+          "file": "P011FieldColumnEvidenceV2.ets",
+          "line": 139,
+          "start": 7419,
+          "end": 7433,
+          "text": "this.arrays(f)",
+          "caller": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.arrays"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 145,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 146,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 152,
+      "kind": "template-string",
+      "text": "`${this.bufferIds[i]}:${a.byteOffset}:${a.length}:${a.byteLength}`",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 156,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 156,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 158,
+      "kind": "constructor",
+      "text": "new Uint8Array(poolBuffers[i])",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 161,
+      "kind": "object-literal",
+      "text": "{revision:this.revision,column:col,badMask:mask,\n      valueText:valueText,rawBits:rawBits,sumBits:[this.numberBits(s1),this.numberBits(s2),\n        this.numberBits(s3)],finite:finite,negative:negative,sumFinite:Number.isFinite(s3),\n      f",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure",
+      "file": "P011FieldColumnEvidenceV2.ets",
+      "line": 162,
+      "kind": "array-literal",
+      "text": "[this.numberBits(s1),this.numberBits(s2),\n        this.numberBits(s3)]",
+      "phase": "HOT_FAILURE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::beginStepHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1218,
+          "start": 92592,
+          "end": 92620,
+          "text": "beginStepHotBody(work,input)",
+          "caller": "P011ParticleHot.ets::beginStepHot",
+          "callee": "P011ParticleHot.ets::beginStepHotBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 529,
+          "start": 43067,
+          "end": 43455,
+          "text": "work.fieldColumnEvidenceV2.captureFailure(f,col,work.ownerId,work.stepEpoch,\r\n          input.runToken,input.attemptToken,input.substepId,\r\n          work.pool.particleMassHAt(col),work.pool.particleMassLAt(col),work.stepEpoch,\r\n          w",
+          "caller": "P011ParticleHot.ets::beginStepHotBody",
+          "callee": "P011FieldColumnEvidenceV2.ets::P011FieldColumnEvidenceV2.captureFailure"
+        }
+      ]
+    },
+    {
+      "owner": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+      "file": "WaterSandField.ets",
+      "line": 4539,
+      "kind": "constructor",
+      "text": "new Map<number, number>()",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        }
+      ]
+    },
+    {
+      "owner": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+      "file": "WaterSandField.ets",
+      "line": 4915,
+      "kind": "object-literal",
+      "text": "{ accepted: 0, rejected: 0, allLegalBefore: true,\r\n        limitingEdge: null }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        }
+      ]
+    },
+    {
+      "owner": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+      "file": "WaterSandField.ets",
+      "line": 4922,
+      "kind": "closure",
+      "text": "(edge: number): number => this.materialGuardResidual(edge)",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardConstraintsForDelta",
+      "file": "P011MaterialGuard.ets",
+      "line": 134,
+      "kind": "constructor",
+      "text": "new Set<number>()",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4921,
+          "start": 230503,
+          "end": 230627,
+          "text": "p011GuardConstraintsForDelta(deltaColumns,\r\n      (edge: number): number => this.materialGuardResidual(edge), this.cols - 1)",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardConstraintsForDelta"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardConstraintsForDelta",
+      "file": "P011MaterialGuard.ets",
+      "line": 143,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4921,
+          "start": 230503,
+          "end": 230627,
+          "text": "p011GuardConstraintsForDelta(deltaColumns,\r\n      (edge: number): number => this.materialGuardResidual(edge), this.cols - 1)",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardConstraintsForDelta"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardConstraintsForDelta",
+      "file": "P011MaterialGuard.ets",
+      "line": 147,
+      "kind": "object-literal",
+      "text": "{\r\n      residual: residualOf(edge),\r\n      influence: influence\r\n    }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4921,
+          "start": 230503,
+          "end": 230627,
+          "text": "p011GuardConstraintsForDelta(deltaColumns,\r\n      (edge: number): number => this.materialGuardResidual(edge), this.cols - 1)",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardConstraintsForDelta"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAdmit",
+      "file": "P011MaterialGuard.ets",
+      "line": 56,
+      "kind": "object-literal",
+      "text": "{\r\n      accepted: Math.max(0, Number.isFinite(requested) ? requested : 0),\r\n      rejected: 0,\r\n      allLegalBefore: true,\r\n      limitingEdge: null\r\n    }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4923,
+          "start": 230650,
+          "end": 230717,
+          "text": "p011GuardAdmit(requested, constraints, this.materialGuardHardMax())",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardAdmit"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAdmit",
+      "file": "P011MaterialGuard.ets",
+      "line": 71,
+      "kind": "object-literal",
+      "text": "{ accepted: 0, rejected: requested, allLegalBefore: false,\r\n        limitingEdge: e }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4923,
+          "start": 230650,
+          "end": 230717,
+          "text": "p011GuardAdmit(requested, constraints, this.materialGuardHardMax())",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardAdmit"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAdmit",
+      "file": "P011MaterialGuard.ets",
+      "line": 82,
+      "kind": "object-literal",
+      "text": "{ accepted: 0, rejected: requested, allLegalBefore: allLegal,\r\n          limitingEdge: e }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4923,
+          "start": 230650,
+          "end": 230717,
+          "text": "p011GuardAdmit(requested, constraints, this.materialGuardHardMax())",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardAdmit"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAdmit",
+      "file": "P011MaterialGuard.ets",
+      "line": 105,
+      "kind": "object-literal",
+      "text": "{ accepted: 0, rejected: requested, allLegalBefore: allLegal,\r\n      limitingEdge: limitingEdge }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4923,
+          "start": 230650,
+          "end": 230717,
+          "text": "p011GuardAdmit(requested, constraints, this.materialGuardHardMax())",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardAdmit"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAdmit",
+      "file": "P011MaterialGuard.ets",
+      "line": 109,
+      "kind": "object-literal",
+      "text": "{\r\n    accepted: accepted,\r\n    rejected: Math.max(0, requested - accepted),\r\n    allLegalBefore: allLegal,\r\n    limitingEdge: limitingEdge\r\n  }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4923,
+          "start": 230650,
+          "end": 230717,
+          "text": "p011GuardAdmit(requested, constraints, this.materialGuardHardMax())",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "P011MaterialGuard.ets::p011GuardAdmit"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAffectedEdgesForDelta",
+      "file": "P011MaterialGuard.ets",
+      "line": 166,
+      "kind": "constructor",
+      "text": "new Set<number>()",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4924,
+          "start": 230724,
+          "end": 230799,
+          "text": "this.recordMaterialGuardEvidence('guard', deltaColumns, requested, outcome)",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "WaterSandField.ets::WaterSandField.recordMaterialGuardEvidence"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4941,
+          "start": 231434,
+          "end": 231493,
+          "text": "p011GuardAffectedEdgesForDelta(deltaColumns, this.cols - 1)",
+          "caller": "WaterSandField.ets::WaterSandField.recordMaterialGuardEvidence",
+          "callee": "P011MaterialGuard.ets::p011GuardAffectedEdgesForDelta"
+        }
+      ]
+    },
+    {
+      "owner": "P011MaterialGuard.ets::p011GuardAffectedEdgesForDelta",
+      "file": "P011MaterialGuard.ets",
+      "line": 175,
+      "kind": "array-literal",
+      "text": "[]",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4924,
+          "start": 230724,
+          "end": 230799,
+          "text": "this.recordMaterialGuardEvidence('guard', deltaColumns, requested, outcome)",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "WaterSandField.ets::WaterSandField.recordMaterialGuardEvidence"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4941,
+          "start": 231434,
+          "end": 231493,
+          "text": "p011GuardAffectedEdgesForDelta(deltaColumns, this.cols - 1)",
+          "caller": "WaterSandField.ets::WaterSandField.recordMaterialGuardEvidence",
+          "callee": "P011MaterialGuard.ets::p011GuardAffectedEdgesForDelta"
+        }
+      ]
+    },
+    {
+      "owner": "WaterSandField.ets::WaterSandField.recordMaterialGuardEvidence",
+      "file": "WaterSandField.ets",
+      "line": 4945,
+      "kind": "object-literal",
+      "text": "{\r\n      channel: channel,\r\n      limitingEdge: limitingPhysical,\r\n      affectedEdgeIds: affected,\r\n      rejected: outcome.rejected,\r\n      clipped: Math.max(0, requested - outcome.accepted)\r\n    }",
+      "phase": "OTHER_REACHABLE_SOURCE",
+      "trigger": "ABSTRACT_REACHABILITY_NOT_DYNAMIC_COUNT",
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::applyParticlePlanInto"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1250,
+          "start": 94559,
+          "end": 94626,
+          "text": "applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanInto",
+          "callee": "P011ParticleHot.ets::applyParticlePlanIntoBody"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1185,
+          "start": 90045,
+          "end": 90102,
+          "text": "sink.applyInto(work, expectedStepEpoch, plan, i, results)",
+          "caller": "P011ParticleHot.ets::applyParticlePlanIntoBody",
+          "callee": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto"
+        },
+        {
+          "file": "P011ParticleM2Sink.ets",
+          "line": 199,
+          "start": 13359,
+          "end": 13423,
+          "text": "this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted)",
+          "caller": "P011ParticleM2Sink.ets::P011ParticleM2CommitSink.applyInto",
+          "callee": "WaterSandField.ets::WaterSandField.internalParticleGuard"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4540,
+          "start": 212649,
+          "end": 212699,
+          "text": "this.materialGuardAdmitIncrement(requested, delta)",
+          "caller": "WaterSandField.ets::WaterSandField.internalParticleGuard",
+          "callee": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement"
+        },
+        {
+          "file": "WaterSandField.ets",
+          "line": 4924,
+          "start": 230724,
+          "end": 230799,
+          "text": "this.recordMaterialGuardEvidence('guard', deltaColumns, requested, outcome)",
+          "caller": "WaterSandField.ets::WaterSandField.materialGuardAdmitIncrement",
+          "callee": "WaterSandField.ets::WaterSandField.recordMaterialGuardEvidence"
+        }
+      ]
+    }
+  ],
+  "unresolvedExternalClock": [
+    {
+      "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now",
+      "file": "P011PoolProgressDiagnostic.ets",
+      "line": 70,
+      "start": 4703,
+      "end": 4715,
+      "text": "this.clock()",
+      "reason": "UNRESOLVED_CALL",
+      "contextKeys": [
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4f669e8e153281f56ae6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cd2ffe447cc42b80d5e8",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b68d88b21d214f37edc7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#8520a61b1e5ac9a49c68",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2bd78425a5788a3520a9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#bb3f56177be7c9672a5b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2dd2087ed5f2b8cd6e3d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1b157e3a401cd5768f52",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#295051a39b1f9329f8d1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#59c1645be047731d8a3a",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fee993cd184edc77045a",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2f12a066e81ffe3cf648",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f361606b12c0831574ce",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#071f714e4b9b4ac68f17",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#16bc3d6a15858e4adcf4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c94e74c1a5194977f006",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#8b17ddd83a42d0c7e79f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9ec57eedb6c10dd6f20b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7994efe8649ea40ab150",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#69430af898f2aa8bd6c1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3b908adc370af58e5731",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#19a7e4ec2c8de6ad0500",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b62d212710102a6279e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5a81ebad0b88689b7785",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2930bdb410426fa8983f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#a37719339b634d05e22d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fe44c1117665a2b96059",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9d1cc846a9cc777e6e1d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e86fd14024728fccfb35",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#429b95cc70886fd8403d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#53f805e45eb0180bc8c7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#86d588037b4115955eac",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#606fe6e1814e78d54819",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1e39c0f75b5cf9cc3003",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#aaaa51e792d3a41461cc",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7eb42d942e0ae69bf2b5",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#bcff2d8fe21e5f19189f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d1fe7319d54f9d399b8b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#84ec4c928121448d2333",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cab937b065b0917fa252",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5b4be03d7aa51dd3e133",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#24a0bcbd02b7e028acc6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5927965ae0f8e198bf06",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#15b4bf462e950e31a2d8",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#42dbb975b8fd84f59e04",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3e5f99e4aa6b53862e67",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#782b93af2655424b96f4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#00ddeaddd2a6fbacef26",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#10b7292bdc2f307cc624",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cb992969a5eef4b869a9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5232e39e4dd574e30538",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#6ac9fd653f141782a991",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#bdf616e0bc7e1f2ba538",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c77671f25f82bc3af065",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c3b14c6592612d953678",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#392073b8c4331b8f7282",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#403be9ec06a45009e5e6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1202b12665bc6e1e3103",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#aa9191cab0114d1b6ec0",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#28ad69bec7e68d944fb1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#18aa9626ead91809737e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#a92d5b8d95081b8e5698",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#18456b7ea342c36925e6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#265ff00b93fbd3e00f26",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b0289787b8226640db96",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4618825acd9096ffa50e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3a22cbfb70d9bb710b00",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b07748bb35e4318659c5",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#abad954d3d4d0ea67ee1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1cff2a4d7682cb847c5a",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#23b65ac0e52af67d5d21",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#073f3002a98da97f0a86",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#30b4e851638f845ca588",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d4c353516ee45977c21a",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#6ecf88180ff83cc2e8a3",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f94f073ca66651113fa2",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#a4ea8021694e4e2242e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2827823ac3c792650dc4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#da3d08cca33d9efda95b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#298171660317bf00b3db",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0b31fef8d5bc5919827e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#23ceae2cf45374847cc0",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#17993dc406179db5c14a"
+      ],
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 453,
+          "start": 37832,
+          "end": 37871,
+          "text": "copyPoolDiagnosticHot(this, out, false)",
+          "caller": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+          "callee": "P011ParticleHot.ets::copyPoolDiagnosticHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1240,
+          "start": 93970,
+          "end": 94023,
+          "text": "d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ')",
+          "caller": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin"
+        },
+        {
+          "file": "P011PoolProgressDiagnostic.ets",
+          "line": 90,
+          "start": 6045,
+          "end": 6055,
+          "text": "this.now()",
+          "caller": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now"
+        }
+      ]
+    },
+    {
+      "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now",
+      "file": "P011PoolProgressDiagnostic.ets",
+      "line": 70,
+      "start": 4703,
+      "end": 4715,
+      "text": "this.clock()",
+      "reason": "UNKNOWN_CALL_OR_ALIAS_ESCAPE",
+      "contextKeys": [
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4f669e8e153281f56ae6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b68d88b21d214f37edc7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2bd78425a5788a3520a9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2dd2087ed5f2b8cd6e3d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1b157e3a401cd5768f52",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#295051a39b1f9329f8d1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#fee993cd184edc77045a",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f361606b12c0831574ce",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#071f714e4b9b4ac68f17",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#16bc3d6a15858e4adcf4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c94e74c1a5194977f006",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#9ec57eedb6c10dd6f20b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#7994efe8649ea40ab150",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#69430af898f2aa8bd6c1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3b908adc370af58e5731",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b62d212710102a6279e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2930bdb410426fa8983f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#a37719339b634d05e22d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#e86fd14024728fccfb35",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#429b95cc70886fd8403d",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#53f805e45eb0180bc8c7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#606fe6e1814e78d54819",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1e39c0f75b5cf9cc3003",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#aaaa51e792d3a41461cc",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#bcff2d8fe21e5f19189f",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#d1fe7319d54f9d399b8b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cab937b065b0917fa252",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5b4be03d7aa51dd3e133",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#5927965ae0f8e198bf06",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#42dbb975b8fd84f59e04",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#782b93af2655424b96f4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#00ddeaddd2a6fbacef26",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#10b7292bdc2f307cc624",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#cb992969a5eef4b869a9",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#6ac9fd653f141782a991",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c77671f25f82bc3af065",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#c3b14c6592612d953678",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#392073b8c4331b8f7282",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#403be9ec06a45009e5e6",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#aa9191cab0114d1b6ec0",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#28ad69bec7e68d944fb1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#18aa9626ead91809737e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#a92d5b8d95081b8e5698",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#265ff00b93fbd3e00f26",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b0289787b8226640db96",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#4618825acd9096ffa50e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#3a22cbfb70d9bb710b00",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#b07748bb35e4318659c5",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#abad954d3d4d0ea67ee1",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#1cff2a4d7682cb847c5a",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#23b65ac0e52af67d5d21",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#30b4e851638f845ca588",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#6ecf88180ff83cc2e8a3",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#f94f073ca66651113fa2",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#a4ea8021694e4e2242e7",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#2827823ac3c792650dc4",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#da3d08cca33d9efda95b",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#298171660317bf00b3db",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#0b31fef8d5bc5919827e",
+        "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now#23ceae2cf45374847cc0"
+      ],
+      "witness": [
+        {
+          "root": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 453,
+          "start": 37832,
+          "end": 37871,
+          "text": "copyPoolDiagnosticHot(this, out, false)",
+          "caller": "P011ParticleHot.ets::P011ParticleHotWorkspace.copyStateToHot",
+          "callee": "P011ParticleHot.ets::copyPoolDiagnosticHot"
+        },
+        {
+          "file": "P011ParticleHot.ets",
+          "line": 1240,
+          "start": 93970,
+          "end": 94023,
+          "text": "d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ')",
+          "caller": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin"
+        },
+        {
+          "file": "P011PoolProgressDiagnostic.ets",
+          "line": 90,
+          "start": 6045,
+          "end": 6055,
+          "text": "this.now()",
+          "caller": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.begin",
+          "callee": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.now"
+        }
+      ]
+    }
+  ],
+  "runtimeAllocations": null,
+  "runtimeBytes": null,
+  "rss": null,
+  "elapsedMs": null
+}

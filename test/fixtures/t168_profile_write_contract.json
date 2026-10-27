@@ -1,0 +1,1506 @@
+{
+  "revision": "T168_APPROVED_T162_V2_FACTS_V1",
+  "approvedDesign": "docs/architecture-T162-diagnostic-gate-disposition-v2.md",
+  "sourceCommit": "50ebbff",
+  "writes": [
+    {
+      "file": "P011MergeExactIndex.ets",
+      "owner": "P011MergeExactIndex.ets::P011MergeExactIndex",
+      "kind": "initializer",
+      "text": "diagnostic: P011PoolProgressDiagnostic | null=null;",
+      "controlFlowSha256": "9f18721caeb41f631b16a374930cf4725012b9deec13db71840bfd82a39a04f4"
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace",
+      "kind": "initializer",
+      "text": "diagnosticEnabled = false;",
+      "controlFlowSha256": "2070696705ed22a52f1a0b944eab2f664ba3a080ca6f94a9307fdd3ffc9d3782"
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace",
+      "kind": "initializer",
+      "text": "fieldColumnEvidenceV2: P011FieldColumnEvidenceV2 | null = null;",
+      "controlFlowSha256": "2070696705ed22a52f1a0b944eab2f664ba3a080ca6f94a9307fdd3ffc9d3782"
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace",
+      "kind": "initializer",
+      "text": "poolProgress: P011PoolProgressDiagnostic | null = null;",
+      "controlFlowSha256": "2070696705ed22a52f1a0b944eab2f664ba3a080ca6f94a9307fdd3ffc9d3782"
+    },
+    {
+      "file": "P011TiltPreviewTrace.ets",
+      "owner": "P011TiltPreviewTrace.ets::P011TiltPreviewTrace",
+      "kind": "initializer",
+      "text": "fieldColumnEvidenceV2: P011FieldEvidenceExportV2 | null = null;",
+      "controlFlowSha256": "cee74a2bc288c714c49a71650598008407ee575e96bf14419ed99d90e5b0f441"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.configurePoolProgressDiagnostic",
+      "kind": "write",
+      "text": "w.diagnosticEnabled=this.poolProgressEnabled",
+      "controlFlowSha256": "d464a65a96411cc1401cdd1ad46891b3ba7f895d8bb5dd858ca1d576f78c1de8"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.configurePoolProgressDiagnostic",
+      "kind": "write",
+      "text": "w.mergeIndex.diagnostic=d",
+      "controlFlowSha256": "d464a65a96411cc1401cdd1ad46891b3ba7f895d8bb5dd858ca1d576f78c1de8"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.configurePoolProgressDiagnostic",
+      "kind": "write",
+      "text": "w.mergeIndex.diagnostic=null",
+      "controlFlowSha256": "d464a65a96411cc1401cdd1ad46891b3ba7f895d8bb5dd858ca1d576f78c1de8"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.configurePoolProgressDiagnostic",
+      "kind": "write",
+      "text": "w.poolProgress=d",
+      "controlFlowSha256": "d464a65a96411cc1401cdd1ad46891b3ba7f895d8bb5dd858ca1d576f78c1de8"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.configurePoolProgressDiagnostic",
+      "kind": "write",
+      "text": "w.poolProgress=null",
+      "controlFlowSha256": "d464a65a96411cc1401cdd1ad46891b3ba7f895d8bb5dd858ca1d576f78c1de8"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.initializeDryParticleDemo",
+      "kind": "write",
+      "text": "binding.work.fieldColumnEvidenceV2=new P011FieldColumnEvidenceV2(this.cols)",
+      "controlFlowSha256": "0fc27735d6c9487f2e7f542ee7d7a020487798b7a2a03284c7481051e2be30e8"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.recordCollectFirstFailure",
+      "kind": "write",
+      "text": "trace.fieldColumnEvidenceV2=evidence.exportEvidence()",
+      "controlFlowSha256": "dcc81ee4b78ae41e2ba03c5db49ba5840a7bfef05bbb5ad0e5e8ce5bccb713e6"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.setParticleRoute",
+      "kind": "write",
+      "text": "this.particleBinding.work.fieldColumnEvidenceV2=new P011FieldColumnEvidenceV2(this.cols)",
+      "controlFlowSha256": "ae2dbd216716bb9d6abe2d37089760462fb7d530c3b7b1a86b199b4b0b1076db"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "owner": "WaterSandField.ets::WaterSandField.setTiltPreviewTraceSink",
+      "kind": "write",
+      "text": "this.particleBinding.work.fieldColumnEvidenceV2=sink===null?null:\r\n        new P011FieldColumnEvidenceV2(this.cols)",
+      "controlFlowSha256": "bbda8b5b47c07a45ac2a842431371aee3bbc01680238a7e1d21ab6128c20d243"
+    }
+  ],
+  "cold": [
+    {
+      "key": "WaterSandField.ets::WaterSandField.setTiltPreviewTraceSink",
+      "sha256": "bbda8b5b47c07a45ac2a842431371aee3bbc01680238a7e1d21ab6128c20d243"
+    },
+    {
+      "key": "WaterSandField.ets::WaterSandField.setPoolProgressDiagnosticEnabled",
+      "sha256": "8e06fa4b4171e515285212b2ea80752d59a81df440c6c4abb081574048bb6e9b"
+    },
+    {
+      "key": "WaterSandField.ets::WaterSandField.configurePoolProgressDiagnostic",
+      "sha256": "d464a65a96411cc1401cdd1ad46891b3ba7f895d8bb5dd858ca1d576f78c1de8"
+    }
+  ],
+  "registryBindings": [
+    {
+      "id": "F01",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "beginStep",
+        "line": 453,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify(identity)",
+        "id": "F01"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.beginStep",
+          "sha256": "aa99c2f6cc884e6592e8c47ee5c2e267f911d58ea0f032deb0d512b948e19e5c",
+          "text": "JSON.stringify(identity)"
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "beginStep",
+        "line": 455,
+        "kind": "object-literal",
+        "text": "{ massPackage: params.massPackage, nmax: params.nmax,\n      terminalSpeedHeavy: params.terminalSpeedHeavy, ter",
+        "id": "F02"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.beginStep",
+          "sha256": "83ea873f9651e47a93b2a687a0d381a9261eb7f9c3879152b48798884cc38c21",
+          "text": "{ massPackage: params.massPackage, nmax: params.nmax,\r\n      terminalSpeedHeavy: params.terminalSpeedHeavy, terminalSpeedLight: params.terminalSpeedLight,\r\n      dragHeavy: params.dragHeavy, dragLight: params.dragLight, liftSpeedHeavy: params.liftSpeedHeavy,\r\n      liftSpeedLight: params.liftSpeedLight, liftSpread: params.liftSpread,\r\n      mergeColRadius: params.mergeColRadius, mergeHeightRadius: params.mergeHeightRadius,\r\n      contactEps: params.contactEps, channelRateCap: params.channelRateCap }"
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "applyParticlePlan",
+        "line": 471,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify(plan.identity)",
+        "id": "F03"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "8e739c803e03ef7f19e4904351791b28efdebca87ced2e6c22e5fa725097c695",
+          "text": "JSON.stringify(plan.identity) !== this.stepIdentityKey"
+        },
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "15143d804ae2eaf90240a544459043e9b241dba82cce4c3d8e94722ce2fa23de",
+          "text": "JSON.stringify(plan.identity)"
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "applyParticlePlan",
+        "line": 472,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify(plan.requests)",
+        "id": "F04"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "47435c8dabb78241af3d7d449255dc0da9043cab76cd8031123a90b94d1bf1c7",
+          "text": "JSON.stringify(plan.requests) !== plan.requestHash"
+        },
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "3b06a6f540b7c33d6e9143772100692766e6d894e80eafc7e8b34cc2ba9ed350",
+          "text": "JSON.stringify(plan.requests)"
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "applyParticlePlan",
+        "line": 473,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify(plan.motions)",
+        "id": "F05"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "8d9992daab39bacb44327cb6ae38b07486292526c4da2b407f119f868b7ee8f2",
+          "text": "JSON.stringify(plan.motions) !== plan.motionHash"
+        },
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "579aba96424e5efa6fb68e88939a0a1af07921f7d82ce81f3e4ef53ea5555b64",
+          "text": "JSON.stringify(plan.motions)"
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "applyParticlePlan",
+        "line": 482,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "F06"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "F07",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "applyParticlePlan",
+        "line": 486,
+        "kind": "array-literal",
+        "text": "[result.requested, result.granted, result.remainder,\n        result.budgetClipped, result.guardRejected, resul",
+        "id": "F07"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.applyParticlePlan",
+          "sha256": "d0786abcad1439bb1807d6afa0208414790f1f2cae67e0c9d35f6ccff145d1b6",
+          "text": "[result.requested, result.granted, result.remainder,\r\n        result.budgetClipped, result.guardRejected, result.capacityClipped, result.poolClipped]"
+        }
+      ]
+    },
+    {
+      "id": "F08",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "checkpoint",
+        "line": 511,
+        "kind": "object-literal",
+        "text": "{ state: this.snapshot(), stepId: this.stepId, appliedKeys: Array.from(this.appliedKeys) }",
+        "id": "F08"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.checkpoint",
+          "sha256": "fb7cf745f7c930840116f2c8614eab269b190ad38377b0d2d02ea6531fd88fd5",
+          "text": "{ state: this.snapshot(), stepId: this.stepId, appliedKeys: Array.from(this.appliedKeys) }"
+        }
+      ]
+    },
+    {
+      "id": "F09",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "checkpoint",
+        "line": 511,
+        "kind": "allocating-helper",
+        "text": "this.snapshot()",
+        "id": "F09"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.checkpoint",
+          "sha256": "28b19687b9b146d597875f82a11841999f0f404444797c138fdc2946347a537b",
+          "text": "this.snapshot()"
+        }
+      ]
+    },
+    {
+      "id": "F10",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "rollback",
+        "line": 515,
+        "kind": "constructor",
+        "text": "new Set<string>(checkpoint.appliedKeys)",
+        "id": "F10"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.rollback",
+          "sha256": "a8d2dda28bbd7c824aae4c2567e0f3c079b0b587929eafee111fb7c88e494324",
+          "text": "new Set<string>(checkpoint.appliedKeys)"
+        }
+      ]
+    },
+    {
+      "id": "F11",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "prepare",
+        "line": 551,
+        "kind": "constructor",
+        "text": "new P011ParticlePreparedPatch(this.nextPatchId++, request.requestKey,\n      this.stepId, before, after)",
+        "id": "F11"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.prepare",
+          "sha256": "fc9c5d37b446ea5e2dc17553dfe0487832944f787c42926bd1c539b053d39f61",
+          "text": "new P011ParticlePreparedPatch(this.nextPatchId++, request.requestKey,\r\n      this.stepId, before, after)"
+        }
+      ]
+    },
+    {
+      "id": "F12",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "mergePair",
+        "line": 610,
+        "kind": "object-literal",
+        "text": "{ kind: 'merge', index: this.mergeRecords.length }",
+        "id": "F12"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.mergePair",
+          "sha256": "5bc5b9f156fee85b0abcfb425e846bf799850eae471f8e453fa6e398331449a1",
+          "text": "{ kind: 'merge', index: this.mergeRecords.length }"
+        }
+      ]
+    },
+    {
+      "id": "F13",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "mergePair",
+        "line": 611,
+        "kind": "object-literal",
+        "text": "{ survivor: this.pId[a], absorbed: this.pId[b],\n      phase: this.pPhase[a], sourceKind: this.pSource[a], sour",
+        "id": "F13"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.mergePair",
+          "sha256": "91b6f5d42261e6ba84e6cb99e0e41265554d7818a4d5f06df87f98580a147bbf",
+          "text": "{ survivor: this.pId[a], absorbed: this.pId[b],\r\n      phase: this.pPhase[a], sourceKind: this.pSource[a], sourceId: this.pSourceId[a],\r\n      column: Math.floor(this.pX[a]), massBefore: mass, massAfter: mass }"
+        }
+      ]
+    },
+    {
+      "id": "F14",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "edit",
+        "line": 660,
+        "kind": "object-literal",
+        "text": "{ mass: packageMass, x: x,\n            y: r.kind === 'lift' ? low : Math.max(low, Math.min(high, r.predictedY)",
+        "id": "F14"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.edit",
+          "sha256": "5eea84dc85a2ea2067cce1f88da22be7415087d3f4e3976a6e3c418d0ace9347",
+          "text": "{ mass: packageMass, x: x,\r\n            y: dry&&r.kind==='spawn'?r.predictedY:r.kind === 'lift' ? low : Math.max(low, Math.min(high, r.predictedY)),\r\n            vx: dry&&r.kind==='spawn'?0:r.kind === 'lift' ? jitter * 2 * params.liftSpread : speed * Math.sin(view.effectiveTiltRad),\r\n            vy: dry&&r.kind==='spawn'?0:r.kind === 'lift' ? lift : -speed * Math.cos(view.effectiveTiltRad),\r\n            phase: phase, sourceKind: r.sourceKind, sourceId: r.sourceId }"
+        }
+      ]
+    },
+    {
+      "id": "F15",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "edit",
+        "line": 666,
+        "kind": "object-literal",
+        "text": "{ kind: 'birth', index: this.birthRecords.length }",
+        "id": "F15"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.edit",
+          "sha256": "40286a57f08b8bad64f8dba92753eda22dc9c391e10ebf33c07dc780dccad145",
+          "text": "{ kind: 'birth', index: this.birthRecords.length }"
+        }
+      ]
+    },
+    {
+      "id": "F16",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "edit",
+        "line": 667,
+        "kind": "object-literal",
+        "text": "{ particleId: this.pId[slot], mass: birth.mass,\n            x: birth.x, y: birth.y, vx: birth.vx, vy: birth.vy",
+        "id": "F16"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleField.edit",
+          "sha256": "2d90b94afcbde0ad08854929271c6a66c795a9e66f745bd6d6ab056dca91c1ab",
+          "text": "{ particleId: this.pId[slot], mass: birth.mass,\r\n            x: birth.x, y: birth.y, vx: birth.vx, vy: birth.vy,\r\n            phase: birth.phase, sourceKind: birth.sourceKind, sourceId: birth.sourceId }"
+        }
+      ]
+    },
+    {
+      "id": "F17",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "record",
+        "line": 867,
+        "kind": "allocating-helper",
+        "text": "request.mergedIds.slice()",
+        "id": "F17"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleJournal.record",
+          "sha256": "c5aa95d8c6bd513bdd5db7e369a475aa1158a768d16424ecf6b4b909199a8b3b",
+          "text": "request.mergedIds.slice()"
+        }
+      ]
+    },
+    {
+      "id": "F18",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "finish",
+        "line": 874,
+        "kind": "allocating-helper",
+        "text": "this.requests.slice(0, this.count)",
+        "id": "F18"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleJournal.finish",
+          "sha256": "48de4fc2d0f08b28d308e893b193d7ace844f1cacb8d91a4787bc958016f4dcc",
+          "text": "this.requests.slice(0, this.count)"
+        }
+      ]
+    },
+    {
+      "id": "F19",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "finish",
+        "line": 875,
+        "kind": "object-literal",
+        "text": "{ identity: this.identity, requestCount: this.count,\n      requests: active, totalRequested: this.totalRequest",
+        "id": "F19"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleJournal.finish",
+          "sha256": "cc688dd68f5fc76f6b7ccdb52865a6b48a42a2d3fe930d916d67c53f82e0533c",
+          "text": "{ identity: this.identity, requestCount: this.count,\r\n      requests: active, totalRequested: this.totalRequested,\r\n      requestHash: JSON.stringify(active) }"
+        }
+      ]
+    },
+    {
+      "id": "F20",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "finish",
+        "line": 877,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify(active)",
+        "id": "F20"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::P011ParticleJournal.finish",
+          "sha256": "828869de2ba6cc53d375f6e606acaa1ca23df91518d585ba6050dd1895929748",
+          "text": "JSON.stringify(active)"
+        }
+      ]
+    },
+    {
+      "id": "F21",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 892,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "F21"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "F22",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 894,
+        "kind": "closure",
+        "text": "(a: number, b: number): number => frozenPool.pId[a] - frozenPool.pId[b]",
+        "id": "F22"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "3bd3c2aaf1b5f71ef111d2f3c1068deb3394a8799ff109c10cc6b98350c98f25",
+          "text": "(a: number, b: number): number => frozenPool.pId[a] - frozenPool.pId[b]"
+        }
+      ]
+    },
+    {
+      "id": "F23",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 897,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "F23"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "F24",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 898,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "F24"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "F25",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 899,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "F25"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "F26",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 919,
+        "kind": "object-literal",
+        "text": "{ particleId: frozenPool.pId[i], column: c, x: x,\n        y: Math.max(y, frozenField.sandTopAt(c) + params.con",
+        "id": "F26"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "e38dfe934b3bc5ec589f5981a4d236a98f988f1fc751a9451b862afe16d301d2",
+          "text": "{ particleId: frozenPool.pId[i], column: c, x: x,\r\n        y: Math.max(y, frozenField.sandTopAt(c) + params.contactEps), vx: vx, vy: vy }"
+        }
+      ]
+    },
+    {
+      "id": "F27",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 924,
+        "kind": "object-literal",
+        "text": "{\n      requestKey: JSON.stringify([identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, co",
+        "id": "F27"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "27eaaf7b02af9f8ff10e07a0bbb3ef4fa2c966eabaa05aeadd1bb0011cc905f7",
+          "text": "{\r\n      requestKey: JSON.stringify([identity.runId, identity.substepId, kind,\r\n        frozenPool.pId[i], c, contact ? -1 : target, j]),\r\n      substepId: identity.substepId, ordinal: j, kind: kind,\r\n      particleId: frozenPool.pId[i], sourceId: frozenPool.pSourceId[i],\r\n      phase: frozenPool.pPhase[i], sourceKind: frozenPool.pSource[i],\r\n      column: c, targetColumn: contact ? -1 : target,\r\n      requested: frozenPool.pMass[i], totalWeight: frozenPool.pMass[i],\r\n      predictedX: contact ? x0 : x,\r\n      predictedY: contact ? frozenField.sandTopAt(c) + params.contactEps :\r\n        Math.max(y, frozenField.sandTopAt(target) + params.contactEps),\r\n      predictedVx: contact ? 0 : vx, predictedVy: contact ? 0 : vy,\r\n      mergedIds: []\r\n    }"
+        }
+      ]
+    },
+    {
+      "id": "F28",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 925,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify([identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, contact ? -1 : target,",
+        "id": "F28"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "890b9b51ab16ab98f868d7deffa2b53dea26470f5c899fd9b5c64d97025ede22",
+          "text": "JSON.stringify([identity.runId, identity.substepId, kind,\r\n        frozenPool.pId[i], c, contact ? -1 : target, j])"
+        }
+      ]
+    },
+    {
+      "id": "F29",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 925,
+        "kind": "array-literal",
+        "text": "[identity.runId, identity.substepId, kind,\n        frozenPool.pId[i], c, contact ? -1 : target, j]",
+        "id": "F29"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "ec452b848aa8a6fe742858b9d2bf9d9dcf7b46d955bb51f630284b66df6d00d4",
+          "text": "[identity.runId, identity.substepId, kind,\r\n        frozenPool.pId[i], c, contact ? -1 : target, j]"
+        }
+      ]
+    },
+    {
+      "id": "F30",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 936,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "F30"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "F31",
+      "original": {
+        "file": "P011ParticleField.ets",
+        "owner": "collectParticlePlan",
+        "line": 944,
+        "kind": "allocating-helper",
+        "text": "JSON.stringify(motions)",
+        "id": "F31"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticleField.ets::collectParticlePlan",
+          "sha256": "214de1722d4b918a3413bf89d8f83f08649e87ace1d1cb366b7b6c4cc52eed83",
+          "text": "JSON.stringify(motions)"
+        }
+      ]
+    },
+    {
+      "id": "P01",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "reserve",
+        "line": 58,
+        "kind": "object-literal",
+        "text": "{ ticketId: this.nextId, requestKey: r.requestKey,\n      substepId: r.substepId, source: r.column, target: tar",
+        "id": "P01"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeBudget.reserve",
+          "sha256": "5cbc15d3bed86a9ecfb4c96cb90fc6cd3ac8973ee50be386a2422e90d7297043",
+          "text": "{ ticketId: this.nextId, requestKey: r.requestKey,\r\n      substepId: r.substepId, source: r.column, target: target,\r\n      requested: r.requested, localAllowed: l, reserved: reserved, refunded: 0 }"
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "view",
+        "line": 167,
+        "kind": "constructor",
+        "text": "new P011ParticlePrototypeView(this)",
+        "id": "P02"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.view",
+          "sha256": "778ad5eef3cf4c2db6dff72e7ddec81743250bbd8b306e617c7e6761101d0e7e",
+          "text": "new P011ParticlePrototypeView(this)"
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "executeParticlePlan",
+        "line": 181,
+        "kind": "allocating-helper",
+        "text": "this.snapshot()",
+        "id": "P03"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan",
+          "sha256": "28b19687b9b146d597875f82a11841999f0f404444797c138fdc2946347a537b",
+          "text": "this.snapshot()"
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "executeParticlePlan",
+        "line": 181,
+        "kind": "allocating-helper",
+        "text": "this.pool.checkpoint()",
+        "id": "P04"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan",
+          "sha256": "4bf547c9ed3e9a2133bc221bcfe8bcc89673946589f1df1852c58042de21e904",
+          "text": "this.pool.checkpoint()"
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "executeParticlePlan",
+        "line": 189,
+        "kind": "object-literal",
+        "text": "{ ok: true, errorCode: null, results: results }",
+        "id": "P05"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan",
+          "sha256": "73bf1993b62cb2959cf5809bdceb427dd22ab747ca2909bc9ed671b5d057f9db",
+          "text": "{ ok: true, errorCode: null, results: results }"
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "executeParticlePlan",
+        "line": 194,
+        "kind": "object-literal",
+        "text": "{ ok: false, errorCode: code, results: [] }",
+        "id": "P06"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan",
+          "sha256": "c85cd2a0ef655f274d6f8f103432a8a6bcdbbe523f56214be98369c0986618d5",
+          "text": "{ ok: false, errorCode: code, results: [] }"
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "executeParticlePlan",
+        "line": 194,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "P07"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.executeParticlePlan",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "guard",
+        "line": 198,
+        "kind": "constructor",
+        "text": "new Map<number, number>()",
+        "id": "P08"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.guard",
+          "sha256": "f3f0d12a5c13724ab5587e4572a1ce94d2855dc4d37a124d72e61d1678a77612",
+          "text": "new Map<number, number>()"
+        }
+      ]
+    },
+    {
+      "id": "P09",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "guard",
+        "line": 200,
+        "kind": "closure",
+        "text": "(edge: number): number => this.sand(edge + 1) - this.sand(edge) -\n        Math.tan(this.identity.effectiveTilt",
+        "id": "P09"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.guard",
+          "sha256": "80760d78b408775858bbd47dc47af2c4aaf402bb822a9ec1715f6e3ffc55a4c9",
+          "text": "(edge: number): number => this.sand(edge + 1) - this.sand(edge) -\r\n        Math.tan(this.identity.effectiveTiltRad)"
+        }
+      ]
+    },
+    {
+      "id": "P10",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "guard",
+        "line": 204,
+        "kind": "object-literal",
+        "text": "{ accepted: decision.accepted, rejected: decision.rejected,\n      allLegalBefore: decision.allLegalBefore,\n   ",
+        "id": "P10"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.guard",
+          "sha256": "a5a2c1f7dee1c2c8cb8da3d108a852b7f48814e3977d391005346e38f00e8dbf",
+          "text": "{ accepted: decision.accepted, rejected: decision.rejected,\r\n      allLegalBefore: decision.allLegalBefore,\r\n      limitingEdge: decision.limitingEdge === null ? null : edges[decision.limitingEdge],\r\n      affectedEdgeIds: edges }"
+        }
+      ]
+    },
+    {
+      "id": "P11",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 244,
+        "kind": "allocating-helper",
+        "text": "this.snapshot()",
+        "id": "P11"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "28b19687b9b146d597875f82a11841999f0f404444797c138fdc2946347a537b",
+          "text": "this.snapshot()"
+        }
+      ]
+    },
+    {
+      "id": "P12",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 254,
+        "kind": "allocating-helper",
+        "text": "this.pool.snapshot()",
+        "id": "P12"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "b39f8c67d934d9fc68b56e0dee5992b62b22352cd7fa5cdcb34998ab3e19581e",
+          "text": "this.pool.snapshot()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "b39f8c67d934d9fc68b56e0dee5992b62b22352cd7fa5cdcb34998ab3e19581e",
+          "text": "this.pool.snapshot()"
+        }
+      ]
+    },
+    {
+      "id": "P13",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 256,
+        "kind": "allocating-helper",
+        "text": "this.view()",
+        "id": "P13"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "86d6ca30696ad3b13887d4f3e7ff8ebddd8ef2867952c841d9fb6e896cea9819",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "3d6978bb12cbc3f38b6704d29a39a6b41e140aac2d44d10f13e3bc674185689f",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "192eb3110bb936fd61540c5fc98b9c9276febedea2a4997c15a24717755d3a7c",
+          "text": "this.view().freeSpaceAt(r.targetColumn)"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d903dbdf13261825a7bac23c6fd8544b8ebd457d28f461cce5ddd349736348a",
+          "text": "this.view().freeSpaceAt"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "ab0e70f34fa17fa0f53cb89fea2a3d2e7655f65a8f85b81ed63386c3962666f5",
+          "text": "this.view().freeSpaceAt(c) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d25fe26cae62a1613afddf565a45b9a197f86f8148e4564cbb2c3c770ee35fd",
+          "text": "this.view().freeSpaceAt(c) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "0dcc4ea26baf188f3e7ceaebc648c60d9f5a535d33ea9eaae750bfe6d17b59e1",
+          "text": "this.view().freeSpaceAt(c)"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d903dbdf13261825a7bac23c6fd8544b8ebd457d28f461cce5ddd349736348a",
+          "text": "this.view().freeSpaceAt"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        }
+      ]
+    },
+    {
+      "id": "P14",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 257,
+        "kind": "allocating-helper",
+        "text": "this.view().freeSpaceAt(r.targetColumn)",
+        "id": "P14"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "86d6ca30696ad3b13887d4f3e7ff8ebddd8ef2867952c841d9fb6e896cea9819",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "3d6978bb12cbc3f38b6704d29a39a6b41e140aac2d44d10f13e3bc674185689f",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "192eb3110bb936fd61540c5fc98b9c9276febedea2a4997c15a24717755d3a7c",
+          "text": "this.view().freeSpaceAt(r.targetColumn)"
+        }
+      ]
+    },
+    {
+      "id": "P15",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 257,
+        "kind": "allocating-helper",
+        "text": "this.view()",
+        "id": "P15"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "86d6ca30696ad3b13887d4f3e7ff8ebddd8ef2867952c841d9fb6e896cea9819",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "3d6978bb12cbc3f38b6704d29a39a6b41e140aac2d44d10f13e3bc674185689f",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "192eb3110bb936fd61540c5fc98b9c9276febedea2a4997c15a24717755d3a7c",
+          "text": "this.view().freeSpaceAt(r.targetColumn)"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d903dbdf13261825a7bac23c6fd8544b8ebd457d28f461cce5ddd349736348a",
+          "text": "this.view().freeSpaceAt"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "ab0e70f34fa17fa0f53cb89fea2a3d2e7655f65a8f85b81ed63386c3962666f5",
+          "text": "this.view().freeSpaceAt(c) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d25fe26cae62a1613afddf565a45b9a197f86f8148e4564cbb2c3c770ee35fd",
+          "text": "this.view().freeSpaceAt(c) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "0dcc4ea26baf188f3e7ceaebc648c60d9f5a535d33ea9eaae750bfe6d17b59e1",
+          "text": "this.view().freeSpaceAt(c)"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d903dbdf13261825a7bac23c6fd8544b8ebd457d28f461cce5ddd349736348a",
+          "text": "this.view().freeSpaceAt"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        }
+      ]
+    },
+    {
+      "id": "P16",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 259,
+        "kind": "allocating-helper",
+        "text": "this.view().freeSpaceAt(c)",
+        "id": "P16"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "ab0e70f34fa17fa0f53cb89fea2a3d2e7655f65a8f85b81ed63386c3962666f5",
+          "text": "this.view().freeSpaceAt(c) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d25fe26cae62a1613afddf565a45b9a197f86f8148e4564cbb2c3c770ee35fd",
+          "text": "this.view().freeSpaceAt(c) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "0dcc4ea26baf188f3e7ceaebc648c60d9f5a535d33ea9eaae750bfe6d17b59e1",
+          "text": "this.view().freeSpaceAt(c)"
+        }
+      ]
+    },
+    {
+      "id": "P17",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 259,
+        "kind": "allocating-helper",
+        "text": "this.view()",
+        "id": "P17"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "86d6ca30696ad3b13887d4f3e7ff8ebddd8ef2867952c841d9fb6e896cea9819",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "3d6978bb12cbc3f38b6704d29a39a6b41e140aac2d44d10f13e3bc674185689f",
+          "text": "this.view().freeSpaceAt(r.targetColumn) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "192eb3110bb936fd61540c5fc98b9c9276febedea2a4997c15a24717755d3a7c",
+          "text": "this.view().freeSpaceAt(r.targetColumn)"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d903dbdf13261825a7bac23c6fd8544b8ebd457d28f461cce5ddd349736348a",
+          "text": "this.view().freeSpaceAt"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "ab0e70f34fa17fa0f53cb89fea2a3d2e7655f65a8f85b81ed63386c3962666f5",
+          "text": "this.view().freeSpaceAt(c) + 1e-9 < r.requested"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d25fe26cae62a1613afddf565a45b9a197f86f8148e4564cbb2c3c770ee35fd",
+          "text": "this.view().freeSpaceAt(c) + 1e-9"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "0dcc4ea26baf188f3e7ceaebc648c60d9f5a535d33ea9eaae750bfe6d17b59e1",
+          "text": "this.view().freeSpaceAt(c)"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "8d903dbdf13261825a7bac23c6fd8544b8ebd457d28f461cce5ddd349736348a",
+          "text": "this.view().freeSpaceAt"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "c8de53f9529f4939a067e97ad7a488fce2b9311f472c09bf325ee934c019e2ca",
+          "text": "this.view()"
+        }
+      ]
+    },
+    {
+      "id": "P18",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 295,
+        "kind": "object-literal",
+        "text": "{ requestKey: r.requestKey,\n        substepId: r.substepId, ordinal: r.ordinal, kind: r.kind, particleId: r.pa",
+        "id": "P18"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "d91a553b6d7d6f893879d5949eac4457bb39de70c66efc71df4c77a66028ad3a",
+          "text": "{ requestKey: r.requestKey,\r\n        substepId: r.substepId, ordinal: r.ordinal, kind: r.kind, particleId: r.particleId,\r\n        sourceId: r.sourceId, phase: r.phase, sourceKind: r.sourceKind,\r\n        column: c, targetColumn: r.targetColumn, requested: r.requested, totalWeight: r.totalWeight,\r\n        predictedX: r.predictedX, predictedY: r.kind === 'deposit' || r.kind === 'lift' ?\r\n          this.sand(c) + this.params.contactEps : r.predictedY,\r\n        predictedVx: r.predictedVx, predictedVy: r.predictedVy, mergedIds: r.mergedIds }"
+        }
+      ]
+    },
+    {
+      "id": "P19",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 302,
+        "kind": "object-literal",
+        "text": "{ requestKey: r.requestKey,\n        grantedHeavy: gh, grantedLight: gl, disposition: disposition }",
+        "id": "P19"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "70d00549ff2dc70bbabe73fe97ea397d901fb736480d06e44b2842fa26aa7591",
+          "text": "{ requestKey: r.requestKey,\r\n        grantedHeavy: gh, grantedLight: gl, disposition: disposition }"
+        }
+      ]
+    },
+    {
+      "id": "P20",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 325,
+        "kind": "allocating-helper",
+        "text": "this.pool.snapshot()",
+        "id": "P20"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "b39f8c67d934d9fc68b56e0dee5992b62b22352cd7fa5cdcb34998ab3e19581e",
+          "text": "this.pool.snapshot()"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "b39f8c67d934d9fc68b56e0dee5992b62b22352cd7fa5cdcb34998ab3e19581e",
+          "text": "this.pool.snapshot()"
+        }
+      ]
+    },
+    {
+      "id": "P21",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 343,
+        "kind": "object-literal",
+        "text": "{ kind: 'MERGE', requestKey: r.requestKey, particleId: m.survivor,\n          sourceId: m.sourceId, phase: m.ph",
+        "id": "P21"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "73f10aa46606497b8d3bc78a6bb3bcddcbf09f9a4050cae2cdf9757807ab23f7",
+          "text": "{ kind: 'MERGE', requestKey: r.requestKey, particleId: m.survivor,\r\n          sourceId: m.sourceId, phase: m.phase, sourceKind: m.sourceKind, column: m.column,\r\n          targetColumn: -1, mass: m.massBefore, requested: m.massBefore, granted: m.massAfter,\r\n          remainder: 0, budgetClipped: 0, guardRejected: 0, capacityClipped: 0, poolClipped: 0,\r\n          deltaS: 0, mergedIds: [m.survivor, m.absorbed], flag: '' }"
+        }
+      ]
+    },
+    {
+      "id": "P22",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 347,
+        "kind": "array-literal",
+        "text": "[m.survivor, m.absorbed]",
+        "id": "P22"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "f7be4665be25f41ea39dad9426791256d18c19fa4a91fdaf70cf9c217de44684",
+          "text": "[m.survivor, m.absorbed]"
+        }
+      ]
+    },
+    {
+      "id": "P23",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 353,
+        "kind": "object-literal",
+        "text": "{ kind: 'SPAWN', requestKey: r.requestKey, particleId: b.particleId,\n          sourceId: b.sourceId, phase: b.",
+        "id": "P23"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "4f671a3f1da4ce548d60aff9a85f79b4117634ccb3f977c413b4669edf99ad90",
+          "text": "{ kind: 'SPAWN', requestKey: r.requestKey, particleId: b.particleId,\r\n          sourceId: b.sourceId, phase: b.phase, sourceKind: b.sourceKind, column: c, targetColumn: -1,\r\n          mass: b.mass, requested: b.mass, granted: b.mass, admitted: b.mass,\r\n          remainder: 0, budgetClipped: 0, guardRejected: 0, capacityClipped: 0, poolClipped: 0,\r\n          deltaS: 0, mergedIds: [], flag: '', x: b.x, y: b.y, vx: b.vx, vy: b.vy }"
+        }
+      ]
+    },
+    {
+      "id": "P24",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 357,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "P24"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "P25",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 362,
+        "kind": "object-literal",
+        "text": "{ kind: kind, requestKey: r.requestKey, particleId: r.particleId,\n        sourceId: r.sourceId, phase: r.phase",
+        "id": "P25"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "00652141fcba04e8463a7adb327dd463cd48382910d07dda8101146f16acffe3",
+          "text": "{ kind: kind, requestKey: r.requestKey, particleId: r.particleId,\r\n        sourceId: r.sourceId, phase: r.phase, sourceKind: r.sourceKind, column: c,\r\n        targetColumn: r.targetColumn, mass: r.requested, requested: r.requested, granted: granted,\r\n        remainder: r.requested - granted, budgetClipped: budgetClipped, guardRejected: guardRejected,\r\n        capacityClipped: capacityClipped, poolClipped: poolClipped,\r\n        deltaS: r.kind === 'deposit' ? granted : r.kind === 'lift' ? -granted : 0,\r\n        mergedIds: r.mergedIds, flag: r.kind === 'degrade' ? 'PARTICLE_DEGRADED_TO_COLUMN' : '',\r\n        massAfter: r.requested - granted, released: r.requested === granted,\r\n        remainderDisposition: r.kind === 'deposit' && r.requested > granted ? 'RETAIN_PARTICLE' : 'NONE',\r\n        guardPreview: guard, budgetLocal: granted, budgetTotal: ticket === null ? 0 : granted, bottom: 0 }"
+        }
+      ]
+    },
+    {
+      "id": "P26",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 372,
+        "kind": "object-literal",
+        "text": "{ kind: 'DEGRADE', requestKey: r.requestKey, particleId: 0,\n        sourceId: r.sourceId, phase: r.phase, sour",
+        "id": "P26"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "0a6f4563c5905ba7b7b3f466b9c42c9b4b8c42fb75ee14315efb7611a204a4a7",
+          "text": "{ kind: 'DEGRADE', requestKey: r.requestKey, particleId: 0,\r\n        sourceId: r.sourceId, phase: r.phase, sourceKind: r.sourceKind, column: c, targetColumn: -1,\r\n        mass: granted, requested: granted, granted: granted, remainder: 0, budgetClipped: 0,\r\n        guardRejected: 0, capacityClipped: 0, poolClipped: 0, deltaS: 0, mergedIds: [],\r\n        flag: 'PARTICLE_DEGRADED_TO_COLUMN' }"
+        }
+      ]
+    },
+    {
+      "id": "P27",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 375,
+        "kind": "array-literal",
+        "text": "[]",
+        "id": "P27"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        },
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "text": "[]"
+        }
+      ]
+    },
+    {
+      "id": "P28",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 385,
+        "kind": "object-literal",
+        "text": "{ requestKey: r.requestKey, committed: true, errorCode: null,\n        requested: r.requested, granted: granted",
+        "id": "P28"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "ee88b4269daa8f99d5ec65a5330107bb08f98e35267f2519678a7cf2b09a97c3",
+          "text": "{ requestKey: r.requestKey, committed: true, errorCode: null,\r\n        requested: r.requested, granted: granted, remainder: r.requested - granted,\r\n        budgetClipped: budgetClipped, guardRejected: guardRejected, capacityClipped: capacityClipped,\r\n        poolClipped: poolClipped, guard: guard, eventBegin: begin, eventCount: count }"
+        }
+      ]
+    },
+    {
+      "id": "P29",
+      "original": {
+        "file": "P011ParticlePrototype.ets",
+        "owner": "apply",
+        "line": 392,
+        "kind": "object-literal",
+        "text": "{ requestKey: r.requestKey, committed: false, errorCode: `${error}`,\n        requested: r.requested, granted: ",
+        "id": "P29"
+      },
+      "bindings": [
+        {
+          "owner": "P011ParticlePrototype.ets::P011ParticlePrototypeSink.apply",
+          "sha256": "cc166487a394c7b6a23934c0f693ec1f23f850cad15ae72626886a36b4839407",
+          "text": "{ requestKey: r.requestKey, committed: false, errorCode: `${error}`,\r\n        requested: r.requested, granted: 0, remainder: r.requested,\r\n        budgetClipped: 0, guardRejected: 0, capacityClipped: 0, poolClipped: r.requested,\r\n        guard: null, eventBegin: before.eventCount, eventCount: 0 }"
+        }
+      ]
+    }
+  ]
+}

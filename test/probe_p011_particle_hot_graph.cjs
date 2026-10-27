@@ -9,7 +9,7 @@ const roots=new Set(['beginStepHot','checkpointHot','collectParticlePlanInto','c
   'copyStateToHot','guardAdmitInto','reserveInto','refundInto','closeInto']);
 const pure=new Set(['Math.floor','Math.max','Math.min','Math.sin','Math.cos','Math.tan','Math.exp','Math.abs','Math.imul',
   'Number.isSafeInteger','Number.isFinite','Number.isInteger']);
-function audit(){
+function conservativeAudit(){
   const nodes=[],byName=new Map(),typed=new Set();
   for(const file of files){
     const ast=ts.createSourceFile(file,fs.readFileSync(path.join(__dirname,'../entry/src/main/ets/physics',file),'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TS);
@@ -57,4 +57,10 @@ function audit(){
     roots:visited.filter(n=>roots.has(n.name)).map(n=>n.key),reachableNodes:visited.map(n=>({key:n.key,edges:[...new Set(n.edges)]})),
     nativeAllowlist:[...pure,'TypedArray.set (declared existing storage)','TypedArray.fill (declared existing storage)']};
 }
-module.exports={audit};if(require.main===module){const r=audit();console.log(JSON.stringify(r,null,2));if(r.status!=='ZERO_ALLOCATION')process.exitCode=2;}
+// No-argument API/CLI remains the original conservative graph and exit=2.
+function audit(options){return options===undefined?conservativeAudit():require('./tools/p011_hot_context_graph.cjs').audit(options);}
+module.exports={audit};if(require.main===module){
+  const profileIndex=process.argv.indexOf('--profile'),sourceIndex=process.argv.indexOf('--source-root');
+  const r=profileIndex<0?audit():audit({profile:process.argv[profileIndex+1],sourceRoot:sourceIndex<0?undefined:process.argv[sourceIndex+1]});
+  console.log(JSON.stringify(r,null,2));if(r.status!=='ZERO_ALLOCATION')process.exitCode=2;
+}
