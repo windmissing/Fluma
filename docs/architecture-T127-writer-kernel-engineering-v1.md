@@ -1,5 +1,7 @@
 # T127 严格态逐核工程接力 v1
 
+2026-10-27语义增补（T148）：除法令s=sign(v*b−a)，定向端点需要sign(a/b−v)=−s*sign(b)，当前实现的负号正确。不得按T147 V1错误oracle删负号；测试纠正与T135既定缺口接力见 [T148](architecture-T148-outward-kernel-routing-v1.md)。本段明确原合同符号，不改算法/容差或启生产路由。
+
 日期：2026-10-26。architect；原卡 `6adf424be4b0127832c267ff`。消费T110算法/证据/复盘、T104工程、T112 db1be20基础实现和T120位型勘误。**工程分阶段交付；纯核可实施，完整strict route仍NOT_IMPLEMENTED/禁止启用**。不使用真机。
 
 ## 1. 支持域与当前代码差距

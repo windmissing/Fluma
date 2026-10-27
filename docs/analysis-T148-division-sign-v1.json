@@ -1,0 +1,113 @@
+{
+  "revision": "T148_EXACT_DIVISION_SIGN_ANALYSIS_V1",
+  "date": "2026-10-27",
+  "kind": "read-only archived evidence plus exact integer arithmetic; no product/test execution",
+  "formula": "a/b-v=(a-v*b)/b",
+  "inputSha256": "57597d3561ffd8eab6438d81ffc0f84e3d6dc56fe1afed8b722935ac3508c00b",
+  "archivedRows": 5,
+  "checked": [
+    {
+      "a": 137307.4545288086,
+      "b": -0.000011015367480382565,
+      "v": -12465081602.891735,
+      "production": [
+        -12465081602.891735,
+        -12465081602.891733
+      ],
+      "oracle": [
+        -12465081602.891737,
+        -12465081602.891735
+      ],
+      "exactVBminusASign": 1,
+      "bSign": -1,
+      "independentExactMinusVSign": 1,
+      "productionContainsExactQuotient": true,
+      "reportedOracleContainsExactQuotient": false
+    },
+    {
+      "a": -5.6387022315251834e-8,
+      "b": -4.334790612015027e-7,
+      "v": 0.1300801523352943,
+      "production": [
+        0.1300801523352943,
+        0.13008015233529432
+      ],
+      "oracle": [
+        0.13008015233529427,
+        0.1300801523352943
+      ],
+      "exactVBminusASign": 1,
+      "bSign": -1,
+      "independentExactMinusVSign": 1,
+      "productionContainsExactQuotient": true,
+      "reportedOracleContainsExactQuotient": false
+    },
+    {
+      "a": 2.6799223413690925,
+      "b": -9.369056803709697e-7,
+      "v": -2860397.1536472826,
+      "production": [
+        -2860397.153647283,
+        -2860397.1536472826
+      ],
+      "oracle": [
+        -2860397.1536472826,
+        -2860397.153647282
+      ],
+      "exactVBminusASign": -1,
+      "bSign": -1,
+      "independentExactMinusVSign": -1,
+      "productionContainsExactQuotient": true,
+      "reportedOracleContainsExactQuotient": false
+    },
+    {
+      "a": 0.02006657551828539,
+      "b": 1045291.7492675781,
+      "v": 1.919710504971054e-8,
+      "production": [
+        1.919710504971054e-8,
+        1.9197105049710544e-8
+      ],
+      "oracle": [
+        1.9197105049710537e-8,
+        1.919710504971054e-8
+      ],
+      "exactVBminusASign": -1,
+      "bSign": 1,
+      "independentExactMinusVSign": 1,
+      "productionContainsExactQuotient": true,
+      "reportedOracleContainsExactQuotient": false
+    },
+    {
+      "a": 243726062.4375,
+      "b": 5.508179266033864e-7,
+      "v": 442480265557866.8,
+      "production": [
+        442480265557866.8,
+        442480265557866.9
+      ],
+      "oracle": [
+        442480265557866.75,
+        442480265557866.8
+      ],
+      "exactVBminusASign": -1,
+      "bSign": 1,
+      "independentExactMinusVSign": 1,
+      "productionContainsExactQuotient": true,
+      "reportedOracleContainsExactQuotient": false
+    }
+  ],
+  "decisive": {
+    "a": 181.74490928649902,
+    "b": 0.000032622665372628035,
+    "v": 5571123.8554711,
+    "residualVBminusA": {
+      "numerator": "503444847",
+      "denominator": "37778931862957161709568"
+    },
+    "exactQuotientMinusV": {
+      "numerator": "-503444847",
+      "denominator": "1232449452300566528"
+    }
+  }
+}
