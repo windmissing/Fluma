@@ -1,0 +1,171 @@
+{
+ "executionId": "p160-kernels-independent-v1",
+ "date": "2026-10-27",
+ "target": "T135 6ee7e19",
+ "results": [
+  {
+   "id": "T160-W1",
+   "name": "registry: settle/top/land CONTACT_WAIT SUPPORTED; PERCOLATE unsupported; AIRBORNE CONTACT_HOLD_UNSUPPORTED",
+   "status": "PASS"
+  },
+  {
+   "id": "T160-W2",
+   "name": "settle: RAW decision, phase sum = 0.175 (exact rational), NOT qGranted 0.15; A interval excludes 1 (ALo>1)",
+   "status": "PASS",
+   "sum": 0.175,
+   "ALo": 1.1666666666666665,
+   "AHi": 1.166666666666667,
+   "phaseHeavy": 0.05,
+   "phaseLight": 0.125
+  },
+  {
+   "id": "T160-W3",
+   "name": "settle commit: mh/ml get phase values, suspH/suspL = 1−phase (conservation), snapshotSerial advanced once",
+   "status": "PASS",
+   "reason": "OK",
+   "mh": 0.05,
+   "ml": 0.125,
+   "suspH": 0.95,
+   "suspL": 0.875,
+   "serial": 6
+  },
+  {
+   "id": "T160-W4",
+   "name": "top MIX: 2-column patch, receiver column receives recorded phaseHeavy/phaseLight",
+   "status": "PASS",
+   "branch": "MIX",
+   "changed": 2,
+   "reason": "OK",
+   "mh2": 0.03333333333333333,
+   "ml2": 0.06666666666666667
+  },
+  {
+   "id": "T160-W5",
+   "name": "top MIX b (two-term T134 semantics): stored M=0.30000000000000004 ≠ exact sum; b interval non-degenerate and covers the residual magnitude",
+   "status": "PASS",
+   "bLo": -1.1102230246251565e-16,
+   "bHi": 0,
+   "stored": 0.30000000000000004,
+   "residual": 2.7755575615628914e-17
+  },
+  {
+   "0": {
+    "branch": "MIX_LIGHT",
+    "decision": "RAW",
+    "nodes": 35
+   },
+   "1": {
+    "branch": "MIX_LIGHT_HEAVY",
+    "decision": "RAW",
+    "nodes": 36
+   },
+   "id": "T160-W6",
+   "name": "top later branches: MIX_LIGHT and MIX_LIGHT_HEAVY reach RAW with correct branch names",
+   "status": "PASS"
+  },
+  {
+   "id": "T160-W7",
+   "name": "LAND partial q=2^-54: RN(m−q)=m forbids bed increase → ZERO, pool mass untouched, no event, ticket refused state",
+   "status": "PASS",
+   "decision": "ZERO",
+   "poolMass": 1,
+   "events": 0,
+   "ticketState": 3
+  },
+  {
+   "id": "T160-W8",
+   "name": "LAND q=2^-53: RN(1−q)=nextDown(1) allowed → poolMass decremented exactly, ID retained",
+   "status": "PASS",
+   "decision": "RAW",
+   "poolMass": 0.9999999999999999,
+   "expect": 0.9999999999999999
+  },
+  {
+   "id": "T160-W9",
+   "name": "full LAND retire: slot state→0, ID preserved, liveCount→0, retired slot released once",
+   "status": "PASS",
+   "afterPartial": {
+    "mass": 0.9999999999999999,
+    "live": 1,
+    "free": 1,
+    "id": 21
+   },
+   "retired": true,
+   "reason": "OK",
+   "live": 0,
+   "free": 2,
+   "nextId": 1
+  },
+  {
+   "id": "T160-W10",
+   "name": "LAND INWARD: 2 previews (RAW then INWARD), qControl in (0,.2); commit keeps ID/source/motion provenance, refund=debit−qControl once, event+lineage written, waterTop=cache+surface",
+   "status": "PASS",
+   "decision": "INWARD",
+   "previews": 2,
+   "q": 0.19999999999999982,
+   "refund": 0.30000000000000016,
+   "reason": "OK",
+   "events": 1,
+   "lineage": 1
+  },
+  {
+   "id": "T160-W11",
+   "name": "token single-consume: second commit with same token → STALE_TOKEN, zero field mutation",
+   "status": "PASS",
+   "first": "OK",
+   "second": "STALE_TOKEN"
+  },
+  {
+   "id": "T160-W12",
+   "name": "all participants (columns/source/pool/ticket/identity/freeSlots) checked pre-commit; forged public afterBits/qControl cannot alter sealed write",
+   "status": "PASS",
+   "attempted": [
+    "IDENTITY_MISMATCH",
+    "IDENTITY_MISMATCH",
+    "IDENTITY_MISMATCH",
+    "IDENTITY_MISMATCH",
+    "IDENTITY_MISMATCH",
+    "IDENTITY_MISMATCH"
+   ],
+   "forged": "OK"
+  },
+  {
+   "id": "T160-W13",
+   "name": "older token after newer preview → STALE_TOKEN; ZERO preserves ±0 bit patterns, no pool/event writes, ticket refused",
+   "status": "PASS",
+   "stale": "STALE_TOKEN",
+   "zeroDecision": "ZERO",
+   "zReason": "OK"
+  },
+  {
+   "id": "T160-W14",
+   "name": "settle envelope: 54 nodes, every node's ideal interval contains the independent exact expression and error interval brackets actual−ideal",
+   "status": "PASS",
+   "nodeCount": 54,
+   "bad": []
+  },
+  {
+   "0": {
+    "kernel": "TOP_SPLIT_RN_GRAPH_V1",
+    "nodes": 34,
+    "bad": 0,
+    "delta0": [
+     -2.220446049250313e-16,
+     0
+    ]
+   },
+   "1": {
+    "kernel": "LAND_RN_GRAPH_V1",
+    "nodes": 14,
+    "bad": 0,
+    "delta0": [
+     0,
+     0
+    ]
+   },
+   "id": "T160-W15",
+   "name": "top+LAND node certificates reconstruct exactly; CanonicalS δ0 explicit (nonzero interval) for top",
+   "status": "PASS"
+  }
+ ]
+}
