@@ -7,6 +7,7 @@ import { P012FrameContext,P012AppearanceParams,p012FactoryAppearance,validateP01
 import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
 import { p013Sha256 } from './preparation/P013CanvasAssetExport';
 import { P013BaseByteEvaluator,P013BaseStripDescriptor } from './preparation/P013BaseByteEvaluator';
+import { P013MaterialRejectionV1 } from './P013MaterialRejection';
 export class P013SceneController {
   readonly light: P013LightParams=new P013LightParams();
   readonly preparation: P013ScenePreparation=new P013ScenePreparation();
@@ -20,6 +21,7 @@ export class P013SceneController {
   private baseEvaluator: P013BaseByteEvaluator=new P013BaseByteEvaluator();
   private configBindingId: number=0;private configDigest: string='';
   constructor(native: P013SceneNative|null=null){this.native=native;this.loaded=native!==null;}
+  getLastMaterialRejection(): P013MaterialRejectionV1 | null {return this.preparation.getLastMaterialRejection();}
   onLoad(): void {this.native=nativeRenderer as P013SceneNative;this.loaded=true;this.session=0;this.configured=false;if(!this.active)this.native.setActive(false);}
   setActive(active: boolean): void {this.active=active;if(this.loaded)this.native?.setActive(active);}
   release(): void {if(this.loaded)this.native?.release();this.loaded=false;this.native=null;this.session=0;this.configured=false;}
@@ -65,6 +67,7 @@ export class P013SceneController {
       f.capacity=state.field.capacity;f.visualInverted=context.visualInverted;
       f.stateEpoch=state.stateEpoch;f.physicsCommitId=state.physicsCommitId;f.runId=state.runId;f.ledgerCommitKey=state.ledgerCommitKey===null?'':JSON.stringify(state.ledgerCommitKey);f.routeId=state.routeId ?? 'column-field';f.mediumMode=state.mediumMode;
       f.frameToken=state.runId+':'+state.stateEpoch+':'+state.physicsCommitId+':'+f.frameId;f.requestedGeneration=this.requestedGeneration;f.particleLayerEnabled=context.particleLayerEnabled!==false;
+      this.preparation.setDiagnosticFrame(f,pipeline,scale,this.configBindingId,this.configDigest);
       f.sourceFailure=this.preparation.pack(state,context);if(f.sourceFailure==='OK')f.sourceFailure='';
       f.particleCount=this.preparation.count;f.particleCapacity=this.preparation.capacity;
       f.scenePacketRevision=pipeline===0?'P013_SCENE_PACKET_V1':'P013_SCENE_PACKET_V2_BASE_STRIP';
@@ -93,6 +96,7 @@ export class P013SceneController {
       }
       const receipt=pipeline===0?native.drawNewPipelineFrame(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion):
         native.drawNewPipelineFrameV2(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion);
+      try{this.preparation.materialRejection.attachReceipt(receipt);}catch(e){}
       this.lastReceipt=receipt;this.failure=receipt.currentFrameSucceeded?'':receipt.firstFailureStage;
       if(timeNs-this.lastLogNs>=1e9||receipt.presentationState!=='CURRENT'){this.lastLogNs=timeNs;console.info('WS_EVENT p013_scene '+JSON.stringify({run:state.runId,commit:state.physicsCommitId,frame:f.frameId,request:receipt.requestedFrameToken,actual:receipt.lastGoodFrameToken,state:receipt.presentationState,first:receipt.firstFailureStage,swap:receipt.requestedSwapSucceeded,staleSwap:receipt.staleSwapSucceeded,generation:receipt.actualPresentationGeneration,config:receipt.renderedConfigRevision,desiredConfig:this.revision,configurationFailure:this.configurationFailure}));}
       return receipt;

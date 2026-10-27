@@ -724,6 +724,11 @@ napi_value SceneResult(napi_env e,const SceneReceipt& r,const ScenePacket& p){
  auto o=Control(e,Status(r.code));Put(e,o,"renderContractRevision","P013_NEWPIPE_ONLY_V1");Put(e,o,"compositionRevision","P013_FULLFRAME_SHADER_V1");Put(e,o,"compositingDomain","LINEAR_DISPLAY_PREMULT_OVER_V1");
  Put(e,o,"requestedPipelineId",r.requested.pipeline.c_str());Put(e,o,"renderPipelineId",r.actualGeneration||r.current||r.staleSwap?r.lastGood.pipeline.c_str():"UNKNOWN");
  Put(e,o,"presentationState",r.state.c_str());Put(e,o,"faultReason",r.fault.c_str());Put(e,o,"firstFailureStage",r.stage.c_str());Put(e,o,"currentFrameSucceeded",r.current);Put(e,o,"requestedSwapSucceeded",r.requestedSwap);Put(e,o,"staleSwapSucceeded",r.staleSwap);Put(e,o,"displayPresentVerified",false);
+ Put(e,o,"materialDiagnosticRevision","P013_SCENE_MATERIAL_REJECTION_V1");Put(e,o,"compatibilityFailureMask",double(r.compatibilityFailureMask));Put(e,o,"replayAttempted",r.replayAttempted);
+ auto diagnosticStatus=[&](const char* key,int status){if(status<0){napi_value nullValue;napi_get_null(e,&nullValue);napi_set_named_property(e,o,key,nullValue);}else Put(e,o,key,double(status));};
+ diagnosticStatus("presentOldStatus",r.presentOldStatus);diagnosticStatus("swapOldStatus",r.swapOldStatus);diagnosticStatus("originalFailureCode",r.originalCode);diagnosticStatus("unbindStatus",r.unbindStatus);
+ Put(e,o,"originalFailureStage",r.originalStage.c_str());Put(e,o,"glEglRawErrorStatus","NOT_CAPTURED");
+ diagnosticStatus("eglErrorBeforeUnbind",r.eglErrorBeforeUnbind);diagnosticStatus("eglUnbindError",r.eglUnbindError);
  Put(e,o,"requestedFrameToken",r.requested.token.c_str());Put(e,o,"requestedGeneration",double(r.requested.generation));Put(e,o,"requestedConfigRevision",double(r.requested.revision));
  SceneNullable(e,o,"renderedFrameToken",r.rendered.token);SceneNullable(e,o,"lastGoodFrameToken",r.lastGood.token);
  Put(e,o,"renderedGeneration",double(r.rendered.generation));Put(e,o,"renderedConfigRevision",double(r.rendered.revision));Put(e,o,"lastGoodGeneration",double(r.lastGood.generation));Put(e,o,"lastGoodConfigRevision",double(r.lastGood.revision));
@@ -779,7 +784,10 @@ napi_value DrawNewPipelineFrameInternal(napi_env e,napi_callback_info info,bool 
   if(current!=Status::OK)receipt=g.scene.Reject(p,int(current),g.egl.errorStage,nullptr,false);
   else if(!sourceFailure.empty())receipt=g.scene.Reject(p,100,sourceFailure.c_str(),&g.sceneGpu,true);
   else try{receipt=g.scene.Draw(p,g.material,g.sceneGpu,v2?&g.baseStrip:nullptr);}catch(const std::bad_alloc&){receipt.code=301;receipt.state="FAULT";receipt.fault=receipt.stage="SCENE_CPU_ALLOCATION";}
-  auto unbound=g.egl.Unbind();if(unbound!=Status::OK){receipt.code=int(unbound);receipt.fault=receipt.stage="SCENE_UNBIND_AFTER_SWAP";receipt.state="FAULT";receipt.current=false;}
+  if(receipt.originalCode<0){receipt.originalCode=receipt.code;receipt.originalStage=receipt.stage;}
+  if(current!=Status::OK||receipt.code==int(Status::SWAP_FAILED)||receipt.swapOldStatus==int(Status::SWAP_FAILED))receipt.eglErrorBeforeUnbind=g.egl.error;
+  auto unbound=g.egl.Unbind();receipt.unbindStatus=int(unbound);if(unbound!=Status::OK){receipt.code=int(unbound);receipt.fault=receipt.stage="SCENE_UNBIND_AFTER_SWAP";receipt.state="FAULT";receipt.current=false;}
+  if(unbound!=Status::OK)receipt.eglUnbindError=g.egl.error;
   if(int(current)>=200||int(unbound)>=200||receipt.code==201||receipt.code==202||receipt.code==303){Destroy(ResetReason::FAILURE);g.egl.state=State::FAILED;}
  }
  return SceneResult(e,receipt,p);

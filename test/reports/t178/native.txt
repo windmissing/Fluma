@@ -1,0 +1,7 @@
+t178_scene_diagnostic_test.cpp
+scene_compositor.cpp
+material_uploader.cpp
+base_strip_uploader.cpp
+正在生成代码...
+PASS T56 scene core: first-frame fault, 7-layer ordering, 8 pass/present faults, honest stale, swap atomicity, resize/context invalidation, two-generation complete config, lease mutation guard, bounded release
+PASS T178 real SceneCompositor rejection: compatibility bits, raw present/swap statuses, NOT_RUN, original first cause, no atomicity regression; SceneGpu is host stub.

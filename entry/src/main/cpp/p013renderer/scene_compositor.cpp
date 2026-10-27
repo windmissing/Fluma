@@ -30,8 +30,14 @@ bool SceneCompositor::Compatible(const ScenePacket& p)const {
 }
 SceneReceipt SceneCompositor::Reject(const ScenePacket& p,int code,const char* stage,SceneGpu* gpu,bool replay){
  SceneReceipt r;r.requested=Source(p,p.requestedGeneration,p.frame.appearanceConfigRevision);r.lastGood=valid_?last_:SceneSource{};r.code=code;r.fault=stage;r.stage=stage;r.state="FAULT";
+ r.originalCode=code;r.originalStage=stage;
+ r.compatibilityFailureMask=(!valid_?1u:0u)|(last_.run!=p.run?2u:0u)|(last_.context!=p.contextEpoch?4u:0u)|
+  (last_.surface!=p.frame.surfaceEpoch?8u:0u)|(last_.geometry!=p.frame.geometryEpoch?16u:0u)|(last_.continuity!=p.frame.continuityEpoch?32u:0u)|
+  (last_.width!=p.frame.surfaceWidthPx||last_.height!=p.frame.surfaceHeightPx?64u:0u)|
+  (last_.box!=std::array<double,4>{p.frame.boxXPx,p.frame.boxYPx,p.frame.boxWidthPx,p.frame.boxHeightPx}?128u:0u)|(last_.invert!=p.frame.visualInverted?256u:0u);
  if(replay&&gpu&&Compatible(p)){
-  if(gpu->Present(true)==Status::OK&&gpu->Swap(uint64_t(p.frame.frameId))==Status::OK){r.staleSwap=true;r.state="STALE";r.actualGeneration=last_.generation;}
+  r.replayAttempted=true;r.presentOldStatus=int(gpu->Present(true));
+  if(r.presentOldStatus==int(Status::OK)){r.swapOldStatus=int(gpu->Swap(uint64_t(p.frame.frameId)));if(r.swapOldStatus==int(Status::OK)){r.staleSwap=true;r.state="STALE";r.actualGeneration=last_.generation;}}
  }
  return r;
 }

@@ -1,0 +1,11 @@
+t56_scene_bridge_test.cpp
+egl_context.cpp
+material_uploader.cpp
+base_strip_uploader.cpp
+material_pass.cpp
+scene_compositor.cpp
+正在生成代码...
+  正在创建库 .codex\local-test\p013-host\t56_scene_bridge.lib 和对象 .codex\local-test\p013-host\t56_scene_bridge.exp
+PASS P013 lifecycle: eight partial-init faults, authoritative dimensions, background, stale callbacks, swap/context loss, bounded recovery, repeated release, frame contract
+PASS P013 actual bridge: offset Float32Array, length/detach/NaN/version/stale rejection, consumed IDs, wrong owner, no half upload, transparent OFF, swap failure, ring/drop, release/reinit
+PASS T56 actual scene bridge: Float64 config hash/binding/range/detach, owned data, full frame source, stale token, source failure replay, pass failure, wrong owner, NaN, release; synthetic GPU boundary

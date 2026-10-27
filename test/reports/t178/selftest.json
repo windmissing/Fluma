@@ -1,0 +1,76 @@
+{
+  "suite": "T178",
+  "device": "NOT_RUN",
+  "passed": 17,
+  "failed": 0,
+  "results": [
+    {
+      "name": "layout stage retains source and same token",
+      "status": "PASS"
+    },
+    {
+      "name": "VALUE mh",
+      "status": "PASS"
+    },
+    {
+      "name": "VALUE ml",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source sandTop/1",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source waterTop/2",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source bh/16",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source bl/32",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source sandTop/64",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source waterTop/128",
+      "status": "PASS"
+    },
+    {
+      "name": "PROFILE source waterTop/256",
+      "status": "PASS"
+    },
+    {
+      "name": "NaN payload and negative zero captured raw then detached",
+      "status": "PASS"
+    },
+    {
+      "name": "first success + first failure immutable and fixed ring",
+      "status": "PASS"
+    },
+    {
+      "name": "F32 profile rejects original strict ordering",
+      "status": "PASS"
+    },
+    {
+      "name": "final staging overflow preserves output",
+      "status": "PASS"
+    },
+    {
+      "name": "unexpected exception does not overwrite original outcome",
+      "status": "PASS"
+    },
+    {
+      "name": "diagnostic exception cannot turn rejection into success",
+      "status": "PASS"
+    },
+    {
+      "name": "native receipt identity attaches only exact rejected token",
+      "status": "PASS"
+    }
+  ]
+}

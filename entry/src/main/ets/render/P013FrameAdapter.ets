@@ -1,15 +1,27 @@
 // P-013 P0 v1: independent, read-only DISPLAY_4X3_V1 adapter.
 import { WaterSandSnapshot } from '../physics/WaterSandField';
 import { P013FrameInput, P013LightParams } from './P013RenderTypes';
+import { P013MaterialFailurePoint, P013MaterialRejectionStore } from './P013MaterialRejection';
 export class P013FrameAdapter {
+  readonly failurePoint: P013MaterialFailurePoint = new P013MaterialFailurePoint();
+  private readonly diagnosticF32: Float32Array = new Float32Array(512);
+  private readonly diagnosticProfiles: Float64Array = new Float64Array(512);
+  private sourceValid: number = 0;
+  captureDiagnostic(store: P013MaterialRejectionStore): void {
+    store.copy(12,this.diagnosticF32,this.failurePoint.profileValid*4);
+    for(let k=0;k<4;k++)this.diagnosticProfiles.set(this.profiles[k],k*128);
+    store.copy(19,this.diagnosticProfiles,this.sourceValid===128?4096:0);
+  }
   readonly data: Float32Array = new Float32Array(512);
   private profiles: Float64Array[] = [new Float64Array(128), new Float64Array(128),
     new Float64Array(128), new Float64Array(128)];
   private scratch: Float64Array = new Float64Array(128);
   pack(s: WaterSandSnapshot): boolean {
+    this.failurePoint.reset();this.sourceValid=0;
     if (s.cols !== 128 || !Number.isFinite(s.capacity) || s.capacity <= 0 ||
       s.sandTop.length !== 128 || s.waterTop.length !== 128 || s.bh.length !== 128 || s.bl.length !== 128) {
-      return false;
+      this.failurePoint.fail('MATERIAL_DATA_PROFILE','SOURCE_LAYOUT',-1,-1,-1,
+        (s.cols!==128?1:0)|(!Number.isFinite(s.capacity)?2:0)|(s.capacity<=0?4:0)|(s.sandTop.length!==128?8:0)|(s.waterTop.length!==128?16:0)|(s.bh.length!==128?32:0)|(s.bl.length!==128?64:0));return false;
     }
     for (let c = 0; c < 128; c++) {
       const top = s.sandTop[c];
@@ -18,12 +30,15 @@ export class P013FrameAdapter {
       const mix = bottom + s.bl[c];
       if (!Number.isFinite(top) || !Number.isFinite(water) || !Number.isFinite(bottom) ||
         !Number.isFinite(mix) || bottom < 0 || bottom > mix || mix > top || top > water || water > s.capacity) {
-        return false;
+        this.failurePoint.fail('MATERIAL_DATA_PROFILE','SOURCE_VALIDATION',c,0,-1,
+          (!Number.isFinite(top)?1:0)|(!Number.isFinite(water)?2:0)|(!Number.isFinite(bottom)?4:0)|(!Number.isFinite(mix)?8:0)|
+          (bottom<0?16:0)|(bottom>mix?32:0)|(mix>top?64:0)|(top>water?128:0)|(water>s.capacity?256:0));return false;
       }
       this.profiles[0][c] = top;
       this.profiles[1][c] = water;
       this.profiles[2][c] = bottom;
       this.profiles[3][c] = mix;
+      this.sourceValid=c+1;
     }
     // Same pass ordering, edge replication and Float64 scratch->set as Canvas.
     for (let pass = 0; pass < 4; pass++) {
@@ -41,9 +56,12 @@ export class P013FrameAdapter {
       const water = Math.fround(this.profiles[1][c]);
       const bottom = Math.fround(this.profiles[2][c]);
       const mix = Math.fround(this.profiles[3][c]);
+      this.diagnosticF32[c*4]=top;this.diagnosticF32[c*4+1]=water;this.diagnosticF32[c*4+2]=bottom;this.diagnosticF32[c*4+3]=mix;
+      this.failurePoint.profileValid=(c+1)*4;
       if (!Number.isFinite(top) || !Number.isFinite(water) || bottom < 0 ||
         bottom > mix || mix > top || top > water || water > s.capacity) {
-        return false;
+        this.failurePoint.fail('MATERIAL_DATA_PROFILE','F32_VALIDATION',c,0,-1,
+          (!Number.isFinite(top)?1:0)|(!Number.isFinite(water)?2:0)|(bottom<0?16:0)|(bottom>mix?32:0)|(mix>top?64:0)|(top>water?128:0)|(water>s.capacity?256:0));return false;
       }
     }
     for (let c = 0; c < 128; c++) {

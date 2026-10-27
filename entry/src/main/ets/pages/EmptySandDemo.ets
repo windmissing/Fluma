@@ -34,6 +34,17 @@ struct EmptySandDemo {
   private failureTraces: P011TiltPreviewTrace[] = [];
   private failureTraceDropped: number = 0;
   private failureV2ExportedId: string | null = null;
+  private materialFailureExportedToken: string | null = null;
+  private emitMaterialRejection(): void {
+    try{
+      const bundle=this.renderer.getLastMaterialRejection(),token=bundle?.firstFailure?.frameToken ?? null;
+      if(bundle===null||token===null||token===this.materialFailureExportedToken)return;
+      const text=JSON.stringify(bundle),parts=Math.min(64,Math.ceil(text.length/2048));
+      for(let i=0;i<parts;i++)console.info('WS_EVENT scene_material_rejection '+JSON.stringify({revision:bundle.revision,frameToken:token,
+        part:i+1,parts:parts,complete:text.length<=131072,totalCharacters:text.length,text:text.slice(i*2048,(i+1)*2048)}));
+      this.materialFailureExportedToken=token;
+    }catch(e){console.info('WS_EVENT scene_material_rejection EXPORT_FAILED');}
+  }
   private emitPhysicsFailureV2(): void {
     try {
       const bundle=this.model.exportPhysicsFailureV2();
@@ -182,6 +193,7 @@ struct EmptySandDemo {
         gravityDirY:Math.cos(this.publication.effectiveTiltDeg*Math.PI/180),sandTracerEnabled:false
       };
       const result = this.renderer.drawNewPipelineFrame(this.publication,context,p012FactoryAppearance(),0,ns,this.getUIContext().vp2px(1));
+      if(result!==null&&!result.currentFrameSucceeded)this.emitMaterialRejection();
       this.diagnostics.record({kind:'present',time:ns/1e6,runId:this.publication.runId,commit:this.publication.physicsCommitId,frame:this.serial,code:result?.code ?? -1,swap:result?.requestedSwapSucceeded ?? false,reason:this.renderer.failure});
       if (this.serial % 60 === 0) console.info(`WS_EVENT empty_sand_demo ${JSON.stringify({
         input:input,config:this.gravityConfig.revision,physicsCommitId:this.publication.physicsCommitId,

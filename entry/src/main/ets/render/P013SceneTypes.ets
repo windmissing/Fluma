@@ -19,6 +19,10 @@ export interface P013SceneSource {
   surfaceEpoch: number;contextEpoch: number;geometryEpoch: number;continuityEpoch: number;generation: number;configRevision: number;
 }
 export interface P013SceneReceipt {
+  materialDiagnosticRevision?: string; compatibilityFailureMask?: number; replayAttempted?: boolean;
+  presentOldStatus?: number | null; swapOldStatus?: number | null; originalFailureCode?: number | null;
+  originalFailureStage?: string; unbindStatus?: number | null; glEglRawErrorStatus?: string;
+  eglErrorBeforeUnbind?: number | null; eglUnbindError?: number | null;
   code: number;requestedPipelineId: string;renderPipelineId: string;renderContractRevision: string;compositionRevision: string;compositingDomain: string;
   presentationState: string;faultReason: string;firstFailureStage: string;currentFrameSucceeded: boolean;
   requestedSwapSucceeded: boolean;staleSwapSucceeded: boolean;displayPresentVerified: boolean;

@@ -32,6 +32,11 @@ struct SceneReceipt {
  SceneSource requested,rendered,lastGood;
  bool current=false,requestedSwap=false,staleSwap=false;uint64_t actualGeneration=0;
  uint64_t actualStripSerial=0;
+ // T178 diagnostic sidecar; -1 denotes a stage that did not execute.
+ uint32_t compatibilityFailureMask=0;bool replayAttempted=false;
+ int presentOldStatus=-1,swapOldStatus=-1,originalCode=-1,unbindStatus=-1;
+ int eglErrorBeforeUnbind=-1,eglUnbindError=-1;
+ std::string originalStage;
 };
 class SceneGpu {
  public:virtual ~SceneGpu()=default;
