@@ -1,0 +1,20 @@
+{
+ "revision": "T158_LEGACY_JSON_AUDIT_V1",
+ "note": "original invalid files preserved untouched; in-memory conversion is the only repair path",
+ "audit": [
+  {
+   "file": "test/reports/t142/t142_device_timing.json",
+   "bytes": 13883,
+   "sha256": "8f6ff63abfd8fb8f9d6d4d4f3cd139eb6294be3cade964f3ed6e4e6bc07d11cd",
+   "parseError": "Unexpected token ',', ...\"\",\"runs\":[,{\"Nmax\":1\"... is not valid JSON",
+   "leadingCommaFound": true
+  },
+  {
+   "file": "test/reports/t142/t142_device_fixture_diag.json",
+   "bytes": 2506,
+   "sha256": "d50731583fb64c6c395f2812f0faea104d4b473d467f5db10d8ba6ce95313ed7",
+   "parseError": "Unexpected token ',', ...\"\",\"runs\":[,{\"Nmax\":1\"... is not valid JSON",
+   "leadingCommaFound": true
+  }
+ ]
+}

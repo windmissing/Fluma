@@ -1,0 +1,13 @@
+{
+ "revision": "T158_COMPILE_LOG_ARCHIVE_V1",
+ "searchedRoots": [
+  "test/reports",
+  "test/reports/t142",
+  "test/reports/t141",
+  ".codex/local-test/t141",
+  "test/p013_compute"
+ ],
+ "foundLocations": [],
+ "captureStatus": "NOT_CAPTURED",
+ "note": "original device compile/link info log (7 errors, Expected token half) was emitted to hdc shell stdout in the T142 session and never redirected to a file; per T152 §3 marked NOT_CAPTURED, no device re-run performed to fabricate it; next formal device run (T161) must capture compile/link stdout+info log"
+}

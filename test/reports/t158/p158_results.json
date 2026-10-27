@@ -1,0 +1,75 @@
+{
+ "executionId": "p158-collector-revision-v1",
+ "date": "2026-10-27",
+ "target": "T152 §1/3/6 step 2",
+ "results": [
+  {
+   "id": "T158-L1",
+   "name": "legacy T142 timing/fixture_diag JSON confirmed invalid (leading `[,`), parse errors + byteLength + SHA archived; files NOT repaired in place",
+   "status": "PASS",
+   "audit": [
+    {
+     "file": "test/reports/t142/t142_device_timing.json",
+     "bytes": 13883,
+     "sha256": "8f6ff63abfd8fb8f9d6d4d4f3cd139eb6294be3cade964f3ed6e4e6bc07d11cd",
+     "parseError": "Unexpected token ',', ...\"\",\"runs\":[,{\"Nmax\":1\"... is not valid JSON",
+     "leadingCommaFound": true
+    },
+    {
+     "file": "test/reports/t142/t142_device_fixture_diag.json",
+     "bytes": 2506,
+     "sha256": "d50731583fb64c6c395f2812f0faea104d4b473d467f5db10d8ba6ce95313ed7",
+     "parseError": "Unexpected token ',', ...\"\",\"runs\":[,{\"Nmax\":1\"... is not valid JSON",
+     "leadingCommaFound": true
+    }
+   ]
+  },
+  {
+   "id": "T158-L2",
+   "name": "in-memory conversion (only documented leading-comma removal) parses both legacy files: 2 runs each; timing file 5 samples/pool all consume=PROTOCOL_ERROR — consume failure NOT counted as protocol PASS",
+   "status": "PASS",
+   "conv": [
+    {
+     "file": "test/reports/t142/t142_device_timing.json",
+     "parseOK": true,
+     "runs": 2,
+     "allAgree": false,
+     "samples": 10
+    },
+    {
+     "file": "test/reports/t142/t142_device_fixture_diag.json",
+     "parseOK": true,
+     "runs": 2,
+     "allAgree": false,
+     "samples": 2
+    }
+   ]
+  },
+  {
+   "id": "T158-L3",
+   "name": "schema validation on converted records: required fields present, waitReturn enum valid, dispatchCount 11/12 per Nmax; any violation listed",
+   "status": "PASS",
+   "issues": []
+  },
+  {
+   "id": "T158-L4",
+   "name": "V2 exporter source: fresh per-sample request identity (serial=cap*100+rep+1), leading-comma fix (first-item emits no comma), exec/consume/oracle classification + protocolPass flag present",
+   "status": "PASS",
+   "freshIdentity": true,
+   "firstNoComma": true,
+   "classification": true
+  },
+  {
+   "id": "T158-L5",
+   "name": "old compile/link info log: searched all legal capture locations; NOT_CAPTURED (stdout never redirected) — recorded, no device re-run to fabricate evidence",
+   "status": "PASS",
+   "captureStatus": "NOT_CAPTURED",
+   "found": []
+  },
+  {
+   "id": "T158-L6",
+   "name": "source markers: exporter distinguishes T140 fixture (argv) vs built-in synthetic pool (argc<=3); leafTopSample documented as CPU leaves dump, never claimed as GPU per-layer table readback",
+   "status": "PASS"
+  }
+ ]
+}

@@ -58,20 +58,23 @@ int main(int argc,char**argv){if(argc<2)return 2;std::string outPath=argv[1];
   auto prep=prepareExactRanges(pool.view,.5,id,cpu,prepared);
   ContextSlot gpu;RequestDiagnostics diag;
   auto init=gpu.initialize(cap,"test/p013_compute/glsl",diag);
-  if(init!=ExecStatus::OK){rep<<(runIdx++?",":",")<<"{\"Nmax\":"<<cap<<",\"init\":\""<<diag.stage<<"\"}";all=false;continue;}
-  rep<<(runIdx++?",":",")<<"{\"Nmax\":"<<cap<<",\"samples\":[";
+  if(init!=ExecStatus::OK){rep<<(runIdx==0?"":",")<<"{\"Nmax\":"<<cap<<",\"init\":\""<<diag.stage<<"\"}";runIdx++;all=false;continue;}
+  rep<<(runIdx==0?"":",")<<"{\"Nmax\":"<<cap<<",\"samples\":[";
+  runIdx++;
   int sampleIdx=0;
   for(int rep2=0;rep2<5;rep2++){
+  id=identity(0,gpu.contextEpoch(),cap*100+rep2+1); // fresh request identity per sample
   id.contextEpoch=gpu.contextEpoch();
   prep=prepareExactRanges(pool.view,.5,id,cpu,prepared);
   Result result;
   auto done=gpu.executeIntegerPair(prepared,0,{std::chrono::steady_clock::now()+std::chrono::seconds(2)},result,diag);
-  rep<<(sampleIdx++?",":",")<<"{\"exec\":\""<<(done==ExecStatus::OK?"OK":diag.stage)
+  rep<<(sampleIdx==0?"":",")<<"{\"exec\":\""<<(done==ExecStatus::OK?"OK":diag.stage)
    <<"\",\"dispatchCount\":"<<diag.dispatchCount
    <<",\"uploadCpuMs\":"<<diag.uploadCpuMs<<",\"dispatchCpuMs\":"<<diag.dispatchCpuMs
    <<",\"fenceWaitCpuMs\":"<<diag.fenceWaitCpuMs<<",\"mapCpuMs\":"<<diag.mapCpuMs
    <<",\"requestCpuMs\":"<<diag.requestCpuMs<<",\"waitCalls\":"<<diag.waitCalls
    <<",\"waitReturn\":\""<<diag.waitReturn<<"\"";
+  sampleIdx++;
   if(done==ExecStatus::OK){
    const auto& w=result.w;
    rep<<",\"result\":[";
@@ -103,7 +106,11 @@ int main(int argc,char**argv){if(argc<2)return 2;std::string outPath=argv[1];
    rep<<",\"consume\":\""<<(cs==ConsumeStatus::OK?"OK":cs==ConsumeStatus::NO_PAIR?"NO_PAIR":
      cs==ConsumeStatus::STALE?"STALE":cs==ConsumeStatus::PROTOCOL_ERROR?"PROTOCOL_ERROR":
      cs==ConsumeStatus::ORACLE_MISMATCH?"ORACLE_MISMATCH":"INPUT_INVALID")<<"\",\"agree\":"<<(agree?"true":"false");
-   rep<<",\"legacyFound\":"<<(found?"true":"false")
+   rep<<",\"classification\":\""<<(done==ExecStatus::OK?(cs==ConsumeStatus::OK?"EXEC_CONSUME_OK":
+     cs==ConsumeStatus::NO_PAIR?"EXEC_CONSUME_NO_PAIR":cs==ConsumeStatus::ORACLE_MISMATCH?"EXEC_ORACLE_MISMATCH":
+     "EXEC_CONSUME_PROTOCOL_ERROR"):"EXEC_FAILED")<<"\",\"protocolPass\":"
+     <<(cs==ConsumeStatus::OK||cs==ConsumeStatus::NO_PAIR?"true":"false")
+    <<",\"legacyFound\":"<<(found?"true":"false")
     <<",\"legacySlotA\":"<<a<<",\"legacySlotB\":"<<b;
    all=all&&agree;
   }
