@@ -1,0 +1,75 @@
+{
+ "generatedAt": "2026-10-28T15:32:26.311Z",
+ "results": [
+  {
+   "id": "CW-01",
+   "name": "C-basis symbol presence (T226)",
+   "status": "PASS",
+   "detail": {
+    "missing": [],
+    "present": 8
+   }
+  },
+  {
+   "id": "CW-02",
+   "name": "engine ctor(K192) + surface",
+   "status": "PASS",
+   "detail": {
+    "apiN": 29
+   }
+  },
+  {
+   "id": "CW-03",
+   "name": "optics16 domain + independent transmission/premult/Fresnel",
+   "status": "PASS",
+   "detail": {
+    "cases": 9,
+    "fails": 0,
+    "T": "0.818731"
+   }
+  },
+  {
+   "id": "CW-04",
+   "name": "source controller lifecycle API",
+   "status": "PASS",
+   "detail": {
+    "apiN": 10
+   }
+  },
+  {
+   "id": "CW-05",
+   "name": "FlightV2(T227)/V4(T228) NOT_IMPLEMENTED explicit",
+   "status": "PASS",
+   "detail": {
+    "v2": false,
+    "v4": false,
+    "note": "V1 water direct-W is current basis"
+   }
+  },
+  {
+   "id": "CW-06",
+   "name": "area highlight adjacency/zero-water reference",
+   "status": "PASS",
+   "detail": {
+    "fails": 0
+   }
+  },
+  {
+   "id": "CW-07",
+   "name": "FrameClock raw differential no clamp",
+   "status": "PASS",
+   "detail": {
+    "hasClamp": false
+   }
+  },
+  {
+   "id": "CW-08",
+   "name": "source dedup + NOT_COMMITTED enum",
+   "status": "PASS",
+   "detail": {
+    "hasDedup": true,
+    "hasNC": true
+   }
+  }
+ ]
+}
