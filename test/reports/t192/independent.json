@@ -1,0 +1,133 @@
+{
+  "revision": "T192_STRICT_VARIANTS_INDEPENDENT_V1",
+  "executedAt": "2026-10-28T01:30:47.169Z",
+  "spec": "T183 §7C + developer-T191-strict-build-v1.md",
+  "commitUnderTest": "049300e",
+  "device": "NOT_RUN (offline per card); device evidence deferred to T193",
+  "shaImpl": "FIPS 180-4 direct implementation in this executor (not crypto module) cross-checked against node:crypto",
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "results": [
+    {
+      "name": "independent SHA-256 (FIPS 180-4 direct impl) matches node:crypto across 55/56/63/64/65/empty/canonical",
+      "status": "PASS",
+      "detail": {
+        "checked": [
+          {
+            "len": 0,
+            "match": true
+          },
+          {
+            "len": 1,
+            "match": true
+          },
+          {
+            "len": 54,
+            "match": true
+          },
+          {
+            "len": 55,
+            "match": true
+          },
+          {
+            "len": 56,
+            "match": true
+          },
+          {
+            "len": 57,
+            "match": true
+          },
+          {
+            "len": 63,
+            "match": true
+          },
+          {
+            "len": 64,
+            "match": true
+          },
+          {
+            "len": 65,
+            "match": true
+          },
+          {
+            "len": 127,
+            "match": true
+          },
+          {
+            "len": 128,
+            "match": true
+          },
+          {
+            "len": 1000,
+            "match": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "O0/O2 variants: independent 3-route physical run, pool SHA identical to known 0ee7cf0b baseline",
+      "status": "PASS",
+      "detail": {
+        "O0": {
+          "sha": "0ee7cf0ba5664c26",
+          "calls": 64
+        },
+        "O2": {
+          "sha": "0ee7cf0ba5664c26",
+          "calls": 64
+        }
+      }
+    },
+    {
+      "name": "variant identity: configId embeds STRICT_O0/O2 respectively; delivery HAP SHAs distinct",
+      "status": "PASS",
+      "detail": {
+        "o0": "STRICT_O0",
+        "o2": "STRICT_O2",
+        "hap0": "df833640d89a",
+        "hap2": "7a574b52e4da"
+      }
+    },
+    {
+      "name": "actual compile flags: STRICT_O0 gets -O0, STRICT_O2 gets -O2, both keep -fno-fast-math -ffp-contract=off",
+      "status": "PASS",
+      "detail": {
+        "o0": {
+          "strict": true,
+          "noFastMath": true,
+          "noContract": true
+        },
+        "o2": {
+          "strict": true,
+          "noFastMath": true,
+          "noContract": true
+        }
+      }
+    },
+    {
+      "name": "physics tree: O0/O2 identical to V3 reference except identity/variant-whitelisted files",
+      "status": "PASS",
+      "detail": {
+        "same": 65,
+        "whitelistedDiff": [
+          "T159BuildIdentity.ets",
+          "T165PageLauncher.ets",
+          "T171Protocol.ets"
+        ],
+        "unexpected": [
+          "T171Micro.ets"
+        ]
+      }
+    },
+    {
+      "name": "delivery boundary declarations: device NOT_RUN, host doubles not ARM/GPU evidence, signed NOT_BUILT",
+      "status": "PASS",
+      "detail": {
+        "declaresNotRun": true,
+        "declaresHostNotArm": true,
+        "declaresSignedNotBuilt": true
+      }
+    }
+  ]
+}
