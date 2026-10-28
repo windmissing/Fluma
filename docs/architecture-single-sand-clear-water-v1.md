@@ -1,5 +1,7 @@
 # T107：单沙＋明水工程方案 V1
 
+2026-10-28 B段接续：T188/T189已交A；按T196定稿的B模块/五bank提交、event40/acc70与逐字段资源工程见 `architecture-T203-clear-water-B-v1.md` 及其manifest。C与restore仍未实施，以下历史A/B分段要求按交付范围读取。
+
 2026-10-27；architect；原卡 `6adf343de4b06ee35743c76a`；目标7/P3，排前六目标之后，目标6 compute最高调度优先。不使用真机，不实施/重跑测试。唯一算法依据为T122 `e1d0ec7`交接及 `algorithm-single-sand-clear-water-v1.md` §3–7，18项CW合同不改。**ENGINEERING_DESIGN_READY，尚未实现/验证；开发实际开始须有T108测试先行基线，不新增manager批准门。**
 
 ## 1. 架构选择与现行代码冲突
