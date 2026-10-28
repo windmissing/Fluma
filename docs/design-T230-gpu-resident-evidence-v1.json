@@ -1,0 +1,334 @@
+{
+  "revision": "T230_DESIGN_INTEGER_EVIDENCE_V1",
+  "date": "2026-10-28",
+  "task": "6ae1c798e4b0c3103c116f0a",
+  "route": "gpu-resident-integer-step-v1",
+  "status": "DESIGN_READY_FOR_ARCHITECT_NOT_IMPLEMENTED_NOT_VALIDATED",
+  "scope": "DESIGN_ARITHMETIC_AND_PROTOCOL_MODEL_ONLY",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "GLExecuted": false,
+  "shaderCompiled": false,
+  "checks": {
+    "mul32To64Cases": 3000,
+    "signedRNECases": 9632,
+    "binary64InputFloorCases": 1500,
+    "largeTotal64Fixture": {
+      "maxVolumeUnits": 34359738368,
+      "exceedsUint32": true
+    },
+    "guardIntervalCases": 3875,
+    "threeColorDomainsCheckedN": [
+      2,
+      128
+    ],
+    "threeColorBudgetPatchCases": 1200,
+    "timeCarryCases": 5000,
+    "timeRemainderNumerator": 432584800,
+    "DdaCrossingBoundFixtures": {
+      "randomCases": 2000,
+      "maxCountIncludingEndpointPadding": 10,
+      "straightChordPhysicalColumnPlaneBound": 10,
+      "motionRowsReserved": 32,
+      "scope": "BOUND_ONLY_NOT_TRAJECTORY_EXECUTION"
+    },
+    "exactInventoryTransferCases": 5000,
+    "integerPairOracleComparisons": 2119,
+    "residentDeleteReinsertCases": 1780,
+    "nonAdjacentMinBFixture": [
+      1,
+      2
+    ],
+    "hostAcceptanceStateModelCases": 1000,
+    "hostAcceptanceModelAccepted": 201,
+    "angleLUTDesignReference": {
+      "rows": 15361,
+      "layoutBytes": 16,
+      "designReferenceSHA256": "23b5210055d0b3f51892967170134a6cad14360579b038e26ee48f3ea5bbb368",
+      "maxTanQuantizationError": "9.533260694725264819850820110018398106091465090292802E-7",
+      "Hfloor": 605395,
+      "Hsafe": 605394,
+      "floorWithoutMarginCounterexample": {
+        "angleIndex": -7677,
+        "tanUnits": -605109,
+        "dUnits": 605395,
+        "physicalAbsResidual": "0.5773503445438223741605871107937566590439653080620390707259",
+        "oldHardLimitF64": "0.577350269189625731058868041145615279674530029296875"
+      },
+      "flatMaxAngleIndex": 7679,
+      "flatMaxAngleDeg": 29.99609375,
+      "status": "DESIGN_DECIMAL_REFERENCE_NOT_PRODUCTION_APPROVED_TABLE",
+      "limits": "Decimal Taylor reference is not device arithmetic or CPU-engine equivalence certification"
+    },
+    "T131RawLimitsRead": {
+      "wgCount": [
+        65535,
+        65535,
+        65535
+      ],
+      "wgSize": [
+        1024,
+        1024,
+        1024
+      ],
+      "maxInvocations": 1024,
+      "ssboMaxBytes": 1073741824,
+      "sharedMemBytes": 32768,
+      "ssboBindings": 16
+    },
+    "T131ComputeBlocksFieldInThisJSON": false,
+    "T231LimitsAttribution": "T231 reports compute stage blocks=16; not present in inspected t131.json; preserve distinction"
+  },
+  "resourceTemplates": [
+    {
+      "K": 192,
+      "N": 128,
+      "KwReserved": 64,
+      "Q": 16,
+      "D": 4096,
+      "eventsPerFrameCapacity": 26044,
+      "singleEventBlockBytes": 6667264,
+      "partsBytes": {
+        "three_state_banks": 73728,
+        "two_publications": 43008,
+        "motion32": 24576,
+        "two_index_arrays": 1536,
+        "scan_scratch": 1536,
+        "edge_proposals": 8192,
+        "column_audit": 2048,
+        "two_frame_event64_arenas": 13334528,
+        "dedup64": 1048576,
+        "source_event16": 262144,
+        "queue32": 2048,
+        "two_status256": 2048,
+        "two_gpu_completion256": 2048,
+        "two_host_completion256": 2048,
+        "source_receipts64": 4096,
+        "angle_table": 245776,
+        "fixed_stats": 1024,
+        "fixed_control": 1024
+      },
+      "basePayloadBytes": 15059984,
+      "sortLayers": 36,
+      "quantumDispatchBound": 59,
+      "sourceDispatchBound": 32,
+      "tickDispatchBound": 268,
+      "rootFenceBoundPerTick": 5,
+      "completionBytesPerRoot": 1024,
+      "completionReadbackBytesPerTickBound": 5120,
+      "status": "DESIGN_TEMPLATE_NOT_ALLOCATED_NOT_RSS",
+      "excludes": [
+        "driver/program/alignment",
+        "render VBO/textures/fullframe 8*w*h",
+        "NAPI/cold objects",
+        "IO/checkpoint",
+        "M1/M2/M3 additional buffers"
+      ]
+    },
+    {
+      "K": 512,
+      "N": 128,
+      "KwReserved": 64,
+      "Q": 16,
+      "D": 4096,
+      "eventsPerFrameCapacity": 68604,
+      "singleEventBlockBytes": 17562624,
+      "partsBytes": {
+        "three_state_banks": 135168,
+        "two_publications": 83968,
+        "motion32": 65536,
+        "two_index_arrays": 4096,
+        "scan_scratch": 2816,
+        "edge_proposals": 8192,
+        "column_audit": 2048,
+        "two_frame_event64_arenas": 35125248,
+        "dedup64": 1048576,
+        "source_event16": 262144,
+        "queue32": 2048,
+        "two_status256": 2048,
+        "two_gpu_completion256": 2048,
+        "two_host_completion256": 2048,
+        "source_receipts64": 4096,
+        "angle_table": 245776,
+        "fixed_stats": 1024,
+        "fixed_control": 1024
+      },
+      "basePayloadBytes": 36997904,
+      "sortLayers": 45,
+      "quantumDispatchBound": 68,
+      "sourceDispatchBound": 34,
+      "tickDispatchBound": 306,
+      "rootFenceBoundPerTick": 5,
+      "completionBytesPerRoot": 1024,
+      "completionReadbackBytesPerTickBound": 5120,
+      "status": "DESIGN_TEMPLATE_NOT_ALLOCATED_NOT_RSS",
+      "excludes": [
+        "driver/program/alignment",
+        "render VBO/textures/fullframe 8*w*h",
+        "NAPI/cold objects",
+        "IO/checkpoint",
+        "M1/M2/M3 additional buffers"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 8004,
+      "sha256": "70b2af4d55ccb4469432d04a369b2a57f6bc6662b9d0b04551e39942b7824e65"
+    },
+    {
+      "path": ".codex/PIPELINE.md",
+      "bytes": 17911,
+      "sha256": "972aa96c3035d8ce71f8243e0f2ce1ab1e47e156356fb5547aca722f40a418c9"
+    },
+    {
+      "path": ".codex/agents/designer.toml",
+      "bytes": 2901,
+      "sha256": "4db846796d9d2f78ef398a6a47766943ed950ce3073f6bd3286f770e7b6df79b"
+    },
+    {
+      "path": "docs/algorithm-T197-whole-transaction-complexity-v1.md",
+      "bytes": 46692,
+      "sha256": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d"
+    },
+    {
+      "path": "docs/architecture-T205-whole-transaction-v1.md",
+      "bytes": 42261,
+      "sha256": "9f07dede67b920d24f7937a37fe187da93ff06a03702808a9bed3f05cdbc32b1"
+    },
+    {
+      "path": "docs/analysis-T205-tx-resource-work-manifest-v1.json",
+      "bytes": 49992,
+      "sha256": "4d26cf1f0c80db8a3fe44d82b1773b47e24d5a460537ed896ee36a83ee95b831"
+    },
+    {
+      "path": "docs/developer-T211-whole-transaction-d1-v1.md",
+      "bytes": 7855,
+      "sha256": "7a2ffb1296e12e6a44bd474bd7eb0c29f96a3c2c4a0b9277094b891fd1fdf233"
+    },
+    {
+      "path": "docs/developer-T212-tx-gpu-bridge-v1.md",
+      "bytes": 3658,
+      "sha256": "2513967d5051c73b299af3e49e8c2b935ecc16c4f17a514073c566642b5acd48"
+    },
+    {
+      "path": "docs/test-report-T213-tx-d1-independent-v1.md",
+      "bytes": 3490,
+      "sha256": "f8e5f542693379d3c4c2aba2ae358361580ecf42083447a42397307652181c5d"
+    },
+    {
+      "path": "docs/test-report-T142-gpu-device-differential-v1.md",
+      "bytes": 6516,
+      "sha256": "a7ee03c8d6bbd6c9536bdcadd27677b7d7cc9bef259641cb6901267284fac3a7"
+    },
+    {
+      "path": "docs/test-report-T161-gpu-full-transaction-device-v1.md",
+      "bytes": 5453,
+      "sha256": "e2ea6a11f65ef56ebc02b883a16c840d2d98e8c14c5850dd64a1999940ff877c"
+    },
+    {
+      "path": "docs/test-report-T199-gpu-strict-device-v1.md",
+      "bytes": 3942,
+      "sha256": "7443e031b7ef54f5fc41a9d8a45d2201a6392f2ff66cf3eb36cc95645d3d2ce2"
+    },
+    {
+      "path": "docs/algorithm-T207-dry-derived-render-domain-v1.md",
+      "bytes": 26309,
+      "sha256": "fbd9984de42daa4888010c62cfad4566a9c6c348941ab8d43154b25ba11b9907"
+    },
+    {
+      "path": "docs/algorithm-T221-sand-water-demo-v1.md",
+      "bytes": 39631,
+      "sha256": "aa5c83de136c6ebac9a32e34c8f4464cca3565b421738dc547ae9cff7f747b77"
+    },
+    {
+      "path": "docs/architecture-T222-clear-water-flight-v2.md",
+      "bytes": 29096,
+      "sha256": "d178a541b96551d3f369adac2ba0363c8a0446cc593ec512af972252160049a4"
+    },
+    {
+      "path": "docs/architecture-T231-gpu-resident-platform-v1.md",
+      "bytes": 17202,
+      "sha256": "eabe25d569089ea3d1944edebb58535a9c3027421f72f725c366e7354f1ea709"
+    },
+    {
+      "path": "test/reports/t131/t131.json",
+      "bytes": 1501,
+      "sha256": "2d1d92df3fc755cce3154ba6ba897b0281bded5edf9f671b6c9914a25e6e5882"
+    },
+    {
+      "path": "test/p013_compute/pair_executor_v1.cpp",
+      "bytes": 18127,
+      "sha256": "eec3e90b2a6f136a73d70006b5a38c11d88a2ea7e15accefdf0b004623d6d260"
+    },
+    {
+      "path": "test/p013_compute/glsl/pair_build_v1.comp",
+      "bytes": 897,
+      "sha256": "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/egl_context.cpp",
+      "bytes": 12038,
+      "sha256": "1dfcb7daf7150cf3bda1f8e134d60ddbada5bd637872e6be85dbfc4cf2268728"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_gpu.cpp",
+      "bytes": 3421,
+      "sha256": "083230a5ce5c5f10f3932591600f512fbd8fdceb114bb61490276fda59bb2fd0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "bytes": 432900,
+      "sha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "bytes": 111884,
+      "sha256": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "bytes": 54987,
+      "sha256": "3a3b8fa8ff0b81a91ecdda3d36f97b7d835c91445b65364323736d589465dc36"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHotBudget.ets",
+      "bytes": 18365,
+      "sha256": "04f63d6f8f794c0b41056da9f2e0ea703a9a4ebe0dec147edc2f90305e8f1e1f"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051EmptySandDemo.ets",
+      "bytes": 10804,
+      "sha256": "57f7b869510103ee895aa2b88ba1fb4df93ac23c9adf4dbde66d49251f8b1ecc"
+    },
+    {
+      "path": "docs/algorithm-T230-gpu-resident-step-v1.md",
+      "bytes": 46702,
+      "sha256": "a61ed2c7b7da60d5c887aaa5d35bfdb39a6210eeec4265ccf0502e871b5db24a"
+    },
+    {
+      "path": "docs/retro-T230-gpu-resident-step-v1.md",
+      "bytes": 4124,
+      "sha256": "4210d556d4151c00c64cb595be9d050b05b680c0196f140a42144696293260c9"
+    },
+    {
+      "path": "docs/design-T230-gpu-resident-model-v1.py",
+      "bytes": 20058,
+      "sha256": "0bd1077e58eb9e31e045f01a6ef012c32c62b049309e2e8b1206a04aaff247d2"
+    }
+  ],
+  "specReferences": [
+    "https://registry.khronos.org/OpenGL/specs/es/3.1/GLSL_ES_Specification_3.10.pdf",
+    "https://registry.khronos.org/OpenGL/specs/es/3.1/es_spec_3.1.pdf",
+    "https://registry.khronos.org/EGL/extensions/KHR/EGL_KHR_fence_sync.txt"
+  ],
+  "limits": [
+    "No full motion/channel/GLSL implementation verified",
+    "CPU integer/Fraction/Decimal checks are designer models, not independent product tests",
+    "LUT is a design reference only; not a frozen production table/device certificate",
+    "T231 same-context first; cross-context/actual allocations/performance still need probes",
+    "M0 single H dry only; M1/M2/M3 are explicitly unimplemented",
+    "Payload templates exclude driver/render/checkpoint/IO/runtime objects"
+  ]
+}
