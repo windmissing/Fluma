@@ -1,0 +1,285 @@
+{
+  "revision": "T221_DESIGN_ARITHMETIC_EVIDENCE_V1",
+  "date": "2026-10-28",
+  "task": "6ae19fb6e4b0f11bdf2b2ca2",
+  "route": "sand-water-demo-flight-v1",
+  "designStatus": "DESIGN_READY_FOR_ARCHITECT",
+  "productStatus": "NOT_IMPLEMENTED_NOT_VALIDATED",
+  "scope": "DESIGN_MATH_STATIC_CONTRACT_ONLY",
+  "productTestsExecuted": false,
+  "deviceUsed": false,
+  "GLExecuted": false,
+  "checks": {
+    "arrivalOrderCounterexample": {
+      "initialEta": 1,
+      "id1": {
+        "y": 2,
+        "m": 0.25
+      },
+      "id2": {
+        "y": 1,
+        "m": 2
+      },
+      "idOrderMissesEngulfedId1": true,
+      "heightOrderArrivedIds": [
+        2,
+        1
+      ],
+      "finalEta": 3.25,
+      "scope": "IDEAL_CONTACT_MODEL_NOT_PRODUCT"
+    },
+    "idealSortedContactCases": 1500,
+    "idealSourceArrivalStopTransfers": 500,
+    "chordArrivalFixtures": {
+      "lowerSimulationSeconds": 0.4,
+      "higherSimulationSeconds": 0.8081632653061225,
+      "g": 12,
+      "dt": "1/60",
+      "scope": "IDEAL_EXAMPLE_NOT_CALIBRATION"
+    },
+    "idealFlatFiveBoundFlow": {
+      "steps": 24,
+      "nonzeroEdgeTransfers": 183,
+      "leftOut": 0.7725000087570365,
+      "rightOut": 0.7763384548831902,
+      "requiresInstantMirrorSymmetry": false
+    },
+    "idealSlopeBarrierFixtures": {
+      "tiltPositiveAllRight": true,
+      "highBedBlocks": true
+    },
+    "RNExamples": {
+      "positiveArrivalCanLeaveWUnchanged": true,
+      "roundedWaterAdditionChangesExactMass": true,
+      "tinyMassLEHex": "000000000000903c"
+    },
+    "opticsRangeCases": 2000,
+    "shallowWaterAlphaLimit": [
+      3.89129015481305e-05,
+      3.89129015481305e-08,
+      3.89129015481305e-11
+    ],
+    "waterGlyphCases": 500,
+    "gravityTrialCases": 1000,
+    "gravityFixture": {
+      "rawTarget": 89,
+      "boundedTarget": 30,
+      "firstSuccess": 1.5,
+      "secondSuccess": 3.0,
+      "secondFailureKeeps": 1.5,
+      "shake": "DIAGNOSTIC_ONLY",
+      "scope": "FORMULA_MODEL_NOT_SENSOR_TEST"
+    },
+    "staticSourceContract": "LOCAL_W_ONLY_NO_FLIGHT_IN_CURRENT_SOURCE",
+    "testContractsPresent": [
+      "SW01",
+      "SW02",
+      "SW03",
+      "SW04",
+      "SW05",
+      "SW06",
+      "SW07",
+      "SW08",
+      "SW09",
+      "SW10",
+      "SW11",
+      "SW12",
+      "SW13",
+      "SW14"
+    ]
+  },
+  "resources": [
+    {
+      "N": 128,
+      "K": 192,
+      "Kw": 64,
+      "e": 8,
+      "ew": 8,
+      "D": 4096,
+      "baseArrayDeltaBytes": 1304480,
+      "parts": {
+        "five_water_state_banks": 29440,
+        "two_water_event48_header64_summary16": 410624,
+        "two_tapes_u32_pair": 36832,
+        "sort_marks_flight_scratch": 832,
+        "source_dedup_event_suffix_and_scratch": 786560,
+        "four_water_proof_xy_meta_packets": 24576,
+        "four_profile_and_two_gpu_texture_delta": 12288,
+        "two_gl_vbo_header_optics_delta": 3328
+      },
+      "T209OwnerBytes": 4230656,
+      "T219CTemplateBytes": 207112,
+      "combinedTemplateBytes": 5742248,
+      "fullFrameTargetAdditionalBytes": "8*widthPx*heightPx, if not already accounted/reused",
+      "peakRSS": "NOT_MEASURED_EXCLUDES_DRIVER_OBJECTS_OTHER_LIVE_BUFFERS"
+    },
+    {
+      "N": 128,
+      "K": 512,
+      "Kw": 64,
+      "e": 8,
+      "ew": 8,
+      "D": 4096,
+      "baseArrayDeltaBytes": 1345440,
+      "parts": {
+        "five_water_state_banks": 29440,
+        "two_water_event48_header64_summary16": 410624,
+        "two_tapes_u32_pair": 77792,
+        "sort_marks_flight_scratch": 832,
+        "source_dedup_event_suffix_and_scratch": 786560,
+        "four_water_proof_xy_meta_packets": 24576,
+        "four_profile_and_two_gpu_texture_delta": 12288,
+        "two_gl_vbo_header_optics_delta": 3328
+      },
+      "T209OwnerBytes": 6312256,
+      "T219CTemplateBytes": 331272,
+      "combinedTemplateBytes": 7988968,
+      "fullFrameTargetAdditionalBytes": "8*widthPx*heightPx, if not already accounted/reused",
+      "peakRSS": "NOT_MEASURED_EXCLUDES_DRIVER_OBJECTS_OTHER_LIVE_BUFFERS"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 8004,
+      "sha256": "70b2af4d55ccb4469432d04a369b2a57f6bc6662b9d0b04551e39942b7824e65"
+    },
+    {
+      "path": ".codex/agents/designer.toml",
+      "bytes": 2901,
+      "sha256": "4db846796d9d2f78ef398a6a47766943ed950ce3073f6bd3286f770e7b6df79b"
+    },
+    {
+      "path": ".codex/PIPELINE.md",
+      "bytes": 17911,
+      "sha256": "972aa96c3035d8ce71f8243e0f2ce1ab1e47e156356fb5547aca722f40a418c9"
+    },
+    {
+      "path": "docs/algorithm-T196-clear-water-B-step-v1.md",
+      "bytes": 32953,
+      "sha256": "cee21d1cbf6cd8eaed641a2e4f9d6500c5365fe7d9fe05b0c7a1aa7fc4315173"
+    },
+    {
+      "path": "docs/architecture-T203-clear-water-B-v1.md",
+      "bytes": 22293,
+      "sha256": "f1878ded2d3a65a6758db0be877dc19ae183eb0c8e63b4055276b6ac11c0537f"
+    },
+    {
+      "path": "docs/developer-T209-clear-water-B-v1.md",
+      "bytes": 9216,
+      "sha256": "0daf7edf0e61f0453cb330c5cfadd0875fca2ba6a4a632f958e3c29d6dc6eca7"
+    },
+    {
+      "path": "docs/test-report-T215-clear-water-B-independent-v1.md",
+      "bytes": 3370,
+      "sha256": "d9ed60f55b30024c99f2462299a3a0d0eaf6841dcd5ebe6e48fcaf96deee0532"
+    },
+    {
+      "path": "docs/architecture-T219-clear-water-C-v1.md",
+      "bytes": 18476,
+      "sha256": "2e0ec35cb4d3e079626253acb3d0b547dbf8d2633df7cf1bba77dfc4994ff0db"
+    },
+    {
+      "path": "docs/analysis-T219-clear-water-C-engineering-manifest-v1.json",
+      "bytes": 18934,
+      "sha256": "35c0fc8d6d2e408a253a2772318b0d9c8577b79752e759168bbc44fa3e0c32ad"
+    },
+    {
+      "path": "docs/architecture-T202-demo-material-arrival-v1.md",
+      "bytes": 10649,
+      "sha256": "f7402feb5734580a4e5c13c08d210b0f9864b4bf1db369e3a5f67a7c50098cdb"
+    },
+    {
+      "path": "docs/algorithm-T197-whole-transaction-complexity-v1.md",
+      "bytes": 46692,
+      "sha256": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d"
+    },
+    {
+      "path": "docs/algorithm-T207-dry-derived-render-domain-v1.md",
+      "bytes": 26309,
+      "sha256": "fbd9984de42daa4888010c62cfad4566a9c6c348941ab8d43154b25ba11b9907"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051GravityInputAdapter.ets",
+      "bytes": 2692,
+      "sha256": "62da969e8b3d79d7b470c8d34c8c4f575e8c02c08e778e1ad6a820a07411ed2f"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterBTypes.ets",
+      "bytes": 6664,
+      "sha256": "076f06cc13ac901407a671bb8d27f9bb5ce307739507b7046b605ce6190f21a0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 22311,
+      "sha256": "ee726a6904cf507a4d4579f445ef3cd44c97a1f77b5f8a8ccd30ea672a081500"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEvents.ets",
+      "bytes": 5612,
+      "sha256": "353aa46a181411997c1aa9b7db9f2ac3ce34181b1a25fd6ad56962fd569d6bec"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterExactMass.ets",
+      "bytes": 4989,
+      "sha256": "8eef9b315cc508e32b8d53c0a2c37b8ff2c0b236726bed610c518f5aab685b89"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterGuard.ets",
+      "bytes": 6347,
+      "sha256": "126ef81f02db5d0eb59fdc1a9b4a62c4afa936951f7dc8d43ff53e90cc1c7b91"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterHydraulics.ets",
+      "bytes": 4039,
+      "sha256": "a83c0b9ce1101d8f14f82b5d43768a7450d1e3baf491d9a4a0bcd4fa6a5404fd"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterParticles.ets",
+      "bytes": 11271,
+      "sha256": "45b5b549a95617e895d8dcabbee24b78dcc8cc992cd7f5f30dee6c22954ec341"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 14990,
+      "sha256": "5afc741a32414d548f326a5e75551b05c48210ad5e780074b7c6aa4ad2587967"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterState.ets",
+      "bytes": 15066,
+      "sha256": "4487802c28aafb0ca2c9a6f2f17e890bcc949b949ba0002e9475bd650684d1f2"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterStep.ets",
+      "bytes": 24055,
+      "sha256": "b24850030d06aca6933eac4d4b0d755b79cfc7cbdcbda8d3bcf5d42de67ee569"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterTypes.ets",
+      "bytes": 6972,
+      "sha256": "55514ef5c47c97a63a2957a11aa458ba563bf1c4833a45a2968d9a1e5107a2ad"
+    },
+    {
+      "path": "docs/algorithm-T221-sand-water-demo-v1.md",
+      "bytes": 39631,
+      "sha256": "aa5c83de136c6ebac9a32e34c8f4464cca3565b421738dc547ae9cff7f747b77"
+    },
+    {
+      "path": "docs/retro-T221-sand-water-demo-v1.md",
+      "bytes": 3757,
+      "sha256": "c677a3556bb65f283a60ad33f9958c205415f93a89bafcef0025ea88e14e531d"
+    },
+    {
+      "path": "docs/design-T221-sand-water-demo-model-v1.py",
+      "bytes": 13667,
+      "sha256": "d7c277bf0f5b30ecb376d1cee38af498ab9be0d4554e59416f20002a1b2ae62c"
+    }
+  ],
+  "limits": [
+    "Ideal Fraction models do not verify product RN graphs or event trajectory implementation",
+    "No product owner, shader, sensor, replay or device performance executed",
+    "Optics/gravity/flight parameters remain PENDING_CALIBRATION",
+    "T219 is partial engineering; this does not change its task state",
+    "Resource table is a design payload template, not peak RSS"
+  ]
+}
