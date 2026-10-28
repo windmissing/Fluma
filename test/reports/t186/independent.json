@@ -1,0 +1,108 @@
+{
+  "revision": "T186_FIRST_FAILURE_V2_INDEPENDENT_V1",
+  "executedAt": "2026-10-28T00:57:20.149Z",
+  "spec": "T181 §4.3 + developer-T185-first-physics-failure-v2.md",
+  "commitUnderTest": "1f762cc",
+  "device": "NOT_RUN (offline per card)",
+  "total": 10,
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "name": "non-5 raw codes 1..6/null recorded verbatim; sticky counts once, no re-step",
+      "status": "PASS",
+      "detail": {
+        "seen": {
+          "1": 1,
+          "2": 2,
+          "3": 3,
+          "4": 4,
+          "6": 6,
+          "null": null
+        },
+        "code5Raw": 5
+      }
+    },
+    {
+      "name": "export returns independent copy (mutation does not stick)",
+      "status": "PASS",
+      "detail": {
+        "orig": 3,
+        "after": 3
+      }
+    },
+    {
+      "name": "missing trace → null+NOT_CAPTURED; throwing trace does not mask physics failure",
+      "status": "PASS",
+      "detail": {
+        "missing": {
+          "stage": null,
+          "traceStatus": "NOT_CAPTURED"
+        },
+        "throwing": {
+          "captured": true,
+          "err": ""
+        }
+      }
+    },
+    {
+      "name": "reset: old export frozen accessible via previous, current cleared, new run new identity & lastGood null",
+      "status": "PASS",
+      "detail": {
+        "oldId": "p011-run-1793149040099-33:1:1",
+        "frozenOk": true,
+        "newRun": true,
+        "gen": 2
+      }
+    },
+    {
+      "name": "100 page stops: lifecycle bounded at 8, dropped>0, repeatCount=100, same firstFailureId",
+      "status": "PASS",
+      "detail": {
+        "lifecycle": 8,
+        "dropped": 95,
+        "repeat": 100
+      }
+    },
+    {
+      "name": "successful admission before failed step: source counters advance and are retained",
+      "status": "PASS",
+      "detail": {
+        "seq": [
+          0,
+          1
+        ],
+        "epoch": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "name": "two instances: firstFailureId distinct (identity composition runId:generation:frame)",
+      "status": "PASS",
+      "detail": {
+        "a": "p011-run-1793149040122-43:1:1",
+        "b": "p011-run-1793149040124-46:1:1"
+      }
+    },
+    {
+      "name": "identity semantics: run identity from per-instance runId/generation, not bundle-level installTime",
+      "status": "PASS",
+      "detail": {
+        "note": "两实例 runId 若同构生成则靠 modelGeneration/frame 区分; installTime 不在 V2 身份字段内",
+        "hasInstallTimeInExport": false
+      }
+    },
+    {
+      "name": "diagnostic injection does not expose product recovery (totals unchanged by capture)",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "name": "export abnormal-path isolation: physics result unaffected, exports deterministic",
+      "status": "PASS",
+      "detail": null
+    }
+  ]
+}
