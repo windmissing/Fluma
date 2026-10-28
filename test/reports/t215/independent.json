@@ -1,0 +1,123 @@
+{
+  "revision": "T215_CLEAR_WATER_B_INDEPENDENT_V1",
+  "executedAt": "2026-10-28T03:26:42.802Z",
+  "spec": "T196 §11 B01–B14 + T203 §B",
+  "commitUnderTest": "4bdf050",
+  "device": "NOT_RUN (offline per card)",
+  "oracle": "self-held BigInt exact-mass (2^-1074 units) + independent trajectory/counter derivation; product ExactMass/replay NOT used as oracle",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "results": [
+    {
+      "id": "B-10",
+      "name": "BigInt exact-mass oracle: encode/add/compare/carry vs 2^46-neg-NaN domain edges",
+      "status": "PASS",
+      "detail": {
+        "checks": 10
+      }
+    },
+    {
+      "id": "B-09",
+      "name": "adversarial accumulation order: BigInt sums order-invariant (exposes RN increment hazard)",
+      "status": "PASS",
+      "detail": {
+        "rnL": 1,
+        "rnR": 1,
+        "rnDiffers": false
+      }
+    },
+    {
+      "id": "B-01",
+      "name": "A receipt/queue/dt0 zero-write: authority/queue/counters/arenaHeader preserved",
+      "status": "PASS",
+      "detail": {
+        "pending": 1
+      }
+    },
+    {
+      "id": "B-02",
+      "name": "source commit retained across step failures; second failure keeps first",
+      "status": "PASS",
+      "detail": {
+        "firstStatus": 16,
+        "secondStatus": 16,
+        "sourceCommit": 1
+      }
+    },
+    {
+      "id": "B-03",
+      "name": "water five-boundary local admission: admitted=1, W[64] only",
+      "status": "PASS",
+      "detail": {
+        "admitted": 1,
+        "W64": 1
+      }
+    },
+    {
+      "id": "B-07",
+      "name": "full/partial LAND: P/S increased somewhere, W unchanged, nextId monotonic (no regression)",
+      "status": "PASS",
+      "detail": {
+        "landed": true,
+        "P64": 0.25,
+        "S64": 0,
+        "why": {}
+      }
+    },
+    {
+      "id": "B-08",
+      "name": "bed top-first avalanche and budget refund executed within step chain (counters populated)",
+      "status": "PASS",
+      "detail": {
+        "budgetUsed": false
+      }
+    },
+    {
+      "id": "B-11",
+      "name": "stale-run source rejection with identity, no half-log",
+      "status": "PASS",
+      "detail": {
+        "st": 4
+      }
+    },
+    {
+      "id": "B-12",
+      "name": "frame multiplier counters: whole-audit ≤3, no per-birth rebuild",
+      "status": "PASS",
+      "detail": {
+        "entry": 1,
+        "work": 1,
+        "replay": 1,
+        "cacheRebuilds": 2,
+        "indexRebuilds": 0,
+        "mergeCalls": 0
+      }
+    },
+    {
+      "id": "B-13",
+      "name": "B snapshot sealed copy (caller mutation isolated); restore NOT implemented",
+      "status": "PASS",
+      "detail": {
+        "hasRestore": false
+      }
+    },
+    {
+      "id": "B-14",
+      "name": "C publication/page/FrameToken NOT implemented (no page entry, no FrameToken in engine)",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "id": "B01-A",
+      "name": "A receipt fields/source ledger preserved under B attach (replay materialization keeps IDs)",
+      "status": "PASS",
+      "detail": {
+        "seq": 1,
+        "I_sand": 0.125,
+        "replay": true,
+        "tx": 1
+      }
+    }
+  ]
+}
