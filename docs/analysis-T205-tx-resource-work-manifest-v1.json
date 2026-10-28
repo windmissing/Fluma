@@ -1,0 +1,1582 @@
+{
+  "revision": "T205_TX_ENGINEERING_MANIFEST_V1",
+  "date": "2026-10-28",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED_NOT_ALLOCATED_NOT_DEVICE_TESTED",
+  "route": "P011_WHOLE_TRANSACTION_V1",
+  "layers": {
+    "exact": "TX_EXACT_STRUCTURE_V1",
+    "cert": "TX_STAGE_CERT_V1",
+    "owner": "TX_OWNER_ADMISSION_V1_DECISION_REQUIRED",
+    "gpu": "TX_GPU_PAIR_EXPERIMENT_V1_DISABLED_IN_PRODUCTION"
+  },
+  "dimensions": {
+    "C": 128,
+    "N": "192|512",
+    "Qcap": 2048,
+    "Ehot": 4096,
+    "Lghot": 8192,
+    "Hcap": "N",
+    "Rmax": 8,
+    "Vmax": 3,
+    "Smax": 2,
+    "viewSlots": 8,
+    "depthMax": 8,
+    "stageSlots": 64,
+    "queueSlots": 16,
+    "publicationSlots": 2,
+    "ioSlots": 2,
+    "traceRows": 256,
+    "traceCounters": 128,
+    "dependencyDomains": 256,
+    "dependencyMaskWords": 8,
+    "identityUtf8Max": 12288,
+    "BpubMax": "REQUIRED_EXPLICIT_SAFE_INTEGER",
+    "JpubMax": "REQUIRED_EXPLICIT_SAFE_INTEGER",
+    "EpubMax": "REQUIRED_EXPLICIT_SAFE_INTEGER",
+    "LgpubMax": "REQUIRED_EXPLICIT_SAFE_INTEGER",
+    "undoRecords": "REQUIRED_EXPLICIT_SAFE_INTEGER",
+    "addressSlots": "EXACT_REGISTERED_ADDRESS_COUNT",
+    "WpubMax": "PENDING_DEVICE_CALIBRATION",
+    "ZioSlotMax": "SCHEMA_UPPER_UTF8_BYTES_REQUIRED",
+    "sealedCaptureSlotBytes": "EXACT_REGISTERED_SCHEMA_REQUIRED",
+    "snapshotHoldMax": "EXPLICIT_CALLER_LEASE_LIMIT",
+    "p_a": "FROZEN_FIELD_PASS_CAP",
+    "identityStringMaxUtf8": {
+      "runId": 1024,
+      "stateId": 1024,
+      "configId": 8192
+    }
+  },
+  "cutpoints": [
+    {
+      "id": "SOURCE_IDENTITY",
+      "fileFunction": "WaterSandField.injectGestureSand",
+      "readOrder": "run/mode/input/time/sequence/shape before backup",
+      "onFailure": "original request rejection/receipt, no new pre-audit"
+    },
+    {
+      "id": "SOURCE_CAPACITY_ETA",
+      "fileFunction": "WaterSandField.injectGestureSand",
+      "readOrder": "same R<=8/global scale/eta/audit order",
+      "onFailure": "same retry and source-prefix rollback"
+    },
+    {
+      "id": "BEGIN_HOT",
+      "fileFunction": "P011ParticleHot.beginStepHotBody",
+      "readOrder": "active/backlog/buffer/field scalar/column/token/pool/budget order",
+      "onFailure": "same first predicate/code"
+    },
+    {
+      "id": "COLLECT_HEADER",
+      "fileFunction": "P011ParticleM2Field.collectBirthHeaders",
+      "readOrder": "full original collect validation then overwrite consumed plan fields",
+      "onFailure": "predictor/finite/overflow must execute"
+    },
+    {
+      "id": "COLLECT_AB",
+      "fileFunction": "P011ParticleM2Field.beginCollectBody",
+      "readOrder": "A collect then B collect then compare",
+      "onFailure": "nonalias A/B, original failures"
+    },
+    {
+      "id": "REQUEST_VALIDATE",
+      "fileFunction": "P011ParticleHot.requestIdentityHot",
+      "readOrder": "original row validation/seen order",
+      "onFailure": "duplicate physical-slot behavior preserved"
+    },
+    {
+      "id": "SINK_RESERVE_GUARD",
+      "fileFunction": "P011ParticleM2Sink.applyInto",
+      "readOrder": "capacity/reserve/guard/refund/field stock",
+      "onFailure": "no grant reorder"
+    },
+    {
+      "id": "PATCH_PREPARE",
+      "fileFunction": "P011ParticleHot.preparePatchHot",
+      "readOrder": "binding/grant/old snapshot/row/seed/birth/find",
+      "onFailure": "same invalid code before optimization faults"
+    },
+    {
+      "id": "FIND",
+      "fileFunction": "P011ParticleHot.mergeOldestHot",
+      "readOrder": "current scratch pair then original mergePair",
+      "onFailure": "lexicographic exact current state"
+    },
+    {
+      "id": "PATCH_PUBLISH",
+      "fileFunction": "P011ParticleHot.publishPatchHot",
+      "readOrder": "current token/state/buffer then publish",
+      "onFailure": "same rollback domain"
+    },
+    {
+      "id": "AUDIT_SINK",
+      "fileFunction": "P011ParticleHot.auditParticleHot",
+      "readOrder": "slot fold/column before-after/budget",
+      "onFailure": "logical execute or valid certificate"
+    },
+    {
+      "id": "TICKET_CLOSE_EVENTS",
+      "fileFunction": "P011ParticleM2Sink.applyInto",
+      "readOrder": "audit before close/event append/finishPatch",
+      "onFailure": "same sourceExternal/event lineage order"
+    },
+    {
+      "id": "MOTION_APPLY",
+      "fileFunction": "P011ParticleHot.applyParticlePlanIntoBody",
+      "readOrder": "original motion sequence and ID lookup",
+      "onFailure": "no early invalid-ID normalization"
+    },
+    {
+      "id": "AUDIT_TAIL",
+      "fileFunction": "P011ParticleHot.applyParticlePlanIntoBody",
+      "readOrder": "after pool motion publish",
+      "onFailure": "numeric miss original slot-order fold"
+    },
+    {
+      "id": "AUDIT_FINISH",
+      "fileFunction": "P011ParticleHot.finishStepHotBody",
+      "readOrder": "allClosed before audit/token/finish/seal",
+      "onFailure": "source/seed successful page identity"
+    },
+    {
+      "id": "PREVIEW_RESTORE",
+      "fileFunction": "WaterSandField.previewChannelPlansAt",
+      "readOrder": "same backup/collect/particle/shadow/finally",
+      "onFailure": "no candidate leakage"
+    },
+    {
+      "id": "AUTHORITATIVE",
+      "fileFunction": "WaterSandField.stepWithTiltTrace",
+      "readOrder": "queued-source before backup; original channels/consistency",
+      "onFailure": "source success survives step failure"
+    },
+    {
+      "id": "FIELD_AUDIT",
+      "fileFunction": "WaterSandField.audit",
+      "readOrder": "same ordered field totals/drift/guard",
+      "onFailure": "no T207 numeric changes here"
+    },
+    {
+      "id": "SOURCE_PUBLISH",
+      "fileFunction": "WaterSandField.injectGestureSand",
+      "readOrder": "prepare/commit source receipt then epochs/publication",
+      "onFailure": "ACK never source success"
+    },
+    {
+      "id": "OBSERVE_SEAL",
+      "fileFunction": "WaterSandField.finishNaturalObservation",
+      "readOrder": "original endpoint/peak/ledger per substep",
+      "onFailure": "encoding failure separate after physics success"
+    }
+  ],
+  "newArrays": [
+    {
+      "name": "pairId.left",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.right",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.parent",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.height",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.size",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.prev",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.next",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.flags",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.minEligibleSlot",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.minIdSlot",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.idLeft",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.idRight",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.idParent",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.idHeight",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.slotLive",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.reserved",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "pairId.keyRev",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "IDs valid through UINT32_MAX; absence determined by slot/has flag, not max ID sentinel"
+    },
+    {
+      "name": "pairId.slotGeneration",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "IDs valid through UINT32_MAX; absence determined by slot/has flag, not max ID sentinel"
+    },
+    {
+      "name": "pairId.minEligibleId",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "IDs valid through UINT32_MAX; absence determined by slot/has flag, not max ID sentinel"
+    },
+    {
+      "name": "pairId.minId",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "PairIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "IDs valid through UINT32_MAX; absence determined by slot/has flag, not max ID sentinel"
+    },
+    {
+      "name": "ticket.ordinalLeft",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.ordinalRight",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.ordinalParent",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.ordinalHeight",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.tokenLeft",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.tokenRight",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.tokenParent",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.tokenHeight",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.ticketRow",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.flags",
+      "type": "Int32Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*4",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "ticket.tokenReference",
+      "type": "Float64Array",
+      "lengthExpression": "Qcap",
+      "byteExpression": "(Qcap)*8",
+      "instanceScope": "viewSlots",
+      "owner": "TicketIndex",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "exact original token; no re-encoding"
+    },
+    {
+      "name": "revision.slot.pool",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.slot.key",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.slot.predictor",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.slot.membership",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.water",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.bed",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.mix",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.suspension",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.poolCache",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.motion",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.budget",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "revision.column.source",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.owner",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.branchGeneration",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.inputRev",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.cutGraphId",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.resultCode",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.resultOrdinal",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.coveredRevision",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.stage.sideEffectVersion",
+      "type": "Float64Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "(stageSlots)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.readMask",
+      "type": "Uint32Array",
+      "lengthExpression": "stageSlots*dependencyMaskWords",
+      "byteExpression": "(stageSlots*dependencyMaskWords)*4",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "cert.coveredDomainRev",
+      "type": "Float64Array",
+      "lengthExpression": "dependencyDomains",
+      "byteExpression": "(dependencyDomains)*8",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "conservative domain revision invalidation; no hash-only identity"
+    },
+    {
+      "name": "dirty.S",
+      "type": "Uint8Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*1",
+      "instanceScope": "viewSlots",
+      "owner": "Field",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "dirty.dryEnvelope",
+      "type": "Uint8Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*1",
+      "instanceScope": "viewSlots",
+      "owner": "Field",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "undo.addressId",
+      "type": "Uint32Array",
+      "lengthExpression": "undoRecords",
+      "byteExpression": "(undoRecords)*4",
+      "instanceScope": "once",
+      "owner": "Undo",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "undo.byteOffset",
+      "type": "Uint32Array",
+      "lengthExpression": "undoRecords",
+      "byteExpression": "(undoRecords)*4",
+      "instanceScope": "once",
+      "owner": "Undo",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "undo.oldLo",
+      "type": "Uint32Array",
+      "lengthExpression": "undoRecords",
+      "byteExpression": "(undoRecords)*4",
+      "instanceScope": "once",
+      "owner": "Undo",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "undo.oldHi",
+      "type": "Uint32Array",
+      "lengthExpression": "undoRecords",
+      "byteExpression": "(undoRecords)*4",
+      "instanceScope": "once",
+      "owner": "Undo",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "undo.frameId",
+      "type": "Float64Array",
+      "lengthExpression": "undoRecords",
+      "byteExpression": "(undoRecords)*8",
+      "instanceScope": "once",
+      "owner": "Undo",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "savepoint.rows",
+      "type": "Float64Array",
+      "lengthExpression": "depthMax*8",
+      "byteExpression": "(depthMax*8)*8",
+      "instanceScope": "once",
+      "owner": "Undo",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "mark/view/branch/membership/ticket/event/lineage/error domain, detailed shape in document"
+    },
+    {
+      "name": "view.headers",
+      "type": "Float64Array",
+      "lengthExpression": "viewSlots*32",
+      "byteExpression": "(viewSlots*32)*8",
+      "instanceScope": "once",
+      "owner": "Owner",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "address.idWidthFlags",
+      "type": "Uint32Array",
+      "lengthExpression": "addressSlots*4",
+      "byteExpression": "(addressSlots*4)*4",
+      "instanceScope": "once",
+      "owner": "StorageRegistry",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "stableFieldSort.order",
+      "type": "Int32Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*4",
+      "instanceScope": "viewSlots",
+      "owner": "Field",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "stableFieldSort.scratch",
+      "type": "Int32Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*4",
+      "instanceScope": "viewSlots",
+      "owner": "Field",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "trace.rows",
+      "type": "Float64Array",
+      "lengthExpression": "traceRows*32",
+      "byteExpression": "(traceRows*32)*8",
+      "instanceScope": "once",
+      "owner": "Trace",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "trace.counters",
+      "type": "Float64Array",
+      "lengthExpression": "traceCounters",
+      "byteExpression": "(traceCounters)*8",
+      "instanceScope": "once",
+      "owner": "Trace",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "input.headers",
+      "type": "Uint8Array",
+      "lengthExpression": "queueSlots*256",
+      "byteExpression": "(queueSlots*256)*1",
+      "instanceScope": "candidateOwnerOnly",
+      "owner": "OwnerQueue",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "input.payload",
+      "type": "Float64Array",
+      "lengthExpression": "queueSlots*2*C",
+      "byteExpression": "(queueSlots*2*C)*8",
+      "instanceScope": "candidateOwnerOnly",
+      "owner": "OwnerQueue",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "public.events48",
+      "type": "Float64Array",
+      "lengthExpression": "2*EpubMax*48",
+      "byteExpression": "(2*EpubMax*48)*8",
+      "instanceScope": "once",
+      "owner": "SealedCapture",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "T171 numeric48 is separate versioned evidence; not existing endpoint event wire"
+    },
+    {
+      "name": "public.lineage",
+      "type": "Uint32Array",
+      "lengthExpression": "2*LgpubMax",
+      "byteExpression": "(2*LgpubMax)*4",
+      "instanceScope": "once",
+      "owner": "SealedCapture",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "public.headers",
+      "type": "Float64Array",
+      "lengthExpression": "2*64",
+      "byteExpression": "(2*64)*8",
+      "instanceScope": "once",
+      "owner": "SealedCapture",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "publication.sealed",
+      "type": "Uint8Array",
+      "lengthExpression": "publicationSlots*sealedCaptureSlotBytes",
+      "byteExpression": "(publicationSlots*sealedCaptureSlotBytes)*1",
+      "instanceScope": "candidateOwnerOnly",
+      "owner": "Publication",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "io.sealed",
+      "type": "Uint8Array",
+      "lengthExpression": "ioSlots*ZioSlotMax",
+      "byteExpression": "(ioSlots*ZioSlotMax)*1",
+      "instanceScope": "candidateOwnerOnly",
+      "owner": "IO",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "leases.headers",
+      "type": "Float64Array",
+      "lengthExpression": "(publicationSlots+ioSlots)*16",
+      "byteExpression": "((publicationSlots+ioSlots)*16)*8",
+      "instanceScope": "candidateOwnerOnly",
+      "owner": "OwnerQueue",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.mass",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.x",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.y",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.vx",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.vy",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.phase",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.source",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.state",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.id",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.sourceId",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.freeSlots",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.colMassH",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.frozen.colMassL",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.order",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.idOrder",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.freeSeen",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.leaves",
+      "type": "Uint32Array",
+      "lengthExpression": "4*K",
+      "byteExpression": "(4*K)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.queries",
+      "type": "Uint32Array",
+      "lengthExpression": "8*K",
+      "byteExpression": "(8*K)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.header",
+      "type": "Uint32Array",
+      "lengthExpression": "64",
+      "byteExpression": "(64)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.result",
+      "type": "Uint32Array",
+      "lengthExpression": "32",
+      "byteExpression": "(32)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot0.identityBytes",
+      "type": "Uint8Array",
+      "lengthExpression": "identityUtf8Max",
+      "byteExpression": "(identityUtf8Max)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "actual canonical identity length checked before write, capacity frozen; native vectors/heap overhead separately recorded"
+    },
+    {
+      "name": "gpu.slot1.frozen.mass",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.x",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.y",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.vx",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.vy",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.phase",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.source",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.state",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.id",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.sourceId",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.freeSlots",
+      "type": "Int32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.colMassH",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.frozen.colMassL",
+      "type": "Float64Array",
+      "lengthExpression": "C",
+      "byteExpression": "(C)*8",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.order",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.idOrder",
+      "type": "Uint32Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.freeSeen",
+      "type": "Uint8Array",
+      "lengthExpression": "N",
+      "byteExpression": "(N)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.leaves",
+      "type": "Uint32Array",
+      "lengthExpression": "4*K",
+      "byteExpression": "(4*K)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.queries",
+      "type": "Uint32Array",
+      "lengthExpression": "8*K",
+      "byteExpression": "(8*K)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.header",
+      "type": "Uint32Array",
+      "lengthExpression": "64",
+      "byteExpression": "(64)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.result",
+      "type": "Uint32Array",
+      "lengthExpression": "32",
+      "byteExpression": "(32)*4",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": ""
+    },
+    {
+      "name": "gpu.slot1.identityBytes",
+      "type": "Uint8Array",
+      "lengthExpression": "identityUtf8Max",
+      "byteExpression": "(identityUtf8Max)*1",
+      "instanceScope": "gpuEnabled",
+      "owner": "GpuPair",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "actual canonical identity length checked before write, capacity frozen; native vectors/heap overhead separately recorded"
+    },
+    {
+      "name": "cert.valid",
+      "type": "Uint8Array",
+      "lengthExpression": "stageSlots",
+      "byteExpression": "stageSlots",
+      "instanceScope": "viewSlots",
+      "owner": "Certificates",
+      "lifetime": "COLD_PROFILE_FIXED",
+      "note": "eager invalidation at every registered domain writer; domainRev is current per-view, not a per-certificate revision snapshot"
+    }
+  ],
+  "requiredBaselineInventory": "analysis-T205-source-ledger-inventory-v1.json:sourceSites and source files",
+  "budgetRules": {
+    "pairIdBytesPerView": "96*N",
+    "ticketBytesPerView": "48*Qcap",
+    "certificateBaseBytesPerView": "32*N+64*C+64*stageSlots",
+    "extraCertificateDependencyBytesPerView": "4*stageSlots*dependencyMaskWords+8*dependencyDomains+2*C + stageSlots",
+    "undoBytes": "24*undoRecords+64*depthMax",
+    "upperUndoCapacity": ">=depthMax*w_upper conservative until implementation proves single-log bound",
+    "wholeMemory": "M_inherited_unique_backings + sum(newArrays with actual instance scopes) + original field/source/step banks and schema bytes not already inherited + native heap + renderer overlap + caller snapshots; unknown multiplicity => NOT_TOTALLED",
+    "output": "ZioSlotMax calculated from full schema worst UTF8 escaping and record count, not mean JSON size"
+  },
+  "workEnvelope": {
+    "hA": "ceil(2*log2(N+1))",
+    "hR": "ceil(log2(N+1))",
+    "findNodes": "6*hR*hA+4*hA+fixedHead",
+    "insertEraseNodes": "64*hA+fixedHead per primitive; relocate=erase+insert",
+    "sourceSeedMax": "2*C*Rmax",
+    "birthFindMax": "B_enter",
+    "audit": "A_logical=A_execute+A_certHit; A_execute may equal all logical calls",
+    "gpuSSBOBytes": "2*(256+16*K*(h+1)+32*K+32*K+32*K+128)",
+    "gpuUploadBytesPerRequest": "256+16*K+32*K+128",
+    "gpuIdentitySha": "messageByteLength plus real SHA256 padding blocks ceil((length+9)/64); count each digest separately",
+    "total": "root call-set exclusive work sum; residual ordered-fold and field C^2 explicitly retained",
+    "wallLimits": "PENDING_DEVICE_CALIBRATION; no hard realtime claim"
+  },
+  "readSets": {
+    "pair": [
+      "13pool buffer identities",
+      "group keys phase/source/sourceId/state/floorX/Y/id/slot",
+      "radiusRev",
+      "branch/viewGen",
+      "slotGeneration"
+    ],
+    "numericAudit": [
+      "slot-order mass/x/y/vx/vy/phase/source/state/id/sourceId/free arrays",
+      "column cache",
+      "field stocks/current and before arrays",
+      "waterTop/suspension",
+      "stepExternal",
+      "budget actual values and graph version"
+    ],
+    "predictor": [
+      "frozen pool",
+      "field S/waterTop",
+      "mode/params/dt/theta/seed",
+      "input/params revisions",
+      "algorithm graph"
+    ],
+    "fullPublicRollback": [
+      "field inventory and backups",
+      "pool and caches/free/ID",
+      "source counters/admissions/dedup",
+      "budget tickets/refund",
+      "plans/results/events/lineage/page",
+      "derivatives/tree roots/dirty",
+      "revisions except monotonic generations"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "docs/algorithm-T197-whole-transaction-complexity-v1.md",
+      "sha256": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d",
+      "bytes": 46692
+    },
+    {
+      "path": "docs/design-T197-whole-transaction-evidence-v1.json",
+      "sha256": "bcb639bb449177e8a91dc78e040a1cb8ed740e0e6ba1cc635c96f072056c0168",
+      "bytes": 9241
+    },
+    {
+      "path": "docs/architecture-T116-T156-whole-transaction-v3.md",
+      "sha256": "f6717fc69aa38c3a86e36adcf8e85f854d0e03016d84bd2fad750917dd139f2c",
+      "bytes": 19989
+    },
+    {
+      "path": "docs/effect-report-P051-T204-t156-errata-v1.md",
+      "sha256": "a2ff3024710344ec4002bc6d5db365f78932a2664656bba57ad1fa5d978f54ff",
+      "bytes": 4881
+    },
+    {
+      "path": "docs/test-report-T199-gpu-strict-device-v1.md",
+      "sha256": "7443e031b7ef54f5fc41a9d8a45d2201a6392f2ff66cf3eb36cc95645d3d2ce2",
+      "bytes": 3942
+    },
+    {
+      "path": "test/p013_compute/pair_wire_v1.h",
+      "sha256": "9bc54802759b14dc06b7ce6726717daf829138fe8a1337d87f57d3182fe51847",
+      "bytes": 2026
+    },
+    {
+      "path": "test/p013_compute/pair_binding_v1.cpp",
+      "sha256": "acfd93f4ad28cdca78b6788e9b8aa17f91e8d5e351492d24a08d55d94c85e24e",
+      "bytes": 24913
+    }
+  ],
+  "exampleStructuralOnly": [
+    {
+      "N": 192,
+      "C": 128,
+      "viewSlots": 8,
+      "pairIdBytes": 147456,
+      "ticketBytes": 786432,
+      "certAndDirtyBytes": 182784,
+      "NOTE": "PARTIAL_STRUCTURE_SUBTOTAL_ONLY; excludes inherited state, undo, root output, GPU/native/render and snapshots"
+    },
+    {
+      "N": 512,
+      "C": 128,
+      "viewSlots": 8,
+      "pairIdBytes": 393216,
+      "ticketBytes": 786432,
+      "certAndDirtyBytes": 264704,
+      "NOTE": "PARTIAL_STRUCTURE_SUBTOTAL_ONLY; excludes inherited state, undo, root output, GPU/native/render and snapshots"
+    }
+  ],
+  "inheritedOwnershipTemplates": [
+    {
+      "name": "pool13",
+      "bytes": "55*N+16*C",
+      "instances": "canonical + patchBefore + patchAfter + patchScratch + frozenPool = 5 distinct per original Hot owner; other saveBackup/projection/export banks separate",
+      "aliasRule": "bindHotTransactionStorage returns aliases to the same three patch banks; do not count them twice"
+    },
+    {
+      "name": "hotPlan",
+      "bytes": "91*Q + 40*H + 4*Lg",
+      "instances": "planA, planB, sealedPlan at Qcap/Hcap/Lghot; seenRequests at Qcap/1/2Qcap; patchRequest,patchOriginal at 1/1/2; budget.requests at Qcap/1/2Qcap",
+      "aliasRule": "use actual instance path and bufferId, not each reference"
+    },
+    {
+      "name": "hotResult",
+      "bytes": "75*Q",
+      "instances": "results,sealedResults",
+      "aliasRule": "no extra result bank solely for a lease"
+    },
+    {
+      "name": "hotEvent",
+      "bytes": "270*E+4*Lg",
+      "instances": "patchActions,events; public/capture sealed copies separately",
+      "aliasRule": "storage[] holds references only; eventKind legacy bank is additional"
+    },
+    {
+      "name": "hotAux",
+      "bytes": "144*C+5*N+20*(Qcap+1)+33*Ehot",
+      "instances": "once per Hot owner, excluding mergeIndex",
+      "aliasRule": "frozen+before field16F64C, audit2F64C; order I32N+auditSlots U8N; seen2F64 and validationI32; legacy events U8+4I32/U32+2F64"
+    },
+    {
+      "name": "oldExactIndex",
+      "bytes": "12*N+8*K",
+      "instances": "old mergeIndex retained until replacement teardown",
+      "aliasRule": "T123 baseline separate; not the new adjacency AVL"
+    },
+    {
+      "name": "hotBudget",
+      "bytes": "32*C+25*Qcap + hotPlan(Qcap,1,2Qcap)",
+      "instances": "one budget per Hot work; refund receipts separate",
+      "aliasRule": "local remaining/used/before remaining/used; token,reserved,refunded,closed"
+    },
+    {
+      "name": "m2Scratch",
+      "bytes": "16*C + 9*8*(5+16*Qcap+11*N) + receipts/guards actual site lengths",
+      "instances": "M2 host before two columns; projection scratch+8 slots; two refund and two guard results",
+      "aliasRule": "projection serialized banks are additional to Hot storage"
+    },
+    {
+      "name": "WaterSandField",
+      "bytes": "sum sourceSites lengths and element widths, each distinct constructor/lazy instance + source/step/planner backup banks",
+      "instances": "canonical owner field and retained actual backups; no multiplier inferred from reference count",
+      "aliasRule": "source bank vs step bank vs candidate bank distinct; iteration temporaries multiply by simultaneous lifetime, work bytes by invocation count"
+    },
+    {
+      "name": "plannerObservationEndpoint",
+      "bytes": "sum registered planner, journal, natural/store, peak, endpoint buffers + schema record caps + retained source dedup payload",
+      "instances": "all current snapshot/journal/history leases, explicit lifetimes",
+      "aliasRule": "Map/Set size, JS object/string and array backing capacity recorded separately; unbounded old API lifetime means no finite whole-process bound"
+    },
+    {
+      "name": "sceneRenderer",
+      "bytes": "scenePrep F32[2048]+motion F64[10]+4*F64[128] + per DualFieldSlot(F32[512]+F32[2*cap]+U32[2*cap]) + native format-stride-by-height textures/FBOs",
+      "instances": "actual slots plus explicit current/STALE/context-restore overlap; publication banks separate",
+      "aliasRule": "DataView no new backing; ArrayBuffer counted once; driver allocation not inferred as 4*width*height for every format"
+    },
+    {
+      "name": "archiveAndCaller",
+      "bytes": "archiveRing schema max * held slots + encoded UTF8 buffers + message transfer/copy + write queue + externally held snapshots",
+      "instances": "old API unbounded caller retention explicitly UNBOUNDED_EXTERNAL; new finite lease API DECISION_REQUIRED",
+      "aliasRule": "transfer detaches sender only at actual transfer fence; otherwise sender/receiver overlap both counted"
+    },
+    {
+      "name": "nativeGpu",
+      "bytes": "2*(256+16*K*(h+1)+96*K+128) SSBO + native frozen/staging + canonical 12288B-capacity bytes per CPU slot + vectors/strings/NAPI wrappers + EGL/program/fence resource tables",
+      "instances": "two CPU slots, two GPU slots per owning context; quarantined resource overlap explicit",
+      "aliasRule": "ETS mirrors and native owned copies separate; native vectors capacity not just size"
+    }
+  ],
+  "instanceLedgerSchema": {
+    "fields": [
+      "bufferId",
+      "ownerId",
+      "viewId",
+      "branchGen",
+      "instancePath",
+      "sitePathLine",
+      "type",
+      "elementLength",
+      "byteLength",
+      "aliasOf",
+      "lifetimeBeginEnd",
+      "coldOrHot",
+      "maxConcurrent",
+      "copyOrTransferFence",
+      "nativeCapacityBytes",
+      "profileRev"
+    ],
+    "sum": "sum byteLength of unique live backing IDs + separately recorded runtime/native/driver capacity; no reference double count",
+    "coverage": "every sourceSites entry is RETAINED/REPLACED/UNREACHABLE_WITH_ROUTE_PROOF; every allocationRiskSite is classified; generated modules add their complete allocation inventory",
+    "external": "retained external snapshot lifetime unbounded in original sync API; report separately, do not silently impose new refusal"
+  },
+  "wholeWorkTerms": {
+    "tree": "Hbulk*(N+L*log2(L))+U*log2(N)+Mfind*log2(N)^2; counters retain actual finite node envelopes",
+    "audits": "Aexecute*(N+C) ordered numeric work + AcertHit*certificateValidation + eagerDomainInvalidationVisits",
+    "collect": "sum actual A/B/header/seed collection visits and serialization writes, never just consumed header count",
+    "field": "sum residual water40*(C+actual donorReceiver) + source eta64*C + actual correction/guard/dirtyS calls; p_a*C^2 and repeated per-patch S scans retained until proven exact replacement",
+    "copiesUndo": "exclusive pool/field/plan/results/event copies + actual 32/64-bit logged stores/restores + branch setup/teardown; inherited banks retained until all callers migrated",
+    "output": "event/lineage append + endpoint/peak/journal/source-dedup + sealing + UTF8 worst-case escape encoding + messaging + write/fsync",
+    "gpu": "freeze13 + validate + sort/range + canonical pack/SHA blocks + bridge/context + upload + dispatch/barrier + fence wait/map + identity/snapshot/predicate consume + CPU merge/audit + archive",
+    "render": "material capture/validation + prep + bridge + uploads + shader/swap and retained STALE resources; include frame-outside direct source in whole-frame accounting"
+  }
+}
