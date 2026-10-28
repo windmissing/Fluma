@@ -1,0 +1,151 @@
+{
+  "revision": "T207_DESIGN_EXACT_MASS_AND_DOMAIN_V1",
+  "date": "2026-10-28",
+  "kind": "designer arithmetic/domain and existing-capture checks, not product/device tests",
+  "inputSha256": {
+    "docs/architecture-T202-demo-material-arrival-v1.md": "f7402feb5734580a4e5c13c08d210b0f9864b4bf1db369e3a5f67a7c50098cdb",
+    "docs/analysis-T202-demo-material-capture-v1.json": "ac5ccfdf668e5cf48a84066055dc4f514100e90b54d02cc3a8bf85b3ca20827a",
+    "docs/analysis-T202-reassembled-material-v1.json": "8588ebc85a8d328444f7b512441796bec6ac3b89298a7e94e8e4fcadac949bfb",
+    "docs/algorithm-T197-whole-transaction-complexity-v1.md": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d",
+    "docs/analysis-T205-tx-resource-work-manifest-v1.json": "4d26cf1f0c80db8a3fe44d82b1773b47e24d5a460537ed896ee36a83ee95b831",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+    "entry/src/main/ets/physics/P011ParticleM2Sink.ets": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+    "entry/src/main/ets/physics/P011ParticleField.ets": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5",
+    "entry/src/main/ets/physics/WaterSandField.ets": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d",
+    "entry/src/main/ets/physics/P011PublishedRenderState.ets": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776",
+    "entry/src/main/ets/render/P013FrameAdapter.ets": "53b1f99b3a3c198fbfda62d8c2ade62631c1dd25eff09faad918c90592de7025",
+    "entry/src/main/ets/render/preparation/P013MaterialDataPreparation.ets": "99f97ffd0acb677a49f312ff60782b333c62a5f777e26b6466511e41e421a332",
+    "docs/design-T207-dry-derived-model-v1.py": "6e99cfae248c96be727f2c2a69f17423bbd5183b06c6abc7798e61a2273146f5"
+  },
+  "proposedCacheRevision": "P011_LIVE_MASS_EXACT70_V2",
+  "counts": {
+    "encodeRoundCases": 3807,
+    "memberMutations": 2500,
+    "nonnegativeProfileCases": 500,
+    "historicalArrayHashesVerified": 17
+  },
+  "membershipModel": {
+    "finalLiveCount": 404,
+    "mutationCount": 2500,
+    "scope": "synthetic stored-mass membership/phase/column changes, not product writers"
+  },
+  "syntheticNegativeHistory": {
+    "scope": "synthetic mechanism example, NOT reconstructed T202 writer history",
+    "records": [
+      {
+        "op": "birth",
+        "mass": 1.0,
+        "legacy": 1.0,
+        "v2": 1.0
+      },
+      {
+        "op": "birth",
+        "mass": 5.551115123125783e-17,
+        "legacy": 1.0,
+        "v2": 1.0
+      },
+      {
+        "op": "birth",
+        "mass": 1.1102230246251565e-16,
+        "legacy": 1.0,
+        "v2": 1.0000000000000002
+      },
+      {
+        "op": "retire",
+        "mass": 1.0,
+        "legacy": 0.0,
+        "v2": 1.6653345369377348e-16
+      },
+      {
+        "op": "retire",
+        "mass": 5.551115123125783e-17,
+        "legacy": -5.551115123125783e-17,
+        "v2": 1.1102230246251565e-16
+      },
+      {
+        "op": "retire",
+        "mass": 1.1102230246251565e-16,
+        "legacy": -1.6653345369377348e-16,
+        "v2": 0.0
+      }
+    ],
+    "legacyFinalBits": "bca8000000000000",
+    "v2FinalBits": "0000000000000000"
+  },
+  "domainModel": {
+    "profileCases": 500,
+    "ghostWaterExample": {
+      "top": 0.1,
+      "P": 0.3,
+      "envelope": 0.4,
+      "oldInferredWater": 5.551115123125783e-17,
+      "v2DefinedDryWater": 0.0
+    },
+    "slotFoldDifferenceUpperForSupportedT": "2319371400281849599/158456325028519667987833159680",
+    "slotFoldDifferenceUpperFloat": 1.4637291378961357e-11,
+    "oldCacheAuditAbsTolerance": 1e-09
+  },
+  "actualWriterMassExamples": {
+    "merge": {
+      "oldMasses": [
+        0.1,
+        0.2
+      ],
+      "newStoredMass": 0.30000000000000004,
+      "oldExactSum": "10808639105689191/36028797018963968",
+      "newExactSum": "1351079888211149/4503599627370496",
+      "cacheAfter": 0.30000000000000004
+    },
+    "partialLandNoMassEffect": {
+      "mass": 1.0,
+      "controlQ": 5.551115123125783e-17,
+      "actualRemainder": 1.0,
+      "derivedMassAfter": 1.0,
+      "conclusion": "update membership from actual before/after; do not subtract control q"
+    }
+  },
+  "historicalFacts": {
+    "column": 57,
+    "values": {
+      "waterTop": -1.6653345369377348e-16,
+      "sandTop": 0.0,
+      "colParticleMassH": -1.6653345369377348e-16,
+      "colParticleMassL": 0.0
+    },
+    "predicateMask": 128,
+    "token": "p011-run-1793151013110-3:2:826:409",
+    "presentation": "STALE",
+    "poolReplayComplete": false,
+    "uniqueFirstWriter": "NOT_CAPTURED_NOT_INFERRED"
+  },
+  "resourceProposal": {
+    "C": 128,
+    "Nmax": 512,
+    "limbs": 70,
+    "perViewBytes": 37560,
+    "views": 8,
+    "auditViews": 1,
+    "baseNewPayloadBytes": 338040,
+    "excludes": [
+      "undo/COW capacity",
+      "metadata/publication headers",
+      "runtime/driver/old scene/resources"
+    ]
+  },
+  "realSemanticChanges": [
+    "live-cache reduction bits",
+    "cache-dependent capacity/guard inputs and future trajectory",
+    "dry-water statistic defined +0 instead of envelope subtraction",
+    "strict dry publishable domain and revision-aware snapshots"
+  ],
+  "notClaimed": [
+    "T202 pool was empty",
+    "unique first writer determined",
+    "new physics bitwise equivalent to V1",
+    "V2 implemented",
+    "whole-chain tests passed",
+    "current frame rendered successfully",
+    "same-DEMO device stability verified",
+    "GPU production migration"
+  ]
+}
