@@ -1,0 +1,157 @@
+{
+ "generatedAt": "2026-10-28T14:54:36.449Z",
+ "results": [
+  {
+   "id": "WM-00",
+   "name": "M1 symbol presence scan",
+   "status": "NOT_IMPLEMENTED",
+   "detail": {
+    "missing": [
+     "GRS_Q20_WATER_M1_V2",
+     "GRS_M1_SEGMENT_T16_V1",
+     "GRS_M1_SOURCE32_V2",
+     "GRS_M1_EVENT64_V2",
+     "GRS_GPU_SCENE_Q20_M1_V2",
+     "GRS_FIXED120_TIME_V1",
+     "waterIdExhausted",
+     "arrivalSerial",
+     "DIRECT_W",
+     "FLIGHT_J"
+    ],
+    "total": 10
+   }
+  },
+  {
+   "id": "WM-01",
+   "name": "source dual-kind admission semantics (independent oracle)",
+   "status": "PASS",
+   "detail": {
+    "cases": 7,
+    "fails": 0,
+    "note": "judge fn self-held; product GPU source32 V2 unimplemented"
+   }
+  },
+  {
+   "id": "WM-02",
+   "name": "ARRIVE identity R-invariant / eta lift by m",
+   "status": "PASS",
+   "detail": {
+    "R0": "38797312",
+    "R1": "38797312"
+   }
+  },
+  {
+   "id": "WM-03",
+   "name": "water flux head2 formula + conservation + no-reversal (200-step random)",
+   "status": "PASS",
+   "detail": {
+    "cases": 6,
+    "fails": 0,
+    "consFails": 0,
+    "sampleQ": "20840448"
+   }
+  },
+  {
+   "id": "WM-04",
+   "name": "AIR/WET integrator RNE oracle (implicit drag, no double gravity, trapezoid)",
+   "status": "PASS",
+   "detail": {
+    "cases": 6,
+    "fails": 0,
+    "vw0": "-15379115",
+    "v1": "-21251140"
+   }
+  },
+  {
+   "id": "WM-05",
+   "name": "LAND eta lift / no drain / receiver capacity includes W+J",
+   "status": "PASS",
+   "detail": {
+    "cases": 4,
+    "fails": 0
+   }
+  },
+  {
+   "id": "WM-06",
+   "name": "arrival low-to-high single sweep: face-rise swallows y=12 packet, y=20 stays AIR",
+   "status": "PASS",
+   "detail": {
+    "cases": 5,
+    "fails": 0,
+    "arrived": [
+     "1",
+     "2",
+     "3"
+    ]
+   }
+  },
+  {
+   "id": "WM-07",
+   "name": "event time ceil/zero-crossing tick/wait-tick accounting + eS48/eW16 constants",
+   "status": "PASS",
+   "detail": {
+    "cases": 7,
+    "fails": 0,
+    "rZero": "245760"
+   }
+  },
+  {
+   "id": "WM-08",
+   "name": "event64 V2 namespace bits + stock mapping (independent encode/decode)",
+   "status": "PASS",
+   "detail": {
+    "cases": 5,
+    "fails": 0
+   }
+  },
+  {
+   "id": "WM-09",
+   "name": "root lifecycle: failure rollback keeps committed prefix; ARRIVE no I/source bump",
+   "status": "PASS",
+   "detail": {
+    "cases": 5,
+    "fails": 0
+   }
+  },
+  {
+   "id": "WM-10",
+   "name": "optics depth/T formula + same-token retire semantics (formula PASS, product RED)",
+   "status": "PASS",
+   "detail": {
+    "cases": 4,
+    "fails": 0,
+    "note": "formula-level PASS only; scene GRS_GPU_SCENE_Q20_M1_V2 unimplemented -> product RED covered by WM-00"
+   }
+  },
+  {
+   "id": "WM-11",
+   "name": "dispatch/stage constants frozen from §9 + water bank bytes",
+   "status": "PASS",
+   "detail": {
+    "cases": 4,
+    "fails": 0,
+    "frozen": {
+     "K192kw64": 114,
+     "K512kw64": 123,
+     "K192kw128": 128,
+     "K512kw128": 137,
+     "srcG1kw64": 488,
+     "srcF4kw64": 526,
+     "srcG1kw128": 544,
+     "srcF4kw128": 582
+    },
+    "note": "L(K) formula textual ambiguity recorded; explicit numbers frozen"
+   }
+  },
+  {
+   "id": "WM-12",
+   "name": "isolation: M0/M1 rev separation, feature bitmap, new-empty-run",
+   "status": "PASS",
+   "detail": {
+    "cases": 5,
+    "fails": 0,
+    "manifestSchema": "GRS_Q20_WATER_M1_ENGINEERING_MANIFEST_V2"
+   }
+  }
+ ]
+}

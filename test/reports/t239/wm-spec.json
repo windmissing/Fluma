@@ -1,0 +1,52 @@
+{
+ "protocolId": "p011-gpu-water-m1-wm-v1",
+ "revision": "wm-independent-v1",
+ "source": "docs/algorithm-T237-gpu-water-M1-v1.md §2-§10",
+ "numericPolicy": "GRS_Q20_WATER_M1_V2",
+ "oracle": {
+  "rne": "signed wide nearest-even (r*2 vs den, tie-even)",
+  "D": 7864320,
+  "Qm": 1048576,
+  "Vmax": 1073741824,
+  "gQmin": 125829120
+ },
+ "wm": {
+  "WM01": {
+   "admission": "y<S REJECT POSITION_IN_BED; S<=y<=eta DIRECT_W(W+=q); y>eta FLIGHT_J(J+=q,waterFree>0); q=floor(requested*Q), q==0 -> NUMERIC_RESOLUTION_REJECTED; waterBeforeAfter=W+J"
+  },
+  "WM02": {
+   "arrive": "J-=m, W+=m, R bit-identical, eta lifts by m; no I_water/sourceCommit bump"
+  },
+  "WM03": {
+   "flux": "head2=2(S+W)-(2c+1)u; qReq=floor(kappaW*delta2/240); q=min(qReq,floor(delta2/4),W[d],max(0,(head2[d]-max(bed2)/2)),free_r); no head reversal; kappaW in [0,960]"
+  },
+  "WM04": {
+   "integ": "AIR v1=RNE(Dv0/(D+kAir r))+RNE(a r/D); WET v1=RNE((Dv0+k r vT)/(D+k r)) no extra g; p1=p0+RNE((v0+v1)r/(2D)); Vmax violation=FAIL no clamp"
+  },
+  "WM05": {
+   "land": "P-=q,S+=q,W unchanged, eta+=q; receiver free=Cq-S-W-P-J"
+  },
+  "WM06": {
+   "arrival": "sort (column,y,id) ascending single sweep vs current eta=S+W; face-rise swallows later higher packets; end state all alive y>eta"
+  },
+  "WM07": {
+   "time": "t=ceil(rSeg*lambda); T=65536 ticks; D=7864320; zero-crossing <=16 bisection; eS48/eW16 row bounds; waitTicks=T-tauBefore-tMotion"
+  },
+  "WM08": {
+   "replay": "event64 V2 namespace bits18-19 SAND/WATER/FIELD/SOURCE; stock A/B by kind (ARRIVE W/J, LAND mh/P, BED mh/mh, WATER_EDGE donorW/receiverW); field rows slot=id=0"
+  },
+  "WM09": {
+   "lifecycle": "quantum fail -> candidate full rollback; committed source & prior quanta retained; stop/switch keep accepted J/P/W; ARRIVE no commit bump; dt=0 no write"
+  },
+  "WM10": {
+   "scene": "depth=clamp(eta-max(y,S),0,W); T=exp(-sigma*depth); body=((1-T)tint,1-T); same-token ARRIVE retires glyph same frame"
+  },
+  "WM11": {
+   "cost": "frozen §9: K192kw64=114 K512kw64=123 K192kw128=128 K512kw128=137 dispatch/quantum; source G1/F4 488/526/544/582; water bank extra 16*Kw bytes; <=5 roots/tick"
+  },
+  "WM12": {
+   "isolation": "M0 reader rejects M1 rev; M1 new-empty-run bh=0; feature bitmap=3; legacy F64 waterTotal=W+J reference only"
+  }
+ },
+ "productRed": "all M1 product symbols absent (see WM-00 missing list) -> implementation cases RED pre-test"
+}
