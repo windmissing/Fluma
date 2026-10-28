@@ -1,0 +1,271 @@
+{
+  "revision": "T196_DESIGN_ARITHMETIC_AND_COST_V1",
+  "date": "2026-10-28",
+  "kind": "designer arithmetic/cost/source reading only; not product, GPU or device tests",
+  "route": "SINGLE_SAND_CLEAR_WATER_V1",
+  "supplement": "CW_B_STEP_DESIGN_V1",
+  "inputSha256": {
+    "docs/algorithm-single-sand-clear-water-v1.md": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808",
+    "docs/algorithm-T122-single-sand-clear-water-handoff-v1.md": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6",
+    "docs/architecture-single-sand-clear-water-v1.md": "a2ae3fe4dbe586fb9f9748796795de3fd2a764557b6031653418718f8a2b8eb1",
+    "docs/developer-T188-clear-water-source-v1.md": "37b60c23eef461c3ed9a6c8316730a5e04c6a5bb0bd974c3078791c42b3f6138",
+    "docs/test-report-T189-clear-water-A-independent-v1.md": "281c0265385073840615043a1bdd06abbd1cd8dfd56d228ccfb821b4db75286d",
+    "docs/test-report-single-sand-clear-water-baseline-v1.md": "38b1cd050cad40e4e7fd0495feec690bb6b2e25cb83a4eb7d0c27a51625e8c5c",
+    "test/reports/t189/independent.json": "a3aa49cf0e89e4ea1d1d31ff7083e8ae5f2203adcd1a9766793140450a0eaaef",
+    "test/reports/t188/allocation-ledger.json": "c6c1a34a057c394b8135684c47f0fe69ddd1894d7efb939f6dc45f4fc5a33cb2",
+    "entry/src/main/ets/physics/clearwater/P011ClearWaterTypes.ets": "d50c6352afb006495946a2402d03e8094e1df5c8fd59e7c586286e32c24f66d8",
+    "entry/src/main/ets/physics/clearwater/P011ClearWaterState.ets": "5f83a083b712f9152820384ad34c6a14787f6baebd1113669986bcded0b779f6",
+    "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets": "be0f170ad59423c784c18577d0c7d36f0c4595bd4e2df8a6d2eb89447355f195",
+    "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets": "5637ead4bdf74a7327e88c125524cf8d8a85ff617f9efaec6274a9c7a46ada73",
+    "entry/src/main/ets/physics/P011MaterialGuard.ets": "0ab97340dcaf815a62f2aced9712857cb17547ffe71e54f6f46a1d8221563259",
+    "docs/design-T196-clear-water-B-model-v1.py": "0825710cf3d2670a4bd7ff52462e3486260ea50aca25424997321e59912e40d2"
+  },
+  "inheritedAReport": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "rerun": false,
+    "scope": "A inventory/source only; B/C/restore NOT_IMPLEMENTED"
+  },
+  "accumulatorModel": {
+    "finiteEncodeAddSubtractCases": 510,
+    "repeatedMaximumMassAdds": 512,
+    "repeatedMaximumMassSubtracts": 512,
+    "negativeRejected": true,
+    "limbCount": 70,
+    "limbBits": 16,
+    "totalBits": 1120,
+    "physicalScaleExponent": -1074,
+    "maximumSupportedRealExclusivePower": 46
+  },
+  "incrementalCacheCounterexample": {
+    "masses": [
+      1.0,
+      1.1102230246251565e-16,
+      1.1102230246251565e-16
+    ],
+    "originalIDfold": 1.0,
+    "afterRemovingFirstIncremental": 0.0,
+    "afterRemovingFirstIDfold": 2.220446049250313e-16,
+    "conclusion": "do not replace canonical ID-order reduction by incremental +/-"
+  },
+  "roundedCapacityCounterexample": {
+    "S": 0,
+    "W": 0,
+    "masses": [
+      256.0,
+      5.551115123125783e-17
+    ],
+    "IDfold": 256,
+    "roundedR": 256,
+    "exactE": "4611686018427387905/18014398509481984",
+    "boundPolicy": "freeze Bcap=max(C,Eentry) as auxiliary only; final original R<=C remains mandatory"
+  },
+  "waterExamples": [
+    {
+      "name": "wet-to-dry",
+      "q": "1",
+      "waterAfter": [
+        "3",
+        "1"
+      ],
+      "realEnergyDelta": "-3",
+      "kind": "real-arithmetic illustration, not RN product test"
+    },
+    {
+      "name": "high-bed-wall",
+      "q": "0",
+      "waterAfter": [
+        "2",
+        "0"
+      ],
+      "realEnergyDelta": "0",
+      "kind": "real-arithmetic illustration, not RN product test"
+    },
+    {
+      "name": "particle-reserved-receiver",
+      "q": "1",
+      "waterAfter": [
+        "5",
+        "2"
+      ],
+      "realEnergyDelta": "-4",
+      "kind": "real-arithmetic illustration, not RN product test"
+    },
+    {
+      "name": "tilt",
+      "q": "1/4",
+      "waterAfter": [
+        "11/4",
+        "13/4"
+      ],
+      "realEnergyDelta": "-1/16",
+      "kind": "real-arithmetic illustration, not RN product test"
+    }
+  ],
+  "exactBudgetExamples": [
+    {
+      "kind": "LAND",
+      "columns": [
+        0
+      ],
+      "request": "1/4",
+      "reserved": "1/4",
+      "accepted": "1/8",
+      "refundOnce": "1/8",
+      "remainingTotal": "39/8",
+      "remainingLocal": [
+        "41/120",
+        "7/15",
+        "7/15"
+      ]
+    },
+    {
+      "kind": "CROSS",
+      "columns": [
+        0,
+        1
+      ],
+      "request": "1/4",
+      "reserved": "1/4",
+      "accepted": "1/4",
+      "refundOnce": "0",
+      "remainingTotal": "37/8",
+      "remainingLocal": [
+        "11/120",
+        "13/60",
+        "7/15"
+      ]
+    },
+    {
+      "kind": "BED",
+      "columns": [
+        1,
+        2
+      ],
+      "request": "1/2",
+      "reserved": "13/60",
+      "accepted": "1/10",
+      "refundOnce": "7/60",
+      "remainingTotal": "181/40",
+      "remainingLocal": [
+        "11/120",
+        "7/60",
+        "11/30"
+      ]
+    }
+  ],
+  "postBedContactCases": [
+    {
+      "name": "bed rises into a live point",
+      "yBefore": 0.3,
+      "newBedS": 0.4,
+      "yAfter": 0.4,
+      "stateAfter": "BED_WAIT",
+      "massChange": 0,
+      "waterChange": 0,
+      "sourceChange": 0,
+      "extraEventRows": 1,
+      "timeAdvanced": 0
+    },
+    {
+      "name": "support falls away",
+      "yBefore": 0.4,
+      "newBedS": 0.2,
+      "yAfter": 0.4,
+      "stateAfter": "AIRBORNE",
+      "massChange": 0,
+      "waterChange": 0,
+      "sourceChange": 0,
+      "extraEventRows": 1,
+      "timeAdvanced": 0
+    }
+  ],
+  "eventResourcePolicy": {
+    "perParticleLimit": 8,
+    "motionLoopLimit": 7,
+    "postBedContactReserved": 1,
+    "summaryDoesNotPromiseContiguousPerParticleEvents": true
+  },
+  "proposedCostAndPayload": [
+    {
+      "N": 128,
+      "K": 192,
+      "e": 8,
+      "hydraulicEdges": 127,
+      "bedEdges": 127,
+      "particleEventUpper": 1536,
+      "eventRowsPerBank": 1790,
+      "lineageRowsPerBank": 3580,
+      "maxFullAuditsPerPositiveStep": 3,
+      "physicsCandidates": 1,
+      "lambdaRetries": 0,
+      "perBirthMergeOrIndexRebuild": 0,
+      "proposedBPayloadParts": {
+        "replayState": 22336,
+        "originWaitFiveBanks": 8640,
+        "medium": 1152,
+        "exactAcc": 36128,
+        "budget": 6400,
+        "doubleParticleSummaries": 49152,
+        "doubleEvent40": 1145600,
+        "doubleLineage3": 171840,
+        "scalarHeaders": 2048
+      },
+      "proposedBPayloadBytes": 1443296,
+      "coldAttachIntervalBytes": 65536,
+      "proposedBPeakIncludingColdAttach": 1508832,
+      "observedABytes": null,
+      "proposedAplusBHotBytes": null,
+      "proposedAplusBPeakBytes": null
+    },
+    {
+      "N": 128,
+      "K": 512,
+      "e": 8,
+      "hydraulicEdges": 127,
+      "bedEdges": 127,
+      "particleEventUpper": 4096,
+      "eventRowsPerBank": 4350,
+      "lineageRowsPerBank": 8700,
+      "maxFullAuditsPerPositiveStep": 3,
+      "physicsCandidates": 1,
+      "lambdaRetries": 0,
+      "perBirthMergeOrIndexRebuild": 0,
+      "proposedBPayloadParts": {
+        "replayState": 42496,
+        "originWaitFiveBanks": 23040,
+        "medium": 1152,
+        "exactAcc": 36128,
+        "budget": 6400,
+        "doubleParticleSummaries": 131072,
+        "doubleEvent40": 2784000,
+        "doubleLineage3": 417600,
+        "scalarHeaders": 2048
+      },
+      "proposedBPayloadBytes": 3443936,
+      "coldAttachIntervalBytes": 65536,
+      "proposedBPeakIncludingColdAttach": 3509472,
+      "observedABytes": 2802784,
+      "proposedAplusBHotBytes": 6246720,
+      "proposedAplusBPeakBytes": 6312256
+    }
+  ],
+  "aggregation": {
+    "sourceBoundariesDefault": 1,
+    "sourceQueueMaxPerBoundary": 64,
+    "frameSubstepsMax": 2,
+    "formula": "enqueue_sum + source_boundaries_sum + substeps_sum(V*Tstep) + C_when_implemented",
+    "singleBoundaryBirthUpper": "entry freeCount <= K",
+    "noClaimThatFrameBirthsAlwaysLeK": true
+  },
+  "notClaimed": [
+    "B code implemented",
+    "new exact helper independently tested in product",
+    "full step or restore validated",
+    "C renderer/touch enabled",
+    "device performance pass",
+    "aggregate latency reduced",
+    "overall strict-state route enabled"
+  ]
+}
