@@ -1,0 +1,58 @@
+{
+  "revision": "T191_DEVELOPER_BUILD_UNITS_V1",
+  "passed": 12,
+  "failed": 0,
+  "results": [
+    {
+      "name": "o0 manifest digest and exact baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "o0 all whitelist edits invert byte-exactly to V3",
+      "status": "PASS"
+    },
+    {
+      "name": "o0 no arithmetic/ABI/shader/fixture/worker overlay",
+      "status": "PASS"
+    },
+    {
+      "name": "o0 actual four units final flags and packaged ELF identity",
+      "status": "PASS"
+    },
+    {
+      "name": "o2 manifest digest and exact baseline",
+      "status": "PASS"
+    },
+    {
+      "name": "o2 all whitelist edits invert byte-exactly to V3",
+      "status": "PASS"
+    },
+    {
+      "name": "o2 no arithmetic/ABI/shader/fixture/worker overlay",
+      "status": "PASS"
+    },
+    {
+      "name": "o2 actual four units final flags and packaged ELF identity",
+      "status": "PASS"
+    },
+    {
+      "name": "O0/O2 only variant/source literal and final optimization differ in commands",
+      "status": "PASS"
+    },
+    {
+      "name": "macros identical except source literal and compiler optimization builtins",
+      "status": "PASS"
+    },
+    {
+      "name": "variant bound in configId, output config and validation; schedule unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "fresh regeneration preserves both source identities; invalid/overwrite rejected",
+      "status": "PASS"
+    }
+  ],
+  "armExecution": "NOT_RUN",
+  "device": "NOT_RUN",
+  "performance": "NOT_MEASURED"
+}

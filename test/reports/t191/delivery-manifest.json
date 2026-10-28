@@ -1,0 +1,219 @@
+{
+  "revision": "T191_DELIVERY_V1",
+  "archives": [
+    {
+      "variant": "STRICT_O0",
+      "path": "test/reports/t191/artifacts-o0.zip",
+      "bytes": 2530365,
+      "sha256": "ff0170635000c8253865ac8701ef420d3807962ff9da051594dc0b4e63d4a690",
+      "entries": [
+        {
+          "name": "entry-default-unsigned.hap",
+          "bytes": 4070911,
+          "sha256": "df833640d89ad77b231be25268b36c8715e792b19d779d133e5cf80ad915e253"
+        },
+        {
+          "name": "ninja-commands.txt",
+          "bytes": 6304,
+          "sha256": "374cee0e37a5cbad8d5c9ae3c402ec458a34b868b0c5f49c997b2daff455b0f0"
+        },
+        {
+          "name": "object-libp011_gpu_pair_prototype.so",
+          "bytes": 1593344,
+          "sha256": "fbae516e84e21f838e33f2f9f232cf480a950f2ec402f10fde4d4ea27759b73f"
+        },
+        {
+          "name": "packaged-libp011_gpu_pair_prototype.so",
+          "bytes": 360208,
+          "sha256": "d144dfe8a8cb7ecf90150d4f09cd149a4391db227f9f82d58112b1d2b839da9b"
+        },
+        {
+          "name": "pair_binding_v1.cpp.o",
+          "bytes": 732752,
+          "sha256": "52dd0356d8e1d15ff8c44eb12839c70a56d9ce73b710fb84bff8f4f9261106f0"
+        },
+        {
+          "name": "pair_binding_v1.macros.txt",
+          "bytes": 99743,
+          "sha256": "eb415be33d7b6fb78f8cae0ec5bd5beaf963a73d8705817c0a9b0fe6d8f37ca0"
+        },
+        {
+          "name": "pair_executor_v1.cpp.o",
+          "bytes": 626336,
+          "sha256": "9f3f3facb999a642708912477d0b41de09ce69807a4294caa265de3c63887a0b"
+        },
+        {
+          "name": "pair_executor_v1.macros.txt",
+          "bytes": 129694,
+          "sha256": "b9563fcd39f593d2d5b53bb29ceee42598ace064f56b5c549eb26c0a41725bb7"
+        },
+        {
+          "name": "pair_owner_v1.cpp.o",
+          "bytes": 125224,
+          "sha256": "1fae60da14033d32aed944a62d06d657cbef7b097201af082118dcf5537ba48a"
+        },
+        {
+          "name": "pair_owner_v1.macros.txt",
+          "bytes": 86579,
+          "sha256": "b20442f176f2add038f7ed52ab3e2102f2d01beb4a9542b0383975ff6d452683"
+        },
+        {
+          "name": "pair_prepare_v1.cpp.o",
+          "bytes": 1262960,
+          "sha256": "2449bfeb63d0454db34dac662423321a3b8d48392e1c35aae3ab965fe251bea2"
+        },
+        {
+          "name": "pair_prepare_v1.macros.txt",
+          "bytes": 89021,
+          "sha256": "66d1d45bb6448d37d1eec48b2fd3b9cf23f79ee561e6d7345954dbd3138d789c"
+        },
+        {
+          "name": "post-build-manifest.json",
+          "bytes": 25965,
+          "sha256": "d5515a5b1e0162cda21c44c248058223f9288a703c5c4f0ab72d5082a2e14d74"
+        },
+        {
+          "name": "source-manifest.json",
+          "bytes": 50329,
+          "sha256": "e08ee498fe6dd0988235b65eeec332e6e7ff8339c434a9f92710a17b9c6bcad5"
+        }
+      ],
+      "unsignedHapSha256": "df833640d89ad77b231be25268b36c8715e792b19d779d133e5cf80ad915e253",
+      "sourceManifestSha256": "6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d",
+      "packagedSoSha256": "d144dfe8a8cb7ecf90150d4f09cd149a4391db227f9f82d58112b1d2b839da9b",
+      "signed": "NOT_BUILT"
+    },
+    {
+      "variant": "STRICT_O2",
+      "path": "test/reports/t191/artifacts-o2.zip",
+      "bytes": 2340094,
+      "sha256": "f9e821059105f664e833a40cdae69fcace1afef8683da024670730301b5ee6cc",
+      "entries": [
+        {
+          "name": "entry-default-unsigned.hap",
+          "bytes": 3867751,
+          "sha256": "7a574b52e4da7363ee0e31bb4dddfd5cb428bf2c97fb5dd5d92eab13d63f69a3"
+        },
+        {
+          "name": "ninja-commands.txt",
+          "bytes": 6304,
+          "sha256": "0ae60efd00498afb6c6d5beef71710957f1605eb942286d4f4571622f10f8ac8"
+        },
+        {
+          "name": "object-libp011_gpu_pair_prototype.so",
+          "bytes": 1333488,
+          "sha256": "08f21bc8656ecef442e5994072c076358215e5781b050e5b8902fd62141f2082"
+        },
+        {
+          "name": "packaged-libp011_gpu_pair_prototype.so",
+          "bytes": 157048,
+          "sha256": "ac8be9769f01c9e9834a516497debce8944d4b68e4581ca987e717ccd086e908"
+        },
+        {
+          "name": "pair_binding_v1.cpp.o",
+          "bytes": 593672,
+          "sha256": "ceccf4b38436e89e080d8c85ea1f0f22932fe6702ad0631166be51d17c198a1d"
+        },
+        {
+          "name": "pair_binding_v1.macros.txt",
+          "bytes": 99742,
+          "sha256": "0ddfb37ddb78b66854397221c5d059ed99ce063904560ae17a260be0deb53b7c"
+        },
+        {
+          "name": "pair_executor_v1.cpp.o",
+          "bytes": 530888,
+          "sha256": "4ecd18642afa7d70ff9771db9f404516d1f912c5c73146e53c53446d54fbe048"
+        },
+        {
+          "name": "pair_executor_v1.macros.txt",
+          "bytes": 129693,
+          "sha256": "f4cec5d75cf913857fdf3d86b22ac7cf658813c8fbf82e1699ca34248c89afdb"
+        },
+        {
+          "name": "pair_owner_v1.cpp.o",
+          "bytes": 106704,
+          "sha256": "4d2c01a1fd2eef0c72999b9dac0c7d67cd501e44af40175c1942d3ad74ac6a77"
+        },
+        {
+          "name": "pair_owner_v1.macros.txt",
+          "bytes": 86578,
+          "sha256": "17e0ff86abd119c9046d360479c5427a269dc7931b39e050282f30d072757c51"
+        },
+        {
+          "name": "pair_prepare_v1.cpp.o",
+          "bytes": 602552,
+          "sha256": "d9bdf8f7e79b92ec92c2e520b69d89e07cee9336aa0ff342b59bf2990e603e57"
+        },
+        {
+          "name": "pair_prepare_v1.macros.txt",
+          "bytes": 89020,
+          "sha256": "663323f799d4eaae19df9d3d16b217bf7f683d8aaecc2793a87c10f6be7284c1"
+        },
+        {
+          "name": "post-build-manifest.json",
+          "bytes": 25960,
+          "sha256": "6d20759cbd88a7a4e1d7d4a92c70237cb8ae33ab522c54b564a4eff68a9b902b"
+        },
+        {
+          "name": "source-manifest.json",
+          "bytes": 50329,
+          "sha256": "c7961997a8953438bc83c34bbf6cf6f31b1569b93cadc7f45c16c735eaa8e2d2"
+        }
+      ],
+      "unsignedHapSha256": "7a574b52e4da7363ee0e31bb4dddfd5cb428bf2c97fb5dd5d92eab13d63f69a3",
+      "sourceManifestSha256": "e48340d397bf407e69ce4d8ffb97e3d9b224e571c7a38a7e2fcdd36b74631cde",
+      "packagedSoSha256": "ac8be9769f01c9e9834a516497debce8944d4b68e4581ca987e717ccd086e908",
+      "signed": "NOT_BUILT"
+    }
+  ],
+  "codeFiles": [
+    {
+      "path": "test/p013_compute/build_t191_host.cmd",
+      "sha256": "d19676b01aa71a574b70ebfc3bc810e5d8fb806efb1bfb72f21cfe4248ee8efb"
+    },
+    {
+      "path": "test/p013_compute/run_t191_cmake_guards.py",
+      "sha256": "00abdc9283581f6edf79aa419110971d5b99a1a8da209fe46ae2c8742956607e"
+    },
+    {
+      "path": "test/p013_compute/run_t191_strict_build_units.cjs",
+      "sha256": "a268081a0bc0b31696e4e5cb62a47c59234d8d0f3bbf54c579112056a497f8c7"
+    },
+    {
+      "path": "test/p013_compute/strict_variant_v1.cmake",
+      "sha256": "058b5c5a16cc934551f00c3ae5a07a33ac8b908b84c7370dd3594b113e768aa5"
+    },
+    {
+      "path": "test/p013_compute/tools/archive_t191_post_build.py",
+      "sha256": "bda98a2614085374eadf4baca278c6d6a897e63425db37deb894b3c690691c74"
+    },
+    {
+      "path": "test/p013_compute/tools/build_t191_strict_variants.py",
+      "sha256": "c6459b6c9f998c775271e67cbd330bade3257ade6d5fa58b5905c0f768476a35"
+    },
+    {
+      "path": "test/p013_compute/tools/generate_transaction_project_v4.cjs",
+      "sha256": "86bba114430cc049420637f9153d8612a91d9abc47badd73a32fc82c7dea5d36"
+    }
+  ],
+  "device": "NOT_RUN",
+  "performance": "NOT_MEASURED",
+  "reproduction": [
+    {
+      "variant": "STRICT_O0",
+      "compilePackageExitCode": 0,
+      "unsignedHapSha256": "9418125afa9c6f8b1f3f8677604e294ca62da1a82320454aaa1c257678da1f4f",
+      "sourceManifestSha256": "6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d",
+      "signed": "NOT_BUILT",
+      "device": "NOT_RUN"
+    },
+    {
+      "variant": "STRICT_O2",
+      "compilePackageExitCode": 0,
+      "unsignedHapSha256": "ce29af3f76c9dda5ecaf600e3154f30d156d65a542f8fd62162d82fe65204e3e",
+      "sourceManifestSha256": "e48340d397bf407e69ce4d8ffb97e3d9b224e571c7a38a7e2fcdd36b74631cde",
+      "signed": "NOT_BUILT",
+      "device": "NOT_RUN"
+    }
+  ]
+}

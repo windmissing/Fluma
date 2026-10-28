@@ -1,0 +1,49 @@
+{
+  "scope": "REAL_CMAKE_CONFIGURE_REJECTION_ONLY_NO_COMPILER_IN_NEGATIVE_HARNESS",
+  "passed": 6,
+  "failed": 0,
+  "cases": [
+    {
+      "case": "identity",
+      "exitCode": 1,
+      "expected": "T191_VARIANT_IDENTITY_CONFLICT",
+      "output": "-- Configuring incomplete, errors occurred!\nCMake Error at D:/hmprojects/HelloWorld/test/p013_compute/strict_variant_v1.cmake:11 (message):\n  T191_VARIANT_IDENTITY_CONFLICT\nCall Stack (most recent call first):\n  CMakeLists.txt:5 (include)\n\n\n",
+      "status": "PASS"
+    },
+    {
+      "case": "release",
+      "exitCode": 1,
+      "expected": "T191_REQUIRES_UNCHANGED_DEBUG_CONFIGURATION",
+      "output": "-- Configuring incomplete, errors occurred!\nCMake Error at D:/hmprojects/HelloWorld/test/p013_compute/strict_variant_v1.cmake:14 (message):\n  T191_REQUIRES_UNCHANGED_DEBUG_CONFIGURATION\nCall Stack (most recent call first):\n  CMakeLists.txt:5 (include)\n\n\n",
+      "status": "PASS"
+    },
+    {
+      "case": "lto",
+      "exitCode": 1,
+      "expected": "T191_LTO_FORBIDDEN",
+      "output": "-- Configuring incomplete, errors occurred!\nCMake Error at D:/hmprojects/HelloWorld/test/p013_compute/strict_variant_v1.cmake:17 (message):\n  T191_LTO_FORBIDDEN\nCall Stack (most recent call first):\n  CMakeLists.txt:5 (include)\n\n\n",
+      "status": "PASS"
+    },
+    {
+      "case": "ndebug",
+      "exitCode": 1,
+      "expected": "T191_FORBIDDEN_FLAGS",
+      "output": "-- Configuring incomplete, errors occurred!\nCMake Error at D:/hmprojects/HelloWorld/test/p013_compute/strict_variant_v1.cmake:21 (message):\n  T191_FORBIDDEN_FLAGS:CMAKE_CXX_FLAGS\nCall Stack (most recent call first):\n  CMakeLists.txt:5 (include)\n\n\n",
+      "status": "PASS"
+    },
+    {
+      "case": "fastmath",
+      "exitCode": 1,
+      "expected": "T191_FORBIDDEN_FLAGS",
+      "output": "-- Configuring incomplete, errors occurred!\nCMake Error at D:/hmprojects/HelloWorld/test/p013_compute/strict_variant_v1.cmake:21 (message):\n  T191_FORBIDDEN_FLAGS:CMAKE_CXX_FLAGS\nCall Stack (most recent call first):\n  CMakeLists.txt:5 (include)\n\n\n",
+      "status": "PASS"
+    },
+    {
+      "case": "contraction",
+      "exitCode": 1,
+      "expected": "T191_FORBIDDEN_FLAGS",
+      "output": "-- Configuring incomplete, errors occurred!\nCMake Error at D:/hmprojects/HelloWorld/test/p013_compute/strict_variant_v1.cmake:21 (message):\n  T191_FORBIDDEN_FLAGS:CMAKE_CXX_FLAGS\nCall Stack (most recent call first):\n  CMakeLists.txt:5 (include)\n\n\n",
+      "status": "PASS"
+    }
+  ]
+}

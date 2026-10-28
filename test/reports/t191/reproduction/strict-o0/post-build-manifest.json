@@ -1,0 +1,406 @@
+{
+  "revision": "T191_POST_BUILD_V1",
+  "variant": "STRICT_O0",
+  "generatedRoot": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0",
+  "sourceManifestSha256": "6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d",
+  "sourceManifestFile": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\t191-source-manifest.json",
+    "bytes": 50329,
+    "sha256": "e08ee498fe6dd0988235b65eeec332e6e7ff8339c434a9f92710a17b9c6bcad5"
+  },
+  "configurationIdentity": "T191_STRICT_CONFIG_V1|variant:STRICT_O0",
+  "compiler": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+    "version": "OHOS (dev) clang version 15.0.4 (llvm-project 3f002d04ba6b3a7659c601207c89d3a896b82546)\nTarget: x86_64-w64-windows-gnu\nThread model: posix\nInstalledDir: C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm/bin\n",
+    "file": {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+      "bytes": 106698240,
+      "sha256": "c090283dcef69bb2792c1b8fde748557eab787a7a34ea1d35d01068fc6e0baf5"
+    }
+  },
+  "abi": "arm64-v8a",
+  "buildType": "Debug",
+  "compileCommands": [
+    {
+      "source": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_binding_v1.cpp",
+      "sourceFile": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_binding_v1.cpp",
+        "bytes": 24913,
+        "sha256": "acfd93f4ad28cdca78b6788e9b8aa17f91e8d5e351492d24a08d55d94c85e24e"
+      },
+      "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -DP011_GPU_TEST_INJECTION=1 -DT159_SOURCE_SHA=\\\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\\\" -DT171_SHADER0_SHA=\\\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\\\" -DT171_SHADER1_SHA=\\\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\\\" -DT171_SHADER2_SHA=\\\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\\\" -Dp011_gpu_pair_napi_EXPORTS -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -fno-fast-math -ffp-contract=off -O0 -o p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_binding_v1.cpp.o -c D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_binding_v1.cpp",
+      "arguments": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+        "--target=aarch64-linux-ohos",
+        "--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm",
+        "--sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot",
+        "-DP011_GPU_TEST_INJECTION=1",
+        "-DT159_SOURCE_SHA=\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\"",
+        "-DT171_SHADER0_SHA=\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\"",
+        "-DT171_SHADER1_SHA=\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\"",
+        "-DT171_SHADER2_SHA=\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\"",
+        "-Dp011_gpu_pair_napi_EXPORTS",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-funwind-tables",
+        "-fstack-protector-strong",
+        "-no-canonical-prefixes",
+        "-fno-addrsig",
+        "-Wa,--noexecstack",
+        "-Wformat",
+        "-Werror=format-security",
+        "-D__MUSL__",
+        "-O0",
+        "-g",
+        "-fno-limit-debug-info",
+        "-std=gnu++17",
+        "-fPIC",
+        "-fno-fast-math",
+        "-ffp-contract=off",
+        "-O0",
+        "-o",
+        "p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_binding_v1.cpp.o",
+        "-c",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_binding_v1.cpp"
+      ],
+      "effectiveOptimization": "-O0",
+      "object": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_binding_v1.cpp.o",
+        "bytes": 732776,
+        "sha256": "2c93d12785c856a8437db2ed540a377f5a29ebafccbe11c95ba6a810678c5557"
+      },
+      "macros": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t191\\reproduction\\strict-o0\\pair_binding_v1.macros.txt",
+        "bytes": 99743,
+        "sha256": "eb415be33d7b6fb78f8cae0ec5bd5beaf963a73d8705817c0a9b0fe6d8f37ca0"
+      }
+    },
+    {
+      "source": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_prepare_v1.cpp",
+      "sourceFile": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_prepare_v1.cpp",
+        "bytes": 11618,
+        "sha256": "d1dba4704757961a16b0aca764d1117740bf1ea0e17fac7cce1cc0d83b215a78"
+      },
+      "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -DP011_GPU_TEST_INJECTION=1 -DT159_SOURCE_SHA=\\\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\\\" -DT171_SHADER0_SHA=\\\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\\\" -DT171_SHADER1_SHA=\\\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\\\" -DT171_SHADER2_SHA=\\\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\\\" -Dp011_gpu_pair_napi_EXPORTS -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -fno-fast-math -ffp-contract=off -O0 -o p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_prepare_v1.cpp.o -c D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_prepare_v1.cpp",
+      "arguments": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+        "--target=aarch64-linux-ohos",
+        "--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm",
+        "--sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot",
+        "-DP011_GPU_TEST_INJECTION=1",
+        "-DT159_SOURCE_SHA=\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\"",
+        "-DT171_SHADER0_SHA=\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\"",
+        "-DT171_SHADER1_SHA=\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\"",
+        "-DT171_SHADER2_SHA=\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\"",
+        "-Dp011_gpu_pair_napi_EXPORTS",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-funwind-tables",
+        "-fstack-protector-strong",
+        "-no-canonical-prefixes",
+        "-fno-addrsig",
+        "-Wa,--noexecstack",
+        "-Wformat",
+        "-Werror=format-security",
+        "-D__MUSL__",
+        "-O0",
+        "-g",
+        "-fno-limit-debug-info",
+        "-std=gnu++17",
+        "-fPIC",
+        "-fno-fast-math",
+        "-ffp-contract=off",
+        "-O0",
+        "-o",
+        "p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_prepare_v1.cpp.o",
+        "-c",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_prepare_v1.cpp"
+      ],
+      "effectiveOptimization": "-O0",
+      "object": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_prepare_v1.cpp.o",
+        "bytes": 1263288,
+        "sha256": "f5d0ca79f41b21fee35902695ff261235b9149c998cd2dfbb8f8e5a322be6b76"
+      },
+      "macros": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t191\\reproduction\\strict-o0\\pair_prepare_v1.macros.txt",
+        "bytes": 89021,
+        "sha256": "66d1d45bb6448d37d1eec48b2fd3b9cf23f79ee561e6d7345954dbd3138d789c"
+      }
+    },
+    {
+      "source": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_executor_v1.cpp",
+      "sourceFile": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_executor_v1.cpp",
+        "bytes": 18127,
+        "sha256": "eec3e90b2a6f136a73d70006b5a38c11d88a2ea7e15accefdf0b004623d6d260"
+      },
+      "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -DP011_GPU_TEST_INJECTION=1 -DT159_SOURCE_SHA=\\\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\\\" -DT171_SHADER0_SHA=\\\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\\\" -DT171_SHADER1_SHA=\\\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\\\" -DT171_SHADER2_SHA=\\\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\\\" -Dp011_gpu_pair_napi_EXPORTS -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -fno-fast-math -ffp-contract=off -O0 -o p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_executor_v1.cpp.o -c D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_executor_v1.cpp",
+      "arguments": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+        "--target=aarch64-linux-ohos",
+        "--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm",
+        "--sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot",
+        "-DP011_GPU_TEST_INJECTION=1",
+        "-DT159_SOURCE_SHA=\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\"",
+        "-DT171_SHADER0_SHA=\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\"",
+        "-DT171_SHADER1_SHA=\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\"",
+        "-DT171_SHADER2_SHA=\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\"",
+        "-Dp011_gpu_pair_napi_EXPORTS",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-funwind-tables",
+        "-fstack-protector-strong",
+        "-no-canonical-prefixes",
+        "-fno-addrsig",
+        "-Wa,--noexecstack",
+        "-Wformat",
+        "-Werror=format-security",
+        "-D__MUSL__",
+        "-O0",
+        "-g",
+        "-fno-limit-debug-info",
+        "-std=gnu++17",
+        "-fPIC",
+        "-fno-fast-math",
+        "-ffp-contract=off",
+        "-O0",
+        "-o",
+        "p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_executor_v1.cpp.o",
+        "-c",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_executor_v1.cpp"
+      ],
+      "effectiveOptimization": "-O0",
+      "object": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_executor_v1.cpp.o",
+        "bytes": 626376,
+        "sha256": "fe4c1acfce8ea287d9e06209533a00e43066c5be77eeb81a28db7dbc31bb6026"
+      },
+      "macros": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t191\\reproduction\\strict-o0\\pair_executor_v1.macros.txt",
+        "bytes": 129694,
+        "sha256": "b9563fcd39f593d2d5b53bb29ceee42598ace064f56b5c549eb26c0a41725bb7"
+      }
+    },
+    {
+      "source": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_owner_v1.cpp",
+      "sourceFile": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_owner_v1.cpp",
+        "bytes": 3711,
+        "sha256": "9d79af03a5b384c41bf7596fe8f10a8414a877bc2a729c589a72f9bcebba8bb6"
+      },
+      "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -DP011_GPU_TEST_INJECTION=1 -DT159_SOURCE_SHA=\\\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\\\" -DT171_SHADER0_SHA=\\\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\\\" -DT171_SHADER1_SHA=\\\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\\\" -DT171_SHADER2_SHA=\\\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\\\" -Dp011_gpu_pair_napi_EXPORTS -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -fno-fast-math -ffp-contract=off -O0 -o p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_owner_v1.cpp.o -c D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_owner_v1.cpp",
+      "arguments": [
+        "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+        "--target=aarch64-linux-ohos",
+        "--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm",
+        "--sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot",
+        "-DP011_GPU_TEST_INJECTION=1",
+        "-DT159_SOURCE_SHA=\"6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d\"",
+        "-DT171_SHADER0_SHA=\"da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd\"",
+        "-DT171_SHADER1_SHA=\"ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a\"",
+        "-DT171_SHADER2_SHA=\"3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9\"",
+        "-Dp011_gpu_pair_napi_EXPORTS",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-funwind-tables",
+        "-fstack-protector-strong",
+        "-no-canonical-prefixes",
+        "-fno-addrsig",
+        "-Wa,--noexecstack",
+        "-Wformat",
+        "-Werror=format-security",
+        "-D__MUSL__",
+        "-O0",
+        "-g",
+        "-fno-limit-debug-info",
+        "-std=gnu++17",
+        "-fPIC",
+        "-fno-fast-math",
+        "-ffp-contract=off",
+        "-O0",
+        "-o",
+        "p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_owner_v1.cpp.o",
+        "-c",
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_owner_v1.cpp"
+      ],
+      "effectiveOptimization": "-O0",
+      "object": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\p013_compute\\CMakeFiles\\p011_gpu_pair_napi.dir\\pair_owner_v1.cpp.o",
+        "bytes": 125256,
+        "sha256": "c9663e9529ac74007192e381043f4ecbc04ccdf3d382a0539a9bd552dd1e3c1e"
+      },
+      "macros": {
+        "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t191\\reproduction\\strict-o0\\pair_owner_v1.macros.txt",
+        "bytes": 86579,
+        "sha256": "b20442f176f2add038f7ed52ab3e2102f2d01beb4a9542b0383975ff6d452683"
+      }
+    }
+  ],
+  "nativeSourceFiles": {
+    "pair_binding_v1.cpp": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_binding_v1.cpp",
+      "bytes": 24913,
+      "sha256": "acfd93f4ad28cdca78b6788e9b8aa17f91e8d5e351492d24a08d55d94c85e24e"
+    },
+    "pair_driver_v1.cpp": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_driver_v1.cpp",
+      "bytes": 7343,
+      "sha256": "d8d77af620c072e70f2741f73a8ece272817f7701456cfc3b0e2f930a853852a"
+    },
+    "pair_executor_v1.cpp": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_executor_v1.cpp",
+      "bytes": 18127,
+      "sha256": "eec3e90b2a6f136a73d70006b5a38c11d88a2ea7e15accefdf0b004623d6d260"
+    },
+    "pair_executor_v1.h": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_executor_v1.h",
+      "bytes": 2921,
+      "sha256": "5e4e8f98e37662cd2c7d61e9d31da52a9f3f8707f24af337a48776a82678862d"
+    },
+    "pair_identity_v2.h": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_identity_v2.h",
+      "bytes": 1997,
+      "sha256": "03226a62ba492d865409a41688c6f7ef0c8d137b9e384ccf71ff855db808c668"
+    },
+    "pair_owner_v1.cpp": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_owner_v1.cpp",
+      "bytes": 3711,
+      "sha256": "9d79af03a5b384c41bf7596fe8f10a8414a877bc2a729c589a72f9bcebba8bb6"
+    },
+    "pair_owner_v1.h": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_owner_v1.h",
+      "bytes": 854,
+      "sha256": "80a1c13635e3ac20ce8fd36438d4ccff44d68a6c65c30cb9149f1ebb477046e8"
+    },
+    "pair_prepare_v1.cpp": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_prepare_v1.cpp",
+      "bytes": 11618,
+      "sha256": "d1dba4704757961a16b0aca764d1117740bf1ea0e17fac7cce1cc0d83b215a78"
+    },
+    "pair_prepare_v1.h": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_prepare_v1.h",
+      "bytes": 2304,
+      "sha256": "979eeac60cc52e4e9531664f361917e2943bedc8ca3b5b05b754fe5b6b5c9c75"
+    },
+    "pair_sha256_v1.h": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_sha256_v1.h",
+      "bytes": 2753,
+      "sha256": "154cf18fe5b2c1fe2831326faf0287dbcd83f420e4eea22a8dfe5d30a7db9faa"
+    },
+    "pair_wire_v1.h": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\src\\main\\cpp\\p013_compute\\pair_wire_v1.h",
+      "bytes": 2026,
+      "sha256": "9bc54802759b14dc06b7ce6726717daf829138fe8a1337d87f57d3182fe51847"
+    }
+  },
+  "ninjaCommands": {
+    "path": "D:\\hmprojects\\HelloWorld\\test\\reports\\t191\\reproduction\\strict-o0\\ninja-commands.txt",
+    "bytes": 6334,
+    "sha256": "a303a7c4d9a12590572dfe2d50be15b008e166b45ec1078910c173f46c960ea3"
+  },
+  "actualLinkCommand": "C:\\Windows\\system32\\cmd.exe /C \"cd . && C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -fPIC -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -D__MUSL__ -O0 -g -fno-limit-debug-info  --rtlib=compiler-rt -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--warn-shared-textrel -Wl,--fatal-warnings -lunwind -Wl,--no-undefined -Qunused-arguments -Wl,-z,noexecstack -shared -Wl,-soname,libp011_gpu_pair_prototype.so -o D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp011_gpu_pair_prototype.so p013_compute/CMakeFiles/p011_gpu_pair_napi.dir/pair_binding_v1.cpp.o p013_compute/CMakeFiles/p011_gpu_pair_napi.dir/pair_prepare_v1.cpp.o p013_compute/CMakeFiles/p011_gpu_pair_napi.dir/pair_executor_v1.cpp.o p013_compute/CMakeFiles/p011_gpu_pair_napi.dir/pair_owner_v1.cpp.o  -lace_napi.z  -lEGL  -lGLESv3  -lm && cd .\"",
+  "objectSo": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp011_gpu_pair_prototype.so",
+    "bytes": 1593704,
+    "sha256": "cef6477f0be93cbdd4fb24ec08e22cfaf0cd47c4987ff4189a3deeec6627ee61"
+  },
+  "objectElf": {
+    "machine": "AARCH64",
+    "buildId": "8c755f0d20832f1187ffdd019200af78f81092c7",
+    "sections": {
+      ".note.gnu.build-id": {
+        "bytes": 36,
+        "sha256": "4abc7cfe528ee5bdf997d8acd60e2c94ee9b2c8598d03e0fdad4997075411ed0"
+      },
+      ".dynsym": {
+        "bytes": 12216,
+        "sha256": "c8c10a0c85e69c049e38c1e546ab667fa45366de23c72376ed820a455fa49258"
+      },
+      ".rodata": {
+        "bytes": 14305,
+        "sha256": "02b20b3d3b20619655ed384be49f637af007b074bbc2cebbc422de2ceca2b262"
+      },
+      ".text": {
+        "bytes": 213956,
+        "sha256": "422cdc5bd565dfffeff538450abcb69ebb1499a85e282abb38a2c4e1641357e7"
+      },
+      ".data": {
+        "bytes": 232,
+        "sha256": "c6fc39ccfba2ec3f297effd3bfa7f54a0bae84b036fb9ce82b84b7ffc5fbcd27"
+      }
+    }
+  },
+  "packagedSo": {
+    "entry": "libs/arm64-v8a/libp011_gpu_pair_prototype.so",
+    "bytes": 360208,
+    "sha256": "1bb607eadc4e493932e268e5cb6521146c03b89994a859f73b573e74014ccd6a",
+    "elf": {
+      "machine": "AARCH64",
+      "buildId": "8c755f0d20832f1187ffdd019200af78f81092c7",
+      "sections": {
+        ".note.gnu.build-id": {
+          "bytes": 36,
+          "sha256": "4abc7cfe528ee5bdf997d8acd60e2c94ee9b2c8598d03e0fdad4997075411ed0"
+        },
+        ".dynsym": {
+          "bytes": 12216,
+          "sha256": "c8c10a0c85e69c049e38c1e546ab667fa45366de23c72376ed820a455fa49258"
+        },
+        ".rodata": {
+          "bytes": 14305,
+          "sha256": "02b20b3d3b20619655ed384be49f637af007b074bbc2cebbc422de2ceca2b262"
+        },
+        ".text": {
+          "bytes": 213956,
+          "sha256": "422cdc5bd565dfffeff538450abcb69ebb1499a85e282abb38a2c4e1641357e7"
+        },
+        ".data": {
+          "bytes": 232,
+          "sha256": "c6fc39ccfba2ec3f297effd3bfa7f54a0bae84b036fb9ce82b84b7ffc5fbcd27"
+        }
+      }
+    }
+  },
+  "unsignedHap": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t191-reproduction-o0\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 4070911,
+    "sha256": "9418125afa9c6f8b1f3f8677604e294ca62da1a82320454aaa1c257678da1f4f"
+  },
+  "signedHap": "NOT_BUILT",
+  "rawResources": {
+    "resources/rawfile/t141/glsl/pair_build_v1.comp": {
+      "bytes": 897,
+      "sha256": "da4feeccf4839beba57b4f10aa290f3b839104db14cc2d7567958e2e92e64dfd"
+    },
+    "resources/rawfile/t141/glsl/pair_query_v1.comp": {
+      "bytes": 1406,
+      "sha256": "ca0ac15415c1fc6370e5a40b328d95fcd4d99bbcd384d28e673db72e87b8ba1a"
+    },
+    "resources/rawfile/t141/glsl/pair_reduce_v1.comp": {
+      "bytes": 2142,
+      "sha256": "3e5520d12482a49b529fc8fe1cefd7239565e37096b24bc3e4fb7c10d6d5a7c9"
+    },
+    "resources/rawfile/t171/WET_192_128.json": {
+      "bytes": 490,
+      "sha256": "5a2d085165b29c8ae55e57c628998eb5bee3a8c73fddacb2bf1941423146c7da"
+    },
+    "resources/rawfile/t171/WET_192_64.json": {
+      "bytes": 488,
+      "sha256": "6d30a4dad2500f71fc38d1955dad5ec442480ece82f83c2e4016e6f88e974cbb"
+    },
+    "resources/rawfile/t171/WET_512_128.json": {
+      "bytes": 490,
+      "sha256": "dded02d3294179898964cba67235bbea482dd61fe8ad114d24df6ae5736c9ce6"
+    },
+    "resources/rawfile/t171/WET_512_64.json": {
+      "bytes": 488,
+      "sha256": "d8b597d2548704dcd68314a9a5d1bc8f442736c186ca639433c73cc27fab0486"
+    }
+  },
+  "device": "NOT_RUN",
+  "performanceBenefit": "NOT_MEASURED",
+  "instrumentation": "UNCHANGED_T171_V3",
+  "productionTouched": false
+}
