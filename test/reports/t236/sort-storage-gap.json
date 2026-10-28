@@ -1,0 +1,16 @@
+{
+  "revision": "T236_T233_SORT_LAYOUT_QUESTION_V1",
+  "K": 192,
+  "Kpad": 256,
+  "manifestTwoIndexBytes": 1536,
+  "twoPaddedIndexBytes": 2048,
+  "differenceBytes": 512,
+  "firstLiveInPadding": {
+    "k": 128,
+    "j": 64,
+    "paddingIndex": 192,
+    "liveId": 128,
+    "liveCountInPadding": 64
+  },
+  "note": "Out-of-place double-pad layout needs correction or explicit alternative. In-place/disjoint-pair or repacked workspace might fit existing total; architecture decision required, not proof GPU infeasible."
+}

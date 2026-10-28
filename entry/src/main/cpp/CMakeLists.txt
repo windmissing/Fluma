@@ -56,3 +56,7 @@ add_library(p013renderer SHARED p013renderer/clear_water_packet.cpp p013renderer
  p013renderer/shader_pass.cpp p013renderer/tdata_uploader.cpp)
 target_include_directories(p013renderer PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(p013renderer PUBLIC libace_napi.z.so libace_ndk.z.so libEGL.so libGLESv3.so libhilog_ndk.z.so)
+
+# T236 isolated integer/control foundation, not a production routing switch.
+add_subdirectory(gpu_resident)
+target_link_libraries(p013renderer PRIVATE grs_foundation)

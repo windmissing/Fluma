@@ -1,0 +1,171 @@
+{
+  "revision": "T236_PARTIAL_FOUNDATION_DELIVERY_V1",
+  "status": "PARTIAL_NEEDS_ARCHITECT_CONTRACT",
+  "M0Product": "NOT_IMPLEMENTED",
+  "device": false,
+  "sourceExecution": "No GLSL runtime execution / no dispatch / no actual GL fence or SSBO allocation",
+  "compiledSources": [
+    "integer.cpp",
+    "control.cpp",
+    "resources.cpp",
+    "foundation.cpp"
+  ],
+  "nativeArchive": {
+    "path": "entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/libgrs_foundation.a",
+    "bytes": 434502,
+    "sha256": "cc16fc7f627223f55eb50bc04371dc0fa6938a0da787b49e2dea20b0d08143d6"
+  },
+  "hap": {
+    "path": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "bytes": 6210431,
+    "sha256": "ce81cfc63d5d4b67f3b5e833a2c381e670ef1e999bb4c51fb21aeaa9a14b3e41"
+  },
+  "nativeElf": [
+    {
+      "entry": "libs/arm64-v8a/libp013renderer.so",
+      "bytes": 439416,
+      "sha256": "97afbbf7b7c79f6c0413c34c9436b9860c23ba99643f37326cd1ca9c243d0a13"
+    }
+  ],
+  "checks": {
+    "foundationOd": {
+      "passed": 76,
+      "failed": 0
+    },
+    "foundationO2": {
+      "passed": 76,
+      "failed": 0
+    },
+    "integerOd": {
+      "cases": 82205,
+      "mismatches": 0
+    },
+    "integerO2": {
+      "cases": 82205,
+      "mismatches": 0
+    },
+    "generation": "80/110 decimal digits table bytes equal; --check PASS",
+    "build": "PackageHap BUILD SUCCESSFUL; one earlier pack spawn EPERM retained, retry successful without code change"
+  },
+  "implementedFeatures": 0,
+  "notImplemented": [
+    "M0 source GPU root",
+    "GPU proposal/integration/DDA/LAND",
+    "three-color GPU bed and exact guard",
+    "full GPU audit and event replay",
+    "GPU completion tail fence transport",
+    "GPU publication pack and renderer scene lease integration",
+    "standalone GPU route page"
+  ],
+  "blockedBy": [
+    "T233 event64 kind/flag/used-zero-mask and completion/source wire code domain clarification",
+    "K192 double-padded sorting storage or explicit alternative layout decision"
+  ],
+  "sources": [
+    {
+      "path": "entry/src/main/cpp/CMakeLists.txt",
+      "bytes": 4632,
+      "sha256": "9b79a36685df52e2a0dab7d720989eaed37407403f8def7368b8ec61650066e4"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/angles_certificate.json",
+      "bytes": 803,
+      "sha256": "7ccabe89b49beb8b94f50e12b430ea2e8061fa8619e3cea7b4be15f51b88bd2f"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/angles_generated.h",
+      "bytes": 741450,
+      "sha256": "52f84e8fff5cfed295a55dbc38bc7eb6a6c42bde1e4adc1391f23fa1959da613"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/angles_q20.bin",
+      "bytes": 245776,
+      "sha256": "23b5210055d0b3f51892967170134a6cad14360579b038e26ee48f3ea5bbb368"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/CMakeLists.txt",
+      "bytes": 899,
+      "sha256": "1b355f0c2729815b5ba6f532ea88128a373389ffb99650730792591d6ed850b3"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/control.cpp",
+      "bytes": 13466,
+      "sha256": "a4aa3151af519cf8f17dd1a3ed7bae8a49faad25c190b1bbf113eb9ee50d306d"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/control.h",
+      "bytes": 3121,
+      "sha256": "36eb0d61594a7844f86db55e96e15dcf112df9d4c6efe614e84eaff4c9e81e53"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/foundation.cpp",
+      "bytes": 461,
+      "sha256": "13e435ab017dbb3f2acfb80830d230ff53038634cd129eed74266feb8a548aa8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/foundation.h",
+      "bytes": 454,
+      "sha256": "1332a3aa5fa55a1f4d53fd2245a28f6c1c1e5497bb728ed05552ba69e9915821"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/integer.cpp",
+      "bytes": 4380,
+      "sha256": "e48e23e3a11ac58e70cdbb166a1031faf4942cd7d50c50cb6d7527f73d8d5f4d"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/integer.h",
+      "bytes": 1084,
+      "sha256": "1e2ed5a33775acac2759baad9ce7f1ccb77ca578355d198037c86297d1dfe8c4"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/integer_primitives.glsl",
+      "bytes": 3883,
+      "sha256": "d5f5b7187419b4c5924a2cd348bd5acf704476a02bd59442845f74eb216bdf68"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/layout_generated.h",
+      "bytes": 42343,
+      "sha256": "aa74ae71ef39bd7d58257ba8bb5d703f90560f3d85f8f97fef19f938ac21dece"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/README.md",
+      "bytes": 1723,
+      "sha256": "8ae9cd14e576b2e02c7c34e688afc041d5f5948131504ff6f9feaa022e33f1a3"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/resources.cpp",
+      "bytes": 3266,
+      "sha256": "18d53cfe28df4e7900250f7be0ee24a82a581a8c49ad1f9b7a09ee846c10e37e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/resources.h",
+      "bytes": 1121,
+      "sha256": "f1161f76d11efba7b6c4053ded835541a06a449ff52af7c241e1df27a3338dd5"
+    },
+    {
+      "path": "test/gpu_resident/build_t236_host.cmd",
+      "bytes": 751,
+      "sha256": "770f8388095df9a8ca9a4f440116296e340bf2bb527a6e9c69b44a776b2c7e44"
+    },
+    {
+      "path": "test/gpu_resident/check_t236_integer.py",
+      "bytes": 4619,
+      "sha256": "08f5b62509b0f3d13207f318fad8bcce2f16522f932ed4605a785a5a73f83313"
+    },
+    {
+      "path": "test/gpu_resident/check_t236_spec.py",
+      "bytes": 2936,
+      "sha256": "9357c94bbffc9f8bedcda8d0a1554adf04e64af477023d4a38d2b5bef2729c1e"
+    },
+    {
+      "path": "test/gpu_resident/generate_t236_contract.py",
+      "bytes": 3920,
+      "sha256": "766b80f151433e4e975eb5adcd692c2845f884c03cd4db3fe939a4d6b85c2e79"
+    },
+    {
+      "path": "test/gpu_resident/t236_foundation_test.cpp",
+      "bytes": 11370,
+      "sha256": "de8cefd97f768d5f07665fa5fa2add1c0d2c66d0a2aa25dabb9027d21aea00a8"
+    }
+  ]
+}
