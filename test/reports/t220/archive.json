@@ -1,0 +1,21 @@
+{
+ "revision": "T220_DEVICE_ARCHIVE_V1",
+ "executedAt": "2026-10-28",
+ "device": "VYG-AL00 62T0225B10010020",
+ "harness": {
+  "project": ".codex/local-test/t220-harness",
+  "isolatedLauncher": "T220PageLauncher (V3 launcher structure, Want t220runId/t220scenario/t220k)",
+  "worker": "T220Worker.ets (test-only, production untouched)",
+  "buildTag": "T220-W2-SCENARIO-FIX-1530",
+  "unsigned": "b9c31849603b5775850d888f48427014de6968c430b543d4c250f4eae4e51271",
+  "signed": "6232046caeabb0e6a15b540e2ac926caac6b28005ff3a54db7330220e6b54972"
+ },
+ "runs": [
+  "t220land-v5 (land/200\u6b65)",
+  "t220matrix-v5 (matrix/192)",
+  "t220tilt-v5 (tilt/512)",
+  "t220m512-v5 (matrix/512)"
+ ],
+ "mainProjectRestore": "entry-default-s139h-signed.hap",
+ "noPermissionChanges": true
+}
