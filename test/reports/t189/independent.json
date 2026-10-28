@@ -1,0 +1,188 @@
+{
+  "revision": "T189_CLEAR_WATER_A_INDEPENDENT_V1",
+  "executedAt": "2026-10-28T01:10:32.963Z",
+  "spec": "T107 §A + T108 CW-01/02/03/11/12/15 + T188 delivery scope",
+  "commitUnderTest": "0cc0439",
+  "device": "NOT_RUN (offline per card)",
+  "oracle": "independent Float64 ledger in this executor, no calls into audited implementation",
+  "total": 15,
+  "passed": 15,
+  "failed": 0,
+  "notImplementedPartitions": [
+    "B hydraulics / wet particles / step budget+guard+lineage",
+    "C publication/render/input controller/page",
+    "snapshot restore"
+  ],
+  "results": [
+    {
+      "name": "CW-01 empty run: ΣW=ΣS=ΣP=0, I=0, medium=CW mode, audit clean",
+      "status": "PASS",
+      "detail": {
+        "medium": "SINGLE_SAND_CLEAR_WATER_V1"
+      }
+    },
+    {
+      "name": "CW-02 continuous water on distinct dry columns: local W only, independent I_water ledger, baseline not reset",
+      "status": "PASS",
+      "detail": {
+        "n": 16,
+        "Iw": 8
+      }
+    },
+    {
+      "name": "CW-03 partial/full local water: rejected reconciled, no spill, no negative W",
+      "status": "PASS",
+      "detail": {
+        "r1": 255.5,
+        "r2": [
+          0.5,
+          1.5
+        ],
+        "r3": 12,
+        "W64": 256
+      }
+    },
+    {
+      "name": "CW-11 invalid family: all rejected with distinct statuses, inventory fingerprint unchanged",
+      "status": "PASS",
+      "detail": {
+        "got": [
+          {
+            "label": "x out of range",
+            "status": 3
+          },
+          {
+            "label": "x NaN",
+            "status": 3
+          },
+          {
+            "label": "y negative",
+            "status": 3
+          },
+          {
+            "label": "volume 0",
+            "status": 3
+          },
+          {
+            "label": "volume negative",
+            "status": 3
+          },
+          {
+            "label": "volume NaN",
+            "status": 3
+          },
+          {
+            "label": "timestamp negative",
+            "status": 3
+          },
+          {
+            "label": "stale run",
+            "status": 4
+          },
+          {
+            "label": "stale geometry",
+            "status": 6
+          },
+          {
+            "label": "stale input gen",
+            "status": 5
+          },
+          {
+            "label": "clock window mismatch",
+            "status": 21
+          }
+        ]
+      }
+    },
+    {
+      "name": "CW-12 idempotency + dual-kind independent sequences + no cross-accounting",
+      "status": "PASS",
+      "detail": {
+        "sandSeq": 1,
+        "waterSeq": 1,
+        "replay": true,
+        "sand": 1
+      }
+    },
+    {
+      "name": "CW-12b conflict semantics: same key diff payload (y / -0 bits) → IDENTITY_CONFLICT; new key → new request",
+      "status": "PASS",
+      "detail": {
+        "conflictY": 7,
+        "conflictBits": 7,
+        "newKey": 0
+      }
+    },
+    {
+      "name": "CW-15 source committed then step fails: distinct before, success retained, inventory unchanged",
+      "status": "PASS",
+      "detail": {
+        "stepStatus": 19,
+        "attempt": 1,
+        "lastCommit": 1
+      }
+    },
+    {
+      "name": "dt=0: queue not consumed, inventory unchanged",
+      "status": "PASS",
+      "detail": {
+        "pending": 1
+      }
+    },
+    {
+      "name": "ULP: MIN_VALUE water rejected NUMERIC_UNREPRESENTABLE, no fake success",
+      "status": "PASS",
+      "detail": {
+        "status": 15
+      }
+    },
+    {
+      "name": "snapshot caller-mutation isolated; allocation ledger present",
+      "status": "PASS",
+      "detail": {
+        "ledgerArrays": 9
+      }
+    },
+    {
+      "name": "queue capacity exhausted: QUEUE_FULL, no overwrite, inventory unchanged",
+      "status": "PASS",
+      "detail": {
+        "st3": 8,
+        "pending": 2
+      }
+    },
+    {
+      "name": "P reserve capacity: water rejected PARTICLE_RESERVED_CAPACITY, explicit reason",
+      "status": "PASS",
+      "detail": {
+        "status": 13
+      }
+    },
+    {
+      "name": "sand birth chain: 2 full + true tail .0625, sequential IDs, phase0/external-source identity",
+      "status": "PASS",
+      "detail": {
+        "ids": [
+          1,
+          2,
+          3
+        ],
+        "admitted": 0.3125
+      }
+    },
+    {
+      "name": "B/C/restore NOT_IMPLEMENTED explicitly partitioned (step → UNSUPPORTED_FEATURE, no restore entry, no legacy medium)",
+      "status": "PASS",
+      "detail": {
+        "stB": 19,
+        "hasRestore": false,
+        "medium": "SINGLE_SAND_CLEAR_WATER_V1"
+      }
+    },
+    {
+      "name": "old wet chain does not claim clear-water pass (no shared mode constant, separate module)",
+      "status": "PASS",
+      "detail": null
+    }
+  ]
+}
