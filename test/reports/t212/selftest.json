@@ -1,0 +1,47 @@
+{
+  "revision": "T212_DEVELOPER_BRIDGE_V1",
+  "passed": 9,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "two owners interleave independent control tables/serials/native states",
+      "status": "PASS"
+    },
+    {
+      "name": "real-to-compat view branches and conservative revisions survive same-byte rollback",
+      "status": "PASS"
+    },
+    {
+      "name": "cancel or scalar/content/pointer change after native reply refuses CPU consumption",
+      "status": "PASS"
+    },
+    {
+      "name": "GPU failure never falls through to legacy; failed cleanup remains quarantined",
+      "status": "PASS"
+    },
+    {
+      "name": "V2 owner policy and unavailable tree are explicit unsupported, no impersonated compatibility",
+      "status": "PASS"
+    },
+    {
+      "name": "SHA message/blocks and fixed resource identities are explicit; GPU timer absent",
+      "status": "PASS"
+    },
+    {
+      "name": "whole legacy fixture and interface CPU double retain original full state",
+      "status": "PASS"
+    },
+    {
+      "name": "native fault preserves first admitted source prefix and explicit failed archive",
+      "status": "PASS"
+    },
+    {
+      "name": "mutable config cannot switch a cold-selected backend; context tamper becomes stale",
+      "status": "PASS"
+    }
+  ],
+  "device": "NOT_RUN",
+  "nativeTransport": "HOST_DOUBLE_NOT_GPU",
+  "gpuBenefit": "NOT_MEASURED",
+  "treeIntegration": "WAITING_T211"
+}
