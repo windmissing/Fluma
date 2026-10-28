@@ -1,0 +1,317 @@
+{
+  "revision": "T237_M1_DESIGN_REFERENCE_EVIDENCE_V1",
+  "date": "2026-10-28",
+  "task": "6ae1ec3be4b0d25fef7ba6a7",
+  "route": "gpu-resident-water-M1-v1",
+  "status": "DESIGN_READY_FOR_ARCHITECT_NOT_IMPLEMENTED_NOT_VALIDATED",
+  "scope": "DESIGN_INTEGER_FRACTION_MODEL_ONLY",
+  "productTestsExecuted": false,
+  "deviceUsed": false,
+  "shaderCompiledOrRun": false,
+  "checks": {
+    "head2FractionOracleCases": 3000,
+    "flatWaterFixture": {
+      "quanta": 80,
+      "leftUnits": 929445,
+      "rightUnits": 937664,
+      "exactTotalUnits": 2097152,
+      "instantSymmetryRequired": false
+    },
+    "barrierAndTiltFixtures": true,
+    "wetVelocityFractionCases": 2500,
+    "turnSplitCases": 1000,
+    "turnCounterexample": {
+      "wholeRemainderFinalVelocity": 3425348,
+      "earlyEventVelocity": -768956,
+      "firstTurnTick": 15360,
+      "conclusion": "Split TURN before drawing a chord across a velocity reversal"
+    },
+    "positiveTimeCeilCases": 2500,
+    "arrivalCounterexample": {
+      "idOrderMissesHighId1": true,
+      "heightOrderIds": [
+        2,
+        1
+      ],
+      "etaAfterUnits": 3407872
+    },
+    "sortedArrivalExactCases": 1500,
+    "inventoryArrivalLandCases": 2000,
+    "maxIdExhaustionFixture": {
+      "lastAssigned": 4294967295,
+      "nextBirthRejected": true
+    },
+    "candidateSourcePrefixCases": 1000,
+    "staticGeometryTrajectoryCases": {
+      "sand": 1000,
+      "water": 1000,
+      "maxSandMotionRowsObserved": 7,
+      "maxWaterMotionRowsObserved": 6,
+      "sandFixturesWithMediumEvent": 76,
+      "scope": "STATIC_GEOMETRY_REFERENCE_NOT_FULL_ROOT_OR_GPU_TEST"
+    },
+    "wetVsAirFixtureUnits": {
+      "airVy": -138691652,
+      "wetVy": -113246208,
+      "calibration": "PENDING"
+    },
+    "waterPoolFirstArrivalEnvelope": {
+      "candidate": {
+        "sourceY": 220,
+        "g": 512,
+        "vEmit": 16,
+        "angle": 0,
+        "dragFlight": 0
+      },
+      "landingQuantumUpperSample": 108,
+      "simulatedSeconds": 0.9,
+      "packsAt100PerSimSecond": 90,
+      "packsAt120PerSimSecond": 108,
+      "Kw64CanRejectBeforeFirstArrival": true,
+      "recommendedCandidateKw": 128,
+      "scope": "CANDIDATE_ENVELOPE_NOT_DEVICE_THROUGHPUT_OR_UNIVERSAL_NO_REJECT_GUARANTEE"
+    }
+  },
+  "resourceTemplates": [
+    {
+      "N": 128,
+      "K": 192,
+      "Kw": 64,
+      "eSandIncludesFinal": 48,
+      "eWaterIncludesFinal": 16,
+      "frameEventCapacity": 42168,
+      "singleEventBlockBytes": 10795008,
+      "baselinePayloadBytes": 15059984,
+      "deltaPartsBytes": {
+        "three_banks_water12_to16": 3072,
+        "two_publications_water20_column16": 10240,
+        "water_motion32": 8192,
+        "two_water_id_indices": 512,
+        "two_water_arrival_indices": 512,
+        "scan_scratch_increase": 0,
+        "frozen_medium4": 2048,
+        "extra_audit4": 2048,
+        "physics_config128word": 512,
+        "gpu_host_optics16F32": 128,
+        "two_frame_event_arena_increase": 8255488
+      },
+      "deltaPayloadBytes": 8282752,
+      "M1BasePayloadBytes": 23342736,
+      "waterSortLayersEach": 21,
+      "quantumDispatchStages": 114,
+      "sourceDispatchStages": 32,
+      "tickDispatchStages": 488,
+      "tailFencesMax": 5,
+      "normalReadbackMaxBytes": 5120,
+      "actualAllocatedBytes": null,
+      "actualGPUTime": null,
+      "status": "DESIGN_TEMPLATE_NOT_ALLOCATED_NOT_DEVICE_MEASUREMENT"
+    },
+    {
+      "N": 128,
+      "K": 512,
+      "Kw": 64,
+      "eSandIncludesFinal": 48,
+      "eWaterIncludesFinal": 16,
+      "frameEventCapacity": 103928,
+      "singleEventBlockBytes": 26605568,
+      "baselinePayloadBytes": 36997904,
+      "deltaPartsBytes": {
+        "three_banks_water12_to16": 3072,
+        "two_publications_water20_column16": 10240,
+        "water_motion32": 8192,
+        "two_water_id_indices": 512,
+        "two_water_arrival_indices": 512,
+        "scan_scratch_increase": 0,
+        "frozen_medium4": 2048,
+        "extra_audit4": 2048,
+        "physics_config128word": 512,
+        "gpu_host_optics16F32": 128,
+        "two_frame_event_arena_increase": 18085888
+      },
+      "deltaPayloadBytes": 18113152,
+      "M1BasePayloadBytes": 55111056,
+      "waterSortLayersEach": 21,
+      "quantumDispatchStages": 123,
+      "sourceDispatchStages": 34,
+      "tickDispatchStages": 526,
+      "tailFencesMax": 5,
+      "normalReadbackMaxBytes": 5120,
+      "actualAllocatedBytes": null,
+      "actualGPUTime": null,
+      "status": "DESIGN_TEMPLATE_NOT_ALLOCATED_NOT_DEVICE_MEASUREMENT"
+    },
+    {
+      "N": 128,
+      "K": 192,
+      "Kw": 128,
+      "eSandIncludesFinal": 48,
+      "eWaterIncludesFinal": 16,
+      "frameEventCapacity": 46264,
+      "singleEventBlockBytes": 11843584,
+      "baselinePayloadBytes": 15059984,
+      "deltaPartsBytes": {
+        "three_banks_water12_to16": 15360,
+        "two_publications_water20_column16": 20480,
+        "water_motion32": 16384,
+        "two_water_id_indices": 1024,
+        "two_water_arrival_indices": 1024,
+        "scan_scratch_increase": 256,
+        "frozen_medium4": 2048,
+        "extra_audit4": 2048,
+        "physics_config128word": 512,
+        "gpu_host_optics16F32": 128,
+        "two_frame_event_arena_increase": 10352640
+      },
+      "deltaPayloadBytes": 10411904,
+      "M1BasePayloadBytes": 25471888,
+      "waterSortLayersEach": 28,
+      "quantumDispatchStages": 128,
+      "sourceDispatchStages": 32,
+      "tickDispatchStages": 544,
+      "tailFencesMax": 5,
+      "normalReadbackMaxBytes": 5120,
+      "actualAllocatedBytes": null,
+      "actualGPUTime": null,
+      "status": "DESIGN_TEMPLATE_NOT_ALLOCATED_NOT_DEVICE_MEASUREMENT"
+    },
+    {
+      "N": 128,
+      "K": 512,
+      "Kw": 128,
+      "eSandIncludesFinal": 48,
+      "eWaterIncludesFinal": 16,
+      "frameEventCapacity": 108024,
+      "singleEventBlockBytes": 27654144,
+      "baselinePayloadBytes": 36997904,
+      "deltaPartsBytes": {
+        "three_banks_water12_to16": 15360,
+        "two_publications_water20_column16": 20480,
+        "water_motion32": 16384,
+        "two_water_id_indices": 1024,
+        "two_water_arrival_indices": 1024,
+        "scan_scratch_increase": 256,
+        "frozen_medium4": 2048,
+        "extra_audit4": 2048,
+        "physics_config128word": 512,
+        "gpu_host_optics16F32": 128,
+        "two_frame_event_arena_increase": 20183040
+      },
+      "deltaPayloadBytes": 20242304,
+      "M1BasePayloadBytes": 57240208,
+      "waterSortLayersEach": 28,
+      "quantumDispatchStages": 137,
+      "sourceDispatchStages": 34,
+      "tickDispatchStages": 582,
+      "tailFencesMax": 5,
+      "normalReadbackMaxBytes": 5120,
+      "actualAllocatedBytes": null,
+      "actualGPUTime": null,
+      "status": "DESIGN_TEMPLATE_NOT_ALLOCATED_NOT_DEVICE_MEASUREMENT"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 8477,
+      "sha256": "4a8eb684600af1807ec9d065b3d1bb30b986a2300d92c3afaf5280a3a43da0a9"
+    },
+    {
+      "path": ".codex/agents/designer.toml",
+      "bytes": 2901,
+      "sha256": "4db846796d9d2f78ef398a6a47766943ed950ce3073f6bd3286f770e7b6df79b"
+    },
+    {
+      "path": "docs/algorithm-T230-gpu-resident-step-v1.md",
+      "bytes": 46702,
+      "sha256": "a61ed2c7b7da60d5c887aaa5d35bfdb39a6210eeec4265ccf0502e871b5db24a"
+    },
+    {
+      "path": "docs/architecture-T233-gpu-resident-M0-v1.md",
+      "bytes": 18279,
+      "sha256": "45d5d6a11f9160ddf9df610d3bc3ae8663ef6e07cfb733b8f63d0c13af7389b4"
+    },
+    {
+      "path": "docs/analysis-T233-gpu-resident-M0-engineering-manifest-v1.json",
+      "bytes": 30152,
+      "sha256": "f0ac6785503ddd029de1f1b52c4482ad10265e7c4a627aaccd35dabf2b4ad0af"
+    },
+    {
+      "path": "docs/architecture-T231-gpu-resident-platform-v1.md",
+      "bytes": 17202,
+      "sha256": "eabe25d569089ea3d1944edebb58535a9c3027421f72f725c366e7354f1ea709"
+    },
+    {
+      "path": "docs/algorithm-T221-sand-water-demo-v1.md",
+      "bytes": 39631,
+      "sha256": "aa5c83de136c6ebac9a32e34c8f4464cca3565b421738dc547ae9cff7f747b77"
+    },
+    {
+      "path": "docs/architecture-T222-clear-water-flight-v2.md",
+      "bytes": 29096,
+      "sha256": "d178a541b96551d3f369adac2ba0363c8a0446cc593ec512af972252160049a4"
+    },
+    {
+      "path": "docs/developer-T209-clear-water-B-v1.md",
+      "bytes": 9216,
+      "sha256": "0daf7edf0e61f0453cb330c5cfadd0875fca2ba6a4a632f958e3c29d6dc6eca7"
+    },
+    {
+      "path": "docs/test-report-T215-clear-water-B-independent-v1.md",
+      "bytes": 3370,
+      "sha256": "d9ed60f55b30024c99f2462299a3a0d0eaf6841dcd5ebe6e48fcaf96deee0532"
+    },
+    {
+      "path": "docs/developer-T226-clear-water-C-v1.md",
+      "bytes": 5130,
+      "sha256": "64158446cd302eec58a32e35a4b924fb708187f4fc509c65c5cf891e9eaf87eb"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 15824,
+      "sha256": "cb8de74a19f2953afd763e2ad992dbd7a46894213749d664d2f07069ef8ed2e7"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterHydraulics.ets",
+      "bytes": 4039,
+      "sha256": "a83c0b9ce1101d8f14f82b5d43768a7450d1e3baf491d9a4a0bcd4fa6a5404fd"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterParticles.ets",
+      "bytes": 11271,
+      "sha256": "45b5b549a95617e895d8dcabbee24b78dcc8cc992cd7f5f30dee6c22954ec341"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 27053,
+      "sha256": "7b11b447da6c771232a7cb6251bc39c81c4fefd7ddcbc539a5c71544cc48d045"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/clear_water_gpu.cpp",
+      "bytes": 4621,
+      "sha256": "c1d4260c711b8f2fb25e089168c717e7ad383761f5237761e32607395ca4f04e"
+    },
+    {
+      "path": "docs/algorithm-T237-gpu-water-M1-v1.md",
+      "bytes": 35689,
+      "sha256": "aa4d5e2ab192dde99ab65a416b9cc77220326efe7c9dd35d74ad70d12883b604"
+    },
+    {
+      "path": "docs/retro-T237-gpu-water-M1-v1.md",
+      "bytes": 3689,
+      "sha256": "590469085a61808404003c4800d9c5e4261ef868d4d788804ffa052307b12d21"
+    },
+    {
+      "path": "docs/design-T237-gpu-water-M1-model-v1.py",
+      "bytes": 20266,
+      "sha256": "6b176ffd725e6cf8a69e080bf8c45183c8c706af5fc80da3af1a3a0ecdb6f68a"
+    }
+  ],
+  "limitations": [
+    "No dynamic bed/ID/budget full GPU implementation executed",
+    "Trajectory exercise uses static geometry and illustrative CPU coefficient values",
+    "Event/turn bound relies on the explicit force, freeze and no-bounce assumptions",
+    "Optics/current scene, context, actual allocation and GPU/UI performance not tested",
+    "Old F64/CPU evidence is reference only, not Q20 byte equivalence or M1 product PASS"
+  ]
+}
