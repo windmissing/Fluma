@@ -143,6 +143,8 @@ mutation只更新真实改变的node：birth插入；retire删除；cross/state/
 
 索引只属于一个owner/viewBranch（public root、λ、preview、authoritative）、poolContentRev、params.mergeRadiusRev；反复用同mutation号但内容不同无效。所有写入口必须声明write-set。rollback将branch/view换回对应持久根或从恢复数组重建一次，旧根不能贴新revision继续用；generation计数不回绕，耗尽fail closed。跨参数/route/restore/newrun失效；GPU结果也不得消费旧节点身份。
 
+连续seed是同一个已准入public root里的**逻辑savepoint**，必须继承当前已正确的派生索引，不在每个seed的beginStep重新cold-build。可用持久节点COW，或对AVL指针/height/min/eligible及root做同样的嵌套undo；子seed成功后父view接管其新树，失败恢复该seed入口树，外层λ失败再退到λ入口。frozen collect只读原frozen位型，不允许因共享树而读到后续Work key。若工程暂只能每seed重建，明确`H_bulk=J+...`代入上界，不能报告本版预期的少量branch-build收益；整套结构未到位前不称复杂度迁移完成。
+
 ID→slot采用第二定容AVL（整数ID全序）或经证明的现ID有序活动链加查询树；不用大小2^32的稀疏数组／概率hash。lookup O(logN)，motion/非birth事件总O(IlogN)，并核slotGeneration、live和ID一致；旧ID退役后同slot再出生不能命中。collect按同ID顺序遍历树，无每次heapsort，仍保留原slot-order验证pass与duplicate错误结果。
 
 票据采用两个定容整数树 `(ordinal→row)`、`(opaqueToken→row)`，保持原allocateParticleHotLease的值／次数及safe整数耗尽规则；reserve仍逐原行执行同F64 debit/scale，duplicate/conflict/closed/epoch错误相同。O(log(Q+1))查询／插入代替O(T)扫，close不删除历史duplicate约束，reset/rollback按branch失效；不把token重编码成索引改变wire身份。
