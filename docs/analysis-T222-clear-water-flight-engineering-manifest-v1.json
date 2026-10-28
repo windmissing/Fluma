@@ -1,0 +1,918 @@
+{
+  "revision": "T222_CLEAR_WATER_FLIGHT_ENGINEERING_V1",
+  "date": "2026-10-28",
+  "task": "6ae1a825e4b0c1a6bd5e81d7",
+  "status": "ENGINEERING_READY_FOR_STAGED_DEVELOPMENT",
+  "product": "C_V2_V4_NOT_IMPLEMENTED_NOT_TESTED",
+  "noDevice": true,
+  "noProductTestRerun": true,
+  "priority": "GOAL8_P3_AFTER_GOALS1_TO7_GPU_HIGHEST",
+  "design": "CW_DEMO_FLIGHT_DESIGN_V1",
+  "route": "SINGLE_SAND_CLEAR_WATER_FLIGHT_V2",
+  "inputs": [
+    {
+      "path": "docs/algorithm-T221-sand-water-demo-v1.md",
+      "bytes": 39631,
+      "sha256": "aa5c83de136c6ebac9a32e34c8f4464cca3565b421738dc547ae9cff7f747b77"
+    },
+    {
+      "path": "docs/design-T221-sand-water-demo-evidence-v1.json",
+      "bytes": 9710,
+      "sha256": "b106df1a26f26f8debdc4fb758f500d2892cef630e84b4e4ab2e8446b80df163"
+    },
+    {
+      "path": "docs/retro-T221-sand-water-demo-v1.md",
+      "bytes": 3757,
+      "sha256": "c677a3556bb65f283a60ad33f9958c205415f93a89bafcef0025ea88e14e531d"
+    },
+    {
+      "path": "docs/architecture-T219-clear-water-C-v1.md",
+      "bytes": 18476,
+      "sha256": "2e0ec35cb4d3e079626253acb3d0b547dbf8d2633df7cf1bba77dfc4994ff0db"
+    },
+    {
+      "path": "docs/analysis-T219-clear-water-C-engineering-manifest-v1.json",
+      "bytes": 18934,
+      "sha256": "35c0fc8d6d2e408a253a2772318b0d9c8577b79752e759168bbc44fa3e0c32ad"
+    },
+    {
+      "path": "docs/algorithm-T196-clear-water-B-step-v1.md",
+      "bytes": 32953,
+      "sha256": "cee21d1cbf6cd8eaed641a2e4f9d6500c5365fe7d9fe05b0c7a1aa7fc4315173"
+    },
+    {
+      "path": "docs/architecture-T203-clear-water-B-v1.md",
+      "bytes": 22293,
+      "sha256": "f1878ded2d3a65a6758db0be877dc19ae183eb0c8e63b4055276b6ac11c0537f"
+    },
+    {
+      "path": "docs/developer-T209-clear-water-B-v1.md",
+      "bytes": 9216,
+      "sha256": "0daf7edf0e61f0453cb330c5cfadd0875fca2ba6a4a632f958e3c29d6dc6eca7"
+    },
+    {
+      "path": "docs/test-report-T215-clear-water-B-independent-v1.md",
+      "bytes": 3370,
+      "sha256": "d9ed60f55b30024c99f2462299a3a0d0eaf6841dcd5ebe6e48fcaf96deee0532"
+    },
+    {
+      "path": "test/reports/t209/allocation-192.json",
+      "bytes": 25958,
+      "sha256": "e254429e239bb625cde74796a57a4c4277ccccad0ce2f38ac6dff3593a99803b"
+    },
+    {
+      "path": "test/reports/t209/allocation-512.json",
+      "bytes": 25989,
+      "sha256": "b00d295b43de062366fc505ef4e8b07aa51f17a7283515d3885152b2f2211846"
+    }
+  ],
+  "sources": [
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 22311,
+      "sha256": "ee726a6904cf507a4d4579f445ef3cd44c97a1f77b5f8a8ccd30ea672a081500"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterState.ets",
+      "bytes": 15066,
+      "sha256": "4487802c28aafb0ca2c9a6f2f17e890bcc949b949ba0002e9475bd650684d1f2"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 14990,
+      "sha256": "5afc741a32414d548f326a5e75551b05c48210ad5e780074b7c6aa4ad2587967"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterStep.ets",
+      "bytes": 24055,
+      "sha256": "b24850030d06aca6933eac4d4b0d755b79cfc7cbdcbda8d3bcf5d42de67ee569"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterExactMass.ets",
+      "bytes": 4989,
+      "sha256": "8eef9b315cc508e32b8d53c0a2c37b8ff2c0b236726bed610c518f5aab685b89"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEvents.ets",
+      "bytes": 5612,
+      "sha256": "353aa46a181411997c1aa9b7db9f2ac3ce34181b1a25fd6ad56962fd569d6bec"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterBTypes.ets",
+      "bytes": 6664,
+      "sha256": "076f06cc13ac901407a671bb8d27f9bb5ce307739507b7046b605ce6190f21a0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterGuard.ets",
+      "bytes": 6347,
+      "sha256": "126ef81f02db5d0eb59fdc1a9b4a62c4afa936951f7dc8d43ff53e90cc1c7b91"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterHydraulics.ets",
+      "bytes": 4039,
+      "sha256": "a83c0b9ce1101d8f14f82b5d43768a7450d1e3baf491d9a4a0bcd4fa6a5404fd"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterParticles.ets",
+      "bytes": 11271,
+      "sha256": "45b5b549a95617e895d8dcabbee24b78dcc8cc992cd7f5f30dee6c22954ec341"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051GravityInputAdapter.ets",
+      "bytes": 2692,
+      "sha256": "62da969e8b3d79d7b470c8d34c8c4f575e8c02c08e778e1ad6a820a07411ed2f"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/napi_bridge.cpp",
+      "bytes": 86001,
+      "sha256": "d30eb9b6bc06b689d49c720570215fae6fe377850ab6cb4cf02808a1f022a981"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_compositor.cpp",
+      "bytes": 10247,
+      "sha256": "484957eab74fd19b855aa6cac1d66e411dc564c2688691a5468035d0c85f6f67"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/fullframe_targets.cpp",
+      "bytes": 1608,
+      "sha256": "09a1c8ab2c37dae7a1873e4f729d612a33f9d9c27fb4744daf10eac33634dc9d"
+    }
+  ],
+  "isolation": {
+    "v1": "A/B row20/56/24 event40 old audit/status/snapshot unchanged; no implicit migration",
+    "v2": "cold new empty run, B attached, single owner five-bank root",
+    "restore": "UNSUPPORTED_FEATURE",
+    "render": "XCOMPONENT_SHADER_ONLY_ALL_LAYERS_FAULT_OR_EXPLICIT_COMPLETE_STALE"
+  },
+  "constants": {
+    "N": 128,
+    "C": 256,
+    "K": [
+      192,
+      512
+    ],
+    "e": 8,
+    "Kw": 64,
+    "ew": 8,
+    "D": 4096,
+    "Q": 64,
+    "waterState": {
+      "AIR": 1,
+      "INTERFACE_WAIT": 2,
+      "SIDE_WAIT": 3
+    },
+    "waterWait": {
+      "NONE": 0,
+      "SURFACE": 1,
+      "SIDE_CAPACITY": 2,
+      "NUMERIC_ARRIVAL_BLOCKED": 3,
+      "HIGH_BED": 4
+    },
+    "deliveryMode": {
+      "NONE": 0,
+      "DIRECT": 1,
+      "FLIGHT": 2
+    }
+  },
+  "waterPoolArrays": [
+    {
+      "names": [
+        "mass",
+        "x",
+        "y",
+        "vx",
+        "vy",
+        "originSourceCommit",
+        "birthPhysicsCommit"
+      ],
+      "type": "Float64Array",
+      "count": 7,
+      "length": "Kw",
+      "bytes": "7*8*Kw",
+      "banks": 5
+    },
+    {
+      "names": [
+        "id"
+      ],
+      "type": "Uint32Array",
+      "count": 1,
+      "length": "Kw",
+      "bytes": "4*Kw",
+      "banks": 5
+    },
+    {
+      "names": [
+        "state",
+        "wait"
+      ],
+      "type": "Uint8Array",
+      "count": 2,
+      "length": "Kw",
+      "bytes": "2*Kw",
+      "banks": 5
+    },
+    {
+      "names": [
+        "prev",
+        "next",
+        "freeSlots"
+      ],
+      "type": "Int32Array",
+      "count": 3,
+      "length": "Kw",
+      "bytes": "3*4*Kw",
+      "banks": 5
+    },
+    {
+      "names": [
+        "J"
+      ],
+      "type": "Float64Array",
+      "count": 1,
+      "length": "N",
+      "bytes": "8*N",
+      "banks": 5
+    },
+    {
+      "names": [
+        "waterHeader"
+      ],
+      "type": "Float64Array",
+      "count": 1,
+      "length": "16",
+      "bytes": "16*8",
+      "banks": 5
+    }
+  ],
+  "waterHeaderFields": [
+    "head",
+    "tail",
+    "freeCount",
+    "liveCount",
+    "nextWaterId",
+    "arrivalSerial",
+    "simulationTime",
+    "lastArrivalPhysicsCommit",
+    "flightRevisionCode",
+    "waterArenaSerial",
+    "emissionPolicyRev",
+    "flightConfigRev",
+    "sortPolicyRev",
+    "reserved13=0",
+    "reserved14=0",
+    "reserved15=0"
+  ],
+  "sourceSuffix16": [
+    "settledBefore",
+    "settledAfter",
+    "flightBefore",
+    "flightAfter",
+    "JcolBefore",
+    "JcolAfter",
+    "firstWaterId",
+    "waterBirthCount",
+    "deliveryMode",
+    "nextWaterIdBefore",
+    "nextWaterIdAfter",
+    "arrivalSerialAtBirth",
+    "emissionPolicyRev",
+    "birthSimulationTime",
+    "reserved14=0",
+    "reserved15=0"
+  ],
+  "sourceSuffix8": [
+    "waterId",
+    "deliveryMode",
+    "JcolBefore",
+    "JcolAfter",
+    "nextWaterIdBefore",
+    "nextWaterIdAfter",
+    "emissionPolicyRev",
+    "birthSimulationTime"
+  ],
+  "event48Fields": [
+    "kind",
+    "localOrdinal",
+    "slot",
+    "id",
+    "origin",
+    "birthCommit",
+    "fromCol",
+    "toCol",
+    "m0",
+    "m1",
+    "x0",
+    "y0",
+    "vx0",
+    "vy0",
+    "x1",
+    "y1",
+    "vx1",
+    "vy1",
+    "W0",
+    "W1",
+    "Jfrom0",
+    "Jfrom1",
+    "Jto0",
+    "Jto1",
+    "state0",
+    "state1",
+    "wait0",
+    "wait1",
+    "remaining0",
+    "remaining1",
+    "hEvent",
+    "lambda",
+    "planeType",
+    "planeCoord",
+    "reason",
+    "flags",
+    "reserved36=0",
+    "reserved37=0",
+    "reserved38=0",
+    "reserved39=0",
+    "reserved40=0",
+    "reserved41=0",
+    "reserved42=0",
+    "reserved43=0",
+    "reserved44=0",
+    "reserved45=0",
+    "reserved46=0",
+    "reserved47=0"
+  ],
+  "eventKind": {
+    "MOVE": 1,
+    "CROSS": 2,
+    "CONTACT_WAIT": 3,
+    "ARRIVE": 4
+  },
+  "eventFlags": {
+    "oldLive": 0,
+    "newLive": 1,
+    "changedColumn": 2,
+    "changedW": 3,
+    "topologyWait": 4,
+    "arrived": 5,
+    "otherBits": "ZERO"
+  },
+  "planeType": {
+    "NONE": 0,
+    "BED": 1,
+    "WATER": 2,
+    "WALL": 3,
+    "TOP": 4,
+    "COLUMN": 5
+  },
+  "flightReasons": [
+    [
+      "NONE",
+      0,
+      "success"
+    ],
+    [
+      "INCOMPATIBLE_ROUTE",
+      1,
+      "failure"
+    ],
+    [
+      "INVALID_FLIGHT_CONFIG",
+      2,
+      "failure"
+    ],
+    [
+      "STORAGE_OR_ALIAS",
+      3,
+      "failure"
+    ],
+    [
+      "ENTRY_AUDIT",
+      4,
+      "failure"
+    ],
+    [
+      "SOURCE_SUFFIX_FULL",
+      5,
+      "failure"
+    ],
+    [
+      "WATER_SLOT_FULL",
+      6,
+      "failure"
+    ],
+    [
+      "EVENT48_FULL",
+      7,
+      "failure"
+    ],
+    [
+      "TAPE_FULL",
+      8,
+      "failure"
+    ],
+    [
+      "EVENT_LIMIT",
+      9,
+      "failure"
+    ],
+    [
+      "NUMERIC_ARRIVAL_BLOCKED",
+      10,
+      "legal_WAIT"
+    ],
+    [
+      "TIME_NO_PROGRESS",
+      11,
+      "failure"
+    ],
+    [
+      "SIDE_CAPACITY",
+      12,
+      "legal_WAIT"
+    ],
+    [
+      "REPLAY_OLD_BITS",
+      13,
+      "failure"
+    ],
+    [
+      "REPLAY_RESULT",
+      14,
+      "failure"
+    ],
+    [
+      "COMMIT_STORAGE_INVALID",
+      15,
+      "failure"
+    ],
+    [
+      "UNSUPPORTED_GEOMETRY",
+      16,
+      "render_failure"
+    ],
+    [
+      "GRAVITY_STALE",
+      17,
+      "controller_pause"
+    ]
+  ],
+  "eventAllowedSlots": {
+    "MOVE": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      21,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "CROSS": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "CONTACT_WAIT": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      21,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "ARRIVE": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      24,
+      25,
+      26,
+      27,
+      32,
+      33,
+      34,
+      35
+    ]
+  },
+  "eventRules": {
+    "all": "slots36..47 positive zero; localOrdinal starts1 per stream; no NaN/infinite; flags agree with fields; per waterId <=ew, last contact row reserved",
+    "MOVE": "m1=m0; fromCol=toCol; W0=W1=0; Jfrom/Jto unchanged; id remains live",
+    "CROSS": "m1=m0; abs(toCol-fromCol)=1; W0=W1=0; J exact patch between columns; id remains live",
+    "CONTACT_WAIT": "m1=m0; W0=W1=0; state/wait/topology may change; no source commit",
+    "ARRIVE": "m1=0; toCol=fromCol; W1 raw differs W0; J source mass removed, newLive=0, arrived=1; no external ledger change"
+  },
+  "eventZeroRules": {
+    "MOVE": "18,19,22,23=0; 36..47=+0",
+    "CROSS": "18,19=0; 36..47=+0",
+    "CONTACT_WAIT": "18,19,22,23=0; 36..47=+0",
+    "ARRIVE": "22,23,28,29,30,31=0; 36..47=+0"
+  },
+  "waterArenaHeader64": [
+    "arenaSerial",
+    "waterEventCount",
+    "tapeCount",
+    "physicsCommit",
+    "sourceCommit",
+    "runGeneration",
+    "configRev",
+    "flightConfigRev",
+    "stepSerial",
+    "attemptSerial",
+    "acceptedAngleDeg",
+    "dt",
+    "clockWindowId",
+    "ownerId",
+    "waterLiveAtEntry",
+    "waterLiveAtExit",
+    "arrivalCount",
+    "arrivalSerial",
+    "simulationTimeBefore",
+    "simulationTimeAfter",
+    "ew",
+    "Kw",
+    "sandEventCount",
+    "sandLineageCount",
+    "sandSealedArenaSerial",
+    "tapeSerial",
+    "waterMotionVisits",
+    "contactSortRows",
+    "waterReplayRows",
+    "WtotalBefore",
+    "WtotalAfter",
+    "rootCommitCode",
+    "reserved32=0",
+    "reserved33=0",
+    "reserved34=0",
+    "reserved35=0",
+    "reserved36=0",
+    "reserved37=0",
+    "reserved38=0",
+    "reserved39=0",
+    "reserved40=0",
+    "reserved41=0",
+    "reserved42=0",
+    "reserved43=0",
+    "reserved44=0",
+    "reserved45=0",
+    "reserved46=0",
+    "reserved47=0",
+    "reserved48=0",
+    "reserved49=0",
+    "reserved50=0",
+    "reserved51=0",
+    "reserved52=0",
+    "reserved53=0",
+    "reserved54=0",
+    "reserved55=0",
+    "reserved56=0",
+    "reserved57=0",
+    "reserved58=0",
+    "reserved59=0",
+    "reserved60=0",
+    "reserved61=0",
+    "reserved62=0",
+    "reserved63=0"
+  ],
+  "waterSummary16": [
+    "waterId",
+    "slot",
+    "origin",
+    "birthCommit",
+    "state",
+    "wait",
+    "column",
+    "mass",
+    "x",
+    "y",
+    "vx",
+    "vy",
+    "firstEventOrdinal",
+    "eventCount",
+    "arrived",
+    "flags"
+  ],
+  "rootCommitCode": {
+    "flightV2Success": 2
+  },
+  "tape": {
+    "revision": "CW_REPLAY_TAPE_V1",
+    "type": "Uint32Array",
+    "rowWidth": 2,
+    "fields": [
+      "stream 0 B40 or 1 WATER48",
+      "rowIndex zero-based"
+    ],
+    "globalOrdinal": "tapeRow+1",
+    "limits": "Ls=e*K+2*(N-1); Lw=ew*Kw; Lt=Ls+Lw",
+    "arenas": 2
+  },
+  "optics16": [
+    "sigma",
+    "tintR",
+    "tintG",
+    "tintB",
+    "surfaceGain",
+    "opticsRev",
+    "profileRev",
+    "reserved7=0",
+    "widthPx",
+    "lightR",
+    "lightG",
+    "lightB",
+    "F0",
+    "specPower",
+    "lightX",
+    "lightY"
+  ],
+  "profileV4": [
+    "S",
+    "W",
+    "eta",
+    "P",
+    "bh",
+    "mh",
+    "R",
+    "J",
+    "R8",
+    "wet"
+  ],
+  "waterProof10": [
+    "waterId",
+    "mass",
+    "x64",
+    "y64",
+    "vx64",
+    "vy64",
+    "originSourceCommit",
+    "birthPhysicsCommit",
+    "state",
+    "wait"
+  ],
+  "waterMeta2": [
+    "state | (wait << 8)",
+    "waterId"
+  ],
+  "gpuProfileRows": [
+    [
+      "S",
+      "W",
+      "eta",
+      "bh"
+    ],
+    [
+      "mh",
+      "P",
+      "R",
+      "wet"
+    ],
+    [
+      "J",
+      "R8",
+      "0",
+      "0"
+    ]
+  ],
+  "gravity": {
+    "revision": "CW_GRAVITY_ACCEPT_V1",
+    "boundDeg": [
+      -30,
+      30
+    ],
+    "targetAdapterDeg": [
+      -89,
+      89
+    ],
+    "freshnessMs": 250,
+    "algorithm": "trial=a0+clamp((boundTarget-a0)*(1-exp(-h/tau)),-omega*h,+omega*h); update only on positive successful step",
+    "candidateTauSeconds": 0.12,
+    "candidateOmegaDegPerSecond": 90,
+    "calibration": "PENDING_CALIBRATION",
+    "shake": "DIAGNOSTIC_ONLY",
+    "stale": "STOP_SOURCE_AND_PAUSE_TICK_KEEP_ANGLE"
+  },
+  "capacity": {
+    "version": "CW_FLIGHT_RESERVATION_V1",
+    "workArray": "existing 70xU16 Pexact workspace becomes Gexact in V2 only",
+    "build": "Gexact=exact sand active masses + exact water active masses in current column",
+    "bound": "max(exact(256),exact(S)+exact(W)+Gexact entry)",
+    "patch": "separately encode old/new stored operands; precheck 1 or 2 columns then apply",
+    "final": "R=RN(eta+P)<=256 and R8=RN(R+J)<=256, no new EPS"
+  },
+  "stageOrder": [
+    "entry audit & copy",
+    "water edges once",
+    "freeze etaMedium/wetMask",
+    "waterId motion",
+    "sandId motion",
+    "bed edges once",
+    "sand final fold",
+    "one sort(column,y,id) & arrival",
+    "waterId final fold & work audit",
+    "one global tape replay & replay audit",
+    "whole-root compare/precheck",
+    "canonical+paired arena+angle commit"
+  ],
+  "resourceRows": [
+    {
+      "name": "five_water_state_banks",
+      "formula": "5*(74*Kw+8*N+128)"
+    },
+    {
+      "name": "two_water_event48_header64_summary16",
+      "formula": "2*(48*8*ew*Kw+64*8+16*8*Kw)"
+    },
+    {
+      "name": "two_tapes_u32_pair",
+      "formula": "2*2*4*(e*K+2*(N-1)+ew*Kw)"
+    },
+    {
+      "name": "sort_marks_flight_scratch",
+      "formula": "9*Kw+256"
+    },
+    {
+      "name": "source_dedup_event_suffix_and_scratch",
+      "formula": "16*8*D+8*8*D+16*8"
+    },
+    {
+      "name": "four_water_proof_xy_meta_packets",
+      "formula": "384*Kw"
+    },
+    {
+      "name": "four_profile_and_two_gpu_texture_delta",
+      "formula": "64*N+32*N"
+    },
+    {
+      "name": "two_gl_vbo_header_optics_delta",
+      "formula": "32*Kw+1024+256"
+    }
+  ],
+  "cOnlyOptics16IncrementBytes": 256,
+  "cOnlyListedPayloadBytes": {
+    "K192": 207368,
+    "K512": 331528
+  },
+  "resourceExamples": [
+    {
+      "K": 192,
+      "N": 128,
+      "Kw": 64,
+      "e": 8,
+      "ew": 8,
+      "D": 4096,
+      "parts": {
+        "five_water_state_banks": 29440,
+        "two_water_event48_header64_summary16": 410624,
+        "two_tapes_u32_pair": 36832,
+        "sort_marks_flight_scratch": 832,
+        "source_dedup_event_suffix_and_scratch": 786560,
+        "four_water_proof_xy_meta_packets": 24576,
+        "four_profile_and_two_gpu_texture_delta": 12288,
+        "two_gl_vbo_header_optics_delta": 3328
+      },
+      "deltaBytes": 1304480,
+      "T209ActualABPayloadBytes": 4230656,
+      "T219CTemplateBytes": 207112,
+      "listedCombinedBytes": 5742248,
+      "fullFrameAdditional": "8*widthPx*heightPx only if not reused",
+      "RSS": "NOT_MEASURED"
+    },
+    {
+      "K": 512,
+      "N": 128,
+      "Kw": 64,
+      "e": 8,
+      "ew": 8,
+      "D": 4096,
+      "parts": {
+        "five_water_state_banks": 29440,
+        "two_water_event48_header64_summary16": 410624,
+        "two_tapes_u32_pair": 77792,
+        "sort_marks_flight_scratch": 832,
+        "source_dedup_event_suffix_and_scratch": 786560,
+        "four_water_proof_xy_meta_packets": 24576,
+        "four_profile_and_two_gpu_texture_delta": 12288,
+        "two_gl_vbo_header_optics_delta": 3328
+      },
+      "deltaBytes": 1345440,
+      "T209ActualABPayloadBytes": 6312256,
+      "T219CTemplateBytes": 331272,
+      "listedCombinedBytes": 7988968,
+      "fullFrameAdditional": "8*widthPx*heightPx only if not reused",
+      "RSS": "NOT_MEASURED"
+    }
+  ],
+  "fullFrameWork": "enqueue scans D+Q; G source boundaries each Q item candidate/copy/audit; F<=2 attempts exact guard+water/sand edges+events+one Kw log Kw sort+work/replay folds+paired commit; C capture/native proof/upload+7 layer pixels+present/swap+IO; cold/failed actual work separately",
+  "notInPayload": [
+    "existing full-frame pair 8*widthPx*heightPx if not reused",
+    "driver/GL program/VAO/alignment",
+    "object/view/string/NAPI overhead",
+    "old/new context and resize overlap",
+    "cold snapshots/diagnostic IO retained",
+    "device RSS and actual timings"
+  ],
+  "owners": {
+    "engine": "single integrator for shared Engine/State/Source/Step",
+    "native": "single integrator for NAPI/CMake/compositor/UI hunk",
+    "tests": "independent SW01-14 and E-SW1-4 after implementation; pretest NOT_IMPLEMENTED"
+  }
+}
