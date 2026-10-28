@@ -48,6 +48,7 @@ export class ClearWaterSourceReceipt {
   sourceLedgerRev: number = 1; errorStage: number = 0;
 }
 export class ClearWaterStepResult {
+  stepRevision:string='CW_B_STEP_V1';stepReason:number=0;stage:number=0;ordinal:number=0;lastBStepSerial:number=0;sourceCommitAtEntry:number=0;acceptedAngleDeg:number=0;arenaSerial:number=0;eventCount:number=0;lineageCount:number=0;maxResidual:number=0;allEdgesWithinH:boolean=false;
   status: ClearWaterStatus = ClearWaterStatus.OK; stepped: boolean = false; lastAcceptedCommit: number = 0;
   failedAttempt: number | null = null; implementation: string = 'NOT_IMPLEMENTED_B_COUPLING';
 }

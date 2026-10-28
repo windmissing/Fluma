@@ -1,0 +1,145 @@
+{
+  "revision": "T209_DEVELOPER_DELIVERY_V1",
+  "implementation": "CW_B_STEP_V1",
+  "scope": "A_AND_B_ONLY_C_AND_RESTORE_NOT_IMPLEMENTED",
+  "sourceFiles": [
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterBTypes.ets",
+      "bytes": 6664,
+      "sha256": "076f06cc13ac901407a671bb8d27f9bb5ce307739507b7046b605ce6190f21a0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 22311,
+      "sha256": "ee726a6904cf507a4d4579f445ef3cd44c97a1f77b5f8a8ccd30ea672a081500"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEvents.ets",
+      "bytes": 5612,
+      "sha256": "353aa46a181411997c1aa9b7db9f2ac3ce34181b1a25fd6ad56962fd569d6bec"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterExactMass.ets",
+      "bytes": 4989,
+      "sha256": "8eef9b315cc508e32b8d53c0a2c37b8ff2c0b236726bed610c518f5aab685b89"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterGuard.ets",
+      "bytes": 6347,
+      "sha256": "126ef81f02db5d0eb59fdc1a9b4a62c4afa936951f7dc8d43ff53e90cc1c7b91"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterHydraulics.ets",
+      "bytes": 4039,
+      "sha256": "a83c0b9ce1101d8f14f82b5d43768a7450d1e3baf491d9a4a0bcd4fa6a5404fd"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterParticles.ets",
+      "bytes": 11271,
+      "sha256": "45b5b549a95617e895d8dcabbee24b78dcc8cc992cd7f5f30dee6c22954ec341"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 14990,
+      "sha256": "5afc741a32414d548f326a5e75551b05c48210ad5e780074b7c6aa4ad2587967"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterState.ets",
+      "bytes": 15066,
+      "sha256": "4487802c28aafb0ca2c9a6f2f17e890bcc949b949ba0002e9475bd650684d1f2"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterStep.ets",
+      "bytes": 24055,
+      "sha256": "b24850030d06aca6933eac4d4b0d755b79cfc7cbdcbda8d3bcf5d42de67ee569"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterTypes.ets",
+      "bytes": 6972,
+      "sha256": "55514ef5c47c97a63a2957a11aa458ba563bf1c4833a45a2968d9a1e5107a2ad"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011MaterialGuard.ets",
+      "bytes": 12360,
+      "sha256": "0ab97340dcaf815a62f2aced9712857cb17547ffe71e54f6f46a1d8221563259"
+    },
+    {
+      "path": "test/run_t209_clear_water_b_units.cjs",
+      "bytes": 25375,
+      "sha256": "d0ae45cd5656f7e156eea76c33975914f4f9c7cd79ada9e048dbc461a54a1b00"
+    },
+    {
+      "path": "test/compile_t209_clear_water_modules.py",
+      "bytes": 1770,
+      "sha256": "4b259b9f4e28ff13af2ce443a98386d9fc0471b0d0c503e20d43ce2285da80e8"
+    },
+    {
+      "path": "docs/architecture-T203-clear-water-B-v1.md",
+      "bytes": 22293,
+      "sha256": "f1878ded2d3a65a6758db0be877dc19ae183eb0c8e63b4055276b6ac11c0537f"
+    },
+    {
+      "path": "docs/analysis-T203-clear-water-B-engineering-manifest-v1.json",
+      "bytes": 90209,
+      "sha256": "d2dfaada8afd4fdcfe30ce41c6702727d131df560d1e06f3095151dc7bcd527b"
+    },
+    {
+      "path": "docs/algorithm-T196-clear-water-B-step-v1.md",
+      "bytes": 32953,
+      "sha256": "cee21d1cbf6cd8eaed641a2e4f9d6500c5365fe7d9fe05b0c7a1aa7fc4315173"
+    }
+  ],
+  "forcedArkTSCompile": "PASS",
+  "unsignedPackageHap": "PASS",
+  "signedHap": "NOT_BUILT",
+  "device": "NOT_RUN",
+  "independentTester": "SEPARATE_TASK",
+  "performance": "NOT_MEASURED",
+  "AStatusRange": "0..22 unchanged",
+  "specArrayPayloadBytes": {
+    "K192": 4230656,
+    "K512": 6312256
+  },
+  "snapshotBExtraBytes": {
+    "K192": 3319456,
+    "K512": 4284576
+  },
+  "unsignedHap": {
+    "path": "entry/build/default/outputs/default/entry-default-unsigned.hap",
+    "bytes": 4670356,
+    "sha256": "0b9bb83035924b4cdff63bbeee1f9458c5d75519e69fadce642d2ef3d96bc90b",
+    "scope": "EXISTING_MAIN_APP_NO_C_PAGE_OR_ROUTE_INTEGRATION"
+  },
+  "checks": {
+    "selftest": {
+      "passed": 35,
+      "failed": 0,
+      "sha256": "d968b9589137ba2ab6b573867426f3052a2463fd0ae633985a96b71dfb96323a"
+    },
+    "a-regression": {
+      "passed": 26,
+      "failed": 0,
+      "sha256": "e8a0f96411c0b7e60a81bead459f3241a4f90c4b273755b2e1304feb2dbc5b6d"
+    },
+    "gesture-regression": {
+      "passed": 18,
+      "failed": 0,
+      "sha256": "01953e9075b0c14e637724e62b9bda9b02c66eb98986b006c676e0fe134a3e8d"
+    },
+    "demo-regression": {
+      "passed": 5,
+      "failed": 0,
+      "sha256": "e7a40d3978ffc42da90f1261072b2c56a8d0537ec7e24365c2b8bd266e605ff3"
+    }
+  },
+  "logs": [
+    {
+      "path": "test/reports/t209/compile.txt",
+      "sha256": "309eec44c88afba01bb2095162223cd4ef8d1653061d43bf650736a0a3973b50"
+    },
+    {
+      "path": "test/reports/t209/package.txt",
+      "sha256": "1c8d94db93169e7d3aa118534af66024a0fbd0b3318d5f429765524cc3bcef64"
+    }
+  ]
+}

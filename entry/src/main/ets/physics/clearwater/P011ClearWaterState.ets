@@ -46,7 +46,21 @@ export class ClearWaterPool {
     for(let i=0;i<3;i++)out.push({name:prefix+'.'+ni[i],type:'Int32Array',length:this.nmax,byteLength:i32[i].byteLength,lifetime:'COLD_RUN_FIXED'});return out;
   }
 }
+export interface ClearWaterAStateJSON {
+  W:Float64Array;bh:Float64Array;mh:Float64Array;S:Float64Array;eta:Float64Array;P:Float64Array;R:Float64Array;auditMass:Float64Array;
+  initialWater:number;initialSand:number;I_water:number;I_sand:number;waterSuccessCount:number;sandSuccessCount:number;sourceCommit:number;physicsCommit:number;pool:ClearWaterPool;
+}
 export class ClearWaterState {
+  // Preserve V1 cold JSON byte order/schema. Optional B metadata/bindings are
+  // exported only by snapshotB(), never smuggled into the A serialized view.
+  toJSON():ClearWaterAStateJSON {return {W:this.W,bh:this.bh,mh:this.mh,S:this.S,eta:this.eta,P:this.P,R:this.R,auditMass:this.auditMass,
+    initialWater:this.initialWater,initialSand:this.initialSand,I_water:this.I_water,I_sand:this.I_sand,waterSuccessCount:this.waterSuccessCount,sandSuccessCount:this.sandSuccessCount,sourceCommit:this.sourceCommit,physicsCommit:this.physicsCommit,pool:this.pool};}
+  private bBound: ArrayBuffer[]=[];
+  bStorageBuffers():ArrayBuffer[] {return this.bBound;}
+  bindBStorage():void {this.bBound=[this.W.buffer as ArrayBuffer,this.bh.buffer as ArrayBuffer,this.mh.buffer as ArrayBuffer,this.S.buffer as ArrayBuffer,this.eta.buffer as ArrayBuffer,this.P.buffer as ArrayBuffer,this.R.buffer as ArrayBuffer,this.auditMass.buffer as ArrayBuffer,this.pool.pMass.buffer as ArrayBuffer,this.pool.pX.buffer as ArrayBuffer,this.pool.pY.buffer as ArrayBuffer,this.pool.pVx.buffer as ArrayBuffer,this.pool.pVy.buffer as ArrayBuffer,this.pool.pPhase.buffer as ArrayBuffer,this.pool.pSource.buffer as ArrayBuffer,this.pool.pState.buffer as ArrayBuffer,this.pool.pId.buffer as ArrayBuffer,this.pool.pSourceId.buffer as ArrayBuffer,this.pool.freeSlots.buffer as ArrayBuffer,this.pool.colParticleMassH.buffer as ArrayBuffer,this.pool.colParticleMassL.buffer as ArrayBuffer,this.pool.prev.buffer as ArrayBuffer,this.pool.next.buffer as ArrayBuffer,this.originSourceCommit!.buffer as ArrayBuffer,this.waitReason!.buffer as ArrayBuffer,this.bHeader!.buffer as ArrayBuffer];}
+  bStorageValid():boolean {return this.W.buffer===this.bBound[0]&&this.W.byteLength===128*8&&this.bh.buffer===this.bBound[1]&&this.bh.byteLength===128*8&&this.mh.buffer===this.bBound[2]&&this.mh.byteLength===128*8&&this.S.buffer===this.bBound[3]&&this.S.byteLength===128*8&&this.eta.buffer===this.bBound[4]&&this.eta.byteLength===128*8&&this.P.buffer===this.bBound[5]&&this.P.byteLength===128*8&&this.R.buffer===this.bBound[6]&&this.R.byteLength===128*8&&this.auditMass.buffer===this.bBound[7]&&this.auditMass.byteLength===128*8&&this.pool.pMass.buffer===this.bBound[8]&&this.pool.pMass.byteLength===this.pool.nmax*8&&this.pool.pX.buffer===this.bBound[9]&&this.pool.pX.byteLength===this.pool.nmax*8&&this.pool.pY.buffer===this.bBound[10]&&this.pool.pY.byteLength===this.pool.nmax*8&&this.pool.pVx.buffer===this.bBound[11]&&this.pool.pVx.byteLength===this.pool.nmax*8&&this.pool.pVy.buffer===this.bBound[12]&&this.pool.pVy.byteLength===this.pool.nmax*8&&this.pool.pPhase.buffer===this.bBound[13]&&this.pool.pPhase.byteLength===this.pool.nmax*1&&this.pool.pSource.buffer===this.bBound[14]&&this.pool.pSource.byteLength===this.pool.nmax*1&&this.pool.pState.buffer===this.bBound[15]&&this.pool.pState.byteLength===this.pool.nmax*1&&this.pool.pId.buffer===this.bBound[16]&&this.pool.pId.byteLength===this.pool.nmax*4&&this.pool.pSourceId.buffer===this.bBound[17]&&this.pool.pSourceId.byteLength===this.pool.nmax*4&&this.pool.freeSlots.buffer===this.bBound[18]&&this.pool.freeSlots.byteLength===this.pool.nmax*4&&this.pool.colParticleMassH.buffer===this.bBound[19]&&this.pool.colParticleMassH.byteLength===128*8&&this.pool.colParticleMassL.buffer===this.bBound[20]&&this.pool.colParticleMassL.byteLength===128*8&&this.pool.prev.buffer===this.bBound[21]&&this.pool.prev.byteLength===this.pool.nmax*4&&this.pool.next.buffer===this.bBound[22]&&this.pool.next.byteLength===this.pool.nmax*4&&this.originSourceCommit!.buffer===this.bBound[23]&&this.originSourceCommit!.byteLength===this.pool.nmax*8&&this.waitReason!.buffer===this.bBound[24]&&this.waitReason!.byteLength===this.pool.nmax*1&&this.bHeader!.buffer===this.bBound[25]&&this.bHeader!.byteLength===16*8;}
+  originSourceCommit:Float64Array|null=null;waitReason:Uint8Array|null=null;bHeader:Float64Array|null=null;
+  enableB():void {if(this.originSourceCommit!==null)throw new Error('CW_B_ALREADY_BOUND');this.originSourceCommit=new Float64Array(this.pool.nmax);this.waitReason=new Uint8Array(this.pool.nmax);this.bHeader=new Float64Array(16);}
   readonly W: Float64Array=new Float64Array(128);readonly bh: Float64Array=new Float64Array(128);readonly mh: Float64Array=new Float64Array(128);
   readonly S: Float64Array=new Float64Array(128);readonly eta: Float64Array=new Float64Array(128);readonly P: Float64Array=new Float64Array(128);readonly R: Float64Array=new Float64Array(128);
   readonly pool: ClearWaterPool;
@@ -55,12 +69,14 @@ export class ClearWaterState {
   waterSuccessCount: number=0;sandSuccessCount: number=0;sourceCommit: number=0;physicsCommit: number=0;
   constructor(k: number){this.pool=new ClearWaterPool(k);}
   reset(initial: ClearWaterInitialState | null): void {
+    if(this.originSourceCommit!==null)this.originSourceCommit.fill(0);if(this.waitReason!==null)this.waitReason.fill(0);if(this.bHeader!==null)this.bHeader.fill(0);
     this.W.fill(0);this.bh.fill(0);this.mh.fill(0);this.pool.clear();
     if(initial!==null){this.W.set(initial.W);this.bh.set(initial.bh);this.mh.set(initial.mh);}
     this.I_water=this.I_sand=this.waterSuccessCount=this.sandSuccessCount=this.sourceCommit=this.physicsCommit=0;
     this.rebuild();this.initialWater=this.waterTotal();this.initialSand=this.sandTotal();
   }
   copyFrom(s: ClearWaterState): void {
+    if(this.originSourceCommit!==null){if(s.originSourceCommit===null||s.waitReason===null||s.bHeader===null)throw new Error('CW_B_METADATA_REQUIRED');this.originSourceCommit.set(s.originSourceCommit);this.waitReason!.set(s.waitReason);this.bHeader!.set(s.bHeader);}
     this.W.set(s.W);this.bh.set(s.bh);this.mh.set(s.mh);this.S.set(s.S);this.eta.set(s.eta);this.P.set(s.P);this.R.set(s.R);this.pool.copyFrom(s.pool);
     this.initialWater=s.initialWater;this.initialSand=s.initialSand;this.I_water=s.I_water;this.I_sand=s.I_sand;
     this.waterSuccessCount=s.waterSuccessCount;this.sandSuccessCount=s.sandSuccessCount;this.sourceCommit=s.sourceCommit;this.physicsCommit=s.physicsCommit;
@@ -101,6 +117,7 @@ export class ClearWaterState {
   allocations(prefix: string): ClearWaterAllocation[] {
     const out=this.pool.allocations(prefix+'.pool'),arrays: Float64Array[]=[this.W,this.bh,this.mh,this.S,this.eta,this.P,this.R];
     const names: string[]=['W','bh','mh','S','eta','P','R'];for(let i=0;i<7;i++)out.push({name:prefix+'.'+names[i],type:'Float64Array',length:128,byteLength:arrays[i].byteLength,lifetime:'COLD_RUN_FIXED'});
-    out.push({name:prefix+'.auditMass',type:'Float64Array',length:128,byteLength:1024,lifetime:'COLD_RUN_FIXED'});return out;
+    out.push({name:prefix+'.auditMass',type:'Float64Array',length:128,byteLength:1024,lifetime:'COLD_RUN_FIXED'});
+    if(this.originSourceCommit!==null){out.push({name:prefix+'.originSourceCommit',type:'Float64Array',length:this.pool.nmax,byteLength:this.pool.nmax*8,lifetime:'COLD_RUN_FIXED'});out.push({name:prefix+'.waitReason',type:'Uint8Array',length:this.pool.nmax,byteLength:this.pool.nmax,lifetime:'COLD_RUN_FIXED'});out.push({name:prefix+'.bHeader',type:'Float64Array',length:16,byteLength:128,lifetime:'COLD_RUN_FIXED'});}return out;
   }
 }

@@ -1,7 +1,9 @@
 import { ClearWaterStatus as S, ClearWaterRunConfig, ClearWaterSourceRequest, ClearWaterSourceReceipt, ClearWaterAllocation,
   CW_SOURCE, CW_ROW_REVISION, CW_QUEUE_OFFSETS, CW_DEDUP_OFFSETS, CW_EVENT_OFFSETS, cwSafePositive, cwSameFiniteBits } from './P011ClearWaterTypes';
 import { ClearWaterState } from './P011ClearWaterState';
+import { ClearWaterBOrigins } from './P011ClearWaterEvents';
 export class ClearWaterSource {
+  bOrigins:ClearWaterBOrigins|null=null;bCounters:Float64Array|null=null;
   readonly rowRevision: string = CW_ROW_REVISION;
   readonly queue: Float64Array;readonly dedup: Float64Array;readonly events: Float64Array;
   private readonly request: Float64Array=new Float64Array(20);private readonly receiptRow: Float64Array=new Float64Array(56);
@@ -22,7 +24,7 @@ export class ClearWaterSource {
   get queueHead(): number {return this.head;}
   get enqueueOrdinal(): number {return this.ordinal;}
   clearPending(): void {this.queue.fill(0);this.head=this.count=0;}
-  reset(): void {this.clearPending();this.dedup.fill(0);this.events.fill(0);this.ordinal=this.dedupCount=this.eventCount=0;}
+  reset(): void {this.clearPending();this.dedup.fill(0);this.events.fill(0);this.ordinal=this.dedupCount=this.eventCount=0;if(this.bOrigins!==null)this.bOrigins.reset();}
   private encode(r: ClearWaterSourceRequest): void {
     const a=this.request;a.fill(0);a[0]=r.runGeneration;a[1]=r.configRev;a[2]=r.geometryEpoch;a[3]=r.inputGeneration;a[4]=r.gestureId;
     a[5]=r.sourceId;a[6]=r.requestSeq;a[7]=r.kind;a[8]=r.x;a[9]=r.y;a[10]=r.requestedVolume;a[11]=r.timestamp;
@@ -64,11 +66,11 @@ export class ClearWaterSource {
     if(r.revision!==CW_SOURCE||!cwSafePositive(r.runGeneration)||!cwSafePositive(r.configRev)||!cwSafePositive(r.geometryEpoch)||
       !cwSafePositive(r.inputGeneration)||!cwSafePositive(r.gestureId)||!cwSafePositive(r.sourceId)||r.sourceId>0xffffffff||!cwSafePositive(r.requestSeq)||
       (r.kind!==0&&r.kind!==1)||!cwSafePositive(r.seed)||r.seed>0xffffffff||!cwSafePositive(r.clockWindowId))return this.reject(S.INVALID_IDENTITY,run,state,out);
-    for(let i=0;i<this.dedupCount;i++)if(this.key(this.dedup,i*56,56)){
+    for(let i=0;i<this.dedupCount;i++){if(this.bCounters!==null)this.bCounters[43]++;if(this.key(this.dedup,i*56,56)){
       if(!this.payload(this.dedupBits,i*56)||r.timestampUnit!=='NS'&&r.timestampUnit!=='MS')return this.reject(S.IDENTITY_CONFLICT,run,state,out);
       this.materialize(this.dedup,i*56,run,true,out);return out.status;
-    }
-    for(let i=0;i<this.count;i++){const b=((this.head+i)%this.config.queueCapacity)*20;if(this.key(this.queue,b,20)){
+    }}
+    for(let i=0;i<this.count;i++){if(this.bCounters!==null)this.bCounters[42]++;const b=((this.head+i)%this.config.queueCapacity)*20;if(this.key(this.queue,b,20)){
       if(!this.payload(this.queueBits,b)||r.timestampUnit!=='NS'&&r.timestampUnit!=='MS')return this.reject(S.IDENTITY_CONFLICT,run,state,out);
       this.prepareReceipt(state);this.materialize(this.receiptRow,0,run,true,out);return S.OK;
     }}
@@ -110,13 +112,16 @@ export class ClearWaterSource {
         births=k+(tail>0?1:0);
         if(!Number.isFinite(q)||q<=0||!Number.isSafeInteger(births)||tail<0||births>state.pool.freeCount)status=S.NUMERIC_UNREPRESENTABLE;
         else if(!water&&firstId+births-1>0xffffffff)status=S.TOKEN_EXHAUSTED;
+        else if(!water&&this.bOrigins!==null&&this.bOrigins.count>=4096)status=S.EVENT_FULL;
+        else if(!water&&this.bOrigins!==null&&!this.bOrigins.canAppend(firstId,firstId+births-1,state.sourceCommit+1))status=S.INVALID_IDENTITY;
         else {
-          before.copyFrom(state);work.copyFrom(state);
+          before.copyFrom(state);work.copyFrom(state);if(this.bCounters!==null)this.bCounters[44]+=(63*work.pool.nmax+72*128+9*work.pool.nmax+128)*2;
           if(water)work.W[c]+=q;
           else for(let i=0;i<births;i++)if(!work.pool.birth(i<k?this.config.massPackage:tail,this.request[8],this.request[9],this.request[5]))status=S.POOL_FULL;
           work.rebuild();
           if(water){work.I_water+=q;work.waterSuccessCount++;}else{work.I_sand+=q;work.sandSuccessCount++;}
           work.sourceCommit++;work.physicsCommit++;
+          if(!water&&work.originSourceCommit!==null){let slot=work.pool.head,n=0;while(slot!==-1&&n++<work.pool.nmax){if(work.pool.pId[slot]>=firstId){work.originSourceCommit[slot]=work.sourceCommit;work.waitReason![slot]=0;}slot=work.pool.next[slot];}}
           const dw=work.waterTotal()-before.waterTotal(),ds=work.sandTotal()-before.sandTotal();
           // A sand birth changes authoritative pool mass/state/ID even if its
           // contribution rounds away in the derived P reduction. Water has W
@@ -135,7 +140,8 @@ export class ClearWaterSource {
             this.events[e+9]=work.physicsCommit;this.events[e+10]=this.request[14];this.events[e+11]=row[25];this.events[e+12]=before.W[c];this.events[e+13]=work.W[c];
             this.events[e+14]=before.P[c];this.events[e+15]=work.P[c];this.events[e+16]=this.request[8];this.events[e+17]=this.request[9];this.events[e+18]=this.request[13];
             this.events[e+19]=this.config.massPackage;this.events[e+20]=tail;this.events[e+21]=k;this.events[e+22]=1;
-            state.copyFrom(work);this.eventCount++;
+            state.copyFrom(work);this.eventCount++;if(this.bCounters!==null)this.bCounters[44]+=63*work.pool.nmax+72*128+9*work.pool.nmax+128;
+            if(!water&&this.bOrigins!==null)this.bOrigins.append(firstId,firstId+births-1,work.sourceCommit);
           }
         }
       }

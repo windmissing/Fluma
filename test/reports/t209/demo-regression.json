@@ -1,0 +1,27 @@
+{
+  "suite": "T49_T51_actual_demo",
+  "passed": 5,
+  "failed": 0,
+  "results": [
+    {
+      "name": "empty initial inventory, sources and render packet are zero without NaN",
+      "status": "PASS"
+    },
+    {
+      "name": "touch creates real particles; release stops additions and LAND enters same-packet bed",
+      "status": "PASS"
+    },
+    {
+      "name": "reset/hidden/cancel never emit deferred catch-up sand",
+      "status": "PASS"
+    },
+    {
+      "name": "T49 refuses Float32 out-of-domain packing before mutating last valid packet",
+      "status": "PASS"
+    },
+    {
+      "name": "zero dt at first page callback preserves empty inventory",
+      "status": "PASS"
+    }
+  ]
+}
