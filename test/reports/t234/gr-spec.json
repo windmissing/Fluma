@@ -1,0 +1,83 @@
+{
+  "revision": "T234_GR_SPEC_V1",
+  "source": "algorithm-T230-gpu-resident-step-v1.md §11",
+  "policy": "GRS_Q20_V1",
+  "M0vsM1_2_3": "M0: bh/mh/P_H only, H-source only, no W/J/merge; M1 water; M2 pair/merge; M3 full channels — 支持边界按 feature 位图分列",
+  "oldF64Diff": "Q20 ≠ 旧F64: subnormal/±0/NaN payload/RN 顺序 fold/reserve-refund 图均不等价；旧 snapshot/import 拒绝",
+  "rows": {
+    "GR01": {
+      "id": "数值",
+      "oracle": "BigInt mulDivRNE/floor-ceil/U128 overflow/Hq bound/quantization floor+REJECTED",
+      "fixture": "edge values + 1200 random groups",
+      "status": "NOT_IMPLEMENTED",
+      "note": "oracle 本卡已交付自检 PASS；产品核到件后逐位对拍"
+    },
+    "GR02": {
+      "id": "source",
+      "oracle": "free-scan slot 升序/ID prefix/MAX_ID/full-partial-replay-conflict/旧代拒绝/源成功跨 step 保留/ACK≠成功≠CURRENT",
+      "fixture": "32word command + dedup64 终态槽逐字段",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR03": {
+      "id": "motion",
+      "oracle": "有理弦 DDA U64 交叉乘/同刻 tie 床>墙>列/SIDE_HIGH_BED 不钻床/1 网格单位显式离散/Vmax/eMotion=32/partial-full LAND/slot 复用",
+      "fixture": "同弦多事件序列",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR04": {
+      "id": "guard",
+      "oracle": "k∈[-2,2] 整数区间穷举/strict Hq≤tan30 保守界/无原状态超临界豁免/bad 入口 FAIL",
+      "fixture": "d_e 采样×k 全组合",
+      "status": "NOT_IMPLEMENTED",
+      "note": "区间闭式解本卡已枚举自检 PASS"
+    },
+    "GR05": {
+      "id": "并行冲突",
+      "oracle": "同列多粒 ID 次序/mod3 颜色互不干扰/prefix total-local/申请>预算/fairness 仅记录/多 workgroup 逐 word 相同",
+      "fixture": "同列 3+粒×多 workgroup",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR06": {
+      "id": "root",
+      "oracle": "stage 失败/arena 溢出/重放翻位/candidate 不碰 current/late-reset-stop tombstone/fence timeout/context lost/先前成功不撤销",
+      "fixture": "逐 stage 故障注入",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR07": {
+      "id": "dispatch/资源",
+      "oracle": "K192/512 全 stage/barrier/copy/scan/sort E/F/Q 计数/拒绝成本/allocation ledger 峰值",
+      "fixture": "T230 §10.1 M0 59/68 dispatch",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR08": {
+      "id": "scene",
+      "oracle": "同 token 床+活动沙/F32 跨列投影/字段保序/GL present 错完整 STALE-FAULT/lease 复用/无 Canvas",
+      "fixture": "真机归 T232",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR09": {
+      "id": "time/input",
+      "oracle": "120Hz carry/0..4 quantum/暂停首 tick0 无 catchup/失败 duration 回执/背压 offered-accepted 分母",
+      "fixture": "carry oracle 本卡自检 PASS",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR10": {
+      "id": "M1",
+      "oracle": "W/J 独立守恒/五界/两侧/凹槽/AIR-WET-tie/在途到达/停源 J→W/不双记/禁 dry policy",
+      "fixture": "M1 到件",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR11": {
+      "id": "M2",
+      "oracle": "pair key/非邻最小 b/merge 串行链/slot reuse/GPU 索引 O(K)/无 CPU 往返/pool-full-no-pair-fatal",
+      "fixture": "M2 到件",
+      "status": "NOT_IMPLEMENTED"
+    },
+    "GR12": {
+      "id": "M3",
+      "oracle": "逐 channel round-guard-预算-库存-时序/unsupported 位图拒绝/不得拿 M0 冒全通道",
+      "fixture": "M3 到件",
+      "status": "NOT_IMPLEMENTED"
+    }
+  }
+}

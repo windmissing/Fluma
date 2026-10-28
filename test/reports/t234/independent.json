@@ -1,0 +1,82 @@
+{
+  "revision": "T234_INDEPENDENT_V1",
+  "tested": "current tree (GRS zero-implementation) vs T230 §11 GR01-12",
+  "device": "NOT_RUN",
+  "passed": 7,
+  "failed": 0,
+  "results": [
+    {
+      "id": "GR-01",
+      "name": "independent numeric oracle self-test: RNE ties-even/floor-ceil div/Hq conservative bound/U128 carry",
+      "status": "PASS",
+      "detail": {
+        "cases": 14,
+        "fails": 0,
+        "vecFails": 0
+      }
+    },
+    {
+      "id": "GR-01b",
+      "name": "Q20 input quantization baseline: floor(requested*Qm), <1 quantum unit → NUMERIC_RESOLUTION_REJECTED",
+      "status": "PASS",
+      "detail": {
+        "cases": 5,
+        "fails": 0
+      }
+    },
+    {
+      "id": "GR-04",
+      "name": "integer guard interval enumeration k∈[-2,2]×d near ±Hq: closed-form vs constraint check",
+      "status": "PASS",
+      "detail": {
+        "cases": 479,
+        "fails": 0,
+        "Hq": 605394
+      }
+    },
+    {
+      "id": "GR-03",
+      "name": "rational DDA oracle self-test: cross-multiply comparison/tie/Vmax bound/eMotion headroom",
+      "status": "PASS",
+      "detail": {
+        "fails": 0
+      }
+    },
+    {
+      "id": "GR-09",
+      "name": "120Hz carry oracle: a=carry+120*deltaNs, F≤4, carry<1e9, no wall-catchup",
+      "status": "PASS",
+      "detail": {
+        "n": 5
+      }
+    },
+    {
+      "id": "GR-00",
+      "name": "implementation symbol coverage: 9/10 GRS symbols absent (M0 zero-implementation RED)",
+      "status": "PASS",
+      "detail": {
+        "missing": [
+          "GRS_Q20_V1",
+          "GRS_FIXED120_TIME_V1",
+          "mulDivRNE",
+          "GRS_COMPLETION256_WORD_V1",
+          "NUMERIC_RESOLUTION_REJECTED",
+          "SIDE_HIGH_BED",
+          "Hq",
+          "Hfloor",
+          "gpu_resident"
+        ]
+      }
+    },
+    {
+      "id": "GR-SPEC",
+      "name": "GR01-12 machine-readable spec registered (oracle/fixture/status per row, M0 vs M1/2/3 boundary + old-F64 diff explicit)",
+      "status": "PASS",
+      "detail": {
+        "rows": 12
+      }
+    }
+  ],
+  "independence": "oracle 自持 BigInt/Fraction/位型构造；不调用产品核或 design-T230-gpu-resident-model-v1.py",
+  "calibration": "rSoft/drag/g/massPackage/吞吐收益 PENDING_CALIBRATION；M0 平台成功非 GRS 产品收益"
+}
