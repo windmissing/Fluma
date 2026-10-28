@@ -1,0 +1,1273 @@
+{
+  "revision": "T202_READ_ONLY_EVIDENCE_V1",
+  "date": "2026-10-28",
+  "noDevice": true,
+  "noTestRerun": true,
+  "arms": [
+    {
+      "arm": "C0",
+      "pid": "36531",
+      "lines": 2114,
+      "raw": {
+        "path": "test/artifacts/t180-t187-joint-20261028/C0-full.txt",
+        "bytes": 40377622,
+        "sha256": "0ac5debe3b63d5355fa49d312bd4605b3d79eed53be2f993d28f17355ec912f6"
+      },
+      "markers": {
+        "WS_EVENT demo_diag": {
+          "count": 1602,
+          "first": {
+            "line": 207154,
+            "time": "10-28 09:27:20.279",
+            "text": "WS_EVENT demo_diag {\"revision\":\"P051_PASSIVE_DIAGNOSTICS_V1\",\"dropped\":0,\"firstSequence\":1,\"lastSequence\":2,\"rows\":[{\"sequence\":1,\"event\":{\"kind\":\"tick\",\"runId\":\"p011-run-1793150840263-3\",\"commit\":2,\"frame\":1,\"time\":2543577044.621376,\"source\":\"none\",\"staleCount\":0,\"value\":0,\"reason\":\"active\"}},{\"sequence\":2,\"event\":{\"kind\":\"present\",\"time\":2543577044.621376,\"runId\":\"p011-run-1793150840263-3\",\"commit\":2,\"frame\":1,\"code\":-1,\"swap\":false,\"reason\":\"NOT_READY\"}}]}"
+          },
+          "last": {
+            "line": 219274,
+            "time": "10-28 09:27:58.139",
+            "text": "WS_EVENT demo_diag {\"revision\":\"P051_PASSIVE_DIAGNOSTICS_V1\",\"dropped\":0,\"firstSequence\":2932,\"lastSequence\":2932,\"rows\":[{\"sequence\":2932,\"event\":{\"kind\":\"present\",\"time\":2543614866.294649,\"runId\":\"p011-run-1793150840263-3\",\"commit\":1042,\"frame\":521,\"code\":0,\"swap\":true,\"reason\":\"\"}}]}"
+          }
+        },
+        "WS_EVENT p013_scene": {
+          "count": 38,
+          "first": {
+            "line": 207519,
+            "time": "10-28 09:27:20.486",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793150840263-3\",\"commit\":4,\"frame\":1,\"request\":\"p011-run-1793150840263-3:2:4:1\",\"actual\":\"p011-run-1793150840263-3:2:4:1\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          },
+          "last": {
+            "line": 219211,
+            "time": "10-28 09:27:57.723",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793150840263-3\",\"commit\":1032,\"frame\":515,\"request\":\"p011-run-1793150840263-3:2:1032:515\",\"actual\":\"p011-run-1793150840263-3:2:1032:515\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          }
+        }
+      },
+      "runs": [
+        "p011-run-1793150840263-3"
+      ],
+      "presentCodes": {
+        "0": 520,
+        "-1": 1
+      },
+      "presentReasons": {
+        "NOT_READY": 1,
+        "": 520
+      },
+      "sceneStates": {
+        "CURRENT": 38
+      },
+      "presentFirst": {
+        "kind": "present",
+        "time": 2543577044.621376,
+        "runId": "p011-run-1793150840263-3",
+        "commit": 2,
+        "frame": 1,
+        "code": -1,
+        "swap": false,
+        "reason": "NOT_READY",
+        "line": 207154,
+        "logTime": "10-28 09:27:20.279"
+      },
+      "presentLast": {
+        "kind": "present",
+        "time": 2543614866.294649,
+        "runId": "p011-run-1793150840263-3",
+        "commit": 1042,
+        "frame": 521,
+        "code": 0,
+        "swap": true,
+        "reason": "",
+        "line": 219274,
+        "logTime": "10-28 09:27:58.139"
+      },
+      "code100First": null,
+      "code100Last": null,
+      "admissions": [],
+      "stops": [
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793150840263-3",
+          "commit": 2,
+          "frame": 1,
+          "time": 2543577044.621376,
+          "x": 64,
+          "y": 220,
+          "reason": "GEOMETRY_CHANGED"
+        }
+      ],
+      "framePhysical": [],
+      "events": [],
+      "materialChunks": []
+    },
+    {
+      "arm": "C1",
+      "pid": "38777",
+      "lines": 1434,
+      "raw": {
+        "path": "test/artifacts/t180-t187-joint-20261028/C1-full.txt",
+        "bytes": 40826989,
+        "sha256": "d72e485bb67bdca6b74053253b080f7a0505ca4c45945ae5dc62b983cdd60a6d"
+      },
+      "markers": {
+        "WS_EVENT p013_scene": {
+          "count": 1,
+          "first": {
+            "line": 209414,
+            "time": "10-28 09:28:14.558",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793150894459-3\",\"commit\":6,\"frame\":1,\"request\":\"p011-run-1793150894459-3:2:6:1\",\"actual\":\"p011-run-1793150894459-3:2:6:1\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          },
+          "last": {
+            "line": 209414,
+            "time": "10-28 09:28:14.558",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793150894459-3\",\"commit\":6,\"frame\":1,\"request\":\"p011-run-1793150894459-3:2:6:1\",\"actual\":\"p011-run-1793150894459-3:2:6:1\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          }
+        },
+        "WS_FRAME": {
+          "count": 131,
+          "first": {
+            "line": 209415,
+            "time": "10-28 09:28:14.558",
+            "text": "WS_FRAME {\"frameTimeMs\":16.7,\"physicsTimeMs\":27,\"substeps\":2,\"substepDt\":0.00835,\"maxSandTopSubstepDeltaObserved\":0.019296162984404945,\"maxSandTopSpeedObserved\":2.310917722683227,\"substepBudgetUsedMax\":0.019296162984404945,\"substepBudgetClipped\":false,\"dormant\":false} seg={\"physMs\":27,\"renderMs\":58,\"presentMs\":0}"
+          },
+          "last": {
+            "line": 211199,
+            "time": "10-28 09:28:20.741",
+            "text": "WS_FRAME {\"frameTimeMs\":34,\"physicsTimeMs\":25,\"substeps\":2,\"substepDt\":0.016666666666666666,\"maxSandTopSubstepDeltaObserved\":0.021803234085997047,\"maxSandTopSpeedObserved\":1.3081940451598228,\"substepBudgetUsedMax\":0.021803234085996593,\"substepBudgetClipped\":false,\"dormant\":false} seg={\"physMs\":25,\"renderMs\":4,\"presentMs\":5}"
+          }
+        },
+        "P011_OBS_STORE_CLOSED": {
+          "count": 1,
+          "first": {
+            "line": 211234,
+            "time": "10-28 09:28:20.744",
+            "text": "P011_OBS_STORE_CLOSED {\"filePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150894459-3.ndjson\",\"admissionFilePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150894459-3-admissions.ndjson\",\"records\":262,\"admissions\":0,\"status\":\"COMPLETE\"}"
+          },
+          "last": {
+            "line": 211234,
+            "time": "10-28 09:28:20.744",
+            "text": "P011_OBS_STORE_CLOSED {\"filePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150894459-3.ndjson\",\"admissionFilePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150894459-3-admissions.ndjson\",\"records\":262,\"admissions\":0,\"status\":\"COMPLETE\"}"
+          }
+        }
+      },
+      "runs": [
+        "p011-run-1793150894459-3"
+      ],
+      "presentCodes": {},
+      "presentReasons": {},
+      "sceneStates": {
+        "CURRENT": 1
+      },
+      "presentFirst": null,
+      "presentLast": null,
+      "code100First": null,
+      "code100Last": null,
+      "admissions": [],
+      "stops": [],
+      "framePhysical": [],
+      "events": [],
+      "materialChunks": []
+    },
+    {
+      "arm": "C2",
+      "pid": "39412",
+      "lines": 1974,
+      "raw": {
+        "path": "test/artifacts/t180-t187-joint-20261028/C2-full.txt",
+        "bytes": 40120106,
+        "sha256": "658320c8b34037f1dd5223528f1487b7aa72dfd9cbd1b72aae07f5f4f72eeda9"
+      },
+      "markers": {
+        "WS_EVENT p013_scene": {
+          "count": 1,
+          "first": {
+            "line": 201299,
+            "time": "10-28 09:29:07.758",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793150947660-3\",\"commit\":6,\"frame\":1,\"request\":\"p011-run-1793150947660-3:2:6:1\",\"actual\":\"p011-run-1793150947660-3:2:6:1\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          },
+          "last": {
+            "line": 201299,
+            "time": "10-28 09:29:07.758",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793150947660-3\",\"commit\":6,\"frame\":1,\"request\":\"p011-run-1793150947660-3:2:6:1\",\"actual\":\"p011-run-1793150947660-3:2:6:1\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          }
+        },
+        "WS_FRAME": {
+          "count": 133,
+          "first": {
+            "line": 201300,
+            "time": "10-28 09:29:07.758",
+            "text": "WS_FRAME {\"frameTimeMs\":16.7,\"physicsTimeMs\":28,\"substeps\":2,\"substepDt\":0.00835,\"maxSandTopSubstepDeltaObserved\":0.019296162984404945,\"maxSandTopSpeedObserved\":2.310917722683227,\"substepBudgetUsedMax\":0.019296162984404945,\"substepBudgetClipped\":false,\"dormant\":false} seg={\"physMs\":28,\"renderMs\":56,\"presentMs\":0}"
+          },
+          "last": {
+            "line": 202913,
+            "time": "10-28 09:29:14.017",
+            "text": "WS_FRAME {\"frameTimeMs\":33,\"physicsTimeMs\":31,\"substeps\":2,\"substepDt\":0.0165,\"maxSandTopSubstepDeltaObserved\":0.021458223080509597,\"maxSandTopSpeedObserved\":1.3004983685157332,\"substepBudgetUsedMax\":0.021458223080509545,\"substepBudgetClipped\":false,\"dormant\":false} seg={\"physMs\":32,\"renderMs\":5,\"presentMs\":0}"
+          }
+        },
+        "P011_OBS_STORE_CLOSED": {
+          "count": 1,
+          "first": {
+            "line": 202940,
+            "time": "10-28 09:29:14.029",
+            "text": "P011_OBS_STORE_CLOSED {\"filePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150947660-3.ndjson\",\"admissionFilePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150947660-3-admissions.ndjson\",\"records\":266,\"admissions\":0,\"status\":\"COMPLETE\"}"
+          },
+          "last": {
+            "line": 202940,
+            "time": "10-28 09:29:14.029",
+            "text": "P011_OBS_STORE_CLOSED {\"filePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150947660-3.ndjson\",\"admissionFilePath\":\"/data/storage/el2/base/haps/entry/cache/p011-v212-relax-hysteresis-p011-run-1793150947660-3-admissions.ndjson\",\"records\":266,\"admissions\":0,\"status\":\"COMPLETE\"}"
+          }
+        },
+        "WS_EVENT pan_update": {
+          "count": 488,
+          "first": {
+            "line": 203767,
+            "time": "10-28 09:29:25.338",
+            "text": "WS_EVENT pan_update {\"count\":1,\"localX\":34.63230242047991,\"localY\":304,\"coordinateSource\":\"finger_local\",\"accepted\":false}"
+          },
+          "last": {
+            "line": 205436,
+            "time": "10-28 09:29:34.228",
+            "text": "WS_EVENT pan_update {\"count\":240,\"localX\":341.7142857142857,\"localY\":304,\"coordinateSource\":\"finger_local\",\"accepted\":false}"
+          }
+        }
+      },
+      "runs": [
+        "p011-run-1793150947660-3"
+      ],
+      "presentCodes": {},
+      "presentReasons": {},
+      "sceneStates": {
+        "CURRENT": 1
+      },
+      "presentFirst": null,
+      "presentLast": null,
+      "code100First": null,
+      "code100Last": null,
+      "admissions": [],
+      "stops": [],
+      "framePhysical": [],
+      "events": [],
+      "materialChunks": []
+    },
+    {
+      "arm": "C3",
+      "pid": "40176",
+      "lines": 2671,
+      "raw": {
+        "path": "test/artifacts/t180-t187-joint-20261028/C3-full.txt",
+        "bytes": 39992014,
+        "sha256": "11fe7ab055a4934a009f6a39ebdcabfcd9450eaa6b6e49bc1fa38d1a6f8faf98"
+      },
+      "markers": {
+        "WS_EVENT demo_diag": {
+          "count": 1979,
+          "first": {
+            "line": 193375,
+            "time": "10-28 09:30:13.123",
+            "text": "WS_EVENT demo_diag {\"revision\":\"P051_PASSIVE_DIAGNOSTICS_V1\",\"dropped\":0,\"firstSequence\":1,\"lastSequence\":2,\"rows\":[{\"sequence\":1,\"event\":{\"kind\":\"tick\",\"runId\":\"p011-run-1793151013110-3\",\"commit\":2,\"frame\":1,\"time\":2543749885.092527,\"source\":\"none\",\"staleCount\":0,\"value\":0,\"reason\":\"active\"}},{\"sequence\":2,\"event\":{\"kind\":\"present\",\"time\":2543749885.092527,\"runId\":\"p011-run-1793151013110-3\",\"commit\":2,\"frame\":1,\"code\":-1,\"swap\":false,\"reason\":\"NOT_READY\"}}]}"
+          },
+          "last": {
+            "line": 203028,
+            "time": "10-28 09:31:08.905",
+            "text": "WS_EVENT demo_diag {\"revision\":\"P051_PASSIVE_DIAGNOSTICS_V1\",\"dropped\":0,\"firstSequence\":3676,\"lastSequence\":3677,\"rows\":[{\"sequence\":3676,\"event\":{\"kind\":\"sensor\",\"time\":2543803138.192516,\"runId\":\"p011-run-1793151013110-3\",\"commit\":962,\"frame\":478,\"source\":\"sensor\",\"x\":-9.103521347045898,\"y\":1.8252723217010498,\"sensorCount\":2660}},{\"sequence\":3677,\"event\":{\"kind\":\"tick\",\"runId\":\"p011-run-1793151013110-3\",\"commit\":962,\"frame\":479,\"time\":2543803150.861892,\"source\":\"sensor\",\"staleCount\":0,\"value\":0,\"reason\":\"active\"}}]}"
+          }
+        },
+        "WS_EVENT p013_scene": {
+          "count": 103,
+          "first": {
+            "line": 193570,
+            "time": "10-28 09:30:13.222",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793151013110-3\",\"commit\":4,\"frame\":1,\"request\":\"p011-run-1793151013110-3:2:4:1\",\"actual\":\"p011-run-1793151013110-3:2:4:1\",\"state\":\"CURRENT\",\"first\":\"NONE\",\"swap\":true,\"staleSwap\":false,\"generation\":0,\"config\":1,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          },
+          "last": {
+            "line": 203018,
+            "time": "10-28 09:31:08.875",
+            "text": "WS_EVENT p013_scene {\"run\":\"p011-run-1793151013110-3\",\"commit\":976,\"frame\":484,\"request\":\"p011-run-1793151013110-3:2:976:484\",\"actual\":\"p011-run-1793151013110-3:2:852:422\",\"state\":\"FAULT\",\"first\":\"SCENE_MATERIAL_DATA\",\"swap\":false,\"staleSwap\":false,\"generation\":0,\"config\":0,\"desiredConfig\":5,\"configurationFailure\":\"\"}"
+          }
+        },
+        "SCENE_MATERIAL_DATA": {
+          "count": 136,
+          "first": {
+            "line": 198672,
+            "time": "10-28 09:30:46.166",
+            "text": "SCENE_MATERIAL_DATA\",\"swap\":false,\"staleSwap\":true,\"generation\":0,\"config\":0,\"desiredConfig\":1,\"configurationFailure\":\"\"}"
+          },
+          "last": {
+            "line": 203018,
+            "time": "10-28 09:31:08.875",
+            "text": "SCENE_MATERIAL_DATA\",\"swap\":false,\"staleSwap\":false,\"generation\":0,\"config\":0,\"desiredConfig\":5,\"configurationFailure\":\"\"}"
+          }
+        },
+        "scene_material_rejection": {
+          "count": 24,
+          "first": {
+            "line": 198674,
+            "time": "10-28 09:30:46.197",
+            "text": "scene_material_rejection {\"revision\":\"P013_SCENE_MATERIAL_REJECTION_V1\",\"frameToken\":\"p011-run-1793151013110-3:2:826:409\",\"part\":1,\"parts\":24,\"complete\":true,\"totalCharacters\":49063,\"text\":\"{\\\"revision\\\":\\\"P013_SCENE_MATERIAL_REJECTION_V1\\\",\\\"firstSuccess\\\":{\\\"runId\\\":\\\"p011-run-1793151013110-3\\\",\\\"stateEpoch\\\":2,\\\"physicsCommitId\\\":4,\\\"publicationKind\\\":\\\"STEP\\\",\\\"fieldCommitId\\\":4,\\\"ledgerCommitKey\\\":null,\\\"routeId\\\":\\\"dual-field-particle-v1\\\",\\\"medium\\\":\\\"DRY_AIR_V1\\\",\\\"pageFrame\\\":2,\\\"contextFrame\\\":2,\\\"sceneFrameId\\\":1,\\\"frameToken\\\":\\\"p011-run-1793151013110-3:2:4:1\\\",\\\"session\\\":1,\\\"context\\\":1,\\\"surface\\\":2,\\\"geometry\\\":2,\\\"continuity\\\":1,\\\"viewportWidth\\\":1178,\\\"viewportHeight\\\":2026,\\\"sourceBoxX\\\":0,\\\"sourceBoxY\\\":0,\\\"sourceBoxW\\\":336.45713588169644,\\\"sourceBoxH\\\":578.8571428571429,\\\"targetBoxX\\\":0,\\\"targetBoxY\\\":0,\\\"targetBoxW\\\":1178,\\\"targetBoxH\\\":2026,\\\"scale\\\":3.5,\\\"pipeline\\\":0,\\\"configBindingId\\\":1,\\\"configDigest\\\":\\\"9435b9ccb5a0e00901b6099c245d93ae03bca6c8451f9188a1307c5e77ef32fb\\\",\\\"configRevision\\\":1,\\\"sourceBuildIdentity\\\":\\\"NOT_CAPTURED_USE_PACKAGE_MANIFEST\\\",\\\"sourceFailure\\\":\\\"\\\",\\\"sequence\\\":1},\\\"firstFailure\\\":{\\\"runId\\\":\\\"p011-run-1793151013110-3\\\",\\\"stateEpoch\\\":2,\\\"physicsCommitId\\\":826,\\\"publicationKind\\\":\\\"STEP\\\",\\\"fieldCommitId\\\":826,\\\"ledgerCommitKey\\\":null,\\\"routeId\\\":\\\"dual-field-particle-v1\\\",\\\"medium\\\":\\\"DRY_AIR_V1\\\",\\\"pageFrame\\\":410,\\\"contextFrame\\\":410,\\\"sceneFrameId\\\":409,\\\"frameToken\\\":\\\"p011-run-1793151013110-3:2:826:409\\\",\\\"session\\\":"
+          },
+          "last": {
+            "line": 198697,
+            "time": "10-28 09:30:46.197",
+            "text": "scene_material_rejection {\"revision\":\"P013_SCENE_MATERIAL_REJECTION_V1\",\"frameToken\":\"p011-run-1793151013110-3:2:826:409\",\"part\":24,\"parts\":24,\"complete\":true,\"totalCharacters\":49063,\"text\":\"Y_AIR_V1\\\",\\\"widthPx\\\":1178,\\\"heightPx\\\":2026,\\\"frameToken\\\":\\\"p011-run-1793151013110-3:2:824:408\\\",\\\"runId\\\":\\\"p011-run-1793151013110-3\\\",\\\"ledgerCommitKey\\\":\\\"\\\",\\\"stateEpoch\\\":2,\\\"physicsCommitId\\\":824,\\\"surfaceEpoch\\\":2,\\\"contextEpoch\\\":1,\\\"geometryEpoch\\\":2,\\\"continuityEpoch\\\":1,\\\"generation\\\":0,\\\"configRevision\\\":1,\\\"stripSerial\\\":0,\\\"stripProfileHash\\\":\\\"\\\",\\\"stripPayloadHash\\\":\\\"\\\"},\\\"renderedSource\\\":null,\\\"targetSurfaceEpoch\\\":2,\\\"targetContextEpoch\\\":1,\\\"actualPresentationGeneration\\\":0,\\\"requestedStripSerial\\\":0,\\\"actualStripSerial\\\":0,\\\"requestedStripProfileHash\\\":\\\"\\\",\\\"requestedStripPayloadHash\\\":\\\"\\\",\\\"activeStripSerial\\\":0,\\\"pendingStripSerial\\\":0,\\\"discardedSerial\\\":0,\\\"baseStripUploadedBytes\\\":0,\\\"baseStripPendingBytes\\\":0,\\\"baseStripCpuBytes\\\":0,\\\"baseStripGpuBytes\\\":0,\\\"baseStripTextureLiveCount\\\":0,\\\"baseStripRestoreCount\\\":0,\\\"baseStripState\\\":\\\"DISCARDED\\\",\\\"activeGeneration\\\":0,\\\"pendingGeneration\\\":0,\\\"materialTextureLiveCount\\\":0,\\\"assetCpuBytes\\\":0,\\\"frameTextureLiveCount\\\":2,\\\"frameFboLiveCount\\\":2,\\\"frameTextureBytes\\\":19093024,\\\"sceneAuxTextureLiveCount\\\":2,\\\"sceneAuxTextureBytes\\\":73728,\\\"legacyTDataTextureLiveCount\\\":0,\\\"particleCount\\\":48,\\\"particleBufferBytes\\\":8192,\\\"particlePresentedSource\\\":\\\"C_PARTICLE\\\",\\\"tracerDrawCount\\\":0,\\\"sceneShaderHash\\\":\\\"24"
+          }
+        }
+      },
+      "runs": [
+        "p011-run-1793151013110-3"
+      ],
+      "presentCodes": {
+        "0": 414,
+        "100": 63,
+        "-1": 1
+      },
+      "presentReasons": {
+        "NOT_READY": 1,
+        "": 414,
+        "SCENE_MATERIAL_DATA": 63
+      },
+      "sceneStates": {
+        "CURRENT": 33,
+        "STALE": 2,
+        "FAULT": 68
+      },
+      "presentFirst": {
+        "kind": "present",
+        "time": 2543749885.092527,
+        "runId": "p011-run-1793151013110-3",
+        "commit": 2,
+        "frame": 1,
+        "code": -1,
+        "swap": false,
+        "reason": "NOT_READY",
+        "line": 193375,
+        "logTime": "10-28 09:30:13.123"
+      },
+      "presentLast": {
+        "kind": "present",
+        "time": 2543802800.350412,
+        "runId": "p011-run-1793151013110-3",
+        "commit": 962,
+        "frame": 478,
+        "code": 100,
+        "swap": false,
+        "reason": "SCENE_MATERIAL_DATA",
+        "line": 202979,
+        "logTime": "10-28 09:31:08.626"
+      },
+      "code100First": {
+        "kind": "present",
+        "time": 2543782701.187457,
+        "runId": "p011-run-1793151013110-3",
+        "commit": 826,
+        "frame": 410,
+        "code": 100,
+        "swap": false,
+        "reason": "SCENE_MATERIAL_DATA",
+        "line": 198778,
+        "logTime": "10-28 09:30:46.492"
+      },
+      "code100Last": {
+        "kind": "present",
+        "time": 2543802800.350412,
+        "runId": "p011-run-1793151013110-3",
+        "commit": 962,
+        "frame": 478,
+        "code": 100,
+        "swap": false,
+        "reason": "SCENE_MATERIAL_DATA",
+        "line": 202979,
+        "logTime": "10-28 09:31:08.626"
+      },
+      "admissions": [
+        {
+          "kind": "dry.receipt",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 671,
+          "frame": 336,
+          "time": 2543772552.053966,
+          "sequence": 1,
+          "admitted": 0.532512134552002,
+          "reason": "ACCEPTED"
+        },
+        {
+          "kind": "dry.receipt",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 674,
+          "frame": 337,
+          "time": 2543772629.777071,
+          "sequence": 2,
+          "admitted": 0.621784839630127,
+          "reason": "ACCEPTED"
+        },
+        {
+          "kind": "dry.receipt",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 677,
+          "frame": 338,
+          "time": 2543772718.582206,
+          "sequence": 3,
+          "admitted": 0.7104410781860352,
+          "reason": "ACCEPTED"
+        },
+        {
+          "kind": "dry.receipt",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 744,
+          "frame": 371,
+          "time": 2543776146.668934,
+          "sequence": 4,
+          "admitted": 0.5408253097534179,
+          "reason": "ACCEPTED"
+        },
+        {
+          "kind": "dry.receipt",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 747,
+          "frame": 372,
+          "time": 2543776280.020087,
+          "sequence": 5,
+          "admitted": 1.0668092231750488,
+          "reason": "ACCEPTED"
+        },
+        {
+          "kind": "dry.receipt",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 796,
+          "frame": 396,
+          "time": 2543779963.765159,
+          "sequence": 6,
+          "admitted": 0.978774959564209,
+          "reason": "ACCEPTED"
+        }
+      ],
+      "stops": [
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 2,
+          "frame": 1,
+          "time": 2543749885.092527,
+          "x": 64,
+          "y": 220,
+          "reason": "GEOMETRY_CHANGED"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 679,
+          "frame": 338,
+          "time": 2543772725.675,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "UP"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 749,
+          "frame": 372,
+          "time": 2543776348.123,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "UP"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 798,
+          "frame": 396,
+          "time": 2543780002.74,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "UP"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 826,
+          "frame": 410,
+          "time": 2543782701.187457,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "GEOMETRY_CHANGED"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 828,
+          "frame": 411,
+          "time": 2543782968.172001,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "GEOMETRY_CHANGED"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 832,
+          "frame": 413,
+          "time": 2543783624.986,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "UP"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 854,
+          "frame": 424,
+          "time": 2543785909.453969,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "GEOMETRY_CHANGED"
+        },
+        {
+          "kind": "model.stop",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 856,
+          "frame": 425,
+          "time": 2543786076.367403,
+          "x": 85.76087134321608,
+          "y": 183.21816386969397,
+          "reason": "GEOMETRY_CHANGED"
+        }
+      ],
+      "framePhysical": [],
+      "events": [
+        {
+          "kind": "input.START",
+          "reason": "ACCEPTED",
+          "time": 2543772438.178,
+          "rawTimestamp": 2543772438178000,
+          "timestampUnit": "ns",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 668,
+          "frame": 334,
+          "pageFrame": 334,
+          "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+          "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+          "source": "DOWN",
+          "geometryEpoch": 2,
+          "widthVp": 336.45713588169644,
+          "heightVp": 578.8571428571429,
+          "geometryReady": true,
+          "foreground": true,
+          "inputGeneration": 1,
+          "gestureId": 1,
+          "eventOrdinal": 1,
+          "pointerId": 0,
+          "changedCount": 1,
+          "touchCount": 1,
+          "x": 37.93478339516149,
+          "y": 183.21816386969397
+        },
+        {
+          "kind": "input.START",
+          "reason": "ACCEPTED",
+          "time": 2543776065.962,
+          "rawTimestamp": 2543776065962000,
+          "timestampUnit": "ns",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 741,
+          "frame": 369,
+          "pageFrame": 369,
+          "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+          "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+          "source": "DOWN",
+          "geometryEpoch": 2,
+          "widthVp": 336.45713588169644,
+          "heightVp": 578.8571428571429,
+          "geometryReady": true,
+          "foreground": true,
+          "inputGeneration": 2,
+          "gestureId": 2,
+          "eventOrdinal": 8,
+          "pointerId": 0,
+          "changedCount": 1,
+          "touchCount": 1,
+          "x": 37.93478339516149,
+          "y": 183.21816386969397
+        },
+        {
+          "kind": "input.START",
+          "reason": "ACCEPTED",
+          "time": 2543779707.981,
+          "rawTimestamp": 2543779707981000,
+          "timestampUnit": "ns",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 793,
+          "frame": 394,
+          "pageFrame": 394,
+          "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+          "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+          "source": "DOWN",
+          "geometryEpoch": 2,
+          "widthVp": 336.45713588169644,
+          "heightVp": 578.8571428571429,
+          "geometryReady": true,
+          "foreground": true,
+          "inputGeneration": 3,
+          "gestureId": 3,
+          "eventOrdinal": 13,
+          "pointerId": 0,
+          "changedCount": 1,
+          "touchCount": 1,
+          "x": 37.93478339516149,
+          "y": 183.21816386969397
+        },
+        {
+          "kind": "input.START",
+          "reason": "ACCEPTED",
+          "time": 2543783348.463,
+          "rawTimestamp": 2543783348463000,
+          "timestampUnit": "ns",
+          "runId": "p011-run-1793151013110-3",
+          "commit": 830,
+          "frame": 412,
+          "pageFrame": 412,
+          "inputRevision": "P051_TOUCH_INPUT_ENGINEERING_V1",
+          "sourceApiRevision": "P051_DRY_AIR_SOURCE_V1",
+          "source": "DOWN",
+          "geometryEpoch": 4,
+          "widthVp": 336.45713588169644,
+          "heightVp": 578.8571428571429,
+          "geometryReady": true,
+          "foreground": true,
+          "inputGeneration": 6,
+          "gestureId": 4,
+          "eventOrdinal": 18,
+          "pointerId": 0,
+          "changedCount": 1,
+          "touchCount": 1,
+          "x": 37.93478339516149,
+          "y": 183.21816386969397
+        }
+      ],
+      "materialChunks": [
+        {
+          "line": 198674,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 1,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198675,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 2,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198676,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 3,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198677,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 4,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198678,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 5,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198679,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 6,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198680,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 7,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198681,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 8,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198682,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 9,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198683,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 10,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198684,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 11,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198685,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 12,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198686,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 13,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198687,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 14,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198688,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 15,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198689,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 16,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198690,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 17,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198691,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 18,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198692,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 19,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198693,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 20,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198694,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 21,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198695,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 22,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198696,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 23,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        },
+        {
+          "line": 198697,
+          "time": "10-28 09:30:46.197",
+          "revision": "P013_SCENE_MATERIAL_REJECTION_V1",
+          "frameToken": "p011-run-1793151013110-3:2:826:409",
+          "part": 24,
+          "parts": 24,
+          "complete": true,
+          "totalCharacters": 49063
+        }
+      ],
+      "firstMaterialScene": {
+        "line": 198672,
+        "time": "10-28 09:30:46.166",
+        "run": "p011-run-1793151013110-3",
+        "commit": 826,
+        "frame": 409,
+        "request": "p011-run-1793151013110-3:2:826:409",
+        "actual": "p011-run-1793151013110-3:2:824:408",
+        "state": "STALE",
+        "first": "SCENE_MATERIAL_DATA",
+        "swap": false,
+        "staleSwap": true,
+        "generation": 0,
+        "config": 0,
+        "desiredConfig": 1,
+        "configurationFailure": ""
+      }
+    }
+  ],
+  "source": [
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "baseline": "0cc0439",
+      "gitBlobContentSha256": "d8c2113f11709032410de2f766c8d0ae92c9b86a535309d762ceaa0263883a13",
+      "currentFileSha256": "4fb24584729f55020a377696715cfdd136c896d55c96b38b69bed50a7005b072",
+      "equalLf": true
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneController.ets",
+      "baseline": "0cc0439",
+      "gitBlobContentSha256": "47f71d2f66f03fcd168aaefa68db446dac75bd064951dbdf53b755b7264c8000",
+      "currentFileSha256": "47f71d2f66f03fcd168aaefa68db446dac75bd064951dbdf53b755b7264c8000",
+      "equalLf": true
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "baseline": "0cc0439",
+      "gitBlobContentSha256": "1188b45dc5a69b67ec029824fff6db9d231af8f7b245439c37ae8d74675711ce",
+      "currentFileSha256": "1188b45dc5a69b67ec029824fff6db9d231af8f7b245439c37ae8d74675711ce",
+      "equalLf": true
+    },
+    {
+      "path": "entry/src/main/ets/render/P013MaterialRejection.ets",
+      "baseline": "0cc0439",
+      "gitBlobContentSha256": "7c4c5a523ff52b331398456aede292c23da47cb59b88f1c2e70bc64ecb5c273a",
+      "currentFileSha256": "873da53045a10f592ec275c067d05c3687eaaef63aa3e048d434dd0b88c1113e",
+      "equalLf": true
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_compositor.cpp",
+      "baseline": "0cc0439",
+      "gitBlobContentSha256": "484957eab74fd19b855aa6cac1d66e411dc564c2688691a5468035d0c85f6f67",
+      "currentFileSha256": "484957eab74fd19b855aa6cac1d66e411dc564c2688691a5468035d0c85f6f67",
+      "equalLf": true
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/napi_bridge.cpp",
+      "baseline": "0cc0439",
+      "gitBlobContentSha256": "d30eb9b6bc06b689d49c720570215fae6fe377850ab6cb4cf02808a1f022a981",
+      "currentFileSha256": "d30eb9b6bc06b689d49c720570215fae6fe377850ab6cb4cf02808a1f022a981",
+      "equalLf": true
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/effect-report-P051-T180-T187-joint-narrow-v1.md",
+      "bytes": 5203,
+      "sha256": "d1521c9c88ed72a4a3fd44c0aedfc26bd88de3a5645a8561f6254f484706cb6e"
+    },
+    {
+      "path": "docs/task-T180-T187-joint-narrow-capture-runbook-v1.md",
+      "bytes": 2282,
+      "sha256": "9c004517b191b98a3516ae06571504d2085c5c6d6555af7a1453350962e1b602"
+    },
+    {
+      "path": "tools/t180_t187_joint.ps1",
+      "bytes": 4243,
+      "sha256": "010ab7df3234b1c1b0285a7dae25485fc48ddae73d004605c7b91fe9d83cdee4"
+    },
+    {
+      "path": "test/artifacts/t180-t187-joint-20261028/run-console-v2.log",
+      "bytes": 1532,
+      "sha256": "4447ca810ed4cc678b6b036e5870fa4bca17f37dcc4ba5584652ea05b69fcb26"
+    }
+  ],
+  "materialReassembly": {
+    "pid": "40176",
+    "parts": 24,
+    "characters": 49063,
+    "utf8Bytes": 49063,
+    "utf8Sha256": "0f3cedbf65e2c69697fe7de43b8d670531a4bb629b9836916737d257fdd3e39f",
+    "frameToken": "p011-run-1793151013110-3:2:826:409",
+    "firstLine": 198674,
+    "lastLine": 198697,
+    "arrays": [
+      {
+        "name": "waterTop",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "63d23d74299c6ad8104d48bc8b104070eb864dc277f5efddbb92083fabb66544",
+        "recomputed": "63d23d74299c6ad8104d48bc8b104070eb864dc277f5efddbb92083fabb66544",
+        "hashMatch": true
+      },
+      {
+        "name": "bh",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "bl",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "mh",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "ml",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "suspH",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "suspL",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "sandTop",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "hs",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "hl",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "colParticleMassH",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "63d23d74299c6ad8104d48bc8b104070eb864dc277f5efddbb92083fabb66544",
+        "recomputed": "63d23d74299c6ad8104d48bc8b104070eb864dc277f5efddbb92083fabb66544",
+        "hashMatch": true
+      },
+      {
+        "name": "colParticleMassL",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "recomputed": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+        "hashMatch": true
+      },
+      {
+        "name": "displayF32",
+        "bytes": 0,
+        "status": "NOT_VALID_CURRENT",
+        "declared": null,
+        "recomputed": null,
+        "hashMatch": true
+      },
+      {
+        "name": "profileF64",
+        "bytes": 0,
+        "status": "NOT_VALID_CURRENT",
+        "declared": null,
+        "recomputed": null,
+        "hashMatch": true
+      },
+      {
+        "name": "materialStagingF32",
+        "bytes": 0,
+        "status": "NOT_VALID_CURRENT",
+        "declared": null,
+        "recomputed": null,
+        "hashMatch": true
+      },
+      {
+        "name": "warpH",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "12748c2721656e9b2d78a7b50c75733f317a62215729b88d47470d82b4958bb5",
+        "recomputed": "12748c2721656e9b2d78a7b50c75733f317a62215729b88d47470d82b4958bb5",
+        "hashMatch": true
+      },
+      {
+        "name": "warpL",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "12748c2721656e9b2d78a7b50c75733f317a62215729b88d47470d82b4958bb5",
+        "recomputed": "12748c2721656e9b2d78a7b50c75733f317a62215729b88d47470d82b4958bb5",
+        "hashMatch": true
+      },
+      {
+        "name": "warpM",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "12748c2721656e9b2d78a7b50c75733f317a62215729b88d47470d82b4958bb5",
+        "recomputed": "12748c2721656e9b2d78a7b50c75733f317a62215729b88d47470d82b4958bb5",
+        "hashMatch": true
+      },
+      {
+        "name": "spark",
+        "bytes": 1024,
+        "status": "CAPTURED",
+        "declared": "8e50a375541f1046f8939daa8d1574a488708d072829f1a0c31054a3fbc222de",
+        "recomputed": "8e50a375541f1046f8939daa8d1574a488708d072829f1a0c31054a3fbc222de",
+        "hashMatch": true
+      },
+      {
+        "name": "motion",
+        "bytes": 80,
+        "status": "CAPTURED",
+        "declared": "202aefd714841dd28e649cbe5d69c9f76b816696f0d20ac814e2ea13fa7d05f9",
+        "recomputed": "202aefd714841dd28e649cbe5d69c9f76b816696f0d20ac814e2ea13fa7d05f9",
+        "hashMatch": true
+      }
+    ]
+  },
+  "console": [
+    "[09:27:15.263] T180+T187 joint start (s151 3c8abfae in place; entry/src == d9b4afb)",
+    "[09:27:15.277] C0 DEMO static baseline",
+    "[09:27:16.880] C0 freeze oldPid=",
+    "[09:27:28.565] C0 newPid=36531",
+    "[09:28:02.612] C0 end pid=36531 (was [09:27:16.880] C0 freeze oldPid= force stop process successfully. start ability successfully. [09:27:28.565] C0 newPid=36531 36531) �� attribution DRIFT",
+    "[09:28:02.616] C1 SandCanvas control (no injection)",
+    "[09:28:02.752] C1 freeze oldPid=36531",
+    "[09:28:22.688] C1 newPid=38777",
+    "[09:28:55.909] C1 end pid=38777 (was [09:28:02.752] C1 freeze oldPid=36531 force stop process successfully. start ability successfully. [09:28:22.688] C1 newPid=38777 38777) �� attribution DRIFT",
+    "[09:28:55.914] C2 SandCanvas injection (shake=0 + 2x swipe)",
+    "[09:28:56.111] C2 freeze oldPid=38777",
+    "[09:29:15.978] C2 newPid=39412",
+    "[09:29:30.862] C2 swipe 1 done",
+    "[09:29:36.996] C2 swipe 2 done",
+    "[09:30:01.287] C2 end pid=39412 (was [09:28:56.111] C2 freeze oldPid=38777 force stop process successfully. start ability successfully. [09:29:15.978] C2 newPid=39412 39412)",
+    "[09:30:01.292] C3 DEMO injection (4x swipe, T103 sequence)",
+    "[09:30:01.472] C3 freeze oldPid=39412",
+    "[09:30:21.392] C3 newPid=40176",
+    "[09:30:38.716] C3 swipe 1 done",
+    "[09:30:42.340] C3 swipe 2 done",
+    "[09:30:46.004] C3 swipe 3 done",
+    "[09:30:49.611] C3 swipe 4 done",
+    "[09:31:13.399] C3 end pid=40176 (was [09:30:01.472] C3 freeze oldPid=39412 force stop process successfully. start ability successfully. [09:30:21.392] C3 newPid=40176 40176)",
+    "[09:31:13.549] ALL DONE"
+  ],
+  "packageProof": {
+    "declaredSignedSha256": "3c8abfae71bbff53ca5e1ae98137b187e2d11f96af4d121a0423597ff0748f6c",
+    "signedPackageFoundByS151Name": false,
+    "installedSourceVersion": "FULL_SOURCE_MAPPING_UNPROVEN;RUNTIME_MATERIAL_REJECTION_V1_POSITIVELY_CAPTURED",
+    "note": "current-source equality and CompileArkTS cache skip do not attest installed package; 24 raw chunks positively prove material diagnostic ran"
+  },
+  "firstPredicate": {
+    "point": {
+      "reason": "MATERIAL_DATA_PROFILE",
+      "stage": "SOURCE_VALIDATION",
+      "column": 57,
+      "row": 0,
+      "channel": null,
+      "predicateMask": 128,
+      "profileValid": 0,
+      "stagingValid": 0,
+      "exceptionName": "Error",
+      "exceptionMessage": "MATERIAL_DATA_PROFILE"
+    },
+    "column": 57,
+    "values": [
+      {
+        "name": "waterTop",
+        "value": -1.6653345369377348e-16,
+        "leHex": "000000000000a8bc"
+      },
+      {
+        "name": "bh",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "bl",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "mh",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "ml",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "suspH",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "suspL",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "sandTop",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "hs",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "hl",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "colParticleMassH",
+        "value": -1.6653345369377348e-16,
+        "leHex": "000000000000a8bc"
+      },
+      {
+        "name": "colParticleMassL",
+        "value": 0,
+        "leHex": "0000000000000000"
+      },
+      {
+        "name": "warpH",
+        "value": -0.24235852411808953,
+        "leHex": "1b3c7fa79a05cfbf"
+      },
+      {
+        "name": "warpL",
+        "value": -0.24235852411808953,
+        "leHex": "1b3c7fa79a05cfbf"
+      },
+      {
+        "name": "warpM",
+        "value": -0.24235852411808953,
+        "leHex": "1b3c7fa79a05cfbf"
+      },
+      {
+        "name": "spark",
+        "value": 1,
+        "leHex": "000000000000f03f"
+      }
+    ],
+    "fullPoolCaptured": false
+  }
+}
