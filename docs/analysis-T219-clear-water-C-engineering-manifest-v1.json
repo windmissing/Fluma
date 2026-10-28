@@ -1,0 +1,552 @@
+{
+  "revision": "T219_CLEAR_WATER_C_ENGINEERING_V1",
+  "date": "2026-10-28",
+  "task": "6ae19c8ae4b0c3103c0d2244",
+  "status": "PARTIAL_ENGINEERING_DESIGN_GAPS_ROUTE_TO_DESIGNER",
+  "product": "C_NOT_IMPLEMENTED_NOT_TESTED",
+  "noDevice": true,
+  "noProductTestsRerun": true,
+  "priority": "GOAL7_P3_AFTER_GOALS1_TO6_GPU_HIGHEST",
+  "inputs": [
+    {
+      "path": "docs/algorithm-single-sand-clear-water-v1.md",
+      "bytes": 26110,
+      "sha256": "c2349416593d8fb800a0ad496f2745aefccc2a1a5bd9be7410933129f9149808"
+    },
+    {
+      "path": "docs/algorithm-T122-single-sand-clear-water-handoff-v1.md",
+      "bytes": 9862,
+      "sha256": "78c2b19625bf17f506d06ce6d042cf3b60dfac0cebdb929167d97bab304dd4b6"
+    },
+    {
+      "path": "docs/architecture-single-sand-clear-water-v1.md",
+      "bytes": 29752,
+      "sha256": "05adb697c75a3df6f543cde8e9c1904be08cb371e8d6e2c9ad21e609ae7c1d6f"
+    },
+    {
+      "path": "docs/analysis-T107-clear-water-engineering-manifest-v1.json",
+      "bytes": 16627,
+      "sha256": "397b5c96a3975818bcce5b26c81f761d313b3c720c4e7d33b7e2008231952331"
+    },
+    {
+      "path": "docs/algorithm-T196-clear-water-B-step-v1.md",
+      "bytes": 32953,
+      "sha256": "cee21d1cbf6cd8eaed641a2e4f9d6500c5365fe7d9fe05b0c7a1aa7fc4315173"
+    },
+    {
+      "path": "docs/architecture-T203-clear-water-B-v1.md",
+      "bytes": 22293,
+      "sha256": "f1878ded2d3a65a6758db0be877dc19ae183eb0c8e63b4055276b6ac11c0537f"
+    },
+    {
+      "path": "docs/analysis-T203-clear-water-B-engineering-manifest-v1.json",
+      "bytes": 90209,
+      "sha256": "d2dfaada8afd4fdcfe30ce41c6702727d131df560d1e06f3095151dc7bcd527b"
+    },
+    {
+      "path": "docs/developer-T209-clear-water-B-v1.md",
+      "bytes": 9216,
+      "sha256": "0daf7edf0e61f0453cb330c5cfadd0875fca2ba6a4a632f958e3c29d6dc6eca7"
+    },
+    {
+      "path": "docs/test-report-T215-clear-water-B-independent-v1.md",
+      "bytes": 3370,
+      "sha256": "d9ed60f55b30024c99f2462299a3a0d0eaf6841dcd5ebe6e48fcaf96deee0532"
+    },
+    {
+      "path": "test/reports/t209/allocation-192.json",
+      "bytes": 25958,
+      "sha256": "e254429e239bb625cde74796a57a4c4277ccccad0ce2f38ac6dff3593a99803b"
+    },
+    {
+      "path": "test/reports/t209/allocation-512.json",
+      "bytes": 25989,
+      "sha256": "b00d295b43de062366fc505ef4e8b07aa51f17a7283515d3885152b2f2211846"
+    },
+    {
+      "path": "test/reports/t215/independent.json",
+      "bytes": 3161,
+      "sha256": "6468f54a4f378074aeab18e62a30d98b7fcda7d5d7d3c5c5b81ac06149b7f0fc"
+    }
+  ],
+  "sources": [
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 22311,
+      "sha256": "ee726a6904cf507a4d4579f445ef3cd44c97a1f77b5f8a8ccd30ea672a081500"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 14990,
+      "sha256": "5afc741a32414d548f326a5e75551b05c48210ad5e780074b7c6aa4ad2587967"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterState.ets",
+      "bytes": 15066,
+      "sha256": "4487802c28aafb0ca2c9a6f2f17e890bcc949b949ba0002e9475bd650684d1f2"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterTypes.ets",
+      "bytes": 6972,
+      "sha256": "55514ef5c47c97a63a2957a11aa458ba563bf1c4833a45a2968d9a1e5107a2ad"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterBTypes.ets",
+      "bytes": 6664,
+      "sha256": "076f06cc13ac901407a671bb8d27f9bb5ce307739507b7046b605ce6190f21a0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterStep.ets",
+      "bytes": 24055,
+      "sha256": "b24850030d06aca6933eac4d4b0d755b79cfc7cbdcbda8d3bcf5d42de67ee569"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneTypes.ets",
+      "bytes": 4171,
+      "sha256": "72e751774925e08076551272c27cc1b741a11fdc53ed9388eff8802ea878833c"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneController.ets",
+      "bytes": 11229,
+      "sha256": "47f71d2f66f03fcd168aaefa68db446dac75bd064951dbdf53b755b7264c8000"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "bytes": 8258,
+      "sha256": "1188b45dc5a69b67ec029824fff6db9d231af8f7b245439c37ae8d74675711ce"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ParticleProjection.ets",
+      "bytes": 942,
+      "sha256": "b5df2463f59d0ab96522e88a70f8881348c4f4cd5ef675a10315b6ebbd82414d"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051GravityInputAdapter.ets",
+      "bytes": 2692,
+      "sha256": "62da969e8b3d79d7b470c8d34c8c4f575e8c02c08e778e1ad6a820a07411ed2f"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051TouchSourceAdapter.ets",
+      "bytes": 4946,
+      "sha256": "4dd36d2e8dd320fd8c3a8004afb9aef7d3586332eedad3df20bfc5b30ca50864"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011GestureRateClock.ets",
+      "bytes": 875,
+      "sha256": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051EmptySandDemo.ets",
+      "bytes": 10804,
+      "sha256": "57f7b869510103ee895aa2b88ba1fb4df93ac23c9adf4dbde66d49251f8b1ecc"
+    },
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "bytes": 17077,
+      "sha256": "4fb24584729f55020a377696715cfdd136c896d55c96b38b69bed50a7005b072"
+    },
+    {
+      "path": "entry/src/main/resources/base/profile/main_pages.json",
+      "bytes": 144,
+      "sha256": "03a990c32e82d4078c22d99297d17a566fa1bc7b39e251fe9bd6ba79de9d6d6c"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_compositor.cpp",
+      "bytes": 10247,
+      "sha256": "484957eab74fd19b855aa6cac1d66e411dc564c2688691a5468035d0c85f6f67"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_gpu.cpp",
+      "bytes": 3421,
+      "sha256": "083230a5ce5c5f10f3932591600f512fbd8fdceb114bb61490276fda59bb2fd0"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_layers.cpp",
+      "bytes": 9620,
+      "sha256": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/fullframe_targets.cpp",
+      "bytes": 1608,
+      "sha256": "09a1c8ab2c37dae7a1873e4f729d612a33f9d9c27fb4744daf10eac33634dc9d"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/napi_bridge.cpp",
+      "bytes": 86001,
+      "sha256": "d30eb9b6bc06b689d49c720570215fae6fe377850ab6cb4cf02808a1f022a981"
+    }
+  ],
+  "decisions": {
+    "render": "XCOMPONENT_SHADER_ONLY_BACKGROUND_AND_FOREGROUND_NO_CANVAS_FAULT_OR_EXPLICIT_COMPLETE_STALE",
+    "numeric": "A_AND_B_UNCHANGED_C_READ_ONLY_NO_INITIAL_BASELINE_RESET_AS_SOURCE",
+    "snapshotB": "COLD_EXPORT_CURRENT_CANONICAL_A_AND_SEPARATE_HISTORICAL_B_ARENA_NOT_A_SINGLE_COMMIT_PROOF_NOT_FRAME_LOOP_NOT_RESTORE",
+    "publication": "CAPTURE_CURRENT_CANONICAL_INTO_PREALLOCATED_C_SLOT_NONALIAS_SAME_OWNER_BUSY_GUARD",
+    "receipt": "PENDING_ACK_NOT_SUCCESS; NEW_READ_ONLY_EXACT_KEY_PAYLOAD_TERMINAL_RECEIPT_READER",
+    "optics": "T106_TRANSMITTANCE_FORMULA_AND_T107_PROFILE8_PROOF8_DEFINED; SURFACE_HIGHLIGHT_MODEL_MISSING",
+    "sensor": "B_ACCEPTED_ANGLE_INPUT_EXISTS; TARGET_ACCEPTANCE_AND_SHAKE_SEMANTICS_NOT_DEFINED_FOR_CLEARWATER",
+    "restore": "restoreBInto_REMAINS_UNSUPPORTED_FEATURE"
+  },
+  "designGaps": [
+    {
+      "id": "CW-C-D1",
+      "owner": "designer",
+      "needed": "surface coverage distance/profile, width unit, shallow/dry/disconnected boundary and antialias, premultiplied linear RGB/alpha/gain law and optics revision layout",
+      "evidence": "T106 §6 + T107 §5 only surfaceGain and thin highlight, no unique shader/oracle",
+      "blockedScope": "complete WATER_SURFACE shader and CW16 surface oracle",
+      "notBlocked": "publication/input-source/defined transmission core isolation engineering"
+    },
+    {
+      "id": "CW-C-D2",
+      "owner": "designer",
+      "needed": "T50 targetTilt [-89,89]/stale to B acceptedAngle [-30,30] acceptance policy, once-per-tick/substep timing and failure; shake report-only versus actual acceleration/bed action and precise formula if supported; B config/schema change if required",
+      "evidence": "P051GravityInputAdapter emits target/shake; ClearWaterEngine.advanceSubstepInto accepts supplied angle only; BConfig fixed gModel/dragAir, no shake; old WaterSandField planner is not this route",
+      "blockedScope": "real-handheld gravity/shake complete controller and device effect claim",
+      "notBlocked": "synthetic explicit accepted-angle fixture and source lifecycle contracts"
+    }
+  ],
+  "dimensions": {
+    "N": 128,
+    "C": 256,
+    "K": "192|512",
+    "publicationBanks": 2,
+    "nativePacketBanks": 2,
+    "traceRows": 256,
+    "traceWidth": 24,
+    "counterSlots": 32
+  },
+  "profileOffsets": [
+    "S",
+    "W",
+    "eta",
+    "P",
+    "bh",
+    "mh",
+    "R",
+    "wet"
+  ],
+  "particleProofOffsets": [
+    "id",
+    "mass",
+    "x64",
+    "y64",
+    "vx64",
+    "vy64",
+    "sourceId",
+    "packedTag"
+  ],
+  "tag": "phase | (state << 8); phase==0; state in {1,2}; meta[2i]=tag,meta[2i+1]=id",
+  "newArrayTemplates": [
+    {
+      "name": "ets.slot.profile",
+      "type": "Float64Array",
+      "lengthExpression": "8*N",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*N*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.proof",
+      "type": "Float64Array",
+      "lengthExpression": "8*K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*K*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.origin",
+      "type": "Float64Array",
+      "lengthExpression": "K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*K*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.wait",
+      "type": "Uint8Array",
+      "lengthExpression": "K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*K",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.xy",
+      "type": "Float32Array",
+      "lengthExpression": "2*K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*2*K*4",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.meta",
+      "type": "Uint32Array",
+      "lengthExpression": "2*K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*2*K*4",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.header",
+      "type": "Float64Array",
+      "lengthExpression": "64",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*64*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.ledger",
+      "type": "Float64Array",
+      "lengthExpression": "64",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*64*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "ets.slot.optics",
+      "type": "Float64Array",
+      "lengthExpression": "8",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.profile",
+      "type": "Float64Array",
+      "lengthExpression": "8*N",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*N*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.proof",
+      "type": "Float64Array",
+      "lengthExpression": "8*K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*K*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.origin",
+      "type": "Float64Array",
+      "lengthExpression": "K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*K*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.wait",
+      "type": "Uint8Array",
+      "lengthExpression": "K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*K",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.xy",
+      "type": "Float32Array",
+      "lengthExpression": "2*K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*2*K*4",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.meta",
+      "type": "Uint32Array",
+      "lengthExpression": "2*K",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*2*K*4",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.header",
+      "type": "Float64Array",
+      "lengthExpression": "64",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*64*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.ledger",
+      "type": "Float64Array",
+      "lengthExpression": "64",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*64*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.packet.optics",
+      "type": "Float64Array",
+      "lengthExpression": "8",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.verifyP",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "instanceScope": "once",
+      "byteExpression": "8*N",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "native.profileStaging",
+      "type": "Float32Array",
+      "lengthExpression": "8*N",
+      "instanceScope": "2 banks",
+      "byteExpression": "2*8*N*4",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "gpu.profileTextures",
+      "type": "RGBA32F",
+      "lengthExpression": "128*2",
+      "instanceScope": "2 textures",
+      "byteExpression": "2*128*2*16",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "gpu.particleVbo",
+      "type": "RAW_XY_META",
+      "lengthExpression": "4*K words",
+      "instanceScope": "2 capacity banks",
+      "byteExpression": "2*16*K",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "controller.trace",
+      "type": "Float64Array",
+      "lengthExpression": "256*24",
+      "instanceScope": "once",
+      "byteExpression": "256*24*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "controller.counters",
+      "type": "Float64Array",
+      "lengthExpression": "32",
+      "instanceScope": "once",
+      "byteExpression": "32*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "controller.receiptSlots",
+      "type": "Float64Array",
+      "lengthExpression": "56",
+      "instanceScope": "64 fixed numeric materialization slots if batch-reader used",
+      "byteExpression": "64*56*8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    },
+    {
+      "name": "projection.bits",
+      "type": "ArrayBuffer",
+      "lengthExpression": "8",
+      "instanceScope": "once",
+      "byteExpression": "8",
+      "lifetime": "COLD_FIXED_DESIGN_NOT_ALLOCATED"
+    }
+  ],
+  "wholeResource": "existing actual A+B ledger + ETS C double packet + native double owned packet + native verify/staging + two profile GPU textures + particle VBO capacity + existing reused fullframe SRGB8_ALPHA8 pair + cold config/shader/program/VAO + context/size restore overlap + source/controller/runtime/NAPI/string/trace + explicit cold snapshotB retained copies. NO_RSS_OR_TOTAL_PERF_PASS",
+  "work": {
+    "frame": "G*source boundary(Q,N,K,D,Bbirth) + F<=2 actual B attempts(original candidate/replay/audits) + capture/pack/hash/NAPI validation/copy/upload + 6 layer fragment work + present/swap + diagnostics/cold export only if actually invoked",
+    "capture": "O(N+K) current canonical scan ID-chain once + bounded source summary; no queue/dedup/event full export",
+    "native": "O(N+K) strict F64 proof and ID-order P fold + projection validation/hash + upload 4096+16*liveCount bytes",
+    "fullframe": "2 SRGB8_ALPHA8 textures payload 8*widthPx*heightPx; target reuse not double count; driver/restore extra explicit",
+    "queue": "one controlled source sample per active tick; MOVE changes location only; no physical progress or source consumption hidden in dt0",
+    "timing": "exclusive/inclusive clocks retained, GPU timer NOT_MEASURED unless real evidence, driver/EGL wait not treated as CPU simulation cost"
+  },
+  "headerFields": [
+    "ownerId",
+    "runGeneration",
+    "publicationSerial",
+    "stateEpoch",
+    "configRev",
+    "currentPhysicsCommit",
+    "currentSourceCommit",
+    "publicationKind",
+    "inputGeneration",
+    "geometryEpoch",
+    "lastSuccessfulBStepSerial",
+    "lastBPhysicsCommit",
+    "lastBSourceCommit",
+    "sealedArenaSerial",
+    "hasSealedB",
+    "acceptedAngleDeg",
+    "acceptedAngleValid",
+    "angleRevision",
+    "particleCount",
+    "particleCapacity",
+    "cols",
+    "capacity",
+    "sourceLedgerRev",
+    "waterSuccessCount",
+    "sandSuccessCount",
+    "I_water",
+    "I_sand",
+    "initialWater",
+    "initialSand",
+    "failedAttempt",
+    "failedStage",
+    "failedReason",
+    "profileLayoutCode",
+    "proofLayoutCode",
+    "projectionCode",
+    "configBindingSerial",
+    "opticsRev",
+    "captureStatus",
+    "bConfigRev",
+    "inputPolicyRev",
+    "reserved40..63=0"
+  ],
+  "ledgerFields": [
+    "0 runGeneration",
+    "1 configRev",
+    "2 currentSourceCommit",
+    "3 currentPhysicsCommit",
+    "4 sourceLedgerRev",
+    "5 waterSuccessCount",
+    "6 sandSuccessCount",
+    "7 I_water",
+    "8 I_sand",
+    "9 initialWater",
+    "10 initialSand",
+    "11 totalW",
+    "12 totalS",
+    "13 totalP",
+    "14 totalR",
+    "15 hasTerminalReceipt",
+    "16 terminalReceipt.sourceCommit",
+    "17 terminalReceipt.physicsCommit",
+    "18 terminalReceipt.transactionIdOrZero",
+    "19 terminalReceipt.kindSuccessSeqOrZero",
+    "20 terminalReceipt.status",
+    "21 sealedB.sourceCommit",
+    "22 sealedB.physicsCommit",
+    "23 sealedB.arenaSerial",
+    "24 sealedB.stepSerial",
+    "25 sealedB.hasSealed",
+    "26 sealedB.acceptedAngleOrZero",
+    "27..63 reserved=0"
+  ],
+  "examples": [
+    {
+      "K": 192,
+      "N": 128,
+      "etsDoublePacket": 52736,
+      "nativeDoublePacket": 52736,
+      "otherFixedPayload": 101640,
+      "totalListedIncrementExcludingFullframeAssetsRuntimeColdSnapshots": 207112,
+      "fullframeAdd": "8*widthPx*heightPx unless same allocated pair reused",
+      "legacyABPayload": 4230656
+    },
+    {
+      "K": 512,
+      "N": 128,
+      "etsDoublePacket": 109696,
+      "nativeDoublePacket": 109696,
+      "otherFixedPayload": 111880,
+      "totalListedIncrementExcludingFullframeAssetsRuntimeColdSnapshots": 331272,
+      "fullframeAdd": "8*widthPx*heightPx unless same allocated pair reused",
+      "legacyABPayload": 6312256
+    }
+  ]
+}
