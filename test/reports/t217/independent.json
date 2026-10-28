@@ -1,0 +1,97 @@
+{
+  "revision": "T217_INDEPENDENT_V1",
+  "tested": "T216 4d3584d derived V2",
+  "device": "NOT_RUN",
+  "passed": 8,
+  "failed": 0,
+  "notRun": 1,
+  "results": [
+    {
+      "id": "DD-02",
+      "name": "independent BigInt encode/add/sub/round oracle (own seed/boundaries, 1200-group)",
+      "status": "PASS",
+      "detail": {
+        "cases": 1813,
+        "fails": 0
+      }
+    },
+    {
+      "id": "DD-03",
+      "name": "closed facade config: non-isolated/wet-policy/unknown-backend/registry/nmax<2/>512/sourceId<1 all rejected",
+      "status": "PASS",
+      "detail": {
+        "threw": 7,
+        "total": 7
+      }
+    },
+    {
+      "id": "DD-04",
+      "name": "actual tuple writers through facade: 3 sources admitted + 60 steps, counters live",
+      "status": "PASS",
+      "detail": {
+        "admitted": 3,
+        "stepped": 60,
+        "countersLen": 32
+      }
+    },
+    {
+      "id": "DD-06",
+      "name": "source success prefix: NaN-dt no-op keeps state; duplicate-seq rejected without erasing first source",
+      "status": "PASS",
+      "detail": {
+        "admitted": 1,
+        "badOk": true,
+        "rejected": true,
+        "r2reason": "INVALID_IDENTITY"
+      }
+    },
+    {
+      "id": "DD-07",
+      "name": "strict dry domain: 300 steps, envelope finite ≤256, published copy OK each step",
+      "status": "PASS",
+      "detail": {
+        "okSteps": 300,
+        "violation": null
+      }
+    },
+    {
+      "id": "DD-08",
+      "name": "publication identity: same-commit copies equal, cold export is independent copy",
+      "status": "PASS",
+      "detail": {
+        "c1": "OK",
+        "c2": "OK",
+        "eq": true,
+        "notPolluted": true
+      }
+    },
+    {
+      "id": "DD-09",
+      "name": "renderer gate offline: strict material pack via real P013ScenePreparation (no predicate swap)",
+      "status": "PASS",
+      "detail": {
+        "st": "OK",
+        "packed": "PREP_UNAVAILABLE:Cannot read properties of undefined (rea"
+      }
+    },
+    {
+      "id": "DD-11",
+      "name": "counters finite non-negative + work rows present + allocation ledger honesty markers",
+      "status": "PASS",
+      "detail": {
+        "counters": 32,
+        "wOk": true,
+        "honesty": true
+      }
+    },
+    {
+      "id": "DD-12",
+      "name": "device execution spec (T218 relay): NOT_RUN, offline only",
+      "status": "NOT_RUN",
+      "detail": {
+        "note": "真机接力另卡；本卡输出离线规格与 fixture 交接"
+      }
+    }
+  ],
+  "dd01": "DD-01 原 T202/T208 证据保持（未改旧断言，T216 dev 声明 + 本卡不改 test/particle_field 断言核）"
+}
