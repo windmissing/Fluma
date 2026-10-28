@@ -1,0 +1,2099 @@
+{
+  "revision": "T214_EXACT70_ENGINEERING_EXTENSION_V1",
+  "date": "2026-10-28",
+  "status": "ENGINEERING_SPEC_ONLY_NOT_IMPLEMENTED_NOT_DEVICE_TESTED",
+  "task": "6ae168e3e4b0f11bdf26a135",
+  "designerCommit": "f2b3e83",
+  "extends": "T205_TX_ENGINEERING_MANIFEST_V1",
+  "inputs": [
+    {
+      "path": "docs/algorithm-T207-dry-derived-render-domain-v1.md",
+      "bytes": 26309,
+      "sha256": "fbd9984de42daa4888010c62cfad4566a9c6c348941ab8d43154b25ba11b9907"
+    },
+    {
+      "path": "docs/design-T207-dry-derived-evidence-v1.json",
+      "bytes": 5643,
+      "sha256": "6417971bf61151fa8b552b5c0f058d1b837eaccf9c03ad3835e1fbae6cc9ce3a"
+    },
+    {
+      "path": "docs/retro-T207-dry-derived-render-domain-v1.md",
+      "bytes": 1467,
+      "sha256": "81e06a1d524bea69e0bca037db02b6cdabeeedf393e1e2a88dcc62cc23d47c79"
+    },
+    {
+      "path": "docs/architecture-T205-whole-transaction-v1.md",
+      "bytes": 42261,
+      "sha256": "9f07dede67b920d24f7937a37fe187da93ff06a03702808a9bed3f05cdbc32b1"
+    },
+    {
+      "path": "docs/analysis-T205-tx-resource-work-manifest-v1.json",
+      "bytes": 49992,
+      "sha256": "4d26cf1f0c80db8a3fe44d82b1773b47e24d5a460537ed896ee36a83ee95b831"
+    },
+    {
+      "path": "docs/architecture-T202-demo-material-arrival-v1.md",
+      "bytes": 10649,
+      "sha256": "f7402feb5734580a4e5c13c08d210b0f9864b4bf1db369e3a5f67a7c50098cdb"
+    },
+    {
+      "path": "docs/analysis-T202-reassembled-material-v1.json",
+      "bytes": 54452,
+      "sha256": "8588ebc85a8d328444f7b512441796bec6ac3b89298a7e94e8e4fcadac949bfb"
+    },
+    {
+      "path": "docs/effect-report-P051-T208-material-evidence-errata-v1.md",
+      "bytes": 4304,
+      "sha256": "28bdb625c17566da4473d776b172d76488ed5f5918575a2b0bce45e64ebe43ca"
+    }
+  ],
+  "sources": [
+    {
+      "path": "entry/src/main/ets/physics/P011ExternalAdmissions.ets",
+      "bytes": 8593,
+      "sha256": "3411b4334855902f04799cda032deadbcc1e8ff827da8b59df632e42690d53fb"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "bytes": 52790,
+      "sha256": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "bytes": 94681,
+      "sha256": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "bytes": 20420,
+      "sha256": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "bytes": 23641,
+      "sha256": "46747913fbc96b5d8e51530582967d1089a731ba44899de38f9a37b4e90c13f6"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "bytes": 2981,
+      "sha256": "725bc69e0b6949d5d1c8e61301694bfa5b4f495e048cd22b9fdd9316f9402ee2"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "bytes": 353618,
+      "sha256": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011PublishedRenderState.ets",
+      "bytes": 1079,
+      "sha256": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051DryParticleAdmission.ets",
+      "bytes": 1751,
+      "sha256": "d7b830a1bd5d6f58f4eb8cead2ee1acee25f93d126bdfbaff6e6c4cb87db5197"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051EmptySandDemo.ets",
+      "bytes": 10804,
+      "sha256": "57f7b869510103ee895aa2b88ba1fb4df93ac23c9adf4dbde66d49251f8b1ecc"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011TiltPlanningPass.ets",
+      "bytes": 22381,
+      "sha256": "3a4b95a3a1e1f2fe1257bcfad3234cf3a416389a7032a252cf2664cce0a27e2d"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011EndpointMetrics.ets",
+      "bytes": 9953,
+      "sha256": "666af6c24ed6060c945ff5f928e73f6353a08cc3123f92498ee61f6c1c9c4332"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneController.ets",
+      "bytes": 11229,
+      "sha256": "47f71d2f66f03fcd168aaefa68db446dac75bd064951dbdf53b755b7264c8000"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013FrameAdapter.ets",
+      "bytes": 5399,
+      "sha256": "53b1f99b3a3c198fbfda62d8c2ade62631c1dd25eff09faad918c90592de7025"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "bytes": 8258,
+      "sha256": "1188b45dc5a69b67ec029824fff6db9d231af8f7b245439c37ae8d74675711ce"
+    },
+    {
+      "path": "entry/src/main/ets/render/preparation/P013MaterialDataPreparation.ets",
+      "bytes": 4890,
+      "sha256": "99f97ffd0acb677a49f312ff60782b333c62a5f777e26b6466511e41e421a332"
+    },
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "bytes": 17077,
+      "sha256": "4fb24584729f55020a377696715cfdd136c896d55c96b38b69bed50a7005b072"
+    },
+    {
+      "path": "test/p013_compute/pair_wire_v1.h",
+      "bytes": 2026,
+      "sha256": "9bc54802759b14dc06b7ce6726717daf829138fe8a1337d87f57d3182fe51847"
+    },
+    {
+      "path": "test/p013_compute/pair_binding_v1.cpp",
+      "bytes": 24913,
+      "sha256": "acfd93f4ad28cdca78b6788e9b8aa17f91e8d5e351492d24a08d55d94c85e24e"
+    },
+    {
+      "path": "test/p013_compute/ets/t171/T171Metadata.ets",
+      "bytes": 2317,
+      "sha256": "188e3c05ccf11c344220f81419269feb224d7f170bdb445e067d9a2c76f36459"
+    }
+  ],
+  "designerInputFingerprintCheck": [
+    {
+      "path": "docs/architecture-T202-demo-material-arrival-v1.md",
+      "expected": "f7402feb5734580a4e5c13c08d210b0f9864b4bf1db369e3a5f67a7c50098cdb",
+      "actual": "f7402feb5734580a4e5c13c08d210b0f9864b4bf1db369e3a5f67a7c50098cdb",
+      "matches": true
+    },
+    {
+      "path": "docs/analysis-T202-demo-material-capture-v1.json",
+      "expected": "ac5ccfdf668e5cf48a84066055dc4f514100e90b54d02cc3a8bf85b3ca20827a",
+      "actual": "ac5ccfdf668e5cf48a84066055dc4f514100e90b54d02cc3a8bf85b3ca20827a",
+      "matches": true
+    },
+    {
+      "path": "docs/analysis-T202-reassembled-material-v1.json",
+      "expected": "8588ebc85a8d328444f7b512441796bec6ac3b89298a7e94e8e4fcadac949bfb",
+      "actual": "8588ebc85a8d328444f7b512441796bec6ac3b89298a7e94e8e4fcadac949bfb",
+      "matches": true
+    },
+    {
+      "path": "docs/algorithm-T197-whole-transaction-complexity-v1.md",
+      "expected": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d",
+      "actual": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d",
+      "matches": true
+    },
+    {
+      "path": "docs/analysis-T205-tx-resource-work-manifest-v1.json",
+      "expected": "4d26cf1f0c80db8a3fe44d82b1773b47e24d5a460537ed896ee36a83ee95b831",
+      "actual": "4d26cf1f0c80db8a3fe44d82b1773b47e24d5a460537ed896ee36a83ee95b831",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "expected": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+      "actual": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "expected": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+      "actual": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "expected": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5",
+      "actual": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "expected": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d",
+      "actual": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011PublishedRenderState.ets",
+      "expected": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776",
+      "actual": "f7733e8ed9dc7d045cc4779fc5238ce09a480a00f9d1176a6598321a8e65b776",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/render/P013FrameAdapter.ets",
+      "expected": "53b1f99b3a3c198fbfda62d8c2ade62631c1dd25eff09faad918c90592de7025",
+      "actual": "53b1f99b3a3c198fbfda62d8c2ade62631c1dd25eff09faad918c90592de7025",
+      "matches": true
+    },
+    {
+      "path": "entry/src/main/ets/render/preparation/P013MaterialDataPreparation.ets",
+      "expected": "99f97ffd0acb677a49f312ff60782b333c62a5f777e26b6466511e41e421a332",
+      "actual": "99f97ffd0acb677a49f312ff60782b333c62a5f777e26b6466511e41e421a332",
+      "matches": true
+    },
+    {
+      "path": "docs/design-T207-dry-derived-model-v1.py",
+      "expected": "6e99cfae248c96be727f2c2a69f17423bbd5183b06c6abc7798e61a2273146f5",
+      "actual": "6e99cfae248c96be727f2c2a69f17423bbd5183b06c6abc7798e61a2273146f5",
+      "matches": true
+    }
+  ],
+  "writerReviewSites": [
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 328,
+      "sourceLine": "this.pMass[slot] = seed.mass; this.pX[slot] = seed.x; this.pY[slot] = seed.y;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 330,
+      "sourceLine": "this.pPhase[slot] = seed.phase; this.pSource[slot] = seed.sourceKind;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 332,
+      "sourceLine": "this.pState[slot] = 1; this.liveCount++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 350,
+      "sourceLine": "this.pMass[slot] = remainder;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 352,
+      "sourceLine": "this.pState[slot] = 0; this.liveCount--;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 355,
+      "sourceLine": "this.pState[slot] = 2; this.pY[slot] = sandTopAfter + contactEps;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 366,
+      "sourceLine": "for (let i = 0; i < this.nmax; i++) if (this.pState[i] === 2) resting++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 385,
+      "sourceLine": "for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 && this.pSource[i] === sourceKind) {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 387,
+      "sourceLine": "if (this.pPhase[i] === 0) result.massH += this.pMass[i]; else result.massL += this.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 400,
+      "sourceLine": "if (this.pPhase[i] === 0) heavy += this.pMass[i]; else light += this.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 418,
+      "sourceLine": "this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 420,
+      "sourceLine": "this.pX[i] = this.cols - 1 - this.pX[i]; this.pY[i] = capacity - this.pY[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 430,
+      "sourceLine": "if (this.pState[i] === 0) continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 435,
+      "sourceLine": "const group = this.pState[i] === 1 ? result.FLYING : result.CONTACT_WAIT;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 437,
+      "sourceLine": "if (this.pPhase[i] === 0) group.massH += this.pMass[i]; else group.massL += this.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 448,
+      "sourceLine": "this.pMass.fill(0); this.pX.fill(0); this.pY.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 449,
+      "sourceLine": "this.pVx.fill(0); this.pVy.fill(0); this.pPhase.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 450,
+      "sourceLine": "this.pSource.fill(0); this.pState.fill(0); this.pId.fill(0); this.pSourceId.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 451,
+      "sourceLine": "this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 519,
+      "sourceLine": "restoreSnapshot(state: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 522,
+      "sourceLine": "this.copySnapshot(state);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 530,
+      "sourceLine": "this.copySnapshot(checkpoint.state); this.appliedKeys = new Set<string>(checkpoint.appliedKeys);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 533,
+      "sourceLine": "private copySnapshot(s: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 534,
+      "sourceLine": "this.pMass.set(s.pMass); this.pX.set(s.pX); this.pY.set(s.pY);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 535,
+      "sourceLine": "this.pVx.set(s.pVx); this.pVy.set(s.pVy); this.pPhase.set(s.pPhase);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 536,
+      "sourceLine": "this.pSource.set(s.pSource); this.pState.set(s.pState); this.pId.set(s.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 538,
+      "sourceLine": "this.colParticleMassH.set(s.colParticleMassH); this.colParticleMassL.set(s.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 559,
+      "sourceLine": "this.copyStateTo(before);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 560,
+      "sourceLine": "scratch.copySnapshot(before);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 565,
+      "sourceLine": "scratch.copyStateTo(after);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 587,
+      "sourceLine": "this.copySnapshot(active.after); active.published = true;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 592,
+      "sourceLine": "this.copySnapshot(active.before); this.patch = null;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 612,
+      "sourceLine": "for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 && this.pId[i] === id) return i;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 617,
+      "sourceLine": "this.pMass[slot] = 0; this.pState[slot] = 0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 629,
+      "sourceLine": "this.pX[a] = (this.pX[a] * ma + this.pX[b] * mb) / mass;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 633,
+      "sourceLine": "this.pMass[a] = mass;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 635,
+      "sourceLine": "this.pMass[b] = 0; this.pState[b] = 0; this.liveCount--;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 643,
+      "sourceLine": "this.pPhase[i] === this.pPhase[j] && this.pSource[i] === this.pSource[j] &&",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 644,
+      "sourceLine": "this.pSourceId[i] === this.pSourceId[j] && this.pState[i] === this.pState[j] &&",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 704,
+      "sourceLine": "this.pX[slot] = r.targetColumn > r.column ? r.column + 1 - 1e-9 : r.column + 1e-9;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 709,
+      "sourceLine": "this.pX[slot] = r.predictedX; this.pY[slot] = r.predictedY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 732,
+      "sourceLine": "this.pX[slot] = m.x; this.pY[slot] = m.y; this.pVx[slot] = m.vx; this.pVy[slot] = m.vy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 750,
+      "sourceLine": "// an owned copy; production adapters can reuse copyStateTo() buffers.",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 790,
+      "sourceLine": "transferHotState(s: P011ParticleSnapshot, restore: boolean): number {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 803,
+      "sourceLine": "if (restore) this.copySnapshot(s);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 806,
+      "sourceLine": "s.pMass.set(this.pMass); s.pX.set(this.pX); s.pY.set(this.pY); s.pVx.set(this.pVx); s.pVy.set(this.pVy);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 807,
+      "sourceLine": "s.pPhase.set(this.pPhase); s.pSource.set(this.pSource); s.pState.set(this.pState); s.pId.set(this.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 809,
+      "sourceLine": "s.colParticleMassH.set(this.colParticleMassH); s.colParticleMassL.set(this.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 820,
+      "sourceLine": "if (this.pState[i] === 0) continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 821,
+      "sourceLine": "x[count] = this.pX[i]; y[count] = this.pY[i]; vx[count] = this.pVx[i]; vy[count] = this.pVy[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 822,
+      "sourceLine": "mass[count] = this.pMass[i]; phase[count] = this.pPhase[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 823,
+      "sourceLine": "state[count] = this.pState[i]; particleId[count] = this.pId[i]; count++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 827,
+      "sourceLine": "copyStateTo(out: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 833,
+      "sourceLine": "out.pMass.set(this.pMass); out.pX.set(this.pX); out.pY.set(this.pY);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 834,
+      "sourceLine": "out.pVx.set(this.pVx); out.pVy.set(this.pVy); out.pPhase.set(this.pPhase);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 835,
+      "sourceLine": "out.pSource.set(this.pSource); out.pState.set(this.pState); out.pId.set(this.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 837,
+      "sourceLine": "out.colParticleMassH.set(this.colParticleMassH); out.colParticleMassL.set(this.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 845,
+      "sourceLine": "if (this.pState[slot] === 0) throw new Error('PARTICLE_EMPTY_SLOT');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 932,
+      "sourceLine": "const heavy = frozenPool.pPhase[i] === P011_PARTICLE_HEAVY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 947,
+      "sourceLine": "const contact = frozenPool.pState[i] === 2 || y <= frozenField.sandTopAt(c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 554,
+      "sourceLine": "work.frozenWaterTop.set(f.waterTop); work.frozenBh.set(f.bh); work.frozenBl.set(f.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 555,
+      "sourceLine": "work.frozenMh.set(f.mh); work.frozenMl.set(f.ml); work.frozenSuspH.set(f.suspH); work.frozenSuspL.set(f.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 559,
+      "sourceLine": "work.fieldBeforeWaterTop.set(f.waterTop); work.fieldBeforeBh.set(f.bh); work.fieldBeforeBl.set(f.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 561,
+      "sourceLine": "work.fieldBeforeSuspL.set(f.suspL); work.fieldBeforeSurface.set(f.surface);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 589,
+      "sourceLine": "field.waterTop.set(work.fieldBeforeWaterTop); field.bh.set(work.fieldBeforeBh); field.bl.set(work.fieldBeforeBl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 590,
+      "sourceLine": "field.mh.set(work.fieldBeforeMh); field.ml.set(work.fieldBeforeMl); field.suspH.set(work.fieldBeforeSuspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 591,
+      "sourceLine": "field.suspL.set(work.fieldBeforeSuspL); field.surface.set(work.fieldBeforeSurface);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 643,
+      "sourceLine": "work.fieldBeforeWaterTop.set(f.waterTop); work.fieldBeforeBh.set(f.bh); work.fieldBeforeBl.set(f.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 644,
+      "sourceLine": "work.fieldBeforeMh.set(f.mh); work.fieldBeforeMl.set(f.ml); work.fieldBeforeSuspH.set(f.suspH); work.fieldBeforeSuspL.set(f.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 688,
+      "sourceLine": "pool.pMass[i] <= 0 || pool.pPhase[i] > 1 || pool.pSource[i] > 1 || pool.pSourceId[i] === 0 ||",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 729,
+      "sourceLine": "const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 745,
+      "sourceLine": "const contact = p.pState[i] === 2 || y <= sandHot(work, c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 764,
+      "sourceLine": "const i = work.order[j]; const c = Math.floor(p.pX[i]); const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 775,
+      "sourceLine": "const y = Math.min(work.capacity, p.pY[i] + vy * work.dt); const contact = p.pState[i] === 2 || y <= sandHot(work, c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 791,
+      "sourceLine": "destination.ordinal[r] = r + 1; destination.requested[r] = p.pMass[i]; destination.totalWeight[r] = p.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 868,
+      "sourceLine": "function copyPoolHot(from: P011ParticleSnapshot, to: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 870,
+      "sourceLine": "to.pMass.set(from.pMass); to.pX.set(from.pX); to.pY.set(from.pY); to.pVx.set(from.pVx); to.pVy.set(from.pVy);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 871,
+      "sourceLine": "to.pPhase.set(from.pPhase); to.pSource.set(from.pSource); to.pState.set(from.pState); to.pId.set(from.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 873,
+      "sourceLine": "to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 876,
+      "sourceLine": "for (let i = 0; i < pool.nmax; i++) if (pool.pState[i] !== 0 && pool.pId[i] === id) return i;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 924,
+      "sourceLine": "a.phase[i] = p.pPhase[slot]; a.sourceKind[i] = p.pSource[slot]; a.column[i] = Math.floor(p.pX[slot]);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 925,
+      "sourceLine": "a.targetColumn[i] = -1; a.x[i] = p.pX[slot]; a.y[i] = p.pY[slot]; a.vx[i] = p.pVx[slot]; a.vy[i] = p.pVy[slot];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 926,
+      "sourceLine": "a.requested[i] = p.pMass[slot]; a.granted[i] = p.pMass[slot]; a.remainder[i] = 0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 927,
+      "sourceLine": "a.massBefore[i] = p.pMass[slot]; a.massAfter[i] = p.pMass[slot];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 944,
+      "sourceLine": "p.pX[a] = (p.pX[a] * ma + p.pX[b] * mb) / mass; p.pY[a] = (p.pY[a] * ma + p.pY[b] * mb) / mass;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 946,
+      "sourceLine": "p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 992,
+      "sourceLine": "p.pMass[slot] = k < count ? work.params.massPackage : tail; p.pX[slot] = dry && kind === 1 ? plan.predictedX[row] : c + 0.5 + jitter;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 996,
+      "sourceLine": "p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 997,
+      "sourceLine": "p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 999,
+      "sourceLine": "if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1008,
+      "sourceLine": "Math.floor(p.pX[slot]) !== c || p.pMass[slot] !== plan.requested[row] || (plan.phase[row] === 0 ? gl : gh) !== 0) return P011_HOT_IDENTITY_MISMATCH;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1013,
+      "sourceLine": "cache[c] -= amount; p.pMass[slot] = remainder;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1014,
+      "sourceLine": "if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; }",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1015,
+      "sourceLine": "else { p.pState[slot] = 2; p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1018,
+      "sourceLine": "cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1022,
+      "sourceLine": "if (disposition === 6 && amount === 0) p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1026,
+      "sourceLine": "p.pX[slot] = plan.predictedX[row]; p.pY[slot] = plan.predictedY[row];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1049,
+      "sourceLine": "copyPoolHot(work.patchBefore, work.patchScratch);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1059,
+      "sourceLine": "copyPoolHot(work.patchScratch, work.patchAfter);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1126,
+      "sourceLine": "if (work.auditSlots[i] !== 0 || p.pState[i] > 2 || p.pPhase[i] > 1 || p.pSource[i] > 1 || p.pId[i] === 0 ||",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1130,
+      "sourceLine": "const c = Math.floor(p.pX[i]); work.order[live++] = i;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1131,
+      "sourceLine": "if (p.pPhase[i] === 0) work.auditMassH[c] += p.pMass[i]; else work.auditMassL[c] += p.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1204,
+      "sourceLine": "p.pX[slot] = plan.motionX[i]; p.pY[slot] = plan.motionY[i]; p.pVx[slot] = plan.motionVx[i]; p.pVy[slot] = plan.motionVy[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1242,
+      "sourceLine": "try{code=work.pool.transferHotState(out,restore);if(code===0&&!restore)d?.input(out);return code;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 239,
+      "sourceLine": "if (kind === 5 || degraded === 1) { f.suspH[c] += gh; f.suspL[c] += gl; }",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 250,
+      "sourceLine": "f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 251,
+      "sourceLine": "if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "line": 164,
+      "sourceLine": "beginDryBatch(heavy: number,light: number,x: number,y: number,sourceId: number,seed: number,sourceKind: number=0): boolean {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "line": 171,
+      "sourceLine": "finishDryBatch(): boolean {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "line": 29,
+      "sourceLine": "out[n++] = pool.pState[i]; out[n++] = pool.pId[i]; out[n++] = pool.pSourceId[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "line": 30,
+      "sourceLine": "out[n++] = pool.pPhase[i]; out[n++] = pool.pSource[i]; out[n++] = pool.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "line": 31,
+      "sourceLine": "out[n++] = pool.pX[i]; out[n++] = pool.pY[i]; out[n++] = pool.pVx[i]; out[n++] = pool.pVy[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 875,
+      "sourceLine": "this.updateSandTop();const c=Math.floor(request.x);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 892,
+      "sourceLine": "if(!binding.beginDryBatch(h,l,request.x,request.y,request.sourceId,request.seed)) {binding.rollback();this.restoreBackup();lambda*=.5;continue;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 893,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 894,
+      "sourceLine": "if(this.audit(false)!==null){binding.rollback();this.restoreBackup();lambda*=.5;continue;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 895,
+      "sourceLine": "if(!binding.finishDryBatch()){this.restoreBackup();lambda*=.5;continue;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 899,
+      "sourceLine": "this.publishRenderState('EXTERNAL_ADMISSION');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 974,
+      "sourceLine": "private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1418,
+      "sourceLine": "this.waterTop.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1423,
+      "sourceLine": "this.suspH.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1424,
+      "sourceLine": "this.suspL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1440,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1519,
+      "sourceLine": "this.publishRenderState('RESET', true);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1596,
+      "sourceLine": "this.waterTop[c] += amountPerColumn;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1604,
+      "sourceLine": "this.suspH[c] += amountPerColumn;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1610,
+      "sourceLine": "this.suspL[c] += amountPerColumn;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1617,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1619,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1626,
+      "sourceLine": "if (spec.amount > 0) this.publishRenderState('EXTERNAL_ADMISSION');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1778,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1823,
+      "sourceLine": "this.suspH[c] += aH[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1824,
+      "sourceLine": "this.suspL[c] += aL[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1831,
+      "sourceLine": "this.suspH[c] -= aH[c]; this.suspL[c] -= aL[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1851,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1874,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1881,
+      "sourceLine": "if (totalH + totalL > 0) this.publishRenderState('EXTERNAL_ADMISSION');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1887,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1892,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1900,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1999,
+      "sourceLine": "this.waterTop[c] = lifted;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2064,
+      "sourceLine": "this.waterTop.set(newWaterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2069,
+      "sourceLine": "this.suspH.set(newSuspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2070,
+      "sourceLine": "this.suspL.set(newSuspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2074,
+      "sourceLine": "this.publishRenderState('INVERT');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2075,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2178,
+      "sourceLine": "try{if(restore)b.pool.restoreSnapshot(snapshot);else b.pool.copyStateTo(snapshot);code=0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2319,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2354,
+      "sourceLine": "this.restoreMotionSnapshot();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2398,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2632,
+      "sourceLine": "this.publishRenderState('STEP');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2852,
+      "sourceLine": "if (routeId !== this.naturalObservationRouteId) this.publishRenderState('ROUTE_CHANGE');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2871,
+      "sourceLine": "this.publishRenderState('ROUTE_CHANGE');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2901,
+      "sourceLine": "this.publishRenderState('ROUTE_CHANGE');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3260,
+      "sourceLine": "this.waterTop[c] += (add ? 1 : -1) * admitted * perCol[c] / sum;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3268,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3699,
+      "sourceLine": "this.suspH[donor] = newDonor;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3700,
+      "sourceLine": "this.suspH[receiver] = newReceiverSuspH;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3703,
+      "sourceLine": "this.suspL[donor] = newDonor;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3704,
+      "sourceLine": "this.suspL[receiver] = newReceiverSuspL;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3845,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4236,
+      "sourceLine": "this.copyStateTo(target);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4252,
+      "sourceLine": "this.copyStateTo(out.field);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4267,
+      "sourceLine": "this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4287,
+      "sourceLine": "copyStateTo(target: WaterSandSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4302,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4314,
+      "sourceLine": "target.waterTop.set(this.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4319,
+      "sourceLine": "target.suspH.set(this.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4320,
+      "sourceLine": "target.suspL.set(this.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4332,
+      "sourceLine": "state.pMass.fill(0); state.pX.fill(0); state.pY.fill(0); state.pVx.fill(0); state.pVy.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4333,
+      "sourceLine": "state.pPhase.fill(0); state.pSource.fill(0); state.pState.fill(0); state.pId.fill(0); state.pSourceId.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4334,
+      "sourceLine": "state.colParticleMassH.fill(0); state.colParticleMassL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4357,
+      "sourceLine": "this.waterTop.set(source.waterTop); this.bh.set(source.bh); this.bl.set(source.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4358,
+      "sourceLine": "this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4377,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4378,
+      "sourceLine": "this.publishRenderState('RESTORE', true);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4393,
+      "sourceLine": "for(let j=0;j<p.freeCount;j++){const i=p.freeSlots[j];if(i<0||i>=p.nmax||seen[i]!==0||p.pState[i]!==0)throw new WaterSandSnapshotError('INVALID_DRY_FREE');seen[i]=1;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4395,
+      "sourceLine": "if(p.pState[i]===0)continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4398,
+      "sourceLine": "for(let j=0;j<i;j++)if(p.pState[j]!==0&&p.pId[j]===p.pId[i])throw new WaterSandSnapshotError('DUPLICATE_DRY_ID');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4399,
+      "sourceLine": "const c=Math.floor(p.pX[i]);if(p.pPhase[i]===0)h[c]+=p.pMass[i];else l[c]+=p.pMass[i];count++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4482,
+      "sourceLine": "this.motionSnapshot.waterTop.set(this.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4487,
+      "sourceLine": "this.motionSnapshot.suspH.set(this.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4488,
+      "sourceLine": "this.motionSnapshot.suspL.set(this.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4504,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4508,
+      "sourceLine": "private restoreMotionSnapshot(): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4509,
+      "sourceLine": "this.waterTop.set(this.motionSnapshot.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4514,
+      "sourceLine": "this.suspH.set(this.motionSnapshot.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4515,
+      "sourceLine": "this.suspL.set(this.motionSnapshot.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4520,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4542,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4622,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4645,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4667,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4715,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4866,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5133,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5247,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5249,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5263,
+      "sourceLine": "this.restoreMotionSnapshot();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5285,
+      "sourceLine": "this.updateSandTop(); this.particlePreviewApplied = true;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5297,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5299,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6223,
+      "sourceLine": "this.waterTop[donor] -= amount;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6224,
+      "sourceLine": "this.waterTop[receiver] += amount;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6250,
+      "sourceLine": "this.suspH[c + 1] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6251,
+      "sourceLine": "this.suspH[c] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6258,
+      "sourceLine": "this.suspH[c] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6259,
+      "sourceLine": "this.suspH[c + 1] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6267,
+      "sourceLine": "this.suspL[c + 1] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6268,
+      "sourceLine": "this.suspL[c] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6275,
+      "sourceLine": "this.suspL[c] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6276,
+      "sourceLine": "this.suspL[c + 1] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6499,
+      "sourceLine": "this.suspH[c] -= heavy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6501,
+      "sourceLine": "this.suspL[c] -= light;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6508,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6550,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6741,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6954,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7069,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7073,
+      "sourceLine": "const ok=this.particleBinding.beginDryBatch(split.heavy,split.light,c+.5,contact,particleSourceId,particleSourceId,1);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7074,
+      "sourceLine": "if(!ok || !this.particleBinding.finishDryBatch()){",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7077,
+      "sourceLine": "this.materialGuardRefund(amount,[c],false);this.updateSandTop();continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7085,
+      "sourceLine": "if (slot < 0) this.suspH[c] += split.heavy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7091,
+      "sourceLine": "if (slot < 0) this.suspL[c] += split.light;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7096,
+      "sourceLine": "this.suspH[c] += split.heavy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7097,
+      "sourceLine": "this.suspL[c] += split.light;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7101,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7124,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7135,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7170,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7355,
+      "sourceLine": "private updateSandTop(): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7357,
+      "sourceLine": "this.sandTopScratch[c] = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7358,
+      "sourceLine": "if(this.mediumMode===P051_DRY_MEDIUM)this.waterTop[c]=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7441,
+      "sourceLine": "this.backup.waterTop.set(this.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7446,
+      "sourceLine": "this.backup.suspH.set(this.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7447,
+      "sourceLine": "this.backup.suspL.set(this.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7461,
+      "sourceLine": "private restoreBackup(): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7463,
+      "sourceLine": "this.waterTop.set(this.backup.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7468,
+      "sourceLine": "this.suspH.set(this.backup.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7469,
+      "sourceLine": "this.suspL.set(this.backup.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7483,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "line": 43,
+      "sourceLine": "cur.massH[c]=f.bh[c]+f.mh[c]+f.suspH[c];cur.massL[c]=f.bl[c]+f.ml[c]+f.suspL[c];const yH=cur.massH[c]-compH,tH=totalH+yH;compH=(tH-totalH)-yH;totalH=tH;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "line": 79,
+      "sourceLine": "this.data[1536+c*4+1]=depth>1e-6?Math.max(0,Math.min(1,f.suspL[c]/depth)):0;this.data[1536+c*4+2]=this.data[1536+c*4+3]=0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "line": 82,
+      "sourceLine": "if(prior.pState[i]===2)beforeContact++;else if(prior.pState[i]===1)beforeAirborne++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    },
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "line": 86,
+      "sourceLine": "if (p.pState[i] === 2) contact++; else if (p.pState[i] === 1) airborne++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage"
+    }
+  ],
+  "policy": {
+    "cache": "P011_LIVE_MASS_EXACT70_V2",
+    "physics": "P011_DRY_CACHE_EXACT_V2",
+    "envelope": "P011_DRY_ENVELOPE_ORDERED_V2",
+    "publication": "P011_DERIVED_PUBLICATION_V2",
+    "checkpoint": "P011_DERIVED_CHECKPOINT_V2",
+    "migration": "P011_DERIVED_MIGRATION_V2",
+    "enabledByDefault": false,
+    "enableBoundary": "EXPLICIT_NEW_RUN_ISOLATED_ONLY",
+    "liveMigrationEnabled": false,
+    "gpuAbiCompatible": false,
+    "txNumericalEqualityAgainstV1": false
+  },
+  "dimensions": {
+    "C": 128,
+    "Nmax": 512,
+    "capacity": 256,
+    "phases": 2,
+    "limbs": 70,
+    "limbBits": 16,
+    "scaleExponent": -1074,
+    "viewSlots": 8,
+    "auditSlots": 1,
+    "tupleRowsPerView": 4,
+    "publicationBanks": 2
+  },
+  "newArrays": [
+    {
+      "name": "exact70.acc",
+      "type": "Uint16Array",
+      "lengthExpression": "2*C*70",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "2*(2*C*70)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "exact70.liveCount",
+      "type": "Uint32Array",
+      "lengthExpression": "2*C",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "4*(2*C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "exact70.envelopeDirty",
+      "type": "Uint8Array",
+      "lengthExpression": "C",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "1*(C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "exact70.scratch",
+      "type": "Uint16Array",
+      "lengthExpression": "4*70",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "2*(4*70)",
+      "lifetime": "COLD_FIXED",
+      "note": "ephemeral work words; never a semantic rollback snapshot"
+    },
+    {
+      "name": "exact70.bits",
+      "type": "ArrayBuffer",
+      "lengthExpression": "8",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "1*(8)",
+      "lifetime": "COLD_FIXED",
+      "note": "one cold DataView aliases this backing; do not count twice"
+    },
+    {
+      "name": "tuple.slot",
+      "type": "Int32Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "4*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.id",
+      "type": "Uint32Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "4*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.generation",
+      "type": "Float64Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "8*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.state",
+      "type": "Uint8Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "1*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.phase",
+      "type": "Uint8Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "1*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.column",
+      "type": "Int32Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "4*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.massLo",
+      "type": "Uint32Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "4*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "tuple.massHi",
+      "type": "Uint32Array",
+      "lengthExpression": "4",
+      "multiplicity": "8 view",
+      "byteExpression": "4*(4)",
+      "lifetime": "COLD_FIXED",
+      "note": "rows 0/1 old,2/3 actual new; slot=-1 unused; 120 bytes per view total"
+    },
+    {
+      "name": "derived.header",
+      "type": "Float64Array",
+      "lengthExpression": "32",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "8*(32)",
+      "lifetime": "COLD_FIXED",
+      "note": "256 bytes per bank, safe-integer identity/revision only"
+    },
+    {
+      "name": "derived.bufferRegistry",
+      "type": "Uint32Array",
+      "lengthExpression": "16",
+      "multiplicity": "8 view + 1 audit",
+      "byteExpression": "4*(16)",
+      "lifetime": "COLD_FIXED",
+      "note": "64 bytes per bank, buffer descriptors/flags; original buffers registered in T205 table"
+    },
+    {
+      "name": "derived.slotGeneration",
+      "type": "Float64Array",
+      "lengthExpression": "N",
+      "multiplicity": "8 view unless T205 same-view generation is registered and proven shared",
+      "byteExpression": "8*(N)",
+      "lifetime": "COLD_FIXED",
+      "note": "real allocation included when standalone V2 is used; no invented alias savings"
+    },
+    {
+      "name": "publication.domainHeader",
+      "type": "Float64Array",
+      "lengthExpression": "32",
+      "multiplicity": "2 publication banks",
+      "byteExpression": "8*(32)",
+      "lifetime": "COLD_FIXED",
+      "note": "256 bytes each + cold interned policy strings, complete legacy field/pool publication bank separate"
+    },
+    {
+      "name": "migration.beforeAfterCaches",
+      "type": "Float64Array",
+      "lengthExpression": "4*C",
+      "multiplicity": "1 explicit cold candidate only",
+      "byteExpression": "8*(4*C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "migration.beforeAfterEnvelopes",
+      "type": "Float64Array",
+      "lengthExpression": "2*C",
+      "multiplicity": "1 explicit cold candidate only",
+      "byteExpression": "8*(2*C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "migration.header",
+      "type": "Float64Array",
+      "lengthExpression": "32",
+      "multiplicity": "1 explicit cold candidate only",
+      "byteExpression": "8*(32)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "projection.acc",
+      "type": "Uint16Array",
+      "lengthExpression": "2*C*70",
+      "multiplicity": "scratch + 8 projection slots; WHOLE_COPY mode only",
+      "byteExpression": "2*(2*C*70)",
+      "lifetime": "COLD_FIXED",
+      "note": "separate from the main eight views; omit only with proved immutable lease lifecycle"
+    },
+    {
+      "name": "projection.count",
+      "type": "Uint32Array",
+      "lengthExpression": "2*C",
+      "multiplicity": "scratch + 8 projection slots; WHOLE_COPY mode only",
+      "byteExpression": "4*(2*C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "projection.dirty",
+      "type": "Uint8Array",
+      "lengthExpression": "C",
+      "multiplicity": "scratch + 8 projection slots; WHOLE_COPY mode only",
+      "byteExpression": "1*(C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "projection.header",
+      "type": "Float64Array",
+      "lengthExpression": "32",
+      "multiplicity": "scratch + 8 projection slots; WHOLE_COPY mode only",
+      "byteExpression": "8*(32)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "projection.cache",
+      "type": "Float64Array",
+      "lengthExpression": "2*C",
+      "multiplicity": "scratch + 8 projection slots; WHOLE_COPY mode only",
+      "byteExpression": "8*(2*C)",
+      "lifetime": "COLD_FIXED",
+      "note": ""
+    },
+    {
+      "name": "projection.field",
+      "type": "Float64Array",
+      "lengthExpression": "8*C",
+      "multiplicity": "scratch + 8 projection slots; WHOLE_COPY mode only",
+      "byteExpression": "8*(8*C)",
+      "lifetime": "COLD_FIXED",
+      "note": "waterTop/bh/bl/mh/ml/suspH/suspL/surface, compare raw bits at matched cut"
+    }
+  ],
+  "resourceExamples": {
+    "basePerView": 37560,
+    "baseEightViews": 300480,
+    "basePlusAudit": 338040,
+    "NOTE": "BASE_PAYLOAD_ONLY; excludes all metadata/tuple/generation/undo/publication/checkpoint/migration/native/runtime/external resources",
+    "projectionWholeCopyPayload": 427392,
+    "extraTupleHeaderRegistry": 4352,
+    "withoutUndoPublicationAndGeneration": 342392,
+    "standaloneGeneration": [
+      {
+        "N": 192,
+        "bytes": 12288
+      },
+      {
+        "N": 512,
+        "bytes": 32768
+      }
+    ],
+    "coldMigrationRecordPayload": 6400,
+    "coldMigrationPeak": "old owner+old held publications/checkpoints + complete candidate V2 owner(including this extension)+candidate two sealed publications + raw migration before/after record; retain until atomic switch/abort and leases released"
+  },
+  "work": {
+    "mutation": "O(70) per actual <=2-slot mutation; <=4 old/new tuple updates; no full-pool rebuild inside seed/row/event",
+    "boundary": "one rebuilt verification per final public source/substep candidate boundary; logical attempts/failures counted; no derived verifier per UI frame",
+    "total": "W205(policy=V2)+70*U_mass+(Bbuild+Jverify)*70*(N+2*C)+Pcopy*2*C*70+Dflush + source/field/domain checks + publication/capture/native/IO actual work",
+    "derivedUndoUpper": "depthMax*(326*U_mass + 2*C*envelopeWholeFlushes + persistentHeaderWritesOutsideTuple + bulkAccWordWrites); certificate and original physical/tree/field logs separately in W205, no double-count",
+    "wholeMemory": "M205_registered_unique_backings(policyV2) + exact70_base + tuple/header/registry + generation_if_not_already_owned + derived_undo_if_not_already_reserved + synchronous_dual_publication_if_not_already_present + checkpoint/migration_peak + runtime/native/external; alias IDs prevent double count",
+    "unknowns": [
+      "profile undo/work/output capacities explicit cold configuration",
+      "actual native/runtime/driver capacities and device timing PENDING_DEVICE_CALIBRATION",
+      "old caller snapshot retention unbounded external term, no silent finite lease API"
+    ]
+  },
+  "errors": [
+    {
+      "namespace": "P011_DERIVED_FAILURE_V2",
+      "reason": "DERIVED_INPUT_INVALID",
+      "v2Code": 1001,
+      "originalCode": "NULL_UNLESS_AN_ORIGINAL_PREDICATE_ACTUALLY_FAILED"
+    },
+    {
+      "namespace": "P011_DERIVED_FAILURE_V2",
+      "reason": "DERIVED_ACC_NEGATIVE",
+      "v2Code": 1002,
+      "originalCode": "NULL_UNLESS_AN_ORIGINAL_PREDICATE_ACTUALLY_FAILED"
+    },
+    {
+      "namespace": "P011_DERIVED_FAILURE_V2",
+      "reason": "DERIVED_ACC_OVERFLOW",
+      "v2Code": 1003,
+      "originalCode": "NULL_UNLESS_AN_ORIGINAL_PREDICATE_ACTUALLY_FAILED"
+    },
+    {
+      "namespace": "P011_DERIVED_FAILURE_V2",
+      "reason": "DERIVED_CERT_STALE",
+      "v2Code": 1004,
+      "originalCode": "NULL_UNLESS_AN_ORIGINAL_PREDICATE_ACTUALLY_FAILED"
+    },
+    {
+      "namespace": "P011_DERIVED_FAILURE_V2",
+      "reason": "DRY_DOMAIN_INFEASIBLE",
+      "v2Code": 1005,
+      "originalCode": "NULL_UNLESS_AN_ORIGINAL_PREDICATE_ACTUALLY_FAILED"
+    },
+    {
+      "namespace": "P011_DERIVED_FAILURE_V2",
+      "reason": "PUBLICATION_DOMAIN_MISMATCH",
+      "v2Code": 1006,
+      "originalCode": "NULL_UNLESS_AN_ORIGINAL_PREDICATE_ACTUALLY_FAILED"
+    }
+  ],
+  "supportMatrix": [
+    {
+      "route": "newRun",
+      "contract": "explicit isolated V2 domain, all guards before visible switch"
+    },
+    {
+      "route": "ordinary tuple",
+      "contract": "controlled Hot and legacy Field paths use same exact70 coordinator"
+    },
+    {
+      "route": "bulk reset/import",
+      "contract": "private cold/bulk candidate rebuild once, no old-cache mirror copy"
+    },
+    {
+      "route": "physical invert",
+      "contract": "current dry entry remains DRY_INVERT_UNSUPPORTED; no new enablement by numerical V2"
+    },
+    {
+      "route": "sameV2 rollback",
+      "contract": "restore original limb/cache/header bits; never rebuild for ordinary undo"
+    },
+    {
+      "route": "V1 replay",
+      "contract": "original policy/raw/error preserved"
+    },
+    {
+      "route": "V1 migration",
+      "contract": "specified cold candidate only, not enabled by this delivery"
+    },
+    {
+      "route": "wet",
+      "contract": "V2 configuration refused; preserve WET V1"
+    },
+    {
+      "route": "clearwater",
+      "contract": "independent B route, cannot reinterpret true W/eta as dry envelope"
+    },
+    {
+      "route": "GPU",
+      "contract": "V2 refused before native configure/dispatch; no silent CPU fallback"
+    },
+    {
+      "route": "unknownWriterOrAlias",
+      "contract": "reject V2 configuration or abort candidate before next numerical read, no UI repair"
+    },
+    {
+      "route": "fieldOnly",
+      "contract": "explicit V2 zero-pool owner proof or remain separately labeled V1; never inherit particle V2 certificate by route OFF"
+    }
+  ],
+  "documentArithmeticVerification": {
+    "kind": "READ_ONLY_SPEC_ARITHMETIC_AND_FINGERPRINT_CHECK_NOT_PRODUCT_TEST",
+    "basePerView": 37560,
+    "baseViewsPlusAudit": 338040,
+    "tupleBytesPerView": 120,
+    "extraTupleHeaderRegistry": 4352,
+    "projectionWholeCopy": 427392,
+    "migrationRecord": 6400,
+    "inputAndSourceFingerprintsAllMatch": true,
+    "designerInputsAllMatch": true,
+    "uniqueAllocationNames": 26
+  }
+}
