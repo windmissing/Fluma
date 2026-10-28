@@ -1,0 +1,150 @@
+{
+  "revision": "T213_INDEPENDENT_V1",
+  "tested": "T211 edd980c tree + T212 a27d92c bridge (HOST_DOUBLE)",
+  "device": "NOT_RUN",
+  "passed": 13,
+  "failed": 0,
+  "notRun": 0,
+  "results": [
+    {
+      "id": "D-01",
+      "name": "full command differential OFF/LEGACY/TX identical receipts+raw state",
+      "status": "PASS",
+      "detail": {
+        "ok": true
+      }
+    },
+    {
+      "id": "D-02",
+      "name": "trace closure identities entered/audit both healthy and post-invalid-source",
+      "status": "PASS",
+      "detail": {
+        "a": {
+          "eq1": true,
+          "eq2": true,
+          "eq3": true,
+          "entered": 11992,
+          "failed": 0,
+          "auditExec": 20
+        },
+        "b": {
+          "eq1": true,
+          "eq2": true,
+          "eq3": true,
+          "entered": 11993,
+          "failed": 0,
+          "auditExec": 20
+        }
+      }
+    },
+    {
+      "id": "D-03",
+      "name": "cut trace hooks present (source identity/publish, sink guard executed)",
+      "status": "PASS",
+      "detail": {
+        "enters": 6490,
+        "completed": 6490
+      }
+    },
+    {
+      "id": "D-04",
+      "name": "successful source prefix preserved: NaN-dt no-op keeps bh; next valid step acts on existing source",
+      "status": "PASS",
+      "detail": {
+        "r1": true,
+        "stepped1": false,
+        "stepped2": true
+      }
+    },
+    {
+      "id": "D-05",
+      "name": "AVL pair selection vs independent O(n^2) oracle incl -0/boundary/MAX_ID/cross-group/reuse",
+      "status": "PASS",
+      "detail": {
+        "cases": 7,
+        "fails": 0
+      }
+    },
+    {
+      "id": "D-06",
+      "name": "branch savepoint/commit/stale-rollback/read-lease-invalidate/foreign-view",
+      "status": "PASS",
+      "detail": {}
+    },
+    {
+      "id": "D-07",
+      "name": "storage scalar save/restore + depth-8 uncertified + enterRoot depth guard",
+      "status": "PASS",
+      "detail": {
+        "uncertified": 2,
+        "sv": 5
+      }
+    },
+    {
+      "id": "D-08",
+      "name": "ID index retire/reuse/no-stale-hit + duplicate-ID uncertified at pair layer",
+      "status": "PASS",
+      "detail": {
+        "certified": false
+      }
+    },
+    {
+      "id": "D-09",
+      "name": "backend identity whitelist (GPU not via D1 attach) + foreign owner rejection",
+      "status": "PASS",
+      "detail": {
+        "resBackend": "TX_ADJ_AVL",
+        "badThrew": true,
+        "foreignThrew": true
+      }
+    },
+    {
+      "id": "D-10",
+      "name": "wall inclusive/exclusive, negative-wall not monotonic-claimed, detail DISABLED",
+      "status": "PASS",
+      "detail": {
+        "incl": 0,
+        "excl": 0,
+        "t2incomplete": true
+      }
+    },
+    {
+      "id": "D-11",
+      "name": "GPU bridge tree adapter: HOST_DOUBLE backend same physical after as LEGACY (isolated tree)",
+      "status": "PASS",
+      "detail": [
+        {
+          "n": 192,
+          "x": "COMMITTED",
+          "y": "COMMITTED",
+          "afterEq": true,
+          "finds": 64,
+          "yErr": ""
+        },
+        {
+          "n": 512,
+          "x": "COMMITTED",
+          "y": "COMMITTED",
+          "afterEq": true,
+          "finds": 64,
+          "yErr": ""
+        }
+      ]
+    },
+    {
+      "id": "D-12",
+      "name": "resource ledger honesty markers (NOT_TOTALLED/PARTIAL_BOUND/UNBOUNDED_EXTERNAL) present",
+      "status": "PASS",
+      "detail": {}
+    },
+    {
+      "id": "D-13",
+      "name": "trace dictionary 20 cut ids match T205 manifest order+identity; 273 fn scopes",
+      "status": "PASS",
+      "detail": {
+        "cuts": 20,
+        "scopes": 273
+      }
+    }
+  ]
+}
