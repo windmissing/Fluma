@@ -1,0 +1,24 @@
+[09:27:15.263] T180+T187 joint start (s151 3c8abfae in place; entry/src == d9b4afb)
+[09:27:15.277] C0 DEMO static baseline
+[09:27:16.880] C0 freeze oldPid=
+[09:27:28.565] C0 newPid=36531
+[09:28:02.612] C0 end pid=36531 (was [09:27:16.880] C0 freeze oldPid= force stop process successfully. start ability successfully. [09:27:28.565] C0 newPid=36531 36531) ¡ª attribution DRIFT
+[09:28:02.616] C1 SandCanvas control (no injection)
+[09:28:02.752] C1 freeze oldPid=36531
+[09:28:22.688] C1 newPid=38777
+[09:28:55.909] C1 end pid=38777 (was [09:28:02.752] C1 freeze oldPid=36531 force stop process successfully. start ability successfully. [09:28:22.688] C1 newPid=38777 38777) ¡ª attribution DRIFT
+[09:28:55.914] C2 SandCanvas injection (shake=0 + 2x swipe)
+[09:28:56.111] C2 freeze oldPid=38777
+[09:29:15.978] C2 newPid=39412
+[09:29:30.862] C2 swipe 1 done
+[09:29:36.996] C2 swipe 2 done
+[09:30:01.287] C2 end pid=39412 (was [09:28:56.111] C2 freeze oldPid=38777 force stop process successfully. start ability successfully. [09:29:15.978] C2 newPid=39412 39412)
+[09:30:01.292] C3 DEMO injection (4x swipe, T103 sequence)
+[09:30:01.472] C3 freeze oldPid=39412
+[09:30:21.392] C3 newPid=40176
+[09:30:38.716] C3 swipe 1 done
+[09:30:42.340] C3 swipe 2 done
+[09:30:46.004] C3 swipe 3 done
+[09:30:49.611] C3 swipe 4 done
+[09:31:13.399] C3 end pid=40176 (was [09:30:01.472] C3 freeze oldPid=39412 force stop process successfully. start ability successfully. [09:30:21.392] C3 newPid=40176 40176)
+[09:31:13.549] ALL DONE
