@@ -1,0 +1,102 @@
+{
+  "revision": "T224_INDEPENDENT_V1",
+  "tested": "T211 edd980c tree (post T213)",
+  "device": "NOT_RUN",
+  "passed": 7,
+  "failed": 0,
+  "results": [
+    {
+      "id": "T224-1",
+      "name": "detail rows: kind/parent/cut/code/incl>=excl schema + context captured + ring-overflow INCOMPLETE",
+      "status": "PASS",
+      "detail": {
+        "rows": 12978,
+        "bad": -1,
+        "maxCut": 370,
+        "roots": 2,
+        "incompOk": true
+      }
+    },
+    {
+      "id": "T224-2",
+      "name": "SOURCE-side fault faces: shape/below-bed/dup-seq/all-zero with no half-write",
+      "status": "PASS",
+      "detail": {
+        "cases": [
+          {
+            "name": "shape-invalid",
+            "rejected": true,
+            "stateKept": true
+          },
+          {
+            "name": "negative-mass",
+            "rejected": true
+          },
+          {
+            "name": "dup-seq",
+            "firstOk": true,
+            "secondBehavior": "accepted-original"
+          },
+          {
+            "name": "all-zero-null",
+            "isNull": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "T224-3",
+      "name": "step fault faces: NaN-dt no-op keeps sourceEpoch; identities hold after heavy source + rollback",
+      "status": "PASS",
+      "detail": {
+        "eq1": true,
+        "eq2": true,
+        "entered": 22748,
+        "failed": 0
+      }
+    },
+    {
+      "id": "T224-4",
+      "name": "6 sources + 10 steps: no scope leak (active=0) after full run",
+      "status": "PASS",
+      "detail": {
+        "entered": 72467,
+        "active": 0,
+        "note": "queue>64 背压路径经 TxQueuedSourceCommand（T211 commands 覆盖），直接注入无独立 queue 面"
+      }
+    },
+    {
+      "id": "T224-5",
+      "name": "aggregate bounds: entered==completed, source attempts recorded, fallback counter live",
+      "status": "PASS",
+      "detail": {
+        "entered": 132923,
+        "completed": 132923,
+        "attempts": 2,
+        "copyBytes": 0,
+        "uncertFallbacks": 84
+      }
+    },
+    {
+      "id": "T224-6",
+      "name": "unknown-writer fallback counter (37) reachable in production inject/step flow",
+      "status": "PASS",
+      "detail": {
+        "before": 0,
+        "after": 6,
+        "note": "37 在 invalid-writer/uncertified 路径计数; 生产正路径可能为 0（全 certified），如实记录"
+      }
+    },
+    {
+      "id": "T224-7",
+      "name": "device fixture identity: t211-final STRICT_O2 unsigned HAP + source manifest (offline PASS is not device)",
+      "status": "PASS",
+      "detail": {
+        "hap": "734978733541c3af",
+        "source": "7d7202a9b9404280",
+        "note": "20-cut 故障矩阵真机复现用 t211-final 包（T211/T213 同源）; 离线 PASS 不等于设备 PASS"
+      }
+    }
+  ],
+  "scope": "补验与 T213 去重: detail trace schema/20-cut fault faces/aggregate bounds/uncertified fallback/device fixture"
+}
