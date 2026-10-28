@@ -1,0 +1,230 @@
+{
+  "revision": "T206_WHOLE_CHAIN_SPEC_V1",
+  "executedAt": "2026-10-28T02:33:32.221Z",
+  "spec": "T197 §12 (algorithm-T197-whole-transaction-complexity-v1.md)",
+  "commitUnderTest": "current tree (TX trace zero implementation; RED pre-test)",
+  "device": "NOT_RUN (offline per card)",
+  "modelCaveat": "T197 designer 4822-example arithmetic model is NOT a product oracle; independent spec defined here",
+  "total": 15,
+  "passed": 2,
+  "notImplemented": 13,
+  "failed": 0,
+  "missingSymbols": [
+    "P011_TX_WORK_TRACE_V1 计量 revision",
+    "scope ENTER/LEAVE/FAIL/CANCEL 计数",
+    "具名 scope 常量 (B_REQ/M_FIND_ENTER/PAIR_BUILD等)",
+    "AUDIT_LOGICAL/EXECUTE/CERT_HIT 分解",
+    "COPY_POOL_BYTES/COPY_FIELD_BYTES/UNDO_WRITES 计量",
+    "publication/encode/write/fsync bytes 计量",
+    "GPU prepare/sort/range/SHA_BLOCKS/upload/dispatch 分项计量"
+  ],
+  "cwCases": [
+    {
+      "id": "TX-01",
+      "spec": "C/N/L/B 独立变化、空槽F、B>N、full no-pair/early/late 配对；同 M 分母旧scan/T123/new树逐pair一致",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-02",
+      "spec": "邻接只证 eligible；非相邻最小 b；signed-zero/subnormal/rounded y±r/MAX_ID/跨group/质心重定位/退役slot拒旧ID",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-03",
+      "spec": "连续 birth/merge 每 audit、budget 分母/refund、first code/stage/ordinal、λ 恢复与成功 source 前缀（不只 final SHA）",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-04",
+      "spec": "read-set 逐位失效/同rev异内容/alias/pointer/budget.close/motion 缓存 miss，cert hit 与重算一致",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-05",
+      "spec": "slot-order vs tree/ID-order 求和反例；dirty numeric audit 原 fold，证书不用结合律/epsilon",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-06",
+      "spec": "SOURCE R1..8、lift collect 无 seed、apply 多 C/phase seed、V0..3/S1..2、frame 外 DIRECT；计数不二次乘",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-07",
+      "spec": "全 field 通道/water40/eta64/correction C²/dirtyS/观测/发布——pair 热点降低后未藏未计链",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-08",
+      "spec": "undo nested 同地址多写、源成功后 stepfail、plan/事件/lineage/票据溢出、savepoint 逐字节一致",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-09",
+      "spec": "工作量/内存/IO 不足 root 修改前背压；bound violation 整 root rollback；offered/accepted 分母、重试身份",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-10",
+      "spec": "owner FIFO/停止/reset/cancel/deadline/队列满/publication lease/IO 慢/迟到 GPU；不丢已接受 source；UI 显式 STALE",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-11",
+      "spec": "GPU prepare/SHA/bridge/fence/consume 与 archive 全项；O0/O2/CPU/GPU 同 fixture 同包身份",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    },
+    {
+      "id": "TX-12",
+      "spec": "N192/512 与 C/B/Q/E 独立 sweep，全 root/frame 峰值内存/work 上界，拒绝率与时延分列",
+      "status": "NOT_IMPLEMENTED",
+      "reason": "P011_TX_WORK_TRACE_V1 计量/具名 scope 未插桩——预测试 RED，结束本轮归因归工程"
+    }
+  ],
+  "results": [
+    {
+      "id": "SYM",
+      "name": "P011_TX_WORK_TRACE_V1 implementation symbols",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "missing": [
+          "P011_TX_WORK_TRACE_V1 计量 revision",
+          "scope ENTER/LEAVE/FAIL/CANCEL 计数",
+          "具名 scope 常量 (B_REQ/M_FIND_ENTER/PAIR_BUILD等)",
+          "AUDIT_LOGICAL/EXECUTE/CERT_HIT 分解",
+          "COPY_POOL_BYTES/COPY_FIELD_BYTES/UNDO_WRITES 计量",
+          "publication/encode/write/fsync bytes 计量",
+          "GPU prepare/sort/range/SHA_BLOCKS/upload/dispatch 分项计量"
+        ]
+      }
+    },
+    {
+      "id": "MODEL",
+      "name": "T197 model evidence is designer arithmetic (4822 examples), NOT product oracle",
+      "status": "PASS",
+      "detail": {
+        "keys": [
+          "revision",
+          "date",
+          "route",
+          "kind",
+          "rootCauseBaseline",
+          "inputSha256"
+        ]
+      }
+    },
+    {
+      "id": "IDT",
+      "name": "independent identity checkers (entered/M_find/audit/budget/copyBytes/frameWork) self-tested",
+      "status": "PASS",
+      "detail": null
+    },
+    {
+      "id": "TX-01",
+      "name": "C/N/L/B 独立变化、空槽F、B>N、full no-pair/early/late 配对；同 M 分母旧scan/T123/new树逐pair一致",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-02",
+      "name": "邻接只证 eligible；非相邻最小 b；signed-zero/subnormal/rounded y±r/MAX_ID/跨group/质心重定位/退役slot拒旧ID",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-03",
+      "name": "连续 birth/merge 每 audit、budget 分母/refund、first code/stage/ordinal、λ 恢复与成功 source 前缀（不只 final SHA）",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-04",
+      "name": "read-set 逐位失效/同rev异内容/alias/pointer/budget.close/motion 缓存 miss，cert hit 与重算一致",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-05",
+      "name": "slot-order vs tree/ID-order 求和反例；dirty numeric audit 原 fold，证书不用结合律/epsilon",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-06",
+      "name": "SOURCE R1..8、lift collect 无 seed、apply 多 C/phase seed、V0..3/S1..2、frame 外 DIRECT；计数不二次乘",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-07",
+      "name": "全 field 通道/water40/eta64/correction C²/dirtyS/观测/发布——pair 热点降低后未藏未计链",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-08",
+      "name": "undo nested 同地址多写、源成功后 stepfail、plan/事件/lineage/票据溢出、savepoint 逐字节一致",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-09",
+      "name": "工作量/内存/IO 不足 root 修改前背压；bound violation 整 root rollback；offered/accepted 分母、重试身份",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-10",
+      "name": "owner FIFO/停止/reset/cancel/deadline/队列满/publication lease/IO 慢/迟到 GPU；不丢已接受 source；UI 显式 STALE",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-11",
+      "name": "GPU prepare/SHA/bridge/fence/consume 与 archive 全项；O0/O2/CPU/GPU 同 fixture 同包身份",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    },
+    {
+      "id": "TX-12",
+      "name": "N192/512 与 C/B/Q/E 独立 sweep，全 root/frame 峰值内存/work 上界，拒绝率与时延分列",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "reason": "trace instrumentation absent (pre-test RED)"
+      }
+    }
+  ]
+}

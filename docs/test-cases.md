@@ -1082,3 +1082,16 @@ rev2 §9 切片 2 的 G1 前置 = rev2 manager 验收（**已满足**，22:30）
 - 参数：κ / rateWater / rateSand / 一次上限 / dragWet / settlingSpeed / sigmaWater / tint / 高光 / 分段误差 全部 PENDING_CALIBRATION——测试仅输出测量值与候选 configRev，不贴既有门槛标签。
 - 边界：dry 注入成功与旧 WET_COLUMN_V1 加水成功均不作为明水通过（CW-02 明示）；旧全局 levelWater 不是新邻接核 oracle；算法 §9 十二反例清单随实现保留核验。
 - 执行证据：`test/reports/t108/red_baseline.json`（2 PASS 符号外基线 / 19 NOT_IMPLEMENTED / 0 FAIL；缺符号清单 8 项）。
+
+
+## 19. T206 整体复杂度全链独立规格 TX-01..12 用例条目（2026-10-28 登记，RED 基线）
+
+- 来源：`algorithm-T197-whole-transaction-complexity-v1.md` §12（P011_TX_WORK_TRACE_V1 计量、具名 scope、恒等式、独立规格表）。
+- 状态：**全部 NOT_IMPLEMENTED（预测试 RED）**——实现面符号 7/7 缺（TX trace revision、scope ENTER/LEAVE/FAIL/CANCEL、具名 scope 常量、AUDIT 三分解、COPY/UNDO 计量、publication bytes、GPU 分项）。
+- 独立恒等式检验器（执行器内建、自测通过，trace 到件后逐 scope 使用）：
+  - `entered = completed + failed + cancelled + stillActive`（闭合 scope；FIRST_LONG 运行中快照另加 findStillActive/findCancelled，不硬塞 noPair/error）
+  - `M_find = found + noPair + error`；`B_ent ≤ B_req 且 B_commit ≤ B_ent`（discard 不算 commit）；`AUDIT_LOGICAL = AUDIT_EXECUTE + AUDIT_CERT_HIT`（无证 skip 不存在）
+  - `copyBytes(root) = Σ exclusive child copyBytes`；`ΣframeWork = direct + queued + step stages + observation + publication + IO`
+- TX-01..12 逐条规格（oracle/对抗反例/上界）按 §12 表登记为 caseRows；trace 到件后由执行器扩展逐条断言。
+- 边界：T197 designer 4822 例算术模型不是产品 oracle（本执行器 MODEL 核）；partial trace 缺尾标 INCOMPLETE 不称完整恒等式已验；耗时 inclusive/exclusive 并列不异时钟相减；诊断 OFF 也需低扰动计数，不能无日志填 0。
+- 执行证据：`test/reports/t206/independent.json`（2 PASS 恒等器自检 / 13 NOT_IMPLEMENTED / 0 FAIL；缺符号清单 7 项）。
