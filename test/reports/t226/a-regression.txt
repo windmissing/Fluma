@@ -1,0 +1,114 @@
+{
+  "suite": "T188_A_SOURCE_INVENTORY",
+  "device": "NOT_RUN",
+  "B": "NOT_IMPLEMENTED",
+  "C": "NOT_IMPLEMENTED",
+  "passed": 26,
+  "failed": 0,
+  "results": [
+    {
+      "name": "empty independent W, eta, P and invariants",
+      "status": "PASS"
+    },
+    {
+      "name": "water admission is local and source baseline unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "sand splits packages plus true tail, phase0 and identity chain",
+      "status": "PASS"
+    },
+    {
+      "name": "same requestSeq independent kind success sequences",
+      "status": "PASS"
+    },
+    {
+      "name": "P reserves water capacity with explicit reason",
+      "status": "PASS"
+    },
+    {
+      "name": "full/partial local water never spills",
+      "status": "PASS"
+    },
+    {
+      "name": "idempotent replay after stop and frozen payload -0 conflict",
+      "status": "PASS"
+    },
+    {
+      "name": "pending duplicate is one ordinal/one source",
+      "status": "PASS"
+    },
+    {
+      "name": "queue64 capacity no overwrite + stop barrier",
+      "status": "PASS"
+    },
+    {
+      "name": "event exhausted rejection dedup and successes unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "pool capacity partial then full no fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "ID exhaustion fails before authority writes",
+      "status": "PASS"
+    },
+    {
+      "name": "global token exhaustion fails without success",
+      "status": "PASS"
+    },
+    {
+      "name": "positive source smaller than W ULP rejected no fake success",
+      "status": "PASS"
+    },
+    {
+      "name": "work audit failure discards pool/free/ID/cache/ledger",
+      "status": "PASS"
+    },
+    {
+      "name": "step zero bit exact and B unsupported preserves accepted source",
+      "status": "PASS"
+    },
+    {
+      "name": "negative W and pool cache corruption are not clamped",
+      "status": "PASS"
+    },
+    {
+      "name": "clock strict window and units, no dt cap catch-up",
+      "status": "PASS"
+    },
+    {
+      "name": "reset new namespace rejects stale old query, independent snapshot",
+      "status": "PASS"
+    },
+    {
+      "name": "all queue/dedup offsets and payload bit identity",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid request inputs never modify authority",
+      "status": "PASS"
+    },
+    {
+      "name": "run capacity4096 retains oldest receipt until explicit reset",
+      "status": "PASS"
+    },
+    {
+      "name": "complete typed-array allocation ledger agrees with actual four banks",
+      "status": "PASS"
+    },
+    {
+      "name": "drift equality 0.001 fails, lower drift passes, strict capacity fails",
+      "status": "PASS"
+    },
+    {
+      "name": "sand tiny true tail changes pool even when derived sum rounds unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "source hot APIs use fixed buffers without constructors, Map/Set or slice",
+      "status": "PASS"
+    }
+  ]
+}

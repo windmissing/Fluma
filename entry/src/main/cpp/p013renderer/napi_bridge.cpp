@@ -23,6 +23,8 @@
 #include "material_pass.h"
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
 #include "scene_gpu.h"
+#include "clear_water_gpu.h"
+#include "clear_water_shaders.h"
 #endif
 #include <vector>
 #include "p013_shader_sources.h"
@@ -52,6 +54,7 @@ struct Session {
   BaseStripGlGpu baseStripGpu;
   BaseStripUploader baseStrip{baseStripGpu};
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
+  ClearWaterAtomic clearWater;ClearWaterGlGpu clearWaterGpu{egl};ClearWaterPacket clearWaterPackets[2];int clearWaterNext=0;
   SceneCompositor scene;ScenePacket scenePacket;
   SceneGlGpu sceneGpu{egl,materialPass,dual,{kP013MaterialVertex,kP013MaterialFragment}};
 #endif
@@ -133,7 +136,7 @@ napi_value Control(napi_env e, Status code) {
 }
 void ResetGpu() {
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
-  g.scene.ResetGpu();g.sceneGpu.Reset(false);
+  g.scene.ResetGpu();g.sceneGpu.Reset(false);g.clearWater.Reset();g.clearWaterGpu.Reset(false);
 #endif
   g.materialPass.Reset(false);
   g.material.Reset(false);
@@ -145,7 +148,7 @@ void ResetGpu() {
 }
 bool SceneResourcesLive(){
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
- return g.sceneGpu.layers.program||g.sceneGpu.targets.textures[0];
+ return g.sceneGpu.layers.program||g.sceneGpu.targets.textures[0]||g.clearWaterGpu.program||g.clearWaterGpu.targets.textures[0];
 #else
  return false;
 #endif
@@ -159,7 +162,7 @@ void Destroy(ResetReason reason) {
     if (g.egl.EnsureCurrent({g.egl.surfaceEpoch, g.egl.width, g.egl.height},
                             info) == Status::OK) {
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
-      g.scene.ResetGpu();g.sceneGpu.Reset(true);
+      g.scene.ResetGpu();g.sceneGpu.Reset(true);g.clearWater.Reset();g.clearWaterGpu.Reset(true);
 #endif
       g.materialPass.Reset(true);
       g.material.Reset(true);
@@ -745,6 +748,36 @@ napi_value SceneResult(napi_env e,const SceneReceipt& r,const ScenePacket& p){
  Put(e,o,"legacyTDataTextureLiveCount",double(bool(g.uploader.Texture())));
  Put(e,o,"particleCount",double(p.count));Put(e,o,"particleBufferBytes",double(g.dual.capacity*16));Put(e,o,"particlePresentedSource",p.particleEnabled&&p.count?"C_PARTICLE":"NONE");Put(e,o,"tracerDrawCount",0.);Put(e,o,"sceneShaderHash",g.sceneGpu.layers.sourceHash.c_str());Put(e,o,"sceneProgramLiveCount",double(bool(g.sceneGpu.layers.program)+bool(g.sceneGpu.layers.present)+bool(g.dual.bed)+bool(g.dual.particles)+bool(g.materialPass.Program())));Put(e,o,"materialShaderHash",kP013MaterialShaderHash);return o;
 }
+// C V3 uses nine independent whole-buffer views. OH NAPI reports view length in bytes.
+bool ClearWaterView(napi_env e,napi_value v,napi_typedarray_type expected,size_t length,size_t size,void*& data){
+ napi_typedarray_type type;size_t bytes=0,offset=0,bufferBytes=0;napi_value buffer=nullptr;void* base=nullptr;bool detached=false;
+ return napi_get_typedarray_info(e,v,&type,&bytes,&data,&buffer,&offset)==napi_ok&&type==expected&&bytes==length*size&&offset==0&&data&&napi_is_detached_arraybuffer(e,buffer,&detached)==napi_ok&&!detached&&napi_get_arraybuffer_info(e,buffer,&base,&bufferBytes)==napi_ok&&base&&bufferBytes==bytes&&data==base;
+}
+napi_value DrawClearWaterSceneV3(napi_env e,napi_callback_info info){
+ size_t n=6;napi_value a[6]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
+ std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.clearWaterPackets[g.clearWaterNext];const char* stage="CW_V3_PARSE";
+ double context=0,count=0,capacity=0;void* raw[9]{};size_t lengths[9]{};
+ bool valid=n==6&&ParseFrame(e,a[0],p.frame,stage)&&ExactString(e,a[0],"scenePacketRevision","CW_SCENE_PACKET_V3")&&ExactString(e,a[0],"renderContractRevision","CW_NEWPIPE_OPTICS16_V1")&&ExactString(e,a[0],"routeId","single-sand-clear-water-v1")&&ExactString(e,a[0],"mediumMode","SINGLE_SAND_CLEAR_WATER_V1")&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=512&&count<=capacity&&Number(e,a[0],"dpi",p.dpi)&&MaterialText(e,a[0],"frameToken",p.token)&&MaterialText(e,a[0],"runId",p.run)&&MaterialText(e,a[0],"configDigest",p.configDigest)&&MaterialText(e,a[0],"payloadDigest",p.payloadDigest);
+ if(valid){p.context=uint64_t(context);p.count=size_t(count);p.capacity=size_t(capacity);napi_value extra[4]{};const char* names[]={"header64","ledger64","originSourceCommit64","waitReason8"};for(int i=0;i<4;i++)valid=valid&&napi_get_named_property(e,a[0],names[i],&extra[i])==napi_ok;
+  valid=valid&&ClearWaterView(e,a[1],napi_float64_array,1024,8,raw[0])&&ClearWaterView(e,a[2],napi_float64_array,p.capacity*8,8,raw[1])&&ClearWaterView(e,a[3],napi_float32_array,p.capacity*2,4,raw[2])&&ClearWaterView(e,a[4],napi_uint32_array,p.capacity*2,4,raw[3])&&ClearWaterView(e,a[5],napi_float64_array,16,8,raw[4])&&ClearWaterView(e,extra[0],napi_float64_array,64,8,raw[5])&&ClearWaterView(e,extra[1],napi_float64_array,64,8,raw[6])&&ClearWaterView(e,extra[2],napi_float64_array,p.capacity,8,raw[7])&&ClearWaterView(e,extra[3],napi_uint8_array,p.capacity,1,raw[8]);
+  lengths[0]=8192;lengths[1]=p.capacity*64;lengths[2]=lengths[3]=p.capacity*8;lengths[4]=128;lengths[5]=lengths[6]=512;lengths[7]=p.capacity*8;lengths[8]=p.capacity;
+  if(valid)for(int i=0;i<9;i++)for(int j=0;j<i;j++){uintptr_t x=reinterpret_cast<uintptr_t>(raw[i]),y=reinterpret_cast<uintptr_t>(raw[j]);if(x<y+lengths[j]&&y<x+lengths[i])valid=false;}
+ }
+ ClearWaterReceipt r;r.stage=stage;r.code=MaterialOwner();if(r.code==Status::OK&&(!valid||p.frame.sessionId!=g.id))r.code=Status::INVALID_ARGUMENT;
+ if(r.code==Status::OK){
+  // Full synchronous ownership copy before any GL or EGL work. No JS view retained.
+  std::memcpy(p.profile.data(),raw[0],lengths[0]);std::memcpy(p.proof.data(),raw[1],lengths[1]);std::memcpy(p.xy.data(),raw[2],lengths[2]);std::memcpy(p.meta.data(),raw[3],lengths[3]);std::memcpy(p.optics.data(),raw[4],lengths[4]);std::memcpy(p.header.data(),raw[5],lengths[5]);std::memcpy(p.ledger.data(),raw[6],lengths[6]);std::memcpy(p.origin.data(),raw[7],lengths[7]);std::memcpy(p.wait.data(),raw[8],lengths[8]);
+  r.code=ValidateClearWater(p,r.stage);
+  if(r.code==Status::OK&&(p.context!=g.egl.contextEpoch||p.frame.surfaceEpoch!=g.egl.surfaceEpoch)){r.code=Status::STALE_SURFACE;r.stage="CW_CONTEXT_SURFACE";}
+  if(r.code==Status::OK){SurfaceInfo surface;r.stage="CW_ENSURE_CURRENT";r.code=g.egl.EnsureCurrent({uint64_t(p.frame.surfaceEpoch),int(p.frame.surfaceWidthPx),int(p.frame.surfaceHeightPx)},surface);
+   if(r.code==Status::OK)r=g.clearWater.Draw(p,g.clearWaterGpu);
+   auto unbound=g.egl.Unbind();if(unbound!=Status::OK){r.code=unbound;r.success=false;r.rendered.clear();r.stage="CW_UNBIND";}
+   if(r.success)g.clearWaterNext=1-g.clearWaterNext;
+   if(int(r.code)>=200&&int(r.code)<300||r.code==Status::SWAP_FAILED){Destroy(ResetReason::FAILURE);g.egl.state=State::FAILED;}
+  }
+ }
+ auto out=Object(e);Put(e,out,"code",double(r.code));Put(e,out,"presentationState",r.success?"CURRENT":"FAULT");Put(e,out,"firstFailureStage",r.stage);Put(e,out,"currentFrameSucceeded",r.success);Put(e,out,"requestedSwapSucceeded",r.success);Put(e,out,"displayPresentVerified",false);Put(e,out,"requestedFrameToken",p.token.c_str());Put(e,out,"renderedFrameToken",r.rendered.c_str());Put(e,out,"lastGoodFrameToken",g.clearWater.lastGood.c_str());Put(e,out,"frameTextureBytes",double(g.clearWaterGpu.targets.Bytes()));Put(e,out,"shaderHash",kClearWaterShaderHash);Put(e,out,"nativePacketBytes",double(sizeof(g.clearWaterPackets)));Put(e,out,"calibrationStatus","PENDING_CALIBRATION");return out;
+}
 napi_value DrawNewPipelineFrameInternal(napi_env e,napi_callback_info info,bool v2){
  size_t n=5;napi_value a[5]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
  std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.scenePacket;p.frame={};p.token.clear();p.run.clear();p.ledgerKey.clear();p.route.clear();p.medium.clear();p.contextEpoch=p.stateEpoch=p.commit=p.requestedGeneration=0;p.count=0;p.capacity=1;p.baseStripV2=v2;p.baseStrip=BaseStripDesc{};
@@ -1307,6 +1340,7 @@ static napi_value Init(napi_env e, napi_value exports) {
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
     {"registerSceneConfiguration",nullptr,RegisterSceneConfiguration,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"drawNewPipelineFrame",nullptr,DrawNewPipelineFrame,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"drawClearWaterSceneV3",0,DrawClearWaterSceneV3,0,0,0,napi_default,0},
     {"drawNewPipelineFrameV2",nullptr,DrawNewPipelineFrameV2,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"stageBaseByteStrip",nullptr,StageBaseByteStrip,nullptr,nullptr,nullptr,napi_default,nullptr},
     {"pumpBaseByteStripUploads",nullptr,PumpBaseByteStripUploads,nullptr,nullptr,nullptr,napi_default,nullptr},

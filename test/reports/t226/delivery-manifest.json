@@ -1,0 +1,174 @@
+{
+  "revision": "T226_DEVELOPER_DELIVERY_V1",
+  "device": false,
+  "build": "PackageHap BUILD SUCCESSFUL; ArkTS + arm64-v8a native",
+  "hap": {
+    "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 6210431,
+    "sha256": "4980ede4ff50d3e212393657ae58409fa0543b38eb9c9287bb3377f4b885662a"
+  },
+  "native": [
+    {
+      "entry": "libs/arm64-v8a/libp013renderer.so",
+      "bytes": 439416,
+      "sha256": "97afbbf7b7c79f6c0413c34c9436b9860c23ba99643f37326cd1ca9c243d0a13"
+    }
+  ],
+  "checks": {
+    "C": {
+      "passed": 14,
+      "failed": 0
+    },
+    "nativeOd": {
+      "passed": 29,
+      "failed": 0
+    },
+    "nativeO2": {
+      "passed": 29,
+      "failed": 0
+    },
+    "A": {
+      "passed": 26,
+      "failed": 0
+    },
+    "B": {
+      "passed": 35,
+      "failed": 0
+    }
+  },
+  "sources": [
+    {
+      "path": "entry/src/main/cpp/CMakeLists.txt",
+      "bytes": 4460,
+      "sha256": "38ff8727a7f615228764066484fe1f16780ccd3ecdbf9bcdcd42555647df322b"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/clear_water_gpu.cpp",
+      "bytes": 4621,
+      "sha256": "c1d4260c711b8f2fb25e089168c717e7ad383761f5237761e32607395ca4f04e"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/clear_water_gpu.h",
+      "bytes": 781,
+      "sha256": "7e6ffe43f77ae102d749270b4a3a28eea8b797139673b45ba0e815797c092253"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/clear_water_packet.cpp",
+      "bytes": 9300,
+      "sha256": "96326fc9af1d5f74758e9fb15bbde8d3f25fb06c97466e5047000c8c9b0149fd"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/clear_water_packet.h",
+      "bytes": 1608,
+      "sha256": "ddddc297b48c0de2301a0c4a165bd8fb086e8e8ae306a7ded65124b13141095a"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/glsl/clear_water_v3.frag",
+      "bytes": 2310,
+      "sha256": "ccf93f48a14248e93a3d9580529432063991db9ffea19d62bf2e3905a9ed8233"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/napi_bridge.cpp",
+      "bytes": 92910,
+      "sha256": "6bc33e98affaa9d519050b471c5dedba6da6683c7a16c6f66cac0c947cd10d74"
+    },
+    {
+      "path": "entry/src/main/ets/pages/ClearWaterDemo.ets",
+      "bytes": 4199,
+      "sha256": "ab2e05e4316b147ff9f8fe926764593f785e5f75e6556a5c88097302961ef1b8"
+    },
+    {
+      "path": "entry/src/main/ets/pages/Index.ets",
+      "bytes": 647,
+      "sha256": "031c6c8b4e05a11319b9bdc2c420674a88f5d5976e2fa36ccfac2c7bf5650710"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterCConfig.ets",
+      "bytes": 1148,
+      "sha256": "670f3f8d1120abf63f28e48568280a59897dd843832b889544197a4de14135ad"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterCTypes.ets",
+      "bytes": 5331,
+      "sha256": "104fa43ab8a4e3ae1f8749c73fa7a0a0125f372eed394e4603f5bf85b791db15"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterEngine.ets",
+      "bytes": 27053,
+      "sha256": "7b11b447da6c771232a7cb6251bc39c81c4fefd7ddcbc539a5c71544cc48d045"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterFrameClock.ets",
+      "bytes": 1079,
+      "sha256": "5a76c33e7dc4e221967951db614b833307970cf5ef58aca388a12cb6967d7f9c"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterGravityPort.ets",
+      "bytes": 2686,
+      "sha256": "5273f3d3482ebe4eec8de20c545a0350058b8ed5fe0e50199d04269b568466fb"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterPublication.ets",
+      "bytes": 1026,
+      "sha256": "7d4b0500a223e03adf92036a0b08031e09dcbad493750e681751d05204dfb83d"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSource.ets",
+      "bytes": 15824,
+      "sha256": "cb8de74a19f2953afd763e2ad992dbd7a46894213749d664d2f07069ef8ed2e7"
+    },
+    {
+      "path": "entry/src/main/ets/physics/clearwater/P011ClearWaterSourceController.ets",
+      "bytes": 4362,
+      "sha256": "9b23ea96cfa659832cb6aad3a2b0943136b357ebbe675beefb5ab48c3ecd30a4"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ClearWaterController.ets",
+      "bytes": 6850,
+      "sha256": "72fdc0797197ee81cacac0c3311860ccd84a962e0d88e5b49ca5b61a86033d55"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ClearWaterTypes.ets",
+      "bytes": 2395,
+      "sha256": "2934a2946fcc3ef88adef48a627b5cd9a5227d9675ac38004a0eafe43384edb9"
+    },
+    {
+      "path": "entry/src/main/resources/base/profile/main_pages.json",
+      "bytes": 213,
+      "sha256": "028f1089e85167c410f52df60e1f4291d43a8f296b1da1f151bf33d01225e914"
+    },
+    {
+      "path": "test/p013_native/build_t226_host.cmd",
+      "bytes": 708,
+      "sha256": "f073a32b99052dacefffb8abe6b1302a4a2462386a0c6b7a2caec26a2a5b7577"
+    },
+    {
+      "path": "test/p013_native/t226_clear_water_test.cpp",
+      "bytes": 6440,
+      "sha256": "55fa817f56f9c82b5431d757d927c388a5f4ee1fe00c1dd858ec49e41e73170e"
+    },
+    {
+      "path": "test/run_t226_clear_water_c_units.cjs",
+      "bytes": 10659,
+      "sha256": "9adcabd9dea2feb545e242ed7e07664f256ea05bc5e43ccee82a1b8ba608d223"
+    }
+  ],
+  "resource": {
+    "nativePacketBanksBytes": 110464,
+    "nativeCapacity": "fixed 512 both banks, including K192; object/string capacity excluded",
+    "etsSlotPayloadFormula": "8*1024 + 64*K + 8*K + K + 8*K + 8*K + 512+512+128 +1024 fold+4 projection; two slots",
+    "controllerNumericBytes": 49408,
+    "nativeProfileStagingBytes": 6144,
+    "gpuProfileTextureBytes": 8192,
+    "gpuSandTextureBytes": 2048,
+    "gpuParticleVboBytes": "16*K",
+    "additionalFullFrameBytes": "8*widthPx*heightPx dedicated C pair; legacy pair may coexist",
+    "runtimeDriverRSS": "NOT_MEASURED"
+  },
+  "limits": [
+    "GLES runtime shader compile/display/colorspace/device not verified",
+    "V1 water directly W; FlightV2/V4 deferred T227/T228",
+    "candidate calibration PENDING_CALIBRATION",
+    "FAULT policy; no STALE replay and no Canvas fallback"
+  ]
+}

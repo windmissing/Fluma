@@ -1,0 +1,186 @@
+{
+  "revision": "T209_DEVELOPER_B_SELFTEST_V1",
+  "passed": 35,
+  "failed": 0,
+  "cases": [
+    {
+      "id": "B01",
+      "name": "A remains optional and dt0 preserves authority/queue/sealed/budget",
+      "status": "PASS"
+    },
+    {
+      "id": "B02",
+      "name": "each stage failure preserves accepted source and sealed prior substep",
+      "status": "PASS"
+    },
+    {
+      "id": "B03",
+      "name": "water local five bounds, lower head direction and absolute stock closure",
+      "status": "PASS"
+    },
+    {
+      "id": "B03",
+      "name": "water dry barrier and RN no-effect do not create fake rows",
+      "status": "PASS"
+    },
+    {
+      "id": "B04",
+      "name": "air motion follows supplied RN graph and substep angle",
+      "status": "PASS"
+    },
+    {
+      "id": "B04",
+      "name": "air to wet splits time and records medium row then wet remainder",
+      "status": "PASS"
+    },
+    {
+      "id": "B05",
+      "name": "whole packet crossing debits both locals once and keeps ID",
+      "status": "PASS"
+    },
+    {
+      "id": "B05",
+      "name": "budget quantum waits in original floor without splitting or LAND",
+      "status": "PASS"
+    },
+    {
+      "id": "B05",
+      "name": "neighbor high bed creates side wait not bed wait",
+      "status": "PASS"
+    },
+    {
+      "id": "B06/B07",
+      "name": "point contact then full LAND retires once with original source transaction",
+      "status": "PASS"
+    },
+    {
+      "id": "B07",
+      "name": "partial LAND keeps slot/ID/origin and actual stock",
+      "status": "PASS"
+    },
+    {
+      "id": "B08",
+      "name": "bed top-first donor mh then bh with frozen non-worsening",
+      "status": "PASS"
+    },
+    {
+      "id": "B09",
+      "name": "ID RN fold and pool cache retained for adversarial tiny masses",
+      "status": "PASS"
+    },
+    {
+      "id": "B10",
+      "name": "70 limb independent BigInt bits, carry, subtraction and atomic negative refusal",
+      "status": "PASS"
+    },
+    {
+      "id": "B11",
+      "name": "cold origin attach handles interleaved water, future source origins and reset",
+      "status": "PASS"
+    },
+    {
+      "id": "B11",
+      "name": "event cap failure leaves original authority and no sealed partial log",
+      "status": "PASS"
+    },
+    {
+      "id": "B12",
+      "name": "explicit complete frame includes two source boundaries and at most three audits per step",
+      "status": "PASS"
+    },
+    {
+      "id": "B13/B14",
+      "name": "B snapshot/sealed copy isolated, last sealed commit can precede source, C/restore explicit",
+      "status": "PASS"
+    },
+    {
+      "id": "RESOURCE",
+      "name": "actual all-array payload matches engineering manifest at both K",
+      "status": "PASS"
+    },
+    {
+      "id": "B04",
+      "name": "wet exit at surface and zero-time downward entry are finite and bounded",
+      "status": "PASS"
+    },
+    {
+      "id": "B06",
+      "name": "post-bed bury and lowered support CONTACT are explicit; reserved event row works",
+      "status": "PASS"
+    },
+    {
+      "id": "B11",
+      "name": "malformed origin history fails cold attach without half B install",
+      "status": "PASS"
+    },
+    {
+      "id": "B11",
+      "name": "replay old-bit corruption rejects whole step, retains sealed payload and budget snapshot",
+      "status": "PASS"
+    },
+    {
+      "id": "B13",
+      "name": "copy out alias with any state or arena storage is rejected",
+      "status": "PASS"
+    },
+    {
+      "id": "B12",
+      "name": "detached or replaced hot storage fails before any canonical writes",
+      "status": "PASS"
+    },
+    {
+      "id": "B12",
+      "name": "whole hot step/source uses no new typed buffers, maps, sets or slices",
+      "status": "PASS"
+    },
+    {
+      "id": "B12",
+      "name": "injected monotonic clock and throw/backwards have explicit timing validity",
+      "status": "PASS"
+    },
+    {
+      "id": "B10",
+      "name": "random binary64 encoding and exact capacity above RN C never replace canonical fold",
+      "status": "PASS"
+    },
+    {
+      "id": "B08",
+      "name": "budget ticket preserves reserve/refund RN order and single total/two full local refunds",
+      "status": "PASS"
+    },
+    {
+      "id": "B11",
+      "name": "arena and lineage reservation faults cannot publish partial rows or stocks",
+      "status": "PASS"
+    },
+    {
+      "id": "B12",
+      "name": "water overflow is rejected before min can hide it; banks have no shared backing",
+      "status": "PASS"
+    },
+    {
+      "id": "B01",
+      "name": "A-only source receipts and serialized snapshots exactly match original 0cc0439",
+      "status": "PASS"
+    },
+    {
+      "id": "B12",
+      "name": "192/512 full pools: Q1/BK/F2/e8/V1 exact visit and audit counts",
+      "status": "PASS"
+    },
+    {
+      "id": "B02/B03/B07",
+      "name": "100 offline falling/wet/bed steps retain accepted source and closed inventories",
+      "status": "PASS"
+    },
+    {
+      "id": "B04/B05",
+      "name": "target-bed equality wins over column crossing without an epsilon",
+      "status": "PASS"
+    }
+  ],
+  "device": "NOT_RUN",
+  "C": "NOT_IMPLEMENTED",
+  "restore": "NOT_IMPLEMENTED",
+  "independentTester": "SEPARATE_TASK"
+}

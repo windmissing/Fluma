@@ -47,7 +47,12 @@ string(REPLACE "\r\n" "\n" P013_MATERIAL_FRAG "${P013_MATERIAL_FRAG}")
 string(SHA256 P013_MATERIAL_HASH "${P013_MATERIAL_VERT}${P013_MATERIAL_FRAG}")
 file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/p013_shader_sources.h"
  "static constexpr const char* kP013MaterialVertex=R\"P013(${P013_MATERIAL_VERT})P013\";\nstatic constexpr const char* kP013MaterialFragment=R\"P013(${P013_MATERIAL_FRAG})P013\";\nstatic constexpr const char* kP013MaterialShaderHash=\"${P013_MATERIAL_HASH}\";\n")
-add_library(p013renderer SHARED p013renderer/scene_compositor.cpp p013renderer/scene_gpu.cpp p013renderer/fullframe_targets.cpp p013renderer/scene_layers.cpp p013renderer/material_pass.cpp p013renderer/material_uploader.cpp p013renderer/base_strip_uploader.cpp p013renderer/dualfield_pass.cpp p013renderer/composition_probe.cpp p013renderer/napi_bridge.cpp p013renderer/egl_context.cpp
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/p013renderer/glsl/clear_water_v3.frag")
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/p013renderer/glsl/clear_water_v3.frag" CW_FRAG)
+string(SHA256 CW_HASH "${CW_FRAG}")
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/clear_water_shaders.h" "#pragma once\nstatic constexpr const char* kClearWaterFragment=R\"CW(${CW_FRAG})CW\";\nstatic constexpr const char* kClearWaterShaderHash=\"${CW_HASH}\";\n")
+set_source_files_properties(p013renderer/clear_water_packet.cpp PROPERTIES COMPILE_OPTIONS "-fno-fast-math;-ffp-contract=off")
+add_library(p013renderer SHARED p013renderer/clear_water_packet.cpp p013renderer/clear_water_gpu.cpp p013renderer/scene_compositor.cpp p013renderer/scene_gpu.cpp p013renderer/fullframe_targets.cpp p013renderer/scene_layers.cpp p013renderer/material_pass.cpp p013renderer/material_uploader.cpp p013renderer/base_strip_uploader.cpp p013renderer/dualfield_pass.cpp p013renderer/composition_probe.cpp p013renderer/napi_bridge.cpp p013renderer/egl_context.cpp
  p013renderer/shader_pass.cpp p013renderer/tdata_uploader.cpp)
 target_include_directories(p013renderer PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_link_libraries(p013renderer PUBLIC libace_napi.z.so libace_ndk.z.so libEGL.so libGLESv3.so libhilog_ndk.z.so)

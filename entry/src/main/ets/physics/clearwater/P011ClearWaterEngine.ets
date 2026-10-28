@@ -1,3 +1,4 @@
+import { ClearWaterCaptureBoundary, ClearWaterSceneSlot, ClearWaterReceiptRead, ClearWaterReceiptQuery as CQ } from './P011ClearWaterCTypes';
 import { ClearWaterRunConfig, ClearWaterInitialState, ClearWaterStatus as S, ClearWaterSourceRequest, ClearWaterSourceReceipt,
   ClearWaterStepResult, ClearWaterAllocation, CW_MEDIUM, CW_ROUTE, cwConfigValid, cwSafePositive } from './P011ClearWaterTypes';
 import { ClearWaterState } from './P011ClearWaterState';
@@ -35,6 +36,7 @@ export class P011ClearWaterEngine {
   private readonly lastReceipt: ClearWaterSourceReceipt=new ClearWaterSourceReceipt();
   private run: string='';private generation: number=0;private inputGeneration: number=1;private geometry: number=1;
   private readonly owner: number;private busy: boolean=false;private failedAttempt: number=0;
+  private cFailedAttempt:number=0;private cHasTerminal:boolean=false;private cFailureStage:number=0;private cFailureReason:number=0;
   private clockId: number=0;private clockRaw: number=0;private clockUnit: string='';
   get runId(): string {return this.run;}get runGeneration(): number {return this.generation;}
   get currentInputGeneration(): number {return this.inputGeneration;}get geometryEpoch(): number {return this.geometry;}
@@ -57,6 +59,7 @@ export class P011ClearWaterEngine {
       if(this.work.audit(this.marks,this.config.capacity)!==S.OK)return S.AUDIT_FAILED;
       this.canonical.copyFrom(this.work);this.sourceBefore.copyFrom(this.work);this.stepBefore.copyFrom(this.work);
       this.sources.reset();if(this.b!==null)this.b.reset();this.frameOpen=false;this.generation++;this.inputGeneration=this.geometry=1;this.clockId=0;this.clockRaw=0;this.clockUnit='';this.failedAttempt=0;
+      this.cFailedAttempt=0;this.cHasTerminal=false;this.cFailureStage=this.cFailureReason=0;
       this.run='cw-run-'+Date.now()+'-'+this.owner+'-'+this.generation;return S.OK;
     }finally{this.busy=false;}
   }
@@ -88,10 +91,10 @@ export class P011ClearWaterEngine {
     this.busy=true;const started=this.b===null?NaN:this.b.readClock();try{
       const count=this.sources.pendingCount;if(this.b!==null){this.b.counters[1]++;if(!this.frameOpen)this.b.fullScope=false;}
       for(let i=0;i<count;i++){
-        const bornBefore=this.canonical.pool.liveCount;
+        const bornBefore=this.canonical.pool.liveCount,terminalBefore=this.sources.dedupCount;
         const status=this.sources.commitNext(this.run,this.inputGeneration,this.geometry,this.canonical,this.sourceBefore,this.work,this.marks,this.lastReceipt);
         if(this.b!==null){this.b.counters[2]++;this.b.counters[status===S.OK||status===S.PARTIAL_CAPACITY?3:4]++;this.b.counters[5]+=this.canonical.pool.liveCount-bornBefore;}
-        out.processed++;if(status===S.OK||status===S.PARTIAL_CAPACITY)out.accepted++;else{out.rejected++;out.status=status;}
+        this.cHasTerminal=this.sources.dedupCount>terminalBefore;out.processed++;if(status===S.OK||status===S.PARTIAL_CAPACITY)out.accepted++;else{out.rejected++;out.status=status;}
       }
       out.lastSourceCommit=this.canonical.sourceCommit;out.lastPhysicsCommit=this.canonical.physicsCommit;return out.status;
     }finally{if(this.b!==null)this.b.scopeTime(1,started,this.b.readClock());this.busy=false;}
@@ -116,12 +119,48 @@ export class P011ClearWaterEngine {
       out.failedAttempt=++this.failedAttempt;out.implementation='CW_B_STEP_V1';this.busy=true;
       try{return this.b.runInto(this.canonical,this.stepBefore,this.work,this.config,dt,acceptedAngle,this.failedAttempt,this.generation,this.inputGeneration,this.geometry,this.clockId,this.owner,this.marks,out);}
       catch(error){out.status=S.AUDIT_FAILED;out.stepReason=BReason.COMMIT_STORAGE_INVALID;out.stage=this.b.stage;out.ordinal=this.b.candidate.count+1;return out.status;}
-      finally{this.busy=false;}
+      finally{if(out.status!==S.OK){this.cFailedAttempt=this.failedAttempt;this.cFailureStage=out.stage;this.cFailureReason=out.stepReason;}this.busy=false;}
     }
     this.stepBefore.copyFrom(this.canonical);out.failedAttempt=++this.failedAttempt;
     // No partially implemented hydraulic/particle writer can run in phase A.
     // The source commit is outside this step rollback boundary and survives.
     return out.status=S.UNSUPPORTED_FEATURE;
+  }
+  get ownerId():number {return this.owner;}
+  copySourceReceiptInto(request:ClearWaterSourceRequest,out:ClearWaterReceiptRead):CQ {
+    if(this.busy)return out.query=CQ.BUSY;
+    this.busy=true;try{return this.sources.copySourceReceiptInto(request,this.run,this.generation,out);}finally{this.busy=false;}
+  }
+  copyCurrentSceneInto(boundary:ClearWaterCaptureBoundary,out:ClearWaterSceneSlot):S {
+    if(this.busy)return S.REENTRANT;
+    if(this.b===null)return S.UNSUPPORTED_FEATURE;
+    if(boundary.runId!==this.run||boundary.runGeneration!==this.generation)return S.STALE_RUN;
+    if(boundary.configRev!==this.config.configRev)return S.INVALID_IDENTITY;
+    if(boundary.inputGeneration!==this.inputGeneration)return S.STALE_INPUT_GENERATION;
+    if(boundary.geometryEpoch!==this.geometry)return S.STALE_GEOMETRY;
+    if(!cwSafePositive(boundary.publicationSerial)||out.capacity!==this.config.particleCapacity||!out.valid(this.bOwnedBuffers)||!this.b.storageValid()||!this.canonical.bStorageValid())return S.PUBLICATION_INVALID;
+    this.busy=true;try{
+      const c=this.canonical,p=c.pool,h=out.header64,l=out.ledger64,o=out.optics64,b=c.bHeader!;
+      out.profile64.fill(0);out.particleProof64.fill(0);out.originSourceCommit64.fill(0);out.waitReason8.fill(0);out.xy32.fill(0);out.meta32.fill(0);h.fill(0);l.fill(0);o.fill(0);
+      let tw=0,ts=0,tp=0,tr=0;
+      for(let i=0;i<128;i++){const j=i*8,a=out.profile64;a[j]=c.S[i];a[j+1]=c.W[i];a[j+2]=c.eta[i];a[j+3]=c.P[i];a[j+4]=c.bh[i];a[j+5]=c.mh[i];a[j+6]=c.R[i];a[j+7]=c.W[i]>0?1:0;tw+=c.W[i];ts+=c.S[i];tp+=c.P[i];tr+=c.R[i];}
+      let slot=p.head,count=0,lastId=0;
+      while(slot!==-1&&count<p.nmax){
+        const id=p.pId[slot];if(id<=lastId||p.pPhase[slot]!==0||(p.pState[slot]!==1&&p.pState[slot]!==2))return S.PUBLICATION_INVALID;
+        const j=count*8,a=out.particleProof64,tag=p.pState[slot]*256;a[j]=id;a[j+1]=p.pMass[slot];a[j+2]=p.pX[slot];a[j+3]=p.pY[slot];a[j+4]=p.pVx[slot];a[j+5]=p.pVy[slot];a[j+6]=p.pSourceId[slot];a[j+7]=tag;
+        out.originSourceCommit64[count]=c.originSourceCommit![slot];out.waitReason8[count]=c.waitReason![slot];out.xy32[count*2]=out.projectX(p.pX[slot]);out.xy32[count*2+1]=out.projectY(p.pY[slot]);out.meta32[count*2]=tag;out.meta32[count*2+1]=id;
+        lastId=id;slot=p.next[slot];count++;
+      }
+      if(slot!==-1||count!==p.liveCount)return S.PUBLICATION_INVALID;
+      h[0]=this.owner;h[1]=this.generation;h[2]=boundary.publicationSerial;h[3]=this.generation;h[4]=this.config.configRev;h[5]=c.physicsCommit;h[6]=c.sourceCommit;h[7]=b[0]===0?0:c.physicsCommit===b[3]?2:1;h[8]=this.inputGeneration;h[9]=this.geometry;
+      h[10]=b[0];h[11]=b[3];h[12]=b[4];h[13]=b[5];h[14]=b[0]>0?1:0;h[15]=b[1];h[16]=h[14];h[17]=b[0];h[18]=count;h[19]=p.nmax;h[20]=128;h[21]=256;h[22]=1;h[23]=c.waterSuccessCount;h[24]=c.sandSuccessCount;h[25]=c.I_water;h[26]=c.I_sand;h[27]=c.initialWater;h[28]=c.initialSand;h[29]=this.cFailedAttempt;h[30]=this.cFailureStage;h[31]=this.cFailureReason;h[32]=h[33]=h[34]=1;h[35]=this.config.configRev;h[36]=this.config.opticsRev;h[37]=S.OK;h[38]=this.b.config.configRev;h[39]=1;
+      l[0]=this.generation;l[1]=this.config.configRev;l[2]=c.sourceCommit;l[3]=c.physicsCommit;l[4]=1;l[5]=c.waterSuccessCount;l[6]=c.sandSuccessCount;l[7]=c.I_water;l[8]=c.I_sand;l[9]=c.initialWater;l[10]=c.initialSand;l[11]=tw;l[12]=ts;l[13]=tp;l[14]=tr;l[15]=this.cHasTerminal?1:0;
+      if(this.cHasTerminal){const r=this.lastReceipt;l[16]=r.sourceCommit;l[17]=r.physicsCommitId;l[18]=r.transactionId===null?0:r.transactionId;l[19]=r.kindSuccessSeq===null?0:r.kindSuccessSeq;l[20]=r.status;}
+      l[21]=b[4];l[22]=b[3];l[23]=b[5];l[24]=b[0];l[25]=h[14];l[26]=b[1];
+      o[0]=this.config.sigmaWater;o[1]=this.config.tintLinear[0];o[2]=this.config.tintLinear[1];o[3]=this.config.tintLinear[2];o[4]=this.config.surfaceGain;o[5]=this.config.opticsRev;o[6]=1;
+      // T222 candidate defaults, PENDING_CALIBRATION. Not a measured material.
+      o[8]=1.5;o[9]=o[10]=o[11]=1;o[12]=0.02;o[13]=32;o[14]=-0.4/Math.hypot(-0.4,1);o[15]=1/Math.hypot(-0.4,1);return S.OK;
+    }finally{this.busy=false;}
   }
   audit(): S {return this.canonical.audit(this.marks,this.config.capacity);}
   snapshot():ClearWaterSnapshot {

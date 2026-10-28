@@ -1,3 +1,4 @@
+import { ClearWaterReceiptRead, ClearWaterReceiptQuery as CQ } from './P011ClearWaterCTypes';
 import { ClearWaterStatus as S, ClearWaterRunConfig, ClearWaterSourceRequest, ClearWaterSourceReceipt, ClearWaterAllocation,
   CW_SOURCE, CW_ROW_REVISION, CW_QUEUE_OFFSETS, CW_DEDUP_OFFSETS, CW_EVENT_OFFSETS, cwSafePositive, cwSameFiniteBits } from './P011ClearWaterTypes';
 import { ClearWaterState } from './P011ClearWaterState';
@@ -48,6 +49,18 @@ export class ClearWaterSource {
     out.globalSandBefore=row[b+30];out.globalSandAfter=row[b+31];out.columnWaterBefore=row[b+32];out.columnWaterAfter=row[b+33];
     out.columnSandBefore=row[b+34];out.columnSandAfter=row[b+35];out.controlAdmitted=row[b+36];out.actualWaterDelta=row[b+37];out.actualSandDelta=row[b+38];
     out.waterSuccessCount=row[b+39];out.sandSuccessCount=row[b+40];out.I_water=row[b+41];out.I_sand=row[b+42];out.sourceLedgerRev=row[b+43];out.errorStage=row[b+44];
+  }
+  // No enqueue, queue scan, counter increment, terminal insertion or receipt rewrite.
+  copySourceReceiptInto(r:ClearWaterSourceRequest,run:string,generation:number,out:ClearWaterReceiptRead):CQ {
+    out.query=CQ.NOT_COMMITTED;
+    if(r.runId!==run||r.runGeneration!==generation)return out.query=CQ.STALE_RUN;
+    if(r.revision!==CW_SOURCE||(r.timestampUnit!=='NS'&&r.timestampUnit!=='MS'))return out.query=CQ.INVALID_REQUEST;
+    this.encode(r);
+    for(let i=0;i<this.dedupCount;i++)if(this.key(this.dedup,i*56,56)){
+      if(!this.payload(this.dedupBits,i*56))return out.query=CQ.IDENTITY_CONFLICT;
+      this.materialize(this.dedup,i*56,run,true,out.receipt);return out.query=CQ.TERMINAL;
+    }
+    return out.query;
   }
   private reject(status: S, run: string, state: ClearWaterState, out: ClearWaterSourceReceipt): S {
     this.prepareReceipt(state);this.receiptRow[20]=status;this.receiptRow[21]=3;this.receiptRow[44]=status;

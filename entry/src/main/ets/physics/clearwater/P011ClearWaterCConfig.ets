@@ -1,0 +1,5 @@
+import { ClearWaterRunConfig } from './P011ClearWaterTypes';
+import { ClearWaterBConfig } from './P011ClearWaterBTypes';
+// Explicit isolated demo candidates. No existing route defaults are changed.
+export function clearWaterCConfig(k:number=192):ClearWaterRunConfig {return {revision:'CLEAR_WATER_RUN_CONFIG_V1',configRev:1,seed:1,cols:128,capacity:256,particleCapacity:k,massPackage:0.125,kappaW:1,dragWet:1,settlingSpeed:1,rateSand:1,rateWater:1,maxSourceVolume:256,dtWindowPolicy:'CW_ACTIVE_TICK_DT_V1',opticsRev:1,sigmaWater:0.025,tintLinear:[0.14,0.35,0.42],surfaceGain:0.35,queueCapacity:64,dedupCapacity:4096,eventCapacity:4096,calibrationStatus:'PENDING_CALIBRATION'};}
+export function clearWaterCBConfig(k:number=192):ClearWaterBConfig {return {revision:'CW_B_CONFIG_V1',configRev:1,stepRevision:'CW_B_STEP_V1',eventRevision:'CW_B_EVENT40_V1',lineageRevision:'CW_B_LINEAGE3_V1',priorityRevision:'CW_B_SERIAL_PRIORITY_V1',contactRevision:'CW_POINT_CONTACT_V1',accRevision:'CW_MASS_ACCUM70_V1',gModel:9.8,dragAir:0.01,maxAvalancheFlux:24,e:8,eventCapacity:8*k+254,lineageCapacity:2*(8*k+254),calibrationStatus:'PENDING_CALIBRATION'};}
