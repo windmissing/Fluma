@@ -1,0 +1,177 @@
+{
+  "revision": "T223_INDEPENDENT_V1",
+  "tested": "current tree (T188 A + T209/T215 B) vs T221 §10 SW01-14",
+  "device": "NOT_RUN",
+  "passed": 5,
+  "notImplemented": 10,
+  "failed": 0,
+  "results": [
+    {
+      "id": "SW-01",
+      "name": "stock/source: direct q -> W+=q once; FLIGHT branch (y>eta water packet birth) presence check",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "wTotal": 2,
+        "flightImplemented": false,
+        "note": "现实现空中注水直接 W+=2（无 FLIGHT/水包出生/deliveryMode）；SW01 FLIGHT 判定需 T221 新 source"
+      }
+    },
+    {
+      "id": "SW-02",
+      "name": "flight string-segment collision oracle + arrival W+=/J-= identity",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "note": "无 waterId/水包池/弦段碰撞/ARRIVE 收尾；arrivalSerial 无符号（8/8 缺）"
+      }
+    },
+    {
+      "id": "SW-03",
+      "name": "capacity/sidewall: column-local partial admission verified (A-segment baseline); packet sidewall bounce NOT_IMPLEMENTED",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "w1": 255,
+        "w2": 256,
+        "partialOk": true,
+        "note": "A 段局部准入 PASS 作对照；T221 整包跨列/墙反弹零实现"
+      }
+    },
+    {
+      "id": "SW-04",
+      "name": "water/sand independence: empty water, sand-only no W, mixed eta=S+W",
+      "status": "PASS",
+      "detail": {
+        "emptyWater": true,
+        "sandOnlyWater": true,
+        "sandDeposited": true,
+        "wCol": 0.5,
+        "etaOk": true
+      }
+    },
+    {
+      "id": "SW-05",
+      "name": "two-sided flow: center water spreads both directions (cumulative left/right >0)",
+      "status": "PASS",
+      "detail": {
+        "W63": 1.4572284962140085,
+        "W65": 1.457639401703595
+      }
+    },
+    {
+      "id": "SW-06",
+      "name": "stop-source: Wtotal conserved after source stops (redistribution continues)",
+      "status": "PASS",
+      "detail": {
+        "wA": 4,
+        "wB": 3.9999999999999996,
+        "kept": true,
+        "note": "凹槽/高脊水包场景零实现 RED"
+      }
+    },
+    {
+      "id": "SW-07",
+      "name": "idempotency: replay no double-count, payload conflict; new-DOWN source switch NOT_IMPLEMENTED (UI/emission layer)",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "replayNoChange": true,
+        "conflict": true,
+        "note": "物理层幂等 PASS 作对照；DOWN/切源/emissionPolicy 零实现"
+      }
+    },
+    {
+      "id": "SW-08",
+      "name": "lifecycle: reset new-run identity; no restore entry (matches T221 no-fake-restore)",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "hasReset": false,
+        "hasRestore": false,
+        "runId1": "cw-run-1"
+      }
+    },
+    {
+      "id": "SW-09",
+      "name": "atomicity: rejected step keeps source commit",
+      "status": "PASS",
+      "detail": {
+        "commit1": 1,
+        "commit2": 1,
+        "stepStatus": 3
+      }
+    },
+    {
+      "id": "SW-10",
+      "name": "arrival ordering (column,y,id) single sort/attempt; ew/tape exhaustion",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "note": "无水包池/ARRIVE 收尾排序/event48 双 arena；B 段沙事件有界（T215 已核）仅覆盖沙侧"
+      }
+    },
+    {
+      "id": "SW-11",
+      "name": "optics CPU oracle (coverage/Fresnel/premult) + optics16/V4 profile",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "symbols": {
+          "optics16": false,
+          "profileRev": false,
+          "waterProof": false,
+          "FlightVisualConfig": false,
+          "surfacePremult": false
+        },
+        "note": "全部零实现"
+      }
+    },
+    {
+      "id": "SW-12",
+      "name": "frame tokens (desired/captured/rendered), source-only+B-fail, GL/swap faults",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "note": "C 段/页面入口/FrameToken 零实现（T215 B-14 已核）"
+      }
+    },
+    {
+      "id": "SW-13",
+      "name": "gravity acceptance token (±89→saturated±30), rate filter, shake diagnostic-only",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "note": "GravityAcceptanceToken/saturated 角零实现；合成角仅离线测试模式属 T221 新增"
+      }
+    },
+    {
+      "id": "SW-14",
+      "name": "V1 isolation: V1 reader explicitly rejects V2 rows",
+      "status": "NOT_IMPLEMENTED",
+      "detail": {
+        "hasV2Rev": false,
+        "note": "V2 revision/前缀未实现，无可拒对象 → 预测试 RED"
+      }
+    },
+    {
+      "id": "SW-00",
+      "name": "implementation symbol coverage: 17/18 T221 symbols absent",
+      "status": "PASS",
+      "detail": {
+        "missing": [
+          "FLIGHT",
+          "deliveryMode",
+          "suffix16",
+          "event48",
+          "waterId",
+          "ARRIVE",
+          "arrivalSerial",
+          "emissionPolicy",
+          "flightPolicy",
+          "waterProof",
+          "optics16",
+          "profileRev",
+          "FlightVisualConfig",
+          "GravityAcceptanceToken",
+          "SAND_WATER_SOURCE_V2",
+          "vEmit",
+          "dragFlight"
+        ]
+      }
+    }
+  ],
+  "calibrationNote": "全部 T221 新参数 (vEmit/dragFlight/gFall/mRef/widthPx/gain/sigma/tint) PENDING_CALIBRATION；本执行器只输出测量值不贴门槛",
+  "effectHandoff": "E-SW1..4 效果需求交接 effector（四段连续同 run 录像/逐 FrameToken 回执）；设备另卡"
+}

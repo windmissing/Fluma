@@ -1095,3 +1095,13 @@ rev2 §9 切片 2 的 G1 前置 = rev2 manager 验收（**已满足**，22:30）
 - TX-01..12 逐条规格（oracle/对抗反例/上界）按 §12 表登记为 caseRows；trace 到件后由执行器扩展逐条断言。
 - 边界：T197 designer 4822 例算术模型不是产品 oracle（本执行器 MODEL 核）；partial trace 缺尾标 INCOMPLETE 不称完整恒等式已验；耗时 inclusive/exclusive 并列不异时钟相减；诊断 OFF 也需低扰动计数，不能无日志填 0。
 - 执行证据：`test/reports/t206/independent.json`（2 PASS 恒等器自检 / 13 NOT_IMPLEMENTED / 0 FAIL；缺符号清单 7 项）。
+
+
+## 20. T223 沙水DEMO SW-01..14 用例条目（2026-10-28 登记，RED 基线）
+
+- 来源：`algorithm-T221-sand-water-demo-v1.md` §10 SW01–14（逐条独立客观构造）+ T219 既定合同；与 T222 对齐不互设循环。
+- 状态：**10 NOT_IMPLEMENTED / 4 PASS / 0 FAIL**（预测试 RED）——T221 专用实现面符号 17/18 缺（FLIGHT/deliveryMode/suffix16/event48/waterId/ARRIVE/arrivalSerial/emissionPolicy/flightPolicy/waterProof/optics16/profileRev/FlightVisualConfig/GravityAcceptanceToken/SAND_WATER_SOURCE_V2/vEmit/dragFlight/gFall）。
+- 可先行 PASS（现 A/B 段对照基线，非明水 DEMO 通过）：SW-04 水沙独立（空水/仅沙不增 W/混合 eta=S+W）；SW-05 平床中央水双侧外流均>0；SW-08 生命周期（reset 入口+无 restore 假成功）；SW-09 原子性（拒绝 step 保留 sourceCommit）。
+- 逐条规格（oracle/判定）按 §10 表登记；T221 实现到件后由执行器 `test/p223_sand_water_sw_independent.cjs` 扩展断言。
+- 边界：T221 designer 4822 例设计模型不是产品 oracle（自持 Float64/精确算术）；全部新参数（vEmit/dragFlight/gFall/mRef/widthPx/gain/sigma/tint）PENDING_CALIBRATION；不自造 fps 阈值；E-SW1..4 效果需求交接 effector，设备另卡。
+- 执行证据：`test/reports/t223/independent.json`（基线复跑 T188 26/26、T209 35/35、T215 12/12、T189 15/15 全绿）。
