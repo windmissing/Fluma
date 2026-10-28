@@ -1,12 +1,12 @@
 {
-  "schema": "GRS_Q20_WATER_M1_ENGINEERING_MANIFEST_V1",
+  "schema": "GRS_Q20_WATER_M1_ENGINEERING_MANIFEST_V2",
   "date": "2026-10-28",
   "task": "T238",
   "baseManifest": "docs/analysis-T233-gpu-resident-M0-engineering-manifest-v1.json",
   "design": "docs/algorithm-T237-gpu-water-M1-v1.md",
   "designEvidence": "docs/design-T237-gpu-water-M1-evidence-v1.json",
   "inputSha256": {
-    "baseManifest": "f0ac6785503ddd029de1f1b52c4482ad10265e7c4a627aaccd35dabf2b4ad0af",
+    "baseManifest": "7b400e24b222ba902a36745b1f7e6a03b51c9af4327f0f3e9d1dd81015e359df",
     "design": "aa4d5e2ab192dde99ab65a416b9cc77220326efe7c9dd35d74ad70d12883b604",
     "designEvidence": "6630698e2b258be0cddcc1058453785c15be8004dace3769f49ca0e32fccb527"
   },
@@ -1070,7 +1070,8 @@
     "waterBirth": "one water slot per accepted water source above eta; J+=q, W unchanged",
     "directW": "S<=y<=eta; W+=q, no water slot",
     "waterIdMax": "0xffffffff assignable once; exhausted bit prevents wrap",
-    "slotGenerationOverflow": "whole root failure"
+    "slotGenerationOverflow": "whole root failure",
+    "productWire": "use wire revisionWord2 and T233 T241 numeric domains; T236 mock CompletionPolicy is not authority"
   },
   "eventFlagBits": {
     "oldState": [
@@ -1148,15 +1149,17 @@
         29,
         30,
         31,
+        32,
+        33,
         48,
         49,
         50,
         51,
         52
       ],
-      "usedMaskHex": "0x001f0000ffffffff",
+      "usedMaskHex": "0x001f0003ffffffff",
       "zeroElsewhere": true,
-      "meaning": "new slot mass/position/source; no motion time"
+      "meaning": "new slot mass/position/source; stock A is column PH for sand or J for water, old/new; no motion time"
     },
     {
       "id": 2,
@@ -1183,15 +1186,13 @@
         21,
         32,
         33,
-        34,
-        35,
         48,
         49,
         50,
         51,
         52
       ],
-      "usedMaskHex": "0x001f000f0030ffff",
+      "usedMaskHex": "0x001f00030030ffff",
       "zeroElsewhere": true,
       "meaning": "stock A=W; no packet"
     },
@@ -1885,6 +1886,15 @@
     }
   ],
   "stockMappings": {
+    "SOURCE_BIRTH_SAND": {
+      "A": "columnPH"
+    },
+    "SOURCE_BIRTH_WATER": {
+      "A": "columnJ"
+    },
+    "DIRECT_W": {
+      "A": "columnW"
+    },
     "WATER_EDGE": {
       "A": "donorW",
       "B": "receiverW"
@@ -1912,7 +1922,7 @@
   },
   "fieldEventIdentity": "slot/id/sourceId words16..19 forced zero",
   "eventAux": "nonzero only for an actual motion segment; FIELD/SOURCE/LAND/BED/WATER_EDGE/ARRIVE/FINAL_CONTACT = 0",
-  "eventUnusedWordRule": "all words not in usedWordIndices are exactly zero",
+  "eventUnusedWordRule": "all words outside each M1 kind usedWordIndices zero; flags namespace and T16 fields only under revisionWord2",
   "constants": {
     "Qm": 1048576,
     "Cq": 268435456,
@@ -1935,7 +1945,7 @@
       "frameEventCapacity": 42168,
       "event64BytesPerRow": 256,
       "singleEventBlockBytes": 10795008,
-      "baselineM0Kw64PayloadBytes": 15059984,
+      "baselineM0Kw64PayloadBytes": 15060496,
       "deltaPartsBytes": {
         "three_banks_water12_to16": 3072,
         "two_publications_water20_column16": 10240,
@@ -1950,7 +1960,7 @@
         "two_frame_event_arena_increase": 8255488
       },
       "deltaPayloadBytes": 8282752,
-      "totalDesignPayloadBytes": 23342736,
+      "totalDesignPayloadBytes": 23343248,
       "stateBankRawBytes": 25600,
       "publicationSlotRawBytes": 26624,
       "logicalWorkSegments": [
@@ -1963,77 +1973,77 @@
         {
           "name": "sandIndexA",
           "logicalOffsetWords": 6144,
-          "wordCount": 192,
+          "wordCount": 256,
           "lifetime": "sort_to_final_fold"
         },
         {
           "name": "sandIndexB",
-          "logicalOffsetWords": 6336,
-          "wordCount": 192,
+          "logicalOffsetWords": 6400,
+          "wordCount": 256,
           "lifetime": "sort_to_final_fold"
         },
         {
           "name": "freeScan",
-          "logicalOffsetWords": 6528,
+          "logicalOffsetWords": 6656,
           "wordCount": 384,
           "lifetime": "source_scan"
         },
         {
           "name": "edgeProposal",
-          "logicalOffsetWords": 6912,
+          "logicalOffsetWords": 7040,
           "wordCount": 2048,
           "lifetime": "water_edges_then_bed_edges"
         },
         {
           "name": "columnAudit",
-          "logicalOffsetWords": 8960,
+          "logicalOffsetWords": 9088,
           "wordCount": 512,
           "lifetime": "entry_work_replay_audit"
         },
         {
           "name": "waterMotion32",
-          "logicalOffsetWords": 9472,
+          "logicalOffsetWords": 9600,
           "wordCount": 2048,
           "lifetime": "water_proposal_to_resolver"
         },
         {
           "name": "waterIdIndexA",
-          "logicalOffsetWords": 11520,
+          "logicalOffsetWords": 11648,
           "wordCount": 64,
           "lifetime": "water_sort_to_resolver"
         },
         {
           "name": "waterIdIndexB",
-          "logicalOffsetWords": 11584,
+          "logicalOffsetWords": 11712,
           "wordCount": 64,
           "lifetime": "water_sort_to_resolver"
         },
         {
           "name": "arrivalIndexA",
-          "logicalOffsetWords": 11648,
+          "logicalOffsetWords": 11776,
           "wordCount": 64,
           "lifetime": "arrival_sort_to_arrival"
         },
         {
           "name": "arrivalIndexB",
-          "logicalOffsetWords": 11712,
+          "logicalOffsetWords": 11840,
           "wordCount": 64,
           "lifetime": "arrival_sort_to_arrival"
         },
         {
           "name": "frozenMedium4",
-          "logicalOffsetWords": 11776,
+          "logicalOffsetWords": 11904,
           "wordCount": 512,
           "lifetime": "after_water_edges_to_replay"
         },
         {
           "name": "extraAudit4",
-          "logicalOffsetWords": 12288,
+          "logicalOffsetWords": 12416,
           "wordCount": 512,
           "lifetime": "work_and_replay_audit"
         }
       ],
-      "logicalWorkWords": 12800,
+      "logicalWorkWords": 12928,
       "waterSortLayersEach": 21,
       "quantumDispatchDesignStages": 114,
       "sourceDispatchDesignStages": 32,
@@ -2041,7 +2051,10 @@
       "tailFencesMax": 5,
       "completionReadbackMaxBytes": 5120,
       "actualAllocationBytes": null,
-      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED"
+      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED",
+      "sortIndexBaselineRevision": "T241_M0_WIRE_AND_SORT_V2",
+      "designEvidencePayloadBytes": 23342736,
+      "designEvidenceDeltaBytes": 512
     },
     {
       "K": 512,
@@ -2156,7 +2169,10 @@
       "tailFencesMax": 5,
       "completionReadbackMaxBytes": 5120,
       "actualAllocationBytes": null,
-      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED"
+      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED",
+      "sortIndexBaselineRevision": "T241_M0_WIRE_AND_SORT_V2",
+      "designEvidencePayloadBytes": 55111056,
+      "designEvidenceDeltaBytes": 0
     },
     {
       "K": 192,
@@ -2165,7 +2181,7 @@
       "frameEventCapacity": 46264,
       "event64BytesPerRow": 256,
       "singleEventBlockBytes": 11843584,
-      "baselineM0Kw64PayloadBytes": 15059984,
+      "baselineM0Kw64PayloadBytes": 15060496,
       "deltaPartsBytes": {
         "three_banks_water12_to16": 15360,
         "two_publications_water20_column16": 20480,
@@ -2180,7 +2196,7 @@
         "two_frame_event_arena_increase": 10352640
       },
       "deltaPayloadBytes": 10411904,
-      "totalDesignPayloadBytes": 25471888,
+      "totalDesignPayloadBytes": 25472400,
       "stateBankRawBytes": 29696,
       "publicationSlotRawBytes": 31744,
       "logicalWorkSegments": [
@@ -2193,77 +2209,77 @@
         {
           "name": "sandIndexA",
           "logicalOffsetWords": 6144,
-          "wordCount": 192,
+          "wordCount": 256,
           "lifetime": "sort_to_final_fold"
         },
         {
           "name": "sandIndexB",
-          "logicalOffsetWords": 6336,
-          "wordCount": 192,
+          "logicalOffsetWords": 6400,
+          "wordCount": 256,
           "lifetime": "sort_to_final_fold"
         },
         {
           "name": "freeScan",
-          "logicalOffsetWords": 6528,
+          "logicalOffsetWords": 6656,
           "wordCount": 448,
           "lifetime": "source_scan"
         },
         {
           "name": "edgeProposal",
-          "logicalOffsetWords": 6976,
+          "logicalOffsetWords": 7104,
           "wordCount": 2048,
           "lifetime": "water_edges_then_bed_edges"
         },
         {
           "name": "columnAudit",
-          "logicalOffsetWords": 9024,
+          "logicalOffsetWords": 9152,
           "wordCount": 512,
           "lifetime": "entry_work_replay_audit"
         },
         {
           "name": "waterMotion32",
-          "logicalOffsetWords": 9536,
+          "logicalOffsetWords": 9664,
           "wordCount": 4096,
           "lifetime": "water_proposal_to_resolver"
         },
         {
           "name": "waterIdIndexA",
-          "logicalOffsetWords": 13632,
-          "wordCount": 128,
-          "lifetime": "water_sort_to_resolver"
-        },
-        {
-          "name": "waterIdIndexB",
           "logicalOffsetWords": 13760,
           "wordCount": 128,
           "lifetime": "water_sort_to_resolver"
         },
         {
-          "name": "arrivalIndexA",
+          "name": "waterIdIndexB",
           "logicalOffsetWords": 13888,
           "wordCount": 128,
-          "lifetime": "arrival_sort_to_arrival"
+          "lifetime": "water_sort_to_resolver"
         },
         {
-          "name": "arrivalIndexB",
+          "name": "arrivalIndexA",
           "logicalOffsetWords": 14016,
           "wordCount": 128,
           "lifetime": "arrival_sort_to_arrival"
         },
         {
-          "name": "frozenMedium4",
+          "name": "arrivalIndexB",
           "logicalOffsetWords": 14144,
+          "wordCount": 128,
+          "lifetime": "arrival_sort_to_arrival"
+        },
+        {
+          "name": "frozenMedium4",
+          "logicalOffsetWords": 14272,
           "wordCount": 512,
           "lifetime": "after_water_edges_to_replay"
         },
         {
           "name": "extraAudit4",
-          "logicalOffsetWords": 14656,
+          "logicalOffsetWords": 14784,
           "wordCount": 512,
           "lifetime": "work_and_replay_audit"
         }
       ],
-      "logicalWorkWords": 15168,
+      "logicalWorkWords": 15296,
       "waterSortLayersEach": 28,
       "quantumDispatchDesignStages": 128,
       "sourceDispatchDesignStages": 32,
@@ -2271,7 +2287,10 @@
       "tailFencesMax": 5,
       "completionReadbackMaxBytes": 5120,
       "actualAllocationBytes": null,
-      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED"
+      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED",
+      "sortIndexBaselineRevision": "T241_M0_WIRE_AND_SORT_V2",
+      "designEvidencePayloadBytes": 25471888,
+      "designEvidenceDeltaBytes": 512
     },
     {
       "K": 512,
@@ -2386,7 +2405,10 @@
       "tailFencesMax": 5,
       "completionReadbackMaxBytes": 5120,
       "actualAllocationBytes": null,
-      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED"
+      "status": "DESIGN_PAYLOAD_ONLY_CAPABILITY_REQUIRED",
+      "sortIndexBaselineRevision": "T241_M0_WIRE_AND_SORT_V2",
+      "designEvidencePayloadBytes": 57240208,
+      "designEvidenceDeltaBytes": 0
     }
   ],
   "requiredHostAcceptance": [
@@ -2402,5 +2424,142 @@
     "CURRENT_only_after_complete_shader_swap"
   ],
   "deviceCapabilities": "CAPABILITY_REQUIRED_T232_ADD_FRAGMENT_SSBO_KW128_ALLOC_T16",
-  "status": "ENGINEERING_SPEC_ONLY_NOT_IMPLEMENTED_NOT_DEVICE_VALIDATED"
+  "status": "ENGINEERING_SPEC_ONLY_NOT_IMPLEMENTED_NOT_DEVICE_VALIDATED",
+  "engineeringRevision": "T241_M1_BASELINE_SYNC_V2",
+  "engineeringRevisionDate": "2026-10-29",
+  "baseEngineeringRevision": "T241_M0_WIRE_AND_SORT_V2",
+  "wire": {
+    "revisionWord": 2,
+    "baseRevisionWord": 1,
+    "magicWords": {
+      "stateHeader": 1213420103,
+      "sourceCommand": 1129534023,
+      "event64": 1163088455,
+      "completion256": 1381192263,
+      "publicationHeader": 1347637831
+    },
+    "sealWord": 3235823838,
+    "rootKind": {
+      "SOURCE": 1,
+      "QUANTUM": 2
+    },
+    "outcome": {
+      "SUCCESS": 1,
+      "METADATA_REJECT": 2,
+      "DEDUP_REPLAY": 3,
+      "FATAL_ERROR": 4
+    },
+    "acceptedOutcomes": [
+      1,
+      2,
+      3
+    ],
+    "terminalStatus": {
+      "SUCCESS": 1,
+      "PARTIAL": 2,
+      "REJECTED": 3
+    },
+    "reason": {
+      "NONE": 0,
+      "UNSUPPORTED_FEATURE": 1,
+      "INPUT_RANGE_UNSUPPORTED": 2,
+      "NUMERIC_RESOLUTION_REJECTED": 3,
+      "POSITION_IN_BED": 4,
+      "POOL_FULL": 5,
+      "CAPACITY_REJECTED": 6,
+      "ID_EXHAUSTED": 7,
+      "DUPLICATE_KEY_CONFLICT": 8,
+      "STALE_IDENTITY": 9,
+      "CLOCK_WINDOW_REJECTED": 10,
+      "SOURCE_LOG_FULL": 11,
+      "EVENT_ARENA_FULL": 12,
+      "NUMERIC_OVERFLOW": 13,
+      "GUARD_VIOLATION": 14,
+      "AUDIT_FAILED": 15,
+      "REPLAY_MISMATCH": 16,
+      "TIME_NO_PROGRESS": 17,
+      "GL_FAILURE": 18,
+      "OWNER_STATE_LOST": 19,
+      "CONFIG_UNSUPPORTED": 20,
+      "SLOT_GENERATION_EXHAUSTED": 21,
+      "UNSUPPORTED_INITIAL_STATE": 22
+    },
+    "sourceKind": {
+      "SAND_H": 0,
+      "WATER": 1
+    },
+    "deliveryMode": {
+      "SAND": 0,
+      "DIRECT_W": 1,
+      "FLIGHT_J": 2
+    },
+    "eventKind": {
+      "SOURCE_BIRTH": 1,
+      "DIRECT_W": 2,
+      "SAND_MOVE": 3,
+      "WATER_MOVE": 4,
+      "CROSS": 5,
+      "MEDIUM": 6,
+      "CONTACT_WAIT": 7,
+      "LAND": 8,
+      "BED": 9,
+      "WATER_EDGE": 10,
+      "ARRIVE": 11,
+      "RELEASE": 12,
+      "FINAL_CONTACT": 13,
+      "TURN": 14
+    },
+    "eventNamespace": {
+      "SAND": 0,
+      "WATER": 1,
+      "FIELD": 2,
+      "SOURCE": 3
+    },
+    "eventFlagBits": {
+      "oldState": [
+        0,
+        3
+      ],
+      "newState": [
+        4,
+        7
+      ],
+      "oldMedium": 8,
+      "newMedium": 9,
+      "oldWait": [
+        10,
+        13
+      ],
+      "newWait": [
+        14,
+        17
+      ],
+      "namespace": [
+        18,
+        19
+      ],
+      "turnAxisMask": [
+        20,
+        21
+      ],
+      "reservedZero": [
+        22,
+        31
+      ]
+    },
+    "requiredStageMaskLo": 255,
+    "requiredAuditMaskLo": 1023,
+    "replayEqualSentinel": 4294967295,
+    "completionFenceStatusWord105": 0,
+    "completionActualBytesMappedWord113": 0,
+    "terminalFlagsWord31": {
+      "sandIdExhausted": 0,
+      "waterIdExhausted": 1
+    },
+    "sourceReplay": "completion carries original terminal including admittedUnits; receiptReplayFlag=1; stored terminal immutable replayFlag=0; no new sourceSuccess/I/commit",
+    "sourceSuccess": "outcome SUCCESS and root SOURCE and admittedUnits>0; kind selects I_sand or I_water; terminal SUCCESS/PARTIAL",
+    "metadataReject": "stock all words equal base, no source/physics commit; new-key dedup+1 or conflicting-key dedup+0",
+    "fatal": "diagnostic only, never accept bank or publish CURRENT",
+    "revisionSeparation": "M0 event kind integer values and M1 event kind integer values are distinct schemas; reader rejects wrong revision before dispatch"
+  }
 }

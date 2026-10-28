@@ -1,5 +1,7 @@
 # T238：GPU 驻留沙水 M1 工程协议 V1
 
+> **T241 继承修订，2026-10-29 定版**：T233 K192 双 pad256 排序索引从1536B补至2048B，M1 的K192两档 payload各加512B；T233 产品 wire 首次冻结，M1 以 revision word2继承数值域，并保留本稿独立 V2 event kind/水扩展。T237原模型资源表是修订前设计值，不能按旧数冷分配；T238 manifest `engineeringRevision=T241_M1_BASELINE_SYNC_V2` 为当前有效工程账。K512不变。
+
 2026-10-28，architect；原卡 `6ae1fbafe4b0c1a6bd64bfba`，目标6/P5。消费 T237 `a069962` 算法、T233 `f41de57` 逐 word 工程和 T231 平台边界。本稿与 `analysis-T238-gpu-water-M1-engineering-manifest-v1.json` 冻结新空 run 的 **`GRS_Q20_WATER_M1_V1`**；状态 `ENGINEERING_READY / CAPABILITY_REQUIRED / PRODUCT_NOT_IMPLEMENTED`。不使用真机、不改业务代码、生产默认路由或在途 T236 实施。所有背景/前景/沙/水只走新 XComponent+shader；故障为 FAULT 或显式 STALE 的完整上一有效新管线帧，禁止 Canvas 上屏/回退。
 
 ## 1. 新版本、接口和支持边界
@@ -24,6 +26,8 @@ M1 public API 只通过 resident opaque handle 扩展：`configureM1(profile,ang
 
 source event16、sand16、source command 原始 payload word 仍按 T233 指数读取；revision/feature 决定语义。source 终态和 state `waterIdExhausted` 防 MAX_ID 后回绕，MAX_ID 本身可分配；slot generation 再增会溢出则 root 失败。state enum FREE0/AIR1/CONTACT_WAIT2/SIDE_WAIT3，wait reason NONE0/BED1/SIDE_CAPACITY2/SIDE_HIGH_BED3/SIDE_BUDGET4/WALL5/SURFACE6，sand 的介质 bit AIR/WET 与沙种不同。按 slot generation+namespace+ID+sourceCommit 验事件来源；`sourceId` 只是外部源号，不能代成功 commit 身份。
 
+T241 后 M1 product wire 的 header/command/event/completion `revisionWord=2`，magic 与 seal、rootKind SOURCE1/QUANTUM2、outcome SUCCESS1/METADATA_REJECT2/DEDUP_REPLAY3/FATAL_ERROR4、terminal SUCCESS1/PARTIAL2/REJECTED3 和 reason 数值域继承 T233 修订；只有事件 kind 1–14 和 M1 扩展字段按本版另表解释。**先核 revision 再解 kind**：例如 M0 event kind2 是 MOVE，M1 kind2 是 DIRECT_W，不能按号误读。M1 dedup replay 的 completion 可带原 admittedUnits>0，但 sourceSuccess=false、I/commit/prefix 不增、存档 terminal 不改 replayFlag；water source 新成功只增 I_water/总水，sand source 增 I_sand/总沙，部分成功亦是本次成功。M1 fatal 从不接受 bank。T236 显式 TEST CompletionPolicy 不能直接充当 M0/M1 产品数值域，需按本修订生成并独立差分。
+
 `WORK` 采用显式逻辑段表、物理 offset 在能力查询后按 alignment 上取整；motion32*K、双 sand index2K、scan(K+Kw+N)、edge16N、audit4N、water motion32Kw、双 water ID index2Kw、双 arrival index2Kw、frozen medium4N、extra audit4N，各为 U32 word 数，冷 config128word、optics 双16word 各独立记录。水边 proposal 与床边 proposal 可在**水边完全应用并冻结所需 head/medium 后**复用 edge 段；frozen medium 保留至沙运动与 replay 所需位置，不能和 audit 同时 alias。两排序 index 可复用同一逻辑 allocator，但水 ID 与 arrival 索引在 replay 前若仍需复现，不能覆盖未消费数据。manifest 的资源模板按独立段求和，任何实际 alias 省字节必须另 revision 和独立证明，不从账上提前扣。
 
 ## 3. source、quantum 与事件回放的写集
@@ -37,6 +41,8 @@ head2 与 bed2 用 signed 宽整数：`2*(S+W)−(2c+1)*u` / `2*S−(2c+1)*u`，
 T16 `T=65536` time ticks/quantum、`D=120*T=7864320`。AIR/水包 `v1=RNE(D*v0/(D+kAir*r))+RNE(a*r/D)`，WET `v1=RNE((D*v0+kWet*r*vT)/(D+kWet*r))`，位置 `p1=p0+RNE((v0+v1)*r/(2D))`；每分量 signed 宽乘、除和溢出核，不靠 float/CPU exp。若预测速度换号，先按最早零点≤16轮整数二分切 TURN，再形成无反向弦。几何 `λ` 用有理交叉乘，tie 床→墙→列→水面→TURN，事件耗时 `ceil(rSeg*λNum/λDen)`，正时为1..rSeg，lambda0 仅可真实拓扑变化；重复同 plane/无进展 `TIME_NO_PROGRESS` fatal，不能塞 epsilon。CONTACT_WAIT/墙/高床/预算/容量约束以同一事件的 `tauBefore→T` 消费剩余 ticks，记 `eventAux=rSeg` 和 λ，不把 WAIT 全当自由飞行；下一 quantum 重新评估。沙事件上限48/slot/quantum，水16/slot/quantum，含末行；超过 cap 整 root 回滚，不丢行或余时。source/quantum 成功前缀不因后续 root 失败撤销。
 
 event64 一个 root 一个 global ordinal 流，flags bit18–19 的 namespace SAND0/WATER1/FIELD2/SOURCE3；kind 1–14、按 kind used-word mask/stock A/B 映射在 manifest。field 行 slot/id/source=0，不能撞真实 ID0；所有未用 word 精确0。原 `sourceCommitLo/Hi` 是成功来源，不等 `sourceId`。parallel water/bed edge 先 prefix 确定唯一 ordinal，resolver 单 writer，重放严格相同顺序、old/new stock/位置/速度/介质/τ/λ/来源/guard/容量/预算逐项核；冻结面要从重放到水边末的 state 派生，不能读后来变动的 candidate。replay 是产品自检，独立 WM oracle 另实现。失败尝试占 frame event credit 并封存首错；双 frame 保留上帧与本帧，冻结占满背压，常规不下载大 event，完整长期 trace 走显式 credit/IO 模式。
+
+T241 交叉核补正 M1 `SOURCE_BIRTH` kind1 的 stock A 前后值：SAND_H 对应当前列 PH，FLIGHT_J 对应当前列 J，均占 event64 word32–33；`DIRECT_W` kind2 的 stock A 为当前列 W。三类源事件的 q、slot/ID、origin/request 和 GPU 终态必须在同一 replay 原子 patch 中核，不能只记出生 slot 而遗漏列库存。M0/M1 event kind2 语义不同，仍先核 revision。
 
 | root / 阶段 | 仅 candidate 可写的域 | 接受或失败时的边界 |
 | --- | --- | --- |
@@ -59,7 +65,7 @@ event64 一个 root 一个 global ordinal 流，flags bit18–19 的 namespace S
 
 M1 保留 M0 的 23 个非排序 quantum stage（proposal/resolver 升版），加水边两色6、freeze medium1、水 ID init/proposal/resolver3、arrival init/resolver2、水末 fold1，共13；另 `L(K)=h(h+1)/2` 沙排序与两套 `L(Kw)` 水排序。`Dquantum=36+L(K)+2L(Kw)`，source `16+2ceil(log2 Kpad)`；K192/512×Kw64 是114/123 quantum、488/526 tick，Kw128 是128/137 quantum、**544/582 tick**。这是假设 packed WORK 下无额外拆分的**设计 stage 包络**；实际 shader/pass ledger 若超过须升版并报告真实值，不宣原上界已达成。`Eframe=4*(48K+16Kw+2(N−1))+K`，每 event64 256B，包含一帧至多G1+F4和受控失败尝试；首 fatal 停该 frame 后续 root、保留故障行，不能在同 arena 无限重试。
 
-T237 模板经 manifest 对 T233 基线逐项复算：N128/Q16/D4096；Kw64 K192/512 payload **23,342,736/55,111,056B**，单 event block **10,795,008/26,605,568B**；推荐 Kw128 K192/512 payload **25,471,888/57,240,208B**，单 event block **11,843,584/27,654,144B**。基线 Kw64 只用于差额比较，不表示 M0 reader/layout 已变。大头是双 event arena，不能为通过设备而删日志/审计/replay。实际 GL allocation、alignment padding、program/staging、双全帧目标至少 `8*w*h`、旧 LastGood/lease 并存、driver/RSS、CPU oracle/capture、T16 算术与完整画面时延未测；profile 不足 `MEMORY_PROFILE_UNSUPPORTED`，不得静默降 Kw 或合并 offered 请求。Kw64 对约100Hz/0.9秒首落样本可能提前满池；Kw128 只是候选，不保证任意频率无拒绝。
+T237 模板经 manifest 对**T241修订后的T233基线**逐项复算：N128/Q16/D4096；Kw64 K192/512 payload **23,343,248/55,111,056B**，单 event block **10,795,008/26,605,568B**；推荐 Kw128 K192/512 payload **25,472,400/57,240,208B**，单 event block **11,843,584/27,654,144B**。K192双pad索引512B差额不改变四档事件容量或设计dispatch数；K512本已pad512。基线 Kw64 只用于差额比较，不表示 M0 reader/layout 已变。大头是双 event arena，不能为通过设备而删日志/审计/replay。实际 GL allocation、alignment padding、program/staging、双全帧目标至少 `8*w*h`、旧 LastGood/lease 并存、driver/RSS、CPU oracle/capture、T16 算术与完整画面时延未测；profile 不足 `MEMORY_PROFILE_UNSUPPORTED`，不得静默降 Kw 或合并 offered 请求。Kw64 对约100Hz/0.9秒首落样本可能提前满池；Kw128 只是候选，不保证任意频率无拒绝。
 
 ## 5. 同 context 场景、设备增量与接力
 
