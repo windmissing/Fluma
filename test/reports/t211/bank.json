@@ -1,0 +1,32 @@
+{
+  "revision": "T211_BANK_IDENTITY_DEVELOPER_V1",
+  "passed": 6,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "whole bank nested child success then parent rollback restores raw NaN/-0 and registered scalars",
+      "status": "PASS"
+    },
+    {
+      "name": "read lease invalidates on rollback even when restored bytes are identical",
+      "status": "PASS"
+    },
+    {
+      "name": "9th controlled depth falls back explicitly, no new physical refusal",
+      "status": "PASS"
+    },
+    {
+      "name": "word undo records every write and child commit keeps records for parent",
+      "status": "PASS"
+    },
+    {
+      "name": "ticket ordinal/token trees retain closed history and do not coerce safe-integer tokens",
+      "status": "PASS"
+    },
+    {
+      "name": "trace scope closure and exclusive parent/child wall identities; disabled/overflow explicit",
+      "status": "PASS"
+    }
+  ],
+  "device": "NOT_RUN"
+}

@@ -1,3 +1,4 @@
+import { TxWholePairAdapter,TxHotBanks } from './tx/TxWholePairAdapter';
 // P-011 D1-R3 S0/S1: fixed-capacity HOT workspace and pure dual collect.
 // This module deliberately has no renderer or WaterSandField dependency.
 import { P011ParticleField, P011ParticleParams, P011ParticleSnapshot, particleSnapshotBufferAtHot } from './P011ParticleField';
@@ -254,6 +255,7 @@ export class P011ParticleHotEventBuffer {
 }
 
 export class P011ParticleHotWorkspace {
+  txD1:TxWholePairAdapter|null=null;
   mediumMode: string = 'WET_COLUMN_V1';
   private readonly bufferBindings: ArrayBuffer[]; private readonly bufferBytes: number[];
   readonly fieldBinding: ArrayBuffer[];
@@ -467,15 +469,15 @@ function fieldBufferAtHot(f: P011ParticleHotFieldBuffer, i: number): ArrayBuffer
     default: return f.surface.buffer;
   }
 }
-function fieldStorageValidHot(work: P011ParticleHotWorkspace, f: P011ParticleHotFieldBuffer, bound: boolean): boolean {
+function fieldStorageValidHot(work: P011ParticleHotWorkspace, f: P011ParticleHotFieldBuffer, bound: boolean): boolean {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(306);let txCode=0;try{
   if(bound && (f.mediumMode ?? 'WET_COLUMN_V1')!==work.mediumMode)return false;
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 8; i++) {txTrace?.add(39);
     const buffer = fieldBufferAtHot(f, i);
     if (buffer.byteLength !== work.cols * 8 || work.ownsBufferHot(buffer) || (bound && buffer !== work.fieldBinding[i])) return false;
     for (let j = 0; j < i; j++) if (buffer === fieldBufferAtHot(f, j)) return false;
   }
   return true;
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,306,txCode);}}
 function validParams(p: P011ParticleParams): boolean {
   return Number.isSafeInteger(p.nmax) && p.nmax > 0 && Number.isFinite(p.massPackage) && p.massPackage > 0 &&
     Number.isFinite(p.terminalSpeedHeavy) && Number.isFinite(p.terminalSpeedLight) &&
@@ -491,23 +493,23 @@ export function configureHot(config: P011ParticleHotConfig): P011ParticleHotWork
     !validCapacity(config.eventCapacity) || !validCapacity(config.lineageCapacity)) throw new Error('PARTICLE_HOT_INVALID_CONFIG');
   return new P011ParticleHotWorkspace(config, new P011ParticleField(config.cols, config.nmax));
 }
-export function warmUpHot(work: P011ParticleHotWorkspace): number {
+export function warmUpHot(work: P011ParticleHotWorkspace): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(307);let txCode=0;try{
   if (work.configured !== 1) return P011_HOT_NOT_CONFIGURED;
   work.pool.warmUpTransactions();
   work.lastStatus = P011_HOT_OK;
   return P011_HOT_OK;
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,307,txCode);}}
 
-function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {
+function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(3);let txCode=0;try{
   work.beginFailurePredicate='';work.beginFailureIndex=-1;
-  if (work.configured !== 1){work.beginFailurePredicate='NOT_CONFIGURED';return work.lastStatus = P011_HOT_NOT_CONFIGURED;}
-  if (work.active !== 0){work.beginFailurePredicate='ACTIVE';return work.lastStatus = P011_HOT_STEP_BUSY;}
-  if (work.pageBacklog !== 0){work.beginFailurePredicate='PAGE_BACKLOG';return work.lastStatus = P011_HOT_JOURNAL_OVERFLOW;}
+  if (work.configured !== 1){work.beginFailurePredicate='NOT_CONFIGURED';{const txOriginalCode:number=work.lastStatus = P011_HOT_NOT_CONFIGURED;txCode=txOriginalCode;return txOriginalCode;}}
+  if (work.active !== 0){work.beginFailurePredicate='ACTIVE';{const txOriginalCode:number=work.lastStatus = P011_HOT_STEP_BUSY;txCode=txOriginalCode;return txOriginalCode;}}
+  if (work.pageBacklog !== 0){work.beginFailurePredicate='PAGE_BACKLOG';{const txOriginalCode:number=work.lastStatus = P011_HOT_JOURNAL_OVERFLOW;txCode=txOriginalCode;return txOriginalCode;}}
   const f = input.field; const c = work.cols;
   if(f.mediumMode!==undefined && f.mediumMode!=='WET_COLUMN_V1' && f.mediumMode!=='DRY_AIR_V1'){
-    work.beginFailurePredicate='MEDIUM_MODE';return work.lastStatus=P011_HOT_INVALID_INPUT;}
+    work.beginFailurePredicate='MEDIUM_MODE';{const txOriginalCode:number=work.lastStatus=P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}}
   if (!work.storageValidHot() || !fieldStorageValidHot(work, f, false)){
-    work.beginFailurePredicate='STORAGE_OR_BINDING';return work.lastStatus = 3;}
+    work.beginFailurePredicate='STORAGE_OR_BINDING';{const txOriginalCode:number=work.lastStatus = 3;txCode=txOriginalCode;return txOriginalCode;}}
   if (!Number.isSafeInteger(input.runToken) || input.runToken <= 0 || !Number.isSafeInteger(input.substepId) || input.substepId < 0 ||
     !Number.isSafeInteger(input.attemptToken) || input.attemptToken <= 0 || !Number.isFinite(input.dt) || input.dt <= 0 ||
     !Number.isFinite(input.effectiveTiltRad) || !Number.isSafeInteger(input.seed) ||
@@ -516,9 +518,9 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
     f.ml.length !== c || f.suspH.length !== c || f.suspL.length !== c || f.surface.length !== c ||
     !Number.isFinite(f.sourceInjectedH) || f.sourceInjectedH < 0 || !Number.isFinite(f.sourceInjectedL) ||
     f.sourceInjectedL < 0 || !Number.isSafeInteger(f.sourceEpoch) || f.sourceEpoch < 0) {
-    work.beginFailurePredicate='INPUT_SCALAR';return work.lastStatus = P011_HOT_INVALID_INPUT;
+    work.beginFailurePredicate='INPUT_SCALAR';{const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
   }
-  for (let col = 0; col < c; col++) {
+  for (let col = 0; col < c; col++) {txTrace?.add(39);
     if (!Number.isFinite(f.waterTop[col]) || !Number.isFinite(f.bh[col]) || !Number.isFinite(f.bl[col]) ||
       !Number.isFinite(f.mh[col]) || !Number.isFinite(f.ml[col]) || !Number.isFinite(f.suspH[col]) ||
       !Number.isFinite(f.suspL[col]) || !Number.isFinite(f.surface[col]) || f.waterTop[col] < -WATER_TOP_AUDIT_EPS ||
@@ -532,18 +534,18 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
           work.pool.hotCanonicalBuffers(),work.pool.storageValidForHot(),
           work.pool.totals().count,work.pool.freeSlotCount,work.pool.nextParticleId);
       }catch(_e){work.fieldColumnEvidenceV2.windowStatus='CAPTURE_FAILED';}
-      return work.lastStatus = P011_HOT_INVALID_INPUT;
+      {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
     }
   }
-  if (work.stepEpoch >= Number.MAX_SAFE_INTEGER){work.beginFailurePredicate='STEP_EPOCH';return work.lastStatus = P011_HOT_TOKEN_EXHAUSTED;}
+  if (work.stepEpoch >= Number.MAX_SAFE_INTEGER){work.beginFailurePredicate='STEP_EPOCH';{const txOriginalCode:number=work.lastStatus = P011_HOT_TOKEN_EXHAUSTED;txCode=txOriginalCode;return txOriginalCode;}}
   const poolStatus = copyPoolDiagnosticHot(work, work.frozenPool, false);
-  if (poolStatus !== P011_HOT_OK){work.beginFailurePredicate='POOL_TRANSFER';return work.lastStatus = poolStatus;}
+  if (poolStatus !== P011_HOT_OK){work.beginFailurePredicate='POOL_TRANSFER';{const txOriginalCode:number=work.lastStatus = poolStatus;txCode=txOriginalCode;return txOriginalCode;}}
   if(work.diagnosticEnabled){work.diagnosticFreeBefore=work.frozenPool.freeCount;
     work.diagnosticLiveBefore=work.frozenPool.liveCount;work.diagnosticNextIdBefore=work.frozenPool.nextId;
     work.diagnosticFirstError=0;work.diagnosticFirstErrorStage=0;}
   if (work.budget !== null) {
     const budgetStatus = work.budget.beginHot(work.stepEpoch + 1, input.dt);
-    if (budgetStatus !== 0){work.beginFailurePredicate='BUDGET_BEGIN';return work.lastStatus = budgetStatus;}
+    if (budgetStatus !== 0){work.beginFailurePredicate='BUDGET_BEGIN';{const txOriginalCode:number=work.lastStatus = budgetStatus;txCode=txOriginalCode;return txOriginalCode;}}
   }
   work.stepEpoch++;
   work.runToken = input.runToken; work.substepId = input.substepId; work.attemptToken = input.attemptToken;
@@ -570,19 +572,19 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
   work.planB.requestCount = 0; work.planB.motionCount = 0; work.planB.totalRequested = 0;
   work.planA.valid = 0; work.planB.valid = 0; work.planA.consumed = 0; work.planB.consumed = 0;
   work.results.resultCount = 0; work.results.status = P011_HOT_OK;
-  return P011_HOT_OK;
-}
+  {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,3,txCode);}}
 
-export function checkpointHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {
+export function checkpointHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(309);let txCode=0;try{
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
   return work.lastStatus = P011_HOT_OK;
-}
-export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {
-  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,309,txCode);}}
+export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(310);let txCode=0;try{
+  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) {const txOriginalCode:number=work.lastStatus = P011_HOT_STALE_HANDLE;txCode=txOriginalCode;return txOriginalCode;}
   const restored = copyPoolDiagnosticHot(work, work.frozenPool, true);
-  if (restored !== P011_HOT_OK) return work.lastStatus = restored;
+  if (restored !== P011_HOT_OK) {const txOriginalCode:number=work.lastStatus = restored;txCode=txOriginalCode;return txOriginalCode;}
   if (work.budget !== null) {
-    const status = work.budget.rollbackHot(expectedStepEpoch); if (status !== 0) return work.lastStatus = status;
+    const status = work.budget.rollbackHot(expectedStepEpoch); if (status !== 0) {const txOriginalCode:number=work.lastStatus = status;txCode=txOriginalCode;return txOriginalCode;}
   }
   const field = work.field;
   if (field !== null) {
@@ -600,41 +602,41 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
   if (work.sinkCheckpoint !== null) work.sinkCheckpoint.restoreOutsHot();
   work.planA.consumed = 0; work.planB.consumed = 0; work.results.resultCount = 0;
   work.active = 0; work.rollbackCount++; work.lastStatus = P011_HOT_OK;
-  return P011_HOT_OK;
-}
-function finishStepHotBody(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {
-  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
-  if (work.activePatchToken !== 0) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
-  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) return work.lastStatus = 3;
+  {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,310,txCode);}}
+function finishStepHotBody(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(15);let txCode=0;try{
+  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) {const txOriginalCode:number=work.lastStatus = P011_HOT_STALE_HANDLE;txCode=txOriginalCode;return txOriginalCode;}
+  if (work.activePatchToken !== 0) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_PATCH_STATE;txCode=txOriginalCode;return txOriginalCode;}
+  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) {const txOriginalCode:number=work.lastStatus = 3;txCode=txOriginalCode;return txOriginalCode;}
   if (work.budget !== null) {
     if (work.planA.consumed !== 1 || work.results.resultCount !== work.planA.requestCount || !work.budget.allClosedHot()) {
-      return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
+      {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_PATCH_STATE;txCode=txOriginalCode;return txOriginalCode;}
     }
-    const audit = auditParticleHot(work, 'FINISH'); if (audit !== 0) return work.lastStatus = audit;
-    if (nextLeaseToken > Number.MAX_SAFE_INTEGER) { work.tokenExhausted = 1; return work.lastStatus = 14; }
-    const status = work.budget.finishHot(expectedStepEpoch); if (status !== 0) return work.lastStatus = status;
+    const audit = auditParticleHot(work, 'FINISH'); if (audit !== 0) {const txOriginalCode:number=work.lastStatus = audit;txCode=txOriginalCode;return txOriginalCode;}
+    if (nextLeaseToken > Number.MAX_SAFE_INTEGER) { work.tokenExhausted = 1; {const txOriginalCode:number=work.lastStatus = 14;txCode=txOriginalCode;return txOriginalCode;} }
+    const status = work.budget.finishHot(expectedStepEpoch); if (status !== 0) {const txOriginalCode:number=work.lastStatus = status;txCode=txOriginalCode;return txOriginalCode;}
     sealEvidenceHot(work);
   }
-  work.active = 0; work.lastStatus = P011_HOT_OK; return P011_HOT_OK;
-}
+  work.active = 0; work.lastStatus = P011_HOT_OK; {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,15,txCode);}}
 
-function sealEvidenceHot(work: P011ParticleHotWorkspace): void {
+function sealEvidenceHot(work: P011ParticleHotWorkspace): void {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(312);let txCode=0;try{
   const a = work.planA, b = work.sealedPlan;
   b.ownerId = a.ownerId; b.runToken = a.runToken; b.stepEpoch = a.stepEpoch; b.substepId = a.substepId;
   b.attemptToken = a.attemptToken; b.paramsRevision = a.paramsRevision; b.inputRevision = a.inputRevision;
   b.seed = a.seed; b.dt = a.dt; b.effectiveTiltRad = a.effectiveTiltRad;
   b.requestCount = a.requestCount; b.motionCount = a.motionCount; b.totalRequested = a.totalRequested;
   b.valid = a.valid; b.consumed = a.consumed;
-  for (let i = 0; i < a.requestCount; i++) {
+  for (let i = 0; i < a.requestCount; i++) {txTrace?.add(39);
     b.kind[i] = a.kind[i]; b.phase[i] = a.phase[i]; b.sourceKind[i] = a.sourceKind[i]; b.column[i] = a.column[i]; b.targetColumn[i] = a.targetColumn[i]; b.particleId[i] = a.particleId[i]; b.sourceId[i] = a.sourceId[i]; b.substep[i] = a.substep[i]; b.ordinal[i] = a.ordinal[i]; b.requested[i] = a.requested[i]; b.totalWeight[i] = a.totalWeight[i]; b.predictedX[i] = a.predictedX[i]; b.predictedY[i] = a.predictedY[i]; b.predictedVx[i] = a.predictedVx[i]; b.predictedVy[i] = a.predictedVy[i]; b.mergeStart[i] = a.mergeStart[i]; b.mergeCount[i] = a.mergeCount[i];
     for (let j = 0; j < a.mergeCount[i]; j++) b.lineage[a.mergeStart[i] + j] = a.lineage[a.mergeStart[i] + j];
   }
-  for (let i = 0; i < a.motionCount; i++) {
+  for (let i = 0; i < a.motionCount; i++) {txTrace?.add(39);
     b.motionParticleId[i] = a.motionParticleId[i]; b.motionColumn[i] = a.motionColumn[i]; b.motionX[i] = a.motionX[i]; b.motionY[i] = a.motionY[i]; b.motionVx[i] = a.motionVx[i]; b.motionVy[i] = a.motionVy[i];
   }
   const r = work.results, s = work.sealedResults;
   s.ownerId = r.ownerId; s.stepEpoch = r.stepEpoch; s.resultCount = r.resultCount; s.status = r.status;
-  for (let i = 0; i < r.resultCount; i++) {
+  for (let i = 0; i < r.resultCount; i++) {txTrace?.add(39);
     s.committed[i] = r.committed[i]; s.disposition[i] = r.disposition[i]; s.released[i] = r.released[i]; s.rowStatus[i] = r.rowStatus[i]; s.guardIndex[i] = r.guardIndex[i]; s.eventBegin[i] = r.eventBegin[i]; s.eventCount[i] = r.eventCount[i]; s.granted[i] = r.granted[i]; s.remainder[i] = r.remainder[i]; s.budgetClipped[i] = r.budgetClipped[i]; s.guardRejected[i] = r.guardRejected[i]; s.capacityClipped[i] = r.capacityClipped[i]; s.poolClipped[i] = r.poolClipped[i]; s.massAfter[i] = r.massAfter[i];
   }
   copyPoolDiagnosticHot(work, work.patchAfter, false);
@@ -646,7 +648,7 @@ function sealEvidenceHot(work: P011ParticleHotWorkspace): void {
     work.pageSourceL = f.sourceInjectedL; work.pageSourceEpoch = f.sourceEpoch;
   }
   work.committedPageToken = allocateParticleHotLease(); work.pageBacklog = 1;
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,312,txCode);}}
 
 // Numeric operation codes are fixed by this module and converted to legacy strings only by cold export.
 export const P011_HOT_KIND_SPAWN = 1;
@@ -679,9 +681,9 @@ function siftDown(order: Int32Array, root: number, end: number, pool: P011Partic
     const t = order[parent]; order[parent] = order[child]; order[child] = t; parent = child;
   }
 }
-function sortActive(work: P011ParticleHotWorkspace): number {
+function sortActive(work: P011ParticleHotWorkspace): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(313);let txCode=0;try{
   const pool = work.frozenPool; const order = work.order; let count = 0;
-  for (let i = 0; i < pool.nmax; i++) {
+  for (let i = 0; i < pool.nmax; i++) {txTrace?.add(39);
     if (pool.pState[i] !== 0) {
       if (!Number.isFinite(pool.pMass[i]) || !Number.isFinite(pool.pX[i]) || !Number.isFinite(pool.pY[i]) ||
         !Number.isFinite(pool.pVx[i]) || !Number.isFinite(pool.pVy[i]) || pool.pId[i] === 0 ||
@@ -694,38 +696,38 @@ function sortActive(work: P011ParticleHotWorkspace): number {
   sortOrderHot(order, count, pool, work, true);
   for (let i = 1; i < count; i++) if (pool.pId[order[i - 1]] === pool.pId[order[i]]) return -1;
   return count;
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,313,txCode);}}
 function sortOrderHot(order: Int32Array, count: number, pool: P011ParticleSnapshot,
-  work: P011ParticleHotWorkspace, collect: boolean): void {
+  work: P011ParticleHotWorkspace, collect: boolean): void {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(314);let txCode=0;try{
   const d=work.poolProgress;let span=-1;
   if(d!==null){d.input(pool);d.cursor(Math.floor(count/2)-1,count-1,-1,-1,count);
     span=d.begin(collect?'SORT_COLLECT':'SORT_AUDIT');d.increment(collect?4:5);}
   try {
-    for (let i = Math.floor(count / 2) - 1; i >= 0; i--) {
+    for (let i = Math.floor(count / 2) - 1; i >= 0; i--) {txTrace?.add(39);
       d?.cursor(i,count-1,i,-1,count);siftDown(order, i, count - 1, pool,d);
     }
-    for (let end = count - 1; end > 0; end--) {
+    for (let end = count - 1; end > 0; end--) {txTrace?.add(39);
       d?.cursor(0,end,0,-1,count);
       const t = order[0]; order[0] = order[end]; order[end] = t; siftDown(order, 0, end - 1, pool,d);
     }
   } finally {d?.endSpan(span,0);}
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,314,txCode);}}
 
 function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
-  destination: P011ParticleHotPlanBuffer): number {
+  destination: P011ParticleHotPlanBuffer): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(315);let txCode=0;try{
   if (work.diagnosticEnabled) work.collectCalls++;
-  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = P011_HOT_STALE_HANDLE;
-  if (destination !== work.planA && destination !== work.planB) return work.lastStatus = P011_HOT_INVALID_BUFFER;
-  if (work.planA.consumed !== 0 || work.applying !== 0) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
-  if (!destination.storageValidHot()) return work.lastStatus = P011_HOT_INVALID_BUFFER;
+  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) {const txOriginalCode:number=work.lastStatus = P011_HOT_STALE_HANDLE;txCode=txOriginalCode;return txOriginalCode;}
+  if (destination !== work.planA && destination !== work.planB) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_BUFFER;txCode=txOriginalCode;return txOriginalCode;}
+  if (work.planA.consumed !== 0 || work.applying !== 0) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_PATCH_STATE;txCode=txOriginalCode;return txOriginalCode;}
+  if (!destination.storageValidHot()) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_BUFFER;txCode=txOriginalCode;return txOriginalCode;}
   const count = sortActive(work);
   if(work.diagnosticEnabled && count>=0)work.diagnosticActiveCount=count;
-  if (count < 0) { destination.valid = 0; return work.lastStatus = P011_HOT_INVALID_INPUT; }
+  if (count < 0) { destination.valid = 0; {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;} }
   const p = work.frozenPool; let deposits = 0; let crossings = 0; let motions = 0; let total = 0;
   // First pass counts output rows, so overflow is rejected before writing any plan row.
-  for (let j = 0; j < count; j++) {
+  for (let j = 0; j < count; j++) {txTrace?.add(39);
     const i = work.order[j]; const c = Math.floor(p.pX[i]);
-    if (c < 0 || c >= work.cols) return work.lastStatus = P011_HOT_INVALID_INPUT;
+    if (c < 0 || c >= work.cols) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
     const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;
     const speed = heavy ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
     const drag = heavy ? work.params.dragHeavy : work.params.dragLight;
@@ -740,7 +742,7 @@ function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedSte
       Math.max(c - 1 + 1e-9, Math.min(c + 2 - 1e-9, p.pX[i] + vx * work.dt))));
     const y = Math.min(work.capacity, p.pY[i] + vy * work.dt);
     if (!Number.isFinite(vx) || !Number.isFinite(vy) || !Number.isFinite(y) || !Number.isFinite(x)) {
-      return work.lastStatus = P011_HOT_INVALID_INPUT;
+      {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
     }
     const contact = p.pState[i] === 2 || y <= sandHot(work, c);
     const target = Math.floor(x);
@@ -749,9 +751,9 @@ function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedSte
     else crossings++;
     if (contact || target !== c) total += p.pMass[i];
   }
-  if (!Number.isFinite(total)) return work.lastStatus = P011_HOT_INVALID_INPUT;
-  if (deposits + crossings > work.requestCapacity) return work.lastStatus = P011_HOT_PLAN_OVERFLOW;
-  if (motions > work.motionCapacity) return work.lastStatus = P011_HOT_MOTION_OVERFLOW;
+  if (!Number.isFinite(total)) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
+  if (deposits + crossings > work.requestCapacity) {const txOriginalCode:number=work.lastStatus = P011_HOT_PLAN_OVERFLOW;txCode=txOriginalCode;return txOriginalCode;}
+  if (motions > work.motionCapacity) {const txOriginalCode:number=work.lastStatus = P011_HOT_MOTION_OVERFLOW;txCode=txOriginalCode;return txOriginalCode;}
   destination.requestCount = 0; destination.motionCount = 0; destination.totalRequested = 0;
   total = 0;
   destination.ownerId = work.ownerId; destination.runToken = work.runToken; destination.stepEpoch = work.stepEpoch;
@@ -759,8 +761,8 @@ function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedSte
   destination.paramsRevision = work.paramsRevision; destination.inputRevision = work.inputRevision;
   destination.seed = work.seed; destination.dt = work.dt; destination.effectiveTiltRad = work.effectiveTiltRad;
   // Preserve the legacy global phase order: all deposits, followed by all crossings.
-  for (let phasePass = 0; phasePass < 2; phasePass++) {
-    for (let j = 0; j < count; j++) {
+  for (let phasePass = 0; phasePass < 2; phasePass++) {txTrace?.add(39);
+    for (let j = 0; j < count; j++) {txTrace?.add(39);
       const i = work.order[j]; const c = Math.floor(p.pX[i]); const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;
       const speed = heavy ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
       const drag = heavy ? work.params.dragHeavy : work.params.dragLight;
@@ -797,8 +799,8 @@ function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedSte
     }
   }
   destination.totalRequested = total; destination.valid = 1; destination.consumed = 0;
-  return work.lastStatus = P011_HOT_OK;
-}
+  {const txOriginalCode:number=work.lastStatus = P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,315,txCode);}}
 
 export function compareParticlePlansHot(a: P011ParticleHotPlanBuffer, b: P011ParticleHotPlanBuffer): number {
   if (a === b || !planValuesValidHot(a) || !planValuesValidHot(b) || a.ownerId !== b.ownerId || a.runToken !== b.runToken ||
@@ -826,9 +828,9 @@ export function compareParticlePlansHot(a: P011ParticleHotPlanBuffer, b: P011Par
   return P011_HOT_OK;
 }
 
-function sandHot(work: P011ParticleHotWorkspace, c: number): number {
+function sandHot(work: P011ParticleHotWorkspace, c: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(316);let txCode=0;try{
   return work.frozenBh[c] + work.frozenBl[c] + work.frozenMh[c] + work.frozenMl[c];
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,316,txCode);}}
 
 // S1 validates every effective row, including equal NaNs in both buffers.
 function planValuesValidHot(p: P011ParticleHotPlanBuffer): boolean {
@@ -865,14 +867,16 @@ export function allocateParticleHotLease(): number {
   if (nextLeaseToken > Number.MAX_SAFE_INTEGER) return 0;
   return nextLeaseToken++;
 }
-function copyPoolHot(from: P011ParticleSnapshot, to: P011ParticleSnapshot): void {
+function copyPoolHot(from: P011ParticleSnapshot, to: P011ParticleSnapshot, work:P011ParticleHotWorkspace): void {
   to.liveCount = from.liveCount; to.freeCount = from.freeCount; to.nextId = from.nextId;
   to.pMass.set(from.pMass); to.pX.set(from.pX); to.pY.set(from.pY); to.pVx.set(from.pVx); to.pVy.set(from.pVy);
   to.pPhase.set(from.pPhase); to.pSource.set(from.pSource); to.pState.set(from.pState); to.pId.set(from.pId);
   to.pSourceId.set(from.pSourceId); to.freeSlots.set(from.freeSlots);
   to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);
+  work.txD1?.copy(from,to);
 }
-function particleSlotHot(pool: P011ParticleSnapshot, id: number): number {
+function particleSlotHot(pool: P011ParticleSnapshot, id: number, work:P011ParticleHotWorkspace): number {
+  if(work.txD1!==null)return work.txD1.lookup(pool,id);
   for (let i = 0; i < pool.nmax; i++) if (pool.pState[i] !== 0 && pool.pId[i] === id) return i;
   return -1;
 }
@@ -887,7 +891,7 @@ export function sameRequestHot(a: P011ParticleHotPlanBuffer, i: number, b: P011P
   for (let k = 0; k < a.mergeCount[i]; k++) if (a.lineage[a.mergeStart[i] + k] !== b.lineage[b.mergeStart[j] + k]) return false;
   return true;
 }
-function rememberRequestHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, i: number): void {
+function rememberRequestHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, i: number): void {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(317);let txCode=0;try{
   const o = p.ordinal[i]; const j = o - 1; const b = work.seenRequests;
   b.kind[j] = p.kind[i]; b.phase[j] = p.phase[i]; b.sourceKind[j] = p.sourceKind[i];
   b.column[j] = p.column[i]; b.targetColumn[j] = p.targetColumn[i]; b.particleId[j] = p.particleId[i];
@@ -898,26 +902,26 @@ function rememberRequestHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPl
   b.mergeStart[j] = j * 2; b.mergeCount[j] = p.mergeCount[i];
   for (let k = 0; k < p.mergeCount[i]; k++) b.lineage[j * 2 + k] = p.lineage[p.mergeStart[i] + k];
   work.seenEpoch[o] = work.stepEpoch;
-}
-function requestIdentityHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,317,txCode);}}
+function requestIdentityHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(6);let txCode=0;try{
   if (work.active !== 1 || p.ownerId !== work.ownerId || p.stepEpoch !== work.stepEpoch ||
     p.runToken !== work.runToken || p.substepId !== work.substepId || p.attemptToken !== work.attemptToken ||
     p.paramsRevision !== work.paramsRevision || p.inputRevision !== work.inputRevision || p.seed !== work.seed ||
-    p.dt !== work.dt || p.effectiveTiltRad !== work.effectiveTiltRad || p.consumed !== 0) return P011_HOT_STALE_HANDLE;
+    p.dt !== work.dt || p.effectiveTiltRad !== work.effectiveTiltRad || p.consumed !== 0) {const txOriginalCode:number=P011_HOT_STALE_HANDLE;txCode=txOriginalCode;return txOriginalCode;}
   if ((p !== work.planA && p !== work.planB) || (work.applying !== 1 && !planValuesValidHot(p)) ||
     !Number.isInteger(row) || row < 0 || row >= p.requestCount ||
-    (p.kind[row] === P011_HOT_KIND_MERGE ? p.mergeCount[row] !== 2 : p.mergeCount[row] !== 0)) return P011_HOT_INVALID_INPUT;
-  if (work.applying === 1 && !sameRequestHot(p, row, work.planB, row)) return P011_HOT_IDENTITY_MISMATCH;
+    (p.kind[row] === P011_HOT_KIND_MERGE ? p.mergeCount[row] !== 2 : p.mergeCount[row] !== 0)) {const txOriginalCode:number=P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
+  if (work.applying === 1 && !sameRequestHot(p, row, work.planB, row)) {const txOriginalCode:number=P011_HOT_IDENTITY_MISMATCH;txCode=txOriginalCode;return txOriginalCode;}
   const ordinal = p.ordinal[row];
   if (work.seenEpoch[ordinal] === work.stepEpoch) {
-    return sameRequestHot(p, row, work.seenRequests, ordinal - 1) ? P011_HOT_DUPLICATE_REQUEST : P011_HOT_IDENTITY_MISMATCH;
+    {const txOriginalCode:number=sameRequestHot(p, row, work.seenRequests, ordinal - 1) ? P011_HOT_DUPLICATE_REQUEST : P011_HOT_IDENTITY_MISMATCH;txCode=txOriginalCode;return txOriginalCode;}
   }
-  return P011_HOT_OK;
-}
-export function validateParticleHotRequest(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {
-  return requestIdentityHot(work, p, row);
-}
-function actionCommonHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number, kind: number): number {
+  {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,6,txCode);}}
+export function validateParticleHotRequest(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(319);let txCode=0;try{
+  {const txOriginalCode:number=requestIdentityHot(work, p, row);txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,319,txCode);}}
+function actionCommonHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number, kind: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(320);let txCode=0;try{
   const a = work.patchActions;
   if (a.count >= a.capacity) return -1;
   const i = a.count++; a.kind[i] = kind; a.particleId[i] = p.pId[slot]; a.sourceId[i] = p.pSourceId[slot];
@@ -927,36 +931,39 @@ function actionCommonHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot
   a.massBefore[i] = p.pMass[slot]; a.massAfter[i] = p.pMass[slot];
   a.lineageStart[i] = a.lineageCount; a.lineageLength[i] = 0;
   return i;
-}
-function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a: number, b: number): number {
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,320,txCode);}}
+function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a: number, b: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(321);let txCode=0;try{
   if (a === b || a < 0 || b < 0 || p.pPhase[a] !== p.pPhase[b] || p.pSource[a] !== p.pSource[b] ||
     p.pSourceId[a] !== p.pSourceId[b] || Math.floor(p.pX[a]) !== Math.floor(p.pX[b]) ||
-    Math.abs(p.pY[a] - p.pY[b]) > work.params.mergeHeightRadius || p.pState[a] !== p.pState[b]) return P011_HOT_INVALID_PATCH_STATE;
+    Math.abs(p.pY[a] - p.pY[b]) > work.params.mergeHeightRadius || p.pState[a] !== p.pState[b]) {const txOriginalCode:number=P011_HOT_INVALID_PATCH_STATE;txCode=txOriginalCode;return txOriginalCode;}
   const actions = work.patchActions;
-  if (actions.count >= actions.capacity) return P011_HOT_JOURNAL_OVERFLOW;
-  if (actions.lineageCount + 2 > actions.lineageCapacity) return P011_HOT_LINEAGE_OVERFLOW;
+  if (actions.count >= actions.capacity) {const txOriginalCode:number=P011_HOT_JOURNAL_OVERFLOW;txCode=txOriginalCode;return txOriginalCode;}
+  if (actions.lineageCount + 2 > actions.lineageCapacity) {const txOriginalCode:number=P011_HOT_LINEAGE_OVERFLOW;txCode=txOriginalCode;return txOriginalCode;}
   const ma = p.pMass[a]; const mb = p.pMass[b]; const mass = ma + mb;
-  if (!Number.isFinite(mass)) return P011_HOT_INVALID_INPUT;
+  if (!Number.isFinite(mass)) {const txOriginalCode:number=P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
   const event = actionCommonHot(work, p, a, P011_HOT_KIND_MERGE);
   actions.lineage[actions.lineageCount++] = p.pId[a]; actions.lineage[actions.lineageCount++] = p.pId[b];
   actions.lineageLength[event] = 2; actions.requested[event] = mass; actions.granted[event] = mass;
   actions.massBefore[event] = mass; actions.massAfter[event] = mass;
+  work.txD1?.before(p,a);work.txD1?.before(p,b);
   p.pX[a] = (p.pX[a] * ma + p.pX[b] * mb) / mass; p.pY[a] = (p.pY[a] * ma + p.pY[b] * mb) / mass;
   p.pVx[a] = (p.pVx[a] * ma + p.pVx[b] * mb) / mass; p.pVy[a] = (p.pVy[a] * ma + p.pVy[b] * mb) / mass;
   p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;
-  return P011_HOT_OK;
-}
-function mergeOldestHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot): number {
+  work.txD1?.after(p,a);work.txD1?.after(p,b);work.txD1?.trace.add(15);
+  {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,321,txCode);}}
+function mergeOldestHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(9);let txCode=0;try{
   if (work.diagnosticEnabled) work.mergeCalls++;
   // The index owns cold fixed buffers. Each call reads the current scratch;
   // it never reuses a pairing after centroid or free-list mutation.
+  work.mergeIndex.txD1=work.txD1;
   const found=work.mergeIndex.find(p,work.params.mergeHeightRadius);
   if(!found)return P011_HOT_INVALID_PATCH_STATE;
   const a=work.mergeIndex.selectedA,b=work.mergeIndex.selectedB;
   const status=mergePairHot(work,p,a,b);
   if(status===0&&work.diagnosticEnabled)work.mergeSuccess++;
   return status;
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,9,txCode);}}
 function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBuffer, row: number,
   gh: number, gl: number, disposition: number): number {
   const p = work.patchScratch; const kind = plan.kind[row]; const c = plan.column[row]; const amount = gh + gl;
@@ -969,10 +976,11 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
       const mass = phase === 0 ? gh : gl; const count = Math.floor(mass / work.params.massPackage);
       const tail = mass - count * work.params.massPackage;
       const births = count + (tail > 0 ? 1 : 0);
+      work.txD1?.trace.add(8,births);
       if (work.diagnosticEnabled) work.birthRequested += births;
       work.poolProgress?.increment(19,births);
       if (!Number.isSafeInteger(births) || births > work.patchActions.capacity - work.patchActions.count) return P011_HOT_JOURNAL_OVERFLOW;
-      for (let k = 0; k < births; k++) {
+      for (let k = 0; k < births; k++) {work.txD1?.trace.add(9);
         if (p.freeCount === 0) {
           if (work.mediumMode === 'DRY_AIR_V1') return 5;
           const merged = mergeOldestHot(work, p); if (merged !== 0) return merged;
@@ -989,12 +997,15 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
         const speed = phase === 0 ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
         const lift = phase === 0 ? work.params.liftSpeedHeavy : work.params.liftSpeedLight;
         const slot = p.freeSlots[--p.freeCount];
+        work.txD1?.before(p,slot);
         p.pMass[slot] = k < count ? work.params.massPackage : tail; p.pX[slot] = dry && kind === 1 ? plan.predictedX[row] : c + 0.5 + jitter;
         p.pY[slot] = dry && kind === 1 ? plan.predictedY[row] : kind === 4 ? low : Math.max(low, Math.min(high, plan.predictedY[row]));
         p.pVx[slot] = dry && kind === 1 ? 0 : kind === 4 ? jitter * 2 * work.params.liftSpread : speed * Math.sin(work.effectiveTiltRad);
         p.pVy[slot] = dry && kind === 1 ? 0 : kind === 4 ? lift : -speed * Math.cos(work.effectiveTiltRad);
         p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];
         p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;
+        work.txD1?.after(p,slot);
+        work.txD1?.trace.add(10);
         if (work.diagnosticEnabled) work.birthCompleted++;
         if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];
         if (actionCommonHot(work, p, slot, P011_HOT_KIND_SPAWN) < 0) return P011_HOT_JOURNAL_OVERFLOW;
@@ -1002,7 +1013,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
     }
     return 0;
   }
-  const slot = particleSlotHot(p, plan.particleId[row]);
+  const slot = particleSlotHot(p, plan.particleId[row],work);
   if (slot < 0) return P011_HOT_UNKNOWN_PARTICLE;
   if (p.pPhase[slot] !== plan.phase[row] || p.pSource[slot] !== plan.sourceKind[row] || p.pSourceId[slot] !== plan.sourceId[row] ||
     Math.floor(p.pX[slot]) !== c || p.pMass[slot] !== plan.requested[row] || (plan.phase[row] === 0 ? gl : gh) !== 0) return P011_HOT_IDENTITY_MISMATCH;
@@ -1010,31 +1021,37 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
   if (kind === P011_HOT_KIND_DEPOSIT) {
     if ((disposition !== 2 && disposition !== 6) || amount > p.pMass[slot]) return P011_HOT_INVALID_PATCH_STATE;
     const remainder = amount === p.pMass[slot] ? 0 : p.pMass[slot] - amount;
+    work.txD1?.before(p,slot);
     cache[c] -= amount; p.pMass[slot] = remainder;
     if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; }
     else { p.pState[slot] = 2; p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }
+    work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_DEGRADE) {
     if (disposition !== 3 || amount !== p.pMass[slot]) return P011_HOT_INVALID_PATCH_STATE;
+    work.txD1?.before(p,slot);
     cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--;
+    work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_CROSSING) {
     const target = plan.targetColumn[row];
     if (target < 0 || target >= p.cols || Math.abs(target - c) !== 1) return P011_HOT_INVALID_INPUT;
-    if (disposition === 6 && amount === 0) p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;
+    if (disposition === 6 && amount === 0) {work.txD1?.before(p,slot);p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;}
     else {
       if (disposition !== 4 || amount !== p.pMass[slot] || Math.floor(plan.predictedX[row]) !== target) return P011_HOT_INVALID_PATCH_STATE;
+      work.txD1?.before(p,slot);
       cache[c] -= amount; cache[target] += amount;
       p.pX[slot] = plan.predictedX[row]; p.pY[slot] = plan.predictedY[row];
       p.pVx[slot] = plan.predictedVx[row]; p.pVy[slot] = plan.predictedVy[row];
     }
+    work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_MERGE) {
     if (disposition !== 5 || plan.lineage[plan.mergeStart[row]] !== plan.particleId[row]) return P011_HOT_INVALID_PATCH_STATE;
-    return mergePairHot(work, p, slot, particleSlotHot(p, plan.lineage[plan.mergeStart[row] + 1]));
+    return mergePairHot(work, p, slot, particleSlotHot(p, plan.lineage[plan.mergeStart[row] + 1],work));
   } else return P011_HOT_INVALID_INPUT;
   return 0;
 }
 
 export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBuffer,
-  row: number, grantedHeavy: number, grantedLight: number, dispositionCode: number): number {
+  row: number, grantedHeavy: number, grantedLight: number, dispositionCode: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(8);let txCode=0;try{
   if (work.activePatchToken !== 0) { work.lastStatus = P011_HOT_PATCH_BUSY; work.patchBusyCount++; return 0; }
   const valid = requestIdentityHot(work, plan, row);
   if (valid !== 0) { work.lastStatus = valid; return 0; }
@@ -1046,7 +1063,7 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
   if (nextLeaseToken > Number.MAX_SAFE_INTEGER) { work.lastStatus = P011_HOT_TOKEN_EXHAUSTED; work.tokenExhausted = 1; return 0; }
   const copied = copyPoolDiagnosticHot(work, work.patchBefore, false);
   if (copied !== 0) { work.lastStatus = copied; return 0; }
-  copyPoolHot(work.patchBefore, work.patchScratch);
+  copyPoolHot(work.patchBefore, work.patchScratch,work);
   work.patchActions.count = 0; work.patchActions.lineageCount = 0;
   copyRequestRowHot(plan, row, work.patchOriginal, 0); copyRequestRowHot(plan, row, work.patchRequest, 0);
   if (work.stagedYActive === 1) work.patchRequest.predictedY[0] = work.stagedY;
@@ -1056,42 +1073,42 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
     if (status === 9 || status === 10) work.overflowCount++;
     return 0;
   }
-  copyPoolHot(work.patchScratch, work.patchAfter);
+  copyPoolHot(work.patchScratch, work.patchAfter,work);
   const token = allocateParticleHotLease();
   work.activePatchToken = token; work.activePatchStepEpoch = work.stepEpoch; work.activePatchOrdinal = plan.ordinal[row];
   work.patchState = 1; work.patchPlan = plan; work.patchRow = row; work.lastStatus = 0;
   return token;
-}
-function patchLeaseHot(work: P011ParticleHotWorkspace, token: number, required: number): number {
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,8,txCode);}}
+function patchLeaseHot(work: P011ParticleHotWorkspace, token: number, required: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(324);let txCode=0;try{
   if (work.active !== 1 || !Number.isSafeInteger(token) || token <= 0 || token !== work.activePatchToken ||
     work.activePatchStepEpoch !== work.stepEpoch) { work.staleHandleRejectCount++; return P011_HOT_STALE_HANDLE; }
   if (work.patchState !== required) return P011_HOT_INVALID_PATCH_STATE;
   if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) return P011_HOT_INVALID_BUFFER;
   return P011_HOT_OK;
-}
-function clearPatchHot(work: P011ParticleHotWorkspace): void {
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,324,txCode);}}
+function clearPatchHot(work: P011ParticleHotWorkspace): void {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(325);let txCode=0;try{
   work.activePatchToken = 0; work.activePatchStepEpoch = 0; work.activePatchOrdinal = 0;
   work.patchState = 0; work.patchPlan = null; work.patchRow = -1;
-}
-export function publishPatchHot(work: P011ParticleHotWorkspace, token: number): number {
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,325,txCode);}}
+export function publishPatchHot(work: P011ParticleHotWorkspace, token: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(10);let txCode=0;try{
+  const valid = patchLeaseHot(work, token, 1); if (valid !== 0) {const txOriginalCode:number=work.lastStatus = valid;txCode=txOriginalCode;return txOriginalCode;}
+  const status = copyPoolDiagnosticHot(work, work.patchAfter, true); if (status !== 0) {const txOriginalCode:number=work.lastStatus = status;txCode=txOriginalCode;return txOriginalCode;}
+  work.patchState = 2; {const txOriginalCode:number=work.lastStatus = 0;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,10,txCode);}}
+export function restorePatchHot(work: P011ParticleHotWorkspace, token: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(327);let txCode=0;try{
+  const valid = patchLeaseHot(work, token, 2); if (valid !== 0) {const txOriginalCode:number=work.lastStatus = valid;txCode=txOriginalCode;return txOriginalCode;}
+  const status = copyPoolDiagnosticHot(work, work.patchBefore, true); if (status !== 0) {const txOriginalCode:number=work.lastStatus = status;txCode=txOriginalCode;return txOriginalCode;}
+  clearPatchHot(work); {const txOriginalCode:number=work.lastStatus = 0;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,327,txCode);}}
+export function discardPatchHot(work: P011ParticleHotWorkspace, token: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(328);let txCode=0;try{
   const valid = patchLeaseHot(work, token, 1); if (valid !== 0) return work.lastStatus = valid;
-  const status = copyPoolDiagnosticHot(work, work.patchAfter, true); if (status !== 0) return work.lastStatus = status;
-  work.patchState = 2; return work.lastStatus = 0;
-}
-export function restorePatchHot(work: P011ParticleHotWorkspace, token: number): number {
-  const valid = patchLeaseHot(work, token, 2); if (valid !== 0) return work.lastStatus = valid;
-  const status = copyPoolDiagnosticHot(work, work.patchBefore, true); if (status !== 0) return work.lastStatus = status;
   clearPatchHot(work); return work.lastStatus = 0;
-}
-export function discardPatchHot(work: P011ParticleHotWorkspace, token: number): number {
-  const valid = patchLeaseHot(work, token, 1); if (valid !== 0) return work.lastStatus = valid;
-  clearPatchHot(work); return work.lastStatus = 0;
-}
-export function finishPatchHot(work: P011ParticleHotWorkspace, token: number): number {
-  const valid = patchLeaseHot(work, token, 2); if (valid !== 0) return work.lastStatus = valid;
-  const p = work.patchPlan; if (p === null) return work.lastStatus = P011_HOT_INVALID_PATCH_STATE;
-  rememberRequestHot(work, work.patchOriginal, 0); clearPatchHot(work); return work.lastStatus = 0;
-}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,328,txCode);}}
+export function finishPatchHot(work: P011ParticleHotWorkspace, token: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(329);let txCode=0;try{
+  const valid = patchLeaseHot(work, token, 2); if (valid !== 0) {const txOriginalCode:number=work.lastStatus = valid;txCode=txOriginalCode;return txOriginalCode;}
+  const p = work.patchPlan; if (p === null) {const txOriginalCode:number=work.lastStatus = P011_HOT_INVALID_PATCH_STATE;txCode=txOriginalCode;return txOriginalCode;}
+  rememberRequestHot(work, work.patchOriginal, 0); clearPatchHot(work); {const txOriginalCode:number=work.lastStatus = 0;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,329,txCode);}}
 
 export function copyRequestRowHot(a: P011ParticleHotPlanBuffer, i: number, b: P011ParticleHotPlanBuffer, j: number): void {
   b.kind[j] = a.kind[i]; b.phase[j] = a.phase[i]; b.sourceKind[j] = a.sourceKind[i];
@@ -1104,21 +1121,21 @@ export function copyRequestRowHot(a: P011ParticleHotPlanBuffer, i: number, b: P0
   for (let k = 0; k < a.mergeCount[i]; k++) b.lineage[j * 2 + k] = a.lineage[a.mergeStart[i] + k];
 }
 
-export function auditParticleHot(work: P011ParticleHotWorkspace, source: string='OTHER'): number {
+export function auditParticleHot(work: P011ParticleHotWorkspace, source: string='OTHER'): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(source==='APPLY_TAIL'?14:source==='FINISH'?15:11);let txCode=0;try{txTrace?.add(23);txTrace?.add(24);
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;
     span=d.begin(source==='SINK_ROW'?'AUDIT_SINK_ROW':source==='APPLY_TAIL'?'AUDIT_APPLY_TAIL':
       source==='FINISH'?'AUDIT_FINISH':'AUDIT_OTHER');
     d.increment(source==='SINK_ROW'?0:source==='APPLY_TAIL'?1:source==='FINISH'?2:3);}
-  try {code=auditParticleHotBody(work);return code;}finally{d?.endSpan(span,code);}
-}
-function auditParticleHotBody(work: P011ParticleHotWorkspace): number {
-  const f = work.field; if (f === null) return 1;
-  const p = work.patchScratch; const status = copyPoolDiagnosticHot(work, p, false); if (status !== 0) return status;
+  try {code=auditParticleHotBody(work);return code;}finally{txCode=code;d?.endSpan(span,code);}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,source==='APPLY_TAIL'?14:source==='FINISH'?15:11,txCode);}}
+function auditParticleHotBody(work: P011ParticleHotWorkspace): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(331);let txCode=0;try{
+  const f = work.field; if (f === null) {const txOriginalCode:number=1;txCode=txOriginalCode;return txOriginalCode;}
+  const p = work.patchScratch; const status = copyPoolDiagnosticHot(work, p, false); if (status !== 0) {const txOriginalCode:number=status;txCode=txOriginalCode;return txOriginalCode;}
   work.auditMassH.fill(0); work.auditMassL.fill(0); work.auditSlots.fill(0);
-  if (p.freeCount < 0 || p.freeCount > p.nmax || p.liveCount + p.freeCount !== p.nmax) return 13;
-  for (let i = 0; i < p.freeCount; i++) {
-    const slot = p.freeSlots[i]; if (slot < 0 || slot >= p.nmax || work.auditSlots[slot] !== 0 || p.pState[slot] !== 0) return 13;
+  if (p.freeCount < 0 || p.freeCount > p.nmax || p.liveCount + p.freeCount !== p.nmax) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
+  for (let i = 0; i < p.freeCount; i++) {txTrace?.add(39);txTrace?.add(26);
+    const slot = p.freeSlots[i]; if (slot < 0 || slot >= p.nmax || work.auditSlots[slot] !== 0 || p.pState[slot] !== 0) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
     work.auditSlots[slot] = 1;
   }
   let live = 0;
@@ -1126,15 +1143,15 @@ function auditParticleHotBody(work: P011ParticleHotWorkspace): number {
     if (work.auditSlots[i] !== 0 || p.pState[i] > 2 || p.pPhase[i] > 1 || p.pSource[i] > 1 || p.pId[i] === 0 ||
       p.pSourceId[i] === 0 || !Number.isFinite(p.pMass[i]) || p.pMass[i] <= 0 || !Number.isFinite(p.pX[i]) ||
       p.pX[i] < 0 || p.pX[i] >= work.cols || !Number.isFinite(p.pY[i]) || p.pY[i] < 0 || p.pY[i] > work.capacity ||
-      !Number.isFinite(p.pVx[i]) || !Number.isFinite(p.pVy[i])) return 13;
+      !Number.isFinite(p.pVx[i]) || !Number.isFinite(p.pVy[i])) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
     const c = Math.floor(p.pX[i]); work.order[live++] = i;
     if (p.pPhase[i] === 0) work.auditMassH[c] += p.pMass[i]; else work.auditMassL[c] += p.pMass[i];
   }
-  if (live !== p.liveCount) return 13;
+  if (live !== p.liveCount) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
   sortOrderHot(work.order, live, p, work, false);
-  for (let i = 1; i < live; i++) if (p.pId[work.order[i - 1]] === p.pId[work.order[i]]) return 13;
+  for (let i = 1; i < live; i++) if (p.pId[work.order[i - 1]] === p.pId[work.order[i]]) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
   let beforeH = 0; let beforeL = 0; let afterH = 0; let afterL = 0;
-  for (let c = 0; c < work.cols; c++) {
+  for (let c = 0; c < work.cols; c++) {txTrace?.add(39);txTrace?.add(26);
     const sand = f.bh[c] + f.bl[c] + f.mh[c] + f.ml[c];
     if (!Number.isFinite(sand) || !Number.isFinite(f.bh[c]) || !Number.isFinite(f.bl[c]) ||
       !Number.isFinite(f.mh[c]) || !Number.isFinite(f.ml[c]) || !Number.isFinite(f.suspH[c]) ||
@@ -1144,46 +1161,46 @@ function auditParticleHotBody(work: P011ParticleHotWorkspace): number {
       p.colParticleMassH[c] < -1e-9 || p.colParticleMassL[c] < -1e-9 ||
       Math.abs(work.auditMassH[c] - p.colParticleMassH[c]) > 1e-9 || Math.abs(work.auditMassL[c] - p.colParticleMassL[c]) > 1e-9 ||
       sand + f.suspH[c] + f.suspL[c] + p.colParticleMassH[c] + p.colParticleMassL[c] > f.waterTop[c] + 1e-9 ||
-      f.waterTop[c] > work.capacity) return 13;
+      f.waterTop[c] > work.capacity) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
     if (work.mediumMode === 'DRY_AIR_V1' && (f.suspH[c] !== 0 || f.suspL[c] !== 0 ||
-      Math.abs(f.waterTop[c] - sand - p.colParticleMassH[c] - p.colParticleMassL[c]) > 1e-9)) return 13;
+      Math.abs(f.waterTop[c] - sand - p.colParticleMassH[c] - p.colParticleMassL[c]) > 1e-9)) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
     beforeH += work.fieldBeforeBh[c] + work.fieldBeforeMh[c] + work.fieldBeforeSuspH[c] + work.frozenPool.colParticleMassH[c];
     beforeL += work.fieldBeforeBl[c] + work.fieldBeforeMl[c] + work.fieldBeforeSuspL[c] + work.frozenPool.colParticleMassL[c];
     afterH += f.bh[c] + f.mh[c] + f.suspH[c] + p.colParticleMassH[c];
     afterL += f.bl[c] + f.ml[c] + f.suspL[c] + p.colParticleMassL[c];
   }
-  if (work.budget !== null && work.budget.auditHot() !== 0) return 13;
-  return Math.abs(afterH - beforeH - work.stepExternalH) > 1e-9 || Math.abs(afterL - beforeL - work.stepExternalL) > 1e-9 ? 13 : 0;
-}
-function failApplyHot(work: P011ParticleHotWorkspace, epoch: number, code: number, ordinal: number, stage: number): number {
+  if (work.budget !== null && work.budget.auditHot() !== 0) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
+  {const txOriginalCode:number=Math.abs(afterH - beforeH - work.stepExternalH) > 1e-9 || Math.abs(afterL - beforeL - work.stepExternalL) > 1e-9 ? 13 : 0;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,331,txCode);}}
+function failApplyHot(work: P011ParticleHotWorkspace, epoch: number, code: number, ordinal: number, stage: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(332);let txCode=0;try{
   if(work.diagnosticEnabled&&work.diagnosticFirstError===0){work.diagnosticFirstError=code;work.diagnosticFirstErrorStage=stage;}
   work.failureStatus = code; work.failureOrdinal = ordinal; work.failureAttemptToken = work.attemptToken;
   const rolled = work.active === 1 ? rollbackStepHot(work, epoch) : 0;
   work.errorStageCode = stage; work.results.status = code;
   if (code === 7 || code === 8 || code === 9 || code === 10 || code === 11) work.overflowCount++;
-  return work.lastStatus = rolled === 0 ? code : rolled;
-}
+  {const txOriginalCode:number=work.lastStatus = rolled === 0 ? code : rolled;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,332,txCode);}}
 function applyParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
-  plan: P011ParticleHotPlanBuffer, sink: P011ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {
-  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) return work.lastStatus = 4;
-  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) return work.lastStatus = 3;
-  if (plan !== work.planA || sink !== work.commitSink || results !== work.results || !results.storageValidHot()) return work.lastStatus = 3;
-  if (plan.consumed !== 0) return work.lastStatus = 15;
-  if (compareParticlePlansHot(plan, work.planB) !== 0) return failApplyHot(work, expectedStepEpoch, 12, 0, 1);
+  plan: P011ParticleHotPlanBuffer, sink: P011ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(13);let txCode=0;try{
+  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) {const txOriginalCode:number=work.lastStatus = 4;txCode=txOriginalCode;return txOriginalCode;}
+  if (!work.storageValidHot() || work.field === null || !fieldStorageValidHot(work, work.field, true)) {const txOriginalCode:number=work.lastStatus = 3;txCode=txOriginalCode;return txOriginalCode;}
+  if (plan !== work.planA || sink !== work.commitSink || results !== work.results || !results.storageValidHot()) {const txOriginalCode:number=work.lastStatus = 3;txCode=txOriginalCode;return txOriginalCode;}
+  if (plan.consumed !== 0) {const txOriginalCode:number=work.lastStatus = 15;txCode=txOriginalCode;return txOriginalCode;}
+  if (compareParticlePlansHot(plan, work.planB) !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, 12, 0, 1);txCode=txOriginalCode;return txOriginalCode;}
   work.applying = 1;
   work.validationRows.fill(0);
-  for (let i = 0; i < plan.requestCount; i++) {
-    const valid = requestIdentityHot(work, plan, i); if (valid !== 0) return failApplyHot(work, expectedStepEpoch, valid, plan.ordinal[i], 1);
+  for (let i = 0; i < plan.requestCount; i++) {txTrace?.add(39);
+    const valid = requestIdentityHot(work, plan, i); if (valid !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, valid, plan.ordinal[i], 1);txCode=txOriginalCode;return txOriginalCode;}
     const ordinal = plan.ordinal[i]; const previous = work.validationRows[ordinal];
-    if (previous !== 0) return failApplyHot(work, expectedStepEpoch,
-      sameRequestHot(plan, i, plan, previous - 1) ? 15 : 16, ordinal, 1);
+    if (previous !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch,
+      sameRequestHot(plan, i, plan, previous - 1) ? 15 : 16, ordinal, 1);txCode=txOriginalCode;return txOriginalCode;}
     work.validationRows[ordinal] = i + 1;
   }
   if (work.budget !== null) work.budget.denominator = plan.totalRequested;
   results.ownerId = work.ownerId; results.stepEpoch = expectedStepEpoch; results.resultCount = 0;
-  for (let i = 0; i < plan.requestCount; i++) {
+  for (let i = 0; i < plan.requestCount; i++) {txTrace?.add(39);
     const status = sink.applyInto(work, expectedStepEpoch, plan, i, results);
-    if (status !== 0) return failApplyHot(work, expectedStepEpoch, status, plan.ordinal[i], 2);
+    if (status !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, status, plan.ordinal[i], 2);txCode=txOriginalCode;return txOriginalCode;}
     if (results.committed[i] !== 1 || !Number.isFinite(results.granted[i]) || results.granted[i] < 0 ||
       !Number.isFinite(results.remainder[i]) || results.remainder[i] < 0 ||
       !Number.isFinite(results.budgetClipped[i]) || results.budgetClipped[i] < 0 ||
@@ -1191,62 +1208,64 @@ function applyParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedStepE
       !Number.isFinite(results.capacityClipped[i]) || results.capacityClipped[i] < 0 ||
       !Number.isFinite(results.poolClipped[i]) || results.poolClipped[i] < 0 ||
       Math.abs(plan.requested[i] - results.granted[i] - results.budgetClipped[i] - results.guardRejected[i] -
-        results.capacityClipped[i] - results.poolClipped[i]) > 1e-9) return failApplyHot(work, expectedStepEpoch, 13, plan.ordinal[i], 3);
+        results.capacityClipped[i] - results.poolClipped[i]) > 1e-9) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, 13, plan.ordinal[i], 3);txCode=txOriginalCode;return txOriginalCode;}
     results.resultCount++;
   }
   const p = work.patchScratch;
-  const copied = copyPoolDiagnosticHot(work, p, false); if (copied !== 0) return failApplyHot(work, expectedStepEpoch, copied, 0, 4);
-  for (let i = 0; i < plan.motionCount; i++) {
-    const slot = particleSlotHot(p, plan.motionParticleId[i]);
+  const copied = copyPoolDiagnosticHot(work, p, false); if (copied !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, copied, 0, 4);txCode=txOriginalCode;return txOriginalCode;}
+  for (let i = 0; i < plan.motionCount; i++) {txTrace?.add(39);
+    const slot = particleSlotHot(p, plan.motionParticleId[i],work);
     if (slot < 0 || Math.floor(p.pX[slot]) !== plan.motionColumn[i] || Math.floor(plan.motionX[i]) !== plan.motionColumn[i]) {
-      return failApplyHot(work, expectedStepEpoch, 17, 0, 4);
+      {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, 17, 0, 4);txCode=txOriginalCode;return txOriginalCode;}
     }
+    work.txD1?.before(p,slot);
     p.pX[slot] = plan.motionX[i]; p.pY[slot] = plan.motionY[i]; p.pVx[slot] = plan.motionVx[i]; p.pVy[slot] = plan.motionVy[i];
+    work.txD1?.after(p,slot);
   }
-  const moved = copyPoolDiagnosticHot(work, p, true); if (moved !== 0) return failApplyHot(work, expectedStepEpoch, moved, 0, 4);
+  const moved = copyPoolDiagnosticHot(work, p, true); if (moved !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, moved, 0, 4);txCode=txOriginalCode;return txOriginalCode;}
   if(work.diagnosticEnabled){work.diagnosticJournalUsed=work.patchActions.count;
     work.diagnosticLineageUsed=work.patchActions.lineageCount;
     work.diagnosticFreeAfter=p.freeCount;work.diagnosticLiveAfter=p.liveCount;work.diagnosticNextIdAfter=p.nextId;}
-  const audit = auditParticleHot(work, 'APPLY_TAIL'); if (audit !== 0) return failApplyHot(work, expectedStepEpoch, audit, 0, 5);
-  work.applying = 0; plan.consumed = 1; results.status = 0; return work.lastStatus = 0;
-}
+  const audit = auditParticleHot(work, 'APPLY_TAIL'); if (audit !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, audit, 0, 5);txCode=txOriginalCode;return txOriginalCode;}
+  work.applying = 0; plan.consumed = 1; results.status = 0; {const txOriginalCode:number=work.lastStatus = 0;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,13,txCode);}}
 
-export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {
+export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(334);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=input.attemptToken;d.context.runToken=input.runToken;d.context.ownerId=work.ownerId;
     span=d.begin('BEGIN_HOT');d.increment(15);}
   try{code=beginStepHotBody(work,input);return code;}
-  finally{if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=input.attemptToken;d.context.runToken=input.runToken;d.context.ownerId=work.ownerId;d.endSpan(span,code);}}
-}
+  finally{txCode=code;if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=input.attemptToken;d.context.runToken=input.runToken;d.context.ownerId=work.ownerId;d.endSpan(span,code);}}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,334,txCode);}}
 
-export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, destination: P011ParticleHotPlanBuffer): number {
+export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, destination: P011ParticleHotPlanBuffer): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(335);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;
     span=d.begin('COLLECT');d.increment(16);}
   try{code=collectParticlePlanIntoBody(work,expectedStepEpoch,destination);return code;}
-  finally{if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;d.endSpan(span,code);}}
-}
+  finally{txCode=code;if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;d.endSpan(span,code);}}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,335,txCode);}}
 
-export function finishStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {
+export function finishStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(336);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;
     span=d.begin('FINISH');d.increment(18);}
   try{code=finishStepHotBody(work,expectedStepEpoch);return code;}
-  finally{if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;d.endSpan(span,code);}}
-}
+  finally{txCode=code;if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;d.endSpan(span,code);}}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,336,txCode);}}
 
-export function copyPoolDiagnosticHot(work: P011ParticleHotWorkspace,out: P011ParticleSnapshot,restore: boolean): number {
+export function copyPoolDiagnosticHot(work: P011ParticleHotWorkspace,out: P011ParticleSnapshot,restore: boolean): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(337);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){span=d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ');d.increment(8);d.increment(21);}
   if(restore)d?.input(out);
-  try{code=work.pool.transferHotState(out,restore);if(code===0&&!restore)d?.input(out);return code;}
-  finally{d?.endSpan(span,code);}
-}
+  try{code=work.pool.transferHotState(out,restore);if(code===0&&!restore)d?.input(out);if(code===0)work.txD1?.transfer(out,restore);return code;}
+  finally{txCode=code;d?.endSpan(span,code);}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,337,txCode);}}
 
 export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
-  plan: P011ParticleHotPlanBuffer,sink: P011ParticleHotCommitSink,results: P011ParticleHotResultBuffer): number {
+  plan: P011ParticleHotPlanBuffer,sink: P011ParticleHotCommitSink,results: P011ParticleHotResultBuffer): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(338);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){span=d.begin('APPLY');d.increment(17);}
   try{code=applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results);return code;}
-  finally{d?.endSpan(span,code);}
-}
+  finally{txCode=code;d?.endSpan(span,code);}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,338,txCode);}}

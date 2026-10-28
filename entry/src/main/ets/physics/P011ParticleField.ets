@@ -258,6 +258,8 @@ export function validateParticleRequest(r: P011ParticleRequest, cols: number): v
 // Canonical pool only. These local primitives do not publish field events;
 // D1-B must coordinate pool+field changes atomically before production use.
 export class P011ParticleField implements P011ParticleAtomicPool {
+  private txCanonicalInvalidator:(()=>void)|null=null;
+  setTxCanonicalInvalidator(callback:(()=>void)|null):void{this.txCanonicalInvalidator=callback;}
   private readonly hotCanonicalBinding: ArrayBuffer[];
   private readonly pMass: Float64Array;
   private readonly pX: Float64Array;
@@ -324,6 +326,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     }
     if (this.freeCount === 0) return -1;
     if (this.nextId > UINT32_MAX) throw new Error('PARTICLE_ID_EXHAUSTED');
+    this.txCanonicalInvalidator?.();
     const slot = this.freeSlots[--this.freeCount];
     this.pMass[slot] = seed.mass; this.pX[slot] = seed.x; this.pY[slot] = seed.y;
     this.pVx[slot] = seed.vx; this.pVy[slot] = seed.vy;
@@ -345,6 +348,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     const mass = this.pMass[slot];
     if (granted < 0 || granted > mass || sandTopAfter < 0 || contactEps <= 0 ||
       !Number.isFinite(sandTopAfter + contactEps)) throw new Error('PARTICLE_INVALID_GRANT');
+    this.txCanonicalInvalidator?.();
     const remainder = granted === mass ? 0 : mass - granted;
     this.cache(this.pPhase[slot])[Math.floor(this.pX[slot])] -= granted;
     this.pMass[slot] = remainder;
@@ -443,7 +447,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     return result;
   }
 
-  reset(): void {
+  reset(): void {this.txCanonicalInvalidator?.();
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     this.pMass.fill(0); this.pX.fill(0); this.pY.fill(0);
     this.pVx.fill(0); this.pVy.fill(0); this.pPhase.fill(0);
@@ -530,7 +534,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     this.copySnapshot(checkpoint.state); this.appliedKeys = new Set<string>(checkpoint.appliedKeys);
   }
 
-  private copySnapshot(s: P011ParticleSnapshot): void {
+  private copySnapshot(s: P011ParticleSnapshot): void {this.txCanonicalInvalidator?.();
     this.pMass.set(s.pMass); this.pX.set(s.pX); this.pY.set(s.pY);
     this.pVx.set(s.pVx); this.pVy.set(s.pVy); this.pPhase.set(s.pPhase);
     this.pSource.set(s.pSource); this.pState.set(s.pState); this.pId.set(s.pId);
@@ -612,12 +616,12 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 && this.pId[i] === id) return i;
     throw new Error('PARTICLE_UNKNOWN_ID');
   }
-  private remove(slot: number): void {
+  private remove(slot: number): void {this.txCanonicalInvalidator?.();
     this.cache(this.pPhase[slot])[Math.floor(this.pX[slot])] -= this.pMass[slot];
     this.pMass[slot] = 0; this.pState[slot] = 0;
     this.freeSlots[this.freeCount++] = slot; this.liveCount--;
   }
-  private mergePair(a: number, b: number, params: P011ParticleParams): boolean {
+  private mergePair(a: number, b: number, params: P011ParticleParams): boolean {this.txCanonicalInvalidator?.();
     if (a === b || this.pPhase[a] !== this.pPhase[b] || this.pSource[a] !== this.pSource[b] ||
       this.pSourceId[a] !== this.pSourceId[b] || Math.floor(this.pX[a]) !== Math.floor(this.pX[b]) ||
       Math.abs(this.pY[a] - this.pY[b]) > params.mergeHeightRadius || this.pState[a] !== this.pState[b]) return false;
@@ -718,7 +722,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
 
   // Free flight stays in its original column; every crossing is a request.
   // Outer substep rollback owns this publication together with sink fields.
-  applyMotions(motions: P011ParticleMotion[]): void {
+  applyMotions(motions: P011ParticleMotion[]): void {this.txCanonicalInvalidator?.();
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     for (let i = 0; i < motions.length; i++) {
       const m = motions[i]; const slot = this.slotFor(m.particleId);

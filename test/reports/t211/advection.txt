@@ -1,0 +1,43 @@
+{
+  "suite": "advection_stage_a_units",
+  "passed": 9,
+  "failed": 0,
+  "results": [
+    {
+      "name": "adv_conservationIdentity",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_momentLedgerRM",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_cflBound",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_sameSnapshotAntiOversell",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_sixPartIdempotency",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_routeIsolationBitExact",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_directionSemantics",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_shakeLiftSourceConservationAndRouteExclusion",
+      "status": "PASS"
+    },
+    {
+      "name": "adv_performanceOofN",
+      "status": "PASS"
+    }
+  ]
+}

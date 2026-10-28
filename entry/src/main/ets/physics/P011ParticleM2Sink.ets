@@ -171,36 +171,36 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     return rolled === 0 ? code : rolled;
   }
   applyInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, p: P011ParticleHotPlanBuffer,
-    row: number, result: P011ParticleHotResultBuffer): number {
-    if (work !== this.work || expectedStepEpoch !== work.stepEpoch || work.active !== 1) return 4;
-    if (result !== work.results || !result.storageValidHot()) return 3;
-    const valid = validateParticleHotRequest(work, p, row); if (valid !== 0) return valid;
-    const f = work.field; if (f === null) return 1;
+    row: number, result: P011ParticleHotResultBuffer): number {if(work.txD1!==null)work.txD1.trace.context[15]=row;work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(7);let txCode=0;try{
+    if (work !== this.work || expectedStepEpoch !== work.stepEpoch || work.active !== 1) {const txRc:number=4;txCode=txRc;return txRc;}
+    if (result !== work.results || !result.storageValidHot()) {const txRc:number=3;txCode=txRc;return txRc;}
+    const valid = validateParticleHotRequest(work, p, row); if (valid !== 0) {const txRc:number=valid;txCode=txRc;return txRc;}
+    const f = work.field; if (f === null) {const txRc:number=1;txCode=txRc;return txRc;}
     const c = p.column[row], kind = p.kind[row], requested = p.requested[row];
     let granted = requested, budgetClipped = 0, guardRejected = 0, capacityClipped = 0, poolClipped = 0;
     let ticketToken = 0; let degraded = 0; let guarded = 0; let disposition = 1;
-    const copied = copyPoolDiagnosticHot(work,work.patchScratch, false); if (copied !== 0) return copied;
+    const copied = copyPoolDiagnosticHot(work,work.patchScratch, false); if (copied !== 0) {const txRc:number=copied;txCode=txRc;return txRc;}
     const target = kind === 3 ? p.targetColumn[row] : c;
-    if (target < 0 || target >= work.cols) return 2;
+    if (target < 0 || target >= work.cols) {const txRc:number=2;txCode=txRc;return txRc;}
     const free = (f.mediumMode === 'DRY_AIR_V1' ? f.capacity : f.waterTop[target]) - sand(work, target) - f.suspH[target] - f.suspL[target] -
       work.patchScratch.colParticleMassH[target] - work.patchScratch.colParticleMassL[target];
     if ((kind === 1 || kind === 3) && free + 1e-9 < requested) { capacityClipped = requested; granted = 0; }
     else if (kind === 2 || kind === 3 || kind === 4 && this.birthOnly === 0) {
-      const reserve = this.budget.reserveInto(expectedStepEpoch, p, row, this.ticket); if (reserve !== 0) return this.failHot(reserve);
+      const reserve = this.budget.reserveInto(expectedStepEpoch, p, row, this.ticket); if (reserve !== 0) {const txRc:number=this.failHot(reserve);txCode=txRc;return txRc;}
       ticketToken = this.ticket.ticketToken; granted = this.ticket.reserved;
       if (kind === 3 && granted < requested) {
-        const refunded = this.budget.refundInto(ticketToken, granted, this.refund); if (refunded !== 0) return this.failHot(refunded);
+        const refunded = this.budget.refundInto(ticketToken, granted, this.refund); if (refunded !== 0) {const txRc:number=this.failHot(refunded);txCode=txRc;return txRc;}
         granted = 0; budgetClipped = requested;
       } else {
         budgetClipped = requested - granted;
         if (kind !== 3) {
           const status = guardAdmitInto(work, expectedStepEpoch, c, kind === 2 ? 1 : -1, granted, this.guard);
-          if (status !== 0) return this.failHot(status);
+          if (status !== 0) {const txRc:number=this.failHot(status);txCode=txRc;return txRc;}
           const actual = this.host.internalParticleGuard(c, kind === 2 ? 1 : -1, granted);
-          if (!Number.isFinite(actual) || actual < 0 || actual > granted) return this.failHot(13);
+          if (!Number.isFinite(actual) || actual < 0 || actual > granted) {const txRc:number=this.failHot(13);txCode=txRc;return txRc;}
           this.guard.accepted = actual; this.guard.rejected = granted - actual; guarded = 1;
           const refunded = this.budget.refundInto(ticketToken, this.guard.rejected, this.refund);
-          if (refunded !== 0) return this.failHot(refunded);
+          if (refunded !== 0) {const txRc:number=this.failHot(refunded);txCode=txRc;return txRc;}
           guardRejected = this.guard.rejected; granted = this.guard.accepted;
         }
       }
@@ -212,7 +212,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       const available = sand(work, c);
       if (granted > available) {
         const clipped = granted - available; capacityClipped += clipped;
-        if (ticketToken !== 0) { const status = this.budget.refundInto(ticketToken, clipped, this.refund); if (status !== 0) return this.failHot(status); }
+        if (ticketToken !== 0) { const status = this.budget.refundInto(ticketToken, clipped, this.refund); if (status !== 0) {const txRc:number=this.failHot(status);txCode=txRc;return txRc;} }
         granted = available;
       }
       const fromMix = Math.min(granted, f.mh[c] + f.ml[c]); const scale = fromMix / Math.max(f.mh[c] + f.ml[c], 1e-9);
@@ -235,24 +235,25 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       token = preparePatchHot(work, p, row, gh, gl, disposition);
     }
     work.stagedYActive = 0;
-    if (token === 0) return this.failHot(work.lastStatus);
+    if (token === 0) {const txRc:number=this.failHot(work.lastStatus);txCode=txRc;return txRc;}
     if (kind === 5 || degraded === 1) { f.suspH[c] += gh; f.suspL[c] += gl; }
     let births = 0;
     for (let i = 0; i < work.patchActions.count; i++) if (work.patchActions.kind[i] === 1) births++;
     const main = kind === 6 || (kind === 1 && births > 0) ? 0 : 1;
     const eventCount = work.patchActions.count + main + degraded;
-    if (work.events.count + eventCount > work.events.capacity) return this.failHot(9);
-    if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) return this.failHot(10);
-    const published = publishPatchHot(work, token); if (published !== 0) return this.failHot(published);
+    if (work.events.count + eventCount > work.events.capacity) {const txRc:number=this.failHot(9);txCode=txRc;return txRc;}
+    if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) {const txRc:number=this.failHot(10);txCode=txRc;return txRc;}
+    const published = publishPatchHot(work, token); if (published !== 0) {const txRc:number=this.failHot(published);txCode=txRc;return txRc;}
     if (kind === 1 || this.birthOnly === 1) { work.stepExternalH += gh; work.stepExternalL += gl; }
     if (f.mediumMode === 'DRY_AIR_V1') {
       const pool=work.pool;
       f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);
       if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);
     }
-    const audit = auditParticleHot(work,'SINK_ROW'); if (audit !== 0) return this.failHot(audit);
-    if (this.failAfterPublish !== 0) return this.failHot(13);
-    if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, granted, this.refund); if (closed !== 0) return this.failHot(closed); }
+    const audit = auditParticleHot(work,'SINK_ROW'); if (audit !== 0) {const txRc:number=this.failHot(audit);txCode=txRc;return txRc;}
+    if (this.failAfterPublish !== 0) {const txRc:number=this.failHot(13);txCode=txRc;return txRc;}
+    txTrace?.cut(12);
+    if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, granted, this.refund); if (closed !== 0) {const txRc:number=this.failHot(closed);txCode=txRc;return txRc;} }
     const begin = work.events.count;
     for (let i = 0; i < work.patchActions.count; i++) copyAction(work, i, p.ordinal[row]);
     let guardEvent = -1;
@@ -272,7 +273,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
         guardEvent = i; e.guardCount[i] = this.guard.count; e.guardLimitingEdge[i] = this.guard.limitingEdge;
         e.guardAllLegal[i] = this.guard.allLegalBefore; e.guardAccepted[i] = this.guard.accepted;
         e.guardRejectedAmount[i] = this.guard.rejected;
-        for (let j = 0; j < this.guard.count; j++) {
+        for (let j = 0; j < this.guard.count; j++) {txTrace?.add(39);
           e.guardEdgeId[i * 3 + j] = this.guard.edgeId[j]; e.guardResidual[i * 3 + j] = this.guard.residual[j];
           e.guardInfluence[i * 3 + j] = this.guard.influence[j];
         }
@@ -287,12 +288,12 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       e.massBefore[i] = granted; e.massAfter[i] = granted;
       e.toSuspH[i] = gh; e.toSuspL[i] = gl;
     }
-    const finished = finishPatchHot(work, token); if (finished !== 0) return this.failHot(finished);
+    const finished = finishPatchHot(work, token); if (finished !== 0) {const txRc:number=this.failHot(finished);txCode=txRc;return txRc;}
     result.committed[row] = 1; result.disposition[row] = disposition; result.released[row] = requested === granted ? 1 : 0;
     result.rowStatus[row] = 0; result.granted[row] = granted; result.remainder[row] = requested - granted;
     result.budgetClipped[row] = budgetClipped; result.guardRejected[row] = guardRejected;
     result.capacityClipped[row] = capacityClipped; result.poolClipped[row] = poolClipped; result.massAfter[row] = requested - granted;
     result.guardIndex[row] = guardEvent; result.eventBegin[row] = begin; result.eventCount[row] = eventCount;
-    return 0;
-  }
+    {const txRc:number=0;txCode=txRc;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,7,txCode);}}
 }

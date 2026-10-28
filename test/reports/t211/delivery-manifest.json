@@ -1,0 +1,133 @@
+{
+  "revision": "T211_D1_DELIVERY_V1",
+  "baseline": "a27d92c",
+  "productionHunks": [
+    {
+      "path": "entry/src/main/ets/physics/P011MergeExactIndex.ets",
+      "beforeSha256": "c84d2085edb7d0f8dd50af0b885d5b04544ea519ef9821565aeafe5461ac63e2",
+      "afterSha256": "a87867eb40f45b6aa91e894e5fadb3660d65d665cd47e797015a267d5b0100df"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "beforeSha256": "f1357f038630810465732b531cfc72f8082ec7f326e73b283a954d878d8bfe9c",
+      "afterSha256": "086f1debb6ee8842524fdf9e91dac7925c88a3ad6dc30b21ddec52aa2e71590a"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "beforeSha256": "4517c1de752bcd6c2af3222e9bc9549ff100484234fb32154188178aeac74b68",
+      "afterSha256": "ac6899ddc632825bc6a98c03ac5b6fe84969d8f886c04e600dd883289a54797b"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHotBudget.ets",
+      "beforeSha256": "2480c3b2ada7ae6540f6011add46905e6d866838dad703761491377bb75540fb",
+      "afterSha256": "04f63d6f8f794c0b41056da9f2e0ea703a9a4ebe0dec147edc2f90305e8f1e1f"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "beforeSha256": "bada2d114a0941f623d76bd40b9f327093db905686c7b1d71e03f498629c1df1",
+      "afterSha256": "0a7cfdc3dd39395db5d4c5b2b8a129b71d97eae9a7b3f5dbd0d236e712be48a4"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "beforeSha256": "54879f7b10831daf1b92791b35de5b732a109aac2f14d3ffe8a2f6bf539fe681",
+      "afterSha256": "a9ba9ab215a36e18840cb6a7fe2c8d0ceba0935bd1f01e7278d8587b2f70acfc"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "beforeSha256": "810797ff7c952ca6ef3c17378aa40bd8e8c02f9e340e892fa96a93135069dc0b",
+      "afterSha256": "b270823fd99d7be7263c124bfe5ecab43d33dd4d119f7554e8e2532ab933335d"
+    }
+  ],
+  "newModules": [
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxAvlTree.ets",
+      "sha256": "5f54230d3f5de12e4a4dd4a1ccbbd24c880adc3d10f02eab97779ec709996f9d",
+      "bytes": 3294
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxBranchView.ets",
+      "sha256": "0ef183d714fab2c9daaa49e121fc60e68b8a177ebcab333b976e859e280c272f",
+      "bytes": 3990
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxCapture.ets",
+      "sha256": "11d2cfd49a80ac27eaf5b83f1f67af5c5b0aa320f8a47a5aee5074e3e8f8dcf3",
+      "bytes": 1136
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxCertificates.ets",
+      "sha256": "42ff50dfcfac3df3ba014e832a8d40c1f644edb17ff75aae2dfd517cd3fb0413",
+      "bytes": 553
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxFieldViews.ets",
+      "sha256": "c2b734638aaa4c5224c0fb967c9521980f155693e08e0a4fd9bbc28629e5069b",
+      "bytes": 372
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxFixtureDriver.ets",
+      "sha256": "9163fa1459828a1332d280c4b405bdc949afb9f80095c18c00dc6d68c6e20ddf",
+      "bytes": 3486
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxIdIndex.ets",
+      "sha256": "c2bf30d56e59233d9dcb64987ba92f5b8b448bcb632bb0bd98148104031cbafc",
+      "bytes": 810
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxOwnerFacade.ets",
+      "sha256": "7e88fe8c889a966f08bc1e3df6555fbdd1cbcdcb1b6f0cfa1b5c8d48ff1ce925",
+      "bytes": 1260
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxPairAdjAvl.ets",
+      "sha256": "1798141b36831baf4acb1067b080ce2be987baa4aadcb6a5e931898701dda282",
+      "bytes": 8669
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxStorageRegistry.ets",
+      "sha256": "4022c32c7b5a4d68dcbf1cbfe1fe63f249893e94ce339f7985f192ab59b836a0",
+      "bytes": 3547
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxTicketIndex.ets",
+      "sha256": "1a6ae2b4227e892502d32541ebdad4db41fd806d6c7a244f7d9ffd91c18fc5d8",
+      "bytes": 2188
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxTypes.ets",
+      "sha256": "5def4516c1ccf805283b46d2d2c1c9d94b832b3b778df671f3b00222dbfc6aba",
+      "bytes": 2238
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxWholePairAdapter.ets",
+      "sha256": "790d2db673d79d3894286f350a17078d1108928af79fc292fd7230dbc4ec4ca2",
+      "bytes": 175
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxWordUndo.ets",
+      "sha256": "4a267befa65c645e0fd8c09e69592f7310478c473abac94fe873805376a96a40",
+      "bytes": 1739
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\tx\\TxWorkTrace.ets",
+      "sha256": "66cfae616c19e54b493accac98161dd3c6f985b8f91b89168f372af89b7ad48c",
+      "bytes": 4169
+    },
+    {
+      "path": "entry\\src\\main\\ets\\physics\\TxWholeTransactionCore.ets",
+      "sha256": "99c38371c26445ea0ef7f15a14bf0e1e1855f947422f6b50d1c0f4aca00bcc92",
+      "bytes": 10679
+    }
+  ],
+  "rootUnsignedHap": {
+    "sha256": "4a5c82a36ebfca30b934d5cb135a2ae50c0159419d070fb375155a73ef6867bf",
+    "bytes": 5253805
+  },
+  "isolatedUnsignedSha256": "734978733541c3afa7999a64720f541bcc538bb681f396fb6f58d0aa6c34f00d",
+  "isolatedSourceManifestSha256": "7d7202a9b9404280148f09deeea3d400b098a9db02e916e914ad6e1beb81e4ec",
+  "signed": "NOT_BUILT_THIS_TASK",
+  "device": "NOT_RUN",
+  "e2e": "NOT_RUN",
+  "gpuBenefit": "NOT_MEASURED"
+}

@@ -1,3 +1,5 @@
+import { TxFixtureDriver } from './tx/TxFixtureDriver';
+import { TxWholePairAdapter } from './tx/TxWholePairAdapter';
 import { P011TiltPreviewTrace, P011TiltPreviewTraceSink, P011FirstFailureEvidence } from './P011TiltPreviewTrace';
 import { P011FieldColumnEvidenceV2, P011FieldStageIdentity } from './P011FieldColumnEvidenceV2';
 import { P011PoolProgressDiagnostic, P011ProgressClock } from './P011PoolProgressDiagnostic';
@@ -793,6 +795,17 @@ function finite(value: number): boolean {
 export interface P051DryDiagnostics { mediumRevision: string; airDynamicsRevision: string; freeWaterTotal: number;
  occupiedVolumeTotal: number; baselineStatus: string; sourceEpoch: number; externalAdmissionCount: number | null; }
 export class WaterSandField {
+  private txD1:TxWholePairAdapter|null=null;
+  static createWholeTransactionFixture(nmax:number,backend:string):TxFixtureDriver{return new TxFixtureDriver(nmax,backend);}
+  // Explicit cold differential entry; no production default route change.
+  attachWholeTransactionD1(backend:string='TX_ADJ_AVL'):TxWholePairAdapter {
+    if(this.particleBinding===null)throw new Error('TX_D1_ROUTE_NOT_ARMED');
+    if(backend!=='TX_ADJ_AVL'&&backend!=='LEGACY_SCAN')throw new Error('TX_D1_BACKEND');
+    const core=new TxWholePairAdapter(this.particleBinding.work.params.nmax);core.backend=backend;
+    core.attach(this.particleBinding.work,this.particleBinding.work.params.mergeHeightRadius);
+    this.particleBinding.sink.budget.enableTxTickets();this.txD1=core;return core;
+  }
+
   private readonly particleColumnGuardWorkspace: P011ParticleColumnGuardWorkspace = new P011ParticleColumnGuardWorkspace();
   readonly cols: number;
   readonly capacity: number;
@@ -834,23 +847,23 @@ export class WaterSandField {
   private mediumMode: string = 'WET_COLUMN_V1';
   private dryResetPending: boolean = false;
   private drySourceId: number = 0; private dryLastSequence: number = 0; private dryLastInputTime: number = 0;
-  getMediumMode(): string { return this.mediumMode; }
-  getDryDiagnostics(): P051DryDiagnostics {
+  getMediumMode(): string {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(100);let txCode=0;try{ {const txRc:string=this.mediumMode;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,100,txCode);}}
+  getDryDiagnostics(): P051DryDiagnostics {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(101);let txCode=0;try{
     let occupied=0; for(let c=0;c<this.cols;c++)occupied+=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
     const totals=this.getTotals();
-    return {mediumRevision:this.mediumMode,airDynamicsRevision:this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY',
+    {const txRc:P051DryDiagnostics={mediumRevision:this.mediumMode,airDynamicsRevision:this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY',
       freeWaterTotal:totals.water,occupiedVolumeTotal:occupied,baselineStatus:this.initialHeavy+this.initialLight+this.sourceInjectedHeavy+this.sourceInjectedLight===0?'EMPTY_BASELINE':'NONEMPTY',
-      sourceEpoch:this.sourceEpoch,externalAdmissionCount:this.externalAdmissions.count};
-  }
-  initializeDryParticleDemo(config: P051DryRunConfig): P051DryRunResult {
-    if(config.revision!==P051_DRY_REVISION || this.cols!==128 || !Number.isSafeInteger(config.sourceId)||config.sourceId<1||config.sourceId>0xffffffff)return {ok:false,code:'INVALID_CONFIG'};
-    if(this.particleBinding!==null && this.particleBinding.active)return {ok:false,code:'BUSY'};
+      sourceEpoch:this.sourceEpoch,externalAdmissionCount:this.externalAdmissions.count};txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,101,txCode);}}
+  initializeDryParticleDemo(config: P051DryRunConfig): P051DryRunResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(102);let txCode=0;try{
+    if(config.revision!==P051_DRY_REVISION || this.cols!==128 || !Number.isSafeInteger(config.sourceId)||config.sourceId<1||config.sourceId>0xffffffff){const txRc:P051DryRunResult={ok:false,code:'INVALID_CONFIG'};txCode=0;return txRc;}
+    if(this.particleBinding!==null && this.particleBinding.active){const txRc:P051DryRunResult={ok:false,code:'BUSY'};txCode=0;return txRc;}
     if(this.advectionRouteActive()||this.deepCreepRouteActive()||this.correctionRouteActive()||this.moistureParams!==null||this.advectionParams!==null||this.deepCreepParams!==null||
-      (this.naturalObservationRouteId!==null && this.naturalObservationRouteId!==P011_PARTICLE_ROUTE_ID))return {ok:false,code:'MODE_CONFLICT'};
+      (this.naturalObservationRouteId!==null && this.naturalObservationRouteId!==P011_PARTICLE_ROUTE_ID)){const txRc:P051DryRunResult={ok:false,code:'MODE_CONFLICT'};txCode=0;return txRc;}
     const params=config.particleParams;
     let binding: P011ParticleM2FieldBinding;
     try { binding=new P011ParticleM2FieldBinding(this.cols,this.capacity,this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL,this.sandTopScratch,params,this); }
-    catch(error){return {ok:false,code:'INVALID_PARAMS'};}
+    catch(error){{const txRc:P051DryRunResult={ok:false,code:'INVALID_PARAMS'};txCode=0;return txRc;}}
     const backup=binding.pool.snapshot(), journal=binding.pool.snapshot(), b=binding.pool.snapshot(), m=binding.pool.snapshot();
     this.particleBinding=binding;this.particleParams=binding.work.params;this.particleRouteId=P011_PARTICLE_ROUTE_ID;
     this.configurePoolProgressDiagnostic();
@@ -861,22 +874,22 @@ export class WaterSandField {
     this.particleBackup=backup;this.particleJournalBefore=journal;this.backup.particleState=b;this.motionSnapshot.particleState=m;
     this.dryResetPending=true;this.drySourceId=config.sourceId;
     this.initialize({waterRegions:[],heavyDepositedRegions:[],lightDepositedRegions:[],heavySuspendedRegions:[],lightSuspendedRegions:[]});
-    return {ok:true,code:'OK'};
-  }
-  injectDryGestureSand(request: P051DryAdmissionRequest): P051DryAdmissionReceipt {
+    {const txRc:P051DryRunResult={ok:true,code:'OK'};txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,102,txCode);}}
+  injectDryGestureSand(request: P051DryAdmissionRequest): P051DryAdmissionReceipt {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(103);let txCode=0;try{
     const result: P051DryAdmissionReceipt={revision:P051_DRY_REVISION,runId:this.p011RunId,sourceId:request.sourceId,sequence:request.sequence,
       requestedH:request.requestedH,requestedL:request.requestedL,admittedH:0,admittedL:0,lambda:0,x:request.x,y:request.y,
       rejectedReason:null,admissionTransactionId:null,sourceEpoch:this.sourceEpoch,physicsCommitId:this.renderPhysicsCommitId};
-    if(this.mediumMode!==P051_DRY_MEDIUM||!this.particleRouteActive()||this.particleBinding===null||this.particleParams===null){result.rejectedReason='MODE_CONFLICT';return result;}
+    if(this.mediumMode!==P051_DRY_MEDIUM||!this.particleRouteActive()||this.particleBinding===null||this.particleParams===null){result.rejectedReason='MODE_CONFLICT';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
     const binding=this.particleBinding;
-    if(this.frozen||binding.active||binding.work.pageBacklog!==0){result.rejectedReason='BUSY_OR_FROZEN';return result;}
+    if(this.frozen||binding.active||binding.work.pageBacklog!==0){result.rejectedReason='BUSY_OR_FROZEN';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
     const error=p051DryRequestError(request,this.drySourceId,this.dryLastSequence,this.dryLastInputTime,this.cols,this.capacity);
-    if(error!==null){result.rejectedReason=error;return result;}
+    if(error!==null){result.rejectedReason=error;{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
     this.updateSandTop();const c=Math.floor(request.x);
-    if(request.y<this.sandTopScratch[c]+this.particleParams.contactEps){result.rejectedReason='BIRTH_OCCLUDED';return result;}
+    if(request.y<this.sandTopScratch[c]+this.particleParams.contactEps){result.rejectedReason='BIRTH_OCCLUDED';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
     const q=request.requestedH+request.requestedL;const free=Math.max(0,this.capacity-this.waterTop[c]);
     let lambda=Math.min(1,free/q);const eventStart=this.endpointParticleEvents.length;
-    for(let attempt=0;attempt<8 && lambda>=1e-4;attempt++){
+    for(let attempt=0;attempt<8 && lambda>=1e-4;attempt++){txTrace?.add(39);txTrace?.add(31);
       if(binding.work.poolProgress!==null){this.poolDiagnosticOrigin='DRY_ADMISSION';
         this.poolDiagnosticLambdaAttempt=attempt;this.poolDiagnosticLambda=lambda;
         this.poolDiagnosticParentSequence=request.sequence;this.updatePoolProgressContext();}
@@ -887,7 +900,7 @@ export class WaterSandField {
         binding.pool.nextParticleId+slots-1>0xffffffff||!Number.isSafeInteger(this.sourceEpoch+1)||!Number.isSafeInteger(this.renderPhysicsCommitId+1)) {lambda*=.5;continue;}
       let admission: P011ExternalAdmissionRecord;
       try {admission=this.externalAdmissions.prepare(this.p011RunId,request.sourceId,request.sequence,request.inputTimeMs,h,l);}
-      catch(e){result.rejectedReason='ADMISSION_PREPARE_FAILED';return result;}
+      catch(e){result.rejectedReason='ADMISSION_PREPARE_FAILED';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
       this.saveBackup();binding.registerRun(this.p011RunId,this.p011SubstepId+1);
       if(!binding.beginDryBatch(h,l,request.x,request.y,request.sourceId,request.seed)) {binding.rollback();this.restoreBackup();lambda*=.5;continue;}
       this.updateSandTop();
@@ -900,11 +913,11 @@ export class WaterSandField {
       result.admittedH=h;result.admittedL=l;result.lambda=lambda;result.sourceEpoch=this.sourceEpoch;
       result.physicsCommitId=this.renderPhysicsCommitId;result.admissionTransactionId=admission.admissionTransactionId;
       const evidence=binding.exportCommittedEvidence();
-      for(let i=0;i<evidence.events.length;i++){const row=serializeP011ParticleEvent(evidence.events[i],i);if(row!==null)this.endpointParticleEvents.push(row);}
-      this.externalAdmissions.exportLast();return result;
+      for(let i=0;i<evidence.events.length;i++){txTrace?.add(39);txTrace?.add(31);const row=serializeP011ParticleEvent(evidence.events[i],i);if(row!==null)this.endpointParticleEvents.push(row);}
+      this.externalAdmissions.exportLast();{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}
     }
-    this.endpointParticleEvents.length=eventStart;result.rejectedReason='CAPACITY_BLOCKED';return result;
-  }
+    this.endpointParticleEvents.length=eventStart;result.rejectedReason='CAPACITY_BLOCKED';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,103,txCode);}}
   private initialHeavy = 0;
   private initialLight = 0;
   private targetTilt = 0;
@@ -971,10 +984,10 @@ export class WaterSandField {
   private renderStateEpoch: number = 0;
   private renderPublicationKind: P011RenderPublicationKind = 'RESET';
   private renderLedgerCommitKey: P011EndpointCommitKey | null = null;
-  private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {
+  private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(104);let txCode=0;try{
     this.renderPhysicsCommitId++; if (newEpoch) this.renderStateEpoch++;
     this.renderPublicationKind = kind; this.renderLedgerCommitKey = null;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,104,txCode);}}
   private particleBinding: P011ParticleM2FieldBinding | null = null;
   private particleRouteId: string | null = null;
   private particleParams: P011ParticleParams | null = null;
@@ -1034,43 +1047,43 @@ export class WaterSandField {
   private planningDelegate: P011PlanningPassDelegate =
     new WaterSandFieldPlanningDelegate(this);
 
-  internalPreviewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {
-    return this.previewChannelPlansAt(thetaCandidate);
-  }
+  internalPreviewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(105);let txCode=0;try{
+    {const txRc:P011ChannelPlan[] | null=this.previewChannelPlansAt(thetaCandidate);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,105,txCode);}}
 
   // §24 correction adapter accessors (same-file classes cannot touch
   // private members under ArkTS class-level privacy).
-  internalSandTopScratch(): Float64Array {
-    return this.sandTopScratch;
-  }
+  internalSandTopScratch(): Float64Array {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(106);let txCode=0;try{
+    {const txRc:Float64Array=this.sandTopScratch;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,106,txCode);}}
 
-  internalEffectiveTilt(): number {
-    return this.effectiveTilt;
-  }
+  internalEffectiveTilt(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(107);let txCode=0;try{
+    {const txRc:number=this.effectiveTilt;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,107,txCode);}}
 
-  internalSubstepSandTopBefore(): Float64Array {
-    return this.substepSandTopBefore;
-  }
+  internalSubstepSandTopBefore(): Float64Array {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(108);let txCode=0;try{
+    {const txRc:Float64Array=this.substepSandTopBefore;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,108,txCode);}}
 
-  internalSandTopSnapshot(): Float64Array {
+  internalSandTopSnapshot(): Float64Array {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(109);let txCode=0;try{
     const copy = new Float64Array(this.cols);
     copy.set(this.substepSandTopBefore);
-    return copy;
-  }
+    {const txRc:Float64Array=copy;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,109,txCode);}}
 
-  internalPreexistingViolation(hardMax: number): boolean {
-    for (let c = 0; c + 1 < this.cols; c++) {
+  internalPreexistingViolation(hardMax: number): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(110);let txCode=0;try{
+    for (let c = 0; c + 1 < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const residual = this.substepSandTopBefore[c + 1] - this.substepSandTopBefore[c] -
         Math.tan(this.effectiveTilt * Math.PI / 180);
       const trace=this.planningPassService.trace;
       if(trace!==null)try{trace.preexistingResiduals.push(residual);}catch(e){trace.incomplete();}
       if (Math.abs(residual) > hardMax + 1e-12) {
         if(trace!==null)trace.preexistingViolation=true;
-        return true;
+        {const txRc:boolean=true;txCode=0;return txRc;}
       }
     }
-    return false;
-  }
+    {const txRc:boolean=false;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,110,txCode);}}
   private naturalObservationPhysicsDt = 0;
   private naturalObservationTotalRequested = 0;
   private naturalObservationRelaxCandidateCount = 0;
@@ -1214,7 +1227,7 @@ export class WaterSandField {
     this.initialize(this.defaultScene());
   }
 
-  configure(params: WaterSandParams): void {
+  configure(params: WaterSandParams): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(111);let txCode=0;try{
     if (params.routeId !== P011_BOTTOM_ROUTE_ID ||
       params.angleDeg <= 0 || params.angleDeg >= 45 ||
       params.lightSettleSpeed <= 0 || params.heavySettleSpeed <= params.lightSettleSpeed ||
@@ -1281,7 +1294,7 @@ export class WaterSandField {
     if (pairStop !== null) {
       values.push(pairStop);
     }
-    for (const value of values) {
+    for (const value of values) {txTrace?.add(39);txTrace?.add(31);
       if (!finite(value)) {
         throw new WaterSandParamError('non-finite WaterSandParams value');
       }
@@ -1336,7 +1349,7 @@ export class WaterSandField {
     // pair is unchanged).
     this.applyThresholdConfigFromParams(relaxMode, pairStart, pairStop,
       thresholdSource);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,111,txCode);}}
 
   /**
    * §27.3 path B: derive activeThresholdConfig from the just-copied params
@@ -1349,7 +1362,7 @@ export class WaterSandField {
   private applyThresholdConfigFromParams(relaxMode: 'dual-user-configured' |
     'dual-protocol' | 'legacy-single', pairStart: number | null,
     pairStop: number | null, thresholdSource: 'factory-recommended' | 'user' |
-    'protocol-candidate' | 'legacy'): void {
+    'protocol-candidate' | 'legacy'): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(112);let txCode=0;try{
     const previousConfig = this.activeThresholdConfig;
     if (relaxMode === 'legacy-single') {
       this.relaxHysteresisThresholds = null;
@@ -1387,7 +1400,7 @@ export class WaterSandField {
         previousConfig.thetaStopDeg !== this.activeThresholdConfig.thetaStopDeg)) {
       this.onConfigurationChanged();
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,112,txCode);}}
 
   /**
    * §27.5 epoch cleanup: the running pair changed — clear the state
@@ -1396,7 +1409,7 @@ export class WaterSandField {
    * (no stop transitions recorded); material, budgets, run identity and
    * the accepted tilt are all preserved (ΔV=0).
    */
-  private onConfigurationChanged(): void {
+  private onConfigurationChanged(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(113);let txCode=0;try{
     this.relaxSliding.fill(0);
     this.naturalObservationSliding.fill(0);
     this.naturalObservationSlidingBefore.fill(0);
@@ -1406,9 +1419,9 @@ export class WaterSandField {
     this.correctionReservation = null;
     this.configurationEpoch += 1;
     this.configurationResetCount += 1;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,113,txCode);}}
 
-  initialize(scene: WaterSandScene): void {
+  initialize(scene: WaterSandScene): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(114);let txCode=0;try{
     this.validateScene(scene);
     this.mediumMode=this.dryResetPending?P051_DRY_MEDIUM:'WET_COLUMN_V1';this.dryResetPending=false;
     this.dryLastSequence=0;this.dryLastInputTime=0;
@@ -1517,14 +1530,14 @@ export class WaterSandField {
     this.dormant = false;
     this.lastError = null;
     this.publishRenderState('RESET', true);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,114,txCode);}}
 
-  reset(scene?: WaterSandScene): void {
+  reset(scene?: WaterSandScene): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(115);let txCode=0;try{
     this.initialize(scene === undefined ? this.defaultScene() : scene);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,115,txCode);}}
 
   // P-011 dual-input-v1: O(1) mode boundary; preserves materials, budgets and run identity.
-  resetInputState(): void {
+  resetInputState(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(116);let txCode=0;try{
     this.targetTilt = 0;
     this.effectiveTilt = 0;
     this.effectiveTiltRate = 0;
@@ -1533,9 +1546,9 @@ export class WaterSandField {
     this.lastNonZeroTargetTime = this.simulationTime;
     this.zeroTargetSince = this.simulationTime;
     this.dormant = false;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,116,txCode);}}
 
-  setTilt(deg: number): void {
+  setTilt(deg: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(117);let txCode=0;try{
     if (!finite(deg)) {
       throw new WaterSandParamError('tilt must be finite');
     }
@@ -1553,9 +1566,9 @@ export class WaterSandField {
       this.beginCommandPhase(targetSign);
     }
     this.dormant = false;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,117,txCode);}}
 
-  private beginCommandPhase(sign: number): void {
+  private beginCommandPhase(sign: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(118);let txCode=0;try{
     this.commandPhaseId += 1;
     this.commandPhaseSign = sign;
     this.commandPhaseStartPhysicsTime = this.lastP011PhysicsTime;
@@ -1567,9 +1580,9 @@ export class WaterSandField {
     this.phaseLightActual = 0;
     this.phaseHeavyBaseline.set(this.bh);
     this.phaseLightBaseline.set(this.bl);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,118,txCode);}}
 
-  setShakeInput(value: number): void {
+  setShakeInput(value: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(119);let txCode=0;try{
     if (!finite(value)) {
       throw new WaterSandParamError('shake input must be finite');
     }
@@ -1578,9 +1591,9 @@ export class WaterSandField {
       this.endpointPhase === null ? '' : this.endpointPhase.occurrenceId);
     this.shakeInput = accepted;
     this.dormant = false;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,119,txCode);}}
 
-  inject(spec: WaterSandInjection): void {
+  inject(spec: WaterSandInjection): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(120);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM)throw new WaterSandParamError('MODE_CONFLICT');
     if (!finite(spec.amount) || spec.amount < 0) {
       throw new WaterSandParamError('injection amount must be finite and non-negative');
@@ -1592,13 +1605,13 @@ export class WaterSandField {
     const amountPerColumn = spec.amount / columns;
     this.saveBackup();
     if (spec.phase === WaterSandPhase.WATER) {
-      for (let c = spec.startCol; c <= spec.endColInclusive; c++) {
+      for (let c = spec.startCol; c <= spec.endColInclusive; c++) {txTrace?.add(39);txTrace?.add(31);
         this.waterTop[c] += amountPerColumn;
       }
     } else {
       const isHeavy = spec.phase === WaterSandPhase.HEAVY;
       const suspended = spec.state === WaterSandInjectionState.SUSPENDED;
-      for (let c = spec.startCol; c <= spec.endColInclusive; c++) {
+      for (let c = spec.startCol; c <= spec.endColInclusive; c++) {txTrace?.add(39);txTrace?.add(31);
         if (isHeavy) {
           if (suspended) {
             this.suspH[c] += amountPerColumn;
@@ -1624,7 +1637,7 @@ export class WaterSandField {
     this.initialHeavy = totals.heavy;
     this.initialLight = totals.light;
     if (spec.amount > 0) this.publishRenderState('EXTERNAL_ADMISSION');
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,120,txCode);}}
 
   // =========================================================================
   // falling-sand B-route physics injection (architecture-P011-gesture-sand-
@@ -1642,13 +1655,13 @@ export class WaterSandField {
   private sourceEpoch = 0;
   private readonly externalAdmissions: P011ExternalAdmissions = new P011ExternalAdmissions();
 
-  setExternalAdmissionEventSink(sink: ((record: P011ExternalAdmissionRecord) => void) | null): void {
+  setExternalAdmissionEventSink(sink: ((record: P011ExternalAdmissionRecord) => void) | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(121);let txCode=0;try{
     this.externalAdmissions.setSink(sink);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,121,txCode);}}
 
-  getExternalAdmissionEvidence(): P011ExternalAdmissionEvidence {
-    return this.externalAdmissions.snapshot();
-  }
+  getExternalAdmissionEvidence(): P011ExternalAdmissionEvidence {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(122);let txCode=0;try{
+    {const txRc:P011ExternalAdmissionEvidence=this.externalAdmissions.snapshot();txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,122,txCode);}}
 
   /**
    * Stage a page-routed request (D3 wiring calls this from the Pan
@@ -1658,17 +1671,17 @@ export class WaterSandField {
    * never fabricates admission).
    */
   /** D3 lifecycle: drop all staged requests (page reset/invert/leave). */
-  clearGestureSandQueue(): void {
+  clearGestureSandQueue(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(123);let txCode=0;try{
     this.gestureSandQueue = [];
     this.lastGestureInputTime = 0;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,123,txCode);}}
 
-  stageGestureSand(request: P011GestureSandRequest): void {
+  stageGestureSand(request: P011GestureSandRequest): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(124);let txCode=0;try{
     this.gestureSandQueue.push(request);
     if (this.gestureSandQueue.length > 8) {
       this.gestureSandQueue.shift();
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,124,txCode);}}
 
   /**
    * Consume at most ONE staged request (called at the top of each
@@ -1677,9 +1690,9 @@ export class WaterSandField {
    * older than 1/30 s relative to the last consumed event gets scaled
    * down (anti-burst on frame recovery, algorithm §2).
    */
-  consumePendingGestureSand(substepDt: number): void {
+  consumePendingGestureSand(substepDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(125);let txCode=0;try{
     if (this.gestureSandQueue.length === 0) {
-      return;
+      {txCode=0;return;}
     }
     const request = this.gestureSandQueue.shift() as P011GestureSandRequest;
     // Δt clamp vs the last consumed inputTime (per sourceId).
@@ -1695,7 +1708,7 @@ export class WaterSandField {
     if (scale < 1) {
       const qH = new Float64Array(this.cols);
       const qL = new Float64Array(this.cols);
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         qH[c] = request.perColumnHeavy[c] * scale;
         qL[c] = request.perColumnLight[c] * scale;
       }
@@ -1708,7 +1721,7 @@ export class WaterSandField {
     } else {
       this.injectGestureSand(request);
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,125,txCode);}}
 
   private lastGestureInputTime = 0;
 
@@ -1721,39 +1734,39 @@ export class WaterSandField {
   private shakeLiftEventSink: ((lifted: number, columns: number) => void) | null = null;
 
   /** Cold-path telemetry hooks installed by SandCanvas; no payload allocation in physics HOT loops. */
-  setGestureSandEventSink(sink: ((receipt: P011InjectionReceipt) => void) | null): void {
+  setGestureSandEventSink(sink: ((receipt: P011InjectionReceipt) => void) | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(126);let txCode=0;try{
     this.gestureSandEventSink = sink;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,126,txCode);}}
 
-  setShakeLiftEventSink(sink: ((lifted: number, columns: number) => void) | null): void {
+  setShakeLiftEventSink(sink: ((lifted: number, columns: number) => void) | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(127);let txCode=0;try{
     this.shakeLiftEventSink = sink;
-  }
-  injectGestureSand(request: P011GestureSandRequest): P011InjectionReceipt | null {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,127,txCode);}}
+  injectGestureSand(request: P011GestureSandRequest): P011InjectionReceipt | null {if(this.txD1!==null&&this.txD1.trace.depth===0)this.txD1.beginRoot();this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(1);let txCode=0;try{
     // 0. Precheck: finite/non-negative/length; all-zero -> null.
     let sumH = 0;
     let sumL = 0;
     if (request.perColumnHeavy.length !== this.cols ||
       request.perColumnLight.length !== this.cols) {
-      return null;
+      {const txRc:P011InjectionReceipt | null=null;txCode=0;return txRc;}
     }
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const qH = request.perColumnHeavy[c];
       const qL = request.perColumnLight[c];
       if (!finite(qH) || !finite(qL) || qH < 0 || qL < 0) {
-        return null;
+        {const txRc:P011InjectionReceipt | null=null;txCode=0;return txRc;}
       }
       sumH += qH;
       sumL += qL;
     }
     if (sumH <= 0 && sumL <= 0) {
-      return null;
+      {const txRc:P011InjectionReceipt | null=null;txCode=0;return txRc;}
     }
     // 1. Transaction backup + free-water invariant snapshot (the η
     // lift keeps the water ABOVE the material surface exactly constant;
     // ΣwaterTop grows by the injected volume — that is displacement,
     // not drift).
     let freeWaterSnapshot = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
         (this.particleRouteActive() && this.particleBinding !== null
           ? this.particleBinding.pool.particleMassAt(c) : 0);
@@ -1765,7 +1778,7 @@ export class WaterSandField {
     this.saveBackup();
     // 2. Route recheck: at least one requested column must be wet.
     let anyWet = false;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if ((request.perColumnHeavy[c] > 0 || request.perColumnLight[c] > 0) &&
         this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c] -
           (this.particleRouteActive() && this.particleBinding !== null
@@ -1776,7 +1789,7 @@ export class WaterSandField {
     }
     if (!anyWet) {
       this.restoreBackup();
-      return this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'NO_WATER'));
+      {const txRc:P011InjectionReceipt | null=this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'NO_WATER'));txCode=0;return txRc;}
     }
     // 3. Unified λ admission (trial 1 -> global bound -> eta solve ->
     //    halve on failure, ≤8 retries, λmin 1e-4).
@@ -1785,14 +1798,15 @@ export class WaterSandField {
     if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
       this.poolDiagnosticOrigin='GESTURE_SPAWN';this.poolDiagnosticParentSequence=request.sequence;
     }
-    for (let attempt = 0; attempt < 8; attempt++) {
+    this.txD1?.trace.cut(2);
+    for (let attempt = 0; attempt < 8; attempt++) {this.txD1?.trace.add(40);if(this.txD1!==null)this.txD1.trace.context[14]=attempt;txTrace?.add(39);txTrace?.add(31);
       if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
         this.poolDiagnosticLambdaAttempt=attempt;this.poolDiagnosticLambda=lambda;
         this.updatePoolProgressContext();
       }
       const aH = new Float64Array(this.cols);
       const aL = new Float64Array(this.cols);
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         aH[c] = request.perColumnHeavy[c] * lambda;
         aL[c] = request.perColumnLight[c] * lambda;
       }
@@ -1800,7 +1814,7 @@ export class WaterSandField {
       // §3): Σ(H - max(waterTop, S+susp)) over requested columns.
       let bound = 0;
       let want = 0;
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         if (request.perColumnHeavy[c] > 0 || request.perColumnLight[c] > 0) {
           const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
             (this.particleRouteActive() && this.particleBinding !== null
@@ -1819,7 +1833,7 @@ export class WaterSandField {
         continue;
       }
       // 3c. Trial write + η solve + audit.
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         this.suspH[c] += aH[c];
         this.suspL[c] += aL[c];
       }
@@ -1827,7 +1841,7 @@ export class WaterSandField {
       let auditOk = etaOk && this.gestureInjectionAudit();
       if (auditOk) {
         if (this.particleRouteActive() && this.particleBinding !== null && this.particleParams !== null) {
-          for (let c = 0; c < this.cols; c++) {
+          for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
             this.suspH[c] -= aH[c]; this.suspL[c] -= aL[c];
             const y = Math.max(this.sandTopScratch[c] + this.particleParams.contactEps,
               Math.min(request.y, this.waterTop[c] - this.particleParams.contactEps));
@@ -1856,7 +1870,7 @@ export class WaterSandField {
         // 5. Commit.
         let totalH = 0;
         let totalL = 0;
-        for (let c = 0; c < this.cols; c++) {
+        for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
           totalH += aH[c];
           totalL += aL[c];
         }
@@ -1877,7 +1891,7 @@ export class WaterSandField {
         }
         this.sourceInjectedHeavy += totalH;
         this.sourceInjectedLight += totalL;
-        this.sourceEpoch += 1;
+        this.sourceEpoch += 1;this.txD1?.trace.cut(19);
         if (totalH + totalL > 0) this.publishRenderState('EXTERNAL_ADMISSION');
         this.dormant = false; // injected material is in flight
         // CONS-04: a successful injection starts a new settling epoch for
@@ -1886,7 +1900,7 @@ export class WaterSandField {
         this.t90Light = -1;
         this.updateSandTop();
         this.externalAdmissions.exportLast();
-        return this.emitGestureSandReceipt(receipt);
+        {const txRc:P011InjectionReceipt | null=this.emitGestureSandReceipt(receipt);txCode=0;return txRc;}
       }
       // 6. Audit/eta failure -> rollback, halve λ, retry.
       this.restoreBackup();
@@ -1899,21 +1913,21 @@ export class WaterSandField {
     // λ exhausted: full rollback + CAPACITY_BLOCKED (admitted may be ~0).
     this.restoreBackup();
     this.endpointParticleEvents.length = particleEventStart;
-    return this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED'));
-  }
+    {const txRc:P011InjectionReceipt | null=this.emitGestureSandReceipt(this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED'));txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,1,txCode);}}
 
-  private emitGestureSandReceipt(receipt: P011InjectionReceipt): P011InjectionReceipt {
+  private emitGestureSandReceipt(receipt: P011InjectionReceipt): P011InjectionReceipt {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(129);let txCode=0;try{
     if (this.gestureSandEventSink !== null) {
       this.gestureSandEventSink(receipt);
     }
-    return receipt;
-  }
+    {const txRc:P011InjectionReceipt=receipt;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,129,txCode);}}
 
   /** Assemble the B-contract receipt (nine fields, §1.2). */
   private gestureReceipt(request: P011GestureSandRequest,
     admittedH: number, admittedL: number,
-    rejectedReason: string | null): P011InjectionReceipt {
-    return {
+    rejectedReason: string | null): P011InjectionReceipt {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(130);let txCode=0;try{
+    {const txRc:P011InjectionReceipt={
       sourceId: request.sourceId,
       sequence: request.sequence,
       admittedH: admittedH,
@@ -1925,16 +1939,16 @@ export class WaterSandField {
       y: request.y,
       inputTime: request.inputTime,
       seed: request.seed
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,130,txCode);}}
 
-  private arraySum(values: Float64Array): number {
+  private arraySum(values: Float64Array): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(131);let txCode=0;try{
     let sum = 0;
-    for (let i = 0; i < values.length; i++) {
+    for (let i = 0; i < values.length; i++) {txTrace?.add(39);txTrace?.add(31);
       sum += values[i];
     }
-    return sum;
-  }
+    {const txRc:number=sum;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,131,txCode);}}
 
   /**
    * §2.2 η lift solve: construct waterTop' = min(H, max(T, waterTop+η))
@@ -1945,10 +1959,10 @@ export class WaterSandField {
    * η still truncates a column at H (local wet-capacity infeasible — the
    * caller halves λ).
    */
-  private solveInjectionWaterTop(aH: Float64Array, aL: Float64Array): boolean {
+  private solveInjectionWaterTop(aH: Float64Array, aL: Float64Array): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(132);let txCode=0;try{
     const cols = this.cols;
     const tArr = new Float64Array(cols);
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
       tArr[c] = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
         (this.particleRouteActive() && this.particleBinding !== null
           ? this.particleBinding.pool.particleMassAt(c) : 0);
@@ -1969,11 +1983,11 @@ export class WaterSandField {
       return sum;
     };
     if (Math.abs(objective(0) - freeWater) < 1e-9) {
-      return true; // η=0 already conserves (no lift needed)
+      {const txRc:boolean=true;txCode=0;return txRc;} // η=0 already conserves (no lift needed)
     }
     let low = 0;
     let high = this.capacity;
-    for (let iter = 0; iter < 64; iter++) {
+    for (let iter = 0; iter < 64; iter++) {txTrace?.add(39);txTrace?.add(31);
       const mid = (low + high) / 2;
       if (objective(mid) < freeWater) {
         low = mid;
@@ -1986,11 +2000,11 @@ export class WaterSandField {
     }
     const eta = (low + high) / 2;
     if (Math.abs(objective(eta) - freeWater) > 1e-6) {
-      return false; // solve failed (discontinuous truncation region)
+      {const txRc:boolean=false;txCode=0;return txRc;} // solve failed (discontinuous truncation region)
     }
     // Write + verify no column truncated at H (local infeasible).
     let truncated = false;
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const lifted = Math.min(this.capacity,
         Math.max(tArr[c], this.waterTop[c] + eta));
       if (lifted >= this.capacity - EPS && this.waterTop[c] + eta > this.capacity + EPS) {
@@ -1998,43 +2012,43 @@ export class WaterSandField {
       }
       this.waterTop[c] = lifted;
     }
-    return !truncated;
-  }
+    {const txRc:boolean=!truncated;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,132,txCode);}}
 
   /**
    * §2.1-4 audit chain: finite/range, phase conservation, water total
    * EXACTLY unchanged (the η construction), per-column capacity.
    * (sandTop is untouched — ΔS=0 by construction, no new tan30 edges.)
    */
-  private gestureInjectionAudit(): boolean {
-    for (let c = 0; c < this.cols; c++) {
+  private gestureInjectionAudit(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(133);let txCode=0;try{
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (!finite(this.suspH[c]) || !finite(this.suspL[c]) ||
         !finite(this.waterTop[c]) || this.suspH[c] < 0 ||
         this.suspL[c] < 0 || this.waterTop[c] < 0) {
-        return false;
+        {const txRc:boolean=false;txCode=0;return txRc;}
       }
       const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
         (this.particleRouteActive() && this.particleBinding !== null
           ? this.particleBinding.pool.particleMassAt(c) : 0);
       if (this.waterTop[c] < t - EPS || this.waterTop[c] > this.capacity + EPS) {
-        return false;
+        {const txRc:boolean=false;txCode=0;return txRc;}
       }
     }
     // Free water (above the material surface) must be EXACTLY the
     // pre-injection free water (η displacement; ΣwaterTop grows by the
     // injected volume — that is the sand pushing water up, not drift).
     let freeWaterNow = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const t = this.sandTopScratch[c] + this.suspH[c] + this.suspL[c] +
         (this.particleRouteActive() && this.particleBinding !== null
           ? this.particleBinding.pool.particleMassAt(c) : 0);
       freeWaterNow += Math.max(0, this.waterTop[c] - t);
     }
     if (Math.abs(freeWaterNow - this.gestureWaterBefore) > 1e-6) {
-      return false;
+      {const txRc:boolean=false;txCode=0;return txRc;}
     }
-    return true;
-  }
+    {const txRc:boolean=true;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,133,txCode);}}
 
   /** Pre-injection FREE water (Σ max(0, waterTop−T)) — the invariant
    * the η lift preserves (displacement: the injected sand occupies
@@ -2042,17 +2056,17 @@ export class WaterSandField {
    * grows by the injected amount, which is correct, not drift). */
   private gestureWaterBefore = 0;
 
-  invert180(): void {
+  invert180(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(134);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM)throw new WaterSandParamError('DRY_INVERT_UNSUPPORTED');
     if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.pool.validateInvert180(this.capacity);
     if (this.frozen) {
-      return;
+      {txCode=0;return;}
     }
     if (this.endpointSampler !== null) this.endpointInvertCount++;
     const newWaterTop = new Float64Array(this.cols);
     const newSuspH = new Float64Array(this.cols);
     const newSuspL = new Float64Array(this.cols);
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const mirrored = this.cols - 1 - c;
       const waterVolume = this.getWaterVolume(c);
       newSuspH[mirrored] = this.bh[c] + this.mh[c] + this.suspH[c];
@@ -2074,7 +2088,7 @@ export class WaterSandField {
     this.publishRenderState('INVERT');
     this.updateSandTop();
     this.shakeEnergy = Math.max(this.shakeEnergy, 0.8);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,134,txCode);}}
 
   private tiltTraceSink: P011TiltPreviewTraceSink | null = null;
   private tiltTracePending: P011TiltPreviewTrace[] | null = null;
@@ -2082,7 +2096,7 @@ export class WaterSandField {
   private readonly fieldStageIdentityV2: P011FieldStageIdentity={runId:'',stateEpoch:0,configRevision:0,
     substepId:0,attemptId:'',candidateRole:'',callOrdinal:0,theta:0,commitBefore:0,
     commitCurrent:0,sourceEpoch:0,writerStage:'',preview:false,poolEpoch:0};
-  setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void {
+  setTiltPreviewTraceSink(sink: P011TiltPreviewTraceSink | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(135);let txCode=0;try{
     this.tiltTraceSink=sink;
     if(this.particleBinding!==null){
       this.particleBinding.collectFailureEnabled=sink!==null;
@@ -2090,10 +2104,10 @@ export class WaterSandField {
         new P011FieldColumnEvidenceV2(this.cols);
       this.particleBinding.work.fieldColumnEvidenceV2?.bind(this.particleBinding.field);
     }
-  }
-  private observeFieldColumnV2(stage: string,writerStage: string): void {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,135,txCode);}}
+  private observeFieldColumnV2(stage: string,writerStage: string): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(136);let txCode=0;try{
     const b=this.particleBinding;
-    if(this.tiltTraceSink===null||b===null||b.work.fieldColumnEvidenceV2===null)return;
+    if(this.tiltTraceSink===null||b===null||b.work.fieldColumnEvidenceV2===null){txCode=0;return;}
     const id=this.fieldStageIdentityV2,trace=this.planningPassService.trace;
     id.runId=this.p011RunId;id.stateEpoch=this.renderStateEpoch;id.configRevision=this.configRevision;
     id.substepId=this.p011SubstepId+1;id.attemptId=this.p011CurrentAttemptId ?? '';
@@ -2105,34 +2119,34 @@ export class WaterSandField {
     id.poolEpoch=b.work.stepEpoch;
     try{b.work.fieldColumnEvidenceV2.observe(stage,b.field,id);}
     catch(_e){b.work.fieldColumnEvidenceV2.windowStatus='OBSERVATION_FAILED';}
-  }
-  getLastTiltPreviewTrace(): P011TiltPreviewTrace | null { return this.tiltTraceLast; }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,136,txCode);}}
+  getLastTiltPreviewTrace(): P011TiltPreviewTrace | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(137);let txCode=0;try{ {const txRc:P011TiltPreviewTrace | null=this.tiltTraceLast;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,137,txCode);}}
   private readonly diagnosticBits: DataView = new DataView(new ArrayBuffer(8));
-  private diagnosticStateDigest(): string {
+  private diagnosticStateDigest(): string {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(138);let txCode=0;try{
     let h=2166136261;
     const arrays: Float64Array[]=[this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL];
     if(this.particleBinding!==null){const p=this.particleBinding.pool.snapshot();
       arrays.push(p.pMass,p.pX,p.pY,p.pVx,p.pVy,p.colParticleMassH,p.colParticleMassL);
-      for(let i=0;i<p.nmax;i++){h=Math.imul(h^p.pId[i],16777619);h=Math.imul(h^p.pState[i],16777619);}
+      for(let i=0;i<p.nmax;i++){txTrace?.add(39);txTrace?.add(31);h=Math.imul(h^p.pId[i],16777619);h=Math.imul(h^p.pState[i],16777619);}
       h=Math.imul(h^p.liveCount,16777619);h=Math.imul(h^p.freeCount,16777619);h=Math.imul(h^p.nextId,16777619);}
-    for(const a of arrays)for(let i=0;i<a.length;i++){
+    for(const a of arrays)for(let i=0;i<a.length;i++){txTrace?.add(39);txTrace?.add(31);
       this.diagnosticBits.setFloat64(0,a[i],false);
       h=Math.imul(h^this.diagnosticBits.getUint32(0,false),16777619);
       h=Math.imul(h^this.diagnosticBits.getUint32(4,false),16777619);
     }
-    return (h>>>0).toString(16).padStart(8,'0');
-  }
-  private sealSubstepDiagnostic(): void {
-    const pending=this.tiltTracePending;if(pending===null||pending.length===0)return;
+    {const txRc:string=(h>>>0).toString(16).padStart(8,'0');txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,138,txCode);}}
+  private sealSubstepDiagnostic(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(139);let txCode=0;try{
+    const pending=this.tiltTracePending;if(pending===null||pending.length===0){txCode=0;return;}
     const trace=pending[pending.length-1];trace.authoritativeAfterDigest=this.diagnosticStateDigest();
     trace.commitAfter=this.renderPhysicsCommitId;
     const b=this.particleBinding;if(b!==null){trace.cleanupStepOpen=b.active?1:0;trace.cleanupActive=b.work.active;
       trace.cleanupBudgetEpoch=b.sink.budget.diagnosticEpoch;trace.cleanupPageBacklog=b.work.pageBacklog;}
-  }
-  private recordCollectFirstFailure(origin: string,rawCode: number,drift: WaterSandDrift | null=null): void {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,139,txCode);}}
+  private recordCollectFirstFailure(origin: string,rawCode: number,drift: WaterSandDrift | null=null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(140);let txCode=0;try{
     const pending=this.tiltTracePending;
     const trace=this.planningPassService.trace ?? (pending===null||pending.length===0?null:pending[pending.length-1]);
-    if(trace===null||trace.firstFailure!==null)return;
+    if(trace===null||trace.firstFailure!==null){txCode=0;return;}
     const d=this.particleBinding===null?null:this.particleBinding.collectFailure;
     const e: P011FirstFailureEvidence={origin:origin,rawCode:rawCode,m2Code:d===null?0:d.m2Code,
       phase:d===null?'NOT_RUN':d.phase,rollbackCode:d===null?0:d.rollbackCode,
@@ -2163,14 +2177,14 @@ export class WaterSandField {
       catch(_e){trace.incomplete();}
     }
     trace.recordFirstFailure(e);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,140,txCode);}}
   private poolProgressEnabled: boolean=false;
   private poolProgressClock: P011ProgressClock|null=null;
-  setPoolProgressDiagnosticEnabled(enabled: boolean,clock: P011ProgressClock|null=null): void {
+  setPoolProgressDiagnosticEnabled(enabled: boolean,clock: P011ProgressClock|null=null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(141);let txCode=0;try{
     this.poolProgressEnabled=enabled;this.poolProgressClock=clock;this.configurePoolProgressDiagnostic();
-  }
-  private copyParticleStateDiagnostic(snapshot: P011ParticleSnapshot,restore: boolean=false): void {
-    const b=this.particleBinding;if(b===null)return;
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,141,txCode);}}
+  private copyParticleStateDiagnostic(snapshot: P011ParticleSnapshot,restore: boolean=false): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(142);let txCode=0;try{
+    const b=this.particleBinding;if(b===null){txCode=0;return;}
     const d=b.work.poolProgress;let span=-1,code=-1;
     if(d!==null){span=d.begin(restore?'FIELD_POOL_RESTORE':'FIELD_POOL_CHECKPOINT');
       d.increment(21);d.increment(restore?23:22);}
@@ -2178,11 +2192,11 @@ export class WaterSandField {
     try{if(restore)b.pool.restoreSnapshot(snapshot);else b.pool.copyStateTo(snapshot);code=0;
       if(!restore)d?.input(snapshot);}
     finally{d?.endSpan(span,code);}
-  }
-  private configurePoolProgressDiagnostic(): void {
-    const b=this.particleBinding;if(b===null)return;const w=b.work;
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,142,txCode);}}
+  private configurePoolProgressDiagnostic(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(143);let txCode=0;try{
+    const b=this.particleBinding;if(b===null){txCode=0;return;}const w=b.work;
     w.diagnosticEnabled=this.poolProgressEnabled;
-    if(!this.poolProgressEnabled){w.poolProgress=null;w.mergeIndex.diagnostic=null;return;}
+    if(!this.poolProgressEnabled){w.poolProgress=null;w.mergeIndex.diagnostic=null;{txCode=0;return;}}
     const d=new P011PoolProgressDiagnostic(this.poolProgressClock,w.pool.hotCanonicalBuffers());
     d.nmax=w.nmax;d.free=w.pool.freeSlotCount;d.live=w.nmax-d.free;
     const p=w.params;
@@ -2190,9 +2204,9 @@ export class WaterSandField {
       p.liftSpeedHeavy,p.liftSpeedLight,p.liftSpread,p.mergeColRadius,p.mergeHeightRadius,p.contactEps,p.channelRateCap,
       b.field.cols,b.field.capacity,b.field.mediumMode==='DRY_AIR_V1'?1:0]);
     w.poolProgress=d;w.mergeIndex.diagnostic=d;this.updatePoolProgressContext();
-  }
-  private updatePoolProgressContext(): void {
-    const d=this.particleBinding?.work.poolProgress;if(d===undefined||d===null)return;
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,143,txCode);}}
+  private updatePoolProgressContext(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(144);let txCode=0;try{
+    const d=this.particleBinding?.work.poolProgress;if(d===undefined||d===null){txCode=0;return;}
     const c=d.context,t=this.planningPassService.trace;
     c.runId=this.p011RunId;c.stateEpoch=this.renderStateEpoch;c.configRevision=this.configRevision;
     c.substepId=this.p011SubstepId+1;c.attemptId=this.p011CurrentAttemptId??'';
@@ -2202,9 +2216,9 @@ export class WaterSandField {
     c.lambda=this.poolDiagnosticLambda;c.sourceEpoch=this.sourceEpoch;c.commit=this.renderPhysicsCommitId;
     c.energyBefore=this.poolDiagnosticRequestEnergy;c.energyAfter=this.poolDiagnosticEnergyAfter;
     c.parentSequence=this.poolDiagnosticParentSequence;
-  }
-  getPoolProgressDiagnostic(): string | null {
-    const b=this.particleBinding;if(b===null || !b.work.diagnosticEnabled)return null;
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,144,txCode);}}
+  getPoolProgressDiagnostic(): string | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(145);let txCode=0;try{
+    const b=this.particleBinding;if(b===null || !b.work.diagnosticEnabled){const txRc:string | null=null;txCode=0;return txRc;}
     const w=b.work;
     const legacy=JSON.stringify({revision:'P011_POOL_PROGRESS_DIAGNOSTIC_V3',runId:this.p011RunId,
       countersScope:'WORKSPACE_CUMULATIVE',lastOrigin:this.poolDiagnosticOrigin,
@@ -2230,32 +2244,32 @@ export class WaterSandField {
       firstError:w.diagnosticFirstError,firstErrorStage:w.diagnosticFirstErrorStage,
       liveCount:b.liveCount,freeCount:b.pool.freeSlotCount,nextId:b.pool.nextParticleId,
       failureStatus:w.failureStatus,errorStageCode:w.errorStageCode,rollbackCount:w.rollbackCount});
-    return legacy.substring(0,legacy.length-1)+',"progressV3":'+(w.poolProgress?.exportJson()??'null')+'}';
-  }
-  getParticleEventTail(limit: number): string[] {
+    {const txRc:string | null=legacy.substring(0,legacy.length-1)+',"progressV3":'+(w.poolProgress?.exportJson()??'null')+'}';txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,145,txCode);}}
+  getParticleEventTail(limit: number): string[] {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(146);let txCode=0;try{
     const count=Math.max(0,Math.min(8,Math.floor(limit)));
-    return this.endpointParticleEvents.slice(Math.max(0,this.endpointParticleEvents.length-count));
-  }
-  step(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
+    {const txRc:string[]=this.endpointParticleEvents.slice(Math.max(0,this.endpointParticleEvents.length-count));txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,146,txCode);}}
+  step(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {if(this.txD1!==null&&this.txD1.trace.depth===0)this.txD1.beginRoot();this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(147);let txCode=0;try{
     const d=this.particleBinding?.work.poolProgress;
-    if(d===undefined||d===null)return this.stepDiagnosticBody(dt,p011Hook);
+    if(d===undefined||d===null){const txRc:WaterSandStepResult=this.stepDiagnosticBody(dt,p011Hook);txCode=txRc.ok?0:txRc.errorCode===null?1:txRc.errorCode;return txRc;}
     this.updatePoolProgressContext();const span=d.begin('STEP');let code=-1;
-    try{const result=this.stepDiagnosticBody(dt,p011Hook);code=result.errorCode??0;return result;}
+    try{const result=this.stepDiagnosticBody(dt,p011Hook);code=result.errorCode??0;{const txRc:WaterSandStepResult=result;txCode=txRc.ok?0:txRc.errorCode===null?1:txRc.errorCode;return txRc;}}
     finally{d.endSpan(span,code);}
-  }
-  private stepDiagnosticBody(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
-    if(this.tiltTraceSink===null)return this.stepWithTiltTrace(dt,p011Hook);
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,147,txCode);}}
+  private stepDiagnosticBody(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(148);let txCode=0;try{
+    if(this.tiltTraceSink===null){const txRc:WaterSandStepResult=this.stepWithTiltTrace(dt,p011Hook);txCode=0;return txRc;}
     const sink=this.tiltTraceSink;
     this.tiltTracePending=[];
-    try {return this.stepWithTiltTrace(dt,p011Hook);}
+    try {{const txRc:WaterSandStepResult=this.stepWithTiltTrace(dt,p011Hook);txCode=0;return txRc;}}
     catch(e){if(this.tiltTracePending!==null)for(const trace of this.tiltTracePending)trace.incomplete();throw e as Error;}
     finally {
       const pending=this.tiltTracePending;this.tiltTracePending=null;this.planningPassService.trace=null;
       // Delivery is after the normal step/rollback and preview finally blocks.
-      if(pending!==null)for(const trace of pending){this.tiltTraceLast=trace;try{sink(trace);}catch(e){trace.incomplete();}}
+      if(pending!==null)for(const trace of pending){txTrace?.add(39);txTrace?.add(31);this.tiltTraceLast=trace;try{sink(trace);}catch(e){trace.incomplete();}}
     }
-  }
-  private stepWithTiltTrace(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,148,txCode);}}
+  private stepWithTiltTrace(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(17);let txCode=0;try{
     const start = Date.now();
     const result: WaterSandStepResult = {
       ok: true,
@@ -2274,7 +2288,7 @@ export class WaterSandField {
     };
     if (this.frozen || !finite(dt) || dt <= 0) {
       result.physicsTimeMs = Date.now() - start;
-      return result;
+      {const txRc:WaterSandStepResult=result;txCode=txRc.ok?0:txRc.errorCode===null?1:txRc.errorCode;return txRc;}
     }
     this.p011FrameId += 1;
     if (this.dormant && !(this.particleRouteActive() && this.particleBinding !== null && this.particleBinding.liveCount > 0) &&
@@ -2288,7 +2302,7 @@ export class WaterSandField {
       result.dormant = true;
       result.physicsTimeMs = Date.now() - start;
       this.lastPhysicsTimeMs = result.physicsTimeMs;
-      return result;
+      {const txRc:WaterSandStepResult=result;txCode=txRc.ok?0:txRc.errorCode===null?1:txRc.errorCode;return txRc;}
     }
     const clipped = Math.min(dt, 1 / 30);
     const substeps = clipped <= 1 / 60 ? 1 : 2;
@@ -2298,7 +2312,7 @@ export class WaterSandField {
     this.maxSandTopSpeedObserved = 0;
     this.substepBudgetUsedMax = 0;
     this.substepBudgetClipped = false;
-    for (let index = 0; index < substeps; index++) {
+    for (let index = 0; index < substeps; index++) {txTrace?.add(39);txTrace?.add(31);
       // falling-sand §1.2: consume ≤1 staged gesture request BEFORE the
       // substep backup (the injection carries its own transaction
       // backup; a failed injection leaves the substep untouched).
@@ -2422,7 +2436,7 @@ export class WaterSandField {
       result.moved = this.changedSinceBackup() || result.moved;
       let substepDelta = 0;
       let budgetUsed = 0;
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         substepDelta = Math.max(substepDelta,
           Math.abs(this.sandTopScratch[c] - this.substepSandTopBefore[c]));
         budgetUsed = Math.max(budgetUsed, this.substepMotionBudgetUsed[c]);
@@ -2447,14 +2461,14 @@ export class WaterSandField {
     result.substepBudgetClipped = this.substepBudgetClipped;
     result.physicsTimeMs = Date.now() - start;
     this.lastPhysicsTimeMs = result.physicsTimeMs;
-    return result;
-  }
+    {const txRc:WaterSandStepResult=result;txCode=txRc.ok?0:txRc.errorCode===null?1:txRc.errorCode;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,17,txCode);}}
 
-  getTotals(): WaterSandTotals {
+  getTotals(): WaterSandTotals {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(150);let txCode=0;try{
     let water = 0;
     let heavy = 0;
     let light = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       water += this.getWaterVolume(c);
       heavy += this.bh[c] + this.mh[c] + this.suspH[c];
       light += this.bl[c] + this.ml[c] + this.suspL[c];
@@ -2464,10 +2478,10 @@ export class WaterSandField {
       heavy += particleTotals.heavy;
       light += particleTotals.light;
     }
-    return { water, heavy, light };
-  }
+    {const txRc:WaterSandTotals={ water, heavy, light };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,150,txCode);}}
 
-  private updatePhaseShapeTelemetry(): void {
+  private updatePhaseShapeTelemetry(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(151);let txCode=0;try{
     const margin = Math.floor(this.cols * (1 - P011_CENTRAL_ROI_FRACTION) / 2);
     const start = margin;
     const endExclusive = this.cols - margin;
@@ -2476,7 +2490,7 @@ export class WaterSandField {
     let lightSquareSum = 0;
     let heavyMaxDelta = 0;
     let lightMaxDelta = 0;
-    for (let column = start; column < endExclusive; column++) {
+    for (let column = start; column < endExclusive; column++) {txTrace?.add(39);txTrace?.add(31);
       const heavyDelta = this.bh[column] - this.phaseHeavyBaseline[column];
       const lightDelta = this.bl[column] - this.phaseLightBaseline[column];
       heavySquareSum += heavyDelta * heavyDelta;
@@ -2490,19 +2504,19 @@ export class WaterSandField {
     this.lastLightShapeMaxDelta = lightMaxDelta;
     this.lastMaxSubstepBh = 0;
     this.lastMaxSubstepBl = 0;
-    for (let column = 0; column < this.cols; column++) {
+    for (let column = 0; column < this.cols; column++) {txTrace?.add(39);txTrace?.add(31);
       this.lastMaxSubstepBh = Math.max(this.lastMaxSubstepBh,
         Math.abs(this.bh[column] - this.substepBhBefore[column]));
       this.lastMaxSubstepBl = Math.max(this.lastMaxSubstepBl,
         Math.abs(this.bl[column] - this.substepBlBefore[column]));
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,151,txCode);}}
 
-  getP011Metric(): WaterSandP011Metric {
+  getP011Metric(): WaterSandP011Metric {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(152);let txCode=0;try{
     const totals = this.getTotals();
     this.updatePhaseShapeTelemetry();
     const heavyShare = this.lastBottomFlux > EPS ? this.lastHeavyFlux / this.lastBottomFlux : null;
-    return {
+    {const txRc:WaterSandP011Metric={
       identityRevision: 'P011_COMMIT_IDENTITY_V2',
       routeId: this.params.routeId,
       runId: this.p011RunId,
@@ -2545,11 +2559,11 @@ export class WaterSandField {
       maxSubstepBl: this.lastMaxSubstepBl,
       heavyShare,
       heavyShareDeficit: heavyShare === null ? 0 : Math.max(0, P011_HEAVY_SHARE_MIN - heavyShare)
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,152,txCode);}}
 
-  getP011Bottom(): WaterSandP011Bottom {
-    return {
+  getP011Bottom(): WaterSandP011Bottom {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(153);let txCode=0;try{
+    {const txRc:WaterSandP011Bottom={
       routeId: this.params.routeId,
       runId: this.p011RunId,
       sequence: this.p011SampleSequence,
@@ -2560,17 +2574,17 @@ export class WaterSandField {
       bl: Array.from(this.bl),
       bottomCreepDonorEffectiveDisplacement: Array.from(this.bottomCreepDonorEffectiveDisplacement),
       bottomCreepReceiverEffectiveDisplacement: Array.from(this.bottomCreepReceiverEffectiveDisplacement)
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,153,txCode);}}
 
-  getP011RunId(): string {
-    return this.p011RunId;
-  }
+  getP011RunId(): string {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(154);let txCode=0;try{
+    {const txRc:string=this.p011RunId;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,154,txCode);}}
   // Opt-in only, before a run's first substep. The caller must use this
   // same elapsed clock for schedule dispatch/effect/boundary evidence.
-  setEndpointSampling(clock: P011EndpointClock | null, phase: P011EndpointPhaseIdentity | null): void {
+  setEndpointSampling(clock: P011EndpointClock | null, phase: P011EndpointPhaseIdentity | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(155);let txCode=0;try{
     if (clock === null) {
-      this.endpointSampler = null; this.endpointPhase = null; this.endpointStamp = null; this.peakSampler = null; return;
+      this.endpointSampler = null; this.endpointPhase = null; this.endpointStamp = null; this.peakSampler = null; {txCode=0;return;}
     }
     if (this.p011SubstepId !== 0 || this.sourceEpoch !== 0 || phase === null) {
       throw new Error('INVALID_ENDPOINT_RUN_START');
@@ -2578,18 +2592,18 @@ export class WaterSandField {
     this.endpointSampler = new P011EndpointSampler(this.p011RunId, clock);
     this.peakSampler = new P011PeakSampler(this.p011RunId, clock);
     this.endpointPhase = phase; this.endpointStamp = null; this.endpointSampleError = null;
-  }
-  getPeakShakeInputEvents(): P011PeakInputEvent[] {
-    return this.peakSampler === null ? [] : this.peakSampler.inputEvents();
-  }
-  getPeakSummary(): P011PeakSummary | null {
-    return this.peakSampler === null ? null : this.peakSampler.summary();
-  }
-  private recordPeakCommit(): void {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,155,txCode);}}
+  getPeakShakeInputEvents(): P011PeakInputEvent[] {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(156);let txCode=0;try{
+    {const txRc:P011PeakInputEvent[]=this.peakSampler === null ? [] : this.peakSampler.inputEvents();txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,156,txCode);}}
+  getPeakSummary(): P011PeakSummary | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(157);let txCode=0;try{
+    {const txRc:P011PeakSummary | null=this.peakSampler === null ? null : this.peakSampler.summary();txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,157,txCode);}}
+  private recordPeakCommit(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(158);let txCode=0;try{
     const sampler = this.peakSampler, stamp = this.endpointStamp, input = this.peakConsumedInput;
-    if (sampler === null || stamp === null || input === null) return;
+    if (sampler === null || stamp === null || input === null) {txCode=0;return;}
     let dh = 0, dl = 0, uh = 0, ul = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       dh += this.bh[c] + this.mh[c]; dl += this.bl[c] + this.ml[c]; uh += this.suspH[c]; ul += this.suspL[c];
     }
     const pool = this.particleRouteActive() && this.particleBinding !== null ? this.particleBinding.pool.totals() : null;
@@ -2600,39 +2614,39 @@ export class WaterSandField {
         EH: this.initialHeavy + this.sourceInjectedHeavy, EL: this.initialLight + this.sourceInjectedLight });
     if (this.naturalObservationProbe !== null) this.naturalObservationProbe.stampPeakConsumption(order,
       input.eventId, input.shakeOnEventId, input.value, sampler.summary());
-  }
-  setEndpointPhaseIdentity(phase: P011EndpointPhaseIdentity): void { this.endpointPhase = phase; }
-  getShakeInput(): number { return this.shakeInput; }
-  endpointCurrentPhaseIdentity(occurrenceId: string): P011EndpointPhaseIdentity {
-    return { occurrenceId: occurrenceId, commandSequence: this.p011InputSequence,
-      commandPhaseId: this.commandPhaseId, segmentId: this.p011CurrentSegmentId };
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,158,txCode);}}
+  setEndpointPhaseIdentity(phase: P011EndpointPhaseIdentity): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(159);let txCode=0;try{ this.endpointPhase = phase; }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,159,txCode);}}
+  getShakeInput(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(160);let txCode=0;try{ {const txRc:number=this.shakeInput;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,160,txCode);}}
+  endpointCurrentPhaseIdentity(occurrenceId: string): P011EndpointPhaseIdentity {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(161);let txCode=0;try{
+    {const txRc:P011EndpointPhaseIdentity={ occurrenceId: occurrenceId, commandSequence: this.p011InputSequence,
+      commandPhaseId: this.commandPhaseId, segmentId: this.p011CurrentSegmentId };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,161,txCode);}}
   bindEndpointOccurrence(occurrenceId: string, commandSequence: number,
-    commandPhaseId: number, segmentId: string | null): void {
+    commandPhaseId: number, segmentId: string | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(162);let txCode=0;try{
     if (!occurrenceId || commandSequence !== this.p011InputSequence || commandPhaseId !== this.commandPhaseId ||
       segmentId !== this.p011CurrentSegmentId) throw new Error('ENDPOINT_PHASE_IDENTITY_MISMATCH');
     this.endpointPhase = { occurrenceId: occurrenceId, commandSequence: commandSequence,
       commandPhaseId: commandPhaseId, segmentId: segmentId };
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,162,txCode);}}
   // Endpoint-only read binding: D2 remains the owner of live route changes.
-  setEndpointParticlePool(pool: P011ParticleField | null, routeActive: boolean): void {
+  setEndpointParticlePool(pool: P011ParticleField | null, routeActive: boolean): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(163);let txCode=0;try{
     if (this.p011SubstepId !== 0 || this.sourceEpoch !== 0) throw new Error('INVALID_ENDPOINT_PARTICLE_BINDING');
     this.endpointParticlePool = pool;
     this.endpointParticleRouteActive = routeActive;
-  }
-  setEndpointParticleEvents(events: string[]): void { this.endpointParticleEvents = events.slice(); }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,163,txCode);}}
+  setEndpointParticleEvents(events: string[]): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(164);let txCode=0;try{ this.endpointParticleEvents = events.slice(); }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,164,txCode);}}
   // Evidence-only notification from a new endpoint capture controller.
   // An unbound mode remains unknown; it is not silently assumed TEST.
-  setEndpointCaptureMode(mode: 'TEST' | 'EXPERIENCE'): void {
+  setEndpointCaptureMode(mode: 'TEST' | 'EXPERIENCE'): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(165);let txCode=0;try{
     if (mode !== 'TEST' && mode !== 'EXPERIENCE') throw new Error('INVALID_ENDPOINT_MODE');
     if (this.endpointCaptureMode !== null && mode !== this.endpointCaptureMode) this.endpointModeChanges++;
     this.endpointCaptureMode = mode;
-  }
-  private recordEndpointCommit(physicsDt: number): void {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,165,txCode);}}
+  private recordEndpointCommit(physicsDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(166);let txCode=0;try{
     this.publishRenderState('STEP');
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
-    if (sampler === null) return;
+    if (sampler === null) {txCode=0;return;}
     const key: P011EndpointCommitKey = { runId: this.p011RunId, sequence: this.p011SampleSequence, identityRevision: 'P011_COMMIT_IDENTITY_V2',
       frameId: this.p011FrameId, substepId: this.p011SubstepId + 1,
       attemptId: this.p011CurrentAttemptId, committedOrdinal: sampler.committedOrdinal + 1 };
@@ -2640,7 +2654,7 @@ export class WaterSandField {
     try {
       if (phase === null || phase.commandSequence !== this.p011InputSequence || phase.commandPhaseId !== this.commandPhaseId) {
         if (this.naturalObservationProbe === null) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
-        this.endpointSampleError = 'ENDPOINT_PHASE_IDENTITY_MISMATCH'; return;
+        this.endpointSampleError = 'ENDPOINT_PHASE_IDENTITY_MISMATCH'; {txCode=0;return;}
       }
       if (this.naturalObservationProbe === null) {
         this.endpointStamp = sampler.stampEndpointPostCommit(key, physicsDt, phase, sampler.clock);
@@ -2656,17 +2670,17 @@ export class WaterSandField {
       if (sampler.committedOrdinal < key.committedOrdinal) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
       this.endpointSampleError = error instanceof Error ? error.message : 'ENDPOINT_SAMPLE_UNAVAILABLE';
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,166,txCode);}}
 
-  setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void {
+  setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(167);let txCode=0;try{
     this.naturalObservationProbe?.flushParticleColumnGuardEvidence();
     this.naturalObservationProbe = probe;
     this.naturalObservationStateBefore = null;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,167,txCode);}}
 
   setNaturalObservationRunMetadata(runRole: P011NaturalObservationRunRole | null,
     thresholdCalibrationId: string | null, thetaStartDeg: number | null,
-    thetaStopDeg: number | null): void {
+    thetaStopDeg: number | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(168);let txCode=0;try{
     this.naturalObservationRunRole = runRole;
     this.naturalObservationThresholdCalibrationId = thresholdCalibrationId;
     this.naturalObservationThetaStartDeg = thetaStartDeg;
@@ -2680,12 +2694,12 @@ export class WaterSandField {
       this.activeThresholdConfig !== null &&
       (this.activeThresholdConfig.thetaStartDeg !== thetaStartDeg ||
         this.activeThresholdConfig.thetaStopDeg !== thetaStopDeg);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,168,txCode);}}
 
   /** §27.3: true when the metadata pair disagrees with the active config. */
-  naturalObservationThresholdMismatch(): boolean {
-    return this.naturalObservationMetadataMismatch;
-  }
+  naturalObservationThresholdMismatch(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(169);let txCode=0;try{
+    {const txRc:boolean=this.naturalObservationMetadataMismatch;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,169,txCode);}}
 
   /**
    * §27.3 path C: dual-protocol adapter — the experiment entrance routes
@@ -2694,11 +2708,11 @@ export class WaterSandField {
    * or the active mode is not dual-protocol. configure() rejections
    * propagate to the caller (refuse, never clamp).
    */
-  applyProtocolThresholdPair(thetaStartDeg: number, thetaStopDeg: number): boolean {
+  applyProtocolThresholdPair(thetaStartDeg: number, thetaStopDeg: number): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(170);let txCode=0;try{
     if (this.naturalObservationMetadataMismatch ||
       this.activeThresholdConfig === null ||
       this.activeThresholdConfig.relaxMode !== 'dual-protocol') {
-      return false;
+      {const txRc:boolean=false;txCode=0;return txRc;}
     }
     const next = this.currentParamsCopy();
     next.relaxMode = 'dual-protocol';
@@ -2706,12 +2720,12 @@ export class WaterSandField {
     next.thetaStopDeg = thetaStopDeg;
     next.thresholdSource = 'protocol-candidate';
     this.configure(next);
-    return true;
-  }
+    {const txRc:boolean=true;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,170,txCode);}}
 
   /** Current params as a mutable copy (UI/protocol reconfigure base). */
-  private currentParamsCopy(): WaterSandParams {
-    return {
+  private currentParamsCopy(): WaterSandParams {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(171);let txCode=0;try{
+    {const txRc:WaterSandParams={
       routeId: this.params.routeId,
       angleDeg: this.params.angleDeg,
       heavySettleSpeed: this.params.heavySettleSpeed,
@@ -2739,23 +2753,23 @@ export class WaterSandField {
       thetaStartDeg: this.params.thetaStartDeg,
       thetaStopDeg: this.params.thetaStopDeg,
       thresholdSource: this.params.thresholdSource
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,171,txCode);}}
 
   /** §27.4: the active config revision (0 before the first configure). */
-  getConfigRevision(): number {
-    return this.configRevision;
-  }
+  getConfigRevision(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(172);let txCode=0;try{
+    {const txRc:number=this.configRevision;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,172,txCode);}}
 
   /** §27.1: read-only view of the active threshold config (null=legacy). */
-  getActiveThresholdConfig(): P011ActiveThresholdConfig | null {
-    return this.activeThresholdConfig;
-  }
+  getActiveThresholdConfig(): P011ActiveThresholdConfig | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(173);let txCode=0;try{
+    {const txRc:P011ActiveThresholdConfig | null=this.activeThresholdConfig;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,173,txCode);}}
 
   /** §27.5: how many mid-run pair changes this field instance saw. */
-  getConfigurationResetCount(): number {
-    return this.configurationResetCount;
-  }
+  getConfigurationResetCount(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(174);let txCode=0;try{
+    {const txRc:number=this.configurationResetCount;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,174,txCode);}}
 
   /**
    * GAP-5: bind the execution identity (source commit / per-file SHA-256 /
@@ -2764,11 +2778,11 @@ export class WaterSandField {
    * P011_RELAX_HYSTERESIS_VERSION constant.
    */
   setNaturalObservationExecutionIdentity(sourceCommit: string | null,
-    sourceFileSha256: string | null, buildSha256: string | null): void {
+    sourceFileSha256: string | null, buildSha256: string | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(175);let txCode=0;try{
     this.naturalObservationExecSourceCommit = sourceCommit;
     this.naturalObservationExecSourceFileSha256 = sourceFileSha256;
     this.naturalObservationExecBuildSha256 = buildSha256;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,175,txCode);}}
 
   /**
    * GAP-2: bind the v3 schedule segment identity of the CURRENT command.
@@ -2777,11 +2791,11 @@ export class WaterSandField {
    * the substeps executing that command. Nulls clear the binding.
    */
   setP011CurrentCommandSegment(legId: string | null, segmentId: string | null,
-    phaseKind: 'platform' | 'ramp' | null): void {
+    phaseKind: 'platform' | 'ramp' | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(176);let txCode=0;try{
     this.p011CurrentLegId = legId;
     this.p011CurrentSegmentId = segmentId;
     this.p011CurrentPhaseKindV3 = phaseKind;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,176,txCode);}}
 
   /**
    * §26.4 decision 2: record the driving schedule command's dispatch drift
@@ -2790,29 +2804,29 @@ export class WaterSandField {
    * records, never chases; the checker consumes the field under the
    * existing input-timing gates.
    */
-  setP011ScheduleDrift(driftMs: number | null): void {
+  setP011ScheduleDrift(driftMs: number | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(177);let txCode=0;try{
     this.p011ScheduleDriftMs = driftMs;
     this.p011ScheduleDriftExceeded = driftMs !== null &&
       driftMs > P011_SCHEDULE_DRIFT_MARKER_MS;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,177,txCode);}}
 
   /** True when the dual-threshold state machine drives relax eligibility. */
-  relaxHysteresisEnabled(): boolean {
-    return this.relaxHysteresisThresholds !== null;
-  }
+  relaxHysteresisEnabled(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(178);let txCode=0;try{
+    {const txRc:boolean=this.relaxHysteresisThresholds !== null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,178,txCode);}}
 
   /**
    * GAP-5: executedThresholds as the state machine actually read them (the
    * same object the transition function uses), with implementation identity.
    * Null on legacy runs.
    */
-  private executedThresholdsForLedger(): P011NaturalObservationExecutedThresholds | null {
+  private executedThresholdsForLedger(): P011NaturalObservationExecutedThresholds | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(179);let txCode=0;try{
     const thresholds = this.relaxHysteresisThresholds;
     const config = this.activeThresholdConfig;
     if (thresholds === null || config === null) {
-      return null;
+      {const txRc:P011NaturalObservationExecutedThresholds | null=null;txCode=0;return txRc;}
     }
-    return {
+    {const txRc:P011NaturalObservationExecutedThresholds | null={
       thetaStartDeg: config.thetaStartDeg,
       thetaStopDeg: config.thetaStopDeg,
       slopeStart: thresholds.slopeStart,
@@ -2823,15 +2837,15 @@ export class WaterSandField {
       buildSha256: this.naturalObservationExecBuildSha256 ?? '',
       configRevision: config.configRevision,
       thresholdSource: config.thresholdSource
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,179,txCode);}}
 
   // Observation-3 v2 remediation: the command schedule identifier selects the
   // phase-name mapping table (nine-phase 30° v2 vs legacy seven-phase 45° v1).
   // Null keeps the legacy mapping (backward compatible).
-  setNaturalObservationScheduleId(scheduleId: string | null): void {
+  setNaturalObservationScheduleId(scheduleId: string | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(180);let txCode=0;try{
     this.naturalObservationScheduleId = scheduleId;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,180,txCode);}}
 
   /**
    * D-1 (Option A + explicit route isolation): bind the physics-apply route
@@ -2842,40 +2856,40 @@ export class WaterSandField {
    * including candidate natural-relax-hysteresis-v1 runs: the v3 identity
    * is not an implicit correction switch.
    */
-  setNaturalObservationRouteId(routeId: string | null): void {
+  setNaturalObservationRouteId(routeId: string | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(181);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM && routeId!==P011_PARTICLE_ROUTE_ID)throw new WaterSandParamError('MODE_CONFLICT');
     // A live particle inventory cannot be orphaned by switching its unique
     // route gate. The caller can retry after the pool has drained.
     if (this.particleBinding !== null && this.particleBinding.liveCount > 0 &&
-      routeId !== P011_PARTICLE_ROUTE_ID) return;
+      routeId !== P011_PARTICLE_ROUTE_ID) {txCode=0;return;}
     if (this.endpointSampler !== null && routeId !== this.naturalObservationRouteId) this.endpointRouteChanges++;
     if (routeId !== this.naturalObservationRouteId) this.publishRenderState('ROUTE_CHANGE');
     this.naturalObservationRouteId = routeId;
     this.endpointParticlePool = this.particleBinding === null ? null : this.particleBinding.pool;
     this.endpointParticleRouteActive = this.particleRouteActive();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,181,txCode);}}
 
   /** D2 route contract: activation requires the exact route id and params;
    * unloading a non-empty pool is rejected without changing either value. */
-  private particleRouteResult(code: P011ParticleRouteCode): P011ParticleRouteResult {
-    return { ok: code === 'OK', code: code, active: this.particleRouteActive() };
-  }
-  setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {
-    if(this.mediumMode===P051_DRY_MEDIUM)return this.particleRouteResult('ROUTE_CONFLICT');
-    if (this.particleBinding !== null && this.particleBinding.liveCount > 0) return this.particleRouteResult('BUSY_PARTICLES');
+  private particleRouteResult(code: P011ParticleRouteCode): P011ParticleRouteResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(182);let txCode=0;try{
+    {const txRc:P011ParticleRouteResult={ ok: code === 'OK', code: code, active: this.particleRouteActive() };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,182,txCode);}}
+  setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(183);let txCode=0;try{
+    if(this.mediumMode===P051_DRY_MEDIUM){const txRc:P011ParticleRouteResult=this.particleRouteResult('ROUTE_CONFLICT');txCode=0;return txRc;}
+    if (this.particleBinding !== null && this.particleBinding.liveCount > 0) {const txRc:P011ParticleRouteResult=this.particleRouteResult('BUSY_PARTICLES');txCode=0;return txRc;}
     if (params === null) {
-      if (this.particleBinding === null && this.particleParams === null && this.particleRouteId === null) return this.particleRouteResult('OK');
+      if (this.particleBinding === null && this.particleParams === null && this.particleRouteId === null) {const txRc:P011ParticleRouteResult=this.particleRouteResult('OK');txCode=0;return txRc;}
       this.particleBinding = null; this.particleBackup = null;
       this.particleRouteId = null; this.particleParams = null;
       this.endpointParticlePool = null; this.endpointParticleRouteActive = false;
       this.publishRenderState('ROUTE_CHANGE');
-      return this.particleRouteResult('OK');
+      {const txRc:P011ParticleRouteResult=this.particleRouteResult('OK');txCode=0;return txRc;}
     }
     if (this.naturalObservationRouteId !== null && this.naturalObservationRouteId !== P011_PARTICLE_ROUTE_ID ||
       this.advectionParams !== null || this.deepCreepParams !== null || this.moistureParams !== null) {
-      return this.particleRouteResult('ROUTE_CONFLICT');
+      {const txRc:P011ParticleRouteResult=this.particleRouteResult('ROUTE_CONFLICT');txCode=0;return txRc;}
     }
-    if (params.nmax <= 0 || this.cols !== 128) return this.particleRouteResult('INVALID_PARAMS');
+    if (params.nmax <= 0 || this.cols !== 128) {const txRc:P011ParticleRouteResult=this.particleRouteResult('INVALID_PARAMS');txCode=0;return txRc;}
     const chosen: P011ParticleParams = { massPackage: params.massPackage, nmax: params.nmax,
       terminalSpeedHeavy: params.terminalSpeedHeavy, terminalSpeedLight: params.terminalSpeedLight,
       dragHeavy: params.dragHeavy, dragLight: params.dragLight, liftSpeedHeavy: params.liftSpeedHeavy,
@@ -2894,19 +2908,19 @@ export class WaterSandField {
       this.particleJournalBefore = this.particleBinding.pool.snapshot();
       this.backup.particleState = this.particleBinding.pool.snapshot();
       this.motionSnapshot.particleState = this.particleBinding.pool.snapshot();
-    } catch (_error) { return this.particleRouteResult('INVALID_PARAMS'); }
+    } catch (_error) { {const txRc:P011ParticleRouteResult=this.particleRouteResult('INVALID_PARAMS');txCode=0;return txRc;} }
     this.particleRouteId = P011_PARTICLE_ROUTE_ID; this.particleParams = chosen;
     this.endpointParticlePool = this.particleBinding.pool;
     this.endpointParticleRouteActive = this.particleRouteActive();
     this.publishRenderState('ROUTE_CHANGE');
-    return this.particleRouteResult('OK');
-  }
+    {const txRc:P011ParticleRouteResult=this.particleRouteResult('OK');txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,183,txCode);}}
 
-  particleRouteActive(): boolean {
-    return this.naturalObservationRouteId === P011_PARTICLE_ROUTE_ID &&
+  particleRouteActive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(184);let txCode=0;try{
+    {const txRc:boolean=this.naturalObservationRouteId === P011_PARTICLE_ROUTE_ID &&
       particleRouteEnabled(this.particleRouteId, this.particleParams) &&
-      this.particleBinding !== null;
-  }
+      this.particleBinding !== null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,184,txCode);}}
 
   /**
    * Matrix variant (preregistration §1): A/B/C/D selection for the
@@ -2916,23 +2930,23 @@ export class WaterSandField {
    * unbound (variant A by definition) this parameter is inert and the
    * original relax path runs.
    */
-  setCorrectionVariant(variant: P011CorrectionVariant): void {
+  setCorrectionVariant(variant: P011CorrectionVariant): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(185);let txCode=0;try{
     this.correctionVariant = variant;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,185,txCode);}}
 
-  getCorrectionVariant(): P011CorrectionVariant {
-    return this.correctionVariant;
-  }
+  getCorrectionVariant(): P011CorrectionVariant {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(186);let txCode=0;try{
+    {const txRc:P011CorrectionVariant=this.correctionVariant;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,186,txCode);}}
 
   /**
    * S4 §1.4 double gate (correction D-1 precedent): the route binding
    * (sufficient) + armed params (necessary). Either missing = full
    * bypass, bit-identical to the current HEAD.
    */
-  deepCreepRouteActive(): boolean {
-    return this.naturalObservationRouteId === P011_DEEP_CREEP_ROUTE_ID &&
-      this.deepCreepParams !== null;
-  }
+  deepCreepRouteActive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(187);let txCode=0;try{
+    {const txRc:boolean=this.naturalObservationRouteId === P011_DEEP_CREEP_ROUTE_ID &&
+      this.deepCreepParams !== null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,187,txCode);}}
 
   /**
    * S4 §5 (S-5): arm the deep-creep params. Fail-closed validation
@@ -2940,11 +2954,11 @@ export class WaterSandField {
    * the call (no clamping); kDeep ∈ (0, 0.2], muY ∈ [0, 0.5],
    * hMin ∈ [0.5, 2].
    */
-  setDeepCreepParams(params: P011DeepCreepParams | null): void {
+  setDeepCreepParams(params: P011DeepCreepParams | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(188);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM && params!==null)throw new WaterSandParamError('MODE_CONFLICT');
     if (params === null) {
       this.deepCreepParams = null;
-      return;
+      {txCode=0;return;}
     }
     if (!finite(params.kDeep) || !finite(params.muY) ||
       !finite(params.hMin) || params.kDeep <= 0 || params.kDeep > 0.2 ||
@@ -2956,21 +2970,21 @@ export class WaterSandField {
     this.deepCreepParams = {
       kDeep: params.kDeep, muY: params.muY, hMin: params.hMin
     };
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,188,txCode);}}
 
-  getDeepCreepParams(): P011DeepCreepParams | null {
-    return this.deepCreepParams;
-  }
+  getDeepCreepParams(): P011DeepCreepParams | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(189);let txCode=0;try{
+    {const txRc:P011DeepCreepParams | null=this.deepCreepParams;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,189,txCode);}}
 
   /**
    * S3 M-6: the moisture double gate (S4/correction precedent): the
    * route binding + armed params. Either missing = full bypass,
    * bit-identical to the pre-S3 behavior on every existing run.
    */
-  moistureRouteActive(): boolean {
-    return this.naturalObservationRouteId === P011_MOISTURE_ROUTE_ID &&
-      this.moistureParams !== null;
-  }
+  moistureRouteActive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(190);let txCode=0;try{
+    {const txRc:boolean=this.naturalObservationRouteId === P011_MOISTURE_ROUTE_ID &&
+      this.moistureParams !== null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,190,txCode);}}
 
   /**
    * S3 M-5/M-6: arm the moisture model (fail-closed — §27.2 precedent).
@@ -2978,13 +2992,13 @@ export class WaterSandField {
    * CURRENT base pair (thetaStopBase <= deadzone), non-finite params,
    * or an illegal K tier. Rejection leaves ZERO state change.
    */
-  setMoistureParams(params: P011MoistureParams | null): void {
+  setMoistureParams(params: P011MoistureParams | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(191);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM && params!==null)throw new WaterSandParamError('MODE_CONFLICT');
     if (params === null) {
       this.moistureParams = null;
       this.moistureField = null;
       this.moistureOccupancy = null;
-      return;
+      {txCode=0;return;}
     }
     const kOk = params.k === 8 || params.k === 16;
     const finiteOk = finite(params.sBase0) && finite(params.sBaseSlope) &&
@@ -3015,18 +3029,18 @@ export class WaterSandField {
       this.moistureOccupancy = new Float32Array(this.cols * params.k);
     }
     this.refreshMoisture();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,191,txCode);}}
 
-  getMoistureParams(): P011MoistureParams | null {
-    return this.moistureParams;
-  }
+  getMoistureParams(): P011MoistureParams | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(192);let txCode=0;try{
+    {const txRc:P011MoistureParams | null=this.moistureParams;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,192,txCode);}}
 
   /** Advection §5.1: assemble the advection ledger block (undefined when
    * the route is OFF — pre-v6 consumers see no block). */
-  private buildAdvectionLedgerBlock(): P011AdvectionLedgerBlock | undefined {
+  private buildAdvectionLedgerBlock(): P011AdvectionLedgerBlock | undefined {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(193);let txCode=0;try{
     const params = this.advectionParams;
     if (!this.advectionRouteActive() || params === null) {
-      return undefined;
+      {const txRc:P011AdvectionLedgerBlock | undefined=undefined;txCode=0;return txRc;}
     }
     const block = new P011AdvectionLedgerBlockImpl();
     block.routeId = P011_ADVECTION_ROUTE_ID;
@@ -3038,14 +3052,14 @@ export class WaterSandField {
     const moments = probe !== null && probe.lastAdvectionMoments !== null
       ? probe.lastAdvectionMoments : this.computeAdvectionMoments();
     block.perSubstep = moments;
-    return block;
-  }
+    {const txRc:P011AdvectionLedgerBlock | undefined=block;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,193,txCode);}}
 
   /** S3 §6.1: assemble the moisture ledger block (null when OFF). */
-  private buildMoistureLedgerBlock(): P011MoistureLedgerBlock | undefined {
+  private buildMoistureLedgerBlock(): P011MoistureLedgerBlock | undefined {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(194);let txCode=0;try{
     if (!this.moistureRouteActive() || this.moistureField === null ||
       this.moistureOccupancy === null || this.moistureParams === null) {
-      return undefined;
+      {const txRc:P011MoistureLedgerBlock | undefined=undefined;txCode=0;return txRc;}
     }
     const totals = this.getTotals();
     const vs = totals.heavy + totals.light;
@@ -3058,7 +3072,7 @@ export class WaterSandField {
     const K = this.moistureK;
     const s = this.moistureField;
     const m = this.moistureOccupancy;
-    for (let i = 0; i < s.length; i++) {
+    for (let i = 0; i < s.length; i++) {txTrace?.add(39);txTrace?.add(31);
       if (m[i] > 0) {
         sMin = Math.min(sMin, s[i]);
         sMax = Math.max(sMax, s[i]);
@@ -3075,7 +3089,7 @@ export class WaterSandField {
     let oMin = Infinity;
     let oMax = -Infinity;
     let anyDelta = false;
-    for (let e = 0; e < this.cols - 1; e++) {
+    for (let e = 0; e < this.cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
       aMin = Math.min(aMin, this.edgeThetaStartFwd[e], this.edgeThetaStartRev[e]);
       aMax = Math.max(aMax, this.edgeThetaStartFwd[e], this.edgeThetaStartRev[e]);
       oMin = Math.min(oMin, this.edgeThetaStopFwd[e], this.edgeThetaStopRev[e]);
@@ -3099,8 +3113,8 @@ export class WaterSandField {
     block.edgeThetaStopMin = oMin === Infinity ? 0 : oMin;
     block.edgeThetaStopMax = oMax === -Infinity ? 0 : oMax;
     block.thresholdCause = anyDelta ? 'moisture' : 'reference';
-    return block;
-  }
+    {const txRc:P011MoistureLedgerBlock | undefined=block;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,194,txCode);}}
 
   /**
    * S3 M-3: the six-step refresh (§3.1) — runs at the SUBSTEP TOP
@@ -3110,11 +3124,11 @@ export class WaterSandField {
    * apply channels then share ONE frozen set of edge arrays for the
    * whole substep — no version check needed in single-threaded code).
    */
-  refreshMoisture(): void {
+  refreshMoisture(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(195);let txCode=0;try{
     const params = this.moistureParams;
     if (params === null || this.moistureField === null ||
       this.moistureOccupancy === null) {
-      return;
+      {txCode=0;return;}
     }
     const K = this.moistureK;
     // a+b. Water fraction q from the live totals.
@@ -3127,10 +3141,10 @@ export class WaterSandField {
     // c+d. Occupancy + mixed saturation per (column, bin).
     const m = this.moistureOccupancy;
     const s = this.moistureField;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const sTop = this.sandTopScratch[c];
       const binH = sTop / K;
-      for (let k = 0; k < K; k++) {
+      for (let k = 0; k < K; k++) {txTrace?.add(39);txTrace?.add(31);
         const zLo = k * binH;
         const zHi = (k + 1) * binH;
         // Occupancy fraction of the bin covered by sand (0..1).
@@ -3162,7 +3176,7 @@ export class WaterSandField {
       : this.params.angleDeg + 6;
     const window = p011MoistureDeltaWindow(stopBase, startBase,
       this.params.bottomCreepDeadZone);
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       const sFwd = this.edgeSurfaceSaturation(e);
       const sRev = this.edgeSurfaceSaturation(e + 1);
       const sFwdRef = p011MoistureRefSaturation(sFwd, q, params);
@@ -3178,26 +3192,26 @@ export class WaterSandField {
     }
     // f. Revision freeze point.
     this.moistureRevision += 1;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,195,txCode);}}
 
   /**
    * §4.1 donor-surface saturation: the occupancy-weighted mean of the
    * donor column's bins within tTop material units of the sand top
    * (the surface window — deep bins don't dilute a dry surface).
    */
-  private edgeSurfaceSaturation(donor: number): number {
+  private edgeSurfaceSaturation(donor: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(196);let txCode=0;try{
     const params = this.moistureParams;
     const s = this.moistureField;
     const m = this.moistureOccupancy;
     if (params === null || s === null || m === null) {
-      return 0;
+      {const txRc:number=0;txCode=0;return txRc;}
     }
     const K = this.moistureK;
     const sTop = this.sandTopScratch[donor];
     const binH = sTop / K;
     let acc = 0;
     let wsum = 0;
-    for (let k = 0; k < K; k++) {
+    for (let k = 0; k < K; k++) {txTrace?.add(39);txTrace?.add(31);
       const zCenter = (k + 0.5) * binH;
       if (sTop - zCenter <= params.tTop) {
         const idx = donor * K + k;
@@ -3206,8 +3220,8 @@ export class WaterSandField {
         wsum += w;
       }
     }
-    return wsum > 0 ? acc / wsum : 0;
-  }
+    {const txRc:number=wsum > 0 ? acc / wsum : 0;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,196,txCode);}}
 
   /**
    * S3 M-5: addWater — a runtime transaction with partial admission
@@ -3216,24 +3230,24 @@ export class WaterSandField {
    * NEVER resets (waterTransactionNet accumulates; expectedWater =
    * initialWater + net). Zero admission = zero state change.
    */
-  addWater(requested: number): P011WaterTransactionReceipt | null {
-    return this.waterTransaction(requested, true);
-  }
+  addWater(requested: number): P011WaterTransactionReceipt | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(197);let txCode=0;try{
+    {const txRc:P011WaterTransactionReceipt | null=this.waterTransaction(requested, true);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,197,txCode);}}
 
   /** S3 M-5: drainWater — the mirror transaction (uniform lower). */
-  drainWater(requested: number): P011WaterTransactionReceipt | null {
-    return this.waterTransaction(requested, false);
-  }
+  drainWater(requested: number): P011WaterTransactionReceipt | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(198);let txCode=0;try{
+    {const txRc:P011WaterTransactionReceipt | null=this.waterTransaction(requested, false);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,198,txCode);}}
 
   private waterTransaction(requested: number,
-    add: boolean): P011WaterTransactionReceipt | null {
+    add: boolean): P011WaterTransactionReceipt | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(199);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM)throw new WaterSandParamError('MODE_CONFLICT');
     if (!finite(requested) || requested <= 0) {
-      return null;
+      {const txRc:P011WaterTransactionReceipt | null=null;txCode=0;return txRc;}
     }
     this.saveBackup();
     let capacity = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (add) {
         capacity += Math.max(0, this.capacity - this.waterTop[c]);
       } else {
@@ -3248,7 +3262,7 @@ export class WaterSandField {
       // Uniform distribution weighted by the per-column headroom (keeps
       // the relative shape; ΣΔ = admitted exactly).
       const perCol = new Float64Array(this.cols);
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         perCol[c] = add
           ? Math.max(0, this.capacity - this.waterTop[c])
           : Math.max(0, this.waterTop[c] - this.sandTopScratch[c] -
@@ -3256,7 +3270,7 @@ export class WaterSandField {
       }
       const sum = perCol.reduce((a, b) => a + b, 0);
       if (sum > 0) {
-        for (let c = 0; c < this.cols; c++) {
+        for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
           this.waterTop[c] += (add ? 1 : -1) * admitted * perCol[c] / sum;
         }
       }
@@ -3275,20 +3289,20 @@ export class WaterSandField {
     receipt.waterBefore = this.gestureWaterBefore;
     receipt.waterAfter = this.getTotals().water;
     receipt.revision = this.moistureRevision;
-    return receipt;
-  }
+    {const txRc:P011WaterTransactionReceipt | null=receipt;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,199,txCode);}}
 
   /** S3: the current water-transaction net (baseline delta). */
-  getWaterTransactionNet(): number {
-    return this.waterTransactionNet;
-  }
+  getWaterTransactionNet(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(200);let txCode=0;try{
+    {const txRc:number=this.waterTransactionNet;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,200,txCode);}}
 
   /** S3: read-only per-edge pair access (planner/apply consumers). */
   getEdgeThetaPair(edge: number,
-    donorIsLeft: boolean): P011EdgeThetaPair | null {
+    donorIsLeft: boolean): P011EdgeThetaPair | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(201);let txCode=0;try{
     if (!this.moistureRouteActive() || edge < 0 ||
       edge >= this.cols - 1) {
-      return null;
+      {const txRc:P011EdgeThetaPair | null=null;txCode=0;return txRc;}
     }
     const start = donorIsLeft
       ? this.edgeThetaStartFwd[edge] : this.edgeThetaStartRev[edge];
@@ -3300,8 +3314,8 @@ export class WaterSandField {
     pair.slopeHardMax = Math.tan(30 * Math.PI / 180);
     pair.thetaStartDeg = start;
     pair.thetaStopDeg = stop;
-    return pair;
-  }
+    {const txRc:P011EdgeThetaPair | null=pair;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,201,txCode);}}
 
   // =========================================================================
   // P-011 plan-3 stage a: the suspension advection channel
@@ -3315,10 +3329,10 @@ export class WaterSandField {
   // =========================================================================
 
   /** §1.1: double gate (S4/correction precedent) — route + params. */
-  advectionRouteActive(): boolean {
-    return this.naturalObservationRouteId === P011_ADVECTION_ROUTE_ID &&
-      this.advectionParams !== null;
-  }
+  advectionRouteActive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(202);let txCode=0;try{
+    {const txRc:boolean=this.naturalObservationRouteId === P011_ADVECTION_ROUTE_ID &&
+      this.advectionParams !== null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,202,txCode);}}
 
   /**
    * §A-3 (fail-closed, §27.2 precedent): kDrag/uCap/channelRateCap must be
@@ -3326,11 +3340,11 @@ export class WaterSandField {
    * gain=0 arms the route but generates ZERO requests (bit-exact OFF —
    * §1.1: identical to unbound, pinned by the isolation test).
    */
-  setAdvectionParams(params: P011AdvectionParams | null): void {
+  setAdvectionParams(params: P011AdvectionParams | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(203);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM && params!==null)throw new WaterSandParamError('MODE_CONFLICT');
     if (params === null) {
       this.advectionParams = null;
-      return;
+      {txCode=0;return;}
     }
     if (!finite(params.kDrag) || !finite(params.uCap) ||
       !finite(params.channelRateCap) || !finite(params.advectionGain) ||
@@ -3345,21 +3359,21 @@ export class WaterSandField {
       channelRateCap: params.channelRateCap,
       advectionGain: params.advectionGain
     };
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,203,txCode);}}
 
-  getAdvectionParams(): P011AdvectionParams | null {
-    return this.advectionParams;
-  }
+  getAdvectionParams(): P011AdvectionParams | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(204);let txCode=0;try{
+    {const txRc:P011AdvectionParams | null=this.advectionParams;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,204,txCode);}}
 
   /** §5.2: last substep's channel telemetry (test/offline use). */
-  getAdvectionFluxes(): number[] {
-    return [this.advectionFluxH, this.advectionFluxL, this.advectionLastMs];
-  }
+  getAdvectionFluxes(): number[] {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(205);let txCode=0;try{
+    {const txRc:number[]=[this.advectionFluxH, this.advectionFluxL, this.advectionLastMs];txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,205,txCode);}}
 
   /** §5.1: the per-substep domain moments (deposited/suspension, both
    * phases). O(N) — the §5.2 cost ruling (negligible; gated by the
    * telemetry switch so OFF runs pay zero). */
-  private computeAdvectionMoments(): P011AdvectionSubstepMoments {
+  private computeAdvectionMoments(): P011AdvectionSubstepMoments {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(206);let txCode=0;try{
     const moments = new P011AdvectionSubstepMomentsImpl();
     let mdepH = 0;
     let mdepL = 0;
@@ -3371,7 +3385,7 @@ export class WaterSandField {
     let sourceFlowL = 0;
     const liftByColumnH = new Array<number>(this.cols);
     const liftByColumnL = new Array<number>(this.cols);
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       mdepH += c * (this.bh[c] + this.mh[c]);
       mdepL += c * (this.bl[c] + this.ml[c]);
       msuspH += c * this.suspH[c];
@@ -3416,8 +3430,8 @@ export class WaterSandField {
       moments.shakeSourceFlowH = 0;
       moments.shakeSourceFlowL = 0;
     }
-    return moments;
-  }
+    {const txRc:P011AdvectionSubstepMoments=moments;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,206,txCode);}}
 
   /** Previous-substep moments for the R_M reconciliation (§5.1). */
   private advectionPrevMdepH = 0;
@@ -3436,9 +3450,9 @@ export class WaterSandField {
    * R_M against the previous snapshot, pushes the diffusion fluxes to the
    * probe, and rolls the previous snapshot forward.
    */
-  private advectionEndOfSubstep(): void {
+  private advectionEndOfSubstep(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(207);let txCode=0;try{
     if (!this.advectionRouteActive()) {
-      return;
+      {txCode=0;return;}
     }
     const probe = this.naturalObservationProbe;
     // Track the legacy diffusion signed fluxes per substep: wrap
@@ -3479,7 +3493,7 @@ export class WaterSandField {
     this.advectionPrevAdvectionFluxL = moments.advectionFluxL;
     this.advectionPrevDiffusionFluxH = moments.diffusionFluxH;
     this.advectionPrevDiffusionFluxL = moments.diffusionFluxL;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,207,txCode);}}
 
   /**
    * §1.4 advectionSlot — the full pseudocode. Called at the SAME slot in
@@ -3500,10 +3514,10 @@ export class WaterSandField {
   private advOutHBuf = new Float64Array(0);
   private advOutLBuf = new Float64Array(0);
 
-  private advectionSlot(dt: number): void {
+  private advectionSlot(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(208);let txCode=0;try{
     const params = this.advectionParams;
     if (params === null || params.advectionGain <= 0) {
-      return; // route OFF or gain=0: bit-exact skip (no requests, no ledger)
+      {txCode=0;return;} // route OFF or gain=0: bit-exact skip (no requests, no ledger)
     }
     const cols = this.cols;
     const edgeCount = cols - 1;
@@ -3543,14 +3557,14 @@ export class WaterSandField {
     // after this slot and are EXCLUDED by construction.
     let slotPreMsuspH = 0;
     let slotPreMsuspL = 0;
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
       slotPreMsuspH += c * this.suspH[c];
       slotPreMsuspL += c * this.suspL[c];
     }
     // ── Request generation (frozen snapshot read — same array object in
     //    both phases: collect reads motionSnapshot post-save, apply reads
     //    the restored live arrays; content identical).
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       const gE = this.sandTopScratch[e + 1] - this.sandTopScratch[e];
       const fE = tanAccepted - gE;
       let uE = params.kDrag * fE;
@@ -3576,7 +3590,7 @@ export class WaterSandField {
     // way.)
     const suspHRef = this.suspH;
     const suspLRef = this.suspL;
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       const nu = nuEdge[e];
       if (nu <= EPS) {
         continue;
@@ -3590,7 +3604,7 @@ export class WaterSandField {
     // ── Snapshot-level donor oversell scaling (§1.2): for each column,
     //    Σ q_out over its out-edges; if > the snapshot stock, scale each
     //    out-edge request by stock/Σ (proportional + deterministic).
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       if (reqH[e] <= EPS && reqL[e] <= EPS) {
         continue;
       }
@@ -3598,7 +3612,7 @@ export class WaterSandField {
       outSumH[donor] += reqH[e];
       outSumL[donor] += reqL[e];
     }
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       if (reqH[e] <= EPS && reqL[e] <= EPS) {
         continue;
       }
@@ -3619,14 +3633,14 @@ export class WaterSandField {
     //    six-part idempotency requested = granted + 5 clip classes.
     //    Atomic micro-transaction: all four validity checks computed
     //    before any write (S4 §2.4 precedent); a failed note skips whole.
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       if (reqH[e] <= EPS && reqL[e] <= EPS) {
         continue;
       }
       const donor = uEdge[e] > 0 ? e : e + 1;
       const receiver = uEdge[e] > 0 ? e + 1 : e;
       // Phase H then L (fixed order).
-      for (let phase = 0; phase < 2; phase++) {
+      for (let phase = 0; phase < 2; phase++) {txTrace?.add(39);txTrace?.add(31);
         const isHeavy = phase === 0;
         const requested = isHeavy ? reqH[e] : reqL[e];
         if (requested <= EPS) {
@@ -3743,7 +3757,7 @@ export class WaterSandField {
     // by the slot scope — would appear).
     let slotPostMsuspH = 0;
     let slotPostMsuspL = 0;
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
       slotPostMsuspH += c * this.suspH[c];
       slotPostMsuspL += c * this.suspL[c];
     }
@@ -3751,21 +3765,21 @@ export class WaterSandField {
       this.advectionFluxH;
     this.advectionSlotRML = slotPostMsuspL - slotPreMsuspL -
       this.advectionFluxL;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,208,txCode);}}
 
-  private shakeSourceRouteActive(): boolean {
-    return this.advectionRouteActive() && !this.endpointParticleRouteActive;
-  }
+  private shakeSourceRouteActive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(209);let txCode=0;try{
+    {const txRc:boolean=this.advectionRouteActive() && !this.endpointParticleRouteActive;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,209,txCode);}}
 
   private moveShakeSourceLineage(tags: Float64Array, donor: number, receiver: number,
-    amount: number, donorStockBefore: number): void {
+    amount: number, donorStockBefore: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(210);let txCode=0;try{
     if (!this.shakeSourceRouteActive() || amount <= EPS || donorStockBefore <= EPS) {
-      return;
+      {txCode=0;return;}
     }
     const moved = Math.min(tags[donor], amount * tags[donor] / donorStockBefore);
     tags[donor] -= moved;
     tags[receiver] += moved;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,210,txCode);}}
 
   /** §5.1: the slot-scope R_M residuals (suspension domain only). */
   private advectionSlotRMH = 0;
@@ -3773,9 +3787,9 @@ export class WaterSandField {
   private recordAdvectionNote(edge: number, isHeavy: boolean, u: number,
     nu: number, requested: number, granted: number, clipInventory: number,
     clipCapacity: number, clipChannel: number, clipLocal: number,
-    clipTotal: number, reason: string | null): void {
+    clipTotal: number, reason: string | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(211);let txCode=0;try{
     if (this.naturalObservationProbe === null || !this.advectionTelemetryActive) {
-      return;
+      {txCode=0;return;}
     }
     this.naturalObservationProbe.recordAdvectionEvidence({
       edge: edge,
@@ -3791,19 +3805,19 @@ export class WaterSandField {
       clipTotal: clipTotal,
       reason: reason
     });
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,211,txCode);}}
 
   /**
    * S4 dormant-wake probe: does ANY adjacent pair still carry a
    * potential drive (D>0 with stocks)? Cheap O(cols) scan mirroring the
    * applyDeepCreep generation rule — used ONLY by the dormant judgment.
    */
-  private deepCreepHasDrive(): boolean {
+  private deepCreepHasDrive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(212);let txCode=0;try{
     const params = this.deepCreepParams;
     if (params === null) {
-      return false;
+      {const txRc:boolean=false;txCode=0;return txRc;}
     }
-    for (let e = 0; e < this.cols - 1; e++) {
+    for (let e = 0; e < this.cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
       const i = this.bh[e] >= this.bh[e + 1] ? e : e + 1;
       const j = i === e ? e + 1 : e;
       const deltaBh = this.bh[i] - this.bh[j];
@@ -3811,39 +3825,39 @@ export class WaterSandField {
       const dRaw = deltaBh - params.muY * pEff;
       if (dRaw > EPS && deltaBh > 2 * EPS &&
         this.bh[i] > params.hMin && this.bl[j] > params.hMin) {
-        return true;
+        {const txRc:boolean=true;txCode=0;return txRc;}
       }
     }
-    return false;
-  }
+    {const txRc:boolean=false;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,212,txCode);}}
 
   /** S4 telemetry: last substep's attribution counters. */
-  getDeepCreepAttribution(): P011DeepCreepAttribution {
+  getDeepCreepAttribution(): P011DeepCreepAttribution {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(213);let txCode=0;try{
     const result = new P011DeepCreepAttribution();
     result.noDrive = this.deepCreepNoDrive;
     result.noInventory = this.deepCreepNoInventory;
     result.budgetClipped = this.deepCreepBudgetClipped;
     result.totalUsed = this.deepCreepTotalUsed;
-    return result;
-  }
+    {const txRc:P011DeepCreepAttribution=result;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,213,txCode);}}
 
-  getNaturalObservationRouteId(): string | null {
-    return this.naturalObservationRouteId;
-  }
+  getNaturalObservationRouteId(): string | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(214);let txCode=0;try{
+    {const txRc:string | null=this.naturalObservationRouteId;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,214,txCode);}}
 
   /** True only when BOTH gate conditions hold (necessary + sufficient). */
-  correctionRouteActive(): boolean {
-    return this.relaxHysteresisThresholds !== null &&
-      this.naturalObservationRouteId === P011_CORRECTION_ROUTE_ID;
-  }
+  correctionRouteActive(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(215);let txCode=0;try{
+    {const txRc:boolean=this.relaxHysteresisThresholds !== null &&
+      this.naturalObservationRouteId === P011_CORRECTION_ROUTE_ID;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,215,txCode);}}
 
-  getNaturalObservationScheduleId(): string | null {
-    return this.naturalObservationScheduleId;
-  }
+  getNaturalObservationScheduleId(): string | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(216);let txCode=0;try{
+    {const txRc:string | null=this.naturalObservationScheduleId;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,216,txCode);}}
 
-  private naturalObservationState(): P011NaturalObservationState {
+  private naturalObservationState(): P011NaturalObservationState {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(217);let txCode=0;try{
     this.updateSandTop();
-    return {
+    {const txRc:P011NaturalObservationState={
       bh: Array.from(this.bh),
       bl: Array.from(this.bl),
       mh: Array.from(this.mh),
@@ -3852,12 +3866,12 @@ export class WaterSandField {
       suspL: Array.from(this.suspL),
       S: Array.from(this.sandTopScratch),
       waterTop: Array.from(this.waterTop)
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,217,txCode);}}
 
-  private beginNaturalObservation(substepDt: number): void {
+  private beginNaturalObservation(substepDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(218);let txCode=0;try{
     if (this.naturalObservationProbe === null) {
-      return;
+      {txCode=0;return;}
     }
     this.naturalObservationPhysicsDt = substepDt;
     const state = this.naturalObservationState();
@@ -3937,13 +3951,13 @@ export class WaterSandField {
     }, state);
     this.naturalObservationRelaxCandidateCount = 0;
     this.naturalObservationRelaxRequestedTotal = 0;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,218,txCode);}}
 
-  private naturalObservationBudgets(): P011NaturalObservationBudgets {
+  private naturalObservationBudgets(): P011NaturalObservationBudgets {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(219);let txCode=0;try{
     const localUsed = Array.from(this.substepMotionBudgetUsed);
     const localRemaining = Array.from(this.substepMotionBudgetRemaining);
     const localLimit = localUsed.map((used, index) => used + localRemaining[index]);
-    return {
+    {const txRc:P011NaturalObservationBudgets={
       localLimit: localLimit,
       localUsed: localUsed,
       localRemaining: localRemaining,
@@ -3956,14 +3970,14 @@ export class WaterSandField {
       totalLimit: this.totalMotionBudgetLimit,
       totalRemaining: this.totalMotionBudgetRemaining,
       totalClipped: this.totalMotionBudgetClipped
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,219,txCode);}}
 
-  private finishNaturalObservation(errorCode: WaterSandErrorCode | null): void {
+  private finishNaturalObservation(errorCode: WaterSandErrorCode | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(20);let txCode=0;try{
     const probe = this.naturalObservationProbe;
     const before = this.naturalObservationStateBefore;
     if (probe === null || before === null) {
-      return;
+      {txCode=0;return;}
     }
     if (errorCode === null) {
       // GAP-1: candidate runs persist the state machine's own array (the
@@ -3991,12 +4005,12 @@ export class WaterSandField {
     let maxSubstepBl = 0;
     let maxSandTopSubstepDelta = 0;
     let maxSandTopInvariantError = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const values = [before.bh[c], before.bl[c], before.mh[c], before.ml[c],
         before.suspH[c], before.suspL[c], before.S[c], before.waterTop[c],
         after.bh[c], after.bl[c], after.mh[c], after.ml[c],
         after.suspH[c], after.suspL[c], after.S[c], after.waterTop[c]];
-      for (const value of values) {
+      for (const value of values) {txTrace?.add(39);txTrace?.add(31);
         finite = finite && Number.isFinite(value);
         stock = stock && value >= -EPS;
         range = range && value <= this.capacity + EPS;
@@ -4018,7 +4032,7 @@ export class WaterSandField {
       }
     }
     if (this.particleRouteActive() && this.particleBinding !== null && this.particleBackup !== null) {
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         heavyBefore += this.particleBackup.colParticleMassH[c]; lightBefore += this.particleBackup.colParticleMassL[c];
         heavyAfter += this.particleBinding.pool.particleMassHAt(c); lightAfter += this.particleBinding.pool.particleMassLAt(c);
         capacity = capacity && after.S[c] + after.suspH[c] + after.suspL[c] + this.particleBinding.pool.particleMassAt(c) <= this.capacity + EPS;
@@ -4031,7 +4045,7 @@ export class WaterSandField {
       Math.abs(lightAfter - lightBefore) <= 1e-6;
     const budgets = this.naturalObservationBudgets();
     let maxLocalBudgetExcess = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       maxLocalBudgetExcess = Math.max(maxLocalBudgetExcess,
         budgets.localUsed[c] - budgets.localLimit[c]);
     }
@@ -4107,14 +4121,14 @@ export class WaterSandField {
       audit.airDynamicsRevision=dry.airDynamicsRevision;audit.freeWaterTotal=dry.freeWaterTotal;audit.occupiedVolumeTotal=dry.occupiedVolumeTotal;}
     probe.finishSubstep(after, budgets, audit);
     this.naturalObservationStateBefore = null;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,20,txCode);}}
 
-  nextP011InputSequence(): number {
+  nextP011InputSequence(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(221);let txCode=0;try{
     this.p011InputSequence += 1;
-    return this.p011InputSequence;
-  }
+    {const txRc:number=this.p011InputSequence;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,221,txCode);}}
 
-  emitP011NoopTelemetry(p011Hook?: WaterSandP011Hook): void {
+  emitP011NoopTelemetry(p011Hook?: WaterSandP011Hook): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(222);let txCode=0;try{
     // P-011 bottom-creep-v2.8-heavy-interface: align dormant commands by physicsTime.
     this.p011FrameId += 1;
     this.p011SubstepId += 1;
@@ -4141,9 +4155,9 @@ export class WaterSandField {
     if (p011Hook !== undefined) {
       p011Hook(this.getP011Metric(), this.getP011Bottom());
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,222,txCode);}}
 
-  getDrift(): WaterSandDrift {
+  getDrift(): WaterSandDrift {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(223);let txCode=0;try{
     const totals = this.getTotals();
     // S3 §2.2-3: the water baseline = initial + cumulative transaction
     // net (runtime water ops never reset the baseline — the same ruling
@@ -4157,14 +4171,14 @@ export class WaterSandField {
     // historical formula.
     const expectedHeavy = this.initialHeavy + this.sourceInjectedHeavy;
     const expectedLight = this.initialLight + this.sourceInjectedLight;
-    return {
+    {const txRc:WaterSandDrift={
       water: Math.abs(totals.water - expectedWater) / Math.max(expectedWater, EPS),
       heavy: Math.abs(totals.heavy - expectedHeavy) / Math.max(expectedHeavy, EPS),
       light: Math.abs(totals.light - expectedLight) / Math.max(expectedLight, EPS)
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,223,txCode);}}
 
-  getMetrics(pixelScale?: number): WaterSandMetrics {
+  getMetrics(pixelScale?: number): WaterSandMetrics {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(224);let txCode=0;try{
     const scale = pixelScale === undefined ? 1 : pixelScale;
     const totals = this.getTotals();
     const drift = this.getDrift();
@@ -4172,7 +4186,7 @@ export class WaterSandField {
     let suspended = 0;
     let depositedHeavy = 0;
     let depositedLight = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       suspended += this.suspH[c] + this.suspL[c];
       depositedHeavy += this.bh[c] + this.mh[c];
       depositedLight += this.bl[c] + this.ml[c];
@@ -4194,7 +4208,7 @@ export class WaterSandField {
       metricKey = { runId: k.runId, sequence: k.sequence, frameId: k.frameId,
         substepId: k.substepId, attemptId: k.attemptId, committedOrdinal: k.committedOrdinal };
     }
-    return {
+    {const txRc:WaterSandMetrics={
       endpointFieldRevision: P011_ENDPOINT_FIELD_REVISION, sourceEpoch: this.sourceEpoch, metricCommitKey: metricKey,
       sourceInjectedHeavy: this.sourceInjectedHeavy, sourceInjectedLight: this.sourceInjectedLight,
       depositedMass: endpoint.depositedMass, suspendedMass: endpoint.suspendedMass,
@@ -4228,26 +4242,26 @@ export class WaterSandField {
       substepBudgetClipped: this.substepBudgetClipped,
       physicsTimeMs: this.lastPhysicsTimeMs,
       dormant: this.dormant
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,224,txCode);}}
 
-  snapshot(): WaterSandSnapshot {
+  snapshot(): WaterSandSnapshot {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(225);let txCode=0;try{
     const target = this.createEmptySnapshot();
     this.copyStateTo(target);
-    return target;
-  }
+    {const txRc:WaterSandSnapshot=target;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,225,txCode);}}
 
-  getRenderPhysicsCommitId(): number { return this.renderPhysicsCommitId; }
-  createPublishedRenderStateSlot(): P011PublishedRenderState {
-    return new P011PublishedRenderState(this.createEmptySnapshot());
-  }
-  copyPublishedRenderStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {
-    if (!this.particleRouteActive() || this.particleBinding === null) return 'ROUTE_INACTIVE';
+  getRenderPhysicsCommitId(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(226);let txCode=0;try{ {const txRc:number=this.renderPhysicsCommitId;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,226,txCode);}}
+  createPublishedRenderStateSlot(): P011PublishedRenderState {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(227);let txCode=0;try{
+    {const txRc:P011PublishedRenderState=new P011PublishedRenderState(this.createEmptySnapshot());txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,227,txCode);}}
+  copyPublishedRenderStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(228);let txCode=0;try{
+    if (!this.particleRouteActive() || this.particleBinding === null) {const txRc:P011RenderCopyStatus='ROUTE_INACTIVE';txCode=0;return txRc;}
     if (out.field.schemaVersion !== 4 || out.field.particleState === undefined || out.field.particleState === null)
-      return 'SCHEMA_UNAVAILABLE';
+      {const txRc:P011RenderCopyStatus='SCHEMA_UNAVAILABLE';txCode=0;return txRc;}
     if (out.field.particleState.nmax !== this.particleBinding.pool.nmax || out.field.cols !== this.cols ||
-      out.field.capacity !== this.capacity) return 'CAPACITY_MISMATCH';
-    if (!Number.isSafeInteger(this.renderPhysicsCommitId) || !Number.isSafeInteger(this.renderStateEpoch)) return 'INVALID_TOKEN';
+      out.field.capacity !== this.capacity) {const txRc:P011RenderCopyStatus='CAPACITY_MISMATCH';txCode=0;return txRc;}
+    if (!Number.isSafeInteger(this.renderPhysicsCommitId) || !Number.isSafeInteger(this.renderStateEpoch)) {const txRc:P011RenderCopyStatus='INVALID_TOKEN';txCode=0;return txRc;}
     // Synchronous UI call: no callback, step, collect, or consumer access before the full copy returns.
     this.copyStateTo(out.field);
     out.effectiveTiltDeg = this.effectiveTilt;
@@ -4258,20 +4272,20 @@ export class WaterSandField {
     out.ledgerCommitKey = this.renderLedgerCommitKey;
     out.routeId = this.particleRouteId; out.particleRouteActive = true;
     out.particleCapacity = this.particleBinding.pool.nmax; out.liveCount = out.field.particleState.liveCount;
-    return 'OK';
-  }
+    {const txRc:P011RenderCopyStatus='OK';txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,228,txCode);}}
   // T56 read-only scene publication also supports the canonical field-only route.
-  copyPublishedSceneStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {
-    if(this.particleRouteActive())return this.copyPublishedRenderStateInto(out);
-    if(out.field.cols!==this.cols||out.field.capacity!==this.capacity)return 'CAPACITY_MISMATCH';
+  copyPublishedSceneStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(229);let txCode=0;try{
+    if(this.particleRouteActive()){const txRc:P011RenderCopyStatus=this.copyPublishedRenderStateInto(out);txCode=0;return txRc;}
+    if(out.field.cols!==this.cols||out.field.capacity!==this.capacity){const txRc:P011RenderCopyStatus='CAPACITY_MISMATCH';txCode=0;return txRc;}
     this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;
     out.stateEpoch=this.renderStateEpoch;out.physicsCommitId=this.renderPhysicsCommitId;out.publicationKind=this.renderPublicationKind;out.ledgerCommitKey=this.renderLedgerCommitKey;
     out.mediumMode=this.mediumMode;out.airDynamicsRevision=this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY';
     out.birthPlacementRevision=this.mediumMode===P051_DRY_MEDIUM?'DRY_POINT_V1':'WET_COLUMN_V1';
-    out.routeId=this.params.routeId;out.particleRouteActive=false;out.particleCapacity=0;out.liveCount=0;return 'OK';
-  }
-  particleRenderCapacity(): number { return this.particleParams === null ? 0 : this.particleParams.nmax; }
-  copyParticleRenderSnapshot(out: P011ParticleRenderProjection): P011ParticleRenderProjection {
+    out.routeId=this.params.routeId;out.particleRouteActive=false;out.particleCapacity=0;out.liveCount=0;{const txRc:P011RenderCopyStatus='OK';txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,229,txCode);}}
+  particleRenderCapacity(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(230);let txCode=0;try{ {const txRc:number=this.particleParams === null ? 0 : this.particleParams.nmax;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,230,txCode);}}
+  copyParticleRenderSnapshot(out: P011ParticleRenderProjection): P011ParticleRenderProjection {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(231);let txCode=0;try{
     out.physicsCommitId = this.renderPhysicsCommitId;
     out.particleRevision = this.renderPhysicsCommitId;
     out.active = this.particleRouteActive();
@@ -4282,9 +4296,9 @@ export class WaterSandField {
         out.mass, out.phase, out.state, out.particleId);
       out.capacity = this.particleBinding.pool.nmax;
     }
-    return out;
-  }
-  copyStateTo(target: WaterSandSnapshot): void {
+    {const txRc:P011ParticleRenderProjection=out;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,231,txCode);}}
+  copyStateTo(target: WaterSandSnapshot): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(232);let txCode=0;try{
     // S3: accept schema 2 (legacy consumers create v2 targets — the
     // optional moisture block is skipped on those) and 3.
     const schemaNum = target.schemaVersion as number;
@@ -4318,7 +4332,7 @@ export class WaterSandField {
     target.ml.set(this.ml);
     target.suspH.set(this.suspH);
     target.suspL.set(this.suspL);
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       target.hs[c] = this.bh[c] + this.mh[c];
       target.hl[c] = this.bl[c] + this.ml[c];
       target.sandTop[c] = target.hs[c] + target.hl[c];
@@ -4335,11 +4349,11 @@ export class WaterSandField {
         for (let i = 0; i < state.nmax; i++) state.freeSlots[i] = state.nmax - 1 - i;
       }
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,232,txCode);}}
 
   /** Restore schema 3 as a structural zero particle field; schema 4 restores
    * the full SoA pool when a particle route is armed. */
-  restoreFromSnapshot(source: WaterSandSnapshot): void {
+  restoreFromSnapshot(source: WaterSandSnapshot): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(233);let txCode=0;try{
     const version = source.schemaVersion as number;
     if ((version !== 3 && version !== 4) || source.cols !== this.cols || source.capacity !== this.capacity ||
       source.waterTop.length !== this.cols || source.bh.length !== this.cols || source.bl.length !== this.cols ||
@@ -4376,9 +4390,9 @@ export class WaterSandField {
     }
     this.updateSandTop();
     this.publishRenderState('RESTORE', true);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,233,txCode);}}
 
-  private validateDrySnapshot(s: WaterSandSnapshot): void {
+  private validateDrySnapshot(s: WaterSandSnapshot): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(234);let txCode=0;try{
     const p=s.particleState, e=s.externalSourceState;
     if(s.airDynamicsRevision!==P051_DRY_GRAVITY || s.birthPlacementRevision!=='DRY_POINT_V1' || !Number.isSafeInteger(s.drySourceId)||s.drySourceId!<1||s.drySourceId!>0xffffffff||
       !Number.isSafeInteger(s.dryLastSequence)||s.dryLastSequence!<0||!finite(s.dryLastInputTime!)||s.dryLastInputTime!<0||
@@ -4390,8 +4404,8 @@ export class WaterSandField {
     if(p.colParticleMassH.length!==this.cols||p.colParticleMassL.length!==this.cols)throw new WaterSandSnapshotError('INVALID_DRY_CACHE');
     const h=new Float64Array(this.cols),l=new Float64Array(this.cols),seen=new Uint8Array(p.nmax);let count=0,totalH=0,totalL=0;
     if(!Number.isSafeInteger(p.freeCount)||p.freeCount<0||p.freeCount>p.nmax||!Number.isSafeInteger(p.nextId)||p.nextId<1||p.nextId>0x100000000)throw new WaterSandSnapshotError('INVALID_DRY_ALLOCATOR');
-    for(let j=0;j<p.freeCount;j++){const i=p.freeSlots[j];if(i<0||i>=p.nmax||seen[i]!==0||p.pState[i]!==0)throw new WaterSandSnapshotError('INVALID_DRY_FREE');seen[i]=1;}
-    for(let i=0;i<p.nmax;i++){
+    for(let j=0;j<p.freeCount;j++){txTrace?.add(39);txTrace?.add(31);const i=p.freeSlots[j];if(i<0||i>=p.nmax||seen[i]!==0||p.pState[i]!==0)throw new WaterSandSnapshotError('INVALID_DRY_FREE');seen[i]=1;}
+    for(let i=0;i<p.nmax;i++){txTrace?.add(39);txTrace?.add(31);
       if(p.pState[i]===0)continue;
       if(seen[i]!==0||(p.pState[i]!==1&&p.pState[i]!==2)||p.pPhase[i]>1||p.pSource[i]>1||!finite(p.pMass[i])||p.pMass[i]<=0||!finite(p.pX[i])||p.pX[i]<0||p.pX[i]>=this.cols||
         !finite(p.pY[i])||p.pY[i]<0||p.pY[i]>this.capacity||!finite(p.pVx[i])||!finite(p.pVy[i])||p.pId[i]<1||p.pId[i]>=p.nextId||p.pSourceId[i]===0)throw new WaterSandSnapshotError('INVALID_DRY_PARTICLE');
@@ -4399,20 +4413,20 @@ export class WaterSandField {
       const c=Math.floor(p.pX[i]);if(p.pPhase[i]===0)h[c]+=p.pMass[i];else l[c]+=p.pMass[i];count++;
     }
     if(count!==p.liveCount||count+p.freeCount!==p.nmax)throw new WaterSandSnapshotError('INVALID_DRY_COUNT');
-    for(let c=0;c<this.cols;c++){
+    for(let c=0;c<this.cols;c++){txTrace?.add(39);txTrace?.add(31);
       const sand=s.bh[c]+s.bl[c]+s.mh[c]+s.ml[c];
       if(!finite(sand)||s.bh[c]<0||s.bl[c]<0||s.mh[c]<0||s.ml[c]<0||s.suspH[c]!==0||s.suspL[c]!==0||!finite(s.waterTop[c])||s.waterTop[c]>this.capacity||
         Math.abs(s.waterTop[c]-(sand+h[c]+l[c]))>EPS||Math.abs(h[c]-p.colParticleMassH[c])>EPS||Math.abs(l[c]-p.colParticleMassL[c])>EPS)throw new WaterSandSnapshotError('INVALID_DRY_ENVELOPE');
       totalH+=s.bh[c]+s.mh[c]+h[c];totalL+=s.bl[c]+s.ml[c]+l[c];
     }
     if(!finite(totalH)||!finite(totalL)||!finite(e.sourceInjectedH)||!finite(e.sourceInjectedL)||Math.abs(totalH-e.sourceInjectedH)>1e-9||Math.abs(totalL-e.sourceInjectedL)>1e-9)throw new WaterSandSnapshotError('INVALID_DRY_SOURCE_TOTALS');
-  }
-  getLastError(): WaterSandErrorCode | null {
-    return this.lastError;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,234,txCode);}}
+  getLastError(): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(235);let txCode=0;try{
+    {const txRc:WaterSandErrorCode | null=this.lastError;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,235,txCode);}}
 
   private beginSubstepMotionBudget(substepDt: number, collectRequests: boolean,
-    totalMotionScale: number): void {
+    totalMotionScale: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(236);let txCode=0;try{
     // P-003/P-005 v2.2 and P-011 v2.8: substep-local motion budgets.
     const budget = this.params.vSandTopMax * substepDt;
     this.substepMotionBudgetRemaining.fill(budget);
@@ -4464,9 +4478,9 @@ export class WaterSandField {
       this.naturalObservationProbe.lastDiffusionFluxH = 0;
       this.naturalObservationProbe.lastDiffusionFluxL = 0;
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,236,txCode);}}
 
-  private beginMotionApplication(substepDt: number, totalMotionScale: number): void {
+  private beginMotionApplication(substepDt: number, totalMotionScale: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(237);let txCode=0;try{
     const budget = this.params.vSandTopMax * substepDt;
     this.substepMotionBudgetRemaining.fill(budget);
     this.substepMotionBudgetUsed.fill(0);
@@ -4476,9 +4490,9 @@ export class WaterSandField {
     this.totalMotionBudgetClipped = 0;
     this.collectingTotalMotionRequests = false;
     this.totalMotionBudgetScale = totalMotionScale;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,237,txCode);}}
 
-  private saveMotionSnapshot(dt: number): void {
+  private saveMotionSnapshot(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(238);let txCode=0;try{
     this.motionSnapshot.waterTop.set(this.waterTop);
     this.motionSnapshot.bh.set(this.bh);
     this.motionSnapshot.bl.set(this.bl);
@@ -4503,9 +4517,9 @@ export class WaterSandField {
     }
     this.updateSandTop();
     this.observeFieldColumnV2('BEGIN_COLLECT_AFTER','PARTICLE_BEGIN');
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,238,txCode);}}
 
-  private restoreMotionSnapshot(): void {
+  private restoreMotionSnapshot(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(239);let txCode=0;try{
     this.waterTop.set(this.motionSnapshot.waterTop);
     this.bh.set(this.motionSnapshot.bh);
     this.bl.set(this.motionSnapshot.bl);
@@ -4518,13 +4532,13 @@ export class WaterSandField {
       this.shakeSourceL.set(this.motionSnapshot.shakeSourceL!);
     }
     this.updateSandTop();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,239,txCode);}}
 
   // D2 narrow host API: old channels retain their existing refund semantics.
-  internalParticleReserve(column: number, target: number, requested: number): number {
-    return this.clipSubstepMotion(column, target, requested);
-  }
-  internalParticleRefund(column: number, target: number, amount: number): void {
+  internalParticleReserve(column: number, target: number, requested: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(240);let txCode=0;try{
+    {const txRc:number=this.clipSubstepMotion(column, target, requested);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,240,txCode);}}
+  internalParticleRefund(column: number, target: number, amount: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(241);let txCode=0;try{
     this.substepMotionBudgetRemaining[column] += amount;
     this.substepMotionBudgetUsed[column] -= amount;
     if (target >= 0) {
@@ -4532,20 +4546,20 @@ export class WaterSandField {
       this.substepMotionBudgetUsed[target] -= amount;
     }
     this.totalMotionBudgetRemaining += amount; this.totalMotionBudgetUsed -= amount;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,241,txCode);}}
   internalParticleRestoreBudget(remaining: Float64Array, used: Float64Array,
-    totalRemaining: number, totalUsed: number): void {
+    totalRemaining: number, totalUsed: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(242);let txCode=0;try{
     this.substepMotionBudgetRemaining.set(remaining); this.substepMotionBudgetUsed.set(used);
     this.totalMotionBudgetRemaining = totalRemaining; this.totalMotionBudgetUsed = totalUsed;
-  }
-  internalParticleGuard(column: number, sign: number, requested: number): number {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,242,txCode);}}
+  internalParticleGuard(column: number, sign: number, requested: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(243);let txCode=0;try{
     this.updateSandTop();
     const w = this.particleColumnGuardWorkspace; w.count = 0;
     if (requested <= 0) {
       w.out.accepted = 0; w.out.rejected = 0; w.out.allLegalBefore = true; w.out.limitingEdge = null;
-      return 0;
+      {const txRc:number=0;txCode=0;return txRc;}
     }
-    if (!w.storageValid()) return NaN;
+    if (!w.storageValid()) {const txRc:number=NaN;txCode=0;return txRc;}
     // Map/Set iteration canonicalized -0 keys to +0 in the reference.
     const c = column === 0 ? 0 : column;
     if (c - 1 >= 0 && c - 1 < this.cols - 1) {
@@ -4563,16 +4577,16 @@ export class WaterSandField {
       probe.recordParticleColumnGuardInto(w.count, w.edgeId[0], w.edgeId[1], limiting,
         requested, w.out.accepted, w.out.rejected);
     }
-    return w.out.accepted;
-  }
+    {const txRc:number=w.out.accepted;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,243,txCode);}}
 
   // T174 cold boundary: never invoked from the original Hot roots.
-  private flushParticleGuardEvidence(probe: P011NaturalObservationProbe | null): void {
+  private flushParticleGuardEvidence(probe: P011NaturalObservationProbe | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(244);let txCode=0;try{
     probe?.flushParticleColumnGuardEvidence();
     if (this.naturalObservationProbe !== probe) this.naturalObservationProbe?.flushParticleColumnGuardEvidence();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,244,txCode);}}
 
-  private clipSubstepMotion(source: number, target: number, requested: number): number {
+  private clipSubstepMotion(source: number, target: number, requested: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(245);let txCode=0;try{
     let locallyAllowed = Math.max(0, requested);
     if (target === -1) {
       locallyAllowed = Math.min(locallyAllowed, this.substepMotionBudgetRemaining[source]);
@@ -4592,10 +4606,10 @@ export class WaterSandField {
     if (target !== -1) {
       this.substepMotionBudgetUsed[target] += allowed;
     }
-    return allowed;
-  }
+    {const txRc:number=allowed;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,245,txCode);}}
 
-  private clipTotalMotion(locallyAllowed: number, requestedForTotal: number): number {
+  private clipTotalMotion(locallyAllowed: number, requestedForTotal: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(246);let txCode=0;try{
     const locallyAllowedValue = Math.max(0, locallyAllowed);
     const requested = Math.max(0, requestedForTotal);
     const totalAllowed = Math.min(requested * this.totalMotionBudgetScale,
@@ -4604,21 +4618,21 @@ export class WaterSandField {
     this.totalMotionBudgetUsed += allowed;
     this.totalMotionBudgetClipped += requested - totalAllowed;
     this.totalMotionBudgetRemaining -= allowed;
-    return allowed;
-  }
+    {const txRc:number=allowed;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,246,txCode);}}
 
-  private clipBottomCreepMotion(requested: number): number {
+  private clipBottomCreepMotion(requested: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(247);let txCode=0;try{
     const allowed = this.clipTotalMotion(requested, requested);
     this.bottomCreepBudgetUsed += allowed;
     this.targetShapeActualDisplacement += allowed;
-    return allowed;
-  }
+    {const txRc:number=allowed;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,247,txCode);}}
 
-  private markSubstepBudgetClipped(): void {
+  private markSubstepBudgetClipped(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(248);let txCode=0;try{
     this.substepBudgetClipped = true;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,248,txCode);}}
 
-  private substep(dt: number): WaterSandErrorCode | null {
+  private substep(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(249);let txCode=0;try{
     this.updateSandTop();
     this.observeFieldColumnV2('SUBSTEP_UPDATE_AFTER','UPDATE_SAND_TOP');
     if(this.mediumMode!==P051_DRY_MEDIUM){this.waterLevel(dt);this.diffuseSuspension(dt);}
@@ -4626,7 +4640,7 @@ export class WaterSandField {
       this.saveMotionSnapshot(dt);
       if (this.particleRouteActive() && this.particleBinding !== null && !this.particleBinding.active){
         this.recordCollectFirstFailure('PARTICLE_BEGIN',this.particleBinding.collectFailure.hotCode);
-        return WaterSandErrorCode.UNKNOWN;
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.UNKNOWN;txCode=0;return txRc;}
       }
     }
     // Plan-3 stage a (advection §1.2): AFTER the motion snapshot, BEFORE
@@ -4638,7 +4652,7 @@ export class WaterSandField {
     const creepError = this.creepBottom(dt);
     if (creepError !== null) {
       this.recordCollectFirstFailure('CHANNEL',creepError);
-      return creepError;
+      {const txRc:WaterSandErrorCode | null=creepError;txCode=0;return txRc;}
     }
     this.relaxAngle(dt);
     this.liftByShake(dt);
@@ -4646,27 +4660,28 @@ export class WaterSandField {
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.totalMotionBudgetRequested += this.particleBinding.requested();
     }
-    return this.audit(true);
-  }
+    {const txRc:WaterSandErrorCode | null=this.audit(true);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,249,txCode);}}
 
-  private applyMotionChannels(dt: number): WaterSandErrorCode | null {
+  private applyMotionChannels(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(250);let txCode=0;try{
     if (this.particleRouteActive() && this.particleBinding !== null) {
       const totalBefore = this.totalMotionBudgetRemaining;
       const guardProbe = this.naturalObservationProbe;
       this.flushParticleGuardEvidence(guardProbe);
       let particleApplyStatus = 0;
       try {
+      this.txD1?.role(3);
       const status = this.particleBinding.apply(this.totalMotionBudgetScale,
         this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
         this.totalMotionBudgetRemaining);
         particleApplyStatus = status;
       } finally { this.flushParticleGuardEvidence(guardProbe); }
-      if (particleApplyStatus !== 0) return WaterSandErrorCode.UNKNOWN;
+      if (particleApplyStatus !== 0) {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.UNKNOWN;txCode=0;return txRc;}
       this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
       // Production particle adapter already debited the real total ledger.
       this.updateSandTop();
       if (!this.particleBinding.projection.consistent(this.effectiveTilt, this.particleBinding.work)) {
-        return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;txCode=0;return txRc;}
       }
       // Verify against the accepted-angle preview after the particle chain
       // head has consumed the same shared budgets and field delta. This keeps
@@ -4674,9 +4689,9 @@ export class WaterSandField {
       this.particlePreviewApplied = true;
       const consistencyError = this.verifyPreviewCommitConsistency(dt);
       this.particlePreviewApplied = false;
-      if (consistencyError !== null) return consistencyError;
+      if (consistencyError !== null) {const txRc:WaterSandErrorCode | null=consistencyError;txCode=0;return txRc;}
       const evidence = this.particleBinding.exportCommittedEvidence();
-      for (let i = 0; i < evidence.events.length; i++) {
+      for (let i = 0; i < evidence.events.length; i++) {txTrace?.add(39);txTrace?.add(31);
         const row = serializeP011ParticleEvent(evidence.events[i], i);
         if (row !== null) this.endpointParticleEvents.push(row);
       }
@@ -4690,7 +4705,7 @@ export class WaterSandField {
     this.percolateHeavyConservative(dt);
     const creepError = this.creepBottom(dt);
     if (creepError !== null) {
-      return creepError;
+      {const txRc:WaterSandErrorCode | null=creepError;txCode=0;return txRc;}
     }
     // S4 §1.1: deepCreep sits AFTER bottomCreep and BEFORE relax/
     // correction — its ΔS=0 reverse exchanges leave the sandTop residual
@@ -4715,9 +4730,9 @@ export class WaterSandField {
     this.updateSandTop();
     this.observeFieldColumnV2('APPLY_AUDIT_BEFORE','MOTION_CHANNELS');
     const auditError = this.audit(true);
-    if (auditError !== null) return auditError;
-    return null;
-  }
+    if (auditError !== null) {const txRc:WaterSandErrorCode | null=auditError;txCode=0;return txRc;}
+    {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,250,txCode);}}
 
   /**
    * §24 computeCorrectionReservation: on the candidate-angle snapshot (post
@@ -4726,7 +4741,7 @@ export class WaterSandField {
    * P_i and the frozen execution order. Ordinary channels then see a
    * folded total budget B − R_limit via the scale in the step loop.
    */
-  private computeCorrectionReservation(substepDt: number): void {
+  private computeCorrectionReservation(substepDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(251);let txCode=0;try{
     this.correctionReservation = null;
     this.correctionStalledCount = 0;
     const hysteresis = this.relaxHysteresisThresholds;
@@ -4752,12 +4767,12 @@ export class WaterSandField {
     this.correctionBudgetRemaining = reservation.rLimit;
     this.correctionBudgetUsed = 0;
     this.correctionBudgetClipped = 0;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,251,txCode);}}
 
   /** Live-field stock view for the reservation and the apply slot. */
-  private correctionStockView(): P011CorrectionStockView {
-    return new LiveCorrectionStockView(this);
-  }
+  private correctionStockView(): P011CorrectionStockView {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(252);let txCode=0;try{
+    {const txRc:P011CorrectionStockView=new LiveCorrectionStockView(this);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,252,txCode);}}
 
   /**
    * §24 applyCorrectionSlot: replaces relaxAngle's budget allocation in the
@@ -4769,7 +4784,7 @@ export class WaterSandField {
    * slice first, then bl/bh fallbacks) so updateSandTop recomputes
    * bit-identically to the preview mirror.
    */
-  private applyCorrectionSlot(substepDt: number): void {
+  private applyCorrectionSlot(substepDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(253);let txCode=0;try{
     const reservation = this.correctionReservation;
     if (reservation === null || reservation.candidates.length === 0) {
       // D-1b: zero-activity substep — the four telemetry fields still land
@@ -4777,7 +4792,7 @@ export class WaterSandField {
       this.naturalObservationProbe?.recordCorrectionSlot(0, 0, 0, 0);
       this.recordNaturalRelaxInactiveEdges();
       this.recordNaturalRelaxSummary(0);
-      return;
+      {txCode=0;return;}
     }
     const params: P011CorrectionParams = {
       // preregistration-P011-correction-matrix-v1.md §2.4 (h-consistency
@@ -4809,7 +4824,7 @@ export class WaterSandField {
     const requestedCount = reservation.candidates.length;
     let grantedCount = 0;
     let rejectedCount = 0;
-    for (const index of reservation.order) {
+    for (const index of reservation.order) {txTrace?.add(39);txTrace?.add(31);
       const candidate = reservation.candidates[index];
       const outcome = p011CorrectionApplyOnce(reservation, index, view,
         params, this.materialGuardHardMax(), ledger);
@@ -4909,14 +4924,14 @@ export class WaterSandField {
       grantedCount, rejectedCount, stalled);
     this.recordNaturalRelaxInactiveEdges();
     this.recordNaturalRelaxSummary(appliedTotal);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,253,txCode);}}
 
-  private updateTilt(dt: number): void {
+  private updateTilt(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(254);let txCode=0;try{
     const maxStep = this.params.maxTiltOmegaDegPerSec * dt;
     const difference = Math.max(-maxStep, Math.min(maxStep, this.targetTilt - this.effectiveTilt));
     this.effectiveTilt += difference;
     this.effectiveTiltRate = difference / dt;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,254,txCode);}}
 
   // ==========================================================================
   // P-011 §19.5 pre-commit material guard: runs before each individual
@@ -4929,15 +4944,15 @@ export class WaterSandField {
 
   private static readonly MATERIAL_GUARD_HARD_MAX = Math.tan(30 * Math.PI / 180);
 
-  private materialGuardHardMax(): number {
-    return WaterSandField.MATERIAL_GUARD_HARD_MAX;
-  }
+  private materialGuardHardMax(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(255);let txCode=0;try{
+    {const txRc:number=WaterSandField.MATERIAL_GUARD_HARD_MAX;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,255,txCode);}}
 
   /** Signed residual of edge e against the committed effectiveTilt. */
-  private materialGuardResidual(edge: number): number {
-    return this.sandTopScratch[edge + 1] - this.sandTopScratch[edge] -
-      Math.tan(this.effectiveTilt * Math.PI / 180);
-  }
+  private materialGuardResidual(edge: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(256);let txCode=0;try{
+    {const txRc:number=this.sandTopScratch[edge + 1] - this.sandTopScratch[edge] -
+      Math.tan(this.effectiveTilt * Math.PI / 180);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,256,txCode);}}
 
   /**
    * Build the closed-form constraints for one increment and admit it.
@@ -4948,10 +4963,10 @@ export class WaterSandField {
    */
   private materialGuardAdmitIncrement(
     requested: number,
-    deltaColumns: Map<number, number>): P011GuardOutcome {
+    deltaColumns: Map<number, number>): P011GuardOutcome {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(257);let txCode=0;try{
     if (requested <= 0) {
-      return { accepted: 0, rejected: 0, allLegalBefore: true,
-        limitingEdge: null };
+      {const txRc:P011GuardOutcome={ accepted: 0, rejected: 0, allLegalBefore: true,
+        limitingEdge: null };txCode=0;return txRc;}
     }
     // Shared derivation (§23.1 R-3-a): the apply side and the preview
     // allocator's guard mirror use the same affected-edge set and influence
@@ -4960,8 +4975,8 @@ export class WaterSandField {
       (edge: number): number => this.materialGuardResidual(edge), this.cols - 1);
     const outcome = p011GuardAdmit(requested, constraints, this.materialGuardHardMax());
     this.recordMaterialGuardEvidence('guard', deltaColumns, requested, outcome);
-    return outcome;
-  }
+    {const txRc:P011GuardOutcome=outcome;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,257,txCode);}}
 
   /**
    * GAP-4 (§24.4 affectedEdgeIds): record per-writer guard evidence with
@@ -4971,10 +4986,10 @@ export class WaterSandField {
    */
   private recordMaterialGuardEvidence(channel: string,
     deltaColumns: Map<number, number>, requested: number,
-    outcome: P011GuardOutcome): void {
+    outcome: P011GuardOutcome): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(258);let txCode=0;try{
     const probe = this.naturalObservationProbe;
     if (probe === null || outcome.rejected <= 0) {
-      return;
+      {txCode=0;return;}
     }
     const affected = p011GuardAffectedEdgesForDelta(deltaColumns, this.cols - 1);
     const limitingPhysical = outcome.limitingEdge !== null &&
@@ -4987,7 +5002,7 @@ export class WaterSandField {
       rejected: outcome.rejected,
       clipped: Math.max(0, requested - outcome.accepted)
     });
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,258,txCode);}}
 
   /**
    * S4 deepCreep §2.1-2.4: the bh-interface reverse-exchange channel.
@@ -4999,10 +5014,10 @@ export class WaterSandField {
    * (computed fully before any write). Telemetry per pair via
    * recordDeepCreep (registration, no materialGuardAdmit — ΔS=0).
    */
-  private applyDeepCreep(dt: number): void {
+  private applyDeepCreep(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(259);let txCode=0;try{
     const params = this.deepCreepParams;
     if (params === null) {
-      return;
+      {txCode=0;return;}
     }
     this.deepCreepNoDrive = 0;
     this.deepCreepNoInventory = 0;
@@ -5016,7 +5031,7 @@ export class WaterSandField {
     const candidates: number[] = [];
     const drives: number[] = [];
     const rawQ: number[] = [];
-    for (let e = 0; e < edgeCount; e++) {
+    for (let e = 0; e < edgeCount; e++) {txTrace?.add(39);txTrace?.add(31);
       // Donor = the HIGH-bh side (the design's i/j are donor/receiver
       // roles, not left/right: the reverse exchange moves heavy sand
       // downhill on the interface, so the donor is whichever endpoint
@@ -5055,7 +5070,7 @@ export class WaterSandField {
     // Lexicographic processing (edge ascending) — deterministic serial
     // budget competition (§2.4).
     picked.sort((a, b) => candidates[a] - candidates[b]);
-    for (const index of picked) {
+    for (const index of picked) {txTrace?.add(39);txTrace?.add(31);
       const e = candidates[index];
       // Direction-free donor selection (same rule as generation).
       const i = this.bh[e] >= this.bh[e + 1] ? e : e + 1;
@@ -5132,15 +5147,15 @@ export class WaterSandField {
     if (substepUsed > 0) {
       this.updateSandTop();
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,259,txCode);}}
 
   /** S4 §1.3: registration-style telemetry (percolate precedent) — no
    * materialGuardAdmit (ΔS=0 channel; the guard only speaks sandTop). */
   private recordDeepCreep(edge: number, requested: number, granted: number,
-    q: number, drive: number, reason: string | null): void {
+    q: number, drive: number, reason: string | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(260);let txCode=0;try{
     const probe = this.naturalObservationProbe;
     if (probe === null) {
-      return;
+      {txCode=0;return;}
     }
     probe.recordDeepCreepEvidence({
       edge: edge,
@@ -5150,7 +5165,7 @@ export class WaterSandField {
       drive: drive,
       reason: reason
     });
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,260,txCode);}}
 
   /**
    * Refund the guard-rejected part of a clipped increment to the budget
@@ -5159,9 +5174,9 @@ export class WaterSandField {
    * by the same amount so used+remaining matches the final accepted grant.
    */
   private materialGuardRefund(rejected: number, localColumns: number[],
-    bottomChannel: boolean): void {
+    bottomChannel: boolean): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(261);let txCode=0;try{
     if (rejected <= 0) {
-      return;
+      {txCode=0;return;}
     }
     const refund = new P011GuardLedgerRefund(this.substepMotionBudgetRemaining,
       this.substepMotionBudgetUsed);
@@ -5172,7 +5187,7 @@ export class WaterSandField {
       this.bottomCreepBudgetUsed = Math.max(0, this.bottomCreepBudgetUsed - rejected);
       // bottomCreepBudgetLimit is not a "remaining" ledger: used stays <= limit.
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,261,txCode);}}
 
   // ==========================================================================
   // P-011 v2.14 §20: two-pass planning pass with dynamic tilt feasibility.
@@ -5187,7 +5202,7 @@ export class WaterSandField {
   // transitions into the authoritative collect (preview purity, §20.7-□2).
   private planningSlidingBackup: Uint8Array = new Uint8Array(0);
 
-  private savePlanningScalars(): void {
+  private savePlanningScalars(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(262);let txCode=0;try{
     this.planningScalarsBefore.targetShapeRequestRate = this.targetShapeRequestRate;
     this.planningScalarsBefore.targetShapeIdealDisplacement = this.targetShapeIdealDisplacement;
     this.planningScalarsBefore.phaseHeavyIdeal = this.phaseHeavyIdeal;
@@ -5200,9 +5215,9 @@ export class WaterSandField {
     this.planningScalarsBefore.effectiveTiltRate = this.effectiveTiltRate;
     this.planningScalarsBefore.totalMotionBudgetRequested = this.totalMotionBudgetRequested;
     this.planningScalarsBefore.bottomCreepBudgetRequested = this.bottomCreepBudgetRequested;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,262,txCode);}}
 
-  private restorePlanningScalars(): void {
+  private restorePlanningScalars(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(263);let txCode=0;try{
     this.targetShapeRequestRate = this.planningScalarsBefore.targetShapeRequestRate;
     this.targetShapeIdealDisplacement = this.planningScalarsBefore.targetShapeIdealDisplacement;
     this.phaseHeavyIdeal = this.planningScalarsBefore.phaseHeavyIdeal;
@@ -5215,7 +5230,7 @@ export class WaterSandField {
     this.effectiveTiltRate = this.planningScalarsBefore.effectiveTiltRate;
     this.totalMotionBudgetRequested = this.planningScalarsBefore.totalMotionBudgetRequested;
     this.bottomCreepBudgetRequested = this.planningScalarsBefore.bottomCreepBudgetRequested;
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,263,txCode);}}
 
   /**
    * One pure preview at thetaCandidate: temporarily detach the probe, set the
@@ -5223,7 +5238,7 @@ export class WaterSandField {
    * allocate the collected requests against independent budget copies with the
    * fixed channel order. Restores every touched scalar and material field.
    */
-  private previewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {
+  private previewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(16);let txCode=0;try{
     const substepDt = this.lastPlanningSubstepDt;
     const probe = this.naturalObservationProbe;
     this.savePlanningScalars();
@@ -5270,6 +5285,7 @@ export class WaterSandField {
           this.flushParticleGuardEvidence(guardProbe);
           let particleApplyStatus = 0;
           try {
+          this.txD1?.role(4);
           const particleStatus = this.particleBinding.apply(scale,
             this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
             this.totalMotionBudgetRemaining);
@@ -5313,8 +5329,8 @@ export class WaterSandField {
     }
     if(plans!==null)this.planningPassService.trace?.stage('PLANS_READY',null,null,
       this.particleRouteActive()?0:null);
-    return plans;
-  }
+    {const txRc:P011ChannelPlan[] | null=plans;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,16,txCode);}}
 
   private lastPlanningSubstepDt = 0;
 
@@ -5352,7 +5368,7 @@ export class WaterSandField {
    * read the same post-collect request ledgers and the same S0, so they are
    * bit-identical.
    */
-  private allocatePreviewPlans(substepDt: number): P011ChannelPlan[] {
+  private allocatePreviewPlans(substepDt: number): P011ChannelPlan[] {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(265);let txCode=0;try{
     const cols = this.cols;
     const plans: P011ChannelPlan[] = [];
     const localRemaining = new Float64Array(cols);
@@ -5544,7 +5560,7 @@ export class WaterSandField {
         const advNuEdge = new Float64Array(cols - 1);
         const advReqH = new Float64Array(cols - 1);
         const advReqL = new Float64Array(cols - 1);
-        for (let e = 0; e < cols - 1; e++) {
+        for (let e = 0; e < cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
           const gE = shadowS[e + 1] - shadowS[e];
           const fE = shadowTanAccepted - gE;
           let uE = advParams.kDrag * fE;
@@ -5557,7 +5573,7 @@ export class WaterSandField {
           advUEdge[e] = uE;
           advNuEdge[e] = Math.min(1, Math.abs(uE) * substepDt);
         }
-        for (let e = 0; e < cols - 1; e++) {
+        for (let e = 0; e < cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
           const nu = advNuEdge[e];
           if (nu <= EPS) {
             continue;
@@ -5569,7 +5585,7 @@ export class WaterSandField {
         // Donor oversell scaling (snapshot-level, same rule).
         const advOutH = new Float64Array(cols);
         const advOutL = new Float64Array(cols);
-        for (let e = 0; e < cols - 1; e++) {
+        for (let e = 0; e < cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
           if (advReqH[e] <= EPS && advReqL[e] <= EPS) {
             continue;
           }
@@ -5577,7 +5593,7 @@ export class WaterSandField {
           advOutH[donor] += advReqH[e];
           advOutL[donor] += advReqL[e];
         }
-        for (let e = 0; e < cols - 1; e++) {
+        for (let e = 0; e < cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
           if (advReqH[e] <= EPS && advReqL[e] <= EPS) {
             continue;
           }
@@ -5590,13 +5606,13 @@ export class WaterSandField {
           }
         }
         // Admission chain (same order/rules; shadow ledgers).
-        for (let e = 0; e < cols - 1; e++) {
+        for (let e = 0; e < cols - 1; e++) {txTrace?.add(39);txTrace?.add(31);
           if (advReqH[e] <= EPS && advReqL[e] <= EPS) {
             continue;
           }
           const donor = advUEdge[e] > 0 ? e : e + 1;
           const receiver = advUEdge[e] > 0 ? e + 1 : e;
-          for (let phase = 0; phase < 2; phase++) {
+          for (let phase = 0; phase < 2; phase++) {txTrace?.add(39);txTrace?.add(31);
             const isHeavy = phase === 0;
             const requested = isHeavy ? advReqH[e] : advReqL[e];
             if (requested <= EPS) {
@@ -5649,7 +5665,7 @@ export class WaterSandField {
       let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
-      for (let c = 0; c < cols; c++) {
+      for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
         const originalRequested = this.settleRequestAmounts[c];
         if (originalRequested <= EPS) {
           continue;
@@ -5692,7 +5708,7 @@ export class WaterSandField {
       let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
-      for (let c = 0; c < cols; c++) {
+      for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
         const originalRequested = this.percolationRequestAmounts[c];
         if (originalRequested <= EPS) {
           continue;
@@ -5743,7 +5759,7 @@ export class WaterSandField {
       let shadowPhaseHeavyActual = this.phaseHeavyActual;
       let shadowPhaseLightActual = this.phaseLightActual;
       const creepDirectionSign = this.bottomCreepDirection > 0 ? 1 : -1;
-      for (let index = 0; index < this.bottomCreepRequestCount; index++) {
+      for (let index = 0; index < this.bottomCreepRequestCount; index++) {txTrace?.add(39);txTrace?.add(31);
         const requested = this.bottomCreepRequestAmounts[index];
         const donor = this.bottomCreepRequestDonors[index];
         const receiver = this.bottomCreepRequestReceivers[index];
@@ -5842,7 +5858,7 @@ export class WaterSandField {
           () => shadowCorrectionRemaining,
           (delta: number): void => { shadowCorrectionRemaining += delta; });
       const requestedTotal = shadowReservation.rLimit;
-      for (const index of shadowReservation.order) {
+      for (const index of shadowReservation.order) {txTrace?.add(39);txTrace?.add(31);
         const candidate = shadowReservation.candidates[index];
         const outcome = p011CorrectionApplyOnce(shadowReservation, index,
           headView, correctionParams, this.materialGuardHardMax(),
@@ -5885,12 +5901,12 @@ export class WaterSandField {
       const relaxLimit = Math.tan(this.params.angleDeg * Math.PI / 180);
       const relaxTargetSlope = Math.tan(this.effectiveTilt * Math.PI / 180);
       let relaxMaxDeviation = 0;
-      for (let c = 0; c < cols - 1; c++) {
+      for (let c = 0; c < cols - 1; c++) {txTrace?.add(39);txTrace?.add(31);
         const deviation = shadowS[c + 1] - shadowS[c] - relaxTargetSlope;
         relaxMaxDeviation = Math.max(relaxMaxDeviation, Math.abs(deviation));
       }
       if (relaxMaxDeviation > relaxLimit) {
-        for (let index = 0; index < this.slipRequestCount; index++) {
+        for (let index = 0; index < this.slipRequestCount; index++) {txTrace?.add(39);txTrace?.add(31);
           const requested = this.slipRequestAmounts[index];
           const donor = this.slipRequestDonors[index];
           const receiver = this.slipRequestReceivers[index];
@@ -5939,7 +5955,7 @@ export class WaterSandField {
       let requestedTotal = 0;
       let grantedTotal = 0;
       let totalUse = 0;
-      for (let c = 0; c < cols; c++) {
+      for (let c = 0; c < cols; c++) {txTrace?.add(39);txTrace?.add(31);
         const requested = this.riseRequestAmounts[c];
         if (requested <= EPS) {
           continue;
@@ -5975,8 +5991,8 @@ export class WaterSandField {
       }
       plans.push(makePlan('lift', requestedTotal, grantedTotal, 0, totalUse, deltaS));
     }
-    return plans;
-  }
+    {const txRc:P011ChannelPlan[]=plans;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,265,txCode);}}
 
 /**
    * Replace the unconditional updateTilt commit (§20.3: the reference angle
@@ -5985,7 +6001,7 @@ export class WaterSandField {
    * commit: effectiveTilt = thetaAccepted. On BLOCKED the reference angle is
    * held at thetaBefore and the substep is marked failed via lastPlanning*.
    */
-  private planAndCommitTilt(dt: number): WaterSandErrorCode | null {
+  private planAndCommitTilt(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(266);let txCode=0;try{
     if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.projection.clear();
     const thetaBefore = this.effectiveTilt;
     // §27.4: snapshot the config revision at planning entry. The preview
@@ -6063,7 +6079,7 @@ export class WaterSandField {
       this.lastPlanningBlockedReason = 'PREVIEW_CONFIG_REVISION_CHANGED';
       this.p011CurrentCommitStatus = 'blocked';
       this.p011CurrentRollbackReason = 'PREVIEW_CONFIG_REVISION_CHANGED';
-      return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+      {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;txCode=0;return txRc;}
     }
     const result = preview.result;
     this.lastPlanningStatus = result.status;
@@ -6083,7 +6099,7 @@ export class WaterSandField {
       // GAP-4: the blocked attempt still lands in the ledger.
       this.p011CurrentCommitStatus = 'blocked';
       this.p011CurrentRollbackReason = result.blockedReason;
-      return WaterSandErrorCode.TILT_PLANNING_BLOCKED;
+      {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.TILT_PLANNING_BLOCKED;txCode=0;return txRc;}
     }
     // Commit the accepted angle, then verify preview/commit exact equality
     // (§20.6.4): the authoritative collect re-runs at thetaAccepted inside
@@ -6101,8 +6117,8 @@ export class WaterSandField {
     // lands in the ledger's requestRejected / plannerHold fields, which is
     // where the attempt audit reads it (P011NaturalObservation ledger).
     this.p011CurrentCommitStatus = 'committed';
-    return null;
-  }
+    {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,266,txCode);}}
 
   /**
    * §20.6.4 preview/commit exact-equality check, run after the authoritative
@@ -6112,11 +6128,11 @@ export class WaterSandField {
    * against the preview plans; -0 is normalized and NaN rejected inside the
    * comparator. Any mismatch freezes the substep as PREVIEW_COMMIT_MISMATCH.
    */
-  private verifyPreviewCommitConsistency(dt: number): WaterSandErrorCode | null {
+  private verifyPreviewCommitConsistency(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(267);let txCode=0;try{
     const previewPlans = this.lastPlanningCommittedPlans;
     if (previewPlans === null || this.lastPlanningStatus === null ||
       this.lastPlanningStatus === 'blocked') {
-      return null;
+      {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
     }
     const committedPlans = this.allocatePreviewPlans(dt);
     const consistent = p011PreviewCommitConsistent(
@@ -6142,13 +6158,13 @@ export class WaterSandField {
       // step loop discards its material effects).
       this.p011CurrentCommitStatus = 'rolled_back';
       this.p011CurrentRollbackReason = 'PREVIEW_COMMIT_MISMATCH';
-      return WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;
+      {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;txCode=0;return txRc;}
     }
-    return null;
-  }
+    {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,267,txCode);}}
 
-  getPlanningTelemetry(): P011PlanningTelemetry {
-    return {
+  getPlanningTelemetry(): P011PlanningTelemetry {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(268);let txCode=0;try{
+    {const txRc:P011PlanningTelemetry={
       status: this.lastPlanningStatus,
       blockedReason: this.lastPlanningBlockedReason,
       passCount: this.lastPlanningPassCount,
@@ -6156,34 +6172,34 @@ export class WaterSandField {
       thetaRequested: this.lastPlanningThetaRequested,
       limitingEdge: this.lastPlanningLimitingEdge,
       configRevision: this.configRevision
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,268,txCode);}}
 
-  private waterLevel(dt: number): void {
+  private waterLevel(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(269);let txCode=0;try{
     const slope = Math.tan(this.effectiveTilt * Math.PI / 180);
     if (Math.abs(this.effectiveTilt) < EPS) {
       let minimum = Number.POSITIVE_INFINITY;
       let maximum = Number.NEGATIVE_INFINITY;
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         minimum = Math.min(minimum, this.waterTop[c]);
         maximum = Math.max(maximum, this.waterTop[c]);
       }
       if (maximum - minimum <= EPS) {
-        return;
+        {txCode=0;return;}
       }
     }
     const totals = this.getTotals();
     let suspended = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       suspended += this.suspH[c] + this.suspL[c];
     }
     const sum = totals.water + suspended;
     let low = -this.capacity;
     let high = 2 * this.capacity;
-    for (let iteration = 0; iteration < 40; iteration++) {
+    for (let iteration = 0; iteration < 40; iteration++) {txTrace?.add(39);txTrace?.add(31);
       const base = (low + high) / 2;
       let volume = 0;
-      for (let c = 0; c < this.cols; c++) {
+      for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
         const target = Math.max(this.sandTopScratch[c],
           Math.min(this.capacity, base + slope * (c - (this.cols - 1) / 2)));
         volume += target - this.sandTopScratch[c];
@@ -6196,7 +6212,7 @@ export class WaterSandField {
     }
     const base = (low + high) / 2;
     let positiveError = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const target = Math.max(this.sandTopScratch[c],
         Math.min(this.capacity, base + slope * (c - (this.cols - 1) / 2)));
       this.targetTopScratch[c] = target;
@@ -6206,11 +6222,11 @@ export class WaterSandField {
       }
     }
     let budget = Math.min(positiveError, positiveError * Math.min(1, this.params.waterLevelRate * dt) + EPS);
-    for (let donor = 0; donor < this.cols && budget > EPS; donor++) {
+    for (let donor = 0; donor < this.cols && budget > EPS; donor++) {txTrace?.add(39);txTrace?.add(31);
       if (this.errorScratch[donor] <= EPS) {
         continue;
       }
-      for (let receiver = 0; receiver < this.cols && budget > EPS; receiver++) {
+      for (let receiver = 0; receiver < this.cols && budget > EPS; receiver++) {txTrace?.add(39);txTrace?.add(31);
         if (this.errorScratch[receiver] >= -EPS) {
           continue;
         }
@@ -6227,20 +6243,20 @@ export class WaterSandField {
         budget -= amount;
       }
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,269,txCode);}}
 
-  private diffuseSuspension(dt: number): void {
+  private diffuseSuspension(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(270);let txCode=0;try{
     let hasSuspension = false;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (this.suspH[c] > EPS || this.suspL[c] > EPS) {
         hasSuspension = true;
         break;
       }
     }
     if (!hasSuspension) {
-      return;
+      {txCode=0;return;}
     }
-    for (let c = 0; c < this.cols - 1; c++) {
+    for (let c = 0; c < this.cols - 1; c++) {txTrace?.add(39);txTrace?.add(31);
       const heavyDifference = this.suspH[c + 1] - this.suspH[c];
       const lightDifference = this.suspL[c + 1] - this.suspL[c];
       if (heavyDifference > 0) {
@@ -6278,17 +6294,17 @@ export class WaterSandField {
         this.recordNaturalSuspensionDiffusion(c, c, c + 1, 0, flux);
       }
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,270,txCode);}}
 
-  private suspensionCapacity(column: number): number {
-    return Math.max(0, this.waterTop[column] - this.sandTopScratch[column] -
-      this.suspH[column] - this.suspL[column]);
-  }
+  private suspensionCapacity(column: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(271);let txCode=0;try{
+    {const txRc:number=Math.max(0, this.waterTop[column] - this.sandTopScratch[column] -
+      this.suspH[column] - this.suspL[column]);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,271,txCode);}}
 
   private recordNaturalSuspensionDiffusion(interfaceIndex: number, donor: number,
-    receiver: number, heavy: number, light: number): void {
+    receiver: number, heavy: number, light: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(272);let txCode=0;try{
     if (this.naturalObservationProbe === null || !this.collectingTotalMotionRequests) {
-      return;
+      {txCode=0;return;}
     }
     // Advection §5.1: accumulate the SIGNED per-substep diffusion fluxes
     // (donor->receiver positive toward +c) — the R_M separate column.
@@ -6305,11 +6321,11 @@ export class WaterSandField {
       heavy: heavy,
       light: light
     });
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,272,txCode);}}
 
-  private recordNaturalRelaxSummary(appliedTotal: number): void {
+  private recordNaturalRelaxSummary(appliedTotal: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(273);let txCode=0;try{
     if (this.naturalObservationProbe === null) {
-      return;
+      {txCode=0;return;}
     }
     this.naturalObservationProbe.recordRelaxAngle(
       this.naturalObservationRelaxCandidateCount,
@@ -6317,7 +6333,7 @@ export class WaterSandField {
       this.naturalObservationRelaxRequestedTotal,
       appliedTotal
     );
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,273,txCode);}}
 
   /**
    * GAP-3: record one state-machine decision at its sampling point (inside
@@ -6327,10 +6343,10 @@ export class WaterSandField {
    * (fixing the v2 requested>EPS proxy).
    */
   private recordRelaxDecision(edge: number, deviation: number, activeBefore: boolean,
-    decision: P011RelaxHysteresisNextActiveResult): void {
+    decision: P011RelaxHysteresisNextActiveResult): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(274);let txCode=0;try{
     const probe = this.naturalObservationProbe;
     if (probe === null) {
-      return;
+      {txCode=0;return;}
     }
     probe.markHysteresisActive();
     const decisionG = this.sandTopScratch[edge + 1] - this.sandTopScratch[edge];
@@ -6353,17 +6369,17 @@ export class WaterSandField {
     );
     this.relaxDecisionOrdinals[edge] += 1;
     probe.recordDecision(sample);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,274,txCode);}}
 
   /** Per-substep decision order counters (cleared in beginSubstepMotionBudget). */
   private relaxDecisionOrdinals: Int32Array = new Int32Array(0);
 
-  private recordNaturalRelaxInactiveEdges(): void {
+  private recordNaturalRelaxInactiveEdges(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(275);let txCode=0;try{
     if (this.naturalObservationProbe === null) {
-      return;
+      {txCode=0;return;}
     }
     const hysteresisActive = this.relaxHysteresisThresholds !== null;
-    for (let index = 0; index < this.cols - 1; index++) {
+    for (let index = 0; index < this.cols - 1; index++) {txTrace?.add(39);txTrace?.add(31);
       if (this.naturalObservationSlipSeen[index] !== 0) {
         continue;
       }
@@ -6412,13 +6428,13 @@ export class WaterSandField {
         hardGuardAvailable: true
       });
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,275,txCode);}}
 
   private recordNaturalTopSplit(interfaceIndex: number | null, column: number, amount: number,
     donorBh: number, donorBl: number, donorMh: number, donorMl: number,
-    split: WaterSandSplitResult): void {
+    split: WaterSandSplitResult): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(276);let txCode=0;try{
     if (this.naturalObservationProbe === null) {
-      return;
+      {txCode=0;return;}
     }
     const fromMix = Math.min(amount, donorMh + donorMl);
     const mixTotal = Math.max(donorMh + donorMl, EPS);
@@ -6451,10 +6467,10 @@ export class WaterSandField {
       finalHeavy: split.heavy,
       finalLight: split.light
     });
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,276,txCode);}}
 
-  private settleSandV2(dt: number): void {
-    for (let c = 0; c < this.cols; c++) {
+  private settleSandV2(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(277);let txCode=0;try{
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (this.suspH[c] <= EPS && this.suspL[c] <= EPS) {
         continue;
       }
@@ -6506,10 +6522,10 @@ export class WaterSandField {
       }
     }
     this.updateSandTop();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,277,txCode);}}
 
-  private percolateHeavyConservative(dt: number): void {
-    for (let c = 0; c < this.cols; c++) {
+  private percolateHeavyConservative(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(278);let txCode=0;try{
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (this.collectingTotalMotionRequests) {
         const depth = Math.max(this.waterTop[c] - this.sandTopScratch[c], EPS);
         const rawHeavy = this.suspH[c] * Math.min(1, this.params.heavySettleSpeed * dt / depth);
@@ -6548,14 +6564,14 @@ export class WaterSandField {
       }
     }
     this.updateSandTop();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,278,txCode);}}
 
-  private relaxAngle(dt: number): void {
+  private relaxAngle(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(279);let txCode=0;try{
     const hysteresis = this.relaxHysteresisThresholds;
     const limit = Math.tan(this.params.angleDeg * Math.PI / 180);
     const targetSlope = Math.tan(this.effectiveTilt * Math.PI / 180);
     let maximumDeviation = 0;
-    for (let c = 0; c < this.cols - 1; c++) {
+    for (let c = 0; c < this.cols - 1; c++) {txTrace?.add(39);txTrace?.add(31);
       const deviation = this.sandTopScratch[c + 1] - this.sandTopScratch[c] - targetSlope;
       maximumDeviation = Math.max(maximumDeviation, Math.abs(deviation));
     }
@@ -6565,14 +6581,14 @@ export class WaterSandField {
       if (legacyTrigger) {
         this.recordNaturalRelaxInactiveEdges();
         this.recordNaturalRelaxSummary(0);
-        return;
+        {txCode=0;return;}
       }
     }
     const maxFlux = this.params.maxAvalancheFlux * dt;
     if (this.collectingTotalMotionRequests) {
       let candidateCount = 0;
       let requestedTotal = 0;
-      for (let index = 0; index < this.cols - 1; index++) {
+      for (let index = 0; index < this.cols - 1; index++) {txTrace?.add(39);txTrace?.add(31);
         const c = index;
         const next = c + 1;
         const deviation = this.sandTopScratch[next] - this.sandTopScratch[c] - targetSlope;
@@ -6652,7 +6668,7 @@ export class WaterSandField {
       this.naturalObservationRelaxCandidateCount = candidateCount;
       this.naturalObservationRelaxRequestedTotal = requestedTotal;
       this.recordNaturalRelaxSummary(0);
-      return;
+      {txCode=0;return;}
     }
     // Apply branch (relaxAngle's own apply — the pre-correction semantics).
     // D-1 route isolation: this branch runs for every run that did NOT
@@ -6661,7 +6677,7 @@ export class WaterSandField {
     // natural-relax-hysteresis-v1 runs); the correction route replaces this
     // slot via applyCorrectionSlot in applyMotionChannels.
     let appliedTotal = 0;
-    for (let index = 0; index < this.slipRequestCount; index++) {
+    for (let index = 0; index < this.slipRequestCount; index++) {txTrace?.add(39);txTrace?.add(31);
       const requested = this.slipRequestAmounts[index];
       const donor = this.slipRequestDonors[index];
       const receiver = this.slipRequestReceivers[index];
@@ -6742,9 +6758,9 @@ export class WaterSandField {
     }
     this.recordNaturalRelaxInactiveEdges();
     this.recordNaturalRelaxSummary(appliedTotal);
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,279,txCode);}}
 
-  private creepBottom(dt: number): WaterSandErrorCode | null {
+  private creepBottom(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(280);let txCode=0;try{
     const tiltMagnitude = Math.abs(this.targetTilt);
     if (tiltMagnitude >= this.params.bottomCreepDeadZone) {
       let requestRate = this.targetShapeRequestRate;
@@ -6765,17 +6781,17 @@ export class WaterSandField {
       }
       this.lastBottomCreepRate = requestRate;
       if (requestRate > EPS) {
-        return this.creepBottomRequests(dt, requestRate);
+        {const txRc:WaterSandErrorCode | null=this.creepBottomRequests(dt, requestRate);txCode=0;return txRc;}
       }
     }
     this.lastBottomCreepRate = 0;
     this.lastP011DirectionCorrect = true;
     this.targetShapeRequestRate = 0;
-    return null;
-  }
+    {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,280,txCode);}}
 
   private creepBottomRequests(dt: number, requestRate: number,
-    ): WaterSandErrorCode | null {
+    ): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(281);let txCode=0;try{
     const requestedDirection = this.targetTilt > 0 ? 1 : -1;
     const holdSeconds = this.params.directionHoldTime / 1000;
     if (this.targetTilt === 0 && this.zeroTargetSince >= 0 &&
@@ -6783,7 +6799,7 @@ export class WaterSandField {
       this.bottomCreepDirection = 0;
       this.lastBottomCreepRate = 0;
       this.lastP011DirectionCorrect = true;
-      return null;
+      {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
     }
     if (this.bottomCreepDirection === 0) {
       this.bottomCreepDirection = requestedDirection;
@@ -6798,12 +6814,12 @@ export class WaterSandField {
     if (this.bottomCreepDirection === 0) {
       this.lastBottomCreepRate = 0;
       this.lastP011DirectionCorrect = true;
-      return null;
+      {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
     }
     this.lastP011DirectionCorrect = requestedDirection === this.bottomCreepDirection;
     const maxFlux = requestRate * dt;
     // P-011 v2.8: positive tilt sends mass left-to-right; negative is symmetric.
-    for (let offset = 0; offset < this.cols - 1; offset++) {
+    for (let offset = 0; offset < this.cols - 1; offset++) {txTrace?.add(39);txTrace?.add(31);
       const index = this.bottomCreepDirection > 0 ? this.cols - 2 - offset : offset;
       const left = index;
       const right = index + 1;
@@ -6835,9 +6851,9 @@ export class WaterSandField {
     if (this.collectingTotalMotionRequests) {
       this.totalMotionBudgetRequested += Math.min(this.bottomCreepBudgetRequested,
         this.bottomCreepBudgetLimit);
-      return null;
+      {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
     }
-    for (let index = 0; index < this.bottomCreepRequestCount; index++) {
+    for (let index = 0; index < this.bottomCreepRequestCount; index++) {txTrace?.add(39);txTrace?.add(31);
       const requested = this.bottomCreepRequestAmounts[index];
       const donor = this.bottomCreepRequestDonors[index];
       const receiver = this.bottomCreepRequestReceivers[index];
@@ -6902,7 +6918,7 @@ export class WaterSandField {
       const fallbackLight = Math.min(remainder, donorBlBefore - initialLight);
       const split = this.splitBottomPhaseBalanced(donor, amount, heavyResidual, lightResidual);
       if (this.lastBottomSplitError !== null) {
-        return this.lastBottomSplitError;
+        {const txRc:WaterSandErrorCode | null=this.lastBottomSplitError;txCode=0;return txRc;}
       }
       if (this.naturalObservationProbe !== null) {
         this.naturalObservationProbe.recordBottomCreep({
@@ -6953,18 +6969,18 @@ export class WaterSandField {
       this.phaseLightActual += directionSign * split.light;
       this.updateSandTop();
     }
-    return null;
-  }
+    {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,281,txCode);}}
 
-  private dryLiftSlots(column: number, amount: number): number {
-    if(this.particleParams===null)return Number.MAX_SAFE_INTEGER;
+  private dryLiftSlots(column: number, amount: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(282);let txCode=0;try{
+    if(this.particleParams===null){const txRc:number=Number.MAX_SAFE_INTEGER;txCode=0;return txRc;}
     const mix=this.mh[column]+this.ml[column],fromMix=Math.min(amount,mix),scale=fromMix/Math.max(mix,EPS);
     let h=this.mh[column]*scale,l=this.ml[column]*scale,remaining=amount-fromMix;
     const fromLight=Math.min(remaining,this.bl[column]);l+=fromLight;remaining-=fromLight;h+=Math.min(remaining,this.bh[column]);
     const pkg=this.particleParams.massPackage,nh=Math.floor(h/pkg),nl=Math.floor(l/pkg);
-    return nh+(h-nh*pkg>0?1:0)+nl+(l-nl*pkg>0?1:0);
-  }
-  private liftByShake(dt: number): void {
+    {const txRc:number=nh+(h-nh*pkg>0?1:0)+nl+(l-nl*pkg>0?1:0);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,282,txCode);}}
+  private liftByShake(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(283);let txCode=0;try{
     const trackSource = this.shakeSourceRouteActive() && !this.collectingTotalMotionRequests;
     const requestEnergy = this.shakeEnergy;
     if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
@@ -6987,10 +7003,10 @@ export class WaterSandField {
     if(this.particleBinding!==null&&this.particleBinding.work.diagnosticEnabled){
       this.poolDiagnosticEnergyAfter=this.shakeEnergy;this.updatePoolProgressContext();}
     if (requestEnergy <= EPS) {
-      return;
+      {txCode=0;return;}
     }
     const bandBase = Math.max(0.5, Math.tan(this.params.angleDeg * Math.PI / 180));
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       const band = Math.min(this.sandTopScratch[c], bandBase);
       if (band <= EPS) {
         continue;
@@ -7077,7 +7093,7 @@ export class WaterSandField {
             this.materialGuardRefund(amount,[c],false);this.updateSandTop();continue;
           }
           const evidence=this.particleBinding.exportCommittedEvidence();
-          for(let i=0;i<evidence.events.length;i++){const row=serializeP011ParticleEvent(evidence.events[i],i);if(row!==null)this.endpointParticleEvents.push(row);}
+          for(let i=0;i<evidence.events.length;i++){txTrace?.add(39);txTrace?.add(31);const row=serializeP011ParticleEvent(evidence.events[i],i);if(row!==null)this.endpointParticleEvents.push(row);}
         } else {
         if (split.heavy > 0) {
           const slot = this.particleBinding.seed(split.heavy, c + 0.5, contact, 0,
@@ -7103,9 +7119,9 @@ export class WaterSandField {
     if (liftedTotal > EPS && this.shakeLiftEventSink !== null) {
       this.shakeLiftEventSink(liftedTotal, liftedColumns);
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,283,txCode);}}
 
-  private splitTopV2(column: number, amount: number): WaterSandSplitResult {
+  private splitTopV2(column: number, amount: number): WaterSandSplitResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(284);let txCode=0;try{
     const fromMix = Math.min(amount, this.mh[column] + this.ml[column]);
     const mixTotal = Math.max(this.mh[column] + this.ml[column], EPS);
     const mixScale = fromMix / mixTotal;
@@ -7122,10 +7138,10 @@ export class WaterSandField {
     this.bl[column] -= fromLight;
     this.bh[column] -= fromHeavy;
     this.updateSandTop();
-    return { heavy, light };
-  }
+    {const txRc:WaterSandSplitResult={ heavy, light };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,284,txCode);}}
 
-  private splitBottom(column: number, amount: number): WaterSandSplitResult {
+  private splitBottom(column: number, amount: number): WaterSandSplitResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(285);let txCode=0;try{
     const deposited = this.bh[column] + this.bl[column];
     const scale = amount / Math.max(deposited, EPS);
     const heavy = this.bh[column] * scale;
@@ -7133,15 +7149,15 @@ export class WaterSandField {
     this.bh[column] -= heavy;
     this.bl[column] -= light;
     this.updateSandTop();
-    return { heavy, light };
-  }
+    {const txRc:WaterSandSplitResult={ heavy, light };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,285,txCode);}}
 
   private splitBottomPhaseBalanced(
     donor: number,
     amount: number,
     heavyResidual: number,
     lightResidual: number
-  ): WaterSandSplitResult {
+  ): WaterSandSplitResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(286);let txCode=0;try{
     const deposited = Math.max(this.bh[donor] + this.bl[donor], EPS);
     const baseShare = Math.max(P011_HEAVY_SHARE_MIN,
       Math.min(P011_HEAVY_SHARE_MAX, this.bh[donor] / deposited));
@@ -7159,14 +7175,14 @@ export class WaterSandField {
     remainder -= extraLight;
     if (remainder > EPS) {
       this.lastBottomSplitError = WaterSandErrorCode.CAPACITY_OVERFLOW;
-      return { heavy: 0, light: 0 };
+      {const txRc:WaterSandSplitResult={ heavy: 0, light: 0 };txCode=0;return txRc;}
     }
     this.bh[donor] -= heavy;
     this.bl[donor] -= light;
-    return { heavy, light };
-  }
+    {const txRc:WaterSandSplitResult={ heavy, light };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,286,txCode);}}
 
-  private computeSeparationProfile(): WaterSandSeparationProfile {
+  private computeSeparationProfile(): WaterSandSeparationProfile {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(287);let txCode=0;try{
     this.updateSandTop();
     let lowHeavy = 0;
     let lowLight = 0;
@@ -7174,7 +7190,7 @@ export class WaterSandField {
     let highLight = 0;
     let hasHeavy = false;
     let hasLight = false;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       hasHeavy = hasHeavy || this.bh[c] + this.mh[c] > EPS;
       hasLight = hasLight || this.bl[c] + this.ml[c] > EPS;
       const lowerBound = this.sandTopScratch[c] / 3;
@@ -7194,27 +7210,27 @@ export class WaterSandField {
         upperMix * this.ml[c] / Math.max(mixTotal, EPS);
     }
     if (!hasHeavy || !hasLight || lowHeavy + lowLight <= EPS || highHeavy + highLight <= EPS) {
-      return { lowerHeavyShare: null, upperHeavyShare: null, separationRatio: null };
+      {const txRc:WaterSandSeparationProfile={ lowerHeavyShare: null, upperHeavyShare: null, separationRatio: null };txCode=0;return txRc;}
     }
     const lowerHeavyShare = lowHeavy / (lowHeavy + lowLight);
     const upperHeavyShare = highHeavy / (highHeavy + highLight);
-    return {
+    {const txRc:WaterSandSeparationProfile={
       lowerHeavyShare,
       upperHeavyShare,
       separationRatio: upperHeavyShare / Math.max(lowerHeavyShare, EPS)
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,287,txCode);}}
 
-  private mixedOverlap(start: number, end: number, mixStart: number, sandTop: number): number {
-    return Math.max(0, Math.min(end, sandTop) - Math.max(start, mixStart));
-  }
+  private mixedOverlap(start: number, end: number, mixStart: number, sandTop: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(288);let txCode=0;try{
+    {const txRc:number=Math.max(0, Math.min(end, sandTop) - Math.max(start, mixStart));txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,288,txCode);}}
 
-  private updateMetrics(dt: number): void {
+  private updateMetrics(dt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(289);let txCode=0;try{
     this.simulationTime += dt;
     let depositedHeavy = 0;
     let depositedLight = 0;
     let suspended = 0;
-    for (let c = 0; c < this.cols; c++) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       depositedHeavy += this.bh[c] + this.mh[c];
       depositedLight += this.bl[c] + this.ml[c];
       suspended += this.suspH[c] + this.suspL[c];
@@ -7245,37 +7261,37 @@ export class WaterSandField {
     if (this.deepCreepRouteActive() && this.deepCreepHasDrive()) {
       this.dormant = false;
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,289,txCode);}}
 
-  private audit(checkDrift: boolean): WaterSandErrorCode | null {
-    for (let c = 0; c < this.cols; c++) {
+  private audit(checkDrift: boolean): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(18);let txCode=0;try{txTrace?.add(23);txTrace?.add(24);
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (!finite(this.waterTop[c]) || !finite(this.bh[c]) || !finite(this.bl[c]) ||
         !finite(this.mh[c]) || !finite(this.ml[c]) || !finite(this.suspH[c]) ||
         !finite(this.suspL[c])) {
         this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.NON_FINITE_VALUE);
         this.lastError = WaterSandErrorCode.NON_FINITE_VALUE;
-        return WaterSandErrorCode.NON_FINITE_VALUE;
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.NON_FINITE_VALUE;txCode=txRc===null?0:txRc;return txRc;}
       }
       if (this.waterTop[c] < -EPS || this.bh[c] < -EPS || this.bl[c] < -EPS ||
         this.mh[c] < -EPS || this.ml[c] < -EPS || this.suspH[c] < -EPS ||
         this.suspL[c] < -EPS) {
         this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.NEGATIVE_VALUE);
         this.lastError = WaterSandErrorCode.NEGATIVE_VALUE;
-        return WaterSandErrorCode.NEGATIVE_VALUE;
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.NEGATIVE_VALUE;txCode=txRc===null?0:txRc;return txRc;}
       }
       const particleMass = this.particleRouteActive() && this.particleBinding !== null
         ? this.particleBinding.pool.particleMassAt(c) : 0;
       if(this.mediumMode===P051_DRY_MEDIUM && (this.suspH[c]!==0 || this.suspL[c]!==0 ||
         Math.abs(this.waterTop[c]-(this.sandTopScratch[c]+particleMass))>EPS)){
         this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.CAPACITY_OVERFLOW);
-        return WaterSandErrorCode.CAPACITY_OVERFLOW;}
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.CAPACITY_OVERFLOW;txCode=txRc===null?0:txRc;return txRc;}}
       const total = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c] +
         this.suspH[c] + this.suspL[c] + particleMass + this.getWaterVolume(c);
       if (total > this.capacity + 1e-7 || this.suspH[c] + this.suspL[c] + particleMass >
         this.waterTop[c] - this.sandTopScratch[c] + EPS) {
         this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.CAPACITY_OVERFLOW);
         this.lastError = WaterSandErrorCode.CAPACITY_OVERFLOW;
-        return WaterSandErrorCode.CAPACITY_OVERFLOW;
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.CAPACITY_OVERFLOW;txCode=txRc===null?0:txRc;return txRc;}
       }
     }
     if (checkDrift) {
@@ -7297,75 +7313,75 @@ export class WaterSandField {
       if (drift.water >= DRIFT_LIMIT || drift.heavy >= DRIFT_LIMIT || drift.light >= DRIFT_LIMIT) {
         this.recordCollectFirstFailure('AUDIT',WaterSandErrorCode.UNKNOWN,drift);
         this.lastError = WaterSandErrorCode.UNKNOWN;
-        return WaterSandErrorCode.UNKNOWN;
+        {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.UNKNOWN;txCode=txRc===null?0:txRc;return txRc;}
       }
     }
-    return null;
-  }
+    {const txRc:WaterSandErrorCode | null=null;txCode=txRc===null?0:txRc;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,18,txCode);}}
 
-  private dryReceiverCapacity(c: number, sand: number): number {
-    return this.capacity-sand-(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
-  }
-  private getWaterVolume(c: number): number {
+  private dryReceiverCapacity(c: number, sand: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(291);let txCode=0;try{
+    {const txRc:number=this.capacity-sand-(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,291,txCode);}}
+  private getWaterVolume(c: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(292);let txCode=0;try{
     const particles = this.particleRouteActive() && this.particleBinding !== null
       ? this.particleBinding.pool.particleMassAt(c) : 0;
-    if(this.mediumMode===P051_DRY_MEDIUM)return Math.max(0,this.waterTop[c]-(this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+particles));
-    return Math.max(0, this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c] - particles);
-  }
+    if(this.mediumMode===P051_DRY_MEDIUM){const txRc:number=Math.max(0,this.waterTop[c]-(this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+particles));txCode=0;return txRc;}
+    {const txRc:number=Math.max(0, this.waterTop[c] - this.sandTopScratch[c] - this.suspH[c] - this.suspL[c] - particles);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,292,txCode);}}
 
-  private maxSlopeDeg(): number {
+  private maxSlopeDeg(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(293);let txCode=0;try{
     let maximum = 0;
-    for (let c = 0; c < this.cols - 1; c++) {
+    for (let c = 0; c < this.cols - 1; c++) {txTrace?.add(39);txTrace?.add(31);
       maximum = Math.max(maximum, Math.abs(this.sandTopScratch[c + 1] - this.sandTopScratch[c]));
     }
-    return Math.atan(maximum) * 180 / Math.PI;
-  }
+    {const txRc:number=Math.atan(maximum) * 180 / Math.PI;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,293,txCode);}}
 
-  private maxCurvature(): number {
+  private maxCurvature(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(294);let txCode=0;try{
     let maximum = 0;
-    for (let c = 1; c < this.cols - 1; c++) {
+    for (let c = 1; c < this.cols - 1; c++) {txTrace?.add(39);txTrace?.add(31);
       maximum = Math.max(maximum, Math.abs(
         this.sandTopScratch[c + 1] - 2 * this.sandTopScratch[c] + this.sandTopScratch[c - 1]));
     }
-    return maximum;
-  }
+    {const txRc:number=maximum;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,294,txCode);}}
 
-  private waterSlopeDeg(): number {
+  private waterSlopeDeg(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(295);let txCode=0;try{
     let maximum = 0;
     const start = Math.floor(this.cols * 0.1);
     const end = this.cols - 1 - start;
-    for (let c = start; c < end; c++) {
+    for (let c = start; c < end; c++) {txTrace?.add(39);txTrace?.add(31);
       maximum = Math.max(maximum, Math.abs(this.waterTop[c + 1] - this.waterTop[c]));
     }
-    return Math.atan(maximum) * 180 / Math.PI;
-  }
+    {const txRc:number=Math.atan(maximum) * 180 / Math.PI;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,295,txCode);}}
 
-  private waterAmplitude(): number {
+  private waterAmplitude(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(296);let txCode=0;try{
     const start = Math.floor(this.cols * 0.1);
     const end = this.cols - start;
     let minimum = Number.POSITIVE_INFINITY;
     let maximum = Number.NEGATIVE_INFINITY;
-    for (let c = start; c < end; c++) {
+    for (let c = start; c < end; c++) {txTrace?.add(39);txTrace?.add(31);
       minimum = Math.min(minimum, this.waterTop[c]);
       maximum = Math.max(maximum, this.waterTop[c]);
     }
-    return maximum - minimum;
-  }
+    {const txRc:number=maximum - minimum;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,296,txCode);}}
 
-  private updateSandTop(): void {
-    for (let c = 0; c < this.cols; c++) {
+  private updateSandTop(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(297);let txCode=0;try{
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       this.sandTopScratch[c] = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c];
       if(this.mediumMode===P051_DRY_MEDIUM)this.waterTop[c]=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,297,txCode);}}
 
-  private validateScene(scene: WaterSandScene): void {
+  private validateScene(scene: WaterSandScene): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(298);let txCode=0;try{
     const groups = [
       scene.waterRegions, scene.heavyDepositedRegions, scene.lightDepositedRegions,
       scene.heavySuspendedRegions, scene.lightSuspendedRegions
     ];
-    for (const regions of groups) {
-      for (const region of regions) {
+    for (const regions of groups) {txTrace?.add(39);txTrace?.add(31);
+      for (const region of regions) {txTrace?.add(39);txTrace?.add(31);
         if (!Number.isInteger(region.startCol) || !Number.isInteger(region.endColInclusive) ||
           region.startCol < 0 || region.endColInclusive >= this.cols ||
           region.startCol > region.endColInclusive || region.bottom < 0 ||
@@ -7374,11 +7390,11 @@ export class WaterSandField {
         }
       }
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,298,txCode);}}
 
-  private fillRegions(target: Float64Array, regions: WaterSandRegion[], additive: boolean): void {
-    for (const region of regions) {
-      for (let c = region.startCol; c <= region.endColInclusive; c++) {
+  private fillRegions(target: Float64Array, regions: WaterSandRegion[], additive: boolean): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(299);let txCode=0;try{
+    for (const region of regions) {txTrace?.add(39);txTrace?.add(31);
+      for (let c = region.startCol; c <= region.endColInclusive; c++) {txTrace?.add(39);txTrace?.add(31);
         if (additive) {
           target[c] += region.height;
         } else {
@@ -7386,21 +7402,21 @@ export class WaterSandField {
         }
       }
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,299,txCode);}}
 
-  private defaultScene(): WaterSandScene {
+  private defaultScene(): WaterSandScene {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(300);let txCode=0;try{
     const all: WaterSandRegion = { startCol: 0, endColInclusive: this.cols - 1, bottom: 0, height: 110 };
-    return {
+    {const txRc:WaterSandScene={
       waterRegions: [all],
       heavyDepositedRegions: [],
       lightDepositedRegions: [],
       heavySuspendedRegions: [{ startCol: 0, endColInclusive: this.cols - 1, bottom: 0, height: 24 }],
       lightSuspendedRegions: [{ startCol: 0, endColInclusive: this.cols - 1, bottom: 0, height: 16 }]
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,300,txCode);}}
 
-  private createEmptySnapshot(): WaterSandSnapshot {
-    return {
+  private createEmptySnapshot(): WaterSandSnapshot {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(301);let txCode=0;try{
+    {const txRc:WaterSandSnapshot={
       schemaVersion: this.particleRouteActive() ? 4 : 3,
       moistureField: this.moistureField === null ? undefined
         : new Float32Array(this.moistureField),
@@ -7430,23 +7446,23 @@ export class WaterSandField {
       hl: new Float64Array(this.cols),
       sandTop: new Float64Array(this.cols),
       particleState: this.particleBinding === null ? null : this.particleBinding.pool.snapshot()
-    };
-  }
+    };txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,301,txCode);}}
 
-  private saveBackup(): void {
+  private saveBackup(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(302);let txCode=0;try{
     this.particleEventBackupLength = this.endpointParticleEvents.length;
     if (this.particleRouteActive() && this.particleBinding !== null && this.particleJournalBefore !== null && this.endpointParticleEvents.length === 0) {
       this.copyParticleStateDiagnostic(this.particleJournalBefore);
     }
-    this.backup.waterTop.set(this.waterTop);
-    this.backup.bh.set(this.bh);
-    this.backup.bl.set(this.bl);
-    this.backup.mh.set(this.mh);
-    this.backup.ml.set(this.ml);
-    this.backup.suspH.set(this.suspH);
-    this.backup.suspL.set(this.suspL);
-    this.backup.shakeSourceH!.set(this.shakeSourceH);
-    this.backup.shakeSourceL!.set(this.shakeSourceL);
+    this.backup.waterTop.set(this.waterTop);txTrace?.add(29,(this.waterTop).byteLength);
+    this.backup.bh.set(this.bh);txTrace?.add(29,(this.bh).byteLength);
+    this.backup.bl.set(this.bl);txTrace?.add(29,(this.bl).byteLength);
+    this.backup.mh.set(this.mh);txTrace?.add(29,(this.mh).byteLength);
+    this.backup.ml.set(this.ml);txTrace?.add(29,(this.ml).byteLength);
+    this.backup.suspH.set(this.suspH);txTrace?.add(29,(this.suspH).byteLength);
+    this.backup.suspL.set(this.suspL);txTrace?.add(29,(this.suspL).byteLength);
+    this.backup.shakeSourceH!.set(this.shakeSourceH);txTrace?.add(29,(this.shakeSourceH).byteLength);
+    this.backup.shakeSourceL!.set(this.shakeSourceL);txTrace?.add(29,(this.shakeSourceL).byteLength);
     this.backup.shakeSourceLiftedH = this.shakeSourceLiftedH;
     this.backup.shakeSourceLiftedL = this.shakeSourceLiftedL;
     this.backup.shakeSourceLandedH = this.shakeSourceLandedH;
@@ -7456,19 +7472,19 @@ export class WaterSandField {
     if (this.particleBinding !== null && this.particleBackup !== null) {
       this.copyParticleStateDiagnostic(this.particleBackup);
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,302,txCode);}}
 
-  private restoreBackup(): void {
+  private restoreBackup(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(303);let txCode=0;try{
     this.endpointParticleEvents.length = this.particleEventBackupLength;
-    this.waterTop.set(this.backup.waterTop);
-    this.bh.set(this.backup.bh);
-    this.bl.set(this.backup.bl);
-    this.mh.set(this.backup.mh);
-    this.ml.set(this.backup.ml);
-    this.suspH.set(this.backup.suspH);
-    this.suspL.set(this.backup.suspL);
-    this.shakeSourceH.set(this.backup.shakeSourceH!);
-    this.shakeSourceL.set(this.backup.shakeSourceL!);
+    this.waterTop.set(this.backup.waterTop);txTrace?.add(29,(this.backup.waterTop).byteLength);
+    this.bh.set(this.backup.bh);txTrace?.add(29,(this.backup.bh).byteLength);
+    this.bl.set(this.backup.bl);txTrace?.add(29,(this.backup.bl).byteLength);
+    this.mh.set(this.backup.mh);txTrace?.add(29,(this.backup.mh).byteLength);
+    this.ml.set(this.backup.ml);txTrace?.add(29,(this.backup.ml).byteLength);
+    this.suspH.set(this.backup.suspH);txTrace?.add(29,(this.backup.suspH).byteLength);
+    this.suspL.set(this.backup.suspL);txTrace?.add(29,(this.backup.suspL).byteLength);
+    this.shakeSourceH.set(this.backup.shakeSourceH!);txTrace?.add(29,(this.backup.shakeSourceH!).byteLength);
+    this.shakeSourceL.set(this.backup.shakeSourceL!);txTrace?.add(29,(this.backup.shakeSourceL!).byteLength);
     this.shakeSourceLiftedH = this.backup.shakeSourceLiftedH ?? 0;
     this.shakeSourceLiftedL = this.backup.shakeSourceLiftedL ?? 0;
     this.shakeSourceLandedH = this.backup.shakeSourceLandedH ?? 0;
@@ -7481,10 +7497,10 @@ export class WaterSandField {
       this.particleBinding.discardCommittedPage();
     }
     this.updateSandTop();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,303,txCode);}}
 
-  private changedSinceBackup(): boolean {
-    for (let c = 0; c < this.cols; c++) {
+  private changedSinceBackup(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(304);let txCode=0;try{
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       if (Math.abs(this.waterTop[c] - this.backup.waterTop[c]) > EPS ||
         Math.abs(this.bh[c] - this.backup.bh[c]) > EPS ||
         Math.abs(this.bl[c] - this.backup.bl[c]) > EPS ||
@@ -7492,21 +7508,21 @@ export class WaterSandField {
         Math.abs(this.ml[c] - this.backup.ml[c]) > EPS ||
         Math.abs(this.suspH[c] - this.backup.suspH[c]) > EPS ||
         Math.abs(this.suspL[c] - this.backup.suspL[c]) > EPS) {
-        return true;
+        {const txRc:boolean=true;txCode=0;return txRc;}
       }
     }
-    return false;
-  }
+    {const txRc:boolean=false;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,304,txCode);}}
 
-  private firstInvalidColumn(): number {
+  private firstInvalidColumn(): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(305);let txCode=0;try{
     const state = [this.waterTop, this.bh, this.bl, this.mh, this.ml, this.suspH, this.suspL];
-    for (let c = 0; c < this.cols; c++) {
-      for (const array of state) {
+    for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
+      for (const array of state) {txTrace?.add(39);txTrace?.add(31);
         if (!finite(array[c]) || array[c] < -EPS) {
-          return c;
+          {const txRc:number=c;txCode=0;return txRc;}
         }
       }
     }
-    return -1;
-  }
+    {const txRc:number=-1;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,305,txCode);}}
 }

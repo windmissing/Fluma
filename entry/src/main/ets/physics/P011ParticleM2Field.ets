@@ -72,8 +72,8 @@ export class P011ParticleM2FieldBinding {
   seedCollectCalls = 0; seedApplyCalls = 0; previewCollectCalls = 0; authoritativeApplyCalls = 0;
   collectFailureEnabled = false;
   readonly collectFailure: P011CollectFirstFailure = new P011CollectFirstFailure();
-  private collectEntry(dt: number,tiltRad: number,substepId: number,seed: number): void {
-    if(!this.collectFailureEnabled)return;
+  private collectEntry(dt: number,tiltRad: number,substepId: number,seed: number): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(350);let txCode=0;try{
+    if(!this.collectFailureEnabled){txCode=0;return;}
     const d=this.collectFailure,w=this.work,b=this.sink.budget;
     d.phase='ENTRY';d.m2Code=0;d.hotCode=0;d.rollbackCode=0;
     d.rollbackExecuted=false;
@@ -81,8 +81,8 @@ export class P011ParticleM2FieldBinding {
     d.entryStepOpen=this.stepOpen;d.entryActive=w.active;d.entryEpoch=w.stepEpoch;
     d.entryBudgetEpoch=b.diagnosticEpoch;d.entryBudgetOpen=b.diagnosticOpenCount;d.entryPageBacklog=w.pageBacklog;
     d.attemptToken=this.attemptToken;d.runToken=this.runToken;d.substepId=substepId;d.seed=seed;d.dt=dt;d.tiltRad=tiltRad;
-  }
-  private collectExit(phase: string,m2Code: number,hotCode: number,rollbackCode: number=0): number {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,350,txCode);}}
+  private collectExit(phase: string,m2Code: number,hotCode: number,rollbackCode: number=0): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(351);let txCode=0;try{
     if(this.collectFailureEnabled){const d=this.collectFailure,w=this.work,b=this.sink.budget;
       d.phase=phase;d.m2Code=m2Code;d.hotCode=hotCode;d.rollbackCode=rollbackCode;
       d.rollbackExecuted=phase==='COLLECT_A'||phase==='COLLECT_B'||phase==='COMPARE';
@@ -90,27 +90,27 @@ export class P011ParticleM2FieldBinding {
       d.failureIndex=phase==='BEGIN_HOT'?w.beginFailureIndex:phase==='COMPARE'?this.compareFailureIndex():-1;
       d.exitStepOpen=this.stepOpen;d.exitActive=w.active;d.exitEpoch=w.stepEpoch;
       d.exitBudgetEpoch=b.diagnosticEpoch;d.exitBudgetOpen=b.diagnosticOpenCount;d.exitPageBacklog=w.pageBacklog;}
-    return m2Code;
-  }
-  private compareFailurePredicate(): string {
+    {const txRc:number=m2Code;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,351,txCode);}}
+  private compareFailurePredicate(): string {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(352);let txCode=0;try{
     const a=this.work.planA,b=this.work.planB;
-    if(a.ownerId!==b.ownerId||a.stepEpoch!==b.stepEpoch||a.runToken!==b.runToken)return 'IDENTITY';
-    if(a.requestCount!==b.requestCount||a.motionCount!==b.motionCount)return 'COUNT';
-    for(let i=0;i<a.requestCount;i++){
-      if(a.kind[i]!==b.kind[i])return 'KIND';
-      if(a.particleId[i]!==b.particleId[i])return 'PARTICLE_ID';
-      if(a.requested[i]!==b.requested[i])return 'REQUESTED';
-      if(a.column[i]!==b.column[i]||a.targetColumn[i]!==b.targetColumn[i])return 'COLUMN';
+    if(a.ownerId!==b.ownerId||a.stepEpoch!==b.stepEpoch||a.runToken!==b.runToken){const txRc:string='IDENTITY';txCode=0;return txRc;}
+    if(a.requestCount!==b.requestCount||a.motionCount!==b.motionCount){const txRc:string='COUNT';txCode=0;return txRc;}
+    for(let i=0;i<a.requestCount;i++){txTrace?.add(39);
+      if(a.kind[i]!==b.kind[i]){const txRc:string='KIND';txCode=0;return txRc;}
+      if(a.particleId[i]!==b.particleId[i]){const txRc:string='PARTICLE_ID';txCode=0;return txRc;}
+      if(a.requested[i]!==b.requested[i]){const txRc:string='REQUESTED';txCode=0;return txRc;}
+      if(a.column[i]!==b.column[i]||a.targetColumn[i]!==b.targetColumn[i]){const txRc:string='COLUMN';txCode=0;return txRc;}
     }
-    return 'OTHER_PLAN_FIELD';
-  }
-  private compareFailureIndex(): number {
+    {const txRc:string='OTHER_PLAN_FIELD';txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,352,txCode);}}
+  private compareFailureIndex(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(353);let txCode=0;try{
     const a=this.work.planA,b=this.work.planB;
     for(let i=0;i<Math.min(a.requestCount,b.requestCount);i++)if(a.kind[i]!==b.kind[i]||
       a.particleId[i]!==b.particleId[i]||a.requested[i]!==b.requested[i]||
-      a.column[i]!==b.column[i]||a.targetColumn[i]!==b.targetColumn[i])return i;
-    return -1;
-  }
+      a.column[i]!==b.column[i]||a.targetColumn[i]!==b.targetColumn[i]){const txRc:number=i;txCode=0;return txRc;}
+    {const txRc:number=-1;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,353,txCode);}}
   constructor(cols: number, capacity: number, waterTop: Float64Array, bh: Float64Array,
     bl: Float64Array, mh: Float64Array, ml: Float64Array, suspH: Float64Array,
     suspL: Float64Array, surface: Float64Array, params: P011ParticleParams, host: P011ParticleM2Host) {
@@ -131,74 +131,74 @@ export class P011ParticleM2FieldBinding {
   // The birth callers overwrite every effective row and motion count. The
   // first collect still performs the original frozen-pool/predictor validation;
   // the second collect had no consumed data beyond this plan identity header.
-  private collectBirthHeaders(): number {
+  private collectBirthHeaders(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(4);let txCode=0;try{
     const w = this.work;
     const status = collectParticlePlanInto(w, w.stepEpoch, w.planA);
-    if (status !== 0) return status;
+    if (status !== 0) {const txRc:number=status;txCode=0;return txRc;}
     const a = w.planA, b = w.planB;
-    if (!b.storageValidHot()) return -1;
+    if (!b.storageValidHot()) {const txRc:number=-1;txCode=0;return txRc;}
     b.ownerId = a.ownerId; b.runToken = a.runToken; b.stepEpoch = a.stepEpoch;
     b.substepId = a.substepId; b.attemptToken = a.attemptToken;
     b.paramsRevision = a.paramsRevision; b.inputRevision = a.inputRevision;
     b.seed = a.seed; b.dt = a.dt; b.effectiveTiltRad = a.effectiveTiltRad;
     b.valid = 1; b.consumed = 0;
-    return 0;
-  }
+    {const txRc:number=0;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,4,txCode);}}
   private dryProgressSpan: number=-1;
   private diagnosticSeedInput(mass: number,x: number,y: number,vx: number,vy: number,
-    phase: number,sourceKind: number,seed: number): void {
-    const d=this.work.poolProgress;if(d===null)return;
+    phase: number,sourceKind: number,seed: number): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(355);let txCode=0;try{
+    const d=this.work.poolProgress;if(d===null){txCode=0;return;}
     d.nmax=this.work.nmax;d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;
     d.epoch=this.work.stepEpoch;d.attemptToken=this.attemptToken+1;
     d.context.runToken=this.runToken;d.context.ownerId=this.work.ownerId;
     d.context.mass=mass;d.context.x=x;d.context.y=y;d.context.vx=vx;d.context.vy=vy;
     d.context.column=Math.floor(x);d.context.phase=phase;d.context.sourceKind=sourceKind;d.context.seed=seed;
-  }
-  seed(mass: number,x: number,y: number,vx: number,vy: number,phase: number,sourceKind: number,sourceId: number): number {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,355,txCode);}}
+  seed(mass: number,x: number,y: number,vx: number,vy: number,phase: number,sourceKind: number,sourceId: number): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(356);let txCode=0;try{
     const d=this.work.poolProgress;let span=-1,code=-1;
     if(d!==null){this.diagnosticSeedInput(mass,x,y,vx,vy,phase,sourceKind,sourceId);
       span=d.begin('SEED');d.increment(14);}
-    try{code=this.seedBody(mass,x,y,vx,vy,phase,sourceKind,sourceId);return code;}
+    try{code=this.seedBody(mass,x,y,vx,vy,phase,sourceKind,sourceId);{const txRc:number=code;txCode=0;return txRc;}}
     finally{if(d!==null){d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;d.endSpan(span,code);}}
-  }
-  beginDryBatch(heavy: number,light: number,x: number,y: number,sourceId: number,seed: number,sourceKind: number=0): boolean {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,356,txCode);}}
+  beginDryBatch(heavy: number,light: number,x: number,y: number,sourceId: number,seed: number,sourceKind: number=0): boolean {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(357);let txCode=0;try{
     const d=this.work.poolProgress;let ok=false;
     if(d!==null){this.diagnosticSeedInput(heavy+light,x,y,0,0,-1,sourceKind,seed);
       this.dryProgressSpan=d.begin('SEED_BATCH');d.increment(14);}
-    try{ok=this.beginDryBatchBody(heavy,light,x,y,sourceId,seed,sourceKind);return ok;}
+    try{ok=this.beginDryBatchBody(heavy,light,x,y,sourceId,seed,sourceKind);{const txRc:boolean=ok;txCode=0;return txRc;}}
     finally{if(!ok&&d!==null){d.endSpan(this.dryProgressSpan,-1);this.dryProgressSpan=-1;}}
-  }
-  finishDryBatch(): boolean {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,357,txCode);}}
+  finishDryBatch(): boolean {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(358);let txCode=0;try{
     const d=this.work.poolProgress;let ok=false;
-    try{ok=this.finishDryBatchBody();return ok;}
+    try{ok=this.finishDryBatchBody();{const txRc:boolean=ok;txCode=0;return txRc;}}
     finally{if(d!==null){d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;
       d.endSpan(this.dryProgressSpan,ok?0:-1);this.dryProgressSpan=-1;}}
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,358,txCode);}}
   beginCollect(dt: number,tiltRad: number,substepId: number,seed: number,
-    sourceHeavy: number,sourceLight: number,sourceEpoch: number): number {
+    sourceHeavy: number,sourceLight: number,sourceEpoch: number): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(359);let txCode=0;try{
     const d=this.work.poolProgress;let span=-1,code=-1;
     if(d!==null){d.context.substepId=substepId;d.context.theta=tiltRad;d.context.seed=seed;
       d.context.sourceEpoch=sourceEpoch;d.attemptToken=this.attemptToken+1;
       d.nmax=this.work.nmax;d.free=this.pool.freeSlotCount;d.live=d.nmax-d.free;span=d.begin('COLLECT_ATTEMPT');}
-    try{code=this.beginCollectBody(dt,tiltRad,substepId,seed,sourceHeavy,sourceLight,sourceEpoch);return code;}
+    try{code=this.beginCollectBody(dt,tiltRad,substepId,seed,sourceHeavy,sourceLight,sourceEpoch);{const txRc:number=code;txCode=txRc;return txRc;}}
     finally{d?.endSpan(span,code);}
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,359,txCode);}}
   private seedBody(mass: number, x: number, y: number, vx: number, vy: number,
-    phase: number, sourceKind: number, sourceId: number): number {
-    if (this.stepOpen !== 0 || this.work.pageBacklog !== 0) return -1;
+    phase: number, sourceKind: number, sourceId: number): number {this.work.txD1?.role(1);this.work.txD1?.trace.add(41);this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(360);let txCode=0;try{
+    if (this.stepOpen !== 0 || this.work.pageBacklog !== 0) {const txRc:number=-1;txCode=0;return txRc;}
     if(this.work.diagnosticEnabled)this.seedCalls++;
     this.attemptToken++;
     const w = this.work;
     const tilt = sourceKind === 0 ? Math.atan2(vx, 0 - vy) : w.effectiveTiltRad;
     if (beginStepHot(w, { runToken: this.runToken, substepId: w.substepId,
       attemptToken: this.attemptToken, dt: 1 / 60, effectiveTiltRad: tilt, seed: sourceId,
-      paramsRevision: 1, inputRevision: 1, field: this.field }) !== 0) return -1;
+      paramsRevision: 1, inputRevision: 1, field: this.field }) !== 0) {const txRc:number=-1;txCode=0;return txRc;}
     this.stepOpen = 1;
     const collectStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const collected=this.collectBirthHeaders();
     if(this.work.diagnosticEnabled)this.seedCollectCalls++;
     if(this.work.diagnosticEnabled)this.seedCollectMs+=(this.work.poolProgress?.clockNow() ?? NaN)-collectStart;
-    if (collected !== 0) { this.rollback(); return -1; }
+    if (collected !== 0) { this.rollback(); {const txRc:number=-1;txCode=0;return txRc;} }
     const a = w.planA, b = w.planB;
     a.requestCount = 1; a.motionCount = 0; a.totalRequested = 0;
     a.kind[0] = sourceKind === 0 ? 1 : 4; a.phase[0] = phase; a.sourceKind[0] = sourceKind;
@@ -214,30 +214,30 @@ export class P011ParticleM2FieldBinding {
     if(this.work.diagnosticEnabled)this.seedApplyCalls++;
     if(this.work.diagnosticEnabled)this.seedApplyMs+=(this.work.poolProgress?.clockNow() ?? NaN)-applyStart;
     this.sink.birthOnly = 0;
-    if (applied !== 0 || w.results.granted[0] !== mass) { this.rollback(); return -1; }
+    if (applied !== 0 || w.results.granted[0] !== mass) { this.rollback(); {const txRc:number=-1;txCode=0;return txRc;} }
     const finishStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const finished=finishStepHot(w, w.stepEpoch);
     if(this.work.diagnosticEnabled)this.seedFinishMs+=(this.work.poolProgress?.clockNow() ?? NaN)-finishStart;
-    if (finished !== 0) { this.rollback(); return -1; }
+    if (finished !== 0) { this.rollback(); {const txRc:number=-1;txCode=0;return txRc;} }
     this.stepOpen = 0;
     const evidence = this.exportCommittedEvidence();
-    for (let i = 0; i < evidence.events.length; i++) { const row = serializeP011ParticleEvent(evidence.events[i], i); if (row !== null) this.birthEventRows.push(row); }
-    return 0;
-  }
-  private beginDryBatchBody(heavy: number, light: number, x: number, y: number, sourceId: number, seed: number, sourceKind: number = 0): boolean {
-    if (this.stepOpen !== 0 || this.work.pageBacklog !== 0 || this.field.mediumMode !== 'DRY_AIR_V1') return false;
+    for (let i = 0; i < evidence.events.length; i++) {txTrace?.add(39); const row = serializeP011ParticleEvent(evidence.events[i], i); if (row !== null) this.birthEventRows.push(row); }
+    {const txRc:number=0;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,360,txCode);}}
+  private beginDryBatchBody(heavy: number, light: number, x: number, y: number, sourceId: number, seed: number, sourceKind: number = 0): boolean {this.work.txD1?.role(1);this.work.txD1?.trace.add(41);this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(361);let txCode=0;try{
+    if (this.stepOpen !== 0 || this.work.pageBacklog !== 0 || this.field.mediumMode !== 'DRY_AIR_V1') {const txRc:boolean=false;txCode=0;return txRc;}
     if(this.work.diagnosticEnabled)this.seedCalls++;
     this.attemptToken++; const w=this.work;
     if (beginStepHot(w,{runToken:this.runToken,substepId:w.substepId,attemptToken:this.attemptToken,
-      dt:1/60,effectiveTiltRad:0,seed:seed,paramsRevision:1,inputRevision:1,field:this.field})!==0)return false;
+      dt:1/60,effectiveTiltRad:0,seed:seed,paramsRevision:1,inputRevision:1,field:this.field})!==0){const txRc:boolean=false;txCode=0;return txRc;}
     this.stepOpen=1;
     const collectStart=this.work.diagnosticEnabled?(this.work.poolProgress?.clockNow() ?? NaN):0;
     const collected=this.collectBirthHeaders();
     if(this.work.diagnosticEnabled)this.seedCollectCalls++;
     if(this.work.diagnosticEnabled)this.seedCollectMs+=(this.work.poolProgress?.clockNow() ?? NaN)-collectStart;
-    if(collected!==0){this.rollback();return false;}
+    if(collected!==0){this.rollback();{const txRc:boolean=false;txCode=0;return txRc;}}
     const a=w.planA,b=w.planB;a.requestCount=0;a.motionCount=0;a.totalRequested=0;
-    for(let phase=0;phase<2;phase++){
+    for(let phase=0;phase<2;phase++){txTrace?.add(39);
       const mass=phase===0?heavy:light;if(mass===0)continue;const row=a.requestCount++;
       a.kind[row]=sourceKind===0?1:4;a.phase[row]=phase;a.sourceKind[row]=sourceKind;a.column[row]=Math.floor(x);a.targetColumn[row]=-1;
       a.particleId[row]=0;a.sourceId[row]=sourceId;a.substep[row]=w.substepId;a.ordinal[row]=row+1;
@@ -251,64 +251,66 @@ export class P011ParticleM2FieldBinding {
     const applied=applyParticlePlanInto(w,w.stepEpoch,a,this.sink,w.results);this.sink.birthOnly=0;
     if(this.work.diagnosticEnabled)this.seedApplyCalls++;
     if(this.work.diagnosticEnabled)this.seedApplyMs+=(this.work.poolProgress?.clockNow() ?? NaN)-applyStart;
-    if(applied!==0){this.rollback();return false;}
-    for(let row=0;row<a.requestCount;row++)if(w.results.granted[row]!==a.requested[row]){this.rollback();return false;}
-    return true;
-  }
-  private finishDryBatchBody(): boolean {
-    if(this.stepOpen===0)return false;
-    if(finishStepHot(this.work,this.work.stepEpoch)!==0){this.rollback();return false;}
-    this.stepOpen=0;return true;
-  }
-  drainBirthEvents(): string[] {
-    const rows = this.birthEventRows; this.birthEventRows = []; return rows;
-  }
+    if(applied!==0){this.rollback();{const txRc:boolean=false;txCode=0;return txRc;}}
+    for(let row=0;row<a.requestCount;row++)if(w.results.granted[row]!==a.requested[row]){this.rollback();{const txRc:boolean=false;txCode=0;return txRc;}}
+    {const txRc:boolean=true;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,361,txCode);}}
+  private finishDryBatchBody(): boolean {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(362);let txCode=0;try{
+    if(this.stepOpen===0){const txRc:boolean=false;txCode=0;return txRc;}
+    if(finishStepHot(this.work,this.work.stepEpoch)!==0){this.rollback();{const txRc:boolean=false;txCode=0;return txRc;}}
+    this.stepOpen=0;{const txRc:boolean=true;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,362,txCode);}}
+  drainBirthEvents(): string[] {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(363);let txCode=0;try{
+    const rows = this.birthEventRows; this.birthEventRows = []; {const txRc:string[]=rows;txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,363,txCode);}}
 
   private beginCollectBody(dt: number, tiltRad: number, substepId: number, seed: number,
-    sourceHeavy: number, sourceLight: number, sourceEpoch: number): number {
+    sourceHeavy: number, sourceLight: number, sourceEpoch: number): number {this.work.txD1?.role(2);this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(5);let txCode=0;try{
     this.collectEntry(dt,tiltRad,substepId,seed);
-    if (this.stepOpen !== 0) return this.collectExit('ENTRY',P011_PARTICLE_M2_BUSY,0);
+    if (this.stepOpen !== 0) {const txRc:number=this.collectExit('ENTRY',P011_PARTICLE_M2_BUSY,0);txCode=txRc;return txRc;}
     this.attemptToken++;
     if(this.collectFailureEnabled)this.collectFailure.attemptToken=this.attemptToken;
-    if (!Number.isSafeInteger(this.attemptToken)) return this.collectExit('TOKEN',P011_PARTICLE_M2_STEP_FAILED,0);
+    if (!Number.isSafeInteger(this.attemptToken)) {const txRc:number=this.collectExit('TOKEN',P011_PARTICLE_M2_STEP_FAILED,0);txCode=txRc;return txRc;}
     this.field.syncSources(sourceHeavy, sourceLight, sourceEpoch);
     const status = beginStepHot(this.work, { runToken: this.runToken, substepId: substepId,
       attemptToken: this.attemptToken, dt: dt, effectiveTiltRad: tiltRad, seed: seed,
       paramsRevision: 1, inputRevision: 1, field: this.field });
-    if (status !== 0) return this.collectExit('BEGIN_HOT',P011_PARTICLE_M2_STEP_FAILED,status);
+    if (status !== 0) {const txRc:number=this.collectExit('BEGIN_HOT',P011_PARTICLE_M2_STEP_FAILED,status);txCode=txRc;return txRc;}
     this.stepOpen = 1;
     const epoch = this.work.stepEpoch;
+    txTrace?.add(43);
     const a=collectParticlePlanInto(this.work,epoch,this.work.planA);
     if(this.work.diagnosticEnabled)this.previewCollectCalls++;
-    if(a!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COLLECT_A',P011_PARTICLE_M2_STEP_FAILED,a,rollback);}
+    if(a!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;{const txRc:number=this.collectExit('COLLECT_A',P011_PARTICLE_M2_STEP_FAILED,a,rollback);txCode=txRc;return txRc;}}
+    txTrace?.add(44);
     const b=collectParticlePlanInto(this.work,epoch,this.work.planB);
     if(this.work.diagnosticEnabled)this.previewCollectCalls++;
-    if(b!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COLLECT_B',P011_PARTICLE_M2_STEP_FAILED,b,rollback);}
+    if(b!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;{const txRc:number=this.collectExit('COLLECT_B',P011_PARTICLE_M2_STEP_FAILED,b,rollback);txCode=txRc;return txRc;}}
     const comparison=compareParticlePlansHot(this.work.planA,this.work.planB);
-    if(comparison!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;return this.collectExit('COMPARE',P011_PARTICLE_M2_STEP_FAILED,comparison,rollback);}
-    return this.collectExit('READY',0,0);
-  }
-  requested(): number { return this.stepOpen === 0 ? 0 : this.work.planA.totalRequested; }
+    if(comparison!==0){const rollback=rollbackStepHot(this.work,epoch);this.stepOpen=0;{const txRc:number=this.collectExit('COMPARE',P011_PARTICLE_M2_STEP_FAILED,comparison,rollback);txCode=txRc;return txRc;}}
+    {const txRc:number=this.collectExit('READY',0,0);txCode=txRc;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,5,txCode);}}
+  requested(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(365);let txCode=0;try{ {const txRc:number=this.stepOpen === 0 ? 0 : this.work.planA.totalRequested;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,365,txCode);}}
   get totalRemaining(): number { return this.sink.budget.totalRemaining; }
   get totalUsed(): number { return this.sink.budget.totalUsed; }
-  registerRun(runId: string, substepId?: number): void {
+  registerRun(runId: string, substepId?: number): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(366);let txCode=0;try{
     registerParticleHotRun(this.work, this.runToken, runId);
     if (substepId !== undefined) this.work.substepId = substepId;
-  }
-  exportCommittedEvidence(): P011ParticleHotEvidence {
-    return exportParticleEvidence(this.work, this.work.committedPageToken);
-  }
-  discardCommittedPage(): void {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,366,txCode);}}
+  exportCommittedEvidence(): P011ParticleHotEvidence {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(367);let txCode=0;try{
+    {const txRc:P011ParticleHotEvidence=exportParticleEvidence(this.work, this.work.committedPageToken);txCode=0;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,367,txCode);}}
+  discardCommittedPage(): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(368);let txCode=0;try{
     if (this.work.active === 0 && this.work.pageBacklog === 1 &&
       this.work.committedPageToken > 0) {
       this.work.pageBacklog = 0; this.work.committedPageToken = 0;
     }
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,368,txCode);}}
   apply(totalScale: number, localRemaining: Float64Array, localUsed: Float64Array,
-    totalRemaining: number): number {
+    totalRemaining: number): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(369);let txCode=0;try{
     if (this.stepOpen === 0 || localRemaining.length !== this.work.cols ||
       localUsed.length !== this.work.cols || !Number.isFinite(totalScale) || totalScale < 0 || totalScale > 1) {
-      return P011_PARTICLE_M2_STEP_FAILED;
+      {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;}
     }
     const budget = this.sink.budget;
     budget.scale = totalScale;
@@ -316,21 +318,21 @@ export class P011ParticleM2FieldBinding {
     const epoch = this.work.stepEpoch;
     const status = applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results);
     if(this.work.diagnosticEnabled)this.authoritativeApplyCalls++;
-    if (status !== 0) { this.rollback(); return P011_PARTICLE_M2_STEP_FAILED; }
-    if (finishStepHot(this.work, epoch) !== 0) { rollbackStepHot(this.work, epoch); this.stepOpen = 0; return P011_PARTICLE_M2_STEP_FAILED; }
+    if (status !== 0) { this.rollback(); {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
+    if (finishStepHot(this.work, epoch) !== 0) { rollbackStepHot(this.work, epoch); this.stepOpen = 0; {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
     localRemaining.set(budget.localRemaining); localUsed.set(budget.localUsed);
-    this.stepOpen = 0; return 0;
-  }
-  rollback(): void {
+    this.stepOpen = 0; {const txRc:number=0;txCode=txRc;return txRc;}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,369,txCode);}}
+  rollback(): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(370);let txCode=0;try{
     if(this.work.poolProgress!==null&&this.dryProgressSpan>=0){
       this.work.poolProgress.endSpan(this.dryProgressSpan,-1);this.dryProgressSpan=-1;}
 
     if (this.work.active !== 0) rollbackStepHot(this.work, this.work.stepEpoch);
     this.stepOpen = 0;
-  }
-  reset(): void {
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,370,txCode);}}
+  reset(): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(371);let txCode=0;try{
     this.rollback(); this.discardCommittedPage(); this.pool.reset();
-  }
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,371,txCode);}}
 }
 
 interface P011ParticleLedgerSnapshot {

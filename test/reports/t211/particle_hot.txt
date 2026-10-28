@@ -1,0 +1,12 @@
+PASS configure allocates fixed capacities and distinct plan buffers
+PASS invalid config rejects before creating a workspace
+PASS begin validates inputs before epoch or field state changes
+PASS step identities copy scalar inputs and keep all buffers stable across steps
+PASS stale epoch rejection has no workspace side effects
+PASS numeric dual collect is deterministic and preserves distinct plan buffers
+PASS request capacity overflow rejects before publishing a valid plan
+PASS S1 all mixed-phase candidates and motions equal cold reference for 64 frozen scenes
+PASS S1 compares lineage and rejects equal NaNs, aliased plans and forged capacities
+PASS S1 exact Q/N boundaries, stale epoch and overflow leave canonical unchanged
+PASS S1 duplicate particle ids and invalid state fail without canonical writes
+{"suite":"run_p011_particle_hot_units","passed":11,"failed":0}

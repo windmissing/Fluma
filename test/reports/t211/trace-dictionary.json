@@ -1,0 +1,2065 @@
+{
+  "revision": "T211_D1_TRACE_DICTIONARY_V1",
+  "cutpoints": [
+    {
+      "id": "SOURCE_IDENTITY",
+      "fileFunction": "WaterSandField.injectGestureSand",
+      "readOrder": "run/mode/input/time/sequence/shape before backup",
+      "onFailure": "original request rejection/receipt, no new pre-audit"
+    },
+    {
+      "id": "SOURCE_CAPACITY_ETA",
+      "fileFunction": "WaterSandField.injectGestureSand",
+      "readOrder": "same R<=8/global scale/eta/audit order",
+      "onFailure": "same retry and source-prefix rollback"
+    },
+    {
+      "id": "BEGIN_HOT",
+      "fileFunction": "P011ParticleHot.beginStepHotBody",
+      "readOrder": "active/backlog/buffer/field scalar/column/token/pool/budget order",
+      "onFailure": "same first predicate/code"
+    },
+    {
+      "id": "COLLECT_HEADER",
+      "fileFunction": "P011ParticleM2Field.collectBirthHeaders",
+      "readOrder": "full original collect validation then overwrite consumed plan fields",
+      "onFailure": "predictor/finite/overflow must execute"
+    },
+    {
+      "id": "COLLECT_AB",
+      "fileFunction": "P011ParticleM2Field.beginCollectBody",
+      "readOrder": "A collect then B collect then compare",
+      "onFailure": "nonalias A/B, original failures"
+    },
+    {
+      "id": "REQUEST_VALIDATE",
+      "fileFunction": "P011ParticleHot.requestIdentityHot",
+      "readOrder": "original row validation/seen order",
+      "onFailure": "duplicate physical-slot behavior preserved"
+    },
+    {
+      "id": "SINK_RESERVE_GUARD",
+      "fileFunction": "P011ParticleM2Sink.applyInto",
+      "readOrder": "capacity/reserve/guard/refund/field stock",
+      "onFailure": "no grant reorder"
+    },
+    {
+      "id": "PATCH_PREPARE",
+      "fileFunction": "P011ParticleHot.preparePatchHot",
+      "readOrder": "binding/grant/old snapshot/row/seed/birth/find",
+      "onFailure": "same invalid code before optimization faults"
+    },
+    {
+      "id": "FIND",
+      "fileFunction": "P011ParticleHot.mergeOldestHot",
+      "readOrder": "current scratch pair then original mergePair",
+      "onFailure": "lexicographic exact current state"
+    },
+    {
+      "id": "PATCH_PUBLISH",
+      "fileFunction": "P011ParticleHot.publishPatchHot",
+      "readOrder": "current token/state/buffer then publish",
+      "onFailure": "same rollback domain"
+    },
+    {
+      "id": "AUDIT_SINK",
+      "fileFunction": "P011ParticleHot.auditParticleHot",
+      "readOrder": "slot fold/column before-after/budget",
+      "onFailure": "logical execute or valid certificate"
+    },
+    {
+      "id": "TICKET_CLOSE_EVENTS",
+      "fileFunction": "P011ParticleM2Sink.applyInto",
+      "readOrder": "audit before close/event append/finishPatch",
+      "onFailure": "same sourceExternal/event lineage order"
+    },
+    {
+      "id": "MOTION_APPLY",
+      "fileFunction": "P011ParticleHot.applyParticlePlanIntoBody",
+      "readOrder": "original motion sequence and ID lookup",
+      "onFailure": "no early invalid-ID normalization"
+    },
+    {
+      "id": "AUDIT_TAIL",
+      "fileFunction": "P011ParticleHot.applyParticlePlanIntoBody",
+      "readOrder": "after pool motion publish",
+      "onFailure": "numeric miss original slot-order fold"
+    },
+    {
+      "id": "AUDIT_FINISH",
+      "fileFunction": "P011ParticleHot.finishStepHotBody",
+      "readOrder": "allClosed before audit/token/finish/seal",
+      "onFailure": "source/seed successful page identity"
+    },
+    {
+      "id": "PREVIEW_RESTORE",
+      "fileFunction": "WaterSandField.previewChannelPlansAt",
+      "readOrder": "same backup/collect/particle/shadow/finally",
+      "onFailure": "no candidate leakage"
+    },
+    {
+      "id": "AUTHORITATIVE",
+      "fileFunction": "WaterSandField.stepWithTiltTrace",
+      "readOrder": "queued-source before backup; original channels/consistency",
+      "onFailure": "source success survives step failure"
+    },
+    {
+      "id": "FIELD_AUDIT",
+      "fileFunction": "WaterSandField.audit",
+      "readOrder": "same ordered field totals/drift/guard",
+      "onFailure": "no T207 numeric changes here"
+    },
+    {
+      "id": "SOURCE_PUBLISH",
+      "fileFunction": "WaterSandField.injectGestureSand",
+      "readOrder": "prepare/commit source receipt then epochs/publication",
+      "onFailure": "ACK never source success"
+    },
+    {
+      "id": "OBSERVE_SEAL",
+      "fileFunction": "WaterSandField.finishNaturalObservation",
+      "readOrder": "original endpoint/peak/ledger per substep",
+      "onFailure": "encoding failure separate after physics success"
+    }
+  ],
+  "functionScopes": [
+    {
+      "file": "WaterSandField.ets",
+      "function": "getMediumMode",
+      "cut": 100,
+      "originalBodySha256": "8d5a3ab422a6bfb0f6ea4b234c707df497c9957241f8c94e300ac94e4499f668",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getDryDiagnostics",
+      "cut": 101,
+      "originalBodySha256": "c6c0b1e2352f6b20125a37938f2066980902d1ab5666f3f3315db85c5efec59a",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "initializeDryParticleDemo",
+      "cut": 102,
+      "originalBodySha256": "66a4f59a98a461b0b2c290364b2e35b7b91d9a6cee6f2284b9a3519519340495",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "injectDryGestureSand",
+      "cut": 103,
+      "originalBodySha256": "18db8fae3804301b3451ed6f51c7137077d04b6e61b093fead8bd5a351ee856e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "publishRenderState",
+      "cut": 104,
+      "originalBodySha256": "9054e5c3bb36575653a0fbdd9e7a194d375158db164ec169e839c159e361232e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalPreviewChannelPlansAt",
+      "cut": 105,
+      "originalBodySha256": "6d0e3424617610931104023942d46681995e6a5476f0fac2ac9efe9ac820abb3",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalSandTopScratch",
+      "cut": 106,
+      "originalBodySha256": "686580d0330f0e58913eb89c4576af1f241773c3419fdc9e7f59ece2d56b6652",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalEffectiveTilt",
+      "cut": 107,
+      "originalBodySha256": "a46d80f7d0fd1e99edbbdb3a055465bf258c589337a90938f16cbc81378e7ef4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalSubstepSandTopBefore",
+      "cut": 108,
+      "originalBodySha256": "bd832781f1275122e4e53b56082cb480ced3d2e9a6e47e3945f281482b11fb19",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalSandTopSnapshot",
+      "cut": 109,
+      "originalBodySha256": "6404f39897d8bbd9e273dfb4cb376ff9e9e65a069dce19ea3714ea55881d06ae",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalPreexistingViolation",
+      "cut": 110,
+      "originalBodySha256": "999222aa0d58638634173d7c8550f5e94905ac976fe11dd113855c02be83473a",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "configure",
+      "cut": 111,
+      "originalBodySha256": "b22a175954413e2475b8a04e2583f0cc437ccdebb767d1a3f1b20519d98e3d28",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "applyThresholdConfigFromParams",
+      "cut": 112,
+      "originalBodySha256": "f7c8bdd1b9432361fabbe8ebc2d4ae9512a813154404044974a4d1c476f6d2e1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "onConfigurationChanged",
+      "cut": 113,
+      "originalBodySha256": "d50e9e05cec7647d5f4e6e18245b4e44f29460e144555d6bf0df59e15f532cb3",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "initialize",
+      "cut": 114,
+      "originalBodySha256": "206e90f56bb73a7702a3f70412c53fd9845d15507363352e83f34b76a48df8ed",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "reset",
+      "cut": 115,
+      "originalBodySha256": "a8f551eb37f563ebfec7083d86176a6b43e7cae4dc2b33f0300d356abd13e736",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "resetInputState",
+      "cut": 116,
+      "originalBodySha256": "74617cd0f0679ab8a2ed251b8024b70079138c7e63c6940d70b2799abe2a0c35",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setTilt",
+      "cut": 117,
+      "originalBodySha256": "7e27703d5ee9ed545f2f5025b7e3d66448c424826bf2c2c08a01404610c85fac",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "beginCommandPhase",
+      "cut": 118,
+      "originalBodySha256": "7366277d6635a1b9c54ee4e2e491a1c8b94410a0d93bb827a1515e1204d01cb2",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setShakeInput",
+      "cut": 119,
+      "originalBodySha256": "0d8b40e6fd7211ecfb287d937eec8ded3294167d5401e3e65c36ae4fbf784d6e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "inject",
+      "cut": 120,
+      "originalBodySha256": "2468670c6805fa801da0bfb669107f4a7daa4aa45dd07eb87282863b14307841",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setExternalAdmissionEventSink",
+      "cut": 121,
+      "originalBodySha256": "aa5dac6f03a63d2991fecd326002b72b6e351be74437b891f7fda952d8d7068c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getExternalAdmissionEvidence",
+      "cut": 122,
+      "originalBodySha256": "79842d2f5ec5d158f448aed15c8373c748f25764d1a56b374704f134dbfcf710",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "clearGestureSandQueue",
+      "cut": 123,
+      "originalBodySha256": "16c21e230361d03cbaf53352fc9484d6dd6577cb159f58d7e1a2398da856eeb4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "stageGestureSand",
+      "cut": 124,
+      "originalBodySha256": "759107f030618c39e436e6ad62543660fe1fb88925726723f5b2864aa839fb52",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "consumePendingGestureSand",
+      "cut": 125,
+      "originalBodySha256": "3172bfe6e4a3b3a4519b000168dd85cdb7b5d2b44cfa6aa8f235bfc064a97872",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setGestureSandEventSink",
+      "cut": 126,
+      "originalBodySha256": "33481a1f6598c605b2b4b4a86cccd2934e777d90b62387344b02711d1bff919b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setShakeLiftEventSink",
+      "cut": 127,
+      "originalBodySha256": "c31663b7b965c89a8712c53a25c86cd03632b0cf194050a8bfc874f5fd059d83",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "injectGestureSand",
+      "cut": 1,
+      "originalBodySha256": "794cc4c8ea36da64a4ed924e353079a66be76984500f7e8e6f62ff2b5c3fab3e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "emitGestureSandReceipt",
+      "cut": 129,
+      "originalBodySha256": "099618423af784b32f5e8332f71c034a8a3859fc45409f6030b7bfd74312d321",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "gestureReceipt",
+      "cut": 130,
+      "originalBodySha256": "f8504c47a3ef0e8faa8d4218fcba98f8387b04c840a60132f64a30af382225b1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "arraySum",
+      "cut": 131,
+      "originalBodySha256": "4abb779237b2968241d4118960e225681458a54a2da7f9440ec93c67ed4ca5fd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "solveInjectionWaterTop",
+      "cut": 132,
+      "originalBodySha256": "54020c58c229f996aa933d7e00d2d2d789034c2fa9ad13081737ee6d57872843",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "gestureInjectionAudit",
+      "cut": 133,
+      "originalBodySha256": "5e8e8e91cc870876bf1fd7f032f51854ded89c8f1920016e68b48e4e37d9fc39",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "invert180",
+      "cut": 134,
+      "originalBodySha256": "70a5cadc3e581b2c435fcf1c6ee10c51a4912480868c87e677f9daa434eea9f8",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setTiltPreviewTraceSink",
+      "cut": 135,
+      "originalBodySha256": "0315ad2ad579f5851d324f4d9bf3ce72166a5c39c266d1e12a0f11d088d3027c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "observeFieldColumnV2",
+      "cut": 136,
+      "originalBodySha256": "4bc241f4356718789e74ca111c5c2d70998c2ce267983edeaf5a62b969f25679",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getLastTiltPreviewTrace",
+      "cut": 137,
+      "originalBodySha256": "b91b8c651437b1e7c4281a253f81fd7ca8b9a5c6894fe6d218eb01c901cb1835",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "diagnosticStateDigest",
+      "cut": 138,
+      "originalBodySha256": "2231d4ceda1aab36592eadb1710621ae7f1ee9a879071cb6fd673a1dfa44095e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "sealSubstepDiagnostic",
+      "cut": 139,
+      "originalBodySha256": "00ee2b1ca056287730a81b3e881b2a1e6d27b2093c40cc8472a7e10f66a8a086",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordCollectFirstFailure",
+      "cut": 140,
+      "originalBodySha256": "8907e21fbfb4c32645db148f44bb840497092a6d092b9cc9557238cb00fe5d4d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setPoolProgressDiagnosticEnabled",
+      "cut": 141,
+      "originalBodySha256": "1f2113efde1520875c1cd29693f13d6f5f13aa94113b1f4ec99771cd25912f3b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "copyParticleStateDiagnostic",
+      "cut": 142,
+      "originalBodySha256": "0509e0d96108b268fa68b1f81f83fc9c9b11752f09c35d041efdccc936b46e45",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "configurePoolProgressDiagnostic",
+      "cut": 143,
+      "originalBodySha256": "4a087ebd06bcd08d1a9c494214d94d8435384c069e3c041bb37970feef4ba485",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "updatePoolProgressContext",
+      "cut": 144,
+      "originalBodySha256": "6a6c9632a70289b7a34f3aa15e72c983be750e3ad81c460d2a456e5c01209b46",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getPoolProgressDiagnostic",
+      "cut": 145,
+      "originalBodySha256": "c34593e35fe7d247c7c7c622372da1eafb55e45ed298d31bd279f9fe5094b483",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getParticleEventTail",
+      "cut": 146,
+      "originalBodySha256": "5be82f4b18dff90de015b811d5375ffb9136b6de6f3de377a87b05119f7422ef",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "step",
+      "cut": 147,
+      "originalBodySha256": "a040ab75049a39261d1a2854d2219eaaa4a692ffe12341ff6fbcdcc79fa1ac04",
+      "statusMeasured": true
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "stepDiagnosticBody",
+      "cut": 148,
+      "originalBodySha256": "2e5dfb1194001318d2c1ac9a61d0cf33179f0d73139aa85abce3b9f58e4b9c2b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "stepWithTiltTrace",
+      "cut": 17,
+      "originalBodySha256": "388f9e7f29fd786ca1fba94e57458c760be4e720366a8289f8fe3476ae420f11",
+      "statusMeasured": true
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getTotals",
+      "cut": 150,
+      "originalBodySha256": "6c2fc5fb89335b5993cee7ff8a1c0f1d28f9a09f5bbf69cc3bcb0af56b1dbe3d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "updatePhaseShapeTelemetry",
+      "cut": 151,
+      "originalBodySha256": "97484037d78631dcbb067fa26b5d478bb24b26ec2004bb24be0cd5a0515f4fec",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getP011Metric",
+      "cut": 152,
+      "originalBodySha256": "4c9c15f364add6195a0ab3f8c23788c869697caffc81569d54982f35a49e9699",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getP011Bottom",
+      "cut": 153,
+      "originalBodySha256": "7eb6abd39cb27f74be6f5749b7619daa1f7cb59177a2da77cf2f8076819bd56e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getP011RunId",
+      "cut": 154,
+      "originalBodySha256": "2439a69d62a713265feee6610987f67967ce4bea76317807e1805449a9823e76",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setEndpointSampling",
+      "cut": 155,
+      "originalBodySha256": "001c063b40b4a6c3015319e2e13d4fcbba8d78781c0697cd9bf67e1adfcf3637",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getPeakShakeInputEvents",
+      "cut": 156,
+      "originalBodySha256": "60116769b3a04f6d4dddab14aca8d43bc81b6ffd65466c25e3548beff343a883",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getPeakSummary",
+      "cut": 157,
+      "originalBodySha256": "f694f14305cb5e13619c924290159576f899a3f02f86d7c05107ff7b0f361cd3",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordPeakCommit",
+      "cut": 158,
+      "originalBodySha256": "16fb2d46d6c16299cd61ce56222714f35acab82043ba56f1e009dc32c12c6515",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setEndpointPhaseIdentity",
+      "cut": 159,
+      "originalBodySha256": "0074fac9325eec60ec6104e86f70f7139bdffbe76f226f39eca46cb567d6a826",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getShakeInput",
+      "cut": 160,
+      "originalBodySha256": "b73f9678f766baf4482ebb869cd91af4c795b797510d0c57ecaef3c5c837df0f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "endpointCurrentPhaseIdentity",
+      "cut": 161,
+      "originalBodySha256": "7e63c2eb7056e66ed53bb070cfd4bccb33b0f7714fbf6ce2b56f274655bbcaa6",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "bindEndpointOccurrence",
+      "cut": 162,
+      "originalBodySha256": "9ad8961c2032be03b212ef73cc8282a084fa42aacf27bcd322c697b735d23666",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setEndpointParticlePool",
+      "cut": 163,
+      "originalBodySha256": "708513b2ea0db054898b45ab9d2094b06540b37cda619dc931a0f0ddddc9f9ab",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setEndpointParticleEvents",
+      "cut": 164,
+      "originalBodySha256": "f5a819b373b40c476343b90cad979e00e6da25fde6d03c5b964472d74c2413fd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setEndpointCaptureMode",
+      "cut": 165,
+      "originalBodySha256": "1192233e42f224eb9a681388a9d4a2d8961aabb0106d80c1e9502c1d61db066a",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordEndpointCommit",
+      "cut": 166,
+      "originalBodySha256": "cfefdb246287da7bec66356120c11b97b1b88e1881a3fbf5a15529565c8d46e4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setNaturalObservationProbe",
+      "cut": 167,
+      "originalBodySha256": "338dd6116c14e9aaa0610ac8237aee7f32c1fe081961754522901e05324132cd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setNaturalObservationRunMetadata",
+      "cut": 168,
+      "originalBodySha256": "079fd7f8b53adbb287fc7c8489ea4b5ac1f06f1359eecea014457a02bdee95a4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "naturalObservationThresholdMismatch",
+      "cut": 169,
+      "originalBodySha256": "49aa1a43edb2083022be2372c260489dcbea2d91e34232da6337b7326b138ea1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "applyProtocolThresholdPair",
+      "cut": 170,
+      "originalBodySha256": "c92cc8610a7bc81eea86db49336b81ee475ed9f4547f76dca76c6e7d7d5179d3",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "currentParamsCopy",
+      "cut": 171,
+      "originalBodySha256": "ed6ead49865b71159a59a09c611af952a295f4ca63594c37110a08f768919db8",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getConfigRevision",
+      "cut": 172,
+      "originalBodySha256": "762d655fcb38666c71ee09321e0deff0dc503b871faf46b288a0bcfb973f03aa",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getActiveThresholdConfig",
+      "cut": 173,
+      "originalBodySha256": "e55d1a66c082b8b8de14745429757a2874badf28b53defe1c6132e4daf37e3f1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getConfigurationResetCount",
+      "cut": 174,
+      "originalBodySha256": "0b772d1408becee2a6cbcf23403580377d4909d79aa966338746116acce6aa89",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setNaturalObservationExecutionIdentity",
+      "cut": 175,
+      "originalBodySha256": "2585a38b6a79ed843248776421e855ade01ae66a4f0803a37aff61e69feeebbf",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setP011CurrentCommandSegment",
+      "cut": 176,
+      "originalBodySha256": "904df90b9616e02ba2f9512d2f2dde6d921e32d3e6c9f7d3a2643999dc98293a",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setP011ScheduleDrift",
+      "cut": 177,
+      "originalBodySha256": "78a69403692e5688714d4276295e8e4af70b43d23da34266908d3ffccf8d2565",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "relaxHysteresisEnabled",
+      "cut": 178,
+      "originalBodySha256": "c37c581c77eab4351456ae3f0617939ac807ea094bbfbc5862abe34322b3bdd9",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "executedThresholdsForLedger",
+      "cut": 179,
+      "originalBodySha256": "d526dc76f9b894fdf81345b3e88dbd7d01148b8bd7bc389d0f598f425ed7a57c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setNaturalObservationScheduleId",
+      "cut": 180,
+      "originalBodySha256": "6d65dd1704f29e0e5927c96fd8d49f2a255e68e7a20bfe9c9326298f0f5afe54",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setNaturalObservationRouteId",
+      "cut": 181,
+      "originalBodySha256": "8c69973123721784d62ab317e888ac4a7147c59f033c21bf8595140f1ab945b6",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "particleRouteResult",
+      "cut": 182,
+      "originalBodySha256": "5026a75f3fe4622a020fe9909cf82e986406d7c88368161b255ee77c300d2e61",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setParticleRoute",
+      "cut": 183,
+      "originalBodySha256": "255e281fcb0121537cc15d66042e5c661b75854bdd85a3044a29eef8d218a0cd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "particleRouteActive",
+      "cut": 184,
+      "originalBodySha256": "fd3fd0a92243acfebafb40e830659da0125111b851aa7f7660b93cae6d281f69",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setCorrectionVariant",
+      "cut": 185,
+      "originalBodySha256": "f2451d66c10ebdde8e77bf660e1e3bed73c70942b3ffbad2307c618196984cec",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getCorrectionVariant",
+      "cut": 186,
+      "originalBodySha256": "7bef285195904aaee1bb97d2b12ef824e1e2107b663aab9695563dfdc5532e04",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "deepCreepRouteActive",
+      "cut": 187,
+      "originalBodySha256": "70815be41b0638b0e6c7f3e72c00d126d449fe69becd3324b01d1e0820b9c5b7",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setDeepCreepParams",
+      "cut": 188,
+      "originalBodySha256": "b08ef012e8a45cb6c0360062b21d890f59ab275aa332ce0269182be1563f7bad",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getDeepCreepParams",
+      "cut": 189,
+      "originalBodySha256": "cf3980aa7bbfc79c01a18438d3f0caa56094f0b489704b512770d56f3c1decfa",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "moistureRouteActive",
+      "cut": 190,
+      "originalBodySha256": "4bf2862ebae5dcd67a311601ede3463f8fa1df064dbeb36e7cb8bc2b5e1fd1b7",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setMoistureParams",
+      "cut": 191,
+      "originalBodySha256": "00dc76bff0cb4d69ac6c5213860bbfd8e697fa459f8ceb02245d56a182baf240",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getMoistureParams",
+      "cut": 192,
+      "originalBodySha256": "bcf929f67d5430a75cafa4f9bef42eadbeede62059e4a027f3635bbdcec4af8b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "buildAdvectionLedgerBlock",
+      "cut": 193,
+      "originalBodySha256": "4846aca359521416e0c5b0d021fc84c6ed797ef7531180104c14e0db8c69ab82",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "buildMoistureLedgerBlock",
+      "cut": 194,
+      "originalBodySha256": "c203467e45ea8b5d6b4ad2f6b727c207ecf9f4b30b218c52d5a98d9212f146cf",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "refreshMoisture",
+      "cut": 195,
+      "originalBodySha256": "511dbaddba2a9b13fb32d15043cae03c77c37b16a03e9999203bfb5f9938466f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "edgeSurfaceSaturation",
+      "cut": 196,
+      "originalBodySha256": "919b8bbb1921adcc33cfb400290a236e25b42398fd84e01e34110f10393c6a7d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "addWater",
+      "cut": 197,
+      "originalBodySha256": "4783446d93813d8f5337233798133753fc2619721371de17db04d29db9a23ea1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "drainWater",
+      "cut": 198,
+      "originalBodySha256": "7fff3f4c570883f9526acc0459f68d33b60d49f918578bba55be0a4cb1461598",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "waterTransaction",
+      "cut": 199,
+      "originalBodySha256": "b66a9a0a4c8a624e8012ad8cb0b5ca06093ff5fa1a6e2cbe0a6dd1a6364bb92c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getWaterTransactionNet",
+      "cut": 200,
+      "originalBodySha256": "1e9dd25926a3e74c83e43c1f4becfa2bab5ff69d731e19c929db364a31b66bf8",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getEdgeThetaPair",
+      "cut": 201,
+      "originalBodySha256": "cfd39a0103b261d9b542b4bd09bf6f181bbab2ae2e486fd885d32747b0e53674",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "advectionRouteActive",
+      "cut": 202,
+      "originalBodySha256": "bb4b752f3bdada81dc0c3c003f448d85854a64477497ccd7ca736c71d759ae71",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "setAdvectionParams",
+      "cut": 203,
+      "originalBodySha256": "debbfe64634a0aee21229379b3af0fc60e997dfd31e3e0929659eeac67e46eb0",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getAdvectionParams",
+      "cut": 204,
+      "originalBodySha256": "a6f07a34126ec246e43841b047d04b9fe9dfea9a28e90aee48847e9d9c79c52c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getAdvectionFluxes",
+      "cut": 205,
+      "originalBodySha256": "2ba7ea61dcd8f0fbcb4834f170eae1d3ac0d0b8701bdd21c151b92cfad8dceb8",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "computeAdvectionMoments",
+      "cut": 206,
+      "originalBodySha256": "00a2e665381d3f9154722a58b5f80971ec093d20312dce943c997c68f59400a8",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "advectionEndOfSubstep",
+      "cut": 207,
+      "originalBodySha256": "a9b16672474ca536982e6f14dd8cb2c7abdf8ffceaed2fed784d53273f133513",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "advectionSlot",
+      "cut": 208,
+      "originalBodySha256": "0b61587f412aa659eddec44a7e1bd864a764b21bbf4b12e99d06227561034afb",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "shakeSourceRouteActive",
+      "cut": 209,
+      "originalBodySha256": "e847a98318b6980ce20832cc3900d466e88bf52b1aa1afe1524ff8dcc17ae55d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "moveShakeSourceLineage",
+      "cut": 210,
+      "originalBodySha256": "13fa88223a8ee49c293ea0d511089454bfc15cd7fbadf744dcd5a3f94c565bc9",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordAdvectionNote",
+      "cut": 211,
+      "originalBodySha256": "6b20e75b24f66515c5420124d5b692c99df14f8b68d8f43a415638b36146883f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "deepCreepHasDrive",
+      "cut": 212,
+      "originalBodySha256": "35078c0e9591390e9a0223f5e7517d5aab3852db0836d125c129f354135a6363",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getDeepCreepAttribution",
+      "cut": 213,
+      "originalBodySha256": "9526685ac38f2772fd4b6957e27b1dbb9f4f1f7ff772bcba519b26de7b83c9dd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getNaturalObservationRouteId",
+      "cut": 214,
+      "originalBodySha256": "9e4152511a502b7d89186e855cbe7148ec753a1a2b02ada788f685cf7b083cb1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "correctionRouteActive",
+      "cut": 215,
+      "originalBodySha256": "1cd6efaf1d4b652dbdd74102f8452e3bae4b40082692f1dfe4f60982c83da93d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getNaturalObservationScheduleId",
+      "cut": 216,
+      "originalBodySha256": "65fd2593436302344a2954c7d7b7d5776bc57e06a975777671e3924a2133fac6",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "naturalObservationState",
+      "cut": 217,
+      "originalBodySha256": "c8736c0234bc623269b89e735790192fe6571afc7c40d76fc1f5d4fe16735314",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "beginNaturalObservation",
+      "cut": 218,
+      "originalBodySha256": "363331c59ad639ba568879a14ac32fc5db6c3aa6db9107d1faad6edb24298d60",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "naturalObservationBudgets",
+      "cut": 219,
+      "originalBodySha256": "424a9da7300a185fb7c35b54d67c239f55b70971cbd52f17087ce6fbcfb5535b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "finishNaturalObservation",
+      "cut": 20,
+      "originalBodySha256": "12984e9d9191f0a4527f604d048f7e1bd7f078b46b45bfdd1c45941ac2e2295e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "nextP011InputSequence",
+      "cut": 221,
+      "originalBodySha256": "3ddd23f43c78a16fcd10bd4b999c09f305f20a28f4dad6815368cc5edf3a323c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "emitP011NoopTelemetry",
+      "cut": 222,
+      "originalBodySha256": "308b8baafcaf0044c2fa429fad05b4f618ff088d79cb36d1403b07c00b9d66f7",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getDrift",
+      "cut": 223,
+      "originalBodySha256": "4bb330af6108ad11bc8ce13026c8e1f7f69c8632936e21dae04d7936922596be",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getMetrics",
+      "cut": 224,
+      "originalBodySha256": "90a6667e595e7f288bbfce7dcc4223e24c71e72443e92b3fcff3f13d3b4b5855",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "snapshot",
+      "cut": 225,
+      "originalBodySha256": "526c5167435cdb09bdb842916f25ab17232c2eae529faa0c985bfe618396edb6",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getRenderPhysicsCommitId",
+      "cut": 226,
+      "originalBodySha256": "9608ccdf76ffba5e09488b1387ddd28ea34e4e0e51e2ccdf82900cd2e0b4767e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "createPublishedRenderStateSlot",
+      "cut": 227,
+      "originalBodySha256": "a4b2c67d2d01f9e0ae871e32d24b7200d6624cad5c463fa857559e58ef78a8c3",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "copyPublishedRenderStateInto",
+      "cut": 228,
+      "originalBodySha256": "4fd21a3826f437b77ca34f62d157596ef73af319546ba219710707dab9fc9891",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "copyPublishedSceneStateInto",
+      "cut": 229,
+      "originalBodySha256": "a1d035c88a0295b480ec9b46198f215978fa39c1a39b10d9394cbafc9634bb24",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "particleRenderCapacity",
+      "cut": 230,
+      "originalBodySha256": "d960a006f046590487119bba4dcfb3d02711e9203bb41a71f175cf99a092e24c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "copyParticleRenderSnapshot",
+      "cut": 231,
+      "originalBodySha256": "8e77b0f548e4dca6d3d3461afe62b0217f4b0523260617e56df55cbce48e05d7",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "copyStateTo",
+      "cut": 232,
+      "originalBodySha256": "c63cd8b2dfcfa336e03660a0ce6d9401794b93bbbfefec0b2f45bcdc1c86a415",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "restoreFromSnapshot",
+      "cut": 233,
+      "originalBodySha256": "ad106c2f228bfc917134f435180fac07cb476b0c6f56d00954fbce049ec6343e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "validateDrySnapshot",
+      "cut": 234,
+      "originalBodySha256": "6a313a04b2eb4fbb14abeda7016cd64228cad0eb07e909158f6deee56630ea84",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getLastError",
+      "cut": 235,
+      "originalBodySha256": "9fed86dbea0d4504637af658cb5e89fb33cafc33d261a46dbb67546d9fe179d0",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "beginSubstepMotionBudget",
+      "cut": 236,
+      "originalBodySha256": "d2820b0133ab6b539bf3ae6fd221f3b42498070d15d761c7e028e5902fc6c06d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "beginMotionApplication",
+      "cut": 237,
+      "originalBodySha256": "3824898caee1e1e0fd5ebaaa11fb862baeed874b0883a867f42ff2eef23276bc",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "saveMotionSnapshot",
+      "cut": 238,
+      "originalBodySha256": "da9f1a6f9d4ef1d9b67dfcb80d8b4cc1aacde8e2b260e57858295f635b93c92e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "restoreMotionSnapshot",
+      "cut": 239,
+      "originalBodySha256": "f779c24c35f854e9665e4e13bcdf67cd38c5f9a02a5fef50b722d4a2dba2730d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalParticleReserve",
+      "cut": 240,
+      "originalBodySha256": "9644f780c80c6f2115c5417904f7a29197c591224eb1c1c2e7300c44508ddfa5",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalParticleRefund",
+      "cut": 241,
+      "originalBodySha256": "e7c850783170130037636497ab4c1ab8c27455f1a711092497930a983f91cbf7",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalParticleRestoreBudget",
+      "cut": 242,
+      "originalBodySha256": "3ad5cbad0d07da79ef6d8d29ce4d538e3cc0102baf634d97feedac4fef6499a9",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "internalParticleGuard",
+      "cut": 243,
+      "originalBodySha256": "4ad53d06638602c3ace71d980f8bba1153941532b42a8bf0e9164f61e3e7a6f4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "flushParticleGuardEvidence",
+      "cut": 244,
+      "originalBodySha256": "273df6bcdaad44c9b0efdfc7bfead174060c1306fafe61b20a2ee8bf63a6802f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "clipSubstepMotion",
+      "cut": 245,
+      "originalBodySha256": "76a617428306bcb8209efa986bd9e3933b9ed4e7d831a8360ac1623035318add",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "clipTotalMotion",
+      "cut": 246,
+      "originalBodySha256": "6e06fcd269298e6b8593f9c1e180ae70899b9cf3fdb07449050f028bface2af0",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "clipBottomCreepMotion",
+      "cut": 247,
+      "originalBodySha256": "fd6308fca4edb9de54b10e308ef2e3dd214ed2f9c82cf40a63a1d640c9ec088c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "markSubstepBudgetClipped",
+      "cut": 248,
+      "originalBodySha256": "e33962d77defe7f394cdd4b2febd29900846ad35c1827710f9b316ac9a59dcae",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "substep",
+      "cut": 249,
+      "originalBodySha256": "ea2dde35e771de7ec6b6e333db6d05ca50879ff84312788f12c6f528f0c55f7b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "applyMotionChannels",
+      "cut": 250,
+      "originalBodySha256": "663310fd1da535ced716cf1bd864b38fdc3d8df83c95b52b34fba05570d7e802",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "computeCorrectionReservation",
+      "cut": 251,
+      "originalBodySha256": "d6a51ee21b1f6a493db91102e50332f03f5d8dbe9a58eaf2bf7db06a2d734cdb",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "correctionStockView",
+      "cut": 252,
+      "originalBodySha256": "76f09f61691838a51ad0e6fad5737ead28291012d0528cd927807207186c86e2",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "applyCorrectionSlot",
+      "cut": 253,
+      "originalBodySha256": "ca2ae5cb8e90ee34141b60948c6a79428cc3b75550aeeb95e34d83ff5aca2326",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "updateTilt",
+      "cut": 254,
+      "originalBodySha256": "b82dcd07806a641b27ecc8b0bab27296de41d864c23c9e065cae378afbe46825",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "materialGuardHardMax",
+      "cut": 255,
+      "originalBodySha256": "aae400adc98519f1429b8da64f3adaeed320f0b5fdd03d2a5f799efbb3921483",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "materialGuardResidual",
+      "cut": 256,
+      "originalBodySha256": "f28a7903a26215693903db5c5efe062bb67a7108b717ee491b5808949949f4e5",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "materialGuardAdmitIncrement",
+      "cut": 257,
+      "originalBodySha256": "1ff5836f0e90c86fdce745cab75e755f8c1923a3652a833b82e174a9c2d80241",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordMaterialGuardEvidence",
+      "cut": 258,
+      "originalBodySha256": "17f11c2aa66be3b667fe01f4006ffa51d12b69b2bc1738e7c835ed2e084a0afe",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "applyDeepCreep",
+      "cut": 259,
+      "originalBodySha256": "12c3b31d8681033d286d4b7d5de3d580aa74a11dc84e2908bdb58e129a0b6ef5",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordDeepCreep",
+      "cut": 260,
+      "originalBodySha256": "5a0fe9322d7ba880f867f53947f95b57a7c6756ff5126ce9828edea0bb7e57ef",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "materialGuardRefund",
+      "cut": 261,
+      "originalBodySha256": "600e0ba3f4885b6e4a698d6ba0b952de1725de3bcf6b6ffee612df0b3cd4557e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "savePlanningScalars",
+      "cut": 262,
+      "originalBodySha256": "730d31f64276c1078800bf4162f5377332b9ead4c744a88d4177e9f0145665d7",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "restorePlanningScalars",
+      "cut": 263,
+      "originalBodySha256": "3fa4ef0bf6dd2c0dd73f322a67c3373db7494f303a30ec8418e07bafc9e370ca",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "previewChannelPlansAt",
+      "cut": 16,
+      "originalBodySha256": "083f40aec5ca48ddafdca4faffef28334565ae2848a2bc0366553fc24fffd3ea",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "allocatePreviewPlans",
+      "cut": 265,
+      "originalBodySha256": "90001a3326dc8327c0fcf173a92c2534c62b882796ab6613c05a7bb2f1a8f465",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "planAndCommitTilt",
+      "cut": 266,
+      "originalBodySha256": "4e0a8cd22b6cc7f086124c3689c1a0ca214bfb0a0cff022af55a3bf45ab1ab3e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "verifyPreviewCommitConsistency",
+      "cut": 267,
+      "originalBodySha256": "b9580c2b918786e59446a178419ee1d16daf7a658c89204f8103ff44db1d519f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getPlanningTelemetry",
+      "cut": 268,
+      "originalBodySha256": "19b2425079482c092e8bbcf632e6f883042bb782df1aa2641203a8a09efc2505",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "waterLevel",
+      "cut": 269,
+      "originalBodySha256": "52c414fb093e677ebf4f29883f2eef76b90f7362c484f9d6c3b3e4d115c47964",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "diffuseSuspension",
+      "cut": 270,
+      "originalBodySha256": "3030ff90c4e997b4c0fe4202de0f58367a4181a92d10ef5cb531d293fe418559",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "suspensionCapacity",
+      "cut": 271,
+      "originalBodySha256": "a00bfad972e57c85bb351c2245129587914119a3781374c0e5f47ff3a9fb35f3",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordNaturalSuspensionDiffusion",
+      "cut": 272,
+      "originalBodySha256": "35f044223d3e43ef49ea013af0f122e90ae1b1f1849fa9c99f543894c7b9e811",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordNaturalRelaxSummary",
+      "cut": 273,
+      "originalBodySha256": "c15d209109452674488393d93afa7fcb1754f80eef71822f67c539f15bbb5fcf",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordRelaxDecision",
+      "cut": 274,
+      "originalBodySha256": "2ada6efd4c129dd268d600f533ac2576708c049dd4e03782bd62d702f44c8771",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordNaturalRelaxInactiveEdges",
+      "cut": 275,
+      "originalBodySha256": "cd02a1e63a9beb7e36bfd5c09e07b3f8471529bc364ad0c000a33deb3eacfe79",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "recordNaturalTopSplit",
+      "cut": 276,
+      "originalBodySha256": "4359bee9a7220457a8bad5340d5de34c50e22e2dd54051bcf26fe4b54e461757",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "settleSandV2",
+      "cut": 277,
+      "originalBodySha256": "c202ccce4ef8f49bdb9a07db386daf101da7e98630cd90076c699cd4cb913573",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "percolateHeavyConservative",
+      "cut": 278,
+      "originalBodySha256": "1684482c70773045abc8b70e9248bf11d77ad7208ea97c7b0942e52b0b55eaa4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "relaxAngle",
+      "cut": 279,
+      "originalBodySha256": "7af7c92ec361734955267ed90c0dacecdd27c2415c85b50ec96ef309996ac4df",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "creepBottom",
+      "cut": 280,
+      "originalBodySha256": "c3df60c1c70202bc946573db77af287554ac44c46a4a568bacf282737d3c843c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "creepBottomRequests",
+      "cut": 281,
+      "originalBodySha256": "991785c15f97b473e2197d04298fa87ca70b67aff062ee7a96e0eec91b56308a",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "dryLiftSlots",
+      "cut": 282,
+      "originalBodySha256": "816e79cf4ebbab14a0823e9582b52f40db2ceee490bd780a1ee75fab3c0056e1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "liftByShake",
+      "cut": 283,
+      "originalBodySha256": "9af735f2c425d5d7bb031668ba2d41746e258206f8a23c12a19d689635301ca1",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "splitTopV2",
+      "cut": 284,
+      "originalBodySha256": "1d9172fe3048953cf113b39a1657436479310909bce593ca546ae3703c9ade4e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "splitBottom",
+      "cut": 285,
+      "originalBodySha256": "7970079fafe7cd934028585e87b0b6934535a8db833aabde126655af331ec59f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "splitBottomPhaseBalanced",
+      "cut": 286,
+      "originalBodySha256": "20a45b4e048599fa6cc686e8e3090a89cf1bf2654c9d54559adab3f69540cf70",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "computeSeparationProfile",
+      "cut": 287,
+      "originalBodySha256": "9fd7581c2776a75b6620e2e69b10cd4b9b22baf74ada761881a991d4530ccdcd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "mixedOverlap",
+      "cut": 288,
+      "originalBodySha256": "60bff773827c4dceff008e7d1c2bef3b7861703b2e4c1e1b69e57da0846d0b09",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "updateMetrics",
+      "cut": 289,
+      "originalBodySha256": "55047a94bf8008c79785154bd2d9a6042376f40edc73133c059d34f457da4e9c",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "audit",
+      "cut": 18,
+      "originalBodySha256": "bfb519aa94210ce82444b11bec298eb11189ea4bf558b1f2504be7a1dd56f771",
+      "statusMeasured": true
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "dryReceiverCapacity",
+      "cut": 291,
+      "originalBodySha256": "e4ad032bbc7db4483f2dd60af6149fff97e0cb18f215e05e9fd19e4e59a5bc35",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "getWaterVolume",
+      "cut": 292,
+      "originalBodySha256": "7c9fdd3619c55b930ba0fb620670ebf1e040d2562d1032dab06ade3f3b961d7b",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "maxSlopeDeg",
+      "cut": 293,
+      "originalBodySha256": "97d98652a75d305c6babee43148c14731de486ebe349a98328037f20f2b95142",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "maxCurvature",
+      "cut": 294,
+      "originalBodySha256": "829e9e293e81c10b4e6927f29010b709b13275d14adcfd576d40f349efb8494e",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "waterSlopeDeg",
+      "cut": 295,
+      "originalBodySha256": "48384478ed0e0677ecf6bf7d4173969490ad31bca16ffa43c1e9e0c0cbafd7c4",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "waterAmplitude",
+      "cut": 296,
+      "originalBodySha256": "f40f96482b4c3f627ec15ac75fc0955202d42774bf75543b26a7805f4cf22885",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "updateSandTop",
+      "cut": 297,
+      "originalBodySha256": "6970d9de32d17c7c246480f51d8c353fd68396fc2b1cae87aa00673a9d31055f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "validateScene",
+      "cut": 298,
+      "originalBodySha256": "d3fecbab73e13d44a3e65c44b2bdf5333bbf691d7acd7cafbc5ba46b895fb72d",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "fillRegions",
+      "cut": 299,
+      "originalBodySha256": "beed650516c5ea43220857936cdee51d1d6339c8d42fbb3ed532c5a9392d0140",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "defaultScene",
+      "cut": 300,
+      "originalBodySha256": "1090c32bf25d26a13ef445efcdca28a5ee3bdebe7aa7e5e890a109582ce6a365",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "createEmptySnapshot",
+      "cut": 301,
+      "originalBodySha256": "81f4d158160db653107da9b4d2190a27903798e63388e5dc6e5e1512601ce7bd",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "saveBackup",
+      "cut": 302,
+      "originalBodySha256": "1ad83ac720c490ffd3f4c525584daaa0d48a266df17cfe57426657a0a16c453f",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "restoreBackup",
+      "cut": 303,
+      "originalBodySha256": "f3232c1de1093f7589573272cfa8cfd21a07868d3fefd58f2674da50ff0f2825",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "changedSinceBackup",
+      "cut": 304,
+      "originalBodySha256": "a93aced1d53041a15e61af22e142782a7fa00575afee74eaf822ea7169cd2029",
+      "statusMeasured": false
+    },
+    {
+      "file": "WaterSandField.ets",
+      "function": "firstInvalidColumn",
+      "cut": 305,
+      "originalBodySha256": "011a872f7418cfbbc9c06841e3eda1a320d80383db06c3c4b69791097212a00a",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "fieldStorageValidHot",
+      "cut": 306,
+      "originalBodySha256": "bbfff48fd57d7c1e85f56f8e9b70b1a91461b60eab30a7f8e96fa1fae8487268",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "warmUpHot",
+      "cut": 307,
+      "originalBodySha256": "33bbc4827b142f86305559ca94eb611e62f2076f45142c5736307173c68015f0",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "beginStepHotBody",
+      "cut": 3,
+      "originalBodySha256": "fd32402239470dd1603bfe4e33420fb4271d8ffe36fe01abe33058b0b5c6cce2",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "checkpointHot",
+      "cut": 309,
+      "originalBodySha256": "e7275ca69eea644f0ec140beeac284ac2fc606dfa871a60e892cf7dfeb915321",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "rollbackStepHot",
+      "cut": 310,
+      "originalBodySha256": "8aa993175f0185dd84eb6318afd05166e2cb536172f9231a4b6634f1ef3eb982",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "finishStepHotBody",
+      "cut": 15,
+      "originalBodySha256": "b3028bc164777ccadeb19ff3339f1c090fd25c7cec4e0a9d5c8f528b263bd7c7",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "sealEvidenceHot",
+      "cut": 312,
+      "originalBodySha256": "a4a47d769901a80c947f23b5e269ef506437fe307d934e625c56eace934b5a6e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "sortActive",
+      "cut": 313,
+      "originalBodySha256": "ffa3a8fdf023afacc4b5851f471855c5698518daa5e8180b916c21a72b88d340",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "sortOrderHot",
+      "cut": 314,
+      "originalBodySha256": "733811964e3583e3dfed93774ae949b81eb139779eb53201997321b5385a6b8c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "collectParticlePlanIntoBody",
+      "cut": 315,
+      "originalBodySha256": "fed979905014e6863b91d2342d454b9f48166c403b72ac4398b5d5dae33a1711",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "sandHot",
+      "cut": 316,
+      "originalBodySha256": "67a0029ed799d4eec838fd41efda9642b0f39196a9a101156f79b48ae801e92f",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "rememberRequestHot",
+      "cut": 317,
+      "originalBodySha256": "0b3b707c94db3d8e86a9bb43df7d911bcaa6f8898b82a10b4c072ebf1257a965",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "requestIdentityHot",
+      "cut": 6,
+      "originalBodySha256": "98562c81a2f5a7d458b96c1bdd0f31984021da01bbd4457a0c7400bbafd1b96e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "validateParticleHotRequest",
+      "cut": 319,
+      "originalBodySha256": "50d6aea9d800cf4ba7541157500b5131120552d65980d4d4cb4ac5b170695551",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "actionCommonHot",
+      "cut": 320,
+      "originalBodySha256": "03d19ec96512d250f7f6791ae133dcc0e05c820ffcab3ce7a3159491e7f6365c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "mergePairHot",
+      "cut": 321,
+      "originalBodySha256": "dc8637ea461623d53d7fc6452eb152dec4513fb8084c3d9f1cbdfd973b96356e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "mergeOldestHot",
+      "cut": 9,
+      "originalBodySha256": "1bb06b6c73b946666717485101a6811a650aaa01149ab307e85f3b8708fff45c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "preparePatchHot",
+      "cut": 8,
+      "originalBodySha256": "88529b6799519443f978e3e6ac7479364a689d587335119be2b3e476f9f559fd",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "patchLeaseHot",
+      "cut": 324,
+      "originalBodySha256": "9f402be06b744bbb454b0f9ff6c4617e55b4b72630a3b509ac406d6dda680525",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "clearPatchHot",
+      "cut": 325,
+      "originalBodySha256": "ec1140622a19b3fda15f1af5584e99993b1bd65a60704bdbfb2c9a7f296c4c0c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "publishPatchHot",
+      "cut": 10,
+      "originalBodySha256": "ed884fd95c8f2418e6bcda0df4edc2ecc801b5afdbdb47af585ef096717caf66",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "restorePatchHot",
+      "cut": 327,
+      "originalBodySha256": "dcdab308ae21e6d113a753114b7c5005236e009df9bc89e85ecd15a6a79c137e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "discardPatchHot",
+      "cut": 328,
+      "originalBodySha256": "335a2d0aae8685ca71cd8a8493eb15acf4222a8cc21291c372a322ee79401ecc",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "finishPatchHot",
+      "cut": 329,
+      "originalBodySha256": "c051c49e29c8c7419935bd8ef9731968b1328824880d6305b2cc06934ab8f9b2",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "auditParticleHot",
+      "cut": 11,
+      "originalBodySha256": "51d4ada3316fb8bb34b51e9048c523853af5321dd2995d2697c1dea878cbb071",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "auditParticleHotBody",
+      "cut": 331,
+      "originalBodySha256": "a1b077b73ae44d31d54c031563b6d760df8be08665b955971cd6025764df17a8",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "failApplyHot",
+      "cut": 332,
+      "originalBodySha256": "a2a04a8faaade14a2e9c93258ea9417f87be51c0441a8fd4c1f8971580f3afdd",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "applyParticlePlanIntoBody",
+      "cut": 13,
+      "originalBodySha256": "759fd62658c0bca6348a9fc36a030823eed9b4ae1c24ec675bd96525b40064ec",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "beginStepHot",
+      "cut": 334,
+      "originalBodySha256": "e309ba2cbb7eb02eead41afd347472714fec4ee6a2d14eb7c50611d2ccb971a3",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "collectParticlePlanInto",
+      "cut": 335,
+      "originalBodySha256": "17ace03db2e32907df570c4501cb1b77d2310253405615603aac386fbb0dce32",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "finishStepHot",
+      "cut": 336,
+      "originalBodySha256": "d13281bef8dfb08834212f35759a696463d3ab4d175a9df8419cd1a945f7542f",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "copyPoolDiagnosticHot",
+      "cut": 337,
+      "originalBodySha256": "5f0806dc5eb2f615d5f43ab8d211793ffc3a89d14bbaf5e926b5273bf05c955a",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHot.ets",
+      "function": "applyParticlePlanInto",
+      "cut": 338,
+      "originalBodySha256": "1c99bdd3a84f368c78727906484b51c46a52d2643bc38382efb3caf27e5cde79",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "enableTxTickets",
+      "cut": 339,
+      "originalBodySha256": "63e0710eed4f4164349fb6cc34e96d612527deb1a4cdf6446d00670f042c00d2",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "beginHot",
+      "cut": 340,
+      "originalBodySha256": "76c936b5681e903fca52d3ca360250f560d06124a36fb20799ce9272daaeffe3",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "rollbackHot",
+      "cut": 341,
+      "originalBodySha256": "ca638281550a0c1b63b9f89d327fc4116056785027b6b9a23d98b87d67133dd8",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "allClosedHot",
+      "cut": 342,
+      "originalBodySha256": "4ed7d7b959b803ee39cb27612a765bc03ce2acf22a414f0d673ecaab8b15c9cf",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "auditHot",
+      "cut": 343,
+      "originalBodySha256": "1cd4facb27f7e8a4ece478ef9f376dfa61c97e1efc6759f6c4a2d4c696a8ba08",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "finishHot",
+      "cut": 344,
+      "originalBodySha256": "00b0ba6379c5bff149b49e8aeb3a9af170f628c45bd1d3a544d446e4a5ec72bb",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "reserveInto",
+      "cut": 345,
+      "originalBodySha256": "29e03a05f4cd5554439eaee9824c78987f91036ad647fd92ab35d449bc2ced76",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "slotHot",
+      "cut": 346,
+      "originalBodySha256": "4e8cd8f73a01bf9cfe48885288458a9b0b947bb3a95a2699bb40a6376f40f7cb",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "refundInto",
+      "cut": 347,
+      "originalBodySha256": "f1b8ab4d723badbc474a55bcfdc146af7bba37fc49f29dba0a19f8fadb9dec0d",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "closeInto",
+      "cut": 348,
+      "originalBodySha256": "707a01b174b13503b34ebdf04bc5a7932ea2f7d04c85786b88c37bf15e719a6c",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "function": "fillHot",
+      "cut": 349,
+      "originalBodySha256": "cb17f88f126cfcf7cbb260c00db39949a3181c2bcc654ec817f5751a64b8155c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "collectEntry",
+      "cut": 350,
+      "originalBodySha256": "ff827368805f0fe61a8b5a28067189317e9f0b1ed18ba5effce74f5a83f55e1e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "collectExit",
+      "cut": 351,
+      "originalBodySha256": "b594c548deb618a570f6b3c6acb387d4096b2e2890836ae0e5a037848c59bd67",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "compareFailurePredicate",
+      "cut": 352,
+      "originalBodySha256": "c7e5cd6577c32cb42e53e3e11c9fd7564a892b7f9fa5e20d3b31211519bf4b1f",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "compareFailureIndex",
+      "cut": 353,
+      "originalBodySha256": "ebb70bfe535899f29ccaf439638b6cdde1d6995aa45d6313f7827fad8d793e74",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "collectBirthHeaders",
+      "cut": 4,
+      "originalBodySha256": "5bd88a60b875223bc239b07bd46b60790bd5ab6ed1e37a9bed444299f7b550c0",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "diagnosticSeedInput",
+      "cut": 355,
+      "originalBodySha256": "d3776127a98402b1aedfd570dd6dc626db3c556290dfe331ad2c99e6e3d6a5dc",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "seed",
+      "cut": 356,
+      "originalBodySha256": "3fbfb96c5a266225ab20e6343f9bbc8aac2edfdb546984c44f62387bfae6bd1a",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "beginDryBatch",
+      "cut": 357,
+      "originalBodySha256": "04631534cd477a2f8098ce5c5168e40e528e9a69fa28b0918668fa55aa0dad0c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "finishDryBatch",
+      "cut": 358,
+      "originalBodySha256": "cfce6c7997dcceff4d0b328209789d2ed143fec7e9703ab84bc8b75507b0d7e6",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "beginCollect",
+      "cut": 359,
+      "originalBodySha256": "aca3d9ddda1545d66b48572fd02801ef47fb647d1f3cc67e5a6ba85c7921b436",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "seedBody",
+      "cut": 360,
+      "originalBodySha256": "e96f3359a7a34f14d6b1271285509b0e489f75510f1c22d6e65312dca7f24c19",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "beginDryBatchBody",
+      "cut": 361,
+      "originalBodySha256": "1c33df2f562de03664fee5ae0f0841c17893d652f6615730e20c0676c22cf764",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "finishDryBatchBody",
+      "cut": 362,
+      "originalBodySha256": "f209228bf4dad1dda1147d30e354cf124872b7e1e069d71d5c39ad84011644f0",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "drainBirthEvents",
+      "cut": 363,
+      "originalBodySha256": "4b4499185bfae6ceb33a2f8711d26e45ecd9a2e23a5febe0ad664a39e7d48c5e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "beginCollectBody",
+      "cut": 5,
+      "originalBodySha256": "0762fa0a1050155dfc1b7ca5ffca3931a1bb0134bdfa80f1178a87b51712c6d2",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "requested",
+      "cut": 365,
+      "originalBodySha256": "b25f909dd08b6c2a5aa08b62eab155a36927d9a133334d3a5559e613f663f7fc",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "registerRun",
+      "cut": 366,
+      "originalBodySha256": "b484c9d69eec5a8a74a2ab9fdefe943182a5d7323d3e9eb11adc47615c986362",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "exportCommittedEvidence",
+      "cut": 367,
+      "originalBodySha256": "56c5dc6fb7ce7a4d79f1cbb1269793b314791cbc9531baac3b4a415dd15280a5",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "discardCommittedPage",
+      "cut": 368,
+      "originalBodySha256": "8504b10bf7ad94b0906b765113f2eb21b8a5cc3a3f823ba128757f59a3b109f7",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "apply",
+      "cut": 369,
+      "originalBodySha256": "500729d2c405aab044792e46beeafa2e8be037bd12a02e05bcea74b67d43af06",
+      "statusMeasured": true
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "rollback",
+      "cut": 370,
+      "originalBodySha256": "9c65fe2590a703c043e40679e953991879539ee28b04b9b676ea62adc4deb54e",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "function": "reset",
+      "cut": 371,
+      "originalBodySha256": "25fe5e6d010a2e2c7cf6b2ba2651e74dc028e45fc7c6b84f920cf169dca7a35c",
+      "statusMeasured": false
+    },
+    {
+      "file": "P011ParticleM2Sink.ets",
+      "function": "applyInto",
+      "cut": 7,
+      "originalBodySha256": "3a047109f25a9b48495587449e3c491f3d28d1532dd811eae888556dd4dfc8b9",
+      "statusMeasured": true
+    }
+  ],
+  "rows": {
+    "0": "ENTER=1 LEAVE=2 FAIL=3",
+    "1": "scopeId",
+    "2": "parentScopeId",
+    "3": "publicRootId",
+    "4": "cutId",
+    "5": "originalStatusWhenInstrumentedOrInvocationCompletion; exception=-1",
+    "6": "start",
+    "7": "end",
+    "8": "inclusiveMs",
+    "9": "exclusiveMs",
+    "16..31": "owner/run/step/attempt/substep/seed/params/input/sourceEpoch/dt/viewBranch/root/role/roleOrdinal/lambdaAttempt/row"
+  },
+  "counterDictionarySource": "entry/src/main/ets/physics/tx/TxWorkTrace.ets",
+  "extraCounters": {
+    "40": "R_LAMBDA",
+    "41": "J_SEED",
+    "43": "COLLECT_A",
+    "44": "COLLECT_B",
+    "46": "AVL_NODE_VISITS",
+    "47": "AVL_ROTATIONS",
+    "48": "ID_VISITS",
+    "49": "TICKET_VISITS"
+  },
+  "zeroMeaning": "zero only means no counted operation in a traced scope; uninstrumented VM/callee internals are retained inside inclusive wall and baseline inventory, not claimed zero",
+  "detailDefault": "DISABLED",
+  "firstCodeAuthority": "original public receipt and existing first-failure evidence, no derived pre-audit; detailed per-original-cut independent fault matrix is T213"
+}

@@ -1,9 +1,11 @@
+import { TxWholePairAdapter } from './tx/TxWholePairAdapter';
 // T123: fixed-capacity, exact lexicographic merge-pair search.
 // Rebuilt from the current patch scratch after every successful merge.
 import { P011ParticleSnapshot } from './P011ParticleField';
 import { P011PoolProgressDiagnostic } from './P011PoolProgressDiagnostic';
 
 export class P011MergeExactIndex {
+  txD1:TxWholePairAdapter|null=null;
   diagnostic: P011PoolProgressDiagnostic | null=null;
   readonly groupOrder: Int32Array;
   readonly idOrder: Int32Array;
@@ -115,6 +117,7 @@ export class P011MergeExactIndex {
     return false;
   }
   find(p: P011ParticleSnapshot,radius: number): boolean {
+    if(this.txD1!==null){const r=this.txD1.selectBound(p,radius);this.selectedA=r.slotA;this.selectedB=r.slotB;return r.status==='PAIR';}
     const d=this.diagnostic;let span=-1;let result=false;
     if(d!==null){d.input(p);span=d.begin('INDEX_FIND');}
     try{result=this.findBody(p,radius);return result;}
