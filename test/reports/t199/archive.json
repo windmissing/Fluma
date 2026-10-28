@@ -1,0 +1,37 @@
+{
+ "revision": "T199_DEVICE_ARCHIVE_V1",
+ "executedAt": "2026-10-28",
+ "device": "VYG-AL00 62T0225B10010020",
+ "variants": {
+  "STRICT_O0": {
+   "unsigned": "df833640d89ad77b231be25268b36c8715e792b19d779d133e5cf80ad915e253",
+   "signed": "f352958d58f74daa4d62f6e75c5b8be0fdef65706bc273267fe7ffadc59c5a29",
+   "buildManifestParam": "df833640\u2026",
+   "source": "6ed2d9eaeb37853d7ddb64d7999a586078e424916ab15a80c822065a9137d15d",
+   "pid": [
+    49720,
+    51897
+   ]
+  },
+  "STRICT_O2": {
+   "unsigned": "7a574b52e4da7363ee0e31bb4dddfd5cb428bf2c97fb5dd5d92eab13d63f69a3",
+   "signed": "407d7e3950a661514b8c72967aad33314623d019849d0d5a75cefd2803901dfa",
+   "buildManifestParam": "7a574b52\u2026",
+   "source": "e48340d397bf407e69ce4d8ffb97e3d9b224e571c7a38a7e2fcdd36b74631cde",
+   "pid": [
+    50889,
+    54020,
+    57332
+   ]
+  }
+ },
+ "ownerRecovery": {
+  "exhaustedPid": 57332,
+  "exhaustedFinal": "OWNER_GENERATION_EXHAUSTED (DEDICATED_EXHAUSTION_INSTANCE, testInstance 1)",
+  "realExit": "aa force-stop, pidof empty confirmed",
+  "newPid": 58333,
+  "newRun": "t199ownerRecover GPU/T123/LEGACY all TRANSACTION_RETURNED sel=64"
+ },
+ "mainProjectRestore": "entry-default-s139h-signed.hap reinstalled",
+ "noPermissionChanges": true
+}

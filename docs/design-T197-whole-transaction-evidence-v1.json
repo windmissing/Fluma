@@ -1,0 +1,253 @@
+{
+  "revision": "T197_DESIGN_DISCRETE_PROOF_AND_ENVELOPE_V1",
+  "date": "2026-10-28",
+  "route": "P011_WHOLE_TRANSACTION_V1",
+  "kind": "designer finite mathematical model/cost reasoning, NOT product/AVL/GPU/device tests",
+  "rootCauseBaseline": "T116 V3 only; R1/R2 actual N/B/M etc remain NOT_CAPTURED",
+  "inputSha256": {
+    "docs/architecture-T116-T156-whole-transaction-v3.md": "f6717fc69aa38c3a86e36adcf8e85f854d0e03016d84bd2fad750917dd139f2c",
+    "docs/analysis-T116-T156-arrival-v3.json": "7c9d8821467b200813f960a053487cd1ed8ac729efafdc312c66f0de2f0a32fd",
+    "docs/developer-T123-merge-exact-index.md": "103b118d37f7357902e790fc3f9f44e104dfac8d9447464c6f7049f9164d40d3",
+    "docs/tester-T128-merge-index-differential-v1.md": "a7560aecb203b431c294005d7b4023541c99f99671058bb3c20dd74b2e5d43ce",
+    "docs/architecture-T130-gpu-compute-route-v1.md": "c330430db5f6de386a6b873dadf991a9a76ba398cbb05f723d45afeebde08045",
+    "docs/algorithm-T137-gpu-deterministic-pair-v1.md": "12a131fd7e744b74c992b529c6e44c587ba844c71c2966d97aa8583ad5a3cc3a",
+    "docs/architecture-T183-gpu-cost-next-v1.md": "070e9682d18f148545a6cf3aa141c4d9c9e9cb5610cc7fdc616df8603beec8eb",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "89459bbbef69a0b9f33d26a4209e53c35b05ffc07bd6c29c6d5591ee5d7bec12",
+    "entry/src/main/ets/physics/P011ParticleM2Field.ets": "46747913fbc96b5d8e51530582967d1089a731ba44899de38f9a37b4e90c13f6",
+    "entry/src/main/ets/physics/P011ParticleM2Sink.ets": "8db180dd595c4581d5e56d3a004694a2b88d4c39558f34ef1e13b7c177f9fd53",
+    "entry/src/main/ets/physics/P011ParticleHotBudget.ets": "2480c3b2ada7ae6540f6011add46905e6d866838dad703761491377bb75540fb",
+    "entry/src/main/ets/physics/P011ParticleField.ets": "3db62411fdc6eb26c82f897bd2b534749a2de74eb0653d677bea6ac40902cab5",
+    "entry/src/main/ets/physics/P011MergeExactIndex.ets": "642df4452d1a558d19427fa8df8615f9a34a62a8aaf76a526db50219ea4b023f",
+    "entry/src/main/ets/physics/WaterSandField.ets": "7918cb8cdb701290971ba87c134e4b0d4f4fea03afb48f6d5fff2a6102240c3d",
+    "entry/src/main/ets/physics/P011RelaxCorrection.ets": "09d6ddf8fcc489396c7e49df2c37e3e96b40f5115aaae2c3e99be68cb3808cde",
+    "entry/src/main/ets/physics/P011TiltPlanningPass.ets": "3a4b95a3a1e1f2fe1257bcfad3234cf3a416389a7032a252cf2664cce0a27e2d",
+    "entry/src/main/ets/physics/P011NaturalObservation.ets": "75bb7afa319939517b179d28061cebdf411577350a9d9fa262bdd1fdaa8d6026",
+    "entry/src/main/ets/physics/P011NaturalObservationStore.ets": "bfafd83b7982340b5cda764cdf4be059d94d488b3cb95d06f476247a4a3a39e0",
+    "entry/src/main/ets/physics/P011EndpointMetrics.ets": "666af6c24ed6060c945ff5f928e73f6353a08cc3123f92498ee61f6c1c9c4332",
+    "entry/src/main/ets/physics/P011PeakMetrics.ets": "071045cd58f75bc4327d99166eb907b2cd6091b92cac3a3c8ad696c1c32ea9ef",
+    "docs/design-T197-whole-transaction-model-v1.py": "010932c9ad8a9d57ce8659bf7caf1541e6749a43d8b33defc522e2ff6d78cfbf"
+  },
+  "adjacencyModel": {
+    "finiteExhaustivePools": 4665,
+    "randomSeed": 197,
+    "counts": {
+      "poolCases": 4822,
+      "eligibilityChecks": 37498,
+      "localUpdates": 294,
+      "sequentialPairs": 2,
+      "invalidInputsRejected": 4
+    },
+    "serialMergePairs": [
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    "witnessPartnerCounterexample": {
+      "heights": [
+        0.0,
+        0.1,
+        0.2
+      ],
+      "ids": [
+        1,
+        100,
+        2
+      ],
+      "pair": [
+        1,
+        2
+      ],
+      "nearestWitnessId": 100
+    },
+    "malformedScope": "model validity only, NOT proposed early product rejection"
+  },
+  "structureBudgets": [
+    {
+      "N": 192,
+      "avlHeightUpper": 16,
+      "rankSearchRounds": 8,
+      "findTreeNodeBudgetExcludingHeader": 832,
+      "primitiveKeyUpdateBudgetExcludingHeader": 1024,
+      "pairAndIdTreesPayloadPerView": 18432
+    },
+    {
+      "N": 512,
+      "avlHeightUpper": 19,
+      "rankSearchRounds": 10,
+      "findTreeNodeBudgetExcludingHeader": 1216,
+      "primitiveKeyUpdateBudgetExcludingHeader": 1216,
+      "pairAndIdTreesPayloadPerView": 49152
+    }
+  ],
+  "orderedFoldCounterexample": {
+    "operands": [
+      1.0,
+      1.1102230246251565e-16,
+      1.1102230246251565e-16
+    ],
+    "originalSequential": 1.0,
+    "rebracketed": 1.0000000000000002,
+    "conclusion": "dirty numerical audit must retain original F64 fold, no sum associativity"
+  },
+  "sourceThenStepRollbackModel": {
+    "initial": {
+      "mass": 1.0,
+      "sourceEpoch": 0
+    },
+    "successfulSource": {
+      "mass": 2.0,
+      "sourceEpoch": 1
+    },
+    "afterFailedStep": {
+      "mass": 2.0,
+      "sourceEpoch": 1
+    },
+    "sameAddressWriteValues": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "conclusion": "one outer old-value is insufficient for inner rollback"
+  },
+  "illustrativeWorkloads": [
+    {
+      "kind": "symbolic envelope illustration, not executed physical workload",
+      "C": 128,
+      "N": 192,
+      "B_ent": 64,
+      "M_find": 64,
+      "R": 1,
+      "V": 1,
+      "S": 1,
+      "J_source_upper": 256,
+      "seedAuditLogicalUpper": 768,
+      "baselineFindScale": 110592,
+      "newPairScale": 8896,
+      "retainedAuditFoldScale": 245760,
+      "etaColumnUpperPerSource": 8192,
+      "perFieldChainWaterReceiverUpper": 16384,
+      "frameSubstepUpper": 1,
+      "previewUpperPerSubstep": 1,
+      "caution": "does not multiply J/M/frame totals by R/V/S again"
+    },
+    {
+      "kind": "symbolic envelope illustration, not executed physical workload",
+      "C": 128,
+      "N": 512,
+      "B_ent": 128,
+      "M_find": 128,
+      "R": 2,
+      "V": 3,
+      "S": 2,
+      "J_source_upper": 512,
+      "seedAuditLogicalUpper": 1536,
+      "baselineFindScale": 720896,
+      "newPairScale": 26112,
+      "retainedAuditFoldScale": 983040,
+      "etaColumnUpperPerSource": 16384,
+      "perFieldChainWaterReceiverUpper": 16384,
+      "frameSubstepUpper": 2,
+      "previewUpperPerSubstep": 3,
+      "caution": "does not multiply J/M/frame totals by R/V/S again"
+    },
+    {
+      "kind": "symbolic envelope illustration, not executed physical workload",
+      "C": 128,
+      "N": 512,
+      "B_ent": 1024,
+      "M_find": 1024,
+      "R": 8,
+      "V": 3,
+      "S": 2,
+      "J_source_upper": 2048,
+      "seedAuditLogicalUpper": 6144,
+      "baselineFindScale": 5767168,
+      "newPairScale": 169472,
+      "retainedAuditFoldScale": 3932160,
+      "etaColumnUpperPerSource": 65536,
+      "perFieldChainWaterReceiverUpper": 16384,
+      "frameSubstepUpper": 2,
+      "previewUpperPerSubstep": 3,
+      "caution": "does not multiply J/M/frame totals by R/V/S again"
+    }
+  ],
+  "queuePayloadExample": {
+    "queueSlots": 16,
+    "C": 128,
+    "headerBytes": 256,
+    "maxInputPayloadBytesPerSlot": 2304,
+    "queuePayloadBytes": 36864,
+    "status": "proposed resource profile, decision required"
+  },
+  "wholeChainScopes": [
+    "direct-source-outside-frame",
+    "queued-source",
+    "source-lambda",
+    "lift-collect-no-birth",
+    "lift-apply",
+    "seed",
+    "birth",
+    "merge-find",
+    "merge-commit",
+    "pair-index-build-and-update",
+    "ID-lookup",
+    "ticket-reserve-refund-close",
+    "collect-A-B-headers",
+    "audit-logical-execute-cert",
+    "pool-field-copy-undo",
+    "planner-preview",
+    "authoritative",
+    "consistency-mirror",
+    "field-advection",
+    "field-settle-percolate-bottom-deep-relax-correction",
+    "water-level-40",
+    "injection-eta-64",
+    "guard-and-dirty-S",
+    "peak-endpoint-natural-observation",
+    "immutable-publication",
+    "render-and-scene-preparation",
+    "GPU-exact-prepare",
+    "GPU-SHA-pack-bridge-upload-dispatch-barrier-fence-map-consume",
+    "JSON-encode-message-write-fsync-fence",
+    "owner-FIFO-backpressure-cancel"
+  ],
+  "sourceReadFacts": {
+    "particleMassAt": "O(1) column-cache read",
+    "poolTotals": "O(C+N) including resting scan",
+    "correctionRatioInnerScan": "executes once then break; not quadratic by nesting alone",
+    "dirtyLegacyAuditReduction": "slot order, not ID order or tree sum"
+  },
+  "unchangedPolicy": {
+    "numericAuditsAtLogicalCutpoints": true,
+    "actualOrderedFoldRetained": true,
+    "massRadiusAndF64NotQuantized": true,
+    "birthsMergedInOriginalSerialOrder": true
+  },
+  "requiresExplicitBehaviorVersion": [
+    "async pending/enqueue ACK API",
+    "atomic work admission rejection",
+    "queue/backpressure/cancel/deadline policy"
+  ],
+  "pending": [
+    "device service rates/deadlines/work cap",
+    "complete allocation envelope choices",
+    "architect engineering of AVL/cert/write barriers",
+    "T198 independent oracle",
+    "product migration/whole-chain device stability and benefit"
+  ],
+  "notClaimed": [
+    "new AVL implementation tested",
+    "field/physics product equivalence verified",
+    "all audits eliminated",
+    "whole frame linear",
+    "actual failing transaction replayed",
+    "GPU production migrated",
+    "O2/device performance pass",
+    "freeze fixed"
+  ]
+}
