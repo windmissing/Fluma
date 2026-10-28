@@ -3,6 +3,7 @@ import { P051DerivedFacadeV2, DerivedPublishedSlotV2 } from './P051DerivedFacade
 import { P011GestureRateClock } from '../P011GestureRateClock';
 import { P051_DRY_REVISION } from '../P051DryParticleAdmission';
 import { DERIVED_POLICY_V2 } from './P011DerivedTypesV2';
+import hilog from '@ohos.hilog';
 // Isolated new-run model: original V1 model/default page remains unchanged.
 export class P051DerivedDemoV2 {
     private readonly owner: P051DerivedFacadeV2;
@@ -56,6 +57,7 @@ export class P051DerivedDemoV2 {
             const seconds = this.clock.sample(ns, 'ns');
             if (seconds > 0) {
                 const r = this.owner.inject({ revision: P051_DRY_REVISION, sourceId: 51, sequence: ++this.seq, inputTimeMs: ns / 1e6, x: this.x, y: this.y, seed: 51, requestedH: 8 * seconds, requestedL: 0 });
+                hilog.info(0, 'T218DBG', 'inject seq=%{public}s sec=%{public}s ok=%{public}s adm=%{public}s rej=%{public}s', String(this.seq), seconds.toFixed(4), String(r.ok), String(r.original ? r.original.admittedH : -1), String(r.original ? (r.original.rejectedReason ?? 'none') : 'noOrig'));
                 if (!r.ok) {
                     this.stop();
                     this.status = r.derivedFault === null ? r.original?.rejectedReason ?? 'SOURCE_FAILED' : r.derivedFault.namespace + ':' + r.derivedFault.code;
