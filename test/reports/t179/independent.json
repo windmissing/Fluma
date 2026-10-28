@@ -1,0 +1,156 @@
+{
+  "revision": "T179_MATERIAL_REJECTION_INDEPENDENT_V1",
+  "executedAt": "2026-10-28T01:02:42.141Z",
+  "spec": "T176 §5 + developer-T178-material-rejection-v1.md",
+  "commitUnderTest": "64ca085",
+  "device": "NOT_RUN (offline per card; T180 owns device)",
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "results": [
+    {
+      "name": "SOURCE predicate mask enumeration (7 cases, bit-exact stage+mask)",
+      "status": "PASS",
+      "detail": [
+        {
+          "k": "sandTop",
+          "v": null,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 1,
+          "expect": 1
+        },
+        {
+          "k": "waterTop",
+          "v": null,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 2,
+          "expect": 2
+        },
+        {
+          "k": "bh",
+          "v": -1,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 16,
+          "expect": 16
+        },
+        {
+          "k": "bl",
+          "v": -2,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 32,
+          "expect": 32
+        },
+        {
+          "k": "sandTop",
+          "v": 1,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 64,
+          "expect": 64
+        },
+        {
+          "k": "sandTop",
+          "v": 11,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 128,
+          "expect": 128
+        },
+        {
+          "k": "waterTop",
+          "v": 257,
+          "stage": "SOURCE_VALIDATION",
+          "mask": 256,
+          "expect": 256
+        }
+      ]
+    },
+    {
+      "name": "LAYOUT dimensions boxW/H rejected with layout reason",
+      "status": "PASS",
+      "detail": [
+        {
+          "dim": "boxW",
+          "reason": "MATERIAL_DATA_LAYOUT",
+          "mask": 1
+        },
+        {
+          "dim": "boxH",
+          "reason": "MATERIAL_DATA_LAYOUT",
+          "mask": 2
+        },
+        {
+          "dim": "boxW",
+          "reason": "MATERIAL_DATA_LAYOUT",
+          "mask": 1
+        }
+      ]
+    },
+    {
+      "name": "F32 prefix capture truncated at valid prefix; snapshot detached from source buffer",
+      "status": "PASS",
+      "detail": {
+        "captured": 16,
+        "stable": true
+      }
+    },
+    {
+      "name": "read-only: captured bh raw hex frozen at failure time (contains -1, excludes later 77)",
+      "status": "PASS",
+      "detail": {
+        "atFail": true,
+        "afterMutation": true
+      }
+    },
+    {
+      "name": "firstFailure not overwritten by 5 wrong-token receipts; receipt stays null",
+      "status": "PASS",
+      "detail": {
+        "receipt": null
+      }
+    },
+    {
+      "name": "exact-token receipt attached with full status fields; repeat attach is last-writer-wins (documented behavior)",
+      "status": "PASS",
+      "detail": {
+        "code": 100,
+        "afterCode": 555
+      }
+    },
+    {
+      "name": "first success/failure immutable; 20 repeats → repeatCount/ring8/dropped; new run clears current, runId lineage kept",
+      "status": "PASS",
+      "detail": {
+        "repeat": 20,
+        "ring": 8,
+        "dropped": 14
+      }
+    },
+    {
+      "name": "not-executed statuses preserved as null (not 0)",
+      "status": "PASS",
+      "detail": {
+        "present": null,
+        "swap": null
+      }
+    },
+    {
+      "name": "capture byte budget tracked (captureBytes<=capacity), timing NOT_CAPTURED",
+      "status": "PASS",
+      "detail": {
+        "bytes": 16464,
+        "cap": 28752
+      }
+    },
+    {
+      "name": "unexpected throw name/message recorded; diagnostic exception keeps rejection",
+      "status": "PASS",
+      "detail": {
+        "name": "RangeError"
+      }
+    },
+    {
+      "name": "P0/P1 wet/dry context alive in fixture harness (T56 regression rerun separately)",
+      "status": "PASS",
+      "detail": null
+    }
+  ]
+}
