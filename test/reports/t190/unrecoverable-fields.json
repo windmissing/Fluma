@@ -1,0 +1,41 @@
+{
+ "unrecoverableFields": [
+  {
+   "field": "headerWords/resultWords/identityBytes (FAULT_OBSERVATION.result)",
+   "path": "t173f_*.jsonl FAULT_OBSERVATION.result.*",
+   "presentInFaultRuns": false,
+   "reason": "reply() 仅在 s->fullDump 且 select 成功路径 put header/result/identityBytes；失败路径(exec!=OK / INPUT_INVALID / SHADER早退)不 put。FAULT 运行 oracleMode=ON 但失败分支先行 return。",
+   "rebuildable": "NO——原始 GL 缓冲已随 reset 释放，事后无法重放（属设备一次性执行）",
+   "remedy": "按 T183 §7D: 若需该字段, 需受控单故障取证加 fullDump 失败分支导出"
+  },
+  {
+   "field": "STALE_REQUEST_HI requestCpuMs/prepare 等 native 计时",
+   "path": "t173f_STALE_REQUEST_HI FAULT_OBSERVATION.result",
+   "presentInFaultRuns": false,
+   "reason": "identity 校验在 native 计时区间前失败返回 INPUT_INVALID, validationMs 之外的 prepare/fence 未进入",
+   "rebuildable": "NO（该拒绝分支语义上无此区间）"
+  },
+  {
+   "field": "SHADER run 的 ATTEMPT nativeTimings",
+   "path": "t173f_SHADER ATTEMPT.requestRows",
+   "presentInFaultRuns": false,
+   "reason": "configure 失败无任何请求发出",
+   "rebuildable": "NO"
+  },
+  {
+   "field": "OWNER_EXHAUSTION 恢复新 PID 段",
+   "path": "—",
+   "presentInFaultRuns": false,
+   "reason": "同进程无新 OS 进程段; 设备 run 未包含恢复进程取证",
+   "rebuildable": "NO——需 T183 §7D 真机新进程取证"
+  },
+  {
+   "field": "UI 接收时延 (uiReceive)",
+   "path": "hilog T171 行有 uiReceivedUptimeMs; JSONL CLEANUP 行标 NOT_YET_MEASURED",
+   "presentInFaultRuns": "hilog 关联可恢复部分",
+   "reason": "JSONL 内未测, hilog 仅 UI 收到报告时刻",
+   "rebuildable": "PARTIAL——hilog 时间戳可与 queuedUptimeMs 关联但非同帧完整链"
+  }
+ ],
+ "rollbackVsFullState": "rollbackCalls 计数不替代全状态核: QUARANTINE/STALE_CONSUME 保留 physicsBefore/After 于 FAULT_OBSERVATION 行; STALE_REQUEST_HI/SHADER/OWNER 无物理 attempt"
+}

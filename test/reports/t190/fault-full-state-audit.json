@@ -1,0 +1,309 @@
+{
+ "t173f_QUARANTINE_GL": {
+  "phases": [
+   "COMMAND",
+   "READY",
+   "FAULT_ARM",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "FAULT_OBSERVATION",
+   "UNAVAILABLE_SECOND_REQUEST",
+   "FAULT_RESET",
+   "READY",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "CLEANUP",
+   "COMMAND_COMPLETE"
+  ],
+  "fields": {
+   "FAULT_ARM": {
+    "status": "ARMED",
+    "errorCode": "NONE",
+    "liveBuffers": 12,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45089,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   },
+   "attemptCommon": {
+    "status": "TRANSACTION_RETURNED",
+    "error": "",
+    "selectorCalls": 64,
+    "mergeCommitted": 64,
+    "overflow": false,
+    "rollbackCalls": 0,
+    "auditCalls": 22,
+    "refundCount": 0
+   },
+   "faultObservation": {
+    "observed": true,
+    "execStatus": "GL_ERROR",
+    "errorCode": "TEST_ILLEGAL_UPLOAD_TARGET",
+    "requestCpuMs": 0.088594,
+    "prepareCpuMs": null,
+    "fenceWaitCpuMs": null,
+    "uploadCpuMs": 0.075938,
+    "dispatchCpuMs": null,
+    "mapCpuMs": null,
+    "firstFailureStage": "TEST_ILLEGAL_UPLOAD_TARGET",
+    "firstFailureRawGlError": 1280,
+    "quarantined": true,
+    "testConsumed": true
+   },
+   "UNAVAILABLE_SECOND_REQUEST": {
+    "status": "ERROR",
+    "errorCode": "BINDING_UNAVAILABLE",
+    "liveBuffers": 12,
+    "quarantined": true,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45089,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   },
+   "FAULT_RESET": {
+    "status": "RESET",
+    "errorCode": "NONE",
+    "liveBuffers": 0,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45089,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   }
+  }
+ },
+ "t173f_STALE_REQUEST_HI": {
+  "phases": [
+   "COMMAND",
+   "READY",
+   "FAULT_ARM",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "FAULT_OBSERVATION",
+   "FAULT_RESET",
+   "READY",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "CLEANUP",
+   "COMMAND_COMPLETE"
+  ],
+  "fields": {
+   "FAULT_ARM": {
+    "status": "ARMED",
+    "errorCode": "NONE",
+    "liveBuffers": 12,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45235,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   },
+   "attemptCommon": {
+    "status": "TRANSACTION_RETURNED",
+    "error": "",
+    "selectorCalls": 64,
+    "mergeCommitted": 64,
+    "overflow": false,
+    "rollbackCalls": 0,
+    "auditCalls": 22,
+    "refundCount": 0
+   },
+   "faultObservation": {
+    "observed": true,
+    "execStatus": "INPUT_INVALID",
+    "errorCode": "REQUEST_CONTEXT_OR_INPUT",
+    "requestCpuMs": null,
+    "prepareCpuMs": null,
+    "fenceWaitCpuMs": null,
+    "uploadCpuMs": null,
+    "dispatchCpuMs": null,
+    "mapCpuMs": null,
+    "firstFailureStage": "NONE",
+    "firstFailureRawGlError": 0,
+    "quarantined": false,
+    "testConsumed": true
+   },
+   "FAULT_RESET": {
+    "status": "RESET",
+    "errorCode": "NONE",
+    "liveBuffers": 0,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45235,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   }
+  }
+ },
+ "t173f_STALE_CONSUME_HI": {
+  "phases": [
+   "COMMAND",
+   "READY",
+   "FAULT_ARM",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "FAULT_OBSERVATION",
+   "UNAVAILABLE_SECOND_REQUEST",
+   "FAULT_RESET",
+   "READY",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "CLEANUP",
+   "COMMAND_COMPLETE"
+  ],
+  "fields": {
+   "FAULT_ARM": {
+    "status": "ARMED",
+    "errorCode": "NONE",
+    "liveBuffers": 12,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45572,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   },
+   "attemptCommon": {
+    "status": "TRANSACTION_RETURNED",
+    "error": "",
+    "selectorCalls": 64,
+    "mergeCommitted": 64,
+    "overflow": false,
+    "rollbackCalls": 0,
+    "auditCalls": 22,
+    "refundCount": 0
+   },
+   "faultObservation": {
+    "observed": true,
+    "execStatus": "OK",
+    "errorCode": "STALE",
+    "requestCpuMs": 1.802187,
+    "prepareCpuMs": 1.084218,
+    "fenceWaitCpuMs": 0.423281,
+    "uploadCpuMs": 0.076093,
+    "dispatchCpuMs": 1.137812,
+    "mapCpuMs": 0.027812,
+    "firstFailureStage": "OWNER_CONSUME_STALE",
+    "firstFailureRawGlError": 0,
+    "quarantined": false,
+    "testConsumed": true
+   },
+   "UNAVAILABLE_SECOND_REQUEST": {
+    "status": "ERROR",
+    "errorCode": "BINDING_UNAVAILABLE",
+    "liveBuffers": 12,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45572,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   },
+   "FAULT_RESET": {
+    "status": "RESET",
+    "errorCode": "NONE",
+    "liveBuffers": 0,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45572,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   }
+  }
+ },
+ "t173f_SHADER": {
+  "phases": [
+   "COMMAND",
+   "READY",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "FAULT_OBSERVATION",
+   "FAULT_RESET",
+   "READY",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "CLEANUP",
+   "COMMAND_COMPLETE"
+  ],
+  "fields": {
+   "attemptCommon": {
+    "status": "TRANSACTION_RETURNED",
+    "error": "",
+    "selectorCalls": 64,
+    "mergeCommitted": 64,
+    "overflow": false,
+    "rollbackCalls": 0,
+    "auditCalls": 22,
+    "refundCount": 0
+   },
+   "faultObservation": {
+    "observed": true,
+    "execStatus": null,
+    "errorCode": null,
+    "requestCpuMs": null,
+    "prepareCpuMs": null,
+    "fenceWaitCpuMs": null,
+    "uploadCpuMs": null,
+    "dispatchCpuMs": null,
+    "mapCpuMs": null,
+    "firstFailureStage": null,
+    "firstFailureRawGlError": null,
+    "quarantined": null,
+    "testConsumed": null
+   },
+   "FAULT_RESET": {
+    "status": "RESET",
+    "errorCode": "NONE",
+    "liveBuffers": 0,
+    "quarantined": false,
+    "ownerGenerationLo": 1,
+    "testProcessId": 45893,
+    "testInstanceLo": 1,
+    "allocatorScope": "PROCESS_GLOBAL_MONOTONIC"
+   }
+  }
+ },
+ "t173f_OWNER": {
+  "phases": [
+   "COMMAND",
+   "FAULT_ARM",
+   "READY",
+   "ATTEMPT",
+   "ARCHIVE_TIMING",
+   "CLEANUP",
+   "OWNER_EXHAUSTION_SECOND_CONFIG",
+   "COMMAND_COMPLETE"
+  ],
+  "fields": {
+   "FAULT_ARM": {
+    "status": "ARMED",
+    "errorCode": "NONE",
+    "liveBuffers": 0,
+    "quarantined": false,
+    "ownerGenerationLo": 0,
+    "testProcessId": 46269,
+    "testInstanceLo": 1,
+    "allocatorScope": "DEDICATED_EXHAUSTION_INSTANCE"
+   },
+   "attemptCommon": {
+    "status": "TRANSACTION_RETURNED",
+    "error": "",
+    "selectorCalls": 64,
+    "mergeCommitted": 64,
+    "overflow": false,
+    "rollbackCalls": 0,
+    "auditCalls": 22,
+    "refundCount": 0
+   },
+   "OWNER_EXHAUSTION_SECOND_CONFIG": {
+    "status": "ERROR",
+    "errorCode": "OWNER_GENERATION_EXHAUSTED",
+    "liveBuffers": 0,
+    "quarantined": false,
+    "ownerGenerationLo": 0,
+    "testProcessId": 46269,
+    "testInstanceLo": 1,
+    "allocatorScope": "DEDICATED_EXHAUSTION_INSTANCE"
+   }
+  }
+ }
+}
