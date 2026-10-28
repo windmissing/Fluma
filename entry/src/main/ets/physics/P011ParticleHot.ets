@@ -1,3 +1,4 @@
+import { DerivedCoordinatorV2 } from './derived/P011DerivedTupleBarrierV2';
 import { TxWholePairAdapter,TxHotBanks } from './tx/TxWholePairAdapter';
 // P-011 D1-R3 S0/S1: fixed-capacity HOT workspace and pure dual collect.
 // This module deliberately has no renderer or WaterSandField dependency.
@@ -255,6 +256,7 @@ export class P011ParticleHotEventBuffer {
 }
 
 export class P011ParticleHotWorkspace {
+  derivedV2:DerivedCoordinatorV2|null=null;
   txD1:TxWholePairAdapter|null=null;
   mediumMode: string = 'WET_COLUMN_V1';
   private readonly bufferBindings: ArrayBuffer[]; private readonly bufferBytes: number[];
@@ -547,6 +549,7 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
     const budgetStatus = work.budget.beginHot(work.stepEpoch + 1, input.dt);
     if (budgetStatus !== 0){work.beginFailurePredicate='BUDGET_BEGIN';{const txOriginalCode:number=work.lastStatus = budgetStatus;txCode=txOriginalCode;return txOriginalCode;}}
   }
+  work.derivedV2?.saveField(work);
   work.stepEpoch++;
   work.runToken = input.runToken; work.substepId = input.substepId; work.attemptToken = input.attemptToken;
   work.dt = input.dt; work.effectiveTiltRad = input.effectiveTiltRad; work.seed = input.seed;
@@ -591,6 +594,7 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
     field.waterTop.set(work.fieldBeforeWaterTop); field.bh.set(work.fieldBeforeBh); field.bl.set(work.fieldBeforeBl);
     field.mh.set(work.fieldBeforeMh); field.ml.set(work.fieldBeforeMl); field.suspH.set(work.fieldBeforeSuspH);
     field.suspL.set(work.fieldBeforeSuspL); field.surface.set(work.fieldBeforeSurface);
+    work.derivedV2?.restoreField(work);
     field.sourceInjectedH = work.sourceInjectedH; field.sourceInjectedL = work.sourceInjectedL; field.sourceEpoch = work.sourceEpoch;
   }
   work.activePatchToken = 0; work.activePatchStepEpoch = 0; work.activePatchOrdinal = 0; work.patchState = 0;
@@ -873,7 +877,7 @@ function copyPoolHot(from: P011ParticleSnapshot, to: P011ParticleSnapshot, work:
   to.pPhase.set(from.pPhase); to.pSource.set(from.pSource); to.pState.set(from.pState); to.pId.set(from.pId);
   to.pSourceId.set(from.pSourceId); to.freeSlots.set(from.freeSlots);
   to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);
-  work.txD1?.copy(from,to);
+  work.txD1?.copy(from,to);work.derivedV2?.counters.add(19,55*to.nmax+16*to.cols);work.derivedV2?.copy(from,to);
 }
 function particleSlotHot(pool: P011ParticleSnapshot, id: number, work:P011ParticleHotWorkspace): number {
   if(work.txD1!==null)return work.txD1.lookup(pool,id);
@@ -945,10 +949,12 @@ function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a
   actions.lineage[actions.lineageCount++] = p.pId[a]; actions.lineage[actions.lineageCount++] = p.pId[b];
   actions.lineageLength[event] = 2; actions.requested[event] = mass; actions.granted[event] = mass;
   actions.massBefore[event] = mass; actions.massAfter[event] = mass;
+  const derivedToken=work.derivedV2===null?null:work.derivedV2.begin(p,a,b,'MERGE');if(work.derivedV2!==null&&derivedToken===null)return work.derivedV2.status;
   work.txD1?.before(p,a);work.txD1?.before(p,b);
   p.pX[a] = (p.pX[a] * ma + p.pX[b] * mb) / mass; p.pY[a] = (p.pY[a] * ma + p.pY[b] * mb) / mass;
   p.pVx[a] = (p.pVx[a] * ma + p.pVx[b] * mb) / mass; p.pVy[a] = (p.pVy[a] * ma + p.pVy[b] * mb) / mass;
   p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;
+  if(work.derivedV2!==null&&derivedToken!==null){const derivedStatus=work.derivedV2.finish(p,derivedToken);if(derivedStatus!==0){work.txD1?.invalidate(p);return derivedStatus;}}
   work.txD1?.after(p,a);work.txD1?.after(p,b);work.txD1?.trace.add(15);
   {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,321,txCode);}}
@@ -997,6 +1003,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
         const speed = phase === 0 ? work.params.terminalSpeedHeavy : work.params.terminalSpeedLight;
         const lift = phase === 0 ? work.params.liftSpeedHeavy : work.params.liftSpeedLight;
         const slot = p.freeSlots[--p.freeCount];
+        const derivedBirth=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&derivedBirth===null)return work.derivedV2.status;
         work.txD1?.before(p,slot);
         p.pMass[slot] = k < count ? work.params.massPackage : tail; p.pX[slot] = dry && kind === 1 ? plan.predictedX[row] : c + 0.5 + jitter;
         p.pY[slot] = dry && kind === 1 ? plan.predictedY[row] : kind === 4 ? low : Math.max(low, Math.min(high, plan.predictedY[row]));
@@ -1004,10 +1011,13 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
         p.pVy[slot] = dry && kind === 1 ? 0 : kind === 4 ? lift : -speed * Math.cos(work.effectiveTiltRad);
         p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];
         p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;
+        if(work.derivedV2!==null&&derivedBirth!==null){const ds=work.derivedV2.finish(p,derivedBirth);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
         work.txD1?.after(p,slot);
         work.txD1?.trace.add(10);
         if (work.diagnosticEnabled) work.birthCompleted++;
+        if(work.derivedV2===null){
         if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];
+        }
         if (actionCommonHot(work, p, slot, P011_HOT_KIND_SPAWN) < 0) return P011_HOT_JOURNAL_OVERFLOW;
       }
     }
@@ -1021,27 +1031,34 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
   if (kind === P011_HOT_KIND_DEPOSIT) {
     if ((disposition !== 2 && disposition !== 6) || amount > p.pMass[slot]) return P011_HOT_INVALID_PATCH_STATE;
     const remainder = amount === p.pMass[slot] ? 0 : p.pMass[slot] - amount;
+    const d=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&d===null)return work.derivedV2.status;
     work.txD1?.before(p,slot);
-    cache[c] -= amount; p.pMass[slot] = remainder;
+    if(work.derivedV2===null)cache[c] -= amount; p.pMass[slot] = remainder;
     if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; }
     else { p.pState[slot] = 2; p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }
+    if(work.derivedV2!==null&&d!==null){const ds=work.derivedV2.finish(p,d);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
     work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_DEGRADE) {
     if (disposition !== 3 || amount !== p.pMass[slot]) return P011_HOT_INVALID_PATCH_STATE;
+    const d=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&d===null)return work.derivedV2.status;
     work.txD1?.before(p,slot);
-    cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--;
+    if(work.derivedV2===null)cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--;
+    if(work.derivedV2!==null&&d!==null){const ds=work.derivedV2.finish(p,d);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
     work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_CROSSING) {
     const target = plan.targetColumn[row];
     if (target < 0 || target >= p.cols || Math.abs(target - c) !== 1) return P011_HOT_INVALID_INPUT;
+    if(!((disposition===6&&amount===0)||(disposition===4&&amount===p.pMass[slot]&&Math.floor(plan.predictedX[row])===target)))return P011_HOT_INVALID_PATCH_STATE;
+    const d=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&d===null)return work.derivedV2.status;
     if (disposition === 6 && amount === 0) {work.txD1?.before(p,slot);p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;}
     else {
       if (disposition !== 4 || amount !== p.pMass[slot] || Math.floor(plan.predictedX[row]) !== target) return P011_HOT_INVALID_PATCH_STATE;
       work.txD1?.before(p,slot);
-      cache[c] -= amount; cache[target] += amount;
+      if(work.derivedV2===null){cache[c] -= amount; cache[target] += amount;}
       p.pX[slot] = plan.predictedX[row]; p.pY[slot] = plan.predictedY[row];
       p.pVx[slot] = plan.predictedVx[row]; p.pVy[slot] = plan.predictedVy[row];
     }
+    if(work.derivedV2!==null&&d!==null){const ds=work.derivedV2.finish(p,d);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
     work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_MERGE) {
     if (disposition !== 5 || plan.lineage[plan.mergeStart[row]] !== plan.particleId[row]) return P011_HOT_INVALID_PATCH_STATE;
@@ -1132,6 +1149,7 @@ export function auditParticleHot(work: P011ParticleHotWorkspace, source: string=
 function auditParticleHotBody(work: P011ParticleHotWorkspace): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(331);let txCode=0;try{
   const f = work.field; if (f === null) {const txOriginalCode:number=1;txCode=txOriginalCode;return txOriginalCode;}
   const p = work.patchScratch; const status = copyPoolDiagnosticHot(work, p, false); if (status !== 0) {const txOriginalCode:number=status;txCode=txOriginalCode;return txOriginalCode;}
+  if(work.derivedV2!==null){const ds=work.derivedV2.flush();if(ds!==0)return ds;}
   work.auditMassH.fill(0); work.auditMassL.fill(0); work.auditSlots.fill(0);
   if (p.freeCount < 0 || p.freeCount > p.nmax || p.liveCount + p.freeCount !== p.nmax) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
   for (let i = 0; i < p.freeCount; i++) {txTrace?.add(39);txTrace?.add(26);
@@ -1218,8 +1236,10 @@ function applyParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedStepE
     if (slot < 0 || Math.floor(p.pX[slot]) !== plan.motionColumn[i] || Math.floor(plan.motionX[i]) !== plan.motionColumn[i]) {
       {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, 17, 0, 4);txCode=txOriginalCode;return txOriginalCode;}
     }
+    const dm=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'MOTION');if(work.derivedV2!==null&&dm===null)return failApplyHot(work,expectedStepEpoch,work.derivedV2.status,0,4);
     work.txD1?.before(p,slot);
     p.pX[slot] = plan.motionX[i]; p.pY[slot] = plan.motionY[i]; p.pVx[slot] = plan.motionVx[i]; p.pVy[slot] = plan.motionVy[i];
+    if(work.derivedV2!==null&&dm!==null){const ds=work.derivedV2.finish(p,dm);if(ds!==0)return failApplyHot(work,expectedStepEpoch,ds,0,4);}
     work.txD1?.after(p,slot);
   }
   const moved = copyPoolDiagnosticHot(work, p, true); if (moved !== 0) {const txOriginalCode:number=failApplyHot(work, expectedStepEpoch, moved, 0, 4);txCode=txOriginalCode;return txOriginalCode;}
@@ -1258,7 +1278,7 @@ export function copyPoolDiagnosticHot(work: P011ParticleHotWorkspace,out: P011Pa
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){span=d.begin(restore?'POOL_COPY_RESTORE':'POOL_COPY_READ');d.increment(8);d.increment(21);}
   if(restore)d?.input(out);
-  try{code=work.pool.transferHotState(out,restore);if(code===0&&!restore)d?.input(out);if(code===0)work.txD1?.transfer(out,restore);return code;}
+  try{code=work.pool.transferHotState(out,restore);if(code===0&&!restore)d?.input(out);if(code===0){work.derivedV2?.counters.add(19,55*out.nmax+16*out.cols);work.txD1?.transfer(out,restore);}return code;}
   finally{txCode=code;d?.endSpan(span,code);}
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,337,txCode);}}
 

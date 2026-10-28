@@ -1,3 +1,4 @@
+import { DerivedFieldV2 } from './derived/P011DryDomainV2';
 import { P011ParticleM2Projection } from './P011ParticleM2Projection';
 // P-011 Route C D2: bind the M1 fixed-buffer executor to WaterSandField's
 // canonical arrays. The binding is cold-created when the route is armed;
@@ -37,7 +38,7 @@ export function defaultP011ParticleParams(): P011ParticleParams {
 
 /** Stable field-array view. Primitive ledger values are synchronized at the
  * boundary; all material arrays alias WaterSandField's canonical storage. */
-export class P011ParticleM2FieldBuffer implements P011ParticleHotFieldBuffer {
+export class P011ParticleM2FieldBuffer implements P011ParticleHotFieldBuffer,DerivedFieldV2 {
   readonly cols: number; readonly capacity: number;
   readonly waterTop: Float64Array; readonly bh: Float64Array; readonly bl: Float64Array;
   readonly mh: Float64Array; readonly ml: Float64Array; readonly suspH: Float64Array;
@@ -165,6 +166,7 @@ export class P011ParticleM2FieldBinding {
     const d=this.work.poolProgress;let ok=false;
     if(d!==null){this.diagnosticSeedInput(heavy+light,x,y,0,0,-1,sourceKind,seed);
       this.dryProgressSpan=d.begin('SEED_BATCH');d.increment(14);}
+    this.work.derivedV2?.counters.add(18);
     try{ok=this.beginDryBatchBody(heavy,light,x,y,sourceId,seed,sourceKind);{const txRc:boolean=ok;txCode=0;return txRc;}}
     finally{if(!ok&&d!==null){d.endSpan(this.dryProgressSpan,-1);this.dryProgressSpan=-1;}}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,357,txCode);}}

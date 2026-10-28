@@ -8,7 +8,7 @@ export interface TxTreeBackend {selectPair(p:P011ParticleSnapshot,radius:number,
 export interface TxGpuConfig {
   nmax:number;shaderDirectory:string;runId:string;configId:string;sourceManifestSha256:string;buildManifestSha256:string;
   buildShaderSha256:string;queryShaderSha256:string;reduceShaderSha256:string;diagnosticOracle:boolean;fullDump:boolean;
-  backend:string;policy:string;traceCapacity:number;variant:string;
+  numericPolicy?:string;backend:string;policy:string;traceCapacity:number;variant:string;
 }
 export interface TxNativeReply {
   status:string;errorCode:string;slotA:number;slotB:number;ownerGenerationLo:number;ownerGenerationHi:number;contextEpochLo:number;contextEpochHi:number;liveBuffers:number;
@@ -33,6 +33,7 @@ export class TxPairBackends {
   readyReport():string {return JSON.stringify(this.ready);}
   private readonly transport:TxNativeTransport|null;private ready:TxNativeReply|null=null;private slot:number=0;
   constructor(config:TxGpuConfig,transport:TxNativeTransport|null){
+    if(config.numericPolicy!==undefined&&config.numericPolicy!=='P011_NUMERIC_V1')throw new Error('TX_GPU_UNSUPPORTED_NUMERIC_POLICY_BEFORE_CONFIGURE');
     if(config.policy!=='TX_EXACT_STRUCTURE_V1')throw new Error('TX_GPU_UNSUPPORTED_POLICY');
     if(['LEGACY_SCAN','TX_ADJ_AVL','GPU_PAIR_V1'].indexOf(config.backend)<0||!Number.isSafeInteger(config.traceCapacity)||config.traceCapacity<=0)throw new Error('TX_GPU_CONFIG');
     this.config=JSON.parse(JSON.stringify(config)) as TxGpuConfig;this.route=config.backend;this.transport=transport;

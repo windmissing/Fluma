@@ -1,3 +1,4 @@
+import { derivedPublicationGateV2 } from '../physics/derived/P011DerivedCommitV2';
 // T56 single bounded preparation: pure numerical providers, one publication token.
 import { P011PublishedRenderState } from '../physics/P011PublishedRenderState';
 import { P012FrameContext } from './P012RenderTypes';
@@ -30,6 +31,7 @@ export class P013ScenePreparation {
   get xy(): Float32Array{return this.slot.particleXY;}get meta(): Uint32Array{return this.slot.particleMeta;}
   get count(): number{return this.slot.frame.particleCount;}get capacity(): number{return this.slot.capacity;}
   pack(state: P011PublishedRenderState,context: P012FrameContext): string {
+    if(!derivedPublicationGateV2(state))return 'PUBLICATION_DOMAIN_MISMATCH';
     this.materialRejection.begin(state.runId);
     if(state.particleRouteActive){
       if(this.slot.capacity!==state.particleCapacity)this.slot=new P013DualFieldUploadSlot(state.particleCapacity);

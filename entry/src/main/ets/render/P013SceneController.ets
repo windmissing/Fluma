@@ -1,3 +1,4 @@
+import { derivedPublicationGateV2 } from '../physics/derived/P011DerivedCommitV2';
 // T56 production scene boundary. No Canvas renderer, no per-layer clock/prepare.
 import nativeRenderer from 'libp013renderer.so';
 import { P013SceneFrame,P013SceneNative,P013SceneReceipt } from './P013SceneTypes';
@@ -26,6 +27,7 @@ export class P013SceneController {
   setActive(active: boolean): void {this.active=active;if(this.loaded)this.native?.setActive(active);}
   release(): void {if(this.loaded)this.native?.release();this.loaded=false;this.native=null;this.session=0;this.configured=false;}
   drawNewPipelineFrame(state: P011PublishedRenderState,context: P012FrameContext,app: P012AppearanceParams=p012FactoryAppearance(),pipeline: number=0,timeNs: number=0,scale: number=1): P013SceneReceipt|null {
+    if(!derivedPublicationGateV2(state)){this.failure='PUBLICATION_DOMAIN_MISMATCH';return null;}
     const native=this.native;if(native===null||!this.loaded||!this.active){this.failure='NOT_READY';return null;}
     try {
       if(this.session===0){const init=native.init('p013_lmat_surface');if(init.code!==0){this.failure='INIT_'+init.code;return null;}this.session=init.sessionId;this.serial=this.revision=this.generation=0;this.configured=false;}

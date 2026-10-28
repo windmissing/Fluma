@@ -1,0 +1,45 @@
+{
+  revision: 'T216_DEVELOPER_EXACT70_V1',
+  cases: 3208,
+  failed: 0,
+  oracle: 'INDEPENDENT_BIGINT_ONLY_IN_TEST',
+  device: 'NOT_RUN'
+}
+[
+  {
+    n: 192,
+    backend: 'OFF',
+    commands: 6,
+    allReceiptsAndSixRawStatesMatch: true
+  },
+  {
+    n: 192,
+    backend: 'LEGACY_SCAN',
+    commands: 6,
+    allReceiptsAndSixRawStatesMatch: true
+  },
+  {
+    n: 192,
+    backend: 'TX_ADJ_AVL',
+    commands: 6,
+    allReceiptsAndSixRawStatesMatch: true
+  },
+  {
+    n: 512,
+    backend: 'OFF',
+    commands: 6,
+    allReceiptsAndSixRawStatesMatch: true
+  },
+  {
+    n: 512,
+    backend: 'LEGACY_SCAN',
+    commands: 6,
+    allReceiptsAndSixRawStatesMatch: true
+  },
+  {
+    n: 512,
+    backend: 'TX_ADJ_AVL',
+    commands: 6,
+    allReceiptsAndSixRawStatesMatch: true
+  }
+]

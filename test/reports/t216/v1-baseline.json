@@ -1,0 +1,44 @@
+{
+  "revision": "T216_V1_BASELINE_RAW_DIFFERENTIAL_V1",
+  "baseline": "a27d92c",
+  "clock": "FROZEN_FOR_EQUAL_INPUT_NOT_PERFORMANCE",
+  "rows": [
+    {
+      "n": 192,
+      "backend": "OFF",
+      "commands": 6,
+      "allReceiptsAndSixRawStatesMatch": true
+    },
+    {
+      "n": 192,
+      "backend": "LEGACY_SCAN",
+      "commands": 6,
+      "allReceiptsAndSixRawStatesMatch": true
+    },
+    {
+      "n": 192,
+      "backend": "TX_ADJ_AVL",
+      "commands": 6,
+      "allReceiptsAndSixRawStatesMatch": true
+    },
+    {
+      "n": 512,
+      "backend": "OFF",
+      "commands": 6,
+      "allReceiptsAndSixRawStatesMatch": true
+    },
+    {
+      "n": 512,
+      "backend": "LEGACY_SCAN",
+      "commands": 6,
+      "allReceiptsAndSixRawStatesMatch": true
+    },
+    {
+      "n": 512,
+      "backend": "TX_ADJ_AVL",
+      "commands": 6,
+      "allReceiptsAndSixRawStatesMatch": true
+    }
+  ],
+  "device": "NOT_RUN"
+}

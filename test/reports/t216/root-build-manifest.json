@@ -1,0 +1,109 @@
+{
+  "revision": "T216_ROOT_PACKAGE_V2",
+  "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+  "sha256": "5618d59725ae5a42ee9a5a0209919ac0f3450d397a54aadb326da1c72ea002f5",
+  "bytes": 5546618,
+  "native": [
+    {
+      "entry": "libs/arm64-v8a/libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elf": {
+        "machine": "AARCH64",
+        "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58",
+        "sections": {
+          ".note.gnu.build-id": {
+            "bytes": 36,
+            "sha256": "bf3f63c91c4f91acb1099fdb6c89536f4765aaf6e556a61de64d6b5d4c892b81"
+          },
+          ".dynsym": {
+            "bytes": 60744,
+            "sha256": "8eaa3cd319a45e156dbbe3a404efa516d316aee38db0954a058d389751deaad0"
+          },
+          ".rodata": {
+            "bytes": 156160,
+            "sha256": "a5de922657c6193b0ccbd065f3ce553bc1dd71cd7ebf9f57d9e351b5abeef915"
+          },
+          ".text": {
+            "bytes": 618820,
+            "sha256": "57124abdf31b92346786e0b8889e21209bf06b65570347b9444f54a07cfc09f0"
+          },
+          ".data": {
+            "bytes": 425,
+            "sha256": "a54ed68afe332933913504457c5f0489601c8b10c48c30304f5d621415cd9c53"
+          }
+        }
+      }
+    },
+    {
+      "entry": "libs/arm64-v8a/libp013hello.so",
+      "bytes": 70544,
+      "sha256": "beec184c6a15c9a71edcdd81e877ed793b6d6bf6ce745acb593e198c6a410f1a",
+      "elf": {
+        "machine": "AARCH64",
+        "buildId": "8667da4026083861011512853718d8bb604451bd",
+        "sections": {
+          ".note.gnu.build-id": {
+            "bytes": 36,
+            "sha256": "4201a4a6befd337460f630f6bc4e6cd12deee5ffe30b4601123e19c81cfc725d"
+          },
+          ".dynsym": {
+            "bytes": 3096,
+            "sha256": "a77dd162517a45e39807a4bb4f69ffd23b41ded6295593881b9518d34563b25b"
+          },
+          ".rodata": {
+            "bytes": 9856,
+            "sha256": "a1b2bb19eea3c75e2935e8f6eb26f40a433ce26f62bb60ce19aa4e24aedfb341"
+          },
+          ".text": {
+            "bytes": 37616,
+            "sha256": "aa7e877ab6141c774f07c887bad6c2b9a82ba7a9c7cbf8c52a152eb71f6b04a3"
+          },
+          ".data": {
+            "bytes": 168,
+            "sha256": "605f547a1a5006a058f1313bd26a1c25ec93a0b0cbacbdff2979631ad3eb736c"
+          }
+        }
+      }
+    },
+    {
+      "entry": "libs/arm64-v8a/libp013renderer.so",
+      "bytes": 372360,
+      "sha256": "3fd7771a803ad51d0ddb77933c659243ba7bd70bec029dcdb6f0d0b6a566126d",
+      "elf": {
+        "machine": "AARCH64",
+        "buildId": "8a17fc4834ea6ab86d1338748e3c8c1eb9edfc9f",
+        "sections": {
+          ".note.gnu.build-id": {
+            "bytes": 36,
+            "sha256": "74dedffcdc34aab53d2d1d2722f51cba54b0cc5faa75ee85d25906e59fd04b62"
+          },
+          ".dynsym": {
+            "bytes": 12504,
+            "sha256": "95e83f906f90fc9aefabd8d1d83c151e68d3e99026edb9ec40e05e7685d21971"
+          },
+          ".rodata": {
+            "bytes": 33348,
+            "sha256": "86679780a8b0e3dee3577a693e71bb99ac27a9cff7c9815a800d9ff099aa6c98"
+          },
+          ".text": {
+            "bytes": 225208,
+            "sha256": "4d340c179298759d9dcf2e3ef8163b0bbf8997d245669acfa23df8985c2aaaf1"
+          },
+          ".data": {
+            "bytes": 256,
+            "sha256": "a3bb20146547d3fb60b660a844de68086fca18184600ab9a3e7a1258772a1bef"
+          }
+        }
+      }
+    }
+  ],
+  "render": "NEW_XCOMPONENT_SHADER_ONLY_NO_CANVAS",
+  "newPage": "pages/P051DerivedV2Demo",
+  "defaultPage": "pages/Index_UNCHANGED",
+  "numericPolicy": "P011_DRY_CACHE_EXACT_V2",
+  "signing": "NOT_BUILT_THIS_TASK",
+  "device": "NOT_RUN",
+  "e2e": "NOT_RUN",
+  "gpuBenefit": "NOT_MEASURED"
+}

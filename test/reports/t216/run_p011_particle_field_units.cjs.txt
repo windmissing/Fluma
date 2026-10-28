@@ -1,0 +1,493 @@
+{
+  "suite": "p011_particle_D1_AB",
+  "passed": 33,
+  "failed": 0,
+  "results": [
+    {
+      "name": "route exact two-condition predicate; default off; no field dependency",
+      "status": "PASS"
+    },
+    {
+      "name": "fixed pool fills, refuses without mutation, reuses free slot with new ID",
+      "status": "PASS"
+    },
+    {
+      "name": "CONS-03 partial/zero/full grants retain identity and exact tiny remainder",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid seeds/grants reject before writes",
+      "status": "PASS"
+    },
+    {
+      "name": "reset preserves ID monotonicity; ID exhaustion never wraps",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshots own complete independent SoA/free stack/cache copies",
+      "status": "PASS"
+    },
+    {
+      "name": "double collect is deterministic and has zero live/snapshot/view writes",
+      "status": "PASS"
+    },
+    {
+      "name": "resting mass retries explicitly even above bed; no same-step crossing",
+      "status": "PASS"
+    },
+    {
+      "name": "journal refuses overflow/duplicates and never returns truncated success",
+      "status": "PASS"
+    },
+    {
+      "name": "journal copies recorded requests and identity rather than borrowing writer state",
+      "status": "PASS"
+    },
+    {
+      "name": "stub apply preserves requested=granted+all clipping; no hidden second deposit",
+      "status": "PASS"
+    },
+    {
+      "name": "600s-equivalent randomized pool transfers conserve both phases to 1e-9",
+      "status": "PASS"
+    },
+    {
+      "name": "B T1 packages+tail, seeded birth clamp/phase speed, admitted=0 no particles",
+      "status": "PASS"
+    },
+    {
+      "name": "B prepare/publish/restore/discard restore every SoA/free-stack/nextId",
+      "status": "PASS"
+    },
+    {
+      "name": "B atomic multiphase spawn cannot leave successful H when L lacks slots",
+      "status": "PASS"
+    },
+    {
+      "name": "B T3 budget partial LAND retains original ID and real guard/refund identity",
+      "status": "PASS"
+    },
+    {
+      "name": "B non-worsening guard rejects worsening lift, keeps mass in bed, refunds actual reservation",
+      "status": "PASS"
+    },
+    {
+      "name": "B clip formula local-before-scale, closed tickets immutable, overrefund/replay rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "B T4 capacity-first whole-particle wait; partial budget fully refunded; paid double local",
+      "status": "PASS"
+    },
+    {
+      "name": "B T2 mixed/light/heavy exposure -> airborne -> partial deposit closes inventory",
+      "status": "PASS"
+    },
+    {
+      "name": "B T6 deterministic same-column/source merge preserves mass and x/y/v first moments",
+      "status": "PASS"
+    },
+    {
+      "name": "B full pool: merge frees slot; incompatible source degrades lift once; T1 refuses",
+      "status": "PASS"
+    },
+    {
+      "name": "B T5 explicit degrade transfers only pool->susp and does not debit a second budget",
+      "status": "PASS"
+    },
+    {
+      "name": "B faults after pool+bed publication and journal overflow roll back full state",
+      "status": "PASS"
+    },
+    {
+      "name": "B shadow/live clones consume same double-collected plan and produce identical grants/state",
+      "status": "PASS"
+    },
+    {
+      "name": "B exact tan30 partial guard refunds only debit and preserves legal adjacent edges",
+      "status": "PASS"
+    },
+    {
+      "name": "B merge refuses cross-column, cross-source and cross-phase without writes",
+      "status": "PASS"
+    },
+    {
+      "name": "B whole-plan rollback removes earlier successful LAND and permits exact retry",
+      "status": "PASS"
+    },
+    {
+      "name": "B representation journal preserves birth-before-merge ID trace order when pool fills",
+      "status": "PASS"
+    },
+    {
+      "name": "B shared 300/s cap and denominator inclusion never give free whole-particle transport",
+      "status": "PASS"
+    },
+    {
+      "name": "B seed-repeatability and rejected source identity/invalid cap are explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "R9 reserve matches real clip grid; adapter refund vs rev1; legacy pair is known-incompatible",
+      "status": "PASS"
+    },
+    {
+      "name": "B 600s six-transaction sandbox: in-flight conservation/capacity/budgets every substep",
+      "status": "PASS"
+    }
+  ],
+  "negativeControls": [
+    {
+      "scale": 0.13,
+      "local": 0.07,
+      "total": 0.03,
+      "reserved": 0.0091,
+      "refund": 0.0036400000000000004,
+      "adapterSourceRefund": 0.0036400000000000004,
+      "adapterTargetRefund": 0.0036400000000000004,
+      "legacySourceRefund": 0.0018200000000000002,
+      "legacyTargetRefund": 0.0018200000000000002,
+      "sourceDifference": 0.0018200000000000002,
+      "targetDifference": 0.0018200000000000002
+    },
+    {
+      "scale": 0.13,
+      "local": 0.07,
+      "total": 0.4,
+      "reserved": 0.0091,
+      "refund": 0.0036400000000000004,
+      "adapterSourceRefund": 0.0036400000000000004,
+      "adapterTargetRefund": 0.0036400000000000004,
+      "legacySourceRefund": 0.0018200000000000002,
+      "legacyTargetRefund": 0.0018200000000000002,
+      "sourceDifference": 0.0018200000000000002,
+      "targetDifference": 0.0018200000000000002
+    },
+    {
+      "scale": 0.13,
+      "local": 0.07,
+      "total": 5,
+      "reserved": 0.0091,
+      "refund": 0.0036400000000000004,
+      "adapterSourceRefund": 0.0036400000000000004,
+      "adapterTargetRefund": 0.0036400000000000004,
+      "legacySourceRefund": 0.0018200000000000002,
+      "legacyTargetRefund": 0.0018200000000000002,
+      "sourceDifference": 0.0018200000000000002,
+      "targetDifference": 0.0018200000000000002
+    },
+    {
+      "scale": 0.13,
+      "local": 0.2,
+      "total": 0.03,
+      "reserved": 0.026000000000000002,
+      "refund": 0.010400000000000001,
+      "adapterSourceRefund": 0.010400000000000001,
+      "adapterTargetRefund": 0.010400000000000001,
+      "legacySourceRefund": 0.005200000000000001,
+      "legacyTargetRefund": 0.005200000000000001,
+      "sourceDifference": 0.005200000000000001,
+      "targetDifference": 0.005200000000000001
+    },
+    {
+      "scale": 0.13,
+      "local": 0.2,
+      "total": 0.4,
+      "reserved": 0.026000000000000002,
+      "refund": 0.010400000000000001,
+      "adapterSourceRefund": 0.010400000000000001,
+      "adapterTargetRefund": 0.010400000000000001,
+      "legacySourceRefund": 0.005200000000000001,
+      "legacyTargetRefund": 0.005200000000000001,
+      "sourceDifference": 0.005200000000000001,
+      "targetDifference": 0.005200000000000001
+    },
+    {
+      "scale": 0.13,
+      "local": 0.2,
+      "total": 5,
+      "reserved": 0.026000000000000002,
+      "refund": 0.010400000000000001,
+      "adapterSourceRefund": 0.010400000000000001,
+      "adapterTargetRefund": 0.010400000000000001,
+      "legacySourceRefund": 0.005200000000000001,
+      "legacyTargetRefund": 0.005200000000000001,
+      "sourceDifference": 0.005200000000000001,
+      "targetDifference": 0.005200000000000001
+    },
+    {
+      "scale": 0.13,
+      "local": 1,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 0.13,
+      "local": 1,
+      "total": 0.4,
+      "reserved": 0.06066666666666667,
+      "refund": 0.02426666666666667,
+      "adapterSourceRefund": 0.02426666666666667,
+      "adapterTargetRefund": 0.02426666666666667,
+      "legacySourceRefund": 0.012133333333333335,
+      "legacyTargetRefund": 0.012133333333333335,
+      "sourceDifference": 0.012133333333333335,
+      "targetDifference": 0.012133333333333335
+    },
+    {
+      "scale": 0.13,
+      "local": 1,
+      "total": 5,
+      "reserved": 0.06066666666666667,
+      "refund": 0.02426666666666667,
+      "adapterSourceRefund": 0.02426666666666667,
+      "adapterTargetRefund": 0.02426666666666667,
+      "legacySourceRefund": 0.012133333333333335,
+      "legacyTargetRefund": 0.012133333333333335,
+      "sourceDifference": 0.012133333333333335,
+      "targetDifference": 0.012133333333333335
+    },
+    {
+      "scale": 0.5,
+      "local": 0.07,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 0.5,
+      "local": 0.07,
+      "total": 0.4,
+      "reserved": 0.035,
+      "refund": 0.014000000000000002,
+      "adapterSourceRefund": 0.014000000000000002,
+      "adapterTargetRefund": 0.014000000000000002,
+      "legacySourceRefund": 0.007000000000000001,
+      "legacyTargetRefund": 0.007000000000000001,
+      "sourceDifference": 0.007000000000000001,
+      "targetDifference": 0.007000000000000001
+    },
+    {
+      "scale": 0.5,
+      "local": 0.07,
+      "total": 5,
+      "reserved": 0.035,
+      "refund": 0.014000000000000002,
+      "adapterSourceRefund": 0.014000000000000002,
+      "adapterTargetRefund": 0.014000000000000002,
+      "legacySourceRefund": 0.007000000000000001,
+      "legacyTargetRefund": 0.007000000000000001,
+      "sourceDifference": 0.007000000000000001,
+      "targetDifference": 0.007000000000000001
+    },
+    {
+      "scale": 0.5,
+      "local": 0.2,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 0.5,
+      "local": 0.2,
+      "total": 0.4,
+      "reserved": 0.1,
+      "refund": 0.04000000000000001,
+      "adapterSourceRefund": 0.04000000000000001,
+      "adapterTargetRefund": 0.04000000000000001,
+      "legacySourceRefund": 0.020000000000000004,
+      "legacyTargetRefund": 0.020000000000000004,
+      "sourceDifference": 0.020000000000000004,
+      "targetDifference": 0.020000000000000004
+    },
+    {
+      "scale": 0.5,
+      "local": 0.2,
+      "total": 5,
+      "reserved": 0.1,
+      "refund": 0.04000000000000001,
+      "adapterSourceRefund": 0.04000000000000001,
+      "adapterTargetRefund": 0.04000000000000001,
+      "legacySourceRefund": 0.020000000000000004,
+      "legacyTargetRefund": 0.020000000000000004,
+      "sourceDifference": 0.020000000000000004,
+      "targetDifference": 0.020000000000000004
+    },
+    {
+      "scale": 0.5,
+      "local": 1,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 0.5,
+      "local": 1,
+      "total": 0.4,
+      "reserved": 0.23333333333333334,
+      "refund": 0.09333333333333334,
+      "adapterSourceRefund": 0.09333333333333334,
+      "adapterTargetRefund": 0.09333333333333334,
+      "legacySourceRefund": 0.04666666666666667,
+      "legacyTargetRefund": 0.04666666666666667,
+      "sourceDifference": 0.04666666666666667,
+      "targetDifference": 0.04666666666666667
+    },
+    {
+      "scale": 0.5,
+      "local": 1,
+      "total": 5,
+      "reserved": 0.23333333333333334,
+      "refund": 0.09333333333333334,
+      "adapterSourceRefund": 0.09333333333333334,
+      "adapterTargetRefund": 0.09333333333333334,
+      "legacySourceRefund": 0.04666666666666667,
+      "legacyTargetRefund": 0.04666666666666667,
+      "sourceDifference": 0.04666666666666667,
+      "targetDifference": 0.04666666666666667
+    },
+    {
+      "scale": 1,
+      "local": 0.07,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 1,
+      "local": 0.07,
+      "total": 0.4,
+      "reserved": 0.07,
+      "refund": 0.028000000000000004,
+      "adapterSourceRefund": 0.028000000000000004,
+      "adapterTargetRefund": 0.028000000000000004,
+      "legacySourceRefund": 0.014000000000000002,
+      "legacyTargetRefund": 0.014000000000000002,
+      "sourceDifference": 0.014000000000000002,
+      "targetDifference": 0.014000000000000002
+    },
+    {
+      "scale": 1,
+      "local": 0.07,
+      "total": 5,
+      "reserved": 0.07,
+      "refund": 0.028000000000000004,
+      "adapterSourceRefund": 0.028000000000000004,
+      "adapterTargetRefund": 0.028000000000000004,
+      "legacySourceRefund": 0.014000000000000002,
+      "legacyTargetRefund": 0.014000000000000002,
+      "sourceDifference": 0.014000000000000002,
+      "targetDifference": 0.014000000000000002
+    },
+    {
+      "scale": 1,
+      "local": 0.2,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 1,
+      "local": 0.2,
+      "total": 0.4,
+      "reserved": 0.2,
+      "refund": 0.08000000000000002,
+      "adapterSourceRefund": 0.08000000000000002,
+      "adapterTargetRefund": 0.08000000000000002,
+      "legacySourceRefund": 0.04000000000000001,
+      "legacyTargetRefund": 0.04000000000000001,
+      "sourceDifference": 0.04000000000000001,
+      "targetDifference": 0.04000000000000001
+    },
+    {
+      "scale": 1,
+      "local": 0.2,
+      "total": 5,
+      "reserved": 0.2,
+      "refund": 0.08000000000000002,
+      "adapterSourceRefund": 0.08000000000000002,
+      "adapterTargetRefund": 0.08000000000000002,
+      "legacySourceRefund": 0.04000000000000001,
+      "legacyTargetRefund": 0.04000000000000001,
+      "sourceDifference": 0.04000000000000001,
+      "targetDifference": 0.04000000000000001
+    },
+    {
+      "scale": 1,
+      "local": 1,
+      "total": 0.03,
+      "reserved": 0.03,
+      "refund": 0.012,
+      "adapterSourceRefund": 0.012,
+      "adapterTargetRefund": 0.012,
+      "legacySourceRefund": 0.006,
+      "legacyTargetRefund": 0.006,
+      "sourceDifference": 0.006,
+      "targetDifference": 0.006
+    },
+    {
+      "scale": 1,
+      "local": 1,
+      "total": 0.4,
+      "reserved": 0.4,
+      "refund": 0.16000000000000003,
+      "adapterSourceRefund": 0.16000000000000003,
+      "adapterTargetRefund": 0.16000000000000003,
+      "legacySourceRefund": 0.08000000000000002,
+      "legacyTargetRefund": 0.08000000000000002,
+      "sourceDifference": 0.08000000000000002,
+      "targetDifference": 0.08000000000000002
+    },
+    {
+      "scale": 1,
+      "local": 1,
+      "total": 5,
+      "reserved": 0.4666666666666667,
+      "refund": 0.18666666666666668,
+      "adapterSourceRefund": 0.18666666666666668,
+      "adapterTargetRefund": 0.18666666666666668,
+      "legacySourceRefund": 0.09333333333333334,
+      "legacyTargetRefund": 0.09333333333333334,
+      "sourceDifference": 0.09333333333333334,
+      "targetDifference": 0.09333333333333334
+    }
+  ],
+  "pending": "D2 real WaterSandField integration is not claimed"
+}

@@ -257,7 +257,19 @@ export function validateParticleRequest(r: P011ParticleRequest, cols: number): v
 
 // Canonical pool only. These local primitives do not publish field events;
 // D1-B must coordinate pool+field changes atomically before production use.
+// Pure pool dependency inversion: no runtime imports or field/render dependency.
+export interface P011ParticleDerivedBindingV2 {
+  knows(p:P011ParticleSnapshot):boolean;
+  copy(from:P011ParticleSnapshot,to:P011ParticleSnapshot):void;
+  exportCopy(from:P011ParticleSnapshot,to:P011ParticleSnapshot):void;
+}
 export class P011ParticleField implements P011ParticleAtomicPool {
+  private derivedV2:P011ParticleDerivedBindingV2|null=null;
+  private derivedCanonical:P011ParticleSnapshot|null=null;
+  derivedBindingCold():P011ParticleSnapshot{return this.borrowHotState();}
+  attachDerivedV2(coordinator:P011ParticleDerivedBindingV2,canonical:P011ParticleSnapshot):void{if(this.derivedV2!==null)throw new Error('DERIVED_ALREADY_BOUND');this.derivedV2=coordinator;this.derivedCanonical=canonical;}
+  private derivedHeaders():void{const p=this.derivedCanonical;if(p!==null){p.liveCount=this.liveCount;p.freeCount=this.freeCount;p.nextId=this.nextId;}}
+
   private txCanonicalInvalidator:(()=>void)|null=null;
   setTxCanonicalInvalidator(callback:(()=>void)|null):void{this.txCanonicalInvalidator=callback;}
   private readonly hotCanonicalBinding: ArrayBuffer[];
@@ -314,7 +326,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
   }
 
   // O(1) allocation, no scan. -1 means capacity refusal, zero writes.
-  allocate(seed: P011ParticleSeed): number {
+  allocate(seed: P011ParticleSeed): number {if(this.derivedV2!==null)throw new Error('DERIVED_UNREGISTERED_LEGACY_WRITER');
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     requireFinite(seed.mass); requireFinite(seed.x); requireFinite(seed.y);
     requireFinite(seed.vx); requireFinite(seed.vy);
@@ -341,7 +353,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
   // The caller's isolated stub supplies the matching bed delta; production
   // field atomic publication is deliberately deferred to D1-B/D2.
   retainAfterDeposit(slot: number, granted: number, sandTopAfter: number,
-    contactEps: number): number {
+    contactEps: number): number {if(this.derivedV2!==null)throw new Error('DERIVED_UNREGISTERED_LEGACY_WRITER');
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     this.requireLive(slot); requireFinite(granted); requireFinite(sandTopAfter);
     requireFinite(contactEps);
@@ -447,7 +459,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     return result;
   }
 
-  reset(): void {this.txCanonicalInvalidator?.();
+  reset(): void {if(this.derivedV2!==null)throw new Error('DERIVED_RESET_REQUIRES_NEW_OWNER');this.txCanonicalInvalidator?.();
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     this.pMass.fill(0); this.pX.fill(0); this.pY.fill(0);
     this.pVx.fill(0); this.pVy.fill(0); this.pPhase.fill(0);
@@ -534,16 +546,17 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     this.copySnapshot(checkpoint.state); this.appliedKeys = new Set<string>(checkpoint.appliedKeys);
   }
 
-  private copySnapshot(s: P011ParticleSnapshot): void {this.txCanonicalInvalidator?.();
+  private copySnapshot(s: P011ParticleSnapshot): void {if(this.derivedV2!==null&&!this.derivedV2.knows(s))throw new Error('DERIVED_UNSUPPORTED_RAW_IMPORT');this.txCanonicalInvalidator?.();
     this.pMass.set(s.pMass); this.pX.set(s.pX); this.pY.set(s.pY);
     this.pVx.set(s.pVx); this.pVy.set(s.pVy); this.pPhase.set(s.pPhase);
     this.pSource.set(s.pSource); this.pState.set(s.pState); this.pId.set(s.pId);
     this.pSourceId.set(s.pSourceId); this.freeSlots.set(s.freeSlots);
     this.colParticleMassH.set(s.colParticleMassH); this.colParticleMassL.set(s.colParticleMassL);
-    this.freeCount = s.freeCount; this.liveCount = s.liveCount; this.nextId = s.nextId;
+    this.derivedHeaders();if(this.derivedV2!==null&&this.derivedCanonical!==null)this.derivedV2.copy(s,this.derivedCanonical);
+    this.freeCount = s.freeCount; this.liveCount = s.liveCount; this.nextId = s.nextId;this.derivedHeaders();
   }
 
-  prepare(request: P011ParticleRequest, grant: P011ParticleGrant): P011ParticlePoolPatch | null {
+  prepare(request: P011ParticleRequest, grant: P011ParticleGrant): P011ParticlePoolPatch | null {if(this.derivedV2!==null)throw new Error('DERIVED_UNREGISTERED_LEGACY_WRITER');
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     if (this.params === null || this.view === null || request.substepId !== this.stepId ||
       request.requestKey !== grant.requestKey || this.appliedKeys.has(request.requestKey)) {
@@ -722,7 +735,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
 
   // Free flight stays in its original column; every crossing is a request.
   // Outer substep rollback owns this publication together with sink fields.
-  applyMotions(motions: P011ParticleMotion[]): void {this.txCanonicalInvalidator?.();
+  applyMotions(motions: P011ParticleMotion[]): void {if(this.derivedV2!==null)throw new Error('DERIVED_UNREGISTERED_LEGACY_WRITER');this.txCanonicalInvalidator?.();
     if (this.patch !== null) throw new Error('PARTICLE_PATCH_BUSY');
     for (let i = 0; i < motions.length; i++) {
       const m = motions[i]; const slot = this.slotFor(m.particleId);
@@ -811,6 +824,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       s.pPhase.set(this.pPhase); s.pSource.set(this.pSource); s.pState.set(this.pState); s.pId.set(this.pId);
       s.pSourceId.set(this.pSourceId); s.freeSlots.set(this.freeSlots);
       s.colParticleMassH.set(this.colParticleMassH); s.colParticleMassL.set(this.colParticleMassL);
+      this.derivedHeaders();if(this.derivedV2!==null&&this.derivedCanonical!==null)this.derivedV2.exportCopy(this.derivedCanonical,s);
     }
     return 0;
   }
@@ -839,6 +853,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
     out.pSource.set(this.pSource); out.pState.set(this.pState); out.pId.set(this.pId);
     out.pSourceId.set(this.pSourceId); out.freeSlots.set(this.freeSlots);
     out.colParticleMassH.set(this.colParticleMassH); out.colParticleMassL.set(this.colParticleMassL);
+    this.derivedHeaders();if(this.derivedV2!==null&&this.derivedCanonical!==null)this.derivedV2.exportCopy(this.derivedCanonical,out);
   }
 
   private cache(phase: number): Float64Array {

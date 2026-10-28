@@ -1,3 +1,8 @@
+import { DerivedCheckpointV2 } from './derived/P011DerivedCheckpointV2';
+import { DerivedCoordinatorV2,DerivedFailureRawV2,DerivedWorkV2 } from './derived/P011DerivedTupleBarrierV2';
+import { DerivedCommitV2 } from './derived/P011DerivedCommitV2';
+import { DerivedStatus,DerivedFaultV2 } from './derived/P011DerivedTypesV2';
+import { P051DerivedFacadeV2 } from './derived/P051DerivedFacadeV2';
 import { TxFixtureDriver } from './tx/TxFixtureDriver';
 import { TxWholePairAdapter } from './tx/TxWholePairAdapter';
 import { P011TiltPreviewTrace, P011TiltPreviewTraceSink, P011FirstFailureEvidence } from './P011TiltPreviewTrace';
@@ -795,6 +800,58 @@ function finite(value: number): boolean {
 export interface P051DryDiagnostics { mediumRevision: string; airDynamicsRevision: string; freeWaterTotal: number;
  occupiedVolumeTotal: number; baselineStatus: string; sourceEpoch: number; externalAdmissionCount: number | null; }
 export class WaterSandField {
+  private derivedFieldWriteV2(column:number,value:number):number{this.derivedV2?.markField(column);return value;}
+  private derivedFieldBulkV2(write:()=>void):void{write();this.derivedV2?.markField();}
+
+  private derivedV2:DerivedCoordinatorV2|null=null;
+  private derivedPublicationV2:DerivedCommitV2|null=null;
+  enableDerivedV2Cold(permit:object,checkpoint:DerivedCheckpointV2|null=null):void {
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2!==null||this.mediumMode!=='DRY_AIR_V1'||this.capacity!==256||this.cols!==128||this.particleBinding===null)throw new Error('DERIVED_COLD_OWNER_REQUIRED');
+    const b=this.particleBinding,w=b.work,p=b.pool.derivedBindingCold();
+    const coordinator=new DerivedCoordinatorV2(p,b.field,w.ownerId);this.derivedV2=coordinator;b.pool.attachDerivedV2(coordinator,p);w.derivedV2=coordinator;b.projection.enableDerivedV2();
+    coordinator.register(w.frozenPool);coordinator.register(w.patchBefore);coordinator.register(w.patchScratch);coordinator.register(w.patchAfter);
+    if(this.particleBackup===null||this.particleJournalBefore===null||this.backup.particleState===null||this.backup.particleState===undefined||this.motionSnapshot.particleState===null||this.motionSnapshot.particleState===undefined)throw new Error('DERIVED_COLD_BANKS');
+    coordinator.register(this.particleBackup);coordinator.register(this.particleJournalBefore);coordinator.register(this.backup.particleState);coordinator.register(this.motionSnapshot.particleState);
+    for(const a of [this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL,this.sandTopScratch,this.substepMotionBudgetRemaining,this.substepMotionBudgetUsed])coordinator.registerFailureBufferCold('field.'+a.byteLength,a.buffer as ArrayBuffer);if(w.budget!==null)for(const a of w.budget.coldBuffers())coordinator.registerFailureBufferCold('budget',a);
+    coordinator.registerFailureScalarCold('sourceEpoch',():number=>this.sourceEpoch);coordinator.registerFailureScalarCold('injectedH',():number=>this.sourceInjectedHeavy);coordinator.registerFailureScalarCold('injectedL',():number=>this.sourceInjectedLight);coordinator.registerFailureScalarCold('initialWater',():number=>this.initialWater);coordinator.registerFailureScalarCold('initialH',():number=>this.initialHeavy);coordinator.registerFailureScalarCold('initialL',():number=>this.initialLight);coordinator.registerFailureScalarCold('renderCommit',():number=>this.renderPhysicsCommitId);coordinator.registerFailureScalarCold('stateEpoch',():number=>this.renderStateEpoch);coordinator.registerFailureScalarCold('substep',():number=>this.p011SubstepId);coordinator.registerFailureScalarCold('hotStep',():number=>w.stepEpoch);coordinator.registerFailureScalarCold('hotAttempt',():number=>w.attemptToken);coordinator.registerFailureScalarCold('stepExternalH',():number=>w.stepExternalH);coordinator.registerFailureScalarCold('stepExternalL',():number=>w.stepExternalL);coordinator.registerFailureScalarCold('patchToken',():number=>w.activePatchToken);coordinator.registerFailureScalarCold('patchState',():number=>w.patchState);
+    coordinator.registerFieldMark(this.backup);coordinator.registerFieldMark(this.motionSnapshot);coordinator.registerFieldMark(w);
+    if(p.liveCount!==0&&checkpoint===null)throw new Error('DERIVED_RESTORE_REQUIRES_CHECKPOINT');
+    if(coordinator.canonical.build()!==0)throw new Error('DERIVED_COLD_BUILD');
+    for(const bank of [w.frozenPool,w.patchBefore,w.patchScratch,w.patchAfter,this.particleBackup,this.particleJournalBefore,this.backup.particleState,this.motionSnapshot.particleState])coordinator.copy(p,bank);
+    if(coordinator.flush()!==0)throw new Error('DERIVED_COLD_DOMAIN');
+    if(checkpoint!==null){
+      if(checkpoint.revision!=='P011_DERIVED_CHECKPOINT_V2'||checkpoint.numericPolicy!=='P011_DRY_CACHE_EXACT_V2'||checkpoint.cacheRevision!=='P011_LIVE_MASS_EXACT70_V2'||checkpoint.envelopeRevision!=='P011_DRY_ENVELOPE_ORDERED_V2'||checkpoint.replayStatus!=='QUIESCENT_COLD_COPY')throw new Error('DERIVED_CHECKPOINT_VERSION');
+      if(!checkpoint.runId||!Number.isSafeInteger(checkpoint.commit+1)||checkpoint.commit<0||!Number.isSafeInteger(checkpoint.stateEpoch+1)||checkpoint.stateEpoch<0||!Number.isSafeInteger(checkpoint.derivedRevision)||checkpoint.derivedRevision<0)throw new Error('DERIVED_CHECKPOINT_IDENTITY');
+      const v=coordinator.canonical,old=checkpoint.authority,op=old.particleState;if(op===undefined||op===null||op.nmax!==p.nmax)throw new Error('DERIVED_CHECKPOINT_SHAPE');
+      for(let k=0;k<v.acc.length;k++)if(v.acc[k]!==checkpoint.acc[k])throw new Error('DERIVED_CHECKPOINT_ACC');
+      for(let k=0;k<256;k++)if(v.count[k]!==checkpoint.count[k])throw new Error('DERIVED_CHECKPOINT_COUNT');
+      for(let c=0;c<128;c++)if(v.cacheH[c]!==op.colParticleMassH[c]||(v.cacheH[c]===0&&1/op.colParticleMassH[c]!==Infinity)||v.cacheL[c]!==op.colParticleMassL[c]||(v.cacheL[c]===0&&1/op.colParticleMassL[c]!==Infinity)||this.waterTop[c]!==old.waterTop[c]||this.sandTopScratch[c]!==old.sandTop[c]||checkpoint.dirty[c]!==0)throw new Error('DERIVED_CHECKPOINT_DERIVED_BITS');
+      for(let i=0;i<p.nmax;i++)if(!Number.isSafeInteger(checkpoint.generations[i])||checkpoint.generations[i]<0||checkpoint.ids[i]!==p.pId[i])throw new Error('DERIVED_CHECKPOINT_SLOT_IDENTITY');const source=old.externalSourceState;if(source===undefined||1/source.initialWater!==Infinity||(source.admissions.lastRecord!==null&&source.admissions.lastRecord.runId!==checkpoint.runId))throw new Error('DERIVED_CHECKPOINT_SOURCE_IDENTITY');
+      v.generations.set(checkpoint.generations);v.ids.set(checkpoint.ids);v.revision=checkpoint.derivedRevision;this.p011RunId=checkpoint.runId;this.renderStateEpoch=checkpoint.stateEpoch+1;this.renderPhysicsCommitId=checkpoint.commit+1;
+      if(coordinator.verifyPublicBoundary('RESTORE_COLD')!==0)throw new Error('DERIVED_CHECKPOINT_VERIFY');
+    }
+
+    this.initialWater=0;
+    this.derivedPublicationV2=new DerivedCommitV2(coordinator,w.nmax,(out:P011PublishedRenderState):void=>{this.fillDerivedPublicationV2(out);});
+    if(this.derivedPublicationV2.prepareInactive(checkpoint===null?'RESET':'RESTORE',this.p011RunId,this.renderStateEpoch,this.renderPhysicsCommitId,null)!==0)throw new Error('DERIVED_COLD_PUBLICATION');
+    this.derivedPublicationV2.commitPrepared();
+  }
+  private fillDerivedPublicationV2(out:P011PublishedRenderState):void {
+    this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;out.stateEpoch=this.renderStateEpoch;out.physicsCommitId=this.renderPhysicsCommitId;out.publicationKind=this.renderPublicationKind;out.ledgerCommitKey=this.renderLedgerCommitKey;out.routeId=this.particleRouteId;out.particleRouteActive=true;out.particleCapacity=this.particleBinding!.pool.nmax;out.liveCount=this.particleBinding!.work.derivedV2!.canonical.pool.liveCount;out.mediumMode=this.mediumMode;out.airDynamicsRevision=P051_DRY_GRAVITY;out.birthPlacementRevision='DRY_POINT_V1';
+  }
+  exportDerivedCheckpointColdV2(permit:object):DerivedCheckpointV2 {
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null||this.particleBinding===null||this.particleBinding.active||this.particleBinding.work.activePatchToken!==0)throw new Error('DERIVED_CHECKPOINT_NOT_QUIESCENT');
+    const d=this.derivedV2;if(d.verifyPublicBoundary('CHECKPOINT')!==0)throw new Error('DERIVED_CHECKPOINT_VERIFY');
+    const out=new DerivedCheckpointV2(this.particleBinding.work.nmax);this.copyStateTo(out.authority);out.acc.set(d.canonical.acc);out.count.set(d.canonical.count);out.dirty.set(d.canonical.dirty);out.generations.set(d.canonical.generations);out.ids.set(d.canonical.ids);out.runId=this.p011RunId;out.stateEpoch=this.renderStateEpoch;out.commit=this.renderPhysicsCommitId;out.derivedRevision=d.canonical.revision;return out;
+  }
+  startDerivedCommandV2(permit:object,kind:number=0,ordinal:number=0):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.derivedV2.startCommand(kind,ordinal,this.renderPhysicsCommitId);}
+  finishDerivedCommandV2(permit:object,ok:boolean):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.derivedV2.finishCommand(ok,this.renderPhysicsCommitId);}
+  derivedWorkColdV2(permit:object):DerivedWorkV2{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.exportWorkCold();}
+  derivedFailureRawColdV2(permit:object):DerivedFailureRawV2|null{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.exportFailureCold();}
+  derivedFaultColdV2(permit:object):DerivedFaultV2|null{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.status===0?null:JSON.parse(JSON.stringify(this.derivedV2.fault)) as DerivedFaultV2;}
+  derivedCountersColdV2(permit:object):Float64Array{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.counters.values.slice();}
+  abortDerivedCommandV2(permit:object):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.restoreBackup();this.derivedV2.fault.rolledBack=true;}
+
   private txD1:TxWholePairAdapter|null=null;
   static createWholeTransactionFixture(nmax:number,backend:string):TxFixtureDriver{return new TxFixtureDriver(nmax,backend);}
   // Explicit cold differential entry; no production default route change.
@@ -889,7 +946,7 @@ export class WaterSandField {
     if(request.y<this.sandTopScratch[c]+this.particleParams.contactEps){result.rejectedReason='BIRTH_OCCLUDED';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
     const q=request.requestedH+request.requestedL;const free=Math.max(0,this.capacity-this.waterTop[c]);
     let lambda=Math.min(1,free/q);const eventStart=this.endpointParticleEvents.length;
-    for(let attempt=0;attempt<8 && lambda>=1e-4;attempt++){txTrace?.add(39);txTrace?.add(31);
+    for(let attempt=0;attempt<8 && lambda>=1e-4;attempt++){this.derivedV2?.counters.add(17);txTrace?.add(39);txTrace?.add(31);
       if(binding.work.poolProgress!==null){this.poolDiagnosticOrigin='DRY_ADMISSION';
         this.poolDiagnosticLambdaAttempt=attempt;this.poolDiagnosticLambda=lambda;
         this.poolDiagnosticParentSequence=request.sequence;this.updatePoolProgressContext();}
@@ -902,10 +959,11 @@ export class WaterSandField {
       try {admission=this.externalAdmissions.prepare(this.p011RunId,request.sourceId,request.sequence,request.inputTimeMs,h,l);}
       catch(e){result.rejectedReason='ADMISSION_PREPARE_FAILED';{const txRc:P051DryAdmissionReceipt=result;txCode=0;return txRc;}}
       this.saveBackup();binding.registerRun(this.p011RunId,this.p011SubstepId+1);
-      if(!binding.beginDryBatch(h,l,request.x,request.y,request.sourceId,request.seed)) {binding.rollback();this.restoreBackup();lambda*=.5;continue;}
+      if(!binding.beginDryBatch(h,l,request.x,request.y,request.sourceId,request.seed)) {binding.rollback();this.restoreBackup();if(this.derivedV2!==null&&this.derivedV2.status!==0){result.rejectedReason='P011_DERIVED_FAILURE_V2:'+this.derivedV2.status;return result;}lambda*=.5;continue;}
       this.updateSandTop();
       if(this.audit(false)!==null){binding.rollback();this.restoreBackup();lambda*=.5;continue;}
       if(!binding.finishDryBatch()){this.restoreBackup();lambda*=.5;continue;}
+      if(this.derivedPublicationV2!==null){const status=this.derivedPublicationV2.prepareInactive('EXTERNAL_ADMISSION',this.p011RunId,this.renderStateEpoch,this.renderPhysicsCommitId+1,null,admission);if(status!==0){this.restoreBackup();result.rejectedReason='P011_DERIVED_FAILURE_V2:'+status;return result;}}
       // All fallible prechecks precede this callback-free source/publication tail.
       this.externalAdmissions.commit(admission);this.sourceInjectedHeavy+=h;this.sourceInjectedLight+=l;this.sourceEpoch++;
       this.dryLastSequence=request.sequence;this.dryLastInputTime=request.inputTimeMs;this.dormant=false;this.t90Heavy=-1;this.t90Light=-1;
@@ -987,6 +1045,7 @@ export class WaterSandField {
   private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(104);let txCode=0;try{
     this.renderPhysicsCommitId++; if (newEpoch) this.renderStateEpoch++;
     this.renderPublicationKind = kind; this.renderLedgerCommitKey = null;
+    if(this.derivedPublicationV2!==null)this.derivedPublicationV2.commitPrepared();
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,104,txCode);}}
   private particleBinding: P011ParticleM2FieldBinding | null = null;
   private particleRouteId: string | null = null;
@@ -1429,12 +1488,12 @@ export class WaterSandField {
     if(this.particleBinding!==null)this.particleBinding.field.mediumMode=this.mediumMode;
     if(this.poolProgressEnabled)this.configurePoolProgressDiagnostic();
     this.waterTop.fill(0);
-    this.bh.fill(0);
-    this.bl.fill(0);
-    this.mh.fill(0);
-    this.ml.fill(0);
-    this.suspH.fill(0);
-    this.suspL.fill(0);
+    {this.derivedV2?.markField();this.bh.fill(0);}
+    {this.derivedV2?.markField();this.bl.fill(0);}
+    {this.derivedV2?.markField();this.mh.fill(0);}
+    {this.derivedV2?.markField();this.ml.fill(0);}
+    {this.derivedV2?.markField();this.suspH.fill(0);}
+    {this.derivedV2?.markField();this.suspL.fill(0);}
     this.naturalObservationSliding.fill(0);
     this.naturalObservationSlidingBefore.fill(0);
     this.naturalObservationSlidingAfter.fill(0);
@@ -1614,15 +1673,15 @@ export class WaterSandField {
       for (let c = spec.startCol; c <= spec.endColInclusive; c++) {txTrace?.add(39);txTrace?.add(31);
         if (isHeavy) {
           if (suspended) {
-            this.suspH[c] += amountPerColumn;
+            this.derivedFieldWriteV2(c,(this.suspH[c] += amountPerColumn));
           } else {
-            this.mh[c] += amountPerColumn;
+            this.derivedFieldWriteV2(c,(this.mh[c] += amountPerColumn));
           }
         } else {
           if (suspended) {
-            this.suspL[c] += amountPerColumn;
+            this.derivedFieldWriteV2(c,(this.suspL[c] += amountPerColumn));
           } else {
-            this.ml[c] += amountPerColumn;
+            this.derivedFieldWriteV2(c,(this.ml[c] += amountPerColumn));
           }
         }
       }
@@ -1834,15 +1893,15 @@ export class WaterSandField {
       }
       // 3c. Trial write + η solve + audit.
       for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
-        this.suspH[c] += aH[c];
-        this.suspL[c] += aL[c];
+        this.derivedFieldWriteV2(c,(this.suspH[c] += aH[c]));
+        this.derivedFieldWriteV2(c,(this.suspL[c] += aL[c]));
       }
       const etaOk = this.solveInjectionWaterTop(aH, aL);
       let auditOk = etaOk && this.gestureInjectionAudit();
       if (auditOk) {
         if (this.particleRouteActive() && this.particleBinding !== null && this.particleParams !== null) {
           for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
-            this.suspH[c] -= aH[c]; this.suspL[c] -= aL[c];
+            this.derivedFieldWriteV2(c,(this.suspH[c] -= aH[c])); this.derivedFieldWriteV2(c,(this.suspL[c] -= aL[c]));
             const y = Math.max(this.sandTopScratch[c] + this.particleParams.contactEps,
               Math.min(request.y, this.waterTop[c] - this.particleParams.contactEps));
             if (aH[c] > 0) {
@@ -2076,12 +2135,12 @@ export class WaterSandField {
       newWaterTop[mirrored] = waterVolume + newSuspH[mirrored] + newSuspL[mirrored] + particleMass;
     }
     this.waterTop.set(newWaterTop);
-    this.bh.fill(0);
-    this.bl.fill(0);
-    this.mh.fill(0);
-    this.ml.fill(0);
-    this.suspH.set(newSuspH);
-    this.suspL.set(newSuspL);
+    {this.derivedV2?.markField();this.bh.fill(0);}
+    {this.derivedV2?.markField();this.bl.fill(0);}
+    {this.derivedV2?.markField();this.mh.fill(0);}
+    {this.derivedV2?.markField();this.ml.fill(0);}
+    {this.derivedV2?.markField();this.suspH.set(newSuspH);}
+    {this.derivedV2?.markField();this.suspL.set(newSuspL);}
     if (this.particleRouteActive() && this.particleBinding !== null) {
       this.particleBinding.pool.invert180(this.capacity);
     }
@@ -2643,13 +2702,15 @@ export class WaterSandField {
     this.endpointCaptureMode = mode;
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,165,txCode);}}
   private recordEndpointCommit(physicsDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(166);let txCode=0;try{
-    this.publishRenderState('STEP');
+    let derivedKey:P011EndpointCommitKey|null=null;
+    if(this.derivedPublicationV2!==null){derivedKey={runId:this.p011RunId,sequence:this.p011SampleSequence,identityRevision:'P011_COMMIT_IDENTITY_V2',frameId:this.p011FrameId,substepId:this.p011SubstepId+1,attemptId:this.p011CurrentAttemptId,committedOrdinal:this.endpointSampler===null?this.p011SubstepId+1:this.endpointSampler.committedOrdinal+1};const status=this.derivedPublicationV2.prepareInactive('STEP',this.p011RunId,this.renderStateEpoch,this.renderPhysicsCommitId+1,derivedKey);if(status!==0){this.restoreBackup();throw new Error('P011_DERIVED_FAILURE_V2:'+status);}}
+    this.publishRenderState('STEP');if(derivedKey!==null)this.renderLedgerCommitKey=derivedKey;
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
     if (sampler === null) {txCode=0;return;}
-    const key: P011EndpointCommitKey = { runId: this.p011RunId, sequence: this.p011SampleSequence, identityRevision: 'P011_COMMIT_IDENTITY_V2',
+    const key: P011EndpointCommitKey = derivedKey===null ? { runId: this.p011RunId, sequence: this.p011SampleSequence, identityRevision: 'P011_COMMIT_IDENTITY_V2',
       frameId: this.p011FrameId, substepId: this.p011SubstepId + 1,
-      attemptId: this.p011CurrentAttemptId, committedOrdinal: sampler.committedOrdinal + 1 };
+      attemptId: this.p011CurrentAttemptId, committedOrdinal: sampler.committedOrdinal + 1 } : derivedKey;
     if (this.naturalObservationProbe !== null) sampler.recordSuccessfulCommitWithoutStamp(key, physicsDt);
     try {
       if (phase === null || phase.commandSequence !== this.p011InputSequence || phase.commandPhaseId !== this.commandPhaseId) {
@@ -3710,12 +3771,12 @@ export class WaterSandField {
         // §1.3: bottom is never debited; total debits q ONCE per note —
         // the real displacement is q, H/L notes independent).
         if (isHeavy) {
-          this.suspH[donor] = newDonor;
-          this.suspH[receiver] = newReceiverSuspH;
+          this.derivedFieldWriteV2(donor,(this.suspH[donor] = newDonor));
+          this.derivedFieldWriteV2(receiver,(this.suspH[receiver] = newReceiverSuspH));
           this.moveShakeSourceLineage(this.shakeSourceH, donor, receiver, granted, donorStock);
         } else {
-          this.suspL[donor] = newDonor;
-          this.suspL[receiver] = newReceiverSuspL;
+          this.derivedFieldWriteV2(donor,(this.suspL[donor] = newDonor));
+          this.derivedFieldWriteV2(receiver,(this.suspL[receiver] = newReceiverSuspL));
           this.moveShakeSourceLineage(this.shakeSourceL, donor, receiver, granted, donorStock);
         }
         this.substepMotionBudgetRemaining[donor] -= granted;
@@ -4255,7 +4316,7 @@ export class WaterSandField {
   createPublishedRenderStateSlot(): P011PublishedRenderState {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(227);let txCode=0;try{
     {const txRc:P011PublishedRenderState=new P011PublishedRenderState(this.createEmptySnapshot());txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,227,txCode);}}
-  copyPublishedRenderStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(228);let txCode=0;try{
+  copyPublishedRenderStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(228);let txCode=0;try{if(this.derivedPublicationV2!==null)return this.derivedPublicationV2.copyPublishedInto(out) as P011RenderCopyStatus;
     if (!this.particleRouteActive() || this.particleBinding === null) {const txRc:P011RenderCopyStatus='ROUTE_INACTIVE';txCode=0;return txRc;}
     if (out.field.schemaVersion !== 4 || out.field.particleState === undefined || out.field.particleState === null)
       {const txRc:P011RenderCopyStatus='SCHEMA_UNAVAILABLE';txCode=0;return txRc;}
@@ -4275,7 +4336,7 @@ export class WaterSandField {
     {const txRc:P011RenderCopyStatus='OK';txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,228,txCode);}}
   // T56 read-only scene publication also supports the canonical field-only route.
-  copyPublishedSceneStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(229);let txCode=0;try{
+  copyPublishedSceneStateInto(out: P011PublishedRenderState): P011RenderCopyStatus {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(229);let txCode=0;try{if(this.derivedPublicationV2!==null)return this.derivedPublicationV2.copyPublishedInto(out) as P011RenderCopyStatus;
     if(this.particleRouteActive()){const txRc:P011RenderCopyStatus=this.copyPublishedRenderStateInto(out);txCode=0;return txRc;}
     if(out.field.cols!==this.cols||out.field.capacity!==this.capacity){const txRc:P011RenderCopyStatus='CAPACITY_MISMATCH';txCode=0;return txRc;}
     this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;
@@ -4313,7 +4374,7 @@ export class WaterSandField {
       target.hl.length !== this.cols || target.sandTop.length !== this.cols) {
       throw new WaterSandSnapshotError('snapshot array length mismatch');
     }
-    this.updateSandTop();
+    if(this.derivedV2===null)this.updateSandTop();
     target.birthPlacementRevision=this.mediumMode===P051_DRY_MEDIUM?'DRY_POINT_V1':'WET_COLUMN_V1';
     target.mediumMode=this.mediumMode;target.airDynamicsRevision=this.mediumMode===P051_DRY_MEDIUM?P051_DRY_GRAVITY:'WET_AIR_LEGACY';
     target.drySourceId=this.drySourceId;target.dryLastSequence=this.dryLastSequence;target.dryLastInputTime=this.dryLastInputTime;
@@ -4335,7 +4396,7 @@ export class WaterSandField {
     for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       target.hs[c] = this.bh[c] + this.mh[c];
       target.hl[c] = this.bl[c] + this.ml[c];
-      target.sandTop[c] = target.hs[c] + target.hl[c];
+      target.sandTop[c] = this.derivedV2===null ? target.hs[c] + target.hl[c] : this.sandTopScratch[c];
     }
     if (schemaNum === 4 && target.particleState !== undefined && target.particleState !== null) {
       if (this.particleRouteActive() && this.particleBinding !== null) {
@@ -4368,8 +4429,8 @@ export class WaterSandField {
     if(mode===P051_DRY_MEDIUM)this.validateDrySnapshot(source);
     this.mediumMode=mode;this.drySourceId=source.drySourceId ?? 0;this.dryLastSequence=source.dryLastSequence ?? 0;this.dryLastInputTime=source.dryLastInputTime ?? 0;
     if(this.particleBinding!==null)this.particleBinding.field.mediumMode=mode;
-    this.waterTop.set(source.waterTop); this.bh.set(source.bh); this.bl.set(source.bl);
-    this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);
+    this.waterTop.set(source.waterTop); {this.derivedV2?.markField();this.bh.set(source.bh);} {this.derivedV2?.markField();this.bl.set(source.bl);}
+    {this.derivedV2?.markField();this.mh.set(source.mh);} {this.derivedV2?.markField();this.ml.set(source.ml);} {this.derivedV2?.markField();this.suspH.set(source.suspH);} {this.derivedV2?.markField();this.suspL.set(source.suspL);}
     if (this.particleRouteActive() && this.particleBinding !== null) {
       if (version === 4 && source.particleState !== undefined && source.particleState !== null) {
         this.copyParticleStateDiagnostic(source.particleState,true);
@@ -4515,23 +4576,23 @@ export class WaterSandField {
       if (particleStatus !== 0) {this.recordCollectFirstFailure('PARTICLE_BEGIN',this.particleBinding.collectFailure.hotCode);
         this.lastError = WaterSandErrorCode.UNKNOWN;}
     }
-    this.updateSandTop();
+    this.updateSandTop();this.derivedV2?.saveField(this.motionSnapshot);
     this.observeFieldColumnV2('BEGIN_COLLECT_AFTER','PARTICLE_BEGIN');
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,238,txCode);}}
 
   private restoreMotionSnapshot(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(239);let txCode=0;try{
     this.waterTop.set(this.motionSnapshot.waterTop);
-    this.bh.set(this.motionSnapshot.bh);
-    this.bl.set(this.motionSnapshot.bl);
-    this.mh.set(this.motionSnapshot.mh);
-    this.ml.set(this.motionSnapshot.ml);
-    this.suspH.set(this.motionSnapshot.suspH);
-    this.suspL.set(this.motionSnapshot.suspL);
+    {this.derivedV2?.markField();this.bh.set(this.motionSnapshot.bh);}
+    {this.derivedV2?.markField();this.bl.set(this.motionSnapshot.bl);}
+    {this.derivedV2?.markField();this.mh.set(this.motionSnapshot.mh);}
+    {this.derivedV2?.markField();this.ml.set(this.motionSnapshot.ml);}
+    {this.derivedV2?.markField();this.suspH.set(this.motionSnapshot.suspH);}
+    {this.derivedV2?.markField();this.suspL.set(this.motionSnapshot.suspL);}
     if (this.shakeSourceRouteActive()) {
       this.shakeSourceH.set(this.motionSnapshot.shakeSourceH!);
       this.shakeSourceL.set(this.motionSnapshot.shakeSourceL!);
     }
-    this.updateSandTop();
+    if(this.derivedV2!==null)this.derivedV2.restoreField(this.motionSnapshot);else this.updateSandTop();
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,239,txCode);}}
 
   // D2 narrow host API: old channels retain their existing refund semantics.
@@ -4871,12 +4932,12 @@ export class WaterSandField {
         const donorBlBefore = this.bl[donor];
         const donorMhBefore = this.mh[donor];
         const donorMlBefore = this.ml[donor];
-        this.mh[donor] -= this.mh[donor] * mixScale;
-        this.ml[donor] -= this.ml[donor] * mixScale;
-        this.bl[donor] -= fromLight;
-        this.bh[donor] -= fromHeavy;
-        this.mh[receiver] += heavy;
-        this.ml[receiver] += light;
+        this.derivedFieldWriteV2(donor,(this.mh[donor] -= this.mh[donor] * mixScale));
+        this.derivedFieldWriteV2(donor,(this.ml[donor] -= this.ml[donor] * mixScale));
+        this.derivedFieldWriteV2(donor,(this.bl[donor] -= fromLight));
+        this.derivedFieldWriteV2(donor,(this.bh[donor] -= fromHeavy));
+        this.derivedFieldWriteV2(receiver,(this.mh[receiver] += heavy));
+        this.derivedFieldWriteV2(receiver,(this.ml[receiver] += light));
         appliedTotal += outcome.accepted;
         this.updateSandTop();
         if (this.naturalObservationProbe !== null) {
@@ -5130,10 +5191,10 @@ export class WaterSandField {
       }
       // Commit: four elements + ledgers (2q total, q per endpoint local,
       // cap booking).
-      this.bh[i] = newBhI;
-      this.bh[j] = newBhJ;
-      this.bl[j] = newBlJ;
-      this.bl[i] = newBlI;
+      this.derivedFieldWriteV2(i,(this.bh[i] = newBhI));
+      this.derivedFieldWriteV2(j,(this.bh[j] = newBhJ));
+      this.derivedFieldWriteV2(j,(this.bl[j] = newBlJ));
+      this.derivedFieldWriteV2(i,(this.bl[i] = newBlI));
       this.substepMotionBudgetRemaining[i] -= q;
       this.substepMotionBudgetUsed[i] += q;
       this.substepMotionBudgetRemaining[j] -= q;
@@ -6263,16 +6324,16 @@ export class WaterSandField {
         const donorStock = this.suspH[c + 1];
         const flux = Math.min(this.params.heavyDiffusion * dt, heavyDifference / 2,
           this.suspensionCapacity(c));
-        this.suspH[c + 1] -= flux;
-        this.suspH[c] += flux;
+        this.derivedFieldWriteV2(c + 1,(this.suspH[c + 1] -= flux));
+        this.derivedFieldWriteV2(c,(this.suspH[c] += flux));
         this.moveShakeSourceLineage(this.shakeSourceH, c + 1, c, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c + 1, c, flux, 0);
       } else if (heavyDifference < 0) {
         const donorStock = this.suspH[c];
         const flux = Math.min(this.params.heavyDiffusion * dt, -heavyDifference / 2,
           this.suspensionCapacity(c + 1));
-        this.suspH[c] -= flux;
-        this.suspH[c + 1] += flux;
+        this.derivedFieldWriteV2(c,(this.suspH[c] -= flux));
+        this.derivedFieldWriteV2(c + 1,(this.suspH[c + 1] += flux));
         this.moveShakeSourceLineage(this.shakeSourceH, c, c + 1, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c, c + 1, flux, 0);
       }
@@ -6280,16 +6341,16 @@ export class WaterSandField {
         const donorStock = this.suspL[c + 1];
         const flux = Math.min(this.params.lightDiffusion * dt, lightDifference / 2,
           this.suspensionCapacity(c));
-        this.suspL[c + 1] -= flux;
-        this.suspL[c] += flux;
+        this.derivedFieldWriteV2(c + 1,(this.suspL[c + 1] -= flux));
+        this.derivedFieldWriteV2(c,(this.suspL[c] += flux));
         this.moveShakeSourceLineage(this.shakeSourceL, c + 1, c, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c + 1, c, 0, flux);
       } else if (lightDifference < 0) {
         const donorStock = this.suspL[c];
         const flux = Math.min(this.params.lightDiffusion * dt, -lightDifference / 2,
           this.suspensionCapacity(c + 1));
-        this.suspL[c] -= flux;
-        this.suspL[c + 1] += flux;
+        this.derivedFieldWriteV2(c,(this.suspL[c] -= flux));
+        this.derivedFieldWriteV2(c + 1,(this.suspL[c + 1] += flux));
         this.moveShakeSourceLineage(this.shakeSourceL, c, c + 1, flux, donorStock);
         this.recordNaturalSuspensionDiffusion(c, c, c + 1, 0, flux);
       }
@@ -6512,10 +6573,10 @@ export class WaterSandField {
         this.shakeSourceLandedH += sourceHeavy;
         this.shakeSourceLandedL += sourceLight;
       }
-      this.suspH[c] -= heavy;
-      this.mh[c] += heavy;
-      this.suspL[c] -= light;
-      this.ml[c] += light;
+      this.derivedFieldWriteV2(c,(this.suspH[c] -= heavy));
+      this.derivedFieldWriteV2(c,(this.mh[c] += heavy));
+      this.derivedFieldWriteV2(c,(this.suspL[c] -= light));
+      this.derivedFieldWriteV2(c,(this.ml[c] += light));
       if (this.naturalObservationProbe !== null) {
         this.naturalObservationProbe.recordSettle(c, originalRequested, allowed, heavy, light,
           guardClipped);
@@ -6555,10 +6616,10 @@ export class WaterSandField {
       const allowed = this.clipTotalMotion(requested, originalRequested);
       const q = Math.min(through, 0.5 * through, allowed);
       const r = Math.min(pair, 0.5 * pair, Math.max(0, allowed - q), this.mh[c] - q);
-      this.mh[c] -= q + r;
-      this.bh[c] += q + r;
-      this.bl[c] += r - q;
-      this.ml[c] += q - r;
+      this.derivedFieldWriteV2(c,(this.mh[c] -= q + r));
+      this.derivedFieldWriteV2(c,(this.bh[c] += q + r));
+      this.derivedFieldWriteV2(c,(this.bl[c] += r - q));
+      this.derivedFieldWriteV2(c,(this.ml[c] += q - r));
       if (this.naturalObservationProbe !== null) {
         this.naturalObservationProbe.recordPercolate(c, originalRequested, allowed, q, r);
       }
@@ -6751,8 +6812,8 @@ export class WaterSandField {
         this.recordNaturalTopSplit(edge, donor, amount, donorBhBefore, donorBlBefore,
           donorMhBefore, donorMlBefore, split);
       }
-      this.mh[receiver] += split.heavy;
-      this.ml[receiver] += split.light;
+      this.derivedFieldWriteV2(receiver,(this.mh[receiver] += split.heavy));
+      this.derivedFieldWriteV2(receiver,(this.ml[receiver] += split.light));
       appliedTotal += amount;
       this.updateSandTop();
     }
@@ -6957,8 +7018,8 @@ export class WaterSandField {
           finalLight: split.light
         });
       }
-      this.bh[receiver] += split.heavy;
-      this.bl[receiver] += split.light;
+      this.derivedFieldWriteV2(receiver,(this.bh[receiver] += split.heavy));
+      this.derivedFieldWriteV2(receiver,(this.bl[receiver] += split.light));
       // P-011 v2.8: signed global left/right effective displacement.
       this.bottomCreepDonorEffectiveDisplacement[donor] -= directionSign * amount;
       this.bottomCreepReceiverEffectiveDisplacement[receiver] += directionSign * amount;
@@ -7088,8 +7149,8 @@ export class WaterSandField {
         if(this.mediumMode===P051_DRY_MEDIUM){
           const ok=this.particleBinding.beginDryBatch(split.heavy,split.light,c+.5,contact,particleSourceId,particleSourceId,1);
           if(!ok || !this.particleBinding.finishDryBatch()){
-            this.particleBinding.rollback();this.bh[c]=donorBhBefore;this.bl[c]=donorBlBefore;
-            this.mh[c]=donorMhBefore;this.ml[c]=donorMlBefore;
+            this.particleBinding.rollback();this.derivedFieldWriteV2(c,(this.bh[c]=donorBhBefore));this.derivedFieldWriteV2(c,(this.bl[c]=donorBlBefore));
+            this.derivedFieldWriteV2(c,(this.mh[c]=donorMhBefore));this.derivedFieldWriteV2(c,(this.ml[c]=donorMlBefore));
             this.materialGuardRefund(amount,[c],false);this.updateSandTop();continue;
           }
           const evidence=this.particleBinding.exportCommittedEvidence();
@@ -7098,19 +7159,19 @@ export class WaterSandField {
         if (split.heavy > 0) {
           const slot = this.particleBinding.seed(split.heavy, c + 0.5, contact, 0,
             this.particleParams.liftSpeedHeavy, 0, 1, particleSourceId);
-          if (slot < 0) this.suspH[c] += split.heavy;
+          if (slot < 0) this.derivedFieldWriteV2(c,(this.suspH[c] += split.heavy));
           else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
         }
         if (split.light > 0) {
           const slot = this.particleBinding.seed(split.light, c + 0.5, contact, 0,
             this.particleParams.liftSpeedLight, 1, 1, particleSourceId);
-          if (slot < 0) this.suspL[c] += split.light;
+          if (slot < 0) this.derivedFieldWriteV2(c,(this.suspL[c] += split.light));
           else this.endpointParticleEvents.push(...this.particleBinding.drainBirthEvents());
         }
         }
       } else {
-        this.suspH[c] += split.heavy;
-        this.suspL[c] += split.light;
+        this.derivedFieldWriteV2(c,(this.suspH[c] += split.heavy));
+        this.derivedFieldWriteV2(c,(this.suspL[c] += split.light));
       }
       liftedTotal += amount;
       liftedColumns++;
@@ -7133,10 +7194,10 @@ export class WaterSandField {
     remaining -= fromLight;
     const fromHeavy = Math.min(remaining, this.bh[column]);
     heavy += fromHeavy;
-    this.mh[column] -= this.mh[column] * mixScale;
-    this.ml[column] -= this.ml[column] * mixScale;
-    this.bl[column] -= fromLight;
-    this.bh[column] -= fromHeavy;
+    this.derivedFieldWriteV2(column,(this.mh[column] -= this.mh[column] * mixScale));
+    this.derivedFieldWriteV2(column,(this.ml[column] -= this.ml[column] * mixScale));
+    this.derivedFieldWriteV2(column,(this.bl[column] -= fromLight));
+    this.derivedFieldWriteV2(column,(this.bh[column] -= fromHeavy));
     this.updateSandTop();
     {const txRc:WaterSandSplitResult={ heavy, light };txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,284,txCode);}}
@@ -7146,8 +7207,8 @@ export class WaterSandField {
     const scale = amount / Math.max(deposited, EPS);
     const heavy = this.bh[column] * scale;
     const light = this.bl[column] * scale;
-    this.bh[column] -= heavy;
-    this.bl[column] -= light;
+    this.derivedFieldWriteV2(column,(this.bh[column] -= heavy));
+    this.derivedFieldWriteV2(column,(this.bl[column] -= light));
     this.updateSandTop();
     {const txRc:WaterSandSplitResult={ heavy, light };txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,285,txCode);}}
@@ -7177,8 +7238,8 @@ export class WaterSandField {
       this.lastBottomSplitError = WaterSandErrorCode.CAPACITY_OVERFLOW;
       {const txRc:WaterSandSplitResult={ heavy: 0, light: 0 };txCode=0;return txRc;}
     }
-    this.bh[donor] -= heavy;
-    this.bl[donor] -= light;
+    this.derivedFieldWriteV2(donor,(this.bh[donor] -= heavy));
+    this.derivedFieldWriteV2(donor,(this.bl[donor] -= light));
     {const txRc:WaterSandSplitResult={ heavy, light };txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,286,txCode);}}
 
@@ -7322,7 +7383,7 @@ export class WaterSandField {
   private dryReceiverCapacity(c: number, sand: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(291);let txCode=0;try{
     {const txRc:number=this.capacity-sand-(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,291,txCode);}}
-  private getWaterVolume(c: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(292);let txCode=0;try{
+  private getWaterVolume(c: number): number {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(292);let txCode=0;try{if(this.derivedV2!==null)return 0;
     const particles = this.particleRouteActive() && this.particleBinding !== null
       ? this.particleBinding.pool.particleMassAt(c) : 0;
     if(this.mediumMode===P051_DRY_MEDIUM){const txRc:number=Math.max(0,this.waterTop[c]-(this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+particles));txCode=0;return txRc;}
@@ -7369,6 +7430,8 @@ export class WaterSandField {
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,296,txCode);}}
 
   private updateSandTop(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(297);let txCode=0;try{
+    if(this.derivedV2!==null){const status=this.derivedV2.flush();if(status!==0)throw new Error('P011_DERIVED_FAILURE_V2:'+status);return;}
+
     for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       this.sandTopScratch[c] = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c];
       if(this.mediumMode===P051_DRY_MEDIUM)this.waterTop[c]=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));
@@ -7472,17 +7535,18 @@ export class WaterSandField {
     if (this.particleBinding !== null && this.particleBackup !== null) {
       this.copyParticleStateDiagnostic(this.particleBackup);
     }
+    this.derivedV2?.saveField(this.backup);
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,302,txCode);}}
 
   private restoreBackup(): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(303);let txCode=0;try{
     this.endpointParticleEvents.length = this.particleEventBackupLength;
     this.waterTop.set(this.backup.waterTop);txTrace?.add(29,(this.backup.waterTop).byteLength);
-    this.bh.set(this.backup.bh);txTrace?.add(29,(this.backup.bh).byteLength);
-    this.bl.set(this.backup.bl);txTrace?.add(29,(this.backup.bl).byteLength);
-    this.mh.set(this.backup.mh);txTrace?.add(29,(this.backup.mh).byteLength);
-    this.ml.set(this.backup.ml);txTrace?.add(29,(this.backup.ml).byteLength);
-    this.suspH.set(this.backup.suspH);txTrace?.add(29,(this.backup.suspH).byteLength);
-    this.suspL.set(this.backup.suspL);txTrace?.add(29,(this.backup.suspL).byteLength);
+    {this.derivedV2?.markField();this.bh.set(this.backup.bh);}txTrace?.add(29,(this.backup.bh).byteLength);
+    {this.derivedV2?.markField();this.bl.set(this.backup.bl);}txTrace?.add(29,(this.backup.bl).byteLength);
+    {this.derivedV2?.markField();this.mh.set(this.backup.mh);}txTrace?.add(29,(this.backup.mh).byteLength);
+    {this.derivedV2?.markField();this.ml.set(this.backup.ml);}txTrace?.add(29,(this.backup.ml).byteLength);
+    {this.derivedV2?.markField();this.suspH.set(this.backup.suspH);}txTrace?.add(29,(this.backup.suspH).byteLength);
+    {this.derivedV2?.markField();this.suspL.set(this.backup.suspL);}txTrace?.add(29,(this.backup.suspL).byteLength);
     this.shakeSourceH.set(this.backup.shakeSourceH!);txTrace?.add(29,(this.backup.shakeSourceH!).byteLength);
     this.shakeSourceL.set(this.backup.shakeSourceL!);txTrace?.add(29,(this.backup.shakeSourceL!).byteLength);
     this.shakeSourceLiftedH = this.backup.shakeSourceLiftedH ?? 0;
@@ -7496,7 +7560,7 @@ export class WaterSandField {
       this.copyParticleStateDiagnostic(this.particleBackup,true);
       this.particleBinding.discardCommittedPage();
     }
-    this.updateSandTop();
+    if(this.derivedV2!==null)this.derivedV2.restoreField(this.backup);else this.updateSandTop();
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,303,txCode);}}
 
   private changedSinceBackup(): boolean {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(304);let txCode=0;try{

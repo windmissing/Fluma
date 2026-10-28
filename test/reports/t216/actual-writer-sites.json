@@ -1,0 +1,894 @@
+{
+  "revision": "T216_ACTUAL_AST_WRITER_REVIEW_V2",
+  "rows": [
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 343,
+      "method": "allocate",
+      "target": "this.pMass",
+      "expression": "this.pMass[slot] = seed.mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 343,
+      "method": "allocate",
+      "target": "this.pX",
+      "expression": "this.pX[slot] = seed.x"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 343,
+      "method": "allocate",
+      "target": "this.pY",
+      "expression": "this.pY[slot] = seed.y"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 345,
+      "method": "allocate",
+      "target": "this.pPhase",
+      "expression": "this.pPhase[slot] = seed.phase"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 347,
+      "method": "allocate",
+      "target": "this.pState",
+      "expression": "this.pState[slot] = 1"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 365,
+      "method": "retainAfterDeposit",
+      "target": "this.cache(this.pPhase[slot])",
+      "expression": "this.cache(this.pPhase[slot])[Math.floor(this.pX[slot])] -= granted"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 366,
+      "method": "retainAfterDeposit",
+      "target": "this.pMass",
+      "expression": "this.pMass[slot] = remainder"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 368,
+      "method": "retainAfterDeposit",
+      "target": "this.pState",
+      "expression": "this.pState[slot] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 371,
+      "method": "retainAfterDeposit",
+      "target": "this.pState",
+      "expression": "this.pState[slot] = 2"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 371,
+      "method": "retainAfterDeposit",
+      "target": "this.pY",
+      "expression": "this.pY[slot] = sandTopAfter + contactEps"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 436,
+      "method": "invert180",
+      "target": "this.pX",
+      "expression": "this.pX[i] = this.cols - 1 - this.pX[i]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 436,
+      "method": "invert180",
+      "target": "this.pY",
+      "expression": "this.pY[i] = capacity - this.pY[i]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 438,
+      "method": "invert180",
+      "target": "this.cache(this.pPhase[i])",
+      "expression": "this.cache(this.pPhase[i])[Math.floor(this.pX[i])] += this.pMass[i]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 633,
+      "method": "remove",
+      "target": "this.cache(this.pPhase[slot])",
+      "expression": "this.cache(this.pPhase[slot])[Math.floor(this.pX[slot])] -= this.pMass[slot]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 634,
+      "method": "remove",
+      "target": "this.pMass",
+      "expression": "this.pMass[slot] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 634,
+      "method": "remove",
+      "target": "this.pState",
+      "expression": "this.pState[slot] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 646,
+      "method": "mergePair",
+      "target": "this.pX",
+      "expression": "this.pX[a] = (this.pX[a] * ma + this.pX[b] * mb) / mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 647,
+      "method": "mergePair",
+      "target": "this.pY",
+      "expression": "this.pY[a] = (this.pY[a] * ma + this.pY[b] * mb) / mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 650,
+      "method": "mergePair",
+      "target": "this.pMass",
+      "expression": "this.pMass[a] = mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 652,
+      "method": "mergePair",
+      "target": "this.pMass",
+      "expression": "this.pMass[b] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 652,
+      "method": "mergePair",
+      "target": "this.pState",
+      "expression": "this.pState[b] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 721,
+      "method": "edit",
+      "target": "this.pX",
+      "expression": "this.pX[slot] = r.targetColumn > r.column ? r.column + 1 - 1e-9 : r.column + 1e-9"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 726,
+      "method": "edit",
+      "target": "this.pX",
+      "expression": "this.pX[slot] = r.predictedX"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 726,
+      "method": "edit",
+      "target": "this.pY",
+      "expression": "this.pY[slot] = r.predictedY"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 749,
+      "method": "applyMotions",
+      "target": "this.pX",
+      "expression": "this.pX[slot] = m.x"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 749,
+      "method": "applyMotions",
+      "target": "this.pY",
+      "expression": "this.pY[slot] = m.y"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 954,
+      "method": "mergePairHot",
+      "target": "p.pX",
+      "expression": "p.pX[a] = (p.pX[a] * ma + p.pX[b] * mb) / mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 954,
+      "method": "mergePairHot",
+      "target": "p.pY",
+      "expression": "p.pY[a] = (p.pY[a] * ma + p.pY[b] * mb) / mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 956,
+      "method": "mergePairHot",
+      "target": "p.pMass",
+      "expression": "p.pMass[a] = mass"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 956,
+      "method": "mergePairHot",
+      "target": "p.pMass",
+      "expression": "p.pMass[b] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 956,
+      "method": "mergePairHot",
+      "target": "p.pState",
+      "expression": "p.pState[b] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1008,
+      "method": "editPoolHot",
+      "target": "p.pMass",
+      "expression": "p.pMass[slot] = k < count ? work.params.massPackage : tail"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1008,
+      "method": "editPoolHot",
+      "target": "p.pX",
+      "expression": "p.pX[slot] = dry && kind === 1 ? plan.predictedX[row] : c + 0.5 + jitter"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1009,
+      "method": "editPoolHot",
+      "target": "p.pY",
+      "expression": "p.pY[slot] = dry && kind === 1 ? plan.predictedY[row] : kind === 4 ? low : Math.max(low, Math.min(high, plan.predictedY[row]))"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1012,
+      "method": "editPoolHot",
+      "target": "p.pPhase",
+      "expression": "p.pPhase[slot] = phase"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1013,
+      "method": "editPoolHot",
+      "target": "p.pState",
+      "expression": "p.pState[slot] = 1"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1019,
+      "method": "editPoolHot",
+      "target": "p.colParticleMassH",
+      "expression": "p.colParticleMassH[c] += p.pMass[slot]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1019,
+      "method": "editPoolHot",
+      "target": "p.colParticleMassL",
+      "expression": "p.colParticleMassL[c] += p.pMass[slot]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1036,
+      "method": "editPoolHot",
+      "target": "cache",
+      "expression": "cache[c] -= amount"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1036,
+      "method": "editPoolHot",
+      "target": "p.pMass",
+      "expression": "p.pMass[slot] = remainder"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1037,
+      "method": "editPoolHot",
+      "target": "p.pState",
+      "expression": "p.pState[slot] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1038,
+      "method": "editPoolHot",
+      "target": "p.pState",
+      "expression": "p.pState[slot] = 2"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1038,
+      "method": "editPoolHot",
+      "target": "p.pY",
+      "expression": "p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1045,
+      "method": "editPoolHot",
+      "target": "cache",
+      "expression": "cache[c] -= p.pMass[slot]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1045,
+      "method": "editPoolHot",
+      "target": "p.pMass",
+      "expression": "p.pMass[slot] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1045,
+      "method": "editPoolHot",
+      "target": "p.pState",
+      "expression": "p.pState[slot] = 0"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1053,
+      "method": "editPoolHot",
+      "target": "p.pX",
+      "expression": "p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1057,
+      "method": "editPoolHot",
+      "target": "cache",
+      "expression": "cache[c] -= amount"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1057,
+      "method": "editPoolHot",
+      "target": "cache",
+      "expression": "cache[target] += amount"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1058,
+      "method": "editPoolHot",
+      "target": "p.pX",
+      "expression": "p.pX[slot] = plan.predictedX[row]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1058,
+      "method": "editPoolHot",
+      "target": "p.pY",
+      "expression": "p.pY[slot] = plan.predictedY[row]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1241,
+      "method": "applyParticlePlanIntoBody",
+      "target": "p.pX",
+      "expression": "p.pX[slot] = plan.motionX[i]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1241,
+      "method": "applyParticlePlanIntoBody",
+      "target": "p.pY",
+      "expression": "p.pY[slot] = plan.motionY[i]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 210,
+      "method": "applyInto",
+      "target": "f.mh",
+      "expression": "f.mh[c] += gh"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 210,
+      "method": "applyInto",
+      "target": "f.ml",
+      "expression": "f.ml[c] += gl"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 222,
+      "method": "applyInto",
+      "target": "f.mh",
+      "expression": "f.mh[c] -= f.mh[c] * scale"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 222,
+      "method": "applyInto",
+      "target": "f.ml",
+      "expression": "f.ml[c] -= f.ml[c] * scale"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 222,
+      "method": "applyInto",
+      "target": "f.bl",
+      "expression": "f.bl[c] -= fromLight"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 222,
+      "method": "applyInto",
+      "target": "f.bh",
+      "expression": "f.bh[c] -= fromHeavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 239,
+      "method": "applyInto",
+      "target": "f.suspH",
+      "expression": "f.suspH[c] += gh"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 239,
+      "method": "applyInto",
+      "target": "f.suspL",
+      "expression": "f.suspL[c] += gl"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 251,
+      "method": "applyInto",
+      "target": "f.waterTop",
+      "expression": "f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c)"
+    },
+    {
+      "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 252,
+      "method": "applyInto",
+      "target": "f.waterTop",
+      "expression": "f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target)"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1668,
+      "method": "inject",
+      "target": "this.waterTop",
+      "expression": "this.waterTop[c] += amountPerColumn"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1676,
+      "method": "inject",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] += amountPerColumn"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1678,
+      "method": "inject",
+      "target": "this.mh",
+      "expression": "this.mh[c] += amountPerColumn"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1682,
+      "method": "inject",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] += amountPerColumn"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1684,
+      "method": "inject",
+      "target": "this.ml",
+      "expression": "this.ml[c] += amountPerColumn"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1896,
+      "method": "injectGestureSand",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] += aH[c]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1897,
+      "method": "injectGestureSand",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] += aL[c]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1904,
+      "method": "injectGestureSand",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] -= aH[c]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1904,
+      "method": "injectGestureSand",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] -= aL[c]"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2072,
+      "method": "solveInjectionWaterTop",
+      "target": "this.waterTop",
+      "expression": "this.waterTop[c] = lifted"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3335,
+      "method": "waterTransaction",
+      "target": "this.waterTop",
+      "expression": "this.waterTop[c] += (add ? 1 : -1) * admitted * perCol[c] / sum"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3774,
+      "method": "advectionSlot",
+      "target": "this.suspH",
+      "expression": "this.suspH[donor] = newDonor"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3775,
+      "method": "advectionSlot",
+      "target": "this.suspH",
+      "expression": "this.suspH[receiver] = newReceiverSuspH"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3778,
+      "method": "advectionSlot",
+      "target": "this.suspL",
+      "expression": "this.suspL[donor] = newDonor"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3779,
+      "method": "advectionSlot",
+      "target": "this.suspL",
+      "expression": "this.suspL[receiver] = newReceiverSuspL"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4935,
+      "method": "applyCorrectionSlot",
+      "target": "this.mh",
+      "expression": "this.mh[donor] -= this.mh[donor] * mixScale"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4936,
+      "method": "applyCorrectionSlot",
+      "target": "this.ml",
+      "expression": "this.ml[donor] -= this.ml[donor] * mixScale"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4937,
+      "method": "applyCorrectionSlot",
+      "target": "this.bl",
+      "expression": "this.bl[donor] -= fromLight"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4938,
+      "method": "applyCorrectionSlot",
+      "target": "this.bh",
+      "expression": "this.bh[donor] -= fromHeavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4939,
+      "method": "applyCorrectionSlot",
+      "target": "this.mh",
+      "expression": "this.mh[receiver] += heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4940,
+      "method": "applyCorrectionSlot",
+      "target": "this.ml",
+      "expression": "this.ml[receiver] += light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5194,
+      "method": "applyDeepCreep",
+      "target": "this.bh",
+      "expression": "this.bh[i] = newBhI"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5195,
+      "method": "applyDeepCreep",
+      "target": "this.bh",
+      "expression": "this.bh[j] = newBhJ"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5196,
+      "method": "applyDeepCreep",
+      "target": "this.bl",
+      "expression": "this.bl[j] = newBlJ"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5197,
+      "method": "applyDeepCreep",
+      "target": "this.bl",
+      "expression": "this.bl[i] = newBlI"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6300,
+      "method": "waterLevel",
+      "target": "this.waterTop",
+      "expression": "this.waterTop[donor] -= amount"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6301,
+      "method": "waterLevel",
+      "target": "this.waterTop",
+      "expression": "this.waterTop[receiver] += amount"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6327,
+      "method": "diffuseSuspension",
+      "target": "this.suspH",
+      "expression": "this.suspH[c + 1] -= flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6328,
+      "method": "diffuseSuspension",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] += flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6335,
+      "method": "diffuseSuspension",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] -= flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6336,
+      "method": "diffuseSuspension",
+      "target": "this.suspH",
+      "expression": "this.suspH[c + 1] += flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6344,
+      "method": "diffuseSuspension",
+      "target": "this.suspL",
+      "expression": "this.suspL[c + 1] -= flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6345,
+      "method": "diffuseSuspension",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] += flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6352,
+      "method": "diffuseSuspension",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] -= flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6353,
+      "method": "diffuseSuspension",
+      "target": "this.suspL",
+      "expression": "this.suspL[c + 1] += flux"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6576,
+      "method": "settleSandV2",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] -= heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6577,
+      "method": "settleSandV2",
+      "target": "this.mh",
+      "expression": "this.mh[c] += heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6578,
+      "method": "settleSandV2",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] -= light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6579,
+      "method": "settleSandV2",
+      "target": "this.ml",
+      "expression": "this.ml[c] += light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6619,
+      "method": "percolateHeavyConservative",
+      "target": "this.mh",
+      "expression": "this.mh[c] -= q + r"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6620,
+      "method": "percolateHeavyConservative",
+      "target": "this.bh",
+      "expression": "this.bh[c] += q + r"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6621,
+      "method": "percolateHeavyConservative",
+      "target": "this.bl",
+      "expression": "this.bl[c] += r - q"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6622,
+      "method": "percolateHeavyConservative",
+      "target": "this.ml",
+      "expression": "this.ml[c] += q - r"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6815,
+      "method": "relaxAngle",
+      "target": "this.mh",
+      "expression": "this.mh[receiver] += split.heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6816,
+      "method": "relaxAngle",
+      "target": "this.ml",
+      "expression": "this.ml[receiver] += split.light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7021,
+      "method": "creepBottomRequests",
+      "target": "this.bh",
+      "expression": "this.bh[receiver] += split.heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7022,
+      "method": "creepBottomRequests",
+      "target": "this.bl",
+      "expression": "this.bl[receiver] += split.light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7152,
+      "method": "liftByShake",
+      "target": "this.bh",
+      "expression": "this.bh[c]=donorBhBefore"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7152,
+      "method": "liftByShake",
+      "target": "this.bl",
+      "expression": "this.bl[c]=donorBlBefore"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7153,
+      "method": "liftByShake",
+      "target": "this.mh",
+      "expression": "this.mh[c]=donorMhBefore"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7153,
+      "method": "liftByShake",
+      "target": "this.ml",
+      "expression": "this.ml[c]=donorMlBefore"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7162,
+      "method": "liftByShake",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] += split.heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7168,
+      "method": "liftByShake",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] += split.light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7173,
+      "method": "liftByShake",
+      "target": "this.suspH",
+      "expression": "this.suspH[c] += split.heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7174,
+      "method": "liftByShake",
+      "target": "this.suspL",
+      "expression": "this.suspL[c] += split.light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7197,
+      "method": "splitTopV2",
+      "target": "this.mh",
+      "expression": "this.mh[column] -= this.mh[column] * mixScale"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7198,
+      "method": "splitTopV2",
+      "target": "this.ml",
+      "expression": "this.ml[column] -= this.ml[column] * mixScale"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7199,
+      "method": "splitTopV2",
+      "target": "this.bl",
+      "expression": "this.bl[column] -= fromLight"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7200,
+      "method": "splitTopV2",
+      "target": "this.bh",
+      "expression": "this.bh[column] -= fromHeavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7210,
+      "method": "splitBottom",
+      "target": "this.bh",
+      "expression": "this.bh[column] -= heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7211,
+      "method": "splitBottom",
+      "target": "this.bl",
+      "expression": "this.bl[column] -= light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7241,
+      "method": "splitBottomPhaseBalanced",
+      "target": "this.bh",
+      "expression": "this.bh[donor] -= heavy"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7242,
+      "method": "splitBottomPhaseBalanced",
+      "target": "this.bl",
+      "expression": "this.bl[donor] -= light"
+    },
+    {
+      "file": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7437,
+      "method": "updateSandTop",
+      "target": "this.waterTop",
+      "expression": "this.waterTop[c]=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c))"
+    }
+  ]
+}

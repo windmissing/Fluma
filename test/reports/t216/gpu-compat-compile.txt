@@ -1,0 +1,120 @@
+Installing dependencies...
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1
++
+Progress: resolved 1, reused 1, downloaded 0, added 0
+Progress: resolved 1, reused 1, downloaded 0, added 1
+Progress: resolved 1, reused 1, downloaded 0, added 1, done
+ WARN  Issues with peer dependencies found
+.
+└─┬ @ohos/hvigor-ohos-plugin 6.26.8
+  └── ✕ missing peer @ohos/hvigor@6.26.8
+Peer dependencies that should be installed:
+  @ohos/hvigor@6.26.8
+
+dependencies:
++ @ohos/hvigor-ohos-plugin 6.26.8
+
+Done in 39.4s using pnpm v10.28.2
+Hvigor install success.
+> hvigor [32mFinished :entry:clean... after 3 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 252 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 2 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 7 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 93 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 51 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 6 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 11 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 6 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 21 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 274 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 8 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 5 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 14 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 256 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 4 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 121 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 5 s 768 ms [39m
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/cpp/p013renderer/napi_bridge.cpp:756:442: warning: implicit conversion from 'unsigned long' to 'double' changes value from 1152921504606846975 to 1152921504606846976 [-Wimplicit-const-int-float-conversion]
+ valid=valid&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"stateEpoch",state)&&SafeInteger(state)&&state>0&&Number(e,a[0],"physicsCommitId",commit)&&SafeInteger(commit)&&commit>0&&Number(e,a[0],"requestedGeneration",generation)&&SafeInteger(generation)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=SIZE_MAX/16&&count<=capacity&&Boolean(e,a[0],"particleLayerEnabled",p.particleEnabled)&&text("frameToken",p.token)&&text("runId",p.run)&&text("ledgerCommitKey",p.ledgerKey)&&text("routeId",p.route)&&text("mediumMode",p.medium)&&text("sourceFailure",sourceFailure);
+                                                                                                                                                                                                                                                                                                                                                                                                                                               ~~~~~~~~~~^~~
+1 warning generated.
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 9 s 23 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 186 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 670 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 22 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/render/P013SceneController.ets:3:28
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/physics/tx/TxGpuWorker.ets:5:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:33:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:37:6
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:41:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/physics/T159Native.ets:2:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T159PhysicsWorker.ets:27:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T159PhysicsWorker.ets:29:49
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T159PhysicsWorker.ets:30:8
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T159PhysicsWorker.ets:31:18
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/physics/T171Native.ets:2:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T171Worker.ets:6:17
+ Currently module for 'libp011_gpu_pair_prototype.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T171Worker.ets:20:44
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t216-closed/entry/src/main/ets/workers/T171Worker.ets:20:141
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 24 s 642 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 7 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 3 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 958 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 36 s 655 ms [39m
+
+30 tasks in total: 30 executed, 0 up-to-date

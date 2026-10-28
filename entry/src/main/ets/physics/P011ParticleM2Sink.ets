@@ -245,7 +245,8 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) {const txRc:number=this.failHot(10);txCode=txRc;return txRc;}
     const published = publishPatchHot(work, token); if (published !== 0) {const txRc:number=this.failHot(published);txCode=txRc;return txRc;}
     if (kind === 1 || this.birthOnly === 1) { work.stepExternalH += gh; work.stepExternalL += gl; }
-    if (f.mediumMode === 'DRY_AIR_V1') {
+    if(work.derivedV2!==null){work.derivedV2.markField(c);if(target!==c)work.derivedV2.markField(target);const ds=work.derivedV2.flush();if(ds!==0){const txRc:number=this.failHot(ds);txCode=txRc;return txRc;}}
+    else if (f.mediumMode === 'DRY_AIR_V1') {
       const pool=work.pool;
       f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);
       if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);

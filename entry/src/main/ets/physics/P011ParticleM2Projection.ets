@@ -1,3 +1,4 @@
+import { DerivedProjectionV2 } from './derived/P011DerivedProjectionV2';
 // D2 independent particle preview/live projection; fixed storage, exact numeric comparison.
 import { P011ParticleHotWorkspace } from './P011ParticleHot';
 class P011ParticleProjectionSlot {
@@ -8,6 +9,8 @@ export class P011ParticleM2Projection {
   private readonly slots: P011ParticleProjectionSlot[] = [];
   private readonly scratch: Float64Array;
   private cursor = 0;
+  private derived:DerivedProjectionV2|null=null;
+  enableDerivedV2():void{if(this.derived===null)this.derived=new DerivedProjectionV2();}
   constructor(work: P011ParticleHotWorkspace) {
     const size = 5 + work.requestCapacity * 16 + work.nmax * 11;
     this.scratch = new Float64Array(size);
@@ -36,6 +39,7 @@ export class P011ParticleM2Projection {
   capture(theta: number, work: P011ParticleHotWorkspace): void {
     let slot = this.slots[this.cursor];
     for (let i = 0; i < this.slots.length; i++) if (this.slots[i].valid && this.slots[i].theta === theta) slot = this.slots[i];
+    if(work.derivedV2!==null){if(this.derived===null)throw new Error('DERIVED_PROJECTION_UNBOUND');this.derived.capture(this.slots.indexOf(slot),work);}
     slot.theta = theta; slot.length = this.write(work, slot.values); slot.valid = true;
     this.cursor = (this.cursor + 1) % this.slots.length;
   }
@@ -44,6 +48,7 @@ export class P011ParticleM2Projection {
     for (let i = 0; i < this.slots.length; i++) {
       const slot = this.slots[i];
       if (!slot.valid || slot.theta !== theta || slot.length !== length) continue;
+      if(work.derivedV2!==null&&(this.derived===null||!this.derived.consistent(i,work)))return false;
       for (let j = 0; j < length; j++) if (!Number.isFinite(this.scratch[j]) || this.scratch[j] !== slot.values[j]) return false;
       return true;
     }

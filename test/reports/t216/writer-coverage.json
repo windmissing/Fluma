@@ -1,0 +1,2219 @@
+{
+  "revision": "T216_WRITER_COVERAGE_V2",
+  "architecture": "c280602",
+  "manifest": "docs/analysis-T214-exact70-engineering-manifest-v1.json",
+  "closedWriterRegistry": "T216_DRY_WRITERS_V2",
+  "rows": [
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 328,
+      "sourceLine": "this.pMass[slot] = seed.mass; this.pX[slot] = seed.x; this.pY[slot] = seed.y;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "allocate",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 330,
+      "sourceLine": "this.pPhase[slot] = seed.phase; this.pSource[slot] = seed.sourceKind;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "allocate",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 332,
+      "sourceLine": "this.pState[slot] = 1; this.liveCount++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "allocate",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 350,
+      "sourceLine": "this.pMass[slot] = remainder;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "retainAfterDeposit",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 352,
+      "sourceLine": "this.pState[slot] = 0; this.liveCount--;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "retainAfterDeposit",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 355,
+      "sourceLine": "this.pState[slot] = 2; this.pY[slot] = sandTopAfter + contactEps;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "retainAfterDeposit",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 366,
+      "sourceLine": "for (let i = 0; i < this.nmax; i++) if (this.pState[i] === 2) resting++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "totals",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 385,
+      "sourceLine": "for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 && this.pSource[i] === sourceKind) {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "sourceTotals",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 387,
+      "sourceLine": "if (this.pPhase[i] === 0) result.massH += this.pMass[i]; else result.massL += this.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "sourceTotals",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 400,
+      "sourceLine": "if (this.pPhase[i] === 0) heavy += this.pMass[i]; else light += this.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "auditBasic",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 418,
+      "sourceLine": "this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 420,
+      "sourceLine": "this.pX[i] = this.cols - 1 - this.pX[i]; this.pY[i] = capacity - this.pY[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 430,
+      "sourceLine": "if (this.pState[i] === 0) continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "endpointByState",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 435,
+      "sourceLine": "const group = this.pState[i] === 1 ? result.FLYING : result.CONTACT_WAIT;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "endpointByState",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 437,
+      "sourceLine": "if (this.pPhase[i] === 0) group.massH += this.pMass[i]; else group.massL += this.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "endpointByState",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 448,
+      "sourceLine": "this.pMass.fill(0); this.pX.fill(0); this.pY.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "reset",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 449,
+      "sourceLine": "this.pVx.fill(0); this.pVy.fill(0); this.pPhase.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "reset",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 450,
+      "sourceLine": "this.pSource.fill(0); this.pState.fill(0); this.pId.fill(0); this.pSourceId.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "reset",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 451,
+      "sourceLine": "this.colParticleMassH.fill(0); this.colParticleMassL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "reset",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 519,
+      "sourceLine": "restoreSnapshot(state: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreSnapshot",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 522,
+      "sourceLine": "this.copySnapshot(state);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreSnapshot",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 530,
+      "sourceLine": "this.copySnapshot(checkpoint.state); this.appliedKeys = new Set<string>(checkpoint.appliedKeys);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "rollback",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 533,
+      "sourceLine": "private copySnapshot(s: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 534,
+      "sourceLine": "this.pMass.set(s.pMass); this.pX.set(s.pX); this.pY.set(s.pY);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 535,
+      "sourceLine": "this.pVx.set(s.pVx); this.pVy.set(s.pVy); this.pPhase.set(s.pPhase);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 536,
+      "sourceLine": "this.pSource.set(s.pSource); this.pState.set(s.pState); this.pId.set(s.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 538,
+      "sourceLine": "this.colParticleMassH.set(s.colParticleMassH); this.colParticleMassL.set(s.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 559,
+      "sourceLine": "this.copyStateTo(before);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "prepare",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 560,
+      "sourceLine": "scratch.copySnapshot(before);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "prepare",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 565,
+      "sourceLine": "scratch.copyStateTo(after);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "prepare",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 587,
+      "sourceLine": "this.copySnapshot(active.after); active.published = true;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "publish",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 592,
+      "sourceLine": "this.copySnapshot(active.before); this.patch = null;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restore",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 612,
+      "sourceLine": "for (let i = 0; i < this.nmax; i++) if (this.pState[i] !== 0 && this.pId[i] === id) return i;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "slotFor",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 617,
+      "sourceLine": "this.pMass[slot] = 0; this.pState[slot] = 0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "remove",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 629,
+      "sourceLine": "this.pX[a] = (this.pX[a] * ma + this.pX[b] * mb) / mass;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergePair",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 633,
+      "sourceLine": "this.pMass[a] = mass;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergePair",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 635,
+      "sourceLine": "this.pMass[b] = 0; this.pState[b] = 0; this.liveCount--;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergePair",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 643,
+      "sourceLine": "this.pPhase[i] === this.pPhase[j] && this.pSource[i] === this.pSource[j] &&",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergeOldest",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 644,
+      "sourceLine": "this.pSourceId[i] === this.pSourceId[j] && this.pState[i] === this.pState[j] &&",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergeOldest",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 704,
+      "sourceLine": "this.pX[slot] = r.targetColumn > r.column ? r.column + 1 - 1e-9 : r.column + 1e-9;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "edit",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 709,
+      "sourceLine": "this.pX[slot] = r.predictedX; this.pY[slot] = r.predictedY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "edit",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 732,
+      "sourceLine": "this.pX[slot] = m.x; this.pY[slot] = m.y; this.pVx[slot] = m.vx; this.pVy[slot] = m.vy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyMotions",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 750,
+      "sourceLine": "// an owned copy; production adapters can reuse copyStateTo() buffers.",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "COLD_CONSTRUCTOR",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Only fresh/cold candidate before binding or read-only snapshot; in-place reset after binding is rejected"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 790,
+      "sourceLine": "transferHotState(s: P011ParticleSnapshot, restore: boolean): number {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "transferHotState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 803,
+      "sourceLine": "if (restore) this.copySnapshot(s);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "transferHotState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 806,
+      "sourceLine": "s.pMass.set(this.pMass); s.pX.set(this.pX); s.pY.set(this.pY); s.pVx.set(this.pVx); s.pVy.set(this.pVy);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "transferHotState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 807,
+      "sourceLine": "s.pPhase.set(this.pPhase); s.pSource.set(this.pSource); s.pState.set(this.pState); s.pId.set(this.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "transferHotState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 809,
+      "sourceLine": "s.colParticleMassH.set(this.colParticleMassH); s.colParticleMassL.set(this.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "transferHotState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 820,
+      "sourceLine": "if (this.pState[i] === 0) continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyRenderProjection",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 821,
+      "sourceLine": "x[count] = this.pX[i]; y[count] = this.pY[i]; vx[count] = this.pVx[i]; vy[count] = this.pVy[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyRenderProjection",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 822,
+      "sourceLine": "mass[count] = this.pMass[i]; phase[count] = this.pPhase[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyRenderProjection",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 823,
+      "sourceLine": "state[count] = this.pState[i]; particleId[count] = this.pId[i]; count++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyRenderProjection",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 827,
+      "sourceLine": "copyStateTo(out: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 833,
+      "sourceLine": "out.pMass.set(this.pMass); out.pX.set(this.pX); out.pY.set(this.pY);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 834,
+      "sourceLine": "out.pVx.set(this.pVx); out.pVy.set(this.pVy); out.pPhase.set(this.pPhase);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 835,
+      "sourceLine": "out.pSource.set(this.pSource); out.pState.set(this.pState); out.pId.set(this.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 837,
+      "sourceLine": "out.colParticleMassH.set(this.colParticleMassH); out.colParticleMassL.set(this.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Controlled same-policy copy follows sidecar; unknown raw import rejected after binding; raw export has no live seal"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 845,
+      "sourceLine": "if (this.pState[slot] === 0) throw new Error('PARTICLE_EMPTY_SLOT');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "requireLive",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 932,
+      "sourceLine": "const heavy = frozenPool.pPhase[i] === P011_PARTICLE_HEAVY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlan",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleField.ets",
+      "line": 947,
+      "sourceLine": "const contact = frozenPool.pState[i] === 2 || y <= frozenField.sandTopAt(c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlan",
+      "implementationStatus": "REJECT_V2",
+      "reason": "Legacy non-Hot mutation explicitly rejected or unreachable through the closed V2 facade; actual supported mutations use Hot tuple barrier"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 554,
+      "sourceLine": "work.frozenWaterTop.set(f.waterTop); work.frozenBh.set(f.bh); work.frozenBl.set(f.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "beginStepHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 555,
+      "sourceLine": "work.frozenMh.set(f.mh); work.frozenMl.set(f.ml); work.frozenSuspH.set(f.suspH); work.frozenSuspL.set(f.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "beginStepHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 559,
+      "sourceLine": "work.fieldBeforeWaterTop.set(f.waterTop); work.fieldBeforeBh.set(f.bh); work.fieldBeforeBl.set(f.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "beginStepHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 561,
+      "sourceLine": "work.fieldBeforeSuspL.set(f.suspL); work.fieldBeforeSurface.set(f.surface);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "beginStepHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 589,
+      "sourceLine": "field.waterTop.set(work.fieldBeforeWaterTop); field.bh.set(work.fieldBeforeBh); field.bl.set(work.fieldBeforeBl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "rollbackStepHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 590,
+      "sourceLine": "field.mh.set(work.fieldBeforeMh); field.ml.set(work.fieldBeforeMl); field.suspH.set(work.fieldBeforeSuspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "rollbackStepHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 591,
+      "sourceLine": "field.suspL.set(work.fieldBeforeSuspL); field.surface.set(work.fieldBeforeSurface);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "rollbackStepHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 643,
+      "sourceLine": "work.fieldBeforeWaterTop.set(f.waterTop); work.fieldBeforeBh.set(f.bh); work.fieldBeforeBl.set(f.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "sealEvidenceHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 644,
+      "sourceLine": "work.fieldBeforeMh.set(f.mh); work.fieldBeforeMl.set(f.ml); work.fieldBeforeSuspH.set(f.suspH); work.fieldBeforeSuspL.set(f.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "sealEvidenceHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 688,
+      "sourceLine": "pool.pMass[i] <= 0 || pool.pPhase[i] > 1 || pool.pSource[i] > 1 || pool.pSourceId[i] === 0 ||",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "sortActive",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 729,
+      "sourceLine": "const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlanIntoBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 745,
+      "sourceLine": "const contact = p.pState[i] === 2 || y <= sandHot(work, c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlanIntoBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 764,
+      "sourceLine": "const i = work.order[j]; const c = Math.floor(p.pX[i]); const heavy = p.pPhase[i] === P011_HOT_PHASE_HEAVY;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlanIntoBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 775,
+      "sourceLine": "const y = Math.min(work.capacity, p.pY[i] + vy * work.dt); const contact = p.pState[i] === 2 || y <= sandHot(work, c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlanIntoBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 791,
+      "sourceLine": "destination.ordinal[r] = r + 1; destination.requested[r] = p.pMass[i]; destination.totalWeight[r] = p.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "collectParticlePlanIntoBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 868,
+      "sourceLine": "function copyPoolHot(from: P011ParticleSnapshot, to: P011ParticleSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 870,
+      "sourceLine": "to.pMass.set(from.pMass); to.pX.set(from.pX); to.pY.set(from.pY); to.pVx.set(from.pVx); to.pVy.set(from.pVy);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 871,
+      "sourceLine": "to.pPhase.set(from.pPhase); to.pSource.set(from.pSource); to.pState.set(from.pState); to.pId.set(from.pId);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 873,
+      "sourceLine": "to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 876,
+      "sourceLine": "for (let i = 0; i < pool.nmax; i++) if (pool.pState[i] !== 0 && pool.pId[i] === id) return i;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "particleSlotHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 924,
+      "sourceLine": "a.phase[i] = p.pPhase[slot]; a.sourceKind[i] = p.pSource[slot]; a.column[i] = Math.floor(p.pX[slot]);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "actionCommonHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 925,
+      "sourceLine": "a.targetColumn[i] = -1; a.x[i] = p.pX[slot]; a.y[i] = p.pY[slot]; a.vx[i] = p.pVx[slot]; a.vy[i] = p.pVy[slot];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "actionCommonHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 926,
+      "sourceLine": "a.requested[i] = p.pMass[slot]; a.granted[i] = p.pMass[slot]; a.remainder[i] = 0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "actionCommonHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 927,
+      "sourceLine": "a.massBefore[i] = p.pMass[slot]; a.massAfter[i] = p.pMass[slot];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "actionCommonHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 944,
+      "sourceLine": "p.pX[a] = (p.pX[a] * ma + p.pX[b] * mb) / mass; p.pY[a] = (p.pY[a] * ma + p.pY[b] * mb) / mass;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergePairHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 946,
+      "sourceLine": "p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "mergePairHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 992,
+      "sourceLine": "p.pMass[slot] = k < count ? work.params.massPackage : tail; p.pX[slot] = dry && kind === 1 ? plan.predictedX[row] : c + 0.5 + jitter;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 996,
+      "sourceLine": "p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 997,
+      "sourceLine": "p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 999,
+      "sourceLine": "if (phase === 0) p.colParticleMassH[c] += p.pMass[slot]; else p.colParticleMassL[c] += p.pMass[slot];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Legacy cache arithmetic guarded by derivedV2===null; V2 cache exclusively RN70 actual stored tuples"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1008,
+      "sourceLine": "Math.floor(p.pX[slot]) !== c || p.pMass[slot] !== plan.requested[row] || (plan.phase[row] === 0 ? gl : gh) !== 0) return P011_HOT_IDENTITY_MISMATCH;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1013,
+      "sourceLine": "cache[c] -= amount; p.pMass[slot] = remainder;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Legacy cache arithmetic guarded by derivedV2===null; V2 cache exclusively RN70 actual stored tuples"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1014,
+      "sourceLine": "if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; }",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1015,
+      "sourceLine": "else { p.pState[slot] = 2; p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1018,
+      "sourceLine": "cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Legacy cache arithmetic guarded by derivedV2===null; V2 cache exclusively RN70 actual stored tuples"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1022,
+      "sourceLine": "if (disposition === 6 && amount === 0) p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1026,
+      "sourceLine": "p.pX[slot] = plan.predictedX[row]; p.pY[slot] = plan.predictedY[row];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "editPoolHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1049,
+      "sourceLine": "copyPoolHot(work.patchBefore, work.patchScratch);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "preparePatchHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1059,
+      "sourceLine": "copyPoolHot(work.patchScratch, work.patchAfter);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "preparePatchHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1126,
+      "sourceLine": "if (work.auditSlots[i] !== 0 || p.pState[i] > 2 || p.pPhase[i] > 1 || p.pSource[i] > 1 || p.pId[i] === 0 ||",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "auditParticleHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1130,
+      "sourceLine": "const c = Math.floor(p.pX[i]); work.order[live++] = i;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "auditParticleHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1131,
+      "sourceLine": "if (p.pPhase[i] === 0) work.auditMassH[c] += p.pMass[i]; else work.auditMassL[c] += p.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "auditParticleHotBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1204,
+      "sourceLine": "p.pX[slot] = plan.motionX[i]; p.pY[slot] = plan.motionY[i]; p.pVx[slot] = plan.motionVx[i]; p.pVy[slot] = plan.motionVy[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyParticlePlanIntoBody",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "line": 1242,
+      "sourceLine": "try{code=work.pool.transferHotState(out,restore);if(code===0&&!restore)d?.input(out);return code;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPoolDiagnosticHot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 239,
+      "sourceLine": "if (kind === 5 || degraded === 1) { f.suspH[c] += gh; f.suspL[c] += gl; }",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyInto",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original stock/budget order; field dirty + strict flush after publish, actual tuple barriers in Hot"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 250,
+      "sourceLine": "f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyInto",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original stock/budget order; field dirty + strict flush after publish, actual tuple barriers in Hot"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "line": 251,
+      "sourceLine": "if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyInto",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original stock/budget order; field dirty + strict flush after publish, actual tuple barriers in Hot"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "line": 164,
+      "sourceLine": "beginDryBatch(heavy: number,light: number,x: number,y: number,sourceId: number,seed: number,sourceKind: number=0): boolean {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "beginDryBatch",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "line": 171,
+      "sourceLine": "finishDryBatch(): boolean {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "finishDryBatch",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "line": 29,
+      "sourceLine": "out[n++] = pool.pState[i]; out[n++] = pool.pId[i]; out[n++] = pool.pSourceId[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "write",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Additional nine fixed exact A/count/cache/field/header projection banks; exact comparison at original cut"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "line": 30,
+      "sourceLine": "out[n++] = pool.pPhase[i]; out[n++] = pool.pSource[i]; out[n++] = pool.pMass[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "write",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Additional nine fixed exact A/count/cache/field/header projection banks; exact comparison at original cut"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleM2Projection.ets",
+      "line": 31,
+      "sourceLine": "out[n++] = pool.pX[i]; out[n++] = pool.pY[i]; out[n++] = pool.pVx[i]; out[n++] = pool.pVy[i];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "write",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Additional nine fixed exact A/count/cache/field/header projection banks; exact comparison at original cut"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 875,
+      "sourceLine": "this.updateSandTop();const c=Math.floor(request.x);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectDryGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 892,
+      "sourceLine": "if(!binding.beginDryBatch(h,l,request.x,request.y,request.sourceId,request.seed)) {binding.rollback();this.restoreBackup();lambda*=.5;continue;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectDryGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 893,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectDryGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 894,
+      "sourceLine": "if(this.audit(false)!==null){binding.rollback();this.restoreBackup();lambda*=.5;continue;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectDryGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 895,
+      "sourceLine": "if(!binding.finishDryBatch()){this.restoreBackup();lambda*=.5;continue;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectDryGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 899,
+      "sourceLine": "this.publishRenderState('EXTERNAL_ADMISSION');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectDryGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 974,
+      "sourceLine": "private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "publishRenderState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1418,
+      "sourceLine": "this.waterTop.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "initialize",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1423,
+      "sourceLine": "this.suspH.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "initialize",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1424,
+      "sourceLine": "this.suspL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "initialize",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1440,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "initialize",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1519,
+      "sourceLine": "this.publishRenderState('RESET', true);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "initialize",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1596,
+      "sourceLine": "this.waterTop[c] += amountPerColumn;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "inject",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1604,
+      "sourceLine": "this.suspH[c] += amountPerColumn;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "inject",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1610,
+      "sourceLine": "this.suspL[c] += amountPerColumn;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "inject",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1617,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "inject",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1619,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "inject",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1626,
+      "sourceLine": "if (spec.amount > 0) this.publishRenderState('EXTERNAL_ADMISSION');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "inject",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1778,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1823,
+      "sourceLine": "this.suspH[c] += aH[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1824,
+      "sourceLine": "this.suspL[c] += aL[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1831,
+      "sourceLine": "this.suspH[c] -= aH[c]; this.suspL[c] -= aL[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1851,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1874,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1881,
+      "sourceLine": "if (totalH + totalL > 0) this.publishRenderState('EXTERNAL_ADMISSION');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1887,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1892,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1900,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "injectGestureSand",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 1999,
+      "sourceLine": "this.waterTop[c] = lifted;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "solveInjectionWaterTop",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2064,
+      "sourceLine": "this.waterTop.set(newWaterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2069,
+      "sourceLine": "this.suspH.set(newSuspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2070,
+      "sourceLine": "this.suspL.set(newSuspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2074,
+      "sourceLine": "this.publishRenderState('INVERT');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2075,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "invert180",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2178,
+      "sourceLine": "try{if(restore)b.pool.restoreSnapshot(snapshot);else b.pool.copyStateTo(snapshot);code=0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyParticleStateDiagnostic",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2319,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "stepWithTiltTrace",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2354,
+      "sourceLine": "this.restoreMotionSnapshot();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "stepWithTiltTrace",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2398,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "stepWithTiltTrace",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2632,
+      "sourceLine": "this.publishRenderState('STEP');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "recordEndpointCommit",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2852,
+      "sourceLine": "if (routeId !== this.naturalObservationRouteId) this.publishRenderState('ROUTE_CHANGE');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "setNaturalObservationRouteId",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2871,
+      "sourceLine": "this.publishRenderState('ROUTE_CHANGE');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "setParticleRoute",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 2901,
+      "sourceLine": "this.publishRenderState('ROUTE_CHANGE');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "setParticleRoute",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3260,
+      "sourceLine": "this.waterTop[c] += (add ? 1 : -1) * admitted * perCol[c] / sum;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "waterTransaction",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3268,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "waterTransaction",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3699,
+      "sourceLine": "this.suspH[donor] = newDonor;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "advectionSlot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Unregistered alternate physics route unavailable from V2 cold configuration"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3700,
+      "sourceLine": "this.suspH[receiver] = newReceiverSuspH;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "advectionSlot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Unregistered alternate physics route unavailable from V2 cold configuration"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3703,
+      "sourceLine": "this.suspL[donor] = newDonor;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "advectionSlot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Unregistered alternate physics route unavailable from V2 cold configuration"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3704,
+      "sourceLine": "this.suspL[receiver] = newReceiverSuspL;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "advectionSlot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Unregistered alternate physics route unavailable from V2 cold configuration"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 3845,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "naturalObservationState",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4236,
+      "sourceLine": "this.copyStateTo(target);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "snapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4252,
+      "sourceLine": "this.copyStateTo(out.field);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPublishedRenderStateInto",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4267,
+      "sourceLine": "this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyPublishedSceneStateInto",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4287,
+      "sourceLine": "copyStateTo(target: WaterSandSnapshot): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4302,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4314,
+      "sourceLine": "target.waterTop.set(this.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4319,
+      "sourceLine": "target.suspH.set(this.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4320,
+      "sourceLine": "target.suspL.set(this.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4332,
+      "sourceLine": "state.pMass.fill(0); state.pX.fill(0); state.pY.fill(0); state.pVx.fill(0); state.pVy.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4333,
+      "sourceLine": "state.pPhase.fill(0); state.pSource.fill(0); state.pState.fill(0); state.pId.fill(0); state.pSourceId.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4334,
+      "sourceLine": "state.colParticleMassH.fill(0); state.colParticleMassL.fill(0);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "copyStateTo",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4357,
+      "sourceLine": "this.waterTop.set(source.waterTop); this.bh.set(source.bh); this.bl.set(source.bl);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreFromSnapshot",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4358,
+      "sourceLine": "this.mh.set(source.mh); this.ml.set(source.ml); this.suspH.set(source.suspH); this.suspL.set(source.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreFromSnapshot",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4377,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreFromSnapshot",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4378,
+      "sourceLine": "this.publishRenderState('RESTORE', true);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreFromSnapshot",
+      "implementationStatus": "EXPLICIT_BULK",
+      "reason": "Cold exclusive candidate initialize/import validates before owner swap; in-place route/invert/config hooks not exposed by V2 facade"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4393,
+      "sourceLine": "for(let j=0;j<p.freeCount;j++){const i=p.freeSlots[j];if(i<0||i>=p.nmax||seen[i]!==0||p.pState[i]!==0)throw new WaterSandSnapshotError('INVALID_DRY_FREE');seen[i]=1;}",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "validateDrySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4395,
+      "sourceLine": "if(p.pState[i]===0)continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "validateDrySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4398,
+      "sourceLine": "for(let j=0;j<i;j++)if(p.pState[j]!==0&&p.pId[j]===p.pId[i])throw new WaterSandSnapshotError('DUPLICATE_DRY_ID');",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "validateDrySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4399,
+      "sourceLine": "const c=Math.floor(p.pX[i]);if(p.pPhase[i]===0)h[c]+=p.pMass[i];else l[c]+=p.pMass[i];count++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "validateDrySnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4482,
+      "sourceLine": "this.motionSnapshot.waterTop.set(this.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4487,
+      "sourceLine": "this.motionSnapshot.suspH.set(this.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4488,
+      "sourceLine": "this.motionSnapshot.suspL.set(this.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4504,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4508,
+      "sourceLine": "private restoreMotionSnapshot(): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4509,
+      "sourceLine": "this.waterTop.set(this.motionSnapshot.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4514,
+      "sourceLine": "this.suspH.set(this.motionSnapshot.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4515,
+      "sourceLine": "this.suspL.set(this.motionSnapshot.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4520,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreMotionSnapshot",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4542,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "internalParticleGuard",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4622,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "substep",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4645,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "substep",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4667,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyMotionChannels",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4715,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyMotionChannels",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 4866,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyCorrectionSlot",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Unregistered alternate physics route unavailable from V2 cold configuration"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5133,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "applyDeepCreep",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Unregistered alternate physics route unavailable from V2 cold configuration"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5247,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "previewChannelPlansAt",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5249,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "previewChannelPlansAt",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5263,
+      "sourceLine": "this.restoreMotionSnapshot();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "previewChannelPlansAt",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5285,
+      "sourceLine": "this.updateSandTop(); this.particlePreviewApplied = true;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "previewChannelPlansAt",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5297,
+      "sourceLine": "this.restoreBackup();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "previewChannelPlansAt",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 5299,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "previewChannelPlansAt",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6223,
+      "sourceLine": "this.waterTop[donor] -= amount;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "waterLevel",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6224,
+      "sourceLine": "this.waterTop[receiver] += amount;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "waterLevel",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6250,
+      "sourceLine": "this.suspH[c + 1] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6251,
+      "sourceLine": "this.suspH[c] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6258,
+      "sourceLine": "this.suspH[c] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6259,
+      "sourceLine": "this.suspH[c + 1] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6267,
+      "sourceLine": "this.suspL[c + 1] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6268,
+      "sourceLine": "this.suspL[c] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6275,
+      "sourceLine": "this.suspL[c] -= flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6276,
+      "sourceLine": "this.suspL[c + 1] += flux;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "diffuseSuspension",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6499,
+      "sourceLine": "this.suspH[c] -= heavy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "settleSandV2",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6501,
+      "sourceLine": "this.suspL[c] -= light;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "settleSandV2",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6508,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "settleSandV2",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6550,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "percolateHeavyConservative",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6741,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "relaxAngle",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 6954,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "creepBottomRequests",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7069,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7073,
+      "sourceLine": "const ok=this.particleBinding.beginDryBatch(split.heavy,split.light,c+.5,contact,particleSourceId,particleSourceId,1);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7074,
+      "sourceLine": "if(!ok || !this.particleBinding.finishDryBatch()){",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7077,
+      "sourceLine": "this.materialGuardRefund(amount,[c],false);this.updateSandTop();continue;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7085,
+      "sourceLine": "if (slot < 0) this.suspH[c] += split.heavy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7091,
+      "sourceLine": "if (slot < 0) this.suspL[c] += split.light;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7096,
+      "sourceLine": "this.suspH[c] += split.heavy;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7097,
+      "sourceLine": "this.suspL[c] += split.light;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7101,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "liftByShake",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7124,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "splitTopV2",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7135,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "splitBottom",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7170,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "computeSeparationProfile",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7355,
+      "sourceLine": "private updateSandTop(): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "updateSandTop",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7357,
+      "sourceLine": "this.sandTopScratch[c] = this.bh[c] + this.bl[c] + this.mh[c] + this.ml[c];",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "updateSandTop",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7358,
+      "sourceLine": "if(this.mediumMode===P051_DRY_MEDIUM)this.waterTop[c]=this.sandTopScratch[c]+this.suspH[c]+this.suspL[c]+(this.particleBinding===null?0:this.particleBinding.pool.particleMassAt(c));",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "updateSandTop",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7441,
+      "sourceLine": "this.backup.waterTop.set(this.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7446,
+      "sourceLine": "this.backup.suspH.set(this.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7447,
+      "sourceLine": "this.backup.suspL.set(this.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "saveBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7461,
+      "sourceLine": "private restoreBackup(): void {",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7463,
+      "sourceLine": "this.waterTop.set(this.backup.waterTop);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7468,
+      "sourceLine": "this.suspH.set(this.backup.suspH);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7469,
+      "sourceLine": "this.suspL.set(this.backup.suspL);",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/physics/WaterSandField.ets",
+      "line": 7483,
+      "sourceLine": "this.updateSandTop();",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "restoreBackup",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Original read/field operation retained; private facade closed route and same-policy tuple/copy/field barriers"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "line": 43,
+      "sourceLine": "cur.massH[c]=f.bh[c]+f.mh[c]+f.suspH[c];cur.massL[c]=f.bl[c]+f.ml[c]+f.suspL[c];const yH=cur.massH[c]-compH,tH=totalH+yH;compH=(tH-totalH)-yH;totalH=tH;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "pack",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Version/seal gate before original packing; original SOURCE/F32/material graphs and strict checks unchanged"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "line": 79,
+      "sourceLine": "this.data[1536+c*4+1]=depth>1e-6?Math.max(0,Math.min(1,f.suspL[c]/depth)):0;this.data[1536+c*4+2]=this.data[1536+c*4+3]=0;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "pack",
+      "implementationStatus": "SUPPORTED",
+      "reason": "Version/seal gate before original packing; original SOURCE/F32/material graphs and strict checks unchanged"
+    },
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "line": 82,
+      "sourceLine": "if(prior.pState[i]===2)beforeContact++;else if(prior.pState[i]===1)beforeAirborne++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "COLD_CONSTRUCTOR",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Existing public field alias V1 page is not a V2 owner; separate derived model/page"
+    },
+    {
+      "path": "entry/src/main/ets/pages/EmptySandDemo.ets",
+      "line": 86,
+      "sourceLine": "if (p.pState[i] === 2) contact++; else if (p.pState[i] === 1) airborne++;",
+      "classification": "STATIC_WRITE_OR_BULK_BOUNDARY_REVIEW_SITE; not proof of exhaustive alias coverage",
+      "originalMethod": "COLD_CONSTRUCTOR",
+      "implementationStatus": "V1_ONLY",
+      "reason": "Existing public field alias V1 page is not a V2 owner; separate derived model/page"
+    }
+  ],
+  "notes": [
+    "245 historical review sites include reads and copies, not 245 distinct mutations",
+    "No arbitrary alias/plugin/setter/callback registration is exposed by V2 facade",
+    "Actual new writer sites separately enumerated; cold/private ownership is part of support proof",
+    "Old public V1 WaterSandField and P051EmptySandDemo are intentionally NOT V2 owners"
+  ]
+}

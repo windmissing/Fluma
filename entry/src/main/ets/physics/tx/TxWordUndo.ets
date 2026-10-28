@@ -12,12 +12,13 @@ export class TxWordUndo {
         this.buffers.push(new DataView(b)); }
     mark(): number { return this.tail; }
     beforeWrite(id: number, offset: number, width: number): void { if (this.tail >= this.address.length)
-        throw new Error('TX_UNDO_TEST_CAPACITY'); if (width !== 1 && width !== 4 && width !== 8)
-        throw new Error('TX_UNDO_WIDTH'); const d = this.buffers[id], i = this.tail++; this.bufferId[i] = id; this.address[i] = offset; this.width[i] = width; this.lo[i] = width === 1 ? d.getUint8(offset) : d.getUint32(offset, true); this.hi[i] = width === 8 ? d.getUint32(offset + 4, true) : 0; }
+        throw new Error('TX_UNDO_TEST_CAPACITY'); if (width !== 1 && width !== 2 && width !== 4 && width !== 8)
+        throw new Error('TX_UNDO_WIDTH'); const d = this.buffers[id], i = this.tail++; this.bufferId[i] = id; this.address[i] = offset; this.width[i] = width; this.lo[i] = width === 1 ? d.getUint8(offset) : width === 2 ? d.getUint16(offset,true) : d.getUint32(offset, true); this.hi[i] = width === 8 ? d.getUint32(offset + 4, true) : 0; }
     rollback(mark: number): void { while (this.tail > mark) {
         const i = --this.tail, d = this.buffers[this.bufferId[i]], offset = this.address[i];
         if (this.width[i] === 1)
             d.setUint8(offset, this.lo[i]);
+        else if(this.width[i]===2)d.setUint16(offset,this.lo[i],true);
         else {
             d.setUint32(offset, this.lo[i], true);
             if (this.width[i] === 8)
