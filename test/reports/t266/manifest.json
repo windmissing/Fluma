@@ -1,0 +1,228 @@
+{
+  "revision": "T266_BOUNDED_DIAGNOSTICS_V2",
+  "sourceFiles": [
+    {
+      "name": "T266Clock.ets",
+      "sha": "4bc788d2f2e9200b6258936e4f57aa0fc918ce1a15ddb54c6ba3a499fb8f2ce0"
+    },
+    {
+      "name": "native_observation.h",
+      "sha": "06bb64ea2c990dc15f76c56549df38fa899805aa18740cfc297839f4d56847c2"
+    }
+  ],
+  "edits": [
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "import { T248Observation }",
+      "to": "import { TxWorkTrace } from '../tx/TxWorkTrace';\nimport { T248Observation }",
+      "sha": "6c68a81d421b5f8421bc70a2837aa9469b6ee4495815c4bac2065f6219ee353f"
+    },
+    {
+      "rel": "diagnostics/t248/T248Observation.ets",
+      "from": "import { WaterSandSnapshot }",
+      "to": "import { T266Clock } from './T266Clock';\nimport { WaterSandSnapshot }",
+      "sha": "1a52d9a42aaa7da6015812f7bf476d7217fe89187d33b53e338ad3038b4b38ad"
+    },
+    {
+      "rel": "diagnostics/t248/T248Observation.ets",
+      "from": "export class T248Observation {",
+      "to": "export class T248Observation extends T266Clock {",
+      "sha": "0a3dbb48f4639ff4d34e311a0028e3c242857429404be95077b36486ee76b892"
+    },
+    {
+      "rel": "diagnostics/t248/T248Observation.ets",
+      "from": "  acceptedSeconds: number = 0; stepCount: number = 0;\n  recordStep(dt: number,ok: boolean,stepped: boolean): void {\n    if(ok&&stepped&&Number.isFinite(dt)&&dt>0){this.acceptedSeconds+=dt;this.stepCount++;}\n  }",
+      "to": "",
+      "sha": "acad39141d6cc268daf8cfdbad6bab8809f22ac9b865bbf6303b2160fccd27f3"
+    },
+    {
+      "rel": "diagnostics/t248/T248Observation.ets",
+      "from": "T248_READONLY_V1",
+      "to": "T266_READONLY_V2",
+      "sha": "f66f885891c011899f11e4888bea2eeee1a9f6e700b934c1ad504246e1463cfa"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "import { DerivedCheckpointV2 }",
+      "to": "import { T266Clock } from '../diagnostics/t248/T266Clock';\nimport { TxWorkTrace } from './tx/TxWorkTrace';\nimport { DerivedCheckpointV2 }",
+      "sha": "909c05de9fa60961b231ce157ac456e80f40b3ac31a6970b6bd891bddb2892d5"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "export class WaterSandField {",
+      "to": "export class WaterSandField {\n  t266Trace:TxWorkTrace|null=null;\n  t266Bind(clock:T266Clock):void {clock.bind(this.p011RunId,this.renderStateEpoch);}\n  t266Scope():TxWorkTrace|null {const t=this.t266Trace;if(t!==null){t.context[0]=this.p011SubstepId;t.context[1]=this.renderPhysicsCommitId;t.context[2]=this.particleBinding?.pool.nmax??0;t.context[3]=this.particleBinding===null?0:this.particleBinding.pool.nmax-this.particleBinding.pool.freeSlotCount;t.context[4]=this.renderStateEpoch;}return t;}\n  t266HasBed():boolean {for(let c=0;c<this.cols;c++)if(this.mh[c]+this.ml[c]+this.bh[c]+this.bl[c]>0)return true;return false;}\n",
+      "sha": "fc23ae620560663ca3d571e45ab5a59b9c23a9282b067a68b7c54205c85e5567"
+    },
+    {
+      "rel": "physics/derived/P051DerivedFacadeV2.ets",
+      "from": "    exportFailureCold():",
+      "to": "    t266Attach(trace:TxWorkTrace|null,clock:T266Clock):void{const run=clock.runId,epoch=clock.stateEpoch;this.field.t266Trace=trace;this.field.t266Bind(clock);if(trace!==null&&(run!==clock.runId||epoch!==clock.stateEpoch)){trace.count=0;trace.depth=0;trace.incomplete=false;trace.counts.fill(0);trace.wallInclusive.fill(0);trace.wallExclusive.fill(0);trace.wallCalls.fill(0);}}\n    t266HasBed():boolean{return this.field.t266HasBed();}\n    t266Commit():number{return this.field.getRenderPhysicsCommitId();}\n    exportFailureCold():",
+      "sha": "f2ac824ed7cb4337273f36426b77a92e188dece5b94c14f641df275798f84e4b"
+    },
+    {
+      "rel": "physics/derived/P051DerivedFacadeV2.ets",
+      "from": "import { copyDerivedPayloadV2 }",
+      "to": "import { T266Clock } from '../../diagnostics/t248/T266Clock';\nimport { TxWorkTrace } from '../tx/TxWorkTrace';\nimport { copyDerivedPayloadV2 }",
+      "sha": "f5130d409c64a1f4bee9b4d7a5c269f63be2d4ae83979802d93b4d9764dfe07b"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "    readonly t248 = new T248Observation();",
+      "to": "    readonly t248 = new T248Observation();\n    readonly t266Trace:TxWorkTrace=new TxWorkTrace(4096);\n    t266Enabled:boolean=true;\n    t266Heavy:boolean=false;\n    private t266Frame:number=0;\n    private t266EncodeMs:number=0;\n    t266LogMs:number=0;\n    t266StepMs:number=0;\n    t266AnchorFrames:number=0;\n    private t266SawBed:boolean=false;\n    private t266Saw8:boolean=false;\n    t266Now:()=>number=():number=>Date.now();\n    t266Drain(full:boolean=false):string {const begin=this.t266Now();const t=this.t266Trace;const stages:number[]=[125,302,266,249,239,250,166,20,304,289];const costs:number[]=[];for(const id of stages)costs.push(id,t.wallInclusive[id],t.wallExclusive[id],t.wallCalls[id]);const v=JSON.stringify({stepRows:full?this.t248.stepRows.slice(0,this.t248.stepRowCount*10):null,stepRowCount:this.t248.stepRowCount,stepRowsDropped:this.t248.stepRowsDropped,sourceRows:full?this.t248.sourceRows.slice(0,this.t248.sourceRowCount*7):null,sourceReasons:full?this.t248.sourceReasons.slice(0,this.t248.sourceRowCount):null,sourceRowsDropped:this.t248.sourceRowsDropped,fieldStepMs:this.t266StepMs,encodePreviousMs:this.t266EncodeMs,logPreviousMs:this.t266LogMs,phaseCosts:costs,clock:JSON.parse(this.t248.summary()),frame:this.t266Frame,rows:full?t.rows.slice(0,t.count*32):null,count:t.count,depth:t.depth,incomplete:t.incomplete,activeScopeId:t.depth?t.stack[t.depth-1]:null,stageContext:'substepId,physicsCommit,poolCapacity,poolLive,stateEpoch',clockDomain:'MONOTONIC_MS',wallMs:Date.now(),monotonicMs:this.t266Now()});t.count=0;t.incomplete=false;this.t266EncodeMs=this.t266Now()-begin;return v;}",
+      "sha": "208df2d6eb3eb2bf7193e00ea10adb04c77292d3080c0a7bd4463da3890d0054"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        if (!this.active)\n            return true;",
+      "to": "        if (!this.active) return true;\n        this.t266Trace.detail=true;this.t266Trace.clock=this.t266Now;this.t266Trace.root=++this.t266Frame;\n        this.owner.t266Attach(this.t266Enabled?this.t266Trace:null,this.t248);",
+      "sha": "b87f2c9b0bc0f6514678969c496bd27a6dac9dab188911c6b70e135f7375bd33"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "                const r = this.owner.inject(",
+      "to": "                const t266SourceBefore=this.owner.t266Commit();const r = this.owner.inject(",
+      "sha": "973b490a63e9b4acc395325510f516981b696a87694cc25a74419652cde75495"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        const t248Start=Date.now();const r = this.owner.step(dt);",
+      "to": "        const t266CommitBefore=this.owner.t266Commit();const t248Start=this.t266Now();const r = this.owner.step(dt);this.t266StepMs=this.t266Now()-t248Start;",
+      "sha": "54107ace860cea003877f16d828232a66812aa970e2ad6ed65e8e6ce9a07722a"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "stepMs:Date.now()-t248Start",
+      "to": "stepMs:this.t266Now()-t248Start",
+      "sha": "9b94f6f9456452ce5b85eb2955e87c1e583f2e4a3473b60e9888dbca0534e82f"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        this.t248.recordStep(r.original===null?0:r.original.substeps*r.original.substepDt,r.derivedFault===null,r.original!==null&&r.original.stepped);",
+      "to": "        this.t248.stepEvidence(this.t266Frame,dt,r.original?.substeps??0,r.original?.substepDt??0,t266CommitBefore,r.physicalCommit,r.ok,r.original?.errorCode??0);",
+      "sha": "bc570a779c4f968a31d5612348a03936288032e7f5da8e5f1f2607dfd81aa17e"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "\n        if (!r.ok) {",
+      "to": "\n        if(!this.t266SawBed&&this.owner.t266HasBed()){this.t266SawBed=true;this.t266AnchorFrames=4;}\n        if(!this.t266Saw8&&this.t248.secondsSinceFirstBirth>=8){this.t266Saw8=true;this.t266AnchorFrames=4;}\n        if (!r.ok) {console.info('T266_FAILURE '+JSON.stringify({result:r,boundedTrace:this.t266Drain(true)}));",
+      "sha": "ed451abebf373a56496d743017ddda26c6620646b76c7586fe1804c98c90da4a"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "                console.info('T248_SOURCE '+JSON.stringify({wallNs:ns,seconds:seconds,receipt:r}));",
+      "to": "                this.t248.source(seconds,r.original?.admittedH??0,(r.original?.admittedH??0)>0,r.physicalCommit,!r.ok,this.seq,t266SourceBefore,r.original?.rejectedReason??(r.ok?'NONE':'NO_ORIGINAL_RECEIPT'));\n                if(this.t266Heavy||!r.ok)console.info('T266_SOURCE '+JSON.stringify({clock:JSON.parse(this.t248.summary()),sequence:this.seq,wallNs:ns,receipt:r}));",
+      "sha": "3b8b50ab32e1e914e90e5b93de4763e094d0a588add0d0225bf655faea615a55"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        console.info('T248_STEP '",
+      "to": "        if(this.t266Heavy)console.info('T248_STEP '",
+      "sha": "dae5fea5edea9bcd7c40d6c43692c0ed5a11e9819d25a600c1fc71bd6c32b8a5"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        console.info('T248_LAND '",
+      "to": "        if(this.t266Heavy)console.info('T248_LAND '",
+      "sha": "3bf8fe6880d7e45e1f3fb529243476086f6a0c138d44ee8f4c2f2897f27d932b"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "                hilog.info(0,",
+      "to": "                if(this.t266Heavy)hilog.info(0,",
+      "sha": "74a45cb2a1d6eaffda04950b6fadb986b4cf2f709463d8eb2b4f57cbc172486f"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "this.seq = 0; this.status = 'READY';",
+      "to": "this.seq = 0; this.status = 'READY';this.t266AnchorFrames=0;this.t266SawBed=false;this.t266Saw8=false;this.owner.t266Attach(this.t266Enabled?this.t266Trace:null,this.t248);",
+      "sha": "e31858ff13a1d86edb762cc0c0be95658135ed378e1531379604c3c2103aab92"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "import sensor from",
+      "to": "import native from 'libp013renderer.so';\nimport sensor from",
+      "sha": "d996f824ccc92abd32bcd3c3856e1cb1255063c022514a7a7ab5e8711790a689"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "onPageShow():void{this.active=true;",
+      "to": "onPageShow():void{this.model.t266Now=p013NowMs;this.model.t266Heavy=AppStorage.get<boolean>('t266heavy')===true;this.active=true;",
+      "sha": "44fbe95b8dcde19427a40a54e674974b69a1236fbabf94bcd7575d66b7ba9b23"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "  const t248Authority=this.model.t248AuthorityCold(),t248Payload=p.exportPayloadCold(),t248Published=new T248Observation().capture(t248Payload.authority),t248RenderStart=Date.now();",
+      "to": "  const t266Anchor=this.model.t266Heavy||this.model.t266AnchorFrames>0;\n  const t248Authority=t266Anchor?this.model.t248AuthorityCold():'NOT_SAMPLED',t248Published=t266Anchor?this.model.t248.capture(p.exportPayloadCold().authority):'NOT_SAMPLED',t248RenderStart=p013NowMs();",
+      "sha": "d96fc1cb5489358eff693c54f96eb4fa3f17f0c072f1d0a7f7002f0230729755"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "console.info('T248_FRAME '",
+      "to": "if(t266Anchor||this.serial%60===0||!receipt?.currentFrameSucceeded){const t266LogBegin=p013NowMs();console.info('T266_FRAME '",
+      "sha": "c721ed0fa82f07a7993f10af5edc5ccbd3df4367c75f90f3315d7c5a7883b634"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "this.status=receipt?.currentFrameSucceeded?",
+      "to": "if(this.model.t266AnchorFrames>0)this.model.t266AnchorFrames--;this.status=receipt?.currentFrameSucceeded?",
+      "sha": "45a4edeaaeaf263f411c15b22c3dff974e38df9e2e9f08415a09b6fe008ed219"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "renderInclusiveMs:Date.now()-t248RenderStart",
+      "to": "renderInclusiveMs:p013NowMs()-t248RenderStart",
+      "sha": "b3f8e87cc877b9b49891f21dd1c5c9efe7ec1e083767981301931d5a9d8d92c3"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "nativeStageTiming:'NOT_IMPLEMENTED_PLATFORM_PATCH_REQUIRED'",
+      "to": "runClock:JSON.parse(this.model.t248.summary()),boundedTrace:this.model.t266Drain(t266Anchor),nativeStages:native.t266Drain()",
+      "sha": "725773f53ca1bda8fa24e6eb45a21809a92413ce9b5bbcf1e63a63a4d086fe4d"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "nativeStages:native.t266Drain()}));",
+      "to": "nativeStages:native.t266Drain()}));this.model.t266LogMs=p013NowMs()-t266LogBegin;}",
+      "sha": "45c97ae79218fdcd5c3faf91e7f6db2b8f783eef4685c6db18c6e8ac393f88c6"
+    },
+    {
+      "rel": "render/P013SceneController.ets",
+      "from": "export class P013SceneController {",
+      "to": "export class P013SceneController {t266CapturePacked:boolean=false;",
+      "sha": "43843f63223a14fa42c75248dc6f59877cc8d30b6192bd36b0759697976ca8f3"
+    },
+    {
+      "rel": "render/P013SceneController.ets",
+      "from": "      console.info('T248_PACK '",
+      "to": "      if(this.t266CapturePacked||AppStorage.get<boolean>('t266heavy')===true)console.info('T248_PACK '",
+      "sha": "9abe6e76fbfdc4fdedfb1aadb1b428556509551edf96e7cff641a9b434e28740"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "  const receipt=p.drawNewPipeline",
+      "to": "  this.renderer.t266CapturePacked=t266Anchor;const receipt=p.drawNewPipeline",
+      "sha": "1badf821d99a288b8701b6d2a1296a76a4f85081b8f33f32188a4d8e95c20022"
+    }
+  ],
+  "scopeSites": 206,
+  "scopeCapacity": 4096,
+  "route": "pages/P051DerivedV2Demo",
+  "heavyArmWant": "t266heavy=true",
+  "productionTouched": false,
+  "pending": [
+    "inflight watchdog export if UI cannot drain: NOT_CAPTURED",
+    "pixel probe requires explicit device capture"
+  ],
+  "phaseDictionary": {
+    "20": "finishNaturalObservation",
+    "125": "consumePendingGestureSand",
+    "166": "recordEndpointCommit",
+    "239": "restoreMotionSnapshot",
+    "249": "substep collect",
+    "250": "applyMotionChannels",
+    "266": "planAndCommitTilt",
+    "289": "updateMetrics",
+    "302": "saveBackup",
+    "304": "changedSinceBackup"
+  }
+}
