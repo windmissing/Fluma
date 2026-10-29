@@ -1,0 +1,413 @@
+{
+  "revision": "T250_BEFORE_GENERATOR_V10",
+  "parentSourceSha": "2e384ad09066d3aeecfa6d2911d6a617833089ed46f0e20c6e504dceea5c161a",
+  "edits": [
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "import { P011InjectionReceipt }",
+      "to": "import { captureBeforeWork } from './tx/TxBeforeWork';\nimport { P011InjectionReceipt }",
+      "sha": "be1dd62ce2ad96cb4eadfd313581e3b9b40ccc198f18d2e16f82b923a28a8556"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "  t171ArchiveState(): string {",
+      "to": "  t250BeforeWorkCold():string{return this.particleBinding===null?'NO_BINDING':captureBeforeWork(this.particleBinding.work);}\n  t171ArchiveState(): string {",
+      "sha": "664f2d5bfc2adee1c797c7298857a5ba96cf514dc09b6eb6f47e20fe5c2dbd1f"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "import { TxCutFault }",
+      "to": "import { TxBeforeFault } from './TxBeforeFault';\nimport { TxCutFault }",
+      "sha": "2843c403ad32fa5da225ba2976ea32f7861d0786e2ae449110db54641c9361f2"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "export class TxPairBackends {",
+      "to": "export class TxPairBackends {readonly beforeFault:TxBeforeFault=new TxBeforeFault();",
+      "sha": "6da377a0879b78dc6aadaf488b051b5801586d57b040c68b085d4a7ab956801b"
+    },
+    {
+      "rel": "physics/tx/TxWorkTrace.ets",
+      "from": "export class TxWorkTrace {",
+      "to": "export class TxWorkTrace {beforeWitness:((scope:number,parent:number,root:number,cut:number,code:number)=>void)|null=null;",
+      "sha": "14accec0e78ccd27024b78ddf4fd205c0660955109d5aceb4013216005b32e03"
+    },
+    {
+      "rel": "physics/tx/TxWorkTrace.ets",
+      "from": "private emit(kind: number, id: number, parent: number, cut: number, code: number, start: number, end: number, inclusive: number, exclusive: number, at: number): void {",
+      "to": "private emit(kind: number, id: number, parent: number, cut: number, code: number, start: number, end: number, inclusive: number, exclusive: number, at: number): void {try{",
+      "sha": "2fe41651e01b28829675d4df8a8253f7d155b9d1cdafb90fee5f8ade1b780248"
+    },
+    {
+      "rel": "physics/tx/TxWorkTrace.ets",
+      "from": "this.rows[i + 16 + k] = this.stackData[at + 4 + k]; }",
+      "to": "this.rows[i + 16 + k] = this.stackData[at + 4 + k]; }finally{if(kind===2||kind===3)this.beforeWitness?.(id,parent,this.root,cut,code);}}",
+      "sha": "6013c2b6b3d62f3e5a4ece5a7dc3a4ce6bff22b33d00e217fcaf3da32516958b"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "backend.cutFault.plan=faultPlan;",
+      "to": "if([1,6,18].includes(faultPlan.cutId))backend.cutFault.plan=faultPlan;else backend.beforeFault.plan=faultPlan;",
+      "sha": "c311a461b1ae8b83ed1894226048005da3cfbb71773d93316be69129bc086dd2"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "pid:number=0):TxGpuFixtureResult {",
+      "to": "pid:number=0,beforeLiveInputs:boolean=false,beforeEndpointInputs:boolean=false):TxGpuFixtureResult {",
+      "sha": "2b4fc3e0da52abb8d4a234fd2a188cf7f1ac5d2398e215565a3394daf5010c0e"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "  const f=T171_FIXTURES.find",
+      "to": "  beforeLiveInputs=beforeLiveInputs||(faultPlan!==null&&[5,12,16,17,18].includes(faultPlan.cutId));beforeEndpointInputs=beforeEndpointInputs||faultPlan?.cutId===20;\n  const f=T171_FIXTURES.find",
+      "sha": "1fca79a5f7ac0997c5d33ce177b13048e0019ebec793fe4d3c587095b88c7be8"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "import { t171Evidence }",
+      "to": "import { P011NaturalObservationProbe } from '../P011NaturalObservation';\nimport { P011EndpointClock } from '../P011EndpointMetrics';\nimport { P011InjectionReceipt } from '../../render/P012SandTracer';\nimport { t171Evidence }",
+      "sha": "3d992793ee10e3064511c48230eb5f585832e5f5e65c35772f25f47edcd0f05b"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "export interface TxGpuFixtureResult {",
+      "to": "class TxBeforeFixedClock implements P011EndpointClock {clockId:string='T250_BEFORE_FIXED_CLOCK';nowElapsedMs():number{return 1000;}}\nexport interface TxGpuFixtureResult {",
+      "sha": "f056ff348d3e33907cbaf8c0dcee4b07b533ff1c18c76e0c03068c1140526b96"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "  const rootRows:string[]=[];",
+      "to": "  const observationRows:string[]=[];if(beforeEndpointInputs){field.setNaturalObservationProbe(new P011NaturalObservationProbe(128,(record):void=>{observationRows.push(JSON.stringify(record));}));const endpointClock:P011EndpointClock=new TxBeforeFixedClock();field.setEndpointSampling(endpointClock,field.endpointCurrentPhaseIdentity('BEFORE20'));}\n  const rootRows:string[]=[];",
+      "sha": "2448ff2a83cda0953c3f1dcb838420f0f5fb08f64b345e4a0aa3846e2f0bd40a"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "    for(let n=0;n<steps;n++){",
+      "to": "    if(beforeLiveInputs){field.setShakeInput(1);field.setTilt(20);}if(beforeEndpointInputs)field.setEndpointPhaseIdentity(field.endpointCurrentPhaseIdentity('BEFORE20'));\n    for(let n=0;n<steps;n++){",
+      "sha": "f951fc834e28d0c08df2c4c8a8afd7dbc60a56dde091ffaca431d0f187770e17"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "  const rootRows:string[]=[];",
+      "to": "  backend.beforeFault.capture=():string=>JSON.stringify({authority:field.t171ArchiveState(),eventsLineage:t171Evidence.exportJson(true),hotReadset:field.t250BeforeWorkCold()});backend.beforeFault.context=():string=>{const t=backend.scopeRows;return JSON.stringify({root:backend.metadata.rootId,scope:t.depth?t.stack[t.depth-1]:0,parent:t.depth>1?t.stack[t.depth-2]:0,context:t.context.slice()});};backend.scopeRows.beforeWitness=(scope:number,parent:number,root:number,cut:number,code:number):void=>{backend.beforeFault.backupRestore(root,scope,parent,cut,code);};\n  const rootRows:string[]=[];",
+      "sha": "a46f8987b679280df92b5b6dd69997917bf73e4a6ccaca8a64499464fd619429"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "faultPlan:string;resourceEvidence:string;",
+      "to": "faultPlan:string;beforeEvidence:string;resourceEvidence:string;",
+      "sha": "64f92828a8a2da45df0e94879ec67b9e13c80f867b374b518cc3e7fe8f78842f"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "faultPlan:JSON.stringify({requested:faultPlan,",
+      "to": "beforeEvidence:JSON.stringify({revision:'T250_BEFORE_V10',fixtureVariant:beforeEndpointInputs?'ENDPOINT_FIXED_CLOCK':beforeLiveInputs?'SHAKE1_TILT20':'T171_ORIGINAL',observationRows:observationRows,hit:backend.beforeFault.hit,dropped:backend.beforeFault.dropped,rows:backend.beforeFault.rows}),faultPlan:JSON.stringify({requested:faultPlan,",
+      "sha": "a7aaa871be352fe32db7507466699f4ccd16b8b5b55fdb1c1ca333f281afecdc"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "import { WaterSandField }",
+      "to": "import { WaterSandField,WaterSandStepResult }",
+      "sha": "06e8a9b203427aaf693aaae3c499ee5f97fe4dc4ee811644121a5d357027b7ea"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "      const r=field.injectGestureSand({perColumnHeavy:h,perColumnLight:l,sourceId:f.sourceId,sequence:f.sequences[input],inputTime:f.inputTimes[input],x:f.x,y:f.y,seed:f.seed});",
+      "to": "      let r:P011InjectionReceipt|null=null;let originalException:string|null=null;try{r=field.injectGestureSand({perColumnHeavy:h,perColumnLight:l,sourceId:f.sourceId,sequence:f.sequences[input],inputTime:f.inputTimes[input],x:f.x,y:f.y,seed:f.seed});}catch(e){originalException=(e as Error).message;}",
+      "sha": "e5a6334ae37b92cf27af6bf98509a0aeadfe150cf732e81c8d5911269926d4a3"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "firstCode:r===null?'NULL':r.rejectedReason,rollback:",
+      "to": "originalException:originalException,firstCode:originalException!==null?'EXCEPTION:'+originalException:r===null?'NULL':r.rejectedReason,rollback:",
+      "sha": "052b5a77a0cda1ac9736a1f7200baf4a30933db3b4e82e153fc2f2e05179fa1c"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "      if(r===null||Math.abs(r.admittedH-h[f.column])>1e-10)",
+      "to": "      if(originalException!==null)throw new Error(originalException);if(r===null||Math.abs(r.admittedH-h[f.column])>1e-10)",
+      "sha": "9050651bbf97cd8697146db2f0eb24c6f0e0fdb76c8a1069f17199c20d694661"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "const rootBefore=field.t171ArchiveState(),r=field.step(1/60);rootRows.push(JSON.stringify({kind:'STEP'",
+      "to": "const rootBefore=field.t171ArchiveState();let r:WaterSandStepResult|null=null;let originalStepException:string|null=null;try{r=field.step(1/60);}catch(e){originalStepException=(e as Error).message;}rootRows.push(JSON.stringify({kind:'STEP'",
+      "sha": "87198d8810cc2af7b9bec6aee35561afbf488d3a22237035bfe416fec045c477"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "firstCode:r.errorCode,rollback:",
+      "to": "originalException:originalStepException,firstCode:originalStepException!==null?'EXCEPTION:'+originalStepException:r?.errorCode,rollback:",
+      "sha": "63bb48073e4f019ad654a84ffade35e184fa5e5f1593f7f1fa6f4e350972999c"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "if(!r.ok)throw new Error('TX_GPU_PHYSICAL_FAILED:'+String(r.errorCode));",
+      "to": "if(originalStepException!==null)throw new Error(originalStepException);if(r===null||!r.ok)throw new Error('TX_GPU_PHYSICAL_FAILED:'+String(r?.errorCode));",
+      "sha": "1f0cb63de772f1775447296e19682ddaf244775096f89b662e3dd33be5d3ff5b"
+    },
+    {
+      "rel": "physics/tx/TxFaultPlan.ets",
+      "from": "  return 'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR';",
+      "to": "  if(p.edge==='BEFORE'&&[2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,19,20].includes(p.cutId))return 'READY_ORIGINAL_BEFORE_CHECK';\n  return 'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR';",
+      "sha": "7bc631b9ea10af9a2bdad13e7f0c9479842f93253005d16ac42815ecb577d1d0"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "header": "function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {",
+      "cut": 3,
+      "setup": "const bs=work.configured",
+      "mutate": "work.configured=0",
+      "undo": "work.configured=bs",
+      "status": "String(work.lastStatus)",
+      "sha": "492622dfcaf8c25ac1ea1f3708cdbb81f02336f9550d5a422c00d40c260840d9"
+    },
+    {
+      "rel": "physics/P011ParticleM2Field.ets",
+      "header": "private collectBirthHeaders(): number {",
+      "cut": 4,
+      "setup": "const bs=this.work.active",
+      "mutate": "this.work.active=0",
+      "undo": "this.work.active=bs",
+      "status": "String(this.work.lastStatus)",
+      "sha": "a0d928a52189d531abe9c1b3b5e13c417fd83c7b2f6cd76bc9668eaf1b14d7b0"
+    },
+    {
+      "rel": "physics/P011ParticleM2Field.ets",
+      "from": "    const a=collectParticlePlanInto(this.work,epoch,this.work.planA);",
+      "to": "    const bf=this.work.txPairBackend?.beforeFault,br=this.work.txPairBackend?.metadata.rootId??0,bs=this.work.active;const bi=bf?.begin(5,br,txScope,JSON.stringify({active:bs,plan:'A'}))??false;let a=0;try{if(bi){this.work.active=0;bf?.applied(5,JSON.stringify({active:this.work.active}));}a=collectParticlePlanInto(this.work,epoch,this.work.planA);}finally{if(bi){this.work.active=bs;bf?.end('collectParticlePlanInto A',String(a),JSON.stringify({active:this.work.active}));}}",
+      "sha": "b6f0b0baf5c1d69e00433bd5121992d1f4f26f96d273c08e6dc9568a6cb0fbb0"
+    },
+    {
+      "rel": "physics/P011ParticleM2Field.ets",
+      "from": "    const b=collectParticlePlanInto(this.work,epoch,this.work.planB);",
+      "to": "    const bsB=this.work.active;const biB=bf?.begin(5,br,txScope,JSON.stringify({active:bsB,plan:'B'}))??false;let b=0;try{if(biB){this.work.active=0;bf?.applied(5,JSON.stringify({active:this.work.active}));}b=collectParticlePlanInto(this.work,epoch,this.work.planB);}finally{if(biB){this.work.active=bsB;bf?.end('collectParticlePlanInto B',String(b),JSON.stringify({active:this.work.active}));}}",
+      "sha": "33495f444c6ef272e68018fe66269ba4e94a25ee8c211f8451e9d3f62816f3dd"
+    },
+    {
+      "rel": "physics/P011ParticleM2Sink.ets",
+      "header": "row: number, result: P011ParticleHotResultBuffer): number {",
+      "cut": 7,
+      "setup": "const bs=work.active",
+      "mutate": "work.active=0",
+      "undo": "work.active=bs",
+      "status": "String(txCode)",
+      "sha": "4ccd1f158343adc9ffede587c4ba9e76a7295779aaa0ac6dda82acafcce9b4da"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "header": "row: number, grantedHeavy: number, grantedLight: number, dispositionCode: number): number {",
+      "cut": 8,
+      "setup": "const bs=work.activePatchToken",
+      "mutate": "work.activePatchToken=1",
+      "undo": "work.activePatchToken=bs",
+      "status": "JSON.stringify({return:0,workStatus:work.lastStatus})",
+      "sha": "ab948884cee1343623d9e9ecb9d9137adcb7160f42d9496fe5924ccfba40d74a"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "header": "selectPair(p:P011ParticleSnapshot,radius:number,w:P011ParticleHotWorkspace):TxPairResult {",
+      "cut": 9,
+      "setup": "const bs=this.state",
+      "mutate": "this.state='STALE'",
+      "undo": "this.state=bs",
+      "status": "'ORIGINAL_EXCEPTION_TX_GPU_NOT_REUSABLE:STALE'",
+      "sha": "4001f86e93f4618f23abadf0586dcc6df0056006a10e8c1a79afd0b9bb25c8d2"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "from": "catch(error){return P011_HOT_AUDIT_FAILED;}",
+      "to": "catch(error){const originalStatus=P011_HOT_AUDIT_FAILED;const witness=work.txPairBackend?.beforeFault;if(witness?.hit&&witness.plan?.cutId===9)witness.end('mergeOldestHot original selector catch',String(originalStatus),'original caller maps selector exception');return originalStatus;}",
+      "sha": "ee2c6507df32bb3110aa359bde23a87a0fce6237fd746f45af9532a10332385e"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "header": "export function publishPatchHot(work: P011ParticleHotWorkspace, token: number): number {",
+      "cut": 10,
+      "setup": "const bs=token",
+      "mutate": "token=0",
+      "undo": "token=bs",
+      "status": "String(txCode)",
+      "sha": "16284dfcd8bb37668d020ec6fb759d7d5d37e0a453ec6953745c9e101b0697a9"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "from": "  const d=work.poolProgress;let span=-1,code=-1;\n  if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;\n    span=d.begin(source==='SINK_ROW'?'AUDIT_SINK_ROW':source==='APPLY_TAIL'?'AUDIT_APPLY_TAIL':",
+      "to": "  const bf=work.txPairBackend?.beforeFault,br=work.txPairBackend?.metadata.rootId??0,bs=work.field;const bi=source==='SINK_ROW'?bf?.begin(11,br,txScope,JSON.stringify({fieldPresent:bs!==null})):source==='APPLY_TAIL'?bf?.begin(14,br,txScope,JSON.stringify({fieldPresent:bs!==null})):false;if(bi){work.field=null;bf?.applied(source==='SINK_ROW'?11:14,JSON.stringify({fieldPresent:false}));}\n  const d=work.poolProgress;let span=-1,code=-1;\n  if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;\n    span=d.begin(source==='SINK_ROW'?'AUDIT_SINK_ROW':source==='APPLY_TAIL'?'AUDIT_APPLY_TAIL':",
+      "sha": "b829c3e304398973e865a6ab0701e0a6e76fd0109f9107ff35a06d248adcf328"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "from": "try {code=auditParticleHotBody(work);return code;}finally{txCode=code;",
+      "to": "try {code=auditParticleHotBody(work);return code;}finally{if(bi){work.field=bs;bf?.end('auditParticleHot '+source,String(code),JSON.stringify({fieldRestored:work.field===bs}));}txCode=code;",
+      "sha": "8bba7fe57678a39cdd1ab8e66dd0c35f252cac5ae982151707fd16c167663b35"
+    },
+    {
+      "rel": "physics/P011ParticleHotBudget.ets",
+      "header": "closeInto(token: number, committed: number, out: P011ParticleHotRefundReceipt): number {",
+      "cut": 12,
+      "setup": "const bs=token",
+      "mutate": "token=0",
+      "undo": "token=bs",
+      "status": "String(txCode)",
+      "sha": "7c0841814c3342c1e6e1e317ddb5594a75ed4cf273b8a05e89090258a05cfcd8"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "header": "plan: P011ParticleHotPlanBuffer, sink: P011ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {",
+      "cut": 13,
+      "setup": "const bs=plan.consumed",
+      "mutate": "plan.consumed=1",
+      "undo": "plan.consumed=bs",
+      "status": "String(txCode)",
+      "sha": "d8d6618ebbff517475462f564f3ff9fffddc6b7ac360471a74383be951d4a535"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "header": "function finishStepHotBody(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {",
+      "cut": 15,
+      "setup": "const bs=work.active",
+      "mutate": "work.active=0",
+      "undo": "work.active=bs",
+      "status": "String(txCode)",
+      "sha": "f588dead6c3276ed991566d94164692188b77fe6aade2c5713dd7e8134c50f94"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "header": "private previewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {",
+      "cut": 16,
+      "setup": "const bs=thetaCandidate",
+      "mutate": "thetaCandidate=NaN",
+      "undo": "thetaCandidate=bs",
+      "status": "'NULL_ORIGINAL_PREVIEW_RETURN_SEE_PLANNER'",
+      "sha": "7722d628864095ebc2097b7fc59b515aa3082c31a0490cd82bc814e7447f2951"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "header": "private stepWithTiltTrace(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {",
+      "cut": 17,
+      "setup": "const bs=this.waterTop[0]",
+      "mutate": "this.waterTop[0]=-1",
+      "undo": "this.waterTop[0]=bs",
+      "status": "String(txCode)",
+      "sha": "7c9eda76da5b72c2777ac87c9dd25266efd537ea1ec4aaf6c039fe8897b82f42"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "  const t250SourceFault=",
+      "to": "  const bsrc=this.particleBinding?.work.txPairBackend?.beforeFault,brsrc=this.particleBinding?.work.txPairBackend?.metadata.rootId??0;let bsource=false;let bcol=-1;let bmass=0;let bepoch=false;let bepochBefore=0;\n  const t250SourceFault=",
+      "sha": "2486e4e8da74174865adb4b3bbfcef14962c011bdec5c1ae0eb515c96e77f81a"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "    this.txD1?.trace.cut(2);",
+      "to": "    for(let c=0;c<this.cols;c++)if(request.perColumnHeavy[c]>0){bcol=c;break;}if(bcol>=0){bmass=request.perColumnHeavy[bcol];bsource=bsrc?.begin(2,brsrc,txScope,JSON.stringify({column:bcol,mass:bmass}))??false;if(bsource){request.perColumnHeavy[bcol]=1e9;bsrc?.applied(2,JSON.stringify({column:bcol,offered:request.perColumnHeavy[bcol]}));}}\n    this.txD1?.trace.cut(2);",
+      "sha": "1c1e13b4cdfbab14f9efc56558174090e54cc19837b243d96ea05fcc7dcf1bb8"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "          admission = this.externalAdmissions.prepare",
+      "to": "          bepochBefore=this.sourceEpoch;bepoch=bsrc?.begin(19,brsrc,txScope,JSON.stringify({sourceEpoch:bepochBefore}))??false;if(bepoch){this.sourceEpoch=Number.MAX_SAFE_INTEGER;bsrc?.applied(19,JSON.stringify({sourceEpoch:this.sourceEpoch}));}\n          admission = this.externalAdmissions.prepare",
+      "sha": "1747ee6117b860937689e46defa57a7d548df5b5fb772b7746bf4c6199a5a870"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "        } catch (error) {\n          this.restoreBackup();",
+      "to": "        } catch (error) {\n          if(bepoch)this.sourceEpoch=bepochBefore;this.restoreBackup();",
+      "sha": "ff3f5e6c34038ada8ba80db2d2204fe0736caf9d1e3b594afa7d4fcf5900e4a9"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "finally{if(t250SourceInjected)",
+      "to": "finally{if(bsource){request.perColumnHeavy[bcol]=bmass;bsrc?.end('source capacity/lambda receipt',String(txCode),JSON.stringify({column:bcol,mass:request.perColumnHeavy[bcol]}));}if(bepoch){this.sourceEpoch=bepochBefore;bsrc?.end('source publish original epoch check','ORIGINAL_EXCEPTION_SOURCE_EPOCH_OVERFLOW',JSON.stringify({sourceEpoch:this.sourceEpoch}));}if(t250SourceInjected)",
+      "sha": "bb510d8d934f2bdbbb0b086df1ad2aebdf5fed7e85c1d3c97be3bb449eb55fba"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "      probe.stampEndpointObservation(errorCode === null ? this.endpointStamp : null,",
+      "to": "      const bf20=this.particleBinding?.work.txPairBackend?.beforeFault,br20=this.particleBinding?.work.txPairBackend?.metadata.rootId??0;const stamp20=this.endpointStamp,run20=stamp20?.key.runId??'';const bi20=errorCode===null&&stamp20!==null&&(bf20?.begin(20,br20,txScope,JSON.stringify({stamp:stamp20.key}))??false);if(bi20&&stamp20!==null){stamp20.key.runId='T250_BAD_OBSERVATION_KEY';bf20?.applied(20,JSON.stringify({stamp:stamp20.key}));}let err20='NO_EXCEPTION';try{\n      probe.stampEndpointObservation(errorCode === null ? this.endpointStamp : null,",
+      "sha": "5874fd9af360934db80f65d335b5701795125abc85cf5b73daa709e903e93a5c"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "      probe.stampExternalAdmissionEvidence(this.externalAdmissions.snapshot());",
+      "to": "      }catch(e){err20=(e as Error).message;throw e as Error;}finally{if(bi20&&stamp20!==null){stamp20.key.runId=run20;bf20?.end('P011NaturalObservationProbe.stampEndpointObservation','EXCEPTION:'+err20,JSON.stringify({restoredStamp:stamp20.key,physicsOutcome:'ALREADY_COMMITTED_OBSERVATION_ONLY'}));}}\n      probe.stampExternalAdmissionEvidence(this.externalAdmissions.snapshot());",
+      "sha": "e80c0198ca90a8f8f938ac88328758b91d2744f58c460f6bdc1d8c1255ea8df5"
+    }
+  ],
+  "helperSha": "025b41f321fda6a56cedd3a52b50e2af8d8d441d22a72a3bdbc31b7691c23089",
+  "generatedFiles": [
+    {
+      "file": "physics/tx/TxPairBackends.ets",
+      "sha256": "4001f86e93f4618f23abadf0586dcc6df0056006a10e8c1a79afd0b9bb25c8d2"
+    },
+    {
+      "file": "physics/tx/TxGpuFixture.ets",
+      "sha256": "1f0cb63de772f1775447296e19682ddaf244775096f89b662e3dd33be5d3ff5b"
+    },
+    {
+      "file": "physics/WaterSandField.ets",
+      "sha256": "e80c0198ca90a8f8f938ac88328758b91d2744f58c460f6bdc1d8c1255ea8df5"
+    },
+    {
+      "file": "physics/P011ParticleHot.ets",
+      "sha256": "f588dead6c3276ed991566d94164692188b77fe6aade2c5713dd7e8134c50f94"
+    },
+    {
+      "file": "physics/P011ParticleM2Field.ets",
+      "sha256": "9e8dcf98d932f67c2a389ecaf192af7608a17bf7cc0faa4ba5da974badb8bb48"
+    },
+    {
+      "file": "physics/P011ParticleM2Sink.ets",
+      "sha256": "d78bb415b22e6728a071bc450fa70f77d2682288033ac6a29da55a2097c4e330"
+    },
+    {
+      "file": "physics/P011ParticleHotBudget.ets",
+      "sha256": "292dd897147fbb5b34407c7f119bdb83d475ca66394026da6cc2327b60bb263a"
+    },
+    {
+      "file": "physics/tx/TxWorkTrace.ets",
+      "sha256": "6013c2b6b3d62f3e5a4ece5a7dc3a4ce6bff22b33d00e217fcaf3da32516958b"
+    },
+    {
+      "file": "physics/tx/TxFaultPlan.ets",
+      "sha256": "7bc631b9ea10af9a2bdad13e7f0c9479842f93253005d16ac42815ecb577d1d0"
+    },
+    {
+      "file": "physics/tx/TxBeforeFault.ets",
+      "sha256": "025b41f321fda6a56cedd3a52b50e2af8d8d441d22a72a3bdbc31b7691c23089"
+    },
+    {
+      "file": "physics/tx/TxBeforeWork.ets",
+      "sha256": "64ad5f21267faf575b5d35e6e9ec610a0309f2239a15b7582ee562962161d603"
+    }
+  ],
+  "implementedBefore": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "observationOnly": [
+    20
+  ],
+  "productionTouched": false,
+  "sourceManifestSha256": "249d5089685751a375cfede6e005559320e42d889c5ab3c616282531610cfd85",
+  "identityFilesDerivedFromPayload": true
+}

@@ -22,4 +22,5 @@ for(const nmax of [192,512]){let reference=null;for(const arm of ['COMMON_FREEZE
  for(let i=0;i<result.count;i++)if(arm==='COMMON_FREEZE_ON')assert(result.ledger[i*64+61]>0);
  cases.push({nmax,arm,backend:backend==='GPU_PAIR_V1'?'GPU_INTERFACE_CPU_DOUBLE':backend,status:'PASS',roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),M:count('M_MERGE_SUCCESS'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),selectorRequests:result.count});
 }}
-console.log(JSON.stringify({revision:'T250_OFFLINE_V2',cases,passed:cases.length,failed:0,nativeGpu:'NOT_RUN',sameBinaryDevicePid:'NOT_RUN',faultCuts:'20_NOT_IMPLEMENTED'},null,2));
+const beforeManifest=path.resolve(base,'../../../../../t250-before-manifest.json');
+console.log(JSON.stringify({revision:'T250_OFFLINE_V2',cases,passed:cases.length,failed:0,nativeGpu:'NOT_RUN',sameBinaryDevicePid:'NOT_RUN',faultCuts:fs.existsSync(beforeManifest)?'BEFORE_MATRIX_SEPARATE_SEE_BEFORE_SUMMARY':'20_NOT_IMPLEMENTED'},null,2));
