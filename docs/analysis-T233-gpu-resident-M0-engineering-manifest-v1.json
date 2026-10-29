@@ -1278,9 +1278,18 @@
   ],
   "normalReadback": "at most 1024B per root; no full pool/event hot readback",
   "status": "ENGINEERING_SPECIFICATION_ONLY_NOT_IMPLEMENTED_NOT_DEVICE_VALIDATED",
-  "engineeringRevision": "T241_M0_WIRE_AND_SORT_V2",
+  "engineeringRevision": "T259_M0_SAND_ID_EXHAUST_V3",
   "engineeringRevisionDate": "2026-10-29",
-  "supersedesManifestSha256": "f0ac6785503ddd029de1f1b52c4482ad10265e7c4a627aaccd35dabf2b4ad0af",
+  "supersedesManifestSha256": "7b400e24b222ba902a36745b1f7e6a03b51c9af4327f0f3e9d1dd81015e359df",
+  "sandIdExhaustion": {
+    "idDomain": "1..0xFFFFFFFF inclusive; 0 is never a particle ID",
+    "nextSandId": "header256 word39: 1..0xFFFFFFFF next allocatable ID, 0 means permanently exhausted in this run",
+    "lastAllocation": "if next>0 and births>=1 and births-1<=0xFFFFFFFF-next, allocate next..next+births-1; nextIdAfter=0 exactly when last allocated ID is 0xFFFFFFFF, else next+births",
+    "wireProjection": "sourceTerminal32 words8/9, sourceEvent16 words12/13, completion256 word92 and receipt nextId use same before/after U32; after 0 is exhaustion sentinel, not ID wrap",
+    "subsequent": "new positive-birth request from header nextSandId=0 is METADATA_REJECT reason ID_EXHAUSTED=7 without stock/source/physics commit or source event; accepted dedup terminal may advance only per normal new-key reject; identical prior command DEDUP_REPLAY preserves its original receipt; quantum/metadata-only roots preserve 0",
+    "validation": "native and GPU accept 0 only as post-last-ID exhausted state; transitions 0->nonzero forbidden; 1..MAX->0 allowed only for successful source whose last allocated real ID is MAX; no saturation, reuse, reserved-word repurposing or modulo birth ID",
+    "revisionNote": "word indexes, magic and wire revisionWord=1 unchanged; engineering revision and manifest SHA advance; source event/terminal/completion semantics clarified"
+  },
   "wire": {
     "revisionWord": 1,
     "magicWords": {

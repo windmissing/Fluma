@@ -6,7 +6,7 @@
   "design": "docs/algorithm-T237-gpu-water-M1-v1.md",
   "designEvidence": "docs/design-T237-gpu-water-M1-evidence-v1.json",
   "inputSha256": {
-    "baseManifest": "7b400e24b222ba902a36745b1f7e6a03b51c9af4327f0f3e9d1dd81015e359df",
+    "baseManifest": "d5b215eca0bbe9f10cc49c38cbbd92a86c4b4097927a12b124118e43b2373c4a",
     "design": "aa4d5e2ab192dde99ab65a416b9cc77220326efe7c9dd35d74ad70d12883b604",
     "designEvidence": "6630698e2b258be0cddcc1058453785c15be8004dace3769f49ca0e32fccb527"
   },
@@ -2425,9 +2425,10 @@
   ],
   "deviceCapabilities": "CAPABILITY_REQUIRED_T232_ADD_FRAGMENT_SSBO_KW128_ALLOC_T16",
   "status": "ENGINEERING_SPEC_ONLY_NOT_IMPLEMENTED_NOT_DEVICE_VALIDATED",
-  "engineeringRevision": "T241_M1_BASELINE_SYNC_V2",
+  "engineeringRevision": "T259_M1_SAND_ID_BASELINE_SYNC_V3",
   "engineeringRevisionDate": "2026-10-29",
-  "baseEngineeringRevision": "T241_M0_WIRE_AND_SORT_V2",
+  "baseEngineeringRevision": "T259_M0_SAND_ID_EXHAUST_V3",
+  "sandIdExhaustionInheritance": "inherits M0 sand nextSandId U32 0 exhausted sentinel and MAX valid ID; M1 water ID exhaustion remains separately subject to its own water-ID contract and is not proven by this sand-only revision",
   "wire": {
     "revisionWord": 2,
     "baseRevisionWord": 1,

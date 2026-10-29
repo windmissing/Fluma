@@ -1,5 +1,7 @@
 # T241：M0 双 pad 存储与产品 wire 工程修订回执
 
+> **T259 后续补正**：T241 首次定版没有冻结 `0xFFFFFFFF` 合法出生后的单 U32 `nextSandId` 表达。现以 `0` 作唯一耗尽哨兵，合法 ID 仍至 MAX；terminal/sourceEvent/completion/header 的 after 同值0，后续正量新请求按 ID_EXHAUSTED 拒、重复请求投影原终态，细则见 T233 与 manifest 的 `sandIdExhaustion`。本补正是工程语义澄清，不改变 T241 双 pad、事件类别或 word index；T236 需按新 manifest SHA 重生成并验证末 ID，不得把旧 SHA 的 PC 成绩当此修订的通过。
+
 2026-10-29，architect；原卡 `6ae20646e4b0c3103c15d490`，2026-10-28 开始。消费 T236 `c7ab688` 的 `docs/developer-T236-gpu-resident-M0-foundation-v1.md`、`test/reports/t236/sort-storage-gap.json`、`handoff-questions.json`，修订 T233 工程稿/manifest 并同步 T238 M1 继承账。不使用真机，不重跑 T236 测试或产品测试，不改业务代码、生产默认或其它清单行。所有渲染含背景/前景仅新 XComponent+shader，失败 FAULT 或显式 STALE 完整有效旧新管线帧，禁止 Canvas 上屏/回退。
 
 ## 归因与裁定

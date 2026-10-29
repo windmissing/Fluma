@@ -1,8 +1,10 @@
 # T238：GPU 驻留沙水 M1 工程协议 V1
 
+> **T259 M0 基线同步**：M1 manifest 的 base SHA/revision 已跟随 T233 `T259_M0_SAND_ID_EXHAUST_V3`。M1 沙 ID 继承 `nextSandId=0` 耗尽哨兵与真实 MAX ID 合法性；本轮仅同步沙 ID，不能外推水 ID 末值、M1 实现或设备 PASS。消费方按新 SHA 重生布局/合同，再继续 M1 离线实施。
+
 > **T242/WM11 澄清**：下文 `h(K)=ceil(log2(nextPow2(K)))`，`h(Kw)=ceil(log2(nextPow2(Kw)))`；`L(K)=h(K)(h(K)+1)/2`、`L(Kw)=h(Kw)(h(Kw)+1)/2`。K=192/512 对应 h=8/9、L=36/45；Kw=64/128 对应 h=6/7、Lw=21/28。故 `36+L+2Lw=114/123/128/137`（依 K192Kw64、K512Kw64、K192Kw128、K512Kw128），`source=16+2h=32/34`，`source+4D=488/526/544/582`。T239 WM11 的 `hK` 下标写法不清是文本歧义，未证设计冲突；这些仍是设计 stage 包络，新增 pack/pass 必须重算。T232 pbuffer 的 1GiB 单 block limit不证明本稿 23/55/25/57MB 完整驻留加渲染共存；真实 window context 的 fragment SSBO fetch、范围对齐与峰值另证，不能宣 M1 产品 PASS。
 
-> **T241 继承修订，2026-10-29 定版**：T233 K192 双 pad256 排序索引从1536B补至2048B，M1 的K192两档 payload各加512B；T233 产品 wire 首次冻结，M1 以 revision word2继承数值域，并保留本稿独立 V2 event kind/水扩展。T237原模型资源表是修订前设计值，不能按旧数冷分配；T238 manifest `engineeringRevision=T241_M1_BASELINE_SYNC_V2` 为当前有效工程账。K512不变。
+> **T241 历史继承修订，2026-10-29**：T233 K192 双 pad256 排序索引从1536B补至2048B，M1 的K192两档 payload各加512B；T233 产品 wire 首次冻结，M1 以 revision word2继承数值域，并保留本稿独立 V2 event kind/水扩展。T237原模型资源表是修订前设计值，不能按旧数冷分配；T238 manifest 当时 `engineeringRevision=T241_M1_BASELINE_SYNC_V2`，现已随 T259 沙 ID 基线升为 `T259_M1_SAND_ID_BASELINE_SYNC_V3`。K512资源账不变。
 
 2026-10-28，architect；原卡 `6ae1fbafe4b0c1a6bd64bfba`，目标6/P5。消费 T237 `a069962` 算法、T233 `f41de57` 逐 word 工程和 T231 平台边界。本稿与 `analysis-T238-gpu-water-M1-engineering-manifest-v1.json` 冻结新空 run 的 **`GRS_Q20_WATER_M1_V1`**；状态 `ENGINEERING_READY / CAPABILITY_REQUIRED / PRODUCT_NOT_IMPLEMENTED`。不使用真机、不改业务代码、生产默认路由或在途 T236 实施。所有背景/前景/沙/水只走新 XComponent+shader；故障为 FAULT 或显式 STALE 的完整上一有效新管线帧，禁止 Canvas 上屏/回退。
 
