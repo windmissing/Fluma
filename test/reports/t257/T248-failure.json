@@ -1,0 +1,8 @@
+{
+  "operation": "sign-app",
+  "exitCode": 1,
+  "stdoutBytes": 424,
+  "stderrBytes": 403,
+  "outputSha256": "a7cf29dd046b07ec48ae2d551730137e3cf79cb3f9fa24ee37288abede278ba8",
+  "diagnostic": "10-29 10:00:57.843  INFO - Start sign-app\r\n10-29 10:00:58.065  INFO - certificate in profile: OpenHarmony Application Release\r\n10-29 10:00:58.104  INFO - Start to sign code.\r\n10-29 10:00:58.109  INFO - profile type is: debug\r\n10-29 10:00:58.159  INFO - [MATERIAL_REDACTED] is exist. Try to load it with given passwd\r\n10-29 10:00:58.394  INFO - sign-app failed\r\n10-29 10:00:57.934  ERROR - verify certificate chain failed! Signature does not match.\r\n10-29 10:00:58.393  ERROR - \r\nERROR: 11013002 Certificate format is incorrect, please check your appCertFile parameter.\r\nError Message: verify certificate chain failed! Signature does not match.\r\n\r\n* Try the following: \r\n > {-appCertFile} should input a cert chain file, this file is usually suffixed with .cer.\r\n\r\n"
+}
