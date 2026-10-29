@@ -7,7 +7,7 @@ layout(std430,binding=2) buffer Workspace {uint W[];};
 layout(std430,binding=3) buffer Events {uint E[];};
 /* INTEGER_PRIMITIVES */
 uniform uint uK,uKw,uWater,uColumn,uHeader,uWords,uPass,uEmitQ;
-uniform uvec2 uNonce,uFrame;
+uniform uvec2 uNonce,uFrame,uControl;uniform uint uBaseBank,uPublicationSlot,uCarry,uUploaded;
 const uint CQ=268435456u,PACKAGE=131072u,T=32u,S=64u,DEDUP=96u;
 // Source-core workspace only. Candidate remains unpublished until the complete
 // M1 transport validates completion256; this kernel never seals a partial M1.
@@ -76,6 +76,7 @@ void finish(){
  for(uint j=0u;j<2u;j++){W[T+10u+j]=C[uHeader+14u+j];W[T+12u+j]=C[uHeader+16u+j];W[T+14u+j]=C[uHeader+14u+j];W[T+16u+j]=B[uHeader+56u+j];W[T+18u+j]=C[uHeader+56u+j];W[T+20u+j]=B[uHeader+58u+j];W[T+22u+j]=C[uHeader+58u+j];W[T+24u+j]=C[uHeader+60u+j];W[T+26u+j]=C[uHeader+62u+j];}
  W[T+31u]=C[uHeader+126u]|(C[uHeader+127u]<<1u);
  if(!audit(false)){fail(15u);return;}
+ if(W[S]==1u){if(B[uHeader+34u]>=4096u){fail(11u);return;}C[uHeader+34u]=B[uHeader+34u]+1u;}
  if(W[S+10u]!=0u){uint prefix=B[uHeader+33u];C[uHeader+33u]=prefix+1u;C[uHeader+74u]=prefix+1u;C[uHeader+75u]=0u;W[T+28u]=prefix+1u;W[T+29u]=0u;if(W[S]!=1u){W[T+14u]=0u;W[T+15u]=0u;}uint at=DEDUP+64u*prefix;for(uint j=0u;j<32u;j++){W[at+j]=W[j];W[at+32u+j]=W[T+j];}}
 
 }
@@ -101,8 +102,17 @@ void replay(){
  if(mode!=1u){W[h+(kind==0u?41u:42u)]+=rows;W[h+(kind==0u?43u:44u)]-=rows;W[h+(kind==0u?39u:40u)]=next+rows;if(next+rows==0u)W[h+(kind==0u?126u:127u)]=1u;}
  uint c=sp+uColumn;W[c+12u*128u+col]=W[c+10u*128u+col]+W[c+6u*128u+col];W[c+13u*128u+col]=W[c+12u*128u+col]+W[c+7u*128u+col]+W[c+8u*128u+col];
  }
+ if(W[S]==1u)W[sp+uHeader+34u]=B[uHeader+34u]+1u;
  if(W[S+10u]!=0u){W[sp+uHeader+33u]=B[uHeader+33u]+1u;W[sp+uHeader+74u]=B[uHeader+33u]+1u;W[sp+uHeader+75u]=0u;}
  for(uint i=0u;i<uWords;i++)if(W[sp+i]!=C[i]){W[S+11u]=i;fail(16u);return;}
  W[S+12u]=1u;
 }
-void main(){uint i=gl_GlobalInvocationID.x;if(uPass==0u){if(i<uWords){C[i]=B[i];W[spare()+i]=B[i];}if(i>=32u&&i<96u)W[i]=0u;return;}if(i!=0u)return;if(uPass==1u)source();if(uPass==2u)finish();if(uPass==3u)replay();}
+/* SOURCE_SEAL */
+void main(){uint i=gl_GlobalInvocationID.x;if(uPass==0u){if(i<uWords){C[i]=B[i];W[spare()+i]=B[i];}if(i>=32u&&i<96u)W[i]=0u;return;}if(i!=0u)return;
+ if(uPass==1u){W[S+14u]=1u;source();if(W[S]!=4u)W[S+14u]|=6u;}
+ if(uPass==2u){finish();if(W[S]!=4u)W[S+14u]|=8u;}
+ if(uPass==3u){replay();if(W[S]!=4u&&W[S+12u]==1u)W[S+14u]|=16u;}
+ if(uPass==4u){finalizeSource();}
+ if(uPass==5u){packPublication();}
+ if(uPass==6u){sealCompletion();}
+}
