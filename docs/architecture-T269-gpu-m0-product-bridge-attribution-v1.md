@@ -33,3 +33,21 @@ N-API `offer` 首先逐项查 `napi_get_cb_info`、argc、对象类型和实际�
 developer 离线对真实 `libgrsm0` N-API 函数做 128B ArrayBuffer 与 Uint32Array 正例、错误 argc/type/31或33 word/偏移/detach/非法 header及全 32 word 逐位复制；用相同生成 manifest 构造真实 source packet，证实桥层入 FIFO 后仍等 GPU completion 才 ACK。注入正常 8ms、>33,333,333ns、GPU inflight 后间隔、pause/new run/epoch 变更/两层 FIFO 背压/late fence；核首码、carry、inputGeneration、拒绝/已接受计数与不补跑。真实产品代码编译/非机测试与可部署签包 SHA 为开发交付；不可把 host stub 当真机或完成 GR01–09。若必须改 `control.cpp/run.cpp` 公共状态机，先在本稿增版本与不变量核对，再串行协调 T240/T263。
 
 tester 在修复签包上定点真机：先取每次 `offer` 的 N-API 分支/完整 packet 身份和 app→run FIFO 回执，再取 `Advance` 原码/delta/carry/phase 与 pause/rebase/epoch，**同一 K192 新 run**完成 source terminal→至少一个成功 quantum/completion256→lease→同 token shader/swap/像素。分别注入稳定前台与一次真实暂停/恢复，先保留诊断原序列；能复现 T264 时按首码分流，不按 Doze 日志猜 delta。随后完整故障矩阵、K512/末 ID/收益沿既有真实前置另测，绝不重跑旧独立 probe 充产品门。若设备仍仅给 `INVALID_COMMAND`/`FAULT/ADVANCE` 而无首码/参数，则是精确仪表缺口，先回 architect，不盲改时钟或换数字类型。
+
+## 5. T273 真机回传后工程修订 v2（2026-10-29）
+
+T273 用 `T272-signed.hap` SHA `7a5644a311168f423aba1caf4b039cef89e7606e24229167987a5d0f481e7ed6`。`t273d.json` 的 128B ArrayBuffer、`napiStage=OK`、`lastOfferCode=ENQUEUED_NOT_ACK`、`appQueueDepth=1` 和 hilog 对应，说明旧 N-API 入口拒绝已越过；`t273e/g/j.json` 的原始 `clockDeltaNs` 分别约 192/167/210ms，`advanceCode=6`、`carryAfter=0`、`NEW_RUN_REQUIRED`，说明超窗转显式 pause 的设备行为。`acceptedCount=0`，故本次**没有**验证已接受库存的保留语义。source terminal、quantum/completion256、publication lease 和 CURRENT 均未执行，产品 M0 仍未通过。`runQueueDepth` 在 pause 后可残留 1，是最后一次采样值，不能当 pause 后真实队列仍有待提交 root。
+
+原报告“READY 从未观察到”需勘误：`t273b/c/d.json` 的状态串为 `STATE_LOST`，但同一快照 `ready=true`、`clockPhase=READY`；`t273d` 还成功入 app FIFO。**这不是自洽的 READY 证据，也不是从未 ready**。源码 `app_bridge.cpp::loop` 在 EGL/transport 创建后单独锁内写 `identity/input/ready=true/phase=READY`，再经另一次 `publish(READY)` 写状态串；期间 `invalidate()` 可增 epoch 并写 `STATE_LOST/ready=false`，而创建线程未在 ready 写入处重新核 `seen==epoch`。于是旧 epoch 的创建完成可写回 `ready=true`，`publish()` 因 epoch 不同拒绝旧 READY 字符串，留下本次快照的矛盾组合；在下一次 owner loop 回收前，`offer()` 只核 `ready` 与 packet 身份，存在旧 run/旧 epoch 入队窗口。原件与源码证明**状态发布/epoch 门存在工程缺口**；该交错是否造成 T273 的每一次 CLOCK_GAP，现有采样不能断言。
+
+`ps` 相隔 5s CPU TIME 不变，结合多次 138–215ms 超窗和资源调度 Doze 日志，支持“进程运行/调度停顿且时钟窗口失守”；`Doze has special:ERR_IN_STATE_FOREGROUND` 本身不证明每个超窗都由 cgroup freezer 唯一造成，更不能排除 UI/GL/诊断或电量因素。保持 `GRS_FIXED120_TIME_V1` 的 33,333,333ns 上限、120Hz、F≤4、无补跑/钳值；设备持续停顿时显式 `NEW_RUN_REQUIRED` 是合理失败，不应伪恢复或改变物理合同。
+
+### 5.1 给 developer 的有界修订
+
+在实验 bridge 而非物理核修原子发布：每次异步 EGL/transport/owner 初始化后、写任何共享 `identity/input/ready/status` 前，于同一锁内重新核 `seen==epoch && active && held window 仍属当前 surface`。不匹配则只退休本次局部资源，不写当前 epoch 状态；匹配时一次写完整身份、`readyEpoch`、`phase=READY` 和 `status=READY`，消除两锁间的观察窗口。`invalidate()` 在同一锁内撤销 ready/readyEpoch、旧消息队列和状态串；`offer()` 只允许 `status=READY && readyEpoch==epoch`，packet 与队列项绑定同 epoch，worker 消费前再核 epoch/输入代，不让旧初始化/旧 FIFO 穿透。`status()` 从同一状态快照序列化，不拼旧 `state` 与新 `ready`；保留有限首错/旧代拒绝/取消计数。对 `runQueueDepth` 定义采样时点或在 Pause 后刷新，避免旧值作现况。
+
+非机竞争用例应阻断在 EGL/transport 建立完成与 READY 发布之间插入 `invalidate/newRun/surfaceChange`，核绝无 `STATE_LOST+ready=true`、旧包 `ENQUEUED_NOT_ACK`、旧 epoch 恢复 CURRENT；正常入口和 CLOCK_GAP 原测试继续。真实构建与非机自测即可交 developer 卡；需要新签包和设备证据的部分另由 tester 执行。公共 owner/scene hunk 与 T279–T281 串行协调，始终仅 XComponent+shader，失败 FAULT 或完整旧 token 显式 STALE。
+
+### 5.2 给 tester 的条件与判线
+
+工程修订包后，在稳定供电、亮屏且应用实际保持前台的窗口，归档显示/电量/进程 CPU TIME 与每次 loop wake、active delta、offer/owner 队列/epoch 原码；先核 READY 快照内部一致，再同一 K192 run 收 source terminal→成功 quantum/completion256→lease→同 token CURRENT/像素。若仍 CLOCK_GAP，保留 firstFailure/active 时间线和是否发生诊断输出，不把 `ENQUEUED_NOT_ACK` 当 GPU ACK；调度停顿无法消除时只报环境阻断，并提出可复现设备条件。T273 原卡执行已关闭，后续定点续证需另卡。完整矩阵、收益和 K512 仍未通过。

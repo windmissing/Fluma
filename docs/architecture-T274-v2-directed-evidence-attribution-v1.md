@@ -25,3 +25,21 @@ T266-v9 `T266Clock.source()` 首次正量出生时只冻结 `birthClock=accepted
 ## 4. 后续定向补证与分流
 
 tester 仅在上述修订签包及 SHA 到件后，以**一个新 run**收齐首次出生基线和后续同 run 正成功物理秒≥8 的 `T266_CLOCK_V3`，每条与 commit/stepRows 对上；源停后仍取 clock。若设备休眠使锚点不可达，原样归档最后成功秒和原因，记 BLOCKED。达标后取 writer LAND、床四量、publication→packed→同 token 后3个 CURRENT 与像素；若权威床仍0，提交连续 y/vy/state/首码与阶段成本给 architect 判断运动/设计/工程；若权威床正而下游缺失，才分 publication/packing/shader。多 run 不能合并秒；缺设备原件需精确补证，不重跑 T218 全矩阵。T267 报告的“计时冻结需修法”应勘误为**源日志停止及帧日志截断导致观测不足**，并保留原报告而非改写历史。
+
+## 5. T277 回传后工程修订 v2（2026-10-29）
+
+T277 真机包 `T276-v5-signed.hap` SHA `e9c0b37c66b6013849f12292d2bc3b2b128fe98e4f522d79447e9d6361885380`。`test/reports/t277/reassembled{,2}/index.json` 均为 `INCOMPLETE`、`invalidPhysicalLines=0`、`clocks=[]`；其中若干 `T248_LAND/T248_STEP/PACK/T266_FRAME` 单项 `COMPLETE` 有独立 SHA，带源主档缺片。完整帧36/37 `firstBirthCommit=null`，不可转述为带源锚点；PACK 床四量为0仅限这些无源期帧。电量3%、USB慢充与进程停顿支持设备窗口不稳定，**尚不足证明低电 Doze 是唯一根因**；本轮没有同 run 首生后≥8成功物理秒，也未触发 LAND→床→同 token 像素链。
+
+T276 的 `T266Clock.ets` 已用 `acceptedPhysicsSeconds-birthClock` 差值并在 `bind()` 重置；这与 v1 核定语义一致，原“T267 since 冻结”缺陷不能继续当已证物理/计时 bug。T277 未取得出生后钟值，因此真机未验证长时增长，结论为**源码合同已修/早期运行有证，DD12 长时行为未证**。
+
+另有确定的**取证工程问题**：`test/t266/generate.cjs` 把 `t266Heavy=true` 直接并入每帧 `t266Anchor`；T277 正以 `--ps t266heavy true` 运行。`test/t276/generate.cjs` 虽将单条日志缩到≤1800字符，却对每个重日志帧同步导出完整 `T266_FRAME`；已完整的单帧档约 1.87MB、7314 分片，带源帧缺片。逐条有界不等于**每帧总量/主线程耗时有界**，会与16.7/33.3ms窗口竞争并放大低电停顿。不能仅以充电重跑同一重日志流程作为充分接力，也不能据此宣它是所有进程冻结的唯一原因。
+
+### 5.1 给 developer 的诊断出口修订
+
+仅改隔离 `test/t266/generate.cjs`、`test/t276/generate.cjs`/`T276Export.ets` 及生成的诊断页面，生产物理和默认路由不动。`t266Heavy` 只开放**冷采能力**，不再使 `t266Anchor` 每帧为真；第一笔正量出生时先输出单条 `T266_CLOCK_V3(FIRST_BIRTH)`，并指定一个后续 frame 的有界锚点，首床及 `sinceFirstBirth≥8` 再各指定最多数帧。允许明确 `captureFrame` 一次性选择同 run/frame/token；普通帧只写定长 clock、commit/首码/dropped 与成本，不自动导出巨型 authority。每 run/锚点设可核的总字节、分片数、主线程时间和队列容量预算，超限标 `INCOMPLETE/BUDGET`，不得一帧同步打印几千片后称正常臂；冷快照与重组可在空闲/停止后分批完成，保留冻结时同 token 的身份/哈希，不从后续 canonical 伪造旧帧。失败首码和物理成功前缀不可因诊断 IO 反写。给同一锚点的 scalar clock→LAND writer→床/粒状态→publication/packed→native pixel 保序索引，缺片如实 `MISSING_PART`。
+
+非机回归至少覆盖重日志开关下非锚点0个大导出、首生/首床/8秒只触发约定次数、手选帧一次、总预算溢出显式不完整、导出推迟后仍为原 token/commit、诊断开关前后物理位型与提交相同，并编译签包。此修订先交 developer 后再给 tester；不改 dt/阈值/水沙物理，不引入 Canvas。若现有同步架构无法冷封快照并延后导出，developer 须回报具体生命周期/所有权限制，交 architect 版本化裁定，不能以热逐帧大日志凑证据。
+
+### 5.2 设备续证判线
+
+待稳定供电与修订包到件，tester 先核两 index 的完整性与新有界预算，再在一个新 run 取 FIRST_BIRTH、连续成功 step 至 `sinceFirstBirth≥8` 的小钟行，源停后继续 clock；重组仅指定锚点的完整档，分别核 LAND writer/床四量、publication/packed、同 token 三 CURRENT/像素。若仍床0，交连续 y/vy/state/首码与成本回 architect；若床正而下游丢，才派具体工程层。真机电量/亮屏/调度停止时间线随证据归档，不能用充电、跨run总秒或无源期 COMPLETE 档替代产品结果。设备窗口等待不列实质阻塞，T277 执行报告已结束，续证需 manager 另卡接力。
