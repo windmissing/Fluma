@@ -1,0 +1,108 @@
+  正在创建库 .codex/local-test/t258/node.lib 和对象 .codex/local-test/t258/node.exp
+addon.cpp
+clear_water_packet.cpp
+正在生成代码...
+  正在创建库 .codex/local-test/t258/identity.lib 和对象 .codex/local-test/t258/identity.exp
+{
+  "revision": "T258_ACTUAL_NODE_NAPI_CV3_SEAM_V1",
+  "environment": "Node NAPI, real product reader and validator; GL boundary explicitly synthetic",
+  "device": false,
+  "tokenUtf8Bytes": 996,
+  "configUtf8Bytes": 854,
+  "passed": 23,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "real C config and frame bind cross actual Node NAPI UTF8 unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken UTF8 bytes 255",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken UTF8 bytes 256",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken UTF8 bytes 8192",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken UTF8 bytes 8193",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest UTF8 bytes 255",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest UTF8 bytes 256",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest UTF8 bytes 4096",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest UTF8 bytes 4097",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken nonASCII byte limit",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest nonASCII byte limit",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken reject \"\"",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest reject \"\"",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken reject 123",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest reject 123",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken reject null",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest reject null",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken reject {}",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest reject {}",
+      "status": "PASS"
+    },
+    {
+      "name": "frameToken reject \"a\\u0000b\"",
+      "status": "PASS"
+    },
+    {
+      "name": "configDigest reject \"a\\u0000b\"",
+      "status": "PASS"
+    },
+    {
+      "name": "long full token valid product packet commits and returns identical token",
+      "status": "PASS"
+    },
+    {
+      "name": "stale same long token rejected by real atomic before GPU boundary",
+      "status": "PASS"
+    }
+  ]
+}

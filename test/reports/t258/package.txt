@@ -1,0 +1,39 @@
+> hvigor [32mUP-TO-DATE :entry:default@PreBuild...  [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateMetadata...  [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 29 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MergeProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CreateBuildProfile...  [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 13 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgSdkInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 33 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MakePackInfo...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@SyscapTransform...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessRouterMap...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessShareConfig...  [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateLoaderJson...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CompileResource...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CompileArkTS...  [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 3 ms [39m
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+D:/hmprojects/HelloWorld/entry/src/main/cpp/p013renderer/napi_bridge.cpp:790:442: warning: implicit conversion from 'unsigned long' to 'double' changes value from 1152921504606846975 to 1152921504606846976 [-Wimplicit-const-int-float-conversion]
+ valid=valid&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"stateEpoch",state)&&SafeInteger(state)&&state>0&&Number(e,a[0],"physicsCommitId",commit)&&SafeInteger(commit)&&commit>0&&Number(e,a[0],"requestedGeneration",generation)&&SafeInteger(generation)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=SIZE_MAX/16&&count<=capacity&&Boolean(e,a[0],"particleLayerEnabled",p.particleEnabled)&&text("frameToken",p.token)&&text("runId",p.run)&&text("ledgerCommitKey",p.ledgerKey)&&text("routeId",p.route)&&text("mediumMode",p.medium)&&text("sourceFailure",sourceFailure);
+                                                                                                                                                                                                                                                                                                                                                                                                                                               ~~~~~~~~~~^~~
+1 warning generated.
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 2 s 263 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 61 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 115 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 9 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgModuleJson...  [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 727 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 7 s 993 ms [39m
+
+29 tasks in total: 14 executed, 15 up-to-date

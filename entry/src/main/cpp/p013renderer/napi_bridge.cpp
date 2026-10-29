@@ -16,6 +16,7 @@
 #include <thread>
 
 #include "egl_context.h"
+#include "clear_water_identity.h"
 #include "composition_probe.h"
 #include "dualfield_pass.h"
 #include "material_uploader.h"
@@ -755,9 +756,9 @@ bool ClearWaterView(napi_env e,napi_value v,napi_typedarray_type expected,size_t
 }
 napi_value DrawClearWaterSceneV3(napi_env e,napi_callback_info info){
  size_t n=6;napi_value a[6]{};napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
- std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.clearWaterPackets[g.clearWaterNext];const char* stage="CW_V3_PARSE";
+ std::lock_guard<std::mutex> lock(g.mutex);auto& p=g.clearWaterPackets[g.clearWaterNext];p.token.clear();p.configDigest.clear();const char* stage="CW_V3_PARSE";
  double context=0,count=0,capacity=0;void* raw[9]{};size_t lengths[9]{};
- bool valid=n==6&&ParseFrame(e,a[0],p.frame,stage)&&ExactString(e,a[0],"scenePacketRevision","CW_SCENE_PACKET_V3")&&ExactString(e,a[0],"renderContractRevision","CW_NEWPIPE_OPTICS16_V1")&&ExactString(e,a[0],"routeId","single-sand-clear-water-v1")&&ExactString(e,a[0],"mediumMode","SINGLE_SAND_CLEAR_WATER_V1")&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=512&&count<=capacity&&Number(e,a[0],"dpi",p.dpi)&&MaterialText(e,a[0],"frameToken",p.token)&&MaterialText(e,a[0],"runId",p.run)&&MaterialText(e,a[0],"configDigest",p.configDigest)&&MaterialText(e,a[0],"payloadDigest",p.payloadDigest);
+ bool valid=n==6&&ParseFrame(e,a[0],p.frame,stage)&&ExactString(e,a[0],"scenePacketRevision","CW_SCENE_PACKET_V3")&&ExactString(e,a[0],"renderContractRevision","CW_NEWPIPE_OPTICS16_V1")&&ExactString(e,a[0],"routeId","single-sand-clear-water-v1")&&ExactString(e,a[0],"mediumMode","SINGLE_SAND_CLEAR_WATER_V1")&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=512&&count<=capacity&&Number(e,a[0],"dpi",p.dpi)&&ReadClearWaterIdentity(e,a[0],p.token,p.configDigest,stage)&&MaterialText(e,a[0],"runId",p.run)&&MaterialText(e,a[0],"payloadDigest",p.payloadDigest);
  if(valid){p.context=uint64_t(context);p.count=size_t(count);p.capacity=size_t(capacity);napi_value extra[4]{};const char* names[]={"header64","ledger64","originSourceCommit64","waitReason8"};for(int i=0;i<4;i++)valid=valid&&napi_get_named_property(e,a[0],names[i],&extra[i])==napi_ok;
   valid=valid&&ClearWaterView(e,a[1],napi_float64_array,1024,8,raw[0])&&ClearWaterView(e,a[2],napi_float64_array,p.capacity*8,8,raw[1])&&ClearWaterView(e,a[3],napi_float32_array,p.capacity*2,4,raw[2])&&ClearWaterView(e,a[4],napi_uint32_array,p.capacity*2,4,raw[3])&&ClearWaterView(e,a[5],napi_float64_array,16,8,raw[4])&&ClearWaterView(e,extra[0],napi_float64_array,64,8,raw[5])&&ClearWaterView(e,extra[1],napi_float64_array,64,8,raw[6])&&ClearWaterView(e,extra[2],napi_float64_array,p.capacity,8,raw[7])&&ClearWaterView(e,extra[3],napi_uint8_array,p.capacity,1,raw[8]);
   lengths[0]=8192;lengths[1]=p.capacity*64;lengths[2]=lengths[3]=p.capacity*8;lengths[4]=128;lengths[5]=lengths[6]=512;lengths[7]=p.capacity*8;lengths[8]=p.capacity;

@@ -1,0 +1,25 @@
+{
+  "revision": "T258_DELIVERY_V1",
+  "device": false,
+  "compile": "PASS_NATIVE_ARKTS_PACKAGE",
+  "nodeNapiCases": 23,
+  "genericStringByteIdentical": true,
+  "artifacts": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "sha256": "2d00c792eaa9579ea4f6d3a342f435dfba5d01e5a5bc64950ea2701d70b3f204",
+      "bytes": 6221224
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp013renderer.so",
+      "sha256": "b991ef73a20d1c9738ae98ee4b73b1a72cbda4c1b73a11a66a8cce5e4dad236d",
+      "bytes": 1730136
+    }
+  ],
+  "source": {
+    "entry\\src\\main\\cpp\\p013renderer\\napi_bridge.cpp": "db4cd822b97d7c12a0b14b87a00a615dc7bca13f93bd927a7f5f0956e2fbed52",
+    "entry\\src\\main\\cpp\\p013renderer\\clear_water_identity.h": "61b2f1ac5427c5d9e307c92f5853ba7532364dfe54595ef763da85fcf74ba777"
+  },
+  "sign": "PENDING_T257_FOLLOWUP",
+  "GLBoundary": "SYNTHETIC_NOT_DEVICE"
+}
