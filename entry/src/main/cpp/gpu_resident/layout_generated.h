@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 namespace grs {
-inline constexpr char kLayoutManifestSha256[]="7b400e24b222ba902a36745b1f7e6a03b51c9af4327f0f3e9d1dd81015e359df";
+inline constexpr char kLayoutManifestSha256[]="d5b215eca0bbe9f10cc49c38cbbd92a86c4b4097927a12b124118e43b2373c4a";
 namespace sand16 {
 inline constexpr size_t Words=16;
 inline constexpr size_t mass=0;

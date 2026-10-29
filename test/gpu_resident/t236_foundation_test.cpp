@@ -82,6 +82,18 @@ int main(int argc,char** argv){
   }
   AcceptedRoot a;auto code=o.Poll(FenceState::Signaled,c.data(),256,0,a);if(kind==4){assert(code==ControlCode::COMPLETION_INVALID&&o.Bank()==0);}else{assert(code==ControlCode::OK);assert(a.sourceSuccess==(kind==1));assert(o.Header()[header256::I_sandLo]==(kind==1?1u:0u));assert(o.Header()[header256::sourceLedgerRevLo]==(kind==1||kind==2?1u:0u));}passed++;
  }
+ // Product MAX ID is a real birth; next=0 is permanent exhaustion, never a particle ID.
+ {RootOwner o;auto p=ProductCompletionPolicy();auto initial=h;initial[header256::nextSandId]=UINT32_MAX;initial[header256::sourceLedgerRevLo]=0;
+  assert(o.Initialize(id,p,initial,1)==ControlCode::OK);auto r=request();assert(o.Begin(r)==ControlCode::OK);auto c=result(o,r,id);using namespace completion256;
+  c[magic]=p.magic;c[seal]=p.seal;c[stageCompletedMaskLo]=255;c[auditFlagMaskLo]=1023;
+  assert(c[receiptFirstId]==UINT32_MAX&&c[receiptNextId]==0&&c[nextSandId]==0);
+  AcceptedRoot a;assert(o.Poll(FenceState::Signaled,c.data(),256,0,a)==ControlCode::OK&&a.sourceSuccess);
+  assert(o.Header()[header256::nextSandId]==0);passed++;
+  auto r2=request(2);r2.publicationSlot=1;assert(o.Begin(r2)==ControlCode::OK);auto bad=result(o,r2,id);
+  bad[magic]=p.magic;bad[seal]=p.seal;bad[stageCompletedMaskLo]=255;bad[auditFlagMaskLo]=1023;
+  assert(o.Poll(FenceState::Signaled,bad.data(),256,0,a)==ControlCode::COMPLETION_INVALID);
+  assert(o.Header()[header256::nextSandId]==0);passed++;
+ }
  {uint32_t word=0;uint32_t e[64]{};e[0]=wire::magicWords::event64;e[1]=1;e[4]=1;e[5]=1;e[6]=1;e[2]=e[7]=e[9]=e[12]=e[14]=e[48]=e[50]=1;e[17]=e[18]=e[19]=1;e[23]=1;e[52]=(3u<<18)|(1u<<4);assert(ValidateEventWords(e,64,word));e[63]=1;assert(!ValidateEventWords(e,64,word)&&word==63);passed++;}
  std::cout<<"{\"scope\":\"T236_FOUNDATION_ONLY_NOT_M0_PRODUCT\",\"passed\":"<<passed<<",\"failed\":0,\"GPU\":\"NOT_EXECUTED\"}"<<std::endl;return 0;
 }

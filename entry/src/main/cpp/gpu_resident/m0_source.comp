@@ -58,8 +58,8 @@ void prepare(){
  uint admitted=min(q,min(268435456u-occupied,bySlots));
  if(admitted==0u){reject(free==0u?5u:6u,true);return;}
  uint births=admitted/uPackage+(admitted%uPackage==0u?0u:1u),next=H(39u);
- // No wrap: unresolved exhausted-next representation is kept as an explicit domain rejection.
- if(next==0u||births>0xffffffffu-next){reject(7u,true);return;}
+ // ID 0 is the permanent exhaustion sentinel. MAX remains a real birth ID.
+ if(next==0u||births-1u>0xffffffffu-next){reject(7u,true);return;}
  if(H(34u)>=4096u){reject(11u,false);return;}
  if(uEventStart>uEventCapacity||births>uEventCapacity-uEventStart){fail(2u,12u,0u);return;}
  uint rank=0u;for(uint i=0u;i<uK&&rank<births;i++)if(C[i]==0u){if(C[10u*uK+i]==0xffffffffu){reject(21u,true);return;}rank++;}

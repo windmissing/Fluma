@@ -56,13 +56,22 @@ bool RootOwner::ValidCompletion(const uint32_t* c,size_t count,uint32_t rawGlErr
  if(c[actualDispatchCount]!=pending.dispatchCount||c[actualBarrierCount]!=pending.barrierCount||c[actualBytesUploaded]!=pending.uploadedBytes||c[actualBytesMapped]!=0||c[timeCarryHi]!=0||c[timeCarryLo]!=pending.carry)return false;
  if(c[sourceEventPrefixBefore]!=header[header256::acceptedSourceEventCount]||c[dedupPrefixBefore]!=header[header256::acceptedSourceCount]||c[sourceEventPrefixAfter]>4096||c[dedupPrefixAfter]>4096||c[sourceEventPrefixAfter]<c[sourceEventPrefixBefore]||c[dedupPrefixAfter]<c[dedupPrefixBefore]||c[sourceEventPrefixAfter]-c[sourceEventPrefixBefore]>1||c[dedupPrefixAfter]-c[dedupPrefixBefore]>1)return false;
  int64_t angle=c[angleAcceptedIndex]<=0x7fffffffu?int64_t(c[angleAcceptedIndex]):int64_t(c[angleAcceptedIndex])-4294967296LL;
- if(angle<angleMinIndex||angle>angleMaxIndex||c[nextSandId]<header[header256::nextSandId]||c[nextWaterId]!=header[header256::nextWaterId])return false;
+ if(angle<angleMinIndex||angle>angleMaxIndex||c[nextWaterId]!=header[header256::nextWaterId])return false;
  if(c[waterLive]||c[waterFree]!=64||!Match(c,waterBeforeLo,{})||!Match(c,waterAfterLo,{})||!Match(c,I_waterLo,{})||c[sandLive]>512||c[sandFree]>512||c[sandLive]+c[sandFree]!=header[header256::sandLive]+header[header256::sandFree]||c[capacityMax]>Cq)return false;
  if(!Match(c,sandBeforeLo,Read(header.data(),header256::sandMassLo)))return false;
  if(policy.productWire){
   if(c[outcome]==policy.successOutcome){
    if(c[metadataOnlyStockEqual]!=0)return false;
-   if(pending.kind==policy.sourceKind){if(c[dedupPrefixAfter]!=c[dedupPrefixBefore]+1||c[sourceEventPrefixAfter]!=c[sourceEventPrefixBefore]+1||c[receiptStatus]==policy.successReceipt&&c[rejectedUnits]!=0||c[receiptStatus]==policy.partialReceipt&&c[rejectedUnits]==0)return false;}
+   if(pending.kind==policy.sourceKind){
+    const uint32_t oldNext=header[header256::nextSandId],births=c[receiptBirthCount];
+    if(oldNext==0||births==0||uint64_t(births-1)>uint64_t(UINT32_MAX)-oldNext)return false;
+    const uint64_t lastId=uint64_t(oldNext)+births-1;
+    const uint32_t expectedNext=lastId==UINT32_MAX?0:uint32_t(lastId+1);
+    if(c[receiptFirstId]!=oldNext||c[receiptNextId]!=expectedNext||c[nextSandId]!=expectedNext||
+       c[dedupPrefixAfter]!=c[dedupPrefixBefore]+1||c[sourceEventPrefixAfter]!=c[sourceEventPrefixBefore]+1||
+       (c[receiptStatus]==policy.successReceipt&&c[rejectedUnits]!=0)||
+       (c[receiptStatus]==policy.partialReceipt&&c[rejectedUnits]==0))return false;
+   }
    else {if(c[nextSandId]!=header[header256::nextSandId])return false;const size_t sourceFields[]={sourceId,requestSeq,admittedUnits,rejectedUnits,receiptStatus,receiptReason,receiptReplayFlag,receiptBirthCount,receiptFirstId,receiptNextId,sourceEventCount};for(size_t i:sourceFields)if(c[i])return false;if(c[dedupPrefixAfter]!=c[dedupPrefixBefore]||c[sourceEventPrefixAfter]!=c[sourceEventPrefixBefore])return false;}
   }else if(c[outcome]==policy.metadataRejectOutcome){
    if(c[reason]==0||c[receiptReason]!=c[reason]||c[receiptReplayFlag]||c[sourceEventPrefixAfter]!=c[sourceEventPrefixBefore]||c[nextSandId]!=header[header256::nextSandId]||c[sandLive]!=header[header256::sandLive]||c[sandFree]!=header[header256::sandFree])return false;
