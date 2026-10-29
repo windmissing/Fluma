@@ -12,5 +12,6 @@ export function validateTxFaultPlan(p:TxFaultPlan,fixtureId:string,buildSHA:stri
     (p.edge!=='BEFORE'&&p.edge!=='AFTER')||
     !Number.isSafeInteger(p.ordinal)||p.ordinal<1)return 'FAULT_PLAN_RANGE';
   if(p.cutId===6&&p.edge==='BEFORE')return 'READY_REQUEST_OWNER_CORRUPTION';
+  if(p.cutId===1&&p.edge==='BEFORE')return 'READY_SOURCE_NEGATIVE_MASS';
   return 'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR';
 }

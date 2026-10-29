@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict'),ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');
+require.extensions['.ets']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText,f);
+const base=path.join(path.resolve(process.argv[2]),'entry/src/main/ets/physics'),{runTxGpuFixture}=require(path.join(base,'tx/TxGpuFixture.ets'));
+const config={nmax:192,shaderDirectory:'HOST_NOT_GPU',runId:'source1',configId:'SOURCE1',sourceManifestSha256:'a'.repeat(64),buildManifestSha256:'b'.repeat(64),buildShaderSha256:'c'.repeat(64),queryShaderSha256:'d'.repeat(64),reduceShaderSha256:'e'.repeat(64),diagnosticOracle:false,fullDump:false,backend:'LEGACY_SCAN',policy:'TX_EXACT_STRUCTURE_V1',traceCapacity:4096,variant:'STRICT_O2'};
+const cases=[];for(const arm of ['COMMON_FREEZE_OFF','COMMON_FREEZE_ON']){const c={...config,freezeArm:arm},plan={fixtureId:'WET_192_64',buildSHA:c.buildManifestSha256,backend:c.backend,freezeArm:arm,PID:100,rootId:1,cutId:1,edge:'BEFORE',ordinal:1};
+ const r=runTxGpuFixture(c,'WET_192_64',1,null,()=>0,null,plan,100),f=JSON.parse(r.faultPlan),rows=f.rows.map(JSON.parse),root=JSON.parse(r.rootRows[0]);
+ assert.equal(f.hit,true);assert.equal(root.receipt,null);assert.equal(root.firstCode,'NULL');assert.equal(rows[1].firstCode,0);assert.equal(rows[1].raw,rows[0].raw);assert.equal(root.before,root.after);
+ const control=runTxGpuFixture(c,'WET_192_64',1,null,()=>0);assert.equal(control.physicalStatus,'COMMITTED');
+ cases.push({arm,result:r,control:'COMMITTED'});
+}console.log(JSON.stringify({revision:'T250_SOURCE_PRECHECK_V1',passed:14,failed:0,cases,device:'NOT_RUN'},null,2));

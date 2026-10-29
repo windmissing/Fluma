@@ -30,7 +30,7 @@ assert.equal(resource.driverBytes,'NOT_MEASURED');
 const basePlan={fixtureId:'WET_192_64',buildSHA:config.buildManifestSha256,backend:config.backend,freezeArm:config.freezeArm,PID:100,rootId:1,cutId:1,edge:'BEFORE',ordinal:1};
 let checked=0;
 for(let cutId=1;cutId<=20;cutId++)for(const edge of ['BEFORE','AFTER']){
-  assert.equal(validateTxFaultPlan({...basePlan,cutId,edge},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),cutId===6&&edge==='BEFORE'?'READY_REQUEST_OWNER_CORRUPTION':'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR');checked++;
+  assert.equal(validateTxFaultPlan({...basePlan,cutId,edge},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),cutId===1&&edge==='BEFORE'?'READY_SOURCE_NEGATIVE_MASS':cutId===6&&edge==='BEFORE'?'READY_REQUEST_OWNER_CORRUPTION':'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR');checked++;
 }
 assert.equal(validateTxFaultPlan({...basePlan,PID:101},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_IDENTITY_MISMATCH');
 assert.equal(validateTxFaultPlan({...basePlan,ordinal:0},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_RANGE');

@@ -1,5 +1,7 @@
 import { TxFaultPlan } from './TxFaultPlan';
 import { P011ParticleHotPlanBuffer } from '../P011ParticleHot';
+import { P011GestureSandRequest } from '../WaterSandField';
+interface TxSourceReadset {heavy0:number;cols:number;sourceId:number;sequence:number;}
 export class TxCutFault {
   readonly rows:string[]=[];
   plan:TxFaultPlan|null=null;
@@ -7,8 +9,16 @@ export class TxCutFault {
   private seen=0;
   hit=false;
   private savedOwner=0;
+  private savedMass=0;
+  enterSource(root:number,r:P011GestureSandRequest):boolean {
+    const f=this.plan;if(f===null||f.cutId!==1||f.edge!=='BEFORE'||root!==f.rootId||this.hit)return false;
+    if(++this.seen!==f.ordinal)return false;
+    this.savedMass=r.perColumnHeavy[0];const readset:TxSourceReadset={heavy0:this.savedMass,cols:r.perColumnHeavy.length,sourceId:r.sourceId,sequence:r.sequence};this.rows.push(JSON.stringify({edge:'BEFORE',plan:f,readset:readset,raw:this.capture()}));
+    r.perColumnHeavy[0]=-1;this.hit=true;return true;
+  }
+  leaveSource(r:P011GestureSandRequest,code:number):void {r.perColumnHeavy[0]=this.savedMass;this.rows.push(JSON.stringify({edge:'AFTER_ORIGINAL_CHECK',firstCode:code,returnContract:'ORIGINAL_NULL_PRECHECK_NOT_A_BUSINESS_ERROR',raw:this.capture()}));}
   enter(root:number,p:P011ParticleHotPlanBuffer,row:number):boolean {
-    const f=this.plan;if(f===null||root!==f.rootId||this.hit)return false;
+    const f=this.plan;if(f===null||f.cutId!==6||root!==f.rootId||this.hit)return false;
     this.seen++;if(this.seen!==f.ordinal)return false;
     this.savedOwner=p.ownerId;
     this.rows.push(JSON.stringify({edge:'BEFORE',plan:f,requestRow:row,ownerId:p.ownerId,raw:this.capture()}));
