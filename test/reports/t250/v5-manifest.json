@@ -1,0 +1,907 @@
+{
+  "revision": "T250_SAME_BINARY_V3",
+  "parentSourceSha": "29bbcc3605d1c902528688befd1e91927d7fea5960fc5089227cb0522e7f2d05",
+  "edits": [
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "export class TxPairBackends {",
+      "to": "interface TxVisibleArrays {selectorRows:number;cpuTotals:number;cpuCounts:number;metadataRows:number;metadataOrdinals:number;frozenCopies:number;frozenOffsets:number;frozenLengths:number;}\ninterface TxVisibleStrings {rootRows:number;workloadRows:number;nativeRows:number;errors:number;states:number;}\ninterface TxVisibleResource {revision:string;scope:string;typedArrays:TxVisibleArrays;stringsUtf8Bytes:TxVisibleStrings;rootRowsCount:number;selectorRowsCount:number;nativeSlotsAtConfigure:number;wrapperObjectsPerGpuSelect:string;externalCopies:string;driverBytes:string;rssBytes:string;}\nexport class TxPairBackends {\n  readonly workloadRows:string[]=[];\n  workload(kind:string,value:number=1):void {if(this.workloadRows.length>=131072)throw new Error('T250_WORKLOAD_FULL');this.workloadRows.push(JSON.stringify({root:this.metadata.rootId,role:this.metadata.role,kind:kind,value:value}));}\n  resourceEvidence(rootRows:string[]):string {\n    let frozen=0;for(const v of this.frozen0.copies)frozen+=v.byteLength;for(const v of this.frozen1.copies)frozen+=v.byteLength;\n    const bytes=(rows:string[]):number=>{let n=0;for(const v of rows)n+=txUtf8Bytes(v);return n;};\n    const evidence:TxVisibleResource={revision:'T250_VISIBLE_RESOURCE_V1',scope:'retained fixture owner after last root before GC',\n      typedArrays:{selectorRows:this.rows.byteLength,cpuTotals:this.cpuTotals.byteLength,cpuCounts:this.cpuCounts.byteLength,\n        metadataRows:this.metadata.rows.byteLength,metadataOrdinals:this.metadata.ordinals.byteLength,\n        frozenCopies:frozen,frozenOffsets:this.frozen0.offsets.byteLength+this.frozen1.offsets.byteLength,\n        frozenLengths:this.frozen0.lengths.byteLength+this.frozen1.lengths.byteLength},\n      stringsUtf8Bytes:{rootRows:bytes(rootRows),workloadRows:bytes(this.workloadRows),nativeRows:bytes(this.nativeRows),\n        errors:bytes(this.errors),states:bytes(this.states)},\n      rootRowsCount:rootRows.length,selectorRowsCount:this.count,nativeSlotsAtConfigure:this.ready===null?0:this.ready.liveBuffers,\n      wrapperObjectsPerGpuSelect:'26_ESTIMATE_NOT_MEASURED',externalCopies:'NOT_MEASURED',driverBytes:'NOT_MEASURED',rssBytes:'NOT_MEASURED'};\n    return JSON.stringify(evidence);\n  }\n",
+      "originalSha": "59d0422a3865b6dd31c322c26b5b7bbe42dba2ee33795a8bb88baffbd8cefae0",
+      "generatedSha": "d1b0b8d4f789fc18447832249007b629675fc9d76eb731ac627ca3a664e09f64"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "  merged(status:number,ms:number):void {",
+      "to": "  merged(status:number,ms:number):void {this.workload('MERGE_ATTEMPT');if(status===0)this.workload('M_MERGE_SUCCESS');",
+      "originalSha": "d1b0b8d4f789fc18447832249007b629675fc9d76eb731ac627ca3a664e09f64",
+      "generatedSha": "ad48de0beb6110848df69e2fe0fe14b7c9ff0aa8e12022558ee65c443453eb30"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "  enterRole(role:number):void {",
+      "to": "  enterRole(role:number):void {this.workload('A_ROLE_'+role.toString());",
+      "originalSha": "ad48de0beb6110848df69e2fe0fe14b7c9ff0aa8e12022558ee65c443453eb30",
+      "generatedSha": "3c5c332dd8b9198960cb64ad8f08e60e954fcc744186f0d58c4d6c5540ac567a"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "  cancel():void {",
+      "to": "  cancel():void {this.workload('M_CANCEL');",
+      "originalSha": "3c5c332dd8b9198960cb64ad8f08e60e954fcc744186f0d58c4d6c5540ac567a",
+      "generatedSha": "7a2d7712c2c911acc229ecbf9f2e5e0c60b82afdefbc23add600c4f5c29f71bb"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "      if(r.status==='PAIR'&&!this.validPair",
+      "to": "      this.workload('M_FIND');this.workload(r.status==='PAIR'?'M_FOUND':r.status==='NO_PAIR'?'M_NO_PAIR':'M_ERROR');\n      if(r.status==='PAIR'&&!this.validPair",
+      "originalSha": "7a2d7712c2c911acc229ecbf9f2e5e0c60b82afdefbc23add600c4f5c29f71bb",
+      "generatedSha": "8ea3a71cb4b5038bc8896ccebea1d9e72dfe10f17f8537607dc1d4cc7afbed95"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "from": "        if (work.diagnosticEnabled) work.birthCompleted++;",
+      "to": "        work.txPairBackend?.workload('B_BIRTH_COMPLETED');\n        if (work.diagnosticEnabled) work.birthCompleted++;",
+      "originalSha": "58a2362a29ae3b3a7c2e698cef8dda42d0614d6dc87bbd103d1423d11c3c8f51",
+      "generatedSha": "ca0c9ac544faccab180db21445684639c75ad8518480126df11dc3ba422116b9"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "    for (let attempt = 0; attempt < 8; attempt++) {",
+      "to": "    for (let attempt = 0; attempt < 8; attempt++) {this.particleBinding?.work.txPairBackend?.workload('SOURCE_LAMBDA_ATTEMPT');",
+      "originalSha": "d1031fe67aeecfc84fb31a9267ff5b5acb9c78acfdf4922141b35d5ab12b6c7f",
+      "generatedSha": "8a1e74bf2004e3617a985e7d35ffa187bd87d41aec6c91d60e554caf52550922"
+    },
+    {
+      "rel": "physics/P011TiltPlanningPass.ets",
+      "from": "  trace: P011TiltPreviewTrace | null = null;",
+      "to": "  trace: P011TiltPreviewTrace | null = null;\n  txMeter:((kind:string)=>void)|null=null;",
+      "originalSha": "42796565df03ada530dfe173c1b93c2a949fd378a460d1ec2b6991b7bead197b",
+      "generatedSha": "cdb1e613cb6cd08b840ce566e28b46faefb5852ce0a3fa55059f3fb1448aff8d"
+    },
+    {
+      "rel": "physics/P011TiltPlanningPass.ets",
+      "from": "    return delegate.previewAt(theta);",
+      "to": "    const result=delegate.previewAt(theta);\n    this.txMeter?.('STEP_PREVIEW_ATTEMPT_'+role);\n    this.txMeter?.(result===null?'STEP_PREVIEW_NULL':'STEP_PREVIEW_VALID');\n    return result;",
+      "originalSha": "cdb1e613cb6cd08b840ce566e28b46faefb5852ce0a3fa55059f3fb1448aff8d",
+      "generatedSha": "0d7df01271e791980ca573aa37e2e159ce6cdbc5c6a0e60aa19c8d3f886b27ad"
+    },
+    {
+      "rel": "physics/P011TiltPlanningPass.ets",
+      "from": "    this.lastCommitted = preview;",
+      "to": "    this.txMeter?.('STEP_PLANNER_ACCEPTED');\n    this.lastCommitted = preview;",
+      "originalSha": "0d7df01271e791980ca573aa37e2e159ce6cdbc5c6a0e60aa19c8d3f886b27ad",
+      "generatedSha": "0460b6da7a20905a311ad328587cf76d5b79cb518bf56e423237a0de3eaf513c"
+    },
+    {
+      "rel": "physics/P011TiltPlanningPass.ets",
+      "from": "    return new P011PlanningPassPreviewHandle(this, input, result, false);",
+      "to": "    this.txMeter?.('STEP_PLANNER_REJECTED');\n    return new P011PlanningPassPreviewHandle(this, input, result, false);",
+      "originalSha": "0460b6da7a20905a311ad328587cf76d5b79cb518bf56e423237a0de3eaf513c",
+      "generatedSha": "236cb48d4fb39dc58f45a26641dbfcad603e570e8292d56dc28129811db1e0e8"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "this.particleBinding.work.txPairBackend=backend;}",
+      "to": "this.particleBinding.work.txPairBackend=backend;this.planningPassService.txMeter=(kind:string):void=>backend.workload(kind);}",
+      "originalSha": "8a1e74bf2004e3617a985e7d35ffa187bd87d41aec6c91d60e554caf52550922",
+      "generatedSha": "3c89298afcd5d947accb40d03ab37e2ff75bebeb11e9b159e82a984691e74ab9"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "  numericPolicy?:string;backend:string;",
+      "to": "  freezeArm?:string;numericPolicy?:string;backend:string;",
+      "originalSha": "8ea3a71cb4b5038bc8896ccebea1d9e72dfe10f17f8537607dc1d4cc7afbed95",
+      "generatedSha": "bf238f7c996b162b42df6fe1c6fa2bb63fda67934e9b74bec6aa0d1818ea19a3"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "    this.config=JSON.parse",
+      "to": "    if(config.freezeArm!==undefined&&config.freezeArm!=='COMMON_FREEZE_ON'&&config.freezeArm!=='COMMON_FREEZE_OFF')throw new Error('T250_FREEZE_ARM');\n    this.config=JSON.parse",
+      "originalSha": "bf238f7c996b162b42df6fe1c6fa2bb63fda67934e9b74bec6aa0d1818ea19a3",
+      "generatedSha": "11023304f161f0c3d1c5a7a231b58745fdfa7ad460037d3db544d2ffc5633337"
+    },
+    {
+      "rel": "physics/tx/TxPairBackends.ets",
+      "from": "      let r:TxPairResult;",
+      "to": "      if(this.config.freezeArm==='COMMON_FREEZE_ON'){const copyStart=this.now();this.frozen0.freeze(p);this.rows[o+60]=this.now()-copyStart;this.rows[o+61]=55*p.nmax+16*p.cols;}\n      let r:TxPairResult;",
+      "originalSha": "11023304f161f0c3d1c5a7a231b58745fdfa7ad460037d3db544d2ffc5633337",
+      "generatedSha": "ae17fa2f579dad7f7f386dbde6fe07a3ee81fb476573a385659e1ddc2251a881"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "cpuCalls:Uint32Array;}",
+      "to": "cpuCalls:Uint32Array;rootRows:string[];workloadRows:string[];freezeArm:string;faultPlan:string;resourceEvidence:string;}",
+      "originalSha": "819608c6f264beb906908dd694aadca962db5ad8e17837377a62b031eda0aa53",
+      "generatedSha": "a7493d56dc072f5482435006c416bf0ebe2af953ef0844a21f5296a07eadfaec"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "  const before=field.t171ArchiveState();",
+      "to": "  const rootRows:string[]=[];\n  const before=field.t171ArchiveState();",
+      "originalSha": "a7493d56dc072f5482435006c416bf0ebe2af953ef0844a21f5296a07eadfaec",
+      "generatedSha": "d3425b6d8436ed86bcf3f1dedc415085ba4411dd8bba426634ca9f0523af5178"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "      backend.beginRoot();const h=",
+      "to": "      backend.beginRoot();const rootBefore=field.t171ArchiveState();const h=",
+      "originalSha": "d3425b6d8436ed86bcf3f1dedc415085ba4411dd8bba426634ca9f0523af5178",
+      "generatedSha": "24570799a8fdf4587a5648c20a5c8064515f5e2909c8dcd00f884667842a861f"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "      if(r===null||",
+      "to": "      rootRows.push(JSON.stringify({kind:'SOURCE',root:backend.metadata.rootId,offered:h[f.column],receipt:r,before:rootBefore,after:field.t171ArchiveState(),firstCode:r===null?'NULL':r.rejectedReason,rollback:'ORIGINAL_STATE_BYTES_ARCHIVED'}));\n      if(r===null||",
+      "originalSha": "24570799a8fdf4587a5648c20a5c8064515f5e2909c8dcd00f884667842a861f",
+      "generatedSha": "e8fb4426785fc8e7e62a8fa8f06e5e4bf2d0315f6a51804288805226ce4caa97"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "    for(let n=0;n<steps;n++){backend.beginRoot();const r=field.step(1/60);if(!r.ok)throw new Error('TX_GPU_PHYSICAL_FAILED:'+String(r.errorCode));}",
+      "to": "    for(let n=0;n<steps;n++){backend.beginRoot();const rootBefore=field.t171ArchiveState(),r=field.step(1/60);rootRows.push(JSON.stringify({kind:'STEP',root:backend.metadata.rootId,dt:1/60,receipt:r,before:rootBefore,after:field.t171ArchiveState(),firstCode:r.errorCode,rollback:'ORIGINAL_STATE_BYTES_ARCHIVED'}));if(!r.ok)throw new Error('TX_GPU_PHYSICAL_FAILED:'+String(r.errorCode));}",
+      "originalSha": "e8fb4426785fc8e7e62a8fa8f06e5e4bf2d0315f6a51804288805226ce4caa97",
+      "generatedSha": "9e743a6080f5a2fc318d1f7517063fde281d757188ba15be60562f8416d1393d"
+    },
+    {
+      "rel": "physics/tx/TxGpuFixture.ets",
+      "from": "return {revision:'TX_GPU_FIXTURE_RESULT_V1',",
+      "to": "return {rootRows:rootRows,workloadRows:backend.workloadRows,resourceEvidence:backend.resourceEvidence(rootRows),freezeArm:config.freezeArm??'COMMON_FREEZE_OFF',faultPlan:'20_CUT_INJECTION_NOT_IMPLEMENTED',revision:'T250_TX_FIXTURE_V2',",
+      "originalSha": "9e743a6080f5a2fc318d1f7517063fde281d757188ba15be60562f8416d1393d",
+      "generatedSha": "8e3cbe9a53460d06d1b5c033bfb9230d8ac91b02b98a83fbcd5b0c4a00542d2d"
+    },
+    {
+      "rel": "physics/tx/TxGpuWorker.ets",
+      "from": "import worker,{MessageEvents}",
+      "to": "import process from '@ohos.process';\nimport worker,{MessageEvents}",
+      "originalSha": "7904b47a71c6221bf2f2fccade62065ee182017426f67bfe869e1bec445ff345",
+      "generatedSha": "fe57f613bae1910689ae8ca221ab6380675e4d0a8122369889598f4286452c96"
+    },
+    {
+      "rel": "physics/tx/TxGpuWorker.ets",
+      "from": "import fs from '@ohos.file.fs';",
+      "to": "import { TxFaultPlan,validateTxFaultPlan } from './TxFaultPlan';\nimport fs from '@ohos.file.fs';",
+      "originalSha": "fe57f613bae1910689ae8ca221ab6380675e4d0a8122369889598f4286452c96",
+      "generatedSha": "44cf5bc5769f87cb624835ae9971827b7681bbf0ddd670df43fb15016e2a5d9a"
+    },
+    {
+      "rel": "physics/tx/TxGpuWorker.ets",
+      "from": "export interface TxGpuCommand {revision:string;",
+      "to": "export interface TxGpuCommand {faultPlan?:TxFaultPlan;suite?:boolean;revision:string;",
+      "originalSha": "44cf5bc5769f87cb624835ae9971827b7681bbf0ddd670df43fb15016e2a5d9a",
+      "generatedSha": "8fbfc5dd7a7f69d99327ba2bc9320e0d7bb02f860aa75f10c8fff131cd6dda4b"
+    },
+    {
+      "rel": "physics/tx/TxGpuWorker.ets",
+      "from": "    const start=now(),result=",
+      "to": "    if(c.faultPlan!==undefined){const verdict=validateTxFaultPlan(c.faultPlan,c.fixtureId,c.config.buildManifestSha256,c.config.backend,c.config.freezeArm??'COMMON_FREEZE_OFF',process.pid);throw new Error(verdict);}\n    const start=now(),result=",
+      "originalSha": "8fbfc5dd7a7f69d99327ba2bc9320e0d7bb02f860aa75f10c8fff131cd6dda4b",
+      "generatedSha": "86aef742e5f4a44d290eec723ea7199e6b17fcbb068853f61af50c838d43d8a0"
+    },
+    {
+      "rel": "physics/tx/TxGpuWorker.ets",
+      "from": "    physicalStatus=result.physicalStatus;",
+      "to": "    const suiteRows:string[]=[];\n    if(c.suite===true)for(const arm of ['COMMON_FREEZE_OFF','COMMON_FREEZE_ON'])for(const backend of ['LEGACY_SCAN','TX_ADJ_AVL','GPU_PAIR_V1']){\n      const config=JSON.parse(JSON.stringify(c.config)) as TxGpuConfig;config.backend=backend;config.freezeArm=arm;config.configId+='|suite:'+backend+'|freeze:'+arm;\n      const suiteStart=now(),row=runTxGpuFixture(config,c.fixtureId,c.steps,backend==='GPU_PAIR_V1'?new NativeTransport():null,now,backend==='TX_ADJ_AVL'?new TxGpuTreeAdapter(config.nmax):null);\n      suiteRows.push(JSON.stringify({pid:process.pid,source:T159_SOURCE_SHA,build:config.buildManifestSha256,config:config,serviceThroughRetirementMs:now()-suiteStart,result:row}));\n    }\n    physicalStatus=result.physicalStatus;",
+      "originalSha": "86aef742e5f4a44d290eec723ea7199e6b17fcbb068853f61af50c838d43d8a0",
+      "generatedSha": "0abf515ebf3d81c829edf21cd8089cf8f90791ae22688d67026396d693545f0a"
+    },
+    {
+      "rel": "physics/tx/TxGpuWorker.ets",
+      "from": "JSON.stringify({command:c,result:result})",
+      "to": "JSON.stringify({pid:process.pid,command:c,result:result,suiteRows:suiteRows})",
+      "originalSha": "0abf515ebf3d81c829edf21cd8089cf8f90791ae22688d67026396d693545f0a",
+      "generatedSha": "cee20f7c5dd73d59a581ce9e8aaa0e419d9ab4885e6ee68e8abc75e245cfec4e"
+    },
+    {
+      "rel": "physics/tx/TxGpuPageLauncher.ets",
+      "from": "revision:'TX_GPU_COMMAND_V1',fixtureId:",
+      "to": "revision:'TX_GPU_COMMAND_V1',suite:p['txSuite']===true,fixtureId:",
+      "originalSha": "d7628e24d46d2cc7797199d1fdaaa05b2235f3806098918a0717573a11bbd38b",
+      "generatedSha": "20090f5d5a7755666396ec7235cf6d6bf0b69bbf940ec211faeebc30a6913a99"
+    },
+    {
+      "rel": "physics/tx/TxGpuPageLauncher.ets",
+      "from": "config:{nmax:f.nmax,",
+      "to": "config:{freezeArm:p['txFreezeArm']===undefined?'COMMON_FREEZE_OFF':String(p['txFreezeArm']),nmax:f.nmax,",
+      "originalSha": "20090f5d5a7755666396ec7235cf6d6bf0b69bbf940ec211faeebc30a6913a99",
+      "generatedSha": "07d8afc69a1d8278bdc6557febf0813e1d740764d74e37e1c64a4f63b2a165d9"
+    }
+  ],
+  "dictionary": [
+    {
+      "slot": 0,
+      "name": "nativeValidationCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 1,
+      "name": "prepareValidateCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 2,
+      "name": "prepareFreezeCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 3,
+      "name": "prepareSortCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 4,
+      "name": "prepareRangeCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 5,
+      "name": "prepareHashPackCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 6,
+      "name": "prepareInclusiveCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "inclusive",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 7,
+      "name": "uploadCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 8,
+      "name": "dispatchSubmitCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 9,
+      "name": "fenceWaitCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 10,
+      "name": "mapCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 11,
+      "name": "requestInclusiveCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "inclusive",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 12,
+      "name": "ownerConsumeCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 13,
+      "name": "nativeReplyObjectCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 14,
+      "name": "nativeReturnEncodeCpuMs",
+      "unit": "ms",
+      "scope": "native GPU_PAIR path only; original timer boundary in nativeRows",
+      "aggregation": "stage; never sum with inclusive parent",
+      "denominator": "one actual native select request",
+      "missing": "null/NaN NOT_MEASURED; CPU backend has no native call",
+      "gpuRuntime": false
+    },
+    {
+      "slot": 15,
+      "name": "bridgeInclusiveMs",
+      "unit": "ms",
+      "scope": "NAPI select call inclusive",
+      "aggregation": "inclusive",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 16,
+      "name": "ownerId",
+      "unit": "identity",
+      "scope": "request",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 17,
+      "name": "rootId",
+      "unit": "identity",
+      "scope": "root",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 18,
+      "name": "viewSlot",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 19,
+      "name": "branchGeneration",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 20,
+      "name": "contentRevision",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 21,
+      "name": "realStep",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 22,
+      "name": "realAttempt",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 23,
+      "name": "realSubstep",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 24,
+      "name": "compatStep",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 25,
+      "name": "compatAttempt",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 26,
+      "name": "candidateRole",
+      "unit": "enum",
+      "scope": "request",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 27,
+      "name": "candidateOrdinal",
+      "unit": "count",
+      "scope": "request",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 28,
+      "name": "requestSerial",
+      "unit": "identity",
+      "scope": "request",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 29,
+      "name": "slot",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 30,
+      "name": "requiredAdapterFreezeMs",
+      "unit": "ms",
+      "scope": "GPU_PAIR adapter",
+      "aggregation": "stage included in selectorInclusiveMs",
+      "denominator": "one GPU_PAIR request",
+      "missing": "NOT_MEASURED"
+    },
+    {
+      "slot": 31,
+      "name": "freezePayloadBytes",
+      "unit": "bytes",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 32,
+      "name": "wrapperObjects",
+      "unit": "count",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 33,
+      "name": "snapshotHashBytes",
+      "unit": "bytes",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 34,
+      "name": "snapshotHashBlocks",
+      "unit": "SHA256 64-byte compression blocks",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 35,
+      "name": "payloadHashBytes",
+      "unit": "bytes",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 36,
+      "name": "payloadHashBlocks",
+      "unit": "SHA256 64-byte compression blocks",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 37,
+      "name": "identityHashBytes",
+      "unit": "bytes",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 38,
+      "name": "identityHashBlocks",
+      "unit": "SHA256 64-byte compression blocks",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 39,
+      "name": "uploadBytes",
+      "unit": "bytes",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 40,
+      "name": "dispatchCount",
+      "unit": "count",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 41,
+      "name": "fenceCount",
+      "unit": "count",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 42,
+      "name": "resultBytes",
+      "unit": "bytes",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 43,
+      "name": "ownerGenerationLo",
+      "unit": "original scalar/identity",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 44,
+      "name": "ownerGenerationHi",
+      "unit": "original scalar/identity",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 45,
+      "name": "contextEpochLo",
+      "unit": "original scalar/identity",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 46,
+      "name": "contextEpochHi",
+      "unit": "original scalar/identity",
+      "scope": "GPU_PAIR native request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 47,
+      "name": "slotA",
+      "unit": "slot",
+      "scope": "result",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 48,
+      "name": "slotB",
+      "unit": "slot",
+      "scope": "result",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 49,
+      "name": "selectorInclusiveMs",
+      "unit": "ms",
+      "scope": "entire selector inclusive (not exclusive)",
+      "aggregation": "inclusive",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 50,
+      "name": "nativeRowEncodeMs",
+      "unit": "ms",
+      "scope": "GPU_PAIR adapter",
+      "aggregation": "stage included in selectorInclusiveMs",
+      "denominator": "one GPU_PAIR request",
+      "missing": "NOT_MEASURED"
+    },
+    {
+      "slot": 51,
+      "name": "nativeRowUtf8Bytes",
+      "unit": "bytes",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 52,
+      "name": "ownerMetadataGeneration",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 53,
+      "name": "realRunToken",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 54,
+      "name": "paramsRevision",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 55,
+      "name": "inputRevision",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 56,
+      "name": "seed",
+      "unit": "original scalar/identity",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 57,
+      "name": "mergeStatus",
+      "unit": "status",
+      "scope": "mergePairHot return",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 58,
+      "name": "mergeInclusiveMs",
+      "unit": "ms",
+      "scope": "mergePairHot inclusive",
+      "aggregation": "inclusive",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 59,
+      "name": "barrierCount",
+      "unit": "count",
+      "scope": "current selector request",
+      "aggregation": "value, not timing",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED; never fill zero across backend"
+    },
+    {
+      "slot": 60,
+      "name": "commonFreezeMs",
+      "unit": "ms",
+      "scope": "extra common freeze inclusive; excludes native required freeze",
+      "aggregation": "inclusive",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 61,
+      "name": "commonFreezeBytes",
+      "unit": "bytes",
+      "scope": "extra common freeze only",
+      "aggregation": "value",
+      "denominator": "one selector request",
+      "missing": "NOT_MEASURED_NOT_ZERO"
+    },
+    {
+      "slot": 62,
+      "name": "backend_specific_62",
+      "unit": "UNDEFINED_DO_NOT_COMPARE",
+      "scope": "backend-private",
+      "aggregation": "NOT_COMPARABLE",
+      "denominator": "one selector request"
+    },
+    {
+      "slot": 63,
+      "name": "backend_specific_63",
+      "unit": "UNDEFINED_DO_NOT_COMPARE",
+      "scope": "backend-private",
+      "aggregation": "NOT_COMPARABLE",
+      "denominator": "one selector request"
+    }
+  ],
+  "faultPlanModuleSha": "fad7d5f7846a8ef41a254598caa14bce7fcc61054fb52c5fe7071a987cc0dba1",
+  "sourceManifestSha256": "979094404c4f3b85949d9d434ed2fccca820d1e17ca41466a4666f79d089fd89",
+  "treeBackend": "T211_CORE_COMPILED",
+  "productionTouched": false,
+  "faultCuts": [
+    {
+      "cut": 1,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 2,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 3,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 4,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 5,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 6,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 7,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 8,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 9,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 10,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 11,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 12,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 13,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 14,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 15,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 16,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 17,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 18,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 19,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    },
+    {
+      "cut": 20,
+      "status": "NOT_IMPLEMENTED",
+      "gap": "NO_ORIGINAL_CODE_CONTROLLABLE_CUT_INJECTOR"
+    }
+  ],
+  "resourceBoundary": "retained owner typed arrays and archived UTF8 measured; external/driver/RSS NOT_MEASURED"
+}

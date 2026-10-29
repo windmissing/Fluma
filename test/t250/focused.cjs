@@ -1,0 +1,32 @@
+'use strict';
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');
+require.extensions['.ets']=(m,f)=>m._compile(ts.transpileModule(fs.readFileSync(f,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText,f);
+const out=path.resolve(process.argv[2]||'.codex/local-test/t250-v3');
+const base=path.join(out,'entry/src/main/ets/physics');
+const {runTxGpuFixture}=require(path.join(base,'tx/TxGpuFixture.ets'));
+const {validateTxFaultPlan}=require(path.join(base,'tx/TxFaultPlan.ets'));
+const manifest=JSON.parse(fs.readFileSync(path.join(out,'t250-manifest.json')));
+const config={nmax:192,shaderDirectory:'HOST_NOT_GPU',runId:'focused',configId:'T250_FOCUSED',sourceManifestSha256:manifest.sourceManifestSha256,buildManifestSha256:'b'.repeat(64),buildShaderSha256:'c'.repeat(64),queryShaderSha256:'d'.repeat(64),reduceShaderSha256:'e'.repeat(64),diagnosticOracle:false,fullDump:false,freezeArm:'COMMON_FREEZE_OFF',backend:'LEGACY_SCAN',policy:'TX_EXACT_STRUCTURE_V1',traceCapacity:4096,variant:'STRICT_O2'};
+const result=runTxGpuFixture(config,'WET_192_64',1,null,()=>0);
+assert.equal(result.physicalStatus,'COMMITTED',result.error);
+assert.equal(result.rootRows.length,3);
+const workloads=result.workloadRows.map(JSON.parse),count=k=>workloads.filter(x=>x.kind===k).length;
+assert(count('B_BIRTH_COMPLETED')>0);
+assert(count('SOURCE_LAMBDA_ATTEMPT')>0);
+assert(count('STEP_PREVIEW_ATTEMPT_REQUESTED')>0);
+assert(count('STEP_PLANNER_ACCEPTED')+count('STEP_PLANNER_REJECTED')>0);
+assert.equal(count('M_FIND'),count('M_FOUND')+count('M_NO_PAIR')+count('M_ERROR'));
+const resource=JSON.parse(result.resourceEvidence);
+assert.equal(resource.typedArrays.selectorRows,4096*64*8);
+assert.equal(resource.stringsUtf8Bytes.rootRows,result.rootRows.reduce((n,s)=>n+Buffer.byteLength(s),0));
+assert.equal(resource.stringsUtf8Bytes.workloadRows,result.workloadRows.reduce((n,s)=>n+Buffer.byteLength(s),0));
+assert.equal(resource.driverBytes,'NOT_MEASURED');
+const basePlan={fixtureId:'WET_192_64',buildSHA:config.buildManifestSha256,backend:config.backend,freezeArm:config.freezeArm,PID:100,rootId:1,cutId:1,edge:'BEFORE',ordinal:1};
+let checked=0;
+for(let cutId=1;cutId<=20;cutId++)for(const edge of ['BEFORE','AFTER']){
+  assert.equal(validateTxFaultPlan({...basePlan,cutId,edge},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR');checked++;
+}
+assert.equal(validateTxFaultPlan({...basePlan,PID:101},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_IDENTITY_MISMATCH');
+assert.equal(validateTxFaultPlan({...basePlan,ordinal:0},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_RANGE');
+console.log(JSON.stringify({revision:'T250_FOCUSED_V3',passed:checked+10,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),resource,faultCuts:'20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR',gpu:'NOT_RUN'},null,2));

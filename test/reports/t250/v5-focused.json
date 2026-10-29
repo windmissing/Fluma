@@ -1,0 +1,40 @@
+{
+  "revision": "T250_FOCUSED_V3",
+  "passed": 50,
+  "failed": 0,
+  "roots": 3,
+  "B": 256,
+  "Mfind": 64,
+  "sourceLambda": 2,
+  "stepPreview": 1,
+  "resource": {
+    "revision": "T250_VISIBLE_RESOURCE_V1",
+    "scope": "retained fixture owner after last root before GC",
+    "typedArrays": {
+      "selectorRows": 2097152,
+      "cpuTotals": 32,
+      "cpuCounts": 16,
+      "metadataRows": 768,
+      "metadataOrdinals": 24,
+      "frozenCopies": 25216,
+      "frozenOffsets": 104,
+      "frozenLengths": 104
+    },
+    "stringsUtf8Bytes": {
+      "rootRows": 487948,
+      "workloadRows": 27532,
+      "nativeRows": 0,
+      "errors": 0,
+      "states": 28480
+    },
+    "rootRowsCount": 3,
+    "selectorRowsCount": 64,
+    "nativeSlotsAtConfigure": 0,
+    "wrapperObjectsPerGpuSelect": "26_ESTIMATE_NOT_MEASURED",
+    "externalCopies": "NOT_MEASURED",
+    "driverBytes": "NOT_MEASURED",
+    "rssBytes": "NOT_MEASURED"
+  },
+  "faultCuts": "20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR",
+  "gpu": "NOT_RUN"
+}
