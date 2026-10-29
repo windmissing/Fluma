@@ -1,0 +1,64 @@
+{
+  "revision": "T260_DIFFERENTIAL_V1",
+  "scope": "ORACLE_VS_SWIFTSHADER_TRACE",
+  "device": false,
+  "hardwareGPU": false,
+  "shader": "PC SwiftShader (ANGLE Vulkan) product m0_source.comp",
+  "diffsTotal": 0,
+  "results": [
+    {
+      "id": "D-SRC",
+      "name": "source root state+events word-diff",
+      "status": "PASS",
+      "detail": {
+        "diffs": 0,
+        "sample": []
+      }
+    },
+    {
+      "id": "D-SRC-C",
+      "name": "source completion256 word-diff",
+      "status": "PASS",
+      "detail": {
+        "diffs": 0,
+        "sample": []
+      }
+    },
+    {
+      "id": "D-Q1",
+      "name": "quantum 1 state word-diff",
+      "status": "PASS",
+      "detail": {
+        "diffs": 0,
+        "sample": []
+      }
+    },
+    {
+      "id": "D-Q2",
+      "name": "quantum 2 state word-diff",
+      "status": "PASS",
+      "detail": {
+        "diffs": 0,
+        "sample": []
+      }
+    },
+    {
+      "id": "D-Q3",
+      "name": "quantum 3 state word-diff",
+      "status": "PASS",
+      "detail": {
+        "diffs": 0,
+        "sample": []
+      }
+    },
+    {
+      "id": "D-Q4",
+      "name": "quantum 4 state word-diff",
+      "status": "PASS",
+      "detail": {
+        "diffs": 0,
+        "sample": []
+      }
+    }
+  ]
+}
