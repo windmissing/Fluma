@@ -30,7 +30,7 @@ assert.equal(resource.driverBytes,'NOT_MEASURED');
 const basePlan={fixtureId:'WET_192_64',buildSHA:config.buildManifestSha256,backend:config.backend,freezeArm:config.freezeArm,PID:100,rootId:1,cutId:1,edge:'BEFORE',ordinal:1};
 let checked=0;
 for(let cutId=1;cutId<=20;cutId++)for(const edge of ['BEFORE','AFTER']){
-  assert.equal(validateTxFaultPlan({...basePlan,cutId,edge},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR');checked++;
+  assert.equal(validateTxFaultPlan({...basePlan,cutId,edge},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),cutId===6&&edge==='BEFORE'?'READY_REQUEST_OWNER_CORRUPTION':'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR');checked++;
 }
 assert.equal(validateTxFaultPlan({...basePlan,PID:101},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_IDENTITY_MISMATCH');
 assert.equal(validateTxFaultPlan({...basePlan,ordinal:0},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_RANGE');
@@ -41,4 +41,4 @@ assert.equal(bad.physicalStatus,'FAULT');
 assert(badCount('M_FIND')>0);
 assert.equal(badCount('M_FIND'),badCount('M_ERROR'));
 assert.equal(badCount('M_FOUND'),0);
-console.log(JSON.stringify({revision:'T250_FOCUSED_V5',passed:checked+19,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),audit:count('A_AUDIT_LOGICAL'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),badPair:{status:bad.physicalStatus,find:badCount('M_FIND'),error:badCount('M_ERROR'),found:badCount('M_FOUND')},resource,faultCuts:'20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR',gpu:'HOST_CPU_DOUBLE_ONLY'},null,2));
+console.log(JSON.stringify({revision:'T250_FOCUSED_V6',passed:checked+19,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),audit:count('A_AUDIT_LOGICAL'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),badPair:{status:bad.physicalStatus,find:badCount('M_FIND'),error:badCount('M_ERROR'),found:badCount('M_FOUND')},resource,faultCuts:'CUT6_BEFORE_ONLY_OTHER39_EDGES_NOT_IMPLEMENTED',gpu:'HOST_CPU_DOUBLE_ONLY'},null,2));

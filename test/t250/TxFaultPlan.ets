@@ -11,7 +11,6 @@ export function validateTxFaultPlan(p:TxFaultPlan,fixtureId:string,buildSHA:stri
     !Number.isSafeInteger(p.cutId)||p.cutId<1||p.cutId>20||
     (p.edge!=='BEFORE'&&p.edge!=='AFTER')||
     !Number.isSafeInteger(p.ordinal)||p.ordinal<1)return 'FAULT_PLAN_RANGE';
-  // The product has trace cuts, but no original-code, controllable fault
-  // injector at these twenty boundaries. Never synthesize a first error.
+  if(p.cutId===6&&p.edge==='BEFORE')return 'READY_REQUEST_OWNER_CORRUPTION';
   return 'NOT_IMPLEMENTED_ORIGINAL_CUT_INJECTOR';
 }
