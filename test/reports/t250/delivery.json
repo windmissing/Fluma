@@ -1,0 +1,118 @@
+{
+  "revision": "T250_DEVELOPER_HANDOFF_V1",
+  "date": "2026-10-29",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff",
+  "compile": "PASS_ARKTS_ARM64_NATIVE",
+  "package": "PASS_UNSIGNED",
+  "sign": "FAIL_00303116_PASSWORD_FIELD_LENGTH",
+  "install": "NOT_RUN",
+  "device": "NOT_RUN",
+  "recipeFiles": {
+    "test\\t250\\generate.cjs": "b6e14acbd493d171a9467d6e4450970992c185f024324000bd458881456e566f",
+    "test\\t250\\selftest.cjs": "d89022a6b0ca126603016f1d9d22549d9c530bc59f553d9cbfe3e4adb72be332"
+  },
+  "artifacts": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp011_gpu_pair_prototype.so",
+      "bytes": 1333368,
+      "sha256": "b63de242921f01efc700b9d7538ecde99b193e1260e4bf3c9f60e75b45d81309",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp013hello.so",
+      "bytes": 309512,
+      "sha256": "34cc6ad0f6e265051f592264b8a7fe76cf7135e6d7d378c442091859803fc8fc",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp013renderer.so",
+      "bytes": 1700896,
+      "sha256": "8b3c549d68ea6b3bb18e95de899b4727de6cba5307aca055734066d9d80347bb",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libp011_gpu_pair_prototype.so",
+      "bytes": 1333368,
+      "sha256": "b63de242921f01efc700b9d7538ecde99b193e1260e4bf3c9f60e75b45d81309",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libp013hello.so",
+      "bytes": 309512,
+      "sha256": "34cc6ad0f6e265051f592264b8a7fe76cf7135e6d7d378c442091859803fc8fc",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libp013renderer.so",
+      "bytes": 1700896,
+      "sha256": "8b3c549d68ea6b3bb18e95de899b4727de6cba5307aca055734066d9d80347bb",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libp011_gpu_pair_prototype.so",
+      "bytes": 157048,
+      "sha256": "7c68bd6e4d39c315acd446864bfe61e8fd71f4e52770e933b6f7358f6f1bc86d",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libp013hello.so",
+      "bytes": 70544,
+      "sha256": "e061198aab4f9e73a1cf8f5cf419b1cb21aec56d9e89752578047d96178f33b7",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libp013renderer.so",
+      "bytes": 439416,
+      "sha256": "8370d5002307ff3df94f770ebd17cd6fc301d3835225bb98fd33f366047fd46d",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t250-handoff\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 4915154,
+      "sha256": "6ca5838219be955e35fcbbc2d74a6e6b782397cc5c2457de736fae0919e756f1",
+      "packagedSo": [
+        {
+          "name": "libs/arm64-v8a/libc++_shared.so",
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "bytes": 1262248
+        },
+        {
+          "name": "libs/arm64-v8a/libp011_gpu_pair_prototype.so",
+          "sha256": "7c68bd6e4d39c315acd446864bfe61e8fd71f4e52770e933b6f7358f6f1bc86d",
+          "bytes": 157048
+        },
+        {
+          "name": "libs/arm64-v8a/libp013hello.so",
+          "sha256": "e061198aab4f9e73a1cf8f5cf419b1cb21aec56d9e89752578047d96178f33b7",
+          "bytes": 70544
+        },
+        {
+          "name": "libs/arm64-v8a/libp013renderer.so",
+          "sha256": "8370d5002307ff3df94f770ebd17cd6fc301d3835225bb98fd33f366047fd46d",
+          "bytes": 439416
+        }
+      ]
+    }
+  ],
+  "buildLogSha256": "c172bf797b3ebc663f4a1d5eb0df70d96dc3e694888aa852846fd7c7155d0e03",
+  "signLogSha256": "0526cc4f3655744ef8c75713e798e657e4b50c18e095c361c6a3779e128657d7",
+  "signingConfigUnchanged": true
+}
