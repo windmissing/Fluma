@@ -13,10 +13,15 @@ assert.equal(result.physicalStatus,'COMMITTED',result.error);
 assert.equal(result.rootRows.length,3);
 const workloads=result.workloadRows.map(JSON.parse),count=k=>workloads.filter(x=>x.kind===k).length;
 assert(count('B_BIRTH_COMPLETED')>0);
+assert.equal(count('B_BIRTH_ENTER'),count('B_BIRTH_COMPLETED'));
+assert.equal(count('B_BIRTH_COMMIT'),count('B_BIRTH_COMPLETED'));
 assert(count('SOURCE_LAMBDA_ATTEMPT')>0);
 assert(count('STEP_PREVIEW_ATTEMPT_REQUESTED')>0);
 assert(count('STEP_PLANNER_ACCEPTED')+count('STEP_PLANNER_REJECTED')>0);
 assert.equal(count('M_FIND'),count('M_FOUND')+count('M_NO_PAIR')+count('M_ERROR'));
+assert(count('A_AUDIT_LOGICAL')>0);
+assert.equal(count('A_AUDIT_LOGICAL'),count('A_AUDIT_EXECUTE'));
+assert.equal(count('OWNER_CANCEL'),0);
 const resource=JSON.parse(result.resourceEvidence);
 assert.equal(resource.typedArrays.selectorRows,4096*64*8);
 assert.equal(resource.stringsUtf8Bytes.rootRows,result.rootRows.reduce((n,s)=>n+Buffer.byteLength(s),0));
@@ -29,4 +34,4 @@ for(let cutId=1;cutId<=20;cutId++)for(const edge of ['BEFORE','AFTER']){
 }
 assert.equal(validateTxFaultPlan({...basePlan,PID:101},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_IDENTITY_MISMATCH');
 assert.equal(validateTxFaultPlan({...basePlan,ordinal:0},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_RANGE');
-console.log(JSON.stringify({revision:'T250_FOCUSED_V3',passed:checked+10,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),resource,faultCuts:'20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR',gpu:'NOT_RUN'},null,2));
+console.log(JSON.stringify({revision:'T250_FOCUSED_V4',passed:checked+15,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),audit:count('A_AUDIT_LOGICAL'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),resource,faultCuts:'20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR',gpu:'NOT_RUN'},null,2));
