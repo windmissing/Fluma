@@ -1,5 +1,7 @@
 # T205：全事务复杂度方案工程规格 V1
 
+> **T245 设备证据与 ledger 身份修订（2026-10-29）**：T225 的 GPU/legacy 与 AVL 分属两份 sourceManifest；64 root 终态与 pair oracle 是局部正确性证据，单次 1380/2606/3753ms 是该 synthetic fixture 各一轮时间，不是同二进制服务分布或整体收益。差分 ledger 只在 schema revision、字段名、单位、inclusive/exclusive 作用域、时间窗口及 offered/accepted 分母均相同的槽位比较；报告中第49槽 `5 vs 32` 量纲不同，不得逐槽相减或据 4096 槽差异判事务错误。严格同 binary 三后端成本需先合并 TreeAdapter 与 GPU bridge 的隔离构建；满池、B/M/A/λ 原始计数、双 freeze PID、20 cut、全链 p50/p95 和实际资源峰值分别补证，不重跑已证 64root 矩阵。详见 `architecture-T245-whole-tx-device-routing-v1.md`。
+
 日期：2026-10-28。角色：architect。不使用真机，不实现业务，不重跑产品或模型测试。
 
 原卡：`6ae15c23e4b0c3103c068383`，完整标题「【T205·整体复杂度方案工程化】architect：动态索引、数值切点、资源全表与迁移接口」。消费 T197 `f0e3a0c` 的完整方案及 §13、T116 V3、T204 原始已归档 ledger、T199 GPU 报告与现有 T137/T171/T191 接口。本稿是工程交付，实施及产品指标仍为 NOT_IMPLEMENTED / NOT_TESTED。

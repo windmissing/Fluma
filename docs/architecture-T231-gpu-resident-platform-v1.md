@@ -1,5 +1,7 @@
 # T231：GPU 驻留整步的平台与工程边界 V1
 
+> **T242 设备证据修订（2026-10-29）**：T232 在独立 pbuffer 内证明 4096 项整数原语逐位相符、跨 dispatch SSBO barrier 128 项零错、尾部 256 word/1024B 微探针零错。P-E 真实 XComponent window 同 context compute→draw/swap 未运行；不能由 pbuffer 的 GL limit 或 fence 推导产品驻留链已通。该 context 报 vertex SSBO blocks=0、fragment=16；P1 的顶点 shader 直读 SSBO 只能作为待测条件路线，先在实际窗口验证 fragment 整数 fetch，失败时升版 GPU image/texture 或 VBO pack，逐路线记新增 bytes/pass/barrier，不用 CPU 全池回传。offsetAlignment=256B 约束 `glBindBufferRange` 的 base offset，不意味着连续 U32 内部 word 都须 256B 对齐。单 SSBO block limit=1GiB 只是限值查询，不证明 M0 15/37MB、M1 23/55/25/57MB 连同双 event、双发布、完整新管线 render targets 能同时分配。所有限值和分配须在真实 window context 重查，逐对象记录实际 bytes/offset、失败 GL 错误与峰值。
+
 2026-10-28，architect；原卡 `6ae1c798e4b0c1a6bd6163a9`。与 T230 算法设计并行，**本稿只定平台、生命周期、可验证接线和最小探针**，不替 T230 定数值表示、merge 顺序或事务算法。目标6/P5最高调度优先；旧 pair 原型与 CPU 全链是正确性/成本对照，不是 GPU 驻留整步实现。状态 `PLATFORM_ENGINEERING_READY_FOR_PROBES / DEVICE_CAPABILITY_PARTIAL / GPU_RESIDENT_PRODUCT_NOT_IMPLEMENTED`。不使用真机，不改业务代码、设备设置或生产开关，不重跑测试。所有渲染含背景/前景只能走新 XComponent+shader；故障返回 FAULT 或明确 STALE 的完整上一有效新管线帧，绝不 Canvas 上屏或回退。
 
 ## 1. 核证范围：已测、未测、不能外推

@@ -1,5 +1,7 @@
 # T233：GPU 驻留 M0 逐 word 工程定版 V1（T241 工程修订 V2）
 
+> **T242 平台接续边界**：T232 在独立 pbuffer 对 256 U32/1024B 尾包的微探针通过，只覆盖同步/读回形状；不是此 manifest 的完整 completion256 字段、五 root 同 tick、验签/审计及实际 GPU M0 bank commit。256B `GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT` 约束 range base，不改变本稿 `4*index` 的内部 word ABI；实际每个 range 的 base、length 与总对象 bytes 分别核。vertex SSBO blocks=0，正式窗口需要 fragment SSBO fetch 或另版 GPU pack 路线实测，不能假定顶点 shader 直读。15,060,496/36,997,904B 是 payload 算术，不是 T232 实际并存分配 PASS；真机探针须保留双 arena、双发布、lease、全帧目标及 LastGood 峰值、GL 错误与释放记录。离线 T236 实施不因此等待真机。
+
 > **T241 修订，2026-10-29 定版**：T236 `c7ab688` 发现 K192 双 pad256 索引原模板短 512B，且产品 event/completion 枚举未冻结。本稿第 2、3、6 节与同名 manifest 的 `engineeringRevision=T241_M0_WIRE_AND_SORT_V2` 现为有效工程合同；原 15,059,984B 是 T230/T233 设计模板历史值，不可继续按它冷分配 K192。M0 字段 word index 未搬移，既有生成头需要按新 manifest SHA 重生成；产品 wire 数值此前未定，本次首次定版，不把 T236 mock `CompletionPolicy` 当旧产品协议。M1 的 T238 manifest 以本修订为基线另版读取。
 
 2026-10-28，architect；原卡 `6ae1ea8be4b0c3103c13e7ce`。目标6/P5。消费 T230 设计 `b8f7e3f` 和 T231 平台补正 `4722534`；本稿冻结 **GRS_Q20_V1 隔离新 run** 的工程接口，配套机器可读 `analysis-T233-gpu-resident-M0-engineering-manifest-v1.json`。状态 `ENGINEERING_READY / CAPABILITY_REQUIRED / PRODUCT_NOT_IMPLEMENTED`。不使用真机；不修改业务代码、生产默认路由或设备设置。新 XComponent+shader 是全部背景、前景和场景的唯一上屏路径；故障为 FAULT 或标明 STALE 的上一完整有效新管线帧，绝无 Canvas 回退。
