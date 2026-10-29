@@ -1,0 +1,10 @@
+CREATE 0 GL=0
+ROOT 1 status=0 outcome=1 reason=0 audit=1023 ownerMapped=1024
+ROOT 2 status=0 outcome=1 reason=0 audit=1023 ownerMapped=2048
+ROOT 3 status=0 outcome=1 reason=0 audit=1023 ownerMapped=3072
+ROOT 4 status=0 outcome=3 reason=0 audit=1023 ownerMapped=4096
+ROOT 5 status=0 outcome=2 reason=8 audit=1023 ownerMapped=5120
+ROOT 6 status=0 outcome=2 reason=3 audit=1023 ownerMapped=6144
+ROOT 7 status=0 outcome=2 reason=1 audit=1023 ownerMapped=7168
+ROOT 8 status=9 outcome=2 reason=1 audit=1023 ownerMapped=7168
+{"revision":"T240_SOURCE_TRANSPORT_V1","K":512,"Kw":128,"passed":562,"failed":0,"execution":"PC_SWIFTSHADER","scope":"M1_SOURCE_NATIVE_OWNER_FENCE_PUBLICATION_LEASE","device":"NOT_RUN"}

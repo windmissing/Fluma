@@ -1,0 +1,46 @@
+#include "m1/source_transport.h"
+#include "foundation.h"
+#include "angles_generated.h"
+#include <cassert>
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <chrono>
+#include <thread>
+extern "C" void GL_APIENTRY glFinish(){auto f=reinterpret_cast<PFNGLFINISHPROC>(eglGetProcAddress("glFinish"));assert(f);f();}
+namespace grs {FoundationInfo GetFoundationInfo(){return {"SOURCE_ONLY","SOURCE_ONLY","SOURCE_ONLY","unused",kAngleSha256,"unused",0,false,false};}}
+using namespace grs;
+void hashes(const char* s,std::array<uint32_t,8>& out){for(uint32_t i=0;i<32;i++){char h[]={s[2*i],s[2*i+1],0};out[i/4]|=uint32_t(std::stoul(h,nullptr,16))<<(8*(i%4));}}
+void binary(std::array<uint32_t,32>& c,size_t i,double value){std::memcpy(c.data()+i,&value,8);}
+int main(int argc,char** argv){uint32_t K=argc>1?uint32_t(std::stoul(argv[1])):192,Kw=argc>2?uint32_t(std::stoul(argv[2])):128;
+ using Platform=EGLDisplay(EGLAPIENTRYP)(EGLenum,void*,const EGLint*);auto platform=reinterpret_cast<Platform>(eglGetProcAddress("eglGetPlatformDisplayEXT"));assert(platform);EGLint args[]={0x3203,0x3450,0x3209,0x3487,EGL_NONE};auto d=platform(0x3202,nullptr,args);EGLint major,minor;assert(eglInitialize(d,&major,&minor));EGLConfig cfg;EGLint count,attrs[]={EGL_SURFACE_TYPE,EGL_PBUFFER_BIT,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,EGL_NONE};assert(eglChooseConfig(d,attrs,&cfg,1,&count)&&count);assert(eglBindAPI(EGL_OPENGL_ES_API));EGLint ca[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_CONTEXT_MINOR_VERSION,1,EGL_NONE},pa[]={EGL_WIDTH,16,EGL_HEIGHT,16,EGL_NONE};auto ctx=eglCreateContext(d,cfg,EGL_NO_CONTEXT,ca);auto surf=eglCreatePbufferSurface(d,cfg,pa);assert(eglMakeCurrent(d,surf,surf,ctx));
+ Identity id;id.run={1,2};id.owner={2,3};id.context={1,4};id.surface={1,5};id.geometry={1,6};id.config={1,7};hashes(m1::manifestSha,id.layoutSha);hashes(m1::SourceCoreSha(),id.shaderSha);hashes(kAngleSha256,id.angleSha);
+ m1::SourceCoreTransport gpu;auto create=gpu.Create(K,Kw,id);std::cout<<"CREATE "<<int(create)<<" GL="<<gpu.Stats().firstGlError<<std::endl;assert(create==TransportCode::OK);uint32_t frame=0,seq=0;int passed=0;
+ auto command=[&](uint32_t kind,double x,double y,double q){std::array<uint32_t,32> c{};c[0]=1129534023;c[1]=2;c[2]=kind;c[4]=id.run.lo;c[5]=id.run.hi;c[6]=++seq;c[8]=1;c[10]=1;c[12]=id.geometry.lo;c[13]=id.geometry.hi;c[14]=c[15]=c[24]=c[27]=1;c[28]=id.config.lo;c[29]=id.config.hi;binary(c,16,x);binary(c,18,y);binary(c,20,q);return c;};
+ auto request=[&](){RootRequest r;r.kind=1;r.nonce={frame+1,2};r.frame={frame+1,3};r.control={frame+1,4};r.eventArena=r.frame.lo&1u;r.publicationSlot=r.eventArena;return r;};
+ auto submit=[&](const std::array<uint32_t,32>& c,bool stop=false){auto req=request();frame++;PublicationLease retireProbe;GLuint unused=0;gpu.Acquire(0,{0,0},retireProbe,unused);auto old=gpu.Owner();auto status=gpu.Submit(c,req);assert(status==TransportCode::OK);const auto actual=gpu.Trace().At(gpu.Trace().Size()-1).root;assert(old.Begin(actual,c)==ControlCode::OK);if(stop)assert(gpu.Stop()==ControlCode::QUARANTINED);auto start=std::chrono::steady_clock::now();AcceptedRoot out;do{status=gpu.Poll(out);if(status!=TransportCode::BUSY)break;std::this_thread::yield();}while(std::chrono::steady_clock::now()-start<std::chrono::seconds(20));std::cout<<"ROOT "<<frame<<" status="<<int(status)<<" outcome="<<gpu.LastCompletion()[28]<<" reason="<<gpu.LastCompletion()[29]<<" audit="<<gpu.LastCompletion()[99]<<" ownerMapped="<<gpu.Owner().MappedBytes()<<std::endl;
+  if(stop){assert(status==TransportCode::PROTOCOL_REJECTED);return out;}assert(status==TransportCode::OK);auto completion=gpu.LastCompletion();AcceptedRoot check;auto valid=old;assert(valid.Poll(FenceState::Pending,nullptr,0,0,check)==ControlCode::BUSY);assert(valid.Bank()!=out.bank);assert(valid.Poll(FenceState::Signaled,completion.data(),256,0,check)==ControlCode::OK);assert(valid.Bank()==out.bank);passed++;
+  // Every identity/version/audit/reserved field mutation must be rejected before a bank switch.
+  for(size_t at:{size_t(0),size_t(1),size_t(2),size_t(3),size_t(4),size_t(6),size_t(7),size_t(8),size_t(10),size_t(12),size_t(14),size_t(18),size_t(22),size_t(24),size_t(27),size_t(30),size_t(32),size_t(33),size_t(34),size_t(35),size_t(36),size_t(38),size_t(40),size_t(42),size_t(49),size_t(51),size_t(54),size_t(55),size_t(57),size_t(59),size_t(60),size_t(69),size_t(73),size_t(81),size_t(85),size_t(88),size_t(89),size_t(90),size_t(91),size_t(94),size_t(95),size_t(96),size_t(97),size_t(98),size_t(99),size_t(100),size_t(101),size_t(102),size_t(103),size_t(104),size_t(105),size_t(106),size_t(107),size_t(108),size_t(109),size_t(110),size_t(111),size_t(112),size_t(113),size_t(114),size_t(122),size_t(130),size_t(138),size_t(142),size_t(146),size_t(148),size_t(150),size_t(152),size_t(155),size_t(156),size_t(157),size_t(160),size_t(255)}){auto bad=completion;bad[at]^=1;auto probe=old;auto bank=probe.Bank();auto code=probe.Poll(FenceState::Signaled,bad.data(),256,0,check);if(code!=ControlCode::COMPLETION_INVALID)std::cerr<<"MUTATION_ACCEPTED "<<at<<std::endl;assert(code==ControlCode::COMPLETION_INVALID);assert(probe.Bank()==bank);passed++;}
+  for(size_t shape:{size_t(0),size_t(255),size_t(257)}){auto probe=old;assert(probe.Poll(FenceState::Signaled,completion.data(),shape,0,check)==ControlCode::COMPLETION_INVALID);passed++;}auto badGl=old;assert(badGl.Poll(FenceState::Signaled,completion.data(),256,GL_INVALID_OPERATION,check)==ControlCode::COMPLETION_INVALID);passed++;return out;
+ };
+ auto sand=command(0,64.5,100,.25);auto wrongRequest=request();assert(eglMakeCurrent(d,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT));assert(gpu.Submit(sand,wrongRequest)==TransportCode::WRONG_OWNER);assert(eglMakeCurrent(d,surf,surf,ctx));passed++;
+ auto first=submit(sand);assert(first.sourceSuccess&&first.completion[66]==2&&first.source.lo==1);passed++;
+ PublicationLease lease;GLuint pub=0;assert(gpu.Acquire(first.publication,first.publicationGeneration,lease,pub)==ControlCode::OK&&pub);assert(Compare64(lease.source,first.source)==0&&Compare64(lease.nonce,first.nonce)==0);assert(gpu.Release()==TransportCode::BUSY);passed++;
+ // Lease blocks reuse of only its own slot, while the other slot can commit.
+ auto flight=submit(command(1,60.5,100,.25));assert(flight.sourceSuccess&&flight.completion[144]==262144&&flight.completion[140]==0&&flight.completion[66]==1);passed++;
+ auto blocked=request();assert(blocked.publicationSlot==first.publication);assert(gpu.Submit(command(1,20.5,0,.25),blocked)==TransportCode::BUSY);assert(gpu.Owner().Bank()==flight.bank);passed++;
+ glBindBuffer(GL_COPY_READ_BUFFER,pub);const size_t pubHeader=16*size_t(K)+20*size_t(Kw)+16*128;auto coldPub=glMapBufferRange(GL_COPY_READ_BUFFER,GLintptr(pubHeader*4),1024,GL_MAP_READ_BIT);assert(coldPub);Words256 pubTail{};std::memcpy(pubTail.data(),coldPub,1024);assert(glUnmapBuffer(GL_COPY_READ_BUFFER));assert(pubTail[1]==2&&pubTail[3]==3235823838u&&pubTail[4]==id.run.lo&&pubTail[5]==id.run.hi&&pubTail[12]==first.source.lo&&pubTail[14]==first.physics.lo&&pubTail[31]==first.bank&&pubTail[32]==first.publicationGeneration.lo&&pubTail[37]==lease.frame.lo&&pubTail[38]==lease.frame.hi);passed++;
+ auto release=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);glFlush();assert(gpu.ReleasePublication(first.publication,first.publicationGeneration,release)==ControlCode::OK);glFinish();
+ auto direct=submit(command(1,20.5,0,.5));assert(direct.sourceSuccess&&direct.completion[66]==0&&direct.completion[140]==524288&&direct.completion[144]==262144&&direct.completion[90]==1);passed++;
+ assert(gpu.Freeze(true)==TransportCode::OK);std::vector<uint32_t> state;assert(gpu.CaptureAccepted(state)==TransportCode::OK);assert(state[gpu.HeaderOffsetWords()+58]==786432);assert(gpu.Freeze(false)==TransportCode::OK);passed++;
+ auto replay=submit(sand);assert(!replay.sourceSuccess&&replay.outcome==3&&replay.source.lo==3&&replay.completion[61]==262144&&replay.completion[65]==1);passed++;
+ auto conflict=sand;conflict[26]=7;auto rejected=submit(conflict);assert(rejected.outcome==2&&rejected.completion[29]==8&&rejected.source.lo==3);passed++;
+ auto zero=submit(command(1,2.5,0,0));assert(zero.outcome==2&&zero.completion[29]==3);passed++;
+ auto unsupported=submit(command(2,2.5,0,.25));assert(unsupported.outcome==2&&unsupported.completion[29]==1);passed++;
+ auto acceptedBefore=gpu.Owner().AcceptedCount(),mappedBefore=gpu.Stats().mappedBytes;auto before=gpu.Owner().Header();submit(command(1,50.5,0,.1),true);assert(gpu.Owner().Header()==before&&gpu.Owner().AcceptedCount()==acceptedBefore&&gpu.Stats().mappedBytes==mappedBefore);passed++;
+ assert(gpu.Stats().mappedBytes==acceptedBefore*1024&&gpu.Stats().dispatches==8*(acceptedBefore+1)&&gpu.Stats().firstGlError==0);passed++;
+ assert(gpu.Release()==TransportCode::OK);passed++;gpu.ContextLost();assert(gpu.Submit(sand,request())==TransportCode::STATE_LOST);passed++;
+ std::cout<<"{\"revision\":\"T240_SOURCE_TRANSPORT_V1\",\"K\":"<<K<<",\"Kw\":"<<Kw<<",\"passed\":"<<passed<<",\"failed\":0,\"execution\":\"PC_SWIFTSHADER\",\"scope\":\"M1_SOURCE_NATIVE_OWNER_FENCE_PUBLICATION_LEASE\",\"device\":\"NOT_RUN\"}\n";eglMakeCurrent(d,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);eglDestroySurface(d,surf);eglDestroyContext(d,ctx);eglTerminate(d);
+}
+

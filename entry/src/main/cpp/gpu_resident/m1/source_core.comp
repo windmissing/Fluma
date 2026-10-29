@@ -7,7 +7,7 @@ layout(std430,binding=2) buffer Workspace {uint W[];};
 layout(std430,binding=3) buffer Events {uint E[];};
 /* INTEGER_PRIMITIVES */
 uniform uint uK,uKw,uWater,uColumn,uHeader,uWords,uPass,uEmitQ;
-uniform uvec2 uNonce,uFrame,uControl;uniform uint uBaseBank,uPublicationSlot,uCarry,uUploaded;
+uniform uvec2 uNonce,uFrame,uControl;uniform uint uBaseBank,uPublicationSlot,uEventArena,uCarry,uUploaded;
 const uint CQ=268435456u,PACKAGE=131072u,T=32u,S=64u,DEDUP=96u;
 // Source-core workspace only. Candidate remains unpublished until the complete
 // M1 transport validates completion256; this kernel never seals a partial M1.
@@ -108,11 +108,13 @@ void replay(){
  W[S+12u]=1u;
 }
 /* SOURCE_SEAL */
+/* SOURCE_AUDIT */
 void main(){uint i=gl_GlobalInvocationID.x;if(uPass==0u){if(i<uWords){C[i]=B[i];W[spare()+i]=B[i];}if(i>=32u&&i<96u)W[i]=0u;return;}if(i!=0u)return;
  if(uPass==1u){W[S+14u]=1u;source();if(W[S]!=4u)W[S+14u]|=6u;}
  if(uPass==2u){finish();if(W[S]!=4u)W[S+14u]|=8u;}
  if(uPass==3u){replay();if(W[S]!=4u&&W[S+12u]==1u)W[S+14u]|=16u;}
  if(uPass==4u){finalizeSource();}
  if(uPass==5u){packPublication();}
- if(uPass==6u){sealCompletion();}
+ if(uPass==6u&&W[S]!=4u){if(!auditPublication())fail(15u);else W[S+14u]|=64u;}
+ if(uPass==7u){sealCompletion();}
 }

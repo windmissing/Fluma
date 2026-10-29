@@ -6,4 +6,4 @@ int main(){using namespace grs::m1;int count=0;for(const auto& p:profiles){Profi
  assert(Plan(p.K,p.Kw,3,2,256,1024,out)==ConfigureCode::InvalidRange&&out.profile==nullptr);++count;
  assert(Plan(p.K,p.Kw,7,2,256,1ULL<<30,out)==ConfigureCode::Unsupported);++count;
  assert(Plan(p.K,p.Kw,3,1,256,1ULL<<30,out)==ConfigureCode::Unsupported);++count;
- }std::cout<<"{\"passed\":"<<count<<",\"failed\":0,\"M1Shader\":\"NOT_IMPLEMENTED\"}\n";}
+ }std::cout<<"{\"passed\":"<<count<<",\"failed\":0,\"scope\":\"FULL_M1_PROFILE_GATING\",\"fullM1Quantum\":\"NOT_IMPLEMENTED\",\"sourceCore\":\"SEPARATE_NATIVE_MODULE\"}\n";}

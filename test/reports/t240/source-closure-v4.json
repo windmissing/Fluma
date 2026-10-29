@@ -1,0 +1,129 @@
+{
+  "revision": "T240_SOURCE_CORE_CLOSED_V4",
+  "scope": "SOURCE_ONLY_GPU_CORE_NATIVE_FENCE_OWNER_PUBLICATION_LEASE",
+  "fullM1Quantum": "NOT_IMPLEMENTED",
+  "productionDefaultRoute": "OFF",
+  "sceneM1": "NOT_IMPLEMENTED_SEPARATE_CARD",
+  "hostExecution": "PC_SWIFTSHADER_NOT_OHOS_DEVICE",
+  "profiles": [
+    {
+      "file": "test/reports/t240/transport-192-64.txt",
+      "sha256": "1b2c5b038e1ae4f03b3702dbb4e2fa4ddc16c1962fa0836beb3253b63f08ba7f",
+      "result": {
+        "revision": "T240_SOURCE_TRANSPORT_V1",
+        "K": 192,
+        "Kw": 64,
+        "passed": 562,
+        "failed": 0,
+        "execution": "PC_SWIFTSHADER",
+        "scope": "M1_SOURCE_NATIVE_OWNER_FENCE_PUBLICATION_LEASE",
+        "device": "NOT_RUN"
+      }
+    },
+    {
+      "file": "test/reports/t240/transport-192-128.txt",
+      "sha256": "41d88dc52a566e979814bf681c6e4f1bdcb5fad52c07823b519398638e12df62",
+      "result": {
+        "revision": "T240_SOURCE_TRANSPORT_V1",
+        "K": 192,
+        "Kw": 128,
+        "passed": 562,
+        "failed": 0,
+        "execution": "PC_SWIFTSHADER",
+        "scope": "M1_SOURCE_NATIVE_OWNER_FENCE_PUBLICATION_LEASE",
+        "device": "NOT_RUN"
+      }
+    },
+    {
+      "file": "test/reports/t240/transport-512-64.txt",
+      "sha256": "b31c8370dcce82ab4c5453544940c2af32413baf709d923f083bf00ad3d91988",
+      "result": {
+        "revision": "T240_SOURCE_TRANSPORT_V1",
+        "K": 512,
+        "Kw": 64,
+        "passed": 562,
+        "failed": 0,
+        "execution": "PC_SWIFTSHADER",
+        "scope": "M1_SOURCE_NATIVE_OWNER_FENCE_PUBLICATION_LEASE",
+        "device": "NOT_RUN"
+      }
+    },
+    {
+      "file": "test/reports/t240/transport-512-128.txt",
+      "sha256": "5842d70ce1a840507593f9faad8bebee4c1edc6a55212b2866392e9eb6933167",
+      "result": {
+        "revision": "T240_SOURCE_TRANSPORT_V1",
+        "K": 512,
+        "Kw": 128,
+        "passed": 562,
+        "failed": 0,
+        "execution": "PC_SWIFTSHADER",
+        "scope": "M1_SOURCE_NATIVE_OWNER_FENCE_PUBLICATION_LEASE",
+        "device": "NOT_RUN"
+      }
+    }
+  ],
+  "core": {
+    "file": "test/reports/t240/source-host-v5.txt",
+    "sha256": "fd36ea44c1d2ce26663cebd1158eec8846de77346714fa0cbff173faf97512fd",
+    "result": {
+      "revision": "T240_GPU_SOURCE_CORE_V1",
+      "passed": 20,
+      "failed": 0,
+      "execution": "PC_SWIFTSHADER",
+      "completion256": "GPU_SOURCE_AUDIT_WITH_SEPARATE_NATIVE_TRANSPORT_TEST",
+      "device": "NOT_RUN"
+    }
+  },
+  "kernelSha256": "27dd092eababdd68bca985528fd0d4338f1190b4ef93bcd5cd272d00bb344948",
+  "sourceFiles": [
+    {
+      "file": "m1/source_core.comp",
+      "sha256": "ab14d0a6930641dc6afd41ff3db226ed3a3ae2a147ad89ee64e99a2e6cbaebfd"
+    },
+    {
+      "file": "m1/source_seal.glsl",
+      "sha256": "961e9d379bdda6f102de29b17a3286d65fd6b1043c4869953d9b71018499b5e4"
+    },
+    {
+      "file": "m1/source_audit.glsl",
+      "sha256": "72233280adcb28e55b210ed2fe707ea8eb2c302383e287967311dcd5d2ca18e2"
+    },
+    {
+      "file": "m1/source_owner.cpp",
+      "sha256": "48bfdee3ff46cce4c630687bc27ba497c4e5a77a1d09a6c20700c0b1b7af0863"
+    },
+    {
+      "file": "m1/source_owner.h",
+      "sha256": "43a9bb8d01e34655c04968268d247ee2e630a2673364d7b505cad56f0bb79ed8"
+    },
+    {
+      "file": "m1/source_transport.cpp",
+      "sha256": "efa847e0ef6f2f193ae909811939b93f43ff3b40233209bfcd44797b679b298e"
+    },
+    {
+      "file": "m1/source_transport.h",
+      "sha256": "4aa6538e7b2f07667b188f5311d9313783a473d593a71648bdd1ca104497ec63"
+    },
+    {
+      "file": "m1/source_kernel.cpp",
+      "sha256": "f91296c32b43f2fb7fd22f0b470d97367eb72c15b5edb3a9a763a60cd46ea3d2"
+    },
+    {
+      "file": "m1/profile.cpp",
+      "sha256": "7d17baa842b5b675c3c48604087f18d685e2a653458252c9a6351c38999175d9"
+    },
+    {
+      "file": "m1/layout_generated.h",
+      "sha256": "3668b16e6f9f9169048eda5380549260cac76440b08e1502eba88844d9eec41f"
+    }
+  ],
+  "auditMask": 1023,
+  "passes": 8,
+  "barriersPerRoot": 9,
+  "mappedBytesPerNonTombstonedRoot": 1024,
+  "lateTombstonedRootMappedBytes": 0,
+  "sourceOnlyWorkspace": "explicit standalone source layout, no claim of full M1 resources/optics/quantum allocation",
+  "build": "BUILD_SUCCESSFUL",
+  "device": "NOT_RUN"
+}
