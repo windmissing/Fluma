@@ -1,0 +1,138 @@
+{
+  "revision": "T236_M0_CORE_DEVELOPER_EVIDENCE_V2",
+  "date": "2026-10-29",
+  "task": "6ae1ea8be4b0c3103c13e7d0",
+  "delivery": "PARTIAL_CORE_SLICE",
+  "device": false,
+  "hardwareGPU": false,
+  "windowRouteConnected": false,
+  "productionDefaultEnabled": false,
+  "CPUPhysicsFallback": false,
+  "nativeOptimizationResults": [
+    {
+      "scope": "T236_FOUNDATION_ONLY_NOT_M0_PRODUCT",
+      "passed": 85,
+      "failed": 0,
+      "GPU": "NOT_EXECUTED"
+    },
+    {
+      "scope": "T236_FOUNDATION_ONLY_NOT_M0_PRODUCT",
+      "passed": 85,
+      "failed": 0,
+      "GPU": "NOT_EXECUTED"
+    }
+  ],
+  "integerCasesPerOptimization": 82205,
+  "normalSoftwareK192": {
+    "scope": "PC_SWIFTSHADER_M0_ROOT_SLICE_DEV_ONLY",
+    "passed": 26,
+    "failed": 0,
+    "mappedBytes": 21504,
+    "coldMappedBytes": 122880,
+    "dispatches": 1001
+  },
+  "normalSoftwareK512": {
+    "scope": "PC_SWIFTSHADER_M0_ROOT_SLICE_DEV_ONLY",
+    "passed": 26,
+    "failed": 0,
+    "mappedBytes": 21504,
+    "coldMappedBytes": 225280,
+    "dispatches": 1122
+  },
+  "unloggedMutation": {
+    "scope": "TEST_SHADER_UNLOGGED_WRITE_REJECTION",
+    "passed": 4,
+    "failed": 0,
+    "hardwareGPU": false
+  },
+  "defaultPcGate": {
+    "scope": "PC_ANGLE_CAPABILITY_GATE_ONLY",
+    "gate": "PASS_EXPECTED_UNSUPPORTED",
+    "sourceExecution": "NOT_RUN",
+    "rawGlError": 1280
+  },
+  "physicalShaderSha256": "290eb07e67dcd45bcfca583c08947486009657b1f2aa5fa094df94a963578d3d",
+  "sceneShaderSha256": "fee0d715b3b4b192d054eacbbd247ad62bb56ab1e416f9927d75d737cecfec53",
+  "CMakeEmbeddedShaMatches": true,
+  "PackageHap": "BUILD_SUCCESSFUL_ZERO_ERRORS",
+  "K512PriorHarness30s": "ASSERTION_FAILED_PRESERVED_LOG; final software 120s harness complete/fault0",
+  "notCompleted": [
+    "MAX_ID nextSandId exhaustion wire unresolved; final-ID birth explicitly rejected",
+    "Actual XComponent owner/NAPI/page integration",
+    "Full fault-cut/trace/performance/export and independent product oracle matrix"
+  ],
+  "files": {
+    "fault-shader.json": {
+      "bytes": 157,
+      "sha256": "c038f9a5bab943ae07f9d22fdc536a5f7de4d8d131000bd75e6d3d4aaa26ce9e"
+    },
+    "integer-differential.json": {
+      "bytes": 958,
+      "sha256": "74c454502aaff83fac96add6a44d4a39eec31e7e10999c1827deb5c902b5a995"
+    },
+    "integer.txt": {
+      "bytes": 960,
+      "sha256": "f1b1a1a92b045df4c21c0826e0b6ec4f8e91dfca47a9098aa6bc66958053928b"
+    },
+    "native.txt": {
+      "bytes": 402,
+      "sha256": "279a7b235c2a21820d738816a4fbf450337e991ea0d46544dab15d5bda1c1cf8"
+    },
+    "package.txt": {
+      "bytes": 2741,
+      "sha256": "293e8b9d6a1b90ba71423d8b56d5f597f6b5a3083806ffa0ce5caf36fd297468"
+    },
+    "package.txt.gz": {
+      "bytes": 668,
+      "sha256": "a965386fdf0431f5201ceb4b3eb1a7eec2dd59b1da4b9ffac7415c513aaec016"
+    },
+    "pc-source.txt": {
+      "bytes": 288,
+      "sha256": "87460495a7d390578e7ca70a73773d3c13cff09d2971d4f5b8fbcee66208a142"
+    },
+    "scene-shaders.json": {
+      "bytes": 141,
+      "sha256": "1ff64bb2c0d0d95bf8b207a106aaf81e80f3d7f4ef46bb3f8d9fec94573b2dfb"
+    },
+    "shader-compile.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "shader-source.json": {
+      "bytes": 361,
+      "sha256": "5d653446b960734832f4438cfc2a4477fd2400069a26c5aa4edf561d905e7320"
+    },
+    "software-fault.txt": {
+      "bytes": 428,
+      "sha256": "5f457094215a0b06c1e2a30c14bede5bc84e6c9d854508215af1e240eb32c8d7"
+    },
+    "software-k512-harness-30s.txt": {
+      "bytes": 1598,
+      "sha256": "c8b1d414cf512a031e3a694621f5974154e0a0b6a2249b40148101235756bd15"
+    },
+    "software-k512.txt": {
+      "bytes": 1751,
+      "sha256": "8b01e132259e7dbef59ce8f6a08e2ee6989c425253767078ea9ed3d1288e4608"
+    },
+    "software-source.txt": {
+      "bytes": 1623,
+      "sha256": "e919d69fc64e6b5e84a00c274360ce8716099cbc71715900724e296d38eb69b8"
+    },
+    "source-state-192.bin": {
+      "bytes": 24576,
+      "sha256": "a844fb2d4d9fbe71ea9dcdc8e2582fa801c89dada8fb0cb32ea7b0f6469a61b7"
+    },
+    "source-state-512.bin": {
+      "bytes": 45056,
+      "sha256": "8d11a335402cdb08894ed9b44a4a02d3415f89699c030f189864916fde89b999"
+    },
+    "source-state-fault-192.bin": {
+      "bytes": 24576,
+      "sha256": "80cf08b42faf3ecf65d528f290008e04063893210d7bb925cab0626e3a33a89d"
+    },
+    "spec-check.json": {
+      "bytes": 378,
+      "sha256": "31c508ed12e1f5c014dc879d072f8aeb1eac4b557368b7b1df7e72a9f8088f88"
+    }
+  }
+}

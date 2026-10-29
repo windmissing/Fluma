@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 namespace grs {
-inline constexpr char kLayoutManifestSha256[]="f0ac6785503ddd029de1f1b52c4482ad10265e7c4a627aaccd35dabf2b4ad0af";
+inline constexpr char kLayoutManifestSha256[]="7b400e24b222ba902a36745b1f7e6a03b51c9af4327f0f3e9d1dd81015e359df";
 namespace sand16 {
 inline constexpr size_t Words=16;
 inline constexpr size_t mass=0;
@@ -1056,4 +1056,140 @@ inline constexpr int64_t budgetTotalPerQuantum=2621440;
 inline constexpr int64_t budgetLocalPerQuantum=244667;
 inline constexpr int64_t motionEventsPerSandPerQuantum=32;
 inline constexpr int64_t extraContactEventsPerSandPerQuantum=1;
+namespace wire {
+inline constexpr uint32_t revisionWord=1u;
+namespace magicWords {
+inline constexpr uint32_t stateHeader=1213420103u;
+inline constexpr uint32_t sourceCommand=1129534023u;
+inline constexpr uint32_t event64=1163088455u;
+inline constexpr uint32_t completion256=1381192263u;
+inline constexpr uint32_t publicationHeader=1347637831u;
+}
+namespace magicAsciiLittleEndian {
+}
+inline constexpr uint32_t sealWord=3235823838u;
+namespace rootKind {
+inline constexpr uint32_t SOURCE=1u;
+inline constexpr uint32_t QUANTUM=2u;
+}
+namespace outcome {
+inline constexpr uint32_t SUCCESS=1u;
+inline constexpr uint32_t METADATA_REJECT=2u;
+inline constexpr uint32_t DEDUP_REPLAY=3u;
+inline constexpr uint32_t FATAL_ERROR=4u;
+}
+namespace terminalStatus {
+inline constexpr uint32_t SUCCESS=1u;
+inline constexpr uint32_t PARTIAL=2u;
+inline constexpr uint32_t REJECTED=3u;
+}
+namespace reason {
+inline constexpr uint32_t NONE=0u;
+inline constexpr uint32_t UNSUPPORTED_FEATURE=1u;
+inline constexpr uint32_t INPUT_RANGE_UNSUPPORTED=2u;
+inline constexpr uint32_t NUMERIC_RESOLUTION_REJECTED=3u;
+inline constexpr uint32_t POSITION_IN_BED=4u;
+inline constexpr uint32_t POOL_FULL=5u;
+inline constexpr uint32_t CAPACITY_REJECTED=6u;
+inline constexpr uint32_t ID_EXHAUSTED=7u;
+inline constexpr uint32_t DUPLICATE_KEY_CONFLICT=8u;
+inline constexpr uint32_t STALE_IDENTITY=9u;
+inline constexpr uint32_t CLOCK_WINDOW_REJECTED=10u;
+inline constexpr uint32_t SOURCE_LOG_FULL=11u;
+inline constexpr uint32_t EVENT_ARENA_FULL=12u;
+inline constexpr uint32_t NUMERIC_OVERFLOW=13u;
+inline constexpr uint32_t GUARD_VIOLATION=14u;
+inline constexpr uint32_t AUDIT_FAILED=15u;
+inline constexpr uint32_t REPLAY_MISMATCH=16u;
+inline constexpr uint32_t TIME_NO_PROGRESS=17u;
+inline constexpr uint32_t GL_FAILURE=18u;
+inline constexpr uint32_t OWNER_STATE_LOST=19u;
+inline constexpr uint32_t CONFIG_UNSUPPORTED=20u;
+inline constexpr uint32_t SLOT_GENERATION_EXHAUSTED=21u;
+inline constexpr uint32_t UNSUPPORTED_INITIAL_STATE=22u;
+}
+namespace sourceKind {
+inline constexpr uint32_t SAND_H=0u;
+}
+namespace deliveryMode {
+inline constexpr uint32_t SAND=0u;
+}
+namespace eventStage {
+inline constexpr uint32_t SOURCE=1u;
+inline constexpr uint32_t MOTION=2u;
+inline constexpr uint32_t BED=3u;
+inline constexpr uint32_t FINAL=4u;
+}
+namespace firstErrorStage {
+inline constexpr uint32_t NONE=0u;
+inline constexpr uint32_t COPY=1u;
+inline constexpr uint32_t ADMISSION=2u;
+inline constexpr uint32_t SORT=3u;
+inline constexpr uint32_t MOTION=4u;
+inline constexpr uint32_t BED=5u;
+inline constexpr uint32_t AUDIT=6u;
+inline constexpr uint32_t REPLAY=7u;
+inline constexpr uint32_t PUBLICATION=8u;
+inline constexpr uint32_t SEAL=9u;
+}
+namespace rootStatus {
+inline constexpr uint32_t COLD=0u;
+inline constexpr uint32_t INFLIGHT=1u;
+inline constexpr uint32_t SEALED=2u;
+inline constexpr uint32_t FATAL=3u;
+}
+namespace phaseSourceStateBits {
+}
+namespace sandState {
+inline constexpr uint32_t FREE=0u;
+inline constexpr uint32_t AIR=1u;
+inline constexpr uint32_t CONTACT_WAIT=2u;
+inline constexpr uint32_t SIDE_WAIT=3u;
+}
+namespace phase {
+inline constexpr uint32_t H=0u;
+}
+namespace medium {
+inline constexpr uint32_t AIR=0u;
+}
+namespace waitReason {
+inline constexpr uint32_t NONE=0u;
+inline constexpr uint32_t BED=1u;
+inline constexpr uint32_t SIDE_CAPACITY=2u;
+inline constexpr uint32_t SIDE_HIGH_BED=3u;
+inline constexpr uint32_t SIDE_BUDGET=4u;
+inline constexpr uint32_t WALL=5u;
+}
+namespace eventFlagBits {
+inline constexpr uint32_t oldMedium=8u;
+inline constexpr uint32_t newMedium=9u;
+}
+namespace eventNamespace {
+inline constexpr uint32_t SAND=0u;
+inline constexpr uint32_t WATER_RESERVED_FOR_M1=1u;
+inline constexpr uint32_t FIELD=2u;
+inline constexpr uint32_t SOURCE=3u;
+}
+namespace eventKind {
+inline constexpr uint32_t SOURCE_BIRTH=1u;
+inline constexpr uint32_t MOVE=2u;
+inline constexpr uint32_t CROSS=3u;
+inline constexpr uint32_t CONTACT=4u;
+inline constexpr uint32_t LAND=5u;
+inline constexpr uint32_t BED=6u;
+inline constexpr uint32_t FINAL_CONTACT=7u;
+}
+inline constexpr uint32_t requiredStageMaskLo=255u;
+inline constexpr uint32_t requiredStageMaskHi=0u;
+inline constexpr uint32_t requiredAuditMaskLo=1023u;
+inline constexpr uint32_t requiredAuditMaskHi=0u;
+inline constexpr uint32_t replayEqualSentinel=4294967295u;
+inline constexpr uint32_t completionFenceStatusWord105=0u;
+inline constexpr uint32_t completionActualBytesMappedWord113=0u;
+inline constexpr uint32_t acceptedFirstErrorStage=0u;
+inline constexpr uint32_t acceptedFirstErrorOrdinal=0u;
+inline constexpr uint32_t acceptedFirstGlError=0u;
+inline constexpr uint32_t sourceTerminalStoredReplayFlag=0u;
+inline constexpr uint32_t unsupportedInitialBhReason=22u;
+}
 } // namespace grs

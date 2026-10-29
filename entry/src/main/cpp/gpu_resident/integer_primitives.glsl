@@ -30,7 +30,7 @@ bool grsFloorBinary64Q20(uvec2 raw,uint maxUnits,out uint result){
 }
 uint grsQ20FloatBits(uint units){
  if(units==0u)return 0u;int top=findMSB(units);uint sig;
- if(top<=23)sig=units<<uint(23-top);else{int shift=top-23;sig=units>>uint(shift);uint r=units&((1u<<uint(shift))-1u),half=1u<<uint(shift-1);if(r>half||(r==half&&(sig&1u)!=0u))sig++;if(sig==(1u<<24u)){sig>>=1u;top++;}}
+ if(top<=23)sig=units<<uint(23-top);else{int shift=top-23;sig=units>>uint(shift);uint r=units&((1u<<uint(shift))-1u),halfway=1u<<uint(shift-1);if(r>halfway||(r==halfway&&(sig&1u)!=0u))sig++;if(sig==(1u<<24u)){sig>>=1u;top++;}}
  return (uint(top-20+127)<<23u)|(sig&0x7fffffu);
 }
 uint grsColumnPreservingFloatBits(uint x){uint bits=grsQ20FloatBits(x),upper=(x>>20u)+1u;if(bits>=grsQ20FloatBits(upper<<20u))bits--;return bits;}

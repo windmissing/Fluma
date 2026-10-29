@@ -1,0 +1,32 @@
+  正在创建库 .codex/local-test/t236-source-host/egl.lib 和对象 .codex/local-test/t236-source-host/egl.exp
+t236_source_host.cpp
+gl_forward.cpp
+source_transport.cpp
+scene.cpp
+run.cpp
+fullframe_targets.cpp
+control.cpp
+integer.cpp
+resources.cpp
+product_wire.cpp
+正在生成代码...
+PC_SWIFTSHADER_EXPLICIT_SOFTWARE OpenGL ES 3.1.0 (ANGLE 2.1.18846 git hash: 4a65a669e11b) ANGLE (Google, Vulkan 1.2.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)
+CREATE 0
+ROOT 1 code=0 outcome=1 source=1 physical=1 sourceSuccess=1
+ROOT 2 code=0 outcome=3 source=1 physical=1 sourceSuccess=0
+ROOT 3 code=0 outcome=2 source=1 physical=1 sourceSuccess=0
+ROOT 4 code=0 outcome=2 source=1 physical=1 sourceSuccess=0
+ROOT 5 code=0 outcome=2 source=1 physical=1 sourceSuccess=0
+ROOT 6 code=9 outcome=0 source=0 physical=0 sourceSuccess=0
+ROOT 7 code=0 outcome=1 source=2 physical=2 sourceSuccess=1
+QUANTUM 1 code=0 reason=0 stage=0 ordinal=0 mask=255 audit=1023
+QUANTUM 2 code=0 reason=0 stage=0 ordinal=0 mask=255 audit=1023
+QUANTUM 3 code=0 reason=0 stage=0 ordinal=0 mask=255 audit=1023
+QUANTUM 4 code=0 reason=0 stage=0 ordinal=0 mask=255 audit=1023
+ROOT 9 code=0 outcome=1 source=3 physical=7 sourceSuccess=1
+LAND code=0 reason=0 stage=0 ordinal=0
+ROOT 10 code=0 outcome=1 source=4 physical=9 sourceSuccess=1
+MOTION angle=3840 code=0 reason=0 stage=0 ordinal=0
+MOTION angle=7680 code=0 reason=0 stage=0 ordinal=0
+SCENE stage=NONE gl=0 swap=1
+Assertion failed: run.Tick().complete&&!run.Tick().fault, file test/gpu_resident/t236_source_host.cpp, line 90

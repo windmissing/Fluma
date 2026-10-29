@@ -19,10 +19,11 @@ struct CompletionPolicy {
  // No guessed V1 wire enums: production integrator must supply architect-defined codes.
  uint32_t magic=0,revision=0,seal=0,successOutcome=0,metadataRejectOutcome=0,replayOutcome=0;
  uint32_t sourceKind=0,quantumKind=0,successReceipt=0,partialReceipt=0,rejectedReceipt=0;
- U64 requiredStages,requiredAudit;uint32_t replayEqualSentinel=0;
+ bool productWire=false;U64 requiredStages,requiredAudit;uint32_t replayEqualSentinel=0;
 };
+CompletionPolicy ProductCompletionPolicy();
 struct AcceptedRoot {uint32_t bank=0,publication=0,outcome=0;U64 source,physics,publicationGeneration,nonce;bool sourceSuccess=false;Words256 completion{};};
-struct PublicationLease {bool available=false,leased=false,releasePending=false;U64 generation,run,context,surface;uint32_t bank=0;};
+struct PublicationLease {Identity identity;U64 source,physics,control,frame,nonce;uint32_t angle=0;bool available=false,leased=false,releasePending=false;U64 generation,run,context,surface;uint32_t bank=0;};
 class RootOwner {
  public:
  ControlCode Initialize(const Identity&,const CompletionPolicy&,const Words256& coldHeader,uint32_t features);

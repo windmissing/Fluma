@@ -1,0 +1,37 @@
+{
+  "revision": "T236_INTEGER_DIFFERENTIAL_V1",
+  "scope": "FOUNDATION_CPP_ONLY_NOT_M0_NOT_GPU",
+  "casesPerOptimization": 82205,
+  "groups": {
+    "1": 4000,
+    "2": 4000,
+    "3": 4000,
+    "4": 4000,
+    "5": 4000,
+    "6": 18065,
+    "7": 16026,
+    "8": 8011,
+    "9": 8005,
+    "10": 4049,
+    "11": 4049,
+    "12": 4000
+  },
+  "inputSha256": "088ce8c2dc06ff5dbfec9fa7c1f3b83f6056f7a6f88e38be77660be4d9e49dc5",
+  "expectedSha256": "1b6c9a8e877cfcdf5fc2e6d1667196b93152eaf753a27e38f024db9a21a7a904",
+  "results": [
+    {
+      "optimization": "Od",
+      "cases": 82205,
+      "mismatches": [],
+      "resultSha256": "1b6c9a8e877cfcdf5fc2e6d1667196b93152eaf753a27e38f024db9a21a7a904"
+    },
+    {
+      "optimization": "O2",
+      "cases": 82205,
+      "mismatches": [],
+      "resultSha256": "1b6c9a8e877cfcdf5fc2e6d1667196b93152eaf753a27e38f024db9a21a7a904"
+    }
+  ],
+  "device": false,
+  "GLSL": "NOT_EXECUTED"
+}

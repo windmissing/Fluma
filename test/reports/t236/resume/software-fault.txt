@@ -1,0 +1,5 @@
+PC_SWIFTSHADER_EXPLICIT_SOFTWARE OpenGL ES 3.1.0 (ANGLE 2.1.18846 git hash: 4a65a669e11b) ANGLE (Google, Vulkan 1.2.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)
+CREATE 0
+ROOT 1 code=0 outcome=1 source=1 physical=1 sourceSuccess=1
+FAULT code=9 reason=16 stage=7 word=192 expected=67633153 actual=67633152
+{"scope":"TEST_SHADER_UNLOGGED_WRITE_REJECTION","passed":4,"failed":0,"hardwareGPU":false}

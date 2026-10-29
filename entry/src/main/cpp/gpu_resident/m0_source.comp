@@ -1,0 +1,101 @@
+#version 310 es
+precision highp float;precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer Base {uint B[];};
+layout(std430,binding=1) buffer Candidate {uint C[];};
+layout(std430,binding=2) buffer Workspace {uint W[];};
+layout(std430,binding=3) buffer Events {uint E[];};
+// Generated includes are expanded by the reproducible shader builder.
+/* GRS_LAYOUT */
+/* GRS_INTEGER */
+uniform uint uRootKind,uQuantumOrdinal;
+uniform uint uPass,uK,uPad,uStateWords,uHeader,uColumn,uScan,uCommand,uDedup,uSourceEvents,uStatus,uTerminal;
+uniform uint uScanWidth,uPackage,uEventStart,uEventCapacity,uEventArena,uPublicationSlot;
+uniform uvec2 uRootNonce,uFrameSerial,uControlSerial,uInputGeneration,uGeometryEpoch;
+uniform uvec3 uBanks;
+// Status/private workspace offsets. Not hidden header reserved words.
+const uint Fatal=0u,Reason=1u,Outcome=2u,Requested=3u,Admitted=4u,BirthCount=5u,Column=6u,X=7u,Y=8u,FreeCount=9u;
+const uint TableIndex=10u,Append=11u,Replay=12u,EventCursor=13u,FirstStage=14u,FirstOrdinal=15u;
+uint H(uint i){return C[uHeader+i];}uint D(uint i){return W[uCommand+i];}uint S(uint i){return W[uStatus+i];}
+void setS(uint i,uint v){W[uStatus+i]=v;}
+void fail(uint stage,uint reason,uint ordinal){if(S(Fatal)==0u){setS(Fatal,1u);setS(Reason,reason);setS(FirstStage,stage);setS(FirstOrdinal,ordinal);setS(Outcome,4u);}}
+void mismatch(uint stage,uint ordinal,uint word,uint expected,uint actual){if(S(Fatal)==0u){setS(35u,word);setS(36u,expected);setS(37u,actual);}fail(stage,16u,ordinal);}
+void reject(uint reason,bool append){setS(Reason,reason);setS(Outcome,2u);setS(Append,append?1u:0u);setS(Admitted,0u);setS(BirthCount,0u);}
+bool keyEqual(uint at){
+ // request U64 is unique within a run; every other command word is immutable payload.
+ return W[at+4u]==D(4u)&&W[at+5u]==D(5u)&&W[at+6u]==D(6u)&&W[at+7u]==D(7u);
+}
+bool payloadEqual(uint at){for(uint i=0u;i<32u;i++)if(W[at+i]!=D(i))return false;return true;}
+bool sourceAudit(bool spare);
+void prepare(){
+ for(uint i=0u;i<32u;i++)W[uStatus+i]=0u;
+ for(uint i=0u;i<32u;i++)W[uTerminal+i]=0u;
+ setS(Outcome,1u);setS(EventCursor,uEventStart);if(!sourceAudit(false)){fail(2u,15u,0u);return;}uint count=H(33u);setS(TableIndex,count);
+ if(count>4096u){fail(2u,15u,0u);return;}
+ if(D(0u)!=GRS_wire_magicWords_sourceCommand||D(1u)!=1u||D(31u)!=0u){reject(9u,false);return;}
+ if(D(4u)!=H(4u)||D(5u)!=H(5u)){reject(9u,false);return;}
+ // Old-generation replays are found before current input/clock validation.
+ for(uint i=0u;i<count;i++){uint at=uDedup+64u*i;if(keyEqual(at)){
+  if(!payloadEqual(at)){reject(8u,false);return;}
+  setS(Outcome,3u);setS(Replay,1u);setS(TableIndex,i);
+  for(uint j=0u;j<32u;j++)W[uTerminal+j]=W[at+32u+j];W[uTerminal+2u]=1u;return;
+ }}
+ if(count==4096u){reject(11u,false);return;}setS(Append,1u);
+ if(D(2u)!=0u||D(3u)!=0u||D(30u)!=0u){reject(1u,true);return;}
+ if(D(8u)!=uInputGeneration.x||D(9u)!=uInputGeneration.y||D(12u)!=uGeometryEpoch.x||D(13u)!=uGeometryEpoch.y||D(28u)!=H(22u)||D(29u)!=H(23u)||D(14u)==0u||D(15u)==0u||(D(10u)|D(11u))==0u||(D(6u)|D(7u))==0u){reject(9u,true);return;}
+ if((D(24u)|D(25u))==0u||D(27u)>1u){reject(10u,true);return;}
+ uint x,y,q;
+ if(!grsFloorBinary64Q20(uvec2(D(16u),D(17u)),134217727u,x)||!grsFloorBinary64Q20(uvec2(D(18u),D(19u)),268435456u,y)||!grsFloorBinary64Q20(uvec2(D(20u),D(21u)),268435456u,q)){reject(2u,true);return;}
+ // Validate the original domains as well as their floor-quantized values.
+ if((D(17u)&0x7fffffffu)>=0x40600000u||(D(19u)&0x7fffffffu)>0x40700000u||(D(19u)&0x7fffffffu)==0x40700000u&&D(18u)>0u||(D(21u)&0x7fffffffu)>0x40700000u||(D(21u)&0x7fffffffu)==0x40700000u&&D(20u)>0u){reject(2u,true);return;}
+ setS(Requested,q);setS(X,x);setS(Y,y);uint column=x>>20u;setS(Column,column);
+ if(q==0u){reject(3u,true);return;}
+ if(y<C[uColumn+10u*128u+column]){reject(4u,true);return;}
+ if(uPackage==0u){fail(2u,20u,0u);return;}
+ uint free=0u;for(uint i=0u;i<uK;i++)if(C[i]==0u)free++;setS(FreeCount,free);
+ uint occupied=C[uColumn+13u*128u+column];if(occupied>268435456u){fail(2u,15u,column);return;}
+ uvec2 slots=grsMul32(free,uPackage);uint bySlots=slots.y==0u?slots.x:0xffffffffu;
+ uint admitted=min(q,min(268435456u-occupied,bySlots));
+ if(admitted==0u){reject(free==0u?5u:6u,true);return;}
+ uint births=admitted/uPackage+(admitted%uPackage==0u?0u:1u),next=H(39u);
+ // No wrap: unresolved exhausted-next representation is kept as an explicit domain rejection.
+ if(next==0u||births>0xffffffffu-next){reject(7u,true);return;}
+ if(H(34u)>=4096u){reject(11u,false);return;}
+ if(uEventStart>uEventCapacity||births>uEventCapacity-uEventStart){fail(2u,12u,0u);return;}
+ uint rank=0u;for(uint i=0u;i<uK&&rank<births;i++)if(C[i]==0u){if(C[10u*uK+i]==0xffffffffu){reject(21u,true);return;}rank++;}
+ if((H(14u)==0xffffffffu&&H(15u)==0xffffffffu)||(H(16u)==0xffffffffu&&H(17u)==0xffffffffu)){fail(2u,13u,0u);return;}
+ setS(Admitted,admitted);setS(BirthCount,births);
+}
+void birth(uint slot){
+ if(slot>=uK||C[slot]!=0u||S(Outcome)!=1u)return;uint rank=W[uScan+slot];if(rank>=S(BirthCount))return;
+ uint m=rank+1u==S(BirthCount)?S(Admitted)-rank*uPackage:uPackage;
+ uint id=H(39u)+rank,gen=C[10u*uK+slot]+1u,column=S(Column);uint row=uEventStart+rank,at=row*64u;
+ for(uint i=0u;i<64u;i++)E[at+i]=0u;
+ E[at]=GRS_wire_magicWords_event64;E[at+1u]=1u;E[at+2u]=uRootNonce.x;E[at+3u]=uRootNonce.y;E[at+4u]=1u;E[at+5u]=1u;E[at+6u]=1u;E[at+7u]=row+1u;E[at+9u]=uFrameSerial.x;E[at+10u]=uFrameSerial.y;
+ uvec2 origin;if(!grsAdd64(uvec2(H(14u),H(15u)),uvec2(1u,0u),origin)){fail(2u,13u,row+1u);return;}
+ uvec2 physical;if(!grsAdd64(uvec2(H(16u),H(17u)),uvec2(1u,0u),physical)){fail(2u,13u,row+1u);return;}
+ E[at+12u]=origin.x;E[at+13u]=origin.y;E[at+14u]=physical.x;E[at+15u]=physical.y;
+ E[at+16u]=slot;E[at+17u]=gen;E[at+18u]=id;E[at+19u]=D(14u);E[at+20u]=column;E[at+21u]=column;E[at+23u]=m;E[at+26u]=S(X);E[at+27u]=S(Y);
+ // PH prefix is deterministic by free-slot rank, with no atomics or thread-arrival arbitration.
+ uint ph=C[uColumn+8u*128u+column];E[at+32u]=ph+rank*uPackage;E[at+33u]=E[at+32u]+m;E[at+48u]=origin.x;E[at+49u]=origin.y;E[at+50u]=D(6u);E[at+51u]=D(7u);E[at+52u]=(3u<<18u)|(1u<<4u);
+ C[slot]=m;C[uK+slot]=S(X);C[2u*uK+slot]=S(Y);C[3u*uK+slot]=0u;C[4u*uK+slot]=0u;C[5u*uK+slot]=id;C[6u*uK+slot]=1u;C[7u*uK+slot]=D(14u);C[8u*uK+slot]=origin.x;C[9u*uK+slot]=origin.y;C[10u*uK+slot]=gen;
+ for(uint field=11u;field<16u;field++)C[field*uK+slot]=0u;
+}
+void prepareQuantum(bool spare);void replayQuantum();void quantumPass();
+/* GRS_SOURCE_ROOT */
+/* GRS_QUANTUM */
+void main(){
+ uint i=gl_GlobalInvocationID.x;
+ if(uPass==0u){if(i==0u){for(uint at=0u;at<256u;at++)W[uStatus+at]=0u;W[uStatus+32u]=1u;W[uStatus+33u]=1u;}if(i<uStateWords)C[i]=B[i];return;}
+ if(i==0u)W[uStatus+32u]++;
+ if(uPass==1u){if(i==0u){prepare();if(S(Fatal)==0u)W[uStatus+33u]|=2u;}return;}
+ if(S(Fatal)!=0u&&uPass!=17u)return;
+ if(uPass>=18u){quantumPass();return;}
+ if(uPass==2u){if(i<uPad)W[uScan+i]=i<uK&&C[i]==0u?1u:0u;return;}
+ if(uPass==3u){uint at=(i+1u)*2u*uScanWidth-1u;if(at<uPad)W[uScan+at]+=W[uScan+at-uScanWidth];return;}
+ if(uPass==4u){if(i==0u)W[uScan+uPad-1u]=0u;return;}
+ if(uPass==5u){uint at=(i+1u)*2u*uScanWidth-1u;if(at<uPad){uint t=W[uScan+at-uScanWidth];W[uScan+at-uScanWidth]=W[uScan+at];W[uScan+at]+=t;}return;}
+ if(uPass==6u){if(i==0u)W[uStatus+33u]|=4u;birth(i);return;}
+ if(i==0u)rootStage();
+ // Host still accepts only after the real tail fence and complete product completion validation.
+}

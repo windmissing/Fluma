@@ -2,6 +2,7 @@
 #include "control.h"
 #include "resources.h"
 #include "angles_generated.h"
+#include "product_wire.h"
 #include <fstream>
 #include <iostream>
 #include <cassert>
@@ -64,8 +65,23 @@ int main(int argc,char** argv){
  {RootOwner o;o.Initialize(id,policy,h,1);auto r=request();o.Begin(r);auto c=result(o,r,id);AcceptedRoot accepted;o.Poll(FenceState::Signaled,c.data(),256,0,accepted);PublicationLease lease;assert(o.Acquire(0,{1,0},lease)==ControlCode::OK);assert(o.Begin(request(2))==ControlCode::BACKPRESSURE);assert(o.Release(0,{0,0},true)==ControlCode::STALE);assert(o.Release(0,{1,0},false)==ControlCode::OK);assert(o.Begin(request(2))==ControlCode::BACKPRESSURE);assert(o.RetireRelease(0,{1,0},false)==ControlCode::BUSY);assert(o.RetireRelease(0,{1,0},true)==ControlCode::OK);assert(o.Begin(request(2))==ControlCode::OK);passed++;}
  {RootOwner o;o.Initialize(id,policy,h,1);auto r=request();o.Begin(r);auto c=result(o,r,id);AcceptedRoot accepted;o.Poll(FenceState::Signaled,c.data(),256,0,accepted);auto saved=o.Header();auto r2=request(2);r2.kind=2;r2.publicationSlot=1;r2.quantumOrdinal=1;o.Begin(r2);auto bad=result(o,r2,id);assert(o.Poll(FenceState::Signaled,bad.data(),256,0,accepted)==ControlCode::COMPLETION_INVALID);assert(o.Header()==saved&&o.AcceptedCount()==1);passed++;}
  {Fixed120Clock clock;TickPlan p;assert(clock.Plan(0,p)==ControlCode::OK&&p.quanta==0);assert(clock.Plan(8333333,p)==ControlCode::OK&&p.quanta==0);assert(clock.Plan(8333333,p)==ControlCode::OK&&p.quanta==0&&p.carryAfter==999999960);assert(clock.Plan(1,p)==ControlCode::OK&&p.quanta==1&&p.carryAfter==80);assert(clock.Plan(33333334,p)==ControlCode::INVALID_INPUT&&clock.Carry()==0);assert(clock.Plan(33333333,p)==ControlCode::OK&&p.quanta==0);assert(clock.Plan(33333333,p)==ControlCode::OK&&p.quanta==3&&p.carryAfter==999999960);passed++;}
- for(uint32_t K:{192u,512u}){ResourcePlan plan;ProfileLimits limits;assert(PlanResources(K,limits,plan)==ResourceCode::CAPABILITY_REQUIRED);assert(plan.payloadBytes==(K==192?15059984:36997904));assert(plan.paddedSortExtraBytes==(K==192?512:0));assert(plan.tickDispatch==(K==192?268:306));limits.measured=true;limits.globalBindings=limits.computeBlocks=4;limits.workGroupInvocations=limits.workGroupSize=64;limits.maxBlockBytes=1u<<30;limits.maxTotalPayloadBytes=64u<<20;limits.storageAlignment=256;assert(PlanResources(K,limits,plan)==ResourceCode::OK&&!plan.deviceValidated);assert(plan.allocatedBytes>=plan.payloadBytes);limits.maxBlockBytes=1024;assert(PlanResources(K,limits,plan)==ResourceCode::MEMORY_PROFILE_UNSUPPORTED);passed++;}
+ for(uint32_t K:{192u,512u}){ResourcePlan plan;ProfileLimits limits;assert(PlanResources(K,limits,plan)==ResourceCode::CAPABILITY_REQUIRED);assert(plan.payloadBytes==(K==192?15060496:36997904));assert(plan.paddedSortExtraBytes==0&&plan.doublePaddedSortFits);assert(plan.tickDispatch==(K==192?268:306));limits.measured=true;limits.globalBindings=limits.computeBlocks=4;limits.workGroupInvocations=limits.workGroupSize=64;limits.maxBlockBytes=1u<<30;limits.maxTotalPayloadBytes=64u<<20;limits.storageAlignment=256;assert(PlanResources(K,limits,plan)==ResourceCode::OK&&!plan.deviceValidated);assert(plan.allocatedBytes>=plan.payloadBytes);limits.maxBlockBytes=1024;assert(PlanResources(K,limits,plan)==ResourceCode::MEMORY_PROFILE_UNSUPPORTED);passed++;}
  {StateSegments p;assert(PlanStateSegments(192,256,1u<<20,p));assert(p.sand==0&&p.water%256==0&&p.column%256==0&&p.header%256==0&&p.total==24576);assert(!PlanStateSegments(192,0,1u<<20,p));size_t out=17;assert(!CheckedBytes(SIZE_MAX,SIZE_MAX,out)&&out==17);assert(!AlignUp(SIZE_MAX,256,SIZE_MAX,out)&&out==17);passed++;}
  {int32_t last=-999999999;for(int i=0;i<15361;i++){int32_t t=Signed(kAngleWords[4*i]);assert(t>=last);last=t;assert(kAngleWords[4*i+3]==0);assert(Signed(kAngleWords[4*(15360-i)])==-t);}assert(Signed(kAngleWords[4*7680])==0);assert(Signed(kAngleWords[4*7680+2])==1048576);passed++;}
+ for(uint32_t K:{192u,512u}){auto s=SourcePlan(K),q=QuantumPlan(K);assert(s.count==(K==192?32:34)&&q.count==(K==192?59:68));for(uint32_t i=0;i<s.count;i++)assert(s.passes[i].index==i);uint32_t sorts=0;for(uint32_t i=0;i<q.count;i++)sorts+=q.passes[i].stage==Sort;assert(sorts==(K==192?36:45));passed++;}
+ {auto p=ProductCompletionPolicy();assert(p.magic==wire::magicWords::completion256&&p.seal==0xc0dec0deu&&p.requiredStages.lo==255&&p.requiredAudit.lo==1023);passed++;}
+ // Product outcomes with the architect-defined completion seal/codes/masks.
+ for(uint32_t kind:{1u,2u,3u,4u,5u}){
+  RootOwner o;auto p=ProductCompletionPolicy();auto initial=h;initial[header256::sourceLedgerRevLo]=0;assert(o.Initialize(id,p,initial,1)==ControlCode::OK);auto r=request();assert(o.Begin(r)==ControlCode::OK);auto c=result(o,r,id);using namespace completion256;
+  c[magic]=p.magic;c[seal]=p.seal;c[stageCompletedMaskLo]=255;c[auditFlagMaskLo]=1023;
+  if(kind>=2){c[outcome]=kind==2?2:kind==3?3:kind==4?4:2;c[admittedUnits]=0;c[receiptBirthCount]=0;c[sandAfterLo]=c[sandBeforeLo];c[I_sandLo]=0;c[proposedSourceCommitLo]=c[baseSourceCommitLo];c[proposedPhysicsCommitLo]=c[basePhysicsCommitLo];c[metadataOnlyStockEqual]=1;c[sourceEventPrefixAfter]=0;c[nextSandId]=1;c[sandLive]=0;c[sandFree]=192;
+   c[receiptStatus]=3;c[reason]=c[receiptReason]=kind==5?8:5;
+   if(kind==3){c[reason]=c[receiptReason]=0;c[receiptStatus]=1;c[receiptReplayFlag]=1;c[admittedUnits]=7;c[dedupPrefixAfter]=0;}
+   if(kind==4)c[firstErrorStage]=6;
+   if(kind==5)c[dedupPrefixAfter]=0;
+  }
+  AcceptedRoot a;auto code=o.Poll(FenceState::Signaled,c.data(),256,0,a);if(kind==4){assert(code==ControlCode::COMPLETION_INVALID&&o.Bank()==0);}else{assert(code==ControlCode::OK);assert(a.sourceSuccess==(kind==1));assert(o.Header()[header256::I_sandLo]==(kind==1?1u:0u));assert(o.Header()[header256::sourceLedgerRevLo]==(kind==1||kind==2?1u:0u));}passed++;
+ }
+ {uint32_t word=0;uint32_t e[64]{};e[0]=wire::magicWords::event64;e[1]=1;e[4]=1;e[5]=1;e[6]=1;e[2]=e[7]=e[9]=e[12]=e[14]=e[48]=e[50]=1;e[17]=e[18]=e[19]=1;e[23]=1;e[52]=(3u<<18)|(1u<<4);assert(ValidateEventWords(e,64,word));e[63]=1;assert(!ValidateEventWords(e,64,word)&&word==63);passed++;}
  std::cout<<"{\"scope\":\"T236_FOUNDATION_ONLY_NOT_M0_PRODUCT\",\"passed\":"<<passed<<",\"failed\":0,\"GPU\":\"NOT_EXECUTED\"}"<<std::endl;return 0;
 }

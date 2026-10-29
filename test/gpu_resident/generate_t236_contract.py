@@ -41,14 +41,32 @@ def artifacts():
   lines+=['namespace '+name+' {','inline constexpr size_t Words='+str(layout['wordCount'])+';']
   lines+=['inline constexpr size_t '+n+'='+str(i)+';' for i,n in enumerate(layout['words'])]
   lines+=['}']
- lines+=['inline constexpr int64_t '+name+'='+str(value)+';' for name,value in m['constants'].items()];lines+=['} // namespace grs','']
+ lines+=['inline constexpr int64_t '+name+'='+str(value)+';' for name,value in m['constants'].items()]
+ def emit_mapping(name,value):
+  lines.append('namespace '+name+' {')
+  for k,v in value.items():
+   if isinstance(v,dict):emit_mapping(k,v)
+   elif isinstance(v,int):lines.append('inline constexpr uint32_t '+k+'='+str(v)+'u;')
+  lines.append('}')
+ emit_mapping('wire',m['wire'])
+ lines+=['} // namespace grs','']
  a,proof=table(80);b,proof2=table(110);assert a==b and proof['strictErrorBound'] and proof2['strictTrueTan30Bound'] and proof2['libmErrorBound']
  angle_sha=hashlib.sha256(a).hexdigest();proof.update({'revision':'T236_DECIMAL_ANGLE_CERTIFICATE_V1','rows':15361,'bytes':len(a),'sha256':angle_sha,'secondPrecision':110,'precisionAgreement':a==b,'policy':'GRS_Q20_V1','status':'OFFLINE_GENERATED_NOT_DEVICE_VALIDATED','layoutSha256':sha})
  header=['// T236 cold angle bytes, generated independently at 80/110 decimal digits.','#pragma once','#include <cstdint>','namespace grs {','inline constexpr char kAngleSha256[]="'+angle_sha+'";','inline constexpr uint32_t kAngleWords[61444]={']
  values=struct.unpack('<61444I',a)
  for i in range(0,len(values),16):header.append(','.join('0x%08xu'%v for v in values[i:i+16])+',')
  header+=['};','}']
- return {'layout_generated.h':'\n'.join(lines).encode(),'angles_q20.bin':a,'angles_generated.h':('\n'.join(header)+'\n').encode(),'angles_certificate.json':(json.dumps(proof,indent=2)+'\n').encode()}
+ glsl=['// Generated T233/T241 indices and product wire.']
+ for name,layout in m['layouts'].items():
+  for i,n in enumerate(layout['words']):glsl.append('#define GRS_'+name+'_'+n+' '+str(i)+'u')
+ def emit_glsl(prefix,obj):
+  for k,v in obj.items():
+   if isinstance(v,dict):emit_glsl(prefix+'_'+k,v)
+   elif isinstance(v,int):glsl.append('#define '+prefix+'_'+k+' '+str(v)+'u')
+ emit_glsl('GRS_wire',m['wire'])
+ for e in m['eventKinds']:
+  mask=int(e['usedMaskHex'],16);glsl.append('const uvec2 grsMask'+str(e['id'])+'=uvec2('+str(mask&0xffffffff)+'u,'+str(mask>>32)+'u);')
+ return {'layout_generated.glsl':('\n'.join(glsl)+'\n').encode(),'layout_generated.h':'\n'.join(lines).encode(),'angles_q20.bin':a,'angles_generated.h':('\n'.join(header)+'\n').encode(),'angles_certificate.json':(json.dumps(proof,indent=2)+'\n').encode()}
 if __name__=='__main__':
  ap=argparse.ArgumentParser();ap.add_argument('--check',action='store_true');args=ap.parse_args()
  for name,raw in artifacts().items():

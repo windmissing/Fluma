@@ -5,7 +5,9 @@ import random,struct,subprocess,json,hashlib,math
 from fractions import Fraction
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
-OUT=ROOT/'test/reports/t236';LOCAL=ROOT/'.codex/local-test/t236-host'
+import argparse
+parser=argparse.ArgumentParser();parser.add_argument('--output-dir',default='test/reports/t236');args=parser.parse_args()
+OUT=ROOT/args.output_dir;OUT.mkdir(parents=True,exist_ok=True);LOCAL=ROOT/'.codex/local-test/t236-host'
 rng=random.Random(236);MASK=2**32-1;M64=2**64-1;M128=2**128-1
 rows=[];expected=[];groups={}
 def words(v,n=2):return [(v>>(32*i))&MASK for i in range(n)]
