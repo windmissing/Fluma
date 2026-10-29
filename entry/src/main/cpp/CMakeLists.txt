@@ -60,3 +60,6 @@ target_link_libraries(p013renderer PUBLIC libace_napi.z.so libace_ndk.z.so libEG
 # T236 isolated integer/control foundation, not a production routing switch.
 add_subdirectory(gpu_resident)
 target_link_libraries(p013renderer PRIVATE grs_foundation)
+add_library(grsm0 SHARED gpu_resident/app_bridge.cpp p013renderer/fullframe_targets.cpp)
+target_compile_features(grsm0 PRIVATE cxx_std_17)
+target_link_libraries(grsm0 PRIVATE grs_foundation libace_napi.z.so libace_ndk.z.so libnative_window.so libEGL.so libGLESv3.so)
