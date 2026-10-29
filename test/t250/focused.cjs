@@ -34,4 +34,11 @@ for(let cutId=1;cutId<=20;cutId++)for(const edge of ['BEFORE','AFTER']){
 }
 assert.equal(validateTxFaultPlan({...basePlan,PID:101},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_IDENTITY_MISMATCH');
 assert.equal(validateTxFaultPlan({...basePlan,ordinal:0},basePlan.fixtureId,basePlan.buildSHA,basePlan.backend,basePlan.freezeArm,100),'FAULT_PLAN_RANGE');
-console.log(JSON.stringify({revision:'T250_FOCUSED_V4',passed:checked+15,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),audit:count('A_AUDIT_LOGICAL'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),resource,faultCuts:'20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR',gpu:'NOT_RUN'},null,2));
+const badTransport={configure:()=>({status:'READY',errorCode:'NONE',ownerGenerationLo:7,ownerGenerationHi:1,contextEpochLo:8,contextEpochHi:1,liveBuffers:12}),selectPair:()=>({status:'PAIR',slotA:0,slotB:0,errorCode:'HOST_BAD_PAIR',dispatchCount:11}),reset:()=>({status:'RESET',liveBuffers:0})};
+const bad=runTxGpuFixture({...config,backend:'GPU_PAIR_V1',configId:'T250_BAD_PAIR'},'WET_192_64',1,badTransport,()=>0);
+const badWork=bad.workloadRows.map(JSON.parse),badCount=k=>badWork.filter(x=>x.kind===k).length;
+assert.equal(bad.physicalStatus,'FAULT');
+assert(badCount('M_FIND')>0);
+assert.equal(badCount('M_FIND'),badCount('M_ERROR'));
+assert.equal(badCount('M_FOUND'),0);
+console.log(JSON.stringify({revision:'T250_FOCUSED_V5',passed:checked+19,failed:0,roots:result.rootRows.length,B:count('B_BIRTH_COMPLETED'),Mfind:count('M_FIND'),audit:count('A_AUDIT_LOGICAL'),sourceLambda:count('SOURCE_LAMBDA_ATTEMPT'),stepPreview:count('STEP_PREVIEW_ATTEMPT_REQUESTED'),badPair:{status:bad.physicalStatus,find:badCount('M_FIND'),error:badCount('M_ERROR'),found:badCount('M_FOUND')},resource,faultCuts:'20_NOT_IMPLEMENTED_NO_ORIGINAL_CUT_INJECTOR',gpu:'HOST_CPU_DOUBLE_ONLY'},null,2));
