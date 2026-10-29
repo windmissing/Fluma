@@ -2,6 +2,7 @@ import p013renderer from 'libp013renderer.so';
 import { P011ClearWaterEngine } from '../physics/clearwater/P011ClearWaterEngine';
 import { ClearWaterPublication } from '../physics/clearwater/P011ClearWaterPublication';
 import { ClearWaterSourceController } from '../physics/clearwater/P011ClearWaterSourceController';
+import hilog from '@ohos.hilog';
 import { ClearWaterGravityPort } from '../physics/clearwater/P011ClearWaterGravityPort';
 import { ClearWaterStepResult,ClearWaterStatus as S } from '../physics/clearwater/P011ClearWaterTypes';
 import { ClearWaterBAttachResult } from '../physics/clearwater/P011ClearWaterBTypes';
@@ -43,6 +44,7 @@ export class P013ClearWaterController {
   this.counters[6]++;const capture=this.publication.capture(this.engine,1);if(capture!==S.OK){this.status='CAPTURE_'+capture;return;}
   const slot=this.publication.slots[this.publication.publishedIndex],f=this.frame;f.frameId++;f.surfaceEpoch=state.surfaceEpoch;f.contextEpoch=state.contextEpoch;f.surfaceWidthPx=this.width;f.surfaceHeightPx=this.height;f.boxXPx=0;f.boxYPx=0;f.boxWidthPx=this.width;f.boxHeightPx=this.height;f.dpi=dpi;f.frameTimeNs=ns;f.bind(slot,this.engine.runId);
   const r=n.drawClearWaterSceneV3(f,slot.profile64,slot.particleProof64,slot.xy32,slot.meta32,slot.optics64);this.lastReceipt=r;this.counters[7]++;this.counters[r.currentFrameSucceeded?8:9]++;
+  if(!r.currentFrameSucceeded)hilog.error(0,'T252DBG','CW draw fail code=%{public}s stage=%{public}s sess=%{public}s ctx=%{public}s surf=%{public}s w=%{public}s h=%{public}s cnt=%{public}s cap=%{public}s tok=%{public}s',String(r.code),r.firstFailureStage,String(f.sessionId),String(f.contextEpoch),String(f.surfaceEpoch),String(f.surfaceWidthPx),String(f.surfaceHeightPx),String(f.particleCount),String(f.particleCapacity),String(f.frameToken.slice(0,40)));
   const row=(this.traceRows%256)*24,h=slot.header64;this.trace.fill(0,row,row+24);this.trace[row]=f.frameId;this.trace[row+1]=ns;this.trace[row+2]=h[0];this.trace[row+3]=h[1];this.trace[row+4]=h[2];this.trace[row+5]=h[5];this.trace[row+6]=h[6];this.trace[row+7]=h[10];this.trace[row+8]=h[11];this.trace[row+9]=h[15];this.trace[row+10]=h[18];this.trace[row+11]=f.surfaceEpoch;this.trace[row+12]=f.contextEpoch;this.trace[row+13]=this.width;this.trace[row+14]=this.height;this.trace[row+15]=r.code;this.trace[row+16]=r.currentFrameSucceeded?1:0;this.trace[row+17]=fresh?1:0;this.trace[row+18]=this.source.clock.seconds;this.trace[row+19]=this.source.feedbackCount;this.trace[row+20]=this.engine.pendingSourceCount;this.traceRows++;
   if(!r.currentFrameSucceeded)this.status='FAULT_'+r.firstFailureStage;else if(fresh)this.status=physicsFailure===0?'CURRENT':'CURRENT_CANONICAL; PHYSICS_FAILED_'+physicsFailure;
  }
