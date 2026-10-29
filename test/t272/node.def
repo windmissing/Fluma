@@ -1,0 +1,16 @@
+LIBRARY node.exe
+EXPORTS
+napi_get_cb_info
+napi_is_arraybuffer
+napi_is_typedarray
+napi_get_typedarray_info
+napi_is_detached_arraybuffer
+napi_get_arraybuffer_info
+napi_create_object
+napi_create_string_utf8
+napi_set_named_property
+napi_create_int32
+napi_create_uint32
+napi_create_array_with_length
+napi_set_element
+napi_define_properties
