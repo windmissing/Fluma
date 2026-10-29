@@ -1,6 +1,7 @@
 #pragma once
 #include "product_wire.h"
 #include "resources.h"
+#include "trace.h"
 #include <GLES3/gl31.h>
 #include <EGL/egl.h>
 #include <thread>
@@ -29,6 +30,9 @@ class SourceGpuTransport {
  U64 InputGeneration()const{return input;}
  const Words256& LastCompletion()const{return lastCompletion;}
  const SourceTransportStats& Stats()const{return stats;}const RootOwner& Owner()const{return owner;}
+ const TransportTraceRing& Trace()const{return trace;}
+ // Cold archive boundary only; owner thread, never while a root is in flight.
+ TransportCode ClearTrace(){if(!Current())return TransportCode::WRONG_OWNER;if(fence)return TransportCode::BUSY;trace.Clear();return TransportCode::OK;}
  const SourcePublication& PublicationLayout()const{return publication;}
  private:
  TransportCode SubmitRoot(const std::array<uint32_t,32>* command,RootRequest,int requestedAngle);
@@ -37,7 +41,7 @@ class SourceGpuTransport {
  uint32_t K=0,pad=0;EGLContext context=EGL_NO_CONTEXT;EGLDisplay display=EGL_NO_DISPLAY;EGLSurface surface=EGL_NO_SURFACE;std::thread::id thread;
  GLuint program=0,banks[2]{},work=0,events[2]{},pubs[2]{},results[2]{};GLsync fence=nullptr,releases[2]{};
  U64 releaseGenerations[2]{};uint32_t pendingSlot=0;U64 input{1,0},lastSourceFrame{},lastQuantumFrame{};uint32_t lastQuantumOrdinal=0;bool fatalFrozen=false,diagnosticFreeze=false,submittedAny=false,ready=false,lost=false;
- SourceWorkspace workspace;SourcePublication publication;StateSegments segments;SourceTransportStats stats;RootOwner owner;Identity identity;RootRequest pending;
+ TransportTraceRing trace;SourceWorkspace workspace;SourcePublication publication;StateSegments segments;SourceTransportStats stats;RootOwner owner;Identity identity;RootRequest pending;
 };
 const char* SourceKernelSource();const char* SourceKernelSha();
 }

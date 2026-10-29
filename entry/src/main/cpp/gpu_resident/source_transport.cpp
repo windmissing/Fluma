@@ -3,8 +3,10 @@
 #include <vector>
 #include <cstring>
 #include <limits>
+#include <chrono>
 namespace grs {
 namespace {
+uint64_t TraceNow(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}
 uint32_t Hex(char c){return c>='0'&&c<='9'?uint32_t(c-'0'):c>='a'&&c<='f'?uint32_t(c-'a'+10):0xffu;}
 bool HashMatches(const char* s,const std::array<uint32_t,8>& words){for(uint32_t i=0;i<8;i++){uint32_t v=0;for(uint32_t j=0;j<4;j++){uint32_t hi=Hex(s[i*8+j*2]),lo=Hex(s[i*8+j*2+1]);if(hi>15||lo>15)return false;v|=(hi*16+lo)<<(j*8);}if(v!=words[i])return false;}return s[64]==0;}
 void put(Words256& h,size_t i,U64 value){h[i]=value.lo;h[i+1]=value.hi;}
@@ -65,18 +67,19 @@ TransportCode SourceGpuTransport::SubmitRoot(const std::array<uint32_t,32>* comm
  for(uint32_t i=0;i<plan.count;i++){
   const auto& pass=plan.passes[i];GLuint output=pass.stage==Pack||pass.stage==PackAudit?pubs[pendingSlot]:pass.stage==Seal?results[pendingSlot]:events[r.eventArena];
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER,0,banks[owner.Bank()]);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,1,banks[1-owner.Bank()]);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,2,work);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,3,output);set("uPass",pass.stage);set("uScanWidth",pass.k);set("uIndexA",readIndex);set("uIndexB",writeIndex);set("uSortK",pass.k);set("uSortJ",pass.j);set("uColor",pass.color);
-  glDispatchCompute(GLuint((segments.total/4+63)/64),1,1);stats.dispatches++;glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);stats.barriers++;if(!GlOK())break;if(pass.stage==Sort)std::swap(readIndex,writeIndex);
+  TransportTrace row;row.identity=identity;row.root=r;row.ordinal=i;row.stage=pass.stage;row.groups=uint32_t((segments.total/4+63)/64);row.barrierBits=GL_SHADER_STORAGE_BARRIER_BIT;row.stateBytes=segments.total;row.workspaceBytes=workspace.words*4;row.outputBytes=pass.stage==Pack||pass.stage==PackAudit?publication.words*4:pass.stage==Seal?1024:256*size_t(133*K+508);row.beginNs=TraceNow();
+  glDispatchCompute(row.groups,1,1);stats.dispatches++;glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);stats.barriers++;bool good=GlOK();row.endNs=TraceNow();row.rawGl=stats.firstGlError;trace.Push(row);if(!good)break;if(pass.stage==Sort)std::swap(readIndex,writeIndex);
  }
  glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT|GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT|GL_PIXEL_BUFFER_BARRIER_BIT);stats.barriers++;fence=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);stats.fences++;glFlush();if(!GlOK()||!fence){owner.Stop();return TransportCode::GL_FAILED;}return TransportCode::OK;
 }
 TransportCode SourceGpuTransport::Poll(AcceptedRoot& out){
  out={};if(lost)return TransportCode::STATE_LOST;if(!Current())return TransportCode::WRONG_OWNER;if(!fence)return TransportCode::NOT_READY;stats.polls++;
- GLenum state=glClientWaitSync(fence,0,0);if(state==GL_TIMEOUT_EXPIRED)return TransportCode::BUSY;
+ TransportTrace row;row.identity=identity;row.root=pending;row.kind=TraceKind::Poll;row.beginNs=TraceNow();GLenum state=glClientWaitSync(fence,0,0);row.endNs=TraceNow();row.result=state;trace.Push(row);if(state==GL_TIMEOUT_EXPIRED)return TransportCode::BUSY;
  if(state==GL_WAIT_FAILED){owner.Poll(FenceState::Failed,nullptr,0,stats.firstGlError,out);return TransportCode::GL_FAILED;}
  if(owner.State()==FlightState::Quarantined){owner.Poll(FenceState::Signaled,nullptr,0,stats.firstGlError,out);glDeleteSync(fence);fence=nullptr;return TransportCode::PROTOCOL_REJECTED;}
  Words256 completion{};glBindBuffer(GL_COPY_READ_BUFFER,results[pendingSlot]);void* data=glMapBufferRange(GL_COPY_READ_BUFFER,0,1024,GL_MAP_READ_BIT);if(!data){owner.Poll(FenceState::Failed,nullptr,0,stats.firstGlError,out);return TransportCode::GL_FAILED;}
  std::memcpy(completion.data(),data,1024);lastCompletion=completion;stats.mappedBytes+=1024;bool unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;if(!unmapped||!GlOK()){if(stats.firstGlError==0)stats.firstGlError=GL_INVALID_OPERATION;}
- auto code=owner.Poll(FenceState::Signaled,completion.data(),256,stats.firstGlError,out);if(code==ControlCode::OK)arenaUsed[pending.eventArena]=completion[completion256::eventEnd];else fatalFrozen=true;glDeleteSync(fence);fence=nullptr;return code==ControlCode::OK?TransportCode::OK:TransportCode::PROTOCOL_REJECTED;
+ auto code=owner.Poll(FenceState::Signaled,completion.data(),256,stats.firstGlError,out);row.kind=TraceKind::Completion;row.endNs=TraceNow();row.result=uint32_t(code);row.mappedBytes=1024;row.rawGl=stats.firstGlError;trace.Push(row);if(code==ControlCode::OK)arenaUsed[pending.eventArena]=completion[completion256::eventEnd];else fatalFrozen=true;glDeleteSync(fence);fence=nullptr;return code==ControlCode::OK?TransportCode::OK:TransportCode::PROTOCOL_REJECTED;
 }
 TransportCode SourceGpuTransport::FreezeDiagnostics(bool freeze){if(!Current())return TransportCode::WRONG_OWNER;if(fence)return TransportCode::BUSY;diagnosticFreeze=freeze;return TransportCode::OK;}
 TransportCode SourceGpuTransport::CaptureAcceptedState(std::vector<uint32_t>& words){
