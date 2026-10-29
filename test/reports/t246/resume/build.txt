@@ -1,0 +1,75 @@
+Installing dependencies...
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1
++
+Progress: resolved 1, reused 1, downloaded 0, added 0
+Progress: resolved 1, reused 1, downloaded 0, added 1
+Progress: resolved 1, reused 1, downloaded 0, added 1, done
+ WARN  Issues with peer dependencies found
+.
+└─┬ @ohos/hvigor-ohos-plugin 6.26.8
+  └── ✕ missing peer @ohos/hvigor@6.26.8
+Peer dependencies that should be installed:
+  @ohos/hvigor@6.26.8
+
+dependencies:
++ @ohos/hvigor-ohos-plugin 6.26.8
+
+Done in 44.1s using pnpm v10.28.2
+Hvigor install success.
+> hvigor [32mFinished :entry:clean... after 3 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 162 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 5 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 29 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 45 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 5 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 12 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 6 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 15 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 523 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 5 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 5 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 12 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 317 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 5 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 193 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 5 s 811 ms [39m
+> hvigor WARN: When performing compilation for the arm64-v8a architecture:
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+clang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument]
+
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 2 s 800 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 131 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 282 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 11 ms [39m
+> hvigor WARN: WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t246-v2/entry/src/main/ets/entryability/EntryAbility.ets:1:105
+ Currently module for 'libt246probe.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t246-v2/entry/src/main/ets/entryability/EntryAbility.ets:1:232
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t246-v2/entry/src/main/ets/pages/T246Probe.ets:1:19
+ Currently module for 'libt246probe.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t246-v2/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:33:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t246-v2/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:37:6
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t246-v2/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:41:14
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 9 s 353 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 5 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 821 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 20 s 897 ms [39m
+
+30 tasks in total: 30 executed, 0 up-to-date

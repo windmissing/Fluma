@@ -1,0 +1,39 @@
+{
+  "revision": "T246_ASYNC_PLATFORM_HANDOFF_V2",
+  "date": "2026-10-29",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-v2",
+  "compile": "PASS_NATIVE_ARKTS_PACKAGE",
+  "device": "NOT_RUN",
+  "signing": "PENDING_T257",
+  "privateProbeOnly": true,
+  "productAdapter": "NOT_CONNECTED_TO_M0_ROOT",
+  "actualWindowLifecycleExecution": "NOT_RUN_TESTER_T247",
+  "sourceFiles": {
+    "test\\t246\\build_host.cmd": "ed9632300c60db880341fba8b8f8e3f6e7442ea6d38ba8b5f254b048b2894886",
+    "test\\t246\\generate.cjs": "0912b15c8dd6f99f7c31cc2b7cea226b0492d764487d24b46f02ff4806dcb807",
+    "test\\t246\\probe.cpp": "811dddaa36904d39956736bac9a19307ad48bc028f43f55dc2af27054cf0f6b2",
+    "test\\t246\\protocol.h": "f87339caf99f328863ee41a1758080ba6eb8c374f3742bf24fd8c9f850144ba5",
+    "test\\t246\\protocol_test.cpp": "b1e1ea1e99aca76975ed2330b9e031efae8ed1bd99cb2a81621e70c6c9e4bff2"
+  },
+  "artifacts": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-v2\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 1632484,
+      "sha256": "2678bd2f12c088e6407142cdf94dfe0cf29cf0f771037ccfa9ca2b44538f4f75"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-v2\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libt246probe.so",
+      "bytes": 798584,
+      "sha256": "c69f59a0bcefd354d9f6e6a8bef7aa8790f7603bfd4c2d493d9443e739c7d6c9"
+    }
+  ],
+  "hostAuthorityTests": "PASS_256_TAMPERS_EPOCH_CANCEL_INFLIGHT_NO_REUSE_GATE",
+  "lifecycleApi": [
+    "run(profile,slowDispatches0to64)",
+    "poll() zero-timeout real fence",
+    "cancel() tombstone until fence",
+    "setLeaseHeld(bool) real render-release fence",
+    "setActive(bool) actual EGL retirement/recreation",
+    "window callbacks + drain() bounded256 log"
+  ]
+}

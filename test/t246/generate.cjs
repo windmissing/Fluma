@@ -22,15 +22,20 @@ fs.writeFileSync(path.join(cpp,'resources_generated.h'),'#pragma once\n#include 
 fs.writeFileSync(path.join(main,'cpp/CMakeLists.txt'),'cmake_minimum_required(VERSION 3.16)\nproject(t246)\nadd_library(t246probe SHARED t246/probe.cpp platform/egl_context.cpp)\ntarget_compile_features(t246probe PRIVATE cxx_std_17)\ntarget_link_libraries(t246probe PRIVATE libace_napi.z.so libace_ndk.z.so libEGL.so libGLESv3.so libhilog_ndk.z.so)\n');
 fs.writeFileSync(path.join(main,'ets/pages/T246Probe.ets'),`import probe from 'libt246probe.so';
 @Entry @Component struct T246Probe {
- @State status:string='NOT_RUN'; private serial:number=0;private profile:number=1;
- build(){Column(){Text('T246 independent window compute → fragment probe');Text(this.status);XComponent({id:'t246',type:XComponentType.SURFACE,libraryname:'t246probe'}).width('100%').height('70%');
- Button('M0 K192').onClick(()=>{this.status=probe.run(0,0) as string;console.info('T246 '+this.status);});
- Button('M0 K512').onClick(()=>{this.status=probe.run(1,0) as string;console.info('T246 '+this.status);});
- Button('cycle M1 profiles').onClick(()=>{this.profile=2+(this.profile-1)%4;this.status=probe.run(this.profile,0) as string;console.info('T246 '+this.status);});
- Button('cancel / lease / resize / context / late').onClick(()=>{this.serial=this.serial%5+1;this.status=probe.run(0,this.serial) as string;console.info('T246 '+this.status);});}.width('100%').height('100%');}
+ @State status:string='NOT_RUN';@State visible:boolean=true;private timer:number=-1;private profile:number=1;private held:boolean=false;
+ private log(value:string):void{this.status=value;console.info('T246 '+value);}
+ aboutToAppear():void{this.timer=setInterval(()=>{this.log(probe.poll() as string);},100);}
+ aboutToDisappear():void{clearInterval(this.timer);probe.setActive(false);}
+ build(){Column(){Text('T246 private async window probe (not M0 commit)');Text(this.status).maxLines(4);
+ if(this.visible){XComponent({id:'t246',type:XComponentType.SURFACE,libraryname:'t246probe'}).width('100%').height('50%');}
+ Button('M0 K192').onClick(()=>this.log(probe.run(0,0) as string));Button('M0 K512').onClick(()=>this.log(probe.run(1,0) as string));
+ Button('cycle M1').onClick(()=>{this.profile=2+(this.profile-1)%4;this.log(probe.run(this.profile,0) as string);});
+ Button('slow real GPU fence').onClick(()=>this.log(probe.run(0,64) as string));Button('cancel inflight').onClick(()=>this.log(probe.cancel() as string));
+ Button('hold/release actual slot').onClick(()=>{this.held=!this.held;this.log(probe.setLeaseHeld(this.held) as string);});
+ Button('destroy/recreate XComponent').onClick(()=>{this.visible=!this.visible;});Button('lifecycle log').onClick(()=>this.log(probe.drain() as string));}.width('100%').height('100%');}
 }`);
 fs.writeFileSync(path.join(main,'resources/base/profile/main_pages.json'),JSON.stringify({src:['pages/T246Probe']}));
-fs.writeFileSync(path.join(main,'ets/entryability/EntryAbility.ets'),`import UIAbility from '@ohos.app.ability.UIAbility';import window from '@ohos.window';export default class EntryAbility extends UIAbility{onWindowStageCreate(stage:window.WindowStage):void{stage.loadContent('pages/T246Probe');}}`);
+fs.writeFileSync(path.join(main,'ets/entryability/EntryAbility.ets'),`import UIAbility from '@ohos.app.ability.UIAbility';import window from '@ohos.window';import probe from 'libt246probe.so';export default class EntryAbility extends UIAbility{onWindowStageCreate(stage:window.WindowStage):void{stage.loadContent('pages/T246Probe');}onBackground():void{console.info('T246 '+probe.setActive(false));}onForeground():void{console.info('T246 '+probe.setActive(true));}}`);
 // Only the dedicated probe page and no Worker requires compilation in this tiny project.
 const b=JSON.parse(fs.readFileSync(path.join(out,'entry/build-profile.json5')));b.buildOption.sourceOption.workers=[];fs.writeFileSync(path.join(out,'entry/build-profile.json5'),JSON.stringify(b,null,2));
-fs.writeFileSync(path.join(out,'t246-manifest.json'),JSON.stringify({revision:'T246_WINDOW_V1',sourceSha:hash,m0Sha:sha(m0),m1Sha:sha(m1),profiles:profiles.map(p=>({K:p.K,Kw:p.Kw,bytes:p.basePayloadBytes})),pending:['product completion256 fields and audit semantics (shape-only identity tail currently)','actual delayed/cancelled GL lease vs host identity fault hooks','platform-owner production scene integration','program/driver actual allocation bytes'],productionTouched:false},null,2));console.log(out);
+fs.writeFileSync(path.join(out,'t246-manifest.json'),JSON.stringify({revision:'T246_WINDOW_ASYNC_V2',sourceSha:hash,m0Sha:sha(m0),m1Sha:sha(m1),profiles:profiles.map(p=>({K:p.K,Kw:p.Kw,bytes:p.basePayloadBytes})),pending:['product completion256 fields and audit semantics (shape-only identity tail currently)','platform-owner production scene integration','program/driver actual allocation bytes'],productionTouched:false},null,2));console.log(out);
