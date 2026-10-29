@@ -1,0 +1,8 @@
+PASS B1 duplicate frame rejected pre-GPU
+PASS B2 Begin/Layer0-5/Present/Swap failure atomicity (9 points)
+PASS B3 F32 cross-column projection consistency (mismatch rejected, original passes)
+PASS B4 12-mutation raw integrity all rejected pre-GPU
+PASS B5 independent adjacent-column Fresnel sum == 1
+  B6 code=102 stage=CW_STALE_FRAME commits=1
+PASS B6 backwards frameId rejected as STALE
+{"revision":"T244_NATIVE_INDEPENDENT_PACKET_ATOMIC_V1","passed":6,"failed":0,"device":false,"gpu":"NOT_MEASURED","boundary":"no-GL-host-stubs"}

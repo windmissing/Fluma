@@ -1,0 +1,91 @@
+{
+ "generatedAt": "2026-10-29T00:12:43.180Z",
+ "results": [
+  {
+   "id": "A-01",
+   "name": "real source down→sample→ACK terminal",
+   "status": "PASS",
+   "detail": {
+    "sample": "0",
+    "query": "1",
+    "disposition": "ACCEPTED",
+    "admitted": 0.016666666,
+    "txn": 1,
+    "kindSeq": 1,
+    "sourceCommit": 1
+   }
+  },
+  {
+   "id": "A-02",
+   "name": "same-key replay: no new commit, same terminal",
+   "status": "PASS",
+   "detail": {
+    "q2": "1",
+    "commit1": 1,
+    "commit2": 1,
+    "disp1": "ACCEPTED",
+    "disp2": "ACCEPTED"
+   }
+  },
+  {
+   "id": "A-03",
+   "name": "stop: pending=0 + inputGeneration bump + status OK",
+   "status": "PASS",
+   "detail": {
+    "st": "0",
+    "pendingAfter": 0,
+    "genBefore": 2,
+    "genAfter": 3
+   }
+  },
+  {
+   "id": "A-04",
+   "name": "reset clears pending+dedup",
+   "status": "PASS",
+   "detail": {
+    "pending": 0,
+    "dedup": 0
+   }
+  },
+  {
+   "id": "A-05",
+   "name": "clock domain change → tick invalid → stop → pending cleared",
+   "status": "PASS",
+   "detail": {
+    "valid": false,
+    "pendingBefore": 0,
+    "pendingAfter": 0
+   }
+  },
+  {
+   "id": "A-06",
+   "name": "angle token: dt0 noop / 31 rejected / 30 boundary accepted-to-phase",
+   "status": "PASS",
+   "detail": {
+    "r0": "0",
+    "r31": "3",
+    "r30": "19"
+   }
+  },
+  {
+   "id": "A-07",
+   "name": "stale clock: ok / dup-id rejected / discontinuous rejected / oversize rejected",
+   "status": "PASS",
+   "detail": {
+    "s1": "0",
+    "s2": "21",
+    "s3": "21",
+    "s4": "21"
+   }
+  },
+  {
+   "id": "C-01",
+   "name": "independent Fresnel-sum/adjacent-column/premult reference",
+   "status": "PASS",
+   "detail": {
+    "a1": 0.5,
+    "body1": "0.181269"
+   }
+  }
+ ]
+}
