@@ -1,0 +1,408 @@
+10-29 15:54:00.356 12348 12348 I A03D00/com.example.helloworld/JSAPP: GRS_SOURCE INVALID_COMMAND
+10-29 15:58:17.496 16078 16078 E C01719/appspawn/ffrt_hcs: 1:ffrt_hcs_init:37 HcsStub init succ
+10-29 15:58:17.497 16078 16078 E C01719/appspawn/ffrt: 1:FFRTQoSShareNodeClose:133 ffts sched device is not open
+10-29 15:58:17.575 16078 16078 I C02C11/appspawn/APPSPAWN: AppSpawnChild id 21232 flags:0xc
+10-29 15:58:17.577 16078 16078 I C02D33/com.example.helloworld/HitraceOption: FilterAppTrace com.example.helloworld 16078
+10-29 15:58:17.584 16078 16078 W C02C11/com.example.helloworld/APPSPAWN: errno:2 bind mount /data/app/el1/public/shader_cache/cloud/com.example.helloworld to /mnt/sandbox/100/com.example.helloworld/data/storage/shader_cache/cloud
+10-29 15:58:17.584 16078 16078 W C02C11/com.example.helloworld/APPSPAWN: check dir /data/app/el1/public/shader_cache/cloud/com.example.helloworld failed,strerror:No such file or directory
+10-29 15:58:17.586 16078 16078 I C02C11/com.example.helloworld/APPSPAWN: [sandbox_core.cpp:980]mount config mount-files is not found in create-on-daemon, app name is com.example.helloworld
+10-29 15:58:17.586 16078 16078 W C02C11/com.example.helloworld/APPSPAWN: check dir /data/app/el1/public/aot_compiler/ark_cache/com.example.helloworld failed,strerror:No such file or directory
+10-29 15:58:17.587 16078 16078 W C02C11/com.example.helloworld/APPSPAWN: errno:2 bind mount /data/preload/app to /mnt/sandbox/100/com.example.helloworld/data/preload/app
+10-29 15:58:17.591 16078 16078 I C05A03/com.example.helloworld/Selinux: Hap setcon finish, context for com.example.helloworld is relabeled to o:r:debug_hap:s0:x14,x335,x512,x868,x1024
+10-29 15:58:17.601 16078 16078 I C05A05/com.example.helloworld/SecCompEnhanceClient: [RegisterCheckCallback]Register secComp: sessionId=1578886183, seqNum=******276.
+10-29 15:58:17.602 16078 16078 I C02D0B/com.example.helloworld/HICHECKER: hichecker param is empty.
+10-29 15:58:17.603 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD3508]mainthread start, pid:16078
+10-29 15:58:17.603   612   612 I C02C11/appspawn/APPSPAWN: Child process:com.example.helloworld success pid:16078 appId:21232 result:0
+10-29 15:58:17.603   612   612 I C02C11/appspawn/APPSPAWN: watch app process pid:16078,pidFd:64
+10-29 15:58:17.603 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD3307]is not in rescue mode
+10-29 15:58:17.603   612   612 I C02C11/appspawn/APPSPAWN: SendMessageComplete connectionId:2 result:0 app:com.example.helloworld pid:16078
+10-29 15:58:17.603  1588 15765 I C02C11/foundation/APPSPAWN_CLIENT: [a92ab1fc9983abf 37a40e0 9a25d]AppSpawnClientSendMsg reqId:21232 fd:130 end result:0x0 pid:16078 checkPointId:0
+10-29 15:58:17.603 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD3334]is not in rescue mode
+10-29 15:58:17.604  1588 15765 I C01311/foundation/AppMS: [a92ab1fc9983abf 37a40e0 9a25d][ASOM509]b:com.example.helloworld pid:16078 u:20020238 pt:0 et:255 pName:com.example.helloworld ru:-1 tMode:0 cPid:16075 cU:0 pm:-1
+10-29 15:58:17.606   999 15776 I C01704/resource_schedule_service/TagSched: [a92ab1fc9983abf 1da3d70 dceacc][ReportCgroupInfo]ReportCgroupInfo: pid:16078 from 255 to 0 withSuppressType: 0
+10-29 15:58:17.607   999 15784 I C01704/resource_schedule_service/TagSched: [a92ab1fc9983abf 12022a 36041a8][ReportCgroupInfo]ReportCgroupInfo: pid:16078 from 0 to 4 withSuppressType: 0
+10-29 15:58:17.607   999  1190 I C01731/resource_schedule_service/SUSPEND_MSG: [a92ab1fc9983abf 1ce1397 31cc1b6]SetLifecycleDetectStatusAfterCreate pid:16078, detectStatus:1, timeoutDuration:16000
+10-29 15:58:17.607   999 15600 I C01731/resource_schedule_service/SUSPEND_MSG: [a92ab1fc9983abf e9d4a1 3154b2d]OnAbilityStateCreate uid:20020238 pid:16078, 35928_EntryAbility_1_255
+10-29 15:58:17.608  1063 15833 I C015B5/netmanager/NetMgrEnhanced: [a92ab1fc9983abf 2877006 23193cf]OnAppStarted appName:com.example.helloworld uid:20020238 pid:16078 state:0
+10-29 15:58:17.612 16078 16078 I C01719/com.example.helloworld/ffrt: 2:QueueMonitor:44 timeout:30000000 us
+10-29 15:58:17.613 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD444]attach
+10-29 15:58:17.615  1588 15759 I C01311/foundation/AppMS: [AMSI2984]attach com.example.helloworld pid:16078
+10-29 15:58:17.623 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD1989]SmartGC:0 version:1000000
+10-29 15:58:17.624 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [ecmascript] asmint: 1, aot: 0, jit: 1, baseline jit: 0, bundle name: com.example.helloworld, arkTSMode: dynamic
+10-29 15:58:17.624 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [gc] Huge page process state reset after fork, pid:16078, canTry:0, enabled:false, systemLimit:0, freeSlotRefillLimit:0
+10-29 15:58:17.628 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [ecmascript] multi-thread check enabled: 0
+10-29 15:58:17.628 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [pgo] reset pgo profiler, pgo profiler is disabled
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: clean up handles in loop(5600)
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: loop:(5600) closed in 0s
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: close:5600, async_io_wfd:19
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: close:5600, backend_fd:14
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: init:9056
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: init:9056, backend_fd:14
+10-29 15:58:17.629 16078 16078 I C03301/com.example.helloworld/LIBUV: open:9056, pipefd[0]:19
+10-29 15:58:17.629 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [ecmascript] can not find aot file
+10-29 15:58:17.630 16078 16078 W C01305/com.example.helloworld/Base: [zip_file.cpp(ExtractToBufByName:971)]GetEntry from pkgContextInfo.json err
+10-29 15:58:17.630 16078 16078 E C03F00/com.example.helloworld/ArkCompiler: [ecmascript] PandaFileSnapshotInterfaces::ReadCrossBundleHspInfo failed
+10-29 15:58:17.635 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: StartServer, componentName = <private>
+10-29 15:58:17.635 16078 16078 W C01321/com.example.helloworld/JsRuntime: [CSM168]disCon
+10-29 15:58:17.635 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [ecmascript] JSNApi::NotifyDebugMode, tid = 16078, debugApp = 1, isDebugMode = 0, instanceId = 0
+10-29 15:58:17.636 16078 16138 I C02D13/com.example.helloworld/HDC_LOG: Send2Jdwp send pid:16078, pp:com.example.helloworld, isDebug:1, msglen:34
+10-29 15:58:17.637 55934 55934 I C02D13/hdcd/HDC_LOG: [ReadStream:282] JDWP accept pid:16078-pkg:com.example.helloworld isDebug:1
+10-29 15:58:17.638 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [compiler] __jit_debug_register_code() is called.
+10-29 15:58:17.638 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [compiler] success to register stub.an to debugger.
+10-29 15:58:17.639 16078 16078 W C01E00/com.example.helloworld/ResourceManager: update userId, currentUserId_= 0, userId= 100
+10-29 15:58:17.639 16078 16078 E C01E00/com.example.helloworld/ResourceManager: failed to realpath the path, errno:2
+10-29 15:58:17.639 16078 16078 E C01E00/com.example.helloworld/ResourceManager: failed to realpath the path, errno:2
+10-29 15:58:17.642 16078 16078 W C03F07/MUSL-LDSO: load absolute_path /system/lib64/liblayered_parameters_manager.z.so: check ns accessible failed namespace=ndk.
+10-29 15:58:17.642 16078 16078 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=ndk no inherits, errno=2
+10-29 15:58:17.642 16078 16078 W C03F07/MUSL-LDSO: load /system/lib64/liblayered_parameters_manager.z.so failed, namespace=default, errno=2
+10-29 15:58:17.642 16078 16078 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/liblayered_parameters_manager.z.so caller namespace : default
+10-29 15:58:17.642 16078 16078 W C01317/com.example.helloworld/AppKit: [MTHRD4617]reason Error loading shared library /system/lib64/liblayered_parameters_manager.z.so: No such file or directoryn
+10-29 15:58:17.642 16078 16078 W C01301/com.example.helloworld/Ability: [resource_config_helper.cpp193]invalid source:
+10-29 15:58:17.642 16078 16078 W C01301/com.example.helloworld/Ability: [resource_config_helper.cpp193]invalid source:
+10-29 15:58:17.642 16078 16078 I C01317/com.example.helloworld/AppKit: [application_cleaner.cpp94]ClearTempData
+10-29 15:58:17.644 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD2960]NtfyAppPreAbiCreate
+10-29 15:58:17.651 16078 16078 I C01317/com.example.helloworld/AppKit: [JAS211]LoadModule
+10-29 15:58:17.651 16078 16078 W C01317/com.example.helloworld/AppKit: [JAS1032]null stage
+10-29 15:58:17.651 16078 16078 W C01317/com.example.helloworld/AppKit: [JAS254]Not found AbilityStage.js
+10-29 15:58:17.651 16078 16078 I C01317/com.example.helloworld/AppKit: [OH_APP432]OnAboutToCreateAbility
+10-29 15:58:17.651 16078 16078 W C01317/com.example.helloworld/AppKit: [JAS349]Not found AbilityStage.js
+10-29 15:58:17.652 16078 16078 I C01332/com.example.helloworld/UIAbility: [ui_ability.cpp131]instanceId: 5761-313b-0fe8-4abb-bfd1a7af6042c864
+10-29 15:58:17.653 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [ecmascript] start to execute module buffer with secure memory: /data/storage/el1/bundle/entry/ets/entryability/EntryAbility.abc
+10-29 15:58:17.668 16078 16078 I C03F04/com.example.helloworld/MMG: [NMM:382]Tail:default/grsm0
+10-29 15:58:17.673 16078 16078 I C01320/com.example.helloworld/JsEnv: [JSENV269]timing: 20
+10-29 15:58:17.673 16078 16078 I C01320/com.example.helloworld/JSENV: Callee constructor is OK string
+10-29 15:58:17.673 16078 16078 I C01320/com.example.helloworld/JSENV: Ability::constructor callee is object [object Object]
+10-29 15:58:17.674 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [ecmascript] start to execute ark buffer with secure memory use file: /data/storage/el1/bundle/entry/ets/modules.abc, entrypoint: @bundle:com.example.helloworld/entry/build/generated/r/ResourceTable
+10-29 15:58:17.674 16078 16078 I C01332/com.example.helloworld/UIAbility: [ui_ability_thread.cpp204]Lifecycle:Attach
+10-29 15:58:17.678 16078 16078 I C01317/com.example.helloworld/AppKit: [MTHRD3136]called
+10-29 15:58:17.678 16078 16078 I C03F00/com.example.helloworld/ArkCompiler: [gc] app is not inBackground
+10-29 15:58:17.678 16078 16078 I C03F00/com.example.helloworld/ArkEtsVm: [nodict]runtime: Application switched to foreground
+10-29 15:58:17.680 16078 16078 I C01332/com.example.helloworld/UIAbility: [ui_ability_thread.cpp271]Lifecycle:name EntryAbility
+10-29 15:58:17.683 16078 16078 I C04201/com.example.helloworld/DMS: AddDisplayIdFromAms: abilityToken and display[0] has been added.
+10-29 15:58:17.684  1628 37304 I C04619/CollaborationFwk/Publish: OnAbilityStateChanged# pid:16078, uid:20020238, bundleName:com.example.helloworld, abilityState:2, isFocused:0
+10-29 15:58:17.690  1063  1085 I C015B5/netmanager/NetMgrEnhanced: uid:20020238, pid:16078, state:2, isFocused:0, com.example.helloworld
+10-29 15:58:17.690 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2211]JsUIAbility call js, name: onCreate
+10-29 15:58:17.691 16078 16078 I A00000/com.example.helloworld/EntryAbility: onCreate
+10-29 15:58:17.691 16078 16078 I C01653/com.example.helloworld/PreferencesJsKit: GetContextMode: set gContextNode: 1, status: 0,
+10-29 15:58:17.693 16078 16078 I A00000/com.example.helloworld/EntryAbility: LiquidCA want rendermode=1 testmode=0 seed=0 shake=}f
+10-29 15:58:17.693 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2256]end, name: onCreate, time: 3
+10-29 15:58:17.693 16078 16078 E C01332/com.example.helloworld/UIAbility: [ui_ability_impl.cpp364]hasSaveData_: false
+10-29 15:58:17.694 16078 16078 W C01332/com.example.helloworld/UIAbility: [JUA1386]formatRegex: []
+10-29 15:58:17.694 16078 16078 I C04202/com.example.helloworld/WMSMain: Init: [requestId: 17433][scbRequestId: 0]WindowScene with window session!
+10-29 15:58:17.694 16078 16078 I C04202/com.example.helloworld/WMSMain: Init: set isModuleAbilityHookEnd
+10-29 15:58:17.694 16078 16078 I C0420A/com.example.helloworld/WMSLife: WindowSessionImpl: nodeId: 69054484185089
+10-29 15:58:17.694 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSFrameRateLinker::Create id: 69054484185088
+10-29 15:58:17.694 16078 16078 I C04202/com.example.helloworld/WMSMain: VsyncStation: id 69054484185089 created
+10-29 15:58:17.694 16078 16078 I C04200/com.example.helloworld/WindowSceneSessionImpl: WindowSceneSessionImpl: [WMSCom] Constructor helloworld0
+10-29 15:58:17.694 16078 16078 E C04200/com.example.helloworld/WMS: SetWindowType: permission denied!
+10-29 15:58:17.694 16078 16078 I C0420A/com.example.helloworld/WMSLife: Create: Window Create name:helloworld0, state:0, mode:0
+10-29 15:58:17.695 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSLogManager init log flag: 0x0(0)
+10-29 15:58:17.695 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSRenderServiceConnectHub call CreateConnection, needRefresh:[0]
+10-29 15:58:17.698 16078 16078 W C04200/com.example.helloworld/WindowSceneSessionImpl: AdjustWindowAnimationFlag: session invalid!
+10-29 15:58:17.698 16078 16078 I C04200/com.example.helloworld/WindowSceneSessionImpl: Remove window flag WINDOW_FLAG_SHOW_WHEN_LOCKED
+10-29 15:58:17.699 16078 16078 I C0420A/com.example.helloworld/WMSLife: Connect: in
+10-29 15:58:17.700  1588 35954 I C01311/foundation/AppMS: [WND_CHG_LSNR38]NotifyWindowPidVisibilityChanged called, pid:16078, visibilityState:0.
+10-29 15:58:17.701 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSSurfaceNode::Unmarshalling, Node: 69054484185089, Name: helloworld0
+10-29 15:58:17.702 16078 16078 I C04208/com.example.helloworld/WMSLayout: Connect: updateRect when connect.preRect:[0,0,1280,2832]rect:[0,0,1280,2832]
+10-29 15:58:17.702 16078 16078 E C0421C/com.example.helloworld/WMSCompat: ReadCombinedCompatibleConfig: combinedConfigSize: 0 fail to meet the conditions
+10-29 15:58:17.702 16078 16078 I C0420A/com.example.helloworld/WMSLife: Connect: Window Connect [name:helloworld0, id:602, type:1], ret:0, oriDisplayId:0, curDisplayId:0
+10-29 15:58:17.702 16078 16078 I C04204/com.example.helloworld/WMSScb: RS multi-instance enabled: 1
+10-29 15:58:17.703 16078 16078 I C02C03/PARAM_WATCHER: Add watcher keyPrefix persist.sys.graphic.animationscale remoteWatcherId 22291 success
+10-29 15:58:17.703 16078 16078 I C01406/com.example.helloworld/OHOS::RS: multi-instance, create RSUIContextManager, isMultiInstanceOpen_ 1
+10-29 15:58:17.704 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSRenderServiceConnectHub AddRenderProcessConnectionToken
+10-29 15:58:17.704 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSApplicationAgentImpl::RegisterRSApplicationAgent!
+10-29 15:58:17.704 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIDirector::GoCreate CurrentState:0, UIContext:69054484185089
+10-29 15:58:17.704 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIDirector::GoResume CurrentState:0, UIContext:69054484185089
+10-29 15:58:17.704 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIDirector::GoForeground CurrentState:1, UIContext:69054484185089
+10-29 15:58:17.704 16078 16078 I C04204/com.example.helloworld/WMSScb: InitRSUIDirector: Create RSUIDirector: RSUIDirector's RSUIContext [token: 69054484185089, tid: 16078], rsUIContext: RSUIContext is null
+10-29 15:58:17.706 16078 16078 I C0420A/com.example.helloworld/WMSLife: PostInitSurfaceNode: name: helloworld0
+10-29 15:58:17.706 16078 16078 I C0421C/com.example.helloworld/WMSCompat: SetAppHookWindowInfo: Id:602, preHookWindowInfo:[enableHookWindow: false, widthHookRatio: 1.000000, notifyWindowChange: false, drawableRectHook: false], newHookWindowInfo:[enableHookWindow: false, widthHookRatio: 1.000000, notifyWindowChange: false, drawableRectHook: false]
+10-29 15:58:17.706 16078 16078 I C0421C/com.example.helloworld/WMSCompat: SendCombinedCompatibleConfigToArkUI: bundleName: com.example.helloworld, combinedCompatibleConfig size: 0
+10-29 15:58:17.706 16078 16078 E C0421C/com.example.helloworld/WMSCompat: SendCombinedCompatibleConfigToArkUI: Combined compatible config size is less than 2!
+10-29 15:58:17.706 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSSurfaceNode::SetAlphaChangedCallback, node=[69054484185089, helloworld0]
+10-29 15:58:17.707 16078 16078 I C04208/com.example.helloworld/WMSLayout: SetWindowMode: windowId: 602, windowModeSupportType: 127, mode: 1
+10-29 15:58:17.707 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateWindowModeImmediately: [WindowModeUpdate:Inner] UpdateWindowModeImmediately id:602, mode:1, splitStyle:0, splitIndex:0, state:1
+10-29 15:58:17.707 16078 16078 I C04208/com.example.helloworld/WMSLayout: NotifyWindowStatusChange: [WindowModeUpdate:Inner] NotifyWindowStatusChange id:602, mode:1, status:1, lastStatus:0, skipRedundant:0
+10-29 15:58:17.708 16078 16078 I C04208/com.example.helloworld/WMSLayout: SetConfigWindowLimitsVP: id:602, windowLimits:[0 0 0 0 0.000000 0.000000 1.000000 1]
+10-29 15:58:17.708 16078 16078 I C04208/com.example.helloworld/WMSLayout: GetSystemSizeLimits: systemLimitsPX: [6720 6720 1120 840 340282346638528859811704183484516925440.000000 0.000000 1.000000 0], systemLimitsVP: [1920 1920 320 240 340282346638528859811704183484516925440.000000 0.000000 1.000000 1], configMaxSize: 1920, vpr: 3.500000, winType: 1
+10-29 15:58:17.708 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateWindowSizeLimits: [WindowLimitsUpdate:CalcLimits] SaveLimits id:602, px[minW:1120,minH:840,maxW:6720,maxH:6720] vp[minW:320,minH:240,maxW:1920,maxH:1920] vpr=3.500000
+10-29 15:58:17.708 16078 16078 I C0421A/com.example.helloworld/WMSLayoutPc: GetSupportedWindowModesConfiguration: winId: 602, property empty, size: 0, extract from metaData
+10-29 15:58:17.708 16078 16078 I C0421A/com.example.helloworld/WMSLayoutPc: GetSupportedWindowModesConfiguration: winId: 602, windowModeSupportType: 15
+10-29 15:58:17.708 16078 16078 I C04202/com.example.helloworld/WMSMain: SetSupportedWindowModesForAncoInFreeWindow: is not anco app, need not update support window mode.
+10-29 15:58:17.708 16078 16078 I C04208/com.example.helloworld/WMSLayout: SetWindowModeSupportType: id:602, old:127, new:15
+10-29 15:58:17.708 16078 16078 I C04208/com.example.helloworld/WMSLayout: GetConfigurationFromAbilityInfo: windowId: 602, windowModeSupportType: 15, isAncoSupportFreeWindow: 0
+10-29 15:58:17.708 16078 16078 I C0420F/com.example.helloworld/WMSRecover: RegisterSessionRecoverCallbackFunc: persistentId=602
+10-29 15:58:17.708 16078 16078 I C04209/com.example.helloworld/WMSImms: UpdateStatusBarColorByColorMode: win 602 type 1 hasDarkRes 0 colorMode light
+10-29 15:58:17.708 16078 16078 I C04200/com.example.helloworld/WMS: IsMainHandlerAvailable: id:602, isAvailable:1
+10-29 15:58:17.708 16078 16078 I C04200/com.example.helloworld/WMS: IsMainHandlerAvailable: id:602, isAvailable:1
+10-29 15:58:17.710   896  2532 I C02801/multimodalinput/MMIService: [|662]Enter, programName:{com.example.helloworld:1}, moduleType:0, pid:16078
+10-29 15:58:17.710   896  2377 E C02801/multimodalinput/UDSServer: [|59]Not found pid:16078
+10-29 15:58:17.710   896  2377 I C02801/multimodalinput/UDSServer: [|427]The pid:16078, fd:56
+10-29 15:58:17.710 16078 16078 I C02800/com.example.helloworld/MMIClient: [|267]Connection to server succeeded, fd:37
+10-29 15:58:17.710 16078 16078 I C02800/com.example.helloworld/MMIClient: [|166]Server was listening
+10-29 15:58:17.710 16078 16078 I C02800/com.example.helloworld/MMIClient: [|127]reuse current event handler, thread name:
+10-29 15:58:17.710 16078 16078 I C02800/com.example.helloworld/MMIClient: [|130]File fd is in listening
+10-29 15:58:17.710 16078 16078 I C0420C/com.example.helloworld/WMSEvent: AddInputWindow: SetWindowInputEventConsumer success, wid:602
+10-29 15:58:17.714 16078 16078 I C04732/com.example.helloworld/GameController: [(OHOS_GameController_RegisterEntryModule:24)]begin load gamecontroller_event
+10-29 15:58:17.714 16078 16078 I C04732/com.example.helloworld/GameController: [(StartInputToTouch:58)]Begin StartInputToTouch
+10-29 15:58:17.714   999 15787 I C01704/resource_schedule_service/TagSched: [a92ab4fc99ae181 0 0][ReportCgroupInfo]ReportCgroupInfo: pid:16078 from 4 to 9 withSuppressType: 0
+10-29 15:58:17.715   895 15485 I C02699/memmgrservice/MM: wms call,pid:16078,Id:602,winNum:0->1
+10-29 15:58:17.716 16078 16078 I C04217/com.example.helloworld/WMSAttribute: ConnectServer: start connect
+10-29 15:58:17.716 16078 16078 I C04217/com.example.helloworld/WMSAttribute: ConnectServer: end connect
+10-29 15:58:17.716 16078 16078 W C04217/com.example.helloworld/WMSAttribute: RegisterGetWMSWindowListCallback: callback has registered
+10-29 15:58:17.716 16078 16078 I C04217/com.example.helloworld/WMSAttribute: RegisterGetWMSWindowListCallback: winId: 602
+10-29 15:58:17.716 16078 16078 I C04217/com.example.helloworld/WMSAttribute: UpdateColorMode: winId: 602, colorMode: light
+10-29 15:58:17.716 16078 16078 I C04218/com.example.helloworld/WMSPc: UpdateSidebarBlurStyleWhenColorModeChange: in, persistentId=602
+10-29 15:58:17.716 16078 16078 W C04218/com.example.helloworld/WMSPc: UpdateSidebarBlurStyleWhenColorModeChange: RSAnimatableProperty is null
+10-29 15:58:17.717 16078 16078 I C04217/com.example.helloworld/WMSAttribute: UpdateColorMode: winId: 602, colorMode: light, hasDarkRes: 0
+10-29 15:58:17.717 16078 16078 I C0421C/com.example.helloworld/WMSCompat: SetPcAppInpadSpecificSystemBarInvisible: isPcAppInpadSpecificSystemBarInvisible: 0
+10-29 15:58:17.717 16078 16078 I C0421C/com.example.helloworld/WMSCompat: SetPcAppInpadOrientationLandscape: isPcAppInpadOrientationLandscape: 0
+10-29 15:58:17.717 16078 16078 I C0420A/com.example.helloworld/WMSLife: Create: Window Create success [name:helloworld0, id:602], state:1, mode:1, enableDefaultDensity:0, displayId:0
+10-29 15:58:17.717 16078 16078 E C04200/com.example.helloworld/WMS: singleton_container.cpp GetSingleton: cant get OHOS::Rosen::WindowInfoReporter
+10-29 15:58:17.717 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2211]JsUIAbility call js, name: onWindowStageCreate
+10-29 15:58:17.717 16078 16078 I A00000/com.example.helloworld/EntryAbility: onWindowStageCreate
+10-29 15:58:17.717 16078 16078 I C04200/com.example.helloworld/JsWindowStage: LoadContent: [NAPI]
+10-29 15:58:17.718 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2256]end, name: onWindowStageCreate, time: 0
+10-29 15:58:17.718 16078 16078 I C0420A/com.example.helloworld/WMSLife: NotifyWindowStageCreateFinished: id: 602
+10-29 15:58:17.718 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2211]JsUIAbility call js, name: onWillForeground
+10-29 15:58:17.718 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2256]end, name: onWillForeground, time: 0
+10-29 15:58:17.718 16078 16078 I C04202/com.example.helloworld/WMSMain: GoForeground: [requestId: 17433][scbRequestId: 0]reason: 4 isGamePreLaunch: 0
+10-29 15:58:17.718 16078 16078 I C0420A/com.example.helloworld/WMSLife: Show: [requestId: 17433][scbRequestId: 0]Window show [name: helloworld0, id: 602, type: 1], reason: 4, state:1, requestState:1
+10-29 15:58:17.718 16078 16078 I C04208/com.example.helloworld/WMSLayout: GetSystemSizeLimits: systemLimitsPX: [6720 6720 1120 840 340282346638528859811704183484516925440.000000 0.000000 1.000000 0], systemLimitsVP: [1920 1920 320 240 340282346638528859811704183484516925440.000000 0.000000 1.000000 1], configMaxSize: 1920, vpr: 3.500000, winType: 1
+10-29 15:58:17.718 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateWindowSizeLimits: [WindowLimitsUpdate:CalcLimits] SaveLimits id:602, px[minW:1120,minH:840,maxW:6720,maxH:6720] vp[minW:320,minH:240,maxW:1920,maxH:1920] vpr=3.500000
+10-29 15:58:17.718 16078 16078 I C04217/com.example.helloworld/WMSAttribute: IsSystemDensityChanged: id=602, lastDensity=-1.000000, systemDpi=3.500000, hookedDpi=3.500000
+10-29 15:58:17.718 16078 16078 I C04208/com.example.helloworld/WMSLayout: GetSystemSizeLimits: systemLimitsPX: [6720 6720 1120 840 340282346638528859811704183484516925440.000000 0.000000 1.000000 0], systemLimitsVP: [1920 1920 320 240 340282346638528859811704183484516925440.000000 0.000000 1.000000 1], configMaxSize: 1920, vpr: 3.500000, winType: 1
+10-29 15:58:17.718 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateWindowSizeLimits: [WindowLimitsUpdate:CalcLimits] SaveLimits id:602, px[minW:1120,minH:840,maxW:6720,maxH:6720] vp[minW:320,minH:240,maxW:1920,maxH:1920] vpr=3.500000
+10-29 15:58:17.719 16078 16078 W C04200/com.example.helloworld/WindowSessionImpl: UpdateViewportConfig: uiContent is null!
+10-29 15:58:17.719 16078 16078 I C01332/com.example.helloworld/UIAbility: [ui_ability_impl.cpp489]wnd call, AfterForeground
+10-29 15:58:17.719 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSFrameRateLinker::Create id: 69054484185089
+10-29 15:58:17.721   999 15774 I C01704/resource_schedule_service/TagSched: [a92ab6fc99afc0f 0 0][ReportCgroupInfo]ReportCgroupInfo: pid:16078 from 9 to 4 withSuppressType: 0
+10-29 15:58:17.722  1588 15763 I C01311/foundation/AppMS: [AMSI9162]uid:20020238, pid:16078
+10-29 15:58:17.722 16078 16078 I C01706/com.example.helloworld/ueaClient-FrameUiIntf: [Init]:ret:1, inited:1
+10-29 15:58:17.722 16078 16078 I C04217/com.example.helloworld/WMSAttribute: InitWaterfallMode: winId: 602
+10-29 15:58:17.722 16078 16078 I C04217/com.example.helloworld/WMSAttribute: NotifyWaterfallModeChange: winId: 602, waterfall: 0, stat: 2
+10-29 15:58:17.722 16078 16078 I C04202/com.example.helloworld/WMSMain: NotifyFreeMultiWindowModeResume: IsPcMode 0, isColdStart 1
+10-29 15:58:17.722 16078 16078 I C0420A/com.example.helloworld/WMSLife: Show: [requestId: 17433][scbRequestId: 0]Window show success [name:helloworld0, id:602, type:1]
+10-29 15:58:17.722 16078 16078 W C04201/com.example.helloworld/DMS: OnDisplayInfoChange: data is not changed.
+10-29 15:58:17.723 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2211]JsUIAbility call js, name: onForeground
+10-29 15:58:17.724 16078 16078 I A00000/com.example.helloworld/EntryAbility: onForeground
+10-29 15:58:17.724 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2256]end, name: onForeground, time: 1
+10-29 15:58:17.725  1455 21531 I C01610/distributeddata/KvStoreDataService: operator(): bundle:com.example.helloworld, feature:data_share, uid:20020238, pid:16078, emplace:success.
+10-29 15:58:17.725 16078 16078 E C01651/com.example.helloworld/data_share_manager_impl: RegisterClientDeathObserver: RegisterClientDeathObserver failed, bundleName is com.example.helloworld
+10-29 15:58:17.725 16078 16078 E C01651/com.example.helloworld/data_share_manager_impl: GetDataShareServiceProxy: RegisterClientDeathObserver failed
+10-29 15:58:17.726  1063 21308 I C015B5/netmanager/NetMgrEnhanced: uid:20020238, pid:16078, state:2, isFocused:1, com.example.helloworld
+10-29 15:58:17.727  1455 29014 I C01610/distributeddata/KvStoreDataService: operator(): bundle:com.example.helloworld, feature:data_share, uid:20020238, pid:16078, inserted:failed.
+10-29 15:58:17.727  1063  2719 I C015B5/netmanager/NetMgrEnhanced: QOE: HandleForegroundAppChanged uid:20020238, pid:16078, status:2, bundleName:com.example.helloworld, isFocused:1
+10-29 15:58:17.729 16078 16078 I C05405/com.example.helloworld/CompConfigClient: [nodict]GetConfigByApp: GetDataShareData return 0 result
+10-29 15:58:17.729 16078 16078 E C01301/com.example.helloworld/Ability: [page_config_manager.cpp62]configJson_ is empty
+10-29 15:58:17.730 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2211]JsUIAbility call js, name: onDidForeground
+10-29 15:58:17.730 16078 16078 I C01332/com.example.helloworld/UIAbility: [JUA2256]end, name: onDidForeground, time: 0
+10-29 15:58:17.730 16078 16078 I C04202/com.example.helloworld/WMSMain: GoResume: in isGamePreLaunch: 0
+10-29 15:58:17.730 16078 16078 I C0420A/com.example.helloworld/WMSLife: SetUIContentInner: pages/GpuResidentM0, state:2, persistentId: 602
+10-29 15:58:17.730 16078 16078 I C0420A/com.example.helloworld/WMSLife: SetUIContentComplete: persistentId=602
+10-29 15:58:17.730 16078 16078 I C0420A/com.example.helloworld/WMSLife: InitUIContent: start
+10-29 15:58:17.730 16078 16078 I C0420A/com.example.helloworld/WMSLife: DestroyExistUIContent: start
+10-29 15:58:17.731 16078 16078 I C03900/com.example.helloworld/Ace: [(-1:-1:undefined)] CreateUIContent.
+10-29 15:58:17.731 16078 16078 I C03934/com.example.helloworld/AceUIEvent: [(-1:-1:undefined)] report ace loaded
+10-29 15:58:17.731 16078 16078 I C04707/com.example.helloworld/HaAceEngine: OnAceLoaded end
+10-29 15:58:17.732 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] Init RenderService UniRender Type:0
+10-29 15:58:17.732 16078 16078 W C01409/com.example.helloworld/APS_MANAGER: redo Connect
+10-29 15:58:17.732 16078 16078 I C01409/com.example.helloworld/APS_MANAGER: Start to ConnectService
+10-29 15:58:17.732 16078 16078 I C01409/com.example.helloworld/APS_MANAGER: GetSystemAbilityManager success
+10-29 15:58:17.733 16078 16078 I C01409/com.example.helloworld/APS_MANAGER: GetSystemAbility success
+10-29 15:58:17.733  1063  2719 I C015B5/netmanager/NetMgrEnhanced: QOE: ChrNetLinkMonitor::HandleForegroundAppChanged, uid:20020238, pid:16078, status:2, bundleName:com.example.helloworld
+10-29 15:58:17.733 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] [com.example.helloworld][entry][-1]: UIContent: apiCompatibleVersion: 26, apiTargetVersion: 26, and apiReleaseType: Release, useNewPipe: 1, enableCustomComponentCrossAbility: 0
+10-29 15:58:17.733 16078 16078 I C02C03/PARAM_WATCHER: Add watcher keyPrefix persist.sys.arkui.animationscale remoteWatcherId 22291 success
+10-29 15:58:17.734 16078 16078 E C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] ConfigParserBase read system UI correction config file failed
+10-29 15:58:17.734 16078 16078 W C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] ArkUiFeatureParamManager failed to load UI correction config file
+10-29 15:58:17.736  1063  2719 I C015B5/netmanager/NetMgrEnhanced: QOE: HandleForegroundAppChanged, uid:20020238, pid:16078, status:2, bundleName:com.example.helloworld
+10-29 15:58:17.756 16078 16078 I C05405/com.example.helloworld/CompConfigClient: [nodict]SubscribeEvent_: SubscriberEvent, ret: 1
+10-29 15:58:17.757 16078 16078 I C05405/com.example.helloworld/CompConfigClient: [nodict]GetConfigByApp: GetDataShareData return 0 result
+10-29 15:58:17.757 16078 16078 W C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] FeatureManager get config failed, key:UICorrectionStrategy ret:1
+10-29 15:58:17.757 16078 16078 W C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] FeatureParamManager get UICorrectionStrategy from FeatureManager failed
+10-29 15:58:17.760 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] SetLocale language tag: zh-CN, font locale: , select language: zh-CN
+10-29 15:58:17.760 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] [com.example.helloworld][entry][-1]: SetLanguage: zh, colorMode: light, deviceAccess: 0
+10-29 15:58:17.760 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:-1:undefined)] [com.example.helloworld][entry][-1]: Initialize UIContent isModelJson:true
+10-29 15:58:17.762 16078 16078 I C03922/com.example.helloworld/AceNavigation: [(-2:-1:undefined)] subscribe hsp Update successfully
+10-29 15:58:17.762 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] SetHapPath, Use hap path to load resource
+10-29 15:58:17.763 16078 16078 I C04217/com.example.helloworld/WMSAttribute: RegisterWaterfallModeChangeListener: winId: 602
+10-29 15:58:17.764 16078 16078 I C04200/com.example.helloworld/WMS: GetSurfaceNode: name:helloworld0, id:602
+10-29 15:58:17.764 16078 16078 I C04200/com.example.helloworld/WMS: GetSurfaceNode: name:helloworld0, id:602
+10-29 15:58:17.764 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] SetRSSurfaceNode 69054484185089 with rs multi
+10-29 15:58:17.764 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIContext::AttachFromUI. token: 69054484185089 uiPiplineNum: -1
+10-29 15:58:17.764 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIContext::SetUITaskRunner, Context token:69054484185089
+10-29 15:58:17.764 16078 16078 I C03925/com.example.helloworld/AceRouter: [(100000:100000:scope)] createManager, deviceType: 0
+10-29 15:58:17.765 16078 16078 W C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Invalid config:zh_CN-long-notround-vertical-light-phone-xxxhdpi
+10-29 15:58:17.765 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIDirector::GoBackground CurrentState:2, UIContext:69054484185089
+10-29 15:58:17.765 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSSurfaceNode::SetAbilityState, surfaceNodeId:[69054484185089], ability state: background
+10-29 15:58:17.765 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] set translateManager to pipeline, instanceId:100000
+10-29 15:58:17.765 16078 16078 I C0421D/com.example.helloworld/WMSRotation: RegisterOrientationChangeListener: in
+10-29 15:58:17.765 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] AddPersistAfterLayoutTask size: 1
+10-29 15:58:17.766 16078 16078 I C03919/com.example.helloworld/AceInputTracking: [(100000:100000:scope)] Debug touch pass mode 0
+10-29 15:58:17.766 16078 16078 I C01706/com.example.helloworld/ueaClient-FrameUiIntf: GetSenseSchedEnable [Init]inited:1
+10-29 15:58:17.766 16078 16078 W C03F07/MUSL-LDSO: load absolute_path /system/lib64/libtransform_interaction_ext.z.so: check ns accessible failed namespace=ndk.
+10-29 15:58:17.766 16078 16078 W C03F07/MUSL-LDSO: load /system/lib64/libtransform_interaction_ext.z.so failed, namespace=ndk no inherits, errno=2
+10-29 15:58:17.766 16078 16078 W C03F07/MUSL-LDSO: load /system/lib64/libtransform_interaction_ext.z.so failed, namespace=default, errno=2
+10-29 15:58:17.766 16078 16078 W C03F07/MUSL-LDSO: dlopen_impl load library header failed for /system/lib64/libtransform_interaction_ext.z.so caller namespace : default
+10-29 15:58:17.766 16078 16078 E C03934/com.example.helloworld/AceUIEvent: [(100000:100000:scope)] AceTransform load failed: Error loading shared library /system/lib64/libtransform_interaction_ext.z.so: No such file or directory
+10-29 15:58:17.766 16078 16078 I C03937/com.example.helloworld/AceResource: [(100000:100000:scope)] ResourceAdapter UpdateResConfig with colorMode light
+10-29 15:58:17.766 16078 16078 W C03900/com.example.helloworld/Ace: [(100000:100000:scope)] not found systemTheme in HapModuleInfo, loading default OHOS_THEME
+10-29 15:58:17.773 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSRootNode::Create, Node:69054484185091, Token:69054484185089
+10-29 15:58:17.773 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] root node OnAttachToFrameNode, id:0
+10-29 15:58:17.773 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Rosenwindow set root, rsId:69054484185091
+10-29 15:58:17.773 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSRootNode::AttachRSSurfaceNode, SurfaceNode:69054484185089, Node:69054484185091
+10-29 15:58:17.774 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] AddPersistAfterLayoutTask size: 2
+10-29 15:58:17.776 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] focusWindowId: 0, realHostWindowId: 0
+10-29 15:58:17.776 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] [com.example.helloworld][entry][100000]: window focus
+10-29 15:58:17.777 16078 16078 I C02C03/PARAM_WATCHER: Add watcher keyPrefix debug.graphic.frame remoteWatcherId 22291 success
+10-29 15:58:17.777 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] ArkUIInvisibleFreeze: 0
+10-29 15:58:17.777 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] [com.example.helloworld][entry][100000]: SetMinPlatformVersion is 26
+10-29 15:58:17.777 16078 16078 I C04209/com.example.helloworld/WMSImms: RegisterAvoidAreaChangeListener: win 602
+10-29 15:58:17.779 16078 16078 E C04200/com.example.helloworld/IMockSessionManager: [nodict]Read result failed, code is: 4.
+10-29 15:58:17.779 16078 16078 E C04200/com.example.helloworld/IMockSessionManager: [nodict]Read result failed, code is: 4.
+10-29 15:58:17.779 16078 16078 I C04200/com.example.helloworld/WMS: InitSessionManagerServiceProxy: Init success, userId=-1
+10-29 15:58:17.779 16078 16078 I C04200/com.example.helloworld/WMS: InitSceneSessionManagerLiteProxy: Init success, userId=-1
+10-29 15:58:17.779 16078 16078 I C04204/com.example.helloworld/WMSScb: InitSceneSessionManagerProxy: enter, userId=-1
+10-29 15:58:17.779 16078 16078 I C04204/com.example.helloworld/WMSScb: GetSceneSessionManagerProxy: init first time, userId=-1
+10-29 15:58:17.780 16078 16078 I C04209/com.example.helloworld/WMSImms: GetAvoidAreaByType: win 602 type not supported
+10-29 15:58:17.780 16078 16078 I C03917/com.example.helloworld/AceSafeArea: [(100000:100000:scope)] InitializeSafeArea systemInsets:SafeAreaInsets left_: [start: 0, end: 0], top_: [start: 0, end: 136], right_: [start: 0, end: 0], bottom_: [start: 0, end: 0], cutoutInsets:SafeAreaInsets left_: [start: 0, end: 0], top_: [start: 38, end: 122], right_: [start: 0, end: 0], bottom_: [start: 0, end: 0], navInsets:SafeAreaInsets left_: [start: 0, end: 0], top_: [start: 0, end: 0], right_: [start: 0, end: 0], bottom_: [start: 2734, end: 2832], floatNavInsets:SafeAreaInsets left_: [start: 0, end: 0], top_: [start: 0, end: 0], right_: [start: 0, end: 0], bottom_: [start: 0, end: 0]
+10-29 15:58:17.781 16078 16078 I C0394E/com.example.helloworld/AceWindow: [(100000:100000:scope)] Initialize displayId: 0, availableRect: [0, 0, 1280, 2832]
+10-29 15:58:17.781 16078 16078 I C02504/com.example.helloworld/thp_extra: GetProcessName[68]name is: com.example.helloworld
+10-29 15:58:17.781 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:100000:singleton)] [com.example.helloworld][entry][100000]: Initialize: pages/GpuResidentM0
+10-29 15:58:17.782 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] RunPage:pages/GpuResidentM0
+10-29 15:58:17.782 16078 16078 W C03900/com.example.helloworld/Ace: [(100000:100000:scope)] GetAsset failed: manifest.json
+10-29 15:58:17.782 16078 16078 I C04200/com.example.helloworld/WMS: InitUIContent: [0, 0]
+10-29 15:58:17.782 16078 16078 I C04208/com.example.helloworld/WMSLayout: SetUIContentInner: single hand, id:602, posX:0, posY:0, scaleX:1.000000, scaleY:1.000000
+10-29 15:58:17.782 16078 16078 I C04219/com.example.helloworld/WMSDecor: UpdateDecorEnable: decorEnable:0, decorVisible:1, isDockAutoHide:0, isDecorHiddenByApp:0, isMaximizeInvoked:0, id:602
+10-29 15:58:17.782 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:100000:singleton)] [com.example.helloworld][entry][100000]: UpdateWindowVisible: 1, hasDecor: 0
+10-29 15:58:17.782 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:100000:singleton)] [com.example.helloworld][entry][100000]: NotifyWindowMode mode = 1
+10-29 15:58:17.783 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:100000:singleton)] [com.example.helloworld][entry][100000]: window foreground
+10-29 15:58:17.783 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Update application state , state: ON_SHOW
+10-29 15:58:17.783 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSUIDirector::GoForeground CurrentState:3, UIContext:69054484185089
+10-29 15:58:17.783 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSSurfaceNode::SetAbilityState, surfaceNodeId:[69054484185089], ability state: foreground
+10-29 15:58:17.785 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] ArkUI requests first Vsync.
+10-29 15:58:17.785 16078 16078 I C04202/com.example.helloworld/WMSMain: RequestVsync: First vsync has requested, nodeId: 69054484185089
+10-29 15:58:17.785 16078 16078 I C03922/com.example.helloworld/AceNavigation: [(100000:100000:scope)] disable forceSplit, mode:0
+10-29 15:58:17.785 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateViewportConfig: Id: 602, reason: 0, viewportRect: [0 0 1280 2832], displayOrientation: 0, config[0, 0, 0, 3.500000], displayId: 0
+10-29 15:58:17.785 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:100000:singleton)] [com.example.helloworld][entry][100000]: window focus
+10-29 15:58:17.785 16078 16078 I C03900/com.example.helloworld/Ace: [(-2:100000:singleton)] [com.example.helloworld][entry][100000]:window active
+10-29 15:58:17.786 16078 16078 I A00000/com.example.helloworld/EntryAbility: Succeeded in loading the content.
+10-29 15:58:17.786 16078 16078 I C04200/com.example.helloworld/JsWindowStage: Window [602, helloworld0] load content end, ret=0
+10-29 15:58:17.786 16078 16078 I C04209/com.example.helloworld/WMSImms: NotifyAvoidAreaChange: win 602 api 26 type 0 area top [0 0 1280 136] 
+10-29 15:58:17.786 16078 16078 I C04209/com.example.helloworld/WMSImms: NotifyAvoidAreaChange: win 602 api 26 type 1 area top [464 38 352 84] 
+10-29 15:58:17.786 16078 16078 I C04209/com.example.helloworld/WMSImms: NotifyAvoidAreaChange: win 602 api 26 type 2 area empty
+10-29 15:58:17.786 16078 16078 I C04209/com.example.helloworld/WMSImms: NotifyAvoidAreaChange: win 602 api 26 type 3 area empty
+10-29 15:58:17.786 16078 16078 I C04209/com.example.helloworld/WMSImms: NotifyAvoidAreaChange: win 602 api 26 type 4 area bottom [416 2734 448 98] 
+10-29 15:58:17.786 16078 16078 I C03922/com.example.helloworld/AceNavigation: [(100000:100000:scope)] disable forceSplit, mode:0
+10-29 15:58:17.786 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateViewportConfig: Id: 602, reason: 23, viewportRect: [0 0 1280 2832], displayOrientation: 0, config[0, 0, 0, 3.500000], displayId: 0
+10-29 15:58:17.786 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Update application state , state: ON_ACTIVE
+10-29 15:58:17.787 16078 16078 I C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] Window: 602 get focus.
+10-29 15:58:17.787 16078 16078 W C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] Current focus view can not found!
+10-29 15:58:17.787 16078 16078 I C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] Request focus on rootFocusHub: root/0
+10-29 15:58:17.787 16078 16078 I C03922/com.example.helloworld/AceNavigation: [(100000:100000:scope)] disable forceSplit, mode:0
+10-29 15:58:17.787 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateViewportConfig: Id: 602, reason: 23, viewportRect: [0 0 1280 2832], displayOrientation: 0, config[0, 0, 0, 3.500000], displayId: 0
+10-29 15:58:17.787 16078 16078 I C03925/com.example.helloworld/AceRouter: [(100000:100000:scope)] Page router manager is creating page[1]: url: pages/GpuResidentM0 path: pages/GpuResidentM0.js, recoverable: yes, namedRouter: no
+10-29 15:58:17.790 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RSSurfaceNode::Create name: grs-m0Surface type: 6, id: 69054484185098
+10-29 15:58:17.792 16078 16078 I C02B3F/com.example.helloworld/VPE: isProductSupport=1, isFeatureSupport=1, isInterfaceEnable=0
+10-29 15:58:17.792 16078 16078 E C02B3F/com.example.helloworld/VPE: Unsupported type: 0x20
+10-29 15:58:17.792 16078 16078 I C02B3F/com.example.helloworld/VPE: IsSupported: name grs-m0Surface not enabled in local map
+10-29 15:58:17.792 16078 16078 I C01406/com.example.helloworld/OHOS::RS: RsDebug RSSurfaceNode::Create id:69054484185098
+10-29 15:58:17.793 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] DisplayManagerOhos created
+10-29 15:58:17.793 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Sensor Correction is not Enabled
+10-29 15:58:17.793 16078 16078 E C03900/com.example.helloworld/Ace: [(100000:100000:scope)] UIContent set compensation angle empty
+10-29 15:58:17.794 16078 16078 W C01E00/com.example.helloworld/ResourceManager: by id=125835722 limitPaths is empty
+10-29 15:58:17.794 16078 16078 E C01E00/com.example.helloworld/ResourceManager: ref <private> id not found
+10-29 15:58:17.794 16078 16078 W C01E00/com.example.helloworld/ResourceManager: by id=125835722 limitPaths is empty
+10-29 15:58:17.794 16078 16078 E C01E00/com.example.helloworld/ResourceManager: ref <private> id not found
+10-29 15:58:17.794 16078 16078 W C03937/com.example.helloworld/AceResource: [(100000:100000:scope)] Get pattern by name error, name=app_theme_pattern, bundleName: com.example.helloworld, moduleName: entry
+10-29 15:58:17.794 16078 16078 W C01E00/com.example.helloworld/ResourceManager: by id=125835722 limitPaths is empty
+10-29 15:58:17.794 16078 16078 E C01E00/com.example.helloworld/ResourceManager: ref <private> id not found
+10-29 15:58:17.794 16078 16078 W C01E00/com.example.helloworld/ResourceManager: by id=125835722 limitPaths is empty
+10-29 15:58:17.794 16078 16078 E C01E00/com.example.helloworld/ResourceManager: ref <private> id not found
+10-29 15:58:17.794 16078 16078 W C03937/com.example.helloworld/AceResource: [(100000:100000:scope)] Get pattern by name error, name=app_theme_pattern
+10-29 15:58:17.795 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(100000:100000:scope)] InitializeAccessibility accessibilityId: 7
+10-29 15:58:17.795 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(100000:100000:scope)] XComponent[grs-m0] AttachToMainTree, leaktype: xcomponent-s-grs-m0
+10-29 15:58:17.795 16078 16078 I C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] view: page/2 show
+10-29 15:58:17.795 16078 16078 I C03922/com.example.helloworld/AceNavigation: [(100000:100000:scope)] can't find inner navigation
+10-29 15:58:17.796 16078 16078 I C03933/com.example.helloworld/AceKeyboard: [(100000:100000:scope)] PageChangeCloseKB
+10-29 15:58:17.796 16078 16078 I C03925/com.example.helloworld/AceRouter: [(100000:100000:scope)] LoadPage Success
+10-29 15:58:17.796 16078 16078 I C0392A/com.example.helloworld/AceUiExtensionComponent: [(-2:100000:singleton)] NotifyWindowMode aliveUIExtensions = 0
+10-29 15:58:17.796 16078 16078 I C0394E/com.example.helloworld/AceWindow: [(100000:100000:scope)] Update displayWindowRect in UpdateViewportConfig to : Rect (0.00, 0.00) - [1280.00 x 2832.00]
+10-29 15:58:17.796 16078 16078 I C03917/com.example.helloworld/AceSafeArea: [(100000:100000:scope)] SetIsFullScreen 1
+10-29 15:58:17.796 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Root node request first frame.
+10-29 15:58:17.796 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Update application state , state: ON_ACTIVE
+10-29 15:58:17.797 16078 16078 I C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] Window: 602 get focus.
+10-29 15:58:17.797 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] Update application state , state: ON_ACTIVE
+10-29 15:58:17.797 16078 16078 I C03922/com.example.helloworld/AceNavigation: [(100000:100000:scope)] disable forceSplit, mode:0
+10-29 15:58:17.797 16078 16078 I C04208/com.example.helloworld/WMSLayout: UpdateViewportConfig: Id: 602, reason: 23, viewportRect: [0 0 1280 2832], displayOrientation: 0, config[0, 0, 0, 3.500000], displayId: 0
+10-29 15:58:17.797 16078 16078 I C04202/com.example.helloworld/WMSMain: VsyncCallbackInner: First vsync has come back, nodeId: 69054484185089
+10-29 15:58:17.799 16078 16078 I C01408/com.example.helloworld/Text: InitTextBundleConfig: Adapter text height enabled 0
+10-29 15:58:17.799 16078 16078 I C01408/com.example.helloworld/Text: InitTextBundleConfig: Disable spacing for control char 0
+10-29 15:58:17.802 16078 16078 W C01409/com.example.helloworld/APS_MANAGER: redo Connect
+10-29 15:58:17.802 16078 16078 I C01409/com.example.helloworld/APS_MANAGER: Start to ConnectService
+10-29 15:58:17.802 16078 16078 I C01409/com.example.helloworld/APS_MANAGER: GetSystemAbilityManager success
+10-29 15:58:17.802 16078 16078 I C01409/com.example.helloworld/APS_MANAGER: GetSystemAbility success
+10-29 15:58:17.802 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(100000:100000:scope)] XComponent[grs-m0] triggers onLoad and OnSurfaceCreated callback
+10-29 15:58:17.802 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(100000:100000:scope)] XComponent[grs-m0] native OnSurfaceCreated
+10-29 15:58:17.802 16078 16078 I C01406/com.example.helloworld/RSNode: RSNode::AddChild, Id: 69054484185097, SurfaceNode:[Id: 69054484185098, name: grs-m0Surface]
+10-29 15:58:17.804 16078 16078 I C03900/com.example.helloworld/Ace: [(100000:100000:scope)] ArkUi flush first frame messages.
+10-29 15:58:17.804 16078 16078 I C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] Request focus on focusView: page/2.
+10-29 15:58:17.804 16078 16078 I C0391C/com.example.helloworld/AceFocus: [(100000:100000:scope)] WinFocusMove end, root/secure_field onBlur, Column/secure_field onFocus, start: 2, end: 1, update: 2
+10-29 15:58:17.804 16078 16078 I C03933/com.example.helloworld/AceKeyboard: [(100000:100000:scope)] focus:Column/5
+10-29 15:58:17.804 16078 16078 I C03933/com.example.helloworld/AceKeyboard: [(100000:100000:scope)] WinFocusCB
+10-29 15:58:17.804 16078 16078 I C03933/com.example.helloworld/AceKeyboard: [(100000:100000:scope)] window switch needKB=0
+10-29 15:58:17.804 16078 16078 I C0420B/com.example.helloworld/WMSKeyboard: id: 602, isNeedKeyboard: 0, keepKeyboardFlag: 0
+10-29 15:58:17.805 16078 16078 I C0420B/com.example.helloworld/WMSKeyboard: RequestInputMethodCloseKeyboard: Notify InputMethod framework close keyboard start. id: 602, isUIEProc: 0, hostWindowId: 602
+10-29 15:58:17.807 16078 16078 I C0390D/com.example.helloworld/AceOverlay: [(100000:100000:scope)] hide all menus enter
+10-29 15:58:17.807 16078 16078 I C03903/com.example.helloworld/AceSubWindow: [(100000:100000:scope)] hide menu ng exit, window not exist
+10-29 15:58:17.807 16078 16078 I C04216/com.example.helloworld/WMSPattern: FlushLayoutSize: NotifyFrameLayoutFinishFromApp, id: 602, rect: [0 0 1280 2832], notifyListener: 0
+10-29 15:58:17.903 16078 16078 W C03913/com.example.helloworld/AceText: [(100000:100000:scope)] destroy TxtParagraph with placeholderCnt_ 0, textAlign_ 0, count 0
+10-29 15:58:18.653 16078 16078 I C01356/com.example.helloworld/Recovery: [app_recovery.cpp497]fileDir: /data/storage/el2/base/files
+10-29 15:58:21.178 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 15:58:21.178 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 15:58:21.832 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 15:58:22.790 16078 16078 W C03F00/com.example.helloworld/ArkCompiler: [ecmascript] Serialize: ConstPool Snapshot is not enabled
+10-29 15:58:22.819  1417 15322 I C02D66/hiview/XPerf: appStartMonitor: AppStartMetrics bundle:com.example.helloworld pid:16078 e2e:612
+10-29 15:58:22.819  1417 15322 I C02D66/hiview/XPerf: appStartMonitor: AppStartMetrics bundle:com.example.helloworld pid:16078 e2e:612
+10-29 15:58:22.829  1417 15322 I C02D66/hiview/XPerf: [FaultHandlerBase::CollectByTypes] pid:16078 id:70050
+10-29 15:58:38.451 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 15:58:38.451 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 15:58:39.117 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 15:58:43.857 16078 16078 I C01406/com.example.helloworld/RSNode: RSNode::AddChild, Id: 69054484185097, SurfaceNode:[Id: 69054484185098, name: grs-m0Surface]
+10-29 15:58:43.954 16078 16078 I C01406/com.example.helloworld/RSNode: RSNode::AddChild, Id: 69054484185097, SurfaceNode:[Id: 69054484185098, name: grs-m0Surface]
+10-29 15:58:56.260 16078 16078 I C02805/com.example.helloworld/InputKeyFlow: [P:D:666901|252]ac: down: 666901
+10-29 15:58:56.261 16078 16078 I C02805/com.example.helloworld/InputKeyFlow: [P:D:666901|731]recv
+10-29 15:58:56.261 16078 16078 I C04213/com.example.helloworld/InputKeyFlow: HandleInputEvent: eid:0,InputId:666901,wid:602,ac:2
+10-29 15:58:56.264 16078 16078 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:666901, fId:10000, T:0, I=0, M=0
+10-29 15:58:56.267 16078 16078 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:666901, TTHNI:fId: 10000{ T: Button, D: 6 };
+10-29 15:58:56.268 16078 16078 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:666901, TTHRTI: T ClickRecognizer info: { T: Button };
+10-29 15:58:56.269 16078 16078 I C03945/com.example.helloworld/AceStateStyle: [(100000:100000:scope)] Handle TouchDown event node: Button
+10-29 15:58:56.271   607 26265 E C02C03/PARAM_WATCHER: [watcher_manager.cpp:192]app not have permission watch param:persist.rosen.animationtrace.enabled uid:20020238 pid:16078
+10-29 15:58:56.271 16078 16078 E C02C03/com.example.helloworld/PARAM_WATCHER: [nodict]Read result failed, code is: 1.
+10-29 15:58:56.271 16078 16078 E C02C03/PARAM_WATCHER: Failed to add watcher for persist.rosen.animationtrace.enabled
+10-29 15:58:56.271 16078 16078 E C02C03/PARAM_WATCHER: SystemWatchParameter is failed!keyPrefix is:persist.rosen.animationtrace.enabled,errNum is:-1
+10-29 15:58:56.271 16078 16078 E C02C0B/BEGET: [service_watcher.c:85]WatchParameter failed! the errNum is -1
+10-29 15:58:56.272 16078 16078 I C02C03/PARAM_WATCHER: Add watcher keyPrefix sys.graphic.openTestModeTrace remoteWatcherId 22291 success
+10-29 15:58:56.365 16078 16078 I C02805/com.example.helloworld/InputKeyFlow: [P:U:666902|252]ac: up: 666902
+10-29 15:58:56.365 16078 16078 I C02805/com.example.helloworld/InputKeyFlow: [P:U:666902|731]recv
+10-29 15:58:56.365 16078 16078 I C04213/com.example.helloworld/InputKeyFlow: HandleInputEvent: eid:1,InputId:666902,wid:602,ac:4
+10-29 15:58:56.367 16078 16078 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:666902, fId:10000, T:1, I=0, M=0
+10-29 15:58:56.367 16078 16078 I C03945/com.example.helloworld/AceStateStyle: [(100000:100000:scope)] Handle TouchUp or Cancel event node: Button
+10-29 15:58:56.369 16078 16078 I C0391E/com.example.helloworld/AceGesture: [(100000:100000:scope)] Click try accept Button
+10-29 15:58:56.369 16078 16078 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] CLK RACC, T: Button
+10-29 15:58:58.966 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 15:58:58.966 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 15:58:59.613 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 15:59:02.367 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 15:59:02.368 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 15:59:03.011 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 15:59:05.760 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 15:59:05.760 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 15:59:06.450 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 15:59:09.683 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 15:59:09.683 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 15:59:10.362 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 16:01:59.536 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:431)]Register windowId[602] start
+10-29 16:01:59.536 16078 16078 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+10-29 16:02:00.273 16078 16078 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:512)]Deregister windowId[602] start
+10-29 16:02:44.944  1417 22517 I P02D15/hiview/XPower: [task_71]#check appInfo name:com.example.helloworld, cpuTime = 299638, pid:16078, quotaName : com.example.helloworld

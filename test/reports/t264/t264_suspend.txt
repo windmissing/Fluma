@@ -1,0 +1,8 @@
+10-29 15:58:17.605   999 15784 I C01731/resource_schedule_service/SUSPEND_MSG: [a92ab1fc9983abf 31cc1b6 446e1b]20020238_com.example.helloworld_16078 create, type:0_255_0, host:0
+10-29 15:58:17.607   999  1190 I C01713/resource_schedule_service/SUSPEND_MANAGER: [a92ab1fc9983abf 1ce1397 31cc1b6]add freeze unit: 20020238_com.example.helloworld, C_[(0,0,0,0,0,0,1,0,1)], T_0, R_0_0, S_0, pT_0, eT_[255], cC_0, [16078_0_0][]
+10-29 15:58:17.607   999  1190 I C01731/resource_schedule_service/SUSPEND_MSG: [a92ab1fc9983abf 1ce1397 31cc1b6]SetLifecycleDetectStatusAfterCreate pid:16078, detectStatus:1, timeoutDuration:16000
+10-29 15:58:17.607   999 15600 I C01731/resource_schedule_service/SUSPEND_MSG: [a92ab1fc9983abf e9d4a1 3154b2d]OnAbilityStateCreate uid:20020238 pid:16078, 35928_EntryAbility_1_255
+10-29 15:58:17.681   999 15776 I C01731/resource_schedule_service/SUSPEND_MSG: [a92abafc99a6449 0 0]20020238_com.example.helloworld_16078, state:2
+10-29 15:58:17.713   999 15772 I C01731/resource_schedule_service/SUSPEND_MSG: [a92ab4fc99ae181 0 0]20020238_com.example.helloworld_16078 windowNum:0->1 id:602; callingPid:-1
+10-29 15:58:17.725   999 15600 I C01731/resource_schedule_service/SUSPEND_MSG: [a92abafc99b1023 0 0]20020238_com.example.helloworld_16078, state:2
+10-29 15:58:20.731   999  1190 I C01713/resource_schedule_service/SUSPEND_MANAGER: [a92abcfc99b2338 0 0]Doze has special:ERR_IN_STATE_FOREGROUND, 20020238_com.example.helloworld_[16078][], DOZE_BY_STOP_LIFECYCLE_DETECT_FOR_APP_FOREGROUND
