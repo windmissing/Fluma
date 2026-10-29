@@ -1,0 +1,139 @@
+{
+  "revision": "CW_C_DIAG_V1",
+  "diagnosticDefault": false,
+  "sourceSha": "1c50a99fcfc536ec47dd2591194070e4d6d0aebe31b972b61012da90ff47bfe6",
+  "nativeSha": "4f881e309faa74ed4ff044bc38beee42906ddaa4b4cd5cfc877d42389e057d01",
+  "edits": [
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "import { P011ClearWaterEngine,",
+      "to": "import { ClearWaterDiagnostic } from './diagnostics/ClearWaterDiagnostic';\nimport { P011ClearWaterEngine,",
+      "sha": "e532efd7b82bf07945d5cc6c959c056eb99683a78aca5f1bfc01c3cf824d7827"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "export class ClearWaterSourceController {",
+      "to": "export class ClearWaterSourceController {\n diagnostic:ClearWaterDiagnostic|null=null;\n queryOld(request:ClearWaterSourceRequest,out:ClearWaterReceiptRead):CQ {const q=this.engine.copySourceReceiptInto(request,out);this.diagnostic?.event(10,this.engine,request,q===CQ.TERMINAL?out.receipt:null,q,1,'OLD_KEY_READ_ONLY');return q;}",
+      "sha": "f59df44630e61fc33ce31bf0b18f5986040b1a6b3b3ce322922ba3950f814219"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "stop(reason:string,geometry:number=this.engine.geometryEpoch):S {",
+      "to": "stop(reason:string,geometry:number=this.engine.geometryEpoch):S {this.diagnostic?.event(2,this.engine,null,null,this.kind,geometry,reason);",
+      "sha": "b204f1872cebce0a60c20aefe52fc102ddbfcfed7c6f7181cdba96997c949c11"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "this.stop('KIND_SWITCH');this.kind=kind;",
+      "to": "this.diagnostic?.event(1,this.engine,null,null,this.kind,kind,'SELECT');this.stop('KIND_SWITCH');if(this.diagnostic!==null&&this.seq>0)this.queryOld(this.request,this.terminal);this.kind=kind;",
+      "sha": "45a8b5d84ce6ca20c312968647f2638172f919fbc727cbe6ba4c90bba4f3258c"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "this.gesture++;this.seq=0;return true;",
+      "to": "this.gesture++;this.seq=0;this.diagnostic?.event(3,this.engine,null,null,this.gesture,pointer,'DOWN');return true;",
+      "sha": "e8b708f7a2a056b9ff6c96d884cc991826c0ec1d943d14375e18b5b3eec4e985"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "  const result=e.enqueueSourceInto(r,this.ack);if(result!==S.OK)return result;",
+      "to": "  this.diagnostic?.event(5,e,r,null,c.previous,c.current,'CLOCK_WINDOW');const result=e.enqueueSourceInto(r,this.ack);this.diagnostic?.event(6,e,r,this.ack,result,0,'ENQUEUE');if(result!==S.OK)return result;",
+      "sha": "0ba9e345236bed887d4f1708e193b5353cc40e9e27b982fdbfb21f0bc571fa43"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "  if(e.copySourceReceiptInto(r,this.terminal)===CQ.TERMINAL){",
+      "to": "  this.diagnostic?.event(7,e,r,null,this.batch.processed,0,'BATCH');const query=e.copySourceReceiptInto(r,this.terminal);this.diagnostic?.event(8,e,r,query===CQ.TERMINAL?this.terminal.receipt:null,query,0,'TERMINAL_QUERY');if(query===CQ.TERMINAL){",
+      "sha": "68ad6a787c68e9e3edb4f12a90eab23b0c7f614c4e447e84c292ae9c7cdf636e"
+    },
+    {
+      "rel": "physics/clearwater/P011ClearWaterSourceController.ets",
+      "from": "const valid=this.clock.tick(raw,unit,domain);",
+      "to": "const valid=this.clock.tick(raw,unit,domain);this.diagnostic?.clockEvent(this.engine,raw,this.clock.seconds,this.clock.windowId,unit,domain,this.clock.reason,valid);",
+      "sha": "aea70bccd05e159793eb0efa7fc444cab823bfc4f8a1fa4f3496375ae103c14e"
+    },
+    {
+      "rel": "render/P013ClearWaterController.ets",
+      "from": "import p013renderer from",
+      "to": "import { ClearWaterDiagnostic } from '../physics/clearwater/diagnostics/ClearWaterDiagnostic';\nimport { p013NowMs } from './P013RenderController';\nimport p013renderer from",
+      "sha": "11ea5744dcc512474e0a130cfc370df7ab75219eb4c8c8d4efa5fb860733154c"
+    },
+    {
+      "rel": "render/P013ClearWaterController.ets",
+      "from": "export class P013ClearWaterController {",
+      "to": "export class P013ClearWaterController {\n diagnostic:ClearWaterDiagnostic|null=null;\n configureDiagnostic(capacity:number,firstFrame:number):void {const d=new ClearWaterDiagnostic(capacity);d.firstFrame=firstFrame;this.diagnostic=d;this.source.diagnostic=d;}\n exportDiagnosticCold(packageSha:string):string {return this.diagnostic===null?'DISABLED':this.diagnostic.exportCold(packageSha,p013renderer.cwDiagExport());}",
+      "sha": "4a145c64b31c6a5a9c7f541cedde83152ab558a997ecfe597522acb8c5d4f383"
+    },
+    {
+      "rel": "render/P013ClearWaterController.ets",
+      "from": "this.lastReceipt=r;this.counters[7]++;",
+      "to": "this.lastReceipt=r;if(this.diagnostic!==null){const begin=p013NowMs();const before=this.diagnostic.frames;this.diagnostic.capture(f,slot,r);if(this.diagnostic.frames>before)this.diagnostic.frameData[(this.diagnostic.frames-1)*16+14]=p013NowMs()-begin;}this.counters[7]++;",
+      "sha": "021e08e790189902468c61e6bbc0ab010b76712a7ddba96e117f73b69de29bf1"
+    },
+    {
+      "rel": "pages/ClearWaterDemo.ets",
+      "from": "aboutToAppear():void {this.callback.owner=this;}",
+      "to": "aboutToAppear():void {this.callback.owner=this;if(AppStorage.get<boolean>('cwdiag')===true)this.model.configureDiagnostic(256,AppStorage.get<number>('cwdiagFrame')??1);}",
+      "sha": "1dfafb9f503ba73380b6dc33dd8e1f580f1cd3615e9f641f4acad089994f2fd6"
+    },
+    {
+      "rel": "pages/ClearWaterDemo.ets",
+      "from": "this.model.onLoad()).hitTestBehavior",
+      "to": "{this.model.onLoad();if(AppStorage.get<boolean>('cwdiag')===true)cwNative.cwDiagArm(AppStorage.get<number>('cwdiagFrame')??1,3,AppStorage.get<number>('cwdiagX')??64,AppStorage.get<number>('cwdiagY')??64,4,4);}).hitTestBehavior",
+      "sha": "439e6efbbcfb184f7d30de9d26224c670ff0f9ce513c1572c1d022da88d68659"
+    },
+    {
+      "rel": "pages/ClearWaterDemo.ets",
+      "from": "import sensor from",
+      "to": "import cwNative from 'libp013renderer.so';\nimport sensor from",
+      "sha": "a4997c8b12285fa2a32a91456d9a19050694537e06261a8b572f91b7bc41ce32"
+    },
+    {
+      "rel": "pages/ClearWaterDemo.ets",
+      "from": "    Button('重置').onClick(()=>this.model.reset())",
+      "to": "    Button('重置').onClick(()=>this.model.reset())\n    Button('导出诊断').onClick(()=>{const sha=AppStorage.get<string>('cwdiagSha')??'';try{const raw=this.model.exportDiagnosticCold(sha);let part=0;for(let i=0;i<raw.length;i+=1500)console.info('CW_C_DIAG_EXPORT '+part+++' '+raw.slice(i,i+1500));console.info('CW_C_DIAG_EXPORT_END '+raw.length);}catch(e){this.status='DIAG_EXPORT_REQUIRES_PACKAGE_SHA';}})",
+      "sha": "5ebdbf2f00bd6575e5bb2f37fc5cfe658e17d6954925b9b3cff9d0a3b39a26e1"
+    },
+    {
+      "rel": "cpp/clear_water_gpu.cpp",
+      "from": "#include \"clear_water_gpu.h\"",
+      "to": "#include \"clear_water_gpu.h\"\n#include \"cw_diag.h\"",
+      "sha": "dfa4a52f5a47aeaba3e2ede04340bd5d7628040eec866d0204a1bc98a362a86b"
+    },
+    {
+      "rel": "cpp/clear_water_gpu.h",
+      "from": " private:EglContext& egl;",
+      "to": " private:Status LayerBody(int,const ClearWaterPacket&);EglContext& egl;",
+      "sha": "d337f17e107767485748a1f5dca914e5fd5e6b030d1f0ed1c6da1967cea2edfb"
+    },
+    {
+      "rel": "cpp/clear_water_gpu.cpp",
+      "from": "Status ClearWaterGlGpu::Layer(int layer,const ClearWaterPacket& p){",
+      "to": "Status ClearWaterGlGpu::Layer(int layer,const ClearWaterPacket& p){auto code=LayerBody(layer,p);if(code==Status::OK)cwdiag::sample(layer,p,targets.fbos[targets.candidate]);return code;}\nStatus ClearWaterGlGpu::LayerBody(int layer,const ClearWaterPacket& p){",
+      "sha": "d4cc5e7745bd800857c5e2eb5b8ac60eab1450cbe2e8339c009b475c20adcadf"
+    },
+    {
+      "rel": "cpp/napi_bridge.cpp",
+      "from": "#include \"napi_bridge.h\"",
+      "to": "#include \"napi_bridge.h\"\n#include \"cw_diag.h\"",
+      "sha": "a0d5d85da0742f23efe156a198efe97f2f0bf4d11c7fd782b2965c919a7b359a"
+    },
+    {
+      "rel": "cpp/napi_bridge.cpp",
+      "from": "  napi_property_descriptor d[] = {",
+      "to": "  napi_property_descriptor d[] = {\n {\"cwDiagExport\",nullptr,[](napi_env e,napi_callback_info)->napi_value{auto s=cwdiag::exportCold();napi_value v;napi_create_string_utf8(e,s.c_str(),s.size(),&v);return v;},nullptr,nullptr,nullptr,napi_default,nullptr},\n {\"cwDiagArm\",nullptr,[](napi_env e,napi_callback_info i)->napi_value{size_t n=6;napi_value a[6];double v[6]{};napi_get_cb_info(e,i,&n,a,nullptr,nullptr);bool ok=n==6;for(size_t j=0;j<n&&j<6;j++)ok=ok&&napi_get_value_double(e,a[j],&v[j])==napi_ok&&std::isfinite(v[j])&&std::floor(v[j])==v[j]&&v[j]>=0&&v[j]<=2147483647;ok=ok&&cwdiag::arm(uint64_t(v[0]),int(v[1]),int(v[2]),int(v[3]),int(v[4]),int(v[5]));napi_value r;napi_get_boolean(e,ok,&r);return r;},nullptr,nullptr,nullptr,napi_default,nullptr},",
+      "sha": "2ecb29bd12fbc7b8b83899aa6a8e3a0d610cb8c9b2e6032e8292dcf6c6ca5502"
+    }
+  ],
+  "productionTouched": false,
+  "rows": 256,
+  "framesMax": 3,
+  "roiMax": [
+    16,
+    16
+  ],
+  "pending": [
+    "device same-token ROI execution",
+    "screen capture and visible-water judgement"
+  ]
+}
