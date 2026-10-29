@@ -1,0 +1,774 @@
+{
+  "revision": "T250_CUT_SITES_V2",
+  "owner": "T278_AFTER_ONLY",
+  "legacyV1Sha256": "5dc0d6ab8391ba475204c57dd60ba6d15fd5cdd6340e0d7faf27f6adc06d2b2d",
+  "historicalBeforeUnchanged": true,
+  "cuts": [
+    {
+      "cutId": 1,
+      "name": "SOURCE_IDENTITY",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 1803,
+          "context": " {if(this.txD1!==null&&this.txD1.trace.depth===0)this.txD1.beginRoot();this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(1);let txCode=0;try{\n    // 0. Precheck: finite/non-negative/length; all-zero -> null."
+        }
+      ],
+      "BEFORE": "IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": null,
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "injectGestureSand",
+      "consumerPredicate": "if (!anyWet)",
+      "consumerBinding": {
+        "line": 1849,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "root1 legal positive request; candidate requested-column water equal sand+susp+particle; undo in finally",
+      "expectedOriginalReturn": "receipt NO_WATER, admitted=0, txCode=0",
+      "firstCodeOwner": "source route receipt, no new business code",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "1"
+    },
+    {
+      "cutId": 2,
+      "name": "SOURCE_CAPACITY_ETA",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 1860,
+          "context": "ding!==null&&this.particleBinding.work.diagnosticEnabled){\n      this.poolDiagnosticOrigin='GESTURE_SPAWN';this.poolDiagnosticParentSequence=request.sequence;\n    }\n    this.txD1?.trace.cut(2);\n    for (let attempt = 0; attempt < 8; attempt++) {this.txD1?.trace.add(40);if(this.tx"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "injectGestureSand",
+      "consumerPredicate": "this.gestureReceipt(request, 0, 0, 'CAPACITY_BLOCKED')",
+      "consumerBinding": {
+        "line": 1975,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "root1 legal finite offeredH=1e9 in cold clone; unchanged lambda/global capacity/eta solve",
+      "expectedOriginalReturn": "receipt CAPACITY_BLOCKED, admitted=0, txCode=0",
+      "firstCodeOwner": "source lambda/eta/audit receipt, no new business code",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "2"
+    },
+    {
+      "cutId": 3,
+      "name": "BEGIN_HOT",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 505,
+          "context": "k: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(3);let txCode=0;try{\n  work.beginFailurePredicate='';work.beginFailureIndex=-1;\n  if ("
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "consumerFunction": "beginStepHotBody",
+      "consumerPredicate": "txTrace.enter(3)",
+      "consumerBinding": {
+        "line": 505,
+        "sourceSha256": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7"
+      },
+      "fixtureInput": "successful begin: active/epoch/backup/pool raw snapshot",
+      "expectedOriginalReturn": "0",
+      "firstCodeOwner": "begin; AFTER OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 4,
+      "name": "COLLECT_HEADER",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+          "line": 135,
+          "context": "entity header.\n  private collectBirthHeaders(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(4);let txCode=0;try{\n    const w = this.work;\n    const status = collectParticlePlanIn"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "consumerFunction": "collectParticlePlanIntoBody",
+      "consumerPredicate": "if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch)",
+      "consumerBinding": {
+        "line": 582,
+        "sourceSha256": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7"
+      },
+      "fixtureInput": "root2 work.active=0 only before original collect; finally restore=1",
+      "expectedOriginalReturn": "P011_HOT_STALE_HANDLE=4; wrapper335 propagates",
+      "firstCodeOwner": "collect predicate scope315, propagated335; successful header not re-coded",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "4"
+    },
+    {
+      "cutId": 5,
+      "name": "COLLECT_AB",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+          "line": 270,
+          "context": ", sourceEpoch: number): number {this.work.txD1?.role(2);this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(5);let txCode=0;try{\n    this.collectEntry(dt,tiltRad,substepId,seed);\n    if (this.st"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+      "consumerFunction": "beginCollectBody",
+      "consumerPredicate": "txTrace.enter(5)",
+      "consumerBinding": {
+        "line": 270,
+        "sourceSha256": "b1df13ead13960108da26de726f8675bfe8a4d520e33304a7044926beee939c0"
+      },
+      "fixtureInput": "original A/B return after collect, read-only twice",
+      "expectedOriginalReturn": "0 / original nonzero",
+      "firstCodeOwner": "actual A/B collect; AFTER OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 6,
+      "name": "REQUEST_VALIDATE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 910,
+          "context": "ticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(6);let txCode=0;try{\n  if (work.active !== 1 || p.ownerId !== work.ownerId || p.stepEp"
+        }
+      ],
+      "BEFORE": "IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": null,
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "consumerFunction": "applyInto",
+      "consumerPredicate": "if (target < 0 || target >= work.cols)",
+      "consumerBinding": {
+        "line": 184,
+        "sourceSha256": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092"
+      },
+      "fixtureInput": "root2 validated request p.column=cols before target consumer; finally restore column",
+      "expectedOriginalReturn": "2",
+      "firstCodeOwner": "sink target check scope7; request validator success unchanged",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "6"
+    },
+    {
+      "cutId": 7,
+      "name": "SINK_RESERVE_GUARD",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+          "line": 174,
+          "context": "ltBuffer): number {if(work.txD1!==null)work.txD1.trace.context[15]=row;work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(7);let txCode=0;try{\n    if (work !== this.work || expectedStepEpoch !== work.stepEpoc"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "consumerFunction": "applyInto",
+      "consumerPredicate": "if (work.events.count + eventCount > work.events.capacity)",
+      "consumerBinding": {
+        "line": 244,
+        "sourceSha256": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092"
+      },
+      "fixtureInput": "root2 after successful prepare: events.count=capacity; finally undo; same consumer as cut8",
+      "expectedOriginalReturn": "failHot(9)",
+      "firstCodeOwner": "event capacity in sink scope7, not preceding reserve/guard",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "EVENT_CAPACITY_9"
+    },
+    {
+      "cutId": 8,
+      "name": "PATCH_PREPARE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1071,
+          "context": "Heavy: number, grantedLight: number, dispositionCode: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(8);let txCode=0;try{\n  if (work.activePatchToken !== 0) { work.lastStatus = P011_HOT_P"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "consumerFunction": "applyInto",
+      "consumerPredicate": "if (work.events.count + eventCount > work.events.capacity)",
+      "consumerBinding": {
+        "line": 244,
+        "sourceSha256": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092"
+      },
+      "fixtureInput": "root2 successful prepare token then events.count=capacity; finally undo",
+      "expectedOriginalReturn": "failHot(9)",
+      "firstCodeOwner": "same event-capacity consumer as cut7; deduplicate EVENT_CAPACITY_9",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "EVENT_CAPACITY_9"
+    },
+    {
+      "cutId": 9,
+      "name": "FIND",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 961,
+          "context": "tHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(9);let txCode=0;try{\n  if (work.diagnosticEnabled) work.mergeCalls++;\n  // The index o"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011MergeExactIndex.ets",
+      "consumerFunction": "find",
+      "consumerPredicate": "find(p: P011ParticleSnapshot,radius: number)",
+      "consumerBinding": {
+        "line": 119,
+        "sourceSha256": "a87867eb40f45b6aa91e894e5fadb3660d65d665cd47e797015a267d5b0100df"
+      },
+      "fixtureInput": "original found / noPair / invalidInput cold snapshots; input bytes unchanged; root2 found uses original LEGACY_SCAN fixture adapter",
+      "expectedOriginalReturn": "true / false+invalid=false / false+invalid=true",
+      "firstCodeOwner": "find outcome only; noPair is not an invented business error",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 10,
+      "name": "PATCH_PUBLISH",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1110,
+          "context": "ublishPatchHot(work: P011ParticleHotWorkspace, token: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(10);let txCode=0;try{\n  const valid = patchLeaseHot(work, token, 1); if (valid !== 0) "
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NEXT_EXERCISED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NEXT",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "consumerFunction": "applyInto",
+      "consumerPredicate": "if (this.failAfterPublish !== 0)",
+      "consumerBinding": {
+        "line": 255,
+        "sourceSha256": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092"
+      },
+      "fixtureInput": "root2 existing failAfterPublish=1 after real publish and SINK_ROW audit; finally restore",
+      "expectedOriginalReturn": "failHot(13)",
+      "firstCodeOwner": "existing sink failAfterPublish branch scope7; publish remains successful",
+      "rollbackBoundary": "original candidate rollback only; successful root1 prefix retained",
+      "reason": "real next consumer; original return and cold rollback/withdrawal evidence",
+      "faultInjectionPassEligible": true,
+      "uniqueConsumer": "10"
+    },
+    {
+      "cutId": 11,
+      "name": "AUDIT_SINK",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+          "line": 254,
+          "context": "auditParticleHot(work,'SINK_ROW')",
+          "bindingRevision": "T278_EXACT_CALLSITE_V2",
+          "dynamicAuditScope": 11
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "no direct enter/cut match; requires binding-specific original checkpoint mapping",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "consumerFunction": "applyInto",
+      "consumerPredicate": "auditParticleHot(work,'SINK_ROW')",
+      "consumerBinding": {
+        "line": 254,
+        "sourceSha256": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092"
+      },
+      "fixtureInput": "exact SINK_ROW audit return before failAfterPublish; original dynamic scope11",
+      "expectedOriginalReturn": "0 / original audit code",
+      "firstCodeOwner": "audit scope11; after successful audit OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null,
+      "bindingReason": "V1 regex missed dynamic source===APPLY_TAIL?14:source===FINISH?15:11; exact original call now bound; no new checkpoint"
+    },
+    {
+      "cutId": 12,
+      "name": "TICKET_CLOSE_EVENTS",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+          "line": 256,
+          "context": "udit !== 0) {const txRc:number=this.failHot(audit);txCode=txRc;return txRc;}\n    if (this.failAfterPublish !== 0) {const txRc:number=this.failHot(13);txCode=txRc;return txRc;}\n    txTrace?.cut(12);\n    if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, gra"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+      "consumerFunction": "applyInto",
+      "consumerPredicate": "this.budget.closeInto(ticketToken, granted, this.refund)",
+      "consumerBinding": {
+        "line": 257,
+        "sourceSha256": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092"
+      },
+      "fixtureInput": "positive real ticket in cold SHAKE1/TILT20 fixture; read after successful close, before event seal",
+      "expectedOriginalReturn": "0",
+      "firstCodeOwner": "original close; no mutation of successful close",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 13,
+      "name": "MOTION_APPLY",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1202,
+          "context": "1ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(13);let txCode=0;try{\n  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch)"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "consumerFunction": "applyParticlePlanIntoBody",
+      "consumerPredicate": "txTrace.enter(13)",
+      "consumerBinding": {
+        "line": 1202,
+        "sourceSha256": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7"
+      },
+      "fixtureInput": "original motion/apply output and snapshot after return",
+      "expectedOriginalReturn": "original status",
+      "firstCodeOwner": "motion/apply; OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 14,
+      "name": "AUDIT_TAIL",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1249,
+          "context": "auditParticleHot(work, 'APPLY_TAIL')",
+          "bindingRevision": "T278_EXACT_CALLSITE_V2",
+          "dynamicAuditScope": 14
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "no direct enter/cut match; requires binding-specific original checkpoint mapping",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "consumerFunction": "applyParticlePlanIntoBody",
+      "consumerPredicate": "auditParticleHot(work, 'APPLY_TAIL')",
+      "consumerBinding": {
+        "line": 1249,
+        "sourceSha256": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7"
+      },
+      "fixtureInput": "exact APPLY_TAIL original audit return, dynamic scope14",
+      "expectedOriginalReturn": "0 / original audit code",
+      "firstCodeOwner": "audit scope14; successful return OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null,
+      "bindingReason": "V1 regex missed dynamic source===APPLY_TAIL?14:source===FINISH?15:11; exact original call now bound; no new checkpoint"
+    },
+    {
+      "cutId": 15,
+      "name": "AUDIT_FINISH",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 611,
+          "context": "dy(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(15);let txCode=0;try{\n  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch)"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "consumerFunction": "finishStepHot",
+      "consumerPredicate": "export function finishStepHot(",
+      "consumerBinding": {
+        "line": 1269,
+        "sourceSha256": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7"
+      },
+      "fixtureInput": "read only after wrapper336 returns; not inner FINISH audit marker15",
+      "expectedOriginalReturn": "original finish status",
+      "firstCodeOwner": "finish336; OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 16,
+      "name": "PREVIEW_RESTORE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 5302,
+          "context": "eviewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(16);let txCode=0;try{\n    const substepDt = this.lastPlanningSubstepDt;\n    const prob"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "previewChannelPlansAt",
+      "consumerPredicate": "private previewChannelPlansAt(",
+      "consumerBinding": {
+        "line": 5302,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "original preview/restore result and authority raw bytes",
+      "expectedOriginalReturn": "plan / null, original return retained",
+      "firstCodeOwner": "parent planner; OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 17,
+      "name": "AUTHORITATIVE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 2331,
+          "context": "tTrace(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(17);let txCode=0;try{\n    const start = Date.now();\n    const result: WaterSandStepRes"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "stepWithTiltTrace",
+      "consumerPredicate": "stepWithTiltTrace(",
+      "consumerBinding": {
+        "line": 2320,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "original root substep prefix and tail receipt; no post-return corruption",
+      "expectedOriginalReturn": "original step receipt",
+      "firstCodeOwner": "actual root/substep; OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 18,
+      "name": "FIELD_AUDIT",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 7327,
+          "context": ");}}\n\n  private audit(checkDrift: boolean): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(18);let txCode=0;try{txTrace?.add(23);txTrace?.add(24);\n    for (let c = 0; c < this.c"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_OBSERVED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "OBS",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "audit",
+      "consumerPredicate": "private audit(checkDrift: boolean)",
+      "consumerBinding": {
+        "line": 7327,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "audit successful original return with immutable raw inventory/capacity/conservation",
+      "expectedOriginalReturn": "null / original WaterSandErrorCode",
+      "firstCodeOwner": "audit scope18; OBS only",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "successful original return; immutable AFTER observation",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 19,
+      "name": "SOURCE_PUBLISH",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 1953,
+          "context": "row new Error((error as Error).message);\n        }\n        this.sourceInjectedHeavy += totalH;\n        this.sourceInjectedLight += totalL;\n        this.sourceEpoch += 1;this.txD1?.trace.cut(19);\n        if (totalH + totalL > 0) this.publishRenderState('EXTERNAL_ADMISSION');\n     "
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NA",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NA",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "injectGestureSand",
+      "consumerPredicate": "this.sourceEpoch += 1",
+      "consumerBinding": {
+        "line": 1953,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "already successful source authority and receipt; no AFTER mutation",
+      "expectedOriginalReturn": "original accepted source receipt",
+      "firstCodeOwner": "NONE: authority already committed",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "authority committed / terminal; no same-root next rejecting consumer",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    },
+    {
+      "cutId": 20,
+      "name": "OBSERVE_SEAL",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 4037,
+          "context": " finishNaturalObservation(errorCode: WaterSandErrorCode | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(20);let txCode=0;try{\n    const probe = this.naturalObservationProbe;\n    const before"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "AFTER_NA",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only.",
+      "beforeStateIsHistorical": true,
+      "afterDisposition": "NA",
+      "consumerFile": "entry/src/main/ets/physics/WaterSandField.ets",
+      "consumerFunction": "finishNaturalObservation",
+      "consumerPredicate": "private finishNaturalObservation(",
+      "consumerBinding": {
+        "line": 4037,
+        "sourceSha256": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95"
+      },
+      "fixtureInput": "terminal observation record/error/missing status",
+      "expectedOriginalReturn": "original observation record",
+      "firstCodeOwner": "NONE: terminal boundary",
+      "rollbackBoundary": "read-only, no failure or rollback fabricated",
+      "reason": "authority committed / terminal; no same-root next rejecting consumer",
+      "faultInjectionPassEligible": false,
+      "uniqueConsumer": null
+    }
+  ],
+  "nextDescriptors": 7,
+  "uniqueFaultConsumersPerArm": 6,
+  "obsDescriptors": 11,
+  "naDescriptors": 2,
+  "faultPassDenominatorExcludes": [
+    "OBS",
+    "NA",
+    "duplicate predecessor7/8 of same capacity consumer",
+    "all T250 BEFORE"
+  ],
+  "allRawWitnessArchives": [
+    {
+      "kind": "OBS",
+      "cutId": null,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "obs-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "f45178e622bb4110ea57c8764357a99246782644dbeed84c0f44fe19df909421",
+      "uncompressedSha256": "54e497bb895c2a7aa80af245a2e478a0d02151fecca6cc65e25329ad83a2b774"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 1,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-1-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "a81f9f253ce47cb9925989156b66c343146aa2330e2c19577ac364da73bc0e6e",
+      "uncompressedSha256": "01bfe5a3b4cc84c256632ff5c0d4feba6d881a4bfcde9c404891b186714865d8"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 2,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-2-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "b5027eec5eda3c433741c392c16b0a571f61b6c0f83b975000ff4f55efdcd520",
+      "uncompressedSha256": "04c7c76827f592d38871d910250ff22d6fb66014af9fb8a8b757cda42b1ad3cd"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 4,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-4-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "b87e3b73f528a1e0a432ef3b08ab96dcd1ff7da30c41c9be7b79ebd5fd14458c",
+      "uncompressedSha256": "f21232578b2888e47794a6a5611b6eee1b38156d553bc528bf81c24dc8922026"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 6,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-6-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "5c6685d1c912ca2b7589e5478d7914341510aca4d7e96c31a2e873bf85f28d7c",
+      "uncompressedSha256": "db0bb22e82890ef91e0275a91d846874389ce59ed24550146172c2c1ffe04d84"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 7,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-7-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "0bf915d248bc388068c2d48254a17e1bfc782d22f29ec7dde35431b8fdd19b28",
+      "uncompressedSha256": "b80b864fba51f83b7b18bc9395f330a8c3d46196c4998a5171daabaa32704c3a"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 8,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-8-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "eda98f2c5b2c5067cac1528962d2dcabd838d3972b2300519f136ec07b269e16",
+      "uncompressedSha256": "9fbffa324b7bc5dd025bd0eaaea123c818402f3aebb1c983dacad3ecc65b8f3f"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 10,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-10-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "e1810afc8f2751ded16a8f9575a2c2e5786d23704dd16a68d481f2562d11cd5b",
+      "uncompressedSha256": "872182eaaae57cb0b06bf527e6b2aa1789db949bce410d651303821209cc9653"
+    },
+    {
+      "kind": "OBS",
+      "cutId": null,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "obs-COMMON_FREEZE_ON.json.gz",
+      "sha256": "9f15b4b98236e939a7051e23da378460607d19f3da1f4b752635aef648a4df36",
+      "uncompressedSha256": "d0c98815c9c9dbfac102accd3ae99e7039e2a6d7fe612b3041d5cadf28b57d6e"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 1,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-1-COMMON_FREEZE_ON.json.gz",
+      "sha256": "47bb68a9d8117f6131f46ceec57b578977c0dfe5d82bd5cec7b7155f194fcc5e",
+      "uncompressedSha256": "7c9cdcb6a9792dccfd584678e67b61fdfe0dc68902e765aca0a4cfa1ee78defc"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 2,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-2-COMMON_FREEZE_ON.json.gz",
+      "sha256": "4ee4e4e11d133ef568efa0fc2f7401564b60768fce1bf185a67df74ed19489b9",
+      "uncompressedSha256": "5ee952cb84fad3d3126603877972ec56b9e9e51a2cd0c81c26ead1eaa5913e17"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 4,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-4-COMMON_FREEZE_ON.json.gz",
+      "sha256": "3a9215eae374f4223d76ea7581e96175c4aeaafa22278cf3b21243ad795c8af7",
+      "uncompressedSha256": "2ad37ba856eb1995809ecea1ea73ce97615adef6683c5146c761e5a89f990881"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 6,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-6-COMMON_FREEZE_ON.json.gz",
+      "sha256": "48a0c9c885b66c73d8c7433fad951ffd0d1567386cc6c75875319743957e800e",
+      "uncompressedSha256": "28e9fb436bdf6409aae9725c0ff3f74dfe17c41e7737b16b3ee94c0d4e5f7afc"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 7,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-7-COMMON_FREEZE_ON.json.gz",
+      "sha256": "3f2495ca93e4de981059515d3cbdccfc94f9b875fb19a13a343d690b2df06d9b",
+      "uncompressedSha256": "4e216ed087488f240ab8ec662267ec28f3ab199a4c8ab30ff02dd512e4b9fd89"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 8,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-8-COMMON_FREEZE_ON.json.gz",
+      "sha256": "cd896e2b99e77fd4a3014650485a005d2e949edb0fb24ab22645b92240f6199d",
+      "uncompressedSha256": "1be3ba61a52092bbc383e2687f8b3f5ca5dbb1e482d6f3cb5ddc068056b5889c"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 10,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-10-COMMON_FREEZE_ON.json.gz",
+      "sha256": "de34d7f6c1cc3c74d4106f1b39f5a1dde874b10a2dc6ac7fa552c3ab776b15db",
+      "uncompressedSha256": "9e136f00f819bcd567e65aa257ebcc2c8718658ab90aefbfae9596dbdd9b330e"
+    }
+  ]
+}

@@ -1,0 +1,295 @@
+{
+  "revision": "T250_CUT_SITES_V1",
+  "cuts": [
+    {
+      "cutId": 1,
+      "name": "SOURCE_IDENTITY",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 1803,
+          "context": " {if(this.txD1!==null&&this.txD1.trace.depth===0)this.txD1.beginRoot();this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(1);let txCode=0;try{\n    // 0. Precheck: finite/non-negative/length; all-zero -> null."
+        }
+      ],
+      "BEFORE": "IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": null,
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 2,
+      "name": "SOURCE_CAPACITY_ETA",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 1860,
+          "context": "ding!==null&&this.particleBinding.work.diagnosticEnabled){\n      this.poolDiagnosticOrigin='GESTURE_SPAWN';this.poolDiagnosticParentSequence=request.sequence;\n    }\n    this.txD1?.trace.cut(2);\n    for (let attempt = 0; attempt < 8; attempt++) {this.txD1?.trace.add(40);if(this.tx"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 3,
+      "name": "BEGIN_HOT",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 505,
+          "context": "k: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(3);let txCode=0;try{\n  work.beginFailurePredicate='';work.beginFailureIndex=-1;\n  if ("
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 4,
+      "name": "COLLECT_HEADER",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+          "line": 135,
+          "context": "entity header.\n  private collectBirthHeaders(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(4);let txCode=0;try{\n    const w = this.work;\n    const status = collectParticlePlanIn"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 5,
+      "name": "COLLECT_AB",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Field.ets",
+          "line": 270,
+          "context": ", sourceEpoch: number): number {this.work.txD1?.role(2);this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(5);let txCode=0;try{\n    this.collectEntry(dt,tiltRad,substepId,seed);\n    if (this.st"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 6,
+      "name": "REQUEST_VALIDATE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 910,
+          "context": "ticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(6);let txCode=0;try{\n  if (work.active !== 1 || p.ownerId !== work.ownerId || p.stepEp"
+        }
+      ],
+      "BEFORE": "IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": null,
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 7,
+      "name": "SINK_RESERVE_GUARD",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+          "line": 174,
+          "context": "ltBuffer): number {if(work.txD1!==null)work.txD1.trace.context[15]=row;work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(7);let txCode=0;try{\n    if (work !== this.work || expectedStepEpoch !== work.stepEpoc"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 8,
+      "name": "PATCH_PREPARE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1071,
+          "context": "Heavy: number, grantedLight: number, dispositionCode: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(8);let txCode=0;try{\n  if (work.activePatchToken !== 0) { work.lastStatus = P011_HOT_P"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 9,
+      "name": "FIND",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 961,
+          "context": "tHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(9);let txCode=0;try{\n  if (work.diagnosticEnabled) work.mergeCalls++;\n  // The index o"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 10,
+      "name": "PATCH_PUBLISH",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1110,
+          "context": "ublishPatchHot(work: P011ParticleHotWorkspace, token: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(10);let txCode=0;try{\n  const valid = patchLeaseHot(work, token, 1); if (valid !== 0) "
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 11,
+      "name": "AUDIT_SINK",
+      "originalSites": [],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "no direct enter/cut match; requires binding-specific original checkpoint mapping",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 12,
+      "name": "TICKET_CLOSE_EVENTS",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleM2Sink.ets",
+          "line": 256,
+          "context": "udit !== 0) {const txRc:number=this.failHot(audit);txCode=txRc;return txRc;}\n    if (this.failAfterPublish !== 0) {const txRc:number=this.failHot(13);txCode=txRc;return txRc;}\n    txTrace?.cut(12);\n    if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, gra"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 13,
+      "name": "MOTION_APPLY",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 1202,
+          "context": "1ParticleHotCommitSink, results: P011ParticleHotResultBuffer): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(13);let txCode=0;try{\n  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch)"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 14,
+      "name": "AUDIT_TAIL",
+      "originalSites": [],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "no direct enter/cut match; requires binding-specific original checkpoint mapping",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 15,
+      "name": "AUDIT_FINISH",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/P011ParticleHot.ets",
+          "line": 611,
+          "context": "dy(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(15);let txCode=0;try{\n  if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch)"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 16,
+      "name": "PREVIEW_RESTORE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 5302,
+          "context": "eviewChannelPlansAt(thetaCandidate: number): P011ChannelPlan[] | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(16);let txCode=0;try{\n    const substepDt = this.lastPlanningSubstepDt;\n    const prob"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 17,
+      "name": "AUTHORITATIVE",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 2331,
+          "context": "tTrace(dt: number, p011Hook?: WaterSandP011Hook): WaterSandStepResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(17);let txCode=0;try{\n    const start = Date.now();\n    const result: WaterSandStepRes"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 18,
+      "name": "FIELD_AUDIT",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 7327,
+          "context": ");}}\n\n  private audit(checkDrift: boolean): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(18);let txCode=0;try{txTrace?.add(23);txTrace?.add(24);\n    for (let c = 0; c < this.c"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 19,
+      "name": "SOURCE_PUBLISH",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 1953,
+          "context": "row new Error((error as Error).message);\n        }\n        this.sourceInjectedHeavy += totalH;\n        this.sourceInjectedLight += totalL;\n        this.sourceEpoch += 1;this.txD1?.trace.cut(19);\n        if (totalH + totalL > 0) this.publishRenderState('EXTERNAL_ADMISSION');\n     "
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    },
+    {
+      "cutId": 20,
+      "name": "OBSERVE_SEAL",
+      "originalSites": [
+        {
+          "file": "entry/src/main/ets/physics/WaterSandField.ets",
+          "line": 4037,
+          "context": " finishNaturalObservation(errorCode: WaterSandErrorCode | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(20);let txCode=0;try{\n    const probe = this.naturalObservationProbe;\n    const before"
+        }
+      ],
+      "BEFORE": "NOT_IMPLEMENTED",
+      "AFTER": "NO_ORIGINAL_FAILURE_PREDICATE_DECLARED",
+      "beforeGap": "original check exists; isolated injector/rollback-readset mapping remains to implement",
+      "afterGap": "T256 names boundary but does not identify a mutable input plus next original rejecting consumer; cannot throw a synthetic business error after a successful check. Need per-cut cancellation/revalidation semantics for AFTER, or record it as observation only."
+    }
+  ],
+  "implementedEdges": 2,
+  "unsupportedEdges": 38
+}

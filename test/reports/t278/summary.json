@@ -1,0 +1,290 @@
+{
+  "revision": "T278_AFTER_EXECUTION_V2",
+  "passed": 99,
+  "failed": 0,
+  "checks": [
+    "control COMMON_FREEZE_OFF",
+    "OBS read only 3 COMMON_FREEZE_OFF",
+    "OBS read only 5 COMMON_FREEZE_OFF",
+    "OBS read only 9 COMMON_FREEZE_OFF",
+    "OBS read only 11 COMMON_FREEZE_OFF",
+    "OBS read only 12 COMMON_FREEZE_OFF",
+    "OBS read only 13 COMMON_FREEZE_OFF",
+    "OBS read only 14 COMMON_FREEZE_OFF",
+    "OBS read only 15 COMMON_FREEZE_OFF",
+    "OBS read only 16 COMMON_FREEZE_OFF",
+    "OBS read only 17 COMMON_FREEZE_OFF",
+    "OBS read only 18 COMMON_FREEZE_OFF",
+    "observer withdrawal exact authority COMMON_FREEZE_OFF",
+    "NEXT hit identity 1 COMMON_FREEZE_OFF",
+    "original consumer code 1 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 1 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 1 COMMON_FREEZE_OFF",
+    "withheld injection control 1 COMMON_FREEZE_OFF",
+    "NEXT hit identity 2 COMMON_FREEZE_OFF",
+    "original consumer code 2 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 2 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 2 COMMON_FREEZE_OFF",
+    "withheld injection control 2 COMMON_FREEZE_OFF",
+    "NEXT hit identity 4 COMMON_FREEZE_OFF",
+    "original consumer code 4 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 4 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 4 COMMON_FREEZE_OFF",
+    "withheld injection control 4 COMMON_FREEZE_OFF",
+    "NEXT hit identity 6 COMMON_FREEZE_OFF",
+    "original consumer code 6 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 6 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 6 COMMON_FREEZE_OFF",
+    "withheld injection control 6 COMMON_FREEZE_OFF",
+    "NEXT hit identity 7 COMMON_FREEZE_OFF",
+    "original consumer code 7 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 7 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 7 COMMON_FREEZE_OFF",
+    "withheld injection control 7 COMMON_FREEZE_OFF",
+    "NEXT hit identity 8 COMMON_FREEZE_OFF",
+    "original consumer code 8 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 8 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 8 COMMON_FREEZE_OFF",
+    "withheld injection control 8 COMMON_FREEZE_OFF",
+    "NEXT hit identity 10 COMMON_FREEZE_OFF",
+    "original consumer code 10 COMMON_FREEZE_OFF",
+    "original backup rollback bytes 10 COMMON_FREEZE_OFF",
+    "source receipt or retained prefix 10 COMMON_FREEZE_OFF",
+    "withheld injection control 10 COMMON_FREEZE_OFF",
+    "control COMMON_FREEZE_ON",
+    "OBS read only 3 COMMON_FREEZE_ON",
+    "OBS read only 5 COMMON_FREEZE_ON",
+    "OBS read only 9 COMMON_FREEZE_ON",
+    "OBS read only 11 COMMON_FREEZE_ON",
+    "OBS read only 12 COMMON_FREEZE_ON",
+    "OBS read only 13 COMMON_FREEZE_ON",
+    "OBS read only 14 COMMON_FREEZE_ON",
+    "OBS read only 15 COMMON_FREEZE_ON",
+    "OBS read only 16 COMMON_FREEZE_ON",
+    "OBS read only 17 COMMON_FREEZE_ON",
+    "OBS read only 18 COMMON_FREEZE_ON",
+    "observer withdrawal exact authority COMMON_FREEZE_ON",
+    "NEXT hit identity 1 COMMON_FREEZE_ON",
+    "original consumer code 1 COMMON_FREEZE_ON",
+    "original backup rollback bytes 1 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 1 COMMON_FREEZE_ON",
+    "withheld injection control 1 COMMON_FREEZE_ON",
+    "NEXT hit identity 2 COMMON_FREEZE_ON",
+    "original consumer code 2 COMMON_FREEZE_ON",
+    "original backup rollback bytes 2 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 2 COMMON_FREEZE_ON",
+    "withheld injection control 2 COMMON_FREEZE_ON",
+    "NEXT hit identity 4 COMMON_FREEZE_ON",
+    "original consumer code 4 COMMON_FREEZE_ON",
+    "original backup rollback bytes 4 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 4 COMMON_FREEZE_ON",
+    "withheld injection control 4 COMMON_FREEZE_ON",
+    "NEXT hit identity 6 COMMON_FREEZE_ON",
+    "original consumer code 6 COMMON_FREEZE_ON",
+    "original backup rollback bytes 6 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 6 COMMON_FREEZE_ON",
+    "withheld injection control 6 COMMON_FREEZE_ON",
+    "NEXT hit identity 7 COMMON_FREEZE_ON",
+    "original consumer code 7 COMMON_FREEZE_ON",
+    "original backup rollback bytes 7 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 7 COMMON_FREEZE_ON",
+    "withheld injection control 7 COMMON_FREEZE_ON",
+    "NEXT hit identity 8 COMMON_FREEZE_ON",
+    "original consumer code 8 COMMON_FREEZE_ON",
+    "original backup rollback bytes 8 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 8 COMMON_FREEZE_ON",
+    "withheld injection control 8 COMMON_FREEZE_ON",
+    "NEXT hit identity 10 COMMON_FREEZE_ON",
+    "original consumer code 10 COMMON_FREEZE_ON",
+    "original backup rollback bytes 10 COMMON_FREEZE_ON",
+    "source receipt or retained prefix 10 COMMON_FREEZE_ON",
+    "withheld injection control 10 COMMON_FREEZE_ON",
+    "original find found",
+    "original find noPair",
+    "original find invalidInput"
+  ],
+  "uniqueFaultConsumersPerArm": 6,
+  "observationCuts": [
+    3,
+    5,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "naCuts": [
+    19,
+    20
+  ],
+  "findOutcomes": [
+    {
+      "name": "found",
+      "return": true,
+      "invalid": false,
+      "selected": [
+        0,
+        1
+      ],
+      "businessFirstCode": null
+    },
+    {
+      "name": "noPair",
+      "return": false,
+      "invalid": false,
+      "selected": [
+        -1,
+        -1
+      ],
+      "businessFirstCode": null
+    },
+    {
+      "name": "invalidInput",
+      "return": false,
+      "invalid": true,
+      "selected": [
+        -1,
+        -1
+      ],
+      "businessFirstCode": null
+    }
+  ],
+  "device": "NOT_RUN",
+  "buildInputManifestSha256": "a65a8558427e1a7681778020a5bd1f018728687a0a5a576fd35859fdb7a52b55",
+  "archives": [
+    {
+      "kind": "OBS",
+      "cutId": null,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "obs-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "f45178e622bb4110ea57c8764357a99246782644dbeed84c0f44fe19df909421",
+      "uncompressedSha256": "54e497bb895c2a7aa80af245a2e478a0d02151fecca6cc65e25329ad83a2b774"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 1,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-1-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "a81f9f253ce47cb9925989156b66c343146aa2330e2c19577ac364da73bc0e6e",
+      "uncompressedSha256": "01bfe5a3b4cc84c256632ff5c0d4feba6d881a4bfcde9c404891b186714865d8"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 2,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-2-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "b5027eec5eda3c433741c392c16b0a571f61b6c0f83b975000ff4f55efdcd520",
+      "uncompressedSha256": "04c7c76827f592d38871d910250ff22d6fb66014af9fb8a8b757cda42b1ad3cd"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 4,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-4-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "b87e3b73f528a1e0a432ef3b08ab96dcd1ff7da30c41c9be7b79ebd5fd14458c",
+      "uncompressedSha256": "f21232578b2888e47794a6a5611b6eee1b38156d553bc528bf81c24dc8922026"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 6,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-6-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "5c6685d1c912ca2b7589e5478d7914341510aca4d7e96c31a2e873bf85f28d7c",
+      "uncompressedSha256": "db0bb22e82890ef91e0275a91d846874389ce59ed24550146172c2c1ffe04d84"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 7,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-7-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "0bf915d248bc388068c2d48254a17e1bfc782d22f29ec7dde35431b8fdd19b28",
+      "uncompressedSha256": "b80b864fba51f83b7b18bc9395f330a8c3d46196c4998a5171daabaa32704c3a"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 8,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-8-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "eda98f2c5b2c5067cac1528962d2dcabd838d3972b2300519f136ec07b269e16",
+      "uncompressedSha256": "9fbffa324b7bc5dd025bd0eaaea123c818402f3aebb1c983dacad3ecc65b8f3f"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 10,
+      "arm": "COMMON_FREEZE_OFF",
+      "file": "next-10-COMMON_FREEZE_OFF.json.gz",
+      "sha256": "e1810afc8f2751ded16a8f9575a2c2e5786d23704dd16a68d481f2562d11cd5b",
+      "uncompressedSha256": "872182eaaae57cb0b06bf527e6b2aa1789db949bce410d651303821209cc9653"
+    },
+    {
+      "kind": "OBS",
+      "cutId": null,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "obs-COMMON_FREEZE_ON.json.gz",
+      "sha256": "9f15b4b98236e939a7051e23da378460607d19f3da1f4b752635aef648a4df36",
+      "uncompressedSha256": "d0c98815c9c9dbfac102accd3ae99e7039e2a6d7fe612b3041d5cadf28b57d6e"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 1,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-1-COMMON_FREEZE_ON.json.gz",
+      "sha256": "47bb68a9d8117f6131f46ceec57b578977c0dfe5d82bd5cec7b7155f194fcc5e",
+      "uncompressedSha256": "7c9cdcb6a9792dccfd584678e67b61fdfe0dc68902e765aca0a4cfa1ee78defc"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 2,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-2-COMMON_FREEZE_ON.json.gz",
+      "sha256": "4ee4e4e11d133ef568efa0fc2f7401564b60768fce1bf185a67df74ed19489b9",
+      "uncompressedSha256": "5ee952cb84fad3d3126603877972ec56b9e9e51a2cd0c81c26ead1eaa5913e17"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 4,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-4-COMMON_FREEZE_ON.json.gz",
+      "sha256": "3a9215eae374f4223d76ea7581e96175c4aeaafa22278cf3b21243ad795c8af7",
+      "uncompressedSha256": "2ad37ba856eb1995809ecea1ea73ce97615adef6683c5146c761e5a89f990881"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 6,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-6-COMMON_FREEZE_ON.json.gz",
+      "sha256": "48a0c9c885b66c73d8c7433fad951ffd0d1567386cc6c75875319743957e800e",
+      "uncompressedSha256": "28e9fb436bdf6409aae9725c0ff3f74dfe17c41e7737b16b3ee94c0d4e5f7afc"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 7,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-7-COMMON_FREEZE_ON.json.gz",
+      "sha256": "3f2495ca93e4de981059515d3cbdccfc94f9b875fb19a13a343d690b2df06d9b",
+      "uncompressedSha256": "4e216ed087488f240ab8ec662267ec28f3ab199a4c8ab30ff02dd512e4b9fd89"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 8,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-8-COMMON_FREEZE_ON.json.gz",
+      "sha256": "cd896e2b99e77fd4a3014650485a005d2e949edb0fb24ab22645b92240f6199d",
+      "uncompressedSha256": "1be3ba61a52092bbc383e2687f8b3f5ca5dbb1e482d6f3cb5ddc068056b5889c"
+    },
+    {
+      "kind": "NEXT",
+      "cutId": 10,
+      "arm": "COMMON_FREEZE_ON",
+      "file": "next-10-COMMON_FREEZE_ON.json.gz",
+      "sha256": "de34d7f6c1cc3c74d4106f1b39f5a1dde874b10a2dc6ac7fa552c3ab776b15db",
+      "uncompressedSha256": "9e136f00f819bcd567e65aa257ebcc2c8718658ab90aefbfae9596dbdd9b330e"
+    }
+  ],
+  "hostRuntime": "NODE_TYPESCRIPT_TRANSPILE_ORIGINAL_GENERATED_ETS_NOT_OHOS_ABI",
+  "scopeArchiveNote": "legacy4096 scope rows may overflow; complete per-cut AFTER raw witnesses are separately bounded256 and asserted dropped=0; no claim of whole-stream scope completeness"
+}
