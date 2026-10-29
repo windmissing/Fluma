@@ -1,0 +1,98 @@
+{
+  "revision": "T248_DEVELOPER_HANDOFF_V1",
+  "date": "2026-10-29",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery",
+  "compile": "PASS_ARKTS_ARM64_NATIVE",
+  "package": "PASS_UNSIGNED",
+  "sign": "FAIL_00303116_PASSWORD_FIELD_LENGTH",
+  "install": "NOT_RUN",
+  "device": "NOT_RUN",
+  "recipeFiles": {
+    "test\\t248\\archive.py": "f27189e8cfbbaef4450090c1e7f477708ec80b9ea62a28b90f027d552e13ee62",
+    "test\\t248\\generate.cjs": "51320519c8b0791ddf2c10a8a121a1ab67ea627696999701a2c2fb64d93fde99",
+    "test\\t248\\native_observation.h": "60382dd66c61f8644c4c7c6a4b0d57ef4b2f5bcac2ce06d2329bb791473d8fa6",
+    "test\\t248\\selftest.cjs": "3d2e05988cd2430c704857c514010091fe45e49920f58e4821a304e9b6f8b0c1",
+    "test\\t248\\T248Observation.ets": "eb853d565e97429dabb1f86d0df39835731b8ff99b1dfbaac1f1f05da8b522f4"
+  },
+  "artifacts": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp013hello.so",
+      "bytes": 309520,
+      "sha256": "f89b1cb366b98110ade7dd66b5e059dfc4dca41bf29031d0dc38fb437f521b88",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libp013renderer.so",
+      "bytes": 1716200,
+      "sha256": "de0fdb6085c53c66eff69c6661d66f14eb03a411b55fbff51c5cb9a017bd45b4",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libp013hello.so",
+      "bytes": 309520,
+      "sha256": "f89b1cb366b98110ade7dd66b5e059dfc4dca41bf29031d0dc38fb437f521b88",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libp013renderer.so",
+      "bytes": 1716200,
+      "sha256": "de0fdb6085c53c66eff69c6661d66f14eb03a411b55fbff51c5cb9a017bd45b4",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libp013hello.so",
+      "bytes": 70544,
+      "sha256": "fba10f0f3a978efb159885b9f69f7a527f757508c061a4ce24c736d230467dd7",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libp013renderer.so",
+      "bytes": 442880,
+      "sha256": "e5b28bf5e0c2e403fb7e07dd5305083cb3d4b43cd5d95b231d99928446c88079",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t248-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 4955943,
+      "sha256": "40726a7f6779e3c6a0db8cd9716fa129365b84de5678a861b354da33d724f9aa",
+      "packagedSo": [
+        {
+          "name": "libs/arm64-v8a/libc++_shared.so",
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "bytes": 1262248
+        },
+        {
+          "name": "libs/arm64-v8a/libp013hello.so",
+          "sha256": "fba10f0f3a978efb159885b9f69f7a527f757508c061a4ce24c736d230467dd7",
+          "bytes": 70544
+        },
+        {
+          "name": "libs/arm64-v8a/libp013renderer.so",
+          "sha256": "e5b28bf5e0c2e403fb7e07dd5305083cb3d4b43cd5d95b231d99928446c88079",
+          "bytes": 442880
+        }
+      ]
+    }
+  ],
+  "buildLogSha256": "29d4428abca65acf85c7b147eaa50a74c621f9cb3f76b736ae7d19ea66166f1a",
+  "signLogSha256": "c6c033036a891ebc3e35f59019daedb372d7915deca56c149eb99c149368bc91",
+  "signingConfigUnchanged": true
+}
