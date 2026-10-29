@@ -1,5 +1,7 @@
 # T242 GPU 平台探针接续工程与证据边界
 
+> **T255 接续修订（2026-10-29）**：T246 已编译独立 SURFACE 窗口示意探针、六档实际 buffer 与三目标资源分配代码及 1024B 探针 tail，均未真机执行。其 `T246` tail 只存 owner/context/surface/lease/token 与 done，不能替 T241 的产品 completion256、审计、物理 commit。独立窗口/资源/真实生命周期探针可以与 T236 离线 M0 并行；只有产品 completion→native accept→publication lease 的集成必须等实际 M0 接口。真实迟到、后台/重建和 context loss 要靠发生过的 callback/GL/fence 证据，不可用 hook 改内存 token 代替。详见 `architecture-T255-window-probe-remainder-v1.md`。
+
 2026-10-29，architect；原卡 `6ae28b60e4b0c3103c1983fa`。首次归因消费 T232 正式报告及 `test/reports/t232/t232.json`、T239 WM11，并修订 T231/T233/T238。**工程合同和设备取证范围已明确；真实窗口驻留可行性仍待证。** 不使用真机、不重跑测试、不改 endpoint 或业务代码。
 
 ## 已证与未证

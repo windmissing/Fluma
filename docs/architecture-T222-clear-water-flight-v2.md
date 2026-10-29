@@ -1,5 +1,7 @@
 # T222：明水 C 补篇与落水 V2 工程定版
 
+> **T254 C V1 身份桥工程修订（2026-10-29）**：T252 真机 `CW_V3_PARSE` 首帧拒绘归到 ArkTS→NAPI 字符串容量接缝，GL 六层未执行。完整显式 frameToken（实测约999 UTF8字节）与 configDigest 必须保留原字节和同 token 严格比较，FNV/hash 只能辅助，禁止截断或只传 hash。仅 C V3 `frameToken/configDigest` 使用专用两次查询长度的有界 UTF8 reader：分别上限8192/4096字节，checked `n+1`、一次申请、实际复制字节数必须等查询长度，拒空值、内嵌 NUL、非法/超限及身份变化；释放跟随本次 NAPI 请求，不做每帧无界累积。`runId/payloadDigest` 沿已有短字符串校验，泛用 `String()` 和其他路由不因此整体扩容。额度不足返回明确 `CW_V3_PARSE_IDENTITY_LENGTH` 诊断，不进入 GL；具体桥层的 `INVALID_ARGUMENT` 原码可保持。ArkTS 真实 C 配置必须跨 NAPI 回归完整 token 与字段字节相等，再交 tester 定点设备复测。详见 `architecture-T254-c-long-token-attribution-v1.md`。
+
 2026-10-28，architect；原卡 `6ae1a825e4b0c1a6bd5e81d7`。算法唯一依据 `algorithm-T221-sand-water-demo-v1.md` / `CW_DEMO_FLIGHT_DESIGN_V1`（提交 `4725b23`）；消费 T219 部分工程 `95ac99b`、T209 A/B 与 T215 独立证据。逐槽布局、输入哈希、定容公式见 `analysis-T222-clear-water-flight-engineering-manifest-v1.json`。**ENGINEERING_READY_FOR_STAGED_DEVELOPMENT；C、V2、V4、页面均尚未实现或验证。** 不使用真机，不写业务代码或重跑产品测试。目标8/P3排目标1–7之后，GPU compute仍最高调度优先。
 
 ## 1. 版本、当前接口冲突与唯一 owner

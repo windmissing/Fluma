@@ -1,5 +1,7 @@
 # T226 明水 C V1 开发交付
 
+> **T254 工程返修接口**：T252 真机首帧 `CW_V3_PARSE`，在 `DrawClearWaterSceneV3` 的 `MaterialText(frameToken)` 就会被通用 `String()` 的256B本地缓冲拒绝，六层 GL 未执行。C V3 专用 `frameToken/configDigest` 按 T222 修订做有界两次 UTF8 读取及完整字节比较；不改通用 String、不截断、不用 hash-only 代替身份。加入真实 `clearWaterCConfig()+clearWaterCBConfig()` 经 ArkTS→NAPI 的回归接缝，覆盖边界/超限/嵌 NUL，成功后由独立 tester 复测实际窗口。未验证前 C 设备显示仍 FAIL。
+
 任务：6ae1c075e4b0c3103c10d6ef；2026-10-28。不使用真机。依据 T219 工程稿与 T222 §6 补篇（optics16、面积高光与重力接受）；交付仅阶段 C 基础，真实在途水包与 V4 属 T227/T228。
 
 ## 实现

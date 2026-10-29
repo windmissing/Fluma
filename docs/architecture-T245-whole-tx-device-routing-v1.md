@@ -1,5 +1,7 @@
 # T245 整体事务设备缺证首次分流
 
+> **T256 接续修订**：T250 已在同包编译三 backend/两 freeze 臂、部分 B/M/A/source λ 字典和 root before/after，20 cut 注入撤销、step planner λ、FIFO 服务与完整资源仍 NOT_IMPLEMENTED/NOT_MEASURED。开发应先补可执行 trace/faultPlan 和计数接口；设备 p50/p95、PID、真实驱动/RSS 与窗口呈现交 tester，不作为开发卡关闭前置。详见 `architecture-T256-tx-metering-remainder-v1.md`。
+
 2026-10-29，architect；原卡 `6ae28b60e4b0ab67702b91c7`。消费 T225 正式报告及 `test/reports/t225/` 三有效原始结果、T205 工程合同。**三路选对/终态局部通过，完整事务与设备收益仍缺证；现无可归因产品 FAIL。** 不使用真机、不重跑已通过矩阵、不改业务代码。
 
 ## 已证与边界

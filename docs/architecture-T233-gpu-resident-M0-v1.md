@@ -1,5 +1,7 @@
 # T233：GPU 驻留 M0 逐 word 工程定版 V1（T241 工程修订 V2）
 
+> **T255 产品接点隔离**：`test/t246/protocol.h` 的 256-word tail 是平台微探针私有 revision，既不含此处 completion256 的全部身份、stage/audit/replay/stock/receipt，也没有产品 GPU root。平台可在独立窗口证同 context compute→fragment→完整 swap、实际内存分配与生命周期，且不等待 T236；但任何物理/source commit、accepted bank 切换和 publication lease 只能消费 T241 产品 completion 的全部字段、尾 fence/GL/error/tombstone 检查。synthetic token 错配仅证明 host 拒绝函数；真实 late fence、context loss/后台重建和 release 必须另证，未证标 NOT_RUN。
+
 > **T242 平台接续边界**：T232 在独立 pbuffer 对 256 U32/1024B 尾包的微探针通过，只覆盖同步/读回形状；不是此 manifest 的完整 completion256 字段、五 root 同 tick、验签/审计及实际 GPU M0 bank commit。256B `GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT` 约束 range base，不改变本稿 `4*index` 的内部 word ABI；实际每个 range 的 base、length 与总对象 bytes 分别核。vertex SSBO blocks=0，正式窗口需要 fragment SSBO fetch 或另版 GPU pack 路线实测，不能假定顶点 shader 直读。15,060,496/36,997,904B 是 payload 算术，不是 T232 实际并存分配 PASS；真机探针须保留双 arena、双发布、lease、全帧目标及 LastGood 峰值、GL 错误与释放记录。离线 T236 实施不因此等待真机。
 
 > **T241 修订，2026-10-29 定版**：T236 `c7ab688` 发现 K192 双 pad256 索引原模板短 512B，且产品 event/completion 枚举未冻结。本稿第 2、3、6 节与同名 manifest 的 `engineeringRevision=T241_M0_WIRE_AND_SORT_V2` 现为有效工程合同；原 15,059,984B 是 T230/T233 设计模板历史值，不可继续按它冷分配 K192。M0 字段 word index 未搬移，既有生成头需要按新 manifest SHA 重生成；产品 wire 数值此前未定，本次首次定版，不把 T236 mock `CompletionPolicy` 当旧产品协议。M1 的 T238 manifest 以本修订为基线另版读取。
