@@ -1,0 +1,108 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer Base {uint B[];};
+layout(std430,binding=1) buffer Candidate {uint C[];};
+layout(std430,binding=2) buffer Workspace {uint W[];};
+layout(std430,binding=3) buffer Events {uint E[];};
+/* INTEGER_PRIMITIVES */
+uniform uint uK,uKw,uWater,uColumn,uHeader,uWords,uPass,uEmitQ;
+uniform uvec2 uNonce,uFrame;
+const uint CQ=268435456u,PACKAGE=131072u,T=32u,S=64u,DEDUP=96u;
+// Source-core workspace only. Candidate remains unpublished until the complete
+// M1 transport validates completion256; this kernel never seals a partial M1.
+uint spare(){return DEDUP+4096u*64u;}
+uint rd(bool original,uint at){return original?B[at]:C[at];}
+void fail(uint why){if(W[S]!=4u){W[S]=4u;W[S+1u]=why;}}
+uvec2 pairAt(bool original,uint at){return uvec2(rd(original,at),rd(original,at+1u));}
+void putPair(uint at,uvec2 v){C[at]=v.x;C[at+1u]=v.y;}
+bool addHeader(uint at,uint q){uvec2 v;if(!grsAdd64(pairAt(false,uHeader+at),uvec2(q,0u),v)){fail(13u);return false;}putPair(uHeader+at,v);return true;}
+uint totalStock(bool original,uint col){return rd(original,uColumn+10u*128u+col)+rd(original,uColumn+6u*128u+col)+rd(original,uColumn+7u*128u+col)+rd(original,uColumn+8u*128u+col);}
+bool audit(bool original){
+ if(rd(original,uHeader+1u)!=2u||rd(original,uHeader+31u)!=3u||rd(original,uHeader+32u)!=0u)return false;
+ uint liveS=0u,liveW=0u;uvec2 sand=uvec2(0u),water=uvec2(0u),settled=uvec2(0u),flight=uvec2(0u);
+ for(uint c=0u;c<128u;c++){
+  uint s=rd(original,uColumn+10u*128u+c),w=rd(original,uColumn+6u*128u+c),j=rd(original,uColumn+7u*128u+c),p=0u,jFold=0u;
+  if(s>CQ||w>CQ-s||j>CQ-s-w)return false;
+  for(uint i=0u;i<uK;i++){uint m=rd(original,i);if(m==0u)continue;if(rd(original,uK+i)>=134217728u||m>CQ)return false;if((rd(original,uK+i)>>20u)==c){if(p>CQ-m)return false;p+=m;}}
+  for(uint i=0u;i<uKw;i++){uint m=rd(original,uWater+i);if(m==0u)continue;if(rd(original,uWater+uKw+i)>=134217728u||m>CQ||int(rd(original,uWater+4u*uKw+i))>0)return false;if((rd(original,uWater+uKw+i)>>20u)==c){if(jFold>CQ-m)return false;jFold+=m;}}
+  if(p>CQ-s-w-j||p!=rd(original,uColumn+8u*128u+c)||j!=jFold||rd(original,uColumn+12u*128u+c)!=s+w||rd(original,uColumn+13u*128u+c)!=s+w+j+p)return false;
+  if(!grsAdd64(sand,uvec2(s+p,0u),sand)||!grsAdd64(water,uvec2(w+j,0u),water)||!grsAdd64(settled,uvec2(w,0u),settled)||!grsAdd64(flight,uvec2(j,0u),flight))return false;
+ }
+ for(uint i=0u;i<uK;i++)if(rd(original,i)!=0u)liveS++;
+ for(uint i=0u;i<uKw;i++)if(rd(original,uWater+i)!=0u)liveW++;
+ uvec2 expectS,expectW;if(!grsAdd64(pairAt(original,uHeader+64u),pairAt(original,uHeader+60u),expectS)||!grsAdd64(pairAt(original,uHeader+66u),pairAt(original,uHeader+62u),expectW))return false;
+ return grsCompare64(sand,expectS)==0&&grsCompare64(water,expectW)==0&&grsCompare64(sand,pairAt(original,uHeader+56u))==0&&grsCompare64(water,pairAt(original,uHeader+58u))==0&&grsCompare64(settled,pairAt(original,uHeader+112u))==0&&grsCompare64(flight,pairAt(original,uHeader+114u))==0&&liveS==rd(original,uHeader+41u)&&uK-liveS==rd(original,uHeader+43u)&&liveW==rd(original,uHeader+42u)&&uKw-liveW==rd(original,uHeader+44u);
+}
+void reject(uint reason){W[S]=2u;W[S+1u]=reason;W[T]=3u;W[T+1u]=reason;}
+void eventRow(uint row,uint slot,uint id,uint gen,uint mass,uint oldStock,uint newStock,uint mode){
+ uint at=row*64u;for(uint i=0u;i<64u;i++)E[at+i]=0u;
+ E[at]=1163088455u;E[at+1u]=2u;E[at+2u]=uNonce.x;E[at+3u]=uNonce.y;E[at+4u]=1u;E[at+5u]=1u;E[at+6u]=mode==1u?2u:1u;E[at+7u]=row+1u;E[at+9u]=uFrame.x;E[at+10u]=uFrame.y;
+ E[at+12u]=C[uHeader+14u];E[at+13u]=C[uHeader+15u];E[at+14u]=C[uHeader+16u];E[at+15u]=C[uHeader+17u];E[at+20u]=W[S+5u];E[at+21u]=W[S+5u];E[at+32u]=oldStock;E[at+33u]=newStock;E[at+48u]=C[uHeader+14u];E[at+49u]=C[uHeader+15u];E[at+50u]=W[6];E[at+51u]=W[7];E[at+52u]=3u<<18u;
+ if(mode!=1u){E[at+16u]=slot;E[at+17u]=gen;E[at+18u]=id;E[at+19u]=W[14];E[at+23u]=mass;E[at+26u]=W[S+6u];E[at+27u]=W[S+7u];E[at+31u]=mode==2u?0u-uEmitQ:0u;E[at+52u]|=1u<<4u;}
+}
+void source(){
+ if(!audit(true)){fail(15u);return;}uint prefix=B[uHeader+33u];if(prefix>4096u){fail(15u);return;}
+ if(W[0]!=1129534023u||W[1]!=2u||W[4]!=B[uHeader+4u]||W[5]!=B[uHeader+5u]||W[31]!=0u){reject(9u);return;}
+ for(uint i=0u;i<prefix;i++){uint at=DEDUP+64u*i;if(W[at+4u]!=W[4]||W[at+5u]!=W[5]||W[at+6u]!=W[6]||W[at+7u]!=W[7])continue;for(uint j=0u;j<32u;j++)if(W[at+j]!=W[j]){reject(8u);return;}for(uint j=0u;j<32u;j++)W[T+j]=W[at+32u+j];W[T+2u]=1u;W[S]=3u;return;}
+ if(prefix==4096u){reject(11u);return;}
+ W[S+10u]=1u;uint kind=W[2];if(kind>1u||W[3]!=0u||W[30]!=0u){reject(1u);return;}
+ if(W[8]!=B[uHeader+84u]||W[9]!=B[uHeader+85u]||W[12]!=B[uHeader+20u]||W[13]!=B[uHeader+21u]||W[28]!=B[uHeader+22u]||W[29]!=B[uHeader+23u]||W[14]==0u||W[15]==0u||(W[6]|W[7])==0u||(W[10]|W[11])==0u){reject(9u);return;}
+ if((W[24]|W[25])==0u||W[27]>1u){reject(10u);return;}
+ uint x,y,q;if(!grsFloorBinary64Q20(uvec2(W[16],W[17]),134217727u,x)||!grsFloorBinary64Q20(uvec2(W[18],W[19]),CQ,y)||!grsFloorBinary64Q20(uvec2(W[20],W[21]),CQ,q)){reject(2u);return;}
+ if((W[17]&0x7fffffffu)>=0x40600000u||(W[19]&0x7fffffffu)>0x40700000u||((W[19]&0x7fffffffu)==0x40700000u&&W[18]!=0u)||(W[21]&0x7fffffffu)>0x40700000u||((W[21]&0x7fffffffu)==0x40700000u&&W[20]!=0u)){reject(2u);return;}
+ W[S+2u]=q;if(q==0u){reject(3u);return;}uint col=x>>20u,s=C[uColumn+10u*128u+col],eta=C[uColumn+12u*128u+col];W[S+5u]=col;W[S+6u]=x;W[S+7u]=y;if(y<s){reject(4u);return;}
+ uint mode=kind==0u?0u:y<=eta?1u:2u,free=CQ-totalStock(false,col),n=kind==0u?uK:uKw,base=kind==0u?0u:uWater,slots=0u;
+ for(uint i=0u;i<n;i++)if(C[base+i]==0u)slots++;
+ uint admitted=min(q,free);if(mode==0u)admitted=min(admitted,slots*PACKAGE);if(mode==2u&&slots==0u){reject(5u);return;}if(admitted==0u){reject(6u);return;}
+ uint births=mode==0u?(admitted+PACKAGE-1u)/PACKAGE:mode==2u?1u:0u,next=C[uHeader+(kind==0u?39u:40u)];
+ if(births>0u&&(next==0u||births-1u>0xffffffffu-next)){reject(7u);return;}
+ uint generationField=kind==0u?10u:11u,checked=0u;for(uint i=0u;i<n&&checked<births;i++)if(C[base+i]==0u){if(C[base+generationField*n+i]==0xffffffffu){fail(21u);return;}checked++;}
+ W[S+3u]=admitted;W[S+4u]=births;W[S+8u]=mode;
+ if(!addHeader(14u,1u)||!addHeader(16u,1u)||!addHeader(kind==0u?60u:62u,admitted)||!addHeader(kind==0u?56u:58u,admitted))return;
+ uint stockField=mode==0u?8u:mode==1u?6u:7u,old=C[uColumn+stockField*128u+col];
+ if(mode==1u){C[uColumn+6u*128u+col]+=admitted;if(!addHeader(112u,admitted))return;eventRow(0u,0u,0u,0u,0u,old,old+admitted,mode);W[S+9u]=1u;}
+ else {uint rank=0u,done=0u;for(uint i=0u;i<n&&rank<births;i++)if(C[base+i]==0u){uint mass=mode==0u?min(PACKAGE,admitted-done):admitted,gen=C[base+generationField*n+i]+1u;for(uint f=0u;f<16u;f++)C[base+f*n+i]=0u;C[base+i]=mass;C[base+n+i]=x;C[base+2u*n+i]=y;C[base+4u*n+i]=mode==2u?0u-uEmitQ:0u;C[base+5u*n+i]=next+rank;
+ if(kind==0u){C[base+6u*n+i]=1u;C[base+7u*n+i]=W[14];C[base+8u*n+i]=C[uHeader+14u];C[base+9u*n+i]=C[uHeader+15u];}
+ else {C[base+6u*n+i]=C[uHeader+14u];C[base+7u*n+i]=C[uHeader+15u];C[base+8u*n+i]=C[uHeader+16u];C[base+9u*n+i]=C[uHeader+17u];C[base+10u*n+i]=1u;C[base+12u*n+i]=W[14];C[base+13u*n+i]=C[uHeader+118u];C[base+14u*n+i]=C[uHeader+119u];}
+ C[base+generationField*n+i]=gen;eventRow(rank,i,next+rank,gen,mass,old+done,old+done+mass,mode);done+=mass;rank++;}
+ C[uColumn+stockField*128u+col]+=admitted;C[uHeader+(kind==0u?41u:42u)]+=births;C[uHeader+(kind==0u?43u:44u)]-=births;C[uHeader+(kind==0u?39u:40u)]=next+births;if(next+births==0u)C[uHeader+(kind==0u?126u:127u)]=1u;if(kind==1u&&!addHeader(114u,admitted))return;W[S+9u]=births;}
+ C[uColumn+12u*128u+col]=s+C[uColumn+6u*128u+col];C[uColumn+13u*128u+col]=totalStock(false,col);
+ W[T]=admitted==q?1u:2u;W[T+3u]=admitted;W[T+4u]=q-admitted;W[T+5u]=col;W[T+6u]=births;W[T+7u]=births>0u?next:0u;W[T+8u]=next;W[T+9u]=C[uHeader+(kind==0u?39u:40u)];W[T+30u]=mode;W[S]=1u;
+}
+void finish(){
+ if(W[S]==4u||W[S]==3u)return;
+ // Receipt projections always use W+J, never surface W alone.
+ for(uint j=0u;j<2u;j++){W[T+10u+j]=C[uHeader+14u+j];W[T+12u+j]=C[uHeader+16u+j];W[T+14u+j]=C[uHeader+14u+j];W[T+16u+j]=B[uHeader+56u+j];W[T+18u+j]=C[uHeader+56u+j];W[T+20u+j]=B[uHeader+58u+j];W[T+22u+j]=C[uHeader+58u+j];W[T+24u+j]=C[uHeader+60u+j];W[T+26u+j]=C[uHeader+62u+j];}
+ W[T+31u]=C[uHeader+126u]|(C[uHeader+127u]<<1u);
+ if(!audit(false)){fail(15u);return;}
+ if(W[S+10u]!=0u){uint prefix=B[uHeader+33u];C[uHeader+33u]=prefix+1u;C[uHeader+74u]=prefix+1u;C[uHeader+75u]=0u;W[T+28u]=prefix+1u;W[T+29u]=0u;if(W[S]!=1u){W[T+14u]=0u;W[T+15u]=0u;}uint at=DEDUP+64u*prefix;for(uint j=0u;j<32u;j++){W[at+j]=W[j];W[at+32u+j]=W[T+j];}}
+
+}
+bool spareAdd(uint at,uint amount){uvec2 v;if(!grsAdd64(uvec2(W[spare()+uHeader+at],W[spare()+uHeader+at+1u]),uvec2(amount,0u),v))return false;W[spare()+uHeader+at]=v.x;W[spare()+uHeader+at+1u]=v.y;return true;}
+void replay(){
+ if(W[S]==4u)return;
+ uint kind=W[2],mode=W[S+8u],rows=W[S+9u],col=W[S+5u],sp=spare();
+ if(W[S]==1u){uint n=kind==0u?uK:uKw,base=kind==0u?0u:uWater,stock=mode==0u?8u:mode==1u?6u:7u,total=0u,next=B[uHeader+(kind==0u?39u:40u)],search=0u;
+ for(uint row=0u;row<rows;row++){uint at=row*64u,q=mode==1u?W[S+3u]:mode==0u?min(PACKAGE,W[S+3u]-total):W[S+3u];
+  for(uint j=0u;j<64u;j++){bool used=j<=15u||j==20u||j==21u||j==32u||j==33u||(j>=48u&&j<=52u)||(mode!=1u&&j>=16u&&j<=31u);if(!used&&E[at+j]!=0u){fail(16u);return;}}
+  if(E[at]!=1163088455u||E[at+1u]!=2u||E[at+2u]!=uNonce.x||E[at+3u]!=uNonce.y||E[at+4u]!=1u||E[at+5u]!=1u||E[at+6u]!=(mode==1u?2u:1u)||E[at+7u]!=row+1u||E[at+8u]!=0u||E[at+9u]!=uFrame.x||E[at+10u]!=uFrame.y||E[at+11u]!=0u||E[at+12u]!=C[uHeader+14u]||E[at+13u]!=C[uHeader+15u]||E[at+14u]!=C[uHeader+16u]||E[at+15u]!=C[uHeader+17u]||E[at+20u]!=col||E[at+21u]!=col||E[at+48u]!=C[uHeader+14u]||E[at+49u]!=C[uHeader+15u]||E[at+50u]!=W[6]||E[at+51u]!=W[7]||E[at+52u]!=((3u<<18u)|(mode==1u?0u:16u))){fail(16u);return;}
+  uint stockAt=sp+uColumn+stock*128u+col;if(E[at+32u]!=W[stockAt]||E[at+33u]!=W[stockAt]+q){fail(16u);return;}W[stockAt]+=q;
+  if(mode!=1u){uint slot=E[at+16u];while(search<n&&B[base+search]!=0u)search++;if(slot!=search||slot>=n){fail(16u);return;}search++;
+   uint generationField=kind==0u?10u:11u,gen=B[base+generationField*n+slot]+1u;
+   if(E[at+17u]!=gen||E[at+18u]!=next+row||E[at+19u]!=W[14]||E[at+22u]!=0u||E[at+23u]!=q||E[at+24u]!=0u||E[at+25u]!=0u||E[at+26u]!=W[S+6u]||E[at+27u]!=W[S+7u]||E[at+28u]!=0u||E[at+29u]!=0u||E[at+30u]!=0u||E[at+31u]!=(mode==2u?0u-uEmitQ:0u)){fail(16u);return;}
+   for(uint f=0u;f<16u;f++)W[sp+base+f*n+slot]=0u;W[sp+base+slot]=q;W[sp+base+n+slot]=E[at+26u];W[sp+base+2u*n+slot]=E[at+27u];W[sp+base+4u*n+slot]=E[at+31u];W[sp+base+5u*n+slot]=E[at+18u];W[sp+base+generationField*n+slot]=gen;
+   if(kind==0u){W[sp+base+6u*n+slot]=1u;W[sp+base+7u*n+slot]=W[14];W[sp+base+8u*n+slot]=E[at+48u];W[sp+base+9u*n+slot]=E[at+49u];}
+   else{W[sp+base+6u*n+slot]=E[at+48u];W[sp+base+7u*n+slot]=E[at+49u];W[sp+base+8u*n+slot]=C[uHeader+16u];W[sp+base+9u*n+slot]=C[uHeader+17u];W[sp+base+10u*n+slot]=1u;W[sp+base+12u*n+slot]=W[14];W[sp+base+13u*n+slot]=B[uHeader+118u];W[sp+base+14u*n+slot]=B[uHeader+119u];}
+  }total+=q;
+ }
+ if(total!=W[S+3u]){fail(16u);return;}
+ uint h=sp+uHeader;if(!spareAdd(14u,1u)||!spareAdd(16u,1u)||!spareAdd(kind==0u?60u:62u,total)||!spareAdd(kind==0u?56u:58u,total)||kind==1u&&!spareAdd(mode==1u?112u:114u,total)){fail(16u);return;}
+ if(mode!=1u){W[h+(kind==0u?41u:42u)]+=rows;W[h+(kind==0u?43u:44u)]-=rows;W[h+(kind==0u?39u:40u)]=next+rows;if(next+rows==0u)W[h+(kind==0u?126u:127u)]=1u;}
+ uint c=sp+uColumn;W[c+12u*128u+col]=W[c+10u*128u+col]+W[c+6u*128u+col];W[c+13u*128u+col]=W[c+12u*128u+col]+W[c+7u*128u+col]+W[c+8u*128u+col];
+ }
+ if(W[S+10u]!=0u){W[sp+uHeader+33u]=B[uHeader+33u]+1u;W[sp+uHeader+74u]=B[uHeader+33u]+1u;W[sp+uHeader+75u]=0u;}
+ for(uint i=0u;i<uWords;i++)if(W[sp+i]!=C[i]){W[S+11u]=i;fail(16u);return;}
+ W[S+12u]=1u;
+}
+void main(){uint i=gl_GlobalInvocationID.x;if(uPass==0u){if(i<uWords){C[i]=B[i];W[spare()+i]=B[i];}if(i>=32u&&i<96u)W[i]=0u;return;}if(i!=0u)return;if(uPass==1u)source();if(uPass==2u)finish();if(uPass==3u)replay();}
