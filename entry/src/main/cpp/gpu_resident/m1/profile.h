@@ -1,0 +1,9 @@
+#pragma once
+#include "layout_generated.h"
+namespace grs { namespace m1 {
+enum class ConfigureCode {Unsupported,InvalidRange,ProtocolReadyShaderNotImplemented};
+struct ProfilePlan {const Profile* profile=nullptr;uint64_t stateStride=0,publicationStride=0,eventStride=0;};
+// Only cold shape/range planning. No handle can submit M1 until full replay exists.
+ConfigureCode Plan(uint32_t K,uint32_t Kw,uint32_t feature,uint32_t wireRevision,
+                   uint64_t alignment,uint64_t maxBlock,ProfilePlan& out);
+}}

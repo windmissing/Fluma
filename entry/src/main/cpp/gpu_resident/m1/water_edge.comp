@@ -1,0 +1,25 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+// Candidate proposal only. No bank acceptance, event omission or CPU fallback.
+layout(std430,binding=0) readonly buffer Columns {uint col[];};
+layout(std430,binding=1) writeonly buffer Proposals {uvec4 proposal[];};
+uniform uint parity,kappaW;
+uniform int slopeQ;
+/* INTEGER_PRIMITIVES */
+const uint Cq=268435456u;
+bool stock(uint c){uint sum=0u;for(uint i=0u;i<5u;i++){uint x=col[i*128u+c];if(x>Cq||sum>Cq-x)return false;sum+=x;}return true;}
+void main(){uint edge=2u*gl_GlobalInvocationID.x+parity;if(edge>=127u)return;
+ // Input layout for this private proposal stage is S,W,P,J,reservedZero.
+ uint a=edge,b=edge+1u;if(!stock(a)||!stock(b)||col[512u+a]!=0u||col[512u+b]!=0u||abs(slopeQ)>605394||kappaW>960u){proposal[edge]=uvec4(0u,a,b,1u);return;}
+ int ha=2*int(col[a]+col[128u+a])-(2*int(a)+1)*slopeQ;
+ int hb=2*int(col[b]+col[128u+b])-(2*int(b)+1)*slopeQ;
+ uint d=ha>=hb?a:b,r=ha>=hb?b:a;int hd=max(ha,hb);uint delta=uint(abs(ha-hb));
+ uvec2 product=grsMul32(kappaW,delta);uvec4 quotient;uint rem;
+ if(!grsDivide128(uvec4(product,0u,0u),240u,quotient,rem)||any(notEqual(quotient.yzw,uvec3(0u)))){proposal[edge]=uvec4(0u,d,r,2u);return;}
+ int bedD=2*int(col[d])-(2*int(d)+1)*slopeQ,bedR=2*int(col[r])-(2*int(r)+1)*slopeQ;
+ uint waterAbove=uint(max(0,(hd-max(bedD,bedR))/2));
+ uint free=Cq-col[r]-col[128u+r]-col[256u+r]-col[384u+r];
+ uint q=min(quotient.x,min(delta/4u,min(col[128u+d],min(waterAbove,free))));
+ proposal[edge]=uvec4(q,d,r,0u);
+}
