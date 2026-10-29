@@ -1,0 +1,75 @@
+{
+  "revision": "T246_DEVELOPER_HANDOFF_V1",
+  "date": "2026-10-29",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence",
+  "compile": "PASS_ARKTS_ARM64_NATIVE",
+  "package": "PASS_UNSIGNED",
+  "sign": "FAIL_00303116_PASSWORD_FIELD_LENGTH",
+  "install": "NOT_RUN",
+  "device": "NOT_RUN",
+  "recipeFiles": {
+    "test\\t246\\build_host.cmd": "ed9632300c60db880341fba8b8f8e3f6e7442ea6d38ba8b5f254b048b2894886",
+    "test\\t246\\generate.cjs": "15f2e9c1f24c1f0176b2a127685558fb1440f1f0703562bc3fbbc1e7e9a51eb4",
+    "test\\t246\\probe.cpp": "10e6b6e325fe9c5274751973e179927e49d5ea7c23cb23fdd237757699d1138a",
+    "test\\t246\\protocol.h": "e41225832cb30799573d25db17e702c82aab1dcb91bb676104ab91265235a3b4",
+    "test\\t246\\protocol_test.cpp": "7d805a6adcccda938fa4fc2dad08f50736a4c66be1b4e43d7fb3b475ddc8c111"
+  },
+  "artifacts": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libt246probe.so",
+      "bytes": 673664,
+      "sha256": "3e589bf7e0b991e7cfd01679a8e00d10e59a3574986b548b643890de42b7a9a7",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\intermediates\\libs\\default\\arm64-v8a\\libt246probe.so",
+      "bytes": 673664,
+      "sha256": "3e589bf7e0b991e7cfd01679a8e00d10e59a3574986b548b643890de42b7a9a7",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libc++_shared.so",
+      "bytes": 1262248,
+      "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\intermediates\\stripped_native_libs\\default\\arm64-v8a\\libt246probe.so",
+      "bytes": 171112,
+      "sha256": "e7fb06ee0c2339d250ed249dc66cf4d9d40a8dacaedb87efad488b333974faff",
+      "elfMachine": 183
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t246-evidence\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 1596717,
+      "sha256": "5f0b74b192d51ba66e42e86a8034e88cc26db50c5809354a07b49ac4381f8e24",
+      "packagedSo": [
+        {
+          "name": "libs/arm64-v8a/libc++_shared.so",
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "bytes": 1262248
+        },
+        {
+          "name": "libs/arm64-v8a/libt246probe.so",
+          "sha256": "e7fb06ee0c2339d250ed249dc66cf4d9d40a8dacaedb87efad488b333974faff",
+          "bytes": 171112
+        }
+      ]
+    }
+  ],
+  "buildLogSha256": "5a554b32e6343ba5d4d59bb0d7196ff2db7f56ee085e6603024188f445fd04ec",
+  "signLogSha256": "60dff2b022ed1a0ba6efa9fc6913e87e1beb3bb7522de39b31a7a1e04b220282",
+  "signingConfigUnchanged": true
+}
