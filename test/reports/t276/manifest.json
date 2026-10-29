@@ -1,0 +1,131 @@
+{
+  "revision": "T276_CLOCK_COLD_V3",
+  "edits": [
+    {
+      "rel": "diagnostics/t248/T266Clock.ets",
+      "from": "  get acceptedSeconds():number",
+      "to": "  get firstBirthAcceptedSeconds():number{return this.firstBirthCommit<0?NaN:this.birthClock;}\n  get acceptedSeconds():number",
+      "sha": "2cbf425eab3535b60d29b52b97921bd7e236436f44dc806c48a6111077db467b"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "import { TxWorkTrace }",
+      "to": "import { t276Export } from '../../diagnostics/t248/T276Export';\nimport { TxWorkTrace }",
+      "sha": "9fc83ae59be8f6c882ca54bed7549ccecebb49042661cc1fb198537083cc95bb"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "    private readonly owner:",
+      "to": "    private t276Serial:number=0;\n    t276BedSeen():boolean{return this.t266SawBed;}\n    t276Cold(kind:string,payload:string):void {t276Export(kind+'|'+this.t248.runId+'|'+this.t248.stateEpoch+'|'+(++this.t276Serial),payload,(line:string):void=>{console.info(line);});}\n    t276Clock(reason:string,commit:number):void {const c=this.t248;const raw=JSON.stringify({revision:'T266_CLOCK_V3',runId:c.runId,stateEpoch:c.stateEpoch,frameSerial:this.t266Frame,physicsCommit:commit,firstBirthCommit:c.firstBirthCommit<0?null:c.firstBirthCommit,firstBirthAcceptedSeconds:c.firstBirthCommit<0?null:c.firstBirthAcceptedSeconds,acceptedPhysicsSeconds:c.acceptedPhysicsSeconds,sinceFirstBirth:c.firstBirthCommit<0?null:c.secondsSinceFirstBirth,committedSubstepCount:c.committedSubstepCount,sourceRequestedSeconds:c.sourceRequestedSeconds,admittedMass:c.sourceAdmittedMass,rejectedCount:c.sourceRejectedCount,stepDropped:c.stepRowsDropped,sourceDropped:c.sourceRowsDropped,anchorReason:reason,previousLogMs:this.t266LogMs,partIndex:0,partCount:1});if(raw.length>1400)throw new Error('T276_CLOCK_BOUND');console.info('T266_CLOCK_V3 '+raw);}\n    private readonly owner:",
+      "sha": "72e1857bd27150044d8b3e27400456d26b1a1d1fc3b289609dfee6c8b7eec9f4"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        if(!this.t266SawBed&&this.owner.t266HasBed())",
+      "to": "        if(this.t266Frame%60===0)this.t276Clock('PERIODIC',r.physicalCommit);\n        if(!this.t266SawBed&&this.owner.t266HasBed())",
+      "sha": "666b91cdcbc9772a96923aa355c9213364612e2a18d1ab2ee7835a3e6300d879"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "this.t266SawBed=true;this.t266AnchorFrames=4;",
+      "to": "this.t266SawBed=true;this.t266AnchorFrames=4;this.t276Clock('FIRST_BED',r.physicalCommit);",
+      "sha": "ab97c277837f2763c7fc0e7df6c44836578c85741de18ae4bed5286df8878127"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "this.t266Saw8=true;this.t266AnchorFrames=4;",
+      "to": "this.t266Saw8=true;this.t266AnchorFrames=4;this.t276Clock('SINCE_BIRTH_8S',r.physicalCommit);",
+      "sha": "f6f6db0974c6727fd1e2ea1af73153a62388acc408cbd743cde46730cb59a3ed"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "                if(this.t266Heavy||!r.ok)console.info",
+      "to": "                if(this.t248.firstBirthCommit===r.physicalCommit&&(r.original?.admittedH??0)>0)this.t276Clock('FIRST_BIRTH',r.physicalCommit);\n                if(this.t266Heavy||!r.ok)console.info",
+      "sha": "824f6f4c250fa0dfb6961ae176b46a552fe600c9af693ac5dedc7448ee9a3da6"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "boundedTrace:this.model.t266Drain(t266Anchor),",
+      "to": "boundedTrace:this.model.t266Drain(t266Anchor),landWriter:this.model.t276LandCold(),pixel:'NOT_CAPTURED_USE_SAME_TOKEN_DEVICE_PROBE',",
+      "sha": "b37cac79da14d363a1e17a335b8ea8dfba6be6dedb54123cd12637dc2233d583"
+    },
+    {
+      "rel": "render/P013SceneController.ets",
+      "from": "import { derivedPublicationGateV2 }",
+      "to": "import { t276Export } from '../diagnostics/t248/T276Export';\nimport { derivedPublicationGateV2 }",
+      "sha": "dd45ec63764d9ac828717e61fd2c1b8209fa497e7a4052f899eb09da78c33a92"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "import { T266Clock }",
+      "to": "import { T276Land } from '../diagnostics/t248/T276Land';\nimport { T266Clock }",
+      "sha": "5f1a67191cbdb303d28a1293a560036bf7e2bd638643e4fe3555beba525adae0"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "  t266Trace:TxWorkTrace|null=null;",
+      "to": "  t276Land:T276Land=new T276Land();\n  private t276Page:number=-1;private t276Epoch:number=-1;\n  private t276CommitLand():void {if(this.t266Trace===null||this.particleBinding===null)return;const w=this.particleBinding.work;if(this.t276Epoch!==this.renderStateEpoch){this.t276Epoch=this.renderStateEpoch;this.t276Page=-1;}if(w.stepEpoch===this.t276Page)return;this.t276Page=w.stepEpoch;const ids=new Uint32Array(w.pool.hotCanonicalBuffers()[8]),states=new Uint8Array(w.pool.hotCanonicalBuffers()[7]),e=w.events;for(let i=0;i<e.count;i++)if(e.kind[i]===2&&e.granted[i]>0){let before=-1,after=0;for(let k=0;k<w.frozenPool.nmax;k++){if(w.frozenPool.pId[k]===e.particleId[i])before=w.frozenPool.pState[k];if(ids[k]===e.particleId[i])after=states[k];}this.t276Land.add(this.p011RunId,this.renderStateEpoch,this.p011SubstepId+1,w.stepEpoch,e.particleId[i],before,after,e.granted[i],this.renderPhysicsCommitId);}}\n  t266Trace:TxWorkTrace|null=null;",
+      "sha": "8c0f00a31b84eb1695ea1e2e9218cd0fe88e9f1bdb50330e78773300ae874171"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "this.observeFieldColumnV2('COMMIT_FINISH','COMMIT');",
+      "to": "this.observeFieldColumnV2('COMMIT_FINISH','COMMIT');this.t276CommitLand();",
+      "sha": "1ff429091a7fb41a8091cfbeb0ea2dd516eed3a5b03fd906d3acd7c92fe1be85"
+    },
+    {
+      "rel": "physics/derived/P051DerivedFacadeV2.ets",
+      "from": "        this.field.startDerivedCommandV2(OWNER_PERMIT_V2, 2);",
+      "to": "        this.field.t276Land.begin();this.field.startDerivedCommandV2(OWNER_PERMIT_V2, 2);",
+      "sha": "cbb1b1b9d178165bd6e483164b9e2e132a70ae891896cb48161563b0b02d13d5"
+    },
+    {
+      "rel": "physics/derived/P051DerivedFacadeV2.ets",
+      "from": "this.field.finishDerivedCommandV2(OWNER_PERMIT_V2, r !== null && r.ok && fault === null);",
+      "to": "this.field.finishDerivedCommandV2(OWNER_PERMIT_V2, r !== null && r.ok && fault === null);this.field.t276Land.seal(this.field.getRenderPhysicsCommitId(),fault===null);",
+      "sha": "449499269c3131c5621786f239cd887485b8a66a75e1a5582403e1be72089b5e"
+    },
+    {
+      "rel": "physics/derived/P051DerivedFacadeV2.ets",
+      "from": "    t266HasBed():boolean",
+      "to": "    t276LandCold():string{return this.field.t276Land.exportCold();}\n    t266HasBed():boolean",
+      "sha": "cfe2c53f6dd43140f84f998d77d65328cb5a8d542110dca16821dd0a8044ad84"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "    t248LandCold(): string",
+      "to": "    t276LandCold():string{return this.owner.t276LandCold();}\n    t248LandCold(): string",
+      "sha": "aead9aacf20afd8ce7bd2793cf199bafa9b2a97fd4fc7e90393374061aab5842"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "  this.renderer.t266CapturePacked=t266Anchor;",
+      "to": "  if(this.model.t276BedSeen()&&this.model.t266AnchorFrames===4)native.t276ArmPixels(this.serial);this.renderer.t266CapturePacked=t266Anchor;",
+      "sha": "f7a37feb715f3377f1e2fb81b35ef9b5ed58467e4f7559f684a34f655a6e29c2"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "pixel:'NOT_CAPTURED_USE_SAME_TOKEN_DEVICE_PROBE'",
+      "to": "pixel:native.t276Pixels()",
+      "sha": "05751146bd0cd3b538ad029dc4a90d7745c2a00d87bd0afa17c042c873187485"
+    }
+  ],
+  "files": [
+    {
+      "name": "T276Export.ets",
+      "sha": "ed85315d7ef84b917bac50798bfb4d618516a9565a67e521448f2dc6082616c5"
+    },
+    {
+      "name": "T276Land.ets",
+      "sha": "4b6540bc40f3adc8b2298455c6e3d23d9fad495fde4691b36e17d1b1cfd0650e"
+    },
+    {
+      "name": "pixel.h",
+      "sha": "6e362681daa7be8b417427683842f0f984ea72e973615d35636ab7669a1b6031"
+    }
+  ],
+  "partMaxAscii": 1800,
+  "clockMaxChars": 1400,
+  "productionTouched": false,
+  "pixel": "ARMED_ONCE_AT_FIRST_ANCHOR_4_SAME_TOKEN_FRAMES_DEVICE_NOT_RUN"
+}
