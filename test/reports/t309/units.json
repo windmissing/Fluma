@@ -1,0 +1,36 @@
+{
+  "revision": "T309_CRITICAL_LANES_V2",
+  "passed": 7,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "cases": [
+    {
+      "name": "40s60Hz window preserves all five per-request critical + stop boundaries",
+      "status": "PASS"
+    },
+    {
+      "name": "critical overflow has exact first lost key; no silent overwrite",
+      "status": "PASS"
+    },
+    {
+      "name": "request/ACK/terminal raw historical values survive mutable request reuse",
+      "status": "PASS"
+    },
+    {
+      "name": "string budget exhausts explicitly instead of allocating without bound",
+      "status": "PASS"
+    },
+    {
+      "name": "cold segment cursor/SHA/END checked; loss/corruption explicitly incomplete",
+      "status": "PASS"
+    },
+    {
+      "name": "growth during cold export marks incomplete; does not reset lane",
+      "status": "PASS"
+    },
+    {
+      "name": "failed export leaves no END; explicit retry does not clear original evidence",
+      "status": "PASS"
+    }
+  ]
+}
