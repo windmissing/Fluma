@@ -1,0 +1,89 @@
+{
+  "revision": "T306_TIMELINE_COLD_UNITS_V1",
+  "passed": 20,
+  "failed": 0,
+  "fsyncCalls": 33,
+  "device": "NOT_RUN",
+  "cases": [
+    {
+      "name": "stable 0 rows preserves exact U64/file fsync+SHA",
+      "status": "PASS"
+    },
+    {
+      "name": "stable 1 rows preserves exact U64/file fsync+SHA",
+      "status": "PASS"
+    },
+    {
+      "name": "stable 1024 rows preserves exact U64/file fsync+SHA",
+      "status": "PASS"
+    },
+    {
+      "name": "skip cursor => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong next => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate serial => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid U64 => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "numeric ns => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown stage => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "partial page => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "count shrinks => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "native overflow => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "growth => INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "missing package SHA refused",
+      "status": "PASS"
+    },
+    {
+      "name": "oversized page exceeds fixed budget",
+      "status": "PASS"
+    },
+    {
+      "name": "interrupted native reader emits INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "cancel yields partial files + INCOMPLETE manifest",
+      "status": "PASS"
+    },
+    {
+      "name": "package identity change detected",
+      "status": "PASS"
+    },
+    {
+      "name": "file fault remains explicit incomplete",
+      "status": "PASS"
+    },
+    {
+      "name": "both real pages call matching module, cancel on hide, no cold mutation",
+      "status": "PASS"
+    }
+  ]
+}

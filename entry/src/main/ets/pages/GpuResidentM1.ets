@@ -1,3 +1,7 @@
+import process from '@ohos.process';
+import { common } from '@kit.AbilityKit';
+import { GpuBridgeTimelineCold } from '../physics/GpuBridgeTimelineCold';
+import { DiagnosticColdFiles } from '../physics/DiagnosticColdFiles';
 import m1 from 'libgrsm1.so';
 import sensor from '@ohos.sensor';
 import systemDateTime from '@ohos.systemDateTime';
@@ -7,6 +11,16 @@ import { GpuM1DemoController } from '../physics/GpuM1DemoController';
 class M1DemoFrame extends FrameCallback {owner:GpuResidentM1|null=null;onFrame(ns:number):void{this.owner?.tick(ns);}}
 @Entry @Component
 struct GpuResidentM1 {
+ private readonly cold:GpuBridgeTimelineCold=new GpuBridgeTimelineCold();
+ @State private coldStatus:string='';@State private packageSha:string='';
+ private async exportTimeline():Promise<void> {
+  if(this.cold.busy)return;this.coldStatus='导出中';
+  try{const context=getContext(this) as common.UIAbilityContext;
+   const out=await this.cold.collect(m1,new DiagnosticColdFiles(context.filesDir),{module:'libgrsm1.so',route:'GpuResidentM1',packageSha256:this.packageSha.trim(),pid:process.pid},()=>new Promise<void>((resolve:()=>void)=>{setTimeout(resolve,0);}));
+   this.coldStatus=out.state+' '+out.reason;
+  }catch(e){this.coldStatus='INCOMPLETE '+String(e);}
+ }
+
  private readonly model:GpuM1DemoController=new GpuM1DemoController(m1);
  private frame:M1DemoFrame=new M1DemoFrame();private queued:boolean=false;private shown:boolean=false;private active:boolean=false;private sensorActive:boolean=false;
  private readonly sensorConfig:P051GravityConfig=new P051GravityConfig();private readonly adapter:P051GravityInputAdapter=new P051GravityInputAdapter(this.sensorConfig);
@@ -16,7 +30,7 @@ struct GpuResidentM1 {
  private readonly accelerometer=(data:sensor.AccelerometerResponse):void=>{if(!this.active||this.manual)return;const t=systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,true)/1000000;const s=this.adapter.consumeAccelerometer(data.x,data.y,data.z,t);if(s.valid&&s.targetTiltDeg!==null)this.model.sensor(s.targetTiltDeg,s.shakeInput);};
  aboutToAppear():void{this.frame.owner=this;}
  onPageShow():void{this.frame.owner=null;this.frame=new M1DemoFrame();this.frame.owner=this;this.queued=false;this.shown=true;this.syncActive();}
- onPageHide():void{this.shown=false;this.frame.owner=null;this.queued=false;this.syncActive();}
+ onPageHide():void{this.cold.cancel();this.shown=false;this.frame.owner=null;this.queued=false;this.syncActive();}
  aboutToDisappear():void{this.onPageHide();this.frame.owner=null;}
  private syncActive():void {const active=this.shown&&this.foreground;if(active===this.active)return;this.active=active;this.model.setActive(active);this.updateSensor();if(active)this.schedule();}
  private updateSensor():void {
@@ -44,6 +58,6 @@ struct GpuResidentM1 {
   XComponent({id:'grs-m1',type:XComponentType.SURFACE,libraryname:'grsm1'}).width('100%').layoutWeight(1).onAreaChange((_o:Area,a:Area)=>this.model.geometry(Number(a.width),Number(a.height))).onTouch((e:TouchEvent)=>this.touch(e))
   Row({space:6}){Text('离线手动重力').fontSize(11);Toggle({type:ToggleType.Switch,isOn:this.manual}).onChange((v:boolean)=>{this.manual=v;this.model.gravityMode(!v);this.updateSensor();});Button('光学/诊断').onClick(()=>{this.model.stop('CONFIG');this.showOptics=!this.showOptics;});}
   if(this.manual){Slider({min:-30,max:30,value:0,step:1}).onChange((v:number)=>this.model.manualAngle(v));}
-  if(this.showOptics){Text(this.gravityText).fontSize(10);Text(this.memoryText).fontSize(10);Text('光学应用会新建空场；不热改当前库存。').fontSize(11);Text('透射 sigma '+this.sigma.toFixed(3)).fontSize(10);Slider({min:0,max:.12,value:this.sigma,step:.005}).onChange((v:number)=>{this.sigma=v;});Text('高光 '+this.gain.toFixed(2)+' / 宽度 '+this.widthPx.toFixed(1)+'px').fontSize(10);Slider({min:0,max:1,value:this.gain,step:.05}).onChange((v:number)=>{this.gain=v;});Slider({min:.5,max:8,value:this.widthPx,step:.5}).onChange((v:number)=>{this.widthPx=v;});Button('应用光学并新建空场').onClick(()=>this.model.applyOptics(this.sigma,this.gain,this.widthPx));Row(){Button('K192 / W128').onClick(()=>this.model.profile(192,128));Button('K512 / W128').onClick(()=>this.model.profile(512,128));}}
+  if(this.showOptics){TextInput({placeholder:'诊断签包 SHA256（外部签包清单）',text:this.packageSha}).onChange((v:string)=>{this.packageSha=v;});Button('导出原生时间线').onClick(()=>this.exportTimeline());Button('取消导出').onClick(()=>this.cold.cancel());Text(this.coldStatus).fontSize(10);Text(this.gravityText).fontSize(10);Text(this.memoryText).fontSize(10);Text('光学应用会新建空场；不热改当前库存。').fontSize(11);Text('透射 sigma '+this.sigma.toFixed(3)).fontSize(10);Slider({min:0,max:.12,value:this.sigma,step:.005}).onChange((v:number)=>{this.sigma=v;});Text('高光 '+this.gain.toFixed(2)+' / 宽度 '+this.widthPx.toFixed(1)+'px').fontSize(10);Slider({min:0,max:1,value:this.gain,step:.05}).onChange((v:number)=>{this.gain=v;});Slider({min:.5,max:8,value:this.widthPx,step:.5}).onChange((v:number)=>{this.widthPx=v;});Button('应用光学并新建空场').onClick(()=>this.model.applyOptics(this.sigma,this.gain,this.widthPx));Row(){Button('K192 / W128').onClick(()=>this.model.profile(192,128));Button('K512 / W128').onClick(()=>this.model.profile(512,128));}}
  }.width('100%').height('100%').padding({top:8,bottom:8});}
 }
