@@ -1,0 +1,15 @@
+HEADER {"revision":"T303_RUNNER_STAGES_V1","clock":"ACTIVE_MONOTONIC_MS","capacity":1024,"rowWidth":8,"fields":["sequence","ms","identityIndex","stage","root","code","lastCompletedRoot","dropped"]}
+IDENTITY {"runId":"t304frzON","packageSha":"0e61dc946f75c738b2401486f8c222abea61c573a9f8c674ef01fd04677070a9","pid":49698,"tid":49807,"backend":"LEGACY_SCAN","arm":"COMMON_FREEZE_ON","fixture":"WET_192_64","suite":false,"faultPlan":"{\"fixtureId\":\"WET_192_64\",\"buildSHA\":\"0e61dc946f75c738b2401486f8c222abea61c573a9f8c674ef01fd04677070a9\",\"backend\":\"LEGACY_SCAN\",\"freezeArm\":\"COMMON_FREEZE_ON\",\"PID\":49698,\"rootId\":2,\"cutId\":9,\"edge\":\"BEFORE\",\"ordinal\":1}"}
+ROW [1,2734321585,0,4,0,0,0,0]
+ROW [2,2734321585,0,7,0,0,0,0]
+ROW [3,2734321626,0,8,1,0,0,0]
+ROW [4,2734321888,0,9,1,0,1,0]
+ROW [5,2734321906,0,8,2,0,1,0]
+ROW [6,2734324190,0,9,2,0,2,0]
+ERROR {"firstError":"TX_GPU_ADMISSION_FAILED","lastCompletedRoot":2}
+ROW [7,2734324416,0,10,0,0,2,0]
+ROW [8,2734324460,0,11,0,0,2,0]
+ROW [9,2734324461,0,12,0,0,2,0]
+ROW [10,2734324484,0,13,0,0,2,0]
+ROW [11,2734324484,0,14,0,0,2,0]
+END {"count":11,"dropped":0,"lastCompletedRoot":2,"firstError":"TX_GPU_ADMISSION_FAILED","observerError":""}
