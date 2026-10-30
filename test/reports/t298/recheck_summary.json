@@ -1,0 +1,14 @@
+{
+ "revision": "T298_TESTER_INDEPENDENT_RECHECK_V1",
+ "full": [
+  "192-64:465/0",
+  "192-128:465/0",
+  "512-64:465/0",
+  "512-128:465/0"
+ ],
+ "replay_cases": "38x4 PASS",
+ "source_regression": "562/0 (t240 transport.exe re-run)",
+ "counterexamples": "14 FAULT rows status=9 audit<1023 (all rejected, old publication retained)",
+ "device": "NOT_RUN",
+ "execution": "PC_SWIFTSHADER (ANGLE via CokePLUS libEGL/libGLESv2)"
+}
