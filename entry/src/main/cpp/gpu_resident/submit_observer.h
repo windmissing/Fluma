@@ -6,7 +6,10 @@ namespace grs {
 // strings or allocation in Emit. Codes are original TransportCode / raw GL.
 enum class SubmitStage:uint32_t {SubmitEnter=24,SubmitExit,ShaderEnter,ShaderExit,
  ProgramEnter,ProgramExit,ResourceEnter,ResourceExit,PrepareEnter,PrepareExit,
- DispatchEnter,DispatchExit,FenceEnter,FenceExit,PollEnter,PollExit};
+ DispatchEnter,DispatchExit,FenceEnter,FenceExit,PollEnter,PollExit,
+ // T324 §2.6: SubmitRootBegin fires once at the first batch of a partial
+ // submit; SubmitCancel fires when CancelSubmit revokes an unsealed root.
+ SubmitRootBegin=40,SubmitCancel};
 struct SubmitObserver {
  void* context=nullptr;
  void (*write)(void*,SubmitStage,uint64_t,uint32_t,uint32_t)=nullptr;
