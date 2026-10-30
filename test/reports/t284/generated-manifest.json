@@ -1,0 +1,41 @@
+{
+  "revision": "T284_BOUNDED_COLD_V1",
+  "productionTouched": false,
+  "device": "NOT_RUN",
+  "anchors": {
+    "FIRST_BIRTH": 1,
+    "FIRST_BED": 1,
+    "SINCE_BIRTH_8S": 1,
+    "MANUAL": 1
+  },
+  "budgets": {
+    "anchorRawBytes": 262144,
+    "anchorParts": 512,
+    "runRawBytes": 1048576,
+    "runParts": 2048,
+    "queueRawBytes": 524288,
+    "queueItems": 16,
+    "captureMs": 4,
+    "batchParts": 4,
+    "batchMs": 2,
+    "exportMs": 200
+  },
+  "files": [
+    {
+      "file": "physics/derived/P051DerivedDemoV2.ets",
+      "sha256": "e70be957dcad0f16a349c386a4e24a9b9c1059f34bba9d3cb835ab88e5607117"
+    },
+    {
+      "file": "pages/P051DerivedV2Demo.ets",
+      "sha256": "732c0d7abe2d469ab6072f1463aad1e2c802a57a57df731c7e0e629baeb41c1a"
+    },
+    {
+      "file": "render/P013SceneController.ets",
+      "sha256": "9f79afb6b173bc76189630353e7dbfc081b27637cc0c467249f2106b0c9165c5"
+    },
+    {
+      "file": "diagnostics/t248/T284Cold.ets",
+      "sha256": "13a66fdb32604ff77e16967ce3878624be7d6d9b9d66ac16d5a2ed0623d208af"
+    }
+  ]
+}

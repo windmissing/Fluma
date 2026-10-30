@@ -1,0 +1,139 @@
+{
+  "revision": "T284_BOUNDED_COLD_DELIVERY_V1",
+  "date": "2026-10-30",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t284-v4",
+  "build": "BUILD_SUCCESSFUL",
+  "device": "NOT_RUN",
+  "productionPhysics": "UNCHANGED",
+  "dtClock": "UNCHANGED",
+  "render": "XCOMPONENT_SHADER_ONLY",
+  "testsPassed": 59,
+  "testsFailed": 0,
+  "manifest": {
+    "revision": "T284_BOUNDED_COLD_V1",
+    "productionTouched": false,
+    "device": "NOT_RUN",
+    "anchors": {
+      "FIRST_BIRTH": 1,
+      "FIRST_BED": 1,
+      "SINCE_BIRTH_8S": 1,
+      "MANUAL": 1
+    },
+    "budgets": {
+      "anchorRawBytes": 262144,
+      "anchorParts": 512,
+      "runRawBytes": 1048576,
+      "runParts": 2048,
+      "queueRawBytes": 524288,
+      "queueItems": 16,
+      "captureMs": 4,
+      "batchParts": 4,
+      "batchMs": 2,
+      "exportMs": 200
+    },
+    "files": [
+      {
+        "file": "physics/derived/P051DerivedDemoV2.ets",
+        "sha256": "e70be957dcad0f16a349c386a4e24a9b9c1059f34bba9d3cb835ab88e5607117"
+      },
+      {
+        "file": "pages/P051DerivedV2Demo.ets",
+        "sha256": "732c0d7abe2d469ab6072f1463aad1e2c802a57a57df731c7e0e629baeb41c1a"
+      },
+      {
+        "file": "render/P013SceneController.ets",
+        "sha256": "9f79afb6b173bc76189630353e7dbfc081b27637cc0c467249f2106b0c9165c5"
+      },
+      {
+        "file": "diagnostics/t248/T284Cold.ets",
+        "sha256": "13a66fdb32604ff77e16967ce3878624be7d6d9b9d66ac16d5a2ed0623d208af"
+      }
+    ]
+  },
+  "signature": {
+    "revision": "T257_LOCAL_SIGNED_HANDOFF_V1",
+    "task": "T284",
+    "bundleName": "com.example.helloworld",
+    "compatibleVersion": 26,
+    "input": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t284-v4\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "sha256": "bd0c7614e1ae1013716d838d5388e3586b36f6f1157a8f65f26bac31bb692c11"
+    },
+    "signed": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T284\\T284-signed.hap",
+      "sha256": "ed16f0660a544f98a5c850581b6aa554a23fb3eefbc9c2777efccf6c2eaba6ad",
+      "bytes": 5783613
+    },
+    "toolSha256": "a434b6747e6c5d0b14e73837a46b39f4816ab25b42d1833d6f767bf867cf616d",
+    "certificateSha256": "b2242708021fcc788b890ac7de63e62110090a414c8490febeb3852cc6ce28c9",
+    "profileCertificateSha256": "8e93863fc32ee238060bf69a9b37e2608fffb21f93c862dd511cbac9f30024b5",
+    "certificateSPKI": "67cfa9fffa8f817f5fd3ab37ad8dc686cd01153d3cb453bd851004f3fb93fa7e",
+    "profileVerified": true,
+    "profileMatchedPublicChainSha256": "5585edc5c58bc9bea4a00f157cb6c1ad9128a54619ac61fd23fa3e328b6045ab",
+    "originalLeafSignatureMismatchHandledWithExistingProfileCertificate": true,
+    "keystoreCertificateMatchesProfile": true,
+    "verifyApp": "PASS",
+    "payloadEntriesUnchanged": 15,
+    "sourceConfigUnchanged": true,
+    "credentialsLogged": false,
+    "device": "NOT_RUN",
+    "operations": [
+      {
+        "operation": "verify-profile",
+        "exitCode": 0,
+        "stdoutBytes": 100,
+        "stderrBytes": 0,
+        "outputSha256": "02394e0c417979776a9ed1b2b88aa463222eefc7141c8e498e78ae1c6c97a29a"
+      },
+      {
+        "operation": "sign-app",
+        "exitCode": 0,
+        "stdoutBytes": 1097,
+        "stderrBytes": 0,
+        "outputSha256": "67bc575376caadfc26d52aaf93f6dd822948f8a7c0844b3e6f0890faabba4800"
+      },
+      {
+        "operation": "verify-app",
+        "exitCode": 0,
+        "stdoutBytes": 3210,
+        "stderrBytes": 56,
+        "outputSha256": "e925465a6243469e0aeef67050fcd03a969f781d328a02e0acde9d2fbf4a4af8"
+      },
+      {
+        "operation": "verify-profile",
+        "exitCode": 0,
+        "stdoutBytes": 100,
+        "stderrBytes": 0,
+        "outputSha256": "33e1905e76abca8f087f372b20c509ab69140af9714d4e2b00c93551c69137b4"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "test/t276/generate.cjs",
+      "sha256": "cd5c9308e090fd9366e6c1869a3010c7a97a5b4698b379b4e73a1083a8c36e0e"
+    },
+    {
+      "path": "test/t284/apply.cjs",
+      "sha256": "e10a03fbdbafdf387bbab93ccb819a03a448bcdcb45a0ec57772f708667409ff"
+    },
+    {
+      "path": "test/t284/T284Cold.ets",
+      "sha256": "13a66fdb32604ff77e16967ce3878624be7d6d9b9d66ac16d5a2ed0623d208af"
+    },
+    {
+      "path": "test/t284/selftest.cjs",
+      "sha256": "33748624e0a66d10bf61b4f4fe327a7eea8b6b176fd8ca73248aed16197bee4d"
+    },
+    {
+      "path": "test/t284/reassembly_test.cjs",
+      "sha256": "93191e2bee4878188b384b3c0c4ef0db485694b4044f50f555a26816261a3642"
+    },
+    {
+      "path": "test/t284/reassemble.cjs",
+      "sha256": "68e974fbb3a96f713caa5c89d96693beec494c77582f4eac772dbe6595d8817a"
+    }
+  ],
+  "limits": "time checked between bounded operations; one non-preemptible emit/capture may exceed measured limit then INCOMPLETE/BUDGET, never success",
+  "longTrace": "bounded prefix up to64 rows, omitted count/incomplete explicit; no full-run completeness claim"
+}

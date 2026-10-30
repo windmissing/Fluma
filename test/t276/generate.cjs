@@ -41,3 +41,4 @@ fs.writeFileSync(path.join(out,'t276-manifest.json'),JSON.stringify({revision:'T
 
 
 
+require('../t284/apply.cjs')(out);
