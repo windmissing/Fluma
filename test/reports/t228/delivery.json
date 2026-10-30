@@ -1,0 +1,160 @@
+{
+  "revision": "T228_DEVELOPER_DELIVERY_V1",
+  "uiContract": "GRS_M1_DEMO_UI_V4",
+  "sceneContract": "GRS_GPU_SCENE_Q20_M1_V2",
+  "controller": {
+    "revision": "T228_REAL_CONTROLLER_NODE_V1",
+    "passed": 22,
+    "failed": 0,
+    "scope": "Actual ArkTS input controller; explicit native-port double, no physical/GPU assertion",
+    "device": "NOT_RUN",
+    "cases": [
+      {
+        "name": "DOWN/first active tick and dt0 emit no source",
+        "status": "PASS"
+      },
+      {
+        "name": "real raw ns delta -> exact requested volume and original 32word revision2",
+        "status": "PASS"
+      },
+      {
+        "name": "MOVE controls next emission position without resampling elapsed time",
+        "status": "PASS"
+      },
+      {
+        "name": "primary pointer excludes second DOWN and unrelated UP",
+        "status": "PASS"
+      },
+      {
+        "name": "UP preserves owner and stops future births",
+        "status": "PASS"
+      },
+      {
+        "name": "kind switch requires new DOWN, binds water namespace/source control",
+        "status": "PASS"
+      },
+      {
+        "name": "gap >33333333ns stops and never catches up",
+        "status": "PASS"
+      },
+      {
+        "name": "backward/invalid clocks stop without volume",
+        "status": "PASS"
+      },
+      {
+        "name": "exact legal maximum window uses original delta without clamp",
+        "status": "PASS"
+      },
+      {
+        "name": "backpressure stops input with no replay or accumulated retry",
+        "status": "PASS"
+      },
+      {
+        "name": "geometry change disarms; mirror coordinate mapping stays explicit",
+        "status": "PASS"
+      },
+      {
+        "name": "new run disarms and uses fresh request identity",
+        "status": "PASS"
+      },
+      {
+        "name": "READY epoch mismatch cannot emit",
+        "status": "PASS"
+      },
+      {
+        "name": "legacy F64/M0 UI revision is explicitly refused",
+        "status": "PASS"
+      },
+      {
+        "name": "malformed status identity cannot become an offered command",
+        "status": "PASS"
+      },
+      {
+        "name": "background/resume requires new DOWN and preserves run",
+        "status": "PASS"
+      },
+      {
+        "name": "sensor sends only observed target; manual mode is explicit",
+        "status": "PASS"
+      },
+      {
+        "name": "optics are typed cold config with explicit new empty run",
+        "status": "PASS"
+      },
+      {
+        "name": "profile uses M1 feature/revision and clears current gesture",
+        "status": "PASS"
+      },
+      {
+        "name": "request ID exhaustion refuses birth rather than wrapping",
+        "status": "PASS"
+      },
+      {
+        "name": "ENQUEUED is not a successful admission/current frame",
+        "status": "PASS"
+      },
+      {
+        "name": "out-of-box input is rejected, never repositioned to a surface",
+        "status": "PASS"
+      }
+    ]
+  },
+  "native": {
+    "revision": "T228_UI_NATIVE_CONTROL_V1",
+    "passed": 10,
+    "failed": 0,
+    "transport": "EXPLICIT_DOUBLE_REAL_RUN_CLOCK",
+    "device": "NOT_RUN"
+  },
+  "productionApp": {
+    "revision": "T228_PRODUCTION_UI_APP_GLES_V1",
+    "passed": 20,
+    "failed": 0,
+    "gpuBufferAllocatedBytes": 25835728,
+    "frameTargetBytes": 524288,
+    "knownGpuBytesPeak": 26360016,
+    "pcWorkingSetBytes": 19480576,
+    "pcPeakWorkingSetBytes": 1633378304,
+    "pcPrivateUsageBytes": 7053312,
+    "execution": "PC_ANGLE_SWIFTSHADER",
+    "clock": "SCRIPTED_OFFLINE",
+    "driver": "REAL_FULL_M1_APP_BRIDGE_RUN_SCENE",
+    "device": "NOT_RUN"
+  },
+  "m0Bridge": {
+    "revision": "T295_PRODUCTION_BRIDGE_LOOP_HOST",
+    "passed": 16,
+    "failed": 0,
+    "platform": "WINDOW_EGL_TRANSPORT_DOUBLE_REAL_RUN_CLOCK",
+    "device": "NOT_RUN"
+  },
+  "ready": {
+    "revision": "T282_READY_ATOMIC_V1",
+    "passed": 18,
+    "failed": 0,
+    "device": "NOT_RUN"
+  },
+  "clock": {
+    "passed": 14,
+    "failed": 0,
+    "scope": "REAL_CLOCK_RUN_WITH_TRANSPORT_DOUBLE",
+    "acceptedPrefixRetained": 1,
+    "noWallClockCatchup": true
+  },
+  "build": "PASS",
+  "signVerify": {
+    "task": "T228-final",
+    "sign": "PASS",
+    "verify": "PASS",
+    "inputSha": "68ec0ad41cf3e40f663d8bd7a32faa8e4ecfa81473fd89dcdcf71934a13c1bc2",
+    "signedSha": "32f6a1743091e89d0323cec3e8fcb651e2fe04b206f251230216cd6aa8a01b9e"
+  },
+  "signedHap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T228-final\\T228-final-signed.hap",
+  "nativeModules": [
+    "libs/arm64-v8a/libgrsm1.so"
+  ],
+  "resourceScope": "Actual GL buffer allocations + dual full-frame textures; known GPU payload peak excludes driver allocation/JIT/RSS. Separate PC process working-set peak from GetProcessMemoryInfo; not device memory. JS fixed typed payload192B, objects/views/status-string heap not measured. Old/new native contexts retired serially; driver residency overlap not measured.",
+  "realDevice": "NOT_RUN",
+  "independentValidation": "SEPARATE_T229_T300_T301",
+  "productBenefit": "NOT_EVALUATED"
+}

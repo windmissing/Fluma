@@ -9,10 +9,13 @@ public:
  ControlCode Offer(const std::array<uint32_t,32>&);
  ControlCode Advance(uint64_t,U64,U64,int,uint32_t);
  TransportCode Pump();ControlCode Pause();const ResidentTickReceipt& Tick()const{return receipt;}uint32_t Queued()const{return count;}
+ // T228 UI boundaries do not call terminal transport.Stop(). A root already
+ // submitted drains once; queued/unsubmitted sources and future quanta stop.
+ uint32_t DiscardSources();void Suspend();void Resume();bool HasFlight()const{return inflight;}bool SourceInFlight()const{return inflight&&sourceFlight;}
 private:
  void Fail(TransportCode);FullM1Transport& transport;Fixed120Clock clock;QuantumParameters params;
  std::array<std::array<uint32_t,32>,16> queue{};uint32_t head=0,count=0,K=0,nextQuantum=1;
- U64 nonce{},frame{},control{},lastFrame{};int angle=0;bool sourcePending=false,inflight=false,sourceFlight=false,quarantined=false;
+ U64 nonce{},frame{},control{},lastFrame{};int angle=0;bool sourcePending=false,inflight=false,sourceFlight=false,quarantined=false,suspended=false;
  uint64_t offered=0,backpressured=0;ResidentTickReceipt receipt;
 };
 }}

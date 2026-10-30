@@ -6,3 +6,7 @@ export const newRun:()=>string;
 export const diagnostics:()=>string;
 export const timeline:(cursor:number)=>string;
 export const configureM1:(K:number,Kw:number,features:number,revision:number)=>string;
+export const setSource:(kind:number)=>string;
+export const setGravityMode:(sensor:boolean)=>string;
+export const setGravitySample:(rawDegrees:number,shakeDiagnostic:number,sequence:number)=>string;
+export const configureOptics:(optics:Float32Array)=>string;
