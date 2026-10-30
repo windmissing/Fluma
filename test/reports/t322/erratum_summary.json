@@ -1,0 +1,25 @@
+{
+ "revision": "T322_ERRATUM_V1",
+ "two_windows": {
+  "w1": [
+   2734444379322947,
+   2734444390443514,
+   0.011120567
+  ],
+  "w2": [
+   2734444390443514,
+   2734444412682284,
+   0.02223877
+  ],
+  "w1_end==w2_start": true,
+  "total_effective_s": 0.033359337,
+  "matches_two_admissions_bit_exact": true,
+  "rateWater_in_signpackage": 1
+ },
+ "stop_gap": "STOP row17 reason=GAP immediately after TERMINAL row16; no third ENQUEUE/UP; source stopped early by clock GAP",
+ "erratum_T310": "\"8units/s\" claim wrong (signpackage rateWater=1); \"30s long-press merged normally\" wrong (clock GAP stopped source early; 30s wall-clock != 30s effective)",
+ "header_semantics": "header[5]=586=physicsCommit at frame900, header[6]=2=sourceCommit(terminal2) - correct per Engine contract",
+ "native_label_swap": "native sample keys swapped: sourceCommit key holds 586 (physics value), physicsCommit key holds 2 (source value) - writer key-name error, values consistent with header",
+ "fbo_narrow_chain": "retained: terminal2->source2/physics586->same-token FBO surface nonzero (22252bff); body visibility & actual swap presentation NOT evidenced",
+ "no_reresample": "no ROI re-sampling; original archives unchanged"
+}
