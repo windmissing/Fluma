@@ -17,6 +17,7 @@ class TransportTraceRing {
  size_t Size()const{return count;}uint64_t Dropped()const{return dropped;}
  bool Complete()const{return dropped==0;}
  const TransportTrace& At(size_t i)const{return rows.at(i);}
+ void FinalizeRoot(const RootRequest& root){for(size_t i=0;i<count;i++)if(Compare64(rows[i].root.nonce,root.nonce)==0)rows[i].root=root;}
  private:std::array<TransportTrace,capacity> rows{};size_t count=0;uint64_t dropped=0;
 };
 }

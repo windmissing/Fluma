@@ -14,6 +14,11 @@ public:
  uint64_t MappedBytes()const{return mapped;}uint64_t AcceptedCount()const{return accepted;}
  bool HasLeases()const{for(const auto& p:pubs)if(p.leased||p.releasePending)return true;return false;}
 private:
+ friend class FullM1Transport;
+ friend struct FullM1HostAccess;
+ ControlCode BeginQuantum(const RootRequest&,int requestedAngle);
+ bool ValidQuantum(const uint32_t*,size_t,uint32_t)const;int quantumAngle=0;
+ bool fullWaterContract=false;
  bool Valid(const uint32_t*,size_t,uint32_t)const;
  Words256 header{};Identity identity{};RootRequest pending{};std::array<uint32_t,32> command{};
  PublicationLease pubs[2]{};FlightState state=FlightState::StateLost;uint32_t K=0,Kw=0,bank=0;U64 lastNonce{};bool tombstone=false;uint64_t mapped=0,accepted=0;

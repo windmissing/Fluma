@@ -18,11 +18,15 @@ public:
  size_t PublicationWords()const{return pubWords;}size_t HeaderOffsetWords()const{return headerAt;}
 private:
  friend class QuantumCandidate;
+ friend class FullM1Transport;
+ friend struct FullM1HostAccess;
+ TransportCode CreateUsing(uint32_t,uint32_t,const Identity&,const char* expectedSha,const char* shader);
  TransportCode PinCandidate();bool candidatePinned=false;
  bool Current()const;bool Good();bool Set(const char*,uint32_t);bool Pair(const char*,U64);void Retire();
  SourceRootOwner owner;SourceTransportStats stats{};TransportTraceRing trace;Identity identity{};RootRequest pending{};Words256 tail{};
  GLuint program=0,banks[2]{},work=0,events[2]{},pubs[2]{},results[2]{};GLsync fence=nullptr,releases[2]{};U64 releaseGen[2]{};U64 lastFrame{};U64 arenaFrame[2]{};
  EGLContext context=EGL_NO_CONTEXT;EGLDisplay display=EGL_NO_DISPLAY;EGLSurface surface=EGL_NO_SURFACE;std::thread::id thread;
  size_t words=0,workWords=0,pubWords=0,headerAt=0;uint32_t K=0,Kw=0;bool ready=false,lost=false,frozen=false,fatal=false;
+ uint32_t emitQ=1048576;
 };
 }}

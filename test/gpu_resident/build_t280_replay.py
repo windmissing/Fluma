@@ -1,0 +1,12 @@
+from pathlib import Path
+r=Path(__file__).resolve().parents[2];out=r/'.codex/local-test/t280';out.mkdir(exist_ok=True,parents=True)
+s=(r/'test/gpu_resident/t279_quantum_host.cpp').read_text()
+s=s.replace('std::chrono::seconds(45)','std::chrono::seconds(180)')
+s=s.replace('#include <cassert>','#include <cassert>\n#include "t280_commit_access.h"')
+s=s.replace('write(h,16);','m1::QuantumCommitTestAccess::Install(gpu);write(h,16);',1)
+s=s.replace('assert(code==TransportCode::OK);do{code=gpu.Poll();','assert(code==TransportCode::OK);m1::QuantumCommitTestAccess::Audit(gpu);do{code=gpu.Poll();')
+s=s.replace('gpu.Dispatches()==gpu.ExpectedDispatches()','gpu.Dispatches()==gpu.ExpectedDispatches()+3')
+s=s.replace('assert(gpu.Submit(source,params,qr)==TransportCode::OK);','assert(gpu.Submit(source,params,qr)==TransportCode::OK);m1::QuantumCommitTestAccess::Audit(gpu);')
+(out/'replay_host.cpp').write_text(s)
+b=(r/'test/gpu_resident/build_t279_host.cmd').read_text().replace('/I.codex/local-test/t279','/I.codex/local-test/t279 /I.codex/local-test/t280 /Itest/gpu_resident').replace('test/gpu_resident/t279_quantum_host.cpp','.codex/local-test/t280/replay_host.cpp').replace('/Fe.codex/local-test/t279/quantum.exe /Fo.codex/local-test/t279/','/Fe.codex/local-test/t280/replay.exe /Fo.codex/local-test/t280/')
+(out/'build.cmd').write_text(b)
