@@ -1,0 +1,9 @@
+{
+ "revision": "T320_INDEPENDENT_ATTRIBUTION_V1",
+ "explicit_39": "(owner,text) set identical before/after; 23/23 line-number shifts only (T311 metering insertion)",
+ "builtin_2": "same owner P011PoolProgressDiagnostic.checkLong line125, retained",
+ "net18_breakdown": "4x Date.now(begin/end x UNRESOLVED_CALL/UNKNOWN_ALIAS) + 37 new CONTEXT_LIMIT - 32 gone CONTEXT_LIMIT (callgraph expansion, not new news)",
+ "datenow": "ECMA-262 20.4.2.1 returns primitive number, no allocation mandated; ArkTS runtime impl not provable from source -> PROOF_GAP; legacy TxWorkTrace.clock line12 same primitive pre-existing",
+ "diag_switch": "if(!this.enabled) guards on begin/end/next; runtime equivalence evidenced by 97 checks incl ON/OFF; static equivalence PROOF_GAP",
+ "gate": "NOT_ZERO_ALLOCATION/164 remains FAIL; no whitelist, no assertion relaxation"
+}
