@@ -3,6 +3,8 @@ import { FrameCallback } from '@ohos.arkui.UIContext';
 import { P051GravityConfig,P051GravityInputAdapter } from '../physics/P051GravityInputAdapter';
 import { p013NowMs } from '../render/P013RenderController';
 import { P013ClearWaterController } from '../render/P013ClearWaterController';
+import { common } from '@kit.AbilityKit';
+import { DiagnosticColdFiles } from '../physics/DiagnosticColdFiles';
 class ClearWaterFrame extends FrameCallback {owner:ClearWaterDemo|null=null;onFrame(ns:number):void{this.owner?.tick(ns);}}
 @Entry
 @Component
@@ -12,6 +14,8 @@ struct ClearWaterDemo {
  private shown:boolean=false;private active:boolean=false;private queued:boolean=false;private sensorActive:boolean=false;private inputWidth:number=0;private inputHeight:number=0;
  @StorageLink('emptySandDemoForeground') @Watch('syncActive') private foreground:boolean=true;
  @State private status:string='等待新管线';@State private kind:string='沙';
+ @State private sourceFeedback:string='按下后开始供给；只累计连续有效帧';
+ private syncSourceFeedback():void {this.sourceFeedback=this.model.source.feedbackMessage;}
  private readonly accelerometer=(data:sensor.AccelerometerResponse):void=>{if(this.active)this.sensorInput.consumeAccelerometer(data.x,data.y,data.z,p013NowMs());};
  aboutToAppear():void {this.callback.owner=this;}
  onPageShow():void {this.shown=true;this.syncActive();}
@@ -24,24 +28,28 @@ struct ClearWaterDemo {
   if(this.active)this.schedule();
  }
  private schedule():void {if(this.active&&!this.queued){this.queued=true;this.getUIContext().postFrameCallback(this.callback);}}
- tick(ns:number):void {this.queued=false;if(!this.active)return;const now=p013NowMs();try{this.model.tick(ns,now,this.sensorInput.latest(now),this.getUIContext().vp2px(1));this.status=this.model.status;}catch(e){this.model.source.stop('CONTROLLER_FAULT');this.status='FAULT';}this.schedule();}
+ tick(ns:number):void {this.queued=false;if(!this.active)return;const now=p013NowMs();try{this.model.tick(ns,now,this.sensorInput.latest(now),this.getUIContext().vp2px(1));this.status=this.model.status;}catch(e){this.model.source.stop('CONTROLLER_FAULT');this.status='FAULT';}this.syncSourceFeedback();this.schedule();}
  private touch(e:TouchEvent):void {
-  if(e.type===TouchType.Cancel){this.model.source.stop('CANCEL');return;}
+  if(e.type===TouchType.Cancel){this.model.source.stop('CANCEL');this.syncSourceFeedback();return;}
   const points=e.type===TouchType.Up?e.changedTouches:e.touches;if(points.length===0)return;const p=points[0];
-  if(e.type===TouchType.Up){this.model.source.up(p.id);return;}if(this.inputWidth<=0||this.inputHeight<=0||!this.active)return;
+  if(e.type===TouchType.Up){this.model.source.up(p.id);this.syncSourceFeedback();return;}if(this.inputWidth<=0||this.inputHeight<=0||!this.active)return;
   const x=p.x/this.inputWidth*128,y=(1-p.y/this.inputHeight)*256;
   if(e.type===TouchType.Down)this.model.source.down(p.id,x,y);else if(e.type===TouchType.Move)this.model.source.move(p.id,x,y);
+  this.syncSourceFeedback();
  }
  build(){
   Column({space:8}) {
    Text('单沙＋明水 · C V1').fontSize(20)
    Text(this.status+' · 当前源：'+this.kind).fontSize(12)
+   Text(this.sourceFeedback).fontSize(12)
+   Text('水源候选速率 '+this.model.source.configuredWaterRate+' unit/s；墙钟按住时长不等于有效供水时长。').fontSize(12)
    Text('水直接加入水层；摇动仅记录。参数待定标。').fontSize(12)
    Row({space:8}) {
-    Button('沙').onClick(()=>{this.model.source.select(0);this.kind='沙';})
-    Button('水').onClick(()=>{this.model.source.select(1);this.kind='水';})
+    Button('沙').onClick(()=>{this.model.source.select(0);this.kind='沙';this.syncSourceFeedback();})
+    Button('水').onClick(()=>{this.model.source.select(1);this.kind='水';this.syncSourceFeedback();})
     Button('重置').onClick(()=>this.model.reset())
    }
+   Button('导出源时钟收据').onClick(async()=>{try{const context=getContext(this) as common.UIAbilityContext;const file=await new DiagnosticColdFiles(context.filesDir).save('cw-source-'+Date.now()+'.json',this.model.source.trace.exportCold());this.status='源收据已保存：'+file.name;}catch(e){this.status='SOURCE_RECEIPT_EXPORT_FAILED';}})
    Stack(){
     XComponent({id:'p013_clear_water_surface',type:XComponentType.TEXTURE,libraryname:'p013renderer'}).width('100%').height('100%').onLoad(()=>this.model.onLoad()).hitTestBehavior(HitTestMode.None)
     Stack(){}.width('100%').height('100%').onTouch((e:TouchEvent)=>this.touch(e))

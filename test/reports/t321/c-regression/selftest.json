@@ -1,0 +1,64 @@
+{
+  "revision": "T226_DEVELOPER_SELFTEST_V1",
+  "device": false,
+  "passed": 14,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "canonical after source is newer than historical B, no snapshotB loop",
+      "status": "PASS"
+    },
+    {
+      "name": "ACK never terminal; exact terminal read is readonly and detects raw conflict",
+      "status": "PASS"
+    },
+    {
+      "name": "reset invalidates terminal visibility without rewriting old A receipt schema",
+      "status": "PASS"
+    },
+    {
+      "name": "failed second B keeps first success angle/canonical/sealed identity",
+      "status": "PASS"
+    },
+    {
+      "name": "capture without B fails closed and does not publish fake positive steps",
+      "status": "PASS"
+    },
+    {
+      "name": "capture rejects aliases, shortened views, detached buffers before writing",
+      "status": "PASS"
+    },
+    {
+      "name": "capture uses ID order/original x64 and column preserving Float32",
+      "status": "PASS"
+    },
+    {
+      "name": "publication toggles once only on success, failed capture retains prior slot",
+      "status": "PASS"
+    },
+    {
+      "name": "raw clock subtraction, exact boundary, gaps/backward/domain no clamped catch-up",
+      "status": "PASS"
+    },
+    {
+      "name": "source DOWN first sample zero; MOVE no admission; source switch requires fresh DOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "gap and raw unit/domain change invalidate gesture and pending source",
+      "status": "PASS"
+    },
+    {
+      "name": "gravity bounds, per-success smoothing, shake diagnostic and failed step retain angle",
+      "status": "PASS"
+    },
+    {
+      "name": "gravity stale/invalid/backward rejects whole tick; synthetic only explicit offline",
+      "status": "PASS"
+    },
+    {
+      "name": "two fixed packets at K192/512, optics16 and all reserved tails positive zero",
+      "status": "PASS"
+    }
+  ]
+}

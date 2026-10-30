@@ -1,0 +1,65 @@
+{
+  "revision": "T321_SOURCE_CLOCK_UNITS_V1",
+  "passed": 14,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "baselineCommit": "eee20b3",
+  "cases": [
+    {
+      "name": "T315 original NS windows produce exact rate1 quantity and GAP terminal",
+      "status": "PASS"
+    },
+    {
+      "name": "no catch-up or auto-resume after GAP; new DOWN requires first zero tick",
+      "status": "PASS"
+    },
+    {
+      "name": "continuous pointer identity, MOVE no quantity, wrong UP ignored, correct UP explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "domain closes pointer, preserves raw/domain and needs DOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "unit closes pointer, preserves raw/domain and needs DOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "backward closes pointer, preserves raw/domain and needs DOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "nonfinite closes pointer, preserves raw/domain and needs DOWN",
+      "status": "PASS"
+    },
+    {
+      "name": "raw threshold remains 1/30; >1/30 GAP and no clamp",
+      "status": "PASS"
+    },
+    {
+      "name": "terminal records actual admitted/rejected and success counts, not wall duration",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate sample no request, STOP/CANCEL and rate config remain exact",
+      "status": "PASS"
+    },
+    {
+      "name": "observation ON/OFF and original controller bitwise authority parity after every operation",
+      "status": "PASS"
+    },
+    {
+      "name": "fixed recent ring and first boundaries explicitly report loss; GAP is preserved",
+      "status": "PASS"
+    },
+    {
+      "name": "oversized metadata is explicit lost evidence, cold export does not change authority",
+      "status": "PASS"
+    },
+    {
+      "name": "page shows terminal separately from CURRENT and offers explicit checksummed cold export",
+      "status": "PASS"
+    }
+  ]
+}

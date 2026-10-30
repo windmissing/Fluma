@@ -41,6 +41,8 @@ export class P011ClearWaterEngine {
   get runId(): string {return this.run;}get runGeneration(): number {return this.generation;}
   get currentInputGeneration(): number {return this.inputGeneration;}get geometryEpoch(): number {return this.geometry;}
   get pendingSourceCount(): number {return this.sources.pendingCount;}
+  // T321 read-only source feedback identity; never a second authority.
+  get currentSourceCommit():number {return this.canonical.sourceCommit;}
   constructor(config: ClearWaterRunConfig, initial: ClearWaterInitialState | null = null){
     if(!cwConfigValid(config)||!cwSafePositive(clearWaterOwnerSerial+1))throw new Error('CW_INVALID_CONFIG');
     this.config=JSON.parse(JSON.stringify(config)) as ClearWaterRunConfig;this.owner=++clearWaterOwnerSerial;
