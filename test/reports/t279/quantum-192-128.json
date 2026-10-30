@@ -1,0 +1,329 @@
+{
+  "revision": "T279_CANDIDATE_V1",
+  "execution": "PC_SWIFTSHADER",
+  "device": "NOT_RUN",
+  "nativeAcceptance": "T280_NOT_IMPLEMENTED",
+  "scene": "T281_NOT_IMPLEMENTED",
+  "profiles": [
+    {
+      "K": 192,
+      "Kw": 128,
+      "passed": 38,
+      "failed": 0,
+      "dispatchesPerQuantum": 119,
+      "candidateAllocatedBytes": 12394832,
+      "cases": [
+        {
+          "name": "empty",
+          "result": "PASS",
+          "eventKinds": [],
+          "eventRows": 0
+        },
+        {
+          "name": "air-0-0--16777216",
+          "result": "PASS",
+          "eventKinds": [
+            3
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-0-3145728--1048576",
+          "result": "PASS",
+          "eventKinds": [
+            3
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-0--3145728--1048576",
+          "result": "PASS",
+          "eventKinds": [
+            3
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-0-0-0",
+          "result": "PASS",
+          "eventKinds": [
+            3
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-1-0--16777216",
+          "result": "PASS",
+          "eventKinds": [
+            4
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-1-3145728--1048576",
+          "result": "PASS",
+          "eventKinds": [
+            4
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-1--3145728--1048576",
+          "result": "PASS",
+          "eventKinds": [
+            4
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "air-1-0-0",
+          "result": "PASS",
+          "eventKinds": [
+            4
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "water-arrive",
+          "result": "PASS",
+          "eventKinds": [
+            7,
+            11
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "sand-land",
+          "result": "PASS",
+          "eventKinds": [
+            7,
+            8
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "land-local-partial",
+          "result": "PASS",
+          "eventKinds": [
+            7,
+            8
+          ],
+          "eventRows": 5
+        },
+        {
+          "name": "cross-0",
+          "result": "PASS",
+          "eventKinds": [
+            3,
+            5
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "cross-left-0",
+          "result": "PASS",
+          "eventKinds": [
+            3,
+            5
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "wall-0",
+          "result": "PASS",
+          "eventKinds": [
+            7
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "cross-1",
+          "result": "PASS",
+          "eventKinds": [
+            4,
+            5
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "cross-left-1",
+          "result": "PASS",
+          "eventKinds": [
+            4,
+            5
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "wall-1",
+          "result": "PASS",
+          "eventKinds": [
+            7
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "wet-sand",
+          "result": "PASS",
+          "eventKinds": [
+            3,
+            6
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "surface-entry",
+          "result": "PASS",
+          "eventKinds": [
+            3,
+            6
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "turn-sand",
+          "result": "PASS",
+          "eventKinds": [
+            3,
+            14
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "water-spread",
+          "result": "PASS",
+          "eventKinds": [
+            10
+          ],
+          "eventRows": 3
+        },
+        {
+          "name": "water-capacity-wait",
+          "result": "PASS",
+          "eventKinds": [
+            7
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "sand-highbed-wait",
+          "result": "PASS",
+          "eventKinds": [
+            7
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "guard-zero-land",
+          "result": "PASS",
+          "eventKinds": [
+            7
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "bed-flow",
+          "result": "PASS",
+          "eventKinds": [
+            9
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "bed-parallel-prefix",
+          "result": "PASS",
+          "eventKinds": [
+            9
+          ],
+          "eventRows": 4
+        },
+        {
+          "name": "top-wait",
+          "result": "PASS",
+          "eventKinds": [
+            7
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "multicross-0",
+          "result": "PASS",
+          "eventKinds": [
+            5,
+            7
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "multicross-1",
+          "result": "PASS",
+          "eventKinds": [
+            4,
+            5
+          ],
+          "eventRows": 10
+        },
+        {
+          "name": "air-drag",
+          "result": "PASS",
+          "eventKinds": [
+            3
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "flight-drag",
+          "result": "PASS",
+          "eventKinds": [
+            4
+          ],
+          "eventRows": 1
+        },
+        {
+          "name": "wet-extreme",
+          "result": "PASS",
+          "eventKinds": [
+            3,
+            6
+          ],
+          "eventRows": 2
+        },
+        {
+          "name": "arrival-y-order",
+          "result": "PASS",
+          "eventKinds": [
+            4,
+            7,
+            11
+          ],
+          "eventRows": 4
+        },
+        {
+          "name": "cross-highwater-arrival",
+          "result": "PASS",
+          "eventKinds": [
+            5,
+            7,
+            11
+          ],
+          "eventRows": 3
+        },
+        {
+          "name": "fatal-event-cap",
+          "result": "EXPECTED_REJECT",
+          "reason": 12
+        },
+        {
+          "name": "fatal-feature",
+          "result": "EXPECTED_REJECT",
+          "reason": 1
+        },
+        {
+          "name": "fatal-stock",
+          "result": "EXPECTED_REJECT",
+          "reason": 15
+        }
+      ]
+    }
+  ]
+}

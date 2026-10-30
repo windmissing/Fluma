@@ -1,0 +1,59 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer Base {uint B[];};
+layout(std430,binding=1) buffer Candidate {uint C[];};
+layout(std430,binding=2) buffer Workspace {uint W[];};
+layout(std430,binding=3) buffer Events {uint E[];};
+/* INTEGER_PRIMITIVES */
+/* EVENT_MASKS */
+uniform uint uK,uKw,uPad,uWater,uColumn,uHeader,uWords,uPass,uColor,uSortK,uSortJ;
+uniform uint uSandIndex,uWaterIndex,uArrivalIndex,uEdges,uFrozen,uRows,uAngles,uSourceEvents,uEventStart,uEventCapacity;
+uniform uint uGravity,uSettle,uKAir,uKFlight,uKWet,uKappa,uSoft,uFlux,uQuantumOrdinal;
+uniform int uRequestedAngle;
+uniform uvec2 uNonce,uFrame,uControl;
+const uint Q=1048576u,CQ=268435456u,TICKS=65536u;
+// W0 first error, W1 event cursor, W2 first failing stage, W3 row ordinal.
+void qfail(uint reason){if(atomicCompSwap(W[0],0u,reason)==0u){W[2]=uPass;W[3]=W[1]+1u;}}
+uint col(uint f,uint c){return C[uColumn+f*128u+c];}void pc(uint f,uint c,uint v){C[uColumn+f*128u+c]=v;}
+uint baseAt(uint ns){return ns==0u?0u:uWater;}uint slots(uint ns){return ns==0u?uK:uKw;}
+uint at(uint ns,uint f,uint slot){return baseAt(ns)+f*slots(ns)+slot;}
+uint tag(uint ns,uint slot){return C[at(ns,ns==0u?6u:10u,slot)];}
+uint medium(uint ns,uint slot){return ns==0u?C[at(0u,14u,slot)]:0u;}
+uint eta(uint c){return col(10u,c)+col(6u,c);}uint occupied(uint c){return eta(c)+col(7u,c)+col(8u,c);}
+void derived(uint c){pc(12u,c,eta(c));pc(13u,c,occupied(c));}
+uint classify(uint ns,uint c,uint y,int vy){return ns==0u&&W[uFrozen+128u+c]!=0u&&y>col(10u,c)&&(y<W[uFrozen+c]||(y==W[uFrozen+c]&&vy<=0))?1u:0u;}
+void state(uint ns,uint slot,uint value,uint wait,uint m){C[at(ns,ns==0u?6u:10u,slot)]=value|(wait<<12u);if(ns==0u){C[at(0u,11u,slot)]=wait;C[at(0u,14u,slot)]=m;C[at(0u,15u,slot)]=C[uHeader+118u]+1u;}}
+void before(uint ns,uint slot,out uint data[16]){for(uint i=0u;i<16u;i++)data[i]=C[at(ns,i,slot)];}
+void plusHeader(uint word,uint q){uvec2 n;if(!grsAdd64(uvec2(C[uHeader+word],C[uHeader+word+1u]),uvec2(q,0u),n)){qfail(13u);return;}C[uHeader+word]=n.x;C[uHeader+word+1u]=n.y;}
+/* T16 */
+uint reserveRow(uint ns,uint slot){uint row=W[1];if(row>=uEventCapacity){qfail(12u);return row;}if(ns<2u){uint p=uRows+(ns==0u?slot:uK+slot);uint count=W[p],limit=ns==0u?48u:16u;if(count>=limit){qfail(12u);return row;}W[p]=count+1u;}W[1]=row+1u;return row;}
+void emit(uint kind,uint ns,uint slot,uint from,uint to,uint old[16],uint a0,uint a1,uint b0,uint b1,uint total0,uint la0,uint lb0,uint num,uint den,uint tau0,uint tau1,uint segment,uint planeTag,uint turnMask){
+ uint row=ns==2u?W[uEdges+16u*min(from,to)+10u]:reserveRow(ns,slot);if(W[0]!=0u)return;uint e[64];for(uint i=0u;i<64u;i++)e[i]=0u;
+ e[0]=1163088455u;e[1]=2u;e[2]=uNonce.x;e[3]=uNonce.y;e[4]=2u;e[5]=kind==9u?3u:kind==13u||kind==11u?4u:2u;e[6]=kind;e[7]=row+1u;e[9]=uFrame.x;e[10]=uFrame.y;e[11]=uQuantumOrdinal;e[12]=B[uHeader+14u];e[13]=B[uHeader+15u];uvec2 commit;if(!grsAdd64(uvec2(B[uHeader+16u],B[uHeader+17u]),uvec2(1u,0u),commit)){qfail(13u);return;}e[14]=commit.x;e[15]=commit.y;e[20]=from;e[21]=to;
+ if(ns<2u){uint gen=ns==0u?10u:11u,src=ns==0u?7u:12u,origin=ns==0u?8u:6u,tf=ns==0u?6u:10u;
+  e[16]=slot;e[17]=old[gen];e[18]=old[5];e[19]=old[src];e[22]=old[0];e[23]=C[at(ns,0u,slot)];e[24]=old[1];e[25]=old[2];e[26]=C[at(ns,1u,slot)];e[27]=C[at(ns,2u,slot)];e[28]=old[3];e[29]=old[4];e[30]=C[at(ns,3u,slot)];e[31]=C[at(ns,4u,slot)];e[48]=old[origin];e[49]=old[origin+1u];
+  if(old[origin]==0u||old[origin+1u]!=0u||old[origin]>B[uHeader+34u]){qfail(15u);return;}uint srcAt=uSourceEvents+16u*(old[origin]-1u);e[50]=W[srcAt];e[51]=W[srcAt+1u];uint oldM=ns==0u?old[14]:0u,newM=medium(ns,slot),next=tag(ns,slot);
+  e[52]=(old[tf]&15u)|((next&15u)<<4u)|(oldM<<8u)|(newM<<9u)|(((old[tf]>>12u)&15u)<<10u)|(((next>>12u)&15u)<<14u)|(ns<<18u)|(turnMask<<20u);e[56]=tau0;e[57]=tau1;e[58]=oldM;e[59]=newM;e[60]=W[uFrozen+from];e[61]=W[uFrozen+to];e[62]=planeTag;e[63]=segment;
+ }else e[52]=2u<<18u;
+ e[32]=a0;e[33]=a1;e[34]=b0;e[35]=b1;e[36]=total0;e[38]=C[uHeader+54u];e[40]=la0;e[41]=col(15u,from);e[42]=kind==5u||kind==9u?lb0:0u;e[43]=kind==5u||kind==9u?col(15u,to):0u;if(kind==9u){uint q=a0-a1;e[38]=total0-q;e[41]=la0-q;e[43]=lb0-q;}e[44]=num;e[46]=den;
+ uvec2 mask=m1Masks[kind];for(uint i=0u;i<64u;i++)E[row*64u+i]=(((i<32u?mask.x:mask.y)>>(i%32u))&1u)!=0u?e[i]:0u;
+ if(ns==1u)W[8]++;if(kind==6u)W[9]++;if(kind==11u)W[10]++;if(kind==10u)atomicAdd(W[11],1u);
+}
+void retire(uint ns,uint slot){uint gen=ns==0u?10u:11u;for(uint f=0u;f<16u;f++)if(f!=gen)C[at(ns,f,slot)]=0u;}
+uint guard(uint requested,uint donor,uint receiver,bool land){uint q=requested;int tangent=int(W[5]);uint lo=land?donor:min(donor,receiver),hi=land?donor:max(donor,receiver);for(int e=int(lo)-1;e<=int(hi);e++){if(e<0||e>=127)continue;uint a=uint(e),b=a+1u;int delta=int(col(10u,b))-int(col(10u,a))-tangent,k=(b==receiver?1:0)-(a==receiver?1:0);if(!land)k-=(b==donor?1:0)-(a==donor?1:0);if(abs(delta)>605394){qfail(14u);return 0u;}if(k>0)q=min(q,uint(605394-delta)/uint(k));if(k<0)q=min(q,uint(605394+delta)/uint(-k));}return q;}
+void charge(uint q,uint a,uint b,bool pair){if(q>C[uHeader+54u]||q>col(15u,a)||(pair&&q>col(15u,b))){qfail(15u);return;}C[uHeader+54u]-=q;pc(15u,a,col(15u,a)-q);pc(14u,a,col(14u,a)+q);if(pair){pc(15u,b,col(15u,b)-q);pc(14u,b,col(14u,b)+q);}}
+void land(uint slot,uint c){uint q=min(C[slot],min(C[uHeader+54u],col(15u,c)));q=guard(q,c,c,true);if(q==0u||W[0]!=0u)return;uint old[16];before(0u,slot,old);uint a=col(2u,c),b=col(8u,c),t=C[uHeader+54u],l=col(15u,c);charge(q,c,c,false);pc(2u,c,a+q);pc(10u,c,a+q);pc(8u,c,b-q);if(q==old[0])retire(0u,slot);else{C[slot]-=q;C[2u*uK+slot]=col(10u,c);C[4u*uK+slot]=0u;state(0u,slot,2u,1u,0u);}derived(c);emit(8u,0u,slot,c,c,old,a,a+q,b,b-q,t,l,0u,0u,0u,TICKS,TICKS,0u,256u+c,0u);}
+/* MOTION */
+/* STAGES */
+void main(){uint i=gl_GlobalInvocationID.x;if(uPass==0u){if(i<uWords)C[i]=B[i];if(i<32u)W[i]=0u;if(i<uK+uKw)W[uRows+i]=0u;return;}if(uPass==20u){if(W[0]!=0u&&i<uWords)C[i]=B[i];return;}if(W[0]!=0u)return;
+ if(uPass==1u){if(i==0u)prepare();return;}
+ if(uPass==2u){if(i<127u)waterPropose(i);return;}if(uPass==3u){if(i==0u)waterPrefix();return;}if(uPass==4u){if(i<127u)edgeApply(i,false);return;}
+ if(uPass==5u){if(i<128u){W[uFrozen+i]=eta(i);W[uFrozen+128u+i]=col(6u,i)>0u?1u:0u;W[uFrozen+256u+i]=2u*col(10u,i)-(2u*i+1u)*W[5];W[uFrozen+384u+i]=2u*eta(i)-(2u*i+1u)*W[5];}return;}
+ if(uPass==6u){if(i<uPad)W[uSandIndex+i]=i;return;}if(uPass==7u){sortIndex(i,uSandIndex,uPad,0u,false);return;}
+ if(uPass==8u){if(i<uKw)W[uWaterIndex+i]=i;return;}if(uPass==9u){sortIndex(i,uWaterIndex,uKw,1u,false);return;}
+ if(uPass==10u){if(i==0u)resolvePool(1u);return;}if(uPass==11u){if(i==0u)resolvePool(0u);return;}
+ if(uPass==12u){if(i<127u)bedPropose(i);return;}if(uPass==13u){if(i==0u)bedPrefix();return;}if(uPass==14u){if(i<127u)edgeApply(i,true);return;}
+ if(uPass==15u){if(i==0u)finalSand();return;}if(uPass==16u){if(i<uKw)W[uArrivalIndex+i]=i;return;}if(uPass==17u){sortIndex(i,uArrivalIndex,uKw,1u,true);return;}
+ if(uPass==18u){if(i==0u)arrivals();return;}if(uPass==19u){if(i==0u)finishCandidate();return;}
+}

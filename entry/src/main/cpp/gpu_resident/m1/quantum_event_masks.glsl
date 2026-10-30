@@ -1,0 +1,2 @@
+// Generated from T238 EVENT64 V2; unused words must be zero.
+const uvec2 m1Masks[15]=uvec2[15](uvec2(0u),uvec2(0xffffffffu,0x001f0003u),uvec2(0x0030ffffu,0x001f0003u),uvec2(0xffffffffu,0xff1ff000u),uvec2(0xffffffffu,0xff1ff000u),uvec2(0xffffffffu,0xff1fffffu),uvec2(0xffffffffu,0xff1ff000u),uvec2(0xffffffffu,0xff1fffffu),uvec2(0xffffffffu,0xff1f0fffu),uvec2(0x0030ffffu,0x00100fffu),uvec2(0x0030ffffu,0x0010000fu),uvec2(0xffffffffu,0xff1f000fu),uvec2(0xffffffffu,0xff1f0000u),uvec2(0xffffffffu,0xff1f0000u),uvec2(0xffffffffu,0xff1ff000u));
