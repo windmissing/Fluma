@@ -21,11 +21,11 @@ PC ANGLE/SwiftShader真实GLES，四档native各 **465/0（合1860）**；包含
 | K/Kw | 稳态buffer实际payload字节 | QUANTUM dispatch/barrier |
 | --- | --- | --- |
 | 192/64 | 23,707,088 | 113/113 |
-| 192/128 | 25,826,256 | 127/127 |
-| 512/64 | 55,432,912 | 122/122 |
-| 512/128 | 57,552,080 | 136/136 |
+| 192/128 | 25,835,728 | 127/127 |
+| 512/64 | 55,637,712 | 122/122 |
+| 512/128 | 57,766,352 | 136/136 |
 
-实际公式 `35+L(Kpad)+2L(Kw)`，包括候选失败恢复、spare、审核/重放、authority copy、pub审核及seal；每pass重新四binding并storage/update barrier，一个尾fence。热CPU上传逐glUniform计字节，四档1260/1372/1368/1480B（按相同档序）；真实逐pass/stage/groups/root/owner/bytes/rawGL/wall耗时有界trace（每root重置，溢出Dropped）。无GPUtimer数据，不填0冒测量。SOURCE仍8pass/9barrier/一个尾fence。buffer数含独立SOURCE资源、候选、扩展WORK/spare、双frame arena、pub/tail；不含driver/JIT/RSS、冷resize共存和T281 scene，不宣设备内存/性能收益。
+实际公式 `35+L(Kpad)+2L(Kw)`，包括候选失败恢复、spare、审核/重放、authority copy、pub审核及seal；每pass重新四binding并storage/update barrier，一个尾fence。热CPU上传逐glUniform计字节，四档1260/1428/1368/1536B（按相同档序）；真实逐pass/stage/groups/root/owner/bytes/rawGL/wall耗时有界trace（每root重置，溢出Dropped）。无GPUtimer数据，不填0冒测量。SOURCE仍8pass/9barrier/一个尾fence。buffer数含独立SOURCE资源、候选、扩展WORK/spare、双frame arena、pub/tail；不含driver/JIT/RSS、冷resize共存和T281 scene，不宣设备内存/性能收益。
 
 复跑：`prepare_t280_commit.py`→`build_t280_replay.py`→生成build.cmd与`check_t280_replay.py K Kw`；`build_t280_full.cmd`→full.exe K Kw；`archive_t280.py`。证据 `test/reports/t280/delivery.json`、`full-*.txt`（逐pass trace）、`replay-*.txt`、`source-regression.txt`、`package.log.gz`。组合SHA `6c476dcf7597378c7d072251a15fe2cd8ab362339fdc47bff8505f17c17a96d6`，CMake与host生成字节完全相同。hvigor **BUILD SUCCESSFUL**；signed HAP SHA `29a73219ed0aa3ac7856ff0379e02fb938171d6c26b4a929b6b665a6f7857c9e`，签名/verify PASS，文件 `.codex/local-test/t257-sign/T280/T280-signed.hap`。
 
