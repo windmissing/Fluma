@@ -5,3 +5,4 @@ export const setAngle:(angleIndex:number)=>string;
 
 export const newRun:()=>string;
 export const diagnostics:()=>string;
+export const timeline:(cursor:number)=>string;

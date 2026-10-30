@@ -4,6 +4,7 @@ import AbilityConstant from '@ohos.app.ability.AbilityConstant';
 import Want from '@ohos.app.ability.Want';
 import window from '@ohos.window';
 import grsm0 from 'libgrsm0.so';
+import grsm1 from 'libgrsm1.so';
 import hilog from '@ohos.hilog';
 import preferences from '@ohos.data.preferences';
 import { LiquidCAWantCommand, parseLiquidCAWant } from '../physics/LiquidCAWant';
@@ -58,6 +59,7 @@ export default class EntryAbility extends UIAbility {
         'P011_THETA_PAIR preferences unavailable');
     });
     this.applyWant(want.parameters, false);
+    AppStorage.setOrCreate('gpuResidentM1', `${want.parameters?.grsm1}` === 'true');
     AppStorage.setOrCreate('gpuResidentM0', `${want.parameters?.grsm0}` === 'true');
     const params = want.parameters;
     if (params && params.wspreset !== undefined) {
@@ -467,7 +469,7 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onWindowStageCreate');
     // P-013 P1-G0 平台探针页（PROBE-ONLY：勿并入发布分支）
-    const probePage: string = AppStorage.get<boolean>('gpuResidentM0') === true ? 'pages/GpuResidentM0' : AppStorage.get<boolean>('cwDemo') === true ? 'pages/ClearWaterDemo' : AppStorage.get<boolean>('p051v2Demo') === true ? 'pages/P051DerivedV2Demo' : AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
+    const probePage: string = AppStorage.get<boolean>('gpuResidentM1') === true ? 'pages/GpuResidentM1' : AppStorage.get<boolean>('gpuResidentM0') === true ? 'pages/GpuResidentM0' : AppStorage.get<boolean>('cwDemo') === true ? 'pages/ClearWaterDemo' : AppStorage.get<boolean>('p051v2Demo') === true ? 'pages/P051DerivedV2Demo' : AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
       'pages/P013P1G0Probe' : 'pages/SandCanvas';
     windowStage.loadContent(probePage, (err) => {
       if (err.code) {
@@ -483,12 +485,14 @@ export default class EntryAbility extends UIAbility {
   }
 
   onForeground(): void {
+    if (AppStorage.get<boolean>('gpuResidentM1') === true) grsm1.setActive(true);
     if (AppStorage.get<boolean>('gpuResidentM0') === true) grsm0.setActive(true);
     AppStorage.setOrCreate('emptySandDemoForeground', true);
     hilog.info(this.hilogDomain, this.hilogTag, 'onForeground');
   }
 
   onBackground(): void {
+    if (AppStorage.get<boolean>('gpuResidentM1') === true) grsm1.setActive(false);
     if (AppStorage.get<boolean>('gpuResidentM0') === true) grsm0.setActive(false);
     AppStorage.setOrCreate('emptySandDemoForeground', false);
     hilog.info(this.hilogDomain, this.hilogTag, 'onBackground');

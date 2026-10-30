@@ -1,6 +1,10 @@
 // Experimental APP_ROUTE. All EGL/GL and ResidentRun calls belong to one thread.
 #include "run.h"
 #include "scene.h"
+#ifdef GRS_APP_M1
+#include "m1/run.h"
+#include "m1/scene.h"
+#endif
 #include "foundation.h"
 #include "bridge_packet.h"
 #include "bridge_state.h"
@@ -23,12 +27,22 @@
 #include <cmath>
 namespace {
 using namespace grs;
+#ifdef GRS_APP_M1
+class AppTransport:public m1::FullM1Transport {public:U64 InputGeneration()const{const auto& h=Owner().Header();return {h[84],h[85]};}};
+using AppRun=m1::Run;using AppScene=m1::Scene;
+const char* AppShaderSha(){return m1::FullM1ShaderSha();}
+const char* AppLayoutSha(){return m1::manifestSha;}
+#else
+using AppTransport=SourceGpuTransport;using AppRun=ResidentRun;using AppScene=ResidentScene;
+const char* AppShaderSha(){return SourceKernelSha();}
+const char* AppLayoutSha(){return GetFoundationInfo().layoutSha;}
+#endif
 U64 u64(uint64_t n){return {uint32_t(n),uint32_t(n>>32)};}
 uint64_t now(){return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 void hash(const char* s,std::array<uint32_t,8>& a){for(size_t i=0;i<32;i++){unsigned v=0;for(int j=0;j<2;j++){char c=s[2*i+j];v=v*16+(c<='9'?c-'0':c-'a'+10);}a[i/4]|=v<<((i%4)*8);}}
 struct App : BridgeState {
  std::condition_variable wake;std::thread thread;
- bool quit=false;
+ bool quit=false;uint32_t Kw=128;
  uint64_t accepted=0,sourceCommit=0,physicsCommit=0,deltaNs=0;uint32_t carryBefore=0,carryAfter=0,quanta=0;int advanceCode=0,lastRunOffer=0;std::string firstFailure="NONE";const char* lastOffer="NONE";
  std::array<Words256,32> completions{};size_t completionCount=0,completionDropped=0;U64 rootNonce{};
 #ifndef GRS_BRIDGE_HOST_TEST
@@ -53,26 +67,30 @@ struct App : BridgeState {
   (void)stage;
 #endif
  }
- App(bool launch=true){if(launch)thread=std::thread([this]{loop();});}
+ App(bool launch=true){
+#ifdef GRS_APP_M1
+commandRevision=2;waterAllowed=true;
+#endif
+if(launch)thread=std::thread([this]{loop();});}
  ~App(){{std::lock_guard<std::mutex> l(mutex);quit=true;wake.notify_one();}if(thread.joinable())thread.join();if(window)OH_NativeWindow_NativeObjectUnreference(window);}
  void invalidate(void* w,bool replace){std::lock_guard<std::mutex> l(mutex);if(replace){if(w&&OH_NativeWindow_NativeObjectReference(w)!=0){if(window)OH_NativeWindow_NativeObjectUnreference(window);window=nullptr;InvalidateLocked();permission=phase="FAULT";status="{\"state\":\"FAULT\",\"stage\":\"WINDOW_REFERENCE\"}";wake.notify_one();return;}if(window)OH_NativeWindow_NativeObjectUnreference(window);window=w;}InvalidateLocked();MarkLocked(BridgeStage::Invalidate);wake.notify_one();}
  bool setActive(bool value){std::lock_guard<std::mutex> l(mutex);if(active==value)return false;active=value;InvalidateLocked();MarkLocked(BridgeStage::Invalidate);wake.notify_one();return true;}
  void loop(){
   EGLDisplay display=EGL_NO_DISPLAY;EGLContext context=EGL_NO_CONTEXT;EGLSurface surface=EGL_NO_SURFACE;
   void* held=nullptr;uint64_t seen=0,runId=0,last=0,frame=0,render=0,lastAccepted=0;bool failed=false,gap=false;
-  std::unique_ptr<SourceGpuTransport> gpu;std::unique_ptr<ResidentRun> run;ResidentScene scene;
+  std::unique_ptr<AppTransport> gpu;std::unique_ptr<AppRun> run;AppScene scene;
   auto retire=[&]{run.reset();if(gpu)gpu->ContextLost();gpu.reset();scene.Reset(false);if(display!=EGL_NO_DISPLAY){eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);if(surface!=EGL_NO_SURFACE)eglDestroySurface(display,surface);if(context!=EGL_NO_CONTEXT)eglDestroyContext(display,context);eglTerminate(display);}display=EGL_NO_DISPLAY;surface=EGL_NO_SURFACE;context=EGL_NO_CONTEXT;if(held)OH_NativeWindow_NativeObjectUnreference(held);held=nullptr;last=frame=render=lastAccepted=0;};
   auto publish=[&](const std::string& s){std::lock_guard<std::mutex> l(mutex);if(CurrentLocked(seen,held)){status=s;if(s.find("FAULT")!=std::string::npos){RevokeLocked("FAULT");phase="FAULT";if(firstFailure=="NONE"){auto at=s.find("\"stage\":\"");if(at!=std::string::npos){at+=9;auto end=s.find('"',at);firstFailure=s.substr(at,end-at);}else firstFailure=phase;}}}};
   while(true){
-   uint64_t currentEpoch;bool enabled;uint32_t capacity;int requestedAngle;
+   uint64_t currentEpoch;bool enabled;uint32_t capacity,waterCapacity;int requestedAngle;
    {std::unique_lock<std::mutex> l(mutex);MarkLocked(BridgeStage::WaitEnter);
 #ifdef GRS_BRIDGE_HOST_TEST
 if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
 #endif
-wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(quit)break;currentEpoch=epoch;enabled=active;capacity=K;requestedAngle=angle;}
+wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(quit)break;currentEpoch=epoch;enabled=active;capacity=K;waterCapacity=Kw;requestedAngle=angle;}
    if(currentEpoch!=seen){retire();seen=currentEpoch;failed=gap=false;{std::lock_guard<std::mutex> l(mutex);if(seen!=epoch)continue;if(active&&window&&OH_NativeWindow_NativeObjectReference(window)==0)held=window;}if(!held)continue;
     Mark(BridgeStage::InitBegin,seen);
-#ifndef GRS_BRIDGE_HOST_TEST
+#if !defined(GRS_BRIDGE_HOST_TEST) || defined(GRS_BRIDGE_HOST_GL)
     display=eglGetDisplay(EGL_DEFAULT_DISPLAY);EGLint major,minor;EGLConfig config;EGLint n=0;
     const EGLint attrs[]={EGL_SURFACE_TYPE,EGL_WINDOW_BIT,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,EGL_RED_SIZE,8,EGL_GREEN_SIZE,8,EGL_BLUE_SIZE,8,EGL_ALPHA_SIZE,8,EGL_NONE};const EGLint ctx[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_NONE};
     bool good=display!=EGL_NO_DISPLAY&&eglInitialize(display,&major,&minor)&&eglBindAPI(EGL_OPENGL_ES_API)&&eglChooseConfig(display,attrs,&config,1,&n)&&n==1;
@@ -81,8 +99,14 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
     display=reinterpret_cast<EGLDisplay>(1);context=reinterpret_cast<EGLContext>(1);surface=reinterpret_cast<EGLSurface>(1);bool good=true;
 #endif
     if(!good){publish("{\"state\":\"FAULT\",\"stage\":\"EGL_CREATE\",\"rawEGL\":"+std::to_string(eglGetError())+"}");failed=true;continue;}
-    Identity id;id.run=u64(++runId);id.owner={1,0};id.context=id.surface=id.geometry=u64(seen);id.config={1,0};auto f=GetFoundationInfo();hash(f.layoutSha,id.layoutSha);hash(f.angleSha,id.angleSha);hash(SourceKernelSha(),id.shaderSha);
-    gpu=std::make_unique<SourceGpuTransport>();auto code=gpu->Create(capacity,id);if(code!=TransportCode::OK){publish("{\"state\":\"FAULT\",\"stage\":\"TRANSPORT_CREATE\",\"code\":"+std::to_string(int(code))+"}");failed=true;continue;}run=std::make_unique<ResidentRun>(*gpu);bool committed=false;{std::lock_guard<std::mutex> l(mutex);committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
+    Identity id;id.run=u64(++runId);id.owner={1,0};id.context=id.surface=id.geometry=u64(seen);id.config={1,0};auto f=GetFoundationInfo();hash(AppLayoutSha(),id.layoutSha);hash(f.angleSha,id.angleSha);hash(AppShaderSha(),id.shaderSha);
+    gpu=std::make_unique<AppTransport>();
+#ifdef GRS_APP_M1
+    auto code=gpu->Create(capacity,waterCapacity,id);
+#else
+    auto code=gpu->Create(capacity,id);
+#endif
+    if(code!=TransportCode::OK){publish("{\"state\":\"FAULT\",\"stage\":\"TRANSPORT_CREATE\",\"code\":"+std::to_string(int(code))+"}");failed=true;continue;}run=std::make_unique<AppRun>(*gpu);bool committed=false;{std::lock_guard<std::mutex> l(mutex);committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
    }
    if(!enabled||!run)continue;{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;}
    if(gap){Mark(BridgeStage::PumpBegin,seen,last);Hook(BridgeStage::PumpBegin);auto submitted=run->Tick().submitted,wasAccepted=run->Tick().accepted;auto code=run->Pump();Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(code!=TransportCode::BUSY){std::lock_guard<std::mutex> l(mutex);if(CurrentLocked(seen,held))phase="NEW_RUN_REQUIRED";}continue;}
@@ -125,8 +149,19 @@ napi_value offer(napi_env e,napi_callback_info i){auto d=DecodeBridgeCommand(e,i
 
 napi_value diagnostics(napi_env e,napi_callback_info){auto& a=app();std::lock_guard<std::mutex> l(a.mutex);std::ostringstream o;o<<"{\"revision\":\"T272_BRIDGE_V1\",\"dropped\":"<<a.offerDropped<<",\"offers\":[";for(size_t j=0;j<a.offerCount;j++){if(j)o<<',';const auto& d=a.offers[j];o<<"{\"stage\":\""<<d.stage<<"\",\"napiStatus\":"<<int(d.status)<<",\"words\":[";for(size_t k=0;k<32;k++){if(k)o<<',';o<<d.words[k];}o<<"]}";}o<<"],\"completionDropped\":"<<a.completionDropped<<",\"completions\":[";for(size_t j=0;j<a.completionCount;j++){if(j)o<<',';o<<'[';for(size_t k=0;k<256;k++){if(k)o<<',';o<<a.completions[j][k];}o<<']';}o<<"]}";return text(e,o.str());}
 napi_value timeline(napi_env e,napi_callback_info i){size_t n=1;napi_value v;double cursor=0;napi_get_cb_info(e,i,&n,&v,nullptr,nullptr);if(n!=1||napi_get_value_double(e,v,&cursor)!=napi_ok||!std::isfinite(cursor)||cursor<0||cursor>BridgeTimeline::capacity||std::floor(cursor)!=cursor)return text(e,"INVALID_CURSOR");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);return text(e,a.timeline.Export(uint32_t(cursor)));}
-napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={{"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,7,d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
+#ifdef GRS_APP_M1
+napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4];double k=0,kw=0,feature=0,revision=0;if(napi_get_cb_info(e,i,&n,v,nullptr,nullptr)!=napi_ok||n!=4||napi_get_value_double(e,v[0],&k)!=napi_ok||napi_get_value_double(e,v[1],&kw)!=napi_ok||napi_get_value_double(e,v[2],&feature)!=napi_ok||napi_get_value_double(e,v[3],&revision)!=napi_ok||(k!=192&&k!=512)||(kw!=64&&kw!=128)||feature!=3||revision!=2)return text(e,"UNSUPPORTED_M1_CONFIG");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.K=uint32_t(k);a.Kw=uint32_t(kw);a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_RUN_REQUESTED");}
+#endif
+napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
+#ifdef GRS_APP_M1
+{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
+#endif
+{"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
+#ifdef GRS_APP_M1
+napi_module module={1,0,nullptr,init,"grsm1",nullptr,{0}};
+#else
 napi_module module={1,0,nullptr,init,"grsm0",nullptr,{0}};
+#endif
 #endif
 }
 #ifndef GRS_BRIDGE_HOST_TEST
