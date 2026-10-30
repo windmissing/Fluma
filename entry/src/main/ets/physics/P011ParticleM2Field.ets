@@ -126,6 +126,7 @@ export class P011ParticleM2FieldBinding {
     this.work.field = this.field;
     this.sink = new P011ParticleM2CommitSink(this.work, host);
   }
+  exportComplexityCold():string{return this.work.complexity.exportCold();}
   get pool(): P011ParticleField { return this.work.pool; }
   get liveCount(): number { return this.work.pool.totals().count; }
   get active(): boolean { return this.stepOpen !== 0; }

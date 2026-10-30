@@ -804,7 +804,7 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       this.colParticleMassH.buffer === this.hotCanonicalBinding[11] &&
       this.colParticleMassL.buffer === this.hotCanonicalBinding[12];
   }
-  transferHotState(s: P011ParticleSnapshot, restore: boolean): number {
+  validateHotTransfer(s: P011ParticleSnapshot): number {
     if (this.patch !== null) return 6;
     if (s.nmax !== this.nmax || s.cols !== this.cols || s.pMass.length !== this.nmax ||
       s.pX.length !== this.nmax || s.pY.length !== this.nmax || s.pVx.length !== this.nmax ||
@@ -817,6 +817,10 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       for (let j = 0; j < 13; j++) if (buffer === this.hotCanonicalBinding[j]) return 3;
       for (let j = 0; j < i; j++) if (buffer === particleSnapshotBufferAtHot(s, j)) return 3;
     }
+    return 0;
+  }
+  transferHotState(s: P011ParticleSnapshot, restore: boolean): number {
+    const valid=this.validateHotTransfer(s);if(valid!==0)return valid;
     if (restore) this.copySnapshot(s);
     else {
       s.liveCount = this.liveCount; s.freeCount = this.freeCount; s.nextId = this.nextId;

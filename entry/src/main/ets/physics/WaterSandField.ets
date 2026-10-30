@@ -2935,6 +2935,9 @@ export class WaterSandField {
   private particleRouteResult(code: P011ParticleRouteCode): P011ParticleRouteResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(182);let txCode=0;try{
     {const txRc:P011ParticleRouteResult={ ok: code === 'OK', code: code, active: this.particleRouteActive() };txCode=0;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,182,txCode);}}
+  pumpParticleComplexityCold():void {this.particleBinding?.work.complexity.emitProgressCold();}
+  configureParticleComplexityObservation(clock:()=>number,emit:(line:string)=>void):void {if(this.particleBinding!==null){this.particleBinding.work.complexity.emit=emit;}}
+  exportParticleComplexityCold():string{return this.particleBinding===null?'UNBOUND':this.particleBinding.exportComplexityCold();}
   setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(183);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM){const txRc:P011ParticleRouteResult=this.particleRouteResult('ROUTE_CONFLICT');txCode=0;return txRc;}
     if (this.particleBinding !== null && this.particleBinding.liveCount > 0) {const txRc:P011ParticleRouteResult=this.particleRouteResult('BUSY_PARTICLES');txCode=0;return txRc;}

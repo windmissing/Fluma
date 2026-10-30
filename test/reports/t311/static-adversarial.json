@@ -1,0 +1,240 @@
+{
+  "device": "NOT_RUN",
+  "passed": 17,
+  "failed": 16,
+  "results": [
+    {
+      "id": "baseline-fixed-array",
+      "status": "FAIL",
+      "output": "node:assert:90\r\n  throw new AssertionError(obj);\r\n  ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\r\n+ actual - expected\r\n\r\n+ 'NOT_ZERO_ALLOCATION'\r\n- 'ZERO_ALLOCATION'\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:9:46)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: 'NOT_ZERO_ALLOCATION',\r\n  expected: 'ZERO_ALLOCATION',\r\n  operator: 'strictEqual'\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "fixed-oob",
+      "status": "PASS",
+      "remaining": 169,
+      "source": 39,
+      "effects": 2,
+      "proofGaps": 60,
+      "notImplemented": 65
+    },
+    {
+      "id": "fixed-unknown-index",
+      "status": "PASS",
+      "remaining": 169,
+      "source": 39,
+      "effects": 2,
+      "proofGaps": 60,
+      "notImplemented": 65
+    },
+    {
+      "id": "fixed-push",
+      "status": "PASS",
+      "remaining": 169,
+      "source": 39,
+      "effects": 3,
+      "proofGaps": 59,
+      "notImplemented": 65
+    },
+    {
+      "id": "fixed-length",
+      "status": "PASS",
+      "remaining": 169,
+      "source": 39,
+      "effects": 2,
+      "proofGaps": 60,
+      "notImplemented": 65
+    },
+    {
+      "id": "fixed-escape",
+      "status": "PASS",
+      "remaining": 171,
+      "source": 39,
+      "effects": 2,
+      "proofGaps": 62,
+      "notImplemented": 65
+    },
+    {
+      "id": "super-virtual-derived",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:15:249)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "unknown-base-virtual-set",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:16:252)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "super-same-storage",
+      "status": "PASS",
+      "remaining": 170,
+      "source": 40,
+      "effects": 2,
+      "proofGaps": 59,
+      "notImplemented": 66
+    },
+    {
+      "id": "local-map-primitive-escape",
+      "status": "FAIL",
+      "output": "node:assert:90\r\n  throw new AssertionError(obj);\r\n  ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\r\n\r\ntrue !== false\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:18:159)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: true,\r\n  expected: false,\r\n  operator: 'strictEqual'\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "local-map-workspace-escape",
+      "status": "PASS",
+      "remaining": 180,
+      "source": 43,
+      "effects": 3,
+      "proofGaps": 65,
+      "notImplemented": 66
+    },
+    {
+      "id": "local-set-growth",
+      "status": "PASS",
+      "remaining": 177,
+      "source": 42,
+      "effects": 3,
+      "proofGaps": 63,
+      "notImplemented": 66
+    },
+    {
+      "id": "map-iterator-effect",
+      "status": "PASS",
+      "remaining": 177,
+      "source": 42,
+      "effects": 3,
+      "proofGaps": 63,
+      "notImplemented": 66
+    },
+    {
+      "id": "spoof-get",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:22:139)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "spoof-set",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:23:128)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "closure-not-called",
+      "status": "PASS",
+      "remaining": 176,
+      "source": 42,
+      "effects": 2,
+      "proofGaps": 63,
+      "notImplemented": 66
+    },
+    {
+      "id": "closure-called",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:25:78)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "local-callback",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:26:133)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "closure-scalar-escape",
+      "status": "FAIL",
+      "output": "node:assert:90\r\n  throw new AssertionError(obj);\r\n  ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\r\n\r\ntrue !== false\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:27:142)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: true,\r\n  expected: false,\r\n  operator: 'strictEqual'\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "closure-workspace-escape",
+      "status": "PASS",
+      "remaining": 179,
+      "source": 43,
+      "effects": 2,
+      "proofGaps": 65,
+      "notImplemented": 66
+    },
+    {
+      "id": "closure-workspace-write",
+      "status": "PASS",
+      "remaining": 178,
+      "source": 43,
+      "effects": 2,
+      "proofGaps": 63,
+      "notImplemented": 67
+    },
+    {
+      "id": "unknown-callback",
+      "status": "PASS",
+      "remaining": 176,
+      "source": 41,
+      "effects": 2,
+      "proofGaps": 64,
+      "notImplemented": 66
+    },
+    {
+      "id": "nested-string-result",
+      "status": "PASS",
+      "remaining": 170,
+      "source": 39,
+      "effects": 4,
+      "proofGaps": 59,
+      "notImplemented": 65
+    },
+    {
+      "id": "nested-arguments",
+      "status": "PASS",
+      "remaining": 171,
+      "source": 40,
+      "effects": 4,
+      "proofGaps": 59,
+      "notImplemented": 65
+    },
+    {
+      "id": "iterator-close-0",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:33:363)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "iterator-close-1",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:33:363)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "iterator-close-2",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:33:363)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "iterator-close-3",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:33:363)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "iterator-zero",
+      "status": "FAIL",
+      "output": "node:assert:90\r\n  throw new AssertionError(obj);\r\n  ^\r\n\r\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\r\n\r\ntrue !== false\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:34:230)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: true,\r\n  expected: false,\r\n  operator: 'strictEqual'\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "builtin-iteration",
+      "status": "PASS",
+      "remaining": 171,
+      "source": 40,
+      "effects": 4,
+      "proofGaps": 59,
+      "notImplemented": 65
+    },
+    {
+      "id": "unknown-iteration",
+      "status": "PASS",
+      "remaining": 170,
+      "source": 39,
+      "effects": 2,
+      "proofGaps": 59,
+      "notImplemented": 67
+    },
+    {
+      "id": "inherited-iterator-close",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:37:367)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    },
+    {
+      "id": "closure-this-write",
+      "status": "FAIL",
+      "output": "node:internal/assert/utils:281\r\n    throw err;\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\r\n\r\n  assert.ok(has(r))\r\n\r\n    at Object.check (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:38:352)\r\n    at run (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:44:57)\r\n    at Object.<anonymous> (D:\\hmprojects\\HelloWorld\\test\\run_t168_rev2_effect_units.cjs:48:64)\r\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\r\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\r\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\r\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\r\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)\r\n    at node:internal/main/run_main_module:28:49 {\r\n  generatedMessage: true,\r\n  code: 'ERR_ASSERTION',\r\n  actual: false,\r\n  expected: true,\r\n  operator: '=='\r\n}\r\n\r\nNode.js v20.18.1\r\n"
+    }
+  ]
+}

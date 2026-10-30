@@ -1,0 +1,74 @@
+{
+  "task": "T311",
+  "status": "LOOK_AT_COMMENTS_STATIC_GATE_INCOMPLETE",
+  "runtimePassed": 97,
+  "runtimeFailed": 0,
+  "checks": {
+    "newUnits": 9,
+    "scalingRollback": 7,
+    "hotSink": 17,
+    "M2": 13,
+    "M2Transactions": 14,
+    "gesture": 18,
+    "cold": 15,
+    "coldReassembly": 4
+  },
+  "staticGate": {
+    "before": 146,
+    "after": 164,
+    "status": "NOT_ZERO_ALLOCATION",
+    "newExplicitAllocationSites": 0
+  },
+  "productionBuild": "PASS",
+  "candidateBuild": "PASS",
+  "productionSign": {
+    "task": "T311-production",
+    "sign": "PASS",
+    "verify": "PASS",
+    "inputSha": "ad240f343d8b8f7acfe687fcbe47183b40cf73096597827a32a544286b4f5720",
+    "signedSha": "e7ead8ee9a2a660aa86d139109be5e052c7aed39c78f249a704fef4180be1dc1"
+  },
+  "candidateSign": {
+    "task": "T311-final",
+    "sign": "PASS",
+    "verify": "PASS",
+    "inputSha": "56ae9df9f8ea2541dc31af5e9bf99eb12efa0f17d9b3604e56df77f64df9ea3e",
+    "signedSha": "9e7ac5413d555addc9e19d63ae537446afb99571790465eef53ee7106ecca5b6"
+  },
+  "candidateProject": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t311-candidate",
+  "device": "NOT_RUN",
+  "watchdogFixed": "NOT_PROVEN",
+  "remainingComplexity": "O(R*(B+N log N+C+budget+derived)), whole-audit reads Omega(R*(N+C)) retained",
+  "source": [
+    {
+      "file": "P011ParticleHot.ets",
+      "beforeSha": "6561d160a452134bef7c87e6fe217bc419a71859c7cad167f6477a1f21768de7",
+      "afterSha": "a310500242c28ab0bf578debcbaf6b98af5c0ffe6393cd70c5dd05cea2701a85"
+    },
+    {
+      "file": "P011ParticleField.ets",
+      "beforeSha": "3a3b8fa8ff0b81a91ecdda3d36f97b7d835c91445b65364323736d589465dc36",
+      "afterSha": "c714de12c96da3e6fede9672f749584c6dc07071394901a4a18af67149760b8d"
+    },
+    {
+      "file": "P011ParticleM2Sink.ets",
+      "beforeSha": "14cfae336bea8e6273478385b903b86a024200c35ec6cb1edeaf943e3f28b092",
+      "afterSha": "33dad1f639cc7d02b0b40f85412698196543673ceb3070b96f8a885eb4b5a80b"
+    },
+    {
+      "file": "P011ParticleM2Field.ets",
+      "beforeSha": "b1df13ead13960108da26de726f8675bfe8a4d520e33304a7044926beee939c0",
+      "afterSha": "6e2e4e32e479b5ef17bcdfd6f462d5bc93f0aba6c6e77b0b017273f009496e49"
+    },
+    {
+      "file": "P011ParticleHotBudget.ets",
+      "beforeSha": "04f63d6f8f794c0b41056da9f2e0ea703a9a4ebe0dec147edc2f90305e8f1e1f",
+      "afterSha": "98668b8b2df9ad8fe971658bc695c8b060f4552bbbc334948c9c521fcf93e41d"
+    },
+    {
+      "file": "WaterSandField.ets",
+      "beforeSha": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95",
+      "afterSha": "a63eb88a46c5c3524b6120bce594f0bd73b02a9ade73bcc48ec6c3be04d19c86"
+    }
+  ]
+}

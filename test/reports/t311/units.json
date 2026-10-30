@@ -1,0 +1,196 @@
+{
+  "revision": "T311_WORK_EQUIVALENCE_V1",
+  "passed": 9,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "scales": [
+    {
+      "N": 8,
+      "R": 1,
+      "B": 399,
+      "counts": [
+        4,
+        3,
+        0,
+        0,
+        5,
+        1,
+        0,
+        2,
+        4,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "copyBytes": 14928,
+      "aliasComparisons": 3192,
+      "receipts": 7
+    },
+    {
+      "N": 8,
+      "R": 6,
+      "B": 399,
+      "counts": [
+        4,
+        3,
+        0,
+        0,
+        5,
+        1,
+        0,
+        2,
+        4,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "copyBytes": 14928,
+      "aliasComparisons": 3192,
+      "receipts": 7
+    },
+    {
+      "N": 64,
+      "R": 16,
+      "B": 399,
+      "counts": [
+        4,
+        3,
+        0,
+        0,
+        5,
+        1,
+        0,
+        2,
+        4,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "copyBytes": 33408,
+      "aliasComparisons": 3192,
+      "receipts": 7
+    },
+    {
+      "N": 192,
+      "R": 32,
+      "B": 399,
+      "counts": [
+        4,
+        3,
+        0,
+        0,
+        5,
+        1,
+        0,
+        2,
+        4,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "copyBytes": 75648,
+      "aliasComparisons": 3192,
+      "receipts": 7
+    },
+    {
+      "N": 512,
+      "R": 64,
+      "B": 399,
+      "counts": [
+        4,
+        3,
+        0,
+        0,
+        5,
+        1,
+        0,
+        2,
+        4,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "copyBytes": 181248,
+      "aliasComparisons": 3192,
+      "receipts": 7
+    }
+  ],
+  "cases": [
+    {
+      "name": "original/new authority and successful prefix N8 R1",
+      "status": "PASS"
+    },
+    {
+      "name": "original/new authority and successful prefix N8 R6",
+      "status": "PASS"
+    },
+    {
+      "name": "original/new authority and successful prefix N64 R16",
+      "status": "PASS"
+    },
+    {
+      "name": "original/new authority and successful prefix N192 R32",
+      "status": "PASS"
+    },
+    {
+      "name": "original/new authority and successful prefix N512 R64",
+      "status": "PASS"
+    },
+    {
+      "name": "cold registration closes at first attempt and cannot grow afterwards",
+      "status": "PASS"
+    },
+    {
+      "name": "field replace/alias/detach still rejected at attempt boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "per-lease field reference change rejected inside active attempt",
+      "status": "PASS"
+    },
+    {
+      "name": "bounded work receipt never formats in stage path; finite timer export",
+      "status": "PASS"
+    }
+  ]
+}

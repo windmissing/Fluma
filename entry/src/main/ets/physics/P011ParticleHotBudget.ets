@@ -102,14 +102,14 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
     this.ticketCount = 0; this.openCount = 0; this.denominator = 0; this.epoch = 0; {const txRc:number=0;txCode=txRc;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,341,txCode);}}
   allClosedHot(): boolean {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(342);let txCode=0;try{ {const txRc:boolean=this.openCount === 0;txCode=0;return txRc;} }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,342,txCode);}}
-  auditHot(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(343);let txCode=0;try{txTrace?.add(23);txTrace?.add(24);
+  auditHot(): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(343);let txCode=0;const t311Start=this.work.complexity.begin(9);try{txTrace?.add(23);txTrace?.add(24);
     if (!Number.isFinite(this.totalUsed) || !Number.isFinite(this.totalRemaining) || this.totalUsed < -1e-9 || this.totalRemaining < -1e-9 ||
       Math.abs(this.totalUsed + this.totalRemaining - this.beforeTotalUsed - this.beforeTotalRemaining) > 1e-9) {const txRc:number=13;txCode=txRc;return txRc;}
     for (let c = 0; c < this.work.cols; c++) if (!Number.isFinite(this.localUsed[c]) || !Number.isFinite(this.localRemaining[c]) ||
       this.localUsed[c] < -1e-9 || this.localRemaining[c] < -1e-9 ||
       Math.abs(this.localUsed[c] + this.localRemaining[c] - this.beforeUsed[c] - this.beforeRemaining[c]) > 1e-9) {const txRc:number=13;txCode=txRc;return txRc;}
     {const txRc:number=0;txCode=txRc;return txRc;}
-  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,343,txCode);}}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{this.work.complexity.end(9,t311Start);txTrace?.leave(txScope,343,txCode);}}
   finishHot(epoch: number): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(344);let txCode=0;try{
     if (this.epoch !== epoch) {const txRc:number=4;txCode=txRc;return txRc;}
     if (this.openCount !== 0) {const txRc:number=5;txCode=txRc;return txRc;}

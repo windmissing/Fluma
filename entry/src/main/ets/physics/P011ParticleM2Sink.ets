@@ -1,7 +1,7 @@
 // P-011 D2: production transaction sink. M2 owns canonical field writes; M1 only prepares pool patches.
 import { P011ParticleHotWorkspace, P011ParticleHotPlanBuffer, P011ParticleHotResultBuffer,
   P011ParticleHotCommitSink, P011ParticleHotEventBuffer, validateParticleHotRequest,
-  preparePatchHot, publishPatchHot, finishPatchHot, rollbackStepHot, auditParticleHot, copyPoolDiagnosticHot } from './P011ParticleHot';
+  syncHotContext,preparePatchHot, publishPatchHot, finishPatchHot, rollbackStepHot, auditParticleHot, copyPoolDiagnosticHot } from './P011ParticleHot';
 import { P011ParticleHotBudgetAdapter, P011ParticleHotTicketReceipt,
   P011ParticleHotRefundReceipt } from './P011ParticleHotBudget';
 
@@ -34,6 +34,7 @@ export class P011ParticleM2BudgetAdapter extends P011ParticleHotBudgetAdapter {
   }
   auditHot(): number {
     if (!this.liveBound) return super.auditHot();
+    const t311Audit=this.work.complexity.begin(9);try{
     if (!Number.isFinite(this.totalUsed) || !Number.isFinite(this.totalRemaining) ||
       this.totalUsed < -1e-9 || this.totalRemaining < -1e-9 ||
       Math.abs(this.totalUsed + this.totalRemaining - this.hostBeforeTotalUsed - this.hostBeforeTotalRemaining) > 1e-9) return 13;
@@ -41,6 +42,7 @@ export class P011ParticleM2BudgetAdapter extends P011ParticleHotBudgetAdapter {
       !Number.isFinite(this.localUsed[c]) || this.localRemaining[c] < -1e-9 || this.localUsed[c] < -1e-9 ||
       Math.abs(this.localRemaining[c] + this.localUsed[c] - this.hostBeforeRemaining[c] - this.hostBeforeUsed[c]) > 1e-9) return 13;
     return 0;
+    }finally{this.work.complexity.end(9,t311Audit);}
   }
   reserveInto(epoch: number, plan: P011ParticleHotPlanBuffer, row: number,
     receipt: P011ParticleHotTicketReceipt): number {
@@ -171,7 +173,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     return rolled === 0 ? code : rolled;
   }
   applyInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, p: P011ParticleHotPlanBuffer,
-    row: number, result: P011ParticleHotResultBuffer): number {if(work.txD1!==null)work.txD1.trace.context[15]=row;work.txD1?.syncContext();const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(7);let txCode=0;try{
+    row: number, result: P011ParticleHotResultBuffer): number {if(work.txD1!==null)work.txD1.trace.context[15]=row;syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(7);let txCode=0;const t311Start=work.complexity.begin(13);try{
     if (work !== this.work || expectedStepEpoch !== work.stepEpoch || work.active !== 1) {const txRc:number=4;txCode=txRc;return txRc;}
     if (result !== work.results || !result.storageValidHot()) {const txRc:number=3;txCode=txRc;return txRc;}
     const valid = validateParticleHotRequest(work, p, row); if (valid !== 0) {const txRc:number=valid;txCode=txRc;return txRc;}
@@ -179,11 +181,11 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     const c = p.column[row], kind = p.kind[row], requested = p.requested[row];
     let granted = requested, budgetClipped = 0, guardRejected = 0, capacityClipped = 0, poolClipped = 0;
     let ticketToken = 0; let degraded = 0; let guarded = 0; let disposition = 1;
-    const copied = copyPoolDiagnosticHot(work,work.patchScratch, false); if (copied !== 0) {const txRc:number=copied;txCode=txRc;return txRc;}
+    const t311Read=work.complexity.begin(16);const copied = work.pool.validateHotTransfer(work.patchScratch);work.complexity.end(16,t311Read); if (copied !== 0) {const txRc:number=copied;txCode=txRc;return txRc;}
     const target = kind === 3 ? p.targetColumn[row] : c;
     if (target < 0 || target >= work.cols) {const txRc:number=2;txCode=txRc;return txRc;}
     const free = (f.mediumMode === 'DRY_AIR_V1' ? f.capacity : f.waterTop[target]) - sand(work, target) - f.suspH[target] - f.suspL[target] -
-      work.patchScratch.colParticleMassH[target] - work.patchScratch.colParticleMassL[target];
+      work.pool.particleMassHAt(target) - work.pool.particleMassLAt(target);
     if ((kind === 1 || kind === 3) && free + 1e-9 < requested) { capacityClipped = requested; granted = 0; }
     else if (kind === 2 || kind === 3 || kind === 4 && this.birthOnly === 0) {
       const reserve = this.budget.reserveInto(expectedStepEpoch, p, row, this.ticket); if (reserve !== 0) {const txRc:number=this.failHot(reserve);txCode=txRc;return txRc;}
@@ -229,9 +231,9 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     work.stagedYActive = kind === 2 || kind === 4 ? 1 : 0; work.stagedY = sand(work, c) + work.params.contactEps;
     let token = preparePatchHot(work, p, row, gh, gl, disposition);
     if (token === 0 && work.lastStatus === 5 && kind === 4 && granted > 0 && f.mediumMode !== 'DRY_AIR_V1') {
-      disposition = 3; degraded = 1; token = preparePatchHot(work, p, row, gh, gl, disposition);
+      work.complexity.retries++;work.complexity.counts[14]++;disposition = 3; degraded = 1; token = preparePatchHot(work, p, row, gh, gl, disposition);
     } else if (token === 0 && work.lastStatus === 5 && kind === 1) {
-      poolClipped = granted; granted = 0; gh = 0; gl = 0; disposition = 6;
+      work.complexity.retries++;work.complexity.counts[14]++;poolClipped = granted; granted = 0; gh = 0; gl = 0; disposition = 6;
       token = preparePatchHot(work, p, row, gh, gl, disposition);
     }
     work.stagedYActive = 0;
@@ -245,7 +247,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) {const txRc:number=this.failHot(10);txCode=txRc;return txRc;}
     const published = publishPatchHot(work, token); if (published !== 0) {const txRc:number=this.failHot(published);txCode=txRc;return txRc;}
     if (kind === 1 || this.birthOnly === 1) { work.stepExternalH += gh; work.stepExternalL += gl; }
-    if(work.derivedV2!==null){work.derivedV2.markField(c);if(target!==c)work.derivedV2.markField(target);const ds=work.derivedV2.flush();if(ds!==0){const txRc:number=this.failHot(ds);txCode=txRc;return txRc;}}
+    if(work.derivedV2!==null){work.derivedV2.markField(c);if(target!==c)work.derivedV2.markField(target);const t311Flush=work.complexity.begin(10);let ds=0;try{ds=work.derivedV2.flush();}finally{work.complexity.end(10,t311Flush);}if(ds!==0){const txRc:number=this.failHot(ds);txCode=txRc;return txRc;}}
     else if (f.mediumMode === 'DRY_AIR_V1') {
       const pool=work.pool;
       f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);
@@ -296,5 +298,5 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     result.capacityClipped[row] = capacityClipped; result.poolClipped[row] = poolClipped; result.massAfter[row] = requested - granted;
     result.guardIndex[row] = guardEvent; result.eventBegin[row] = begin; result.eventCount[row] = eventCount;
     {const txRc:number=0;txCode=txRc;return txRc;}
-  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,7,txCode);}}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(13,t311Start);txTrace?.leave(txScope,7,txCode);}}
 }
