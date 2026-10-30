@@ -1,0 +1,5 @@
+@echo off
+setlocal
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+if errorlevel 1 exit /b 1
+cl /nologo /std:c++17 /EHsc /O2  /DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /Ientry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident test/t317/app_m0_gl.cpp test/t317/gl_extra.cpp entry/src/main/cpp/gpu_resident/foundation.cpp entry/src/main/cpp/gpu_resident/run.cpp entry/src/main/cpp/gpu_resident/resources.cpp entry/src/main/cpp/gpu_resident/product_wire.cpp entry/src/main/cpp/gpu_resident/source_transport.cpp entry/src/main/cpp/gpu_resident/scene.cpp entry/src/main/cpp/p013renderer/fullframe_targets.cpp entry/src/main/cpp/gpu_resident/control.cpp entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib /Fe.codex/local-test/t317/app-m0.exe /Fo.codex/local-test/t317/

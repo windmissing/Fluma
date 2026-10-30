@@ -1,4 +1,6 @@
 #pragma once
+#include "../submit_observer.h"
+#include "../uniform_locations.h"
 #include "source_transport.h"
 namespace grs {namespace m1 {
 // Candidate values remain PENDING_CALIBRATION (T237); not a validated speed law.
@@ -6,6 +8,7 @@ struct QuantumParameters {uint32_t gravity=512u*1048576u,settle=8u*1048576u,kAir
 // Candidate only. Neither Poll nor Capture changes SourceRootOwner or publishes.
 class QuantumCandidate {
 public:
+ SubmitObserver submitObserver{};
  QuantumCandidate()=default;QuantumCandidate(const QuantumCandidate&)=delete;QuantumCandidate& operator=(const QuantumCandidate&)=delete;
  TransportCode Create(uint32_t K,uint32_t Kw);
  TransportCode Submit(SourceCoreTransport&,const QuantumParameters&,RootRequest);
@@ -19,6 +22,7 @@ public:
  TransportCode Fixture(const std::vector<uint32_t>&,const std::vector<uint32_t>&,const QuantumParameters&,RootRequest,uint32_t capacity=0);
 #endif
 private:
+ UniformLocations uniformLocations;
  friend struct QuantumCommitTestAccess;
  friend struct FullM1HostAccess;
  friend class FullM1Transport;

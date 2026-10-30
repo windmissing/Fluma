@@ -1,4 +1,6 @@
 #pragma once
+#include "../submit_observer.h"
+#include "../uniform_locations.h"
 #include "source_owner.h"
 #include "../source_transport.h"
 namespace grs {namespace m1 {
@@ -6,6 +8,7 @@ namespace grs {namespace m1 {
 // Same native GL owner; ordinary polling reads only a sealed 1024B tail.
 class SourceCoreTransport {
 public:
+ SubmitObserver submitObserver{};
  SourceCoreTransport()=default;SourceCoreTransport(const SourceCoreTransport&)=delete;SourceCoreTransport& operator=(const SourceCoreTransport&)=delete;
  TransportCode Create(uint32_t K,uint32_t Kw,const Identity&);
  TransportCode Submit(const std::array<uint32_t,32>&,RootRequest);
@@ -17,6 +20,7 @@ public:
  const TransportTraceRing& Trace()const{return trace;}
  size_t PublicationWords()const{return pubWords;}size_t HeaderOffsetWords()const{return headerAt;}
 private:
+ UniformLocations uniformLocations;
  friend class QuantumCandidate;
  friend class FullM1Transport;
  friend struct FullM1HostAccess;

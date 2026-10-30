@@ -49,14 +49,14 @@ struct App : BridgeState {
  void UiJsonLocked(std::ostringstream& o){o<<",\"sourceUiRevision\":\"GRS_M1_DEMO_UI_V4\",\"sourceOpen\":"<<(AllowedLocked()&&ui.SourceReady(Stamp())?"true":"false")<<",\"sourceKind\":"<<ui.source<<",\"sourceControlLo\":"<<uint32_t(ui.boundary)<<",\"sourceControlHi\":"<<uint32_t(ui.boundary>>32)<<",\"gravityMode\":\""<<(ui.sensorMode?"SENSOR":"EXPLICIT_MANUAL")<<"\",\"gravityRaw\":"<<ui.rawAngle<<",\"gravityTargetQ\":"<<ui.target<<",\"gravityAcceptedQ\":"<<ui.acceptedAngle<<",\"shakeDiagnostic\":"<<ui.shake<<",\"sourceReceiptStatus\":"<<ui.receipt<<",\"sourceAdmittedQ\":"<<ui.admitted<<",\"sourceRejectedQ\":"<<ui.rejected<<",\"sourceRequestSeq\":"<<ui.request<<",\"settledLo\":"<<ui.settled.lo<<",\"settledHi\":"<<ui.settled.hi<<",\"flightLo\":"<<ui.flight.lo<<",\"flightHi\":"<<ui.flight.hi<<",\"waterTotalLo\":"<<ui.water.lo<<",\"waterTotalHi\":"<<ui.water.hi<<",\"sandTotalLo\":"<<ui.sand.lo<<",\"sandTotalHi\":"<<ui.sand.hi<<",\"gpuBufferAllocatedBytes\":"<<ui.bufferBytes<<",\"frameTargetBytes\":"<<ui.frameBytes<<",\"knownGpuBytesPeak\":"<<ui.knownGpuPeak<<",\"cpuFixedControlBytes\":"<<(sizeof(App)+sizeof(AppRun)+sizeof(AppTransport))<<",\"driverMemory\":\"NOT_MEASURED\",\"calibration\":\"PENDING_CALIBRATION\"";}
  const char* OfferUiLocked(const std::array<uint32_t,32>& w){const char* code=ui.Offer(w,Stamp());return std::strcmp(code,"OK")==0?OfferLocked(w):code;}
  bool SetSourceLocked(int kind){if(!ui.SetSource(kind)){RevokeLocked("SOURCE_CONTROL_EXHAUSTED");wake.notify_one();return false;}cancelled+=count;head=count=0;wake.notify_one();return true;}
- TransportCode PumpControlled(AppRun& run,bool& suspended,uint64_t& last){std::lock_guard<std::mutex> l(mutex);if(ui.applied!=ui.boundary){cancelled+=run.DiscardSources();ui.applied=ui.boundary;}if(!active||!ui.Fresh(Stamp())){if(!suspended){run.Suspend();last=0;suspended=true;SetSourceLocked(-1);RevokeLocked(active?"GRAVITY_STALE":"BACKGROUND");}if(!run.HasFlight())return TransportCode::NOT_READY;}return run.Pump();}
+ TransportCode PumpControlled(AppRun& run,bool& suspended,uint64_t& last){std::lock_guard<std::mutex> l(mutex);if(ui.applied!=ui.boundary){cancelled+=run.DiscardSources();ui.applied=ui.boundary;}if(!active||!ui.Fresh(Stamp())){if(!suspended){run.Suspend();last=0;suspended=true;SetSourceLocked(-1);RevokeLocked(active?"GRAVITY_STALE":"BACKGROUND");}if(!run.HasFlight())return TransportCode::NOT_READY;}transportLockHeld=true;auto result=run.Pump();transportLockHeld=false;return result;}
 #endif
  uint64_t accepted=0,sourceCommit=0,physicsCommit=0,deltaNs=0;uint32_t carryBefore=0,carryAfter=0,quanta=0;int advanceCode=0,lastRunOffer=0;std::string firstFailure="NONE";const char* lastOffer="NONE";
  std::array<Words256,32> completions{};size_t completionCount=0,completionDropped=0;U64 rootNonce{};
 #ifndef GRS_BRIDGE_HOST_TEST
  BridgeDecode decoded{};std::array<BridgeDecode,64> offers{};size_t offerCount=0,offerDropped=0;
 #endif
- BridgeTimeline timeline;bool timelinePaused=false;
+ BridgeTimeline timeline;bool timelinePaused=false;bool transportLockHeld=false;uint64_t transportEpoch=0;Identity transportIdentity{};
  uint64_t Stamp()const {
 #ifdef GRS_BRIDGE_HOST_TEST
   if(hostNow)return hostNow();
@@ -66,7 +66,7 @@ struct App : BridgeState {
 #ifdef GRS_BRIDGE_HOST_TEST
  uint64_t (*hostNow)()=nullptr;void (*hostHook)(App&,BridgeStage)=nullptr;
 #endif
- void MarkLocked(BridgeStage stage,uint64_t seen=0,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){if(stage==BridgeStage::InitBegin)timelinePaused=false;if(timelinePaused&&stage!=BridgeStage::Invalidate&&stage!=BridgeStage::InitBegin)return;BridgeTimeRow r;r.ns=Stamp();r.tid=std::hash<std::thread::id>{}(std::this_thread::get_id());r.epoch=seen?seen:epoch.load();r.run=(uint64_t(identity.run.hi)<<32)|identity.run.lo;r.surface=(uint64_t(identity.surface.hi)<<32)|identity.surface.lo;r.input=(uint64_t(input.hi)<<32)|input.lo;r.stage=uint32_t(stage);r.now=r.ns;r.last=last;r.delta=delta;r.code=uint32_t(code);r.carry=carry;r.quanta=q;r.appQueue=uint32_t(count);r.runQueue=runQueue;r.root=(uint64_t(rootNonce.hi)<<32)|rootNonce.lo;r.flags=(active?1:0)|(window?2:0)|(AllowedLocked()?4:0);timeline.Add(r);if(stage==BridgeStage::PauseEnd)timelinePaused=true;}
+ void MarkLocked(BridgeStage stage,uint64_t seen=0,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){if(stage==BridgeStage::InitBegin)timelinePaused=false;if(timelinePaused&&stage!=BridgeStage::Invalidate&&stage!=BridgeStage::InitBegin)return;BridgeTimeRow r;r.ns=Stamp();r.tid=BridgeTid();r.epoch=seen?seen:epoch.load();r.run=(uint64_t(identity.run.hi)<<32)|identity.run.lo;r.surface=(uint64_t(identity.surface.hi)<<32)|identity.surface.lo;r.input=(uint64_t(input.hi)<<32)|input.lo;r.stage=uint32_t(stage);r.now=r.ns;r.last=last;r.delta=delta;r.code=uint32_t(code);r.carry=carry;r.quanta=q;r.appQueue=uint32_t(count);r.runQueue=runQueue;r.root=(uint64_t(rootNonce.hi)<<32)|rootNonce.lo;r.flags=(active?1:0)|(window?2:0)|(AllowedLocked()?4:0);timeline.Add(r);if(stage==BridgeStage::PauseEnd)timelinePaused=true;}
  void Mark(BridgeStage stage,uint64_t seen,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){std::lock_guard<std::mutex> l(mutex);MarkLocked(stage,seen,last,delta,code,carry,q);}
  void Hook(BridgeStage stage){
 #ifdef GRS_BRIDGE_HOST_TEST
@@ -142,7 +142,8 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
 #endif
     if(!good){publish("{\"state\":\"FAULT\",\"stage\":\"EGL_CREATE\",\"rawEGL\":"+std::to_string(eglGetError())+"}");failed=true;continue;}
     Identity id;id.run=u64(++runId);id.owner={1,0};id.context=id.surface=id.geometry=u64(seen);id.config={1,0};auto f=GetFoundationInfo();hash(AppLayoutSha(),id.layoutSha);hash(f.angleSha,id.angleSha);hash(AppShaderSha(),id.shaderSha);
-    gpu=std::make_unique<AppTransport>();
+    transportEpoch=seen;transportIdentity=id;gpu=std::make_unique<AppTransport>();
+    gpu->submitObserver={this,[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t ordinal){auto& app=*static_cast<App*>(ptr);std::unique_lock<std::mutex> lock(app.mutex,std::defer_lock);if(!app.transportLockHeld)lock.lock();BridgeTimeRow row;row.ns=row.now=app.Stamp();row.tid=BridgeTid();row.epoch=app.transportEpoch;row.run=(uint64_t(app.transportIdentity.run.hi)<<32)|app.transportIdentity.run.lo;row.surface=(uint64_t(app.transportIdentity.surface.hi)<<32)|app.transportIdentity.surface.lo;row.input=(uint64_t(app.input.hi)<<32)|app.input.lo;row.root=root;row.stage=uint32_t(stage);row.code=code;row.carry=ordinal;if(!app.timelinePaused)app.timeline.Add(row);}};
 #ifdef GRS_APP_M1
     auto code=gpu->Create(capacity,waterCapacity,id);
 #else
@@ -183,7 +184,10 @@ PumpControlled(*run,suspended,last);
 #else
 run->Pump();
 #endif
-Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(run->Tick().fault){failed=true;publish("{\"state\":\"FAULT\",\"stage\":\"PRODUCT_COMPLETION\",\"code\":"+std::to_string(int(code))+"}");continue;}
+Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(last&&Stamp()-last>33333333u){
+    const auto elapsed=Stamp()-last;{std::lock_guard<std::mutex> lock(mutex);if(!CurrentLocked(seen,held))continue;MarkLocked(BridgeStage::PauseBegin,seen,last,elapsed);RevokeLocked("PAUSED_CLOCK");deltaNs=elapsed;firstFailure="CLOCK_GAP";phase="CLOCK_GAP";status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}
+    auto paused=run->Pause();Mark(BridgeStage::PauseEnd,seen,last,elapsed,int(paused));last=0;gap=true;continue;
+   }if(run->Tick().fault){failed=true;publish("{\"state\":\"FAULT\",\"stage\":\"PRODUCT_COMPLETION\",\"code\":"+std::to_string(int(code))+"}");continue;}
    uint64_t acceptedNow=gpu->Owner().AcceptedCount();{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;accepted=acceptedNow;runQueue=run->Queued();input=gpu->InputGeneration();const auto& h=gpu->Owner().Header();sourceCommit=(uint64_t(h[15])<<32)|h[14];physicsCommit=(uint64_t(h[17])<<32)|h[16];}if(acceptedNow>lastAccepted){lastAccepted=acceptedNow;const auto& a=run->Tick().latest;{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;rootNonce=a.nonce;if(completionCount<completions.size())completions[completionCount++]=a.completion;else completionDropped++;}EGLint width=0,height=0;eglQuerySurface(display,surface,EGL_WIDTH,&width);eglQuerySurface(display,surface,EGL_HEIGHT,&height);
     ResidentSceneFrame f;f.run=u64(runId);f.context=f.surface=f.geometry=u64(seen);f.renderFrame=++render;f.width=width;f.height=height;f.boxWidth=float(width);f.boxHeight=float(height);
     struct Swap {App* app;uint64_t epoch;EGLDisplay d;EGLSurface s;};Swap args{this,seen,display,surface};

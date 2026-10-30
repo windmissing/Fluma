@@ -1,0 +1,213 @@
+{
+  "revision": "T317_FIRST_ROOT_PREPARATION_V1",
+  "taskStatus": "LOOK_AT_COMMENTS",
+  "scope": "PARTIAL_REAL_TIME_SUBMISSION_BOUND_NOT_CLOSED",
+  "offlinePassed": 79,
+  "offlineFailed": 0,
+  "checks": {
+    "bridge-regression": {
+      "revision": "T295_PRODUCTION_BRIDGE_LOOP_HOST",
+      "passed": 16,
+      "failed": 0,
+      "platform": "WINDOW_EGL_TRANSPORT_DOUBLE_REAL_RUN_CLOCK",
+      "device": "NOT_RUN"
+    },
+    "delays": {
+      "revision": "T317_APP_LOOP_DELAY_DOUBLE_V1",
+      "passed": 11,
+      "failed": 0,
+      "device": "NOT_RUN"
+    },
+    "m1-run": {
+      "revision": "T281_REAL_RUN_PACKET_HOST",
+      "passed": 7,
+      "failed": 0,
+      "transport": "CONTROL_DOUBLE",
+      "device": "NOT_RUN"
+    },
+    "ui-pause-drain": {
+      "revision": "T228_UI_NATIVE_CONTROL_V1",
+      "passed": 10,
+      "failed": 0,
+      "transport": "EXPLICIT_DOUBLE_REAL_RUN_CLOCK",
+      "device": "NOT_RUN"
+    },
+    "app": {
+      "revision": "T317_PRODUCTION_APP_GLES_V1",
+      "passed": 6,
+      "failed": 0,
+      "window": "PC_PBUFFER",
+      "clock": "SCRIPTED_OFFLINE",
+      "device": "NOT_RUN"
+    },
+    "m0-app": {
+      "revision": "T317_M0_APP_GLES_V1",
+      "passed": 6,
+      "failed": 0,
+      "window": "PC_PBUFFER",
+      "clock": "SCRIPTED_OFFLINE",
+      "device": "NOT_RUN"
+    },
+    "cold": {
+      "revision": "T306_TIMELINE_COLD_UNITS_V1",
+      "passed": 23,
+      "failed": 0,
+      "fsyncCalls": 38,
+      "device": "NOT_RUN",
+      "cases": [
+        {
+          "name": "stable 0 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "stable 1 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "stable 1024 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "skip cursor => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "wrong next => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate serial => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid U64 => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "numeric ns => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown stage => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "partial page => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "count shrinks => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "native overflow => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "growth => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "missing package SHA refused",
+          "status": "PASS"
+        },
+        {
+          "name": "oversized page exceeds fixed budget",
+          "status": "PASS"
+        },
+        {
+          "name": "interrupted native reader emits INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "cancel yields partial files + INCOMPLETE manifest",
+          "status": "PASS"
+        },
+        {
+          "name": "package identity change detected",
+          "status": "PASS"
+        },
+        {
+          "name": "file fault remains explicit incomplete",
+          "status": "PASS"
+        },
+        {
+          "name": "both real pages call matching module, cancel on hide, no cold mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "T317 all 39 stages preserve dictionary and raw codes",
+          "status": "PASS"
+        },
+        {
+          "name": "T317 stage40 refused",
+          "status": "PASS"
+        },
+        {
+          "name": "dictionary switch during export refused",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "build": "BUILD_SUCCESSFUL",
+  "sign": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T317-final\\T317-final-signed.hap",
+    "sha256": "3907597832e8f682211314ad8d0c25e7ec15cc6229e029519e80c848b9e9ed39",
+    "bytes": 7975547
+  },
+  "verifyApp": "PASS",
+  "stageRevision": "T317_STAGE39_V2",
+  "capacity": 1024,
+  "device": "NOT_RUN",
+  "productPerformance": "NOT_PROVEN",
+  "remaining": "partial-submit/continuation/cancel-before-fence contract required from architect; delayed Submit still raw CLOCK_GAP",
+  "sourceHashes": {
+    "entry/src/main/cpp/gpu_resident/angles_generated.h": "52f84e8fff5cfed295a55dbc38bc7eb6a6c42bde1e4adc1391f23fa1959da613",
+    "entry/src/main/cpp/gpu_resident/app_bridge.cpp": "c3684199e10eeaab17d6f76baf293509dde3be431296b4a1ede833bc51f41251",
+    "entry/src/main/cpp/gpu_resident/bridge_napi.h": "e26fbc623a1905d697807baba08cf3b3c97ba7201ce9b72c927fd702a617763a",
+    "entry/src/main/cpp/gpu_resident/bridge_packet.h": "2606396dd59f32bd4ff2b468fd1b28b40f1419b69cc9a2c1566fd4212705044c",
+    "entry/src/main/cpp/gpu_resident/bridge_state.h": "a9bf23423c4bd6536593e604e96d845a448fcb4b47f27aa0f268c9d7aec263cd",
+    "entry/src/main/cpp/gpu_resident/bridge_timeline.h": "1a9b5c62daaeb59086f3d445ac01e24298b66dd23784dea22e5629477483e875",
+    "entry/src/main/cpp/gpu_resident/control.cpp": "f92b5f6caba363084a1e304361cf6a231ed845a06e3f1951f099129a24750259",
+    "entry/src/main/cpp/gpu_resident/control.h": "7cd39cd0e570379cfdcd1d8563fc218888f6b10cdfe8c0ae6e6cd3770f883ede",
+    "entry/src/main/cpp/gpu_resident/foundation.cpp": "f73c43f04a2228a178760b4d12b61f15803e62936f3d4cf0a4894b473c00e69a",
+    "entry/src/main/cpp/gpu_resident/foundation.h": "1332a3aa5fa55a1f4d53fd2245a28f6c1c1e5497bb728ed05552ba69e9915821",
+    "entry/src/main/cpp/gpu_resident/integer.cpp": "e48e23e3a11ac58e70cdbb166a1031faf4942cd7d50c50cb6d7527f73d8d5f4d",
+    "entry/src/main/cpp/gpu_resident/integer.h": "1e2ed5a33775acac2759baad9ce7f1ccb77ca578355d198037c86297d1dfe8c4",
+    "entry/src/main/cpp/gpu_resident/layout_generated.h": "53aff4b664525a8b1ab872dbfc3c874dcea3399825d71c0511edbff2c7a17b59",
+    "entry/src/main/cpp/gpu_resident/product_wire.cpp": "e12c6e1476de343f17b08cf6b3f09cf921f7d1d15b28ebfb99ec6fe400bd7b4d",
+    "entry/src/main/cpp/gpu_resident/product_wire.h": "5f921d95c90437d6c4d8c8eae11990a11352f9f390d33a87180b44895b98c5dc",
+    "entry/src/main/cpp/gpu_resident/resources.cpp": "ef85cc58b973415d6df4c6ea9a0f28e96e5e39f1e288d65256d4696bd71bf05b",
+    "entry/src/main/cpp/gpu_resident/resources.h": "f1161f76d11efba7b6c4053ded835541a06a449ff52af7c241e1df27a3338dd5",
+    "entry/src/main/cpp/gpu_resident/run.cpp": "b9638dc7ed4b253c786f9be5299140642549a6e98c45f900dc72e541fb855f48",
+    "entry/src/main/cpp/gpu_resident/run.h": "f933562370d00ffd3ca214ce288d797c0bb473535e5a830a0e74ec4aeb11a36a",
+    "entry/src/main/cpp/gpu_resident/scene.cpp": "ed9eb887333b4df14f720837e5006104e49c930768634f530d22d709dfc31b17",
+    "entry/src/main/cpp/gpu_resident/scene.h": "c53105d7cbf2b4924b5d06abd43ca098692b91ab933ebcaccd483ff5c89231f5",
+    "entry/src/main/cpp/gpu_resident/source_transport.cpp": "5610a0a3727f11c8f183ff763972ff1ecee885330c440d6a62ec33043b6464c8",
+    "entry/src/main/cpp/gpu_resident/source_transport.h": "53e859676aa8f5e256246c8836cba5df62c927d27caaa9124d9c7ff4917e9ff1",
+    "entry/src/main/cpp/gpu_resident/submit_observer.h": "af0ece7d0ee94b9f8f253231660c4702ae59cb5d1df2c8c149dafeaea81fecd3",
+    "entry/src/main/cpp/gpu_resident/trace.h": "eb584910887907ce1170bbf33d3418088454de739db66ba58e010dcf1d4b5bd4",
+    "entry/src/main/cpp/gpu_resident/uniform_locations.h": "979ecf2ec65152a6f3d54e9a98dc0d85a198a9c1b3702c6b46e72cb232f197c3",
+    "entry/src/main/cpp/gpu_resident/m1/full_kernel.cpp": "2f84fdfb6874b3f376e27e3a1b9ac8c7bb9ebd70396f4bc1dc3ae0b86013a4a0",
+    "entry/src/main/cpp/gpu_resident/m1/full_transport.cpp": "1dd869f22662c2ee6a4d754c02e14d40b168b15bba0afc11a67133f22afe1fcb",
+    "entry/src/main/cpp/gpu_resident/m1/full_transport.h": "9d0ee92613cfa016e53ebb2fe5441b2fcc8ef37a3db38b7cc8e16ca76b808bed",
+    "entry/src/main/cpp/gpu_resident/m1/layout_generated.h": "3668b16e6f9f9169048eda5380549260cac76440b08e1502eba88844d9eec41f",
+    "entry/src/main/cpp/gpu_resident/m1/profile.cpp": "7d17baa842b5b675c3c48604087f18d685e2a653458252c9a6351c38999175d9",
+    "entry/src/main/cpp/gpu_resident/m1/profile.h": "b587b884c5883b0e879e1860a1c58269a6f107bfe115b8f32c9b364cce052b03",
+    "entry/src/main/cpp/gpu_resident/m1/quantum_candidate.cpp": "b518840aefb0cc9cadf1ef8c93de915f68a18e409a974fca78549f56cc1b35ff",
+    "entry/src/main/cpp/gpu_resident/m1/quantum_candidate.h": "ba8a6f4332dfc008e4f73dfc67b111de3dbac6b6fd52f7dbb9cf575ea4783057",
+    "entry/src/main/cpp/gpu_resident/m1/quantum_kernel.cpp": "495aa657f796a8cdb07b4a5c0044f53ddccaad117c99447089c897fddeaea7e6",
+    "entry/src/main/cpp/gpu_resident/m1/run.cpp": "bcd9b94654f0b461eb4699282b231280f21382b01a41c566ca3f18d3b0a626ba",
+    "entry/src/main/cpp/gpu_resident/m1/run.h": "9f246428031fd79d253549f1fc6767b5df9b43d0a8bba57474c412bb5757639c",
+    "entry/src/main/cpp/gpu_resident/m1/scene.cpp": "6d4caf863bc79fa71550d1274e83127b1c85aa060a5afac9b4ca5707ad8d63af",
+    "entry/src/main/cpp/gpu_resident/m1/scene.h": "ab589e724ce3cfbd42cd917d73fffe3d0fb3ec4ac53ec02c2119ffaf04488c35",
+    "entry/src/main/cpp/gpu_resident/m1/source_kernel.cpp": "f91296c32b43f2fb7fd22f0b470d97367eb72c15b5edb3a9a763a60cd46ea3d2",
+    "entry/src/main/cpp/gpu_resident/m1/source_owner.cpp": "555792737acca0edf3e1e7f0ec02508734198d71b958d1259b2548848aea3407",
+    "entry/src/main/cpp/gpu_resident/m1/source_owner.h": "879604056e8fb61e1be38c0391720a90f5cf27fb1a9930255bd484d0f3e0021c",
+    "entry/src/main/cpp/gpu_resident/m1/source_transport.cpp": "946316fb27914c33a49767188ccaf23d654163718c7d9432b3955dab44a0b73b",
+    "entry/src/main/cpp/gpu_resident/m1/source_transport.h": "723e262d433dd7e9547fccb21f679a1e51f3a4f076d54327228235a02e546c11",
+    "entry/src/main/cpp/gpu_resident/m1/ui_state.h": "4dab4275a061a20a4e37a21a5af58757eecf6c40dbed950f4e867f1c187a9119",
+    "entry/src/main/ets/physics/GpuBridgeTimelineCold.ets": "6ca71616ed08eaf63e530947fe36087b278b1e58852bb6e482186171b0e87a6a"
+  }
+}

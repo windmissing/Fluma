@@ -1,4 +1,6 @@
 #pragma once
+#include "submit_observer.h"
+#include "uniform_locations.h"
 #include "product_wire.h"
 #include "resources.h"
 #include "trace.h"
@@ -18,6 +20,7 @@ bool PlanSourceWorkspace(uint32_t K,size_t alignment,size_t maxBytes,SourceWorks
 struct SourceTransportStats {uint64_t coldMappedBytes=0,dispatches=0,barriers=0,fences=0,polls=0,mappedBytes=0,uploadedBytes=0,allocatedBytes=0;uint32_t firstGlError=0;};
 class SourceGpuTransport {
  public:
+ SubmitObserver submitObserver{};
  SourceGpuTransport()=default;SourceGpuTransport(const SourceGpuTransport&)=delete;SourceGpuTransport& operator=(const SourceGpuTransport&)=delete;
  TransportCode Create(uint32_t K,const Identity& coldIdentity);
  TransportCode Submit(const std::array<uint32_t,32>& command,RootRequest request);
@@ -35,6 +38,7 @@ class SourceGpuTransport {
  TransportCode ClearTrace(){if(!Current())return TransportCode::WRONG_OWNER;if(fence)return TransportCode::BUSY;trace.Clear();return TransportCode::OK;}
  const SourcePublication& PublicationLayout()const{return publication;}
  private:
+ UniformLocations uniformLocations;
  TransportCode SubmitRoot(const std::array<uint32_t,32>* command,RootRequest,int requestedAngle);
  bool Current()const;bool GlOK();bool SetUniform(const char*,uint32_t);void SetPair(const char*,U64);void RetireReleases();
  Words256 lastCompletion{};U64 arenaFrames[2]{};uint32_t arenaUsed[2]{};

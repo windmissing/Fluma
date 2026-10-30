@@ -1,10 +1,12 @@
 #pragma once
+#include "../submit_observer.h"
 #include "quantum_candidate.h"
 namespace grs {namespace m1 {
 // Full M1 roots, still isolated from product routing/scene. All calls belong
 // to the same current native GL owner. Only Poll can accept a sealed root.
 class FullM1Transport {
 public:
+ SubmitObserver submitObserver{};
  TransportCode Create(uint32_t K,uint32_t Kw,const Identity&,const QuantumParameters& cold=QuantumParameters{},uint32_t emitQ=16u*1048576u);
  TransportCode SubmitSource(const std::array<uint32_t,32>&,RootRequest);
  TransportCode SubmitQuantum(const QuantumParameters&,RootRequest);
