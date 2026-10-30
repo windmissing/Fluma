@@ -1,0 +1,30 @@
+{
+ "revision": "T319_INDEPENDENT_CHECKER_V1",
+ "cut20": {
+  "hit_beforeEvidence": true,
+  "snapshot_identical": true,
+  "budget_totalUsed": "0->5.0 (observation commit retained)",
+  "source_prefix": [
+   "19.2",
+   "6.4"
+  ],
+  "missing_rows": "BEFORE_INPUT/INJECTED_READSET/ORIGINAL_CHECK_RETURN not in archive (observationRows=[])"
+ },
+ "cut5B": {
+  "hit_beforeEvidence": true,
+  "consumer_code": "firstCode=5 (parent step code), consumer 4 on original path",
+  "rollback": "snapshot identical + poolRawBytes identical (byte-exact physical rollback)",
+  "source_prefix": [
+   "19.2",
+   "6.4"
+  ]
+ },
+ "cut9": {
+  "hit_beforeEvidence": true,
+  "variant": "T171_ORIGINAL",
+  "admission": "FAULT TX_GPU_ADMISSION_FAILED after SOURCE1 19.2 + SOURCE2 3.2",
+  "prefix_retained": true
+ },
+ "want_contract": "3 runs independent PIDs, faultPlan PID matched; T297 erratum scope per T304 report",
+ "missing_evidence": "cut20 observation rows not archived"
+}
