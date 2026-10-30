@@ -1,0 +1,12 @@
+{
+ "revision": "T229_TESTER_INDEPENDENT_RECHECK_V1",
+ "controller": "22/0 (node transpile re-run)",
+ "native_units": "10/0 (rebuilt+re-run)",
+ "production_app": "20/0 (rebuilt+re-run, PC_ANGLE_SWIFTSHADER)",
+ "water_conservation": "water=4194304 constant across J birth/ARRIVE/WATER_EDGE/sand phases; phase12 cold-optics reset water=0 correct new-run semantics",
+ "sw01_14": "old T221 CPU-only symbol face replaced by GPU M1 policy (versioned); 4 baseline PASS items retained (SW-04/05/09 + coverage SW-00); 10 NOT_IMPLEMENTED versioned per card instruction, not product defects",
+ "m1_numeric_diff": "covered by T292 independent oracle (B/C/D/E/F/A/G all PASS) - referenced, not duplicated",
+ "ui_contract": "GRS_M1_DEMO_UI_V4; legacy reader refusal case PASS",
+ "device": "NOT_RUN",
+ "execution": "PC offline"
+}
