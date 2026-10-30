@@ -1,0 +1,142 @@
+{
+  "revision": "T250_OFFLINE_V2",
+  "cases": [
+    {
+      "nmax": 192,
+      "arm": "COMMON_FREEZE_OFF",
+      "backend": "LEGACY_SCAN",
+      "status": "PASS",
+      "roots": 3,
+      "B": 256,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 192,
+      "arm": "COMMON_FREEZE_OFF",
+      "backend": "TX_ADJ_AVL",
+      "status": "PASS",
+      "roots": 3,
+      "B": 256,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 192,
+      "arm": "COMMON_FREEZE_OFF",
+      "backend": "GPU_INTERFACE_CPU_DOUBLE",
+      "status": "PASS",
+      "roots": 3,
+      "B": 256,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 192,
+      "arm": "COMMON_FREEZE_ON",
+      "backend": "LEGACY_SCAN",
+      "status": "PASS",
+      "roots": 3,
+      "B": 256,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 192,
+      "arm": "COMMON_FREEZE_ON",
+      "backend": "TX_ADJ_AVL",
+      "status": "PASS",
+      "roots": 3,
+      "B": 256,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 192,
+      "arm": "COMMON_FREEZE_ON",
+      "backend": "GPU_INTERFACE_CPU_DOUBLE",
+      "status": "PASS",
+      "roots": 3,
+      "B": 256,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 512,
+      "arm": "COMMON_FREEZE_OFF",
+      "backend": "LEGACY_SCAN",
+      "status": "PASS",
+      "roots": 3,
+      "B": 576,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 512,
+      "arm": "COMMON_FREEZE_OFF",
+      "backend": "TX_ADJ_AVL",
+      "status": "PASS",
+      "roots": 3,
+      "B": 576,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 512,
+      "arm": "COMMON_FREEZE_OFF",
+      "backend": "GPU_INTERFACE_CPU_DOUBLE",
+      "status": "PASS",
+      "roots": 3,
+      "B": 576,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 512,
+      "arm": "COMMON_FREEZE_ON",
+      "backend": "LEGACY_SCAN",
+      "status": "PASS",
+      "roots": 3,
+      "B": 576,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 512,
+      "arm": "COMMON_FREEZE_ON",
+      "backend": "TX_ADJ_AVL",
+      "status": "PASS",
+      "roots": 3,
+      "B": 576,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    },
+    {
+      "nmax": 512,
+      "arm": "COMMON_FREEZE_ON",
+      "backend": "GPU_INTERFACE_CPU_DOUBLE",
+      "status": "PASS",
+      "roots": 3,
+      "B": 576,
+      "M": 64,
+      "sourceLambda": 2,
+      "selectorRequests": 64
+    }
+  ],
+  "passed": 12,
+  "failed": 0,
+  "nativeGpu": "NOT_RUN",
+  "sameBinaryDevicePid": "NOT_RUN",
+  "faultCuts": "BEFORE_MATRIX_SEPARATE_SEE_BEFORE_SUMMARY"
+}
