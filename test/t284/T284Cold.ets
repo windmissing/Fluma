@@ -18,21 +18,28 @@ export class T284Cold {
  bind(run:string,epoch:number):void {if(run===this.run&&epoch===this.epoch)return;if(this.queue.length>0){for(const i of this.indices)if(i.status==='PENDING'){i.status='INCOMPLETE';i.reason='RUN_CHANGED';}this.emitIndex();}this.queue=[];this.queuedBytes=0;this.runBytes=0;this.runParts=0;this.run=run;this.epoch=epoch;this.seen=[];this.pending=[];this.birthDue=-1;this.anchor='';this.current=null;this.indices=[];this.incomplete=false;this.manualUsed=false;}
  signal(reason:string,frame:number):void {if(!this.enabled||this.seen.indexOf(reason)>=0)return;this.seen.push(reason);if(reason==='FIRST_BIRTH')this.birthDue=frame+1;else this.pending.push(reason);}
  select(frame:number,commit:number):string {if(!this.enabled)return '';if(this.birthDue>=0&&frame>=this.birthDue){this.pending.push('FIRST_BIRTH');this.birthDue=-1;}if(!this.manualUsed&&frame===this.manualFrame){this.manualUsed=true;this.pending.push('MANUAL');}if(this.pending.length===0)return '';const reason=this.pending.shift()??'';if(this.indices.length>=4){this.reject('ANCHOR_LIMIT');return '';}
-  this.anchor=this.run+'|'+this.epoch+'|'+frame+'|'+commit+'|'+reason;this.anchorBytes=this.anchorParts=0;this.captureBegin=this.now();this.current={revision:'T284_COLD_INDEX_V1',anchor:this.anchor,status:'PENDING',reason:'NONE',rawBytes:0,parts:0,emitted:0,captureMs:0,exportMs:0,hashes:[]};this.indices.push(this.current);return reason;}
+  this.anchor=this.run+'|'+this.epoch+'|'+frame+'|'+commit+'|'+reason;this.anchorBytes=this.anchorParts=0;this.captureBegin=-1;this.current={revision:'T284_COLD_INDEX_V1',anchor:this.anchor,status:'PENDING',reason:'NONE',rawBytes:0,parts:0,emitted:0,captureMs:0,exportMs:0,hashes:[]};this.indices.push(this.current);return reason;}
  private reject(reason:string):void {this.incomplete=true;if(this.current!==null){this.current.status='INCOMPLETE';this.current.reason=reason;}this.emit('T284_BUDGET '+JSON.stringify({revision:'T284_COLD_BUDGET_V1',anchor:this.anchor,status:'INCOMPLETE',reason:reason}));}
  // T331 (T323 §3) segmented capture: during the capture window enqueue only
  // does the atomic hand-off — store the payload reference, run byte/part
  // accounting (arithmetic), and defer digest computation to drain(). The
  // caller's atomic snapshot (field arrays + pool buffers) happens upstream
  // before this call; no serialization work remains on the anchor path.
- enqueue(kind:string,payload:string):void {if(this.current===null||this.anchor===''||this.current.status==='INCOMPLETE')return;const bytes=payload.length*2,parts=Math.max(1,Math.ceil(payload.length/256));
+ enqueue(kind:string,payload:string):void {if(this.current===null||this.anchor===''||this.current.status==='INCOMPLETE')return;
+  // T344: the window arms at the FIRST capture action, not at anchor selection
+  // (select() sits before the caller's frame work: authority capture, the full
+  // render pipeline, and the T266_FRAME JSON build — 18-34ms of business work
+  // that the old window wrongly billed to captureMs; T340 rawBytes=0 proves the
+  // first enqueue never even ran before the budget expired).
+  if(this.captureBegin<0)this.captureBegin=this.now();
+  const bytes=payload.length*2,parts=Math.max(1,Math.ceil(payload.length/256));
   if(this.now()-this.captureBegin>this.maxCaptureMs){this.reject('BUDGET_CAPTURE_MS');return;}
   if(bytes>this.maxAnchorBytes-this.anchorBytes||parts>this.maxAnchorParts-this.anchorParts){this.reject('BUDGET_ANCHOR');return;}
   if(bytes>this.maxRunBytes-this.runBytes||parts>this.maxRunParts-this.runParts){this.reject('BUDGET_RUN');return;}
   if(bytes>this.maxQueuedBytes-this.queuedBytes||this.queue.length===this.maxItems){this.reject('BUDGET_QUEUE');return;}
   const id=kind+'|'+this.anchor;this.queue.push({id:id,payload:payload,part:0,parts:parts,digest:0});this.queuedBytes+=bytes;this.runBytes+=bytes;this.runParts+=parts;this.anchorBytes+=bytes;this.anchorParts+=parts;this.current.rawBytes=this.anchorBytes;this.current.parts=this.anchorParts;this.current.hashes.push(kind+':'+0);
  }
- finish():void {if(this.current!==null){this.current.captureMs=this.now()-this.captureBegin;if(this.current.captureMs>this.maxCaptureMs)this.reject('BUDGET_CAPTURE_MS');if(this.current.parts===0&&this.current.status==='PENDING'){this.current.status='INCOMPLETE';this.current.reason='NOT_CAPTURED';}}this.anchor='';this.current=null;this.emitIndex();}
+ finish():void {if(this.current!==null){this.current.captureMs=this.captureBegin<0?0:this.now()-this.captureBegin;if(this.captureBegin>=0&&this.current.captureMs>this.maxCaptureMs)this.reject('BUDGET_CAPTURE_MS');if(this.current.parts===0&&this.current.status==='PENDING'){this.current.status='INCOMPLETE';this.current.reason='NOT_CAPTURED';}}this.anchor='';this.current=null;this.emitIndex();}
  // Deferred callback only; a frame callback never drains. A busy/source-held
  // view defers output until stop/pause. Strings retain original token/commit.
  drain(idle:boolean):number {if(!idle)return 0;const begin=this.now();let emitted=0;while(this.queue.length>0&&emitted<this.maxBatchParts&&this.now()-begin<this.maxBatchMs){const item=this.queue[0],index=this.indices.find((v:T284Index):boolean=>item.id.endsWith('|'+v.anchor));if(index===undefined){this.queue.shift();continue;}if(index.status==='INCOMPLETE'){this.queuedBytes-=item.payload.length*2;this.queue.shift();continue;}if(index.exportMs>=this.maxExportMs){index.status='INCOMPLETE';index.reason='BUDGET_EXPORT_MS';this.queuedBytes-=item.payload.length*2;this.queue.shift();this.incomplete=true;continue;}

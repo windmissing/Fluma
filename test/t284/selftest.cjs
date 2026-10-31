@@ -8,7 +8,14 @@ test('bed and eight seconds once, manual once',()=>{const {b}=cold();b.manualFra
 test('no drain during source held',()=>{const {b,lines}=cold();b.signal('FIRST_BED',1);b.select(1,5);b.enqueue('FRAME','x'.repeat(3000));b.finish();let before=lines.length;assert.equal(b.drain(false),0);assert.equal(lines.length,before);assert(b.drain(true)<=4);});
 test('delayed payload retains frozen token',()=>{const {b,lines}=cold();let state={token:'r|e1|c5',commit:5};b.signal('FIRST_BED',1);b.select(1,5);const payload=JSON.stringify(state);b.enqueue('FRAME',payload);b.finish();state.token='r|e2|c999';state.commit=999;while(b.drain(true));const parts=lines.filter(l=>l.startsWith('T276_COLD_V1 ')).map(l=>JSON.parse(l.slice(13)));assert.equal(t276Assemble(parts).payload,payload);assert(parts.every(p=>p.exportId.includes('r|1|1|5|FIRST_BED')));});
 test('anchor bytes/parts overflow explicit',()=>{const {b,lines}=cold();b.signal('FIRST_BED',1);b.select(1,1);b.enqueue('X','x'.repeat(262145));b.finish();assert(lines.some(l=>l.includes('BUDGET_ANCHOR')));assert.equal(JSON.parse(b.summary()).queuedItems,0);});
-test('capture wall budget explicit',()=>{const {b,lines,tick}=cold();b.signal('FIRST_BED',1);b.select(1,1);tick(5);b.enqueue('X','{}');b.finish();assert(lines.some(l=>l.includes('BUDGET_CAPTURE_MS')));});
+test('capture wall budget explicit',()=>{const {b,lines,tick}=cold();b.signal('FIRST_BED',1);b.select(1,1);
+ // T344: pre-capture caller work (render pipeline, JSON build) is OUTSIDE the
+ // window — 5ms here must NOT bill to captureMs.
+ tick(5);b.enqueue('X','{}');
+ assert(!lines.some(l=>l.includes('BUDGET_CAPTURE_MS')),'pre-capture business work must not bill to captureMs');
+ // 5ms BETWEEN capture actions is inside the window -> over budget.
+ tick(5);b.enqueue('Y','{}');b.finish();
+ assert(lines.some(l=>l.includes('BUDGET_CAPTURE_MS')),'in-window delay must still trip BUDGET_CAPTURE_MS');});
 test('queue item limit',()=>{const {b,lines}=cold();b.signal('FIRST_BED',1);b.select(1,1);for(let i=0;i<17;i++)b.enqueue('X'+i,'{}');b.finish();assert(lines.some(l=>l.includes('BUDGET_QUEUE')));assert.equal(JSON.parse(b.summary()).queuedItems,16);});
 test('run byte/part total survives drain',()=>{const {b,lines}=cold();for(const reason of ['FIRST_BIRTH','FIRST_BED','SINCE_BIRTH_8S']){b.signal(reason,1);b.select(2,2);b.enqueue('X','x'.repeat(131072));b.finish();while(b.drain(true));}b.manualFrame=3;b.select(3,3);b.enqueue('X','x'.repeat(131072));b.finish();while(b.drain(true));assert(JSON.parse(b.summary()).runBytes<=1048576);assert(JSON.parse(b.summary()).runParts<=2048);assert(lines.filter(l=>l.startsWith('T276_COLD_V1 ')).every(l=>l.length<1820));});
 test('deferred batch wall budget and total time',()=>{const {b,lines,tick}=cold();b.emit=l=>{lines.push(l);if(l.startsWith('T276_COLD_V1 '))tick(1.5);};b.signal('FIRST_BED',1);b.select(1,1);b.enqueue('X','x'.repeat(40000));b.finish();assert(b.drain(true)<=2);for(let i=0;i<100;i++)b.drain(true);assert(JSON.parse(b.summary()).indices[0].reason==='BUDGET_EXPORT_MS');});
