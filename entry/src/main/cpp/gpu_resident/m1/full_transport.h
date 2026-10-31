@@ -36,6 +36,10 @@ public:
  uint32_t SubmitBatchPasses()const{return lastBatchPasses;}
  uint64_t SubmitBatchWallNs()const{return lastBatchWallNs;}
  uint64_t SubmitTotalWallNs()const{return submitFirstNs&&submitPhase!=SubmitPhase::IDLE?uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count())-submitFirstNs:submitTotalWallNs;}
+ // T329 (Amendment 1 §2.5): wall clock of the CURRENT Pump's continuation
+ // loop (last ContinueSubmit batch), separate from submitTotalWallNs (Begin
+ // -> now). Used to verify the single-Pump seal expectation (J1).
+ uint64_t SubmitPumpWallNs()const{return submitPumpWallNs;}
  uint32_t SubmitCancelled()const{return submitCancelled;}
 private:
  friend struct FullM1HostAccess;
@@ -73,7 +77,7 @@ private:
  // Test-double access to the state machine internals (host build only).
  friend struct T324TestAccess;
 #endif
- uint64_t lastBatchWallNs=0,submitFirstNs=0,submitTotalWallNs=0;
+ uint64_t lastBatchWallNs=0,submitFirstNs=0,submitTotalWallNs=0,submitPumpWallNs=0;
  uint32_t tailSpare=0,tailReplay=0,tailBank=0,tailSlot=0,tailArena=0,tailCarry=0,tailDispatches=0;
 };
 const char* FullSourceKernel();const char* QuantumCommitKernel();const char* FullM1ShaderSha();

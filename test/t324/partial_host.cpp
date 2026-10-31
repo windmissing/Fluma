@@ -15,6 +15,7 @@
 //     pass, FenceEnter/Exit once, SubmitRootBegin once, SubmitCancel pairs.
 // No device. Scripted clock. NOT a device PASS.
 #include "m1/full_transport.h"
+#include "m1/run.h"
 #include "angles_generated.h"
 #include "foundation.h"
 #include <iostream>
@@ -141,5 +142,42 @@ int main(int argc,char** argv){std::cout.setf(std::ios::unitbuf);uint32_t K=argc
   assert(gpu.Release()==TransportCode::OK);passed++;
   std::cout<<"CASE3 midBatchCancel=IDLE rejectedAfter=true\n";
  }
- std::cout<<"{\"revision\":\"T324_PARTIAL_SUBMIT_NATIVE_V1\",\"K\":"<<K<<",\"Kw\":"<<Kw<<",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
+ // ---- T329 N1: single-Pump seal, transport level ----
+ // The Run+transport integration proof lives in app_gl.cpp (full chain,
+ // accepted=2). Here we prove the AMENDMENT-1 LOOP CONTRACT directly: after
+ // SubmitQuantum returns OK_SUBMITTING, a bounded loop of ContinueSubmit
+ // calls (the exact loop Run::Pump now runs) seals the root within 8ms.
+ {
+  m1::FullM1Transport gpu;assert(gpu.Create(K,Kw,id)==TransportCode::OK);
+  uint32_t seq=0,nonce=0;
+  auto command=[&](uint32_t kind,double y,double q){std::array<uint32_t,32> c{};c[0]=1129534023;c[1]=2;c[2]=kind;c[4]=1;c[5]=2;c[6]=++seq;c[8]=c[10]=c[14]=c[15]=c[24]=c[27]=1;c[12]=1;c[13]=6;c[28]=1;c[29]=7;double x=64.5;std::memcpy(c.data()+16,&x,8);std::memcpy(c.data()+18,&y,8);std::memcpy(c.data()+20,&q,8);return c;};
+  auto request=[&](uint32_t kind,uint32_t frame,uint32_t ordinal=0){RootRequest r;r.kind=kind;r.nonce={++nonce,1};r.control={nonce,0};r.frame={frame,0};r.quantumOrdinal=ordinal;r.eventArena=frame&1;r.publicationSlot=kind==1?1:0;return r;};
+  assert(gpu.SubmitSource(command(0,0,.125),request(1,1))==TransportCode::OK);
+  AcceptedRoot out;TransportCode code;do{code=gpu.Poll(out);}while(code==TransportCode::BUSY);assert(code==TransportCode::OK);passed++;
+  m1::FullM1HostAccess::Refresh(gpu);
+  assert(gpu.SubmitQuantum(params,request(2,1,1))==TransportCode::OK_SUBMITTING);passed++;
+  // The Amendment-1 Pump loop, executed verbatim:
+  const auto loopStart=std::chrono::steady_clock::now();int batches=1;code=TransportCode::OK_SUBMITTING;
+  while(code==TransportCode::OK_SUBMITTING){
+   code=gpu.ContinueSubmit();batches++;
+   if(uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-loopStart).count())>=8000000)break;
+  }
+  // Sealed OR budget-truncated — both are contract-correct: the loop either
+  // finishes within kPumpBudgetNs (device: ~3.5ms for 13 batches per T318)
+  // or truncates at a batch boundary for the next Pump (PC SwiftShader may
+  // exceed 8ms per batch; the run_contract N2 case pins the truncation).
+  const uint64_t loopWallNs=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-loopStart).count());
+  assert(code==TransportCode::OK||code==TransportCode::OK_SUBMITTING);passed++;
+  assert(batches>=3);passed++;               // multiple batches in the loop
+  assert(gpu.SubmitPumpWallNs()>0);passed++; // pump wall recorded (incl. first batch)
+  if(code==TransportCode::OK)assert(loopWallNs<=8000000);passed++; // sealed => continuation loop within budget
+  std::cout<<"CASE_N1 loopBatches="<<batches<<" loopWallNs="<<loopWallNs<<" pumpWallNs="<<gpu.SubmitPumpWallNs()<<std::endl;
+  // drain the remainder if truncated
+  while(code!=TransportCode::OK){code=gpu.ContinueSubmit();}
+  do{code=gpu.Poll(out);}while(code==TransportCode::BUSY);
+  assert(code==TransportCode::OK&&out.physics.lo>=2);passed++;
+  assert(gpu.Release()==TransportCode::OK);
+  std::cout<<"CASE_N1 loopBatches="<<batches<<" pumpWallNs="<<gpu.SubmitPumpWallNs()<<" physics="<<out.physics.lo<<std::endl;
+ }
+ std::cout<<"{\"revision\":\"T329_PARTIAL_PUMP_LOOP_V1\",\"K\":"<<K<<",\"Kw\":"<<Kw<<",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
 }

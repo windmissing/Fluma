@@ -1,4 +1,5 @@
 #include "run.h"
+#include <chrono>
 namespace grs {namespace m1 {
 ControlCode Run::Offer(const std::array<uint32_t,32>& command){
  if(suspended)return ControlCode::BUSY;
@@ -18,14 +19,32 @@ void Run::Fail(TransportCode code){receipt.code=code;receipt.fault=true;receipt.
 TransportCode Run::Pump(){
  if(quarantined){AcceptedRoot ignored;auto code=transport.Poll(ignored);if(code!=TransportCode::BUSY){quarantined=false;inflight=false;}return code;}
  if(!receipt.active)return receipt.fault?receipt.code:TransportCode::NOT_READY;
- // T324 §2.3: continuation branch, before inflight. Same nonce, no root
- // construction, no Add64 — the transport holds the pending root. OK keeps
- // this Pump bounded; the next Pump continues the next batch.
- if(submitting){auto code=transport.ContinueSubmit();
-  if(code==TransportCode::BUSY)return code;
-  if(code==TransportCode::OK_SUBMITTING)return TransportCode::OK;
-  if(code!=TransportCode::OK){Fail(code);return code;}
-  inflight=true;submitting=false;return TransportCode::OK;
+ // T324 §2.3 + Amendment 1 (T328 ruling): continuation branch, before
+ // inflight. Same nonce, no root construction, no Add64 — the transport
+ // holds the pending root. The SINGLE Pump now loops ContinueSubmit until
+ // the root seals (OK -> inflight) or the per-Pump budget (kPumpBudgetNs)
+ // is exhausted; batch boundaries truncate naturally (no half batch).
+ // INV-5: per-batch SubmitEnter/Exit telemetry still fires per batch inside
+ // the loop (41-dict carry keeps incrementing per batch).
+ // INV-7: the first batch stays inside SubmitQuantum; this loop only drives
+ // continuations.
+ if(submitting){
+  // T329 kPumpBudgetNs: single-Pump guard rail (8ms, independent from the
+  // batch budget — defensive ceiling so the bridge loop returns on time and
+  // the post-PumpEnd GAP check keeps its current frequency, INV-6).
+  constexpr uint64_t kPumpBudgetNs=8000000;
+  const auto pumpStart=std::chrono::steady_clock::now();
+  while(true){
+   auto code=transport.ContinueSubmit();
+   if(code==TransportCode::BUSY)return code;
+   if(code==TransportCode::OK_SUBMITTING){
+    const auto elapsed=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-pumpStart).count());
+    if(elapsed<kPumpBudgetNs)continue; // (ii) budget remains: next batch this Pump
+    return TransportCode::OK;          // (iii) budget exhausted: next Pump continues
+   }
+   if(code!=TransportCode::OK){Fail(code);return code;}
+   inflight=true;submitting=false;return TransportCode::OK; // (i) sealed
+  }
  }
  if(inflight){AcceptedRoot accepted;auto code=transport.Poll(accepted);if(code==TransportCode::BUSY)return code;inflight=false;
   if(code!=TransportCode::OK){Fail(code);return code;}receipt.accepted++;receipt.latest=accepted;

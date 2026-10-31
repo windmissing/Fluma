@@ -17,6 +17,7 @@ struct T324TestAccess {
 // Scripted double overrides via shadow methods called by the harness below.
 static int begins=0,cancels=0,continues=0,stops=0;
 static uint32_t batchesRemaining=0;static bool flight=false;static RootRequest pendingReq{};
+static bool slowBatches=false;static uint64_t batchWallNs=0; // T329 N2/N3 control
 static SubmitPhase doublePhase=SubmitPhase::IDLE;static bool doubleActive=false,doubleQF=false;
 }}
 using namespace grs;using namespace grs::m1;
@@ -35,6 +36,8 @@ int main(){_CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_STDERR);_CrtSetReportFile(
  };
  auto continueSubmit=[&](FullM1Transport& t)->TransportCode{
   m1::continues++;
+  if(m1::slowBatches)m1::batchWallNs+=9000000; // simulated 9ms batch (> kPumpBudgetNs)
+  else m1::batchWallNs+=100000;               // fast batch
   if(m1::doublePhase!=SubmitPhase::FENCE_PENDING){
    if(m1::batchesRemaining>1){m1::batchesRemaining--;return TransportCode::OK_SUBMITTING;}
    m1::doublePhase=SubmitPhase::FENCE_PENDING;
@@ -45,13 +48,24 @@ int main(){_CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_STDERR);_CrtSetReportFile(
   m1::cancels++;m1::doublePhase=SubmitPhase::IDLE;m1::doubleActive=false;m1::doubleQF=false;
   return TransportCode::PROTOCOL_REJECTED;
  };
+ auto resetTransport=[&](){m1::doublePhase=SubmitPhase::IDLE;m1::doubleActive=false;m1::doubleQF=false;m1::batchesRemaining=0;};
  FullM1Transport gpu;uint32_t submitted=0;bool inflight=false,submitting=false;U64 nonce{0,0};RootRequest root{};
  auto pump=[&]()->TransportCode{
-  if(submitting){auto code=continueSubmit(gpu);
-   if(code==TransportCode::BUSY)return code;
-   if(code==TransportCode::OK_SUBMITTING)return TransportCode::OK;
-   if(code!=TransportCode::OK)return code;
-   inflight=true;submitting=false;return TransportCode::OK;}
+  if(submitting){
+   const uint64_t kPumpBudgetNs=8000000;uint64_t pumpWall=0;
+   while(true){
+    const uint64_t before=m1::batchWallNs;
+    auto code=continueSubmit(gpu);
+    const uint64_t batch=m1::batchWallNs-before;
+    if(code==TransportCode::BUSY)return code;
+    if(code==TransportCode::OK_SUBMITTING){
+     pumpWall+=batch;
+     if(pumpWall<kPumpBudgetNs)continue;
+     return TransportCode::OK;
+    }
+    if(code!=TransportCode::OK)return code;
+    inflight=true;submitting=false;return TransportCode::OK;
+   }}
   if(inflight){inflight=false;m1::doubleActive=false;m1::doublePhase=SubmitPhase::IDLE;return TransportCode::OK;}
   U64 next{nonce.lo+1,nonce.hi};root.nonce=next;
   auto code=submitQuantum(gpu,m1::QuantumParameters{},root);
@@ -60,23 +74,26 @@ int main(){_CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_STDERR);_CrtSetReportFile(
   if(code!=TransportCode::OK)return code;
   nonce=next;inflight=true;submitted++;return TransportCode::OK;
  };
- // Case 1: 3-batch continuation, ONE nonce consumption, ONE Begin, acceptance
- {m1::begins=m1::continues=m1::cancels=0;submitting=inflight=false;
-  assert(pump()==TransportCode::OK);assert(submitting&&!inflight);passed++;
-  assert(pump()==TransportCode::OK&&m1::continues==1);passed++;
-  assert(pump()==TransportCode::OK&&m1::continues==2);passed++;
-  assert(pump()==TransportCode::OK&&m1::continues==3&&m1::doublePhase==SubmitPhase::FENCE_PENDING&&!submitting&&inflight);passed++; // c3 seals -> inflight
-  assert(pump()==TransportCode::OK&&!inflight);passed++;              // Poll accepts
-  assert(m1::begins==1&&submitted==1);passed++;
+ // Case 1 (Amendment 1): fast batches — the SINGLE Pump loops all 3
+ // continuations and seals (inflight) within the 8ms budget.
+ {m1::begins=m1::continues=m1::cancels=0;m1::slowBatches=false;m1::batchWallNs=0;submitting=inflight=false;
+  assert(pump()==TransportCode::OK);passed++;               // submit -> OK_SUBMITTING -> submitting
+  assert(pump()==TransportCode::OK&&!submitting&&inflight);passed++; // loop seals ALL batches in ONE Pump
+  assert(m1::continues==3&&m1::doublePhase==SubmitPhase::FENCE_PENDING);passed++;
+  assert(pump()==TransportCode::OK&&!inflight);passed++;    // Poll accepts
+  assert(m1::begins==1&&submitted==1);passed++;             // one Begin, one submit
  }
- // Case 2: Pause during submitting -> cancel BEFORE stop, no quarantine
- {m1::begins=m1::continues=m1::cancels=m1::stops=0;submitting=inflight=false;
+ // Case 2: Pause during submitting -> cancel BEFORE stop, no quarantine.
+ // Slow batches keep the root in BATCH_ACTIVE across Pumps (loop truncation)
+ // so Pause can observe a live submitting root.
+ {m1::begins=m1::continues=m1::cancels=m1::stops=0;m1::slowBatches=true;m1::batchWallNs=0;submitting=inflight=false;
   assert(pump()==TransportCode::OK&&submitting);
-  assert(pump()==TransportCode::OK);
+  assert(pump()==TransportCode::OK&&submitting); // budget truncated, still submitting
   m1::stops++; // transport.Stop() call in Pause
   if(submitting){assert(cancelSubmit(gpu)==TransportCode::PROTOCOL_REJECTED);submitting=false;}
   assert(m1::cancels==1&&m1::doublePhase==SubmitPhase::IDLE&&!m1::doubleActive);passed++;
   assert(m1::begins==1);passed++;
+  m1::slowBatches=false;
  }
  // Case 3: contract ordering — cancel must precede Stop (drain order §2.4)
  {m1::cancels=m1::stops=0;submitting=true;
@@ -85,5 +102,26 @@ int main(){_CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_STDERR);_CrtSetReportFile(
   m1::stops++;
   assert(m1::cancels==1);passed++;
  }
- std::cout<<"{\"revision\":\"T324_RUN_SUBMITTING_CONTRACT_V1\",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
+ // ---- T329 N2: budget truncation — slow batches (>8ms each) make each Pump
+ // carry exactly one batch; no skip, continuation resumes next Pump
+ {m1::begins=m1::continues=m1::cancels=0;m1::slowBatches=true;m1::batchWallNs=0;submitting=inflight=false;
+  assert(pump()==TransportCode::OK&&submitting);            // submit -> OK_SUBMITTING -> submitting
+  assert(pump()==TransportCode::OK&&submitting);            // Pump 2: ONE slow batch (9ms>8ms) -> budget out, stays submitting
+  assert(pump()==TransportCode::OK&&submitting);            // Pump 3: same
+  assert(m1::continues==2);passed++;                        // exactly one ContinueSubmit per Pump (N2 truncation, no skip)
+  m1::slowBatches=false;
+  assert(pump()==TransportCode::OK&&!submitting&&inflight); // fast tail (3rd batch) seals within budget
+  passed++;
+ }
+ // ---- T329 N3: mid-loop cancel — BATCH_ACTIVE cancel semantics unchanged,
+ // nonce not consumed twice
+ {m1::begins=m1::continues=m1::cancels=0;m1::slowBatches=true;m1::batchWallNs=0;submitting=inflight=false;resetTransport();
+  assert(pump()==TransportCode::OK&&submitting);
+  assert(pump()==TransportCode::OK&&submitting); // loop truncated, root still BATCH_ACTIVE mid-Pump-sequence
+  assert(cancelSubmit(gpu)==TransportCode::PROTOCOL_REJECTED);submitting=false;
+  assert(m1::cancels==1&&m1::doublePhase==SubmitPhase::IDLE&&!m1::doubleActive);passed++;
+  assert(m1::begins==1);passed++; // exactly one Begin for this root (nonce once)
+  m1::slowBatches=false;
+ }
+ std::cout<<"{\"revision\":\"T329_RUN_PUMP_LOOP_CONTRACT_V1\",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
 }
