@@ -1,0 +1,32 @@
+{
+ "revision": "T338_DEVICE_M_V1",
+ "packageSha256": "7aafce3f628c3bd7a9d147b4b2f2a9c06da1bf24f5f8ba091792ca2756b439e1",
+ "wiringChange": {
+  "file": "entry/src/main/ets/pages/EmptySandDemo.ets",
+  "what": "restore T311_STAGE emit channel (configureParticleComplexityObservation + 1Hz pumpParticleComplexityCold) — channel was unwired in every in-tree build (T312 used private wiring)",
+  "semantics": "observation only, no physics/audit change"
+ },
+ "M1": {
+  "verdict": "PASS",
+  "evidence": [
+   "T311_STAGE R=148 attemptCumulativeMs=150ms (B=399 N=512 live=250 retry=0)",
+   "sustained injection ~4min across 3 runs (runId -1/-2/-3), pid 42629 constant",
+   "THREAD_BLOCK_6S count=0, jscrash=0",
+   "T312 baseline R261 audit 1165+sort 777ms killed; now 150ms@R148 (13x headroom vs 6s)",
+   "T331 non-machine R320=68ms corroborates"
+  ],
+  "note": "emit caps at 32 lines (emitted===32 budget) so later R readings unavailable; R>300 extrapolation from linear ~1ms/R + T331 R320=68ms"
+ },
+ "M2": {
+  "verdict": "PASS",
+  "evidence": "maxMs across all 20 stages <=5ms per T311_STAGE row (vs T312 baseline apply 1449ms single event)"
+ },
+ "M3": {
+  "verdict": "NOT_RUN",
+  "reason": "captureMs belongs to T284Cold in the P051 generated tree (test/t284 apply.cjs), not the main工程 package; requires t284 tree rebuild — separate harness"
+ },
+ "M4": {
+  "verdict": "PASS",
+  "evidence": "auditFallbacks=0 during observed window (R 0..148); T331 non-machine D1-D4 also 0; fallback code path present but untriggered"
+ }
+}
