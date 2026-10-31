@@ -1,0 +1,35 @@
+{
+ "revision": "T340_M3_DEVICE_V1",
+ "packageSha256": "3b387fe6c4e290d58e3217a24afb6b4a6bda1b066cba58c3c9ee338662b10875",
+ "generationTree": ".codex/local-test/t340-v1 (t276 chain incl t284 apply.cjs, t284-manifest.json budgets captureMs=4)",
+ "P1": {
+  "verdict": "FAIL",
+  "samples": {
+   "MANUAL": 18.447,
+   "FIRST_BIRTH": 20.626,
+   "SINCE_BIRTH_8S": 34.231
+  },
+  "budget": 4,
+  "note": "all anchors INCOMPLETE BUDGET_CAPTURE_MS; rawBytes=0 parts=0 yet capture still 18-34ms — segmentation did not reach memcpy-level; attribution to developer"
+ },
+ "P2": {
+  "verdict": "PASS",
+  "note": "INCOMPLETE/BUDGET_CAPTURE_MS marking matches T284 original semantics, fail-closed correct, zero cold parts emitted"
+ },
+ "P3": {
+  "verdict": "DONE_WITH_OLD_BASELINE",
+  "before": {
+   "source": "T312 device report line 37 (pre-segmentation)",
+   "MANUAL": null,
+   "SINCE_BIRTH_8S": 46.5,
+   "other": 19.3
+  },
+  "after": {
+   "MANUAL": 18.447,
+   "FIRST_BIRTH": 20.626,
+   "SINCE_BIRTH_8S": 34.231
+  },
+  "comparison": "SINCE_BIRTH_8S 46.5->34.23 (-26%), still all over budget; no pre-segmentation MANUAL sample for direct compare"
+ },
+ "T338_M3_closure": "M3 now FAIL (was NOT_RUN) — closed with evidence"
+}
