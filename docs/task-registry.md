@@ -60,13 +60,16 @@
 
 2026-10-31：T329/T330接力交付验收（T329=e66f1c2按Amendment 1四件齐+非机全绿26/26×2·12/12·11/11·6/6·23/23设备NOT_RUN如实；T330=693f85a真机混合判定：J2/J4/J5 PASS封尾首达FenceEnter=2/首批code=16×39/GAP窗语义完好46/49ms原值触发，J1/J3 FAIL同根因=末批glFenceSync真机停顿37.65/41.28ms（12批未flush命令缓冲后建fence，循环本体仅2.2ms），击穿8ms预算与33ms窗→FENCE_PENDING被GAP取消code=2、accepted=0双源链NOT_RUN；六项已验证条款无回归、Amendment 1循环结构生效不需回退；NATIVE_DROPPED×2登记）→ 新T335 architect停顿机理归因+修复方向唯一推荐（分批flush/fence独立Pump/Amendment 2）+FENCE_PENDING×GAP核清+环扩容裁定（6ae55382e4b031ea82f3f856）。退役T329/T330。
 
+2026-10-31：T335裁定交付验收（docs/architecture-T335-fence-stall-attribution-v1.md + T324 Amendment 2：机理(a)高置信采纳——驱动在sync创建时实现累计未flush命令缓冲（fence在flush前、127个未flush dispatch、296/325µs/dispatch线性指纹），不判驱动bug；唯一推荐(i)非末批尾glFlush——预期停顿37-41ms→~3ms、单Pump≈6.7ms；(ii)(iii)拒绝；INV-8 code=2取消语义文档化+INV-9 flush不改遥测；§2.5含fence口径预算/窗均不动；环1024→4096）→ 派T336 developer实施（flush一行+环常数+五套回归+flush计数新用例，6ae55673e4b0f69bc5818507）+T337 tester真机K1-K5（fence停顿≤5ms/Pump≤8ms/accepted≥1+双源链闭环/六项无回归/环导出COMPLETE，6ae55680e4b0efba6950e058，等T336）。退役T335。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T331 | 【T331·V2续证工程三件实施】developer：增量审计证书+sort消除+attemptCumulativeMs预算披露+包SHA勘误与冷采分段化附注 | developer | P4 | 6ae5462fe4b0e9cb68ef58d1 |
 | T332 | 【T332·零分配工具收口三项】tester：39位点热路径标注+净18对账表闭合+旧2内建分母（Date.now保留经理裁决） | tester | P3 | 6ae5462fe4b0e9cb68ef58d2 |
 | T333 | 【T333·cw_commit标签反序最小修复】developer：cw_diag.h两行互换+CW_C_DIAG_V2+旧档适配注释+四判据非机回归 | developer | P3 | 6ae5462fe4b031ea82f1f0f4 |
 | T334 | 【T334·cw_commit标签修复真机复核】tester：K1-K4判据（ledger对齐/bridge对齐/token序/V1旧档适配）沿T310复采 | tester | P3 | 6ae5463ae4b0f69bc5806d5a |
-| T335 | 【T335·glFenceSync停顿首次归因】architect：T330新发现37-41ms末批fence停顿机理分层+修复方向唯一推荐+FENCE_PENDING×GAP核清+环扩容裁定 | architect | P5 | 6ae55382e4b031ea82f3f856 |
+| T336 | 【T336·fence停顿修复实施】developer：Amendment 2四件（非末批尾glFlush+环1024→4096+五套回归+flush计数新用例+INV-8注释） | developer | P5 | 6ae55673e4b0f69bc5818507 |
+| T337 | 【T337·fence修复真机验证】tester：K1-K5判据（fence停顿≤5ms/Pump墙钟≤8ms/accepted≥1+双源链闭环/六项无回归/环4096导出COMPLETE） | tester | P5 | 6ae55680e4b0efba6950e058 |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
