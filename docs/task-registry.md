@@ -68,10 +68,14 @@
 
 2026-10-31：T339修复交付（e8d70d1：校验器4096+页数上限256→1024+导出预算1MB→4MB两项环耦合预算同步+反漂移单测4/4+页预算16384核实够用）→T337重测（217d73d）混合判定关闭：K5 PASS（三run COMPLETE dropped=0，T339生效）；K2/K3 FAIL+逐批≤8ms回归——**Amendment 2真机证伪**：停顿精确转移到首批尾glFlush（33.660ms），10 dispatch vs T330的130 dispatch同为33-41ms固定税、与队列深度无关，T335摊销模型被证伪；无run到达末批fence（FenceEnter=0）；nonce/carry/取消/字典/submitting≠inflight五项无回归。**T338真机关闭（f6a1537）：M1/M2/M4 PASS**——R=148 attemptCumulativeMs=150ms（13×余量）、持续注入4分钟跨3run pid不变THREAD_BLOCK=0、maxMs≤5ms全stage（对照1449ms基线3个数量级改善）、auditFallbacks=0；M3 NOT_RUN如实（captureMs属t284生成树需独立harness）；工装T311_STAGE通道恢复×2如实登记（全历史未接线）。→ 派T341 architect固定税机理二次归因+修复方向二次裁定（预热flush/回退/GAP重议/驱动规避，6ae5749fe4b069bbd885cb60）+T340 tester冷采captureMs设备补测（t284独立harness，6ae5749fe4b031ea82f8647f，等T341包选择）。退役T337/T338/T339。
 
+2026-10-31：manager方向变更裁定（用户指令）：**目标3提升为CPU仿真方案优先、GPU方案降为备选、渲染保持XComponent**——核实T202归因（微负派生残差跨模块合同不一致）+T207 exact70设计+T214工程化+T216实施（6份strict pack已过）+T217独立（8PASS/0FAIL）均在案，T218真机BLOCKED（床沙不可见）且复杂度障碍已由T331/T338解除→重测条件具备。派T342 developer code100修复（exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备，6ae5877fe4b0f69bc58437e8，P5）+T343 tester V2双态沙真机复测（D1-D6判据复用T218 DD12+床可见性链，6ae5877fe4b0efba695389b3，P5，等T342，真机队列T340后）。GPU线T279/T280/T281已交付部分保留现状不新增投入，待CPU线收口后manager重估。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T340 | 【T340·冷采captureMs设备补测】tester：t284生成树独立harness（P1 captureMs≤4ms/P2 INCOMPLETE不放宽/P3前后对照）+T338 M3闭环 | tester | P4 | 6ae5749fe4b031ea82f8647f |
 | T341 | 【T341·glFlush固定税机理重估】architect：T337b证伪T335摊销模型→二次归因+修复方向唯一推荐（预热flush/回退/GAP重议）+Amendment 3+T340包选择 | architect | P5 | 6ae5749fe4b069bbd885cb60 |
+| T342 | 【T342·code100材质故障修复】developer：exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备（CPU线最高优先） | developer | P5 | 6ae5877fe4b0f69bc58437e8 |
+| T343 | 【T343·V2双态沙真机复测】tester：D1 code100消除/D2同FrameToken双态可见/D3床量非零LAND闭环/D4停止沉积/D5材质稳定/D6无THREAD_BLOCK（T218判据复用） | tester | P5 | 6ae5877fe4b0efba695389b3 |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
