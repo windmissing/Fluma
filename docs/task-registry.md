@@ -72,9 +72,10 @@
 
 2026-10-31：T340真机交付（43a12fa，P1 FAIL如实/P2 PASS/P3对照完成）——captureMs三锚点18.45/20.63/34.23ms超4ms预算4.6-8.6倍（rawBytes=0零payload仍耗18-34ms，T331分段化未达memcpy级），P2 fail-closed逐位正确，P3对照-26%但未达预算；T338 M3由NOT_RUN转FAIL闭环。**T342同步交付（8de02c9）**：exact70 V2主链N192/512×300步逐帧严格域断言（code100失败形态在V2下不复现）+code100反例（T180原快照解码为完整复现输入→V1形态仍被拒、V2链无法产生该状态）+T216套件7/7+6份strict pack复跑6/6+V1→V2切换就绪（S1-S4，切换决策DEFERRED_TO_T343）→T343真机解锁待包。→ 派T344 developer冷采归因修复（零payload超时→窗口覆盖调用方业务嫌疑，窗口收窄/移出/预算重估三方向唯一推荐，6ae5915de4b031ea82fbd6cc，P4）。退役T340。
 
+2026-10-31：T341裁定交付验收（docs/architecture-T341-flush-tax-reattribution-v1.md + T324 Amendment 3：T335摊销模型确认证伪——数量指纹是伪相关（同一常数除以不同分母）；机理二次归因(a)变体=GPU空闲后首次真实提交的DVFS频率爬升+驱动前端恢复（F1-F4判别链：同pid每run复现杀惰性初始化/零工作glFinish不触税/count无关/连续工作免税），不判驱动bug；唯一推荐(i)每run预热真实flush——Create尾3行+INV-10 warmupWallNs+stage 42字典42版+Amendment 2布局保留（机理表述修正）+降级预案登记；W1-W5真机判据；T340包裁定T338b即刻执行）→ **GPU备选线实施卡+真机卡待manager排程**（方向变更后不新增投入，Amendment 3合同文本维持有效）。退役T341。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
-| T341 | 【T341·glFlush固定税机理重估】architect：T337b证伪T335摊销模型→二次归因+修复方向唯一推荐（预热flush/回退/GAP重议）+Amendment 3+T340包选择 | architect | P5 | 6ae5749fe4b069bbd885cb60 |
 | T342 | 【T342·code100材质故障修复】developer：exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备（CPU线最高优先） | developer | P5 | 6ae5877fe4b0f69bc58437e8 |
 | T343 | 【T343·V2双态沙真机复测】tester：D1 code100消除/D2同FrameToken双态可见/D3床量非零LAND闭环/D4停止沉积/D5材质稳定/D6无THREAD_BLOCK（T218判据复用） | tester | P5 | 6ae5877fe4b0efba695389b3 |
 | T344 | 【T344·冷采captureMs超预算归因与修复】developer：窗口内耗时构成定位+修复方向唯一推荐+最小修复+非机回归 | developer | P4 | 6ae5915de4b031ea82fbd6cc |
