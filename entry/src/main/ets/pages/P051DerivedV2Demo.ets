@@ -7,6 +7,7 @@ import { P051DerivedDemoV2 } from '../physics/derived/P051DerivedDemoV2';
 import { DerivedPublishedSlotV2 } from '../physics/derived/P051DerivedFacadeV2';
 import { P013SceneController } from '../render/P013SceneController';
 import { P012FrameContext,P012AppearanceTier,P012Ablation,P012FillBox } from '../render/P012RenderTypes';
+import { P011ParticleSnapshot } from '../physics/P011ParticleField';
 class DerivedFrameV2 extends FrameCallback {owner:P051DerivedV2Demo|null=null;onFrame(ns:number):void{this.owner?.tick(ns);}}
 @Entry
 @Component
@@ -30,7 +31,7 @@ struct P051DerivedV2Demo {
   // readout — every 120 frames emit pYmin/pYmean/live/motion + bed sums from the publication
   // payload cold copy. Observation only; no physics/audit semantics touched.
   this.stepDbgFrames++;
-  if(this.stepDbgFrames>=120){this.stepDbgFrames=0;const cp=p.exportPayloadCold();const auth=cp.authority;const ps=auth.particleState;let live=0,pYmin=Infinity,pYsum=0,motion=0;for(let i=0;i<ps.nmax;i++)if(ps.pState[i]!==0){live++;pYmin=Math.min(pYmin,ps.pY[i]);pYsum+=ps.pY[i];if(Math.abs(ps.pVy[i])>0)motion++;}let mh=0,ml=0;for(let cc=0;cc<128;cc++){mh+=auth.mh[cc];ml+=auth.ml[cc];}hilog.info(0,'T347STEP','frame=%{public}s commit=%{public}s live=%{public}s pYmin=%{public}s pYmean=%{public}s motion=%{public}s mh=%{public}s ml=%{public}s',String(this.serial),String(p.physicsCommitId),String(live),String(pYmin===Infinity?-1:pYmin),String(live>0?pYsum/live:-1),String(motion),String(mh),String(ml));}
+  if(this.stepDbgFrames>=120){this.stepDbgFrames=0;const cp=p.exportPayloadCold();const auth=cp.authority;const ps:P011ParticleSnapshot|null=auth.particleState??null;if(ps!==null){let live=0,pYmin=Infinity,pYsum=0,motion=0;for(let i=0;i<ps.nmax;i++)if(ps.pState[i]!==0){live++;pYmin=Math.min(pYmin,ps.pY[i]);pYsum+=ps.pY[i];if(Math.abs(ps.pVy[i])>0)motion++;}let mh=0,ml=0;for(let cc=0;cc<128;cc++){mh+=auth.mh[cc];ml+=auth.ml[cc];}hilog.info(0,'T347STEP','frame=%{public}s commit=%{public}s live=%{public}s pYmin=%{public}s pYmean=%{public}s motion=%{public}s mh=%{public}s ml=%{public}s',String(this.serial),String(p.physicsCommitId),String(live),String(pYmin===Infinity?-1:pYmin),String(live>0?pYsum/live:-1),String(motion),String(mh),String(ml));}}
   this.schedule();
  }
  private touch(event:TouchEvent):void{if(event.type===TouchType.Up||event.type===TouchType.Cancel){this.model.stop();return;}if(event.touches.length<1)return;const p=event.touches[0],x=p.x/this.surfaceWidth*128,y=(1-p.y/this.surfaceHeight)*256;if(event.type===TouchType.Down)this.model.start(x,y);else this.model.move(x,y);}
