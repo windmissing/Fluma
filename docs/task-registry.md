@@ -66,11 +66,12 @@
 
 2026-10-31：T337真机BLOCKED（a10d4eb：T336环扩容4096但ArkTS校验器GpuBridgeTimelineCold.ets:24硬编码1024未同步→每页INVALID_PAGE导出0行，K1-K5全部不可判；fail-closed正确、native环4096健康（count=121 dropped=0）、包三件套1b5656e5在档；manager裁定=T336实施遗漏，非机替身不经过ArkTS导出路径是盲区）→ 派T339 developer一行修复（校验器1024→4096+pageBudget核实+单测四例防漂移+cold回归，6ae5622ee4b0f69bc58244ae）；T337保持BLOCKED不关，T339交付后沿原K1-K5换包重测；T338（等T337）顺延。
 
+2026-10-31：T339修复交付（e8d70d1：校验器4096+页数上限256→1024+导出预算1MB→4MB两项环耦合预算同步+反漂移单测4/4+页预算16384核实够用）→T337重测（217d73d）混合判定关闭：K5 PASS（三run COMPLETE dropped=0，T339生效）；K2/K3 FAIL+逐批≤8ms回归——**Amendment 2真机证伪**：停顿精确转移到首批尾glFlush（33.660ms），10 dispatch vs T330的130 dispatch同为33-41ms固定税、与队列深度无关，T335摊销模型被证伪；无run到达末批fence（FenceEnter=0）；nonce/carry/取消/字典/submitting≠inflight五项无回归。**T338真机关闭（f6a1537）：M1/M2/M4 PASS**——R=148 attemptCumulativeMs=150ms（13×余量）、持续注入4分钟跨3run pid不变THREAD_BLOCK=0、maxMs≤5ms全stage（对照1449ms基线3个数量级改善）、auditFallbacks=0；M3 NOT_RUN如实（captureMs属t284生成树需独立harness）；工装T311_STAGE通道恢复×2如实登记（全历史未接线）。→ 派T341 architect固定税机理二次归因+修复方向二次裁定（预热flush/回退/GAP重议/驱动规避，6ae5749fe4b069bbd885cb60）+T340 tester冷采captureMs设备补测（t284独立harness，6ae5749fe4b031ea82f8647f，等T341包选择）。退役T337/T338/T339。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
-| T337 | 【T337·fence修复真机验证】tester：K1-K5判据（fence停顿≤5ms/Pump墙钟≤8ms/accepted≥1+双源链闭环/六项无回归/环4096导出COMPLETE） | tester | P5 | 6ae55680e4b0efba6950e058 |
-| T338 | 【T338·V2续证工程三件设备复核】tester：M1死亡族真机存活+attemptCumulativeMs<6s/M2单事件≤600ms/M3冷采captureMs≤4ms/M4回退计数观察 | tester | P4 | 6ae55f0ae4b069bbd884a5d2 |
-| T339 | 【T339·环扩容ArkTS校验同步】developer：GpuBridgeTimelineCold.ets 1024→4096一行修复+pageBudget核实+校验器单测四例防漂移+cold回归 | developer | P5 | 6ae5622ee4b0f69bc58244ae |
+| T340 | 【T340·冷采captureMs设备补测】tester：t284生成树独立harness（P1 captureMs≤4ms/P2 INCOMPLETE不放宽/P3前后对照）+T338 M3闭环 | tester | P4 | 6ae5749fe4b031ea82f8647f |
+| T341 | 【T341·glFlush固定税机理重估】architect：T337b证伪T335摊销模型→二次归因+修复方向唯一推荐（预热flush/回退/GAP重议）+Amendment 3+T340包选择 | architect | P5 | 6ae5749fe4b069bbd885cb60 |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
