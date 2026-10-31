@@ -76,10 +76,12 @@
 
 2026-10-31：T343真机交付（6d906df，T343-signed.hap c15d1a4c）混合判定关闭——D1 PASS（V2页58+行全CURRENT code100=0，T342修复真机生效；EmptySandDemo的code100属V1链固有非D1失败）+D6 PASS（THREAD_BLOCK=0）；D2/D3 FAIL→**新断链发现**：V2粒子准入成功（28笔adm>0）、渲染可见但位置跨run静止、床量恒零、LAND无事件——重力→沉降→LAND→床写入链在V2断开，code100排除为根因（renderer零拒绝仍不沉降），与T218时代床全0同位但旧链未触及；D4不适用/D5部分。→ 派T345 architect V2粒子不沉降首次归因（重力消费核验/悬浮机理判别/V1V2分歧点定位，6ae5a6b6e4b0efba6955622c）。T344交付（6d906df同批，docs/developer-T344-capture-window-narrowing-v1.md）通过关闭：归因=窗口起表点过宽（18-34ms全为调用方渲染管线+大JSON构造，enqueue前预算已耗尽致rawBytes=0）→唯一推荐窗口收窄（惰性起表）→最小修复三处+窗口合同W1-W4 4/4+selftest 15/15+reassembly 4/4；T323预期矛盾如实登记并语义对位修正；复测归后续真机卡换包（t284生成树链自动携带）。退役T343/T344。
 
+2026-10-31：T345归因交付（docs/architecture-T345-v2-no-settle-attribution-v1.md：CHAIN_TRACED_INTACT——七环节逐行核验静态链完整无单点断链；机理分列不冒唯一（(a)设备侧步进旁路/(c"")collect执行但池写入被V2包装层静默回退，静态不可分）；**决定性离线1:1复现实验设计**（Node移植五项转储判据，pY下降→设备层/pY恒220→复现三候选干净二分）；V1/V2分歧定位=物理内核零分歧（HOT collect重力数学:786-794逐字未动）、分歧面=V2包装层、T207/T214设计无冻结条款；唯一路由developer诊断先行）→ 派T346 developer离线复现诊断（1:1 harness五项转储+二选一结论+复现时最小修复，6ae5af24e4b0e9cb68f4bd3a）。T321交付（docs/developer-T321-source-clock-receipts-v1.md）通过关闭：GAP/UP/CANCEL/BACKGROUND/倒钟全显式终态+用户可见停源反馈+512+64×32固定有界源时钟收据环（checksum冷导出+丢失显式化）+观察不影响权威（ON/OFF逐位一致）；非机14/0+14/0+26/0+7/0四套件全绿设备NOT_RUN如实。退役T345/T321。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T342 | 【T342·code100材质故障修复】developer：exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备（CPU线最高优先） | developer | P5 | 6ae5877fe4b0f69bc58437e8 |
-| T345 | 【T345·V2粒子不沉降首次归因】architect：T343新发现→重力消费核验+悬浮机理判别（输入断链/LAND恒假）+V1V2分歧点定位+修复路由唯一 | architect | P5 | 6ae5a6b6e4b0efba6955622c |
+| T346 | 【T346·V2不沉降离线复现诊断】developer：1:1 harness五项转储判别+二选一结论+复现时最小修复 | developer | P5 | 6ae5af24e4b0e9cb68f4bd3a |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
@@ -545,7 +547,6 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 | T318 | 【T318·GPU有界首root真机闭环】tester：Submit分账与双源同token上屏 | tester | P5 | 6ae44d63e4b031ea82d675fc |
 | T319 | 【T319·事务原档定向checker】tester：三cut原码、前缀与报告勘误 | tester | P4 | 6ae44d63e4b031ea82d675fd |
 | T320 | 【T320·零分配定向证明补证】tester：Date原语、净18记录与旧39位点 | tester | P4 | 6ae44d63e4b0efba6942fb6b |
-| T321 | 【T321·参考明水GAP停源反馈】developer：有效长按终态与有界原时钟收据 | developer | P3 | 6ae44d63e4b0efba6942fb6c |
 | T322 | 【T322·明水原账与commit标签勘误】tester：有效33ms、源物理代与swap证据边界 | tester | P3 | 6ae44d63e4b0f69bc5737c1a |
 
 
