@@ -70,12 +70,14 @@
 
 2026-10-31：manager方向变更裁定（用户指令）：**目标3提升为CPU仿真方案优先、GPU方案降为备选、渲染保持XComponent**——核实T202归因（微负派生残差跨模块合同不一致）+T207 exact70设计+T214工程化+T216实施（6份strict pack已过）+T217独立（8PASS/0FAIL）均在案，T218真机BLOCKED（床沙不可见）且复杂度障碍已由T331/T338解除→重测条件具备。派T342 developer code100修复（exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备，6ae5877fe4b0f69bc58437e8，P5）+T343 tester V2双态沙真机复测（D1-D6判据复用T218 DD12+床可见性链，6ae5877fe4b0efba695389b3，P5，等T342，真机队列T340后）。GPU线T279/T280/T281已交付部分保留现状不新增投入，待CPU线收口后manager重估。
 
+2026-10-31：T340真机交付（43a12fa，P1 FAIL如实/P2 PASS/P3对照完成）——captureMs三锚点18.45/20.63/34.23ms超4ms预算4.6-8.6倍（rawBytes=0零payload仍耗18-34ms，T331分段化未达memcpy级），P2 fail-closed逐位正确，P3对照-26%但未达预算；T338 M3由NOT_RUN转FAIL闭环。**T342同步交付（8de02c9）**：exact70 V2主链N192/512×300步逐帧严格域断言（code100失败形态在V2下不复现）+code100反例（T180原快照解码为完整复现输入→V1形态仍被拒、V2链无法产生该状态）+T216套件7/7+6份strict pack复跑6/6+V1→V2切换就绪（S1-S4，切换决策DEFERRED_TO_T343）→T343真机解锁待包。→ 派T344 developer冷采归因修复（零payload超时→窗口覆盖调用方业务嫌疑，窗口收窄/移出/预算重估三方向唯一推荐，6ae5915de4b031ea82fbd6cc，P4）。退役T340。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
-| T340 | 【T340·冷采captureMs设备补测】tester：t284生成树独立harness（P1 captureMs≤4ms/P2 INCOMPLETE不放宽/P3前后对照）+T338 M3闭环 | tester | P4 | 6ae5749fe4b031ea82f8647f |
 | T341 | 【T341·glFlush固定税机理重估】architect：T337b证伪T335摊销模型→二次归因+修复方向唯一推荐（预热flush/回退/GAP重议）+Amendment 3+T340包选择 | architect | P5 | 6ae5749fe4b069bbd885cb60 |
 | T342 | 【T342·code100材质故障修复】developer：exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备（CPU线最高优先） | developer | P5 | 6ae5877fe4b0f69bc58437e8 |
 | T343 | 【T343·V2双态沙真机复测】tester：D1 code100消除/D2同FrameToken双态可见/D3床量非零LAND闭环/D4停止沉积/D5材质稳定/D6无THREAD_BLOCK（T218判据复用） | tester | P5 | 6ae5877fe4b0efba695389b3 |
+| T344 | 【T344·冷采captureMs超预算归因与修复】developer：窗口内耗时构成定位+修复方向唯一推荐+最小修复+非机回归 | developer | P4 | 6ae5915de4b031ea82fbd6cc |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
