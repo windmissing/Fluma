@@ -1,0 +1,335 @@
+{
+ "revision": "T332_SITE39_HOTPATH_DISPOSITION_V1",
+ "criteria": "T162 §2.1 判据复用（COLD_EXPORT/COLD_FAILURE_ONLY/CTOR/HOT + VIEW_CONSTRUCT 独立分母）；HOT 类附调用链；不新开设计",
+ "totals": {
+  "COLD_FAILURE_ONLY": 32,
+  "HOT": 6,
+  "COLD_EXPORT": 1
+ },
+ "inputs": {
+  "manifest": "test/reports/t311/static-current.json(.gz)",
+  "explicitSites": 39
+ },
+ "summary": {
+  "HOT": 6,
+  "COLD_FAILURE_ONLY": 32,
+  "COLD_EXPORT": 1,
+  "CTOR": 0,
+  "UNCLASSIFIED": 0,
+  "hotNote": "HOT 6 处 = extraI 数组字面量(1) + mint token(1) + ROW:+kind 字符串拼接(4)——均在每步 apply 正常流执行；零分配形式门在这些真实热位点保持 FAIL 依据不变；CTOR=0（无类构造器位点）"
+ },
+ "rows": [
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::requestIdentityHot",
+   "line": 942,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::validateParticleHotRequest",
+   "line": 945,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHotBudget.ets",
+   "owner": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.reserveInto",
+   "line": 148,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHotBudget.ets",
+   "owner": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.slotHot",
+   "line": 154,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHotBudget.ets",
+   "owner": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.fillHot",
+   "line": 191,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHotBudget.ets",
+   "owner": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.refundInto",
+   "line": 168,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHotBudget.ets",
+   "owner": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.closeInto",
+   "line": 175,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "derived/P011DerivedTupleBarrierV2.ets",
+   "owner": "derived/P011DerivedTupleBarrierV2.ets::DerivedCoordinatorV2.copy",
+   "line": 201,
+   "text": "throw new Error('DERIVED_UNREGISTERED_COPY');",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "协议违约拒绝路径：DERIVED_UNREGISTERED_COPY（copy 需 snapshot 已注册，copyPoolHot→txD1.copy 正常流均注册）/DERIVED_UNSUPPORTED_RAW_IMPORT（raw import 拒绝）/DERIVED_FIELD_MARK（restoreMotionSnapshot rollback 违约）；正常流不触发"
+  },
+  {
+   "file": "derived/P011DerivedTupleBarrierV2.ets",
+   "owner": "derived/P011DerivedTupleBarrierV2.ets::DerivedCoordinatorV2.copy",
+   "line": 201,
+   "text": "new Error('DERIVED_UNREGISTERED_COPY')",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "协议违约拒绝路径：DERIVED_UNREGISTERED_COPY（copy 需 snapshot 已注册，copyPoolHot→txD1.copy 正常流均注册）/DERIVED_UNSUPPORTED_RAW_IMPORT（raw import 拒绝）/DERIVED_FIELD_MARK（restoreMotionSnapshot rollback 违约）；正常流不触发"
+  },
+  {
+   "file": "tx/TxPairAdjAvl.ets",
+   "owner": "tx/TxPairAdjAvl.ets::TxPairAdjAvl.extraI",
+   "line": 91,
+   "text": "[this.size, this.prev, this.next, this.flags, this.minEligibleSlot, this.minIdSlot, this.slotLive, this.reserved]",
+   "disposition": "HOT",
+   "evidence": "数组字面量[8 数组引用]在 copyIndex(:89)；调用链 copyIndex←TxWholeTransactionCore.copy(:109/:121)←txD1.copy←copyPoolHot(P011ParticleHot:898)←preparePatchHot(:1101/1111)←M2Sink.applyInto(:232)←applyParticlePlanIntoBody←每步 apply——有 patch 事件的步正常执行"
+  },
+  {
+   "file": "P011PoolProgressDiagnostic.ets",
+   "owner": "P011PoolProgressDiagnostic.ets::P011PoolProgressDiagnostic.checkLong",
+   "line": 122,
+   "text": "new Uint8Array(buffer)",
+   "disposition": "COLD_EXPORT",
+   "evidence": "VIEW_CONSTRUCT（T162 §2.1 已判，并入独立分母第③项）；checkLong 仅 span≥thresholdMs=100ms 且 longCaptured=false 单次触发——长窗诊断捕获，正常步不执行；ArkTS 运行时是否为视图构造分配头对象未实测（T162 原注）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::copyPoolDiagnosticHot",
+   "line": 1302,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::checkpointHot",
+   "line": 601,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleField.ets",
+   "owner": "P011ParticleField.ets::P011ParticleField.copySnapshot",
+   "line": 549,
+   "text": "throw new Error('DERIVED_UNSUPPORTED_RAW_IMPORT');",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "协议违约拒绝路径：DERIVED_UNREGISTERED_COPY（copy 需 snapshot 已注册，copyPoolHot→txD1.copy 正常流均注册）/DERIVED_UNSUPPORTED_RAW_IMPORT（raw import 拒绝）/DERIVED_FIELD_MARK（restoreMotionSnapshot rollback 违约）；正常流不触发"
+  },
+  {
+   "file": "P011ParticleField.ets",
+   "owner": "P011ParticleField.ets::P011ParticleField.copySnapshot",
+   "line": 549,
+   "text": "new Error('DERIVED_UNSUPPORTED_RAW_IMPORT')",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "协议违约拒绝路径：DERIVED_UNREGISTERED_COPY（copy 需 snapshot 已注册，copyPoolHot→txD1.copy 正常流均注册）/DERIVED_UNSUPPORTED_RAW_IMPORT（raw import 拒绝）/DERIVED_FIELD_MARK（restoreMotionSnapshot rollback 违约）；正常流不触发"
+  },
+  {
+   "file": "P011ParticleHotBudget.ets",
+   "owner": "P011ParticleHotBudget.ets::P011ParticleHotBudgetAdapter.rollbackHot",
+   "line": 103,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "WaterSandField.ets",
+   "owner": "WaterSandField.ets::WaterSandField.internalParticleRestoreBudget",
+   "line": 4618,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "derived/P011DerivedTupleBarrierV2.ets",
+   "owner": "derived/P011DerivedTupleBarrierV2.ets::DerivedCoordinatorV2.restoreField",
+   "line": 309,
+   "text": "throw new Error('DERIVED_FIELD_MARK');",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "协议违约拒绝路径：DERIVED_UNREGISTERED_COPY（copy 需 snapshot 已注册，copyPoolHot→txD1.copy 正常流均注册）/DERIVED_UNSUPPORTED_RAW_IMPORT（raw import 拒绝）/DERIVED_FIELD_MARK（restoreMotionSnapshot rollback 违约）；正常流不触发"
+  },
+  {
+   "file": "derived/P011DerivedTupleBarrierV2.ets",
+   "owner": "derived/P011DerivedTupleBarrierV2.ets::DerivedCoordinatorV2.restoreField",
+   "line": 309,
+   "text": "new Error('DERIVED_FIELD_MARK')",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "协议违约拒绝路径：DERIVED_UNREGISTERED_COPY（copy 需 snapshot 已注册，copyPoolHot→txD1.copy 正常流均注册）/DERIVED_UNSUPPORTED_RAW_IMPORT（raw import 拒绝）/DERIVED_FIELD_MARK（restoreMotionSnapshot rollback 违约）；正常流不触发"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::rollbackStepHot",
+   "line": 627,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::fieldStorageValidHot",
+   "line": 497,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::actionCommonHot",
+   "line": 956,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "derived/P011DerivedViewV2.ets",
+   "owner": "derived/P011DerivedViewV2.ets::DerivedMutationTokenV2.mint",
+   "line": 19,
+   "text": "new DerivedMutationTokenV2(serial, a, b, v)",
+   "disposition": "HOT",
+   "evidence": "mint←begin(DerivedViewV2:112)←derivedV2.begin←mergePairHot(:970)/editPoolHot(:1024,1052,1061,1070)←每步 apply 事件（kind 1/2/3/4/6）正常执行"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::mergePairHot",
+   "line": 978,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::mergeOldestHot",
+   "line": 990,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::editPoolHot",
+   "line": 1024,
+   "text": "'ROW:'+kind",
+   "disposition": "HOT",
+   "evidence": "字符串拼接在 editPoolHot 派生 begin tag；editPoolHot←preparePatchHot(:1105)←M2Sink.applyInto←每步 apply 全事件正常执行"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::editPoolHot",
+   "line": 1052,
+   "text": "'ROW:'+kind",
+   "disposition": "HOT",
+   "evidence": "字符串拼接在 editPoolHot 派生 begin tag；editPoolHot←preparePatchHot(:1105)←M2Sink.applyInto←每步 apply 全事件正常执行"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::editPoolHot",
+   "line": 1061,
+   "text": "'ROW:'+kind",
+   "disposition": "HOT",
+   "evidence": "字符串拼接在 editPoolHot 派生 begin tag；editPoolHot←preparePatchHot(:1105)←M2Sink.applyInto←每步 apply 全事件正常执行"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::editPoolHot",
+   "line": 1070,
+   "text": "'ROW:'+kind",
+   "disposition": "HOT",
+   "evidence": "字符串拼接在 editPoolHot 派生 begin tag；editPoolHot←preparePatchHot(:1105)←M2Sink.applyInto←每步 apply 全事件正常执行"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::preparePatchHot",
+   "line": 1116,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::patchLeaseHot",
+   "line": 1123,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::publishPatchHot",
+   "line": 1132,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::restorePatchHot",
+   "line": 1137,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::discardPatchHot",
+   "line": 1141,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishPatchHot",
+   "line": 1146,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::beginStepHot",
+   "line": 1277,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+   "line": 1285,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishStepHot",
+   "line": 1293,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  },
+  {
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+   "line": 1311,
+   "text": "throw txError as Error;",
+   "disposition": "COLD_FAILURE_ONLY",
+   "evidence": "catch(txError) 重抛——仅 try 块先抛异常才执行；正常热路径不进 catch（调用链=所在 hot 函数 catch 尾，分布于 P011ParticleHot/P011ParticleHotBudget/WaterSandField.internalParticleRestoreBudget）"
+  }
+ ]
+}

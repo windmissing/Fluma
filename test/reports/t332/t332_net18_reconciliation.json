@@ -1,0 +1,345 @@
+{
+ "revision": "T332_NET18_RECONCILIATION_V1",
+ "inputs": {
+  "before": "test/reports/t311/static-before.json(.gz)",
+  "current": "test/reports/t311/static-current.json(.gz)",
+  "beforeUnresolved": 102,
+  "currentUnresolved": 120,
+  "key": "(file,owner,text,reason) multiset — T316 对账口径复现"
+ },
+ "added": 27,
+ "gone": 9,
+ "net": 18,
+ "t316_handwritten": "T316 原文 28/10（净 18 一致）；可复现口径 27/9——与手写差 1 条双边（候选=镜像位移行双侧各计 1），净 18 不受影响，如实披露",
+ "reasonRollup": {
+  "ADDED_Date_now": 4,
+  "ADDED_CONTEXT_LIMIT": 23,
+  "GONE_CONTEXT_LIMIT": 9
+ },
+ "rows": [
+  {
+   "direction": "ADDED",
+   "file": "P011HotWorkReceipt.ets",
+   "owner": "P011HotWorkReceipt.ets::P011HotWorkReceipt.begin",
+   "text": "Date.now()",
+   "reason": "UNKNOWN_CALL_OR_ALIAS_ESCAPE",
+   "count": 1,
+   "attribution": "T311 新热时钟原语 Date.now 证明缺口（PROOF_GAP，manager 10-31 裁决保留）"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011HotWorkReceipt.ets",
+   "owner": "P011HotWorkReceipt.ets::P011HotWorkReceipt.begin",
+   "text": "Date.now()",
+   "reason": "UNRESOLVED_CALL",
+   "count": 1,
+   "attribution": "T311 新热时钟原语 Date.now 证明缺口（PROOF_GAP，manager 10-31 裁决保留）"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011HotWorkReceipt.ets",
+   "owner": "P011HotWorkReceipt.ets::P011HotWorkReceipt.end",
+   "text": "Date.now()",
+   "reason": "UNKNOWN_CALL_OR_ALIAS_ESCAPE",
+   "count": 1,
+   "attribution": "T311 新热时钟原语 Date.now 证明缺口（PROOF_GAP，manager 10-31 裁决保留）"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011HotWorkReceipt.ets",
+   "owner": "P011HotWorkReceipt.ets::P011HotWorkReceipt.end",
+   "text": "Date.now()",
+   "reason": "UNRESOLVED_CALL",
+   "count": 1,
+   "attribution": "T311 新热时钟原语 Date.now 证明缺口（PROOF_GAP，manager 10-31 裁决保留）"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.complexity.end(0,t311Start)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.events.storageValidHot()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.patchActions.storageValidHot()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.results.storageValidHot()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.sealedPlan.storageValidHot()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.sealedResults.storageValidHot()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::P011ParticleHotWorkspace.storageValidHot",
+   "text": "this.sinkCheckpoint.buffersValidHot()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+   "text": "syncHotContext(work)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+   "text": "work.complexity.begin(12)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+   "text": "work.complexity.end(12,t311Start)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::beginStepHot",
+   "text": "syncHotContext(work)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::beginStepHot",
+   "text": "work.complexity.seal(txCode)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+   "text": "syncHotContext(work)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+   "text": "work.complexity.begin(11)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+   "text": "work.complexity.end(11,t311Start)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::discardPatchHot",
+   "text": "syncHotContext(work)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishPatchHot",
+   "text": "syncHotContext(work)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishStepHot",
+   "text": "syncHotContext(work)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishStepHot",
+   "text": "work.complexity.seal(txCode)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::patchLeaseHot",
+   "text": "fieldStorageValidHot(work, work.field, true)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::patchLeaseHot",
+   "text": "txTrace?.leave(txScope,324,txCode)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::patchLeaseHot",
+   "text": "work.complexity.end(3,t311Start)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "ADDED",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::restorePatchHot",
+   "text": "copyPoolDiagnosticHot(work, work.patchBefore, true)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 计量接线（receipt.begin/end/syncHotContext/seal/storage 校验链）插入 → 调用图扩大，分析器上下文超限 fail-closed"
+  },
+  {
+   "direction": "GONE",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::applyParticlePlanInto",
+   "text": "work.txD1?.syncContext()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::beginStepHot",
+   "text": "work.txD1?.syncContext()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::collectParticlePlanInto",
+   "text": "work.txD1?.syncContext()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::discardPatchHot",
+   "text": "work.txD1?.syncContext()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishPatchHot",
+   "text": "work.txD1?.syncContext()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "P011ParticleHot.ets",
+   "owner": "P011ParticleHot.ets::finishStepHot",
+   "text": "work.txD1?.syncContext()",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "tx/TxWorkTrace.ets",
+   "owner": "tx/TxWorkTrace.ets::TxWorkTrace.leave",
+   "text": "this.add(4, -1)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "tx/TxWorkTrace.ets",
+   "owner": "tx/TxWorkTrace.ets::TxWorkTrace.leave",
+   "text": "this.add(code === 0 ? 1 : 2)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  },
+  {
+   "direction": "GONE",
+   "file": "tx/TxWorkTrace.ets",
+   "owner": "tx/TxWorkTrace.ets::TxWorkTrace.leave",
+   "text": "this.emit(code === 0 ? 2 : 3, id, this.depth ? this.stack[this.depth - 1] : 0, cut, code, this.stackData[at], end, inclusive, exclusive, at)",
+   "reason": "CONTEXT_LIMIT_FAIL_CLOSED",
+   "count": 1,
+   "attribution": "T311 接线替换/位移旧上下文（txD1.syncContext → syncHotContext；TxWorkTrace.leave 内联合并）"
+  }
+ ]
+}
