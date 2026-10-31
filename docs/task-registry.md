@@ -58,14 +58,15 @@
 
 2026-10-31：T323/T325/T326/T327四裁定交付验收（T323：包SHA差异=delivery清单引用错误非链断裂、复杂度走工程路线增量证书、冷采原子memcpy+序列化延后；T325：Date.now保留PROOF_GAP改判接受成本（manager裁决）、工具三项交tester；T326：observationRows空=注入时序必然非缺陷、撤销T319补序列化建议不派developer；T327：cw_diag.h:14两行互换实锤、最小修复合同+V2+四判据）→ 派T331 developer工程三件实施（增量审计证书+sort消除+预算披露+附注两件）+T332 tester工具三项+T333 developer最小修复+T334 tester真机复核（等T333，真机队列T330后）。退役T323/T325/T326/T327。
 
+2026-10-31：T329/T330接力交付验收（T329=e66f1c2按Amendment 1四件齐+非机全绿26/26×2·12/12·11/11·6/6·23/23设备NOT_RUN如实；T330=693f85a真机混合判定：J2/J4/J5 PASS封尾首达FenceEnter=2/首批code=16×39/GAP窗语义完好46/49ms原值触发，J1/J3 FAIL同根因=末批glFenceSync真机停顿37.65/41.28ms（12批未flush命令缓冲后建fence，循环本体仅2.2ms），击穿8ms预算与33ms窗→FENCE_PENDING被GAP取消code=2、accepted=0双源链NOT_RUN；六项已验证条款无回归、Amendment 1循环结构生效不需回退；NATIVE_DROPPED×2登记）→ 新T335 architect停顿机理归因+修复方向唯一推荐（分批flush/fence独立Pump/Amendment 2）+FENCE_PENDING×GAP核清+环扩容裁定（6ae55382e4b031ea82f3f856）。退役T329/T330。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
-| T329 | 【T329·Pump多批循环实施】developer：Amendment 1四件（run.cpp循环+submitPumpWallNs）+UINT32_MAX补End(16)+非机回归三新用例 | developer | P5 | 6ae54489e4b0e9cb68ef3ff3 |
-| T330 | 【T330·Pump多批循环真机验证】tester：J1-J5判据（单Pump封尾/FenceEnter首达/accepted/首批code16/GAP注入反证）+双源链闭环复测 | tester | P5 | 6ae54495e4b0efba694fadfa |
 | T331 | 【T331·V2续证工程三件实施】developer：增量审计证书+sort消除+attemptCumulativeMs预算披露+包SHA勘误与冷采分段化附注 | developer | P4 | 6ae5462fe4b0e9cb68ef58d1 |
 | T332 | 【T332·零分配工具收口三项】tester：39位点热路径标注+净18对账表闭合+旧2内建分母（Date.now保留经理裁决） | tester | P3 | 6ae5462fe4b0e9cb68ef58d2 |
 | T333 | 【T333·cw_commit标签反序最小修复】developer：cw_diag.h两行互换+CW_C_DIAG_V2+旧档适配注释+四判据非机回归 | developer | P3 | 6ae5462fe4b031ea82f1f0f4 |
 | T334 | 【T334·cw_commit标签修复真机复核】tester：K1-K4判据（ledger对齐/bridge对齐/token序/V1旧档适配）沿T310复采 | tester | P3 | 6ae5463ae4b0f69bc5806d5a |
+| T335 | 【T335·glFenceSync停顿首次归因】architect：T330新发现37-41ms末批fence停顿机理分层+修复方向唯一推荐+FENCE_PENDING×GAP核清+环扩容裁定 | architect | P5 | 6ae55382e4b031ea82f3f856 |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
