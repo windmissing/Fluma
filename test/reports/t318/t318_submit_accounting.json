@@ -1,0 +1,144 @@
+{
+ "sourceReport": "t318",
+ "stageRevision": "T324_STAGE41_V1",
+ "packageSha256": "3b428b0a3b223836c785d92e80910c54fa648869bf6f5bc23b769a506ead965e",
+ "pid": 4044,
+ "runs": [
+  {
+   "label": "run1",
+   "epoch": 3,
+   "run": 2,
+   "submitRootBegin": {
+    "serial": 93,
+    "root": 1,
+    "count": 1
+   },
+   "batches": [
+    {
+     "serial": "92->114",
+     "wallNs": 1712344,
+     "exitCode": 4294967295,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "120->141",
+     "wallNs": 144532,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "147->168",
+     "wallNs": 97500,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "174->195",
+     "wallNs": 105469,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "201->222",
+     "wallNs": 212500,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    }
+   ],
+   "batchWallSumNs": 2272345,
+   "batchGapNs": [
+    169843,
+    8098593,
+    7079844,
+    8115625
+   ],
+   "batchGapWithin8ms": false,
+   "totalSubmitWallNs_BegintoCancel": 32970469,
+   "cancel": {
+    "serial": 228,
+    "code": 1,
+    "count": 1
+   },
+   "pause": {
+    "deltaNs": 33887969,
+    "code": 6
+   },
+   "dispatchCount": 50,
+   "carryMonotonic": true,
+   "submitEnterPairs": 5
+  },
+  {
+   "label": "run2",
+   "epoch": null,
+   "run": null,
+   "submitRootBegin": {
+    "serial": 268,
+    "root": 1,
+    "count": 1
+   },
+   "batches": [
+    {
+     "serial": "267->289",
+     "wallNs": 553906,
+     "exitCode": 4294967295,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "295->316",
+     "wallNs": 227500,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "322->343",
+     "wallNs": 220469,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "349->370",
+     "wallNs": 220313,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    },
+    {
+     "serial": "376->397",
+     "wallNs": 117656,
+     "exitCode": 16,
+     "dispatches": 10,
+     "within8ms": true
+    }
+   ],
+   "batchWallSumNs": 1339844,
+   "batchGapNs": [
+    9767188,
+    9692187,
+    9857656,
+    1074531
+   ],
+   "batchGapWithin8ms": false,
+   "totalSubmitWallNs_BegintoCancel": 41075625,
+   "cancel": {
+    "serial": 403,
+    "code": 1,
+    "count": 1
+   },
+   "pause": {
+    "deltaNs": 41407657,
+    "code": 6
+   },
+   "dispatchCount": 50,
+   "carryMonotonic": true,
+   "submitEnterPairs": 5
+  }
+ ]
+}
