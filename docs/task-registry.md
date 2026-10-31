@@ -52,6 +52,12 @@
 
 2026-10-30/31：T319/T320/T322/T321/T323执行交付、T324合同交付、T317按T324完成partial-submit实现（84bf66e，五套非机证据，设备NOT_RUN）。T318解锁。退役：T319/T320/T322/T317（T321/T323/T325/T326/T327状态以滴答为准）。
 
+2026-10-31：T318真机交付（fdfd9e3：分片状态机真机成立——逐批≤8ms全过最大1.712ms、单dispatch最大691µs；但130op表÷10op/批=13轮Pump×8ms tick≈104-127ms结构性超33ms CLOCK_GAP窗3-4倍，root在BATCH_ACTIVE被GAP取消封尾不可达，完整链NOT_RUN）→ 新T328 architect配比裁定+修订合同+手签口径/UINT32_MAX两项移交。退役T318。
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T328 | 【P-011·分片×GAP配比裁定】architect：批进度速率vs 33ms CLOCK_GAP窗合同层方案+修订合同+两项移交 | architect | P5 | 6ae54054e4b069bbd882aab3 |
+
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
