@@ -2413,6 +2413,7 @@ struct SandCanvas {
   private panLastLocalY = 0;
   private panLastEventAccepted = false;
   private poolProgressTraceEnabled = false;
+  private complexityPumpTimer: number = -1;
   private poolProgressTraceRows = 0;
   private tracePoolProgress(stage: string, detail: string): void {
     if(!this.poolProgressTraceEnabled)return;
@@ -3262,7 +3263,14 @@ struct SandCanvas {
           .onClick(() => {this.scenePipeline=(this.scenePipeline+1)%3;})
           .zIndex(25).fontSize(12).fontColor('#B00020').position({x:20,y:85})
         Button('池诊断切换').onClick(() => {this.poolProgressTraceEnabled=!this.poolProgressTraceEnabled;
-          this.poolProgressTraceRows=0;this.waterSandField?.setPoolProgressDiagnosticEnabled(this.poolProgressTraceEnabled,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));})
+          this.poolProgressTraceRows=0;this.waterSandField?.setPoolProgressDiagnosticEnabled(this.poolProgressTraceEnabled,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));
+          // T338 forensic wiring (tester, registered in test-report-T338): T311_STAGE emit channel was
+          // unwired in the current tree (pumpParticleComplexityCold had zero callers); restore the
+          // observation channel only — no physics/audit semantics touched.
+          if(this.poolProgressTraceEnabled){
+            this.waterSandField?.configureParticleComplexityObservation((): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false),(line: string): void => {console.info(line);});
+            if(this.complexityPumpTimer<0)this.complexityPumpTimer=setInterval((): void => {this.waterSandField?.pumpParticleComplexityCold();},1000);
+          }else if(this.complexityPumpTimer>=0){clearInterval(this.complexityPumpTimer);this.complexityPumpTimer=-1;}})
           .zIndex(25).fontSize(12).position({x:180,y:85})
         Button('结束采集').zIndex(30).position({x:20,y:112})
           .onClick(() => {const store=this.naturalObservationStore;if(store!==null)this.finishCapture('ui:'+store.inspect().storeGeneration).catch((e: Error): void=>{this.logWaterSand(e.message);});})

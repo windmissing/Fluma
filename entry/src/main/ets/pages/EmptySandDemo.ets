@@ -137,6 +137,7 @@ struct EmptySandDemo {
     }
   }
   private model: P051EmptySandDemo = new P051EmptySandDemo();
+  private complexityPumpTimer: number = -1;
   private touchSource: P051TouchSourceAdapter = new P051TouchSourceAdapter(this.model,this.diagnostics);
   private inputGeometry: P051InputGeometry = {revision:'P051_TOUCH_INPUT_ENGINEERING_V1',geometryEpoch:1,widthVp:0,heightVp:0,ready:false};
   private renderer: P013SceneController = new P013SceneController();
@@ -153,6 +154,11 @@ struct EmptySandDemo {
   aboutToAppear(): void {
     this.callback.owner = this;this.model.diagnostics=this.diagnostics;
     this.model.field.setPoolProgressDiagnosticEnabled(true,(): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false));
+    // T338 forensic wiring (tester, registered in test-report-T338): the T311_STAGE emit channel
+    // was unwired in every in-tree build (T312 used a private wiring); restore observation only —
+    // 1Hz cold pump + console sink, no physics/audit semantics touched.
+    this.model.field.configureParticleComplexityObservation((): number => systemDateTime.getUptime(systemDateTime.TimeType.ACTIVE,false),(line: string): void => {console.info(line);});
+    this.complexityPumpTimer = setInterval((): void => {this.model.field.pumpParticleComplexityCold();},1000);
     this.armFailureTrace();
     this.model.field.setGestureSandEventSink((receipt) => {
       this.diagnostics.record({kind:'wet.receipt',time:p013NowMs(),runId:this.model.field.getP011RunId(),commit:this.model.field.getRenderPhysicsCommitId(),frame:this.serial,admitted:receipt.admittedH+receipt.admittedL,reason:receipt.rejectedReason ?? 'ACCEPTED'});
@@ -166,7 +172,7 @@ struct EmptySandDemo {
   }
   onPageShow(): void { this.pageShown = true; this.syncActive(); }
   onPageHide(): void { this.pageShown = false; this.syncActive(); }
-  aboutToDisappear(): void { this.onPageHide(); this.callback.owner = null; this.renderer.release();this.flushDiagnostics();this.model.field.setGestureSandEventSink(null);this.model.field.setTiltPreviewTraceSink(null); }
+  aboutToDisappear(): void { if(this.complexityPumpTimer>=0){clearInterval(this.complexityPumpTimer);this.complexityPumpTimer=-1;} this.onPageHide(); this.callback.owner = null; this.renderer.release();this.flushDiagnostics();this.model.field.setGestureSandEventSink(null);this.model.field.setTiltPreviewTraceSink(null); }
   private schedule(): void { if (this.running && !this.queued) { this.queued = true; this.getUIContext().postFrameCallback(this.callback); } }
   tick(ns: number): void {
     this.queued = false; if (!this.running) return;
