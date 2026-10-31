@@ -5,7 +5,7 @@ import { ClearWaterNativeFrame,ClearWaterNativeReceipt } from '../../../render/P
 // Only attached by the isolated diagnostic build. Fixed storage, preserve first
 // records on overflow. No JSON or long token construction in event recording.
 export class ClearWaterDiagnostic {
-  readonly revision:string='CW_C_DIAG_V1';readonly rows:Float64Array;
+  readonly revision:string='CW_C_DIAG_V2';readonly rows:Float64Array;
   readonly capacity:number;
   readonly runIds:string[];readonly keyRunIds:string[];readonly reasons:string[];readonly dispositions:string[];readonly units:string[];readonly domains:string[];
   count:number=0;dropped:number=0;frames:number=0;firstFrame:number=0;

@@ -1,0 +1,172 @@
+Installing dependencies...
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1
++
+Progress: resolved 1, reused 1, downloaded 0, added 0
+Progress: resolved 1, reused 1, downloaded 0, added 1
+Progress: resolved 1, reused 1, downloaded 0, added 1, done
+ WARN  Issues with peer dependencies found
+.
+└─┬ @ohos/hvigor-ohos-plugin 6.26.8
+  └── ✕ missing peer @ohos/hvigor@6.26.8
+Peer dependencies that should be installed:
+  @ohos/hvigor@6.26.8
+
+dependencies:
++ @ohos/hvigor-ohos-plugin 6.26.8
+
+Done in 53.9s using pnpm v10.28.2
+Hvigor install success.
+> hvigor [32mFinished :entry:clean... after 4 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 175 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 9 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 155 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 30 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 5 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 8 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 5 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 6 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 532 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 15 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 9 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 7 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 13 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 315 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 5 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 207 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 6 s 366 ms [39m
+> hvigor [33mWARN: When performing compilation for the arm64-v8a architecture:
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mD:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/cpp/p013renderer/napi_bridge.cpp:791:442: warning: implicit conversion from 'unsigned long' to 'double' changes value from 1152921504606846975 to 1152921504606846976 [-Wimplicit-const-int-float-conversion][33m[39m
+[33m valid=valid&&Number(e,a[0],"contextEpoch",context)&&SafeInteger(context)&&Number(e,a[0],"stateEpoch",state)&&SafeInteger(state)&&state>0&&Number(e,a[0],"physicsCommitId",commit)&&SafeInteger(commit)&&commit>0&&Number(e,a[0],"requestedGeneration",generation)&&SafeInteger(generation)&&Number(e,a[0],"particleCount",count)&&SafeInteger(count)&&Number(e,a[0],"particleCapacity",capacity)&&SafeInteger(capacity)&&capacity>=1&&capacity<=SIZE_MAX/16&&count<=capacity&&Boolean(e,a[0],"particleLayerEnabled",p.particleEnabled)&&text("frameToken",p.token)&&text("runId",p.run)&&text("ledgerCommitKey",p.ledgerKey)&&text("routeId",p.route)&&text("mediumMode",p.medium)&&text("sourceFailure",sourceFailure);[33m[39m
+[33m                                                                                                                                                                                                                                                                                                                                                                                                                                               ~~~~~~~~~~^~~[33m[39m
+[33m1 warning generated.[33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[33mclang++: warning: argument unused during compilation: '--gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm' [-Wunused-command-line-argument][33m[39m
+[39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 12 s 384 ms [39m
+> hvigor [32mFinished :entry:default@ProcessLibs... after 111 ms [39m
+> hvigor [32mFinished :entry:default@DoNativeStrip... after 359 ms [39m
+> hvigor [32mFinished :entry:default@CacheNativeLibs... after 14 ms [39m
+> hvigor [33mWARN: [33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/render/P013SceneController.ets:3:28
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/entryability/EntryAbility.ets:6:19
+ Currently module for 'libgrsm0.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/entryability/EntryAbility.ets:7:19
+ Currently module for 'libgrsm1.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/render/P013RenderController.ets:7:26
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/render/P013ClearWaterController.ets:3:26
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:11:66
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:12:64
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:12:206
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:12:234
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:13:28
+ The system capacity of this api 'createMd' is not supported on all devices
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:13:28
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:13:56
+ The system capacity of this api 'update' is not supported on all devices
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:13:56
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:13:99
+ The system capacity of this api 'digest' is not supported on all devices
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/physics/DiagnosticColdFiles.ets:13:99
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/pages/ClearWaterDemo.ets:1:22
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/pages/ClearWaterDemo.ets:54:58
+ 'getContext' has been deprecated.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:33:24
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:37:6
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[33mWARN: [33m[33mArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t333-fix/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:41:14
+ Function may throw exceptions. Special handling is required.
+[39m[39m
+[39m
+> hvigor [32mFinished :entry:default@CompileArkTS... after 24 s 770 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgModuleJson... after 6 ms [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 796 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 7 ms [39m
+> hvigor [91mERROR: Failed :entry:default@SignHap... [39m
+> hvigor [91mERROR: [31m00303116 Configuration Error
+[31mError Message: The length of the storePassword or keyPassword field in the signature configuration is less than 32. At file: D:\hmprojects\HelloWorld\.codex\local-test\t333-fix\build-profile.json5
+[31m
+* Try the following:
+  > Re-execute sign your app/atomic service automatically：clear the signingConfigs field in the D:\hmprojects\HelloWorld\.codex\local-test\t333-fix\build-profile.json5 file and go to Project Structure > Project > Signing Configs and apply the signature material
+  > Verify if signingConfigs is overridden in the project-level and module-level hvigorfile.ts. If so, use the error message to ensure the configuration is correct.
+[39m
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[39m
+> hvigor [91mERROR: BUILD FAILED in 37 s 638 ms [39m
+
+31 tasks in total: 31 executed, 0 up-to-date
