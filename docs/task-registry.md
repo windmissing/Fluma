@@ -74,11 +74,12 @@
 
 2026-10-31：T341裁定交付验收（docs/architecture-T341-flush-tax-reattribution-v1.md + T324 Amendment 3：T335摊销模型确认证伪——数量指纹是伪相关（同一常数除以不同分母）；机理二次归因(a)变体=GPU空闲后首次真实提交的DVFS频率爬升+驱动前端恢复（F1-F4判别链：同pid每run复现杀惰性初始化/零工作glFinish不触税/count无关/连续工作免税），不判驱动bug；唯一推荐(i)每run预热真实flush——Create尾3行+INV-10 warmupWallNs+stage 42字典42版+Amendment 2布局保留（机理表述修正）+降级预案登记；W1-W5真机判据；T340包裁定T338b即刻执行）→ **GPU备选线实施卡+真机卡待manager排程**（方向变更后不新增投入，Amendment 3合同文本维持有效）。退役T341。
 
+2026-10-31：T343真机交付（6d906df，T343-signed.hap c15d1a4c）混合判定关闭——D1 PASS（V2页58+行全CURRENT code100=0，T342修复真机生效；EmptySandDemo的code100属V1链固有非D1失败）+D6 PASS（THREAD_BLOCK=0）；D2/D3 FAIL→**新断链发现**：V2粒子准入成功（28笔adm>0）、渲染可见但位置跨run静止、床量恒零、LAND无事件——重力→沉降→LAND→床写入链在V2断开，code100排除为根因（renderer零拒绝仍不沉降），与T218时代床全0同位但旧链未触及；D4不适用/D5部分。→ 派T345 architect V2粒子不沉降首次归因（重力消费核验/悬浮机理判别/V1V2分歧点定位，6ae5a6b6e4b0efba6955622c）。T344交付（6d906df同批，docs/developer-T344-capture-window-narrowing-v1.md）通过关闭：归因=窗口起表点过宽（18-34ms全为调用方渲染管线+大JSON构造，enqueue前预算已耗尽致rawBytes=0）→唯一推荐窗口收窄（惰性起表）→最小修复三处+窗口合同W1-W4 4/4+selftest 15/15+reassembly 4/4；T323预期矛盾如实登记并语义对位修正；复测归后续真机卡换包（t284生成树链自动携带）。退役T343/T344。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T342 | 【T342·code100材质故障修复】developer：exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备（CPU线最高优先） | developer | P5 | 6ae5877fe4b0f69bc58437e8 |
-| T343 | 【T343·V2双态沙真机复测】tester：D1 code100消除/D2同FrameToken双态可见/D3床量非零LAND闭环/D4停止沉积/D5材质稳定/D6无THREAD_BLOCK（T218判据复用） | tester | P5 | 6ae5877fe4b0efba695389b3 |
-| T344 | 【T344·冷采captureMs超预算归因与修复】developer：窗口内耗时构成定位+修复方向唯一推荐+最小修复+非机回归 | developer | P4 | 6ae5915de4b031ea82fbd6cc |
+| T345 | 【T345·V2粒子不沉降首次归因】architect：T343新发现→重力消费核验+悬浮机理判别（输入断链/LAND恒假）+V1V2分歧点定位+修复路由唯一 | architect | P5 | 6ae5a6b6e4b0efba6955622c |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
