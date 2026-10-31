@@ -54,9 +54,12 @@
 
 2026-10-31：T318真机交付（fdfd9e3：分片状态机真机成立——逐批≤8ms全过最大1.712ms、单dispatch最大691µs；但130op表÷10op/批=13轮Pump×8ms tick≈104-127ms结构性超33ms CLOCK_GAP窗3-4倍，root在BATCH_ACTIVE被GAP取消封尾不可达，完整链NOT_RUN）→ 新T328 architect配比裁定+修订合同+手签口径/UINT32_MAX两项移交。退役T318。
 
+2026-10-31：T328裁定交付（docs/architecture-T328-batch-gap-ratio-ruling-v1.md + T324 Amendment 1：唯一推荐方向(a) Pump内多批循环kPumpBudgetNs=8ms护栏——13批压缩到单轮Pump≈3.5ms结构性消除超窗，GAP判定不豁免不放宽，INV-5/6/7增补；移交裁定：手签包tester补签合法追认+SHA归档义务归签包者、UINT32_MAX首批补显式End(16)）→ 派T329 developer实施（run.cpp循环+UINT32_MAX修复+submitPumpWallNs+非机回归）+T330 tester真机验证（J1-J5判据）。退役T328。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
-| T328 | 【P-011·分片×GAP配比裁定】architect：批进度速率vs 33ms CLOCK_GAP窗合同层方案+修订合同+两项移交 | architect | P5 | 6ae54054e4b069bbd882aab3 |
+| T329 | 【T329·Pump多批循环实施】developer：Amendment 1四件（run.cpp循环+submitPumpWallNs）+UINT32_MAX补End(16)+非机回归三新用例 | developer | P5 | 6ae54489e4b0e9cb68ef3ff3 |
+| T330 | 【T330·Pump多批循环真机验证】tester：J1-J5判据（单Pump封尾/FenceEnter首达/accepted/首批code16/GAP注入反证）+双源链闭环复测 | tester | P5 | 6ae54495e4b0efba694fadfa |
 
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
