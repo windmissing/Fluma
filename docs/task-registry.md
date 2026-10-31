@@ -50,6 +50,9 @@
 
 ## 已关闭退役编号（不复用）
 
+2026-10-30/31：T319/T320/T322/T321/T323执行交付、T324合同交付、T317按T324完成partial-submit实现（84bf66e，五套非机证据，设备NOT_RUN）。T318解锁。退役：T319/T320/T322/T317（T321/T323/T325/T326/T327状态以滴答为准）。
+
+
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
 2026-10-26：T59/T65/T70完成，新增：
@@ -420,4 +423,107 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 | T162 | 【P-011·T154门禁分流】architect：诊断OFF控制流+门禁探针扩展方案+baseline路由 | architect | P5 | 6ae00c6d…9c6a |
 | T163 | 【P-011·worker abc打包修复】developer：T159生成项目Worker设备加载失败根因与生成器最小修复 | developer | P5 | 6ae0179b…c90a |
 | T164 | 【P-011·GPU三路收益真机复测】tester：完整attempt收益+注错四类+N相关性复核 | tester | P5 | 6ae017b3…cef8 |
+
+
+## 2026-10-29 接续编号（恢复远端固定卡，禁止复用）
+
+| 编号 | task | 角色 | 优先级 | 卡 ID |
+|---|---|---|---|---|
+| T263 | 【T263·GPU M0全阶段独立差分】tester：LAND、床审核、拒绝与末ID重放 | tester | P5 | 6ae2d367e4b0c3103c20440a |
+| T264 | 【T264·GPU M0产品整步真机验证】tester：同token提交、故障生命周期与完整收益 | tester | P5 | 6ae2d367e4b0c3103c20440b |
+| T265 | 【T265·T243工程交接恢复】architect：补回已交付v2归因与诊断修订 | architect | P4 | 6ae2eb52e4b0c1a6bd710fdd |
+| T266 | 【T266·V2有界诊断与启动修订】developer：独立run计时、阶段成本与合法路由 | developer | P4 | 6ae2eb52e4b0c1a6bd710fde |
+| T267 | 【T267·V2落床定向续证】tester：本run物理时长、冻结阶段与报告勘误 | tester | P4 | 6ae2eb52e4b0d25fef9d6eeb |
+
+
+| T268 | 【T268·明水可见性与ACK缺证分流】architect：库存到像素及设备回执边界 | architect | P3 | 6ae2f99ae4b0ab67703581ef |
+
+
+| T269 | 【T269·GPU产品桥接失败首次归因】architect：命令入队、ADVANCE与时钟生命周期 | architect | P5 | 6ae30629e4b0c3103c250489 |
+| T270 | 【T270·明水逐笔诊断实现】developer：有界receipt、水库存与同token层采样 | developer | P3 | 6ae30629e4b0ab677036c41b |
+| T271 | 【T271·明水逐笔与像素真机补证】tester：正量水ACK、W到层像素及旧代终态 | tester | P3 | 6ae30629e4b0ab677036c41c |
+
+
+| T272 | 【T272·GPU产品桥接修复】developer：128B命令、身份代次与CLOCK_GAP恢复 | developer | P5 | 6ae32a72e4b0efba6930d40a |
+| T273 | 【T273·GPU产品桥接修复真机复测】tester：K192源终态到整步同帧上屏 | tester | P5 | 6ae32a72e4b0e9cb68d51e84 |
+| T274 | 【T274·V2续证阻断首次归因】architect：首生计时冻结、锚点与零床量 | architect | P4 | 6ae32a72e4b0e9cb68d51e85 |
+| T275 | 【T275·事务AFTER切点合同裁定】architect：原拒绝消费者、观测边界与首码归属 | architect | P4 | 6ae32a72e4b031ea82ab720c |
+
+
+| T276 | 【T276·V2诊断导出修复】developer：短时钟日志、分片冷档与提交锚点 | developer | P4 | 6ae32e53e4b0efba69310d8f |
+| T277 | 【T277·V2同run落床锚点续证】tester：首生八秒、完整分片与库存像素链 | tester | P4 | 6ae32e53e4b0efba69310d90 |
+| T278 | 【T278·事务AFTER字典实施】developer：NEXT原消费者、OBS快照与NA边界 | developer | P4 | 6ae32e53e4b0f69bc561d7b1 |
+
+| T279 | 【T279·GPU M1整步候选核】developer：T16水沙运动、ARRIVE与侧扩散 | developer | P5 | 6ae34b05e4b0efba6933b57d |
+| T280 | 【T280·GPU M1整步提交核】developer：全相审核重放与native接受 | developer | P5 | 6ae34b05e4b0f69bc5642ef9 |
+| T281 | 【T281·GPU M1明水同帧接入】developer：publication水scene与产品路由 | developer | P5 | 6ae34b06e4b069bbd86615b9 |
+
+
+| T282 | 【T282·GPU READY原子发布修复】developer：epoch门、队列与一致状态快照 | developer | P5 | 6ae3e0eae4b0efba6938f71b |
+| T283 | 【T283·GPU READY修复真机续证】tester：一致权限到K192整步上屏 | tester | P5 | 6ae3e0eae4b0efba6938f71c |
+| T284 | 【T284·V2冷采总预算修复】developer：锚点限次与延后分批导出 | developer | P4 | 6ae3e0eae4b0e9cb68dbe0ea |
+| T285 | 【T285·V2有界冷采真机续证】tester：单run首生八秒与落床索引链 | tester | P4 | 6ae3e0eae4b069bbd86bf5a8 |
+| T286 | 【T286·明水实际覆盖区重采】tester：正确ROI、自然水量正控与run勘误 | tester | P3 | 6ae3e0eae4b0f69bc5697a38 |
+| T287 | 【T287·GPU M1候选核独立验证】tester：T16、到达序与侧扩散写集 | tester | P5 | 6ae3e0eae4b069bbd86bf5ab |
+
+
+| T288 | 【T288·M1独立事件解析首次分流】architect：event64布局、Capture与oracle边界 | architect | P5 | 6ae3f6c7e4b031ea82c25c23 |
+| T289 | 【T289·明水正控与量化续证分流】architect：单列覆盖、源窗口与sRGB判线 | architect | P3 | 6ae3f6c7e4b0f69bc56bc7a9 |
+| T290 | 【T290·T251执行报告交接】tester：已有真机原档、结论与缺测登记 | tester | P5 | 6ae3f6c7e4b031ea82c25c24 |
+
+
+| T291 | 【T291·GPU CLOCK_GAP持续阻断归因】architect：真实调度时间线与首帧推进 | architect | P5 | 6ae3fc72e4b031ea82c40fd9 |
+| T292 | 【T292·M1独立oracle步长纠正】tester：256B事件行与T16到达全流复核 | tester | P5 | 6ae3fc72e4b0e9cb68de9d5c |
+| T293 | 【T293·明水同run可辨正控补证】tester：动态列ROI与源终态保留 | tester | P3 | 6ae3fc72e4b0f69bc56c71e6 |
+| T294 | 【T294·事务设备runner缺口首次分流】architect：T251入口与合包原档接线 | architect | P5 | 6ae3fc72e4b031ea82c40fda |
+
+
+| T295 | 【T295·GPU首帧分段时间线】developer：wake、Pump、Draw与CLOCK_GAP原时序 | developer | P5 | 6ae4033de4b0efba693caf5b |
+| T296 | 【T296·GPU首帧真实时序采证】tester：工作等待调度分账与K192闭环 | tester | P5 | 6ae4033de4b031ea82c60542 |
+| T297 | 【T297·整体事务既有runner真机执行】tester：三backend两臂、故障与服务成本 | tester | P5 | 6ae4033de4b0f69bc56d30bb |
+
+| T298 | 【T298·GPU M1整步接受独立验证】tester：审核重放、尾包与lease原子性 | tester | P5 | 6ae406b7e4b0f69bc56d8dde |
+
+| T299 | 【T299·事务backend受阻首次归因】architect：AVL与GPU停顿、cut命中及归档 | architect | P5 | 6ae40da4e4b0f69bc56e4d51 |
+| T300 | 【T300·GPU M1场景独立验证】tester：双态水沙同token像素与lease边界 | tester | P5 | 6ae40da4e4b069bbd870db67 |
+| T301 | 【T301·GPU M1产品真机首证】tester：双源整步到明水同帧上屏 | tester | P5 | 6ae40da4e4b0efba693dcf3b |
+
+
+| T302 | 【T302·GPU真机时间线出口归因】architect：冷导出接线与M0/M1超窗证据 | architect | P5 | 6ae41460e4b0f69bc56ef2c5 |
+| T303 | 【T303·事务runner阶段观测接线】developer：worker收命令、原错与冷阶段档 | developer | P5 | 6ae41460e4b0e9cb68e0eb89 |
+| T304 | 【T304·事务阶段锚点真机续证】tester：真实backend入口与缺档定向补齐 | tester | P5 | 6ae41460e4b0f69bc56ef2c6 |
+| T305 | 【T305·明水长窗收据缺口分流】architect：定容环保留与同run像素证据 | architect | P3 | 6ae41460e4b031ea82cab2a0 |
+
+
+| T306 | 【T306·GPU时间线冷出口实现】developer：M0/M1分页文件与完整性清单 | developer | P5 | 6ae4275ee4b031ea82cd9e33 |
+| T307 | 【T307·GPU冷时间线定点真机续证】tester：M0/M1原始文件到首帧分账 | tester | P5 | 6ae4275ee4b0f69bc57022ad |
+| T308 | 【T308·V2 watchdog粒子路径首次归因】architect：buffer绑定、patch规模与累计复杂度 | architect | P4 | 6ae4275ee4b031ea82cd9e34 |
+| T309 | 【T309·明水critical收据保留实现】developer：双lane、冷分段与源帧身份 | developer | P3 | 6ae4275ee4b0e9cb68e1fbca |
+| T310 | 【T310·明水长窗源到像素真机闭环】tester：critical零丢失与同run水面 | tester | P3 | 6ae4275ee4b0e9cb68e1fbcb |
+
+
+| T311 | 【T311·V2累计复杂度整体修订】developer：绑定入口、全池工作与阶段预算 | developer | P4 | 6ae4324ae4b0e9cb68e2a96c |
+| T312 | 【T312·V2整体复杂度真机续证】tester：双路径阶段账与落床同帧 | tester | P4 | 6ae4324ae4b0f69bc570ebd8 |
+
+
+| T313 | 【T313·GPU首root超窗首次归因】architect：原始时间线、提交耗时与时钟边界 | architect | P5 | 6ae43b70e4b0efba69413c99 |
+| T314 | 【T314·事务冷启与故障语义分流】architect：Want复用、阶段分母与cut终态 | architect | P4 | 6ae43b70e4b0efba69413c9d |
+| T315 | 【T315·明水长按源量与像素链核对】architect：有效窗口、两笔水量与同帧身份 | architect | P3 | 6ae43b70e4b0e9cb68e36607 |
+
+
+| T316 | 【T316·V2零分配静态失败首次归因】architect：基线146与新增18证明缺口 | architect | P4 | 6ae43ce9e4b0efba69415fd1 |
+
+| T317 | 【T317·GPU首root同步超窗修订】developer：初始化前置、Submit分段与有界提交 | developer | P5 | 6ae44d63e4b0efba6942fb6a |
+| T318 | 【T318·GPU有界首root真机闭环】tester：Submit分账与双源同token上屏 | tester | P5 | 6ae44d63e4b031ea82d675fc |
+| T319 | 【T319·事务原档定向checker】tester：三cut原码、前缀与报告勘误 | tester | P4 | 6ae44d63e4b031ea82d675fd |
+| T320 | 【T320·零分配定向证明补证】tester：Date原语、净18记录与旧39位点 | tester | P4 | 6ae44d63e4b0efba6942fb6b |
+| T321 | 【T321·参考明水GAP停源反馈】developer：有效长按终态与有界原时钟收据 | developer | P3 | 6ae44d63e4b0efba6942fb6c |
+| T322 | 【T322·明水原账与commit标签勘误】tester：有效33ms、源物理代与swap证据边界 | tester | P3 | 6ae44d63e4b0f69bc5737c1a |
+| T323 | 【T323·V2续证失败首次分流】architect：包SHA、累计审计与冷采预算 | architect | P4 | 6ae44d63e4b0efba6942fb6d |
+
+
+| T324 | 【T324·GPU分片提交合同接力】architect：continuation、撤权封尾与总墙钟 | architect | P5 | 6ae45280e4b0e9cb68e5599a |
+| T325 | 【T325·零分配补证后收口裁定】architect：运行时证明边界与热计量方案 | architect | P4 | 6ae45280e4b0e9cb68e5599e |
+| T326 | 【T326·观察注入缺档首次归因】architect：cut20三行与checker语义 | architect | P4 | 6ae45280e4b0f69bc573fc81 |
+| T327 | 【T327·明水commit标签工程修订】architect：writer映射与版本兼容 | architect | P3 | 6ae45280e4b0e9cb68e5599f |
 
