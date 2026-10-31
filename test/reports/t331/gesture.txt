@@ -1,0 +1,79 @@
+{
+  "suite": "run_p011_gesture_inject_units",
+  "passed": 18,
+  "failed": 0,
+  "results": [
+    {
+      "name": "emits one receipt event per admitted and rejected transaction; metrics expose cumulative admission",
+      "status": "PASS"
+    },
+    {
+      "name": "shake lift telemetry reports actual lifted quantity and column count",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_conservationClosure",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_lambdaAdmissionKeepsPhaseRatio",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_noWaterZeroState",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_capacityBlocked",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_rollbackBitIdentical",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_queueFifoAndDtClamp",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_receiptContractMatchesB",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_schemaV4LedgerFields",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_t90EpochIncrements",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_t90RestartsBothPhaseMarkersAtSuccessfulSourceEpoch",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_t90UsesCumulativeExpectedMassAndExcludesSuspension",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_t90NoSourceRunRetainsInitialBaselineBehavior",
+      "status": "PASS"
+    },
+    {
+      "name": "p011_gsi_legacyInjectBaselineResets",
+      "status": "PASS"
+    },
+    {
+      "name": "sustained admission above 0.1 percent keeps stepping",
+      "status": "PASS"
+    },
+    {
+      "name": "audit and metrics consume identical drift values for all phases",
+      "status": "PASS"
+    },
+    {
+      "name": "no-source runs match historical audit bit for bit",
+      "status": "PASS"
+    }
+  ]
+}

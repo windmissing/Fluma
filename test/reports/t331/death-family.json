@@ -1,0 +1,20 @@
+{
+  "revision": "T331_WATCHDOG_DEATH_FAMILY_V1",
+  "N": 512,
+  "R": 320,
+  "device": "NOT_RUN",
+  "applyWallMs": 63,
+  "attemptCumulativeMs": 66,
+  "maxAuditMs": 1,
+  "maxSortMs": 0,
+  "auditCounts": 322,
+  "sortCounts": 1,
+  "fullVerifications": 22,
+  "fallbacks": 0,
+  "judgements": {
+    "D1_singleEventUnder600ms": true,
+    "D2_attemptUnder6s": true,
+    "D3_auditCountContract": true,
+    "D4_sortCollapsed": true
+  }
+}

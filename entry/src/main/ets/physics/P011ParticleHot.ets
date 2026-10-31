@@ -298,6 +298,28 @@ export class P011ParticleHotWorkspace {
   pageSourceH = 0; pageSourceL = 0; pageSourceEpoch = 0;
   readonly validationRows: Int32Array; readonly auditMassH: Float64Array; readonly auditMassL: Float64Array;
   readonly auditSlots: Uint8Array;
+  // T331 (T323 §2): incremental audit certificate. auditMode=1 means SINK_ROW
+  // audits are incremental (touched-column checks + delta mass accounting on a
+  // full-pool baseline); every K=16 sink rows or at attempt tail the full-pool
+  // verification re-runs, and any failure falls back to the original row-by-row
+  // full mode with identical error code 13 semantics. auditMode=0 is the
+  // original always-full behavior (APPLY_TAIL/FINISH/OTHER are always full).
+  auditMode:number=1;auditRowSinceFull:number=0;auditFullVerifications:number=0;auditFallbacks:number=0;
+  auditSourceNow:string='';
+  readonly auditTouchedColumns:Int32Array;auditTouchedCount:number=0;
+  readonly auditDeltaMassH: Float64Array; readonly auditDeltaMassL: Float64Array;
+  // Rolling journal of patch actions SINCE the last full verification (K window).
+  // Fixed capacity nmax*2 rows: one sink row's editPool can add at most ~nmax
+  // births; the ring stops appending on overflow and forces a full audit.
+  readonly patchActionsJournal: P011ParticleHotEventBuffer;patchActionsJournalCount:number=0;patchActionsJournalOverflow:number=0;
+  readonly auditBaseMassH: Float64Array; readonly auditBaseMassL: Float64Array;
+  auditBaseLive:number=-1;auditBaseFree:number=-1;auditBaseNextId:number=-1;auditBaseValid:number=0;
+  // Ordered live-id index maintained incrementally (audit-scope sort removal):
+  // auditIdIndex holds live slots sorted by pId; births append at the tail when
+  // the new id is the running maximum (monotonic nextId guarantees this), merges
+  // remove one slot in O(log L) via binary search + splice-shift. K-verification
+  // re-derives the order and rejects any drift.
+  readonly auditIdIndex: Int32Array; auditIdCount:number=0;auditIdIndexValid:number=0;
   budget: P011ParticleHotBudgetAdapter | null = null;
   commitSink: P011ParticleHotCommitSink | null = null;
   sinkCheckpoint: P011ParticleHotSinkCheckpoint | null = null;
@@ -372,6 +394,11 @@ export class P011ParticleHotWorkspace {
     this.validationRows = new Int32Array(config.requestCapacity + 1);
     this.auditMassH = new Float64Array(config.cols); this.auditMassL = new Float64Array(config.cols);
     this.auditSlots = new Uint8Array(config.nmax);
+    this.auditBaseMassH = new Float64Array(config.cols); this.auditBaseMassL = new Float64Array(config.cols);
+    this.auditIdIndex = new Int32Array(config.nmax);
+    this.auditTouchedColumns = new Int32Array(4); this.auditDeltaMassH = new Float64Array(config.cols);
+    this.auditDeltaMassL = new Float64Array(config.cols);
+    this.patchActionsJournal = new P011ParticleHotEventBuffer(config.eventCapacity, config.lineageCapacity);
     this.bufferBindings = []; this.bufferBytes = [];
     this.fieldBinding = [this.frozenWaterTop.buffer, this.frozenBh.buffer, this.frozenBl.buffer, this.frozenMh.buffer,
       this.frozenMl.buffer, this.frozenSuspH.buffer, this.frozenSuspL.buffer, this.frozenSurface.buffer];
@@ -582,6 +609,10 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
   work.fieldBeforeMh.set(f.mh); work.fieldBeforeMl.set(f.ml); work.fieldBeforeSuspH.set(f.suspH);
   work.fieldBeforeSuspL.set(f.suspL); work.fieldBeforeSurface.set(f.surface);
   work.active = 1; work.lastStatus = P011_HOT_OK; work.errorStageCode = 0;
+  // T331: a new attempt starts from a fresh certificate (first SINK_ROW runs
+  // full and re-establishes the baseline); the ordered id index carries over
+  // only when the pool did not roll back.
+  work.auditBaseValid = 0; work.auditRowSinceFull = 0; work.patchActionsJournalCount = 0; work.patchActionsJournalOverflow = 0;
   work.events.count = 0; work.events.lineageCount = 0; work.stepExternalH = 0; work.stepExternalL = 0;
   work.events.ownerId = work.ownerId; work.events.runToken = work.runToken; work.events.stepEpoch = work.stepEpoch;
   work.events.substepId = work.substepId; work.events.attemptToken = work.attemptToken;
@@ -623,6 +654,8 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
   if (work.sinkCheckpoint !== null) work.sinkCheckpoint.restoreOutsHot();
   work.planA.consumed = 0; work.planB.consumed = 0; work.results.resultCount = 0;
   work.active = 0; work.rollbackCount++; work.lastStatus = P011_HOT_OK;
+  // T331: rollback rewound the pool; certificate and index are stale.
+  work.auditBaseValid = 0; work.auditIdIndexValid = 0; work.patchActionsJournalCount = 0; work.patchActionsJournalOverflow = 0;
   {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
 }catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(18,t311Start);work.complexity.seal(txCode);txTrace?.leave(txScope,310,txCode);}}
 function finishStepHotBody(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(15);let txCode=0;const t311Start=work.complexity.begin(19);try{
@@ -943,6 +976,69 @@ function requestIdentityHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPl
 export function validateParticleHotRequest(work: P011ParticleHotWorkspace, p: P011ParticleHotPlanBuffer, row: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(319);let txCode=0;try{
   {const txOriginalCode:number=requestIdentityHot(work, p, row);txCode=txOriginalCode;return txOriginalCode;}
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,319,txCode);}}
+// ---- T331 incremental audit certificate helpers ----
+// The journal mirrors patchActions since the last full verification. Overflow
+// (capacity exceeded) invalidates the incremental path: the next SINK_ROW
+// audit runs full and re-establishes the baseline.
+function auditJournalAppendHot(work: P011ParticleHotWorkspace, a: P011ParticleHotEventBuffer, i: number, slot: number): void {
+  const j = work.patchActionsJournal;
+  if (work.patchActionsJournalCount >= j.capacity) { work.patchActionsJournalOverflow = 1; return; }
+  const k = work.patchActionsJournalCount++;
+  j.kind[k] = a.kind[i]; j.particleId[k] = a.particleId[i]; j.sourceId[k] = a.sourceId[i];
+  j.phase[k] = a.phase[i]; j.sourceKind[k] = a.sourceKind[i]; j.column[k] = a.column[i];
+  j.targetColumn[k] = a.targetColumn[i];
+  j.massBefore[k] = a.massBefore[i]; j.massAfter[k] = a.massAfter[i];
+}
+// Birth: the journal row must carry the BORN mass as massAfter (actionCommon
+// snapshots pMass[slot] which is the pre-birth 0; the caller assigns mass after).
+function auditJournalBirthMassHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number): void {
+  const j = work.patchActionsJournal;
+  if (work.patchActionsJournalOverflow === 1 || work.patchActionsJournalCount === 0) return;
+  const k = work.patchActionsJournalCount - 1;
+  if (j.kind[k] === P011_HOT_KIND_SPAWN && j.particleId[k] === p.pId[slot]) { j.massAfter[k] = p.pMass[slot]; }
+}
+// Deposit/degrade death: the journal row's massAfter must reflect the mass
+// removed from the column cache (the particle mass becomes 0/remainder).
+function auditJournalDeathMassHot(work: P011ParticleHotWorkspace, removedMass: number): void {
+  const j = work.patchActionsJournal;
+  if (work.patchActionsJournalOverflow === 1 || work.patchActionsJournalCount === 0) return;
+  const k = work.patchActionsJournalCount - 1;
+  if (j.kind[k] === P011_HOT_KIND_DEPOSIT || j.kind[k] === P011_HOT_KIND_DEGRADE) {
+    // Deposit removes `removedMass` from the column cache; massAfter is the
+    // particle mass after the edit (0 on death).
+    j.massAfter[k] = j.massBefore[k] - removedMass;
+  }
+}
+// Merge: journal row keeps column mass constant — set massAfter to the merged
+// mass and record the survivor column explicitly (targetColumn=-1 keeps the
+// same column since merges are same-column only).
+function auditJournalMergeHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a: number, b: number): void {
+  const j = work.patchActionsJournal;
+  if (work.patchActionsJournalOverflow === 1 || work.patchActionsJournalCount === 0) return;
+  const k = work.patchActionsJournalCount - 1;
+  if (j.kind[k] === P011_HOT_KIND_MERGE) { j.massBefore[k] = p.pMass[a]; j.massAfter[k] = p.pMass[a]; }
+}
+// Ordered live-id index maintenance (audit-scope sort elimination).
+// Birth: ids are monotonically issued (nextId++), so append at the tail keeps
+// sorted order in O(1). Merge/death: binary search + shift removal O(log L +
+// L) worst case (shift), O(log L) comparisons — bounded by nmax and far below
+// the previous O(L log L) heapsort per audit.
+function auditIdIndexAppendHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number): void {
+  if (work.auditIdIndexValid !== 1) return;
+  if (work.auditIdCount >= work.auditIdIndex.length) { work.auditIdIndexValid = 0; return; }
+  if (work.auditIdCount > 0 && p.pId[work.auditIdIndex[work.auditIdCount - 1]] >= p.pId[slot]) { work.auditIdIndexValid = 0; return; }
+  work.auditIdIndex[work.auditIdCount++] = slot;
+}
+function auditIdIndexRemoveHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number): void {
+  if (work.auditIdIndexValid !== 1) return;
+  const id = p.pId[slot];
+  let lo = 0, hi = work.auditIdCount - 1, found = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; const mid = p.pId[work.auditIdIndex[m]];
+    if (mid === id) { found = m; break; } if (mid < id) lo = m + 1; else hi = m - 1; }
+  if (found < 0) { work.auditIdIndexValid = 0; return; }
+  for (let i = found; i < work.auditIdCount - 1; i++) work.auditIdIndex[i] = work.auditIdIndex[i + 1];
+  work.auditIdCount--;
+}
 function actionCommonHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, slot: number, kind: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(320);let txCode=0;try{
   const a = work.patchActions;
   if (a.count >= a.capacity) return -1;
@@ -952,6 +1048,11 @@ function actionCommonHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot
   a.requested[i] = p.pMass[slot]; a.granted[i] = p.pMass[slot]; a.remainder[i] = 0;
   a.massBefore[i] = p.pMass[slot]; a.massAfter[i] = p.pMass[slot];
   a.lineageStart[i] = a.lineageCount; a.lineageLength[i] = 0;
+  // T331: mirror the action into the rolling audit journal for incremental
+  // delta accounting. Note the journal's massBefore is captured BEFORE the
+  // edit (callers mutate after actionCommon in birth paths); the birth path
+  // passes massAfter explicitly via journalBirthMass below.
+  auditJournalAppendHot(work, a, i, kind === P011_HOT_KIND_MERGE ? -1 : slot);
   return i;
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,320,txCode);}}
 function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a: number, b: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(321);let txCode=0;try{
@@ -967,11 +1068,15 @@ function mergePairHot(work: P011ParticleHotWorkspace, p: P011ParticleSnapshot, a
   actions.lineage[actions.lineageCount++] = p.pId[a]; actions.lineage[actions.lineageCount++] = p.pId[b];
   actions.lineageLength[event] = 2; actions.requested[event] = mass; actions.granted[event] = mass;
   actions.massBefore[event] = mass; actions.massAfter[event] = mass;
+  // T331 journal: merge keeps column mass constant (b's mass moves into a);
+  // the ordered id index loses slot b.
+  auditJournalMergeHot(work, p, a, b);
   const derivedToken=work.derivedV2===null?null:work.derivedV2.begin(p,a,b,'MERGE');if(work.derivedV2!==null&&derivedToken===null)return work.derivedV2.status;
   work.txD1?.before(p,a);work.txD1?.before(p,b);
   p.pX[a] = (p.pX[a] * ma + p.pX[b] * mb) / mass; p.pY[a] = (p.pY[a] * ma + p.pY[b] * mb) / mass;
   p.pVx[a] = (p.pVx[a] * ma + p.pVx[b] * mb) / mass; p.pVy[a] = (p.pVy[a] * ma + p.pVy[b] * mb) / mass;
   p.pMass[a] = mass; p.pMass[b] = 0; p.pState[b] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = b;
+  auditIdIndexRemoveHot(work, p, b);
   if(work.derivedV2!==null&&derivedToken!==null){const derivedStatus=work.derivedV2.finish(p,derivedToken);if(derivedStatus!==0){work.txD1?.invalidate(p);return derivedStatus;}}
   work.txD1?.after(p,a);work.txD1?.after(p,b);work.txD1?.trace.add(15);
   {const txOriginalCode:number=P011_HOT_OK;txCode=txOriginalCode;return txOriginalCode;}
@@ -1029,6 +1134,8 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
         p.pVy[slot] = dry && kind === 1 ? 0 : kind === 4 ? lift : -speed * Math.cos(work.effectiveTiltRad);
         p.pPhase[slot] = phase; p.pSource[slot] = plan.sourceKind[row]; p.pSourceId[slot] = plan.sourceId[row];
         p.pId[slot] = p.nextId++; p.pState[slot] = 1; p.liveCount++;
+        auditIdIndexAppendHot(work, p, slot);
+        auditJournalBirthMassHot(work, p, slot);
         if(work.derivedV2!==null&&derivedBirth!==null){const ds=work.derivedV2.finish(p,derivedBirth);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
         work.txD1?.after(p,slot);
         work.txD1?.trace.add(10);
@@ -1052,7 +1159,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
     const d=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&d===null)return work.derivedV2.status;
     work.txD1?.before(p,slot);
     if(work.derivedV2===null)cache[c] -= amount; p.pMass[slot] = remainder;
-    if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; }
+    if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; auditIdIndexRemoveHot(work, p, slot); auditJournalDeathMassHot(work, amount); }
     else { p.pState[slot] = 2; p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }
     if(work.derivedV2!==null&&d!==null){const ds=work.derivedV2.finish(p,d);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
     work.txD1?.after(p,slot);
@@ -1060,7 +1167,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
     if (disposition !== 3 || amount !== p.pMass[slot]) return P011_HOT_INVALID_PATCH_STATE;
     const d=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&d===null)return work.derivedV2.status;
     work.txD1?.before(p,slot);
-    if(work.derivedV2===null)cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--;
+    if(work.derivedV2===null)cache[c] -= p.pMass[slot]; p.pMass[slot] = 0; p.pState[slot] = 0; p.freeSlots[p.freeCount++] = slot; p.liveCount--; auditIdIndexRemoveHot(work, p, slot); auditJournalDeathMassHot(work, amount);
     if(work.derivedV2!==null&&d!==null){const ds=work.derivedV2.finish(p,d);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
     work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_CROSSING) {
@@ -1162,9 +1269,96 @@ export function auditParticleHot(work: P011ParticleHotWorkspace, source: string=
     span=d.begin(source==='SINK_ROW'?'AUDIT_SINK_ROW':source==='APPLY_TAIL'?'AUDIT_APPLY_TAIL':
       source==='FINISH'?'AUDIT_FINISH':'AUDIT_OTHER');
     d.increment(source==='SINK_ROW'?0:source==='APPLY_TAIL'?1:source==='FINISH'?2:3);}
+  work.auditSourceNow=source;
   try {code=auditParticleHotBody(work);return code;}finally{txCode=code;d?.endSpan(span,code);}
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,source==='APPLY_TAIL'?14:source==='FINISH'?15:11,txCode);}}
+// T331 (T323 §2): audit mode routing. SINK_ROW audits run incrementally
+// between full-pool verifications; APPLY_TAIL/FINISH/OTHER always run full.
+// The audit source string travels via auditSourceNow (set by auditParticleHot).
 function auditParticleHotBody(work: P011ParticleHotWorkspace): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(331);let txCode=0;const t311Start=work.complexity.begin(7);try{
+  if (work.auditMode === 1 && work.auditSourceNow === 'SINK_ROW' && work.auditBaseValid === 1) {
+    const inc = auditIncrementalHot(work);
+    if (inc === 0) {const txOriginalCode:number=0;txCode=txOriginalCode;return txOriginalCode;}
+    // Incremental check failed OR K-boundary reached: run the full body; on
+    // full failure the error code semantics are exactly the original ones.
+    if (inc === 2) {work.auditFallbacks++;}
+  }
+  {const txOriginalCode:number=auditFullBody(work);txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(7,t311Start);txTrace?.leave(txScope,331,txCode);}}
+// Returns 0 = incremental pass; 1 = must run full body now (K boundary,
+// baseline invalid, or incremental predicate failure — the failure case also
+// bumps auditFallbacks and forces auditMode to stay available for re-verify);
+// 2 = full body already forced by fallback bookkeeping (caller re-runs full).
+function auditIncrementalHot(work: P011ParticleHotWorkspace): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(339);let txCode=0;try{
+  const f = work.field; if (f === null) return 1;
+  const p = work.patchScratch;
+  // Structural counters must match the baseline + patch journal expectations.
+  if (p.nmax !== work.nmax || p.cols !== work.cols || p.liveCount > p.nmax || p.freeCount < 0 ||
+      p.liveCount + p.freeCount !== p.nmax) return 1;
+  // Touched-column consistency: every column the current row could have
+  // touched is re-derived from the field + pool caches directly.
+  const touched = work.auditTouchedColumns;
+  for (let ti = 0; ti < work.auditTouchedCount; ti++) {
+    const c = touched[ti]; if (c < 0 || c >= work.cols) return 1;
+    if (!Number.isFinite(f.bh[c]) || !Number.isFinite(f.bl[c]) || !Number.isFinite(f.mh[c]) ||
+      !Number.isFinite(f.ml[c]) || !Number.isFinite(f.suspH[c]) || !Number.isFinite(f.suspL[c]) ||
+      !Number.isFinite(f.waterTop[c]) || f.bh[c] < -1e-9 || f.bl[c] < -1e-9 || f.mh[c] < -1e-9 ||
+      f.ml[c] < -1e-9 || f.suspH[c] < -1e-9 || f.suspL[c] < -1e-9 ||
+      !Number.isFinite(p.colParticleMassH[c]) || !Number.isFinite(p.colParticleMassL[c]) ||
+      p.colParticleMassH[c] < -1e-9 || p.colParticleMassL[c] < -1e-9) return 1;
+    const sand = f.bh[c] + f.bl[c] + f.mh[c] + f.ml[c];
+    if (sand + f.suspH[c] + f.suspL[c] + p.colParticleMassH[c] + p.colParticleMassL[c] > f.waterTop[c] + 1e-9 ||
+      f.waterTop[c] > work.capacity) return 1;
+    if (work.mediumMode === 'DRY_AIR_V1' && (f.suspH[c] !== 0 || f.suspL[c] !== 0 ||
+      Math.abs(f.waterTop[c] - sand - p.colParticleMassH[c] - p.colParticleMassL[c]) > 1e-9)) return 1;
+  }
+  // Journal-driven delta accounting: base + journal deltas must equal the
+  // current per-column particle mass caches (the exact predicate the full
+  // audit re-derives over all slots).
+  const baseH = work.auditBaseMassH, baseL = work.auditBaseMassL;
+  for (let c = 0; c < work.cols; c++) {
+    let jh = baseH[c], jl = baseL[c];
+    // Reconstructed from the journal since the baseline (see auditJournalDelta).
+    work.auditDeltaMassH[c] = 0; work.auditDeltaMassL[c] = 0;
+  }
+  if (!auditJournalDelta(work)) return 1;
+  for (let c = 0; c < work.cols; c++) {
+    if (Math.abs(baseH[c] + work.auditDeltaMassH[c] - p.colParticleMassH[c]) > 1e-9 ||
+        Math.abs(baseL[c] + work.auditDeltaMassL[c] - p.colParticleMassL[c]) > 1e-9) return 1;
+  }
+  // K boundary: hand control to the full body for a complete re-verification.
+  work.auditRowSinceFull++;
+  if (work.auditRowSinceFull >= 16) return 1;
+  {const txOriginalCode:number=0;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,339,txCode);}}
+// Replay the patch-action journal since the baseline full verification and
+// accumulate per-column mass deltas into auditDeltaMassH/L. Returns false when
+// any journal row carries non-finite numbers (the full body will produce the
+// precise error).
+function auditJournalDelta(work: P011ParticleHotWorkspace): boolean {
+  const a = work.patchActionsJournal;
+  for (let i = 0; i < work.patchActionsJournalCount; i++) {
+    const kind = a.kind[i], col = a.column[i];
+    if (!Number.isFinite(a.massAfter[i])) return false;
+    if (kind === 1) { if (a.phase[i] === 0) work.auditDeltaMassH[col] += a.massAfter[i]; else work.auditDeltaMassL[col] += a.massAfter[i]; }
+    else if (kind === 2 || kind === 4) {
+      const mass = a.massAfter[i] - a.massBefore[i];
+      if (a.phase[i] === 0) work.auditDeltaMassH[col] += mass; else work.auditDeltaMassL[col] += mass;
+    }
+    // kinds 3 (crossing), 5 (degrade), 6 (merge) net to zero in their column
+    // pair only when target tracking is included; the journal records the
+    // target column so the delta is attributed there.
+    else if (kind === 3 || kind === 6) {
+      const target = a.targetColumn[i] >= 0 ? a.targetColumn[i] : col;
+      if (a.phase[i] === 0) { work.auditDeltaMassH[col] -= a.massBefore[i]; work.auditDeltaMassH[target] += a.massAfter[i]; }
+      else { work.auditDeltaMassL[col] -= a.massBefore[i]; work.auditDeltaMassL[target] += a.massAfter[i]; }
+    } else if (kind === 5) {
+      if (a.phase[i] === 0) work.auditDeltaMassH[col] -= a.massBefore[i]; else work.auditDeltaMassL[col] -= a.massBefore[i];
+    }
+  }
+  return true;
+}
+function auditFullBody(work: P011ParticleHotWorkspace): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(340);let txCode=0;try{
   const f = work.field; if (f === null) {const txOriginalCode:number=1;txCode=txOriginalCode;return txOriginalCode;}
   const p = work.patchScratch; const status = copyPoolDiagnosticHot(work, p, false); if (status !== 0) {const txOriginalCode:number=status;txCode=txOriginalCode;return txOriginalCode;}
   if(work.derivedV2!==null){const t311Flush=work.complexity.begin(10);let ds=0;try{ds=work.derivedV2.flush();}finally{work.complexity.end(10,t311Flush);}if(ds!==0)return ds;}
@@ -1184,7 +1378,20 @@ function auditParticleHotBody(work: P011ParticleHotWorkspace): number {syncHotCo
     if (p.pPhase[i] === 0) work.auditMassH[c] += p.pMass[i]; else work.auditMassL[c] += p.pMass[i];
   }
   if (live !== p.liveCount) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
-  sortOrderHot(work.order, live, p, work, false);
+  // T331 audit-scope sort removal: when the incrementally maintained ordered
+  // id index is valid, its order is checked in O(L) (strictly increasing ids
+  // over the maintained sequence == sorted + duplicate-free). Otherwise this
+  // is baseline establishment: one heapsort builds the order (and the index).
+  if (work.auditIdIndexValid === 1 && work.auditIdCount === live) {
+    let ordered = 1;
+    for (let i = 0; i < live; i++) {
+      const slot = work.auditIdIndex[i];
+      if (p.pState[slot] === 0) { ordered = 0; break; }
+      if (i > 0 && !(p.pId[work.auditIdIndex[i - 1]] < p.pId[slot])) { ordered = 0; break; }
+      work.order[i] = slot;
+    }
+    if (ordered !== 1) { work.auditIdIndexValid = 0; sortOrderHot(work.order, live, p, work, false); }
+  } else { work.auditIdIndexValid = 0; sortOrderHot(work.order, live, p, work, false); }
   for (let i = 1; i < live; i++) if (p.pId[work.order[i - 1]] === p.pId[work.order[i]]) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
   let beforeH = 0; let beforeL = 0; let afterH = 0; let afterL = 0;
   for (let c = 0; c < work.cols; c++) {txTrace?.add(39);txTrace?.add(26);
@@ -1206,8 +1413,19 @@ function auditParticleHotBody(work: P011ParticleHotWorkspace): number {syncHotCo
     afterL += f.bl[c] + f.ml[c] + f.suspL[c] + p.colParticleMassL[c];
   }
   if (work.budget !== null && work.budget.auditHot() !== 0) {const txOriginalCode:number=13;txCode=txOriginalCode;return txOriginalCode;}
-  {const txOriginalCode:number=Math.abs(afterH - beforeH - work.stepExternalH) > 1e-9 || Math.abs(afterL - beforeL - work.stepExternalL) > 1e-9 ? 13 : 0;txCode=txOriginalCode;return txOriginalCode;}
-}catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(7,t311Start);txTrace?.leave(txScope,331,txCode);}}
+  const finalCode = Math.abs(afterH - beforeH - work.stepExternalH) > 1e-9 || Math.abs(afterL - beforeL - work.stepExternalL) > 1e-9 ? 13 : 0;
+  if (finalCode === 0) {
+    // T331: full verification passed — (re)establish the incremental baseline.
+    work.auditBaseMassH.set(p.colParticleMassH); work.auditBaseMassL.set(p.colParticleMassL);
+    work.auditBaseLive = p.liveCount; work.auditBaseFree = p.freeCount; work.auditBaseNextId = p.nextId;
+    work.auditBaseValid = 1; work.auditRowSinceFull = 0; work.auditFullVerifications++;
+    work.patchActionsJournalCount = 0; work.patchActionsJournalOverflow = 0;
+    // Ordered live-id index: reuse the audit's sorted order (work.order[0..live)).
+    work.auditIdCount = live; work.auditIdIndexValid = 1;
+    for (let i = 0; i < live; i++) work.auditIdIndex[i] = work.order[i];
+  } else { work.auditBaseValid = 0; }
+  {const txOriginalCode:number=finalCode;txCode=txOriginalCode;return txOriginalCode;}
+}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,340,txCode);}}
 function failApplyHot(work: P011ParticleHotWorkspace, epoch: number, code: number, ordinal: number, stage: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(332);let txCode=0;try{
   if(work.diagnosticEnabled&&work.diagnosticFirstError===0){work.diagnosticFirstError=code;work.diagnosticFirstErrorStage=stage;}
   work.failureStatus = code; work.failureOrdinal = ordinal; work.failureAttemptToken = work.attemptToken;

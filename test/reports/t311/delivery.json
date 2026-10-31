@@ -70,5 +70,28 @@
       "beforeSha": "d3f7cd7a7da3efac0c127286a251b390c008190248536db2263bf39331e84d95",
       "afterSha": "a63eb88a46c5c3524b6120bce594f0bd73b02a9ade73bcc48ec6c3be04d19c86"
     }
-  ]
+  ],
+  "packageVariantErratum": {
+    "revision": "T311_PACKAGE_VARIANT_ERRATUM_V1",
+    "addedBy": "T331 (T323 \u00a71 ruling: developer delivery-list reference error)",
+    "installedPackage": {
+      "path": ".codex/local-test/t257-sign/T311/T311-signed.hap",
+      "sha256": "366d1ca6bdc24678ef6b5328dd17e9db03ae358ded6d4ccbbde648a4473ace94",
+      "sha256Full": "366d1ca6bdc24678ef6b5328dd17e9db03ae358ded6d4ccbbde648a4473ace94",
+      "variant": "final (bind() WITHOUT stageCounts.fill(0))",
+      "signedAt": "14:34:22",
+      "handSigned": true,
+      "note": "The package T312 actually installed and measured."
+    },
+    "cardReferencedPackage": {
+      "path": ".codex/local-test/t257-sign/T311-final/T311-final-signed.hap",
+      "sha256Full": "9e7ac5413d555addc9e19d63ae537446afb99571790465eef53ee7106ecca5b6",
+      "variant": "candidate (bind() WITH stageCounts.fill(0))",
+      "signedAt": "14:38:10",
+      "handSigned": true,
+      "note": "The package the T311 card referenced; matches candidateSign.signedSha."
+    },
+    "dispositionDecision": "final (installed) is the delivered variant: stageCounts.fill(0) removal affects only cross-run reuse of the T284Cold diagnostic instance; T312 measured the installed package so its evidence stands. The card reference SHOULD have pointed at 366d1ca6. Registered here per T323 \u00a71; the two-variant disclosure becomes a standing requirement for future T284 cold-capture cards.",
+    "semantics": "same signing chain (verified-profile uuid fe686e1b, verifiedPassed=true); NOT unsigned/forged packages"
+  }
 }

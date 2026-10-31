@@ -253,6 +253,11 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       f.waterTop[c]=sand(work,c)+f.suspH[c]+f.suspL[c]+pool.particleMassAt(c);
       if(target!==c)f.waterTop[target]=sand(work,target)+f.suspH[target]+f.suspL[target]+pool.particleMassAt(target);
     }
+    // T331: touched columns for the incremental SINK_ROW audit (column c and
+    // the crossing target when they differ).
+    work.auditTouchedCount = 0;
+    work.auditTouchedColumns[work.auditTouchedCount++] = c;
+    if (target !== c) work.auditTouchedColumns[work.auditTouchedCount++] = target;
     const audit = auditParticleHot(work,'SINK_ROW'); if (audit !== 0) {const txRc:number=this.failHot(audit);txCode=txRc;return txRc;}
     if (this.failAfterPublish !== 0) {const txRc:number=this.failHot(13);txCode=txRc;return txRc;}
     txTrace?.cut(12);

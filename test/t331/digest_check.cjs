@@ -1,0 +1,18 @@
+const ts=require('C:/Program Files/Huawei/DevEco Studio/tools/hvigor/hvigor/node_modules/typescript');
+const Module=require('module'),load=Module._load;Module._load=function(name,parent,main){if(name==='@ohos.hilog')return {default:{info:()=>{}}};return load.call(this,name,parent,main);};
+const path=require('path');
+require.extensions['.ets']=(m,f)=>m._compile(ts.transpileModule(require('fs').readFileSync(f,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.CommonJS}}).outputText,f);
+const base=path.resolve('.codex/local-test/t331-final2/entry/src/main/ets');
+const {T284Cold}=require(base+'/diagnostics/t248/T284Cold.ets');
+const {t276Assemble}=require(base+'/diagnostics/t248/T276Export.ets');
+const b=new T284Cold();const lines=[];let time=0;b.now=()=>time;b.emit=l=>lines.push(l);b.enabled=true;b.bind('r',1);
+b.signal('FIRST_BED',1);b.select(1,5);
+const payload=JSON.stringify({token:'r|e1|c5',commit:5,data:'x'.repeat(3000)});
+b.enqueue('FRAME',payload);b.finish();
+while(b.drain(true));
+const parts=lines.filter(l=>l.startsWith('T276_COLD_V1 ')).map(l=>JSON.parse(l.slice(13)));
+const asm=t276Assemble(parts);
+console.log('reassembled digest nonzero:',asm.digest!==0,'payload match:',asm.payload===payload);
+const idx=JSON.parse(b.summary()).indices[0];
+console.log('index hash:',idx.hashes[0],'status:',idx.status);
+const digestField=parts[0].digest;const okAll=parts.every(pp=>pp.digest===digestField);console.log('part0.digest:',digestField,'idx:',idx.hashes[0],'allPartsSameDigest:',okAll,'indexConsistent:',('FRAME:'+digestField)===idx.hashes[0]);
