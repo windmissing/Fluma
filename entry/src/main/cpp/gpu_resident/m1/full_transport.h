@@ -41,6 +41,10 @@ public:
  // -> now). Used to verify the single-Pump seal expectation (J1).
  uint64_t SubmitPumpWallNs()const{return submitPumpWallNs;}
  uint32_t SubmitCancelled()const{return submitCancelled;}
+ // T324 Amendment 2 (T335): count of NON-final-batch tail flushes issued this
+ // root — the K1 diagnostic proxy on device; the stub-count regression asserts
+ // flushes == batchesIssued-1 (final batch keeps fence->flush, not counted).
+ uint32_t SubmitBatchFlushes()const{return flushes;}
 private:
  friend struct FullM1HostAccess;
  // T324 §2.2 dual batch limit. Budget 8ms per contract. The op cap uses
@@ -73,6 +77,7 @@ private:
  // tail uniforms are staged here and applied when the cursor crosses the
  // stage-20 boundary (original Set order preserved bit-for-bit).
  SubmitPhase submitPhase=SubmitPhase::IDLE;uint32_t passCursor=0,batchesIssued=0,lastBatchPasses=0,submitCancelled=0;
+ uint32_t flushes=0; // T324 Amendment 2: non-final-batch glFlush count (diagnostic)
 #ifdef GRS_T324_HOST_TEST
  // Test-double access to the state machine internals (host build only).
  friend struct T324TestAccess;

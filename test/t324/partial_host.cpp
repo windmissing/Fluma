@@ -179,5 +179,33 @@ int main(int argc,char** argv){std::cout.setf(std::ios::unitbuf);uint32_t K=argc
   assert(gpu.Release()==TransportCode::OK);
   std::cout<<"CASE_N1 loopBatches="<<batches<<" pumpWallNs="<<gpu.SubmitPumpWallNs()<<" physics="<<out.physics.lo<<std::endl;
  }
+ // ---- T336 (T324 Amendment 2): stub-count flush case ----
+ // Per-batch glFlush on NON-final batches only: flushes == batchesIssued-1
+ // (12 non-final batches => 12 flushes; the final batch keeps the original
+ // fence->flush order and does not count). Also pins: flushes>0 whenever the
+ // table split into >=2 batches (the flush actually exists), and the sealed
+ // root still accepts (the flush path cannot break completion).
+ {
+  m1::FullM1Transport gpu;assert(gpu.Create(K,Kw,id)==TransportCode::OK);
+  uint32_t seq=0,nonce=0;
+  auto command=[&](uint32_t kind,double y,double q){std::array<uint32_t,32> c{};c[0]=1129534023;c[1]=2;c[2]=kind;c[4]=1;c[5]=2;c[6]=++seq;c[8]=c[10]=c[14]=c[15]=c[24]=c[27]=1;c[12]=1;c[13]=6;c[28]=1;c[29]=7;double x=64.5;std::memcpy(c.data()+16,&x,8);std::memcpy(c.data()+18,&y,8);std::memcpy(c.data()+20,&q,8);return c;};
+  auto request=[&](uint32_t kind,uint32_t frame,uint32_t ordinal=0){RootRequest r;r.kind=kind;r.nonce={++nonce,1};r.control={nonce,0};r.frame={frame,0};r.quantumOrdinal=ordinal;r.eventArena=frame&1;r.publicationSlot=kind==1?1:0;return r;};
+  assert(gpu.SubmitSource(command(0,0,.125),request(1,1))==TransportCode::OK);
+  AcceptedRoot out;TransportCode code;do{code=gpu.Poll(out);}while(code==TransportCode::BUSY);assert(code==TransportCode::OK);passed++;
+  m1::FullM1HostAccess::Refresh(gpu);
+  assert(gpu.SubmitQuantum(params,request(2,1,1))==TransportCode::OK_SUBMITTING);
+  code=TransportCode::OK_SUBMITTING;
+  while(code==TransportCode::OK_SUBMITTING)code=gpu.ContinueSubmit();
+  assert(code==TransportCode::OK);passed++;              // sealed
+  const uint32_t batches=m1::FullM1HostAccess::Batches(gpu);
+  const uint32_t flushes=gpu.SubmitBatchFlushes();
+  assert(batches>=2);passed++;                           // table really split
+  assert(flushes==batches-1);passed++;                   // one flush per NON-final batch
+  assert(flushes>=1);passed++;                           // the flush path exists
+  do{code=gpu.Poll(out);}while(code==TransportCode::BUSY);
+  assert(code==TransportCode::OK&&out.physics.lo>=2);passed++; // flush breaks nothing
+  assert(gpu.Release()==TransportCode::OK);
+  std::cout<<"CASE_F batches="<<batches<<" flushes="<<flushes<<" (non-final batches)"<<std::endl;
+ }
  std::cout<<"{\"revision\":\"T329_PARTIAL_PUMP_LOOP_V1\",\"K\":"<<K<<",\"Kw\":"<<Kw<<",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
 }

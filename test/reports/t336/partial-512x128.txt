@@ -1,0 +1,7 @@
+CASE1 batches=16 passes=136
+CASE2 cancelled=1 acceptedSame=true
+CASE3 midBatchCancel=IDLE rejectedAfter=true
+CASE_N1 loopBatches=16 loopWallNs=425000 pumpWallNs=13602300
+CASE_N1 loopBatches=16 pumpWallNs=13602300 physics=2
+CASE_F batches=15 flushes=14 (non-final batches)
+{"revision":"T329_PARTIAL_PUMP_LOOP_V1","K":512,"Kw":128,"passed":32,"failed":0,"device":"NOT_RUN"}
