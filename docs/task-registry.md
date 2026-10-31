@@ -64,10 +64,13 @@
 
 2026-10-31：批量验收五交付+上轮T330/333补记（T333=0147095四判据非机全绿；T334=3435c28真机K1-K4全PASS——同run native src=4==TERMINAL#4三层闭环W=0.066773754、phy=266==header[5]、token无镜像、V1适配互证、V2生效；工装环256→4096变更如实登记、16384崩溃fail-closed在案；T332=2a5f955三项工具收口：39位点HOT=6/COLD_FAILURE_ONLY=32/COLD_EXPORT=1、净18对账36行闭合4+23-9=18、checkLong独立分母、静态FAIL有据维持；T331=3435c28混合落盘+归属注记26184ab：增量证书K=16+回退语义、sort消除R=320计数322→1、attemptCumulativeMs披露T311_HOT_WORK_V2、包SHA勘误、冷采分段化，非机全绿attempt68ms@R320；T336=8e2662a四件齐：非末批glFlush+环4096+flush计数CASE_F 12/14两配置断言过+INV-8注释，五套全绿32/32×2·12/12·11/11·6/6·23/23，无签包）→ T337真机验证仍待执行（无证据未关）；派T338 tester设备复核T331（M1死亡族存活/M2单事件≤600ms/M3冷采captureMs≤4ms/M4回退计数，6ae55f0ae4b069bbd884a5d2，等T337）。退役T331/T332/T333/T334/T336。
 
+2026-10-31：T337真机BLOCKED（a10d4eb：T336环扩容4096但ArkTS校验器GpuBridgeTimelineCold.ets:24硬编码1024未同步→每页INVALID_PAGE导出0行，K1-K5全部不可判；fail-closed正确、native环4096健康（count=121 dropped=0）、包三件套1b5656e5在档；manager裁定=T336实施遗漏，非机替身不经过ArkTS导出路径是盲区）→ 派T339 developer一行修复（校验器1024→4096+pageBudget核实+单测四例防漂移+cold回归，6ae5622ee4b0f69bc58244ae）；T337保持BLOCKED不关，T339交付后沿原K1-K5换包重测；T338（等T337）顺延。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T337 | 【T337·fence修复真机验证】tester：K1-K5判据（fence停顿≤5ms/Pump墙钟≤8ms/accepted≥1+双源链闭环/六项无回归/环4096导出COMPLETE） | tester | P5 | 6ae55680e4b0efba6950e058 |
 | T338 | 【T338·V2续证工程三件设备复核】tester：M1死亡族真机存活+attemptCumulativeMs<6s/M2单事件≤600ms/M3冷采captureMs≤4ms/M4回退计数观察 | tester | P4 | 6ae55f0ae4b069bbd884a5d2 |
+| T339 | 【T339·环扩容ArkTS校验同步】developer：GpuBridgeTimelineCold.ets 1024→4096一行修复+pageBudget核实+校验器单测四例防漂移+cold回归 | developer | P5 | 6ae5622ee4b0f69bc58244ae |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
