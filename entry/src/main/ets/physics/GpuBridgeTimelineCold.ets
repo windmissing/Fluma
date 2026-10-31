@@ -20,8 +20,10 @@ export class GpuBridgeTimelineCold {
  private u64(s:string):boolean {return typeof s==='string'&&/^(0|[1-9][0-9]*)$/.test(s)&&(s.length<20||(s.length===20&&s<='18446744073709551615'));}
  private greater(a:string,b:string):boolean{return a.length>b.length||(a.length===b.length&&a>b);}
  private page(raw:string,cursor:number):TimelinePage {
+  // T339: ring capacity 1024->4096 (T336/T335 §4). Page budget 16384 verified:
+  // max page = header + 4 rows at worst-case u64 widths ~1.7KB << 16384.
   if(raw.length>16384)throw new Error('PAGE_BUDGET');const p:TimelinePage=JSON.parse(raw) as TimelinePage;
-  if(p.revision!=='T295_STEADY_TRACE_V1'||p.clock!=='STEADY_NS'||(p.stageRevision!=='T295_STAGE23_V1'&&p.stageRevision!=='T317_STAGE39_V2'&&p.stageRevision!=='T324_STAGE41_V1')||p.capacity!==1024||!Number.isSafeInteger(p.rowBytes)||p.rowBytes<=0||!Number.isSafeInteger(p.count)||p.count<0||p.count>1024||!this.u64(p.dropped)||!this.u64(p.serial)||p.cursor!==cursor||!p.completePage||!Array.isArray(p.rows)||p.rows.length>4||p.next!==cursor+p.rows.length||p.next>p.count)throw new Error('INVALID_PAGE');
+  if(p.revision!=='T295_STEADY_TRACE_V1'||p.clock!=='STEADY_NS'||(p.stageRevision!=='T295_STAGE23_V1'&&p.stageRevision!=='T317_STAGE39_V2'&&p.stageRevision!=='T324_STAGE41_V1')||p.capacity!==4096||!Number.isSafeInteger(p.rowBytes)||p.rowBytes<=0||!Number.isSafeInteger(p.count)||p.count<0||p.count>4096||!this.u64(p.dropped)||!this.u64(p.serial)||p.cursor!==cursor||!p.completePage||!Array.isArray(p.rows)||p.rows.length>4||p.next!==cursor+p.rows.length||p.next>p.count)throw new Error('INVALID_PAGE');
   for(const r of p.rows){if(!this.u64(r.serial)||!this.u64(r.ns)||!this.u64(r.tid)||!this.u64(r.epoch)||!this.u64(r.run)||!this.u64(r.surface)||!this.u64(r.input)||!this.u64(r.now)||!this.u64(r.last)||!this.u64(r.delta)||!this.u64(r.root)||!Number.isInteger(r.stage)||r.stage<1||r.stage>(p.stageRevision==='T324_STAGE41_V1'?41:p.stageRevision==='T317_STAGE39_V2'?39:23)||r.now!==r.ns)throw new Error('INVALID_ROW');}
   return p;
  }
@@ -41,9 +43,9 @@ export class GpuBridgeTimelineCold {
     // Preserve original page bytes and all decimal U64 strings, even if new
     // rows appeared in the last page beyond the initial stable prefix.
     chunk+=raw+'\n';out.pages++;out.rows+=take;cursor+=take;
-    if(out.dataBytes+chunk.length>1048576)throw new Error('EXPORT_BUDGET');if(chunk.length>=49152)await flush();
+    if(out.dataBytes+chunk.length>4194304)throw new Error('EXPORT_BUDGET');if(chunk.length>=49152)await flush();
     if(cursor>=target)break;await yieldUi();
-   }while(out.pages<=256);
+   }while(out.pages<=1024);
    if(out.rows!==target)throw new Error('MISSING_ROWS');await flush();
    out.after=module.timeline(0);const last=this.page(out.after,0);out.statusAfter=module.status();
    if(last.stageRevision!==first.stageRevision||last.count!==first.count||last.serial!==first.serial||last.dropped!==first.dropped)throw new Error('GREW_DURING_EXPORT');
