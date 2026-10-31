@@ -78,11 +78,14 @@
 
 2026-10-31：T345归因交付（docs/architecture-T345-v2-no-settle-attribution-v1.md：CHAIN_TRACED_INTACT——七环节逐行核验静态链完整无单点断链；机理分列不冒唯一（(a)设备侧步进旁路/(c"")collect执行但池写入被V2包装层静默回退，静态不可分）；**决定性离线1:1复现实验设计**（Node移植五项转储判据，pY下降→设备层/pY恒220→复现三候选干净二分）；V1/V2分歧定位=物理内核零分歧（HOT collect重力数学:786-794逐字未动）、分歧面=V2包装层、T207/T214设计无冻结条款；唯一路由developer诊断先行）→ 派T346 developer离线复现诊断（1:1 harness五项转储+二选一结论+复现时最小修复，6ae5af24e4b0e9cb68f4bd3a）。T321交付（docs/developer-T321-source-clock-receipts-v1.md）通过关闭：GAP/UP/CANCEL/BACKGROUND/倒钟全显式终态+用户可见停源反馈+512+64×32固定有界源时钟收据环（checksum冷导出+丢失显式化）+观察不影响权威（ON/OFF逐位一致）；非机14/0+14/0+26/0+7/0四套件全绿设备NOT_RUN如实。退役T345/T321。
 
+2026-10-31：**目标3验收盲区发现（用户亲手操作戳穿）**：EmptySandDemo（XComponent 生产页）触摸只调 model.start/move 记录诊断坐标——「触摸→生成沙粒」链路（stageGestureSandAndFeed）从未接线，只在旧 SandCanvas 页与测试夹具存在；T218/T343/T347 验证链全走 T218DBG 调试注入绕过此缺口；历史上唯一摸过触摸链的 T82 是 SandCanvas 旧页且结论 NOT PASS（落床未证+code5）。**目标3「物理主链已通」状态栏表述误导，改回未完成**（触摸入口缺失+空场缺失+落床连续性未真机证实+code100/多色配色）。→ 派T348 developer触摸倒沙接线移植（stage链从SandCanvas移植+空场场景选项+全链断言回归，6ae5e40fe4b031ea8306dd6b，P5）。目标1核心达成维持（注入路径验证与触摸无关），触摸入口缺失同步登记。
+
 2026-10-31：T346诊断交付（a3e9602，docs/test-report-T346-v2-no-settle-offline-repro-v1.md）通过关闭——**OFFLINE_NOT_REPRODUCED**：Node 1:1 harness（直接 require 真实 ArkTS 源码 transpile，零重写偏差）证明 V2 全链物理正常（pY 215→0.577 单调下降、~6.5s 着陆、mh 床增长 0→0.577、motionCount 30 活跃、mediumMode 恒 DRY_AIR_V1、barrier 无 fault）；**设备层根因定向=帧率坍塌致模拟时间不足**（T343 双进程 hilog 重析：空场 12fps→注入后 0.5fps，观测窗模拟时间 ≤3.27s < 220/vTerm=3.44s 落差时延——粒子物理上尚未落完，s1≈s4「位置不变」=慢速下落被低采样冻结的视觉假象）；性能缺陷移交（V2 包装层 barrier verifyPublicBoundary 256×70 对拍+matchesAuthority 全量比较 O(大常数)/步）供 architect 派性能卡；非机回归全绿（harness 固化 2/2+T216 7/7+regression 10/10+strict pack）。→ 派T347 tester真机验证（E1观测窗延长至模拟时间≥7s hilog实时重建/E2 pY下降/E3床量非零LAND/E4双态同帧可见+fps坍塌曲线采集，6ae5b850e4b0e9cb68f537d6）。退役T346。
 
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T342 | 【T342·code100材质故障修复】developer：exact70 V2主链接入核验+strict pack复跑+code100反例用例+V1→V2生产切换准备（CPU线最高优先） | developer | P5 | 6ae5877fe4b0f69bc58437e8 |
+| T348 | 【T348·触摸倒沙接线移植】developer：EmptySandDemo补stageGestureSandAndFeed链+空场场景选项+全链断言回归（目标3核心缺口） | developer | P5 | 6ae5e40fe4b031ea8306dd6b |
 | T347 | 【T347·V2粒子沉降真机验证】tester：E1观测窗延长至模拟时间≥7s/E2 pY下降/E3床量非零LAND/E4双态同帧可见+fps坍塌曲线采集（T218 DD12复用） | tester | P5 | 6ae5b850e4b0e9cb68f537d6 |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
