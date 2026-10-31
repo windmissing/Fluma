@@ -56,11 +56,16 @@
 
 2026-10-31：T328裁定交付（docs/architecture-T328-batch-gap-ratio-ruling-v1.md + T324 Amendment 1：唯一推荐方向(a) Pump内多批循环kPumpBudgetNs=8ms护栏——13批压缩到单轮Pump≈3.5ms结构性消除超窗，GAP判定不豁免不放宽，INV-5/6/7增补；移交裁定：手签包tester补签合法追认+SHA归档义务归签包者、UINT32_MAX首批补显式End(16)）→ 派T329 developer实施（run.cpp循环+UINT32_MAX修复+submitPumpWallNs+非机回归）+T330 tester真机验证（J1-J5判据）。退役T328。
 
+2026-10-31：T323/T325/T326/T327四裁定交付验收（T323：包SHA差异=delivery清单引用错误非链断裂、复杂度走工程路线增量证书、冷采原子memcpy+序列化延后；T325：Date.now保留PROOF_GAP改判接受成本（manager裁决）、工具三项交tester；T326：observationRows空=注入时序必然非缺陷、撤销T319补序列化建议不派developer；T327：cw_diag.h:14两行互换实锤、最小修复合同+V2+四判据）→ 派T331 developer工程三件实施（增量审计证书+sort消除+预算披露+附注两件）+T332 tester工具三项+T333 developer最小修复+T334 tester真机复核（等T333，真机队列T330后）。退役T323/T325/T326/T327。
+
 | 编号 | task | 角色 | 优先级 | 卡 ID |
 |---|---|---|---|---|
 | T329 | 【T329·Pump多批循环实施】developer：Amendment 1四件（run.cpp循环+submitPumpWallNs）+UINT32_MAX补End(16)+非机回归三新用例 | developer | P5 | 6ae54489e4b0e9cb68ef3ff3 |
 | T330 | 【T330·Pump多批循环真机验证】tester：J1-J5判据（单Pump封尾/FenceEnter首达/accepted/首批code16/GAP注入反证）+双源链闭环复测 | tester | P5 | 6ae54495e4b0efba694fadfa |
-
+| T331 | 【T331·V2续证工程三件实施】developer：增量审计证书+sort消除+attemptCumulativeMs预算披露+包SHA勘误与冷采分段化附注 | developer | P4 | 6ae5462fe4b0e9cb68ef58d1 |
+| T332 | 【T332·零分配工具收口三项】tester：39位点热路径标注+净18对账表闭合+旧2内建分母（Date.now保留经理裁决） | tester | P3 | 6ae5462fe4b0e9cb68ef58d2 |
+| T333 | 【T333·cw_commit标签反序最小修复】developer：cw_diag.h两行互换+CW_C_DIAG_V2+旧档适配注释+四判据非机回归 | developer | P3 | 6ae5462fe4b031ea82f1f0f4 |
+| T334 | 【T334·cw_commit标签修复真机复核】tester：K1-K4判据（ledger对齐/bridge对齐/token序/V1旧档适配）沿T310复采 | tester | P3 | 6ae5463ae4b0f69bc5806d5a |
 
 2026-10-26：T68/T69/T67/T73完成，T66解锁；新增T75 | 【T75·G2合同适配补齐】developer：绑定配置基准、同代身份幂等与非法budget收据 | developer | P5 | 6adeb548e4b0e6ce82bea365，补齐G2合同而不重开T54。
 
@@ -528,11 +533,7 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 | T320 | 【T320·零分配定向证明补证】tester：Date原语、净18记录与旧39位点 | tester | P4 | 6ae44d63e4b0efba6942fb6b |
 | T321 | 【T321·参考明水GAP停源反馈】developer：有效长按终态与有界原时钟收据 | developer | P3 | 6ae44d63e4b0efba6942fb6c |
 | T322 | 【T322·明水原账与commit标签勘误】tester：有效33ms、源物理代与swap证据边界 | tester | P3 | 6ae44d63e4b0f69bc5737c1a |
-| T323 | 【T323·V2续证失败首次分流】architect：包SHA、累计审计与冷采预算 | architect | P4 | 6ae44d63e4b0efba6942fb6d |
 
 
 | T324 | 【T324·GPU分片提交合同接力】architect：continuation、撤权封尾与总墙钟 | architect | P5 | 6ae45280e4b0e9cb68e5599a |
-| T325 | 【T325·零分配补证后收口裁定】architect：运行时证明边界与热计量方案 | architect | P4 | 6ae45280e4b0e9cb68e5599e |
-| T326 | 【T326·观察注入缺档首次归因】architect：cut20三行与checker语义 | architect | P4 | 6ae45280e4b0f69bc573fc81 |
-| T327 | 【T327·明水commit标签工程修订】architect：writer映射与版本兼容 | architect | P3 | 6ae45280e4b0e9cb68e5599f |
 
