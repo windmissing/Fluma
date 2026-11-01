@@ -1,0 +1,30 @@
+{
+  "revision": "T348_PREFLIGHT_PREMISE_CHECK_V1",
+  "device": "NOT_RUN",
+  "verdict": "CARD_PREMISE_CONFLICTS_WITH_CURRENT_CODE",
+  "findings": [
+    "F1 dry touch chain exists since T71 (0b1f7e3)",
+    "F2 runtime proof: 6s touch -> 512 live, 700 steps -> mh 0.5774 bed growth",
+    "F3 stageGestureSand is the WET kernel chain; EmptySandDemo is DRY_AIR_V1 -> NO_WATER if ported as-is",
+    "F4 empty scene already exists (reset -> all-empty regions)",
+    "F5 device demos c5ad113/42ac464 already show touch-pour working"
+  ],
+  "rows": [
+    {
+      "step": 60,
+      "sourceEpoch": 59
+    },
+    {
+      "step": 360,
+      "live": 512
+    },
+    {
+      "step": 700,
+      "mh": 0.5774,
+      "pYmax": 0.58
+    },
+    {
+      "reset": "EMPTY_BASELINE"
+    }
+  ]
+}
