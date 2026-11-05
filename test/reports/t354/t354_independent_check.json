@@ -1,0 +1,47 @@
+{
+  "revision": "T354_INDEPENDENT_BUDGET_CHECK_V1",
+  "consumed": {
+    "file": "test/reports/t351/budget.json",
+    "profiles": 32
+  },
+  "oracle": "independent (no t351/production assertion code imported)",
+  "findings": [
+    {
+      "id": "O1",
+      "name": "stage totals bounded by frames*per-stage-max",
+      "verdict": "PASS",
+      "detail": "24 profiles, 8 zero-work skipped"
+    },
+    {
+      "id": "O2",
+      "name": "authority counter relations (differential/diagnostic-independence/live-monotonic)",
+      "verdict": "PASS",
+      "detail": "O2a 8 pass/0 nodata, O2b 8, O2c 0"
+    },
+    {
+      "id": "O3",
+      "name": "live-scaling monotonicity (where measurable)",
+      "verdict": "PASS",
+      "detail": "0 ordered pairs, 0 zero-work skipped"
+    },
+    {
+      "id": "O4",
+      "name": "before/after verify-work differential",
+      "verdict": "PASS",
+      "detail": "6 improved, 2 no-before-data"
+    },
+    {
+      "id": "O5",
+      "name": "independent exact70 probe (oracle self-check)",
+      "verdict": "PASS",
+      "detail": "2^-54 boundary arithmetic self-consistent"
+    },
+    {
+      "id": "O5b",
+      "name": "first-error bit-typing asset check",
+      "verdict": "NOT_IMPLEMENTED",
+      "detail": "t351 budget.json carries no per-boundary first-error records; RED baseline — needs T351-side export (not a product failure)"
+    }
+  ],
+  "verdict": "NO_FAIL_RED_BASELINE"
+}
