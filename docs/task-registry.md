@@ -82,6 +82,8 @@
 
 2026-11-01：T348裁定收口——developer preflight（696a321，docs/developer-T348-preflight-premise-check-v1.md）**拦下错误卡面前提**：五路证据（F1源码tick注入链自T71在位/F2真ArkTS harness 4/4 PASS含pY下降+mh 0.5774床增长/F3干场湿链互斥NO_WATER/F4 resetDemo已是全空/F5 manager演示录像实测）证实「触摸→倒沙」链自T71起完整在位，**昨晚manager的「从未接线」误判根因=①grep只查touch事件处理器未查tick帧循环（injectDryGestureSand在tick内按held时长积分）②演示Want缺p011particle=1致粒子路线STRUCTURAL_ZERO_OFF（沙走直接沉积路径无下落粒子可见）**。developer暂停实施交裁定正确。manager裁定：卡面前提错误撤案，功能自T71在位无需移植；真实待办=①V1演示参数补p011particle=1重录（manager自查）②T343目标3状态栏表述已在5853b27修正为「未完成→需按F1-F5证据再评估」。T348无实施、无浪费（preflight报告+harness固化为回归资产）。退役T348。
 
+2026-11-05：批量验收 11-01~11-05 八卡（用户「除22外全部验收」）：**T350**（5970fbd+2d504b7，真机 R1-R8）——R1/R2/R5/R6 PASS（三入口区分、真实触摸出生可见、UP 停源、前后台无崩溃）；R3-C BLOCKED→T353（UP 后 pY 逐位冻结 8 模拟秒而 commit 推进——T347 E3「注入期床增长」窄证保留、UP 后冻结另归因）；R4-B FAIL code100×19（V1 链固有复现）；R8 BLOCKED→T353（target89/effective30 倾角分歧）。**T351**（790adb2）通过关闭——V2 帧预算工程修订交付（互斥整帧收据+真实复制字节计数+counter13 语义变更唯一）。**T352**（67dad2a）混合判定关闭——**性能 FAIL 如实**（T351 修订零可测收益：空场 12.0fps==基线、触摸坍塌终点 1.3fps 同 T347、p50 660ms vs 33.3ms 预算 20×超——主导阶段在别处，按 T349 §2 交 T361 归因）；严格语义 PASS（182/182 CURRENT 零 fault）、UP/前后台 PASS；settle/LAND 该包不可测（无 T347STEP wiring）。**T354**（e87be4c）通过关闭——独立 oracle O1 互斥闭合 24 profiles PASS（0.5ms 舍入容差）、O2 计数关系 PASS（差分 656×削减+诊断独立 8/8）、O4/O5 PASS、O5b NOT_IMPLEMENTED honest RED；两次 oracle 自缺陷迭代如实。**T355**（219bc97+3ee3c42）部分完成关闭——真手持摇精确 BLOCKED（无人手+无加速度计注入通道，接手 effector 人工补测）；可做部分完成：触摸基线出生可见（18 帧 GIF）+既有 FAIL 引用不重归因。**T356**（algorithm-T356）通过关闭——双态单沙材质视觉合同 DESIGN_READY_FOR_ARCHITECT（R8 资产/12 项 SM 像素正反控/9 例规格）。**T358**（f06de96）通过关闭——RAW 窗口追回裁定：C 原件仅至 frame406，480-720 RAW_WINDOW_NOT_SAVED（T350 s3 证据列勘误）；UP 原始事件通道不存在（uitest 设计）；结果回 T353。**T359**（8202810）通过关闭——停源切点有界诊断交付（逐 ID 位型收据+T351 预算对象复用+独立工程+签包；T360 前置齐）。**在途保留**：T353（等 T359→T360 切点证据续归因）、T357（等 T354 基线差分）、T360（等 T359 签包，真机）、T361（性能零收益归因）、T362（单沙材质工程化，消费 T356）。退役 T350/T351/T352/T354/T355/T356/T358/T359。
+
 2026-10-31：T346诊断交付（a3e9602，docs/test-report-T346-v2-no-settle-offline-repro-v1.md）通过关闭——**OFFLINE_NOT_REPRODUCED**：Node 1:1 harness（直接 require 真实 ArkTS 源码 transpile，零重写偏差）证明 V2 全链物理正常（pY 215→0.577 单调下降、~6.5s 着陆、mh 床增长 0→0.577、motionCount 30 活跃、mediumMode 恒 DRY_AIR_V1、barrier 无 fault）；**设备层根因定向=帧率坍塌致模拟时间不足**（T343 双进程 hilog 重析：空场 12fps→注入后 0.5fps，观测窗模拟时间 ≤3.27s < 220/vTerm=3.44s 落差时延——粒子物理上尚未落完，s1≈s4「位置不变」=慢速下落被低采样冻结的视觉假象）；性能缺陷移交（V2 包装层 barrier verifyPublicBoundary 256×70 对拍+matchesAuthority 全量比较 O(大常数)/步）供 architect 派性能卡；非机回归全绿（harness 固化 2/2+T216 7/7+regression 10/10+strict pack）。→ 派T347 tester真机验证（E1观测窗延长至模拟时间≥7s hilog实时重建/E2 pY下降/E3床量非零LAND/E4双态同帧可见+fps坍塌曲线采集，6ae5b850e4b0e9cb68f537d6）。退役T346。
 
 | 编号 | task | 角色 | 优先级 | 卡 ID |
@@ -557,4 +559,20 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 
 
 | T324 | 【T324·GPU分片提交合同接力】architect：continuation、撤权封尾与总墙钟 | architect | P5 | 6ae45280e4b0e9cb68e5599a |
+
+
+| T349 | 【T349·V2帧率坍塌整体归因】architect：边界对拍、权威比较与每帧预算 | architect | P5 | 6aec693ee4b0cb1ec5532b01 |
+
+
+| T353 | 【T353·真实触摸停源后冻结首次归因】architect：步进、倾角限幅与入口分流 | architect | P5 | 6aec7341e4b013f128783e16 |
+
+
+| T357 | 【T357·V2性能修订独立差分】tester：新旧逐位状态与阶段账闭合 | tester | P5 | 6aec73d8e4b013f128784612 |
+
+
+| T360 | 【T360·停源悬空链定点真机补证】tester：UP切点到逐ID首次分歧 | tester | P5 | 6aec75c8e4b03d823571eead |
+
+
+| T361 | 【T361·帧率修订无收益首次归因】architect：预算文件、采样分母与主导阶段 | architect | P5 | 6aec7a67e4b0b0ea8935a27e |
+| T362 | 【T362·双态单沙材质工程化】architect：新packet、R8资产与原子配置 | architect | P4 | 6aec7a67e4b0e83fb76bd124 |
 
