@@ -1,0 +1,305 @@
+{
+  "date": "2026-11-05",
+  "role": "designer",
+  "route": "single-sand-dual-material-v1",
+  "status": "DESIGN_ARITHMETIC_CHECKED_NOT_PRODUCT_VALIDATED",
+  "execution": "Python_numpy_Pillow_MATH_ONLY",
+  "no_device": true,
+  "no_product_or_shader_execution": true,
+  "tile": {
+    "kind": "SYNTHETIC_FIXTURE_NOT_PRODUCTION_R8",
+    "sha256": "e9bec0d6e21e0b433aea92b3cc45688aeffd5a637b0c6f840304f40cac044777"
+  },
+  "checks": {
+    "all_256_srgb_neutral_roundtrips": 256,
+    "particle_gain_samples": 10001,
+    "linear_chromaticity_gamut_samples": 20001,
+    "default_contrast_candidate_ge_4": true,
+    "fully_overlapping_contact_positive_and_flat_negative": 9,
+    "ablation_coverage_invariance": 3,
+    "native_scale_subpixel_phase_support": 12,
+    "negative_halo_wrong_hue_temporal_spark_detected": 3,
+    "synthetic_grain_candidate_rms_in_0p5_to_8": true,
+    "legacy_mix_and_double_eotf_counterexamples": 2,
+    "incremental_payload_template_bytes": 333096,
+    "subpixel_bed_not_artificially_thickened": true
+  },
+  "measurements": {
+    "default_min_linear_contrast_conservative_g0p74": 5.532660182515585,
+    "synthetic_grain_delta_Ycode_rms": 2.216173511231312,
+    "fully_overlapping_contact": [
+      {
+        "id": 101,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 102,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 103,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 104,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 105,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 106,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 107,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 108,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      },
+      {
+        "id": 109,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 1.0,
+        "median_delta_code": 8.57080000000002
+      }
+    ],
+    "same_contact_no_detail_negative": [
+      {
+        "id": 101,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 102,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 103,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 104,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 105,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 106,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 107,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 108,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      },
+      {
+        "id": 109,
+        "support_native_pixels": 12,
+        "fraction_delta_ge_4": 0.0,
+        "median_delta_code": 0.0
+      }
+    ],
+    "contact_measurement_fixture": {
+      "profile_u": 70,
+      "centers_y_u": 66,
+      "radius_logical_px": 2,
+      "scale": 1,
+      "all_discs_inside_bed": true
+    },
+    "overview_contact_fixture": {
+      "profile_u": 70,
+      "centers_y_u": 68.8,
+      "note": "partly exposed, separate from measurement fixture"
+    },
+    "particle_gain_min_max": [
+      0.74,
+      1.1
+    ],
+    "neutral_albedo": [
+      145.0,
+      168.0,
+      111.0
+    ]
+  },
+  "figure": {
+    "path": "docs/design-T356-single-sand-reference-v1.png",
+    "sha256": "664484f0430b7eac0d50a51c6057f78066e29ab4ab0bba931ce2cb097fc14fc8",
+    "kind": "MATHEMATICAL_SPECIFICATION_NOT_DEVICE_SCREENSHOT",
+    "scenes": [
+      "V01 EMPTY",
+      "V02 THICK BED",
+      "V03 AIR PARTICLES",
+      "V04 CONTACT / SAME MATERIAL",
+      "V05 THIN BED 0.15u",
+      "V06 NEG: NO DETAIL",
+      "V07 NEG: WRONG HUE",
+      "V08 NEG: EXTERNAL HALO",
+      "V09 NEG: WHITE SPARKS"
+    ]
+  },
+  "input_fingerprints": [
+    {
+      "path": "docs/test-report-T347-v2-settle-device-v1.md",
+      "bytes": 3402,
+      "sha256": "42730dec01b153a1976630297f50af462ce9007106dcdddd802b2d36d69dd27c"
+    },
+    {
+      "path": "docs/test-report-T350-touch-entry-device-v1.md",
+      "bytes": 5027,
+      "sha256": "e4432b6da77d3504992e703c85a2cc929954f8d60d6f658bbfe21ac97ddcdddb"
+    },
+    {
+      "path": "test/reports/t347/s1.jpeg",
+      "bytes": 116523,
+      "sha256": "de89d7a7d540db221f6523d6a77db07219facea4737454bf9559076d4bdcf66f"
+    },
+    {
+      "path": "test/reports/t350/B2_particle1_ext.jpeg",
+      "bytes": 120672,
+      "sha256": "07be31c5e7661a223b52b989e0d53a1e132166acb4912b3ba916d3a832cbc42e"
+    },
+    {
+      "path": "test/reports/t350/A_default.jpeg",
+      "bytes": 117570,
+      "sha256": "2e83de3aa46c764f8c4260b74c4717b7b2b144b6539155c1ddc3069e0f9f3ee4"
+    },
+    {
+      "path": "docs/design-P013-p1-material-recipe-slope-confirmation-v1.md",
+      "bytes": 28399,
+      "sha256": "e6eab5425e943d25a1d50a5755d50a64483ad59e50d6820391738c6ce129185b"
+    },
+    {
+      "path": "docs/architecture-P013-dualfield-particle-shader-adapter-v1.md",
+      "bytes": 17995,
+      "sha256": "665bc095694f80911545a66c3a3526a7b2af2309ebd549810beff0987cb94d0c"
+    },
+    {
+      "path": "docs/architecture-P013-new-pipeline-only-revision-v1.md",
+      "bytes": 22180,
+      "sha256": "f00d570a328fd57defe4da3fb3efe4ea2db2b6ab4f4c87fdb8bf9f8878fe20e3"
+    },
+    {
+      "path": "docs/algorithm-P013-T99-basebyte-representation-v1.md",
+      "bytes": 15558,
+      "sha256": "0c6125526e4f0415cbdaa866fa0826eaf9a5766b12de99264480372164f0a66e"
+    },
+    {
+      "path": "docs/architecture-P013-T105-base-strip-and-color-routing-v1.md",
+      "bytes": 14229,
+      "sha256": "0634cfeacbc8f20b012e07abce7d9e5a9831d4bf670a2582ac1393999291f365"
+    },
+    {
+      "path": "docs/architecture-T349-v2-frame-budget-v1.md",
+      "bytes": 11340,
+      "sha256": "d3e3d0d33602479c31c512355300e81b9de0792978036be009c315ca0fbc545f"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/dualfield_pass.cpp",
+      "bytes": 6956,
+      "sha256": "c7859b6270c1f462bb2b26641522da1a3059115ff6f511820972ff8c42648143"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_gpu.cpp",
+      "bytes": 3421,
+      "sha256": "083230a5ce5c5f10f3932591600f512fbd8fdceb114bb61490276fda59bb2fd0"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/scene_layers.cpp",
+      "bytes": 9620,
+      "sha256": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec"
+    },
+    {
+      "path": "entry/src/main/cpp/p013renderer/glsl/p1_material.frag",
+      "bytes": 3205,
+      "sha256": "f78f821c18a2f807b89c4ffa0fe0b4b365b3402529feb72d3ea040a42cc94fab"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013SceneController.ets",
+      "bytes": 12323,
+      "sha256": "0bc927a9f7b972dce4a3fde5a61219c4f69d2923c9d20e017e1f3e949c873e37"
+    },
+    {
+      "path": "entry/src/main/ets/render/P013ScenePreparation.ets",
+      "bytes": 8508,
+      "sha256": "d7bb28611e00420d37b68426d3b4e933906f3f0839695094ebba4e75802041b3"
+    },
+    {
+      "path": "entry/src/main/ets/render/preparation/P013SceneNumericAssets.ets",
+      "bytes": 10244,
+      "sha256": "e20ac2a4a06cc85bad51dd6d5411fc396f717e63086f4ed6d0eb50ab183086e0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P051DerivedDemoV2.ets",
+      "bytes": 3515,
+      "sha256": "21d7035198ab7afdc971a6a579db769f519cf43c2f3e923ec6d8dcaac0c9345a"
+    },
+    {
+      "path": "docs/reference-P011-45deg-target-effect-v1.md",
+      "bytes": 4568,
+      "sha256": "b2f82ca04c278128c08588f4bb0dde8c4429146f5276d2322934bf716de9cfb8"
+    },
+    {
+      "path": "docs/algorithm-T356-single-sand-dual-material-v1.md",
+      "bytes": 26176,
+      "sha256": "8742bc41f5f2fe15af81fb9415a0670cabc674babb285a0f67e86a0dd9399de2"
+    },
+    {
+      "path": "docs/retro-T356-single-sand-dual-material-v1.md",
+      "bytes": 2793,
+      "sha256": "ad64f028e1d5114350ee34ab9adcd50cfbd300d768d7c804a362639c42d163a9"
+    },
+    {
+      "path": "docs/design-T356-single-sand-model-v1.py",
+      "bytes": 15239,
+      "sha256": "f4be0a0923fae7a88939b9faab6401cb12afa3ffc91b2f782b1600c02e7639ec"
+    }
+  ],
+  "limits": [
+    "No independent tester/effector execution",
+    "No shader or device test",
+    "No performance/product PASS",
+    "No physical trajectory or material identification",
+    "Candidate perceptual thresholds need calibration",
+    "Raw filesystem hashes include current shared working-tree bytes"
+  ]
+}
