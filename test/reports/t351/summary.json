@@ -6,9 +6,9 @@
     },
     "mode": "before",
     "L": 0,
-    "p50": 0.5059999999998581,
-    "p95": 1.5167999999998756,
-    "stageExclusiveMs": 18,
+    "p50": 0.9245999999998276,
+    "p95": 3.66170000000011,
+    "stageExclusiveMs": 33,
     "stages": [
       {
         "name": "callbackTail",
@@ -92,13 +92,13 @@
         "name": "sceneSetup",
         "p50": 0,
         "p95": 1,
-        "total": 7
+        "total": 10
       },
       {
         "name": "pack",
-        "p50": 0,
-        "p95": 1,
-        "total": 10
+        "p50": 1,
+        "p95": 3,
+        "total": 22
       },
       {
         "name": "nativeDraw",
@@ -140,9 +140,9 @@
     },
     "mode": "after-on",
     "L": 0,
-    "p50": 0.22969999999986612,
-    "p95": 0.3225000000002183,
-    "stageExclusiveMs": 5,
+    "p50": 0.2341999999998734,
+    "p95": 0.3208999999997104,
+    "stageExclusiveMs": 6,
     "stages": [
       {
         "name": "callbackTail",
@@ -166,7 +166,7 @@
         "name": "step",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "preview",
@@ -226,13 +226,13 @@
         "name": "sceneSetup",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 4
+        "total": 5
       },
       {
         "name": "nativeDraw",
@@ -274,9 +274,9 @@
     },
     "mode": "before",
     "L": 8,
-    "p50": 4.388199999999415,
-    "p95": 7.9507000000003245,
-    "stageExclusiveMs": 113,
+    "p50": 4.8981000000003405,
+    "p95": 7.526599999999235,
+    "stageExclusiveMs": 126,
     "stages": [
       {
         "name": "callbackTail",
@@ -300,13 +300,13 @@
         "name": "step",
         "p50": 0,
         "p95": 1,
-        "total": 6
+        "total": 12
       },
       {
         "name": "preview",
         "p50": 0,
         "p95": 1,
-        "total": 10
+        "total": 11
       },
       {
         "name": "collect",
@@ -316,9 +316,9 @@
       },
       {
         "name": "hotApply",
-        "p50": 0,
+        "p50": 1,
         "p95": 2,
-        "total": 14
+        "total": 16
       },
       {
         "name": "field",
@@ -329,8 +329,8 @@
       {
         "name": "fillCopy",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 3
       },
       {
         "name": "publicVerify",
@@ -342,7 +342,7 @@
         "name": "authorityCompare",
         "p50": 0,
         "p95": 1,
-        "total": 8
+        "total": 12
       },
       {
         "name": "seal",
@@ -360,13 +360,13 @@
         "name": "sceneSetup",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 4
+        "total": 5
       },
       {
         "name": "nativeDraw",
@@ -377,14 +377,14 @@
       {
         "name": "structure",
         "p50": 0,
-        "p95": 1,
-        "total": 2
+        "p95": 0,
+        "total": 0
       },
       {
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 25
+        "total": 22
       },
       {
         "name": "strictDomain",
@@ -408,15 +408,15 @@
     },
     "mode": "after-on",
     "L": 8,
-    "p50": 3.2696999999998297,
-    "p95": 5.460500000000138,
-    "stageExclusiveMs": 89,
+    "p50": 3.503899999999703,
+    "p95": 4.373599999999897,
+    "stageExclusiveMs": 87,
     "stages": [
       {
         "name": "callbackTail",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "input",
@@ -434,43 +434,43 @@
         "name": "step",
         "p50": 0,
         "p95": 1,
-        "total": 2
+        "total": 3
       },
       {
         "name": "preview",
         "p50": 0,
         "p95": 1,
-        "total": 10
+        "total": 4
       },
       {
         "name": "collect",
-        "p50": 0,
+        "p50": 1,
         "p95": 1,
-        "total": 11
+        "total": 12
       },
       {
         "name": "hotApply",
         "p50": 0,
         "p95": 1,
-        "total": 8
+        "total": 11
       },
       {
         "name": "field",
         "p50": 0,
-        "p95": 1,
-        "total": 10
+        "p95": 2,
+        "total": 13
       },
       {
         "name": "fillCopy",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 4
       },
       {
         "name": "publicVerify",
         "p50": 1,
         "p95": 1,
-        "total": 16
+        "total": 13
       },
       {
         "name": "authorityCompare",
@@ -493,14 +493,14 @@
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 1
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "pack",
         "p50": 0,
-        "p95": 1,
-        "total": 5
+        "p95": 0,
+        "total": 1
       },
       {
         "name": "nativeDraw",
@@ -518,13 +518,13 @@
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 23
+        "total": 19
       },
       {
         "name": "strictDomain",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "reserved",
@@ -542,9 +542,9 @@
     },
     "mode": "before",
     "L": 48,
-    "p50": 4.424399999999878,
-    "p95": 5.327400000000125,
-    "stageExclusiveMs": 107,
+    "p50": 4.774000000000342,
+    "p95": 6.052900000000591,
+    "stageExclusiveMs": 118,
     "stages": [
       {
         "name": "callbackTail",
@@ -568,49 +568,49 @@
         "name": "step",
         "p50": 0,
         "p95": 1,
-        "total": 6
+        "total": 3
       },
       {
         "name": "preview",
         "p50": 0,
-        "p95": 1,
-        "total": 5
+        "p95": 2,
+        "total": 10
       },
       {
         "name": "collect",
-        "p50": 1,
+        "p50": 0,
         "p95": 1,
-        "total": 15
+        "total": 11
       },
       {
         "name": "hotApply",
-        "p50": 0,
-        "p95": 1,
-        "total": 6
+        "p50": 1,
+        "p95": 2,
+        "total": 17
       },
       {
         "name": "field",
         "p50": 0,
         "p95": 2,
-        "total": 11
+        "total": 13
       },
       {
         "name": "fillCopy",
         "p50": 0,
-        "p95": 1,
-        "total": 4
+        "p95": 0,
+        "total": 1
       },
       {
         "name": "publicVerify",
         "p50": 0,
-        "p95": 1,
-        "total": 4
+        "p95": 2,
+        "total": 12
       },
       {
         "name": "authorityCompare",
         "p50": 1,
         "p95": 2,
-        "total": 19
+        "total": 17
       },
       {
         "name": "seal",
@@ -621,20 +621,20 @@
       {
         "name": "consumerCopy",
         "p50": 0,
-        "p95": 0,
-        "total": 1
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "sceneSetup",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 2
+        "total": 3
       },
       {
         "name": "nativeDraw",
@@ -645,20 +645,20 @@
       {
         "name": "structure",
         "p50": 0,
-        "p95": 1,
-        "total": 2
+        "p95": 0,
+        "total": 0
       },
       {
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 30
+        "total": 29
       },
       {
         "name": "strictDomain",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "reserved",
@@ -676,9 +676,9 @@
     },
     "mode": "after-on",
     "L": 48,
-    "p50": 3.500799999999799,
-    "p95": 4.079899999999725,
-    "stageExclusiveMs": 86,
+    "p50": 3.7280999999993583,
+    "p95": 4.5776999999998225,
+    "stageExclusiveMs": 92,
     "stages": [
       {
         "name": "callbackTail",
@@ -701,20 +701,20 @@
       {
         "name": "step",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 3
       },
       {
         "name": "preview",
         "p50": 0,
         "p95": 1,
-        "total": 9
+        "total": 7
       },
       {
         "name": "collect",
         "p50": 0,
         "p95": 1,
-        "total": 7
+        "total": 6
       },
       {
         "name": "hotApply",
@@ -725,8 +725,8 @@
       {
         "name": "field",
         "p50": 0,
-        "p95": 1,
-        "total": 10
+        "p95": 2,
+        "total": 11
       },
       {
         "name": "fillCopy",
@@ -738,7 +738,7 @@
         "name": "publicVerify",
         "p50": 1,
         "p95": 2,
-        "total": 16
+        "total": 19
       },
       {
         "name": "authorityCompare",
@@ -761,14 +761,14 @@
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 1
+        "p95": 1,
+        "total": 3
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 2
+        "total": 4
       },
       {
         "name": "nativeDraw",
@@ -786,7 +786,7 @@
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 27
+        "total": 25
       },
       {
         "name": "strictDomain",
@@ -810,8 +810,8 @@
     },
     "mode": "before",
     "L": 0,
-    "p50": 0.15709999999944557,
-    "p95": 0.23109999999996944,
+    "p50": 0.10850000000027649,
+    "p95": 0.15279999999984284,
     "stageExclusiveMs": 3,
     "stages": [
       {
@@ -890,19 +890,19 @@
         "name": "consumerCopy",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "pack",
         "p50": 0,
-        "p95": 1,
-        "total": 2
+        "p95": 0,
+        "total": 1
       },
       {
         "name": "nativeDraw",
@@ -944,8 +944,8 @@
     },
     "mode": "after-on",
     "L": 0,
-    "p50": 0.0929999999998472,
-    "p95": 0.17439999999987776,
+    "p50": 0.10210000000006403,
+    "p95": 0.1113999999997759,
     "stageExclusiveMs": 2,
     "stages": [
       {
@@ -970,7 +970,7 @@
         "name": "step",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "preview",
@@ -1030,13 +1030,13 @@
         "name": "sceneSetup",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "pack",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "nativeDraw",
@@ -1078,15 +1078,15 @@
     },
     "mode": "before",
     "L": 8,
-    "p50": 4.358299999999872,
-    "p95": 4.819000000000415,
-    "stageExclusiveMs": 104,
+    "p50": 4.999300000000403,
+    "p95": 5.9354000000003,
+    "stageExclusiveMs": 122,
     "stages": [
       {
         "name": "callbackTail",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "input",
@@ -1103,32 +1103,32 @@
       {
         "name": "step",
         "p50": 0,
-        "p95": 1,
-        "total": 2
+        "p95": 0,
+        "total": 1
       },
       {
         "name": "preview",
         "p50": 0,
         "p95": 1,
-        "total": 5
+        "total": 6
       },
       {
         "name": "collect",
         "p50": 0,
         "p95": 1,
-        "total": 4
+        "total": 10
       },
       {
         "name": "hotApply",
         "p50": 0,
         "p95": 1,
-        "total": 5
+        "total": 9
       },
       {
         "name": "field",
         "p50": 0,
         "p95": 2,
-        "total": 15
+        "total": 14
       },
       {
         "name": "fillCopy",
@@ -1138,9 +1138,9 @@
       },
       {
         "name": "publicVerify",
-        "p50": 0,
+        "p50": 1,
         "p95": 2,
-        "total": 11
+        "total": 16
       },
       {
         "name": "authorityCompare",
@@ -1158,19 +1158,19 @@
         "name": "consumerCopy",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 4
       },
       {
         "name": "pack",
         "p50": 0,
-        "p95": 1,
-        "total": 3
+        "p95": 0,
+        "total": 1
       },
       {
         "name": "nativeDraw",
@@ -1182,13 +1182,13 @@
         "name": "structure",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 22
+        "total": 25
       },
       {
         "name": "strictDomain",
@@ -1212,9 +1212,9 @@
     },
     "mode": "after-on",
     "L": 8,
-    "p50": 3.2533999999996013,
-    "p95": 3.6403000000000247,
-    "stageExclusiveMs": 78,
+    "p50": 4.40270000000055,
+    "p95": 5.794700000000375,
+    "stageExclusiveMs": 112,
     "stages": [
       {
         "name": "callbackTail",
@@ -1237,32 +1237,32 @@
       {
         "name": "step",
         "p50": 0,
-        "p95": 1,
-        "total": 2
+        "p95": 0,
+        "total": 1
       },
       {
         "name": "preview",
         "p50": 0,
-        "p95": 1,
-        "total": 6
+        "p95": 2,
+        "total": 17
       },
       {
         "name": "collect",
         "p50": 0,
-        "p95": 1,
-        "total": 6
+        "p95": 2,
+        "total": 9
       },
       {
         "name": "hotApply",
         "p50": 0,
-        "p95": 1,
+        "p95": 2,
         "total": 9
       },
       {
         "name": "field",
-        "p50": 0,
-        "p95": 1,
-        "total": 10
+        "p50": 1,
+        "p95": 2,
+        "total": 20
       },
       {
         "name": "fillCopy",
@@ -1273,14 +1273,14 @@
       {
         "name": "publicVerify",
         "p50": 1,
-        "p95": 1,
-        "total": 15
+        "p95": 2,
+        "total": 21
       },
       {
         "name": "authorityCompare",
         "p50": 0,
         "p95": 1,
-        "total": 6
+        "total": 8
       },
       {
         "name": "seal",
@@ -1298,7 +1298,7 @@
         "name": "sceneSetup",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "pack",
@@ -1322,13 +1322,13 @@
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 21
+        "total": 26
       },
       {
         "name": "strictDomain",
         "p50": 0,
         "p95": 0,
-        "total": 1
+        "total": 0
       },
       {
         "name": "reserved",
@@ -1346,9 +1346,9 @@
     },
     "mode": "before",
     "L": 128,
-    "p50": 5.9483000000000175,
-    "p95": 6.489599999999882,
-    "stageExclusiveMs": 145,
+    "p50": 8.666900000000169,
+    "p95": 11.372300000000905,
+    "stageExclusiveMs": 218,
     "stages": [
       {
         "name": "callbackTail",
@@ -1371,50 +1371,50 @@
       {
         "name": "step",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 2,
+        "total": 10
       },
       {
         "name": "preview",
-        "p50": 0,
-        "p95": 1,
-        "total": 5
+        "p50": 1,
+        "p95": 2,
+        "total": 18
       },
       {
         "name": "collect",
         "p50": 1,
-        "p95": 1,
-        "total": 14
+        "p95": 2,
+        "total": 23
       },
       {
         "name": "hotApply",
         "p50": 1,
-        "p95": 2,
+        "p95": 3,
         "total": 24
       },
       {
         "name": "field",
-        "p50": 0,
+        "p50": 1,
         "p95": 2,
-        "total": 7
+        "total": 27
       },
       {
         "name": "fillCopy",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "publicVerify",
-        "p50": 0,
-        "p95": 1,
-        "total": 9
+        "p50": 1,
+        "p95": 3,
+        "total": 22
       },
       {
         "name": "authorityCompare",
         "p50": 2,
         "p95": 2,
-        "total": 38
+        "total": 39
       },
       {
         "name": "seal",
@@ -1438,7 +1438,7 @@
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 2
+        "total": 4
       },
       {
         "name": "nativeDraw",
@@ -1455,14 +1455,14 @@
       {
         "name": "exact70",
         "p50": 2,
-        "p95": 2,
-        "total": 46
+        "p95": 3,
+        "total": 49
       },
       {
         "name": "strictDomain",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "reserved",
@@ -1480,9 +1480,9 @@
     },
     "mode": "after-on",
     "L": 128,
-    "p50": 4.716500000000451,
-    "p95": 4.967900000000554,
-    "stageExclusiveMs": 113,
+    "p50": 5.733600000001388,
+    "p95": 7.196200000000317,
+    "stageExclusiveMs": 143,
     "stages": [
       {
         "name": "callbackTail",
@@ -1506,147 +1506,13 @@
         "name": "step",
         "p50": 0,
         "p95": 1,
-        "total": 2
-      },
-      {
-        "name": "preview",
-        "p50": 1,
-        "p95": 1,
-        "total": 13
-      },
-      {
-        "name": "collect",
-        "p50": 0,
-        "p95": 1,
-        "total": 7
-      },
-      {
-        "name": "hotApply",
-        "p50": 1,
-        "p95": 1,
-        "total": 16
-      },
-      {
-        "name": "field",
-        "p50": 1,
-        "p95": 2,
-        "total": 16
-      },
-      {
-        "name": "fillCopy",
-        "p50": 0,
-        "p95": 0,
-        "total": 1
-      },
-      {
-        "name": "publicVerify",
-        "p50": 1,
-        "p95": 1,
-        "total": 14
-      },
-      {
-        "name": "authorityCompare",
-        "p50": 0,
-        "p95": 1,
-        "total": 6
-      },
-      {
-        "name": "seal",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "consumerCopy",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "sceneSetup",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "pack",
-        "p50": 0,
-        "p95": 1,
-        "total": 4
-      },
-      {
-        "name": "nativeDraw",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "structure",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "exact70",
-        "p50": 1,
-        "p95": 2,
-        "total": 34
-      },
-      {
-        "name": "strictDomain",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "reserved",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      }
-    ],
-    "counterCalls": 1134
-  },
-  {
-    "scenario": {
-      "n": 512,
-      "l": 512
-    },
-    "mode": "before",
-    "L": 512,
-    "p50": 12.909999999999854,
-    "p95": 15.01260000000002,
-    "stageExclusiveMs": 318,
-    "stages": [
-      {
-        "name": "callbackTail",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "input",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "injection",
-        "p50": 0,
-        "p95": 0,
-        "total": 0
-      },
-      {
-        "name": "step",
-        "p50": 0,
-        "p95": 1,
-        "total": 4
+        "total": 3
       },
       {
         "name": "preview",
         "p50": 0,
-        "p95": 2,
-        "total": 7
+        "p95": 1,
+        "total": 11
       },
       {
         "name": "collect",
@@ -1656,33 +1522,33 @@
       },
       {
         "name": "hotApply",
-        "p50": 4,
-        "p95": 4,
-        "total": 91
+        "p50": 1,
+        "p95": 2,
+        "total": 15
       },
       {
         "name": "field",
-        "p50": 2,
-        "p95": 2,
-        "total": 43
+        "p50": 1,
+        "p95": 1,
+        "total": 18
       },
       {
         "name": "fillCopy",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "publicVerify",
         "p50": 0,
         "p95": 2,
-        "total": 9
+        "total": 14
       },
       {
         "name": "authorityCompare",
-        "p50": 2,
-        "p95": 2,
-        "total": 37
+        "p50": 0,
+        "p95": 1,
+        "total": 9
       },
       {
         "name": "seal",
@@ -1699,14 +1565,14 @@
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 3
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 10
+        "total": 3
       },
       {
         "name": "nativeDraw",
@@ -1722,9 +1588,9 @@
       },
       {
         "name": "exact70",
-        "p50": 4,
-        "p95": 4,
-        "total": 96
+        "p50": 2,
+        "p95": 3,
+        "total": 45
       },
       {
         "name": "strictDomain",
@@ -1739,18 +1605,18 @@
         "total": 0
       }
     ],
-    "counterCalls": 2073600
+    "counterCalls": 1134
   },
   {
     "scenario": {
       "n": 512,
       "l": 512
     },
-    "mode": "after-on",
+    "mode": "before",
     "L": 512,
-    "p50": 11.297499999999673,
-    "p95": 11.86279999999988,
-    "stageExclusiveMs": 272,
+    "p50": 15.675199999999677,
+    "p95": 19.167699999999968,
+    "stageExclusiveMs": 393,
     "stages": [
       {
         "name": "callbackTail",
@@ -1774,31 +1640,165 @@
         "name": "step",
         "p50": 0,
         "p95": 1,
+        "total": 6
+      },
+      {
+        "name": "preview",
+        "p50": 1,
+        "p95": 2,
+        "total": 15
+      },
+      {
+        "name": "collect",
+        "p50": 2,
+        "p95": 3,
+        "total": 36
+      },
+      {
+        "name": "hotApply",
+        "p50": 4,
+        "p95": 5,
+        "total": 102
+      },
+      {
+        "name": "field",
+        "p50": 2,
+        "p95": 3,
+        "total": 42
+      },
+      {
+        "name": "fillCopy",
+        "p50": 0,
+        "p95": 0,
+        "total": 1
+      },
+      {
+        "name": "publicVerify",
+        "p50": 1,
+        "p95": 2,
+        "total": 19
+      },
+      {
+        "name": "authorityCompare",
+        "p50": 2,
+        "p95": 2,
+        "total": 39
+      },
+      {
+        "name": "seal",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      },
+      {
+        "name": "consumerCopy",
+        "p50": 0,
+        "p95": 1,
         "total": 2
+      },
+      {
+        "name": "sceneSetup",
+        "p50": 0,
+        "p95": 0,
+        "total": 1
+      },
+      {
+        "name": "pack",
+        "p50": 1,
+        "p95": 2,
+        "total": 15
+      },
+      {
+        "name": "nativeDraw",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      },
+      {
+        "name": "structure",
+        "p50": 0,
+        "p95": 0,
+        "total": 1
+      },
+      {
+        "name": "exact70",
+        "p50": 4,
+        "p95": 6,
+        "total": 113
+      },
+      {
+        "name": "strictDomain",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      },
+      {
+        "name": "reserved",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      }
+    ],
+    "counterCalls": 2073600
+  },
+  {
+    "scenario": {
+      "n": 512,
+      "l": 512
+    },
+    "mode": "after-on",
+    "L": 512,
+    "p50": 12.449500000000626,
+    "p95": 13.839200000000346,
+    "stageExclusiveMs": 301,
+    "stages": [
+      {
+        "name": "callbackTail",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      },
+      {
+        "name": "input",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      },
+      {
+        "name": "injection",
+        "p50": 0,
+        "p95": 0,
+        "total": 0
+      },
+      {
+        "name": "step",
+        "p50": 0,
+        "p95": 1,
+        "total": 3
       },
       {
         "name": "preview",
         "p50": 0,
         "p95": 1,
-        "total": 7
+        "total": 8
       },
       {
         "name": "collect",
         "p50": 1,
         "p95": 2,
-        "total": 33
+        "total": 31
       },
       {
         "name": "hotApply",
-        "p50": 3,
+        "p50": 4,
         "p95": 4,
-        "total": 79
+        "total": 89
       },
       {
         "name": "field",
         "p50": 1,
         "p95": 2,
-        "total": 29
+        "total": 34
       },
       {
         "name": "fillCopy",
@@ -1809,14 +1809,14 @@
       {
         "name": "publicVerify",
         "p50": 1,
-        "p95": 1,
-        "total": 13
+        "p95": 2,
+        "total": 20
       },
       {
         "name": "authorityCompare",
         "p50": 0,
         "p95": 1,
-        "total": 7
+        "total": 6
       },
       {
         "name": "seal",
@@ -1834,13 +1834,13 @@
         "name": "sceneSetup",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 1,
-        "total": 8
+        "total": 9
       },
       {
         "name": "nativeDraw",
@@ -1851,20 +1851,20 @@
       {
         "name": "structure",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "exact70",
         "p50": 4,
-        "p95": 4,
-        "total": 93
+        "p95": 5,
+        "total": 97
       },
       {
         "name": "strictDomain",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "reserved",
@@ -1883,9 +1883,9 @@
     },
     "mode": "before",
     "L": 0,
-    "p50": 5.866900000000896,
-    "p95": 6.187400000000707,
-    "stageExclusiveMs": 142,
+    "p50": 6.4429999999993015,
+    "p95": 8.354199999999764,
+    "stageExclusiveMs": 160,
     "stages": [
       {
         "name": "callbackTail",
@@ -1903,37 +1903,37 @@
         "name": "injection",
         "p50": 0,
         "p95": 1,
-        "total": 8
+        "total": 6
       },
       {
         "name": "step",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "preview",
         "p50": 0,
-        "p95": 1,
-        "total": 6
+        "p95": 2,
+        "total": 8
       },
       {
         "name": "collect",
-        "p50": 0,
-        "p95": 1,
-        "total": 7
+        "p50": 1,
+        "p95": 2,
+        "total": 15
       },
       {
         "name": "hotApply",
         "p50": 0,
         "p95": 2,
-        "total": 16
+        "total": 17
       },
       {
         "name": "field",
         "p50": 0,
         "p95": 2,
-        "total": 8
+        "total": 10
       },
       {
         "name": "fillCopy",
@@ -1943,15 +1943,15 @@
       },
       {
         "name": "publicVerify",
-        "p50": 0,
+        "p50": 1,
         "p95": 3,
-        "total": 21
+        "total": 34
       },
       {
         "name": "authorityCompare",
-        "p50": 3,
+        "p50": 2,
         "p95": 3,
-        "total": 48
+        "total": 40
       },
       {
         "name": "seal",
@@ -1963,19 +1963,19 @@
         "name": "consumerCopy",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 1
+        "p95": 1,
+        "total": 5
       },
       {
         "name": "pack",
         "p50": 0,
-        "p95": 0,
-        "total": 1
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "nativeDraw",
@@ -1991,9 +1991,9 @@
       },
       {
         "name": "exact70",
-        "p50": 0,
-        "p95": 3,
-        "total": 25
+        "p50": 1,
+        "p95": 2,
+        "total": 19
       },
       {
         "name": "strictDomain",
@@ -2018,15 +2018,15 @@
     },
     "mode": "after-on",
     "L": 0,
-    "p50": 4.178200000000288,
-    "p95": 4.936599999999089,
-    "stageExclusiveMs": 101,
+    "p50": 4.411900000000969,
+    "p95": 5.478699999999662,
+    "stageExclusiveMs": 110,
     "stages": [
       {
         "name": "callbackTail",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "input",
@@ -2038,55 +2038,55 @@
         "name": "injection",
         "p50": 0,
         "p95": 1,
-        "total": 3
+        "total": 7
       },
       {
         "name": "step",
         "p50": 0,
         "p95": 1,
-        "total": 3
+        "total": 2
       },
       {
         "name": "preview",
         "p50": 0,
         "p95": 1,
-        "total": 7
+        "total": 2
       },
       {
         "name": "collect",
-        "p50": 1,
-        "p95": 1,
-        "total": 13
-      },
-      {
-        "name": "hotApply",
-        "p50": 0,
-        "p95": 1,
-        "total": 10
-      },
-      {
-        "name": "field",
         "p50": 0,
         "p95": 1,
         "total": 8
       },
       {
-        "name": "fillCopy",
+        "name": "hotApply",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 11
       },
       {
-        "name": "publicVerify",
+        "name": "field",
         "p50": 1,
         "p95": 2,
         "total": 21
       },
       {
+        "name": "fillCopy",
+        "p50": 0,
+        "p95": 0,
+        "total": 1
+      },
+      {
+        "name": "publicVerify",
+        "p50": 1,
+        "p95": 2,
+        "total": 20
+      },
+      {
         "name": "authorityCompare",
         "p50": 0,
         "p95": 1,
-        "total": 7
+        "total": 9
       },
       {
         "name": "seal",
@@ -2098,19 +2098,19 @@
         "name": "consumerCopy",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "sceneSetup",
         "p50": 0,
-        "p95": 0,
-        "total": 0
+        "p95": 1,
+        "total": 2
       },
       {
         "name": "pack",
         "p50": 0,
         "p95": 0,
-        "total": 0
+        "total": 1
       },
       {
         "name": "nativeDraw",
@@ -2128,7 +2128,7 @@
         "name": "exact70",
         "p50": 1,
         "p95": 2,
-        "total": 28
+        "total": 23
       },
       {
         "name": "strictDomain",

@@ -59,5 +59,8 @@ run/frame/commit/epoch 与 native 实际请求 `frameToken` 同行绑定；保�
 
 T352 使用同一隔离签包/SHA/渲染参数，分别空场、保持真实触摸、停源后低/中/高 live 固定短窗，比较原 callback 间隔 p50/p95、Q/A/R/实际字节及互斥段份额；同时核 LAND/床量、原 token CURRENT/STALE、无新 fault。若 sceneSetup/pack/native 占真机主导，请保留该段原接口调用、绑定/prepare次数、same-token receipt和累计时间再交 architect，而不是把本卡 byte 比较优化称完整帧率修复。开发当前范围无阻断；真机验证不作为本卡关闭前置。
 '''
+text=text.replace('typed payload 132,736B','另有256子步×64 F64和128 F64 scratch，typed payload合计264,832B')
+text=text.replace('run/frame/commit/epoch 与 native 实际请求', '子步行含父 callback serial、真实 p011SubstepId/physical attempt、原错误码、commit前后、R/Q/A/复制/回滚以及hot stepEpoch/attemptToken；每子步独占阶段累计与调用次数单独保存，且和父帧可按serial关联。异常未完成子步在帧尾记-1，不冒成功；子步环覆写另记substepOverwritten。旧帧/子步环是两个有界最近窗口，缺失父帧时不能补造token。\n\nrun/frame/commit/epoch 与 native 实际请求')
+text += '\n## 并行交付版本说明\n\n共享工作区在本轮收尾期间已有 f06de96 收入部分 T351 修改。T352 正式报告已测试此前隔离 SHA `18399de86843f21780a9cf113ea086e656fca85f084bc4c7e1a47b96f68c976c`：设备空场/触摸帧率未有可测改善，性能 FAIL 保留；该报告没有消费本次最终交付 SHA，不将其改写为新包 PASS 或重写原件。最终包补齐子步身份与互斥账，physical attempt 原值 string/null 保存在有界平行数组（null 表示未启用该物理 ledger 身份，不造号）；hot step/attempt 与子步序号另有数值原值。设备失败首次分流归 architect，开发不据 host 快样本宣布帧率修复。本卡当前范围是工程改造、离线证明、编译签包；后续取证/分流由 manager 按真实前置调度。\n'
 text=text.replace('证据重定向到本卡目录，保留其它会话的脏报告。','最终运行通过 NODE_OPTIONS 使所有子进程证据重定向到本卡目录。初次运行的子进程遗漏重定向，覆盖 allocation.json/owner.json 两份既有生成报告；已按开工前5970fbd确定性重生成恢复，allocation 与未被覆盖的原 allocation.txt 容量/缓冲数摘要吻合。没有初始逐字节备份，故不声明恢复字节与原未知字节校验一致。report-recovery.json 与压缩证据保留原错及恢复方法，最终子进程回归后再次校验恢复文件未变化；未覆盖或恢复其它人的源码。')
 (r/'docs/developer-T351-v2-frame-budget-v1.md').write_text(text,encoding='utf-8');print('report written')

@@ -11,13 +11,15 @@
 
 ## 同帧收据与取用
 
-`FrameBudgetV2` 固定最近 128 帧×128 F64，32 层预分配栈；typed payload 132,736B。run≤256 字符、token≤512 字符，历史 UTF16 上界 196,608B，另有引用/对象/当前行，不冒充总堆/RSS。满后覆写最近环并显式 `overwritten/incomplete`；倒钟、非法计数、栈不闭合或过长身份显式 invalid。覆盖声明 `RECENT_128_FRAMES_NOT_FULL_RUN`。
+`FrameBudgetV2` 固定最近 128 帧×128 F64，32 层预分配栈；另有256子步×64 F64和128 F64 scratch，typed payload合计264,832B。run≤256 字符、token≤512 字符，历史 UTF16 上界 196,608B，另有引用/对象/当前行，不冒充总堆/RSS。满后覆写最近环并显式 `overwritten/incomplete`；倒钟、非法计数、栈不闭合或过长身份显式 invalid。覆盖声明 `RECENT_128_FRAMES_NOT_FULL_RUN`。
 
 row[0:23] 含 callback serial、原 callback ns 间隔、原物理 dt、commit/epoch/N/live、Q/A/R、fill/consumer 真实复制字节、派生写、实际 hot begin 尝试、rollback counter 增量、CURRENT/STALE/FAULT/step/copy/exception outcome、比较字节与 fallback view 次数、wall/clockCalls/zeroSegments/invalid。Q/A 在 `commitPrepared` 成功切换时计数；R 是实际递交 apply 的 request rows，含尝试/被拒请求，不等于获准质量。
 
 row[24:44] 是 **互斥 leaf 时间之和**；[44:64] 是各调用独占时间最大值；[64:84] 是实际调用次数；[88:120] 为旧 32 counters 的帧内增量。段名：callback尾、input、injection、step、preview、collect、hotApply、field、fill、publicVerify、authorityCompare、seal、consumerCopy、sceneSetup、pack、nativeDraw、structure、exact70、strictDomain。嵌套父段扣除子段时间，不把 T311 inclusive 和加进来。Q 同帧区分子步数量，调用次数保留 preview/collect 重试，不将其冒作成功子步。
 
-run/frame/commit/epoch 与 native 实际请求 `frameToken` 同行绑定；保留 raw callback 间隔与 dt 两列。**计时为 Date.now 整数毫秒**，有 zeroSegments/clockCalls；不宣亚毫秒阶段精度，不据模拟秒反推 fps。physics 从不读取这个诊断时钟。最大时钟调用在本离线 workload 为 104/frame，不随逐字节计数增长。
+子步行含父 callback serial、真实 p011SubstepId/physical attempt、原错误码、commit前后、R/Q/A/复制/回滚以及hot stepEpoch/attemptToken；每子步独占阶段累计与调用次数单独保存，且和父帧可按serial关联。异常未完成子步在帧尾记-1，不冒成功；子步环覆写另记substepOverwritten。旧帧/子步环是两个有界最近窗口，缺失父帧时不能补造token。
+
+run/frame/commit/epoch 与 native 实际请求 `frameToken` 同行绑定；保留 raw callback 间隔与 dt 两列。**计时为 Date.now 整数毫秒**，有 zeroSegments/clockCalls；不宣亚毫秒阶段精度，不据模拟秒反推 fps。physics 从不读取这个诊断时钟。最大时钟调用在本离线 workload 为 108/frame，不随逐字节计数增长。
 
 仅隔离 V2 页面开启，Facade 默认 disabled；reset 后保留同一预算对象并重新冷绑定 counters。页面按钮“导出帧预算”按需经 DiagnosticColdFiles 原校验和+fsync 文件出口保存；不自动逐帧 JSON/全池导出。移除 T218 每次 held 注入 hilog 和 T347 每120帧冷全池导出；V2 scene 成功/失败日志限制≤1Hz，其余默认页面诊断策略不变。
 
@@ -33,16 +35,16 @@ run/frame/commit/epoch 与 native 实际请求 `frameToken` 同行绑定；保�
 
 | N / 初始live / 负载 | 修改前 p50 / p95 | 修改后观测ON p50 / p95 |
 |---|---:|---:|
-| 64 / 0 / 停源/空场 | 0.506 / 1.517 | 0.230 / 0.323 |
-| 64 / 8 / 停源/空场 | 4.388 / 7.951 | 3.270 / 5.461 |
-| 64 / 48 / 停源/空场 | 4.424 / 5.327 | 3.501 / 4.080 |
-| 512 / 0 / 停源/空场 | 0.157 / 0.231 | 0.093 / 0.174 |
-| 512 / 8 / 停源/空场 | 4.358 / 4.819 | 3.253 / 3.640 |
-| 512 / 128 / 停源/空场 | 5.948 / 6.490 | 4.717 / 4.968 |
-| 512 / 512 / 停源/空场 | 12.910 / 15.013 | 11.297 / 11.863 |
-| 512 / 0 / 持续输入 | 5.867 / 6.187 | 4.178 / 4.937 |
+| 64 / 0 / 停源/空场 | 0.925 / 3.662 | 0.234 / 0.321 |
+| 64 / 8 / 停源/空场 | 4.898 / 7.527 | 3.504 / 4.374 |
+| 64 / 48 / 停源/空场 | 4.774 / 6.053 | 3.728 / 4.578 |
+| 512 / 0 / 停源/空场 | 0.109 / 0.153 | 0.102 / 0.111 |
+| 512 / 8 / 停源/空场 | 4.999 / 5.935 | 4.403 / 5.795 |
+| 512 / 128 / 停源/空场 | 8.667 / 11.372 | 5.734 / 7.196 |
+| 512 / 512 / 停源/空场 | 15.675 / 19.168 | 12.450 / 13.839 |
+| 512 / 0 / 持续输入 | 6.443 / 8.354 | 4.412 / 5.479 |
 
-完整各段 p50/p95、Q/A/R/bytes、每帧原始行、各统计调用数见 budget.json/summary.json。交替采样可见的最大 ON−OFF p50 差为 0.121ms，含 JIT/计时量化与运行噪声，不宣零成本。早一轮与 hvigor 同时执行的样本另存 budget-with-build-contention.json.gz，未作主表。任何单档噪声或回退如实保留，不挑最好样本、不据这一表宣设备性能 PASS。
+完整各段 p50/p95、Q/A/R/bytes、每帧原始行、各统计调用数见 budget.json/summary.json。交替采样可见的最大 ON−OFF p50 差为 1.271ms，含 JIT/计时量化与运行噪声，不宣零成本。早一轮与 hvigor 同时执行的样本另存 budget-with-build-contention.json.gz，未作主表。任何单档噪声或回退如实保留，不挑最好样本、不据这一表宣设备性能 PASS。
 
 剩余工作界保持每边界 O(N+4L+256×70+C)，接触逐行 hot audit 仍有 Ω(R(N+C))，没有用删校验换预算。在 PC 近满池档 exact70 与 hotApply 占主要 CPU 段；pack 并未在该替身环境证明占主导，native 未测。**不能据 host 低于33.3ms 推真机可达**：T347 空场约82ms的差额仍需 T352 原位拆分。
 
@@ -50,10 +52,14 @@ run/frame/commit/epoch 与 native 实际请求 `frameToken` 同行绑定；保�
 
 生产 PackageHap 与隔离完整工程（含 BuildNativeWithCmake/CompileArkTS）均 BUILD SUCCESSFUL。生产默认入口/V1 未切换；隔离 HAP 仅入口固定 V2 页面。verify-app/profile 均 PASS，原配置与签名材料未改，不安装、不启动设备。
 
-生产签包 SHA：`78a8719226519b3c2c8f47d3b10917be1acd89f4d5e45dee04865176405868d9`。
+生产签包 SHA：`56d85bd55a689fa5f6fc55c105b77ebc9d39670c35cc81d03f8f3292ccc70f7e`。
 
-隔离签包 SHA：`18399de86843f21780a9cf113ea086e656fca85f084bc4c7e1a47b96f68c976c`。
+隔离签包 SHA：`70aec640eef4e0347748c7114d5a50b668c484b3e8a1d1ad38c2ed3b26c0edd4`。
 
 绝对路径、source hashes、签名校验、构建压缩日志在 `test/reports/t351/delivery.json` 与 production/isolated-sign.json。隔离包入口直接 V2，保持真实触摸→held→原 admission 数学；无 debug 注入绕过。按需导出最近预算文件，显式记录覆盖数/溢出，不能把128帧环称完整 run。
 
 T352 使用同一隔离签包/SHA/渲染参数，分别空场、保持真实触摸、停源后低/中/高 live 固定短窗，比较原 callback 间隔 p50/p95、Q/A/R/实际字节及互斥段份额；同时核 LAND/床量、原 token CURRENT/STALE、无新 fault。若 sceneSetup/pack/native 占真机主导，请保留该段原接口调用、绑定/prepare次数、same-token receipt和累计时间再交 architect，而不是把本卡 byte 比较优化称完整帧率修复。开发当前范围无阻断；真机验证不作为本卡关闭前置。
+
+## 并行交付版本说明
+
+共享工作区在本轮收尾期间已有 f06de96 收入部分 T351 修改。T352 正式报告已测试此前隔离 SHA `18399de86843f21780a9cf113ea086e656fca85f084bc4c7e1a47b96f68c976c`：设备空场/触摸帧率未有可测改善，性能 FAIL 保留；该报告没有消费本次最终交付 SHA，不将其改写为新包 PASS 或重写原件。最终包补齐子步身份与互斥账，physical attempt 原值 string/null 保存在有界平行数组（null 表示未启用该物理 ledger 身份，不造号）；hot step/attempt 与子步序号另有数值原值。设备失败首次分流归 architect，开发不据 host 快样本宣布帧率修复。本卡当前范围是工程改造、离线证明、编译签包；后续取证/分流由 manager 按真实前置调度。

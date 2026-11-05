@@ -16,32 +16,33 @@
   "normalComparisonNewViewsPerPublication": 0,
   "coldComparisonViews": 63,
   "frameTraceRows": 128,
-  "frameTraceTypedBytes": 132736,
+  "substepTraceRows": 256,
+  "frameTraceTypedBytes": 264832,
   "runTokenLimits": [
     256,
     512
   ],
   "artifacts": {
     "production": {
-      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T351-production-final\\T351-production-final-signed.hap",
-      "sha256": "78a8719226519b3c2c8f47d3b10917be1acd89f4d5e45dee04865176405868d9",
-      "bytes": 8123864
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T351-production-delivery\\T351-production-delivery-signed.hap",
+      "sha256": "56d85bd55a689fa5f6fc55c105b77ebc9d39670c35cc81d03f8f3292ccc70f7e",
+      "bytes": 8137590
     },
     "isolated": {
-      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T351-isolated-final\\T351-isolated-final-signed.hap",
-      "sha256": "18399de86843f21780a9cf113ea086e656fca85f084bc4c7e1a47b96f68c976c",
-      "bytes": 6679065
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T351-isolated-delivery\\T351-isolated-delivery-signed.hap",
+      "sha256": "70aec640eef4e0347748c7114d5a50b668c484b3e8a1d1ad38c2ed3b26c0edd4",
+      "bytes": 6684603
     }
   },
   "verifyApp": "PASS",
   "sourceHashes": {
     "pages/P051DerivedV2Demo.ets": "d3e5cd54cc55947bf5705742c0eb661b10cb3099c6fdcff637745e9e1303ad34",
     "physics/P011ParticleHot.ets": "ec05baa53584a6ec124d98d906a50b10b380a3c7ebb8ee287491cab63dde4157",
-    "physics/WaterSandField.ets": "f7131e192ec2beb6b720b13d96d3f62f8c2d5fb854ea8568346ba3e100c4e924",
+    "physics/WaterSandField.ets": "6a75ee413b946eb729fd26c688f45a3275f296cce436835072b57025b13a0afb",
     "physics/derived/P011DerivedCommitV2.ets": "25cf00bf1fdf12535f85cde889e0456fef674ffe404b6b41b9f3d7faa8c6d9d4",
     "physics/derived/P011DerivedSnapshotV2.ets": "f9affccd307ab6f226db4af9ede69433f8cae46d0ba4e9c63ba862f8ff3bdb5d",
     "physics/derived/P011DerivedTupleBarrierV2.ets": "60d29cd5990d10acc99d1e2a1e28bce7052cb82ca351ae535ebcceeefd2bf5c6",
-    "physics/derived/P011FrameBudgetV2.ets": "0a2f8e4e63fcfe4b24437b6fe307b262994485c7d63d70cd1d8e9e9b4e12b87d",
+    "physics/derived/P011FrameBudgetV2.ets": "31715d3d19852907745f49b4bf059f3c751eaeec29bd9ebdef2bf56fe66cf3b5",
     "physics/derived/P051DerivedDemoV2.ets": "21d7035198ab7afdc971a6a579db769f519cf43c2f3e923ec6d8dcaac0c9345a",
     "physics/derived/P051DerivedFacadeV2.ets": "893008f80ffa61bb42c29fc8f92ab5457481f98a6a3c5f3451a8888ab57eabd9",
     "render/P013SceneController.ets": "0bc927a9f7b972dce4a3fde5a61219c4f69d2923c9d20e017e1f3e949c873e37"

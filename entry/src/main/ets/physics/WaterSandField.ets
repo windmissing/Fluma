@@ -2405,6 +2405,7 @@ export class WaterSandField {
       this.lastMaxSubstepBl = 0;
       this.lastBottomSplitError = null;
       this.lastP011DirectionCorrect = true;
+      if(this.derivedV2!==null){const d=this.derivedV2;d.budget.identity(this.p011RunId,this.renderPhysicsCommitId,this.renderStateEpoch,d.canonical.pool.nmax,d.canonical.pool.liveCount);d.budget.beginSubstep(this.p011SubstepId+1,this.p011CurrentAttemptId);}
       const planningError = this.planAndCommitTilt(substepDt);
       let errorCode: WaterSandErrorCode | null = planningError;
       if (errorCode !== null) {
@@ -2483,6 +2484,7 @@ export class WaterSandField {
         result.errorCode = errorCode;
         result.errorColumn = this.firstInvalidColumn();
         if(this.tiltTracePending!==null)this.sealSubstepDiagnostic();
+        this.derivedV2?.budget.endSubstep(errorCode,this.renderPhysicsCommitId,this.particleBinding?.work.stepEpoch??0,this.particleBinding?.work.attemptToken??0);
         break;
       }
       this.observeFieldColumnV2('AUDIT_ACCEPTED_BEFORE_COMMIT','AUDIT');
@@ -2514,6 +2516,7 @@ export class WaterSandField {
       if (p011Hook !== undefined) {
         p011Hook(this.getP011Metric(), this.getP011Bottom());
       }
+      this.derivedV2?.budget.endSubstep(0,this.renderPhysicsCommitId,this.particleBinding?.work.stepEpoch??0,this.particleBinding?.work.attemptToken??0);
     }
     result.maxSandTopSubstepDeltaObserved = this.maxSandTopSubstepDeltaObserved;
     result.maxSandTopSpeedObserved = this.maxSandTopSpeedObserved;

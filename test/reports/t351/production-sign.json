@@ -1,16 +1,16 @@
 {
   "revision": "T257_LOCAL_SIGNED_HANDOFF_V1",
-  "task": "T351-production-final",
+  "task": "T351-production-delivery",
   "bundleName": "com.example.helloworld",
   "compatibleVersion": 26,
   "input": {
     "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t351-production-sign\\entry\\build\\default\\outputs\\entry-default-unsigned.hap",
-    "sha256": "b789c840b0a4662cde57708b1f95e5a1777e0a37b1ba9315633f78233872eb68"
+    "sha256": "5b0ab878b5705c587295477c801807e413e2ef543f75b03cd3d43d8b85bf8f33"
   },
   "signed": {
-    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T351-production-final\\T351-production-final-signed.hap",
-    "sha256": "78a8719226519b3c2c8f47d3b10917be1acd89f4d5e45dee04865176405868d9",
-    "bytes": 8123864
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T351-production-delivery\\T351-production-delivery-signed.hap",
+    "sha256": "56d85bd55a689fa5f6fc55c105b77ebc9d39670c35cc81d03f8f3292ccc70f7e",
+    "bytes": 8137590
   },
   "toolSha256": "a434b6747e6c5d0b14e73837a46b39f4816ab25b42d1833d6f767bf867cf616d",
   "certificateSha256": "b2242708021fcc788b890ac7de63e62110090a414c8490febeb3852cc6ce28c9",
@@ -31,28 +31,28 @@
       "exitCode": 0,
       "stdoutBytes": 100,
       "stderrBytes": 0,
-      "outputSha256": "ed60df0f0c853a0786a0ccec6451f1ce27af34cd74447cffc4552c126453ad9d"
+      "outputSha256": "48908af265cd2fdfe4e990303067707ecc5cb46d2c00c9fe257bf8ee28ebeef6"
     },
     {
       "operation": "sign-app",
       "exitCode": 0,
       "stdoutBytes": 1158,
       "stderrBytes": 0,
-      "outputSha256": "042e9f2bda371a2611a927ad8a28df98be20ec6cfe60dcbf15b2ed8121d7109e"
+      "outputSha256": "33f34339f0c797b142046831977f58290f17bf690c8b801e0f985cf5579b7dca"
     },
     {
       "operation": "verify-app",
       "exitCode": 0,
       "stdoutBytes": 3277,
       "stderrBytes": 56,
-      "outputSha256": "a6a01157622c213095f3ff823154770cd8020f45b372aab02eadb6448c19577c"
+      "outputSha256": "47b435fbba5f39a2b9ab09cdb2a87861b61113668684e1b29c020c13ec5c6e6b"
     },
     {
       "operation": "verify-profile",
       "exitCode": 0,
       "stdoutBytes": 100,
       "stderrBytes": 0,
-      "outputSha256": "edba809ef294328c85f47f3e2a9f07ae72795875ebfe36e88baca713fb50372e"
+      "outputSha256": "5800ab660dc10e1d8a3c63637e6bc0a1d8f9d80e54e9ac564acef4cd496c62cc"
     }
   ]
 }
