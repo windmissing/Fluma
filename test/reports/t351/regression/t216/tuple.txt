@@ -1,0 +1,43 @@
+{
+  revision: 'T216_DEVELOPER_EXACT70_V1',
+  cases: 3208,
+  failed: 0,
+  oracle: 'INDEPENDENT_BIGINT_ONLY_IN_TEST',
+  device: 'NOT_RUN'
+}
+{
+  revision: 'T216_DEVELOPER_TUPLE_DOMAIN_V2',
+  passed: 7,
+  failed: 0,
+  cases: [
+    {
+      name: 'actual tuple: births/tail/partial/full LAND/cross MOVE-WAIT/state-phase/centroid merge',
+      status: 'PASS'
+    },
+    {
+      name: 'inactive residual mass excluded; old inactive to new live cannot use nominal granted q',
+      status: 'PASS'
+    },
+    {
+      name: 'one-shot token/reentrancy/foreign slot and negative live mass reject',
+      status: 'PASS'
+    },
+    {
+      name: 'public verifier rejects same-revision corruption and freezes unrefreshed raw values',
+      status: 'PASS'
+    },
+    {
+      name: 'strict dry domain rejects U, negative bed, overcapacity without EPS or cache repair',
+      status: 'PASS'
+    },
+    {
+      name: 'whole derived copy restores original limbs/count/generation/dirty without rebuilding',
+      status: 'PASS'
+    },
+    {
+      name: 'U16 nested undo restores only addressed limb without adjacent corruption',
+      status: 'PASS'
+    }
+  ],
+  device: 'NOT_RUN'
+}

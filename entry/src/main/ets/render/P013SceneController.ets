@@ -1,3 +1,4 @@
+import { FrameBudgetV2 } from '../physics/derived/P011FrameBudgetV2';
 import { derivedPublicationGateV2 } from '../physics/derived/P011DerivedCommitV2';
 // T56 production scene boundary. No Canvas renderer, no per-layer clock/prepare.
 import nativeRenderer from 'libp013renderer.so';
@@ -10,6 +11,7 @@ import { p013Sha256 } from './preparation/P013CanvasAssetExport';
 import { P013BaseByteEvaluator,P013BaseStripDescriptor } from './preparation/P013BaseByteEvaluator';
 import { P013MaterialRejectionV1 } from './P013MaterialRejection';
 export class P013SceneController {
+  budget:FrameBudgetV2|null=null;
   readonly light: P013LightParams=new P013LightParams();
   readonly preparation: P013ScenePreparation=new P013ScenePreparation();
   readonly frame: P013SceneFrame=new P013SceneFrame();
@@ -27,8 +29,9 @@ export class P013SceneController {
   setActive(active: boolean): void {this.active=active;if(this.loaded)this.native?.setActive(active);}
   release(): void {if(this.loaded)this.native?.release();this.loaded=false;this.native=null;this.session=0;this.configured=false;}
   drawNewPipelineFrame(state: P011PublishedRenderState,context: P012FrameContext,app: P012AppearanceParams=p012FactoryAppearance(),pipeline: number=0,timeNs: number=0,scale: number=1): P013SceneReceipt|null {
-    if(!derivedPublicationGateV2(state)){this.failure='PUBLICATION_DOMAIN_MISMATCH';return null;}
-    const native=this.native;if(native===null||!this.loaded||!this.active){this.failure='NOT_READY';return null;}
+ const t351meter=this.budget,t351scope=t351meter?.enter(13)??-1;try {
+    if(!derivedPublicationGateV2(state)){this.failure='PUBLICATION_DOMAIN_MISMATCH';this.budget?.outcome(2);return null;}
+    const native=this.native;if(native===null||!this.loaded||!this.active){this.failure='NOT_READY';this.budget?.outcome(2);return null;}
     try {
       if(this.session===0){const init=native.init('p013_lmat_surface');if(init.code!==0){this.failure='INIT_'+init.code;return null;}this.session=init.sessionId;this.serial=this.revision=this.generation=0;this.configured=false;}
       let target=native.getState();const prepared=native.prepareDualFieldSurface(this.session,target.surfaceEpoch);
@@ -70,7 +73,7 @@ export class P013SceneController {
       f.stateEpoch=state.stateEpoch;f.physicsCommitId=state.physicsCommitId;f.runId=state.runId;f.ledgerCommitKey=state.ledgerCommitKey===null?'':JSON.stringify(state.ledgerCommitKey);f.routeId=state.routeId ?? 'column-field';f.mediumMode=state.mediumMode;
       f.frameToken=state.runId+':'+state.stateEpoch+':'+state.physicsCommitId+':'+f.frameId;f.requestedGeneration=this.requestedGeneration;f.particleLayerEnabled=context.particleLayerEnabled!==false;
       this.preparation.setDiagnosticFrame(f,pipeline,scale,this.configBindingId,this.configDigest);
-      f.sourceFailure=this.preparation.pack(state,context);if(f.sourceFailure==='OK')f.sourceFailure='';
+      const packScope=this.budget?.enter(14)??-1;try{f.sourceFailure=this.preparation.pack(state,context);}finally{this.budget?.leave(packScope);}if(f.sourceFailure==='OK')f.sourceFailure='';
       f.particleCount=this.preparation.count;f.particleCapacity=this.preparation.capacity;
       f.scenePacketRevision=pipeline===0?'P013_SCENE_PACKET_V1':'P013_SCENE_PACKET_V2_BASE_STRIP';
       if(pipeline!==0&&f.sourceFailure===''){
@@ -96,12 +99,14 @@ export class P013SceneController {
           }
         }
       }
-      const receipt=pipeline===0?native.drawNewPipelineFrame(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion):
+      const nativeScope=this.budget?.enter(15)??-1;let receipt:P013SceneReceipt;try{receipt=pipeline===0?native.drawNewPipelineFrame(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion):
         native.drawNewPipelineFrameV2(f,this.preparation.data,this.preparation.xy,this.preparation.meta,this.preparation.motion);
+      }finally{this.budget?.leave(nativeScope);}this.budget?.identity(state.runId,state.physicsCommitId,state.stateEpoch,state.particleCapacity,state.liveCount,f.frameToken);this.budget?.outcome(receipt.currentFrameSucceeded?0:receipt.presentationState==='STALE'?1:2);
       try{this.preparation.materialRejection.attachReceipt(receipt);}catch(e){}
       this.lastReceipt=receipt;this.failure=receipt.currentFrameSucceeded?'':receipt.firstFailureStage;
-      if(timeNs-this.lastLogNs>=1e9||receipt.presentationState!=='CURRENT'){this.lastLogNs=timeNs;console.info('WS_EVENT p013_scene '+JSON.stringify({run:state.runId,commit:state.physicsCommitId,frame:f.frameId,request:receipt.requestedFrameToken,actual:receipt.lastGoodFrameToken,state:receipt.presentationState,first:receipt.firstFailureStage,swap:receipt.requestedSwapSucceeded,staleSwap:receipt.staleSwapSucceeded,generation:receipt.actualPresentationGeneration,config:receipt.renderedConfigRevision,desiredConfig:this.revision,configurationFailure:this.configurationFailure}));}
+      if(timeNs-this.lastLogNs>=1e9||(this.budget===null&&receipt.presentationState!=='CURRENT')){this.lastLogNs=timeNs;console.info('WS_EVENT p013_scene '+JSON.stringify({run:state.runId,commit:state.physicsCommitId,frame:f.frameId,request:receipt.requestedFrameToken,actual:receipt.lastGoodFrameToken,state:receipt.presentationState,first:receipt.firstFailureStage,swap:receipt.requestedSwapSucceeded,staleSwap:receipt.staleSwapSucceeded,generation:receipt.actualPresentationGeneration,config:receipt.renderedConfigRevision,desiredConfig:this.revision,configurationFailure:this.configurationFailure}));}
       return receipt;
-    }catch(e){this.failure='SCENE_EXCEPTION';console.error('P013 scene preparation exception '+e);return null;}
-  }
+    }catch(e){this.failure='SCENE_EXCEPTION';this.budget?.outcome(2);if(this.budget===null||timeNs-this.lastLogNs>=1e9){this.lastLogNs=timeNs;console.error('P013 scene preparation exception '+e);}return null;}
+  }finally{t351meter?.leave(t351scope);}
+}
 }

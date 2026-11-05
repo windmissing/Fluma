@@ -1,0 +1,2 @@
+const fs=require('fs'),path=require('path');const write=fs.writeFileSync;
+fs.writeFileSync=function(file,...args){if(typeof file==='string'&&file.replaceAll('\\','/').startsWith('test/reports/')){file=(process.env.T351_REPORT_ROOT||'test/reports/t351/regression')+'/'+file.replaceAll('\\','/').slice('test/reports/'.length);fs.mkdirSync(path.dirname(file),{recursive:true});}return write.call(this,file,...args);};

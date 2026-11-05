@@ -48,6 +48,7 @@ export class DerivedPublicationSealV2 {
 }
 export class DerivedCommitV2 {
     private readonly banks: P011PublishedRenderState[] = [];
+    private readonly byteBuffers:ArrayBuffer[]=[];private readonly byteViews:Uint8Array[]=[];
     private active = -1;
     private prepared = -1;
     private serial = 0;
@@ -59,13 +60,15 @@ export class DerivedCommitV2 {
         this.fill = fill;
         for (let i = 0; i < 2; i++)
             this.banks.push(new P011PublishedRenderState(createDerivedPayloadV2(nmax)));
+        for(const bank of this.banks){const p=bank.field.particleState!;for(let k=0;k<13;k++)this.bindBytes(particleSnapshotBufferAtHot(p,k));const f=bank.field;for(const a of [f.waterTop,f.bh,f.bl,f.mh,f.ml,f.suspH,f.suspL,f.sandTop])this.bindBytes(a.buffer as ArrayBuffer);}
+        for(let k=0;k<13;k++)this.bindBytes(particleSnapshotBufferAtHot(owner.canonical.pool,k));const f=owner.domain.field;for(const a of [f.waterTop,f.bh,f.bl,f.mh,f.ml,f.suspH,f.suspL,f.surface])this.bindBytes(a.buffer as ArrayBuffer);
     }
     prepareInactive(kind: P011RenderPublicationKind, run: string, epoch: number, commit: number, key: P011EndpointCommitKey | null, source: P011ExternalAdmissionRecord | null = null): DerivedStatus {
         if (!Number.isSafeInteger(commit) || commit < 0 || !Number.isSafeInteger(epoch) || epoch < 0 || this.serial >= Number.MAX_SAFE_INTEGER)
             return this.owner.fail(DerivedStatus.INPUT_INVALID, 'PUBLICATION_IDENTITY');
         const i = this.active === 0 ? 1 : 0, state = this.banks[i];
         state.derivedSeal = null;
-        this.fill(state);
+        const fillScope=this.owner.budget.enter(8);try{this.fill(state);}finally{this.owner.budget.leave(fillScope);}
         const status = this.owner.verifyPublicBoundary(kind + ':' + commit);
         if (status !== 0)
             return status;
@@ -111,45 +114,50 @@ export class DerivedCommitV2 {
             state.field.dryLastSequence = source.sequence;
             state.field.dryLastInputTime = source.inputTime;
         }
-        state.derivedSeal = DerivedPublicationSealV2.mintTrusted(state, this.serial + 1, state.derivedCertificateId, SEAL_KEY_V2);
-        this.prepared = i;
+        state.derivedSeal = this.mintSeal(state,this.serial+1,state.derivedCertificateId);
+        this.owner.budget.identity(run,commit,epoch,state.particleCapacity,state.liveCount);this.prepared = i;
         this.preparedContent = verifiedSerial;
-        this.owner.counters.add(13, 13 * 128 * 8 + 55 * state.particleCapacity + 16 * 128);
+        const pool=state.field.particleState!;const written=7*128*8+55*pool.nmax+16*128;this.owner.counters.add(13,written);
         return DerivedStatus.OK;
     }
-    private sameBuffer(a: ArrayBuffer, b: ArrayBuffer): boolean {
+    private mintSeal(state:P011PublishedRenderState,serial:number,certificate:number):DerivedPublicationSealV2{const scope=this.owner.budget.enter(11);try{return DerivedPublicationSealV2.mintTrusted(state,serial,certificate,SEAL_KEY_V2);}finally{this.owner.budget.leave(scope);}}
+    private bindBytes(buffer:ArrayBuffer):void{this.byteBuffers.push(buffer);this.byteViews.push(new Uint8Array(buffer));}
+    private byteView(buffer:ArrayBuffer,i:number):Uint8Array{if(i>=0&&this.byteBuffers[i]===buffer&&this.byteViews[i].byteLength===buffer.byteLength&&buffer.byteLength>0)return this.byteViews[i];this.owner.budget.add(17);return new Uint8Array(buffer);}
+    private sameBuffer(a: ArrayBuffer, b: ArrayBuffer, ai:number=-1,bi:number=-1): boolean {
         if (a.byteLength !== b.byteLength)
             return false;
-        const x = new Uint8Array(a), y = new Uint8Array(b);
+        const x = this.byteView(a,ai), y = this.byteView(b,bi);
         for (let i = 0; i < x.length; i++) {
-            this.owner.counters.add(16);
-            if (x[i] !== y[i])
-                return false;
+            if (x[i] !== y[i]){this.owner.counters.add(16,i+1);this.owner.budget.add(16,i+1);return false;}
         }
-        return true;
+        this.owner.counters.add(16,x.length);this.owner.budget.add(16,x.length);return true;
     }
     private matchesAuthority(state: P011PublishedRenderState): boolean {
-        const p = state.field.particleState, q = this.owner.canonical.pool;
+ const t351meter=this.owner.budget,t351scope=t351meter?.enter(10)??-1;try {
+        const bankBase=state===this.banks[0]?0:21;const p = state.field.particleState, q = this.owner.canonical.pool;
         if (p === null || p === undefined || p.liveCount !== q.liveCount || p.freeCount !== q.freeCount || p.nextId !== q.nextId) {
             this.owner.fault.detail = 'POOL_HEADER';
             return false;
         }
         for (let k = 0; k < 13; k++)
-            if (!this.sameBuffer(particleSnapshotBufferAtHot(p, k), particleSnapshotBufferAtHot(q, k))) {
+            if (!this.sameBuffer(particleSnapshotBufferAtHot(p, k), particleSnapshotBufferAtHot(q, k),bankBase+k,42+k)) {
                 this.owner.fault.detail = 'POOL_BUFFER:' + k;
                 return false;
             }
         const a = state.field, b = this.owner.domain.field;
-        return this.sameBuffer(a.waterTop.buffer as ArrayBuffer, b.waterTop.buffer as ArrayBuffer) && this.sameBuffer(a.bh.buffer as ArrayBuffer, b.bh.buffer as ArrayBuffer) && this.sameBuffer(a.bl.buffer as ArrayBuffer, b.bl.buffer as ArrayBuffer) && this.sameBuffer(a.mh.buffer as ArrayBuffer, b.mh.buffer as ArrayBuffer) && this.sameBuffer(a.ml.buffer as ArrayBuffer, b.ml.buffer as ArrayBuffer) && this.sameBuffer(a.suspH.buffer as ArrayBuffer, b.suspH.buffer as ArrayBuffer) && this.sameBuffer(a.suspL.buffer as ArrayBuffer, b.suspL.buffer as ArrayBuffer) && this.sameBuffer(a.sandTop.buffer as ArrayBuffer, b.surface.buffer as ArrayBuffer);
-    }
+        return this.sameBuffer(a.waterTop.buffer as ArrayBuffer, b.waterTop.buffer as ArrayBuffer,bankBase+13,55) && this.sameBuffer(a.bh.buffer as ArrayBuffer, b.bh.buffer as ArrayBuffer,bankBase+14,56) && this.sameBuffer(a.bl.buffer as ArrayBuffer, b.bl.buffer as ArrayBuffer,bankBase+15,57) && this.sameBuffer(a.mh.buffer as ArrayBuffer, b.mh.buffer as ArrayBuffer,bankBase+16,58) && this.sameBuffer(a.ml.buffer as ArrayBuffer, b.ml.buffer as ArrayBuffer,bankBase+17,59) && this.sameBuffer(a.suspH.buffer as ArrayBuffer, b.suspH.buffer as ArrayBuffer,bankBase+18,60) && this.sameBuffer(a.suspL.buffer as ArrayBuffer, b.suspL.buffer as ArrayBuffer,bankBase+19,61) && this.sameBuffer(a.sandTop.buffer as ArrayBuffer, b.surface.buffer as ArrayBuffer,bankBase+20,62);
+    }finally{t351meter?.leave(t351scope);}
+}
     commitPrepared(): void {
         if (this.prepared < 0 || this.preparedContent !== this.owner.contentSerial)
             throw new Error('DERIVED_PREPARED_STALE');
+        this.owner.budget.add(this.banks[this.prepared].publicationKind==='STEP'?7:this.banks[this.prepared].publicationKind==='EXTERNAL_ADMISSION'?8:23);
         this.serial++;
         this.active = this.prepared;
         this.prepared = -1;
     }
     copyPublishedInto(out: P011PublishedRenderState): string {
+ const t351meter=this.owner.budget,t351scope=t351meter?.enter(12)??-1;try {
         if (this.active < 0)
             return 'SCHEMA_UNAVAILABLE';
         const state = this.banks[this.active], seal = state.derivedSeal;
@@ -157,8 +165,9 @@ export class DerivedCommitV2 {
             return 'INVALID_TOKEN';
         if (out.field.particleState === undefined || out.field.particleState === null || out.field.particleState.nmax !== state.particleCapacity)
             return 'CAPACITY_MISMATCH';
+        this.owner.budget.identity(state.runId,state.physicsCommitId,state.stateEpoch,state.particleCapacity,state.liveCount);
         out.derivedSeal = null;
-        const bytes = copyDerivedPayloadV2(state.field, out.field);
+        const bytes = copyDerivedPayloadV2(state.field, out.field,this.owner.budget);
         out.effectiveTiltDeg = state.effectiveTiltDeg;
         out.runId = state.runId;
         out.stateEpoch = state.stateEpoch;
@@ -179,10 +188,11 @@ export class DerivedCommitV2 {
         out.derivedRevision = state.derivedRevision;
         out.poolContentSerial = state.poolContentSerial;
         out.derivedCertificateId = state.derivedCertificateId;
-        out.derivedSeal = DerivedPublicationSealV2.mintTrusted(out, seal.serial, seal.certificate, SEAL_KEY_V2);
+        out.derivedSeal = this.mintSeal(out,seal.serial,seal.certificate);
         this.owner.counters.add(13, bytes);
         return seal === state.derivedSeal ? 'OK' : 'INVALID_TOKEN';
-    }
+    }finally{t351meter?.leave(t351scope);}
+}
 }
 export function derivedPublicationGateV2(state: P011PublishedRenderState): boolean {
     if (state.numericPolicy === DERIVED_POLICY_V2)

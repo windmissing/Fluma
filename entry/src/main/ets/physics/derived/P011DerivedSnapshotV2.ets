@@ -1,3 +1,4 @@
+import { FrameBudgetV2 } from './P011FrameBudgetV2';
 import { WaterSandSnapshot } from '../WaterSandField';
 import { P011ParticleSnapshot } from '../P011ParticleField';
 import { P011ExternalSourceSnapshot, P011ExternalAdmissionRecord } from '../P011ExternalAdmissions';
@@ -8,9 +9,10 @@ export function createDerivedPayloadV2(n: number): WaterSandSnapshot {
     const out: WaterSandSnapshot = { schemaVersion: 4, cols: 128, capacity: 256, waterTop: new Float64Array(128), bh: new Float64Array(128), bl: new Float64Array(128), mh: new Float64Array(128), ml: new Float64Array(128), suspH: new Float64Array(128), suspL: new Float64Array(128), hs: new Float64Array(128), hl: new Float64Array(128), sandTop: new Float64Array(128), shakeSourceH: new Float64Array(128), shakeSourceL: new Float64Array(128), particleState: p, externalSourceState: new P011ExternalSourceSnapshot() };
     return out;
 }
-export function copyDerivedPayloadV2(from: WaterSandSnapshot, to: WaterSandSnapshot): number {
+export function copyDerivedPayloadV2(from: WaterSandSnapshot, to: WaterSandSnapshot,budget:FrameBudgetV2|null=null): number {
     if (from.cols !== 128 || to.cols !== 128 || from.capacity !== 256 || to.capacity !== 256)
         throw new Error('DERIVED_PAYLOAD_SHAPE');
+    let copiedBytes=0;
     to.schemaVersion = from.schemaVersion;
     to.mediumMode = from.mediumMode;
     to.airDynamicsRevision = from.airDynamicsRevision;
@@ -19,20 +21,20 @@ export function copyDerivedPayloadV2(from: WaterSandSnapshot, to: WaterSandSnaps
     to.dryLastSequence = from.dryLastSequence;
     to.dryLastInputTime = from.dryLastInputTime;
     to.physicsCommitId = from.physicsCommitId;
-    to.waterTop.set(from.waterTop);
-    to.bh.set(from.bh);
-    to.bl.set(from.bl);
-    to.mh.set(from.mh);
-    to.ml.set(from.ml);
-    to.suspH.set(from.suspH);
-    to.suspL.set(from.suspL);
-    to.hs.set(from.hs);
-    to.hl.set(from.hl);
-    to.sandTop.set(from.sandTop);
-    if (to.shakeSourceH !== undefined && from.shakeSourceH !== undefined)
-        to.shakeSourceH.set(from.shakeSourceH);
-    if (to.shakeSourceL !== undefined && from.shakeSourceL !== undefined)
-        to.shakeSourceL.set(from.shakeSourceL);
+    to.waterTop.set(from.waterTop);copiedBytes+=from.waterTop.byteLength;budget?.add(11,from.waterTop.byteLength);
+    to.bh.set(from.bh);copiedBytes+=from.bh.byteLength;budget?.add(11,from.bh.byteLength);
+    to.bl.set(from.bl);copiedBytes+=from.bl.byteLength;budget?.add(11,from.bl.byteLength);
+    to.mh.set(from.mh);copiedBytes+=from.mh.byteLength;budget?.add(11,from.mh.byteLength);
+    to.ml.set(from.ml);copiedBytes+=from.ml.byteLength;budget?.add(11,from.ml.byteLength);
+    to.suspH.set(from.suspH);copiedBytes+=from.suspH.byteLength;budget?.add(11,from.suspH.byteLength);
+    to.suspL.set(from.suspL);copiedBytes+=from.suspL.byteLength;budget?.add(11,from.suspL.byteLength);
+    to.hs.set(from.hs);copiedBytes+=from.hs.byteLength;budget?.add(11,from.hs.byteLength);
+    to.hl.set(from.hl);copiedBytes+=from.hl.byteLength;budget?.add(11,from.hl.byteLength);
+    to.sandTop.set(from.sandTop);copiedBytes+=from.sandTop.byteLength;budget?.add(11,from.sandTop.byteLength);
+    if (to.shakeSourceH !== undefined && from.shakeSourceH !== undefined){
+        to.shakeSourceH.set(from.shakeSourceH);copiedBytes+=from.shakeSourceH.byteLength;budget?.add(11,from.shakeSourceH.byteLength);}
+    if (to.shakeSourceL !== undefined && from.shakeSourceL !== undefined){
+        to.shakeSourceL.set(from.shakeSourceL);copiedBytes+=from.shakeSourceL.byteLength;budget?.add(11,from.shakeSourceL.byteLength);}
     to.shakeSourceLiftedH = from.shakeSourceLiftedH;
     to.shakeSourceLiftedL = from.shakeSourceLiftedL;
     to.shakeSourceLandedH = from.shakeSourceLandedH;
@@ -45,19 +47,19 @@ export function copyDerivedPayloadV2(from: WaterSandSnapshot, to: WaterSandSnaps
     b.liveCount = a.liveCount;
     b.freeCount = a.freeCount;
     b.nextId = a.nextId;
-    b.pMass.set(a.pMass);
-    b.pX.set(a.pX);
-    b.pY.set(a.pY);
-    b.pVx.set(a.pVx);
-    b.pVy.set(a.pVy);
-    b.pPhase.set(a.pPhase);
-    b.pSource.set(a.pSource);
-    b.pState.set(a.pState);
-    b.pId.set(a.pId);
-    b.pSourceId.set(a.pSourceId);
-    b.freeSlots.set(a.freeSlots);
-    b.colParticleMassH.set(a.colParticleMassH);
-    b.colParticleMassL.set(a.colParticleMassL);
+    b.pMass.set(a.pMass);copiedBytes+=a.pMass.byteLength;budget?.add(11,a.pMass.byteLength);
+    b.pX.set(a.pX);copiedBytes+=a.pX.byteLength;budget?.add(11,a.pX.byteLength);
+    b.pY.set(a.pY);copiedBytes+=a.pY.byteLength;budget?.add(11,a.pY.byteLength);
+    b.pVx.set(a.pVx);copiedBytes+=a.pVx.byteLength;budget?.add(11,a.pVx.byteLength);
+    b.pVy.set(a.pVy);copiedBytes+=a.pVy.byteLength;budget?.add(11,a.pVy.byteLength);
+    b.pPhase.set(a.pPhase);copiedBytes+=a.pPhase.byteLength;budget?.add(11,a.pPhase.byteLength);
+    b.pSource.set(a.pSource);copiedBytes+=a.pSource.byteLength;budget?.add(11,a.pSource.byteLength);
+    b.pState.set(a.pState);copiedBytes+=a.pState.byteLength;budget?.add(11,a.pState.byteLength);
+    b.pId.set(a.pId);copiedBytes+=a.pId.byteLength;budget?.add(11,a.pId.byteLength);
+    b.pSourceId.set(a.pSourceId);copiedBytes+=a.pSourceId.byteLength;budget?.add(11,a.pSourceId.byteLength);
+    b.freeSlots.set(a.freeSlots);copiedBytes+=a.freeSlots.byteLength;budget?.add(11,a.freeSlots.byteLength);
+    b.colParticleMassH.set(a.colParticleMassH);copiedBytes+=a.colParticleMassH.byteLength;budget?.add(11,a.colParticleMassH.byteLength);
+    b.colParticleMassL.set(a.colParticleMassL);copiedBytes+=a.colParticleMassL.byteLength;budget?.add(11,a.colParticleMassL.byteLength);
     const x = from.externalSourceState, y = to.externalSourceState;
     if (x === undefined || y === undefined)
         throw new Error('DERIVED_PAYLOAD_SOURCE');
@@ -91,5 +93,5 @@ export function copyDerivedPayloadV2(from: WaterSandSnapshot, to: WaterSandSnaps
         d.cumulativeCount = s.cumulativeCount;
         d.admissionTransactionId = s.admissionTransactionId;
     }
-    return 13 * 128 * 8 + 55 * a.nmax + 16 * 128;
+    return copiedBytes;
 }

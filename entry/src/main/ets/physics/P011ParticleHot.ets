@@ -1486,7 +1486,7 @@ function applyParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedStepE
   work.applying = 0; plan.consumed = 1; results.status = 0; {const txOriginalCode:number=work.lastStatus = 0;txCode=txOriginalCode;return txOriginalCode;}
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,13,txCode);}}
 
-export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(334);let txCode=0;try{
+export function beginStepHot(work: P011ParticleHotWorkspace, input: P011ParticleHotStepInput): number {work.derivedV2?.budget.add(13);syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(334);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=input.attemptToken;d.context.runToken=input.runToken;d.context.ownerId=work.ownerId;
     span=d.begin('BEGIN_HOT');d.increment(15);}
@@ -1494,13 +1494,15 @@ export function beginStepHot(work: P011ParticleHotWorkspace, input: P011Particle
   finally{txCode=code;if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=input.attemptToken;d.context.runToken=input.runToken;d.context.ownerId=work.ownerId;d.endSpan(span,code);}}
 }catch(txError){txCode=-1;throw txError as Error;}finally{if(txCode!==0)work.complexity.seal(txCode);txTrace?.leave(txScope,334,txCode);}}
 
-export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, destination: P011ParticleHotPlanBuffer): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(335);let txCode=0;const t311Start=work.complexity.begin(11);try{work.complexity.phase=1;
+export function collectParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number, destination: P011ParticleHotPlanBuffer): number {
+ const t351meter=work.derivedV2?.budget,t351scope=t351meter?.enter(5)??-1;try {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(335);let txCode=0;const t311Start=work.complexity.begin(11);try{work.complexity.phase=1;
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;
     span=d.begin('COLLECT');d.increment(16);}
   try{code=collectParticlePlanIntoBody(work,expectedStepEpoch,destination);return code;}
   finally{txCode=code;if(d!==null){d.epoch=work.stepEpoch;d.attemptToken=work.attemptToken;d.endSpan(span,code);}}
-}catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(11,t311Start);txTrace?.leave(txScope,335,txCode);}}
+}catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(11,t311Start);txTrace?.leave(txScope,335,txCode);}}finally{t351meter?.leave(t351scope);}
+}
 
 export function finishStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(336);let txCode=0;try{
   const d=work.poolProgress;let span=-1,code=-1;
@@ -1520,10 +1522,12 @@ export function copyPoolDiagnosticHot(work: P011ParticleHotWorkspace,out: P011Pa
 }catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(restore?5:4,t311Start);txTrace?.leave(txScope,337,txCode);}}
 
 export function applyParticlePlanInto(work: P011ParticleHotWorkspace, expectedStepEpoch: number,
-  plan: P011ParticleHotPlanBuffer,sink: P011ParticleHotCommitSink,results: P011ParticleHotResultBuffer): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(338);let txCode=0;const t311Start=work.complexity.begin(12);try{
+  plan: P011ParticleHotPlanBuffer,sink: P011ParticleHotCommitSink,results: P011ParticleHotResultBuffer): number {
+ const t351meter=work.derivedV2?.budget,t351scope=t351meter?.enter(6)??-1;t351meter?.add(9,plan.requestCount);try {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(338);let txCode=0;const t311Start=work.complexity.begin(12);try{
   work.complexity.R+=plan.requestCount;work.complexity.phase=2;
   const d=work.poolProgress;let span=-1,code=-1;
   if(d!==null){span=d.begin('APPLY');d.increment(17);}
   try{code=applyParticlePlanIntoBody(work,expectedStepEpoch,plan,sink,results);return code;}
   finally{txCode=code;d?.endSpan(span,code);}
-}catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(12,t311Start);txTrace?.leave(txScope,338,txCode);}}
+}catch(txError){txCode=-1;throw txError as Error;}finally{work.complexity.end(12,t311Start);txTrace?.leave(txScope,338,txCode);}}finally{t351meter?.leave(t351scope);}
+}

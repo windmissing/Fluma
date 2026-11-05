@@ -1,3 +1,4 @@
+import { FrameBudgetV2 } from './P011FrameBudgetV2';
 import { copyDerivedPayloadV2 } from './P011DerivedSnapshotV2';
 import { P013SceneController } from '../../render/P013SceneController';
 import { P013SceneReceipt } from '../../render/P013SceneTypes';
@@ -40,6 +41,7 @@ export interface DerivedSourceResultV2 {
 // The field and writable arrays are private. Consumers receive command receipts
 // and explicit cold independent copies; the live owner is never returned.
 export class P051DerivedFacadeV2 {
+    readonly budget:FrameBudgetV2=new FrameBudgetV2();
     private field: WaterSandField;
     private readonly nmax: number;
     private readonly source: number;
@@ -62,7 +64,7 @@ export class P051DerivedFacadeV2 {
             throw new Error('DERIVED_INIT:' + r.code);
         if (checkpoint !== null)
             f.restoreFromSnapshot(checkpoint.authority);
-        f.enableDerivedV2Cold(OWNER_PERMIT_V2, checkpoint);
+        f.enableDerivedV2Cold(OWNER_PERMIT_V2, checkpoint, this.budget);
         return f;
     }
     exportFailureCold(): DerivedFailureRawV2 | null { return this.field.derivedFailureRawColdV2(OWNER_PERMIT_V2); }
@@ -89,6 +91,7 @@ export class P051DerivedFacadeV2 {
             this.field.setShakeInput(value);
     }
     inject(request: P051DryAdmissionRequest): DerivedSourceResultV2 {
+ const t351meter=this.budget,t351scope=t351meter?.enter(2)??-1;try {
         if (this.stopped)
             return { ok: false, original: null, derivedFault: null, physicalCommit: this.field.getRenderPhysicsCommitId(), captureStatus: 'STOPPED' };
         this.field.startDerivedCommandV2(OWNER_PERMIT_V2, 1, request.sequence);
@@ -109,8 +112,10 @@ export class P051DerivedFacadeV2 {
         }
         this.field.finishDerivedCommandV2(OWNER_PERMIT_V2, receipt !== null && receipt.rejectedReason === null && fault === null);
         return { ok: receipt !== null && receipt.rejectedReason === null && fault === null, original: receipt, derivedFault: fault, physicalCommit: this.field.getRenderPhysicsCommitId(), captureStatus: 'NOT_CAPTURED' };
-    }
+    }finally{t351meter?.leave(t351scope);}
+}
     step(dt: number): DerivedStepResultV2 {
+ const t351meter=this.budget,t351scope=t351meter?.enter(3)??-1;try {
         if (this.stopped)
             return { ok: false, originalError: null, derivedFault: null, physicalCommit: this.field.getRenderPhysicsCommitId(), captureStatus: 'STOPPED', original: null };
         this.field.startDerivedCommandV2(OWNER_PERMIT_V2, 2);
@@ -131,7 +136,8 @@ export class P051DerivedFacadeV2 {
         }
         this.field.finishDerivedCommandV2(OWNER_PERMIT_V2, r !== null && r.ok && fault === null);
         return { ok: r !== null && r.ok && fault === null, originalError: fault !== null ? null : r === null ? null : r.errorCode, derivedFault: fault, physicalCommit: this.field.getRenderPhysicsCommitId(), captureStatus: 'NOT_CAPTURED', original: r };
-    }
+    }finally{t351meter?.leave(t351scope);}
+}
     createPublishedSlotCold(): DerivedPublishedSlotV2 { return new DerivedPublishedSlotV2(this.nmax); }
     copyPublishedRenderStateInto(slot: DerivedPublishedSlotV2): string { return slot.copyOwner(OWNER_PERMIT_V2, this.field, false); }
     copyPublishedSceneStateInto(slot: DerivedPublishedSlotV2): string { return slot.copyOwner(OWNER_PERMIT_V2, this.field, true); }

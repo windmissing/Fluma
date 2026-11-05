@@ -1,8 +1,10 @@
+import { FrameBudgetV2 } from './P011FrameBudgetV2';
 import { P011ParticleSnapshot, P011ParticleDerivedBindingV2, particleSnapshotBufferAtHot } from '../P011ParticleField';
 import { DerivedViewV2, DerivedMutationTokenV2 } from './P011DerivedViewV2';
 import { DerivedStatus, DerivedCountersV2, DerivedFaultV2 } from './P011DerivedTypesV2';
 import { DerivedFieldV2, DryDomainV2 } from './P011DryDomainV2';
 export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
+    budget:FrameBudgetV2=new FrameBudgetV2();
     readonly ownerId: number;
     readonly counters = new DerivedCountersV2();
     private readonly rootBefore = new Float64Array(32);
@@ -210,6 +212,7 @@ export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
     markField(c: number = -1): void { this.domain.mark(c); this.contentSerial++; this.lastVerifiedSerial = -1; }
     flush(): DerivedStatus { const code = this.domain.flushBeforeRead(); return code === 0 ? code : this.fail(code, 'DRY_DOMAIN'); }
     verifyPublicBoundary(boundary: string): DerivedStatus {
+ const t351meter=this.budget,t351scope=t351meter?.enter(9)??-1;try {
         if (this.status !== 0)
             return this.status;
         if (this.lastVerifiedSerial === this.contentSerial && this.lastBoundary === boundary)
@@ -220,7 +223,7 @@ export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
         const structure = this.verifyStructure();
         if (structure !== 0)
             return this.fail(structure, 'PUBLIC_ALLOCATOR_ID');
-        const status = this.audit.build();
+        const exactScope=this.budget.enter(17);let status:DerivedStatus;try{status=this.audit.build();}finally{this.budget.leave(exactScope);}
         if (status !== 0)
             return this.fail(status, 'PUBLIC_POOL');
         const a = this.audit, v = this.canonical;
@@ -238,15 +241,17 @@ export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
             if (a.bits.getUint32(0, true) !== v.bits.getUint32(0, true) || a.bits.getUint32(4, true) !== v.bits.getUint32(4, true))
                 return this.fail(DerivedStatus.CERT_STALE, 'CACHE_BITS_MISMATCH');
         }
-        const strict = this.domain.verifyStrict();
+        const strictScope=this.budget.enter(18);let strict:DerivedStatus;try{strict=this.domain.verifyStrict();}finally{this.budget.leave(strictScope);}
         if (strict !== 0)
             return this.fail(strict, 'PUBLIC_STRICT_DOMAIN');
         this.lastVerifiedSerial = this.contentSerial;
         this.lastBoundary = boundary;
         this.verifyCertificate++;
         return DerivedStatus.OK;
-    }
+    }finally{t351meter?.leave(t351scope);}
+}
     private verifyStructure(): DerivedStatus {
+ const t351meter=this.budget,t351scope=t351meter?.enter(16)??-1;try {
         const p = this.canonical.pool;
         if (p.liveCount + p.freeCount !== p.nmax || p.freeCount < 0 || p.freeCount > p.nmax || p.nextId < 1 || p.nextId > 4294967296)
             return DerivedStatus.INPUT_INVALID;
@@ -290,7 +295,8 @@ export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
             if (from[i] === from[i - 1])
                 return DerivedStatus.INPUT_INVALID;
         return DerivedStatus.OK;
-    }
+    }finally{t351meter?.leave(t351scope);}
+}
     registerFieldMark(key: object): void { this.fieldKeys.push(key); this.fieldMarks.push(new Float64Array(128 + 2)); this.dirtyMarks.push(new Uint8Array(128)); }
     saveField(key: object): void {
         const i = this.fieldKeys.indexOf(key);

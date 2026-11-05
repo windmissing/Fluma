@@ -1,3 +1,4 @@
+import { FrameBudgetV2 } from './derived/P011FrameBudgetV2';
 import { DerivedCheckpointV2 } from './derived/P011DerivedCheckpointV2';
 import { DerivedCoordinatorV2,DerivedFailureRawV2,DerivedWorkV2 } from './derived/P011DerivedTupleBarrierV2';
 import { DerivedCommitV2 } from './derived/P011DerivedCommitV2';
@@ -805,10 +806,10 @@ export class WaterSandField {
 
   private derivedV2:DerivedCoordinatorV2|null=null;
   private derivedPublicationV2:DerivedCommitV2|null=null;
-  enableDerivedV2Cold(permit:object,checkpoint:DerivedCheckpointV2|null=null):void {
+  enableDerivedV2Cold(permit:object,checkpoint:DerivedCheckpointV2|null=null,budget:FrameBudgetV2|null=null):void {
     if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2!==null||this.mediumMode!=='DRY_AIR_V1'||this.capacity!==256||this.cols!==128||this.particleBinding===null)throw new Error('DERIVED_COLD_OWNER_REQUIRED');
     const b=this.particleBinding,w=b.work,p=b.pool.derivedBindingCold();
-    const coordinator=new DerivedCoordinatorV2(p,b.field,w.ownerId);this.derivedV2=coordinator;b.pool.attachDerivedV2(coordinator,p);w.derivedV2=coordinator;b.projection.enableDerivedV2();
+    const coordinator=new DerivedCoordinatorV2(p,b.field,w.ownerId);if(budget!==null){coordinator.budget=budget;budget.bind(coordinator.counters.values);}this.derivedV2=coordinator;b.pool.attachDerivedV2(coordinator,p);w.derivedV2=coordinator;b.projection.enableDerivedV2();
     coordinator.register(w.frozenPool);coordinator.register(w.patchBefore);coordinator.register(w.patchScratch);coordinator.register(w.patchAfter);
     if(this.particleBackup===null||this.particleJournalBefore===null||this.backup.particleState===null||this.backup.particleState===undefined||this.motionSnapshot.particleState===null||this.motionSnapshot.particleState===undefined)throw new Error('DERIVED_COLD_BANKS');
     coordinator.register(this.particleBackup);coordinator.register(this.particleJournalBefore);coordinator.register(this.backup.particleState);coordinator.register(this.motionSnapshot.particleState);
@@ -4389,21 +4390,22 @@ export class WaterSandField {
     sourceState.sourceInjectedH = this.sourceInjectedHeavy; sourceState.sourceInjectedL = this.sourceInjectedLight;
     sourceState.sourceEpoch = this.sourceEpoch;
     this.externalAdmissions.copyEvidenceTo(sourceState.admissions);
-    target.waterTop.set(this.waterTop);
-    target.bh.set(this.bh);
-    target.bl.set(this.bl);
-    target.mh.set(this.mh);
-    target.ml.set(this.ml);
-    target.suspH.set(this.suspH);
-    target.suspL.set(this.suspL);
+    target.waterTop.set(this.waterTop);this.derivedV2?.budget.add(10,this.waterTop.byteLength);
+    target.bh.set(this.bh);this.derivedV2?.budget.add(10,this.bh.byteLength);
+    target.bl.set(this.bl);this.derivedV2?.budget.add(10,this.bl.byteLength);
+    target.mh.set(this.mh);this.derivedV2?.budget.add(10,this.mh.byteLength);
+    target.ml.set(this.ml);this.derivedV2?.budget.add(10,this.ml.byteLength);
+    target.suspH.set(this.suspH);this.derivedV2?.budget.add(10,this.suspH.byteLength);
+    target.suspL.set(this.suspL);this.derivedV2?.budget.add(10,this.suspL.byteLength);
     for (let c = 0; c < this.cols; c++) {txTrace?.add(39);txTrace?.add(31);
       target.hs[c] = this.bh[c] + this.mh[c];
       target.hl[c] = this.bl[c] + this.ml[c];
       target.sandTop[c] = this.derivedV2===null ? target.hs[c] + target.hl[c] : this.sandTopScratch[c];
     }
+    this.derivedV2?.budget.add(12,3*this.cols*8);
     if (schemaNum === 4 && target.particleState !== undefined && target.particleState !== null) {
       if (this.particleRouteActive() && this.particleBinding !== null) {
-        this.copyParticleStateDiagnostic(target.particleState);
+        this.copyParticleStateDiagnostic(target.particleState);this.derivedV2?.budget.add(10,55*target.particleState.nmax+16*this.cols);
       } else {
         const state = target.particleState;
         state.liveCount = 0; state.freeCount = state.nmax; state.nextId = 1;
@@ -4696,7 +4698,8 @@ export class WaterSandField {
     this.substepBudgetClipped = true;
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,248,txCode);}}
 
-  private substep(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(249);let txCode=0;try{
+  private substep(dt: number): WaterSandErrorCode | null {
+ const t351meter=this.derivedV2?.budget,t351scope=t351meter?.enter(5)??-1;try {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(249);let txCode=0;try{
     this.updateSandTop();
     this.observeFieldColumnV2('SUBSTEP_UPDATE_AFTER','UPDATE_SAND_TOP');
     if(this.mediumMode!==P051_DRY_MEDIUM){this.waterLevel(dt);this.diffuseSuspension(dt);}
@@ -4725,9 +4728,11 @@ export class WaterSandField {
       this.totalMotionBudgetRequested += this.particleBinding.requested();
     }
     {const txRc:WaterSandErrorCode | null=this.audit(true);txCode=0;return txRc;}
-  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,249,txCode);}}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,249,txCode);}}finally{t351meter?.leave(t351scope);}
+}
 
-  private applyMotionChannels(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(250);let txCode=0;try{
+  private applyMotionChannels(dt: number): WaterSandErrorCode | null {
+ const t351meter=this.derivedV2?.budget,t351scope=t351meter?.enter(7)??-1;try {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(250);let txCode=0;try{
     if (this.particleRouteActive() && this.particleBinding !== null) {
       const totalBefore = this.totalMotionBudgetRemaining;
       const guardProbe = this.naturalObservationProbe;
@@ -4796,7 +4801,8 @@ export class WaterSandField {
     const auditError = this.audit(true);
     if (auditError !== null) {const txRc:WaterSandErrorCode | null=auditError;txCode=0;return txRc;}
     {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
-  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,250,txCode);}}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,250,txCode);}}finally{t351meter?.leave(t351scope);}
+}
 
   /**
    * §24 computeCorrectionReservation: on the candidate-angle snapshot (post
@@ -6065,7 +6071,8 @@ export class WaterSandField {
    * commit: effectiveTilt = thetaAccepted. On BLOCKED the reference angle is
    * held at thetaBefore and the substep is marked failed via lastPlanning*.
    */
-  private planAndCommitTilt(dt: number): WaterSandErrorCode | null {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(266);let txCode=0;try{
+  private planAndCommitTilt(dt: number): WaterSandErrorCode | null {
+ const t351meter=this.derivedV2?.budget,t351scope=t351meter?.enter(4)??-1;try {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(266);let txCode=0;try{
     if (this.particleRouteActive() && this.particleBinding !== null) this.particleBinding.projection.clear();
     const thetaBefore = this.effectiveTilt;
     // §27.4: snapshot the config revision at planning entry. The preview
@@ -6182,7 +6189,8 @@ export class WaterSandField {
     // where the attempt audit reads it (P011NaturalObservation ledger).
     this.p011CurrentCommitStatus = 'committed';
     {const txRc:WaterSandErrorCode | null=null;txCode=0;return txRc;}
-  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,266,txCode);}}
+  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,266,txCode);}}finally{t351meter?.leave(t351scope);}
+}
 
   /**
    * §20.6.4 preview/commit exact-equality check, run after the authoritative

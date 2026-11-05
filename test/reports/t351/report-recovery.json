@@ -1,0 +1,19 @@
+{
+  "revision": "T351_REPORT_OUTPUT_ISOLATION_RECOVERY_V1",
+  "baseline": "5970fbd",
+  "allocationSummaryMatches": true,
+  "files": [
+    {
+      "file": "test/reports/t216/allocation.json",
+      "accidentalCurrentSHA": "83836a9328bfdb2799aa1e310f98b8c257019271d133b366b2a26c1a8470a8a1",
+      "recoveredSHA": "7603250de0c7f3b0e72132d6f56ec425db4118233d0766170167d030d037621d",
+      "scope": "DETERMINISTIC_PRE_TASK_SOURCE_REGENERATION_NOT_CLAIMED_INITIAL_BYTE_BACKUP"
+    },
+    {
+      "file": "test/reports/t216/owner.json",
+      "accidentalCurrentSHA": "5a1f290d116e81b63e2b733ab5c738c7e7ec223278e68f6a216a3ad95726af62",
+      "recoveredSHA": "3ec5c1028783334fb3050078c02a43169220816b3dfb9cdd4b98666c293d726e",
+      "scope": "DETERMINISTIC_PRE_TASK_SOURCE_REGENERATION_NOT_CLAIMED_INITIAL_BYTE_BACKUP"
+    }
+  ]
+}

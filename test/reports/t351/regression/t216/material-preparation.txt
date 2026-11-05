@@ -1,0 +1,15 @@
+{
+  revision: 'T216_DEVELOPER_EXACT70_V1',
+  cases: 3208,
+  failed: 0,
+  oracle: 'INDEPENDENT_BIGINT_ONLY_IN_TEST',
+  device: 'NOT_RUN'
+}
+[
+  { n: 192, step: 0, status: 'OK', commit: 4 },
+  { n: 192, step: 123, status: 'OK', commit: 136 },
+  { n: 192, step: 299, status: 'OK', commit: 312 },
+  { n: 512, step: 0, status: 'OK', commit: 4 },
+  { n: 512, step: 123, status: 'OK', commit: 136 },
+  { n: 512, step: 299, status: 'OK', commit: 312 }
+]
