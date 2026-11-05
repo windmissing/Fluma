@@ -1105,3 +1105,18 @@ rev2 §9 切片 2 的 G1 前置 = rev2 manager 验收（**已满足**，22:30）
 - 逐条规格（oracle/判定）按 §10 表登记；T221 实现到件后由执行器 `test/p223_sand_water_sw_independent.cjs` 扩展断言。
 - 边界：T221 designer 4822 例设计模型不是产品 oracle（自持 Float64/精确算术）；全部新参数（vEmit/dragFlight/gFall/mRef/widthPx/gain/sigma/tint）PENDING_CALIBRATION；不自造 fps 阈值；E-SW1..4 效果需求交接 effector，设备另卡。
 - 执行证据：`test/reports/t223/independent.json`（基线复跑 T188 26/26、T209 35/35、T215 12/12、T189 15/15 全绿）。
+
+## 21. T350 真实触摸入口与默认参数真机核对 用例条目（2026-11-05 登记）
+
+消费 T348 preflight 纠偏（触摸→倒沙链自 T71 在位；V1 页默认无 p011particle=1 → STRUCTURAL_ZERO_OFF）与 T347 报告。核对型任务：三入口 × 真实手势链 × 默认参数实际行为。
+
+- **R1 入口身份核对**：EmptySandDemo 生产默认（无参冷启）/ 显式 p011particle=1 / V2 显式入口（p051v2=1）——记录实际 Want 解析（hilog want rendermode/testmode/粒子路线 armed 行）、包 SHA256、revision。判定：三入口身份可区分且与 T348 preflight 一致。
+- **R2 空场→触摸出生（真实手势）**：重置为空场 → 真实 DOWN/MOVE/UP（uitest 手势而非 T218DBG 直注）→ dry.receipt/inject 生效、live>0。判定：真实触摸链在 V1 页（含 p011particle=1 与默认参数两形态）与 V2 页均触发出生。
+- **R3 pY 下降→LAND/床增长**：持续触摸注入后观测 pYmin/pYmean 下降、mh 增长（V2 页 T347STEP；V1 页 p011particle=1 经 pool trace）。判定：与 T347 同形态。
+- **R4 同 token 双态**：p013_scene state=CURRENT、request==actual、无 code100/FAULT；STALE 仅合法（如后台返回）。判定：零非法拒绝。
+- **R5 UP 停源**：UP 后 inject 停止（T218DBG/WS_METRIC 无新增 sequence），live 粒子沉降耗尽或稳定，mh 保持。判定：松手停源有效。
+- **R6 前后台切换**：Home 出→回，active/foreground 状态翻转正确、无崩溃、publication 无非法 STALE 链。判定：生命周期无工程缺陷。
+- **R7 真实模拟时间与 fps**：每入口记录重建模拟时间与 fps 曲线（T346 方法），不为达标而宣 1.3fps 合格——如实记录。判定：数字可追溯即可（不设门槛）。
+- **R8 摇晃传感器流向**：目标（setShakeInput 请求值）与实际（物理消费/事件）分列证据。判定：两列数字分列可追溯。
+
+红线：真实 DOWN/MOVE/UP/CANCEL（禁 T218DBG 直注作判据）；不改业务代码；发现默认参数或生命周期工程缺陷先 architect；不宣 1.3fps 体验达标；V1 生产默认不擅改。
