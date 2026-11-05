@@ -12,7 +12,7 @@ signs={}
 for kind in ['production','isolated']:
  sign=json.loads((r/('test/reports/t257/T351-'+kind+'-delivery.json')).read_text());assert sign['verifyApp']=='PASS' and sha(Path(sign['signed']['path']))==sign['signed']['sha256'];signs[kind]=sign
  (out/(kind+'-sign.json')).write_text(json.dumps(sign,indent=2)+'\n')
- log=(r/('.codex/local-test/t351-'+kind+'-signable-package.log')).read_bytes();assert b'BUILD SUCCESSFUL' in log;(out/(kind+'-package.log.gz')).write_bytes(gzip.compress(log));(out/(kind+'-package-tail.txt')).write_bytes(b'\n'.join(log.splitlines()[-8:]))
+ log=(r/('.codex/local-test/t351-'+kind+'-signable-package.log')).read_bytes();assert b'BUILD SUCCESSFUL' in log;(out/(kind+'-package.log.gz')).write_bytes(gzip.compress(log,mtime=0));(out/(kind+'-package-tail.txt')).write_bytes(b'\n'.join(log.splitlines()[-8:]))
 summary=[]
 for p in budget['profiles']:
  if p['mode'] in ['before','after-on']:
@@ -20,3 +20,4 @@ for p in budget['profiles']:
 (out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
 result={'revision':'T351_DELIVERY_V1','baselineCommit':'5970fbd','device':'NOT_RUN','scope':'CPU_V2_ENGINEERING_AND_OFFLINE_CHECKS','status':'DELIVERED','differentialCases':unit['passed'],'sceneCases':scene['passed'],'strictSuites':strict['passed'],'budgetProfiles':32,'measuredHostFrames':768,'referenceBudgetMs':33.333333,'devicePerformance':'T352_REQUIRED_NOT_PROVEN','nativeTiming':'NAPI_DOUBLE_NOT_DEVICE_TIME','strictVerification':'STRUCTURE_EXACT70_BYTE_COMPARE_ALL_RETAINED','normalComparisonNewViewsPerPublication':0,'coldComparisonViews':63,'frameTraceRows':128,'substepTraceRows':256,'frameTraceTypedBytes':264832,'runTokenLimits':[256,512],'artifacts':{k:v['signed'] for k,v in signs.items()},'verifyApp':'PASS','sourceHashes':{s:sha(r/'entry/src/main/ets'/s) for s in sources}}
 (out/'delivery.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,ensure_ascii=False))
+
