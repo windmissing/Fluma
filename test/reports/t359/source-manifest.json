@@ -1,0 +1,81 @@
+{
+  "revision": "T359_V1",
+  "edits": [
+    {
+      "rel": "physics/derived/P011FrameBudgetV2.ets",
+      "from": "export class FrameBudgetV2 {",
+      "to": "import { StopCuts } from './StopCuts';\nexport class FrameBudgetV2 {\n readonly cuts:StopCuts=new StopCuts();"
+    },
+    {
+      "rel": "physics/derived/P051DerivedDemoV2.ets",
+      "from": "        const r = this.owner.step(dt);",
+      "to": "        const cuts=this.budget.cuts;cuts.held=this.held;cuts.active=this.active;cuts.currentNs=ns;cuts.dt=dt;cuts.admissionCount=this.seq;\n        const r = this.owner.step(dt);cuts.stepOk=r.ok?1:0;cuts.stepped=r.original?.stepped?1:0;cuts.q=r.original?.substeps??0;cuts.subDt=r.original?.substepDt??0;\n        if(r.derivedFault===null&&r.original!==null)cuts.elapsed+=r.original.substeps*r.original.substepDt;cuts.finishStep(r.ok,r.original?.stepped??false,r.original?.dormant??false,r.original?.substeps??0,r.original?.substepDt??0);"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "export class WaterSandField {",
+      "to": "export class WaterSandField {\n t359CaptureBefore():void {if(this.derivedV2!==null){const c=this.derivedV2.budget.cuts;c.run=this.p011RunId;c.epoch=this.renderStateEpoch;c.commit=this.renderPhysicsCommitId;c.source=this.sourceEpoch;c.frozen=this.frozen?1:0;c.lastError=this.lastError??0;c.derivedStatus=this.derivedV2.status;c.capture(0,this.derivedV2.canonical.pool);}}"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "from": "  const moved = copyPoolDiagnosticHot(work, p, true);",
+      "to": "  const moved = copyPoolDiagnosticHot(work, p, true);if(moved===0&&work.derivedV2!==null){const c=work.derivedV2.budget.cuts;c.applyCount++;c.writes+=plan.motionCount;c.capture(2,work.derivedV2.canonical.pool);}"
+    },
+    {
+      "rel": "physics/P011ParticleHot.ets",
+      "from": "  const copied = copyPoolDiagnosticHot(work, p, false); if (copied !== 0)",
+      "to": "  work.derivedV2?.budget.cuts.predicted(plan);\n  const copied = copyPoolDiagnosticHot(work, p, false); if (copied !== 0)"
+    },
+    {
+      "rel": "physics/derived/P011DerivedCommitV2.ets",
+      "from": "        const fillScope=this.owner.budget.enter(8);",
+      "to": "        this.owner.budget.cuts.run=run;this.owner.budget.cuts.epoch=epoch;this.owner.budget.cuts.commit=commit;this.owner.budget.cuts.capture(3,this.owner.canonical.pool);\n        const fillScope=this.owner.budget.enter(8);"
+    },
+    {
+      "rel": "physics/derived/P011DerivedCommitV2.ets",
+      "from": "        this.active = this.prepared;",
+      "to": "        this.active = this.prepared;const c=this.owner.budget.cuts,s=this.banks[this.active];c.run=s.runId;c.epoch=s.stateEpoch;c.commit=s.physicsCommitId;if(s.field.externalSourceState!==undefined)c.source=s.field.externalSourceState.sourceEpoch;if(s.field.particleState)c.capture(4,s.field.particleState);"
+    },
+    {
+      "rel": "physics/derived/P011DerivedCommitV2.ets",
+      "from": "        out.effectiveTiltDeg = state.effectiveTiltDeg;",
+      "to": "        if(out.field.particleState)this.owner.budget.cuts.capture(5,out.field.particleState);\n        out.effectiveTiltDeg = state.effectiveTiltDeg;"
+    },
+    {
+      "rel": "physics/derived/P051DerivedFacadeV2.ets",
+      "from": "        this.field.startDerivedCommandV2(OWNER_PERMIT_V2, 2);",
+      "to": "        this.field.t359CaptureBefore();\n        this.field.startDerivedCommandV2(OWNER_PERMIT_V2, 2);"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "this.model.budget.enabled=true;",
+      "to": "this.model.budget.enabled=true;this.model.budget.cuts.enabled=true;"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "this.model.budget.begin(++this.budgetFrames,rawInterval,dt);",
+      "to": "this.model.budget.cuts.token=String();this.model.budget.cuts.actual=String();this.model.budget.cuts.previousNs=rawInterval===0?0:ns-rawInterval;this.model.budget.cuts.frame=this.budgetFrames+1;this.model.budget.begin(++this.budgetFrames,rawInterval,dt);"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "this.model.budget.exportCold()",
+      "to": "JSON.stringify({cuts:JSON.parse(this.model.budget.cuts.exportCold()),budget:JSON.parse(this.model.budget.exportCold())})"
+    },
+    {
+      "rel": "pages/P051DerivedV2Demo.ets",
+      "from": "const receipt=p.drawNewPipeline(this.renderer,c,ns,this.getUIContext().vp2px(1));",
+      "to": "const receipt=p.drawNewPipeline(this.renderer,c,ns,this.getUIContext().vp2px(1));if(receipt!==null){this.model.budget.cuts.attach(receipt.requestedFrameToken,receipt.renderedFrameToken??'');}"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "        this.lastError = errorCode;",
+      "to": "        if(this.derivedV2!==null){const c=this.derivedV2.budget.cuts;c.rollbacks++;c.reason=errorCode;c.capture(7,this.derivedV2.canonical.pool); }\n        this.lastError = errorCode;"
+    },
+    {
+      "rel": "physics/WaterSandField.ets",
+      "from": "d.budget.beginSubstep(this.p011SubstepId+1,this.p011CurrentAttemptId);",
+      "to": "this.t359CaptureBefore();d.budget.cuts.substep=this.p011SubstepId+1;d.budget.beginSubstep(this.p011SubstepId+1,this.p011CurrentAttemptId);"
+    }
+  ],
+  "sourceSHA": "2e00630695a6172de9625d5acc7e1ed0fab31111fbb0badd45f992ea96984383"
+}
