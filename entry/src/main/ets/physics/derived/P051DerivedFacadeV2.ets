@@ -1,3 +1,5 @@
+import { P013SingleSandController } from '../../render/P013SingleSandController';
+import { SingleSandReceipt } from '../../render/P013SingleSandTypes';
 import { FrameBudgetV2 } from './P011FrameBudgetV2';
 import { copyDerivedPayloadV2 } from './P011DerivedSnapshotV2';
 import { P013SceneController } from '../../render/P013SceneController';
@@ -159,6 +161,7 @@ export class DerivedPublishedSlotV2 {
     get stateEpoch(): number { return this.state.stateEpoch; }
     get effectiveTiltDeg(): number { return this.state.effectiveTiltDeg; }
     get publicationKind(): string { return this.state.publicationKind; }
+    drawSingleSand(renderer:P013SingleSandController,context:P012FrameContext,scale:number):SingleSandReceipt|null {return renderer.drawSingleSandScene(this.state,context,scale);}
     drawNewPipeline(renderer: P013SceneController, context: P012FrameContext, timeNs: number, scale: number): P013SceneReceipt | null { return renderer.drawNewPipelineFrame(this.state, context, p012FactoryAppearance(), 0, timeNs, scale); }
     exportPayloadCold(): DerivedCheckpointV2 { const cp = new DerivedCheckpointV2(this.state.particleCapacity); copyDerivedPayloadV2(this.state.field, cp.authority); cp.runId = this.state.runId; cp.commit = this.state.physicsCommitId; cp.stateEpoch = this.state.stateEpoch; cp.replayStatus = 'PUBLICATION_COPY_NOT_CHECKPOINT'; return cp; }
 }

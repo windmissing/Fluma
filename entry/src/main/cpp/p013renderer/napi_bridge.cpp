@@ -1,5 +1,8 @@
 // P-013 P0 v1. The mutex protects the borrowed window through unbind.
 #include "napi_bridge.h"
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) && !defined(P013_SCENE_BRIDGE_TEST)
+#include "single_sand_pass.h"
+#endif
 
 #include <napi/native_api.h>
 #include <sys/syscall.h>
@@ -58,6 +61,9 @@ struct Session {
   ClearWaterAtomic clearWater;ClearWaterGlGpu clearWaterGpu{egl};ClearWaterPacket clearWaterPackets[2];int clearWaterNext=0;
   SceneCompositor scene;ScenePacket scenePacket;
   SceneGlGpu sceneGpu{egl,materialPass,dual,{kP013MaterialVertex,kP013MaterialFragment}};
+#endif
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) && !defined(P013_SCENE_BRIDGE_TEST)
+  SingleSandPass singleSand;
 #endif
   TDataUploader uploader;
   std::unique_ptr<FrameStorage> storage;
@@ -136,6 +142,9 @@ napi_value Control(napi_env e, Status code) {
   return o;
 }
 void ResetGpu() {
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) && !defined(P013_SCENE_BRIDGE_TEST)
+  g.singleSand.Reset(false);
+#endif
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
   g.scene.ResetGpu();g.sceneGpu.Reset(false);g.clearWater.Reset();g.clearWaterGpu.Reset(false);
 #endif
@@ -148,6 +157,9 @@ void ResetGpu() {
   g.uploader.Reset(false);
 }
 bool SceneResourcesLive(){
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) && !defined(P013_SCENE_BRIDGE_TEST)
+ if(g.singleSand.program)return true;
+#endif
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
  return g.sceneGpu.layers.program||g.sceneGpu.targets.textures[0]||g.clearWaterGpu.program||g.clearWaterGpu.targets.textures[0];
 #else
@@ -164,6 +176,9 @@ void Destroy(ResetReason reason) {
                             info) == Status::OK) {
 #if !defined(P013_MATERIAL_PASS_CORE_ONLY) || defined(P013_SCENE_BRIDGE_TEST)
       g.scene.ResetGpu();g.sceneGpu.Reset(true);g.clearWater.Reset();g.clearWaterGpu.Reset(true);
+#endif
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) && !defined(P013_SCENE_BRIDGE_TEST)
+      g.singleSand.Reset(true);
 #endif
       g.materialPass.Reset(true);
       g.material.Reset(true);
@@ -829,6 +844,7 @@ napi_value DrawNewPipelineFrameInternal(napi_env e,napi_callback_info info,bool 
 napi_value DrawNewPipelineFrame(napi_env e,napi_callback_info info){return DrawNewPipelineFrameInternal(e,info,false);}
 napi_value DrawNewPipelineFrameV2(napi_env e,napi_callback_info info){return DrawNewPipelineFrameInternal(e,info,true);}
 #endif
+#include "single_sand_napi.inc"
 napi_value PrepareDualFieldSurface(napi_env e, napi_callback_info info) {
  size_t n=2; napi_value a[2]{}; napi_get_cb_info(e,info,&n,a,nullptr,nullptr);
  double session=0, epoch=0;
@@ -1353,6 +1369,11 @@ static napi_value Init(napi_env e, napi_value exports) {
     {"canActivate", nullptr, CanActivateMaterial, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"activateMaterial", nullptr, ActivateMaterial, nullptr,nullptr,nullptr,napi_default,nullptr},
     {"discardMaterialStage", nullptr, DiscardMaterialStage, nullptr,nullptr,nullptr,napi_default,nullptr},
+#if !defined(P013_MATERIAL_PASS_CORE_ONLY) && !defined(P013_SCENE_BRIDGE_TEST)
+    {"registerSingleSandConfiguration",nullptr,RegisterSingleSand,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"stageSingleSandGrain",nullptr,StageSingleSand,nullptr,nullptr,nullptr,napi_default,nullptr},
+    {"drawSingleSandScene",nullptr,DrawSingleSand,nullptr,nullptr,nullptr,napi_default,nullptr},
+#endif
     {"prepareDualFieldSurface", nullptr, PrepareDualFieldSurface, nullptr, nullptr, nullptr, napi_default, nullptr},
     {"drawDualFieldFrame", nullptr, DrawDualFieldFrame, nullptr, nullptr, nullptr, napi_default, nullptr},
                                   {"requestComposition", nullptr, RequestComposition, nullptr, nullptr, nullptr, napi_default, nullptr},

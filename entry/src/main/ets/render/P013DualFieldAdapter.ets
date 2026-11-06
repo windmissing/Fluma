@@ -21,7 +21,7 @@ export class P013ParticleRejection {
 export class P013DualFieldAdapter {
   lastRejected: P013ParticleRejection | null = null;
   private readonly profile: P013FrameAdapter = new P013FrameAdapter();
-  packInto(state: P011PublishedRenderState, context: P012FrameContext, out: P013DualFieldUploadSlot, projectionRevision: string = 'RAW_F32_V1', includeFieldProfiles: boolean = true): string {
+  packInto(state: P011PublishedRenderState, context: P012FrameContext, out: P013DualFieldUploadSlot, projectionRevision: string = 'RAW_F32_V1', includeFieldProfiles: boolean = true, singleHeavy: boolean = false): string {
     if (projectionRevision !== 'RAW_F32_V1' && projectionRevision !== P013_COLUMN_PROJECTION) return 'PROJECTION_VERSION';
     const project = projectionRevision === P013_COLUMN_PROJECTION;
     const diagnostic = new P013ProjectionDiagnostic(); diagnostic.revision = projectionRevision;
@@ -53,6 +53,7 @@ export class P013DualFieldAdapter {
         !Number.isFinite(qx) || !Number.isFinite(qy) ||
         qx < 0 || qx >= 128 || qy < 0 || qy > field.capacity ||
         !Number.isInteger(pool.pId[i]) || pool.pId[i] < 1 || pool.pId[i] > 0xffffffff) return 'INVALID_PARTICLE';
+      if(singleHeavy&&pool.pPhase[i]!==0)return "UNSUPPORTED_MATERIAL_SET";
       for (let j = 0; j < i; j++) if (pool.pState[j] !== 0 && pool.pId[j] === pool.pId[i]) return 'DUPLICATE_ID';
       diagnostic.maxXError = Math.max(diagnostic.maxXError, Math.abs(qx - pool.pX[i]));
       diagnostic.maxYError = Math.max(diagnostic.maxYError, Math.abs(qy - pool.pY[i]));

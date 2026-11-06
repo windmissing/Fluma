@@ -1,0 +1,29 @@
+{
+  "task": "T364",
+  "launchParameter": "singleSand=1",
+  "build": "PASS",
+  "device": "NOT_RUN",
+  "verifyApp": "PASS",
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T364-delivery\\T364-delivery-signed.hap",
+    "sha256": "33d395932c75811b5b368a2e5c500cf9a7b6df173097ae8e97831fb43acf56b3",
+    "bytes": 8221262
+  },
+  "shaderSourceSha": "f22a5e867ec64e3be2fc649596a69a271f1ec143a89b923f001cb982b7ae0993",
+  "hostTargets": {
+    "srgbFboNeutral": [
+      145,
+      168,
+      111,
+      255
+    ],
+    "pbufferNeutral": [
+      72,
+      100,
+      40,
+      255
+    ],
+    "window": "T365_SEPARATE"
+  },
+  "hostSwap": "INJECTED"
+}

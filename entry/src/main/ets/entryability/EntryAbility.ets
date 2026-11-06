@@ -390,6 +390,7 @@ export default class EntryAbility extends UIAbility {
       AppStorage.setOrCreate('emptySandDemo', `${parameters.emptysanddemo}` === '1');
     }
     if (parameters !== undefined && parameters.p051v2 !== undefined) {
+      AppStorage.setOrCreate('singleSandDemo', String(parameters.singleSand) === '1');
       AppStorage.setOrCreate('p051v2Demo', `${parameters.p051v2}` === '1');
     }
     if (parameters !== undefined && parameters.cwdemo !== undefined) {
@@ -469,7 +470,7 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onWindowStageCreate');
     // P-013 P1-G0 平台探针页（PROBE-ONLY：勿并入发布分支）
-    const probePage: string = AppStorage.get<boolean>('gpuResidentM1') === true ? 'pages/GpuResidentM1' : AppStorage.get<boolean>('gpuResidentM0') === true ? 'pages/GpuResidentM0' : AppStorage.get<boolean>('cwDemo') === true ? 'pages/ClearWaterDemo' : AppStorage.get<boolean>('p051v2Demo') === true ? 'pages/P051DerivedV2Demo' : AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
+    const probePage: string = AppStorage.get<boolean>('gpuResidentM1') === true ? 'pages/GpuResidentM1' : AppStorage.get<boolean>('gpuResidentM0') === true ? 'pages/GpuResidentM0' : AppStorage.get<boolean>('cwDemo') === true ? 'pages/ClearWaterDemo' : (AppStorage.get<boolean>('p051v2Demo') === true || AppStorage.get<boolean>('singleSandDemo') === true) ? 'pages/P051DerivedV2Demo' : AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
       'pages/P013P1G0Probe' : 'pages/SandCanvas';
     windowStage.loadContent(probePage, (err) => {
       if (err.code) {

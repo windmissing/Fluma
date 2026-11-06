@@ -1,3 +1,4 @@
+import { P013SingleSandController } from '../render/P013SingleSandController';
 import { common } from '@kit.AbilityKit';
 import { DiagnosticColdFiles } from '../physics/DiagnosticColdFiles';
 import sensor from '@ohos.sensor';
@@ -13,6 +14,8 @@ class DerivedFrameV2 extends FrameCallback {owner:P051DerivedV2Demo|null=null;on
 @Entry
 @Component
 struct P051DerivedV2Demo {
+ private readonly singleSand=new P013SingleSandController();
+ private readonly useSingleSand:boolean=AppStorage.get<boolean>('singleSandDemo')===true;
  private readonly model=new P051DerivedDemoV2();private readonly renderer=new P013SceneController();private readonly callback=new DerivedFrameV2();private publication:DerivedPublishedSlotV2=this.model.createPublicationCold();private budgetFrames=0;private previous=0;private serial=0;private active=false;private queued=false;private surfaceWidth:number=320;private surfaceHeight:number=480;
  private readonly gravityConfig:P051GravityConfig=new P051GravityConfig();private readonly gravity:P051GravityInputAdapter=new P051GravityInputAdapter(this.gravityConfig);private sensorActive:boolean=false;
  private readonly accelerometer=(data:sensor.AccelerometerResponse):void=>{if(this.active)this.gravity.consumeAccelerometer(data.x,data.y,data.z,p013NowMs());};
@@ -29,6 +32,12 @@ struct P051DerivedV2Demo {
   this.model.budget.leave(inputScope);
   if(!this.model.tick(ns,dt)){this.model.budget.outcome(3);this.status=this.model.status;this.schedule();return;}const copy=this.model.copyPublicationInto(this.publication);if(copy!=='OK'){this.model.budget.outcome(4);this.status=copy;this.schedule();return;}
   const p=this.publication,c:P012FrameContext={physicsCommitId:p.physicsCommitId,particleLayerEnabled:true,fieldEpoch:p.stateEpoch,continuityEpoch:1,geometryEpoch:1,frameSerial:++this.serial,sampleTimeMs:ns/1e6,frameDeltaMs:dt*1000,inputMode:'EXPERIENCE',sourceKind:'gesture',physicalRouteId:'dual-field-particle-v1',runIdentity:p.runId,boxX:0,boxY:0,boxW:this.surfaceWidth,boxH:this.surfaceHeight,pixelRatio:1,visualInverted:false,appearanceTier:P012AppearanceTier.OFF,renderSeed:51,configRevision:1,ablation:P012Ablation.OFF,fillBox:P012FillBox.TIGHT,canonicalEvidence:false,gravityDirX:Math.sin(p.effectiveTiltDeg*Math.PI/180),gravityDirY:Math.cos(p.effectiveTiltDeg*Math.PI/180),sandTracerEnabled:false};
+  if(this.useSingleSand){
+   const receipt=p.drawSingleSand(this.singleSand,c,this.getUIContext().vp2px(1));
+   this.model.budget.outcome(receipt?.currentFrameSucceeded?0:receipt?.presentationState==='STALE'?1:2);
+   this.status=receipt?.currentFrameSucceeded?'单沙双态':receipt?.presentationState==='STALE'?'上一有效帧（STALE）':'绘制故障：'+this.singleSand.failure;
+   this.schedule();return;
+  }
   const receipt=p.drawNewPipeline(this.renderer,c,ns,this.getUIContext().vp2px(1));this.status=receipt?.currentFrameSucceeded?'运行中':receipt?.presentationState==='STALE'?'上一有效帧（STALE）':'绘制故障：'+this.renderer.failure;
   this.schedule();
   }catch(error){this.model.budget.outcome(5);throw error as Error;}finally{this.model.budget.end();}
@@ -45,6 +54,17 @@ struct P051DerivedV2Demo {
       Button('重置').onClick(()=>{this.model.reset();this.publication=this.model.createPublicationCold();})
     }
     Button('导出帧预算').onClick(async()=>{try{const context=getContext(this) as common.UIAbilityContext;const file=await new DiagnosticColdFiles(context.filesDir).save('v2-budget-'+Date.now()+'.json',this.model.budget.exportCold());this.status='预算收据已保存：'+file.name;}catch(e){this.status='BUDGET_EXPORT_FAILED';}})
+    if(this.useSingleSand){
+      Button('导出材质收据').onClick(async()=>{
+        const receipt=this.singleSand.lastReceipt;
+        if(receipt===null)return;
+        try{
+          const context=getContext(this) as common.UIAbilityContext;
+          const file=await new DiagnosticColdFiles(context.filesDir).save('single-sand-'+Date.now()+'.json',JSON.stringify(receipt));
+          this.status='材质收据已保存：'+file.name;
+        }catch(e){this.status='SINGLE_RECEIPT_EXPORT_FAILED';}
+      })
+    }
     Stack() {
       XComponent({id:'p013_lmat_surface',type:XComponentType.TEXTURE,libraryname:'p013renderer'})
         .width('100%').height('100%').onLoad(()=>this.renderer.onLoad()).hitTestBehavior(HitTestMode.None)
