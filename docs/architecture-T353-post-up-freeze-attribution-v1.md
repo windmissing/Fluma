@@ -1,5 +1,7 @@
 # T353 · 停源冻结首次归因、倾角与入口分流 v1
 
+**2026-11-06 续裁见 §6。** T358 已裁定旧窗口未保存。T360 原档确认新包在所覆盖窗口继续步进，并补足了采样边界。旧冻结的首处分歧仍待复现。
+
 2026-11-05，architect，不使用真机。消费 T350 原卡评论、正式报告、`test/reports/t350/` 全部六份日志、T346/T347/T348/T349 报告和对应源码。T347 签包本地 SHA256 实核为 `0195c9359f6cf397cd5bf76afc17a7702e459da93a23bc47b862ff3252df445d`，与 T350 声明一致；源码基准为报告登记的 `41c5351`，使用 `git show` 读历史版本，不将 T351 在途修改冒充旧签包源码。未运行设备或重跑测试，未改产品代码。
 
 ## 1. 裁定和真实前置
@@ -64,3 +66,31 @@ effector 使用现有真实手持基线 T355：同run/入口/包，直立→小�
 T348 已证触摸→干源注入存在，不能移植湿链 `stageGestureSandAndFeed` 到干场。T350 A 默认是FLUID/rendermode1、粒子请求默认关闭，属于STRUCTURAL_ZERO_OFF；B显式粒子路线有出生但复现code100，T342 exact70 V2只修V2链，不给V1补了隐含修复。T342 S1-S4和T347窄功能证据可供切换裁决，但T350停源争议、T352性能/真实触摸续证仍未闭合；由manager作默认入口/生产切换决策，不自行修旧V1或切V2。
 
 T351继续T349的性能工程，T354/T357继续独立计数/位型差分；本卡只写本工程稿，与其WaterSandField/Hot/facade/page/renderer共享hunk不冲突。新诊断优先复用其固定收据，但要保原签包复现身份与功能对照，不能把速度变好当冻结自动修复。后续开发需本角色编译/非机回归，设备执行另卡；持续推进至当前范围完成或具体阻断，清单仅改本人行状态，渲染前背景均XComponent+shader。
+
+## 6. 2026-11-06 续裁：T360 新包步进有证，旧冻结仍待定位
+
+消费 T358 `RAW_WINDOW_NOT_SAVED` 裁定、T359 诊断源码与交付、T360 正式报告和原卡回执。以 `test/reports/t360/v2-budget-t360-arm{1,2,2b}.json` 自带 fields/stages 解码，同 `hilog_arm1/2.txt` 对齐 run/epoch/commit/token。签包本地 SHA256 实核 `cd9fbef5143100bc28f4c2d49d36a8af9bb876e18e67208e8acd8da614358316`，与 T350 `0195c935…` 是不同包。三份冷档 SHA256 分别为 `a8a81138c882de739ed9a9e7d78446a0edf54235cd389ceb1e0edba08903950a`、`2b69a6ac2cdefe8a5453fd6ed31d7255bee8fad7301920becadbc832f3d9ee31`、`f9d2d09a5e2657e7cd7561b0b868a3a825d34e129340bcee6aa1898de2ccd27f`。本次只离线核原档与实现。
+
+### 6.1 原档裁定和对报告措辞的修正
+
+三份 cuts 都是同一 run `p011-run-1793926161426-3`、epoch 2 的 256 行最近窗口。arm1/arm2/arm2b 各只含 callback 437–441、1177–1180、1459–1463，且首帧可能只剩部分切点。跟踪集合三档全为 ID 1/2/3，另有 ID 0 命令回执，覆盖不会随“多看90秒”而扩大。T359 `StopCuts.predicted()` 只搜 `plan.motionParticleId[]`，未采 DEPOSIT/CROSSING 请求的预测和 grant。所有三档 stage1 对 ID 1–3 都是 `present=0`。stage2 是应用后池读数，且收到了 planner preview 的写回，需用 attempt/substep 及最终 bank 判断权威提交。`physicalSlot` 在预测行实为 motion 行位置，跨切点统一按 ID，而非槽号对比。
+
+| 资产 | 原始结果 | 裁定 |
+|---|---|---|
+| arm1 | 末段 callback 437–441 均 held=0、STEP OK、Q=2、dt=1/60、fault=0，成功 elapsed 14.500→14.633 s。子步收据显示较早 live 94→83，最终被追踪 ID 1–3 在 bank/slot 仍 live，y≈1.1547015、vy=0。 | 停源窗口内有成功步进和活池减少。live 减少单独无法区分全额 LAND、合并等退役原因。仅凭 y/vy 无法判定三 ID 已计入床库存。报告“441→1050 的20.3物理秒”不是 arm1 cuts 的 UP 后实测区间，不能用帧差替代 UP 锚点/累计成功 elapsed。 |
+| arm2 | callback1179 stage8 held=1，commit2367，sourceEpoch/admissionCount=11，elapsed39.233333 s。下一帧 canonicalBefore held=0，仍为2367，随后 stage8 commit2369、Q=2、elapsed39.266667 s，A=0。128 帧预算仅一次 A=1（1179），live 83→124 对应净增41。 | 捕获了 held 从 1 到 0 的页内边界及紧随其后的正常 STEP。`held` 无 stopReason，不能独立确认为系统 UP 事件，手势动作由执行记录佐证。报告称“新粒子 stage2 预测 y=1.218/1.282/1.346”实为旧 ID 1/2/3 的应用后预览读数，vy=0，同窗 bank/slot 仍约1.1547；不能据此证明新粒子下降。 |
+| arm2b | 同 run held=0、sourceEpoch/admissionCount仍11，128 帧全部 Q=2/A=0、live=124；末 stage8 commit2935、elapsed48.700000 s。以 arm2 末次 held=1 回执作边界，成功累计 elapsed 增约9.466667 s。旧 ID 1–3 仍 present、同 F64 y/vy。 | 已覆盖≥8 实际成功物理秒与停源后无新增准入。live 恒定不能证明124粒全部沉积，且124包含原有83粒的基数。原档无新粒逐ID、state/床量或同 commit LAND grant，冻结或完成态都不能在该批粒子上定案。 |
+
+所采 final bank/slot 中三 ID 的位型一致，stage8 请求/实际 token 匹配。前缀中的 commit 差由 Q 和外源 A 共同解释。T360 的“未复现”限于**新包已覆盖的场景和可观测粒子**，能排除这一窗口内整条 step/发布链停止。新生群仍缺观察，故不能升级为“相同负载必然不冻结”，也不能推出复位残留或注入节奏是病因。旧日志 runId 的 `-3` 不能代替用户实际重置次数，新包三个档也都是 `-3` 后缀。T350 可核原件只有九笔实际准入和末段至406，报告所称长负载/重启史须作为待控制变量，不能当已证触发条件。
+
+acceptedTiltRad 的30°/42°同时出现在同一档中的不同切点。stage1 的角来自传入计划，stage2 等可继承最近计划角，preview 候选不等于最终 publication。现有证据无法从该分布证明“按钮+15使提交角30→42”。保留空场 tan30 可行域裁定。要验证按键与传感器覆盖，须同 commit 记录输入源、target、最终 accepted 和 publication 角，排除 preview 值。真实手持仍按 §5 独立处理。
+
+### 6.2 条件分流和最小下一步
+
+当前定案为 `STEP_CONTINUES_IN_OBSERVED_WINDOW / NEW_COHORT_NOT_OBSERVED / ORIGINAL_FIRST_DIVERGENCE_UNRESOLVED`。旧 T350 原始窗口已确认不可追回，新包首次分歧仍无足够逐 ID 证据。只保留一次有明确判别条件的补证，停止原样重跑 T360。T347 注入期 LAND/床增窄证、V1 默认/code100 和 T361 性能分流各自保留。源码中 `pState==2` 会走接触沉积请求，未全额沉积可以保持 live、贴面、vy=0。该合法候选需要 state/余量/guard 收据区分，不能据贴面读数认定是旧悬空冻结。
+
+developer 先修 T359 **观测**接口，复用 `test/t359/StopCuts.ets`、生成器与既有有界冷出口。按 `(run,epoch,admissionTransactionId)` 在最后一笔实际 accepted admission 选择最多3个**新生且离床的 ID**，为其单独固定 UP/停源锚点，旧 ID 只作可选对照。记录 stopReason=`UP|CANCEL|STALE_SENSOR|ADMISSION_REJECT|LIFECYCLE` 与事件时间，帧回执关联 sourceEpoch、实际 accepted 增量、step Q/elapsed。每 ID 记录 state、床高度/净高、质量、motion/DEPOSIT/CROSSING 行类别，requested/granted/remainder、零 grant 首因及本 commit 的 LAND/退役原因，before→predicted→afterApply→prepublication→bank→slot。显式区分 PREVIEW/AUTHORITATIVE 和 `NO_MOTION_ROW`/`ABSENT_ID`。同 commit 保存床量差和最终 accepted 角，热路固定容量，保留独立锚点和最近短环，覆盖不得吞掉前后锚点。编译和非机证明观测开关位型等价，产品物理保持原合约。
+
+tester 使用同一新签包/入口和确定的 accepted 角。先用已观测的9笔节奏做单 run 对照，再用相同脚本在明确 reset/重启历史的 run 复做，仅改变这一因素。若两者都没有冻结且新生群观察完整，最多加一组明确上限的较长注入或高 live 负载，登记真实 accepted 数/列/高度/时间。每臂满足有效悬空 ID、真实停源及 ≥8 成功物理秒或同 token 全额 LAND，10分钟墙钟上限，固定采停源前、首个成功子步及末端。无悬空样本或超墙钟为 `INSUFFICIENT_SUPPORT`，不得填 PASS。若已捕获原形态，按 §4 首分歧表归 architect。若三组皆不复现且覆盖闭合，回 architect 按已覆盖条件结案，不扩大矩阵。
+
+本卡续裁交付完成到上述证据边界。旧悬空冻结根因和生产修复仍缺新生群首次分歧，原卡“看评论”，请 manager 按新观测前置派工。此为 tester 的定点证据和 developer 的诊断工作，architect 继续负责首次归因。前景与背景使用 XComponent+shader，故障沿 FAULT 或完整旧 token STALE。

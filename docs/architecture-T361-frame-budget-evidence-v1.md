@@ -1,5 +1,7 @@
 # T361 · 帧率无收益首次归因与预算补取工程 v1
 
+**2026-11-06 续裁见 §6。** T363 已追回预算原件。设备慢窗主导段定位到 CPU 粒子 `hotApply`，§1 的待归因状态及 §3–4 的取档条件分支以本轮证据更新。
+
 2026-11-05；architect；不使用真机。读 T352 原报告、三份 phase 日志和 layout0，T351 delivery/签包台账、FrameBudgetV2、页面和 DiagnosticColdFiles。本文未重跑设备、未实现产品。CPU 主线优先；T353/T359/T360 功能冻结与本性能案独立。
 
 ## 1. 裁定
@@ -59,3 +61,43 @@ JSON字段以文件自身schema为准；当前T351 V1 frame row[1]是rawCallback
 | enabled/invalid/coverage不合格 | 返回精确字段与文件缺口，不新猜产品瓶颈 |
 
 按参考33.3ms、真实逐callback/互斥段p50/p95及window吞吐报告ON/OFF/负载，列native GPU时长NOT_MEASURED。T352 FAIL仍保留；本稿不是修复收益证明。所有渲染前背景只走XComponent+shader，失败FAULT或完整旧token显式STALE，不能为性能删严格域、物理事务、守恒或endpoint合同。
+
+## 6. 2026-11-06 续裁：CPU hotApply 主导，转粒子事务工程
+
+消费 T363 正式报告、原卡回执及 `test/reports/t360/v2-budget-t352-era.json`。原文件58488 B，SHA256实核 `f320e6a6bfd4f7f22d14a3ab572075cdc39b00f830f4ee0d7eae569c537f0ee3`。T363 由 `v2-budget-1793882460817.json` 的生成时点、沙箱来源和同 run/commit/frameToken 绑定至 T352 所测 `18399de8…` 包，最终交付 `70aec640…` 是另一个包。本文件自身没有嵌入 HAP SHA。以下归因绑定 T352 所测包的这段存档，最终交付包的实测仍待独立取证。
+
+### 6.1 分母、身份、互斥闭合
+
+按文件自身 `T351_EXCLUSIVE_FRAME_BUDGET_V1` 与 fields/stages/offsets 解析。无子步数组。`enabled=true, open=false, invalid=0, overwritten=1368, incomplete=true`，最近128条 callback serial1369–1496 连续，均 run `p011-run-1793882179550-3`/epoch2，commit2747–3001。首末 token 的 scene serial1368/1495 与 callback serial 相差1，关联键用完整 token，不能混用两个序号。`outcome=0` 的128行覆盖稳定慢窗，`N=512/live=101/Q=2/A=0` 全窗恒定，commit差均2。128条中121条 R=606，余534–597。R 是递交 hot apply 的请求行总数（含预览尝试），无逐行种类/获准结果。六次 hotApply、十八次 collect 和六次 hot begin 尝试每帧；`rollbacks=14` 来自 derived counter11，记录内部恢复，不能当作14次失败物理提交。
+
+各帧 `[24:44]` 互斥和与 `wallMs` 精确闭合128/128，invalidSegments=0。按原始 callback ns 转毫秒，P50/P95/max=767.742/768.993/784.432ms，callback wall=759/763/767ms。P50 取中位数，P95取升序 `ceil(.95*n)-1`。对127个连续相邻帧比较 `interval[i]-wall[i-1]`，剩余中位8.038ms、P95 12.014ms、范围1.755–17.432ms，`sum(prevWall)/sum(interval)=98.93%`。配对仅作两时钟观测下的回调占用估计，剩余含调度、回调外工作及量化。约1.30fps原慢窗成立。T352较宽的触摸段含更快阶段，660.5ms 的节流区间统计仍采用§2修正，不能以这128帧为其整个分母，空场也不在原件覆盖内。原请求dt=1/30，成功Q=2；缺该版真实子步回执，继续分开请求dt、Q与实测elapsed。
+
+| 独占段 | 每帧 p50 / p95 ms | 128帧累计 ms | 累计份额（分母96,896ms） |
+|---|---:|---:|---:|
+| **hotApply** | **634 / 637** | **80,796** | **83.38%** |
+| exact70 | 37 / 38 | 4,787 | 4.94% |
+| collect | 30 / 31 | 3,794 | 3.92% |
+| field | 18 / 20 | 2,381 | 2.46% |
+| preview 自身 | 11 / 13 | 1,376 | 1.42% |
+| publicVerify 自身 + structure/exact70/strictDomain | 按同帧各列求和 | 6,313 | 6.52%（包含上表 exact70，勿重复相加） |
+| authorityCompare | 8 / 9 | 1,066 | 1.10% |
+| pack | 5 / 5 | 620 | 0.64% |
+| nativeDraw API wall | 2 / 3 | 297 | 0.31% |
+
+`hotApply` 单次独占最大值的每帧中位约111ms。去掉该段后同帧剩余 wall 中位仍126ms，仅表示现有账的剩余量，不能预测真实优化后的帧时间。nativeDraw 仅 NAPI/提交返回 wall，异步 GPU 耗时 `NOT_MEASURED`。包内预算全 ON，**ON/OFF 开销仍不可测**。T363 的“MEASURABLE”适用于 ON 阶段分账，不能代替成对的开销对照。原档已成功追回，本次归因不以重做导出/manifest 或重跑旧包为前置。
+
+### 6.2 源码对应和工程归因
+
+`P011ParticleHot.ets::applyParticlePlanInto` 进入预算 stage6 后，覆盖计划校验、逐行 `sink.applyInto` 及 motion 尾部 transfer/audit。`P011ParticleM2Sink.ets` 的 row 内有 reserve/guard、`preparePatchHot`、`publishPatchHot`、`SINK_ROW` 审计、budget/event 和 `finishPatchHot`。现行 prepare 仍读 authority→`patchBefore`→`patchScratch`，编辑后复制到 `patchAfter`，publish 再写 authority，lease checks 与实际 buffer 检查每行执行。`patchAfter` 也用于最终投影/证据与原事务 trace，简单别名化会改变写入和冻结证据。T331 已有 SINK_ROW 增量证书、K=16重验、回退及 audit ID 索引，因此不得按旧 T311 的“每行全池审计”假设制定修法。具体子段份额尚待测，证据只定位到 `hotApply` 及其工作放大。
+
+预算中 authority 字节对拍76,800 B/帧，fill+consumer复制117,248 B/帧。Derived counter19（`copyPoolHot` 与 `copyPoolDiagnosticHot` 的成功数组 payload 计数）中位75,942,912 B/帧，按 N512 的30,208 B一次折合2514个等量 payload，包含全回调发生的复制而非 stage6 独有。counter9 中位108,977,888属于派生结构复制计数，和其它复制可能同一调用发生，不求和冒实际内存带宽。相同R不等于相同DEPOSIT/CROSSING或触列，不能仅凭606=101×6就定为接触阻塞或 T353 的冻结机理。
+
+T351 公共边界/authority 比较改动范围相对该实测工作很小，能够解释为何只改该处难以在这一慢窗看到明显端到端收益。缺同条件旧包分段和 ON/OFF，无法估算实际节省多少毫秒，也不能外推为空场主因。首次归因裁定为 `CPU_HOT_APPLY_DOMINANT_OBSERVED_WINDOW`，T352 的性能FAIL保留。
+
+### 6.3 接力合同
+
+1. **developer 工程先行**。拥有 `P011ParticleHot.ets`、`P011ParticleM2Sink.ets` 和 `P011ParticleField.ets::validateHotTransfer/transferHotState` 的受控热路，以及已有 T311/T351 冷收据适配。与 T359/T364 共有接点按角色串行交接。先复用 `P011HotWorkReceipt` 和 T331 计数，在诊断变体按帧/物理 substep/attempt 划分 preview 与 authoritative。输出 request kind、尝试/重试、full/incremental/fallback 审计、检查次数、array payload bytes、actual/exact70 derived copy bytes、event/lineage、guard及各子段时间。至少拆 plan identity、prepare/lease 校验、typed array transfer/派生 copy、row audit、预算/事件及 apply tail。现有 nested inclusive 计时保留标签，只有互斥子段可相加。只按样本 attempt 开细计时，固定环冷导出，单列诊断成本，禁止每行日志/字符串/全池导出。
+2. **先消可证明重复的校验与传输**。候选首件为 `validateHotTransfer` 的缓冲互异检查预绑定：按 workspace/attempt 的受控固定13缓冲组建立经完整 preflight 的白名单。每次依原错误顺序检 patch busy、shape、actual 对象/byteLength/绑定代及租约身份，等价才省重复交叉比较，未注册、detach、替换、别名、callback可变或阶段身份异常走原完整检查与原错误。不可缓存行数据合法性或成功结论。若拷贝仍主导，限定私有 staged scratch 的所有权，在被下一审计覆写前核源/目的与使用者，按实际读写闭包决定可合并的复制；`patchBefore`回滚、`patchAfter`冷投影/证据和 tuple/exact70 冻结位型必须保持。不能证明者保留完整原路。若要将每请求全池物理快照改为局部 journal，需要独立证明所有 writer、merge/allocator、严格故障优先级和回滚闭包，先交 architect 定不变量，再交 designer。T331的K、全验与fallback、每个public exact70/严格域、dt、物理通量/事件次序、守恒与事务仍作为现有合同。
+3. **验证与继续分流**。非机回归选同 N=512、近L=101、A=0、Q=2、R约534–606 的高接触/跨列夹具，再含空场、低L、源入、部分/全额LAND及预览回滚。验证状态、pY/pVy、exact70、events、首错、备份恢复与 public token 同位型；同步核T311/T331/T351计数及copy工作界，不能以host耗时宣真机通过。developer完成编译/签包和本角色检查后，由独立tester用同版本包在同设备采空场、注入、停源高负载三短窗，阶段账有效且身份完整。只有需要定诊断成本时另用帧边界ON/OFF并采同分母，沿§4最小入口复用；生产通过仍需真实逐callback预算，不新增manager门。若 hotApply 已明显下降而剩余仍远超33.3ms，按新文件的主导项继续分流，保留原失败证据。
+
+T361 本轮归因与工程合同已交付，可按“结束待验收”登记。诊断 ON/OFF、空场阶段分账及最终包性能属于明确的后续验证。T353停源功能继续独立，前景/背景仍由 XComponent+shader，失败沿 FAULT 或完整旧 token STALE。
