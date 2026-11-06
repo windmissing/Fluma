@@ -35,7 +35,11 @@ TransportCode Run::Pump(){
   constexpr uint64_t kPumpBudgetNs=8000000;
   const auto pumpStart=std::chrono::steady_clock::now();
   while(true){
+   const auto before=transport.tailObserver.Stamp();
    auto code=transport.ContinueSubmit();
+   const auto after=transport.tailObserver.Stamp();
+   const auto root=(uint64_t(nonce.hi)<<32)|nonce.lo;
+   transport.tailObserver.Emit({TailStage::Continuation,root,before,after,0,0,0,uint32_t(code)});
    if(code==TransportCode::BUSY)return code;
    if(code==TransportCode::OK_SUBMITTING){
     const auto elapsed=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-pumpStart).count());
@@ -43,7 +47,9 @@ TransportCode Run::Pump(){
     return TransportCode::OK;          // (iii) budget exhausted: next Pump continues
    }
    if(code!=TransportCode::OK){Fail(code);return code;}
-   inflight=true;submitting=false;return TransportCode::OK; // (i) sealed
+   inflight=true;submitting=false;
+   transport.tailObserver.Emit({TailStage::Inflight,root,after,after,0,0,0,0,2});
+   return TransportCode::OK; // (i) sealed
   }
  }
  if(inflight){AcceptedRoot accepted;auto code=transport.Poll(accepted);if(code==TransportCode::BUSY)return code;inflight=false;
@@ -60,7 +66,10 @@ TransportCode Run::Pump(){
  // semantics below only ever see sealed inflight roots.
  if(code==TransportCode::OK_SUBMITTING){nonce=next;sourceFlight=sourcePending;submitting=true;receipt.submitted++;return TransportCode::OK;}
  if(code==TransportCode::BUSY)return code;if(code!=TransportCode::OK){Fail(code);return code;}
- nonce=next;sourceFlight=sourcePending;inflight=true;receipt.submitted++;return TransportCode::OK;
+ nonce=next;sourceFlight=sourcePending;inflight=true;receipt.submitted++;
+ const auto stamp=transport.tailObserver.Stamp();
+ transport.tailObserver.Emit({TailStage::Inflight,(uint64_t(nonce.hi)<<32)|nonce.lo,stamp,stamp,0,0,0,0,root.kind});
+ return TransportCode::OK;
 }
 uint32_t Run::DiscardSources(){uint32_t keep=SourceInFlight()?1:0,dropped=count-keep;count=keep;if(!keep){head=0;sourcePending=false;if(!inflight&&nextQuantum>receipt.time.quanta){receipt.active=false;receipt.complete=true;}}return dropped;}
 void Run::Suspend(){DiscardSources();suspended=true;clock.Pause();if(!inflight){receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;}}

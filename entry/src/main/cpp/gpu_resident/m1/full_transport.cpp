@@ -72,7 +72,7 @@ TransportCode FullM1Transport::SubmitQuantum(const QuantumParameters& p,RootRequ
  active=true;quantumFlight=true;
  submitPhase=SubmitPhase::BATCH_ACTIVE;passCursor=0;batchesIssued=0;flushes=0;submitFirstNs=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());submitTotalWallNs=0;submitPumpWallNs=0;
  submitObserver.Emit(SubmitStage::SubmitRootBegin,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo));
- auto batch=ExecuteBatch();
+ auto batch=ObserveBatch();
  submitPumpWallNs+=lastBatchWallNs; // T329: first batch counts toward this Pump's loop total
  if(batch!=TransportCode::OK_SUBMITTING){FailSubmit();return batch;}
  return TransportCode::OK_SUBMITTING;
@@ -90,6 +90,25 @@ TransportCode FullM1Transport::SubmitQuantum(const QuantumParameters& p,RootRequ
 // each table entry is one op, Sort entries each count once. Batch ends at
 // kBatchMaxOps or budget exhaustion or table end. Fence+flush only on the
 // final batch, at the original position (after Pass(27) + FinalizeRoot).
+void FullM1Transport::FlushBatch(bool final,uint32_t from){
+ const auto before=tailObserver.Stamp();
+ glFlush();
+ const auto after=tailObserver.Stamp();
+ if(tailObserver.write)flushSample={TailStage::Flush,
+  (uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,after,from,passCursor,0,
+  uint32_t(final),batchesIssued};
+}
+TransportCode FullM1Transport::ObserveBatch(){
+ if(!tailObserver.write)return ExecuteBatch();
+ const auto before=tailObserver.Stamp();
+ const auto from=passCursor,prior=batchesIssued;
+ const auto root=(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo;
+ const auto code=ExecuteBatch();
+ const auto after=tailObserver.Stamp();
+ if(batchesIssued!=prior)tailObserver.Emit(flushSample);
+ tailObserver.Emit({TailStage::BatchCall,root,before,after,from,passCursor,0,uint32_t(code),batchesIssued});
+ return code;
+}
 TransportCode FullM1Transport::ExecuteBatch(){
  if(submitPhase!=SubmitPhase::BATCH_ACTIVE)return TransportCode::NOT_READY;
  if(!quantum.Current())return TransportCode::WRONG_OWNER;
@@ -123,7 +142,7 @@ TransportCode FullM1Transport::ExecuteBatch(){
   // submittedUniformBytes+8 measured at that moment).
   const auto& r=pending;pending.uploadedBytes=quantum.uploadedStage33;
   source.owner.pending.uploadedBytes=quantum.uploadedStage33;quantum.trace.FinalizeRoot(r);
-  submitObserver.Emit(SubmitStage::FenceEnter,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo));quantum.fence=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);submitObserver.Emit(SubmitStage::FenceExit,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo),quantum.fence?0:1);glFlush();
+  submitObserver.Emit(SubmitStage::FenceEnter,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo));quantum.fence=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);submitObserver.Emit(SubmitStage::FenceExit,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo),quantum.fence?0:1);FlushBatch(true,from);
   stats.dispatches+=quantum.dispatches;stats.barriers+=quantum.dispatches;stats.fences++;stats.uploadedBytes+=quantum.uploadedStage33;
   auto gl=glGetError();if(!gl)gl=quantum.firstGlError;if(gl&&!stats.firstGlError)stats.firstGlError=gl;
   submitPhase=SubmitPhase::FENCE_PENDING;submitTotalWallNs=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count())-submitFirstNs;
@@ -133,7 +152,7 @@ TransportCode FullM1Transport::ExecuteBatch(){
  // T324 Amendment 2 keeps the non-final flush layout. Amendment 3
  // warms the first real submit separately before READY. SubmitExit spans
  // the batch and this flush; lastBatchWallNs retains its pre-flush sample.
- glFlush();flushes++;
+ FlushBatch(false,from);flushes++;
  return TransportCode::OK_SUBMITTING;
 }
 // T324 §2.3: same-nonce continuation called by Run while submitting.
@@ -144,7 +163,7 @@ TransportCode FullM1Transport::ContinueSubmit(){
  if(submitPhase==SubmitPhase::FENCE_PENDING)return TransportCode::OK;
  if(submitPhase!=SubmitPhase::BATCH_ACTIVE)return TransportCode::NOT_READY;
  SubmitScope observed(submitObserver,SubmitStage::SubmitEnter,SubmitStage::SubmitExit,((uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo));
- auto result=ExecuteBatch();
+ auto result=ObserveBatch();
  // T329 (Amendment 1 §2.5): accumulate this batch's wall into the current
  // Pump's loop total (reset per root at SubmitQuantum; read by J1 to verify
  // the single-Pump seal expectation).
@@ -176,6 +195,9 @@ TransportCode FullM1Transport::CancelSubmit(){
 }
 void FullM1Transport::FailSubmit(){if(submitPhase==SubmitPhase::FENCE_PENDING&&quantum.fence){glDeleteSync(quantum.fence);quantum.fence=nullptr;}source.owner.Stop();source.candidatePinned=false;failed=true;submitPhase=SubmitPhase::IDLE;passCursor=0;active=false;quantumFlight=false;}
 TransportCode FullM1Transport::Poll(AcceptedRoot& out){
+ const auto before=tailObserver.Stamp();
+ const auto acceptedBefore=tailObserver.write?source.Owner().AcceptedCount():0;
+ const auto root=(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo;
  SubmitScope observed(submitObserver,SubmitStage::PollEnter,SubmitStage::PollExit,((uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo));
  auto result=[&]()->TransportCode {
  out={};if(lost)return TransportCode::STATE_LOST;if(!active)return TransportCode::NOT_READY;
@@ -186,7 +208,16 @@ TransportCode FullM1Transport::Poll(AcceptedRoot& out){
  glBindBuffer(GL_COPY_READ_BUFFER,results[pending.publicationSlot]);auto p=glMapBufferRange(GL_COPY_READ_BUFFER,0,1024,GL_MAP_READ_BIT);if(!p){failed=true;source.owner.Stop();return TransportCode::GL_FAILED;}std::memcpy(tail.data(),p,1024);stats.mappedBytes+=1024;bool good=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;auto gl=glGetError();if(gl&&!stats.firstGlError)stats.firstGlError=gl;
  auto code=source.owner.Poll(FenceState::Signaled,tail.data(),256,good?(gl?gl:quantum.firstGlError):GL_INVALID_OPERATION,out);glDeleteSync(quantum.fence);quantum.fence=nullptr;source.candidatePinned=false;active=false;used[pending.eventArena]=tail[53];submitPhase=SubmitPhase::IDLE;if(code!=ControlCode::OK){failed=true;return TransportCode::PROTOCOL_REJECTED;}source.tail=tail;source.pending=pending;source.lastFrame=pending.frame;lastPublication=out.publication;return TransportCode::OK;
 
- }();observed.End(uint32_t(result));return result;
+ }();
+ const auto after=tailObserver.Stamp();
+ if(tailObserver.write){
+  const auto acceptedAfter=source.Owner().AcceptedCount();
+  tailObserver.Emit({TailStage::RealPoll,root,before,after,acceptedBefore,acceptedAfter,pending.kind,uint32_t(result)});
+  if(acceptedAfter>acceptedBefore)tailObserver.Emit({TailStage::Accepted,root,after,after,
+   (uint64_t(out.publicationGeneration.hi)<<32)|out.publicationGeneration.lo,
+   (uint64_t(out.source.hi)<<32)|out.source.lo,(uint64_t(out.physics.hi)<<32)|out.physics.lo,out.publication,pending.kind});
+ }
+ observed.End(uint32_t(result));return result;
 }
 ControlCode FullM1Transport::Stop(){failed=true;return source.Stop();}
 void FullM1Transport::ContextLost(){source.ContextLost();quantum.ContextLost();eventArenas[0]=eventArenas[1]=results[0]=results[1]=0;active=false;lost=true;submitPhase=SubmitPhase::IDLE;}

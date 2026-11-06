@@ -11,6 +11,7 @@ enum class SubmitPhase:uint8_t {IDLE=0,BATCH_ACTIVE=1,FENCE_PENDING=2};
 // to the same current native GL owner. Only Poll can accept a sealed root.
 class FullM1Transport {
 public:
+ TailObserver tailObserver;
  SubmitObserver submitObserver{};
  TransportCode Create(uint32_t K,uint32_t Kw,const Identity&,const QuantumParameters& cold=QuantumParameters{},uint32_t emitQ=16u*1048576u);
  TransportCode SubmitSource(const std::array<uint32_t,32>&,RootRequest);
@@ -57,6 +58,9 @@ private:
  // still owns its batch when it alone exceeds the budget (§5 boundary).
  static constexpr uint64_t kBatchBudgetNs=8000000;
  static constexpr uint32_t kBatchMaxOps=10;
+ TailSample flushSample{TailStage::Flush};
+ void FlushBatch(bool,uint32_t);
+ TransportCode ObserveBatch();
  TransportCode ExecuteBatch();
  void FailSubmit();
  void TestHook(uint32_t stage){

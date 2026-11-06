@@ -4,7 +4,7 @@ export interface ColdFile {name:string;bytes:number;sha256:string;}
 export interface TimelineStore {save(name:string,text:string):Promise<ColdFile>;}
 export interface TimelineIdentity {module:string;route:string;packageSha256:string;pid:number;}
 export interface TimelineRow {serial:string;ns:string;tid:string;epoch:string;run:string;surface:string;input:string;now:string;last:string;delta:string;root:string;stage:number;}
-const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel','SubmitWarmup'];
+const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel','SubmitWarmup','BatchCall','Flush','Continuation','Inflight','RealPoll','Accepted','Gap','Presentation'];
 interface TimelinePage {revision:string;clock:string;capacity:number;rowBytes:number;count:number;dropped:string;serial:string;cursor:number;rows:TimelineRow[];next:number;completePage:boolean;stageRevision:string;}
 export class TimelineManifest {
  stageRevision:string='T295_STAGE23_V1';stages:string[]=['INVALID','Invalidate','InitBegin','Ready','ReadyRejected','WaitEnter','Wake','FirstTick','AdvanceBegin','AdvanceEnd','AnchorSet','PumpBegin','PumpEnd','DrawBegin','DrawEnd','SwapBegin','SwapEnd','PauseBegin','PauseEnd','Offer','Consume','Stale','RootSubmit','RootPoll'];
@@ -25,6 +25,7 @@ export class GpuBridgeTimelineCold {
    case 'T317_STAGE39_V2':return 39;
    case 'T324_STAGE41_V1':return 41;
    case 'T324_STAGE42_V1':return 42;
+   case 'T384_STAGE50_V1':return 50;
    default:return 0;
   }
  }

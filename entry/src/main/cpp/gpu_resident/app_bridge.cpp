@@ -45,7 +45,24 @@ struct App : BridgeState {
  std::condition_variable wake;std::thread thread;
  bool quit=false;uint32_t Kw=128;
 #ifdef GRS_APP_M1
- m1::UiState ui;m1::SceneOptics optics;bool requiresReset=false;
+ m1::UiState ui;m1::SceneOptics optics;bool requiresReset=false,tailProbeNext=false;
+ void AddTailLocked(const TailSample& s,uint64_t writerBegin,uint32_t receipt=0){
+  BridgeTimeRow r;
+  r.ns=r.now=Stamp();r.tid=BridgeTid();r.epoch=transportEpoch;
+  r.run=(uint64_t(transportIdentity.run.hi)<<32)|transportIdentity.run.lo;
+  r.surface=(uint64_t(transportIdentity.surface.hi)<<32)|transportIdentity.surface.lo;
+  r.input=(uint64_t(input.hi)<<32)|input.lo;r.root=s.root;r.stage=uint32_t(s.stage);
+  r.code=s.code;r.carry=s.ordinal;r.probeStart=s.start;r.probeEnd=s.end;
+  r.probeA=s.a;r.probeB=s.b;r.probeC=s.c;r.receipt=receipt;
+  r.probeWriteNs=TailObserver::Now()-writerBegin;
+  timeline.Add(r);
+ }
+ void MarkGapTailLocked(AppTransport& gpu,U64 nonce,uint64_t stamp,uint64_t last){
+  if(!gpu.tailObserver.write)return;
+  const auto begin=TailObserver::Now();
+  AddTailLocked({TailStage::Gap,(uint64_t(nonce.hi)<<32)|nonce.lo,
+   stamp,stamp,last,gpu.Owner().AcceptedCount()},begin);
+ }
  void UiJsonLocked(std::ostringstream& o){o<<",\"sourceUiRevision\":\"GRS_M1_DEMO_UI_V4\",\"sourceOpen\":"<<(AllowedLocked()&&ui.SourceReady(Stamp())?"true":"false")<<",\"sourceKind\":"<<ui.source<<",\"sourceControlLo\":"<<uint32_t(ui.boundary)<<",\"sourceControlHi\":"<<uint32_t(ui.boundary>>32)<<",\"gravityMode\":\""<<(ui.sensorMode?"SENSOR":"EXPLICIT_MANUAL")<<"\",\"gravityRaw\":"<<ui.rawAngle<<",\"gravityTargetQ\":"<<ui.target<<",\"gravityAcceptedQ\":"<<ui.acceptedAngle<<",\"shakeDiagnostic\":"<<ui.shake<<",\"sourceReceiptStatus\":"<<ui.receipt<<",\"sourceAdmittedQ\":"<<ui.admitted<<",\"sourceRejectedQ\":"<<ui.rejected<<",\"sourceRequestSeq\":"<<ui.request<<",\"settledLo\":"<<ui.settled.lo<<",\"settledHi\":"<<ui.settled.hi<<",\"flightLo\":"<<ui.flight.lo<<",\"flightHi\":"<<ui.flight.hi<<",\"waterTotalLo\":"<<ui.water.lo<<",\"waterTotalHi\":"<<ui.water.hi<<",\"sandTotalLo\":"<<ui.sand.lo<<",\"sandTotalHi\":"<<ui.sand.hi<<",\"gpuBufferAllocatedBytes\":"<<ui.bufferBytes<<",\"frameTargetBytes\":"<<ui.frameBytes<<",\"knownGpuBytesPeak\":"<<ui.knownGpuPeak<<",\"cpuFixedControlBytes\":"<<(sizeof(App)+sizeof(AppRun)+sizeof(AppTransport))<<",\"driverMemory\":\"NOT_MEASURED\",\"calibration\":\"PENDING_CALIBRATION\""<<",\"submitPumpWallNs\":"<<submitPumpWallNsCached<<",\"warmupWallNs\":"<<(warmupEpoch==epoch.load()?warmupWallNsCached:0);}
  const char* OfferUiLocked(const std::array<uint32_t,32>& w){const char* code=ui.Offer(w,Stamp());return std::strcmp(code,"OK")==0?OfferLocked(w):code;}
  bool SetSourceLocked(int kind){if(!ui.SetSource(kind)){RevokeLocked("SOURCE_CONTROL_EXHAUSTED");wake.notify_one();return false;}cancelled+=count;head=count=0;wake.notify_one();return true;}
@@ -57,7 +74,12 @@ struct App : BridgeState {
 #ifndef GRS_BRIDGE_HOST_TEST
  BridgeDecode decoded{};std::array<BridgeDecode,64> offers{};size_t offerCount=0,offerDropped=0;
 #endif
- BridgeTimeline timeline;bool timelinePaused=false;bool transportLockHeld=false;uint64_t transportEpoch=0;Identity transportIdentity{};
+#ifdef GRS_APP_M1
+ BridgeTimeline timeline{true};
+#else
+ BridgeTimeline timeline;
+#endif
+ bool timelinePaused=false;bool transportLockHeld=false;uint64_t transportEpoch=0;Identity transportIdentity{};
  uint64_t Stamp()const {
 #ifdef GRS_BRIDGE_HOST_TEST
   if(hostNow)return hostNow();
@@ -99,6 +121,9 @@ if(launch)thread=std::thread([this]{loop();});}
  void loop(){
   EGLDisplay display=EGL_NO_DISPLAY;EGLContext context=EGL_NO_CONTEXT;EGLSurface surface=EGL_NO_SURFACE;
   void* held=nullptr;uint64_t seen=0,runId=0,last=0,frame=0,render=0,lastAccepted=0;bool failed=false,gap=false;
+#ifdef GRS_APP_M1
+  bool activeTailProbe=false;
+#endif
   std::unique_ptr<AppTransport> gpu;std::unique_ptr<AppRun> run;AppScene scene;
 #ifdef GRS_APP_M1
  bool suspended=false;m1::SceneOptics activeOptics;
@@ -125,7 +150,7 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
 #endif
    ){retire();seen=currentEpoch;failed=gap=false;{std::lock_guard<std::mutex> l(mutex);if(seen!=epoch)continue;
 #ifdef GRS_APP_M1
-    suspended=false;activeOptics=optics;ui.NewRun();
+    suspended=false;activeOptics=optics;activeTailProbe=tailProbeNext;ui.NewRun();
 #endif
     if(active&&window
 #ifdef GRS_APP_M1
@@ -146,6 +171,13 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
     transportEpoch=seen;transportIdentity=id;gpu=std::make_unique<AppTransport>();
     gpu->submitObserver={this,[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t ordinal,uint64_t wallNs){auto& app=*static_cast<App*>(ptr);std::unique_lock<std::mutex> lock(app.mutex,std::defer_lock);if(!app.transportLockHeld)lock.lock();BridgeTimeRow row;row.ns=row.now=app.Stamp();row.tid=BridgeTid();row.epoch=app.transportEpoch;row.run=(uint64_t(app.transportIdentity.run.hi)<<32)|app.transportIdentity.run.lo;row.surface=(uint64_t(app.transportIdentity.surface.hi)<<32)|app.transportIdentity.surface.lo;row.input=(uint64_t(app.input.hi)<<32)|app.input.lo;row.root=root;row.stage=uint32_t(stage);row.code=code;row.carry=ordinal;row.delta=wallNs;if(!app.timelinePaused)app.timeline.Add(row);}};
 #ifdef GRS_APP_M1
+    if(activeTailProbe)gpu->tailObserver={this,[](void* ptr,const TailSample& sample){
+     const auto begin=TailObserver::Now();
+     auto& app=*static_cast<App*>(ptr);
+     std::unique_lock<std::mutex> lock(app.mutex,std::defer_lock);
+     if(!app.transportLockHeld)lock.lock();
+     app.AddTailLocked(sample,begin);
+    }};
     auto code=gpu->Create(capacity,waterCapacity,id);
     {std::lock_guard<std::mutex> l(mutex);if(seen==epoch){warmupEpoch=seen;warmupWallNsCached=gpu->WarmupWallNs();}}
 #else
@@ -171,7 +203,11 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
    if(failed)continue;
    const auto time=Stamp();const uint64_t delta=last?time-last:1;if(!last)Mark(BridgeStage::FirstTick,seen,last,delta);
    if(delta>33333333u){
-    {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;MarkLocked(BridgeStage::PauseBegin,seen,last,delta);RevokeLocked("PAUSED_CLOCK");deltaNs=delta;carryBefore=run->Tick().time.carryAfter;cancelled+=run->Queued();phase="CLOCK_GAP";firstFailure="CLOCK_GAP";status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}
+    {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;MarkLocked(BridgeStage::PauseBegin,seen,last,delta);
+#ifdef GRS_APP_M1
+    MarkGapTailLocked(*gpu,run->CurrentNonce(),time,last);
+#endif
+    RevokeLocked("PAUSED_CLOCK");deltaNs=delta;carryBefore=run->Tick().time.carryAfter;cancelled+=run->Queued();phase="CLOCK_GAP";firstFailure="CLOCK_GAP";status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}
     auto pause=run->Pause();Mark(BridgeStage::PauseEnd,seen,last,delta,int(pause));last=0;gap=true;{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;input=gpu->InputGeneration();runQueue=run->Queued();carryAfter=0;advanceCode=int(pause);status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}continue;
    }
    {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;std::array<uint32_t,32> command{};if(FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);auto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}
@@ -190,7 +226,11 @@ run->Pump();
 {std::lock_guard<std::mutex> l(mutex);submitPumpWallNsCached=gpu->SubmitPumpWallNs();}
 #endif
 Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(last&&Stamp()-last>33333333u){
-    const auto elapsed=Stamp()-last;{std::lock_guard<std::mutex> lock(mutex);if(!CurrentLocked(seen,held))continue;MarkLocked(BridgeStage::PauseBegin,seen,last,elapsed);RevokeLocked("PAUSED_CLOCK");deltaNs=elapsed;firstFailure="CLOCK_GAP";phase="CLOCK_GAP";status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}
+    const auto elapsed=Stamp()-last;{std::lock_guard<std::mutex> lock(mutex);if(!CurrentLocked(seen,held))continue;MarkLocked(BridgeStage::PauseBegin,seen,last,elapsed);
+#ifdef GRS_APP_M1
+    MarkGapTailLocked(*gpu,run->CurrentNonce(),last+elapsed,last);
+#endif
+    RevokeLocked("PAUSED_CLOCK");deltaNs=elapsed;firstFailure="CLOCK_GAP";phase="CLOCK_GAP";status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}
     auto paused=run->Pause();Mark(BridgeStage::PauseEnd,seen,last,elapsed,int(paused));last=0;gap=true;continue;
    }if(run->Tick().fault){failed=true;publish("{\"state\":\"FAULT\",\"stage\":\"PRODUCT_COMPLETION\",\"code\":"+std::to_string(int(code))+"}");continue;}
    uint64_t acceptedNow=gpu->Owner().AcceptedCount();{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;accepted=acceptedNow;runQueue=run->Queued();input=gpu->InputGeneration();const auto& h=gpu->Owner().Header();sourceCommit=(uint64_t(h[15])<<32)|h[14];physicsCommit=(uint64_t(h[17])<<32)|h[16];}if(acceptedNow>lastAccepted){lastAccepted=acceptedNow;const auto& a=run->Tick().latest;{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;rootNonce=a.nonce;if(completionCount<completions.size())completions[completionCount++]=a.completion;else completionDropped++;}EGLint width=0,height=0;eglQuerySurface(display,surface,EGL_WIDTH,&width);eglQuerySurface(display,surface,EGL_HEIGHT,&height);
@@ -206,6 +246,18 @@ Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submit
     {std::lock_guard<std::mutex> l(mutex);ui.Completion(a.completion);ui.Memory(gpu->AllocatedBytes(),receipt.frameTargetBytes);}
 #endif
     Mark(BridgeStage::DrawEnd,seen,last,0,receipt.current?0:1);
+#ifdef GRS_APP_M1
+    if(activeTailProbe){
+     const auto stamp=TailObserver::Now();
+     std::lock_guard<std::mutex> l(mutex);
+     const auto tokens=timeline.SaveTokens(receipt.requestedToken,receipt.renderedToken);
+     AddTailLocked({TailStage::Presentation,(uint64_t(a.nonce.hi)<<32)|a.nonce.lo,stamp,stamp,
+      (uint64_t(a.publicationGeneration.hi)<<32)|a.publicationGeneration.lo,
+      (uint64_t(a.source.hi)<<32)|a.source.lo,(uint64_t(a.physics.hi)<<32)|a.physics.lo,
+      (receipt.current?1u:0u)|(receipt.swapSucceeded?2u:0u)|(CurrentLocked(seen,held)?4u:0u),
+      a.publication},stamp,tokens);
+    }
+#endif
     std::ostringstream out;out<<"{\"state\":\""<<(receipt.current?"CURRENT":"FAULT")<<"\",\"stage\":\""<<receipt.stage<<"\",\"run\":"<<runId<<",\"epoch\":"<<seen<<",\"sourceCommit\":"<<a.source.lo<<",\"physicsCommit\":"<<a.physics.lo<<",\"completionBytes\":1024,\"displayPresentVerified\":false,\"requestedToken\":\""<<receipt.requestedToken<<"\",\"renderedToken\":\""<<receipt.renderedToken<<"\",\"rawGL\":"<<receipt.rawGl<<",\"rawEGL\":"<<receipt.rawEgl<<"}";publish(out.str());if(!receipt.current)failed=true;
    }
   }retire();
@@ -250,13 +302,20 @@ napi_value timeline(napi_env e,napi_callback_info i){size_t n=1;napi_value v;dou
 napi_value sourceMode(napi_env e,napi_callback_info i){size_t n=1;napi_value v;double kind=0;if(napi_get_cb_info(e,i,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||napi_get_value_double(e,v,&kind)!=napi_ok||(kind!=-1&&kind!=0&&kind!=1))return text(e,"INVALID_SOURCE");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);return text(e,a.SetSourceLocked(int(kind))?"SOURCE_BOUNDARY_REQUESTED":"SOURCE_CONTROL_EXHAUSTED");}
 napi_value gravityMode(napi_env e,napi_callback_info i){size_t n=1;napi_value v;bool sensor=true;if(napi_get_cb_info(e,i,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||napi_get_value_bool(e,v,&sensor)!=napi_ok)return text(e,"INVALID_GRAVITY_MODE");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);if(!a.ui.SetMode(sensor))return text(e,"SOURCE_CONTROL_EXHAUSTED");a.cancelled+=a.count;a.head=a.count=0;a.wake.notify_one();return text(e,sensor?"SENSOR_MODE":"EXPLICIT_MANUAL_MODE");}
 napi_value gravitySample(napi_env e,napi_callback_info i){size_t n=3;napi_value v[3];double raw=0,shake=0,seq=0;if(napi_get_cb_info(e,i,&n,v,nullptr,nullptr)!=napi_ok||n!=3||napi_get_value_double(e,v[0],&raw)!=napi_ok||napi_get_value_double(e,v[1],&shake)!=napi_ok||napi_get_value_double(e,v[2],&seq)!=napi_ok||!std::isfinite(seq)||seq<1||seq>UINT32_MAX||std::floor(seq)!=seq)return text(e,"INVALID_GRAVITY_SAMPLE");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);if(!a.ui.enabled||!a.ui.sensorMode||!a.ui.Sample(raw,shake,uint32_t(seq),a.Stamp()))return text(e,"INVALID_GRAVITY_SAMPLE");a.wake.notify_one();return text(e,"SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED");}
+napi_value setTailProbe(napi_env e,napi_callback_info i){
+ size_t n=1;napi_value v;bool enabled=false;
+ if(napi_get_cb_info(e,i,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||
+    napi_get_value_bool(e,v,&enabled)!=napi_ok)return text(e,"INVALID_TAIL_PROBE");
+ auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.tailProbeNext=enabled;
+ return text(e,enabled?"TAIL_PROBE_ON_NEXT_RUN":"TAIL_PROBE_OFF_NEXT_RUN");
+}
 napi_value opticsConfig(napi_env e,napi_callback_info i){size_t n=1;napi_value v;bool typed=false;napi_typedarray_type type;napi_value backing;size_t len=0,offset=0,bytes=0;void* ptr=nullptr;void* base=nullptr;if(napi_get_cb_info(e,i,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||napi_is_typedarray(e,v,&typed)!=napi_ok||!typed||napi_get_typedarray_info(e,v,&type,&len,&ptr,&backing,&offset)!=napi_ok||type!=napi_float32_array||len!=16||!ptr||offset%4||napi_get_arraybuffer_info(e,backing,&base,&bytes)!=napi_ok||!base||offset>bytes||bytes-offset<64)return text(e,"INVALID_OPTICS16");m1::SceneOptics cold;std::memcpy(cold.values.data(),ptr,64);if(!m1::ValidOptics(cold))return text(e,"INVALID_OPTICS16");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.SetSourceLocked(-1);a.optics=cold;a.requiresReset=false;a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_OPTICS_RUN_REQUESTED");}
 napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4];double k=0,kw=0,feature=0,revision=0;if(napi_get_cb_info(e,i,&n,v,nullptr,nullptr)!=napi_ok||n!=4||napi_get_value_double(e,v[0],&k)!=napi_ok||napi_get_value_double(e,v[1],&kw)!=napi_ok||napi_get_value_double(e,v[2],&feature)!=napi_ok||napi_get_value_double(e,v[3],&revision)!=napi_ok||(k!=192&&k!=512)||(kw!=64&&kw!=128)||feature!=3||revision!=2)return text(e,"UNSUPPORTED_M1_CONFIG");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.K=uint32_t(k);a.Kw=uint32_t(kw);a.requiresReset=false;a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_RUN_REQUESTED");}
 #endif
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},
-{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
+{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
 {"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
 #ifdef GRS_APP_M1

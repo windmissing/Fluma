@@ -64,9 +64,23 @@ int main(int argc,char** argv){std::cout.setf(std::ios::unitbuf);uint32_t K=argc
  using Platform=EGLDisplay(EGLAPIENTRYP)(EGLenum,void*,const EGLint*);auto platform=reinterpret_cast<Platform>(eglGetProcAddress("eglGetPlatformDisplayEXT"));assert(platform);EGLint args[]={0x3203,0x3450,0x3209,0x3487,EGL_NONE};auto d=platform(0x3202,nullptr,args);EGLint major,minor;assert(eglInitialize(d,&major,&minor));EGLConfig cfg;EGLint n,attrs[]={EGL_SURFACE_TYPE,EGL_PBUFFER_BIT,EGL_RENDERABLE_TYPE,EGL_OPENGL_ES3_BIT,EGL_NONE};assert(eglChooseConfig(d,attrs,&cfg,1,&n)&&n);assert(eglBindAPI(EGL_OPENGL_ES_API));EGLint ca[]={EGL_CONTEXT_CLIENT_VERSION,3,EGL_CONTEXT_MINOR_VERSION,1,EGL_NONE},pa[]={EGL_WIDTH,1,EGL_HEIGHT,1,EGL_NONE};auto ctx=eglCreateContext(d,cfg,EGL_NO_CONTEXT,ca);auto surf=eglCreatePbufferSurface(d,cfg,pa);assert(eglMakeCurrent(d,surf,surf,ctx));
  Identity id;id.run={1,2};id.owner={2,3};id.context={1,4};id.surface={1,5};id.geometry={1,6};id.config={1,7};auto hash=[](const char* s,std::array<uint32_t,8>& v){for(uint32_t i=0;i<32;i++){char h[]={s[2*i],s[2*i+1],0};v[i/4]|=uint32_t(std::stoul(h,nullptr,16))<<(8*(i%4));}};hash(m1::manifestSha,id.layoutSha);hash(m1::FullM1ShaderSha(),id.shaderSha);hash(kAngleSha256,id.angleSha);
  m1::QuantumParameters params;int passed=0;
+ struct ProbeEvidence { std::vector<TailSample> samples; uint32_t busy=0; bool badBusy=false; } probe;
+ auto& tailProbe=probe.samples;
+ const auto enableProbe=[&](m1::FullM1Transport& gpu){
+  probe={};
+  gpu.tailObserver={&probe,[](void* p,const TailSample& s){
+   auto& e=*static_cast<ProbeEvidence*>(p);
+   if(s.stage==TailStage::RealPoll&&s.code==uint32_t(TransportCode::BUSY)){
+    e.busy++;e.badBusy|=s.a!=s.b||s.start>s.end;return;
+   }
+   e.samples.push_back(s);
+  }};
+ };
+
  // ---- Case 1: batched completion, trace parity, single fence ----
  {
   m1::FullM1Transport gpu;auto code=gpu.Create(K,Kw,id);assert(code==TransportCode::OK);
+  enableProbe(gpu);
   uint32_t seq=0,nonce=0;
   auto command=[&](uint32_t kind,double y,double q){std::array<uint32_t,32> c{};c[0]=1129534023;c[1]=2;c[2]=kind;c[4]=1;c[5]=2;c[6]=++seq;c[8]=c[10]=c[14]=c[15]=c[24]=c[27]=1;c[12]=1;c[13]=6;c[28]=1;c[29]=7;double x=64.5;std::memcpy(c.data()+16,&x,8);std::memcpy(c.data()+18,&y,8);std::memcpy(c.data()+20,&q,8);return c;};
   auto request=[&](uint32_t kind,uint32_t frame,uint32_t ordinal=0){RootRequest r;r.kind=kind;r.nonce={++nonce,1};r.control={nonce,0};r.frame={frame,0};r.quantumOrdinal=ordinal;r.eventArena=frame&1;r.publicationSlot=kind==1?1:0;return r;};
@@ -93,6 +107,30 @@ int main(int argc,char** argv){std::cout.setf(std::ios::unitbuf);uint32_t K=argc
   assert(gpu.ContinueSubmit()==TransportCode::OK);passed++;
   do{code=gpu.Poll(out);}while(code==TransportCode::BUSY);
   assert(code==TransportCode::OK);passed++;
+  uint32_t cursor=0,batchNo=0,finalFlush=0,pollOK=0,accepts=0;
+  const uint64_t quantumNonce=(uint64_t(r.nonce.hi)<<32)|r.nonce.lo;
+  for(size_t i=0;i<tailProbe.size();++i){
+   const auto& t=tailProbe[i];assert(t.start&&t.start<=t.end);
+   if(t.root!=quantumNonce)continue;
+   if(t.stage==TailStage::Flush){
+    assert(i+1<tailProbe.size());const auto& b=tailProbe[i+1];
+    assert(b.stage==TailStage::BatchCall&&b.root==t.root&&t.ordinal==++batchNo&&b.ordinal==batchNo);
+    assert(t.a==cursor&&t.b>t.a&&b.a==t.a&&b.b==t.b&&b.start<=t.start&&t.end<=b.end);
+    assert(!finalFlush);cursor=uint32_t(t.b);finalFlush+=t.code;passed++;
+   }
+   if(t.stage==TailStage::RealPoll){
+    if(t.code==uint32_t(TransportCode::OK)){assert(t.b==t.a+1);pollOK++;}
+    else assert(false);
+   }
+   if(t.stage==TailStage::Accepted){
+    assert(i>0&&tailProbe[i-1].stage==TailStage::RealPoll);
+    assert(t.code==out.publication&&t.a==out.publicationGeneration.lo&&t.b==out.source.lo&&t.c==out.physics.lo);
+    accepts++;
+   }
+  }
+  assert(batchNo==m1::FullM1HostAccess::Batches(gpu)&&finalFlush==1&&pollOK==1&&accepts==1&&!probe.badBusy);passed++;
+  std::cout<<"T384 pairedBatches="<<batchNo<<" finalFlush="<<finalFlush<<" realPollBusy="<<probe.busy<<" accepted="<<accepts<<"\n";
+
   assert(out.physics.lo==2&&out.source.lo==1);
   assert(out.completion[99]==1023);passed++; // audit all-pass, same as monolithic
   // trace parity: stage sequence equals the monolithic reference

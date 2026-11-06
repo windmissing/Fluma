@@ -1,6 +1,7 @@
 #pragma once
 #include <GLES3/gl31.h>
 #include <cstdint>
+#include <chrono>
 namespace grs {
 // T317: fixed callback to the App's existing bounded timeline. No GL calls,
 // strings or allocation in Emit. Codes are original TransportCode / raw GL.
@@ -10,6 +11,21 @@ enum class SubmitStage:uint32_t {SubmitEnter=24,SubmitExit,ShaderEnter,ShaderExi
  // T324 §2.6: SubmitRootBegin fires once at the first batch of a partial
  // submit; SubmitCancel fires when CancelSubmit revokes an unsealed root.
  SubmitRootBegin=40,SubmitCancel,SubmitWarmup};
+enum class TailStage:uint32_t {BatchCall=43,Flush,Continuation,Inflight,RealPoll,Accepted,Gap,Presentation};
+struct TailSample {
+ TailStage stage; uint64_t root=0,start=0,end=0,a=0,b=0,c=0;
+ uint32_t code=0,ordinal=0;
+};
+struct TailObserver {
+ void* context=nullptr;
+ void (*write)(void*,const TailSample&)=nullptr;
+ static uint64_t Now(){
+  return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(
+   std::chrono::steady_clock::now().time_since_epoch()).count());
+ }
+ uint64_t Stamp() const{return write?Now():0;}
+ void Emit(const TailSample& s)const{if(write)write(context,s);}
+};
 struct SubmitObserver {
  void* context=nullptr;
  void (*write)(void*,SubmitStage,uint64_t,uint32_t,uint32_t,uint64_t)=nullptr;
