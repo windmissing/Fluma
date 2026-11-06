@@ -1,0 +1,138 @@
+{
+  "status": "DESIGN_MODEL_CHECKED",
+  "scope": "Existing device archive read-only plus mathematical fixtures. Product and rollback not executed.",
+  "windows": [
+    {
+      "sha256": "65819da585e09b9cd4fabb3501152c69cafb7053f0cc862951eb1d119b508d39",
+      "run": "p011-run-1793932161133-3",
+      "epoch": 2,
+      "cohort_admission": 11,
+      "commit": 1205,
+      "elapsed": 19.86666666666682,
+      "after_y_vy_words": [
+        [
+          1135043233,
+          1077896743
+        ],
+        [
+          3803242853,
+          3225821973
+        ]
+      ],
+      "after_y_vy": [
+        31.399036625257057,
+        -44.27410539280644
+      ],
+      "authority_pairs_per_id": {
+        "86": 8,
+        "87": 8,
+        "88": 8
+      },
+      "slot_samples_per_id": {
+        "86": 4,
+        "87": 4,
+        "88": 4
+      },
+      "candidate_max_abs_error": 0.0
+    },
+    {
+      "sha256": "24a7c53352c00a59d31995ad323235a79c7f4aa7b6e35de54e59c9c418fb00d9",
+      "run": "p011-run-1793932161133-3",
+      "epoch": 2,
+      "cohort_admission": 11,
+      "commit": 2475,
+      "elapsed": 41.03333333333229,
+      "after_y_vy_words": [
+        [
+          1135043233,
+          1077896743
+        ],
+        [
+          3803242853,
+          3225821973
+        ]
+      ],
+      "after_y_vy": [
+        31.399036625257057,
+        -44.27410539280644
+      ],
+      "authority_pairs_per_id": {
+        "86": 8,
+        "87": 8,
+        "88": 8
+      },
+      "slot_samples_per_id": {
+        "86": 4,
+        "87": 4,
+        "88": 4
+      },
+      "candidate_max_abs_error": 0.0
+    }
+  ],
+  "fixture_candidate_y_vy": [
+    30.65877735511109,
+    -44.4155562087579
+  ],
+  "randomized_geometry_cases": 3000,
+  "exact_ticket_arms": {
+    "zero_source": [
+      "0",
+      "0",
+      "0",
+      "BUDGET"
+    ],
+    "zero_target": [
+      "0",
+      "0",
+      "0",
+      "BUDGET"
+    ],
+    "zero_total": [
+      "0",
+      "0",
+      "0",
+      "BUDGET"
+    ],
+    "scale_partial": [
+      "1/20",
+      "1/20",
+      "0",
+      "BUDGET"
+    ],
+    "reserve_partial": [
+      "1/20",
+      "1/20",
+      "0",
+      "BUDGET"
+    ],
+    "capacity": [
+      "0",
+      "0",
+      "0",
+      "CAPACITY"
+    ],
+    "full": [
+      "1/10",
+      "0",
+      "1/10",
+      "CROSS"
+    ]
+  },
+  "exact_land_cases": 3,
+  "f64_refund_non_inverse_used_and_amount": [
+    0.1,
+    0.2
+  ],
+  "flat_bed_counterfactual_substeps_to_contact": 40,
+  "inputs_sha256_at_run": {
+    "docs/architecture-T353-post-up-freeze-attribution-v1.md": "88b94b1f6e0fb3118bdbc86e4de30e9cdb6469d3921dd910e1cf62ae7b9a16f7",
+    "docs/architecture-P011-dual-field-particle-v1.md": "99cd9db5ae0a45dc702393731251c53d3bc6dc42bf80f14ecab2addcbc71f8a9",
+    "docs/test-report-T369-stop-cohort-device-v1.md": "74bf19be4e88e1d6018eb1c5a8d4da8551caf0155848949d6b3ddb9f850da783",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "ab4bad7da430a488d88716043e79429ebe05b71c72398815e79f1eded2f1d7a2",
+    "entry/src/main/ets/physics/P011ParticleM2Sink.ets": "b0ba9af0858254040c7df434537d420fe808d751e663cb8cec15c1fa11d41980",
+    "entry/src/main/ets/physics/P011ParticleHotBudget.ets": "98668b8b2df9ad8fe971658bc695c8b060f4552bbbc334948c9c521fcf93e41d",
+    "entry/src/main/ets/physics/P011ParticleM2Field.ets": "bfcc1db6f4a9b6c51d151926d04b3fe2075c958785e2badee1f0f9e809c11cc7",
+    "entry/src/main/ets/physics/P011ParticleM2Projection.ets": "dbd6d533a1a8c628d23aaf2d3d1a2eac523f48df8ebb7153f481ef06762b980a",
+    "entry/src/main/ets/physics/WaterSandField.ets": "c792564f06d35ceedd9d4cec4f10fee9c3bf835b1e66259a00f7590701e208cf"
+  }
+}
