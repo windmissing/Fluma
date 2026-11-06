@@ -11,6 +11,76 @@ export class P011HotWorkReceipt {
  // directly; next() stamps the start, seal()/progress freeze the value. No new
  // measurement points — Date.now per T325 ruling.
  attemptWallStartMs:number=0;attemptCumulativeMs:number=0;
+ // Sampled exclusive apply ledger. Legacy T311 stage times remain inclusive.
+ fineEnabled:boolean=false;
+ private readonly fineRows:Float64Array=new Float64Array(64*40);
+ private readonly fineRow:Float64Array=new Float64Array(40);
+ private readonly fineStack:Int32Array=new Int32Array(12);
+ private fineHead=0;
+ private fineCount=0;
+ private fineDropped=0;
+ private fineDepth=0;
+ private fineClock=0;
+ private fineStart=0;
+ fineBegin(frame:number,substep:number,role:number,fast:number,checks:number,derivedBytes:number,events:number,lineage:number):void {
+  if(!this.fineEnabled||(frame>0?frame:this.step)%16!==1)return;
+  this.fineRow.fill(0);
+  this.fineRow[0]=frame;this.fineRow[1]=substep;this.fineRow[2]=role;
+  this.fineRow[3]=this.run;this.fineRow[4]=this.step;this.fineRow[5]=this.attempt;
+  this.fineRow[24]=fast;this.fineRow[25]=checks;this.fineRow[26]=derivedBytes;
+  this.fineRow[27]=this.copiedBytes;this.fineRow[28]=events;this.fineRow[29]=lineage;this.fineRow[30]=this.retries;
+  this.fineDepth=1;this.fineStack[0]=0;
+  this.fineStart=this.fineClock=Date.now();
+ }
+ private fineSettle():void {
+  const now=Date.now(),delta=now-this.fineClock;
+  this.fineRow[31]++;
+  if(delta<0||!Number.isFinite(delta))this.clockInvalid++;
+  else this.fineRow[8+this.fineStack[this.fineDepth-1]]+=delta;
+  this.fineClock=now;
+ }
+ fineEnter(stage:number):number {
+  if(this.fineDepth===0)return 0;
+  if(this.fineDepth===12){this.clockInvalid++;return 0;}
+  this.fineSettle();this.fineStack[this.fineDepth++]=stage;
+  return this.fineDepth;
+ }
+ fineLeave(scope:number):void {
+  if(scope===0)return;
+  if(scope!==this.fineDepth){this.clockInvalid++;return;}
+  this.fineSettle();this.fineDepth--;
+ }
+ fineAdd(index:number):void {if(this.fineDepth!==0)this.fineRow[index]++;}
+ fineEnd(code:number,fast:number,checks:number,derivedBytes:number,events:number,lineage:number):void {
+  if(this.fineDepth===0)return;
+  this.fineSettle();this.fineDepth=0;
+  const row=this.fineRow;
+  row[6]=code;row[7]=this.fineClock-this.fineStart;
+  row[24]=fast-row[24];row[25]=checks-row[25];row[26]=derivedBytes-row[26];
+  row[27]=this.copiedBytes-row[27];row[28]=events-row[28];row[29]=lineage-row[29];row[30]=this.retries-row[30];
+  this.fineRows.set(row,this.fineHead*40);this.fineHead=(this.fineHead+1)%64;
+  if(this.fineCount<64)this.fineCount++;else this.fineDropped++;
+ }
+ fineOutcome(granted:number,budget:number,guard:number,capacity:number,pool:number):void {
+  if(this.fineDepth===0)return;
+  this.fineRow[33]+=granted;this.fineRow[34]+=budget;this.fineRow[35]+=guard;
+  this.fineRow[36]+=capacity;this.fineRow[37]+=pool;
+  if(guard>0)this.fineRow[38]++;
+ }
+ exportFineCold():string {
+  const rows:number[][]=[];
+  for(let i=0;i<this.fineCount;i++){
+   const at=(this.fineHead-this.fineCount+64+i)%64;
+   rows.push(Array.from(this.fineRows.subarray(at*40,at*40+40)));
+  }
+  return JSON.stringify({revision:'T366_HOT_APPLY_EXCLUSIVE_V1',clock:'DATE_MS',capacity:64,dropped:this.fineDropped,
+   role:['ADMISSION_OR_DIRECT','AUTHORITATIVE','PREVIEW'],stages:['applyTail','planIdentity','prepareLease','transferAndDerived','rowAudit','budgetGuardEvents'],
+   stagesAt:8,requestKindsAt:16,fullAt:22,incrementalAt:23,fallbackAt:32,
+   fields:['frame','substep','role','runToken','stepEpoch','attempt','code','wallMs'],
+   countersAt:24,counters:['fastBindings','fullAliasComparisons','derivedCopyBytes','poolPayloadBytes','eventDelta','lineageDelta','retryDelta','clockBoundaries'],
+   outcomesAt:33,outcomes:['grantedMass','budgetClippedMass','guardRejectedMass','capacityClippedMass','poolClippedMass','guardRejectedRows'],
+   clockInvalid:this.clockInvalid,rows:rows});
+ }
  begin(stage:number):number {if(!this.enabled)return -1;this.counts[stage]++;return Date.now();}
  end(stage:number,start:number):void {if(start<0||!this.enabled)return;const now=Date.now(),cost=now-start;if(!Number.isFinite(cost)||cost<0){this.clockInvalid++;return;}this.totalMs[stage]+=cost;this.maxMs[stage]=Math.max(this.maxMs[stage],cost);}
  // Called only by the explicit diagnostic timer, never by patch/lease/audit.

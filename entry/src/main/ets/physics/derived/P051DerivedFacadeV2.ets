@@ -143,6 +143,8 @@ export class P051DerivedFacadeV2 {
     createPublishedSlotCold(): DerivedPublishedSlotV2 { return new DerivedPublishedSlotV2(this.nmax); }
     copyPublishedRenderStateInto(slot: DerivedPublishedSlotV2): string { return slot.copyOwner(OWNER_PERMIT_V2, this.field, false); }
     copyPublishedSceneStateInto(slot: DerivedPublishedSlotV2): string { return slot.copyOwner(OWNER_PERMIT_V2, this.field, true); }
+    configureParticleFineReceipt(enabled:boolean):void {this.field.configureParticleFineReceipt(enabled);}
+    exportParticleFineReceiptCold():string {return this.field.exportParticleFineReceiptCold();}
     workCold(): DerivedWorkV2 { return this.field.derivedWorkColdV2(OWNER_PERMIT_V2); }
     countersCold(): Float64Array { return this.field.derivedCountersColdV2(OWNER_PERMIT_V2); }
     get numericPolicy(): string { return DERIVED_POLICY_V2; }

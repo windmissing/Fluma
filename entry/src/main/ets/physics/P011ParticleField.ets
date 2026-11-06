@@ -88,23 +88,27 @@ export interface P011ParticleSnapshot {
 export interface P011ParticleHotTransactionStorage {
   before: P011ParticleSnapshot; after: P011ParticleSnapshot; scratch: P011ParticleSnapshot;
 }
-export function particleSnapshotBufferAtHot(s: P011ParticleSnapshot, i: number): ArrayBuffer {
+type ParticleTransferView = Float64Array | Uint8Array | Uint32Array | Int32Array;
+function particleSnapshotViewAtHot(s: P011ParticleSnapshot, i: number): ParticleTransferView {
   switch (i) {
-    case 0: return s.pMass.buffer;
-    case 1: return s.pX.buffer;
-    case 2: return s.pY.buffer;
-    case 3: return s.pVx.buffer;
-    case 4: return s.pVy.buffer;
-    case 5: return s.pPhase.buffer;
-    case 6: return s.pSource.buffer;
-    case 7: return s.pState.buffer;
-    case 8: return s.pId.buffer;
-    case 9: return s.pSourceId.buffer;
-    case 10: return s.freeSlots.buffer;
-    case 11: return s.colParticleMassH.buffer;
-    case 12: return s.colParticleMassL.buffer;
-    default: return s.pMass.buffer;
+    case 0: return s.pMass;
+    case 1: return s.pX;
+    case 2: return s.pY;
+    case 3: return s.pVx;
+    case 4: return s.pVy;
+    case 5: return s.pPhase;
+    case 6: return s.pSource;
+    case 7: return s.pState;
+    case 8: return s.pId;
+    case 9: return s.pSourceId;
+    case 10: return s.freeSlots;
+    case 11: return s.colParticleMassH;
+    case 12: return s.colParticleMassL;
+    default: return s.pMass;
   }
+}
+export function particleSnapshotBufferAtHot(s: P011ParticleSnapshot, i: number): ArrayBuffer {
+  return particleSnapshotViewAtHot(s, i).buffer as ArrayBuffer;
 }
 
 export type P011ParticleOp = 'spawn' | 'lift' | 'deposit' | 'crossing' | 'degrade' | 'merge';
@@ -273,6 +277,12 @@ export class P011ParticleField implements P011ParticleAtomicPool {
   private txCanonicalInvalidator:(()=>void)|null=null;
   setTxCanonicalInvalidator(callback:(()=>void)|null):void{this.txCanonicalInvalidator=callback;}
   private readonly hotCanonicalBinding: ArrayBuffer[];
+  private readonly transferSnapshots: P011ParticleSnapshot[] = [];
+  private readonly transferBindings: ParticleTransferView[][] = [];
+  private readonly transferCanonical: ArrayBuffer[] = [];
+  private readonly transferLengths: number[] = [];
+  hotTransferFastChecks = 0;
+  hotTransferFullComparisons = 0;
   private readonly pMass: Float64Array;
   private readonly pX: Float64Array;
   private readonly pY: Float64Array;
@@ -804,6 +814,24 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       this.colParticleMassH.buffer === this.hotCanonicalBinding[11] &&
       this.colParticleMassL.buffer === this.hotCanonicalBinding[12];
   }
+  registerHotTransferCold(s: P011ParticleSnapshot): void {
+    if (this.transferSnapshots.length >= 4 || this.transferSnapshots.indexOf(s) >= 0 ||
+      this.validateHotTransfer(s) !== 0) return;
+    if (this.transferCanonical.length === 0) {
+      for (const buffer of this.hotCanonicalBinding) {
+        this.transferCanonical.push(buffer);
+        this.transferLengths.push(buffer.byteLength);
+      }
+    }
+    for (let i = 0; i < 13; i++) {
+      if (this.hotCanonicalBinding[i] !== this.transferCanonical[i]) return;
+    }
+    const views: ParticleTransferView[] = [];
+    for (let i = 0; i < 13; i++) views.push(particleSnapshotViewAtHot(s, i));
+    this.transferSnapshots.push(s);
+    this.transferBindings.push(views);
+  }
+
   validateHotTransfer(s: P011ParticleSnapshot): number {
     if (this.patch !== null) return 6;
     if (s.nmax !== this.nmax || s.cols !== this.cols || s.pMass.length !== this.nmax ||
@@ -812,10 +840,34 @@ export class P011ParticleField implements P011ParticleAtomicPool {
       s.pState.length !== this.nmax || s.pId.length !== this.nmax || s.pSourceId.length !== this.nmax ||
       s.freeSlots.length !== this.nmax || s.colParticleMassH.length !== this.cols || s.colParticleMassL.length !== this.cols) return 3;
     if (!this.storageValidForHot()) return 3;
+    const index = this.transferSnapshots.indexOf(s);
+    if (index >= 0) {
+      const bindings = this.transferBindings[index];
+      let valid = true;
+      for (let i = 0; i < 13; i++) {
+        const buffer = this.hotCanonicalBinding[i];
+        if (buffer !== this.transferCanonical[i] || buffer.byteLength !== this.transferLengths[i] ||
+          particleSnapshotViewAtHot(s, i) !== bindings[i]) {
+          valid = false;
+          break;
+        }
+      }
+      // Shape checks above also reject detached snapshot views.
+      if (valid) {
+        this.hotTransferFastChecks++;
+        return 0;
+      }
+    }
     for (let i = 0; i < 13; i++) {
       const buffer = particleSnapshotBufferAtHot(s, i);
-      for (let j = 0; j < 13; j++) if (buffer === this.hotCanonicalBinding[j]) return 3;
-      for (let j = 0; j < i; j++) if (buffer === particleSnapshotBufferAtHot(s, j)) return 3;
+      for (let j = 0; j < 13; j++) {
+        this.hotTransferFullComparisons++;
+        if (buffer === this.hotCanonicalBinding[j]) return 3;
+      }
+      for (let j = 0; j < i; j++) {
+        this.hotTransferFullComparisons++;
+        if (buffer === particleSnapshotBufferAtHot(s, j)) return 3;
+      }
     }
     return 0;
   }

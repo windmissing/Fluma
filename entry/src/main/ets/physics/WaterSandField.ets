@@ -2941,6 +2941,8 @@ export class WaterSandField {
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,182,txCode);}}
   pumpParticleComplexityCold():void {this.particleBinding?.work.complexity.emitProgressCold();}
   configureParticleComplexityObservation(clock:()=>number,emit:(line:string)=>void):void {if(this.particleBinding!==null){this.particleBinding.work.complexity.emit=emit;}}
+  configureParticleFineReceipt(enabled:boolean):void {if(this.particleBinding!==null)this.particleBinding.work.complexity.fineEnabled=enabled;}
+  exportParticleFineReceiptCold():string {return this.particleBinding===null?"UNBOUND":this.particleBinding.work.complexity.exportFineCold();}
   exportParticleComplexityCold():string{return this.particleBinding===null?'UNBOUND':this.particleBinding.exportComplexityCold();}
   setParticleRoute(params: P011ParticleParams | null): P011ParticleRouteResult {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(183);let txCode=0;try{
     if(this.mediumMode===P051_DRY_MEDIUM){const txRc:P011ParticleRouteResult=this.particleRouteResult('ROUTE_CONFLICT');txCode=0;return txRc;}
@@ -5361,7 +5363,7 @@ export class WaterSandField {
           this.txD1?.role(4);
           const particleStatus = this.particleBinding.apply(scale,
             this.substepMotionBudgetRemaining, this.substepMotionBudgetUsed,
-            this.totalMotionBudgetRemaining);
+            this.totalMotionBudgetRemaining,true);
             particleApplyStatus = particleStatus;
           } finally { this.flushParticleGuardEvidence(guardProbe); }
           this.planningPassService.trace?.stage('PARTICLE',collectError,null,particleApplyStatus);

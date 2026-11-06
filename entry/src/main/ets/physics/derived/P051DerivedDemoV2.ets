@@ -71,6 +71,8 @@ export class P051DerivedDemoV2 {
         }
         return true;
     }
+    configureParticleFineReceipt(enabled:boolean):void {this.owner.configureParticleFineReceipt(enabled);}
+    exportParticleFineReceiptCold():string {return this.owner.exportParticleFineReceiptCold();}
     createPublicationCold(): DerivedPublishedSlotV2 { return this.owner.createPublishedSlotCold(); }
     copyPublicationInto(slot: DerivedPublishedSlotV2): string { return this.owner.copyPublishedRenderStateInto(slot); }
 }

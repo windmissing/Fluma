@@ -310,7 +310,7 @@ export class P011ParticleM2FieldBinding {
     }
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,368,txCode);}}
   apply(totalScale: number, localRemaining: Float64Array, localUsed: Float64Array,
-    totalRemaining: number): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(369);let txCode=0;try{
+    totalRemaining: number, preview: boolean=false): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(369);let txCode=0;try{
     if (this.stepOpen === 0 || localRemaining.length !== this.work.cols ||
       localUsed.length !== this.work.cols || !Number.isFinite(totalScale) || totalScale < 0 || totalScale > 1) {
       {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;}
@@ -319,7 +319,7 @@ export class P011ParticleM2FieldBinding {
     budget.scale = totalScale;
     budget.bindLiveBudget(localRemaining, localUsed, totalRemaining, 0);
     const epoch = this.work.stepEpoch;
-    const status = applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results);
+    const status = applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results,preview?2:1);
     if(this.work.diagnosticEnabled)this.authoritativeApplyCalls++;
     if (status !== 0) { this.rollback(); {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
     if (finishStepHot(this.work, epoch) !== 0) { rollbackStepHot(this.work, epoch); this.stepOpen = 0; {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
