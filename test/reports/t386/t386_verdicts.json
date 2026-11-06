@@ -1,0 +1,40 @@
+{
+ "revision": "T386_DEVICE_Z08_V1",
+ "packageSha256": "2189bf62e7ed33bd08d5521fae56cc53b95fb20e46437176f8642dc0ae1c4c3f",
+ "route": "p051v2=1 P051DerivedV2Demo, pid 55523, run p011-run-1793958125594-3 (same run both receipts)",
+ "Z08_checks": {
+  "same_run_same_signing": "PASS — baseline substep 842 & settled substep 1444 both run p011-run-1793958125594-3, owner=1, no epoch bump",
+  "first_rejection_zero_grant": "PASS — baseline 240/240 rows grant=0 (zero-grant real T4 kept in source column)",
+  "source_column_descent": "PASS — 240/240 final y < y0 (all descended); settled y=0.0 all rows (reached bed / handed to T3)",
+  "T3_full_or_explicable_remainder": "PASS — remainder==requested 240/240 (full remainder, zero grant), refund closed: refunded sum 5.0 == reserved sum 5.0",
+  "zero_cross_column": "PASS — final x ≈ source column 240/240 (baseline & settled); no particle moved to targetPlusOne column",
+  "budget_refund": "PASS — reserved 5.0 -> refunded 5.0 exact closure",
+  "conservation": "PASS — mass sum 23.08518 identical baseline vs settled (delta 0.0)",
+  "rollback": "PASS — failure receipt failed=false rolledBack=false both captures (no rollback events)",
+  "same_token": "PARTIAL — cross receipt has no token field by design; same-run/same-owner/zero-rollback identity preserved; token equality not directly assertable from this receipt — noted honestly"
+ },
+ "readings": {
+  "baseline": {
+   "substep": 842,
+   "commit": 860,
+   "rows": 240,
+   "y_min": 12.487,
+   "y_max": 78.428,
+   "all_descended": true
+  },
+  "settled": {
+   "substep": 1444,
+   "commit": 1462,
+   "rows": 240,
+   "y_all_zero": true,
+   "substeps_between": 602
+  }
+ },
+ "evidenceSha256": {
+  "cross_baseline.json": "e4a70e086662d4c7803c",
+  "cross_baseline_failure.json": "bdbe0c5b9e614834239e",
+  "cross_settled.json": "99e3667983cb6fa489e1",
+  "cross_settled_failure.json": "bdbe0c5b9e614834239e",
+  "layout0.json": "34b4597a45729a575969"
+ }
+}
