@@ -1,0 +1,97 @@
+{
+ "revision": "T376_DEVICE_M1_V1",
+ "packageSha256": "b63d6ec9843cee97d352259f8ed886d377ad2914cbbd23c58e70f94212eb0fe1",
+ "route": "pages/GpuResidentM1 (grsm1=true)",
+ "timeline": {
+  "manifest": "tl-manifest.json",
+  "state": "COMPLETE STABLE_PREFIX_FULL_TRACE",
+  "pages": 84,
+  "rows": 334,
+  "groups": 10
+ },
+ "W1": {
+  "verdict": "STRUCT_PASS_VALUE_BELOW_EXPECTED_BAND",
+  "pairs": [
+   {
+    "run": "2/1",
+    "carry0_delta": "0",
+    "carry1_delta_ns": 23378125,
+    "ms": 23.38
+   },
+   {
+    "run": "3/2",
+    "carry0_delta": "0",
+    "carry1_delta_ns": 27684688,
+    "ms": 27.68
+   },
+   {
+    "run": "4/3",
+    "carry0_delta": "0",
+    "carry1_delta_ns": 28265937,
+    "ms": 28.27
+   }
+  ],
+  "root0_both": true,
+  "same_tid_3475": true,
+  "order": "42@serial49/50 < Ready@51 < AnchorSet@55 (and same for runs 2,3) — warmup precedes READY and first anchor exactly per contract",
+  "note": "expected 33-41ms band per T341 W1 criteria A; device 23-28ms = 28% below lower bound, same ms magnitude; PC 43.66s pbuffer path not transferable"
+ },
+ "W2": {
+  "verdict": "FAIL",
+  "walls_ms": [
+   52.171,
+   50.213,
+   56.593
+  ],
+  "budget": "<=8ms",
+  "note": "SubmitEnter->Exit includes RootPoll wait (RootSubmit s95 -> RootPoll s122 = 51.96ms inside window); T337 first-batch structure differs"
+ },
+ "W3": {
+  "verdict": "PARTIAL",
+  "batch1_wall_ms": [
+   0.433,
+   0.373,
+   0.346
+  ],
+  "batch1": "PASS <=1ms",
+  "batch2_wall_ms": [
+   46.788,
+   41.816,
+   48.218
+  ],
+  "batch2": "FAIL — tail gap (last op Exit st35 -> batch end st25) 46.685/41.721/48.127ms; per-op in-batch gaps p50 0.002ms max 0.004ms (clean)",
+  "note": "warmup moved first-flush tax away from batch1, but a NEW ~47ms stall appears at batch2 tail before RootPoll — new fixed-stall variant, attribution to architect"
+ },
+ "W4": {
+  "verdict": "BLOCKED",
+  "evidence": "SwapBegin/SwapEnd/DrawBegin/DrawEnd zero rows in complete timeline; JS snapshot physicsCommit=0:0, state never CURRENT (UI stuck waiting-for-ready despite native Ready rows present); dual-source sand+water real-touch injection executed (canvas bounds [0,579][1280,986]) but submission counter stays 0:0",
+  "note": "root submission completes but no draw frame consumes it -> same-token dual-source on-screen evidence unreachable"
+ },
+ "W5": {
+  "verdict": "PARTIAL",
+  "timeline_export": "COMPLETE STABLE_PREFIX_FULL_TRACE (K5 4096 semantics kept, 84 pages/334 rows/10 groups)",
+  "six_regression": "not fully enumerable without W4 draw path"
+ },
+ "evidenceSha256": {
+  "hilog_full.txt": "227597950c33ae43be32",
+  "hilog_p1.txt": "523b993fc36450e9269f",
+  "layout0.json": "a9b0d72b6470cc352cbc",
+  "layout1.json": "8b1f47485dcc75026974",
+  "layout2.json": "7afb6b89b3f090c96412",
+  "layout3.json": "f769cd042c9c6f979e75",
+  "layout4.json": "fd076305d551d71a611f",
+  "layout5.json": "201ef4a220bf33db4a36",
+  "layout6.json": "5fe3bbeb0992e9f64c8e",
+  "s1_crop.png": "944d706f0eb0dd5fca7d",
+  "s1_sha_seg1.jpeg": "229b72a6981a953e9b30",
+  "s2_crop.png": "a98f633f501c6478d589",
+  "s2_sha_full.jpeg": "45ec4219b5ac30f9a783",
+  "s3_crop.png": "e819d692b1222e56f3c9",
+  "s3_status.jpeg": "427385f528517151f095",
+  "timeline-manifest.json": "0c96f9159927f8bd8b01",
+  "tl-manifest.json": "bac275d34e2d694d3367",
+  "tl-part0.ndjson": "0b0426a9aa40d2ed297d",
+  "tl-part1.ndjson": "8b0a0abc70256ecd46bd",
+  "tl-part2.ndjson": "2634ccbdb2fb9e4d281a"
+ }
+}
