@@ -1,3 +1,4 @@
+import { P011DryCrossVerticalV1,CROSS_VERTICAL_V1,CROSS_CHECKPOINT_V1 } from './derived/P011DryCrossVerticalV1';
 import { FrameBudgetV2 } from './derived/P011FrameBudgetV2';
 import { DerivedCheckpointV2 } from './derived/P011DerivedCheckpointV2';
 import { DerivedCoordinatorV2,DerivedFailureRawV2,DerivedWorkV2 } from './derived/P011DerivedTupleBarrierV2';
@@ -804,12 +805,38 @@ export class WaterSandField {
   private derivedFieldWriteV2(column:number,value:number):number{this.derivedV2?.markField(column);return value;}
   private derivedFieldBulkV2(write:()=>void):void{write();this.derivedV2?.markField();}
 
+  private crossVerticalRequested=false;
+  private crossVertical:P011DryCrossVerticalV1|null=null;
+  private crossRestored=true;
+  private crossStepCommand=false;
+  private crossBefore:Float64Array|null=null;
+  enableCrossVerticalCold(permit:object):void{
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.particleBinding!==null||this.derivedV2!==null)
+      throw new Error('CROSS_VERTICAL_OWNER');
+    this.crossVerticalRequested=true;
+  }
+  exportCrossVerticalFailureCold(permit:object):string {
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit))throw new Error('DERIVED_OWNER');
+    return this.crossVertical?.exportFailureCold()??'DISABLED';
+  }
+  exportCrossVerticalCold(permit:object):string {
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit))throw new Error('CROSS_VERTICAL_OWNER');
+    return this.crossVertical?.exportCold()??'DISABLED';
+  }
   private derivedV2:DerivedCoordinatorV2|null=null;
   private derivedPublicationV2:DerivedCommitV2|null=null;
   enableDerivedV2Cold(permit:object,checkpoint:DerivedCheckpointV2|null=null,budget:FrameBudgetV2|null=null):void {
     if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2!==null||this.mediumMode!=='DRY_AIR_V1'||this.capacity!==256||this.cols!==128||this.particleBinding===null)throw new Error('DERIVED_COLD_OWNER_REQUIRED');
     const b=this.particleBinding,w=b.work,p=b.pool.derivedBindingCold();
+    if(w.crossRows!==null){this.crossVertical=new P011DryCrossVerticalV1(w.crossRows.capacity);this.crossBefore=new Float64Array(this.cols*2+16);}
+
     const coordinator=new DerivedCoordinatorV2(p,b.field,w.ownerId);if(budget!==null){coordinator.budget=budget;budget.bind(coordinator.counters.values);}this.derivedV2=coordinator;b.pool.attachDerivedV2(coordinator,p);w.derivedV2=coordinator;b.projection.enableDerivedV2();
+    if(w.crossRows!==null){
+      for(const plan of [w.planA,w.planB,w.seenRequests,w.patchRequest,w.patchOriginal,w.sealedPlan])
+        coordinator.registerFailureBufferCold('blockedYFree',plan.blockedYFree.buffer as ArrayBuffer);
+      coordinator.registerFailureBufferCold('crossKeys',w.crossRows.keys.buffer as ArrayBuffer);
+      coordinator.registerFailureBufferCold('crossValues',w.crossRows.values.buffer as ArrayBuffer);
+    }
     coordinator.register(w.frozenPool);coordinator.register(w.patchBefore);coordinator.register(w.patchScratch);coordinator.register(w.patchAfter);
     if(this.particleBackup===null||this.particleJournalBefore===null||this.backup.particleState===null||this.backup.particleState===undefined||this.motionSnapshot.particleState===null||this.motionSnapshot.particleState===undefined)throw new Error('DERIVED_COLD_BANKS');
     coordinator.register(this.particleBackup);coordinator.register(this.particleJournalBefore);coordinator.register(this.backup.particleState);coordinator.register(this.motionSnapshot.particleState);
@@ -821,7 +848,7 @@ export class WaterSandField {
     for(const bank of [w.frozenPool,w.patchBefore,w.patchScratch,w.patchAfter,this.particleBackup,this.particleJournalBefore,this.backup.particleState,this.motionSnapshot.particleState])coordinator.copy(p,bank);
     if(coordinator.flush()!==0)throw new Error('DERIVED_COLD_DOMAIN');
     if(checkpoint!==null){
-      if(checkpoint.revision!=='P011_DERIVED_CHECKPOINT_V2'||checkpoint.numericPolicy!=='P011_DRY_CACHE_EXACT_V2'||checkpoint.cacheRevision!=='P011_LIVE_MASS_EXACT70_V2'||checkpoint.envelopeRevision!=='P011_DRY_ENVELOPE_ORDERED_V2'||checkpoint.replayStatus!=='QUIESCENT_COLD_COPY')throw new Error('DERIVED_CHECKPOINT_VERSION');
+      if(checkpoint.revision!==(this.crossVertical===null?'P011_DERIVED_CHECKPOINT_V2':CROSS_CHECKPOINT_V1)||checkpoint.motionRevision!==(this.crossVertical===null?undefined:CROSS_VERTICAL_V1)||checkpoint.numericPolicy!=='P011_DRY_CACHE_EXACT_V2'||checkpoint.cacheRevision!=='P011_LIVE_MASS_EXACT70_V2'||checkpoint.envelopeRevision!=='P011_DRY_ENVELOPE_ORDERED_V2'||checkpoint.replayStatus!=='QUIESCENT_COLD_COPY')throw new Error('DERIVED_CHECKPOINT_VERSION');
       if(!checkpoint.runId||!Number.isSafeInteger(checkpoint.commit+1)||checkpoint.commit<0||!Number.isSafeInteger(checkpoint.stateEpoch+1)||checkpoint.stateEpoch<0||!Number.isSafeInteger(checkpoint.derivedRevision)||checkpoint.derivedRevision<0)throw new Error('DERIVED_CHECKPOINT_IDENTITY');
       const v=coordinator.canonical,old=checkpoint.authority,op=old.particleState;if(op===undefined||op===null||op.nmax!==p.nmax)throw new Error('DERIVED_CHECKPOINT_SHAPE');
       for(let k=0;k<v.acc.length;k++)if(v.acc[k]!==checkpoint.acc[k])throw new Error('DERIVED_CHECKPOINT_ACC');
@@ -838,20 +865,21 @@ export class WaterSandField {
     this.derivedPublicationV2.commitPrepared();
   }
   private fillDerivedPublicationV2(out:P011PublishedRenderState):void {
+    if(this.crossVertical!==null)out.motionRevision=CROSS_VERTICAL_V1;
     this.copyStateTo(out.field);out.effectiveTiltDeg=this.effectiveTilt;out.runId=this.p011RunId;out.stateEpoch=this.renderStateEpoch;out.physicsCommitId=this.renderPhysicsCommitId;out.publicationKind=this.renderPublicationKind;out.ledgerCommitKey=this.renderLedgerCommitKey;out.routeId=this.particleRouteId;out.particleRouteActive=true;out.particleCapacity=this.particleBinding!.pool.nmax;out.liveCount=this.particleBinding!.work.derivedV2!.canonical.pool.liveCount;out.mediumMode=this.mediumMode;out.airDynamicsRevision=P051_DRY_GRAVITY;out.birthPlacementRevision='DRY_POINT_V1';
   }
   exportDerivedCheckpointColdV2(permit:object):DerivedCheckpointV2 {
     if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null||this.particleBinding===null||this.particleBinding.active||this.particleBinding.work.activePatchToken!==0)throw new Error('DERIVED_CHECKPOINT_NOT_QUIESCENT');
     const d=this.derivedV2;if(d.verifyPublicBoundary('CHECKPOINT')!==0)throw new Error('DERIVED_CHECKPOINT_VERIFY');
-    const out=new DerivedCheckpointV2(this.particleBinding.work.nmax);this.copyStateTo(out.authority);out.acc.set(d.canonical.acc);out.count.set(d.canonical.count);out.dirty.set(d.canonical.dirty);out.generations.set(d.canonical.generations);out.ids.set(d.canonical.ids);out.runId=this.p011RunId;out.stateEpoch=this.renderStateEpoch;out.commit=this.renderPhysicsCommitId;out.derivedRevision=d.canonical.revision;return out;
+    const out=new DerivedCheckpointV2(this.particleBinding.work.nmax,this.crossVertical===null?undefined:CROSS_VERTICAL_V1);this.copyStateTo(out.authority);out.acc.set(d.canonical.acc);out.count.set(d.canonical.count);out.dirty.set(d.canonical.dirty);out.generations.set(d.canonical.generations);out.ids.set(d.canonical.ids);out.runId=this.p011RunId;out.stateEpoch=this.renderStateEpoch;out.commit=this.renderPhysicsCommitId;out.derivedRevision=d.canonical.revision;return out;
   }
-  startDerivedCommandV2(permit:object,kind:number=0,ordinal:number=0):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.derivedV2.startCommand(kind,ordinal,this.renderPhysicsCommitId);}
+  startDerivedCommandV2(permit:object,kind:number=0,ordinal:number=0):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.crossStepCommand=kind===2;this.derivedV2.startCommand(kind,ordinal,this.renderPhysicsCommitId);}
   finishDerivedCommandV2(permit:object,ok:boolean):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.derivedV2.finishCommand(ok,this.renderPhysicsCommitId);}
   derivedWorkColdV2(permit:object):DerivedWorkV2{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.exportWorkCold();}
   derivedFailureRawColdV2(permit:object):DerivedFailureRawV2|null{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.exportFailureCold();}
   derivedFaultColdV2(permit:object):DerivedFaultV2|null{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.status===0?null:JSON.parse(JSON.stringify(this.derivedV2.fault)) as DerivedFaultV2;}
   derivedCountersColdV2(permit:object):Float64Array{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');return this.derivedV2.counters.values.slice();}
-  abortDerivedCommandV2(permit:object):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');this.restoreBackup();this.derivedV2.fault.rolledBack=true;}
+  abortDerivedCommandV2(permit:object):void{if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null)throw new Error('DERIVED_OWNER');if(this.crossVertical!==null&&this.crossStepCommand){this.rollbackCrossSubstep();}else{this.restoreBackup();}this.derivedV2.fault.rolledBack=true;}
 
   private txD1:TxWholePairAdapter|null=null;
   static createWholeTransactionFixture(nmax:number,backend:string):TxFixtureDriver{return new TxFixtureDriver(nmax,backend);}
@@ -920,7 +948,7 @@ export class WaterSandField {
       (this.naturalObservationRouteId!==null && this.naturalObservationRouteId!==P011_PARTICLE_ROUTE_ID)){const txRc:P051DryRunResult={ok:false,code:'MODE_CONFLICT'};txCode=0;return txRc;}
     const params=config.particleParams;
     let binding: P011ParticleM2FieldBinding;
-    try { binding=new P011ParticleM2FieldBinding(this.cols,this.capacity,this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL,this.sandTopScratch,params,this); }
+    try { binding=new P011ParticleM2FieldBinding(this.cols,this.capacity,this.waterTop,this.bh,this.bl,this.mh,this.ml,this.suspH,this.suspL,this.sandTopScratch,params,this,this.crossVerticalRequested); }
     catch(error){{const txRc:P051DryRunResult={ok:false,code:'INVALID_PARAMS'};txCode=0;return txRc;}}
     const backup=binding.pool.snapshot(), journal=binding.pool.snapshot(), b=binding.pool.snapshot(), m=binding.pool.snapshot();
     this.particleBinding=binding;this.particleParams=binding.work.params;this.particleRouteId=P011_PARTICLE_ROUTE_ID;
@@ -1044,9 +1072,11 @@ export class WaterSandField {
   private renderPublicationKind: P011RenderPublicationKind = 'RESET';
   private renderLedgerCommitKey: P011EndpointCommitKey | null = null;
   private publishRenderState(kind: P011RenderPublicationKind, newEpoch: boolean = false): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(104);let txCode=0;try{
+    const crossStep=this.crossVertical!==null&&kind==='STEP';
+    if(crossStep)this.derivedPublicationV2?.commitPrepared();
     this.renderPhysicsCommitId++; if (newEpoch) this.renderStateEpoch++;
     this.renderPublicationKind = kind; this.renderLedgerCommitKey = null;
-    if(this.derivedPublicationV2!==null)this.derivedPublicationV2.commitPrepared();
+    if(!crossStep&&this.derivedPublicationV2!==null)this.derivedPublicationV2.commitPrepared();
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,104,txCode);}}
   private particleBinding: P011ParticleM2FieldBinding | null = null;
   private particleRouteId: string | null = null;
@@ -2393,6 +2423,7 @@ export class WaterSandField {
       this.updateSandTop();
       this.observeFieldColumnV2('DERIVED_UPDATE_AFTER','UPDATE_SAND_TOP');
       this.beginSubstepMotionBudget(substepDt, true, 1);
+      this.saveCrossSubstep();
       this.substepSandTopBefore.set(this.sandTopScratch);
       this.substepBhBefore.set(this.bh);
       this.substepBlBefore.set(this.bl);
@@ -2470,7 +2501,9 @@ export class WaterSandField {
       }
       if (errorCode !== null) {
         this.finishNaturalObservation(errorCode);
-        this.restoreBackup();
+        if(this.crossVertical!==null&&this.derivedV2!==null&&this.derivedV2.status!==0)
+          this.derivedV2.fault.originalFieldCode=errorCode;
+        this.rollbackCrossSubstep(planningError!==null?'PLANNING':'MOTION_OR_AUDIT',errorCode);
         // §20.4: a planning BLOCKED substep marks the run invalid via
         // ok=false, but unlike transaction errors it must NOT freeze the
         // field — the caller may choose an explicit invalid continuation
@@ -2525,7 +2558,7 @@ export class WaterSandField {
     result.physicsTimeMs = Date.now() - start;
     this.lastPhysicsTimeMs = result.physicsTimeMs;
     {const txRc:WaterSandStepResult=result;txCode=txRc.ok?0:txRc.errorCode===null?1:txRc.errorCode;return txRc;}
-  }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,17,txCode);}}
+  }catch(txError){txCode=-1;if(this.crossVertical!==null)this.rollbackCrossSubstep();throw txError as Error;}finally{txTrace?.leave(txScope,17,txCode);}}
 
   getTotals(): WaterSandTotals {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(150);let txCode=0;try{
     let water = 0;
@@ -2705,10 +2738,61 @@ export class WaterSandField {
     if (this.endpointCaptureMode !== null && mode !== this.endpointCaptureMode) this.endpointModeChanges++;
     this.endpointCaptureMode = mode;
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,165,txCode);}}
+  private saveCrossSubstep():void {
+    const b=this.crossBefore,w=this.particleBinding?.work;
+    if(b===null||w===undefined)return;
+    this.crossRestored=false;this.crossVertical?.beginAttempt();w.crossAttempt='';w.crossProof=this.p011SubstepId+1;w.crossFailureHot=0;w.crossFailureStage=0;
+    this.particleBinding?.sink.saveOuterHot();
+    b.set(this.substepMotionBudgetRemaining);b.set(this.substepMotionBudgetUsed,this.cols);
+    b[this.cols*2+0]=this.totalMotionBudgetRemaining;
+    b[this.cols*2+1]=this.totalMotionBudgetUsed;
+    b[this.cols*2+2]=this.totalMotionBudgetLimit;
+    b[this.cols*2+3]=this.totalMotionBudgetClipped;
+    b[this.cols*2+4]=this.totalMotionBudgetScale;
+    b[this.cols*2+5]=this.totalMotionBudgetRequested;
+    b[this.cols*2+6]=this.bottomCreepBudgetUsed;
+    b[this.cols*2+7]=this.bottomCreepBudgetLimit;
+    b[this.cols*2+8]=this.bottomCreepBudgetClipped;
+    b[this.cols*2+9]=this.bottomCreepBudgetRequested;
+    b[this.cols*2+10]=this.substepBudgetClipped?1:0;
+  }
+  private rollbackCrossSubstep(cut:string='CROSS_SUBSTEP_EXCEPTION',fieldCode:number=0):void {
+    const b=this.crossBefore;
+    if(b===null){this.restoreBackup();return;}
+    if(this.crossRestored)return;
+    const d=this.derivedV2,w=this.particleBinding?.work;
+    this.crossVertical?.recordFailure(this.p011RunId,this.renderStateEpoch,this.p011SubstepId+1,
+      w?.crossAttempt??'',d!==null&&d.status!==0?d.fault.cut:cut,
+      w?.crossFailureHot??0,w?.crossFailureStage??0,fieldCode,this.renderPhysicsCommitId);
+    this.restoreBackup();
+    this.crossRestored=true;this.crossVertical?.discard();this.particleBinding?.sink.restoreOuterHot();this.derivedPublicationV2?.abortPrepared();
+    for(let c=0;c<this.cols;c++){
+      this.substepMotionBudgetRemaining[c]=b[c];this.substepMotionBudgetUsed[c]=b[this.cols+c];
+    }
+    this.totalMotionBudgetRemaining=b[this.cols*2+0];
+    this.totalMotionBudgetUsed=b[this.cols*2+1];
+    this.totalMotionBudgetLimit=b[this.cols*2+2];
+    this.totalMotionBudgetClipped=b[this.cols*2+3];
+    this.totalMotionBudgetScale=b[this.cols*2+4];
+    this.totalMotionBudgetRequested=b[this.cols*2+5];
+    this.bottomCreepBudgetUsed=b[this.cols*2+6];
+    this.bottomCreepBudgetLimit=b[this.cols*2+7];
+    this.bottomCreepBudgetClipped=b[this.cols*2+8];
+    this.bottomCreepBudgetRequested=b[this.cols*2+9];
+    this.substepBudgetClipped=b[this.cols*2+10]!==0;
+    this.crossVertical?.finishRollback();
+    if(this.derivedV2!==null&&this.derivedV2.status!==0)this.derivedV2.fault.rolledBack=true;
+  }
   private recordEndpointCommit(physicsDt: number): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(166);let txCode=0;try{
+    if(this.crossVertical!==null&&this.derivedV2!==null&&(!this.crossVertical.ready()||
+      !this.crossVertical.matches(this.derivedV2.ownerId,this.p011RunId,this.renderStateEpoch,this.p011SubstepId+1,this.p011CurrentAttemptId)||
+      !this.crossVertical.verifyClosed(this.derivedV2))){
+      const status=this.derivedV2.fail(DerivedStatus.CERT_STALE,'CROSS_VERTICAL_TAIL_MISSING');
+      this.rollbackCrossSubstep();throw new Error('P011_DERIVED_FAILURE_V2:'+status);
+    }
     let derivedKey:P011EndpointCommitKey|null=null;
-    if(this.derivedPublicationV2!==null){derivedKey={runId:this.p011RunId,sequence:this.p011SampleSequence,identityRevision:'P011_COMMIT_IDENTITY_V2',frameId:this.p011FrameId,substepId:this.p011SubstepId+1,attemptId:this.p011CurrentAttemptId,committedOrdinal:this.endpointSampler===null?this.p011SubstepId+1:this.endpointSampler.committedOrdinal+1};const status=this.derivedPublicationV2.prepareInactive('STEP',this.p011RunId,this.renderStateEpoch,this.renderPhysicsCommitId+1,derivedKey);if(status!==0){this.restoreBackup();throw new Error('P011_DERIVED_FAILURE_V2:'+status);}}
-    this.publishRenderState('STEP');if(derivedKey!==null)this.renderLedgerCommitKey=derivedKey;
+    if(this.derivedPublicationV2!==null){derivedKey={runId:this.p011RunId,sequence:this.p011SampleSequence,identityRevision:'P011_COMMIT_IDENTITY_V2',frameId:this.p011FrameId,substepId:this.p011SubstepId+1,attemptId:this.p011CurrentAttemptId,committedOrdinal:this.endpointSampler===null?this.p011SubstepId+1:this.endpointSampler.committedOrdinal+1};const status=this.derivedPublicationV2.prepareInactive('STEP',this.p011RunId,this.renderStateEpoch,this.renderPhysicsCommitId+1,derivedKey);if(status!==0){this.rollbackCrossSubstep();throw new Error('P011_DERIVED_FAILURE_V2:'+status);}}
+    this.publishRenderState('STEP');this.crossVertical?.commit(this.p011RunId,this.renderStateEpoch,this.p011SubstepId+1,this.p011CurrentAttemptId,this.renderPhysicsCommitId);if(this.crossVertical!==null)this.crossRestored=true;if(derivedKey!==null)this.renderLedgerCommitKey=derivedKey;
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
     if (sampler === null) {txCode=0;return;}
@@ -2739,6 +2823,7 @@ export class WaterSandField {
 
   setNaturalObservationProbe(probe: P011NaturalObservationProbe | null): void {this.txD1?.syncContext();const txTrace=this.txD1===null?null:this.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(167);let txCode=0;try{
     this.naturalObservationProbe?.flushParticleColumnGuardEvidence();
+    if(probe!==null&&this.crossVerticalRequested)throw new Error('CROSS_VERTICAL_OBSERVATION_UNSUPPORTED');
     this.naturalObservationProbe = probe;
     this.naturalObservationStateBefore = null;
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,167,txCode);}}
@@ -4754,7 +4839,7 @@ export class WaterSandField {
       this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
       // Production particle adapter already debited the real total ledger.
       this.updateSandTop();
-      if (!this.particleBinding.projection.consistent(this.effectiveTilt, this.particleBinding.work)) {
+      if (!this.particleBinding.projection.consistent(this.effectiveTilt, this.particleBinding.work,this.lastPlanningCommittedPlans)) {
         {const txRc:WaterSandErrorCode | null=WaterSandErrorCode.PREVIEW_COMMIT_MISMATCH;txCode=0;return txRc;}
       }
       // Verify against the accepted-angle preview after the particle chain
@@ -4764,6 +4849,11 @@ export class WaterSandField {
       const consistencyError = this.verifyPreviewCommitConsistency(dt);
       this.particlePreviewApplied = false;
       if (consistencyError !== null) {const txRc:WaterSandErrorCode | null=consistencyError;txCode=0;return txRc;}
+      if(this.crossVertical!==null&&this.derivedV2!==null){
+        const w=this.particleBinding.work;
+        if(w.crossRows===null||w.crossAttempt!==this.p011CurrentAttemptId)return WaterSandErrorCode.UNKNOWN;
+        this.crossVertical.stage(w.crossRows,this.derivedV2,w.crossRun,w.crossEpoch,w.crossProof,w.crossAttempt,w.stepEpoch,w.attemptToken);
+      }
       const evidence = this.particleBinding.exportCommittedEvidence();
       for (let i = 0; i < evidence.events.length; i++) {txTrace?.add(39);txTrace?.add(31);
         const row = serializeP011ParticleEvent(evidence.events[i], i);
@@ -4802,6 +4892,13 @@ export class WaterSandField {
     }
     this.liftByShake(dt);
     this.updateSandTop();
+    if(this.crossVertical!==null&&this.derivedV2!==null&&this.particleBinding!==null){
+      if(!this.crossVertical.matches(this.derivedV2.ownerId,this.p011RunId,this.renderStateEpoch,this.p011SubstepId+1,this.p011CurrentAttemptId)){
+        this.derivedV2.fail(DerivedStatus.CERT_STALE,'CROSS_VERTICAL_TAIL_PARENT');return WaterSandErrorCode.UNKNOWN;
+      }
+      const status=this.crossVertical.resolve(this.derivedV2,this.particleBinding.work.params.contactEps,this.txD1);
+      if(status!==0)return WaterSandErrorCode.UNKNOWN;
+    }
     this.observeFieldColumnV2('APPLY_AUDIT_BEFORE','MOTION_CHANNELS');
     const auditError = this.audit(true);
     if (auditError !== null) {const txRc:WaterSandErrorCode | null=auditError;txCode=0;return txRc;}
@@ -5372,13 +5469,14 @@ export class WaterSandField {
           } else {
             this.totalMotionBudgetRemaining = this.particleBinding.totalRemaining;
             // Same production adapter is replayed against the preview snapshot.
-            this.particleBinding.projection.capture(thetaCandidate, this.particleBinding.work);
+            if(this.crossVertical===null)this.particleBinding.projection.capture(thetaCandidate, this.particleBinding.work);
             this.updateSandTop(); this.particlePreviewApplied = true;
             const trace=this.planningPassService.trace;
             if(trace!==null && trace.current!==null)try {
               for(let c=0;c<this.cols;c++)trace.current.particleDeltaSandTop.push(this.sandTopScratch[c]-this.substepSandTopBefore[c]);
             }catch(e){trace.incomplete();}
           plans = this.allocatePreviewPlans(substepDt);
+          if(this.crossVertical!==null)this.particleBinding.projection.capture(thetaCandidate,this.particleBinding.work,plans);
           }
         } else {
         plans = this.allocatePreviewPlans(substepDt);
@@ -6092,6 +6190,10 @@ export class WaterSandField {
     this.p011SampleSequence += 1;
     this.p011AttemptCounter += 1;
     this.p011CurrentAttemptId = `${this.p011RunId}-a${this.p011AttemptCounter}`;
+    if(this.crossVertical!==null&&this.particleBinding!==null){
+      const w=this.particleBinding.work;
+      w.crossRun=this.p011RunId;w.crossEpoch=this.renderStateEpoch;w.crossAttempt=this.p011CurrentAttemptId;
+    }
     this.p011CurrentRollbackReason = null;
     this.p011CurrentCommitStatus = 'committed';
     const rateCapRemaining: P011ExistingChannelRateCapRemaining = {
@@ -6934,6 +7036,9 @@ export class WaterSandField {
       const requested = this.bottomCreepRequestAmounts[index];
       const donor = this.bottomCreepRequestDonors[index];
       const receiver = this.bottomCreepRequestReceivers[index];
+      // T381: the full dry writer closure can include sparse creep rows.
+      // An empty collect slot has no donor/receiver or budget transaction.
+      if(this.crossVertical!==null&&requested===0&&donor===-1&&receiver===-1)continue;
       const directionSign = this.bottomCreepDirection > 0 ? 1 : -1;
       const donorDeposited = this.bh[donor] + this.bl[donor];
       const receiverSuspension = this.suspH[receiver] + this.suspL[receiver];

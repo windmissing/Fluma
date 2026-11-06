@@ -1,3 +1,4 @@
+import { CROSS_VERTICAL_V1,CROSS_CHECKPOINT_V1 } from './P011DryCrossVerticalV1';
 import { P013SingleSandController } from '../../render/P013SingleSandController';
 import { SingleSandReceipt } from '../../render/P013SingleSandTypes';
 import { FrameBudgetV2 } from './P011FrameBudgetV2';
@@ -19,6 +20,7 @@ class DerivedOwnerPermitV2 {
 const OWNER_PERMIT_V2 = new DerivedOwnerPermitV2();
 export interface DerivedConfigV2 {
     isolated: boolean;
+    motionRevision?:string;
     numericPolicy: string;
     nmax: number;
     sourceId: number;
@@ -48,10 +50,13 @@ export class P051DerivedFacadeV2 {
     private readonly nmax: number;
     private readonly source: number;
     private stopped = false;
+    readonly motionRevision:string|undefined;
     static isOwnerPermit(permit: object): boolean { return permit === OWNER_PERMIT_V2; }
     constructor(config: DerivedConfigV2) {
         if (!config.isolated || config.numericPolicy !== DERIVED_POLICY_V2 || !Number.isInteger(config.nmax) || config.nmax < 2 || config.nmax > 512 || !Number.isSafeInteger(config.sourceId) || config.sourceId < 1 || config.sourceId > 0xffffffff || config.backend !== 'CPU_ORIGINAL_F64' || config.writerRegistry !== 'T216_DRY_WRITERS_V2')
             throw new Error('DERIVED_CONFIG_UNSUPPORTED');
+        if(config.motionRevision!==undefined&&config.motionRevision!==CROSS_VERTICAL_V1)throw new Error('DERIVED_MOTION_UNSUPPORTED');
+        this.motionRevision=config.motionRevision;
         if (!Exact70.probe())
             throw new Error('NUMERIC_ENVIRONMENT_UNSUPPORTED');
         this.nmax = config.nmax;
@@ -60,6 +65,7 @@ export class P051DerivedFacadeV2 {
     }
     private create(checkpoint: DerivedCheckpointV2 | null = null): WaterSandField {
         const f = new WaterSandField(128, 256), p = defaultP011ParticleParams();
+        if(this.motionRevision!==undefined)f.enableCrossVerticalCold(OWNER_PERMIT_V2);
         p.nmax = this.nmax;
         const r = f.initializeDryParticleDemo({ revision: P051_DRY_REVISION, sourceId: this.source, particleParams: p });
         if (!r.ok)
@@ -69,10 +75,12 @@ export class P051DerivedFacadeV2 {
         f.enableDerivedV2Cold(OWNER_PERMIT_V2, checkpoint, this.budget);
         return f;
     }
+    exportCrossVerticalFailureCold():string{return this.field.exportCrossVerticalFailureCold(OWNER_PERMIT_V2);}
+    exportCrossVerticalCold():string{return this.field.exportCrossVerticalCold(OWNER_PERMIT_V2);}
     exportFailureCold(): DerivedFailureRawV2 | null { return this.field.derivedFailureRawColdV2(OWNER_PERMIT_V2); }
     exportCheckpointCold(): DerivedCheckpointV2 { return this.field.exportDerivedCheckpointColdV2(OWNER_PERMIT_V2); }
     restoreCold(checkpoint: DerivedCheckpointV2): void {
-        if (!(checkpoint instanceof DerivedCheckpointV2) || checkpoint.revision !== 'P011_DERIVED_CHECKPOINT_V2' || checkpoint.numericPolicy !== DERIVED_POLICY_V2 || checkpoint.cacheRevision !== DERIVED_CACHE_V2 || checkpoint.envelopeRevision !== 'P011_DRY_ENVELOPE_ORDERED_V2' || checkpoint.authority.drySourceId !== this.source)
+        if (!(checkpoint instanceof DerivedCheckpointV2) || checkpoint.revision !== (this.motionRevision===undefined?'P011_DERIVED_CHECKPOINT_V2':CROSS_CHECKPOINT_V1) || checkpoint.motionRevision!==this.motionRevision || checkpoint.numericPolicy !== DERIVED_POLICY_V2 || checkpoint.cacheRevision !== DERIVED_CACHE_V2 || checkpoint.envelopeRevision !== 'P011_DRY_ENVELOPE_ORDERED_V2' || checkpoint.authority.drySourceId !== this.source)
             throw new Error('DERIVED_CHECKPOINT_VERSION_CONFIG');
         const expected=defaultP011ParticleParams();expected.nmax=this.nmax;if(checkpoint.backend!=='CPU_ORIGINAL_F64'||checkpoint.writerRegistry!=='T216_DRY_WRITERS_V2'||JSON.stringify(checkpoint.particleParams)!==JSON.stringify(expected))throw new Error('DERIVED_CHECKPOINT_PARAMETER_GRAPH'); const owned = checkpoint.cloneCold();
         const prior = new DerivedPublishedSlotV2(this.nmax);

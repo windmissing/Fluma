@@ -118,6 +118,7 @@ export interface P011ParticleRequest {
   phase: number; sourceKind: number; column: number; targetColumn: number;
   requested: number; totalWeight: number;
   predictedX: number; predictedY: number; predictedVx: number; predictedVy: number;
+  blockedYFree?:number;
   mergedIds: number[];
 }
 export interface P011ParticleStepIdentity {

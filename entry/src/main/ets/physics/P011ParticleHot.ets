@@ -1,3 +1,4 @@
+import { DryCrossRows, crossSameF64, CROSS_CAPACITY, CROSS_BUDGET, CROSS_LAND_REMAINDER } from './derived/P011DryCrossVerticalV1';
 import { P011HotWorkReceipt } from './P011HotWorkReceipt';
 import { DerivedCoordinatorV2 } from './derived/P011DerivedTupleBarrierV2';
 import { TxWholePairAdapter,TxHotBanks } from './tx/TxWholePairAdapter';
@@ -38,6 +39,7 @@ let nextLeaseToken = 1;
 const WATER_TOP_AUDIT_EPS = 1e-9;
 
 export interface P011ParticleHotConfig {
+  crossVertical?: boolean;
   cols: number; nmax: number; requestCapacity: number; motionCapacity: number;
   eventCapacity: number; lineageCapacity: number; params: P011ParticleParams;
 }
@@ -81,7 +83,11 @@ export class P011ParticleHotPlanBuffer {
   readonly motionVx: Float64Array; readonly motionVy: Float64Array;
   readonly lineage: Uint32Array;
   private readonly storage: ArrayBuffer[];
-  constructor(requestCapacity: number, motionCapacity: number, lineageCapacity: number) {
+  readonly blockedYFree:Float64Array;
+  readonly crossVertical:boolean;
+  constructor(requestCapacity: number, motionCapacity: number, lineageCapacity: number,crossVertical:boolean=false) {
+    this.crossVertical=crossVertical;
+    this.blockedYFree=new Float64Array(crossVertical?requestCapacity:0);
     this.requestCapacity = requestCapacity; this.motionCapacity = motionCapacity;
     this.lineageCapacity = lineageCapacity;
     this.kind = new Uint8Array(requestCapacity); this.phase = new Uint8Array(requestCapacity);
@@ -98,6 +104,7 @@ export class P011ParticleHotPlanBuffer {
     this.motionVx = new Float64Array(motionCapacity); this.motionVy = new Float64Array(motionCapacity);
     this.lineage = new Uint32Array(lineageCapacity);
     this.storage = [this.kind.buffer, this.phase.buffer, this.sourceKind.buffer, this.column.buffer, this.targetColumn.buffer, this.particleId.buffer, this.sourceId.buffer, this.substep.buffer, this.ordinal.buffer, this.requested.buffer, this.totalWeight.buffer, this.predictedX.buffer, this.predictedY.buffer, this.predictedVx.buffer, this.predictedVy.buffer, this.mergeStart.buffer, this.mergeCount.buffer, this.motionParticleId.buffer, this.motionColumn.buffer, this.motionX.buffer, this.motionY.buffer, this.motionVx.buffer, this.motionVy.buffer, this.lineage.buffer];
+    if(crossVertical)this.storage.push(this.blockedYFree.buffer as ArrayBuffer);
   }
   storageValidHot(): boolean {
     return this.kind.buffer === this.storage[0] && this.kind.byteOffset === 0 && this.kind.length === this.requestCapacity &&
@@ -123,7 +130,8 @@ export class P011ParticleHotPlanBuffer {
       this.motionY.buffer === this.storage[20] && this.motionY.byteOffset === 0 && this.motionY.length === this.motionCapacity &&
       this.motionVx.buffer === this.storage[21] && this.motionVx.byteOffset === 0 && this.motionVx.length === this.motionCapacity &&
       this.motionVy.buffer === this.storage[22] && this.motionVy.byteOffset === 0 && this.motionVy.length === this.motionCapacity &&
-      this.lineage.buffer === this.storage[23] && this.lineage.byteOffset === 0 && this.lineage.length === this.lineageCapacity;
+      this.lineage.buffer === this.storage[23] && this.lineage.byteOffset === 0 && this.lineage.length === this.lineageCapacity &&
+      (!this.crossVertical||(this.blockedYFree.buffer===this.storage[24]&&this.blockedYFree.byteOffset===0&&this.blockedYFree.length===this.requestCapacity));
   }
   coldBuffers(): ArrayBuffer[] { return this.storage; }
 }
@@ -290,6 +298,10 @@ export class P011ParticleHotWorkspace {
   readonly seenRequests: P011ParticleHotPlanBuffer;
   readonly patchRequest: P011ParticleHotPlanBuffer;
   readonly patchOriginal: P011ParticleHotPlanBuffer;
+  readonly crossRows:DryCrossRows|null;
+  readonly crossBudgetProof:Float64Array;
+  crossReason=0;crossProof=0;crossEpoch=0;
+  crossRun='';crossAttempt='';crossFailureHot=0;crossFailureStage=0;crossEditedSlot=-1;
   stagedYActive = 0; stagedY = 0;
   readonly events: P011ParticleHotEventBuffer;
   readonly sealedPlan: P011ParticleHotPlanBuffer; readonly sealedResults: P011ParticleHotResultBuffer;
@@ -347,6 +359,8 @@ export class P011ParticleHotWorkspace {
   poolProgress: P011PoolProgressDiagnostic | null = null;
   constructor(config: P011ParticleHotConfig, pool: P011ParticleField) {
     this.ownerId = nextOwnerId++; this.pool = pool;
+    this.crossBudgetProof=new Float64Array(config.crossVertical===true?2*config.cols+3:0);
+    this.crossRows=config.crossVertical===true?new DryCrossRows(Math.min(config.nmax,config.requestCapacity)):null;
     // Cold owned copy: caller edits cannot change a frozen step's predictor.
     this.params = { massPackage: config.params.massPackage, nmax: config.params.nmax,
       terminalSpeedHeavy: config.params.terminalSpeedHeavy, terminalSpeedLight: config.params.terminalSpeedLight,
@@ -358,8 +372,8 @@ export class P011ParticleHotWorkspace {
     this.cols = config.cols; this.nmax = config.nmax; this.requestCapacity = config.requestCapacity;
     this.motionCapacity = config.motionCapacity; this.eventCapacity = config.eventCapacity;
     this.lineageCapacity = config.lineageCapacity;
-    this.planA = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity);
-    this.planB = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity);
+    this.planA = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity,config.crossVertical===true);
+    this.planB = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity,config.crossVertical===true);
     this.results = new P011ParticleHotResultBuffer(config.requestCapacity);
     this.frozenWaterTop = new Float64Array(config.cols); this.frozenBh = new Float64Array(config.cols);
     this.frozenBl = new Float64Array(config.cols); this.frozenMh = new Float64Array(config.cols);
@@ -385,11 +399,11 @@ export class P011ParticleHotWorkspace {
     const storage = pool.bindHotTransactionStorage();
     this.patchBefore = storage.before; this.patchAfter = storage.after; this.patchScratch = storage.scratch;
     this.patchActions = new P011ParticleHotEventBuffer(config.eventCapacity, config.lineageCapacity);
-    this.seenRequests = new P011ParticleHotPlanBuffer(config.requestCapacity, 1, 2 * config.requestCapacity);
-    this.patchRequest = new P011ParticleHotPlanBuffer(1, 1, 2);
-    this.patchOriginal = new P011ParticleHotPlanBuffer(1, 1, 2);
+    this.seenRequests = new P011ParticleHotPlanBuffer(config.requestCapacity, 1, 2 * config.requestCapacity,config.crossVertical===true);
+    this.patchRequest = new P011ParticleHotPlanBuffer(1, 1, 2,config.crossVertical===true);
+    this.patchOriginal = new P011ParticleHotPlanBuffer(1, 1, 2,config.crossVertical===true);
     this.events = new P011ParticleHotEventBuffer(config.eventCapacity, config.lineageCapacity);
-    this.sealedPlan = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity);
+    this.sealedPlan = new P011ParticleHotPlanBuffer(config.requestCapacity, config.motionCapacity, config.lineageCapacity,config.crossVertical===true);
     this.sealedResults = new P011ParticleHotResultBuffer(config.requestCapacity);
     this.validationRows = new Int32Array(config.requestCapacity + 1);
     this.auditMassH = new Float64Array(config.cols); this.auditMassL = new Float64Array(config.cols);
@@ -419,6 +433,7 @@ export class P011ParticleHotWorkspace {
     this.registerColdBuffers(this.events.coldBuffers()); this.registerColdBuffers(this.patchActions.coldBuffers());
     this.registerColdBuffers(this.sealedPlan.coldBuffers()); this.registerColdBuffers(this.sealedResults.coldBuffers());
     this.registerColdBuffers(this.mergeIndex.coldBuffers());
+    if(this.crossRows!==null)this.registerColdBuffers([this.crossRows.keys.buffer as ArrayBuffer,this.crossRows.values.buffer as ArrayBuffer,this.crossBudgetProof.buffer as ArrayBuffer]);
   }
   // COLD registration only. Dynamic shape and capacity never change in HOT.
   registerColdBuffers(buffers: ArrayBuffer[]): void {
@@ -617,6 +632,7 @@ function beginStepHotBody(work: P011ParticleHotWorkspace, input: P011ParticleHot
   // full and re-establishes the baseline); the ordered id index carries over
   // only when the pool did not roll back.
   work.auditBaseValid = 0; work.auditRowSinceFull = 0; work.patchActionsJournalCount = 0; work.patchActionsJournalOverflow = 0;
+  if(work.crossRows!==null)work.crossRows.count=0;
   work.events.count = 0; work.events.lineageCount = 0; work.stepExternalH = 0; work.stepExternalL = 0;
   work.events.ownerId = work.ownerId; work.events.runToken = work.runToken; work.events.stepEpoch = work.stepEpoch;
   work.events.substepId = work.substepId; work.events.attemptToken = work.attemptToken;
@@ -653,6 +669,7 @@ export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoc
   work.applying = 0;
   work.patchPlan = null; work.patchRow = -1; work.patchActions.count = 0; work.patchActions.lineageCount = 0;
   work.seenEpoch.set(work.seenEpochBefore);
+  if(work.crossRows!==null)work.crossRows.count=0;
   work.events.count = 0; work.events.lineageCount = 0; work.stepExternalH = 0; work.stepExternalL = 0;
   work.results.committed.fill(0); work.results.eventCount.fill(0);
   if (work.sinkCheckpoint !== null) work.sinkCheckpoint.restoreOutsHot();
@@ -686,6 +703,7 @@ function sealEvidenceHot(work: P011ParticleHotWorkspace): void {syncHotContext(w
   b.requestCount = a.requestCount; b.motionCount = a.motionCount; b.totalRequested = a.totalRequested;
   b.valid = a.valid; b.consumed = a.consumed;
   for (let i = 0; i < a.requestCount; i++) {txTrace?.add(39);
+    if(b.crossVertical)b.blockedYFree[i]=a.blockedYFree[i];
     b.kind[i] = a.kind[i]; b.phase[i] = a.phase[i]; b.sourceKind[i] = a.sourceKind[i]; b.column[i] = a.column[i]; b.targetColumn[i] = a.targetColumn[i]; b.particleId[i] = a.particleId[i]; b.sourceId[i] = a.sourceId[i]; b.substep[i] = a.substep[i]; b.ordinal[i] = a.ordinal[i]; b.requested[i] = a.requested[i]; b.totalWeight[i] = a.totalWeight[i]; b.predictedX[i] = a.predictedX[i]; b.predictedY[i] = a.predictedY[i]; b.predictedVx[i] = a.predictedVx[i]; b.predictedVy[i] = a.predictedVy[i]; b.mergeStart[i] = a.mergeStart[i]; b.mergeCount[i] = a.mergeCount[i];
     for (let j = 0; j < a.mergeCount[i]; j++) b.lineage[a.mergeStart[i] + j] = a.lineage[a.mergeStart[i] + j];
   }
@@ -849,6 +867,7 @@ function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedSte
       destination.targetColumn[r] = contact ? -1 : target; destination.particleId[r] = p.pId[i];
       destination.sourceId[r] = p.pSourceId[i]; destination.substep[r] = work.substepId;
       destination.ordinal[r] = r + 1; destination.requested[r] = p.pMass[i]; destination.totalWeight[r] = p.pMass[i];
+      if(destination.crossVertical)destination.blockedYFree[r]=contact?0:y;
       destination.predictedX[r] = contact ? p.pX[i] : x;
       destination.predictedY[r] = contact ? sandHot(work, c) + work.params.contactEps :
         Math.max(y, sandHot(work, target) + work.params.contactEps);
@@ -861,7 +880,7 @@ function collectParticlePlanIntoBody(work: P011ParticleHotWorkspace, expectedSte
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,315,txCode);}}
 
 export function compareParticlePlansHot(a: P011ParticleHotPlanBuffer, b: P011ParticleHotPlanBuffer): number {
-  if (a === b || !planValuesValidHot(a) || !planValuesValidHot(b) || a.ownerId !== b.ownerId || a.runToken !== b.runToken ||
+  if (a === b || a.crossVertical!==b.crossVertical || !planValuesValidHot(a) || !planValuesValidHot(b) || a.ownerId !== b.ownerId || a.runToken !== b.runToken ||
     a.stepEpoch !== b.stepEpoch || a.substepId !== b.substepId || a.attemptToken !== b.attemptToken ||
     a.paramsRevision !== b.paramsRevision || a.inputRevision !== b.inputRevision || a.seed !== b.seed ||
     a.dt !== b.dt || a.effectiveTiltRad !== b.effectiveTiltRad || a.requestCount !== b.requestCount ||
@@ -871,7 +890,7 @@ export function compareParticlePlansHot(a: P011ParticleHotPlanBuffer, b: P011Par
       a.column[i] !== b.column[i] || a.targetColumn[i] !== b.targetColumn[i] || a.particleId[i] !== b.particleId[i] ||
       a.sourceId[i] !== b.sourceId[i] || a.substep[i] !== b.substep[i] || a.ordinal[i] !== b.ordinal[i] ||
       a.requested[i] !== b.requested[i] || a.totalWeight[i] !== b.totalWeight[i] ||
-      a.predictedX[i] !== b.predictedX[i] || a.predictedY[i] !== b.predictedY[i] ||
+      (a.crossVertical&&!crossSameF64(a.blockedYFree[i],b.blockedYFree[i])) || a.predictedX[i] !== b.predictedX[i] || a.predictedY[i] !== b.predictedY[i] ||
       a.predictedVx[i] !== b.predictedVx[i] || a.predictedVy[i] !== b.predictedVy[i] ||
       a.mergeStart[i] !== b.mergeStart[i] || a.mergeCount[i] !== b.mergeCount[i]) return P011_HOT_PLAN_MISMATCH;
     for (let j = 0; j < a.mergeCount[i]; j++) {
@@ -908,6 +927,7 @@ function planValuesValidHot(p: P011ParticleHotPlanBuffer): boolean {
       p.substep[i] !== p.substepId || p.sourceId[i] === 0 || p.column[i] < 0 || p.column[i] >= 128 ||
       !Number.isFinite(p.requested[i]) || p.requested[i] < 0 ||
       !Number.isFinite(p.totalWeight[i]) || p.totalWeight[i] !== ((p.kind[i] === 2 || p.kind[i] === 3) ? p.requested[i] : 0) ||
+      (p.crossVertical&&(p.kind[i]===3?!Number.isFinite(p.blockedYFree[i]):!crossSameF64(p.blockedYFree[i],0))) ||
       !Number.isFinite(p.predictedX[i]) || !Number.isFinite(p.predictedY[i]) ||
       !Number.isFinite(p.predictedVx[i]) || !Number.isFinite(p.predictedVy[i]) ||
       p.mergeStart[i] < 0 || p.mergeCount[i] < 0 || p.mergeStart[i] + p.mergeCount[i] > p.lineageCapacity) return false;
@@ -944,7 +964,7 @@ export function sameRequestHot(a: P011ParticleHotPlanBuffer, i: number, b: P011P
     a.column[i] !== b.column[j] || a.targetColumn[i] !== b.targetColumn[j] || a.particleId[i] !== b.particleId[j] ||
     a.sourceId[i] !== b.sourceId[j] || a.substep[i] !== b.substep[j] || a.ordinal[i] !== b.ordinal[j] ||
     a.requested[i] !== b.requested[j] || a.totalWeight[i] !== b.totalWeight[j] ||
-    a.predictedX[i] !== b.predictedX[j] || a.predictedY[i] !== b.predictedY[j] ||
+    a.crossVertical!==b.crossVertical || (a.crossVertical&&!crossSameF64(a.blockedYFree[i],b.blockedYFree[j])) || a.predictedX[i] !== b.predictedX[j] || a.predictedY[i] !== b.predictedY[j] ||
     a.predictedVx[i] !== b.predictedVx[j] || a.predictedVy[i] !== b.predictedVy[j] ||
     a.mergeCount[i] !== b.mergeCount[j]) return false;
   for (let k = 0; k < a.mergeCount[i]; k++) if (a.lineage[a.mergeStart[i] + k] !== b.lineage[b.mergeStart[j] + k]) return false;
@@ -956,6 +976,7 @@ function rememberRequestHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPl
   b.column[j] = p.column[i]; b.targetColumn[j] = p.targetColumn[i]; b.particleId[j] = p.particleId[i];
   b.sourceId[j] = p.sourceId[i]; b.substep[j] = p.substep[i]; b.ordinal[j] = o;
   b.requested[j] = p.requested[i]; b.totalWeight[j] = p.totalWeight[i];
+  if(b.crossVertical)b.blockedYFree[j]=p.blockedYFree[i];
   b.predictedX[j] = p.predictedX[i]; b.predictedY[j] = p.predictedY[i];
   b.predictedVx[j] = p.predictedVx[i]; b.predictedVy[j] = p.predictedVy[i];
   b.mergeStart[j] = j * 2; b.mergeCount[j] = p.mergeCount[i];
@@ -970,6 +991,7 @@ function requestIdentityHot(work: P011ParticleHotWorkspace, p: P011ParticleHotPl
   if ((p !== work.planA && p !== work.planB) || (work.applying !== 1 && !planValuesValidHot(p)) ||
     !Number.isInteger(row) || row < 0 || row >= p.requestCount ||
     (p.kind[row] === P011_HOT_KIND_MERGE ? p.mergeCount[row] !== 2 : p.mergeCount[row] !== 0)) {const txOriginalCode:number=P011_HOT_INVALID_INPUT;txCode=txOriginalCode;return txOriginalCode;}
+  if(p.crossVertical&&p.kind[row]===3&&p.blockedYFree[row]>work.capacity)return P011_HOT_INVALID_INPUT;
   if (work.applying === 1 && !sameRequestHot(p, row, work.planB, row)) {const txOriginalCode:number=P011_HOT_IDENTITY_MISMATCH;txCode=txOriginalCode;return txOriginalCode;}
   const ordinal = p.ordinal[row];
   if (work.seenEpoch[ordinal] === work.stepEpoch) {
@@ -1154,6 +1176,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
   }
   const slot = particleSlotHot(p, plan.particleId[row],work);
   if (slot < 0) return P011_HOT_UNKNOWN_PARTICLE;
+  if(plan.crossVertical)work.crossEditedSlot=slot;
   if (p.pPhase[slot] !== plan.phase[row] || p.pSource[slot] !== plan.sourceKind[row] || p.pSourceId[slot] !== plan.sourceId[row] ||
     Math.floor(p.pX[slot]) !== c || p.pMass[slot] !== plan.requested[row] || (plan.phase[row] === 0 ? gl : gh) !== 0) return P011_HOT_IDENTITY_MISMATCH;
   const cache = plan.phase[row] === 0 ? p.colParticleMassH : p.colParticleMassL;
@@ -1164,7 +1187,7 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
     work.txD1?.before(p,slot);
     if(work.derivedV2===null)cache[c] -= amount; p.pMass[slot] = remainder;
     if (remainder === 0) { p.pState[slot] = 0; p.liveCount--; p.freeSlots[p.freeCount++] = slot; auditIdIndexRemoveHot(work, p, slot); auditJournalDeathMassHot(work, amount); }
-    else { p.pState[slot] = 2; p.pY[slot] = (plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }
+    else { p.pState[slot] = 2; p.pY[slot] = plan.crossVertical?Math.min(work.capacity,plan.predictedY[row]):(plan.predictedY[row] - work.params.contactEps) + work.params.contactEps; p.pVy[slot] = 0; }
     if(work.derivedV2!==null&&d!==null){const ds=work.derivedV2.finish(p,d);if(ds!==0){work.txD1?.invalidate(p);return ds;}}
     work.txD1?.after(p,slot);
   } else if (kind === P011_HOT_KIND_DEGRADE) {
@@ -1179,7 +1202,19 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
     if (target < 0 || target >= p.cols || Math.abs(target - c) !== 1) return P011_HOT_INVALID_INPUT;
     if(!((disposition===6&&amount===0)||(disposition===4&&amount===p.pMass[slot]&&Math.floor(plan.predictedX[row])===target)))return P011_HOT_INVALID_PATCH_STATE;
     const d=work.derivedV2===null?null:work.derivedV2.begin(p,slot,-1,'ROW:'+kind);if(work.derivedV2!==null&&d===null)return work.derivedV2.status;
-    if (disposition === 6 && amount === 0) {work.txD1?.before(p,slot);p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;}
+    if (disposition === 6 && amount === 0) {
+      work.txD1?.before(p,slot);p.pX[slot] = target > c ? c + 1 - 1e-9 : c + 1e-9;
+      if(plan.crossVertical){
+        const f=work.field,y=plan.blockedYFree[row];
+        if(f===null||(work.crossReason!==CROSS_CAPACITY&&work.crossReason!==CROSS_BUDGET)||
+           !Number.isFinite(y)||y>work.capacity)return P011_HOT_INVALID_INPUT;
+        const bed=((f.bh[c]+f.bl[c])+f.mh[c])+f.ml[c];
+        if(!Number.isFinite(bed)||bed<0||bed>work.capacity)return P011_HOT_INVALID_INPUT;
+        const hit=Math.min(p.pY[slot],y)<=bed;
+        p.pState[slot]=hit?2:1;p.pY[slot]=hit?Math.min(work.capacity,bed+work.params.contactEps):y;
+        p.pVx[slot]=0;p.pVy[slot]=hit?0:plan.predictedVy[row];
+      }
+    }
     else {
       if (disposition !== 4 || amount !== p.pMass[slot] || Math.floor(plan.predictedX[row]) !== target) return P011_HOT_INVALID_PATCH_STATE;
       work.txD1?.before(p,slot);
@@ -1194,6 +1229,29 @@ function editPoolHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBu
     return mergePairHot(work, p, slot, particleSlotHot(p, plan.lineage[plan.mergeStart[row] + 1],work));
   } else return P011_HOT_INVALID_INPUT;
   return 0;
+}
+
+// Called after the patch lease and the original ticket have closed.
+export function recordCrossVerticalRow(work:P011ParticleHotWorkspace,p:P011ParticleHotPlanBuffer,row:number,
+  reason:number,event:number,ticket:number,reserved:number,refunded:number,granted:number):number {
+  const rows=work.crossRows,f=work.field;
+  if(rows===null||f===null||reason===0)return 0;
+  if(rows.count>=rows.capacity)return P011_HOT_JOURNAL_OVERFLOW;
+  const before=work.patchBefore,after=work.patchAfter,id=p.particleId[row];
+  const slot=work.crossEditedSlot,column=p.column[row];
+  if(slot<0||slot>=work.nmax||before.pId[slot]!==id||after.pId[slot]!==id)return P011_HOT_IDENTITY_MISMATCH;
+  const a=rows.count*8,b=rows.count*20,k=rows.keys,v=rows.values;
+  k[a]=slot;k[a+1]=id;k[a+2]=p.sourceId[row];k[a+3]=column;k[a+4]=p.targetColumn[row]+1;
+  k[a+5]=p.ordinal[row];k[a+6]=reason|(after.pState[slot]<<4)|(after.pPhase[slot]<<8)|(after.pSource[slot]<<9);k[a+7]=event;
+  v[b]=after.pMass[slot];v[b+1]=before.pX[slot];v[b+2]=before.pY[slot];
+  v[b+3]=before.pVx[slot];v[b+4]=before.pVy[slot];
+  v[b+5]=reason===CROSS_LAND_REMAINDER?after.pY[slot]:p.blockedYFree[row];
+  v[b+6]=p.predictedVy[row];v[b+7]=p.predictedY[row];
+  v[b+8]=after.pX[slot];v[b+9]=after.pY[slot];v[b+10]=after.pVx[slot];v[b+11]=after.pVy[slot];
+  v[b+12]=((f.bh[column]+f.bl[column])+f.mh[column])+f.ml[column];v[b+13]=0;
+  v[b+14]=ticket;v[b+15]=reserved;v[b+16]=refunded;
+  v[b+17]=granted;v[b+18]=p.requested[row]-granted;v[b+19]=p.requested[row];
+  rows.count++;return 0;
 }
 
 export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011ParticleHotPlanBuffer,
@@ -1261,6 +1319,7 @@ export function copyRequestRowHot(a: P011ParticleHotPlanBuffer, i: number, b: P0
   b.column[j] = a.column[i]; b.targetColumn[j] = a.targetColumn[i]; b.particleId[j] = a.particleId[i];
   b.sourceId[j] = a.sourceId[i]; b.substep[j] = a.substep[i]; b.ordinal[j] = a.ordinal[i];
   b.requested[j] = a.requested[i]; b.totalWeight[j] = a.totalWeight[i];
+  if(b.crossVertical)b.blockedYFree[j]=a.blockedYFree[i];
   b.predictedX[j] = a.predictedX[i]; b.predictedY[j] = a.predictedY[i];
   b.predictedVx[j] = a.predictedVx[i]; b.predictedVy[j] = a.predictedVy[i];
   b.mergeStart[j] = j * 2; b.mergeCount[j] = a.mergeCount[i];

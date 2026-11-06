@@ -43,10 +43,12 @@ export function exportParticleEvidence(work: P011ParticleHotWorkspace, committed
     const key = JSON.stringify([work.coldRunId, p.substepId, kind, p.particleId[i] || p.sourceId[i],
       p.column[i], p.targetColumn[i], p.ordinal[i]]);
     keys[p.ordinal[i]] = key;
-    requests.push({requestKey:key, substepId:p.substepId, ordinal:p.ordinal[i], kind:kind,
+    const request:P011ParticleRequest={requestKey:key, substepId:p.substepId, ordinal:p.ordinal[i], kind:kind,
       particleId:p.particleId[i], sourceId:p.sourceId[i], phase:p.phase[i], sourceKind:p.sourceKind[i],
       column:p.column[i], targetColumn:p.targetColumn[i], requested:p.requested[i], totalWeight:p.totalWeight[i],
-      predictedX:p.predictedX[i], predictedY:p.predictedY[i], predictedVx:p.predictedVx[i], predictedVy:p.predictedVy[i], mergedIds:lineage});
+      predictedX:p.predictedX[i], predictedY:p.predictedY[i], predictedVx:p.predictedVx[i], predictedVy:p.predictedVy[i], mergedIds:lineage};
+    if(p.crossVertical)request.blockedYFree=p.blockedYFree[i];
+    requests.push(request);
   }
   for (let i = 0; i < p.motionCount; i++) motions.push({particleId:p.motionParticleId[i], column:p.motionColumn[i],
     x:p.motionX[i], y:p.motionY[i], vx:p.motionVx[i], vy:p.motionVy[i]});

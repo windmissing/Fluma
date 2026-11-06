@@ -15,12 +15,13 @@ export class DerivedPublicationSealV2 {
     readonly commit: number;
     readonly run: string;
     readonly certificate: number;
+    private readonly motionRevision:string|undefined;
     private constructor(state: P011PublishedRenderState, serial: number, certificate: number) {
         this.state = state;
         this.serial = serial;
         this.commit = state.physicsCommitId;
         this.run = state.runId;
-        this.certificate = certificate;
+        this.certificate = certificate;this.motionRevision=state.motionRevision;
         const f = state.field;
         this.buffers = [f.waterTop.buffer as ArrayBuffer, f.bh.buffer as ArrayBuffer, f.bl.buffer as ArrayBuffer, f.mh.buffer as ArrayBuffer, f.ml.buffer as ArrayBuffer, f.suspH.buffer as ArrayBuffer, f.suspL.buffer as ArrayBuffer, f.sandTop.buffer as ArrayBuffer, f.hs.buffer as ArrayBuffer, f.hl.buffer as ArrayBuffer];
         const p = f.particleState;
@@ -35,7 +36,7 @@ export class DerivedPublicationSealV2 {
         return new DerivedPublicationSealV2(state, serial, certificate);
     }
     matches(state: P011PublishedRenderState): boolean {
-        if (state !== this.state || state.derivedSeal !== this || state.physicsCommitId !== this.commit || state.runId !== this.run || state.field.physicsCommitId !== this.commit || state.numericPolicy !== DERIVED_POLICY_V2 || state.cacheRevision !== DERIVED_CACHE_V2 || state.envelopeRevision !== DERIVED_ENVELOPE_V2 || state.publicationRevision !== DERIVED_PUBLICATION_V2 || state.derivedCertificateId !== this.certificate)
+        if (state !== this.state || state.derivedSeal !== this || state.physicsCommitId !== this.commit || state.runId !== this.run || state.motionRevision!==this.motionRevision || state.field.physicsCommitId !== this.commit || state.numericPolicy !== DERIVED_POLICY_V2 || state.cacheRevision !== DERIVED_CACHE_V2 || state.envelopeRevision !== DERIVED_ENVELOPE_V2 || state.publicationRevision !== DERIVED_PUBLICATION_V2 || state.derivedCertificateId !== this.certificate)
             return false;
         const f = state.field, p = f.particleState;
         if (p === undefined || p === null)
@@ -148,6 +149,10 @@ export class DerivedCommitV2 {
         return this.sameBuffer(a.waterTop.buffer as ArrayBuffer, b.waterTop.buffer as ArrayBuffer,bankBase+13,55) && this.sameBuffer(a.bh.buffer as ArrayBuffer, b.bh.buffer as ArrayBuffer,bankBase+14,56) && this.sameBuffer(a.bl.buffer as ArrayBuffer, b.bl.buffer as ArrayBuffer,bankBase+15,57) && this.sameBuffer(a.mh.buffer as ArrayBuffer, b.mh.buffer as ArrayBuffer,bankBase+16,58) && this.sameBuffer(a.ml.buffer as ArrayBuffer, b.ml.buffer as ArrayBuffer,bankBase+17,59) && this.sameBuffer(a.suspH.buffer as ArrayBuffer, b.suspH.buffer as ArrayBuffer,bankBase+18,60) && this.sameBuffer(a.suspL.buffer as ArrayBuffer, b.suspL.buffer as ArrayBuffer,bankBase+19,61) && this.sameBuffer(a.sandTop.buffer as ArrayBuffer, b.surface.buffer as ArrayBuffer,bankBase+20,62);
     }finally{t351meter?.leave(t351scope);}
 }
+    abortPrepared():void {
+        if(this.prepared>=0&&this.prepared!==this.active)this.banks[this.prepared].derivedSeal=null;
+        this.prepared=-1;this.preparedContent=-1;
+    }
     commitPrepared(): void {
         if (this.prepared < 0 || this.preparedContent !== this.owner.contentSerial)
             throw new Error('DERIVED_PREPARED_STALE');
@@ -168,6 +173,7 @@ export class DerivedCommitV2 {
         this.owner.budget.identity(state.runId,state.physicsCommitId,state.stateEpoch,state.particleCapacity,state.liveCount);
         out.derivedSeal = null;
         const bytes = copyDerivedPayloadV2(state.field, out.field,this.owner.budget);
+        out.motionRevision=state.motionRevision;
         out.effectiveTiltDeg = state.effectiveTiltDeg;
         out.runId = state.runId;
         out.stateEpoch = state.stateEpoch;

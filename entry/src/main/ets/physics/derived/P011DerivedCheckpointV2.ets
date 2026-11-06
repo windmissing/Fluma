@@ -1,3 +1,4 @@
+import { CROSS_CHECKPOINT_V1 } from './P011DryCrossVerticalV1';
 import { P011ParticleParams } from '../P011ParticleField';
 import { defaultP011ParticleParams } from '../P011ParticleM2Field';
 import { WaterSandSnapshot } from '../WaterSandField';
@@ -5,7 +6,8 @@ import { createDerivedPayloadV2, copyDerivedPayloadV2 } from './P011DerivedSnaps
 import { DERIVED_CHECKPOINT_V2, DERIVED_POLICY_V2, DERIVED_CACHE_V2, DERIVED_ENVELOPE_V2 } from './P011DerivedTypesV2';
 export class DerivedCheckpointV2 {
     readonly backend='CPU_ORIGINAL_F64';readonly writerRegistry='T216_DRY_WRITERS_V2';readonly particleParams:P011ParticleParams=defaultP011ParticleParams();
-    readonly revision = DERIVED_CHECKPOINT_V2;
+    readonly revision:string;
+    readonly motionRevision?:string;
     readonly numericPolicy = DERIVED_POLICY_V2;
     readonly cacheRevision = DERIVED_CACHE_V2;
     readonly envelopeRevision = DERIVED_ENVELOPE_V2;
@@ -20,12 +22,12 @@ export class DerivedCheckpointV2 {
     commit = 0;
     derivedRevision = 0;
     replayStatus = 'QUIESCENT_COLD_COPY';
-    constructor(nmax: number) {this.particleParams.nmax=nmax; this.authority = createDerivedPayloadV2(nmax); this.generations = new Float64Array(nmax); this.ids = new Uint32Array(nmax); }
+    constructor(nmax: number,motionRevision?:string) {this.revision=motionRevision===undefined?DERIVED_CHECKPOINT_V2:CROSS_CHECKPOINT_V1;if(motionRevision!==undefined)this.motionRevision=motionRevision;this.particleParams.nmax=nmax; this.authority = createDerivedPayloadV2(nmax); this.generations = new Float64Array(nmax); this.ids = new Uint32Array(nmax); }
     cloneCold(): DerivedCheckpointV2 {
         const p = this.authority.particleState;
         if (p === null || p === undefined)
             throw new Error('DERIVED_CHECKPOINT_POOL');
-        const out = new DerivedCheckpointV2(p.nmax);
+        const out = new DerivedCheckpointV2(p.nmax,this.motionRevision);
         copyDerivedPayloadV2(this.authority, out.authority);
         out.acc.set(this.acc);
         out.count.set(this.count);

@@ -84,6 +84,7 @@ export class P011ParticleM2FieldBinding {
     d.attemptToken=this.attemptToken;d.runToken=this.runToken;d.substepId=substepId;d.seed=seed;d.dt=dt;d.tiltRad=tiltRad;
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,350,txCode);}}
   private collectExit(phase: string,m2Code: number,hotCode: number,rollbackCode: number=0): number {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(351);let txCode=0;try{
+    if(hotCode!==0)this.recordCrossHotFailure(hotCode);
     if(this.collectFailureEnabled){const d=this.collectFailure,w=this.work,b=this.sink.budget;
       d.phase=phase;d.m2Code=m2Code;d.hotCode=hotCode;d.rollbackCode=rollbackCode;
       d.rollbackExecuted=phase==='COLLECT_A'||phase==='COLLECT_B'||phase==='COMPARE';
@@ -114,10 +115,10 @@ export class P011ParticleM2FieldBinding {
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,353,txCode);}}
   constructor(cols: number, capacity: number, waterTop: Float64Array, bh: Float64Array,
     bl: Float64Array, mh: Float64Array, ml: Float64Array, suspH: Float64Array,
-    suspL: Float64Array, surface: Float64Array, params: P011ParticleParams, host: P011ParticleM2Host) {
+    suspL: Float64Array, surface: Float64Array, params: P011ParticleParams, host: P011ParticleM2Host,crossVertical:boolean=false) {
     const config: P011ParticleHotConfig = { cols: cols, nmax: params.nmax,
       requestCapacity: 2048, motionCapacity: params.nmax, eventCapacity: 4096,
-      lineageCapacity: 8192, params: params };
+      lineageCapacity: 8192, params: params,crossVertical:crossVertical };
     this.work = configureHot(config);
     warmUpHot(this.work);
     this.projection = new P011ParticleM2Projection(this.work);
@@ -207,6 +208,7 @@ export class P011ParticleM2FieldBinding {
     a.kind[0] = sourceKind === 0 ? 1 : 4; a.phase[0] = phase; a.sourceKind[0] = sourceKind;
     a.column[0] = Math.floor(x); a.targetColumn[0] = -1; a.particleId[0] = 0;
     a.sourceId[0] = sourceId; a.substep[0] = w.substepId; a.ordinal[0] = 1;
+    if(a.crossVertical)a.blockedYFree[0]=0;
     a.requested[0] = mass; a.totalWeight[0] = 0; a.predictedX[0] = x; a.predictedY[0] = y;
     a.predictedVx[0] = vx; a.predictedVy[0] = vy; a.mergeStart[0] = 0; a.mergeCount[0] = 0;
     b.requestCount = 1; b.motionCount = 0; b.totalRequested = 0;
@@ -244,6 +246,7 @@ export class P011ParticleM2FieldBinding {
       const mass=phase===0?heavy:light;if(mass===0)continue;const row=a.requestCount++;
       a.kind[row]=sourceKind===0?1:4;a.phase[row]=phase;a.sourceKind[row]=sourceKind;a.column[row]=Math.floor(x);a.targetColumn[row]=-1;
       a.particleId[row]=0;a.sourceId[row]=sourceId;a.substep[row]=w.substepId;a.ordinal[row]=row+1;
+      if(a.crossVertical)a.blockedYFree[row]=0;
       a.requested[row]=mass;a.totalWeight[row]=0;a.predictedX[row]=x;a.predictedY[row]=y;
       a.predictedVx[row]=0;a.predictedVy[row]=sourceKind===0?0:phase===0?w.params.liftSpeedHeavy:w.params.liftSpeedLight;a.mergeStart[row]=row*2;a.mergeCount[row]=0;
     }
@@ -317,15 +320,30 @@ export class P011ParticleM2FieldBinding {
     }
     const budget = this.sink.budget;
     budget.scale = totalScale;
+    if(this.work.crossRows!==null){
+      const proof=this.work.crossBudgetProof;
+      proof.set(localRemaining);proof.set(localUsed,this.work.cols);
+      proof[this.work.cols*2]=totalRemaining;proof[this.work.cols*2+1]=totalScale;
+      proof[this.work.cols*2+2]=this.work.planA.totalRequested;
+    }
     budget.bindLiveBudget(localRemaining, localUsed, totalRemaining, 0);
     const epoch = this.work.stepEpoch;
     const status = applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results,preview?2:1);
     if(this.work.diagnosticEnabled)this.authoritativeApplyCalls++;
+    if(status!==0)this.recordCrossHotFailure(status);
+    if(status!==0&&this.work.crossRows!==null&&this.work.derivedV2!==null&&this.work.derivedV2.status!==0)
+      this.work.derivedV2.fault.originalHotCode=status;
     if (status !== 0) { this.rollback(); {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
-    if (finishStepHot(this.work, epoch) !== 0) { rollbackStepHot(this.work, epoch); this.stepOpen = 0; {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
+    const finished=finishStepHot(this.work,epoch);
+    if (finished !== 0) { this.recordCrossHotFailure(finished);rollbackStepHot(this.work, epoch); this.stepOpen = 0; {const txRc:number=P011_PARTICLE_M2_STEP_FAILED;txCode=txRc;return txRc;} }
     localRemaining.set(budget.localRemaining); localUsed.set(budget.localUsed);
     this.stepOpen = 0; {const txRc:number=0;txCode=txRc;return txRc;}
   }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,369,txCode);}}
+  private recordCrossHotFailure(code:number):void{
+    if(this.work.crossRows!==null&&this.work.crossFailureHot===0){
+      this.work.crossFailureHot=code;this.work.crossFailureStage=this.work.errorStageCode;
+    }
+  }
   rollback(): void {this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(370);let txCode=0;try{
     if(this.work.poolProgress!==null&&this.dryProgressSpan>=0){
       this.work.poolProgress.endSpan(this.dryProgressSpan,-1);this.dryProgressSpan=-1;}

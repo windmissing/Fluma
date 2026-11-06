@@ -1,3 +1,5 @@
+import { recordCrossVerticalRow } from './P011ParticleHot';
+import { CROSS_CAPACITY,CROSS_BUDGET,CROSS_LAND_REMAINDER,DryCrossByteBackup } from './derived/P011DryCrossVerticalV1';
 // P-011 D2: production transaction sink. M2 owns canonical field writes; M1 only prepares pool patches.
 import { P011ParticleHotWorkspace, P011ParticleHotPlanBuffer, P011ParticleHotResultBuffer,
   P011ParticleHotCommitSink, P011ParticleHotEventBuffer, validateParticleHotRequest,
@@ -17,13 +19,30 @@ export class P011ParticleM2BudgetAdapter extends P011ParticleHotBudgetAdapter {
   private readonly hostBeforeRemaining: Float64Array;
   private readonly hostBeforeUsed: Float64Array;
   private liveBound = false;
+  private readonly outerHost:DryCrossByteBackup|null;
+  private readonly outerHostScalars:Float64Array;
   private hostBeforeTotalRemaining = 0;
   private hostBeforeTotalUsed = 0;
   constructor(work: P011ParticleHotWorkspace, host: P011ParticleM2Host) {
     super(work); this.host = host;
     this.hostBeforeRemaining = new Float64Array(work.cols);
     this.hostBeforeUsed = new Float64Array(work.cols);
+    this.outerHost=work.crossRows===null?null:new DryCrossByteBackup([this.hostBeforeRemaining.buffer as ArrayBuffer,this.hostBeforeUsed.buffer as ArrayBuffer]);
+    this.outerHostScalars=new Float64Array(work.crossRows===null?0:3);
   }
+  saveOuterHot():void {
+    super.saveOuterHot();
+    if(this.outerHost===null)return;
+    this.outerHost.save();this.outerHostScalars[0]=this.liveBound?1:0;
+    this.outerHostScalars[1]=this.hostBeforeTotalRemaining;this.outerHostScalars[2]=this.hostBeforeTotalUsed;
+  }
+  restoreOuterHot():void {
+    super.restoreOuterHot();
+    if(this.outerHost===null)return;
+    this.outerHost.restore();this.liveBound=this.outerHostScalars[0]===1;
+    this.hostBeforeTotalRemaining=this.outerHostScalars[1];this.hostBeforeTotalUsed=this.outerHostScalars[2];
+  }
+  outerBackupBytes():number{return super.outerBackupBytes()+(this.outerHost?.bytes??0)+this.outerHostScalars.byteLength;}
   beginHot(epoch: number, dt: number): number { this.liveBound = false; return super.beginHot(epoch, dt); }
   bindLiveBudget(remaining: Float64Array, used: Float64Array, totalRemaining: number, totalUsed: number): void {
     this.liveBound = true;
@@ -141,6 +160,35 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
   private readonly beforeTicket = new P011ParticleHotTicketReceipt();
   private readonly beforeRefund = new P011ParticleHotRefundReceipt();
   private readonly beforeGuard = new P011ParticleHotGuardBuffer();
+  private readonly outerTicket:P011ParticleHotTicketReceipt|null;
+  private readonly outerRefund:P011ParticleHotRefundReceipt|null;
+  private readonly outerGuard:P011ParticleHotGuardBuffer|null;
+  private readonly outerEventBytes:DryCrossByteBackup|null;
+  private readonly outerEventHeader:Float64Array;
+  saveOuterHot():void {
+    const e=this.work.events;
+    if(this.outerEventBytes===null||this.outerTicket===null||this.outerRefund===null||this.outerGuard===null)return;
+    this.budget.saveOuterHot();
+    this.outerTicket.copyFromHot(this.ticket);this.outerRefund.copyFromHot(this.refund);this.outerGuard.copyFromHot(this.guard);
+    if(e.count>0||e.lineageCount>0)this.outerEventBytes.save();
+    this.outerEventHeader[0]=e.count;this.outerEventHeader[1]=e.lineageCount;
+    this.outerEventHeader[2]=e.ownerId;this.outerEventHeader[3]=e.runToken;this.outerEventHeader[4]=e.stepEpoch;
+    this.outerEventHeader[5]=e.substepId;this.outerEventHeader[6]=e.attemptToken;this.outerEventHeader[7]=this.birthOnly;
+  }
+  restoreOuterHot():void {
+    const e=this.work.events;
+    if(this.outerEventBytes===null||this.outerTicket===null||this.outerRefund===null||this.outerGuard===null)return;
+    this.budget.restoreOuterHot();
+    this.ticket.copyFromHot(this.outerTicket);this.refund.copyFromHot(this.outerRefund);this.guard.copyFromHot(this.outerGuard);
+    e.count=this.outerEventHeader[0];e.lineageCount=this.outerEventHeader[1];
+    if(e.count>0||e.lineageCount>0)this.outerEventBytes.restore();
+    e.ownerId=this.outerEventHeader[2];e.runToken=this.outerEventHeader[3];e.stepEpoch=this.outerEventHeader[4];
+    e.substepId=this.outerEventHeader[5];e.attemptToken=this.outerEventHeader[6];this.birthOnly=this.outerEventHeader[7];
+  }
+  outerBackupBytes():number {
+    return this.budget.outerBackupBytes()+(this.outerEventBytes?.bytes??0)+this.outerEventHeader.byteLength+
+      (this.outerRefund===null?0:72)+(this.outerGuard===null?0:60);
+  }
   private readonly ticketBinding = this.ticket;
   private readonly refundBinding = this.refund;
   private readonly guardBinding = this.guard;
@@ -151,6 +199,12 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     if (work.active !== 0 || work.commitSink !== null) throw new Error('PARTICLE_HOT_ALREADY_BOUND');
     this.work = work;
     this.host = host;
+    const enabled=work.crossRows!==null;
+    this.outerTicket=enabled?new P011ParticleHotTicketReceipt():null;
+    this.outerRefund=enabled?new P011ParticleHotRefundReceipt():null;
+    this.outerGuard=enabled?new P011ParticleHotGuardBuffer():null;
+    this.outerEventBytes=enabled?new DryCrossByteBackup(work.events.coldBuffers()):null;
+    this.outerEventHeader=new Float64Array(enabled?8:0);
     this.budget = new P011ParticleM2BudgetAdapter(work, host); work.budget = this.budget; work.commitSink = this;
     work.sinkCheckpoint = this;
     work.registerColdBuffers(this.budget.coldBuffers()); work.registerColdBuffers(this.refund.coldBuffers());
@@ -180,18 +234,20 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     const f = work.field; if (f === null) {const txRc:number=1;txCode=txRc;return txRc;}
     const c = p.column[row], kind = p.kind[row], requested = p.requested[row];
     let granted = requested, budgetClipped = 0, guardRejected = 0, capacityClipped = 0, poolClipped = 0;
+    let reason=0,reservedAmount=0,refundedAmount=0;
     let ticketToken = 0; let degraded = 0; let guarded = 0; let disposition = 1;
     const t311Read=work.complexity.begin(16);const copied = work.pool.validateHotTransfer(work.patchScratch);work.complexity.end(16,t311Read); if (copied !== 0) {const txRc:number=copied;txCode=txRc;return txRc;}
     const target = kind === 3 ? p.targetColumn[row] : c;
     if (target < 0 || target >= work.cols) {const txRc:number=2;txCode=txRc;return txRc;}
     const free = (f.mediumMode === 'DRY_AIR_V1' ? f.capacity : f.waterTop[target]) - sand(work, target) - f.suspH[target] - f.suspL[target] -
       work.pool.particleMassHAt(target) - work.pool.particleMassLAt(target);
-    if ((kind === 1 || kind === 3) && free + 1e-9 < requested) { capacityClipped = requested; granted = 0; }
+    if ((kind === 1 || kind === 3) && free + 1e-9 < requested) { capacityClipped = requested; granted = 0; if(kind===3)reason=CROSS_CAPACITY; }
     else if (kind === 2 || kind === 3 || kind === 4 && this.birthOnly === 0) {
       const reserve = this.budget.reserveInto(expectedStepEpoch, p, row, this.ticket); if (reserve !== 0) {const txRc:number=this.failHot(reserve);txCode=txRc;return txRc;}
-      ticketToken = this.ticket.ticketToken; granted = this.ticket.reserved;
+      ticketToken = this.ticket.ticketToken; granted = this.ticket.reserved;reservedAmount=granted;
       if (kind === 3 && granted < requested) {
         const refunded = this.budget.refundInto(ticketToken, granted, this.refund); if (refunded !== 0) {const txRc:number=this.failHot(refunded);txCode=txRc;return txRc;}
+        refundedAmount=granted;reason=CROSS_BUDGET;
         granted = 0; budgetClipped = requested;
       } else {
         budgetClipped = requested - granted;
@@ -203,6 +259,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
           this.guard.accepted = actual; this.guard.rejected = granted - actual; guarded = 1;
           const refunded = this.budget.refundInto(ticketToken, this.guard.rejected, this.refund);
           if (refunded !== 0) {const txRc:number=this.failHot(refunded);txCode=txRc;return txRc;}
+          refundedAmount=this.guard.rejected;
           guardRejected = this.guard.rejected; granted = this.guard.accepted;
         }
       }
@@ -229,7 +286,9 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     else if (granted === 0) disposition = 6;
     f.surface[c] = sand(work, c);
     work.stagedYActive = kind === 2 || kind === 4 ? 1 : 0; work.stagedY = sand(work, c) + work.params.contactEps;
-    let token = preparePatchHot(work, p, row, gh, gl, disposition);
+    work.crossReason=reason;
+    let token:number;
+    try{token=preparePatchHot(work, p, row, gh, gl, disposition);}finally{work.crossReason=0;}
     if (token === 0 && work.lastStatus === 5 && kind === 4 && granted > 0 && f.mediumMode !== 'DRY_AIR_V1') {
       work.complexity.retries++;work.complexity.counts[14]++;disposition = 3; degraded = 1; token = preparePatchHot(work, p, row, gh, gl, disposition);
     } else if (token === 0 && work.lastStatus === 5 && kind === 1) {
@@ -297,6 +356,11 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       e.toSuspH[i] = gh; e.toSuspL[i] = gl;
     }
     const finished = finishPatchHot(work, token); if (finished !== 0) {const txRc:number=this.failHot(finished);txCode=txRc;return txRc;}
+    if(work.crossRows!==null){
+      if(kind===2&&granted<requested)reason=CROSS_LAND_REMAINDER;
+      const staged=recordCrossVerticalRow(work,p,row,reason,begin,ticketToken,reservedAmount,refundedAmount,granted);
+      if(staged!==0){const txRc:number=this.failHot(staged);txCode=txRc;return txRc;}
+    }
     result.committed[row] = 1; result.disposition[row] = disposition; result.released[row] = requested === granted ? 1 : 0;
     result.rowStatus[row] = 0; result.granted[row] = granted; result.remainder[row] = requested - granted;
     result.budgetClipped[row] = budgetClipped; result.guardRejected[row] = guardRejected;

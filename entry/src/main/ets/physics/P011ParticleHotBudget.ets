@@ -1,3 +1,4 @@
+import { DryCrossByteBackup } from './derived/P011DryCrossVerticalV1';
 import { TxTicketIndex } from './tx/TxTicketIndex';
 // P-011 D1-R3 S3 / hot contract §3.1. Numeric R9 sidecar and fixed outs.
 // Per-end actual debit is refunded in full; total once, bottom always zero.
@@ -49,6 +50,8 @@ export interface P011ParticleHotBudgetSink {
   closeInto(ticketToken: number, committed: number, receipt: P011ParticleHotRefundReceipt): number;
 }
 export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
+  private readonly outerBytes:DryCrossByteBackup|null;
+  private readonly outerScalars:Float64Array;
   private txTickets:TxTicketIndex|null=null;
   enableTxTickets():void{this.work.txD1?.syncContext();const txTrace=this.work.txD1===null?null:this.work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(339);let txCode=0;try{if(this.txTickets===null)this.txTickets=new TxTicketIndex(this.tokens.length,this.tokens,this.work.txD1===null?null:this.work.txD1.trace);}catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,339,txCode);}}
   private readonly storage: ArrayBuffer[];
@@ -72,11 +75,43 @@ export class P011ParticleHotBudgetAdapter implements P011ParticleHotBudgetSink {
     this.beforeRemaining = new Float64Array(work.cols); this.beforeUsed = new Float64Array(work.cols);
     this.tokens = new Float64Array(work.requestCapacity); this.reserved = new Float64Array(work.requestCapacity);
     this.refunded = new Float64Array(work.requestCapacity); this.closed = new Uint8Array(work.requestCapacity);
-    this.requests = new P011ParticleHotPlanBuffer(work.requestCapacity, 1, 2 * work.requestCapacity);
+    this.requests = new P011ParticleHotPlanBuffer(work.requestCapacity, 1, 2 * work.requestCapacity,work.planA.crossVertical);
     this.storage = [this.localRemaining.buffer, this.localUsed.buffer, this.beforeRemaining.buffer, this.beforeUsed.buffer,
       this.tokens.buffer, this.reserved.buffer, this.refunded.buffer, this.closed.buffer];
+    this.outerBytes=work.crossRows===null?null:new DryCrossByteBackup(this.coldBuffers());
+    this.outerScalars=new Float64Array(work.crossRows===null?0:9);
   }
   coldBuffers(): ArrayBuffer[] { return this.storage.concat(this.requests.coldBuffers()); }
+  saveOuterHot():void {
+    if(this.outerBytes===null)return;
+    this.outerBytes.save();
+    this.outerScalars[0]=this.totalRemaining;
+    this.outerScalars[1]=this.totalUsed;
+    this.outerScalars[2]=this.beforeTotalRemaining;
+    this.outerScalars[3]=this.beforeTotalUsed;
+    this.outerScalars[4]=this.epoch;
+    this.outerScalars[5]=this.ticketCount;
+    this.outerScalars[6]=this.openCount;
+    this.outerScalars[7]=this.denominator;
+    this.outerScalars[8]=this.scale;
+  }
+  restoreOuterHot():void {
+    if(this.outerBytes===null)return;
+    this.outerBytes.restore();
+    this.totalRemaining=this.outerScalars[0];
+    this.totalUsed=this.outerScalars[1];
+    this.beforeTotalRemaining=this.outerScalars[2];
+    this.beforeTotalUsed=this.outerScalars[3];
+    this.epoch=this.outerScalars[4];
+    this.ticketCount=this.outerScalars[5];
+    this.openCount=this.outerScalars[6];
+    this.denominator=this.outerScalars[7];
+    this.scale=this.outerScalars[8];
+    this.txTickets?.clear();
+    for(let i=0;i<this.ticketCount;i++)this.txTickets?.add(i,this.requests.ordinal[i]);
+  }
+  outerBackupBytes():number{return (this.outerBytes?.bytes??0)+this.outerScalars.byteLength;}
+
   storageValidHot(): boolean {
     return this.localRemaining.buffer === this.storage[0] && this.localUsed.buffer === this.storage[1] &&
       this.beforeRemaining.buffer === this.storage[2] && this.beforeUsed.buffer === this.storage[3] &&
