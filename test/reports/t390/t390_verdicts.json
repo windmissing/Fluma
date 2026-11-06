@@ -1,0 +1,110 @@
+{
+ "revision": "T390_DEVICE_AB_V1",
+ "packageSha256": "7c35ff60a6f4618bcd676b3c98046ac5ccb5284d54d7d69193a7708495623395",
+ "arms": {
+  "A(T375)": {
+   "runs": [
+    "e2/r1",
+    "e3/r2",
+    "e6/r5",
+    "e8/r7"
+   ],
+   "batch2_tail_ms": [
+    44.315,
+    46.99,
+    44.893,
+    29.154
+   ],
+   "warmup_ms": [
+    26.38,
+    33.3,
+    26.62,
+    20.96
+   ],
+   "cold_chain": [
+    "52 only"
+   ]
+  },
+  "B(two-batch)": {
+   "runs": [
+    "e5/r4",
+    "e7/r6"
+   ],
+   "batch_walls_ms": {
+    "e5/r4": [
+     3.276,
+     13.238,
+     0.681,
+     0.337,
+     1.443,
+     0.123,
+     58.099
+    ],
+    "e7/r6": [
+     0.191,
+     44.359
+    ]
+   },
+   "cold_chain": [
+    "52(carry=1)",
+    "53",
+    "54x2(0-10,10-20)",
+    "57x2",
+    "55 fence 37.1us",
+    "56 cleanup 11.8MB"
+   ]
+  }
+ },
+ "findings": {
+  "cold_chain_B": "COMPLETE device-side: 52(carry=1 B-marker) -> 53 staging flush -> 54 batch segments (0-10,10-20) + 57 per-segment flush -> 55 fence 37.1us -> 56 cleanup 11,843,584 bytes (contract K192/W64=10,795,008 approx match)",
+  "stall_migration": "B strategy: batch2 tail 11.5ms (vs A 44-47ms) with batches 3-6 clean <0.2ms — first-flush stall REDUCED but stall APPEARS at batch7 tail 57.9ms (e5/r4) — migration not elimination; e7/r6 batch2 tail 35.5ms with 1 op (mid-pump abort at GAP)",
+  "warmup_42": "A: 20.9-33.3ms stable; B: 77-90ms (two-batch cold prep makes first warmup larger — honest recording)",
+  "accepted_token": "NOT ACHIEVED all arms — stage47/48/50 zero, statusAfter CLOCK_GAP/PAUSED (same structural GAP revoke as T376/T384: flush tax still exceeds 33.33ms GAP window in surviving stalls)",
+  "gap_negative_control": "GAP revoke observed every run (statusAfter PAUSED_CLOCK) — GAP path exercised",
+  "K5": "timeline exports COMPLETE (226/559/668/766/875/1006 rows, cumulative serial continuity)"
+ },
+ "evidenceSha256": {
+  "A1-manifest.json": "3eef7556f22adfb2e27c",
+  "A1-part0.ndjson": "200b49a03b5ac41829c7",
+  "A1-part1.ndjson": "21cf2b68ec3d8d3785c7",
+  "A2-manifest.json": "806c43515cb368cdf4f9",
+  "A2-part0.ndjson": "8ec86494941117213527",
+  "A2-part1.ndjson": "dde92e2314f9263ac8c0",
+  "A2-part2.ndjson": "64a3bebb7c7102a92742",
+  "A2-part3.ndjson": "0f1fd2a613c57b9e4382",
+  "A2-part4.ndjson": "c3e75da2890d69482568",
+  "A3-manifest.json": "9c72d1e6e63032747c8e",
+  "A3-part0.ndjson": "2eb51246c8f42d0cb114",
+  "A3-part1.ndjson": "2cbbfc1a28602eb847bc",
+  "A3-part2.ndjson": "7c442da35763574b1a43",
+  "A3-part3.ndjson": "5e460533daad7a73badb",
+  "A3-part4.ndjson": "071ad1df58b89a5a85e2",
+  "A3-part5.ndjson": "11e4548b831631dcedab",
+  "analyze_b3.py": "08d47b35f77e78e01180",
+  "B1-manifest.json": "59b1b8a185ed9688e4d2",
+  "B1-part0.ndjson": "07d6a29e548b1d66f230",
+  "B1-part1.ndjson": "b95af959fb49d13822b1",
+  "B1-part2.ndjson": "04beac18b583239c48e3",
+  "B1-part3.ndjson": "ba8dddaf486e3bc4ba89",
+  "B2-manifest.json": "6b502cdef68d35baa4f6",
+  "B2-part0.ndjson": "ecacf50aa2a5df8c2f2f",
+  "B2-part1.ndjson": "d8bf86dbbedd520a0948",
+  "B2-part2.ndjson": "c0594e50978fc312bc6d",
+  "B2-part3.ndjson": "09d56783997de09d63da",
+  "B2-part4.ndjson": "0f81372a9e570a4f02dd",
+  "B3-manifest.json": "c3ede9a9d31d409ce7b4",
+  "B3-part0.ndjson": "86182a1574cf69bf6c1f",
+  "B3-part1.ndjson": "a64bee62340d84ca2498",
+  "B3-part2.ndjson": "84fbc60c4aca12ae4503",
+  "B3-part3.ndjson": "7be8842c8774268bdc68",
+  "B3-part4.ndjson": "981c8fd83cace0ce78f0",
+  "B3-part5.ndjson": "c2591c288003a1f92aa7",
+  "B3-part6.ndjson": "a705dc14be052a7dc748",
+  "layout0.json": "405654593a9794371b37",
+  "layout1.json": "6ca3c3f7d7fe1ccb0fff",
+  "layout2.json": "047c6bfd6c6257230330",
+  "layout3.json": "48d6a33ca79eba2b9016",
+  "layout4.json": "f245d5b52752905f1dae",
+  "layout5.json": "a5fd19a2d0569d558ce0"
+ }
+}
