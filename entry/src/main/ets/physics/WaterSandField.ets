@@ -1,4 +1,5 @@
 import { P011DryCrossVerticalV1,CROSS_VERTICAL_V1,CROSS_CHECKPOINT_V1 } from './derived/P011DryCrossVerticalV1';
+import { P011Z08Archive } from './derived/P011Z08Archive';
 import { FrameBudgetV2 } from './derived/P011FrameBudgetV2';
 import { DerivedCheckpointV2 } from './derived/P011DerivedCheckpointV2';
 import { DerivedCoordinatorV2,DerivedFailureRawV2,DerivedWorkV2 } from './derived/P011DerivedTupleBarrierV2';
@@ -807,6 +808,7 @@ export class WaterSandField {
 
   private crossVerticalRequested=false;
   private crossVertical:P011DryCrossVerticalV1|null=null;
+  private z08Archive:P011Z08Archive|null=null;
   private crossRestored=true;
   private crossStepCommand=false;
   private crossBefore:Float64Array|null=null;
@@ -822,6 +824,13 @@ export class WaterSandField {
   exportCrossVerticalCold(permit:object):string {
     if(!P051DerivedFacadeV2.isOwnerPermit(permit))throw new Error('CROSS_VERTICAL_OWNER');
     return this.crossVertical?.exportCold()??'DISABLED';
+  }
+  bindZ08ArchiveCold(permit:object,archive:P011Z08Archive|null):void {
+    const binding=this.particleBinding;
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.crossVertical===null||binding===null)
+      throw new Error('Z08_ISOLATED_OWNER_REQUIRED');
+    this.z08Archive=archive;
+    binding.sink.z08=archive;
   }
   private derivedV2:DerivedCoordinatorV2|null=null;
   private derivedPublicationV2:DerivedCommitV2|null=null;
@@ -2741,7 +2750,8 @@ export class WaterSandField {
   private saveCrossSubstep():void {
     const b=this.crossBefore,w=this.particleBinding?.work;
     if(b===null||w===undefined)return;
-    this.crossRestored=false;this.crossVertical?.beginAttempt();w.crossAttempt='';w.crossProof=this.p011SubstepId+1;w.crossFailureHot=0;w.crossFailureStage=0;
+    this.crossRestored=false;this.crossVertical?.beginAttempt();this.z08Archive?.beginStep();
+    w.crossAttempt='';w.crossProof=this.p011SubstepId+1;w.crossFailureHot=0;w.crossFailureStage=0;
     this.particleBinding?.sink.saveOuterHot();
     b.set(this.substepMotionBudgetRemaining);b.set(this.substepMotionBudgetUsed,this.cols);
     b[this.cols*2+0]=this.totalMotionBudgetRemaining;
@@ -2793,6 +2803,13 @@ export class WaterSandField {
     let derivedKey:P011EndpointCommitKey|null=null;
     if(this.derivedPublicationV2!==null){derivedKey={runId:this.p011RunId,sequence:this.p011SampleSequence,identityRevision:'P011_COMMIT_IDENTITY_V2',frameId:this.p011FrameId,substepId:this.p011SubstepId+1,attemptId:this.p011CurrentAttemptId,committedOrdinal:this.endpointSampler===null?this.p011SubstepId+1:this.endpointSampler.committedOrdinal+1};const status=this.derivedPublicationV2.prepareInactive('STEP',this.p011RunId,this.renderStateEpoch,this.renderPhysicsCommitId+1,derivedKey);if(status!==0){this.rollbackCrossSubstep();throw new Error('P011_DERIVED_FAILURE_V2:'+status);}}
     this.publishRenderState('STEP');this.crossVertical?.commit(this.p011RunId,this.renderStateEpoch,this.p011SubstepId+1,this.p011CurrentAttemptId,this.renderPhysicsCommitId);if(this.crossVertical!==null)this.crossRestored=true;if(derivedKey!==null)this.renderLedgerCommitKey=derivedKey;
+    const archive=this.z08Archive, crossing=this.crossVertical, owner=this.derivedV2;
+    if(archive!==null && crossing!==null && owner!==null){
+      try {
+        archive.commit(this.derivedPublicationV2?.readActiveZ08Identity()??null,owner,
+          crossing.exportCold(archive.ids),physicsDt,this.effectiveTilt);
+      } catch (error) { archive.markIncomplete(); }
+    }
     this.endpointStamp = null; this.endpointSampleError = null;
     const sampler = this.endpointSampler; const phase = this.endpointPhase;
     if (sampler === null) {txCode=0;return;}

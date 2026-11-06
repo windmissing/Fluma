@@ -1,4 +1,5 @@
 import { recordCrossVerticalRow } from './P011ParticleHot';
+import { P011Z08Archive } from './derived/P011Z08Archive';
 import { CROSS_CAPACITY,CROSS_BUDGET,CROSS_LAND_REMAINDER,DryCrossByteBackup } from './derived/P011DryCrossVerticalV1';
 // P-011 D2: production transaction sink. M2 owns canonical field writes; M1 only prepares pool patches.
 import { P011ParticleHotWorkspace, P011ParticleHotPlanBuffer, P011ParticleHotResultBuffer,
@@ -152,6 +153,8 @@ function copyAction(work: P011ParticleHotWorkspace, action: number, ordinal: num
   for (let j = 0; j < a.lineageLength[action]; j++) e.lineage[e.lineageCount++] = a.lineage[a.lineageStart[action] + j];
 }
 export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
+  z08: P011Z08Archive|null=null;
+  z08Authoritative=false;
   readonly work: P011ParticleHotWorkspace;
   readonly budget: P011ParticleM2BudgetAdapter;
   readonly host: P011ParticleM2Host;
@@ -233,6 +236,10 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     const valid = validateParticleHotRequest(work, p, row); if (valid !== 0) {const txRc:number=valid;txCode=txRc;return txRc;}
     const f = work.field; if (f === null) {const txRc:number=1;txCode=txRc;return txRc;}
     const c = p.column[row], kind = p.kind[row], requested = p.requested[row];
+    const capture=this.z08Authoritative && kind===2 && this.z08?.selects(p.particleId[row])===true ? this.z08 : null;
+    const bedBefore=capture===null?0:sand(work,c);
+    const localBefore=capture===null?0:this.budget.localRemaining[c];
+    const totalBefore=capture===null?0:this.budget.totalRemaining;
     let granted = requested, budgetClipped = 0, guardRejected = 0, capacityClipped = 0, poolClipped = 0;
     let reason=0,reservedAmount=0,refundedAmount=0;
     let ticketToken = 0; let degraded = 0; let guarded = 0; let disposition = 1;
@@ -304,6 +311,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     const eventCount = work.patchActions.count + main + degraded;
     if (work.events.count + eventCount > work.events.capacity) {const txRc:number=this.failHot(9);txCode=txRc;return txRc;}
     if (work.events.lineageCount + work.patchActions.lineageCount > work.events.lineageCapacity) {const txRc:number=this.failHot(10);txCode=txRc;return txRc;}
+    const generation=capture===null?0:work.derivedV2?.canonical.generations[work.crossEditedSlot]??0;
     const published = publishPatchHot(work, token); if (published !== 0) {const txRc:number=this.failHot(published);txCode=txRc;return txRc;}
     if (kind === 1 || this.birthOnly === 1) { work.stepExternalH += gh; work.stepExternalL += gl; }
     if(work.derivedV2!==null){work.derivedV2.markField(c);if(target!==c)work.derivedV2.markField(target);const t311Flush=work.complexity.begin(10);let ds=0;try{ds=work.derivedV2.flush();}finally{work.complexity.end(10,t311Flush);}if(ds!==0){const txRc:number=this.failHot(ds);txCode=txRc;return txRc;}}
@@ -323,6 +331,7 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
     if (ticketToken !== 0) { const closed = this.budget.closeInto(ticketToken, granted, this.refund); if (closed !== 0) {const txRc:number=this.failHot(closed);txCode=txRc;return txRc;} }
     const begin = work.events.count;
     for (let i = 0; i < work.patchActions.count; i++) copyAction(work, i, p.ordinal[row]);
+    const mainEvent=work.events.count;
     let guardEvent = -1;
     if (main !== 0) {
       const e = work.events, i = e.count++; clearEventRow(e, i);
@@ -356,6 +365,8 @@ export class P011ParticleM2CommitSink implements P011ParticleHotCommitSink {
       e.toSuspH[i] = gh; e.toSuspL[i] = gl;
     }
     const finished = finishPatchHot(work, token); if (finished !== 0) {const txRc:number=this.failHot(finished);txCode=txRc;return txRc;}
+    if(capture!==null)capture.stage(work,mainEvent,generation,ticketToken,reservedAmount,refundedAmount,
+      bedBefore,sand(work,c),localBefore,this.budget.localRemaining[c],totalBefore,this.budget.totalRemaining);
     if(work.crossRows!==null){
       if(kind===2&&granted<requested)reason=CROSS_LAND_REMAINDER;
       const staged=recordCrossVerticalRow(work,p,row,reason,begin,ticketToken,reservedAmount,refundedAmount,granted);

@@ -328,7 +328,10 @@ export class P011ParticleM2FieldBinding {
     }
     budget.bindLiveBudget(localRemaining, localUsed, totalRemaining, 0);
     const epoch = this.work.stepEpoch;
-    const status = applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results,preview?2:1);
+    let status:number;
+    this.sink.z08Authoritative=!preview && this.sink.z08!==null;
+    try { status=applyParticlePlanInto(this.work, epoch, this.work.planA, this.sink, this.work.results,preview?2:1); }
+    finally { this.sink.z08Authoritative=false; }
     if(this.work.diagnosticEnabled)this.authoritativeApplyCalls++;
     if(status!==0)this.recordCrossHotFailure(status);
     if(status!==0&&this.work.crossRows!==null&&this.work.derivedV2!==null&&this.work.derivedV2.status!==0)

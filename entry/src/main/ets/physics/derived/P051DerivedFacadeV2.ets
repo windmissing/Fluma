@@ -1,4 +1,6 @@
 import { CROSS_VERTICAL_V1,CROSS_CHECKPOINT_V1 } from './P011DryCrossVerticalV1';
+import { readZ08PublicationIdentity } from './P011DerivedCommitV2';
+import { P011Z08Archive, Z08PublicationIdentity } from './P011Z08Archive';
 import { P013SingleSandController } from '../../render/P013SingleSandController';
 import { SingleSandReceipt } from '../../render/P013SingleSandTypes';
 import { FrameBudgetV2 } from './P011FrameBudgetV2';
@@ -77,6 +79,9 @@ export class P051DerivedFacadeV2 {
     }
     exportCrossVerticalFailureCold():string{return this.field.exportCrossVerticalFailureCold(OWNER_PERMIT_V2);}
     exportCrossVerticalCold():string{return this.field.exportCrossVerticalCold(OWNER_PERMIT_V2);}
+    bindZ08ArchiveCold(archive:P011Z08Archive|null):void {
+        this.field.bindZ08ArchiveCold(OWNER_PERMIT_V2,archive);
+    }
     exportFailureCold(): DerivedFailureRawV2 | null { return this.field.derivedFailureRawColdV2(OWNER_PERMIT_V2); }
     exportCheckpointCold(): DerivedCheckpointV2 { return this.field.exportDerivedCheckpointColdV2(OWNER_PERMIT_V2); }
     restoreCold(checkpoint: DerivedCheckpointV2): void {
@@ -171,6 +176,7 @@ export class DerivedPublishedSlotV2 {
     get stateEpoch(): number { return this.state.stateEpoch; }
     get effectiveTiltDeg(): number { return this.state.effectiveTiltDeg; }
     get publicationKind(): string { return this.state.publicationKind; }
+    readZ08Identity(): Z08PublicationIdentity|null { return readZ08PublicationIdentity(this.state); }
     drawSingleSand(renderer:P013SingleSandController,context:P012FrameContext,scale:number):SingleSandReceipt|null {return renderer.drawSingleSandScene(this.state,context,scale);}
     drawNewPipeline(renderer: P013SceneController, context: P012FrameContext, timeNs: number, scale: number): P013SceneReceipt | null { return renderer.drawNewPipelineFrame(this.state, context, p012FactoryAppearance(), 0, timeNs, scale); }
     exportPayloadCold(): DerivedCheckpointV2 { const cp = new DerivedCheckpointV2(this.state.particleCapacity); copyDerivedPayloadV2(this.state.field, cp.authority); cp.runId = this.state.runId; cp.commit = this.state.physicsCommitId; cp.stateEpoch = this.state.stateEpoch; cp.replayStatus = 'PUBLICATION_COPY_NOT_CHECKPOINT'; return cp; }

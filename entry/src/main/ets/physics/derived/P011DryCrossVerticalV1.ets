@@ -103,12 +103,19 @@ export class P011DryCrossVerticalV1 {
   this.publishedRun=run;this.publishedEpoch=epoch;this.publishedSubstep=substep;this.publishedAttempt=attempt;
   this.discard();
  }
- exportCold():string {
+ exportCold(ids:Uint32Array|null=null):string {
   const rows=this.published;
   const bits=new DataView(new ArrayBuffer(8));const words:string[]=[];
-  for(let i=0;i<rows.count*4;i++){
-   bits.setFloat64(0,this.publishedFinal[i],false);
-   words.push(bits.getUint32(0,false).toString(16).padStart(8,'0')+bits.getUint32(4,false).toString(16).padStart(8,'0'));
+  const integers:number[]=[],values:number[]=[],finalState:number[]=[];
+  for(let row=0;row<rows.count;row++){
+   if(ids!==null&&ids.indexOf(rows.keys[row*8+1])<0)continue;
+   for(let i=0;i<4;i++){
+    bits.setFloat64(0,this.publishedFinal[row*4+i],false);
+    words.push(bits.getUint32(0,false).toString(16).padStart(8,'0')+bits.getUint32(4,false).toString(16).padStart(8,'0'));
+   }
+   for(let i=0;i<8;i++)integers.push(rows.keys[row*8+i]);
+   for(let i=0;i<20;i++)values.push(rows.values[row*20+i]);
+   finalState.push(this.publishedFinalState[row]);
   }
   return JSON.stringify({revision:'P011_CPU_DRY_CROSS_VERTICAL_RECEIPT_V1',run:this.publishedRun,
    owner:this.publishedOwner,hotEpoch:this.publishedHotEpoch,hotAttempt:this.publishedHotAttempt,role:1,
@@ -117,8 +124,7 @@ export class P011DryCrossVerticalV1 {
    fields:['mass','x0','y0','vx0','vy0','yFree','vyFree','predictedY','rowX','rowY','rowVx','rowVy','Srow','Sfinal',
     'ticket','reserved','refunded','grant','remainder','requested'],
    finalFields:['x','y','vx','vy'],finalF64Hex:words,
-   finalState:Array.from(this.publishedFinalState.subarray(0,rows.count)),
-   integers:Array.from(rows.keys.subarray(0,rows.count*8)),values:Array.from(rows.values.subarray(0,rows.count*20))});
+   finalState:finalState,integers:integers,values:values});
  }
  // First independently validate the entire batch and calculate the expected
  // image. No tail writer runs while any row identity or final bed is unknown.

@@ -5,6 +5,18 @@ import { P011ExternalAdmissionRecord } from '../P011ExternalAdmissions';
 import { DerivedCoordinatorV2 } from './P011DerivedTupleBarrierV2';
 import { DerivedStatus, DERIVED_POLICY_V2, DERIVED_CACHE_V2, DERIVED_ENVELOPE_V2, DERIVED_PUBLICATION_V2 } from './P011DerivedTypesV2';
 import { createDerivedPayloadV2, copyDerivedPayloadV2 } from './P011DerivedSnapshotV2';
+import { Z08PublicationIdentity } from './P011Z08Archive';
+export function readZ08PublicationIdentity(state: P011PublishedRenderState): Z08PublicationIdentity|null {
+    const seal=state.derivedSeal, key=state.ledgerCommitKey;
+    if (seal===null || !seal.matches(state) || state.publicationKind!=='STEP' ||
+        key===null || key.runId!==state.runId || key.attemptId===null) return null;
+    return {
+        kind:state.publicationKind, run:state.runId, epoch:state.stateEpoch, commit:state.physicsCommitId,
+        sourceEpoch:state.field.externalSourceState?.sourceEpoch??0, ledgerKey:JSON.stringify(key),
+        substep:key.substepId, attempt:key.attemptId, committedOrdinal:key.committedOrdinal,
+        seal:seal.serial, certificate:seal.certificate, content:state.poolContentSerial
+    };
+}
 class DerivedSealKeyV2 {
 }
 const SEAL_KEY_V2 = new DerivedSealKeyV2();
@@ -160,6 +172,9 @@ export class DerivedCommitV2 {
         this.serial++;
         this.active = this.prepared;
         this.prepared = -1;
+    }
+    readActiveZ08Identity(): Z08PublicationIdentity|null {
+        return this.active<0 ? null : readZ08PublicationIdentity(this.banks[this.active]);
     }
     copyPublishedInto(out: P011PublishedRenderState): string {
  const t351meter=this.owner.budget,t351scope=t351meter?.enter(12)??-1;try {
