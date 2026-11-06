@@ -1,0 +1,177 @@
+{
+ "rows": {
+  "checks": [
+   {
+    "name": "serial-continuity-raw-units",
+    "verdict": "PASS",
+    "detail": {
+     "detail": "0 gaps"
+    }
+   },
+   {
+    "name": "same-run-tid-ns-monotonic",
+    "verdict": "PASS"
+   },
+   {
+    "name": "stage42-before-ready-anchor-pairs",
+    "verdict": "PASS"
+   },
+   {
+    "name": "batch1-wall<=1ms",
+    "verdict": "PASS",
+    "detail": {
+     "detail": "[{\"group\":\"2/1/2/3475\",\"batch\":1,\"wallMs\":0.433,\"ops\":10,\"tailMs\":0.029},{\"group\":\"3/2/3/3475\",\"batch\":1,\"wallMs\":0.373,\"ops\":10,\"tailMs\":0.054},{\"group\":\"4/3/4/3475\",\"batch\":1,\"wallMs\":0.346,\"ops\":10,\"tailMs\":0.026}]"
+    }
+   },
+   {
+    "name": "batch2-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[{\"group\":\"2/1/2/3475\",\"batch\":2,\"wallMs\":46.788,\"ops\":10,\"tailMs\":46.685},{\"group\":\"3/2/3/3475\",\"batch\":2,\"wallMs\":41.816,\"ops\":10,\"tailMs\":41.721},{\"group\":\"4/3/4/3475\",\"batch\":2,\"wallMs\":48.218,\"ops\":10,\"tailMs\":48.127}]"
+    }
+   },
+   {
+    "name": "accepted-to-same-token",
+    "verdict": "NOT_JUDGABLE",
+    "detail": {
+     "notJudgable": true,
+     "detail": "timeline rows carry no accepted/token fields; requires publication receipt (external). RootSubmit->RootPoll pairs listed as partial evidence."
+    }
+   }
+  ],
+  "gaps": [],
+  "findings": {
+   "stage42Order": [
+    {
+     "group": "1/0/0/3475",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/3347",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/3475",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/1/2/3475",
+     "first42": "49",
+     "firstReady": "51",
+     "firstAnchor": "55",
+     "pairOk": true,
+     "orderOk": true,
+     "carry1WarmupNs": "23378125"
+    },
+    {
+     "group": "3/1/2/3347",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "3/1/2/3475",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "3/2/3/3475",
+     "first42": "150",
+     "firstReady": "152",
+     "firstAnchor": "156",
+     "pairOk": true,
+     "orderOk": true,
+     "carry1WarmupNs": "27684688"
+    },
+    {
+     "group": "4/2/3/3347",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/2/3/3475",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/3/4/3475",
+     "first42": "251",
+     "firstReady": "253",
+     "firstAnchor": "257",
+     "pairOk": true,
+     "orderOk": true,
+     "carry1WarmupNs": "28265937"
+    }
+   ],
+   "batches": [
+    {
+     "group": "2/1/2/3475",
+     "batch": 1,
+     "wallMs": 0.433,
+     "ops": 10,
+     "tailMs": 0.029
+    },
+    {
+     "group": "2/1/2/3475",
+     "batch": 2,
+     "wallMs": 46.788,
+     "ops": 10,
+     "tailMs": 46.685
+    },
+    {
+     "group": "3/2/3/3475",
+     "batch": 1,
+     "wallMs": 0.373,
+     "ops": 10,
+     "tailMs": 0.054
+    },
+    {
+     "group": "3/2/3/3475",
+     "batch": 2,
+     "wallMs": 41.816,
+     "ops": 10,
+     "tailMs": 41.721
+    },
+    {
+     "group": "4/3/4/3475",
+     "batch": 1,
+     "wallMs": 0.346,
+     "ops": 10,
+     "tailMs": 0.026
+    },
+    {
+     "group": "4/3/4/3475",
+     "batch": 2,
+     "wallMs": 48.218,
+     "ops": 10,
+     "tailMs": 48.127
+    }
+   ],
+   "anchorToPauseGaps": [],
+   "rootSubmitPoll": [
+    {
+     "group": "2/1",
+     "root": "1",
+     "wallMs": 51.964
+    },
+    {
+     "group": "3/2",
+     "root": "1",
+     "wallMs": 49.942
+    },
+    {
+     "group": "4/3",
+     "root": "1",
+     "wallMs": 56.348
+    }
+   ]
+  },
+  "groups": [
+   "1/0/0/3475",
+   "2/0/0/3347",
+   "2/0/0/3475",
+   "2/1/2/3475",
+   "3/1/2/3347",
+   "3/1/2/3475",
+   "3/2/3/3475",
+   "4/2/3/3347",
+   "4/2/3/3475",
+   "4/3/4/3475"
+  ]
+ }
+}

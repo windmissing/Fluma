@@ -1,0 +1,314 @@
+{
+ "D:/hmprojects/HelloWorld/test/reports/t337b/rows_run2.json": {
+  "checks": [
+   {
+    "name": "serial-continuity-raw-units",
+    "verdict": "PASS",
+    "detail": {
+     "detail": "0 gaps"
+    }
+   },
+   {
+    "name": "same-run-tid-ns-monotonic",
+    "verdict": "PASS"
+   },
+   {
+    "name": "stage42-before-ready-anchor-pairs",
+    "verdict": "PASS"
+   },
+   {
+    "name": "batch1-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[{\"group\":\"4/2/4/20450\",\"batch\":1,\"wallMs\":35.244,\"ops\":10,\"tailMs\":33.66}]"
+    }
+   },
+   {
+    "name": "batch2-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[]"
+    }
+   },
+   {
+    "name": "accepted-to-same-token",
+    "verdict": "NOT_JUDGABLE",
+    "detail": {
+     "notJudgable": true,
+     "detail": "timeline rows carry no accepted/token fields; requires publication receipt (external). RootSubmit->RootPoll pairs listed as partial evidence."
+    }
+   }
+  ],
+  "gaps": [],
+  "findings": {
+   "stage42Order": [
+    {
+     "group": "1/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/1/2/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "3/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/2/4/20450",
+     "note": "no-stage42-in-window"
+    }
+   ],
+   "batches": [
+    {
+     "group": "4/2/4/20450",
+     "batch": 1,
+     "wallMs": 35.244,
+     "ops": 10,
+     "tailMs": 33.66
+    }
+   ],
+   "anchorToPauseGaps": [],
+   "rootSubmitPoll": []
+  },
+  "groups": [
+   "1/0/0/20450",
+   "2/0/0/20103",
+   "2/0/0/20450",
+   "2/1/2/20450",
+   "3/0/0/20103",
+   "4/0/0/20103",
+   "4/0/0/20450",
+   "4/2/4/20450"
+  ],
+  "negativeControls": {
+   "truncationFlagsGap": true,
+   "crossRunIsolated": true,
+   "wrongUnitFlagged": true
+  }
+ },
+ "D:/hmprojects/HelloWorld/test/reports/t337b/rows_run3.json": {
+  "checks": [
+   {
+    "name": "serial-continuity-raw-units",
+    "verdict": "PASS",
+    "detail": {
+     "detail": "0 gaps"
+    }
+   },
+   {
+    "name": "same-run-tid-ns-monotonic",
+    "verdict": "PASS"
+   },
+   {
+    "name": "stage42-before-ready-anchor-pairs",
+    "verdict": "PASS"
+   },
+   {
+    "name": "batch1-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[{\"group\":\"4/2/4/20450\",\"batch\":1,\"wallMs\":35.244,\"ops\":10,\"tailMs\":33.66}]"
+    }
+   },
+   {
+    "name": "batch2-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[]"
+    }
+   },
+   {
+    "name": "accepted-to-same-token",
+    "verdict": "NOT_JUDGABLE",
+    "detail": {
+     "notJudgable": true,
+     "detail": "timeline rows carry no accepted/token fields; requires publication receipt (external). RootSubmit->RootPoll pairs listed as partial evidence."
+    }
+   }
+  ],
+  "gaps": [],
+  "findings": {
+   "stage42Order": [
+    {
+     "group": "1/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/1/2/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "3/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/2/4/20450",
+     "note": "no-stage42-in-window"
+    }
+   ],
+   "batches": [
+    {
+     "group": "4/2/4/20450",
+     "batch": 1,
+     "wallMs": 35.244,
+     "ops": 10,
+     "tailMs": 33.66
+    }
+   ],
+   "anchorToPauseGaps": [],
+   "rootSubmitPoll": []
+  },
+  "groups": [
+   "1/0/0/20450",
+   "2/0/0/20103",
+   "2/0/0/20450",
+   "2/1/2/20450",
+   "3/0/0/20103",
+   "4/0/0/20103",
+   "4/0/0/20450",
+   "4/2/4/20450"
+  ],
+  "negativeControls": {
+   "truncationFlagsGap": true,
+   "crossRunIsolated": true,
+   "wrongUnitFlagged": true
+  }
+ },
+ "D:/hmprojects/HelloWorld/test/reports/t337b/rows_run4.json": {
+  "checks": [
+   {
+    "name": "serial-continuity-raw-units",
+    "verdict": "PASS",
+    "detail": {
+     "detail": "0 gaps"
+    }
+   },
+   {
+    "name": "same-run-tid-ns-monotonic",
+    "verdict": "PASS"
+   },
+   {
+    "name": "stage42-before-ready-anchor-pairs",
+    "verdict": "PASS"
+   },
+   {
+    "name": "batch1-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[{\"group\":\"4/2/4/20450\",\"batch\":1,\"wallMs\":35.244,\"ops\":10,\"tailMs\":33.66}]"
+    }
+   },
+   {
+    "name": "batch2-wall<=1ms",
+    "verdict": "FAIL",
+    "detail": {
+     "detail": "[]"
+    }
+   },
+   {
+    "name": "accepted-to-same-token",
+    "verdict": "NOT_JUDGABLE",
+    "detail": {
+     "notJudgable": true,
+     "detail": "timeline rows carry no accepted/token fields; requires publication receipt (external). RootSubmit->RootPoll pairs listed as partial evidence."
+    }
+   }
+  ],
+  "gaps": [],
+  "findings": {
+   "stage42Order": [
+    {
+     "group": "1/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "2/1/2/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "3/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/0/0/20103",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/0/0/20450",
+     "note": "no-stage42-in-window"
+    },
+    {
+     "group": "4/2/4/20450",
+     "note": "no-stage42-in-window"
+    }
+   ],
+   "batches": [
+    {
+     "group": "4/2/4/20450",
+     "batch": 1,
+     "wallMs": 35.244,
+     "ops": 10,
+     "tailMs": 33.66
+    }
+   ],
+   "anchorToPauseGaps": [],
+   "rootSubmitPoll": []
+  },
+  "groups": [
+   "1/0/0/20450",
+   "2/0/0/20103",
+   "2/0/0/20450",
+   "2/1/2/20450",
+   "3/0/0/20103",
+   "4/0/0/20103",
+   "4/0/0/20450",
+   "4/2/4/20450"
+  ],
+  "negativeControls": {
+   "truncationFlagsGap": true,
+   "crossRunIsolated": true,
+   "wrongUnitFlagged": true
+  }
+ }
+}
