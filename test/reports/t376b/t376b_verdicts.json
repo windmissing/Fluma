@@ -1,0 +1,69 @@
+{
+ "revision": "T376B_DEVICE_T384_V1",
+ "packageSha256": "d5dce2a52b217cc856f320619cdef166b00262a11898995a12b269367370a7d1",
+ "rounds": {
+  "r1_probe_off_repro": {
+   "pid": 48621,
+   "runs": "epoch2/3/4",
+   "batch2_tail_ms": [
+    43.842,
+    48.405,
+    61.338
+   ],
+   "batch1_wall_ms": [
+    0.531,
+    0.526,
+    0.348
+   ],
+   "probe_rows": "NONE (old dict only, per contract)"
+  },
+  "r2_probe_on": {
+   "run": "5/4",
+   "stage45": "code=16 OK_SUBMITTING, probeStart->End=62.34ms (ContinueSubmit incl batch2)",
+   "stage44_flushNs": {
+    "batch1": 22812,
+    "batch2": 62078907
+   },
+   "stage49_GAP": "code=0, probeA=anchor ns, probeB=0 (accepted=0 at revoke) — precise zero-accept evidence",
+   "stages_46_47_48_50": "ABSENT (root unsealed at GAP revoke, contract-consistent)"
+  },
+  "r3_probe_on_heavier": {
+   "runs": 2,
+   "flushNs": [
+    62078907,
+    38492969
+   ],
+   "note": "2nd submission cycle flush 38.49ms (-38% driver warm-up) still > 33.33ms GAP window -> structural GAP revoke"
+  },
+  "verdicts": {
+   "W2": "PASS (batch1 0.35-0.53ms, probe flush 22.8-25.9us)",
+   "W3": "batch1 PASS / batch2 FAIL (flush tax 38-62ms inside 44 Flush GL call, beforeFlush clean 253us, afterFlush 1.7us — stall is precisely inside the flush call)",
+   "W4": "BLOCKED (unsealed root GAP-revoked every cycle; flush tax > 33ms GAP window is structural; accepted=0 at revoke proven by stage49 probeB)",
+   "W5": "timeline COMPLETE all rounds (339 rows r1; K5 kept)"
+  },
+  "attribution": "T382 confirmed by device probe: tail stall = second-flush fixed tax inside GL flush call; GAP window 33.33ms < flush tax 38-62ms -> revoke is structural, not Draw/material issue"
+ },
+ "evidenceSha256": {
+  "layout0.json": "c52766e9bd8bd57e108a",
+  "layout1.json": "b3b31864b5703b35d3fd",
+  "layout2.json": "b8db871ec8d52dcbbef0",
+  "layout3.json": "f1062f218d141e1d7659",
+  "layout4.json": "74d411c26cec319131e9",
+  "layout5.json": "e1460015bdbeabaf2dc3",
+  "r1-manifest.json": "7e971f43eb7ca1a92157",
+  "r1-part0.ndjson": "6d98642036c4e20e7792",
+  "r1-part1.ndjson": "cab20852ab68bcfb7a53",
+  "r1-part2.ndjson": "f1de0a42f598b182ae71",
+  "r1_decoded.json": "658043fa2cbfbed02c46",
+  "r2-manifest.json": "f8e4e2c89e642415f62d",
+  "r2-part0.ndjson": "6ad686286ce62b324fc3",
+  "r2-part1.ndjson": "f0089931079e3deff906",
+  "r2-part2.ndjson": "9d54937c790d04d6b944",
+  "r2_decoded.json": "fa6388e3fdadb9199b67",
+  "r3-part0.ndjson": "0b75567a42c74bb0043b",
+  "r3-part1.ndjson": "3c7beffb2531ecc41f73",
+  "r3-part2.ndjson": "fcd178e4f536b5138e26",
+  "r3-part3.ndjson": "29b1f91b371ddc403ea0",
+  "r3_decoded.json": "5e29667d2c3e21dd63fe"
+ }
+}

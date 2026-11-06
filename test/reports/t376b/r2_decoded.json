@@ -1,0 +1,32 @@
+{
+  "state": "EVIDENCE",
+  "faults": [],
+  "batches": [
+    {
+      "root": "5/4/5/48777/1",
+      "batch": 1,
+      "final": false,
+      "from": "0",
+      "to": "10",
+      "beforeFlushNs": "190000",
+      "flushNs": "22812",
+      "afterFlushNs": "469",
+      "writerNs": "470"
+    },
+    {
+      "root": "5/4/5/48777/1",
+      "batch": 2,
+      "final": false,
+      "from": "10",
+      "to": "20",
+      "beforeFlushNs": "252968",
+      "flushNs": "62078907",
+      "afterFlushNs": "1718",
+      "writerNs": "1719"
+    }
+  ],
+  "polls": [],
+  "present": [],
+  "gapCount": 1,
+  "accepted": []
+}
