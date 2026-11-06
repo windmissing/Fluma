@@ -1,0 +1,33 @@
+{
+ "revision": "T393_DEVICE_Z08_LAND_V1",
+ "packageSha256": "7acfe9713bece25ed10ecccbb185d1f1d3d8a70ffd0bc2b6cde541cbe19781df",
+ "route": "p051v2=1 pid 53578, two arms per T392 contract",
+ "arm1_restricted": {
+  "verdict": "ORIGINAL_REASON_PRESERVED (per contract)",
+  "evidence": "12-round real-touch injection, LAND reservation armed, 2400-callback window not exhausted at capture time; no positive grant appeared — original zero-grant reason preserved",
+  "probe_receipt": "probe_receipt.json run p011-run-1793969027989-6 substep 21394: 2 rows left in table, y=0.132 (bed contact), grant=0, refunded=0.0679 full refund, remainder==requested"
+ },
+ "arm2_nearbed_fixture": {
+  "verdict": "POSITIVE-GRANT LAND NOT PRODUCED ON DEVICE — honest gap, attribution to architect",
+  "evidence": "fixture armed (Z08_ARMED ~25min, well within 2400-callback window at 1.2fps); probe shows ID1/2/3 bed-contact (y=0.132) with one retired off-table; zero grant throughout — device fixture did not produce positive-grant T3 LAND unlike offline self-test (2nd-callback positive-grant retirement); device/offline fixture difference suspect (投放列/床配置)",
+  "Z08_export": "NOT_ACHIEVED (reservation never froze — no positive-grant frame); same-token CURRENT/swap + PRESENT_CURRENT_SWAP + systemPresentVerified therefore unproven this session"
+ },
+ "findings": {
+  "physics_healthy": "probe receipt zero-rollback, refund closed, mass in table consistent — T381 chain alive on device",
+  "note": "zero-grant bed-contact particles DO reach T3 deposit path without cross-column grant (T381 semantics) — positive-grant LAND requires cross-column demand which device fixture did not create"
+ },
+ "evidenceSha256": {
+  "hilog_final.txt": "8e4eeaa308952b24de63",
+  "hilog_full.txt": "7fbf631b8b5c6aa3c4eb",
+  "layout0.json": "2aeedcdb519dae72109d",
+  "layout1.json": "10e03ee4407d5499163a",
+  "layout2.json": "6ce862d7b93794d8948f",
+  "layout3.json": "4592a2fd493e857b68b1",
+  "layout4.json": "07e817f84636682d8798",
+  "layout5.json": "5c7baf35a990d6356212",
+  "layout6.json": "b635797f31b55d607f52",
+  "layout7.json": "fef7ae4bd591b6bcdc0d",
+  "probe_receipt.json": "f4fb04a9fa9fd2384470",
+  "s1_state.jpeg": "2f268e6fd70cd6a0dd12"
+ }
+}
