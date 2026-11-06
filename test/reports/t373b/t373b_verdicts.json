@@ -1,0 +1,56 @@
+{
+ "revision": "T373B_DEVICE_T385_V1",
+ "packageSha256": "db9e3ae46798642526703c567a18c138f92e8c66925f68317f81b53e3d607f68",
+ "defaultRoiSmoke": {
+  "verdict": "PASS",
+  "evidence": {
+   "manifest": "def-manifest.json (CAPTURED/COMPLETE, captureMs=8.70)",
+   "jsByteLength": 16,
+   "nativeRawByteLength": 16,
+   "requestedRoiWords": [
+    0,
+    0,
+    16,
+    16
+   ],
+   "candidate": {
+    "bytes": 1024,
+    "sha256": "b204cdad82f2131c2be3a7730c2e29db8d05126b3652900505827ae67e747697"
+   },
+   "back": {
+    "bytes": 1024,
+    "sha256": "b204cdad82f2131c2be3a7730c2e29db8d05126b3652900505827ae67e747697"
+   },
+   "sidecar": "ab7874509dbfaebf… (over manifest json)",
+   "token_equal": true,
+   "state": "CURRENT",
+   "requestId": 1,
+   "note": "T383 byte/element conversion fix verified on device: 4/16B(JS)/16B(native)/4 normalized elements exactly per contract; candidate==back SHA expected for empty-bg 16x16"
+  }
+ },
+ "bedAirBg": {
+  "verdict": "BLOCKED — new finding, to architect",
+  "evidence": "fixture-not-ready twice (no bed formed); after unlock+injection physics alive (receipt count=203, physicsCommitId rising, CURRENT/swap ok) but canvas frozen: s4 vs s5 canvas region mean-abs-diff=0.0 bitwise identical across relock; s1/s2/s3 screenshots same ~15-grain diagonal",
+  "render_freeze": "lock->unlock->relock leaves canvas rendering frozen at locked fixture frame while physics/publication continue (receipt commit rising, count 203 vs canvas 15 grains) — native swap->compositor chain or fixture repack suspect, developer/architect to judge",
+  "attempts": "heavier injection 16 rounds + 150s settle + unlock/relock cycles — no canvas change; second prefill attempt rejected \"夹具未就绪\" (no bed formed on frozen view consistent with frozen fixture)"
+ },
+ "evidenceSha256": {
+  "def-back.rgba": "b204cdad82f2131c2be3",
+  "def-candidate.rgba": "b204cdad82f2131c2be3",
+  "def-manifest.json": "ab7874509dbfaebf8c26",
+  "def.sha256": "b5cce7b8b0bba56dc57c",
+  "hilog_full.txt": "6e3da8cb7f5be6d2b7b9",
+  "layout0.json": "f9bb175da14b9e25f399",
+  "layout1.json": "7fbfa0e9f49fe453961f",
+  "layout2.json": "3afb0b9d5047d93bd6d6",
+  "layout3.json": "358d6309991e37c7e8bc",
+  "receipt_t385.json": "998213b122df8bfa6b23",
+  "s1_locked.jpeg": "63023155dac9cc34d70d",
+  "s2_after_settle.jpeg": "4bcb532610e8688f6ba6",
+  "s3_unlocktest.jpeg": "c76aab2fc108072d3b5f",
+  "s4_afterinject.jpeg": "374941d06a2bb214be96",
+  "s4_crop.png": "4fbcd895a88f0b2bd3d5",
+  "s5_crop.png": "4fbcd895a88f0b2bd3d5",
+  "s5_relock.jpeg": "53c3f73d3d3577dd2c45"
+ }
+}
