@@ -53,7 +53,7 @@ int main(){int passed=0;
   assert(anchor&&preparationEnd<=firstAnchor);
   if(mode==0||mode==5||mode==9)assert(!gap);
   if(mode==1||mode==2||mode==3||mode==7||mode==8)assert(gap&&!a.ready&&a.readyEpoch==0);
-  if(mode==7){assert(submitCount==1);assert(a.timeline.Export(0).find("T324_STAGE41_V1")!=std::string::npos);}
+  if(mode==7){assert(submitCount==1);assert(a.timeline.Export(0).find("T324_STAGE42_V1")!=std::string::npos);}
   if(mode==4)assert(a.staleRejected>0);
   passed++;std::cout<<"mode="<<mode<<" gap="<<gap<<" submits="<<submitCount<<" polls="<<pollCount<<"\n";
  }

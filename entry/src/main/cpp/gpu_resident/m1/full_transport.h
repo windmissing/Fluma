@@ -39,6 +39,7 @@ public:
  // T329 (Amendment 1 §2.5): wall clock of the CURRENT Pump's continuation
  // loop (last ContinueSubmit batch), separate from submitTotalWallNs (Begin
  // -> now). Used to verify the single-Pump seal expectation (J1).
+ uint64_t WarmupWallNs()const{return warmupWallNs;}
  uint64_t SubmitPumpWallNs()const{return submitPumpWallNs;}
  uint32_t SubmitCancelled()const{return submitCancelled;}
  // T324 Amendment 2 (T335): count of NON-final-batch tail flushes issued this
@@ -82,6 +83,7 @@ private:
  // Test-double access to the state machine internals (host build only).
  friend struct T324TestAccess;
 #endif
+ uint64_t warmupWallNs=0;
  uint64_t lastBatchWallNs=0,submitFirstNs=0,submitTotalWallNs=0,submitPumpWallNs=0;
  uint32_t tailSpare=0,tailReplay=0,tailBank=0,tailSlot=0,tailArena=0,tailCarry=0,tailDispatches=0;
 };

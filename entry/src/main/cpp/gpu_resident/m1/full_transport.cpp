@@ -5,12 +5,34 @@
 namespace grs {namespace m1 {
 SourceTransportStats FullM1Transport::Stats()const{auto r=source.Stats();r.allocatedBytes=AllocatedBytes();r.dispatches+=stats.dispatches;r.barriers+=stats.barriers;r.fences+=stats.fences;r.polls+=stats.polls;r.mappedBytes+=stats.mappedBytes;r.uploadedBytes+=stats.uploadedBytes;r.coldMappedBytes+=stats.coldMappedBytes;if(!r.firstGlError)r.firstGlError=stats.firstGlError;return r;}
 TransportCode FullM1Transport::Create(uint32_t K,uint32_t Kw,const Identity& id,const QuantumParameters& cold,uint32_t emitQ){
- if(active||source.ready||quantum.context!=EGL_NO_CONTEXT||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;if(emitQ>1073741824u||cold.gravity<120u||cold.gravity>1073741824u||cold.settle==0u||cold.settle>1073741824u||cold.kAir>960u||cold.kFlight>960u||cold.kWet==0u||cold.kWet>960u||cold.kappa>960u||cold.soft>=605394u)return TransportCode::PROTOCOL_REJECTED;coldParams=cold;lost=failed=frozen=false;lastFrame={};lastOrdinal=0;frameHasSource=false;lastPublication=2;arenaFrame[0]=arenaFrame[1]={};used[0]=used[1]=0;stats={};extraBytes=0;tail={};batchesIssued=lastBatchPasses=submitCancelled=0;flushes=0;lastBatchWallNs=submitFirstNs=submitTotalWallNs=submitPumpWallNs=0;
+ if(active||source.ready||quantum.context!=EGL_NO_CONTEXT||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;if(emitQ>1073741824u||cold.gravity<120u||cold.gravity>1073741824u||cold.settle==0u||cold.settle>1073741824u||cold.kAir>960u||cold.kFlight>960u||cold.kWet==0u||cold.kWet>960u||cold.kappa>960u||cold.soft>=605394u)return TransportCode::PROTOCOL_REJECTED;coldParams=cold;lost=failed=frozen=false;lastFrame={};lastOrdinal=0;frameHasSource=false;lastPublication=2;arenaFrame[0]=arenaFrame[1]={};used[0]=used[1]=0;stats={};extraBytes=0;tail={};batchesIssued=lastBatchPasses=submitCancelled=0;flushes=0;warmupWallNs=0;lastBatchWallNs=submitFirstNs=submitTotalWallNs=submitPumpWallNs=0;
  source.submitObserver=quantum.submitObserver=submitObserver;auto c=source.CreateUsing(K,Kw,id,FullM1ShaderSha(),FullSourceKernel());if(c!=TransportCode::OK)return c;source.emitQ=emitQ;source.owner.fullWaterContract=true;c=quantum.Create(K,Kw);if(c!=TransportCode::OK){Release();return c;}
  glDeleteProgram(quantum.program);quantum.program=0;GLuint sh=glCreateShader(GL_COMPUTE_SHADER);const char* text=QuantumCommitKernel();glShaderSource(sh,1,&text,nullptr);submitObserver.Emit(SubmitStage::ShaderEnter);glCompileShader(sh);GLint good;glGetShaderiv(sh,GL_COMPILE_STATUS,&good);submitObserver.Emit(SubmitStage::ShaderExit,0,uint32_t(good));if(!good){glDeleteShader(sh);Release();return TransportCode::SHADER_FAILED;}quantum.program=glCreateProgram();glAttachShader(quantum.program,sh);submitObserver.Emit(SubmitStage::ProgramEnter);glLinkProgram(quantum.program);glDeleteShader(sh);glGetProgramiv(quantum.program,GL_LINK_STATUS,&good);submitObserver.Emit(SubmitStage::ProgramExit,0,uint32_t(good));if(!good){Release();return TransportCode::SHADER_FAILED;}
  SubmitScope resources(submitObserver,SubmitStage::ResourceEnter,SubmitStage::ResourceExit);spareAt=quantum.workWords;replayFrozen=spareAt+quantum.words;uint32_t expanded=replayFrozen+256;glBindBuffer(GL_SHADER_STORAGE_BUFFER,quantum.workspace);glBufferData(GL_SHADER_STORAGE_BUFFER,expanded*4,nullptr,GL_DYNAMIC_COPY);glBufferSubData(GL_SHADER_STORAGE_BUFFER,quantum.angles*4,sizeof(kAngleWords),kAngleWords);quantum.allocated+=uint64_t(expanded-quantum.workWords)*4;quantum.workWords=expanded;quantum.deferFence=true;
  eventArenas[0]=quantum.events;glGenBuffers(1,&eventArenas[1]);glBindBuffer(GL_SHADER_STORAGE_BUFFER,eventArenas[1]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(quantum.eventCapacity)*256,nullptr,GL_DYNAMIC_COPY);extraBytes+=uint64_t(quantum.eventCapacity)*256;glGenBuffers(2,results);for(GLuint b:results){glBindBuffer(GL_SHADER_STORAGE_BUFFER,b);glBufferData(GL_SHADER_STORAGE_BUFFER,1024,nullptr,GL_DYNAMIC_COPY);extraBytes+=1024;}
- if(glGetError()!=GL_NO_ERROR){Release();return TransportCode::MEMORY_PROFILE_UNSUPPORTED;}if(!quantum.uniformLocations.Prepare(quantum.program)){Release();return TransportCode::SHADER_FAILED;}resources.End(0);if(PrepareProgram(quantum.program,source.banks[0],quantum.candidate,quantum.workspace,eventArenas[0],submitObserver)!=GL_NO_ERROR){Release();return TransportCode::GL_FAILED;}return TransportCode::OK;
+ if(glGetError()!=GL_NO_ERROR){Release();return TransportCode::MEMORY_PROFILE_UNSUPPORTED;}if(!quantum.uniformLocations.Prepare(quantum.program)){Release();return TransportCode::SHADER_FAILED;}resources.End(0);
+ if(PrepareProgram(quantum.program,source.banks[0],quantum.candidate,quantum.workspace,eventArenas[0],submitObserver)!=GL_NO_ERROR){
+  Release();return TransportCode::GL_FAILED;
+ }
+ // T341: execute a genuine slice of pass 0 on the same GL owner before
+ // READY. Base is readonly. Pass 0 only writes candidate and workspace,
+ // and the first quantum initializes both ranges again in full.
+ submitObserver.Emit(SubmitStage::SubmitWarmup);
+ const auto start=std::chrono::steady_clock::now();
+ const auto& locations=quantum.uniformLocations;
+ glUniform1ui(locations.Find("uPass"),0);
+ glUniform1ui(locations.Find("uWords"),quantum.words);
+ glUniform1ui(locations.Find("uRows"),quantum.rowsAt);
+ glUniform1ui(locations.Find("uK"),K);
+ glUniform1ui(locations.Find("uKw"),Kw);
+ glDispatchCompute(1,1,1);
+ glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+ glFlush();
+ warmupWallNs=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-start).count());
+ const auto error=glGetError();
+ submitObserver.Emit(SubmitStage::SubmitWarmup,0,error,1,warmupWallNs);
+ if(error!=GL_NO_ERROR){stats.firstGlError=error;Release();return TransportCode::GL_FAILED;}
+ return TransportCode::OK;
 }
 TransportCode FullM1Transport::SubmitSource(const std::array<uint32_t,32>& command,RootRequest r){
  SubmitScope observed(submitObserver,SubmitStage::SubmitEnter,SubmitStage::SubmitExit,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo));
@@ -108,15 +130,9 @@ TransportCode FullM1Transport::ExecuteBatch(){
   if(!quantum.fence||gl){FailSubmit();return TransportCode::GL_FAILED;}
   return TransportCode::OK_SUBMITTING;
  }
- // T324 Amendment 2 (T335 attribution §2.2, INV-9): flush after every
- // NON-final batch, after the lastBatchWallNs sample. Mechanism (a): the
- // driver realizes accumulated unflushed command buffers at sync creation —
- // T330 measured 37.65/41.28ms stalls on 127 unflushed dispatches (296/325
- // us/dispatch linear fingerprint). Per-batch flush keeps the fence facing
- // only the last batch's ~10 dispatch residual (~3ms expected stall). The
- // final batch keeps the original fence->flush order (Amendment 2 keeps it
- // unchanged). No timeline event (INV-9): flush cost lands in the batch wall
- // naturally, never hidden.
+ // T324 Amendment 2 keeps the non-final flush layout. Amendment 3
+ // warms the first real submit separately before READY. SubmitExit spans
+ // the batch and this flush; lastBatchWallNs retains its pre-flush sample.
  glFlush();flushes++;
  return TransportCode::OK_SUBMITTING;
 }

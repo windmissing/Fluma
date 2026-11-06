@@ -4,7 +4,7 @@ export interface ColdFile {name:string;bytes:number;sha256:string;}
 export interface TimelineStore {save(name:string,text:string):Promise<ColdFile>;}
 export interface TimelineIdentity {module:string;route:string;packageSha256:string;pid:number;}
 export interface TimelineRow {serial:string;ns:string;tid:string;epoch:string;run:string;surface:string;input:string;now:string;last:string;delta:string;root:string;stage:number;}
-const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel'];
+const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel','SubmitWarmup'];
 interface TimelinePage {revision:string;clock:string;capacity:number;rowBytes:number;count:number;dropped:string;serial:string;cursor:number;rows:TimelineRow[];next:number;completePage:boolean;stageRevision:string;}
 export class TimelineManifest {
  stageRevision:string='T295_STAGE23_V1';stages:string[]=['INVALID','Invalidate','InitBegin','Ready','ReadyRejected','WaitEnter','Wake','FirstTick','AdvanceBegin','AdvanceEnd','AnchorSet','PumpBegin','PumpEnd','DrawBegin','DrawEnd','SwapBegin','SwapEnd','PauseBegin','PauseEnd','Offer','Consume','Stale','RootSubmit','RootPoll'];
@@ -19,12 +19,21 @@ export class GpuBridgeTimelineCold {
  cancel():void{this.cancelled=true;}
  private u64(s:string):boolean {return typeof s==='string'&&/^(0|[1-9][0-9]*)$/.test(s)&&(s.length<20||(s.length===20&&s<='18446744073709551615'));}
  private greater(a:string,b:string):boolean{return a.length>b.length||(a.length===b.length&&a>b);}
+ private stageLimit(revision:string):number {
+  switch(revision){
+   case 'T295_STAGE23_V1':return 23;
+   case 'T317_STAGE39_V2':return 39;
+   case 'T324_STAGE41_V1':return 41;
+   case 'T324_STAGE42_V1':return 42;
+   default:return 0;
+  }
+ }
  private page(raw:string,cursor:number):TimelinePage {
   // T339: ring capacity 1024->4096 (T336/T335 §4). Page budget 16384 verified:
   // max page = header + 4 rows at worst-case u64 widths ~1.7KB << 16384.
   if(raw.length>16384)throw new Error('PAGE_BUDGET');const p:TimelinePage=JSON.parse(raw) as TimelinePage;
-  if(p.revision!=='T295_STEADY_TRACE_V1'||p.clock!=='STEADY_NS'||(p.stageRevision!=='T295_STAGE23_V1'&&p.stageRevision!=='T317_STAGE39_V2'&&p.stageRevision!=='T324_STAGE41_V1')||p.capacity!==4096||!Number.isSafeInteger(p.rowBytes)||p.rowBytes<=0||!Number.isSafeInteger(p.count)||p.count<0||p.count>4096||!this.u64(p.dropped)||!this.u64(p.serial)||p.cursor!==cursor||!p.completePage||!Array.isArray(p.rows)||p.rows.length>4||p.next!==cursor+p.rows.length||p.next>p.count)throw new Error('INVALID_PAGE');
-  for(const r of p.rows){if(!this.u64(r.serial)||!this.u64(r.ns)||!this.u64(r.tid)||!this.u64(r.epoch)||!this.u64(r.run)||!this.u64(r.surface)||!this.u64(r.input)||!this.u64(r.now)||!this.u64(r.last)||!this.u64(r.delta)||!this.u64(r.root)||!Number.isInteger(r.stage)||r.stage<1||r.stage>(p.stageRevision==='T324_STAGE41_V1'?41:p.stageRevision==='T317_STAGE39_V2'?39:23)||r.now!==r.ns)throw new Error('INVALID_ROW');}
+  if(p.revision!=='T295_STEADY_TRACE_V1'||p.clock!=='STEADY_NS'||this.stageLimit(p.stageRevision)===0||p.capacity!==4096||!Number.isSafeInteger(p.rowBytes)||p.rowBytes<=0||!Number.isSafeInteger(p.count)||p.count<0||p.count>4096||!this.u64(p.dropped)||!this.u64(p.serial)||p.cursor!==cursor||!p.completePage||!Array.isArray(p.rows)||p.rows.length>4||p.next!==cursor+p.rows.length||p.next>p.count)throw new Error('INVALID_PAGE');
+  for(const r of p.rows){if(!this.u64(r.serial)||!this.u64(r.ns)||!this.u64(r.tid)||!this.u64(r.epoch)||!this.u64(r.run)||!this.u64(r.surface)||!this.u64(r.input)||!this.u64(r.now)||!this.u64(r.last)||!this.u64(r.delta)||!this.u64(r.root)||!Number.isInteger(r.stage)||r.stage<1||r.stage>this.stageLimit(p.stageRevision)||r.now!==r.ns)throw new Error('INVALID_ROW');}
   return p;
  }
  async collect(module:TimelineModule,store:TimelineStore,id:TimelineIdentity,yieldUi:()=>Promise<void>):Promise<TimelineManifest> {
@@ -32,7 +41,7 @@ export class GpuBridgeTimelineCold {
   const flush=async ():Promise<void>=>{if(!chunk)return;const file=await store.save(prefix+'-part'+chunkIndex+'.ndjson',chunk);out.files.push(file);out.dataBytes+=file.bytes;chunk='';chunkIndex++;};
   try {
    if(!/^[a-fA-F0-9]{64}$/.test(id.packageSha256))throw new Error('PACKAGE_SHA_REQUIRED');
-   out.statusBefore=module.status();const initial=module.timeline(0);const first=this.page(initial,0);out.stageRevision=first.stageRevision;if(first.stageRevision==='T317_STAGE39_V2'||first.stageRevision==='T324_STAGE41_V1')out.stages=out.stages.concat(first.stageRevision==='T324_STAGE41_V1'?TRANSPORT_STAGES:TRANSPORT_STAGES.slice(0,16));out.before=initial;target=first.count;let cursor=0;const start=Date.now();
+   out.statusBefore=module.status();const initial=module.timeline(0);const first=this.page(initial,0);out.stageRevision=first.stageRevision;out.stages=out.stages.concat(TRANSPORT_STAGES.slice(0,this.stageLimit(first.stageRevision)-23));out.before=initial;target=first.count;let cursor=0;const start=Date.now();
    do {
     if(this.cancelled)throw new Error('CANCELLED');if(Date.now()-start>30000)throw new Error('EXPORT_TIMEOUT');
     const raw=cursor===0?initial:module.timeline(cursor);const p=this.page(raw,cursor);

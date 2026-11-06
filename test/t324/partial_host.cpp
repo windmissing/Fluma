@@ -35,6 +35,14 @@ namespace m1 {struct FullM1HostAccess {
  static const QuantumCandidate& Quantum(const FullM1Transport& x){return x.quantum;}
  static uint32_t Pad(const QuantumCandidate& q){return q.pad;}
  static uint32_t KW(const QuantumCandidate& q){return q.Kw;}
+ static GLuint Base(const FullM1Transport& x){return x.source.banks[0];}
+ static GLuint Candidate(const FullM1Transport& x){return x.quantum.candidate;}
+ static GLuint Workspace(const FullM1Transport& x){return x.quantum.workspace;}
+ static uint32_t Rows(const FullM1Transport& x){return x.quantum.rowsAt;}
+ static GLuint Events(const FullM1Transport& x,uint32_t i){return x.eventArenas[i];}
+ static GLuint Results(const FullM1Transport& x,uint32_t i){return x.results[i];}
+ static GLuint Publication(const FullM1Transport& x,uint32_t i){return x.source.pubs[i];}
+
 };}}
 using namespace grs;
 // Monolithic reference stage sequence, captured before T324 (from the t280
@@ -206,6 +214,91 @@ int main(int argc,char** argv){std::cout.setf(std::ios::unitbuf);uint32_t K=argc
   assert(code==TransportCode::OK&&out.physics.lo>=2);passed++; // flush breaks nothing
   assert(gpu.Release()==TransportCode::OK);
   std::cout<<"CASE_F batches="<<batches<<" flushes="<<flushes<<" (non-final batches)"<<std::endl;
+ }
+ // T375: verify one real warmup, no writes outside scratch, and that
+ // the first real root overwrites even poisoned candidate/workspace.
+ {
+  using Access=m1::FullM1HostAccess;
+  static constexpr uint32_t marker=0x13579bdf;
+  auto stamp=[](GLuint buffer,uint32_t offset,uint32_t word){
+   glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffer);
+   glBufferSubData(GL_SHADER_STORAGE_BUFFER,offset*4,4,&word);
+  };
+  auto read=[](GLuint buffer,uint32_t offset){
+   glBindBuffer(GL_COPY_READ_BUFFER,buffer);
+   const auto* word=static_cast<const uint32_t*>(glMapBufferRange(GL_COPY_READ_BUFFER,offset*4,4,GL_MAP_READ_BIT));
+   assert(word);const auto value=*word;assert(glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE);
+   return value;
+  };
+  struct WarmupRun {
+   m1::FullM1Transport* gpu;
+   decltype(stamp)* write;
+   uint64_t wall=0;
+   uint32_t enter=0,exit=0,error=0;
+   bool injectError=false;
+  };
+  auto observer=[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t edge,uint64_t wall){
+   if(stage!=SubmitStage::SubmitWarmup)return;
+   auto& seen=*static_cast<WarmupRun*>(ptr);
+   assert(root==0);
+   if(edge==1){seen.exit++;seen.wall=wall;seen.error=code;return;}
+   assert(edge==0&&code==0&&wall==0);seen.enter++;
+   auto& g=*seen.gpu;
+   (*seen.write)(Access::Candidate(g),0,marker);
+   (*seen.write)(Access::Workspace(g),0,marker);
+   (*seen.write)(Access::Workspace(g),Access::Rows(g),marker);
+   for(uint32_t i=0;i<2;i++){
+    (*seen.write)(Access::Events(g,i),0,marker);
+    (*seen.write)(Access::Results(g,i),0,marker);
+    (*seen.write)(Access::Publication(g,i),0,marker);
+   }
+   if(seen.injectError)glBindBuffer(GL_NONE,0);
+  };
+  m1::FullM1Transport gpu;
+  WarmupRun seen{&gpu,&stamp};
+  gpu.submitObserver={&seen,observer};
+  seen.injectError=true;
+  assert(gpu.Create(K,Kw,id)==TransportCode::GL_FAILED);
+  assert(seen.enter==1&&seen.exit==1&&seen.error==GL_INVALID_ENUM&&seen.wall==gpu.WarmupWallNs());
+  assert(gpu.Release()==TransportCode::OK);passed++;
+  seen.injectError=false;
+  std::vector<uint32_t> referenceBank,referenceEvents;
+  Words256 referenceCompletion{};
+  for(bool poison:{false,true}){
+   const uint32_t prior=seen.enter;
+   const auto priorTrace=gpu.Trace().Size();
+   assert(gpu.Create(K,Kw,id)==TransportCode::OK);
+   assert(seen.enter==prior+1&&seen.exit==seen.enter&&seen.error==0&&seen.wall==gpu.WarmupWallNs()&&seen.wall>0);
+   assert(gpu.Owner().AcceptedCount()==0&&!gpu.Owner().HasLeases()&&gpu.Trace().Size()==priorTrace);
+   assert(gpu.Stats().dispatches==0&&gpu.Stats().fences==0&&gpu.SubmitBatchFlushes()==0);
+   glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);glFinish();
+   assert(read(Access::Candidate(gpu),0)==read(Access::Base(gpu),0));
+   assert(read(Access::Workspace(gpu),0)==0&&read(Access::Workspace(gpu),Access::Rows(gpu))==0);
+   for(uint32_t i=0;i<2;i++){
+    assert(read(Access::Events(gpu,i),0)==marker&&read(Access::Results(gpu,i),0)==marker&&read(Access::Publication(gpu,i),0)==marker);
+   }
+   if(poison){
+    stamp(Access::Candidate(gpu),0,marker);
+    stamp(Access::Workspace(gpu),0,marker);
+    stamp(Access::Workspace(gpu),Access::Rows(gpu),marker);
+   }
+   RootRequest r;r.kind=2;r.nonce={1,0};r.frame={1,0};r.control={1,0};r.quantumOrdinal=1;r.publicationSlot=0;r.eventArena=1;
+   auto c=gpu.SubmitQuantum(params,r);assert(c==TransportCode::OK_SUBMITTING);
+   while(c==TransportCode::OK_SUBMITTING)c=gpu.ContinueSubmit();
+   assert(c==TransportCode::OK);
+   AcceptedRoot out;do{c=gpu.Poll(out);}while(c==TransportCode::BUSY);
+   assert(c==TransportCode::OK&&gpu.Owner().AcceptedCount()==1&&out.completion[99]==1023);
+   assert(gpu.Freeze(true)==TransportCode::OK);
+   std::vector<uint32_t> bank,events;
+   assert(gpu.Capture(bank,events)==TransportCode::OK);
+   assert(gpu.Freeze(false)==TransportCode::OK);
+   if(poison){
+    assert(bank==referenceBank&&events==referenceEvents);
+    assert(out.completion==referenceCompletion);
+   }else{referenceBank=bank;referenceEvents=events;referenceCompletion=out.completion;}
+   assert(gpu.Release()==TransportCode::OK);passed++;
+  }
+  std::cout<<"CASE_W real pass 0, scratch only, fresh-root bit parity, raw wall and failed-Create retry\n";
  }
  std::cout<<"{\"revision\":\"T329_PARTIAL_PUMP_LOOP_V1\",\"K\":"<<K<<",\"Kw\":"<<Kw<<",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
 }

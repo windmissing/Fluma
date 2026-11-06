@@ -9,12 +9,12 @@ enum class SubmitStage:uint32_t {SubmitEnter=24,SubmitExit,ShaderEnter,ShaderExi
  DispatchEnter,DispatchExit,FenceEnter,FenceExit,PollEnter,PollExit,
  // T324 §2.6: SubmitRootBegin fires once at the first batch of a partial
  // submit; SubmitCancel fires when CancelSubmit revokes an unsealed root.
- SubmitRootBegin=40,SubmitCancel};
+ SubmitRootBegin=40,SubmitCancel,SubmitWarmup};
 struct SubmitObserver {
  void* context=nullptr;
- void (*write)(void*,SubmitStage,uint64_t,uint32_t,uint32_t)=nullptr;
- void Emit(SubmitStage s,uint64_t root=0,uint32_t code=0,uint32_t ordinal=0)const{
-  if(write)write(context,s,root,code,ordinal);
+ void (*write)(void*,SubmitStage,uint64_t,uint32_t,uint32_t,uint64_t)=nullptr;
+ void Emit(SubmitStage s,uint64_t root=0,uint32_t code=0,uint32_t ordinal=0,uint64_t wallNs=0)const{
+  if(write)write(context,s,root,code,ordinal,wallNs);
  }
 };
 struct SubmitScope {
