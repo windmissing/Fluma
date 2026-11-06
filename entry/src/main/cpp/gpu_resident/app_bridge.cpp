@@ -45,7 +45,7 @@ struct App : BridgeState {
  std::condition_variable wake;std::thread thread;
  bool quit=false;uint32_t Kw=128;
 #ifdef GRS_APP_M1
- m1::UiState ui;m1::SceneOptics optics;bool requiresReset=false,tailProbeNext=false;
+ m1::UiState ui;m1::SceneOptics optics;bool requiresReset=false,tailProbeNext=false,coldTwoBatchesNext=false;
  void AddTailLocked(const TailSample& s,uint64_t writerBegin,uint32_t receipt=0){
   BridgeTimeRow r;
   r.ns=r.now=Stamp();r.tid=BridgeTid();r.epoch=transportEpoch;
@@ -75,7 +75,7 @@ struct App : BridgeState {
  BridgeDecode decoded{};std::array<BridgeDecode,64> offers{};size_t offerCount=0,offerDropped=0;
 #endif
 #ifdef GRS_APP_M1
- BridgeTimeline timeline{true};
+ BridgeTimeline timeline{true,true};
 #else
  BridgeTimeline timeline;
 #endif
@@ -122,7 +122,7 @@ if(launch)thread=std::thread([this]{loop();});}
   EGLDisplay display=EGL_NO_DISPLAY;EGLContext context=EGL_NO_CONTEXT;EGLSurface surface=EGL_NO_SURFACE;
   void* held=nullptr;uint64_t seen=0,runId=0,last=0,frame=0,render=0,lastAccepted=0;bool failed=false,gap=false;
 #ifdef GRS_APP_M1
-  bool activeTailProbe=false;
+  bool activeTailProbe=false,activeColdTwoBatches=false;
 #endif
   std::unique_ptr<AppTransport> gpu;std::unique_ptr<AppRun> run;AppScene scene;
 #ifdef GRS_APP_M1
@@ -150,7 +150,7 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
 #endif
    ){retire();seen=currentEpoch;failed=gap=false;{std::lock_guard<std::mutex> l(mutex);if(seen!=epoch)continue;
 #ifdef GRS_APP_M1
-    suspended=false;activeOptics=optics;activeTailProbe=tailProbeNext;ui.NewRun();
+    suspended=false;activeOptics=optics;activeTailProbe=tailProbeNext;activeColdTwoBatches=coldTwoBatchesNext;ui.NewRun();
 #endif
     if(active&&window
 #ifdef GRS_APP_M1
@@ -171,19 +171,27 @@ wake.wait_for(l,std::chrono::milliseconds(8));MarkLocked(BridgeStage::Wake);if(q
     transportEpoch=seen;transportIdentity=id;gpu=std::make_unique<AppTransport>();
     gpu->submitObserver={this,[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t ordinal,uint64_t wallNs){auto& app=*static_cast<App*>(ptr);std::unique_lock<std::mutex> lock(app.mutex,std::defer_lock);if(!app.transportLockHeld)lock.lock();BridgeTimeRow row;row.ns=row.now=app.Stamp();row.tid=BridgeTid();row.epoch=app.transportEpoch;row.run=(uint64_t(app.transportIdentity.run.hi)<<32)|app.transportIdentity.run.lo;row.surface=(uint64_t(app.transportIdentity.surface.hi)<<32)|app.transportIdentity.surface.lo;row.input=(uint64_t(app.input.hi)<<32)|app.input.lo;row.root=root;row.stage=uint32_t(stage);row.code=code;row.carry=ordinal;row.delta=wallNs;if(!app.timelinePaused)app.timeline.Add(row);}};
 #ifdef GRS_APP_M1
-    if(activeTailProbe)gpu->tailObserver={this,[](void* ptr,const TailSample& sample){
+    gpu->coldObserver={this,[](void* ptr,const TailSample& sample){
      const auto begin=TailObserver::Now();
      auto& app=*static_cast<App*>(ptr);
      std::unique_lock<std::mutex> lock(app.mutex,std::defer_lock);
      if(!app.transportLockHeld)lock.lock();
      app.AddTailLocked(sample,begin);
     }};
-    auto code=gpu->Create(capacity,waterCapacity,id);
+    if(activeTailProbe)gpu->tailObserver=gpu->coldObserver;
+    struct ColdIdentity { App& app; uint64_t epoch; void* window; };
+    ColdIdentity preparing{*this,seen,held};
+    const m1::ColdPrepareOptions cold{activeColdTwoBatches,&preparing,[](void* ptr){
+     const auto& scope=*static_cast<const ColdIdentity*>(ptr);
+     std::lock_guard<std::mutex> lock(scope.app.mutex);
+     return scope.app.CurrentLocked(scope.epoch,scope.window);
+    }};
+    auto code=gpu->Create(capacity,waterCapacity,id,m1::QuantumParameters{},16u*1048576u,cold);
     {std::lock_guard<std::mutex> l(mutex);if(seen==epoch){warmupEpoch=seen;warmupWallNsCached=gpu->WarmupWallNs();}}
 #else
     auto code=gpu->Create(capacity,id);
 #endif
-    if(code!=TransportCode::OK){publish("{\"state\":\"FAULT\",\"stage\":\"TRANSPORT_CREATE\",\"code\":"+std::to_string(int(code))+"}");failed=true;continue;}run=std::make_unique<AppRun>(*gpu);bool committed=false;{std::lock_guard<std::mutex> l(mutex);committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
+    if(code!=TransportCode::OK){publish("{\"state\":\"FAULT\",\"stage\":\"TRANSPORT_CREATE\",\"code\":"+std::to_string(int(code))+"}");failed=true;retire();continue;}run=std::make_unique<AppRun>(*gpu);bool committed=false;{std::lock_guard<std::mutex> l(mutex);committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
    }
 #ifdef GRS_APP_M1
    if(run&&!failed&&!gap){
@@ -309,13 +317,22 @@ napi_value setTailProbe(napi_env e,napi_callback_info i){
  auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.tailProbeNext=enabled;
  return text(e,enabled?"TAIL_PROBE_ON_NEXT_RUN":"TAIL_PROBE_OFF_NEXT_RUN");
 }
+napi_value setColdTwoBatches(napi_env e,napi_callback_info i){
+ size_t count=1;napi_value arg;bool enabled=false;
+ if(napi_get_cb_info(e,i,&count,&arg,nullptr,nullptr)!=napi_ok||count!=1||
+    napi_get_value_bool(e,arg,&enabled)!=napi_ok)return text(e,"INVALID_COLD_POLICY");
+ auto& a=app();
+ std::lock_guard<std::mutex> lock(a.mutex);
+ a.coldTwoBatchesNext=enabled;
+ return text(e,enabled?"T389_TWO_BATCH_NEXT_RUN":"T375_PASS0_NEXT_RUN");
+}
 napi_value opticsConfig(napi_env e,napi_callback_info i){size_t n=1;napi_value v;bool typed=false;napi_typedarray_type type;napi_value backing;size_t len=0,offset=0,bytes=0;void* ptr=nullptr;void* base=nullptr;if(napi_get_cb_info(e,i,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||napi_is_typedarray(e,v,&typed)!=napi_ok||!typed||napi_get_typedarray_info(e,v,&type,&len,&ptr,&backing,&offset)!=napi_ok||type!=napi_float32_array||len!=16||!ptr||offset%4||napi_get_arraybuffer_info(e,backing,&base,&bytes)!=napi_ok||!base||offset>bytes||bytes-offset<64)return text(e,"INVALID_OPTICS16");m1::SceneOptics cold;std::memcpy(cold.values.data(),ptr,64);if(!m1::ValidOptics(cold))return text(e,"INVALID_OPTICS16");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.SetSourceLocked(-1);a.optics=cold;a.requiresReset=false;a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_OPTICS_RUN_REQUESTED");}
 napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4];double k=0,kw=0,feature=0,revision=0;if(napi_get_cb_info(e,i,&n,v,nullptr,nullptr)!=napi_ok||n!=4||napi_get_value_double(e,v[0],&k)!=napi_ok||napi_get_value_double(e,v[1],&kw)!=napi_ok||napi_get_value_double(e,v[2],&feature)!=napi_ok||napi_get_value_double(e,v[3],&revision)!=napi_ok||(k!=192&&k!=512)||(kw!=64&&kw!=128)||feature!=3||revision!=2)return text(e,"UNSUPPORTED_M1_CONFIG");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.K=uint32_t(k);a.Kw=uint32_t(kw);a.requiresReset=false;a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_RUN_REQUESTED");}
 #endif
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},
-{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
+{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
 {"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
 #ifdef GRS_APP_M1

@@ -7,13 +7,20 @@ namespace grs {namespace m1 {
 // >=1 batch dispatched this root, table not exhausted, no fence yet.
 // FENCE_PENDING: all passes dispatched, fence created, awaiting GPU signal.
 enum class SubmitPhase:uint8_t {IDLE=0,BATCH_ACTIVE=1,FENCE_PENDING=2};
+struct ColdPrepareOptions {
+ bool twoBatches=false;
+ void* context=nullptr;
+ bool (*current)(void*)=nullptr;
+};
 // Full M1 roots, still isolated from product routing/scene. All calls belong
 // to the same current native GL owner. Only Poll can accept a sealed root.
 class FullM1Transport {
 public:
  TailObserver tailObserver;
+ TailObserver coldObserver;
  SubmitObserver submitObserver{};
- TransportCode Create(uint32_t K,uint32_t Kw,const Identity&,const QuantumParameters& cold=QuantumParameters{},uint32_t emitQ=16u*1048576u);
+ TransportCode Create(uint32_t K,uint32_t Kw,const Identity&,const QuantumParameters& cold=QuantumParameters{},
+  uint32_t emitQ=16u*1048576u,const ColdPrepareOptions& preparation={});
  TransportCode SubmitSource(const std::array<uint32_t,32>&,RootRequest);
  TransportCode SubmitQuantum(const QuantumParameters&,RootRequest);
  // T324 §2.2/2.3: same-nonce continuation. BATCH_ACTIVE: dispatch the next
@@ -60,6 +67,7 @@ private:
  static constexpr uint32_t kBatchMaxOps=10;
  TailSample flushSample{TailStage::Flush};
  void FlushBatch(bool,uint32_t);
+ TransportCode PrepareColdPrefix(const QuantumParameters&,const ColdPrepareOptions&,uint64_t,uint32_t&);
  TransportCode ObserveBatch();
  TransportCode ExecuteBatch();
  void FailSubmit();

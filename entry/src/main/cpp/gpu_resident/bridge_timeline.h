@@ -27,8 +27,10 @@ struct BridgeTimeline {
  // Page export (4 rows/page) and fail-closed semantics unchanged; NO
  // auto-export ring clearing (cold-export semantics stay untouched).
  static constexpr uint32_t capacity=4096,pageRows=4;std::array<BridgeTimeRow,capacity> rows{};uint64_t serial=0,dropped=0;uint32_t count=0;
- explicit BridgeTimeline(bool hasTailDictionary=false):tailDictionary(hasTailDictionary){}
+ explicit BridgeTimeline(bool hasTailDictionary=false,bool hasColdDictionary=false)
+  :tailDictionary(hasTailDictionary),coldDictionary(hasColdDictionary){}
  const bool tailDictionary;
+ const bool coldDictionary;
  struct Tokens{std::array<char,1024> requested{},rendered{};};
  std::array<Tokens,32> tokens{};uint32_t tokenCount=0;
  uint32_t SaveTokens(const std::string& requested,const std::string& rendered){
@@ -41,7 +43,7 @@ struct BridgeTimeline {
  static uint64_t Now(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}
  void Add(BridgeTimeRow row){row.serial=++serial;if(count==capacity){++dropped;return;}rows[count++]=row;}
  // Called under App's same lock; explicit bounded cold page, no hot JSON.
- std::string Export(uint32_t cursor)const{std::ostringstream o;o<<"{\"revision\":\"T295_STEADY_TRACE_V1\",\"clock\":\"STEADY_NS\",\"capacity\":"<<capacity<<",\"rowBytes\":"<<sizeof(BridgeTimeRow)<<",\"totalBufferBytes\":"<<sizeof(rows)<<",\"jsonExportBudgetBytes\":1048576,\"count\":"<<count<<",\"stageRevision\":\""<<(tailDictionary?"T384_STAGE50_V1":"T324_STAGE42_V1")<<"\",\"serial\":\""<<serial<<"\",\"dropped\":\""<<dropped<<"\""<<",\"incomplete\":"<<(dropped?"true":"false")<<",\"cursor\":"<<cursor<<",\"rows\":[";uint32_t end=std::min(count,cursor+pageRows);for(uint32_t i=cursor;i<end;i++){const auto& r=rows[i];if(i!=cursor)o<<',';o<<"{\"serial\":\""<<r.serial<<"\",\"ns\":\""<<r.ns<<"\",\"tid\":\""<<r.tid<<"\",\"epoch\":\""<<r.epoch<<"\",\"run\":\""<<r.run<<"\",\"surface\":\""<<r.surface<<"\",\"input\":\""<<r.input<<"\",\"now\":\""<<r.now<<"\",\"last\":\""<<r.last<<"\",\"delta\":\""<<r.delta<<"\",\"root\":\""<<r.root<<"\",\"stage\":"<<r.stage<<",\"code\":"<<r.code<<",\"carry\":"<<r.carry<<",\"quanta\":"<<r.quanta<<",\"appQueue\":"<<r.appQueue<<",\"runQueue\":"<<r.runQueue<<",\"flags\":"<<r.flags;
+ std::string Export(uint32_t cursor)const{std::ostringstream o;o<<"{\"revision\":\"T295_STEADY_TRACE_V1\",\"clock\":\"STEADY_NS\",\"capacity\":"<<capacity<<",\"rowBytes\":"<<sizeof(BridgeTimeRow)<<",\"totalBufferBytes\":"<<sizeof(rows)<<",\"jsonExportBudgetBytes\":1048576,\"count\":"<<count<<",\"stageRevision\":\""<<(coldDictionary?"T389_STAGE57_V1":tailDictionary?"T384_STAGE50_V1":"T324_STAGE42_V1")<<"\",\"serial\":\""<<serial<<"\",\"dropped\":\""<<dropped<<"\""<<",\"incomplete\":"<<(dropped?"true":"false")<<",\"cursor\":"<<cursor<<",\"rows\":[";uint32_t end=std::min(count,cursor+pageRows);for(uint32_t i=cursor;i<end;i++){const auto& r=rows[i];if(i!=cursor)o<<',';o<<"{\"serial\":\""<<r.serial<<"\",\"ns\":\""<<r.ns<<"\",\"tid\":\""<<r.tid<<"\",\"epoch\":\""<<r.epoch<<"\",\"run\":\""<<r.run<<"\",\"surface\":\""<<r.surface<<"\",\"input\":\""<<r.input<<"\",\"now\":\""<<r.now<<"\",\"last\":\""<<r.last<<"\",\"delta\":\""<<r.delta<<"\",\"root\":\""<<r.root<<"\",\"stage\":"<<r.stage<<",\"code\":"<<r.code<<",\"carry\":"<<r.carry<<",\"quanta\":"<<r.quanta<<",\"appQueue\":"<<r.appQueue<<",\"runQueue\":"<<r.runQueue<<",\"flags\":"<<r.flags;
  if(r.stage>=uint32_t(TailStage::BatchCall)){
   o<<",\"probeStart\":\""<<r.probeStart<<"\",\"probeEnd\":\""<<r.probeEnd<<"\",\"probeA\":\""<<r.probeA<<"\",\"probeB\":\""<<r.probeB<<"\",\"probeC\":\""<<r.probeC<<"\",\"probeWriteNs\":\""<<r.probeWriteNs<<'"';
   if(r.stage==uint32_t(TailStage::Presentation)){

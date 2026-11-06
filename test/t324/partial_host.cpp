@@ -42,6 +42,7 @@ namespace m1 {struct FullM1HostAccess {
  static GLuint Events(const FullM1Transport& x,uint32_t i){return x.eventArenas[i];}
  static GLuint Results(const FullM1Transport& x,uint32_t i){return x.results[i];}
  static GLuint Publication(const FullM1Transport& x,uint32_t i){return x.source.pubs[i];}
+ static uint32_t PublicationWords(const FullM1Transport& x){return x.source.pubWords;}
 
 };}}
 using namespace grs;
@@ -337,6 +338,92 @@ int main(int argc,char** argv){std::cout.setf(std::ios::unitbuf);uint32_t K=argc
    assert(gpu.Release()==TransportCode::OK);passed++;
   }
   std::cout<<"CASE_W real pass 0, scratch only, fresh-root bit parity, raw wall and failed-Create retry\n";
+ }
+ {
+  using Access=m1::FullM1HostAccess;
+  m1::FullM1Transport gpu;
+  struct ColdCheck {
+   bool current=true,cancel=false,fenceError=false;
+   uint32_t batches=0,flushes=0,staging=0,fences=0,cleanup=0,error=0;
+   uint64_t bytes=0;
+  } cold;
+  const auto observer=[](void* ptr,const TailSample& s){
+   auto& c=*static_cast<ColdCheck*>(ptr);
+   assert(s.root==0&&s.start<=s.end);
+   if(s.stage==TailStage::ColdStagingFlush)++c.staging;
+   if(s.stage==TailStage::ColdBatch){
+    ++c.batches;
+    assert(s.ordinal==c.batches&&s.a==(c.batches-1)*10&&s.b==c.batches*10&&s.c==s.b);
+    if(c.cancel)c.current=false;
+   }
+   if(s.stage==TailStage::ColdBatchFlush){
+    ++c.flushes;
+    if(c.fenceError&&s.ordinal==2)glBindBuffer(GL_NONE,0);
+   }
+   if(s.stage==TailStage::ColdFence){++c.fences;c.error=uint32_t(s.b);}
+   if(s.stage==TailStage::ColdCleanup){++c.cleanup;c.bytes=s.a;}
+  };
+  gpu.coldObserver={&cold,observer};
+  m1::ColdPrepareOptions opts{true,&cold,[](void* p){return static_cast<ColdCheck*>(p)->current;}};
+  auto warm=[&]{return gpu.Create(K,Kw,id,params,16u*1048576u,opts);};
+  cold.cancel=true;
+  assert(warm()==TransportCode::STATE_LOST&&cold.batches==1&&cold.fences==0&&cold.cleanup==1);
+  assert(gpu.Owner().AcceptedCount()==0&&gpu.Release()==TransportCode::OK);passed++;
+  cold={};cold.fenceError=true;
+  assert(warm()==TransportCode::GL_FAILED&&cold.batches==2&&cold.fences==1&&cold.cleanup==1);
+  assert(cold.error==GL_INVALID_ENUM&&gpu.Owner().AcceptedCount()==0&&gpu.Release()==TransportCode::OK);passed++;
+  std::vector<uint32_t> priorBank,priorEvents,priorPublication;
+  Words256 priorCompletion{},priorHeader{};
+  SourceTransportStats priorStats{};
+  for(bool experimental:{false,true}){
+   cold={};opts.twoBatches=experimental;
+   assert(warm()==TransportCode::OK);
+   assert(cold.staging==uint32_t(experimental)&&cold.batches==2u*experimental&&cold.flushes==2u*experimental);
+   assert(cold.fences==uint32_t(experimental)&&cold.cleanup==uint32_t(experimental));
+   assert(!experimental||cold.bytes==uint64_t(4*(48*K+16*Kw+254)+K)*256);
+   assert(gpu.Stats().dispatches==0&&gpu.Stats().fences==0&&gpu.Owner().AcceptedCount()==0);
+   RootRequest r;
+   r.kind=2;r.nonce={1,0};r.frame={1,0};r.control={1,0};
+   r.quantumOrdinal=1;r.publicationSlot=0;r.eventArena=1;
+   uint32_t hotStaging=0;
+   gpu.tailObserver={&hotStaging,[](void* ptr,const TailSample& s){
+    if(s.stage==TailStage::StagingFlush){
+     assert(s.root==1&&s.start<=s.end&&s.code==0);
+     ++*static_cast<uint32_t*>(ptr);
+    }
+   }};
+   auto code=gpu.SubmitQuantum(params,r);
+   assert(code==TransportCode::OK_SUBMITTING&&hotStaging==1);
+   while(code==TransportCode::OK_SUBMITTING)code=gpu.ContinueSubmit();
+   assert(code==TransportCode::OK);
+   AcceptedRoot root;
+   do{code=gpu.Poll(root);}while(code==TransportCode::BUSY);
+   assert(code==TransportCode::OK&&root.publication==0&&gpu.Owner().AcceptedCount()==1);
+   assert(gpu.Freeze(true)==TransportCode::OK);
+   std::vector<uint32_t> bank,events;
+   assert(gpu.Capture(bank,events)==TransportCode::OK);
+   assert(gpu.Freeze(false)==TransportCode::OK);
+   glBindBuffer(GL_COPY_READ_BUFFER,Access::Publication(gpu,0));
+   const auto count=Access::PublicationWords(gpu);
+   const auto* data=static_cast<const uint32_t*>(glMapBufferRange(GL_COPY_READ_BUFFER,0,count*4,GL_MAP_READ_BIT));
+   assert(data);
+   std::vector<uint32_t> publication(data,data+count);
+   assert(glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE);
+   const auto stats=gpu.Stats();
+   if(experimental){
+    assert(bank==priorBank&&events==priorEvents&&publication==priorPublication);
+    assert(root.completion==priorCompletion&&gpu.Owner().Header()==priorHeader);
+    assert(stats.allocatedBytes==priorStats.allocatedBytes&&stats.dispatches==priorStats.dispatches&&
+     stats.barriers==priorStats.barriers&&stats.fences==priorStats.fences&&
+     stats.mappedBytes==priorStats.mappedBytes&&stats.uploadedBytes==priorStats.uploadedBytes&&
+     stats.firstGlError==priorStats.firstGlError);
+   }else{
+    priorBank=bank;priorEvents=events;priorPublication=publication;priorCompletion=root.completion;
+    priorHeader=gpu.Owner().Header();priorStats=stats;
+   }
+   assert(gpu.Release()==TransportCode::OK);passed++;
+  }
+  std::cout<<"T389 AB bank/event/publication/completion/owner/structural stats identical; epoch cancel, fence GL error, rebuild passed\n";
  }
  std::cout<<"{\"revision\":\"T329_PARTIAL_PUMP_LOOP_V1\",\"K\":"<<K<<",\"Kw\":"<<Kw<<",\"passed\":"<<passed<<",\"failed\":0,\"device\":\"NOT_RUN\"}\n";
 }

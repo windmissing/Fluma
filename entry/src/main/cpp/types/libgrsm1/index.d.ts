@@ -1,3 +1,4 @@
+export const setColdTwoBatches:(enabled:boolean)=>string;
 export const status:()=>string;
 export const setTailProbe:(enabled:boolean)=>string;
 export const setActive:(active:boolean)=>string;

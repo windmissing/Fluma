@@ -4,7 +4,8 @@
 #include <cstdio>
 namespace grs {namespace m1 {
 SourceTransportStats FullM1Transport::Stats()const{auto r=source.Stats();r.allocatedBytes=AllocatedBytes();r.dispatches+=stats.dispatches;r.barriers+=stats.barriers;r.fences+=stats.fences;r.polls+=stats.polls;r.mappedBytes+=stats.mappedBytes;r.uploadedBytes+=stats.uploadedBytes;r.coldMappedBytes+=stats.coldMappedBytes;if(!r.firstGlError)r.firstGlError=stats.firstGlError;return r;}
-TransportCode FullM1Transport::Create(uint32_t K,uint32_t Kw,const Identity& id,const QuantumParameters& cold,uint32_t emitQ){
+TransportCode FullM1Transport::Create(uint32_t K,uint32_t Kw,const Identity& id,const QuantumParameters& cold,
+ uint32_t emitQ,const ColdPrepareOptions& preparation){
  if(active||source.ready||quantum.context!=EGL_NO_CONTEXT||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;if(emitQ>1073741824u||cold.gravity<120u||cold.gravity>1073741824u||cold.settle==0u||cold.settle>1073741824u||cold.kAir>960u||cold.kFlight>960u||cold.kWet==0u||cold.kWet>960u||cold.kappa>960u||cold.soft>=605394u)return TransportCode::PROTOCOL_REJECTED;coldParams=cold;lost=failed=frozen=false;lastFrame={};lastOrdinal=0;frameHasSource=false;lastPublication=2;arenaFrame[0]=arenaFrame[1]={};used[0]=used[1]=0;stats={};extraBytes=0;tail={};batchesIssued=lastBatchPasses=submitCancelled=0;flushes=0;warmupWallNs=0;lastBatchWallNs=submitFirstNs=submitTotalWallNs=submitPumpWallNs=0;
  source.submitObserver=quantum.submitObserver=submitObserver;auto c=source.CreateUsing(K,Kw,id,FullM1ShaderSha(),FullSourceKernel());if(c!=TransportCode::OK)return c;source.emitQ=emitQ;source.owner.fullWaterContract=true;c=quantum.Create(K,Kw);if(c!=TransportCode::OK){Release();return c;}
  glDeleteProgram(quantum.program);quantum.program=0;GLuint sh=glCreateShader(GL_COMPUTE_SHADER);const char* text=QuantumCommitKernel();glShaderSource(sh,1,&text,nullptr);submitObserver.Emit(SubmitStage::ShaderEnter);glCompileShader(sh);GLint good;glGetShaderiv(sh,GL_COMPILE_STATUS,&good);submitObserver.Emit(SubmitStage::ShaderExit,0,uint32_t(good));if(!good){glDeleteShader(sh);Release();return TransportCode::SHADER_FAILED;}quantum.program=glCreateProgram();glAttachShader(quantum.program,sh);submitObserver.Emit(SubmitStage::ProgramEnter);glLinkProgram(quantum.program);glDeleteShader(sh);glGetProgramiv(quantum.program,GL_LINK_STATUS,&good);submitObserver.Emit(SubmitStage::ProgramExit,0,uint32_t(good));if(!good){Release();return TransportCode::SHADER_FAILED;}
@@ -17,8 +18,25 @@ TransportCode FullM1Transport::Create(uint32_t K,uint32_t Kw,const Identity& id,
  // T341: execute a genuine slice of pass 0 on the same GL owner before
  // READY. Base is readonly. Pass 0 only writes candidate and workspace,
  // and the first quantum initializes both ranges again in full.
+ if(coldObserver.write){
+  // FNV-1a of the uploaded initial bank and ledger, and the uniform inputs.
+  uint64_t digest=14695981039346656037ull;
+  auto word=[&](uint32_t v){for(unsigned i=0;i<32;i+=8){digest^=(v>>i)&255u;digest*=1099511628211ull;}};
+  for(uint32_t i=0;i<quantum.header;++i)word(0);
+  for(auto v:source.owner.Header())word(v);
+  for(uint32_t i=0;i<4096*16;++i)word(0);
+  for(auto v:{K,Kw,cold.gravity,cold.settle,cold.kAir,cold.kFlight,cold.kWet,cold.kappa,
+      cold.soft,cold.flux,uint32_t(cold.requestedAngle),1u})word(v);
+  const auto stamp=TailObserver::Now();
+  coldObserver.Emit({TailStage::ColdFixture,0,stamp,stamp,K,Kw,digest,
+   uint32_t(cold.requestedAngle),uint32_t(preparation.twoBatches)});
+ }
  submitObserver.Emit(SubmitStage::SubmitWarmup);
- const auto start=std::chrono::steady_clock::now();
+ const auto start=TailObserver::Now();
+ uint32_t error=0;
+ TransportCode prepared=TransportCode::OK;
+ if(preparation.twoBatches)prepared=PrepareColdPrefix(cold,preparation,start,error);
+ else {
  const auto& locations=quantum.uniformLocations;
  glUniform1ui(locations.Find("uPass"),0);
  glUniform1ui(locations.Find("uWords"),quantum.words);
@@ -28,11 +46,117 @@ TransportCode FullM1Transport::Create(uint32_t K,uint32_t Kw,const Identity& id,
  glDispatchCompute(1,1,1);
  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
  glFlush();
- warmupWallNs=uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-start).count());
- const auto error=glGetError();
+ error=glGetError();
+ if(error!=GL_NO_ERROR)prepared=TransportCode::GL_FAILED;
+ }
+ warmupWallNs=TailObserver::Now()-start;
  submitObserver.Emit(SubmitStage::SubmitWarmup,0,error,1,warmupWallNs);
- if(error!=GL_NO_ERROR){stats.firstGlError=error;Release();return TransportCode::GL_FAILED;}
+ if(prepared!=TransportCode::OK){stats.firstGlError=error;Release();return prepared;}
  return TransportCode::OK;
+}
+
+TransportCode FullM1Transport::PrepareColdPrefix(const QuantumParameters& p,const ColdPrepareOptions& options,
+ uint64_t start,uint32_t& rawGl){
+ constexpr uint64_t limitNs=500000000;
+ constexpr uint32_t batchCount=2,passCount=batchCount*kBatchMaxOps;
+ const uint64_t scratchBytes=uint64_t(quantum.eventCapacity)*256;
+ GLuint eventScratch=0;
+ GLsync coldFence=nullptr;
+ GLenum wait=0;
+ uint32_t cut=0,shaderError=0,rawEgl=0;
+ const auto current=[&]{
+  if(!quantum.Current()){rawEgl=eglGetError();return false;}
+  return !options.current||options.current(options.context);
+ };
+ const auto check=[&]{
+  if(!current())return TransportCode::STATE_LOST;
+  return TailObserver::Now()-start>=limitNs?TransportCode::GL_FAILED:TransportCode::OK;
+ };
+ const auto run=[&]() -> TransportCode {
+  cut=1;
+  if(auto code=check();code!=TransportCode::OK)return code;
+  if(quantum.passTable.size()<passCount||quantum.passTable[passCount-1].stage!=7)
+   return TransportCode::PROTOCOL_REJECTED;
+  glGenBuffers(1,&eventScratch);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER,eventScratch);
+  glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(scratchBytes),nullptr,GL_DYNAMIC_COPY);
+  rawGl=glGetError();
+  if(!eventScratch||rawGl)return TransportCode::GL_FAILED;
+  quantum.events=eventScratch;
+  quantum.coldPrefix=true;
+  // Private staging parameters. No Run/owner request or product nonce is issued.
+  RootRequest fixture;
+  fixture.kind=2;fixture.quantumOrdinal=1;
+  fixture.nonce={1,UINT32_MAX};fixture.frame={1,0};fixture.control={1,0};
+  cut=2;
+  auto code=quantum.Enqueue(source.banks[source.owner.Bank()],source.work,
+   96+4096*64+source.words,0,0,p,fixture,coldObserver,true,&rawGl);
+  if(code!=TransportCode::OK)return code;
+  for(uint32_t batch=0;batch<batchCount;++batch){
+   cut=3+batch;
+   if((code=check())!=TransportCode::OK)return code;
+   const uint32_t from=batch*kBatchMaxOps,to=from+kBatchMaxOps;
+   const auto begin=TailObserver::Now();
+   quantum.RunPassRange(from,to);
+   const auto flushBegin=TailObserver::Now();
+   glFlush();
+   const auto end=TailObserver::Now();
+   const auto flushError=glGetError();
+   rawGl=quantum.firstGlError?quantum.firstGlError:flushError;
+   coldObserver.Emit({TailStage::ColdBatch,0,begin,end,from,to,quantum.dispatches,rawGl,batch+1});
+   coldObserver.Emit({TailStage::ColdBatchFlush,0,flushBegin,end,from,to,0,flushError,batch+1});
+   if(rawGl)return TransportCode::GL_FAILED;
+  }
+  cut=5;
+  if((code=check())!=TransportCode::OK)return code;
+  const auto fenceStart=TailObserver::Now();
+  coldFence=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);
+  glFlush();
+  rawGl=glGetError();
+  if(coldFence&&!rawGl){
+   while((code=check())==TransportCode::OK){
+    wait=glClientWaitSync(coldFence,0,0);
+    if(wait!=GL_TIMEOUT_EXPIRED)break;
+    std::this_thread::sleep_for(std::chrono::microseconds(100));
+   }
+   rawGl=glGetError();
+  }else code=TransportCode::GL_FAILED;
+  if(code==TransportCode::OK&&
+     (rawGl||(wait!=GL_ALREADY_SIGNALED&&wait!=GL_CONDITION_SATISFIED)))code=TransportCode::GL_FAILED;
+  if(code==TransportCode::OK)code=check();
+  coldObserver.Emit({TailStage::ColdFence,0,fenceStart,TailObserver::Now(),wait,rawGl,rawEgl,uint32_t(code)});
+  if(code!=TransportCode::OK)return code;
+  cut=6;
+  // On the empty fixture, the first ten bitonic rounds end at k=16.
+  // The second block must be descending, which pass 6 alone cannot produce.
+  glBindBuffer(GL_COPY_READ_BUFFER,quantum.workspace);
+  const auto* words=static_cast<const uint32_t*>(glMapBufferRange(GL_COPY_READ_BUFFER,0,
+   (quantum.sandIndex+32)*4,GL_MAP_READ_BIT));
+  if(!words){rawGl=glGetError();return TransportCode::GL_FAILED;}
+  shaderError=words[0];
+  bool valid=!shaderError&&words[1]==0&&words[6]==1&&quantum.dispatches==passCount;
+  for(uint32_t i=0;i<32;++i)valid=valid&&words[quantum.sandIndex+i]==(i<16?i:47-i);
+  const bool unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;
+  rawGl=glGetError();
+  if(!unmapped||rawGl)return TransportCode::GL_FAILED;
+  if(!valid)return TransportCode::PROTOCOL_REJECTED;
+  return check();
+ };
+ const auto result=run();
+ const auto cleanupStart=TailObserver::Now();
+ if(quantum.Current()){
+  if(coldFence)glDeleteSync(coldFence);
+  if(eventScratch)glDeleteBuffers(1,&eventScratch);
+  const auto cleanupError=glGetError();
+  if(!rawGl)rawGl=cleanupError;
+ }
+ quantum.events=eventArenas[0];
+ quantum.coldPrefix=false;
+ quantum.dispatches=quantum.firstGlError=0;
+ const auto outcome=result==TransportCode::OK&&rawGl?TransportCode::GL_FAILED:result;
+ coldObserver.Emit({TailStage::ColdCleanup,0,cleanupStart,TailObserver::Now(),
+  eventScratch?scratchBytes:0,shaderError,(uint64_t(rawEgl)<<32)|rawGl,uint32_t(outcome),cut});
+ return outcome;
 }
 TransportCode FullM1Transport::SubmitSource(const std::array<uint32_t,32>& command,RootRequest r){
  SubmitScope observed(submitObserver,SubmitStage::SubmitEnter,SubmitStage::SubmitExit,((uint64_t(r.nonce.hi)<<32)|r.nonce.lo));
@@ -58,7 +182,7 @@ TransportCode FullM1Transport::SubmitQuantum(const QuantumParameters& p,RootRequ
  uint32_t a=r.eventArena,prefix=0;GLuint prefixBuffer=0;if(order==0&&frameHasSource&&lastOrdinal==0){prefix=source.tail[53];prefixBuffer=source.events[source.pending.eventArena];}else if(Compare64(arenaFrame[a],r.frame)==0){prefix=used[a];prefixBuffer=eventArenas[a];}
  r.eventStart=prefix;r.eventCapacity=quantum.EventCapacity();r.dispatchCount=quantum.ExpectedDispatches()+8;r.barrierCount=r.dispatchCount;r.uploadedBytes=0;
  source.Retire();if(source.fatal)return TransportCode::GL_FAILED;auto pin=source.PinCandidate();if(pin!=TransportCode::OK)return pin;auto begin=source.owner.BeginQuantum(r,p.requestedAngle);if(begin!=ControlCode::OK){source.candidatePinned=false;return begin==ControlCode::BACKPRESSURE?TransportCode::BUSY:TransportCode::PROTOCOL_REJECTED;}
- quantum.events=eventArenas[a];quantum.traceIdentity=source.identity;auto c=quantum.Enqueue(source.banks[source.owner.Bank()],source.work,96+4096*64+source.words,prefixBuffer,prefix,p,r);if(c!=TransportCode::OK){source.owner.Stop();failed=true;source.candidatePinned=false;return c;}
+ quantum.events=eventArenas[a];quantum.traceIdentity=source.identity;auto c=quantum.Enqueue(source.banks[source.owner.Bank()],source.work,96+4096*64+source.words,prefixBuffer,prefix,p,r,tailObserver);if(c!=TransportCode::OK){source.owner.Stop();failed=true;source.candidatePinned=false;return c;}
  // The sealed-state transfer fields must be set BEFORE the first batch: the
  // last batch (fence/stats/pending transfer) and CancelSubmit read pending,
  // and Poll gates on active+FENCE_PENDING. This mirrors the original

@@ -11,7 +11,8 @@ enum class SubmitStage:uint32_t {SubmitEnter=24,SubmitExit,ShaderEnter,ShaderExi
  // T324 §2.6: SubmitRootBegin fires once at the first batch of a partial
  // submit; SubmitCancel fires when CancelSubmit revokes an unsealed root.
  SubmitRootBegin=40,SubmitCancel,SubmitWarmup};
-enum class TailStage:uint32_t {BatchCall=43,Flush,Continuation,Inflight,RealPoll,Accepted,Gap,Presentation};
+enum class TailStage:uint32_t {BatchCall=43,Flush,Continuation,Inflight,RealPoll,Accepted,Gap,Presentation,
+ StagingFlush,ColdFixture,ColdStagingFlush,ColdBatch,ColdFence,ColdCleanup,ColdBatchFlush};
 struct TailSample {
  TailStage stage; uint64_t root=0,start=0,end=0,a=0,b=0,c=0;
  uint32_t code=0,ordinal=0;

@@ -5,7 +5,7 @@ const U64 = x => typeof x === 'string' && /^(0|[1-9][0-9]*)$/.test(x) && BigInt(
 function analyze(pages) {
   const rows=pages.flatMap(p=>p.rows), faults=[], batches=[], exchanges=[], polls=[];
   const rev=pages[0]?.stageRevision;
-  if(!['T295_STAGE23_V1','T317_STAGE39_V2','T324_STAGE41_V1','T324_STAGE42_V1','T384_STAGE50_V1'].includes(rev)) return {state:'NOT_JUDGABLE',faults:['DICTIONARY']};
+  if(!['T295_STAGE23_V1','T317_STAGE39_V2','T324_STAGE41_V1','T324_STAGE42_V1','T384_STAGE50_V1','T389_STAGE57_V1'].includes(rev)) return {state:'NOT_JUDGABLE',faults:['DICTIONARY']};
   let lastSerial=0n,lastNs=0n;
   for(const p of pages) if(p.stageRevision!==rev || p.incomplete || p.dropped!=='0' || BigInt(p.count)!==BigInt(rows.length)) faults.push('INCOMPLETE_PAGE_SET');
   for(const r of rows) {
@@ -13,7 +13,7 @@ function analyze(pages) {
     if(BigInt(r.serial)!==lastSerial+1n || BigInt(r.ns)<lastNs) faults.push('SERIAL_OR_NS');
     lastSerial=BigInt(r.serial);lastNs=BigInt(r.ns);
   }
-  if(rev!=='T384_STAGE50_V1') return {state:'LEGACY',faults,bridgeMarkers:rows.filter(r=>r.stage===23).length,acceptance:'NOT_JUDGABLE'};
+  if(rev!=='T384_STAGE50_V1'&&rev!=='T389_STAGE57_V1') return {state:'LEGACY',faults,bridgeMarkers:rows.filter(r=>r.stage===23).length,acceptance:'NOT_JUDGABLE'};
   const identity=r=>[r.epoch,r.run,r.surface,r.tid].join('/');
   const root=r=>identity(r)+'/'+r.root;
   const roots=new Map(), gaps=new Map(), pending=new Map();
