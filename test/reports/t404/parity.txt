@@ -1,0 +1,42 @@
+parity.cpp
+.codex/local-test/t404-parity/parity.cpp(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+entry/src/main/cpp/gpu_resident\m1/full_transport.h(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+gl_extra.cpp
+fwd_extra.cpp
+test/t336/fwd_extra.cpp(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+run.cpp
+entry/src/main/cpp/gpu_resident/m1/run.cpp(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\full_transport.h(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+scene.cpp
+D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\full_transport.h(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+fullframe_targets.cpp
+full_transport.cpp
+entry/src/main/cpp/gpu_resident/m1/full_transport.cpp(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\full_transport.h(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+full_kernel.cpp
+D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\full_transport.h(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+quantum_candidate.cpp
+entry/src/main/cpp/gpu_resident/m1/quantum_candidate.cpp(1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+quantum_kernel.cpp
+source_transport.cpp
+source_owner.cpp
+source_kernel.cpp
+profile.cpp
+control.cpp
+integer.cpp
+gl_forward.cpp
+正在生成代码...
+T384 pairedBatches=12 finalFlush=1 realPollBusy=2615020 accepted=1
+CASE1 batches=12 passes=113
+CASE2 cancelled=1 acceptedSame=true
+CASE3 midBatchCancel=IDLE rejectedAfter=true
+CASE_N1 loopBatches=13 loopWallNs=295400 pumpWallNs=234300
+CASE_N1 loopBatches=13 pumpWallNs=234300 physics=2
+CASE_F batches=12 flushes=11 (non-final batches)
+CASE_W real pass 0, scratch only, fresh-root bit parity, raw wall and failed-Create retry
+T389 AB bank/event/publication/completion/owner/structural stats identical; epoch cancel, fence GL error, rebuild passed
+T398 SOURCE + QUANTUM byte parity; rejected same-arena receipt preserved accepted prefix
+V2=0 pumps=59 active=0 accepted=2 quanta=1 planned=1
+V2=1 pumps=64 active=0 accepted=2 quanta=1 planned=1
+T404 real Run AdvancePlanV2 vs V1 SOURCE+QUANTUM bank/event/completion/header/publication byte parity PASS
+{"revision":"T329_PARTIAL_PUMP_LOOP_V1","K":192,"Kw":64,"passed":53,"failed":0,"device":"NOT_RUN"}

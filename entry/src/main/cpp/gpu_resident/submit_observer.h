@@ -12,7 +12,8 @@ enum class SubmitStage:uint32_t {SubmitEnter=24,SubmitExit,ShaderEnter,ShaderExi
  // submit; SubmitCancel fires when CancelSubmit revokes an unsealed root.
  SubmitRootBegin=40,SubmitCancel,SubmitWarmup};
 enum class TailStage:uint32_t {BatchCall=43,Flush,Continuation,Inflight,RealPoll,Accepted,Gap,Presentation,
- StagingFlush,ColdFixture,ColdStagingFlush,ColdBatch,ColdFence,ColdCleanup,ColdBatchFlush,IsolationCall,IsolationRevoke};
+ StagingFlush,ColdFixture,ColdStagingFlush,ColdBatch,ColdFence,ColdCleanup,ColdBatchFlush,IsolationCall,IsolationRevoke,
+ PagePulse,PlanGrant,QuotaBalance,JobIntent,ProgressTimeout,SourceBoundary};
 struct TailSample {
  TailStage stage; uint64_t root=0,start=0,end=0,a=0,b=0,c=0;
  uint32_t code=0,ordinal=0;

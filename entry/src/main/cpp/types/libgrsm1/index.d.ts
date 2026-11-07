@@ -1,3 +1,7 @@
+export const beginPageSession:()=>string;
+export const endPageSession:(session:string)=>string;
+export const pagePulse:(session:string,sequence:string,callbackNs:string)=>string;
+export const setProgressV2:(enabled:boolean)=>string;
 export const setColdTwoBatches:(enabled:boolean)=>string;
 export const status:()=>string;
 export const setTailProbe:(enabled:boolean)=>string;

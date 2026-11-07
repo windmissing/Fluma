@@ -16,7 +16,25 @@ ControlCode Run::Advance(uint64_t deltaNs,U64 f,U64 c,int target,uint32_t capaci
  if(!sourcePending&&plan.quanta==0){receipt.active=false;receipt.complete=true;}return ControlCode::OK;
 }
 void Run::Fail(TransportCode code){receipt.code=code;receipt.fault=true;receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;receipt.time.discardedQuanta=receipt.discardedQuanta;}
+ControlCode Run::AdvancePlanV2(const PlanGrantV2& grant,U64 f,uint32_t capacity){
+ if(suspended||receipt.active||inflight||submitting||quarantined)return ControlCode::BUSY;
+ if(grant.id<=planV2||grant.quanta>4||grant.carry>=1000000000||
+    grant.angle< -7680||grant.angle>7680||(capacity!=192&&capacity!=512)||
+    Compare64(f,lastFrame)<=0)return ControlCode::INVALID_INPUT;
+ progressV2=true;planV2=grant.id;frame=lastFrame=f;control={uint32_t(grant.id),uint32_t(grant.id>>32)};
+ angle=grant.angle;K=capacity;receipt={};receipt.time.quanta=grant.quanta;
+ receipt.time.carryAfter=uint32_t(grant.carry);receipt.active=true;nextQuantum=1;sourcePending=count!=0;
+ if(!sourcePending&&grant.quanta==0){receipt.active=false;receipt.complete=true;}
+ return ControlCode::OK;
+}
+void Run::DiscardSourceV2(){
+ if(!progressV2){DropRevoked();return;}
+ head=count=0;sourcePending=sourceFlight=submitting=inflight=false;
+ receipt.active=nextQuantum<=receipt.time.quanta;receipt.complete=!receipt.active;
+ receipt.code=TransportCode::REVOKED;
+}
 void Run::DropRevoked(){
+ if(progressV2&&sourceFlight){DiscardSourceV2();return;}
  head=count=0;sourcePending=sourceFlight=submitting=inflight=false;
  receipt.code=TransportCode::REVOKED;receipt.active=false;receipt.complete=true;
  receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;
@@ -75,7 +93,7 @@ TransportCode Run::Pump(){
  // re-Begin the root); the root is unsealed, NOT inflight. Poll/Stop drain
  // semantics below only ever see sealed inflight roots.
  if(code==TransportCode::OK_SUBMITTING){nonce=next;sourceFlight=sourcePending;submitting=true;receipt.submitted++;return TransportCode::OK;}
- if(code==TransportCode::REVOKED){nonce=next;DropRevoked();return code;}
+ if(code==TransportCode::REVOKED){nonce=next;sourceFlight=sourcePending;DropRevoked();return code;}
  if(code==TransportCode::BUSY)return code;if(code!=TransportCode::OK){Fail(code);return code;}
  nonce=next;sourceFlight=sourcePending;inflight=true;receipt.submitted++;
  const auto stamp=transport.tailObserver.Stamp();

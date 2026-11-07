@@ -8,10 +8,18 @@ import systemDateTime from '@ohos.systemDateTime';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 import { P051GravityConfig, P051GravityInputAdapter } from '../physics/P051GravityInputAdapter';
 import { GpuM1DemoController } from '../physics/GpuM1DemoController';
-class M1DemoFrame extends FrameCallback {owner:GpuResidentM1|null=null;onFrame(ns:number):void{this.owner?.tick(ns);}}
+class M1DemoFrame extends FrameCallback {
+ owner:GpuResidentM1|null=null;session:string='0';sequence:number=0;
+ onFrame(ns:number):void{
+  if(this.owner===null||this.session==='0'||!Number.isSafeInteger(ns)||ns<0)return;
+  const code:string=m1.pagePulse(this.session,String(++this.sequence),String(ns));
+  this.owner.tick(ns,code);
+ }
+}
 @Entry @Component
 struct GpuResidentM1 {
  private readonly cold:GpuBridgeTimelineCold=new GpuBridgeTimelineCold();
+ @State private progressV2:boolean=false;
  @State private coldStatus:string='';@State private tailProbe:boolean=false;@State private coldTwoBatches:boolean=false;@State private packageSha:string='';
  private async exportTimeline():Promise<void> {
   if(this.cold.busy)return;this.coldStatus='导出中';
@@ -32,16 +40,25 @@ struct GpuResidentM1 {
  onPageShow():void{this.frame.owner=null;this.frame=new M1DemoFrame();this.frame.owner=this;this.queued=false;this.shown=true;this.syncActive();}
  onPageHide():void{this.cold.cancel();this.shown=false;this.frame.owner=null;this.queued=false;this.syncActive();}
  aboutToDisappear():void{this.onPageHide();this.frame.owner=null;}
- private syncActive():void {const active=this.shown&&this.foreground;if(active===this.active)return;this.active=active;this.model.setActive(active);this.updateSensor();if(active)this.schedule();}
+ private syncActive():void {const active=this.shown&&this.foreground;if(active===this.active)return;this.active=active;this.model.setActive(active);
+  if(active){
+   this.frame.owner=null;this.frame=new M1DemoFrame();this.frame.owner=this;
+   this.frame.session=m1.beginPageSession();this.queued=false;
+  }else if(this.frame.session!=='0'){m1.endPageSession(this.frame.session);this.frame.owner=null;}
+  this.updateSensor();if(active)this.schedule();}
  private updateSensor():void {
   const need=this.active&&!this.manual;
   if(need&&!this.sensorActive){try{sensor.on(sensor.SensorId.ACCELEROMETER,this.accelerometer,{interval:this.sensorConfig.sensorIntervalNs});this.sensorActive=true;}catch(e){this.gravityText='传感器不可用，物理暂停';}}
   else if(!need&&this.sensorActive){try{sensor.off(sensor.SensorId.ACCELEROMETER,this.accelerometer);}catch(e){}this.sensorActive=false;this.adapter.reset();}
  }
  private schedule():void{if(this.active&&!this.queued){this.queued=true;this.getUIContext().postFrameCallback(this.frame);}}
- tick(ns:number):void {
+ tick(ns:number,pulse:string):void {
   this.queued=false;if(!this.active)return;
-  try{this.model.tick(ns);const s=this.model.snapshot;if(s!==null){
+  try{
+   this.model.refresh();
+   if(this.model.snapshot===null||this.model.snapshot.progressClockRevision===undefined){this.model.stop('UNSUPPORTED_PROGRESS_REVISION');this.stateText='UNSUPPORTED_PROGRESS_REVISION';this.schedule();return;}
+   if(pulse!=='PAGE_PULSE_ACCEPTED'&&this.model.snapshot.progressClockRevision==='GRS_M1_PROGRESS_CLOCK_V2'){this.model.stop(pulse);this.stateText=pulse;this.schedule();return;}
+   this.model.tick(ns);const s=this.model.snapshot;if(s!==null){
    this.stateText=s.state==='CURRENT'?'画面已更新':(s.state==='STALE'?'物理暂停，保留上一画面':(s.state==='FAULT'?'仿真故障：'+(s.stage??'未知'):'等待仿真就绪'));
    this.receiptText='准入 '+(s.sourceAdmittedQ/1048576).toFixed(4)+' · '+(this.model.lastEnqueue==='ENQUEUED_NOT_ACK'?'请求已排队，准入另计':'按住画面持续添加');
    this.gravityText='目标 '+(s.gravityTargetQ/256).toFixed(1)+'° / GPU接受 '+(s.gravityAcceptedQ/256).toFixed(1)+'° · 摇晃仅观测';
@@ -58,6 +75,6 @@ struct GpuResidentM1 {
   XComponent({id:'grs-m1',type:XComponentType.SURFACE,libraryname:'grsm1'}).width('100%').layoutWeight(1).onAreaChange((_o:Area,a:Area)=>this.model.geometry(Number(a.width),Number(a.height))).onTouch((e:TouchEvent)=>this.touch(e))
   Row({space:6}){Text('离线手动重力').fontSize(11);Toggle({type:ToggleType.Switch,isOn:this.manual}).onChange((v:boolean)=>{this.manual=v;this.model.gravityMode(!v);this.updateSensor();});Button('光学/诊断').onClick(()=>{this.model.stop('CONFIG');this.showOptics=!this.showOptics;});}
   if(this.manual){Slider({min:-30,max:30,value:0,step:1}).onChange((v:number)=>this.model.manualAngle(v));}
-  if(this.showOptics){TextInput({placeholder:'诊断签包 SHA256（外部签包清单）',text:this.packageSha}).onChange((v:string)=>{this.packageSha=v;});Button(this.tailProbe?'下轮提交探针：开':'下轮提交探针：关').onClick(()=>{this.tailProbe=!this.tailProbe;this.coldStatus=m1.setTailProbe(this.tailProbe);});Button(this.coldTwoBatches?'下轮冷准备：两批':'下轮冷准备：T375').onClick(()=>{this.coldTwoBatches=!this.coldTwoBatches;this.coldStatus=m1.setColdTwoBatches(this.coldTwoBatches);});Button('导出原生时间线').onClick(()=>this.exportTimeline());Button('取消导出').onClick(()=>this.cold.cancel());Text(this.coldStatus).fontSize(10);Text(this.gravityText).fontSize(10);Text(this.memoryText).fontSize(10);Text('光学应用会新建空场；不热改当前库存。').fontSize(11);Text('透射 sigma '+this.sigma.toFixed(3)).fontSize(10);Slider({min:0,max:.12,value:this.sigma,step:.005}).onChange((v:number)=>{this.sigma=v;});Text('高光 '+this.gain.toFixed(2)+' / 宽度 '+this.widthPx.toFixed(1)+'px').fontSize(10);Slider({min:0,max:1,value:this.gain,step:.05}).onChange((v:number)=>{this.gain=v;});Slider({min:.5,max:8,value:this.widthPx,step:.5}).onChange((v:number)=>{this.widthPx=v;});Button('应用光学并新建空场').onClick(()=>this.model.applyOptics(this.sigma,this.gain,this.widthPx));Row(){Button('K192 / W128').onClick(()=>this.model.profile(192,128));Button('K512 / W128').onClick(()=>this.model.profile(512,128));}}
+  if(this.showOptics){TextInput({placeholder:'诊断签包 SHA256（外部签包清单）',text:this.packageSha}).onChange((v:string)=>{this.packageSha=v;});Button(this.tailProbe?'下轮提交探针：开':'下轮提交探针：关').onClick(()=>{this.tailProbe=!this.tailProbe;this.coldStatus=m1.setTailProbe(this.tailProbe);});Button(this.coldTwoBatches?'下轮冷准备：两批':'下轮冷准备：T375').onClick(()=>{this.coldTwoBatches=!this.coldTwoBatches;this.coldStatus=m1.setColdTwoBatches(this.coldTwoBatches);});Button(this.progressV2?'下轮进度时钟：V2':'下轮进度时钟：V1').onClick(()=>{this.progressV2=!this.progressV2;this.coldStatus=m1.setProgressV2(this.progressV2);});Button('导出原生时间线').onClick(()=>this.exportTimeline());Button('取消导出').onClick(()=>this.cold.cancel());Text(this.coldStatus).fontSize(10);Text(this.gravityText).fontSize(10);Text(this.memoryText).fontSize(10);Text('光学应用会新建空场；不热改当前库存。').fontSize(11);Text('透射 sigma '+this.sigma.toFixed(3)).fontSize(10);Slider({min:0,max:.12,value:this.sigma,step:.005}).onChange((v:number)=>{this.sigma=v;});Text('高光 '+this.gain.toFixed(2)+' / 宽度 '+this.widthPx.toFixed(1)+'px').fontSize(10);Slider({min:0,max:1,value:this.gain,step:.05}).onChange((v:number)=>{this.gain=v;});Slider({min:.5,max:8,value:this.widthPx,step:.5}).onChange((v:number)=>{this.widthPx=v;});Button('应用光学并新建空场').onClick(()=>this.model.applyOptics(this.sigma,this.gain,this.widthPx));Row(){Button('K192 / W128').onClick(()=>this.model.profile(192,128));Button('K512 / W128').onClick(()=>this.model.profile(512,128));}}
  }.width('100%').height('100%').padding({top:8,bottom:8});}
 }

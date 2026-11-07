@@ -115,6 +115,7 @@ void T398HostGlPoint(int point){
  if(!inject)return;
  inject->StallAt(point==1?Stall::Flush:point==2?Stall::Wait:Stall::Map);
 }
+#ifndef T404_EMBED_HOST
 int main(int argc,char**){
  {
   const auto storage=std::make_unique<App>(false);
@@ -146,3 +147,5 @@ int main(int argc,char**){
  runCase(Stall::AfterSwap,0,true,true);
  std::cout<<"T398 owner/control isolation 9/9\n";
 }
+
+#endif

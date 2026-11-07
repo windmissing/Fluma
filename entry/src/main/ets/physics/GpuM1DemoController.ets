@@ -7,6 +7,7 @@ export interface GpuM1DemoPort {
  configureOptics(optics:Float32Array):string;
 }
 export interface GpuM1DemoStatus {
+ progressClockRevision?:string;
  state:string;stage?:string;ready:boolean;permissionState:string;epoch:number;readyEpoch:number;
  runLo:number;runHi:number;geometryLo:number;geometryHi:number;inputLo:number;inputHi:number;configLo:number;configHi:number;
  sourceUiRevision:string;sourceOpen:boolean;sourceKind:number;sourceControlLo:number;sourceControlHi:number;
@@ -33,6 +34,7 @@ export class GpuM1DemoController {
  refresh():void {
   try {
    const s:GpuM1DemoStatus=JSON.parse(this.port.status()) as GpuM1DemoStatus;
+   if(s.progressClockRevision!==undefined&&s.progressClockRevision!=='GRS_M1_PROGRESS_CLOCK_V1'&&s.progressClockRevision!=='GRS_M1_PROGRESS_CLOCK_V2'){this.stop('UNSUPPORTED_PROGRESS_REVISION');this.snapshot=null;return;}
    if(s.sourceUiRevision!==this.revision){this.stop('UNSUPPORTED_UI_REVISION');this.snapshot=null;return;}
    if(this.runLo!==s.runLo||this.runHi!==s.runHi){this.stop('NEW_EMPTY_RUN');this.sequence=0;this.runLo=s.runLo;this.runHi=s.runHi;}
    if(this.geometryLo!==s.geometryLo||this.geometryHi!==s.geometryHi){this.stop('GEOMETRY_CHANGED');this.geometryLo=s.geometryLo;this.geometryHi=s.geometryHi;}

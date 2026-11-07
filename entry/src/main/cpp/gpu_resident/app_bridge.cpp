@@ -45,6 +45,56 @@ struct App : BridgeState {
  std::condition_variable wake;std::thread thread;
  bool quit=false;uint32_t Kw=128;
 #ifdef GRS_APP_M1
+ m1::ProgressClockV2 progress;
+ bool progressV2=false,nextProgressV2=false,v2ResourcesReady=false;
+ std::thread supervisor;
+ std::array<uint64_t,16> sourceEnqueued{};
+ uint64_t permitSession=0,permitPlan=0,permitSource=0,permitStarted=0;
+ uint32_t permitKind=0;
+ bool jobLive=false;
+ void QuotaTraceLocked(TailStage stage,uint32_t code=0){
+  const auto stamp=Stamp();
+  AddTailLocked({stage,permit.nonce,stamp,stamp,progress.generated,progress.accepted,
+   uint64_t(progress.pending)|(uint64_t(progress.activeRemaining)<<32),code},stamp);
+  if(stage==TailStage::QuotaBalance){
+   AddTailLocked({stage,permit.nonce,stamp,stamp,progress.overload,progress.revoked,progress.carry,code,1},stamp);
+  }
+ }
+ void TryReadyV2Locked(){
+  if(!progressV2||!v2ResourcesReady||!active||!window||!progress.Fresh(Stamp())||!ui.Fresh(Stamp()))return;
+  if(!AllowedLocked()){
+   progress.ready=true;progress.baseline=false;
+   CommitReadyLocked(epoch,window,transportIdentity,input);
+  }
+ }
+ uint64_t BeginPageSessionLocked(){
+  if(!progress.BeginSession())return 0;
+  if(!progressV2)return progress.session;
+  ++permissionRevision;BridgeState::RevokeLocked("WAIT_PAGE_PULSE");
+  phase="WAIT_PAGE_PULSE";status="{\"state\":\"WAIT_PAGE_PULSE\"}";
+  return progress.session;
+ }
+ const char* PagePulseLocked(uint64_t session,uint64_t seq,uint64_t callback){
+  if(!progressV2&&!progress.open)progress.open=true;
+  const auto result=progress.Pulse(session,seq,callback,Stamp());
+  if(std::strcmp(result,"PAGE_PULSE_ACCEPTED")==0){
+   TryReadyV2Locked();
+   if(progressV2&&(progress.pulses==1||progress.pulses%16==0)){
+    const auto stamp=Stamp();
+    AddTailLocked({TailStage::PagePulse,0,stamp,stamp,callback,progress.maxNativeGap,
+     progress.maxUiGap,0,uint32_t(progress.pulses%UINT32_MAX)},stamp);
+   }
+  }else if(progressV2&&!progress.open){
+   ClockGapLocked(Stamp());QuotaTraceLocked(TailStage::PagePulse,1);
+  }
+  wake.notify_all();return progressV2?result:"PAGE_PULSE_ACCEPTED";
+ }
+ const char* OfferLocked(const std::array<uint32_t,32>& command){
+  const auto result=BridgeState::OfferLocked(command);
+  if(progressV2&&std::strcmp(result,"ENQUEUED_NOT_ACK")==0)
+   sourceEnqueued[(head+count-1)%queue.size()]=Stamp();
+  return result;
+ }
  m1::UiState ui;m1::SceneOptics optics;bool requiresReset=false,tailProbeNext=false,coldTwoBatchesNext=false;
  static constexpr uint64_t kGapNs=33333333;
  struct WorkPermit {
@@ -56,20 +106,53 @@ struct App : BridgeState {
  WorkPermit permit;
  uint64_t permissionRevision=1,controlAnchor=0,lateSwaps=0,revokedRoots=0;
  bool activeProbeForControl=false;
+ void ProgressJsonLocked(std::ostringstream& o){
+  o<<",\"progressClockRevision\":\""<<(progressV2?"GRS_M1_PROGRESS_CLOCK_V2":"GRS_M1_PROGRESS_CLOCK_V1")
+   <<"\",\"gpuDeadlineNs\":\"250000000\",\"pageSession\":\""<<progress.session
+   <<"\",\"pageSequence\":\""<<progress.sequence<<"\",\"pageCallbackNs\":\""<<progress.uiNs
+   <<"\",\"pageReceivedNs\":\""<<progress.receiveNs<<"\",\"pageNativeGapMaxNs\":\""<<progress.maxNativeGap
+   <<"\",\"pageUiGapMaxNs\":\""<<progress.maxUiGap<<"\",\"generatedQuanta\":\""<<progress.generated
+   <<"\",\"acceptedQuantumCount\":\""<<progress.accepted<<"\",\"pendingQuanta\":"<<progress.pending
+   <<",\"activePlanRemaining\":"<<progress.activeRemaining<<",\"overloadDroppedQuanta\":\""<<progress.overload
+   <<"\",\"revokedDroppedQuanta\":\""<<progress.revoked<<"\",\"quotaCarry\":\""<<progress.carry
+   <<"\",\"clearedCarry\":\""<<progress.clearedCarry<<"\",\"planId\":\""<<progress.active.id
+   <<"\",\"quotaBalanced\":"<<(progress.Balanced()?"true":"false")
+   <<",\"pageFault\":\""<<progress.fault<<"\",\"supervisorLateNs\":\""<<progress.lateSupervisorNs<<"\",\"expiredSources\":\""<<progress.droppedSources<<"\"";
+ }
  std::string lastGoodControl;
  void RevokeLocked(const char* why){
+  jobLive=false;
+  if(progressV2){progress.Revoke(why);QuotaTraceLocked(TailStage::QuotaBalance,1);}
   ++permissionRevision;
   BridgeState::RevokeLocked(why);
  }
  void ClockGapLocked(uint64_t stamp){
   if(std::strcmp(phase,"CLOCK_GAP")==0||std::strcmp(phase,"NEW_RUN_REQUIRED")==0)return;
-  const auto elapsed=controlAnchor?stamp-controlAnchor:0;
-  MarkLocked(BridgeStage::PauseBegin,0,controlAnchor,elapsed);
-  if(activeProbeForControl)AddTailLocked({TailStage::Gap,permit.nonce,stamp,stamp,controlAnchor,accepted},stamp);
-  RevokeLocked("PAUSED_CLOCK");phase="CLOCK_GAP";firstFailure="CLOCK_GAP";deltaNs=elapsed;
+  const auto origin=progressV2?progress.receiveNs:controlAnchor;
+  const auto elapsed=origin&&stamp>=origin?stamp-origin:0;
+  MarkLocked(BridgeStage::PauseBegin,0,origin,elapsed);
+  if(activeProbeForControl)AddTailLocked({TailStage::Gap,permit.nonce,stamp,stamp,origin,accepted},stamp);
+  const auto original=progress.fault;
+  RevokeLocked("PAUSED_CLOCK");if(progressV2)progress.fault=original;
+  phase="CLOCK_GAP";firstFailure=progressV2?original:"CLOCK_GAP";deltaNs=elapsed;
   status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";
  }
  void ObserveControlLocked(uint64_t stamp){
+  if(progressV2){
+   if(!progress.Fresh(stamp)&&progress.hasPulse&&!progress.open&&
+      (std::strcmp(progress.fault,"CLOCK_GAP")==0||std::strcmp(progress.fault,"CONTROL_CLOCK_REVERSED")==0)){
+    ClockGapLocked(stamp);return;
+   }
+   if(AllowedLocked()&&!ui.Fresh(stamp)){
+    RevokeLocked("GRAVITY_STALE");phase="GRAVITY_STALE";StatusSuspendedLocked("GRAVITY_STALE");
+   }
+   if(AllowedLocked()&&jobLive&&stamp>permit.deadline){
+    QuotaTraceLocked(TailStage::ProgressTimeout,1);
+    RevokeLocked("GPU_PROGRESS_TIMEOUT");phase="GPU_PROGRESS_TIMEOUT";
+    StatusSuspendedLocked("GPU_PROGRESS_TIMEOUT");
+   }
+   return;
+  }
   if(!AllowedLocked())return;
   if(controlAnchor&&stamp>controlAnchor&&stamp-controlAnchor>kGapNs){ClockGapLocked(stamp);return;}
   if(!ui.Fresh(stamp)){
@@ -84,6 +167,16 @@ struct App : BridgeState {
  bool PermitLocked(const RootRequest& root,uint64_t stamp){
   ObserveControlLocked(stamp);
   const auto eq=[](U64 a,U64 b){return Compare64(a,b)==0;};
+  if(progressV2){
+   if(!progress.Identity(permitPlan,permitSession))return false;
+   if(root.kind&&root.kind!=permitKind)return false;
+   if(permitKind==1&&permitSource!=ui.boundary)return false;
+   if(stamp>permit.deadline){
+    QuotaTraceLocked(TailStage::ProgressTimeout,1);
+    RevokeLocked("GPU_PROGRESS_TIMEOUT");phase="GPU_PROGRESS_TIMEOUT";
+    StatusSuspendedLocked("GPU_PROGRESS_TIMEOUT");return false;
+   }
+  }
   if(!AllowedLocked()||!CurrentLocked(permit.epoch,permit.window)||permit.revision!=permissionRevision||
      stamp>permit.deadline||!eq(permit.input,input)||!eq(permit.identity.run,identity.run)||
      !eq(permit.identity.owner,identity.owner)||!eq(permit.identity.surface,identity.surface)||
@@ -94,11 +187,27 @@ struct App : BridgeState {
   if(permit.nonce==0)permit.nonce=nonce;
   return permit.nonce==nonce;
  }
- void FreezePermitLocked(uint64_t seen,void* held,m1::RootIsolation& gate){
+ void FreezePermitLocked(uint64_t seen,void* held,m1::RootIsolation& gate,uint64_t nonce=0,uint32_t kind=0){
+  if(progressV2){
+   if(permit.nonce==nonce&&permitPlan==progress.active.id&&permitSession==progress.session)return;
+   const auto start=Stamp();
+   if(start>UINT64_MAX-m1::ProgressClockV2::JobNs){RevokeLocked("GPU_DEADLINE_OVERFLOW");return;}
+   permit={identity,input,seen,permissionRevision,start+m1::ProgressClockV2::JobNs,nonce,held};
+   permitSession=progress.session;permitPlan=progress.active.id;permitKind=kind;
+   permitSource=progress.active.sourceBoundary;permitStarted=start;
+   jobLive=true;
+   if(!lastGoodControl.empty())StatusSuspendedLocked("GPU_WORK_PENDING");
+   gate.deadline=permit.deadline;gate.revision=permit.revision;
+   QuotaTraceLocked(TailStage::JobIntent,kind);return;
+  }
   permit={identity,input,seen,permissionRevision,controlAnchor+kGapNs,0,held};
   gate.deadline=permit.deadline;gate.revision=permit.revision;
  }
  void AcceptLocked(const AcceptedRoot& a){
+  if(progressV2){
+   if(a.completion[27]==2)progress.AcceptQuantum(permitPlan);
+   QuotaTraceLocked(TailStage::QuotaBalance);
+  }
   ++accepted;rootNonce=a.nonce;
   sourceCommit=(uint64_t(a.source.hi)<<32)|a.source.lo;
   physicsCommit=(uint64_t(a.physics.hi)<<32)|a.physics.lo;
@@ -123,7 +232,9 @@ struct App : BridgeState {
  const char* OfferUiLocked(const std::array<uint32_t,32>& w){const char* code=ui.Offer(w,Stamp());return std::strcmp(code,"OK")==0?OfferLocked(w):code;}
  bool SetSourceLocked(int kind){
   if(!ui.SetSource(kind)){RevokeLocked("SOURCE_CONTROL_EXHAUSTED");wake.notify_one();return false;}
-  ++permissionRevision;cancelled+=count;head=count=0;
+  if(!progressV2)++permissionRevision;
+  else QuotaTraceLocked(TailStage::SourceBoundary,uint32_t(kind+1));
+  cancelled+=count;head=count=0;
   if(AllowedLocked()&&!lastGoodControl.empty())StatusSuspendedLocked("SOURCE_BOUNDARY");
   wake.notify_one();return true;
  }
@@ -162,8 +273,21 @@ struct App : BridgeState {
 #ifdef GRS_APP_M1
 commandRevision=2;waterAllowed=true;
 #endif
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ supervisor=std::thread([this]{
+  std::unique_lock<std::mutex> lock(mutex);
+  while(!quit){
+   wake.wait_for(lock,std::chrono::milliseconds(2));
+   if(progressV2){ObserveControlLocked(Stamp());TryReadyV2Locked();}
+  }
+ });
+#endif
 if(launch)thread=std::thread([this]{loop();});}
- ~App(){{std::lock_guard<std::mutex> l(mutex);quit=true;wake.notify_one();}if(thread.joinable())thread.join();if(window)OH_NativeWindow_NativeObjectUnreference(window);}
+ ~App(){{std::lock_guard<std::mutex> l(mutex);quit=true;wake.notify_all();}if(thread.joinable())thread.join();
+#ifdef GRS_APP_M1
+if(supervisor.joinable())supervisor.join();
+#endif
+if(window)OH_NativeWindow_NativeObjectUnreference(window);}
  void invalidate(void* w,bool replace){std::lock_guard<std::mutex> l(mutex);
 #ifdef GRS_APP_M1
  if(ui.enabled){if(replace&&accepted>0)requiresReset=true;else if(!replace)requiresReset=false;SetSourceLocked(-1);}
@@ -172,7 +296,13 @@ if(launch)thread=std::thread([this]{loop();});}
 #ifdef GRS_APP_M1
  if(requiresReset){permission=phase="OWNER_STATE_LOST";status="{\"state\":\"FAULT\",\"stage\":\"OWNER_STATE_LOST\",\"newRunRequired\":true}";}
 #endif
- MarkLocked(BridgeStage::Invalidate);wake.notify_one();}
+ #ifdef GRS_APP_M1
+ if(progressV2){
+  progress.Revoke("RUN_RESET");QuotaTraceLocked(TailStage::QuotaBalance,2);
+  progress.ResetRun();progress.open=true;progress.hasPulse=false;v2ResourcesReady=false;
+ }
+#endif
+ MarkLocked(BridgeStage::Invalidate);wake.notify_all();}
  bool setActive(bool value){std::lock_guard<std::mutex> l(mutex);if(active==value)return false;active=value;
 #ifdef GRS_APP_M1
  if(ui.enabled){SetSourceLocked(-1);RevokeLocked(value?"RESUMING":"BACKGROUND");
@@ -207,6 +337,7 @@ if(launch)thread=std::thread([this]{loop();});}
   app.Hook(BridgeStage::RootPoll);
   std::lock_guard<std::mutex> lock(app.mutex);
   if(!app.PermitLocked(root,app.Stamp()))return false;
+  if(app.progressV2&&root.kind==2&&app.progress.activeRemaining==0)return false;
   commit(data);
   app.AcceptLocked(out);
   return true;
@@ -243,7 +374,14 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
 #endif
    ){retire();seen=currentEpoch;failed=gap=false;{std::lock_guard<std::mutex> l(mutex);if(seen!=epoch)continue;
 #ifdef GRS_APP_M1
-    suspended=drainingRevoked=retryBusy=false;controlAnchor=0;lastGoodControl.clear();activeOptics=optics;activeProbeForControl=activeTailProbe=tailProbeNext;activeColdTwoBatches=coldTwoBatchesNext;ui.NewRun();
+    suspended=drainingRevoked=retryBusy=false;
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+    progressV2=nextProgressV2;
+#else
+    progressV2=false;
+#endif
+    progress.ResetRun();v2ResourcesReady=false;permit={};jobLive=false;
+    controlAnchor=0;lastGoodControl.clear();activeOptics=optics;activeProbeForControl=activeTailProbe=tailProbeNext;activeColdTwoBatches=coldTwoBatchesNext;ui.NewRun();
 #endif
     if(active&&window
 #ifdef GRS_APP_M1
@@ -285,7 +423,16 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
 #else
     auto code=gpu->Create(capacity,id);
 #endif
-    if(code!=TransportCode::OK){publish("{\"state\":\"FAULT\",\"stage\":\"TRANSPORT_CREATE\",\"code\":"+std::to_string(int(code))+"}");failed=true;retire();continue;}run=std::make_unique<AppRun>(*gpu);bool committed=false;{std::lock_guard<std::mutex> l(mutex);committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
+    if(code!=TransportCode::OK){publish("{\"state\":\"FAULT\",\"stage\":\"TRANSPORT_CREATE\",\"code\":"+std::to_string(int(code))+"}");failed=true;retire();continue;}run=std::make_unique<AppRun>(*gpu);bool committed=false;{std::lock_guard<std::mutex> l(mutex);
+#ifdef GRS_APP_M1
+     if(progressV2){
+      v2ResourcesReady=true;input=gpu->InputGeneration();identity=id;
+      committed=CurrentLocked(seen,held);phase="WAIT_PAGE_PULSE";permission="WAIT_PAGE_PULSE";
+      status="{\"state\":\"WAIT_PAGE_PULSE\"}";TryReadyV2Locked();
+     }else
+#endif
+     committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());
+     MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
    }
 #ifdef GRS_APP_M1
    if(run&&!failed&&!gap){
@@ -302,7 +449,7 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
      if(seen!=epoch||held!=window)continue;
      ObserveControlLocked(Stamp());
      alreadyGap=std::strcmp(phase,"CLOCK_GAP")==0;
-     if(ui.applied!=ui.boundary){cancelled+=run->DiscardSources();ui.applied=ui.boundary;}
+     if(ui.applied!=ui.boundary&&(!progressV2||!run->SourceInFlight())){cancelled+=run->DiscardSources();ui.applied=ui.boundary;}
      pause=!active||!ui.Fresh(Stamp());
      why=!active?"BACKGROUND":"GRAVITY_STALE";
      if(ui.enabled&&ui.sensorMode)requestedAngle=ui.target;
@@ -323,7 +470,7 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
      if(pause)continue;
      run->Resume();last=0;suspended=false;
     }
-    if(!alreadyGap&&!pause){
+    if(!progressV2&&!alreadyGap&&!pause){
      std::lock_guard<std::mutex> lock(mutex);
      if(CurrentLocked(seen,held)&&!AllowedLocked()&&
         (std::strcmp(phase,"RESUMING")==0||std::strcmp(phase,"BACKGROUND")==0||std::strcmp(phase,"GRAVITY_STALE")==0)){
@@ -343,7 +490,11 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
    if(gap){Mark(BridgeStage::PumpBegin,seen,last);Hook(BridgeStage::PumpBegin);auto submitted=run->Tick().submitted,wasAccepted=run->Tick().accepted;auto code=run->Pump();Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(code!=TransportCode::BUSY){std::lock_guard<std::mutex> l(mutex);if(CurrentLocked(seen,held))phase="NEW_RUN_REQUIRED";}continue;}
    if(failed)continue;
    const auto time=Stamp();const uint64_t delta=last?time-last:1;if(!last)Mark(BridgeStage::FirstTick,seen,last,delta);
-   if(delta>33333333u){
+   if(
+#ifdef GRS_APP_M1
+    !progressV2&&
+#endif
+    delta>33333333u){
     {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;
 #ifdef GRS_APP_M1
     ClockGapLocked(time);
@@ -354,8 +505,45 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
     carryBefore=run->Tick().time.carryAfter;cancelled+=run->Queued();}
     auto pause=run->Pause();Mark(BridgeStage::PauseEnd,seen,last,delta,int(pause));last=0;gap=true;{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;input=gpu->InputGeneration();runQueue=run->Queued();carryAfter=0;advanceCode=int(pause);status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";}continue;
    }
-   {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;std::array<uint32_t,32> command{};if(FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);auto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}
-   if(!run->Tick().active){++frame;Mark(BridgeStage::AdvanceBegin,seen,last,delta,0,run->Tick().time.carryAfter);auto code=run->Advance(delta,u64(frame),u64(frame),requestedAngle,capacity);
+   {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;std::array<uint32_t,32> command{};
+#ifdef GRS_APP_M1
+    if(progressV2){
+     while(count&&(Stamp()<sourceEnqueued[head]||Stamp()-sourceEnqueued[head]>m1::ProgressClockV2::JobNs)){
+      ++progress.droppedSources;PopLocked();
+     }
+    }
+#endif
+    if(
+#ifdef GRS_APP_M1
+ (!progressV2||!run->Tick().active)&&
+#endif
+FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);auto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}
+#ifdef GRS_APP_M1
+   if(progressV2){
+    bool allowed;
+    {std::lock_guard<std::mutex> lock(mutex);allowed=AllowedLocked();}
+    if(!allowed){
+     run->DiscardForControl();
+     const auto drained=gpu->DiscardRevoked();
+     drainingRevoked=drained==TransportCode::BUSY;
+     continue;
+    }
+   }
+#endif
+   if(!run->Tick().active){
+#ifdef GRS_APP_M1
+    if(progressV2){
+     m1::PlanGrantV2 grant;
+     {
+      std::lock_guard<std::mutex> lock(mutex);
+      if(!progress.Claim(Stamp(),requestedAngle,ui.boundary,run->Queued()!=0,grant))continue;
+      QuotaTraceLocked(TailStage::PlanGrant);
+     }
+     const auto planned=run->AdvancePlanV2(grant,u64(++frame),capacity);
+     if(planned!=ControlCode::OK){failed=true;publish("{\"state\":\"FAULT\",\"stage\":\"V2_PLAN\"}");continue;}
+    }else
+#endif
+    {++frame;Mark(BridgeStage::AdvanceBegin,seen,last,delta,0,run->Tick().time.carryAfter);auto code=run->Advance(delta,u64(frame),u64(frame),requestedAngle,capacity);
     {std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;MarkLocked(BridgeStage::AdvanceEnd,seen,last,delta,int(code),run->Tick().time.carryAfter,run->Tick().time.quanta);advanceCode=int(code);deltaNs=delta;carryBefore=run->Tick().time.carryBefore;carryAfter=run->Tick().time.carryAfter;quanta=run->Tick().time.quanta;}
     if(code==ControlCode::BUSY||code==ControlCode::BACKPRESSURE)continue;
     if(code!=ControlCode::OK){failed=true;{std::lock_guard<std::mutex> l(mutex);if(CurrentLocked(seen,held))phase="ADVANCE_INVALID";}publish("{\"state\":\"FAULT\",\"stage\":\"ADVANCE_INVALID\",\"code\":"+std::to_string(int(code))+"}");continue;}last=time;
@@ -363,6 +551,7 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
     {std::lock_guard<std::mutex> lock(mutex);if(!CurrentLocked(seen,held))continue;controlAnchor=last;}
 #endif
     Mark(BridgeStage::AnchorSet,seen,last,delta);
+    }
    }
 #ifdef GRS_APP_M1
    {
@@ -370,8 +559,8 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
     if(!CurrentLocked(seen,held))continue;
     ObserveControlLocked(Stamp());
     if(!run->HasFlight()){
-     if(ui.applied!=ui.boundary){cancelled+=run->DiscardSources();ui.applied=ui.boundary;}
-     FreezePermitLocked(seen,held,isolation);
+     if(ui.applied!=ui.boundary&&(!progressV2||!run->SourceInFlight())){cancelled+=run->DiscardSources();ui.applied=ui.boundary;}
+     FreezePermitLocked(seen,held,isolation,run->NextNonce(),run->NextKind());
     }
    }
 #endif
@@ -385,7 +574,11 @@ run->Pump();
 retryBusy=code==TransportCode::BUSY;
 {std::lock_guard<std::mutex> l(mutex);submitPumpWallNsCached=gpu->SubmitPumpWallNs();}
 #endif
-Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(last&&Stamp()-last>33333333u){
+Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(
+#ifdef GRS_APP_M1
+!progressV2&&
+#endif
+last&&Stamp()-last>33333333u){
     const auto elapsed=Stamp()-last;{std::lock_guard<std::mutex> lock(mutex);if(!CurrentLocked(seen,held))continue;
 #ifdef GRS_APP_M1
     ClockGapLocked(last+elapsed);
@@ -409,13 +602,14 @@ Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submit
     std::lock_guard<std::mutex> lock(mutex);
     if(!CurrentLocked(seen,held))continue;
     ObserveControlLocked(Stamp());
-    invalidated=permit.revision!=permissionRevision||!AllowedLocked();
+    invalidated=permit.revision!=permissionRevision||!AllowedLocked()||
+      (progressV2&&permitKind==1&&permitSource!=ui.boundary);
     if(invalidated||code==TransportCode::REVOKED){
      ++revokedRoots;lastAccepted=accepted;runQueue=0;
     }
    }
    if(invalidated||code==TransportCode::REVOKED){
-    run->DiscardForControl();
+    if(!progressV2||code!=TransportCode::REVOKED)run->DiscardForControl();
     const auto drained=gpu->DiscardRevoked();
     drainingRevoked=drained==TransportCode::BUSY;
     if(drained!=TransportCode::BUSY&&drained!=TransportCode::OK){failed=true;publish("{\"state\":\"FAULT\",\"stage\":\"REVOKED_DRAIN\"}");}
@@ -498,7 +692,7 @@ Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submit
     {
      std::lock_guard<std::mutex> lock(mutex);
      if(PermitLocked(presenting,Stamp())){
-      status=out.str();
+      jobLive=false;status=out.str();
       if(!receipt.current){RevokeLocked("FAULT");phase="FAULT";if(firstFailure=="NONE")firstFailure=receipt.stage;failed=true;}
      }
     }
@@ -522,7 +716,7 @@ a.ObserveControlLocked(a.Stamp());
 #endif
 std::string base=a.status;if(!base.empty())base.pop_back();o<<base<<",\"timelineCount\":"<<a.timeline.count<<",\"timelineDropped\":"<<a.timeline.dropped<<",\"timelineSerial\":"<<a.timeline.serial<<",\"timelineApi\":\"timeline(cursor),4rows,page\",\"ready\":"<<(a.AllowedLocked()?"true":"false")<<",\"epoch\":"<<a.epoch.load()<<",\"readyEpoch\":"<<a.readyEpoch<<",\"permissionState\":\""<<a.permission<<"\",\"staleQueuedRejected\":"<<a.staleRejected<<",\"runQueueSample\":\"POST_PUMP_OR_POST_PAUSE\",\"runLo\":"<<a.identity.run.lo<<",\"runHi\":"<<a.identity.run.hi<<",\"geometryLo\":"<<a.identity.geometry.lo<<",\"geometryHi\":"<<a.identity.geometry.hi<<",\"configLo\":"<<a.identity.config.lo<<",\"configHi\":"<<a.identity.config.hi<<",\"inputLo\":"<<a.input.lo<<",\"inputHi\":"<<a.input.hi<<",\"ownerLo\":"<<a.identity.owner.lo<<",\"ownerHi\":"<<a.identity.owner.hi<<",\"contextLo\":"<<a.identity.context.lo<<",\"contextHi\":"<<a.identity.context.hi<<",\"surfaceLo\":"<<a.identity.surface.lo<<",\"surfaceHi\":"<<a.identity.surface.hi<<",\"appQueueDepth\":"<<a.count<<",\"runQueueDepth\":"<<a.runQueue<<",\"lastOfferCode\":\""<<a.lastOffer<<"\",\"lastRunOfferCode\":"<<a.lastRunOffer<<",\"napiStage\":\""<<a.decoded.stage<<"\",\"napiStatus\":"<<int(a.decoded.status)<<",\"typedType\":"<<a.decoded.type<<",\"typedLength\":"<<a.decoded.length<<",\"byteOffset\":"<<a.decoded.offset<<",\"backingBytes\":"<<a.decoded.backingBytes<<",\"advanceCode\":"<<a.advanceCode<<",\"clockDeltaNs\":"<<a.deltaNs<<",\"carryBefore\":"<<a.carryBefore<<",\"carryAfter\":"<<a.carryAfter<<",\"plannedQuanta\":"<<a.quanta<<",\"clockPhase\":\""<<a.phase<<"\",\"firstFailureStage\":\""<<a.firstFailure<<"\",\"acceptedCount\":"<<a.accepted<<",\"cancelledQueued\":"<<a.cancelled<<",\"offerDropped\":"<<a.offerDropped<<",\"rootNonceLo\":"<<a.rootNonce.lo<<",\"rootNonceHi\":"<<a.rootNonce.hi<<",\"sourceCommitLo\":"<<uint32_t(a.sourceCommit)<<",\"sourceCommitHi\":"<<uint32_t(a.sourceCommit>>32)<<",\"physicsCommitLo\":"<<uint32_t(a.physicsCommit)<<",\"physicsCommitHi\":"<<uint32_t(a.physicsCommit>>32)<<"}";
 #ifdef GRS_APP_M1
-std::string baseUi=o.str();if(!baseUi.empty())baseUi.pop_back();o.str("");o.clear();o<<baseUi;a.UiJsonLocked(o);o<<",\"permissionRevision\":"<<a.permissionRevision
+std::string baseUi=o.str();if(!baseUi.empty())baseUi.pop_back();o.str("");o.clear();o<<baseUi;a.UiJsonLocked(o);a.ProgressJsonLocked(o);o<<",\"permissionRevision\":"<<a.permissionRevision
  <<",\"rootDeadlineNs\":\""<<a.permit.deadline<<"\",\"revokedRoots\":"<<a.revokedRoots
  <<",\"lateSwaps\":"<<a.lateSwaps<<"}";
 #endif
@@ -561,6 +755,50 @@ napi_value setTailProbe(napi_env e,napi_callback_info i){
  auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.tailProbeNext=enabled;
  return text(e,enabled?"TAIL_PROBE_ON_NEXT_RUN":"TAIL_PROBE_OFF_NEXT_RUN");
 }
+bool PageU64(napi_env env,napi_value value,uint64_t& number){
+ char bytes[21]{};size_t length=0;
+ if(napi_get_value_string_utf8(env,value,bytes,sizeof(bytes),&length)!=napi_ok||
+    length==0||length>=sizeof(bytes)||(length>1&&bytes[0]=='0'))return false;
+ number=0;
+ for(size_t i=0;i<length;i++){
+  if(bytes[i]<'0'||bytes[i]>'9')return false;
+  const uint32_t digit=uint32_t(bytes[i]-'0');
+  if(number>(UINT64_MAX-digit)/10)return false;
+  number=number*10+digit;
+ }
+ return true;
+}
+napi_value beginPageSession(napi_env e,napi_callback_info){
+ auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
+ if(!a.active)return text(e,"0");
+ return text(e,std::to_string(a.BeginPageSessionLocked()));
+}
+napi_value endPageSession(napi_env e,napi_callback_info info){
+ size_t n=1;napi_value v;uint64_t session;
+ if(napi_get_cb_info(e,info,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||!PageU64(e,v,session))return text(e,"PAGE_SESSION_INVALID");
+ auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
+ if(session!=a.progress.session)return text(e,"STALE_PAGE_SESSION");
+ a.RevokeLocked("PAGE_HIDDEN");a.phase="PAGE_HIDDEN";a.StatusSuspendedLocked("PAGE_HIDDEN");a.wake.notify_all();
+ return text(e,"PAGE_SESSION_ENDED");
+}
+napi_value pagePulse(napi_env e,napi_callback_info info){
+ size_t n=3;napi_value v[3];uint64_t session,sequence,callback;
+ if(napi_get_cb_info(e,info,&n,v,nullptr,nullptr)!=napi_ok||n!=3||
+    !PageU64(e,v[0],session)||!PageU64(e,v[1],sequence)||!PageU64(e,v[2],callback))return text(e,"PAGE_PULSE_INVALID");
+ auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
+ return text(e,a.PagePulseLocked(session,sequence,callback));
+}
+napi_value setProgressV2(napi_env e,napi_callback_info info){
+ size_t n=1;napi_value v;bool enabled;
+ if(napi_get_cb_info(e,info,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||
+    napi_get_value_bool(e,v,&enabled)!=napi_ok)return text(e,"PROGRESS_CONFIG_INVALID");
+#ifndef GRS_PROGRESS_V2_EXPERIMENT
+ return text(e,"PROGRESS_V2_UNSUPPORTED");
+#else
+ auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);a.nextProgressV2=enabled;
+ return text(e,enabled?"PROGRESS_V2_NEXT_RUN":"PROGRESS_V1_NEXT_RUN");
+#endif
+}
 napi_value setColdTwoBatches(napi_env e,napi_callback_info i){
  size_t count=1;napi_value arg;bool enabled=false;
  if(napi_get_cb_info(e,i,&count,&arg,nullptr,nullptr)!=napi_ok||count!=1||
@@ -576,7 +814,7 @@ napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4]
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},
-{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
+{"beginPageSession",nullptr,beginPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"endPageSession",nullptr,endPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"pagePulse",nullptr,pagePulse,nullptr,nullptr,nullptr,napi_default,nullptr},{"setProgressV2",nullptr,setProgressV2,nullptr,nullptr,nullptr,napi_default,nullptr},{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
 {"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
 #ifdef GRS_APP_M1
