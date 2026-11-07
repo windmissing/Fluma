@@ -13,7 +13,7 @@ namespace grs {
 // All methods execute on the same native GL owner/current context. Poll never waits.
 // T324 §2.2: OK_SUBMITTING = the quantum root is accepted, partial-submit in
 // progress (batches dispatched, no fence yet). Appended value; old codes unchanged.
-enum class TransportCode {OK,NOT_READY,BUSY,WRONG_OWNER,CAPABILITY_UNSUPPORTED,MEMORY_PROFILE_UNSUPPORTED,SHADER_FAILED,GL_FAILED,STATE_LOST,PROTOCOL_REJECTED,OK_SUBMITTING=16};
+enum class TransportCode {OK,NOT_READY,BUSY,WRONG_OWNER,CAPABILITY_UNSUPPORTED,MEMORY_PROFILE_UNSUPPORTED,SHADER_FAILED,GL_FAILED,STATE_LOST,PROTOCOL_REJECTED,OK_SUBMITTING=16,REVOKED};
 struct SourceWorkspace {
  size_t words=0,spare=0,motion=0,indexA=0,indexB=0,scan=0,edges=0,audit=0,dedup=0,sourceEvents=0,command=0,status=0,angles=0,stats=0,terminal=0;
 };

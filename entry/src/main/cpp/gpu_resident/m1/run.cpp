@@ -16,6 +16,12 @@ ControlCode Run::Advance(uint64_t deltaNs,U64 f,U64 c,int target,uint32_t capaci
  if(!sourcePending&&plan.quanta==0){receipt.active=false;receipt.complete=true;}return ControlCode::OK;
 }
 void Run::Fail(TransportCode code){receipt.code=code;receipt.fault=true;receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;receipt.time.discardedQuanta=receipt.discardedQuanta;}
+void Run::DropRevoked(){
+ head=count=0;sourcePending=sourceFlight=submitting=inflight=false;
+ receipt.code=TransportCode::REVOKED;receipt.active=false;receipt.complete=true;
+ receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;
+ receipt.time.discardedQuanta=receipt.discardedQuanta;
+}
 TransportCode Run::Pump(){
  if(quarantined){AcceptedRoot ignored;auto code=transport.Poll(ignored);if(code!=TransportCode::BUSY){quarantined=false;inflight=false;}return code;}
  if(!receipt.active)return receipt.fault?receipt.code:TransportCode::NOT_READY;
@@ -46,6 +52,7 @@ TransportCode Run::Pump(){
     if(elapsed<kPumpBudgetNs)continue; // (ii) budget remains: next batch this Pump
     return TransportCode::OK;          // (iii) budget exhausted: next Pump continues
    }
+   if(code==TransportCode::REVOKED){DropRevoked();return code;}
    if(code!=TransportCode::OK){Fail(code);return code;}
    inflight=true;submitting=false;
    transport.tailObserver.Emit({TailStage::Inflight,root,after,after,0,0,0,0,2});
@@ -53,18 +60,22 @@ TransportCode Run::Pump(){
   }
  }
  if(inflight){AcceptedRoot accepted;auto code=transport.Poll(accepted);if(code==TransportCode::BUSY)return code;inflight=false;
+  if(code==TransportCode::REVOKED){DropRevoked();return code;}
   if(code!=TransportCode::OK){Fail(code);return code;}receipt.accepted++;receipt.latest=accepted;
+  nextPublication=1-accepted.publication;
   if(sourceFlight){head=(head+1)%queue.size();count--;sourcePending=false;}else{receipt.successfulQuanta++;nextQuantum++;}
   if(suspended){receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;return TransportCode::OK;}
   if(!sourcePending&&nextQuantum>receipt.time.quanta){receipt.active=false;receipt.complete=true;}return TransportCode::OK;
  }
  RootRequest root;U64 next;if(!Add64(nonce,{1,0},next)){Fail(TransportCode::PROTOCOL_REJECTED);return receipt.code;}
  root.kind=sourcePending?1:2;root.nonce=next;root.frame=frame;root.control=control;root.carry=receipt.time.carryAfter;root.publicationSlot=uint32_t((next.lo-1)&1u);root.eventArena=frame.lo&1u;root.eventCapacity=0;root.quantumOrdinal=sourcePending?0:nextQuantum;
+ if(transport.isolation)root.publicationSlot=nextPublication;
  auto code=sourcePending?transport.SubmitSource(queue[head],root):transport.SubmitQuantum([&]{auto p=params;p.requestedAngle=angle;return p;}(),root);
  // T324 §2.3: OK_SUBMITTING consumes the nonce immediately (no retry can
  // re-Begin the root); the root is unsealed, NOT inflight. Poll/Stop drain
  // semantics below only ever see sealed inflight roots.
  if(code==TransportCode::OK_SUBMITTING){nonce=next;sourceFlight=sourcePending;submitting=true;receipt.submitted++;return TransportCode::OK;}
+ if(code==TransportCode::REVOKED){nonce=next;DropRevoked();return code;}
  if(code==TransportCode::BUSY)return code;if(code!=TransportCode::OK){Fail(code);return code;}
  nonce=next;sourceFlight=sourcePending;inflight=true;receipt.submitted++;
  const auto stamp=transport.tailObserver.Stamp();

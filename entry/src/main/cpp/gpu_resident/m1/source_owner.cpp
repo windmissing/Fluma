@@ -42,13 +42,32 @@ bool SourceRootOwner::Valid(const uint32_t* c,size_t words,uint32_t error)const{
  }
  return true;
 }
-ControlCode SourceRootOwner::Poll(FenceState fence,const uint32_t* c,size_t n,uint32_t error,AcceptedRoot& out){
- out={};if(state==FlightState::StateLost)return ControlCode::OWNER_STATE_LOST;if(state==FlightState::Idle)return ControlCode::STALE;if(fence==FenceState::Pending)return tombstone?ControlCode::QUARANTINED:ControlCode::BUSY;if(fence==FenceState::Failed||fence==FenceState::Timeout){tombstone=true;state=FlightState::Quarantined;return ControlCode::QUARANTINED;}if(tombstone){tombstone=false;state=FlightState::Idle;return ControlCode::STALE;}state=FlightState::Idle;if(n!=256||!c)return ControlCode::COMPLETION_INVALID;mapped+=1024;if(!(pending.kind==2?ValidQuantum(c,n,error):Valid(c,n,error)))return ControlCode::COMPLETION_INVALID;
- out.bank=c[33];out.publication=c[35];out.outcome=c[28];out.source=read(c,18);out.physics=read(c,20);out.publicationGeneration=read(c,36);out.nonce=pending.nonce;out.sourceSuccess=pending.kind==1&&c[28]==1;std::copy(c,c+256,out.completion.begin());bank=out.bank;
+bool SourceRootOwner::InspectCompletion(const uint32_t* c,size_t n,uint32_t error,AcceptedRoot& out)const{
+ out={};
+ if(state!=FlightState::Submitted||tombstone||!(pending.kind==2?ValidQuantum(c,n,error):Valid(c,n,error)))return false;
+ out.bank=c[33];out.publication=c[35];out.outcome=c[28];out.source=read(c,18);out.physics=read(c,20);out.publicationGeneration=read(c,36);out.nonce=pending.nonce;out.sourceSuccess=pending.kind==1&&c[28]==1;std::copy(c,c+256,out.completion.begin());
+ return true;
+}
+void SourceRootOwner::AcceptCompletion(const AcceptedRoot& out){
+ const auto* c=out.completion.data();
+ bank=out.bank;state=FlightState::Idle;mapped+=1024;
  for(auto p:std::array<std::array<size_t,2>,15>{{{{12,4}},{{14,18}},{{16,20}},{{18,22}},{{49,24}},{{72,36}},{{56,71}},{{58,75}},{{60,77}},{{62,79}},{{112,140}},{{114,144}},{{116,148}},{{118,150}},{{120,152}}}})put(header,p[0],read(c,p[1]));
  header[33]=c[58];header[34]=c[56];header[38]=c[53];header[39]=c[92];header[40]=c[93];header[41]=c[88];header[42]=c[90];header[43]=c[89];header[44]=c[91];header[47]=c[108];header[74]=c[58];header[76]=bank;header[77]=1-bank;header[79]=1;header[80]=c[28];header[81]=2;header[126]=c[92]==0;header[127]=fullWaterContract?(header[127]||(pending.kind==1&&c[28]==1&&command[2]==1&&c[158]==2&&c[67]==UINT32_MAX)):c[93]==0;
  if(pending.kind==2){header[38]=c[53];header[45]=c[107];header[46]=uint32_t(quantumAngle);header[51]=pending.quantumOrdinal;header[52]=2621440;header[53]=0;header[54]=c[83];header[55]=0;header[79]=2;for(size_t i=0;i<4;i++)header[128+i]=c[154+i];}
- auto& pub=pubs[out.publication];pub={};pub.identity=identity;pub.run=identity.run;pub.context=identity.context;pub.surface=identity.surface;pub.source=out.source;pub.physics=out.physics;pub.control=pending.control;pub.frame=pending.frame;pub.nonce=pending.nonce;pub.angle=c[107];pub.available=true;pub.generation=out.publicationGeneration;pub.bank=bank;accepted++;return ControlCode::OK;
+ auto& pub=pubs[out.publication];pub={};pub.identity=identity;pub.run=identity.run;pub.context=identity.context;pub.surface=identity.surface;pub.source=out.source;pub.physics=out.physics;pub.control=pending.control;pub.frame=pending.frame;pub.nonce=pending.nonce;pub.angle=c[107];pub.available=true;pub.generation=out.publicationGeneration;pub.bank=bank;accepted++;
+}
+ControlCode SourceRootOwner::Poll(FenceState fence,const uint32_t* c,size_t n,uint32_t error,AcceptedRoot& out){
+ out={};
+ if(state==FlightState::StateLost)return ControlCode::OWNER_STATE_LOST;
+ if(state==FlightState::Idle)return ControlCode::STALE;
+ if(fence==FenceState::Pending)return tombstone?ControlCode::QUARANTINED:ControlCode::BUSY;
+ if(fence==FenceState::Failed||fence==FenceState::Timeout){tombstone=true;state=FlightState::Quarantined;return ControlCode::QUARANTINED;}
+ if(tombstone){DiscardCompletion();return ControlCode::STALE;}
+ if(!InspectCompletion(c,n,error,out)){
+  if(n==256&&c)mapped+=1024;
+  DiscardCompletion();return ControlCode::COMPLETION_INVALID;
+ }
+ AcceptCompletion(out);return ControlCode::OK;
 }
 ControlCode SourceRootOwner::Stop(){if(state==FlightState::StateLost)return ControlCode::OWNER_STATE_LOST;if(state==FlightState::Submitted){tombstone=true;state=FlightState::Quarantined;}return state==FlightState::Quarantined?ControlCode::QUARANTINED:ControlCode::OK;}
 void SourceRootOwner::ContextLost(){state=FlightState::StateLost;tombstone=true;pubs[0]={};pubs[1]={};}

@@ -3,12 +3,14 @@
 #include "../uniform_locations.h"
 #include "source_owner.h"
 #include "../source_transport.h"
+#include "root_isolation.h"
 namespace grs {namespace m1 {
 // Source-core slice only: distinct from configureM1/full-quantum support.
 // Same native GL owner; ordinary polling reads only a sealed 1024B tail.
 class SourceCoreTransport {
 public:
  SubmitObserver submitObserver{};
+ RootIsolation* isolation=nullptr;
  SourceCoreTransport()=default;SourceCoreTransport(const SourceCoreTransport&)=delete;SourceCoreTransport& operator=(const SourceCoreTransport&)=delete;
  TransportCode Create(uint32_t K,uint32_t Kw,const Identity&);
  TransportCode Submit(const std::array<uint32_t,32>&,RootRequest);
@@ -27,8 +29,9 @@ private:
  TransportCode CreateUsing(uint32_t,uint32_t,const Identity&,const char* expectedSha,const char* shader);
  TransportCode PinCandidate();bool candidatePinned=false;
  bool Current()const;bool Good();bool Set(const char*,uint32_t);bool Pair(const char*,U64);void Retire();
+ TransportCode DiscardRevoked();
  SourceRootOwner owner;SourceTransportStats stats{};TransportTraceRing trace;Identity identity{};RootRequest pending{};Words256 tail{};
- GLuint program=0,banks[2]{},work=0,events[2]{},pubs[2]{},results[2]{};GLsync fence=nullptr,releases[2]{};U64 releaseGen[2]{};U64 lastFrame{};U64 arenaFrame[2]{};
+ GLuint program=0,banks[2]{},work=0,events[2]{},scratchEvent=0,pubs[2]{},results[2]{};GLsync fence=nullptr,releases[2]{};U64 releaseGen[2]{};U64 lastFrame{};U64 arenaFrame[2]{};
  EGLContext context=EGL_NO_CONTEXT;EGLDisplay display=EGL_NO_DISPLAY;EGLSurface surface=EGL_NO_SURFACE;std::thread::id thread;
  size_t words=0,workWords=0,pubWords=0,headerAt=0;uint32_t K=0,Kw=0;bool ready=false,lost=false,frozen=false,fatal=false;
  uint32_t emitQ=1048576;
