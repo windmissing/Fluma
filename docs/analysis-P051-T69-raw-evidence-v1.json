@@ -1,0 +1,172 @@
+{
+  "revision": "T69_ARCHIVED_TOUCH_CHAIN_ANALYSIS_V1",
+  "date": "2026-10-26",
+  "kind": "designer source attribution and archived sample arithmetic, not platform event test or device retest",
+  "baseline": {
+    "commit": "86366dd416c7d4b9dd66d4d9bcdbf5a6c4fa23ff",
+    "sourceZipSha256": "782fdf322d04da329dc8cfcb0eff799579b7b6ec4735044c59863057608141b0",
+    "hapSha256FromT63Report": "6AAC39F187C5A74E992CD1EBA45258B56728F44E227512936F233D9EAE7D227E"
+  },
+  "sourceHashes": {
+    "entry/src/main/ets/pages/EmptySandDemo.ets": {
+      "sha256": "09146dcb85c2d38a3f36c0f350fdc4c29c24f0b4442e6d6e474fe1843a785a49",
+      "isolatedCopyMatchesArchive": true,
+      "mainMatchesArchiveAtRead": false
+    },
+    "entry/src/main/ets/physics/P051EmptySandDemo.ets": {
+      "sha256": "7adf4b2059ed669956db3579994a96be883b9e124f5b28dfb2a66519360dcb3f",
+      "isolatedCopyMatchesArchive": true,
+      "mainMatchesArchiveAtRead": false
+    },
+    "entry/src/main/ets/physics/P011GestureRateClock.ets": {
+      "sha256": "72a65008e42081cee413fe1b4b21db373b0009b5ea72247e45d1166a920333af",
+      "isolatedCopyMatchesArchive": true,
+      "mainMatchesArchiveAtRead": true
+    },
+    "entry/src/main/ets/physics/P051GravityInputAdapter.ets": {
+      "sha256": "62da969e8b3d79d7b470c8d34c8c4f575e8c02c08e778e1ad6a820a07411ed2f",
+      "isolatedCopyMatchesArchive": true,
+      "mainMatchesArchiveAtRead": true
+    },
+    "entry/src/main/ets/physics/WaterSandField.ets": {
+      "sha256": "cb6c8f410e79c2eb263e2e16004f92e1d6ff52bdbfb258f053b136bc714d9fa4",
+      "isolatedCopyMatchesArchive": true,
+      "mainMatchesArchiveAtRead": false
+    },
+    "entry/src/main/cpp/p013renderer/napi_bridge.cpp": {
+      "sha256": "846b064e7bc023627cf3c6d11ed919daa17de4f210419270aa718a71eabb42d1",
+      "isolatedCopyMatchesArchive": true,
+      "mainMatchesArchiveAtRead": false
+    }
+  },
+  "rawLogInputs": {
+    "final-events.txt": {
+      "sha256": "74be3c2633642f57e026091769314d6b81895c6e48f39404e0d687f6368daa23",
+      "bytes": 242027
+    },
+    "manual-events.txt": {
+      "sha256": "b54426eb4d220d31d416ce67225d0e7ea3edd945595b98c319ded11a9e1db829",
+      "bytes": 162131
+    },
+    "pre-manual-events.txt": {
+      "sha256": "2072c5c55c243bb86159971e3ad80de65ee8911d19a9f858911cbb026cb49210",
+      "bytes": 122228
+    },
+    "start-events.txt": {
+      "sha256": "712a6ea0a802fa72fa9d876021d1e042909193fd83577e64562c77c8d7ea19ff",
+      "bytes": 7635
+    },
+    "touch-events.txt": {
+      "sha256": "a6ccceb5f846650b8e89a7747802524c78c17af480e42188f703b6e57b14c1a3",
+      "bytes": 79969
+    }
+  },
+  "actionsInputSha256": "f8dae17e17d0a16ded75a36ef6e883bbb7028edde586b28cd71ff35dcd7e405c",
+  "malformedRecognizedEventJson": 0,
+  "summaryByPid": {
+    "31761": {
+      "frameSamples": 27,
+      "successfulSwapSamples": 27,
+      "maxRenderedParticles": 0,
+      "demoSamples": 8,
+      "sampleMetricMaxima": {
+        "sourceEpoch": 0,
+        "sourceInjectedHeavy": 0,
+        "sourceInjectedLight": 0,
+        "particleMass": 0,
+        "depositedMass": 0,
+        "expectedMass": 0
+      },
+      "sampledSensorSources": {
+        "sensor": 8
+      },
+      "sampledShakeMax": 0,
+      "effectiveTiltMinMax": [
+        29.999999999999996,
+        29.999999999999996
+      ],
+      "surfaceSizes": [
+        [
+          1178,
+          2026
+        ]
+      ],
+      "nativeRejectionSamples": 0,
+      "firstDemoEvidence": {
+        "file": "final-events.txt",
+        "line": 30,
+        "time": "10-26 09:07:53.181"
+      }
+    },
+    "32518": {
+      "frameSamples": 111,
+      "successfulSwapSamples": 111,
+      "maxRenderedParticles": 0,
+      "demoSamples": 31,
+      "sampleMetricMaxima": {
+        "sourceEpoch": 0,
+        "sourceInjectedHeavy": 0,
+        "sourceInjectedLight": 0,
+        "particleMass": 0,
+        "depositedMass": 0,
+        "expectedMass": 0
+      },
+      "sampledSensorSources": {
+        "sensor": 31
+      },
+      "sampledShakeMax": 0,
+      "effectiveTiltMinMax": [
+        -5.661434017720286,
+        29.999999999999996
+      ],
+      "surfaceSizes": [
+        [
+          1178,
+          2026
+        ]
+      ],
+      "nativeRejectionSamples": 0,
+      "firstDemoEvidence": {
+        "file": "final-events.txt",
+        "line": 157,
+        "time": "10-26 09:08:21.053"
+      }
+    }
+  },
+  "staticChecks": {
+    "legacyPageUsesLibraryname": true,
+    "legacyPageOnTouchOnXComponent": true,
+    "nativeDispatchTouchCallbackNull": true,
+    "legacyModelIgnoresInjectionReceipt": true,
+    "legacyModelStopsOnStale": true
+  },
+  "documentation": {
+    "xcomponent": "https://github.com/openharmony/docs/blob/OpenHarmony-6.0-Release/zh-cn/application-dev/reference/apis-arkui/arkui-ts/ts-basic-components-xcomponent.md#事件",
+    "hitTest": "https://github.com/openharmony/docs/blob/master/zh-cn/application-dev/reference/apis-arkui/arkui-ts/ts-universal-attributes-hit-test-behavior.md"
+  },
+  "limits": [
+    "Original raw files unchanged; exact overlapping log lines merged only for sample counting, not physical ledger deduplication.",
+    "No actual per-event receiving/start/tick/request/receipt trace in baseline; missing events do not prove a runtime count of zero.",
+    "Samples do not prove entire-run sensor nonstaleness or entire-run zero shake.",
+    "UI controls capture has no application/XComponent node; no authoritative input bounds or vp/DPI recovered from it.",
+    "T70 arrived later in the turn and was consumed with the dependency/coverage limitations recorded above. No test evidence modified."
+  ],
+  "T70ConsumedLaterInSameTurn": {
+    "inputs": {
+      "docs/tester-T70-touch-zero-source-evidence-v1.md": "d6ec4f8d4d209d07cbebcfa47121ccc31c58a611570b0472b6bbbeea8e04f5a9",
+      "test/p070_touch_zero_source_units.cjs": "6d511dc91935facebc45a9536c166291c4acd99e79a269ce7d377d464f6ecd3d",
+      "test/p070_t63_snapshot_model_check.cjs": "59cab06b317bad4ab0a7b2758e7bcfc3386e84d446e47ec475eb21cfa747cf35",
+      "test/reports/p070_touch_zero_source_units.json": "68103f6bdefb292691f1c08e3d4d49b7143fc1546a2f269f2d2890ce1232bd77",
+      "test/reports/p070_t63_snapshot_model_check.json": "e7aaca3591ce9ab51825850c288d1016510327c1eadc15aa0ea8aebe2d3f8c5a",
+      "test/reports/p070_t63_archive_phase_analysis.json": "c369d8937b4d3ac345b012f6fc86c02cce5e5b661d9edc3ce0abb71dc2bf3ee7"
+    },
+    "findings": [
+      "T70 reports 7/7 working-tree checks and 3/3 model snapshot checks; designer read results but did not rerun.",
+      "Snapshot executor substitutes only P051EmptySandDemo and P051GravityInputAdapter via git show; other dependencies read from working tree.",
+      "A01 working-tree JSON depositedMass is 0; snapshot result omits deposition, so no LAND claim follows.",
+      "106 phase samples overlap; independent entire-line merged device samples remain 39.",
+      "Native dispatch/platform contract mismatch confirmed statically; unique on-device cause remains pending T72/T74."
+    ],
+    "ownership": "T72 owns passive diagnostics; T71 owns conditional business input adapter; T74 pre-fix device collection does not wait for T71."
+  }
+}

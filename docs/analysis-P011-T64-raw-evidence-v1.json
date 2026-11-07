@@ -1,0 +1,310 @@
+{
+  "revision": "T64_OFFLINE_ATTRIBUTION_V1",
+  "date": "2026-10-26",
+  "kind": "designer archived-prefix analysis; not device retest or complete-run certification",
+  "baseline": {
+    "head": "d941e7fd1a94aa1407c757277fcebda4ad673e07",
+    "entrySrcTree": "7836d441b643d4678225ac12e10146e51b8f8eff",
+    "hapSha256": "E47FA0DE97573019AA5DCF1A59163E219EEE4B59E4D357059DC44E860C4B18D8"
+  },
+  "inputs": {
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R0-store.ndjson": {
+      "sha256": "8418e9c9d9d8fc0f4fcef79dba4c886336c82c7fa241d93e91a8e492d7e668e3",
+      "bytes": 187761063
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R0-admissions.ndjson": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R1-store-final.ndjson": {
+      "sha256": "7d48778aa28419f78e14f7715819c20f57036f6df3ff4bc1f85d951623757398",
+      "bytes": 67857505
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R1-admissions-final.ndjson": {
+      "sha256": "dbd34ee261d3eb83c91366e66de7d9af836d61f0f983cf54236015cec07eb47d",
+      "bytes": 5438
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R1-admissions.ndjson": {
+      "sha256": "dbd34ee261d3eb83c91366e66de7d9af836d61f0f983cf54236015cec07eb47d",
+      "bytes": 5438
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R1-full.txt": {
+      "sha256": "975ceb93e4122a08e54901d41fb2ca4167934cb7bdec14aa591ab7307062ca52",
+      "bytes": 145612
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\R1-close.txt": {
+      "sha256": "cb73a5f498646a3d635efb584ab0a8585425ed170d05b603ea5599b6651773b1",
+      "bytes": 147580
+    },
+    "test\\artifacts\\t44-dualfield-product-run-20261026\\actions.txt": {
+      "sha256": "8a3e6513fd04e2c3dac7069206db473d7bc472dde689e13affa8e139ef8f830c",
+      "bytes": 541
+    }
+  },
+  "R1": {
+    "runId": "p011-run-1792975806102-3",
+    "records": 283,
+    "distinctAttemptId": 283,
+    "distinctFullKey": 283,
+    "distinctSubstepId": 283,
+    "distinctCommittedOrdinal": 283,
+    "duplicateSequenceExtraRows": 6,
+    "duplicateGroups": [
+      {
+        "sequence": 267,
+        "records": [
+          {
+            "rawLine": 267,
+            "rawLineSha256": "83d094f312417de0dcea8bf432c5a996d8a16c5ca39af697cd10d3fe5996b19a",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 134,
+            "substepId": 267,
+            "attemptId": "p011-run-1792975806102-3-a267",
+            "endpointCommittedOrdinal": 267,
+            "modeChangeCount": 1,
+            "endpointSampleElapsedMs": 19654
+          },
+          {
+            "rawLine": 268,
+            "rawLineSha256": "cdbdb4271e6db28b7297883758997dbd0b15d2dd952fbc9cc6db1c6191d2c5fe",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 134,
+            "substepId": 268,
+            "attemptId": "p011-run-1792975806102-3-a268",
+            "endpointCommittedOrdinal": 268,
+            "modeChangeCount": 1,
+            "endpointSampleElapsedMs": 19979
+          },
+          {
+            "rawLine": 269,
+            "rawLineSha256": "ca8cc4e046f8788eb9bfcf4d4e36629cad24ee560631d963ea467ab8ea200aa6",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 135,
+            "substepId": 269,
+            "attemptId": "p011-run-1792975806102-3-a269",
+            "endpointCommittedOrdinal": 269,
+            "modeChangeCount": 1,
+            "endpointSampleElapsedMs": 20397
+          },
+          {
+            "rawLine": 270,
+            "rawLineSha256": "21ed9a9eb8a205c7344a4897195ddd90d27d8f704c7bb9d0f41077cf5c177219",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 135,
+            "substepId": 270,
+            "attemptId": "p011-run-1792975806102-3-a270",
+            "endpointCommittedOrdinal": 270,
+            "modeChangeCount": 1,
+            "endpointSampleElapsedMs": 20791
+          },
+          {
+            "rawLine": 271,
+            "rawLineSha256": "465780e948f47b694930ad63ebac9198eb073b9e88a45307656a050c2d4592d9",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 136,
+            "substepId": 271,
+            "attemptId": "p011-run-1792975806102-3-a271",
+            "endpointCommittedOrdinal": 271,
+            "modeChangeCount": 1,
+            "endpointSampleElapsedMs": 22178
+          },
+          {
+            "rawLine": 272,
+            "rawLineSha256": "8c767a2f3bb4078883a4a5528eb6843871483d96d855519fdae68a56938b4d1f",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 136,
+            "substepId": 272,
+            "attemptId": "p011-run-1792975806102-3-a272",
+            "endpointCommittedOrdinal": 272,
+            "modeChangeCount": 1,
+            "endpointSampleElapsedMs": 23568
+          },
+          {
+            "rawLine": 273,
+            "rawLineSha256": "22bc8e8e69fa7496fc67ead6919a8414da255076b13fd96d24d70256bbc64870",
+            "runId": "p011-run-1792975806102-3",
+            "frameId": 137,
+            "substepId": 273,
+            "attemptId": "p011-run-1792975806102-3-a273",
+            "endpointCommittedOrdinal": 273,
+            "modeChangeCount": 2,
+            "endpointSampleElapsedMs": 24370
+          }
+        ]
+      }
+    ],
+    "adjacentModeBoundaries": [
+      {
+        "line": 266,
+        "sequence": 266,
+        "substepId": 266,
+        "endpointCommittedOrdinal": 266,
+        "modeChangeCount": 0
+      },
+      {
+        "line": 267,
+        "sequence": 267,
+        "substepId": 267,
+        "endpointCommittedOrdinal": 267,
+        "modeChangeCount": 1
+      },
+      {
+        "line": 268,
+        "sequence": 267,
+        "substepId": 268,
+        "endpointCommittedOrdinal": 268,
+        "modeChangeCount": 1
+      },
+      {
+        "line": 269,
+        "sequence": 267,
+        "substepId": 269,
+        "endpointCommittedOrdinal": 269,
+        "modeChangeCount": 1
+      },
+      {
+        "line": 270,
+        "sequence": 267,
+        "substepId": 270,
+        "endpointCommittedOrdinal": 270,
+        "modeChangeCount": 1
+      },
+      {
+        "line": 271,
+        "sequence": 267,
+        "substepId": 271,
+        "endpointCommittedOrdinal": 271,
+        "modeChangeCount": 1
+      },
+      {
+        "line": 272,
+        "sequence": 267,
+        "substepId": 272,
+        "endpointCommittedOrdinal": 272,
+        "modeChangeCount": 1
+      },
+      {
+        "line": 273,
+        "sequence": 267,
+        "substepId": 273,
+        "endpointCommittedOrdinal": 273,
+        "modeChangeCount": 2
+      },
+      {
+        "line": 274,
+        "sequence": 268,
+        "substepId": 274,
+        "endpointCommittedOrdinal": 274,
+        "modeChangeCount": 2
+      }
+    ],
+    "admissions": 27,
+    "admissionTransactionIdInFileOrder": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "cumulativeCountInFileOrder": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "orderedLeftFoldH": {
+      "decimal": "19.731137432098386",
+      "binary64Hex": "0x1.3bb2bd29fbe76p+4"
+    },
+    "orderedLeftFoldL": {
+      "decimal": "19.731137432098386",
+      "binary64Hex": "0x1.3bb2bd29fbe76p+4"
+    },
+    "mathFsumH": {
+      "decimal": "19.73113743209839",
+      "binary64Hex": "0x1.3bb2bd29fbe77p+4"
+    },
+    "mathFsumL": {
+      "decimal": "19.73113743209839",
+      "binary64Hex": "0x1.3bb2bd29fbe77p+4"
+    },
+    "finalLedgerH": {
+      "decimal": "19.731137432098386",
+      "binary64Hex": "0x1.3bb2bd29fbe76p+4"
+    },
+    "finalLedgerL": {
+      "decimal": "19.731137432098386",
+      "binary64Hex": "0x1.3bb2bd29fbe76p+4"
+    },
+    "allLedgerPrefixSourceMatch": true,
+    "prefixMismatchLines": [],
+    "allLedgerObservationRoutes": [
+      "dual-field-particle-v1"
+    ]
+  },
+  "geometryConditional": {
+    "source": "R1-full.txt P011_RASTER_LAYOUT; baseline P013RenderController submitDualField",
+    "canvasWidth": 365.7142857142857,
+    "canvasHeight": 742.2857142857143,
+    "coldAssumption": "native widthPx/heightPx unavailable; actual T44 receipt missing",
+    "fallbackWidth": 366,
+    "fallbackHeight": 742,
+    "sx": 1.00078125,
+    "sy": 0.9996150885296381,
+    "absoluteScaleDifference": 0.0011661614703618595,
+    "guard": 1e-06,
+    "conditionalReject": true
+  },
+  "limits": [
+    "No CLOSED counts, so files remain prefix-only.",
+    "Distinct attempts are not export resends; do not deduplicate.",
+    "No native-ready/draw/swap/fallback or lifecycle events sufficient to identify actual first runtime failure.",
+    "Mode-change initiator unproven.",
+    "No source, thresholds, raw inputs or existing analysis scripts modified."
+  ]
+}

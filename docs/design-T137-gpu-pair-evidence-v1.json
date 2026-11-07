@@ -1,0 +1,86 @@
+{
+  "revision": "T137_DESIGN_DISCRETE_MODEL_V1",
+  "date": "2026-10-26",
+  "route": "P011_GPU_PAIR_PROTOTYPE_V1",
+  "kind": "designer finite algorithm/model checks; NOT GLES/product/device tests",
+  "inputSha256": {
+    "docs/architecture-T130-gpu-compute-route-v1.md": "c330430db5f6de386a6b873dadf991a9a76ba398cbb05f723d45afeebde08045",
+    "docs/architecture-T136-compute-arrival-decision-v1.md": "0e633aa8f93e3d583a24a7805450101742611f7a160d3bd0970e72d39c5ad5ae",
+    "docs/architecture-T116-pool-recurrence-index-routing-v1.md": "50be798bc9673b62ed1fb43bddb80dbd54d7ad5fd0ba82b2df4c14461387533c",
+    "docs/test-report-T131-compute-capability-v1.md": "5b799b6ddfb46f5b9be3b8342d0427bc9c0416f5998e5f27143d79b7fe8d253f",
+    "test/reports/t131/t131_stats_summary.json": "cb3193bf3325034f3827fe809ff10c02281ccf4caf3db8f6ef6306e1f67b30c4",
+    "test/reports/t131/t131.json": "2d1d92df3fc755cce3154ba6ba897b0281bded5edf9f671b6c9914a25e6e5882",
+    "test/reports/t131/t131_run5.json": "0a48fd6f9877692a1ddf32bb3b9e7a0aca937a4f031ce1ae03158e8b91efeba4",
+    "test/reports/t131/compute_shader.glsl": "62818ffb0109d18971fe5ef69231ffba6633f71cba8d28fe6e587b5725b6b3f0",
+    "test/p013_native/t131_compute_probe.cpp": "6db6f8f7256fac6f3944ed9599e78ba0648602ee420c634275ebb6057e30ee2d",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "6cd6e926b55aa2817f4111784b63999c01b97c3022839acb75eb3387ea13d597",
+    "docs/design-T137-gpu-pair-model-v1.py": "a7f0e2f333c3add68204debb8b907ea54cd6b39261892a3b9d9163987ba70448"
+  },
+  "counts": {
+    "pools": 4916,
+    "activeQueries": 34868,
+    "buildWrites": 212570,
+    "segments": 71763,
+    "malformedRejected": 6,
+    "continuousMergeSelections": 2
+  },
+  "finiteExhaustivePools": 4665,
+  "randomSeed": 137,
+  "boundaryCounterexample": {
+    "a": 0.2,
+    "b": -5e-324,
+    "radius": 0.2,
+    "originalPredicate": true,
+    "roundedEndpointPredicate": false,
+    "bits": {
+      "a": "3fc999999999999a",
+      "b": "8000000000000001",
+      "radius": "3fc999999999999a"
+    }
+  },
+  "continuousMergeSyntheticPairSequence": [
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      3
+    ]
+  ],
+  "costs": [
+    {
+      "Nmax": 192,
+      "K": 256,
+      "h": 8,
+      "buildComparisonUpper": 9216,
+      "tableBytes": 36864,
+      "slotPayloadBytes": 61824,
+      "dualSlotPayloadBytes": 123648,
+      "uploadUpperBytes": 12672,
+      "readbackBytes": 128,
+      "dispatches": 11,
+      "fencesPerRequest": 1
+    },
+    {
+      "Nmax": 512,
+      "K": 512,
+      "h": 9,
+      "buildComparisonUpper": 23040,
+      "tableBytes": 81920,
+      "slotPayloadBytes": 131456,
+      "dualSlotPayloadBytes": 262912,
+      "uploadUpperBytes": 24960,
+      "readbackBytes": 128,
+      "dispatches": 12,
+      "fencesPerRequest": 1
+    }
+  ],
+  "notClaimed": [
+    "GLES layer/barrier/reduction correctness verified",
+    "full transaction/rollback equivalence verified",
+    "target-device speedup",
+    "GPU production migration",
+    "freeze fixed"
+  ]
+}

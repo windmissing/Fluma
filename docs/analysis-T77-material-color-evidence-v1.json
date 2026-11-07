@@ -1,0 +1,854 @@
+{
+  "revision": "T77_COLOR_ATTRIBUTION_V1",
+  "date": "2026-10-26",
+  "scope": "designer analysis of existing reports/raw FBO sample; no GL execution/device or independent tester run",
+  "baseline": {
+    "T55Commit": "b4561a233a4ddc0e41c7fc709754921572c5aec7",
+    "assembledShaderSha256": "204c7fe5f78005eee50954ff2f3f19b368dd8d88968fade9fc344eba0d68b2e6",
+    "shaderMatchesReportedManifest": true
+  },
+  "sources": {
+    "entry/src/main/cpp/p013renderer/material_pass.cpp": {
+      "frozenNormalizedSha256": "65e3dbee83c0d2dcbb0d181ccb666186423ebfc59f2de3c854bf2c31e45273f5",
+      "currentRawSha256": "30d27084bf77051c8303a424f14f3cf344b8afb79a732936e0dd703a7e309cbe",
+      "sameNormalizedTextAtRead": true
+    },
+    "entry/src/main/cpp/p013renderer/glsl/p1_material.vert": {
+      "frozenNormalizedSha256": "829d2e845f5e64c816eb2e87980c5e29a514d357c9d3811e1661d333bf100fe8",
+      "currentRawSha256": "efbd4e6f32dac6714c193a9c48bc37472a65314f97f02ffbfd97469d8fc063e0",
+      "sameNormalizedTextAtRead": true
+    },
+    "entry/src/main/cpp/p013renderer/glsl/p1_material.frag": {
+      "frozenNormalizedSha256": "fc5c87ca6fb1c79682f2d7b0a9c3c9a9b2fdd56b83db796657854c48ba027147",
+      "currentRawSha256": "8f7b85c75c8a6b5167bb0b1b17a5924450c9087f409415d7b6cafcc76d40ebbf",
+      "sameNormalizedTextAtRead": true
+    },
+    "entry/src/main/ets/render/preparation/p1_material_functions.glsl": {
+      "frozenNormalizedSha256": "7981e83e15956a4bb56c524dd1c0090c46e83c4bdbfa490b24bb0030ac31781f",
+      "currentRawSha256": "0a3becd5a81ed2190fa4b8322bb9cf72248d50b0d0afbb90ba00ebf418cf5ff5",
+      "sameNormalizedTextAtRead": true
+    },
+    "test/p013_native/material_gpu_test.cpp": {
+      "frozenNormalizedSha256": "0bc2bc12af6a8a778c090ffe180b40dc27e3de3d4079d63332b7604f746ddc53",
+      "currentRawSha256": "023ac2f64888d97f53450c47f58cca4c10b25f27b16c74b3f2d0c5aeef92bea6",
+      "sameNormalizedTextAtRead": true
+    },
+    "test/p055_material_fixtures.cjs": {
+      "frozenNormalizedSha256": "42de9249b560778be9ba30b695fd4e1dc5266cde4cee4515f846be6df323ee95",
+      "currentRawSha256": "ed47c766d3f0416b953b111be8644126513fcfadd1951ec8e44bf7f495e7ace7",
+      "sameNormalizedTextAtRead": true
+    }
+  },
+  "inputHashes": {
+    "docs/developer-T55-material-pass.md": "a8cd0eb72e3c981cab459c8b2b3fdcd4c20850df525175a3e2edb8f36184d0fe",
+    "test/reports/t55/gpu-reference-default-pbuffer.json": "7d2f9e2e178669eb007dda6eaeb81ad5c80b3e7c198268753aed4cc777a58abf",
+    "test/reports/t55/gpu-reference-srgb-fbo.json": "70b120993c6870fda66e88fe9e3e64be72b7349d12de5ef85618fb3ee01b823d",
+    "test/reports/t55/gpu-default-pbuffer.txt": "23162a0d13516ba6729a26216eabe57ccefd05dfad8e6d2925abad37967e7614",
+    "test/reports/t55/gpu-srgb-fbo.txt": "2f4c6d93cb067ca8eeb7666aec92a9a5d639ada38b825972e11888f139e15709",
+    "test/reports/t55/shader-manifest.json": "19d5c5e51e9e6f23842a7b1ec20a4fc7256680016b0dcc5aaf905eb52cee07fd",
+    "test/p013_native/material_gpu_test.cpp": "023ac2f64888d97f53450c47f58cca4c10b25f27b16c74b3f2d0c5aeef92bea6",
+    "test/p055_material_fixtures.cjs": "ed47c766d3f0416b953b111be8644126513fcfadd1951ec8e44bf7f495e7ace7"
+  },
+  "fixtureInputHashes": {
+    "manifest.json": "7266e8a322ef48d77b21e4f28e245b88c7d0d17b9cfa74e5e548bdd82fcb90cb",
+    "grain.rgba": "cb8aa193b4c859c6f790f9703b6411fd59437ed23e91b6f0e9c32aed5f484fec",
+    "strata.rgba": "97bec08be2be9391e09ef132ee35f949cfeebf84186d875603bedc503df22b8a",
+    "flat_0_1_0_1_0_0_0.bin": "32870e766b0d501e17d0093edd00336969354dd2ebae141183b9233d3cccc353",
+    "flat_0_1_0_1_0_0_0.rgba": "dccbe278d1b5d96f17b109115e5137f33092ee0dfea6aa749eae5ee0f0a29008"
+  },
+  "reported": {
+    "default": {
+      "fixtures": 35,
+      "maxCodeError": 73.72034040029385,
+      "status": "MEASURED_NOT_CALIBRATED"
+    },
+    "srgbFbo": {
+      "fixtures": 35,
+      "maxCodeError": 1.9562652821043685,
+      "status": "MEASURED_NOT_CALIBRATED"
+    },
+    "assetsMatchAcrossReports": true,
+    "versionsMatchAcrossReports": true
+  },
+  "defaultWorstSamples": [
+    {
+      "fixture": "flat_0_0_0_0_0_0_0",
+      "defaultMaxCodeError": 73.00000000000003,
+      "fboMaxCodeError": 5.684341886080802e-14,
+      "defaultWorst": {
+        "x": 16,
+        "y": 16,
+        "channel": 0,
+        "cpuCode": 145.00000000000003,
+        "gpuCode": 72
+      },
+      "defaultWorstLinearPrediction": 72.20292880964801,
+      "defaultWorstLinearResidual": 0.2029288096480144
+    },
+    {
+      "fixture": "flat_0_0_0_1_0_0_0",
+      "defaultMaxCodeError": 73.00000000000003,
+      "fboMaxCodeError": 1,
+      "defaultWorst": {
+        "x": 17,
+        "y": 16,
+        "channel": 0,
+        "cpuCode": 145.00000000000003,
+        "gpuCode": 72
+      },
+      "defaultWorstLinearPrediction": 72.20292880964801,
+      "defaultWorstLinearResidual": 0.2029288096480144
+    },
+    {
+      "fixture": "flat_0_0_1_0_0_0_0",
+      "defaultMaxCodeError": 73.70571674937824,
+      "fboMaxCodeError": 0.6729335395702947,
+      "defaultWorst": {
+        "x": 69,
+        "y": 107,
+        "channel": 2,
+        "cpuCode": 136.70571674937824,
+        "gpuCode": 63
+      },
+      "defaultWorstLinearPrediction": 63.492448968574486,
+      "defaultWorstLinearResidual": 0.49244896857448595
+    },
+    {
+      "fixture": "flat_0_0_1_1_0_0_0",
+      "defaultMaxCodeError": 73.70571674937824,
+      "fboMaxCodeError": 1.2680574676325875,
+      "defaultWorst": {
+        "x": 71,
+        "y": 113,
+        "channel": 2,
+        "cpuCode": 136.70571674937824,
+        "gpuCode": 63
+      },
+      "defaultWorstLinearPrediction": 63.492448968574486,
+      "defaultWorstLinearResidual": 0.49244896857448595
+    },
+    {
+      "fixture": "flat_0_1_0_0_0_0_0",
+      "defaultMaxCodeError": 73.7093543442578,
+      "fboMaxCodeError": 0.6951479939524745,
+      "defaultWorst": {
+        "x": 59,
+        "y": 104,
+        "channel": 2,
+        "cpuCode": 134.7093543442578,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.49289596564992,
+      "defaultWorstLinearResidual": 0.49289596564992166
+    },
+    {
+      "fixture": "flat_0_1_0_1_0_0_0",
+      "defaultMaxCodeError": 73.7093543442578,
+      "fboMaxCodeError": 1.9562652821043685,
+      "defaultWorst": {
+        "x": 59,
+        "y": 104,
+        "channel": 2,
+        "cpuCode": 134.7093543442578,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.49289596564992,
+      "defaultWorstLinearResidual": 0.49289596564992166
+    },
+    {
+      "fixture": "flat_0_1_1_0_0_0_0",
+      "defaultMaxCodeError": 73.71267681777084,
+      "fboMaxCodeError": 0.6977461190600422,
+      "defaultWorst": {
+        "x": 123,
+        "y": 125,
+        "channel": 2,
+        "cpuCode": 136.71267681777084,
+        "gpuCode": 63
+      },
+      "defaultWorstLinearPrediction": 63.4994855076005,
+      "defaultWorstLinearResidual": 0.4994855076004967
+    },
+    {
+      "fixture": "flat_0_1_1_1_0_0_0",
+      "defaultMaxCodeError": 73.70900354637271,
+      "fboMaxCodeError": 1.7843780706198515,
+      "defaultWorst": {
+        "x": 116,
+        "y": 27,
+        "channel": 0,
+        "cpuCode": 134.7090035463727,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.49254788398716,
+      "defaultWorstLinearResidual": 0.4925478839871573
+    },
+    {
+      "fixture": "flat_1_0_0_0_0_0_0",
+      "defaultMaxCodeError": 73.71874791936065,
+      "fboMaxCodeError": 0.6972465507869003,
+      "defaultWorst": {
+        "x": 42,
+        "y": 118,
+        "channel": 2,
+        "cpuCode": 135.71874791936065,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49923786811292,
+      "defaultWorstLinearResidual": 0.49923786811292103
+    },
+    {
+      "fixture": "flat_1_0_0_1_0_0_0",
+      "defaultMaxCodeError": 73.71874791936065,
+      "fboMaxCodeError": 1.3369508705995088,
+      "defaultWorst": {
+        "x": 44,
+        "y": 118,
+        "channel": 2,
+        "cpuCode": 135.71874791936065,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49923786811292,
+      "defaultWorstLinearResidual": 0.49923786811292103
+    },
+    {
+      "fixture": "flat_1_0_1_0_0_0_0",
+      "defaultMaxCodeError": 73.71722526648341,
+      "fboMaxCodeError": 0.6981002462767947,
+      "defaultWorst": {
+        "x": 70,
+        "y": 98,
+        "channel": 2,
+        "cpuCode": 135.7172252664834,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49771263902012,
+      "defaultWorstLinearResidual": 0.4977126390201221
+    },
+    {
+      "fixture": "flat_1_0_1_1_0_0_0",
+      "defaultMaxCodeError": 73.71722526648341,
+      "fboMaxCodeError": 1.3864921069133231,
+      "defaultWorst": {
+        "x": 71,
+        "y": 98,
+        "channel": 2,
+        "cpuCode": 135.7172252664834,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49771263902012,
+      "defaultWorstLinearResidual": 0.4977126390201221
+    },
+    {
+      "fixture": "flat_1_1_0_0_0_0_0",
+      "defaultMaxCodeError": 73.71715531040655,
+      "fboMaxCodeError": 0.7009042984965959,
+      "defaultWorst": {
+        "x": 95,
+        "y": 120,
+        "channel": 2,
+        "cpuCode": 134.71715531040655,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.50063682601613,
+      "defaultWorstLinearResidual": 0.5006368260161267
+    },
+    {
+      "fixture": "flat_1_1_0_1_0_0_0",
+      "defaultMaxCodeError": 73.71715531040655,
+      "fboMaxCodeError": 1.951051242486102,
+      "defaultWorst": {
+        "x": 95,
+        "y": 120,
+        "channel": 2,
+        "cpuCode": 134.71715531040655,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.50063682601613,
+      "defaultWorstLinearResidual": 0.5006368260161267
+    },
+    {
+      "fixture": "flat_1_1_1_0_0_0_0",
+      "defaultMaxCodeError": 73.72000087489937,
+      "fboMaxCodeError": 0.7003417188947196,
+      "defaultWorst": {
+        "x": 62,
+        "y": 33,
+        "channel": 0,
+        "cpuCode": 135.72000087489937,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.50049295984405,
+      "defaultWorstLinearResidual": 0.5004929598440526
+    },
+    {
+      "fixture": "flat_1_1_1_1_0_0_0",
+      "defaultMaxCodeError": 73.72000087489937,
+      "fboMaxCodeError": 1.7978011225285115,
+      "defaultWorst": {
+        "x": 62,
+        "y": 33,
+        "channel": 0,
+        "cpuCode": 135.72000087489937,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.50049295984405,
+      "defaultWorstLinearResidual": 0.5004929598440526
+    },
+    {
+      "fixture": "ramp_0_1_1_1_0_0_0",
+      "defaultMaxCodeError": 73.7198424675565,
+      "fboMaxCodeError": 1.7843780706198515,
+      "defaultWorst": {
+        "x": 77,
+        "y": 123,
+        "channel": 2,
+        "cpuCode": 135.7198424675565,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.50033428161703,
+      "defaultWorstLinearResidual": 0.5003342816170289
+    },
+    {
+      "fixture": "ramp_1_1_1_1_0_0_0",
+      "defaultMaxCodeError": 73.71691087551045,
+      "fboMaxCodeError": 1.8052580566274798,
+      "defaultWorst": {
+        "x": 45,
+        "y": 28,
+        "channel": 0,
+        "cpuCode": 135.71691087551045,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49739771882539,
+      "defaultWorstLinearResidual": 0.49739771882538975
+    },
+    {
+      "fixture": "pulse_0_1_1_1_0_0_0",
+      "defaultMaxCodeError": 73.70900354637271,
+      "fboMaxCodeError": 1.7843780706198515,
+      "defaultWorst": {
+        "x": 116,
+        "y": 27,
+        "channel": 0,
+        "cpuCode": 134.7090035463727,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.49254788398716,
+      "defaultWorstLinearResidual": 0.4925478839871573
+    },
+    {
+      "fixture": "pulse_1_1_1_1_0_0_0",
+      "defaultMaxCodeError": 73.72034040029385,
+      "fboMaxCodeError": 1.7978011225285115,
+      "defaultWorst": {
+        "x": 62,
+        "y": 33,
+        "channel": 0,
+        "cpuCode": 135.72034040029385,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.50083306663493,
+      "defaultWorstLinearResidual": 0.5008330666349323
+    },
+    {
+      "fixture": "empty_0_1_1_1_0_0_0",
+      "defaultMaxCodeError": 0,
+      "fboMaxCodeError": 0,
+      "defaultWorst": null,
+      "defaultWorstLinearPrediction": null,
+      "defaultWorstLinearResidual": null
+    },
+    {
+      "fixture": "empty_1_1_1_1_0_0_0",
+      "defaultMaxCodeError": 0,
+      "fboMaxCodeError": 0,
+      "defaultWorst": null,
+      "defaultWorstLinearPrediction": null,
+      "defaultWorstLinearResidual": null
+    },
+    {
+      "fixture": "thin_0_1_1_1_0_0_0",
+      "defaultMaxCodeError": 0,
+      "fboMaxCodeError": 0,
+      "defaultWorst": null,
+      "defaultWorstLinearPrediction": null,
+      "defaultWorstLinearResidual": null
+    },
+    {
+      "fixture": "thin_1_1_1_1_0_0_0",
+      "defaultMaxCodeError": 0,
+      "fboMaxCodeError": 0,
+      "defaultWorst": null,
+      "defaultWorstLinearPrediction": null,
+      "defaultWorstLinearResidual": null
+    },
+    {
+      "fixture": "ramp_0_1_1_1_1_0_0",
+      "defaultMaxCodeError": 73.7198424675565,
+      "fboMaxCodeError": 1.7843780706198515,
+      "defaultWorst": {
+        "x": 82,
+        "y": 164,
+        "channel": 2,
+        "cpuCode": 135.7198424675565,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.50033428161703,
+      "defaultWorstLinearResidual": 0.5003342816170289
+    },
+    {
+      "fixture": "ramp_1_1_1_1_1_0_0",
+      "defaultMaxCodeError": 73.71691087551045,
+      "fboMaxCodeError": 1.8052580566274798,
+      "defaultWorst": {
+        "x": 114,
+        "y": 259,
+        "channel": 0,
+        "cpuCode": 135.71691087551045,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49739771882539,
+      "defaultWorstLinearResidual": 0.49739771882538975
+    },
+    {
+      "fixture": "flat_0_1_1_1_0_0_1",
+      "defaultMaxCodeError": 73.70900354637271,
+      "fboMaxCodeError": 1.7843780706198515,
+      "defaultWorst": {
+        "x": 116,
+        "y": 27,
+        "channel": 0,
+        "cpuCode": 134.7090035463727,
+        "gpuCode": 61
+      },
+      "defaultWorstLinearPrediction": 61.49254788398716,
+      "defaultWorstLinearResidual": 0.4925478839871573
+    },
+    {
+      "fixture": "flat_0_0_0_0_0_1_0",
+      "defaultMaxCodeError": 73.00000000000003,
+      "fboMaxCodeError": 5.684341886080802e-14,
+      "defaultWorst": {
+        "x": 16,
+        "y": 16,
+        "channel": 0,
+        "cpuCode": 145.00000000000003,
+        "gpuCode": 72
+      },
+      "defaultWorstLinearPrediction": 72.20292880964801,
+      "defaultWorstLinearResidual": 0.2029288096480144
+    },
+    {
+      "fixture": "flat_0_0_1_0_0_1_0",
+      "defaultMaxCodeError": 73.49444104119004,
+      "fboMaxCodeError": 0.657709826930045,
+      "defaultWorst": {
+        "x": 16,
+        "y": 116,
+        "channel": 2,
+        "cpuCode": 141.49444104119004,
+        "gpuCode": 68
+      },
+      "defaultWorstLinearPrediction": 68.44174790552454,
+      "defaultWorstLinearResidual": 0.4417479055245366
+    },
+    {
+      "fixture": "flat_0_1_0_0_0_1_0",
+      "defaultMaxCodeError": 73.59037118161592,
+      "fboMaxCodeError": 0.6750837105645076,
+      "defaultWorst": {
+        "x": 30,
+        "y": 96,
+        "channel": 1,
+        "cpuCode": 139.59037118161592,
+        "gpuCode": 66
+      },
+      "defaultWorstLinearPrediction": 66.44786987309396,
+      "defaultWorstLinearResidual": 0.4478698730939641
+    },
+    {
+      "fixture": "flat_0_1_1_0_0_1_0",
+      "defaultMaxCodeError": 73.71910767117791,
+      "fboMaxCodeError": 0.6208753717759237,
+      "defaultWorst": {
+        "x": 38,
+        "y": 116,
+        "channel": 1,
+        "cpuCode": 135.7191076711779,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49959823177456,
+      "defaultWorstLinearResidual": 0.49959823177456286
+    },
+    {
+      "fixture": "flat_1_0_0_0_0_1_0",
+      "defaultMaxCodeError": 73.71874791936065,
+      "fboMaxCodeError": 0.6972465507869003,
+      "defaultWorst": {
+        "x": 42,
+        "y": 118,
+        "channel": 2,
+        "cpuCode": 135.71874791936065,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.49923786811292,
+      "defaultWorstLinearResidual": 0.49923786811292103
+    },
+    {
+      "fixture": "flat_1_0_1_0_0_1_0",
+      "defaultMaxCodeError": 73.67051895724387,
+      "fboMaxCodeError": 0.6900035860294338,
+      "defaultWorst": {
+        "x": 25,
+        "y": 126,
+        "channel": 2,
+        "cpuCode": 137.67051895724387,
+        "gpuCode": 64
+      },
+      "defaultWorstLinearPrediction": 64.47219393883066,
+      "defaultWorstLinearResidual": 0.47219393883065663
+    },
+    {
+      "fixture": "flat_1_1_0_0_0_1_0",
+      "defaultMaxCodeError": 73.71048737777204,
+      "fboMaxCodeError": 0.7007544251859343,
+      "defaultWorst": {
+        "x": 38,
+        "y": 99,
+        "channel": 1,
+        "cpuCode": 135.71048737777204,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.490963610926066,
+      "defaultWorstLinearResidual": 0.490963610926066
+    },
+    {
+      "fixture": "flat_1_1_1_0_0_1_0",
+      "defaultMaxCodeError": 73.71961687537274,
+      "fboMaxCodeError": 0.6897199440099087,
+      "defaultWorst": {
+        "x": 47,
+        "y": 111,
+        "channel": 0,
+        "cpuCode": 135.71961687537274,
+        "gpuCode": 62
+      },
+      "defaultWorstLinearPrediction": 62.5001083040654,
+      "defaultWorstLinearResidual": 0.5001083040653995
+    }
+  ],
+  "nonemptyWorstSampleCount": 31,
+  "maxLinearPredictionResidualAtReportedWorstSamples": 0.5008330666349323,
+  "scratchRawAvailability": [
+    {
+      "fixture": "flat_0_0_0_0_0_0_0",
+      "exists": true,
+      "sha256": "c6c5b08c3c0c65a8816c10c1bf1f37f699a51e6459b9a20f3f4ba088f9f11627",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_0_0_1_0_0_0",
+      "exists": true,
+      "sha256": "9ea0ef4df7a668218b2982c6ca827210d6cfe64c8e6bc3d1085ae24ce81c4650",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_0_1_0_0_0_0",
+      "exists": true,
+      "sha256": "9aaec1dae89b117421e9dc88cef7935d74c440444bccf95d61945992b3812c43",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_0_1_1_0_0_0",
+      "exists": true,
+      "sha256": "e6192570d6b480a077b6eb3e97d00ee59958e52bfc7696a3684f56f241eda405",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_0_0_0_0_0",
+      "exists": true,
+      "sha256": "28f587312d63275f717564eb07def984486fcf738f03241fff7913defa1f2d2b",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_0_1_0_0_0",
+      "exists": true,
+      "sha256": "dccbe278d1b5d96f17b109115e5137f33092ee0dfea6aa749eae5ee0f0a29008",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_1_0_0_0_0",
+      "exists": true,
+      "sha256": "b7b723e7d2097188556aebc945e35b1968aed0ddbd587a34c89e1d8d110a04b6",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "94a87374a6316751ffedf3f06166af99eca7106cd9f387c1983a0fa4227889d1",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_0_0_0_0_0_0",
+      "exists": true,
+      "sha256": "ea0cc2e97132e33381ca5bf238d9d7b92ae5ddc62450b6f1c73091492d5f504d",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_0_0_1_0_0_0",
+      "exists": true,
+      "sha256": "a444ae085ebbe2c4625e6fcdf82c73ec3f8191274e5a1756fb33ddc279d11098",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_0_1_0_0_0_0",
+      "exists": true,
+      "sha256": "41a39695feedf57b83f503000b4f8fada24acd48f6725f761f28ee3fb3c3dfc8",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_0_1_1_0_0_0",
+      "exists": true,
+      "sha256": "59ff66be15c9a142af15ec22eb91887782565ff6dbd26e901719d8fcc2c33cb4",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_1_0_0_0_0_0",
+      "exists": true,
+      "sha256": "59d6698d92561ced0828f16eca077125974a7283218362701afee03c95db92d4",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_1_0_1_0_0_0",
+      "exists": true,
+      "sha256": "124ed8492c1c54fb388f4e4512f27fcd9a4e7498a1a7a0568f6102bbb41ff2f6",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_1_1_0_0_0_0",
+      "exists": true,
+      "sha256": "ec9355fd913a03953712a1e5ad7cd2a85b47b362c7e988d257bd7b057060c4e9",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "991e2002016eb7d3e00fb33e0d9bf8624e11e11b18a0f84829db09e9ccdec988",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "ramp_0_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "20677f4081f5fc29937b541e8f01d65775dbd1bb19b9a8cf5f58c2d106dfc68c",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "ramp_1_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "dc2fd0e2bb20c407def4dae9d9e2d597ea09eca9c6d21754ce3cc6bb3ed8a254",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "pulse_0_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "fe0919da7ae0eae2fa98068044d4b683c8d493d1cba44ed668e8596c915b9a2c",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "pulse_1_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "62a4f4046db4743448e74bfce8f3601c823e6c2ccd80e35d913175f697b49e4a",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "empty_0_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "dd493585bde88d5307e760b29cdd3a721ad9fa8fa5cb16618c77889c0d6be401",
+      "matchesFboReport": true,
+      "matchesDefaultReport": true
+    },
+    {
+      "fixture": "empty_1_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "dd493585bde88d5307e760b29cdd3a721ad9fa8fa5cb16618c77889c0d6be401",
+      "matchesFboReport": true,
+      "matchesDefaultReport": true
+    },
+    {
+      "fixture": "thin_0_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "dd493585bde88d5307e760b29cdd3a721ad9fa8fa5cb16618c77889c0d6be401",
+      "matchesFboReport": true,
+      "matchesDefaultReport": true
+    },
+    {
+      "fixture": "thin_1_1_1_1_0_0_0",
+      "exists": true,
+      "sha256": "dd493585bde88d5307e760b29cdd3a721ad9fa8fa5cb16618c77889c0d6be401",
+      "matchesFboReport": true,
+      "matchesDefaultReport": true
+    },
+    {
+      "fixture": "ramp_0_1_1_1_1_0_0",
+      "exists": true,
+      "sha256": "dccfe7e1bfcdee16ea4f15be118f903265bc055f68a61352173614e802cbca61",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "ramp_1_1_1_1_1_0_0",
+      "exists": true,
+      "sha256": "087ea4981f0e28f4d660fab0f630a6e686a92dcd713190d1f035ce8746fe956b",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_1_1_0_0_1",
+      "exists": true,
+      "sha256": "94a87374a6316751ffedf3f06166af99eca7106cd9f387c1983a0fa4227889d1",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_0_0_0_0_1_0",
+      "exists": true,
+      "sha256": "c6c5b08c3c0c65a8816c10c1bf1f37f699a51e6459b9a20f3f4ba088f9f11627",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_0_1_0_0_1_0",
+      "exists": true,
+      "sha256": "015be5971ad690c26fce35408fd8adbf0f008a8b7aae4818331da2243574aae1",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_0_0_0_1_0",
+      "exists": true,
+      "sha256": "558e043530ceb87b6a9989b9f86e64f1939942b89ea91b24cc157b86d340ccbf",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_0_1_1_0_0_1_0",
+      "exists": true,
+      "sha256": "77e64638ef103a768d711944ff0c0630237516d22345f3f3ff51d7209fa9354e",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_0_0_0_0_1_0",
+      "exists": true,
+      "sha256": "ea0cc2e97132e33381ca5bf238d9d7b92ae5ddc62450b6f1c73091492d5f504d",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_0_1_0_0_1_0",
+      "exists": true,
+      "sha256": "51900f006e08909b6bc8449513f1cb4966289b4073bc02c83b963e8b59d1eaf4",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_1_0_0_0_1_0",
+      "exists": true,
+      "sha256": "579ee15b72c7caeb8cefcea104bde818b7fb78e5697d1c10381fd0ce808c59c9",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    },
+    {
+      "fixture": "flat_1_1_1_0_0_1_0",
+      "exists": true,
+      "sha256": "9ffe47d33c91643bb8dfe168c61caffc2c89ad23d9dbe870647bb0a41d83d8a2",
+      "matchesFboReport": true,
+      "matchesDefaultReport": false
+    }
+  ],
+  "fboWorstPrecisionCounterexample": {
+    "fixture": "flat_0_1_0_1_0_0_0",
+    "coordinateSpace": "GL_READPIXELS_BOTTOM_LEFT",
+    "pixel": [
+      88,
+      78
+    ],
+    "h": 62.5,
+    "band": 1,
+    "gainInterpolatedFromActualF32Tdata": 1.149999976158142,
+    "grainXY": [
+      78,
+      200
+    ],
+    "grainRgb": [
+      168,
+      148,
+      102
+    ],
+    "palette": [
+      216,
+      196,
+      150
+    ],
+    "doubleProducts": [
+      248.3999948501587,
+      225.39999532699585,
+      172.4999964237213
+    ],
+    "CPUbaseBytes": [
+      248,
+      225,
+      172
+    ],
+    "illustrativeF32baseBytes": [
+      248,
+      225,
+      173
+    ],
+    "CPUexpectedCode": [
+      247.45260243769525,
+      219.115794294154,
+      155.04373471789563
+    ],
+    "codeWithOnlyBaseBytesSubstituted": [
+      247.45260243769525,
+      219.115794294154,
+      156.5341593505633
+    ],
+    "rawRGBA": [
+      247,
+      219,
+      157,
+      255
+    ],
+    "interpretation": "CPU double 172.4999964237213 rounds172; illustrative binary32 product rounds172.5 then173. This explains a plausible material delta amplified by Q/ToneMap; actual GPU intermediate still requires tester debug-stage evidence, not a proof of all residuals."
+  },
+  "limits": [
+    "Default full raw RGBA currently not retained in scratch for distinct fixtures; use original JSON samples without reconstructing fake pixels.",
+    "Some targets with identical all-zero data can share hashes; that does not establish both raw image archives.",
+    "Metadata/query and numeric bytes disagree on default target domain; write vs read boundary not separately observed.",
+    "No display or device A/B/C evidence; no frozen numeric threshold added or changed.",
+    "Existing reports/shaders/tests/raw assets unchanged."
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "revision": "T110_DESIGN_ARITHMETIC_V1",
+  "date": "2026-10-26",
+  "kind": "designer exact arithmetic and read-only source inventory; NOT product tests, no device",
+  "inputSha256": {
+    "docs/architecture-P011-T104-strict-state-certificates-v1.md": "437855b64524a0a33e0c1d3f970805de4517b23c06dd792046ce994240e59b17",
+    "docs/algorithm-P011-T98-legal-state-numeric-v1.md": "4a20b141a8048be896113eb8e5979a252a11c642c0e10ce178236115d9e2eb1f",
+    "docs/design-T98-numeric-evidence-v1.json": "5d79bc3f82818c55dc0bec6dfd8a3b2689731e4a10b3fcff6c40a21cb17f0328",
+    "entry/src/main/ets/physics/WaterSandField.ets": "4fd86f08de032c70a090dd9d4e3e22a941240eb95314d44ac08468ada4200fe2",
+    "entry/src/main/ets/physics/P011ParticleM2Sink.ets": "5ceac1e11022910e3f572f6e59e8d4464fff1b5b14a9b54f81b6b1f69a1ee6bf",
+    "entry/src/main/ets/physics/P011ParticleHot.ets": "88d7fbdec4d92958a7f99c0d855d0b0b3b8e818a17d708b22a70c1b6e81552db"
+  },
+  "legacyStrictCounterexample": {
+    "hardMax": {
+      "decimal": 0.5773502691896257,
+      "hex": "3fe279a74590331c"
+    },
+    "storedS63to65": [
+      {
+        "decimal": 24,
+        "hex": "4038000000000000"
+      },
+      {
+        "decimal": 24.577350269189626,
+        "hex": "403893cd3a2c8199"
+      },
+      {
+        "decimal": 24,
+        "hex": "4038000000000000"
+      }
+    ],
+    "rawExcess": "1/2251799813685248",
+    "rawExcessInHUlps": 4.0,
+    "rawStrictLegalAtZero": false,
+    "rawFixedPlanExactIntersection": {
+      "lo": "1/2251799813685248",
+      "hi": "-1/2251799813685248",
+      "empty": true
+    }
+  },
+  "settleSyntheticFrozenCollectorApplyMismatch": {
+    "scope": "synthetic graph input demonstrating why A=1 cannot be assumed; not claimed as an observed application trace",
+    "R": {
+      "decimal": 0.3,
+      "bits": "3fd3333333333333",
+      "exact": "5404319552844595/18014398509481984"
+    },
+    "dH": {
+      "decimal": 0.1,
+      "bits": "3fb999999999999a",
+      "exact": "3602879701896397/36028797018963968"
+    },
+    "dL": {
+      "decimal": 0.25,
+      "bits": "3fd0000000000000",
+      "exact": "1/4"
+    },
+    "q": {
+      "decimal": 0.15,
+      "bits": "3fc3333333333333",
+      "exact": "5404319552844595/36028797018963968"
+    },
+    "scaleRN": {
+      "decimal": 0.5,
+      "bits": "3fe0000000000000",
+      "exact": "1/2"
+    },
+    "hRN": {
+      "decimal": 0.05,
+      "bits": "3fa999999999999a",
+      "exact": "3602879701896397/72057594037927936"
+    },
+    "lRN": {
+      "decimal": 0.125,
+      "bits": "3fc0000000000000",
+      "exact": "1/8"
+    },
+    "idealCoefficientA": "12610078956637389/10808639105689190",
+    "exactPhaseSum": "12610078956637389/72057594037927936",
+    "phaseSumMinusControl": "1801439850948199/72057594037927936"
+  },
+  "topSyntheticMIX": {
+    "MH": {
+      "decimal": 0.1,
+      "bits": "3fb999999999999a",
+      "exact": "3602879701896397/36028797018963968"
+    },
+    "ML": {
+      "decimal": 0.2,
+      "bits": "3fc999999999999a",
+      "exact": "3602879701896397/18014398509481984"
+    },
+    "M_RN": {
+      "decimal": 0.30000000000000004,
+      "bits": "3fd3333333333334",
+      "exact": "1351079888211149/4503599627370496"
+    },
+    "exactStoredSum": "10808639105689191/36028797018963968",
+    "coefficientA": "10808639105689191/10808639105689192",
+    "A_equals_one": false,
+    "MIX_LIGHT_bias_b": "-1/36028797018963968",
+    "bias_equals_zero": false,
+    "branchBoundaryQ": [
+      {
+        "decimal": 0.3,
+        "bits": "3fd3333333333333",
+        "exact": "5404319552844595/18014398509481984"
+      },
+      {
+        "decimal": 0.30000000000000004,
+        "bits": "3fd3333333333334",
+        "exact": "1351079888211149/4503599627370496"
+      },
+      {
+        "decimal": 0.3000000000000001,
+        "bits": "3fd3333333333335",
+        "exact": "5404319552844597/18014398509481984"
+      }
+    ]
+  },
+  "landSyntheticSubULPMass": {
+    "m": {
+      "decimal": 1.0,
+      "bits": "3ff0000000000000",
+      "exact": "1"
+    },
+    "q": {
+      "decimal": 5.551115123125783e-17,
+      "bits": "3c90000000000000",
+      "exact": "1/18014398509481984"
+    },
+    "remainderRN": {
+      "decimal": 1.0,
+      "bits": "3ff0000000000000",
+      "exact": "1"
+    },
+    "poolDecreased": false,
+    "strictPartialAllowed": false,
+    "explanation": "positive q may add bed mass while stored pool mass does not change; partial domain requires actual remainder<m"
+  },
+  "zeroLegacyDepositStaticCounterexample": {
+    "source": "P011ParticleHot.ets publishPatchHot DEPOSIT branch",
+    "input": {
+      "state": 1,
+      "mass": 1,
+      "vy": -1,
+      "amount": 0,
+      "disposition": 6
+    },
+    "operation": "remainder=m; nonzero branch writes state=2, y=RN(RN(predictedY-contactEps)+contactEps), vy=0",
+    "conclusion": "not a no-write ZERO even if y rounds back unchanged; not executed against product"
+  },
+  "boundedSelection": {
+    "nonzeroPreviewMax": 2,
+    "zeroPreviewMax": 1,
+    "positiveULPSearchLoop": false
+  },
+  "notProved": [
+    "complete strict route",
+    "CONTACT_HOLD_MOTION",
+    "top non-MIX INWARD without RN inverse endpoint interface",
+    "other writer registry kernels",
+    "invert/external-source publication"
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "revision": "T98_DESIGN_ARITHMETIC_V1",
+  "kind": "designer exact-rational reasoning on stored binary64 inputs; not product test/retest",
+  "date": "2026-10-26",
+  "inputSha256": {
+    "docs/architecture-T90-tilt-interval-routing-v1.md": "72de0383ff944b2382b1895513ada7961d3284a34b4ff3cb1bd1ee2d87d580f1",
+    "test/reports/t86/p086_results.json": "dd680a5b5f8c3d86a25c5bd8748ef293d0dd398fc311fafab2b5f9844cdc7553",
+    "test/reports/t86/p086_traces_step70_75.json": "703178b6e1c2a0f29e8fc4ae08d7957fa9127068a35c12c6956bc2dc249d119e",
+    "test/reports/t100/p100_results.json": "3494b86aba5ec99a78e756b18f9031c2bd319af1b597174dc934bc10e6edeb1e",
+    "test/reports/t100/p100_theta0_edges.json": "5dde8869dc25455fc433c4c745998f606ac89c0439117a9840fce4c889c6051f",
+    "test/reports/t100/p100_theta5_edges.json": "53dc704fb6443c096985c13ff2bfe21ef6312068e54b7ad747e66eea064fa68d"
+  },
+  "hardMax": {
+    "decimal": 0.5773502691896257,
+    "hex": "3fe279a74590331c"
+  },
+  "storedS63to65": [
+    {
+      "decimal": 24,
+      "hex": "4038000000000000"
+    },
+    {
+      "decimal": 24.577350269189626,
+      "hex": "403893cd3a2c8199"
+    },
+    {
+      "decimal": 24,
+      "hex": "4038000000000000"
+    }
+  ],
+  "rawExcess": "1/2251799813685248",
+  "rawExcessFloat": 4.440892098500626e-16,
+  "rawExcessInHUlps": 4.0,
+  "rawStrictLegalAtZero": false,
+  "legacyPreexistingAccepts": true,
+  "rawFixedPlanExactIntersection": {
+    "lo": "1/2251799813685248",
+    "hi": "-1/2251799813685248",
+    "empty": true
+  },
+  "idealSignedHIntersection": {
+    "lo": "0",
+    "hi": "0",
+    "empty": false
+  },
+  "classification": [
+    {
+      "g": {
+        "decimal": 0.5773502691896256,
+        "hex": "3fe279a74590331b"
+      },
+      "strictAtZero": true,
+      "distanceFromH": "-1/9007199254740992"
+    },
+    {
+      "g": {
+        "decimal": 0.5773502691896257,
+        "hex": "3fe279a74590331c"
+      },
+      "strictAtZero": true,
+      "distanceFromH": "0"
+    },
+    {
+      "g": {
+        "decimal": 0.5773502691896258,
+        "hex": "3fe279a74590331d"
+      },
+      "strictAtZero": false,
+      "distanceFromH": "1/9007199254740992"
+    },
+    {
+      "g": {
+        "decimal": -0.5773502691896256,
+        "hex": "bfe279a74590331b"
+      },
+      "strictAtZero": true,
+      "distanceFromH": "-1/9007199254740992"
+    },
+    {
+      "g": {
+        "decimal": -0.5773502691896257,
+        "hex": "bfe279a74590331c"
+      },
+      "strictAtZero": true,
+      "distanceFromH": "0"
+    },
+    {
+      "g": {
+        "decimal": -0.5773502691896258,
+        "hex": "bfe279a74590331d"
+      },
+      "strictAtZero": false,
+      "distanceFromH": "1/9007199254740992"
+    }
+  ],
+  "nearestStoredHeightBelowBoundary": {
+    "value": {
+      "decimal": 24.577350269189623,
+      "hex": "403893cd3a2c8198"
+    },
+    "differenceToLeft": {
+      "decimal": 0.5773502691896226,
+      "hex": "3fe279a745903300"
+    },
+    "note": "Illustrative lattice boundary, NOT authorization to change height or move mass after commit."
+  },
+  "T100theta5": {
+    "slopeLo": {
+      "tag": "finite",
+      "value": -0.04636900367897223,
+      "hex": "bfa7bdad94b2d610"
+    },
+    "slopeHi": {
+      "tag": "finite",
+      "value": 0.0901133354419345,
+      "hex": "3fb711aae4a8160c"
+    },
+    "loEdge": 63,
+    "hiEdge": 64,
+    "empty": false,
+    "containsZero": true
+  },
+  "limitations": [
+    "Existing over-limit snapshot cannot be accepted unchanged under strict original H; new trajectory needs representable writer admission before commit.",
+    "Exact comparison fixes decision arithmetic, not already stored excess.",
+    "T100 summaries consumed as continuation; device code5 same cause unproved."
+  ]
+}

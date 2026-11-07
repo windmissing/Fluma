@@ -1,0 +1,176 @@
+{
+  "revision": "T99_DESIGN_ARITHMETIC_V1",
+  "kind": "designer representation/counterexample arithmetic; no GPU execution",
+  "date": "2026-10-26",
+  "inputSha256": {
+    "docs/architecture-T93-basebyte-evidence-routing-v1.md": "556fc63ed1afe6c9ed2d7b0ce3318fcc4962905bb1de7937303a0f9cb7b2bba9",
+    "test/reports/t88/t88-stage-probe.json": "593f4468bb16790e7bbad6abbcd2150a2abfd1886f59f3b3b17a0a415aa4fa95",
+    "docs/design-P013-p1-material-recipe-slope-confirmation-v1.md": "e6eab5425e943d25a1d50a5755d50a64483ad59e50d6820391738c6ce129185b",
+    "entry/src/main/cpp/p013renderer/glsl/p1_material.frag": "8f7b85c75c8a6b5167bb0b1b17a5924450c9087f409415d7b6cafcc76d40ebbf",
+    "entry/src/main/ets/render/preparation/P013MaterialPreparation.ets": "45dc988e44a5798d43dd974da6ac3b2bc2e6f0f814785cc8000c08c1026b2aa1"
+  },
+  "confirmedIntegerAt88": {
+    "color": [
+      238,
+      181,
+      85
+    ],
+    "baseB": 173,
+    "grainB": 102,
+    "strataB": 127,
+    "k": 1
+  },
+  "referencePoint": {
+    "gain": 1.149999976158142,
+    "F64product": 172.4999964237213,
+    "F64base": 172,
+    "illustrativeF32product": 172.5,
+    "F32base": 173
+  },
+  "halfCases": [
+    {
+      "input": {
+        "decimal": 0.49999999999999994,
+        "hex": "3fdfffffffffffff"
+      },
+      "floorRNE64PlusHalf": 1,
+      "exactHalfUp": 0
+    },
+    {
+      "input": {
+        "decimal": 0.5,
+        "hex": "3fe0000000000000"
+      },
+      "floorRNE64PlusHalf": 1,
+      "exactHalfUp": 1
+    },
+    {
+      "input": {
+        "decimal": 0.5000000000000001,
+        "hex": "3fe0000000000001"
+      },
+      "floorRNE64PlusHalf": 1,
+      "exactHalfUp": 1
+    },
+    {
+      "input": {
+        "decimal": 1.4999999999999998,
+        "hex": "3ff7ffffffffffff"
+      },
+      "floorRNE64PlusHalf": 1,
+      "exactHalfUp": 1
+    },
+    {
+      "input": {
+        "decimal": 1.5,
+        "hex": "3ff8000000000000"
+      },
+      "floorRNE64PlusHalf": 2,
+      "exactHalfUp": 2
+    },
+    {
+      "input": {
+        "decimal": 1.5000000000000002,
+        "hex": "3ff8000000000001"
+      },
+      "floorRNE64PlusHalf": 2,
+      "exactHalfUp": 2
+    },
+    {
+      "input": {
+        "decimal": 172.49999999999997,
+        "hex": "40658fffffffffff"
+      },
+      "floorRNE64PlusHalf": 172,
+      "exactHalfUp": 172
+    },
+    {
+      "input": {
+        "decimal": 172.5,
+        "hex": "4065900000000000"
+      },
+      "floorRNE64PlusHalf": 173,
+      "exactHalfUp": 173
+    },
+    {
+      "input": {
+        "decimal": 172.50000000000003,
+        "hex": "4065900000000001"
+      },
+      "floorRNE64PlusHalf": 173,
+      "exactHalfUp": 173
+    },
+    {
+      "input": {
+        "decimal": 247.49999999999997,
+        "hex": "406eefffffffffff"
+      },
+      "floorRNE64PlusHalf": 247,
+      "exactHalfUp": 247
+    },
+    {
+      "input": {
+        "decimal": 247.5,
+        "hex": "406ef00000000000"
+      },
+      "floorRNE64PlusHalf": 248,
+      "exactHalfUp": 248
+    },
+    {
+      "input": {
+        "decimal": 247.50000000000003,
+        "hex": "406ef00000000001"
+      },
+      "floorRNE64PlusHalf": 248,
+      "exactHalfUp": 248
+    }
+  ],
+  "nativePixelMExamples": [
+    {
+      "surfaceWidth": 256,
+      "nativeX": 144,
+      "modelColumn": 72,
+      "fraction": 0.25,
+      "fH": 0.35000000000000003,
+      "gain": 1.2249999642372131,
+      "Mpalette": [
+        191.14999999999998,
+        186.2,
+        136.35
+      ],
+      "MbaseBytes": [
+        234,
+        228,
+        167
+      ]
+    },
+    {
+      "surfaceWidth": 256,
+      "nativeX": 145,
+      "modelColumn": 72,
+      "fraction": 0.75,
+      "fH": 0.6500000000000001,
+      "gain": 1.074999988079071,
+      "Mpalette": [
+        169.84999999999997,
+        177.8,
+        124.65
+      ],
+      "MbaseBytes": [
+        183,
+        191,
+        134
+      ]
+    }
+  ],
+  "stripBytesByWidth": {
+    "1178": 14136,
+    "1920": 23040,
+    "3840": 46080
+  },
+  "limitations": [
+    "T88 debug attachment0 RGBA8, production sRGB comparison pending T101.",
+    "F64 preparation inherits frozen reference operation order; floor(fl(x+0.5)) and exact mathematical half-up may differ at adjacent representable values.",
+    "Native-X strips address only baseByte for a specified band; mask/k/texel/Q/lighting/target errors remain separately observable."
+  ]
+}
