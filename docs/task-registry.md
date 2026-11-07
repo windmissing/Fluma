@@ -84,6 +84,8 @@
 
 2026-11-05：批量验收 11-01~11-05 八卡（用户「除22外全部验收」）：**T350**（5970fbd+2d504b7，真机 R1-R8）——R1/R2/R5/R6 PASS（三入口区分、真实触摸出生可见、UP 停源、前后台无崩溃）；R3-C BLOCKED→T353（UP 后 pY 逐位冻结 8 模拟秒而 commit 推进——T347 E3「注入期床增长」窄证保留、UP 后冻结另归因）；R4-B FAIL code100×19（V1 链固有复现）；R8 BLOCKED→T353（target89/effective30 倾角分歧）。**T351**（790adb2）通过关闭——V2 帧预算工程修订交付（互斥整帧收据+真实复制字节计数+counter13 语义变更唯一）。**T352**（67dad2a）混合判定关闭——**性能 FAIL 如实**（T351 修订零可测收益：空场 12.0fps==基线、触摸坍塌终点 1.3fps 同 T347、p50 660ms vs 33.3ms 预算 20×超——主导阶段在别处，按 T349 §2 交 T361 归因）；严格语义 PASS（182/182 CURRENT 零 fault）、UP/前后台 PASS；settle/LAND 该包不可测（无 T347STEP wiring）。**T354**（e87be4c）通过关闭——独立 oracle O1 互斥闭合 24 profiles PASS（0.5ms 舍入容差）、O2 计数关系 PASS（差分 656×削减+诊断独立 8/8）、O4/O5 PASS、O5b NOT_IMPLEMENTED honest RED；两次 oracle 自缺陷迭代如实。**T355**（219bc97+3ee3c42）部分完成关闭——真手持摇精确 BLOCKED（无人手+无加速度计注入通道，接手 effector 人工补测）；可做部分完成：触摸基线出生可见（18 帧 GIF）+既有 FAIL 引用不重归因。**T356**（algorithm-T356）通过关闭——双态单沙材质视觉合同 DESIGN_READY_FOR_ARCHITECT（R8 资产/12 项 SM 像素正反控/9 例规格）。**T358**（f06de96）通过关闭——RAW 窗口追回裁定：C 原件仅至 frame406，480-720 RAW_WINDOW_NOT_SAVED（T350 s3 证据列勘误）；UP 原始事件通道不存在（uitest 设计）；结果回 T353。**T359**（8202810）通过关闭——停源切点有界诊断交付（逐 ID 位型收据+T351 预算对象复用+独立工程+签包；T360 前置齐）。**在途保留**：T353（等 T359→T360 切点证据续归因）、T357（等 T354 基线差分）、T360（等 T359 签包，真机）、T361（性能零收益归因）、T362（单沙材质工程化，消费 T356）。退役 T350/T351/T352/T354/T355/T356/T358/T359。
 
+2026-11-07：批量验收三卡（11-07 下午交付）：**T403**（8d7a9f0，test-report-T403）通过关闭——**三臂全达成**：臂1 0°近床正控三笔正授予床 0→0.3 全退役+verified；臂2 25°受限三分列床 0.13212158388108966 离线逐位一致；臂3 首个 T3 零获准负控如实；两臂 PRESENT_CURRENT_SWAP 同帧证实；每臂 2 步封档——**T393 的 25 分钟等待消除，目标3「触摸→粒子态→LAND→床增长」真机全链首次完整闭环**；Z08 导出 3/3 SHA 验证。**T404**（6584249）通过关闭——GPU 独立进度时钟 V2 隔离实验实现（ProgressClockV2/PlanGrantV2、双域 U64 记账、250ms 绝对 deadline 不续期、隔离宏、生产默认 V1 不受影响、字典 T404_STAGE65_V1）；离线 10 万 pulse oracle 全过；真机验证归 T405（等签包）。**T406**（5322349）通过关闭——单沙独立标定与屏幕配对 V2 实现（预登记 nearest 模型+25 点训练/holdout+RGB 零容差+独立时钟域）；真机判读归 tester。在途保留：T399/T405（等包）、T402 列178保未测。退役 T403/T404/T406。
+
 2026-10-31：T346诊断交付（a3e9602，docs/test-report-T346-v2-no-settle-offline-repro-v1.md）通过关闭——**OFFLINE_NOT_REPRODUCED**：Node 1:1 harness（直接 require 真实 ArkTS 源码 transpile，零重写偏差）证明 V2 全链物理正常（pY 215→0.577 单调下降、~6.5s 着陆、mh 床增长 0→0.577、motionCount 30 活跃、mediumMode 恒 DRY_AIR_V1、barrier 无 fault）；**设备层根因定向=帧率坍塌致模拟时间不足**（T343 双进程 hilog 重析：空场 12fps→注入后 0.5fps，观测窗模拟时间 ≤3.27s < 220/vTerm=3.44s 落差时延——粒子物理上尚未落完，s1≈s4「位置不变」=慢速下落被低采样冻结的视觉假象）；性能缺陷移交（V2 包装层 barrier verifyPublicBoundary 256×70 对拍+matchesAuthority 全量比较 O(大常数)/步）供 architect 派性能卡；非机回归全绿（harness 固化 2/2+T216 7/7+regression 10/10+strict pack）。→ 派T347 tester真机验证（E1观测窗延长至模拟时间≥7s hilog实时重建/E2 pY下降/E3床量非零LAND/E4双态同帧可见+fps坍塌曲线采集，6ae5b850e4b0e9cb68f537d6）。退役T346。
 
 | 编号 | task | 角色 | 优先级 | 卡 ID |
@@ -576,3 +578,46 @@ T02、T08、T13按滴答完成状态登记完成，不增加manager验收；端�
 | T361 | 【T361·帧率修订无收益首次归因】architect：预算文件、采样分母与主导阶段 | architect | P5 | 6aec7a67e4b0b0ea8935a27e |
 | T362 | 【T362·双态单沙材质工程化】architect：新packet、R8资产与原子配置 | architect | P4 | 6aec7a67e4b0e83fb76bd124 |
 
+
+| T363 | 【T363·预算原文件定点补取】tester | tester | P5 | 6aed2353e4b0cb1ec563f769 |
+| T364 | 【T364·双态单沙材质实现】developer | developer | P4 | 6aed2353e4b013f1287e8716 |
+| T365 | 【T365·双态单沙独立像素验证】tester | tester | P4 | 6aed2354e4b0e83fb772758b |
+
+| T366 | 【T366·CPU粒子事务热路修订】developer | developer | P5 | 6aed3245e4b03d82357aba35 |
+| T367 | 【T367·停源新生粒子观测修订】developer | developer | P5 | 6aed3245e4b0e83fb7742b9f |
+| T368 | 【T368·CPU热路修订真机定点验证】tester | tester | P5 | 6aed3246e4b0e83fb7742ba0 |
+| T369 | 【T369·停源新生粒子同包真机补证】tester | tester | P5 | 6aed3246e4b013f128802990 |
+| T370 | 【T370·单沙像素缺证工程分流】architect | architect | P4 | 6aed3246e4b0b0ea893de2b6 |
+| T371 | 【T371·单沙离线FBO像素补证】tester | tester | P4 | 6aed37cde4b0cb1ec5699442 |
+| T372 | 【T372·单沙窗口冷读回探针】developer | developer | P4 | 6aed37cde4b0e83fb774e73a |
+| T373 | 【T373·单沙真实窗口颜色链验证】tester | tester | P4 | 6aed37cde4b013f12880d4bf |
+| T374 | 【T374·CPU粒子apply累计复杂度复核】architect | architect | P5 | 6aed6e1fe4b07013b16e1112 |
+| T375 | 【T375·GPU首次真实提交预热】developer | developer | P5 | 6aed6edfe4b03a16e4e7dd24 |
+| T376 | 【T376·GPU预热与双源上屏真机验证】tester | tester | P5 | 6aed6edfe4b07013b16e2167 |
+| T377 | 【T377·CPU零获准跨列纵向推进设计】designer | designer | P3 | 6aed720be4b07013b16e75c9 |
+| T378 | 【T378·CPU跨列受阻纵向推进工程化】architect | architect | P3 | 6aed7aa2e4b0277b8979dbaa |
+| T379 | 【T379·GPU冷时间线独立判读工具】tester | tester | P5 | 6aed7b5fe4b0ea87dfb5fbfb |
+| T380 | 【T380·GPU主线端到端收益计量合同】architect | architect | P5 | 6aed7b5fe4b03a16e4eb260a |
+| T381 | 【T381·CPU跨列受阻纵向推进实现】developer | developer | P3 | 6aed7b5fe4b0277b8979effa |
+| T382 | 【T382·GPU预热后批尾停顿与上屏断链归因】architect | architect | P5 | 6aed8543e4b0987aa1814681 |
+| T383 | 【T383·单沙合法ROI被拒首次归因】architect | architect | P4 | 6aed8543e4b0987aa1814682 |
+| T384 | 【T384·GPU提交停顿分段探针】developer | developer | P5 | 6aed8829e4b07013b170b347 |
+| T385 | 【T385·单沙ROI字节长度桥接修订】developer | developer | P4 | 6aed8829e4b0987aa18186c5 |
+| T386 | 【T386·CPU零获准纵向推进独立真机验证】tester | tester | P3 | 6aed9a45e4b0ea87dfb9354b |
+| T387 | 【T387·GPU第二批flush超窗解法裁定】architect | architect | P5 | 6aedadfae4b07013b174aada |
+| T388 | 【T388·CPU源列沉降发布身份补证分流】architect | architect | P3 | 6aedadfae4b03a16e4f847d9 |
+| T389 | 【T389·GPU前两批冷准备对照包】developer | developer | P5 | 6aedbdffe4b0987aa185ed9d |
+| T390 | 【T390·GPU冷准备A/B与双源定点真机】tester | tester | P5 | 6aedbdffe4b0ea87dfbc8450 |
+| T391 | 【T391·单沙解锁后画面停更首次归因】architect | architect | P4 | 6aedbdffe4b0987aa185ed9e |
+| T392 | 【T392·CPU Z08发布与LAND同帧冷档】developer | developer | P3 | 6aedbdffe4b03a16e4fadc02 |
+| T393 | 【T393·CPU Z08 LAND与同token定点真机】tester | tester | P3 | 6aedbdffe4b0277b89802d02 |
+| T394 | 【T394·单沙解锁与三区取证隔离】developer | developer | P4 | 6aedc43ce4b0ea87dfbd0c30 |
+| T395 | 【T395·GPU停顿迁移与提交时钟裁定】architect | architect | P5 | 6aee8088e4b07013b17db446 |
+| T396 | 【T396·单沙三区颜色与解锁显示真机核对】tester | tester | P4 | 6aee8088e4b0ea87dfc43376 |
+| T397 | 【T397·CPU近床夹具正授予缺证分流】architect | architect | P3 | 6aee8088e4b03a16e50a76a1 |
+| T398 | 【T398·GPU控制与提交隔离V1】developer | developer | P5 | 6aee846fe4b03a16e50b00d0 |
+| T399 | 【T399·GPU控制隔离与双源闭环真机】tester | tester | P5 | 6aee846fe4b07013b17df12f |
+| T400 | 【T400·CPU确定性近床LAND取证修订】developer | developer | P3 | 6aee846fe4b07013b17df132 |
+| T401 | 【T401·GPU独立进度时钟V2工程合同】architect | architect | P5 | 6aeeb779e4b07013b180f55d |
+| T402 | 【T402·单沙屏幕配对亚像素兼容裁定】architect | architect | P4 | 6aeeb779e4b0ea87dfc76379 |
+| T405 | 【T405·GPU V2双源与过载真机验证】tester | tester | P5 | 6aeeba73e4b07013b1811708 |
