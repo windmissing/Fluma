@@ -42,3 +42,5 @@ T366 离线 8/8 和字段/计数定义保留。细账 `T366_HOT_APPLY_EXCLUSIVE_
 developer 本角色编译、签包和上述非机检查后交付。独立 tester 在 GPU 队列允许时用同设备同脚本的标识包采对照，按帧和子步分别对账。设备性能判据沿逐 callback p50/p95、真实阶段与完整身份。33.3 ms 参考仍保留，先验证 CPU 参考减少实际累计工作，原档非 hot 余量123 ms 的量级说明单一优化不足以承诺流畅。若新证据显示 hotApply 内另一子段主导，带独占计量回 architect；工程修订不以盲调参数掩盖负载。渲染前景背景沿 XComponent+shader，失败 FAULT 或完整上一有效 token 的 STALE。
 
 本卡 P3 复杂度复核与工程合同已完成。T368 的性能 FAIL、T366 装包身份差异与细分未取到分别登记。后续 CPU 参考是否排入实施由 manager 按 GPU 主线调度。
+
+2026-11-09 T420 续订。按 [CPU 仿真全链复杂度重构](architecture-T420-cpu-frame-complexity-v1.md) 的 P4 整体路线接力。本文的复制和审计证据纳入同一整帧预算，实施覆盖源、预演/权威、发布及呈现的真实负载对照。
