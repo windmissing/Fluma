@@ -3,10 +3,27 @@
 #include <cstring>
 #include <cstdio>
 namespace grs {namespace m1 {
+LedgerPrefixStage FullM1Transport::StageLedger()const{
+ LedgerPrefixStage s;s.identity=source.identity;s.bank=source.banks[source.owner.Bank()];s.ledger=source.work;
+ s.offset=96+4096*64+source.words;const auto& h=source.owner.Header();s.entries=h[34];
+ s.source={h[14],h[15]};s.physics={h[16],h[17]};s.nonce={h[12],h[13]};
+ auto pair=[&](uint32_t at,U64 v){return h[at]==v.lo&&h[at+1]==v.hi;};
+ s.qualified=source.owner.State()==FlightState::Idle&&h[0]==1213420103u&&h[1]==2&&h[2]==256&&
+  pair(4,s.identity.run)&&pair(6,s.identity.owner)&&pair(8,s.identity.context)&&pair(10,s.identity.surface)&&
+  pair(20,s.identity.geometry)&&pair(22,s.identity.config)&&h[24]==1&&h[25]==1&&h[26]==1&&
+  h[27]==2&&h[28]==2&&h[29]==2&&h[30]==2&&h[31]==3&&h[76]==source.owner.Bank()&&s.entries<=4096;
+ for(size_t i=0;i<8;++i)s.qualified=s.qualified&&h[88+i]==s.identity.shaderSha[i]&&h[96+i]==s.identity.angleSha[i]&&h[104+i]==s.identity.layoutSha[i];
+ return s;
+}
+void FullM1Transport::AddCopySample(const CopyAccounting& s){
+ size_t at=(copyStart+copyCount)%copyRing.size();
+ if(copyCount==copyRing.size()){copyStart=(copyStart+1)%copyRing.size();++copyDropped;}else ++copyCount;
+ copyRing[at]=s;
+}
 SourceTransportStats FullM1Transport::Stats()const{auto r=source.Stats();r.allocatedBytes=AllocatedBytes();r.dispatches+=stats.dispatches;r.barriers+=stats.barriers;r.fences+=stats.fences;r.polls+=stats.polls;r.mappedBytes+=stats.mappedBytes;r.uploadedBytes+=stats.uploadedBytes;r.coldMappedBytes+=stats.coldMappedBytes;if(!r.firstGlError)r.firstGlError=stats.firstGlError;return r;}
 TransportCode FullM1Transport::Create(uint32_t K,uint32_t Kw,const Identity& id,const QuantumParameters& cold,
  uint32_t emitQ,const ColdPrepareOptions& preparation){
- if(active||source.ready||quantum.context!=EGL_NO_CONTEXT||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;if(emitQ>1073741824u||cold.gravity<120u||cold.gravity>1073741824u||cold.settle==0u||cold.settle>1073741824u||cold.kAir>960u||cold.kFlight>960u||cold.kWet==0u||cold.kWet>960u||cold.kappa>960u||cold.soft>=605394u)return TransportCode::PROTOCOL_REJECTED;coldParams=cold;lost=failed=frozen=false;lastFrame={};lastOrdinal=0;frameHasSource=false;lastPublication=2;arenaFrame[0]=arenaFrame[1]={};used[0]=used[1]=0;stats={};extraBytes=0;tail={};batchesIssued=lastBatchPasses=submitCancelled=0;flushes=0;warmupWallNs=0;acceptedArena=0;acceptedQuantum=false;lastBatchWallNs=submitFirstNs=submitTotalWallNs=submitPumpWallNs=0;
+ if(active||source.ready||quantum.context!=EGL_NO_CONTEXT||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;if(emitQ>1073741824u||cold.gravity<120u||cold.gravity>1073741824u||cold.settle==0u||cold.settle>1073741824u||cold.kAir>960u||cold.kFlight>960u||cold.kWet==0u||cold.kWet>960u||cold.kappa>960u||cold.soft>=605394u)return TransportCode::PROTOCOL_REJECTED;ledgerPrefix=preparation.ledgerPrefix;copyStart=copyCount=0;copyDropped=0;coldParams=cold;lost=failed=frozen=false;lastFrame={};lastOrdinal=0;frameHasSource=false;lastPublication=2;arenaFrame[0]=arenaFrame[1]={};used[0]=used[1]=0;stats={};extraBytes=0;tail={};batchesIssued=lastBatchPasses=submitCancelled=0;flushes=0;warmupWallNs=0;acceptedArena=0;acceptedQuantum=false;lastBatchWallNs=submitFirstNs=submitTotalWallNs=submitPumpWallNs=0;
  source.isolation=isolation;source.submitObserver=quantum.submitObserver=submitObserver;auto c=source.CreateUsing(K,Kw,id,FullM1ShaderSha(),FullSourceKernel());if(c!=TransportCode::OK)return c;source.emitQ=emitQ;source.owner.fullWaterContract=true;c=quantum.Create(K,Kw);if(c!=TransportCode::OK){Release();return c;}
  glDeleteProgram(quantum.program);quantum.program=0;GLuint sh=glCreateShader(GL_COMPUTE_SHADER);const char* text=QuantumCommitKernel();glShaderSource(sh,1,&text,nullptr);submitObserver.Emit(SubmitStage::ShaderEnter);glCompileShader(sh);GLint good;glGetShaderiv(sh,GL_COMPILE_STATUS,&good);submitObserver.Emit(SubmitStage::ShaderExit,0,uint32_t(good));if(!good){glDeleteShader(sh);Release();return TransportCode::SHADER_FAILED;}quantum.program=glCreateProgram();glAttachShader(quantum.program,sh);submitObserver.Emit(SubmitStage::ProgramEnter);glLinkProgram(quantum.program);glDeleteShader(sh);glGetProgramiv(quantum.program,GL_LINK_STATUS,&good);submitObserver.Emit(SubmitStage::ProgramExit,0,uint32_t(good));if(!good){Release();return TransportCode::SHADER_FAILED;}
  SubmitScope resources(submitObserver,SubmitStage::ResourceEnter,SubmitStage::ResourceExit);spareAt=quantum.workWords;replayFrozen=spareAt+quantum.words;uint32_t expanded=replayFrozen+256;glBindBuffer(GL_SHADER_STORAGE_BUFFER,quantum.workspace);glBufferData(GL_SHADER_STORAGE_BUFFER,expanded*4,nullptr,GL_DYNAMIC_COPY);glBufferSubData(GL_SHADER_STORAGE_BUFFER,quantum.angles*4,sizeof(kAngleWords),kAngleWords);quantum.allocated+=uint64_t(expanded-quantum.workWords)*4;quantum.workWords=expanded;quantum.deferFence=true;
@@ -168,7 +185,7 @@ TransportCode FullM1Transport::SubmitSource(const std::array<uint32_t,32>& comma
  auto result=[&]()->TransportCode {
  if(lost)return TransportCode::STATE_LOST;if(active||frozen||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;if(failed)return TransportCode::PROTOCOL_REJECTED;
  if(r.kind!=1||Compare64(r.frame,lastFrame)<=0||r.publicationSlot>1||(source.Owner().AcceptedCount()&&r.publicationSlot==lastPublication))return TransportCode::PROTOCOL_REJECTED;
- auto c=source.Submit(command,r);if(c!=TransportCode::OK)return c;source.owner.pubs[r.publicationSlot].available=false;pending=source.pending;active=true;quantumFlight=false;lastFrame=r.frame;lastOrdinal=0;frameHasSource=true;return c;
+ auto c=source.Submit(command,r);if(c!=TransportCode::OK)return c;source.owner.pubs[r.publicationSlot].available=false;pending=source.pending;CopyAccounting sample;sample.identity=source.identity;sample.root=pending;AddCopySample(sample);active=true;quantumFlight=false;lastFrame=r.frame;lastOrdinal=0;frameHasSource=true;return c;
 
  }();observed.End(uint32_t(result));return result;
 }
@@ -187,11 +204,13 @@ TransportCode FullM1Transport::SubmitQuantum(const QuantumParameters& p,RootRequ
  if(isolation&&!isolation->Check(r,RootCut::Stage))return TransportCode::REVOKED;
  uint32_t a=r.eventArena,prefix=0;GLuint prefixBuffer=0;if(order==0&&frameHasSource&&lastOrdinal==0){prefix=source.tail[53];prefixBuffer=source.events[source.pending.eventArena];}else if(Compare64(arenaFrame[a],r.frame)==0){prefix=used[a];prefixBuffer=eventArenas[a];}
  r.eventStart=prefix;r.eventCapacity=quantum.EventCapacity();r.dispatchCount=quantum.ExpectedDispatches()+8;r.barrierCount=r.dispatchCount;r.uploadedBytes=0;
+ const auto ledgerStage=StageLedger();
  source.Retire();if(source.fatal)return TransportCode::GL_FAILED;auto pin=source.PinCandidate();if(pin!=TransportCode::OK)return pin;auto begin=source.owner.BeginQuantum(r,p.requestedAngle);if(begin!=ControlCode::OK){source.candidatePinned=false;return begin==ControlCode::BACKPRESSURE?TransportCode::BUSY:TransportCode::PROTOCOL_REJECTED;}
  quantum.events=isolation?scratchEvent:eventArenas[a];
  quantum.traceIdentity=source.identity;
  const auto stageStart=isolation?isolation->Stamp():0;
- auto c=quantum.Enqueue(source.banks[source.owner.Bank()],source.work,96+4096*64+source.words,prefixBuffer,prefix,p,r,tailObserver);
+ auto c=quantum.Enqueue(source.banks[source.owner.Bank()],source.work,96+4096*64+source.words,prefixBuffer,prefix,p,r,tailObserver,false,nullptr,ledgerPrefix?&ledgerStage:nullptr);
+ AddCopySample(quantum.copies);
  if(isolation)isolation->Record(r,RootCut::Stage,stageStart,uint32_t(c));
  if(c!=TransportCode::OK){source.owner.Stop();failed=true;source.candidatePinned=false;return c;}
  // The sealed-state transfer fields must be set BEFORE the first batch: the
@@ -353,7 +372,8 @@ TransportCode FullM1Transport::Poll(AcceptedRoot& out){
  auto result=[&]()->TransportCode {
  out={};if(lost)return TransportCode::STATE_LOST;if(!active)return TransportCode::NOT_READY;
  if(!quantumFlight){
-  auto code=source.Poll(out);
+  auto mappedBefore=source.Stats().mappedBytes;auto code=source.Poll(out);
+  if(copyCount)copyRing[(copyStart+copyCount-1)%copyRing.size()].completionMappedBytes+=source.Stats().mappedBytes-mappedBefore;
   if(code==TransportCode::BUSY||code==TransportCode::REVOKED)return code;
   active=false;
   if(code==TransportCode::OK){
@@ -383,6 +403,7 @@ TransportCode FullM1Transport::Poll(AcceptedRoot& out){
   failed=true;source.owner.Stop();return TransportCode::GL_FAILED;
  }
  std::memcpy(candidate.data(),mapped,1024);stats.mappedBytes+=1024;
+ if(copyCount)copyRing[(copyStart+copyCount-1)%copyRing.size()].completionMappedBytes+=1024;
  const bool unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;
  auto error=glGetError();if(!error)error=quantum.firstGlError;if(!unmapped&&!error)error=GL_INVALID_OPERATION;
  if(error&&!stats.firstGlError)stats.firstGlError=error;
@@ -442,5 +463,5 @@ TransportCode FullM1Transport::Release(){if(active||quantum.fence||submitPhase!=
 ControlCode FullM1Transport::Acquire(uint32_t slot,U64 generation,PublicationLease& lease,GLuint& buffer){return source.Acquire(slot,generation,lease,buffer);}
 ControlCode FullM1Transport::ReleasePublication(uint32_t slot,U64 generation,GLsync f){return source.ReleasePublication(slot,generation,f);}
 TransportCode FullM1Transport::Freeze(bool value){if(active||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;auto c=source.Freeze(value);if(c!=TransportCode::OK)return c;c=quantum.Freeze(value);if(c==TransportCode::OK)frozen=value;return c;}
-TransportCode FullM1Transport::Capture(std::vector<uint32_t>& bank,std::vector<uint32_t>& log){if(!frozen||active||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;auto c=source.CaptureAccepted(bank);if(c!=TransportCode::OK)return c;uint32_t a=acceptedArena,n=tail[53];glBindBuffer(GL_COPY_READ_BUFFER,acceptedQuantum?eventArenas[a]:source.events[a]);if(n==0){log.clear();return TransportCode::OK;}auto p=glMapBufferRange(GL_COPY_READ_BUFFER,0,GLsizeiptr(n)*256,GL_MAP_READ_BIT);if(!p)return TransportCode::GL_FAILED;log.resize(size_t(n)*64);std::memcpy(log.data(),p,log.size()*4);stats.coldMappedBytes+=log.size()*4;return glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE?TransportCode::OK:TransportCode::GL_FAILED;}
+TransportCode FullM1Transport::Capture(std::vector<uint32_t>& bank,std::vector<uint32_t>& log){if(!frozen||active||submitPhase!=SubmitPhase::IDLE)return TransportCode::BUSY;auto beforeCold=source.Stats().coldMappedBytes;auto c=source.CaptureAccepted(bank);if(copyCount)copyRing[(copyStart+copyCount-1)%copyRing.size()].coldMappedBytes+=source.Stats().coldMappedBytes-beforeCold;if(c!=TransportCode::OK)return c;uint32_t a=acceptedArena,n=tail[53];glBindBuffer(GL_COPY_READ_BUFFER,acceptedQuantum?eventArenas[a]:source.events[a]);if(n==0){log.clear();return TransportCode::OK;}auto p=glMapBufferRange(GL_COPY_READ_BUFFER,0,GLsizeiptr(n)*256,GL_MAP_READ_BIT);if(!p)return TransportCode::GL_FAILED;log.resize(size_t(n)*64);std::memcpy(log.data(),p,log.size()*4);stats.coldMappedBytes+=log.size()*4;if(copyCount)copyRing[(copyStart+copyCount-1)%copyRing.size()].coldMappedBytes+=log.size()*4;return glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE?TransportCode::OK:TransportCode::GL_FAILED;}
 }}

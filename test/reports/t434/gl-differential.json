@@ -1,0 +1,112 @@
+{
+  "schema": "T434_DEVELOPER_GL_DIFF_V1",
+  "device": "NOT_RUN",
+  "engine": "ANGLE SwiftShader GLES 3.1",
+  "rows": [
+    {
+      "k": 192,
+      "w": 64,
+      "route": "full",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 192,
+      "Kw": 64,
+      "passed": 465,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "b193357ac24d5e975308feb6034cbaa6a32475cad668df4b6a4549d429784d73",
+      "log": ".codex/local-test/t434-host/full-192-64.txt"
+    },
+    {
+      "k": 192,
+      "w": 64,
+      "route": "prefix",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 192,
+      "Kw": 64,
+      "passed": 465,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "b193357ac24d5e975308feb6034cbaa6a32475cad668df4b6a4549d429784d73",
+      "log": ".codex/local-test/t434-host/prefix-192-64.txt"
+    },
+    {
+      "k": 192,
+      "w": 128,
+      "route": "full",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 192,
+      "Kw": 128,
+      "passed": 437,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "3236d09654259bb19e5421c7a9ec0ebcd38f428c50f62d15029d00d25a32e513",
+      "log": ".codex/local-test/t434-host/full-192-128.txt"
+    },
+    {
+      "k": 192,
+      "w": 128,
+      "route": "prefix",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 192,
+      "Kw": 128,
+      "passed": 437,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "3236d09654259bb19e5421c7a9ec0ebcd38f428c50f62d15029d00d25a32e513",
+      "log": ".codex/local-test/t434-host/prefix-192-128.txt"
+    },
+    {
+      "k": 512,
+      "w": 64,
+      "route": "full",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 512,
+      "Kw": 64,
+      "passed": 437,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "d8c53af271d706c9fdcfa22f8518158feec312b07019d2d222fe00d637c3c391",
+      "log": ".codex/local-test/t434-host/full-512-64.txt"
+    },
+    {
+      "k": 512,
+      "w": 64,
+      "route": "prefix",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 512,
+      "Kw": 64,
+      "passed": 437,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "d8c53af271d706c9fdcfa22f8518158feec312b07019d2d222fe00d637c3c391",
+      "log": ".codex/local-test/t434-host/prefix-512-64.txt"
+    },
+    {
+      "k": 512,
+      "w": 128,
+      "route": "full",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 512,
+      "Kw": 128,
+      "passed": 437,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "c6b3aa940c7b2e5acb41316197404c5fbfb2783ffdc2c227395e6879405f66dd",
+      "log": ".codex/local-test/t434-host/full-512-128.txt"
+    },
+    {
+      "k": 512,
+      "w": 128,
+      "route": "prefix",
+      "revision": "T434_FULL_M1_DIFF_V1",
+      "K": 512,
+      "Kw": 128,
+      "passed": 437,
+      "failed": 0,
+      "device": "NOT_RUN",
+      "sha256": "c6b3aa940c7b2e5acb41316197404c5fbfb2783ffdc2c227395e6879405f66dd",
+      "log": ".codex/local-test/t434-host/prefix-512-128.txt"
+    }
+  ],
+  "comparison": "raw accepted state+event64+completion256 byte equality; source/quantum/lease/fault tests; n boundary staging+nonzero suffix"
+}

@@ -15,6 +15,19 @@ struct QuantumParameters {uint32_t gravity=512u*1048576u,settle=8u*1048576u,kAir
 // 3=results), traceOutputBytes channel selector (out: 0=events,1=words,2=pub,
 // 3=results1024), and the uploadedBytes+uUploaded set at op 33.
 struct QuantumPassOp {uint32_t stage;uint32_t n;uint32_t color;uint32_t sortK;uint32_t sortJ;uint32_t bind3;uint32_t out;};
+// Native-only staging certificate. Never supplied by page/command data.
+struct LedgerPrefixStage {
+ Identity identity{}; U64 source{},physics{},nonce{};
+ GLuint bank=0,ledger=0; size_t offset=0; uint32_t entries=0; bool qualified=false;
+};
+// Revision 1 counts issued GL copies, not shader loads/stores or driver traffic.
+// stateCopyBytes is zero: state copying remains inside the unchanged shaders.
+struct CopyAccounting {
+ uint32_t revision=1; Identity identity{}; RootRequest root{};
+ uint32_t entries=0,route=0; // 0 full control, 1 certified prefix, 2 fallback
+ uint64_t ledgerCopyBytes=0,eventPrefixCopyBytes=0,stateCopyBytes=0;
+ uint64_t completionMappedBytes=0,coldMappedBytes=0;
+};
 // Candidate only. Neither Poll nor Capture changes SourceRootOwner or publishes.
 class QuantumCandidate {
 public:
@@ -34,13 +47,14 @@ public:
  TransportCode Fixture(const std::vector<uint32_t>&,const std::vector<uint32_t>&,const QuantumParameters&,RootRequest,uint32_t capacity=0);
 #endif
 private:
+ CopyAccounting copies{};
  UniformLocations uniformLocations;
  friend struct QuantumCommitTestAccess;
  friend struct FullM1HostAccess;
  friend class FullM1Transport;
  bool Current()const;void Set(const char*,uint32_t);void Pass(uint32_t,uint32_t);void Sort(uint32_t,uint32_t);
  TransportCode Enqueue(GLuint,GLuint,size_t,GLuint,uint32_t,const QuantumParameters&,RootRequest,
-  const TailObserver& staging={},bool cold=false,uint32_t* rawError=nullptr);
+  const TailObserver& staging={},bool cold=false,uint32_t* rawError=nullptr,const LedgerPrefixStage* ledgerStage=nullptr);
  void BuildPassTable();
  // T324 §2.2: execute passTable[from,to) with the original side effects.
  // The transport owns the cursor; this runs on the same GL owner thread.

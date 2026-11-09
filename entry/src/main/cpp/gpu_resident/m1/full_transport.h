@@ -11,6 +11,7 @@ struct ColdPrepareOptions {
  bool twoBatches=false;
  void* context=nullptr;
  bool (*current)(void*)=nullptr;
+ bool ledgerPrefix=false; // cold/new transport only; false retains full-copy control
 };
 // Full M1 roots, still isolated from product routing/scene. All calls belong
 // to the same current native GL owner. Only Poll can accept a sealed root.
@@ -40,6 +41,10 @@ public:
  const SourceRootOwner& Owner()const{return source.Owner();}const Words256& LastCompletion()const{return tail;}
  uint64_t AllocatedBytes()const{return source.Stats().allocatedBytes+quantum.AllocatedBytes()+extraBytes;}
  SourceTransportStats Stats()const;
+ // Owner-thread cold exporter: bounded ring, oldest-first, explicit schema revision.
+ size_t CopySampleCount()const{return copyCount;}
+ uint64_t CopySamplesDropped()const{return copyDropped;}
+ const CopyAccounting& CopySample(size_t i)const{return copyRing[(copyStart+i)%copyRing.size()];}
  const TransportTraceRing& Trace()const{return quantum.trace;} // last quantum root, reset before submission
  // T324 §4 telemetry (bounded, read-only).
  SubmitPhase Phase()const{return submitPhase;}
@@ -63,6 +68,10 @@ public:
  uint32_t SubmitBatchFlushes()const{return flushes;}
 private:
  friend struct FullM1HostAccess;
+ LedgerPrefixStage StageLedger()const;
+ void AddCopySample(const CopyAccounting&);
+ std::array<CopyAccounting,128> copyRing{};size_t copyStart=0,copyCount=0;uint64_t copyDropped=0;
+ bool ledgerPrefix=false;
  // T324 §2.2 dual batch limit. Budget 8ms per contract. The op cap uses
  // TOP-LEVEL ops (a Sort counts as one op): the actual top-level count is 38
  // (not the contract's illustrative "27+"); 38/8=5 batches x ~8ms bridge
