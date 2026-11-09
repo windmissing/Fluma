@@ -1,0 +1,254 @@
+{
+ "revision": "T418_INDEPENDENT_DIFF_V1",
+ "device": "NOT_RUN",
+ "entries": 33,
+ "agree": 33,
+ "diverge": 0,
+ "details": [
+  {
+   "entry": "T414_BASELINE_units.py",
+   "t414": true,
+   "t415": "prereq",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "T414_BASELINE_runner_units.py",
+   "t414": true,
+   "t415": "prereq",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "T414_BASELINE_controller_units(11)",
+   "t414": true,
+   "t415": "prereq",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "T415_BASELINE_selftest(27)",
+   "t415": true,
+   "t414": "prereq",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "TIME_ENVELOPE_POSITIVE",
+   "t414": {
+    "pass": true,
+    "code": "T413_AFFINE_ENVELOPE_V2"
+   },
+   "t415": {
+    "verdict": "PASS",
+    "code": "CAPTURE_INTERVAL_IN_HOLD"
+   },
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "TIME_ENVELOPE_ENVELOPE_OUTSIDE",
+   "t414": "CAPTURE_INTERVAL_OUTSIDE_HOLD",
+   "t415": "CAPTURE_INTERVAL_OUTSIDE_HOLD",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "TIME_ENVELOPE_FEW_SAMPLES",
+   "t414": "CLOCK_MAPPING_UNKNOWN",
+   "t415": "CLOCK_MAPPING_UNKNOWN",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "TIME_ENVELOPE_ROLLBACK",
+   "t414": "CLOCK_MAPPING_UNKNOWN",
+   "t415": "CLOCK_MAPPING_UNKNOWN",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "RESERVE_DURING_OPEN_CODE",
+   "t414": "HOLD_ACTIVE",
+   "t415": "HOLD_ACTIVE",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "RESERVE_DURING_OPEN_ZERO_SIDE_EFFECT",
+   "t414": {
+    "status": true,
+    "req": true
+   },
+   "t415": {
+    "status": true,
+    "req": true
+   },
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "ACK_OLD_ATTEMPT",
+   "t414": "ARCHIVE_IDENTITY",
+   "t415": "ATTEMPT_MISMATCH",
+   "verdict": "NOTE"
+  },
+  {
+   "entry": "ACK_OLD_REQUEST",
+   "t414": "ARCHIVE_IDENTITY",
+   "t415": "REQUEST_MISMATCH",
+   "verdict": "NOTE"
+  },
+  {
+   "entry": "ACK_EMPTY_SHA",
+   "t414": "ARCHIVE_NOT_READY",
+   "t415": "EMPTY_SHA",
+   "verdict": "NOTE"
+  },
+  {
+   "entry": "ACK_REJECTIONS_KEEP_PENDING",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "SEAL_RETRY_SAME_STATE",
+   "t414": "SEALED",
+   "t415": "SEALED",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "SEAL_WRONG_ID_REJECTED",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "SEAL_TERMINAL_IMMUTABLE",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "SEAL_ENDPOINT_FROZEN",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "LIFECYCLE_OPEN_AFTER_ACK",
+   "t414": [
+    "HOLD_OPEN",
+    "NATIVE_ARCHIVE_SAVED"
+   ],
+   "t415": [
+    "HOLD_OPEN",
+    "NATIVE_ARCHIVE_SAVED"
+   ],
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "LIFECYCLE_RELEASE",
+   "t414": "RELEASED",
+   "t415": "RELEASED",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "LIFECYCLE_SEAL_ENDPOINTS",
+   "t414": [
+    false
+   ],
+   "t415": [
+    true
+   ],
+   "verdict": "NOTE"
+  },
+  {
+   "entry": "EXPIRY_STATE",
+   "t414": "EXPIRED",
+   "t415": "EXPIRED",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "EXPIRY_NO_SUCCESS_SEAL",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "EXPIRY_TERMINAL_VALID_FALSE",
+   "t414": false,
+   "t415": false,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "EXPIRY_TERMINAL_FROZEN",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "CANCEL_REPEAT_FIRST_CAUSE",
+   "t414": "KEYBOARD",
+   "t415": "KEYBOARD",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "CANCEL_REPEAT_STABLE",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "CANCEL_INVALID_REPEAT_SAME_STATE",
+   "t414": "INVALID",
+   "t415": "INVALID",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "RELEASE_NO_ARCHIVE_BLOCKED",
+   "t414": true,
+   "t415": true,
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "RELEASE_AFTER_ACK_SEAL_SAVED",
+   "t414": "RELEASED",
+   "t415": "RELEASED",
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "GEOMETRY_CHANGE_INVALID",
+   "t414": [
+    "INVALID",
+    "GEOMETRY_CHANGED"
+   ],
+   "t415": [
+    "INVALID",
+    "GEOMETRY_CHANGED"
+   ],
+   "verdict": "AGREE"
+  },
+  {
+   "entry": "REJECT_ORDER_CHAIN",
+   "t414": [
+    "CAPTURE_TOOL_RECEIPT(fileSha256 空/缺 PNG/旧 revision/pull 失败)",
+    "LOSSLESS_RGB_REQUIRED(坏 PNG)",
+    "CLOCK_MAPPING_UNKNOWN(样本 scope/serial/回拨/无界)",
+    "CAPTURE_INTERVAL_OUTSIDE_HOLD(先 seal/包络越界)",
+    "MANIFEST_SHA / NATIVE_RGBA_SHA / HOLD_IDENTITY(身份链)"
+   ],
+   "t415": [
+    "CAPTURE_TOOL_RECEIPT(无收据/fileSha256 空)",
+    "CLOCK_MAPPING_UNKNOWN(无归档同步对)",
+    "CAPTURE_INTERVAL_OUTSIDE_HOLD(映射越界)"
+   ],
+   "verdict": "AGREE",
+   "note": "T415 §C 链是 T414 链的子序列（T408 旧资产缺收据/缺时钟对场景），首触发码在两实现中一致：收据层先于时间门。"
+  },
+  {
+   "entry": "PNG_SHA_BINDING",
+   "t414": "verify_bundle: png.stat().st_size==receipt.fileBytes && sha256==receipt.fileSha256（64 位十六进制强校验 len==64）",
+   "t415": "oracle 未实现文件级校验（合成层无文件），§C 审计按 screen.py 链判 fileSha256 空 → CAPTURE_TOOL_RECEIPT",
+   "verdict": "AGREE"
+  }
+ ],
+ "notes": [
+  "状态差分证据为 capture_state_diff.cjs 对隔离生成工程（t413/generate.cjs → t418-diff）render/T413Capture.ets 的实际执行输出 test/reports/t418-capture-raw.json；",
+  "T413Capture.reserve 自身不查 state（canReserve 先行），HOLD_ACTIVE 零副作用由 controller.reserveCapture 以 canReserve 开头保证——直调 reserve 属越权用法，差分按 controller 合同路径构造；",
+  "reject reason 命名两实现不同但语义一致（ARCHIVE_IDENTITY↔ATTEMPT/REQUEST_MISMATCH、ARCHIVE_NOT_READY↔EMPTY_SHA、ARCHIVE_OR_TERMINAL_PENDING↔ARCHIVE_NOT_SAVED），差分记 NOTE 不算语义分歧；",
+  "release 后 terminal() 返回空串（RELEASED 不在 terminal 分支）为 T414 产品语义，oracle 无此状态歧义；差分器已按 release 前后分别断言；",
+  "时间包络正/负例双实现判定一致（含先 seal、包络越界、<3 样本、回拨）；",
+  "本差分给 T408 消费：capture_hold.py 复核链与 oracle 判定无语义冲突，真机续测可同时消费两工具，不作为开工门。"
+ ]
+}

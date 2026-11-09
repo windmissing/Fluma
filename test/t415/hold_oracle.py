@@ -202,7 +202,9 @@ def selftest_state_machine():
     sm = HoldStateMachine(); sm.reserve(roi=[0,0,8,8]); sm.openHold()
     r = sm.cancel(sm.attemptId,'keyboard'); first=r.get('firstCause')
     r = sm.cancel(sm.attemptId,'mouse')
-    expect(r.get('firstCause')==first=='INVALIDATED:keyboard', 'A15 重复取消保留首因')
+    # 勘误(T418 差分发现): 首因前缀随路径——cancel 路径为 CANCELLED:<reason>，
+    # geometry/hide 失效路径才是 INVALIDATED:<cause>。原断言误用 INVALIDATED: 前缀。
+    expect(r.get('firstCause')==first=='CANCELLED:keyboard', 'A15 重复取消保留首因')
 
     # 反控: geometry 变化使 hold 无效
     sm = HoldStateMachine(); sm.reserve(roi=[0,0,8,8]); sm.openHold()
