@@ -1,0 +1,527 @@
+{
+  "revision": "T441_ATTRIBUTION_DIAGNOSTICS_V1",
+  "date": "2026-11-09",
+  "device": "NOT_RUN",
+  "scope": "Read-only replay of existing checker and minimal isolated synthetic counterexamples; not a repaired checker or product acceptance",
+  "archives": [
+    {
+      "dir": "test\\reports\\t410\\v1-attempt2",
+      "manifest": {
+        "name": "gpu-evidence-2893-1-1794212302140-manifest.json",
+        "bytes": 2454,
+        "sha256": "814c5cc6eb845a742a5c25208828fc6a31305d47eb648dab6010a1f67f35006e"
+      },
+      "request": {
+        "name": "gpu-capture-request-1-1.json",
+        "sha256": "51c8a02a56e71d2c90102e84518c761a4659cc88198ee6340f6e20a975c319ca",
+        "state": "FROZEN",
+        "requestId": "1",
+        "captureId": "1",
+        "safePointSerial": "1",
+        "armByNs": "3604985932716266",
+        "startNs": "3604984938442672",
+        "initialPhase": "NEW_RUN_REQUIRED",
+        "initialPermission": "PAUSED_CLOCK",
+        "initialFailure": "CLOCK_GAP",
+        "requestNs": "3604984932716266",
+        "armDelayNs": "5726406",
+        "startBeforeArmBy": true
+      },
+      "scope": {
+        "revision": "T409_EVIDENCE_ARCHIVE_V1",
+        "activeRevision": "GRS_M1_PROGRESS_CLOCK_V1",
+        "captureId": "1",
+        "epoch": "2",
+        "runLo": 1,
+        "runHi": 0,
+        "pageSession": "1",
+        "startNs": "3604984938442672",
+        "endNs": "3604986940182047"
+      },
+      "files": [
+        {
+          "name": "gpu-evidence-2893-1-1794212302140-page0.json",
+          "bytes": 2015,
+          "sha256": "249c652bb2e24a6eb7590a48a7a726dba95f2ee709ecfc79be0b52ef485b3fa3",
+          "matches": true
+        },
+        {
+          "name": "gpu-evidence-2893-1-1794212302140-page1.json",
+          "bytes": 2452,
+          "sha256": "73c7be895a0d2523a884a2983b91dfc66af73b6c962a26d68fbf91a39d71543f",
+          "matches": true
+        }
+      ],
+      "totalBytes": {
+        "declared": 6921,
+        "actual": 6921
+      },
+      "requiredEvents": [
+        "BEGIN",
+        "END"
+      ],
+      "eventKinds": [
+        "BEGIN",
+        "END"
+      ],
+      "serials": [
+        "1",
+        "2"
+      ],
+      "beginLedgerEqualsInitial": true,
+      "endLedgerEqualsTerminal": true,
+      "rowCount": 2,
+      "pageCount": 2,
+      "tokenCount": 0,
+      "summary": {
+        "renderTargetHz": 0,
+        "renderSkippedByCadence": "0",
+        "newPhysicalFrames": "0",
+        "sourceOnlyFrames": "0",
+        "lastSwapGapNs": "0",
+        "maxSwapGapNs": "0",
+        "staleNs": "0",
+        "systemPresentVerified": false,
+        "initialLedger": {
+          "generatedQuanta": "0",
+          "acceptedQuantumCount": "0",
+          "pendingQuanta": "0",
+          "activePlanRemaining": "0",
+          "overloadDroppedQuanta": "0",
+          "revokedDroppedQuanta": "0",
+          "quotaCarry": "0",
+          "clearedCarry": "0"
+        },
+        "terminalLedger": {
+          "generatedQuanta": "0",
+          "acceptedQuantumCount": "0",
+          "pendingQuanta": "0",
+          "activePlanRemaining": "0",
+          "overloadDroppedQuanta": "0",
+          "revokedDroppedQuanta": "0",
+          "quotaCarry": "0",
+          "clearedCarry": "0"
+        },
+        "maxRows": 4096,
+        "maxBytes": 1048576,
+        "durationNs": "2000000000",
+        "dropped": "0",
+        "suppressedDetailedRows": "0",
+        "detailedRoot": "0",
+        "detailPolicy": "FIRST_ROOT_SELECTED_CALLS_V1",
+        "pulseCount": "180",
+        "pulseApiCalls": "180",
+        "rejectedNewSequencePulses": "180",
+        "rejectedOtherPulses": "0",
+        "acceptedPulses": "0",
+        "lifetimeNativeGapMaxAtStartNs": "60194909375",
+        "lifetimeNativeGapMaxAtEndNs": "62193882344",
+        "lifetimeUiGapMaxAtStartNs": "60213201524",
+        "lifetimeUiGapMaxAtEndNs": "62216279507",
+        "rejectedPulses": "180",
+        "maxNativeGapNs": "12931563",
+        "maxUiGapNs": "12536716",
+        "readySeen": false,
+        "sourceOfferSeen": false,
+        "sourceOfferCount": [
+          "0",
+          "0"
+        ],
+        "sourceEnqueuedCount": [
+          "0",
+          "0"
+        ],
+        "sourceAttemptSeen": false,
+        "acceptedSeen": false,
+        "faultSeen": false,
+        "revokeSeen": false,
+        "nativeGapHistogram": [
+          "0",
+          "179",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "uiGapHistogram": [
+          "0",
+          "179",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "stageAggregates": []
+      },
+      "checker": {
+        "state": "FAIL",
+        "unjudgable": false,
+        "failed": [
+          {
+            "id": "T10-REQUIRED",
+            "name": "required 事件在场 (BEGIN,END vs present=)",
+            "verdict": "FAIL",
+            "detail": "缺: BEGIN,END"
+          }
+        ],
+        "passedCheckIds": [
+          "T1-REVISION",
+          "T2-STATE",
+          "T3-FILES",
+          "T4-SHA",
+          "T5-BYTES",
+          "T6-DATA",
+          "T7-TOTAL",
+          "T8-MAXBUDGET",
+          "T9-LEDGERS",
+          "T11-BOUNDS",
+          "T12-PAGES",
+          "T12b-FILECOUNT",
+          "T13-SERIAL"
+        ]
+      },
+      "durationNs": "2001739375",
+      "structuralObservations": {
+        "allRepeatedScopeFieldsMatch": true,
+        "nativeClockMatches": true,
+        "nativeFreezeReasonConsistent": true,
+        "nativeReasonDistinctFromExportReason": true,
+        "cursorsInFileOrder": [
+          0,
+          1
+        ],
+        "nextInFileOrder": [
+          1,
+          2
+        ],
+        "completeInFileOrder": [
+          false,
+          true
+        ],
+        "typesInFileOrder": [
+          "SUMMARY",
+          "EVENTS"
+        ],
+        "summaryMatchesManifest": true,
+        "scopeMatchesReservation": true,
+        "purpose": "Attribution subset observations, not a complete replacement integrity checker"
+      }
+    },
+    {
+      "dir": "test\\reports\\t410\\v2-attempt2",
+      "manifest": {
+        "name": "gpu-evidence-2893-2-1794213109019-manifest.json",
+        "bytes": 2785,
+        "sha256": "74a1374360eeccd518122deff6717258219e18b801f52f5e044ed2a50269eab3"
+      },
+      "request": {
+        "name": "gpu-capture-request-2-2.json",
+        "sha256": "93e56285558db187965eda4d2e48d36d3d24cddbd92cd9b7804c85a29d320caa",
+        "state": "FROZEN",
+        "requestId": "2",
+        "captureId": "2",
+        "safePointSerial": "2",
+        "armByNs": "3605794756362985",
+        "startNs": "3605793762313610",
+        "initialPhase": "CLOCK_GAP",
+        "initialPermission": "PAUSED_CLOCK",
+        "initialFailure": "WAIT_PAGE_PULSE",
+        "requestNs": "3605793756362985",
+        "armDelayNs": "5950625",
+        "startBeforeArmBy": true
+      },
+      "scope": {
+        "revision": "T409_EVIDENCE_ARCHIVE_V1",
+        "activeRevision": "GRS_M1_PROGRESS_CLOCK_V2",
+        "captureId": "2",
+        "epoch": "3",
+        "runLo": 2,
+        "runHi": 0,
+        "pageSession": "1",
+        "startNs": "3605793762313610",
+        "endNs": "3605795763087985"
+      },
+      "files": [
+        {
+          "name": "gpu-evidence-2893-2-1794213109019-page0.json",
+          "bytes": 2346,
+          "sha256": "1e1d6bc13d7d3f092f234ad2b6bf9ad925475e3c633b9bdc33b6bbe38b694db5",
+          "matches": true
+        },
+        {
+          "name": "gpu-evidence-2893-2-1794213109019-page1.json",
+          "bytes": 2422,
+          "sha256": "b57c11d920a56c57bb46ccebaca9a33448400b15f3f9ce497284818c2154ea88",
+          "matches": true
+        }
+      ],
+      "totalBytes": {
+        "declared": 7553,
+        "actual": 7553
+      },
+      "requiredEvents": [
+        "BEGIN",
+        "END"
+      ],
+      "eventKinds": [
+        "BEGIN",
+        "END"
+      ],
+      "serials": [
+        "1",
+        "2"
+      ],
+      "beginLedgerEqualsInitial": true,
+      "endLedgerEqualsTerminal": true,
+      "rowCount": 2,
+      "pageCount": 2,
+      "tokenCount": 0,
+      "summary": {
+        "renderTargetHz": 30,
+        "renderSkippedByCadence": "0",
+        "newPhysicalFrames": "0",
+        "sourceOnlyFrames": "0",
+        "lastSwapGapNs": "0",
+        "maxSwapGapNs": "0",
+        "staleNs": "0",
+        "systemPresentVerified": false,
+        "initialLedger": {
+          "generatedQuanta": "0",
+          "acceptedQuantumCount": "0",
+          "pendingQuanta": "0",
+          "activePlanRemaining": "0",
+          "overloadDroppedQuanta": "0",
+          "revokedDroppedQuanta": "0",
+          "quotaCarry": "0",
+          "clearedCarry": "0"
+        },
+        "terminalLedger": {
+          "generatedQuanta": "0",
+          "acceptedQuantumCount": "0",
+          "pendingQuanta": "0",
+          "activePlanRemaining": "0",
+          "overloadDroppedQuanta": "0",
+          "revokedDroppedQuanta": "0",
+          "quotaCarry": "0",
+          "clearedCarry": "0"
+        },
+        "maxRows": 4096,
+        "maxBytes": 1048576,
+        "durationNs": "2000000000",
+        "dropped": "0",
+        "suppressedDetailedRows": "1169",
+        "detailedRoot": "0",
+        "detailPolicy": "FIRST_ROOT_SELECTED_CALLS_V1",
+        "pulseCount": "0",
+        "pulseApiCalls": "180",
+        "rejectedNewSequencePulses": "0",
+        "rejectedOtherPulses": "180",
+        "acceptedPulses": "0",
+        "lifetimeNativeGapMaxAtStartNs": "814037755938",
+        "lifetimeNativeGapMaxAtEndNs": "814037755938",
+        "lifetimeUiGapMaxAtStartNs": "814060273522",
+        "lifetimeUiGapMaxAtEndNs": "814060273522",
+        "rejectedPulses": "180",
+        "maxNativeGapNs": "0",
+        "maxUiGapNs": "0",
+        "readySeen": false,
+        "sourceOfferSeen": false,
+        "sourceOfferCount": [
+          "0",
+          "0"
+        ],
+        "sourceEnqueuedCount": [
+          "0",
+          "0"
+        ],
+        "sourceAttemptSeen": false,
+        "acceptedSeen": false,
+        "faultSeen": false,
+        "revokeSeen": false,
+        "nativeGapHistogram": [
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "uiGapHistogram": [
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "stageAggregates": [
+          {
+            "stage": 5,
+            "count": "390",
+            "totalNs": "0",
+            "maxNs": "0",
+            "maxStartNs": "0",
+            "maxEndNs": "0",
+            "maxRoot": "0",
+            "maxTid": "4013"
+          },
+          {
+            "stage": 6,
+            "count": "389",
+            "totalNs": "0",
+            "maxNs": "0",
+            "maxStartNs": "0",
+            "maxEndNs": "0",
+            "maxRoot": "0",
+            "maxTid": "4013"
+          },
+          {
+            "stage": 7,
+            "count": "390",
+            "totalNs": "390",
+            "maxNs": "1",
+            "maxStartNs": "0",
+            "maxEndNs": "0",
+            "maxRoot": "0",
+            "maxTid": "4013"
+          }
+        ]
+      },
+      "checker": {
+        "state": "FAIL",
+        "unjudgable": false,
+        "failed": [
+          {
+            "id": "T10-REQUIRED",
+            "name": "required 事件在场 (BEGIN,END vs present=)",
+            "verdict": "FAIL",
+            "detail": "缺: BEGIN,END"
+          }
+        ],
+        "passedCheckIds": [
+          "T1-REVISION",
+          "T2-STATE",
+          "T3-FILES",
+          "T4-SHA",
+          "T5-BYTES",
+          "T6-DATA",
+          "T7-TOTAL",
+          "T8-MAXBUDGET",
+          "T9-LEDGERS",
+          "T11-BOUNDS",
+          "T12-PAGES",
+          "T12b-FILECOUNT",
+          "T13-SERIAL"
+        ]
+      },
+      "durationNs": "2000774375",
+      "structuralObservations": {
+        "allRepeatedScopeFieldsMatch": true,
+        "nativeClockMatches": true,
+        "nativeFreezeReasonConsistent": true,
+        "nativeReasonDistinctFromExportReason": true,
+        "cursorsInFileOrder": [
+          0,
+          1
+        ],
+        "nextInFileOrder": [
+          1,
+          2
+        ],
+        "completeInFileOrder": [
+          false,
+          true
+        ],
+        "typesInFileOrder": [
+          "SUMMARY",
+          "EVENTS"
+        ],
+        "summaryMatchesManifest": true,
+        "scopeMatchesReservation": true,
+        "purpose": "Attribution subset observations, not a complete replacement integrity checker"
+      }
+    }
+  ],
+  "counterexamples": [
+    {
+      "name": "legacy_object_fixture_claims_missing_END_and_FIRST_ACCEPT",
+      "evidenceSource": "SYNTHETIC_PROTOCOL",
+      "dir": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t441-checker-r9zGLf\\t409_good",
+      "requiredEvents": {
+        "present": [
+          "BEGIN",
+          "END",
+          "FIRST_ACCEPT"
+        ],
+        "readySeen": false,
+        "sourceAttemptSeen": false,
+        "acceptedSeen": true,
+        "faultSeen": false,
+        "revokeSeen": false
+      },
+      "actualKinds": [
+        "BEGIN",
+        "PULSE",
+        "PULSE",
+        "PULSE"
+      ],
+      "checkerState": "PASS",
+      "unjudgable": false,
+      "expectedUnderActualProtocol": "REJECT_INVALID_SCHEMA_AND_MISSING_REQUIRED_EVENTS"
+    },
+    {
+      "name": "incomplete_dropped_cli_returns_success",
+      "evidenceSource": "SYNTHETIC_PROTOCOL",
+      "manifest": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t441-checker-r9zGLf\\t409_good\\incomplete-manifest.json",
+      "checkerState": "PASS",
+      "unjudgable": true,
+      "exitCode": 0,
+      "expected": "UNJUDGABLE_WITH_NONZERO_EXIT"
+    }
+  ],
+  "toolFiles": [
+    {
+      "path": "test/t411/t409_check.cjs",
+      "sha256": "2a96a77712a6ce46896a8a3e36d371188cfbac24f03473221f3a0e72706c49b2"
+    },
+    {
+      "path": "test/t411/archive_check.cjs",
+      "sha256": "3e04eed64a079fb2a65a7fe393ecd4ff0833b7d0fdee72f921e9135d3a0ac4ad"
+    },
+    {
+      "path": "entry/src/main/ets/physics/GpuEvidenceCaptureCold.ets",
+      "sha256": "4fb6e04cb2d86aea7e34771cdcfc680dd42926f2016d237773e6f2f9f7779010",
+      "matchesT421Source": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/evidence_capture.h",
+      "sha256": "4f05c255ec2aa6ad00f987c4aa418bbe45f3b058250af5c0865040651c40f17b",
+      "matchesT421Source": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/evidence_capture_app.inc",
+      "sha256": "f66a4cfa0d1e7b95bf97de8c8e856af24e3b87890c258a437a65bfaddd896849",
+      "matchesT421Source": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/evidence_capture_request.inc",
+      "sha256": "ff00d5eb58b69869723e18a933b1e0c08bb7494038a954fb3e8d97d9dcbe6569",
+      "matchesT421Source": true
+    }
+  ],
+  "schemaProvenance": {
+    "initialProducerCommit": "9a8a563",
+    "firstProducerContainsStringArray": true,
+    "firstProducerContainsFirstOffer": true,
+    "legacyObjectProductionArchive": "NOT_EVIDENCED",
+    "oldT306Revision": "T306_TIMELINE_COLD_V1"
+  }
+}

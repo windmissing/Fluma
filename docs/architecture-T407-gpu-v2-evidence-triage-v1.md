@@ -61,6 +61,8 @@ T401 已补正 T399：部分第二批 flush 确有 53.99–60.67ms 调用区间�
 
 2026-11-09 T417 修订。采集入口改为 [有界预约与 owner 安全点消费](architecture-T417-gpu-capture-reservation-v1.md)。T409 同步 arm 和 `CAPTURE_BUSY` 语义保留于下文作为历史合同。新签包按 T417 处理请求、时限与身份。实际窗口、原时钟与配额账、证据预算和冷档校验沿本节。
 
+2026-11-09 T441 修订。独立归档工具按 [T441格式、事件与分页合同](architecture-T441-gpu-archive-checker-schema-v1.md) 修复。T409正式requiredEvents为string[]，从SUMMARY独立推导并核实际事件行；BEGIN/END手工在场、manifest自述COMPLETE或Balanced均不能替代全档校验。页数为`1+ceil(rowCount/4)+tokenCount`，INCOMPLETE/dropped非成功退出。旧timeline按原revision重放，生产格式不为适配错误夹具改成对象。
+
 - 在现有冷诊断接口旁新增隔离 `beginEvidenceCapture(configJson:string):string`、`endEvidenceCapture(captureIdDecimal:string):string`、`evidenceCapturePage(captureIdDecimal:string,cursor:number):string`，不改变 sourceCommand32/completion256。开始配置字段固定为 `packageSha256`、`expectedRevision`、`epoch`、`runLo/runHi`、`pageSession`、`durationNs`、`maxRows`、`maxBytes`；SHA为64位十六进制，U64用严格十进制字符串，run词为U32，duration限2–5秒、maxRows≤4096、maxBytes≤1048576。返回JSON的 `state` 为 `ARMED/FROZEN/REJECTED`，含native生成captureId、实际身份及reason；活动版本/身份与期望不符拒绝arm，隔离包的V1/V2均可采集且不改其控制语义。只在worker无活动root且接受/呈现无在途的安全冷边界开启，等候不持控制锁；忙则返回 `REJECTED/CAPTURE_BUSY`，不能阻塞心跳。armed期间不重置采集，最早到期/首错/显式end冻结；重复end幂等，旧id拒绝。page只读已冻结窗口，cursor按现行有界分页规则验范围，返回next/complete和相同身份。禁止导出隐式清环、热路径写盘/JSON/无界分配。
 - 窗口数据全部绑定 captureId、实际activeRevision、run/epoch/session、native起止、UI时钟域及TID。旧session全局maxGap单列；窗口内重置的是诊断统计，不能重置物理配额或模拟时间。配额首末/终态必须是锁内原子快照，reset先冻结旧账。
 - 固定预算内保留「开始/Ready/第一次源尝试/首次接受/首次失败/撤权/结束」关键事件与终态，单独预留容量；周期pulse原间隔做固定直方图/计数/最大值，首错保存前后seq、两域原时间、实际gap、deadline、许可身份和job/root。详细GL追踪限定前1–2个指定root，其余固定计数/总时/最大时；token样本限定≤8组且保留沙、水及对应QUANTUM/PRESENT完整token，逐帧只累积计数。不能以静默采样掩盖 required 事件缺失。
