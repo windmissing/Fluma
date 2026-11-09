@@ -1,0 +1,253 @@
+{
+ "revision": "T439_GPU_EXPERIENCE_INPUT_BASELINE_V1",
+ "device": "NOT_RUN",
+ "entries": [
+  {
+   "id": "C1_REGULAR_PROFILE",
+   "pass": true,
+   "actual": "{\"GRS_APP_M1\":true,\"GRS_PROGRESS_V2_EXPERIMENT\":false,\"setProgressV2\":\"PROGRESS_V2_UNSUPPORTED\"}"
+  },
+  {
+   "id": "C2_EXPERIMENT_PROFILE",
+   "pass": true,
+   "actual": "{\"GRS_APP_M1\":true,\"GRS_PROGRESS_V2_EXPERIMENT\":true,\"defaultProgressV2\":false,\"enable\":\"Explicit cold selection then new run\"}"
+  },
+  {
+   "id": "C3_V2_UNSUPPORTED_SEMANTICS",
+   "pass": true,
+   "note": "app_bridge.cpp:931 #ifndef 分支返回 PROGRESS_V2_UNSUPPORTED——源码核对"
+  },
+  {
+   "id": "C4_CONFIGURE_M1_BOUNDS",
+   "pass": true,
+   "note": "configure() 只接受 192/512 × 64/128 × feature3 × revision2，否则 UNSUPPORTED_M1_CONFIG"
+  },
+  {
+   "id": "I01_TOUCH_DOWN_OK",
+   "input": "down(0, 合法坐标)",
+   "precondition": "active+READY+pointer 空闲",
+   "expect": "setSource(kind) 入队",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I02_PAGE_INACTIVE",
+   "input": "down 在前台前",
+   "precondition": "active=false",
+   "expect": "PAGE_INACTIVE",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I03_POINTER_ACTIVE",
+   "input": "第二指 down",
+   "precondition": "pointer>=0",
+   "expect": "POINTER_ACTIVE",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I04_NOT_READY",
+   "input": "down 在 snapshot null/旧代",
+   "precondition": "snapshot=null 或 epoch 不符",
+   "expect": "NOT_READY",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I05_INVALID_POINTER",
+   "input": "down(-1)",
+   "precondition": "READY",
+   "expect": "INVALID_POINTER",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I06_OUTSIDE_BOX",
+   "input": "down 坐标出组件",
+   "precondition": "READY",
+   "expect": "OUTSIDE_BOX",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I07_UP_STOPS_SOURCE",
+   "input": "up 后 tick",
+   "precondition": "pointer>=0",
+   "expect": "stop('UP')，而已成功 J 继续落水",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I08_TICK_CLOCK_GAP",
+   "input": "delta>33333333ns",
+   "precondition": "pointer>=0",
+   "expect": "CLOCK_GAP_NO_CATCHUP",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I09_TICK_NEGATIVE_DELTA",
+   "input": "rawNs 回拨",
+   "precondition": "pointer>=0",
+   "expect": "CLOCK_GAP_NO_CATCHUP",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I10_TICK_INVALID_CLOCK",
+   "input": "rawNs 非有限/负",
+   "precondition": "pointer>=0",
+   "expect": "INVALID_CLOCK",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I11_REQUEST_ID_EXHAUSTED",
+   "input": "sequence=4294967295 后 tick",
+   "precondition": "pointer>=0",
+   "expect": "REQUEST_ID_EXHAUSTED",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I12_SENSOR_INVALID",
+   "input": "sensor(NaN)",
+   "precondition": "active+sensorMode",
+   "expect": "INVALID_SENSOR",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I13_SENSOR_MANUAL_MUTEX",
+   "input": "sensorMode 下 manualAngle",
+   "precondition": "sensorMode=true",
+   "expect": "manualAngle 拒（互斥）",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I14_MANUAL_OVER_30",
+   "input": "manualAngle(31)",
+   "precondition": "sensorMode=false",
+   "expect": "拒（|deg|>30）",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I15_GRAVITY_MODE_SWITCH",
+   "input": "gravityMode 切换",
+   "precondition": "pointer>=0",
+   "expect": "stop('GRAVITY_MODE_NEEDS_DOWN') 需重新 down",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I16_BACKGROUND",
+   "input": "setActive(false)",
+   "precondition": "active",
+   "expect": "BACKGROUND+Revoke",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I17_RESUME_NEEDS_DOWN",
+   "input": "setActive(true) 后无 down",
+   "precondition": "active=false",
+   "expect": "stop('RESUME_NEEDS_DOWN')",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I18_RESET_NEW_EMPTY_RUN",
+   "input": "reset()",
+   "precondition": "任意",
+   "expect": "stop('RESET_NEW_EMPTY_RUN')+snapshot=null",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I19_PROFILE_SWITCH",
+   "input": "profile(k,kw)",
+   "precondition": "任意",
+   "expect": "stop('PROFILE_NEW_EMPTY_RUN')+snapshot=null",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I20_V2_UNSUPPORTED_REGULAR",
+   "input": "setProgressV2(true)",
+   "precondition": "常规 profile（无实验宏）",
+   "expect": "PROGRESS_V2_UNSUPPORTED",
+   "dependsOnT438Entry": true,
+   "status": "NOT_IMPLEMENTED"
+  },
+  {
+   "id": "I21_V2_COLD_NEW_RUN",
+   "input": "setProgressV2(true)+newRun",
+   "precondition": "实验 profile",
+   "expect": "PROGRESS_V2_NEXT_RUN 生效于新 run",
+   "dependsOnT438Entry": true,
+   "status": "NOT_IMPLEMENTED"
+  },
+  {
+   "id": "I22_NO_SNAPSHOT_IMPORT",
+   "input": "从旧入口进入 GPU",
+   "precondition": "T438 入口",
+   "expect": "显式新空 run，不导入 CPU/M0 snapshot",
+   "dependsOnT438Entry": true,
+   "status": "NOT_IMPLEMENTED"
+  },
+  {
+   "id": "I23_UNSUPPORTED_MEM",
+   "input": "分配失败路径",
+   "precondition": "buffer 不足",
+   "expect": "明确 unsupported/fault，禁静默降池",
+   "dependsOnT438Entry": true,
+   "status": "NOT_IMPLEMENTED"
+  },
+  {
+   "id": "I24_STALE_TOKEN_REJECT",
+   "input": "旧 token acquire",
+   "precondition": "过期 generation",
+   "expect": "具体拒因（STALE）",
+   "dependsOnT438Entry": false,
+   "status": "CONTRACT_FROZEN"
+  },
+  {
+   "id": "I25_J_CONTINUES_AFTER_UP",
+   "input": "UP 后已成功 J 继续落水",
+   "precondition": "J 已入队",
+   "expect": "J 不因 UP 撤销（只停新源）",
+   "dependsOnT438Entry": true,
+   "status": "NOT_IMPLEMENTED"
+  },
+  {
+   "id": "C6_NOT_IMPLEMENTED_REGISTERED",
+   "pass": true,
+   "actual": "I20_V2_UNSUPPORTED_REGULAR,I21_V2_COLD_NEW_RUN,I22_NO_SNAPSHOT_IMPORT,I23_UNSUPPORTED_MEM,I25_J_CONTINUES_AFTER_UP",
+   "note": "T438 产品入口未实现：I20-I23/I25 按 NOT_IMPLEMENTED，不把模型自测冒产品通过"
+  },
+  {
+   "id": "C7_EXISTING_TOOLS_REUSED",
+   "pass": true,
+   "actual": "[{\"tool\":\"test/t411/archive_check.cjs\",\"exists\":true},{\"tool\":\"test/t412/quota_oracle.cjs\",\"exists\":true},{\"tool\":\"test/t416/token_chain_judge.cjs\",\"exists\":true}]",
+   "note": "库存 token/配额/链判读复用既有 oracle，本卡不重写物理"
+  },
+  {
+   "id": "C8_FREQUENCIES_SEPARATE",
+   "pass": true,
+   "note": "30fps 只约束显示目标，不放宽 33,333,333ns 真实控制门；模拟秒/墙钟秒/新内容帧分列"
+  }
+ ],
+ "inputMatrixSize": 25,
+ "notImplemented": [
+  "I20_V2_UNSUPPORTED_REGULAR",
+  "I21_V2_COLD_NEW_RUN",
+  "I22_NO_SNAPSHOT_IMPORT",
+  "I23_UNSUPPORTED_MEM",
+  "I25_J_CONTINUES_AFTER_UP"
+ ],
+ "verdict": "PASS",
+ "failed": []
+}
