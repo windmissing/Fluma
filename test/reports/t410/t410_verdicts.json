@@ -1,0 +1,59 @@
+{
+ "revision": "T410_DEVICE_CAPTURE_GATE_V1",
+ "packageSha256": "b27eb2fab5fd89a65cdc6cd9e4bf3873d0c8c0bfe47b71c6e0e0b9127024067d",
+ "route": "grsm1=true, multiple sessions",
+ "verdict": "BLOCKED: beginEvidenceCapture always REJECTED CAPTURE_BUSY on device",
+ "armAttempts": [
+  {
+   "l4": "first arm with empty SHA -> REJECTED INVALID_CAPTURE_CONFIG (expected; config check precedes busy check)"
+  },
+  {
+   "l7": "SHA registered (4x16 segment injection verified intact) -> REJECTED CAPTURE_BUSY"
+  },
+  {
+   "l8": "+6s wait -> CAPTURE_BUSY"
+  },
+  {
+   "l9/l10": "force-stop cold restart, SHA re-registered -> CAPTURE_BUSY (clean process!)"
+  },
+  {
+   "l11": "stop button (halt pulses) -> CAPTURE_BUSY"
+  },
+  {
+   "l12": "Home toggle session rebuild + stop -> CAPTURE_BUSY"
+  },
+  {
+   "l13": "40 rapid successive arm clicks over ~10s spanning many worker cycles -> CAPTURE_BUSY every time"
+  }
+ ],
+ "rootCauseAnalysis": {
+  "busyFlags": "captureWorkBusy||captureRootBusy||jobLive (evidence_capture_app.inc:45)",
+  "captureWorkBusy": "RAII WorkInterval wraps the ENTIRE per-cycle worker body (app_bridge.cpp:396) \u2014 true for the whole dispatch/fence/poll cycle every frame; idle window is only the inter-cycle gap (microsecond scale), unreachable by UI-button arm via uitest IPC scheduling (40/40 misses)",
+  "jobLive": "set at JobIntent (permit), cleared only at RevokeLocked/worker-complete/RUN_RESET; page shows STALE physics but permit persists \u2014 with the known structural stall family (T376/T384/T390/T399/T405, 6th cross-package reproduction) the root never seals so jobLive never clears",
+  "contractDeviation": "T407 s4.3 contract: arm at safe cold boundary = \"worker has no active root AND no accept/present in flight\", waiting without holding control lock; implementation treats the entire WorkInterval as busy \u2014 narrower than contract. Developer self-test passed because HOST_SCRIPTED arms at exact scripted idle boundaries; real device UI pacing cannot."
+ },
+ "unmetPerCardFace": {
+  "emptyFieldQuantum": "NOT_ACHIEVED (arm gate upstream)",
+  "dualSourceChain": "NOT_ACHIEVED",
+  "negativeControls": "NOT_EXERCISED (GAP/GPU250ms/pending4/FIFO16/stale-generation/lateSwap all behind arm gate)",
+  "fps30Report": "NOT_MEASURED (no captured window)"
+ },
+ "consumedTools": "T411 checker & T412 oracle ready but no archive produced; T416 judge ready (mixed/late host archives judged separately)",
+ "handover": "architect/developer \u2014 either widen arm cold-boundary definition to contract (idle-within-cycle check instead of whole-WorkInterval RAII), or provide scripted idle-boundary arm entry; tester blocked by REJECTED CAPTURE_BUSY on every attempt, zero side effects per contract",
+ "evidenceSha256": {
+  "l0.json": "4c6773dc9e61313b8ac94a0c",
+  "l1.json": "be47c0c9560bc9c61151d403",
+  "l10.json": "2ddb21d18bb17f58d29b77c0",
+  "l11.json": "a0941f04ad6c80550ef01dd3",
+  "l12.json": "7b81e04d173102fa45258db9",
+  "l13.json": "488523cd21478140cff43b7e",
+  "l2.json": "ec7fad4b9377b9b63f6a8286",
+  "l3.json": "dcec90d52f6804606ba1f17f",
+  "l4.json": "52c93c65d6bf17e85332ec9b",
+  "l5.json": "9648b2f5640b40eea6c88992",
+  "l6.json": "dbc4fb1200fd610551c514b4",
+  "l7.json": "f60361a2dd802db97b4dcece",
+  "l8.json": "8697b702f4ca99aaddda94a4",
+  "l9.json": "8f682dfeba5f4cf8b994cf42"
+ }
+}
