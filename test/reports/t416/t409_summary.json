@@ -1,0 +1,198 @@
+[
+ {
+  "dir": "test/reports/t409/mixed",
+  "verdict": "PASS",
+  "checks": [
+   {
+    "id": "K1-TOKEN-SCOPE",
+    "name": "token 页 captureId 与 manifest 一致（无跨窗混用）",
+    "verdict": "PASS",
+    "detail": "pageCapIds=1 manifest=1"
+   },
+   {
+    "id": "K1b-TOKEN-ROW",
+    "name": "token 行内 captureId == manifest.captureId（身份混窗负控）",
+    "verdict": "PASS",
+    "detail": "all rows in-window"
+   },
+   {
+    "id": "K2-REQUIRED",
+    "name": "required 事件在场 (BEGIN,END,READY,FIRST_OFFER,FIRST_ACCEPT)",
+    "verdict": "PASS",
+    "detail": "all present"
+   },
+   {
+    "id": "K3-CHAIN",
+    "name": "token 链 (3 条: 空场Q+SOURCE链, 完整 3)",
+    "verdict": "PASS",
+    "detail": "[]"
+   },
+   {
+    "id": "K4-SPLIT",
+    "name": "token 分列输出（空场/SOURCE链/后继 commit 分列）",
+    "verdict": "PASS",
+    "detail": "{\"EMPTY_QUANTUM(root1)\":[\"COMPLETE\"],\"SOURCE_1(root2,succ=[3,7])\":[\"COMPLETE\"],\"SOURCE_2(root8,succ=[9,12])\":[\"COMPLETE\"]}"
+   },
+   {
+    "id": "K5-SIM-WALL",
+    "name": "模拟秒与墙钟分列（不做除法混算）",
+    "verdict": "PASS",
+    "detail": "accepted=10 -> simNs=83333330 (0.08333333s @120Hz); wallSpan=88ms (domain=SCRIPTED_OFFLINE_STAMP_NS)"
+   },
+   {
+    "id": "K6-DISPLAY",
+    "name": "显示账分列（系统显示缺证=NOT_MEASURED）",
+    "verdict": "PASS",
+    "detail": "attemptedDraws=3 distinctPhysicsCommits=3 nativeSwap(=swapSucceeded tokens)=1 renderTargetHz=30 systemPresentVerified=false"
+   },
+   {
+    "id": "K7-SCRIPTED",
+    "name": "HOST_SCRIPTED_OFFLINE 标注透传（不当设备/系统证据）",
+    "verdict": "PASS",
+    "detail": "evidenceSource=HOST_SCRIPTED_OFFLINE"
+   }
+  ],
+  "chains": [
+   {
+    "root": "1",
+    "physicsCommit": "1",
+    "category": "EMPTY_QUANTUM",
+    "sourceRoot": null,
+    "publicationSlot": 0,
+    "publicationGeneration": "1",
+    "presentationEvidence": "ATTEMPTED",
+    "requestedEqualsRendered": true,
+    "current": true,
+    "swapSucceeded": true,
+    "complete": true,
+    "breakReason": null
+   },
+   {
+    "root": "2",
+    "physicsCommit": "2",
+    "category": "SOURCE_1",
+    "sourceRoot": "2",
+    "admittedQ": "131072",
+    "successors": [
+     {
+      "root": "3",
+      "commit": "3",
+      "ev": "NOT_ATTEMPTED_NO_SCENE_TOKEN"
+     },
+     {
+      "root": "7",
+      "commit": "7",
+      "ev": "ATTEMPTED"
+     }
+    ],
+    "presentationEvidence": "ATTEMPTED",
+    "requestedEqualsRendered": null,
+    "current": null,
+    "swapSucceeded": null,
+    "complete": true,
+    "breakReason": null
+   },
+   {
+    "root": "8",
+    "physicsCommit": "8",
+    "category": "SOURCE_2",
+    "sourceRoot": "8",
+    "admittedQ": "131072",
+    "successors": [
+     {
+      "root": "9",
+      "commit": "9",
+      "ev": "NOT_ATTEMPTED_NO_SCENE_TOKEN"
+     },
+     {
+      "root": "12",
+      "commit": "12",
+      "ev": "ATTEMPTED"
+     }
+    ],
+    "presentationEvidence": "ATTEMPTED",
+    "requestedEqualsRendered": null,
+    "current": null,
+    "swapSucceeded": null,
+    "complete": true,
+    "breakReason": null
+   }
+  ],
+  "accepted": "10",
+  "simSecondsTicksNs": "83333330",
+  "wallSpanMs": "88"
+ },
+ {
+  "dir": "test/reports/t409/late",
+  "verdict": "FAIL",
+  "checks": [
+   {
+    "id": "K1-TOKEN-SCOPE",
+    "name": "token 页 captureId 与 manifest 一致（无跨窗混用）",
+    "verdict": "PASS",
+    "detail": "pageCapIds=1 manifest=1"
+   },
+   {
+    "id": "K1b-TOKEN-ROW",
+    "name": "token 行内 captureId == manifest.captureId（身份混窗负控）",
+    "verdict": "PASS",
+    "detail": "all rows in-window"
+   },
+   {
+    "id": "K2-REQUIRED",
+    "name": "required 事件在场 (BEGIN,END,READY,FIRST_ACCEPT,FIRST_FAILURE,REVOKE)",
+    "verdict": "PASS",
+    "detail": "all present"
+   },
+   {
+    "id": "K3-CHAIN",
+    "name": "token 链 (1 条: 空场Q+SOURCE链, 完整 0)",
+    "verdict": "FAIL",
+    "detail": "[{\"root\":\"1\",\"cat\":\"EMPTY_QUANTUM\",\"why\":\"REQUESTED_NE_RENDERED\"}]"
+   },
+   {
+    "id": "K4-SPLIT",
+    "name": "token 分列输出（空场/SOURCE链/后继 commit 分列）",
+    "verdict": "PASS",
+    "detail": "{\"EMPTY_QUANTUM(root1)\":[\"REQUESTED_NE_RENDERED\"]}"
+   },
+   {
+    "id": "K5-SIM-WALL",
+    "name": "模拟秒与墙钟分列（不做除法混算）",
+    "verdict": "PASS",
+    "detail": "accepted=1 -> simNs=8333333 (0.008333333s @120Hz); wallSpan=258ms (domain=SCRIPTED_OFFLINE_STAMP_NS)"
+   },
+   {
+    "id": "K6-DISPLAY",
+    "name": "显示账分列（系统显示缺证=NOT_MEASURED）",
+    "verdict": "PASS",
+    "detail": "attemptedDraws=0 distinctPhysicsCommits=0 nativeSwap(=swapSucceeded tokens)=0 renderTargetHz=30 systemPresentVerified=false"
+   },
+   {
+    "id": "K7-SCRIPTED",
+    "name": "HOST_SCRIPTED_OFFLINE 标注透传（不当设备/系统证据）",
+    "verdict": "PASS",
+    "detail": "evidenceSource=HOST_SCRIPTED_OFFLINE"
+   }
+  ],
+  "chains": [
+   {
+    "root": "1",
+    "physicsCommit": "1",
+    "category": "EMPTY_QUANTUM",
+    "sourceRoot": null,
+    "publicationSlot": 0,
+    "publicationGeneration": "1",
+    "presentationEvidence": "ATTEMPTED",
+    "requestedEqualsRendered": false,
+    "current": false,
+    "swapSucceeded": false,
+    "complete": false,
+    "breakReason": "REQUESTED_NE_RENDERED"
+   }
+  ],
+  "accepted": "1",
+  "simSecondsTicksNs": "8333333",
+  "wallSpanMs": "258"
+ }
+]

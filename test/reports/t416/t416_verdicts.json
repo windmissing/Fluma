@@ -1,0 +1,22 @@
+{
+ "revision": "T416_TOKEN_CHAIN_JUDGE_V1",
+ "selftest": "4 ok / 0 bad (good PASS; broken NO_SUCCESSOR_QUANTUM; wrongtoken REQUESTED_NE_RENDERED; mixedwindow K1b row-level mixed-window detection)",
+ "consumed": {
+  "mixed": {
+   "verdict": "PASS",
+   "checks": "8/8",
+   "chains": "EMPTY_QUANTUM(root1) COMPLETE; SOURCE_1(root2,succ=[3,7]) COMPLETE; SOURCE_2(root8,succ=[9,12]) COMPLETE",
+   "sim": "accepted=10 -> 0.08333333s @120Hz",
+   "wall": "88ms domain=SCRIPTED_OFFLINE_STAMP_NS",
+   "display": "attempted=3 distinctCommits=3 swap=1 renderTargetHz=30 systemPresentVerified=false"
+  },
+  "late": {
+   "verdict": "FAIL(\u9884\u671f=lateSwap \u53cd\u4f8b)",
+   "detail": "root1 ATTEMPTED current=false swap=false requested!=rendered \u2014 lateSwap \u62d2\u7edd\u94fe\u7684\u53cd\u4f8b\u8bed\u4e49\uff0c\u5224\u8bfb\u5668\u5982\u5b9e\u6807\u8bb0"
+  }
+ },
+ "evidenceSha256": {
+  "t409_summary.json": "5f41cf9c79b2f0bba23b3598",
+  "t416_verdicts.json": "5e152c3bec67f198c8ac2f62"
+ }
+}
