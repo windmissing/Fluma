@@ -1,0 +1,114 @@
+[
+{
+"tag": "S1_RESERVE",
+"state": "RESERVED",
+"reason": "",
+"requestId": "1",
+"blocker": "WAIT_ROOT",
+"workerPhase": "ROOT",
+"captureId": "0",
+"startNs": "0",
+"armByNs": "1236800000",
+"detectedNs": "0",
+"detectionDelayNs": "0",
+"safePointSerial": "0"
+},
+{
+"tag": "S1_ARMED",
+"state": "ARMED",
+"reason": "",
+"requestId": "1",
+"blocker": "",
+"workerPhase": "OWNER_CHECKPOINT",
+"captureId": "1",
+"startNs": "240900000",
+"armByNs": "1236800000",
+"detectedNs": "240900000",
+"detectionDelayNs": "0",
+"safePointSerial": "1"
+},
+{
+"tag": "S2_RESERVE_ROOT",
+"state": "RESERVED",
+"reason": "",
+"requestId": "1",
+"blocker": "WAIT_ROOT",
+"workerPhase": "ROOT",
+"captureId": "0",
+"startNs": "0",
+"armByNs": "1001000000",
+"detectedNs": "0",
+"detectionDelayNs": "0",
+"safePointSerial": "0"
+},
+{
+"tag": "S2_RESERVE_DRAIN",
+"state": "RESERVED",
+"reason": "",
+"requestId": "2",
+"blocker": "WAIT_REVOKED_DRAIN",
+"workerPhase": "DRAIN",
+"captureId": "0",
+"startNs": "0",
+"armByNs": "1001000000",
+"detectedNs": "0",
+"detectionDelayNs": "0",
+"safePointSerial": "0"
+},
+{
+"tag": "S2_RESERVE_SWAP",
+"state": "RESERVED",
+"reason": "",
+"requestId": "3",
+"blocker": "WAIT_PRESENT",
+"workerPhase": "SWAP",
+"captureId": "0",
+"startNs": "0",
+"armByNs": "1001000000",
+"detectedNs": "0",
+"detectionDelayNs": "0",
+"safePointSerial": "0"
+},
+{
+"tag": "S3_RESERVE",
+"raw": "requestId=1"
+},
+{
+"tag": "S3_AFTER_CHANGE",
+"state": "CANCELLED",
+"reason": "IDENTITY_CHANGED",
+"requestId": "1",
+"blocker": "NO_OWNER_CHECKPOINT",
+"workerPhase": "NO_OWNER_CHECKPOINT",
+"captureId": "0",
+"startNs": "0",
+"armByNs": "1001000000",
+"detectedNs": "1000000",
+"detectionDelayNs": "0",
+"safePointSerial": "0"
+},
+{
+"tag": "S3_VERDICT",
+"raw": "identity change cancels pending; old id rejected as stale; no captureId minted"
+},
+{
+"tag": "S4_RESERVE",
+"raw": "requestId=1 armByNs=1001000000"
+},
+{
+"tag": "S4_SAME_INSTANT",
+"state": "TIMED_OUT",
+"reason": "CAPTURE_SAFE_POINT_TIMEOUT",
+"requestId": "1",
+"blocker": "WAIT_PRESENT",
+"workerPhase": "SWAP",
+"captureId": "0",
+"startNs": "0",
+"armByNs": "1001000000",
+"detectedNs": "1001000000",
+"detectionDelayNs": "0",
+"safePointSerial": "0"
+},
+{
+"tag": "S4_LATE_OWNER",
+"raw": "no captureId, no BEGIN, captureSe
