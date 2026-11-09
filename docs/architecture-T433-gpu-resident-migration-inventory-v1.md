@@ -97,6 +97,8 @@ T280四档完整root、T281软件GLES场景和T421实际App/ANGLE预约属于已
 
 ## 7. 阶段A · M1有效来源账搬运与热传输闭合
 
+2026-11-09，T444 勘误。来源账每条64B，事件前缀每条256B，二者独立。T435 原字节断言按勘误处理。 [T444 计量与测试合同](architecture-T444-gpu-prefix-copy-oracle-erratum-v1.md)
+
 ### A-D developer任务范围
 
 不使用真机。以T421来源冻结一个独立版本，首版只选择**每QUANTUM复制有效sourceEvent16前缀**，同时登记实际copy边。不更改物理shader顺序、pass表、tail格式、四binding和flush布局，不并行重做预约。

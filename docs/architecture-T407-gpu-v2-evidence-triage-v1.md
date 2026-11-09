@@ -59,6 +59,8 @@ T401 已补正 T399：部分第二批 flush 确有 53.99–60.67ms 调用区间�
 
 ### 4.3 显式有界采集窗口
 
+2026-11-09，T442 修订实验取证的签包身份入口。宿主核最终签包，实验页从冷启动 Want 消费只读身份。 [T442 SHA 入口与复测合同](architecture-T442-gpu-capture-sha-launch-v1.md)
+
 2026-11-09 T417 修订。采集入口改为 [有界预约与 owner 安全点消费](architecture-T417-gpu-capture-reservation-v1.md)。T409 同步 arm 和 `CAPTURE_BUSY` 语义保留于下文作为历史合同。新签包按 T417 处理请求、时限与身份。实际窗口、原时钟与配额账、证据预算和冷档校验沿本节。
 
 2026-11-09 T441 修订。独立归档工具按 [T441格式、事件与分页合同](architecture-T441-gpu-archive-checker-schema-v1.md) 修复。T409正式requiredEvents为string[]，从SUMMARY独立推导并核实际事件行；BEGIN/END手工在场、manifest自述COMPLETE或Balanced均不能替代全档校验。页数为`1+ceil(rowCount/4)+tokenCount`，INCOMPLETE/dropped非成功退出。旧timeline按原revision重放，生产格式不为适配错误夹具改成对象。
