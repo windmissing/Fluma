@@ -1,0 +1,24 @@
+{
+  "revision": "T428_ACTUAL_PAGE_WIRING_V1",
+  "passed": 16,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "cases": [
+    "cold no keyboard uses actual three input bindings and two different onIdle frames",
+    "editing -> nonzero avoid -> exit editing -> zero avoid -> READY",
+    "successful component command does not hide persistent keyboard; ratio1 cannot override",
+    "previously editing without nonzero avoid is unknown",
+    "unconfirmed floating keyboard or non-fullscreen never READY",
+    "same-size position change resets frames, READY cannot survive immediate stale reserve",
+    "native old geometry and late action layout cannot produce permit",
+    "actual reserveCapture has mandatory permit gate before phase/request mutation",
+    "READY edit invalidates permit; OPEN keyboard invalidates hold first cause",
+    "double prepare no side effects; delayed timer/frame at >=3000 cannot READY",
+    "hide/show detaches exact listeners and stale callbacks cannot finish new prepare",
+    "component error preserves raw55 but fails; window subscription error rejects",
+    "late cold-write failure from hidden page cannot fail the next preparation or touch export busy",
+    "vp2px drift resets stability and a viewport outside the window rejects",
+    "historical hide reject55 fixture cannot replace actual hidden/visible/unknown observations",
+    "window reconstruction terminates prepare; old generation cannot publish READY"
+  ]
+}
