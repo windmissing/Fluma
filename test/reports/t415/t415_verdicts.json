@@ -1,0 +1,12 @@
+{
+ "revision": "T415_HOLD_ORACLE_V1",
+ "selftest": {
+  "stateMachine": "19 ok / 0 bad (A1-A19: full lifecycle, HOLD_ACTIVE zero-side-effect, stale ack rejection ATTEMPT/REQUEST/EMPTY_SHA, EXPIRED-only-invalidates, cancel idempotent first-cause, geometry invalidation, ARCHIVE_NOT_SAVED gate, invalid-ROI zero-side-effect)",
+  "timeGate": "8 ok / 0 bad (B1 positive in-hold; B2 seal-then-capture OUTSIDE_HOLD; B3 start-before-hold; B4 end-after-seal; B5 envelope-overrun with edge-hugging capture; B6 <3 samples CLOCK_MAPPING_UNKNOWN; B7 rollback evidence; B8 start<holdStart)"
+ },
+ "t408Audit": "conclusion maintained: failure chain CAPTURE_TOOL_RECEIPT(empty sha/missing receipt) -> CLOCK_MAPPING_UNKNOWN(no archived sync pairs) -> CAPTURE_INTERVAL_OUTSIDE_HOLD; none fixable by hold extension or receipt backfill; r2 span 87104.65ms r4 span 228954.438ms matches T413 s2",
+ "t414Interface": "NOT_YET_DELIVERED -> expected RED registered (live capture_hold.py against T414 interfaces deferred until developer delivery)",
+ "evidenceSha256": {
+  "t408_audit.json": "4551068d59036d8faf127764"
+ }
+}

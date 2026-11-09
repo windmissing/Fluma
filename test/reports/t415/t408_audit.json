@@ -1,0 +1,44 @@
+{
+ "revision": "T415_T408_AUDIT_V1",
+ "conclusion": "T408 原结论维持: 未运行 calibrate / 未获 hold 覆盖。失败分类链 = CAPTURE_TOOL_RECEIPT(fileSha256 空/缺收据) → (即使补齐) CLOCK_MAPPING_UNKNOWN(无归档同步对) → CAPTURE_INTERVAL_OUTSIDE_HOLD(映射外)；三者都不能被延长 hold 或补写收据修复（T413 §2 三独立拒判条件）。",
+ "rounds": [
+  {
+   "round": "r1",
+   "firstRejection": "CAPTURE_TOOL_RECEIPT (no capture receipt at all)",
+   "notes": [
+    "r1: no independent hold seal at all (T413: cannot rewrite as \"never established\")"
+   ]
+  },
+  {
+   "round": "r2",
+   "firstRejection": "CAPTURE_TOOL_RECEIPT (fileSha256 empty — PNG not fetched in same wrapped call)",
+   "notes": [
+    "capture receipt lacks local PNG binding; screen.py rejects before time gate",
+    "no archived clock sync pairs → screen.py hits CLOCK_MAPPING_UNKNOWN before CAPTURE_INTERVAL_OUTSIDE_HOLD"
+   ],
+   "holdSpanMs": 87104.65
+  },
+  {
+   "round": "r3",
+   "firstRejection": "CAPTURE_TOOL_RECEIPT (fileSha256 empty — PNG not fetched in same wrapped call)",
+   "notes": [
+    "capture receipt lacks local PNG binding; screen.py rejects before time gate"
+   ]
+  },
+  {
+   "round": "r4",
+   "firstRejection": "CAPTURE_TOOL_RECEIPT (fileSha256 empty — PNG not fetched in same wrapped call)",
+   "notes": [
+    "capture receipt lacks local PNG binding; screen.py rejects before time gate",
+    "no archived clock sync pairs → screen.py hits CLOCK_MAPPING_UNKNOWN before CAPTURE_INTERVAL_OUTSIDE_HOLD"
+   ],
+   "holdSpanMs": 228954.438
+  }
+ ],
+ "visibility": {
+  "r1": "calib.png 键盘展开，标定图未露出",
+  "r2": "calib2.png 同",
+  "r4": "calib4.png 同 + 页面显示\"等待下一次有效绘制\""
+ },
+ "boundary": "本复核只读；旧端点不补写、不挽救；新 attempt 按 T413 §4 全新开始。"
+}
