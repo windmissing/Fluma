@@ -1,0 +1,183 @@
+{
+ "revision": "T447_EXPERIENCE_DIFF_V1",
+ "device": "NOT_RUN",
+ "source": {
+  "regular": ".codex/local-test/t447-regular",
+  "experiment": ".codex/local-test/t447-experiment"
+ },
+ "t439Baseline": "T439_GPU_EXPERIENCE_INPUT_BASELINE_V1",
+ "results": [
+  {
+   "id": "regular:I20_V2_UNSUPPORTED",
+   "expect": "PROGRESS_V2_UNSUPPORTED",
+   "actual": "PROGRESS_V2_UNSUPPORTED",
+   "ok": true,
+   "note": "T439 I20: 常规 profile 拒 V2 不伪选"
+  },
+  {
+   "id": "regular:I20_NO_RESET",
+   "expect": "1",
+   "actual": "1",
+   "ok": true,
+   "note": "拒 V2 不触发新空 run"
+  },
+  {
+   "id": "regular:I22_NO_SNAPSHOT_IMPORT",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "显式入口无快照导入路径"
+  },
+  {
+   "id": "regular:I22_EXPLICIT_NEW_RUN",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "首次进入显式新空 run"
+  },
+  {
+   "id": "regular:I23_FAULT_REASON",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "T439 I23: 资源故障明确 unsupported"
+  },
+  {
+   "id": "regular:I23_DOWN_BLOCKED",
+   "expect": "NOT_READY",
+   "actual": "NOT_READY",
+   "ok": true,
+   "note": "FAULT 中 DOWN 拒（无 packets 增长）"
+  },
+  {
+   "id": "regular:I25_TICK_STREAMS",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "DOWN 期间 tick 持续入队"
+  },
+  {
+   "id": "regular:I25_UP_STOPS_NEW_OFFERS",
+   "expect": "1",
+   "actual": "1",
+   "ok": true,
+   "note": "UP 后不再入队（已准入 J 在 GPU 侧继续）"
+  },
+  {
+   "id": "regular:I01_DOWN_OK",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "恢复 down 继续入队"
+  },
+  {
+   "id": "regular:I08_CLOCK_GAP_STOP",
+   "expect": "CLOCK_GAP_NO_CATCHUP",
+   "actual": "CLOCK_GAP_NO_CATCHUP",
+   "ok": true,
+   "note": "T439 I08"
+  },
+  {
+   "id": "regular:I12_SENSOR_PATH",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "传感器路径由 T439 I12 契约冻结，设备观察归 T448"
+  },
+  {
+   "id": "regular:I18_RESET_NEW_RUN",
+   "expect": "2",
+   "actual": "2",
+   "ok": true,
+   "note": "T439 I18"
+  },
+  {
+   "id": "experiment:I21_COLD_SELECT",
+   "expect": "selectV2,newRun",
+   "actual": "selectV2,newRun",
+   "ok": true,
+   "note": "T439 I21: V2 只作用于下一 run"
+  },
+  {
+   "id": "experiment:I21_V2_ACTIVE",
+   "expect": "V2",
+   "actual": "V2",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "experiment:I22_NO_SNAPSHOT_IMPORT",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "显式入口无快照导入路径"
+  },
+  {
+   "id": "experiment:I22_EXPLICIT_NEW_RUN",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "首次进入显式新空 run"
+  },
+  {
+   "id": "experiment:I23_FAULT_REASON",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "T439 I23: 资源故障明确 unsupported"
+  },
+  {
+   "id": "experiment:I23_DOWN_BLOCKED",
+   "expect": "NOT_READY",
+   "actual": "NOT_READY",
+   "ok": true,
+   "note": "FAULT 中 DOWN 拒（无 packets 增长）"
+  },
+  {
+   "id": "experiment:I25_TICK_STREAMS",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "DOWN 期间 tick 持续入队"
+  },
+  {
+   "id": "experiment:I25_UP_STOPS_NEW_OFFERS",
+   "expect": "1",
+   "actual": "1",
+   "ok": true,
+   "note": "UP 后不再入队（已准入 J 在 GPU 侧继续）"
+  },
+  {
+   "id": "experiment:I01_DOWN_OK",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "恢复 down 继续入队"
+  },
+  {
+   "id": "experiment:I08_CLOCK_GAP_STOP",
+   "expect": "CLOCK_GAP_NO_CATCHUP",
+   "actual": "CLOCK_GAP_NO_CATCHUP",
+   "ok": true,
+   "note": "T439 I08"
+  },
+  {
+   "id": "experiment:I12_SENSOR_PATH",
+   "expect": "true",
+   "actual": "true",
+   "ok": true,
+   "note": "传感器路径由 T439 I12 契约冻结，设备观察归 T448"
+  },
+  {
+   "id": "experiment:I18_RESET_NEW_RUN",
+   "expect": "3",
+   "actual": "3",
+   "ok": true,
+   "note": "T439 I18"
+  }
+ ],
+ "agreed": 24,
+ "diverged": 0,
+ "notImpl": 0,
+ "verdict": "PASS"
+}
