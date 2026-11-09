@@ -1,0 +1,412 @@
+{
+ "revision": "T424_JUDGE_V1",
+ "source": "D:\\hmprojects\\HelloWorld\\test\\reports\\t424\\matrix.json",
+ "entries": [
+  {
+   "entry": "SENTINEL_T403",
+   "pass": true,
+   "grants": [
+    [
+     0.1,
+     0.1,
+     0.09999999999999998
+    ],
+    [
+     0.1,
+     0.032121583881089655,
+     0
+    ]
+   ]
+  },
+  {
+   "scenario": "empty_active_n512_l0",
+   "frames": 92,
+   "substeps": 2,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 0,
+   "wallP95": 0,
+   "QSum": 0,
+   "ASum": 0,
+   "RSum": 0,
+   "fillCopySum": 0,
+   "authoritySum": 0,
+   "stagesActive": {
+    "callbackTail": {
+     "p50": 0,
+     "sum": 1
+    },
+    "seal": {
+     "p50": 0,
+     "sum": 1
+    },
+    "consumerCopy": {
+     "p50": 0,
+     "sum": 1
+    }
+   },
+   "subRSum": 0,
+   "subWallP50": 27,
+   "admission": {
+    "preAdmitted": 0,
+    "preRejected": 0,
+    "finalLive": 0
+   },
+   "verdict": "PASS"
+  },
+  {
+   "scenario": "empty_sleep_n512",
+   "frames": 92,
+   "substeps": 0,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 0,
+   "wallP95": 0,
+   "QSum": 0,
+   "ASum": 0,
+   "RSum": 0,
+   "fillCopySum": 0,
+   "authoritySum": 0,
+   "stagesActive": {
+    "consumerCopy": {
+     "p50": 0,
+     "sum": 1
+    }
+   },
+   "admission": {
+    "preAdmitted": 0,
+    "preRejected": 0,
+    "finalLive": 0
+   },
+   "verdict": "PASS"
+  },
+  {
+   "scenario": "inject_n512_l8",
+   "frames": 92,
+   "substeps": 192,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 4,
+   "wallP95": 6,
+   "QSum": 184,
+   "ASum": 92,
+   "RSum": 92,
+   "fillCopySum": 10315776,
+   "authoritySum": 10598400,
+   "stagesActive": {
+    "callbackTail": {
+     "p50": 0,
+     "sum": 1
+    },
+    "injection": {
+     "p50": 0,
+     "sum": 25
+    },
+    "step": {
+     "p50": 0,
+     "sum": 34
+    },
+    "preview": {
+     "p50": 0,
+     "sum": 31
+    },
+    "collect": {
+     "p50": 0,
+     "sum": 52
+    },
+    "hotApply": {
+     "p50": 1,
+     "sum": 61
+    },
+    "field": {
+     "p50": 1,
+     "sum": 56
+    },
+    "fillCopy": {
+     "p50": 0,
+     "sum": 7
+    },
+    "publicVerify": {
+     "p50": 0,
+     "sum": 16
+    },
+    "authorityCompare": {
+     "p50": 0,
+     "sum": 29
+    },
+    "consumerCopy": {
+     "p50": 0,
+     "sum": 1
+    },
+    "structure": {
+     "p50": 0,
+     "sum": 2
+    },
+    "exact70": {
+     "p50": 0,
+     "sum": 43
+    },
+    "strictDomain": {
+     "p50": 0,
+     "sum": 1
+    }
+   },
+   "subRSum": 0,
+   "subWallP50": 1,
+   "admission": {
+    "preAdmitted": 0,
+    "preRejected": 0,
+    "finalLive": 96
+   },
+   "verdict": "PASS"
+  },
+  {
+   "scenario": "inject_hold_n512_l157",
+   "frames": 92,
+   "substeps": 192,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 8,
+   "wallP95": 9,
+   "QSum": 184,
+   "ASum": 0,
+   "RSum": 0,
+   "fillCopySum": 6877184,
+   "authoritySum": 7065600,
+   "stagesActive": {
+    "step": {
+     "p50": 0,
+     "sum": 21
+    },
+    "preview": {
+     "p50": 0,
+     "sum": 28
+    },
+    "collect": {
+     "p50": 1,
+     "sum": 114
+    },
+    "hotApply": {
+     "p50": 3,
+     "sum": 261
+    },
+    "field": {
+     "p50": 1,
+     "sum": 112
+    },
+    "fillCopy": {
+     "p50": 0,
+     "sum": 3
+    },
+    "publicVerify": {
+     "p50": 0,
+     "sum": 12
+    },
+    "authorityCompare": {
+     "p50": 0,
+     "sum": 21
+    },
+    "seal": {
+     "p50": 0,
+     "sum": 1
+    },
+    "structure": {
+     "p50": 0,
+     "sum": 2
+    },
+    "exact70": {
+     "p50": 1,
+     "sum": 128
+    }
+   },
+   "subRSum": 0,
+   "subWallP50": 4,
+   "admission": {
+    "preAdmitted": 51.0625,
+    "preRejected": 95,
+    "finalLive": 512
+   },
+   "verdict": "PASS"
+  },
+  {
+   "scenario": "inject_full_n512_l512",
+   "frames": 92,
+   "substeps": 192,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 7,
+   "wallP95": 8,
+   "QSum": 184,
+   "ASum": 0,
+   "RSum": 0,
+   "fillCopySum": 6877184,
+   "authoritySum": 7065600,
+   "stagesActive": {
+    "callbackTail": {
+     "p50": 0,
+     "sum": 2
+    },
+    "step": {
+     "p50": 0,
+     "sum": 9
+    },
+    "preview": {
+     "p50": 0,
+     "sum": 22
+    },
+    "collect": {
+     "p50": 1,
+     "sum": 118
+    },
+    "hotApply": {
+     "p50": 3,
+     "sum": 248
+    },
+    "field": {
+     "p50": 1,
+     "sum": 116
+    },
+    "publicVerify": {
+     "p50": 0,
+     "sum": 7
+    },
+    "authorityCompare": {
+     "p50": 0,
+     "sum": 22
+    },
+    "seal": {
+     "p50": 0,
+     "sum": 1
+    },
+    "consumerCopy": {
+     "p50": 0,
+     "sum": 1
+    },
+    "structure": {
+     "p50": 0,
+     "sum": 1
+    },
+    "exact70": {
+     "p50": 1,
+     "sum": 133
+    },
+    "strictDomain": {
+     "p50": 0,
+     "sum": 1
+    }
+   },
+   "subRSum": 0,
+   "subWallP50": 4,
+   "admission": {
+    "preAdmitted": 51.0625,
+    "preRejected": 0,
+    "finalLive": 511
+   },
+   "verdict": "PASS"
+  },
+  {
+   "scenario": "empty_active_n64_l0",
+   "frames": 92,
+   "substeps": 2,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 0,
+   "wallP95": 0,
+   "QSum": 0,
+   "ASum": 0,
+   "RSum": 0,
+   "fillCopySum": 0,
+   "authoritySum": 0,
+   "stagesActive": {
+    "step": {
+     "p50": 0,
+     "sum": 1
+    }
+   },
+   "subRSum": 0,
+   "subWallP50": 1,
+   "admission": {
+    "preAdmitted": 0,
+    "preRejected": 0,
+    "finalLive": 0
+   },
+   "verdict": "PASS"
+  },
+  {
+   "scenario": "inject_hold_n64_l48",
+   "frames": 92,
+   "substeps": 192,
+   "incomplete": false,
+   "invalid": 0,
+   "wallP50": 2,
+   "wallP95": 2,
+   "QSum": 184,
+   "ASum": 0,
+   "RSum": 0,
+   "fillCopySum": 2343424,
+   "authoritySum": 2531840,
+   "stagesActive": {
+    "injection": {
+     "p50": 0,
+     "sum": 1
+    },
+    "step": {
+     "p50": 0,
+     "sum": 11
+    },
+    "preview": {
+     "p50": 0,
+     "sum": 36
+    },
+    "collect": {
+     "p50": 0,
+     "sum": 28
+    },
+    "hotApply": {
+     "p50": 0,
+     "sum": 31
+    },
+    "field": {
+     "p50": 0,
+     "sum": 28
+    },
+    "fillCopy": {
+     "p50": 0,
+     "sum": 1
+    },
+    "publicVerify": {
+     "p50": 0,
+     "sum": 11
+    },
+    "authorityCompare": {
+     "p50": 0,
+     "sum": 4
+    },
+    "consumerCopy": {
+     "p50": 0,
+     "sum": 1
+    },
+    "exact70": {
+     "p50": 0,
+     "sum": 26
+    }
+   },
+   "subRSum": 0,
+   "subWallP50": 1,
+   "admission": {
+    "preAdmitted": 6.375,
+    "preRejected": 96,
+    "finalLive": 64
+   },
+   "verdict": "PASS"
+  }
+ ],
+ "verdict": "PASS",
+ "t368Reference": {
+  "window": "callback2017-2144 N512/L157/Q2/A0/R942",
+  "substeps": 256,
+  "subWallP50DeviceMs": 411,
+  "subRP50Device": 471,
+  "note": "真机数量级锚；host 基线不可直接比 ms，只比工作界结构"
+ }
+}
