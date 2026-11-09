@@ -1,0 +1,84 @@
+{
+ "revision": "T419_SAFEPOINT_BASELINE_V1",
+ "selftest": "PASS",
+ "scenarios": {
+  "S1": {
+   "a_continuous": {
+    "verdict": "ARMED_AT_NEXT_SAFE_POINT",
+    "armedNs": 48000000,
+    "beginBeforeRoots": true
+   },
+   "c_wait_wake": {
+    "verdict": "ARMED_AFTER_WAKE",
+    "armedNs": 116000000
+   },
+   "e_gap_drain": {
+    "verdict": "ARMED_AFTER_DRAIN",
+    "blockedAtNs": 48000000,
+    "armedNs": 80000000
+   },
+   "f_v2_pause": {
+    "verdict": "ARMED_DURING_STABLE_PAUSE",
+    "armedNs": 56000000
+   }
+  },
+  "S2": {
+   "stale_job_live_armed": {
+    "verdict": "ARMED_DESPITE_STALE_JOB_LIVE",
+    "jobLiveUnchanged": true,
+    "armedNs": 48000000
+   },
+   "active_root_blocked": {
+    "verdict": "RESERVED_WITH_WAIT_ROOT"
+   },
+   "half_submit_cache_trap": {
+    "verdict": "RESERVED_DESPITE_HASFLIGHT_FALSE",
+    "note": "cache negative cannot arm"
+   }
+  },
+  "S3": {
+   "cancelledOnIdentityChange": {
+    "verdict": "CANCELLED",
+    "staleOldId": true
+   },
+   "previousFrozenKept": {
+    "captureId": "cap-2",
+    "exportable": true
+   },
+   "newRequestId": 4
+  },
+  "S4": {
+   "timeout": {
+    "verdict": "TIMED_OUT",
+    "detectedNs": 1020000000,
+    "lateOwnerNoOpen": true,
+    "noCaptureId": true
+   },
+   "sameInstantPrecedence": {
+    "sameInstant": "TIMED_OUT_WINS"
+   }
+  },
+  "S5": {
+   "lateEnd": {
+    "verdict": "FROZEN_IDEMPOTENT",
+    "frozenAtNs": 2000000000
+   },
+   "cancelAfterArm": {
+    "verdict": "REJECTED_ALREADY_ARMED"
+   }
+  }
+ },
+ "t409WakeHookAudit": {
+  "revision": "T419_T409_WAKE_HOOK_AUDIT_V1",
+  "fact": "T409 host 用例在 BridgeStage::Wake hook 内直接 BeginEvidenceLocked 并断言 ARMED。",
+  "position": "Wake 检查点位于循环顶 wait 块之后、WorkInterval 构造之前（app_bridge.cpp::loop），此时上一迭代的 WorkInterval 析构已把 captureWorkBusy 清 false。",
+  "why_armed": "host 脚本形态下上一迭代完整走完（含 retire），Wake 即\"已知安全边界\"；且 hook 断言 !evidence && !captureRootBusy && !jobLive 后才提交。",
+  "production_gap": "生产路径 Wake 检查点不持有安全快照（不核 Run 无提交/在途/隔离轮询、transport 无半提交/fence、drainingRevoked 完成、本 root 交接结束）。裸 Wake 不能直接等价 T417 安全点；T417 要求 TryArmReservedLocked 在本轮控制/身份校验之后、下一次 offer/PlanGrant/JobIntent/Pump/Draw 之前，携带定长 owner 快照（safePointSerial/workerPhase/root kind 等）。",
+  "ui_cross_loop_window": "UI pulse 线程每 8ms 推进注入时钟并 PagePulse；跨迭代窗口内captureWorkBusy 在析构后为 false，但该窗口同时可能有控制换代（seen!=epoch continue），脚本未覆盖换代与预约竞争。",
+  "baseline_use": "该结论作为修订包真机判读前置：修订实现不得以裸 Wake 位置充当安全点，须出示快照字段。"
+ },
+ "boundary": "本基线为 tester 独立合成层（对照 T417 合同文本），非产品代码；对未定修复语义只记录预期（当前产品无预约接口，全部场景对现实现为预期 RED 登记），不作为缺陷，交 architect 消费。",
+ "constants": {
+  "waitBudgetNs": 1000000000
+ }
+}
