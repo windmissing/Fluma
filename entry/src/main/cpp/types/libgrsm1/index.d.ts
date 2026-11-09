@@ -1,4 +1,6 @@
 export const beginEvidenceCapture:(configJson:string)=>string;
+export const evidenceCaptureRequest: (requestIdDecimal:string) => string;
+export const cancelEvidenceCaptureRequest: (requestIdDecimal:string) => string;
 export const endEvidenceCapture:(captureIdDecimal:string)=>string;
 export const evidenceCapturePage:(captureIdDecimal:string,cursor:number)=>string;
 export const recordSourceAttempt:(record:string)=>string;

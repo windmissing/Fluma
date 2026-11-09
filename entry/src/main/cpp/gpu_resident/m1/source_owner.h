@@ -12,6 +12,7 @@ public:
  ControlCode Acquire(uint32_t,U64,PublicationLease&);ControlCode Release(uint32_t,U64,bool);
  uint32_t Bank()const{return bank;}const Words256& Header()const{return header;}FlightState State()const{return state;}
  uint64_t MappedBytes()const{return mapped;}uint64_t AcceptedCount()const{return accepted;}
+ bool HasUnhandedLease()const{for(const auto& p:pubs)if(p.leased)return true;return false;}
  bool HasLeases()const{for(const auto& p:pubs)if(p.leased||p.releasePending)return true;return false;}
 private:
  friend class FullM1Transport;

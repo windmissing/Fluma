@@ -1,3 +1,4 @@
+import { EvidenceCaptureReply } from './GpuEvidenceCaptureCold';
 // T228 / GRS_M1_DEMO_UI_V4. Input protocol only, no CPU inventory or angle acceptance.
 export interface GpuM1DemoPort {
  status():string;recordSourceAttempt?(record:string):string;offer(command:ArrayBuffer):string;setSource(kind:number):string;
@@ -7,6 +8,7 @@ export interface GpuM1DemoPort {
  configureOptics(optics:Float32Array):string;
 }
 export interface GpuM1DemoStatus {
+ captureRequest?:EvidenceCaptureReply;captureStorageReady?:boolean;
  countersRunLo?:number;countersRunHi?:number;countersEpoch?:string;countersPageSession?:string;countersProgressRevision?:string;
  progressClockRevision?:string;pageSession?:string;sampleSerial?:string;sourceClosePending?:boolean;
  state:string;stage?:string;ready:boolean;permissionState:string;epoch:number;readyEpoch:number;

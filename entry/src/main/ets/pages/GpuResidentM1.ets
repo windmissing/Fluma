@@ -20,17 +20,38 @@ class M1DemoFrame extends FrameCallback {
 @Entry @Component
 struct GpuResidentM1 {
  private readonly captureCold:GpuEvidenceCaptureCold=new GpuEvidenceCaptureCold();
+ private captureRequestId:string='';private captureSha:string='';private archivedSha:string='';private archivedRequestId:string='';private archivedRequest:EvidenceCaptureReply|null=null;private capturePending:boolean=false;private captureExporting:boolean=false;
  @State private captureId:string='';@State private captureText:string='未采集';
  private armCapture():void {
-  this.model.refresh();const s=this.model.snapshot;if(s===null){this.captureText='STATUS_FAULT';return;}
+  if(this.captureCold.busy||this.captureExporting)return;
+  const s=this.model.snapshot;if(s===null){this.captureText='STATUS_FAULT';return;}
   const config:EvidenceArmConfig={packageSha256:this.packageSha.trim(),expectedRevision:s.progressClockRevision??'',epoch:String(s.epoch),runLo:s.runLo,runHi:s.runHi,pageSession:s.pageSession??'0',durationNs:'2000000000',maxRows:4096,maxBytes:1048576};
   const reply:EvidenceCaptureReply=JSON.parse(m1.beginEvidenceCapture(JSON.stringify(config))) as EvidenceCaptureReply;
-  this.captureText=reply.state+' '+reply.reason;if(reply.state==='ARMED'&&reply.captureId!==undefined)this.captureId=reply.captureId;
+  if(reply.state==='RESERVED'&&reply.requestId!==undefined){this.captureRequestId=reply.requestId;this.captureSha=config.packageSha256;}
+  this.updateCapture(reply);
+ }
+ private updateCapture(reply:EvidenceCaptureReply):void {
+  if(reply.state!=='REJECTED')this.capturePending=reply.state==='RESERVED';
+  const label=reply.state+' '+(reply.reason||reply.lastBlocker||'')+' #'+(reply.requestId??'');
+  if(label!==this.captureText)this.captureText=label;
+  if((reply.state==='ARMED'||reply.state==='FROZEN')&&reply.captureId!==undefined&&reply.captureId!=='0'){
+   this.captureId=reply.captureId;this.archivedSha=this.captureSha;this.archivedRequestId=reply.requestId??'';this.archivedRequest=reply;
+  }
+ }
+ private cancelCaptureRequest():void {
+  if(!this.captureRequestId)return;
+  this.updateCapture(JSON.parse(m1.cancelEvidenceCaptureRequest(this.captureRequestId)) as EvidenceCaptureReply);
  }
  private async exportCapture():Promise<void> {
-  if(this.captureCold.busy||!this.captureId)return;
+  if(this.captureCold.busy||this.captureExporting||!this.captureId||this.capturePending)return;
+  this.captureExporting=true;
   this.captureText=m1.endEvidenceCapture(this.captureId);
-  try{const context=getContext(this) as common.UIAbilityContext;const result=await this.captureCold.collect(m1,new DiagnosticColdFiles(context.filesDir),this.captureId,this.packageSha.trim(),process.pid,()=>new Promise<void>((resolve:()=>void)=>{setTimeout(resolve,0);}));this.captureText=result.state+' '+result.reason;}catch(e){this.captureText='INCOMPLETE '+String(e);}
+  try{const context=getContext(this) as common.UIAbilityContext;const files=new DiagnosticColdFiles(context.filesDir);
+   const request:string=m1.evidenceCaptureRequest(this.archivedRequestId);
+   const r=JSON.parse(request) as EvidenceCaptureReply;
+   const receipt:string=r.state==='FROZEN'&&r.captureId===this.captureId?request:JSON.stringify(this.archivedRequest);
+   if(this.archivedRequest!==null)await files.save('gpu-capture-request-'+this.archivedRequestId+'-'+this.captureId+'.json',receipt);
+   const result=await this.captureCold.collect(m1,files,this.captureId,this.archivedSha,process.pid,()=>new Promise<void>((resolve:()=>void)=>{setTimeout(resolve,0);}));this.captureText=result.state+' '+result.reason;}catch(e){this.captureText='INCOMPLETE '+String(e);}finally{this.captureExporting=false;}
  }
  private readonly cold:GpuBridgeTimelineCold=new GpuBridgeTimelineCold();
  @State private progressV2:boolean=false;
@@ -76,6 +97,9 @@ struct GpuResidentM1 {
    else this.model.tickSnapshot(ns);
    if(this.lastTextNs<0||ns<this.lastTextNs||ns-this.lastTextNs>=33333334){
     this.lastTextNs=ns;
+    const capture=s?.captureRequest;
+    if(capture!==undefined&&capture.requestId===this.captureRequestId&&!this.captureCold.busy&&!this.captureExporting)this.updateCapture(capture);
+    else if(this.captureRequestId===''&&s?.captureStorageReady===false)this.captureText='CAPTURE_STORAGE_NOT_READY';
     const identity=s===null?'无快照':(s.progressClockRevision??'?')+' / run '+s.runHi+':'+s.runLo+' / epoch '+s.epoch+' / session '+(s.pageSession??'?')+' / sample '+(s.sampleSerial??'?');
     const stale=s===null||pulse!=='PAGE_PULSE_ACCEPTED'||!s.ready||s.state!=='CURRENT';
     this.stateText=(stale?'STALE · ':'CURRENT · ')+identity+' · '+(pulse==='PAGE_PULSE_ACCEPTED'?(s?.stage??s?.state??'STATUS_FAULT'):pulse);
@@ -96,7 +120,7 @@ struct GpuResidentM1 {
   Text(this.stateText).fontSize(11).height(32).maxLines(2)
   Text(this.receiptText).fontSize(10).height(30).maxLines(2)
   Row({space:8}){Button('沙').onClick(()=>{this.model.select(0);this.sourceText='沙';});Button('水').onClick(()=>{this.model.select(1);this.sourceText='水';});Button('停止').onClick(()=>this.model.stop('STOP'));Button('新空场').onClick(()=>this.model.reset());}
-  Row({space:8}){Button('开始2秒同窗采集').onClick(()=>this.armCapture());Button('冻结并导出同窗').onClick(()=>this.exportCapture());}
+  Row({space:8}){Button('开始2秒同窗采集').onClick(()=>this.armCapture());Button('取消预约').onClick(()=>this.cancelCaptureRequest());Button('冻结并导出同窗').onClick(()=>this.exportCapture());}
   Text(this.captureText).fontSize(10).height(14).maxLines(1)
   Text('当前：'+this.sourceText+'；抬手停源，已有水沙继续运动。参数待定标。').fontSize(11)
   XComponent({id:'grs-m1',type:XComponentType.SURFACE,libraryname:'grsm1'}).width('100%').layoutWeight(1).onAreaChange((_o:Area,a:Area)=>this.model.geometry(Number(a.width),Number(a.height))).onTouch((e:TouchEvent)=>this.touch(e))

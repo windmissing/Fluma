@@ -43,6 +43,10 @@ public:
  const TransportTraceRing& Trace()const{return quantum.trace;} // last quantum root, reset before submission
  // T324 §4 telemetry (bounded, read-only).
  SubmitPhase Phase()const{return submitPhase;}
+ // Owner only. Release fences already handed to transport are not root fences.
+ bool CaptureRootIdle()const{return !active&&submitPhase==SubmitPhase::IDLE&&
+  !quantum.fence&&!source.fence&&!source.candidatePinned&&!source.Owner().HasUnhandedLease();}
+
  uint32_t SubmitBatches()const{return batchesIssued;}
  uint32_t SubmitBatchPasses()const{return lastBatchPasses;}
  uint64_t SubmitBatchWallNs()const{return lastBatchWallNs;}

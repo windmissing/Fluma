@@ -2,7 +2,8 @@
 std::unique_ptr<EvidenceCapture> evidence;
 uint64_t captureSerial=0,sampleSerial=0,closedSourceBoundary=0,countersEpoch=0,countersSession=0;U64 countersRun{};bool countersV2=false;
 void CounterIdentityLocked(){countersRun=identity.run;countersEpoch=epoch.load();countersSession=progress.session;countersV2=progressV2;}
-bool captureWorkBusy=false,captureRootBusy=false;uint32_t nativeViewportWidth=0,nativeViewportHeight=0;
+bool captureRootBusy=false; // Existing source-close snapshot only, never an arm gate.
+uint32_t nativeViewportWidth=0,nativeViewportHeight=0;
 RenderCadence30 renderCadence;
 EvidenceControl observedPulse{},swapEvidence{};bool checkingPulse=false;
 std::array<bool,2> downRecorded{};
@@ -33,29 +34,7 @@ void CheckEvidenceLocked(){
   c.expectedRevision!=(progressV2?"GRS_M1_PROGRESS_CLOCK_V2":"GRS_M1_PROGRESS_CLOCK_V1"))FreezeEvidenceLocked("IDENTITY_CHANGED");
  else if(Stamp()>=evidence->deadlineNs)FreezeEvidenceLocked("DURATION_REACHED");
 }
-std::string BeginEvidenceLocked(const EvidenceConfig& config,std::unique_ptr<EvidenceCapture>& candidate){
- auto reject=[](const char* why){return std::string("{\"state\":\"REJECTED\",\"reason\":\"")+why+"\"}";};
-#ifndef GRS_PROGRESS_V2_EXPERIMENT
- return reject("CAPTURE_UNSUPPORTED");
-#else
- CheckEvidenceLocked();
- if(!config.Valid())return reject("INVALID_CAPTURE_CONFIG");
- if(config.maxRows<16||config.maxBytes<EvidenceCapture::EnvelopeBudget)return reject("CAPTURE_BUDGET_TOO_SMALL");
- if(evidence&&evidence->armed)return reject("CAPTURE_ALREADY_ARMED");
- if(captureWorkBusy||captureRootBusy||jobLive)return reject("CAPTURE_BUSY");
- if(config.expectedRevision!=(progressV2?"GRS_M1_PROGRESS_CLOCK_V2":"GRS_M1_PROGRESS_CLOCK_V1")||
-  config.epoch!=epoch.load()||config.runLo!=identity.run.lo||config.runHi!=identity.run.hi||config.pageSession!=progress.session)return reject("CAPTURE_IDENTITY_MISMATCH");
- if(captureSerial==UINT64_MAX||Stamp()>UINT64_MAX-config.durationNs)return reject("CAPTURE_ID_EXHAUSTED");
- if(!candidate)return reject("CAPTURE_STORAGE_MISSING");
-#ifdef GRS_BRIDGE_HOST_TEST
- candidate->evidenceSource="HOST_SCRIPTED_OFFLINE";candidate->clockDomain="SCRIPTED_OFFLINE_STAMP_NS";candidate->uiDomain="SCRIPTED_UI_CALLBACK_NS";candidate->probeDomain="HOST_STEADY_NS";
-#endif
- candidate->Begin(config,++captureSerial,Stamp(),EvidenceLedger::Of(progress));evidence.swap(candidate);downRecorded={};evidence->lifetimeNativeStart=progress.maxNativeGap;evidence->lifetimeUiStart=progress.maxUiGap;
- EvidenceKeyLocked("BEGIN","");
- if(AllowedLocked()){evidence->readySeen=true;EvidenceKeyLocked("READY","");}
- return evidence->State();
-#endif
-}
+#include "evidence_capture_request.inc"
 std::string EndEvidenceLocked(uint64_t id){
  CheckEvidenceLocked();if(!evidence||evidence->id!=id)return "{\"state\":\"REJECTED\",\"reason\":\"STALE_CAPTURE_ID\"}";
  FreezeEvidenceLocked("EXPLICIT_END");return evidence->State();

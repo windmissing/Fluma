@@ -73,6 +73,9 @@ struct App : BridgeState {
  uint64_t BeginPageSessionLocked(){
   if(evidence&&evidence->armed){if(progressV2)progress.Revoke("PAGE_SESSION_REPLACED");CaptureRevokeLocked("PAGE_SESSION_REPLACED");}
   if(!progress.BeginSession())return 0;
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+  CheckCaptureRequestLocked(Stamp());
+#endif
   if(!progressV2)return progress.session;
   ++permissionRevision;BridgeState::RevokeLocked("WAIT_PAGE_PULSE");
   phase="WAIT_PAGE_PULSE";status="{\"state\":\"WAIT_PAGE_PULSE\"}";
@@ -277,7 +280,14 @@ struct App : BridgeState {
 #ifdef GRS_BRIDGE_HOST_TEST
  uint64_t (*hostNow)()=nullptr;void (*hostHook)(App&,BridgeStage)=nullptr;
 #endif
- void MarkLocked(BridgeStage stage,uint64_t seen=0,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){if(stage==BridgeStage::InitBegin)timelinePaused=false;if(timelinePaused&&stage!=BridgeStage::Invalidate&&stage!=BridgeStage::InitBegin)return;BridgeTimeRow r;r.ns=Stamp();r.tid=BridgeTid();r.epoch=seen?seen:epoch.load();r.run=(uint64_t(identity.run.hi)<<32)|identity.run.lo;r.surface=(uint64_t(identity.surface.hi)<<32)|identity.surface.lo;r.input=(uint64_t(input.hi)<<32)|input.lo;r.stage=uint32_t(stage);r.now=r.ns;r.last=last;r.delta=delta;r.code=uint32_t(code);r.carry=carry;r.quanta=q;r.appQueue=uint32_t(count);r.runQueue=runQueue;r.root=(uint64_t(rootNonce.hi)<<32)|rootNonce.lo;r.flags=(active?1:0)|(window?2:0)|(AllowedLocked()?4:0);timeline.Add(r);
+ void MarkLocked(BridgeStage stage,uint64_t seen=0,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+  if(stage==BridgeStage::PumpBegin)RecordCaptureOwnerLocked("ROOT","WAIT_ROOT",Stamp());
+  else if(stage==BridgeStage::DrawBegin)RecordCaptureOwnerLocked("DRAW","WAIT_PRESENT",Stamp());
+  else if(stage==BridgeStage::SwapBegin)RecordCaptureOwnerLocked("SWAP","WAIT_PRESENT",Stamp());
+  else if(stage==BridgeStage::SwapEnd||stage==BridgeStage::DrawEnd)RecordCaptureOwnerLocked("PRESENT_HANDOFF","WAIT_PRESENT",Stamp());
+#endif
+if(stage==BridgeStage::InitBegin)timelinePaused=false;if(timelinePaused&&stage!=BridgeStage::Invalidate&&stage!=BridgeStage::InitBegin)return;BridgeTimeRow r;r.ns=Stamp();r.tid=BridgeTid();r.epoch=seen?seen:epoch.load();r.run=(uint64_t(identity.run.hi)<<32)|identity.run.lo;r.surface=(uint64_t(identity.surface.hi)<<32)|identity.surface.lo;r.input=(uint64_t(input.hi)<<32)|input.lo;r.stage=uint32_t(stage);r.now=r.ns;r.last=last;r.delta=delta;r.code=uint32_t(code);r.carry=carry;r.quanta=q;r.appQueue=uint32_t(count);r.runQueue=runQueue;r.root=(uint64_t(rootNonce.hi)<<32)|rootNonce.lo;r.flags=(active?1:0)|(window?2:0)|(AllowedLocked()?4:0);timeline.Add(r);
 #ifdef GRS_APP_M1
 CaptureDetailLocked(r);if(stage==BridgeStage::Ready)CaptureReadyLocked();
 #endif
@@ -295,11 +305,18 @@ if(stage==BridgeStage::PauseEnd)timelinePaused=true;}
 commandRevision=2;waterAllowed=true;
 #endif
 #ifdef GRS_PROGRESS_V2_EXPERIMENT
+ capturePrepared=NewCaptureStorage();
  supervisor=std::thread([this]{
   std::unique_lock<std::mutex> lock(mutex);
   while(!quit){
    wake.wait_for(lock,std::chrono::milliseconds(2));
+   CheckCaptureRequestLocked(Stamp());
    CheckEvidenceLocked();if(progressV2){ObserveControlLocked(Stamp());TryReadyV2Locked();}
+   if(!capturePrepared){
+    auto retired=std::move(captureRetired);
+    lock.unlock();retired.reset();auto ready=NewCaptureStorage();lock.lock();
+    capturePrepared=std::move(ready);
+   }
   }
  });
 #endif
@@ -326,8 +343,14 @@ if(evidence&&evidence->armed){if(progressV2)progress.Revoke("WINDOW_OR_RUN_CHANG
   progress.ResetRun();progress.open=true;progress.hasPulse=false;v2ResourcesReady=false;
  }
 #endif
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ CheckCaptureRequestLocked(Stamp());
+#endif
  MarkLocked(BridgeStage::Invalidate);wake.notify_all();}
  bool setActive(bool value){std::lock_guard<std::mutex> l(mutex);if(active==value)return false;active=value;
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ CheckCaptureRequestLocked(Stamp());
+#endif
 #ifdef GRS_APP_M1
  if(ui.enabled){SetSourceLocked(-1);RevokeLocked(value?"RESUMING":"BACKGROUND");
   phase=value?"RESUMING":"BACKGROUND";StatusSuspendedLocked(phase);wake.notify_one();return true;}
@@ -364,17 +387,41 @@ if(evidence&&evidence->armed){if(progressV2)progress.Revoke("WINDOW_OR_RUN_CHANG
   if(app.progressV2&&root.kind==2&&app.progress.activeRemaining==0)return false;
   commit(data);
   app.AcceptLocked(out);
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+  app.RecordCaptureOwnerLocked("PRESENT_HANDOFF","WAIT_PRESENT",app.Stamp());
+#endif
   return true;
  };
 #endif
-  auto retire=[&]{run.reset();if(gpu)gpu->ContextLost();gpu.reset();scene.Reset(false);if(display!=EGL_NO_DISPLAY){eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);if(surface!=EGL_NO_SURFACE)eglDestroySurface(display,surface);if(context!=EGL_NO_CONTEXT)eglDestroyContext(display,context);eglTerminate(display);}display=EGL_NO_DISPLAY;surface=EGL_NO_SURFACE;context=EGL_NO_CONTEXT;if(held)OH_NativeWindow_NativeObjectUnreference(held);held=nullptr;last=frame=render=lastAccepted=0;};
+  auto retire=[&]{
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+   {std::lock_guard<std::mutex> l(mutex);captureCommittedEpoch=0;CheckCaptureRequestLocked(Stamp());}
+#endif
+   run.reset();if(gpu)gpu->ContextLost();gpu.reset();scene.Reset(false);if(display!=EGL_NO_DISPLAY){eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);if(surface!=EGL_NO_SURFACE)eglDestroySurface(display,surface);if(context!=EGL_NO_CONTEXT)eglDestroyContext(display,context);eglTerminate(display);}display=EGL_NO_DISPLAY;surface=EGL_NO_SURFACE;context=EGL_NO_CONTEXT;if(held)OH_NativeWindow_NativeObjectUnreference(held);held=nullptr;last=frame=render=lastAccepted=0;};
   auto publish=[&](const std::string& s){std::lock_guard<std::mutex> l(mutex);if(CurrentLocked(seen,held)){status=s;if(s.find("FAULT")!=std::string::npos){RevokeLocked("FAULT");phase="FAULT";if(firstFailure=="NONE"){auto at=s.find("\"stage\":\"");if(at!=std::string::npos){at+=9;auto end=s.find('"',at);firstFailure=s.substr(at,end-at);}else firstFailure=phase;}}}};
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+  // Only the GL owner reads Run/transport. Every loop boundary follows the
+  // preceding Pump, presentation, and lease handoff (including continue cuts).
+  auto captureCheckpoint=[&]{
+   if(captureRequest.state!=CaptureRequest::RESERVED)return;
+   const char* blocker=!run||!gpu||!CurrentLocked(seen,held)?"NO_OWNER_CHECKPOINT":
+     drainingRevoked?"WAIT_REVOKED_DRAIN":run->HasFlight()||!gpu->CaptureRootIdle()||
+     (jobLive&&retryBusy&&permit.revision==permissionRevision&&
+       (permitKind!=1||permitSource==ui.boundary))?"WAIT_ROOT":"";
+   TryArmReservedLocked(blocker,Stamp());
+  };
+#endif
   while(true){
    uint64_t currentEpoch;bool enabled;uint32_t capacity,waterCapacity;int requestedAngle;
 #ifdef GRS_APP_M1
    bool resetBlocked;
 #endif
    {std::unique_lock<std::mutex> l(mutex);MarkLocked(BridgeStage::WaitEnter);
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+   if(quit)break;
+   captureCheckpoint();
+   const bool captureNotified=captureWake;captureWake=false;
+#endif
 #ifdef GRS_BRIDGE_HOST_TEST
 if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
 #endif
@@ -382,19 +429,24 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
 #ifdef GRS_APP_M1
  const bool runnable=run&&!failed&&!gap&&!suspended&&!drainingRevoked&&!retryBusy&&run->Tick().active&&
   (!run->HasFlight()||(run->Submitting()&&gpu->Phase()==m1::SubmitPhase::BATCH_ACTIVE));
- if(!runnable)wake.wait_for(l,std::chrono::milliseconds(
+ if(!runnable
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ &&!captureNotified
+#endif
+ )wake.wait_for(l,std::chrono::milliseconds(
   (drainingRevoked||retryBusy||(run&&run->HasFlight()))?1:8));
 #else
  wake.wait_for(l,std::chrono::milliseconds(8));
 #endif
-}MarkLocked(BridgeStage::Wake);if(quit)break;currentEpoch=epoch;enabled=active;capacity=K;waterCapacity=Kw;requestedAngle=angle;
+}MarkLocked(BridgeStage::Wake);if(quit)break;
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ captureCheckpoint();captureWake=false;
+#endif
+ currentEpoch=epoch;enabled=active;capacity=K;waterCapacity=Kw;requestedAngle=angle;
 #ifdef GRS_APP_M1
  resetBlocked=requiresReset;
 #endif
  }
-#ifdef GRS_APP_M1
-   struct WorkInterval {App& app;explicit WorkInterval(App& a):app(a){std::lock_guard<std::mutex> l(app.mutex);app.captureWorkBusy=true;}~WorkInterval(){std::lock_guard<std::mutex> l(app.mutex);app.captureWorkBusy=false;}} interval(*this);
-#endif
    if(currentEpoch!=seen
 #ifdef GRS_APP_M1
       ||(!gpu&&enabled&&!failed&&!resetBlocked)
@@ -471,11 +523,17 @@ app.CaptureDetailLocked(row);
 #ifdef GRS_APP_M1
 CounterIdentityLocked();
 #endif
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+captureCommittedEpoch=seen;
+#endif
 accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
    }
 #ifdef GRS_APP_M1
    if(run&&!failed&&!gap){
     if(drainingRevoked){
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+     {std::lock_guard<std::mutex> l(mutex);RecordCaptureOwnerLocked("DRAIN","WAIT_REVOKED_DRAIN",Stamp());}
+#endif
      const auto drained=gpu->DiscardRevoked();
      if(drained==TransportCode::BUSY)continue;
      drainingRevoked=false;
@@ -525,6 +583,9 @@ accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNo
     if(gpu->DiscardRevoked()==TransportCode::BUSY)continue;
     drainingRevoked=false;
    }
+#endif
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+   {std::lock_guard<std::mutex> l(mutex);captureCheckpoint();}
 #endif
    if(gap){Mark(BridgeStage::PumpBegin,seen,last);Hook(BridgeStage::PumpBegin);auto submitted=run->Tick().submitted,wasAccepted=run->Tick().accepted;auto code=run->Pump();Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(code!=TransportCode::BUSY){std::lock_guard<std::mutex> l(mutex);if(CurrentLocked(seen,held))phase="NEW_RUN_REQUIRED";}continue;}
    if(failed)continue;
@@ -671,6 +732,9 @@ last&&Stamp()-last>33333333u){
      if(!PermitLocked(presenting,Stamp()))continue;
      if(!renderCadence.Due(Stamp(),progressV2)){
       if(evidence&&evidence->armed)++evidence->display.skipped;
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+      ++captureCompleted;
+#endif
       jobLive=false;StatusSuspendedLocked("RENDER_CADENCE_SKIPPED");continue;
      }
     }
@@ -746,6 +810,9 @@ last&&Stamp()-last>33333333u){
     {
      std::lock_guard<std::mutex> lock(mutex);
      if(PermitLocked(presenting,Stamp())){
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+      ++captureCompleted;
+#endif
       jobLive=false;status=out.str();
       if(!receipt.current){RevokeLocked("FAULT");phase="FAULT";if(firstFailure=="NONE")firstFailure=receipt.stage;failed=true;}
      }
@@ -773,7 +840,12 @@ std::string base=a.status;if(!base.empty())base.pop_back();o<<base<<",\"timeline
 std::string baseUi=o.str();if(!baseUi.empty())baseUi.pop_back();o.str("");o.clear();o<<baseUi;a.UiJsonLocked(o);a.ProgressJsonLocked(o);o<<",\"permissionRevision\":"<<a.permissionRevision
  <<",\"rootDeadlineNs\":\""<<a.permit.deadline<<"\",\"revokedRoots\":"<<a.revokedRoots
  <<",\"countersRunLo\":"<<a.countersRun.lo<<",\"countersRunHi\":"<<a.countersRun.hi<<",\"countersEpoch\":\""<<a.countersEpoch<<"\",\"countersPageSession\":\""<<a.countersSession<<"\",\"countersProgressRevision\":\""<<(a.countersV2?"GRS_M1_PROGRESS_CLOCK_V2":"GRS_M1_PROGRESS_CLOCK_V1")<<"\",\"captureRevision\":\"T409_EVIDENCE_CAPTURE_V1\",\"nativeViewportWidth\":"<<a.nativeViewportWidth<<",\"nativeViewportHeight\":"<<a.nativeViewportHeight<<",\"evidenceCaptureId\":\""<<(a.evidence?a.evidence->id:0)<<"\",\"evidenceCaptureState\":\""<<(a.evidence?(a.evidence->frozen?"FROZEN":"ARMED"):"NONE")<<"\",\"lateSwaps\":"<<a.lateSwaps<<",\"sampleSerial\":\""<<++a.sampleSerial<<"\",\"sourceClosePending\":"<<((a.count||(a.captureRootBusy&&a.permitKind==1)||a.ui.applied!=a.ui.boundary)?"true":"false")
- <<",\"renderMode\":\""<<(a.progressV2?"V2_ACCEPTED_ROOT_30HZ":"V1_EVERY_ACCEPTED_ROOT")<<"\",\"captureStorageBytes\":"<<(a.evidence?sizeof(EvidenceCapture):0)<<",\"renderTargetHz\":"<<(a.progressV2?30:0)<<",\"renderSkippedByCadence\":\""<<a.renderCadence.skipped<<"\",\"newPhysicalFrames\":\""<<a.renderCadence.newPhysicalFrames<<"\",\"sourceOnlyFrames\":\""<<a.renderCadence.sourceOnlyFrames<<"\",\"lastSwapGapNs\":\""<<a.renderCadence.lastSwapGapNs<<"\",\"maxSwapGapNs\":\""<<a.renderCadence.maxSwapGapNs<<"\",\"staleNs\":\""<<a.renderCadence.staleNs<<"\"}";
+ <<",\"renderMode\":\""<<(a.progressV2?"V2_ACCEPTED_ROOT_30HZ":"V1_EVERY_ACCEPTED_ROOT")<<"\",\"captureStorageBytes\":"<<(a.evidence?sizeof(EvidenceCapture):0)<<",\"renderTargetHz\":"<<(a.progressV2?30:0)<<",\"renderSkippedByCadence\":\""<<a.renderCadence.skipped<<"\",\"newPhysicalFrames\":\""<<a.renderCadence.newPhysicalFrames<<"\",\"sourceOnlyFrames\":\""<<a.renderCadence.sourceOnlyFrames<<"\",\"lastSwapGapNs\":\""<<a.renderCadence.lastSwapGapNs<<"\",\"maxSwapGapNs\":\""<<a.renderCadence.maxSwapGapNs<<"\",\"staleNs\":\""<<a.renderCadence.staleNs<<"\"";
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ o<<",\"captureStorageReady\":"<<(a.capturePrepared?"true":"false")<<",\"captureRequest\":";
+ a.CaptureRequestJsonLocked(o);
+#endif
+ o<<"}";
 #endif
 return text(e,o.str());}
 napi_value active(napi_env e,napi_callback_info i){size_t n=1;napi_value v;bool value=false;napi_get_cb_info(e,i,&n,&v,nullptr,nullptr);if(n!=1||napi_get_value_bool(e,v,&value)!=napi_ok)return text(e,"INVALID_ACTIVE");bool changed=app().setActive(value);
@@ -835,6 +907,9 @@ napi_value endPageSession(napi_env e,napi_callback_info info){
  if(napi_get_cb_info(e,info,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||!PageU64(e,v,session))return text(e,"PAGE_SESSION_INVALID");
  auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
  if(session!=a.progress.session)return text(e,"STALE_PAGE_SESSION");
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ const auto stamp=a.Stamp();a.CheckCaptureRequestLocked(stamp);a.CancelCaptureScopeLocked("IDENTITY_CHANGED",stamp);
+#endif
  a.RevokeLocked("PAGE_HIDDEN");a.phase="PAGE_HIDDEN";a.StatusSuspendedLocked("PAGE_HIDDEN");a.wake.notify_all();
  return text(e,"PAGE_SESSION_ENDED");
 }
@@ -871,7 +946,7 @@ napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4]
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},
-{"beginEvidenceCapture",nullptr,beginEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"endEvidenceCapture",nullptr,endEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"evidenceCapturePage",nullptr,evidenceCapturePage,nullptr,nullptr,nullptr,napi_default,nullptr},{"recordSourceAttempt",nullptr,recordSourceAttempt,nullptr,nullptr,nullptr,napi_default,nullptr},{"beginPageSession",nullptr,beginPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"endPageSession",nullptr,endPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"pagePulse",nullptr,pagePulse,nullptr,nullptr,nullptr,napi_default,nullptr},{"setProgressV2",nullptr,setProgressV2,nullptr,nullptr,nullptr,napi_default,nullptr},{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
+{"beginEvidenceCapture",nullptr,beginEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"evidenceCaptureRequest",nullptr,evidenceCaptureRequest,nullptr,nullptr,nullptr,napi_default,nullptr},{"cancelEvidenceCaptureRequest",nullptr,cancelEvidenceCaptureRequest,nullptr,nullptr,nullptr,napi_default,nullptr},{"endEvidenceCapture",nullptr,endEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"evidenceCapturePage",nullptr,evidenceCapturePage,nullptr,nullptr,nullptr,napi_default,nullptr},{"recordSourceAttempt",nullptr,recordSourceAttempt,nullptr,nullptr,nullptr,napi_default,nullptr},{"beginPageSession",nullptr,beginPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"endPageSession",nullptr,endPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"pagePulse",nullptr,pagePulse,nullptr,nullptr,nullptr,napi_default,nullptr},{"setProgressV2",nullptr,setProgressV2,nullptr,nullptr,nullptr,napi_default,nullptr},{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
 {"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
 #ifdef GRS_APP_M1

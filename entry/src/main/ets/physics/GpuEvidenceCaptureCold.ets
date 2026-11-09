@@ -1,6 +1,6 @@
 import util from '@ohos.util';
 import { ColdFile, TimelineStore } from './GpuBridgeTimelineCold';
-export interface EvidenceCaptureReply {state:string;reason:string;captureId?:string;}
+export interface EvidenceCaptureReply {state:string;reason:string;captureId?:string;requestId?:string;lastBlocker?:string;}
 export interface EvidenceArmConfig {packageSha256:string;expectedRevision:string;epoch:string;runLo:number;runHi:number;pageSession:string;durationNs:string;maxRows:number;maxBytes:number;}
 export interface EvidenceCapturePort {
  beginEvidenceCapture(configJson:string):string;endEvidenceCapture(id:string):string;

@@ -24,10 +24,27 @@ bool EvidenceConfigArg(napi_env e,napi_callback_info info,EvidenceConfig& c){
 }
 napi_value beginEvidenceCapture(napi_env e,napi_callback_info info){
  EvidenceConfig config;if(!EvidenceConfigArg(e,info,config))return text(e,"{\"state\":\"REJECTED\",\"reason\":\"INVALID_CAPTURE_CONFIG\"}");
- auto candidate=std::make_unique<EvidenceCapture>(); // cold allocation before control lock
- auto& a=app();std::string out;{std::lock_guard<std::mutex> l(a.mutex);out=a.BeginEvidenceLocked(config,candidate);}
- return text(e,out); // old frozen storage is freed outside the control lock
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ auto& a=app();std::string out;
+ {std::lock_guard<std::mutex> l(a.mutex);out=a.ReserveEvidenceLocked(std::move(config));}
+ return text(e,out);
+#else
+ return text(e,"{\"state\":\"REJECTED\",\"reason\":\"CAPTURE_UNSUPPORTED\"}");
+#endif
 }
+napi_value captureRequestApi(napi_env e,napi_callback_info info,bool cancel){
+#ifdef GRS_PROGRESS_V2_EXPERIMENT
+ size_t n=1;napi_value v;uint64_t id=0;
+ if(napi_get_cb_info(e,info,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||!PageU64(e,v,id))return text(e,App::CaptureReject("INVALID_CAPTURE_REQUEST_ID"));
+ auto& a=app();std::string out;
+ {std::lock_guard<std::mutex> l(a.mutex);out=a.ReadCaptureRequestLocked(id,cancel);}
+ return text(e,out);
+#else
+ return text(e,"{\"state\":\"REJECTED\",\"reason\":\"CAPTURE_UNSUPPORTED\"}");
+#endif
+}
+napi_value evidenceCaptureRequest(napi_env e,napi_callback_info info){return captureRequestApi(e,info,false);}
+napi_value cancelEvidenceCaptureRequest(napi_env e,napi_callback_info info){return captureRequestApi(e,info,true);}
 napi_value endEvidenceCapture(napi_env e,napi_callback_info info){
  size_t n=1;napi_value v;uint64_t id=0;
  if(napi_get_cb_info(e,info,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||!PageU64(e,v,id))return text(e,"{\"state\":\"REJECTED\",\"reason\":\"INVALID_CAPTURE_ID\"}");
