@@ -1,0 +1,65 @@
+{
+ "revision": "T427_E2E_NEGATIVES_V1",
+ "device": "NOT_RUN",
+ "total": 9,
+ "passed": 9,
+ "failed": 0,
+ "cases": [
+  {
+   "case": "E0_PAIR_POSITIVE",
+   "expected": "DISPLAY_CALIBRATED_A_AND_B_PAIRED",
+   "got": "DISPLAY_CALIBRATED_A_AND_B_PAIRED",
+   "pass": true
+  },
+  {
+   "case": "N1_SHIFT_1PX_VIA_PAIR",
+   "expected": "NOT_ACCEPTED(先于像素比较拒)",
+   "got": "DISPLAY_NOT_JUDGABLE:B_SCREEN_MISMATCH",
+   "pass": true
+  },
+  {
+   "case": "N2_CODE_1_COLOR",
+   "expected": "NOT_PAIRED(1码差拒)",
+   "got": "DISPLAY_NOT_JUDGABLE:B_SCREEN_MISMATCH",
+   "pass": true
+  },
+  {
+   "case": "N3_MISSING_COLUMN",
+   "expected": "PREDECLARED_NATIVE_TILE_MISMATCH",
+   "got": "PREDECLARED_NATIVE_TILE_MISMATCH",
+   "pass": true
+  },
+  {
+   "case": "N4_STALE_TOKEN",
+   "expected": "REJECTED(HOLD_IDENTITY)",
+   "got": "HOLD_IDENTITY",
+   "pass": true
+  },
+  {
+   "case": "N5_COLOR_MODEL_UNKNOWN",
+   "expected": "CALIBRATION_BACK_COLOR_MODEL_UNKNOWN",
+   "got": "CALIBRATION_BACK_COLOR_MODEL_UNKNOWN",
+   "pass": true
+  },
+  {
+   "case": "N6_LATE_CAPTURE_V2_BUNDLE",
+   "expected": "CAPTURE_INTERVAL_OUTSIDE_HOLD",
+   "got": "CAPTURE_INTERVAL_OUTSIDE_HOLD",
+   "pass": true
+  },
+  {
+   "case": "N7_LATE_CAPTURE_V1",
+   "expected": "CAPTURE_INTERVAL_OUTSIDE_HOLD",
+   "got": "CAPTURE_INTERVAL_OUTSIDE_HOLD",
+   "pass": true
+  },
+  {
+   "case": "N8_REJECT_ORDER_SHA_BEFORE_TIME",
+   "expected": "CAPTURE_TOOL_RECEIPT",
+   "got": "CAPTURE_TOOL_RECEIPT",
+   "pass": true
+  }
+ ],
+ "order": "判读器拒绝顺序: bundle 完整性(SHA/bundle/身份) → 时钟域/hold 覆盖 → 校准/plan 身份 → 像素比较。合成与真实窗口边界: 合成层证明判定逻辑；真实系统截图可见性与真实时钟关系按 T408 attempt1 报告单列（t413-prepare 阻断中），本卡不卡真机。",
+ "reuse": "时钟差分复用 T418 判定（hold_oracle.time_gate ↔ clock.envelope 一致性已在 T418 33 条差分证明）；状态差分不重做。"
+}
