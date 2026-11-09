@@ -1,0 +1,36 @@
+{
+ "revision": "T371_DEVICE_RUN_V1",
+ "verdict": "PASS_ALL_RUN_ARMS (9 checks, 0 failures)",
+ "build": "MSVC 14.51.36231 cl.exe /std:c++17 with explicit INCLUDE/LIB (reg.exe sandbox block bypassed; no vcvars needed)",
+ "runtime": "ANGLE libEGL/libGLESv2 (CokePLUS) on pbuffer 64x64 sRGB",
+ "checks": {
+  "SM12-linearFbo": "PASS status=COMPLETE encoding=0x2601 (GL_LINEAR confirmed)",
+  "SM12-linearRamp": "PASS 6-point ramp matches raw linear prediction within \u00b11 (EOTF-free)",
+  "SM03-background-uniform": "PASS 12x12 ROI single constant (air region, particle avoided)",
+  "SM03-negative-radius": "PASS radius 2.0->2.5 changes particle ROI bytes (config propagation proven)",
+  "SM05-slope-vs-flat": "PASS flat sum R=38656 vs slope sum R=8704 (surface depth shading responds)",
+  "SM05-negative-determinism": "PASS identical inputs -> identical ROI bytes",
+  "SM07-mask-structure": "PASS inMask=12 outMask(spill)=0 vs independent geometric oracle",
+  "SM06-overlap-D": "PASS D mean=0.000000 over 12 masked px (candidate 40% recorded not gated)",
+  "SM09-scale-monotonic": "PASS s=1/2/3 lit px non-decreasing (raster phase caveat recorded)"
+ },
+ "harnessFixesDuringRun": [
+  "host_sm_stubs.cpp added (glClear/glClearColor/glTexImage2D stubs + EglContext::Swap) \u2014 self-contained in test/t371/, no T364/product edits",
+  "EglContext field injection aligned with T364 host.cpp (attachmentEncoding/colorspace/srgbWrite from default framebuffer)",
+  "packet profile/count/Validate alignment with T364 working packet",
+  "Stage/Draw generation chain: Draw requires p.generation==asset generation (7 after wrong Stage, 8 after restore)",
+  "configDigest BEFORE Validate (digest covers perturbed values)",
+  "negative control: albedo/background frozen by Validate v[0..5]; radius v[6] 2.0->2.5 used as tile-independent perturbation",
+  "particle lands at window (30-33,39-41): negative-control ROI moved to (24,32,16,16)",
+  "wrong-config Validate() call required to re-derive float arrays \u2014 original harness bug found and fixed"
+ ],
+ "evidenceSha256": {
+  "run_output.txt": "bff928be6d7b4d4ab286d62f",
+  "t371_sm03_background.ppm": "3d79ac415b759c9eacae064c",
+  "t371_sm03_before_wrong.ppm": "3cf730e8f850835d0144959c",
+  "t371_sm03_wrong_full.ppm": "3b3e0cb06fa7a154164a5d19",
+  "t371_sm05_flat_bed.ppm": "7de0326c76e9362012f1df2a",
+  "t371_sm05_slope_bed.ppm": "266f4eaca01af24ec475e1ff",
+  "t371_sm07_with_particle.ppm": "266f4eaca01af24ec475e1ff"
+ }
+}
