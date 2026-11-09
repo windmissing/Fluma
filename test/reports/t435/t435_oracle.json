@@ -1,0 +1,200 @@
+{
+ "revision": "T435_PREFIX_BOUNDARY_ORACLE_V1",
+ "device": "NOT_RUN",
+ "entries": [
+  {
+   "id": "E1_BASELINE_REPLAYABLE",
+   "pass": true,
+   "actual": "465/0 K=192"
+  },
+  {
+   "id": "E2_ORACLE_MATH_AGREES_T433",
+   "pass": true,
+   "actual": "256*1=256, T433 perRow=256"
+  },
+  {
+   "id": "E3_LEDGER_EDGE_FROZEN",
+   "pass": true,
+   "actual": "262144 === 262144"
+  },
+  {
+   "id": "E4_TRACE_STRUCTURE",
+   "pass": true,
+   "actual": "passes=113 uploaded=1260 workspace=547408"
+  },
+  {
+   "id": "S01_N0",
+   "scenario": "PREFIX_COPY_SKIPPED",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 0,
+   "expectLedgerCopyBytes": 262144,
+   "note": "n=0 跳过 prefix copy（count&&prefix!=events 门），毒值区保持",
+   "pass": true
+  },
+  {
+   "id": "S02_N1",
+   "scenario": "PREFIX_COPY_256B",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 256,
+   "expectLedgerCopyBytes": 262144,
+   "note": "n=1 最小有效前缀 256B",
+   "pass": true
+  },
+  {
+   "id": "S03_N4095",
+   "scenario": "PREFIX_COPY_1047040B",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 1048320,
+   "expectLedgerCopyBytes": 262144,
+   "note": "n=4095 接近满",
+   "pass": true
+  },
+  {
+   "id": "S04_N4096",
+   "scenario": "PREFIX_COPY_1048576B",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 1048576,
+   "expectLedgerCopyBytes": 262144,
+   "note": "n=4096 满前缀，无省量（T433 §7 预计 n=4096 省量 0）",
+   "pass": true
+  },
+  {
+   "id": "S05_DIRECT_W",
+   "scenario": "LEDGER_ONLY_NO_WATER_SLOT",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 512,
+   "expectLedgerCopyBytes": 262144,
+   "note": "DIRECT_W 不占 water slot 但增加来源账（前缀含 DIRECT_W 事件）",
+   "pass": true
+  },
+  {
+   "id": "S06_PARTIAL_ADMIT",
+   "scenario": "PARTIAL_EVENTS_IN_PREFIX",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 768,
+   "expectLedgerCopyBytes": 262144,
+   "note": "部分准入：拒量也入事件前缀，事件数=实际 accepted+rejected 记账行",
+   "pass": true
+  },
+  {
+   "id": "S07_PARTIAL_REJECT",
+   "scenario": "REJECT_STILL_LEDGER_COPY",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 0,
+   "expectLedgerCopyBytes": 262144,
+   "note": "SOURCE 拒绝（如 capacity 满）不改 ledger 固定复制边",
+   "pass": true
+  },
+  {
+   "id": "S08_SAME_SOURCE_CONTINUOUS",
+   "scenario": "CONTINUOUS_QUANTUM_PREFIX",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 512,
+   "expectLedgerCopyBytes": 262144,
+   "note": "同 SOURCE 后连续 QUANTUM：续帧路径 used[a] 前缀复制",
+   "pass": true
+  },
+  {
+   "id": "S09_STOP_J_TO_W",
+   "scenario": "STOP_INFLIGHT_REVOKED",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 256,
+   "expectLedgerCopyBytes": 262144,
+   "note": "停源在途 J→W：尾拒绝，header/count 不变，前缀不复活",
+   "pass": true
+  },
+  {
+   "id": "S10_LAND",
+   "scenario": "LAND_EVENT_IN_PREFIX",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 256,
+   "expectLedgerCopyBytes": 262144,
+   "note": "LAND 到达事件入有效前缀",
+   "pass": true
+  },
+  {
+   "id": "S11_CAPACITY_EXHAUST",
+   "scenario": "CAPACITY_REJECT_PRECISE",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 0,
+   "expectLedgerCopyBytes": 262144,
+   "note": "capacity 耗尽精准拒绝，不因更早错误遮蔽",
+   "pass": true
+  },
+  {
+   "id": "S12_ID_EXHAUST",
+   "scenario": "ID_EXHAUST_PRECISE",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 0,
+   "expectLedgerCopyBytes": 262144,
+   "note": "ID 耗尽（MaxWaterId 0xffffffff 后拒绝）精准",
+   "pass": true
+  },
+  {
+   "id": "S13_OLD_RUN_WORKSPACE",
+   "scenario": "STALE_IDENTITY_REJECTED",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 256,
+   "expectLedgerCopyBytes": 262144,
+   "note": "旧 run/workspace 身份拒绝（identity 断言）",
+   "pass": true
+  },
+  {
+   "id": "S14_ILLEGAL_ORIGIN",
+   "scenario": "ORIGIN_REJECTED_AT_CUT",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 0,
+   "expectLedgerCopyBytes": 262144,
+   "note": "非法 origin 在原检查切点失败，不前移业务拒绝",
+   "pass": true
+  },
+  {
+   "id": "S15_WRONG_N",
+   "scenario": "N_OVER_4096_REJECTED",
+   "expectRed": false,
+   "expectPrefixCopyBytes": 1048576,
+   "expectLedgerCopyBytes": 262144,
+   "note": "错 n>4096 checked 拒绝（n≤4096 上界）",
+   "pass": true
+  },
+  {
+   "id": "S16_SUFFIX_POISON",
+   "scenario": "POISON_INTACT_BEYOND_N",
+   "expectRed": true,
+   "expectPrefixCopyBytes": 512,
+   "expectLedgerCopyBytes": 262144,
+   "note": "前缀复制后 [n,4096) 毒值保持 0xDEADBEEF——T434 未实现按预期 RED",
+   "pass": true
+  },
+  {
+   "id": "S17_PREFIX_BYTES_REDUCED",
+   "scenario": "PREFIX_COPY_NOT_262144",
+   "expectRed": true,
+   "expectPrefixCopyBytes": 512,
+   "expectLedgerCopyBytes": 262144,
+   "note": "T434 后 prefix copy 应为 512B 而非事件区整复制——当前产品未实现按预期 RED",
+   "pass": true
+  },
+  {
+   "id": "E6_EXPECT_RED_REGISTERED",
+   "pass": true,
+   "actual": "S16_SUFFIX_POISON,S17_PREFIX_BYTES_REDUCED",
+   "note": "S16/S17 为 T434 预期 RED，T436 消费本 oracle 做实际差分"
+  },
+  {
+   "id": "E7_FAULTS_PRECISE",
+   "pass": true,
+   "actual": "faultLines=14",
+   "note": "非法 origin/错 n/毒值在原切点拒绝的前提证据"
+  }
+ ],
+ "scenarios": 17,
+ "verdict": "PASS",
+ "failed": [],
+ "boundaryTable": {
+  "0": 0,
+  "1": 256,
+  "4095": 1048320,
+  "4096": 1048576
+ }
+}
