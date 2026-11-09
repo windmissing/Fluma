@@ -54,6 +54,8 @@
 
 ### 4.2 接口、文件归属及固定布局
 
+2026-11-09，T426 修订。页面准备动作以 [T426 页面准备与键盘就绪合同](architecture-T426-single-sand-prepare-readiness-v1.md) 为准。收键盘命令回执与页面就绪分别记录，使用标准 TextInputController 退出编辑及同代窗口/焦点/遮挡/稳定帧观察生成本地许可，在预约提交前复核。`configuring=false`、API 成功或内部错误码55均不能独立放行。该修订同时补充 §4.4 的生成页异步/键盘非机检查与 §5 的 T408 新 attempt 接续，不改变以下 hold、时间、颜色与映射合同。
+
 在后续隔离生成器（基于T406，建议 `test/t413/generate.cjs`）与独立inc中实现，避免破坏T394/T406历史包重放。主要落点为生成页 `P051DerivedV2Demo.ets`、生成controller `P013SingleSandController.ets`、`T394Phase/SingleSandWindowCold` 的版本化扩展；native只补必要的当前owner/geometry验证，不改shader/读回布局。
 
 | 新隔离控制接口 | 返回与约束 |
