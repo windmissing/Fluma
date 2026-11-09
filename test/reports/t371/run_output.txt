@@ -1,0 +1,11 @@
+[PASS] SM12-linearFbo :: status=COMPLETE encoding=0x2601
+[PASS] SM12-linearRamp :: 6-point ramp matches raw linear prediction within ±1
+[PASS] SM03-background-uniform :: 12x12 ROI single constant 0/0/0
+[PASS] SM03-negative-radius :: radius 2.0->2.5 changed particle ROI (1024/1024 bytes changed)
+[PASS] SM05-slope-vs-flat :: flat sum R=38656 slope sum R=8704 (surface depth shading responds)
+[PASS] SM05-negative-determinism :: identical inputs produce identical ROI bytes
+[PASS] SM07-mask-structure :: inMask=12 outMask(spill)=0 (oracle geometric mask)
+[PASS] SM06-overlap-D :: D mean=0.000000 over 12 masked px, D>=4 ratio=0.000000 (candidate 40% recorded not gated)
+[PASS] SM09-scale-monotonic :: s=1 lit=480 s=2 lit=480 s=3 lit=480 (non-decreasing lit px with scale; raster phase caveat recorded)
+T371 checks=9 failures=0
+T371 VERDICT: PASS_ALL_RUN_ARMS

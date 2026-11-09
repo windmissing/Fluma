@@ -1,0 +1,40 @@
+{
+ "name": "B2_normal_consume",
+ "contract": "T401 Q1+Q3",
+ "hardAsserts": "accepted==3, invariant",
+ "trace": [
+  {
+   "op": "pulse",
+   "delta": "33333333"
+  },
+  {
+   "op": "pulse",
+   "delta": "33333333"
+  },
+  {
+   "op": "pulse",
+   "delta": "33333333"
+  },
+  {
+   "op": "take"
+  },
+  {
+   "op": "accept",
+   "n": 3,
+   "assert": "accepted",
+   "eq": 3
+  }
+ ],
+ "replayFinal": {
+  "runSeq": 0,
+  "carryNs": "999999880",
+  "generated": "11",
+  "accepted": "3",
+  "pending": 0,
+  "activePlanRemaining": "1",
+  "overloadDropped": "7",
+  "revokedDropped": "0"
+ },
+ "replayViolations": [],
+ "replayRuns": 0
+}
