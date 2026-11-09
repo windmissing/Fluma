@@ -1,0 +1,235 @@
+{
+  "revision": "T433_SOURCE_INVENTORY_V1",
+  "date": "2026-11-09",
+  "role": "architect",
+  "device": "NOT_RUN",
+  "scope": "Read-only source and signed HAP identity audit, arithmetic derived from source, no runtime performance measurement",
+  "t421Hap": {
+    "path": ".codex/local-test/t257-sign/T421-release/T421-release-signed.hap",
+    "bytes": 8556531,
+    "sha256": "5450ad3052654de11994e180870e0a6b9e0db7c80d2a6e95aa572003367ae751"
+  },
+  "sources": [
+    {
+      "path": "entry/src/main/ets/entryability/EntryAbility.ets",
+      "sha256": "4d74140e31865e960b7f2fa27b83aba6b62c544064018908947f82591cfaf1b5",
+      "matchesT421Source": true,
+      "t421SourceSha256": "4d74140e31865e960b7f2fa27b83aba6b62c544064018908947f82591cfaf1b5"
+    },
+    {
+      "path": "entry/src/main/ets/pages/Index.ets",
+      "sha256": "031c6c8b4e05a11319b9bdc2c420674a88f5d5976e2fa36ccfac2c7bf5650710",
+      "matchesT421Source": true,
+      "t421SourceSha256": "031c6c8b4e05a11319b9bdc2c420674a88f5d5976e2fa36ccfac2c7bf5650710"
+    },
+    {
+      "path": "entry/src/main/ets/pages/GpuResidentM1.ets",
+      "sha256": "4ce2810a5169131980b8e12097d4b73c1ac3b5e3c302c5ff028bc2a43c1df655",
+      "matchesT421Source": true,
+      "t421SourceSha256": "4ce2810a5169131980b8e12097d4b73c1ac3b5e3c302c5ff028bc2a43c1df655"
+    },
+    {
+      "path": "entry/src/main/ets/physics/GpuM1DemoController.ets",
+      "sha256": "62d0229856c233b50a5bb63fc974eb2c67410c387d8bf34d324f2e893413f2ae",
+      "matchesT421Source": true,
+      "t421SourceSha256": "62d0229856c233b50a5bb63fc974eb2c67410c387d8bf34d324f2e893413f2ae"
+    },
+    {
+      "path": "entry/src/main/cpp/CMakeLists.txt",
+      "sha256": "6663edbbbc080083b107355d2b4277810ae3c8a97ae8ea17858ba9128ddaae52",
+      "matchesT421Source": false,
+      "t421SourceSha256": "f79f516cf6fbf0e36d564ad8ec8b90fd38794de4506e10f0c43359dccbad6961",
+      "difference": "T421 isolated source adds target_compile_definitions(grsm1 PRIVATE GRS_PROGRESS_V2_EXPERIMENT); regular source omits it"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/CMakeLists.txt",
+      "sha256": "a9be33ca6d2c36619e7dacd8c103deccf4a0d2879a694c6c1018cfb550e49de4",
+      "matchesT421Source": true,
+      "t421SourceSha256": "a9be33ca6d2c36619e7dacd8c103deccf4a0d2879a694c6c1018cfb550e49de4"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "sha256": "3b9bfa963ed71810ca1aa6c9f6c34f0ebfbf4d302ee12ef4f9290e8a053136b1",
+      "matchesT421Source": true,
+      "t421SourceSha256": "3b9bfa963ed71810ca1aa6c9f6c34f0ebfbf4d302ee12ef4f9290e8a053136b1"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+      "sha256": "646c7f849e1cbdbeb69090e027aace00e8a1ae9e5720c910a84d7794d25f49b3",
+      "matchesT421Source": true,
+      "t421SourceSha256": "646c7f849e1cbdbeb69090e027aace00e8a1ae9e5720c910a84d7794d25f49b3"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.h",
+      "sha256": "b9f4035d64a346c5dbd8a555b42604459de6fda3f71d15e67107e530b5ff0fd6",
+      "matchesT421Source": true,
+      "t421SourceSha256": "b9f4035d64a346c5dbd8a555b42604459de6fda3f71d15e67107e530b5ff0fd6"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/quantum_candidate.cpp",
+      "sha256": "e5cdc2bdcad2daf553f1364e16a452e16413bc814d287ce8e64dcc64a9dee03f",
+      "matchesT421Source": true,
+      "t421SourceSha256": "e5cdc2bdcad2daf553f1364e16a452e16413bc814d287ce8e64dcc64a9dee03f"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/source_transport.cpp",
+      "sha256": "dcebbd84f3748480b35e774f6588d371135cbb5376e47877ea5e6cf0b6105b3a",
+      "matchesT421Source": true,
+      "t421SourceSha256": "dcebbd84f3748480b35e774f6588d371135cbb5376e47877ea5e6cf0b6105b3a"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/source_owner.cpp",
+      "sha256": "42b59b93ebedb710a45dbc90e476f2891a0f74c2986812f152f832f01f9e2b68",
+      "matchesT421Source": true,
+      "t421SourceSha256": "42b59b93ebedb710a45dbc90e476f2891a0f74c2986812f152f832f01f9e2b68"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/quantum_owner.inc",
+      "sha256": "42228cf9163a393ee09b8f6e95dfeb0284e0c33e44e7fb6398bd4dcd4489fed8",
+      "matchesT421Source": true,
+      "t421SourceSha256": "42228cf9163a393ee09b8f6e95dfeb0284e0c33e44e7fb6398bd4dcd4489fed8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "sha256": "4381ba266fa115f24e1345b96c83f035a6b0526c9cdf539b7878a4bdb25f5619",
+      "matchesT421Source": true,
+      "t421SourceSha256": "4381ba266fa115f24e1345b96c83f035a6b0526c9cdf539b7878a4bdb25f5619"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/scene.frag",
+      "sha256": "949c9768faa27255c1cb063258f46f86743be7b0655f22016019fa8150a9390e",
+      "matchesT421Source": true,
+      "t421SourceSha256": "949c9768faa27255c1cb063258f46f86743be7b0655f22016019fa8150a9390e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/quantum_stages.glsl",
+      "sha256": "2efbdafdc62e3e9627f074be5a1bd7f40b149e7f592aabc40a50c595d269da03",
+      "matchesT421Source": true,
+      "t421SourceSha256": "2efbdafdc62e3e9627f074be5a1bd7f40b149e7f592aabc40a50c595d269da03"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/quantum_motion.glsl",
+      "sha256": "156349ce76b74cbad4b7de0286380c61edc94c17cd3f40353dc3b604eb9d3d10",
+      "matchesT421Source": true,
+      "t421SourceSha256": "156349ce76b74cbad4b7de0286380c61edc94c17cd3f40353dc3b604eb9d3d10"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/quantum_replay.glsl",
+      "sha256": "5f2ae0b247cc29c1d421ecc074ff7e7c588d1cbbf8d2512eaa13baf7498898df",
+      "matchesT421Source": true,
+      "t421SourceSha256": "5f2ae0b247cc29c1d421ecc074ff7e7c588d1cbbf8d2512eaa13baf7498898df"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/quantum_commit_main.glsl",
+      "sha256": "59c8f9bbf3819027115c4bd47d90fd95c283d1893ed3cc8d9bbc92b43a751346",
+      "matchesT421Source": true,
+      "t421SourceSha256": "59c8f9bbf3819027115c4bd47d90fd95c283d1893ed3cc8d9bbc92b43a751346"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/run.cpp",
+      "sha256": "6168a9eadf7ec80d34a19264948079f4cd544def5fd7292712f9bfd589611f9b",
+      "matchesT421Source": true,
+      "t421SourceSha256": "6168a9eadf7ec80d34a19264948079f4cd544def5fd7292712f9bfd589611f9b"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a",
+      "matchesT421Source": true,
+      "t421SourceSha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/ui_state.h",
+      "sha256": "4dab4275a061a20a4e37a21a5af58757eecf6c40dbed950f4e867f1c187a9119",
+      "matchesT421Source": true,
+      "t421SourceSha256": "4dab4275a061a20a4e37a21a5af58757eecf6c40dbed950f4e867f1c187a9119"
+    }
+  ],
+  "profiles": [
+    {
+      "K": 192,
+      "Kw": 64,
+      "stateBytes": 25600,
+      "publicationBytes": 26624,
+      "sourceWorkBytes": 1336704,
+      "quantumWorkBytes": 547408,
+      "eventRows": 42168,
+      "eventArenaBytes": 10795008,
+      "baseBuffersBytes": 23707088,
+      "rootIsolationBuffersBytes": 34551504,
+      "coldTwoBatchTransientEventBytes": 10795008,
+      "quantumDispatches": 113
+    },
+    {
+      "K": 192,
+      "Kw": 128,
+      "stateBytes": 29696,
+      "publicationBytes": 31744,
+      "sourceWorkBytes": 1340800,
+      "quantumWorkBytes": 552272,
+      "eventRows": 46264,
+      "eventArenaBytes": 11843584,
+      "baseBuffersBytes": 25835728,
+      "rootIsolationBuffersBytes": 37728720,
+      "coldTwoBatchTransientEventBytes": 11843584,
+      "quantumDispatches": 127
+    },
+    {
+      "K": 512,
+      "Kw": 64,
+      "stateBytes": 46080,
+      "publicationBytes": 47104,
+      "sourceWorkBytes": 1357184,
+      "quantumWorkBytes": 570192,
+      "eventRows": 103928,
+      "eventArenaBytes": 26605568,
+      "baseBuffersBytes": 55637712,
+      "rootIsolationBuffersBytes": 82374608,
+      "coldTwoBatchTransientEventBytes": 26605568,
+      "quantumDispatches": 122
+    },
+    {
+      "K": 512,
+      "Kw": 128,
+      "stateBytes": 50176,
+      "publicationBytes": 52224,
+      "sourceWorkBytes": 1361280,
+      "quantumWorkBytes": 575056,
+      "eventRows": 108024,
+      "eventArenaBytes": 27654144,
+      "baseBuffersBytes": 57766352,
+      "rootIsolationBuffersBytes": 85551824,
+      "coldTwoBatchTransientEventBytes": 27654144,
+      "quantumDispatches": 136
+    }
+  ],
+  "hotTransfer": {
+    "completionBytesPerMappedTail": 1024,
+    "maxRootsPerPlan": 5,
+    "maxMappedCompletionBytesPerPlan": 5120,
+    "sourceCommandBytes": 128,
+    "sourceLogicalUploadBytes": 232,
+    "sourceLedgerGpuCopyBytesPerQuantum": 262144,
+    "gpuEventPrefixCopyBytesPerRow": 256,
+    "publicationCpuPoolUploadBytes": 0,
+    "coldFrozenStateDumpBytes": "stateBytes + 256*validEventRows"
+  },
+  "limits": [
+    "Payload arithmetic excludes driver, JIT, GL alignment and RSS",
+    "Scene frame targets add 8*width*height bytes and resize overlap separately",
+    "ColdTwoBatches temporarily allocates one additional full event arena",
+    "Historical host results are not T421 device performance evidence"
+  ],
+  "buildProfiles": {
+    "regular": {
+      "GRS_APP_M1": true,
+      "GRS_PROGRESS_V2_EXPERIMENT": false,
+      "setProgressV2": "PROGRESS_V2_UNSUPPORTED"
+    },
+    "T421-release": {
+      "GRS_APP_M1": true,
+      "GRS_PROGRESS_V2_EXPERIMENT": true,
+      "defaultProgressV2": false,
+      "enable": "Explicit cold selection then new run"
+    }
+  }
+}
