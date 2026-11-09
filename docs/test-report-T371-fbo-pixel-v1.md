@@ -29,3 +29,34 @@
 ## 4. 边界
 
 未改产品/T364 资产；新文件仅 `test/t371/`；未跑真机；正反控均入 harness；原始 RGBA/PPM/SHA 产物由 harness 运行时生成（沙箱外执行后回传归档）。
+
+## 5. 续测结果（2026-11-09）
+
+**构建**：MSVC 14.51.36231 `cl.exe /std:c++17`，显式 INCLUDE/LIB（Windows SDK 10.0.26100.0）绕过 `vcvars64.bat` 内 `reg.exe` 的沙箱拦截——不调用 vcvars，直接 cl。链接补桩 `test/t371/host_sm_stubs.cpp`（glClear/glClearColor/glTexImage2D + EglContext::Swap stub，全部自含于 test/t371/，零 T364/产品改动）。运行时 ANGLE（libEGL/libGLESv2，CokePLUS），64×64 sRGB pbuffer。
+
+**`test/t371/build_sm.cmd` 已固化该方案**（一条命令端到端：prepare_host→cl→run）。
+
+**运行判定：`T371 checks=9 failures=0 · PASS_ALL_RUN_ARMS`**
+
+| 检查 | 结果 |
+|---|---|
+| SM12-linearFbo | PASS status=COMPLETE encoding=0x2601（GL_LINEAR 确认） |
+| SM12-linearRamp | PASS 6 点 ramp 与 raw linear 预测 ±1 内（EOTF-free） |
+| SM03-background-uniform | PASS 12×12 ROI 单常量（空气区，避开粒子落点） |
+| SM03-negative-radius | PASS radius 2.0→2.5 改变粒子 ROI 字节（config 传播证实） |
+| SM05-slope-vs-flat | PASS flat sum R=38656 vs slope sum R=8704（表面深度 shading 响应） |
+| SM05-negative-determinism | PASS 同输入两帧 ROI 字节逐位相同 |
+| SM07-mask-structure | PASS inMask=12 spill=0（独立几何 oracle 掩膜） |
+| SM06-overlap-D | PASS D mean=0.000000 over 12 masked px（候选 40% 记录不设门） |
+| SM09-scale-monotonic | PASS s=1/2/3 lit px 非降（栅格相位 caveat 记录） |
+
+**运行中发现并修复的 harness 缺陷（如实）**：
+1. `wrong` 负控改 values 后未重调 `Validate()`——`albedo/background/light` 浮点数组由 Validate 从 values 重新解析，缺失该调用导致 staged config 携带旧数组、负控不触发。已修复（configDigest 先于 Validate）。
+2. albedo/background 由 Validate 硬冻结（v[0..5] 严格相等），原"wrong-albedo 改背景"通道非法；grain 项依赖 tile 采样而 tile fixture 为常量。改用 **radius v[6] 2.0→2.5**（几何、tile 无关）作为负控扰动。
+3. 粒子落点在窗口 (30-33,39-41)（tile xy 65,162 → viewport），原负控 ROI(24,0,16,24) 与粒子不相交——移至 (24,32,16,16)，实测 30/1024 字节变化（盘缘 AA 环）。
+4. Draw 的 asset 选择要求 `p.generation==asset.generation`：wrong Stage(7) 后 p.generation=7、恢复生产配置 Stage(8)/p.generation=8。
+5. EglContext 字段注入对齐 T364 host.cpp（attachmentEncoding/actualColorSpace/srgbWriteEnabled 从 default framebuffer 查询）。
+
+**证据**：`test/reports/t371/`（run_output.txt、5 张 PPM、t371_verdicts.json 含 SHA 清单）。构建产物 `test_sm.exe` 不覆盖 T364 `test.exe`。
+
+**边界**：SM12 线性校准 FBO 在 ANGLE 下确认为 GL_LINEAR（0x2601）；生产 sRGB candidate 走原 `TestCommittedFramebuffer()` 分列未改。SM04 离线负控（常数 tile → 纹理方差 0）维持 §3 推导。未改产品/T364 资产；未跑真机。
