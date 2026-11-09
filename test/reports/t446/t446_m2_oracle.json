@@ -1,0 +1,202 @@
+{
+ "revision": "T446_M2_PAIR_TRANSACTION_ORACLE_V1",
+ "device": "NOT_RUN",
+ "entries": [
+  {
+   "id": "M201a",
+   "name": "unsigned MAX_ID 合法作 idB（3,MAX 同 origin 同列半径内）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M201b",
+   "name": "重复ID跨group 不进 pair 逻辑（入口审核拒，非 pair 判定）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M201c",
+   "name": "同sourceId不同origin 不合并（origin 独立于 sourceId）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M201d",
+   "name": "全枚举==邻接见证（60 组随机唯一 ID 同 origin）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M202a",
+   "name": "nearest 不是最小 b（选整个同组最小 idB）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M202b",
+   "name": "radius+1 边界排除",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M202c",
+   "name": "radius 恰等纳入",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M202d",
+   "name": "重包（>lightMax）unary 排除",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M202e",
+   "name": "中间非 eligible 不遮邻（1-3 直接成对）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M203a",
+   "name": "merge 后下一轮重选（旧 disjoint batch 不复用）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M203b",
+   "name": "merge 保留 a generation；mutationSerial 才是 key 版本",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M204a",
+   "name": "正数 tie-even（1/2 → 0）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M204b",
+   "name": "负数 tie-even（-1/2 → 0）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M204c",
+   "name": "3/2 → 2（偶舍入）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M204d",
+   "name": "极大宽乘 |num|<2^48",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M204e",
+   "name": "抵消零唯一编码",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M204f",
+   "name": "结果在两输入之间",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M205a",
+   "name": "NO_PAIR 是正常前缀停止（非故障）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M205b",
+   "name": "BIRTH_LIMIT 在 NO_PAIR 前",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M205c",
+   "name": "ID_EXHAUSTED 在 NO_PAIR 前",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M205d",
+   "name": "TARGET_COMPLETE 首达",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M205e",
+   "name": "COLUMN_LIMIT：target 尽但 request 余",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M205f",
+   "name": "offered 不截短（rejectedUnits=request−admitted）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M206a",
+   "name": "跨来源不合并（M201c 已核 origin 独立）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M206b",
+   "name": "per-origin liveMass 聚合界（审计层语义冻结）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M207a",
+   "name": "SOURCE128 快照布局语义冻结（oldA/oldB/newA/newB 16-word 各段）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M208a",
+   "name": "SOURCE 成功后 QUANTUM 失败保留 SOURCE",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M208b",
+   "name": "SOURCE 内 fatal 整 root 回滚（含已 births/merges 回 base）",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "M208c",
+   "name": "迟到尾只能退休不能复活",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "BOUNDa",
+   "name": "M1 两满包 262144>244667 合并必超局部预算",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "BOUNDb",
+   "name": "新 package 122333：2×P≤244666",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "notImplemented": [
+  "M207 SOURCE128 used-mask 逐 word 断言（需 V3 sourceRecord wire）",
+  "M208 每 stage 故障的 completion reason23-26 精确码（需 V3 firstError wire）",
+  "M205 firstId/birthCount 连续区间断言（需 V3 header132-144 wire）",
+  "M206 per-origin liveMass 聚合审计（需 V3 base 审核路径）",
+  "M203 mutationSerial U64 checked+1（需 V3 header word141/142）"
+ ],
+ "passed": 31,
+ "failed": [],
+ "verdict": "PASS"
+}
