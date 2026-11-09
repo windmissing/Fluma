@@ -1,0 +1,147 @@
+{
+  "scope": "DESIGN_MATH_AND_COUNTEREXAMPLES",
+  "date": "2026-11-09",
+  "product_execution": false,
+  "device_execution": false,
+  "cases": {
+    "E01_exact_membership_mutation_cuts": 3000,
+    "E02_rounding_boundary_cases": 13,
+    "E03_checked_prefix_netting_counterexamples": 2,
+    "E04_RN64_tree_and_exact_differ": true,
+    "E05_total_minus_removed_term_counterexample": true,
+    "E06_ordered_suffix_random_cases": 1500,
+    "E06_later_dirty_stops_early_exit": true,
+    "E07_raw_signed_zero_subnormal_nan_undo": true,
+    "E08_alias_same_serial_and_canonical_only_corruption": 2,
+    "E09_first_stage_pair_cases": 49,
+    "E10_same_slot_branch_ABA_rejected": true,
+    "E10_child_commit_parent_rollback_and_success_prefix": true,
+    "E11_free_order_and_duplicate_ID_counterexamples": 2,
+    "E11_dirty_dependencies_and_predicate_domains": 6,
+    "E12_model_sparse_cut_comparisons": 1500,
+    "E04_unproved_cache_tolerance_boundary_flip": true,
+    "resource_template_N512_N192": [
+      74288,
+      52848
+    ]
+  },
+  "measurements": {
+    "E01_checked_limb_operations": 4726,
+    "E02_valid_512_slot_max_sum_bit_length": 1092,
+    "E04_bits": {
+      "serial": "0x3ff0000000000000",
+      "tree": "0x3ff0000000000001"
+    },
+    "E06_forced_prefix_replay_items": 32,
+    "E09_eager_fast_fail_wrong_stage_pairs": 21,
+    "E12_synthetic_proof_hits_fallbacks": [
+      1338,
+      162
+    ],
+    "E04_tolerance_boundary": {
+      "cache": 0.9999999990000001,
+      "serial_error": 9.99999860695766e-10,
+      "exact_error": 1.000000082740371e-09,
+      "scope": "damaged input predicate counterexample, not certified valid V2"
+    }
+  },
+  "inputs": [
+    {
+      "path": "docs/architecture-T420-cpu-frame-complexity-v1.md",
+      "bytes": 27332,
+      "sha256": "71f11cb03821815635e5474022bd93e3e3eebfc383b5a00ccca1f53443b1d6af"
+    },
+    {
+      "path": "docs/developer-report-T423-cpu-local-undo-v1.md",
+      "bytes": 4902,
+      "sha256": "fe94091accae920c1b237a6856cbcf0047d8cf56b333cb0545399e2340659695"
+    },
+    {
+      "path": "docs/test-report-T424-cpu-baseline-matrix-v1.md",
+      "bytes": 5068,
+      "sha256": "5024fcb10925b8ea7b006e67d31afcdbd0f871d49d54fc432f260656c35ac752"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P011Exact70.ets",
+      "bytes": 5920,
+      "sha256": "43369fcd8981db828520d2e79cabd5049a42e6ab0f6429ae93ff6760eccac981"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P011DerivedViewV2.ets",
+      "bytes": 12790,
+      "sha256": "ff4ea1e5c6087dc266ae1e9d03bad927ce2cd07d0c80da04f500a020a1e1d5bd"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P011DerivedTupleBarrierV2.ets",
+      "bytes": 16980,
+      "sha256": "030b0ffde83d8f17a95a94ff75ed8821d280916f516c717e133b165cefb8d1d0"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P011DryDomainV2.ets",
+      "bytes": 3086,
+      "sha256": "7ecd2b3f3cf369e30dae22f4b571a393dd4273fd1dddfa3d51d3e594b9920d78"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P011DerivedCommitV2.ets",
+      "bytes": 15306,
+      "sha256": "9987b802fbfb77f28319e8c4339064a4e80616978d296113717fff5733a29b95"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P051DerivedFacadeV2.ets",
+      "bytes": 12549,
+      "sha256": "36e2beeba8125287fbbbefa3958041429866aaf945faa985247b6dc1aab417c7"
+    },
+    {
+      "path": "entry/src/main/ets/physics/derived/P011DerivedCheckpointV2.ets",
+      "bytes": 2362,
+      "sha256": "0c7cb3d3f37ae3dea60c22d9b10220daa8734b111e255b79335773d77529df54"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P011ParticleHot.ets",
+      "bytes": 140819,
+      "sha256": "a69bc53592cc4c53edde7c94e7a98a14b2b62b67a90bf14cffe4c42b2666b309"
+    },
+    {
+      "path": "entry/src/main/ets/physics/tx/CpuLocalRowUndoV1.ets",
+      "bytes": 3286,
+      "sha256": "bce3a7b8b564606292c6565f0cd09881cde9acd519f988322262668e401ee0b4"
+    },
+    {
+      "path": "entry/src/main/ets/physics/tx/TxWordUndo.ets",
+      "bytes": 2352,
+      "sha256": "1db8d89f85abe1501e9e20b421cf4c72fb8c38f3586e96a25dbb35cdf9e00f2a"
+    },
+    {
+      "path": "entry/src/main/ets/physics/tx/TxCertificates.ets",
+      "bytes": 553,
+      "sha256": "42ff50dfcfac3df3ba014e832a8d40c1f644edb17ff75aae2dfd517cd3fb0413"
+    },
+    {
+      "path": "docs/algorithm-T197-whole-transaction-complexity-v1.md",
+      "bytes": 46692,
+      "sha256": "8a1ad7e682a9030def734998cdd8e81213a0e93d1549c4e7c1b7beac2299be9d"
+    },
+    {
+      "path": "docs/algorithm-T425-incremental-audit-equivalence-v1.md",
+      "bytes": 27988,
+      "sha256": "2748eec2c91f4fff655dbc48a3325d4b9132887213b91cad792be65d6a1da771"
+    },
+    {
+      "path": "docs/retro-T425-incremental-audit-equivalence-v1.md",
+      "bytes": 1925,
+      "sha256": "52373364991ed8df7f7843a6dafe66ec9185a1a3f8987da76514da6c43ac418c"
+    },
+    {
+      "path": "docs/design-T425-audit-proof-model-v1.py",
+      "bytes": 17975,
+      "sha256": "38753d9f9c836cf7297752b38526bad6bdad432343dc369499741096dab8ab02"
+    }
+  ],
+  "limitations": [
+    "Proof is conditional on the P0-P8 writer/reader closure.",
+    "No product audit was replaced or product regression run.",
+    "Python model does not establish ArkTS device numerical conformance.",
+    "No device timing, RSS, rendering or 30fps result.",
+    "Actual work counters differ when scans are removed and require versioned accounting."
+  ]
+}
