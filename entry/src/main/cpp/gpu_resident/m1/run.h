@@ -11,6 +11,7 @@ public:
  ControlCode Advance(uint64_t,U64,U64,int,uint32_t);
  ControlCode AdvancePlanV2(const PlanGrantV2&,U64,uint32_t);
  uint64_t NextNonce()const{U64 next;return Add64(nonce,{1,0},next)?(uint64_t(next.hi)<<32)|next.lo:0;}
+ uint32_t NextSourcePhase()const{return sourcePending&&count?queue[head][2]:2;}
  uint32_t NextKind()const{return sourcePending?1:2;}
  void DiscardSourceV2();
  TransportCode Pump();ControlCode Pause();const ResidentTickReceipt& Tick()const{return receipt;}uint32_t Queued()const{return count;}

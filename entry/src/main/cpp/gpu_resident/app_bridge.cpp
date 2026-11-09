@@ -10,6 +10,9 @@
 #include "bridge_packet.h"
 #include "bridge_state.h"
 #include "bridge_timeline.h"
+#ifdef GRS_APP_M1
+#include "evidence_capture.h"
+#endif
 #ifndef GRS_BRIDGE_HOST_TEST
 #include "bridge_napi.h"
 #include <napi/native_api.h>
@@ -50,7 +53,7 @@ struct App : BridgeState {
  std::thread supervisor;
  std::array<uint64_t,16> sourceEnqueued{};
  uint64_t permitSession=0,permitPlan=0,permitSource=0,permitStarted=0;
- uint32_t permitKind=0;
+ uint32_t permitKind=0,permitSourcePhase=2;
  bool jobLive=false;
  void QuotaTraceLocked(TailStage stage,uint32_t code=0){
   const auto stamp=Stamp();
@@ -64,10 +67,11 @@ struct App : BridgeState {
   if(!progressV2||!v2ResourcesReady||!active||!window||!progress.Fresh(Stamp())||!ui.Fresh(Stamp()))return;
   if(!AllowedLocked()){
    progress.ready=true;progress.baseline=false;
-   CommitReadyLocked(epoch,window,transportIdentity,input);
+   CommitReadyLocked(epoch,window,transportIdentity,input);CaptureReadyLocked();
   }
  }
  uint64_t BeginPageSessionLocked(){
+  if(evidence&&evidence->armed){if(progressV2)progress.Revoke("PAGE_SESSION_REPLACED");CaptureRevokeLocked("PAGE_SESSION_REPLACED");}
   if(!progress.BeginSession())return 0;
   if(!progressV2)return progress.session;
   ++permissionRevision;BridgeState::RevokeLocked("WAIT_PAGE_PULSE");
@@ -75,8 +79,12 @@ struct App : BridgeState {
   return progress.session;
  }
  const char* PagePulseLocked(uint64_t session,uint64_t seq,uint64_t callback){
+  CheckEvidenceLocked();
   if(!progressV2&&!progress.open)progress.open=true;
-  const auto result=progress.Pulse(session,seq,callback,Stamp());
+  checkingPulse=session==progress.session;observedPulse={};observedPulse.observedSeq=seq;observedPulse.observedUiNs=callback;observedPulse.observedReceiveNs=Stamp();
+  const bool newCurrentSequence=session==progress.session&&progress.open&&seq>progress.sequence;
+  const auto result=progress.Pulse(session,seq,callback,observedPulse.observedReceiveNs);
+  if(evidence)evidence->Pulse(seq,callback,observedPulse.observedReceiveNs,!std::strcmp(result,"PAGE_PULSE_ACCEPTED"),newCurrentSequence);
   if(std::strcmp(result,"PAGE_PULSE_ACCEPTED")==0){
    TryReadyV2Locked();
    if(progressV2&&(progress.pulses==1||progress.pulses%16==0)){
@@ -85,9 +93,9 @@ struct App : BridgeState {
      progress.maxUiGap,0,uint32_t(progress.pulses%UINT32_MAX)},stamp);
    }
   }else if(progressV2&&!progress.open){
-   ClockGapLocked(Stamp());QuotaTraceLocked(TailStage::PagePulse,1);
+   if(std::strcmp(phase,"CLOCK_GAP")!=0&&std::strcmp(phase,"NEW_RUN_REQUIRED")!=0){ClockGapLocked(Stamp());QuotaTraceLocked(TailStage::PagePulse,1);}
   }
-  wake.notify_all();return progressV2?result:"PAGE_PULSE_ACCEPTED";
+  checkingPulse=false;wake.notify_all();return progressV2?result:"PAGE_PULSE_ACCEPTED";
  }
  const char* OfferLocked(const std::array<uint32_t,32>& command){
   const auto result=BridgeState::OfferLocked(command);
@@ -104,6 +112,7 @@ struct App : BridgeState {
   void* window=nullptr;
  };
  WorkPermit permit;
+#include "evidence_capture_app.inc"
  uint64_t permissionRevision=1,controlAnchor=0,lateSwaps=0,revokedRoots=0;
  bool activeProbeForControl=false;
  void ProgressJsonLocked(std::ostringstream& o){
@@ -125,6 +134,7 @@ struct App : BridgeState {
   if(progressV2){progress.Revoke(why);QuotaTraceLocked(TailStage::QuotaBalance,1);}
   ++permissionRevision;
   BridgeState::RevokeLocked(why);
+  CaptureRevokeLocked(why);
  }
  void ClockGapLocked(uint64_t stamp){
   if(std::strcmp(phase,"CLOCK_GAP")==0||std::strcmp(phase,"NEW_RUN_REQUIRED")==0)return;
@@ -138,6 +148,7 @@ struct App : BridgeState {
   status="{\"state\":\"PAUSED_CLOCK\",\"stage\":\"CLOCK_GAP\",\"newRunRequired\":true}";
  }
  void ObserveControlLocked(uint64_t stamp){
+  CheckEvidenceLocked();
   if(progressV2){
    if(!progress.Fresh(stamp)&&progress.hasPulse&&!progress.open&&
       (std::strcmp(progress.fault,"CLOCK_GAP")==0||std::strcmp(progress.fault,"CONTROL_CLOCK_REVERSED")==0)){
@@ -161,45 +172,48 @@ struct App : BridgeState {
   }
  }
  void StatusSuspendedLocked(const char* why){
+  renderCadence.Stale(Stamp());if(evidence&&evidence->armed)evidence->display.Stale(Stamp());
   status="{\"state\":\""+std::string(lastGoodControl.empty()?"FAULT":"STALE")+"\",\"stage\":\""+
    why+"\",\"renderedToken\":\""+lastGoodControl+"\",\"current\":false}";
  }
  bool PermitLocked(const RootRequest& root,uint64_t stamp){
   ObserveControlLocked(stamp);
+  const auto reject=[&](){CaptureFaultLocked("ROOT_PERMIT_REJECTED");return false;};
   const auto eq=[](U64 a,U64 b){return Compare64(a,b)==0;};
   if(progressV2){
-   if(!progress.Identity(permitPlan,permitSession))return false;
-   if(root.kind&&root.kind!=permitKind)return false;
-   if(permitKind==1&&permitSource!=ui.boundary)return false;
+   if(!progress.Identity(permitPlan,permitSession))return reject();
+   if(root.kind&&root.kind!=permitKind)return reject();
+   if(permitKind==1&&permitSource!=ui.boundary)return reject();
    if(stamp>permit.deadline){
     QuotaTraceLocked(TailStage::ProgressTimeout,1);
     RevokeLocked("GPU_PROGRESS_TIMEOUT");phase="GPU_PROGRESS_TIMEOUT";
-    StatusSuspendedLocked("GPU_PROGRESS_TIMEOUT");return false;
+    StatusSuspendedLocked("GPU_PROGRESS_TIMEOUT");return reject();
    }
   }
   if(!AllowedLocked()||!CurrentLocked(permit.epoch,permit.window)||permit.revision!=permissionRevision||
      stamp>permit.deadline||!eq(permit.input,input)||!eq(permit.identity.run,identity.run)||
      !eq(permit.identity.owner,identity.owner)||!eq(permit.identity.surface,identity.surface)||
      !eq(permit.identity.context,identity.context)||!eq(permit.identity.geometry,identity.geometry)||
-     !eq(permit.identity.config,identity.config))return false;
+     !eq(permit.identity.config,identity.config))return reject();
   const auto nonce=m1::NonceOf(root);
-  if(nonce==0)return false;
+  if(nonce==0)return reject();
   if(permit.nonce==0)permit.nonce=nonce;
-  return permit.nonce==nonce;
+  if(permit.nonce!=nonce)return reject();return true;
  }
  void FreezePermitLocked(uint64_t seen,void* held,m1::RootIsolation& gate,uint64_t nonce=0,uint32_t kind=0){
   if(progressV2){
-   if(permit.nonce==nonce&&permitPlan==progress.active.id&&permitSession==progress.session)return;
+   if(permit.nonce==nonce&&permitKind==kind&&permitPlan==progress.active.id&&permitSession==progress.session)return;
    const auto start=Stamp();
    if(start>UINT64_MAX-m1::ProgressClockV2::JobNs){RevokeLocked("GPU_DEADLINE_OVERFLOW");return;}
    permit={identity,input,seen,permissionRevision,start+m1::ProgressClockV2::JobNs,nonce,held};
-   permitSession=progress.session;permitPlan=progress.active.id;permitKind=kind;
+   swapEvidence={};permitSession=progress.session;permitPlan=progress.active.id;permitKind=kind;
    permitSource=progress.active.sourceBoundary;permitStarted=start;
    jobLive=true;
    if(!lastGoodControl.empty())StatusSuspendedLocked("GPU_WORK_PENDING");
    gate.deadline=permit.deadline;gate.revision=permit.revision;
    QuotaTraceLocked(TailStage::JobIntent,kind);return;
   }
+  swapEvidence={};permitSession=progress.session;permitPlan=0;permitKind=kind;permitSource=ui.boundary;permitStarted=Stamp();
   permit={identity,input,seen,permissionRevision,controlAnchor+kGapNs,0,held};
   gate.deadline=permit.deadline;gate.revision=permit.revision;
  }
@@ -208,12 +222,13 @@ struct App : BridgeState {
    if(a.completion[27]==2)progress.AcceptQuantum(permitPlan);
    QuotaTraceLocked(TailStage::QuotaBalance);
   }
-  ++accepted;rootNonce=a.nonce;
+  ++accepted;rootNonce=a.nonce;CounterIdentityLocked();
   sourceCommit=(uint64_t(a.source.hi)<<32)|a.source.lo;
   physicsCommit=(uint64_t(a.physics.hi)<<32)|a.physics.lo;
   if(completionCount<completions.size())completions[completionCount++]=a.completion;
   else ++completionDropped;
   ui.Completion(a.completion);
+  CaptureAcceptedLocked(a);
   if(lastGoodControl.empty())status="{\"state\":\"READY\",\"stage\":\"DRAW_PENDING\"}";
   else StatusSuspendedLocked("DRAW_PENDING");
  }
@@ -226,12 +241,14 @@ struct App : BridgeState {
   r.code=s.code;r.carry=s.ordinal;r.probeStart=s.start;r.probeEnd=s.end;
   r.probeA=s.a;r.probeB=s.b;r.probeC=s.c;r.receipt=receipt;
   r.probeWriteNs=TailObserver::Now()-writerBegin;
-  timeline.Add(r);
+  timeline.Add(r);CaptureDetailLocked(r);
  }
  void UiJsonLocked(std::ostringstream& o){o<<",\"sourceUiRevision\":\"GRS_M1_DEMO_UI_V4\",\"sourceOpen\":"<<(AllowedLocked()&&ui.SourceReady(Stamp())?"true":"false")<<",\"sourceKind\":"<<ui.source<<",\"sourceControlLo\":"<<uint32_t(ui.boundary)<<",\"sourceControlHi\":"<<uint32_t(ui.boundary>>32)<<",\"gravityMode\":\""<<(ui.sensorMode?"SENSOR":"EXPLICIT_MANUAL")<<"\",\"gravityRaw\":"<<ui.rawAngle<<",\"gravityTargetQ\":"<<ui.target<<",\"gravityAcceptedQ\":"<<ui.acceptedAngle<<",\"shakeDiagnostic\":"<<ui.shake<<",\"sourceReceiptStatus\":"<<ui.receipt<<",\"sourceAdmittedQ\":"<<ui.admitted<<",\"sourceRejectedQ\":"<<ui.rejected<<",\"sourceRequestSeq\":"<<ui.request<<",\"settledLo\":"<<ui.settled.lo<<",\"settledHi\":"<<ui.settled.hi<<",\"flightLo\":"<<ui.flight.lo<<",\"flightHi\":"<<ui.flight.hi<<",\"waterTotalLo\":"<<ui.water.lo<<",\"waterTotalHi\":"<<ui.water.hi<<",\"sandTotalLo\":"<<ui.sand.lo<<",\"sandTotalHi\":"<<ui.sand.hi<<",\"gpuBufferAllocatedBytes\":"<<ui.bufferBytes<<",\"frameTargetBytes\":"<<ui.frameBytes<<",\"knownGpuBytesPeak\":"<<ui.knownGpuPeak<<",\"cpuFixedControlBytes\":"<<(sizeof(App)+sizeof(AppRun)+sizeof(AppTransport))<<",\"driverMemory\":\"NOT_MEASURED\",\"calibration\":\"PENDING_CALIBRATION\""<<",\"submitPumpWallNs\":"<<submitPumpWallNsCached<<",\"warmupWallNs\":"<<(warmupEpoch==epoch.load()?warmupWallNsCached:0);}
- const char* OfferUiLocked(const std::array<uint32_t,32>& w){const char* code=ui.Offer(w,Stamp());return std::strcmp(code,"OK")==0?OfferLocked(w):code;}
+ const char* OfferUiLocked(const std::array<uint32_t,32>& w){const char* code=ui.Offer(w,Stamp());const auto result=std::strcmp(code,"OK")==0?OfferLocked(w):code;CaptureOfferLocked(w,result);return result;}
  bool SetSourceLocked(int kind){
+  if(kind==-1&&ui.source==-1&&closedSourceBoundary==ui.boundary){cancelled+=count;head=count=0;if(captureRootBusy&&permitKind==1)wake.notify_all();return true;}
   if(!ui.SetSource(kind)){RevokeLocked("SOURCE_CONTROL_EXHAUSTED");wake.notify_one();return false;}
+  closedSourceBoundary=kind==-1?ui.boundary:0;
   if(!progressV2)++permissionRevision;
   else QuotaTraceLocked(TailStage::SourceBoundary,uint32_t(kind+1));
   cancelled+=count;head=count=0;
@@ -260,7 +277,11 @@ struct App : BridgeState {
 #ifdef GRS_BRIDGE_HOST_TEST
  uint64_t (*hostNow)()=nullptr;void (*hostHook)(App&,BridgeStage)=nullptr;
 #endif
- void MarkLocked(BridgeStage stage,uint64_t seen=0,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){if(stage==BridgeStage::InitBegin)timelinePaused=false;if(timelinePaused&&stage!=BridgeStage::Invalidate&&stage!=BridgeStage::InitBegin)return;BridgeTimeRow r;r.ns=Stamp();r.tid=BridgeTid();r.epoch=seen?seen:epoch.load();r.run=(uint64_t(identity.run.hi)<<32)|identity.run.lo;r.surface=(uint64_t(identity.surface.hi)<<32)|identity.surface.lo;r.input=(uint64_t(input.hi)<<32)|input.lo;r.stage=uint32_t(stage);r.now=r.ns;r.last=last;r.delta=delta;r.code=uint32_t(code);r.carry=carry;r.quanta=q;r.appQueue=uint32_t(count);r.runQueue=runQueue;r.root=(uint64_t(rootNonce.hi)<<32)|rootNonce.lo;r.flags=(active?1:0)|(window?2:0)|(AllowedLocked()?4:0);timeline.Add(r);if(stage==BridgeStage::PauseEnd)timelinePaused=true;}
+ void MarkLocked(BridgeStage stage,uint64_t seen=0,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){if(stage==BridgeStage::InitBegin)timelinePaused=false;if(timelinePaused&&stage!=BridgeStage::Invalidate&&stage!=BridgeStage::InitBegin)return;BridgeTimeRow r;r.ns=Stamp();r.tid=BridgeTid();r.epoch=seen?seen:epoch.load();r.run=(uint64_t(identity.run.hi)<<32)|identity.run.lo;r.surface=(uint64_t(identity.surface.hi)<<32)|identity.surface.lo;r.input=(uint64_t(input.hi)<<32)|input.lo;r.stage=uint32_t(stage);r.now=r.ns;r.last=last;r.delta=delta;r.code=uint32_t(code);r.carry=carry;r.quanta=q;r.appQueue=uint32_t(count);r.runQueue=runQueue;r.root=(uint64_t(rootNonce.hi)<<32)|rootNonce.lo;r.flags=(active?1:0)|(window?2:0)|(AllowedLocked()?4:0);timeline.Add(r);
+#ifdef GRS_APP_M1
+CaptureDetailLocked(r);if(stage==BridgeStage::Ready)CaptureReadyLocked();
+#endif
+if(stage==BridgeStage::PauseEnd)timelinePaused=true;}
  void Mark(BridgeStage stage,uint64_t seen,uint64_t last=0,uint64_t delta=0,int code=0,uint32_t carry=0,uint32_t q=0){std::lock_guard<std::mutex> l(mutex);MarkLocked(stage,seen,last,delta,code,carry,q);}
  void Hook(BridgeStage stage){
 #ifdef GRS_BRIDGE_HOST_TEST
@@ -278,7 +299,7 @@ commandRevision=2;waterAllowed=true;
   std::unique_lock<std::mutex> lock(mutex);
   while(!quit){
    wake.wait_for(lock,std::chrono::milliseconds(2));
-   if(progressV2){ObserveControlLocked(Stamp());TryReadyV2Locked();}
+   CheckEvidenceLocked();if(progressV2){ObserveControlLocked(Stamp());TryReadyV2Locked();}
   }
  });
 #endif
@@ -289,6 +310,9 @@ if(supervisor.joinable())supervisor.join();
 #endif
 if(window)OH_NativeWindow_NativeObjectUnreference(window);}
  void invalidate(void* w,bool replace){std::lock_guard<std::mutex> l(mutex);
+#ifdef GRS_APP_M1
+if(evidence&&evidence->armed){if(progressV2)progress.Revoke("WINDOW_OR_RUN_CHANGED");CaptureRevokeLocked("WINDOW_OR_RUN_CHANGED");}
+#endif
 #ifdef GRS_APP_M1
  if(ui.enabled){if(replace&&accepted>0)requiresReset=true;else if(!replace)requiresReset=false;SetSourceLocked(-1);}
 #endif
@@ -368,6 +392,9 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
  resetBlocked=requiresReset;
 #endif
  }
+#ifdef GRS_APP_M1
+   struct WorkInterval {App& app;explicit WorkInterval(App& a):app(a){std::lock_guard<std::mutex> l(app.mutex);app.captureWorkBusy=true;}~WorkInterval(){std::lock_guard<std::mutex> l(app.mutex);app.captureWorkBusy=false;}} interval(*this);
+#endif
    if(currentEpoch!=seen
 #ifdef GRS_APP_M1
       ||(!gpu&&enabled&&!failed&&!resetBlocked)
@@ -380,7 +407,7 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
 #else
     progressV2=false;
 #endif
-    progress.ResetRun();v2ResourcesReady=false;permit={};jobLive=false;
+    FreezeEvidenceLocked("RUN_RESET");progress.ResetRun();v2ResourcesReady=false;permit={};jobLive=false;captureRootBusy=false;renderCadence={};
     controlAnchor=0;lastGoodControl.clear();activeOptics=optics;activeProbeForControl=activeTailProbe=tailProbeNext;activeColdTwoBatches=coldTwoBatchesNext;ui.NewRun();
 #endif
     if(active&&window
@@ -398,9 +425,17 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
     display=reinterpret_cast<EGLDisplay>(1);context=reinterpret_cast<EGLContext>(1);surface=reinterpret_cast<EGLSurface>(1);bool good=true;
 #endif
     if(!good){publish("{\"state\":\"FAULT\",\"stage\":\"EGL_CREATE\",\"rawEGL\":"+std::to_string(eglGetError())+"}");failed=true;continue;}
+#ifdef GRS_APP_M1
+    {EGLint viewportWidth=0,viewportHeight=0;eglQuerySurface(display,surface,EGL_WIDTH,&viewportWidth);eglQuerySurface(display,surface,EGL_HEIGHT,&viewportHeight);
+     std::lock_guard<std::mutex> lock(mutex);nativeViewportWidth=uint32_t(std::max(0,viewportWidth));nativeViewportHeight=uint32_t(std::max(0,viewportHeight));}
+#endif
     Identity id;id.run=u64(++runId);id.owner={1,0};id.context=id.surface=id.geometry=u64(seen);id.config={1,0};auto f=GetFoundationInfo();hash(AppLayoutSha(),id.layoutSha);hash(f.angleSha,id.angleSha);hash(AppShaderSha(),id.shaderSha);
     transportEpoch=seen;transportIdentity=id;gpu=std::make_unique<AppTransport>();
-    gpu->submitObserver={this,[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t ordinal,uint64_t wallNs){auto& app=*static_cast<App*>(ptr);std::lock_guard<std::mutex> lock(app.mutex);BridgeTimeRow row;row.ns=row.now=app.Stamp();row.tid=BridgeTid();row.epoch=app.transportEpoch;row.run=(uint64_t(app.transportIdentity.run.hi)<<32)|app.transportIdentity.run.lo;row.surface=(uint64_t(app.transportIdentity.surface.hi)<<32)|app.transportIdentity.surface.lo;row.input=(uint64_t(app.input.hi)<<32)|app.input.lo;row.root=root;row.stage=uint32_t(stage);row.code=code;row.carry=ordinal;row.delta=wallNs;if(!app.timelinePaused)app.timeline.Add(row);}};
+    gpu->submitObserver={this,[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t ordinal,uint64_t wallNs){auto& app=*static_cast<App*>(ptr);std::lock_guard<std::mutex> lock(app.mutex);BridgeTimeRow row;row.ns=row.now=app.Stamp();row.tid=BridgeTid();row.epoch=app.transportEpoch;row.run=(uint64_t(app.transportIdentity.run.hi)<<32)|app.transportIdentity.run.lo;row.surface=(uint64_t(app.transportIdentity.surface.hi)<<32)|app.transportIdentity.surface.lo;row.input=(uint64_t(app.input.hi)<<32)|app.input.lo;row.root=root;row.stage=uint32_t(stage);row.code=code;row.carry=ordinal;row.delta=wallNs;if(!app.timelinePaused)app.timeline.Add(row);
+#ifdef GRS_APP_M1
+app.CaptureDetailLocked(row);
+#endif
+}};
 #ifdef GRS_APP_M1
     gpu->coldObserver={this,[](void* ptr,const TailSample& sample){
      const auto begin=TailObserver::Now();
@@ -432,7 +467,11 @@ if(hostHook){l.unlock();Hook(BridgeStage::Wake);l.lock();}else
      }else
 #endif
      committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());
-     MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
+     MarkLocked(committed?BridgeStage::Ready:BridgeStage::ReadyRejected,seen);if(committed){
+#ifdef GRS_APP_M1
+CounterIdentityLocked();
+#endif
+accepted=sourceCommit=physicsCommit=0;completionCount=completionDropped=0;rootNonce={};firstFailure="NONE";}}if(!committed){retire();continue;}
    }
 #ifdef GRS_APP_M1
    if(run&&!failed&&!gap){
@@ -558,8 +597,11 @@ FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consum
     std::lock_guard<std::mutex> lock(mutex);
     if(!CurrentLocked(seen,held))continue;
     ObserveControlLocked(Stamp());
+    gpu->tailObserver=(activeTailProbe||(evidence&&evidence->armed))?gpu->coldObserver:TailObserver{};
+    isolation.observer=gpu->tailObserver;
     if(!run->HasFlight()){
      if(ui.applied!=ui.boundary&&(!progressV2||!run->SourceInFlight())){cancelled+=run->DiscardSources();ui.applied=ui.boundary;}
+     permitSourcePhase=run->NextSourcePhase();
      FreezePermitLocked(seen,held,isolation,run->NextNonce(),run->NextKind());
     }
    }
@@ -572,7 +614,7 @@ run->Pump();
 #endif
 #ifdef GRS_APP_M1
 retryBusy=code==TransportCode::BUSY;
-{std::lock_guard<std::mutex> l(mutex);submitPumpWallNsCached=gpu->SubmitPumpWallNs();}
+{std::lock_guard<std::mutex> l(mutex);submitPumpWallNsCached=gpu->SubmitPumpWallNs();captureRootBusy=run->HasFlight();}
 #endif
 Mark(BridgeStage::PumpEnd,seen,last,0,int(code));if(run->Tick().submitted>submitted){std::lock_guard<std::mutex> l(mutex);if(gpu->Trace().Size())rootNonce=gpu->Trace().At(gpu->Trace().Size()-1).root.nonce;MarkLocked(BridgeStage::RootSubmit,seen,last);}else if(run->Tick().active||run->Tick().accepted>wasAccepted)Mark(BridgeStage::RootPoll,seen,last,0,int(code));if(
 #ifdef GRS_APP_M1
@@ -627,6 +669,10 @@ last&&Stamp()-last>33333333u){
     {
      std::lock_guard<std::mutex> lock(mutex);
      if(!PermitLocked(presenting,Stamp()))continue;
+     if(!renderCadence.Due(Stamp(),progressV2)){
+      if(evidence&&evidence->armed)++evidence->display.skipped;
+      jobLive=false;StatusSuspendedLocked("RENDER_CADENCE_SKIPPED");continue;
+     }
     }
 #else
    uint64_t acceptedNow=gpu->Owner().AcceptedCount();{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;accepted=acceptedNow;runQueue=run->Queued();input=gpu->InputGeneration();const auto& h=gpu->Owner().Header();sourceCommit=(uint64_t(h[15])<<32)|h[14];physicsCommit=(uint64_t(h[17])<<32)|h[16];}if(acceptedNow>lastAccepted){lastAccepted=acceptedNow;const auto& a=run->Tick().latest;{std::lock_guard<std::mutex> l(mutex);if(!CurrentLocked(seen,held))continue;rootNonce=a.nonce;if(completionCount<completions.size())completions[completionCount++]=a.completion;else completionDropped++;}
@@ -642,7 +688,9 @@ last&&Stamp()-last>33333333u){
      v.app->Hook(BridgeStage::SwapBegin);
      if(!v.gate->Check(v.root,m1::RootCut::Swap)){v.app->Mark(BridgeStage::SwapEnd,v.epoch,0,0,2);return false;}
      const auto before=v.gate->Stamp();
+     {std::lock_guard<std::mutex> lock(v.app->mutex);v.app->swapEvidence={};v.app->swapEvidence.swapCallStarted=true;v.app->swapEvidence.swapStartNs=v.app->Stamp();}
      const bool native=eglSwapBuffers(v.d,v.s)==EGL_TRUE;
+     {std::lock_guard<std::mutex> lock(v.app->mutex);v.app->swapEvidence.swapReturned=true;v.app->swapEvidence.nativeSwapSucceeded=native;v.app->swapEvidence.swapEndNs=v.app->Stamp();}
      v.app->Hook(BridgeStage::SwapEnd);
      const bool allowed=v.gate->Check(v.root,m1::RootCut::Swap);
      if(!allowed){std::lock_guard<std::mutex> lock(v.app->mutex);++v.app->lateSwaps;}
@@ -657,7 +705,10 @@ last&&Stamp()-last>33333333u){
 #endif
     Mark(BridgeStage::DrawBegin,seen,last);Hook(BridgeStage::DrawBegin);auto receipt=scene.Draw(*gpu,a.publication,a.publicationGeneration,f,swapped,&args
 #ifdef GRS_APP_M1
-     ,activeOptics
+     ,activeOptics,nullptr,[](const std::string& token,void* ptr){
+      auto& v=*static_cast<Swap*>(ptr);std::lock_guard<std::mutex> lock(v.app->mutex);
+      if(v.app->evidence)v.app->evidence->Requested(m1::NonceOf(v.root),token);
+     }
 #endif
     );
 #ifdef GRS_APP_M1
@@ -669,6 +720,8 @@ last&&Stamp()-last>33333333u){
       receipt.stage="T398_PRESENT_REVOKED";
       receipt.renderedToken=lastGoodControl;
      }else if(receipt.current){
+      renderCadence.Presented(Stamp(),(uint64_t(a.physics.hi)<<32)|a.physics.lo,permitKind);
+      if(evidence&&evidence->armed)evidence->display.Presented(Stamp(),(uint64_t(a.physics.hi)<<32)|a.physics.lo,permitKind);
       lastGoodControl=receipt.renderedToken;
       ui.Memory(gpu->AllocatedBytes(),receipt.frameTargetBytes);
      }
@@ -676,6 +729,7 @@ last&&Stamp()-last>33333333u){
 #endif
     Mark(BridgeStage::DrawEnd,seen,last,0,receipt.current?0:1);
 #ifdef GRS_APP_M1
+    {std::lock_guard<std::mutex> lock(mutex);if(evidence)evidence->Present((uint64_t(a.nonce.hi)<<32)|a.nonce.lo,receipt.requestedToken,receipt.renderedToken,receipt.current,receipt.swapSucceeded);}
     if(activeTailProbe){
      const auto stamp=TailObserver::Now();
      std::lock_guard<std::mutex> l(mutex);
@@ -718,7 +772,8 @@ std::string base=a.status;if(!base.empty())base.pop_back();o<<base<<",\"timeline
 #ifdef GRS_APP_M1
 std::string baseUi=o.str();if(!baseUi.empty())baseUi.pop_back();o.str("");o.clear();o<<baseUi;a.UiJsonLocked(o);a.ProgressJsonLocked(o);o<<",\"permissionRevision\":"<<a.permissionRevision
  <<",\"rootDeadlineNs\":\""<<a.permit.deadline<<"\",\"revokedRoots\":"<<a.revokedRoots
- <<",\"lateSwaps\":"<<a.lateSwaps<<"}";
+ <<",\"countersRunLo\":"<<a.countersRun.lo<<",\"countersRunHi\":"<<a.countersRun.hi<<",\"countersEpoch\":\""<<a.countersEpoch<<"\",\"countersPageSession\":\""<<a.countersSession<<"\",\"countersProgressRevision\":\""<<(a.countersV2?"GRS_M1_PROGRESS_CLOCK_V2":"GRS_M1_PROGRESS_CLOCK_V1")<<"\",\"captureRevision\":\"T409_EVIDENCE_CAPTURE_V1\",\"nativeViewportWidth\":"<<a.nativeViewportWidth<<",\"nativeViewportHeight\":"<<a.nativeViewportHeight<<",\"evidenceCaptureId\":\""<<(a.evidence?a.evidence->id:0)<<"\",\"evidenceCaptureState\":\""<<(a.evidence?(a.evidence->frozen?"FROZEN":"ARMED"):"NONE")<<"\",\"lateSwaps\":"<<a.lateSwaps<<",\"sampleSerial\":\""<<++a.sampleSerial<<"\",\"sourceClosePending\":"<<((a.count||(a.captureRootBusy&&a.permitKind==1)||a.ui.applied!=a.ui.boundary)?"true":"false")
+ <<",\"renderMode\":\""<<(a.progressV2?"V2_ACCEPTED_ROOT_30HZ":"V1_EVERY_ACCEPTED_ROOT")<<"\",\"captureStorageBytes\":"<<(a.evidence?sizeof(EvidenceCapture):0)<<",\"renderTargetHz\":"<<(a.progressV2?30:0)<<",\"renderSkippedByCadence\":\""<<a.renderCadence.skipped<<"\",\"newPhysicalFrames\":\""<<a.renderCadence.newPhysicalFrames<<"\",\"sourceOnlyFrames\":\""<<a.renderCadence.sourceOnlyFrames<<"\",\"lastSwapGapNs\":\""<<a.renderCadence.lastSwapGapNs<<"\",\"maxSwapGapNs\":\""<<a.renderCadence.maxSwapGapNs<<"\",\"staleNs\":\""<<a.renderCadence.staleNs<<"\"}";
 #endif
 return text(e,o.str());}
 napi_value active(napi_env e,napi_callback_info i){size_t n=1;napi_value v;bool value=false;napi_get_cb_info(e,i,&n,&v,nullptr,nullptr);if(n!=1||napi_get_value_bool(e,v,&value)!=napi_ok)return text(e,"INVALID_ACTIVE");bool changed=app().setActive(value);
@@ -756,9 +811,10 @@ napi_value setTailProbe(napi_env e,napi_callback_info i){
  return text(e,enabled?"TAIL_PROBE_ON_NEXT_RUN":"TAIL_PROBE_OFF_NEXT_RUN");
 }
 bool PageU64(napi_env env,napi_value value,uint64_t& number){
- char bytes[21]{};size_t length=0;
+ char bytes[21]{};size_t length=0,fullLength=0;
+ if(napi_get_value_string_utf8(env,value,nullptr,0,&fullLength)!=napi_ok||fullLength==0||fullLength>20)return false;
  if(napi_get_value_string_utf8(env,value,bytes,sizeof(bytes),&length)!=napi_ok||
-    length==0||length>=sizeof(bytes)||(length>1&&bytes[0]=='0'))return false;
+    length!=fullLength||length>=sizeof(bytes)||(length>1&&bytes[0]=='0'))return false;
  number=0;
  for(size_t i=0;i<length;i++){
   if(bytes[i]<'0'||bytes[i]>'9')return false;
@@ -768,6 +824,7 @@ bool PageU64(napi_env env,napi_value value,uint64_t& number){
  }
  return true;
 }
+#include "evidence_capture_napi.inc"
 napi_value beginPageSession(napi_env e,napi_callback_info){
  auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
  if(!a.active)return text(e,"0");
@@ -814,7 +871,7 @@ napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4]
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},
-{"beginPageSession",nullptr,beginPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"endPageSession",nullptr,endPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"pagePulse",nullptr,pagePulse,nullptr,nullptr,nullptr,napi_default,nullptr},{"setProgressV2",nullptr,setProgressV2,nullptr,nullptr,nullptr,napi_default,nullptr},{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
+{"beginEvidenceCapture",nullptr,beginEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"endEvidenceCapture",nullptr,endEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"evidenceCapturePage",nullptr,evidenceCapturePage,nullptr,nullptr,nullptr,napi_default,nullptr},{"recordSourceAttempt",nullptr,recordSourceAttempt,nullptr,nullptr,nullptr,napi_default,nullptr},{"beginPageSession",nullptr,beginPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"endPageSession",nullptr,endPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"pagePulse",nullptr,pagePulse,nullptr,nullptr,nullptr,napi_default,nullptr},{"setProgressV2",nullptr,setProgressV2,nullptr,nullptr,nullptr,napi_default,nullptr},{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
 {"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
 #ifdef GRS_APP_M1

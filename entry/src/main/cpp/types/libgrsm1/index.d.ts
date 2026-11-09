@@ -1,3 +1,7 @@
+export const beginEvidenceCapture:(configJson:string)=>string;
+export const endEvidenceCapture:(captureIdDecimal:string)=>string;
+export const evidenceCapturePage:(captureIdDecimal:string,cursor:number)=>string;
+export const recordSourceAttempt:(record:string)=>string;
 export const beginPageSession:()=>string;
 export const endPageSession:(session:string)=>string;
 export const pagePulse:(session:string,sequence:string,callbackNs:string)=>string;

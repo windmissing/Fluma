@@ -1,13 +1,14 @@
 // T228 / GRS_M1_DEMO_UI_V4. Input protocol only, no CPU inventory or angle acceptance.
 export interface GpuM1DemoPort {
- status():string;offer(command:ArrayBuffer):string;setSource(kind:number):string;
+ status():string;recordSourceAttempt?(record:string):string;offer(command:ArrayBuffer):string;setSource(kind:number):string;
  setActive(active:boolean):string;setGravityMode(sensor:boolean):string;
  setGravitySample(rawDegrees:number,shake:number,sequence:number):string;
  setAngle(index:number):string;newRun():string;configureM1(k:number,kw:number,features:number,revision:number):string;
  configureOptics(optics:Float32Array):string;
 }
 export interface GpuM1DemoStatus {
- progressClockRevision?:string;
+ countersRunLo?:number;countersRunHi?:number;countersEpoch?:string;countersPageSession?:string;countersProgressRevision?:string;
+ progressClockRevision?:string;pageSession?:string;sampleSerial?:string;sourceClosePending?:boolean;
  state:string;stage?:string;ready:boolean;permissionState:string;epoch:number;readyEpoch:number;
  runLo:number;runHi:number;geometryLo:number;geometryHi:number;inputLo:number;inputHi:number;configLo:number;configHi:number;
  sourceUiRevision:string;sourceOpen:boolean;sourceKind:number;sourceControlLo:number;sourceControlHi:number;
@@ -24,6 +25,7 @@ export class GpuM1DemoController {
  private readonly command:ArrayBuffer=new ArrayBuffer(128);private readonly words:Uint32Array;private readonly raw:DataView;
  private active:boolean=false;private pointer:number=-1;private x:number=0;private y:number=0;private lastNs:number=-1;
  private width:number=0;private height:number=0;private mirror:boolean=false;private sequence:number=0;private sampleSequence:number=0;
+ private closedScope:string='';
  private runLo:number=0;private runHi:number=0;private geometryLo:number=0;private geometryHi:number=0;
  kind:number=0;sensorMode:boolean=true;rate:number=8; // units/s candidate, not a speed law
  snapshot:GpuM1DemoStatus|null=null;message:string='等待 GPU M1';lastEnqueue:string='NONE';
@@ -43,18 +45,37 @@ export class GpuM1DemoController {
  }
  setActive(value:boolean):void {if(this.active===value)return;this.stop(value?'RESUME_NEEDS_DOWN':'BACKGROUND');this.active=value;if(value)this.port.setGravityMode(this.sensorMode);this.port.setActive(value);}
  select(kind:number):void {if(kind!==0&&kind!==1)return;this.stop('SWITCH_NEEDS_DOWN');this.kind=kind;}
- stop(reason:string):void {this.pointer=-1;this.lastNs=-1;this.port.setSource(-1);this.message=reason;}
+ stop(reason:string):void {
+  this.pointer=-1;this.lastNs=-1;const s=this.snapshot;
+  const key=s===null?'':[s.runLo,s.runHi,s.epoch,s.pageSession??'',s.sourceControlLo,s.sourceControlHi].join(':');
+  if(!(s!==null&&s.sourceKind===-1&&s.sourceClosePending===false&&key===this.closedScope)){
+   this.port.setSource(-1);this.closedScope=key;
+  }
+  this.message=reason;
+ }
  geometry(width:number,height:number,mirror:boolean=false):void {if(this.width===width&&this.height===height&&this.mirror===mirror)return;this.stop('GEOMETRY_CHANGED');this.width=width;this.height=height;this.mirror=mirror;}
  private position(x:number,y:number):boolean {
   if(!Number.isFinite(x)||!Number.isFinite(y)||!Number.isFinite(this.width)||!Number.isFinite(this.height)||this.width<=0||this.height<=0)return false;
   const u=x/this.width,v=y/this.height;this.x=(this.mirror?1-u:u)*128;this.y=(this.mirror?v:1-v)*256;
   return this.x>=0&&this.x<128&&this.y>=0&&this.y<=256;
  }
- down(id:number,x:number,y:number):boolean {this.refresh();if(!this.active||this.pointer>=0||this.snapshot===null||!this.allowed(this.snapshot)||!Number.isSafeInteger(id)||id<0||!this.position(x,y))return false;this.pointer=id;this.lastNs=-1;this.port.setSource(this.kind);return true;}
+ down(id:number,x:number,y:number):boolean {
+  this.refresh();const s=this.snapshot;let reason:string='OK';
+  if(!this.active)reason='PAGE_INACTIVE';else if(this.pointer>=0)reason='POINTER_ACTIVE';
+  else if(s===null||!this.allowed(s))reason='NOT_READY';
+  else if(!Number.isSafeInteger(id)||id<0)reason='INVALID_POINTER';else if(!this.position(x,y))reason='OUTSIDE_BOX';
+  const ok=reason==='OK';
+  if(this.port.recordSourceAttempt!==undefined)this.port.recordSourceAttempt(JSON.stringify({
+   sampleSerial:s?.sampleSerial??'0',epoch:s?.epoch??0,runLo:s?.runLo??0,runHi:s?.runHi??0,
+   pageSession:s?.pageSession??'0',coordinatesFinite:[x,y,this.width,this.height].every((v:number)=>Number.isFinite(v)),x:Number.isFinite(x)?x:0,y:Number.isFinite(y)?y:0,width:Number.isFinite(this.width)?this.width:0,height:Number.isFinite(this.height)?this.height:0,kind:this.kind,accepted:ok,reason:reason}));
+  if(!ok){this.message=reason;return false;}
+  this.pointer=id;this.lastNs=-1;this.closedScope='';this.port.setSource(this.kind);return true;
+ }
  move(id:number,x:number,y:number):void {if(id!==this.pointer)return;if(!this.position(x,y))this.stop('OUTSIDE_BOX');}
  up(id:number):void {if(id===this.pointer)this.stop('UP');}
- tick(rawNs:number):void {
-  this.refresh();const s=this.snapshot;if(!this.active||this.pointer<0||s===null)return;
+ tick(rawNs:number):void {this.refresh();this.tickSnapshot(rawNs);}
+ tickSnapshot(rawNs:number):void {
+  const s=this.snapshot;if(!this.active||this.pointer<0||s===null)return;
   if(!this.allowed(s)||!s.sourceOpen||s.sourceKind!==this.kind){this.lastNs=-1;return;}
   if(!Number.isSafeInteger(rawNs)||rawNs<0){this.stop('INVALID_CLOCK');return;}
   if(this.lastNs<0){this.lastNs=rawNs;return;}
