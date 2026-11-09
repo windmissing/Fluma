@@ -1,0 +1,48 @@
+{
+ "stageRevision": "SYNTH_V1",
+ "revision": "SYNTH_ARCHIVE_V1",
+ "state": "COMPLETE",
+ "reason": null,
+ "before": {
+  "count": 2,
+  "dropped": "0",
+  "incomplete": false
+ },
+ "after": {
+  "count": 2,
+  "dropped": "0",
+  "incomplete": false
+ },
+ "statusBefore": {},
+ "statusAfter": {},
+ "pages": 1,
+ "rows": 2,
+ "missing": 0,
+ "duplicates": 0,
+ "firstSerial": "1",
+ "lastSerial": "3",
+ "groups": [
+  "1/0/0/42"
+ ],
+ "files": [
+  {
+   "name": "good-part0.ndjson",
+   "bytes": 83,
+   "sha256": "c7105f975d4eb1c89892d3d0b70526ab49cdd459f5fd30b0074e4aee7d53f7a2"
+  },
+  {
+   "name": "good-part1.ndjson",
+   "bytes": 83,
+   "sha256": "e5bea1d81259f706e0f124095fbb875737567d08161623e9ce5fbcae26a8789c"
+  }
+ ],
+ "dataBytes": 166,
+ "cancelled": false,
+ "end": "END",
+ "identity": {
+  "module": "synth.so",
+  "route": "Synth",
+  "packageSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "pid": 42
+ }
+}
