@@ -1,3 +1,4 @@
+import { CpuLocalRowUndoV1 } from './tx/CpuLocalRowUndoV1';
 import { DryCrossRows, crossSameF64, CROSS_CAPACITY, CROSS_BUDGET, CROSS_LAND_REMAINDER } from './derived/P011DryCrossVerticalV1';
 import { P011HotWorkReceipt } from './P011HotWorkReceipt';
 import { DerivedCoordinatorV2 } from './derived/P011DerivedTupleBarrierV2';
@@ -293,6 +294,14 @@ export class P011ParticleHotWorkspace {
   readonly eventColumn: Int32Array; readonly eventTargetColumn: Int32Array;
   readonly eventRequested: Float64Array; readonly eventGranted: Float64Array;
   readonly frozenPool: P011ParticleSnapshot;
+  cpuUndo:CpuLocalRowUndoV1|null=null;
+  enableCpuUndoCold():void {
+    if(this.cpuUndo!==null)return;
+    const d=this.derivedV2,scratch=d?.view(this.patchScratch),before=d?.view(this.patchBefore);
+    if(d===null||scratch===null||scratch===undefined||before===null||before===undefined)throw new Error('CPU_TX_WRITER_VIEW');
+    this.cpuUndo=new CpuLocalRowUndoV1(this.patchScratch,this.patchBefore,scratch,before);
+    this.derivedV2?.registerFailurePreparationCold(():void=>{materializeCpuBeforeHot(this);});
+  }
   readonly patchBefore: P011ParticleSnapshot; readonly patchAfter: P011ParticleSnapshot;
   readonly patchScratch: P011ParticleSnapshot; readonly patchActions: P011ParticleHotEventBuffer;
   readonly seenRequests: P011ParticleHotPlanBuffer;
@@ -652,6 +661,7 @@ export function checkpointHot(work: P011ParticleHotWorkspace, expectedStepEpoch:
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,309,txCode);}}
 export function rollbackStepHot(work: P011ParticleHotWorkspace, expectedStepEpoch: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(310);let txCode=0;const t311Start=work.complexity.begin(18);try{
   if (work.active !== 1 || expectedStepEpoch !== work.stepEpoch) {const txOriginalCode:number=work.lastStatus = P011_HOT_STALE_HANDLE;txCode=txOriginalCode;return txOriginalCode;}
+  materializeCpuBeforeHot(work);
   const restored = copyPoolDiagnosticHot(work, work.frozenPool, true);
   if (restored !== P011_HOT_OK) {const txOriginalCode:number=work.lastStatus = restored;txCode=txOriginalCode;return txOriginalCode;}
   if (work.budget !== null) {
@@ -715,6 +725,7 @@ function sealEvidenceHot(work: P011ParticleHotWorkspace): void {syncHotContext(w
   for (let i = 0; i < r.resultCount; i++) {txTrace?.add(39);
     s.committed[i] = r.committed[i]; s.disposition[i] = r.disposition[i]; s.released[i] = r.released[i]; s.rowStatus[i] = r.rowStatus[i]; s.guardIndex[i] = r.guardIndex[i]; s.eventBegin[i] = r.eventBegin[i]; s.eventCount[i] = r.eventCount[i]; s.granted[i] = r.granted[i]; s.remainder[i] = r.remainder[i]; s.budgetClipped[i] = r.budgetClipped[i]; s.guardRejected[i] = r.guardRejected[i]; s.capacityClipped[i] = r.capacityClipped[i]; s.poolClipped[i] = r.poolClipped[i]; s.massAfter[i] = r.massAfter[i];
   }
+  materializeCpuBeforeHot(work);
   copyPoolDiagnosticHot(work, work.patchAfter, false);
   const f = work.field;
   if (f !== null) {
@@ -954,6 +965,22 @@ function copyPoolHot(from: P011ParticleSnapshot, to: P011ParticleSnapshot, work:
   to.colParticleMassH.set(from.colParticleMassH); to.colParticleMassL.set(from.colParticleMassL);
   work.txD1?.copy(from,to);work.derivedV2?.counters.add(19,55*to.nmax+16*to.cols);work.derivedV2?.copy(from,to);
 }finally{work.complexity.end(6,t311Start);}}finally{work.complexity.fineLeave(fineScope);}}
+// The raw reader must see the legacy before image, even if a later cut fails.
+function materializeCpuBeforeHot(work:P011ParticleHotWorkspace):void {
+  const undo=work.cpuUndo;
+  if(undo===null||!undo.selected||undo.materialized)return;
+  const from=undo.afterReady?work.patchAfter:work.patchScratch,to=work.patchBefore;
+  // Keep the physical transfer accounting separate from logical copy serials.
+  to.liveCount=from.liveCount;to.freeCount=from.freeCount;to.nextId=from.nextId;
+  to.pMass.set(from.pMass);to.pX.set(from.pX);to.pY.set(from.pY);to.pVx.set(from.pVx);to.pVy.set(from.pVy);
+  to.pPhase.set(from.pPhase);to.pSource.set(from.pSource);to.pState.set(from.pState);to.pId.set(from.pId);
+  to.pSourceId.set(from.pSourceId);to.freeSlots.set(from.freeSlots);
+  to.colParticleMassH.set(from.colParticleMassH);to.colParticleMassL.set(from.colParticleMassL);
+  work.derivedV2?.copyFailureView(from,to);undo.restoreBefore();work.txD1?.invalidate(to);
+  const bytes=55*work.nmax+16*work.cols;
+  work.complexity.copiedBytes+=bytes;work.derivedV2?.counters.add(19,bytes);undo.materializedBytes+=bytes;
+  undo.materialized=true;
+}
 function particleSlotHot(pool: P011ParticleSnapshot, id: number, work:P011ParticleHotWorkspace): number {
   if(work.txD1!==null)return work.txD1.lookup(pool,id);
   for (let i = 0; i < pool.nmax; i++) if (pool.pState[i] !== 0 && pool.pId[i] === id) return i;
@@ -1265,9 +1292,37 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
     work.lastStatus = P011_HOT_INVALID_INPUT; return 0;
   }
   if (nextLeaseToken > Number.MAX_SAFE_INTEGER) { work.lastStatus = P011_HOT_TOKEN_EXHAUSTED; work.tokenExhausted = 1; return 0; }
-  const copied = copyPoolDiagnosticHot(work, work.patchBefore, false);
+  const undo=work.cpuUndo;
+  const kind=plan.kind[row],column=plan.column[row];
+  const target=kind===P011_HOT_KIND_CROSSING?plan.targetColumn[row]:column;
+  const birth=kind===P011_HOT_KIND_SPAWN||kind===P011_HOT_KIND_LIFT;
+  const packageMass=work.params.massPackage;
+  const birthsH=Math.floor(grantedHeavy/packageMass),birthsL=Math.floor(grantedLight/packageMass);
+  const births=dispositionCode===P011_HOT_DISPOSITION_PARTICLE&&birth?
+    birthsH+birthsL+(grantedHeavy-birthsH*packageMass>0?1:0)+(grantedLight-birthsL*packageMass>0?1:0):0;
+  let useLocal=undo!==null&&work.derivedV2!==null&&work.mediumMode==='DRY_AIR_V1'&&plan.crossVertical&&
+    plan.requestCount<=128&&target>=0&&target<work.cols&&column>=0&&column<work.cols&&
+    ((birth&&births<=4&&births<=work.pool.freeSlotCount&&(kind!==P011_HOT_KIND_SPAWN||Math.floor(plan.predictedX[row])===column))||
+    kind===P011_HOT_KIND_CROSSING||kind===P011_HOT_KIND_DEPOSIT||kind===P011_HOT_KIND_DEGRADE);
+  const copied = copyPoolDiagnosticHot(work, useLocal?work.patchScratch:work.patchBefore, false);
   if (copied !== 0) { work.lastStatus = copied; return 0; }
-  copyPoolHot(work.patchBefore, work.patchScratch,work);
+  if(useLocal&&births>0){
+    const scratch=work.patchScratch;
+    for(let i=0;i<births;i++){
+      const slot=scratch.freeSlots[scratch.freeCount-1-i];
+      if(!Number.isInteger(slot)||slot<0||slot>=scratch.nmax||scratch.pState[slot]!==0){
+        // Keep the original edit path and first failure for an unknown allocator state.
+        copyPoolHot(scratch,work.patchBefore,work);useLocal=false;break;
+      }
+    }
+  }
+  undo?.clear();
+  if(useLocal&&undo!==null){
+    const slot=birth?-1:particleSlotHot(work.patchScratch,plan.particleId[row],work);
+    const mayRetire=slot>=0&&(kind===P011_HOT_KIND_DEGRADE||
+      (kind===P011_HOT_KIND_DEPOSIT&&grantedHeavy+grantedLight===work.patchScratch.pMass[slot]));
+    undo.begin(slot,births,column,target,mayRetire);work.derivedV2?.advanceLogicalCopy();
+  }else{copyPoolHot(work.patchBefore, work.patchScratch,work);if(undo!==null)undo.fallbackRows++;}
   work.patchActions.count = 0; work.patchActions.lineageCount = 0;
   copyRequestRowHot(plan, row, work.patchOriginal, 0); copyRequestRowHot(plan, row, work.patchRequest, 0);
   if (work.stagedYActive === 1) work.patchRequest.predictedY[0] = work.stagedY;
@@ -1278,6 +1333,7 @@ export function preparePatchHot(work: P011ParticleHotWorkspace, plan: P011Partic
     return 0;
   }
   copyPoolHot(work.patchScratch, work.patchAfter,work);
+  if(undo?.selected===true){undo.afterReady=true;undo.record(55*work.nmax+16*work.cols);}
   const token = allocateParticleHotLease();
   work.activePatchToken = token; work.activePatchStepEpoch = work.stepEpoch; work.activePatchOrdinal = plan.ordinal[row];
   work.patchState = 1; work.patchPlan = plan; work.patchRow = row; work.lastStatus = 0;
@@ -1301,11 +1357,14 @@ export function publishPatchHot(work: P011ParticleHotWorkspace, token: number): 
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,10,txCode);}}
 export function restorePatchHot(work: P011ParticleHotWorkspace, token: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(327);let txCode=0;try{
   const valid = patchLeaseHot(work, token, 2); if (valid !== 0) {const txOriginalCode:number=work.lastStatus = valid;txCode=txOriginalCode;return txOriginalCode;}
+  const local=work.cpuUndo?.selected===true;
+  if(local)materializeCpuBeforeHot(work);
   const status = copyPoolDiagnosticHot(work, work.patchBefore, true); if (status !== 0) {const txOriginalCode:number=work.lastStatus = status;txCode=txOriginalCode;return txOriginalCode;}
   clearPatchHot(work); {const txOriginalCode:number=work.lastStatus = 0;txCode=txOriginalCode;return txOriginalCode;}
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,327,txCode);}}
 export function discardPatchHot(work: P011ParticleHotWorkspace, token: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(328);let txCode=0;try{
   const valid = patchLeaseHot(work, token, 1); if (valid !== 0) return work.lastStatus = valid;
+  if(work.cpuUndo?.selected===true){materializeCpuBeforeHot(work);work.cpuUndo?.clear();}
   clearPatchHot(work); return work.lastStatus = 0;
 }catch(txError){txCode=-1;throw txError as Error;}finally{txTrace?.leave(txScope,328,txCode);}}
 export function finishPatchHot(work: P011ParticleHotWorkspace, token: number): number {syncHotContext(work);const txTrace=work.txD1===null?null:work.txD1.trace;const txScope=txTrace===null?-1:txTrace.enter(329);let txCode=0;try{

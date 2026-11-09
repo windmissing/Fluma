@@ -75,6 +75,14 @@ export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
         this.scalarReaders.push(read);
         this.scalarNames.push(name);
     }
+    private prepareFailure:(()=>void)|null=null;
+    registerFailurePreparationCold(prepare:()=>void):void {this.prepareFailure=prepare;}
+    advanceLogicalCopy():void {this.contentSerial++;this.lastVerifiedSerial=-1;}
+    copyFailureView(from:P011ParticleSnapshot,to:P011ParticleSnapshot):void {
+        const a=this.view(from),b=this.view(to);
+        if(a===null||b===null)throw new Error('DERIVED_UNREGISTERED_FAILURE_VIEW');
+        b.copyFrom(a);
+    }
     private rawFrozen = false;
     registerFailureBufferCold(name: string, buffer: ArrayBuffer): void {
         if (this.rawBuffers.indexOf(buffer) >= 0)
@@ -145,6 +153,7 @@ export class DerivedCoordinatorV2 implements P011ParticleDerivedBindingV2 {
             this.fault.ordinal = this.rootOrdinal;
             this.fault.cut = reason;
             this.fault.firstFaultFrozen = true;
+            this.prepareFailure?.();
             for (let i = 0; i < this.rawCopies.length; i++) {
                 this.rawCopies[i].set(this.rawReaders[i]);
                 this.counters.add(12, this.rawCopies[i].byteLength);

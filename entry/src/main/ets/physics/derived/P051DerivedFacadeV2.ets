@@ -23,6 +23,7 @@ const OWNER_PERMIT_V2 = new DerivedOwnerPermitV2();
 export interface DerivedConfigV2 {
     isolated: boolean;
     motionRevision?:string;
+    cpuTxRoute?:string;
     numericPolicy: string;
     nmax: number;
     sourceId: number;
@@ -53,12 +54,15 @@ export class P051DerivedFacadeV2 {
     private readonly source: number;
     private stopped = false;
     readonly motionRevision:string|undefined;
+    readonly cpuTxRoute:string;
     static isOwnerPermit(permit: object): boolean { return permit === OWNER_PERMIT_V2; }
     constructor(config: DerivedConfigV2) {
         if (!config.isolated || config.numericPolicy !== DERIVED_POLICY_V2 || !Number.isInteger(config.nmax) || config.nmax < 2 || config.nmax > 512 || !Number.isSafeInteger(config.sourceId) || config.sourceId < 1 || config.sourceId > 0xffffffff || config.backend !== 'CPU_ORIGINAL_F64' || config.writerRegistry !== 'T216_DRY_WRITERS_V2')
             throw new Error('DERIVED_CONFIG_UNSUPPORTED');
         if(config.motionRevision!==undefined&&config.motionRevision!==CROSS_VERTICAL_V1)throw new Error('DERIVED_MOTION_UNSUPPORTED');
         this.motionRevision=config.motionRevision;
+        this.cpuTxRoute=config.cpuTxRoute??'LEGACY_FULL';
+        if(this.cpuTxRoute!=='LEGACY_FULL'&&(this.cpuTxRoute!=='LOCAL_UNDO_V1'||this.motionRevision!==CROSS_VERTICAL_V1))throw new Error('CPU_TX_ROUTE_UNSUPPORTED');
         if (!Exact70.probe())
             throw new Error('NUMERIC_ENVIRONMENT_UNSUPPORTED');
         this.nmax = config.nmax;
@@ -75,8 +79,10 @@ export class P051DerivedFacadeV2 {
         if (checkpoint !== null)
             f.restoreFromSnapshot(checkpoint.authority);
         f.enableDerivedV2Cold(OWNER_PERMIT_V2, checkpoint, this.budget);
+        if(this.cpuTxRoute==='LOCAL_UNDO_V1')f.enableCpuTxUndoCold(OWNER_PERMIT_V2);
         return f;
     }
+    exportCpuTxUndoCold():string{return this.field.exportCpuTxUndoCold(OWNER_PERMIT_V2);}
     exportCrossVerticalFailureCold():string{return this.field.exportCrossVerticalFailureCold(OWNER_PERMIT_V2);}
     exportCrossVerticalCold():string{return this.field.exportCrossVerticalCold(OWNER_PERMIT_V2);}
     bindZ08ArchiveCold(archive:P011Z08Archive|null):void {

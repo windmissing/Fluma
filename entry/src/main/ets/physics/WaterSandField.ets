@@ -834,6 +834,17 @@ export class WaterSandField {
   }
   private derivedV2:DerivedCoordinatorV2|null=null;
   private derivedPublicationV2:DerivedCommitV2|null=null;
+  enableCpuTxUndoCold(permit:object):void {
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2===null||this.particleBinding===null)throw new Error('CPU_TX_OWNER');
+    this.particleBinding.work.enableCpuUndoCold();
+  }
+  exportCpuTxUndoCold(permit:object):string {
+    if(!P051DerivedFacadeV2.isOwnerPermit(permit))throw new Error('CPU_TX_OWNER');
+    const w=this.particleBinding?.work,u=w?.cpuUndo;
+    return JSON.stringify({revision:'T423_CPU_COPY_V1',route:u===null||u===undefined?'LEGACY_FULL':'LOCAL_UNDO_V1',
+      rows:u?.rows??0,fallbackRows:u?.fallbackRows??0,removedBytes:u?.removedBytes??0,undoBytes:u?.undoBytes??0,
+      replayedBytes:u?.replayedBytes??0,materializedBytes:u?.materializedBytes??0,undoTypedBytes:u===null||u===undefined?0:8136,hotPoolBytes:this.derivedV2?.counters.values[19]??0});
+  }
   enableDerivedV2Cold(permit:object,checkpoint:DerivedCheckpointV2|null=null,budget:FrameBudgetV2|null=null):void {
     if(!P051DerivedFacadeV2.isOwnerPermit(permit)||this.derivedV2!==null||this.mediumMode!=='DRY_AIR_V1'||this.capacity!==256||this.cols!==128||this.particleBinding===null)throw new Error('DERIVED_COLD_OWNER_REQUIRED');
     const b=this.particleBinding,w=b.work,p=b.pool.derivedBindingCold();
