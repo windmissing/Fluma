@@ -1,0 +1,22 @@
+{
+  "schema": "T438_SIGNED_PROFILE_DIFFERENTIAL_V1",
+  "frozenNative": "0228a7d",
+  "passed": 2,
+  "failed": 0,
+  "rows": [
+    {
+      "profile": "regular",
+      "hapSha256": "876922506b597675f2c267fbd9eb3811c29f128a5b40c53490c2270e65c3732b",
+      "libSha256": "c61a2a766183068879266c534a5f3006c95ea3d404566995b58a314da612bb8d",
+      "progressV2Macro": false,
+      "nativeBranch": "PROGRESS_V2_UNSUPPORTED"
+    },
+    {
+      "profile": "experiment",
+      "hapSha256": "10cc8e835a106e5b8cd672bea84abbfa46f30ef7fca7d22fcf796e2604f7a95f",
+      "libSha256": "314562c9b9232a724199c53a022284feab5d7eed61b4c48b1619d2b4fcbfd0bf",
+      "progressV2Macro": true,
+      "nativeBranch": "PROGRESS_V2_NEXT_RUN"
+    }
+  ]
+}

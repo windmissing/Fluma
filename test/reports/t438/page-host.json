@@ -1,0 +1,88 @@
+{
+  "schema": "T438_DEVELOPER_PAGE_HOST_V1",
+  "device": "NOT_RUN",
+  "passed": 16,
+  "failed": 0,
+  "rows": [
+    {
+      "profile": "regular",
+      "name": "isolated ordinary menu and same XComponent owner",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "first explicit entry requests one empty run",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "DOWN/MOVE/UP routes both source kinds on one run",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "background cancels old callback and resume requires new DOWN",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "manual and sensor paths are mutually exclusive",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "V2 rejects or cold-selects with no optimistic label",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "native resource fault preserves reason and blocks DOWN",
+      "passed": true
+    },
+    {
+      "profile": "regular",
+      "name": "hide/show closes and renews page session without resetting run",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "isolated ordinary menu and same XComponent owner",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "first explicit entry requests one empty run",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "DOWN/MOVE/UP routes both source kinds on one run",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "background cancels old callback and resume requires new DOWN",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "manual and sensor paths are mutually exclusive",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "V2 rejects or cold-selects with no optimistic label",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "native resource fault preserves reason and blocks DOWN",
+      "passed": true
+    },
+    {
+      "profile": "experiment",
+      "name": "hide/show closes and renews page session without resetting run",
+      "passed": true
+    }
+  ]
+}
