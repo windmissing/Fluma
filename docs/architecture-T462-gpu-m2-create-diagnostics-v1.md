@@ -44,3 +44,7 @@ developer 不使用真机，修改独立生成 m2route 的实际三个 program�
 ## 4. 本轮结论
 
 本卡完成工程诊断缺口首次归因与可实施修订，交developer新增诊断、tester再取设备首错回architect。当前 shader具体失败阶段和驱动原因登记 UNDETERMINED，T461未行使功能继续 NOT_RUN；不把本次归因交付写成产品PASS。
+
+## 2026-11-10 用户要求补齐编译产物持久化
+
+此前仅安排日志落盘，遗漏成功program binary复用。新增 [编译产物持久化工程合同](architecture-T462-program-binary-persistence-v1.md)，明确自动落盘、跨启动加载、环境/代码失效及开发/独立验证prompt。manager据此新增P5实施，不扩正在执行的T468诊断关闭门；当前尚未实施，不能称为已缓存。
