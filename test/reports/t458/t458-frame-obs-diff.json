@@ -1,0 +1,71 @@
+{
+ "schema": "T458_FRAME_OBSERVATION_INDEPENDENT_DIFF_V1",
+ "verdict": "PASS",
+ "passed": 12,
+ "total": 12,
+ "results": [
+  {
+   "id": "S1_NEVER_IDLE_REACHES_STABLE",
+   "pass": true,
+   "detail": "sample=2 drop=0"
+  },
+  {
+   "id": "S1_TWO_DISTINCT_FRAMES",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "S1_TIMEOUT_AFTER_STABLE",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "S7_EMPTY_TIMEOUT_WAIT_POST",
+   "pass": true,
+   "detail": "got=WAIT_POST"
+  },
+  {
+   "id": "S2_TIMEOUT_WAIT_FRAME_ENTER",
+   "pass": true,
+   "detail": "got=WAIT_FRAME_ENTER"
+  },
+  {
+   "id": "S8_TIMEOUT_WAIT_FRAME_ENTER",
+   "pass": true,
+   "detail": "got=WAIT_FRAME_ENTER (FRAME 未发生，优先于 LAYOUT)"
+  },
+  {
+   "id": "S3_FRAME_NOT_INCREASING_DROPPED",
+   "pass": true,
+   "detail": "drop=3 (DRAW_NOT_DELIVERED 1 + NOT_INCREASING 2)"
+  },
+  {
+   "id": "S4_OLD_CALLBACK_NO_SLOT_TAKE",
+   "pass": true,
+   "detail": "draw=1 drop=0"
+  },
+  {
+   "id": "S5_DUPLICATE_DRAW_NO_TICKET",
+   "pass": true,
+   "detail": "draw=2 drop=1"
+  },
+  {
+   "id": "S6_LAYOUT_DRIFT_INVALIDATES_ANCHOR",
+   "pass": true,
+   "detail": "drop=1 gen=2"
+  },
+  {
+   "id": "S6_GENERATION_INCREASES",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "id": "S8_EMPTY_ANCHOR_DROPPED",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "source": "test/t455/PrepareFrameObservation.ets (T455 release-final 实际类)",
+ "oracleReuse": "T432 permission semantics (65 agree/0 diverge) reused; not re-run",
+ "device": "NOT_RUN"
+}
