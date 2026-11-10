@@ -1,0 +1,503 @@
+{
+ "revision": "T455_T432_SEMANTIC_REGRESSION_V1",
+ "device": "NOT_RUN",
+ "source": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t455-release-final",
+ "staticChecks": [
+  {
+   "id": "W1_PAGE_WIRES_THREE_REAL_INPUTS",
+   "ok": true,
+   "detail": "三个 TextInput 必须绑定独立 controller（T426 §3.2）"
+  },
+  {
+   "id": "W2_NO_HIDE_TEXT_INPUT",
+   "ok": true,
+   "detail": "正式路径不得调用 inputMethod hideTextInput（T426 §2）"
+  },
+  {
+   "id": "W3_RESERVE_GATE_IS_CONSUME",
+   "ok": true,
+   "detail": "预约唯一入口必须消费 preparePermit（T426 §4 reserve 复核）"
+  },
+  {
+   "id": "W4_STOP_EDITING_BEFORE_CLEAR_FOCUS",
+   "ok": true,
+   "detail": "退出编辑先于清理焦点（T426 §3.2）"
+  },
+  {
+   "id": "W5_DEFAULT_FOCUS_FALSE",
+   "ok": true,
+   "detail": "三输入禁用自动聚焦（T426 §3.2）"
+  },
+  {
+   "id": "W6_PREPARE_COLD_FILE_NAME",
+   "ok": true,
+   "detail": "准备冷档独立命名（T426 §3.7 / T428 交付）"
+  },
+  {
+   "id": "W7_PERMIT_NOT_HOLD_TOKEN",
+   "ok": true,
+   "detail": "preparePermit 不得伪装 hold token（T426 §4）"
+  }
+ ],
+ "results": [
+  {
+   "id": "O1_COLD_READY_PREDICATE",
+   "expect": "",
+   "actual": "",
+   "ok": true,
+   "note": "oracle 期待冷启快照通过 §4 谓词"
+  },
+  {
+   "id": "O1_COLD_READY_STATE",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O1_TWO_DISTINCT_FRAMES",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "§3.4 两个不同帧点"
+  },
+  {
+   "id": "O1_STOP_EDITING_CALLED",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "实际 stopEditing×3 在 API 原始记录中"
+  },
+  {
+   "id": "O2_NONZERO_OCCLUDED",
+   "expect": "KEYBOARD_OCCLUDED",
+   "actual": "KEYBOARD_OCCLUDED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O2_ORACLE_AGREES",
+   "expect": "KEYBOARD_OCCLUDED",
+   "actual": "KEYBOARD_OCCLUDED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O2_EXIT_THEN_READY",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O2_ORACLE_AGREES_READY",
+   "expect": "",
+   "actual": "",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O3_STILL_OCCLUDED",
+   "expect": "PREPARING",
+   "actual": "PREPARING",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O3_REASON",
+   "expect": "KEYBOARD_OCCLUDED",
+   "actual": "KEYBOARD_OCCLUDED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O3_ORACLE_AGREES",
+   "expect": "KEYBOARD_OCCLUDED",
+   "actual": "KEYBOARD_OCCLUDED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O4_UNKNOWN",
+   "expect": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "actual": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O4_ORACLE_AGREES",
+   "expect": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "actual": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O5_FLOATING",
+   "expect": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "actual": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O5_NON_FULLSCREEN",
+   "expect": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "actual": "KEYBOARD_VISIBILITY_UNKNOWN",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O6_RESERVE_ZERO_SIDE_EFFECT",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": "漂移后预约零 phase 副作用"
+  },
+  {
+   "id": "O6_PERMIT_REVOKED",
+   "expect": "INVALIDATED",
+   "actual": "INVALIDATED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O7_NATIVE_STALE",
+   "expect": "PREPARE_NATIVE_NOT_READY",
+   "actual": "PREPARE_NATIVE_NOT_READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O7_RECOVERY_RESTARTS_COUNT",
+   "expect": "PREPARING",
+   "actual": "PREPARING",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O7_RECOVERED_READY",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_NO_PERMIT_REJECTED",
+   "expect": "REJECTED",
+   "actual": "REJECTED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_NO_PHASE_MUTATION",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_WITH_PERMIT_RESERVED",
+   "expect": "RESERVED",
+   "actual": "RESERVED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_PERMIT_CONSUMED",
+   "expect": "INVALIDATED",
+   "actual": "INVALIDATED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_CONSUMED_REASON",
+   "expect": "PREPARE_PERMIT_CONSUMED",
+   "actual": "PREPARE_PERMIT_CONSUMED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_PERMIT_ONESHOT_REJECT",
+   "expect": "REJECTED",
+   "actual": "REJECTED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O8_ONESHOT_ZERO_EFFECT",
+   "expect": 1,
+   "actual": 1,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O9_READY_EDIT_INVALIDATES",
+   "expect": "INVALIDATED",
+   "actual": "INVALIDATED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O9_OPEN_OCCLUSION_HOLD_INVALID",
+   "expect": "INVALID",
+   "actual": "INVALID",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O9_FIRST_CAUSE_STABLE",
+   "expect": "KEYBOARD_AVOID_CHANGED",
+   "actual": "KEYBOARD_AVOID_CHANGED",
+   "ok": true,
+   "note": "后续事件不得改写首因"
+  },
+  {
+   "id": "O10_DOUBLE_PREPARE_SAME_ID",
+   "expect": 11,
+   "actual": 11,
+   "ok": true,
+   "note": "PREPARING 中重复点击零副作用"
+  },
+  {
+   "id": "O10_TIMEOUT_FAILS",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O11_LISTENERS_DETACHED",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": "按原 callback 引用解除，无残留"
+  },
+  {
+   "id": "O11_STALE_CALLBACKS_INERT",
+   "expect": 13,
+   "actual": 13,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O11_NEW_PREP_ALIVE",
+   "expect": "PREPARING",
+   "actual": "PREPARING",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O11_NEW_PREP_CAN_READY",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O12_STOP_FAILS_TO_FAILED",
+   "expect": "FAILED",
+   "actual": "FAILED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O12_RAW55_PRESERVED",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "历史 55 原样保留不赋 READY 义"
+  },
+  {
+   "id": "O12_SUBSCRIBE_FAILS",
+   "expect": "FAILED",
+   "actual": "FAILED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O13_NEW_PREP_UNTOUCHED",
+   "expect": 16,
+   "actual": 16,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O13_EXPORT_BUSY_UNTOUCHED",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O13_STATE_ALIVE",
+   "expect": "PREPARING",
+   "actual": "PREPARING",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O14_DRIFT_RESETS",
+   "expect": "PREPARING",
+   "actual": "PREPARING",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O14_RESTABILIZED",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O14_OUT_OF_WINDOW_INVALID",
+   "expect": "INVALIDATED",
+   "actual": "INVALIDATED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O15_HIDDEN",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": "命令回执自身不代替页面判定"
+  },
+  {
+   "id": "O15_VISIBLE",
+   "expect": "NOT_READY",
+   "actual": "NOT_READY",
+   "ok": true,
+   "note": "命令回执自身不代替页面判定"
+  },
+  {
+   "id": "O15_UNKNOWN",
+   "expect": "NOT_READY",
+   "actual": "NOT_READY",
+   "ok": true,
+   "note": "命令回执自身不代替页面判定"
+  },
+  {
+   "id": "O15_RAW55_COUNT",
+   "expect": 3,
+   "actual": 3,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O16_WINDOW_REBUILD_TERMINATES",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "O17_EXACT_DEADLINE_FAILS",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "T426 §3.5 真实 elapsed 含等号 (state=FAILED, reason=PREPARE_TIMEOUT:WAIT_FRAME_ENTER, started=4211)"
+  },
+  {
+   "id": "O18_COLD_FILE_NAMED",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "独立命名 t455-prepare-<session>-<gen>-<id>-<state>-<serial>.json"
+  },
+  {
+   "id": "O18_COLD_FILES_EXIST",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "PREPARING 与 READY 状态各落盘"
+  },
+  {
+   "id": "O18_SHA_RECEIPT",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": "DiagnosticColdFiles 每档返回 SHA 收据"
+  },
+  {
+   "id": "T455_FRAME_WITHOUT_LAYOUT",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_LATE_ANCHOR",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_DUPLICATE_DRAW",
+   "expect": 1,
+   "actual": 1,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_SAME_LAYOUT_SECOND_FRAME",
+   "expect": "READY",
+   "actual": "READY",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_READY_OBSERVERS_DETACHED",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_ANCHOR_DRIFT_REJECT",
+   "expect": "REJECTED",
+   "actual": "REJECTED",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_ANCHOR_DRIFT_ZERO_PHASE",
+   "expect": 0,
+   "actual": 0,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_OLD_OBSERVER_CANNOT_CLEAR_NEW_SLOT",
+   "expect": true,
+   "actual": true,
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_TIMEOUT_MISSING_FRAME",
+   "expect": "PREPARE_TIMEOUT:WAIT_FRAME_ENTER",
+   "actual": "PREPARE_TIMEOUT:WAIT_FRAME_ENTER",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_TIMEOUT_MISSING_LAYOUT",
+   "expect": "PREPARE_TIMEOUT:WAIT_LAYOUT_DONE",
+   "actual": "PREPARE_TIMEOUT:WAIT_LAYOUT_DONE",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "id": "T455_TIMEOUT_MISSING_DRAW",
+   "expect": "PREPARE_TIMEOUT:WAIT_DRAW_PAIR",
+   "actual": "PREPARE_TIMEOUT:WAIT_DRAW_PAIR",
+   "ok": true,
+   "note": ""
+  }
+ ],
+ "passed": 65,
+ "diverged": 0,
+ "missing": 0,
+ "summary": "65 agree, 0 diverge, 0 missing wiring"
+}
