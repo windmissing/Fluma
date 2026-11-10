@@ -1,0 +1,46 @@
+{
+  "schema": "T450_SIGNED_INSTALL_INPUT_V1",
+  "target": "t437",
+  "sha256": "4ab9b671e068eabeb425b9bac2fd1eb0bc645471ee2632ec715f5f3818f35f9f",
+  "file": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T450-t437\\T450-t437-signed.hap",
+  "bytes": 8624205,
+  "bundle": "com.example.helloworld",
+  "versionCode": 1000000,
+  "versionName": "1.0.0",
+  "install": [
+    "hdc",
+    "-t",
+    "<device>",
+    "install",
+    "-r",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T450-t437\\T450-t437-signed.hap"
+  ],
+  "stop": [
+    "hdc",
+    "-t",
+    "<device>",
+    "shell",
+    "aa",
+    "force-stop",
+    "com.example.helloworld"
+  ],
+  "launch": [
+    "hdc",
+    "-t",
+    "<device>",
+    "shell",
+    "aa",
+    "start",
+    "-b",
+    "com.example.helloworld",
+    "-a",
+    "EntryAbility",
+    "--pb",
+    "grsm1",
+    "true",
+    "--ps",
+    "gpusha",
+    "4ab9b671e068eabeb425b9bac2fd1eb0bc645471ee2632ec715f5f3818f35f9f"
+  ],
+  "device": "NOT_RUN"
+}
