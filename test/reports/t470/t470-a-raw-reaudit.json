@@ -1,0 +1,41 @@
+{
+ "schema": "T470_A_RAW_REAUDIT_V1",
+ "verdict": "PASS",
+ "passed": 4,
+ "total": 4,
+ "results": [
+  {
+   "id": "A1",
+   "name": "60 raw = 接受32+拒绝16+重放8+QUANTUM4（T465 §1 表）",
+   "pass": true,
+   "detail": "dist={'k1 o1': 32, 'k1 o3': 8, 'k1 o2': 16, 'k2 o1': 4}"
+  },
+  {
+   "id": "A2",
+   "name": "mutationSerial U64 逐root delta==MERGE+BIRTH（fixture边界 BASE=0 单列）",
+   "pass": true,
+   "detail": "fails=0; fixture边界=[16, 31, 46]（serial==m+b，BASE=0 起步）"
+  },
+  {
+   "id": "A3",
+   "name": "nextId 链非 END 行全连续（END 行 wire 语义无链）",
+   "pass": true,
+   "detail": "checked=5656, fails=0"
+  },
+  {
+   "id": "A4",
+   "name": "completion[160:173] 投影 == header[132:145] 全 60 raw",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "rawCount": 60,
+ "rawDir": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t452-host",
+ "wireSha256": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+ "notImplemented": [
+  "per-origin liveMass 聚合审计：originU64 段在 WORK control 区（[334752,342944)），raw 未 dump 该区——需 B 包执行时读回",
+  "pre-state/command 原字节：fixture 输入序列未随 raw 落盘——独立期望需 B 包保存输入后再算",
+  "fatal 23–26 原档：60 raw 无 fatal（fatal 不写 raw），归 C 包故障 hook 补采"
+ ],
+ "device": "NOT_RUN"
+}

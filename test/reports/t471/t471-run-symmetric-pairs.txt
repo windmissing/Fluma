@@ -1,0 +1,35 @@
+﻿T409 actual App idempotent close/first revoke/one-shot fault/atomic terminal ledger/busy/stale capture PASS
+T421 independent supervisor timeout at equality while owner blocked; late checkpoint cannot arm PASS
+t471.exe : [T471-D] symmetric script arms start
+所在位置 行:508 字符: 112
++ ... $env:PATH"; & .codex\local-test\t471\t471.exe *> test\reports\t471-ru ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([T471-D] symmetric script arms st 
+   art:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PULSE_REJECTED pulse=14 code=CLOCK_GAP
+[T471-D] off arm done accepted=0
+RESERVE_REPLY pulse=10 {"revision":"T417_CAPTURE_REQUEST_V1","state":"RESERVED"
+,"reason":"","requestId":"1","requestNs":"161000000","armByNs":"1161000000","de
+tectedNs":"0","detectionDelayNs":"0","captureId":"0","startNs":"0","epoch":"1",
+"runLo":1,"runHi":0,"pageSession":"1","actualRevision":"GRS_M1_PROGRESS_CLOCK_V
+2","packageSha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaa","owner":"1","context":"1","surface":"1","geometry":"1","config":"1","las
+tBlocker":"WAIT_ROOT","observedNs":"161000000","safePointSerial":"0","workerPha
+se":"ROOT","phaseSinceNs":"33000000","rootNonce":"1","rootKind":2,"permitStartN
+s":"33000000","permitDeadlineNs":"283000000","lastCompleted":"0","draining":fal
+se,"drawing":false,"swapping":false,"initialPhase":"","initialPermission":"","i
+nitialFailure":""}
+[T471-D] on arm done accepted=0
+PAIR_DIVERGE acceptedCount off=17 on=34
+PAIR_DIVERGE generatedQuanta off=17 on=34
+PAIR_OK revokedDroppedQuanta =5
+PAIR_DIVERGE overloadDroppedQuanta off=12 on=29
+PAIR_OK quotaCarry =0
+PAIR_DIVERGE clearedCarry off=280000000 on=560000000
+PAIR_OK pendingEnd =0
+PAIR_OK activeRemainingEnd =0
+PAIR_OK completion256x0
+CAPTURE_NOT_FROZEN rows=0
+OBSERVATION_DISTURBANCE

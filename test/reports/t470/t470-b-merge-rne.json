@@ -1,0 +1,28 @@
+{
+ "schema": "T470_B_MERGE_RNE_INDEPENDENT_V1",
+ "verdict": "PASS",
+ "passed": 3,
+ "total": 3,
+ "results": [
+  {
+   "id": "B1",
+   "name": "出生质量独立重算 min(emitQ, PACKAGE)=122333",
+   "pass": true,
+   "detail": "GPU slot0 mass=122333, expect=122333（emit 131072 截断）"
+  },
+  {
+   "id": "B2",
+   "name": "满池 maxBirth 出生 K=192 粒 each mass=122333（无 merge）",
+   "pass": true,
+   "detail": "122333 x194 (should be >= 192), 244666 x0 (expect 0)"
+  },
+  {
+   "id": "B3",
+   "name": "满池 merge 链：191 对 M=244666（==MERGED_MAX）+ 末粒 122333",
+   "pass": true,
+   "detail": "244666 x191 (expect 191), 122333 x3 (>=1 incl header)"
+  }
+ ],
+ "oracleReuse": "T446 rne/merge_fields/stop_order 语义（independent oracle）",
+ "device": "NOT_RUN"
+}

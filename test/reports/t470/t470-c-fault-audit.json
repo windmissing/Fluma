@@ -1,0 +1,58 @@
+{
+ "schema": "T470_C_FAULT_PREFIX_AUDIT_V1",
+ "verdict": "PASS",
+ "passed": 8,
+ "total": 8,
+ "results": [
+  {
+   "id": "C1",
+   "name": "fatal-schema-23: outcome=4 + reason + bank不变",
+   "pass": true,
+   "detail": "outcome=4 reason64=0 reason29=23 bankSame=True"
+  },
+  {
+   "id": "C1",
+   "name": "fatal-order-24: outcome=4 + reason + bank不变",
+   "pass": true,
+   "detail": "outcome=4 reason64=0 reason29=24 bankSame=True"
+  },
+  {
+   "id": "C1",
+   "name": "fatal-prefix-26: outcome=4 + reason + bank不变",
+   "pass": true,
+   "detail": "outcome=4 reason64=0 reason29=26 bankSame=True"
+  },
+  {
+   "id": "C1",
+   "name": "fatal-mutation-25: outcome=4 + reason + bank不变",
+   "pass": true,
+   "detail": "outcome=4 reason64=0 reason29=25 bankSame=True"
+  },
+  {
+   "id": "C2",
+   "name": "PAYLOAD_CONFLICT: outcome=2 reason=8",
+   "pass": true,
+   "detail": "outcome=2 reason=8"
+  },
+  {
+   "id": "C3",
+   "name": "generation 溢出 reason=21",
+   "pass": true,
+   "detail": "reason29=21"
+  },
+  {
+   "id": "C4",
+   "name": "SOURCE成功→Q poison 拒绝：账保留",
+   "pass": true,
+   "detail": "same=True"
+  },
+  {
+   "id": "C5",
+   "name": "WORK ctrl 段 firstReason 独立读回 == completion reason",
+   "pass": true,
+   "detail": "ctrl[2]=25"
+  }
+ ],
+ "artifacts": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t470-c",
+ "device": "NOT_RUN"
+}
