@@ -1,0 +1,136 @@
+{
+  "schema": "T452_M2_V3_DEVELOPER_DELIVERY_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "baseline": "0228a7d",
+  "policy": "M2_SAND_SAME_ORIGIN_AIR_V1",
+  "layoutSha": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+  "shaderSha": "ff5d18fe0f7211b9b577f2d1b5c06f74d608fa42b6619e32358b7d1199f89240",
+  "sourceSha": "eb479a7b4fb3be0dc06245aef95b05e4ceabcaa9f9de7051994c5ac4504a1c1c",
+  "quantumSha": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc",
+  "gpuRoots": {
+    "passed": 80,
+    "failed": 0,
+    "accepted": 60,
+    "fatalRejected": 20,
+    "profiles": [
+      {
+        "K": 192,
+        "Kw": 64,
+        "roots": 20,
+        "maxSoftwareWallMs": 222711.0
+      },
+      {
+        "K": 192,
+        "Kw": 128,
+        "roots": 20,
+        "maxSoftwareWallMs": 985.466
+      },
+      {
+        "K": 512,
+        "Kw": 64,
+        "roots": 20,
+        "maxSoftwareWallMs": 2216.07
+      },
+      {
+        "K": 512,
+        "Kw": 128,
+        "roots": 20,
+        "maxSoftwareWallMs": 1524.4
+      }
+    ],
+    "scope": "SOURCE13/full QUANTUM, spare word replay, normal partial/NO_PAIR/capacity/last ID/generation rollback, fatal23-26 word+expected+actual",
+    "sourceUploadedBytes": 240,
+    "tailMappedBytes": 1024
+  },
+  "native": {
+    "schema": "T452_DEVELOPER_NATIVE_GL_V3",
+    "passed": 1,
+    "failed": 0,
+    "admittedJQ": 131072,
+    "settledAfterUpQ": 131072,
+    "device": "NOT_RUN",
+    "capabilities": {
+      "revision": "GRS_M1_EXPERIENCE_V1",
+      "buildProfile": "T452_M2_EXPERIMENT_V3",
+      "GRS_APP_M1": true,
+      "GRS_PROGRESS_V2_EXPERIMENT": true,
+      "K": 192,
+      "Kw": 128,
+      "features": 7,
+      "layoutRevision": 3,
+      "numericRevision": 1,
+      "sceneRevision": 3,
+      "scenePolicy": "GRS_GPU_SCENE_Q20_M2_V3",
+      "defaultProgress": "V1",
+      "M2": "M2_SAND_SAME_ORIGIN_AIR_V1",
+      "M3": "UNSUPPORTED_M1_CONFIG"
+    }
+  },
+  "coldReader": {
+    "passed": 61,
+    "failed": 0,
+    "negativeChecks": 183
+  },
+  "primitives": {
+    "report": "test/reports/t452/gl-primitives.json",
+    "unchangedSince": "ca21608",
+    "profiles": 4,
+    "mergeCases": 6,
+    "indexCases": 5
+  },
+  "build": {
+    "result": "BUILD_SUCCESSFUL",
+    "errors": 0,
+    "logSha": "09d1bb7ae9308422441476ffddb1bdef607e8c5b27f405763cbe574db6effc0e"
+  },
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T452-final-complete\\T452-final-complete-signed.hap",
+    "sha256": "de316a648a17e86b21b5b7cb9debbde3ceadfc90cf2d20cef9ddd62a7f076959",
+    "bytes": 8720140
+  },
+  "signReport": "test/reports/t257/T452-final-complete.json",
+  "boundaries": [
+    "Offline software GLES and injected host clock; no device deadline/fps/effect claim",
+    "T453 independent production differential is a separate tester task",
+    "Old M1/V2 source files are unchanged; isolated App generated from the pinned baseline"
+  ],
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/m2/assemble_kernels.py": "09d618eade1d7008bfbe6c69e425219b16c6b823715c778d97b6f73e95fc8c50",
+    "entry/src/main/cpp/gpu_resident/m2/buffer_plan.h": "57db4c9c00d149d1e2ee27380c9c342a2aa2b8fb95a2c29d5f3193200ad30f2b",
+    "entry/src/main/cpp/gpu_resident/m2/capability.h": "bfecc8ae4c73d686da9c3680946d4bf8e8ff4d64c29fd5bd5cf262446db349b3",
+    "entry/src/main/cpp/gpu_resident/m2/cold_reader.py": "7a7d9cc25080faf95c55cf9e2623ef9e49f397f5c61fa6e57eea84a33302ef80",
+    "entry/src/main/cpp/gpu_resident/m2/generate_layout.py": "e5d86665101dd98d2040edc4c4a59bb16fe095aa6e96552f27d0aa06eda165a0",
+    "entry/src/main/cpp/gpu_resident/m2/layout_generated.glsl": "d3a9e80ef27169e444ecd3c1437d72d391f79ad8d42b6cd76669e599532c1ef2",
+    "entry/src/main/cpp/gpu_resident/m2/layout_generated.h": "7da72f25901263556013d3a16c4a4edcda02aa87577f727e6b9b2a64fdaa37ef",
+    "entry/src/main/cpp/gpu_resident/m2/merge_primitives.glsl": "7837f82a0a8ceaced0224e89be3499d19feb517ef8655e72cf2419be5ee0abb9",
+    "entry/src/main/cpp/gpu_resident/m2/pair_index.glsl": "5658a0f020fed8c234d0311e329322cc626462d158c5cd4d8585f95de067f950",
+    "entry/src/main/cpp/gpu_resident/m2/quantum_origins.glsl": "147fcc140dfd44db700fec3563d43dec5f264499861960a4e13a53efbf457f6a",
+    "entry/src/main/cpp/gpu_resident/m2/root_gate.h": "fcc196ba42813a2fe8690dd84a8219603558ba07b8438f6bf7e68e178d1377c3",
+    "entry/src/main/cpp/gpu_resident/m2/source_audit.glsl": "61b58657623bdb4a09a4ac6df47894b21f65df7405e8bca54bad3f5211f313e1",
+    "entry/src/main/cpp/gpu_resident/m2/source_execute.glsl": "25212bfe1d2741d92cea07e83e1c22a6b39827bad4b3b154888a9b390c1ad953",
+    "entry/src/main/cpp/gpu_resident/m2/source_row.glsl": "9230ced2633b9a4fa4e2db986af6190e12d5a78e13b258075ca5d12193545735",
+    "entry/src/main/cpp/gpu_resident/m2/source_v3.comp": "1f99cd81f62181d7fb02b1f9ee83351e0409223249561300a8c56dc45d2c859b",
+    "test/t452/build_host.cmd": "9f634053d8115eb814bdfd33d586a7549667769bce0931494a0d53a7feda4680",
+    "test/t452/build_route_host.cjs": "08c84811620afcb2f86f984c67cdc854512e04e3aca4e84c41224226fad8e3d2",
+    "test/t452/build_source.cmd": "48779a14a38cb852e9497771be0a8993520f89f8f9e4d20da87d959216e83601",
+    "test/t452/capability_host.cpp": "2f3bf24148092fbfc1ce9ae3b90753931304227ceefafd35296a7f0af5da05b5",
+    "test/t452/check_traces.py": "ebc6ca52e83d42df42adcc9664321336a51f0ed58d6f2f3df9481e21e6454148",
+    "test/t452/collect_report.py": "d188cb634cf094543724bedbc13e5a6554685b8d5eaa41586abe98a6dd0d0809",
+    "test/t452/generate.cjs": "f07eea3dd3a31b864e7a9a1f2e376eaaa7eadf483f82a2eb648164243be2c2a6",
+    "test/t452/index_prefix.glsl": "3846e9a7f402335af9dcf5940c6ef346cc82cd6df359a4f890cfeea21e67e2ee",
+    "test/t452/index_probe.glsl": "1f6d2b1ffb9fc1328a2b1dedf77b8751e88c1eea162509e3cce30c2f96151366",
+    "test/t452/merge_probe.glsl": "961dca85c9aa8c288e787e32aa2ec215df28537f321a6923154548924e77d734",
+    "test/t452/merge_probe.inc": "fc990e2073381bedbd3d3b5fd6d228fd891bfe0ba31c6b078f9175462f1164ea",
+    "test/t452/README.md": "84b7199779d4d73591fb95df9865dc68a36c828189adcc6304c71ad55fde9702",
+    "test/t452/source_host.cpp": "ad274db170c05e92b53384d024ea03b2d0b2dd1c49fc7ea4425afa376e6056b2",
+    "test/t452/trace_app.inc": "859e4497e2b197d3169a20477b00bf47fa085986e8e401605a8a278c55e9853e",
+    "test/t452/trace_napi.inc": "8aa211a2b5c3b1d08713d8035237e9e17bfa7e78cdf9e2e322cf56dbb8559062",
+    "test/t452/trace_page.inc": "e7d6f4df27f228fe3464b65641d416610136e2bbe629aaf59f63ea239cdcfd82"
+  },
+  "logs": {
+    ".codex/local-test/t452-final-evidence.txt": "066dfb8a9187d1945a9b573d950370588e90d6a5f5c63d3b9215dd1cd1166e0a",
+    ".codex/local-test/t452-accepted-app.txt": "2a3eb241002e67235015b08062e328d80ef2702d03b7cc0255df651c23a89c4e",
+    ".codex/local-test/t452-complete-build.txt": "09d1bb7ae9308422441476ffddb1bdef607e8c5b27f405763cbe574db6effc0e"
+  }
+}
