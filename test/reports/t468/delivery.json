@@ -1,0 +1,79 @@
+{
+  "schema": "T468_DEVELOPER_DELIVERY_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "helper": {
+    "schema": "T468_ACTUAL_HELPER_UNITS_V1",
+    "passed": 21,
+    "failed": 0
+  },
+  "coldExport": {
+    "schema": "T468_COLD_EXPORT_UNITS_V1",
+    "passed": 11,
+    "failed": 0
+  },
+  "nativeCreate": {
+    "passed": 1,
+    "failed": 0,
+    "code": 0,
+    "programCount": 3,
+    "actualLimitQueries": 15,
+    "shaderBytes": [
+      85060,
+      26429,
+      54857
+    ],
+    "allCompileLinkLogQueries": true,
+    "driver": [
+      {
+        "value": "Google Inc. (Google)",
+        "rawGl": 0
+      },
+      {
+        "value": "ANGLE (Google, Vulkan 1.2.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
+        "rawGl": 0
+      },
+      {
+        "value": "OpenGL ES 3.1.0 (ANGLE 2.1.18846 git hash: 4a65a669e11b)",
+        "rawGl": 0
+      },
+      {
+        "value": "OpenGL ES GLSL ES 3.10 (ANGLE 2.1.18846 git hash: 4a65a669e11b)",
+        "rawGl": 0
+      }
+    ]
+  },
+  "kernelWireUnchanged": true,
+  "build": {
+    "result": "PASS",
+    "errors": 0,
+    "logSha": "bad6968f268322c00997fa39e6643d03398bbae99380d8ad3bf0651a022abb5c"
+  },
+  "handoff": "test/reports/t468/handoff.json",
+  "signReport": "test/reports/t257/T468-release.json",
+  "logBounds": {
+    "perObjectBytes": 4096,
+    "totalBytes": 16384,
+    "retainedAttempts": 3,
+    "eventsPerAttempt": 96
+  },
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc",
+    "test/t468/build_gl.cjs": "6201817680075cca3225c90312b1e4c4f65fcabb8008b2bfbfd65f64fcbaae07",
+    "test/t468/build_units.cjs": "81ef189fb7d657f60a1d78b033b7e7fc211b474d59f0606968073a9ea7c11202",
+    "test/t468/generate.cjs": "d45c3fba6e89a5941a00572ee5b8f309d57cea010a11047b6889168d43288244",
+    "test/t468/helper_units.cpp": "9cc0c7f3887c5f1cd0cefaeb41fc5f865fd8efbd5622c0ee1621d07e4ae5fc04",
+    "test/t468/M2CreateColdFiles.ets": "a760b95b33a389dcc015e9e99dfbfe348cbad45e5ae5b66802763b9ebfbda48b",
+    "test/t468/M2CreatePackage.ets": "42c209c9cad936ace9e0f0cd03d4a66639bce058af6a7f4f6154843549b5aa08",
+    "test/t468/napi.inc": "9b7c03d0108649fed8d227cc4a2997cbbd0714268b00cb344edaa9388467c5d1",
+    "test/t468/page.inc": "f90e2538a2e7b41e20e7910c5c86cf8fe322d5308646475098b45a9a793ab661",
+    "test/t468/page_units.cjs": "2253129ee108008dd4257ea4aca0e2d62e5f1b42a3cb0e51b032cb0edb94c218",
+    "test/t468/README.md": "74e8e972e078cdc7e40498848c0d26d904b86785de38709c80fa73e18ee7cfa6",
+    "test/t468/uniform_locations_v3.h": "f07e9f6faedfeaffdc9c3d46da02c5fae3cda44075b5d5879125c4ed420deb90"
+  },
+  "boundaries": [
+    "Package/ELF runtime fields are external cold declarations bound against measured host signature/ELF receipt",
+    "Offline GLES is not device compiler support; T472 still must collect actual first failure",
+    "T452 kernels and wire are unchanged; no T467/T469 integration in this isolated variant"
+  ]
+}

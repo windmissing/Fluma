@@ -1,0 +1,38 @@
+{
+  "schema": "T468_SIGNED_CREATE_DIAG_HANDOFF_V1",
+  "package": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T468-release\\T468-release-signed.hap",
+    "sha256": "43e8da21312b1a088cc436db5560d73996c24c7641c826be1710701ecf911b3a",
+    "bytes": 8842760
+  },
+  "elf": {
+    "entry": "libs/arm64-v8a/libgrsm1.so",
+    "sha256": "574c811755383fe7c49090eb5f4b1b9b839168e0d5e6b5841d75693c8b5395c5",
+    "bytes": 1173504
+  },
+  "buildVariant": "T468_M2_V3_DIAGNOSTIC",
+  "layoutSha": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+  "programs": [
+    {
+      "name": "SOURCE_V3",
+      "sha256": "eb479a7b4fb3be0dc06245aef95b05e4ceabcaa9f9de7051994c5ac4504a1c1c",
+      "sourceBytes": 85060
+    },
+    {
+      "name": "QUANTUM_INTERMEDIATE",
+      "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+      "sourceBytes": 26429
+    },
+    {
+      "name": "QUANTUM_FINAL_V3",
+      "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc",
+      "sourceBytes": 54857
+    }
+  ],
+  "wantParameters": {
+    "grsm1": "true",
+    "gpusha": "43e8da21312b1a088cc436db5560d73996c24c7641c826be1710701ecf911b3a",
+    "gpuelfsha": "574c811755383fe7c49090eb5f4b1b9b839168e0d5e6b5841d75693c8b5395c5"
+  },
+  "binding": "Runtime values are cold Want declarations; tester must match this verified host receipt and ELF before attribution"
+}
