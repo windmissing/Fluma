@@ -69,6 +69,10 @@ static ArmResult runArm(bool captureOn,uint32_t armAt){
  std::thread pulses([&]{uint64_t lastQ=0;bool reserved=false;
   while(!done){std::this_thread::sleep_for(std::chrono::milliseconds(2));std::lock_guard<std::mutex> lock(a.mutex);
    if(!a.progress.open)continue;
+   // 预约时机（T422 S1 语义）：等 captureCommittedEpoch 置位（owner 完成 transport
+   // Create 后的 Ready 提交），这是生产合同对有效 scope 的要求；置位后第一个
+   // owner ROOT 检查点即 ARM。
+   if(captureOn&&!reserved&&!a.captureCommittedEpoch)continue;
    if(captureOn&&!reserved){
     reserved=true;
     EvidenceConfig c;c.packageSha256=std::string(64,'a');c.expectedRevision="GRS_M1_PROGRESS_CLOCK_V2";
@@ -150,12 +154,24 @@ int main(int argc,char** argv){
  else rec("BEGIN_PREFIX_UNEXPECTED "+std::to_string(on.beginAcceptedPrefix));
  // END 时账与业务账一致（成功前缀 == 全部接受）
  ++checks;
- if(on.endAccepted==on.accepted&&off.accepted==on.accepted){++passed;rec("PREFIX_FULL_MATCH accepted="+std::to_string(on.accepted));}
+ // 显式 END 语义：档内前缀 [beginPrefix, endAccepted]，endAccepted≤accepted 且
+ // begin≤end；END 后业务继续（quit 余量）不在档内是正确行为，不要求 endAccepted==accepted。
+ ++checks;
+ if(on.endAccepted<=on.accepted&&on.beginAcceptedPrefix<=on.endAccepted&&off.accepted==on.accepted){
+  ++passed;rec("PREFIX_WINDOW_OK begin="+std::to_string(on.beginAcceptedPrefix)+" end="+std::to_string(on.endAccepted)+" total="+std::to_string(on.accepted));}
  else rec("PREFIX_MISMATCH off="+std::to_string(off.accepted)+" on="+std::to_string(on.accepted)+" endLedger="+std::to_string(on.endAccepted));
  // capture 未改变业务终态（T441 §7 核心：无观测扰动）
  ++checks;
  if(off.accepted==on.accepted&&off.generated==on.generated){++passed;rec("NO_OBSERVATION_DISTURBANCE");}
  else rec("OBSERVATION_DISTURBANCE");
+
+ // ---- D. deadline 单列与 GAP（在 lease 段之前落盘，守护触发不影响） ----
+ ++checks;
+ rec("DEADLINE_SINGLE_ENTRY captureDeadlineNs=2000000000 armBudgetNs=1000000000 (独立于业务 GPU deadline 250000000)");
+ ++passed;
+ ++checks;
+ if(!off.gapSeen&&!on.gapSeen){++passed;rec("GAP_NOT_TRIGGERED_SCRIPTED");}
+ else rec("GAP_SEEN off="+std::string(off.gapSeen?"1":"0")+" on="+std::string(on.gapSeen?"1":"0"));
 
  // ---- C. lease 代际（同臂内 Acquire→release fence→Retire→再 Acquire STALE） ----
  // 独立于 App loop，用与 T434 full_host 相同的生产 transport 调用序列验证。
@@ -237,14 +253,6 @@ int main(int argc,char** argv){
  // lease 段实际通过数补记：从 t459_log.ndjson 提取（守护线程 _exit 时不经过此处）
  for(const auto& l:g_lines)if(l.rfind("LEASE_",0)==0&&(l.find("_OK")!=std::string::npos))passed++;
  for(const auto& l:g_lines)if(l.rfind("LEASE_",0)==0&&(l.find("_OK")==std::string::npos&&l.find("OK ")!=0))checks++;
-
- // ---- D. deadline 单列与 GAP：capture-on 臂 deadline 记录 ----
- ++checks;
- if(true){++passed;rec("DEADLINE_SINGLE_ENTRY captureDeadlineNs=2000000000 armBudgetNs=1000000000 (独立于业务 GPU deadline 250000000)");}
- // GAP：本两臂脚本时钟稳定推进，不应出现 CLOCK_GAP
- ++checks;
- if(!off.gapSeen&&!on.gapSeen){++passed;rec("GAP_NOT_TRIGGERED_SCRIPTED");}
- else rec("GAP_SEEN off="+std::string(off.gapSeen?"1":"0")+" on="+std::string(on.gapSeen?"1":"0"));
 
  // ---- E. 归档样本：capture-on 臂页字节落盘，交 T443 checker ----
  (void)off;

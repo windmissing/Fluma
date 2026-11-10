@@ -1,14 +1,17 @@
-RESERVE_REPLY accepted=0 {"revision":"T417_CAPTURE_REQUEST_V1","state":"REJECTED","reason":"CAPTURE_SCOPE_UNAVAILABLE"}
+RESERVE_REPLY accepted=0 {"revision":"T417_CAPTURE_REQUEST_V1","state":"RESERVED","reason":"","requestId":"1","requestNs":"1000000","armByNs":"1001000000","detectedNs":"0","detectionDelayNs":"0","captureId":"0","startNs":"0","epoch":"1","runLo":1,"runHi":0,"pageSession":"1","actualRevision":"GRS_M1_PROGRESS_CLOCK_V2","packageSha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","owner":"1","context":"1","surface":"1","geometry":"1","config":"1","lastBlocker":"NO_OWNER_CHECKPOINT","observedNs":"1000000","safePointSerial":"0","workerPhase":"NO_OWNER_CHECKPOINT","phaseSinceNs":"0","rootNonce":"0","rootKind":0,"permitStartNs":"0","permitDeadlineNs":"0","lastCompleted":"0","draining":false,"drawing":false,"swapping":false,"initialPhase":"","initialPermission":"","initialFailure":""}
+END_REPLY {"revision":"T409_EVIDENCE_CAPTURE_V1","state":"FROZEN","reason":"EXPLICIT_END","captureId":"1","activeRevision":"GRS_M1_PROGRESS_CLOCK_V2","packageSha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","epoch":"1","runLo":1,"runHi":0,"pageSession":"1","startNs":"1000000","endNs":"54900000","evidenceSource":"HOST_SCRIPTED_OFFLINE","clock":"SCRIPTED_OFFLINE_STAMP_NS","uiClock":"SCRIPTED_UI_CALLBACK_NS","probeClock":"HOST_STEADY_NS"}
 PAIR_OK acceptedCount =8
 PAIR_OK generatedQuanta =8
 PAIR_OK revokedDroppedQuanta =0
 PAIR_OK overloadDroppedQuanta =0
-PAIR_DIVERGE quotaCarry off=460000000 on=712000000
+PAIR_DIVERGE quotaCarry off=436000000 on=460000000
 PAIR_OK clearedCarry =0
 PAIR_OK pendingEnd =0
 PAIR_OK activeRemainingEnd =0
 PAIR_OK completion256x8
-CAPTURE_NOT_FROZEN reason=NO_EVIDENCE rows=0
-BEGIN_PREFIX_UNEXPECTED 18446744073709551615
-PREFIX_MISMATCH off=8 on=8 endLedger=18446744073709551615
+CAPTURE_FROZEN rows=196
+BEGIN_PREFIX acceptedPrefix=0 accepted=8
+PREFIX_WINDOW_OK begin=0 end=6 total=8
 NO_OBSERVATION_DISTURBANCE
+DEADLINE_SINGLE_ENTRY captureDeadlineNs=2000000000 armBudgetNs=1000000000 (独立于业务 GPU deadline 250000000)
+GAP_NOT_TRIGGERED_SCRIPTED
