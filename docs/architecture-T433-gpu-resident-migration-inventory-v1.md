@@ -118,6 +118,8 @@ T280四档完整root、T281软件GLES场景和T421实际App/ANGLE预约属于已
 
 ## 8. 阶段B · GPU M1显式体验入口与版本能力收口
 
+2026-11-10，T451 核实 T448 regular 原档已有 V1 READY 提交后的 CLOCK_GAP。experiment 原档的实际时钟仍为 V1。新包按 T451 合同取窗口交接、READY 和首个运行切点的同代原件。 [T451 首次归因与取证合同](architecture-T451-gpu-experience-state-lost-v1.md)
+
 ### B-D developer任务范围和前置
 
 不使用真机。消费已冻结M1配置/控制/scene接口，建立可从普通app界面进入的**显式GPU沙水体验入口**，直接进入同一M1页面与native owner。沿同一个新空run做选沙/选水、触摸落下、UP停源而已成功J继续落水、姿态/手动互斥、重置和前后台。复用已实现M1效果，不移植CPU F64 facade、不改T408页面准备、不顺便增加M2/M3。

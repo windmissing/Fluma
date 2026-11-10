@@ -1,0 +1,454 @@
+{
+  "revision": "T451_T448_EVIDENCE_AUDIT_V1",
+  "date": "2026-11-10",
+  "device": "NOT_RUN",
+  "evidenceScope": "Static source and signed artifact comparison; archived UI and reservation evidence only",
+  "rawT448Hilogs": "NOT_FOUND_IN_ARCHIVED_T448_FILES_OR_NAMED_LOCAL_COPIES",
+  "archive": [
+    {
+      "path": "test/reports/t448/t448-s1.jpeg",
+      "bytes": 144624,
+      "sha256": "ab6d09b59963f78468a08b74d8204d4e187eaa50eace215dcac33a578a580242"
+    },
+    {
+      "path": "test/reports/t448/t448-s2.jpeg",
+      "bytes": 144637,
+      "sha256": "bed6f9cab26985bf080f2e7acb675c7b17952c6a57db1201be0b4e8ce8a5757a"
+    },
+    {
+      "path": "test/reports/t448/t448-s3.jpeg",
+      "bytes": 145845,
+      "sha256": "d202075b065eb6a77655a14e8ccffedfdf155743d145420e1dcd95bbdc5d1307"
+    },
+    {
+      "path": "test/reports/t448/t448-s4.jpeg",
+      "bytes": 145646,
+      "sha256": "bc51cd69ae1ae4696e6e3b83cfcc7741bf6aa327417936e777c2e27acc144e9b"
+    },
+    {
+      "path": "test/reports/t448/t448-s5.jpeg",
+      "bytes": 145829,
+      "sha256": "806b83c3482533c69e0a5d7df408228e48c47b9313f88b0aa6202448ffd24240"
+    },
+    {
+      "path": "test/reports/t448/t448-s6.jpeg",
+      "bytes": 145746,
+      "sha256": "37114c701b3d0a4c80bd6220cbfbd4d7944cbf350d3d1fcef8a19182a00f3071"
+    },
+    {
+      "path": "test/reports/t448/t448-l0.json",
+      "bytes": 35803,
+      "sha256": "1a53d4faab468ad754afd2dfb19944725f755bf67524eccb45f64c2f086c4a93",
+      "uiText": [
+        "进入 GPU 沙水体验"
+      ],
+      "xcomponentBounds": []
+    },
+    {
+      "path": "test/reports/t448/t448-l1.json",
+      "bytes": 45130,
+      "sha256": "d8a236200cfdbfdc59c71793cdec273c2971085b22ba47fbcb44e29d2d6841aa",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:0",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l2.json",
+      "bytes": 45238,
+      "sha256": "1998c9533f5c85161257add1f3f0110eb130799d44ddf1e930cd9bc9f656fb6c",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:0",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l3.json",
+      "bytes": 45238,
+      "sha256": "8a2b6b1aea4d7820d744be737f9f78dd9ef2a2f80695f6d0e0f957e385c88fcf",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:2",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l4.json",
+      "bytes": 45242,
+      "sha256": "2f954f7ad5b9d7dbb8b32f66799a62546863e0bb5fb848377ea6e749d9150258",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "PAUSED_CLOCK CLOCK_GAP / run 0:3",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l5.json",
+      "bytes": 45238,
+      "sha256": "4af0256c4b4a4c85eb42466527af19550b6d1f874605e54a0f0d082f95003d24",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:3",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l6.json",
+      "bytes": 45238,
+      "sha256": "4af0256c4b4a4c85eb42466527af19550b6d1f874605e54a0f0d082f95003d24",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:3",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l7.json",
+      "bytes": 45238,
+      "sha256": "384542d47d55848cc5f2899ce431b3abaa693486156e7e15c42a2af80dad9f12",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_REGULAR · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:4",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l8.json",
+      "bytes": 45142,
+      "sha256": "3363587c267c8d8f5503a830d3e57860596c71e9f6d8e738772908ac3898b7bf",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_EXPERIMENT_V2 · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:0",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l9.json",
+      "bytes": 45142,
+      "sha256": "3363587c267c8d8f5503a830d3e57860596c71e9f6d8e738772908ac3898b7bf",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_EXPERIMENT_V2 · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:0",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    },
+    {
+      "path": "test/reports/t448/t448-l10.json",
+      "bytes": 45142,
+      "sha256": "9f6e4a1705c0debf052d701a3d82ef3504c57a18fcf07a75e8774bdccba2f240",
+      "uiText": [
+        "GPU 沙水体验 · V1",
+        "T438_EXPERIMENT_V2 · K192/Kw128 · GRS_GPU_SCENE_Q20_M1_V2",
+        "STATE_LOST STATE_LOST / run 0:0",
+        "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+        "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED"
+      ],
+      "xcomponentBounds": [
+        "[0,688][1280,2458]"
+      ]
+    }
+  ],
+  "packages": [
+    {
+      "name": "T438-regular-release",
+      "signedBytes": 8609060,
+      "signedSha256": "876922506b597675f2c267fbd9eb3811c29f128a5b40c53490c2270e65c3732b",
+      "libgrsm1Sha256": "c61a2a766183068879266c534a5f3006c95ea3d404566995b58a314da612bb8d",
+      "libgrsm1Bytes": 965528
+    },
+    {
+      "name": "T438-experiment-release",
+      "signedBytes": 8635734,
+      "signedSha256": "10cc8e835a106e5b8cd672bea84abbfa46f30ef7fca7d22fcf796e2604f7a95f",
+      "libgrsm1Sha256": "314562c9b9232a724199c53a022284feab5d7eed61b4c48b1619d2b4fcbfd0bf",
+      "libgrsm1Bytes": 988008
+    },
+    {
+      "name": "T421-release",
+      "signedBytes": 8556531,
+      "signedSha256": "5450ad3052654de11994e180870e0a6b9e0db7c80d2a6e95aa572003367ae751",
+      "libgrsm1Sha256": "a55a928143443fb92c48c9e17f9f91956b921bc97f2b997133e9d6c4c0d55ddf",
+      "libgrsm1Bytes": 985888
+    }
+  ],
+  "sourceComparison": [
+    {
+      "path": "cpp/gpu_resident/app_bridge.cpp",
+      "frozen0228a7dSha256": "82d5aaeb299a7f6460bf6bd5c506705cb86d822920c5efa57b2aa13c3a1056f1",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "d236bb126184786eb027d86a72f15fbf4917834314d32b399f4ba3e0b6a26e65",
+          "matchesFrozenIgnoringCRLF": false
+        },
+        "t438-experiment": {
+          "sha256": "d236bb126184786eb027d86a72f15fbf4917834314d32b399f4ba3e0b6a26e65",
+          "matchesFrozenIgnoringCRLF": false
+        },
+        "t421-release": {
+          "sha256": "3b9bfa963ed71810ca1aa6c9f6c34f0ebfbf4d302ee12ef4f9290e8a053136b1",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "cpp/gpu_resident/bridge_state.h",
+      "frozen0228a7dSha256": "4c41b6b8eafe0566c058ee3201243574edef6fa514ef61bfe6454c903d970630",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "4c41b6b8eafe0566c058ee3201243574edef6fa514ef61bfe6454c903d970630",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "4c41b6b8eafe0566c058ee3201243574edef6fa514ef61bfe6454c903d970630",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "a9bf23423c4bd6536593e604e96d845a448fcb4b47f27aa0f268c9d7aec263cd",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "cpp/gpu_resident/m1/full_transport.cpp",
+      "frozen0228a7dSha256": "d40fe3ab880a30ed4546f507a19322417c6fbb2a3bebf91581a02065ab49f80f",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "d40fe3ab880a30ed4546f507a19322417c6fbb2a3bebf91581a02065ab49f80f",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "d40fe3ab880a30ed4546f507a19322417c6fbb2a3bebf91581a02065ab49f80f",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "646c7f849e1cbdbeb69090e027aace00e8a1ae9e5720c910a84d7794d25f49b3",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "cpp/gpu_resident/m1/source_transport.cpp",
+      "frozen0228a7dSha256": "01f080c851635b6871028780c2d51683f50e9f45c214c11f837848a1353e4639",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "01f080c851635b6871028780c2d51683f50e9f45c214c11f837848a1353e4639",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "01f080c851635b6871028780c2d51683f50e9f45c214c11f837848a1353e4639",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "dcebbd84f3748480b35e774f6588d371135cbb5376e47877ea5e6cf0b6105b3a",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "cpp/gpu_resident/m1/quantum_candidate.cpp",
+      "frozen0228a7dSha256": "51824662b2126e3de4b094b5e1c4ba28ad2d05f3fa0168fe7b50e38f3d07e7bb",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "51824662b2126e3de4b094b5e1c4ba28ad2d05f3fa0168fe7b50e38f3d07e7bb",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "51824662b2126e3de4b094b5e1c4ba28ad2d05f3fa0168fe7b50e38f3d07e7bb",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "e5cdc2bdcad2daf553f1364e16a452e16413bc814d287ce8e64dcc64a9dee03f",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "cpp/gpu_resident/m1/scene.cpp",
+      "frozen0228a7dSha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "4381ba266fa115f24e1345b96c83f035a6b0526c9cdf539b7878a4bdb25f5619",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "ets/entryability/EntryAbility.ets",
+      "frozen0228a7dSha256": "6bc4c673c40377a05189c03a643fba1152ecb5cee244d4c9b56bb382d3e18bd8",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "3cb2ab53a0f64b81dbe977ffdfe8f613a22b71d6b7bbf16f425765facb734aaa",
+          "matchesFrozenIgnoringCRLF": false
+        },
+        "t438-experiment": {
+          "sha256": "3cb2ab53a0f64b81dbe977ffdfe8f613a22b71d6b7bbf16f425765facb734aaa",
+          "matchesFrozenIgnoringCRLF": false
+        },
+        "t421-release": {
+          "sha256": "4d74140e31865e960b7f2fa27b83aba6b62c544064018908947f82591cfaf1b5",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "ets/pages/GpuResidentM1.ets",
+      "frozen0228a7dSha256": "f5c67e1291740318edad0a0b350540b3c8ab68eb54e16d722e5ca344d977669f",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "f5c67e1291740318edad0a0b350540b3c8ab68eb54e16d722e5ca344d977669f",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "f5c67e1291740318edad0a0b350540b3c8ab68eb54e16d722e5ca344d977669f",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "4ce2810a5169131980b8e12097d4b73c1ac3b5e3c302c5ff028bc2a43c1df655",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "ets/physics/GpuM1DemoController.ets",
+      "frozen0228a7dSha256": "f30ad06d3236df9a67f91110c619a22293ecdf38837c3cd81ea67eda027b83f3",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "f30ad06d3236df9a67f91110c619a22293ecdf38837c3cd81ea67eda027b83f3",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t438-experiment": {
+          "sha256": "f30ad06d3236df9a67f91110c619a22293ecdf38837c3cd81ea67eda027b83f3",
+          "matchesFrozenIgnoringCRLF": true
+        },
+        "t421-release": {
+          "sha256": "62d0229856c233b50a5bb63fc974eb2c67410c387d8bf34d324f2e893413f2ae",
+          "matchesFrozenIgnoringCRLF": true
+        }
+      }
+    },
+    {
+      "path": "cpp/CMakeLists.txt",
+      "frozen0228a7dSha256": "2a4b318d116aa5344f06ad39b34075b496fcdd5d7bfb723c14cb734312990291",
+      "localBuildTrees": {
+        "t438-regular": {
+          "sha256": "8956f8dea15dcc82a1f392e62ef1067905f4ece1cc01afea653fc3f8cb4d51ac",
+          "matchesFrozenIgnoringCRLF": false
+        },
+        "t438-experiment": {
+          "sha256": "edb6eabc4b8487044d2d4c7cf48e55b345fb247691320e0c3d74cbd1380fa5ed",
+          "matchesFrozenIgnoringCRLF": false
+        },
+        "t421-release": {
+          "sha256": "f79f516cf6fbf0e36d564ad8ec8b90fd38794de4506e10f0c43359dccbad6961",
+          "matchesFrozenIgnoringCRLF": false
+        }
+      }
+    }
+  ],
+  "t421ReservationControl": [
+    {
+      "path": "test/reports/t410/v1-attempt2/gpu-capture-request-1-1.json",
+      "sha256": "51c8a02a56e71d2c90102e84518c761a4659cc88198ee6340f6e20a975c319ca",
+      "state": "FROZEN",
+      "actualRevision": "GRS_M1_PROGRESS_CLOCK_V1",
+      "captureId": "1",
+      "safePointSerial": "1",
+      "initialPhase": "NEW_RUN_REQUIRED",
+      "initialPermission": "PAUSED_CLOCK",
+      "initialFailure": "CLOCK_GAP",
+      "rootNonce": "1",
+      "lastCompleted": "0"
+    },
+    {
+      "path": "test/reports/t410/v2-attempt2/gpu-capture-request-2-2.json",
+      "sha256": "93e56285558db187965eda4d2e48d36d3d24cddbd92cd9b7804c85a29d320caa",
+      "state": "FROZEN",
+      "actualRevision": "GRS_M1_PROGRESS_CLOCK_V2",
+      "captureId": "2",
+      "safePointSerial": "2",
+      "initialPhase": "CLOCK_GAP",
+      "initialPermission": "PAUSED_CLOCK",
+      "initialFailure": "WAIT_PAGE_PULSE",
+      "rootNonce": "0",
+      "lastCompleted": "0"
+    },
+    {
+      "path": "test/reports/t410/v2-run3/gpu-capture-request-3-3.json",
+      "sha256": "aea29abcdf7b040a9a7c4d0939613527ceacf9765ca68f3fd894948f7ff1ad20",
+      "state": "FROZEN",
+      "actualRevision": "GRS_M1_PROGRESS_CLOCK_V2",
+      "captureId": "3",
+      "safePointSerial": "3",
+      "initialPhase": "CLOCK_GAP",
+      "initialPermission": "PAUSED_CLOCK",
+      "initialFailure": "GPU_PROGRESS_TIMEOUT",
+      "rootNonce": "1",
+      "lastCompleted": "0"
+    }
+  ],
+  "arithmetic": {
+    "reportedProfile": {
+      "K": 192,
+      "Kw": 128
+    },
+    "steadyComputeBufferPayloadBytes": 37728720,
+    "eventArenaBytes": 11843584,
+    "illustrativeTwoRGBA8TargetsAtLayoutSize": 18124800,
+    "layoutSizeIsNotNativeViewportMeasurement": true
+  }
+}
