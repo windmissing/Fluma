@@ -1,0 +1,114 @@
+{
+  "schema": "T467_DEVELOPER_DELIVERY_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "controls": {
+    "schema": "T467_GENERATED_BRIDGE_CONTROLS_V1",
+    "passed": 23,
+    "failed": 0,
+    "device": "NOT_RUN"
+  },
+  "pageFrames": {
+    "schema": "T467_REAL_PAGE_FRAME_CONTROLS_V1",
+    "passed": 12,
+    "failed": 0
+  },
+  "native": {
+    "schema": "T467_GENERATED_APP_GL_V1",
+    "passed": 1,
+    "failed": 0,
+    "admittedJQ": 131072,
+    "settledAfterUpQ": 131072,
+    "device": "NOT_RUN",
+    "capabilities": {
+      "revision": "GRS_M1_EXPERIENCE_V1",
+      "buildProfile": "T438_EXPERIMENT_V2",
+      "GRS_APP_M1": true,
+      "GRS_PROGRESS_V2_EXPERIMENT": true,
+      "K": 192,
+      "Kw": 128,
+      "features": 3,
+      "layoutRevision": 2,
+      "numericRevision": 1,
+      "sceneRevision": 2,
+      "scenePolicy": "GRS_GPU_SCENE_Q20_M1_V2",
+      "defaultProgress": "V1",
+      "M2": "UNSUPPORTED_M1_CONFIG",
+      "M3": "UNSUPPORTED_M1_CONFIG"
+    }
+  },
+  "artifacts": [
+    {
+      "target": "regular",
+      "build": "PASS",
+      "buildLogSha": "38f555f40803a39c5133f9d20d9931fce988c2f2dacc196ef7e1b7e2adab6be8",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-regular-final\\T467-regular-final-signed.hap",
+        "sha256": "555b99eef9e4d5648301ec656d597d404b183cb53aa64beccd77f7ca752ce4c8",
+        "bytes": 8682548
+      },
+      "receipt": "test\\reports\\t257\\T467-regular-final.json"
+    },
+    {
+      "target": "experience",
+      "build": "PASS",
+      "buildLogSha": "a82379387ae3f0cb3a1ab2b1923b309d04c1055c4634d9add745de272af004a8",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-experience-final\\T467-experience-final-signed.hap",
+        "sha256": "1a3d8d5313480cc5bfbcac54d12ff461d2db2ef8cb79da70572ad9687b62f6f2",
+        "bytes": 8708044
+      },
+      "receipt": "test\\reports\\t257\\T467-experience-final.json"
+    },
+    {
+      "target": "t410",
+      "build": "PASS",
+      "buildLogSha": "71f641bed80fa724de89ee99a421fc0bbb9f8dbf50165d7be30a7ade268fb00f",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-t410-final\\T467-t410-final-signed.hap",
+        "sha256": "8f1c45f711f1aaf9e07e6b68d65a8692ed5eaaecebffc54c5f7e60266bda39f6",
+        "bytes": 8720252
+      },
+      "receipt": "test\\reports\\t257\\T467-t410-final.json"
+    },
+    {
+      "target": "t437",
+      "build": "PASS",
+      "buildLogSha": "9576a3bf9f4eae23ad9a1e645e8c274fd7b5cc454a99b87aa6bf3922c5692186",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-t437-final\\T467-t437-final-signed.hap",
+        "sha256": "9ae69471db925ac0cd631904f874bb9df4ee5fcec259e5d2f37983d0748cd2df",
+        "bytes": 8730766
+      },
+      "receipt": "test\\reports\\t257\\T467-t437-final.json"
+    }
+  ],
+  "limits": {
+    "GAP_NS": 33333333,
+    "ROOT_DEADLINE_NS": 250000000,
+    "QUOTA_HZ": 120
+  },
+  "generatedReproductionFiles": 7,
+  "rawLogs": {
+    "t467-control-delivery.txt": "2e7e7ea3b38ed96a7b4ea7034dce4ba0cc77f9f578b4622fe356946ba4013c56",
+    "t467-gl-delivery.txt": "93c699ec243bdd25c326be1b56f59a2e71c57d34a4dc927b02aae3e14628423b"
+  },
+  "sources": {
+    "test/t467/build_controls.cjs": "05bb2624170b4afc37c094b54826ac07d6dce02afe092b4de0b00e895bd1c559",
+    "test/t467/build_gl.cjs": "ddd2435c85b9a8ec9cb95f51fefa5a18ea04fc528481c141b4a2656835a532f2",
+    "test/t467/control_host.cpp": "145b854b6248515e8ca5ee043b0229489bbec1391ee26671b71de0d5e8dd921a",
+    "test/t467/generate.cjs": "d672aaa833e0eee310b17bab1339a76798246e2a269386a9be10fd3e1760c542",
+    "test/t467/GpuRecoveryPulse.ets": "6d52ff029ddc0dd472084e591423a099e64cf1253ed6a78c46f82474b05867b3",
+    "test/t467/pages.cjs": "02559293e625b6a62d5c3e18ff5c26c7284c4082337828b8aba750e8385882f1",
+    "test/t467/page_units.cjs": "649de6738e2e81a2125f95086f81e3316a7d8ad7ad63f8bab303714ce3d3d025",
+    "test/t467/README.md": "e96b0fae39e19c538145c89d0827229df0c33c762903de184d4286e8bdfc9dcc",
+    "test/t467/recovery_bridge.inc": "7020005f4c5fcea57d90f769c12775cb92fcb3e59a4d15c6d75bbe66e98d8f9e",
+    "test/t467/recovery_napi.inc": "b0cf84b4e3d4f7f50e21bd83380634d8392adaae45fc8aba4955075f1a46754c",
+    "entry/src/main/cpp/gpu_resident/recovery_v3.h": "f2c7da7b358a53200ec36a2920b7f847de610c6152d18bbb621c027508760970"
+  },
+  "boundaries": [
+    "No device run; software GLES with injected host clock is not a device timing verdict",
+    "Full-context retirement, never reusing old SSBO/FBO/window handles",
+    "T468/T469 are separate next cards"
+  ]
+}
