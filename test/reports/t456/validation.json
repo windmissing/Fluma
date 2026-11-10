@@ -1,0 +1,32 @@
+{
+  "schema": "T456_DEVELOPER_OFFLINE_V1",
+  "device": "NOT_RUN",
+  "signedProfiles": [
+    {
+      "profile": "regular",
+      "sha256": "f6e4c302e477810e6591add812efcc2c60be429fbc9a4a29e889a33bfda35100",
+      "probeRevision": "T451_GPU_BOOT_PROBE_V1"
+    },
+    {
+      "profile": "experiment",
+      "sha256": "96ae7ca2a0d78dc8f47bc0796eb7cee96f67236d9adc37fb427821778a1a9310",
+      "probeRevision": "T451_GPU_BOOT_PROBE_V1"
+    }
+  ],
+  "generatedBridge": {
+    "egl": true,
+    "ready": true,
+    "rootAccept": true,
+    "swap": true,
+    "window": "ANGLE_PBUFFER",
+    "clock": "SCRIPTED_OFFLINE"
+  },
+  "negativeControls": [
+    "WAIT_WINDOW",
+    "same-thread EGL failure before cleanup",
+    "late old failure isolated",
+    "enter without exit readable",
+    "bounded overflow retains first failure",
+    "shader log escaped"
+  ]
+}
