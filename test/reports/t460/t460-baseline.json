@@ -1,0 +1,156 @@
+{
+ "schema": "T460_M2_V3_ARCHIVE_FORMAT_BASELINE_V1",
+ "verdict": "PASS",
+ "passed": 20,
+ "total": 20,
+ "cases": [
+  {
+   "case": "pos-source",
+   "expect": "PASS",
+   "got": "PASS",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "pos-quantum",
+   "expect": "PASS",
+   "got": "PASS",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-source-stride",
+   "expect": "TRACE_STRIDE",
+   "got": "TRACE_STRIDE",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-quantum-stride",
+   "expect": "TRACE_STRIDE",
+   "got": "TRACE_STRIDE",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-source-eventsize",
+   "expect": "TRACE_EVENT_SIZE",
+   "got": "TRACE_EVENT_SIZE",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-source-rows-inflate",
+   "expect": "TRACE_EVENT_SIZE",
+   "got": "TRACE_EVENT_SIZE",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-file-hash",
+   "expect": "REJECT(bytes/sha mismatch)",
+   "got": "REJECT",
+   "agree": true
+  },
+  {
+   "case": "neg-revision-v2",
+   "expect": "TRACE_REVISION",
+   "got": "TRACE_REVISION",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-revision-unknown",
+   "expect": "TRACE_REVISION",
+   "got": "TRACE_REVISION",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-scope-epoch",
+   "expect": "TRACE_SCOPE",
+   "got": "TRACE_SCOPE",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-arena-oob",
+   "expect": "TRACE_ARENA",
+   "got": "TRACE_ARENA",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-generation-mismatch",
+   "expect": "TRACE_GENERATION",
+   "got": "TRACE_GENERATION",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-rootkind-flip",
+   "expect": "TRACE_STRIDE",
+   "got": "TRACE_STRIDE",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-roottoken",
+   "expect": "TRACE_ROOT_TOKEN",
+   "got": "TRACE_ROOT_TOKEN",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-token-scene-shape",
+   "expect": "TRACE_ROOT_TOKEN",
+   "got": "TRACE_ROOT_TOKEN",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-source-rowseal",
+   "expect": "TRACE_SOURCE_ROW_SEAL",
+   "got": "TRACE_SOURCE_ROW_SEAL",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-source-reserved",
+   "expect": "TRACE_SOURCE_RESERVED",
+   "got": "TRACE_SOURCE_RESERVED",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-source-end-early",
+   "expect": "TRACE_SOURCE_END_TAIL",
+   "got": "TRACE_SOURCE_END_TAIL",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-quantum-kind",
+   "expect": "TRACE_QUANTUM_KIND",
+   "got": "TRACE_QUANTUM_KIND",
+   "agree": true,
+   "detail": ""
+  },
+  {
+   "case": "neg-quantum-reserved",
+   "expect": "TRACE_QUANTUM_RESERVED",
+   "got": "TRACE_QUANTUM_RESERVED",
+   "agree": true,
+   "detail": ""
+  }
+ ],
+ "notImplemented": [
+  "真机冷档（GPU 页写出 bytes/SHA 收据链路）由 T461 真机档覆盖",
+  "T453 生产差分中的 reader 与产品 GL 链路一致性",
+  "pub/scene token 真实互替攻击（需产品 scene token 通道，当前离线无该通道）"
+ ],
+ "wireContract": "docs/analysis-T445-gpu-M2-wire-v3.json",
+ "wireSha256": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+ "independentReader": "test/t460/archive_format_baseline.py::indep_read (不 import 生产 cold_reader.py)",
+ "device": "NOT_RUN"
+}
