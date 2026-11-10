@@ -1,0 +1,42 @@
+{
+ "schema": "T453_M2_V3_INDEPENDENT_DIFF_V1",
+ "verdict": "PASS",
+ "passed": 5,
+ "total": 5,
+ "results": [
+  {
+   "id": "M203",
+   "name": "mutationSerial(lo)==sealedRows（接受 SOURCE 全部）",
+   "pass": true,
+   "detail": "32/32"
+  },
+  {
+   "id": "M205",
+   "name": "stop∈0..9 且 BIRTH_LIMIT rows==K+1（DEDUP_REPLAY 继承原终态不计）",
+   "pass": true,
+   "detail": "48/48, replays=8, fails=[]"
+  },
+  {
+   "id": "M206",
+   "name": "header merge/birth 计数(h137/h138) == 事件行 kind15/16 实际计数",
+   "pass": true,
+   "detail": "32/32"
+  },
+  {
+   "id": "M207",
+   "name": "SOURCE128 逐行 magic/seal/ordinal/END尾/used-mask/保留位",
+   "pass": true,
+   "detail": "5712/5712 rows, fails=[]"
+  },
+  {
+   "id": "M208",
+   "name": "fatal/reject roots reason∈{23-26, 0x10000|input, stop} 且事件行≤1",
+   "pass": true,
+   "detail": "fatals=16, bad=[]"
+  }
+ ],
+ "source": "T452 raw-*.bin (80 roots, 4 profiles, real offline GLES)",
+ "wireSha256": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+ "oracleReuse": "T446 semantic layer (31 entries) reused, not re-run",
+ "device": "NOT_RUN"
+}
