@@ -1,0 +1,227 @@
+{
+ "revision": "T454_PREFIX_ORACLE_ERRATUM_V2",
+ "device": "NOT_RUN",
+ "supersedes": "T435_PREFIX_BOUNDARY_ORACLE_V1 (numeric assertions invalidated per T444)",
+ "entries": [
+  {
+   "id": "E1_BASELINE_REPLAYABLE",
+   "pass": true,
+   "actual": "465/0",
+   "state": "OLD_GL"
+  },
+  {
+   "id": "E2_T444_TABLE_AGREES",
+   "pass": true,
+   "actual": "{\"0\":0,\"1\":64,\"2\":128,\"4095\":262080,\"4096\":262144}",
+   "state": "MODEL",
+   "note": "勘误: expectedLedgerCopyBytes=64*n（原 256*n 作废），E2 旧断言（256*1=perRow）失效"
+  },
+  {
+   "id": "E3_EVENT_EDGE_INDEPENDENT",
+   "pass": true,
+   "actual": "256*e for e>0 else 0",
+   "state": "MODEL"
+  },
+  {
+   "id": "E4_FALLBACK_EDGE",
+   "pass": true,
+   "actual": "262144",
+   "state": "MODEL"
+  },
+  {
+   "id": "S01_N0_E0",
+   "n": 0,
+   "e": 0,
+   "expectLedgerCopyBytes": 0,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "SKIP_COPY_KEEP_BARRIER",
+   "state": "MODEL",
+   "note": "n=0 跳过 copy 保 barrier；毒值全后缀保持（T444: S01 跳过条件用来源账 n=0）",
+   "pass": true
+  },
+  {
+   "id": "S02_N1_E0",
+   "n": 1,
+   "e": 0,
+   "expectLedgerCopyBytes": 64,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "LEDGER_64B",
+   "state": "MODEL",
+   "note": "n=1 最小合格前缀 64B（勘误：原 256B 系 event 边误接）",
+   "pass": true
+  },
+  {
+   "id": "S03_N4095_E0",
+   "n": 4095,
+   "e": 0,
+   "expectLedgerCopyBytes": 262080,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "LEDGER_262080B",
+   "state": "MODEL",
+   "note": "n=4095 接近满，省 64B",
+   "pass": true
+  },
+  {
+   "id": "S04_N4096_E0",
+   "n": 4096,
+   "e": 0,
+   "expectLedgerCopyBytes": 262144,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "LEDGER_262144B",
+   "state": "MODEL",
+   "note": "n=4096 满账，省量 0；后缀为空",
+   "pass": true
+  },
+  {
+   "id": "S05_N4097_E0",
+   "n": 4097,
+   "e": 0,
+   "expectLedgerCopyBytes": 262144,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "FALLBACK_262144B_ROUTE2",
+   "state": "NEW_PROD",
+   "note": "4097 不能截到 4096 当合格样本；走完整复制与回退原因（T436 已核 route=2）",
+   "pass": true
+  },
+  {
+   "id": "S06_N2_E3",
+   "n": 2,
+   "e": 3,
+   "expectLedgerCopyBytes": 128,
+   "expectEventPrefixCopyBytes": 768,
+   "scenario": "LEDGER_128B_PLUS_EVENT_768B",
+   "state": "MODEL",
+   "note": "同 n 不同 e：ledger 128B 与 event 768B 独立计",
+   "pass": true
+  },
+  {
+   "id": "S07_N5_E2",
+   "n": 5,
+   "e": 2,
+   "expectLedgerCopyBytes": 320,
+   "expectEventPrefixCopyBytes": 512,
+   "scenario": "LEDGER_320B_PLUS_EVENT_512B",
+   "state": "MODEL",
+   "note": "同 e 不同 n：ledger 320B 与 event 512B 独立计",
+   "pass": true
+  },
+  {
+   "id": "S08_N0_E2",
+   "n": 0,
+   "e": 2,
+   "expectLedgerCopyBytes": 0,
+   "expectEventPrefixCopyBytes": 512,
+   "scenario": "LEDGER_SKIP_EVENT_512B",
+   "state": "MODEL",
+   "note": "n=0 跳 ledger copy 但 event 前缀独立照常（e>0）",
+   "pass": true
+  },
+  {
+   "id": "S09_N2_SAME_OBJ",
+   "n": 2,
+   "e": 2,
+   "expectLedgerCopyBytes": 128,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "EVENT_SAME_OBJ_SKIP",
+   "state": "MODEL",
+   "note": "e>0 且 prefixBuffer==目标（同一对象）时 event copy 跳过",
+   "pass": true
+  },
+  {
+   "id": "S10_FULL_FALLBACK",
+   "n": 4096,
+   "e": 0,
+   "expectLedgerCopyBytes": 262144,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "FULL_ROUTE_ON_UNQUALIFIED",
+   "state": "NEW_PROD",
+   "note": "资格不明/错代走 262144B 完整复制（T436 route=2 已证）",
+   "pass": true
+  },
+  {
+   "id": "S11_STALE_IDENTITY",
+   "n": 2,
+   "e": 0,
+   "expectLedgerCopyBytes": 262144,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "FALLBACK_NOT_TRUNCATE",
+   "state": "NEW_PROD",
+   "note": "错代不截 4096 当合格；回退+原首错（T436 identity.run.lo^=1 已核）",
+   "pass": true
+  },
+  {
+   "id": "S12_POISON_N2",
+   "n": 2,
+   "e": 0,
+   "expectLedgerCopyBytes": 128,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "POISON_INTACT_16N_TO_16_4096",
+   "state": "NEW_PROD",
+   "note": "毒值区 word 界 [32,65536)；仅合格前缀断言后缀不变（T436 已核 0xa5a5c3c3）",
+   "pass": true
+  },
+  {
+   "id": "S13_POISON_FULL",
+   "n": 4096,
+   "e": 0,
+   "expectLedgerCopyBytes": 262144,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "EMPTY_SUFFIX",
+   "state": "NEW_PROD",
+   "note": "满长后缀为空（T444 表 n=4096）",
+   "pass": true
+  },
+  {
+   "id": "S14_NORMAL_UP",
+   "n": 1,
+   "e": 0,
+   "expectLedgerCopyBytes": 64,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "UP_NOT_REVOCATION",
+   "state": "MODEL",
+   "note": "普通 UP 单独不充当 QUANTUM 撤权；停止 source 后已接受 J 的到达照常",
+   "pass": true
+  },
+  {
+   "id": "S15_EXPLICIT_REVOKE",
+   "n": 1,
+   "e": 0,
+   "expectLedgerCopyBytes": 64,
+   "expectEventPrefixCopyBytes": 0,
+   "scenario": "TAIL_REJECT_KEEP_PREFIX",
+   "state": "OLD_GL",
+   "note": "显式根撤权：尾拒绝+已接受前缀保留（T280 stop 在途原切点拒绝 header/count 不变）",
+   "pass": true
+  },
+  {
+   "id": "E6_T436_PROD_RESULT_REFERENCED",
+   "pass": true,
+   "actual": "4 profiles raw-identical=true dev-match=true",
+   "state": "NEW_PROD",
+   "note": "S05/S10/S11/S12/S13 的 NEW_PROD 断言由 T436 实际 GL 差分已证"
+  },
+  {
+   "id": "E7_HISTORY_PRESERVED",
+   "pass": true,
+   "actual": "原 oracle/json 原件保留",
+   "state": "MODEL",
+   "note": "原 t435_oracle.json 保留为历史工件，其数字断言由本 v2 作废替换"
+  },
+  {
+   "id": "E8_EXPECT_RED_CLOSED",
+   "pass": true,
+   "actual": "S16/S17 由 T436 实际差分关闭（毒值保持+prefix 真减量均已在生产路径成立）",
+   "state": "NEW_PROD"
+  },
+  {
+   "id": "E9_FAULT_LINES_HINT",
+   "pass": true,
+   "actual": "faultLines=14",
+   "state": "OLD_GL",
+   "note": "仅作历史执行器覆盖线索（T444：E7 旧语义降级为线索）"
+  }
+ ],
+ "scenarios": 15,
+ "verdict": "PASS",
+ "failed": []
+}
