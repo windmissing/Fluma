@@ -78,3 +78,7 @@ V2 的所有控制新鲜度读取改看lastPagePulse，GPU worker不写该值。
 - 快pulse、慢GPU、源竞争、长时间过载及reset用精确整数oracle核上述守恒式，含carry边界和溢出。SOURCE不增加模拟秒，重复CURRENT不增加新帧，丢配额不改变库存。监督线程延迟时接受门仍不能漏掉控制GAP。
 
 编译/非机自测和签包即开发交付。tester在同机对照V1/V2和探针开关，先空场成功quantum，再真实沙水分别准入→成功量子→同token Draw/Swap，报告控制pulse原值、调度/GL分段、GPU期限、丢配额和实际成功模拟秒/墙钟秒。独立制造控制断档、GPU>250ms/无返回、旧代迟到和满队列负控，不能用自发超时替独立注错。250ms是本隔离实验候选，平均服务跟不上120Hz或有效新帧不足时仍登记性能失败；T380收益前置继续按真实结果。
+
+## 2026-11-10 T464 恢复接续
+
+撤权后不静默续旧permit。T410/T437原件及冻结源码核验后的显式新run/新session/旧代退休工程合同以 [T464](architecture-T464-gpu-v2-recovery-v1.md) 为准；其中纠正了“新空场完全不打开open”的报告表述。首root V1撤权另见 [T451 v2](architecture-T451-gpu-experience-first-root-v2.md)，未证同根因不合并，GAP/250ms/120Hz保持。

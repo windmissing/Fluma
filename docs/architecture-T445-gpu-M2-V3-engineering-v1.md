@@ -68,3 +68,7 @@ SOURCE WORK 的旧 command/terminal/status/dedup/spare/ledger 地址照基线；
 developer 不使用真机。按机器 manifest 生成独立 C++/GLSL/reader 常量并做编译期范围断言，冻结实际 shader/布局 SHA。实现 SOURCE 完整 13 pass、V3 QUANTUM 审核、短接受、冷 trace 和 scene lease，覆盖四档真实离线 GLES、正常/部分/NO_PAIR、来源待接受、末 ID、污染/回滚、旧代与错 stride。任何超预算拆 pass 先回 architect 修订机器账。提供复跑、编译、签包验签和设备能力探针入口。T446 的独立反例按其原卡推进，真实生产差分等可复跑实现，设备验证等签包后串行。两者为独立证据，不作为开发完成前置。
 
 执行者完成当前范围和角色检查，局部受阻先做其余，失败回原卡写具体原错、已试和前置。不得修改后续工作清单或滴答同名清单，本人行状态为唯一例外。共享树不回退他人改动，CPU 仅复用既有 oracle。
+
+## 2026-11-10 创建诊断及独立证据修订
+
+T461设备Create错误6首次归因与有界诊断实施以 [T462](architecture-T462-gpu-m2-create-diagnostics-v1.md) 为准；不能把该共用码直接定为组合kernel编译失败。T453/T459独立覆盖边界、断言勘误及最小补证见 [T465](architecture-T465-independent-evidence-routing-v1.md)，不更改本稿wire/算法或既有开发交付状态。

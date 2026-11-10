@@ -26,3 +26,7 @@ developer 在 T428 的隔离生成器上实现并验证实际生成页。不使�
 tester 串行验证冷启无键盘、编辑后固定键盘确实收起、静止页面真实两帧采样、重准备和后台旧回调，保留新冷档、原始事件/时钟及截图。验证同代许可后继续 T426 §6 的原 hold、独立时钟、PNG 及颜色链。缺回调按具体阶段原件回 architect。
 
 执行者完成当前范围与角色检查，局部受阻先做其余。失败报告原错、复现、证据、尝试与前置。不得修改后续工作清单或滴答同名清单，本人行状态为唯一例外。渲染沿 XComponent+shader，故障为 FAULT 或完整旧帧明确标 STALE。
+
+## 2026-11-10 T463 接续
+
+T455/T458与T408 attempt5已证明观察泵路径有效，当前几何拒绝按 [T463](architecture-T463-single-sand-raster-geometry-v1.md) 修订。didLayout锚新增实际内渲染节点和planRevision身份，计划更新后重等新layout与两帧；不再修改onFrame/willDraw调度或引入Idle依赖。

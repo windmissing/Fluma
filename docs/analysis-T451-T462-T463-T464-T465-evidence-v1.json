@@ -1,0 +1,699 @@
+{
+  "revision": "T451_T462_T463_T464_T465_ARCHITECT_EVIDENCE_V1",
+  "date": "2026-11-10",
+  "mode": "READ_ONLY_ARCHIVE_AND_SOURCE",
+  "device": "NOT_RUN",
+  "evidence": [
+    {
+      "path": "test/reports/t457/t457_boot_want.json",
+      "bytes": 15187,
+      "sha256": "aa698369b96d94166b7ddb9761ffb4dd19eba15010cdfd26ed4f33278739bcbf"
+    },
+    {
+      "path": "test/reports/t457/t457_boot_menu.json",
+      "bytes": 15333,
+      "sha256": "108472b3f1973108f36e868021ddef83c35a42999cb9de228795ac708b72133e"
+    },
+    {
+      "path": "test/reports/t457/t457_boot_rerun.json",
+      "bytes": 23521,
+      "sha256": "fa3f31a07b8639d3d1e97f1d724eca1f5fa6742af95b3f6ef865a0e2f41a7d3a"
+    },
+    {
+      "path": "test/reports/t408/attempt5/t408_cold2.json",
+      "bytes": 18713,
+      "sha256": "5bb4e6320ba2997c522fd07dae532c13911a7d1e452382cf1d713aa245daffa0"
+    },
+    {
+      "path": "test/reports/t408/attempt5/t408_cold_failed.json",
+      "bytes": 12111,
+      "sha256": "a28928e538cdfe9c882acf79048e004620ca0a7daa5dbd919930d99cde333382"
+    },
+    {
+      "path": "test/reports/t461/t461_l.json",
+      "bytes": 35817,
+      "sha256": "5f39ec9fe74e9dd14139a1577af7f9d79d565edaf3337b6b733cb2a904862822"
+    },
+    {
+      "path": "test/reports/t461/t461_m2l.json",
+      "bytes": 47099,
+      "sha256": "0846ea917b6def033372d54998bb01bc8afbc8f6c3e3935f6322253face190b5"
+    },
+    {
+      "path": "test/t453/v3_assertions.py",
+      "bytes": 9073,
+      "sha256": "08590c4143a64a7b5a7d9acdf93d159e554cd74cc40cb68454aeb55c3cea05bb"
+    },
+    {
+      "path": "test/t459/capture_toggle_diff.cpp",
+      "bytes": 18021,
+      "sha256": "aa9248b740492d019a7301e88a323d58d5174298a2df694f43431754cdcc1e47"
+    },
+    {
+      "path": "test/reports/t459/t459_log.ndjson",
+      "bytes": 1834,
+      "sha256": "2dce94d7516a45171ea84d6dae10681621ee21489fd280de12c0d84f08162d14"
+    },
+    {
+      "path": "test/t434/full_host.cpp",
+      "bytes": 17019,
+      "sha256": "496e4be2c9f70360867023f0611db59091eb4da4858542aa23897e8bd9cada83"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": "test/t456/generate.cjs",
+      "bytes": 17845,
+      "sha256": "51bf8ab35d361d38207a4e27b51a3d72187d7da135524249d484f752b817cb7a"
+    },
+    {
+      "path": "test/t426/page.inc",
+      "bytes": 11964,
+      "sha256": "64c8ccd48689937b2f2637b934ce9fc4babed7457bc25e74e93cd4c86ead6861"
+    },
+    {
+      "path": "test/t426/PrepareReadiness.ets",
+      "bytes": 11303,
+      "sha256": "45f72c27b28105a92d28bc4d5a7b7149ee902754835dfd136ce9800c3e4291e5"
+    },
+    {
+      "path": ".codex/local-test/t455-release-final/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 37983,
+      "sha256": "94146f6ca0b674f222eb4984f7dfaa4bdc67654e3966d83fc9dae7000b81139e"
+    },
+    {
+      "path": ".codex/local-test/t455-release-final/entry/src/main/cpp/p013renderer/egl_context.cpp",
+      "bytes": 12038,
+      "sha256": "1dfcb7daf7150cf3bda1f8e134d60ddbada5bd637872e6be85dbfc4cf2268728"
+    },
+    {
+      "path": ".codex/local-test/t452-complete/entry/src/main/cpp/gpu_resident/m2route/source_transport.cpp",
+      "bytes": 16901,
+      "sha256": "3e82bddc9a574ac680d35bc8854a32593e858d86355d01a217af856180b34ca3"
+    },
+    {
+      "path": ".codex/local-test/t452-complete/entry/src/main/cpp/gpu_resident/m2route/quantum_candidate.cpp",
+      "bytes": 14739,
+      "sha256": "0a86353ff05a296f9342e98df2adf8fd8b3e9985942dcedeed224f85527e7223"
+    },
+    {
+      "path": ".codex/local-test/t452-complete/entry/src/main/cpp/gpu_resident/m2route/full_transport.cpp",
+      "bytes": 32160,
+      "sha256": "82535fd23d739214cfe15537039377a7ecfedabfd4789ce7096b07114c9a08d6"
+    },
+    {
+      "path": ".codex/local-test/t452-complete/entry/src/main/cpp/gpu_resident/m2route/full_kernel.cpp",
+      "bytes": 140197,
+      "sha256": "7a471b643ed6b9e611e8cd742b3da898581bfbc9e3b9ba95d8a18c2293722912"
+    },
+    {
+      "path": ".codex/local-test/t456-experiment-final/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 74891,
+      "sha256": "df685687a03a4c7f04b8f5a66f7a0bb9050e8f28e40f7f40cd6949e6e36fba92"
+    },
+    {
+      "path": ".codex/local-test/t450-t410/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 62553,
+      "sha256": "82d5aaeb299a7f6460bf6bd5c506705cb86d822920c5efa57b2aa13c3a1056f1"
+    },
+    {
+      "path": ".codex/local-test/t450-t437/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 65408,
+      "sha256": "a014deb770e37d09b0197a16acd99459113461d568f83eabf465cfbaa148d524"
+    }
+  ],
+  "boot": [
+    {
+      "path": "test/reports/t457/t457_boot_menu.json",
+      "pid": "33895",
+      "ownerTid": "34600",
+      "firstObserverTid": "33895",
+      "epoch": "3",
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V1",
+      "viewport": [
+        1280,
+        1609
+      ],
+      "readyNs": "3690926128767828",
+      "createWallNs": 20247062656,
+      "firstRootKind": "2",
+      "anchorNs": "3690926141582360",
+      "observedNs": "3690926181808610",
+      "gapNs": 40226250,
+      "gapArithmeticMatches": true,
+      "flushIntervals": [
+        {
+          "ordinal": "1",
+          "startNs": "3690926142261578",
+          "endNs": "3690926142285953",
+          "durationNs": 24375
+        },
+        {
+          "ordinal": "2",
+          "startNs": "3690926142487516",
+          "endNs": "3690926172920485",
+          "durationNs": 30432969
+        }
+      ],
+      "hasRootAccept": false,
+      "hasDraw": false
+    },
+    {
+      "path": "test/reports/t457/t457_boot_rerun.json",
+      "pid": "31861",
+      "ownerTid": "31965",
+      "firstObserverTid": "31861",
+      "epoch": "2",
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V1",
+      "viewport": [
+        1280,
+        1471
+      ],
+      "readyNs": "3690618949753766",
+      "createWallNs": 56021752500,
+      "firstRootKind": "2",
+      "anchorNs": "3690618959498766",
+      "observedNs": "3690619009227203",
+      "gapNs": 49728437,
+      "gapArithmeticMatches": true,
+      "flushIntervals": [
+        {
+          "ordinal": "1",
+          "startNs": "3690618960075953",
+          "endNs": "3690618960100328",
+          "durationNs": 24375
+        },
+        {
+          "ordinal": "2",
+          "startNs": "3690618960303610",
+          "endNs": "3690618991905485",
+          "durationNs": 31601875
+        }
+      ],
+      "hasRootAccept": false,
+      "hasDraw": false
+    },
+    {
+      "path": "test/reports/t457/t457_boot_want.json",
+      "pid": "31861",
+      "ownerTid": "31965",
+      "firstObserverTid": "31861",
+      "epoch": "2",
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V1",
+      "viewport": [
+        1280,
+        1471
+      ],
+      "readyNs": "3690618949753766",
+      "createWallNs": 56021752500,
+      "firstRootKind": "2",
+      "anchorNs": "3690618959498766",
+      "observedNs": "3690619009227203",
+      "gapNs": 49728437,
+      "gapArithmeticMatches": true,
+      "flushIntervals": [
+        {
+          "ordinal": "1",
+          "startNs": "3690618960075953",
+          "endNs": "3690618960100328",
+          "durationNs": 24375
+        },
+        {
+          "ordinal": "2",
+          "startNs": "3690618960303610",
+          "endNs": "3690618991905485",
+          "durationNs": 31601875
+        }
+      ],
+      "hasRootAccept": false,
+      "hasDraw": false
+    }
+  ],
+  "m2Raw": {
+    "rawFileCount": 60,
+    "kindOutcomeCounts": [
+      {
+        "kind": 1,
+        "outcome": 1,
+        "count": 32
+      },
+      {
+        "kind": 1,
+        "outcome": 2,
+        "count": 16
+      },
+      {
+        "kind": 1,
+        "outcome": 3,
+        "count": 8
+      },
+      {
+        "kind": 2,
+        "outcome": 1,
+        "count": 4
+      }
+    ],
+    "rejectReasons": {
+      "8": 4,
+      "65539": 4,
+      "1": 4,
+      "3": 4
+    },
+    "M203_actualTestCompares": "h[141] == c[169] (both sealedRows; does not inspect mutationSerial)",
+    "samples": [
+      {
+        "path": "raw-1.bin",
+        "h141_sealedRows": 193,
+        "h142_143_mutationSerial": [
+          192,
+          0
+        ],
+        "c169_sealedRows": 193,
+        "c170_171_mutationSerial": [
+          192,
+          0
+        ]
+      },
+      {
+        "path": "raw-3.bin",
+        "h141_sealedRows": 5,
+        "h142_143_mutationSerial": [
+          196,
+          0
+        ],
+        "c169_sealedRows": 5,
+        "c170_171_mutationSerial": [
+          196,
+          0
+        ]
+      },
+      {
+        "path": "raw-4.bin",
+        "h141_sealedRows": 2,
+        "h142_143_mutationSerial": [
+          196,
+          0
+        ],
+        "c169_sealedRows": 2,
+        "c170_171_mutationSerial": [
+          196,
+          0
+        ]
+      },
+      {
+        "path": "raw-5.bin",
+        "h141_sealedRows": 2,
+        "h142_143_mutationSerial": [
+          197,
+          0
+        ],
+        "c169_sealedRows": 2,
+        "c170_171_mutationSerial": [
+          197,
+          0
+        ]
+      },
+      {
+        "path": "raw-10.bin",
+        "h141_sealedRows": 193,
+        "h142_143_mutationSerial": [
+          192,
+          0
+        ],
+        "c169_sealedRows": 193,
+        "c170_171_mutationSerial": [
+          192,
+          0
+        ]
+      },
+      {
+        "path": "raw-11.bin",
+        "h141_sealedRows": 383,
+        "h142_143_mutationSerial": [
+          574,
+          0
+        ],
+        "c169_sealedRows": 383,
+        "c170_171_mutationSerial": [
+          574,
+          0
+        ]
+      },
+      {
+        "path": "raw-12.bin",
+        "h141_sealedRows": 2,
+        "h142_143_mutationSerial": [
+          574,
+          0
+        ],
+        "c169_sealedRows": 2,
+        "c170_171_mutationSerial": [
+          574,
+          0
+        ]
+      },
+      {
+        "path": "raw-14.bin",
+        "h141_sealedRows": 2,
+        "h142_143_mutationSerial": [
+          1,
+          0
+        ],
+        "c169_sealedRows": 2,
+        "c170_171_mutationSerial": [
+          1,
+          0
+        ]
+      }
+    ],
+    "rawFileHashes": [
+      {
+        "path": "raw-1.bin",
+        "sha256": "526b67242d82e99e1416e1143039a1609bd5909eb3b0733ea7d3c042c6671d0c"
+      },
+      {
+        "path": "raw-2.bin",
+        "sha256": "1e4a60d48b3b5f6aced59fef15cea9c43620cf6ce92bdfba84e5841e91686661"
+      },
+      {
+        "path": "raw-3.bin",
+        "sha256": "2f68a96c8b034b8eb2b8f755606540044c244578e6cddb9192cc856d2f9b19e4"
+      },
+      {
+        "path": "raw-4.bin",
+        "sha256": "22300461ea5bc23489ad78a0684fa2f75720004fcc2d1ca805120d36f75634e1"
+      },
+      {
+        "path": "raw-5.bin",
+        "sha256": "bf81ac52894719cce1dc9195f37bf2892e69f27cb642cc55a75ed5a79424d305"
+      },
+      {
+        "path": "raw-6.bin",
+        "sha256": "c6140bf2315c1cc1054f8088780d007c711afa1ffbb2772cfb3d7ba40f39ea25"
+      },
+      {
+        "path": "raw-7.bin",
+        "sha256": "570446fbfdf4117ba74543c55438bc64c65d2c15992d8d4c18af23444b379d9f"
+      },
+      {
+        "path": "raw-8.bin",
+        "sha256": "d20e62f49862fa4c9d8e121bb7e3beea5066e5599cfe54cc8fdb623e0e6b0b06"
+      },
+      {
+        "path": "raw-9.bin",
+        "sha256": "9c6ac5e46d8b1f46638d4921ff8c89a2b41868ffcdb0189d8691a8a596157deb"
+      },
+      {
+        "path": "raw-10.bin",
+        "sha256": "6d5ca9078fbbc52c935e2a768239f686b51e34577b6f31753977bc513a47779c"
+      },
+      {
+        "path": "raw-11.bin",
+        "sha256": "24dd08c204e6aa8ec84c16b83fa7495c8e15b78c59e5f2c8e150c79e4cf7231e"
+      },
+      {
+        "path": "raw-12.bin",
+        "sha256": "6ff12decd5e823a75da0b5c54bf07df33b7207eae23385f3a5a3b16c9c00c005"
+      },
+      {
+        "path": "raw-13.bin",
+        "sha256": "30eef0fafdcba334abec7033bd0f0f4ca5973cdc52e484ab2928a28bac72785a"
+      },
+      {
+        "path": "raw-14.bin",
+        "sha256": "6ed994bdd469e36d81b656d7f7e97e9163365746ef2edea2d8d23b406eeea72d"
+      },
+      {
+        "path": "raw-15.bin",
+        "sha256": "024683bd9c3f7b6ad7b189078510c159af1fb387ccb0aec66ff656c97dbbcff2"
+      },
+      {
+        "path": "raw-16.bin",
+        "sha256": "14261e2346f64e57accbefce5dc7af5c02e3f91961114b80303e51c552a4485e"
+      },
+      {
+        "path": "raw-17.bin",
+        "sha256": "deae886282a7f33123b3e9bca36717b905127a19c6f5779a75963404297d3658"
+      },
+      {
+        "path": "raw-18.bin",
+        "sha256": "b1d2b82f9805aa202b9624c9ffcf7192f473b28f9b5a961e0cbee213e12cfc8c"
+      },
+      {
+        "path": "raw-19.bin",
+        "sha256": "cea77ac2f3aed9c6e97d280978d97307331ebd9acef5b4a2df4145913c8b8074"
+      },
+      {
+        "path": "raw-20.bin",
+        "sha256": "a1df654b710241bfb2f528d730a2fa7f5555db62234dfe1eee103267fae105aa"
+      },
+      {
+        "path": "raw-21.bin",
+        "sha256": "6368b82a7124f8ea73ffe10ca5fc91269dc8acbd4a3bad829c695e639be16b9f"
+      },
+      {
+        "path": "raw-22.bin",
+        "sha256": "9caab3a234eb4663c781bfd518507f70a8d8209751db3ce13c952cb8ff59f9a1"
+      },
+      {
+        "path": "raw-23.bin",
+        "sha256": "247e391580974a52eb1bba0838c2df0be4d35c3875e7f1f6a2d2c7854044ce35"
+      },
+      {
+        "path": "raw-24.bin",
+        "sha256": "be18e1a457c4810e5c9e423df5fc166f5b6fbc6def699b714539aa2387f4f7b6"
+      },
+      {
+        "path": "raw-25.bin",
+        "sha256": "15ec10ca18ec5fbf365bf156609bd8c774da9dc76495e43df4bb24c1cc26b096"
+      },
+      {
+        "path": "raw-26.bin",
+        "sha256": "14d4e852cc78d810b00dadd06f912563983936f76b1365097baa5076cf65df2d"
+      },
+      {
+        "path": "raw-27.bin",
+        "sha256": "3a93787d7b7d5ac1deee0597fd07ddec6111b188a6310bfb4d44dee9c956ed88"
+      },
+      {
+        "path": "raw-28.bin",
+        "sha256": "b6caa61c1a76d4824b17392deb78261758bb8980290cdf812b17915e8db21830"
+      },
+      {
+        "path": "raw-29.bin",
+        "sha256": "32b860cf26df8893a2d55beebb82311c4d1cfcf58b02d896b6dc481613026fb2"
+      },
+      {
+        "path": "raw-30.bin",
+        "sha256": "19faea993e5062517b464e4f55e0dfca58924925b6830b7dd2ddba9d363d142f"
+      },
+      {
+        "path": "raw-31.bin",
+        "sha256": "f3e1ee3c0ad3bf36039f6f8a224c2d6a1543d5bf564880d9db4d7b7c54f73f02"
+      },
+      {
+        "path": "raw-32.bin",
+        "sha256": "c73134cb19bfdafa0bf7403f3e968066590006c655b52be97bf9756f1378cd43"
+      },
+      {
+        "path": "raw-33.bin",
+        "sha256": "0645c1acba15a12b09e82c3093765912f649a798df5b72a3c2b7ec7d2b5917da"
+      },
+      {
+        "path": "raw-34.bin",
+        "sha256": "b18597d561b503156db34dd5f256974cdb34ad48eb77a2aa4adc6eda1a13c9be"
+      },
+      {
+        "path": "raw-35.bin",
+        "sha256": "695bbbcf65c82be54bed58e91d72d6550ab06c4bcba08150856107714b0ae47e"
+      },
+      {
+        "path": "raw-36.bin",
+        "sha256": "d4d7368a3d3d71405e0c5bbc4ee8f718a5ff44f1c4c2f92d49500ee905ddeee2"
+      },
+      {
+        "path": "raw-37.bin",
+        "sha256": "64c4fd6fe8ee98ee055578c525e0a0ba242ea01d931c67254a0975841b1166e7"
+      },
+      {
+        "path": "raw-38.bin",
+        "sha256": "ae83dcdaeed40de0a0cf3cdd196fc1d09befd28f99c6fc04b6ce6373747df987"
+      },
+      {
+        "path": "raw-39.bin",
+        "sha256": "b505ccc626aa52a63310e5dada8f0c7071f5592f9fc34e1493c6becdd144764c"
+      },
+      {
+        "path": "raw-40.bin",
+        "sha256": "49b17d8c4af2e0454b956be2f1b13dc4ef42c141852fb3d475e66ae65ea196cb"
+      },
+      {
+        "path": "raw-41.bin",
+        "sha256": "1bb97bd60df5242410cf66f3ec620dcc7179ce08587fa66c6fefe6d0db587d75"
+      },
+      {
+        "path": "raw-42.bin",
+        "sha256": "4e9fa8d4cf17c7ab22dc0d884c9766bb82837bfc8d988bd4d77067881879f06f"
+      },
+      {
+        "path": "raw-43.bin",
+        "sha256": "6e41a8ceebc05e7ab4145aee9c5db58bdc72df966d7fec71899486bc5407c344"
+      },
+      {
+        "path": "raw-44.bin",
+        "sha256": "d4d569a28d487188c384bf0fda1ff5965cac3adb76e2da33b4996cc9dd566640"
+      },
+      {
+        "path": "raw-45.bin",
+        "sha256": "7a088d871622da0f0d0bdb52ddc41732bcb069a8fa66db6917b37d737bbca057"
+      },
+      {
+        "path": "raw-46.bin",
+        "sha256": "b4a60a3bfb09ec3634f70693c7f36407379fd2e7445c4524e4448ba51807e8f7"
+      },
+      {
+        "path": "raw-47.bin",
+        "sha256": "42c7939431d4d98f0e274b9deb9d9cf97a74d2ffa68c277e0b874613535e5f46"
+      },
+      {
+        "path": "raw-48.bin",
+        "sha256": "ded6a04116d8e8757d6cb87140ce68a51741e450e64ca2f7eb229b98a71ec692"
+      },
+      {
+        "path": "raw-49.bin",
+        "sha256": "65908660c8783c912182553b89349c1015c96d6df17b8e46569eeb02cd225fce"
+      },
+      {
+        "path": "raw-50.bin",
+        "sha256": "e983c69062a3d05d09fa184485a4351818ea53302383471bcc247435598da117"
+      },
+      {
+        "path": "raw-51.bin",
+        "sha256": "721b5d1cfba4bb18daee93c03e190d77228e16ef3c7a4629bfb1b544e264bafd"
+      },
+      {
+        "path": "raw-52.bin",
+        "sha256": "fbec1b146d8ece799d809967aa39aa2a3447d0d20379855535a5ddd805d3a322"
+      },
+      {
+        "path": "raw-53.bin",
+        "sha256": "fb252161bc49a78fe47df591af73c237c5de19d4b89a30bbbf79725c562c4149"
+      },
+      {
+        "path": "raw-54.bin",
+        "sha256": "4bc2c6968ca22e4b51049a4eb03f2140dc4c01fe73dfccc4e96e2f8d8b41cc46"
+      },
+      {
+        "path": "raw-55.bin",
+        "sha256": "ef1e59bba6932dcbf0e621d7903d1c3e948801e65d1db2d776959e8bbb284361"
+      },
+      {
+        "path": "raw-56.bin",
+        "sha256": "dab96c1c3c273c5a610124cd0761ecec90ba494fd3792e8e57015f29bc4e9526"
+      },
+      {
+        "path": "raw-57.bin",
+        "sha256": "f9bf7cb93ebdcb036e4c4f49766951f755b6ab5011c0470ffa00c3e4a63da5e0"
+      },
+      {
+        "path": "raw-58.bin",
+        "sha256": "e781dd6fc21d5899da8349a30519e81adc314eef1e4a8efd70e885d9aa0f72f2"
+      },
+      {
+        "path": "raw-59.bin",
+        "sha256": "4add5d327d6b523fc6bb8eabeaa004ca4a70dd44535208cd8e8129c87f39602b"
+      },
+      {
+        "path": "raw-60.bin",
+        "sha256": "6e058c87484beb8643614c7cfc1925e55473496ed185a1e7f745ffcc967ffcfb"
+      }
+    ]
+  },
+  "packages": [
+    {
+      "task": "T456-experiment-finalized",
+      "receiptSha256": "fd9fc04e21d228cb208fa0b58ef5c09967cbd4ec3e81ec7c725b90cfb4feb6be",
+      "signedSha256": "96ae7ca2a0d78dc8f47bc0796eb7cee96f67236d9adc37fb427821778a1a9310",
+      "matchesReceipt": true,
+      "native": {
+        "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+        "libs/arm64-v8a/libgrsm0.so": "5012b53a8f4f2a5b0d4fbd966a4a22f6fa7ea14627cf780c40fd2aeab2c89e6e",
+        "libs/arm64-v8a/libgrsm1.so": "20e76b53c95c0b4a96a3a02b00108534c2f3136227080e23cab69df6a22ba3be",
+        "libs/arm64-v8a/libp013hello.so": "5e87ffc6955076faadb2500a4f24c2d5d24e0b8d17e17d8ab373d50c821b2f82",
+        "libs/arm64-v8a/libp013renderer.so": "1b8327f77851cc28041d145dfa733edca2a5682f5a813c3cfe4234a651aee65e"
+      }
+    },
+    {
+      "task": "T452-final-complete",
+      "receiptSha256": "c4e861bf1e73e5fafb1a5bcf65de07abdf7895f86544c6fa3064ea3ce7731c57",
+      "signedSha256": "de316a648a17e86b21b5b7cb9debbde3ceadfc90cf2d20cef9ddd62a7f076959",
+      "matchesReceipt": true,
+      "native": {
+        "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+        "libs/arm64-v8a/libgrsm0.so": "8fc13687aeecf4fc361adbc2c22c1853fe9e91a52eafee7390f3266695a5ebbf",
+        "libs/arm64-v8a/libgrsm1.so": "37b27e0d8c36ff63bb8604d644bd6de55867480e7e666dc45d080c17842d8c6d",
+        "libs/arm64-v8a/libp013hello.so": "8bbba29d2f2d8792ba23194282fa0cc9c99335cd19e3cf9924c4148785535f2a",
+        "libs/arm64-v8a/libp013renderer.so": "70ef28422ce15ae296d2709322c2927c4a8c246875da3fcc58ebac944b7c2c35"
+      }
+    },
+    {
+      "task": "T455-release",
+      "receiptSha256": "400ac419efc7bae6b8f93af59c84e948fa9fcb5ec393a6125e76bcf59e6c901b",
+      "signedSha256": "7b13fb3e4fecca3867e16d484539f7ea6f659e02549d5c42c5755c3ca2725d33",
+      "matchesReceipt": true,
+      "native": {
+        "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+        "libs/arm64-v8a/libgrsm0.so": "9dda25fdc8671c5c0c983d3fe5c249a94552d0f7015ba306b4bcc865656a075c",
+        "libs/arm64-v8a/libgrsm1.so": "dc4ca12ce7a65c7d7b3ed566e4a66c32e21b32af667f92498a172af355c8131a",
+        "libs/arm64-v8a/libp013hello.so": "f2e7e0457054765067f978fcbc5592e548eb1146fcd14de8d5d68540fb01451b",
+        "libs/arm64-v8a/libp013renderer.so": "32eca10f287d9a9cc9c82f25ec14c26caa6264394eba7c84b69efb756dc8c3bb"
+      }
+    }
+  ],
+  "validation": {
+    "documents": [
+      {
+        "path": "docs/architecture-T451-gpu-experience-first-root-v2.md",
+        "bytes": 7072,
+        "localLinksChecked": 3
+      },
+      {
+        "path": "docs/architecture-T462-gpu-m2-create-diagnostics-v1.md",
+        "bytes": 7075,
+        "localLinksChecked": 2
+      },
+      {
+        "path": "docs/architecture-T463-single-sand-raster-geometry-v1.md",
+        "bytes": 8137,
+        "localLinksChecked": 0
+      },
+      {
+        "path": "docs/architecture-T464-gpu-v2-recovery-v1.md",
+        "bytes": 7871,
+        "localLinksChecked": 1
+      },
+      {
+        "path": "docs/architecture-T465-independent-evidence-routing-v1.md",
+        "bytes": 9773,
+        "localLinksChecked": 1
+      }
+    ],
+    "localLinksAndRequiredRoleConstraints": "PASS",
+    "evidenceHashesRechecked": 24,
+    "signedPackagesMatched": 3,
+    "distinctV1FailureAttempts": 2,
+    "bootGapArithmetic": "PASS",
+    "rawFileCount": 60,
+    "productTestsRerun": false,
+    "deviceUsed": false
+  },
+  "geometryUpstreamReference": {
+    "repository": "https://github.com/openharmony/arkui_ace_engine",
+    "commit": "a46eecb2cfd9133f55743df8f695cfd7d205763c",
+    "path": "frameworks/core/components_ng/pattern/xcomponent/xcomponent_pattern.cpp",
+    "scope": "Public upstream reference only, not proof of device firmware pixel rounding"
+  }
+}
