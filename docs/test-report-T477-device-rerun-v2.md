@@ -1,5 +1,13 @@
 # T477 复跑 · GPU 编译缓存冷暖主链真机验证（v2，T482-final 修复包）
 
+> **v2.1 复测补记（同日 17:40–17:50，用户指令"再测"）**：全套流程独立重跑一遍（清数据冷启 → 强停暖启 → timeline 导出），全部复现：
+> - 冷启动：三 program 再次全 PERSISTED、0 失败；**两轮冷编译产物逐字节一致**（设备端 sha256sum vs 本地 run1 .bin：`71ad…`=e9b50a07…、`48d7…`=5bd2093b… 全文件 SHA 相同）→ Maleoon 编译确定性成立，PERSISTED 产物跨进程可复现。
+> - 第二轮冷启动墙时（无其它负载）：SOURCE 全 build 12.8s（compile 7.0s+link 5.8s）、INTERMEDIATE 4.1s、FINAL 18.7s——比第一轮（28.6/13.7/49.9s）明显更快，第一轮数值含首启环境预热噪声，以本轮为净值参考。
+> - 暖启动：三 program 再次 BINARY_LOAD compile=0，load 4.75/0.67/1.66ms，与第一轮（4.80/1.04/1.89ms）同量级 → 暖墙时可复现。
+> - 上屏阻断复现：UI 仍 `STALE_PAGE_SESSION/GPU_WORK_PENDING`，但**物理 commit 持续单调增长**（601→1283→2181，约 15 quanta/s）→ GPU 物理链在正常推进，卡的是 page-session/permit→swap 域，非计算域；源收据恒 0。
+> - timeline 导出 INVALID_ROW 复现 3/3（本轮 22 页/88 行处，页数随启动时长变化，**失败点不固定在 120 行**，修正 v2 报告"恰 120 行"表述——稳定复现的是 INVALID_ROW 本身，非固定行号）。
+> - 复测证据：`test/reports/t477/device-rerun-v2/rerun3/`。
+
 - 日期：2026-11-11
 - 角色：tester（真机 62T0225B10010020）
 - 前置：T482 developer 修复 coherent 值传参边界（新 SOURCE SHA `b7d0a027128811db…`），签包 `.codex/local-test/t257-sign/T482-final/T482-final-signed.hap`
