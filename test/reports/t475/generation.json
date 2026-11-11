@@ -1,0 +1,101 @@
+{
+  "revision": "T475_CACHE_V1",
+  "base": [
+    "T468 (T452 M2)",
+    "T456 boot",
+    "T467 recovery"
+  ],
+  "cacheFiles": [
+    {
+      "name": "artifact_store.h",
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92"
+    },
+    {
+      "name": "program_factory.h",
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "name": "sha256.h",
+      "sha256": "154cf18fe5b2c1fe2831326faf0287dbcd83f420e4eea22a8dfe5d30a7db9faa"
+    }
+  ],
+  "edits": [
+    {
+      "file": "cpp/gpu_resident/app_bridge.cpp",
+      "before": "554facbe49fd66ad8052c47c4d11c85b744faa0543254aa496811b5f05d6be69",
+      "after": "43cc9b416c37f621731c6f1ee0855bad98be30bac2179ae44db81ae3623b9012"
+    },
+    {
+      "file": "cpp/gpu_resident/m2route/full_transport.cpp",
+      "before": "3329d7df05bbf7d644a5b62d90de33f2e90b0b0dd847a3ac79a50dab257357b1",
+      "after": "22e24be59d7839028cdcea2e6ccea65f768dd6604a3100e9b1b5ab1d636ae4ba"
+    },
+    {
+      "file": "cpp/gpu_resident/m2route/source_owner.h",
+      "before": "a398f7a6baf2bde7a988b25c63456606e63f007885c80aa53663d301bbdfa34c",
+      "after": "e916cc41c46c3f002ea31bbac0cf5bdba2726d4cba94d401a09f5d532bf397ec"
+    },
+    {
+      "file": "ets/pages/GpuSandWaterExperience.ets",
+      "before": "35dfa91c78ee5f8975a54830536f9b7ab697bc4018ad23aa8946b394cf37eab1",
+      "after": "11e1225f288a00252fc65a973db94380e097e476d8184c90622e49bf474f31ac"
+    },
+    {
+      "file": "cpp/gpu_resident/m1/source_transport.cpp",
+      "before": "c239e4e0da9a28e51cf8d6a23110b37e3666cf40509aa586fdac79b5423ec4f1",
+      "after": "872818b5297118e8106caccd15a582cb75f2f139f2a7afa6faf584fd03d4830f"
+    },
+    {
+      "file": "cpp/gpu_resident/m1/quantum_candidate.cpp",
+      "before": "16d35c5d95b1361724bd2294d8d9a0e8600be077700e1767eea1ec5679852832",
+      "after": "d0838f4c4470c6c2adeebd54553090c449b5cb39b2efbdf2ee14afdde94024f1"
+    },
+    {
+      "file": "cpp/gpu_resident/m1/full_transport.cpp",
+      "before": "b3151bf6cb63d0f7583f5367de3ea552d1d962fda612a68cb0a3f92d28298a0b",
+      "after": "e7e202c53cdb33896ee4041df1dbaeed93792c65d6f96a498a942e0c400b7ab6"
+    },
+    {
+      "file": "cpp/gpu_resident/m2route/source_transport.cpp",
+      "before": "7af89598cc4c75c41245973ad8898820ca36838826459120d42829334f85548b",
+      "after": "fe3ded98e6750a71578dfe3a101103ac37bacebe5434fc5b3c14669a3c6f94d2"
+    },
+    {
+      "file": "cpp/gpu_resident/m2route/quantum_candidate.cpp",
+      "before": "502f8ff275be7f2c699a2a755b5e08ab33d8d99906b2b6c5e0efc968ae207b88",
+      "after": "e93ec2ce8c0a08e7de20cd8ca858aa1ba277d1f2e81a816b93ae7c678b34073a"
+    },
+    {
+      "file": "cpp/gpu_resident/m2route/full_transport.cpp",
+      "before": "22e24be59d7839028cdcea2e6ccea65f768dd6604a3100e9b1b5ab1d636ae4ba",
+      "after": "4c5b6c64848841f5c181b3bf2bd991f86c10e095a396f397b4b18d171c8b9c88"
+    },
+    {
+      "file": "cpp/gpu_resident/app_bridge.cpp",
+      "before": "43cc9b416c37f621731c6f1ee0855bad98be30bac2179ae44db81ae3623b9012",
+      "after": "5f528c9bf14992821cee26859fa85e34583cac48c726432a6d8871364c8ea21f"
+    },
+    {
+      "file": "cpp/types/libgrsm1/index.d.ts",
+      "before": "57d30c94b7d7d3c60e2fc1800659655b01c087b33ab322996ccd9689ed359878",
+      "after": "9ab0c96abf2f711343561d7f520ce1174fd8024e56684c14a47c4dd356cf447d"
+    },
+    {
+      "file": "ets/entryability/EntryAbility.ets",
+      "before": "ff34069c18cd843ed35b55a3810e0ca22e380488e6d56bfa9e92218f23924f79",
+      "after": "c3f498db0e68c930dc4f91ce2cf00790f49dfcc7845cf136c5bf6c69e79e8f0c"
+    }
+  ],
+  "coverage": [
+    "M1 SOURCE",
+    "M1 INTERMEDIATE_QUANTUM",
+    "M1 FINAL_QUANTUM",
+    "M2 SOURCE",
+    "M2 INTERMEDIATE_QUANTUM",
+    "M2 FINAL_QUANTUM"
+  ],
+  "excluded": [
+    "scene vertex/fragment shaders"
+  ],
+  "device": "NOT_RUN"
+}

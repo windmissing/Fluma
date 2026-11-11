@@ -1,0 +1,130 @@
+{
+  "schema": "T475_DEVELOPER_OFFLINE_V1",
+  "device": "NOT_RUN",
+  "routes": {
+    "M2": {
+      "passed": true,
+      "programs": [
+        {
+          "role": "FINAL_QUANTUM",
+          "key": "8a1418ae50ca02c560ad156c0736b8f7d40e512c9cb37885265f5a97ff2bb903",
+          "binarySHA256": "b37caaf0fa96aa4216cdd84dd967fef87b7e84d0dbcbe1d3109960cd7ed9a9f9",
+          "binaryBytes": 388042,
+          "format": 37798,
+          "shaderSHA256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc",
+          "layoutSHA256": "819bc2b419445f124c29fc6b4e691ee549ed0e8e4d55b30b6a099d8e84069942",
+          "environmentSHA256": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "cold": "SOURCE_COMPILE/PERSISTED",
+          "warm": "BINARY_LOAD/REFLECT_PREPARE_OK",
+          "warmSourceCompileCalls": 0,
+          "receipt": "test\\reports\\t475\\m2\\8a1418ae50ca02c560ad156c0736b8f7d40e512c9cb37885265f5a97ff2bb903.jsonl"
+        },
+        {
+          "role": "INTERMEDIATE_QUANTUM",
+          "key": "aff1eede4095346c0457513e3dd583a392bfb065c1a818f7430e64aa9f64c9f1",
+          "binarySHA256": "513ea83d3d2084850c8f1b7b6cbe3d3bc9402f43df496abe906dc2067764f339",
+          "binaryBytes": 177820,
+          "format": 37798,
+          "shaderSHA256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+          "layoutSHA256": "819bc2b419445f124c29fc6b4e691ee549ed0e8e4d55b30b6a099d8e84069942",
+          "environmentSHA256": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "cold": "SOURCE_COMPILE/PERSISTED",
+          "warm": "BINARY_LOAD/REFLECT_PREPARE_OK",
+          "warmSourceCompileCalls": 0,
+          "receipt": "test\\reports\\t475\\m2\\aff1eede4095346c0457513e3dd583a392bfb065c1a818f7430e64aa9f64c9f1.jsonl"
+        },
+        {
+          "role": "SOURCE",
+          "key": "d35cc73bbd5db0dd585301d41691ef10ffbcad915b771b84401f12beebda7544",
+          "binarySHA256": "637f4eb2ce2a01767e76ad0cc28cf2fac1abb235342e335efbca3d9c3d80dfb1",
+          "binaryBytes": 227462,
+          "format": 37798,
+          "shaderSHA256": "eb479a7b4fb3be0dc06245aef95b05e4ceabcaa9f9de7051994c5ac4504a1c1c",
+          "layoutSHA256": "819bc2b419445f124c29fc6b4e691ee549ed0e8e4d55b30b6a099d8e84069942",
+          "environmentSHA256": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "cold": "SOURCE_COMPILE/PERSISTED",
+          "warm": "BINARY_LOAD/REFLECT_PREPARE_OK",
+          "warmSourceCompileCalls": 0,
+          "receipt": "test\\reports\\t475\\m2\\d35cc73bbd5db0dd585301d41691ef10ffbcad915b771b84401f12beebda7544.jsonl"
+        }
+      ],
+      "fixture": "generated M2 App"
+    },
+    "M1": {
+      "passed": true,
+      "programs": [
+        {
+          "role": "SOURCE",
+          "key": "1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc",
+          "binarySHA256": "3cfcd84b87951975a801c63a1cadf515711b3dc45e60c527f019c03af2ef27c9",
+          "binaryBytes": 172698,
+          "format": 37798,
+          "shaderSHA256": "47c0076c8a5dba5e2bf578bd447751fbeee389168a463b73ec7d18ef14e63ea2",
+          "layoutSHA256": "e8f1168e93ef3e6f25d82f78cfb9bea245d6254ffbad0361297c56e170766e27",
+          "environmentSHA256": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "cold": "SOURCE_COMPILE/PERSISTED",
+          "warm": "BINARY_LOAD/REFLECT_PREPARE_OK",
+          "warmSourceCompileCalls": 0,
+          "receipt": "test\\reports\\t475\\m1\\1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.jsonl"
+        },
+        {
+          "role": "FINAL_QUANTUM",
+          "key": "545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494",
+          "binarySHA256": "861858da416d77a22223efacf474527c4c9218c4adbb1b9bae8ad2232ac33f04",
+          "binaryBytes": 377482,
+          "format": 37798,
+          "shaderSHA256": "5d4e983fbcf8453eb05a5edb7e9793f1e7708515d82a03ef62724bbbe4674332",
+          "layoutSHA256": "e8f1168e93ef3e6f25d82f78cfb9bea245d6254ffbad0361297c56e170766e27",
+          "environmentSHA256": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "cold": "SOURCE_COMPILE/PERSISTED",
+          "warm": "BINARY_LOAD/REFLECT_PREPARE_OK",
+          "warmSourceCompileCalls": 0,
+          "receipt": "test\\reports\\t475\\m1\\545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.jsonl"
+        },
+        {
+          "role": "INTERMEDIATE_QUANTUM",
+          "key": "9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1",
+          "binarySHA256": "687ab06bc7cd45bf46f6be5e4368200f3e8660fbe0e692cbacddcbdd5f5ebedd",
+          "binaryBytes": 177820,
+          "format": 37798,
+          "shaderSHA256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+          "layoutSHA256": "e8f1168e93ef3e6f25d82f78cfb9bea245d6254ffbad0361297c56e170766e27",
+          "environmentSHA256": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "cold": "SOURCE_COMPILE/PERSISTED",
+          "warm": "BINARY_LOAD/REFLECT_PREPARE_OK",
+          "warmSourceCompileCalls": 0,
+          "receipt": "test\\reports\\t475\\m1\\9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.jsonl"
+        }
+      ],
+      "fixture": "same App fixture adapted to M1 namespace; actual generated M1 transport sources"
+    }
+  },
+  "grsm1ElfSHA256": "6bc31490472d99ca369899a2f3d6b261b9f6f2932ee1d1827c5084a606ddb49b",
+  "signedHap": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T475-handoff\\T475-handoff-signed.hap",
+    "sha256": "29ecdbdecf506d277762fc36ced88686fef179a3be8cf8e8b0875fb3241785ec",
+    "bytes": 9446661
+  },
+  "verifyApp": "PASS",
+  "injectedFaults": [
+    "no binary formats",
+    "empty/oversized export length",
+    "ENOSPC",
+    "partial temporary write",
+    "sync failure",
+    "replacement failure"
+  ],
+  "realNegativeCases": [
+    "bad disk hash source fallback",
+    "truncated disk file source fallback",
+    "unknown binary format",
+    "driver rejects corrupt executable",
+    "invalid GLSL",
+    "preexisting product GL error",
+    "different live EGL context"
+  ],
+  "excluded": [
+    "scene vertex/fragment program cache",
+    "device run and device startup benefit"
+  ]
+}
