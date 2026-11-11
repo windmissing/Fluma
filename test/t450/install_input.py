@@ -9,8 +9,15 @@ p = argparse.ArgumentParser()
 p.add_argument('target', choices=['t410', 't437'])
 p.add_argument('hap', type=Path)
 p.add_argument('--declared-sha', help='validate an existing cold Want declaration against the file')
+p.add_argument('--receipt', type=Path, help='exact signing receipt for this generation; defaults to the T450 receipt')
 a = p.parse_args()
-report = json.loads(Path(f'test/reports/t257/T450-{a.target}.json').read_text(encoding='utf-8'))
+receipt = a.receipt or Path(f'test/reports/t257/T450-{a.target}.json')
+report = json.loads(receipt.read_text(encoding='utf-8'))
+if a.receipt is not None:
+    if a.target not in report.get('task', '').split('-'):
+        p.error('SIGNING_RECEIPT_TARGET_MISMATCH')
+    if report.get('verifyApp') != 'PASS':
+        p.error('SIGNING_RECEIPT_NOT_VERIFIED')
 actual = hashlib.sha256(a.hap.read_bytes()).hexdigest()
 if actual != report['signed']['sha256'] or a.hap.stat().st_size != report['signed']['bytes']:
     p.error('INSTALL_HAP_IDENTITY_MISMATCH')
@@ -26,6 +33,7 @@ with zipfile.ZipFile(a.hap) as z:
     if app['bundleName'] != report['bundleName']:
         p.error('BUNDLE_IDENTITY_MISMATCH')
 print(json.dumps({'schema':'T450_SIGNED_INSTALL_INPUT_V1','target':a.target,'sha256':actual,
+    'signingReceipt':str(receipt.resolve()),
     'file':str(a.hap.resolve()),'bytes':a.hap.stat().st_size,'bundle':app['bundleName'],
     'versionCode':app.get('versionCode'),'versionName':app.get('versionName'),
     'install':['hdc','-t','<device>','install','-r',str(a.hap.resolve())],

@@ -1,0 +1,50 @@
+recovery.cpp
+gl_extra.cpp
+foundation.cpp
+run.cpp
+scene.cpp
+fullframe_targets.cpp
+full_transport.cpp
+full_kernel.cpp
+quantum_candidate.cpp
+quantum_kernel.cpp
+source_transport.cpp
+source_owner.cpp
+source_kernel.cpp
+profile.cpp
+control.cpp
+integer.cpp
+gl_forward.cpp
+正在生成代码...
+PASS R1_REQUEST_STATE | 显式新空场后 open=false、permit 撤、 retiring/retired 登记
+PASS R1_NO_SESSION_BEFORE_HANDOFF | 资源交接前新 session 不建立
+PASS R2_RESOURCES_NOT_READY | 资源完成后仍无 session → 未 READY（首 pulse 建 baseline 前）
+PASS R3_SESSION_IDENTITY_GATE | 错 run、旧 serial 的 session 请求拒绝
+PASS R4_SESSION_TOKEN_VALID | 合法身份 session token 建立且非零
+PASS R5_FIRST_PULSE_BASELINE | 首 pulse 接受建 baseline：READY 达成但 baseline 拍不产 quota（generated=0）
+PASS R6_READY_AFTER_SECOND_PULSE | 第二 pulse 起 quota；readyEpoch==epoch；账平衡
+PASS R7_GAP_REVOKED | GAP 撤权 → FAULTED_REVOKED、open=false
+PASS R8_STALE_PULSE | GAP 后旧 token pulse → STALE_PAGE_SESSION
+PASS R8B | GAP 后旧 token pulse → STALE_PAGE_SESSION
+PASS R8B | GAP 后旧 token pulse → STALE_PAGE_SESSION
+PASS R9_SERIAL_ROLLS | 每次显式新空场 resetSerial 严格递增
+PASS R9B_OLD_TOKEN_REJECTED | 旧 token 在新代拒绝（STALE_PAGE_SESSION）；新代 token 非零
+PASS R9C_NEW_GEN_READY | 新代 session 1 pulse 后 READY
+PASS R10_BACKGROUND_UNMOUNTS | 后台 → permit 卸下
+PASS R10B_SESSION_CANCELLED | 后台期间新 session 请求取消
+PASS R10C_RESUME_NOT_AUTO_READY | 回前台不自动 READY（无定时器伪心跳/旧 permit 续期）
+PASS R11_RESERVED_CANCELLED | RESERVED 采集遇 RUN_RESET → CANCELLED/RUN_RESET
+PASS R11B_ARMED_FROZEN | ARMED 采集遇 RUN_RESET → 冻结（frozen=1 armed=0 reason=RUN_RESET phaseBefore=RESET_REQUESTED phaseNow=RESET_REQUESTED）
+PASS R11C_REASON_IMMUTABLE | 后续 reset 不改写已冻结 reason（终态一次定型）
+PASS R12_FREEZE_PRESERVES_DEADLINE | 冻结不缩短/延续期限（250ms 保持）
+PASS R12B_DEADLINE_HONORED | 期限边界：恰到期接受、+1ns 拒绝（无宽限）
+PASS R12C_RESET_KILLS_PERMIT | reset 后旧 permit 立即失效
+PASS R13_STALE_RESOURCES_REFUSED | 旧 epoch 资源交接与旧 serial session 双拒绝
+PASS R13B_SESSION_OVERFLOW_REJECTED | session 溢出拒绝并置 requiresReset
+PASS R14_V1_COLD_CLOCK | 冷选 V1 → V1 clock READY
+PASS R14B_V2_COLD_CLOCK | 冷选 V2 → V2 clock READY，token 递增
+PASS R15_TX_REQUEST_RETIRING | 事务请求 → RETIRING
+PASS R15B_RESOURCES_BLOCKED_WHILE_RETIRING | 退休完成前资源交接拒绝
+PASS R15C_RING_BOUNDED_DROPS | 512 固定事件环：600 溢出 88 条丢弃计数
+PASS R15D_FIRST_FAULT_LATCHED | 首错锁存（SECOND 不覆盖 FIRST）
+T481 recovery differential: 31/31 PASS

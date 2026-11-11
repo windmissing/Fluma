@@ -1,0 +1,47 @@
+{
+  "schema": "T450_SIGNED_INSTALL_INPUT_V1",
+  "target": "t410",
+  "sha256": "8f1c45f711f1aaf9e07e6b68d65a8692ed5eaaecebffc54c5f7e60266bda39f6",
+  "signingReceipt": "D:\\hmprojects\\HelloWorld\\test\\reports\\t257\\T467-t410-final.json",
+  "file": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-t410-final\\T467-t410-final-signed.hap",
+  "bytes": 8720252,
+  "bundle": "com.example.helloworld",
+  "versionCode": 1000000,
+  "versionName": "1.0.0",
+  "install": [
+    "hdc",
+    "-t",
+    "<device>",
+    "install",
+    "-r",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-t410-final\\T467-t410-final-signed.hap"
+  ],
+  "stop": [
+    "hdc",
+    "-t",
+    "<device>",
+    "shell",
+    "aa",
+    "force-stop",
+    "com.example.helloworld"
+  ],
+  "launch": [
+    "hdc",
+    "-t",
+    "<device>",
+    "shell",
+    "aa",
+    "start",
+    "-b",
+    "com.example.helloworld",
+    "-a",
+    "EntryAbility",
+    "--pb",
+    "grsm1",
+    "true",
+    "--ps",
+    "gpusha",
+    "8f1c45f711f1aaf9e07e6b68d65a8692ed5eaaecebffc54c5f7e60266bda39f6"
+  ],
+  "device": "NOT_RUN"
+}

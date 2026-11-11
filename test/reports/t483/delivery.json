@@ -1,0 +1,191 @@
+{
+  "schema": "T483_SOURCE_RECOVERY_AUDIT_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "sources": {
+    "regular": {
+      "receipt": "test/reports/t257/T467-regular-final.json",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-regular-final\\T467-regular-final-signed.hap",
+        "sha256": "555b99eef9e4d5648301ec656d597d404b183cb53aa64beccd77f7ca752ce4c8",
+        "bytes": 8682548
+      },
+      "elfSHA": "ac687348f14df9e3df51e6cafe6cfcc56de8ef8732952222a55dbf70175d4c76",
+      "bridgeRawSHA": "8d77f1860556fd95f02cef06ed8e65a20db2743787ed23b44cdbb4f7cce38888",
+      "bridgeNormalizedSHA": "e44e8f9ca9ed44c2d11ccdebef76491cb7f024bc332aa62001389373b0ff6a0a",
+      "captureResetConditional": true,
+      "route": "M1",
+      "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t467-regular-final",
+      "freshProject": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t483-regular",
+      "normalizedSourceFilesMatched": 256,
+      "addedUnreferencedHeaders": [
+        "cpp/gpu_resident/m2/create_diagnostics.h",
+        "cpp/gpu_resident/program_cache/artifact_store.h",
+        "cpp/gpu_resident/program_cache/program_factory.h",
+        "cpp/gpu_resident/program_cache/sha256.h"
+      ],
+      "sourceTreeNormalizedSHA": "0d926626561597b8d9020f68a642629c1b3cdf363280f7a00843d54d6981d880",
+      "freshBridgeRawSHA": "e44e8f9ca9ed44c2d11ccdebef76491cb7f024bc332aa62001389373b0ff6a0a"
+    },
+    "experience": {
+      "receipt": "test/reports/t257/T467-experience-final.json",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-experience-final\\T467-experience-final-signed.hap",
+        "sha256": "1a3d8d5313480cc5bfbcac54d12ff461d2db2ef8cb79da70572ad9687b62f6f2",
+        "bytes": 8708044
+      },
+      "elfSHA": "b2dd4ba23abc90fb0f1ce9b31f2de0f31878e82f59eccf09f54f5e77ec561ea7",
+      "bridgeRawSHA": "8d77f1860556fd95f02cef06ed8e65a20db2743787ed23b44cdbb4f7cce38888",
+      "bridgeNormalizedSHA": "e44e8f9ca9ed44c2d11ccdebef76491cb7f024bc332aa62001389373b0ff6a0a",
+      "captureResetConditional": true,
+      "route": "M1",
+      "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t467-unit",
+      "freshProject": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t483-experience",
+      "normalizedSourceFilesMatched": 256,
+      "addedUnreferencedHeaders": [
+        "cpp/gpu_resident/m2/create_diagnostics.h",
+        "cpp/gpu_resident/program_cache/artifact_store.h",
+        "cpp/gpu_resident/program_cache/program_factory.h",
+        "cpp/gpu_resident/program_cache/sha256.h"
+      ],
+      "sourceTreeNormalizedSHA": "e15ccdfe66eefb4c7f53ab81f768aa24ad9c759ffd8b211910ac4aa7072c5010",
+      "freshBridgeRawSHA": "e44e8f9ca9ed44c2d11ccdebef76491cb7f024bc332aa62001389373b0ff6a0a"
+    },
+    "t410": {
+      "receipt": "test/reports/t257/T467-t410-final.json",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-t410-final\\T467-t410-final-signed.hap",
+        "sha256": "8f1c45f711f1aaf9e07e6b68d65a8692ed5eaaecebffc54c5f7e60266bda39f6",
+        "bytes": 8720252
+      },
+      "elfSHA": "445cfd47ed1ec5a78fc1c90d266092df141883ebf49496926a5cc30c854ce3f8",
+      "bridgeRawSHA": "8d77f1860556fd95f02cef06ed8e65a20db2743787ed23b44cdbb4f7cce38888",
+      "bridgeNormalizedSHA": "e44e8f9ca9ed44c2d11ccdebef76491cb7f024bc332aa62001389373b0ff6a0a",
+      "captureResetConditional": true,
+      "route": "M1",
+      "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t467-t410-final",
+      "freshProject": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t483-t410",
+      "normalizedSourceFilesMatched": 258,
+      "addedUnreferencedHeaders": [
+        "cpp/gpu_resident/m2/create_diagnostics.h",
+        "cpp/gpu_resident/program_cache/artifact_store.h",
+        "cpp/gpu_resident/program_cache/program_factory.h",
+        "cpp/gpu_resident/program_cache/sha256.h"
+      ],
+      "sourceTreeNormalizedSHA": "ab0e93af1153d38dcc60ab96937f4cb0bea70aedbc6883f3f677b3149a4d62f4",
+      "freshBridgeRawSHA": "e44e8f9ca9ed44c2d11ccdebef76491cb7f024bc332aa62001389373b0ff6a0a"
+    },
+    "t437": {
+      "receipt": "test/reports/t257/T467-t437-final.json",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T467-t437-final\\T467-t437-final-signed.hap",
+        "sha256": "9ae69471db925ac0cd631904f874bb9df4ee5fcec259e5d2f37983d0748cd2df",
+        "bytes": 8730766
+      },
+      "elfSHA": "da684997611ce14f658350868c997166f6427c558f4db9cd618edb3c628caf4a",
+      "bridgeRawSHA": "17a294b2e4efdaad3aecc5eefa1ce364bdc8146f26ec3b0a885e66cdded72d86",
+      "bridgeNormalizedSHA": "50b0af8fe47d11f042a5b731f383cea14c713af0acd0815b7611ceec6161b416",
+      "captureResetConditional": true,
+      "route": "M1",
+      "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t467-t437-final",
+      "freshProject": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t483-t437",
+      "normalizedSourceFilesMatched": 258,
+      "addedUnreferencedHeaders": [
+        "cpp/gpu_resident/m2/create_diagnostics.h",
+        "cpp/gpu_resident/program_cache/artifact_store.h",
+        "cpp/gpu_resident/program_cache/program_factory.h",
+        "cpp/gpu_resident/program_cache/sha256.h"
+      ],
+      "sourceTreeNormalizedSHA": "97109dcb06f6d8a1c6d53b0cbc08186f4096cd27a803c5f24985038c1593a2af",
+      "freshBridgeRawSHA": "50b0af8fe47d11f042a5b731f383cea14c713af0acd0815b7611ceec6161b416"
+    },
+    "T475": {
+      "receipt": "test/reports/t257/T475-handoff.json",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T475-handoff\\T475-handoff-signed.hap",
+        "sha256": "29ecdbdecf506d277762fc36ced88686fef179a3be8cf8e8b0875fb3241785ec",
+        "bytes": 9446661
+      },
+      "elfSHA": "6bc31490472d99ca369899a2f3d6b261b9f6f2932ee1d1827c5084a606ddb49b",
+      "bridgeRawSHA": "5f528c9bf14992821cee26859fa85e34583cac48c726432a6d8871364c8ea21f",
+      "bridgeNormalizedSHA": "26b8638021f23b5423cc9b1a8fce30ddb2855470dcf16d7d9ec033746f0f1a7b",
+      "captureResetConditional": true,
+      "route": "M2",
+      "shaderSHA": "eb479a7b4fb3be0dc06245aef95b05e4ceabcaa9f9de7051994c5ac4504a1c1c",
+      "sourceLine1138": "        if (m2KeyLess(W[at+m2OldRank(mid,d0,d1)],slot,k)) low=mid+1u;",
+      "recoveryOverlayMatchesT482": true
+    }
+  },
+  "intermediate": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t467-dev\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+    "rawSHA": "0919caecc81399ed6182da27bb835906cb2a743253f54944edf56d73385dfeba",
+    "classification": "INTERMEDIATE_SOURCE_NOT_FINAL_SIGNING_INPUT",
+    "preserved": true
+  },
+  "recoveryEvidence": {
+    "file": "test/reports/t473/boot-after-ready.json",
+    "sha256": "bd7052398d36cf28e5d3326363f1e26f310d5f2dec042f0836eb3292a316bd4e",
+    "readyEpoch": "4",
+    "firstFailure": {
+      "stage": "V2_PULSE_CLOCK_GAP",
+      "ns": "3765596935180797",
+      "tid": "57000",
+      "root": "4",
+      "a": "3765596901707360",
+      "b": "3765596935171578",
+      "c": "33464218",
+      "result": 0,
+      "rawEgl": 0,
+      "rawGl": 0
+    },
+    "latest": {
+      "stage": "CLOCK_RAW_DOMAINS",
+      "ns": "3765596935184703",
+      "tid": "57000",
+      "root": "4",
+      "a": "3765596898456715",
+      "b": "3765596901707360",
+      "c": "3765597179777516",
+      "result": 0,
+      "rawEgl": 0,
+      "rawGl": 0
+    },
+    "gapNs": 33464218,
+    "limitNs": 33333333,
+    "ringIncomplete": true,
+    "ringDropped": 7571,
+    "deviceInstalledHapIdentity": "TESTER_REPORTED_T467_EXPERIENCE_FINAL",
+    "driverCallCause": "NOT_ESTABLISHED"
+  },
+  "t410Declaration": {
+    "file": "test/reports/t410-v4/t410_ld.json",
+    "declaredSHA": "63b0fd25e8476fd2bf792b142f63caf52b60c3bdf0f0a1363e74fa806c4fa706",
+    "expectedT467SHA": "8f1c45f711f1aaf9e07e6b68d65a8692ed5eaaecebffc54c5f7e60266bda39f6",
+    "identity": "OLD_T450_DECLARATION",
+    "installedHapIdentity": "NOT_PROVEN_BY_DECLARATION"
+  },
+  "installInputTests": {
+    "schema": "T483_INSTALL_INPUT_CHECKS_V1",
+    "passed": 6,
+    "failed": 0,
+    "device": "NOT_RUN"
+  },
+  "recoveryChecks": {
+    "verdict": "PASS",
+    "passed": 31,
+    "total": 31,
+    "schema": "T481_RECOVERY_DIFF_V1",
+    "domain": "HOST_SCRIPTED_OFFLINE"
+  },
+  "build": {
+    "status": "PASS",
+    "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t483-experience",
+    "log": "test/reports/t483/build.txt"
+  },
+  "nextConditions": {
+    "T461_T477": "Use T482-final signing receipt for M2 whole root and cold/warm verification",
+    "T410": "Use install-t410.json exact HAP and Want SHA; explicit reset; capture fresh same-run READY and first GAP domains",
+    "T437": "Use install-t437.json exact dual-route HAP and Want SHA; explicit reset; compare full/prefix in valid READY window",
+    "T473": "READY then GAP is observed; current ring overflow prevents attributing a particular driver call"
+  }
+}
