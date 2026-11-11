@@ -1,0 +1,68 @@
+{
+  "schema": "T469_DEVELOPER_DELIVERY_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "units": {
+    "schema": "T469_GENERATED_RASTER_CHECKS_V1",
+    "passed": 31,
+    "failed": 0,
+    "cases": [
+      "floor 0.9999999999999998",
+      "floor 1",
+      "floor 1.0000000000000002",
+      "floor 1177.9999999999998",
+      "floor 1178",
+      "floor 1178.0000000000002",
+      "floor 1177.5",
+      "floor 0",
+      "floor -1",
+      "floor NaN",
+      "floor Infinity",
+      "floor 2147483648",
+      "actual two frames, exact integer sizes and both coordinate domains",
+      "EGL -1",
+      "EGL 1",
+      "old packet width",
+      "stale packet after surfaceEpoch",
+      "stale packet after contextEpoch",
+      "wrong actual component at 1178",
+      "touch layer must match actual node",
+      "transform unsupported",
+      "window origin mismatch",
+      "delayed layout rejects old frame, two distinct frames after layout",
+      "same floor movement invalidates permit and reserve has zero side effects",
+      "same floor scale change invalidates an open hold before clock and keeps first reason",
+      "generated draw packet uses allocated integer size and rejects mismatching EGL",
+      "rotation and native generation need new layout",
+      "old observer cannot consume new plan",
+      "keyboard occlusion stays strict",
+      "keyboard configuration unknown stays strict",
+      "pixel lengths on real inner nodes"
+    ],
+    "device": "NOT_RUN"
+  },
+  "build": {
+    "status": "PASS",
+    "summary": "BUILD SUCCESSFUL in 35 s 423 ms",
+    "warningsPresent": true,
+    "tasksExecuted": 30,
+    "log": ".codex/local-test/t469-handoff-build.txt",
+    "command": "hvigorw --mode module -p product=default -p module=entry@default default@PackageHap --no-daemon"
+  },
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T469-release\\T469-release-signed.hap",
+    "sha256": "cab5081663aab4626b8b3dad9cbd203e724f1d2224c05db1ed744ac9180eacdf",
+    "bytes": 7457723
+  },
+  "signReceipt": "test/reports/t257/T469-release.json",
+  "baseComparison": {
+    "base": "fresh T455 generator at same checkout",
+    "sourceFilesCompared": 329,
+    "changedSourceFiles": 6,
+    "nativeAndResourcesUnchanged": true
+  },
+  "handoff": {
+    "T474": "Independent offline differential checks against generated source",
+    "T408": "Recalibrate on signed HAP and validate actual ArkUI/EGL geometry, ROI, PNG and clock"
+  }
+}
