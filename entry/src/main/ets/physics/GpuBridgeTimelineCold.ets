@@ -4,7 +4,7 @@ export interface ColdFile {name:string;bytes:number;sha256:string;}
 export interface TimelineStore {save(name:string,text:string):Promise<ColdFile>;}
 export interface TimelineIdentity {module:string;route:string;packageSha256:string;pid:number;}
 export interface TimelineRow {serial:string;ns:string;tid:string;epoch:string;run:string;surface:string;input:string;now:string;last:string;delta:string;root:string;stage:number;}
-const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel','SubmitWarmup','BatchCall','Flush','Continuation','Inflight','RealPoll','Accepted','Gap','Presentation','StagingFlush','ColdFixture','ColdStagingFlush','ColdBatch','ColdFence','ColdCleanup','ColdBatchFlush','IsolationCall','IsolationRevoke','PagePulse','PlanGrant','QuotaBalance','JobIntent','ProgressTimeout','SourceBoundary'];
+const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel','SubmitWarmup','BatchCall','Flush','Continuation','Inflight','RealPoll','Accepted','Gap','Presentation','StagingFlush','ColdFixture','ColdStagingFlush','ColdBatch','ColdFence','ColdCleanup','ColdBatchFlush','IsolationCall','IsolationRevoke','PagePulse','PlanGrant','QuotaBalance','JobIntent','ProgressTimeout','SourceBoundary','BatchFlushEnter','BatchFlushExit'];
 interface TimelinePage {revision:string;clock:string;capacity:number;rowBytes:number;count:number;dropped:string;serial:string;cursor:number;rows:TimelineRow[];next:number;completePage:boolean;stageRevision:string;}
 export class TimelineManifest {
  stageRevision:string='T295_STAGE23_V1';stages:string[]=['INVALID','Invalidate','InitBegin','Ready','ReadyRejected','WaitEnter','Wake','FirstTick','AdvanceBegin','AdvanceEnd','AnchorSet','PumpBegin','PumpEnd','DrawBegin','DrawEnd','SwapBegin','SwapEnd','PauseBegin','PauseEnd','Offer','Consume','Stale','RootSubmit','RootPoll'];
@@ -12,6 +12,7 @@ export class TimelineManifest {
  revision:string='T306_TIMELINE_COLD_V1';state:string='INCOMPLETE';reason:string='NOT_STARTED';identity:TimelineIdentity;
  before:string='';after:string='';statusBefore:string='';statusAfter:string='';pages:number=0;rows:number=0;missing:number=0;duplicates:number=0;
  firstSerial:string='';lastSerial:string='';groups:string[]=[];files:ColdFile[]=[];dataBytes:number=0;cancelled:boolean=false;end:string='END';
+ rejectedPage:ColdFile|null=null;
  constructor(id:TimelineIdentity){this.identity={module:id.module,route:id.route,packageSha256:id.packageSha256,pid:id.pid};}
 }
 export class GpuBridgeTimelineCold {
@@ -29,6 +30,7 @@ export class GpuBridgeTimelineCold {
    case 'T389_STAGE57_V1':return 57;
    case 'T398_STAGE59_V1':return 59;
    case 'T404_STAGE65_V1':return 65;
+   case 'T477_STAGE67_V1':return 67;
    default:return 0;
   }
  }
@@ -41,14 +43,14 @@ export class GpuBridgeTimelineCold {
   return p;
  }
  async collect(module:TimelineModule,store:TimelineStore,id:TimelineIdentity,yieldUi:()=>Promise<void>):Promise<TimelineManifest> {
-  if(this.busy)throw new Error('EXPORT_BUSY');this.busy=true;this.cancelled=false;const out=new TimelineManifest(id);const prefix='gpu-timeline-'+id.module+'-'+id.pid+'-'+(++this.sequence)+'-'+Date.now();let previousNs='0',previousSerial='0';let target=0;let chunk='';let chunkIndex=0;
+  if(this.busy)throw new Error('EXPORT_BUSY');this.busy=true;this.cancelled=false;const out=new TimelineManifest(id);const prefix='gpu-timeline-'+id.module+'-'+id.pid+'-'+(++this.sequence)+'-'+Date.now();let previousNs='0',previousSerial='0';let target=0;let chunk='';let chunkIndex=0;let pendingRaw:string='';
   const flush=async ():Promise<void>=>{if(!chunk)return;const file=await store.save(prefix+'-part'+chunkIndex+'.ndjson',chunk);out.files.push(file);out.dataBytes+=file.bytes;chunk='';chunkIndex++;};
   try {
    if(!/^[a-fA-F0-9]{64}$/.test(id.packageSha256))throw new Error('PACKAGE_SHA_REQUIRED');
-   out.statusBefore=module.status();const initial=module.timeline(0);const first=this.page(initial,0);out.stageRevision=first.stageRevision;out.stages=out.stages.concat(TRANSPORT_STAGES.slice(0,this.stageLimit(first.stageRevision)-23));out.before=initial;target=first.count;let cursor=0;const start=Date.now();
+   out.statusBefore=module.status();const initial=module.timeline(0);pendingRaw=initial;const first=this.page(initial,0);pendingRaw='';out.stageRevision=first.stageRevision;out.stages=out.stages.concat(TRANSPORT_STAGES.slice(0,this.stageLimit(first.stageRevision)-23));out.before=initial;target=first.count;let cursor=0;const start=Date.now();
    do {
     if(this.cancelled)throw new Error('CANCELLED');if(Date.now()-start>30000)throw new Error('EXPORT_TIMEOUT');
-    const raw=cursor===0?initial:module.timeline(cursor);const p=this.page(raw,cursor);
+    const raw=cursor===0?initial:module.timeline(cursor);pendingRaw=raw;const p=this.page(raw,cursor);pendingRaw='';
     if(p.count<target||p.rowBytes!==first.rowBytes||p.stageRevision!==first.stageRevision)throw new Error('PREFIX_CHANGED');
     if(cursor<target&&p.next===cursor)throw new Error('MISSING_PAGE');
     const take=Math.min(p.rows.length,target-cursor);
@@ -60,11 +62,15 @@ export class GpuBridgeTimelineCold {
     if(cursor>=target)break;await yieldUi();
    }while(out.pages<=1024);
    if(out.rows!==target)throw new Error('MISSING_ROWS');await flush();
-   out.after=module.timeline(0);const last=this.page(out.after,0);out.statusAfter=module.status();
+   out.after=module.timeline(0);pendingRaw=out.after;const last=this.page(out.after,0);pendingRaw='';out.statusAfter=module.status();
    if(last.stageRevision!==first.stageRevision||last.count!==first.count||last.serial!==first.serial||last.dropped!==first.dropped)throw new Error('GREW_DURING_EXPORT');
    if(id.packageSha256!==out.identity.packageSha256||id.module!==out.identity.module||id.pid!==out.identity.pid)throw new Error('PACKAGE_IDENTITY_CHANGED');
    if(first.dropped!=='0')throw new Error('NATIVE_DROPPED');out.state='COMPLETE';out.reason='STABLE_PREFIX_FULL_TRACE';
-  }catch(e){out.state='INCOMPLETE';out.reason=String(e);out.cancelled=this.cancelled;try{await flush();}catch(io){out.reason+=';STORE:'+String(io);}}
+  }catch(e){out.state='INCOMPLETE';out.reason=String(e);out.cancelled=this.cancelled;
+   if(pendingRaw.length>0&&pendingRaw.length<=16384){
+    try{out.rejectedPage=await store.save(prefix+'-rejected-page.json',pendingRaw);}catch(io){out.reason+=';REJECTED_PAGE_STORE:'+String(io);}
+   }
+   try{await flush();}catch(io){out.reason+=';STORE:'+String(io);}}
   try{const manifest=await store.save(prefix+'-manifest.json',JSON.stringify(out));console.info('GRS_TIMELINE_COLD '+JSON.stringify({file:manifest.name,bytes:manifest.bytes,sha256:manifest.sha256,packageSha256:id.packageSha256,module:id.module,state:out.state}));}finally{this.busy=false;}
   return out;
  }

@@ -18,7 +18,13 @@ function edit(p,f){const file=path.join(main,p);fs.writeFileSync(file,f(fs.readF
 function one(s,a,b){if(s.split(a).length!==2)throw Error('T467_SOURCE_DRIFT '+a);return s.replace(a,b);}
 function span(s,a,b,v){const i=s.indexOf(a),j=s.indexOf(b,i);if(i<0||j<0)throw Error('T467_SPAN '+a);return s.slice(0,i)+v+s.slice(j);}
 fs.copyFileSync('entry/src/main/cpp/gpu_resident/recovery_v3.h',path.join(base,'recovery_v3.h'));
+edit('cpp/gpu_resident/submit_observer.h',s=>one(s,'ProgressTimeout,SourceBoundary};','ProgressTimeout,SourceBoundary,BatchFlushEnter,BatchFlushExit};'));
+edit('cpp/gpu_resident/bridge_timeline.h',s=>one(s,
+ '#ifdef GRS_PROGRESS_V2_EXPERIMENT\n "T404_STAGE65_V1":\n#else\n "T398_STAGE59_V1":\n#endif',
+ ' "T477_STAGE67_V1":'));
+fs.copyFileSync('entry/src/main/ets/physics/GpuBridgeTimelineCold.ets',path.join(main,'ets/physics/GpuBridgeTimelineCold.ets'));
 edit('cpp/gpu_resident/app_bridge.cpp',s=>{
+ s=one(s,'const bool runnable=run&&!failed', 'const bool runnable=AllowedLocked()&&run&&!failed');
  s=one(s,'#include "boot_probe.h"','#include "boot_probe.h"\n#include "recovery_v3.h"');
  s=one(s,' m1::ProgressClockV2 progress;',read('recovery_bridge.inc')+'\n m1::ProgressClockV2 progress;');
  s=span(s,' void TryReadyV2Locked(){',' const char* PagePulseLocked',` void TryReadyV2Locked(){
@@ -70,9 +76,9 @@ edit('cpp/gpu_resident/app_bridge.cpp',s=>{
  s=one(s,'\n     committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());','\n#ifndef GRS_APP_M1\n     committed=CommitReadyLocked(seen,held,id,gpu->InputGeneration());\n#endif');
  s=one(s,'if(session!=a.progress.session)return text(e,"STALE_PAGE_SESSION");','if(session!=a.progress.session||!a.progress.open||a.recovery.session!=session)return text(e,"STALE_PAGE_SESSION");');
  s=one(s,'controlAnchor=last;}','RecoveryNote("ANCHOR_SET",2,controlAnchor,last);controlAnchor=last;}');
- s=one(s,'     app.AddTailLocked(sample,begin);',`     if(uint32_t(sample.stage)==141||uint32_t(sample.stage)==142){
-      app.RecoveryNote(uint32_t(sample.stage)==141?"FLUSH_ENTER":"FLUSH_EXIT",2,sample.a,sample.b,sample.start);
-      if(uint32_t(sample.stage)==141){app.recovery.calling=true;app.recovery.inCall={"FLUSH_ENTER",sample.start,BridgeTid(),app.recovery.serial,app.recovery.epoch,app.recovery.session,app.permissionRevision,sample.root,sample.a,sample.b,0,2,0};app.recovery.inCall.root=sample.root;app.recovery.inCall.stamp=sample.start;app.recovery.inCall.a=sample.a;app.recovery.inCall.b=sample.b;}
+ s=one(s,'     app.AddTailLocked(sample,begin);',`     if(sample.stage==TailStage::BatchFlushEnter||sample.stage==TailStage::BatchFlushExit){
+      app.RecoveryNote(sample.stage==TailStage::BatchFlushEnter?"FLUSH_ENTER":"FLUSH_EXIT",2,sample.a,sample.b,sample.start);
+      if(sample.stage==TailStage::BatchFlushEnter){app.recovery.calling=true;app.recovery.inCall={"FLUSH_ENTER",sample.start,BridgeTid(),app.recovery.serial,app.recovery.epoch,app.recovery.session,app.permissionRevision,sample.root,sample.a,sample.b,0,2,0};app.recovery.inCall.root=sample.root;app.recovery.inCall.stamp=sample.start;app.recovery.inCall.a=sample.a;app.recovery.inCall.b=sample.b;}
       else app.recovery.calling=false;
      }
      app.AddTailLocked(sample,begin);`);
@@ -88,7 +94,7 @@ edit('cpp/gpu_resident/app_bridge.cpp',s=>{
 edit('cpp/gpu_resident/m1/source_owner.h',s=>one(s,' bool HasLeases()const', ' bool RetirementLease(size_t slot,U64& generation)const{if(slot>=2)return false;const auto& p=pubs[slot];generation=p.generation;return p.leased||p.releasePending;}\n bool HasLeases()const'));
 edit('cpp/gpu_resident/m1/full_transport.cpp',s=>{
  const begin=s.indexOf('void FullM1Transport::FlushBatch('),end=s.indexOf('TransportCode FullM1Transport::ObserveBatch',begin);
- const a=s.slice(begin,end).replace(' glFlush();',' tailObserver.Emit({TailStage(141),(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,0,from,passCursor,0,uint32_t(final),batchesIssued});\n glFlush();').replace(' const auto after=tailObserver.Stamp();',' const auto after=tailObserver.Stamp();\n tailObserver.Emit({TailStage(142),(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,after,from,passCursor,0,uint32_t(final),batchesIssued});');
+ const a=s.slice(begin,end).replace(' glFlush();',' tailObserver.Emit({TailStage::BatchFlushEnter,(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,0,from,passCursor,0,uint32_t(final),batchesIssued});\n glFlush();').replace(' const auto after=tailObserver.Stamp();',' const auto after=tailObserver.Stamp();\n tailObserver.Emit({TailStage::BatchFlushExit,(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,after,from,passCursor,0,uint32_t(final),batchesIssued});');
  return s.slice(0,begin)+a+s.slice(end);
 });
 fs.copyFileSync(path.join(__dirname,'GpuRecoveryPulse.ets'),path.join(main,'ets/physics/GpuRecoveryPulse.ets'));

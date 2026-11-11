@@ -22,7 +22,7 @@ edit('cpp/gpu_resident/m2route/full_transport.cpp', s => {
     if (begin < 0 || end < 0)
         throw Error('T475_RECOVERY_FLUSH_SITE');
     const body = s.slice(begin, end);
-    const patched = one(one(body, ' glFlush();', ' tailObserver.Emit({TailStage(141),(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,0,from,passCursor,0,uint32_t(final),batchesIssued});\n glFlush();'), ' const auto after=tailObserver.Stamp();', ' const auto after=tailObserver.Stamp();\n tailObserver.Emit({TailStage(142),(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,after,from,passCursor,0,uint32_t(final),batchesIssued});');
+    const patched = one(one(body, ' glFlush();', ' tailObserver.Emit({TailStage::BatchFlushEnter,(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,0,from,passCursor,0,uint32_t(final),batchesIssued});\n glFlush();'), ' const auto after=tailObserver.Stamp();', ' const auto after=tailObserver.Stamp();\n tailObserver.Emit({TailStage::BatchFlushExit,(uint64_t(pending.nonce.hi)<<32)|pending.nonce.lo,before,after,from,passCursor,0,uint32_t(final),batchesIssued});');
     return s.slice(0, begin) + patched + s.slice(end);
 });
 edit('cpp/gpu_resident/m2route/source_owner.h', s => one(s, ' bool HasLeases()const', ' bool RetirementLease(size_t slot,U64& generation)const{if(slot>=2)return false;const auto& p=pubs[slot];generation=p.generation;return p.leased||p.releasePending;}\n bool HasLeases()const'));

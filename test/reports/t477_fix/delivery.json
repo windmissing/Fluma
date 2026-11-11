@@ -1,0 +1,257 @@
+{
+  "schema": "T477_RERUN_V2_DEVELOPER_FIX_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "units": {
+    "schema": "T477_FIX_UNITS_V1",
+    "passed": 9,
+    "failed": 0,
+    "cases": [
+      "native stage66/67 export crosses the former 120-row boundary",
+      "old dictionary still rejects raw141 and preserves the exact rejected page",
+      "new dictionary rejects unknown68 and retains rejected bytes",
+      "native dropped stays INCOMPLETE with the full readable prefix",
+      "same-session native revoke reports original GAP and stops old pulses",
+      "revoke between state read and pulse preserves native reason",
+      "explicit new frame rebinds a new reset; an old frame cannot send",
+      "genuine native CLOCK_GAP is terminal without new session or reset",
+      "offline reader recognizes bounded enter event with no fabricated exit"
+    ],
+    "device": "NOT_RUN"
+  },
+  "frames": {
+    "schema": "T467_REAL_PAGE_FRAME_CONTROLS_V1",
+    "passed": 12,
+    "failed": 0
+  },
+  "regressions": {
+    "t306": {
+      "revision": "T306_TIMELINE_COLD_UNITS_V1",
+      "passed": 20,
+      "failed": 0,
+      "fsyncCalls": 56,
+      "device": "NOT_RUN",
+      "cases": [
+        {
+          "name": "stable 0 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "stable 1 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "stable 4096 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "skip cursor => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "wrong next => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate serial => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid U64 => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "numeric ns => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown stage => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "partial page => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "count shrinks => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "native overflow => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "growth => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "missing package SHA refused",
+          "status": "PASS"
+        },
+        {
+          "name": "oversized page exceeds fixed budget",
+          "status": "PASS"
+        },
+        {
+          "name": "interrupted native reader emits INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "cancel yields partial files + INCOMPLETE manifest",
+          "status": "PASS"
+        },
+        {
+          "name": "package identity change detected",
+          "status": "PASS"
+        },
+        {
+          "name": "file fault remains explicit incomplete",
+          "status": "PASS"
+        },
+        {
+          "name": "both real pages call matching module, cancel on hide, no cold mutation",
+          "status": "PASS"
+        }
+      ]
+    },
+    "t404": {
+      "revision": "T306_TIMELINE_COLD_UNITS_V1",
+      "passed": 22,
+      "failed": 0,
+      "fsyncCalls": 60,
+      "device": "NOT_RUN",
+      "cases": [
+        {
+          "name": "stable 0 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "stable 1 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "stable 4096 rows preserves exact U64/file fsync+SHA",
+          "status": "PASS"
+        },
+        {
+          "name": "skip cursor => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "wrong next => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicate serial => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid U64 => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "numeric ns => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown stage => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "partial page => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "count shrinks => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "native overflow => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "growth => INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "missing package SHA refused",
+          "status": "PASS"
+        },
+        {
+          "name": "oversized page exceeds fixed budget",
+          "status": "PASS"
+        },
+        {
+          "name": "interrupted native reader emits INCOMPLETE",
+          "status": "PASS"
+        },
+        {
+          "name": "cancel yields partial files + INCOMPLETE manifest",
+          "status": "PASS"
+        },
+        {
+          "name": "package identity change detected",
+          "status": "PASS"
+        },
+        {
+          "name": "file fault remains explicit incomplete",
+          "status": "PASS"
+        },
+        {
+          "name": "both real pages call matching module, cancel on hide, no cold mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "T404 V2 stages60-65 preserve distinct identities",
+          "status": "PASS"
+        },
+        {
+          "name": "T404 stage66 rejected",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "recovery": {
+    "verdict": "PASS",
+    "passed": 31,
+    "total": 31,
+    "schema": "T481_RECOVERY_DIFF_V1",
+    "domain": "HOST_SCRIPTED_OFFLINE"
+  },
+  "generatedM2App": {
+    "schema": "T477_FIX_GENERATED_M2_GL_V1",
+    "passed": 1,
+    "failed": 0,
+    "admittedJQ": 131072,
+    "settledAfterUpQ": 131072,
+    "device": "NOT_RUN",
+    "capabilities": {}
+  },
+  "nativeDrawSwapCurrentAsserted": true,
+  "nativePresentedPhysicalFrames": 1,
+  "build": "PASS",
+  "signatureVerification": "PASS",
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T477-fix\\T477-fix-signed.hap",
+    "sha256": "b27eb2114579ae486d30e48c8155aa4a5448ac9e248c755aeb836923cbbac13a",
+    "bytes": 9460638
+  },
+  "elfSHA256": "5b1129f38dd13ece85ea0c5606d1d19ae91723fd1b0332a0114f29bc51f02cda",
+  "shaderBytesUnchangedFromT482": true,
+  "originalEvidence": {
+    "path": "test/reports/t477/device-rerun-v2/timeline/manifest.json",
+    "sha256": "504558afbf0363087c86c5de33fbf2f60028f25d96c676e25517fa4897fab499",
+    "exportRows": 120,
+    "nativeNewPhysicalFrames": "2446",
+    "gapNs": 34329218,
+    "limitNs": 33333333,
+    "interpretation": "GAP revokes an established session; native counter alone does not verify system pixels"
+  },
+  "deviceFollowup": [
+    "Export new timeline dictionary past row120 and keep all original rejected page bytes",
+    "Explicit new run/session after a real GAP; correlate boot/recovery/Draw/Swap in one scope",
+    "Confirm actual device presentation independently"
+  ],
+  "realGapStillRevokes": true
+}
