@@ -25,6 +25,9 @@ uint pubWater(){return uWater;}
 uint pubColumn(){return pubWater()+20u*uKw;}
 uint pubHeader(){return pubColumn()+2048u;}
 bool replaying=false;
+// Publication uses the committed candidate even during replay. Return a loaded
+// value so ordinary scalar parameters never receive a coherent storage lvalue.
+uint m2CandidateValue(uint at){return C[at];}
 uint st(uint at){return replaying?W[spare()+at]:C[at];}
 void put(uint at,uint v){if(replaying)W[spare()+at]=v;else C[at]=v;}
 uint h(uint i){return st(uHeader+i);}

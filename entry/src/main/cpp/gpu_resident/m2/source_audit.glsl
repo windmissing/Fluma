@@ -44,7 +44,7 @@ void endSource(){
         for(uint i=0u;i<32u;++i)W[T+i]=term[i];
     }else{
         if(cursor()!=W[S+9u]||state!=W[S]||uint(appendDedup)!=W[S+10u]){fail(M2_SOURCE_PREFIX_MISMATCH);return;}
-        for(uint i=0u;i<32u;++i){W[ctrl()+32u+i]=term[i];if(term[i]!=W[T+i]){mismatch(M2_SOURCE_PREFIX_MISMATCH,cursor()+1u,i,term[i],W[T+i]);return;}}
+        for(uint i=0u;i<32u;++i){W[ctrl()+32u+i]=term[i];if(term[i]!=W[T+i]){uint actualWord=W[T+i];mismatch(M2_SOURCE_PREFIX_MISMATCH,cursor()+1u,i,term[i],actualWord);return;}}
         finalizeV3(true);
     }
 }
@@ -174,25 +174,30 @@ void finalizeV3(bool verify){
         uint a=sourceEvents()+n*16u;
         uint words[16]=uint[16](W[6],W[7],h(14u),h(15u),W[2],W[S+5u],W[S+3u],W[T+7u],W[T+6u],W[14],W[S+6u],W[S+7u],W[T+8u],W[T+9u],h(137u),h(139u));
         if(verify)words=uint[16](W[6],W[7],h(14u),h(15u),kind,column,admitted,term[7],births,W[14],x,y,term[8],term[9],merges,stopCode);
-        for(uint i=0u;i<16u;++i){if(verify&&W[a+i]!=words[i]){mismatch(M2_SOURCE_PREFIX_MISMATCH,cursor()+1u,a+i,words[i],W[a+i]);return;}if(!verify)W[a+i]=words[i];}
+        for(uint i=0u;i<16u;++i){if(verify&&W[a+i]!=words[i]){uint actualWord=W[a+i];mismatch(M2_SOURCE_PREFIX_MISMATCH,cursor()+1u,a+i,words[i],actualWord);return;}if(!verify)W[a+i]=words[i];}
     }
     if(W[S+10u]!=0u){
         if(d>=4096u){fail(11u);return;}
         uint a=DEDUP+64u*d;
         for(uint i=0u;i<32u;++i){
-            if(verify&&(W[a+i]!=W[i]||W[a+32u+i]!=term[i])){mismatch(M2_SOURCE_PREFIX_MISMATCH,cursor()+1u,a+i,W[a+i]!=W[i]?W[i]:term[i],W[a+i]!=W[i]?W[a+i]:W[a+32u+i]);return;}
+            if(verify&&(W[a+i]!=W[i]||W[a+32u+i]!=term[i])){
+                uint expectedWord=W[a+i]!=W[i]?W[i]:term[i];
+                uint actualWord=W[a+i]!=W[i]?W[a+i]:W[a+32u+i];
+                mismatch(M2_SOURCE_PREFIX_MISMATCH,cursor()+1u,a+i,expectedWord,actualWord);return;
+            }
             if(!verify){W[a+i]=W[i];W[a+32u+i]=W[T+i];}
         }
     }
     uvec2 generation;
     if(!grsAdd64(hp(72u),uvec2(1u,0u),generation)){fail(13u);return;}
     sethp(72u,generation);sethp(12u,uNonce);sethp(18u,uControl);sethp(49u,uFrame);
-    seth(76u,1u-uBaseBank);seth(77u,uBaseBank);seth(78u,2u);seth(79u,1u);seth(80u,W[S]);seth(81u,3u);seth(47u,uCarry);seth(38u,0u);
+    uint sourceState=W[S];
+    seth(76u,1u-uBaseBank);seth(77u,uBaseBank);seth(78u,2u);seth(79u,1u);seth(80u,sourceState);seth(81u,3u);seth(47u,uCarry);seth(38u,0u);
     if(!auditState()){fail(15u);return;}
     if(!verify)W[S+15u]=255u;
 }
 
 void compareSource(){
-    for(uint i=0u;i<uWords;++i){if(W[spare()+i]!=C[i]){mismatch(i==uHeader+142u||i==uHeader+143u?M2_SOURCE_MUTATION_SERIAL:M2_SOURCE_PREFIX_MISMATCH,W[S+9u]+1u,i,W[spare()+i],C[i]);return;}}
+    for(uint i=0u;i<uWords;++i){if(W[spare()+i]!=C[i]){uint expectedWord=W[spare()+i],actualWord=C[i];mismatch(i==uHeader+142u||i==uHeader+143u?M2_SOURCE_MUTATION_SERIAL:M2_SOURCE_PREFIX_MISMATCH,W[S+9u]+1u,i,expectedWord,actualWord);return;}}
     W[S+12u]=1u;W[S+15u]|=256u;
 }

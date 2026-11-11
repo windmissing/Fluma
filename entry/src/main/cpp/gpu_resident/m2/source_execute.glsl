@@ -34,14 +34,16 @@ void emitSource(uint row[128]){
         if(!m2SealSourceRow(row,at,2u*uK+1u)){failAt(M2_SOURCE_EVENT_SCHEMA,at+1u,0u);return;}
     }else{
         uint actual[128];
-        if(!m2ReadSourceRow(at,W[S+9u],2u*uK+1u,actual)){
+        uint sealedRows=W[S+9u];
+        if(!m2ReadSourceRow(at,sealedRows,2u*uK+1u,actual)){
             uint word=31u,expected=M2_sourceSeal;
             if(E[at*128u+31u]==M2_sourceSeal){
                 for(uint i=0u;i<128u;++i){uint v=i==31u?M2_sourceSeal:row[i];
                     if(actual[i]!=v){word=i;expected=v;break;}
                 }
             }
-            mismatch(M2_SOURCE_EVENT_SCHEMA,at+1u,word,expected,E[at*128u+word]);return;
+            uint actualWord=E[at*128u+word];
+            mismatch(M2_SOURCE_EVENT_SCHEMA,at+1u,word,expected,actualWord);return;
         }
         const uint orderFields[8]=uint[8](2u,15u,16u,25u,26u,27u,28u,29u);
         for(uint f=0u;f<8u;++f){uint i=orderFields[f];if(actual[i]!=row[i]){

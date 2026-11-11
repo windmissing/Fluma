@@ -17,6 +17,13 @@ def source_shader():
     pub = read(M1 / 'source_audit.glsl').split('bool auditPublication(){', 1)[1]
     pack = pack.replace('E[h+1u]=2u;', 'E[h+1u]=3u;')
     pub = 'bool auditPublication(){' + pub.replace('E[h+1u]!=2u', 'E[h+1u]!=3u')
+    # These M1 publication helpers also serve M2's coherent Candidate block.
+    # Keep the coherent load in the getter and pass only its value to arithmetic.
+    def publication_values(text):
+        return re.sub(r'(grsColumnPreservingFloatBits|grsQ20FloatBits)\(C\[([^\[\]]+)\]\)',
+                      r'\1(m2CandidateValue(\2))', text)
+    pack = publication_values(pack)
+    pub = publication_values(pub)
     completion = seal[seal.index('void sealCompletion()'):].replace('void sealCompletion()', 'void sealCompletionV3()')
     completion = completion.replace('W[S+14u]!=127u', 'W[S+14u]!=4095u')
     completion = completion.replace('E[1]=2u;', 'E[1]=3u;').replace('W[S]==4u?9u:0u', 'W[S]==4u?W[ctrl()+3u]:0u')

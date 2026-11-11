@@ -96,7 +96,9 @@ uint m2LowerBound(uint at, uint count, uint k, uint slot, uint d0, uint d1) {
     uint low=0u, high=count;
     while (low<high) {
         uint mid=(low+high)/2u;
-        if (m2KeyLess(W[at+m2OldRank(mid,d0,d1)],slot,k)) low=mid+1u;
+        // Preserve the coherent load; pass its value across the function boundary.
+        uint oldSlot=W[at+m2OldRank(mid,d0,d1)];
+        if (m2KeyLess(oldSlot,slot,k)) low=mid+1u;
         else high=mid;
     }
     return low;

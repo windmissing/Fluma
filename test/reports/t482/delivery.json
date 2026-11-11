@@ -1,0 +1,138 @@
+{
+  "schema": "T482_DEVELOPER_DELIVERY_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "sourceBoundary": {
+    "schema": "T482_SHADER_BOUNDARY_CHECK_V1",
+    "passed": 8,
+    "failed": 0,
+    "oldSourceSHA": "eb479a7b4fb3be0dc06245aef95b05e4ceabcaa9f9de7051994c5ac4504a1c1c",
+    "newSourceSHA": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+    "oldViolations": [
+      {
+        "line": 1138,
+        "function": "m2KeyLess"
+      },
+      {
+        "line": 1254,
+        "function": "m2ReadSourceRow"
+      },
+      {
+        "line": 1261,
+        "function": "mismatch"
+      },
+      {
+        "line": 1472,
+        "function": "mismatch"
+      },
+      {
+        "line": 1602,
+        "function": "mismatch"
+      },
+      {
+        "line": 1608,
+        "function": "mismatch"
+      },
+      {
+        "line": 1615,
+        "function": "seth"
+      },
+      {
+        "line": 1621,
+        "function": "mismatch"
+      },
+      {
+        "line": 1628,
+        "function": "grsColumnPreservingFloatBits"
+      },
+      {
+        "line": 1628,
+        "function": "grsQ20FloatBits"
+      },
+      {
+        "line": 1629,
+        "function": "grsColumnPreservingFloatBits"
+      },
+      {
+        "line": 1629,
+        "function": "grsQ20FloatBits"
+      },
+      {
+        "line": 1638,
+        "function": "grsColumnPreservingFloatBits"
+      },
+      {
+        "line": 1638,
+        "function": "grsQ20FloatBits"
+      },
+      {
+        "line": 1640,
+        "function": "grsColumnPreservingFloatBits"
+      },
+      {
+        "line": 1640,
+        "function": "grsQ20FloatBits"
+      }
+    ],
+    "newViolations": [],
+    "barriersPreserved": true,
+    "qualifiersPreserved": true,
+    "finalQuantumUnchanged": true,
+    "device": "NOT_RUN"
+  },
+  "programs": [
+    {
+      "role": "SOURCE",
+      "key": "4b181da781ae336c653c9caed2df0a2f5fe715babc5cda04124c3e36ff95d1c2",
+      "shaderSHA": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+      "cold": "PERSISTED",
+      "warm": "BINARY_LOAD",
+      "warmCompileCalls": 0
+    },
+    {
+      "role": "FINAL_QUANTUM",
+      "key": "8a1418ae50ca02c560ad156c0736b8f7d40e512c9cb37885265f5a97ff2bb903",
+      "shaderSHA": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc",
+      "cold": "PERSISTED",
+      "warm": "BINARY_LOAD",
+      "warmCompileCalls": 0
+    },
+    {
+      "role": "INTERMEDIATE_QUANTUM",
+      "key": "aff1eede4095346c0457513e3dd583a392bfb065c1a818f7430e64aa9f64c9f1",
+      "shaderSHA": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+      "cold": "PERSISTED",
+      "warm": "BINARY_LOAD",
+      "warmCompileCalls": 0
+    }
+  ],
+  "gpuRoots": {
+    "profiles": [
+      "192/64",
+      "192/128",
+      "512/64",
+      "512/128"
+    ],
+    "scope": "T452 SOURCE/replay/QUANTUM and rejection assertions"
+  },
+  "cacheKey": {
+    "old": "d35cc73bbd5db0dd585301d41691ef10ffbcad915b771b84401f12beebda7544",
+    "new": "4b181da781ae336c653c9caed2df0a2f5fe715babc5cda04124c3e36ff95d1c2",
+    "sameEnvironmentAndLayout": true
+  },
+  "build": "PASS",
+  "signVerify": "PASS",
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T482-final\\T482-final-signed.hap",
+    "sha256": "300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e",
+    "bytes": 9454076
+  },
+  "elfSHA": "783cb115038e83e22897400c8e350b9562fba7783fa6fbe2b8c766c9249fa5b2",
+  "oldElfSHA": "6bc31490472d99ca369899a2f3d6b261b9f6f2932ee1d1827c5084a606ddb49b",
+  "actualSourceBytesMatchedSignedElf": true,
+  "deviceFollowup": [
+    "T477 cold/warm main chain",
+    "T461 M2 whole root"
+  ],
+  "maleoonCompileResult": "NOT_RUN"
+}
