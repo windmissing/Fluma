@@ -49,3 +49,7 @@ C/E中的WORK/lease若现host无读回接口，tester可在测试编译域读取
 ## 4. 归因交付
 
 T453断言映射错误和T459输入/lease前置问题归tester修订独立测试；不是已确认产品数学缺陷。原T446语义oracle、T453结构子集、T459事务子集和T436运输对照按上表复用。新补证结果先回architect判断产品工程/设计/用例或仍缺证，manager仅登记派工，无重测或新增验收门。本轮只读核对已存原件和实现，未执行产品或设备测试，归因范围已完成。
+
+## 2026-11-12 T478/T484 实际补证工程接续
+
+T471线程/守护/lease用例首次归因与D1+D2+E可执行合同以 [T478](architecture-T478-symmetric-driver-lease-v2.md) 为准，保生产异步预约，不把worker单线程差分当完整覆盖。T479出生y/origin/断言解释纠偏及现有host受控BASE方案以 [T484](architecture-T484-m2-controlled-base-fixtures-v1.md) 为准，可直接交tester，无需线上注入接口或CPU仿真。旧卡报告保历史范围，未覆盖项不随其PASS关闭。

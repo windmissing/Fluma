@@ -51,3 +51,7 @@ manager据本稿新建P5缓存实施卡及其独立验证卡；T468继续完成�
 tester真机卡必须带“真机”标签且同设备串行。新包安装后的首次冷创建证明compile/export/PERSISTED；保留应用数据，强停并重新启动证明同keyload命中、源码compile计数为0，分别记录load/反射/warmup/READY/首root/Draw耗时。新空场/重建context再测，不能只测同进程同context复用。清数据/卸载会清私有缓存，应单列冷缓存场景，不能混作失效缺陷。用受控环境指纹/代码更改、坏档负控证明拒绝并正确重编译，原root事务和设备能力门不变。
 
 收益必须是实际冷/热启动时长对照和compile/load计数，不能仅以落盘文件存在或软件GL通过推真机加速。若设备格式数为0或实际load仍慢，带真实能力/时长回architect；不得因此省略失败日志或放宽控制时钟。失败首次归因仍回architect，manager不重跑测试。
+
+## 2026-11-12 T480 场景覆盖工程接续
+
+T475已实现M1/M2三compute program持久化，场景vertex/fragment首版未覆盖。新增 [T480工程稿](architecture-T480-scene-program-cache-v1.md) 明确三graphics role、双stage工厂、旧compute key与T475B001兼容、冷准备/反射/代际清理和同帧像素回归；不扩大T475关闭范围，不把compute真机暖load推为场景已通过。
