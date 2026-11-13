@@ -1,0 +1,360 @@
+{
+  "revision": "T492_DEVELOPER_DELIVERY_V1",
+  "device": "NOT_RUN",
+  "snapshot": {
+    "payloadBytes": 753664,
+    "ttlNs": "60000000000",
+    "copies": 1,
+    "pageRows": 4,
+    "pageBytes": 16384,
+    "traceAndDiagnosticBytes": 4194304
+  },
+  "rootDeadlineNs": "250000000",
+  "gapNs": "33333333",
+  "routes": {
+    "m1": {
+      "manifest": {
+        "revision": "T492_DIAGNOSTIC_OVERLAY_V1",
+        "route": "m1",
+        "sourceCommit": "dcf105dfd2b4f2e7b8d77ec43d58532ac8d6dc53",
+        "device": "NOT_RUN",
+        "files": {
+          "app_bridge.cpp": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0",
+          "timeline_snapshot.h": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+          "execution_diagnostics.h": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5",
+          "t492_source.h": "0167901f153df2f4f854c411ea2512c57413f955c0d6ac0c3b6adfe033c46474",
+          "program_cache/graphics_program_factory.h": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea",
+          "program_cache/program_factory.h": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244",
+          "program_cache/artifact_store.h": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+          "../p013renderer/fullframe_targets.cpp": "b6797f7e09f97bc150ca3f6527805fa4044bbfcd985fd3c4b4a0277152fbb0ec",
+          "m1/scene.cpp": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64"
+        },
+        "integrationFiles": {
+          "physics/GpuBridgeTimelineCold.ets": "d860ab989264d5737942aa6304d018519a4760038a5a5604b5ecbd60b9c64435",
+          "physics/GpuTimelineSnapshotCold.ets": "ddeb58d7d41d61ee4954d25c05e4a307b82ee18518357d72495a40254e5988b9",
+          "physics/GpuM1DemoController.ets": "fc5da8e0be15621994ad74d5f12a36137567f44d0d90cee615133bb5a7a817e5",
+          "physics/GpuRecoveryPulse.ets": "89b744717e26284765848461cf574c1afbc87ecfcef591545bdbdab5b9ae2ed0",
+          "pages/GpuResidentM1.ets": "dbccb806cbab4cccea5709eea1a30a862f1f19f1e51b17c8078dcfcb517e9753",
+          "pages/GpuSandWaterExperience.ets": "db8aa549a21890d13abce09183a0e60a592dba82554767bfa30217c55c2a5437"
+        }
+      },
+      "nativeControls": [
+        {
+          "schema": "T467_GENERATED_BRIDGE_CONTROLS_V1",
+          "passed": 23,
+          "failed": 0,
+          "device": "NOT_RUN"
+        },
+        {
+          "revision": "T492_NATIVE_CONTROLS_V1",
+          "passed": 20,
+          "failed": 0,
+          "device": "NOT_RUN"
+        }
+      ],
+      "pageControls": 20,
+      "preparations": {
+        "cold": {
+          "RESET_NATIVE_REQUEST": 1,
+          "OLD_PERMIT_TOMBSTONE": 1,
+          "RESET_REQUESTED": 1,
+          "INVALIDATE": 1,
+          "WAIT_ENTER": 2,
+          "WAKE": 1,
+          "CONTEXT_TOMBSTONES": 1,
+          "CONTEXT_RETIRED": 1,
+          "INIT_BEGIN": 1,
+          "RESOURCE_ENTER": 3,
+          "RESOURCE_EXIT": 3,
+          "PREPARE_ENTER": 2,
+          "PREPARE_EXIT": 2,
+          "COLD_FIXTURE": 1,
+          "SUBMIT_WARMUP": 2,
+          "SCENE_VAO_ENTER": 1,
+          "SCENE_VAO_EXIT": 1,
+          "SCENE_BUILD_ENTER": 3,
+          "GRAPHICS_COMPILE_ENTER": 6,
+          "GRAPHICS_COMPILE_EXIT": 6,
+          "GRAPHICS_LINK_ENTER": 3,
+          "GRAPHICS_LINK_EXIT": 3,
+          "SCENE_BUILD_EXIT": 3,
+          "RESOURCES_READY": 1,
+          "READY": 1,
+          "SESSION_HANDOFF": 1,
+          "PAGE_PULSE": 2,
+          "READY_COMMIT": 1
+        },
+        "warm": {
+          "RESET_NATIVE_REQUEST": 1,
+          "OLD_PERMIT_TOMBSTONE": 1,
+          "RESET_REQUESTED": 1,
+          "INVALIDATE": 1,
+          "WAIT_ENTER": 2,
+          "WAKE": 1,
+          "CONTEXT_TOMBSTONES": 1,
+          "CONTEXT_RETIRED": 1,
+          "INIT_BEGIN": 1,
+          "RESOURCE_ENTER": 3,
+          "RESOURCE_EXIT": 3,
+          "PREPARE_ENTER": 2,
+          "PREPARE_EXIT": 2,
+          "COLD_FIXTURE": 1,
+          "SUBMIT_WARMUP": 2,
+          "SCENE_VAO_ENTER": 1,
+          "SCENE_VAO_EXIT": 1,
+          "SCENE_BUILD_ENTER": 3,
+          "GRAPHICS_LOAD_ENTER": 3,
+          "GRAPHICS_LOAD_EXIT": 3,
+          "SCENE_BUILD_EXIT": 3,
+          "RESOURCES_READY": 1,
+          "READY": 1,
+          "SESSION_HANDOFF": 1,
+          "PAGE_PULSE": 2,
+          "READY_COMMIT": 1
+        }
+      },
+      "sourceGL": {
+        "schema": "T492_GENERATED_M1_SOURCE_GL_V1",
+        "passed": 1,
+        "failed": 0,
+        "admittedJQ": 131072,
+        "settledAfterUpQ": 131072,
+        "device": "NOT_RUN",
+        "capabilities": {}
+      },
+      "unchangedPhysics": {
+        "m1/experience_capabilities.h": "ccd286281412ec7e100a1ffcef22f10aa42833e4a83c37a52df8f2f2e8c49848",
+        "m1/full_kernel.cpp": "2f84fdfb6874b3f376e27e3a1b9ac8c7bb9ebd70396f4bc1dc3ae0b86013a4a0",
+        "m1/full_kernels.cmake": "82f819ee05c72fbcd2068b6dfa38f8b7409dd333456c8440f154612d59c88662",
+        "m1/full_source_audit.glsl": "1812e0a1cdeaec22f39c82b3fcf98b938242563ad01e9082502a0de5ceb83637",
+        "m1/full_transport.cpp": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c",
+        "m1/full_transport.h": "78ff42aad2862a7bfa54f132c6746f5b4008c4a1cbb9bfac7919d06cadc1558d",
+        "m1/layout_generated.h": "e0d1c23527077c26ad3d153013570315929c778b5804c5d37b894de5a6849e7e",
+        "m1/profile.cpp": "7d17baa842b5b675c3c48604087f18d685e2a653458252c9a6351c38999175d9",
+        "m1/profile.h": "b587b884c5883b0e879e1860a1c58269a6f107bfe115b8f32c9b364cce052b03",
+        "m1/progress_clock_v2.h": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a",
+        "m1/quantum_candidate.cpp": "d0838f4c4470c6c2adeebd54553090c449b5cb39b2efbdf2ee14afdde94024f1",
+        "m1/quantum_candidate.h": "9f3458190ce967d8e8275b63eddb6747b00effb2c0b1df289a9c9eea374616c2",
+        "m1/quantum_commit_main.glsl": "59c8f9bbf3819027115c4bd47d90fd95c283d1893ed3cc8d9bbc92b43a751346",
+        "m1/quantum_core.comp": "9c45c0a5d017b7b8d7c99c48b3a44bdd8ff5ab1febc3d7cd6756e11f45f6f404",
+        "m1/quantum_event_masks.glsl": "5cf26e4e74919163ce827ef25bd4f4d91941fd540a7db221cae17216d58dbc46",
+        "m1/quantum_geometry_audit.glsl": "d13d39a607b9535313900a9fc29118bfc2897cc8c16f7b13625d141a25f75dd9",
+        "m1/quantum_kernel.cpp": "495aa657f796a8cdb07b4a5c0044f53ddccaad117c99447089c897fddeaea7e6",
+        "m1/quantum_motion.glsl": "6114dc5de42fe92b4f57e180f38e76070e0e48bcab9a881fc6e36ab1fddbabac",
+        "m1/quantum_owner.inc": "10533e255da1bfabcf7f56747db845c5efbe6edd5e63b5f3f6720b49e98fb428",
+        "m1/quantum_replay.glsl": "ff51807adab6efed1d09d7287fb68ff7d2cbbcfcc35a4a78101d1eb3fc9ee0a4",
+        "m1/quantum_seal.glsl": "2ad914ab29b32d9e93d992d9cc79d3e6a8e6aefad1de2df97616543e0698d35d",
+        "m1/quantum_stages.glsl": "3ebc74ff2c680fefbdd6f4753be78e5bd2861221dfb0b65f3863c8ae0db9257b",
+        "m1/quantum_t16.glsl": "b4d2851fe5f560006632d59c41c8be630717d55179f597e4cd50374845c9b640",
+        "m1/root_isolation.h": "9dcdf6afb55ba716892e71d3fe8f7e899d87d581ed13d1ee0c27453803187836",
+        "m1/run.cpp": "db0172ff21448d64db1fff53880324904364fa467e33c4f3cef0a722477ad167",
+        "m1/run.h": "aa47746b62a11553c14bdea099855bcf14344dee78721226caa0ab29c84d1f11",
+        "m1/scene.frag": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445",
+        "m1/source_audit.glsl": "f6208143eaf76cab3bbee7a536d4c0697900f01066f1214e7e9bf10fb8fccc19",
+        "m1/source_core.comp": "8faf12f8250280631e845568efcb0943e3071087c100af1713a9a66728fbbe66",
+        "m1/source_kernel.cpp": "f91296c32b43f2fb7fd22f0b470d97367eb72c15b5edb3a9a763a60cd46ea3d2",
+        "m1/source_owner.cpp": "0390df4af9f546dc21ef688cccc1a772db8ca9bfa644650c28860f49a08049fb",
+        "m1/source_owner.h": "8e2317d78b7401a78a13ce992a4aff453afc182574497d94b27eece98abca60c",
+        "m1/source_seal.glsl": "2bee37bcaebb5c6b274240d0fddc1f58365d4817891800631432dc2230b1a1c6",
+        "m1/source_transport.cpp": "872818b5297118e8106caccd15a582cb75f2f139f2a7afa6faf584fd03d4830f",
+        "m1/source_transport.h": "8989a9e289dd191fc8495532ae6ede3ed713f6c1acefcd3f7484c13574d037b5",
+        "m1/ui_state.h": "6140e21a1055d6428b7c993577e1c46780c5a6a63973bf5a433e16c85e3d0e4a",
+        "m1/water_edge.comp": "f29a7ec29dd474335a6421a169da1c6dc0268039d193c0d8973ece1f9d20f59d",
+        "m1/water_glyph.frag": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612",
+        "m1/water_glyph.vert": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e"
+      },
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T492-m1-delivery\\T492-m1-delivery-signed.hap",
+        "sha256": "801c2d63ecd7a82d9e48bf92f0cbb6312a0c64074b477e527c0622150a9aa1b0",
+        "bytes": 9432164
+      },
+      "elfSHA256": "32947a028c8b88c2959c15c2ada1387337656200a820171b46c77f9c66973d2a",
+      "nativeReaderArchive": {
+        "file": "test/reports/t492/native-reader-m1.zip",
+        "sha256": "cacb9b65499d4eb114e7e302ee146f858dfd84b1cd054c723d7610f561c6c4b0"
+      }
+    },
+    "m2": {
+      "manifest": {
+        "revision": "T492_DIAGNOSTIC_OVERLAY_V1",
+        "route": "m2",
+        "sourceCommit": "dcf105dfd2b4f2e7b8d77ec43d58532ac8d6dc53",
+        "device": "NOT_RUN",
+        "files": {
+          "app_bridge.cpp": "1f029bc94b6ca4f204d421231cc8e4c9aaf0bdc64d2fdac0cd991ad4561602b6",
+          "timeline_snapshot.h": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+          "execution_diagnostics.h": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5",
+          "t492_source.h": "92c80e1227014d0b65adb9a9ef9cc975404097498bbce4e7b0c35fc22772ce31",
+          "program_cache/graphics_program_factory.h": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea",
+          "program_cache/program_factory.h": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244",
+          "program_cache/artifact_store.h": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+          "../p013renderer/fullframe_targets.cpp": "b6797f7e09f97bc150ca3f6527805fa4044bbfcd985fd3c4b4a0277152fbb0ec",
+          "m1/scene.cpp": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64",
+          "m2route/scene.cpp": "62afaba40729862472ab21dad4af644d944e124ab08780d88fd82a6b58462098"
+        },
+        "integrationFiles": {
+          "physics/GpuBridgeTimelineCold.ets": "d860ab989264d5737942aa6304d018519a4760038a5a5604b5ecbd60b9c64435",
+          "physics/GpuTimelineSnapshotCold.ets": "ddeb58d7d41d61ee4954d25c05e4a307b82ee18518357d72495a40254e5988b9",
+          "physics/GpuM1DemoController.ets": "9704c8a8ea5993541bade0efa707796ff37f063ae6415c1acac812b58019d75d",
+          "physics/GpuRecoveryPulse.ets": "89b744717e26284765848461cf574c1afbc87ecfcef591545bdbdab5b9ae2ed0",
+          "pages/GpuResidentM1.ets": "dbccb806cbab4cccea5709eea1a30a862f1f19f1e51b17c8078dcfcb517e9753",
+          "pages/GpuSandWaterExperience.ets": "34f751d587e1edfe4e7939c87aa0af4c70cbbd4c9fb1751eb55903d16f57c4dd"
+        }
+      },
+      "nativeControls": [
+        {
+          "schema": "T467_GENERATED_BRIDGE_CONTROLS_V1",
+          "passed": 23,
+          "failed": 0,
+          "device": "NOT_RUN"
+        },
+        {
+          "revision": "T492_NATIVE_CONTROLS_V1",
+          "passed": 20,
+          "failed": 0,
+          "device": "NOT_RUN"
+        }
+      ],
+      "pageControls": 20,
+      "preparations": {
+        "cold": {
+          "RESET_NATIVE_REQUEST": 1,
+          "OLD_PERMIT_TOMBSTONE": 1,
+          "RESET_REQUESTED": 1,
+          "INVALIDATE": 1,
+          "WAIT_ENTER": 2,
+          "WAKE": 1,
+          "CONTEXT_TOMBSTONES": 1,
+          "CONTEXT_RETIRED": 1,
+          "INIT_BEGIN": 1,
+          "RESOURCE_ENTER": 3,
+          "RESOURCE_EXIT": 3,
+          "PREPARE_ENTER": 2,
+          "PREPARE_EXIT": 2,
+          "COLD_FIXTURE": 1,
+          "SUBMIT_WARMUP": 2,
+          "SCENE_VAO_ENTER": 1,
+          "SCENE_VAO_EXIT": 1,
+          "SCENE_BUILD_ENTER": 3,
+          "GRAPHICS_COMPILE_ENTER": 6,
+          "GRAPHICS_COMPILE_EXIT": 6,
+          "GRAPHICS_LINK_ENTER": 3,
+          "GRAPHICS_LINK_EXIT": 3,
+          "SCENE_BUILD_EXIT": 3,
+          "RESOURCES_READY": 1,
+          "READY": 1,
+          "SESSION_HANDOFF": 1,
+          "PAGE_PULSE": 2,
+          "READY_COMMIT": 1
+        },
+        "warm": {
+          "RESET_NATIVE_REQUEST": 1,
+          "OLD_PERMIT_TOMBSTONE": 1,
+          "RESET_REQUESTED": 1,
+          "INVALIDATE": 1,
+          "WAIT_ENTER": 2,
+          "WAKE": 1,
+          "CONTEXT_TOMBSTONES": 1,
+          "CONTEXT_RETIRED": 1,
+          "INIT_BEGIN": 1,
+          "RESOURCE_ENTER": 3,
+          "RESOURCE_EXIT": 3,
+          "PREPARE_ENTER": 2,
+          "PREPARE_EXIT": 2,
+          "COLD_FIXTURE": 1,
+          "SUBMIT_WARMUP": 2,
+          "SCENE_VAO_ENTER": 1,
+          "SCENE_VAO_EXIT": 1,
+          "SCENE_BUILD_ENTER": 3,
+          "GRAPHICS_LOAD_ENTER": 3,
+          "GRAPHICS_LOAD_EXIT": 3,
+          "SCENE_BUILD_EXIT": 3,
+          "RESOURCES_READY": 1,
+          "READY": 1,
+          "SESSION_HANDOFF": 1,
+          "PAGE_PULSE": 2,
+          "READY_COMMIT": 1
+        }
+      },
+      "sourceGL": {
+        "schema": "T492_GENERATED_M2ROUTE_SOURCE_GL_V1",
+        "passed": 1,
+        "failed": 0,
+        "admittedJQ": 131072,
+        "settledAfterUpQ": 131072,
+        "device": "NOT_RUN",
+        "capabilities": {}
+      },
+      "unchangedPhysics": {
+        "m2route/create_shader_identity.h": "6b335b79f9926369440b8f98cc6493b46d1211361ed563c7f5706e9e6cccc871",
+        "m2route/full_kernel.cpp": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77",
+        "m2route/full_transport.cpp": "2f006a5283146170f7998b173b0b6e4530daf4c428671557186ca81411b3ce63",
+        "m2route/full_transport.h": "51fcf6b5866ea1dbd1a0eeb49ae07260256b1bb9491cce0848730706e3925e9e",
+        "m2route/layout_generated.h": "e4d9f3c7ec892b7622b4123ccf7b9ab2d29cb8ee2fcd01ead262397d85e8fd26",
+        "m2route/profile.cpp": "7278be2e469c55ffcff04f9df17027415cec27913291d4018b3aae4675d8c2e4",
+        "m2route/profile.h": "4f8d46202cd0b0e612b4a3fc5aea7418fb2be934bfd89e65da974cf18d2c509a",
+        "m2route/progress_clock_v2.h": "1e0152c6b4cfc4ef3b82e3130be8cfee926adb5f56d05a78c5cef29c78c2a21c",
+        "m2route/quantum_candidate.cpp": "e93ec2ce8c0a08e7de20cd8ca858aa1ba277d1f2e81a816b93ae7c678b34073a",
+        "m2route/quantum_candidate.h": "94b8f230be5344ba207792f1b7773747e299456bd3998f9882934c5d632ad078",
+        "m2route/quantum_kernel.cpp": "d92363654dcda4f4f044087c6cf9191140de8e6cc198dc531d05a94e3d362a58",
+        "m2route/quantum_owner.inc": "51d364444b4928fc58505510e24cc452217f0dce49db0cc650bfd9edcd691ad4",
+        "m2route/root_isolation.h": "f0b70fd6f1ab6d28aed21c6f72d24411e5cb83594e2a55a56a896c5e71796ee8",
+        "m2route/run.cpp": "68eced0fabb67d8b436e279083d681035513570ec76fe270d9d375438b5db671",
+        "m2route/run.h": "ec063c9281ff428869e6d154488b07454f422cc55f01af03e742f976d3a2abac",
+        "m2route/source_kernel.cpp": "bc823d266274fbc2e653af20c9d2b7233d01dc7ca3fbff88b961f9898bf6ed1e",
+        "m2route/source_owner.cpp": "fd8b24b465ecf6433183eaf6f4db085770f635b8a5ff5fc50294bebfb460400e",
+        "m2route/source_owner.h": "e916cc41c46c3f002ea31bbac0cf5bdba2726d4cba94d401a09f5d532bf397ec",
+        "m2route/source_transport.cpp": "fe3ded98e6750a71578dfe3a101103ac37bacebe5434fc5b3c14669a3c6f94d2",
+        "m2route/source_transport.h": "6a3dd3dd10c76ffe1421ac69598d66d3f21f046d95ee2879f273647444b3ab49",
+        "m2route/ui_state.h": "c49f2f9b059356d230f42ad4c20fd8eef73b07446cce716ce8c7396d90a038de",
+        "m2route/uniform_locations_v3.h": "f07e9f6faedfeaffdc9c3d46da02c5fae3cda44075b5d5879125c4ed420deb90"
+      },
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T492-m2-delivery\\T492-m2-delivery-signed.hap",
+        "sha256": "c6ba4032812f8ebaab428b9748cc9fb2e226c5480d20e6d212869714564d0ce8",
+        "bytes": 9626370
+      },
+      "elfSHA256": "b4df70a8f3706e6e9efe8144140bcb2f30a6684a03710fcc538aa1287d849954",
+      "nativeReaderArchive": {
+        "file": "test/reports/t492/native-reader-m2.zip",
+        "sha256": "b5a76b83fe82403658b29d7bdf53a2a2ec256ae15eb67fb5a7317c47bd1ea642"
+      }
+    }
+  },
+  "overlayFiles": {
+    "test/t492/bridge.inc": "78386c60b07f33ffb81e581eef364490d75df259ec1d0eacc669307e1397e44a",
+    "test/t492/build_app.cjs": "1b3487148fd88c265e9640a33520ebfc23e9f71006098c8bf503669eda1ef271",
+    "test/t492/build_controls.cjs": "d022bcbdfe1b147d0ddb3e6accb62e190d8b2e7cb4bf37a9c26748e948fb63d1",
+    "test/t492/build_source_gl.cjs": "668abe64ca6fc1fe1bfca826f69e39d9fb01d2b932525c41c183cec53e576ae4",
+    "test/t492/collect.py": "20dfa95779ddb8bf4364e86aeae85f364897760f99ba4136388d07a6349a85e7",
+    "test/t492/controls.inc": "c9baaf84d79d20dabbc4d50d7399de3bf96c430764f0b3b83e7606a4acb549da",
+    "test/t492/generate.cjs": "65b765a470f205ce8b1fde2ac972f33bf6484cf96b1ad26de72a3919fbdc13bf",
+    "test/t492/napi.inc": "4845215b5a2ce86a8b45a1d3404b93f713d8f34eab3b6066e73f7333dcfdfa31",
+    "test/t492/page_units.cjs": "960623d6ce55593c9aa9e82f88cf2b05269742f08bba91df4d02da510b085978",
+    "test/t492/pages.cjs": "5ca3ad7d01ef15c5981b7c6eacaa994dad4a6eec4d28bb607463e11c7973a03e",
+    "test/t492/README.md": "9f0a91206e04860553debacb07f6f11c0eda58bdcf8b5e3ccda18cab86e7c468",
+    "test/t492/regressions.cjs": "67f4a0abde1df0b4f51723ec52c09de78e2d612f916981ed289e39ee8247c5e1"
+  },
+  "legacyTimeline": {
+    "schema": "T477_FIX_UNITS_V1",
+    "passed": 9,
+    "failed": 0,
+    "cases": [
+      "native stage66/67 export crosses the former 120-row boundary",
+      "old dictionary still rejects raw141 and preserves the exact rejected page",
+      "new dictionary rejects unknown68 and retains rejected bytes",
+      "native dropped stays INCOMPLETE with the full readable prefix",
+      "same-session native revoke reports original GAP and stops old pulses",
+      "revoke between state read and pulse preserves native reason",
+      "explicit new frame rebinds a new reset; an old frame cannot send",
+      "genuine native CLOCK_GAP is terminal without new session or reset",
+      "offline reader recognizes bounded enter event with no fabricated exit"
+    ],
+    "device": "NOT_RUN"
+  },
+  "readerRegressions": {
+    "t306": 20,
+    "t404": 22
+  },
+  "status": "DEVELOPER_COMPLETE"
+}

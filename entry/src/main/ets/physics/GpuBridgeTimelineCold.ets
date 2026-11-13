@@ -5,7 +5,7 @@ export interface TimelineStore {save(name:string,text:string):Promise<ColdFile>;
 export interface TimelineIdentity {module:string;route:string;packageSha256:string;pid:number;}
 export interface TimelineRow {serial:string;ns:string;tid:string;epoch:string;run:string;surface:string;input:string;now:string;last:string;delta:string;root:string;stage:number;}
 const TRANSPORT_STAGES:string[]=['SubmitEnter','SubmitExit','ShaderEnter','ShaderExit','ProgramEnter','ProgramExit','ResourceEnter','ResourceExit','PrepareEnter','PrepareExit','DispatchEnter','DispatchExit','FenceEnter','FenceExit','PollEnter','PollExit','SubmitRootBegin','SubmitCancel','SubmitWarmup','BatchCall','Flush','Continuation','Inflight','RealPoll','Accepted','Gap','Presentation','StagingFlush','ColdFixture','ColdStagingFlush','ColdBatch','ColdFence','ColdCleanup','ColdBatchFlush','IsolationCall','IsolationRevoke','PagePulse','PlanGrant','QuotaBalance','JobIntent','ProgressTimeout','SourceBoundary','BatchFlushEnter','BatchFlushExit'];
-interface TimelinePage {revision:string;clock:string;capacity:number;rowBytes:number;count:number;dropped:string;serial:string;cursor:number;rows:TimelineRow[];next:number;completePage:boolean;stageRevision:string;}
+export interface TimelinePage {revision:string;clock:string;capacity:number;rowBytes:number;count:number;dropped:string;serial:string;cursor:number;rows:TimelineRow[];next:number;completePage:boolean;stageRevision:string;}
 export class TimelineManifest {
  stageRevision:string='T295_STAGE23_V1';stages:string[]=['INVALID','Invalidate','InitBegin','Ready','ReadyRejected','WaitEnter','Wake','FirstTick','AdvanceBegin','AdvanceEnd','AnchorSet','PumpBegin','PumpEnd','DrawBegin','DrawEnd','SwapBegin','SwapEnd','PauseBegin','PauseEnd','Offer','Consume','Stale','RootSubmit','RootPoll'];
  packageIdentitySource:string='OPERATOR_SIGNED_ARTIFACT_MANIFEST_EXTERNAL_VERIFY_REQUIRED';
@@ -34,12 +34,18 @@ export class GpuBridgeTimelineCold {
    default:return 0;
   }
  }
- private page(raw:string,cursor:number):TimelinePage {
+ protected page(raw:string,cursor:number):TimelinePage {
   // T339: ring capacity 1024->4096 (T336/T335 §4). Page budget 16384 verified:
   // max page = header + 4 rows at worst-case u64 widths ~1.7KB << 16384.
   if(raw.length>16384)throw new Error('PAGE_BUDGET');const p:TimelinePage=JSON.parse(raw) as TimelinePage;
   if(p.revision!=='T295_STEADY_TRACE_V1'||p.clock!=='STEADY_NS'||this.stageLimit(p.stageRevision)===0||p.capacity!==4096||!Number.isSafeInteger(p.rowBytes)||p.rowBytes<=0||!Number.isSafeInteger(p.count)||p.count<0||p.count>4096||!this.u64(p.dropped)||!this.u64(p.serial)||p.cursor!==cursor||!p.completePage||!Array.isArray(p.rows)||p.rows.length>4||p.next!==cursor+p.rows.length||p.next>p.count)throw new Error('INVALID_PAGE');
-  for(const r of p.rows){if(!this.u64(r.serial)||!this.u64(r.ns)||!this.u64(r.tid)||!this.u64(r.epoch)||!this.u64(r.run)||!this.u64(r.surface)||!this.u64(r.input)||!this.u64(r.now)||!this.u64(r.last)||!this.u64(r.delta)||!this.u64(r.root)||!Number.isInteger(r.stage)||r.stage<1||r.stage>this.stageLimit(p.stageRevision)||r.now!==r.ns)throw new Error('INVALID_ROW');}
+  for(let rowIndex:number=0;rowIndex<p.rows.length;rowIndex++){
+   const r=p.rows[rowIndex];const names:string[]=['serial','ns','tid','epoch','run','surface','input','now','last','delta','root'];
+   const values:string[]=[r.serial,r.ns,r.tid,r.epoch,r.run,r.surface,r.input,r.now,r.last,r.delta,r.root];
+   for(let field:number=0;field<values.length;field++)if(!this.u64(values[field]))throw new Error('INVALID_ROW:'+names[field]+'@'+String(cursor+rowIndex));
+   if(!Number.isInteger(r.stage)||r.stage<1||r.stage>this.stageLimit(p.stageRevision))throw new Error('INVALID_ROW:stage@'+String(cursor+rowIndex));
+   if(r.now!==r.ns)throw new Error('INVALID_ROW:now@'+String(cursor+rowIndex));
+  }
   return p;
  }
  async collect(module:TimelineModule,store:TimelineStore,id:TimelineIdentity,yieldUi:()=>Promise<void>):Promise<TimelineManifest> {
@@ -50,14 +56,14 @@ export class GpuBridgeTimelineCold {
    out.statusBefore=module.status();const initial=module.timeline(0);pendingRaw=initial;const first=this.page(initial,0);pendingRaw='';out.stageRevision=first.stageRevision;out.stages=out.stages.concat(TRANSPORT_STAGES.slice(0,this.stageLimit(first.stageRevision)-23));out.before=initial;target=first.count;let cursor=0;const start=Date.now();
    do {
     if(this.cancelled)throw new Error('CANCELLED');if(Date.now()-start>30000)throw new Error('EXPORT_TIMEOUT');
-    const raw=cursor===0?initial:module.timeline(cursor);pendingRaw=raw;const p=this.page(raw,cursor);pendingRaw='';
+    const raw=cursor===0?initial:module.timeline(cursor);pendingRaw=raw;const p=this.page(raw,cursor);
     if(p.count<target||p.rowBytes!==first.rowBytes||p.stageRevision!==first.stageRevision)throw new Error('PREFIX_CHANGED');
     if(cursor<target&&p.next===cursor)throw new Error('MISSING_PAGE');
     const take=Math.min(p.rows.length,target-cursor);
     for(let i=0;i<take;i++) {const row=p.rows[i];if(!this.greater(row.serial,previousSerial)){out.duplicates++;throw new Error('SERIAL_DUPLICATE_OR_BACKWARD');}if(row.serial!==String(cursor+i+1)){out.missing++;throw new Error('SERIAL_GAP');}if(this.greater(previousNs,row.ns))throw new Error('NS_BACKWARD');previousNs=row.ns;previousSerial=row.serial;if(!out.firstSerial)out.firstSerial=row.serial;out.lastSerial=row.serial;const group=row.epoch+'/'+row.run+'/'+row.surface+'/'+row.tid;if(out.groups.indexOf(group)<0)out.groups.push(group);}
     // Preserve original page bytes and all decimal U64 strings, even if new
     // rows appeared in the last page beyond the initial stable prefix.
-    chunk+=raw+'\n';out.pages++;out.rows+=take;cursor+=take;
+    chunk+=raw+'\n';pendingRaw='';out.pages++;out.rows+=take;cursor+=take;
     if(out.dataBytes+chunk.length>4194304)throw new Error('EXPORT_BUDGET');if(chunk.length>=49152)await flush();
     if(cursor>=target)break;await yieldUi();
    }while(out.pages<=1024);

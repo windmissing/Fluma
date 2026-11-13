@@ -1,0 +1,26 @@
+{
+  "revision": "T492_DIAGNOSTIC_OVERLAY_V1",
+  "route": "m2",
+  "sourceCommit": "dcf105dfd2b4f2e7b8d77ec43d58532ac8d6dc53",
+  "device": "NOT_RUN",
+  "files": {
+    "app_bridge.cpp": "1f029bc94b6ca4f204d421231cc8e4c9aaf0bdc64d2fdac0cd991ad4561602b6",
+    "timeline_snapshot.h": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+    "execution_diagnostics.h": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5",
+    "t492_source.h": "92c80e1227014d0b65adb9a9ef9cc975404097498bbce4e7b0c35fc22772ce31",
+    "program_cache/graphics_program_factory.h": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea",
+    "program_cache/program_factory.h": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244",
+    "program_cache/artifact_store.h": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+    "../p013renderer/fullframe_targets.cpp": "b6797f7e09f97bc150ca3f6527805fa4044bbfcd985fd3c4b4a0277152fbb0ec",
+    "m1/scene.cpp": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64",
+    "m2route/scene.cpp": "62afaba40729862472ab21dad4af644d944e124ab08780d88fd82a6b58462098"
+  },
+  "integrationFiles": {
+    "physics/GpuBridgeTimelineCold.ets": "d860ab989264d5737942aa6304d018519a4760038a5a5604b5ecbd60b9c64435",
+    "physics/GpuTimelineSnapshotCold.ets": "ddeb58d7d41d61ee4954d25c05e4a307b82ee18518357d72495a40254e5988b9",
+    "physics/GpuM1DemoController.ets": "9704c8a8ea5993541bade0efa707796ff37f063ae6415c1acac812b58019d75d",
+    "physics/GpuRecoveryPulse.ets": "89b744717e26284765848461cf574c1afbc87ecfcef591545bdbdab5b9ae2ed0",
+    "pages/GpuResidentM1.ets": "dbccb806cbab4cccea5709eea1a30a862f1f19f1e51b17c8078dcfcb517e9753",
+    "pages/GpuSandWaterExperience.ets": "34f751d587e1edfe4e7939c87aa0af4c70cbbd4c9fb1751eb55903d16f57c4dd"
+  }
+}

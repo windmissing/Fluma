@@ -1,10 +1,11 @@
 import { EvidenceCaptureReply } from './GpuEvidenceCaptureCold';
 // T228 / GRS_M1_DEMO_UI_V4. Input protocol only, no CPU inventory or angle acceptance.
 export interface GpuM1DemoPort {
- status():string;recordSourceAttempt?(record:string):string;offer(command:ArrayBuffer):string;setSource(kind:number):string;
+ status():string;recordSourceAttempt?(record:string):string;recordDiagnosticAction?(record:string):string;offer(command:ArrayBuffer):string;setSource(kind:number):string;
  setActive(active:boolean):string;setGravityMode(sensor:boolean):string;
  setGravitySample(rawDegrees:number,shake:number,sequence:number):string;
  setAngle(index:number):string;newRun():string;configureM1(k:number,kw:number,features:number,revision:number):string;
+ newRunAction?(serial:string):string;
  configureOptics(optics:Float32Array):string;
 }
 export interface GpuM1DemoStatus {
@@ -32,6 +33,13 @@ export class GpuM1DemoController {
  kind:number=0;sensorMode:boolean=true;rate:number=8; // units/s candidate, not a speed law
  snapshot:GpuM1DemoStatus|null=null;message:string='等待 GPU M1';lastEnqueue:string='NONE';
  private readonly port:GpuM1DemoPort;
+ private actionSerial:number=0;private diagnosticCount:number=0;private receiptKey:string='';
+ private diagnostic(event:string,detail:string,serial:number=this.actionSerial):void {
+  if(this.port.recordDiagnosticAction===undefined||this.diagnosticCount>=96)return;this.diagnosticCount++;
+  const s=this.snapshot;
+  this.port.recordDiagnosticAction(JSON.stringify({origin:'CONTROLLER',actionSerial:serial,event:event,clock:'UI_WALL_MS',stamp:Date.now(),epoch:s?.epoch??0,runLo:s?.runLo??0,runHi:s?.runHi??0,pageSession:s?.pageSession??'0',detail:detail}));
+ }
+ private commandHash():string {let hash:number=2166136261;const bytes=new Uint8Array(this.command);for(let i:number=0;i<128;i++)hash=Math.imul(hash^bytes[i],16777619)>>>0;return hash.toString(16).padStart(8,'0');}
  constructor(port:GpuM1DemoPort){this.port=port;this.words=new Uint32Array(this.command);this.raw=new DataView(this.command);}
  private word(v:number):boolean{return Number.isSafeInteger(v)&&v>=0&&v<=4294967295;}
  private allowed(s:GpuM1DemoStatus):boolean{return s.sourceUiRevision===this.revision&&s.ready&&s.permissionState==='READY'&&Number.isSafeInteger(s.epoch)&&s.epoch>0&&s.epoch===s.readyEpoch&&this.word(s.runLo)&&this.word(s.runHi)&&this.word(s.inputLo)&&this.word(s.inputHi)&&this.word(s.geometryLo)&&this.word(s.geometryHi)&&this.word(s.configLo)&&this.word(s.configHi)&&this.word(s.sourceControlLo)&&this.word(s.sourceControlHi);}
@@ -42,11 +50,14 @@ export class GpuM1DemoController {
    if(s.sourceUiRevision!==this.revision){this.stop('UNSUPPORTED_UI_REVISION');this.snapshot=null;return;}
    if(this.runLo!==s.runLo||this.runHi!==s.runHi){this.stop('NEW_EMPTY_RUN');this.sequence=0;this.runLo=s.runLo;this.runHi=s.runHi;}
    if(this.geometryLo!==s.geometryLo||this.geometryHi!==s.geometryHi){this.stop('GEOMETRY_CHANGED');this.geometryLo=s.geometryLo;this.geometryHi=s.geometryHi;}
-   this.snapshot=s;if(!this.allowed(s)&&this.pointer>=0)this.stop(s.stage??s.permissionState);
+   this.snapshot=s;
+   const receipt=[s.epoch,s.runLo,s.runHi,s.sourceRequestSeq,s.sourceReceiptStatus,s.sourceAdmittedQ,s.sourceRejectedQ].join(':');
+   if(s.sourceRequestSeq>0&&receipt!==this.receiptKey){this.receiptKey=receipt;this.diagnostic('SOURCE_RECEIPT',JSON.stringify({request:s.sourceRequestSeq,status:s.sourceReceiptStatus,admitted:s.sourceAdmittedQ,rejected:s.sourceRejectedQ,sourceCommitLo:s.sourceCommitLo,sourceCommitHi:s.sourceCommitHi}));}
+   if(!this.allowed(s)&&this.pointer>=0)this.stop(s.stage??s.permissionState);
   }catch(e){this.stop('STATUS_FAULT');this.snapshot=null;}
  }
  setActive(value:boolean):void {if(this.active===value)return;this.stop(value?'RESUME_NEEDS_DOWN':'BACKGROUND');this.active=value;if(value)this.port.setGravityMode(this.sensorMode);this.port.setActive(value);}
- select(kind:number):void {if(kind!==0&&kind!==1)return;this.stop('SWITCH_NEEDS_DOWN');this.kind=kind;}
+ select(kind:number):void {if(kind!==0&&kind!==1)return;this.stop('SWITCH_NEEDS_DOWN');this.kind=kind;this.diagnostic('SOURCE_SELECT',String(kind));}
  stop(reason:string):void {
   this.pointer=-1;this.lastNs=-1;const s=this.snapshot;
   const key=s===null?'':[s.runLo,s.runHi,s.epoch,s.pageSession??'',s.sourceControlLo,s.sourceControlHi].join(':');
@@ -62,11 +73,13 @@ export class GpuM1DemoController {
   return this.x>=0&&this.x<128&&this.y>=0&&this.y<=256;
  }
  down(id:number,x:number,y:number):boolean {
+  if(this.actionSerial<Number.MAX_SAFE_INTEGER)this.actionSerial++;
   this.refresh();const s=this.snapshot;let reason:string='OK';
   if(!this.active)reason='PAGE_INACTIVE';else if(this.pointer>=0)reason='POINTER_ACTIVE';
   else if(s===null||!this.allowed(s))reason='NOT_READY';
   else if(!Number.isSafeInteger(id)||id<0)reason='INVALID_POINTER';else if(!this.position(x,y))reason='OUTSIDE_BOX';
   const ok=reason==='OK';
+  this.diagnostic('POINTER_DOWN_READY_COORDINATES',JSON.stringify({pointer:id,kind:this.kind,ready:s!==null&&this.allowed(s),x:x,y:y,width:this.width,height:this.height,mirror:this.mirror,columnX:this.x,columnY:this.y,accepted:ok,reason:reason}));
   if(this.port.recordSourceAttempt!==undefined)this.port.recordSourceAttempt(JSON.stringify({
    sampleSerial:s?.sampleSerial??'0',epoch:s?.epoch??0,runLo:s?.runLo??0,runHi:s?.runHi??0,
    pageSession:s?.pageSession??'0',coordinatesFinite:[x,y,this.width,this.height].every((v:number)=>Number.isFinite(v)),x:Number.isFinite(x)?x:0,y:Number.isFinite(y)?y:0,width:Number.isFinite(this.width)?this.width:0,height:Number.isFinite(this.height)?this.height:0,kind:this.kind,accepted:ok,reason:reason}));
@@ -89,13 +102,19 @@ export class GpuM1DemoController {
   w[8]=s.inputLo;w[9]=s.inputHi;w[10]=s.sourceControlLo;w[11]=s.sourceControlHi;w[12]=s.geometryLo;w[13]=s.geometryHi;
   w[14]=this.kind+1;w[15]=this.sequence;this.raw.setFloat64(64,this.x,true);this.raw.setFloat64(72,this.y,true);this.raw.setFloat64(80,this.rate*delta/1000000000,true);
   w[22]=rawNs%4294967296;w[23]=Math.floor(rawNs/4294967296);w[24]=this.sequence;w[26]=1;w[27]=1;w[28]=s.configLo;w[29]=s.configHi;
+  const hash=this.commandHash();this.diagnostic('UPLOAD_32U32',JSON.stringify({request:w[6],hashRevision:'FNV1A32_LE_128B',hash:hash}));
   this.lastEnqueue=this.port.offer(this.command);this.message=this.lastEnqueue;
+  this.diagnostic('OFFER_REPLY',JSON.stringify({request:w[6],hash:hash,reply:this.lastEnqueue}));
   if(this.lastEnqueue!=='ENQUEUED_NOT_ACK')this.stop(this.lastEnqueue); // no backlog/retry
  }
  sensor(raw:number,shake:number):string {if(!this.active||!this.sensorMode||!Number.isFinite(raw)||!Number.isFinite(shake)||this.sampleSequence===4294967295)return 'INVALID_SENSOR';return this.port.setGravitySample(raw,shake,++this.sampleSequence);}
  gravityMode(sensor:boolean):void {this.stop('GRAVITY_MODE_NEEDS_DOWN');this.sensorMode=sensor;this.port.setGravityMode(sensor);}
  manualAngle(degrees:number):void {if(this.sensorMode||!Number.isFinite(degrees)||Math.abs(degrees)>30)return;this.port.setAngle(Math.round(degrees*256));}
- reset():void {this.stop('RESET_NEW_EMPTY_RUN');this.port.newRun();this.snapshot=null;}
+ reset(actionSerial:number=0):void {
+  this.stop('RESET_NEW_EMPTY_RUN');this.diagnostic('NEW_RUN_ENTER','',actionSerial);
+  try{const receipt=this.port.newRunAction===undefined?this.port.newRun():this.port.newRunAction(String(actionSerial));this.diagnostic('NEW_RUN_RETURN',receipt,actionSerial);}catch(error){this.diagnostic('NEW_RUN_THROW',String(error),actionSerial);throw new Error(String(error));}
+  this.snapshot=null;
+ }
  profile(k:number,kw:number):void {this.stop('PROFILE_NEW_EMPTY_RUN');this.port.configureM1(k,kw,3,2);this.snapshot=null;}
  applyOptics(sigma:number,gain:number,width:number):string {
   if(!Number.isFinite(sigma)||sigma<0||!Number.isFinite(gain)||gain<0||gain>1||!Number.isFinite(width)||width<=0||width>8)return 'INVALID_OPTICS';

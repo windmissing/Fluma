@@ -1,0 +1,88 @@
+{
+  "revision": "T492_PAGE_READER_CONTROLS_V1",
+  "passed": 20,
+  "failed": 0,
+  "device": "NOT_RUN",
+  "cases": [
+    {
+      "name": "actual native 125 rows / 66+67 / tokens; live growth ignored by snapshot identity",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown68 saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "old dictionary141 saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "scope identity changes saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong snapshot ID saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate cursor saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "serial duplicate saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "native dropped saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed u64 saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "unterminated EXIT saves original rejected bytes before manifest and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "native dropped captured from Begin stays INCOMPLETE",
+      "status": "PASS"
+    },
+    {
+      "name": "cancel releases snapshot preserving partial files",
+      "status": "PASS"
+    },
+    {
+      "name": "30s export timeout releases",
+      "status": "PASS"
+    },
+    {
+      "name": "fsync failure preserves INCOMPLETE and releases",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed Begin original bytes saved and ID still released",
+      "status": "PASS"
+    },
+    {
+      "name": "not READY and outside coordinates reject without Offer",
+      "status": "PASS"
+    },
+    {
+      "name": "legitimate down preserves route wire revision; 32U32 hash matches actual Offer / receipt",
+      "status": "PASS"
+    },
+    {
+      "name": "two explicit resets retain action serial + return/exception",
+      "status": "PASS"
+    },
+    {
+      "name": "GpuResidentM1 handler → cancel → reset → bind ordered and hide cancels",
+      "status": "PASS"
+    },
+    {
+      "name": "GpuSandWaterExperience handler → cancel → reset → bind ordered and hide cancels",
+      "status": "PASS"
+    }
+  ]
+}
