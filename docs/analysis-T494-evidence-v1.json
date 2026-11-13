@@ -1,0 +1,904 @@
+{
+  "revision": "T494_ARCHITECT_EVIDENCE_V1",
+  "date": "2026-11-13",
+  "timezone": "Asia/Shanghai",
+  "headAtAnalysis": "cf2f85a88c25dddec1344e02e269d5adde526fe9",
+  "device": "NOT_RUN",
+  "glRuntime": "NOT_RUN",
+  "businessCodeChanged": false,
+  "files": [
+    {
+      "path": "docs/test-report-T488-driver-lease-revision-v1.md",
+      "bytes": 5848,
+      "sha256": "8d5ac9062110063ca097acf43a396fc5cf34df3ccbd9600de4890b2926ec381d"
+    },
+    {
+      "path": "test/t488/driver_lease_diff.cpp",
+      "bytes": 38578,
+      "sha256": "c2a9ed1c07b98200d5ff046f58e433312607248c4c52975194342bf2510ab01f"
+    },
+    {
+      "path": "test/t488/build.cmd",
+      "bytes": 2779,
+      "sha256": "ecf92c5256eac91f7f1ff9e344a47494aabe5eb4a530b64850eb4db6660d841e"
+    },
+    {
+      "path": "test/t488/gl_wrappers.inc",
+      "bytes": 1720,
+      "sha256": "73df8724d67d3254f2c2b307712a0a9789ef2c363de501ee9b478fffcdb8ec37"
+    },
+    {
+      "path": "test/t422/t409_host_nomain.cpp",
+      "bytes": 13992,
+      "sha256": "a6c816427d21e06e6875367e656ccaa913e6e3115b68cadbe4a17d84b040d46b"
+    },
+    {
+      "path": "test/t398/app_host.cpp",
+      "bytes": 5690,
+      "sha256": "cda672f11ecedd9c140bb2ed33d5c3db29ad85e8a6acbc11ca728a3131737ae8"
+    },
+    {
+      "path": "test/t324/app_gl.cpp",
+      "bytes": 4065,
+      "sha256": "200c2c4622a9b4ac67530c410a16e4170b74cd2fa900645f64610b3edf39dbfa"
+    },
+    {
+      "path": "test/t459/capture_toggle_diff.cpp",
+      "bytes": 18021,
+      "sha256": "aa9248b740492d019a7301e88a323d58d5174298a2df694f43431754cdcc1e47"
+    },
+    {
+      "path": "test/t459/build.cmd",
+      "bytes": 1980,
+      "sha256": "d8d28f2817b4165f74940b0e8b87118f5f8cd15d0d60de9cc39da6d53741f139"
+    },
+    {
+      "path": "test/reports/t459/t459_log.ndjson",
+      "bytes": 1834,
+      "sha256": "2dce94d7516a45171ea84d6dae10681621ee21489fd280de12c0d84f08162d14"
+    },
+    {
+      "path": "test/reports/t459/t459-summary-timeout.json",
+      "bytes": 298,
+      "sha256": "1c38b44602d8a6b44661069459624e83ac47433bd5f83e260440d5e9d3ac1eb6"
+    },
+    {
+      "path": "test/reports/t488/t488-summary.json",
+      "bytes": 285,
+      "sha256": "188c6a99361cfba33fab83fe5a4b874f0c4aedf869f223e2b45b27551b9ed625"
+    },
+    {
+      "path": ".codex/local-test/t488/t488_log.ndjson",
+      "bytes": 429993,
+      "sha256": "40bc61b74ac5100ec85467c58e2c59c510b7efbd60689e18eee28a03a2b968be"
+    },
+    {
+      "path": ".codex/local-test/t488/t488-script-manifest.json",
+      "bytes": 3805,
+      "sha256": "edf860954d2c114df8dad5b01383504cf50e8a2de4d0b03db851e89f197921e3"
+    },
+    {
+      "path": ".codex/local-test/t488/t488-stages.ndjson",
+      "bytes": 44898,
+      "sha256": "33e9abd984596cbb923397d77112f58a1440c45a6808439435267cf0307e56e5"
+    },
+    {
+      "path": ".codex/local-test/t488/t488.exe",
+      "bytes": 1147904,
+      "sha256": "98e7f56ae39ada4658d5edf6a78c3a594e9352b5d874e8032f442abd135fc552"
+    },
+    {
+      "path": ".codex/local-test/t236-source-host/host_clock.h",
+      "bytes": 383,
+      "sha256": "a8954ff5190c93e266305725b51ef8ee7ccc33c645447e1141b8fd8958e09c14"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 63514,
+      "sha256": "3b9bfa963ed71810ca1aa6c9f6c34f0ebfbf4d302ee12ef4f9290e8a053136b1"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/run.h",
+      "bytes": 2059,
+      "sha256": "7bb0187ba1026506bc3cf37c23404efd24275346d3ebd51b5e41389a53f2ea75"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/run.cpp",
+      "bytes": 8430,
+      "sha256": "6168a9eadf7ec80d34a19264948079f4cd544def5fd7292712f9bfd589611f9b"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.h",
+      "bytes": 7180,
+      "sha256": "9faad28d0d30e6325637f3dd07c1b9017328c71cbf00b5dc0b68bbf6c682c8f9"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+      "bytes": 34443,
+      "sha256": "507a3283a312b0e927e3377be4aa4a67ddcda3b0299cf4970b4a85e1d33f3ce1"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/scene.h",
+      "bytes": 1601,
+      "sha256": "8a1ad3b2fe06d4b535ad1619439d370fc2b6e97f0b5a44f88eeb9e24ba751be2"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 12823,
+      "sha256": "4fe4606512f9203ca3c92635dab9ef998ea11628ee4687bfdce787d238be223e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/ui_state.h",
+      "bytes": 2909,
+      "sha256": "4dab4275a061a20a4e37a21a5af58757eecf6c40dbed950f4e867f1c187a9119"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/bridge_state.h",
+      "bytes": 2686,
+      "sha256": "a9bf23423c4bd6536593e604e96d845a448fcb4b47f27aa0f268c9d7aec263cd"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/evidence_capture_request.inc",
+      "bytes": 9480,
+      "sha256": "ff00d5eb58b69869723e18a933b1e0c08bb7494038a954fb3e8d97d9dcbe6569"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 86762,
+      "sha256": "5f528c9bf14992821cee26859fa85e34583cac48c726432a6d8871364c8ea21f"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/run.h",
+      "bytes": 2025,
+      "sha256": "aa47746b62a11553c14bdea099855bcf14344dee78721226caa0ab29c84d1f11"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/run.cpp",
+      "bytes": 8314,
+      "sha256": "db0172ff21448d64db1fff53880324904364fa467e33c4f3cef0a722477ad167"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/full_transport.h",
+      "bytes": 6476,
+      "sha256": "78ff42aad2862a7bfa54f132c6746f5b4008c4a1cbb9bfac7919d06cadc1558d"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+      "bytes": 32073,
+      "sha256": "e7e202c53cdb33896ee4041df1dbaeed93792c65d6f96a498a942e0c400b7ab6"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/scene.h",
+      "bytes": 1063,
+      "sha256": "3c8c79a96c406f92015aa9e0ab811c36d0bdf146c856d283a8d4fc46dc8926b4"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 10467,
+      "sha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/ui_state.h",
+      "bytes": 2883,
+      "sha256": "6140e21a1055d6428b7c993577e1c46780c5a6a63973bf5a433e16c85e3d0e4a"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/bridge_state.h",
+      "bytes": 2674,
+      "sha256": "78144b3c029ca60f0f1f42503fc94b858cff5bb28c08454031fba71946354fb3"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/evidence_capture_request.inc",
+      "bytes": 9343,
+      "sha256": "48d915643e4d596c1f08940ed2d87c94bf34c67f6c5909efc50785f94af5bdc5"
+    },
+    {
+      "path": ".codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "path": ".codex/local-test/t488-run.log",
+      "bytes": 52,
+      "sha256": "35c6164cab947ed63e4ce6c405ee05a62a62fba84fde1d16c5ff10ebbc70ffc5"
+    },
+    {
+      "path": ".codex/local-test/t488-run2.log",
+      "bytes": 52,
+      "sha256": "35c6164cab947ed63e4ce6c405ee05a62a62fba84fde1d16c5ff10ebbc70ffc5"
+    },
+    {
+      "path": ".codex/local-test/t488-run3.log",
+      "bytes": 53,
+      "sha256": "ce8277990a05eebcafb41f25a889739e7fdb3b1eaa072916acf94e676029a29f"
+    },
+    {
+      "path": ".codex/local-test/t488-run4.log",
+      "bytes": 54,
+      "sha256": "5b4e4580f6dc6b172f345bb82c14487eddebe1c7733b7cffacb58ea5644fa948"
+    },
+    {
+      "path": ".codex/local-test/t488-run5.log",
+      "bytes": 54,
+      "sha256": "522ce68e466e83d90a369285cdf88952cfd7bf948a13c9acb9a24175d9781eee"
+    },
+    {
+      "path": ".codex/local-test/t488-run6.log",
+      "bytes": 54,
+      "sha256": "be75598694bbbeb26466e20979c19f36ce88c49846deecdce2377fbf55c840ed"
+    },
+    {
+      "path": ".codex/local-test/t494/include-audit.cmd",
+      "bytes": 1638,
+      "sha256": "a47f54dcab74273ef3518f311fe34b0b6f58eeee44ee552bf4b38befcfa70b1c"
+    },
+    {
+      "path": ".codex/local-test/t494/include-audit.log",
+      "bytes": 50327,
+      "sha256": "3d5718e1af8ded7302ba22008eb8ebc09ec6eec98080d45fcefe341b5a6280a3"
+    },
+    {
+      "path": ".codex/local-test/t494/layout-shared.cmd",
+      "bytes": 1666,
+      "sha256": "404e3feb5798b8b94b77c55259ed3d2f5800dc34ec473a33a988eaee93db1b13"
+    },
+    {
+      "path": ".codex/local-test/t494/layout-shared.log",
+      "bytes": 1839,
+      "sha256": "2eee966bb5e7b36fad8643f80522fa3731d9e2d4bd8466129537ae559213aedd"
+    },
+    {
+      "path": ".codex/local-test/t494/layout-frozen.cmd",
+      "bytes": 1725,
+      "sha256": "58be74c5429c628cc46e3d3d74499bca56cf31cf7487d5038b6e0fe0c58d61db"
+    },
+    {
+      "path": ".codex/local-test/t494/layout-frozen.log",
+      "bytes": 1455,
+      "sha256": "f167c30c29dfb19311923984b09b1b1b250776551f54f73791d9b8e0ba180f9f"
+    }
+  ],
+  "compileAudit": {
+    "compiler": "MSVC 14.51.36231 x64",
+    "mode": "Zs syntax/include/layout only, no link or GL",
+    "exitCodes": [
+      0,
+      0,
+      0
+    ],
+    "sharedDriverTU": {
+      "sizeBytes": 216704,
+      "offsetBytes": {
+        "flushSample": 33880,
+        "source": 33944,
+        "quantum": 125936
+      }
+    },
+    "frozenImplementationTU": {
+      "sizeBytes": 182640,
+      "offsetBytes": {
+        "flushSample": 64,
+        "source": 128,
+        "quantum": 92128
+      }
+    },
+    "classDefinitionsCompatible": false,
+    "historicalBuildManifestComplete": false,
+    "auditArtifact": "docs/analysis-T494-compile-audit-v1.txt",
+    "displayArtifactWhitespaceNormalized": true
+  },
+  "rawSummary": {
+    "revision": "T488_DRIVER_LEASE_REVISION_V1",
+    "runId": "t488-702877288780900",
+    "mode": "HOST_SCRIPTED_OFFLINE",
+    "source": "t475-handoff-final(M1)",
+    "checks": 29,
+    "passed": 26,
+    "failed": 3,
+    "offAccepted": 0,
+    "onAccepted": 0,
+    "captureRows": 0,
+    "frozen": false,
+    "firstError": "NONE",
+    "eChecks": 12,
+    "ePassed": 12
+  },
+  "log": {
+    "totalLines": 4590,
+    "validJSONLines": 4566,
+    "invalidJSONLines": 24,
+    "distinctActionRuns": 12,
+    "invalidRows": [
+      {
+        "line": 53,
+        "runId": "t488-699915112875300",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "0d99f3ef2e4495b2d72270fa927ccebcaf0129c20d056bda8e608a46764c8e14"
+      },
+      {
+        "line": 83,
+        "runId": "t488-699915112875300",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "b33e2fd93e610739e7bb1216e35e5805a947481f0b466a99b37bbe03d1c726eb"
+      },
+      {
+        "line": 434,
+        "runId": "t488-700232792647500",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "0a6558544d8d9bae4327a9a2a1d8f539e076a307aaf53674addcb05295fd7292"
+      },
+      {
+        "line": 464,
+        "runId": "t488-700232792647500",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "f2d2184032030c9a93a3b9f6f26cd8f6529432f0cc59c553bce245bce9ac75af"
+      },
+      {
+        "line": 815,
+        "runId": "t488-700708994595600",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "d21dd1c508ffdc6cd63341b49d296075cfa5c9bcce6b5bf5e5f2f450f0f037fc"
+      },
+      {
+        "line": 845,
+        "runId": "t488-700708994595600",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "04418828e4fdc718d9ebbe9764add4a66c7c727ec6bd89e12695cfc0ea4ecc28"
+      },
+      {
+        "line": 1196,
+        "runId": "t488-700919791244600",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "6532e7e8424a65cfc912effdafb28eb52f35c34474cea6d7949279a7a010c56b"
+      },
+      {
+        "line": 1226,
+        "runId": "t488-700919791244600",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "76cd44e1bb79fd46c6fad30a0603bd7d8a5eee48d0f78282275a7b852c339ab4"
+      },
+      {
+        "line": 1577,
+        "runId": "t488-701315053683800",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "bd29447e2c0411dcfde163d2a52d48979f844001dc903c333fb51230f8598bbc"
+      },
+      {
+        "line": 1607,
+        "runId": "t488-701315053683800",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "68a9b6fd2cb3de46cbdfddacfcc91e7ebe073c5b49fc572e37585a779fb2321e"
+      },
+      {
+        "line": 1959,
+        "runId": "t488-701504517064100",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "9f047cb9b3b861e933c17e59509080e8f607ad607635a8c90cc77f41fb2c6810"
+      },
+      {
+        "line": 1989,
+        "runId": "t488-701504517064100",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "b1dff10a625309b16326792b06c2614828e4cd56dab94c2aeacfc4c546460f76"
+      },
+      {
+        "line": 2341,
+        "runId": "t488-701861906581100",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "7558bbf3731bd5c458e8e7fba60793b8825dc16ce067b986a370ad3a9591dd6b"
+      },
+      {
+        "line": 2371,
+        "runId": "t488-701861906581100",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "91dcc31a0b185ea29d85b555991a6ae06b91f09bb40ce22e3b74ba8e21fa6c5a"
+      },
+      {
+        "line": 2726,
+        "runId": "t488-702031314992000",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "27c48220999ee04ab23c39c70abc5723e230ad3bcc009756e81545f08ba953b6"
+      },
+      {
+        "line": 2756,
+        "runId": "t488-702031314992000",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "f443a37b2fad83e485eaad34bd6bca58f0807924aca66aaad855e7a2904e8df9"
+      },
+      {
+        "line": 3109,
+        "runId": "t488-702319308629800",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "b5cfce6db0677ba1e4cd0d87dfea839e0285e1fc25ae341f45cf5ed8cf83426a"
+      },
+      {
+        "line": 3139,
+        "runId": "t488-702319308629800",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "95c0b027c43488d458969b144dc604c84616c05584217c3a0cfe52496ddb270f"
+      },
+      {
+        "line": 3492,
+        "runId": "t488-702486216175800",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "7dad527dd17cbfd96fef1e9252cc7e7cfad54aed6e70f81b0a250b6420e193de"
+      },
+      {
+        "line": 3522,
+        "runId": "t488-702486216175800",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "3c1cee84357a219fc0c5d85c3635d76539d489e3dba2cd41fe6832cfec087b46"
+      },
+      {
+        "line": 3875,
+        "runId": "t488-702704766835200",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "85817fbbb431e6ceef3e857e09016d0a7665f427c6758ae55c7a2c8055a6efa8"
+      },
+      {
+        "line": 3905,
+        "runId": "t488-702704766835200",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "fbb056e4ece7f98f620a1430ef813c7521381b22bb4c327eeedbc198f8ac0654"
+      },
+      {
+        "line": 4258,
+        "runId": "t488-702877288780900",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "3eb20a0737aed5766ed17804c7417d45a80d966c0d6a5e8b4d324dc4c0c28f49"
+      },
+      {
+        "line": 4288,
+        "runId": "t488-702877288780900",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "f81023e09fda409293a80f0d221271b296a03a47e40d30364e7ca8be72c8b558"
+      }
+    ],
+    "finalRunFirstLine": 4208,
+    "finalRunLastActionLine": 4288,
+    "finalRunRawLinesIncludingFollowingUnscopedAssertions": 383,
+    "finalRunInvalidRows": [
+      {
+        "line": 4258,
+        "runId": "t488-702877288780900",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "3eb20a0737aed5766ed17804c7417d45a80d966c0d6a5e8b4d324dc4c0c28f49"
+      },
+      {
+        "line": 4288,
+        "runId": "t488-702877288780900",
+        "reason": "Expecting ',' delimiter",
+        "rawLineSha256": "f81023e09fda409293a80f0d221271b296a03a47e40d30364e7ca8be72c8b558"
+      }
+    ],
+    "finalRunByArm": {
+      "off": {
+        "validActionRows": 40,
+        "tids": {
+          "26528": 40
+        },
+        "phases": {
+          "PULSE": 6,
+          "SOURCE_SAND": 1,
+          "QUANTUM": 30,
+          "RESERVE_OFF_NOOP": 1,
+          "SOURCE_WATER": 1,
+          "END_OFF_NOOP": 1
+        },
+        "sourceReceipts": [
+          {
+            "line": 4214,
+            "runId": "t488-702877288780900",
+            "arm": "off",
+            "actionId": "7",
+            "phase": "SOURCE_SAND",
+            "tid": "26528",
+            "scriptNs": "97000000",
+            "detail": "code=ENQUEUED_NOT_ACK"
+          },
+          {
+            "line": 4228,
+            "runId": "t488-702877288780900",
+            "arm": "off",
+            "actionId": "21",
+            "phase": "SOURCE_WATER",
+            "tid": "26528",
+            "scriptNs": "305000000",
+            "detail": "code=ENQUEUED_NOT_ACK"
+          }
+        ]
+      },
+      "on": {
+        "validActionRows": 39,
+        "tids": {
+          "26528": 39
+        },
+        "phases": {
+          "PULSE": 6,
+          "SOURCE_SAND": 1,
+          "QUANTUM": 30,
+          "SOURCE_WATER": 1,
+          "END_NO_CAPTURE": 1
+        },
+        "sourceReceipts": [
+          {
+            "line": 4254,
+            "runId": "t488-702877288780900",
+            "arm": "on",
+            "actionId": "7",
+            "phase": "SOURCE_SAND",
+            "tid": "26528",
+            "scriptNs": "97000000",
+            "detail": "code=ENQUEUED_NOT_ACK"
+          },
+          {
+            "line": 4268,
+            "runId": "t488-702877288780900",
+            "arm": "on",
+            "actionId": "21",
+            "phase": "SOURCE_WATER",
+            "tid": "26528",
+            "scriptNs": "305000000",
+            "detail": "code=ENQUEUED_NOT_ACK"
+          }
+        ]
+      },
+      "d2": {
+        "validActionRows": 0,
+        "tids": {},
+        "phases": {},
+        "sourceReceipts": []
+      }
+    },
+    "unscopedRepeatedAssertions": {
+      "DELIVERED_ACTION_COUNT": 17,
+      "acceptedCount": 17,
+      "generatedQuanta": 17,
+      "revokedDroppedQuanta": 17,
+      "overloadDroppedQuanta": 17,
+      "quotaCarry": 17,
+      "clearedCarry": 17,
+      "pendingEnd": 17,
+      "activeRemainingEnd": 17,
+      "sourceCommit": 17,
+      "physicsCommit": 17,
+      "completionCount": 17,
+      "CAPTURE_FROZEN": 17,
+      "BEGIN_PREFIX_VALID": 17,
+      "NO_OBSERVATION_DISTURBANCE": 17,
+      "D2_BUSY_RESERVE": 17,
+      "D2_ARM_AT_CHECKPOINT": 17,
+      "E_CREATE_OK": 1,
+      "E_SOURCE_OK": 1,
+      "E_ACQUIRE_OK": 1,
+      "E_ACQUIRE_DUP_BACKPRESSURE": 1,
+      "E_RELEASE_OK": 1,
+      "E_SIGNAL_REACQUIRE": 1,
+      "E_SIGNAL_REACQUIRE_RETURN": 1,
+      "E_SOURCE2_OK": 1,
+      "E_SOURCE3_OK": 1,
+      "E_SAMESLOT_OLDGEN_STALE": 1,
+      "E_SAMESLOT_NEWGEN_OK": 1,
+      "E_TRANSPORT_RELEASE": 1
+    },
+    "finalUniqueAssertions": [
+      {
+        "assert": "DELIVERED_ACTION_COUNT",
+        "pass": true,
+        "detail": "off=40 on=40"
+      },
+      {
+        "assert": "acceptedCount",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "generatedQuanta",
+        "pass": true,
+        "detail": "off=69 on=69"
+      },
+      {
+        "assert": "revokedDroppedQuanta",
+        "pass": true,
+        "detail": "off=8 on=8"
+      },
+      {
+        "assert": "overloadDroppedQuanta",
+        "pass": true,
+        "detail": "off=61 on=61"
+      },
+      {
+        "assert": "quotaCarry",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "clearedCarry",
+        "pass": true,
+        "detail": "off=120000000 on=120000000"
+      },
+      {
+        "assert": "pendingEnd",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "activeRemainingEnd",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "sourceCommit",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "physicsCommit",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "completionCount",
+        "pass": true,
+        "detail": "off=0 on=0"
+      },
+      {
+        "assert": "CAPTURE_FROZEN",
+        "pass": false,
+        "detail": "rows=0 reason=NO_EVIDENCE"
+      },
+      {
+        "assert": "BEGIN_PREFIX_VALID",
+        "pass": false,
+        "detail": "begin=18446744073709551615 accepted=0"
+      },
+      {
+        "assert": "NO_OBSERVATION_DISTURBANCE",
+        "pass": true,
+        "detail": "T441 §7 全部账两臂一致"
+      },
+      {
+        "assert": "D2_BUSY_RESERVE",
+        "pass": true,
+        "detail": "owner busy → RESERVED+WAIT_ROOT, no direct ARM"
+      },
+      {
+        "assert": "D2_ARM_AT_CHECKPOINT",
+        "pass": false,
+        "detail": "armed via production captureCheckpoint after owner resumes"
+      },
+      {
+        "assert": "E_CREATE_OK",
+        "pass": true,
+        "detail": "code=0"
+      },
+      {
+        "assert": "E_SOURCE_OK",
+        "pass": true,
+        "detail": "code=0"
+      },
+      {
+        "assert": "E_ACQUIRE_OK",
+        "pass": true,
+        "detail": "code=0 slot=1"
+      },
+      {
+        "assert": "E_ACQUIRE_DUP_BACKPRESSURE",
+        "pass": true,
+        "detail": "code=4"
+      },
+      {
+        "assert": "E_RELEASE_OK",
+        "pass": true,
+        "detail": "code=0"
+      },
+      {
+        "assert": "E_SIGNAL_REACQUIRE",
+        "pass": true,
+        "detail": "signaled → same-gen acquire code=0"
+      },
+      {
+        "assert": "E_SIGNAL_REACQUIRE_RETURN",
+        "pass": true,
+        "detail": "returned the re-acquired lease"
+      },
+      {
+        "assert": "E_SOURCE2_OK",
+        "pass": true,
+        "detail": "code=0"
+      },
+      {
+        "assert": "E_SOURCE3_OK",
+        "pass": true,
+        "detail": "code=0"
+      },
+      {
+        "assert": "E_SAMESLOT_OLDGEN_STALE",
+        "pass": true,
+        "detail": "slot1 G1 after same-slot overwrite → code=5"
+      },
+      {
+        "assert": "E_SAMESLOT_NEWGEN_OK",
+        "pass": true,
+        "detail": "slot1 G3 → code=0"
+      },
+      {
+        "assert": "E_TRANSPORT_RELEASE",
+        "pass": true,
+        "detail": "code=0"
+      }
+    ],
+    "assertionsHistoricallyLackRunId": true,
+    "rewroteOrRepairedRawLines": false
+  },
+  "script": {
+    "actionCount": 40,
+    "pulseActionCount": 36,
+    "maxDeclaredCallbackGapNs": 32000000,
+    "sourceActions": [
+      {
+        "id": 7,
+        "kind": 1,
+        "scriptNs": "97000000",
+        "seq": 7,
+        "phase": 0,
+        "payloadHash": "d99d7275d32de49b"
+      },
+      {
+        "id": 21,
+        "kind": 1,
+        "scriptNs": "305000000",
+        "seq": 21,
+        "phase": 1,
+        "payloadHash": "ac0dfd9d00a44625"
+      }
+    ],
+    "actuallyLoggedPulseSeqAndPayloadBytes": false,
+    "countParityIsNotDeliveredInputEquivalence": true
+  },
+  "finalRunStageIntervals": [
+    {
+      "stage": "D1_OFF",
+      "enterNs": "702877294628900",
+      "exitNs": "702918839599500",
+      "hostDurationNs": 41544970600,
+      "code": "OK"
+    },
+    {
+      "stage": "D1_ON",
+      "enterNs": "702918839617800",
+      "exitNs": "702958286642900",
+      "hostDurationNs": 39447025100,
+      "code": "OK"
+    },
+    {
+      "stage": "D2_BUSY_RESERVE",
+      "enterNs": "702958286677600",
+      "exitNs": "702997111656400",
+      "hostDurationNs": 38824978800,
+      "code": "OK"
+    },
+    {
+      "stage": "EGL_INIT",
+      "enterNs": "702997111766200",
+      "exitNs": "702997131083800",
+      "hostDurationNs": 19317600,
+      "code": "OK"
+    },
+    {
+      "stage": "EGL_CONFIG",
+      "enterNs": "702997131102400",
+      "exitNs": "702997131118900",
+      "hostDurationNs": 16500,
+      "code": "OK"
+    },
+    {
+      "stage": "EGL_CONTEXT",
+      "enterNs": "702997131124800",
+      "exitNs": "702997131392800",
+      "hostDurationNs": 268000,
+      "code": "OK"
+    },
+    {
+      "stage": "TRANSPORT_CREATE",
+      "enterNs": "702997131402100",
+      "exitNs": "703035641401500",
+      "hostDurationNs": 38509999400,
+      "code": "0"
+    },
+    {
+      "stage": "SOURCE_SUBMIT",
+      "enterNs": "703035641422300",
+      "exitNs": "703037785339100",
+      "hostDurationNs": 2143916800,
+      "code": "0"
+    },
+    {
+      "stage": "ACQUIRE_1",
+      "enterNs": "703037785908800",
+      "exitNs": "703037786412200",
+      "hostDurationNs": 503400,
+      "code": "0"
+    },
+    {
+      "stage": "RELEASE_PUBLISH",
+      "enterNs": "703037786453800",
+      "exitNs": "703037786792100",
+      "hostDurationNs": 338300,
+      "code": "0"
+    },
+    {
+      "stage": "FENCE_PROBE",
+      "enterNs": "703037786907100",
+      "exitNs": "703037787011300",
+      "hostDurationNs": 104200,
+      "code": "37146"
+    },
+    {
+      "stage": "OVERWRITE_SLOT",
+      "enterNs": "703037787416400",
+      "exitNs": "703037877176700",
+      "hostDurationNs": 89760300,
+      "code": "0"
+    },
+    {
+      "stage": "OVERWRITE_SLOT_BACK",
+      "enterNs": "703037877198700",
+      "exitNs": "703037956262700",
+      "hostDurationNs": 79064000,
+      "code": "0"
+    },
+    {
+      "stage": "TRANSPORT_RELEASE",
+      "enterNs": "703037956340500",
+      "exitNs": "703037956495300",
+      "hostDurationNs": 154800,
+      "code": "0"
+    },
+    {
+      "stage": "E_LEASE",
+      "enterNs": "702997111681300",
+      "exitNs": "703037965016200",
+      "hostDurationNs": 40853334900,
+      "code": "ALL_OK"
+    }
+  ],
+  "disposition": {
+    "primary": "TEST_ENGINEERING_TO_TESTER",
+    "productStarvation": "NOT_ESTABLISHED",
+    "d2SameCauseAsSource": "NOT_ESTABLISHED_D2_HAS_NO_SOURCE_ACTION",
+    "t459WakeSourcePositiveControl": "NOT_ESTABLISHED",
+    "e12ObservedAssertionsRetained": true,
+    "eScope": "HOST_ONLY_EXISTING_BUILD_WITH_MIXED_SOURCE_LIMITATION",
+    "next": "UNIFY_SOURCE_THEN_HANDSHAKE_DRAIN_PERSIST_EXACT_OWNER_REQUEST_EVIDENCE",
+    "oldT471Reopened": false
+  },
+  "validation": {
+    "status": "PASS_ARCHITECT_ARCHIVE_SOURCE_AND_COMPILE_AUDIT_ONLY",
+    "originalHashCount": 53,
+    "jsonParsingStrict": "PASS_INVALID_RAW_RETAINED",
+    "finalRunAssertions": 29,
+    "finalRunPassedObservations": 26,
+    "ePassedObservations": 12,
+    "noNewProductOrGLTest": true,
+    "allOriginalInputHashesStillMatch": true,
+    "localLinks": 5,
+    "promptConstraints": "PASS",
+    "compileAuditArtifactSha256": "2f488a6cb8357673e7ec7a12e1204d3af9b8e41a2baed69aade8fd2887bdadcd"
+  }
+}

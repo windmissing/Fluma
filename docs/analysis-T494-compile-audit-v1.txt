@@ -1,0 +1,321 @@
+T494 compile-only audit, 2026-11-13 Asia/Shanghai
+No link, no GL execution, no device. All three commands exited 0.
+Source HEAD: cf2f85a88c25dddec1344e02e269d5adde526fe9
+
+INCLUDE AUDIT COMMAND
+@echo off
+setlocal
+set "MSVC=C:/Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231"
+set "WINSDK=C:/Program Files (x86)\Windows Kits\10"
+set "SDKVER=10.0.26100.0"
+set "INCLUDE=%MSVC%\include;%WINSDK%\Include\%SDKVER%\ucrt;%WINSDK%\Include\%SDKVER%\um;%WINSDK%\Include\%SDKVER%\shared"
+set "LIB=%MSVC%\lib\x64;%WINSDK%\Lib\%SDKVER%\ucrt\x64;%WINSDK%\Lib\%SDKVER%\um\x64"
+set "PATH=%MSVC%\bin\Hostx64\x64;C:/Users/admin/AppData/Local/Programs/CokePLUS;%PATH%"
+cd /d D:/hmprojects/HelloWorld
+if not exist .codex\local-test\t488 mkdir .codex\local-test\t488
+rem Frozen source under test: T475-handoff-final (M1 route, T467/T475/T482/T483 fixes)
+set SRCS=.codex/local-test/t475-handoff-final/entry/src/main/cpp/p013renderer/fullframe_targets.cpp .codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/control.cpp .codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib
+set INCS=/DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /I.codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident
+cl /nologo /utf-8 /std:c++17 /EHsc /O2 /Zs /showIncludes /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT %INCS% test/t488/driver_lease_diff.cpp > .codex\local-test\t494\include-audit.log 2>&1
+exit /b %errorlevel%
+
+RELEVANT RAW INCLUDE LINES (path spelling retained)
+注意: 包含文件:     D:\hmprojects\HelloWorld\test\t324\../../entry/src/main/cpp/gpu_resident/app_bridge.cpp
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\run.h
+注意: 包含文件:       D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\source_transport.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\submit_observer.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\uniform_locations.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\product_wire.h
+注意: 包含文件:         D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\control.h
+注意: 包含文件:          D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\layout_generated.h
+注意: 包含文件:          D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\integer.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\resources.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\trace.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\scene.h
+注意: 包含文件:       D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\../p013renderer/fullframe_targets.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1/run.h
+注意: 包含文件:       D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\full_transport.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\quantum_candidate.h
+注意: 包含文件:         D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\source_transport.h
+注意: 包含文件:          D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\source_owner.h
+注意: 包含文件:           D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\profile.h
+注意: 包含文件:            D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\layout_generated.h
+注意: 包含文件:          D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\root_isolation.h
+注意: 包含文件:       D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\progress_clock_v2.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1/scene.h
+注意: 包含文件:       D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1\../program_cache/graphics_program_factory.h
+注意: 包含文件:        D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\program_cache\program_factory.h
+注意: 包含文件:         D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\program_cache\../m2/create_diagnostics.h
+注意: 包含文件:          D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m2\layout_generated.h
+注意: 包含文件:         D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\program_cache\artifact_store.h
+注意: 包含文件:          D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\program_cache\sha256.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\m1/ui_state.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\foundation.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\bridge_packet.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\bridge_state.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\bridge_timeline.h
+注意: 包含文件:      D:\hmprojects\HelloWorld\entry\src\main\cpp\gpu_resident\evidence_capture.h
+注意: 包含文件:  .codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident\angles_generated.h
+
+LAYOUT COMMANDS (same env/INCS as include audit)
+
+cl /nologo /utf-8 /std:c++17 /EHsc /O2 /Zs /d1reportSingleClassLayoutFullM1Transport /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT %INCS% test/t488/driver_lease_diff.cpp > .codex\local-test\t494\layout-shared.log 2>&1
+exit /b %errorlevel%
+
+cl /nologo /utf-8 /std:c++17 /EHsc /O2 /Zs /d1reportSingleClassLayoutFullM1Transport /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT %INCS% .codex/local-test/t475-handoff-final/entry/src/main/cpp/gpu_resident/m1/full_transport.cpp > .codex\local-test\t494\layout-frozen.log 2>&1
+exit /b %errorlevel%
+
+FULL SHARED-TU LAYOUT (whitespace normalized; raw output separately hashed)
+driver_lease_diff.cpp
+
+test/t488/driver_lease_diff.cpp(16): warning C4005: “GRS_PROGRESS_V2_EXPERIMENT”: 宏重定义
+
+test/t488/driver_lease_diff.cpp(16): note: 之前在命令行上声明的“GRS_PROGRESS_V2_EXPERIMENT”
+
+
+
+class grs::m1::FullM1Transport  size(216704):
+
+    +---
+
+ 0  | TailObserver tailObserver
+
+16  | TailObserver coldObserver
+
+32  | isolation
+
+40  | SubmitObserver submitObserver
+
+56  | ?$array@UCopyAccounting@m1@grs@@$0IA@ copyRing
+
+33848   | copyStart
+
+33856   | copyCount
+
+33864   | copyDropped
+
+33872   | ledgerPrefix
+
+    | <alignment member> (size=7)
+
+33880   | TailSample flushSample
+
+33944   | SourceCoreTransport source
+
+125936  | QuantumCandidate quantum
+
+215312  | eventArenas
+
+215320  | scratchEvent
+
+215324  | results
+
+    | <alignment member> (size=4)
+
+215336  | extraBytes
+
+215344  | spareAt
+
+215348  | replayFrozen
+
+215352  | active
+
+215353  | quantumFlight
+
+215354  | failed
+
+215355  | lost
+
+215356  | frozen
+
+    | <alignment member> (size=3)
+
+215360  | RootRequest pending
+
+215424  | ?$array@I$0BAA@ tail
+
+216448  | SourceTransportStats stats
+
+216520  | U64 lastFrame
+
+216528  | arenaFrame
+
+216544  | used
+
+216552  | lastOrdinal
+
+216556  | lastPublication
+
+216560  | frameHasSource
+
+    | <alignment member> (size=3)
+
+216564  | acceptedArena
+
+216568  | acceptedQuantum
+
+    | <alignment member> (size=3)
+
+216572  | QuantumParameters coldParams
+
+216608  | SubmitPhase submitPhase
+
+    | <alignment member> (size=3)
+
+216612  | passCursor
+
+216616  | batchesIssued
+
+216620  | lastBatchPasses
+
+216624  | submitCancelled
+
+216628  | flushes
+
+216632  | warmupWallNs
+
+216640  | lastBatchWallNs
+
+216648  | submitFirstNs
+
+216656  | submitTotalWallNs
+
+216664  | submitPumpWallNs
+
+216672  | tailSpare
+
+216676  | tailReplay
+
+216680  | tailBank
+
+216684  | tailSlot
+
+216688  | tailArena
+
+216692  | tailCarry
+
+216696  | tailDispatches
+
+    | <alignment member> (size=4)
+
+    +---
+
+
+FULL FROZEN-TU LAYOUT (whitespace normalized; raw output separately hashed)
+full_transport.cpp
+
+
+
+class grs::m1::FullM1Transport  size(182640):
+
+    +---
+
+ 0  | TailObserver tailObserver
+
+16  | TailObserver coldObserver
+
+32  | isolation
+
+40  | SubmitObserver submitObserver
+
+64  | TailSample flushSample
+
+128 | SourceCoreTransport source
+
+92128   | QuantumCandidate quantum
+
+181248  | eventArenas
+
+181256  | scratchEvent
+
+181260  | results
+
+    | <alignment member> (size=4)
+
+181272  | extraBytes
+
+181280  | spareAt
+
+181284  | replayFrozen
+
+181288  | active
+
+181289  | quantumFlight
+
+181290  | failed
+
+181291  | lost
+
+181292  | frozen
+
+    | <alignment member> (size=3)
+
+181296  | RootRequest pending
+
+181360  | ?$array@I$0BAA@ tail
+
+182384  | SourceTransportStats stats
+
+182456  | U64 lastFrame
+
+182464  | arenaFrame
+
+182480  | used
+
+182488  | lastOrdinal
+
+182492  | lastPublication
+
+182496  | frameHasSource
+
+    | <alignment member> (size=3)
+
+182500  | acceptedArena
+
+182504  | acceptedQuantum
+
+    | <alignment member> (size=3)
+
+182508  | QuantumParameters coldParams
+
+182544  | SubmitPhase submitPhase
+
+    | <alignment member> (size=3)
+
+182548  | passCursor
+
+182552  | batchesIssued
+
+182556  | lastBatchPasses
+
+182560  | submitCancelled
+
+182564  | flushes
+
+182568  | warmupWallNs
+
+182576  | lastBatchWallNs
+
+182584  | submitFirstNs
+
+182592  | submitTotalWallNs
+
+182600  | submitPumpWallNs
+
+182608  | tailSpare
+
+182612  | tailReplay
+
+182616  | tailBank
+
+182620  | tailSlot
+
+182624  | tailArena
+
+182628  | tailCarry
+
+182632  | tailDispatches
+
+    | <alignment member> (size=4)
+
+    +---
