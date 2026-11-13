@@ -1,0 +1,21 @@
+11-13 09:53:32.644 16802 16802 I A03D00/com.example.helloworld/JSAPP: WS_EVENT t456_boot {"name":"t456-boot-1794534812637.json","bytes":113147,"sha256":"95fbce2dea560a3964b3562b501907c266144a15eeeaba7f4912ec36a113b76f"}
+11-13 09:54:21.780 16802 16802 W C01400/com.example.helloworld/Vsync: PrintRequestTs: recv vsync timestamp, from:WM_16802, now:70397913247655, fromRsTs:70397912561738, timeInterval:685917ns
+11-13 09:54:36.111 16802 25945 I C02700/com.example.helloworld/PrintSensorData: in ControlSensorClientPrint, sensorType:1, clientTimes:3000
+11-13 09:54:36.299 16802 25774 I C02700/com.example.helloworld/PrintSensorData: in PrintClientData, -1 1 0 1  ts:76962.976562, 0.817237, -0.299132, 9.765163
+11-13 09:54:41.129 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:D:109222|252]ac: down: 109222
+11-13 09:54:41.129 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:D:109222|732]recv
+11-13 09:54:41.129 16802 16802 I C04213/com.example.helloworld/InputKeyFlow: HandleInputEvent: eid:6,InputId:109222,wid:1001,ac:2
+11-13 09:54:41.130 16802 16802 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:109222, fId:10000, T:0, I=0, M=0
+11-13 09:54:41.131 16802 16802 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:109222, TTHNI:fId: 10000{ T: XComponent, D: 7 };
+11-13 09:54:41.131 16802 16802 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:109222, TTHRTI: 
+11-13 09:54:41.131 16802 16802 I C03919/com.example.helloworld/AceInputTracking: [(100000:100000:scope)] Hitted recognizer info is empty.
+11-13 09:54:41.141 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:M:109223|252]ac: move: 109223
+11-13 09:54:41.474 16802 16802 W C01400/com.example.helloworld/Vsync: PrintRequestTs: recv vsync timestamp, from:WM_16802, now:70417607341092, fromRsTs:70417606817145, timeInterval:523947ns
+11-13 09:54:41.894 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:M:109323|252]ac: move, first: 109224-(2026-11-13 09:54:41.147ms), 109323, count: 100
+11-13 09:54:42.509 16802 27027 I C02805/com.example.helloworld/InputKeyFlow: [|74]Ffrt PE:108410 109404
+11-13 09:54:42.653 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:M:109423|252]ac: move, first: 109324-(2026-11-13 09:54:41.903ms), 109423, count: 100
+11-13 09:54:43.408 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:M:109523|252]ac: move, first: 109424-(2026-11-13 09:54:42.659ms), 109523, count: 100
+11-13 09:54:43.842 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:U:109580|252]ac: move, first: 109524-(2026-11-13 09:54:43.416ms), 109579, count: 56, last: ac: up: 109580
+11-13 09:54:43.842 16802 16802 I C02805/com.example.helloworld/InputKeyFlow: [P:U:109580|732]recv
+11-13 09:54:43.842 16802 16802 I C04213/com.example.helloworld/InputKeyFlow: HandleInputEvent: eid:7,InputId:109580,wid:1001,ac:4
+11-13 09:54:43.843 16802 16802 I C03951/com.example.helloworld/InputKeyFlow: [(100000:100000:scope)] ITK Id:109580, fId:10000, T:1, I=0, M=0
