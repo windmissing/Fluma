@@ -1,0 +1,672 @@
+{
+  "revision": "T485_SCENE_CACHE_DEVELOPER_V1",
+  "status": "DEVELOPER_COMPLETE",
+  "device": "NOT_RUN",
+  "graphicsFactoryFaults": {
+    "schema": "T485_GRAPHICS_FACTORY_FAULTS_V1",
+    "passed": 13,
+    "failed": 0,
+    "device": "NOT_RUN"
+  },
+  "pixelEvidence": "test/reports/t485/pixels.json",
+  "rawPixelArchive": {
+    "path": "test/reports/t485/pixel-originals.zip",
+    "sha256": "d6e30d7e5215d54021f12936a4298bbe452e86d3e5b73da5e5f8f5b35187aa17"
+  },
+  "routes": {
+    "m1": {
+      "sourceManifest": {
+        "revision": "T485_SCENE_CACHE_V1",
+        "route": "m1",
+        "base": "T475+T482+T483+T477 fixes",
+        "files": {
+          "program_cache/graphics_program_factory.h": "44a9281a06392a9989fced145fdad78e126e09a8b3a6d57a9b6a6561c4d8e7e7",
+          "program_cache/program_factory.h": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244",
+          "m1/scene.cpp": "4fe4606512f9203ca3c92635dab9ef998ea11628ee4687bfdce787d238be223e",
+          "m1/scene.h": "8a1ad3b2fe06d4b535ad1619439d370fc2b6e97f0b5a44f88eeb9e24ba751be2",
+          "app_bridge.cpp": "168ae88747a5d41c7fb6a91baffa4629c89afc15dc373b13ac5b314ccf66533f"
+        }
+      },
+      "shaderInventory": {
+        "kM1FullVertex": {
+          "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed",
+          "bytes": 108
+        },
+        "kM1SceneFragment": {
+          "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445",
+          "bytes": 2636
+        },
+        "kM1ParticleVertex": {
+          "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce",
+          "bytes": 681
+        },
+        "kM1ParticleFragment": {
+          "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7",
+          "bytes": 471
+        },
+        "kM1WaterVertex": {
+          "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e",
+          "bytes": 713
+        },
+        "kM1WaterFragment": {
+          "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612",
+          "bytes": 514
+        }
+      },
+      "graphicsRoles": [
+        {
+          "role": "SCENE_FULL",
+          "key": "e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5",
+          "bindingAbiSHA": "1e19966bdd401e5360f37a1c9143fd0792732f8a488b6706d3b170cdf831aa70",
+          "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+          "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "shaderStages": [
+            {
+              "stage": 35633,
+              "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed",
+              "bytes": 108,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            },
+            {
+              "stage": 35632,
+              "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445",
+              "bytes": 2636,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "uColumn",
+              "location": 0,
+              "type": 5125,
+              "size": 1
+            },
+            {
+              "name": "uResolution",
+              "location": 1,
+              "type": 35664,
+              "size": 1
+            },
+            {
+              "name": "uBox",
+              "location": 2,
+              "type": 35666,
+              "size": 1
+            },
+            {
+              "name": "uMirror",
+              "location": 3,
+              "type": 35670,
+              "size": 1
+            },
+            {
+              "name": "uLayer",
+              "location": 4,
+              "type": 5124,
+              "size": 1
+            },
+            {
+              "name": "uOptics",
+              "location": 5,
+              "type": 35666,
+              "size": 4
+            },
+            {
+              "name": "uFrame",
+              "location": 9,
+              "type": 35678,
+              "size": 1
+            }
+          ],
+          "publicationBinding": 0,
+          "aStateInactive": false,
+          "colorLocation": 0,
+          "colorType": 35666
+        },
+        {
+          "role": "SCENE_PARTICLES",
+          "key": "834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942",
+          "bindingAbiSHA": "dfe9121d647d8229286853acea10a09f6e9b56a39c3169ce5238050811d57075",
+          "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+          "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "shaderStages": [
+            {
+              "stage": 35633,
+              "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce",
+              "bytes": 681,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            },
+            {
+              "stage": 35632,
+              "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7",
+              "bytes": 471,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "aX",
+              "location": 0,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aY",
+              "location": 1,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aMass",
+              "location": 2,
+              "type": 5125,
+              "size": 1
+            },
+            {
+              "name": "aRadius",
+              "location": 4,
+              "type": 5126,
+              "size": 1
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "uResolution",
+              "location": 0,
+              "type": 35664,
+              "size": 1
+            },
+            {
+              "name": "uBox",
+              "location": 1,
+              "type": 35666,
+              "size": 1
+            },
+            {
+              "name": "uMirror",
+              "location": 2,
+              "type": 35670,
+              "size": 1
+            }
+          ],
+          "publicationBinding": -1,
+          "aStateInactive": true,
+          "colorLocation": 0,
+          "colorType": 35666
+        },
+        {
+          "role": "SCENE_WATER",
+          "key": "cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88",
+          "bindingAbiSHA": "312bbcaf9450a4391f9ac031bd05fdb67880b64809c0efd949b4b917b5c89536",
+          "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+          "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "shaderStages": [
+            {
+              "stage": 35633,
+              "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e",
+              "bytes": 713,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            },
+            {
+              "stage": 35632,
+              "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612",
+              "bytes": 514,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "aX",
+              "location": 0,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aY",
+              "location": 1,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aMass",
+              "location": 2,
+              "type": 5125,
+              "size": 1
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "uResolution",
+              "location": 0,
+              "type": 35664,
+              "size": 1
+            },
+            {
+              "name": "uBox",
+              "location": 1,
+              "type": 35666,
+              "size": 1
+            },
+            {
+              "name": "uMirror",
+              "location": 2,
+              "type": 35670,
+              "size": 1
+            },
+            {
+              "name": "uRadius",
+              "location": 3,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "uMassReference",
+              "location": 4,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "uOptics",
+              "location": 5,
+              "type": 35666,
+              "size": 4
+            }
+          ],
+          "publicationBinding": -1,
+          "aStateInactive": false,
+          "colorLocation": 0,
+          "colorType": 35666
+        }
+      ],
+      "coldPrepareBeforeReady": true,
+      "firstPulseColdQuota": 0,
+      "applicationMode": "M1 compute binaries seeded; scene cold then warm",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T485-m1-handoff\\T485-m1-handoff-signed.hap",
+        "sha256": "c76c39f87a2293ded383c18e1cd84a2abe277946702e49ad961b4f853a169ee9",
+        "bytes": 9351311
+      },
+      "elfSHA256": "2cb2fe5f4663470ccf944fac6da6dd5f0f7c39444d113d9b730e6c6485479602",
+      "signingReceipt": "test/reports/t257/T485-m1-handoff.json",
+      "build": "PASS"
+    },
+    "m2": {
+      "sourceManifest": {
+        "revision": "T485_SCENE_CACHE_V1",
+        "route": "m2",
+        "base": "T475+T482+T483+T477 fixes",
+        "files": {
+          "program_cache/graphics_program_factory.h": "44a9281a06392a9989fced145fdad78e126e09a8b3a6d57a9b6a6561c4d8e7e7",
+          "program_cache/program_factory.h": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244",
+          "m1/scene.cpp": "4fe4606512f9203ca3c92635dab9ef998ea11628ee4687bfdce787d238be223e",
+          "m1/scene.h": "8a1ad3b2fe06d4b535ad1619439d370fc2b6e97f0b5a44f88eeb9e24ba751be2",
+          "app_bridge.cpp": "97732b4ddbe065cadcc4c668a66b619eb7b125fb22c3211baa8ef9e1e1a6785e",
+          "m2route/scene.cpp": "1cee55a2aacf3ebf757f46d49b366c11f51601885893dc7717ba1afe62f23146"
+        }
+      },
+      "shaderInventory": {
+        "kM1FullVertex": {
+          "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed",
+          "bytes": 108
+        },
+        "kM1SceneFragment": {
+          "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445",
+          "bytes": 2636
+        },
+        "kM1ParticleVertex": {
+          "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce",
+          "bytes": 681
+        },
+        "kM1ParticleFragment": {
+          "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7",
+          "bytes": 471
+        },
+        "kM1WaterVertex": {
+          "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e",
+          "bytes": 713
+        },
+        "kM1WaterFragment": {
+          "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612",
+          "bytes": 514
+        }
+      },
+      "graphicsRoles": [
+        {
+          "role": "SCENE_FULL",
+          "key": "e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5",
+          "bindingAbiSHA": "1e19966bdd401e5360f37a1c9143fd0792732f8a488b6706d3b170cdf831aa70",
+          "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+          "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "shaderStages": [
+            {
+              "stage": 35633,
+              "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed",
+              "bytes": 108,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            },
+            {
+              "stage": 35632,
+              "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445",
+              "bytes": 2636,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            }
+          ],
+          "attributes": [],
+          "uniforms": [
+            {
+              "name": "uColumn",
+              "location": 0,
+              "type": 5125,
+              "size": 1
+            },
+            {
+              "name": "uResolution",
+              "location": 1,
+              "type": 35664,
+              "size": 1
+            },
+            {
+              "name": "uBox",
+              "location": 2,
+              "type": 35666,
+              "size": 1
+            },
+            {
+              "name": "uMirror",
+              "location": 3,
+              "type": 35670,
+              "size": 1
+            },
+            {
+              "name": "uLayer",
+              "location": 4,
+              "type": 5124,
+              "size": 1
+            },
+            {
+              "name": "uOptics",
+              "location": 5,
+              "type": 35666,
+              "size": 4
+            },
+            {
+              "name": "uFrame",
+              "location": 9,
+              "type": 35678,
+              "size": 1
+            }
+          ],
+          "publicationBinding": 0,
+          "aStateInactive": false,
+          "colorLocation": 0,
+          "colorType": 35666
+        },
+        {
+          "role": "SCENE_PARTICLES",
+          "key": "834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942",
+          "bindingAbiSHA": "dfe9121d647d8229286853acea10a09f6e9b56a39c3169ce5238050811d57075",
+          "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+          "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "shaderStages": [
+            {
+              "stage": 35633,
+              "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce",
+              "bytes": 681,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            },
+            {
+              "stage": 35632,
+              "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7",
+              "bytes": 471,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "aX",
+              "location": 0,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aY",
+              "location": 1,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aMass",
+              "location": 2,
+              "type": 5125,
+              "size": 1
+            },
+            {
+              "name": "aRadius",
+              "location": 4,
+              "type": 5126,
+              "size": 1
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "uResolution",
+              "location": 0,
+              "type": 35664,
+              "size": 1
+            },
+            {
+              "name": "uBox",
+              "location": 1,
+              "type": 35666,
+              "size": 1
+            },
+            {
+              "name": "uMirror",
+              "location": 2,
+              "type": 35670,
+              "size": 1
+            }
+          ],
+          "publicationBinding": -1,
+          "aStateInactive": true,
+          "colorLocation": 0,
+          "colorType": 35666
+        },
+        {
+          "role": "SCENE_WATER",
+          "key": "cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88",
+          "bindingAbiSHA": "312bbcaf9450a4391f9ac031bd05fdb67880b64809c0efd949b4b917b5c89536",
+          "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+          "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+          "shaderStages": [
+            {
+              "stage": 35633,
+              "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e",
+              "bytes": 713,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            },
+            {
+              "stage": 35632,
+              "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612",
+              "bytes": 514,
+              "compileLog": {
+                "text": "",
+                "bytesHex": "",
+                "reported": 0,
+                "copied": 0,
+                "truncated": false,
+                "queryError": 0
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "aX",
+              "location": 0,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aY",
+              "location": 1,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "aMass",
+              "location": 2,
+              "type": 5125,
+              "size": 1
+            }
+          ],
+          "uniforms": [
+            {
+              "name": "uResolution",
+              "location": 0,
+              "type": 35664,
+              "size": 1
+            },
+            {
+              "name": "uBox",
+              "location": 1,
+              "type": 35666,
+              "size": 1
+            },
+            {
+              "name": "uMirror",
+              "location": 2,
+              "type": 35670,
+              "size": 1
+            },
+            {
+              "name": "uRadius",
+              "location": 3,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "uMassReference",
+              "location": 4,
+              "type": 5126,
+              "size": 1
+            },
+            {
+              "name": "uOptics",
+              "location": 5,
+              "type": 35666,
+              "size": 4
+            }
+          ],
+          "publicationBinding": -1,
+          "aStateInactive": false,
+          "colorLocation": 0,
+          "colorType": 35666
+        }
+      ],
+      "coldPrepareBeforeReady": true,
+      "firstPulseColdQuota": 0,
+      "applicationMode": "compute and scene cold then warm",
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T485-m2-handoff\\T485-m2-handoff-signed.hap",
+        "sha256": "70a21bda3a871ae52931d3ab0a2d35d3f4f7348fd7e6eb8e0cf4190d4dbc2ef3",
+        "bytes": 9545614
+      },
+      "elfSHA256": "75a0a4babf131afcce3bfc226a77ddd2feaa544084e5987d232c186b6ca43b77",
+      "signingReceipt": "test/reports/t257/T485-m2-handoff.json",
+      "build": "PASS"
+    }
+  },
+  "computeCompatibility": {
+    "oldKeyUnchanged": true,
+    "actualLegacyBinaryLoaded": true,
+    "key": "7234cbb48b952df7966f31a83f07bde24db8f7d210cc2ecbb64f4e0b4c86d153"
+  },
+  "limits": {
+    "binaryFormat": "T475B001",
+    "headerBytes": 144,
+    "entryBytes": 33554432,
+    "payloadBytes": 134217728,
+    "entries": 32,
+    "rawLogsPerProgramBytes": 4096,
+    "productFallback": "GPU_GLSL_ONLY",
+    "pixelScope": "FROZEN_PUBLICATION_REAL_SCENE_GLES; compute acceptance not re-estimated"
+  }
+}

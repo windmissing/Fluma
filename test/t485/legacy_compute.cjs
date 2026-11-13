@@ -1,0 +1,20 @@
+const fs=require('node:fs'),cp=require('node:child_process'),path=require('node:path');
+const out=path.resolve(process.argv[2]);
+if(!process.argv[2]||fs.existsSync(out))throw Error('FRESH_OUTPUT_REQUIRED');
+fs.mkdirSync(out,{recursive:true});
+let command=fs.readFileSync('test/t475/build_gl.cmd','utf8');
+command=command.slice(0,command.indexOf('.codex\\local-test\\t475-gl.exe %1 cold'));
+command=command.replaceAll('.codex/local-test/t475-gl.exe',out.replaceAll('\\','/')+'/legacy.exe')
+ .replaceAll('/Fo.codex/local-test/','/Fo'+out.replaceAll('\\','/')+'/');
+fs.writeFileSync(out+'/build.cmd',command);
+cp.execFileSync('cmd.exe',['/c',path.join(out,'build.cmd')],{stdio:'inherit'});
+const dir=path.join(out,'cache/gpu-program-cache/v1');fs.mkdirSync(dir,{recursive:true});
+const old='.codex/local-test/t475-gl-complete-disk/gpu-program-cache/v1';
+const entries=fs.readdirSync(old).filter(n=>n.endsWith('.bin'));
+if(entries.length!==1)throw Error('FROZEN_LEGACY_ARTIFACT_REQUIRED');
+fs.copyFileSync(path.join(old,entries[0]),path.join(dir,entries[0]));
+const env={...process.env,PATH:'C:\\Users\\admin\\AppData\\Local\\Programs\\CokePLUS;'+process.env.PATH};
+const result=cp.execFileSync(path.join(out,'legacy.exe'),[path.join(out,'cache'),'warm'],{env,encoding:'utf8'});
+fs.writeFileSync(out+'/run.txt',result);
+if(!result.includes('route=BINARY_LOAD'))throw Error('LEGACY_COMPUTE_BINARY_NOT_LOADED');
+process.stdout.write(result);
