@@ -1,0 +1,740 @@
+{
+  "revision": "T489_T490_ARCHITECT_EVIDENCE_V1",
+  "date": "2026-11-13",
+  "mode": "READ_ONLY_ARCHIVE_SOURCE_ARITHMETIC",
+  "device": "NOT_RUN",
+  "files": [
+    {
+      "path": "docs/test-report-T448-device-experience-v2.md",
+      "bytes": 6773,
+      "sha256": "d16fb3402da0069016fb144391ad717344dac7be7a0e1e8dfb4af19325a5a302"
+    },
+    {
+      "path": "docs/test-report-T477-device-rerun-v2.md",
+      "bytes": 7695,
+      "sha256": "1cd392679812fc0a7f6b0f2e26d48fd4e3db711ea73b49ae91190ecaee6d967f"
+    },
+    {
+      "path": "docs/developer-T477-rerun-v2-fixes.md",
+      "bytes": 3821,
+      "sha256": "fb2fba5becfd78cdaddd98eafe92a659961f8ddf2e61fbc74b6b546c75aec819"
+    },
+    {
+      "path": "docs/developer-T483-source-recovery-consistency.md",
+      "bytes": 3948,
+      "sha256": "605389a3bdffce61c46383d1a17d951a6474c5c0e7646ac21cdf110c23e5e530"
+    },
+    {
+      "path": "test/reports/t448-s2/boot1.json",
+      "bytes": 113147,
+      "sha256": "95fbce2dea560a3964b3562b501907c266144a15eeeaba7f4912ec36a113b76f"
+    },
+    {
+      "path": "test/reports/t448-s2/boot2.json",
+      "bytes": 145678,
+      "sha256": "a054900972d01e231f22cfa32785ba8ccf205bedb8ebf81735d8ba425c7479ed"
+    },
+    {
+      "path": "test/reports/t448-s2/full.log",
+      "bytes": 200573,
+      "sha256": "d1290eafd280a4720188a2ce827fc70b6aa06d32a89a81e7bcb5572a2d7f2982"
+    },
+    {
+      "path": "test/reports/t448-s2/full2.log",
+      "bytes": 708418,
+      "sha256": "04a13394db176cb69141d9f6e6f71ac1845b9e3086f19367da42cf7aeb700a87"
+    },
+    {
+      "path": "test/reports/t448-s2/hilog_after_newrun.txt",
+      "bytes": 1180,
+      "sha256": "6da222ec60c8a9c0ef1f4d45d25f527035f77aacdee301cec5d8a97d769208c1"
+    },
+    {
+      "path": "test/reports/t448-s2/hilog_pid_touch.txt",
+      "bytes": 3081,
+      "sha256": "3d8bd51c7d7014de3d025b9ed2c5ddb04c70712064c108960b2f79972dbd2e68"
+    },
+    {
+      "path": "test/reports/t477/device-rerun-v2/timeline/manifest.json",
+      "bytes": 6600,
+      "sha256": "504558afbf0363087c86c5de33fbf2f60028f25d96c676e25517fa4897fab499"
+    },
+    {
+      "path": "test/reports/t477/device-rerun-v2/timeline/manifest2.json",
+      "bytes": 6600,
+      "sha256": "694d354fcda7acdd0104849a5a4a65210bfc1aec42323759e6b73459079a49e8"
+    },
+    {
+      "path": "test/reports/t477/device-rerun-v2/rerun3/timeline-manifest-r3.json",
+      "bytes": 6598,
+      "sha256": "ed56a5b448a0bc7fdd65aa86ccd1047c4f5ec01bfabd31c506d00e514d13bd97"
+    },
+    {
+      "path": "test/reports/t477_fix/delivery.json",
+      "bytes": 7615,
+      "sha256": "bf359248d7edebd7b6d36c6943e25622371b13c0d44873e944040e77c5db9886"
+    },
+    {
+      "path": "test/reports/t477_fix/t477-fix-units.txt",
+      "bytes": 1893,
+      "sha256": "6d37a8f790af83c5e934fc684e122ea40b2a456723d293c041bca639bb255e5e"
+    },
+    {
+      "path": "test/reports/t477_fix/t477-fix-native-present.txt",
+      "bytes": 39,
+      "sha256": "24c931fe00eeab563e6ba3624db5e3d5df020eb13ff8c84b59f46cd1a2481fc3"
+    },
+    {
+      "path": "test/t477_fix/units.cjs",
+      "bytes": 5826,
+      "sha256": "d67f70d54d547b633123bb9d2a81694dec7340427068267d87ca83586c895147"
+    },
+    {
+      "path": "test/t467/generate.cjs",
+      "bytes": 12185,
+      "sha256": "6f683458f873522129199b25cc2eacd9a28a5648b9f5b36803dd1368a156fb39"
+    },
+    {
+      "path": "test/t467/pages.cjs",
+      "bytes": 3786,
+      "sha256": "02559293e625b6a62d5c3e18ff5c26c7284c4082337828b8aba750e8385882f1"
+    },
+    {
+      "path": "test/t467/recovery_bridge.inc",
+      "bytes": 1993,
+      "sha256": "7020005f4c5fcea57d90f769c12775cb92fcb3e59a4d15c6d75bbe66e98d8f9e"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 79950,
+      "sha256": "8d77f1860556fd95f02cef06ed8e65a20db2743787ed23b44cdbb4f7cce38888"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/bridge_timeline.h",
+      "bytes": 4858,
+      "sha256": "64acce86fce3be4f8d33773f593e0f34fdfe2b9b1c766aea68f42bf05c8c6637"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/submit_observer.h",
+      "bytes": 3199,
+      "sha256": "55a3392bed935e7f9399a8bebb593ca78604ee51cca38e298b555462fe19395d"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/recovery_v3.h",
+      "bytes": 4917,
+      "sha256": "f2c7da7b358a53200ec36a2920b7f847de610c6152d18bbb621c027508760970"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 10467,
+      "sha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/ets/physics/GpuRecoveryPulse.ets",
+      "bytes": 1884,
+      "sha256": "6d52ff029ddc0dd472084e591423a099e64cf1253ed6a78c46f82474b05867b3"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/ets/physics/GpuBridgeTimelineCold.ets",
+      "bytes": 7905,
+      "sha256": "e65c15480a9d0aedbd1ab59f993c0bbf1bea045c19fe10dc0382de78d3ad544f"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 9784,
+      "sha256": "091f9fdbd1270f39ca562ededb265c83957805a860bcf82ad6727102d6ee0e50"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 86762,
+      "sha256": "5f528c9bf14992821cee26859fa85e34583cac48c726432a6d8871364c8ea21f"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/bridge_timeline.h",
+      "bytes": 4858,
+      "sha256": "64acce86fce3be4f8d33773f593e0f34fdfe2b9b1c766aea68f42bf05c8c6637"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/submit_observer.h",
+      "bytes": 3199,
+      "sha256": "55a3392bed935e7f9399a8bebb593ca78604ee51cca38e298b555462fe19395d"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/recovery_v3.h",
+      "bytes": 4917,
+      "sha256": "f2c7da7b358a53200ec36a2920b7f847de610c6152d18bbb621c027508760970"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 10467,
+      "sha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/physics/GpuRecoveryPulse.ets",
+      "bytes": 1884,
+      "sha256": "6d52ff029ddc0dd472084e591423a099e64cf1253ed6a78c46f82474b05867b3"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/physics/GpuBridgeTimelineCold.ets",
+      "bytes": 7905,
+      "sha256": "e65c15480a9d0aedbd1ab59f993c0bbf1bea045c19fe10dc0382de78d3ad544f"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 13314,
+      "sha256": "11e1225f288a00252fc65a973db94380e097e476d8184c90622e49bf474f31ac"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 86830,
+      "sha256": "47422705d4c6c17c58b2dfadc5ba863abf4d5d30bdcbf0dcd40cbb4208c6d117"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/cpp/gpu_resident/bridge_timeline.h",
+      "bytes": 4791,
+      "sha256": "68796b7887874f4b5ac483fee18da01c27848618dcc421641884bb9844abc0a1"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/cpp/gpu_resident/submit_observer.h",
+      "bytes": 3230,
+      "sha256": "484e154003ff9b8dd5091992c48a287ce8a27c63251ee8024b3de124a1840696"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/cpp/gpu_resident/recovery_v3.h",
+      "bytes": 4917,
+      "sha256": "f2c7da7b358a53200ec36a2920b7f847de610c6152d18bbb621c027508760970"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 10467,
+      "sha256": "864073901a7cc5cca13e6ca173a8007abf608af90c753fad675988244b3252fc"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/ets/physics/GpuRecoveryPulse.ets",
+      "bytes": 2545,
+      "sha256": "89b744717e26284765848461cf574c1afbc87ecfcef591545bdbdab5b9ae2ed0"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/ets/physics/GpuBridgeTimelineCold.ets",
+      "bytes": 8345,
+      "sha256": "bc444673630380ec7e137696043d197882c232ddfa1877c38ae0c3559ec25dd8"
+    },
+    {
+      "path": ".codex/local-test/t477-fix-release/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 13314,
+      "sha256": "11e1225f288a00252fc65a973db94380e097e476d8184c90622e49bf474f31ac"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex/local-test/t467-unit/entry/src/main/cpp/gpu_resident/m1/root_isolation.h",
+      "bytes": 1471,
+      "sha256": "9dcdf6afb55ba716892e71d3fe8f7e899d87d581ed13d1ee0c27453803187836"
+    }
+  ],
+  "packages": [
+    {
+      "name": "T467-experience-final",
+      "signedSha256": "1a3d8d5313480cc5bfbcac54d12ff461d2db2ef8cb79da70572ad9687b62f6f2",
+      "matchesReceipt": true,
+      "bytes": 8708044,
+      "elfSHA256": "b2dd4ba23abc90fb0f1ce9b31f2de0f31878e82f59eccf09f54f5e77ec561ea7",
+      "nativeStage65String": true,
+      "nativeStage67String": false,
+      "frozenBuildInput": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t467-unit\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap"
+    },
+    {
+      "name": "T482-final",
+      "signedSha256": "300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e",
+      "matchesReceipt": true,
+      "bytes": 9454076,
+      "elfSHA256": "783cb115038e83e22897400c8e350b9562fba7783fa6fbe2b8c766c9249fa5b2",
+      "nativeStage65String": true,
+      "nativeStage67String": false,
+      "frozenBuildInput": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t482-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap"
+    },
+    {
+      "name": "T477-fix",
+      "signedSha256": "b27eb2114579ae486d30e48c8155aa4a5448ac9e248c755aeb836923cbbac13a",
+      "matchesReceipt": true,
+      "bytes": 9460638,
+      "elfSHA256": "5b1129f38dd13ece85ea0c5606d1d19ae91723fd1b0332a0114f29bc51f02cda",
+      "nativeStage65String": false,
+      "nativeStage67String": true,
+      "frozenBuildInput": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t477-fix-release\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap"
+    }
+  ],
+  "t490": {
+    "pid": "16802",
+    "epoch": "3",
+    "run": "1",
+    "session": "1",
+    "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+    "sameAttemptInBothFiles": true,
+    "attemptCount": 3,
+    "nativeTransitionsIdentical": true,
+    "transitionDropped": [
+      "0",
+      "0"
+    ],
+    "resetTransitions": [
+      {
+        "reason": "UI_RESET",
+        "ns": "70292239582186",
+        "tid": "16802",
+        "beforeEpoch": "2",
+        "afterEpoch": "3",
+        "surfaceGeneration": "1",
+        "a": "0",
+        "b": "0",
+        "result": 0
+      }
+    ],
+    "selectedBootRows": [
+      {
+        "stage": "TRANSPORT_CREATE_ENTER",
+        "ns": "70292288071717",
+        "tid": "25769",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "TRANSPORT_CREATE_EXIT",
+        "ns": "70343571098749",
+        "tid": "25769",
+        "root": "0",
+        "a": "37728720",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "RECOVERY_READY_COMMIT",
+        "ns": "70343576510311",
+        "tid": "16802",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "ROOT_INTENT",
+        "ns": "70343609933592",
+        "tid": "25769",
+        "root": "1",
+        "a": "2",
+        "b": "70343609929217",
+        "c": "70343859929217",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "ROOT_ACCEPT",
+        "ns": "70343855447967",
+        "tid": "25769",
+        "root": "1",
+        "a": "2",
+        "b": "1",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "DRAW_ENTER",
+        "ns": "70343855472342",
+        "tid": "25769",
+        "root": "1",
+        "a": "1280",
+        "b": "1609",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "V2_GPU_PROGRESS_TIMEOUT",
+        "ns": "70343860670624",
+        "tid": "25768",
+        "root": "1",
+        "a": "70343609929217",
+        "b": "70343859929217",
+        "c": "70343860670155",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "V2_PULSE_CLOCK_GAP",
+        "ns": "70343876377811",
+        "tid": "16802",
+        "root": "1",
+        "a": "70343859759686",
+        "b": "70343876368280",
+        "c": "16608594",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "V2_GPU_DEADLINE",
+        "ns": "70343998529530",
+        "tid": "25769",
+        "root": "1",
+        "a": "70343609929217",
+        "b": "70343859929217",
+        "c": "70343998527030",
+        "result": 9,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      {
+        "stage": "T398_PRESENT_REVOKED",
+        "ns": "70343998668592",
+        "tid": "25769",
+        "root": "1",
+        "a": "16476160",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 12288,
+        "rawGl": 0
+      }
+    ],
+    "metrics": {
+      "intentToAcceptNs": 245518750,
+      "acceptToDrawNs": 24375,
+      "headroomAtAcceptNs": 4481250,
+      "headroomAtDrawNs": 4456875,
+      "timeoutObservedOverdueNs": 740938,
+      "drawToTimeoutNoteNs": 5198282,
+      "drawToLatePermitRejectNs": 143054688,
+      "drawToFinalReceiptNs": 143196250,
+      "flushSumNs": 186712341,
+      "fenceCallSpanNs": 45501406,
+      "remainingRootWallOutsideFlushAndFenceNs": 13305003
+    },
+    "flushIntervals": [
+      {
+        "ordinal": "1",
+        "startNs": "70343610787342",
+        "endNs": "70343610829217",
+        "durationNs": 41875
+      },
+      {
+        "ordinal": "2",
+        "startNs": "70343611156249",
+        "endNs": "70343650583436",
+        "durationNs": 39427187
+      },
+      {
+        "ordinal": "3",
+        "startNs": "70343650831874",
+        "endNs": "70343704301249",
+        "durationNs": 53469375
+      },
+      {
+        "ordinal": "4",
+        "startNs": "70343704517499",
+        "endNs": "70343704552186",
+        "durationNs": 34687
+      },
+      {
+        "ordinal": "5",
+        "startNs": "70343704676874",
+        "endNs": "70343704705936",
+        "durationNs": 29062
+      },
+      {
+        "ordinal": "6",
+        "startNs": "70343705058905",
+        "endNs": "70343756802186",
+        "durationNs": 51743281
+      },
+      {
+        "ordinal": "7",
+        "startNs": "70343757037811",
+        "endNs": "70343757075780",
+        "durationNs": 37969
+      },
+      {
+        "ordinal": "8",
+        "startNs": "70343757197655",
+        "endNs": "70343757223905",
+        "durationNs": 26250
+      },
+      {
+        "ordinal": "9",
+        "startNs": "70343757495311",
+        "endNs": "70343799323905",
+        "durationNs": 41828594
+      },
+      {
+        "ordinal": "10",
+        "startNs": "70343799512186",
+        "endNs": "70343799541092",
+        "durationNs": 28906
+      },
+      {
+        "ordinal": "11",
+        "startNs": "70343799632030",
+        "endNs": "70343799651092",
+        "durationNs": 19062
+      },
+      {
+        "ordinal": "12",
+        "startNs": "70343799745155",
+        "endNs": "70343799766561",
+        "durationNs": 21406
+      },
+      {
+        "ordinal": "13",
+        "startNs": "70343845600780",
+        "endNs": "70343845605467",
+        "durationNs": 4687
+      }
+    ],
+    "pulseAcceptedCount": 18,
+    "acceptedNativeGapMaxNs": 17778125,
+    "acceptedUiGapMaxNs": 16687867,
+    "firstRejectedPulse": {
+      "kind": "PAGE_PULSE",
+      "ns": "70343876365155",
+      "tid": "16802",
+      "role": 1,
+      "serial": "1",
+      "epoch": "3",
+      "session": "1",
+      "permissionRevision": "4",
+      "root": "1",
+      "a": "70343875237983",
+      "b": "70343859759686",
+      "c": "70343876361561",
+      "code": 1
+    },
+    "firstRejectedNativeGapNs": 16601875,
+    "boot1Recovery": {
+      "eventCount": 360,
+      "incomplete": false,
+      "dropped": 0
+    },
+    "boot2Recovery": {
+      "eventCount": 512,
+      "incomplete": true,
+      "dropped": 10290
+    },
+    "boot2RejectedPulseCount": 450,
+    "swapEventsInBoot": 0,
+    "firstFailure": {
+      "stage": "V2_GPU_PROGRESS_TIMEOUT",
+      "ns": "70343860670624",
+      "tid": "25768",
+      "root": "1",
+      "a": "70343609929217",
+      "b": "70343859929217",
+      "c": "70343860670155",
+      "result": 0,
+      "rawEgl": 0,
+      "rawGl": 0
+    },
+    "bootTerminalFiltering": {
+      "source": "boot_probe.h::Probe::Root",
+      "timeoutMarksTerminal": true,
+      "laterRootEventsSuppressed": true,
+      "finalDrawStillRecorded": true,
+      "absenceOfSwapRowsProvesNoCallback": false,
+      "lateResult9IsSwapPermitRejection": true,
+      "eglSwapBuffersReached": "NOT_PROVEN"
+    }
+  },
+  "t489": [
+    {
+      "manifest": "test/reports/t477/device-rerun-v2/timeline/manifest.json",
+      "manifestSha256": "504558afbf0363087c86c5de33fbf2f60028f25d96c676e25517fa4897fab499",
+      "pageFile": "test/reports/t477/device-rerun-v2/timeline/gpu-timeline-part0.ndjson",
+      "pageSha256": "5b31d5debf52ad538952f74dfc7252e7da996a179d825c08c2be215d6c7fc652",
+      "identity": {
+        "module": "libgrsm1.so",
+        "route": "GpuResidentM1",
+        "packageSha256": "300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e",
+        "pid": 48949
+      },
+      "state": "INCOMPLETE",
+      "reason": "Error: INVALID_ROW",
+      "stageRevision": "T404_STAGE65_V1",
+      "rowsSaved": 120,
+      "pagesSaved": 30,
+      "lastSavedStage": 35,
+      "dropped": "3568305",
+      "serial": "3572401",
+      "statusBefore": {
+        "epoch": 3,
+        "runLo": 1,
+        "contextLo": 3,
+        "pageSession": "1",
+        "pageSequence": "15458",
+        "pageFault": "CLOCK_GAP",
+        "firstFailureStage": "CLOCK_GAP",
+        "clockDeltaNs": 34329218,
+        "acceptedCount": 2446,
+        "physicsCommitLo": 2446,
+        "sourceCommitLo": 0,
+        "newPhysicalFrames": "2446",
+        "lastSwapGapNs": "82974844",
+        "maxSwapGapNs": "205980000",
+        "pageNativeGapMaxNs": "27263906",
+        "pageUiGapMaxNs": "25744856",
+        "sourceRequestSeq": 0,
+        "lastOfferCode": "NONE",
+        "sourceReceiptStatus": 0
+      },
+      "savedPrefixContiguous": true,
+      "savedStagesValid65": true,
+      "statusNotSystemPixelEvidence": true
+    },
+    {
+      "manifest": "test/reports/t477/device-rerun-v2/timeline/manifest2.json",
+      "manifestSha256": "694d354fcda7acdd0104849a5a4a65210bfc1aec42323759e6b73459079a49e8",
+      "pageFile": "test/reports/t477/device-rerun-v2/timeline/gpu-timeline-part0-run2.ndjson",
+      "pageSha256": "e09ae7455f1da003d0ce16c8a8cb8953bd89d59df094405d1d732640cc6bd808",
+      "identity": {
+        "module": "libgrsm1.so",
+        "route": "GpuResidentM1",
+        "packageSha256": "300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e",
+        "pid": 48949
+      },
+      "state": "INCOMPLETE",
+      "reason": "Error: INVALID_ROW",
+      "stageRevision": "T404_STAGE65_V1",
+      "rowsSaved": 120,
+      "pagesSaved": 30,
+      "lastSavedStage": 35,
+      "dropped": "4683513",
+      "serial": "4687609",
+      "statusBefore": {
+        "epoch": 3,
+        "runLo": 1,
+        "contextLo": 3,
+        "pageSession": "1",
+        "pageSequence": "15458",
+        "pageFault": "CLOCK_GAP",
+        "firstFailureStage": "CLOCK_GAP",
+        "clockDeltaNs": 34329218,
+        "acceptedCount": 2446,
+        "physicsCommitLo": 2446,
+        "sourceCommitLo": 0,
+        "newPhysicalFrames": "2446",
+        "lastSwapGapNs": "82974844",
+        "maxSwapGapNs": "205980000",
+        "pageNativeGapMaxNs": "27263906",
+        "pageUiGapMaxNs": "25744856",
+        "sourceRequestSeq": 0,
+        "lastOfferCode": "NONE",
+        "sourceReceiptStatus": 0
+      },
+      "savedPrefixContiguous": true,
+      "savedStagesValid65": true,
+      "statusNotSystemPixelEvidence": true
+    },
+    {
+      "manifest": "test/reports/t477/device-rerun-v2/rerun3/timeline-manifest-r3.json",
+      "manifestSha256": "ed56a5b448a0bc7fdd65aa86ccd1047c4f5ec01bfabd31c506d00e514d13bd97",
+      "pageFile": "test/reports/t477/device-rerun-v2/rerun3/timeline-r3.ndjson",
+      "pageSha256": "55981345125b3d9d3d983453df9edd7857f88ca76c8a063f68e6dee1bb210699",
+      "identity": {
+        "module": "libgrsm1.so",
+        "route": "GpuResidentM1",
+        "packageSha256": "300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e",
+        "pid": 27279
+      },
+      "state": "INCOMPLETE",
+      "reason": "Error: INVALID_ROW",
+      "stageRevision": "T404_STAGE65_V1",
+      "rowsSaved": 88,
+      "pagesSaved": 22,
+      "lastSavedStage": 34,
+      "dropped": "2212662",
+      "serial": "2216758",
+      "statusBefore": {
+        "epoch": 3,
+        "runLo": 1,
+        "contextLo": 3,
+        "pageSession": "1",
+        "pageSequence": "15476",
+        "pageFault": "CLOCK_GAP",
+        "firstFailureStage": "CLOCK_GAP",
+        "clockDeltaNs": 33441407,
+        "acceptedCount": 2441,
+        "physicsCommitLo": 2441,
+        "sourceCommitLo": 0,
+        "newPhysicalFrames": "2441",
+        "lastSwapGapNs": "109186250",
+        "maxSwapGapNs": "203519375",
+        "pageNativeGapMaxNs": "24383750",
+        "pageUiGapMaxNs": "22892176",
+        "sourceRequestSeq": 0,
+        "lastOfferCode": "NONE",
+        "sourceReceiptStatus": 0
+      },
+      "savedPrefixContiguous": true,
+      "savedStagesValid65": true,
+      "statusNotSystemPixelEvidence": true
+    }
+  ],
+  "existingFix": {
+    "commit": "956570402c1e6dca8bc70bcf50fb6c36f13a20f0",
+    "developerStatus": "DEVELOPER_COMPLETE",
+    "device": "NOT_RUN",
+    "unitCases": {
+      "schema": "T477_FIX_UNITS_V1",
+      "passed": 9,
+      "failed": 0,
+      "cases": [
+        "native stage66/67 export crosses the former 120-row boundary",
+        "old dictionary still rejects raw141 and preserves the exact rejected page",
+        "new dictionary rejects unknown68 and retains rejected bytes",
+        "native dropped stays INCOMPLETE with the full readable prefix",
+        "same-session native revoke reports original GAP and stops old pulses",
+        "revoke between state read and pulse preserves native reason",
+        "explicit new frame rebinds a new reset; an old frame cannot send",
+        "genuine native CLOCK_GAP is terminal without new session or reset",
+        "offline reader recognizes bounded enter event with no fabricated exit"
+      ],
+      "device": "NOT_RUN"
+    },
+    "nativePresentedPhysicalFrames": 1,
+    "signed": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T477-fix\\T477-fix-signed.hap",
+      "sha256": "b27eb2114579ae486d30e48c8155aa4a5448ac9e248c755aeb836923cbbac13a",
+      "bytes": 9460638
+    },
+    "notInstalledInOldT482Evidence": true
+  },
+  "validation": {
+    "status": "PASS_ARCHITECT_DOCUMENT_AND_ARCHIVE_CHECKS_ONLY",
+    "inputHashCount": 46,
+    "originalInputsUnchanged": true,
+    "signedPackageReceiptMatches": 3,
+    "integerNsArithmetic": "PASS",
+    "flushIntervals": 13,
+    "localDocumentLinks": 13,
+    "executionPromptConstraints": "PASS",
+    "productTest": "NOT_RUN",
+    "device": "NOT_RUN",
+    "businessCodeChanged": false
+  }
+}

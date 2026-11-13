@@ -51,3 +51,7 @@ T466 tester 串行消费同包实际 V2，记录 actualClock、同档位、viewp
 ## 2026-11-10 用户要求补齐编译产物持久化
 
 此前仅安排日志落盘，遗漏成功program binary复用。新增 [编译产物持久化工程合同](architecture-T462-program-binary-persistence-v1.md)，明确自动落盘、跨启动加载、环境/代码失效及开发/独立验证prompt。manager据此新增P5实施，不扩正在执行的T468诊断关闭门；当前尚未实施，不能称为已缓存。
+
+## 2026-11-13 T448 v2首root归因修订
+
+[T490工程裁定](architecture-T490-m1-first-root-budget-v1.md)核实际T467签包及冻结源：首QUANTUM在245.51875ms真实ACCEPT，后续呈现共享deadline仅余4.48ms并晚拒；旧报告2455ms单位错误。timeout后boot普通root记录被terminal过滤，缺SWAP行不证明没有回调。graphics冷准备沿T480/T485，首次撤权锁存和有界尾部另作工程接续；不修改250ms/GAP/配额语义。

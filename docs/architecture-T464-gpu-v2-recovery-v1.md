@@ -50,3 +50,7 @@ tester 后续带真机标签串行：同包分别触发一次真实GAP、显式�
 执行prompt必须带：要么完成本卡范围及必要检查，要么遇到具体不可继续问题才停止，局部分支受阻先完成其它项。不允许修改 `D:\hmprojects\HelloWorld\docs\后续工作清单.md`，仅本人行状态例外，不改其它列/行/滴答同名清单。CPU停投。全部背景前景只XComponent+shader，禁止Canvas/软件GL回退，失败FAULT或标STALE完整旧有效帧。成功原卡回执并本人行结束待验收；失败/缺证原卡留未完项、复现原错、证据、尝试、不能继续原因、前置和接手角色，本人行看评论。
 
 本轮完成工程路径核验、报告纠偏和恢复合同，未运行真机，不声明设备已恢复或30fps达标。
+
+## 2026-11-13 终态pulse与第二次reset补充
+
+[T490工程裁定](architecture-T490-m1-first-root-budget-v1.md)发现旧native在GPU超期关闭open后，可被正常间隔晚pulse再次调用ClockGapLocked并改写恢复原因。终态pulse必须幂等保留首次scope/原因，仅计late/stale；当前open真实GAP仍按原阈值处理。T448 boot1/boot2是同一次attempt扩展，只有一次UI_RESET，不能判第二次native退休失败；按actionSerial补齐按钮→桥→native→退休证据。[T489](architecture-T489-m2-presentation-timeline-triage-v1.md)另区分M2真实GAP与9565704已有页面停pulse修复，二者不混判。
