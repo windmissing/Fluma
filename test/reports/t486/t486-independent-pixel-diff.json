@@ -1,0 +1,69 @@
+{
+ "revision": "T486_INDEPENDENT_PIXEL_DIFF_V1",
+ "date": "2026-11-13",
+ "mode": "OFFLINE_INDEPENDENT_RECOMPUTE_FROM_T485_ARTIFACTS",
+ "device": "NOT_RUN",
+ "authority": "独立重算（不复用 T485 开发断言）",
+ "sources": {
+  "zip": "D:\\hmprojects\\HelloWorld\\test\\reports\\t485\\pixel-originals.zip",
+  "matrix": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t485-pixel-final-matrix",
+  "zipEntries": 288
+ },
+ "results": [
+  {
+   "id": "Z1",
+   "name": "zip 原始字节与六路运行目录逐份一致（防复写）",
+   "pass": true,
+   "detail": "288 份核对，不一致 0 份"
+  },
+  {
+   "id": "E1",
+   "name": "禁缓存（off）基准：每场景 8 层像素尺寸=宽×高×4 全有效",
+   "pass": true,
+   "detail": "64 层全部有效"
+  },
+  {
+   "id": "E2",
+   "name": "三路（off/cold/warm）同 route 同场景同层像素 SHA 逐位相等",
+   "pass": true,
+   "detail": "128 对比较，不一致 0"
+  },
+  {
+   "id": "E3",
+   "name": "M1/M2 同 mode 同场景同层像素逐位相等（共享 graphics binary 的结果面）",
+   "pass": true,
+   "detail": "96 对比较，不一致 0"
+  },
+  {
+   "id": "E4",
+   "name": "业务 token 与 mode 无关（同 route 同场景三路逐位相等）",
+   "pass": true,
+   "detail": "8 组 × 3 路，不一致 0"
+  },
+  {
+   "id": "E5",
+   "name": "反射绑定独立核（publicationBinding=0 / aState loc3 uint / color loc0 vec4）",
+   "pass": true,
+   "detail": "不一致 0"
+  },
+  {
+   "id": "E6",
+   "name": "暖 BINARY_LOAD compile=0 / 冷 SOURCE_COMPILE×2 / 禁缓存 CACHE_DISABLED_SOURCE×2",
+   "pass": true,
+   "detail": "不一致 0"
+  },
+  {
+   "id": "E7",
+   "name": "坏 hash/截断新进程一次源码回退且像素与冷基准一致",
+   "pass": true,
+   "detail": "不一致 0"
+  },
+  {
+   "id": "E8",
+   "name": "M1/M2 缓存目录三 graphics key 集合相等且与声明一致",
+   "pass": true,
+   "detail": "m1=3 m2=3 declared=3"
+  }
+ ],
+ "verdict": "PASS"
+}
