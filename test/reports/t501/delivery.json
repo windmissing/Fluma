@@ -1,0 +1,114 @@
+{
+  "revision": "T501_DEVELOPER_DELIVERY_V1",
+  "device": "NOT_RUN",
+  "driver": "DRIVER_NOT_MEASURED",
+  "routes": {
+    "m1": {
+      "buffers": 17,
+      "logicalPayload": 37728720,
+      "programs": 5,
+      "controls": [
+        {
+          "schema": "T467_GENERATED_BRIDGE_CONTROLS_V1",
+          "passed": 23,
+          "failed": 0,
+          "device": "NOT_RUN"
+        },
+        {
+          "revision": "T492_NATIVE_CONTROLS_V1",
+          "passed": 20,
+          "failed": 0,
+          "device": "NOT_RUN"
+        },
+        {
+          "revision": "T501_LEDGER_CONTROLS_V1",
+          "passed": 7,
+          "failed": 0
+        }
+      ],
+      "exitCases": 9,
+      "sourceGL": {
+        "schema": "T492_GENERATED_M1_SOURCE_GL_V1",
+        "passed": 1,
+        "failed": 0,
+        "admittedJQ": 131072,
+        "settledAfterUpQ": 131072,
+        "device": "NOT_RUN",
+        "capabilities": {}
+      },
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T501-m1-delivery\\T501-m1-delivery-signed.hap",
+        "sha256": "461a4d7f5be0dbb41d53081a369cee4bfbb8bfa974c4fbfa3055c3009cd2aad2",
+        "bytes": 9526260
+      },
+      "elfSHA256": "52f3790e7ad6d8c327eb3a403b95a29a9b21e082787fdc13d9b54897f3896e8d",
+      "manifest": {
+        "revision": "T501_RESOURCE_OVERLAY_V1",
+        "route": "m1",
+        "files": {
+          "app_bridge.cpp": "3c134de3992a82c59fbc4670a13a46acafa2e05fdabff54183e200927e2f363f",
+          "resource_ledger.h": "72062e487b7606239b06ec092145e6e2033ca2bf05d4adcbf2412228047f5f0e",
+          "resource_gl.h": "2e9f374313b15af9fe23ea816a57df3b9d09c424de9c784de42f9842c91e3985",
+          "program_cache/program_factory.h": "202c220a85838b8e2190ca29f91ba97785a63ddd6b5dfc633f701624b377f20c",
+          "program_cache/artifact_store.h": "711d0f380a58c72d8c9453b0544bdd2c1432333646eb7d22999872d76ab3e77b",
+          "m1/source_transport.cpp": "fe361a1c677d1a78c5e3082166443a51c6bfc3e73e5a3e67cde2f4bb09aa2334",
+          "m1/quantum_candidate.h": "460ce5af0781d1338128887f47cadc0419412956817c2a40c3fa38b2166e0615"
+        }
+      }
+    },
+    "m2": {
+      "buffers": 20,
+      "logicalPayload": 38388176,
+      "programs": 5,
+      "controls": [
+        {
+          "schema": "T467_GENERATED_BRIDGE_CONTROLS_V1",
+          "passed": 23,
+          "failed": 0,
+          "device": "NOT_RUN"
+        },
+        {
+          "revision": "T492_NATIVE_CONTROLS_V1",
+          "passed": 20,
+          "failed": 0,
+          "device": "NOT_RUN"
+        },
+        {
+          "revision": "T501_LEDGER_CONTROLS_V1",
+          "passed": 7,
+          "failed": 0
+        }
+      ],
+      "exitCases": 9,
+      "sourceGL": {
+        "schema": "T492_GENERATED_M2ROUTE_SOURCE_GL_V1",
+        "passed": 1,
+        "failed": 0,
+        "admittedJQ": 131072,
+        "settledAfterUpQ": 131072,
+        "device": "NOT_RUN",
+        "capabilities": {}
+      },
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T501-m2-delivery\\T501-m2-delivery-signed.hap",
+        "sha256": "70fcc4d21711abb2c951f5971eb7ef29fdbdf60ae663d4c1337ff70586d3427d",
+        "bytes": 9719458
+      },
+      "elfSHA256": "d105785f6d4025ea669c464214d3089a21574989c42b1119156465dd50acf46f",
+      "manifest": {
+        "revision": "T501_RESOURCE_OVERLAY_V1",
+        "route": "m2",
+        "files": {
+          "app_bridge.cpp": "687aceed539592e47fbdda33757c0af092214c1ecb5312fad3df2b0aa0d673e7",
+          "resource_ledger.h": "72062e487b7606239b06ec092145e6e2033ca2bf05d4adcbf2412228047f5f0e",
+          "resource_gl.h": "2e9f374313b15af9fe23ea816a57df3b9d09c424de9c784de42f9842c91e3985",
+          "program_cache/program_factory.h": "202c220a85838b8e2190ca29f91ba97785a63ddd6b5dfc633f701624b377f20c",
+          "program_cache/artifact_store.h": "711d0f380a58c72d8c9453b0544bdd2c1432333646eb7d22999872d76ab3e77b",
+          "m2route/source_transport.cpp": "5881aba9dd07d27bc7c32e3517bc0674f149bc1d1340bd3b8e70dc604eeb1f81",
+          "m2route/quantum_candidate.h": "4c099b679a31fd93a607dffeaccf41f4d6461a6118db5315f7508a2805973f61"
+        }
+      }
+    }
+  },
+  "status": "DEVELOPER_COMPLETE"
+}
