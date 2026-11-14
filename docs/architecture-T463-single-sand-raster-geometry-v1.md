@@ -43,3 +43,7 @@ developer 不使用真机，修改实际T455生成页、必要的准备helper/�
 执行者要么完成约定范围及角色必要检查，要么遇到具体不可继续问题才停止，局部受阻先做其它项。不允许修改 `D:\hmprojects\HelloWorld\docs\后续工作清单.md`，仅本人行状态例外，不改滴答同名清单。CPU停投。前景背景仅XComponent+shader，禁止Canvas上屏或回退，失败FAULT/标STALE旧完整有效帧。成功原卡报告且本人行结束待验收；失败/关键缺证原卡留未完项、复现原错、证据、尝试、不能继续原因、前置与接手角色，本人行看评论。
 
 本卡完成来源核验、工程裁定及可执行修订。厂商内部精确取整实现仍未知，本方案通过显式整数布局消除对该猜测的依赖；产品READY与后续标定仍待实施和独立取证。
+
+## 2026-11-14 T509位置合同v2修订
+
+T408 attempt7实际T469包出现parent.x=51.20001220703125、inner/actual/touch.x=51，原V1仅floor宽高不足以保证包围。[T509 v2](architecture-T509-inward-raster-position-v2.md)以ceil(left/top)、floor(right/bottom)共同生成window-px整数框，显式父content内position驱动位置及尺寸，再严格核实际三框/native/packet。当前例新计划52/990/1176/1716，旧51/1177不追认；不加1px容差，位置变化即使四整数不变仍使旧permit/OPEN失效。此条替代本稿§2仅宽高floor的分配策略；旧PNG/颜色/时序及两帧/键盘/窗口门保持。

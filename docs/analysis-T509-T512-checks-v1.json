@@ -1,0 +1,142 @@
+{
+  "schema": "T509_T512_ARCHITECT_STATIC_CONTRACT_CHECKS_V1",
+  "date": "2026-11-14",
+  "device": "NOT_RUN",
+  "gl": "NOT_RUN",
+  "product": "NOT_IMPLEMENTED_V5",
+  "files": [
+    {
+      "path": "docs/algorithm-T506-gpu-lift-suspension-v1.md",
+      "bytes": 22957,
+      "sha256": "430c9f6d32b055b2f3478cc562a918b1a2bbfdb9a648e92963c3a900bcf73016"
+    },
+    {
+      "path": "docs/design-T506-gpu-lift-manifest-v1.json",
+      "bytes": 28370,
+      "sha256": "7b5aed07a93214c0b6429cc81db841fcb102dcac37fb274e4ddd731f069c8cd9"
+    },
+    {
+      "path": "docs/design-T506-gpu-lift-fixtures-v1.json",
+      "bytes": 6801,
+      "sha256": "0af0cc6eb46389d47033ae9c18510839cf30605b56eed6bf754a4e45d813bea7"
+    },
+    {
+      "path": "docs/design-T506-gpu-lift-evidence-v1.json",
+      "bytes": 8386,
+      "sha256": "d0cc50fe068c13832bdb3dd0f5935ccbbb08576d57d89140f0d61e0174495fe6"
+    },
+    {
+      "path": "docs/architecture-T498-gpu-M3-engineering-v1.md",
+      "bytes": 16673,
+      "sha256": "bc099997c3d93fe02a3a04ba2eb70deeda17183989313fc5034d0b9057970ff0"
+    },
+    {
+      "path": "docs/architecture-T498-m3-engineering-manifest-v1.json",
+      "bytes": 480047,
+      "sha256": "76b6ce06e6e79d8371ba4da17732c9d1acce3851acb1e148a442cb5a6a62a4c8"
+    },
+    {
+      "path": "docs/architecture-T503-bounded-cold-protocol-v1.md",
+      "bytes": 13898,
+      "sha256": "c71f4cf09a39fc504e612ff23940a44f47a8af33a6bcd063ded6e0bddf596c51"
+    },
+    {
+      "path": "docs/architecture-T503-cold-manifest-v1.json",
+      "bytes": 3599,
+      "sha256": "73975006f64234358567919b58dd43ced454299e8fb8d3fdfc3e4d7e6ef34b23"
+    },
+    {
+      "path": "entry/src/main/ets/physics/P051GravityInputAdapter.ets",
+      "bytes": 2692,
+      "sha256": "62da969e8b3d79d7b470c8d34c8c4f575e8c02c08e778e1ad6a820a07411ed2f"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 11403,
+      "sha256": "db8aa549a21890d13abce09183a0e60a592dba82554767bfa30217c55c2a5437"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/m2route/full_kernel.cpp",
+      "bytes": 140976,
+      "sha256": "e6ebb13f47b28cee21b08c690a24894efdae28e04037895dc5263d304016db77"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\ets\\api\\@ohos.sensor.d.ts",
+      "bytes": 219129,
+      "sha256": "0d1355fc5c61195b77e6a2f18b44f123284999b7af809c0a3524cbcd44a1e948"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\ets\\api\\@ohos.systemDateTime.d.ts",
+      "bytes": 15436,
+      "sha256": "3d19ca3e48600f917efff80ce20172bbba44a8ac93f8a1990bd94402836af70e"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\ets\\api\\@ohos.arkui.componentUtils.d.ts",
+      "bytes": 12369,
+      "sha256": "8b8251bc4904d1a0f4dddceabe7e4468e8cbf7c61e60b619884fb054e0d5c5e4"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\ets\\component\\common.d.ts",
+      "bytes": 930742,
+      "sha256": "c4e673557876fecbe51603b4d76a39c78def8cf0983352199c133793a8b2c804"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\sysroot\\usr\\include\\time.h",
+      "bytes": 4428,
+      "sha256": "5b1f85f379c6bf90eae8a8f13f6f4cd083a0c8461298e68dec0ead4b731444fe"
+    }
+  ],
+  "checks": {
+    "headerCompletionMap": "PASS",
+    "V5Masks": "PASS",
+    "sevenStateResourceSums": 4,
+    "expandedDispatchCounts": [
+      569,
+      639,
+      614,
+      684
+    ],
+    "fourBindings": true,
+    "explicitWorkTailRebaseContinuity": true,
+    "T509GeometryEvidence": "analysis-T509-evidence-v1.json",
+    "finiteScalarChecks": {
+      "requestWideDivision": 512,
+      "cycleFloorPartition": 512,
+      "energyStrictDecay": 512
+    },
+    "fullSimulatorAdded": false,
+    "actualArkUiOrGpuHelperExecuted": false
+  },
+  "sensorSDKFindings": {
+    "ResponseTimestamp": "number startup-to-report ns",
+    "startupIncludesDeepSleep": true,
+    "activeExcludesDeepSleep": true,
+    "nativeClockBoottimeDeclared": true,
+    "existingPageUsesCallbackActiveInsteadOfReportTimestamp": true,
+    "deviceCommonClockVerified": false,
+    "productSensorGate": "SENSOR_CLOCK_UNVERIFIED unless target proof supplied",
+    "defaultOFF": true
+  },
+  "dependencies": {
+    "T508": "required formal time policy and T498 gate before product implementation",
+    "T512EngineeringScope": "complete conditional contract, no product readiness claim"
+  },
+  "primarySources": [
+    {
+      "url": "https://github.com/openharmony/docs/blob/master/en/application-dev/reference/apis-sensor-service-kit/js-apis-sensor.md#response",
+      "supports": "startup nanosecond report timestamp; not native clock equivalence",
+      "readDate": "2026-11-14"
+    },
+    {
+      "url": "https://github.com/openharmony/docs/blob/master/en/application-dev/reference/apis-arkui/arkui-ts/ts-universal-attributes-location.md#position",
+      "supports": "absolute parent-content layout position distinct from draw offset",
+      "readDate": "2026-11-14"
+    }
+  ],
+  "validation": {
+    "originalInputsUnchanged": true,
+    "localDocumentLinks": 4,
+    "executionPromptConstraints": "PASS",
+    "productDevicePassClaimed": false
+  }
+}
