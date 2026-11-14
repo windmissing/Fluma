@@ -36,3 +36,37 @@ calibrationId 冻结、planId 冻结、静态 single、动态 pair V2 判读、�
 ## 边界
 
 未改业务；未改半径/shader/阈值；不逐 ROI/臂找平移；capture 全部走 capture.py（后三轮）且收据齐备；时钟映射未从被测图拟合。
+
+---
+
+## attempt7（2026-11-14，T469-release cab50816… 新整数内框版）
+
+来源：唯一签包 `T469-release-signed.hap` SHA256 `cab5081663aab4626b8b3dad9cbd203e724f1d2224c05db1ed744ac9180eacdf`（本地逐位一致）；旧 T455 `7b13fb3e…` 未使用。按 `test/t469/README.md` 执行。证据：`test/reports/t491/t408/`（11 截图 + prepare 档 + t413-status + 布局 dump）。
+
+### 执行链
+
+1. 冷启 PID 46765 → 单沙页 `单沙显式冻结截图 V2 · CONFIGURING · IDLE` 在位。
+2. 确认固定键盘 → 收键盘并准备（session `s1794657849033-1`）→ 3 秒超时 **FAILED**。
+3. 多轮重试（含释放→预约→归档→时钟→状态完整链）均复现；无 PNG/calibrationId 产物（find 为空）。
+
+### 阻断根因（独立复算，交 architect）
+
+prepare 档 `readinessReason = PREPARE_TIMEOUT:RASTER_OUTSIDE_ALLOCATION`（prepareId 1，observationSerial 11）。用 FAILED 档原始数据独立复算 `rasterNodeReason`（`test/t469/RasterGeometry.ets:59`）：
+
+| 域 | x | y | width | height |
+|---|---|---|---|---|
+| actual/inner/touch（整数内框） | **51** | 990 | 1177 | 1716 |
+| allocation.parent（浮点） | **51.20001220703125** | 990 | 1177.5999755859375 | 1716 |
+| window | 0 | 0 | 1280 | 2832 |
+
+`r.x(51) < parent.x(51.2)` → **RASTER_OUTSIDE_ALLOCATION**。设备 vp2px=3.5，父组件浮点 x=51.2；T469 整数内框计划 floor 了宽高但组件实际渲染 x=51 未与浮点父框对齐 → `rasterPredicate` 恒非空 → prepare 永不 READY。
+
+下游连锁：`Button('预约').enabled(prepareGate.state==='READY')`（P051DerivedV2Demo.ets:517）→ 预约 disabled（t413-status.json 权威核：readSerial 3、state=IDLE、holdId=''）→ **HOLD_OPEN/PNG/capture.py 时钟链/配对/plan 冻结全部未达**。
+
+### 修复方向建议（交 architect 裁定，本卡不改）
+
+`rasterNodeReason` 对浮点父框允许 ≤1px 取整容差（`r.x < parent.x - epsilon`），或整数内框计划同步取整组件 x/y。按卡面"不逐 ROI 找平、不改半径/shader/阈值"约束不在 tester 侧改。
+
+### NOT_MEASURED（attempt7）
+
+PNG/ROI、跨域时钟映射与 hold 误差区间、中性厚床/非零 gains/CONTROL A-B/LOCK A-B、V2 single/pair 判读、1px/1码/缺列/过期身份/越 hold 正反控——全部因 prepare 不 READY 未达（非跳过）。attempt1-4 的 hold 时序约束移交项保持有效。
