@@ -1,0 +1,77 @@
+{
+ "revision": "T504_STATIC_LEDGER_V1",
+ "date": "2026-11-14",
+ "mode": "OFFLINE_FORMULA_RECOMPUTE",
+ "device": "NOT_RUN",
+ "results": [
+  {
+   "id": "P1",
+   "name": "kProfiles 四档齐（192/64 192/128 512/64 512/128）",
+   "pass": true,
+   "detail": "实得 [(192, 64), (192, 128), (512, 64), (512, 128)]"
+  },
+  {
+   "id": "P2-192x64",
+   "name": "B2 公式复算 == payloadBytes（192/64）",
+   "pass": true,
+   "detail": "calc=35,210,960 declared=35,210,960 diff=+0 parts={'W': 6400, 'S': 25600, 'P': 26624, 'Es': 49408, 'E': 10795008, 'SW1': 1336704, 'Q0': 130196, 'QW1': 547408, 'B1': 34551504, 'A128': 197120, 'B2': 35210960}"
+  },
+  {
+   "id": "P2-192x128",
+   "name": "B2 公式复算 == payloadBytes（192/128）",
+   "pass": true,
+   "detail": "calc=38,388,176 declared=38,388,176 diff=+0 parts={'W': 7424, 'S': 29696, 'P': 31744, 'Es': 49408, 'E': 11843584, 'SW1': 1340800, 'Q0': 130388, 'QW1': 552272, 'B1': 37728720, 'A128': 197120, 'B2': 38388176}"
+  },
+  {
+   "id": "P2-512x64",
+   "name": "B2 公式复算 == payloadBytes（512/64）",
+   "pass": true,
+   "detail": "calc=84,019,152 declared=84,019,152 diff=+0 parts={'W': 11520, 'S': 46080, 'P': 47104, 'Es': 131328, 'E': 26605568, 'SW1': 1357184, 'Q0': 130772, 'QW1': 570192, 'B1': 82374608, 'A128': 524800, 'B2': 84019152}"
+  },
+  {
+   "id": "P2-512x128",
+   "name": "B2 公式复算 == payloadBytes（512/128）",
+   "pass": true,
+   "detail": "calc=87,196,368 declared=87,196,368 diff=+0 parts={'W': 12544, 'S': 50176, 'P': 52224, 'Es': 131328, 'E': 27654144, 'SW1': 1361280, 'Q0': 130964, 'QW1': 575056, 'B1': 85551824, 'A128': 524800, 'B2': 87196368}"
+  },
+  {
+   "id": "P3-192x64",
+   "name": "高水位公式（192/64）normal=51,687,120 twoBatches=51,687,120",
+   "pass": true,
+   "detail": "F=16,476,160 E=10,795,008"
+  },
+  {
+   "id": "P3-192x128",
+   "name": "高水位公式（192/128）normal=54,864,336 twoBatches=54,864,336",
+   "pass": true,
+   "detail": "F=16,476,160 E=11,843,584"
+  },
+  {
+   "id": "P3-512x64",
+   "name": "高水位公式（512/64）normal=100,495,312 twoBatches=110,624,720",
+   "pass": true,
+   "detail": "F=16,476,160 E=26,605,568"
+  },
+  {
+   "id": "P3-512x128",
+   "name": "高水位公式（512/128）normal=103,672,528 twoBatches=114,850,512",
+   "pass": true,
+   "detail": "F=16,476,160 E=27,654,144"
+  },
+  {
+   "id": "P4",
+   "name": "T500 §4.1 host 布局独立断言（App 2365824 / snapshot 754200 / capture 2818864 / transport 182640）",
+   "pass": true,
+   "detail": "实测 App=2365824 snapshot=754200 capture=2818864 transport=182640"
+  }
+ ],
+ "reference": {
+  "appM1": 2365824,
+  "appM2": 2365872,
+  "snapshot": 754200,
+  "evidence": 2818864,
+  "transportM1": 182640,
+  "transportM2": 183672
+ },
+ "verdict": "PASS"
+}
