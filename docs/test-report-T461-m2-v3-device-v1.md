@@ -18,3 +18,15 @@
 真机 SHADER_FAILED 与离线 SwiftShader 全绿（T452 80 roots）矛盾：组合 kernel 超出真机 GPU 编译能力（指令数/shared/barrier 结构）或触发驱动编译 bug。需 developer 提供真机 shader log（`shaderLog` 字段在 Create 失败路径未被填充——诊断为空）或拆分 kernel。**附发现**：Create 失败路径 `shaderLog` 为空字符串，首错诊断链在真机不可用，建议 developer 在 SHADER_FAILED 时回填编译 log。
 
 证据：`test/reports/t461/`（4 截图 + 2 layout）。
+---存在，追加---
+
+---
+
+## v1 补充（2026-11-14，T482-final coherent 修复包 300bd52a…）
+
+来源更正后重测：`T482-final-signed.hap` SHA256 `300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e`（本地逐位一致；shaderSHA 新 b7d0a027…）。证据 `test/reports/t491/t461/`。
+
+- **入口与身份在位**：`--ps grsm1 false` → 首页"开启独立 GPU M2 V3 空场"（真实 bounds `[254,1414][1027,1554]`）；进入后 `GPU M2 V3 · V2`，声明 `T452_M2_EXPERIMENT_V3 · K192/Kw128 · GRS_GPU_SCENE_Q20_M2_V3`（实际 revision 3 在位）；V3 专属按钮齐（锁存/导出 V3 冷档、导出 M2 创建原始诊断/上一创建诊断）。
+- **整根 run**：新空场 → `PAUSED_CLOCK CLOCK_GAP / run 0:1`，四账全零，画布黑——M2 V3 与 M1 同落 CLOCK_GAP 域。
+- **诊断 0 字节**："导出 M2 创建原始诊断"×2 产出 `t468-create-1-*.log` 均 0 字节（设备端 ls 实测）；V3 能力域 NOT_MEASURED。
+- **NOT_REACHED**：四档验证、SOURCE 13 pass、部分/NO_PAIR/merge+birth、QUANTUM、短接受、同 token/Swap、成功前缀与回滚——全部因零 QUANTUM 未达。交 architect（呈现域根因归 T448/T490 链）。
