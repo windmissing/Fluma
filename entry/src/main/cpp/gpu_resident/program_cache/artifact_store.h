@@ -18,6 +18,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <sstream>
+#include <set>
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -80,10 +82,44 @@ class ProgramArtifactStore {
   std::map<std::string, bool> unavailable_;
   std::atomic<bool> configured_{false};
   std::atomic<uint64_t> receiptFailures_{0};
+  std::atomic<uint64_t> tempBytes_{0},tempCount_{0},diskBytes_{0},diskKeys_{0},diskPeak_{0};
+  std::atomic<uint64_t> cleanupFailures_{0},diskRoomRejected_{0},queueRejected_{0},pinRejected_{0};
+  std::atomic<int> cleanupError_{0};
+  std::atomic<bool> diskScanFailed_{false};
 
 #ifdef GRS_PROGRAM_CACHE_TEST_FAULTS
   std::atomic<unsigned> writeFault_{0};
+  std::atomic<bool> removeFault_{false};
 #endif
+  bool RemoveTemporary(const std::filesystem::path& path) {
+    std::error_code ec;
+    const auto status=std::filesystem::symlink_status(path,ec);
+    if(ec==std::errc::no_such_file_or_directory)return true;
+    if(!ec&&!std::filesystem::exists(status))return true;
+    if(!ec&&!std::filesystem::is_regular_file(status))ec=std::make_error_code(std::errc::operation_not_permitted);
+    if(ec){++cleanupFailures_;cleanupError_=ec.value();return false;}
+#ifdef GRS_PROGRAM_CACHE_TEST_FAULTS
+    if(removeFault_)ec=std::make_error_code(std::errc::permission_denied);
+    else
+#endif
+    std::filesystem::remove(path,ec);
+    if(ec){++cleanupFailures_;cleanupError_=ec.value();return false;}
+    return true;
+  }
+  // Worker only: no per-file retained metadata. Failed cleanup still consumes
+  // the one shared on-disk budget and can never be treated as free capacity.
+  bool TemporaryInventory(bool clean) {
+    uint64_t bytes=0,count=0;std::error_code ec;
+    for(std::filesystem::directory_iterator it(directory_,ec),end;!ec&&it!=end;it.increment(ec)){
+      if(it->path().extension()!=".tmp")continue;
+      std::error_code fileError;if(!it->is_regular_file(fileError)){if(fileError){ec=fileError;break;}continue;}
+      if(clean&&RemoveTemporary(it->path()))continue;
+      const auto size=it->file_size(fileError);if(fileError||size>UINT64_MAX-bytes){ec=fileError?fileError:std::make_error_code(std::errc::value_too_large);break;}
+      bytes+=size;++count;
+    }
+    tempBytes_=bytes;tempCount_=count;diskScanFailed_=bool(ec);
+    if(ec){cleanupError_=ec.value();++cleanupFailures_;return false;}return true;
+  }
   static bool Sync(FILE *f) {
     if (std::fflush(f))
       return false;
@@ -108,6 +144,8 @@ class ProgramArtifactStore {
 #endif
     auto tmp = dest;
     tmp += ".tmp";
+    // Do not truncate a failed previous temporary in place or lose its charge.
+    {std::error_code ec;if(std::filesystem::exists(tmp,ec)&&!RemoveTemporary(tmp)){TemporaryInventory(false);return false;}if(ec)return false;}
 #ifdef _WIN32
     FILE *f = _wfopen(tmp.c_str(), L"wb");
 #else
@@ -141,10 +179,8 @@ class ProgramArtifactStore {
       }
 #endif
     }
-    if (!ok) {
-      std::error_code ec;
-      std::filesystem::remove(tmp, ec);
-    }
+    if (!ok) RemoveTemporary(tmp);
+    TemporaryInventory(false);
     return ok;
   }
   void Loop() {
@@ -175,8 +211,10 @@ class ProgramArtifactStore {
              it->second->touched < victim->second->touched))
           victim = it;
       }
-      if (victim == entries_.end())
+      if (victim == entries_.end()) {
+        ++pinRejected_;
         return false;
+      }
       bytes_ -= victim->second->bytes.size();
       entries_.erase(victim);
     }
@@ -191,20 +229,28 @@ class ProgramArtifactStore {
   // artifact. Include receipts, headers and atomic temporary bytes in the total
   // disk bound.
   bool DiskRoom(const std::string &protectedKey, size_t incoming) {
+    if(!TemporaryInventory(true)){++diskRoomRejected_;return false;}
     std::map<std::string, DiskEntry> grouped;
+    std::set<std::string> temporaryKeys;
     uint64_t total = 0;
     for (const auto &f : std::filesystem::directory_iterator(directory_)) {
       if (!f.is_regular_file())
         continue;
       auto ext = f.path().extension().string();
       auto key = f.path().stem().string();
+      if(ext==".tmp"){
+        const auto size=f.file_size();if(size>UINT64_MAX-total){++diskRoomRejected_;return false;}total+=size;
+        const auto destination=f.path().stem();const auto suffix=destination.extension().string();
+        const auto tempKey=destination.stem().string();if((suffix==".bin"||suffix==".jsonl")&&KeyValid(tempKey))temporaryKeys.insert(tempKey);
+        continue;
+      }
       if ((ext != ".bin" && ext != ".jsonl") || !KeyValid(key))
         continue;
       auto &entry = grouped[key];
       entry.key = key;
       entry.bytes += f.file_size();
       entry.touched = std::max(entry.touched, f.last_write_time());
-      total += f.file_size();
+      if(f.file_size()>UINT64_MAX-total){++diskRoomRejected_;return false;}total += f.file_size();
     }
     std::vector<DiskEntry> ordered;
     for (const auto &item : grouped)
@@ -212,11 +258,10 @@ class ProgramArtifactStore {
     std::sort(ordered.begin(), ordered.end(), [](const auto &a, const auto &b) {
       return a.touched < b.touched;
     });
-    size_t count =
-        grouped.size() +
-        (protectedKey.empty() || grouped.count(protectedKey) ? 0 : 1);
+    std::set<std::string> keys=temporaryKeys;for(const auto& entry:grouped)keys.insert(entry.first);if(!protectedKey.empty())keys.insert(protectedKey);
+    size_t count = keys.size();
     for (const auto &entry : ordered) {
-      if (count <= kCountLimit && total + incoming <= kTotalLimit)
+      if (count <= kCountLimit && total <= kTotalLimit && incoming <= kTotalLimit-total)
         break;
       if (entry.key == protectedKey)
         continue;
@@ -244,10 +289,12 @@ class ProgramArtifactStore {
         }
       }
       if (!std::filesystem::exists(directory_ / (entry.key + ".bin")) &&
-          !std::filesystem::exists(directory_ / (entry.key + ".jsonl")))
+          !std::filesystem::exists(directory_ / (entry.key + ".jsonl")) && !temporaryKeys.count(entry.key))
         --count;
     }
-    return count <= kCountLimit && total + incoming <= kTotalLimit;
+    diskBytes_=total;diskKeys_=count;const uint64_t reserved=total<=kTotalLimit&&incoming<=kTotalLimit-total?total+incoming:total;auto peak=diskPeak_.load();while(reserved>peak&&!diskPeak_.compare_exchange_weak(peak,reserved)){}
+    const bool room=count<=kCountLimit&&total<=kTotalLimit&&incoming<=kTotalLimit-total;
+    if(!room)++diskRoomRejected_;return room;
   }
   void ReadArtifact(const std::filesystem::directory_entry &f) {
     const auto keyName = f.path().stem().string();
@@ -318,12 +365,6 @@ public:
       try {
         directory_ = filesDir / "gpu-program-cache/v1";
         std::filesystem::create_directories(directory_);
-        for (const auto &f : std::filesystem::directory_iterator(directory_)) {
-          if (f.path().extension() == ".tmp" && f.is_regular_file()) {
-            std::error_code ec;
-            std::filesystem::remove(f.path(), ec);
-          }
-        }
         if (!DiskRoom("", 0))
           throw std::runtime_error("CACHE_CAPACITY");
         for (const auto &f : std::filesystem::directory_iterator(directory_)) {
@@ -341,8 +382,10 @@ public:
   }
   void Enqueue(std::function<void()> job) {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (quit_ || jobs_.size() >= 128)
+    if (quit_ || jobs_.size() >= 128) {
+      ++queueRejected_;
       throw std::runtime_error("CACHE_QUEUE_FULL");
+    }
     jobs_.push_back(std::move(job));
     wake_.notify_one();
   }
@@ -527,7 +570,12 @@ public:
   }
 #ifdef GRS_PROGRAM_CACHE_TEST_FAULTS
   void SetWriteFault(unsigned fault) { writeFault_ = fault; }
+  void SetRemoveFault(bool fault) { removeFault_ = fault; }
 #endif
+  std::string Diagnostics502() {
+    std::lock_guard<std::mutex> lock(mutex_);size_t pins=0,capacity=0;for(const auto& item:entries_){pins+=item.second.use_count()>1;capacity+=item.second->bytes.capacity();}
+    std::ostringstream o;o<<"{\"revision\":\"T502_CACHE_STORAGE_V1\",\"accounting\":\"HOST_ALLOCATED_CAPACITY_AND_DISK_BYTES\",\"entries\":"<<entries_.size()<<",\"pinnedArtifacts\":"<<pins<<",\"queueJobs\":"<<jobs_.size()<<",\"payloadSize\":"<<bytes_<<",\"payloadCapacity\":"<<capacity<<",\"tempBytes\":"<<tempBytes_<<",\"tempFiles\":"<<tempCount_<<",\"diskBytesLastReservation\":"<<diskBytes_<<",\"diskKeysLastReservation\":"<<diskKeys_<<",\"diskPeakObserved\":"<<diskPeak_<<",\"cleanupFailures\":"<<cleanupFailures_<<",\"lastCleanupError\":"<<cleanupError_<<",\"diskScanFailed\":"<<(diskScanFailed_?"true":"false")<<",\"diskRoomRejected\":"<<diskRoomRejected_<<",\"queueRejected\":"<<queueRejected_<<",\"pinRejected\":"<<pinRejected_<<",\"glHandleValidity\":\"NOT_INFERRED_FROM_ARTIFACT_OR_RECEIPT\"}";return o.str();
+  }
   size_t Count() {
     std::lock_guard<std::mutex> lock(mutex_);
     return entries_.size();

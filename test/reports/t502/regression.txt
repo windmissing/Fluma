@@ -1,0 +1,37 @@
+store_test.cpp
+PASS persistence/restart, bounded receipts, concurrent immutable same key, bad hash/truncation, interrupted temp, write failure/old file preservation, receipt failure visibility, pinned LRU/byte limit, configure failure, injected ENOSPC/partial/sync/rename failure preserves same old file
+store_diff.cpp
+PASS F1_KEY_SEPARATION | sha key 派生、64hex 校验、非 hex 拒绝
+PASS F2_PUT_IMMUTABLE_STATE | Put 后 WRITE_PENDING（文件线程未完）
+PASS F3_PERSISTED_TRANSITION | Drain 后 PERSISTED
+PASS F4_DISK_WIRE_FORMAT | 磁盘 wire = 144B header+payload，magic T475B001
+PASS F5_CONCURRENT_SAME_KEY_IMMUTABLE | 8 线程同 key 提交共享同一 artifact 且字节不变
+PASS F6_EMPTY_REJECTED | 空 payload 拒绝
+PASS F7_OVERSIZE_REJECTED | 超 32MiB 单条拒绝
+PASS F8_RESTART_LOAD | 重启实例读回 PERSISTED 同字节（GL 侧 compile0 由 t476-gl 独立核）
+PASS F9_TMP_CLEANED | 启动清理 .tmp 残留
+PASS F10_CORRUPT_HASH_REJECTED | 坏 hash 拒绝且 Rejection 带 DISK_ 前缀
+PASS F11_TRUNCATED_REJECTED | 截断（50B）拒绝
+PASS F12_UNKNOWN_SCHEMA_REJECTED | 坏 magic 拒绝
+AT_F13
+PASS F13_KEY_FILE_MISMATCH_REJECTED | header key != 文件名拒绝
+AT_F14
+PASS F14_RESTORE_LOADS | 原字节还原后可载入
+PASS F15_ENOSPC_WRITE_FAILED | ENOSPC → WRITE_FAILED 且无半成品 .bin
+PASS F16_EXISTING_KEY_INTACT | 故障不影响既有 key
+PASS F17_PARTIAL_WRITE_FAILED | 部分临时写入 → WRITE_FAILED
+PASS F18_SYNC_FAIL_REJECTS | sync 失败 → 拒绝且旧文件（如有）逐字节完整
+PASS F19_REPLACE_BLOCKED | .tmp 目录占位 → 替换失败
+PASS F20A_SAME_KEY_SHARED_NO_REWRITE | 同 key 有效 entry Put 共享不可变旧版本（state=PERSISTED，不触盘）
+PASS F20B_OLD_FILE_INTACT | 同 key 替换失败 → 旧 .bin 逐字节完整 size=147/147
+PASS F21_COUNT_LIMIT | 条数 = 32 上限（含既有 1 条）
+AT_LRU_PUT
+AT_LRU_PIN_CHECK
+PASS F22_PINNED_SURVIVES | 被 pin 的 artifact 驱逐时保留
+PASS F23_TOTAL_LIMIT_REJECT | 超 128MiB 总 payload 拒绝
+AT_F24
+PASS F24_RECEIPT_ROLL_BOUNDED | receipt 历史滚动 ≤128KiB（写 87390B）
+AT_F25
+PASS F25_RECEIPT_FAILURE_COUNTED | 非法 key 收据 → receiptFailures 计数
+AT_END
+T476 store differential: 26/26 PASS
