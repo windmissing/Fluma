@@ -1,0 +1,88 @@
+T500 host compile-only resource layout audit
+2026-11-14 Asia/Shanghai
+No GL execution, no linking, no device. MSVC x64 ABI only; not an ARM64/RSS measurement.
+Raw logs and commands are hashed in analysis-T500-resource-inventory-v1.json. Display whitespace normalized.
+
+COMMAND m1-App
+@echo off
+setlocal
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+set "PATH=C:\Users\admin\AppData\Local\Programs\CokePLUS;%PATH%"
+set SRCS=.codex/local-test/t492-m1-delivery/entry/src/main/cpp/p013renderer/fullframe_targets.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/control.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib
+set INCS=/DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /I.codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident
+cl /nologo /std:c++17 /EHsc /O2 /utf-8 /Zs /d1reportSingleClassLayoutApp /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT /I.codex/local-test/t492-m1-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident %INCS% .codex/local-test/t492-delivery-controls-m1/controls.cpp > .codex\local-test\t500\m1-App.log 2>&1
+exit /b %errorlevel%
+
+SELECTED LAYOUT HEADERS
+`anonymous-namespace'::AppTransport: 182640 bytes
+`anonymous-namespace'::App: 2365824 bytes
+class `anonymous-namespace'::AppTransport   size(182640):
+    +---
+class `anonymous-namespace'::App    size(2365824):
+    +---
+
+COMMAND m2-App
+@echo off
+setlocal
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+set "PATH=C:\Users\admin\AppData\Local\Programs\CokePLUS;%PATH%"
+set SRCS=.codex/local-test/t492-m2-delivery/entry/src/main/cpp/p013renderer/fullframe_targets.cpp .codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/control.cpp .codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib
+set INCS=/DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /I.codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident
+cl /nologo /std:c++17 /EHsc /O2 /utf-8 /Zs /d1reportSingleClassLayoutApp /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT /I.codex/local-test/t492-m2-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident %INCS% .codex/local-test/t492-delivery-controls-m2/controls.cpp > .codex\local-test\t500\m2-App.log 2>&1
+exit /b %errorlevel%
+
+SELECTED LAYOUT HEADERS
+`anonymous-namespace'::AppTransport: 183672 bytes
+`anonymous-namespace'::App: 2365872 bytes
+class `anonymous-namespace'::AppTransport   size(183672):
+    +---
+class `anonymous-namespace'::App    size(2365872):
+    +---
+
+COMMAND m1-Capture
+@echo off
+setlocal
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+set "PATH=C:\Users\admin\AppData\Local\Programs\CokePLUS;%PATH%"
+set SRCS=.codex/local-test/t492-m1-delivery/entry/src/main/cpp/p013renderer/fullframe_targets.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/control.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib
+set INCS=/DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /I.codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident
+cl /nologo /std:c++17 /EHsc /O2 /utf-8 /Zs /d1reportSingleClassLayoutCapture /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT /I.codex/local-test/t492-m1-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident %INCS% .codex/local-test/t492-delivery-controls-m1/controls.cpp > .codex\local-test\t500\m1-Capture.log 2>&1
+exit /b %errorlevel%
+
+SELECTED LAYOUT HEADERS
+grs::diagnostic492::Capture: 1404072 bytes
+grs::EvidenceCapture: 2818864 bytes
+class grs::diagnostic492::Capture   size(1404072):
+    +---
+class grs::EvidenceCapture  size(2818864):
+    +---
+
+COMMAND m1-TimelineSnapshot
+@echo off
+setlocal
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+set "PATH=C:\Users\admin\AppData\Local\Programs\CokePLUS;%PATH%"
+set SRCS=.codex/local-test/t492-m1-delivery/entry/src/main/cpp/p013renderer/fullframe_targets.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/control.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib
+set INCS=/DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /I.codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident
+cl /nologo /std:c++17 /EHsc /O2 /utf-8 /Zs /d1reportSingleClassLayoutTimelineSnapshot /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT /I.codex/local-test/t492-m1-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident %INCS% .codex/local-test/t492-delivery-controls-m1/controls.cpp > .codex\local-test\t500\m1-TimelineSnapshot.log 2>&1
+exit /b %errorlevel%
+
+SELECTED LAYOUT HEADERS
+grs::TimelineSnapshot: 754200 bytes
+class grs::TimelineSnapshot size(754200):
+    +---
+
+COMMAND m1-Run
+@echo off
+setlocal
+call "C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+set "PATH=C:\Users\admin\AppData\Local\Programs\CokePLUS;%PATH%"
+set SRCS=.codex/local-test/t492-m1-delivery/entry/src/main/cpp/p013renderer/fullframe_targets.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/control.cpp .codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/integer.cpp .codex/local-test/t236-source-host/gl_forward.cpp .codex/local-test/t236-source-host/egl.lib
+set INCS=/DEGL_NO_PLATFORM_SPECIFIC_TYPES /DKHRONOS_STATIC /I.codex/local-test/t55-gpu/sdk /I.codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident /Itest/t295 /I.codex/local-test/t281 /I.codex/local-test/t236-source-host /FIhost_clock.h /I.codex/local-test/t280 /I.codex/local-test/t279 /I.codex/local-test/t240-source /Ientry/.cxx/default/default/debug/arm64-v8a/gpu_resident
+cl /nologo /std:c++17 /EHsc /O2 /utf-8 /Zs /d1reportSingleClassLayoutRun /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT /I.codex/local-test/t492-m1-delivery/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident %INCS% .codex/local-test/t492-delivery-controls-m1/controls.cpp > .codex\local-test\t500\m1-Run.log 2>&1
+exit /b %errorlevel%
+
+SELECTED LAYOUT HEADERS
+grs::m1::Run: 3320 bytes
+class grs::m1::Run  size(3320):
+    +---

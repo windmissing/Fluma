@@ -86,3 +86,7 @@ P5，developer，不使用真机。实现本稿graphics descriptor/key/双stage�
 tester离线卡消费实际新工厂、生成Scene和cold/warm各层原件，独立确认真实三graphics role+旧compute兼容及原同帧语义。真机卡带“真机”标签，同设备串行，先核包/ELF与生成shader SHA，首次冷建保数据强停暖启，逐role核PERSISTED/load/compile=0、阶段时长，再核READY/首root/完整Draw/Swap。T477的三compute暖load可按原件复用，不等于场景已测；若原有STALE_PAGE_SESSION/permit→Swap阻断仍在，场景缓存收据与上屏失败分别报告，失败先回architect，manager不重跑。
 
 本轮完成实际创建点、stage/绑定ABI、工厂限制、key与存储兼容、生命周期及回归范围工程设计，未执行GL或设备测试。没有把T475成果改记为场景已覆盖，也不把新增缓存当作T477上屏阻断的已证根治。
+
+## 2026-11-14 T500峰值与释放补充
+
+[T500资源账](architecture-T500-gpu-resident-resource-lifecycle-v1.md)核T485/T492已交Scene，正常同代只有双FBO逻辑8wh，resize为Reset后再建，graphics三program/VAO按owner及context代际清理。binary共享store、导出向量、worker wire与driver program/JIT分别计；32MiB为单binary上限，不是每role实占。延迟删除/旧context物理回收及长期高水位另作独立测试，不加T485关闭门。

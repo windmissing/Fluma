@@ -55,3 +55,7 @@ tester真机卡必须带“真机”标签且同设备串行。新包安装后�
 ## 2026-11-12 T480 场景覆盖工程接续
 
 T475已实现M1/M2三compute program持久化，场景vertex/fragment首版未覆盖。新增 [T480工程稿](architecture-T480-scene-program-cache-v1.md) 明确三graphics role、双stage工厂、旧compute key与T475B001兼容、冷准备/反射/代际清理和同帧像素回归；不扩大T475关闭范围，不把compute真机暖load推为场景已通过。
+
+## 2026-11-14 T500 store累计预算补充
+
+[T500生命周期盘点](architecture-T500-gpu-resident-resource-lifecycle-v1.md)核实际store：entries的128MiB不包含GL导出/worker wire/预载副本与receipt队列，pin同一Artifact不复制binary；磁盘正常路径含header/receipt/incoming.tmp，删除失败遗留.tmp未被DiskRoom统计须独立补证。沿既有32条/单32MiB/总128MiB政策，不将预算当实占、不改限制，不把cache失败升级为物理/渲染丢失。

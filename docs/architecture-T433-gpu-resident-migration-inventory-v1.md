@@ -156,3 +156,7 @@ effector另以真机和真实操作者条件验证连续掉沙/注水、侧扩�
 已完成原卡、当前入口/生产与隔离宏、22文件来源、签包SHA、GPU写者/host接受/lease、热冷传输、实际pass表、四档资源公式和已交证据边界核对。四档无isolation公式与T280原报告逐项吻合，isolation及cold transient按本版alloc分支另算。未编译业务、重跑产品/设备测试或改变任何阈值。后续两阶段给出了developer、独立tester和设备/体验工作范围及真实前置。
 
 本轮自行选择优先删除来源账无效后缀复制、保留逐root接受与flush布局，再收口显式GPU体验入口。未选择尚无同窗证据支撑的“取消completion”“多root一次接受”或默认启用实验V2。吞吐、资源真实峰值、系统呈现与完整效果仍待相应设备任务验证。
+
+## 2026-11-14 T500资源生命周期补充
+
+[T500盘点](architecture-T500-gpu-resident-resource-lifecycle-v1.md)以T492实际M1/M2生成源复核四档对象账，M1 isolation数保持、M2与生成profile一致。当前冷额外E在首次FBO创建前删除，已知活跃峰值按max(B+E,B+8wh)分阶段算；resize先删旧FBO，不把假定旧新共存当已知应用实占。driver退役存储、系统surface、host快照/capture/冷trace/cache副本另账，真实物理峰值仍未测。长序列独立接力，不改旧开发关闭范围或容量。
