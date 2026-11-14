@@ -333,6 +333,11 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
     return R;
 }
 
+// 2026-11-14 运行时阻断记录：Create 在 ANGLE 上 >52min 未完成（iter 210000/450000，
+// CPU 活跃、心跳正常）。T475 同构 fixture 8min 完成；T492 overlay（recovery+scene-cache）
+// 疑似与 HOST_TEST 交互引入卡点。下一轮：用暖缓存种子
+// （test/t492/build_app.cjs 第4参数，同 T485-app-m1-exact cache）跳过 compute JIT，
+// 仅 graphics 冷编译，验证是否 Create 路径本身卡死。
 int main(int argc, char** argv) {
     (void)argc;(void)argv;
     g_runId="t496-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
