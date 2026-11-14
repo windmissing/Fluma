@@ -1,0 +1,1877 @@
+{
+  "revision": "T505_ARCHITECT_DEVICE_ARCHIVE_REVIEW_V1",
+  "date": "2026-11-14",
+  "device": "NOT_RUN_BY_ARCHITECT",
+  "inputDeviceEvidenceRetained": true,
+  "packages": [
+    {
+      "route": "m1",
+      "hapSHA256": "a87579df0500e12a3b902a54d6e8b30d3f47d2b432bc397109e52ebd337818ef",
+      "elfSHA256": "993eb255958d1646470e8078be5878e2d6714f63115df07b8fcc9c513dc63a46",
+      "embeddedSource": [
+        "dc2edb28191ae10a4170ed9b593280c9fc35339d+T492-overlay-v1"
+      ],
+      "actualInputProject": ".codex/local-test/t492-m1-handoff",
+      "elfContainsFirstQuantumJson": true,
+      "elfContainsFaultRootJson": false,
+      "receiptMatches": true
+    },
+    {
+      "route": "m2",
+      "hapSHA256": "de742561b49ea83c85c6a4f19b1bb7ae12b3dee239da3e8965a9ee9d327490b8",
+      "elfSHA256": "e626b8f2a5ae290e313791c9d6af4a66487bf8818197c101e47cd07d84cd732c",
+      "embeddedSource": [
+        "e2dc1ec0576563c1213acad8dec9b602814c9ab7+T492-overlay-v1"
+      ],
+      "actualInputProject": ".codex/local-test/t492-m2-handoff-v2",
+      "elfContainsFirstQuantumJson": true,
+      "elfContainsFaultRootJson": false,
+      "receiptMatches": true
+    }
+  ],
+  "bootFiles": [
+    {
+      "path": "test/reports/t491/t495/boot-cold.json",
+      "sha256": "d8938d2b67ff99539909ceaf6ded09025bb3b3bb44e21f8a8bb5600d36fe8382",
+      "pid": "17196",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "17331",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": false,
+        "complete": false,
+        "dropped": "0",
+        "firstFailure": {
+          "stage": "",
+          "ns": "0",
+          "tid": "0",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "21335875530937",
+          "tid": "17331",
+          "root": "0",
+          "a": "28",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21328984296562",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21328984322031",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21328984427812",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21328984438281",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21328984445000",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21328990812031",
+          "tid": "17196",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "TRANSPORT_CAPABILITY": 2,
+        "SUBMIT_OBSERVER": 9,
+        "TRANSPORT_BUFFER": 13
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "CREATING_NEW",
+        "reason": "CREATING_NEW",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "0",
+        "runLo": 0,
+        "runHi": 0,
+        "contextLo": 0,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": false,
+        "dropped": 0,
+        "inCall": false,
+        "callRoot": "0",
+        "callEnterNs": "0",
+        "callFrom": 0,
+        "callTo": 0,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {},
+      "hasExecutionDiagnostics": false,
+      "rootIntents": []
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-cold.json",
+      "sha256": "411f580d45fd1568bd062ec53269689e77de659ee579de19f035ab5db6a11bf6",
+      "pid": "21954",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "22053",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": false,
+        "complete": false,
+        "dropped": "0",
+        "firstFailure": {
+          "stage": "",
+          "ns": "0",
+          "tid": "0",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "21741964055156",
+          "tid": "22053",
+          "root": "0",
+          "a": "28",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21722310079531",
+          "tid": "21954",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21722310089531",
+          "tid": "21954",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21722310213281",
+          "tid": "21954",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21722310234531",
+          "tid": "21954",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21722310243906",
+          "tid": "21954",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21722316252187",
+          "tid": "21954",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "SUBMIT_OBSERVER": 11
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "CREATING_NEW",
+        "reason": "CREATING_NEW",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "0",
+        "runLo": 0,
+        "runHi": 0,
+        "contextLo": 0,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": false,
+        "dropped": 0,
+        "inCall": false,
+        "callRoot": "0",
+        "callEnterNs": "0",
+        "callFrom": 0,
+        "callTo": 0,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {},
+      "hasExecutionDiagnostics": false,
+      "rootIntents": []
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-gap.json",
+      "sha256": "4e5f031dc6b47cd895d1f62b018d1570a34ae53665c73b85606c60837c76beb2",
+      "pid": "22680",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "1",
+        "readyEpoch": "3",
+        "session": "1",
+        "ownerTid": "22834",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": true,
+        "complete": false,
+        "dropped": "165",
+        "firstFailure": {
+          "stage": "V2_PULSE_CLOCK_GAP",
+          "ns": "22045063957812",
+          "tid": "22833",
+          "root": "2156",
+          "a": "22045029381718",
+          "b": "22045063948750",
+          "c": "34567032",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "CLOCK_RAW_DOMAINS",
+          "ns": "22045063961718",
+          "tid": "22833",
+          "root": "2156",
+          "a": "22045028347673",
+          "b": "22045029381718",
+          "c": "22045276827343",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21783078982500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21783078991875",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21783079102500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21783079116718",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21783079122656",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21783085012500",
+          "tid": "22680",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "SUBMIT_OBSERVER": 88,
+        "TAIL_OBSERVER": 138,
+        "TRANSPORT_CREATE_EXIT": 1,
+        "SCENE_PROGRAM_PREPARE_ENTER": 1,
+        "SCENE_PROGRAM_PREPARE_EXIT": 1,
+        "WAIT_PAGE_PULSE_OR_SENSOR": 1,
+        "RECOVERY_READY_COMMIT": 1,
+        "ROOT_INTENT": 1
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "FAULTED_REVOKED",
+        "reason": "V2_PULSE_CLOCK_GAP",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "1",
+        "runLo": 1,
+        "runHi": 0,
+        "contextLo": 3,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": true,
+        "dropped": 71342,
+        "inCall": false,
+        "callRoot": "2156",
+        "callEnterNs": "22045038300781",
+        "callFrom": 90,
+        "callTo": 100,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {
+        "1": 140677970,
+        "2": 85392343,
+        "3": 31813126,
+        "4": 34146405,
+        "5": 26301095,
+        "6": 22381562,
+        "7": 34007343,
+        "8": 46604527,
+        "9": 35366721,
+        "10": 56483594,
+        "11": 32672188,
+        "12": 50524218,
+        "13": 31386875,
+        "14": 39627031,
+        "15": 223906
+      },
+      "hasExecutionDiagnostics": false,
+      "rootIntents": [
+        {
+          "stage": "ROOT_INTENT",
+          "ns": "21817909918593",
+          "tid": "22834",
+          "root": "1",
+          "a": "2",
+          "b": "21817909901718",
+          "c": "21818159901718",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-rebind.json",
+      "sha256": "4e5f031dc6b47cd895d1f62b018d1570a34ae53665c73b85606c60837c76beb2",
+      "pid": "22680",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "1",
+        "readyEpoch": "3",
+        "session": "1",
+        "ownerTid": "22834",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": true,
+        "complete": false,
+        "dropped": "165",
+        "firstFailure": {
+          "stage": "V2_PULSE_CLOCK_GAP",
+          "ns": "22045063957812",
+          "tid": "22833",
+          "root": "2156",
+          "a": "22045029381718",
+          "b": "22045063948750",
+          "c": "34567032",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "CLOCK_RAW_DOMAINS",
+          "ns": "22045063961718",
+          "tid": "22833",
+          "root": "2156",
+          "a": "22045028347673",
+          "b": "22045029381718",
+          "c": "22045276827343",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21783078982500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21783078991875",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21783079102500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21783079116718",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21783079122656",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21783085012500",
+          "tid": "22680",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "SUBMIT_OBSERVER": 88,
+        "TAIL_OBSERVER": 138,
+        "TRANSPORT_CREATE_EXIT": 1,
+        "SCENE_PROGRAM_PREPARE_ENTER": 1,
+        "SCENE_PROGRAM_PREPARE_EXIT": 1,
+        "WAIT_PAGE_PULSE_OR_SENSOR": 1,
+        "RECOVERY_READY_COMMIT": 1,
+        "ROOT_INTENT": 1
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "FAULTED_REVOKED",
+        "reason": "V2_PULSE_CLOCK_GAP",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "1",
+        "runLo": 1,
+        "runHi": 0,
+        "contextLo": 3,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": true,
+        "dropped": 71342,
+        "inCall": false,
+        "callRoot": "2156",
+        "callEnterNs": "22045038300781",
+        "callFrom": 90,
+        "callTo": 100,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {
+        "1": 140677970,
+        "2": 85392343,
+        "3": 31813126,
+        "4": 34146405,
+        "5": 26301095,
+        "6": 22381562,
+        "7": 34007343,
+        "8": 46604527,
+        "9": 35366721,
+        "10": 56483594,
+        "11": 32672188,
+        "12": 50524218,
+        "13": 31386875,
+        "14": 39627031,
+        "15": 223906
+      },
+      "hasExecutionDiagnostics": false,
+      "rootIntents": [
+        {
+          "stage": "ROOT_INTENT",
+          "ns": "21817909918593",
+          "tid": "22834",
+          "root": "1",
+          "a": "2",
+          "b": "21817909901718",
+          "c": "21818159901718",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-reset1.json",
+      "sha256": "0dbd45610dd92bdf76a0cbb21ef6bf1a32418a0a486b9606ff917f682008a3f6",
+      "pid": "22680",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "22834",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": false,
+        "complete": false,
+        "dropped": "0",
+        "firstFailure": {
+          "stage": "",
+          "ns": "0",
+          "tid": "0",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "21789825048281",
+          "tid": "22834",
+          "root": "0",
+          "a": "28",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21783078982500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21783078991875",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21783079102500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21783079116718",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21783079122656",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21783085012500",
+          "tid": "22680",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "SUBMIT_OBSERVER": 9
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "CREATING_NEW",
+        "reason": "CREATING_NEW",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "0",
+        "runLo": 0,
+        "runHi": 0,
+        "contextLo": 0,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": false,
+        "dropped": 0,
+        "inCall": false,
+        "callRoot": "0",
+        "callEnterNs": "0",
+        "callFrom": 0,
+        "callTo": 0,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {},
+      "hasExecutionDiagnostics": false,
+      "rootIntents": []
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-reset2.json",
+      "sha256": "0dbd45610dd92bdf76a0cbb21ef6bf1a32418a0a486b9606ff917f682008a3f6",
+      "pid": "22680",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "0",
+        "readyEpoch": "0",
+        "session": "0",
+        "ownerTid": "22834",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": false,
+        "complete": false,
+        "dropped": "0",
+        "firstFailure": {
+          "stage": "",
+          "ns": "0",
+          "tid": "0",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "21789825048281",
+          "tid": "22834",
+          "root": "0",
+          "a": "28",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21783078982500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21783078991875",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21783079102500",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21783079116718",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21783079122656",
+          "tid": "22680",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21783085012500",
+          "tid": "22680",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "SUBMIT_OBSERVER": 9
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "CREATING_NEW",
+        "reason": "CREATING_NEW",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "0",
+        "runLo": 0,
+        "runHi": 0,
+        "contextLo": 0,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": false,
+        "dropped": 0,
+        "inCall": false,
+        "callRoot": "0",
+        "callEnterNs": "0",
+        "callFrom": 0,
+        "callTo": 0,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {},
+      "hasExecutionDiagnostics": false,
+      "rootIntents": []
+    },
+    {
+      "path": "test/reports/t491/t495/boot-reset1.json",
+      "sha256": "0e4f7552c29b9147671bff83e155e92ac78e9cfb70d4fe07a4279f3e3583f13d",
+      "pid": "17196",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "1",
+        "readyEpoch": "3",
+        "session": "1",
+        "ownerTid": "17331",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": true,
+        "complete": false,
+        "dropped": "81",
+        "firstFailure": {
+          "stage": "V2_GPU_PROGRESS_TIMEOUT",
+          "ns": "21358821445937",
+          "tid": "17196",
+          "root": "1",
+          "a": "21358571055156",
+          "b": "21358821055156",
+          "c": "21358821445468",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "T398_PRESENT_REVOKED",
+          "ns": "21358831812656",
+          "tid": "17331",
+          "root": "1",
+          "a": "15063040",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 12288,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21328984296562",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21328984322031",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21328984427812",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21328984438281",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21328984445000",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21328990812031",
+          "tid": "17196",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "TRANSPORT_CAPABILITY": 2,
+        "SUBMIT_OBSERVER": 81,
+        "TRANSPORT_BUFFER": 13,
+        "TAIL_OBSERVER": 130,
+        "TRANSPORT_CREATE_EXIT": 1,
+        "SCENE_PROGRAM_PREPARE_ENTER": 1,
+        "SCENE_PROGRAM_PREPARE_EXIT": 1,
+        "WAIT_PAGE_PULSE_OR_SENSOR": 1,
+        "RECOVERY_READY_COMMIT": 1,
+        "ROOT_INTENT": 1
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "FAULTED_REVOKED",
+        "reason": "GPU_PROGRESS_TIMEOUT",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "1",
+        "runLo": 1,
+        "runHi": 0,
+        "contextLo": 3,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": false,
+        "dropped": 0,
+        "inCall": false,
+        "callRoot": "1",
+        "callEnterNs": "21358774936406",
+        "callFrom": 120,
+        "callTo": 127,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {
+        "1": 172756562
+      },
+      "hasExecutionDiagnostics": false,
+      "rootIntents": [
+        {
+          "stage": "ROOT_INTENT",
+          "ns": "21358571071875",
+          "tid": "17331",
+          "root": "1",
+          "a": "2",
+          "b": "21358571055156",
+          "c": "21358821055156",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t495/boot-reset2.json",
+      "sha256": "0e4f7552c29b9147671bff83e155e92ac78e9cfb70d4fe07a4279f3e3583f13d",
+      "pid": "17196",
+      "attemptMeta": {
+        "bootSerial": "3",
+        "epoch": "3",
+        "surfaceGeneration": "1",
+        "windowId": "1",
+        "candidateRun": "1",
+        "publishedRun": "1",
+        "readyEpoch": "3",
+        "session": "1",
+        "ownerTid": "17331",
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "K": 192,
+        "Kw": 128,
+        "width": 1280,
+        "height": 1471,
+        "terminal": true,
+        "complete": false,
+        "dropped": "81",
+        "firstFailure": {
+          "stage": "V2_GPU_PROGRESS_TIMEOUT",
+          "ns": "21358821445937",
+          "tid": "17196",
+          "root": "1",
+          "a": "21358571055156",
+          "b": "21358821055156",
+          "c": "21358821445468",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        "latest": {
+          "stage": "T398_PRESENT_REVOKED",
+          "ns": "21358831812656",
+          "tid": "17331",
+          "root": "1",
+          "a": "15063040",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 12288,
+          "rawGl": 0
+        }
+      },
+      "transitions": [
+        {
+          "reason": "XCOMPONENT_UNWRAP",
+          "ns": "21328984296562",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_REGISTER",
+          "ns": "21328984322031",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        },
+        {
+          "reason": "XCOMPONENT_SIZE",
+          "ns": "21328984427812",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "0",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "CALLBACK_WINDOW_REFERENCE",
+          "ns": "21328984438281",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "1",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "SURFACE_CREATED",
+          "ns": "21328984445000",
+          "tid": "17196",
+          "beforeEpoch": "1",
+          "afterEpoch": "2",
+          "surfaceGeneration": "1",
+          "a": "1280",
+          "b": "1471",
+          "result": 0
+        },
+        {
+          "reason": "UI_RESET",
+          "ns": "21328990812031",
+          "tid": "17196",
+          "beforeEpoch": "2",
+          "afterEpoch": "3",
+          "surfaceGeneration": "1",
+          "a": "0",
+          "b": "0",
+          "result": 0
+        }
+      ],
+      "transitionDropped": "0",
+      "stageCounts": {
+        "OWNER_ATTEMPT": 1,
+        "OWNER_WINDOW_REFERENCE_ENTER": 1,
+        "OWNER_WINDOW_REFERENCE_EXIT": 1,
+        "EGL_GET_DISPLAY_ENTER": 1,
+        "EGL_GET_DISPLAY_EXIT": 1,
+        "EGL_INITIALIZE_ENTER": 1,
+        "EGL_INITIALIZE_EXIT": 1,
+        "EGL_VERSION": 1,
+        "EGL_BIND_API_ENTER": 1,
+        "EGL_BIND_API_EXIT": 1,
+        "EGL_CHOOSE_CONFIG_ENTER": 1,
+        "EGL_CHOOSE_CONFIG_EXIT": 1,
+        "EGL_CONFIG_COUNT": 1,
+        "EGL_CREATE_CONTEXT_ENTER": 1,
+        "EGL_CREATE_CONTEXT_EXIT": 1,
+        "EGL_CREATE_SURFACE_ENTER": 1,
+        "EGL_CREATE_SURFACE_EXIT": 1,
+        "EGL_MAKE_CURRENT_ENTER": 1,
+        "EGL_MAKE_CURRENT_EXIT": 1,
+        "EGL_QUERY_SURFACE_ENTER": 2,
+        "EGL_QUERY_SURFACE_EXIT": 2,
+        "TRANSPORT_CREATE_ENTER": 1,
+        "TRANSPORT_CAPABILITY": 2,
+        "SUBMIT_OBSERVER": 81,
+        "TRANSPORT_BUFFER": 13,
+        "TAIL_OBSERVER": 130,
+        "TRANSPORT_CREATE_EXIT": 1,
+        "SCENE_PROGRAM_PREPARE_ENTER": 1,
+        "SCENE_PROGRAM_PREPARE_EXIT": 1,
+        "WAIT_PAGE_PULSE_OR_SENSOR": 1,
+        "RECOVERY_READY_COMMIT": 1,
+        "ROOT_INTENT": 1
+      },
+      "recoveryMeta": {
+        "revision": "T464_RECOVERY_V1",
+        "phase": "FAULTED_REVOKED",
+        "reason": "GPU_PROGRESS_TIMEOUT",
+        "firstReason": "WINDOW_OR_PAGE_CHANGED",
+        "resetSerial": "1",
+        "epoch": "3",
+        "session": "1",
+        "runLo": 1,
+        "runHi": 0,
+        "contextLo": 3,
+        "contextHi": 0,
+        "retired": true,
+        "resources": false,
+        "incomplete": false,
+        "dropped": 0,
+        "inCall": false,
+        "callRoot": "1",
+        "callEnterNs": "21358774936406",
+        "callFrom": 120,
+        "callTo": 127,
+        "oldLedgers": [],
+        "windowAvailable": true,
+        "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+        "readyEpoch": "0"
+      },
+      "flushSumNsPerRoot": {
+        "1": 172756562
+      },
+      "hasExecutionDiagnostics": false,
+      "rootIntents": [
+        {
+          "stage": "ROOT_INTENT",
+          "ns": "21358571071875",
+          "tid": "17331",
+          "root": "1",
+          "a": "2",
+          "b": "21358571055156",
+          "c": "21358821055156",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "test/reports/t491/t495/boot-cold.json",
+      "bytes": 15263,
+      "sha256": "d8938d2b67ff99539909ceaf6ded09025bb3b3bb44e21f8a8bb5600d36fe8382"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-cold.json",
+      "bytes": 13382,
+      "sha256": "411f580d45fd1568bd062ec53269689e77de659ee579de19f035ab5db6a11bf6"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-gap.json",
+      "bytes": 139951,
+      "sha256": "4e5f031dc6b47cd895d1f62b018d1570a34ae53665c73b85606c60837c76beb2"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-rebind.json",
+      "bytes": 139951,
+      "sha256": "4e5f031dc6b47cd895d1f62b018d1570a34ae53665c73b85606c60837c76beb2"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-reset1.json",
+      "bytes": 13118,
+      "sha256": "0dbd45610dd92bdf76a0cbb21ef6bf1a32418a0a486b9606ff917f682008a3f6"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-m2-reset2.json",
+      "bytes": 13118,
+      "sha256": "0dbd45610dd92bdf76a0cbb21ef6bf1a32418a0a486b9606ff917f682008a3f6"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-reset1.json",
+      "bytes": 53876,
+      "sha256": "0e4f7552c29b9147671bff83e155e92ac78e9cfb70d4fe07a4279f3e3583f13d"
+    },
+    {
+      "path": "test/reports/t491/t495/boot-reset2.json",
+      "bytes": 53876,
+      "sha256": "0e4f7552c29b9147671bff83e155e92ac78e9cfb70d4fe07a4279f3e3583f13d"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_layout.json",
+      "bytes": 68781,
+      "sha256": "0f0d98fa0e68b26dc839661e27a015e7c8a5d73baed0f2f4cf15e053b504d99a"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m1_diag.jpeg",
+      "bytes": 192160,
+      "sha256": "54975f2e174377231c6d8dc261d321176961fcb5dd621b1875c049e26601994b"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m1_final.jpeg",
+      "bytes": 192414,
+      "sha256": "cff566a4ae1977c8a5562fdece2221c583ef8f0e7a101dbc50c639b74249d166"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m1_reset2.jpeg",
+      "bytes": 192417,
+      "sha256": "e3333b75a7c7f8573cef66fb5cc5594d4431749f729f5426a97522893e5c4355"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m1_run.jpeg",
+      "bytes": 189520,
+      "sha256": "153ae6eedfad2b8abc6f644ca22618263872990714b84cba8793792c8dc11464"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m1_run2.jpeg",
+      "bytes": 192180,
+      "sha256": "a09e3db49f2364937b346c1a9132864c44b609513610eb28bf1e01f26c01546f"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m1_sand.jpeg",
+      "bytes": 192039,
+      "sha256": "49b19dea24a0900e22db600604ec8e27724e56f11dcfe1fad0b2df2197215f07"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_diag_now.jpeg",
+      "bytes": 194916,
+      "sha256": "9f952e49b45370dd9ed5baf058b4606236e60fe5abe4897fcd0f8644398ed1df"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_final2.jpeg",
+      "bytes": 195150,
+      "sha256": "eb92929513cd4fe441a16c71e0819838d0dcbddf32840357c8136554a3be634a"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_last.jpeg",
+      "bytes": 194672,
+      "sha256": "96e7cbed6a088beac3ec7592508efcd8be194a4690623effdd9d0e26ad056075"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_now.jpeg",
+      "bytes": 193170,
+      "sha256": "8bb3e0c563f33e93b351bf2c19c27ae21918820a9ebefce0859e196bf65ad0c8"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_now2.jpeg",
+      "bytes": 193942,
+      "sha256": "f66f2da702b60c735c31bc299731cef6469cf4b0acba4d7360fc2b0a196f5472"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_now3.jpeg",
+      "bytes": 194449,
+      "sha256": "976f14e764023293705c06e695e6df1b6208273b63f8f033092819279a194005"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_now4.jpeg",
+      "bytes": 194860,
+      "sha256": "337cc6e97c8b277c7cd4511ff57c7cc547a2d7402ba6f637c5cddafd250675c0"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_rebind.jpeg",
+      "bytes": 195169,
+      "sha256": "498f7b219891faddc07ee541c34feff32ceae0054901562f1724f52c22ef6be7"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_reset2.jpeg",
+      "bytes": 190348,
+      "sha256": "761a69dd9197d43dbadb7922df59520d29304a8f36ac34a00f483481966e0c00"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_run.jpeg",
+      "bytes": 190178,
+      "sha256": "cb4907f70ef87ae62f212834720c5ef8d8336a1894e5264cea12f1bb95b74539"
+    },
+    {
+      "path": "test/reports/t491/t495/t495_m2_sand_gesture.jpeg",
+      "bytes": 194620,
+      "sha256": "1b1c3c8cd1f228dda54dd5909ec8f379a1d2cd3553c2b4cfe5be93c29ff2acff"
+    },
+    {
+      "path": "test/reports/t257/T492-m1-handoff.json",
+      "bytes": 2306,
+      "sha256": "51d52bb8ed14cb8ec7ac990f32d8ee99b3214ebd55dfb7a3ed71d92017d93fa4"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 92113,
+      "sha256": "2ae24dd20cd57d2020bba0823c169a83eaf6608c48a71431b5e0ed7a6f368f88"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "bytes": 7685,
+      "sha256": "c328622a56b511cf34e430283f3c095f1da05fda3f6d09477fad5ce00644e403"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "bytes": 4786,
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/t492_source.h",
+      "bytes": 150,
+      "sha256": "1da50b6bff3139e941f41b0de07e4b91f9f45d088990104941d8d184c4bbcb14"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 11403,
+      "sha256": "db8aa549a21890d13abce09183a0e60a592dba82554767bfa30217c55c2a5437"
+    },
+    {
+      "path": "test/reports/t257/T492-m2-handoff.json",
+      "bytes": 2309,
+      "sha256": "a819eaef36fc5032d127d9b2b5ffa20c073b92b2126d5c49f5d36ad55136616b"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 98035,
+      "sha256": "c6ef2a1c7875cfc38c38b80fd755bc6d394f9cacc12bba2c3f92791e5467a67c"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "bytes": 7685,
+      "sha256": "c328622a56b511cf34e430283f3c095f1da05fda3f6d09477fad5ce00644e403"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "bytes": 4786,
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/t492_source.h",
+      "bytes": 150,
+      "sha256": "97387d75a2d34270ec0a5b7f8ce0854516668c7fde0e827fc19cee93ff552696"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 14933,
+      "sha256": "34f751d587e1edfe4e7939c87aa0af4c70cbbd4c9fb1751eb55903d16f57c4dd"
+    },
+    {
+      "path": "docs/test-report-T495-snapshot-firstroot-device-v1.md",
+      "bytes": 4649,
+      "sha256": "f95f07e119ec147f16f5440e6f5d401e166950ff603d615e40685496af7c3fd1"
+    },
+    {
+      "path": "docs/test-report-T493-snapshot-firstcause-diff-v1.md",
+      "bytes": 3742,
+      "sha256": "1fcb9ee0c3211fd57c07531ecceaa2cb144b64205217bd7f8fc0c44deb2016fb"
+    },
+    {
+      "path": "docs/architecture-T490-m1-first-root-budget-v1.md",
+      "bytes": 11625,
+      "sha256": "c59a416c28c0578e42fd4cf34e8e4baada2f5c988dd36af51f12eb581a90c579"
+    },
+    {
+      "path": "docs/developer-T492-stable-snapshot-first-cause.md",
+      "bytes": 5890,
+      "sha256": "e3ae2ee7e6ca97224e6477257ac59220db6f23dfed32f2aedf79e88b9835f370"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "bytes": 9391,
+      "sha256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "bytes": 4786,
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "bytes": 9391,
+      "sha256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "bytes": 4786,
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8"
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 98316,
+      "sha256": "1f029bc94b6ca4f204d421231cc8e4c9aaf0bdc64d2fdac0cd991ad4561602b6"
+    }
+  ],
+  "m1NsArithmetic": {
+    "permitDuration": 250000000,
+    "detectionOverdue": 390312,
+    "firstFailureFromPermitStart": 250390781,
+    "firstFailureFromIntentLog": 250374062,
+    "finalDrawReceiptFromStart": 260757500,
+    "firstIntentKind": 2,
+    "isGpuTimestampMeasurement": false,
+    "exactAcceptDrawSwapTimes": "NOT_MEASURED_BOOT_DROPPED",
+    "acceptedQuantumPresentationPath": "SOURCE_CODE_INFERENCE_FROM_ROOT1_DRAW_RECEIPT_AND_UI_PHYSICS1_NOT_SOURCE_PROOF"
+  },
+  "m2NsArithmetic": {
+    "firstIntentToGapObservation": 227154047032,
+    "gap": 34567032,
+    "gapThreshold": 33333333,
+    "nativePresentedCounterInSavedScope": "NOT_EXPORTED",
+    "presentOnlyRootCause": "NOT_ESTABLISHED"
+  },
+  "duplicateGroups": [
+    [
+      "boot-reset1.json",
+      "boot-reset2.json"
+    ],
+    [
+      "boot-m2-reset1.json",
+      "boot-m2-reset2.json"
+    ],
+    [
+      "boot-m2-gap.json",
+      "boot-m2-rebind.json"
+    ]
+  ],
+  "coordinateEvidence": {
+    "screen": [
+      1280,
+      2832
+    ],
+    "startupBootBounds": [
+      416,
+      164,
+      864,
+      304
+    ],
+    "sandBounds": [
+      178,
+      651,
+      346,
+      791
+    ],
+    "newRunBounds": [
+      822,
+      651,
+      1102,
+      791
+    ],
+    "xcomponentBounds": [
+      0,
+      1081,
+      1280,
+      2552
+    ],
+    "reportedReset": [
+      731,
+      263
+    ],
+    "reportedSource": [
+      147,
+      263
+    ],
+    "resetWouldHitBootIfSamePixelDomain": true,
+    "originalInjectionCommandAndConversion": "MISSING",
+    "disposition": "TESTER_VERIFY_HIT_TARGET_BEFORE_PRODUCT_RESET_FIX"
+  },
+  "screenshotsVisuallyReviewed": [
+    "t495_m1_sand.jpeg",
+    "t495_m2_final2.jpeg"
+  ],
+  "sourceChainStatus": "NOT_MEASURED",
+  "twoIndependentResetsStatus": "NOT_PROVEN",
+  "newProductPassClaimed": false,
+  "validation": {
+    "status": "PASS_ARCHIVE_SOURCE_AND_INTEGER_NS_REVIEW_ONLY",
+    "inputHashes": 52,
+    "duplicateGroups": 3,
+    "signedHapElfAudited": 2,
+    "deviceRerun": false,
+    "allOriginalHashInputsUnchanged": true,
+    "localLinks": 5,
+    "executionPrompts": "PASS",
+    "productOrDevicePassClaimed": false
+  }
+}

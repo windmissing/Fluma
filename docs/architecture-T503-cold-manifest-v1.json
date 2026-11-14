@@ -1,0 +1,98 @@
+{
+  "schema": "T503_BOUNDED_COLD_MANIFEST_V1",
+  "date": "2026-11-14",
+  "status": "CONTRACT_READY_NOT_IMPLEMENTED",
+  "capability": "T503_BOUNDED_COLD_V1",
+  "traceSchema": "T503_M2_COLD_TRACE_V1",
+  "payloadRevision": "T445_M2_TRACE_V3",
+  "unsupportedTraceRoute": [
+    "m1"
+  ],
+  "legacyOnlinePolicy": "explicit UNSUPPORTED_COLD_REVISION for requestM2Trace/readM2Trace/executionDiagnostics in new bounded build; no old unlimited allocation bypass",
+  "legacyOfflineReader": "retain V3 old archives; reject unknown revisions",
+  "businessWireChanged": false,
+  "api": [
+    "coldCapabilities",
+    "coldTraceBeginV1",
+    "coldTraceStateV1",
+    "coldTracePageV1",
+    "coldTraceEndV1",
+    "executionDiagnosticsV1"
+  ],
+  "trace": {
+    "slots": 2,
+    "maxCumulativeCapacityBytes": 55410688,
+    "slotStorage": "exact caller-owned U32 block completion/state/events; no vector growth or third Capture copy",
+    "maxBuilders": 1,
+    "maxReaders": 1,
+    "ttlFromRequestNs": 60000000000,
+    "ttlReadRenewal": false,
+    "terminalReceiptCount": 32,
+    "u64IdsReuse": false,
+    "states": [
+      "FREE",
+      "BUILDING",
+      "READY",
+      "RETIRING"
+    ],
+    "replace": "explicit matching replaceId; old valid READY preserved if candidate fails; reader-pinned retired slot never reused",
+    "scopeInvalidation": [
+      "run",
+      "epoch",
+      "context",
+      "surface",
+      "session",
+      "resetSerial",
+      "permissionRevision"
+    ],
+    "pageWords": 1024,
+    "pageUtf8Limit": 16384,
+    "wholeArchiveJsonLimitFormula": "(1+ceil(Tprofile/4096))*16384; independent of timeline4MiB budget; stream pages",
+    "unmapRestoreBeforeAbandon": true,
+    "beginReservesTraceId": true,
+    "endPendingTraceIdCancelsCandidate": true,
+    "pendingPageResult": "TRACE_NOT_READY"
+  },
+  "diagnostic": {
+    "maxActiveExports": 1,
+    "gateBeforeCaptureCopy": true,
+    "capturePayloadCompileTimeMax": 1404072,
+    "maxUtf8Bytes": 2097152,
+    "fallbackUtf8Bytes": 16384,
+    "maxCompleteCaptureCopies": 1,
+    "writerCapacity": "min(2097152,remainingTimelineExportBytes)",
+    "writer": "checked UTF8 append; atomic escape; no ostringstream/out.str copy",
+    "fallback": "complete INCOMPLETE envelope preserving four firstCause scopes/fault root/raw GL EGL/stamps; never truncated JSON success",
+    "totalTimelineAndDiagnosticUtf8Bytes": 4194304,
+    "nativeNapiCopy": "create string directly from writer span; JS lifetime measured separately",
+    "scopeChangedAfterCopy": "old explicit scope + scopeStale; collector INCOMPLETE",
+    "allocationFailure": "bounded small original-cause envelope or original NAPI exception; gate always released"
+  },
+  "snapshotProtocolChanged": false,
+  "deadlineNs": 250000000,
+  "gapNs": 33333333,
+  "testBoundaryIds": [
+    "two-slots-capacity",
+    "replace-old-pinned",
+    "reset-End-TTL-during-read",
+    "fail-candidate-preserve-old",
+    "TTL-equality-clock-reversal",
+    "ID-exhaustion",
+    "maxWords-stride-overflow",
+    "map-unmap-restore-failure",
+    "writer-exact-over1",
+    "escape-maxU64-four-causes",
+    "allocation-NAPI-exception-release",
+    "concurrent-reentrant-BUSY-before-copy",
+    "no-legacy-bypass",
+    "collector-UTF8-IO-cancel-finally"
+  ],
+  "device": "NOT_RUN",
+  "runtimeHelpers": "NOT_IMPLEMENTED",
+  "baseline": {
+    "capture": "T492 enhanced delivery",
+    "executionDiagnosticsSHA256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5",
+    "legacyHandoffDiagnosticsSHA256": "c328622a56b511cf34e430283f3c095f1da05fda3f6d09477fad5ce00644e403",
+    "legacyHandoffNotEquivalent": true
+  }
+}

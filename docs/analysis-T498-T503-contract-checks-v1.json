@@ -1,0 +1,177 @@
+{
+  "schema": "T498_T503_ARCHITECT_CONTRACT_CHECKS_V1",
+  "date": "2026-11-14",
+  "device": "NOT_RUN",
+  "runtime": "NOT_IMPLEMENTED",
+  "files": [
+    {
+      "path": "docs/algorithm-T497-gpu-M3-preview-source-v1.md",
+      "sha256": "30896f56cb0b4531068a1569d54d1f37f179ebd21c26c29aa600858cbe4496ef",
+      "bytes": 30774
+    },
+    {
+      "path": "docs/design-T497-gpu-M3-manifest-v1.json",
+      "sha256": "e714f0fcb3660aedc120d983ef0fce78b6384430bc1c6c0162a6b467c79bf35a",
+      "bytes": 41684
+    },
+    {
+      "path": "docs/design-T497-gpu-M3-fixtures-v1.json",
+      "sha256": "a6d72346df1f117adc24a09cb5c6f4a9b2d6092345b4c4bba025aa9467622921",
+      "bytes": 9074
+    },
+    {
+      "path": "docs/design-T497-gpu-M3-evidence-v1.json",
+      "sha256": "3b180861d2991ff8d5bae260cdc01252ff049b9a8c6449455f4da365d9657f12",
+      "bytes": 8142
+    },
+    {
+      "path": "docs/architecture-T500-gpu-resident-resource-lifecycle-v1.md",
+      "sha256": "3da0afbf9f009ffbfa0649d70a5a18f1252570da1d1d6dfbb53959cae576bc1e",
+      "bytes": 22286
+    },
+    {
+      "path": "docs/analysis-T500-resource-inventory-v1.json",
+      "sha256": "112f28e04b39de8bbe4fb20338f420c19501203ddc5f261fda56d07f5a5d2bd6",
+      "bytes": 29974
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "sha256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5",
+      "bytes": 9391
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+      "bytes": 4786
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0",
+      "bytes": 92394
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+      "bytes": 17881
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "sha256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5",
+      "bytes": 9391
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+      "bytes": 4786
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "sha256": "1f029bc94b6ca4f204d421231cc8e4c9aaf0bdc64d2fdac0cd991ad4561602b6",
+      "bytes": 98316
+    },
+    {
+      "path": ".codex/local-test/t492-m2-delivery/entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+      "bytes": 17881
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "sha256": "c328622a56b511cf34e430283f3c095f1da05fda3f6d09477fad5ce00644e403",
+      "bytes": 7685
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+      "bytes": 4786
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "sha256": "2ae24dd20cd57d2020bba0823c169a83eaf6608c48a71431b5e0ed7a6f368f88",
+      "bytes": 92113
+    },
+    {
+      "path": ".codex/local-test/t492-m1-handoff/entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+      "bytes": 17881
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "sha256": "c328622a56b511cf34e430283f3c095f1da05fda3f6d09477fad5ce00644e403",
+      "bytes": 7685
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/timeline_snapshot.h",
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8",
+      "bytes": 4786
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "sha256": "c6ef2a1c7875cfc38c38b80fd755bc6d394f9cacc12bba2c3f92791e5467a67c",
+      "bytes": 98035
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92",
+      "bytes": 17881
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a",
+      "bytes": 3250
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/m2route/progress_clock_v2.h",
+      "sha256": "1e0152c6b4cfc4ef3b82e3130be8cfee926adb5f56d05a78c5cef29c78c2a21c",
+      "bytes": 134
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/m2route/quantum_candidate.cpp",
+      "sha256": "e93ec2ce8c0a08e7de20cd8ca858aa1ba277d1f2e81a816b93ae7c678b34073a",
+      "bytes": 14693
+    },
+    {
+      "path": ".codex/local-test/t492-m2-handoff-v2/entry/src/main/cpp/gpu_resident/m2route/full_transport.cpp",
+      "sha256": "2f006a5283146170f7998b173b0b6e4530daf4c428671557186ca81411b3ce63",
+      "bytes": 32579
+    }
+  ],
+  "checks": {
+    "headerCompletionMaps": "PASS",
+    "sourceStages72": "PASS",
+    "expandedQuantumCounts": [
+      549,
+      619,
+      594,
+      664
+    ],
+    "resourceSumsFourProfiles": "PASS",
+    "workSegmentsAlignedNonoverlapping": "PASS",
+    "maxBindings4": "PASS",
+    "coldSlotsCapacityAndUtf8Budgets": "PASS",
+    "T498FullGate": "NOT_READY_BLOCKED_TIME_POLICY",
+    "T503Contract": "READY_NOT_IMPLEMENTED"
+  },
+  "blockedCounterexample": {
+    "before": {
+      "generated": 4,
+      "activeRemaining": 4,
+      "accepted": 0,
+      "pending": 0,
+      "overload": 0,
+      "revoked": 0
+    },
+    "afterClearingWithoutDisposition": {
+      "generated": 4,
+      "accounted": 0,
+      "balanced": false
+    },
+    "requiredInput": "designer freezes blocked bucket/pending/carry/input/reentry; no silent V2 reuse"
+  },
+  "noBusinessOrOriginalTestChanged": true,
+  "validation": {
+    "allOriginalHashInputsUnchanged": true,
+    "localLinks": 5,
+    "executionPrompts": "PASS",
+    "productOrDevicePassClaimed": false
+  }
+}
