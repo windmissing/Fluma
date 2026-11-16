@@ -1,0 +1,76 @@
+{
+  "revision": "T507_COLLECTOR_CHECKS_V1",
+  "passed": 17,
+  "failed": 0,
+  "results": [
+    {
+      "name": "actual native QUANTUM pages stream without aggregate state",
+      "status": "PASS"
+    },
+    {
+      "name": "bad releases owned trace even on rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "io releases owned trace even on rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "cancel releases owned trace even on rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "manifest releases owned trace even on rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown releases owned trace even on rejection",
+      "status": "PASS"
+    },
+    {
+      "name": "UTF8 budget matches real bytes including surrogate pairs",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot ok finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot busy finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot budget finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot stale finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot oversize finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot throw finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot cancel finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "snapshot manifest finally releases legacy immutable reader",
+      "status": "PASS"
+    },
+    {
+      "name": "GpuResidentM1 actual collector migration and hide cancellation",
+      "status": "PASS"
+    },
+    {
+      "name": "GpuSandWaterExperience actual collector migration and hide cancellation",
+      "status": "PASS"
+    }
+  ],
+  "device": "NOT_RUN"
+}

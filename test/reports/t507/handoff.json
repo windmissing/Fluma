@@ -1,0 +1,57 @@
+{
+  "revision": "T507_DEVELOPER_BOUNDED_COLD_V1",
+  "device": "NOT_RUN",
+  "routes": {
+    "m1": {
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T507-m1-complete\\T507-m1-complete-signed.hap",
+        "sha256": "a1baa57784e1d883fbe823b12c38aac4abb59c44f0cde4fe29563086bcf08d2b",
+        "bytes": 9603973
+      },
+      "elfSHA256": "992baa8152687f2e2796e493f9f36842bda81ebe68adc248408b6a51264b7b97",
+      "verifyApp": "PASS",
+      "trace": "UNSUPPORTED_ROUTE",
+      "diagnostics": "T503_EXECUTION_DIAGNOSTICS_V1"
+    },
+    "m2": {
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T507-m2-complete\\T507-m2-complete-signed.hap",
+        "sha256": "b702032f6fb34c2818fe457daf8f7e8c6ed36fc9fd120eb2d0d723e6a19dc1b6",
+        "bytes": 9829336
+      },
+      "elfSHA256": "3bf67c3e851f3ea7137bf6ea99a5f8c625f7cba279410fd9cafbb2fea48bf8b6",
+      "verifyApp": "PASS",
+      "trace": "SUPPORTED",
+      "diagnostics": "T503_EXECUTION_DIAGNOSTICS_V1"
+    }
+  },
+  "unitChecks": 28,
+  "collectorChecks": 17,
+  "sourceTrace": {
+    "words": 7936,
+    "pagesWithHeader": 9,
+    "utf8Bytes": 25335
+  },
+  "quantumTrace": {
+    "words": 8128,
+    "pagesWithHeader": 9,
+    "utf8Bytes": 25903
+  },
+  "faultInjection": [
+    "GL map invalid target",
+    "GL unmap false return",
+    "restore after unbinding current context",
+    "allocation null",
+    "simulated NAPI exception RAII",
+    "collector IO/cancel/manifest/budget errors"
+  ],
+  "limits": {
+    "traceCapacityBytes": 55410688,
+    "slots": 2,
+    "builders": 1,
+    "readers": 1,
+    "captureMaxBytes": 1404072,
+    "writerMaxBytes": 2097152,
+    "ttlNs": 60000000000
+  }
+}
