@@ -1,0 +1,16 @@
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
+const out=path.resolve(process.argv[2]);
+cp.execFileSync(process.execPath,[require.resolve('../t522/generate.cjs'),out],{stdio:'inherit'});
+const main=path.join(out,'entry/src/main'),cpp=path.join(main,'cpp'),dest=path.join(cpp,'gpu_resident/g9spf');
+fs.cpSync('entry/src/main/cpp/gpu_resident/g9spf',dest,{recursive:true});
+fs.appendFileSync(path.join(cpp,'gpu_resident/CMakeLists.txt'),'\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/g9spf/kernels.cmake")\n');
+require('./bridge_overlay.cjs')(main);
+fs.copyFileSync('entry/src/main/ets/physics/GpuG9Cold.ets',path.join(main,'ets/physics/GpuG9Cold.ets'));
+fs.copyFileSync('entry/src/main/ets/pages/GpuResidentG9.ets',path.join(main,'ets/pages/GpuResidentG9.ets'));
+const pagesPath=path.join(main,'resources/base/profile/main_pages.json'),pages=JSON.parse(fs.readFileSync(pagesPath,'utf8'));
+if(!pages.src.includes('pages/GpuResidentG9'))pages.src.push('pages/GpuResidentG9');fs.writeFileSync(pagesPath,JSON.stringify(pages,null,2)+'\n');
+const entryPath=path.join(main,'ets/pages/GpuSandWaterExperience.ets');let page=fs.readFileSync(entryPath,'utf8').replaceAll('\r\n','\n');
+const anchor="      Text('GPU M2 V3 · ' + this.progress).fontSize(18)";if(page.split(anchor).length!==2)throw Error('T529_ENTRY_ANCHOR');
+page=page.replace(anchor,anchor+"\n      Button('打开 G9 S/F/P 独立研究').onClick(() => { router.pushUrl({ url: 'pages/GpuResidentG9' }); })");fs.writeFileSync(entryPath,page);
+const files={};for(const name of fs.readdirSync(dest))files[name]=crypto.createHash('sha256').update(fs.readFileSync(path.join(dest,name))).digest('hex');
+fs.writeFileSync(path.join(out,'t529-manifest.json'),JSON.stringify({revision:'T529_G9_SPF_DEVELOPMENT',route:'g9spf',defaultRoute:'m2',product:'DEVELOPMENT_COMPILE_ONLY',tests:'NOT_RUN_BY_USER_DIRECTION',device:'NOT_RUN',files},null,2)+'\n');
