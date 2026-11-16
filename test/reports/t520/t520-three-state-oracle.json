@@ -1,0 +1,286 @@
+{
+ "revision": "T520_THREE_STATE_ORACLE_V1",
+ "date": "2026-11-16",
+ "design": "algorithm-T515-gpu-three-state-dynamics-v1.md §4–7 + fixtures 43 输入",
+ "oracle": "independent integer re-implementation",
+ "gpuExecution": "NOT_IMPLEMENTED",
+ "results": [
+  {
+   "id": "G901",
+   "name": "STATIC_BED：纯 S 静止态物理不变（§5.5 静止掩码：无 F 无 pTrial 漂移）",
+   "pass": true,
+   "detail": "oracle 语义：F=0/p=0/无输入 → 全部 writer 零操作"
+  },
+  {
+   "id": "G902",
+   "name": "STATIC_FLOW_MASK：Bs=mU·gn·F/(65536·120J) 可支撑 → Rusanov 不偷搬质量",
+   "pass": true,
+   "detail": "Bs=4581298449（F=1Q, mu=0.5, gn=1Q）pTrial=0≤Bs → q=0"
+  },
+  {
+   "id": "G903",
+   "name": "CAPTURE：P−m/F+m/p+=m·vx 逐字（1572864/4398046511104）",
+   "pass": true,
+   "detail": "oracle newF=1572864 newP=4398046511104"
+  },
+  {
+   "id": "G903b",
+   "name": "CAPTURE 动量核：m·vx=524288·4194304=2199023255552，p 翻倍=4398046511104",
+   "pass": true,
+   "detail": "算术独立复算"
+  },
+  {
+   "id": "G904",
+   "name": "WRONG_CONTACT_CENTER：y=B 直接摊平 → 质心凭空升高 m²gn·? 拒",
+   "pass": true,
+   "detail": "包质心 y2/2=4194304=B=4194304 → 摊平后质心 B+m/2 势能凭空增"
+  },
+  {
+   "id": "G905",
+   "name": "ACTIVATION：S−q/F+q/p 不变（3145728/2097152/p 原值）",
+   "pass": true,
+   "detail": "oracle={'S': 3145728, 'F': 2097152, 'p': '4398046511104', 'BUnchanged': True, 'kineticDoesNotIncrease': True, 'note': '不给新质量邻居速度——混合减速是实际耗散'}"
+  },
+  {
+   "id": "G906",
+   "name": "NO_INCOMING_SAME_SPEED：动员床初始动量 0（赋同速动能翻倍被拒）",
+   "pass": true,
+   "detail": "§4.2：p 不变——混合减速是实际耗散"
+  },
+  {
+   "id": "G907",
+   "name": "SHEAR_RECRUIT：dShear>static 阈值（6.25Q>0.5Q 惯性剪切动员）",
+   "pass": true,
+   "detail": "u=10485760 dShear=6553600=6.25Q static=524288"
+  },
+  {
+   "id": "G908",
+   "name": "STOP_DEPOSIT：p=0/rest 32≥settle 32 → 全部静止 F 按来源键升序入床",
+   "pass": true,
+   "detail": "oracle={'deposit': True, 'order': [[1, 7], [2, 5]], 'note': 'F 清 0、S+=F、p 本来就 0 不消动量'}"
+  },
+  {
+   "id": "G909",
+   "name": "MOVING_NOT_DEPOSIT：p=1≠0 不沉积+计时清 0（停源≠动量清零）",
+   "pass": true,
+   "detail": "oracle={'deposit': False, 'reason': 'p!=0', 'timerReset': True}"
+  },
+  {
+   "id": "G910",
+   "name": "DEPOSIT_LAYER_WAIT：64 层满且顶 origin1≠新 origin2 → REST F 保留",
+   "pass": true,
+   "detail": "oracle={'deposit': False, 'reason': 'DEPOSIT_LAYER_WAIT', 'note': 'REST F 保留精确质量与来源'}"
+  },
+  {
+   "id": "G911",
+   "name": "LAUNCH：vx=TZ(p/F)=3Q、px=q·vx、y2=2(S+F−q)+q=7864320 逐字",
+   "pass": true,
+   "detail": "oracle={'vx': 3145728, 'px': 1649267441664, 'newF': 1572864, 'newP': 4947802324992, 'y2': 7864320, 'potentialChange': '0'}"
+  },
+  {
+   "id": "G911b",
+   "name": "LAUNCH 势能核：新包质心与移出薄层等高（y2 公式独立复算）",
+   "pass": true,
+   "detail": "y2=7864320"
+  },
+  {
+   "id": "G912",
+   "name": "SPLIT_ROUND_ENERGY：分裂 K2 涨 1/6 必须入功上限或拒（不能动量守恒掩盖）",
+   "pass": true,
+   "detail": "F=3,p=1,q=1 → K2: 1/3→1/2 涨 1/6"
+  },
+  {
+   "id": "G913",
+   "name": "NO_FREE_LAUNCH：Jy=0+支撑有效+只改倾角 → 不发射",
+   "pass": true,
+   "detail": "§4.4 合同"
+  },
+  {
+   "id": "G914",
+   "name": "POOL_FULL：K=192 满 → 不发射不改账（无隐藏粒子）",
+   "pass": true,
+   "detail": "§4.4 qy/slot 不足拒绝"
+  },
+  {
+   "id": "G915",
+   "name": "TWO_OUTFLOWS：两面 Hamilton 逐来源合计 [1:3,2:2]（每面共享列混合速度）",
+   "pass": true,
+   "detail": "总量法={1: 3, 2: 2} designer left+right 合计一致"
+  },
+  {
+   "id": "G916",
+   "name": "HAMILTON_TIE：余量按来源键升序（1/2 各+1，无原子抢占赢家）",
+   "pass": true,
+   "detail": "oracle={1: 1, 2: 1, 3: 0}（3 号 0）"
+  },
+  {
+   "id": "G917",
+   "name": "ORIGIN_FULL：来源 64 满遇 65 → 容量拒绝回滚复合操作",
+   "pass": true,
+   "detail": "§4.3 来源集合上限"
+  },
+  {
+   "id": "G918",
+   "name": "PRESSURE_Q_ZERO：q=0 时 jp 仍传力（共同 jp 两列反向、床脉冲分账）",
+   "pass": true,
+   "detail": "§5.7：jp 不能强行解释成 q*u"
+  },
+  {
+   "id": "G919",
+   "name": "FRICTION：REST |p|12>Bs10 → p′=−5（12−Bd7）→ FLOW",
+   "pass": true,
+   "detail": "oracle={'pAfter': -5, 'modeAfter': 'FLOW'}"
+  },
+  {
+   "id": "G920",
+   "name": "WEAK_IMPULSE：REST |8|≤Bs10 → p′=0 弱冲量被静摩擦吸收",
+   "pass": true,
+   "detail": "oracle={'pAfter': 0, 'modeAfter': 'REST'} support=7"
+  },
+  {
+   "id": "G921",
+   "name": "EMBEDDED_AFTER_CAPTURE：捕获抬床吞其它包 → 拒 EMBEDDED_PACKET 不 finalSand 上推",
+   "pass": true,
+   "detail": "§4.1 合同"
+  },
+  {
+   "id": "G922",
+   "name": "REST_CLOCK：每成功 quantum restTicks+32；失败 trial/preview +0",
+   "pass": true,
+   "detail": "§4.3 合同"
+  },
+  {
+   "id": "G923",
+   "name": "TOUCH_ONCE：同一 input nonce 6 trial 只施加一次（不 32/6×32 倍）",
+   "pass": true,
+   "detail": "§7 输入合同"
+  },
+  {
+   "id": "G924",
+   "name": "ANGLE_WORK：角度外功 Wg=U(newG,oldState)−U(oldG,oldState) 一次性入账",
+   "pass": true,
+   "detail": "§6.2 合同"
+  },
+  {
+   "id": "G925",
+   "name": "NOOP_ENERGY：相同项符号抵消 ΔE=0（不铸区间宽度为能量）",
+   "pass": true,
+   "detail": "§6.2 合同"
+  },
+  {
+   "id": "G926",
+   "name": "ENERGY_AMBIGUOUS：区间重叠 → ENERGY_RESOLUTION 细分（无隐形容差）",
+   "pass": true,
+   "detail": "§6.2 合同"
+  },
+  {
+   "id": "G927",
+   "name": "FIRST_SUCCESS：CFL/ENERGY_RESOLUTION 失败后 J=4 成功 → select J=4（非 8）",
+   "pass": true,
+   "detail": "§6.3 首个成功 J 唯一"
+  },
+  {
+   "id": "G928",
+   "name": "ALL_BLOCKED：6 trial 全败 → 零物理提交正常 BLOCKED（STALE 旧有效帧）",
+   "pass": true,
+   "detail": "T508 合同承接"
+  },
+  {
+   "id": "G929",
+   "name": "PARTIAL_SEAL：5 计划只封 4 → 不能接受第 5 事件/推进前缀",
+   "pass": true,
+   "detail": "§7 planned/sealed 双 cursor"
+  },
+  {
+   "id": "G930",
+   "name": "OLD_READER：V5 reader 拒旧 payload（F≠旧 U、旧 LAND writer 禁用）",
+   "pass": true,
+   "detail": "§2 版本隔离"
+  },
+  {
+   "id": "G931",
+   "name": "STALE_INPUT：旧 setGravitySample/raw shake 不冒 V5 触摸/起沙输入",
+   "pass": true,
+   "detail": "§7 合同"
+  },
+  {
+   "id": "G932",
+   "name": "SUBSTEP_VELOCITY：后速 2^30+1 越域 → 拒 trial 不裁剪",
+   "pass": true,
+   "detail": "§6.3 合同"
+  },
+  {
+   "id": "G933",
+   "name": "MASS_NO_MOMENTUM：postF=0 但 postP=1 → 拒 trial（不除零/不消残动量）",
+   "pass": true,
+   "detail": "§5.7 F=0 且 p≠0 拒"
+  },
+  {
+   "id": "G934",
+   "name": "OVERFLOW：累计冲量 S128 满 +1 → FAULT 不回绕",
+   "pass": true,
+   "detail": "§6.1 checked S128"
+  },
+  {
+   "id": "G935",
+   "name": "SOURCE_GEOMETRY：源 y2/2<B → 拒绝无静默投影（source time0）",
+   "pass": true,
+   "detail": "y=0 < B=1048576"
+  },
+  {
+   "id": "G936",
+   "name": "SUSPENSION_NET_TRANSPORT：S→F→P→F→S 净位移非零（终态 p=0 ≠ 零输运）",
+   "pass": true,
+   "detail": "§6 合同"
+  },
+  {
+   "id": "G937",
+   "name": "HORIZONTAL_CAPTURE_PROJECTION：ΔU2=+Q³/4>0 无碰撞耗散可抵 → 拒",
+   "pass": true,
+   "detail": "ΔU2=288230376151711744=+0.25Q³"
+  },
+  {
+   "id": "G938",
+   "name": "NO_DOUBLE_CONTACT_TIME：P 只推进到接触 tick、capture 占末微步、新 F 下微步才动",
+   "pass": true,
+   "detail": "§4.1 一阶接触时滞"
+  },
+  {
+   "id": "G939",
+   "name": "COMMAND_BODY_DEDUP：同 seq 同 body ack 消费；新 root nonce 允许新重力量子",
+   "pass": true,
+   "detail": "§7 dedup 合同"
+  },
+  {
+   "id": "G940",
+   "name": "RAW_SIGNED_ZERO_DUPLICATE：+0→−0 位型不同 → BAD_DUPLICATE（全 body 原位比）",
+   "pass": true,
+   "detail": "§7 合同"
+  },
+  {
+   "id": "G941",
+   "name": "SOURCE_CAPPED_ADMISSION：请求 100 列余 60 → admit60/reject40 单来源记 60",
+   "pass": true,
+   "detail": "admitted=60 rejected=40 逐字"
+  },
+  {
+   "id": "G942",
+   "name": "NEW_MASS_RESETS_REST：捕获清 restTicks=0（新入静止质量重置该列等待）",
+   "pass": true,
+   "detail": "§4.3 合同：新静止质量重置计时"
+  },
+  {
+   "id": "G943",
+   "name": "NEGATIVE_WORK_NO_CREDIT：正功 9>cap8 且负功不抵 → 回滚该列触摸",
+   "pass": true,
+   "detail": "§6.2 workCap 只计 max(0,ΔE.upper)；负功不能抵扣另一次正功"
+  },
+  {
+   "id": "GPU_DOMAIN",
+   "name": "产品 V5 GPU 执行（真实 run）",
+   "pass": null,
+   "detail": "NOT_IMPLEMENTED（产品未实现；oracle/输入已冻结）"
+  }
+ ],
+ "verdict": "PASS"
+}
