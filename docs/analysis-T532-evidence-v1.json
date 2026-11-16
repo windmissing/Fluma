@@ -1,0 +1,318 @@
+{
+  "schema": "T532_ARCHITECT_TRIAGE_V1",
+  "package": {
+    "receipt": {
+      "path": "test/reports/t257/T516-release.json",
+      "bytes": 2295,
+      "sha256": "473828f75c2a96fa5db3a098cdbe710f16c49c27218b63250eba65a296ccb08e"
+    },
+    "signed": {
+      "path": ".codex/local-test/t257-sign/T516-release/T516-release-signed.hap",
+      "bytes": 7998061,
+      "sha256": "6f49d06da5cf4a019d96c3f55a694d6a606fc0730e538406c58e142e68ec1c22"
+    },
+    "libs": {
+      "libs/arm64-v8a/libc++_shared.so": {
+        "bytes": 1262248,
+        "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+      },
+      "libs/arm64-v8a/libgrsm0.so": {
+        "bytes": 623432,
+        "sha256": "862ad91295acba3ea1d814bfd408c6d75ca8590658ba6b98091f5e99944480c0"
+      },
+      "libs/arm64-v8a/libgrsm1.so": {
+        "bytes": 1497656,
+        "sha256": "9de95e1f117d5000099934cf082a2180a8bf9a308f894b7724983ca26b58da78"
+      },
+      "libs/arm64-v8a/libp013hello.so": {
+        "bytes": 70544,
+        "sha256": "342bafbb72e280f4c16aa1904682c66fe8bca8132166f8e0aa4dc92332ea9c03"
+      },
+      "libs/arm64-v8a/libp013renderer.so": {
+        "bytes": 520640,
+        "sha256": "3a0f207ebc0c0f31550d4126c2ad1c1d6584ba62edff3f01b86f890756c13373"
+      }
+    }
+  },
+  "originalRaster": {
+    "revision": "T509_RASTER_GEOMETRY_V2",
+    "generation": 5,
+    "geometry": 5,
+    "renderNode": "t463-xcomponent",
+    "innerNode": "t463-raster",
+    "touchNode": "t463-touch",
+    "allocation": {
+      "parent": {
+        "x": 51.20001220703125,
+        "y": 990,
+        "width": 1177.5999755859375,
+        "height": 1716
+      },
+      "screen": {
+        "x": 51.20001220703125,
+        "y": 990,
+        "width": 1177.5999755859375,
+        "height": 1716
+      },
+      "window": {
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 2832
+      },
+      "vp2px": 3.5,
+      "windowId": 1141,
+      "windowGeneration": 1,
+      "orientation": 0,
+      "transformIdentity": true
+    },
+    "rasterW": 1176,
+    "rasterH": 1716,
+    "desiredWindowRect": {
+      "x": 52,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "desiredScreenRect": {
+      "x": 52,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "localPx": {
+      "x": 0.79998779296875,
+      "y": 0,
+      "width": 1176,
+      "height": 1716
+    },
+    "actual": {
+      "x": 51.79998779296875,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "screen": {
+      "x": 51.79998779296875,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "inner": {
+      "x": 51.79998779296875,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "touch": {
+      "x": 51.79998779296875,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "innerScreen": {
+      "x": 51.79998779296875,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "touchScreen": {
+      "x": 51.79998779296875,
+      "y": 990,
+      "width": 1176,
+      "height": 1716
+    },
+    "native": {
+      "controller": 0,
+      "session": 0,
+      "surface": 1,
+      "context": 0,
+      "run": "",
+      "geometry": 0,
+      "packetWidth": 0,
+      "packetHeight": 0,
+      "viewportWidth": 0,
+      "viewportHeight": 0
+    },
+    "transformIdentity": true,
+    "valid": true,
+    "reason": "",
+    "layoutAcknowledged": 1
+  },
+  "readinessReason": "PREPARE_TIMEOUT:RASTER_PLACEMENT_MISMATCH",
+  "placementDeltaX": -0.20001220703125,
+  "impliedCompositionOrigin": 51.0,
+  "windowScreenOriginZero": true,
+  "originalOutsideAllocationFixed": true,
+  "checkerCorrectlyRejects": true,
+  "cause": "FLOATING_PARENT_COMPOSITION_ASSUMPTION_UNPROVEN_PLATFORM_CUT_NOT_IDENTIFIED",
+  "replacement": "T532_WINDOW_HOST_RASTER_V3",
+  "actualTolerance": 0,
+  "feedbackOffsetCalibration": false,
+  "finiteHostArithmeticCases": [
+    {
+      "windowOrigin": 0,
+      "hostX": 0,
+      "requestedLocal": 52,
+      "windowActual": 52,
+      "screenActual": 52
+    },
+    {
+      "windowOrigin": 0,
+      "hostX": 7,
+      "requestedLocal": 45,
+      "windowActual": 52,
+      "screenActual": 52
+    },
+    {
+      "windowOrigin": 0,
+      "hostX": 31,
+      "requestedLocal": 21,
+      "windowActual": 52,
+      "screenActual": 52
+    },
+    {
+      "windowOrigin": 17,
+      "hostX": 0,
+      "requestedLocal": 52,
+      "windowActual": 52,
+      "screenActual": 69
+    },
+    {
+      "windowOrigin": 17,
+      "hostX": 7,
+      "requestedLocal": 45,
+      "windowActual": 52,
+      "screenActual": 69
+    },
+    {
+      "windowOrigin": 17,
+      "hostX": 31,
+      "requestedLocal": 21,
+      "windowActual": 52,
+      "screenActual": 69
+    },
+    {
+      "windowOrigin": -23,
+      "hostX": 0,
+      "requestedLocal": 52,
+      "windowActual": 52,
+      "screenActual": 29
+    },
+    {
+      "windowOrigin": -23,
+      "hostX": 7,
+      "requestedLocal": 45,
+      "windowActual": 52,
+      "screenActual": 29
+    },
+    {
+      "windowOrigin": -23,
+      "hostX": 31,
+      "requestedLocal": 21,
+      "windowActual": 52,
+      "screenActual": 29
+    }
+  ],
+  "platformPlacementMeasuredByThisTask": false,
+  "nextRawFields": [
+    "localOffset",
+    "windowOffset",
+    "screenOffset",
+    "size",
+    "full transform matrix",
+    "parent node ids",
+    "integer host raw rect",
+    "requested local on host",
+    "layout/draw generation",
+    "native tuple"
+  ],
+  "date": "2026-11-16",
+  "architectScope": "TRIAGE_AND_ENGINEERING_HANDOFF_COMPLETE",
+  "productRepair": "NOT_IMPLEMENTED_BY_THIS_TASK",
+  "deviceUsed": false,
+  "GLExecuted": false,
+  "CPUSimulatorAdded": false,
+  "inputs": [
+    {
+      "path": "test/reports/t491/t408a8/prepare-a8.json",
+      "bytes": 18000,
+      "sha256": "376133243b8bdfbbc85cac11d6b605e9813e6a0ca8e61604fd677e4222828d99"
+    },
+    {
+      "path": "test/reports/t491/t408a8/t408a8_l1.json",
+      "bytes": 75473,
+      "sha256": "482f5a08fb2a257d41781aff7ba98696386fe124e980ebfccef7baa8d27ce8cf"
+    },
+    {
+      "path": "test/reports/t491/t408a8/t408a8_s1.jpeg",
+      "bytes": 154091,
+      "sha256": "e25eb034c6b9decdf05ba8b173a52a506299b8b1cec05b4a0864e654dc8b09e6"
+    },
+    {
+      "path": "test/reports/t516/handoff.json",
+      "bytes": 783,
+      "sha256": "a82a544faf6292e3ec69002eb6a5629c684670e19e121c82b8a3d35de9890e25"
+    },
+    {
+      "path": "test/reports/t516/generation.json",
+      "bytes": 649,
+      "sha256": "f5b5a776198d5f32f1b53d2ccc7092f6abac17f179e5da25d28f7fc1fcdba3b5"
+    },
+    {
+      "path": "test/reports/t525/t525-inward-position-oracle.json",
+      "bytes": 4766,
+      "sha256": "4f63c140c1a339968607084562457aa3de6b1c2ece0d408d3446b163f36edcf7"
+    },
+    {
+      "path": "docs/test-report-T525-inward-position-v1.md",
+      "bytes": 2614,
+      "sha256": "555ff5fd500ef097fd2355d6d997cb82b6e0519d486d056a2341591c7033da04"
+    },
+    {
+      "path": "test/t516/generate.cjs",
+      "bytes": 2607,
+      "sha256": "cf944a3dfcbe39042ff2e7ea4756a3bde2ea52621fb041b19021365b1f58e069"
+    },
+    {
+      "path": "test/t516/RasterGeometry.ets",
+      "bytes": 7164,
+      "sha256": "0d3c25377cf59e945b535cdfe9aa8f5dad6bc8ebf0c374dc79b30e1ad7b15aef"
+    },
+    {
+      "path": ".codex/local-test/t516-delivery/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 42680,
+      "sha256": "d290ee4ec1306d3b65a0bcbcbded5675ee1f37f014a4b0cdc527e680bb967b00"
+    },
+    {
+      "path": "docs/architecture-T509-inward-raster-position-v2.md",
+      "bytes": 9822,
+      "sha256": "34057378b647049cbc67ed769cb903d09a6ccfeac0cebf93f3358f52920ba7d2"
+    },
+    {
+      "path": "docs/developer-T516-inward-raster.md",
+      "bytes": 2276,
+      "sha256": "ec7ce1cdf182662260f122d875f7241c62b077799571c163942b7583124739d9"
+    },
+    {
+      "path": "docs/test-report-T408-calibrated-display-v1.md",
+      "bytes": 8124,
+      "sha256": "003002410b267073229744b3fc973fe5ecba450464800d344e34b30ce1a7351b"
+    },
+    {
+      "path": "docs/architecture-T532-window-host-placement-v1.md",
+      "bytes": 7947,
+      "sha256": "202e86572de457a3654654b68411cf0d4e8272b0d06dfbfface696cbbdaf3079"
+    },
+    {
+      "path": "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/ets/api/@ohos.arkui.componentUtils.d.ts",
+      "bytes": 12369,
+      "sha256": "8b8251bc4904d1a0f4dddceabe7e4468e8cbf7c61e60b619884fb054e0d5c5e4"
+    },
+    {
+      "path": "docs/analysis-T530-T533-triage-checks-v1.py",
+      "bytes": 18418,
+      "sha256": "20f90f7e8566fe6611900d648244845588ea033e3a98d8328cea9f1e8ac2fc0a"
+    }
+  ]
+}

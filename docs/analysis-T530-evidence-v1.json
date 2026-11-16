@@ -1,0 +1,2562 @@
+{
+  "schema": "T530_ARCHITECT_TRIAGE_V1",
+  "package": {
+    "receipt": {
+      "path": "test/reports/t257/T492-m1-delivery.json",
+      "bytes": 2310,
+      "sha256": "8022686e1deca8b20a47bd5ae19721e047ca659765aa58045caab47d1002c966"
+    },
+    "signed": {
+      "path": ".codex/local-test/t257-sign/T492-m1-delivery/T492-m1-delivery-signed.hap",
+      "bytes": 9432164,
+      "sha256": "801c2d63ecd7a82d9e48bf92f0cbb6312a0c64074b477e527c0622150a9aa1b0"
+    },
+    "libs": {
+      "libs/arm64-v8a/libc++_shared.so": {
+        "bytes": 1262248,
+        "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+      },
+      "libs/arm64-v8a/libgrsm0.so": {
+        "bytes": 633912,
+        "sha256": "8710f983261b62c045c3f05e3f1510ff3d9fa197c387ef6bdd4679800aba27c7"
+      },
+      "libs/arm64-v8a/libgrsm1.so": {
+        "bytes": 1723760,
+        "sha256": "32947a028c8b88c2959c15c2ada1387337656200a820171b46c77f9c66973d2a"
+      },
+      "libs/arm64-v8a/libp013hello.so": {
+        "bytes": 70544,
+        "sha256": "36583eb964f8cc0797a28e40a20d735f1226710286b58e9aaed406752df0ca08"
+      },
+      "libs/arm64-v8a/libp013renderer.so": {
+        "bytes": 498928,
+        "sha256": "2263ae17418f97c85c1a33142e0bd0c03dd47eaa91eb24055c05172762fcb78d"
+      }
+    }
+  },
+  "executionSummaries": [
+    {
+      "file": {
+        "path": "test/reports/t491/t510/execution-t510.json",
+        "bytes": 1030885,
+        "sha256": "8b2368dc46ba8ad35fd1d0905a180cb4743d9d86428abff9fe5aaab2e965b117"
+      },
+      "stageCounts": {
+        "WAIT_ENTER": 1390669,
+        "WAKE": 1390669,
+        "CONTEXT_TOMBSTONES": 18,
+        "CONTEXT_RETIRED": 18,
+        "SOURCE_BOUNDARY": 11,
+        "RESET_NATIVE_REQUEST": 7,
+        "OLD_PERMIT_TOMBSTONE": 7,
+        "INVALIDATE": 7,
+        "RESET_REQUESTED": 6,
+        "INIT_BEGIN": 6,
+        "SHADER_ENTER": 3,
+        "SHADER_EXIT": 3,
+        "PROGRAM_ENTER": 3,
+        "PROGRAM_EXIT": 3,
+        "RESOURCE_ENTER": 18,
+        "RESOURCE_EXIT": 18,
+        "PREPARE_ENTER": 12,
+        "PREPARE_EXIT": 12,
+        "COLD_FIXTURE": 6,
+        "SUBMIT_WARMUP": 12,
+        "SCENE_VAO_ENTER": 6,
+        "SCENE_VAO_EXIT": 6,
+        "SCENE_BUILD_ENTER": 18,
+        "GRAPHICS_COMPILE_ENTER": 6,
+        "GRAPHICS_COMPILE_EXIT": 6,
+        "GRAPHICS_LINK_ENTER": 3,
+        "GRAPHICS_LINK_EXIT": 3,
+        "SCENE_BUILD_EXIT": 18,
+        "RESOURCES_READY": 6,
+        "READY": 6,
+        "SESSION_HANDOFF": 6,
+        "PAGE_PULSE": 31334,
+        "READY_COMMIT": 6,
+        "FIRST_TICK": 1389052,
+        "PLAN_GRANT": 1157,
+        "JOB_INTENT": 4609,
+        "ROOT_INTENT": 9218,
+        "PUMP_ENTER": 199257,
+        "SUBMIT_ENTER": 59927,
+        "STAGING_FLUSH": 4609,
+        "ISOLATION_CALL": 331235,
+        "SUBMIT_ROOT_BEGIN": 4609,
+        "DISPATCH_ENTER": 585309,
+        "DISPATCH_EXIT": 585309,
+        "FLUSH_ENTER": 59927,
+        "BATCH_FLUSH_ENTER": 59927,
+        "FLUSH_EXIT": 59926,
+        "BATCH_FLUSH_EXIT": 59926,
+        "FLUSH": 59926,
+        "BATCH_CALL": 59926,
+        "SUBMIT_EXIT": 59926,
+        "PUMP_EXIT": 199256,
+        "ROOT_SUBMIT": 4609,
+        "CONTINUATION": 59924,
+        "ROOT_POLL": 194647,
+        "FENCE_ENTER": 4607,
+        "FENCE_EXIT": 4607,
+        "INFLIGHT": 4607,
+        "POLL_ENTER": 183755,
+        "REAL_POLL": 183755,
+        "POLL_EXIT": 183755,
+        "PROGRESS_TIMEOUT": 2,
+        "FIRST_REVOKE": 2,
+        "QUOTA_BALANCE": 9214,
+        "SUBMIT_CANCEL": 2,
+        "GRAPHICS_LOAD_ENTER": 15,
+        "GRAPHICS_LOAD_EXIT": 15,
+        "ROOT_ACCEPT": 4603,
+        "ACCEPTED": 4603,
+        "DRAW_ENTER": 4603,
+        "SCENE_FBO_ENTER": 4603,
+        "SCENE_FBO_EXIT": 4603,
+        "SCENE_LAYER_ENTER": 36824,
+        "SCENE_LAYER_EXIT": 36824,
+        "SWAP_CHECK_ENTER": 4603,
+        "EGL_SWAP_ENTER": 4603,
+        "EGL_SWAP_RETURN": 4603,
+        "SWAP_CHECK_EXIT": 4603,
+        "POST_DRAW_PERMIT_ENTER": 4603,
+        "POST_DRAW_PERMIT_EXIT": 4603,
+        "DRAW_EXIT": 4603,
+        "RETIRE_ROOT": 3,
+        "RETIRE_LEASE": 3
+      },
+      "decodedActions": [
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794797858909,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794797898176,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794798026437,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 1,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "epoch": 4,
+          "runLo": 2,
+          "runHi": 0,
+          "pageSession": "2",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 1,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "epoch": 4,
+          "runLo": 2,
+          "runHi": 0,
+          "pageSession": "2",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RETIRING_OLD\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"3\",\"epoch\":\"5\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 2,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "epoch": 5,
+          "runLo": 3,
+          "runHi": 0,
+          "pageSession": "3",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 2,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "epoch": 5,
+          "runLo": 3,
+          "runHi": 0,
+          "pageSession": "3",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237732,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"4\",\"epoch\":\"6\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 3,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "epoch": 6,
+          "runLo": 4,
+          "runHi": 0,
+          "pageSession": "4",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 3,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "epoch": 6,
+          "runLo": 4,
+          "runHi": 0,
+          "pageSession": "4",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"5\",\"epoch\":\"7\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 4,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "epoch": 7,
+          "runLo": 5,
+          "runHi": 0,
+          "pageSession": "5",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 4,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "epoch": 7,
+          "runLo": 5,
+          "runHi": 0,
+          "pageSession": "5",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"6\",\"epoch\":\"8\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801495972,
+          "epoch": 8,
+          "runLo": 6,
+          "runHi": 0,
+          "pageSession": "6",
+          "detail": "0"
+        }
+      ],
+      "actionCounts": {
+        "SOURCE_SELECT": 4,
+        "RESET_HANDLER_ENTER": 4,
+        "RESTART_ENTER": 4,
+        "OLD_FRAME_CANCEL_ENTER": 4,
+        "OLD_FRAME_CANCEL_EXIT": 4,
+        "NEW_RUN_ENTER": 4,
+        "NEW_RUN_RETURN": 4,
+        "NEW_FRAME_BIND": 4
+      },
+      "packetCount": 0,
+      "groupScopes": [
+        {
+          "epoch": "3",
+          "run": "1",
+          "context": "3",
+          "surface": "3",
+          "session": "1",
+          "resetSerial": "1",
+          "permissionRevision": "2"
+        },
+        {
+          "epoch": "4",
+          "run": "2",
+          "context": "4",
+          "surface": "4",
+          "session": "2",
+          "resetSerial": "2",
+          "permissionRevision": "6"
+        },
+        {
+          "epoch": "5",
+          "run": "3",
+          "context": "5",
+          "surface": "5",
+          "session": "3",
+          "resetSerial": "3",
+          "permissionRevision": "7"
+        },
+        {
+          "epoch": "6",
+          "run": "4",
+          "context": "6",
+          "surface": "6",
+          "session": "4",
+          "resetSerial": "4",
+          "permissionRevision": "7"
+        }
+      ],
+      "scopeDropped": 3360
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t510/execution2-t510.json",
+        "bytes": 1032355,
+        "sha256": "ccde45c02ef9e76429663da661605638b31d68595276038ca638be76d42a6c1c"
+      },
+      "stageCounts": {
+        "WAIT_ENTER": 1504362,
+        "WAKE": 1504361,
+        "CONTEXT_TOMBSTONES": 18,
+        "CONTEXT_RETIRED": 18,
+        "SOURCE_BOUNDARY": 11,
+        "RESET_NATIVE_REQUEST": 7,
+        "OLD_PERMIT_TOMBSTONE": 7,
+        "INVALIDATE": 7,
+        "RESET_REQUESTED": 6,
+        "INIT_BEGIN": 6,
+        "SHADER_ENTER": 3,
+        "SHADER_EXIT": 3,
+        "PROGRAM_ENTER": 3,
+        "PROGRAM_EXIT": 3,
+        "RESOURCE_ENTER": 18,
+        "RESOURCE_EXIT": 18,
+        "PREPARE_ENTER": 12,
+        "PREPARE_EXIT": 12,
+        "COLD_FIXTURE": 6,
+        "SUBMIT_WARMUP": 12,
+        "SCENE_VAO_ENTER": 6,
+        "SCENE_VAO_EXIT": 6,
+        "SCENE_BUILD_ENTER": 18,
+        "GRAPHICS_COMPILE_ENTER": 6,
+        "GRAPHICS_COMPILE_EXIT": 6,
+        "GRAPHICS_LINK_ENTER": 3,
+        "GRAPHICS_LINK_EXIT": 3,
+        "SCENE_BUILD_EXIT": 18,
+        "RESOURCES_READY": 6,
+        "READY": 6,
+        "SESSION_HANDOFF": 6,
+        "PAGE_PULSE": 39322,
+        "READY_COMMIT": 6,
+        "FIRST_TICK": 1502744,
+        "PLAN_GRANT": 1461,
+        "JOB_INTENT": 5827,
+        "ROOT_INTENT": 11654,
+        "PUMP_ENTER": 251958,
+        "SUBMIT_ENTER": 75765,
+        "STAGING_FLUSH": 5827,
+        "ISOLATION_CALL": 418819,
+        "SUBMIT_ROOT_BEGIN": 5827,
+        "DISPATCH_ENTER": 740005,
+        "DISPATCH_EXIT": 740005,
+        "FLUSH_ENTER": 75765,
+        "BATCH_FLUSH_ENTER": 75765,
+        "FLUSH_EXIT": 75765,
+        "BATCH_FLUSH_EXIT": 75765,
+        "FLUSH": 75765,
+        "BATCH_CALL": 75765,
+        "SUBMIT_EXIT": 75765,
+        "PUMP_EXIT": 251958,
+        "ROOT_SUBMIT": 5827,
+        "CONTINUATION": 75763,
+        "ROOT_POLL": 246131,
+        "FENCE_ENTER": 5825,
+        "FENCE_EXIT": 5825,
+        "INFLIGHT": 5825,
+        "POLL_ENTER": 232353,
+        "REAL_POLL": 232353,
+        "POLL_EXIT": 232353,
+        "PROGRESS_TIMEOUT": 2,
+        "FIRST_REVOKE": 3,
+        "QUOTA_BALANCE": 11652,
+        "SUBMIT_CANCEL": 3,
+        "GRAPHICS_LOAD_ENTER": 15,
+        "GRAPHICS_LOAD_EXIT": 15,
+        "ROOT_ACCEPT": 5821,
+        "ACCEPTED": 5821,
+        "DRAW_ENTER": 5821,
+        "SCENE_FBO_ENTER": 5821,
+        "SCENE_FBO_EXIT": 5821,
+        "SCENE_LAYER_ENTER": 46568,
+        "SCENE_LAYER_EXIT": 46568,
+        "SWAP_CHECK_ENTER": 5821,
+        "EGL_SWAP_ENTER": 5821,
+        "EGL_SWAP_RETURN": 5821,
+        "SWAP_CHECK_EXIT": 5821,
+        "POST_DRAW_PERMIT_ENTER": 5821,
+        "POST_DRAW_PERMIT_EXIT": 5821,
+        "DRAW_EXIT": 5821,
+        "RETIRE_ROOT": 3,
+        "RETIRE_LEASE": 3,
+        "PAUSE_ENTER": 1,
+        "CONTROL_REVOKED": 1
+      },
+      "decodedActions": [
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794797858909,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794797898176,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794798026437,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 1,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "epoch": 4,
+          "runLo": 2,
+          "runHi": 0,
+          "pageSession": "2",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 1,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "epoch": 4,
+          "runLo": 2,
+          "runHi": 0,
+          "pageSession": "2",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RETIRING_OLD\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"3\",\"epoch\":\"5\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 2,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "epoch": 5,
+          "runLo": 3,
+          "runHi": 0,
+          "pageSession": "3",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 2,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "epoch": 5,
+          "runLo": 3,
+          "runHi": 0,
+          "pageSession": "3",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237732,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"4\",\"epoch\":\"6\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 3,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "epoch": 6,
+          "runLo": 4,
+          "runHi": 0,
+          "pageSession": "4",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 3,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "epoch": 6,
+          "runLo": 4,
+          "runHi": 0,
+          "pageSession": "4",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"5\",\"epoch\":\"7\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 4,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "epoch": 7,
+          "runLo": 5,
+          "runHi": 0,
+          "pageSession": "5",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 4,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "epoch": 7,
+          "runLo": 5,
+          "runHi": 0,
+          "pageSession": "5",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"6\",\"epoch\":\"8\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801495972,
+          "epoch": 8,
+          "runLo": 6,
+          "runHi": 0,
+          "pageSession": "6",
+          "detail": "0"
+        }
+      ],
+      "actionCounts": {
+        "SOURCE_SELECT": 4,
+        "RESET_HANDLER_ENTER": 4,
+        "RESTART_ENTER": 4,
+        "OLD_FRAME_CANCEL_ENTER": 4,
+        "OLD_FRAME_CANCEL_EXIT": 4,
+        "NEW_RUN_ENTER": 4,
+        "NEW_RUN_RETURN": 4,
+        "NEW_FRAME_BIND": 4
+      },
+      "packetCount": 0,
+      "groupScopes": [
+        {
+          "epoch": "3",
+          "run": "1",
+          "context": "3",
+          "surface": "3",
+          "session": "1",
+          "resetSerial": "1",
+          "permissionRevision": "2"
+        },
+        {
+          "epoch": "4",
+          "run": "2",
+          "context": "4",
+          "surface": "4",
+          "session": "2",
+          "resetSerial": "2",
+          "permissionRevision": "6"
+        },
+        {
+          "epoch": "5",
+          "run": "3",
+          "context": "5",
+          "surface": "5",
+          "session": "3",
+          "resetSerial": "3",
+          "permissionRevision": "7"
+        },
+        {
+          "epoch": "6",
+          "run": "4",
+          "context": "6",
+          "surface": "6",
+          "session": "4",
+          "resetSerial": "4",
+          "permissionRevision": "7"
+        }
+      ],
+      "scopeDropped": 4579
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t510/execution3-t510.json",
+        "bytes": 1032355,
+        "sha256": "a122a5a0e31c789e220ea1137bdaece90e2e6af2ad6652fa4e2efd13ce14eb73"
+      },
+      "stageCounts": {
+        "WAIT_ENTER": 1518977,
+        "WAKE": 1518976,
+        "CONTEXT_TOMBSTONES": 18,
+        "CONTEXT_RETIRED": 18,
+        "SOURCE_BOUNDARY": 11,
+        "RESET_NATIVE_REQUEST": 7,
+        "OLD_PERMIT_TOMBSTONE": 7,
+        "INVALIDATE": 7,
+        "RESET_REQUESTED": 6,
+        "INIT_BEGIN": 6,
+        "SHADER_ENTER": 3,
+        "SHADER_EXIT": 3,
+        "PROGRAM_ENTER": 3,
+        "PROGRAM_EXIT": 3,
+        "RESOURCE_ENTER": 18,
+        "RESOURCE_EXIT": 18,
+        "PREPARE_ENTER": 12,
+        "PREPARE_EXIT": 12,
+        "COLD_FIXTURE": 6,
+        "SUBMIT_WARMUP": 12,
+        "SCENE_VAO_ENTER": 6,
+        "SCENE_VAO_EXIT": 6,
+        "SCENE_BUILD_ENTER": 18,
+        "GRAPHICS_COMPILE_ENTER": 6,
+        "GRAPHICS_COMPILE_EXIT": 6,
+        "GRAPHICS_LINK_ENTER": 3,
+        "GRAPHICS_LINK_EXIT": 3,
+        "SCENE_BUILD_EXIT": 18,
+        "RESOURCES_READY": 6,
+        "READY": 6,
+        "SESSION_HANDOFF": 6,
+        "PAGE_PULSE": 39322,
+        "READY_COMMIT": 6,
+        "FIRST_TICK": 1517359,
+        "PLAN_GRANT": 1461,
+        "JOB_INTENT": 5827,
+        "ROOT_INTENT": 11654,
+        "PUMP_ENTER": 251958,
+        "SUBMIT_ENTER": 75765,
+        "STAGING_FLUSH": 5827,
+        "ISOLATION_CALL": 418819,
+        "SUBMIT_ROOT_BEGIN": 5827,
+        "DISPATCH_ENTER": 740005,
+        "DISPATCH_EXIT": 740005,
+        "FLUSH_ENTER": 75765,
+        "BATCH_FLUSH_ENTER": 75765,
+        "FLUSH_EXIT": 75765,
+        "BATCH_FLUSH_EXIT": 75765,
+        "FLUSH": 75765,
+        "BATCH_CALL": 75765,
+        "SUBMIT_EXIT": 75765,
+        "PUMP_EXIT": 251958,
+        "ROOT_SUBMIT": 5827,
+        "CONTINUATION": 75763,
+        "ROOT_POLL": 246131,
+        "FENCE_ENTER": 5825,
+        "FENCE_EXIT": 5825,
+        "INFLIGHT": 5825,
+        "POLL_ENTER": 232353,
+        "REAL_POLL": 232353,
+        "POLL_EXIT": 232353,
+        "PROGRESS_TIMEOUT": 2,
+        "FIRST_REVOKE": 3,
+        "QUOTA_BALANCE": 11652,
+        "SUBMIT_CANCEL": 3,
+        "GRAPHICS_LOAD_ENTER": 15,
+        "GRAPHICS_LOAD_EXIT": 15,
+        "ROOT_ACCEPT": 5821,
+        "ACCEPTED": 5821,
+        "DRAW_ENTER": 5821,
+        "SCENE_FBO_ENTER": 5821,
+        "SCENE_FBO_EXIT": 5821,
+        "SCENE_LAYER_ENTER": 46568,
+        "SCENE_LAYER_EXIT": 46568,
+        "SWAP_CHECK_ENTER": 5821,
+        "EGL_SWAP_ENTER": 5821,
+        "EGL_SWAP_RETURN": 5821,
+        "SWAP_CHECK_EXIT": 5821,
+        "POST_DRAW_PERMIT_ENTER": 5821,
+        "POST_DRAW_PERMIT_EXIT": 5821,
+        "DRAW_EXIT": 5821,
+        "RETIRE_ROOT": 3,
+        "RETIRE_LEASE": 3,
+        "PAUSE_ENTER": 1,
+        "CONTROL_REVOKED": 1
+      },
+      "decodedActions": [
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794797858909,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794797898176,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794798026437,
+          "epoch": 3,
+          "runLo": 1,
+          "runHi": 0,
+          "pageSession": "1",
+          "detail": "0"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 1,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "epoch": 4,
+          "runLo": 2,
+          "runHi": 0,
+          "pageSession": "2",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 1,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "epoch": 4,
+          "runLo": 2,
+          "runHi": 0,
+          "pageSession": "2",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 1,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801176190,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RETIRING_OLD\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"3\",\"epoch\":\"5\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 2,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "epoch": 5,
+          "runLo": 3,
+          "runHi": 0,
+          "pageSession": "3",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 2,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237731,
+          "epoch": 5,
+          "runLo": 3,
+          "runHi": 0,
+          "pageSession": "3",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 2,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801237732,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"4\",\"epoch\":\"6\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305240,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 3,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "epoch": 6,
+          "runLo": 4,
+          "runHi": 0,
+          "pageSession": "4",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 3,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "epoch": 6,
+          "runLo": 4,
+          "runHi": 0,
+          "pageSession": "4",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 3,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801305241,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"5\",\"epoch\":\"7\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "RESET_HANDLER_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "RESTART_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "OLD_FRAME_CANCEL_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "OLD_FRAME_CANCEL_EXIT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306764,
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 4,
+          "event": "NEW_RUN_ENTER",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "epoch": 7,
+          "runLo": 5,
+          "runHi": 0,
+          "pageSession": "5",
+          "detail": ""
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 4,
+          "event": "NEW_RUN_RETURN",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "epoch": 7,
+          "runLo": 5,
+          "runHi": 0,
+          "pageSession": "5",
+          "detail": "NEW_RUN_REQUESTED"
+        },
+        {
+          "origin": "PAGE",
+          "actionSerial": 4,
+          "event": "NEW_FRAME_BIND",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801306765,
+          "detail": "{\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"RESET_REQUESTED\",\"reason\":\"WAIT_RETIRED\",\"firstReason\":\"WINDOW_OR_PAGE_CHANGED\",\"resetSerial\":\"6\",\"epoch\":\"8\",\"session\":\"0\",\"runLo\":0,\"runHi\":0,\"contextLo\":0,\"contextHi\":0,\"retired\":false,\"resources\":false,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}"
+        },
+        {
+          "origin": "CONTROLLER",
+          "actionSerial": 0,
+          "event": "SOURCE_SELECT",
+          "clock": "UI_WALL_MS",
+          "stamp": 1794801495972,
+          "epoch": 8,
+          "runLo": 6,
+          "runHi": 0,
+          "pageSession": "6",
+          "detail": "0"
+        }
+      ],
+      "actionCounts": {
+        "SOURCE_SELECT": 4,
+        "RESET_HANDLER_ENTER": 4,
+        "RESTART_ENTER": 4,
+        "OLD_FRAME_CANCEL_ENTER": 4,
+        "OLD_FRAME_CANCEL_EXIT": 4,
+        "NEW_RUN_ENTER": 4,
+        "NEW_RUN_RETURN": 4,
+        "NEW_FRAME_BIND": 4
+      },
+      "packetCount": 0,
+      "groupScopes": [
+        {
+          "epoch": "3",
+          "run": "1",
+          "context": "3",
+          "surface": "3",
+          "session": "1",
+          "resetSerial": "1",
+          "permissionRevision": "2"
+        },
+        {
+          "epoch": "4",
+          "run": "2",
+          "context": "4",
+          "surface": "4",
+          "session": "2",
+          "resetSerial": "2",
+          "permissionRevision": "6"
+        },
+        {
+          "epoch": "5",
+          "run": "3",
+          "context": "5",
+          "surface": "5",
+          "session": "3",
+          "resetSerial": "3",
+          "permissionRevision": "7"
+        },
+        {
+          "epoch": "6",
+          "run": "4",
+          "context": "6",
+          "surface": "6",
+          "session": "4",
+          "resetSerial": "4",
+          "permissionRevision": "7"
+        }
+      ],
+      "scopeDropped": 4579
+    }
+  ],
+  "rootScopes": [
+    {
+      "scope": {
+        "epoch": "3",
+        "run": "1",
+        "context": "3",
+        "surface": "3",
+        "session": "1",
+        "resetSerial": "1",
+        "permissionRevision": "2"
+      },
+      "root": {
+        "nonce": "1",
+        "started": "257397081421250",
+        "deadline": "257397331421250",
+        "kind": 2,
+        "plan": "1",
+        "scope": {
+          "epoch": "3",
+          "run": "1",
+          "context": "3",
+          "surface": "3",
+          "session": "1",
+          "resetSerial": "1",
+          "permissionRevision": "2"
+        },
+        "input": [
+          1,
+          0
+        ]
+      },
+      "firstCause": {
+        "reason": "GPU_PROGRESS_TIMEOUT",
+        "point": {
+          "stage": "FIRST_REVOKE",
+          "clock": "STEADY_NS",
+          "ns": "257397332300312",
+          "tid": "54352",
+          "root": "1",
+          "a": "257397081421250",
+          "b": "257397331421250",
+          "c": "257397330850156",
+          "callStart": "0",
+          "callEnd": "0",
+          "code": 0,
+          "rawGl": 0,
+          "rawEgl": 0,
+          "scope": {
+            "epoch": "3",
+            "run": "1",
+            "context": "3",
+            "surface": "3",
+            "session": "1",
+            "resetSerial": "1",
+            "permissionRevision": "2"
+          }
+        },
+        "latePulses": "0"
+      },
+      "faultRoot": {
+        "nonce": "1",
+        "started": "257397081421250",
+        "deadline": "257397331421250",
+        "kind": 2,
+        "plan": "1",
+        "scope": {
+          "epoch": "3",
+          "run": "1",
+          "context": "3",
+          "surface": "3",
+          "session": "1",
+          "resetSerial": "1",
+          "permissionRevision": "2"
+        },
+        "input": [
+          1,
+          0
+        ]
+      },
+      "retainedEvents": 687,
+      "dropped": 0,
+      "tailDropped": 3355979,
+      "flushes": [
+        {
+          "root": "1",
+          "fromPass": 0,
+          "toPass": 10,
+          "enterNs": "257397082629218",
+          "exitNs": "257397098152187",
+          "wallNs": 15522969
+        },
+        {
+          "root": "1",
+          "fromPass": 10,
+          "toPass": 20,
+          "enterNs": "257397098691250",
+          "exitNs": "257397157868593",
+          "wallNs": 59177343
+        },
+        {
+          "root": "1",
+          "fromPass": 20,
+          "toPass": 30,
+          "enterNs": "257397158229062",
+          "exitNs": "257397158272343",
+          "wallNs": 43281
+        },
+        {
+          "root": "1",
+          "fromPass": 30,
+          "toPass": 40,
+          "enterNs": "257397158658437",
+          "exitNs": "257397189916093",
+          "wallNs": 31257656
+        },
+        {
+          "root": "1",
+          "fromPass": 40,
+          "toPass": 50,
+          "enterNs": "257397190255000",
+          "exitNs": "257397190300156",
+          "wallNs": 45156
+        },
+        {
+          "root": "1",
+          "fromPass": 50,
+          "toPass": 60,
+          "enterNs": "257397190494687",
+          "exitNs": "257397190526250",
+          "wallNs": 31563
+        },
+        {
+          "root": "1",
+          "fromPass": 60,
+          "toPass": 70,
+          "enterNs": "257397190931875",
+          "exitNs": "257397217318593",
+          "wallNs": 26386718
+        },
+        {
+          "root": "1",
+          "fromPass": 70,
+          "toPass": 80,
+          "enterNs": "257397217586406",
+          "exitNs": "257397217617500",
+          "wallNs": 31094
+        },
+        {
+          "root": "1",
+          "fromPass": 80,
+          "toPass": 90,
+          "enterNs": "257397217759062",
+          "exitNs": "257397217783281",
+          "wallNs": 24219
+        },
+        {
+          "root": "1",
+          "fromPass": 90,
+          "toPass": 100,
+          "enterNs": "257397217924062",
+          "exitNs": "257397217978437",
+          "wallNs": 54375
+        },
+        {
+          "root": "1",
+          "fromPass": 100,
+          "toPass": 110,
+          "enterNs": "257397218226406",
+          "exitNs": "257397304754687",
+          "wallNs": 86528281
+        },
+        {
+          "root": "1",
+          "fromPass": 110,
+          "toPass": 120,
+          "enterNs": "257397304984687",
+          "exitNs": "257397305014218",
+          "wallNs": 29531
+        },
+        {
+          "root": "1",
+          "fromPass": 120,
+          "toPass": 127,
+          "enterNs": "257397305198593",
+          "exitNs": "257397305202812",
+          "wallNs": 4219
+        }
+      ],
+      "flushTotalWallNs": 219136405,
+      "points": {
+        "FIRST_REVOKE": [
+          {
+            "stage": "FIRST_REVOKE",
+            "clock": "STEADY_NS",
+            "ns": "257397332300312",
+            "tid": "54352",
+            "root": "1",
+            "a": "257397081421250",
+            "b": "257397331421250",
+            "c": "257397330850156",
+            "callStart": "0",
+            "callEnd": "0",
+            "code": 0,
+            "rawGl": 0,
+            "rawEgl": 0,
+            "scope": {
+              "epoch": "3",
+              "run": "1",
+              "context": "3",
+              "surface": "3",
+              "session": "1",
+              "resetSerial": "1",
+              "permissionRevision": "2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "scope": {
+        "epoch": "4",
+        "run": "2",
+        "context": "4",
+        "surface": "4",
+        "session": "2",
+        "resetSerial": "2",
+        "permissionRevision": "6"
+      },
+      "root": {
+        "nonce": "1",
+        "started": "260765321650468",
+        "deadline": "260765571650468",
+        "kind": 2,
+        "plan": "2",
+        "scope": {
+          "epoch": "4",
+          "run": "2",
+          "context": "4",
+          "surface": "4",
+          "session": "2",
+          "resetSerial": "2",
+          "permissionRevision": "6"
+        },
+        "input": [
+          1,
+          0
+        ]
+      },
+      "firstCause": {
+        "reason": "GPU_PROGRESS_TIMEOUT",
+        "point": {
+          "stage": "FIRST_REVOKE",
+          "clock": "STEADY_NS",
+          "ns": "260765771900781",
+          "tid": "54351",
+          "root": "2",
+          "a": "260765521508125",
+          "b": "260765771508125",
+          "c": "260765771239375",
+          "callStart": "0",
+          "callEnd": "0",
+          "code": 0,
+          "rawGl": 0,
+          "rawEgl": 0,
+          "scope": {
+            "epoch": "4",
+            "run": "2",
+            "context": "4",
+            "surface": "4",
+            "session": "2",
+            "resetSerial": "2",
+            "permissionRevision": "6"
+          }
+        },
+        "latePulses": "0"
+      },
+      "faultRoot": {
+        "nonce": "2",
+        "started": "260765521508125",
+        "deadline": "260765771508125",
+        "kind": 2,
+        "plan": "2",
+        "scope": {
+          "epoch": "4",
+          "run": "2",
+          "context": "4",
+          "surface": "4",
+          "session": "2",
+          "resetSerial": "2",
+          "permissionRevision": "6"
+        },
+        "input": [
+          1,
+          0
+        ]
+      },
+      "retainedEvents": 738,
+      "dropped": 0,
+      "tailDropped": 216395,
+      "flushes": [
+        {
+          "root": "1",
+          "fromPass": 0,
+          "toPass": 10,
+          "enterNs": "260765324069687",
+          "exitNs": "260765332810781",
+          "wallNs": 8741094
+        },
+        {
+          "root": "1",
+          "fromPass": 10,
+          "toPass": 20,
+          "enterNs": "260765333134843",
+          "exitNs": "260765369817656",
+          "wallNs": 36682813
+        },
+        {
+          "root": "1",
+          "fromPass": 20,
+          "toPass": 30,
+          "enterNs": "260765371179218",
+          "exitNs": "260765371339375",
+          "wallNs": 160157
+        },
+        {
+          "root": "1",
+          "fromPass": 30,
+          "toPass": 40,
+          "enterNs": "260765371482812",
+          "exitNs": "260765371510937",
+          "wallNs": 28125
+        },
+        {
+          "root": "1",
+          "fromPass": 40,
+          "toPass": 50,
+          "enterNs": "260765371705625",
+          "exitNs": "260765413259062",
+          "wallNs": 41553437
+        },
+        {
+          "root": "1",
+          "fromPass": 50,
+          "toPass": 60,
+          "enterNs": "260765413738437",
+          "exitNs": "260765413787812",
+          "wallNs": 49375
+        },
+        {
+          "root": "1",
+          "fromPass": 60,
+          "toPass": 70,
+          "enterNs": "260765413966250",
+          "exitNs": "260765413994531",
+          "wallNs": 28281
+        },
+        {
+          "root": "1",
+          "fromPass": 70,
+          "toPass": 80,
+          "enterNs": "260765415910000",
+          "exitNs": "260765416101875",
+          "wallNs": 191875
+        },
+        {
+          "root": "1",
+          "fromPass": 80,
+          "toPass": 90,
+          "enterNs": "260765416677968",
+          "exitNs": "260765418465468",
+          "wallNs": 1787500
+        },
+        {
+          "root": "1",
+          "fromPass": 90,
+          "toPass": 100,
+          "enterNs": "260765419407343",
+          "exitNs": "260765420029687",
+          "wallNs": 622344
+        },
+        {
+          "root": "1",
+          "fromPass": 100,
+          "toPass": 110,
+          "enterNs": "260765422674843",
+          "exitNs": "260765422777812",
+          "wallNs": 102969
+        },
+        {
+          "root": "1",
+          "fromPass": 110,
+          "toPass": 120,
+          "enterNs": "260765423802656",
+          "exitNs": "260765423875000",
+          "wallNs": 72344
+        },
+        {
+          "root": "1",
+          "fromPass": 120,
+          "toPass": 127,
+          "enterNs": "260765438343593",
+          "exitNs": "260765438353750",
+          "wallNs": 10157
+        }
+      ],
+      "flushTotalWallNs": 90030471,
+      "points": {
+        "ROOT_ACCEPT": [
+          {
+            "stage": "ROOT_ACCEPT",
+            "clock": "STEADY_NS",
+            "ns": "260765482189062",
+            "tid": "54352",
+            "root": "1",
+            "a": "0",
+            "b": "1",
+            "c": "2",
+            "callStart": "0",
+            "callEnd": "0",
+            "code": 0,
+            "rawGl": 0,
+            "rawEgl": 0,
+            "scope": {
+              "epoch": "4",
+              "run": "2",
+              "context": "4",
+              "surface": "4",
+              "session": "2",
+              "resetSerial": "2",
+              "permissionRevision": "6"
+            }
+          }
+        ],
+        "EGL_SWAP_ENTER": [
+          {
+            "stage": "EGL_SWAP_ENTER",
+            "clock": "STEADY_NS",
+            "ns": "260765510836093",
+            "tid": "54352",
+            "root": "1",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "callStart": "0",
+            "callEnd": "0",
+            "code": 0,
+            "rawGl": 0,
+            "rawEgl": 0,
+            "scope": {
+              "epoch": "4",
+              "run": "2",
+              "context": "4",
+              "surface": "4",
+              "session": "2",
+              "resetSerial": "2",
+              "permissionRevision": "6"
+            }
+          }
+        ],
+        "EGL_SWAP_RETURN": [
+          {
+            "stage": "EGL_SWAP_RETURN",
+            "clock": "STEADY_NS",
+            "ns": "260765521189375",
+            "tid": "54352",
+            "root": "1",
+            "a": "0",
+            "b": "0",
+            "c": "0",
+            "callStart": "0",
+            "callEnd": "0",
+            "code": 0,
+            "rawGl": 0,
+            "rawEgl": 0,
+            "scope": {
+              "epoch": "4",
+              "run": "2",
+              "context": "4",
+              "surface": "4",
+              "session": "2",
+              "resetSerial": "2",
+              "permissionRevision": "6"
+            }
+          }
+        ],
+        "POST_DRAW_PERMIT_EXIT": [
+          {
+            "stage": "POST_DRAW_PERMIT_EXIT",
+            "clock": "STEADY_NS",
+            "ns": "260765521421562",
+            "tid": "54352",
+            "root": "1",
+            "a": "1",
+            "b": "1",
+            "c": "0",
+            "callStart": "0",
+            "callEnd": "0",
+            "code": 0,
+            "rawGl": 0,
+            "rawEgl": 0,
+            "scope": {
+              "epoch": "4",
+              "run": "2",
+              "context": "4",
+              "surface": "4",
+              "session": "2",
+              "resetSerial": "2",
+              "permissionRevision": "6"
+            }
+          }
+        ],
+        "FIRST_REVOKE": [
+          {
+            "stage": "FIRST_REVOKE",
+            "clock": "STEADY_NS",
+            "ns": "260765771900781",
+            "tid": "54351",
+            "root": "2",
+            "a": "260765521508125",
+            "b": "260765771508125",
+            "c": "260765771239375",
+            "callStart": "0",
+            "callEnd": "0",
+            "code": 0,
+            "rawGl": 0,
+            "rawEgl": 0,
+            "scope": {
+              "epoch": "4",
+              "run": "2",
+              "context": "4",
+              "surface": "4",
+              "session": "2",
+              "resetSerial": "2",
+              "permissionRevision": "6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "scope": {
+        "epoch": "5",
+        "run": "3",
+        "context": "5",
+        "surface": "5",
+        "session": "3",
+        "resetSerial": "3",
+        "permissionRevision": "7"
+      },
+      "root": {
+        "nonce": "1",
+        "started": "260855273543906",
+        "deadline": "260855523543906",
+        "kind": 2,
+        "plan": "3",
+        "scope": {
+          "epoch": "5",
+          "run": "3",
+          "context": "5",
+          "surface": "5",
+          "session": "3",
+          "resetSerial": "3",
+          "permissionRevision": "7"
+        },
+        "input": [
+          1,
+          0
+        ]
+      },
+      "firstCause": null,
+      "faultRoot": {
+        "nonce": "0",
+        "started": "0",
+        "deadline": "0",
+        "kind": 0,
+        "plan": "0",
+        "scope": {
+          "epoch": "0",
+          "run": "0",
+          "context": "0",
+          "surface": "0",
+          "session": "0",
+          "resetSerial": "0",
+          "permissionRevision": "0"
+        },
+        "input": [
+          0,
+          0
+        ]
+      },
+      "retainedEvents": 768,
+      "dropped": 200,
+      "tailDropped": 0,
+      "flushes": [
+        {
+          "root": "1",
+          "fromPass": 0,
+          "toPass": 10,
+          "enterNs": "260855274571406",
+          "exitNs": "260855282765156",
+          "wallNs": 8193750
+        },
+        {
+          "root": "1",
+          "fromPass": 10,
+          "toPass": 20,
+          "enterNs": "260855283017812",
+          "exitNs": "260855317002031",
+          "wallNs": 33984219
+        },
+        {
+          "root": "1",
+          "fromPass": 20,
+          "toPass": 30,
+          "enterNs": "260855317358281",
+          "exitNs": "260855337260625",
+          "wallNs": 19902344
+        },
+        {
+          "root": "1",
+          "fromPass": 30,
+          "toPass": 40,
+          "enterNs": "260855337512187",
+          "exitNs": "260855337560468",
+          "wallNs": 48281
+        },
+        {
+          "root": "1",
+          "fromPass": 40,
+          "toPass": 50,
+          "enterNs": "260855337662187",
+          "exitNs": "260855337681718",
+          "wallNs": 19531
+        },
+        {
+          "root": "1",
+          "fromPass": 50,
+          "toPass": 60,
+          "enterNs": "260855337888125",
+          "exitNs": "260855366101250",
+          "wallNs": 28213125
+        },
+        {
+          "root": "1",
+          "fromPass": 60,
+          "toPass": 70,
+          "enterNs": "260855366263281",
+          "exitNs": "260855366293593",
+          "wallNs": 30312
+        },
+        {
+          "root": "1",
+          "fromPass": 70,
+          "toPass": 80,
+          "enterNs": "260855366385312",
+          "exitNs": "260855366402812",
+          "wallNs": 17500
+        },
+        {
+          "root": "1",
+          "fromPass": 80,
+          "toPass": 90,
+          "enterNs": "260855366492500",
+          "exitNs": "260855366505625",
+          "wallNs": 13125
+        },
+        {
+          "root": "1",
+          "fromPass": 90,
+          "toPass": 100,
+          "enterNs": "260855366680625",
+          "exitNs": "260855382985000",
+          "wallNs": 16304375
+        },
+        {
+          "root": "1",
+          "fromPass": 100,
+          "toPass": 110,
+          "enterNs": "260855383214843",
+          "exitNs": "260855383245000",
+          "wallNs": 30157
+        },
+        {
+          "root": "1",
+          "fromPass": 110,
+          "toPass": 120,
+          "enterNs": "260855383363593",
+          "exitNs": "260855383381718",
+          "wallNs": 18125
+        },
+        {
+          "root": "1",
+          "fromPass": 120,
+          "toPass": 127,
+          "enterNs": "260855383512500",
+          "exitNs": "260855383516250",
+          "wallNs": 3750
+        }
+      ],
+      "flushTotalWallNs": 106778594,
+      "points": {}
+    },
+    {
+      "scope": {
+        "epoch": "6",
+        "run": "4",
+        "context": "6",
+        "surface": "6",
+        "session": "4",
+        "resetSerial": "4",
+        "permissionRevision": "7"
+      },
+      "root": {
+        "nonce": "1",
+        "started": "260916851461562",
+        "deadline": "260917101461562",
+        "kind": 2,
+        "plan": "152",
+        "scope": {
+          "epoch": "6",
+          "run": "4",
+          "context": "6",
+          "surface": "6",
+          "session": "4",
+          "resetSerial": "4",
+          "permissionRevision": "7"
+        },
+        "input": [
+          1,
+          0
+        ]
+      },
+      "firstCause": null,
+      "faultRoot": {
+        "nonce": "0",
+        "started": "0",
+        "deadline": "0",
+        "kind": 0,
+        "plan": "0",
+        "scope": {
+          "epoch": "0",
+          "run": "0",
+          "context": "0",
+          "surface": "0",
+          "session": "0",
+          "resetSerial": "0",
+          "permissionRevision": "0"
+        },
+        "input": [
+          0,
+          0
+        ]
+      },
+      "retainedEvents": 768,
+      "dropped": 156,
+      "tailDropped": 0,
+      "flushes": [
+        {
+          "root": "1",
+          "fromPass": 0,
+          "toPass": 10,
+          "enterNs": "260916852797500",
+          "exitNs": "260916859975312",
+          "wallNs": 7177812
+        },
+        {
+          "root": "1",
+          "fromPass": 10,
+          "toPass": 20,
+          "enterNs": "260916860287968",
+          "exitNs": "260916887885625",
+          "wallNs": 27597657
+        },
+        {
+          "root": "1",
+          "fromPass": 20,
+          "toPass": 30,
+          "enterNs": "260916888301562",
+          "exitNs": "260916910313437",
+          "wallNs": 22011875
+        },
+        {
+          "root": "1",
+          "fromPass": 30,
+          "toPass": 40,
+          "enterNs": "260916910530000",
+          "exitNs": "260916910556562",
+          "wallNs": 26562
+        },
+        {
+          "root": "1",
+          "fromPass": 40,
+          "toPass": 50,
+          "enterNs": "260916910675937",
+          "exitNs": "260916910692656",
+          "wallNs": 16719
+        },
+        {
+          "root": "1",
+          "fromPass": 50,
+          "toPass": 60,
+          "enterNs": "260916910911250",
+          "exitNs": "260916928206250",
+          "wallNs": 17295000
+        },
+        {
+          "root": "1",
+          "fromPass": 60,
+          "toPass": 70,
+          "enterNs": "260916928438437",
+          "exitNs": "260916928465625",
+          "wallNs": 27188
+        },
+        {
+          "root": "1",
+          "fromPass": 70,
+          "toPass": 80,
+          "enterNs": "260916928580937",
+          "exitNs": "260916928598125",
+          "wallNs": 17188
+        },
+        {
+          "root": "1",
+          "fromPass": 80,
+          "toPass": 90,
+          "enterNs": "260916928713281",
+          "exitNs": "260916928730156",
+          "wallNs": 16875
+        },
+        {
+          "root": "1",
+          "fromPass": 90,
+          "toPass": 100,
+          "enterNs": "260916928933906",
+          "exitNs": "260916950755000",
+          "wallNs": 21821094
+        },
+        {
+          "root": "1",
+          "fromPass": 100,
+          "toPass": 110,
+          "enterNs": "260916950951406",
+          "exitNs": "260916950974531",
+          "wallNs": 23125
+        },
+        {
+          "root": "1",
+          "fromPass": 110,
+          "toPass": 120,
+          "enterNs": "260916951069218",
+          "exitNs": "260916951084062",
+          "wallNs": 14844
+        },
+        {
+          "root": "1",
+          "fromPass": 120,
+          "toPass": 127,
+          "enterNs": "260916951192343",
+          "exitNs": "260916951199687",
+          "wallNs": 7344
+        }
+      ],
+      "flushTotalWallNs": 96053283,
+      "points": {}
+    }
+  ],
+  "sourceAllowedActual": "private allowed(s:GpuM1DemoStatus):boolean{return s.sourceUiRevision===this.revision&&s.ready&&s.permissionState==='READY'&&Number.isSafeInteger(s.epoch)&&s.epoch>0&&s.epoch===s.readyEpoch&&this.word(s.runLo)&&this.word(s.runHi)&&this.word(s.inputLo)&&this.word(s.inputHi)&&this.word(s.geometryLo)&&this.word(s.geometryHi)&&this.word(s.configLo)&&this.word(s.configHi)&&this.word(s.sourceControlLo)&&this.word(s.sourceControlHi);}",
+  "downRejectStillEmitsDiagnostic": true,
+  "invalidExecution4": "/bin/sh: cat: /data/app/el2/100/base/com.example.helloworld/haps/entry/files/gpu-snapshot-54243-1794802301550-execution.json: No such file or directory\n",
+  "run2BootPid": "31918",
+  "run2Recovery": {
+    "phase": "READY",
+    "reason": "READY",
+    "firstReason": "WINDOW_OR_PAGE_CHANGED",
+    "epoch": "4",
+    "session": "2",
+    "runLo": 2,
+    "incomplete": true,
+    "dropped": 45044
+  },
+  "run2ExecutionEvidence": "NOT_AVAILABLE_IN_LOCAL_ARCHIVE",
+  "acceptedRootWallNs": 160538594,
+  "firstSwapCallWallNs": 10353282,
+  "firstSwapSinceRootNs": 199538907,
+  "lastGapNs": 33413750,
+  "gapOverLimitNs": 80417,
+  "pixelCause": "UNRESOLVED_NO_PAIRED_FBO_DEFAULT_SYSTEM_ROI",
+  "controllerCURRENTGate": "ABSENT_REPORT_INFERENCE_REJECTED",
+  "specializationGroups": {
+    "COPY": [
+      0,
+      20,
+      22,
+      28
+    ],
+    "PREFLIGHT": [
+      1,
+      24
+    ],
+    "WATER": [
+      2,
+      3,
+      4
+    ],
+    "INDEX_SORT": [
+      6,
+      7,
+      8,
+      9,
+      16,
+      17
+    ],
+    "TRANSPORT": [
+      5,
+      10,
+      11,
+      15,
+      18
+    ],
+    "BED": [
+      12,
+      13,
+      14
+    ],
+    "AUDIT_REPLAY": [
+      19,
+      21,
+      23
+    ],
+    "PUBLICATION": [
+      25,
+      26,
+      27
+    ]
+  },
+  "activeProgramRoleBound": 12,
+  "rootDispatchK192Kw128": 127,
+  "date": "2026-11-16",
+  "architectScope": "TRIAGE_AND_ENGINEERING_HANDOFF_COMPLETE",
+  "productRepair": "NOT_IMPLEMENTED_BY_THIS_TASK",
+  "deviceUsed": false,
+  "GLExecuted": false,
+  "CPUSimulatorAdded": false,
+  "inputs": [
+    {
+      "path": "test/reports/t491/t510/boot-t510-a.json",
+      "bytes": 55135,
+      "sha256": "de421f83d5b405025be84ba43a7f772683b75b3a4b29eced62d517aed3a78337"
+    },
+    {
+      "path": "test/reports/t491/t510/boot-t510-b.json",
+      "bytes": 324882,
+      "sha256": "749660da3fe473821945f1d4fe8dbef5ab61b8935c9b46274a488a3cad932a28"
+    },
+    {
+      "path": "test/reports/t491/t510/boot-t510-c.json",
+      "bytes": 324881,
+      "sha256": "a7ac2aad6172b03d1bcd430eeb4a6168d1a8ac49bbe1d9236342b871b248687e"
+    },
+    {
+      "path": "test/reports/t491/t510/boot-t510-r2.json",
+      "bytes": 177889,
+      "sha256": "090c5d9a7fafb8055ca89fadbd10915260a8e6e5f1828e8a355742bb8c8622c5"
+    },
+    {
+      "path": "test/reports/t491/t510/execution-t510.json",
+      "bytes": 1030885,
+      "sha256": "8b2368dc46ba8ad35fd1d0905a180cb4743d9d86428abff9fe5aaab2e965b117"
+    },
+    {
+      "path": "test/reports/t491/t510/execution2-t510.json",
+      "bytes": 1032355,
+      "sha256": "ccde45c02ef9e76429663da661605638b31d68595276038ca638be76d42a6c1c"
+    },
+    {
+      "path": "test/reports/t491/t510/execution3-t510.json",
+      "bytes": 1032355,
+      "sha256": "a122a5a0e31c789e220ea1137bdaece90e2e6af2ad6652fa4e2efd13ce14eb73"
+    },
+    {
+      "path": "test/reports/t491/t510/execution4-t510.json",
+      "bytes": 153,
+      "sha256": "7794245a8c9b4073c72dbfcc8ae3224d6c63b442013570c0e13220183bb74faf"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l1.json",
+      "bytes": 73901,
+      "sha256": "622411f869b1e0f37eafdaa1def6bdd5334c2cace2aa17ab26e15beaecbc5153"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l2.json",
+      "bytes": 73905,
+      "sha256": "81a1c57782238a9c6454d4ab4115accc7a498bba4aa91b650e27ab4685412711"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l3.json",
+      "bytes": 81785,
+      "sha256": "868c6a325fdab9372cfbe1f9d404d28db56afc78b86778dbb1dd87864a116ce8"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l4.json",
+      "bytes": 132480,
+      "sha256": "d9dc3b58ff4badc6c098c166bbd8a66e5e69f78d6000baeb38144eb7d09f93cd"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l5.json",
+      "bytes": 132480,
+      "sha256": "86416b62432a7eda2f26b7b5e4c80356615d1940d76123c71feed247ed5117a2"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l6.json",
+      "bytes": 82626,
+      "sha256": "a60c0e41f62007ce4c455bb72199377bf433bee6c6cccedfcaecdbea4b001c84"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l7.json",
+      "bytes": 82612,
+      "sha256": "2bc0a246a54e14907853fade8d784f0d4b5ba9908dc122eb42cdb660b802dc14"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l8.json",
+      "bytes": 82612,
+      "sha256": "2052366aed331b88600ca8e7bfcc53652573635405ae85b2f38359f538f99b22"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_l9.json",
+      "bytes": 82612,
+      "sha256": "90e7c8381c7087d47ef403981cc43e23233fe8a0c4c5e73fc60b88a38fcf89b0"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_r2s1.jpeg",
+      "bytes": 194902,
+      "sha256": "cc0b6f3388c01596b819d56c526e46540fc3244e26a0c4ad980149a061b0f01c"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_r2s2.jpeg",
+      "bytes": 195589,
+      "sha256": "06d7a1af67353d47ca3e816898ba5637efc30ab27661d7486ac39a5d42ede2ac"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s1.jpeg",
+      "bytes": 190963,
+      "sha256": "d1b085ed67eae41e22238344999a2548629c001c6b0bc65f8e84538840257d1d"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s2.jpeg",
+      "bytes": 94648,
+      "sha256": "7e76ced9754a42c25b5e6806ffc5d988229e3baaf8ae9a83527d69246d3a8b0b"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s3.jpeg",
+      "bytes": 196223,
+      "sha256": "0a9d06dc89e40f5faa3d2cf81c2f0c724566e3f08aff8315bafd5fc3b9ac1ffd"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s4.jpeg",
+      "bytes": 195886,
+      "sha256": "eba98758dd36557ad60e8415e1a76d483cef52eec259a3e4ec67fb57fef66211"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s5.jpeg",
+      "bytes": 196126,
+      "sha256": "4c5c3576cded50f4ab7eb63694276c16ea7b485836c13304788537b32833f151"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s6.jpeg",
+      "bytes": 322670,
+      "sha256": "a01b3640d26c87cba2368246c1c69c94d4d2c452ebee05ace851377218d041c7"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s7.jpeg",
+      "bytes": 196000,
+      "sha256": "46654e8e8e1a76be62dbc77e96a295d0381efc869d87be5f3c87192ef2d41b39"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s8.jpeg",
+      "bytes": 196618,
+      "sha256": "28e2d4498b21164c1dfa087fedaf413b47087db3e412053e7316f59b8afd1bda"
+    },
+    {
+      "path": "test/reports/t491/t510/t510_s9.jpeg",
+      "bytes": 196504,
+      "sha256": "e7973d27e69933f0a138693dc8226d5b63e744520641f25fa9e4f1e760961b24"
+    },
+    {
+      "path": "test/reports/t491/t510/timeline-manifest-t510.json",
+      "bytes": 811,
+      "sha256": "91c3ac60ad343c841ce40f28d8139a1d093cae06d5bed0c5b741ec8e73d1db48"
+    },
+    {
+      "path": "test/reports/t491/t510/timeline-manifest2.json",
+      "bytes": 17173,
+      "sha256": "b8964bd4b8d9400c4a83f061ade464cf4bd4ff6b4f985af3d08fa09a96a538b7"
+    },
+    {
+      "path": "test/reports/t491/t510/ws-before.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/ets/physics/GpuM1DemoController.ets",
+      "bytes": 11742,
+      "sha256": "fc5da8e0be15621994ad74d5f12a36137567f44d0d90cee615133bb5a7a817e5"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/ets/pages/GpuResidentM1.ets",
+      "bytes": 15507,
+      "sha256": "dbccb806cbab4cccea5709eea1a30a862f1f19f1e51b17c8078dcfcb517e9753"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/bridge_state.h",
+      "bytes": 2660,
+      "sha256": "4c41b6b8eafe0566c058ee3201243574edef6fa514ef61bfe6454c903d970630"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/quantum_candidate.cpp",
+      "bytes": 14723,
+      "sha256": "d0838f4c4470c6c2adeebd54553090c449b5cb39b2efbdf2ee14afdde94024f1"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+      "bytes": 32096,
+      "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 14459,
+      "sha256": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64"
+    },
+    {
+      "path": "docs/test-report-T510-control-source-chain-device-v1.md",
+      "bytes": 7111,
+      "sha256": "d8650837c9718037ebfe09a254ebf1ec3ab98ce1c37a2eddef0f7fa5970e0e35"
+    },
+    {
+      "path": "docs/architecture-T505-device-root-present-evidence-v1.md",
+      "bytes": 11523,
+      "sha256": "90c3404914bdf307e682aedce0fad25e0780d58e27a46af63791d27ff8fc1fec"
+    },
+    {
+      "path": "docs/architecture-T490-m1-first-root-budget-v1.md",
+      "bytes": 11625,
+      "sha256": "c59a416c28c0578e42fd4cf34e8e4baada2f5c988dd36af51f12eb581a90c579"
+    },
+    {
+      "path": "docs/test-report-T410-v2-dual-source-device-v1.md",
+      "bytes": 2344,
+      "sha256": "e691f3cde247fe8d1f35e0a51881b45f5bb4d50c3bdbb54b361c81a8ba029710"
+    },
+    {
+      "path": "docs/test-report-T437-prefix-benefit-device-v1.md",
+      "bytes": 2479,
+      "sha256": "359b1b2b7e24f994845996f644426aac1bdb74a2193c92c228913063965d236c"
+    },
+    {
+      "path": "docs/test-report-T461-m2-v3-device-v1.md",
+      "bytes": 3120,
+      "sha256": "5e75087f6f69b319de17227c415328e416607b21a935c72caa9dffdde6024d66"
+    },
+    {
+      "path": "docs/architecture-T530-source-swap-triage-v1.md",
+      "bytes": 12236,
+      "sha256": "41acdb5e42128d74ef69a10d60286b1b581b68215cf0e2123c762b3780d3be0e"
+    },
+    {
+      "path": "docs/analysis-T530-T533-triage-checks-v1.py",
+      "bytes": 18418,
+      "sha256": "20f90f7e8566fe6611900d648244845588ea033e3a98d8328cea9f1e8ac2fc0a"
+    }
+  ]
+}

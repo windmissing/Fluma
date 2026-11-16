@@ -1,0 +1,465 @@
+{
+  "schema": "T531_ARCHITECT_TRIAGE_V1",
+  "resourcePackage": {
+    "receipt": {
+      "path": "test/reports/t257/T502-m1-delivery.json",
+      "bytes": 2307,
+      "sha256": "05d4d23a7a17df0a8279187d829829fb158c2fd0ba8a5a0012ee9869156bd2b1"
+    },
+    "signed": {
+      "path": ".codex/local-test/t257-sign/T502-m1-delivery/T502-m1-delivery-signed.hap",
+      "bytes": 9554978,
+      "sha256": "362a3cb66f452d1fef71e4ca9a57012e5d6d1f02ea8472ba5a100fa5ab79898b"
+    },
+    "libs": {
+      "libs/arm64-v8a/libc++_shared.so": {
+        "bytes": 1262248,
+        "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+      },
+      "libs/arm64-v8a/libgrsm0.so": {
+        "bytes": 663992,
+        "sha256": "3d6803321afd3253660afc8ae1e2421da745d19e07c83de7e43065bdea20ebee"
+      },
+      "libs/arm64-v8a/libgrsm1.so": {
+        "bytes": 1796080,
+        "sha256": "bd2fab0d4a432e15ebccfad867c3d89cf30f37188a51da5ba57ab3915b494af6"
+      },
+      "libs/arm64-v8a/libp013hello.so": {
+        "bytes": 70544,
+        "sha256": "eeb19df1b1544e16b125e62c29ca4677b2324520a15739fc4cf598a1dc818d5a"
+      },
+      "libs/arm64-v8a/libp013renderer.so": {
+        "bytes": 511256,
+        "sha256": "35c561377f29f611f7f7908157647c517c23222188810c3bc66f61e46432cb3d"
+      }
+    }
+  },
+  "declaredPackage": "362a3cb66f452d1f4e35b7c29be4c0599f268aa30c66e20d55e7d33d0a5b0e4a",
+  "fullSHAIdentityMatch": false,
+  "coldPackage": {
+    "receipt": {
+      "path": "test/reports/t257/T507-m2-complete.json",
+      "bytes": 2306,
+      "sha256": "537c823c693ddd0c1b551d1eea36f8d28c1a1ca236c0c1bebd0959aa84740916"
+    },
+    "signed": {
+      "path": ".codex/local-test/t257-sign/T507-m2-complete/T507-m2-complete-signed.hap",
+      "bytes": 9829336,
+      "sha256": "b702032f6fb34c2818fe457daf8f7e8c6ed36fc9fd120eb2d0d723e6a19dc1b6"
+    },
+    "libs": {
+      "libs/arm64-v8a/libc++_shared.so": {
+        "bytes": 1262248,
+        "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+      },
+      "libs/arm64-v8a/libgrsm0.so": {
+        "bytes": 663992,
+        "sha256": "fd3b6117fb34b18e34e5851c4a43f002daf0b5ea44c3b45319e2bd6b75fcc690"
+      },
+      "libs/arm64-v8a/libgrsm1.so": {
+        "bytes": 2007696,
+        "sha256": "3bf67c3e851f3ea7137bf6ea99a5f8c625f7cba279410fd9cafbb2fea48bf8b6"
+      },
+      "libs/arm64-v8a/libp013hello.so": {
+        "bytes": 70544,
+        "sha256": "2c90a0a8e166217dc3a7c428cf0797496df3298face61448b4513bdaf723482b"
+      },
+      "libs/arm64-v8a/libp013renderer.so": {
+        "bytes": 511256,
+        "sha256": "83da875572ebb6799dc8f850d3533b045c6fd60b7e96eda38a6fa48b6fd2fbb9"
+      }
+    }
+  },
+  "memoryPssSamples": {
+    "mem-after-export.txt": {
+      "GLPssKb": 61164,
+      "TotalPssKb": 368027
+    },
+    "mem-after-reset.txt": {
+      "GLPssKb": 1246146,
+      "TotalPssKb": 1538879
+    },
+    "mem-cold-start.txt": {
+      "GLPssKb": 1114450,
+      "TotalPssKb": 1590410
+    }
+  },
+  "vmAfterResetOriginal": "VmSize:\t41783716 kB\nVmRSS:\t  370136 kB\n",
+  "traceManifestOriginal": {
+    "revision": "T503_M2_COLD_ARCHIVE_V1",
+    "state": "COMPLETE",
+    "reason": "STREAMED_COMPLETE",
+    "requestId": "1",
+    "traceId": "1",
+    "scope": {
+      "pid": "60647",
+      "route": "m2",
+      "source": "6cfdcc5c148f7a5a73a59b1299ea96eac3c66446+T492-overlay-v1",
+      "control": {
+        "epoch": "4",
+        "run": "2",
+        "context": "4",
+        "surface": "4",
+        "session": "1",
+        "resetSerial": "2",
+        "permissionRevision": "4"
+      }
+    },
+    "release": "{\"revision\":\"T503_BOUNDED_COLD_V1\",\"state\":\"ENDED\"}",
+    "files": [
+      {
+        "name": "gpu-cold-trace-1794805873779-1-0.json",
+        "bytes": 909,
+        "sha256": "7879663947fc25c370c0a96542afa7c3e515ac63062e990a34e8e0439451222c"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-1.json",
+        "bytes": 3276,
+        "sha256": "711f1f1c9484a78afece15215d1763252e824471bd700e1460454b51f048c2ca"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-2.json",
+        "bytes": 2956,
+        "sha256": "c51113133777b5a745b546ed8e4a9a6245b75f1e246420c5450f3bf9c9c885f6"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-3.json",
+        "bytes": 2956,
+        "sha256": "fc284c75e8979de39ff7d82b9ea1b086af10fd9b37647e7185ce01a67086842a"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-4.json",
+        "bytes": 2956,
+        "sha256": "0633375c154494c740804fcbc8268908476f6f799de785d42ff9cd53aaaae0bf"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-5.json",
+        "bytes": 2956,
+        "sha256": "f86b879a242572e06bcf74063ffee1046082824470ee5da3d5c68790a119d60e"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-6.json",
+        "bytes": 2956,
+        "sha256": "ca3bd44ccf54896232143a0f5d42ca88a173dcf638f5c3c49d7a600fc5b83016"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-7.json",
+        "bytes": 2956,
+        "sha256": "0d195b4e85e028fc0f720cfadc65ab68fdbb3bba8522ba7aaa1bbfaffb5c8e5e"
+      },
+      {
+        "name": "gpu-cold-trace-1794805873779-1-8.json",
+        "bytes": 2865,
+        "sha256": "01a2e506c39ddd9d9bbdd52aa84b924823533cdecf46e92decc3e6ba9af7cbc5"
+      }
+    ],
+    "bytes": 24786,
+    "words": 7680,
+    "header": {
+      "revision": "T503_M2_COLD_TRACE_V1",
+      "payloadRevision": "T445_M2_TRACE_V3",
+      "state": "TRACE_READY",
+      "traceId": "1",
+      "scope": {
+        "pid": "60647",
+        "route": "m2",
+        "source": "6cfdcc5c148f7a5a73a59b1299ea96eac3c66446+T492-overlay-v1",
+        "control": {
+          "epoch": "4",
+          "run": "2",
+          "context": "4",
+          "surface": "4",
+          "session": "1",
+          "resetSerial": "2",
+          "permissionRevision": "4"
+        }
+      },
+      "page": 0,
+      "pages": 8,
+      "actualWords": 7680,
+      "stateWords": 7424,
+      "eventWords": 0,
+      "rootKind": 2,
+      "stride": 64,
+      "rows": 0,
+      "arena": 1,
+      "generationLo": 521,
+      "generationHi": 0,
+      "rootToken": "GRS_GPU_ROOT_Q20_M2_V3|521|0|2|0|1|0|4|0|4|0|0|0|520|0|0|0|521|0|131|0|131|0|3|2|0|1|2|0|521|0|4|0|1|0|1436817790|330491048|288457379|3355446476|3694104834|85669471|3380772821|1229612323|2209059|4122202197|1905693208|1816793968|87430317|3795366009|1049617518|1756609445|3181838702|3945464614|3040673054|934776717|1281247868|1916112918|499219736|1053263771|1|122333|122333|65536|192|0|0|0|128|0|0|0|0",
+      "words": []
+    },
+    "rejectedPage": null,
+    "nativeReceipt": "{\"revision\":\"T503_M2_COLD_TRACE_V1\",\"state\":\"TRACE_READY\",\"requestId\":\"1\",\"traceId\":\"1\",\"scope\":{\"pid\":\"60647\",\"route\":\"m2\",\"source\":\"6cfdcc5c148f7a5a73a59b1299ea96eac3c66446+T492-overlay-v1\",\"control\":{\"epoch\":\"4\",\"run\":\"2\",\"context\":\"4\",\"surface\":\"4\",\"session\":\"1\",\"resetSerial\":\"2\",\"permissionRevision\":\"4\"}},\"rawGl\":0,\"rawEgl\":0,\"transportCode\":0,\"failedStage\":\"CAPTURE_COMPLETE\"}"
+  },
+  "locallyVerifiedTracePages": [
+    {
+      "page": 0,
+      "actual": {
+        "path": "test/reports/t491/t526/trace-0.json",
+        "bytes": 909,
+        "sha256": "7879663947fc25c370c0a96542afa7c3e515ac63062e990a34e8e0439451222c"
+      },
+      "receipt": {
+        "name": "gpu-cold-trace-1794805873779-1-0.json",
+        "bytes": 909,
+        "sha256": "7879663947fc25c370c0a96542afa7c3e515ac63062e990a34e8e0439451222c"
+      }
+    },
+    {
+      "page": 1,
+      "actual": {
+        "path": "test/reports/t491/t526/trace-1.json",
+        "bytes": 3276,
+        "sha256": "711f1f1c9484a78afece15215d1763252e824471bd700e1460454b51f048c2ca"
+      },
+      "receipt": {
+        "name": "gpu-cold-trace-1794805873779-1-1.json",
+        "bytes": 3276,
+        "sha256": "711f1f1c9484a78afece15215d1763252e824471bd700e1460454b51f048c2ca"
+      }
+    },
+    {
+      "page": 2,
+      "actual": {
+        "path": "test/reports/t491/t526/trace-2.json",
+        "bytes": 2956,
+        "sha256": "c51113133777b5a745b546ed8e4a9a6245b75f1e246420c5450f3bf9c9c885f6"
+      },
+      "receipt": {
+        "name": "gpu-cold-trace-1794805873779-1-2.json",
+        "bytes": 2956,
+        "sha256": "c51113133777b5a745b546ed8e4a9a6245b75f1e246420c5450f3bf9c9c885f6"
+      }
+    }
+  ],
+  "traceMissingLocalPages": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "traceManifestOnlyTotalUtf8": 24786,
+  "localTraceCompleteness": "3_OF_9_ORIGINAL_PAGES",
+  "traceReleaseDoesNotProveCapacityZero": true,
+  "systemRssDoesNotProveDriverFree": true,
+  "resourceApiWiredToPage": false,
+  "pressureCases": [
+    "RESOURCE_PHASE_SAMPLE",
+    "TRACE_MAX_SOURCE_Q",
+    "TWO_SLOT_PIN_REPLACE",
+    "TTL_WALL",
+    "TTL_EDGE_INJECTED",
+    "DIAGNOSTIC_CREDIT",
+    "DIAGNOSTIC_BUSY_FAIL",
+    "CACHE_FAULT"
+  ],
+  "labEvidenceLabels": [
+    "FIXTURE_SYNTHETIC",
+    "PRODUCTION_READ_ONLY"
+  ],
+  "labPhysicsValidated": false,
+  "limits": {
+    "traceCapacity": 55410688,
+    "diagnosticCopyAndWriter": 3501224,
+    "pageWriter": 16384,
+    "labControl": 65536,
+    "knownLabHostPayload": 58993832,
+    "cachePinSeparateMax": 134217728,
+    "resourceRawUtf8Max": 1048576,
+    "resourceSampleTotalUtf8Max": 2097152,
+    "workers": 2,
+    "queueCommands": 8,
+    "TTL": 60000000000
+  },
+  "measurementsStillMissing": [
+    "same-scope native logical/capacity/temp figures",
+    "actual pressure on device",
+    "nonempty SOURCE/scene long sequence",
+    "driver resource reclaim"
+  ],
+  "date": "2026-11-16",
+  "architectScope": "TRIAGE_AND_ENGINEERING_HANDOFF_COMPLETE",
+  "productRepair": "NOT_IMPLEMENTED_BY_THIS_TASK",
+  "deviceUsed": false,
+  "GLExecuted": false,
+  "CPUSimulatorAdded": false,
+  "inputs": [
+    {
+      "path": "test/reports/t491/t519/execution-t519.json",
+      "bytes": 557422,
+      "sha256": "4276d8d1c2149bf0240139267cfce8b98144f9f725304969a9cc791d84ba649b"
+    },
+    {
+      "path": "test/reports/t491/t519/mem-after-export.txt",
+      "bytes": 4285,
+      "sha256": "2d45c95435dcad4cf14fd7fbf07a45f174d9842f7a727486335c5f7075472279"
+    },
+    {
+      "path": "test/reports/t491/t519/mem-after-reset.txt",
+      "bytes": 4285,
+      "sha256": "669e8bd76540368d4ad8ecd6019b368cb1813c3c855c1698ddabe203a93d6a69"
+    },
+    {
+      "path": "test/reports/t491/t519/mem-cold-start.txt",
+      "bytes": 4285,
+      "sha256": "412d304d1b825ef7066d71b6715d6bfaf7888750c484c0854518eb7f2e0bdf2d"
+    },
+    {
+      "path": "test/reports/t491/t519/t519_l3.json",
+      "bytes": 73771,
+      "sha256": "0dfd93847777a1b92d152f8ddc6698a0d1332ef89082190d5e2298e6b2eeb6b2"
+    },
+    {
+      "path": "test/reports/t491/t519/t519_l4.json",
+      "bytes": 81651,
+      "sha256": "9d5ce3a4c19d9c6de5c93b579061142cdfed0f5aed9c899a8baa3abc75adc594"
+    },
+    {
+      "path": "test/reports/t491/t519/t519_p4.jpeg",
+      "bytes": 195521,
+      "sha256": "53304c56db0683eb3bc69c60cbb5de814eaebf55a2c957f429bb4a7ad8eb5823"
+    },
+    {
+      "path": "test/reports/t491/t519/timeline-manifest.json",
+      "bytes": 17497,
+      "sha256": "cd50f6e7a7357a052c062d7d97d3ce0056c9374c3af5eb85b87c4b64de5c70bf"
+    },
+    {
+      "path": "test/reports/t491/t519/vm-after-reset.txt",
+      "bytes": 39,
+      "sha256": "2754b129eec2b7d20a9c9ee191f717ff6908e91d16ea2ef52fa91f26fa1f4552"
+    },
+    {
+      "path": "test/reports/t491/t526/mem-after-trace.txt",
+      "bytes": 4284,
+      "sha256": "ea2e35975811b727efbe1007d6d7a5058a3982171fa1d435a2874acab6f5a7da"
+    },
+    {
+      "path": "test/reports/t491/t526/t526_l1.json",
+      "bytes": 87073,
+      "sha256": "aa6d0dbe2ab1f312afbef196831c0f1823629a79055e9dc330b1f170e3c68ded"
+    },
+    {
+      "path": "test/reports/t491/t526/t526_l2.json",
+      "bytes": 61603,
+      "sha256": "327dee554afcde5255bf80fe0d1c58df9f3d291a2e67c92b779b50d6887bb611"
+    },
+    {
+      "path": "test/reports/t491/t526/t526_l3.json",
+      "bytes": 77081,
+      "sha256": "caa196f6abb94c6e348120e9734320d330b87c969e10931eb16b8f4f3b4ceda4"
+    },
+    {
+      "path": "test/reports/t491/t526/t526_l4.json",
+      "bytes": 77071,
+      "sha256": "f1daf3b8604f7882b0fa0afd5c1c7eb43976fdd2c1903ef42983c12137c5a5c7"
+    },
+    {
+      "path": "test/reports/t491/t526/t526_s1.jpeg",
+      "bytes": 87433,
+      "sha256": "4348ef8d07d55fac87254c0dde4b6791bd5e00d562d408bd86ceff507d307a00"
+    },
+    {
+      "path": "test/reports/t491/t526/trace-0.json",
+      "bytes": 909,
+      "sha256": "7879663947fc25c370c0a96542afa7c3e515ac63062e990a34e8e0439451222c"
+    },
+    {
+      "path": "test/reports/t491/t526/trace-1.json",
+      "bytes": 3276,
+      "sha256": "711f1f1c9484a78afece15215d1763252e824471bd700e1460454b51f048c2ca"
+    },
+    {
+      "path": "test/reports/t491/t526/trace-2.json",
+      "bytes": 2956,
+      "sha256": "c51113133777b5a745b546ed8e4a9a6245b75f1e246420c5450f3bf9c9c885f6"
+    },
+    {
+      "path": "test/reports/t491/t526/trace-manifest.json",
+      "bytes": 3102,
+      "sha256": "31ddf6b40c593856192496f8db8b31a28c0e80d4ed66cd617b65885c108baa76"
+    },
+    {
+      "path": "docs/test-report-T519-resource-baseline-device-v1.md",
+      "bytes": 3520,
+      "sha256": "97783404f2b3247e56c03374264e673f6d7d7918e9dc1466bb873a3697c311a0"
+    },
+    {
+      "path": "docs/test-report-T526-cold-protocol-device-v1.md",
+      "bytes": 2641,
+      "sha256": "bc943546def55e71add513715a8132800e71b0a5e1edff3e9f63085e3eb305be"
+    },
+    {
+      "path": "docs/developer-T501-resource-ledger.md",
+      "bytes": 3591,
+      "sha256": "377247bbf2fa56f52c266fdf4cdffc721fce041151de42de5fe4db28637bb063"
+    },
+    {
+      "path": "docs/developer-T502-cache-temp-budget.md",
+      "bytes": 2967,
+      "sha256": "b2bad42e17f21ebf5f0922ead9a66e2f9e92e57e0b8b8e3d29a071485789a572"
+    },
+    {
+      "path": "docs/developer-T507-bounded-cold.md",
+      "bytes": 6073,
+      "sha256": "352fc2208762dee5ddba44d6373597944297f6523e471629084a8e278296f41d"
+    },
+    {
+      "path": "docs/architecture-T503-bounded-cold-protocol-v1.md",
+      "bytes": 13898,
+      "sha256": "c71f4cf09a39fc504e612ff23940a44f47a8af33a6bcd063ded6e0bddf596c51"
+    },
+    {
+      "path": "test/t501/generate.cjs",
+      "bytes": 9789,
+      "sha256": "2ca1c0c853d42f1d2c2e9154a60bdb96d7a3883ba374598104939970bba3a5f3"
+    },
+    {
+      "path": "test/t502/generate.cjs",
+      "bytes": 1927,
+      "sha256": "94ce3bc9b405d8874f5eed95d5acd034b37967ab07370f64c7bc31273626a57e"
+    },
+    {
+      "path": "test/t507/generate.cjs",
+      "bytes": 5211,
+      "sha256": "106ff2f445a95a0477ef5f7c786b8167bbcd62dac62674a21770776726836ef0"
+    },
+    {
+      "path": "test/t507/service.inc",
+      "bytes": 2275,
+      "sha256": "fcedc22b808f9e28bc84598324cc353c3ae63b6e61d2b8a3be01f543387106e1"
+    },
+    {
+      "path": "test/t507/napi.inc",
+      "bytes": 7490,
+      "sha256": "4b6b79dda787d697767c7bd6fd7622031bbbc80acc0fdc4b27f21cd4398614cd"
+    },
+    {
+      "path": "test/t507/pages.cjs",
+      "bytes": 3962,
+      "sha256": "d099aabd479b35b5bffd6824007f4483de7efc3a508fb544e7954723c930a792"
+    },
+    {
+      "path": ".codex/local-test/t502-m1-final/entry/src/main/ets/pages/GpuResidentM1.ets",
+      "bytes": 15507,
+      "sha256": "dbccb806cbab4cccea5709eea1a30a862f1f19f1e51b17c8078dcfcb517e9753"
+    },
+    {
+      "path": ".codex/local-test/t507-m2-1116/entry/src/main/cpp/gpu_resident/cold_trace.h",
+      "bytes": 9295,
+      "sha256": "7345953e5af549d7209174c6c26314bcf06aedf00dbb55bdfa8afd35242d3305"
+    },
+    {
+      "path": "docs/architecture-T531-resource-lab-and-export-v1.md",
+      "bytes": 11060,
+      "sha256": "ca8ce168d854821cb14de20dba9018602082800a15261600841931dfa0c81de0"
+    },
+    {
+      "path": "docs/analysis-T530-T533-triage-checks-v1.py",
+      "bytes": 18418,
+      "sha256": "20f90f7e8566fe6611900d648244845588ea033e3a98d8328cea9f1e8ac2fc0a"
+    }
+  ]
+}
