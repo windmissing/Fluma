@@ -1,0 +1,266 @@
+{
+ "revision": "T487_SCENARIOS_EXPECTED_V1",
+ "date": "2026-11-16",
+ "oracle": "test/t446/m2_oracle.py 语义（brute_pair/merge_fields/rne 独立复算）",
+ "scenarios": [
+  {
+   "id": "S5a",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 122333,
+   "zA": 0,
+   "zB": 1,
+   "expectM": 244666,
+   "expectZ": 0,
+   "note": "等质量 vx tie → 一次有理 RNE 逐字核 MERGE snapshot z"
+  },
+  {
+   "id": "S5b",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 122333,
+   "zA": 1,
+   "zB": 2,
+   "expectM": 244666,
+   "expectZ": 2,
+   "note": "等质量 vx tie → 一次有理 RNE 逐字核 MERGE snapshot z"
+  },
+  {
+   "id": "S5c",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 122333,
+   "zA": -1,
+   "zB": -2,
+   "expectM": 244666,
+   "expectZ": -2,
+   "note": "等质量 vx tie → 一次有理 RNE 逐字核 MERGE snapshot z"
+  },
+  {
+   "id": "S5d",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 122333,
+   "zA": -2,
+   "zB": -3,
+   "expectM": 244666,
+   "expectZ": -2,
+   "note": "等质量 vx tie → 一次有理 RNE 逐字核 MERGE snapshot z"
+  },
+  {
+   "id": "S6a",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 122333,
+   "zA": 1,
+   "zB": -1,
+   "expectM": 244666,
+   "expectZ": 0,
+   "note": "抵消精确 0 无负零（z==0 且 sign 位 0）"
+  },
+  {
+   "id": "S6b",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 122333,
+   "zA": 1073741824,
+   "zB": 1073741823,
+   "expectM": 244666,
+   "expectZ": 1073741824,
+   "note": "大乘积 mA*zA+mB*zB < 2^48（=262708116988451 < 281474976710656），结果 1073741824"
+  },
+  {
+   "id": "S7",
+   "domain": "RNE",
+   "mA": 122333,
+   "mB": 8739,
+   "zA": 1,
+   "zB": 0,
+   "expectM": 131072,
+   "expectZ": 1,
+   "note": "不等质量（真实种子 122333/8739）一次有理 RNE，非整数中点"
+  },
+  {
+   "id": "S1",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     131074,
+     122333,
+     true
+    ],
+    [
+     3,
+     131074,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": [
+    1,
+    2
+   ],
+   "note": "同距离 tie → unsigned 字典序 (1,2)，不是任一相邻 pair"
+  },
+  {
+   "id": "S2",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     196608,
+     122333,
+     true
+    ],
+    [
+     3,
+     131073,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": [
+    1,
+    2
+   ],
+   "note": "ID3 更近（差1）但最小 pair=(1,2)（差R）——贪心最小 idA 优先"
+  },
+  {
+   "id": "S3m1",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     196607,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": [
+    1,
+    2
+   ],
+   "note": "radius−1（差 R−1）→ (1,2) 配对"
+  },
+  {
+   "id": "S3z",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     196608,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": [
+    1,
+    2
+   ],
+   "note": "radius 恰好（差 R）→ (1,2) 配对"
+  },
+  {
+   "id": "S3p1",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     196609,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": null,
+   "note": "radius+1（差 R+1）→ 合法 NO_PAIR 零 merge/birth"
+  },
+  {
+   "id": "S4",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     131076,
+     244666,
+     false
+    ],
+    [
+     3,
+     131074,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": [
+    1,
+    3
+   ],
+   "note": "heavy(244666) 夹中间不参与不遮蔽；light (1,3) y差2≤R"
+  },
+  {
+   "id": "S8",
+   "domain": "PAIR",
+   "state": [
+    [
+     1,
+     131072,
+     122333,
+     true
+    ],
+    [
+     2,
+     131074,
+     122333,
+     true
+    ],
+    [
+     3,
+     131076,
+     122333,
+     true
+    ]
+   ],
+   "expectPair": [
+    1,
+    2
+   ],
+   "note": "S8 首对 (1,2)；merge 后重选池（新粒 244666 非 eligible）→ 无第二 pair"
+  }
+ ]
+}

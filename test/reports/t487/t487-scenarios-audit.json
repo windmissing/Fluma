@@ -1,0 +1,78 @@
+{
+ "revision": "T487_SCENARIOS_AUDIT_V2",
+ "date": "2026-11-16",
+ "expectedManifestSHA256": "541f577e5726d3472d29fa551d74d7e3cb577cf5daaa36c912a268147850dc5d",
+ "glsl": {
+  "source": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+  "quantum": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+ },
+ "device": "NOT_RUN（host=pbuffer ANGLE，测试域；产品未真机执行）",
+ "runArchive": [
+  "t487-g-run1-archive（初版非满池，判读废止）",
+  "t487-g-run2-archive（满池+S8 后 NEG-dup assert 中断）",
+  "t487-g（run3 完整 8 场景+NEG-dup）"
+ ],
+ "results": [
+  {
+   "id": "PA8",
+   "name": "S1 seeded 前态：满池 192 粒、id 连续 1..192、y 全 0（命令 floor）",
+   "pass": true,
+   "detail": "live=192 ids=[1, 2, 3, 4]..192 y={0}"
+  },
+  {
+   "id": "PA3",
+   "name": "s1: tie 等质量 → id1 胜出保 ID，y=RNE 中点 2R+1",
+   "pass": true,
+   "detail": "outcome=1 merges=2 id1槽0: mass=244666 y=131073（期望 131073）RNE=OK"
+  },
+  {
+   "id": "PA4",
+   "name": "s2: nearest 非最小 b → 仍选 (1,2)（id1 胜出）",
+   "pass": true,
+   "detail": "outcome=1 merges=2 id1槽0: mass=244666"
+  },
+  {
+   "id": "PA2a",
+   "name": "s3m1: 半径−1（差 R−1）→ (1,2) 配对",
+   "pass": true,
+   "detail": "outcome=1 merges=2 id1槽0 mass=244666"
+  },
+  {
+   "id": "PA2b",
+   "name": "s3z: 半径恰好（差 R）→ (1,2) 配对",
+   "pass": true,
+   "detail": "outcome=1 merges=2 id1槽0 mass=244666"
+  },
+  {
+   "id": "PA1",
+   "name": "S3p1 radius+1：目标对 (1,2) 未被配（id1/id2 mass 保持）；背景群 y=0 自配为合法行为（全池 NO_PAIR 不可构造，如实记录边界）",
+   "pass": true,
+   "detail": "outcome=1 merges=2 id1/id2 untouched=True"
+  },
+  {
+   "id": "PA5",
+   "name": "S4 heavy(244666) 夹中间不参与不遮蔽（heavy 槽保持 + light 配对发生）",
+   "pass": true,
+   "detail": "heavy_slots=[0, 2] kept=True merges=2"
+  },
+  {
+   "id": "PA6",
+   "name": "S8 merge 后重选：.25 三包链 3 merge+3 birth（逐行基于变更后全池）",
+   "pass": true,
+   "detail": "outcome=1 merges=3 births=3"
+  },
+  {
+   "id": "PA7",
+   "name": "duplicate ID → GPU 审核 outcome=4 拒绝且 bank 不变（原审核未关闭）",
+   "pass": true,
+   "detail": "outcome=4 dup_injected=True unchanged=True"
+  },
+  {
+   "id": "RNE",
+   "name": "S5/S6/S7 数值域期望已冻结（scenarios_expected.json 7 例）；S1 GPU 实测 y=131073=2R+1 即 RNE 中点见证（等质量 merge z/y 域逐字）",
+   "pass": true,
+   "detail": "vx 域独立注入通道 V3 无（首版 patch 限 x/y）；z 域完整补证归 V4"
+  }
+ ],
+ "verdict": "PASS"
+}
