@@ -1,0 +1,207 @@
+{
+  "schema": "T524_T527_ARCHITECT_STATIC_CHECKS_V1",
+  "date": "2026-11-16",
+  "status": "CONTRACT_CHECKS_PASS",
+  "product": "NOT_IMPLEMENTED",
+  "device": "NOT_RUN",
+  "GLExecuted": false,
+  "CPUSimulatorAdded": false,
+  "g9ScheduleRoleCounts": {
+    "ROOT": 12,
+    "DISCOVERY": 678,
+    "AUTHORITATIVE": 328,
+    "REJECTED_PREFIX_CHECK": 678,
+    "REPLAY": 328
+  },
+  "g9Dispatches": 2024,
+  "g9SourceDispatches": 12,
+  "g9PlanDispatches": 8108,
+  "g9PayloadBytes": [
+    51120768,
+    93803648
+  ],
+  "v5RootSlotBytes": [
+    28524416,
+    29577088,
+    47166336,
+    48219008
+  ],
+  "v5FullSlotBytes": [
+    157537024,
+    163853056,
+    255871744,
+    262187776
+  ],
+  "v5MaxTotalNativeCapacityBytes": 524375552,
+  "checkedOwnershipCases": [
+    {
+      "oldReadyOrRetiringBytes": 0,
+      "builderOrNewReadyBytes": 0,
+      "total": 0
+    },
+    {
+      "oldReadyOrRetiringBytes": 0,
+      "builderOrNewReadyBytes": 262187776,
+      "total": 262187776
+    },
+    {
+      "oldReadyOrRetiringBytes": 262187776,
+      "builderOrNewReadyBytes": 0,
+      "total": 262187776
+    },
+    {
+      "oldReadyOrRetiringBytes": 262187776,
+      "builderOrNewReadyBytes": 262187776,
+      "total": 524375552
+    }
+  ],
+  "thirdSlotRejectedByCapacity": true,
+  "signedRNEBoundaryCases": [
+    [
+      -1,
+      2,
+      0
+    ],
+    [
+      -3,
+      2,
+      -2
+    ],
+    [
+      -5,
+      2,
+      -2
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      3,
+      2,
+      2
+    ],
+    [
+      5,
+      2,
+      2
+    ]
+  ],
+  "energyIntervalArithmeticCases": 12,
+  "g9DesignFixtureSchemaCount": 43,
+  "g9EventUsedMasksChecked": 14,
+  "limitations": [
+    "schema/layout/arithmetic contracts only; not native state-machine or GPU tests",
+    "real shared/compiler/SSBO/alignment/driver/allocator peak unmeasured",
+    "2024 dispatch timing/250ms feasibility and effects not validated",
+    "diagnostic fallback new V5 2048B adapter needs actual writer verification"
+  ],
+  "inputs": [
+    {
+      "path": "docs/algorithm-T515-gpu-three-state-dynamics-v1.md",
+      "bytes": 35055,
+      "sha256": "966762fffd4bb2cbb0c58da70e48a613e728d642b0810e92ad84d1bf569c15d2"
+    },
+    {
+      "path": "docs/design-T515-three-state-manifest-v1.json",
+      "bytes": 48678,
+      "sha256": "bc8b258eb8199e08a9d6d1ecaef32ef7f3444bb4210f58a0a8eb52194abc22ff"
+    },
+    {
+      "path": "docs/design-T515-three-state-fixtures-v1.json",
+      "bytes": 19609,
+      "sha256": "43cc2b646b08e2a64b8d5327b970486f0fd48fb521468b5e10752e80568771f7"
+    },
+    {
+      "path": "docs/design-T515-three-state-evidence-v1.json",
+      "bytes": 9909,
+      "sha256": "3b39c6b84679d6bd0caf301a5f38346713bb769ebe499c6c25d2fe793a703c2a"
+    },
+    {
+      "path": "docs/architecture-T512-gpu-V5-lineage-lift-v1.md",
+      "bytes": 19648,
+      "sha256": "0226726ccaf3b57f834ba8bd32008935a21130707315142b13c703446e98422b"
+    },
+    {
+      "path": "docs/architecture-T512-v5-engineering-manifest-v1.json",
+      "bytes": 496581,
+      "sha256": "f13c3414669f43ce9e83992ec7a27cfd0bef435582a42fb2064c449eb0160eda"
+    },
+    {
+      "path": "docs/architecture-T498-m3-blocked-control-v2.md",
+      "bytes": 9368,
+      "sha256": "9a2c4167db1a1553d4f1b5e22961c13e98efea44eac9c280d23f362d42001b6f"
+    },
+    {
+      "path": "docs/architecture-T498-m3-engineering-manifest-v1.json",
+      "bytes": 497643,
+      "sha256": "dcadb5e47409b9a864412ed1fddf102fa9f2cd8c3145f7cbab8c003935ae1ce3"
+    },
+    {
+      "path": "docs/algorithm-T508-m3-blocked-quota-v1.md",
+      "bytes": 17730,
+      "sha256": "907a34f4d984188d3d0ffec79919213c9538c04607728539944ea79bd31cc00e"
+    },
+    {
+      "path": "docs/architecture-T503-bounded-cold-protocol-v1.md",
+      "bytes": 13898,
+      "sha256": "c71f4cf09a39fc504e612ff23940a44f47a8af33a6bcd063ded6e0bddf596c51"
+    },
+    {
+      "path": "docs/architecture-T503-cold-manifest-v1.json",
+      "bytes": 3599,
+      "sha256": "73975006f64234358567919b58dd43ced454299e8fb8d3fdfc3e4d7e6ef34b23"
+    },
+    {
+      "path": "docs/developer-T507-bounded-cold.md",
+      "bytes": 6073,
+      "sha256": "352fc2208762dee5ddba44d6373597944297f6523e471629084a8e278296f41d"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/cold_trace.h",
+      "bytes": 9295,
+      "sha256": "7345953e5af549d7209174c6c26314bcf06aedf00dbb55bdfa8afd35242d3305"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/cold_protocol.h",
+      "bytes": 4760,
+      "sha256": "888f28c6179ac7d3c213e452b74bae977563b7c92f67c02c8f8b76038d4713fe"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/cold_diagnostics.h",
+      "bytes": 7548,
+      "sha256": "2689d1e23c8ef2a09a3b68229fe4d68608723ee837a3febfd1466abca2ed9a8f"
+    },
+    {
+      "path": "test/t507/generate.cjs",
+      "bytes": 5211,
+      "sha256": "106ff2f445a95a0477ef5f7c786b8167bbcd62dac62674a21770776726836ef0"
+    },
+    {
+      "path": "docs/architecture-T524-g9-spf-engineering-v1.md",
+      "bytes": 20091,
+      "sha256": "c5dc0155af6d1e70f3c42b28bbebd38f99fe8e1571b156536f026e2b311d4780"
+    },
+    {
+      "path": "docs/architecture-T527-v5-cold-lineage-v1.md",
+      "bytes": 14322,
+      "sha256": "5f8f1ab357809b015c684aeea770403a7bf27abfce55ba7556be0df998f38312"
+    },
+    {
+      "path": "docs/architecture-T524-g9-spf-manifest-v1.json",
+      "bytes": 408536,
+      "sha256": "0ae205834bbf0efde09768ec48551925570effbc3b4b5f2d1ad2ed467e203a82"
+    },
+    {
+      "path": "docs/architecture-T527-v5-cold-manifest-v1.json",
+      "bytes": 89497,
+      "sha256": "a898ed4328697107de14c4bc0f75648bb954406b425215293e68b748f251ceeb"
+    },
+    {
+      "path": "docs/analysis-T524-T527-engineering-checks-v1.py",
+      "bytes": 25101,
+      "sha256": "b55b40233e6156c39594cb94c088c4a3c88b33f750e8451d4b78b0101d553153"
+    }
+  ]
+}
