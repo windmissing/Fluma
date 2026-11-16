@@ -1,0 +1,32 @@
+{
+ "revision": "T523_M3_V4_PRODUCT_DIFF_V1",
+ "date": "2026-11-16",
+ "hap": "70d2742c6a76d11bc6aef5450a3e8e68df6c6a513ef7b9969cec54aadb49c3d7",
+ "shaderSameCheck": [
+  "occupied_solvers",
+  "water_event",
+  "water_writer",
+  "source_seed",
+  "source_trial",
+  "inventory_audit"
+ ],
+ "reruns": {
+  "solver_gpu": "11/11 PASS",
+  "source_scenarios": "12/12 PASS",
+  "root549": "4/4 PASS",
+  "blocked_BQ": "19/19 PASS",
+  "native_source": "SOURCE72 accepted 3192B planned==observed",
+  "native_quantum": "DEADLINE/GAP rejected, SOURCE retained (protection, not perf PASS)",
+  "allocations_4prof": "61257552/65229392/129767504/133739344 padding=0",
+  "seed": "births=3 born=244667 shared-origin ascending-seed PASS"
+ },
+ "notImplementedBackfill": {
+  "M3A01": "BQ20 V3 reader rejects V4 + seed-resolution rollback PASS",
+  "M3A04": "seed GPU shared-origin/continuous-ID PASS",
+  "M3A09": "root 4 profiles + corrupt-replay SPARE rejection PASS",
+  "M3A10": "4-profile allocations GL PASS; device deadline NOT_RUN -> architect"
+ },
+ "lambdaConservativeGate": "product shader occupied_solvers.glsl:73 gate exists; GPU rejects w/ status=4; T499 oracle omits gate (OK) -> T533 owns attribution",
+ "t487_vx_rne_support": "S5a/S5b/S5c/S5d/S6a/S6b/S7 7/7 independent RNE recompute MATCH frozen expectations; S6b product 262708116988451 < 2^48; vx standalone injection channel still absent (settle*sin/cos derived)",
+ "verdict": "PASS (offline fixture domain; device domain NOT_RUN -> architect)"
+}
