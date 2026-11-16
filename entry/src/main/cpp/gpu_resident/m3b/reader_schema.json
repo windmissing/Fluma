@@ -1,0 +1,2400 @@
+{
+  "provenance": {
+    "magic": 894456396,
+    "revision": 5,
+    "seal": 3235774469,
+    "words": [
+      "magic",
+      "revision",
+      "kind",
+      "role",
+      "nonceLo",
+      "nonceHi",
+      "auxOrdinal",
+      "physicalOrdinal",
+      "fromColumn",
+      "toColumn",
+      "originLo",
+      "originHi",
+      "sourceId",
+      "q",
+      "cycleBefore",
+      "cycleAfter",
+      "sourceMassBefore",
+      "sourceMassAfter",
+      "destinationMassBefore",
+      "destinationMassAfter",
+      "sourceDepthBefore",
+      "sourceDepthAfter",
+      "destinationDepthBefore",
+      "destinationDepthAfter",
+      "fragmentOrdinal",
+      "materialEventKind",
+      "id",
+      "generation",
+      "slot",
+      "flags",
+      "reason",
+      "seal"
+    ],
+    "kinds": {
+      "BED_FRAGMENT": {
+        "code": 27,
+        "usedWords": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          29,
+          31
+        ],
+        "usedMaskU32": [
+          2751414271
+        ]
+      },
+      "LAND_PROVENANCE": {
+        "code": 28,
+        "usedWords": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          31
+        ],
+        "usedMaskU32": [
+          3218079743
+        ]
+      },
+      "LIFT_ORIGIN": {
+        "code": 29,
+        "usedWords": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          20,
+          21,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          31
+        ],
+        "usedMaskU32": [
+          3207856127
+        ]
+      },
+      "LIFT_REQUEST": {
+        "code": 30,
+        "usedWords": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          13,
+          16,
+          17,
+          18,
+          19,
+          30,
+          31
+        ],
+        "usedMaskU32": [
+          3222217215
+        ]
+      },
+      "ENERGY": {
+        "code": 31,
+        "usedWords": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          31
+        ],
+        "usedMaskU32": [
+          2147549183
+        ]
+      }
+    },
+    "flags": "bit0 sourcePopped,bit1 destinationAppended,bit2 fullRetire,bit3 wet; other bits0",
+    "energyOverrides": {
+      "8": "E0",
+      "9": "E1",
+      "10": "s",
+      "11": "mode",
+      "12": "ramp",
+      "13": "decay",
+      "14": "sampleSeq",
+      "15": "inputFlags"
+    },
+    "requestOverrides": {
+      "8": "column",
+      "13": "qReq",
+      "16": "qGranted",
+      "17": "totalRemainingBefore",
+      "18": "localRemainingBefore",
+      "19": "channelRemainingBefore",
+      "30": "first binding reason"
+    },
+    "physicalOrdinal": "0 for ENERGY/REQUEST; otherwise references actual semantic event in same scope",
+    "order": "ENERGY, movement LAND, bed color/edge/fragment, column REQUEST and optional LIFT_ORIGIN; no atomic winner",
+    "replay": "interleaved at physical event cut, not appended after final physical state"
+  },
+  "input": {
+    "magic": 893994572,
+    "revision": 5,
+    "words": [
+      "magic",
+      "revision",
+      "sourceKind",
+      "flags",
+      "inputLo",
+      "inputHi",
+      "sampleSeq",
+      "adapterRev",
+      "captureNsLo",
+      "captureNsHi",
+      "receiptNsLo",
+      "receiptNsHi",
+      "freezeNsLo",
+      "freezeNsHi",
+      "clockDomain",
+      "parameterRev",
+      "rawTargetLo",
+      "rawTargetHi",
+      "shakeLo",
+      "shakeHi",
+      "magnitudeLo",
+      "magnitudeHi",
+      "accelXLo",
+      "accelXHi",
+      "accelYLo",
+      "accelYHi",
+      "accelZLo",
+      "accelZHi",
+      "filteredXLo",
+      "filteredXHi",
+      "filteredYLo",
+      "filteredYHi",
+      "filteredZLo",
+      "filteredZHi",
+      "alphaLo",
+      "alphaHi",
+      "thresholdOnLo",
+      "thresholdOnHi",
+      "thresholdFullLo",
+      "thresholdFullHi",
+      "pageSessionLo",
+      "pageSessionHi",
+      "ownerLo",
+      "ownerHi",
+      "runLo",
+      "runHi",
+      "contextLo",
+      "contextHi",
+      "parameterSha0",
+      "parameterSha1",
+      "parameterSha2",
+      "parameterSha3",
+      "parameterSha4",
+      "parameterSha5",
+      "parameterSha6",
+      "parameterSha7",
+      "reserved56",
+      "reserved57",
+      "reserved58",
+      "reserved59",
+      "reserved60",
+      "reserved61",
+      "reserved62",
+      "reserved63"
+    ],
+    "sourceKinds": {
+      "NONE": 0,
+      "SENSOR": 1,
+      "SYNTHETIC": 2,
+      "STALE": 3
+    },
+    "flags": "bit0 actual sensor-report timestamp present; bit1 verified common clock mapping; other bits0",
+    "staleNs": 250000000,
+    "acceptBoundaryInclusive": true,
+    "missingTimestamp": "SENSOR_RESEARCH admission requires timestamp plus verified clock mapping; callback-only/native-receipt stamp insufficient",
+    "sourceAPI": "ACCELEROMETER residual indicator, not a calibrated shear or inertial force"
+  },
+  "physicalLift": {
+    "kind": 26,
+    "revision": 5,
+    "usedWords": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      48,
+      49,
+      50,
+      51,
+      52,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63
+    ],
+    "usedMaskU32": [
+      4294967295,
+      4288611327
+    ],
+    "stocks": "32/33 bed S;34/35 poolP; budget36..41; columns identical; mass old0/newq",
+    "tau": "TICKS->TICKS, lambda unused0, eventAux=q, etaFrom==etaTo"
+  },
+  "profiles": [
+    {
+      "K": 192,
+      "Kw": 64,
+      "stateBytes": 172544,
+      "sourceContextBytes": 10224000,
+      "sourceRows": 5153,
+      "physicalRowsPerScope": 10750,
+      "auxRowsPerScope": 8577,
+      "framePhysicalRows": 43192,
+      "frameAuxRows": 34308,
+      "rootSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 205312,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 205312,
+          "byteEnd": 10429312,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10429312,
+          "byteEnd": 13067648,
+          "bytes": 2638336,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 13067648,
+          "byteEnd": 24124800,
+          "bytes": 11057152,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 24124800,
+          "byteEnd": 28516224,
+          "bytes": 4391424,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 28516224,
+          "byteEnd": 28524416,
+          "bytes": 8192,
+          "strideBytes": 512
+        }
+      ],
+      "fullSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 205312,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 205312,
+          "byteEnd": 10429312,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10429312,
+          "byteEnd": 13067648,
+          "bytes": 2638336,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 13067648,
+          "byteEnd": 24124800,
+          "bytes": 11057152,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 24124800,
+          "byteEnd": 28516224,
+          "bytes": 4391424,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 28516224,
+          "byteEnd": 28524416,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_1",
+          "byteStart": 28524416,
+          "byteEnd": 28532608,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_2",
+          "byteStart": 28532608,
+          "byteEnd": 28540800,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_3",
+          "byteStart": 28540800,
+          "byteEnd": 28548992,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_4",
+          "byteStart": 28548992,
+          "byteEnd": 28557184,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "BASE_STATE_0",
+          "byteStart": 28557184,
+          "byteEnd": 28729728,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_0",
+          "byteStart": 28729728,
+          "byteEnd": 38953728,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_1",
+          "byteStart": 38953728,
+          "byteEnd": 39126272,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_1",
+          "byteStart": 39126272,
+          "byteEnd": 49350272,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_2",
+          "byteStart": 49350272,
+          "byteEnd": 49522816,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_2",
+          "byteStart": 49522816,
+          "byteEnd": 59746816,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_3",
+          "byteStart": 59746816,
+          "byteEnd": 59919360,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_3",
+          "byteStart": 59919360,
+          "byteEnd": 70143360,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_4",
+          "byteStart": 70143360,
+          "byteEnd": 70315904,
+          "bytes": 172544,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_4",
+          "byteStart": 70315904,
+          "byteEnd": 80539904,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "Q0_ROLE1_PHYSICAL",
+          "byteStart": 80539904,
+          "byteEnd": 83291904,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE1_PROVENANCE",
+          "byteStart": 83291904,
+          "byteEnd": 84389760,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE2_PHYSICAL",
+          "byteStart": 84389760,
+          "byteEnd": 87141760,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE2_PROVENANCE",
+          "byteStart": 87141760,
+          "byteEnd": 88239616,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE3_PHYSICAL",
+          "byteStart": 88239616,
+          "byteEnd": 90991616,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE3_PROVENANCE",
+          "byteStart": 90991616,
+          "byteEnd": 92089472,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE4_PHYSICAL",
+          "byteStart": 92089472,
+          "byteEnd": 94841472,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE4_PROVENANCE",
+          "byteStart": 94841472,
+          "byteEnd": 95939328,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE5_PHYSICAL",
+          "byteStart": 95939328,
+          "byteEnd": 98691328,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE5_PROVENANCE",
+          "byteStart": 98691328,
+          "byteEnd": 99789184,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE1_PHYSICAL",
+          "byteStart": 99789184,
+          "byteEnd": 102541184,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE1_PROVENANCE",
+          "byteStart": 102541184,
+          "byteEnd": 103639040,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE2_PHYSICAL",
+          "byteStart": 103639040,
+          "byteEnd": 106391040,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE2_PROVENANCE",
+          "byteStart": 106391040,
+          "byteEnd": 107488896,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE3_PHYSICAL",
+          "byteStart": 107488896,
+          "byteEnd": 110240896,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE3_PROVENANCE",
+          "byteStart": 110240896,
+          "byteEnd": 111338752,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE4_PHYSICAL",
+          "byteStart": 111338752,
+          "byteEnd": 114090752,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE4_PROVENANCE",
+          "byteStart": 114090752,
+          "byteEnd": 115188608,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE5_PHYSICAL",
+          "byteStart": 115188608,
+          "byteEnd": 117940608,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE5_PROVENANCE",
+          "byteStart": 117940608,
+          "byteEnd": 119038464,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE1_PHYSICAL",
+          "byteStart": 119038464,
+          "byteEnd": 121790464,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE1_PROVENANCE",
+          "byteStart": 121790464,
+          "byteEnd": 122888320,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE2_PHYSICAL",
+          "byteStart": 122888320,
+          "byteEnd": 125640320,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE2_PROVENANCE",
+          "byteStart": 125640320,
+          "byteEnd": 126738176,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE3_PHYSICAL",
+          "byteStart": 126738176,
+          "byteEnd": 129490176,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE3_PROVENANCE",
+          "byteStart": 129490176,
+          "byteEnd": 130588032,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE4_PHYSICAL",
+          "byteStart": 130588032,
+          "byteEnd": 133340032,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE4_PROVENANCE",
+          "byteStart": 133340032,
+          "byteEnd": 134437888,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE5_PHYSICAL",
+          "byteStart": 134437888,
+          "byteEnd": 137189888,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE5_PROVENANCE",
+          "byteStart": 137189888,
+          "byteEnd": 138287744,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE1_PHYSICAL",
+          "byteStart": 138287744,
+          "byteEnd": 141039744,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE1_PROVENANCE",
+          "byteStart": 141039744,
+          "byteEnd": 142137600,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE2_PHYSICAL",
+          "byteStart": 142137600,
+          "byteEnd": 144889600,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE2_PROVENANCE",
+          "byteStart": 144889600,
+          "byteEnd": 145987456,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE3_PHYSICAL",
+          "byteStart": 145987456,
+          "byteEnd": 148739456,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE3_PROVENANCE",
+          "byteStart": 148739456,
+          "byteEnd": 149837312,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE4_PHYSICAL",
+          "byteStart": 149837312,
+          "byteEnd": 152589312,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE4_PROVENANCE",
+          "byteStart": 152589312,
+          "byteEnd": 153687168,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE5_PHYSICAL",
+          "byteStart": 153687168,
+          "byteEnd": 156439168,
+          "bytes": 2752000,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE5_PROVENANCE",
+          "byteStart": 156439168,
+          "byteEnd": 157537024,
+          "bytes": 1097856,
+          "strideBytes": 128
+        }
+      ],
+      "rootSlotBytes": 28524416,
+      "fullSlotBytes": 157537024,
+      "twoRootSlotsBytes": 57048832,
+      "twoFullSlotsBytes": 315074048,
+      "rootPageMax": 7029,
+      "fullPageMax": 38527,
+      "fullArchiveUtf8Max": 631242752,
+      "rootArchiveUtf8Max": 115179520,
+      "residentPayloadBytes": 79311824,
+      "existingT512FullGPUExtraBytes": 76997120,
+      "fullGPUReservationBytes": 129021056,
+      "knownGPUPayloadWithFullBytes": 208332880,
+      "sourceContextBaseAnchorCopyBytesMax": 51982720,
+      "extraPhysicsDispatch": 0,
+      "baseAnchorMax": 5,
+      "fullGPUBufferObjectMaxBytes": 11057152
+    },
+    {
+      "K": 192,
+      "Kw": 128,
+      "stateBytes": 176640,
+      "sourceContextBytes": 10224000,
+      "sourceRows": 5153,
+      "physicalRowsPerScope": 11774,
+      "auxRowsPerScope": 8577,
+      "framePhysicalRows": 47288,
+      "frameAuxRows": 34308,
+      "rootSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 209408,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 209408,
+          "byteEnd": 10433408,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10433408,
+          "byteEnd": 13071744,
+          "bytes": 2638336,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 13071744,
+          "byteEnd": 25177472,
+          "bytes": 12105728,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 25177472,
+          "byteEnd": 29568896,
+          "bytes": 4391424,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 29568896,
+          "byteEnd": 29577088,
+          "bytes": 8192,
+          "strideBytes": 512
+        }
+      ],
+      "fullSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 209408,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 209408,
+          "byteEnd": 10433408,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10433408,
+          "byteEnd": 13071744,
+          "bytes": 2638336,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 13071744,
+          "byteEnd": 25177472,
+          "bytes": 12105728,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 25177472,
+          "byteEnd": 29568896,
+          "bytes": 4391424,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 29568896,
+          "byteEnd": 29577088,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_1",
+          "byteStart": 29577088,
+          "byteEnd": 29585280,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_2",
+          "byteStart": 29585280,
+          "byteEnd": 29593472,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_3",
+          "byteStart": 29593472,
+          "byteEnd": 29601664,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_4",
+          "byteStart": 29601664,
+          "byteEnd": 29609856,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "BASE_STATE_0",
+          "byteStart": 29609856,
+          "byteEnd": 29786496,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_0",
+          "byteStart": 29786496,
+          "byteEnd": 40010496,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_1",
+          "byteStart": 40010496,
+          "byteEnd": 40187136,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_1",
+          "byteStart": 40187136,
+          "byteEnd": 50411136,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_2",
+          "byteStart": 50411136,
+          "byteEnd": 50587776,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_2",
+          "byteStart": 50587776,
+          "byteEnd": 60811776,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_3",
+          "byteStart": 60811776,
+          "byteEnd": 60988416,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_3",
+          "byteStart": 60988416,
+          "byteEnd": 71212416,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_4",
+          "byteStart": 71212416,
+          "byteEnd": 71389056,
+          "bytes": 176640,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_4",
+          "byteStart": 71389056,
+          "byteEnd": 81613056,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "Q0_ROLE1_PHYSICAL",
+          "byteStart": 81613056,
+          "byteEnd": 84627200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE1_PROVENANCE",
+          "byteStart": 84627200,
+          "byteEnd": 85725056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE2_PHYSICAL",
+          "byteStart": 85725056,
+          "byteEnd": 88739200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE2_PROVENANCE",
+          "byteStart": 88739200,
+          "byteEnd": 89837056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE3_PHYSICAL",
+          "byteStart": 89837056,
+          "byteEnd": 92851200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE3_PROVENANCE",
+          "byteStart": 92851200,
+          "byteEnd": 93949056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE4_PHYSICAL",
+          "byteStart": 93949056,
+          "byteEnd": 96963200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE4_PROVENANCE",
+          "byteStart": 96963200,
+          "byteEnd": 98061056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE5_PHYSICAL",
+          "byteStart": 98061056,
+          "byteEnd": 101075200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE5_PROVENANCE",
+          "byteStart": 101075200,
+          "byteEnd": 102173056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE1_PHYSICAL",
+          "byteStart": 102173056,
+          "byteEnd": 105187200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE1_PROVENANCE",
+          "byteStart": 105187200,
+          "byteEnd": 106285056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE2_PHYSICAL",
+          "byteStart": 106285056,
+          "byteEnd": 109299200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE2_PROVENANCE",
+          "byteStart": 109299200,
+          "byteEnd": 110397056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE3_PHYSICAL",
+          "byteStart": 110397056,
+          "byteEnd": 113411200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE3_PROVENANCE",
+          "byteStart": 113411200,
+          "byteEnd": 114509056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE4_PHYSICAL",
+          "byteStart": 114509056,
+          "byteEnd": 117523200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE4_PROVENANCE",
+          "byteStart": 117523200,
+          "byteEnd": 118621056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE5_PHYSICAL",
+          "byteStart": 118621056,
+          "byteEnd": 121635200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE5_PROVENANCE",
+          "byteStart": 121635200,
+          "byteEnd": 122733056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE1_PHYSICAL",
+          "byteStart": 122733056,
+          "byteEnd": 125747200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE1_PROVENANCE",
+          "byteStart": 125747200,
+          "byteEnd": 126845056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE2_PHYSICAL",
+          "byteStart": 126845056,
+          "byteEnd": 129859200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE2_PROVENANCE",
+          "byteStart": 129859200,
+          "byteEnd": 130957056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE3_PHYSICAL",
+          "byteStart": 130957056,
+          "byteEnd": 133971200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE3_PROVENANCE",
+          "byteStart": 133971200,
+          "byteEnd": 135069056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE4_PHYSICAL",
+          "byteStart": 135069056,
+          "byteEnd": 138083200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE4_PROVENANCE",
+          "byteStart": 138083200,
+          "byteEnd": 139181056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE5_PHYSICAL",
+          "byteStart": 139181056,
+          "byteEnd": 142195200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE5_PROVENANCE",
+          "byteStart": 142195200,
+          "byteEnd": 143293056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE1_PHYSICAL",
+          "byteStart": 143293056,
+          "byteEnd": 146307200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE1_PROVENANCE",
+          "byteStart": 146307200,
+          "byteEnd": 147405056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE2_PHYSICAL",
+          "byteStart": 147405056,
+          "byteEnd": 150419200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE2_PROVENANCE",
+          "byteStart": 150419200,
+          "byteEnd": 151517056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE3_PHYSICAL",
+          "byteStart": 151517056,
+          "byteEnd": 154531200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE3_PROVENANCE",
+          "byteStart": 154531200,
+          "byteEnd": 155629056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE4_PHYSICAL",
+          "byteStart": 155629056,
+          "byteEnd": 158643200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE4_PROVENANCE",
+          "byteStart": 158643200,
+          "byteEnd": 159741056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE5_PHYSICAL",
+          "byteStart": 159741056,
+          "byteEnd": 162755200,
+          "bytes": 3014144,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE5_PROVENANCE",
+          "byteStart": 162755200,
+          "byteEnd": 163853056,
+          "bytes": 1097856,
+          "strideBytes": 128
+        }
+      ],
+      "rootSlotBytes": 29577088,
+      "fullSlotBytes": 163853056,
+      "twoRootSlotsBytes": 59154176,
+      "twoFullSlotsBytes": 327706112,
+      "rootPageMax": 7286,
+      "fullPageMax": 40069,
+      "fullArchiveUtf8Max": 656506880,
+      "rootArchiveUtf8Max": 119390208,
+      "residentPayloadBytes": 83283664,
+      "existingT512FullGPUExtraBytes": 82240000,
+      "fullGPUReservationBytes": 134284416,
+      "knownGPUPayloadWithFullBytes": 217568080,
+      "sourceContextBaseAnchorCopyBytesMax": 52003200,
+      "extraPhysicsDispatch": 0,
+      "baseAnchorMax": 5,
+      "fullGPUBufferObjectMaxBytes": 12105728
+    },
+    {
+      "K": 512,
+      "Kw": 64,
+      "stateBytes": 218624,
+      "sourceContextBytes": 10224000,
+      "sourceRows": 10273,
+      "physicalRowsPerScope": 26110,
+      "auxRowsPerScope": 8897,
+      "framePhysicalRows": 104952,
+      "frameAuxRows": 35588,
+      "rootSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 251392,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 251392,
+          "byteEnd": 10475392,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10475392,
+          "byteEnd": 15735168,
+          "bytes": 5259776,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 15735168,
+          "byteEnd": 42602880,
+          "bytes": 26867712,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 42602880,
+          "byteEnd": 47158144,
+          "bytes": 4555264,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 47158144,
+          "byteEnd": 47166336,
+          "bytes": 8192,
+          "strideBytes": 512
+        }
+      ],
+      "fullSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 251392,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 251392,
+          "byteEnd": 10475392,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10475392,
+          "byteEnd": 15735168,
+          "bytes": 5259776,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 15735168,
+          "byteEnd": 42602880,
+          "bytes": 26867712,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 42602880,
+          "byteEnd": 47158144,
+          "bytes": 4555264,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 47158144,
+          "byteEnd": 47166336,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_1",
+          "byteStart": 47166336,
+          "byteEnd": 47174528,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_2",
+          "byteStart": 47174528,
+          "byteEnd": 47182720,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_3",
+          "byteStart": 47182720,
+          "byteEnd": 47190912,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_4",
+          "byteStart": 47190912,
+          "byteEnd": 47199104,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "BASE_STATE_0",
+          "byteStart": 47199104,
+          "byteEnd": 47417728,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_0",
+          "byteStart": 47417728,
+          "byteEnd": 57641728,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_1",
+          "byteStart": 57641728,
+          "byteEnd": 57860352,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_1",
+          "byteStart": 57860352,
+          "byteEnd": 68084352,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_2",
+          "byteStart": 68084352,
+          "byteEnd": 68302976,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_2",
+          "byteStart": 68302976,
+          "byteEnd": 78526976,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_3",
+          "byteStart": 78526976,
+          "byteEnd": 78745600,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_3",
+          "byteStart": 78745600,
+          "byteEnd": 88969600,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_4",
+          "byteStart": 88969600,
+          "byteEnd": 89188224,
+          "bytes": 218624,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_4",
+          "byteStart": 89188224,
+          "byteEnd": 99412224,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "Q0_ROLE1_PHYSICAL",
+          "byteStart": 99412224,
+          "byteEnd": 106096384,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE1_PROVENANCE",
+          "byteStart": 106096384,
+          "byteEnd": 107235200,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE2_PHYSICAL",
+          "byteStart": 107235200,
+          "byteEnd": 113919360,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE2_PROVENANCE",
+          "byteStart": 113919360,
+          "byteEnd": 115058176,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE3_PHYSICAL",
+          "byteStart": 115058176,
+          "byteEnd": 121742336,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE3_PROVENANCE",
+          "byteStart": 121742336,
+          "byteEnd": 122881152,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE4_PHYSICAL",
+          "byteStart": 122881152,
+          "byteEnd": 129565312,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE4_PROVENANCE",
+          "byteStart": 129565312,
+          "byteEnd": 130704128,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE5_PHYSICAL",
+          "byteStart": 130704128,
+          "byteEnd": 137388288,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE5_PROVENANCE",
+          "byteStart": 137388288,
+          "byteEnd": 138527104,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE1_PHYSICAL",
+          "byteStart": 138527104,
+          "byteEnd": 145211264,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE1_PROVENANCE",
+          "byteStart": 145211264,
+          "byteEnd": 146350080,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE2_PHYSICAL",
+          "byteStart": 146350080,
+          "byteEnd": 153034240,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE2_PROVENANCE",
+          "byteStart": 153034240,
+          "byteEnd": 154173056,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE3_PHYSICAL",
+          "byteStart": 154173056,
+          "byteEnd": 160857216,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE3_PROVENANCE",
+          "byteStart": 160857216,
+          "byteEnd": 161996032,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE4_PHYSICAL",
+          "byteStart": 161996032,
+          "byteEnd": 168680192,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE4_PROVENANCE",
+          "byteStart": 168680192,
+          "byteEnd": 169819008,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE5_PHYSICAL",
+          "byteStart": 169819008,
+          "byteEnd": 176503168,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE5_PROVENANCE",
+          "byteStart": 176503168,
+          "byteEnd": 177641984,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE1_PHYSICAL",
+          "byteStart": 177641984,
+          "byteEnd": 184326144,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE1_PROVENANCE",
+          "byteStart": 184326144,
+          "byteEnd": 185464960,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE2_PHYSICAL",
+          "byteStart": 185464960,
+          "byteEnd": 192149120,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE2_PROVENANCE",
+          "byteStart": 192149120,
+          "byteEnd": 193287936,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE3_PHYSICAL",
+          "byteStart": 193287936,
+          "byteEnd": 199972096,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE3_PROVENANCE",
+          "byteStart": 199972096,
+          "byteEnd": 201110912,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE4_PHYSICAL",
+          "byteStart": 201110912,
+          "byteEnd": 207795072,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE4_PROVENANCE",
+          "byteStart": 207795072,
+          "byteEnd": 208933888,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE5_PHYSICAL",
+          "byteStart": 208933888,
+          "byteEnd": 215618048,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE5_PROVENANCE",
+          "byteStart": 215618048,
+          "byteEnd": 216756864,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE1_PHYSICAL",
+          "byteStart": 216756864,
+          "byteEnd": 223441024,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE1_PROVENANCE",
+          "byteStart": 223441024,
+          "byteEnd": 224579840,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE2_PHYSICAL",
+          "byteStart": 224579840,
+          "byteEnd": 231264000,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE2_PROVENANCE",
+          "byteStart": 231264000,
+          "byteEnd": 232402816,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE3_PHYSICAL",
+          "byteStart": 232402816,
+          "byteEnd": 239086976,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE3_PROVENANCE",
+          "byteStart": 239086976,
+          "byteEnd": 240225792,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE4_PHYSICAL",
+          "byteStart": 240225792,
+          "byteEnd": 246909952,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE4_PROVENANCE",
+          "byteStart": 246909952,
+          "byteEnd": 248048768,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE5_PHYSICAL",
+          "byteStart": 248048768,
+          "byteEnd": 254732928,
+          "bytes": 6684160,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE5_PROVENANCE",
+          "byteStart": 254732928,
+          "byteEnd": 255871744,
+          "bytes": 1138816,
+          "strideBytes": 128
+        }
+      ],
+      "rootSlotBytes": 47166336,
+      "fullSlotBytes": 255871744,
+      "twoRootSlotsBytes": 94332672,
+      "twoFullSlotsBytes": 511743488,
+      "rootPageMax": 11581,
+      "fullPageMax": 62534,
+      "fullArchiveUtf8Max": 1024573440,
+      "rootArchiveUtf8Max": 189759488,
+      "residentPayloadBytes": 148615376,
+      "existingT512FullGPUExtraBytes": 156459520,
+      "fullGPUReservationBytes": 208713856,
+      "knownGPUPayloadWithFullBytes": 357329232,
+      "sourceContextBaseAnchorCopyBytesMax": 52213120,
+      "extraPhysicsDispatch": 0,
+      "baseAnchorMax": 5,
+      "fullGPUBufferObjectMaxBytes": 26867712
+    },
+    {
+      "K": 512,
+      "Kw": 128,
+      "stateBytes": 222720,
+      "sourceContextBytes": 10224000,
+      "sourceRows": 10273,
+      "physicalRowsPerScope": 27134,
+      "auxRowsPerScope": 8897,
+      "framePhysicalRows": 109048,
+      "frameAuxRows": 35588,
+      "rootSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 255488,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 255488,
+          "byteEnd": 10479488,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10479488,
+          "byteEnd": 15739264,
+          "bytes": 5259776,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 15739264,
+          "byteEnd": 43655552,
+          "bytes": 27916288,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 43655552,
+          "byteEnd": 48210816,
+          "bytes": 4555264,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 48210816,
+          "byteEnd": 48219008,
+          "bytes": 8192,
+          "strideBytes": 512
+        }
+      ],
+      "fullSegments": [
+        {
+          "name": "prefix",
+          "byteStart": 0,
+          "byteEnd": 32768,
+          "bytes": 32768,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_STATE",
+          "byteStart": 32768,
+          "byteEnd": 255488,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "FINAL_SOURCE_CONTEXT",
+          "byteStart": 255488,
+          "byteEnd": 10479488,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "SOURCE_FRAME128",
+          "byteStart": 10479488,
+          "byteEnd": 15739264,
+          "bytes": 5259776,
+          "strideBytes": 512
+        },
+        {
+          "name": "PHYSICAL_FRAME64",
+          "byteStart": 15739264,
+          "byteEnd": 43655552,
+          "bytes": 27916288,
+          "strideBytes": 256
+        },
+        {
+          "name": "PROVENANCE_FRAME32",
+          "byteStart": 43655552,
+          "byteEnd": 48210816,
+          "bytes": 4555264,
+          "strideBytes": 128
+        },
+        {
+          "name": "CONTROL_ROOT_0",
+          "byteStart": 48210816,
+          "byteEnd": 48219008,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_1",
+          "byteStart": 48219008,
+          "byteEnd": 48227200,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_2",
+          "byteStart": 48227200,
+          "byteEnd": 48235392,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_3",
+          "byteStart": 48235392,
+          "byteEnd": 48243584,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "CONTROL_ROOT_4",
+          "byteStart": 48243584,
+          "byteEnd": 48251776,
+          "bytes": 8192,
+          "strideBytes": 512
+        },
+        {
+          "name": "BASE_STATE_0",
+          "byteStart": 48251776,
+          "byteEnd": 48474496,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_0",
+          "byteStart": 48474496,
+          "byteEnd": 58698496,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_1",
+          "byteStart": 58698496,
+          "byteEnd": 58921216,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_1",
+          "byteStart": 58921216,
+          "byteEnd": 69145216,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_2",
+          "byteStart": 69145216,
+          "byteEnd": 69367936,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_2",
+          "byteStart": 69367936,
+          "byteEnd": 79591936,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_3",
+          "byteStart": 79591936,
+          "byteEnd": 79814656,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_3",
+          "byteStart": 79814656,
+          "byteEnd": 90038656,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_STATE_4",
+          "byteStart": 90038656,
+          "byteEnd": 90261376,
+          "bytes": 222720,
+          "strideBytes": 4
+        },
+        {
+          "name": "BASE_SOURCE_CONTEXT_4",
+          "byteStart": 90261376,
+          "byteEnd": 100485376,
+          "bytes": 10224000,
+          "strideBytes": 4
+        },
+        {
+          "name": "Q0_ROLE1_PHYSICAL",
+          "byteStart": 100485376,
+          "byteEnd": 107431680,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE1_PROVENANCE",
+          "byteStart": 107431680,
+          "byteEnd": 108570496,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE2_PHYSICAL",
+          "byteStart": 108570496,
+          "byteEnd": 115516800,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE2_PROVENANCE",
+          "byteStart": 115516800,
+          "byteEnd": 116655616,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE3_PHYSICAL",
+          "byteStart": 116655616,
+          "byteEnd": 123601920,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE3_PROVENANCE",
+          "byteStart": 123601920,
+          "byteEnd": 124740736,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE4_PHYSICAL",
+          "byteStart": 124740736,
+          "byteEnd": 131687040,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE4_PROVENANCE",
+          "byteStart": 131687040,
+          "byteEnd": 132825856,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q0_ROLE5_PHYSICAL",
+          "byteStart": 132825856,
+          "byteEnd": 139772160,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q0_ROLE5_PROVENANCE",
+          "byteStart": 139772160,
+          "byteEnd": 140910976,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE1_PHYSICAL",
+          "byteStart": 140910976,
+          "byteEnd": 147857280,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE1_PROVENANCE",
+          "byteStart": 147857280,
+          "byteEnd": 148996096,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE2_PHYSICAL",
+          "byteStart": 148996096,
+          "byteEnd": 155942400,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE2_PROVENANCE",
+          "byteStart": 155942400,
+          "byteEnd": 157081216,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE3_PHYSICAL",
+          "byteStart": 157081216,
+          "byteEnd": 164027520,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE3_PROVENANCE",
+          "byteStart": 164027520,
+          "byteEnd": 165166336,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE4_PHYSICAL",
+          "byteStart": 165166336,
+          "byteEnd": 172112640,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE4_PROVENANCE",
+          "byteStart": 172112640,
+          "byteEnd": 173251456,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q1_ROLE5_PHYSICAL",
+          "byteStart": 173251456,
+          "byteEnd": 180197760,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q1_ROLE5_PROVENANCE",
+          "byteStart": 180197760,
+          "byteEnd": 181336576,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE1_PHYSICAL",
+          "byteStart": 181336576,
+          "byteEnd": 188282880,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE1_PROVENANCE",
+          "byteStart": 188282880,
+          "byteEnd": 189421696,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE2_PHYSICAL",
+          "byteStart": 189421696,
+          "byteEnd": 196368000,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE2_PROVENANCE",
+          "byteStart": 196368000,
+          "byteEnd": 197506816,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE3_PHYSICAL",
+          "byteStart": 197506816,
+          "byteEnd": 204453120,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE3_PROVENANCE",
+          "byteStart": 204453120,
+          "byteEnd": 205591936,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE4_PHYSICAL",
+          "byteStart": 205591936,
+          "byteEnd": 212538240,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE4_PROVENANCE",
+          "byteStart": 212538240,
+          "byteEnd": 213677056,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q2_ROLE5_PHYSICAL",
+          "byteStart": 213677056,
+          "byteEnd": 220623360,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q2_ROLE5_PROVENANCE",
+          "byteStart": 220623360,
+          "byteEnd": 221762176,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE1_PHYSICAL",
+          "byteStart": 221762176,
+          "byteEnd": 228708480,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE1_PROVENANCE",
+          "byteStart": 228708480,
+          "byteEnd": 229847296,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE2_PHYSICAL",
+          "byteStart": 229847296,
+          "byteEnd": 236793600,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE2_PROVENANCE",
+          "byteStart": 236793600,
+          "byteEnd": 237932416,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE3_PHYSICAL",
+          "byteStart": 237932416,
+          "byteEnd": 244878720,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE3_PROVENANCE",
+          "byteStart": 244878720,
+          "byteEnd": 246017536,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE4_PHYSICAL",
+          "byteStart": 246017536,
+          "byteEnd": 252963840,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE4_PROVENANCE",
+          "byteStart": 252963840,
+          "byteEnd": 254102656,
+          "bytes": 1138816,
+          "strideBytes": 128
+        },
+        {
+          "name": "Q3_ROLE5_PHYSICAL",
+          "byteStart": 254102656,
+          "byteEnd": 261048960,
+          "bytes": 6946304,
+          "strideBytes": 256
+        },
+        {
+          "name": "Q3_ROLE5_PROVENANCE",
+          "byteStart": 261048960,
+          "byteEnd": 262187776,
+          "bytes": 1138816,
+          "strideBytes": 128
+        }
+      ],
+      "rootSlotBytes": 48219008,
+      "fullSlotBytes": 262187776,
+      "twoRootSlotsBytes": 96438016,
+      "twoFullSlotsBytes": 524375552,
+      "rootPageMax": 11838,
+      "fullPageMax": 64076,
+      "fullArchiveUtf8Max": 1049837568,
+      "rootArchiveUtf8Max": 193970176,
+      "residentPayloadBytes": 152587216,
+      "existingT512FullGPUExtraBytes": 161702400,
+      "fullGPUReservationBytes": 213977216,
+      "knownGPUPayloadWithFullBytes": 366564432,
+      "sourceContextBaseAnchorCopyBytesMax": 52233600,
+      "extraPhysicsDispatch": 0,
+      "baseAnchorMax": 5,
+      "fullGPUBufferObjectMaxBytes": 27916288
+    }
+  ]
+}

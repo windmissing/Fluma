@@ -1,0 +1,2073 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64)in;
+layout(std430,binding=0)readonly buffer Base{uint B[];};
+layout(std430,binding=1)coherent buffer Candidate{uint C[];};
+layout(std430,binding=2)coherent buffer Workspace{uint W[];};
+layout(std430,binding=3)coherent buffer Events{uint E[];};
+uniform uint uK,uKw,uWater,uColumn,uHeader,uPass;
+const uint Q=1048576u,CQ=268435456u;
+uint col(uint f,uint c){return C[uColumn+f*128u+c];}
+void m2LoadSand(uint slot,out uint row[16]);
+uint m3Input(uint i);
+
+// T236 GRS_Q20_V1. GLSL ES 3.10 highp uint only, no int64/FP64 extension.
+// Integer primitive library, not an M0 step shader or a capability PASS.
+uvec2 grsMul32(uint a,uint b){uint high,low;umulExtended(a,b,high,low);return uvec2(low,high);}
+bool grsAdd64(uvec2 a,uvec2 b,out uvec2 result){uint carry;uint low=uaddCarry(a.x,b.x,carry);uint carryHigh;uint high=uaddCarry(a.y,b.y,carryHigh);uint carryLast;high=uaddCarry(high,carry,carryLast);if((carryHigh|carryLast)!=0u)return false;result=uvec2(low,high);return true;}
+int grsCompare64(uvec2 a,uvec2 b){if(a.y!=b.y)return a.y<b.y?-1:1;return a.x==b.x?0:a.x<b.x?-1:1;}
+bool grsSub64(uvec2 a,uvec2 b,out uvec2 result){if(grsCompare64(a,b)<0)return false;uint borrow;uint low=usubBorrow(a.x,b.x,borrow);result=uvec2(low,a.y-b.y-borrow);return true;}
+uvec4 grsMul64(uvec2 a,uvec2 b){
+ uint aa[4]=uint[4](a.x&65535u,a.x>>16u,a.y&65535u,a.y>>16u),bb[4]=uint[4](b.x&65535u,b.x>>16u,b.y&65535u,b.y>>16u),v[8];for(int i=0;i<8;i++)v[i]=0u;
+ for(int i=0;i<4;i++){uint carry=0u;for(int j=0;j<4;j++){uint t=v[i+j]+aa[i]*bb[j]+carry;v[i+j]=t&65535u;carry=t>>16u;}v[i+4]=carry;}
+ return uvec4(v[0]|(v[1]<<16u),v[2]|(v[3]<<16u),v[4]|(v[5]<<16u),v[6]|(v[7]<<16u));
+}
+bool grsDivide128(uvec4 n,uint d,out uvec4 quotient,out uint remainder){
+ if(d==0u)return false;uvec4 q=uvec4(0u);uint r=0u;
+ for(int i=127;i>=0;i--){bool high=(r>>31u)!=0u;r=(r<<1u)|((n[i/32]>>uint(i%32))&1u);if(high||r>=d){r-=d;q[i/32]|=1u<<uint(i%32);}}
+ quotient=q;remainder=r;return true;
+}
+bool grsMulDivRNE(int a,int b,uint d,out int result){
+ if(d==0u)return false;bool negative=(a<0)!=(b<0);uint aa=a<0?0u-uint(a):uint(a),bb=b<0?0u-uint(b):uint(b);uvec2 p=grsMul32(aa,bb);uvec4 q;uint r;
+ if(!grsDivide128(uvec4(p,0u,0u),d,q,r)||any(notEqual(q.yzw,uvec3(0u))))return false;
+ uint v=q.x;bool rounding=r>d-r||(r==d-r&&(v&1u)!=0u);if(rounding){if(v==0xffffffffu)return false;v++;}
+ if(v>(negative?0x80000000u:0x7fffffffu))return false;
+ result=negative?(v==0x80000000u?(-2147483647-1):-int(v)):int(v);return true;
+}
+bool grsFloorBinary64Q20(uvec2 raw,uint maxUnits,out uint result){
+ uint exp=(raw.y>>20u)&2047u,frac=raw.y&0xfffffu;if(exp==2047u||((raw.y>>31u)!=0u&&(exp!=0u||frac!=0u||raw.x!=0u)))return false;
+ if(exp==0u){result=0u;return true;}uvec2 m=uvec2(raw.x,frac|0x100000u);int shift=int(exp)-1023-32;uint units=0u;
+ if(shift>=0){if(shift>=32||m.y!=0u||m.x>(maxUnits>>uint(shift)))return false;units=m.x<<uint(shift);}
+ else{int right=-shift;if(right>=64)units=0u;else if(right>=32)units=m.y>>uint(right-32);else{if((m.y>>uint(right))!=0u)return false;units=(m.x>>uint(right))|(m.y<<uint(32-right));}}
+ if(units>maxUnits)return false;result=units;return true;
+}
+uint grsQ20FloatBits(uint units){
+ if(units==0u)return 0u;int top=findMSB(units);uint sig;
+ if(top<=23)sig=units<<uint(23-top);else{int shift=top-23;sig=units>>uint(shift);uint r=units&((1u<<uint(shift))-1u),halfway=1u<<uint(shift-1);if(r>halfway||(r==halfway&&(sig&1u)!=0u))sig++;if(sig==(1u<<24u)){sig>>=1u;top++;}}
+ return (uint(top-20+127)<<23u)|(sig&0x7fffffu);
+}
+uint grsColumnPreservingFloatBits(uint x){uint bits=grsQ20FloatBits(x),upper=(x>>20u)+1u;if(bits>=grsQ20FloatBits(upper<<20u))bits--;return bits;}
+
+int grsCompare128(uvec4 a,uvec4 b){for(int i=3;i>=0;i--)if(a[i]!=b[i])return a[i]<b[i]?-1:1;return 0;}
+bool grsDivideSigned(int a,int b,bool ceil,out int result){
+ if(b==0)return false;bool negative=(a<0)!=(b<0);uint aa=a<0?0u-uint(a):uint(a),bb=b<0?0u-uint(b):uint(b),q=aa/bb,r=aa%bb;
+ if(r!=0u&&((negative&&!ceil)||(!negative&&ceil)))q++;
+ if(q>(negative?0x80000000u:0x7fffffffu))return false;result=negative?(q==0x80000000u?(-2147483647-1):-int(q)):int(q);return true;
+}
+bool grsFloorDiv(int a,int b,out int result){return grsDivideSigned(a,b,false,result);}
+bool grsCeilDiv(int a,int b,out int result){return grsDivideSigned(a,b,true,result);}
+
+const uint M2_kPolicyId = 1u;
+const uint M2_rev_wire = 3u;
+const uint M2_rev_layout = 3u;
+const uint M2_rev_algorithm = 3u;
+const uint M2_rev_source = 3u;
+const uint M2_rev_scene = 3u;
+const uint M2_rev_featureBitmapLo = 7u;
+const uint M2_rev_featureBitmapHi = 0u;
+const uint M2_rev_numeric = 1u;
+const uint M2_rev_time = 1u;
+const uint M2_rev_angle = 1u;
+const uint M2_rev_medium = 2u;
+const uint M2_rev_motion = 1u;
+const uint M2_rev_water = 1u;
+const uint M2_rev_optics = 1u;
+const uint M2_cfg_Q = 1048576u;
+const uint M2_cfg_CQ = 268435456u;
+const uint M2_cfg_columns = 128u;
+const uint M2_cfg_package = 122333u;
+const uint M2_cfg_lightMax = 122333u;
+const uint M2_cfg_mergedMax = 244666u;
+const uint M2_cfg_radiusQ = 65536u;
+const uint M2_cfg_D = 4096u;
+const uint M2_cfg_workgroup = 64u;
+const uint M2_cfg_maxSharedBytes = 2048u;
+const uint M2_water16_wordCount = 16u;
+const uint M2_water16_mass = 0u;
+const uint M2_water16_x = 1u;
+const uint M2_water16_y = 2u;
+const uint M2_water16_vx = 3u;
+const uint M2_water16_vy = 4u;
+const uint M2_water16_id = 5u;
+const uint M2_water16_originLo = 6u;
+const uint M2_water16_originHi = 7u;
+const uint M2_water16_birthCommitLo = 8u;
+const uint M2_water16_birthCommitHi = 9u;
+const uint M2_water16_stateWait = 10u;
+const uint M2_water16_generation = 11u;
+const uint M2_water16_sourceId = 12u;
+const uint M2_water16_birthQuantumLo = 13u;
+const uint M2_water16_birthQuantumHi = 14u;
+const uint M2_water16_flags = 15u;
+const uint M2_header256_wordCount = 256u;
+const uint M2_header256_magic = 0u;
+const uint M2_header256_revision = 1u;
+const uint M2_header256_wordLength = 2u;
+const uint M2_header256_flags = 3u;
+const uint M2_header256_runLo = 4u;
+const uint M2_header256_runHi = 5u;
+const uint M2_header256_ownerLo = 6u;
+const uint M2_header256_ownerHi = 7u;
+const uint M2_header256_contextEpochLo = 8u;
+const uint M2_header256_contextEpochHi = 9u;
+const uint M2_header256_surfaceEpochLo = 10u;
+const uint M2_header256_surfaceEpochHi = 11u;
+const uint M2_header256_rootNonceLo = 12u;
+const uint M2_header256_rootNonceHi = 13u;
+const uint M2_header256_sourceCommitLo = 14u;
+const uint M2_header256_sourceCommitHi = 15u;
+const uint M2_header256_physicsCommitLo = 16u;
+const uint M2_header256_physicsCommitHi = 17u;
+const uint M2_header256_controlSerialLo = 18u;
+const uint M2_header256_controlSerialHi = 19u;
+const uint M2_header256_geometryLo = 20u;
+const uint M2_header256_geometryHi = 21u;
+const uint M2_header256_configLo = 22u;
+const uint M2_header256_configHi = 23u;
+const uint M2_header256_numericRev = 24u;
+const uint M2_header256_timeRev = 25u;
+const uint M2_header256_angleRev = 26u;
+const uint M2_header256_mediumRev = 27u;
+const uint M2_header256_layoutRev = 28u;
+const uint M2_header256_algorithmRev = 29u;
+const uint M2_header256_sceneRev = 30u;
+const uint M2_header256_featureBitmapLo = 31u;
+const uint M2_header256_featureBitmapHi = 32u;
+const uint M2_header256_acceptedSourceCount = 33u;
+const uint M2_header256_acceptedSourceEventCount = 34u;
+const uint M2_header256_eventFrameSerialLo = 35u;
+const uint M2_header256_eventFrameSerialHi = 36u;
+const uint M2_header256_eventArenaIndex = 37u;
+const uint M2_header256_eventUsed = 38u;
+const uint M2_header256_nextSandId = 39u;
+const uint M2_header256_nextWaterId = 40u;
+const uint M2_header256_sandLive = 41u;
+const uint M2_header256_waterLive = 42u;
+const uint M2_header256_sandFree = 43u;
+const uint M2_header256_waterFree = 44u;
+const uint M2_header256_acceptedAngleIndex = 45u;
+const uint M2_header256_requestedAngleIndex = 46u;
+const uint M2_header256_timeCarryLo = 47u;
+const uint M2_header256_timeCarryHi = 48u;
+const uint M2_header256_frameSerialLo = 49u;
+const uint M2_header256_frameSerialHi = 50u;
+const uint M2_header256_quantumOrdinal = 51u;
+const uint M2_header256_budgetTotalInitialLo = 52u;
+const uint M2_header256_budgetTotalInitialHi = 53u;
+const uint M2_header256_budgetTotalRemainingLo = 54u;
+const uint M2_header256_budgetTotalRemainingHi = 55u;
+const uint M2_header256_sandMassLo = 56u;
+const uint M2_header256_sandMassHi = 57u;
+const uint M2_header256_waterMassLo = 58u;
+const uint M2_header256_waterMassHi = 59u;
+const uint M2_header256_I_sandLo = 60u;
+const uint M2_header256_I_sandHi = 61u;
+const uint M2_header256_I_waterLo = 62u;
+const uint M2_header256_I_waterHi = 63u;
+const uint M2_header256_sandInitialLo = 64u;
+const uint M2_header256_sandInitialHi = 65u;
+const uint M2_header256_waterInitialLo = 66u;
+const uint M2_header256_waterInitialHi = 67u;
+const uint M2_header256_firstErrorStage = 68u;
+const uint M2_header256_firstErrorOrdinal = 69u;
+const uint M2_header256_firstErrorReason = 70u;
+const uint M2_header256_indexGeneration = 71u;
+const uint M2_header256_publicationGenerationLo = 72u;
+const uint M2_header256_publicationGenerationHi = 73u;
+const uint M2_header256_sourceLedgerRevLo = 74u;
+const uint M2_header256_sourceLedgerRevHi = 75u;
+const uint M2_header256_acceptedBank = 76u;
+const uint M2_header256_candidateBank = 77u;
+const uint M2_header256_spareBank = 78u;
+const uint M2_header256_rootKind = 79u;
+const uint M2_header256_rootOutcome = 80u;
+const uint M2_header256_rootStatus = 81u;
+const uint M2_header256_clockWindowLo = 82u;
+const uint M2_header256_clockWindowHi = 83u;
+const uint M2_header256_inputLo = 84u;
+const uint M2_header256_inputHi = 85u;
+const uint M2_header256_gestureLo = 86u;
+const uint M2_header256_gestureHi = 87u;
+const uint M2_header256_shaderSha_0 = 88u;
+const uint M2_header256_shaderSha_1 = 89u;
+const uint M2_header256_shaderSha_2 = 90u;
+const uint M2_header256_shaderSha_3 = 91u;
+const uint M2_header256_shaderSha_4 = 92u;
+const uint M2_header256_shaderSha_5 = 93u;
+const uint M2_header256_shaderSha_6 = 94u;
+const uint M2_header256_shaderSha_7 = 95u;
+const uint M2_header256_angleSha_0 = 96u;
+const uint M2_header256_angleSha_1 = 97u;
+const uint M2_header256_angleSha_2 = 98u;
+const uint M2_header256_angleSha_3 = 99u;
+const uint M2_header256_angleSha_4 = 100u;
+const uint M2_header256_angleSha_5 = 101u;
+const uint M2_header256_angleSha_6 = 102u;
+const uint M2_header256_angleSha_7 = 103u;
+const uint M2_header256_layoutSha_0 = 104u;
+const uint M2_header256_layoutSha_1 = 105u;
+const uint M2_header256_layoutSha_2 = 106u;
+const uint M2_header256_layoutSha_3 = 107u;
+const uint M2_header256_layoutSha_4 = 108u;
+const uint M2_header256_layoutSha_5 = 109u;
+const uint M2_header256_layoutSha_6 = 110u;
+const uint M2_header256_layoutSha_7 = 111u;
+const uint M2_header256_settledTotalLo = 112u;
+const uint M2_header256_settledTotalHi = 113u;
+const uint M2_header256_flightTotalLo = 114u;
+const uint M2_header256_flightTotalHi = 115u;
+const uint M2_header256_arrivalSerialLo = 116u;
+const uint M2_header256_arrivalSerialHi = 117u;
+const uint M2_header256_quantumSerialLo = 118u;
+const uint M2_header256_quantumSerialHi = 119u;
+const uint M2_header256_frozenMediumQuantumLo = 120u;
+const uint M2_header256_frozenMediumQuantumHi = 121u;
+const uint M2_header256_motionRev = 122u;
+const uint M2_header256_Tticks = 123u;
+const uint M2_header256_waterRev = 124u;
+const uint M2_header256_opticsRev = 125u;
+const uint M2_header256_sandIdExhausted = 126u;
+const uint M2_header256_waterIdExhausted = 127u;
+const uint M2_header256_waterRows = 128u;
+const uint M2_header256_mediumRows = 129u;
+const uint M2_header256_arrivalRows = 130u;
+const uint M2_header256_waterEdgeRows = 131u;
+const uint M2_header256_m2Policy = 132u;
+const uint M2_header256_package = 133u;
+const uint M2_header256_lightMax = 134u;
+const uint M2_header256_radiusQ = 135u;
+const uint M2_header256_Bmax = 136u;
+const uint M2_header256_lastMergeCount = 137u;
+const uint M2_header256_lastBirthCount = 138u;
+const uint M2_header256_lastStopCode = 139u;
+const uint M2_header256_sourceRecordWords = 140u;
+const uint M2_header256_sourceRows = 141u;
+const uint M2_header256_mutationSerialLo = 142u;
+const uint M2_header256_mutationSerialHi = 143u;
+const uint M2_header256_sourceArenaIndex = 144u;
+const uint M2_sourceCommand32_wordCount = 32u;
+const uint M2_sourceCommand32_magic = 0u;
+const uint M2_sourceCommand32_revision = 1u;
+const uint M2_sourceCommand32_kind = 2u;
+const uint M2_sourceCommand32_flags = 3u;
+const uint M2_sourceCommand32_runLo = 4u;
+const uint M2_sourceCommand32_runHi = 5u;
+const uint M2_sourceCommand32_requestLo = 6u;
+const uint M2_sourceCommand32_requestHi = 7u;
+const uint M2_sourceCommand32_inputLo = 8u;
+const uint M2_sourceCommand32_inputHi = 9u;
+const uint M2_sourceCommand32_gestureLo = 10u;
+const uint M2_sourceCommand32_gestureHi = 11u;
+const uint M2_sourceCommand32_geometryLo = 12u;
+const uint M2_sourceCommand32_geometryHi = 13u;
+const uint M2_sourceCommand32_sourceId = 14u;
+const uint M2_sourceCommand32_requestSeq = 15u;
+const uint M2_sourceCommand32_xRawLo = 16u;
+const uint M2_sourceCommand32_xRawHi = 17u;
+const uint M2_sourceCommand32_yRawLo = 18u;
+const uint M2_sourceCommand32_yRawHi = 19u;
+const uint M2_sourceCommand32_volumeRawLo = 20u;
+const uint M2_sourceCommand32_volumeRawHi = 21u;
+const uint M2_sourceCommand32_timestampLo = 22u;
+const uint M2_sourceCommand32_timestampHi = 23u;
+const uint M2_sourceCommand32_clockWindowLo = 24u;
+const uint M2_sourceCommand32_clockWindowHi = 25u;
+const uint M2_sourceCommand32_seed = 26u;
+const uint M2_sourceCommand32_timeUnit = 27u;
+const uint M2_sourceCommand32_configLo = 28u;
+const uint M2_sourceCommand32_configHi = 29u;
+const uint M2_sourceCommand32_subtype = 30u;
+const uint M2_sourceTerminal32_wordCount = 32u;
+const uint M2_sourceTerminal32_status = 0u;
+const uint M2_sourceTerminal32_reason = 1u;
+const uint M2_sourceTerminal32_replayFlag = 2u;
+const uint M2_sourceTerminal32_admittedUnits = 3u;
+const uint M2_sourceTerminal32_rejectedUnits = 4u;
+const uint M2_sourceTerminal32_column = 5u;
+const uint M2_sourceTerminal32_birthCount = 6u;
+const uint M2_sourceTerminal32_firstId = 7u;
+const uint M2_sourceTerminal32_nextIdBefore = 8u;
+const uint M2_sourceTerminal32_nextIdAfter = 9u;
+const uint M2_sourceTerminal32_sourceCommitLo = 10u;
+const uint M2_sourceTerminal32_sourceCommitHi = 11u;
+const uint M2_sourceTerminal32_physicsCommitLo = 12u;
+const uint M2_sourceTerminal32_physicsCommitHi = 13u;
+const uint M2_sourceTerminal32_successSeqLo = 14u;
+const uint M2_sourceTerminal32_successSeqHi = 15u;
+const uint M2_sourceTerminal32_sandBeforeLo = 16u;
+const uint M2_sourceTerminal32_sandBeforeHi = 17u;
+const uint M2_sourceTerminal32_sandAfterLo = 18u;
+const uint M2_sourceTerminal32_sandAfterHi = 19u;
+const uint M2_sourceTerminal32_waterBeforeLo = 20u;
+const uint M2_sourceTerminal32_waterBeforeHi = 21u;
+const uint M2_sourceTerminal32_waterAfterLo = 22u;
+const uint M2_sourceTerminal32_waterAfterHi = 23u;
+const uint M2_sourceTerminal32_I_sandLo = 24u;
+const uint M2_sourceTerminal32_I_sandHi = 25u;
+const uint M2_sourceTerminal32_I_waterLo = 26u;
+const uint M2_sourceTerminal32_I_waterHi = 27u;
+const uint M2_sourceTerminal32_sourceLedgerRevLo = 28u;
+const uint M2_sourceTerminal32_sourceLedgerRevHi = 29u;
+const uint M2_sourceTerminal32_deliveryMode = 30u;
+const uint M2_sourceTerminal32_terminalFlags = 31u;
+const uint M2_event64_wordCount = 64u;
+const uint M2_event64_magic = 0u;
+const uint M2_event64_revision = 1u;
+const uint M2_event64_rootNonceLo = 2u;
+const uint M2_event64_rootNonceHi = 3u;
+const uint M2_event64_rootKind = 4u;
+const uint M2_event64_stage = 5u;
+const uint M2_event64_kind = 6u;
+const uint M2_event64_globalOrdinalLo = 7u;
+const uint M2_event64_globalOrdinalHi = 8u;
+const uint M2_event64_frameSerialLo = 9u;
+const uint M2_event64_frameSerialHi = 10u;
+const uint M2_event64_quantumOrdinal = 11u;
+const uint M2_event64_sourceCommitLo = 12u;
+const uint M2_event64_sourceCommitHi = 13u;
+const uint M2_event64_physicsCommitLo = 14u;
+const uint M2_event64_physicsCommitHi = 15u;
+const uint M2_event64_slot = 16u;
+const uint M2_event64_slotGeneration = 17u;
+const uint M2_event64_id = 18u;
+const uint M2_event64_sourceId = 19u;
+const uint M2_event64_columnBefore = 20u;
+const uint M2_event64_columnAfter = 21u;
+const uint M2_event64_massBefore = 22u;
+const uint M2_event64_massAfter = 23u;
+const uint M2_event64_xBefore = 24u;
+const uint M2_event64_yBefore = 25u;
+const uint M2_event64_xAfter = 26u;
+const uint M2_event64_yAfter = 27u;
+const uint M2_event64_vxBefore = 28u;
+const uint M2_event64_vyBefore = 29u;
+const uint M2_event64_vxAfter = 30u;
+const uint M2_event64_vyAfter = 31u;
+const uint M2_event64_stockBeforeA = 32u;
+const uint M2_event64_stockAfterA = 33u;
+const uint M2_event64_stockBeforeB = 34u;
+const uint M2_event64_stockAfterB = 35u;
+const uint M2_event64_budgetTotalBeforeLo = 36u;
+const uint M2_event64_budgetTotalBeforeHi = 37u;
+const uint M2_event64_budgetTotalAfterLo = 38u;
+const uint M2_event64_budgetTotalAfterHi = 39u;
+const uint M2_event64_budgetLocalBeforeA = 40u;
+const uint M2_event64_budgetLocalAfterA = 41u;
+const uint M2_event64_budgetLocalBeforeB = 42u;
+const uint M2_event64_budgetLocalAfterB = 43u;
+const uint M2_event64_lambdaNumLo = 44u;
+const uint M2_event64_lambdaNumHi = 45u;
+const uint M2_event64_lambdaDenLo = 46u;
+const uint M2_event64_lambdaDenHi = 47u;
+const uint M2_event64_originLo = 48u;
+const uint M2_event64_originHi = 49u;
+const uint M2_event64_requestLo = 50u;
+const uint M2_event64_requestHi = 51u;
+const uint M2_event64_flags = 52u;
+const uint M2_event64_failureReason = 53u;
+const uint M2_event64_surfaceEdge = 54u;
+const uint M2_event64_phase = 55u;
+const uint M2_event64_tauBefore = 56u;
+const uint M2_event64_tauAfter = 57u;
+const uint M2_event64_mediumBefore = 58u;
+const uint M2_event64_mediumAfter = 59u;
+const uint M2_event64_etaFrom = 60u;
+const uint M2_event64_etaTo = 61u;
+const uint M2_event64_planeTag = 62u;
+const uint M2_event64_eventAux = 63u;
+const uint M2_completion256_wordCount = 256u;
+const uint M2_completion256_magic = 0u;
+const uint M2_completion256_revision = 1u;
+const uint M2_completion256_wordLength = 2u;
+const uint M2_completion256_seal = 3u;
+const uint M2_completion256_rootNonceLo = 4u;
+const uint M2_completion256_rootNonceHi = 5u;
+const uint M2_completion256_runLo = 6u;
+const uint M2_completion256_runHi = 7u;
+const uint M2_completion256_ownerLo = 8u;
+const uint M2_completion256_ownerHi = 9u;
+const uint M2_completion256_contextEpochLo = 10u;
+const uint M2_completion256_contextEpochHi = 11u;
+const uint M2_completion256_surfaceEpochLo = 12u;
+const uint M2_completion256_surfaceEpochHi = 13u;
+const uint M2_completion256_baseSourceCommitLo = 14u;
+const uint M2_completion256_baseSourceCommitHi = 15u;
+const uint M2_completion256_basePhysicsCommitLo = 16u;
+const uint M2_completion256_basePhysicsCommitHi = 17u;
+const uint M2_completion256_proposedSourceCommitLo = 18u;
+const uint M2_completion256_proposedSourceCommitHi = 19u;
+const uint M2_completion256_proposedPhysicsCommitLo = 20u;
+const uint M2_completion256_proposedPhysicsCommitHi = 21u;
+const uint M2_completion256_controlSerialLo = 22u;
+const uint M2_completion256_controlSerialHi = 23u;
+const uint M2_completion256_frameSerialLo = 24u;
+const uint M2_completion256_frameSerialHi = 25u;
+const uint M2_completion256_quantumOrdinal = 26u;
+const uint M2_completion256_rootKind = 27u;
+const uint M2_completion256_outcome = 28u;
+const uint M2_completion256_reason = 29u;
+const uint M2_completion256_firstErrorStage = 30u;
+const uint M2_completion256_firstErrorOrdinal = 31u;
+const uint M2_completion256_baseBank = 32u;
+const uint M2_completion256_candidateBank = 33u;
+const uint M2_completion256_spareBank = 34u;
+const uint M2_completion256_publicationSlot = 35u;
+const uint M2_completion256_publicationGenerationLo = 36u;
+const uint M2_completion256_publicationGenerationHi = 37u;
+const uint M2_completion256_geometryLo = 38u;
+const uint M2_completion256_geometryHi = 39u;
+const uint M2_completion256_configLo = 40u;
+const uint M2_completion256_configHi = 41u;
+const uint M2_completion256_numericRev = 42u;
+const uint M2_completion256_timeRev = 43u;
+const uint M2_completion256_angleRev = 44u;
+const uint M2_completion256_mediumRev = 45u;
+const uint M2_completion256_layoutRev = 46u;
+const uint M2_completion256_algorithmRev = 47u;
+const uint M2_completion256_sceneRev = 48u;
+const uint M2_completion256_featureBitmapLo = 49u;
+const uint M2_completion256_featureBitmapHi = 50u;
+const uint M2_completion256_eventArenaIndex = 51u;
+const uint M2_completion256_eventStart = 52u;
+const uint M2_completion256_eventEnd = 53u;
+const uint M2_completion256_eventCapacity = 54u;
+const uint M2_completion256_sourceEventPrefixBefore = 55u;
+const uint M2_completion256_sourceEventPrefixAfter = 56u;
+const uint M2_completion256_dedupPrefixBefore = 57u;
+const uint M2_completion256_dedupPrefixAfter = 58u;
+const uint M2_completion256_sourceId = 59u;
+const uint M2_completion256_requestSeq = 60u;
+const uint M2_completion256_admittedUnits = 61u;
+const uint M2_completion256_rejectedUnits = 62u;
+const uint M2_completion256_receiptStatus = 63u;
+const uint M2_completion256_receiptReason = 64u;
+const uint M2_completion256_receiptReplayFlag = 65u;
+const uint M2_completion256_receiptBirthCount = 66u;
+const uint M2_completion256_receiptFirstId = 67u;
+const uint M2_completion256_receiptNextId = 68u;
+const uint M2_completion256_sandBeforeLo = 69u;
+const uint M2_completion256_sandBeforeHi = 70u;
+const uint M2_completion256_sandAfterLo = 71u;
+const uint M2_completion256_sandAfterHi = 72u;
+const uint M2_completion256_waterBeforeLo = 73u;
+const uint M2_completion256_waterBeforeHi = 74u;
+const uint M2_completion256_waterAfterLo = 75u;
+const uint M2_completion256_waterAfterHi = 76u;
+const uint M2_completion256_I_sandLo = 77u;
+const uint M2_completion256_I_sandHi = 78u;
+const uint M2_completion256_I_waterLo = 79u;
+const uint M2_completion256_I_waterHi = 80u;
+const uint M2_completion256_budgetUsedLo = 81u;
+const uint M2_completion256_budgetUsedHi = 82u;
+const uint M2_completion256_budgetRemainingLo = 83u;
+const uint M2_completion256_budgetRemainingHi = 84u;
+const uint M2_completion256_guardMin = 85u;
+const uint M2_completion256_guardMax = 86u;
+const uint M2_completion256_capacityMax = 87u;
+const uint M2_completion256_sandLive = 88u;
+const uint M2_completion256_sandFree = 89u;
+const uint M2_completion256_waterLive = 90u;
+const uint M2_completion256_waterFree = 91u;
+const uint M2_completion256_nextSandId = 92u;
+const uint M2_completion256_nextWaterId = 93u;
+const uint M2_completion256_motionEventCount = 94u;
+const uint M2_completion256_bedEventCount = 95u;
+const uint M2_completion256_sourceEventCount = 96u;
+const uint M2_completion256_stageCompletedMaskLo = 97u;
+const uint M2_completion256_stageCompletedMaskHi = 98u;
+const uint M2_completion256_auditFlagMaskLo = 99u;
+const uint M2_completion256_auditFlagMaskHi = 100u;
+const uint M2_completion256_replayMismatchWord = 101u;
+const uint M2_completion256_replayMismatchExpected = 102u;
+const uint M2_completion256_replayMismatchActual = 103u;
+const uint M2_completion256_firstGlError = 104u;
+const uint M2_completion256_fenceStatus = 105u;
+const uint M2_completion256_metadataOnlyStockEqual = 106u;
+const uint M2_completion256_angleAcceptedIndex = 107u;
+const uint M2_completion256_timeCarryLo = 108u;
+const uint M2_completion256_timeCarryHi = 109u;
+const uint M2_completion256_actualDispatchCount = 110u;
+const uint M2_completion256_actualBarrierCount = 111u;
+const uint M2_completion256_actualBytesUploaded = 112u;
+const uint M2_completion256_actualBytesMapped = 113u;
+const uint M2_completion256_shaderSha_0 = 114u;
+const uint M2_completion256_shaderSha_1 = 115u;
+const uint M2_completion256_shaderSha_2 = 116u;
+const uint M2_completion256_shaderSha_3 = 117u;
+const uint M2_completion256_shaderSha_4 = 118u;
+const uint M2_completion256_shaderSha_5 = 119u;
+const uint M2_completion256_shaderSha_6 = 120u;
+const uint M2_completion256_shaderSha_7 = 121u;
+const uint M2_completion256_angleSha_0 = 122u;
+const uint M2_completion256_angleSha_1 = 123u;
+const uint M2_completion256_angleSha_2 = 124u;
+const uint M2_completion256_angleSha_3 = 125u;
+const uint M2_completion256_angleSha_4 = 126u;
+const uint M2_completion256_angleSha_5 = 127u;
+const uint M2_completion256_angleSha_6 = 128u;
+const uint M2_completion256_angleSha_7 = 129u;
+const uint M2_completion256_layoutSha_0 = 130u;
+const uint M2_completion256_layoutSha_1 = 131u;
+const uint M2_completion256_layoutSha_2 = 132u;
+const uint M2_completion256_layoutSha_3 = 133u;
+const uint M2_completion256_layoutSha_4 = 134u;
+const uint M2_completion256_layoutSha_5 = 135u;
+const uint M2_completion256_layoutSha_6 = 136u;
+const uint M2_completion256_layoutSha_7 = 137u;
+const uint M2_completion256_settledBeforeLo = 138u;
+const uint M2_completion256_settledBeforeHi = 139u;
+const uint M2_completion256_settledAfterLo = 140u;
+const uint M2_completion256_settledAfterHi = 141u;
+const uint M2_completion256_flightBeforeLo = 142u;
+const uint M2_completion256_flightBeforeHi = 143u;
+const uint M2_completion256_flightAfterLo = 144u;
+const uint M2_completion256_flightAfterHi = 145u;
+const uint M2_completion256_arrivalSerialBeforeLo = 146u;
+const uint M2_completion256_arrivalSerialBeforeHi = 147u;
+const uint M2_completion256_arrivalSerialAfterLo = 148u;
+const uint M2_completion256_arrivalSerialAfterHi = 149u;
+const uint M2_completion256_quantumSerialLo = 150u;
+const uint M2_completion256_quantumSerialHi = 151u;
+const uint M2_completion256_frozenMediumEpochLo = 152u;
+const uint M2_completion256_frozenMediumEpochHi = 153u;
+const uint M2_completion256_waterRows = 154u;
+const uint M2_completion256_mediumRows = 155u;
+const uint M2_completion256_arrivals = 156u;
+const uint M2_completion256_waterEdges = 157u;
+const uint M2_completion256_deliveryMode = 158u;
+const uint M2_completion256_acceptedWaterId = 159u;
+const uint M2_completion256_m2Policy = 160u;
+const uint M2_completion256_package = 161u;
+const uint M2_completion256_lightMax = 162u;
+const uint M2_completion256_radiusQ = 163u;
+const uint M2_completion256_Bmax = 164u;
+const uint M2_completion256_lastMergeCount = 165u;
+const uint M2_completion256_lastBirthCount = 166u;
+const uint M2_completion256_lastStopCode = 167u;
+const uint M2_completion256_sourceRecordWords = 168u;
+const uint M2_completion256_sourceRows = 169u;
+const uint M2_completion256_mutationSerialLo = 170u;
+const uint M2_completion256_mutationSerialHi = 171u;
+const uint M2_completion256_sourceArenaIndex = 172u;
+const uint M2_publicationWater20_wordCount = 20u;
+const uint M2_publicationWater20_mass = 0u;
+const uint M2_publicationWater20_x = 1u;
+const uint M2_publicationWater20_y = 2u;
+const uint M2_publicationWater20_vx = 3u;
+const uint M2_publicationWater20_vy = 4u;
+const uint M2_publicationWater20_id = 5u;
+const uint M2_publicationWater20_originLo = 6u;
+const uint M2_publicationWater20_originHi = 7u;
+const uint M2_publicationWater20_birthCommitLo = 8u;
+const uint M2_publicationWater20_birthCommitHi = 9u;
+const uint M2_publicationWater20_stateWait = 10u;
+const uint M2_publicationWater20_generation = 11u;
+const uint M2_publicationWater20_sourceId = 12u;
+const uint M2_publicationWater20_birthQuantumLo = 13u;
+const uint M2_publicationWater20_birthQuantumHi = 14u;
+const uint M2_publicationWater20_flags = 15u;
+const uint M2_publicationWater20_xF32Bits = 16u;
+const uint M2_publicationWater20_yF32Bits = 17u;
+const uint M2_publicationWater20_packedVisualTag = 18u;
+const uint M2_publicationColumn16_wordCount = 16u;
+const uint M2_publicationColumn16_S = 0u;
+const uint M2_publicationColumn16_W = 1u;
+const uint M2_publicationColumn16_eta = 2u;
+const uint M2_publicationColumn16_J = 3u;
+const uint M2_publicationColumn16_P = 4u;
+const uint M2_publicationColumn16_bh = 5u;
+const uint M2_publicationColumn16_mh = 6u;
+const uint M2_publicationColumn16_R = 7u;
+const uint M2_publicationColumn16_Sf32 = 8u;
+const uint M2_publicationColumn16_etaF32 = 9u;
+const uint M2_publicationColumn16_Wf32 = 10u;
+const uint M2_publicationColumn16_Rf32 = 11u;
+const uint M2_publicationColumn16_wet = 12u;
+const uint M2_publicationColumn16_columnIndex = 13u;
+const uint M2_publicationColumn16_slopeF32 = 14u;
+const uint M2_publicationHeader256_wordCount = 256u;
+const uint M2_publicationHeader256_magic = 0u;
+const uint M2_publicationHeader256_revision = 1u;
+const uint M2_publicationHeader256_wordLength = 2u;
+const uint M2_publicationHeader256_seal = 3u;
+const uint M2_publicationHeader256_runLo = 4u;
+const uint M2_publicationHeader256_runHi = 5u;
+const uint M2_publicationHeader256_ownerLo = 6u;
+const uint M2_publicationHeader256_ownerHi = 7u;
+const uint M2_publicationHeader256_contextEpochLo = 8u;
+const uint M2_publicationHeader256_contextEpochHi = 9u;
+const uint M2_publicationHeader256_surfaceEpochLo = 10u;
+const uint M2_publicationHeader256_surfaceEpochHi = 11u;
+const uint M2_publicationHeader256_sourceCommitLo = 12u;
+const uint M2_publicationHeader256_sourceCommitHi = 13u;
+const uint M2_publicationHeader256_physicsCommitLo = 14u;
+const uint M2_publicationHeader256_physicsCommitHi = 15u;
+const uint M2_publicationHeader256_controlSerialLo = 16u;
+const uint M2_publicationHeader256_controlSerialHi = 17u;
+const uint M2_publicationHeader256_geometryLo = 18u;
+const uint M2_publicationHeader256_geometryHi = 19u;
+const uint M2_publicationHeader256_configLo = 20u;
+const uint M2_publicationHeader256_configHi = 21u;
+const uint M2_publicationHeader256_numericRev = 22u;
+const uint M2_publicationHeader256_timeRev = 23u;
+const uint M2_publicationHeader256_angleRev = 24u;
+const uint M2_publicationHeader256_mediumRev = 25u;
+const uint M2_publicationHeader256_layoutRev = 26u;
+const uint M2_publicationHeader256_algorithmRev = 27u;
+const uint M2_publicationHeader256_sceneRev = 28u;
+const uint M2_publicationHeader256_featureBitmapLo = 29u;
+const uint M2_publicationHeader256_featureBitmapHi = 30u;
+const uint M2_publicationHeader256_acceptedBank = 31u;
+const uint M2_publicationHeader256_publicationGenerationLo = 32u;
+const uint M2_publicationHeader256_publicationGenerationHi = 33u;
+const uint M2_publicationHeader256_sandCount = 34u;
+const uint M2_publicationHeader256_waterCount = 35u;
+const uint M2_publicationHeader256_columnCount = 36u;
+const uint M2_publicationHeader256_frameSerialLo = 37u;
+const uint M2_publicationHeader256_frameSerialHi = 38u;
+const uint M2_publicationHeader256_renderLeaseGenerationLo = 39u;
+const uint M2_publicationHeader256_renderLeaseGenerationHi = 40u;
+const uint M2_publicationHeader256_shaderSha_0 = 41u;
+const uint M2_publicationHeader256_shaderSha_1 = 42u;
+const uint M2_publicationHeader256_shaderSha_2 = 43u;
+const uint M2_publicationHeader256_shaderSha_3 = 44u;
+const uint M2_publicationHeader256_shaderSha_4 = 45u;
+const uint M2_publicationHeader256_shaderSha_5 = 46u;
+const uint M2_publicationHeader256_shaderSha_6 = 47u;
+const uint M2_publicationHeader256_shaderSha_7 = 48u;
+const uint M2_publicationHeader256_angleSha_0 = 49u;
+const uint M2_publicationHeader256_angleSha_1 = 50u;
+const uint M2_publicationHeader256_angleSha_2 = 51u;
+const uint M2_publicationHeader256_angleSha_3 = 52u;
+const uint M2_publicationHeader256_angleSha_4 = 53u;
+const uint M2_publicationHeader256_angleSha_5 = 54u;
+const uint M2_publicationHeader256_angleSha_6 = 55u;
+const uint M2_publicationHeader256_angleSha_7 = 56u;
+const uint M2_publicationHeader256_layoutSha_0 = 57u;
+const uint M2_publicationHeader256_layoutSha_1 = 58u;
+const uint M2_publicationHeader256_layoutSha_2 = 59u;
+const uint M2_publicationHeader256_layoutSha_3 = 60u;
+const uint M2_publicationHeader256_layoutSha_4 = 61u;
+const uint M2_publicationHeader256_layoutSha_5 = 62u;
+const uint M2_publicationHeader256_layoutSha_6 = 63u;
+const uint M2_publicationHeader256_layoutSha_7 = 64u;
+const uint M2_publicationHeader256_opticsRev = 65u;
+const uint M2_publicationHeader256_profileKw = 66u;
+const uint M2_publicationHeader256_motionRev = 67u;
+const uint M2_publicationHeader256_waterRev = 68u;
+const uint M2_publicationHeader256_Tticks = 69u;
+const uint M2_publicationHeader256_waterPolicyRev = 70u;
+const uint M2_column16_wordCount = 16u;
+const uint M2_column16_bh = 0u;
+const uint M2_column16_bl = 1u;
+const uint M2_column16_mh = 2u;
+const uint M2_column16_ml = 3u;
+const uint M2_column16_UH = 4u;
+const uint M2_column16_UL = 5u;
+const uint M2_column16_W = 6u;
+const uint M2_column16_J = 7u;
+const uint M2_column16_PH = 8u;
+const uint M2_column16_PL = 9u;
+const uint M2_column16_S = 10u;
+const uint M2_column16_mix = 11u;
+const uint M2_column16_eta = 12u;
+const uint M2_column16_envelope = 13u;
+const uint M2_column16_localUsed = 14u;
+const uint M2_column16_localRemaining = 15u;
+const uint M2_sourceEvent16_wordCount = 16u;
+const uint M2_sourceEvent16_requestLo = 0u;
+const uint M2_sourceEvent16_requestHi = 1u;
+const uint M2_sourceEvent16_sourceCommitLo = 2u;
+const uint M2_sourceEvent16_sourceCommitHi = 3u;
+const uint M2_sourceEvent16_kind = 4u;
+const uint M2_sourceEvent16_column = 5u;
+const uint M2_sourceEvent16_q = 6u;
+const uint M2_sourceEvent16_firstId = 7u;
+const uint M2_sourceEvent16_birthCount = 8u;
+const uint M2_sourceEvent16_sourceId = 9u;
+const uint M2_sourceEvent16_x = 10u;
+const uint M2_sourceEvent16_y = 11u;
+const uint M2_sourceEvent16_nextIdBefore = 12u;
+const uint M2_sourceEvent16_nextIdAfter = 13u;
+const uint M2_sourceEvent16_mergeCount = 14u;
+const uint M2_sourceEvent16_stopCode = 15u;
+const uint M2_publicationSand16_wordCount = 16u;
+const uint M2_publicationSand16_id = 0u;
+const uint M2_publicationSand16_slotGeneration = 1u;
+const uint M2_publicationSand16_sourceId = 2u;
+const uint M2_publicationSand16_mass = 3u;
+const uint M2_publicationSand16_xQ20 = 4u;
+const uint M2_publicationSand16_yQ20 = 5u;
+const uint M2_publicationSand16_vxQ20 = 6u;
+const uint M2_publicationSand16_vyQ20 = 7u;
+const uint M2_publicationSand16_visualXFloatBits = 8u;
+const uint M2_publicationSand16_visualYFloatBits = 9u;
+const uint M2_publicationSand16_visualRadiusFloatBits = 10u;
+const uint M2_publicationSand16_column = 11u;
+const uint M2_publicationSand16_state = 12u;
+const uint M2_publicationSand16_flags = 13u;
+const uint M2_publicationSand16_originLo = 14u;
+const uint M2_publicationSand16_originHi = 15u;
+const uint M2_sand16_wordCount = 16u;
+const uint M2_sand16_mass = 0u;
+const uint M2_sand16_x = 1u;
+const uint M2_sand16_y = 2u;
+const uint M2_sand16_vx = 3u;
+const uint M2_sand16_vy = 4u;
+const uint M2_sand16_id = 5u;
+const uint M2_sand16_tag = 6u;
+const uint M2_sand16_sourceId = 7u;
+const uint M2_sand16_originLo = 8u;
+const uint M2_sand16_originHi = 9u;
+const uint M2_sand16_generation = 10u;
+const uint M2_sand16_wait = 11u;
+const uint M2_sand16_medium = 14u;
+const uint M2_sand16_lastQuantumAux = 15u;
+const uint M2_dedup64_wordCount = 64u;
+const uint M2_dedup64_command_magic = 0u;
+const uint M2_dedup64_command_revision = 1u;
+const uint M2_dedup64_command_kind = 2u;
+const uint M2_dedup64_command_flags = 3u;
+const uint M2_dedup64_command_runLo = 4u;
+const uint M2_dedup64_command_runHi = 5u;
+const uint M2_dedup64_command_requestLo = 6u;
+const uint M2_dedup64_command_requestHi = 7u;
+const uint M2_dedup64_command_inputLo = 8u;
+const uint M2_dedup64_command_inputHi = 9u;
+const uint M2_dedup64_command_gestureLo = 10u;
+const uint M2_dedup64_command_gestureHi = 11u;
+const uint M2_dedup64_command_geometryLo = 12u;
+const uint M2_dedup64_command_geometryHi = 13u;
+const uint M2_dedup64_command_sourceId = 14u;
+const uint M2_dedup64_command_requestSeq = 15u;
+const uint M2_dedup64_command_xRawLo = 16u;
+const uint M2_dedup64_command_xRawHi = 17u;
+const uint M2_dedup64_command_yRawLo = 18u;
+const uint M2_dedup64_command_yRawHi = 19u;
+const uint M2_dedup64_command_volumeRawLo = 20u;
+const uint M2_dedup64_command_volumeRawHi = 21u;
+const uint M2_dedup64_command_timestampLo = 22u;
+const uint M2_dedup64_command_timestampHi = 23u;
+const uint M2_dedup64_command_clockWindowLo = 24u;
+const uint M2_dedup64_command_clockWindowHi = 25u;
+const uint M2_dedup64_command_seed = 26u;
+const uint M2_dedup64_command_timeUnit = 27u;
+const uint M2_dedup64_command_configLo = 28u;
+const uint M2_dedup64_command_configHi = 29u;
+const uint M2_dedup64_command_subtype = 30u;
+const uint M2_dedup64_command_reserved31 = 31u;
+const uint M2_dedup64_terminal_status = 32u;
+const uint M2_dedup64_terminal_reason = 33u;
+const uint M2_dedup64_terminal_replayFlag = 34u;
+const uint M2_dedup64_terminal_admittedUnits = 35u;
+const uint M2_dedup64_terminal_rejectedUnits = 36u;
+const uint M2_dedup64_terminal_column = 37u;
+const uint M2_dedup64_terminal_birthCount = 38u;
+const uint M2_dedup64_terminal_firstId = 39u;
+const uint M2_dedup64_terminal_nextIdBefore = 40u;
+const uint M2_dedup64_terminal_nextIdAfter = 41u;
+const uint M2_dedup64_terminal_sourceCommitLo = 42u;
+const uint M2_dedup64_terminal_sourceCommitHi = 43u;
+const uint M2_dedup64_terminal_physicsCommitLo = 44u;
+const uint M2_dedup64_terminal_physicsCommitHi = 45u;
+const uint M2_dedup64_terminal_successSeqLo = 46u;
+const uint M2_dedup64_terminal_successSeqHi = 47u;
+const uint M2_dedup64_terminal_sandBeforeLo = 48u;
+const uint M2_dedup64_terminal_sandBeforeHi = 49u;
+const uint M2_dedup64_terminal_sandAfterLo = 50u;
+const uint M2_dedup64_terminal_sandAfterHi = 51u;
+const uint M2_dedup64_terminal_waterBeforeLo = 52u;
+const uint M2_dedup64_terminal_waterBeforeHi = 53u;
+const uint M2_dedup64_terminal_waterAfterLo = 54u;
+const uint M2_dedup64_terminal_waterAfterHi = 55u;
+const uint M2_dedup64_terminal_I_sandLo = 56u;
+const uint M2_dedup64_terminal_I_sandHi = 57u;
+const uint M2_dedup64_terminal_I_waterLo = 58u;
+const uint M2_dedup64_terminal_I_waterHi = 59u;
+const uint M2_dedup64_terminal_sourceLedgerRevLo = 60u;
+const uint M2_dedup64_terminal_sourceLedgerRevHi = 61u;
+const uint M2_dedup64_terminal_deliveryMode = 62u;
+const uint M2_dedup64_terminal_terminalFlags = 63u;
+const uint M2_sourceEvent128_wordCount = 128u;
+const uint M2_sourceEvent128_magic = 0u;
+const uint M2_sourceEvent128_revision = 1u;
+const uint M2_sourceEvent128_kind = 2u;
+const uint M2_sourceEvent128_rootKind = 3u;
+const uint M2_sourceEvent128_nonceLo = 4u;
+const uint M2_sourceEvent128_nonceHi = 5u;
+const uint M2_sourceEvent128_ordinalLo = 6u;
+const uint M2_sourceEvent128_ordinalHi = 7u;
+const uint M2_sourceEvent128_requestLo = 8u;
+const uint M2_sourceEvent128_requestHi = 9u;
+const uint M2_sourceEvent128_proposedSourceCommitLo = 10u;
+const uint M2_sourceEvent128_proposedSourceCommitHi = 11u;
+const uint M2_sourceEvent128_proposedPhysicsCommitLo = 12u;
+const uint M2_sourceEvent128_proposedPhysicsCommitHi = 13u;
+const uint M2_sourceEvent128_namespaceWord = 14u;
+const uint M2_sourceEvent128_slotA = 15u;
+const uint M2_sourceEvent128_slotB = 16u;
+const uint M2_sourceEvent128_column = 17u;
+const uint M2_sourceEvent128_q = 18u;
+const uint M2_sourceEvent128_admittedBeforeLo = 19u;
+const uint M2_sourceEvent128_admittedBeforeHi = 20u;
+const uint M2_sourceEvent128_admittedAfterLo = 21u;
+const uint M2_sourceEvent128_admittedAfterHi = 22u;
+const uint M2_sourceEvent128_stockBefore = 23u;
+const uint M2_sourceEvent128_stockAfter = 24u;
+const uint M2_sourceEvent128_birthCount = 25u;
+const uint M2_sourceEvent128_mergeCount = 26u;
+const uint M2_sourceEvent128_stopCode = 27u;
+const uint M2_sourceEvent128_nextIdBefore = 28u;
+const uint M2_sourceEvent128_nextIdAfter = 29u;
+const uint M2_sourceEvent128_flags = 30u;
+const uint M2_sourceEvent128_rowSeal = 31u;
+const uint M2_sourceEvent128_oldA_slotWord0 = 32u;
+const uint M2_sourceEvent128_oldA_slotWord1 = 33u;
+const uint M2_sourceEvent128_oldA_slotWord2 = 34u;
+const uint M2_sourceEvent128_oldA_slotWord3 = 35u;
+const uint M2_sourceEvent128_oldA_slotWord4 = 36u;
+const uint M2_sourceEvent128_oldA_slotWord5 = 37u;
+const uint M2_sourceEvent128_oldA_slotWord6 = 38u;
+const uint M2_sourceEvent128_oldA_slotWord7 = 39u;
+const uint M2_sourceEvent128_oldA_slotWord8 = 40u;
+const uint M2_sourceEvent128_oldA_slotWord9 = 41u;
+const uint M2_sourceEvent128_oldA_slotWord10 = 42u;
+const uint M2_sourceEvent128_oldA_slotWord11 = 43u;
+const uint M2_sourceEvent128_oldA_slotWord12 = 44u;
+const uint M2_sourceEvent128_oldA_slotWord13 = 45u;
+const uint M2_sourceEvent128_oldA_slotWord14 = 46u;
+const uint M2_sourceEvent128_oldA_slotWord15 = 47u;
+const uint M2_sourceEvent128_oldB_slotWord0 = 48u;
+const uint M2_sourceEvent128_oldB_slotWord1 = 49u;
+const uint M2_sourceEvent128_oldB_slotWord2 = 50u;
+const uint M2_sourceEvent128_oldB_slotWord3 = 51u;
+const uint M2_sourceEvent128_oldB_slotWord4 = 52u;
+const uint M2_sourceEvent128_oldB_slotWord5 = 53u;
+const uint M2_sourceEvent128_oldB_slotWord6 = 54u;
+const uint M2_sourceEvent128_oldB_slotWord7 = 55u;
+const uint M2_sourceEvent128_oldB_slotWord8 = 56u;
+const uint M2_sourceEvent128_oldB_slotWord9 = 57u;
+const uint M2_sourceEvent128_oldB_slotWord10 = 58u;
+const uint M2_sourceEvent128_oldB_slotWord11 = 59u;
+const uint M2_sourceEvent128_oldB_slotWord12 = 60u;
+const uint M2_sourceEvent128_oldB_slotWord13 = 61u;
+const uint M2_sourceEvent128_oldB_slotWord14 = 62u;
+const uint M2_sourceEvent128_oldB_slotWord15 = 63u;
+const uint M2_sourceEvent128_newA_slotWord0 = 64u;
+const uint M2_sourceEvent128_newA_slotWord1 = 65u;
+const uint M2_sourceEvent128_newA_slotWord2 = 66u;
+const uint M2_sourceEvent128_newA_slotWord3 = 67u;
+const uint M2_sourceEvent128_newA_slotWord4 = 68u;
+const uint M2_sourceEvent128_newA_slotWord5 = 69u;
+const uint M2_sourceEvent128_newA_slotWord6 = 70u;
+const uint M2_sourceEvent128_newA_slotWord7 = 71u;
+const uint M2_sourceEvent128_newA_slotWord8 = 72u;
+const uint M2_sourceEvent128_newA_slotWord9 = 73u;
+const uint M2_sourceEvent128_newA_slotWord10 = 74u;
+const uint M2_sourceEvent128_newA_slotWord11 = 75u;
+const uint M2_sourceEvent128_newA_slotWord12 = 76u;
+const uint M2_sourceEvent128_newA_slotWord13 = 77u;
+const uint M2_sourceEvent128_newA_slotWord14 = 78u;
+const uint M2_sourceEvent128_newA_slotWord15 = 79u;
+const uint M2_sourceEvent128_newB_slotWord0 = 80u;
+const uint M2_sourceEvent128_newB_slotWord1 = 81u;
+const uint M2_sourceEvent128_newB_slotWord2 = 82u;
+const uint M2_sourceEvent128_newB_slotWord3 = 83u;
+const uint M2_sourceEvent128_newB_slotWord4 = 84u;
+const uint M2_sourceEvent128_newB_slotWord5 = 85u;
+const uint M2_sourceEvent128_newB_slotWord6 = 86u;
+const uint M2_sourceEvent128_newB_slotWord7 = 87u;
+const uint M2_sourceEvent128_newB_slotWord8 = 88u;
+const uint M2_sourceEvent128_newB_slotWord9 = 89u;
+const uint M2_sourceEvent128_newB_slotWord10 = 90u;
+const uint M2_sourceEvent128_newB_slotWord11 = 91u;
+const uint M2_sourceEvent128_newB_slotWord12 = 92u;
+const uint M2_sourceEvent128_newB_slotWord13 = 93u;
+const uint M2_sourceEvent128_newB_slotWord14 = 94u;
+const uint M2_sourceEvent128_newB_slotWord15 = 95u;
+const uint M2_TARGET_COMPLETE = 0u;
+const uint M2_COLUMN_LIMIT = 1u;
+const uint M2_BIRTH_LIMIT = 2u;
+const uint M2_ID_EXHAUSTED = 3u;
+const uint M2_NO_PAIR = 4u;
+const uint M2_SLOT_LIMIT = 5u;
+const uint M2_INPUT_REJECTED = 6u;
+const uint M2_DEDUP_REPLAY = 7u;
+const uint M2_PAYLOAD_CONFLICT = 8u;
+const uint M2_LEDGER_FULL = 9u;
+const uint M2_SOURCE_EVENT_SCHEMA = 23u;
+const uint M2_SOURCE_ORDER = 24u;
+const uint M2_SOURCE_MUTATION_SERIAL = 25u;
+const uint M2_SOURCE_PREFIX_MISMATCH = 26u;
+const uint M2_sourceMagic = 860172877u;
+const uint M2_sourceSeal = 3235774467u;
+const uint M2_MERGE = 15u;
+const uint M2_MERGE_mask0 = 4160749567u;
+const uint M2_MERGE_mask1 = 4294967295u;
+const uint M2_MERGE_mask2 = 4294967295u;
+const uint M2_MERGE_mask3 = 0u;
+const uint M2_BIRTH = 16u;
+const uint M2_BIRTH_mask0 = 4160684031u;
+const uint M2_BIRTH_mask1 = 65535u;
+const uint M2_BIRTH_mask2 = 65535u;
+const uint M2_BIRTH_mask3 = 0u;
+const uint M2_DIRECT = 17u;
+const uint M2_DIRECT_mask0 = 4160651263u;
+const uint M2_DIRECT_mask1 = 0u;
+const uint M2_DIRECT_mask2 = 0u;
+const uint M2_DIRECT_mask3 = 0u;
+const uint M2_END = 18u;
+const uint M2_END_mask0 = 4269555711u;
+const uint M2_END_mask1 = 0u;
+const uint M2_END_mask2 = 0u;
+const uint M2_END_mask3 = 0u;
+
+// T440 signed weighted nearest-even. Caller has audited the slot words.
+bool m2WeightedRne(uint ma, int a, uint mb, int b, out int value) {
+    value = 0;
+    if (ma == 0u || mb == 0u || ma > M2_cfg_lightMax || mb > M2_cfg_lightMax ||
+        a < -1073741824 || a > 1073741824 || b < -1073741824 || b > 1073741824) return false;
+    uint den = ma + mb;
+    uvec2 pa = grsMul32(ma, uint(abs(a)));
+    uvec2 pb = grsMul32(mb, uint(abs(b)));
+    bool negative;
+    uvec2 magnitude;
+    if ((a < 0) == (b < 0)) {
+        if (!grsAdd64(pa, pb, magnitude)) return false;
+        negative = a < 0;
+    } else if (grsCompare64(pa, pb) >= 0) {
+        if (!grsSub64(pa, pb, magnitude)) return false;
+        negative = a < 0;
+    } else {
+        if (!grsSub64(pb, pa, magnitude)) return false;
+        negative = b < 0;
+    }
+    // The audited magnitude is strictly below 2^48 and the divisor is below 2^18.
+    uint q = 0u, r = 0u;
+    for (int i = 47; i >= 0; --i) {
+        uint bit = (magnitude[i / 32] >> uint(i % 32)) & 1u;
+        r = (r << 1u) | bit;
+        if (r >= den) {
+            if (i >= 32) return false;
+            q |= 1u << uint(i);
+            r -= den;
+        }
+    }
+    if (r > den - r || (r == den - r && (q & 1u) != 0u)) ++q;
+    value = negative ? -int(q) : int(q);
+    return value >= min(a,b) && value <= max(a,b);
+}
+
+// Within the audited single-H SAND_H domain, namespace, phase and sourceKind
+// are constants. Group still compares complete sourceId/origin and tag/medium/column.
+bool m2Eligible(uint row[16]) {
+    return row[M2_sand16_mass] > 0u && row[M2_sand16_mass] <= M2_cfg_lightMax &&
+        row[M2_sand16_tag] == 1u && row[M2_sand16_wait] == 0u && row[M2_sand16_medium] <= 1u;
+}
+bool m2SameGroup(uint a[16], uint b[16]) {
+    return a[M2_sand16_sourceId] == b[M2_sand16_sourceId] &&
+        a[M2_sand16_originHi] == b[M2_sand16_originHi] && a[M2_sand16_originLo] == b[M2_sand16_originLo] &&
+        a[M2_sand16_tag] == b[M2_sand16_tag] && a[M2_sand16_medium] == b[M2_sand16_medium] &&
+        (a[M2_sand16_x] >> 20u) == (b[M2_sand16_x] >> 20u);
+}
+bool m2Pair(uint a[16], uint b[16], uint radius) {
+    uint yA = a[M2_sand16_y], yB = b[M2_sand16_y];
+    return m2Eligible(a) && m2Eligible(b) && m2SameGroup(a,b) &&
+        a[M2_sand16_id] < b[M2_sand16_id] && max(yA,yB) - min(yA,yB) <= radius;
+}
+
+// These snapshot operands are local. Candidate/spare, event credit, mutation
+// serial and lane barriers remain the enclosing SOURCE pass's responsibility.
+bool m2MergeRows(uint a[16], uint b[16], uint radius, uint sandSurface, uint eta, uint water,
+                 out uint merged[16], out uint retired[16]) {
+    if (!m2Pair(a,b,radius)) return false;
+    for (uint f = 0u; f < 16u; ++f) {
+        merged[f] = a[f];
+        retired[f] = f == M2_sand16_generation ? b[f] : 0u;
+    }
+    merged[M2_sand16_mass] += b[M2_sand16_mass];
+    for (uint f = M2_sand16_x; f <= M2_sand16_vy; ++f) {
+        int v;
+        if (!m2WeightedRne(a[M2_sand16_mass], int(a[f]), b[M2_sand16_mass], int(b[f]), v)) return false;
+        merged[f] = uint(v);
+    }
+    uint y = merged[M2_sand16_y];
+    int vy = int(merged[M2_sand16_vy]);
+    merged[M2_sand16_medium] = water > 0u && y > sandSurface && (y < eta || (y == eta && vy <= 0)) ? 1u : 0u;
+    return true;
+}
+
+// Caller supplies W[], m2LoadSand(slot,row) for candidate or spare, and two
+// disjoint pad-word WORK ranges. All 64 invocations must enter these routines.
+shared uint m2Ranks[64];
+shared uint m2Deleted0, m2Deleted1, m2Inserted0, m2Inserted1;
+shared uint m2Changed0, m2Changed1;
+
+bool m2KeyLess(uint a, uint b, uint k) {
+    uint ar[16], br[16];
+    bool av = false, bv = false;
+    if (a < k) { m2LoadSand(a, ar); av = m2Eligible(ar); }
+    if (b < k) { m2LoadSand(b, br); bv = m2Eligible(br); }
+    if (av != bv) return av;
+    if (!av) return a < b;
+    if (ar[7] != br[7]) return ar[7] < br[7];  // sourceId
+    if (ar[9] != br[9]) return ar[9] < br[9];  // originHi
+    if (ar[8] != br[8]) return ar[8] < br[8];  // originLo
+    if (ar[6] != br[6]) return ar[6] < br[6];  // tag
+    if (ar[14] != br[14]) return ar[14] < br[14];  // medium
+    if ((ar[1] >> 20u) != (br[1] >> 20u)) return (ar[1] >> 20u) < (br[1] >> 20u);
+    if (ar[2] != br[2]) return ar[2] < br[2];  // y
+    return ar[5] != br[5] ? ar[5] < br[5] : a < b;
+}
+
+void m2IndexSort(uint at, uint pad, uint k) {
+    uint lane = gl_LocalInvocationIndex;
+    for (uint rank = lane; rank < pad; rank += 64u) W[at+rank] = rank;
+    memoryBarrierBuffer(); barrier();
+    for (uint len = 2u; len <= pad; len <<= 1u) {
+        for (uint step = len >> 1u; step > 0u; step >>= 1u) {
+            for (uint i = lane; i < pad; i += 64u) {
+                uint j = i ^ step;
+                if (j <= i) continue;
+                uint a = W[at+i], b = W[at+j];
+                bool swap = (i & len) == 0u ? m2KeyLess(b,a,k) : m2KeyLess(a,b,k);
+                if (swap) { W[at+i] = b; W[at+j] = a; }
+            }
+            memoryBarrierBuffer(); barrier();
+        }
+    }
+}
+
+uint m2SlotId(uint slot) {
+    uint row[16]; m2LoadSand(slot,row); return row[M2_sand16_id];
+}
+uint m2LowerId(uint a, uint b, uint k) {
+    if (a >= k) return b;
+    if (b >= k) return a;
+    uint aId=m2SlotId(a), bId=m2SlotId(b);
+    return (aId < bId || (aId == bId && a < b)) ? a : b;
+}
+uint m2ReduceId(uint slot, uint k) {
+    uint lane=gl_LocalInvocationIndex;
+    m2Ranks[lane]=slot; barrier();
+    for (uint stride=32u; stride>0u; stride >>= 1u) {
+        if (lane < stride) m2Ranks[lane]=m2LowerId(m2Ranks[lane],m2Ranks[lane+stride],k);
+        barrier();
+    }
+    uint result=m2Ranks[0]; barrier();
+    return result;
+}
+bool m2Witness(uint at, uint rank, uint k, uint a[16], uint radius) {
+    uint slot=W[at+rank];
+    if (slot>=k) return false;
+    uint b[16]; m2LoadSand(slot,b);
+    return m2Pair(a,b,radius)||m2Pair(b,a,radius);
+}
+
+uvec2 m2IndexPair(uint at, uint pad, uint k, uint radius) {
+    uint lane=gl_LocalInvocationIndex, candidate=k;
+    for (uint i=lane; i<pad; i+=64u) {
+        uint slot=W[at+i];
+        if (slot>=k) continue;
+        uint a[16];m2LoadSand(slot,a);
+        if (!m2Eligible(a)) continue;
+        if ((i>0u && m2Witness(at,i-1u,k,a,radius)) || (i+1u<pad && m2Witness(at,i+1u,k,a,radius)))
+            candidate=m2LowerId(candidate,slot,k);
+    }
+    uint first=m2ReduceId(candidate,k);
+    if (first>=k) return uvec2(k);
+    uint a[16];m2LoadSand(first,a);candidate=k;
+    for (uint i=lane; i<pad; i+=64u) {
+        uint slot=W[at+i];
+        if (slot>=k) continue;
+        uint b[16];m2LoadSand(slot,b);
+        if (m2Pair(a,b,radius)) candidate=m2LowerId(candidate,slot,k);
+    }
+    return uvec2(first,m2ReduceId(candidate,k));
+}
+
+uint m2OldRank(uint rank, uint d0, uint d1) {
+    if (rank>=d0) ++rank;
+    if (rank>=d1) ++rank;
+    return rank;
+}
+uint m2LowerBound(uint at, uint count, uint k, uint slot, uint d0, uint d1) {
+    uint low=0u, high=count;
+    while (low<high) {
+        uint mid=(low+high)/2u;
+        // Preserve the coherent load; pass its value across the function boundary.
+        uint oldSlot=W[at+m2OldRank(mid,d0,d1)];
+        if (m2KeyLess(oldSlot,slot,k)) low=mid+1u;
+        else high=mid;
+    }
+    return low;
+}
+
+// Slot values have already changed, but the old index still contains their
+// previous ranks. Delete by slot number before comparing any current keys.
+void m2IndexUpdate(uint oldAt, uint newAt, uint pad, uint k, uint a, uint b) {
+    uint lane=gl_LocalInvocationIndex;
+    if (lane==0u) {
+        uint ra=pad, rb=pad;
+        for (uint i=0u; i<pad; ++i) {
+            if (W[oldAt+i]==a) ra=i;
+            if (b<k && W[oldAt+i]==b) rb=i;
+        }
+        m2Deleted0=min(ra,rb);m2Deleted1=max(ra,rb);
+        uint removed=b<k?2u:1u;
+        if (b<k && m2KeyLess(b,a,k)) {m2Changed0=b;m2Changed1=a;}
+        else {m2Changed0=a;m2Changed1=b;}
+        m2Inserted0=m2LowerBound(oldAt,pad-removed,k,m2Changed0,m2Deleted0,m2Deleted1);
+        m2Inserted1=pad;
+        if (b<k) m2Inserted1=1u+m2LowerBound(oldAt,pad-removed,k,m2Changed1,m2Deleted0,m2Deleted1);
+    }
+    barrier();
+    for (uint i=lane; i<pad; i+=64u) {
+        if (i==m2Inserted0) W[newAt+i]=m2Changed0;
+        else if (i==m2Inserted1) W[newAt+i]=m2Changed1;
+        else {
+            uint r=i-uint(i>m2Inserted0)-uint(i>m2Inserted1);
+            W[newAt+i]=W[oldAt+m2OldRank(r,m2Deleted0,m2Deleted1)];
+        }
+    }
+    memoryBarrierBuffer(); barrier();
+}
+
+// Generated V4 source event field masks.
+const uint M3_MERGE=15u;
+const uvec4 M3_MERGE_MASK=uvec4(4160749567u,4294967295u,4294967295u,255u);
+const uint M3_BIRTH=16u;
+const uvec4 M3_BIRTH_MASK=uvec4(4160684031u,65535u,65535u,255u);
+const uint M3_DIRECT=17u;
+const uvec4 M3_DIRECT_MASK=uvec4(4160651263u,0u,0u,255u);
+const uint M3_END=18u;
+const uvec4 M3_END_MASK=uvec4(4269555711u,0u,0u,255u);
+const uint M3_ETA_COLUMN=20u;
+const uvec4 M3_ETA_COLUMN_MASK=uvec4(3456270335u,2047u,0u,255u);
+const uint M3_SEED_BEGIN=21u;
+const uvec4 M3_SEED_BEGIN_MASK=uvec4(3456532479u,1536u,0u,255u);
+const uint M3_TRIAL_END=22u;
+const uvec4 M3_TRIAL_END_MASK=uvec4(3464265727u,63488u,0u,255u);
+const uint M3_TRIAL_BEGIN=23u;
+const uvec4 M3_TRIAL_BEGIN_MASK=uvec4(3456139263u,6144u,0u,255u);
+uvec4 m3SourceMask(uint kind){
+if(kind==M3_MERGE)return M3_MERGE_MASK;
+if(kind==M3_BIRTH)return M3_BIRTH_MASK;
+if(kind==M3_DIRECT)return M3_DIRECT_MASK;
+if(kind==M3_END)return M3_END_MASK;
+if(kind==M3_ETA_COLUMN)return M3_ETA_COLUMN_MASK;
+if(kind==M3_SEED_BEGIN)return M3_SEED_BEGIN_MASK;
+if(kind==M3_TRIAL_END)return M3_TRIAL_END_MASK;
+if(kind==M3_TRIAL_BEGIN)return M3_TRIAL_BEGIN_MASK;
+return uvec4(0u);
+}
+
+// T497 V4 occupied-head solvers. Called by lane zero of one 64-lane group.
+// State access uses the current role's C bank. WORK scratch is caller-owned.
+uniform uint uM3Scratch,uM3Payload,uM3WaterRate,uM3Settle;
+const uint M3_DESCRIPTOR=0u,M3_REQUESTED=128u,M3_ADMITTED=256u,M3_TARGET_WATER=384u;
+const uint M3_CAP=512u,M3_BASE_ETA=640u,M3_BASE_MATERIAL=768u,M3_WATER_ERROR=896u;
+const uint M3_LAMBDA=0u,M3_TRIAL_REASON=1u,M3_WANT=2u,M3_ETA_HI=3u,M3_RESIDUAL=4u,M3_WATER_BUDGET=5u;
+uint m3Get(uint at){return W[uM3Scratch+at];}
+void m3Put(uint at,uint value){W[uM3Scratch+at]=value;}
+bool m3Sum(inout uvec2 total,uint value){uvec2 next;if(!grsAdd64(total,uvec2(value,0u),next))return false;total=next;return true;}
+uint m3Cap(uint c){
+    uint cap=CQ-col(7u,c);
+    for(uint i=0u;i<uKw;++i){
+        uint mass=C[uWater+i];
+        if(mass==0u||(C[uWater+uKw+i]>>20u)!=c)continue;
+        uint y=C[uWater+2u*uKw+i];
+        if(y==0u)return 0u;
+        cap=min(cap,y-1u);
+    }
+    return cap;
+}
+uint m3Material(uint c){return col(10u,c)+col(8u,c);}
+uint m3Eta(uint c){return m3Material(c)+col(6u,c);}
+bool m3CaptureColumns(){
+    for(uint c=0u;c<128u;++c){
+        uint solid=col(10u,c),particles=col(8u,c),water=col(6u,c),flight=col(7u,c);
+        if(solid>CQ||particles>CQ-solid||water>CQ-solid-particles||flight>CQ-solid-particles-water)return false;
+        uint material=solid+particles,eta=material+water,cap=m3Cap(c);
+        if(eta>cap||col(11u,c)!=material||col(12u,c)!=eta||col(13u,c)!=eta+flight)return false;
+        m3Put(M3_CAP+c,cap);m3Put(M3_BASE_ETA+c,eta);m3Put(M3_BASE_MATERIAL+c,material);
+    }
+    return true;
+}
+bool m3DecodeBulk(){
+    uvec2 total=uvec2(0u);
+    for(uint c=0u;c<128u;++c){
+        uint at=uM3Payload+4u*c;
+        if(W[at+2u]!=0u||W[at+3u]!=0u)return false;
+        uvec2 raw=uvec2(W[at],W[at+1u]);uint quantity=0u;
+        if(!grsFloorBinary64Q20(raw,CQ,quantity)||(raw.y&0x7fffffffu)>0x40700000u||((raw.y&0x7fffffffu)==0x40700000u&&raw.x!=0u))return false;
+        m3Put(M3_REQUESTED+c,quantity);
+        if(!m3Sum(total,quantity)||total.y!=0u||total.x>CQ)return false;
+    }
+    return true;
+}
+uvec2 m3TrialWaterSum(uint shift,bool store){
+    uvec2 sum=uvec2(0u);
+    for(uint c=0u;c<128u;++c){
+        uint virtualMaterial=m3Get(M3_BASE_MATERIAL+c)+m3Get(M3_ADMITTED+c);
+        uint eta=clamp(m3Get(M3_BASE_ETA+c)+shift,virtualMaterial,m3Get(M3_CAP+c));
+        uint water=eta-virtualMaterial;
+        m3Sum(sum,water);if(store)m3Put(M3_TARGET_WATER+c,water);
+    }
+    return sum;
+}
+// 0 SUCCESS, 1 NUMERIC_RESOLUTION, 2 CAP_BOUND_RETRY, 3 ETA_CAPACITY_RETRY,
+// 4 ETA_TRUNCATION_RETRY. Root driver translates these into frozen enum fields.
+uint m3TrialEta(uint lambda){
+    m3Put(M3_LAMBDA,lambda);uvec2 wanted=uvec2(0u),bound=uvec2(0u),water=uvec2(0u);
+    for(uint c=0u;c<128u;++c){
+        uint request=m3Get(M3_REQUESTED+c);uvec2 scaled=grsMul32(request,lambda);
+        uint admitted=(scaled.x>>16u)|(scaled.y<<16u);m3Put(M3_ADMITTED+c,admitted);
+        m3Sum(wanted,admitted);m3Sum(water,col(6u,c));
+        if(request>0u)m3Sum(bound,m3Get(M3_CAP+c)-m3Get(M3_BASE_ETA+c));
+    }
+    if(wanted.y!=0u||wanted.x>CQ)return 3u;
+    m3Put(M3_WANT,wanted.x);
+    if(wanted.x==0u)return 1u;
+    if(grsCompare64(wanted,bound)>0){
+        // In this branch bound < wanted <= CQ, therefore its high word is zero.
+        uvec4 quotient;uint remainder;
+        if(!grsDivide128(uvec4(grsMul32(lambda,bound.x),0u,0u),wanted.x,quotient,remainder)||any(notEqual(quotient.yzw,uvec3(0u))))return 3u;
+        m3Put(M3_LAMBDA,quotient.x);return 2u;
+    }
+    for(uint c=0u;c<128u;++c)if(m3Get(M3_ADMITTED+c)>m3Get(M3_CAP+c)-m3Get(M3_BASE_MATERIAL+c))return 3u;
+    if(grsCompare64(m3TrialWaterSum(CQ,false),water)<0)return 4u;
+    uint low=0u,high=CQ;
+    for(uint iteration=0u;iteration<64u;++iteration){if(low<high){uint middle=low+(high-low)/2u;if(grsCompare64(m3TrialWaterSum(middle,false),water)>=0)high=middle;else low=middle+1u;}}
+    uint eHi=low;m3Put(M3_ETA_HI,eHi);
+    for(uint c=0u;c<128u;++c)if(m3Get(M3_BASE_ETA+c)+eHi>m3Get(M3_CAP+c))return 4u;
+    uvec2 sumHi=m3TrialWaterSum(eHi,false);
+    uint residual=0u;
+    if(grsCompare64(sumHi,water)==0)m3TrialWaterSum(eHi,true);
+    else{
+        if(eHi==0u)return 4u;
+        uvec2 sumLo=m3TrialWaterSum(eHi-1u,true);uvec2 difference;
+        if(!grsSub64(water,sumLo,difference)||difference.y!=0u||difference.x>=128u)return 4u;
+        residual=difference.x;uint remaining=residual;
+        for(uint c=0u;c<128u;++c){
+            uint virtualMaterial=m3Get(M3_BASE_MATERIAL+c)+m3Get(M3_ADMITTED+c);
+            uint highWater=clamp(m3Get(M3_BASE_ETA+c)+eHi,virtualMaterial,m3Get(M3_CAP+c))-virtualMaterial;
+            uint lowerWater=m3Get(M3_TARGET_WATER+c);
+            if(highWater>lowerWater&&remaining>0u){m3Put(M3_TARGET_WATER+c,lowerWater+1u);--remaining;}
+        }
+        if(remaining!=0u)return 4u;
+    }
+    m3Put(M3_RESIDUAL,residual);return 0u;
+}
+int m3Offset(uint c,int tangent){int value=0;if(!grsMulDivRNE(tangent,int(2u*c)-127,2u,value))return 0;return value;}
+uint m3LevelWater(int level,uint c,int tangent){
+    int eta=clamp(level+m3Offset(c,tangent),int(m3Get(M3_BASE_MATERIAL+c)),int(m3Get(M3_CAP+c)));
+    return uint(eta)-m3Get(M3_BASE_MATERIAL+c);
+}
+uvec2 m3LevelWaterSum(int level,int tangent,bool store){
+    uvec2 sum=uvec2(0u);
+    for(uint c=0u;c<128u;++c){uint water=m3LevelWater(level,c,tangent);m3Sum(sum,water);if(store)m3Put(M3_TARGET_WATER+c,water);}
+    return sum;
+}
+bool m3WaterTarget(int tangent){
+    if(!m3CaptureColumns()||uM3WaterRate>1006632960u)return false;
+    uvec2 volume=uvec2(0u);for(uint c=0u;c<128u;++c)m3Sum(volume,col(6u,c));
+    int low=-int(CQ),high=2*int(CQ);
+    for(uint iteration=0u;iteration<40u;++iteration){if(low<high){int middle=low+(high-low)/2;if(grsCompare64(m3LevelWaterSum(middle,tangent,false),volume)>=0)high=middle;else low=middle+1;}}
+    uvec2 highSum=m3LevelWaterSum(low,tangent,false);
+    if(grsCompare64(highSum,volume)==0)m3LevelWaterSum(low,tangent,true);
+    else{
+        uvec2 lower=m3LevelWaterSum(low-1,tangent,true);uvec2 delta;
+        if(!grsSub64(volume,lower,delta)||delta.y!=0u||delta.x>=128u)return false;
+        uint remaining=delta.x;
+        for(uint c=0u;c<128u;++c){uint old=m3Get(M3_TARGET_WATER+c);if(m3LevelWater(low,c,tangent)>old&&remaining>0u){m3Put(M3_TARGET_WATER+c,old+1u);--remaining;}}
+        if(remaining!=0u)return false;
+    }
+    uvec2 positive=uvec2(0u);
+    for(uint c=0u;c<128u;++c){uint actual=col(6u,c),target=m3Get(M3_TARGET_WATER+c);m3Put(M3_WATER_ERROR+c,uint(int(actual)-int(target)));if(actual>target)m3Sum(positive,actual-target);}
+    uint alpha=min(Q,uM3WaterRate/120u);uvec4 quotient;uint remainder;
+    if(!grsDivide128(grsMul64(positive,uvec2(alpha,0u)),Q,quotient,remainder)||any(notEqual(quotient.zw,uvec2(0u))))return false;
+    m3Put(M3_WATER_BUDGET,quotient.x);m3Put(M3_WATER_BUDGET+1u,quotient.y);return true;
+}
+
+// Replay binds the candidate at binding0 for a full-word comparison, while
+// the immutable CURRENT header remains in this root-owned scratch segment.
+uniform uint uM3ReplayPass;
+const uint M3_BASE_HEADER=4096u;
+uint m3SourceBase(uint field){return uM3ReplayPass!=0u?m3Get(M3_BASE_HEADER+field):B[uHeader+field];}
+
+// Source event serialization is shared by candidate execution and independent replay.
+uniform uvec2 uNonce,uFrame,uControl;
+uniform uint uM3SourceRows,uM3Trial,uM3Input;
+const uint M3_EVENT_CURSOR=16u,M3_SCOPE_ORDINAL=17u,M3_BRANCH_LO=18u,M3_BRANCH_HI=19u;
+const uint M3_TRIAL_BIRTHS=20u,M3_TRIAL_MERGES=21u,M3_SEED=22u,M3_TRIAL_BORN=23u;
+const uint M3_PENDING_ORIGIN_LO=24u,M3_PENDING_ORIGIN_HI=25u,M3_SOURCE_COLUMN=26u;
+bool m3Replay=false;
+void m3SourceFail(uint reason,uint word){
+    if(W[0]!=0u)return;
+    W[0]=reason;W[2]=uPass+1u;W[3]=m3Get(M3_EVENT_CURSOR)+1u;W[4]=word;
+}
+void m3SourceRow(out uint row[128],uint kind,uint column){
+    for(uint i=0u;i<128u;++i)row[i]=0u;
+    row[0]=876950349u;row[1]=5u;row[2]=kind;row[3]=1u;
+    row[4]=uNonce.x;row[5]=uNonce.y;row[6]=m3Get(M3_EVENT_CURSOR)+1u;
+    row[8]=W[uM3Input+6u];row[9]=W[uM3Input+7u];row[10]=m3Get(M3_PENDING_ORIGIN_LO);row[11]=m3Get(M3_PENDING_ORIGIN_HI);
+    uvec2 nextPhysics=uvec2(C[uHeader+16u],C[uHeader+17u]);
+    if(kind!=M3_END&&!grsAdd64(uvec2(m3SourceBase(16u),m3SourceBase(17u)),uvec2(1u,0u),nextPhysics)){m3SourceFail(13u,16u);return;}
+    row[12]=nextPhysics.x;row[13]=nextPhysics.y;row[17]=column;row[25]=m3Get(M3_TRIAL_BIRTHS);row[26]=m3Get(M3_TRIAL_MERGES);
+    row[30]=C[uHeader+126u]|(C[uHeader+127u]<<1u)|4u;
+    row[96]=W[uM3Input+2u]==2u?6u:0u;row[97]=uM3Trial;row[98]=m3Get(M3_SEED);row[99]=column;
+    row[100]=m3Get(M3_LAMBDA);row[101]=m3Get(M3_BRANCH_LO);row[102]=m3Get(M3_BRANCH_HI);row[103]=m3Get(M3_SCOPE_ORDINAL);
+}
+bool m3SourceCredit(uint required){
+    uint cursor=m3Get(M3_EVENT_CURSOR);
+    if(cursor>uM3SourceRows||required>uM3SourceRows-cursor){m3SourceFail(12u,0u);return false;}return true;
+}
+void m3SourceEmit(uint row[128]){
+    if(W[0]!=0u||!m3SourceCredit(1u))return;
+    uint ordinal=m3Get(M3_EVENT_CURSOR);uvec4 mask=m3SourceMask(row[2]);
+    if(all(equal(mask,uvec4(0u)))){m3SourceFail(15u,2u);return;}
+    for(uint i=0u;i<128u;++i){uint enabled=(mask[i/32u]>>(i%32u))&1u;if(enabled==0u)row[i]=0u;}
+    row[31]=3235774468u;
+    if(m3Replay){
+        if(E[ordinal*128u+31u]!=3235774468u){m3SourceFail(31u,31u);return;}
+        for(uint i=0u;i<128u;++i)if(E[ordinal*128u+i]!=row[i]){m3SourceFail(31u,i);return;}
+    }else{
+        for(uint i=0u;i<128u;++i)if(i!=31u)E[ordinal*128u+i]=row[i];
+        memoryBarrierBuffer();E[ordinal*128u+31u]=3235774468u;
+    }
+    m3Put(M3_EVENT_CURSOR,ordinal+1u);m3Put(M3_SCOPE_ORDINAL,m3Get(M3_SCOPE_ORDINAL)+1u);
+}
+
+// V5 semantic state operations. All offsets are words in the bound WRITE bank.
+// No host mirror and no geometry-driven reclassification of accepted medium.
+uniform uint uV5Cohort,uV5Depth,uV5Certificate,uV5Aux;
+uint v5Layer(uint column,uint rank){return uV5Cohort+(column*64u+rank)*4u;}
+uint v5Cert(uint slot){return uV5Certificate+slot*16u;}
+uint v5Aux(uint slot){return uV5Aux+slot*4u;}
+bool v5Same(uvec3 a,uvec3 b){return all(equal(a,b));}
+uvec3 v5Origin(uint column,uint rank){uint a=v5Layer(column,rank);return uvec3(C[a],C[a+1u],C[a+2u]);}
+bool v5CanAppend(uint column,uvec3 origin){
+ uint depth=C[uV5Depth+column];
+ return depth<=64u&&(depth==0u||v5Same(v5Origin(column,depth-1u),origin)||depth<64u);
+}
+bool v5Append(uint column,uvec3 origin,uint mass){
+ if(column>=128u||mass==0u||origin.x==0u||origin.y!=0u||origin.z==0u||!v5CanAppend(column,origin))return false;
+ uint depth=C[uV5Depth+column];
+ if(depth>0u&&v5Same(v5Origin(column,depth-1u),origin)){
+  uint a=v5Layer(column,depth-1u);if(C[a+3u]>268435456u-mass)return false;C[a+3u]+=mass;
+ }else{
+  uint a=v5Layer(column,depth);C[a]=origin.x;C[a+1u]=origin.y;C[a+2u]=origin.z;C[a+3u]=mass;C[uV5Depth+column]=depth+1u;
+ }return true;
+}
+bool v5Pop(uint column,uint mass){
+ uint depth=C[uV5Depth+column];if(depth==0u||depth>64u||mass==0u)return false;
+ uint a=v5Layer(column,depth-1u),beforeMass=C[a+3u];if(mass>beforeMass)return false;
+ if(mass==beforeMass){for(uint f=0u;f<4u;++f)C[a+f]=0u;C[uV5Depth+column]=depth-1u;}
+ else C[a+3u]-=mass;
+ return true;
+}
+// Capacity simulation reads no mutation and returns a whole-fragment prefix.
+// At most 64 top-first fragments; partial last fragment is allowed by q.
+uint v5BedPrefix(uint donor,uint receiver,uint requested){
+ if(donor>=128u||receiver>=128u||donor==receiver)return 0u;
+ uint sourceDepth=C[uV5Depth+donor],depth=C[uV5Depth+receiver];
+ if(sourceDepth>64u||depth>64u)return 0u;
+ uvec3 top=depth==0u?uvec3(0u):v5Origin(receiver,depth-1u);uint granted=0u;
+ for(uint n=0u;n<sourceDepth&&granted<requested;++n){
+  uint rank=sourceDepth-1u-n,a=v5Layer(donor,rank);uvec3 origin=v5Origin(donor,rank);
+  if(depth==0u||!v5Same(top,origin)){if(depth==64u)break;++depth;top=origin;}
+  uint q=min(requested-granted,C[a+3u]);granted+=q;
+ }return granted;
+}
+void v5ClearCertificate(uint slot){for(uint f=0u;f<16u;++f)C[v5Cert(slot)+f]=0u;for(uint f=0u;f<4u;++f)C[v5Aux(slot)+f]=0u;}
+bool v5BirthCertificate(uint slot,uint kind,uvec2 commit,uint ordinal,uint rank,uint parentMass){
+ if(slot>=uK||C[slot]==0u||kind>1u||ordinal==0u)return false;
+ uint a=v5Cert(slot);for(uint f=0u;f<16u;++f)C[a+f]=0u;
+ C[a]=C[5u*uK+slot];C[a+1u]=C[10u*uK+slot];C[a+2u]=C[8u*uK+slot];C[a+3u]=C[9u*uK+slot];
+ C[a+4u]=C[7u*uK+slot];C[a+5u]=kind;C[a+6u]=commit.x;C[a+7u]=commit.y;
+ C[a+8u]=ordinal;C[a+9u]=C[slot];C[a+10u]=C[uK+slot]>>20u;C[a+11u]=rank;C[a+12u]=parentMass;C[a+13u]=1u;
+ uint b=v5Aux(slot);C[b]=kind==1u?C[slot]:0u;C[b+1u]=kind;C[b+2u]=1u;C[b+3u]=0u;return true;
+}
+bool v5MergeCertificate(uint survivor,uint removed,uint oldMassA,uint oldMassB){
+ uint a=v5Aux(survivor),b=v5Aux(removed),ta=C[a],tb=C[b];
+ if(ta>oldMassA||tb>oldMassB||oldMassA>244666u-oldMassB||ta>oldMassA+oldMassB-tb)return false;
+ // Birth facts of survivor stay byte-identical, including original birthMass.
+ C[a]=ta+tb;v5ClearCertificate(removed);return true;
+}
+bool v5ReturnTag(uint slot,uint oldMass,uint deposited,out uint returned){
+ uint a=v5Aux(slot),tag=C[a];if(oldMass==0u||deposited>oldMass||tag>oldMass)return false;
+ if(deposited==oldMass)returned=tag;
+ else{uvec4 q;uint remainder;if(!grsDivide128(uvec4(grsMul32(deposited,tag),0u,0u),oldMass,q,remainder)||any(notEqual(q.yzw,uvec3(0u))))return false;returned=q.x;}
+ if(deposited==oldMass)v5ClearCertificate(slot);else C[a]=tag-returned;
+ return true;
+}
+bool v5AuditLayers(uint column){
+ uint depth=C[uV5Depth+column],sum=0u;if(depth>64u)return false;
+ for(uint rank=0u;rank<64u;++rank){
+  uint a=v5Layer(column,rank),mass=C[a+3u];
+  if(rank>=depth){for(uint f=0u;f<4u;++f)if(C[a+f]!=0u)return false;continue;}
+  uvec3 origin=v5Origin(column,rank);if(mass==0u||mass>268435456u-sum||origin.x==0u||origin.y!=0u||origin.z==0u||rank>0u&&v5Same(origin,v5Origin(column,rank-1u)))return false;sum+=mass;
+ }return sum==C[uColumn+2u*128u+column];
+}
+
+// Rebuild caches only at actual writer cuts; this consumes accepted MEDIUM
+// labels and never reclassifies a packet from the later water surface.
+uniform uint uV5SourceLedger,uV5SourceMeta,uV5OriginScratch;
+void v5RefreshAcceptedMedium(){
+ uvec2 wet=uvec2(0u),air=uvec2(0u),tags=uvec2(0u);
+ for(uint c=0u;c<128u;++c){uint u=0u;for(uint slot=0u;slot<uK;++slot)if(C[slot]!=0u&&(C[uK+slot]>>20u)==c&&C[14u*uK+slot]==1u)u+=C[slot];C[uColumn+4u*128u+c]=u;}
+ for(uint slot=0u;slot<uK;++slot)if(C[slot]!=0u){
+  uvec2 next;if(!grsAdd64(C[14u*uK+slot]==1u?wet:air,uvec2(C[slot],0u),next))return;
+  if(C[14u*uK+slot]==1u)wet=next;else air=next;
+  if(!grsAdd64(tags,uvec2(C[v5Aux(slot)],0u),next))return;tags=next;
+ }
+ C[uHeader+173u]=wet.x;C[uHeader+174u]=wet.y;C[uHeader+175u]=air.x;C[uHeader+176u]=air.y;C[uHeader+177u]=tags.x;C[uHeader+178u]=tags.y;
+}
+bool v5CertificateValid(uint slot,uvec2 latestCommit){
+ uint a=v5Cert(slot),b=v5Aux(slot);if(C[slot]==0u)return false;
+ if(C[a]!=C[5u*uK+slot]||C[a+1u]!=C[10u*uK+slot]||C[a+2u]!=C[8u*uK+slot]||C[a+3u]!=C[9u*uK+slot]||C[a+4u]!=C[7u*uK+slot]||
+    C[a+5u]>1u||C[a+8u]==0u||C[a+9u]==0u||C[a+9u]>122333u||C[a+10u]>=128u||C[a+13u]!=1u||C[a+14u]!=0u||C[a+15u]!=0u||
+    C[b]>C[slot]||C[b+1u]!=C[a+5u]||C[b+2u]!=1u||C[b+3u]!=0u)return false;
+ uvec2 birth=uvec2(C[a+6u],C[a+7u]);if(all(equal(birth,uvec2(0u)))||grsCompare64(birth,latestCommit)>0)return false;
+ if(C[a+5u]==0u){
+  uint origin=C[a+2u];if(origin==0u||origin>C[uHeader+34u])return false;
+  uint ledger=uV5SourceLedger+(origin-1u)*16u,meta=uV5SourceMeta+(origin-1u)*32u;
+  return C[a+11u]==0u&&C[a+12u]==0u&&C[a]>=W[ledger+7u]&&C[a]-W[ledger+7u]<W[ledger+8u]&&
+         all(equal(birth,uvec2(W[meta+10u],W[meta+11u])));
+ }
+ return C[a+11u]<64u&&C[a+12u]>=C[a+9u]&&C[a+12u]<=268435456u;
+}
+bool v5AuditState(bool acceptedOrigin){
+ if(C[uHeader+161u]!=1u||C[uHeader+162u]>2u||C[uHeader+163u]>65536u||C[uHeader+164u]>65536u||C[uHeader+181u]!=64u)return false;
+ uvec2 wet=uvec2(0u),air=uvec2(0u),tags=uvec2(0u);
+ if(acceptedOrigin)for(uint i=0u;i<8192u;++i)W[uV5OriginScratch+i]=0u;
+ for(uint c=0u;c<128u;++c){
+  if(!v5AuditLayers(c))return false;uint u=0u;
+  if(acceptedOrigin)for(uint rank=0u;rank<C[uV5Depth+c];++rank){
+   uint layer=v5Layer(c,rank),origin=C[layer],mass=C[layer+3u];
+   if(origin==0u||origin>C[uHeader+34u])return false;uint ledger=uV5SourceLedger+(origin-1u)*16u;
+   if(W[ledger+4u]==1u||W[ledger+4u]>2u||W[ledger+9u]!=C[layer+2u])return false;
+   uint at=uV5OriginScratch+(origin-1u)*2u;uvec2 sum;if(!grsAdd64(uvec2(W[at],W[at+1u]),uvec2(mass,0u),sum))return false;W[at]=sum.x;W[at+1u]=sum.y;
+  }
+  for(uint slot=0u;slot<uK;++slot)if(C[slot]!=0u&&(C[uK+slot]>>20u)==c&&C[14u*uK+slot]==1u)u+=C[slot];
+  if(u!=C[uColumn+4u*128u+c])return false;
+ }
+ for(uint slot=0u;slot<uK;++slot){
+  if(C[slot]==0u){for(uint f=0u;f<16u;++f)if(C[v5Cert(slot)+f]!=0u)return false;for(uint f=0u;f<4u;++f)if(C[v5Aux(slot)+f]!=0u)return false;continue;}
+  if(C[v5Aux(slot)]>C[slot]||C[v5Aux(slot)+2u]!=1u)return false;
+  if(acceptedOrigin){
+   uint origin=C[8u*uK+slot];if(origin==0u||origin>C[uHeader+34u])return false;uint at=uV5OriginScratch+(origin-1u)*2u;
+   uvec2 sum;if(!grsAdd64(uvec2(W[at],W[at+1u]),uvec2(C[slot],0u),sum))return false;W[at]=sum.x;W[at+1u]=sum.y;
+  }
+  uvec2 next;if(!grsAdd64(C[14u*uK+slot]==1u?wet:air,uvec2(C[slot],0u),next))return false;if(C[14u*uK+slot]==1u)wet=next;else air=next;
+  if(!grsAdd64(tags,uvec2(C[v5Aux(slot)],0u),next))return false;tags=next;
+ }
+ uvec2 cycle;if(!grsSub64(uvec2(C[uHeader+169u],C[uHeader+170u]),uvec2(C[uHeader+171u],C[uHeader+172u]),cycle)||any(notEqual(cycle,tags)))return false;
+ if(acceptedOrigin)for(uint origin=0u;origin<C[uHeader+34u];++origin){uint ledger=uV5SourceLedger+origin*16u,at=uV5OriginScratch+origin*2u;uint expected=W[ledger+4u]==1u?0u:W[ledger+6u];if(W[at]!=expected||W[at+1u]!=0u)return false;}
+ return all(equal(wet,uvec2(C[uHeader+173u],C[uHeader+174u])))&&all(equal(air,uvec2(C[uHeader+175u],C[uHeader+176u])))&&all(equal(tags,uvec2(C[uHeader+177u],C[uHeader+178u])));
+}
+
+// Existing M2 resident index and weighted-RNE primitives are reused verbatim.
+// All invocations enter this routine and every index barrier uniformly.
+uniform uint uM3Index0,uM3Index1,uM3YRequest;
+uniform int uM3Sin,uM3Cos;
+shared uint m3SeedColumn,m3SeedRemaining,m3SeedAction,m3SeedSlotA,m3SeedSlotB,m3IndexAt;
+const uint M3_SEED_NEXT=0u,M3_SEED_BIRTH=1u,M3_SEED_PAIR=2u,M3_SEED_STOP=3u;
+void m2LoadSand(uint slot,out uint row[16]){for(uint f=0u;f<16u;++f)row[f]=C[f*uK+slot];}
+void m3WriteSand(uint slot,uint row[16]){for(uint f=0u;f<16u;++f)C[f*uK+slot]=row[f];}
+void m3SourceDerived(uint column){uint material=col(10u,column)+col(8u,column);C[uColumn+11u*128u+column]=material;C[uColumn+12u*128u+column]=material+col(6u,column);C[uColumn+13u*128u+column]=material+col(6u,column)+col(7u,column);}
+void m3SeedFailure(uint reason){if(m3Get(M3_TRIAL_REASON)==0u)m3Put(M3_TRIAL_REASON,reason);m3SeedAction=M3_SEED_STOP;}
+void m3SeedDecide(){
+    m3SeedAction=M3_SEED_NEXT;if(W[0]!=0u||m3Get(M3_TRIAL_REASON)!=0u){m3SeedAction=M3_SEED_STOP;return;}
+    if(m3SeedRemaining==0u)return;
+    if(m3Get(M3_TRIAL_BIRTHS)>=uK){m3SeedFailure(5u);return;}
+    if(C[uHeader+126u]!=0u||C[uHeader+39u]==0u){m3SeedFailure(6u);return;}
+    for(uint i=0u;i<uK;++i)if(C[i]==0u){m3SeedSlotA=i;m3SeedAction=M3_SEED_BIRTH;return;}
+    m3SeedAction=M3_SEED_PAIR;
+}
+bool m3SourceMutation(){uvec2 old=uvec2(C[uHeader+142u],C[uHeader+143u]),next;if(!grsAdd64(old,uvec2(1u,0u),next)){m3SourceFail(13u,142u);return false;}C[uHeader+142u]=next.x;C[uHeader+143u]=next.y;return true;}
+void m3SeedMerge(uint a,uint b){
+    uint beforeA[16],beforeB[16],afterA[16],afterB[16],row[128];m2LoadSand(a,beforeA);m2LoadSand(b,beforeB);
+    uint column=beforeA[1]>>20u;
+    if(beforeB[10]==0xffffffffu){m3SourceFail(21u,b);return;}
+    if(!m2MergeRows(beforeA,beforeB,65536u,col(10u,column),m3Eta(column),col(6u,column),afterA,afterB)){m3SourceFail(15u,a);return;}
+    if(!m3SourceCredit(3u))return;
+    m3SourceRow(row,M3_MERGE,column);row[14]=0u;row[15]=a;row[16]=b;row[18]=beforeB[0];row[23]=row[24]=col(8u,column);row[19]=row[21]=m3Get(M3_TRIAL_BORN);row[26]=m3Get(M3_TRIAL_MERGES)+1u;row[28]=row[29]=C[uHeader+39u];
+    for(uint f=0u;f<16u;++f){row[32u+f]=beforeA[f];row[48u+f]=beforeB[f];row[64u+f]=afterA[f];row[80u+f]=afterB[f];}
+    m3SourceEmit(row);if(W[0]!=0u)return;
+    if(!m3SourceMutation())return;
+    if(!v5MergeCertificate(a,b,beforeA[0],beforeB[0])){m3SourceFail(35u,a);return;}m3WriteSand(a,afterA);m3WriteSand(b,afterB);v5RefreshAcceptedMedium();C[uHeader+41u]--;C[uHeader+43u]++;m3Put(M3_TRIAL_MERGES,m3Get(M3_TRIAL_MERGES)+1u);
+}
+void m3SeedBirth(uint slot){
+    uint old[16],born[16],row[128];m2LoadSand(slot,old);
+    if(old[0]!=0u||old[10]==0xffffffffu){m3SourceFail(21u,slot);return;}
+    uint column=m3SeedColumn,amount=min(122333u,m3SeedRemaining),id=C[uHeader+39u];
+    uint finalEta=m3Get(M3_BASE_MATERIAL+column)+m3Get(M3_ADMITTED+column)+m3Get(M3_TARGET_WATER+column);
+    uint bed=col(10u,column);
+    bool bulk=m3Input(2u)==2u;
+    if((bulk&&finalEta<bed+2u)||amount>m3Cap(column)-m3Eta(column)){m3SeedFailure(7u);return;}
+    if(!m3SourceCredit(2u))return;
+    uint y=bulk?max(bed+1u,min(m3Get(31u),finalEta-1u)):m3Get(31u);
+    for(uint i=0u;i<16u;++i)born[i]=0u;
+    born[0]=amount;born[1]=bulk?(column*1048576u)+524288u:m3Get(30u);born[2]=y;born[5]=id;born[6]=1u;born[7]=W[uM3Input+14u];born[8]=m3Get(M3_PENDING_ORIGIN_LO);born[9]=m3Get(M3_PENDING_ORIGIN_HI);born[10]=old[10]+1u;
+    int vx,vy;
+    if(!grsMulDivRNE(int(uM3Settle),uM3Sin,1048576u,vx)||!grsMulDivRNE(int(uM3Settle),uM3Cos,1048576u,vy)){m3SourceFail(13u,3u);return;}
+    born[3]=bulk?uint(vx):0u;born[4]=bulk?uint(-vy):0u;born[14]=col(6u,column)>0u&&y>bed&&y<finalEta?1u:0u;
+    m3SourceRow(row,M3_BIRTH,column);row[14]=0u;row[15]=slot;row[18]=amount;row[19]=m3Get(M3_TRIAL_BORN);row[21]=row[19]+amount;row[23]=col(8u,column);row[24]=row[23]+amount;row[28]=id;row[29]=id+1u;row[25]=m3Get(M3_TRIAL_BIRTHS)+1u;if(id==0xffffffffu)row[30]|=1u;
+    for(uint f=0u;f<16u;++f){row[32u+f]=old[f];row[64u+f]=born[f];}
+    m3SourceEmit(row);if(W[0]!=0u)return;
+    if(!m3SourceMutation())return;
+    m3WriteSand(slot,born);C[uHeader+39u]=id+1u;if(id==0xffffffffu)C[uHeader+126u]=1u;
+    C[uHeader+41u]++;C[uHeader+43u]--;C[uColumn+8u*128u+column]+=amount;m3SourceDerived(column);
+    uvec2 v5Commit;if(!grsAdd64(uvec2(m3SourceBase(16u),m3SourceBase(17u)),uvec2(1u,0u),v5Commit)||!v5BirthCertificate(slot,0u,v5Commit,m3Get(M3_EVENT_CURSOR),0u,0u)){m3SourceFail(35u,slot);return;}v5RefreshAcceptedMedium();m3SeedRemaining-=amount;m3Put(M3_TRIAL_BORN,m3Get(M3_TRIAL_BORN)+amount);m3Put(M3_TRIAL_BIRTHS,m3Get(M3_TRIAL_BIRTHS)+1u);
+}
+void m3BuildSeedIndex(){
+    if(gl_LocalInvocationIndex==0u)m3IndexAt=uM3Index0;barrier();
+    m2IndexSort(uM3Index0,uK==192u?256u:512u,uK);
+}
+void m3ExecuteSeeds(bool buildIndex){
+    uint lane=gl_LocalInvocationIndex;
+    if(lane==0u)m3IndexAt=uM3Index0;barrier();
+    if(buildIndex)m3BuildSeedIndex();
+    for(uint column=0u;column<128u;++column){
+        if(lane==0u){
+            m3SeedColumn=column;m3SeedRemaining=m3Get(M3_ADMITTED+column);m3SeedAction=M3_SEED_NEXT;
+            if(m3Input(2u)==2u&&m3SeedRemaining>0u&&W[0]==0u&&m3Get(M3_TRIAL_REASON)==0u){uint row[128];m3Put(M3_SEED,m3Get(M3_SEED)+1u);m3SourceRow(row,M3_SEED_BEGIN,column);row[18]=m3SeedRemaining;row[41]=m3Get(M3_REQUESTED+column);row[42]=m3SeedRemaining;m3SourceEmit(row);}
+        }
+        memoryBarrierBuffer();barrier();
+        for(uint iteration=0u;iteration<=uK;++iteration){
+            if(lane==0u)m3SeedDecide();barrier();
+            if(m3SeedAction==M3_SEED_STOP||m3SeedAction==M3_SEED_NEXT)break;
+            if(m3SeedAction==M3_SEED_PAIR){
+                uvec2 pair=m2IndexPair(m3IndexAt,uK==192u?256u:512u,uK,65536u);
+                if(lane==0u){if(pair.x>=uK)m3SeedFailure(4u);else{m3SeedSlotA=pair.x;m3SeedSlotB=pair.y;m3SeedMerge(pair.x,pair.y);}}
+                memoryBarrierBuffer();barrier();
+                if(m3SeedAction==M3_SEED_STOP||W[0]!=0u)break;
+                uint next=m3IndexAt==uM3Index0?uM3Index1:uM3Index0;
+                m2IndexUpdate(m3IndexAt,next,uK==192u?256u:512u,uK,m3SeedSlotA,m3SeedSlotB);
+                if(lane==0u){m3IndexAt=next;m3SeedSlotA=m3SeedSlotB;}barrier();
+            }
+            if(lane==0u)m3SeedBirth(m3SeedSlotA);
+            memoryBarrierBuffer();barrier();
+            if(W[0]!=0u||m3Get(M3_TRIAL_REASON)!=0u)break;
+            uint next=m3IndexAt==uM3Index0?uM3Index1:uM3Index0;
+            m2IndexUpdate(m3IndexAt,next,uK==192u?256u:512u,uK,m3SeedSlotA,uK);
+            if(lane==0u)m3IndexAt=next;barrier();
+        }
+        if(W[0]!=0u||m3Get(M3_TRIAL_REASON)!=0u)break;
+    }
+}
+void m3ExecuteSeeds(){m3ExecuteSeeds(true);}
+
+// T497 SOURCE entry. Original command32 and payload512 are preserved verbatim.
+uniform uint uM3Dedup,uM3RawDedup,uM3SourceMeta,uM3SourceEvents;
+const uint M3_SOURCE_STOP=27u,M3_SOURCE_REQUEST=28u,M3_SOURCE_MODE=29u,M3_SOURCE_X=30u,M3_SOURCE_Y=31u;
+const uint M3_REPLAY_TERMINAL=32u,M3_APPEND_DEDUP=33u,M3_ACCEPTED_TRIAL=34u,M3_NEXT_LAMBDA=35u;
+const uint M3_ROOT_STATE=36u,M3_SOURCE_REQUEST_SUM=37u,M3_TRIAL_CURSOR_BEGIN=38u,M3_TRIAL_SCOPE_BEGIN=39u;
+const uint M3_REJECT_DETAIL=59u;
+uint m3Input(uint i){return W[uM3Input+i];}
+void m3RejectInput(uint detail){m3Put(M3_SOURCE_STOP,m3Input(2u)==2u?5u:M2_INPUT_REJECTED);m3Put(M3_REJECT_DETAIL,m3Input(2u)==2u?0u:detail);}
+bool m3CommandKey(uint at){return W[at+4u]==m3Input(4u)&&W[at+5u]==m3Input(5u)&&W[at+6u]==m3Input(6u)&&W[at+7u]==m3Input(7u);}
+bool m3DecodeSource(){
+    uint prefix=B[uHeader+33u];
+    m3Put(M3_REPLAY_TERMINAL,0u);m3Put(M3_APPEND_DEDUP,0u);m3Put(M3_SOURCE_STOP,0u);m3Put(M3_ROOT_STATE,0u);m3Put(M3_REJECT_DETAIL,0u);
+    if(prefix>4096u){m3SourceFail(15u,33u);return false;}
+    if(m3Input(0u)!=1129534023u||m3Input(1u)!=5u||m3Input(31u)!=0u||m3Input(4u)!=B[uHeader+4u]||m3Input(5u)!=B[uHeader+5u]){m3RejectInput(9u);return false;}
+    for(uint i=0u;i<prefix;++i){
+        uint row=uM3Dedup+64u*i;
+        if(!m3CommandKey(row))continue;
+        for(uint j=0u;j<32u;++j)if(W[row+j]!=m3Input(j)){m3Put(M3_SOURCE_STOP,m3Input(2u)==2u?5u:M2_PAYLOAD_CONFLICT);return false;}
+        for(uint j=0u;j<512u;++j)if(W[uM3RawDedup+512u*i+j]!=m3Input(32u+j)){m3Put(M3_SOURCE_STOP,m3Input(2u)==2u?5u:M2_PAYLOAD_CONFLICT);return false;}
+        m3Put(M3_REPLAY_TERMINAL,row+32u);m3Put(M3_SOURCE_MODE,W[row+62u]);m3Put(M3_SOURCE_COLUMN,W[row+37u]);m3Put(M3_SOURCE_STOP,m3Input(2u)==2u?6u:M2_DEDUP_REPLAY);return false;
+    }
+    if(prefix==4096u){m3Put(M3_SOURCE_STOP,m3Input(2u)==2u?5u:M2_LEDGER_FULL);return false;}
+    m3Put(M3_APPEND_DEDUP,1u);
+    if(m3Input(2u)>2u||m3Input(3u)!=0u||m3Input(30u)!=0u){m3RejectInput(1u);return false;}
+    if(m3Input(8u)!=B[uHeader+84u]||m3Input(9u)!=B[uHeader+85u]||m3Input(12u)!=B[uHeader+20u]||m3Input(13u)!=B[uHeader+21u]||m3Input(28u)!=B[uHeader+22u]||m3Input(29u)!=B[uHeader+23u]||m3Input(14u)==0u||m3Input(15u)==0u||(m3Input(6u)|m3Input(7u))==0u||(m3Input(10u)|m3Input(11u))==0u){m3RejectInput(9u);return false;}
+    if((m3Input(24u)|m3Input(25u))==0u||m3Input(27u)>1u){m3RejectInput(10u);return false;}
+    uint x,y,quantity;
+    if(!grsFloorBinary64Q20(uvec2(m3Input(16u),m3Input(17u)),134217727u,x)||!grsFloorBinary64Q20(uvec2(m3Input(18u),m3Input(19u)),CQ,y)||!grsFloorBinary64Q20(uvec2(m3Input(20u),m3Input(21u)),CQ,quantity)){m3RejectInput(2u);return false;}
+    m3Put(M3_SOURCE_X,x);m3Put(M3_SOURCE_Y,y);m3Put(M3_SOURCE_REQUEST,quantity);
+    if((m3Input(19u)&0x7fffffffu)>0x40700000u||((m3Input(19u)&0x7fffffffu)==0x40700000u&&m3Input(18u)!=0u)||(m3Input(21u)&0x7fffffffu)>0x40700000u||((m3Input(21u)&0x7fffffffu)==0x40700000u&&m3Input(20u)!=0u)){m3RejectInput(2u);return false;}
+    if(!m3CaptureColumns()){m3SourceFail(15u,0u);return false;}
+    if(m3Input(2u)==2u){
+        if(!m3DecodeBulk()){m3RejectInput(2u);return false;}
+        uint total=0u;for(uint c=0u;c<128u;++c)total+=m3Get(M3_REQUESTED+c);
+        m3Put(M3_SOURCE_REQUEST_SUM,total);if(total==0u){m3Put(M3_SOURCE_STOP,4u);return false;}
+        for(uint c=0u;c<128u;++c)if(m3Get(M3_REQUESTED+c)>0u&&col(6u,c)==0u){m3Put(M3_SOURCE_STOP,3u);return false;}
+    }else{
+        for(uint i=0u;i<512u;++i)if(m3Input(32u+i)!=0u){m3RejectInput(1u);return false;}
+        if(quantity==0u){m3RejectInput(3u);return false;}
+        uint column=x>>20u;if(y<col(10u,column)){m3RejectInput(4u);return false;}
+        uint mode=m3Input(2u)==0u?0u:y<=m3Eta(column)?1u:2u;
+        m3Put(M3_SOURCE_MODE,mode);m3Put(M3_SOURCE_COLUMN,column);
+        uint allowed=mode==2u?CQ-col(13u,column):m3Cap(column)-m3Eta(column);
+        m3Put(M3_SOURCE_REQUEST_SUM,quantity);m3Put(M3_WANT,min(quantity,allowed));
+    }
+    uvec2 origin;if(!grsAdd64(uvec2(B[uHeader+14u],B[uHeader+15u]),uvec2(1u,0u),origin)){m3SourceFail(13u,14u);return false;}
+    m3Put(M3_PENDING_ORIGIN_LO,origin.x);m3Put(M3_PENDING_ORIGIN_HI,origin.y);return true;
+}
+
+// Trial audit uses provisional origin/base+born, never public source commit.
+bool m3AuditTrialState(){
+    uvec2 sand=uvec2(0u),water=uvec2(0u);uint born=m3Get(M3_TRIAL_BORN),births=m3Get(M3_TRIAL_BIRTHS),merges=m3Get(M3_TRIAL_MERGES);
+    if(births>uK||merges>births)return false;
+    uint liveS=0u,liveW=0u;
+    for(uint ns=0u;ns<2u;++ns){
+        uint count=ns==0u?uK:uKw,base=ns==0u?0u:uWater,generation=ns==0u?10u:11u;
+        for(uint slot=0u;slot<count;++slot){
+            uint mass=C[base+slot];if(mass==0u){for(uint f=0u;f<16u;++f)if(f!=generation&&C[base+count*f+slot]!=0u)return false;continue;}
+            uint origin=C[base+count*(ns==0u?8u:6u)+slot],originHi=C[base+count*(ns==0u?9u:7u)+slot],id=C[base+5u*count+slot];
+            if(originHi!=0u||origin==0u||id==0u||C[base+generation*count+slot]==0u||mass>(ns==0u?244666u:CQ))return false;
+            for(uint other=slot+1u;other<count;++other)if(C[base+other]!=0u&&C[base+5u*count+other]==id)return false;
+            if(origin>m3SourceBase(34u)){
+                uint first=m3SourceBase(ns==0u?39u:40u);
+                if(ns!=(m3Input(2u)==1u?1u:0u)||origin!=m3Get(M3_PENDING_ORIGIN_LO)||m3Get(M3_PENDING_ORIGIN_HI)!=0u||id<first||id-first>=births||C[base+(ns==0u?7u:12u)*count+slot]!=m3Input(14u))return false;
+            }else{
+                uint at=uM3SourceEvents+(origin-1u)*16u,kind=W[at+4u];
+                if((kind==1u?1u:0u)!=ns||C[base+count*(ns==0u?7u:12u)+slot]!=W[at+9u]||!v5CertificateValid(slot,uvec2(m3SourceBase(16u),m3SourceBase(17u))))return false;
+            }
+            if(ns==0u)++liveS;else ++liveW;
+        }
+    }
+    for(uint c=0u;c<128u;++c){
+        uint bed=col(10u,c),w=col(6u,c),p=0u,j=0u;
+        if(bed!=B[uColumn+10u*128u+c]||bed!=col(2u,c))return false;
+        for(uint i=0u;i<uK;++i)if((C[uK+i]>>20u)==c){if(C[i]>CQ-p)return false;p+=C[i];}
+        for(uint i=0u;i<uKw;++i)if((C[uWater+uKw+i]>>20u)==c){if(C[uWater+i]>CQ-j)return false;j+=C[uWater+i];}
+        if(p>CQ-bed||w>CQ-bed-p||j>CQ-bed-p-w||p!=col(8u,c)||j!=col(7u,c)||col(11u,c)!=bed+p||col(12u,c)!=bed+p+w||col(13u,c)!=bed+p+w+j||bed+p+w>m3Cap(c))return false;
+        if(!m3Sum(sand,bed+p)||!m3Sum(water,w+j))return false;
+    }
+    uvec2 expectedSand,expectedWater;
+    bool isWater=m3Input(2u)==1u;
+    if(!grsAdd64(uvec2(m3SourceBase(56u),m3SourceBase(57u)),uvec2(isWater?0u:born,0u),expectedSand)||!grsAdd64(uvec2(m3SourceBase(58u),m3SourceBase(59u)),uvec2(isWater?born:0u,0u),expectedWater))return false;
+    if(!v5AuditState(false))return false;return all(equal(sand,expectedSand))&&all(equal(water,expectedWater))&&liveS==C[uHeader+41u]&&liveW==C[uHeader+42u]&&C[uHeader+43u]==uK-liveS&&C[uHeader+44u]==uKw-liveW;
+}
+
+// Independent per-trial index/state replay is sequenced by the source driver.
+// Scratch fields 48..63 retain one candidate descriptor, not another state copy.
+const uint M3_TRIAL_START_ROW=48u,M3_TRIAL_END_ROW=49u,M3_TRIAL_ERROR=50u,M3_TRIAL_END_BIRTHS=51u,M3_TRIAL_END_MERGES=52u,M3_TRIAL_END_BORN=53u;
+const uint M3_TRIAL_EXPECTED_LAMBDA=54u,M3_SOURCE_SUCCESS=55u,M3_REPLAY_DONE=56u,M3_ATTEMPTS=57u;
+void m3TrialOpen(){
+    if(W[0]!=0u||m3Get(M3_SOURCE_SUCCESS)!=0u||m3Get(M3_ROOT_STATE)!=1u)return;
+    uint offered=0u;
+    for(uint c=0u;c<128u;++c){uint hi,lo;umulExtended(m3Get(M3_REQUESTED+c),m3Get(M3_LAMBDA),hi,lo);offered+=(hi<<16u)|(lo>>16u);}
+    // A zero quantized offer terminates before an actual trial begins. It must
+    // not leave an unpaired BEGIN or invent a non-contract trial reason.
+    if(offered==0u){m3Put(M3_SOURCE_STOP,4u);m3Put(M3_ROOT_STATE,2u);return;}
+    uvec2 epoch=uvec2(m3Get(M3_BRANCH_LO),m3Get(M3_BRANCH_HI)),next;
+    if(!grsAdd64(epoch,uvec2(1u,0u),next)){m3SourceFail(13u,152u);return;}
+    m3Put(M3_BRANCH_LO,next.x);m3Put(M3_BRANCH_HI,next.y);
+    m3Put(M3_ATTEMPTS,uM3Trial+1u);
+    m3Put(M3_TRIAL_START_ROW,m3Get(M3_EVENT_CURSOR));m3Put(M3_SCOPE_ORDINAL,0u);m3Put(M3_TRIAL_REASON,0u);
+    m3Put(M3_TRIAL_BIRTHS,0u);m3Put(M3_TRIAL_MERGES,0u);m3Put(M3_TRIAL_BORN,0u);m3Put(M3_SEED,0u);m3Put(M3_REPLAY_DONE,0u);
+    uint row[128];m3SourceRow(row,M3_TRIAL_BEGIN,0u);row[43]=m3Get(M3_LAMBDA);m3SourceEmit(row);
+}
+void m3TrialSolve(){
+    if(W[0]!=0u||m3Get(M3_SOURCE_SUCCESS)!=0u||m3Get(M3_ROOT_STATE)!=1u)return;
+    if(!m3CaptureColumns()){m3SourceFail(15u,0u);return;}
+    uint lambda=m3Get(M3_LAMBDA),result=m3TrialEta(lambda);
+    // Translate the solver's internal finite status into T497 trialReasons.
+    if(result!=0u){
+        if(result==1u){m3Put(M3_SOURCE_STOP,4u);m3Put(M3_ROOT_STATE,2u);return;}
+        m3Put(M3_TRIAL_REASON,result-1u);m3Put(M3_NEXT_LAMBDA,result==2u?m3Get(M3_LAMBDA):lambda/2u);m3Put(M3_LAMBDA,lambda);return;
+    }
+    for(uint c=0u;c<128u;++c){
+        uint row[128];m3SourceRow(row,M3_ETA_COLUMN,c);
+        row[32]=col(6u,c);row[33]=m3Get(M3_TARGET_WATER+c);row[34]=m3Get(M3_BASE_MATERIAL+c);row[35]=row[34]+m3Get(M3_ADMITTED+c);row[36]=m3Get(M3_BASE_ETA+c);row[37]=row[35]+row[33];row[38]=m3Get(M3_CAP+c);row[39]=m3Get(M3_ETA_HI);row[40]=0u;row[41]=m3Get(M3_REQUESTED+c);row[42]=m3Get(M3_ADMITTED+c);
+        // Compute the recorded ascending residual grant from the two endpoints.
+        if(row[39]>0u){uint lo=clamp(row[36]+row[39]-1u,row[35],row[38])-row[35];row[40]=row[33]-lo;}
+        m3SourceEmit(row);if(W[0]!=0u)return;
+        C[uColumn+6u*128u+c]=row[33];m3SourceDerived(c);
+    }
+}
+void m3TrialAudit(){
+    if(W[0]!=0u||m3Get(M3_SOURCE_SUCCESS)!=0u||m3Get(M3_ROOT_STATE)!=1u)return;
+    uint reason=m3Get(M3_TRIAL_REASON);
+    if(!m3AuditTrialState()){m3SourceFail(15u,0u);return;}
+    if(reason==0u&&m3Get(M3_TRIAL_BORN)!=m3Get(M3_WANT)){m3SourceFail(15u,23u);return;}
+    m3Put(M3_TRIAL_END_ROW,m3Get(M3_EVENT_CURSOR));m3Put(M3_TRIAL_ERROR,reason);m3Put(M3_TRIAL_END_BIRTHS,m3Get(M3_TRIAL_BIRTHS));m3Put(M3_TRIAL_END_MERGES,m3Get(M3_TRIAL_MERGES));m3Put(M3_TRIAL_END_BORN,m3Get(M3_TRIAL_BORN));m3Put(M3_TRIAL_EXPECTED_LAMBDA,m3Get(M3_LAMBDA));
+}
+void m3TrialReplayBegin(){
+    m3Replay=true;m3Put(M3_EVENT_CURSOR,m3Get(M3_TRIAL_START_ROW));m3Put(M3_SCOPE_ORDINAL,0u);m3Put(M3_TRIAL_REASON,0u);m3Put(M3_TRIAL_BIRTHS,0u);m3Put(M3_TRIAL_MERGES,0u);m3Put(M3_TRIAL_BORN,0u);m3Put(M3_SEED,0u);m3Put(M3_LAMBDA,m3Get(M3_TRIAL_EXPECTED_LAMBDA));
+    uint row[128];m3SourceRow(row,M3_TRIAL_BEGIN,0u);row[43]=m3Get(M3_LAMBDA);m3SourceEmit(row);
+}
+void m3TrialReplayEnd(){
+    if(W[0]!=0u)return;
+    if(m3Get(M3_EVENT_CURSOR)!=m3Get(M3_TRIAL_END_ROW)||m3Get(M3_TRIAL_REASON)!=m3Get(M3_TRIAL_ERROR)||m3Get(M3_TRIAL_BIRTHS)!=m3Get(M3_TRIAL_END_BIRTHS)||m3Get(M3_TRIAL_MERGES)!=m3Get(M3_TRIAL_END_MERGES)||m3Get(M3_TRIAL_BORN)!=m3Get(M3_TRIAL_END_BORN)){m3SourceFail(31u,0u);return;}
+    m3Put(M3_REPLAY_DONE,1u);m3Replay=false;
+}
+void m3TrialClose(){
+    if(W[0]!=0u||m3Get(M3_SOURCE_SUCCESS)!=0u||m3Get(M3_ROOT_STATE)!=1u)return;
+    if(m3Get(M3_REPLAY_DONE)!=1u){m3SourceFail(31u,0u);return;}
+    uint row[128];m3SourceRow(row,M3_TRIAL_END,0u);row[18]=m3Get(M3_TRIAL_BORN);row[27]=m3Get(M3_TRIAL_REASON);row[43]=m3Get(M3_LAMBDA);
+    uint next=m3Get(M3_TRIAL_REASON)==1u?m3Get(M3_NEXT_LAMBDA):m3Get(M3_LAMBDA)/2u;row[44]=m3Get(M3_TRIAL_REASON)==0u?m3Get(M3_LAMBDA):next;row[45]=m3Get(M3_SEED);row[46]=m3Get(M3_TRIAL_BIRTHS);row[47]=m3Get(M3_TRIAL_MERGES);m3SourceEmit(row);
+    if(W[0]!=0u)return;
+    if(m3Get(M3_TRIAL_REASON)==0u){m3Put(M3_SOURCE_SUCCESS,1u);m3Put(M3_ACCEPTED_TRIAL,uM3Trial+1u);m3Put(M3_SOURCE_STOP,m3Get(M3_LAMBDA)==65536u?0u:1u);}
+    else if(uM3Trial==7u||next<7u){m3Put(M3_ROOT_STATE,2u);m3Put(M3_SOURCE_STOP,2u);}
+    else m3Put(M3_LAMBDA,next);
+}
+
+uniform uint uM3EmitQ;
+// Ordinary kind0/1 preserve M2 prefix and DIRECT/FLIGHT behavior in V4.
+void m3OrdinaryInitialize(){
+    uint column=m3Get(M3_SOURCE_COLUMN),kind=m3Input(2u);
+    for(uint c=0u;c<128u;++c){m3Put(M3_ADMITTED+c,c==column?m3Get(M3_WANT):0u);m3Put(M3_TARGET_WATER+c,col(6u,c));}
+    m3Put(M3_TRIAL_REASON,0u);m3Put(M3_TRIAL_BORN,0u);m3Put(M3_TRIAL_BIRTHS,0u);m3Put(M3_TRIAL_MERGES,0u);m3Put(M3_SEED,0u);
+}
+void m3OrdinaryWater(){
+    uint column=m3Get(M3_SOURCE_COLUMN),amount=m3Get(M3_WANT),mode=m3Get(M3_SOURCE_MODE);
+    if(amount==0u){m3Put(M3_SOURCE_STOP,1u);return;}
+    if(mode==1u){
+        if(!m3SourceCredit(2u))return;
+        uint before=col(6u,column),row[128];m3SourceRow(row,M3_DIRECT,column);row[14]=1u;row[18]=amount;row[21]=amount;row[23]=before;row[24]=before+amount;row[28]=row[29]=C[uHeader+40u];m3SourceEmit(row);
+        if(W[0]!=0u)return;C[uColumn+6u*128u+column]=before+amount;m3SourceDerived(column);m3Put(M3_TRIAL_BORN,amount);return;
+    }
+    uint slot=uKw;
+    for(uint i=0u;i<uKw;++i)if(C[uWater+i]==0u){slot=i;break;}
+    if(slot==uKw){m3Put(M3_SOURCE_STOP,5u);return;}
+    uint old[16],born[16],row[128];for(uint f=0u;f<16u;++f){old[f]=C[uWater+f*uKw+slot];born[f]=0u;}
+    if(old[11]==0xffffffffu){m3SourceFail(21u,slot);return;}
+    uint id=C[uHeader+40u];if(id==0u||C[uHeader+127u]!=0u){m3Put(M3_SOURCE_STOP,3u);return;}
+    if(m3Get(M3_SOURCE_Y)<=m3Eta(column)||!m3SourceCredit(2u)){m3SourceFail(15u,slot);return;}
+    born[0]=amount;born[1]=m3Get(M3_SOURCE_X);born[2]=m3Get(M3_SOURCE_Y);born[4]=0u-uM3EmitQ;born[5]=id;born[6]=m3Get(M3_PENDING_ORIGIN_LO);born[7]=m3Get(M3_PENDING_ORIGIN_HI);uvec2 commit;
+    if(!grsAdd64(uvec2(m3SourceBase(16u),m3SourceBase(17u)),uvec2(1u,0u),commit)){m3SourceFail(13u,16u);return;}
+    born[8]=commit.x;born[9]=commit.y;born[10]=1u;born[11]=old[11]+1u;born[12]=m3Input(14u);born[13]=m3SourceBase(118u);born[14]=m3SourceBase(119u);
+    m3SourceRow(row,M3_BIRTH,column);row[14]=1u;row[15]=slot;row[18]=amount;row[21]=amount;row[23]=col(7u,column);row[24]=row[23]+amount;row[25]=1u;row[28]=id;row[29]=id==0xffffffffu?id:id+1u;if(id==0xffffffffu)row[30]|=2u;
+    for(uint i=0u;i<16u;++i){row[32u+i]=old[i];row[64u+i]=born[i];}
+    m3SourceEmit(row);if(W[0]!=0u||!m3SourceMutation())return;
+    for(uint f=0u;f<16u;++f)C[uWater+f*uKw+slot]=born[f];
+    C[uHeader+40u]=id==0xffffffffu?id:id+1u;if(id==0xffffffffu)C[uHeader+127u]=1u;
+    C[uHeader+42u]++;C[uHeader+44u]--;C[uColumn+7u*128u+column]+=amount;m3SourceDerived(column);m3Put(M3_TRIAL_BIRTHS,1u);m3Put(M3_TRIAL_BORN,amount);
+}
+void m3OrdinaryEnd(){
+    if(W[0]!=0u)return;
+    uint admitted=m3Get(M3_TRIAL_BORN),reason=m3Get(M3_TRIAL_REASON);
+    if(m3Input(2u)==0u&&reason!=0u){uint stop=reason==4u?4u:reason==5u?2u:reason==6u?3u:1u;m3Put(M3_SOURCE_STOP,stop);}
+    else if(admitted<m3Get(M3_SOURCE_REQUEST_SUM)&&m3Get(M3_SOURCE_STOP)==0u)m3Put(M3_SOURCE_STOP,1u);
+    if(admitted>0u)m3Put(M3_SOURCE_SUCCESS,1u);
+    m3Put(M3_ROOT_STATE,2u);
+}
+
+// V4 SOURCE finalization. Failed trials never publish their private bank.
+uniform uint uM3Words,uM3EventArena,uM3BaseBank,uM3CandidateBank,uM3SpareBank,uM3Carry;
+const uint M3_TERMINAL=3072u;
+bool m3RootReplay=false;
+void m3SourceStore(uint at,uint value){
+    if(m3RootReplay){if(W[at]!=value)m3SourceFail(31u,at);}
+    else W[at]=value;
+}
+void m3SetPair(uint at,uvec2 value){C[uHeader+at]=value.x;C[uHeader+at+1u]=value.y;}
+bool m3AddHeader(uint at,uint amount){uvec2 next;if(!grsAdd64(uvec2(C[uHeader+at],C[uHeader+at+1u]),uvec2(amount,0u),next)){m3SourceFail(13u,at);return false;}m3SetPair(at,next);return true;}
+void m3FinalizeSource(){
+    if(W[0]!=0u)return;
+    bool accepted=m3Get(M3_SOURCE_SUCCESS)!=0u;
+    uint admitted=accepted?m3Get(M3_TRIAL_BORN):0u,kind=m3Input(2u),mode=m3Get(M3_SOURCE_MODE),requested=m3Get(M3_SOURCE_REQUEST_SUM);
+    if(!accepted)for(uint i=0u;i<uM3Words;++i)C[i]=B[i];
+    uint terminal=uM3Scratch+M3_TERMINAL;
+    for(uint i=0u;i<32u;++i)W[terminal+i]=0u;
+    if(m3Get(M3_REPLAY_TERMINAL)!=0u){
+        uint old=m3Get(M3_REPLAY_TERMINAL);for(uint i=0u;i<32u;++i)W[terminal+i]=W[old+i];W[terminal+2u]=1u;
+    }else{
+        uint stop=m3Get(M3_SOURCE_STOP),encoded=kind==2u?(0x20000u|stop):m3Get(M3_REJECT_DETAIL)!=0u?(0x10000u|m3Get(M3_REJECT_DETAIL)):stop;
+        W[terminal]=admitted==0u?3u:admitted==requested?1u:2u;W[terminal+1u]=encoded;W[terminal+3u]=admitted;W[terminal+4u]=requested-admitted;
+        W[terminal+5u]=m3Get(M3_SOURCE_COLUMN);W[terminal+6u]=accepted?m3Get(M3_TRIAL_BIRTHS):0u;W[terminal+7u]=admitted>0u&&W[terminal+6u]>0u?B[uHeader+39u+(kind==1u?1u:0u)]:0u;
+        W[terminal+8u]=B[uHeader+39u+(kind==1u?1u:0u)];W[terminal+9u]=C[uHeader+39u+(kind==1u?1u:0u)];W[terminal+30u]=mode;W[terminal+31u]=C[uHeader+126u]|(C[uHeader+127u]<<1u)|4u;
+    }
+    if(accepted){
+        if(admitted==0u){m3SourceFail(15u,23u);return;}
+        if(!m3AddHeader(14u,1u)||!m3AddHeader(16u,1u)||!m3AddHeader(kind==1u?58u:56u,admitted)||!m3AddHeader(kind==1u?62u:60u,admitted))return;
+        if(kind==1u&&!m3AddHeader(mode==1u?112u:114u,admitted))return;
+        uint eventIndex=B[uHeader+34u],event=uM3SourceEvents+eventIndex*16u,meta=uM3SourceMeta+eventIndex*32u;
+        if(eventIndex>=4096u){m3SourceFail(15u,34u);return;}
+        if(!m3RootReplay){for(uint i=0u;i<16u;++i)m3SourceStore(event+i,0u);for(uint i=0u;i<32u;++i)m3SourceStore(meta+i,0u);}
+        m3SourceStore(event,m3Input(6u));m3SourceStore(event+1u,m3Input(7u));m3SourceStore(event+2u,C[uHeader+14u]);m3SourceStore(event+3u,C[uHeader+15u]);m3SourceStore(event+4u,kind);m3SourceStore(event+5u,m3Get(M3_SOURCE_COLUMN));m3SourceStore(event+6u,admitted);m3SourceStore(event+7u,W[terminal+7u]);m3SourceStore(event+8u,W[terminal+6u]);m3SourceStore(event+9u,m3Input(14u));m3SourceStore(event+10u,m3Get(M3_SOURCE_X));m3SourceStore(event+11u,m3Get(M3_SOURCE_Y));m3SourceStore(event+12u,W[terminal+8u]);m3SourceStore(event+13u,W[terminal+9u]);m3SourceStore(event+14u,m3Get(M3_TRIAL_MERGES));m3SourceStore(event+15u,W[terminal+1u]);
+        m3SourceStore(meta,kind);m3SourceStore(meta+1u,kind==2u?m3Get(M3_LAMBDA):0u);m3SourceStore(meta+2u,kind==2u?m3Get(M3_ACCEPTED_TRIAL):0u);m3SourceStore(meta+3u,kind==2u?m3Get(M3_SEED):0u);m3SourceStore(meta+4u,W[terminal+6u]);m3SourceStore(meta+5u,m3Get(M3_TRIAL_MERGES));m3SourceStore(meta+6u,admitted);m3SourceStore(meta+7u,requested);m3SourceStore(meta+8u,C[uHeader+14u]);m3SourceStore(meta+9u,C[uHeader+15u]);m3SourceStore(meta+10u,C[uHeader+16u]);m3SourceStore(meta+11u,C[uHeader+17u]);m3SourceStore(meta+12u,B[uHeader+33u]);m3SourceStore(meta+13u,kind==2u?512u:0u);m3SourceStore(meta+14u,m3Input(14u));m3SourceStore(meta+15u,m3Input(15u));m3SourceStore(meta+16u,W[terminal+7u]);m3SourceStore(meta+17u,W[terminal+8u]);m3SourceStore(meta+18u,W[terminal+9u]);m3SourceStore(meta+19u,kind==2u?m3Get(M3_ETA_HI):0u);m3SourceStore(meta+20u,kind==2u?m3Get(M3_RESIDUAL):0u);m3SourceStore(meta+21u,m3Input(18u));m3SourceStore(meta+22u,m3Input(19u));m3SourceStore(meta+23u,B[uHeader+58u]);m3SourceStore(meta+24u,B[uHeader+59u]);m3SourceStore(meta+25u,W[terminal+1u]);m3SourceStore(meta+26u,m3Input(6u));m3SourceStore(meta+27u,m3Input(7u));
+        C[uHeader+34u]=eventIndex+1u;
+    }
+    uint record[128];m3SourceRow(record,M3_END,0u);record[10]=C[uHeader+14u];record[11]=C[uHeader+15u];record[12]=C[uHeader+16u];record[13]=C[uHeader+17u];record[18]=admitted;record[25]=accepted?m3Get(M3_TRIAL_BIRTHS):0u;record[26]=accepted?m3Get(M3_TRIAL_MERGES):0u;record[27]=W[terminal+1u];record[28]=W[terminal+8u];record[29]=W[terminal+9u];record[96]=record[97]=record[98]=record[99]=record[103]=0u;m3SourceEmit(record);if(W[0]!=0u)return;
+    if(m3Get(M3_REPLAY_TERMINAL)==0u){
+        for(uint i=0u;i<2u;++i){W[terminal+10u+i]=C[uHeader+14u+i];W[terminal+12u+i]=C[uHeader+16u+i];W[terminal+14u+i]=accepted?C[uHeader+14u+i]:0u;W[terminal+16u+i]=B[uHeader+56u+i];W[terminal+18u+i]=C[uHeader+56u+i];W[terminal+20u+i]=B[uHeader+58u+i];W[terminal+22u+i]=C[uHeader+58u+i];W[terminal+24u+i]=C[uHeader+60u+i];W[terminal+26u+i]=C[uHeader+62u+i];}
+        W[terminal+28u]=B[uHeader+33u]+m3Get(M3_APPEND_DEDUP);W[terminal+29u]=0u;
+        if(m3Get(M3_APPEND_DEDUP)!=0u){uint row=B[uHeader+33u];if(row>=4096u){m3SourceFail(15u,33u);return;}for(uint i=0u;i<32u;++i){m3SourceStore(uM3Dedup+row*64u+i,m3Input(i));m3SourceStore(uM3Dedup+row*64u+32u+i,W[terminal+i]);}for(uint i=0u;i<512u;++i)m3SourceStore(uM3RawDedup+row*512u+i,m3Input(32u+i));C[uHeader+33u]=row+1u;}
+    }
+    C[uHeader+74u]=C[uHeader+33u];C[uHeader+75u]=0u;
+    C[uHeader+137u]=accepted?m3Get(M3_TRIAL_MERGES):0u;C[uHeader+138u]=accepted?m3Get(M3_TRIAL_BIRTHS):0u;C[uHeader+139u]=W[terminal+1u];C[uHeader+140u]=128u;C[uHeader+141u]=m3Get(M3_EVENT_CURSOR);C[uHeader+144u]=uM3EventArena;
+    C[uHeader+147u]=kind==2u&&accepted?m3Get(M3_LAMBDA):0u;C[uHeader+148u]=kind==2u?m3Get(M3_ATTEMPTS):0u;C[uHeader+149u]=kind==2u&&accepted?m3Get(M3_SEED):0u;C[uHeader+150u]=0u;C[uHeader+151u]=0u;C[uHeader+152u]=m3Get(M3_BRANCH_LO);C[uHeader+153u]=m3Get(M3_BRANCH_HI);C[uHeader+154u]=kind==2u&&accepted?m3Get(M3_ETA_HI):0u;C[uHeader+155u]=kind==2u&&accepted?m3Get(M3_RESIDUAL):0u;C[uHeader+157u]=m3Get(M3_EVENT_CURSOR);C[uHeader+158u]=0u;C[uHeader+159u]=mode;
+    if(!m3AddHeader(72u,1u))return;
+    m3SetPair(12u,uNonce);m3SetPair(18u,uControl);m3SetPair(49u,uFrame);
+    C[uHeader+47u]=uM3Carry;C[uHeader+38u]=0u;
+    C[uHeader+76u]=uM3CandidateBank;C[uHeader+77u]=uM3BaseBank;C[uHeader+78u]=uM3SpareBank;
+    C[uHeader+79u]=1u;C[uHeader+80u]=accepted?1u:m3Get(M3_REPLAY_TERMINAL)!=0u?3u:2u;C[uHeader+81u]=4u;
+}
+
+// Shared V4 state audit. All state/ledger references are frozen role inputs.
+// One caller owns the 8192-word origin accumulator in its packed WORK.
+uniform uint uM3OriginScratch;
+bool m3AuditInventory(){
+    if(C[uHeader]!=1213420103u||C[uHeader+1u]!=5u||C[uHeader+2u]!=256u)return false;
+    const uint versions[9]=uint[9](1u,1u,1u,3u,5u,5u,5u,31u,0u);
+    for(uint i=0u;i<9u;++i)if(C[uHeader+24u+i]!=versions[i])return false;
+    if(C[uHeader+122u]!=1u||C[uHeader+123u]!=65536u||C[uHeader+124u]!=2u||C[uHeader+125u]!=2u||C[uHeader+145u]!=1u||C[uHeader+146u]!=15u||C[uHeader+156u]!=512u)return false;
+    for(uint i=183u;i<256u;++i)if(C[uHeader+i]!=0u)return false;
+    uint prefix=C[uHeader+34u];
+    if(prefix>4096u||C[uHeader+33u]<prefix||C[uHeader+33u]>4096u||C[uHeader+14u]!=prefix||C[uHeader+15u]!=0u)return false;
+    uvec2 sourcedSand=uvec2(0u),sourcedWater=uvec2(0u),previousSourcePhysics=uvec2(0u);
+    uint previousRawRow=0u;
+    for(uint origin=0u;origin<prefix;++origin){
+        uint at=uM3SourceEvents+origin*16u,meta=uM3SourceMeta+origin*32u,kind=W[at+4u],quantity=W[at+6u];
+        if(kind>2u||quantity==0u||quantity>CQ||W[at+2u]!=origin+1u||W[at+3u]!=0u||W[at+9u]==0u||W[at+8u]>uK||W[at+14u]>W[at+8u])return false;
+        if(W[meta]!=kind||W[meta+6u]!=quantity||W[meta+8u]!=origin+1u||W[meta+9u]!=0u||W[meta+14u]!=W[at+9u])return false;
+        if(W[meta+4u]!=W[at+8u]||W[meta+5u]!=W[at+14u]||W[meta+7u]<quantity||W[meta+7u]>CQ||W[meta+12u]>=C[uHeader+33u]||W[meta+15u]==0u||W[meta+16u]!=W[at+7u]||W[meta+17u]!=W[at+12u]||W[meta+18u]!=W[at+13u]||W[meta+25u]!=W[at+15u]||W[meta+26u]!=W[at]||W[meta+27u]!=W[at+1u]||(W[at]|W[at+1u])==0u)return false;
+        uvec2 sourcePhysics=uvec2(W[meta+10u],W[meta+11u]);
+        if(grsCompare64(sourcePhysics,previousSourcePhysics)<=0||grsCompare64(sourcePhysics,uvec2(C[uHeader+16u],C[uHeader+17u]))>0||(origin>0u&&W[meta+12u]<=previousRawRow))return false;
+        previousSourcePhysics=sourcePhysics;previousRawRow=W[meta+12u];
+        uint births=W[meta+4u],first=W[meta+16u],beforeId=W[meta+17u],afterId=W[meta+18u];
+        uvec2 nextId;if(!grsAdd64(uvec2(beforeId,0u),uvec2(births,0u),nextId)||nextId.y>1u||nextId.y==1u&&nextId.x!=0u)return false;
+        if(births==0u){if(first!=0u||afterId!=beforeId)return false;}
+        else if(first!=beforeId||first==0u||afterId!=(kind==1u&&nextId.y!=0u?0xffffffffu:nextId.x))return false;
+        if(kind==2u){
+            uint lambda=W[meta+1u],attempts=W[meta+2u],seeds=W[meta+3u];
+            if(lambda<7u||lambda>65536u||attempts<1u||attempts>8u||seeds<1u||seeds>128u||births<seeds||W[meta+13u]!=512u||W[meta+19u]>CQ||W[meta+20u]>=128u)return false;
+            uint stop=lambda==65536u?131072u:131073u;
+            if(W[meta+25u]!=stop||(lambda==65536u?attempts!=1u:attempts<2u))return false;
+            uvec2 product=grsMul32(W[meta+7u],lambda);uint upper=(product.x>>16u)|(product.y<<16u);
+            if(quantity>upper||upper-quantity>=128u||lambda==65536u&&quantity!=W[meta+7u])return false;
+        }else{
+            if(W[meta+1u]!=0u||W[meta+2u]!=0u||W[meta+3u]!=0u||W[meta+13u]!=0u||W[meta+19u]!=0u||W[meta+20u]!=0u||W[meta+25u]>5u)return false;
+        }
+        for(uint field=28u;field<32u;++field)if(W[meta+field]!=0u)return false;
+        if(kind==1u){if(!m3Sum(sourcedWater,quantity))return false;}
+        else if(!m3Sum(sourcedSand,quantity))return false;
+        W[uM3OriginScratch+origin*2u]=0u;W[uM3OriginScratch+origin*2u+1u]=0u;
+    }
+    uint sandLive=0u,waterLive=0u;
+    for(uint ns=0u;ns<2u;++ns){
+        uint count=ns==0u?uK:uKw,base=ns==0u?0u:uWater,generation=ns==0u?10u:11u,next=C[uHeader+39u+ns],exhausted=C[uHeader+126u+ns];
+        if(exhausted>1u||(ns==0u?((next==0u)!=(exhausted==1u)):(next==0u||(exhausted==1u&&next!=0xffffffffu))))return false;
+        for(uint slot=0u;slot<count;++slot){
+            uint mass=C[base+slot];
+            if(mass==0u){for(uint f=0u;f<16u;++f)if(f!=generation&&C[base+f*count+slot]!=0u)return false;continue;}
+            uint x=C[base+count+slot],y=C[base+count*2u+slot],id=C[base+count*5u+slot];
+            uint tag=C[base+count*(ns==0u?6u:10u)+slot],origin=C[base+count*(ns==0u?8u:6u)+slot],originHi=C[base+count*(ns==0u?9u:7u)+slot];
+            int vx=int(C[base+3u*count+slot]),vy=int(C[base+4u*count+slot]);
+            if(mass>(ns==0u?244666u:CQ)||x>=134217728u||y>CQ||id==0u||C[base+generation*count+slot]==0u||vx< -1073741824||vx>1073741824||vy< -1073741824||vy>1073741824||(ns==1u&&vy>0))return false;
+            if((tag&15u)<1u||(tag&15u)>3u||(tag&0xffff0ff0u)!=0u||(tag>>12u)>6u||origin==0u||origin>prefix||originHi!=0u)return false;
+            if(next!=0u&&id>=next&&!(ns==1u&&exhausted==1u&&id==0xffffffffu))return false;
+            for(uint other=slot+1u;other<count;++other)if(C[base+other]!=0u&&C[base+5u*count+other]==id)return false;
+            uint event=uM3SourceEvents+(origin-1u)*16u,kind=W[event+4u];
+            if((kind==1u?1u:0u)!=ns||C[base+count*(ns==0u?7u:12u)+slot]!=W[event+9u]||(ns==0u?!v5CertificateValid(slot,uvec2(C[uHeader+16u],C[uHeader+17u])):(id<W[event+7u]||id-W[event+7u]>=W[event+8u])))return false;
+            if(ns==0u){
+                if(C[11u*count+slot]!=(tag>>12u)||C[12u*count+slot]!=0u||C[13u*count+slot]!=0u||C[14u*count+slot]>1u)return false;
+                uint at=uM3OriginScratch+(origin-1u)*2u;uvec2 sum;
+                if(!grsAdd64(uvec2(W[at],W[at+1u]),uvec2(mass,0u),sum)||sum.y!=0u||sum.x>W[event+6u])return false;
+                W[at]=sum.x;W[at+1u]=sum.y;++sandLive;
+            }else{if(C[base+15u*count+slot]!=0u||mass>W[event+6u])return false;++waterLive;}
+        }
+    }
+    uvec2 sand=uvec2(0u),water=uvec2(0u),settled=uvec2(0u),flight=uvec2(0u);
+    for(uint c=0u;c<128u;++c){
+        uint bed=col(10u,c),w=col(6u,c),particles=0u,inflight=0u;
+        if(bed!=col(2u,c)||bed>CQ||w>CQ-bed)return false;
+        for(uint f=0u;f<10u;++f)if(f!=2u&&f!=4u&&f!=6u&&f!=7u&&f!=8u&&col(f,c)!=0u)return false;
+        for(uint i=0u;i<uK;++i)if((C[uK+i]>>20u)==c){if(C[i]>CQ-particles)return false;particles+=C[i];}
+        for(uint i=0u;i<uKw;++i)if((C[uWater+uKw+i]>>20u)==c){if(C[uWater+i]>CQ-inflight)return false;inflight+=C[uWater+i];}
+        if(particles>CQ-bed||w>CQ-bed-particles||inflight>CQ-bed-particles-w||col(8u,c)!=particles||col(7u,c)!=inflight||col(11u,c)!=bed+particles||col(12u,c)!=bed+particles+w||col(13u,c)!=bed+particles+w+inflight||bed+particles+w>m3Cap(c))return false;
+        if(!m3Sum(sand,bed+particles)||!m3Sum(water,w+inflight)||!m3Sum(settled,w)||!m3Sum(flight,inflight))return false;
+    }
+    uvec2 physical;if(!grsAdd64(uvec2(C[uHeader+14u],C[uHeader+15u]),uvec2(C[uHeader+118u],C[uHeader+119u]),physical)||any(notEqual(physical,uvec2(C[uHeader+16u],C[uHeader+17u]))))return false;
+    uvec2 expectedSand,expectedWater;
+    if(!grsAdd64(uvec2(C[uHeader+64u],C[uHeader+65u]),sourcedSand,expectedSand)||!grsAdd64(uvec2(C[uHeader+66u],C[uHeader+67u]),sourcedWater,expectedWater)||any(notEqual(sand,expectedSand))||any(notEqual(water,expectedWater)))return false;
+    if(!v5AuditState(true))return false;return sandLive==C[uHeader+41u]&&waterLive==C[uHeader+42u]&&C[uHeader+43u]==uK-sandLive&&C[uHeader+44u]==uKw-waterLive&&all(equal(sand,uvec2(C[uHeader+56u],C[uHeader+57u])))&&all(equal(water,uvec2(C[uHeader+58u],C[uHeader+59u])))&&all(equal(sourcedSand,uvec2(C[uHeader+60u],C[uHeader+61u])))&&all(equal(sourcedWater,uvec2(C[uHeader+62u],C[uHeader+63u])))&&all(equal(settled,uvec2(C[uHeader+112u],C[uHeader+113u])))&&all(equal(flight,uvec2(C[uHeader+114u],C[uHeader+115u])));
+}
+
+// Root-level schema/order check complements per-trial operand replay.
+bool m3AuditSourceEvents(){
+    uint rows=m3Get(M3_EVENT_CURSOR);if(rows==0u||rows>uM3SourceRows)return false;
+    uint trial=0u,scopeOrdinal=0u,seenEnd=0u,activeTrial=0u;
+    for(uint row=0u;row<rows;++row){
+        uint at=row*128u,kind=E[at+2u];uvec4 mask=m3SourceMask(kind);
+        if(all(equal(mask,uvec4(0u)))||E[at]!=876950349u||E[at+1u]!=5u||E[at+3u]!=1u||E[at+4u]!=uNonce.x||E[at+5u]!=uNonce.y||E[at+6u]!=row+1u||E[at+7u]!=0u||E[at+31u]!=3235774468u||E[at+8u]!=m3Input(6u)||E[at+9u]!=m3Input(7u))return false;
+        for(uint field=0u;field<128u;++field)if(((mask[field/32u]>>(field%32u))&1u)==0u&&E[at+field]!=0u)return false;
+        if(kind==M3_END){if(row+1u!=rows||seenEnd!=0u||activeTrial!=0u||E[at+96u]!=0u)return false;++seenEnd;continue;}
+        if(m3Input(2u)==2u){
+            if(kind==M3_TRIAL_BEGIN){if(activeTrial!=0u||E[at+97u]!=trial)return false;activeTrial=1u;scopeOrdinal=0u;}
+            if(activeTrial==0u||E[at+96u]!=6u||E[at+97u]!=trial||E[at+103u]!=scopeOrdinal)return false;
+            ++scopeOrdinal;
+            if(kind==M3_TRIAL_END){activeTrial=0u;++trial;}
+        }else if(E[at+96u]!=0u||E[at+103u]!=scopeOrdinal++)return false;
+    }
+    return seenEnd==1u&&(m3Input(2u)!=2u||trial==m3Get(M3_ATTEMPTS));
+}
+bool m3AuditRawCommand(){
+    if(m3Get(M3_APPEND_DEDUP)==0u)return true;
+    uint index=B[uHeader+33u];if(index>=4096u||C[uHeader+33u]!=index+1u)return false;
+    for(uint i=0u;i<32u;++i)if(W[uM3Dedup+index*64u+i]!=m3Input(i))return false;
+    for(uint i=0u;i<512u;++i)if(W[uM3RawDedup+index*512u+i]!=m3Input(32u+i))return false;
+    return true;
+}
+uniform int uM3Tangent;
+bool m3AuditSourceTransaction(){
+    bool accepted=m3Get(M3_SOURCE_SUCCESS)!=0u;
+    uvec2 source,physics,generation;
+    if(!grsAdd64(uvec2(B[uHeader+14u],B[uHeader+15u]),uvec2(accepted?1u:0u,0u),source)||!grsAdd64(uvec2(B[uHeader+16u],B[uHeader+17u]),uvec2(accepted?1u:0u,0u),physics)||!grsAdd64(uvec2(B[uHeader+72u],B[uHeader+73u]),uvec2(1u,0u),generation))return false;
+    if(any(notEqual(source,uvec2(C[uHeader+14u],C[uHeader+15u])))||any(notEqual(physics,uvec2(C[uHeader+16u],C[uHeader+17u])))||any(notEqual(generation,uvec2(C[uHeader+72u],C[uHeader+73u]))))return false;
+    if(C[uHeader+34u]!=B[uHeader+34u]+(accepted?1u:0u)||C[uHeader+33u]!=B[uHeader+33u]+m3Get(M3_APPEND_DEDUP)||C[uHeader+150u]!=0u||C[uHeader+151u]!=0u||C[uHeader+158u]!=0u)return false;
+    if(C[uHeader+148u]!=(m3Input(2u)==2u?m3Get(M3_ATTEMPTS):0u))return false;
+    if((m3Get(M3_ATTEMPTS)>0u||m3Input(2u)!=2u&&m3Get(M3_ROOT_STATE)!=0u)&&m3Get(M3_REPLAY_DONE)!=1u)return false;
+    if(int(C[uHeader+45u])< -7680||int(C[uHeader+45u])>7680)return false;
+    for(uint c=0u;c<128u;++c){
+        if(C[uColumn+14u*128u+c]!=B[uColumn+14u*128u+c]||C[uColumn+15u*128u+c]!=B[uColumn+15u*128u+c])return false;
+        if(c<127u&&abs(int(col(10u,c+1u))-int(col(10u,c))-uM3Tangent)>605394)return false;
+    }
+    for(uint i=52u;i<=55u;++i)if(C[uHeader+i]!=B[uHeader+i])return false;
+    return true;
+}
+
+// T522 V4 publication. Source template is retained in M1 history.
+uint m3PubWater(){return 16u*uK;}
+uint m3PubColumn(){return m3PubWater()+20u*uKw;}
+uint m3PubHeader(){return m3PubColumn()+2048u;}
+void m3PackPublication(){
+ if(W[0]!=0u)return;uint end=m3PubHeader()+256u;for(uint i=0u;i<end;i++)E[i]=0u;
+ uint sandRank=0u,waterRank=0u;
+ for(uint i=0u;i<uK;i++)if(C[i]!=0u){uint a=sandRank++;E[a]=C[5u*uK+i];E[uK+a]=C[10u*uK+i];E[2u*uK+a]=C[7u*uK+i];E[3u*uK+a]=C[i];E[4u*uK+a]=C[uK+i];E[5u*uK+a]=C[2u*uK+i];E[6u*uK+a]=C[3u*uK+i];E[7u*uK+a]=C[4u*uK+i];E[8u*uK+a]=grsColumnPreservingFloatBits(C[uK+i]);E[9u*uK+a]=grsQ20FloatBits(C[2u*uK+i]);E[10u*uK+a]=0x3fc00000u;E[11u*uK+a]=C[uK+i]>>20u;E[12u*uK+a]=C[6u*uK+i]&15u;E[14u*uK+a]=C[8u*uK+i];E[15u*uK+a]=C[9u*uK+i];}
+ for(uint i=0u;i<uKw;i++)if(C[uWater+i]!=0u){uint a=waterRank++;for(uint f=0u;f<16u;f++)E[m3PubWater()+f*uKw+a]=C[uWater+f*uKw+i];E[m3PubWater()+16u*uKw+a]=grsColumnPreservingFloatBits(C[uWater+uKw+i]);E[m3PubWater()+17u*uKw+a]=grsQ20FloatBits(C[uWater+2u*uKw+i]);E[m3PubWater()+18u*uKw+a]=1u;}
+ for(uint c=0u;c<128u;c++){uint s=C[uColumn+10u*128u+c],w=C[uColumn+6u*128u+c],j=C[uColumn+7u*128u+c],p=C[uColumn+8u*128u+c],eta=s+p+w,r=eta+j;uint values[16]=uint[16](s,w,eta,j,p,C[uColumn+c],C[uColumn+2u*128u+c],r,grsQ20FloatBits(s),grsQ20FloatBits(eta),grsQ20FloatBits(w),grsQ20FloatBits(r),w>0u?1u:0u,c,grsQ20FloatBits(s+p),C[uColumn+4u*128u+c]);for(uint f=0u;f<16u;f++)E[m3PubColumn()+f*128u+c]=values[f];}
+ uint h=m3PubHeader();E[h]=1347637831u;E[h+1u]=5u;E[h+2u]=256u;E[h+3u]=3235823838u;
+ for(uint i=0u;i<8u;i++)E[h+4u+i]=C[uHeader+4u+i];for(uint i=0u;i<19u;i++)E[h+12u+i]=C[uHeader+14u+i];E[h+31u]=uM3CandidateBank;E[h+32u]=C[uHeader+72u];E[h+33u]=C[uHeader+73u];E[h+34u]=C[uHeader+41u];E[h+35u]=C[uHeader+42u];E[h+36u]=128u;E[h+37u]=uFrame.x;E[h+38u]=uFrame.y;E[h+39u]=C[uHeader+72u];E[h+40u]=C[uHeader+73u];for(uint i=0u;i<24u;i++)E[h+41u+i]=C[uHeader+88u+i];for(uint i=0u;i<6u;++i)E[h+65u+i]=C[uHeader+173u+i];
+ // All words are verified by a separate dispatch before completion seal.
+}
+bool m3AuditPublication(){
+ if(W[0]!=0u)return false;
+ uint sandRank=0u,waterRank=0u;
+ for(uint i=0u;i<uK;i++)if(C[i]!=0u){uint s=sandRank++;uint v[16]=uint[16](C[5u*uK+i],C[10u*uK+i],C[7u*uK+i],C[i],C[uK+i],C[2u*uK+i],C[3u*uK+i],C[4u*uK+i],grsColumnPreservingFloatBits(C[uK+i]),grsQ20FloatBits(C[2u*uK+i]),0x3fc00000u,C[uK+i]>>20u,C[6u*uK+i]&15u,0u,C[8u*uK+i],C[9u*uK+i]);for(uint f=0u;f<16u;f++)if(E[f*uK+s]!=v[f])return false;}
+ for(uint i=sandRank;i<uK;i++)for(uint f=0u;f<16u;f++)if(E[f*uK+i]!=0u)return false;
+ for(uint i=0u;i<uKw;i++)if(C[uWater+i]!=0u){uint s=waterRank++;for(uint f=0u;f<16u;f++)if(E[m3PubWater()+f*uKw+s]!=C[uWater+f*uKw+i])return false;if(E[m3PubWater()+16u*uKw+s]!=grsColumnPreservingFloatBits(C[uWater+uKw+i])||E[m3PubWater()+17u*uKw+s]!=grsQ20FloatBits(C[uWater+2u*uKw+i])||E[m3PubWater()+18u*uKw+s]!=1u||E[m3PubWater()+19u*uKw+s]!=0u)return false;}
+ for(uint i=waterRank;i<uKw;i++)for(uint f=0u;f<20u;f++)if(E[m3PubWater()+f*uKw+i]!=0u)return false;
+ for(uint c=0u;c<128u;c++){uint s=C[uColumn+10u*128u+c],w=C[uColumn+6u*128u+c],j=C[uColumn+7u*128u+c],p=C[uColumn+8u*128u+c],eta=s+p+w,r=eta+j;uint v[16]=uint[16](s,w,eta,j,p,C[uColumn+c],C[uColumn+2u*128u+c],r,grsQ20FloatBits(s),grsQ20FloatBits(eta),grsQ20FloatBits(w),grsQ20FloatBits(r),w>0u?1u:0u,c,grsQ20FloatBits(s+p),C[uColumn+4u*128u+c]);for(uint f=0u;f<16u;f++)if(E[m3PubColumn()+f*128u+c]!=v[f])return false;}
+ uint h=m3PubHeader();if(E[h]!=1347637831u||E[h+1u]!=5u||E[h+2u]!=256u||E[h+3u]!=3235823838u||E[h+31u]!=uM3CandidateBank||E[h+32u]!=C[uHeader+72u]||E[h+33u]!=C[uHeader+73u]||E[h+34u]!=sandRank||E[h+35u]!=waterRank||E[h+36u]!=128u||E[h+37u]!=uFrame.x||E[h+38u]!=uFrame.y||E[h+39u]!=C[uHeader+72u]||E[h+40u]!=C[uHeader+73u])return false;
+ for(uint i=0u;i<8u;i++)if(E[h+4u+i]!=C[uHeader+4u+i])return false;for(uint i=0u;i<19u;i++)if(E[h+12u+i]!=C[uHeader+14u+i])return false;for(uint i=0u;i<24u;i++)if(E[h+41u+i]!=C[uHeader+88u+i])return false;for(uint i=0u;i<6u;++i)if(E[h+65u+i]!=C[uHeader+173u+i])return false;for(uint i=71u;i<256u;i++)if(E[h+i]!=0u)return false;
+ return true;
+}
+
+// Ordinary roots expose only this 256-word tail. Control/events remain resident.
+uniform uint uM3PublicationSlot,uM3Uploaded;
+const uint M3_COMPLETED_PASSES=64u,M3_AUDIT_FAMILIES=65u;
+void m3SealSource(){
+    if(W[0]==0u&&(m3Get(M3_COMPLETED_PASSES)!=72u||m3Get(M3_AUDIT_FAMILIES)!=262143u))m3SourceFail(15u,97u);
+    bool ok=W[0]==0u;
+    for(uint i=0u;i<256u;++i)E[i]=0u;
+    E[0]=1381192263u;E[1]=5u;E[2]=256u;E[4]=uNonce.x;E[5]=uNonce.y;
+    for(uint i=0u;i<8u;++i)E[6u+i]=B[uHeader+4u+i];
+    for(uint i=0u;i<4u;++i){E[14u+i]=B[uHeader+14u+i];E[18u+i]=C[uHeader+14u+i];}
+    E[22]=uControl.x;E[23]=uControl.y;E[24]=uFrame.x;E[25]=uFrame.y;
+    E[27]=1u;E[28]=ok?C[uHeader+80u]:4u;E[29]=W[0];E[30]=ok?0u:W[2];E[31]=ok?0u:W[3];
+    E[32]=uM3BaseBank;E[33]=uM3CandidateBank;E[34]=uM3SpareBank;E[35]=uM3PublicationSlot;
+    E[36]=C[uHeader+72u];E[37]=C[uHeader+73u];
+    for(uint i=0u;i<13u;++i)E[38u+i]=B[uHeader+20u+i];
+    E[51]=uM3EventArena;E[53]=m3Get(M3_EVENT_CURSOR);E[54]=uM3SourceRows;
+    E[55]=B[uHeader+34u];E[56]=C[uHeader+34u];E[57]=B[uHeader+33u];E[58]=C[uHeader+33u];
+    uint terminal=uM3Scratch+M3_TERMINAL;
+    E[59]=m3Input(14u);E[60]=m3Input(15u);E[61]=W[terminal+3u];E[62]=W[terminal+4u];
+    E[63]=W[terminal];E[64]=W[terminal+1u];E[65]=W[terminal+2u];E[66]=W[terminal+6u];E[67]=W[terminal+7u];E[68]=W[terminal+9u];
+    for(uint i=0u;i<2u;++i){
+        E[69u+i]=B[uHeader+56u+i];E[71u+i]=C[uHeader+56u+i];E[73u+i]=B[uHeader+58u+i];E[75u+i]=C[uHeader+58u+i];
+        E[77u+i]=C[uHeader+60u+i];E[79u+i]=C[uHeader+62u+i];E[83u+i]=C[uHeader+54u+i];
+        E[138u+i]=B[uHeader+112u+i];E[140u+i]=C[uHeader+112u+i];E[142u+i]=B[uHeader+114u+i];E[144u+i]=C[uHeader+114u+i];
+        E[146u+i]=B[uHeader+116u+i];E[148u+i]=C[uHeader+116u+i];E[150u+i]=C[uHeader+118u+i];E[152u+i]=C[uHeader+120u+i];
+    }
+    for(uint c=0u;c<128u;++c)E[87]=max(E[87],col(13u,c));
+    E[88]=C[uHeader+41u];E[89]=C[uHeader+43u];E[90]=C[uHeader+42u];E[91]=C[uHeader+44u];E[92]=C[uHeader+39u];E[93]=C[uHeader+40u];
+    E[96]=m3Get(M3_EVENT_CURSOR);E[97]=m3Get(M3_COMPLETED_PASSES);E[99]=m3Get(M3_AUDIT_FAMILIES);E[101]=ok?0xffffffffu:W[4];
+    E[106]=ok&&E[28]!=1u?1u:0u;E[107]=C[uHeader+45u];E[108]=uM3Carry;
+    E[110]=m3Get(M3_COMPLETED_PASSES);E[111]=m3Get(M3_COMPLETED_PASSES);E[112]=uM3Uploaded;
+    for(uint i=0u;i<24u;++i)E[114u+i]=B[uHeader+88u+i];
+    E[158]=W[terminal+30u];E[159]=W[terminal+7u];
+    for(uint i=0u;i<13u;++i)E[160u+i]=C[uHeader+132u+i];
+    for(uint i=0u;i<16u;++i)E[173u+i]=C[uHeader+145u+i];
+    for(uint i=0u;i<22u;++i)E[189u+i]=C[uHeader+161u+i];memoryBarrierBuffer();E[3]=3235823838u;
+}
+
+// One workgroup per SOURCE slot. Native bindings are fixed by slot, never by a
+// mapped trial result: CURRENT/candidate except slot 8 (candidate/SPARE).
+uniform uint uM3ExpectedState;
+const uint M3_ROOT_PRE_END=58u;
+bool m3SourceTrialActive(){return W[0]==0u&&m3Get(M3_ROOT_STATE)==1u&&m3Get(M3_SOURCE_SUCCESS)==0u&&(m3Input(2u)==2u||uM3Trial==0u);}
+void m3SourceCopy(){for(uint i=gl_LocalInvocationIndex;i<uM3Words;i+=64u)C[i]=B[i];memoryBarrierBuffer();barrier();}
+void m3OrdinarySaveAudit(){
+    if(!m3AuditTrialState()){m3SourceFail(15u,0u);return;}
+    m3Put(M3_TRIAL_END_ROW,m3Get(M3_EVENT_CURSOR));m3Put(M3_TRIAL_ERROR,m3Get(M3_TRIAL_REASON));m3Put(M3_TRIAL_END_BIRTHS,m3Get(M3_TRIAL_BIRTHS));m3Put(M3_TRIAL_END_MERGES,m3Get(M3_TRIAL_MERGES));m3Put(M3_TRIAL_END_BORN,m3Get(M3_TRIAL_BORN));
+}
+void m3SourceSlot(){
+    uint lane=gl_LocalInvocationIndex;
+    if(uPass!=0u){
+        if(lane==0u){if(m3Get(M3_COMPLETED_PASSES)!=uPass)m3SourceFail(28u,97u);m3Put(M3_COMPLETED_PASSES,m3Get(M3_COMPLETED_PASSES)+1u);}
+        memoryBarrierBuffer();barrier();
+    }
+    if(uPass==0u){
+        m3SourceCopy();
+        for(uint i=lane;i<8192u;i+=64u)m3Put(i,0u);
+        if(lane==0u)for(uint i=0u;i<16u;++i)W[i]=0u;
+        memoryBarrierBuffer();barrier();if(lane==0u)m3Put(M3_COMPLETED_PASSES,1u);return;
+    }
+    if(uPass==1u){
+        if(lane==0u){
+            for(uint i=0u;i<256u;++i)m3Put(M3_BASE_HEADER+i,B[uHeader+i]);
+            m3Put(M3_LAMBDA,65536u);
+            if(!m3AuditInventory()){m3SourceFail(15u,0u);return;}
+            if(m3DecodeSource())m3Put(M3_ROOT_STATE,1u);
+        }return;
+    }
+    if(uPass>=2u&&uPass<66u){
+        uint slot=(uPass-2u)%8u;
+        bool enabled=m3SourceTrialActive(); // Uniform across this single group.
+        if(!enabled)return;
+        bool bulk=m3Input(2u)==2u;
+        if(slot==0u){m3SourceCopy();if(lane==0u){if(bulk)m3TrialOpen();else m3OrdinaryInitialize();}return;}
+        if(slot==1u){if(lane==0u&&bulk)m3TrialSolve();return;}
+        if(slot==2u){if(bulk||m3Input(2u)==0u)m3BuildSeedIndex();return;}
+        if(slot==3u){if(bulk||m3Input(2u)==0u)m3ExecuteSeeds(false);else if(lane==0u)m3OrdinaryWater();return;}
+        if(slot==4u){if(lane==0u){if(bulk)m3TrialAudit();else m3OrdinarySaveAudit();}return;}
+        if(slot==5u){m3SourceCopy();return;}
+        if(slot==6u){
+            if(lane==0u){
+                if(bulk){m3TrialReplayBegin();m3TrialSolve();}
+                else{m3Replay=true;m3Put(M3_EVENT_CURSOR,0u);m3Put(M3_SCOPE_ORDINAL,0u);m3OrdinaryInitialize();}
+            }
+            memoryBarrierBuffer();barrier();
+            if(bulk||m3Input(2u)==0u)m3ExecuteSeeds();else if(lane==0u)m3OrdinaryWater();
+            memoryBarrierBuffer();barrier();
+            if(lane==0u){
+                m3TrialReplayEnd();
+                if(W[0]==0u&&!m3AuditTrialState())m3SourceFail(31u,0u);
+                for(uint i=0u;i<uM3Words&&W[0]==0u;++i)if(B[i]!=C[i])m3SourceFail(31u,i);
+            }return;
+        }
+        if(slot==7u&&lane==0u){if(bulk)m3TrialClose();else m3OrdinaryEnd();}return;
+    }
+    if(uPass==68u){if(W[0]==0u)m3SourceCopy();return;}
+    if(lane!=0u)return;
+    if(uPass==66u){
+        m3Put(M3_ROOT_PRE_END,m3Get(M3_EVENT_CURSOR));m3FinalizeSource();
+        if(W[0]==0u)for(uint i=0u;i<uM3Words;++i)W[uM3ExpectedState+i]=C[i];
+    }
+    else if(uPass==67u&&W[0]==0u){
+        // Native binds CURRENT/SPARE here. Reconstruct root metadata and both
+        // persistent ledgers independently, verifying rather than rewriting.
+        m3RootReplay=true;m3Replay=true;m3Put(M3_EVENT_CURSOR,m3Get(M3_ROOT_PRE_END));
+        m3FinalizeSource();m3Replay=false;m3RootReplay=false;
+        if(W[0]==0u&&(!m3AuditInventory()||!m3AuditSourceEvents()||!m3AuditRawCommand()||!m3AuditSourceTransaction()))m3SourceFail(15u,0u);
+        for(uint i=0u;i<uM3Words&&W[0]==0u;++i)if(C[i]!=W[uM3ExpectedState+i])m3SourceFail(31u,i);
+        // All applicable root families have now been independently checked;
+        // publication qualification remains unset until its separate audit.
+        if(W[0]==0u)m3Put(M3_AUDIT_FAMILIES,261887u);
+    }
+    // Slot68 is a private native copy to ACTUAL, with no public bank swap.
+    else if(uPass==69u)m3PackPublication();
+    else if(uPass==70u&&W[0]==0u){if(!m3AuditPublication())m3SourceFail(15u,0u);else m3Put(M3_AUDIT_FAMILIES,m3Get(M3_AUDIT_FAMILIES)|256u);}
+    else if(uPass==71u)m3SealSource();
+}
+
+void main(){m3SourceSlot();}
