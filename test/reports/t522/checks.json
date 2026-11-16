@@ -1,0 +1,26 @@
+{
+  "revision": "T522_DEVELOPER_CHECKS_V1",
+  "device": "NOT_RUN",
+  "build": "PASS",
+  "verifyApp": "PASS",
+  "source72": "PASS",
+  "full549_requested": "PASS",
+  "full549_offset7": "PASS",
+  "full549_clamped": "PASS",
+  "fullBranch": "PASS",
+  "profilesFunctionalGL": [
+    "192/64"
+  ],
+  "profilesAllocationGL": [
+    "192/64",
+    "192/128",
+    "512/64",
+    "512/128"
+  ],
+  "nativeSourceAccepted": "PASS",
+  "nativeColdCapturePage": "PASS",
+  "nativeQuantum": "CLOCK_GAP_REJECTED_NO_ACCEPT",
+  "nativeQuantumPerformance": "NOT_PASS_NOT_DEVICE",
+  "quotaControlCold": "PASS",
+  "referenceOracleDifference": "T499 solve_lambda ETA_TRUNCATION_RETRY; see developer report"
+}

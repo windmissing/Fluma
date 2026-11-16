@@ -7,6 +7,7 @@ def generate():
     text=read('m1/quantum_replay.glsl')
     text=once(text,'uint rr(uint a){return W[uSpare+a];}void rw(uint a,uint v){W[uSpare+a]=v;}',
                    'uint rr(uint a){return C[a];}void rw(uint a,uint v){C[a]=v;}')
+    text=once(text,'return E[row*64u+field];','return E[uM3EventWord+row*64u+field];')
     text=once(text,'void rd(uint c){wc(10u,c,rc(2u,c));wc(12u,c,rc(10u,c)+rc(6u,c));wc(13u,c,rc(12u,c)+rc(7u,c)+rc(8u,c));}',
         'void rd(uint c){wc(10u,c,rc(2u,c));wc(11u,c,rc(10u,c)+rc(8u,c));wc(12u,c,rc(11u,c)+rc(6u,c));wc(13u,c,rc(12u,c)+rc(7u,c));}')
     start=text.index('bool quantumAudit(){');end=text.index('bool replayField(',start)

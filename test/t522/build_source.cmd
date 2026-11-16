@@ -14,3 +14,9 @@ if errorlevel 1 exit /b 1
 .codex\local-test\t522-source.exe water-flight
 if errorlevel 1 exit /b 1
 .codex\local-test\t522-source.exe corrupt-replay
+if errorlevel 1 exit /b 1
+.codex\local-test\t522-source.exe zero-source
+if errorlevel 1 exit /b 1
+.codex\local-test\t522-source.exe zero-max-physics
+if errorlevel 1 exit /b 1
+.codex\local-test\t522-source.exe seed-resolution

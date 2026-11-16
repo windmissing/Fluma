@@ -54,6 +54,8 @@ bool grsCeilDiv(int a,int b,out int result){return grsDivideSigned(a,b,true,resu
 // Generated from T238 EVENT64 V2; unused words must be zero.
 const uvec2 m1Masks[15]=uvec2[15](uvec2(0u),uvec2(0xffffffffu,0x001f0003u),uvec2(0x0030ffffu,0x001f0003u),uvec2(0xffffffffu,0xff1ff000u),uvec2(0xffffffffu,0xff1ff000u),uvec2(0xffffffffu,0xff1fffffu),uvec2(0xffffffffu,0xff1ff000u),uvec2(0xffffffffu,0xff1fffffu),uvec2(0xffffffffu,0xff1f0fffu),uvec2(0x0030ffffu,0x00100fffu),uvec2(0x0030ffffu,0x0010000fu),uvec2(0xffffffffu,0xff1f000fu),uvec2(0xffffffffu,0xff1f0000u),uvec2(0xffffffffu,0xff1f0000u),uvec2(0xffffffffu,0xff1ff000u));
 
+#define M3_SCOPE_KERNEL
+#define M3_ROLE_DEFINED
 uniform uint uM3Role;
 uniform uint uK,uKw,uPad,uWater,uColumn,uHeader,uWords,uPass,uColor,uSortK,uSortJ;
 uniform uint uSandIndex,uWaterIndex,uArrivalIndex,uEdges,uFrozen,uRows,uAngles,uSourceEvents,uEventStart,uEventCapacity;
@@ -61,8 +63,13 @@ uniform uint uGravity,uSettle,uKAir,uKFlight,uKWet,uKappa,uSoft,uFlux,uQuantumOr
 int m3ScopeAngle;
 uniform uvec2 uNonce,uFrame,uControl;
 const uint Q=1048576u,CQ=268435456u,TICKS=65536u;
+#ifndef M3_EVENT_WORD_DEFINED
+#define M3_EVENT_WORD_DEFINED
+uniform uint uM3EventWord;
+#endif
+uniform uint uM3RootPass;
 // W0 first error, W1 event cursor, W2 first failing stage, W3 row ordinal.
-void qfail(uint reason){if(atomicCompSwap(W[0],0u,reason)==0u){W[2]=uPass;W[3]=W[1]+1u;}}
+void qfail(uint reason){if(atomicCompSwap(W[0],0u,reason)==0u){W[2]=uM3RootPass+1u;W[3]=W[1]+1u;}}
 uint col(uint f,uint c){return C[uColumn+f*128u+c];}void pc(uint f,uint c,uint v){C[uColumn+f*128u+c]=v;}
 uint baseAt(uint ns){return ns==0u?0u:uWater;}uint slots(uint ns){return ns==0u?uK:uKw;}
 uint at(uint ns,uint f,uint slot){return baseAt(ns)+f*slots(ns)+slot;}
@@ -99,7 +106,7 @@ void emit(uint kind,uint ns,uint slot,uint from,uint to,uint old[16],uint a0,uin
   e[52]=(old[tf]&15u)|((next&15u)<<4u)|(oldM<<8u)|(newM<<9u)|(((old[tf]>>12u)&15u)<<10u)|(((next>>12u)&15u)<<14u)|(ns<<18u)|(turnMask<<20u);e[56]=tau0;e[57]=tau1;e[58]=oldM;e[59]=newM;e[60]=W[uFrozen+from];e[61]=W[uFrozen+to];e[62]=planeTag;e[63]=segment;
  }else e[52]=2u<<18u;
  e[52]|=uM3Role<<22u;e[32]=a0;e[33]=a1;e[34]=b0;e[35]=b1;e[36]=total0;e[38]=C[uHeader+54u];e[40]=la0;e[41]=col(15u,from);e[42]=kind==5u||kind==9u?lb0:0u;e[43]=kind==5u||kind==9u?col(15u,to):0u;if(kind==9u){uint q=a0-a1;e[38]=total0-q;e[41]=la0-q;e[43]=lb0-q;}e[44]=num;e[46]=den;
- uvec2 mask=m1Masks[kind];for(uint i=0u;i<64u;i++)E[row*64u+i]=(((i<32u?mask.x:mask.y)>>(i%32u))&1u)!=0u?e[i]:0u;
+ uvec2 mask=m1Masks[kind];for(uint i=0u;i<64u;i++)E[uM3EventWord+row*64u+i]=(((i<32u?mask.x:mask.y)>>(i%32u))&1u)!=0u?e[i]:0u;
  if(ns==1u)W[8]++;if(kind==6u)W[9]++;if(kind==11u)W[10]++;if(kind==10u)atomicAdd(W[11],1u);
 }
 void retire(uint ns,uint slot){uint gen=ns==0u?10u:11u;for(uint f=0u;f<16u;f++)if(f!=gen)C[at(ns,f,slot)]=0u;}

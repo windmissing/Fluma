@@ -1,8 +1,9 @@
 #include "planning_control.h"
 namespace grs::m3a {
 ControlResult PlanningControl::Recheck(const RootPermitV4& p,uint64_t now)const{
-    if(p.identity!=clock_.identity||!clock_.Fresh(now)||!clock_.ready||!clock_.baseline||clock_.mode!=PlanningMode::RUNNABLE)return ControlResult::STALE_REJECTED;
+    if(p.identity!=clock_.identity)return ControlResult::STALE_REJECTED;
     if(now>p.deadline)return ControlResult::DEADLINE;
+    if(!clock_.Fresh(now)||!clock_.ready||!clock_.baseline||clock_.mode!=PlanningMode::RUNNABLE)return ControlResult::STALE_REJECTED;
     if(!clock_.grant.id||p.plan!=clock_.grant.id||!run_.active||p.plan!=run_.plan||p.nonce!=run_.nonce||!clock_.jobLive||!run_.jobLive)return ControlResult::STALE_REJECTED;
     return ControlResult::OK;
 }

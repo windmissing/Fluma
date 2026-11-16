@@ -9,11 +9,30 @@ bool m3AuditInventory(){
     for(uint i=161u;i<256u;++i)if(C[uHeader+i]!=0u)return false;
     uint prefix=C[uHeader+34u];
     if(prefix>4096u||C[uHeader+33u]<prefix||C[uHeader+33u]>4096u||C[uHeader+14u]!=prefix||C[uHeader+15u]!=0u)return false;
-    uvec2 sourcedSand=uvec2(0u),sourcedWater=uvec2(0u);
+    uvec2 sourcedSand=uvec2(0u),sourcedWater=uvec2(0u),previousSourcePhysics=uvec2(0u);
+    uint previousRawRow=0u;
     for(uint origin=0u;origin<prefix;++origin){
         uint at=uM3SourceEvents+origin*16u,meta=uM3SourceMeta+origin*32u,kind=W[at+4u],quantity=W[at+6u];
         if(kind>2u||quantity==0u||quantity>CQ||W[at+2u]!=origin+1u||W[at+3u]!=0u||W[at+9u]==0u||W[at+8u]>uK||W[at+14u]>W[at+8u])return false;
         if(W[meta]!=kind||W[meta+6u]!=quantity||W[meta+8u]!=origin+1u||W[meta+9u]!=0u||W[meta+14u]!=W[at+9u])return false;
+        if(W[meta+4u]!=W[at+8u]||W[meta+5u]!=W[at+14u]||W[meta+7u]<quantity||W[meta+7u]>CQ||W[meta+12u]>=C[uHeader+33u]||W[meta+15u]==0u||W[meta+16u]!=W[at+7u]||W[meta+17u]!=W[at+12u]||W[meta+18u]!=W[at+13u]||W[meta+25u]!=W[at+15u]||W[meta+26u]!=W[at]||W[meta+27u]!=W[at+1u]||(W[at]|W[at+1u])==0u)return false;
+        uvec2 sourcePhysics=uvec2(W[meta+10u],W[meta+11u]);
+        if(grsCompare64(sourcePhysics,previousSourcePhysics)<=0||grsCompare64(sourcePhysics,uvec2(C[uHeader+16u],C[uHeader+17u]))>0||(origin>0u&&W[meta+12u]<=previousRawRow))return false;
+        previousSourcePhysics=sourcePhysics;previousRawRow=W[meta+12u];
+        uint births=W[meta+4u],first=W[meta+16u],beforeId=W[meta+17u],afterId=W[meta+18u];
+        uvec2 nextId;if(!grsAdd64(uvec2(beforeId,0u),uvec2(births,0u),nextId)||nextId.y>1u||nextId.y==1u&&nextId.x!=0u)return false;
+        if(births==0u){if(first!=0u||afterId!=beforeId)return false;}
+        else if(first!=beforeId||first==0u||afterId!=(kind==1u&&nextId.y!=0u?0xffffffffu:nextId.x))return false;
+        if(kind==2u){
+            uint lambda=W[meta+1u],attempts=W[meta+2u],seeds=W[meta+3u];
+            if(lambda<7u||lambda>65536u||attempts<1u||attempts>8u||seeds<1u||seeds>128u||births<seeds||W[meta+13u]!=512u||W[meta+19u]>CQ||W[meta+20u]>=128u)return false;
+            uint stop=lambda==65536u?131072u:131073u;
+            if(W[meta+25u]!=stop||(lambda==65536u?attempts!=1u:attempts<2u))return false;
+            uvec2 product=grsMul32(W[meta+7u],lambda);uint upper=(product.x>>16u)|(product.y<<16u);
+            if(quantity>upper||upper-quantity>=128u||lambda==65536u&&quantity!=W[meta+7u])return false;
+        }else{
+            if(W[meta+1u]!=0u||W[meta+2u]!=0u||W[meta+3u]!=0u||W[meta+13u]!=0u||W[meta+19u]!=0u||W[meta+20u]!=0u||W[meta+25u]>5u)return false;
+        }
         for(uint field=28u;field<32u;++field)if(W[meta+field]!=0u)return false;
         if(kind==1u){if(!m3Sum(sourcedWater,quantity))return false;}
         else if(!m3Sum(sourcedSand,quantity))return false;

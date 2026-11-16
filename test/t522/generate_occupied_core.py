@@ -20,7 +20,15 @@ def generate():
     core=once(core,'e[1]=2u','e[1]=4u')
     core=once(core,'e[32]=a0;', 'e[52]|=uM3Role<<22u;e[32]=a0;')
     # Declare before emit(): role bits are semantic metadata, not a time scale.
-    core=once(core,'uniform uint uK,','uniform uint uM3Role;\nuniform uint uK,')
+    core=once(core,'uniform uint uK,','#define M3_SCOPE_KERNEL\n#define M3_ROLE_DEFINED\nuniform uint uM3Role;\nuniform uint uK,')
+    core=once(core,'// W0 first error,','''#ifndef M3_EVENT_WORD_DEFINED
+#define M3_EVENT_WORD_DEFINED
+uniform uint uM3EventWord;
+#endif
+uniform uint uM3RootPass;
+// W0 first error,''')
+    core=once(core,'W[2]=uPass;','W[2]=uM3RootPass+1u;')
+    core=core.replace('E[row*64u+i]','E[uM3EventWord+row*64u+i]')
     core=once(core,'uniform int uRequestedAngle;','int m3ScopeAngle;')
     core=core.replace('uRequestedAngle','m3ScopeAngle')
     core=once(core,'/* INTEGER_PRIMITIVES */',read('integer_primitives.glsl'))

@@ -4,7 +4,7 @@ uniform uint uSpare,uReplayFrozen,uBaseBank,uPublicationSlot,uEventArena,uCarry,
 uint rr(uint a){return C[a];}void rw(uint a,uint v){C[a]=v;}
 uint rc(uint f,uint c){return rr(uColumn+f*128u+c);}void wc(uint f,uint c,uint v){rw(uColumn+f*128u+c,v);}
 void rd(uint c){wc(10u,c,rc(2u,c));wc(11u,c,rc(10u,c)+rc(8u,c));wc(12u,c,rc(11u,c)+rc(6u,c));wc(13u,c,rc(12u,c)+rc(7u,c));}
-uint ev(uint row,uint field){return E[row*64u+field];}
+uint ev(uint row,uint field){return E[uM3EventWord+row*64u+field];}
 bool requireQ(bool yes,uint why){if(!yes)qfail(why);return yes;}
 bool addR(uint offset,uint amount){uvec2 value;if(!grsAdd64(uvec2(rr(uHeader+offset),rr(uHeader+offset+1u)),uvec2(amount,0u),value)){qfail(13u);return false;}rw(uHeader+offset,value.x);rw(uHeader+offset+1u,value.y);return true;}
 uint replayGuard(uint q,uint donor,uint receiver,bool land){uint lo=land?donor:min(donor,receiver),hi=land?donor:max(donor,receiver);for(int e=int(lo)-1;e<=int(hi);e++){if(e<0||e>=127)continue;uint a=uint(e),b=a+1u;int delta=int(rc(10u,b))-int(rc(10u,a))-int(W[5]),k=(b==receiver?1:0)-(a==receiver?1:0);if(!land)k-=(b==donor?1:0)-(a==donor?1:0);if(abs(delta)>605394){qfail(14u);return 0u;}if(k>0)q=min(q,uint(605394-delta)/uint(k));if(k<0)q=min(q,uint(605394+delta)/uint(-k));}return q;}

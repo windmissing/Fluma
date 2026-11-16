@@ -11,5 +11,16 @@ delete profile.app.signingConfigs;for(const product of profile.app.products)dele
 fs.writeFileSync(profilePath,JSON.stringify(profile,null,2)+'\n');
 const cmake=path.join(cpp,'gpu_resident/CMakeLists.txt');
 if(!fs.readFileSync(cmake,'utf8').includes('/m3a/kernels.cmake'))fs.appendFileSync(cmake,'\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/m3a/kernels.cmake")\n');
+require('./bridge_overlay.cjs')(main);
+fs.copyFileSync('entry/src/main/ets/pages/GpuResidentM3.ets',path.join(main,'ets/pages/GpuResidentM3.ets'));
+fs.copyFileSync('entry/src/main/ets/physics/GpuM3Cold.ets',path.join(main,'ets/physics/GpuM3Cold.ets'));
+const pagesPath=path.join(main,'resources/base/profile/main_pages.json'),pages=JSON.parse(fs.readFileSync(pagesPath,'utf8'));
+if(!pages.src.includes('pages/GpuResidentM3'))pages.src.push('pages/GpuResidentM3');
+fs.writeFileSync(pagesPath,JSON.stringify(pages,null,2)+'\n');
+const experiencePath=path.join(main,'ets/pages/GpuSandWaterExperience.ets');let experience=fs.readFileSync(experiencePath,'utf8').replaceAll('\r\n','\n');
+const routeAnchor="      Text('GPU M2 V3 · ' + this.progress).fontSize(18)";
+if(experience.split(routeAnchor).length!==2)throw Error('M3_ENTRY_LINK_ANCHOR');
+experience="import router from '@ohos.router';\n"+experience.replace(routeAnchor,routeAnchor+"\n      Button('打开 GPU M3 V4').onClick(() => { router.pushUrl({ url: 'pages/GpuResidentM3' }); })");
+fs.writeFileSync(experiencePath,experience);
 const files={};for(const name of fs.readdirSync(dest))files[name]=crypto.createHash('sha256').update(fs.readFileSync(path.join(dest,name))).digest('hex');
-fs.writeFileSync(path.join(out,'t522-manifest.json'),JSON.stringify({revision:'T522_M3_V4_IN_PROGRESS',route:'m3a',product:'IN_PROGRESS',defaultRoute:'m2',files,device:'NOT_RUN'},null,2)+'\n');
+fs.writeFileSync(path.join(out,'t522-manifest.json'),JSON.stringify({revision:'T522_M3_V4_DEVELOPER_DELIVERY',route:'m3a',product:'IMPLEMENTED_DEVICE_NOT_RUN',defaultRoute:'m2',files,device:'NOT_RUN'},null,2)+'\n');

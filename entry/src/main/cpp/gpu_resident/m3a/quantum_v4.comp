@@ -1,0 +1,16 @@
+/* m3a/occupied_core.glsl */
+uniform uint uM3SourceEvents,uM3SourceMeta,uM3CandidateBank;
+/* m3a/occupied_solvers.glsl */
+/* m3a/water_event.glsl */
+/* m3a/water_writer.glsl */
+/* m3a/inventory_audit.glsl */
+/* m3a/occupied_replay.glsl */
+/* m3a/planner.glsl */
+/* m3a/scope_common.glsl */
+/* m3a/plan_receipts.glsl */
+/* m3a/semantic_compare.glsl */
+/* m3a/publication.glsl */
+/* m3a/occupied_dispatch.glsl */
+/* m3a/quantum_completion.glsl */
+/* m3a/quantum_driver.glsl */
+void main(){m3QuantumRoot();}

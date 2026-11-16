@@ -1,6 +1,8 @@
 #include <cstdint>
 #include <cstring>
+#include "../../entry/src/main/cpp/gpu_resident/m3a/shader_variant.h"
 #include "../../entry/src/main/cpp/gpu_resident/m3a/profiles_generated.h"
+#include "../../entry/src/main/cpp/gpu_resident/angles_generated.h"
 #include <EGL/egl.h>
 #include <GLES3/gl31.h>
 #include <cassert>
@@ -12,6 +14,7 @@
 #include "gl_api.inc"
 static std::string Read(const std::string& path){std::ifstream in(path,std::ios::binary);assert(in);return {std::istreambuf_iterator<char>(in),std::istreambuf_iterator<char>()};}
 int main(int argc,char** argv){
+ std::cout.setf(std::ios::unitbuf);
  const std::string scenario=argc>1?argv[1]:"bulk";
  using F=EGLDisplay(EGLAPIENTRYP)(EGLenum,void*,const EGLint*);PROC(F,eglGetPlatformDisplayEXT);
  const EGLint displayArgs[]={0x3203,0x3450,0x3209,0x3487,EGL_NONE};auto display=f(0x3202,nullptr,displayArgs);assert(eglInitialize(display,nullptr,nullptr));
@@ -21,8 +24,8 @@ int main(int argc,char** argv){
  GLuint sh=glCreateShader(GL_COMPUTE_SHADER);const char* src=shader.c_str();glShaderSource(sh,1,&src,nullptr);glCompileShader(sh);GLint ok;glGetShaderiv(sh,GL_COMPILE_STATUS,&ok);if(!ok){char log[8192];glGetShaderInfoLog(sh,sizeof(log),nullptr,log);std::cerr<<log;return 1;}auto program=glCreateProgram();glAttachShader(program,sh);glLinkProgram(program);glGetProgramiv(program,GL_LINK_STATUS,&ok);assert(ok);glDeleteShader(sh);glUseProgram(program);
  constexpr uint32_t H=6144,COL=4096,SCRATCH=4096,INPUT=16384,DEDUP=32768,RAW=DEDUP+4096*64,META=RAW+4096*512,LEDGER=META+4096*32,ORIGINS=LEDGER+4096*16;
  constexpr uint32_t ANGLES=ORIGINS+8192;
- std::vector<uint32_t> base(6400),blank(6400),work(ANGLES+61444),events(10622*64),completion(256),publication(16*192+20*64+2048+256);
- for(unsigned i=0;i<15361;++i)work[ANGLES+i*4+2]=1048576;
+ std::vector<uint32_t> base(6400),blank(6400),work(ANGLES+61444),events(42680*64),completion(256),publication(16*192+20*64+2048+256);
+ for(unsigned i=0;i<61444;++i)work[ANGLES+i]=grs::kAngleWords[i];
  for(uint32_t c=0;c<128;++c){base[COL+6*128+c]=1048576;base[COL+12*128+c]=base[COL+13*128+c]=1048576;}
  auto header=[&](uint32_t field,uint32_t value){base[H+field]=value;};
  header(0,1213420103);header(1,4);header(2,256);header(4,1);header(6,2);header(8,3);header(10,4);header(20,1);header(22,1);header(39,1);header(40,1);header(43,192);header(44,64);header(58,128*1048576);header(66,128*1048576);header(84,1);header(112,128*1048576);header(122,1);header(123,65536);header(124,2);header(125,2);header(145,1);header(146,7);header(156,512);header(160,1);
@@ -41,12 +44,18 @@ int main(int argc,char** argv){
    input(2,sand?0:1);binary(20,122334.0/1048576);
    if(scenario=="water-flight")binary(18,2.0);
    expectedMass=122334;expectedBirths=sand?2:scenario=="water-flight"?1:0;expectedTrials=0;
- }else assert(scenario=="bulk"||scenario=="corrupt-replay"||scenario=="quantum");
+ }else if(scenario=="seed-resolution"){
+   for(uint32_t c=0;c<128;++c){base[COL+6*128+c]=c==1?1:0;base[COL+12*128+c]=base[COL+13*128+c]=c==1?1:0;binary(32+4*c,c==1?1.0/1048576:0);}
+   header(58,1);header(66,1);header(112,1);
+ }else if(scenario=="zero-source"||scenario=="zero-max-physics"){
+   for(uint32_t i=0;i<512;++i)input(32+i,0);input(2,0);binary(20,0);
+   if(scenario=="zero-max-physics"){header(16,UINT32_MAX);header(17,UINT32_MAX);header(118,UINT32_MAX);header(119,UINT32_MAX);}
+ }else assert(scenario=="bulk"||scenario=="corrupt-replay"||scenario=="quantum"||scenario=="root"||scenario=="root-offset"||scenario=="root-clamped"||scenario=="root-full");
  GLuint buffers[8];glGenBuffers(8,buffers);
  const std::vector<uint32_t>* data[]={&base,&blank,&blank,&blank,&work,&events,&publication,&completion};
  for(unsigned i=0;i<8;++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,data[i]->size()*4,data[i]->data(),GL_DYNAMIC_COPY);}
  auto uniform=[&](const char* name,uint32_t value){glUniform1ui(glGetUniformLocation(program,name),value);};
- const std::pair<const char*,uint32_t> uniforms[]={{"uK",192},{"uKw",64},{"uWater",3072},{"uColumn",COL},{"uHeader",H},{"uM3Words",6400},{"uM3Scratch",SCRATCH},{"uM3SourceRows",5153},{"uM3Input",INPUT},{"uM3Payload",INPUT+32},{"uM3Dedup",DEDUP},{"uM3RawDedup",RAW},{"uM3SourceMeta",META},{"uM3SourceEvents",LEDGER},{"uM3OriginScratch",ORIGINS},{"uM3Uploaded",2176},{"uM3ExpectedState",24576},{"uM3CandidateBank",3},{"uM3SpareBank",2},{"uM3Index0",2048},{"uM3Index1",2304},{"uM3Settle",65536}};
+ const std::pair<const char*,uint32_t> uniforms[]={{"uK",192},{"uKw",64},{"uWater",3072},{"uColumn",COL},{"uHeader",H},{"uM3Words",6400},{"uM3Scratch",SCRATCH},{"uM3SourceRows",5153},{"uM3Input",INPUT},{"uM3Payload",INPUT+32},{"uM3Dedup",DEDUP},{"uM3RawDedup",RAW},{"uM3SourceMeta",META},{"uM3SourceEvents",LEDGER},{"uM3OriginScratch",ORIGINS},{"uM3Uploaded",2176},{"uM3ExpectedState",24576},{"uM3CandidateBank",1},{"uM3SpareBank",2},{"uM3Index0",2048},{"uM3Index1",2304},{"uM3Settle",65536}};
  for(auto u:uniforms)uniform(u.first,u.second);glUniform1i(glGetUniformLocation(program,"uM3Cos"),1048576);
  for(unsigned pass=0;pass<72;++pass){
    unsigned in=0,out=1,event=5;
@@ -69,6 +78,14 @@ int main(int argc,char** argv){
  }
  if(!passed)return 2;
  glBindBuffer(GL_COPY_READ_BUFFER,buffers[7]);auto tail=static_cast<const uint32_t*>(glMapBufferRange(GL_COPY_READ_BUFFER,0,1024,GL_MAP_READ_BIT));assert(tail);
+ if(scenario=="zero-source"||scenario=="zero-max-physics"||scenario=="seed-resolution"){
+   assert(tail[28]==2&&tail[18]==0&&tail[19]==0&&tail[64]==(scenario=="seed-resolution"?131076u:65539u)&&tail[106]==1&&tail[97]==72&&tail[99]==32767);
+   if(scenario=="seed-resolution")assert(tail[176]==1&&tail[61]==0);
+   if(scenario=="zero-max-physics")assert(tail[20]==UINT32_MAX&&tail[21]==UINT32_MAX);
+   else assert(tail[20]==0&&tail[21]==0);
+   assert(glUnmapBuffer(GL_COPY_READ_BUFFER));std::cout<<"T522 SOURCE72 rejection/rollback/no physics overflow "<<scenario<<" PASS\n";
+   glDeleteBuffers(8,buffers);glDeleteProgram(program);eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);eglDestroyContext(display,context);eglDestroySurface(display,surface);eglTerminate(display);return 0;
+ }
  assert(tail[0]==1381192263&&tail[1]==4&&tail[2]==256&&tail[3]==3235823838u&&tail[28]==1&&tail[97]==72&&tail[99]==32767&&tail[110]==72&&tail[111]==72&&tail[112]==2176&&tail[173]==1&&tail[174]==7&&tail[188]==1);
  for(unsigned i=189;i<256;++i)assert(tail[i]==0);assert(glUnmapBuffer(GL_COPY_READ_BUFFER));
  glBindBuffer(GL_COPY_READ_BUFFER,buffers[3]);auto actual=static_cast<const uint32_t*>(glMapBufferRange(GL_COPY_READ_BUFFER,0,base.size()*4,GL_MAP_READ_BIT));assert(actual);
@@ -107,5 +124,6 @@ int main(int argc,char** argv){
    const bool quantumPassed=q[0]==0&&q[17]==1;assert(glUnmapBuffer(GL_COPY_READ_BUFFER));if(!quantumPassed)return 3;
    std::cout<<"T522 actual GPU occupied motion core/global water/independent SPARE replay PASS (one scope, not full QUANTUM root)\n";
  }
+#include "quantum_root.inc"
  glDeleteBuffers(8,buffers);glDeleteProgram(program);eglMakeCurrent(display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);eglDestroyContext(display,context);eglDestroySurface(display,surface);eglTerminate(display);
 }
