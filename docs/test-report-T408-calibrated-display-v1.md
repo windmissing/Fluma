@@ -70,3 +70,41 @@ prepare 档 `readinessReason = PREPARE_TIMEOUT:RASTER_OUTSIDE_ALLOCATION`（prep
 ### NOT_MEASURED（attempt7）
 
 PNG/ROI、跨域时钟映射与 hold 误差区间、中性厚床/非零 gains/CONTROL A-B/LOCK A-B、V2 single/pair 判读、1px/1码/缺列/过期身份/越 hold 正反控——全部因 prepare 不 READY 未达（非跳过）。attempt1-4 的 hold 时序约束移交项保持有效。
+
+---
+
+## attempt8（2026-11-16，T516-release 6f49d06d… 四边向内修复版）
+
+来源：`T516-release-signed.hap` SHA256 `6f49d06da5cf4a019d96c3f55a694d6a606fc0730e538406c58e142e68ec1c22`（本地逐位一致）。证据：`test/reports/t491/t408a8/`。
+
+### 执行链
+
+1. `bm clean` 后冷启 PID 4695 → 单沙页在位；确认固定键盘 → 收键盘并准备（session `s1794806214122-1`）→ FAILED。
+2. prepare 档（T509_PREPARE_V2）原始域：
+
+| 域 | 值 |
+|---|---|
+| desiredWindowRect / desiredScreenRect | **(52, 990, 1176, 1716)** —— 与 T525 oracle 独立复算逐字一致 |
+| actual / inner / touch | x=51.79998779296875, y=990, **w=1176**, h=1716（三域一致，旧 OUTSIDE 问题已修） |
+| localPx | (0.79998779296875, 0, 1176, 1716) |
+| screen | x=51.79998779296875（≠desired 52） |
+
+### 新拒因（T516 严格门生效）
+
+`readinessReason = PREPARE_TIMEOUT:RASTER_PLACEMENT_MISMATCH`——**不再是 OUTSIDE_ALLOCATION**：
+attempt7 的外框外问题（51<51.2）已由 T516 四边向内分配修复，actual/inner/touch 三域宽度 1176
+一致且在 allocation 内。新门按 T509 v2"实际三框逐值匹配 desired"判定：**actual.x=51.79998779
+≠ desired.x=52，差 0.2px**——组件实际渲染位置与 ceil 计划位不符（51.2+localPx0.8=52.0 的
+期望被平台渲染定位偏移 0.2px 打破）。**修复后的严格门正确拒绝**（不静默放行）。
+
+### 下游连锁与移交
+
+prepare 不 READY → 预约 disabled → HOLD/PNG/时钟链/配对全部未达（同 attempt7 结构）。
+按 T509 v2 合同"若平台位置不匹配，保原值回 architect，不增加容差"：**0.2px 平台渲染位差
+交 architect 裁定**（候选：窗口原点非零偏移、rtl/平移域、或 desired 基准应取 screen 而非 window）。
+原始三域数据完整在 FAILED 档可复算。
+
+### NOT_MEASURED（attempt8）
+
+PNG/ROI、跨域时钟映射、中性厚床/非零 gains/CONTROL A-B/LOCK A-B、V2 判读、正反控——
+全部因 prepare 不 READY 未达（非跳过）。
