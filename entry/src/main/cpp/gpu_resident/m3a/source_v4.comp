@@ -1,0 +1,33 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64)in;
+layout(std430,binding=0)readonly buffer Base{uint B[];};
+layout(std430,binding=1)coherent buffer Candidate{uint C[];};
+layout(std430,binding=2)coherent buffer Workspace{uint W[];};
+layout(std430,binding=3)coherent buffer Events{uint E[];};
+uniform uint uK,uKw,uWater,uColumn,uHeader,uPass;
+const uint Q=1048576u,CQ=268435456u;
+uint col(uint f,uint c){return C[uColumn+f*128u+c];}
+void m2LoadSand(uint slot,out uint row[16]);
+uint m3Input(uint i);
+
+/* integer_primitives.glsl */
+/* m2/layout_generated.glsl */
+/* m2/merge_primitives.glsl */
+/* m2/pair_index.glsl */
+/* m3a/protocol_generated.glsl */
+/* m3a/occupied_solvers.glsl */
+/* m3a/source_base.glsl */
+/* m3a/source_events.glsl */
+/* m3a/source_seed.glsl */
+/* m3a/source_admission.glsl */
+/* m3a/source_trial_audit.glsl */
+/* m3a/source_trial.glsl */
+/* m3a/source_ordinary.glsl */
+/* m3a/source_finalize.glsl */
+/* m3a/inventory_audit.glsl */
+/* m3a/source_root_audit.glsl */
+/* m3a/publication.glsl */
+/* m3a/source_completion.glsl */
+/* m3a/source_driver.glsl */
+void main(){m3SourceSlot();}
