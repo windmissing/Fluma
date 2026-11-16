@@ -1,24 +1,12 @@
-# T498 · M3首阶段工程闭包与BLOCKED时间账待裁定项
+# T498 · M3首阶段工程闭包（2026-11-16 V2控制gate已闭合）
 
-2026-11-14，architect，P5，不使用真机。消费T497正式算法/manifest/30条反例及实际M2 pass/布局。[工程机器稿](architecture-T498-m3-engineering-manifest-v1.json)展开四档SOURCE/QUANTUM stage、银行、四binding和资源，[静态核对](analysis-T498-T503-contract-checks-v1.json)保原件指纹及检查。**阶段/存储/接口隔离部分已闭合，整卡实施放行仍为NOT_READY：outcome5时间账与再入条件需designer补齐。** 不编码产品、不删控制/守恒门，不将部分稿称完整可实施设计。
+2026-11-14，architect，P5，不使用真机。消费T497正式算法/manifest/30条反例及实际M2 pass/布局。[工程机器稿](architecture-T498-m3-engineering-manifest-v1.json)展开四档SOURCE/QUANTUM stage、银行、四binding和资源，[静态核对](analysis-T498-T503-contract-checks-v1.json)保原件指纹及检查。**2026-11-16续办：T508正式补充已消费，完整工程gate为ENGINEERING_READY / 产品NOT_IMPLEMENTED。控制实现以[时间gate工程v2](architecture-T498-m3-blocked-control-v2.md)及机器稿V2为准。** 不编码产品、不删控制/守恒门，不将部分稿称完整可实施设计。
 
-## 1. 唯一未闭合的算法前置：PLANNING_BLOCKED时间处置
+## 1. BLOCKED时间账已由T508补齐并工程闭合
 
-T497 §6/manifest明定outcome5不接受candidate/header/pub、不发成功QUANTUM，当前帧剩余quantum discarded/block reason，下一次真实新输入才重新规划。现有M2实际别名`m2route::ProgressClockV2`使用m1类，只有accepted/pending/activeRemaining/overload/revoked；守恒式为generated=五类之和。没有“正常规划阻塞丢弃”类别，Revoke又同时关闭session/clear carry/ready。
+2026-11-14发现的正常blocked无独立丢弃字段、pending/carry/等待pulse和真实新输入未定义问题，已由正式T508补齐。2026-11-16消费当前T497/T508 SHA，冻结独立GRS_M3_PROGRESS_CLOCK_V3和GRS_M3_BLOCKED_QUOTA_V1；完整方法/短事务/Run同步退休/producer意图key/reader与资源见[控制工程v2](architecture-T498-m3-blocked-control-v2.md)。本稿后续stage/银行/资源仍有效，旧阻断保留在原卡和9fbf164历史，不再作为当前设计前置。
 
-最小反例：generated=4、activeRemaining=4，其它0；首Q返回合法BLOCKED，若不接受且清剩余，右侧变0，账失衡。将4填accepted是假成功；填overload是假容量丢弃；调用Revoke会关闭session，可能与“新输入可重新规划”冲突。仅新增一个native丢弃字段也未回答同窗pending/carry与等待期间pulse如何处理。因此不能由architect/developer默选一个时间政策。
-
-已尝试核T497算法§6、planningBlockedTail、fixture PLANNER_BLOCKED和原卡评论；它们都没有进一步给账目分类/再入定义。也核实际V2 Claim/AcceptQuantum/Revoke/Balanced，无可直接复用分支。其它工程部分继续完成如下，不因这一项停做整稿。
-
-交designer的最小可执行补充（不重做已交λ/η/preview数学，不改250ms/GAP）：
-
-1. 冻结BLOCKED剩余量的计数/单位、状态schema和守恒式；是否新增独立blockedDiscarded而保旧V2不变，不能借旧字段伪装接受/撤权。
-2. 明确丢弃范围是本active plan剩余（含当前blocked Q）还是连同pending；同时存在pending=2、carry=123456789时各字段精确转移；等待期间真实pulse产生量、carry/baseline和超载如何记，不补跑时长。
-3. 定义“真实新输入”的单调key：合法新SOURCE/target/control事件各如何解锁；单独heartbeat、读诊断、相同target重发是否解锁；源队列能否在BLOCKED等待态继续消费。
-4. 冻结BLOCKED后ready/open/permission/lastGood的关系及最早再Claim点，确保旧nonce尾部不得再接受，新的有效输入能前进，真实GAP/250ms仍故障。
-5. 提供三条状态反例的精确expected：仅active4；active2+pending2+非零carry；BLOCKED后多pulse→一次合法源/target→新plan。给源码/reader需要新增的具名字段，不扩物理支持域。
-
-此补充是设计职责、不是缺设备窗口或developer自测。当前无法自行继续的是**整卡的native时间gate冻结**；所需输入为上述designer补充，接手designer，之后回architect补manifest/gate，再由manager派完整developer卡。T499独立整数反例/工具可继续已解锁范围，产品未实现记NOT_IMPLEMENTED，不假解锁整卡实施。
+G=A+X+P+O+R+B；120*creditedElapsedNs=1e9*G+C+Z+BC。入口active与pending丢弃分账、carry归BC，WAIT/REARM fresh归Bwait；新输入arm后第一个新pulse整段仍记等待，之后才可积可运行quota。三条必要expected和全部21补充fixture已静态核，局部carry123456789不可伪配整数elapsedNs。此为工程闭包，尚无产品实现/设备通过结论。
 
 ## 2. 模块、版本与完整交付范围
 
@@ -87,7 +75,7 @@ gate先核seal/revision/features/完整root和base身份/permit/真实GL结果�
 - SUCCESS：required审核、实际stage表与counter、全部库存/事件/pub验证成立才原子接受；SOURCE后Q失败保成功prefix。
 - METADATA_REJECT/DEDUP_REPLAY：按设计单次metadata接收及delta0，不增物理/source成功量，不凭零库存放松身份。
 - FATAL_ERROR：保首错、隔离candidate/晚尾，FAULT或合法STALE，不fallback到OLD掩盖audit/GL。
-- PLANNING_BLOCKED：保base commits、pub资格0、只控制结果，**不能走旧AcceptQuantum/成功bank分支**；其时间账和再入gate必须等§1设计补充，机器稿显式NOT_READY。
+- PLANNING_BLOCKED：保base commits、pub资格0、只控制结果，**不能走旧AcceptQuantum/成功bank分支**；其时间账和再入gate严格按§1及控制工程v2，走BlockPlanningControl独立事务。
 
 Scene新token/revision4读取column16的T/eta/R：自由水深clamp(eta−max(y,T),0,W)，LAND不再额外抬eta；所有源/运动/床/CROSS/ARRIVE均用occupied面和J净空。背景前景全部XComponent+shader，同代真实lease/Swap前后许可，失败不Canvas/软件GL回退。
 
@@ -110,7 +98,7 @@ combined padding加`2×(alignUp(S,A)−S)`；WORK按整体binding地址0和显�
 
 ## 7. 接力与必要检查
 
-designer先仅补§1并同步算法/manifest/状态反例；architect随后核机器gate、quota守恒及兼容，才标完整ENGINEERING_READY。不得把本稿stage/资源完成当整卡放行，不自动安排部分产品默认接线。
+T508正式设计与本卡控制工程v2已闭合，完整ENGINEERING_READY。developer按机器稿V2一次完整实施；不得把设计检查冒产品运行通过，不自动切产品默认。
 
 后续developer，不使用真机。消费已闭合版本的独立manifest，全stage/角色/银行/shader/reader/controller同源生成，必要非机检查含：T499三十反例、8trial/seed全成全退、η/40轮残差/净空、medium全部writer、role/epoch污染、完整semantic比较、四binding执行、stage计数/审核、blocked补充状态表、四档资源能力与错误清理、晚尾/lease/Swap、旧reader拒未知；host GL仅离线设施。编译/签包及本角色自测即可交付，独立tester/设备另卡，不附加开发门。
 
@@ -118,4 +106,4 @@ T499独立输入/整数期望可继续，不新建CPU业务参考实现，复用
 
 共同prompt：要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部受阻先做其它项。不允许修改 `D:\hmprojects\HelloWorld\docs\后续工作清单.md`，仅本人行状态有限例外，不改其它行列/滴答同名清单。CPU停投。全部前景背景仅XComponent+shader，禁止Canvas/软件GL产品回退，失败FAULT或标STALE上一完整有效帧。GAP33,333,333ns/250,000,000ns绝对root期限/120Hz quota/30fps目标不改。成功原卡回执并本人行结束待验收；失败/关键缺证留未完项、复现原错、证据、已尝试、不能自行继续原因、前置/接手角色，本人行看评论。
 
-本轮完成所有可独立闭合部分与必要静态核验；尚未完成§1时间gate，不能自行选择算法语义。因此T498回原卡“看评论”，所需designer补充明确；未实现/编译/运行产品或设备，不冒完整工程通过。
+2026-11-16续办已完成§1时间gate与全部本角色范围，独立静态核对见analysis-T498-control-gate-v2.json。本卡回原卡并本人行结束待验收；未实现/编译/运行产品或设备，不冒产品PASS。

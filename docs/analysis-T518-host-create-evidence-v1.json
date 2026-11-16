@@ -1,0 +1,1241 @@
+{
+  "schema": "T518_ARCHITECT_STATIC_TRIAGE_V1",
+  "date": "2026-11-16",
+  "status": "TRIAGE_COMPLETE_PRECISE_TESTER_EVIDENCE_REQUIRED",
+  "device": "NOT_RUN",
+  "GLExecuted": false,
+  "logs": [
+    {
+      "runId": "t496-820000823479300",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-820269492331700",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-820269492331700",
+      "arm": "off",
+      "actionId": "WALL",
+      "phase": "GUARD_TIMEOUT",
+      "scriptNs": "1000000",
+      "detail": "no owner checkpoint in 120s"
+    },
+    {
+      "assertId": "D1_WALL_GUARD",
+      "runId": "t496-820269492331700",
+      "arm": "off",
+      "pass": false,
+      "detail": "owner stalled before script end"
+    },
+    {
+      "runId": "t496-820269492331700",
+      "arm": "off",
+      "actionId": "DRAIN",
+      "phase": "PRE_QUIT_SNAPSHOT",
+      "scriptNs": "1000000",
+      "detail": "accepted=0 sourceCommit=0 mailbox=0 runQueue=0"
+    },
+    {
+      "runId": "t496-821533354249000",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-821803424166000",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-822854649600700",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-823111440365700",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-823111440365700",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=0"
+    },
+    {
+      "runId": "t496-823111440365700",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=15000"
+    },
+    {
+      "runId": "t496-823382543211200",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-823382543211200",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=0"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=0"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=15000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=30000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=45000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=60000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=75000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=90000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=105000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=120000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=135000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=150000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=165000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=180000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=195000"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "CREATE_WAIT",
+      "scriptNs": "1000000",
+      "detail": "waiting transport create, iter=210000"
+    }
+  ],
+  "stages": [
+    {
+      "runId": "t496-820000823479300",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-820269492331700",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-820269492331700",
+      "arm": "off",
+      "stage": "D1_OFF",
+      "event": "EXIT",
+      "code": "OK"
+    },
+    {
+      "runId": "t496-820269492331700",
+      "arm": "off",
+      "stage": "D1_ON",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-821533354249000",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-821803424166000",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-822854649600700",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-823111440365700",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-823382543211200",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    },
+    {
+      "runId": "t496-823516366862300",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    }
+  ],
+  "rawOriginals": {
+    "t496_log.ndjson": "{\"runId\":\"t496-820000823479300\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-820269492331700\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-820269492331700\",\"arm\":\"off\",\"actionId\":\"WALL\",\"phase\":\"GUARD_TIMEOUT\",\"scriptNs\":\"1000000\",\"detail\":\"no owner checkpoint in 120s\"}\n{\"assertId\":\"D1_WALL_GUARD\",\"runId\":\"t496-820269492331700\",\"arm\":\"off\",\"pass\":false,\"detail\":\"owner stalled before script end\"}\n{\"runId\":\"t496-820269492331700\",\"arm\":\"off\",\"actionId\":\"DRAIN\",\"phase\":\"PRE_QUIT_SNAPSHOT\",\"scriptNs\":\"1000000\",\"detail\":\"accepted=0 sourceCommit=0 mailbox=0 runQueue=0\"}\n{\"runId\":\"t496-821533354249000\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-821803424166000\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-822854649600700\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-823111440365700\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-823111440365700\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=0\"}\n{\"runId\":\"t496-823111440365700\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=15000\"}\n{\"runId\":\"t496-823382543211200\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-823382543211200\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=0\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"\",\"actionId\":\"BOOT\",\"phase\":\"START\",\"scriptNs\":\"0\",\"detail\":\"source=t492-m1-delivery dcf105d+T492-overlay route=m1\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=0\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=15000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=30000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=45000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=60000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=75000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=90000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=105000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=120000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=135000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=150000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=165000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=180000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=195000\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"off\",\"actionId\":\"BOOT\",\"phase\":\"CREATE_WAIT\",\"scriptNs\":\"1000000\",\"detail\":\"waiting transport create, iter=210000\"}\n",
+    "t496-stages.ndjson": "{\"runId\":\"t496-820000823479300\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-820269492331700\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-820269492331700\",\"arm\":\"off\",\"stage\":\"D1_OFF\",\"event\":\"EXIT\",\"code\":\"OK\"}\n{\"runId\":\"t496-820269492331700\",\"arm\":\"off\",\"stage\":\"D1_ON\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-821533354249000\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-821803424166000\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-822854649600700\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-823111440365700\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-823382543211200\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n{\"runId\":\"t496-823516366862300\",\"arm\":\"\",\"stage\":\"D1_OFF\",\"event\":\"ENTER\"}\n",
+    "t496-script-manifest.json": "{\"revision\":\"T496_SCRIPT_V2\",\"runId\":\"t496-823516366862300\",\"actions\":52}"
+  },
+  "runCount": 8,
+  "runs": {
+    "t496-820000823479300": {
+      "rows": 1,
+      "phases": {
+        "START": 1
+      },
+      "last": {
+        "runId": "t496-820000823479300",
+        "arm": "",
+        "actionId": "BOOT",
+        "phase": "START",
+        "scriptNs": "0",
+        "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+      }
+    },
+    "t496-820269492331700": {
+      "rows": 4,
+      "phases": {
+        "START": 1,
+        "GUARD_TIMEOUT": 1,
+        "ASSERT": 1,
+        "PRE_QUIT_SNAPSHOT": 1
+      },
+      "last": {
+        "runId": "t496-820269492331700",
+        "arm": "off",
+        "actionId": "DRAIN",
+        "phase": "PRE_QUIT_SNAPSHOT",
+        "scriptNs": "1000000",
+        "detail": "accepted=0 sourceCommit=0 mailbox=0 runQueue=0"
+      }
+    },
+    "t496-821533354249000": {
+      "rows": 1,
+      "phases": {
+        "START": 1
+      },
+      "last": {
+        "runId": "t496-821533354249000",
+        "arm": "",
+        "actionId": "BOOT",
+        "phase": "START",
+        "scriptNs": "0",
+        "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+      }
+    },
+    "t496-821803424166000": {
+      "rows": 1,
+      "phases": {
+        "START": 1
+      },
+      "last": {
+        "runId": "t496-821803424166000",
+        "arm": "",
+        "actionId": "BOOT",
+        "phase": "START",
+        "scriptNs": "0",
+        "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+      }
+    },
+    "t496-822854649600700": {
+      "rows": 1,
+      "phases": {
+        "START": 1
+      },
+      "last": {
+        "runId": "t496-822854649600700",
+        "arm": "",
+        "actionId": "BOOT",
+        "phase": "START",
+        "scriptNs": "0",
+        "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+      }
+    },
+    "t496-823111440365700": {
+      "rows": 3,
+      "phases": {
+        "START": 1,
+        "CREATE_WAIT": 2
+      },
+      "last": {
+        "runId": "t496-823111440365700",
+        "arm": "off",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "waiting transport create, iter=15000"
+      }
+    },
+    "t496-823382543211200": {
+      "rows": 2,
+      "phases": {
+        "START": 1,
+        "CREATE_WAIT": 1
+      },
+      "last": {
+        "runId": "t496-823382543211200",
+        "arm": "off",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "waiting transport create, iter=0"
+      }
+    },
+    "t496-823516366862300": {
+      "rows": 16,
+      "phases": {
+        "START": 1,
+        "CREATE_WAIT": 15
+      },
+      "last": {
+        "runId": "t496-823516366862300",
+        "arm": "off",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "waiting transport create, iter=210000"
+      }
+    }
+  },
+  "latestRun": "t496-823516366862300",
+  "firstUnmatchedStage": {
+    "runId": "t496-823516366862300",
+    "stage": "D1_OFF",
+    "event": "ENTER"
+  },
+  "concreteGLUnmatchedCall": "UNKNOWN_NOT_RECORDED",
+  "reported52Minutes": "TESTER_OBSERVATION_NOT_DERIVABLE_FROM_CURRENT_JSONL",
+  "layouts": {
+    "driver": {
+      "size": 182640,
+      "canonical": "class grs::m1::FullM1Transport\tsize(182640):\r\n\t+---\r\n 0\t| TailObserver tailObserver\r\n16\t| TailObserver coldObserver\r\n32\t| isolation\r\n40\t| SubmitObserver submitObserver\r\n64\t| TailSample flushSample\r\n128\t| SourceCoreTransport source\r\n92128\t| QuantumCandidate quantum\r\n181248\t| eventArenas\r\n181256\t| scratchEvent\r\n181260\t| results\r\n  \t| <alignment member> (size=4)\r\n181272\t| extraBytes\r\n181280\t| spareAt\r\n181284\t| replayFrozen\r\n181288\t| active\r\n181289\t| quantumFlight\r\n181290\t| failed\r\n181291\t| lost\r\n181292\t| frozen\r\n  \t| <alignment member> (size=3)\r\n181296\t| RootRequest pending\r\n181360\t| ?$array@I$0BAA@ tail\r\n182384\t| SourceTransportStats stats\r\n182456\t| U64 lastFrame\r\n182464\t| arenaFrame\r\n182480\t| used\r\n182488\t| lastOrdinal\r\n182492\t| lastPublication\r\n182496\t| frameHasSource\r\n  \t| <alignment member> (size=3)\r\n182500\t| acceptedArena\r\n182504\t| acceptedQuantum\r\n  \t| <alignment member> (size=3)\r\n182508\t| QuantumParameters coldParams\r\n182544\t| SubmitPhase submitPhase\r\n  \t| <alignment member> (size=3)\r\n182548\t| passCursor\r\n182552\t| batchesIssued\r\n182556\t| lastBatchPasses\r\n182560\t| submitCancelled\r\n182564\t| flushes\r\n182568\t| warmupWallNs\r\n182576\t| lastBatchWallNs\r\n182584\t| submitFirstNs\r\n182592\t| submitTotalWallNs\r\n182600\t| submitPumpWallNs\r\n182608\t| tailSpare\r\n182612\t| tailReplay\r\n182616\t| tailBank\r\n182620\t| tailSlot\r\n182624\t| tailArena\r\n182628\t| tailCarry\r\n182632\t| tailDispatches\r\n  \t| <alignment member> (size=4)\r\n\t+---",
+      "original": {
+        "path": ".codex/local-test/t496/layout-driver.txt",
+        "bytes": 1988,
+        "sha256": "20c4562e06601a3514207029d227c224276a1116ccb79440c45316668d905514"
+      },
+      "emptyGateOutput": {
+        "path": ".codex/local-test/t496/sizeof-driver.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "impl": {
+      "size": 182640,
+      "canonical": "class grs::m1::FullM1Transport\tsize(182640):\r\n\t+---\r\n 0\t| TailObserver tailObserver\r\n16\t| TailObserver coldObserver\r\n32\t| isolation\r\n40\t| SubmitObserver submitObserver\r\n64\t| TailSample flushSample\r\n128\t| SourceCoreTransport source\r\n92128\t| QuantumCandidate quantum\r\n181248\t| eventArenas\r\n181256\t| scratchEvent\r\n181260\t| results\r\n  \t| <alignment member> (size=4)\r\n181272\t| extraBytes\r\n181280\t| spareAt\r\n181284\t| replayFrozen\r\n181288\t| active\r\n181289\t| quantumFlight\r\n181290\t| failed\r\n181291\t| lost\r\n181292\t| frozen\r\n  \t| <alignment member> (size=3)\r\n181296\t| RootRequest pending\r\n181360\t| ?$array@I$0BAA@ tail\r\n182384\t| SourceTransportStats stats\r\n182456\t| U64 lastFrame\r\n182464\t| arenaFrame\r\n182480\t| used\r\n182488\t| lastOrdinal\r\n182492\t| lastPublication\r\n182496\t| frameHasSource\r\n  \t| <alignment member> (size=3)\r\n182500\t| acceptedArena\r\n182504\t| acceptedQuantum\r\n  \t| <alignment member> (size=3)\r\n182508\t| QuantumParameters coldParams\r\n182544\t| SubmitPhase submitPhase\r\n  \t| <alignment member> (size=3)\r\n182548\t| passCursor\r\n182552\t| batchesIssued\r\n182556\t| lastBatchPasses\r\n182560\t| submitCancelled\r\n182564\t| flushes\r\n182568\t| warmupWallNs\r\n182576\t| lastBatchWallNs\r\n182584\t| submitFirstNs\r\n182592\t| submitTotalWallNs\r\n182600\t| submitPumpWallNs\r\n182608\t| tailSpare\r\n182612\t| tailReplay\r\n182616\t| tailBank\r\n182620\t| tailSlot\r\n182624\t| tailArena\r\n182628\t| tailCarry\r\n182632\t| tailDispatches\r\n  \t| <alignment member> (size=4)\r\n\t+---",
+      "original": {
+        "path": ".codex/local-test/t496/layout-impl.txt",
+        "bytes": 1455,
+        "sha256": "f167c30c29dfb19311923984b09b1b1b250776551f54f73791d9b8e0ba180f9f"
+      },
+      "emptyGateOutput": {
+        "path": ".codex/local-test/t496/sizeof-impl.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "historicalExeSourceBinding": "NO_INPUT_HASH_RECEIPT",
+  "warmSeedEntries": [
+    {
+      "role": "SOURCE",
+      "key": "1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc",
+      "format": 37798,
+      "payloadBytes": 172698,
+      "payloadSha256": "624bfaaa84e3e4e4b7cd35fb92076e945614b17a5391e1e4d1441144658816fe",
+      "binary": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.bin",
+        "bytes": 172842,
+        "sha256": "4f3b44c37b25fafb7fe2679e1f47f83aa8cc6c207e72bf6b07cb9e11e47d0fe3"
+      },
+      "receipt": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.jsonl",
+        "bytes": 15380,
+        "sha256": "a96d7b693aa107af6391c4cff228e3218ad825bbe2705096277ae89729648dac"
+      },
+      "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+      "lastReceipt": {
+        "revision": "T475_PROGRAM_ARTIFACT_V1",
+        "role": "SOURCE",
+        "key": "1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc",
+        "shaderSHA": "47c0076c8a5dba5e2bf578bd447751fbeee389168a463b73ec7d18ef14e63ea2",
+        "layoutSHA": "e8f1168e93ef3e6f25d82f78cfb9bea245d6254ffbad0361297c56e170766e27",
+        "linkConfigSHA": "6841f249566ce08e8ec085102ee73abcbc1f97190e468656f4599d07661791ae",
+        "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+        "packageSource": "HOST_APP_warm",
+        "route": "BINARY_LOAD",
+        "stage": "REFLECT_PREPARE_OK",
+        "cacheRawGL": 0,
+        "originalRawGL": 0,
+        "log": "",
+        "logReported": 0,
+        "logCopied": 0,
+        "logTruncated": false,
+        "shaderLog": "",
+        "shaderLogReported": 0,
+        "shaderLogCopied": 0,
+        "shaderLogTruncated": false,
+        "beginNs": 699776973678900,
+        "buildEndNs": 699776974877100,
+        "endNs": 699776975800600,
+        "binaryBytes": 172698,
+        "binaryFormat": 37798,
+        "cacheLog": "",
+        "logBytesHex": "",
+        "shaderLogBytesHex": "",
+        "cacheLogBytesHex": "",
+        "cacheRawEGL": 12288,
+        "compileBeginNs": 0,
+        "compileEndNs": 0,
+        "linkBeginNs": 0,
+        "linkEndNs": 0,
+        "loadBeginNs": 699776974322700,
+        "loadEndNs": 699776974842900,
+        "reflectBeginNs": 699776975604600,
+        "reflectEndNs": 699776975624300,
+        "prepareBeginNs": 699776975672900,
+        "prepareEndNs": 699776975747700,
+        "warmupBeginNs": 0,
+        "warmupEndNs": 0,
+        "supportedFormats": [
+          37798
+        ],
+        "binarySHA": "624bfaaa84e3e4e4b7cd35fb92076e945614b17a5391e1e4d1441144658816fe",
+        "persistence": "PERSISTED"
+      },
+      "currentGLLoad": "NOT_RUN"
+    },
+    {
+      "role": "FINAL_QUANTUM",
+      "key": "545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494",
+      "format": 37798,
+      "payloadBytes": 377482,
+      "payloadSha256": "70fa746bfc0cae377d687e1e915f2c424736f0ec0d6add0c3d5b38b9a47d9375",
+      "binary": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.bin",
+        "bytes": 377626,
+        "sha256": "245cd234f82817c317904b03f09a112bb0c4f59f59e1b609a694bf55d5e46558"
+      },
+      "receipt": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.jsonl",
+        "bytes": 18214,
+        "sha256": "7271cc1ceaaa9223cf98c3845f43db24c16b269bc93d45fe19aa13cfbd3fad02"
+      },
+      "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+      "lastReceipt": {
+        "revision": "T475_PROGRAM_ARTIFACT_V1",
+        "role": "FINAL_QUANTUM",
+        "key": "545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494",
+        "shaderSHA": "5d4e983fbcf8453eb05a5edb7e9793f1e7708515d82a03ef62724bbbe4674332",
+        "layoutSHA": "e8f1168e93ef3e6f25d82f78cfb9bea245d6254ffbad0361297c56e170766e27",
+        "linkConfigSHA": "6841f249566ce08e8ec085102ee73abcbc1f97190e468656f4599d07661791ae",
+        "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+        "packageSource": "HOST_APP_warm",
+        "route": "BINARY_LOAD",
+        "stage": "WARMUP_OK",
+        "cacheRawGL": 0,
+        "originalRawGL": 0,
+        "log": "",
+        "logReported": 0,
+        "logCopied": 0,
+        "logTruncated": false,
+        "shaderLog": "",
+        "shaderLogReported": 0,
+        "shaderLogCopied": 0,
+        "shaderLogTruncated": false,
+        "beginNs": 699776977139200,
+        "buildEndNs": 699776978301300,
+        "endNs": 699823428548900,
+        "binaryBytes": 377482,
+        "binaryFormat": 37798,
+        "cacheLog": "",
+        "logBytesHex": "",
+        "shaderLogBytesHex": "",
+        "cacheLogBytesHex": "",
+        "cacheRawEGL": 12288,
+        "compileBeginNs": 0,
+        "compileEndNs": 0,
+        "linkBeginNs": 0,
+        "linkEndNs": 0,
+        "loadBeginNs": 699776977884300,
+        "loadEndNs": 699776978272300,
+        "reflectBeginNs": 699776978402700,
+        "reflectEndNs": 699776978420800,
+        "prepareBeginNs": 699776978446500,
+        "prepareEndNs": 699776978461600,
+        "warmupBeginNs": 699776978816500,
+        "warmupEndNs": 699823428500100,
+        "supportedFormats": [
+          37798
+        ],
+        "binarySHA": "70fa746bfc0cae377d687e1e915f2c424736f0ec0d6add0c3d5b38b9a47d9375",
+        "persistence": "PERSISTED"
+      },
+      "currentGLLoad": "NOT_RUN"
+    },
+    {
+      "role": "SCENE_PARTICLES",
+      "key": "834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942",
+      "format": 37798,
+      "payloadBytes": 17591,
+      "payloadSha256": "79db7b346a30bc614bfd05c65a87d108a24c8270661a011e8308a330fb782839",
+      "binary": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942.bin",
+        "bytes": 17735,
+        "sha256": "a26dcc6d9dd09945d22ca8c86af86b10a46e817f1329130bbcd25686a4a25dca"
+      },
+      "receipt": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942.jsonl",
+        "bytes": 22616,
+        "sha256": "08caeaa1341bffba3c61aed2b3f15eefd8ebbd26599e5e367a53bd1425afbfdf"
+      },
+      "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+      "lastReceipt": {
+        "revision": "T480_SCENE_PROGRAM_ARTIFACT_V1",
+        "programKind": "GRAPHICS",
+        "role": "SCENE_PARTICLES",
+        "key": "834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942",
+        "bindingAbiSHA": "dfe9121d647d8229286853acea10a09f6e9b56a39c3169ce5238050811d57075",
+        "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+        "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+        "packageSource": "HOST_APP_warm",
+        "context": "2310400593872",
+        "contextGeneration": "2",
+        "owner": "4975443575544055513",
+        "route": "BINARY_LOAD",
+        "stage": "CONTEXT_RELEASED",
+        "compileCalls": 0,
+        "cacheReason": "",
+        "linkCalls": 0,
+        "loadCalls": 1,
+        "firstProductError": 0,
+        "queryError": 0,
+        "queryEgl": 12288,
+        "beginNs": 699823429201600,
+        "endNs": 699823430689400,
+        "compileBeginNs": 0,
+        "compileEndNs": 0,
+        "linkBeginNs": 0,
+        "linkEndNs": 0,
+        "loadBeginNs": 699823429314500,
+        "loadEndNs": 699823429412500,
+        "reflectBeginNs": 699823429451800,
+        "reflectEndNs": 699823429464600,
+        "prepareBeginNs": 699823429509200,
+        "prepareEndNs": 699823429509300,
+        "binaryBytes": 0,
+        "binaryFormat": 0,
+        "shaderStages": [
+          {
+            "stage": 35633,
+            "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce",
+            "bytes": 681,
+            "compileLog": {
+              "text": "",
+              "bytesHex": "",
+              "reported": 0,
+              "copied": 0,
+              "truncated": false,
+              "queryError": 0
+            }
+          },
+          {
+            "stage": 35632,
+            "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7",
+            "bytes": 471,
+            "compileLog": {
+              "text": "",
+              "bytesHex": "",
+              "reported": 0,
+              "copied": 0,
+              "truncated": false,
+              "queryError": 0
+            }
+          }
+        ],
+        "linkLog": {
+          "text": "",
+          "bytesHex": "",
+          "reported": 0,
+          "copied": 0,
+          "truncated": false,
+          "queryError": 0
+        },
+        "uniforms": [
+          {
+            "name": "uResolution",
+            "location": 0,
+            "type": 35664,
+            "size": 1
+          },
+          {
+            "name": "uBox",
+            "location": 1,
+            "type": 35666,
+            "size": 1
+          },
+          {
+            "name": "uMirror",
+            "location": 2,
+            "type": 35670,
+            "size": 1
+          }
+        ],
+        "attributes": [
+          {
+            "name": "aX",
+            "location": 0,
+            "type": 5126,
+            "size": 1
+          },
+          {
+            "name": "aY",
+            "location": 1,
+            "type": 5126,
+            "size": 1
+          },
+          {
+            "name": "aMass",
+            "location": 2,
+            "type": 5125,
+            "size": 1
+          },
+          {
+            "name": "aRadius",
+            "location": 4,
+            "type": 5126,
+            "size": 1
+          }
+        ],
+        "aStateInactive": true,
+        "publicationBinding": -1,
+        "colorType": 35666,
+        "colorSize": 1,
+        "colorLocation": 0,
+        "persistence": "CACHE_NOT_STORED"
+      },
+      "currentGLLoad": "NOT_RUN"
+    },
+    {
+      "role": "INTERMEDIATE_QUANTUM",
+      "key": "9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1",
+      "format": 37798,
+      "payloadBytes": 177820,
+      "payloadSha256": "5353319bedbd0e577b9f9aed18e5b505ff7d75ea68ab535c1d6ecc6c0e195392",
+      "binary": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.bin",
+        "bytes": 177964,
+        "sha256": "eac3ddf9f6b1694c58f414475b5980d98e608aa261c9fb8b399876b90b49ebac"
+      },
+      "receipt": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.jsonl",
+        "bytes": 12944,
+        "sha256": "fadf69ef7d515be4f1f647f3d1146f6976fea283443bb72f2819ae9977e3c8af"
+      },
+      "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+      "lastReceipt": {
+        "revision": "T475_PROGRAM_ARTIFACT_V1",
+        "role": "INTERMEDIATE_QUANTUM",
+        "key": "9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1",
+        "shaderSHA": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+        "layoutSHA": "e8f1168e93ef3e6f25d82f78cfb9bea245d6254ffbad0361297c56e170766e27",
+        "linkConfigSHA": "6841f249566ce08e8ec085102ee73abcbc1f97190e468656f4599d07661791ae",
+        "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+        "packageSource": "HOST_APP_warm",
+        "route": "BINARY_LOAD",
+        "stage": "REFLECT_PREPARE_OK",
+        "cacheRawGL": 0,
+        "originalRawGL": 0,
+        "log": "",
+        "logReported": 0,
+        "logCopied": 0,
+        "logTruncated": false,
+        "shaderLog": "",
+        "shaderLogReported": 0,
+        "shaderLogCopied": 0,
+        "shaderLogTruncated": false,
+        "beginNs": 699776975902100,
+        "buildEndNs": 699776976763800,
+        "endNs": 699776977109700,
+        "binaryBytes": 177820,
+        "binaryFormat": 37798,
+        "cacheLog": "",
+        "logBytesHex": "",
+        "shaderLogBytesHex": "",
+        "cacheLogBytesHex": "",
+        "cacheRawEGL": 12288,
+        "compileBeginNs": 0,
+        "compileEndNs": 0,
+        "linkBeginNs": 0,
+        "linkEndNs": 0,
+        "loadBeginNs": 699776976417800,
+        "loadEndNs": 699776976727000,
+        "reflectBeginNs": 699776977038800,
+        "reflectEndNs": 699776977055800,
+        "prepareBeginNs": 0,
+        "prepareEndNs": 0,
+        "warmupBeginNs": 0,
+        "warmupEndNs": 0,
+        "supportedFormats": [
+          37798
+        ],
+        "binarySHA": "5353319bedbd0e577b9f9aed18e5b505ff7d75ea68ab535c1d6ecc6c0e195392",
+        "persistence": "PERSISTED"
+      },
+      "currentGLLoad": "NOT_RUN"
+    },
+    {
+      "role": "SCENE_WATER",
+      "key": "cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88",
+      "format": 37798,
+      "payloadBytes": 18790,
+      "payloadSha256": "14a11c615bb52303cdc3361eb58527030fd7889334acb98d3c2cf0976b596df2",
+      "binary": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88.bin",
+        "bytes": 18934,
+        "sha256": "6e9d0bb2d3b0f9a18b38d8d9501556b221c6175d65b7b2e226837d65bc5d6bcb"
+      },
+      "receipt": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88.jsonl",
+        "bytes": 23258,
+        "sha256": "d89ca5240586867de4a64a36cde9a466250e026d43f0723a2bc4d16f31d91346"
+      },
+      "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+      "lastReceipt": {
+        "revision": "T480_SCENE_PROGRAM_ARTIFACT_V1",
+        "programKind": "GRAPHICS",
+        "role": "SCENE_WATER",
+        "key": "cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88",
+        "bindingAbiSHA": "312bbcaf9450a4391f9ac031bd05fdb67880b64809c0efd949b4b917b5c89536",
+        "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+        "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+        "packageSource": "HOST_APP_warm",
+        "context": "2310400593872",
+        "contextGeneration": "2",
+        "owner": "4975443575544055513",
+        "route": "BINARY_LOAD",
+        "stage": "CONTEXT_RELEASED",
+        "compileCalls": 0,
+        "cacheReason": "",
+        "linkCalls": 0,
+        "loadCalls": 1,
+        "firstProductError": 0,
+        "queryError": 0,
+        "queryEgl": 12288,
+        "beginNs": 699823429554900,
+        "endNs": 699823430739000,
+        "compileBeginNs": 0,
+        "compileEndNs": 0,
+        "linkBeginNs": 0,
+        "linkEndNs": 0,
+        "loadBeginNs": 699823429658300,
+        "loadEndNs": 699823429783200,
+        "reflectBeginNs": 699823429827400,
+        "reflectEndNs": 699823429840000,
+        "prepareBeginNs": 699823429892000,
+        "prepareEndNs": 699823429892000,
+        "binaryBytes": 0,
+        "binaryFormat": 0,
+        "shaderStages": [
+          {
+            "stage": 35633,
+            "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e",
+            "bytes": 713,
+            "compileLog": {
+              "text": "",
+              "bytesHex": "",
+              "reported": 0,
+              "copied": 0,
+              "truncated": false,
+              "queryError": 0
+            }
+          },
+          {
+            "stage": 35632,
+            "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612",
+            "bytes": 514,
+            "compileLog": {
+              "text": "",
+              "bytesHex": "",
+              "reported": 0,
+              "copied": 0,
+              "truncated": false,
+              "queryError": 0
+            }
+          }
+        ],
+        "linkLog": {
+          "text": "",
+          "bytesHex": "",
+          "reported": 0,
+          "copied": 0,
+          "truncated": false,
+          "queryError": 0
+        },
+        "uniforms": [
+          {
+            "name": "uResolution",
+            "location": 0,
+            "type": 35664,
+            "size": 1
+          },
+          {
+            "name": "uBox",
+            "location": 1,
+            "type": 35666,
+            "size": 1
+          },
+          {
+            "name": "uMirror",
+            "location": 2,
+            "type": 35670,
+            "size": 1
+          },
+          {
+            "name": "uRadius",
+            "location": 3,
+            "type": 5126,
+            "size": 1
+          },
+          {
+            "name": "uMassReference",
+            "location": 4,
+            "type": 5126,
+            "size": 1
+          },
+          {
+            "name": "uOptics",
+            "location": 5,
+            "type": 35666,
+            "size": 4
+          }
+        ],
+        "attributes": [
+          {
+            "name": "aX",
+            "location": 0,
+            "type": 5126,
+            "size": 1
+          },
+          {
+            "name": "aY",
+            "location": 1,
+            "type": 5126,
+            "size": 1
+          },
+          {
+            "name": "aMass",
+            "location": 2,
+            "type": 5125,
+            "size": 1
+          }
+        ],
+        "aStateInactive": false,
+        "publicationBinding": -1,
+        "colorType": 35666,
+        "colorSize": 1,
+        "colorLocation": 0,
+        "persistence": "CACHE_NOT_STORED"
+      },
+      "currentGLLoad": "NOT_RUN"
+    },
+    {
+      "role": "SCENE_FULL",
+      "key": "e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5",
+      "format": 37798,
+      "payloadBytes": 28290,
+      "payloadSha256": "08b114496212fa8424596dadb2cd872f25680e62075495c074a546f4a1c4d6a3",
+      "binary": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5.bin",
+        "bytes": 28434,
+        "sha256": "6cf2fa7fe4f6b94b03b89913abde21aa6c5716c6e1e09163718551f58b1cd350"
+      },
+      "receipt": {
+        "path": ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1/e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5.jsonl",
+        "bytes": 22646,
+        "sha256": "1f193320541f882dc9332c1ee7a7eb7139ff4420250a63aeb5340e1b7f69e5e4"
+      },
+      "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+      "lastReceipt": {
+        "revision": "T480_SCENE_PROGRAM_ARTIFACT_V1",
+        "programKind": "GRAPHICS",
+        "role": "SCENE_FULL",
+        "key": "e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5",
+        "bindingAbiSHA": "1e19966bdd401e5360f37a1c9143fd0792732f8a488b6706d3b170cdf831aa70",
+        "linkConfigSHA": "3d60696dfb8b93079b096664d7a167d4bdd3a9992c9e82703390890803f57fb0",
+        "environmentSHA": "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0",
+        "packageSource": "HOST_APP_warm",
+        "context": "2310400593872",
+        "contextGeneration": "2",
+        "owner": "4975443575544055513",
+        "route": "BINARY_LOAD",
+        "stage": "CONTEXT_RELEASED",
+        "compileCalls": 0,
+        "cacheReason": "",
+        "linkCalls": 0,
+        "loadCalls": 1,
+        "firstProductError": 0,
+        "queryError": 0,
+        "queryEgl": 12288,
+        "beginNs": 699823428612700,
+        "endNs": 699823430640600,
+        "compileBeginNs": 0,
+        "compileEndNs": 0,
+        "linkBeginNs": 0,
+        "linkEndNs": 0,
+        "loadBeginNs": 699823428769200,
+        "loadEndNs": 699823428941000,
+        "reflectBeginNs": 699823428988600,
+        "reflectEndNs": 699823429015100,
+        "prepareBeginNs": 699823429067000,
+        "prepareEndNs": 699823429067100,
+        "binaryBytes": 0,
+        "binaryFormat": 0,
+        "shaderStages": [
+          {
+            "stage": 35633,
+            "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed",
+            "bytes": 108,
+            "compileLog": {
+              "text": "",
+              "bytesHex": "",
+              "reported": 0,
+              "copied": 0,
+              "truncated": false,
+              "queryError": 0
+            }
+          },
+          {
+            "stage": 35632,
+            "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445",
+            "bytes": 2636,
+            "compileLog": {
+              "text": "",
+              "bytesHex": "",
+              "reported": 0,
+              "copied": 0,
+              "truncated": false,
+              "queryError": 0
+            }
+          }
+        ],
+        "linkLog": {
+          "text": "",
+          "bytesHex": "",
+          "reported": 0,
+          "copied": 0,
+          "truncated": false,
+          "queryError": 0
+        },
+        "uniforms": [
+          {
+            "name": "uColumn",
+            "location": 0,
+            "type": 5125,
+            "size": 1
+          },
+          {
+            "name": "uResolution",
+            "location": 1,
+            "type": 35664,
+            "size": 1
+          },
+          {
+            "name": "uBox",
+            "location": 2,
+            "type": 35666,
+            "size": 1
+          },
+          {
+            "name": "uMirror",
+            "location": 3,
+            "type": 35670,
+            "size": 1
+          },
+          {
+            "name": "uLayer",
+            "location": 4,
+            "type": 5124,
+            "size": 1
+          },
+          {
+            "name": "uOptics",
+            "location": 5,
+            "type": 35666,
+            "size": 4
+          },
+          {
+            "name": "uFrame",
+            "location": 9,
+            "type": 35678,
+            "size": 1
+          }
+        ],
+        "attributes": [],
+        "aStateInactive": false,
+        "publicationBinding": 0,
+        "colorType": 35666,
+        "colorSize": 1,
+        "colorLocation": 0,
+        "persistence": "CACHE_NOT_STORED"
+      },
+      "currentGLLoad": "NOT_RUN"
+    }
+  ],
+  "warmCurrentEnvironment": "UNKNOWN_NOT_PROBED",
+  "confirmedStaticIssues": [
+    "empty layout comparison",
+    "unconfigured seed store",
+    "missing recovery session/pulse handoff",
+    "recursive scheduler mutex in drain",
+    "quit can leave hook awaiting permit",
+    "missing true milestone and D2 control",
+    "empty ledgers can pass parity; unconditional EXIT_OK and exit0"
+  ],
+  "inputFiles": [
+    {
+      "path": "test/t496/build.cmd",
+      "bytes": 3302,
+      "sha256": "893f4c3d5ff7bf19db985e160e98376282009d18842a40fe321fb129d6767271"
+    },
+    {
+      "path": "test/t496/external_source_diff.cpp",
+      "bytes": 19857,
+      "sha256": "a78b67eaf5187d54b0be3d9f852018a16f50a6f59a8c75af63adbede193451df"
+    },
+    {
+      "path": "test/t496/source_gate.md",
+      "bytes": 560,
+      "sha256": "9c2de3965b4804c9f49240bb015992a06dde7915527e5842d9e2a30763a9e028"
+    },
+    {
+      "path": ".codex/local-test/t496/t496.exe",
+      "bytes": 1203200,
+      "sha256": "38185190735054fa3adcde58d0d7f5fa3d86e3fe89e4c9b820fdf202431a0b9d"
+    },
+    {
+      "path": "test/t492/build_app.cjs",
+      "bytes": 1026,
+      "sha256": "1b3487148fd88c265e9640a33520ebfc23e9f71006098c8bf503669eda1ef271"
+    },
+    {
+      "path": "test/t485/build_app_check.cjs",
+      "bytes": 3818,
+      "sha256": "3c6058223260f3181e53f639dafaa2f649c9e33467b33d8816ef0e50bdbfa629"
+    },
+    {
+      "path": "test/t475/build_app.cjs",
+      "bytes": 3620,
+      "sha256": "1c758616b8d5115a2396b8cca93e123e655214af3463f77842d2b3f2b386e8a6"
+    },
+    {
+      "path": "docs/test-report-T504-resource-lifecycle-v1.md",
+      "bytes": 2372,
+      "sha256": "171a2ef064977134cf441f2addd56ef64520ccb12183381d8f0c6d3d7d11218d"
+    },
+    {
+      "path": "docs/architecture-T494-external-source-reservation-triage-v1.md",
+      "bytes": 15871,
+      "sha256": "fcebfcf601f20799c9c1e55fc72cdd916e5f825a24332e5d4a6e482c161fb801"
+    },
+    {
+      "path": "docs/architecture-T518-host-create-triage-v1.md",
+      "bytes": 10062,
+      "sha256": "2708e6d75009f3fac3db2e37aead7dc17a837c863e3e1b5da07bebd618870803"
+    },
+    {
+      "path": "docs/analysis-T518-T521-evidence-audit-v1.py",
+      "bytes": 9699,
+      "sha256": "1ad9225bae8536f1513a79b5d2104cbf90866bb807a9675082687d38cabf5fcd"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+      "bytes": 32096,
+      "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/source_transport.cpp",
+      "bytes": 16166,
+      "sha256": "872818b5297118e8106caccd15a582cb75f2f139f2a7afa6faf584fd03d4830f"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/quantum_candidate.cpp",
+      "bytes": 14723,
+      "sha256": "d0838f4c4470c6c2adeebd54553090c449b5cb39b2efbdf2ee14afdde94024f1"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/scene.cpp",
+      "bytes": 14459,
+      "sha256": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/program_cache/graphics_program_factory.h",
+      "bytes": 18446,
+      "sha256": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+      "bytes": 17881,
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/execution_diagnostics.h",
+      "bytes": 9391,
+      "sha256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5"
+    },
+    {
+      "path": ".codex/local-test/t496/t496_log.ndjson",
+      "bytes": 4491,
+      "sha256": "88a882330ecf3779245d5f6dbed85617145a98f59ce82ff0503cbfb7c4c2c98f"
+    },
+    {
+      "path": ".codex/local-test/t496/t496-stages.ndjson",
+      "bytes": 776,
+      "sha256": "6926f218aa9de469e54561a1b6a1713adf686ea5ee425d38fabe46bd3d915254"
+    },
+    {
+      "path": ".codex/local-test/t496/t496-script-manifest.json",
+      "bytes": 73,
+      "sha256": "660ff95c6ccf5e29606ed4c86672aa6fb5666ada64177dd7401eb30045f1af1e"
+    }
+  ]
+}

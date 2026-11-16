@@ -1,0 +1,528 @@
+{
+  "schema": "T521_ARCHITECT_STATIC_TRIAGE_V1",
+  "date": "2026-11-16",
+  "status": "TRIAGE_COMPLETE_PRECISE_EXISTING_CAPABILITY_EVIDENCE_REQUIRED",
+  "functionalStatus": "NOT_REACHED",
+  "device": "NOT_RUN",
+  "GLExecuted": false,
+  "packages": {
+    "signed": {
+      "package": {
+        "path": ".codex/local-test/t257-sign/T482-final/T482-final-signed.hap",
+        "bytes": 9454076,
+        "sha256": "300bd52a97e360cf533e261bf35433b465f560329f4a73232d8e119cdb51381e"
+      },
+      "elfEntry": "libs/arm64-v8a/libgrsm1.so",
+      "elfBytes": 1753184,
+      "elfSha256": "783cb115038e83e22897400c8e350b9562fba7783fa6fbe2b8c766c9249fa5b2",
+      "elfMarkers": {
+        "T462_M2_CREATE_DIAGNOSTIC_V1": true,
+        "m2CreateDiagnostics": true,
+        "m2CreateLog": true,
+        "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1": true
+      }
+    },
+    "input": {
+      "package": {
+        "path": ".codex/local-test/t482-final/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 9321982,
+        "sha256": "fef97d3c94f50438848eaa4d54a5b9af8aa2506c9194fe4e361ded2106ecab73"
+      },
+      "elfEntry": "libs/arm64-v8a/libgrsm1.so",
+      "elfBytes": 1753184,
+      "elfSha256": "783cb115038e83e22897400c8e350b9562fba7783fa6fbe2b8c766c9249fa5b2",
+      "elfMarkers": {
+        "T462_M2_CREATE_DIAGNOSTIC_V1": true,
+        "m2CreateDiagnostics": true,
+        "m2CreateLog": true,
+        "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1": true
+      }
+    }
+  },
+  "layouts": {
+    "t461_l1.json": {
+      "file": {
+        "path": "test/reports/t491/t461/t461_l1.json",
+        "bytes": 87073,
+        "sha256": "19991241f991db695100066eb26c690d253f774a694e900fecf9b97bde3163df"
+      },
+      "textBounds": [
+        {
+          "text": "100",
+          "bounds": "[1109,58][1179,103]"
+        },
+        {
+          "text": "11月14日",
+          "bounds": "[425,1182][663,1247]"
+        },
+        {
+          "text": "11月14日, 星期六, 十月初六",
+          "bounds": "[373,388][906,1456]"
+        },
+        {
+          "text": "十月初六",
+          "bounds": "[453,1261][673,1325]"
+        },
+        {
+          "text": "无 SIM 卡 | 仅限紧急呼叫",
+          "bounds": "[0,54][38,107]"
+        },
+        {
+          "text": "无 SIM 卡 | 仅限紧急呼叫",
+          "bounds": "[56,54][450,107]"
+        },
+        {
+          "text": "无 SIM 卡 | 仅限紧急呼叫",
+          "bounds": "[56,54][559,107]"
+        },
+        {
+          "text": "星期六",
+          "bounds": "[689,1182][855,1247]"
+        }
+      ]
+    },
+    "t461_l2.json": {
+      "file": {
+        "path": "test/reports/t491/t461/t461_l2.json",
+        "bytes": 59481,
+        "sha256": "13bc678dac13f21c0d5ed21d69d1040d0589a5d0855a2f5185855194040b9c05"
+      },
+      "textBounds": [
+        {
+          "text": "10",
+          "bounds": "[56,49][118,111]"
+        },
+        {
+          "text": "10, :, 18",
+          "bounds": "[56,38][195,122]"
+        },
+        {
+          "text": "100",
+          "bounds": "[1109,58][1179,103]"
+        },
+        {
+          "text": "18",
+          "bounds": "[133,49][195,111]"
+        },
+        {
+          "text": ":",
+          "bounds": "[118,54][133,107]"
+        },
+        {
+          "text": "千年地下的谜团，三号坑之下会不会再现青铜神树？ \n https://drcn.video.cloud.huawei.com/share/video/shortvod/119/M202609241662598094700883821313.html?sp=2&cnt=CN&lng=zh_CN&from=com.huawei.hmsapp.himovie",
+          "bounds": "[1246,311][1279,490]"
+        },
+        {
+          "text": "开启独立 GPU M2 V3 空场",
+          "bounds": "[254,1414][1027,1554]"
+        },
+        {
+          "text": "流沙画",
+          "bounds": "[514,1260][767,1358]"
+        }
+      ]
+    },
+    "t461_l3.json": {
+      "file": {
+        "path": "test/reports/t491/t461/t461_l3.json",
+        "bytes": 59481,
+        "sha256": "07bb3a6869e1ecbd84e8c9b7b2f36b606e543dda8ffeb005a7c047c7141c7913"
+      },
+      "textBounds": [
+        {
+          "text": "10",
+          "bounds": "[56,49][118,111]"
+        },
+        {
+          "text": "10, :, 19",
+          "bounds": "[56,38][195,122]"
+        },
+        {
+          "text": "100",
+          "bounds": "[1109,58][1179,103]"
+        },
+        {
+          "text": "19",
+          "bounds": "[133,49][195,111]"
+        },
+        {
+          "text": ":",
+          "bounds": "[118,54][133,107]"
+        },
+        {
+          "text": "千年地下的谜团，三号坑之下会不会再现青铜神树？ \n https://drcn.video.cloud.huawei.com/share/video/shortvod/119/M202609241662598094700883821313.html?sp=2&cnt=CN&lng=zh_CN&from=com.huawei.hmsapp.himovie",
+          "bounds": "[1246,311][1279,490]"
+        },
+        {
+          "text": "开启独立 GPU M2 V3 空场",
+          "bounds": "[254,1414][1027,1554]"
+        },
+        {
+          "text": "流沙画",
+          "bounds": "[514,1260][767,1358]"
+        }
+      ]
+    },
+    "t461_l4.json": {
+      "file": {
+        "path": "test/reports/t491/t461/t461_l4.json",
+        "bytes": 72314,
+        "sha256": "e34b4cdaeccdf2d929849b8f24325126b23077c1457662a99f4faba9b18f06a4"
+      },
+      "textBounds": [
+        {
+          "text": "10",
+          "bounds": "[56,49][118,111]"
+        },
+        {
+          "text": "10, :, 25",
+          "bounds": "[56,38][195,122]"
+        },
+        {
+          "text": "100",
+          "bounds": "[1109,58][1179,103]"
+        },
+        {
+          "text": "25",
+          "bounds": "[133,49][195,111]"
+        },
+        {
+          "text": ":",
+          "bounds": "[118,54][133,107]"
+        },
+        {
+          "text": "GPU M2 V3 · V2",
+          "bounds": "[406,164][874,238]"
+        },
+        {
+          "text": "PAUSED_CLOCK CLOCK_GAP / run 0:1",
+          "bounds": "[278,370][1003,419]"
+        },
+        {
+          "text": "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED",
+          "bounds": "[228,2157][1052,2202]"
+        },
+        {
+          "text": "T452_M2_EXPERIMENT_V3 · K192/Kw128 · GRS_GPU_SCENE_Q20_M2_V3",
+          "bounds": "[255,259][1026,349]"
+        },
+        {
+          "text": "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+          "bounds": "[242,440][1039,485]"
+        },
+        {
+          "text": "千年地下的谜团，三号坑之下会不会再现青铜神树？ \n https://drcn.video.cloud.huawei.com/share/video/shortvod/119/M202609241662598094700883821313.html?sp=2&cnt=CN&lng=zh_CN&from=com.huawei.hmsapp.himovie",
+          "bounds": "[1246,311][1279,490]"
+        },
+        {
+          "text": "实验 V2",
+          "bounds": "[857,1996][1167,2136]"
+        },
+        {
+          "text": "导出 M2 创建原始诊断",
+          "bounds": "[304,2384][976,2524]"
+        },
+        {
+          "text": "导出 V3 冷档",
+          "bounds": "[654,2223][1091,2363]"
+        },
+        {
+          "text": "导出上一创建诊断",
+          "bounds": "[360,2545][920,2685]"
+        },
+        {
+          "text": "当前 沙 · 抬手停源，已准入水滴继续下落",
+          "bounds": "[288,667][993,712]"
+        },
+        {
+          "text": "手动倾角",
+          "bounds": "[114,2044][269,2089]"
+        },
+        {
+          "text": "新空场",
+          "bounds": "[696,506][976,646]"
+        },
+        {
+          "text": "新空场 V1",
+          "bounds": "[463,1996][829,2136]"
+        },
+        {
+          "text": "水",
+          "bounds": "[500,506][668,646]"
+        },
+        {
+          "text": "沙",
+          "bounds": "[304,506][472,646]"
+        },
+        {
+          "text": "锁存 V3 冷档",
+          "bounds": "[189,2223][626,2363]"
+        }
+      ]
+    },
+    "t461_l5.json": {
+      "file": {
+        "path": "test/reports/t491/t461/t461_l5.json",
+        "bytes": 72314,
+        "sha256": "9573ae50ad70b06d22ab159fe2f2014286e5124c390f2767197c6547039d7d04"
+      },
+      "textBounds": [
+        {
+          "text": "10",
+          "bounds": "[56,49][118,111]"
+        },
+        {
+          "text": "10, :, 25",
+          "bounds": "[56,38][195,122]"
+        },
+        {
+          "text": "100",
+          "bounds": "[1109,58][1179,103]"
+        },
+        {
+          "text": "25",
+          "bounds": "[133,49][195,111]"
+        },
+        {
+          "text": ":",
+          "bounds": "[118,54][133,107]"
+        },
+        {
+          "text": "GPU M2 V3 · V2",
+          "bounds": "[406,164][874,238]"
+        },
+        {
+          "text": "PAUSED_CLOCK CLOCK_GAP / run 0:1",
+          "bounds": "[278,370][1003,419]"
+        },
+        {
+          "text": "SENSOR_TARGET_ENQUEUED_NOT_ACCEPTED",
+          "bounds": "[228,2157][1052,2202]"
+        },
+        {
+          "text": "T452_M2_EXPERIMENT_V3 · K192/Kw128 · GRS_GPU_SCENE_Q20_M2_V3",
+          "bounds": "[255,259][1026,349]"
+        },
+        {
+          "text": "准入 Q 0 / 拒量 Q 0 / 在途水 Q 0:0 / 落水 Q 0:0",
+          "bounds": "[242,440][1039,485]"
+        },
+        {
+          "text": "千年地下的谜团，三号坑之下会不会再现青铜神树？ \n https://drcn.video.cloud.huawei.com/share/video/shortvod/119/M202609241662598094700883821313.html?sp=2&cnt=CN&lng=zh_CN&from=com.huawei.hmsapp.himovie",
+          "bounds": "[1246,311][1279,490]"
+        },
+        {
+          "text": "实验 V2",
+          "bounds": "[857,1996][1167,2136]"
+        },
+        {
+          "text": "导出 M2 创建原始诊断",
+          "bounds": "[304,2384][976,2524]"
+        },
+        {
+          "text": "导出 V3 冷档",
+          "bounds": "[654,2223][1091,2363]"
+        },
+        {
+          "text": "导出上一创建诊断",
+          "bounds": "[360,2545][920,2685]"
+        },
+        {
+          "text": "当前 沙 · 抬手停源，已准入水滴继续下落",
+          "bounds": "[288,667][993,712]"
+        },
+        {
+          "text": "手动倾角",
+          "bounds": "[114,2044][269,2089]"
+        },
+        {
+          "text": "新空场",
+          "bounds": "[696,506][976,646]"
+        },
+        {
+          "text": "新空场 V1",
+          "bounds": "[463,1996][829,2136]"
+        },
+        {
+          "text": "水",
+          "bounds": "[500,506][668,646]"
+        },
+        {
+          "text": "沙",
+          "bounds": "[304,506][472,646]"
+        },
+        {
+          "text": "锁存 V3 冷档",
+          "bounds": "[189,2223][626,2363]"
+        }
+      ]
+    }
+  },
+  "filesListing": "gpu-program-cache\nt468-create-1-1794666388084-0.log\nt468-create-1-1794666422882-0.log\n",
+  "nativeDiagnosticLocalFile": "ZERO_BYTES_WITHOUT_DEVICE_NATIVE_RECEIPT",
+  "zeroRawLogMeaning": [
+    "not attempted",
+    "queried legal empty",
+    "binary path with no original log query",
+    "export partial or transport incomplete remains possible"
+  ],
+  "screenshotObservations": {
+    "t461_m2run.jpeg": "LOCK_SCREEN",
+    "t461_real.jpeg": "STATE_LOST WAIT_RETIRED run0:0",
+    "t461_run2.jpeg": "PAUSED_CLOCK CLOCK_GAP run0:1, four Q ledgers zero"
+  },
+  "missing": [
+    "actual click command/coordinates/time",
+    "WS_EVENT t468_create",
+    "device ls-l/stat and fetch exit codes",
+    "three raw logs + native + manifest per prefix",
+    "native creation code/scope and boot/recovery/pulse root attribution"
+  ],
+  "inputFiles": [
+    {
+      "path": "test/reports/t257/T482-final.json",
+      "bytes": 2286,
+      "sha256": "aac204b1f1b57a43cea2cbc7c1022d67f6584fd758d6a3cf1cb9137d2ac6996e"
+    },
+    {
+      "path": "test/reports/t482/delivery.json",
+      "bytes": 3838,
+      "sha256": "1a112c553c953d91baa5e25ea19cd108e251601e391ec6336edfc01325fcfec3"
+    },
+    {
+      "path": "docs/test-report-T461-m2-v3-device-v1.md",
+      "bytes": 3120,
+      "sha256": "5e75087f6f69b319de17227c415328e416607b21a935c72caa9dffdde6024d66"
+    },
+    {
+      "path": "docs/developer-T482-coherent-value-boundaries.md",
+      "bytes": 2183,
+      "sha256": "40f56dd90b7666a8ce4b92ae64cf71e0ce3c826bff627f70e1def9e4976297bb"
+    },
+    {
+      "path": "docs/architecture-T521-m2-zero-ledger-triage-v1.md",
+      "bytes": 8184,
+      "sha256": "20d8935b89c8a77a635323a868986dff8147567f2d3fe0ff670866ede29191a5"
+    },
+    {
+      "path": "docs/analysis-T518-T521-evidence-audit-v1.py",
+      "bytes": 9699,
+      "sha256": "1ad9225bae8536f1513a79b5d2104cbf90866bb807a9675082687d38cabf5fcd"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 86762,
+      "sha256": "5f528c9bf14992821cee26859fa85e34583cac48c726432a6d8871364c8ea21f"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+      "bytes": 14631,
+      "sha256": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 13314,
+      "sha256": "11e1225f288a00252fc65a973db94380e097e476d8184c90622e49bf474f31ac"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/physics/M2CreateColdFiles.ets",
+      "bytes": 1194,
+      "sha256": "a760b95b33a389dcc015e9e99dfbfe348cbad45e5ae5b66802763b9ebfbda48b"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/physics/DiagnosticColdFiles.ets",
+      "bytes": 1225,
+      "sha256": "eb8ce3e76708a2b0ee6a663a5d79323c1e9aa7c8d0bab50318d7ef523992347a"
+    },
+    {
+      "path": ".codex/local-test/t482-final/entry/src/main/ets/physics/M2CreatePackage.ets",
+      "bytes": 895,
+      "sha256": "42c209c9cad936ace9e0f0cd03d4a66639bce058af6a7f4f6154843549b5aa08"
+    },
+    {
+      "path": "test/reports/t491/t461/create-diag.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/reports/t491/t461/files.txt",
+      "bytes": 92,
+      "sha256": "c1f859865bd9ab3907ca3a399c18b03d8c5a4777297313f08d5f46c26d0cea6c"
+    },
+    {
+      "path": "test/reports/t491/t461/m2log.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_direct.jpeg",
+      "bytes": 86396,
+      "sha256": "d2c40f2b303e3f69d126467ae656d2348efdf3eaa0492d4b8540b41c41c61ea7"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_l1.json",
+      "bytes": 87073,
+      "sha256": "19991241f991db695100066eb26c690d253f774a694e900fecf9b97bde3163df"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_l2.json",
+      "bytes": 59481,
+      "sha256": "13bc678dac13f21c0d5ed21d69d1040d0589a5d0855a2f5185855194040b9c05"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_l3.json",
+      "bytes": 59481,
+      "sha256": "07bb3a6869e1ecbd84e8c9b7b2f36b606e543dda8ffeb005a7c047c7141c7913"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_l4.json",
+      "bytes": 72314,
+      "sha256": "e34b4cdaeccdf2d929849b8f24325126b23077c1457662a99f4faba9b18f06a4"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_l5.json",
+      "bytes": 72314,
+      "sha256": "9573ae50ad70b06d22ab159fe2f2014286e5124c390f2767197c6547039d7d04"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_m2.jpeg",
+      "bytes": 86379,
+      "sha256": "856fabb4be436229ee93855d202f5ddaad09afcf5eec1bf013ec9088b551e188"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_m2run.jpeg",
+      "bytes": 94980,
+      "sha256": "a60fc70f9c988480269f2816f25acce90f99146533b5fe47d16de8a32809c0e4"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_m2run2.jpeg",
+      "bytes": 86476,
+      "sha256": "48e693a7db271a9bc36ecdb8d3e2838b0bb2290f2200291946ef8135fe682737"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_m2v3.jpeg",
+      "bytes": 86301,
+      "sha256": "04b2e0928798a432283ccc76a0d7fa78aea6e7dec77b484c2509148bd64d656e"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_real.jpeg",
+      "bytes": 194672,
+      "sha256": "bad014439b20c02c8bab2840297aa809f28a4fa7c153d5be25afebfc250782ee"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_run.jpeg",
+      "bytes": 194939,
+      "sha256": "70e90aa1ce67133e14f2d977c5092405a4198aa285eb53d66d316c1282eafbf2"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_run2.jpeg",
+      "bytes": 194905,
+      "sha256": "964613d08f34143f29efcac22dfb6bf063a3f15b67f0e01c24c43e08417ed673"
+    },
+    {
+      "path": "test/reports/t491/t461/t461_s1.jpeg",
+      "bytes": 190064,
+      "sha256": "ecdd2bacd76b44dce89f71a775beac155c686beab97c9d2217109b230eab8739"
+    }
+  ]
+}

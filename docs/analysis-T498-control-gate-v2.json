@@ -1,0 +1,90 @@
+{
+  "schema": "T498_CONTROL_ENGINEERING_AUDIT_V2",
+  "date": "2026-11-16",
+  "status": "ENGINEERING_CONTRACT_CHECKS_PASS",
+  "product": "NOT_IMPLEMENTED",
+  "device": "NOT_RUN",
+  "GLExecuted": false,
+  "physicsSimulatorAdded": false,
+  "expectedSnapshots": 20,
+  "localArithmeticCases": 500,
+  "fixtureSchemasChecked": 21,
+  "snapshotWords": 256,
+  "sourceDispatch": 72,
+  "quantumDispatch": [
+    549,
+    619,
+    594,
+    664
+  ],
+  "payloadBytes": [
+    61257552,
+    65229392,
+    129767504,
+    133739344
+  ],
+  "newHostReservedBytes": 2048,
+  "newGPUBytes": 0,
+  "limitations": [
+    "static identities and contracts only; no native control execution",
+    "negative fixture declarations are not product test results",
+    "current source clock is V2; V3 remains to be implemented"
+  ],
+  "inputs": [
+    {
+      "path": "docs/algorithm-T508-m3-blocked-quota-v1.md",
+      "bytes": 17730,
+      "sha256": "907a34f4d984188d3d0ffec79919213c9538c04607728539944ea79bd31cc00e"
+    },
+    {
+      "path": "docs/design-T508-blocked-quota-manifest-v1.json",
+      "bytes": 12289,
+      "sha256": "f3513731549e56e2f469b492173d9d4cabc39d1a1c01ce4373447cdb41a906ec"
+    },
+    {
+      "path": "docs/design-T508-blocked-quota-fixtures-v1.json",
+      "bytes": 36703,
+      "sha256": "7887c4b44550da1343f5c3bdac08c9bab98a4c72af2fed74edf163418e82b91d"
+    },
+    {
+      "path": "docs/design-T508-blocked-quota-evidence-v1.json",
+      "bytes": 2387,
+      "sha256": "31a49a30b35be41b9dc7f318bd4e6712aebd0fefc7be6e9f1a27dd25cb90244b"
+    },
+    {
+      "path": "docs/design-T497-gpu-M3-manifest-v1.json",
+      "bytes": 54887,
+      "sha256": "96ed620ae539508289f2d5c1e08d6e99fe6652b2e51a99dcd62eff6fc4916df4"
+    },
+    {
+      "path": "docs/design-T497-gpu-M3-fixtures-v1.json",
+      "bytes": 45627,
+      "sha256": "e79572ed286b1ff1faf4304f5e86c004d52f4265fed3049a8730e900838bdea9"
+    },
+    {
+      "path": "docs/architecture-T498-gpu-M3-engineering-v1.md",
+      "bytes": 15019,
+      "sha256": "128f332e8a6fc032a95381bf3bea6a3e079fd6cc84f3804cc3a6eb2bdfd70bbb"
+    },
+    {
+      "path": "docs/architecture-T498-m3-blocked-control-v2.md",
+      "bytes": 9368,
+      "sha256": "9a2c4167db1a1553d4f1b5e22961c13e98efea44eac9c280d23f362d42001b6f"
+    },
+    {
+      "path": "docs/architecture-T498-m3-engineering-manifest-v1.json",
+      "bytes": 497643,
+      "sha256": "dcadb5e47409b9a864412ed1fddf102fa9f2cd8c3145f7cbab8c003935ae1ce3"
+    },
+    {
+      "path": "docs/analysis-T498-control-gate-v2.py",
+      "bytes": 7096,
+      "sha256": "e4f42fe825104361cf55fad57f55d332dffd6406169ff4b3f6f35f4fc2237ea8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    }
+  ]
+}
