@@ -1,0 +1,27 @@
+blocked_cases.cpp
+progress_clock_v3.cpp
+root_owner.cpp
+planning_control.cpp
+completion_gate.cpp
+quota_snapshot_v3.cpp
+quota_reader_v3.cpp
+正在生成代码...
+T522 quota/control/root-owner/publication reader and lease gates PASS
+BQ01 PASS
+BQ02 PASS
+BQ03/BQ14 PASS
+BQ04 local-only PASS
+BQ05/BQ13 admission-before-GPU-outcome PASS
+BQ06 PASS
+BQ07 PASS
+BQ08 bounded-index PASS
+BQ09 FIFO PASS
+BQ10/BQ11 PASS
+BQ12 PASS
+BQ15 PASS
+BQ16 PASS
+BQ17 SOURCE-only busy PASS
+BQ18 PASS
+BQ19 PASS
+BQ20 missing-B/revision rejection PASS (new reader; old reader check remains separate)
+BQ21 PASS

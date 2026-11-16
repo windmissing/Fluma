@@ -1,0 +1,23 @@
+native_gl.cpp
+kernel_assets.cpp
+transport.cpp
+controller.cpp
+root_owner.cpp
+completion_gate.cpp
+planning_control.cpp
+progress_clock_v3.cpp
+quota_snapshot_v3.cpp
+quota_reader_v3.cpp
+gl_forward.cpp
+正在生成代码...
+native configure=0
+native source begin=0
+native source result=0 elapsedNs=204400700
+native source fault=0 outcome=1 reason=0 completed=72 uploaded=3192 planned=3192 observed=3192
+native V4 SOURCE gate/current-bank/published lease metadata PASS
+native cold begin={"revision":"GRS_M3_BOUNDED_COLD_V1","state":"REQUESTED","requestId":"1","traceId":"1","scope":{"pid":"37740","route":"m3a","source":"96ed620ae539508289f2d5c1e08d6e99fe6652b2e51a99dcd62eff6fc4916df4","control":{"epoch":"1","run":"1","context":"3","surface":"9","session":"5","resetSerial":"4","permissionRevision":"6"}},"rawGl":0,"rawEgl":0,"transportCode":0,"failedStage":""}
+native cold state={"revision":"GRS_M3_BOUNDED_COLD_V1","state":"TRACE_READY","requestId":"1","traceId":"1","scope":{"pid":"37740","route":"m3a","source":"96ed620ae539508289f2d5c1e08d6e99fe6652b2e51a99dcd62eff6fc4916df4","control":{"epoch":"1","run":"1","context":"3","surface":"9","session":"5","resetSerial":"4","permissionRevision":"6"}},"rawGl":0,"rawEgl":0,"transportCode":0,"failedStage":""}
+native quantum begin=0
+native quantum result=5 elapsedNs=36913700
+native quantum fault=7 outcome=0 reason=0 completed=0 uploaded=0 planned=30252 observed=0 barriers=419 shaderBarrier=0
+native host QUANTUM deadline/GAP guard: rejected, SOURCE retained, no Q accepted PASS (not a performance PASS)
