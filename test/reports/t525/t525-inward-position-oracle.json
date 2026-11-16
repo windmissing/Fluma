@@ -1,0 +1,166 @@
+{
+ "revision": "T525_INWARD_POSITION_ORACLE_V1",
+ "date": "2026-11-16",
+ "design": "architecture-T509-inward-raster-position-v2.md",
+ "target": "T516 (a38636c/cf15da7, HAP 6f49d06d…) RasterGeometry/PrepareReadiness/页面",
+ "devicePaint": "NOT_RUN（T408 独立真机卡）",
+ "results": [
+  {
+   "id": "A1",
+   "name": "精确样本独立复算 == (52,990,1176,1716)",
+   "pass": true,
+   "detail": "oracle=(52, 990, 1176, 1716)"
+  },
+  {
+   "id": "A2",
+   "name": "旧 51/1177 宽拒绝（(51,990,1177,1716)≠inward）",
+   "pass": true,
+   "detail": "51<ceil(51.2) 且 1177≠floor 派生宽"
+  },
+  {
+   "id": "A3",
+   "name": "52/1177 拒绝（1177≠1176）",
+   "pass": true,
+   "detail": "宽度 floor 派生=1176 非 1177"
+  },
+  {
+   "id": "A4",
+   "name": "T516 pages.json 44/0（failed=0 且 44 项）",
+   "pass": true,
+   "detail": "passed=44 failed=0"
+  },
+  {
+   "id": "B1",
+   "name": "scale3.5 相邻边界：−ε 同格 35 / 恰好 35 / +ε 进 36 / 半像素 37",
+   "pass": true,
+   "detail": "[(9.999999999999998, 3.5, 35), (10.0, 3.5, 35), (10.000000000000002, 3.5, 36), (10.5, 3.5, 37)]"
+  },
+  {
+   "id": "B2",
+   "name": "scale2.625 相邻边界：±ε 同格 27（乘积恰好不越）/半像素 28",
+   "pass": true,
+   "detail": "[(9.999999999999998, 2.625, 27), (10.0, 2.625, 27), (10.000000000000002, 2.625, 27), (10.5, 2.625, 28)]"
+  },
+  {
+   "id": "B3",
+   "name": "T516 8 项相邻边界用例在名单（2.625/3.5 × 4 值）",
+   "pass": true,
+   "detail": "scale × 浮点相邻值全覆盖"
+  },
+  {
+   "id": "C1",
+   "name": "floor 语义：0.999..8→0、1→1、1.000..2→1（恰好不动 −ε 不退）",
+   "pass": true,
+   "detail": "T509 v2 floor 合同"
+  },
+  {
+   "id": "C2",
+   "name": "floor 1177.5→1177、1177.999..8→1177、1178→1178",
+   "pass": true,
+   "detail": "半像素/±ε 边界"
+  },
+  {
+   "id": "C3",
+   "name": "floor 特殊值：0→0、−1→−1、NaN/Infinity 拒、2^31 越界拒",
+   "pass": true,
+   "detail": "NaN/Inf/2147483648 由页面严格门拒（T516 用例在名单）"
+  },
+  {
+   "id": "C4",
+   "name": "floor 12 项 + 相邻 8 项 + EGL/包/观察等 24 项 = 44 全覆盖",
+   "pass": true,
+   "detail": "用例分类计数"
+  },
+  {
+   "id": "D1",
+   "name": "transform 位置域不支持（保原值回 architect）",
+   "pass": true,
+   "detail": "T516 用例在名单：transform unsupported"
+  },
+  {
+   "id": "D2",
+   "name": "窗口原点不匹配拒绝",
+   "pass": true,
+   "detail": "T516 用例在名单：window origin mismatch"
+  },
+  {
+   "id": "D3",
+   "name": "触摸层必须等于实际节点",
+   "pass": true,
+   "detail": "T516 用例在名单：touch layer must match actual node"
+  },
+  {
+   "id": "D4",
+   "name": "EGL 失败 −1 拒绝",
+   "pass": true,
+   "detail": "T516 用例在名单：EGL -1"
+  },
+  {
+   "id": "D5",
+   "name": "旧 packet 宽度拒绝",
+   "pass": true,
+   "detail": "T516 用例在名单：old packet width"
+  },
+  {
+   "id": "D6",
+   "name": "surfaceEpoch 换代旧 packet 拒",
+   "pass": true,
+   "detail": "T516 用例在名单：stale packet after surfaceEpoch"
+  },
+  {
+   "id": "D7",
+   "name": "contextEpoch 换代旧 packet 拒",
+   "pass": true,
+   "detail": "T516 用例在名单：stale packet after contextEpoch"
+  },
+  {
+   "id": "D8",
+   "name": "键盘遮挡严格门",
+   "pass": true,
+   "detail": "T516 用例在名单：keyboard occlusion stays strict"
+  },
+  {
+   "id": "E1",
+   "name": "两帧门：actual two frames + exact integer sizes + 双坐标域",
+   "pass": true,
+   "detail": "T509 v2：两帧锚定后才 READY"
+  },
+  {
+   "id": "E2",
+   "name": "同 floor 移动使 permit 失效且 reserve 零副作用",
+   "pass": true,
+   "detail": "换代语义：父小动 ceil 不变仍换代"
+  },
+  {
+   "id": "E3",
+   "name": "同 floor scale 变化使 open hold 失效且保首因",
+   "pass": true,
+   "detail": "卡面：ceil 不变仍换代"
+  },
+  {
+   "id": "E4",
+   "name": "旧观察代不消费新计划",
+   "pass": true,
+   "detail": "旧观察拒绝"
+  },
+  {
+   "id": "F1",
+   "name": "draw packet 用分配整数尺寸并拒 EGL 不匹配",
+   "pass": true,
+   "detail": "packet ROI 全 tuple（x,y,w,h,generation）"
+  },
+  {
+   "id": "F2",
+   "name": "像素长度取真实 inner 节点",
+   "pass": true,
+   "detail": "position vs transform 分域"
+  },
+  {
+   "id": "DEVICE_DOMAIN",
+   "name": "真机 paint/ROI 实测（T408 接 T516 新包）",
+   "pass": null,
+   "detail": "NOT_RUN（不使用真机；T408 独立接新签包 6f49d06d 重标定，结果回 architect）"
+  }
+ ],
+ "verdict": "PASS"
+}
