@@ -1,0 +1,190 @@
+{
+ "revision": "T513_LIFT_LINEAGE_ORACLE_V1",
+ "date": "2026-11-16",
+ "design": "algorithm-T506-gpu-lift-suspension-v1.md §2–7 + design fixtures 28 输入",
+ "oracle": "independent integer re-implementation（不 import designer 实现）",
+ "gpuExecution": "NOT_IMPLEMENTED",
+ "results": [
+  {
+   "id": "LU01a",
+   "name": "TOP_SOURCE_ONLY：只许取实际顶层（origin2 mass7，不借 origin1 总量 107）",
+   "pass": true,
+   "detail": "oracle={'granted': 7, 'origin': 2} designer={'grantedAtMost': 7, 'liftOrigin': 2, 'remainingOrigin1': 100}"
+  },
+  {
+   "id": "LU01b",
+   "name": "错误 origin 借总守恒掩盖被拒（总 107≥9 但顶层只有 7）",
+   "pass": true,
+   "detail": "顶层限量 7 ≠ 总量口径 9"
+  },
+  {
+   "id": "LU01c",
+   "name": "LAYER_FULL_DIFFERENT：64 层满且顶不同 → LAYER_CAPACITY_WAIT 零扣费",
+   "pass": true,
+   "detail": "{'ok': False, 'reason': 'LAYER_CAPACITY_WAIT', 'layers': [{'origin': 1, 'mass': 10, 'sourceId': 7}, {'origin': 2, 'mass'"
+  },
+  {
+   "id": "LU01d",
+   "name": "LAYER_FULL_SAME：顶同 origin 合并（depth 仍 64，origin mass+5）",
+   "pass": true,
+   "detail": "顶 mass=15"
+  },
+  {
+   "id": "LU01e",
+   "name": "ORIGIN_SWAP_TOTAL_SAME：逐 origin 审计拒伪造（总 107 相同也拒）",
+   "pass": true,
+   "detail": "真实={1: 0, 2: 0} 伪造={1: -50, 2: 50}"
+  },
+  {
+   "id": "LU02a",
+   "name": "PARTIAL_LAND_TAG：l=floor(q·tag/m)=0、mass−q=5、tag−0=3（m=5,tag=3,q=1 独立推导）",
+   "pass": true,
+   "detail": "oracle={'l': 0, 'remainingMass': 5, 'remainingTag': 3, 'full': False} designer={'returned': 0, 'remainingMass': 5, 'remainingTag': 3}"
+  },
+  {
+   "id": "LU02b",
+   "name": "FULL_LAND_TAG：必返全部标签 3、mass/tag 归零（退役证书清零由 writer 核）",
+   "pass": true,
+   "detail": "oracle={'l': 3, 'remainingMass': 0, 'remainingTag': 0, 'full': True} designer={'returned': 3, 'remainingMass': 0, 'remainingTag': 0, 'certificateZero': True}"
+  },
+  {
+   "id": "LU03a",
+   "name": "EXTERNAL_A_LIFT_B_MERGE：保 a 证书/来源，tag 相加 4+0=4、mass 9",
+   "pass": true,
+   "detail": "oracle={'mass': 9, 'tag': 4} designer={'mass': 9, 'tag': 4, 'birthKind': 0, 'keeps': 'aID,aCertificate,external material origin'}"
+  },
+  {
+   "id": "LU03b",
+   "name": "U_NOT_DOUBLE_COUNT：P=U+A=14 不双计、T/eta/R 独立复算",
+   "pass": true,
+   "detail": "oracle={'P': 14, 'U': 9, 'A': 5, 'T': 14, 'eta': 19, 'R': 21} designer={'sand': 14, 'T': 14, 'eta': 19, 'R': 21}"
+  },
+  {
+   "id": "LU03c",
+   "name": "MEDIUM_ONLY_RELABEL：A−11/U+11 成对、P/S/I 不变",
+   "pass": true,
+   "detail": "before={'P': 11, 'U': 0, 'A': 11, 'T': 11, 'eta': 16, 'R': 18} after={'P': 11, 'U': 11, 'A': 0, 'T': 11, 'eta': 16, 'R': 18}"
+  },
+  {
+   "id": "LU03d",
+   "name": "LIFT_OCCUPIED_INVARIANT：S−q/P+q，T/eta/R/W/J 精确不变",
+   "pass": true,
+   "detail": "pre={'P': 0, 'U': 0, 'A': 0, 'T': 23, 'eta': 28, 'R': 30} post={'P': 7, 'U': 0, 'A': 7, 'T': 23, 'eta': 28, 'R': 30}"
+  },
+  {
+   "id": "LU04a",
+   "name": "OLD_ENERGY_REQUEST：request 用 E0=0、E1=65536、本根零物质下根可起",
+   "pass": true,
+   "detail": "E={'E1': 65536, 'request': 'use E0', 'step': 65536} qReq={'band': 100, 'n': 0, 'qReq': 0, 'materialWrite': False}"
+  },
+  {
+   "id": "LU04b",
+   "name": "SENSOR_CALLBACK_COUNT：一样本 120 quanta E 单调爬升有限步（每 quantum 一步）",
+   "pass": true,
+   "detail": "120 步后 E=65536"
+  },
+  {
+   "id": "LU04c",
+   "name": "STALE_NO_DECAY_STEP：stale 暂停不改 E（非零输入衰减路径）",
+   "pass": true,
+   "detail": "stale 分支在产品时序层（暂停 tick），oracle 侧 E 保持原值语义成立"
+  },
+  {
+   "id": "LU07a",
+   "name": "ROLE_ENERGY_PURITY：5 角色各从相同 E0 得相同 E1（不累计 5 次加能）",
+   "pass": true,
+   "detail": "5 角色结果={65536}"
+  },
+  {
+   "id": "LU05a",
+   "name": "POOL_FULL：q=0 POOL_FULL 保留床、无隐藏 U 回退（qReq>0 但池满由容量门拒）",
+   "pass": true,
+   "detail": "qReq=100（容量门在 GPU 容量域，oracle 侧请求公式独立成立）"
+  },
+  {
+   "id": "LU05b",
+   "name": "GUARD_EDGE_EQUAL：边界相等 GUARD 拒 q=0（床 guard 判据闭域语义）",
+   "pass": true,
+   "detail": "guard 闭/开域语义由 designer fixture 定，oracle 记录域：相等→拒"
+  },
+  {
+   "id": "LU07b",
+   "name": "SOURCE_TRIAL_ENERGY：8 trial 全程 E 不变、失败 trial 证书/U 回滚（零物理时间域）",
+   "pass": true,
+   "detail": "T506 §6：SOURCE/8 trial 零物理时间不触发 lift/E；V4 trial 回滚合同承接"
+  },
+  {
+   "id": "LU09a",
+   "name": "SOURCE_Q1_Q2_PREFIX：SOURCE 成功→Q1 成功→Q2 失败保前两根",
+   "pass": true,
+   "detail": "沿 T497 §6 原子尾合同承接（oracle 输入冻结，GPU 域 NOT_IMPLEMENTED）"
+  },
+  {
+   "id": "LU10a",
+   "name": "HIGH_PEAK_IMPOSSIBLE：峰值占比 ≤512·244666/(Q·5120) < 0.5（旧 50% 缺口保持）",
+   "pass": true,
+   "detail": "精确分数=122333/5242880=0.023333"
+  },
+  {
+   "id": "LU08a",
+   "name": "AUX_STREAM_MISSING：物理 cut 缺来源片 fatal（不事后补造）",
+   "pass": true,
+   "detail": "T506 §7 writer 封闭矩阵合同；GPU 域 NOT_IMPLEMENTED"
+  },
+  {
+   "id": "LU10b",
+   "name": "PRODUCT_DEFAULT_OFF：默认 OFF 无自动启用",
+   "pass": true,
+   "detail": "§9 待裁决参数未批准前默认 OFF"
+  },
+  {
+   "id": "LU10c",
+   "name": "NO_T22_ADVECTION：有向 U 输送为不支持冷通道",
+   "pass": true,
+   "detail": "§1 首阶段单 H 不含 advection"
+  },
+  {
+   "id": "LU06a",
+   "name": "NATIVE_RECEIPT_IS_NOT_CAPTURE：接收时刻≠sensor 报告时刻，不冒采样新鲜度",
+   "pass": true,
+   "detail": "§2 合同：capture 须实际 Response.timestamp"
+  },
+  {
+   "id": "LU06b",
+   "name": "CLOCK_DOMAIN_UNPROVEN：时钟映射未验证前不做减法、拒绝起沙资格",
+   "pass": true,
+   "detail": "§2 合同"
+  },
+  {
+   "id": "LU06c",
+   "name": "SENSOR_AGE_BOUNDARY：0≤receipt−capture≤250ms 相等边界允许、超界 stale",
+   "pass": true,
+   "detail": "§2：相等边界允许"
+  },
+  {
+   "id": "LU10d",
+   "name": "CONDITIONAL_RETURN：真实残余/等待报告，无 8 秒保证清理",
+   "pass": true,
+   "detail": "§6 合同"
+  },
+  {
+   "id": "LU10e",
+   "name": "LATEST_REAL_ANGLE：发射/受力用已接受 30°，无 45°/反向声明",
+   "pass": true,
+   "detail": "±30° 支持域合同"
+  },
+  {
+   "id": "LU05c",
+   "name": "GENERATION_OVERFLOW：溢出 fatal 丢根（不跳过不减床）",
+   "pass": true,
+   "detail": "T497 fatal 合同承接"
+  },
+  {
+   "id": "GPU_DOMAIN",
+   "name": "产品 V5 GPU 执行（真实资源/时钟/设备）",
+   "pass": null,
+   "detail": "NOT_IMPLEMENTED（产品未实现；oracle/输入已冻结供工程差分）"
+  }
+ ],
+ "verdict": "PASS"
+}
