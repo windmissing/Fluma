@@ -1,0 +1,13 @@
+11-17 11:25:49.942   642  1713 I C02D11/hiview/Faultlogger: GetHilogByPid: read hilog start
+11-17 11:25:50.033   642  1713 I C02D11/hiview/Faultlogger: GetHilogByPid: get hilog waitpid 31798 success
+11-17 11:25:50.036   642  1713 I C02D11/hiview/FaultLogManager: SaveFaultLogToFile: create log jscrash-com.example.helloworld-20020230-20261117112549830.log
+11-17 11:25:50.036   642  1713 I C02D11/hiview/Faultlogger_Base: AddFaultLog: 
+11-17 11:25:50.036   642  1713 I C02D11/hiview/Faultlogger_Base: Save Faultlog of Process:30232
+11-17 11:25:50.036   642  1713 I C02D11/hiview/Faultlogger_Base: ModuleName:com.example.helloworld
+11-17 11:25:50.036   642  1713 I C02D11/hiview/Faultlogger_Base: Reason:SyntaxError
+11-17 11:25:50.060   642  1713 I C02D11/hiview/Faultlogger: GetHilogByPid: read hilog start
+11-17 11:25:50.132   642  1713 I C02D11/hiview/Faultlogger: GetHilogByPid: get hilog waitpid 31828 success
+11-17 11:25:50.138   642  1713 I C02D11/hiview/FaultloggerExt-Mgr: GetExtName: bundleName: com.example.helloworld, find extName failed
+11-17 11:25:50.138   642  1713 I C02D11/hiview/FaultloggerExt-Mgr: OnFault: com.example.helloworld Unsupported faultlog abily
+11-17 11:25:50.139   642  1713 I C02D11/hiview/FaultloggerFilter: OnEvent: OnEvent handle JS_ERROR
+11-17 11:25:50.140   642  1713 I C02D11/hiview/FaultloggerFilter: OnEvent: JS_ERROR is not need filter
