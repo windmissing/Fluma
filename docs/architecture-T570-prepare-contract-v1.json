@@ -1,0 +1,73 @@
+{
+  "schema": "T570_PREPARE_TRANSACTION_V4",
+  "status": "ENGINEERING_READY_CAUSAL_LIMITS_EXPLICIT",
+  "deadlineMs": 3000,
+  "deadlineOrigin": "user begin app monotonic; no restart/renew",
+  "transitionMatrix": [
+    {
+      "before": "PREPARING",
+      "change": "SOFT",
+      "after": "PREPARING",
+      "permitSurvives": false,
+      "deadlineReset": false
+    },
+    {
+      "before": "PREPARING",
+      "change": "HARD",
+      "after": "INVALIDATED",
+      "permitSurvives": false,
+      "deadlineReset": false
+    },
+    {
+      "before": "READY",
+      "change": "SOFT",
+      "after": "INVALIDATED",
+      "permitSurvives": false,
+      "deadlineReset": false
+    },
+    {
+      "before": "READY",
+      "change": "HARD",
+      "after": "INVALIDATED",
+      "permitSurvives": false,
+      "deadlineReset": false
+    }
+  ],
+  "subphases": [
+    "DISMISSING",
+    "SETTLING",
+    "VERIFY_PAIR"
+  ],
+  "hardOwner": [
+    "page",
+    "windowId",
+    "windowGeneration",
+    "controller",
+    "session",
+    "surface",
+    "context",
+    "run"
+  ],
+  "softBeforeReady": [
+    "input focus/edit",
+    "avoid/keyboardHeight",
+    "layout/config values"
+  ],
+  "stableFrame": "original complete predicate, same owner and semantic snapshot, two increasing tickets each independently willDraw sampled",
+  "READY": "serial/layout/input/owner changes revoke; synchronous fresh check ticket then existing reserve; consume only on RESERVED in same stack, no second stopEditing",
+  "witness": {
+    "payloadBytesMax": 53248,
+    "jsonBytesMax": 65536,
+    "records": 64,
+    "recordBytes": 256,
+    "snapshotCount": 2,
+    "snapshotBytes": 16384,
+    "APIRecords": 8,
+    "APIRecordBytes": 256,
+    "headerBytes": 2048,
+    "credit": "existing2MiB writer/4MiB total; overflow complete INCOMPLETE; first cause never overwritten"
+  },
+  "evidenceGap": "post-fixed-keyboard-confirmation failed attempt exact first invalidator/owner before-after",
+  "deviceExecuted": false,
+  "productPASS": false
+}

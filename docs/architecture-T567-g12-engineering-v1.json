@@ -1,0 +1,8328 @@
+{
+  "schema": "T567_G12_WATER_SFP_ENGINEERING_V1",
+  "date": "2026-11-17",
+  "status": "ENGINEERING_READY_RESEARCH_NOT_IMPLEMENTED_NOT_VALIDATED",
+  "notUsingDevice": true,
+  "profile": "G12_POROUS_SPF_Q20_V1",
+  "profileCode": 1345466695,
+  "magic": {
+    "state": 1395798343,
+    "input": 1228026183,
+    "event": 1160917319,
+    "path": 1412575559,
+    "config": 1127362887,
+    "completion": 1177694535,
+    "cold": 1261580615,
+    "waterHeader": 1462907207
+  },
+  "revision": 1,
+  "seal": 3235779073,
+  "defaultOFF": true,
+  "CPUPhysicsAdded": false,
+  "inputs": [
+    {
+      "path": "docs/algorithm-G12-water-sfp-coupling-v1.md",
+      "bytes": 29465,
+      "sha256": "15e606f26ed43b51bba342d402dd07f0317c1b56808528e0dcb2f3621162b3c7"
+    },
+    {
+      "path": "docs/design-G12-water-sfp-manifest-v1.json",
+      "bytes": 5508,
+      "sha256": "282c36adb2a9bd54b9d1cdea17b02f0d5179041821364b154971cafa510de452"
+    },
+    {
+      "path": "docs/design-G12-water-sfp-fixtures-v1.json",
+      "bytes": 5328,
+      "sha256": "502113bdb3b15376e52a00a61da623be63fdcd24bb47b597a524d42da47de1a1"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-dispatch-v2.json",
+      "bytes": 242873,
+      "sha256": "976ff2f73bf3190113689a73431c5aa63261330d1409be332a6b8c5efec26a44"
+    }
+  ],
+  "support": {
+    "N": 128,
+    "K": [
+      192,
+      512
+    ],
+    "Kw": [
+      64,
+      128
+    ],
+    "sand": "SINGLE_H",
+    "Q": 1048576,
+    "CQ": 268435456,
+    "sand_mass_scale": "Q20_BULK_MASS_AND_FIXED_POROSITY_VOLUME",
+    "water_volume_mass_scale": "Q22",
+    "water_p_scale": "Q42_S64",
+    "sand_p_scale": "Q40_S64",
+    "velocity_limit": 1073741824,
+    "quantum": "1/120",
+    "J": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "wet_angle_degrees": [
+      0
+    ],
+    "dry_angle_degrees": [
+      -30,
+      30
+    ],
+    "phi": "1/2",
+    "porosity": "1/2",
+    "dry_bulk_density": "1",
+    "water_density": "1",
+    "grain_density": "2",
+    "origins_per_phase": 4096,
+    "origin_map_per_column": 64,
+    "hydrostatic_vertical_equilibrium": true,
+    "horizontal_water_momentum": true,
+    "same_column_packet_slabs_must_not_overlap": true,
+    "unsupported": [
+      "WET_TILT",
+      "CAPILLARY",
+      "RESIDUAL_MOISTURE",
+      "EXCESS_PORE_PRESSURE",
+      "DILATANCY",
+      "LIQUEFACTION",
+      "DENSE_OVERLAP_P",
+      "MULTI_SAND",
+      "M3_BULK_WET_SOURCE",
+      "3D",
+      "DEM",
+      "CANVAS_FALLBACK"
+    ]
+  },
+  "parameters": {
+    "status": "UNAPPROVED_UNCALIBRATED_RESEARCH",
+    "kappa_Q16_candidates": [
+      0,
+      262144,
+      1048576,
+      4194304
+    ],
+    "kappa_Q16_range": [
+      0,
+      4194304
+    ],
+    "gamma_Q16_range": [
+      0,
+      65536
+    ],
+    "final_tolerances": null,
+    "parent_parameters": "same fixed DM parent specification; no R1 approval reuse"
+  },
+  "config": {
+    "materialConfig128": [
+      {
+        "word": 0,
+        "name": "parentConfig64_0"
+      },
+      {
+        "word": 1,
+        "name": "parentConfig64_1"
+      },
+      {
+        "word": 2,
+        "name": "parentConfig64_2"
+      },
+      {
+        "word": 3,
+        "name": "parentConfig64_3"
+      },
+      {
+        "word": 4,
+        "name": "parentConfig64_4"
+      },
+      {
+        "word": 5,
+        "name": "parentConfig64_5"
+      },
+      {
+        "word": 6,
+        "name": "parentConfig64_6"
+      },
+      {
+        "word": 7,
+        "name": "parentConfig64_7"
+      },
+      {
+        "word": 8,
+        "name": "parentConfig64_8"
+      },
+      {
+        "word": 9,
+        "name": "parentConfig64_9"
+      },
+      {
+        "word": 10,
+        "name": "parentConfig64_10"
+      },
+      {
+        "word": 11,
+        "name": "parentConfig64_11"
+      },
+      {
+        "word": 12,
+        "name": "parentConfig64_12"
+      },
+      {
+        "word": 13,
+        "name": "parentConfig64_13"
+      },
+      {
+        "word": 14,
+        "name": "parentConfig64_14"
+      },
+      {
+        "word": 15,
+        "name": "parentConfig64_15"
+      },
+      {
+        "word": 16,
+        "name": "parentConfig64_16"
+      },
+      {
+        "word": 17,
+        "name": "parentConfig64_17"
+      },
+      {
+        "word": 18,
+        "name": "parentConfig64_18"
+      },
+      {
+        "word": 19,
+        "name": "parentConfig64_19"
+      },
+      {
+        "word": 20,
+        "name": "parentConfig64_20"
+      },
+      {
+        "word": 21,
+        "name": "parentConfig64_21"
+      },
+      {
+        "word": 22,
+        "name": "parentConfig64_22"
+      },
+      {
+        "word": 23,
+        "name": "parentConfig64_23"
+      },
+      {
+        "word": 24,
+        "name": "parentConfig64_24"
+      },
+      {
+        "word": 25,
+        "name": "parentConfig64_25"
+      },
+      {
+        "word": 26,
+        "name": "parentConfig64_26"
+      },
+      {
+        "word": 27,
+        "name": "parentConfig64_27"
+      },
+      {
+        "word": 28,
+        "name": "parentConfig64_28"
+      },
+      {
+        "word": 29,
+        "name": "parentConfig64_29"
+      },
+      {
+        "word": 30,
+        "name": "parentConfig64_30"
+      },
+      {
+        "word": 31,
+        "name": "parentConfig64_31"
+      },
+      {
+        "word": 32,
+        "name": "parentConfig64_32"
+      },
+      {
+        "word": 33,
+        "name": "parentConfig64_33"
+      },
+      {
+        "word": 34,
+        "name": "parentConfig64_34"
+      },
+      {
+        "word": 35,
+        "name": "parentConfig64_35"
+      },
+      {
+        "word": 36,
+        "name": "parentConfig64_36"
+      },
+      {
+        "word": 37,
+        "name": "parentConfig64_37"
+      },
+      {
+        "word": 38,
+        "name": "parentConfig64_38"
+      },
+      {
+        "word": 39,
+        "name": "parentConfig64_39"
+      },
+      {
+        "word": 40,
+        "name": "parentConfig64_40"
+      },
+      {
+        "word": 41,
+        "name": "parentConfig64_41"
+      },
+      {
+        "word": 42,
+        "name": "parentConfig64_42"
+      },
+      {
+        "word": 43,
+        "name": "parentConfig64_43"
+      },
+      {
+        "word": 44,
+        "name": "parentConfig64_44"
+      },
+      {
+        "word": 45,
+        "name": "parentConfig64_45"
+      },
+      {
+        "word": 46,
+        "name": "parentConfig64_46"
+      },
+      {
+        "word": 47,
+        "name": "parentConfig64_47"
+      },
+      {
+        "word": 48,
+        "name": "parentConfig64_48"
+      },
+      {
+        "word": 49,
+        "name": "parentConfig64_49"
+      },
+      {
+        "word": 50,
+        "name": "parentConfig64_50"
+      },
+      {
+        "word": 51,
+        "name": "parentConfig64_51"
+      },
+      {
+        "word": 52,
+        "name": "parentConfig64_52"
+      },
+      {
+        "word": 53,
+        "name": "parentConfig64_53"
+      },
+      {
+        "word": 54,
+        "name": "parentConfig64_54"
+      },
+      {
+        "word": 55,
+        "name": "parentConfig64_55"
+      },
+      {
+        "word": 56,
+        "name": "parentConfig64_56"
+      },
+      {
+        "word": 57,
+        "name": "parentConfig64_57"
+      },
+      {
+        "word": 58,
+        "name": "parentConfig64_58"
+      },
+      {
+        "word": 59,
+        "name": "parentConfig64_59"
+      },
+      {
+        "word": 60,
+        "name": "parentConfig64_60"
+      },
+      {
+        "word": 61,
+        "name": "parentConfig64_61"
+      },
+      {
+        "word": 62,
+        "name": "parentConfig64_62"
+      },
+      {
+        "word": 63,
+        "name": "parentConfig64_63"
+      },
+      {
+        "word": 64,
+        "name": "magic"
+      },
+      {
+        "word": 65,
+        "name": "revision"
+      },
+      {
+        "word": 66,
+        "name": "profile"
+      },
+      {
+        "word": 67,
+        "name": "Kw"
+      },
+      {
+        "word": 68,
+        "name": "kappaQ16"
+      },
+      {
+        "word": 69,
+        "name": "phiNumerator"
+      },
+      {
+        "word": 70,
+        "name": "phiDenominator"
+      },
+      {
+        "word": 71,
+        "name": "waterDensityNumerator"
+      },
+      {
+        "word": 72,
+        "name": "waterDensityDenominator"
+      },
+      {
+        "word": 73,
+        "name": "bulkDensityNumerator"
+      },
+      {
+        "word": 74,
+        "name": "bulkDensityDenominator"
+      },
+      {
+        "word": 75,
+        "name": "waterMassScaleBits"
+      },
+      {
+        "word": 76,
+        "name": "wetAngleIndex"
+      },
+      {
+        "word": 77,
+        "name": "waterSourcesMax"
+      },
+      {
+        "word": 78,
+        "name": "waterOriginsPerColumn"
+      },
+      {
+        "word": 79,
+        "name": "JPathRowsPerMicro"
+      },
+      {
+        "word": 80,
+        "name": "designSHA0"
+      },
+      {
+        "word": 81,
+        "name": "designSHA1"
+      },
+      {
+        "word": 82,
+        "name": "designSHA2"
+      },
+      {
+        "word": 83,
+        "name": "designSHA3"
+      },
+      {
+        "word": 84,
+        "name": "designSHA4"
+      },
+      {
+        "word": 85,
+        "name": "designSHA5"
+      },
+      {
+        "word": 86,
+        "name": "designSHA6"
+      },
+      {
+        "word": 87,
+        "name": "designSHA7"
+      },
+      {
+        "word": 88,
+        "name": "parentParameterSHA0"
+      },
+      {
+        "word": 89,
+        "name": "parentParameterSHA1"
+      },
+      {
+        "word": 90,
+        "name": "parentParameterSHA2"
+      },
+      {
+        "word": 91,
+        "name": "parentParameterSHA3"
+      },
+      {
+        "word": 92,
+        "name": "parentParameterSHA4"
+      },
+      {
+        "word": 93,
+        "name": "parentParameterSHA5"
+      },
+      {
+        "word": 94,
+        "name": "parentParameterSHA6"
+      },
+      {
+        "word": 95,
+        "name": "parentParameterSHA7"
+      },
+      {
+        "word": 96,
+        "name": "seedRecipeSHA0"
+      },
+      {
+        "word": 97,
+        "name": "seedRecipeSHA1"
+      },
+      {
+        "word": 98,
+        "name": "seedRecipeSHA2"
+      },
+      {
+        "word": 99,
+        "name": "seedRecipeSHA3"
+      },
+      {
+        "word": 100,
+        "name": "seedRecipeSHA4"
+      },
+      {
+        "word": 101,
+        "name": "seedRecipeSHA5"
+      },
+      {
+        "word": 102,
+        "name": "seedRecipeSHA6"
+      },
+      {
+        "word": 103,
+        "name": "seedRecipeSHA7"
+      },
+      {
+        "word": 104,
+        "name": "fixturesSHA0"
+      },
+      {
+        "word": 105,
+        "name": "fixturesSHA1"
+      },
+      {
+        "word": 106,
+        "name": "fixturesSHA2"
+      },
+      {
+        "word": 107,
+        "name": "fixturesSHA3"
+      },
+      {
+        "word": 108,
+        "name": "fixturesSHA4"
+      },
+      {
+        "word": 109,
+        "name": "fixturesSHA5"
+      },
+      {
+        "word": 110,
+        "name": "fixturesSHA6"
+      },
+      {
+        "word": 111,
+        "name": "fixturesSHA7"
+      },
+      {
+        "word": 112,
+        "name": "reserved112"
+      },
+      {
+        "word": 113,
+        "name": "reserved113"
+      },
+      {
+        "word": 114,
+        "name": "reserved114"
+      },
+      {
+        "word": 115,
+        "name": "reserved115"
+      },
+      {
+        "word": 116,
+        "name": "reserved116"
+      },
+      {
+        "word": 117,
+        "name": "reserved117"
+      },
+      {
+        "word": 118,
+        "name": "reserved118"
+      },
+      {
+        "word": 119,
+        "name": "reserved119"
+      },
+      {
+        "word": 120,
+        "name": "reserved120"
+      },
+      {
+        "word": 121,
+        "name": "reserved121"
+      },
+      {
+        "word": 122,
+        "name": "reserved122"
+      },
+      {
+        "word": 123,
+        "name": "reserved123"
+      },
+      {
+        "word": 124,
+        "name": "reserved124"
+      },
+      {
+        "word": 125,
+        "name": "reserved125"
+      },
+      {
+        "word": 126,
+        "name": "reserved126"
+      },
+      {
+        "word": 127,
+        "name": "reserved127"
+      }
+    ],
+    "parent64": "exact frozen parent material config bytes",
+    "materialSHA": "all128 LE u32 words, not the legacy parent-only SHA",
+    "parentSHA": "exact parent64 separately bound at88..95",
+    "GPUConfig192": "runtime envelope64 + materialConfig128; parent allocation128 grows64 in declared runtimeConfigExtension64",
+    "waterConstants": {
+      "phi": [
+        1,
+        2
+      ],
+      "waterDensity": [
+        1,
+        1
+      ],
+      "bulkDensity": [
+        1,
+        1
+      ],
+      "massScaleBits": 22,
+      "wetAngleIndex": 0,
+      "waterSourceMax": 4096,
+      "mapMax": 64,
+      "JPathRowsMax": 16
+    },
+    "seedSHA": "actual initialized raw bytes after derived caches/audits, never recipe hash"
+  },
+  "coldSeed": {
+    "recipeSHA": "SHA256 exact SeedDescriptor bytes: initial totals, ordered S/F/H origin inventory, P/J coordinates/velocities/IDs/generations, recipe revision; excludes derived cache",
+    "dispatch": [
+      "SEED_UPLOAD_VALIDATE",
+      "SEED_HYDRO_ENERGY_AUDIT",
+      "SEED_FINAL_SEAL"
+    ],
+    "copies": "after sealed initialization, four full-state copies to other banks, separate actual copy ledger",
+    "hash": "stream finalized GPU seed through existing cold caller-span after fence; bind actualSeedSHA in runtime identity outside hashed seed bytes",
+    "memory": "same allocated state/work/arena, <=4096B caller-span in existing16384B page credit; no hidden full seed CPU buffer",
+    "publish": "no permit/CURRENT until geometry/audit/hash identity binding complete"
+  },
+  "state": {
+    "waterHeader64": [
+      {
+        "word": 0,
+        "name": "magic"
+      },
+      {
+        "word": 1,
+        "name": "revision"
+      },
+      {
+        "word": 2,
+        "name": "Kw"
+      },
+      {
+        "word": 3,
+        "name": "nextJId"
+      },
+      {
+        "word": 4,
+        "name": "waterSourceCount"
+      },
+      {
+        "word": 5,
+        "name": "flags"
+      },
+      {
+        "word": 6,
+        "name": "initialWaterLo"
+      },
+      {
+        "word": 7,
+        "name": "initialWaterHi"
+      },
+      {
+        "word": 8,
+        "name": "admittedWaterLo"
+      },
+      {
+        "word": 9,
+        "name": "admittedWaterHi"
+      },
+      {
+        "word": 10,
+        "name": "sumHLo"
+      },
+      {
+        "word": 11,
+        "name": "sumHHi"
+      },
+      {
+        "word": 12,
+        "name": "sumJLo"
+      },
+      {
+        "word": 13,
+        "name": "sumJHi"
+      },
+      {
+        "word": 14,
+        "name": "lastWaterSourceSeqLo"
+      },
+      {
+        "word": 15,
+        "name": "lastWaterSourceSeqHi"
+      },
+      {
+        "word": 16,
+        "name": "waterSourceImpulseX0"
+      },
+      {
+        "word": 17,
+        "name": "waterSourceImpulseX1"
+      },
+      {
+        "word": 18,
+        "name": "waterSourceImpulseX2"
+      },
+      {
+        "word": 19,
+        "name": "waterSourceImpulseX3"
+      },
+      {
+        "word": 20,
+        "name": "waterSourceImpulseY0"
+      },
+      {
+        "word": 21,
+        "name": "waterSourceImpulseY1"
+      },
+      {
+        "word": 22,
+        "name": "waterSourceImpulseY2"
+      },
+      {
+        "word": 23,
+        "name": "waterSourceImpulseY3"
+      },
+      {
+        "word": 24,
+        "name": "waterGravityImpulseY0"
+      },
+      {
+        "word": 25,
+        "name": "waterGravityImpulseY1"
+      },
+      {
+        "word": 26,
+        "name": "waterGravityImpulseY2"
+      },
+      {
+        "word": 27,
+        "name": "waterGravityImpulseY3"
+      },
+      {
+        "word": 28,
+        "name": "wetSupportImpulseX0"
+      },
+      {
+        "word": 29,
+        "name": "wetSupportImpulseX1"
+      },
+      {
+        "word": 30,
+        "name": "wetSupportImpulseX2"
+      },
+      {
+        "word": 31,
+        "name": "wetSupportImpulseX3"
+      },
+      {
+        "word": 32,
+        "name": "wetSupportImpulseY0"
+      },
+      {
+        "word": 33,
+        "name": "wetSupportImpulseY1"
+      },
+      {
+        "word": 34,
+        "name": "wetSupportImpulseY2"
+      },
+      {
+        "word": 35,
+        "name": "wetSupportImpulseY3"
+      },
+      {
+        "word": 36,
+        "name": "waterSourceEnergy0"
+      },
+      {
+        "word": 37,
+        "name": "waterSourceEnergy1"
+      },
+      {
+        "word": 38,
+        "name": "waterSourceEnergy2"
+      },
+      {
+        "word": 39,
+        "name": "waterSourceEnergy3"
+      },
+      {
+        "word": 40,
+        "name": "waterSourceWork0"
+      },
+      {
+        "word": 41,
+        "name": "waterSourceWork1"
+      },
+      {
+        "word": 42,
+        "name": "waterSourceWork2"
+      },
+      {
+        "word": 43,
+        "name": "waterSourceWork3"
+      },
+      {
+        "word": 44,
+        "name": "wetTouchWork0"
+      },
+      {
+        "word": 45,
+        "name": "wetTouchWork1"
+      },
+      {
+        "word": 46,
+        "name": "wetTouchWork2"
+      },
+      {
+        "word": 47,
+        "name": "wetTouchWork3"
+      },
+      {
+        "word": 48,
+        "name": "initialWaterEnergy0"
+      },
+      {
+        "word": 49,
+        "name": "initialWaterEnergy1"
+      },
+      {
+        "word": 50,
+        "name": "initialWaterEnergy2"
+      },
+      {
+        "word": 51,
+        "name": "initialWaterEnergy3"
+      },
+      {
+        "word": 52,
+        "name": "waterDragDissipation0"
+      },
+      {
+        "word": 53,
+        "name": "waterDragDissipation1"
+      },
+      {
+        "word": 54,
+        "name": "waterDragDissipation2"
+      },
+      {
+        "word": 55,
+        "name": "waterDragDissipation3"
+      },
+      {
+        "word": 56,
+        "name": "wetConversionDissipation0"
+      },
+      {
+        "word": 57,
+        "name": "wetConversionDissipation1"
+      },
+      {
+        "word": 58,
+        "name": "wetConversionDissipation2"
+      },
+      {
+        "word": 59,
+        "name": "wetConversionDissipation3"
+      },
+      {
+        "word": 60,
+        "name": "phaseFlags"
+      },
+      {
+        "word": 61,
+        "name": "waterIdExhausted"
+      },
+      {
+        "word": 62,
+        "name": "reserved62"
+      },
+      {
+        "word": 63,
+        "name": "seal"
+      }
+    ],
+    "waterColumn16": [
+      {
+        "word": 0,
+        "name": "H4"
+      },
+      {
+        "word": 1,
+        "name": "pWLo"
+      },
+      {
+        "word": 2,
+        "name": "pWHi"
+      },
+      {
+        "word": 3,
+        "name": "J4"
+      },
+      {
+        "word": 4,
+        "name": "eta4"
+      },
+      {
+        "word": 5,
+        "name": "R4"
+      },
+      {
+        "word": 6,
+        "name": "W4"
+      },
+      {
+        "word": 7,
+        "name": "C_Q16"
+      },
+      {
+        "word": 8,
+        "name": "waterOriginCount"
+      },
+      {
+        "word": 9,
+        "name": "PCount"
+      },
+      {
+        "word": 10,
+        "name": "JCount"
+      },
+      {
+        "word": 11,
+        "name": "wetFlags"
+      },
+      {
+        "word": 12,
+        "name": "hydroEpoch"
+      },
+      {
+        "word": 13,
+        "name": "hydroPhase"
+      },
+      {
+        "word": 14,
+        "name": "geometryStatus"
+      },
+      {
+        "word": 15,
+        "name": "reserved15"
+      }
+    ],
+    "waterOrigin4": [
+      {
+        "word": 0,
+        "name": "originLo"
+      },
+      {
+        "word": 1,
+        "name": "originHi"
+      },
+      {
+        "word": 2,
+        "name": "sourceId"
+      },
+      {
+        "word": 3,
+        "name": "mass4"
+      }
+    ],
+    "waterSource16": [
+      {
+        "word": 0,
+        "name": "originLo"
+      },
+      {
+        "word": 1,
+        "name": "originHi"
+      },
+      {
+        "word": 2,
+        "name": "sourceId"
+      },
+      {
+        "word": 3,
+        "name": "sourceKind"
+      },
+      {
+        "word": 4,
+        "name": "admittedMassLo"
+      },
+      {
+        "word": 5,
+        "name": "admittedMassHi"
+      },
+      {
+        "word": 6,
+        "name": "sourceSeqLo"
+      },
+      {
+        "word": 7,
+        "name": "sourceSeqHi"
+      },
+      {
+        "word": 8,
+        "name": "inputGenerationLo"
+      },
+      {
+        "word": 9,
+        "name": "inputGenerationHi"
+      },
+      {
+        "word": 10,
+        "name": "digest0"
+      },
+      {
+        "word": 11,
+        "name": "digest1"
+      },
+      {
+        "word": 12,
+        "name": "digest2"
+      },
+      {
+        "word": 13,
+        "name": "digest3"
+      },
+      {
+        "word": 14,
+        "name": "flags"
+      },
+      {
+        "word": 15,
+        "name": "reserved15"
+      }
+    ],
+    "waterPacket32": [
+      {
+        "word": 0,
+        "name": "mass4"
+      },
+      {
+        "word": 1,
+        "name": "xQ20"
+      },
+      {
+        "word": 2,
+        "name": "y4Q22"
+      },
+      {
+        "word": 3,
+        "name": "vxQ20"
+      },
+      {
+        "word": 4,
+        "name": "vyQ20"
+      },
+      {
+        "word": 5,
+        "name": "column"
+      },
+      {
+        "word": 6,
+        "name": "id"
+      },
+      {
+        "word": 7,
+        "name": "generation"
+      },
+      {
+        "word": 8,
+        "name": "originLo"
+      },
+      {
+        "word": 9,
+        "name": "originHi"
+      },
+      {
+        "word": 10,
+        "name": "sourceId"
+      },
+      {
+        "word": 11,
+        "name": "flags"
+      },
+      {
+        "word": 12,
+        "name": "birthSeqLo"
+      },
+      {
+        "word": 13,
+        "name": "birthSeqHi"
+      },
+      {
+        "word": 14,
+        "name": "ageTicksLo"
+      },
+      {
+        "word": 15,
+        "name": "ageTicksHi"
+      },
+      {
+        "word": 16,
+        "name": "contactKind"
+      },
+      {
+        "word": 17,
+        "name": "contactLevel4"
+      },
+      {
+        "word": 18,
+        "name": "pathBegin"
+      },
+      {
+        "word": 19,
+        "name": "pathCount"
+      },
+      {
+        "word": 20,
+        "name": "birthCommitLo"
+      },
+      {
+        "word": 21,
+        "name": "birthCommitHi"
+      },
+      {
+        "word": 22,
+        "name": "reserved22"
+      },
+      {
+        "word": 23,
+        "name": "reserved23"
+      },
+      {
+        "word": 24,
+        "name": "reserved24"
+      },
+      {
+        "word": 25,
+        "name": "reserved25"
+      },
+      {
+        "word": 26,
+        "name": "reserved26"
+      },
+      {
+        "word": 27,
+        "name": "reserved27"
+      },
+      {
+        "word": 28,
+        "name": "reserved28"
+      },
+      {
+        "word": 29,
+        "name": "reserved29"
+      },
+      {
+        "word": 30,
+        "name": "reserved30"
+      },
+      {
+        "word": 31,
+        "name": "seal"
+      }
+    ],
+    "freeJ": "zero all except preserved generation; checked increment on reuse",
+    "retiredId": "never reused; MAX_ID allocatable once with exhausted flag, no wrap",
+    "wetAdditionalLedgers": "parent sand Q40 impulse/Q60 E2 plus declared wet corrections Q42/Q62; never silently reinterpret parent fields",
+    "cumulativeWidth": "S128 checked; instantaneous bounds do not excuse cumulative overflow"
+  },
+  "work": {
+    "hydroColumn128": [
+      {
+        "word": 0,
+        "name": "epoch"
+      },
+      {
+        "word": 1,
+        "name": "phase"
+      },
+      {
+        "word": 2,
+        "name": "B"
+      },
+      {
+        "word": 3,
+        "name": "Psum"
+      },
+      {
+        "word": 4,
+        "name": "H4"
+      },
+      {
+        "word": 5,
+        "name": "J4"
+      },
+      {
+        "word": 6,
+        "name": "eta4"
+      },
+      {
+        "word": 7,
+        "name": "R4"
+      },
+      {
+        "word": 8,
+        "name": "W4"
+      },
+      {
+        "word": 9,
+        "name": "SWet4"
+      },
+      {
+        "word": 10,
+        "name": "FWet4"
+      },
+      {
+        "word": 11,
+        "name": "C_Q16"
+      },
+      {
+        "word": 12,
+        "name": "PCount"
+      },
+      {
+        "word": 13,
+        "name": "JCount"
+      },
+      {
+        "word": 14,
+        "name": "lowerBoundIterations"
+      },
+      {
+        "word": 15,
+        "name": "status"
+      },
+      {
+        "word": 16,
+        "name": "waterPotentialQ620"
+      },
+      {
+        "word": 17,
+        "name": "waterPotentialQ621"
+      },
+      {
+        "word": 18,
+        "name": "waterPotentialQ622"
+      },
+      {
+        "word": 19,
+        "name": "waterPotentialQ623"
+      },
+      {
+        "word": 20,
+        "name": "waterPotentialScaledLower0"
+      },
+      {
+        "word": 21,
+        "name": "waterPotentialScaledLower1"
+      },
+      {
+        "word": 22,
+        "name": "waterPotentialScaledLower2"
+      },
+      {
+        "word": 23,
+        "name": "waterPotentialScaledLower3"
+      },
+      {
+        "word": 24,
+        "name": "waterPotentialScaledUpper0"
+      },
+      {
+        "word": 25,
+        "name": "waterPotentialScaledUpper1"
+      },
+      {
+        "word": 26,
+        "name": "waterPotentialScaledUpper2"
+      },
+      {
+        "word": 27,
+        "name": "waterPotentialScaledUpper3"
+      },
+      {
+        "word": 28,
+        "name": "PiWQ620"
+      },
+      {
+        "word": 29,
+        "name": "PiWQ621"
+      },
+      {
+        "word": 30,
+        "name": "PiWQ622"
+      },
+      {
+        "word": 31,
+        "name": "PiWQ623"
+      },
+      {
+        "word": 32,
+        "name": "PiFQ600"
+      },
+      {
+        "word": 33,
+        "name": "PiFQ601"
+      },
+      {
+        "word": 34,
+        "name": "PiFQ602"
+      },
+      {
+        "word": 35,
+        "name": "PiFQ603"
+      },
+      {
+        "word": 36,
+        "name": "NFQ400"
+      },
+      {
+        "word": 37,
+        "name": "NFQ401"
+      },
+      {
+        "word": 38,
+        "name": "NFQ402"
+      },
+      {
+        "word": 39,
+        "name": "NFQ403"
+      },
+      {
+        "word": 40,
+        "name": "aPXQ20"
+      },
+      {
+        "word": 41,
+        "name": "gammaFQ16"
+      },
+      {
+        "word": 42,
+        "name": "gammaSQ16"
+      },
+      {
+        "word": 43,
+        "name": "gammaRefQ16"
+      },
+      {
+        "word": 44,
+        "name": "gnRefQ20"
+      },
+      {
+        "word": 45,
+        "name": "psiLo"
+      },
+      {
+        "word": 46,
+        "name": "psiHi"
+      },
+      {
+        "word": 47,
+        "name": "probeDepth"
+      },
+      {
+        "word": 48,
+        "name": "jProbeLo"
+      },
+      {
+        "word": 49,
+        "name": "jProbeHi"
+      },
+      {
+        "word": 50,
+        "name": "aWaterLo"
+      },
+      {
+        "word": 51,
+        "name": "aWaterHi"
+      },
+      {
+        "word": 52,
+        "name": "fStaticEligible"
+      },
+      {
+        "word": 53,
+        "name": "waveSpeedQ20"
+      },
+      {
+        "word": 54,
+        "name": "sourceGeometryEpoch"
+      },
+      {
+        "word": 55,
+        "name": "wetLengthEpoch"
+      },
+      {
+        "word": 56,
+        "name": "nextEta4"
+      },
+      {
+        "word": 57,
+        "name": "nextR4"
+      },
+      {
+        "word": 58,
+        "name": "nextW4"
+      },
+      {
+        "word": 59,
+        "name": "reserved59"
+      },
+      {
+        "word": 60,
+        "name": "reserved60"
+      },
+      {
+        "word": 61,
+        "name": "reserved61"
+      },
+      {
+        "word": 62,
+        "name": "reserved62"
+      },
+      {
+        "word": 63,
+        "name": "reserved63"
+      },
+      {
+        "word": 64,
+        "name": "reserved64"
+      },
+      {
+        "word": 65,
+        "name": "reserved65"
+      },
+      {
+        "word": 66,
+        "name": "reserved66"
+      },
+      {
+        "word": 67,
+        "name": "reserved67"
+      },
+      {
+        "word": 68,
+        "name": "reserved68"
+      },
+      {
+        "word": 69,
+        "name": "reserved69"
+      },
+      {
+        "word": 70,
+        "name": "reserved70"
+      },
+      {
+        "word": 71,
+        "name": "reserved71"
+      },
+      {
+        "word": 72,
+        "name": "reserved72"
+      },
+      {
+        "word": 73,
+        "name": "reserved73"
+      },
+      {
+        "word": 74,
+        "name": "reserved74"
+      },
+      {
+        "word": 75,
+        "name": "reserved75"
+      },
+      {
+        "word": 76,
+        "name": "reserved76"
+      },
+      {
+        "word": 77,
+        "name": "reserved77"
+      },
+      {
+        "word": 78,
+        "name": "reserved78"
+      },
+      {
+        "word": 79,
+        "name": "reserved79"
+      },
+      {
+        "word": 80,
+        "name": "reserved80"
+      },
+      {
+        "word": 81,
+        "name": "reserved81"
+      },
+      {
+        "word": 82,
+        "name": "reserved82"
+      },
+      {
+        "word": 83,
+        "name": "reserved83"
+      },
+      {
+        "word": 84,
+        "name": "reserved84"
+      },
+      {
+        "word": 85,
+        "name": "reserved85"
+      },
+      {
+        "word": 86,
+        "name": "reserved86"
+      },
+      {
+        "word": 87,
+        "name": "reserved87"
+      },
+      {
+        "word": 88,
+        "name": "reserved88"
+      },
+      {
+        "word": 89,
+        "name": "reserved89"
+      },
+      {
+        "word": 90,
+        "name": "reserved90"
+      },
+      {
+        "word": 91,
+        "name": "reserved91"
+      },
+      {
+        "word": 92,
+        "name": "reserved92"
+      },
+      {
+        "word": 93,
+        "name": "reserved93"
+      },
+      {
+        "word": 94,
+        "name": "reserved94"
+      },
+      {
+        "word": 95,
+        "name": "reserved95"
+      },
+      {
+        "word": 96,
+        "name": "reserved96"
+      },
+      {
+        "word": 97,
+        "name": "reserved97"
+      },
+      {
+        "word": 98,
+        "name": "reserved98"
+      },
+      {
+        "word": 99,
+        "name": "reserved99"
+      },
+      {
+        "word": 100,
+        "name": "reserved100"
+      },
+      {
+        "word": 101,
+        "name": "reserved101"
+      },
+      {
+        "word": 102,
+        "name": "reserved102"
+      },
+      {
+        "word": 103,
+        "name": "reserved103"
+      },
+      {
+        "word": 104,
+        "name": "reserved104"
+      },
+      {
+        "word": 105,
+        "name": "reserved105"
+      },
+      {
+        "word": 106,
+        "name": "reserved106"
+      },
+      {
+        "word": 107,
+        "name": "reserved107"
+      },
+      {
+        "word": 108,
+        "name": "reserved108"
+      },
+      {
+        "word": 109,
+        "name": "reserved109"
+      },
+      {
+        "word": 110,
+        "name": "reserved110"
+      },
+      {
+        "word": 111,
+        "name": "reserved111"
+      },
+      {
+        "word": 112,
+        "name": "reserved112"
+      },
+      {
+        "word": 113,
+        "name": "reserved113"
+      },
+      {
+        "word": 114,
+        "name": "reserved114"
+      },
+      {
+        "word": 115,
+        "name": "reserved115"
+      },
+      {
+        "word": 116,
+        "name": "reserved116"
+      },
+      {
+        "word": 117,
+        "name": "reserved117"
+      },
+      {
+        "word": 118,
+        "name": "reserved118"
+      },
+      {
+        "word": 119,
+        "name": "reserved119"
+      },
+      {
+        "word": 120,
+        "name": "reserved120"
+      },
+      {
+        "word": 121,
+        "name": "reserved121"
+      },
+      {
+        "word": 122,
+        "name": "reserved122"
+      },
+      {
+        "word": 123,
+        "name": "reserved123"
+      },
+      {
+        "word": 124,
+        "name": "reserved124"
+      },
+      {
+        "word": 125,
+        "name": "reserved125"
+      },
+      {
+        "word": 126,
+        "name": "reserved126"
+      },
+      {
+        "word": 127,
+        "name": "reserved127"
+      }
+    ],
+    "waterFace64": [
+      {
+        "word": 0,
+        "name": "leftColumn"
+      },
+      {
+        "word": 1,
+        "name": "rightColumn"
+      },
+      {
+        "word": 2,
+        "name": "qW4"
+      },
+      {
+        "word": 3,
+        "name": "jpWLo"
+      },
+      {
+        "word": 4,
+        "name": "jpWHi"
+      },
+      {
+        "word": 5,
+        "name": "qF"
+      },
+      {
+        "word": 6,
+        "name": "jpFLo"
+      },
+      {
+        "word": 7,
+        "name": "jpFHi"
+      },
+      {
+        "word": 8,
+        "name": "CfaceQ16"
+      },
+      {
+        "word": 9,
+        "name": "waveSpeedQ20"
+      },
+      {
+        "word": 10,
+        "name": "etaLeft4"
+      },
+      {
+        "word": 11,
+        "name": "etaRight4"
+      },
+      {
+        "word": 12,
+        "name": "FLeft"
+      },
+      {
+        "word": 13,
+        "name": "FRight"
+      },
+      {
+        "word": 14,
+        "name": "flags"
+      },
+      {
+        "word": 15,
+        "name": "status"
+      },
+      {
+        "word": 16,
+        "name": "fmWQ420"
+      },
+      {
+        "word": 17,
+        "name": "fmWQ421"
+      },
+      {
+        "word": 18,
+        "name": "fmWQ422"
+      },
+      {
+        "word": 19,
+        "name": "fmWQ423"
+      },
+      {
+        "word": 20,
+        "name": "fpWQ620"
+      },
+      {
+        "word": 21,
+        "name": "fpWQ621"
+      },
+      {
+        "word": 22,
+        "name": "fpWQ622"
+      },
+      {
+        "word": 23,
+        "name": "fpWQ623"
+      },
+      {
+        "word": 24,
+        "name": "ALQ620"
+      },
+      {
+        "word": 25,
+        "name": "ALQ621"
+      },
+      {
+        "word": 26,
+        "name": "ALQ622"
+      },
+      {
+        "word": 27,
+        "name": "ALQ623"
+      },
+      {
+        "word": 28,
+        "name": "ARQ620"
+      },
+      {
+        "word": 29,
+        "name": "ARQ621"
+      },
+      {
+        "word": 30,
+        "name": "ARQ622"
+      },
+      {
+        "word": 31,
+        "name": "ARQ623"
+      },
+      {
+        "word": 32,
+        "name": "PiWLQ620"
+      },
+      {
+        "word": 33,
+        "name": "PiWLQ621"
+      },
+      {
+        "word": 34,
+        "name": "PiWLQ622"
+      },
+      {
+        "word": 35,
+        "name": "PiWLQ623"
+      },
+      {
+        "word": 36,
+        "name": "PiWRQ620"
+      },
+      {
+        "word": 37,
+        "name": "PiWRQ621"
+      },
+      {
+        "word": 38,
+        "name": "PiWRQ622"
+      },
+      {
+        "word": 39,
+        "name": "PiWRQ623"
+      },
+      {
+        "word": 40,
+        "name": "capacityOperand0"
+      },
+      {
+        "word": 41,
+        "name": "capacityOperand1"
+      },
+      {
+        "word": 42,
+        "name": "capacityOperand2"
+      },
+      {
+        "word": 43,
+        "name": "capacityOperand3"
+      },
+      {
+        "word": 44,
+        "name": "reservedWide0"
+      },
+      {
+        "word": 45,
+        "name": "reservedWide1"
+      },
+      {
+        "word": 46,
+        "name": "reservedWide2"
+      },
+      {
+        "word": 47,
+        "name": "reservedWide3"
+      },
+      {
+        "word": 48,
+        "name": "reserved48"
+      },
+      {
+        "word": 49,
+        "name": "reserved49"
+      },
+      {
+        "word": 50,
+        "name": "reserved50"
+      },
+      {
+        "word": 51,
+        "name": "reserved51"
+      },
+      {
+        "word": 52,
+        "name": "reserved52"
+      },
+      {
+        "word": 53,
+        "name": "reserved53"
+      },
+      {
+        "word": 54,
+        "name": "reserved54"
+      },
+      {
+        "word": 55,
+        "name": "reserved55"
+      },
+      {
+        "word": 56,
+        "name": "reserved56"
+      },
+      {
+        "word": 57,
+        "name": "reserved57"
+      },
+      {
+        "word": 58,
+        "name": "reserved58"
+      },
+      {
+        "word": 59,
+        "name": "reserved59"
+      },
+      {
+        "word": 60,
+        "name": "reserved60"
+      },
+      {
+        "word": 61,
+        "name": "reserved61"
+      },
+      {
+        "word": 62,
+        "name": "reserved62"
+      },
+      {
+        "word": 63,
+        "name": "reserved63"
+      }
+    ],
+    "wetDrive32": [
+      {
+        "word": 0,
+        "name": "eta4"
+      },
+      {
+        "word": 1,
+        "name": "SWet4"
+      },
+      {
+        "word": 2,
+        "name": "FWet4"
+      },
+      {
+        "word": 3,
+        "name": "probeDepth"
+      },
+      {
+        "word": 4,
+        "name": "gammaRefQ16"
+      },
+      {
+        "word": 5,
+        "name": "gnRefQ20"
+      },
+      {
+        "word": 6,
+        "name": "psiLo"
+      },
+      {
+        "word": 7,
+        "name": "psiHi"
+      },
+      {
+        "word": 8,
+        "name": "jProbeLo"
+      },
+      {
+        "word": 9,
+        "name": "jProbeHi"
+      },
+      {
+        "word": 10,
+        "name": "aWaterLo"
+      },
+      {
+        "word": 11,
+        "name": "aWaterHi"
+      },
+      {
+        "word": 12,
+        "name": "direction"
+      },
+      {
+        "word": 13,
+        "name": "qPhysical"
+      },
+      {
+        "word": 14,
+        "name": "qOrigin"
+      },
+      {
+        "word": 15,
+        "name": "qActual"
+      },
+      {
+        "word": 16,
+        "name": "pendingTouchJyLo"
+      },
+      {
+        "word": 17,
+        "name": "pendingTouchJyHi"
+      },
+      {
+        "word": 18,
+        "name": "touchConsumed"
+      },
+      {
+        "word": 19,
+        "name": "touchReason"
+      },
+      {
+        "word": 20,
+        "name": "modeEntry"
+      },
+      {
+        "word": 21,
+        "name": "pEntryLo"
+      },
+      {
+        "word": 22,
+        "name": "pEntryHi"
+      },
+      {
+        "word": 23,
+        "name": "wetEpoch"
+      },
+      {
+        "word": 24,
+        "name": "reserved24"
+      },
+      {
+        "word": 25,
+        "name": "reserved25"
+      },
+      {
+        "word": 26,
+        "name": "reserved26"
+      },
+      {
+        "word": 27,
+        "name": "reserved27"
+      },
+      {
+        "word": 28,
+        "name": "reserved28"
+      },
+      {
+        "word": 29,
+        "name": "reserved29"
+      },
+      {
+        "word": 30,
+        "name": "reserved30"
+      },
+      {
+        "word": 31,
+        "name": "reserved31"
+      }
+    ],
+    "share4": [
+      {
+        "word": 0,
+        "name": "originLo"
+      },
+      {
+        "word": 1,
+        "name": "originHi"
+      },
+      {
+        "word": 2,
+        "name": "sourceId"
+      },
+      {
+        "word": 3,
+        "name": "actualShare"
+      }
+    ],
+    "packetKick32": "per-packet staged actual/requested S64 impulses/velocities/status, no extra source of authority",
+    "waterFlight64": "per-J original/proposed state, path/contact/rational cursor and sort index, max64 words",
+    "wideColumn32": "two capacities, aggregate impulses and per-column source/energy guards",
+    "pendingControl": "in declared 8192B root control, bounds/cursors/phase/key, no new global binding",
+    "scratchReuse": "after both reserves, parent Hamilton scratch stages128*(newFmap256+newHmap256)words before C mutation"
+  },
+  "input128": {
+    "fields": [
+      {
+        "word": 0,
+        "name": "magic"
+      },
+      {
+        "word": 1,
+        "name": "revision"
+      },
+      {
+        "word": 2,
+        "name": "profile"
+      },
+      {
+        "word": 3,
+        "name": "flags"
+      },
+      {
+        "word": 4,
+        "name": "runLo"
+      },
+      {
+        "word": 5,
+        "name": "runHi"
+      },
+      {
+        "word": 6,
+        "name": "ownerLo"
+      },
+      {
+        "word": 7,
+        "name": "ownerHi"
+      },
+      {
+        "word": 8,
+        "name": "contextLo"
+      },
+      {
+        "word": 9,
+        "name": "contextHi"
+      },
+      {
+        "word": 10,
+        "name": "rootNonceLo"
+      },
+      {
+        "word": 11,
+        "name": "rootNonceHi"
+      },
+      {
+        "word": 12,
+        "name": "inputGenerationLo"
+      },
+      {
+        "word": 13,
+        "name": "inputGenerationHi"
+      },
+      {
+        "word": 14,
+        "name": "sampleSeqLo"
+      },
+      {
+        "word": 15,
+        "name": "sampleSeqHi"
+      },
+      {
+        "word": 16,
+        "name": "captureNsLo"
+      },
+      {
+        "word": 17,
+        "name": "captureNsHi"
+      },
+      {
+        "word": 18,
+        "name": "receiptNsLo"
+      },
+      {
+        "word": 19,
+        "name": "receiptNsHi"
+      },
+      {
+        "word": 20,
+        "name": "freezeNsLo"
+      },
+      {
+        "word": 21,
+        "name": "freezeNsHi"
+      },
+      {
+        "word": 22,
+        "name": "clockDomain"
+      },
+      {
+        "word": 23,
+        "name": "gravitySource"
+      },
+      {
+        "word": 24,
+        "name": "acceptedAngleIndex"
+      },
+      {
+        "word": 25,
+        "name": "parameterRevision"
+      },
+      {
+        "word": 26,
+        "name": "parameterSha0"
+      },
+      {
+        "word": 27,
+        "name": "parameterSha1"
+      },
+      {
+        "word": 28,
+        "name": "parameterSha2"
+      },
+      {
+        "word": 29,
+        "name": "parameterSha3"
+      },
+      {
+        "word": 30,
+        "name": "parameterSha4"
+      },
+      {
+        "word": 31,
+        "name": "parameterSha5"
+      },
+      {
+        "word": 32,
+        "name": "parameterSha6"
+      },
+      {
+        "word": 33,
+        "name": "parameterSha7"
+      },
+      {
+        "word": 34,
+        "name": "rawAngleLo"
+      },
+      {
+        "word": 35,
+        "name": "rawAngleHi"
+      },
+      {
+        "word": 36,
+        "name": "sensorAdapterRevision"
+      },
+      {
+        "word": 37,
+        "name": "sensorFlags"
+      },
+      {
+        "word": 38,
+        "name": "reservedEnvelope38"
+      },
+      {
+        "word": 39,
+        "name": "reservedEnvelope39"
+      },
+      {
+        "word": 40,
+        "name": "commandKind"
+      },
+      {
+        "word": 41,
+        "name": "commandSeqLo"
+      },
+      {
+        "word": 42,
+        "name": "commandSeqHi"
+      },
+      {
+        "word": 43,
+        "name": "commandCaptureNsLo"
+      },
+      {
+        "word": 44,
+        "name": "commandCaptureNsHi"
+      },
+      {
+        "word": 45,
+        "name": "commandFlags"
+      },
+      {
+        "word": 46,
+        "name": "rawTouchXLo"
+      },
+      {
+        "word": 47,
+        "name": "rawTouchXHi"
+      },
+      {
+        "word": 48,
+        "name": "rawRadiusLo"
+      },
+      {
+        "word": 49,
+        "name": "rawRadiusHi"
+      },
+      {
+        "word": 50,
+        "name": "rawGestureDxLo"
+      },
+      {
+        "word": 51,
+        "name": "rawGestureDxHi"
+      },
+      {
+        "word": 52,
+        "name": "rawGestureDyLo"
+      },
+      {
+        "word": 53,
+        "name": "rawGestureDyHi"
+      },
+      {
+        "word": 54,
+        "name": "gestureDurationNsLo"
+      },
+      {
+        "word": 55,
+        "name": "gestureDurationNsHi"
+      },
+      {
+        "word": 56,
+        "name": "physicalJxLo"
+      },
+      {
+        "word": 57,
+        "name": "physicalJxHi"
+      },
+      {
+        "word": 58,
+        "name": "physicalJyLo"
+      },
+      {
+        "word": 59,
+        "name": "physicalJyHi"
+      },
+      {
+        "word": 60,
+        "name": "workCap0"
+      },
+      {
+        "word": 61,
+        "name": "workCap1"
+      },
+      {
+        "word": 62,
+        "name": "workCap2"
+      },
+      {
+        "word": 63,
+        "name": "workCap3"
+      },
+      {
+        "word": 64,
+        "name": "rawSourceMassLo"
+      },
+      {
+        "word": 65,
+        "name": "rawSourceMassHi"
+      },
+      {
+        "word": 66,
+        "name": "rawSourceXLo"
+      },
+      {
+        "word": 67,
+        "name": "rawSourceXHi"
+      },
+      {
+        "word": 68,
+        "name": "rawSourceYLo"
+      },
+      {
+        "word": 69,
+        "name": "rawSourceYHi"
+      },
+      {
+        "word": 70,
+        "name": "rawSourceVxLo"
+      },
+      {
+        "word": 71,
+        "name": "rawSourceVxHi"
+      },
+      {
+        "word": 72,
+        "name": "rawSourceVyLo"
+      },
+      {
+        "word": 73,
+        "name": "rawSourceVyHi"
+      },
+      {
+        "word": 74,
+        "name": "sourceId"
+      },
+      {
+        "word": 75,
+        "name": "sourceKind"
+      },
+      {
+        "word": 76,
+        "name": "sourceAdapterRevision"
+      },
+      {
+        "word": 77,
+        "name": "touchAdapterRevision"
+      },
+      {
+        "word": 78,
+        "name": "waterSourceMode"
+      },
+      {
+        "word": 79,
+        "name": "waterUnitRevision"
+      },
+      {
+        "word": 80,
+        "name": "reserved_80"
+      },
+      {
+        "word": 81,
+        "name": "reserved_81"
+      },
+      {
+        "word": 82,
+        "name": "reserved_82"
+      },
+      {
+        "word": 83,
+        "name": "reserved_83"
+      },
+      {
+        "word": 84,
+        "name": "reserved_84"
+      },
+      {
+        "word": 85,
+        "name": "reserved_85"
+      },
+      {
+        "word": 86,
+        "name": "reserved_86"
+      },
+      {
+        "word": 87,
+        "name": "reserved_87"
+      },
+      {
+        "word": 88,
+        "name": "reserved_88"
+      },
+      {
+        "word": 89,
+        "name": "reserved_89"
+      },
+      {
+        "word": 90,
+        "name": "reserved_90"
+      },
+      {
+        "word": 91,
+        "name": "reserved_91"
+      },
+      {
+        "word": 92,
+        "name": "reserved_92"
+      },
+      {
+        "word": 93,
+        "name": "reserved_93"
+      },
+      {
+        "word": 94,
+        "name": "reserved_94"
+      },
+      {
+        "word": 95,
+        "name": "reserved_95"
+      },
+      {
+        "word": 96,
+        "name": "reserved_96"
+      },
+      {
+        "word": 97,
+        "name": "reserved_97"
+      },
+      {
+        "word": 98,
+        "name": "reserved_98"
+      },
+      {
+        "word": 99,
+        "name": "reserved_99"
+      },
+      {
+        "word": 100,
+        "name": "reserved_100"
+      },
+      {
+        "word": 101,
+        "name": "reserved_101"
+      },
+      {
+        "word": 102,
+        "name": "reserved_102"
+      },
+      {
+        "word": 103,
+        "name": "reserved_103"
+      },
+      {
+        "word": 104,
+        "name": "reserved_104"
+      },
+      {
+        "word": 105,
+        "name": "reserved_105"
+      },
+      {
+        "word": 106,
+        "name": "reserved_106"
+      },
+      {
+        "word": 107,
+        "name": "reserved_107"
+      },
+      {
+        "word": 108,
+        "name": "reserved_108"
+      },
+      {
+        "word": 109,
+        "name": "reserved_109"
+      },
+      {
+        "word": 110,
+        "name": "reserved_110"
+      },
+      {
+        "word": 111,
+        "name": "reserved_111"
+      },
+      {
+        "word": 112,
+        "name": "reserved_112"
+      },
+      {
+        "word": 113,
+        "name": "reserved_113"
+      },
+      {
+        "word": 114,
+        "name": "reserved_114"
+      },
+      {
+        "word": 115,
+        "name": "reserved_115"
+      },
+      {
+        "word": 116,
+        "name": "reserved_116"
+      },
+      {
+        "word": 117,
+        "name": "reserved_117"
+      },
+      {
+        "word": 118,
+        "name": "reserved_118"
+      },
+      {
+        "word": 119,
+        "name": "reserved_119"
+      },
+      {
+        "word": 120,
+        "name": "reserved_120"
+      },
+      {
+        "word": 121,
+        "name": "reserved_121"
+      },
+      {
+        "word": 122,
+        "name": "reserved_122"
+      },
+      {
+        "word": 123,
+        "name": "reserved_123"
+      },
+      {
+        "word": 124,
+        "name": "reserved_124"
+      },
+      {
+        "word": 125,
+        "name": "reserved_125"
+      },
+      {
+        "word": 126,
+        "name": "reserved_126"
+      },
+      {
+        "word": 127,
+        "name": "reserved_127"
+      }
+    ],
+    "commandKind": {
+      "NONE": 0,
+      "SOURCE_SAND": 1,
+      "IMPULSE": 2,
+      "SOURCE_WATER": 3
+    },
+    "waterSourceMode": {
+      "DIRECT_H": 0,
+      "FLIGHT_J": 1
+    },
+    "waterUnitRevision": 1,
+    "bodyUsedWords": {
+      "NONE": [],
+      "SOURCE_SAND": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76
+      ],
+      "IMPULSE": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        77
+      ],
+      "SOURCE_WATER": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        78,
+        79
+      ]
+    },
+    "waterMass": "raw binary64 physical volume bits -> floor(4Q*mass), checked max4CQ and capacity",
+    "sourceWork": "words60..63 now valid SOURCE positive-work cap in Q62 scaled interval, dry sand uses parent zero fields",
+    "touchWork": "IMPULSE words60..63 retain parent Q60+24 cap; wet comparison promotes by4 into Q62+24, never reinterprets raw bits",
+    "dedup": "entire40..127 original capsule + parent identity additions; separate SOURCE/IMPULSE U64 sequences; water and sand share SOURCE sequence",
+    "unsupported": "old M3 BULK_WET_H/source preview/repair cold rejected; no legacy water writer"
+  },
+  "events": {
+    "parentKinds": "new namespace, parent payload retained; wet DM reserved operands carry eta4/gamma/gnRef/probe",
+    "newKinds": [
+      {
+        "name": "WATER_SOURCE",
+        "kind": 32,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "sourceMode"
+          },
+          {
+            "word": 16,
+            "name": "q4"
+          },
+          {
+            "word": 17,
+            "name": "originLo"
+          },
+          {
+            "word": 18,
+            "name": "originHi"
+          },
+          {
+            "word": 19,
+            "name": "sourceId"
+          },
+          {
+            "word": 20,
+            "name": "xQ20"
+          },
+          {
+            "word": 21,
+            "name": "y4Q22"
+          },
+          {
+            "word": 22,
+            "name": "vxQ20"
+          },
+          {
+            "word": 23,
+            "name": "vyQ20"
+          },
+          {
+            "word": 24,
+            "name": "oldH4"
+          },
+          {
+            "word": 25,
+            "name": "newH4"
+          },
+          {
+            "word": 26,
+            "name": "oldJ4"
+          },
+          {
+            "word": 27,
+            "name": "newJ4"
+          },
+          {
+            "word": 28,
+            "name": "oldEta4"
+          },
+          {
+            "word": 29,
+            "name": "newEta4"
+          },
+          {
+            "word": 30,
+            "name": "workCap0"
+          },
+          {
+            "word": 31,
+            "name": "workCap1"
+          },
+          {
+            "word": 32,
+            "name": "workCap2"
+          },
+          {
+            "word": 33,
+            "name": "workCap3"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147483651
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "WET_PROBE",
+        "kind": 33,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "probeDepth"
+          },
+          {
+            "word": 16,
+            "name": "SWet4"
+          },
+          {
+            "word": 17,
+            "name": "FWet4"
+          },
+          {
+            "word": 18,
+            "name": "eta4"
+          },
+          {
+            "word": 19,
+            "name": "gammaRefQ16"
+          },
+          {
+            "word": 20,
+            "name": "gnRefQ20"
+          },
+          {
+            "word": 21,
+            "name": "jProbeLo"
+          },
+          {
+            "word": 22,
+            "name": "jProbeHi"
+          },
+          {
+            "word": 23,
+            "name": "aWaterLo"
+          },
+          {
+            "word": 24,
+            "name": "aWaterHi"
+          },
+          {
+            "word": 25,
+            "name": "qPhysical"
+          },
+          {
+            "word": 26,
+            "name": "qOrigin"
+          },
+          {
+            "word": 27,
+            "name": "qActual"
+          },
+          {
+            "word": 28,
+            "name": "reason"
+          },
+          {
+            "word": 29,
+            "name": "reserved29"
+          },
+          {
+            "word": 30,
+            "name": "reserved30"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          536870911,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "FS_PRESSURE",
+        "kind": 34,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "oldPFLo"
+          },
+          {
+            "word": 16,
+            "name": "oldPFHi"
+          },
+          {
+            "word": 17,
+            "name": "newPFLo"
+          },
+          {
+            "word": 18,
+            "name": "newPFHi"
+          },
+          {
+            "word": 19,
+            "name": "oldPWLo"
+          },
+          {
+            "word": 20,
+            "name": "oldPWHi"
+          },
+          {
+            "word": 21,
+            "name": "newPWLo"
+          },
+          {
+            "word": 22,
+            "name": "newPWHi"
+          },
+          {
+            "word": 23,
+            "name": "jFRequestedLo"
+          },
+          {
+            "word": 24,
+            "name": "jFRequestedHi"
+          },
+          {
+            "word": 25,
+            "name": "jFActualLo"
+          },
+          {
+            "word": 26,
+            "name": "jFActualHi"
+          },
+          {
+            "word": 27,
+            "name": "jSActualLo"
+          },
+          {
+            "word": 28,
+            "name": "jSActualHi"
+          },
+          {
+            "word": 29,
+            "name": "supportXLo"
+          },
+          {
+            "word": 30,
+            "name": "supportXHi"
+          },
+          {
+            "word": 31,
+            "name": "eta4"
+          },
+          {
+            "word": 32,
+            "name": "FWet4"
+          },
+          {
+            "word": 33,
+            "name": "SWet4"
+          },
+          {
+            "word": 34,
+            "name": "aPXQ20"
+          },
+          {
+            "word": 35,
+            "name": "D"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147483663
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "FS_DRAG_A",
+        "kind": 35,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "oldPFLo"
+          },
+          {
+            "word": 16,
+            "name": "oldPFHi"
+          },
+          {
+            "word": 17,
+            "name": "newPFLo"
+          },
+          {
+            "word": 18,
+            "name": "newPFHi"
+          },
+          {
+            "word": 19,
+            "name": "FBeforePWLo"
+          },
+          {
+            "word": 20,
+            "name": "FBeforePWHi"
+          },
+          {
+            "word": 21,
+            "name": "FAfterPWLo"
+          },
+          {
+            "word": 22,
+            "name": "FAfterPWHi"
+          },
+          {
+            "word": 23,
+            "name": "SBeforePWLo"
+          },
+          {
+            "word": 24,
+            "name": "SBeforePWHi"
+          },
+          {
+            "word": 25,
+            "name": "SAfterPWLo"
+          },
+          {
+            "word": 26,
+            "name": "SAfterPWHi"
+          },
+          {
+            "word": 27,
+            "name": "jFRequestedLo"
+          },
+          {
+            "word": 28,
+            "name": "jFRequestedHi"
+          },
+          {
+            "word": 29,
+            "name": "jFActualLo"
+          },
+          {
+            "word": 30,
+            "name": "jFActualHi"
+          },
+          {
+            "word": 31,
+            "name": "jSRequestedLo"
+          },
+          {
+            "word": 32,
+            "name": "jSRequestedHi"
+          },
+          {
+            "word": 33,
+            "name": "jSActualLo"
+          },
+          {
+            "word": 34,
+            "name": "jSActualHi"
+          },
+          {
+            "word": 35,
+            "name": "supportXLo"
+          },
+          {
+            "word": 36,
+            "name": "supportXHi"
+          },
+          {
+            "word": 37,
+            "name": "gammaFQ16"
+          },
+          {
+            "word": 38,
+            "name": "gammaSQ16"
+          },
+          {
+            "word": 39,
+            "name": "kappaQ16"
+          },
+          {
+            "word": 40,
+            "name": "D"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147484159
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "FS_DRAG_B",
+        "kind": 36,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "oldPFLo"
+          },
+          {
+            "word": 16,
+            "name": "oldPFHi"
+          },
+          {
+            "word": 17,
+            "name": "newPFLo"
+          },
+          {
+            "word": 18,
+            "name": "newPFHi"
+          },
+          {
+            "word": 19,
+            "name": "FBeforePWLo"
+          },
+          {
+            "word": 20,
+            "name": "FBeforePWHi"
+          },
+          {
+            "word": 21,
+            "name": "FAfterPWLo"
+          },
+          {
+            "word": 22,
+            "name": "FAfterPWHi"
+          },
+          {
+            "word": 23,
+            "name": "SBeforePWLo"
+          },
+          {
+            "word": 24,
+            "name": "SBeforePWHi"
+          },
+          {
+            "word": 25,
+            "name": "SAfterPWLo"
+          },
+          {
+            "word": 26,
+            "name": "SAfterPWHi"
+          },
+          {
+            "word": 27,
+            "name": "jFRequestedLo"
+          },
+          {
+            "word": 28,
+            "name": "jFRequestedHi"
+          },
+          {
+            "word": 29,
+            "name": "jFActualLo"
+          },
+          {
+            "word": 30,
+            "name": "jFActualHi"
+          },
+          {
+            "word": 31,
+            "name": "jSRequestedLo"
+          },
+          {
+            "word": 32,
+            "name": "jSRequestedHi"
+          },
+          {
+            "word": 33,
+            "name": "jSActualLo"
+          },
+          {
+            "word": 34,
+            "name": "jSActualHi"
+          },
+          {
+            "word": 35,
+            "name": "supportXLo"
+          },
+          {
+            "word": 36,
+            "name": "supportXHi"
+          },
+          {
+            "word": 37,
+            "name": "gammaFQ16"
+          },
+          {
+            "word": 38,
+            "name": "gammaSQ16"
+          },
+          {
+            "word": 39,
+            "name": "kappaQ16"
+          },
+          {
+            "word": 40,
+            "name": "D"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147484159
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "P_KICK_A",
+        "kind": 37,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "mass"
+          },
+          {
+            "word": 16,
+            "name": "gammaQ16"
+          },
+          {
+            "word": 17,
+            "name": "wet4"
+          },
+          {
+            "word": 18,
+            "name": "eta4"
+          },
+          {
+            "word": 19,
+            "name": "kappaEff"
+          },
+          {
+            "word": 20,
+            "name": "D"
+          },
+          {
+            "word": 21,
+            "name": "oldVx"
+          },
+          {
+            "word": 22,
+            "name": "oldVy"
+          },
+          {
+            "word": 23,
+            "name": "intermediateVx"
+          },
+          {
+            "word": 24,
+            "name": "intermediateVy"
+          },
+          {
+            "word": 25,
+            "name": "newVx"
+          },
+          {
+            "word": 26,
+            "name": "newVy"
+          },
+          {
+            "word": 27,
+            "name": "dragBeforePWLo"
+          },
+          {
+            "word": 28,
+            "name": "dragBeforePWHi"
+          },
+          {
+            "word": 29,
+            "name": "dragAfterPWLo"
+          },
+          {
+            "word": 30,
+            "name": "dragAfterPWHi"
+          },
+          {
+            "word": 31,
+            "name": "pressureBeforePWLo"
+          },
+          {
+            "word": 32,
+            "name": "pressureBeforePWHi"
+          },
+          {
+            "word": 33,
+            "name": "pressureAfterPWLo"
+          },
+          {
+            "word": 34,
+            "name": "pressureAfterPWHi"
+          },
+          {
+            "word": 35,
+            "name": "pressureReqXLo"
+          },
+          {
+            "word": 36,
+            "name": "pressureReqXHi"
+          },
+          {
+            "word": 37,
+            "name": "pressureActXLo"
+          },
+          {
+            "word": 38,
+            "name": "pressureActXHi"
+          },
+          {
+            "word": 39,
+            "name": "pressureReqYLo"
+          },
+          {
+            "word": 40,
+            "name": "pressureReqYHi"
+          },
+          {
+            "word": 41,
+            "name": "pressureActYLo"
+          },
+          {
+            "word": 42,
+            "name": "pressureActYHi"
+          },
+          {
+            "word": 43,
+            "name": "dragReqXLo"
+          },
+          {
+            "word": 44,
+            "name": "dragReqXHi"
+          },
+          {
+            "word": 45,
+            "name": "dragActXLo"
+          },
+          {
+            "word": 46,
+            "name": "dragActXHi"
+          },
+          {
+            "word": 47,
+            "name": "dragReqYLo"
+          },
+          {
+            "word": 48,
+            "name": "dragReqYHi"
+          },
+          {
+            "word": 49,
+            "name": "dragActYLo"
+          },
+          {
+            "word": 50,
+            "name": "dragActYHi"
+          },
+          {
+            "word": 51,
+            "name": "supportXLo"
+          },
+          {
+            "word": 52,
+            "name": "supportXHi"
+          },
+          {
+            "word": 53,
+            "name": "supportYLo"
+          },
+          {
+            "word": 54,
+            "name": "supportYHi"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2155872255
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "P_KICK_B",
+        "kind": 38,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "mass"
+          },
+          {
+            "word": 16,
+            "name": "gammaQ16"
+          },
+          {
+            "word": 17,
+            "name": "wet4"
+          },
+          {
+            "word": 18,
+            "name": "eta4"
+          },
+          {
+            "word": 19,
+            "name": "kappaEff"
+          },
+          {
+            "word": 20,
+            "name": "D"
+          },
+          {
+            "word": 21,
+            "name": "oldVx"
+          },
+          {
+            "word": 22,
+            "name": "oldVy"
+          },
+          {
+            "word": 23,
+            "name": "intermediateVx"
+          },
+          {
+            "word": 24,
+            "name": "intermediateVy"
+          },
+          {
+            "word": 25,
+            "name": "newVx"
+          },
+          {
+            "word": 26,
+            "name": "newVy"
+          },
+          {
+            "word": 27,
+            "name": "dragBeforePWLo"
+          },
+          {
+            "word": 28,
+            "name": "dragBeforePWHi"
+          },
+          {
+            "word": 29,
+            "name": "dragAfterPWLo"
+          },
+          {
+            "word": 30,
+            "name": "dragAfterPWHi"
+          },
+          {
+            "word": 31,
+            "name": "pressureBeforePWLo"
+          },
+          {
+            "word": 32,
+            "name": "pressureBeforePWHi"
+          },
+          {
+            "word": 33,
+            "name": "pressureAfterPWLo"
+          },
+          {
+            "word": 34,
+            "name": "pressureAfterPWHi"
+          },
+          {
+            "word": 35,
+            "name": "pressureReqXLo"
+          },
+          {
+            "word": 36,
+            "name": "pressureReqXHi"
+          },
+          {
+            "word": 37,
+            "name": "pressureActXLo"
+          },
+          {
+            "word": 38,
+            "name": "pressureActXHi"
+          },
+          {
+            "word": 39,
+            "name": "pressureReqYLo"
+          },
+          {
+            "word": 40,
+            "name": "pressureReqYHi"
+          },
+          {
+            "word": 41,
+            "name": "pressureActYLo"
+          },
+          {
+            "word": 42,
+            "name": "pressureActYHi"
+          },
+          {
+            "word": 43,
+            "name": "dragReqXLo"
+          },
+          {
+            "word": 44,
+            "name": "dragReqXHi"
+          },
+          {
+            "word": 45,
+            "name": "dragActXLo"
+          },
+          {
+            "word": 46,
+            "name": "dragActXHi"
+          },
+          {
+            "word": 47,
+            "name": "dragReqYLo"
+          },
+          {
+            "word": 48,
+            "name": "dragReqYHi"
+          },
+          {
+            "word": 49,
+            "name": "dragActYLo"
+          },
+          {
+            "word": 50,
+            "name": "dragActYHi"
+          },
+          {
+            "word": 51,
+            "name": "supportXLo"
+          },
+          {
+            "word": 52,
+            "name": "supportXHi"
+          },
+          {
+            "word": 53,
+            "name": "supportYLo"
+          },
+          {
+            "word": 54,
+            "name": "supportYHi"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2155872255
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "WATER_FACE",
+        "kind": 39,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "q4"
+          },
+          {
+            "word": 16,
+            "name": "jpLo"
+          },
+          {
+            "word": 17,
+            "name": "jpHi"
+          },
+          {
+            "word": 18,
+            "name": "oldHL4"
+          },
+          {
+            "word": 19,
+            "name": "oldHR4"
+          },
+          {
+            "word": 20,
+            "name": "newHL4"
+          },
+          {
+            "word": 21,
+            "name": "newHR4"
+          },
+          {
+            "word": 22,
+            "name": "oldPWLLo"
+          },
+          {
+            "word": 23,
+            "name": "oldPWLHi"
+          },
+          {
+            "word": 24,
+            "name": "oldPWRLo"
+          },
+          {
+            "word": 25,
+            "name": "oldPWRHi"
+          },
+          {
+            "word": 26,
+            "name": "newPWLLo"
+          },
+          {
+            "word": 27,
+            "name": "newPWLHi"
+          },
+          {
+            "word": 28,
+            "name": "newPWRLo"
+          },
+          {
+            "word": 29,
+            "name": "newPWRHi"
+          },
+          {
+            "word": 30,
+            "name": "etaL4"
+          },
+          {
+            "word": 31,
+            "name": "etaR4"
+          },
+          {
+            "word": 32,
+            "name": "CfaceQ16"
+          },
+          {
+            "word": 33,
+            "name": "waveSpeedQ20"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147483651
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "WATER_ORIGIN",
+        "kind": 40,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "qLeft4"
+          },
+          {
+            "word": 16,
+            "name": "qRight4"
+          },
+          {
+            "word": 17,
+            "name": "oldCount"
+          },
+          {
+            "word": 18,
+            "name": "newCount"
+          },
+          {
+            "word": 19,
+            "name": "oldMass4"
+          },
+          {
+            "word": 20,
+            "name": "newMass4"
+          },
+          {
+            "word": 21,
+            "name": "sharePlanOffset"
+          },
+          {
+            "word": 22,
+            "name": "sharePlanCount"
+          },
+          {
+            "word": 23,
+            "name": "status"
+          },
+          {
+            "word": 24,
+            "name": "reserved24"
+          },
+          {
+            "word": 25,
+            "name": "reserved25"
+          },
+          {
+            "word": 26,
+            "name": "reserved26"
+          },
+          {
+            "word": 27,
+            "name": "reserved27"
+          },
+          {
+            "word": 28,
+            "name": "reserved28"
+          },
+          {
+            "word": 29,
+            "name": "reserved29"
+          },
+          {
+            "word": 30,
+            "name": "reserved30"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          16777215,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "WET_CAPACITY_ENERGY",
+        "kind": 41,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "oldBulk"
+          },
+          {
+            "word": 16,
+            "name": "newBulk"
+          },
+          {
+            "word": 17,
+            "name": "oldH4"
+          },
+          {
+            "word": 18,
+            "name": "newH4"
+          },
+          {
+            "word": 19,
+            "name": "oldJ4"
+          },
+          {
+            "word": 20,
+            "name": "newJ4"
+          },
+          {
+            "word": 21,
+            "name": "waterEnergyDeltaLower0"
+          },
+          {
+            "word": 22,
+            "name": "waterEnergyDeltaLower1"
+          },
+          {
+            "word": 23,
+            "name": "waterEnergyDeltaLower2"
+          },
+          {
+            "word": 24,
+            "name": "waterEnergyDeltaLower3"
+          },
+          {
+            "word": 25,
+            "name": "waterEnergyDeltaUpper0"
+          },
+          {
+            "word": 26,
+            "name": "waterEnergyDeltaUpper1"
+          },
+          {
+            "word": 27,
+            "name": "waterEnergyDeltaUpper2"
+          },
+          {
+            "word": 28,
+            "name": "waterEnergyDeltaUpper3"
+          },
+          {
+            "word": 29,
+            "name": "reason"
+          },
+          {
+            "word": 30,
+            "name": "reserved30"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          1073741823,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "HYDRO_SUMMARY",
+        "kind": 42,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "entryEpoch"
+          },
+          {
+            "word": 16,
+            "name": "flightEpoch"
+          },
+          {
+            "word": 17,
+            "name": "flowEpoch"
+          },
+          {
+            "word": 18,
+            "name": "depositEpoch"
+          },
+          {
+            "word": 19,
+            "name": "captureEpoch"
+          },
+          {
+            "word": 20,
+            "name": "arriveEpoch"
+          },
+          {
+            "word": 21,
+            "name": "endEpoch"
+          },
+          {
+            "word": 22,
+            "name": "eta4"
+          },
+          {
+            "word": 23,
+            "name": "R4"
+          },
+          {
+            "word": 24,
+            "name": "W4"
+          },
+          {
+            "word": 25,
+            "name": "H4"
+          },
+          {
+            "word": 26,
+            "name": "Psum"
+          },
+          {
+            "word": 27,
+            "name": "J4"
+          },
+          {
+            "word": 28,
+            "name": "maxIterations"
+          },
+          {
+            "word": 29,
+            "name": "status"
+          },
+          {
+            "word": 30,
+            "name": "reserved30"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          1073741823,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "J_FLIGHT",
+        "kind": 43,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "mass4"
+          },
+          {
+            "word": 16,
+            "name": "oldX"
+          },
+          {
+            "word": 17,
+            "name": "oldY4"
+          },
+          {
+            "word": 18,
+            "name": "newX"
+          },
+          {
+            "word": 19,
+            "name": "newY4"
+          },
+          {
+            "word": 20,
+            "name": "oldVx"
+          },
+          {
+            "word": 21,
+            "name": "oldVy"
+          },
+          {
+            "word": 22,
+            "name": "newVx"
+          },
+          {
+            "word": 23,
+            "name": "newVy"
+          },
+          {
+            "word": 24,
+            "name": "oldColumn"
+          },
+          {
+            "word": 25,
+            "name": "newColumn"
+          },
+          {
+            "word": 26,
+            "name": "originLo"
+          },
+          {
+            "word": 27,
+            "name": "originHi"
+          },
+          {
+            "word": 28,
+            "name": "sourceId"
+          },
+          {
+            "word": 29,
+            "name": "pathBegin"
+          },
+          {
+            "word": 30,
+            "name": "pathCount"
+          },
+          {
+            "word": 31,
+            "name": "ticksLo"
+          },
+          {
+            "word": 32,
+            "name": "ticksHi"
+          },
+          {
+            "word": 33,
+            "name": "reason"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147483651
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "J_CONTACT",
+        "kind": 44,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "mass4"
+          },
+          {
+            "word": 16,
+            "name": "x"
+          },
+          {
+            "word": 17,
+            "name": "y4"
+          },
+          {
+            "word": 18,
+            "name": "contactLevel4"
+          },
+          {
+            "word": 19,
+            "name": "oldColumn"
+          },
+          {
+            "word": 20,
+            "name": "newColumn"
+          },
+          {
+            "word": 21,
+            "name": "contactKind"
+          },
+          {
+            "word": 22,
+            "name": "vyBefore"
+          },
+          {
+            "word": 23,
+            "name": "vyAfter"
+          },
+          {
+            "word": 24,
+            "name": "reason"
+          },
+          {
+            "word": 25,
+            "name": "reserved25"
+          },
+          {
+            "word": 26,
+            "name": "reserved26"
+          },
+          {
+            "word": 27,
+            "name": "reserved27"
+          },
+          {
+            "word": 28,
+            "name": "reserved28"
+          },
+          {
+            "word": 29,
+            "name": "reserved29"
+          },
+          {
+            "word": 30,
+            "name": "reserved30"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          33554431,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "J_ARRIVE",
+        "kind": 45,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "mass4"
+          },
+          {
+            "word": 16,
+            "name": "originLo"
+          },
+          {
+            "word": 17,
+            "name": "originHi"
+          },
+          {
+            "word": 18,
+            "name": "sourceId"
+          },
+          {
+            "word": 19,
+            "name": "oldH4"
+          },
+          {
+            "word": 20,
+            "name": "newH4"
+          },
+          {
+            "word": 21,
+            "name": "oldJ4"
+          },
+          {
+            "word": 22,
+            "name": "newJ4"
+          },
+          {
+            "word": 23,
+            "name": "oldPWLo"
+          },
+          {
+            "word": 24,
+            "name": "oldPWHi"
+          },
+          {
+            "word": 25,
+            "name": "newPWLo"
+          },
+          {
+            "word": 26,
+            "name": "newPWHi"
+          },
+          {
+            "word": 27,
+            "name": "oldEta4"
+          },
+          {
+            "word": 28,
+            "name": "newEta4"
+          },
+          {
+            "word": 29,
+            "name": "supportYLo"
+          },
+          {
+            "word": 30,
+            "name": "supportYHi"
+          },
+          {
+            "word": 31,
+            "name": "oldGeneration"
+          },
+          {
+            "word": 32,
+            "name": "retiredGeneration"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          4294967295,
+          2147483649
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "J_RETIRE",
+        "kind": 46,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "mass4"
+          },
+          {
+            "word": 16,
+            "name": "originLo"
+          },
+          {
+            "word": 17,
+            "name": "originHi"
+          },
+          {
+            "word": 18,
+            "name": "sourceId"
+          },
+          {
+            "word": 19,
+            "name": "oldId"
+          },
+          {
+            "word": 20,
+            "name": "oldGeneration"
+          },
+          {
+            "word": 21,
+            "name": "newId"
+          },
+          {
+            "word": 22,
+            "name": "newGeneration"
+          },
+          {
+            "word": 23,
+            "name": "reason"
+          },
+          {
+            "word": 24,
+            "name": "reserved24"
+          },
+          {
+            "word": 25,
+            "name": "reserved25"
+          },
+          {
+            "word": 26,
+            "name": "reserved26"
+          },
+          {
+            "word": 27,
+            "name": "reserved27"
+          },
+          {
+            "word": 28,
+            "name": "reserved28"
+          },
+          {
+            "word": 29,
+            "name": "reserved29"
+          },
+          {
+            "word": 30,
+            "name": "reserved30"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          16777215,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      },
+      {
+        "name": "WET_GLOBAL",
+        "kind": 47,
+        "words": [
+          {
+            "word": 0,
+            "name": "magic"
+          },
+          {
+            "word": 1,
+            "name": "revision"
+          },
+          {
+            "word": 2,
+            "name": "kind"
+          },
+          {
+            "word": 3,
+            "name": "trial"
+          },
+          {
+            "word": 4,
+            "name": "nonceLo"
+          },
+          {
+            "word": 5,
+            "name": "nonceHi"
+          },
+          {
+            "word": 6,
+            "name": "ordinal"
+          },
+          {
+            "word": 7,
+            "name": "stage"
+          },
+          {
+            "word": 8,
+            "name": "micro"
+          },
+          {
+            "word": 9,
+            "name": "fromColumn"
+          },
+          {
+            "word": 10,
+            "name": "toColumn"
+          },
+          {
+            "word": 11,
+            "name": "slot"
+          },
+          {
+            "word": 12,
+            "name": "id"
+          },
+          {
+            "word": 13,
+            "name": "generation"
+          },
+          {
+            "word": 14,
+            "name": "flags"
+          },
+          {
+            "word": 15,
+            "name": "auditMask"
+          },
+          {
+            "word": 16,
+            "name": "reason"
+          },
+          {
+            "word": 17,
+            "name": "phase"
+          },
+          {
+            "word": 18,
+            "name": "operand"
+          },
+          {
+            "word": 19,
+            "name": "waterMassLo"
+          },
+          {
+            "word": 20,
+            "name": "waterMassHi"
+          },
+          {
+            "word": 21,
+            "name": "sourceCommitLo"
+          },
+          {
+            "word": 22,
+            "name": "sourceCommitHi"
+          },
+          {
+            "word": 23,
+            "name": "waterGravityY0"
+          },
+          {
+            "word": 24,
+            "name": "waterGravityY1"
+          },
+          {
+            "word": 25,
+            "name": "waterGravityY2"
+          },
+          {
+            "word": 26,
+            "name": "waterGravityY3"
+          },
+          {
+            "word": 27,
+            "name": "normalSupportY0"
+          },
+          {
+            "word": 28,
+            "name": "normalSupportY1"
+          },
+          {
+            "word": 29,
+            "name": "normalSupportY2"
+          },
+          {
+            "word": 30,
+            "name": "normalSupportY3"
+          },
+          {
+            "word": 31,
+            "name": "reserved31"
+          },
+          {
+            "word": 32,
+            "name": "reserved32"
+          },
+          {
+            "word": 33,
+            "name": "reserved33"
+          },
+          {
+            "word": 34,
+            "name": "reserved34"
+          },
+          {
+            "word": 35,
+            "name": "reserved35"
+          },
+          {
+            "word": 36,
+            "name": "reserved36"
+          },
+          {
+            "word": 37,
+            "name": "reserved37"
+          },
+          {
+            "word": 38,
+            "name": "reserved38"
+          },
+          {
+            "word": 39,
+            "name": "reserved39"
+          },
+          {
+            "word": 40,
+            "name": "reserved40"
+          },
+          {
+            "word": 41,
+            "name": "reserved41"
+          },
+          {
+            "word": 42,
+            "name": "reserved42"
+          },
+          {
+            "word": 43,
+            "name": "reserved43"
+          },
+          {
+            "word": 44,
+            "name": "reserved44"
+          },
+          {
+            "word": 45,
+            "name": "reserved45"
+          },
+          {
+            "word": 46,
+            "name": "reserved46"
+          },
+          {
+            "word": 47,
+            "name": "reserved47"
+          },
+          {
+            "word": 48,
+            "name": "reserved48"
+          },
+          {
+            "word": 49,
+            "name": "reserved49"
+          },
+          {
+            "word": 50,
+            "name": "reserved50"
+          },
+          {
+            "word": 51,
+            "name": "reserved51"
+          },
+          {
+            "word": 52,
+            "name": "reserved52"
+          },
+          {
+            "word": 53,
+            "name": "reserved53"
+          },
+          {
+            "word": 54,
+            "name": "reserved54"
+          },
+          {
+            "word": 55,
+            "name": "reserved55"
+          },
+          {
+            "word": 56,
+            "name": "reserved56"
+          },
+          {
+            "word": 57,
+            "name": "reserved57"
+          },
+          {
+            "word": 58,
+            "name": "reserved58"
+          },
+          {
+            "word": 59,
+            "name": "reserved59"
+          },
+          {
+            "word": 60,
+            "name": "reserved60"
+          },
+          {
+            "word": 61,
+            "name": "reserved61"
+          },
+          {
+            "word": 62,
+            "name": "reserved62"
+          },
+          {
+            "word": 63,
+            "name": "seal"
+          }
+        ],
+        "usedMask": [
+          2147483647,
+          2147483648
+        ],
+        "unusedZero": true,
+        "roleMask": 3,
+        "sealWord": 63,
+        "seal": 3235779073
+      }
+    ],
+    "phaseSlotsPerMicro": {
+      "P_KICK_A": "K",
+      "P_KICK_B": "K",
+      "columnTypes": [
+        "WET_PROBE",
+        "FS_PRESSURE",
+        "FS_DRAG_A",
+        "FS_DRAG_B",
+        "WATER_FACE",
+        "WATER_ORIGIN",
+        "WET_CAPACITY_ENERGY",
+        "HYDRO_SUMMARY"
+      ],
+      "JTypes": [
+        "J_FLIGHT",
+        "J_CONTACT",
+        "J_ARRIVE",
+        "J_RETIRE"
+      ],
+      "global": 32
+    },
+    "bound": "parent +32*(2K+8N+4Kw+32)+64; WATER_FACE <=N interior, wall reactions in column/global slots",
+    "pending": "A drag->pressure and B pressure->drag share one reserved event window; seal entire window only after last pass",
+    "phaseReplay": "compound kick block replays sub-kernel endpoints in real order; never apply each composite old/new as a whole overlapping water patch",
+    "knownFlags": {
+      "roleBits": [
+        0,
+        1
+      ],
+      "roleValues": [
+        0,
+        1,
+        2
+      ],
+      "actualPatchBit": 2,
+      "mask": 7
+    },
+    "unused": "all unused physical words zero; compare known flags and original key before role normalization",
+    "prefix": "on fault preserve last fully sealed event/path cursors and first typed error; never advance through pending block"
+  },
+  "path16": [
+    {
+      "word": 0,
+      "name": "magic"
+    },
+    {
+      "word": 1,
+      "name": "revision"
+    },
+    {
+      "word": 2,
+      "name": "namespace"
+    },
+    {
+      "word": 3,
+      "name": "slot"
+    },
+    {
+      "word": 4,
+      "name": "id"
+    },
+    {
+      "word": 5,
+      "name": "generation"
+    },
+    {
+      "word": 6,
+      "name": "fromColumn"
+    },
+    {
+      "word": 7,
+      "name": "toColumn"
+    },
+    {
+      "word": 8,
+      "name": "oldXQ20"
+    },
+    {
+      "word": 9,
+      "name": "oldY4Q22"
+    },
+    {
+      "word": 10,
+      "name": "newXQ20"
+    },
+    {
+      "word": 11,
+      "name": "newY4Q22"
+    },
+    {
+      "word": 12,
+      "name": "tauBegin"
+    },
+    {
+      "word": 13,
+      "name": "tauEnd"
+    },
+    {
+      "word": 14,
+      "name": "kind"
+    },
+    {
+      "word": 15,
+      "name": "seal"
+    }
+  ],
+  "pathNamespace": {
+    "SAND": 0,
+    "WATER_J": 1
+  },
+  "sandPath": "parent schema/path budget unchanged, namespace chooses correct row dictionary",
+  "JGeometry": {
+    "collision": "point as T237, glyph radius/halfheight is not displaced water or contact surface",
+    "position": "xQ20 and y4Q22 permits exact odd eta4 contact; separate new reader",
+    "energy": "J4*(vx^2+vy^2)+gn*J4*y4/2; rational /2 retained in 24-fraction interval",
+    "flight": "parent rational gravity trajectory, wet gx0, vy<=0, no old one-way wet terminal-speed law",
+    "contact": "center reaches max(4B,eta4), low-to-high actual y4; J only reserves volume before arrival"
+  },
+  "numeric": {
+    "hydroIterationsMax": 31,
+    "hydroCallsPerMicro": 7,
+    "C8": "2*z4 - min(z4,4B) - sum P slab overlap lengths; no union of overlapping packets",
+    "hydroExact": "inclusive [0,4CQ] lower_bound then C8(eta4)==2H4; H4=0 eta4=0",
+    "Cface": "(CLQ16+CRQ16)/2 exact for32768/65536; convert Q16 product before subtraction",
+    "fmW": "RNE(((pWL+pWR)*65536-aQ20*CfaceQ16*(etaR4-etaL4))/(2*65536)); single wide rounding",
+    "pressure": {
+      "aP": "RNE(gn*(etaR4-etaL4)/(8Q))",
+      "PiW_Q62": "RNE(gn*eta4^2/8)",
+      "PiF_Q60": "RNE(gn*(32*F^2-FWet4^2)/64)",
+      "half_step_D": "240J",
+      "full_step_D": "120J",
+      "force_actual_lattice": {
+        "F": 4,
+        "P": "4*m",
+        "S_constraint": 1
+      },
+      "reaction": "same actual integer j with opposite sign; no residual refill",
+      "psi_Q40": "gn*B+RNE(gn*max(eta4-4*B,0)/8)",
+      "NF_Q40": "RNE(gn*(8*F-FWet4)/8)",
+      "gnRef_Q20": "gn-RNE(gn*gammaRefQ16/(2*65536))",
+      "environment_sign": "external impulse ON dynamic inventories, not received recoil"
+    },
+    "drag": {
+      "effective_kappa": "floor(kappaQ16*gammaQ16/65536)",
+      "j": "TZ(k*(mb*pa-ma*pb)/(D*65536*max(ma,mb)+k*(ma+mb)))",
+      "actual": "truncate j toward zero to recipient momentum lattice",
+      "order_A": "F, P unsigned ID ascending, S",
+      "order_B": "reverse order_A",
+      "probe_time_D": "120J; no authority mutation",
+      "numerator_bound_bits": 114
+    },
+    "diffNumeratorMaxBits": 114,
+    "division": "signed U128/S128 magnitude and TZ/RNE; fixed maximum limb loops from backend declared",
+    "waveSpeed": "U32 checked, may exceed signed32; do not cast to signed velocity",
+    "aWater": "wide nonnegative magnitude; reject overflow of parent driver operands rather than truncate",
+    "energy": {
+      "scale": "Q62 with 24 fractional interval bits",
+      "sand": "4*parent E2",
+      "water_kinetic": "pW^2/H4",
+      "water_potential": "gn*sum(a2*(hi4^2-lo4^2))/8; a2=1 pores,2 free water",
+      "water_J": "J4*(vx^2+vy^2+gn*y2)",
+      "extra_buoyancy_potential": false,
+      "closed_micro_gate": "DeltaE.upper<=0",
+      "no_epsilon": true,
+      "instantaneous_scaled_bound_bits": 124
+    },
+    "noEpsilon": true
+  },
+  "writers": [
+    {
+      "passIndex": 1,
+      "op": "HYDRO_ENTRY",
+      "writes": "derived geometry only",
+      "requires": "current sealed H/B/P; wet-domain and overlap guards"
+    },
+    {
+      "passIndex": 2,
+      "op": "WATER_PROBE",
+      "writes": "WORK wetDrive only",
+      "requires": "read entry water/geometry; no actual impulse/time"
+    },
+    {
+      "passIndex": 3,
+      "op": "DM_REQUEST",
+      "writes": "WORK qPhysical/qOrigin",
+      "requires": "entry-frozen gnRef/aWater; same monotone Eval"
+    },
+    {
+      "passIndex": 4,
+      "op": "DM_APPLY",
+      "writes": "S/F/origins",
+      "requires": "actual top cut only; B/H invariant; invalidate F/S wet lengths"
+    },
+    {
+      "passIndex": 5,
+      "op": "DRAG_HALF_A",
+      "writes": "pF/P/pW/support; pending kick rows",
+      "requires": "F then unsigned P ID then S; begin pending event window"
+    },
+    {
+      "passIndex": 6,
+      "op": "P_PRESSURE_A",
+      "writes": "P/pW/support; seal kick rows",
+      "requires": "same entry geometry; actual lattice reactions"
+    },
+    {
+      "passIndex": 7,
+      "op": "SAND_FLIGHT",
+      "writes": "P/path/column reservation",
+      "requires": "parent rational flight using kicked velocities"
+    },
+    {
+      "passIndex": 8,
+      "op": "J_FLIGHT",
+      "writes": "J/path/reservation/contact flags",
+      "requires": "point water packet at Q22 y4, no glyph volume; at most16 rows/slot"
+    },
+    {
+      "passIndex": 9,
+      "op": "HYDRO_AFTER_FLIGHT",
+      "writes": "derived geometry only",
+      "requires": "current sealed flight; reject overlap/capacity"
+    },
+    {
+      "passIndex": 10,
+      "op": "F_PREDICTOR",
+      "writes": "private F predictor WORK",
+      "requires": "wet PiF; no authority inventory/time"
+    },
+    {
+      "passIndex": 11,
+      "op": "F_MIDPOINT",
+      "writes": "private midpoint WORK",
+      "requires": "same entry and frozen force request"
+    },
+    {
+      "passIndex": 12,
+      "op": "F_CORRECTOR",
+      "writes": "WORK final F q/jp",
+      "requires": "one corrector; actual not predictor"
+    },
+    {
+      "passIndex": 13,
+      "op": "WATER_FACE",
+      "writes": "WORK final water q/jp",
+      "requires": "eta head, Cface Q16 divide before Q42 subtraction"
+    },
+    {
+      "passIndex": 14,
+      "op": "COUPLED_FORCE_RESERVE",
+      "writes": "WORK actual F/S pressure j and paired targets",
+      "requires": "preflight complete water+F momenta/capacity; no authority writes"
+    },
+    {
+      "passIndex": 15,
+      "op": "WATER_ORIGIN_RESERVE",
+      "writes": "water left/right final-share planes",
+      "requires": "reuse parent Hamilton scratch; preserve original accepted shares"
+    },
+    {
+      "passIndex": 16,
+      "op": "F_ORIGIN_RESERVE",
+      "writes": "sand left/right final-share planes",
+      "requires": "preserve parent left-first tie; previous water planes remain stable"
+    },
+    {
+      "passIndex": 17,
+      "op": "COUPLED_FLOW_APPLY",
+      "writes": "F/H/pF/pW/both origin maps/support/events",
+      "requires": "stage all new maps in reusable scratch before any C write; barrier then pair apply"
+    },
+    {
+      "passIndex": 18,
+      "op": "HYDRO_AFTER_FLOW",
+      "writes": "derived geometry only",
+      "requires": "current applied H/F/P"
+    },
+    {
+      "passIndex": 19,
+      "op": "P_PRESSURE_B",
+      "writes": "P/pW/support; pending kick rows",
+      "requires": "new flow geometry; begin pending event window"
+    },
+    {
+      "passIndex": 20,
+      "op": "DRAG_HALF_B",
+      "writes": "pF/P/pW/support; seal kick rows",
+      "requires": "reverse A order: S, descending P ID, F"
+    },
+    {
+      "passIndex": 21,
+      "op": "F_FRICTION_DEPOSIT",
+      "writes": "F/S/pF/origins/support",
+      "requires": "wet NF, rest/p0/stability; local coupled energy"
+    },
+    {
+      "passIndex": 22,
+      "op": "HYDRO_AFTER_DEPOSIT",
+      "writes": "derived geometry only",
+      "requires": "B preserved; fresh S/F wet lengths"
+    },
+    {
+      "passIndex": 23,
+      "op": "SAND_CAPTURE_PLAN",
+      "writes": "WORK ordered P capture proposals",
+      "requires": "column/y/id; no retire before full preflight"
+    },
+    {
+      "passIndex": 24,
+      "op": "SAND_CAPTURE_APPLY",
+      "writes": "P/F/origins/support/events",
+      "requires": "same-position interval; local water+sand energy gate"
+    },
+    {
+      "passIndex": 25,
+      "op": "HYDRO_AFTER_CAPTURE",
+      "writes": "derived geometry only",
+      "requires": "capture sealed geometry"
+    },
+    {
+      "passIndex": 26,
+      "op": "J_ARRIVAL_PLAN",
+      "writes": "WORK ordered contact proposals",
+      "requires": "column/y4/id low-to-high, dynamic eta reclassification"
+    },
+    {
+      "passIndex": 27,
+      "op": "J_ARRIVAL_APPLY",
+      "writes": "J/H/pW/water origins/ID/support/events",
+      "requires": "per-packet current eta/capacity/local energy; next micro for new H flow"
+    },
+    {
+      "passIndex": 28,
+      "op": "HYDRO_AFTER_ARRIVE",
+      "writes": "derived geometry only",
+      "requires": "current J/H arrival; no second transport"
+    },
+    {
+      "passIndex": 29,
+      "op": "LAUNCH",
+      "writes": "F/P/origins/ID/workCap/events",
+      "requires": "consume root pending upward touch once in first active micro; no repeated impulse"
+    },
+    {
+      "passIndex": 30,
+      "op": "HYDRO_END",
+      "writes": "derived geometry only",
+      "requires": "final physical geometry/current H"
+    },
+    {
+      "passIndex": 31,
+      "op": "WET_LEDGER_ENERGY_AUDIT",
+      "writes": "WORK audit flags",
+      "requires": "exact inventories/origins/reactions and closed-micro Q62 energy gate"
+    },
+    {
+      "passIndex": 32,
+      "op": "STAGE_SUMMARY_SEAL",
+      "writes": "WORK completion/summary",
+      "requires": "all gates passed, pending empty, canonical typed evidence sealed"
+    }
+  ],
+  "root": {
+    "banks": 5,
+    "arenas": 4,
+    "bindings": 4,
+    "deadlineNs": 250000000,
+    "gapNs": 33333333,
+    "quotaHz": 120,
+    "displayFps": 30,
+    "wetMode": "global sum H4+J4 in BASE, not per-column feature and not water flag alone",
+    "wetSourceFirstGate": "before H/J commit check horizontal angle and all current P slab disjointness",
+    "dryReduction": "same DM operation order/rounding/input physical fields; ignore only declared profile/config identity metadata",
+    "dryDerived": "H/J/pW zero; wet geometry cache epoch0 is N/A, no overlap gate on dry P and no stale cache treated as valid",
+    "rootTouch": "wet upward Jy staged once, LAUNCH first active micro consumes it once; dry retains parent root touch/launch",
+    "requiredMasks": {
+      "DRY_SOURCE": 65535,
+      "DRY_QUANTUM": 262143,
+      "WET_SOURCE": 8191999,
+      "WET_QUANTUM": 8388607
+    },
+    "newAuditBits": {
+      "VOLUME_HYDRO": 18,
+      "WATER_ORIGIN": 19,
+      "ACTUAL_REACTION": 20,
+      "COUPLED_ENERGY": 21,
+      "WET_DOMAIN_SOURCE": 22
+    },
+    "publish": "all water/sand/derived/IDs/dedup/time commit atomically from same accepted root; no partial water publication",
+    "replay": "sixJ discovery, rejected prefix, authoritative, accepted replay each from full same BASE; no host water solver"
+  },
+  "dispatch": {
+    "SOURCE": 16,
+    "WET_QUANTUM": 6204,
+    "DRY_QUANTUM": 2404,
+    "WET_G1F4": 24832,
+    "DRY_G1F4": 9632
+  },
+  "resources": [
+    {
+      "K": 192,
+      "Kw": 64,
+      "stateSegments": [
+        {
+          "name": "waterHeader64",
+          "byteStart": 591872,
+          "byteEnd": 592128,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterColumn16",
+          "byteStart": 592128,
+          "byteEnd": 600320,
+          "bytes": 8192,
+          "count": 128,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterOrigin4",
+          "byteStart": 600320,
+          "byteEnd": 731392,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterSource16",
+          "byteStart": 731392,
+          "byteEnd": 993536,
+          "bytes": 262144,
+          "count": 4096,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterPacket32",
+          "byteStart": 993536,
+          "byteEnd": 1001728,
+          "bytes": 8192,
+          "count": 64,
+          "strideBytes": 128
+        }
+      ],
+      "workSegments": [
+        {
+          "name": "hydroColumn128",
+          "byteStart": 1311360,
+          "byteEnd": 1376896,
+          "bytes": 65536,
+          "count": 128,
+          "strideBytes": 512
+        },
+        {
+          "name": "waterFace64",
+          "byteStart": 1376896,
+          "byteEnd": 1409920,
+          "bytes": 33024,
+          "count": 129,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterLeftShare4",
+          "byteStart": 1409920,
+          "byteEnd": 1540992,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterRightShare4",
+          "byteStart": 1540992,
+          "byteEnd": 1672064,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandLeftShare4",
+          "byteStart": 1672064,
+          "byteEnd": 1803136,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandRightShare4",
+          "byteStart": 1803136,
+          "byteEnd": 1934208,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "wetRootControl",
+          "byteStart": 1934208,
+          "byteEnd": 1942400,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "wetDrive32",
+          "byteStart": 1942400,
+          "byteEnd": 1958784,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterWideColumn32",
+          "byteStart": 1958784,
+          "byteEnd": 1975168,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "sixTrialWaterSummary64",
+          "byteStart": 1975168,
+          "byteEnd": 1976704,
+          "bytes": 1536,
+          "count": 6,
+          "strideBytes": 256
+        },
+        {
+          "name": "prefixCompare",
+          "byteStart": 1976704,
+          "byteEnd": 1984896,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "runtimeConfigExtension64",
+          "byteStart": 1984896,
+          "byteEnd": 1985152,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "reservedZero",
+          "byteStart": 1985152,
+          "byteEnd": 1987200,
+          "bytes": 2048,
+          "count": 1,
+          "strideBytes": 2048
+        },
+        {
+          "name": "packetKick32",
+          "byteStart": 1987200,
+          "byteEnd": 2011776,
+          "bytes": 24576,
+          "count": 192,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterFlight64",
+          "byteStart": 2011776,
+          "byteEnd": 2028160,
+          "bytes": 16384,
+          "count": 64,
+          "strideBytes": 256
+        }
+      ],
+      "stateBytes": 1001728,
+      "workBytes": 2028160,
+      "eventRows": 91920,
+      "pathRows": 81920,
+      "pathByteOffset": 23531520,
+      "arenaBytes": 28774400,
+      "residentPayloadBytes": 122134400,
+      "largestGLObjectBytes": 28774400,
+      "ROOTSlotBytes": 59621888,
+      "FULL_CORESlotBytes": 122204032,
+      "FULL_TRIALSSlotBytes": 294850432,
+      "FULL_TRIALSGPUAdditionalBytes": 172646400,
+      "twoFULL_CORESlotsBytes": 244408064,
+      "twoFULL_TRIALSSlotsBytes": 589700864,
+      "knownCoreResidentTwoColdInputPageBytes": 366581376,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 884520576,
+      "coldDescriptorsMax": 32,
+      "coldPrefixBytes": 65536,
+      "fullCorePageUpperBound": 29868,
+      "fullTrialsPageUpperBound": 72018,
+      "coldTwoSlotsSharedActualCredit": true,
+      "excluded": [
+        "alignment",
+        "host objects",
+        "driver/JIT",
+        "FBO>=8*w*h",
+        "JS/runtime",
+        "files"
+      ]
+    },
+    {
+      "K": 192,
+      "Kw": 128,
+      "stateSegments": [
+        {
+          "name": "waterHeader64",
+          "byteStart": 591872,
+          "byteEnd": 592128,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterColumn16",
+          "byteStart": 592128,
+          "byteEnd": 600320,
+          "bytes": 8192,
+          "count": 128,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterOrigin4",
+          "byteStart": 600320,
+          "byteEnd": 731392,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterSource16",
+          "byteStart": 731392,
+          "byteEnd": 993536,
+          "bytes": 262144,
+          "count": 4096,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterPacket32",
+          "byteStart": 993536,
+          "byteEnd": 1009920,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        }
+      ],
+      "workSegments": [
+        {
+          "name": "hydroColumn128",
+          "byteStart": 1311360,
+          "byteEnd": 1376896,
+          "bytes": 65536,
+          "count": 128,
+          "strideBytes": 512
+        },
+        {
+          "name": "waterFace64",
+          "byteStart": 1376896,
+          "byteEnd": 1409920,
+          "bytes": 33024,
+          "count": 129,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterLeftShare4",
+          "byteStart": 1409920,
+          "byteEnd": 1540992,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterRightShare4",
+          "byteStart": 1540992,
+          "byteEnd": 1672064,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandLeftShare4",
+          "byteStart": 1672064,
+          "byteEnd": 1803136,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandRightShare4",
+          "byteStart": 1803136,
+          "byteEnd": 1934208,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "wetRootControl",
+          "byteStart": 1934208,
+          "byteEnd": 1942400,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "wetDrive32",
+          "byteStart": 1942400,
+          "byteEnd": 1958784,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterWideColumn32",
+          "byteStart": 1958784,
+          "byteEnd": 1975168,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "sixTrialWaterSummary64",
+          "byteStart": 1975168,
+          "byteEnd": 1976704,
+          "bytes": 1536,
+          "count": 6,
+          "strideBytes": 256
+        },
+        {
+          "name": "prefixCompare",
+          "byteStart": 1976704,
+          "byteEnd": 1984896,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "runtimeConfigExtension64",
+          "byteStart": 1984896,
+          "byteEnd": 1985152,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "reservedZero",
+          "byteStart": 1985152,
+          "byteEnd": 1987200,
+          "bytes": 2048,
+          "count": 1,
+          "strideBytes": 2048
+        },
+        {
+          "name": "packetKick32",
+          "byteStart": 1987200,
+          "byteEnd": 2011776,
+          "bytes": 24576,
+          "count": 192,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterFlight64",
+          "byteStart": 2011776,
+          "byteEnd": 2044544,
+          "bytes": 32768,
+          "count": 128,
+          "strideBytes": 256
+        }
+      ],
+      "stateBytes": 1009920,
+      "workBytes": 2044544,
+      "eventRows": 100112,
+      "pathRows": 114688,
+      "pathByteOffset": 25628672,
+      "arenaBytes": 32968704,
+      "residentPayloadBytes": 138968960,
+      "largestGLObjectBytes": 32968704,
+      "ROOTSlotBytes": 68026880,
+      "FULL_CORESlotBytes": 139038592,
+      "FULL_TRIALSSlotBytes": 336850816,
+      "FULL_TRIALSGPUAdditionalBytes": 197812224,
+      "twoFULL_CORESlotsBytes": 278077184,
+      "twoFULL_TRIALSSlotsBytes": 673701632,
+      "knownCoreResidentTwoColdInputPageBytes": 417085056,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1010521728,
+      "coldDescriptorsMax": 32,
+      "coldPrefixBytes": 65536,
+      "fullCorePageUpperBound": 33978,
+      "fullTrialsPageUpperBound": 82272,
+      "coldTwoSlotsSharedActualCredit": true,
+      "excluded": [
+        "alignment",
+        "host objects",
+        "driver/JIT",
+        "FBO>=8*w*h",
+        "JS/runtime",
+        "files"
+      ]
+    },
+    {
+      "K": 512,
+      "Kw": 64,
+      "stateSegments": [
+        {
+          "name": "waterHeader64",
+          "byteStart": 673792,
+          "byteEnd": 674048,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterColumn16",
+          "byteStart": 674048,
+          "byteEnd": 682240,
+          "bytes": 8192,
+          "count": 128,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterOrigin4",
+          "byteStart": 682240,
+          "byteEnd": 813312,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterSource16",
+          "byteStart": 813312,
+          "byteEnd": 1075456,
+          "bytes": 262144,
+          "count": 4096,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterPacket32",
+          "byteStart": 1075456,
+          "byteEnd": 1083648,
+          "bytes": 8192,
+          "count": 64,
+          "strideBytes": 128
+        }
+      ],
+      "workSegments": [
+        {
+          "name": "hydroColumn128",
+          "byteStart": 1313920,
+          "byteEnd": 1379456,
+          "bytes": 65536,
+          "count": 128,
+          "strideBytes": 512
+        },
+        {
+          "name": "waterFace64",
+          "byteStart": 1379456,
+          "byteEnd": 1412480,
+          "bytes": 33024,
+          "count": 129,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterLeftShare4",
+          "byteStart": 1412480,
+          "byteEnd": 1543552,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterRightShare4",
+          "byteStart": 1543552,
+          "byteEnd": 1674624,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandLeftShare4",
+          "byteStart": 1674624,
+          "byteEnd": 1805696,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandRightShare4",
+          "byteStart": 1805696,
+          "byteEnd": 1936768,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "wetRootControl",
+          "byteStart": 1936768,
+          "byteEnd": 1944960,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "wetDrive32",
+          "byteStart": 1944960,
+          "byteEnd": 1961344,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterWideColumn32",
+          "byteStart": 1961344,
+          "byteEnd": 1977728,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "sixTrialWaterSummary64",
+          "byteStart": 1977728,
+          "byteEnd": 1979264,
+          "bytes": 1536,
+          "count": 6,
+          "strideBytes": 256
+        },
+        {
+          "name": "prefixCompare",
+          "byteStart": 1979264,
+          "byteEnd": 1987456,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "runtimeConfigExtension64",
+          "byteStart": 1987456,
+          "byteEnd": 1987712,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "reservedZero",
+          "byteStart": 1987712,
+          "byteEnd": 1989760,
+          "bytes": 2048,
+          "count": 1,
+          "strideBytes": 2048
+        },
+        {
+          "name": "packetKick32",
+          "byteStart": 1989760,
+          "byteEnd": 2055296,
+          "bytes": 65536,
+          "count": 512,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterFlight64",
+          "byteStart": 2055296,
+          "byteEnd": 2071680,
+          "bytes": 16384,
+          "count": 64,
+          "strideBytes": 256
+        }
+      ],
+      "stateBytes": 1083648,
+      "workBytes": 2071680,
+      "eventRows": 133200,
+      "pathRows": 163840,
+      "pathByteOffset": 34099200,
+      "arenaBytes": 44584960,
+      "residentPayloadBytes": 185829760,
+      "largestGLObjectBytes": 44584960,
+      "ROOTSlotBytes": 91406848,
+      "FULL_CORESlotBytes": 185899392,
+      "FULL_TRIALSSlotBytes": 453409152,
+      "FULL_TRIALSGPUAdditionalBytes": 267509760,
+      "twoFULL_CORESlotsBytes": 371798784,
+      "twoFULL_TRIALSSlotsBytes": 906818304,
+      "knownCoreResidentTwoColdInputPageBytes": 557667456,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1360196736,
+      "coldDescriptorsMax": 32,
+      "coldPrefixBytes": 65536,
+      "fullCorePageUpperBound": 45419,
+      "fullTrialsPageUpperBound": 110729,
+      "coldTwoSlotsSharedActualCredit": true,
+      "excluded": [
+        "alignment",
+        "host objects",
+        "driver/JIT",
+        "FBO>=8*w*h",
+        "JS/runtime",
+        "files"
+      ]
+    },
+    {
+      "K": 512,
+      "Kw": 128,
+      "stateSegments": [
+        {
+          "name": "waterHeader64",
+          "byteStart": 673792,
+          "byteEnd": 674048,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterColumn16",
+          "byteStart": 674048,
+          "byteEnd": 682240,
+          "bytes": 8192,
+          "count": 128,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterOrigin4",
+          "byteStart": 682240,
+          "byteEnd": 813312,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterSource16",
+          "byteStart": 813312,
+          "byteEnd": 1075456,
+          "bytes": 262144,
+          "count": 4096,
+          "strideBytes": 64
+        },
+        {
+          "name": "waterPacket32",
+          "byteStart": 1075456,
+          "byteEnd": 1091840,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        }
+      ],
+      "workSegments": [
+        {
+          "name": "hydroColumn128",
+          "byteStart": 1313920,
+          "byteEnd": 1379456,
+          "bytes": 65536,
+          "count": 128,
+          "strideBytes": 512
+        },
+        {
+          "name": "waterFace64",
+          "byteStart": 1379456,
+          "byteEnd": 1412480,
+          "bytes": 33024,
+          "count": 129,
+          "strideBytes": 256
+        },
+        {
+          "name": "waterLeftShare4",
+          "byteStart": 1412480,
+          "byteEnd": 1543552,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "waterRightShare4",
+          "byteStart": 1543552,
+          "byteEnd": 1674624,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandLeftShare4",
+          "byteStart": 1674624,
+          "byteEnd": 1805696,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "sandRightShare4",
+          "byteStart": 1805696,
+          "byteEnd": 1936768,
+          "bytes": 131072,
+          "count": 8192,
+          "strideBytes": 16
+        },
+        {
+          "name": "wetRootControl",
+          "byteStart": 1936768,
+          "byteEnd": 1944960,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "wetDrive32",
+          "byteStart": 1944960,
+          "byteEnd": 1961344,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterWideColumn32",
+          "byteStart": 1961344,
+          "byteEnd": 1977728,
+          "bytes": 16384,
+          "count": 128,
+          "strideBytes": 128
+        },
+        {
+          "name": "sixTrialWaterSummary64",
+          "byteStart": 1977728,
+          "byteEnd": 1979264,
+          "bytes": 1536,
+          "count": 6,
+          "strideBytes": 256
+        },
+        {
+          "name": "prefixCompare",
+          "byteStart": 1979264,
+          "byteEnd": 1987456,
+          "bytes": 8192,
+          "count": 1,
+          "strideBytes": 8192
+        },
+        {
+          "name": "runtimeConfigExtension64",
+          "byteStart": 1987456,
+          "byteEnd": 1987712,
+          "bytes": 256,
+          "count": 1,
+          "strideBytes": 256
+        },
+        {
+          "name": "reservedZero",
+          "byteStart": 1987712,
+          "byteEnd": 1989760,
+          "bytes": 2048,
+          "count": 1,
+          "strideBytes": 2048
+        },
+        {
+          "name": "packetKick32",
+          "byteStart": 1989760,
+          "byteEnd": 2055296,
+          "bytes": 65536,
+          "count": 512,
+          "strideBytes": 128
+        },
+        {
+          "name": "waterFlight64",
+          "byteStart": 2055296,
+          "byteEnd": 2088064,
+          "bytes": 32768,
+          "count": 128,
+          "strideBytes": 256
+        }
+      ],
+      "stateBytes": 1091840,
+      "workBytes": 2088064,
+      "eventRows": 141392,
+      "pathRows": 196608,
+      "pathByteOffset": 36196352,
+      "arenaBytes": 48779264,
+      "residentPayloadBytes": 202664320,
+      "largestGLObjectBytes": 48779264,
+      "ROOTSlotBytes": 99811840,
+      "FULL_CORESlotBytes": 202733952,
+      "FULL_TRIALSSlotBytes": 495409536,
+      "FULL_TRIALSGPUAdditionalBytes": 292675584,
+      "twoFULL_CORESlotsBytes": 405467904,
+      "twoFULL_TRIALSSlotsBytes": 990819072,
+      "knownCoreResidentTwoColdInputPageBytes": 608171136,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1486197888,
+      "coldDescriptorsMax": 32,
+      "coldPrefixBytes": 65536,
+      "fullCorePageUpperBound": 49529,
+      "fullTrialsPageUpperBound": 120983,
+      "coldTwoSlotsSharedActualCredit": true,
+      "excluded": [
+        "alignment",
+        "host objects",
+        "driver/JIT",
+        "FBO>=8*w*h",
+        "JS/runtime",
+        "files"
+      ]
+    }
+  ],
+  "complexity": {
+    "perMicroGeometry": "7*(31*N*(K+1)+K*(K-1)/2), no division by64 for serial cost",
+    "originReserve": "O(N*64^2) independently sand/water",
+    "JOrder": "O(Kw^2) bounded selection",
+    "pairDrag": "O(K+N), two ID orders plus wide arithmetic",
+    "timeConclusion": "UNMEASURED_NOT_REALTIME_CLAIM"
+  },
+  "cold": {
+    "schema": "G12_POROUS_COLD_V1",
+    "page": "G12_POROUS_SEGMENT_PAGE_V1",
+    "modes": [
+      "ROOT",
+      "FULL_CORE",
+      "FULL_TRIALS"
+    ],
+    "slots": 2,
+    "readerMax": 1,
+    "builderMax": 1,
+    "ttlNs": "60000000000",
+    "prefixBytes": 65536,
+    "inputBytes": 4096,
+    "pageWords": 1024,
+    "pageUtf8Bytes": 16384,
+    "descriptorsMax": 32,
+    "FULL_CORE": "T559 design FULL payload, five state/four current role arenas/WORK; not six full discovery originals",
+    "FULL_TRIALS": "FULL_CORE +six discovery arenas; reserve6 GPU arenas and add6 arenas each native cold slot",
+    "copies": "at most six discovery whole-arena copies separate from dispatch; unexecuted trials SKIPPED with validCount0, never old arena residue",
+    "credit": "shared actual capacity with old routes; no third slot until pinned old allocations really freed",
+    "reader": "raw state/origin/geometry/ledgers plus independent C8/potential/actual-event checking; reject old eta readers"
+  },
+  "scene": {
+    "route": "XComponent+shader only, explicit FAULT or labelled STALE complete old compatible frame",
+    "caps": "T560 COMPUTE/SCENE/PRESENT layers; no vertex SSBO; fragment CURRENT state",
+    "water": "derive optical free water from same eta and actual solid intervals, J no water level",
+    "P": "same CURRENT integer instance attributes, physical slab for immersion; glyph radius not volume",
+    "J": "new waterPacket32 integer instance attributes using mass4/x/y4, distinct VAO/fragment optics",
+    "G11": "dry G11 is NOT a wet implementation; wet G11 composite/schema/dispatch/old-new map hooks separately versioned before enabling",
+    "frame": "one lease/token for S/F/P/H/J/derived/foreground, storage+vertex consumer barriers"
+  },
+  "milestones": {
+    "M0": "profile/config/seed/H/J/origins/hydro/energy/cold +dry reduction, not bidirectional function",
+    "M1": "all32 wet passes/source16/sand-water actual reaction/root replay/complete new shader; consumes M0 and actual G9-DM backend",
+    "M2": "independent C01-C20 device and effect evidence; not developer close condition"
+  },
+  "unmeasured": [
+    "actual GPU source/link/resource capability",
+    "standard wet-case advance rate/energy refusals",
+    "250ms/runtime",
+    "allocation fit including cold",
+    "water optics/material thresholds"
+  ],
+  "handoff": "developer implementation/compile/commit only, no tests/device; model/energy counterexample returns designer, no phi0 or deleted reaction"
+}

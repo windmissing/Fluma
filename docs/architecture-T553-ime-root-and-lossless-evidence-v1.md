@@ -1,5 +1,7 @@
 # T553：IME准备域、后继root和严格系统PNG的分流
 
+> 2026-11-17 T570修订：单沙IME/STALE因果以 `architecture-T570-prepare-stability-and-stale-v1.md` 为准。attempt10已证真实IME与keyboardAreaSeen；prep-74为固定键盘声明UNKNOWN，prep-40/41有真实native run换代且没有READY permit，不能直接归为blur仅推serial。确认后的后继STALE仍需同attempt首失效见证；本稿其它root/PNG已证边界不改。
+
 2026-11-17，architect，不使用真机，不重跑产品测试。消费T408 attempt9/T510 v2正式报告与原件、T540/T537/T536生成链及签包。三个域独立处理，不以诊断三色图成功替真实物理或无损像素PASS。机器证据 `analysis-T553-evidence-v1.json`，可执行取证表 `architecture-T553-evidence-manifest-v1.json`。
 
 ## 1. 单沙：位置域已证，KEYBOARD_UNKNOWN仍需拆项

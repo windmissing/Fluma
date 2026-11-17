@@ -1,5 +1,7 @@
 # T554：目标9动态动员与中点积分v2工程闭包
 
+> 2026-11-17目标12独立湿域工程：见 `architecture-T567-water-sfp-engineering-v1.md`，新G12 profile/配置/单位/6204pass与孔隙水量合同。父DM干域/参数/旧机器表不变，不将旧M1/M3/G11或父2404计数迁名冒湿域支持。
+
 > 2026-11-17工程修订：设备资格与无vertex SSBO场景沿 `architecture-T560-stage-capability-and-lab-triage-v1.md`；可选目标11仅按 `architecture-T563-g11-accepted-flux-visual-v1.md` 独立组合接入。父DM物理数学/参数/机器表不变，新组合的视觉资源和dispatch不能复用父计数冒充。
 
 2026-11-17，architect，不使用真机。消费 `algorithm-G9-dynamic-mobilization-v2.md`、正式manifest/fixtures；产品NOT_IMPLEMENTED/NOT_VALIDATED。工程机器表 `architecture-T554-g9-dm-manifest-v2.json`，仅局部数学/表式检查见 `analysis-T554-engineering-checks-v2.json`。这是目标9内部升级，不新立目标10，不恢复CPU投入。

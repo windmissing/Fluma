@@ -1,0 +1,662 @@
+{
+  "schema": "T570_RAW_CAUSALITY_AUDIT_V1",
+  "result": "SOURCE_AND_RAW_SCOPE_AUDIT_COMPLETE_NOT_DEVICE_PASS",
+  "summaries": [
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-33.json",
+        "bytes": 9472,
+        "sha256": "6797a0ba2963f82be3fe3b100bebcabf20dbc5d7c33014265c9ebbd494a0695f"
+      },
+      "state": "PREPARING",
+      "reason": "WAIT_OBSERVATIONS",
+      "prepareId": 1,
+      "page": 1,
+      "observationPage": 1,
+      "serial": 33,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1
+      },
+      "changes": [],
+      "owners": []
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-35.json",
+        "bytes": 33718,
+        "sha256": "0c3c6d77cc349a007f5f3c7353e24cc8521b14cdbeadb2c6455c4bfb6dd0fb57"
+      },
+      "state": "FAILED",
+      "reason": "PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN",
+      "prepareId": 1,
+      "page": 1,
+      "observationPage": 1,
+      "serial": 35,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1,
+        "CHANGE": 2,
+        "SNAPSHOT": 2,
+        "FRAME": 2,
+        "FAILED": 1
+      },
+      "changes": [
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED"
+      ],
+      "owners": [
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        }
+      ]
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-36.json",
+        "bytes": 45439,
+        "sha256": "3b9354e83b04b58201824168a3811070bff87c01ffcd4fe08fb2cf3cabe14fc3"
+      },
+      "state": "FAILED",
+      "reason": "PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN",
+      "prepareId": 1,
+      "page": 2,
+      "observationPage": 1,
+      "serial": 36,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1,
+        "CHANGE": 3,
+        "SNAPSHOT": 3,
+        "FRAME": 2,
+        "FAILED": 1,
+        "HIDE": 1
+      },
+      "changes": [
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED"
+      ],
+      "owners": [
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        }
+      ]
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-37.json",
+        "bytes": 54999,
+        "sha256": "71f765ff897c8d8d29aa64732cedfc3805bc563148ba397f1e38fbd78ea46fc9"
+      },
+      "state": "CONFIGURING",
+      "reason": "",
+      "prepareId": 1,
+      "page": 3,
+      "observationPage": null,
+      "serial": 37,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [],
+      "eventKinds": {
+        "BEGIN": 1,
+        "CHANGE": 4,
+        "SNAPSHOT": 4,
+        "FRAME": 2,
+        "FAILED": 1,
+        "HIDE": 1,
+        "SHOW": 1
+      },
+      "changes": [
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED"
+      ],
+      "owners": [
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916164494-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 13,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": false
+        }
+      ]
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-38.json",
+        "bytes": 9471,
+        "sha256": "abbbf91773d915c78102ef06516ad220e28bae8228b6d83e689fcabde1447900"
+      },
+      "state": "PREPARING",
+      "reason": "WAIT_OBSERVATIONS",
+      "prepareId": 1,
+      "page": 1,
+      "observationPage": 1,
+      "serial": 38,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1
+      },
+      "changes": [],
+      "owners": []
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-40.json",
+        "bytes": 33433,
+        "sha256": "9fc7f2cf06bfb9e6a859d2094b6a7668e9770925193fed5101a81da6e3c3b1e1"
+      },
+      "state": "INVALIDATED",
+      "reason": "PREPARE_STALE",
+      "prepareId": 1,
+      "page": 1,
+      "observationPage": 1,
+      "serial": 40,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1,
+        "CHANGE": 2,
+        "SNAPSHOT": 2,
+        "FRAME": 1
+      },
+      "changes": [
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED"
+      ],
+      "owners": [
+        {
+          "run": "p011-run-1794916671870-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916708845-9",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 12,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        }
+      ]
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-41.json",
+        "bytes": 45158,
+        "sha256": "4b570a6dbbd301467a170da2d8f91a31f45e2b9b91860d7855c32e2fec23ee72"
+      },
+      "state": "INVALIDATED",
+      "reason": "PREPARE_STALE",
+      "prepareId": 1,
+      "page": 2,
+      "observationPage": 1,
+      "serial": 41,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1,
+        "CHANGE": 3,
+        "SNAPSHOT": 3,
+        "FRAME": 1,
+        "HIDE": 1
+      },
+      "changes": [
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED"
+      ],
+      "owners": [
+        {
+          "run": "p011-run-1794916671870-3",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 11,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916708845-9",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 12,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794916708845-9",
+          "context": 1,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 12,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        }
+      ]
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t408vA/prep-74.json",
+        "bytes": 69359,
+        "sha256": "72fdb90f35352bf30c06177ae3e2158addeed4cca8d36e23b61a85fdebd1295f"
+      },
+      "state": "FAILED",
+      "reason": "PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN",
+      "prepareId": 2,
+      "page": 3,
+      "observationPage": 3,
+      "serial": 74,
+      "permitIsNull": true,
+      "keyboardAreaSeen": true,
+      "sessionEverEdited": true,
+      "kbCfg": "UNKNOWN",
+      "APIs": [
+        {
+          "api": "TextInputController.stopEditing.0",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.1",
+          "code": 0
+        },
+        {
+          "api": "TextInputController.stopEditing.2",
+          "code": 0
+        },
+        {
+          "api": "FocusController.clearFocus",
+          "code": 0
+        }
+      ],
+      "eventKinds": {
+        "BEGIN": 1,
+        "CHANGE": 2,
+        "SNAPSHOT": 2,
+        "FRAME": 180,
+        "FAILED": 1
+      },
+      "changes": [
+        "OBSERVATION_CHANGED",
+        "OBSERVATION_CHANGED"
+      ],
+      "owners": [
+        {
+          "run": "p011-run-1794917394318-15",
+          "context": 2,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 21,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        },
+        {
+          "run": "p011-run-1794917394318-15",
+          "context": 2,
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "geometry": 21,
+          "windowId": 413,
+          "windowGeneration": 1,
+          "nativeReady": true
+        }
+      ]
+    }
+  ],
+  "sourceReceipts": [
+    {
+      "path": "test/t426/PrepareReadiness.ets",
+      "bytes": 11303,
+      "sha256": "45f72c27b28105a92d28bc4d5a7b7149ee902754835dfd136ce9800c3e4291e5"
+    },
+    {
+      "path": "test/t455/PrepareFrameObservation.ets",
+      "bytes": 3747,
+      "sha256": "1cc50845739e6805e3df1da44ea941d090200e5a82c4b6bd27013af5c362a85f"
+    },
+    {
+      "path": "test/t455/pump.inc",
+      "bytes": 5550,
+      "sha256": "cb02f539d842173af370ee4e448c2e2bc2c26263d38da41eb076390417f1b2f0"
+    },
+    {
+      "path": "test/t540/overlay.py",
+      "bytes": 5195,
+      "sha256": "36573c373cf993df74a36dc34e1ba9e5971eaec1271d45b73fbed3db6e88b19e"
+    },
+    {
+      "path": "test/t540/page_raster.inc",
+      "bytes": 7998,
+      "sha256": "83d60d3605cd967de81372476fd45bfac9a9bfc61f76696c8c2f981a6bf5fc17"
+    },
+    {
+      "path": "test/t540/RasterGeometry.ets",
+      "bytes": 10437,
+      "sha256": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc"
+    },
+    {
+      "path": ".codex/local-test/t540-final/entry/src/main/ets/render/PrepareReadiness.ets",
+      "bytes": 11621,
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2"
+    },
+    {
+      "path": ".codex/local-test/t540-final/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 47937,
+      "sha256": "5deeaa3f52b249d30dce2bfc4558e0ae36f6d69f3de466d3814e43223f30a2d7"
+    },
+    {
+      "path": ".codex/local-test/t540-final/entry/src/main/ets/render/T413Capture.ets",
+      "bytes": 9189,
+      "sha256": "804a04b974176c43e69f422acdd78e432d640eff8c338a95819fe75034bb0b46"
+    }
+  ],
+  "layoutReceipts": [
+    {
+      "path": "test/reports/t491/t408vA/lI.json",
+      "bytes": 66861,
+      "sha256": "4fbfc1362e253504252296fe9cfbf77f550793e765f96a74199370f3e27a3712"
+    },
+    {
+      "path": "test/reports/t491/t408vA/lJ.json",
+      "bytes": 66861,
+      "sha256": "7bfb554dfaa3b5b2e11dc65c4756e210663c9bcc4f05726b17315644d8ff3613"
+    },
+    {
+      "path": "test/reports/t491/t408vA/lK.json",
+      "bytes": 66861,
+      "sha256": "8d25943acccfebfd96ce7cf3d413548c74b4239631eafbecfa382c1268ad33af"
+    },
+    {
+      "path": "test/reports/t491/t408vA/lM.json",
+      "bytes": 66895,
+      "sha256": "dbfdab616b2f1148607f95e109c5b3e75845da4d6c8f1ce9c5f7bf5a39c2310f"
+    },
+    {
+      "path": "test/reports/t491/t408vA/lP.json",
+      "bytes": 52943,
+      "sha256": "6989c2c21d0537c91621cde287acaef9ac15974818393aee2c4a4b5a7554702c"
+    },
+    {
+      "path": "test/reports/t491/t408vA/lQ.json",
+      "bytes": 52955,
+      "sha256": "19cbfefa44ea7a47b6979d5771d38741d800c4a04905189a138f8531d65ba348"
+    },
+    {
+      "path": "test/reports/t491/t408vA/lR.json",
+      "bytes": 66957,
+      "sha256": "91e3c6b4759f36b94cd2e70b6d036864a0063b0cf441a755546b838c720d345a"
+    }
+  ],
+  "reportReceipt": {
+    "path": "docs/test-report-T408-ime-domain-v10.md",
+    "bytes": 3769,
+    "sha256": "0feaf5d3986625c880d17d030b4a12a509a0563b61bf12bb8a56896e45bb3795"
+  },
+  "generatedManifestReceipt": {
+    "path": ".codex/local-test/t540-final/t540-manifest.json",
+    "bytes": 822,
+    "sha256": "744c59cee307413ef2c8ccaa57ffe3f0529797f82ef19b6c513bc0947f040da9"
+  },
+  "generatedSourceMatches": [
+    {
+      "path": "pages/P051DerivedV2Demo.ets",
+      "sha256": "5deeaa3f52b249d30dce2bfc4558e0ae36f6d69f3de466d3814e43223f30a2d7",
+      "generatedManifestMatches": true
+    },
+    {
+      "path": "render/PrepareReadiness.ets",
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2",
+      "generatedManifestMatches": true
+    },
+    {
+      "path": "render/T413Capture.ets",
+      "sha256": "804a04b974176c43e69f422acdd78e432d640eff8c338a95819fe75034bb0b46",
+      "generatedManifestMatches": true
+    }
+  ],
+  "sourceVsInstalledETS": "local generation manifest matched; this task does not independently unpack/reverse installed Ark bytecode",
+  "findings": [
+    "prep40 native run actually changes while prior nativeReady; hard stale gate is valid",
+    "prep41 includes HIDE/page2 with observer page1; not a ready permit invalidated solely by blur",
+    "prep74 UNKNOWN fixed-keyboard declaration with observed keyboard history and stable later serial",
+    "later confirmed-keyboard STALE lacks one-to-one full cold witness in present directory"
+  ],
+  "notProven": [
+    "specific callback causing post-confirmation attempt stale",
+    "all prepare paths permanently fail"
+  ],
+  "noDevice": true
+}

@@ -1,0 +1,228 @@
+{
+  "schema": "T567_FINITE_ENGINEERING_AUDIT_V1",
+  "result": "FINITE_LAYOUT_ALGEBRA_PASS_NOT_PRODUCT_PASS",
+  "configWords": 128,
+  "GPUConfigWords": 192,
+  "waterHeaderWords": 64,
+  "staticVolumeCases": 150,
+  "newEventKinds": 16,
+  "resourceCombinations": 4,
+  "dispatch": {
+    "SOURCE": 16,
+    "WET_QUANTUM": 6204,
+    "DRY_QUANTUM": 2404,
+    "WET_G1F4": 24832,
+    "DRY_G1F4": 9632
+  },
+  "maxResource": {
+    "K": 512,
+    "Kw": 128,
+    "stateSegments": [
+      {
+        "name": "waterHeader64",
+        "byteStart": 673792,
+        "byteEnd": 674048,
+        "bytes": 256,
+        "count": 1,
+        "strideBytes": 256
+      },
+      {
+        "name": "waterColumn16",
+        "byteStart": 674048,
+        "byteEnd": 682240,
+        "bytes": 8192,
+        "count": 128,
+        "strideBytes": 64
+      },
+      {
+        "name": "waterOrigin4",
+        "byteStart": 682240,
+        "byteEnd": 813312,
+        "bytes": 131072,
+        "count": 8192,
+        "strideBytes": 16
+      },
+      {
+        "name": "waterSource16",
+        "byteStart": 813312,
+        "byteEnd": 1075456,
+        "bytes": 262144,
+        "count": 4096,
+        "strideBytes": 64
+      },
+      {
+        "name": "waterPacket32",
+        "byteStart": 1075456,
+        "byteEnd": 1091840,
+        "bytes": 16384,
+        "count": 128,
+        "strideBytes": 128
+      }
+    ],
+    "workSegments": [
+      {
+        "name": "hydroColumn128",
+        "byteStart": 1313920,
+        "byteEnd": 1379456,
+        "bytes": 65536,
+        "count": 128,
+        "strideBytes": 512
+      },
+      {
+        "name": "waterFace64",
+        "byteStart": 1379456,
+        "byteEnd": 1412480,
+        "bytes": 33024,
+        "count": 129,
+        "strideBytes": 256
+      },
+      {
+        "name": "waterLeftShare4",
+        "byteStart": 1412480,
+        "byteEnd": 1543552,
+        "bytes": 131072,
+        "count": 8192,
+        "strideBytes": 16
+      },
+      {
+        "name": "waterRightShare4",
+        "byteStart": 1543552,
+        "byteEnd": 1674624,
+        "bytes": 131072,
+        "count": 8192,
+        "strideBytes": 16
+      },
+      {
+        "name": "sandLeftShare4",
+        "byteStart": 1674624,
+        "byteEnd": 1805696,
+        "bytes": 131072,
+        "count": 8192,
+        "strideBytes": 16
+      },
+      {
+        "name": "sandRightShare4",
+        "byteStart": 1805696,
+        "byteEnd": 1936768,
+        "bytes": 131072,
+        "count": 8192,
+        "strideBytes": 16
+      },
+      {
+        "name": "wetRootControl",
+        "byteStart": 1936768,
+        "byteEnd": 1944960,
+        "bytes": 8192,
+        "count": 1,
+        "strideBytes": 8192
+      },
+      {
+        "name": "wetDrive32",
+        "byteStart": 1944960,
+        "byteEnd": 1961344,
+        "bytes": 16384,
+        "count": 128,
+        "strideBytes": 128
+      },
+      {
+        "name": "waterWideColumn32",
+        "byteStart": 1961344,
+        "byteEnd": 1977728,
+        "bytes": 16384,
+        "count": 128,
+        "strideBytes": 128
+      },
+      {
+        "name": "sixTrialWaterSummary64",
+        "byteStart": 1977728,
+        "byteEnd": 1979264,
+        "bytes": 1536,
+        "count": 6,
+        "strideBytes": 256
+      },
+      {
+        "name": "prefixCompare",
+        "byteStart": 1979264,
+        "byteEnd": 1987456,
+        "bytes": 8192,
+        "count": 1,
+        "strideBytes": 8192
+      },
+      {
+        "name": "runtimeConfigExtension64",
+        "byteStart": 1987456,
+        "byteEnd": 1987712,
+        "bytes": 256,
+        "count": 1,
+        "strideBytes": 256
+      },
+      {
+        "name": "reservedZero",
+        "byteStart": 1987712,
+        "byteEnd": 1989760,
+        "bytes": 2048,
+        "count": 1,
+        "strideBytes": 2048
+      },
+      {
+        "name": "packetKick32",
+        "byteStart": 1989760,
+        "byteEnd": 2055296,
+        "bytes": 65536,
+        "count": 512,
+        "strideBytes": 128
+      },
+      {
+        "name": "waterFlight64",
+        "byteStart": 2055296,
+        "byteEnd": 2088064,
+        "bytes": 32768,
+        "count": 128,
+        "strideBytes": 256
+      }
+    ],
+    "stateBytes": 1091840,
+    "workBytes": 2088064,
+    "eventRows": 141392,
+    "pathRows": 196608,
+    "pathByteOffset": 36196352,
+    "arenaBytes": 48779264,
+    "residentPayloadBytes": 202664320,
+    "largestGLObjectBytes": 48779264,
+    "ROOTSlotBytes": 99811840,
+    "FULL_CORESlotBytes": 202733952,
+    "FULL_TRIALSSlotBytes": 495409536,
+    "FULL_TRIALSGPUAdditionalBytes": 292675584,
+    "twoFULL_CORESlotsBytes": 405467904,
+    "twoFULL_TRIALSSlotsBytes": 990819072,
+    "knownCoreResidentTwoColdInputPageBytes": 608171136,
+    "knownFullTrialsResidentTwoColdInputPageBytes": 1486197888,
+    "coldDescriptorsMax": 32,
+    "coldPrefixBytes": 65536,
+    "fullCorePageUpperBound": 49529,
+    "fullTrialsPageUpperBound": 120983,
+    "coldTwoSlotsSharedActualCredit": true,
+    "excluded": [
+      "alignment",
+      "host objects",
+      "driver/JIT",
+      "FBO>=8*w*h",
+      "JS/runtime",
+      "files"
+    ]
+  },
+  "checks": [
+    "all four profiles exactly match design formulas",
+    "reference192/64 and512/128 exact",
+    "contiguous nonoverlapping state/work segments",
+    "full32 writer table and6204 pass table",
+    "used masks from exact64word dictionaries",
+    "Cface Q16 conversion explicit",
+    "114bit drag numerator",
+    "C8 exact static lattice",
+    "FULL_CORE versus six-trial FULL cost explicit"
+  ],
+  "deviceExecuted": false,
+  "CPUPhysicsAdded": false,
+  "productPASS": false
+}
