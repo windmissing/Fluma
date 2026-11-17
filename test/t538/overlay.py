@@ -22,6 +22,7 @@ def overlay(out,route):
 add_library(grs_resource_lab SHARED t538_lab_bridge.cpp)
 target_include_directories(grs_resource_lab PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/gpu_resident")
 target_compile_features(grs_resource_lab PRIVATE cxx_std_17)
+target_compile_options(grs_resource_lab PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
 target_compile_definitions(grs_resource_lab PRIVATE GRS_PROGRAM_CACHE_TEST_FAULTS T531_RESOURCE_LAB_V1)
 target_link_libraries(grs_resource_lab PRIVATE grs_foundation libace_napi.z.so libace_ndk.z.so libEGL.so libGLESv3.so)
 ''';p.write_text(s,encoding='utf8')

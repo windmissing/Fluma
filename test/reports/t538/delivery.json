@@ -9,15 +9,15 @@
     "m1": {
       "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t538-delivery2-m1",
       "build": "PASS",
-      "buildLog": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t538-m1-final4-build.txt",
+      "buildLog": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t538-delivery2-m1-isolation-build.txt",
       "signed": {
-        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T538-m1-final\\T538-m1-final-signed.hap",
-        "sha256": "7d93aa2c84750f64f5fe97caf44b0f1c92af362a27a2724751b65673009613d0",
-        "bytes": 10447654
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T538-m1-isolated\\T538-m1-isolated-signed.hap",
+        "sha256": "39c8b6259ff7d4c49572cecd9c4a88f22b0f5cc39933989480fd73f3ea9fc52b",
+        "bytes": 10266476
       },
       "sourceSha256": {
         "module.json5": "a8440427f0347296fd42fe394534175f6a9452ce6d5e708db8d42880009983bd",
-        "cpp\\CMakeLists.txt": "f25dc37a87874b9a09a7392eab0f703478b9b0921ab8507087d9677d8d0551a2",
+        "cpp\\CMakeLists.txt": "580657ca56966ef67a0eb7c9e0f0bdc65bf336c02fe4f338e8a27f1c7caee3f0",
         "cpp\\t538_lab_bridge.cpp": "46c7470b5c79be4e29195bebd12cbf0a62283b5e1da925c6ca3b764cd3b850ef",
         "cpp\\gpu_resident\\angles_certificate.json": "8f884a70b89a386d4c3060d4a344a21bc5abff3a23905178b516ad519593396c",
         "cpp\\gpu_resident\\angles_generated.h": "52f84e8fff5cfed295a55dbc38bc7eb6a6c42bde1e4adc1391f23fa1959da613",
@@ -549,20 +549,21 @@
         "resources\\base\\media\\app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
         "resources\\base\\media\\start_icon.svg": "e127c84c5e680548b9571479310d1944c6263ce8e28a2ec75129362a810c6191",
         "resources\\base\\profile\\main_pages.json": "9407f6d80057a818109b780c3122509dde3472f95586b8da32334c70d25086f8"
-      }
+      },
+      "cmakeSha256": "580657ca56966ef67a0eb7c9e0f0bdc65bf336c02fe4f338e8a27f1c7caee3f0"
     },
     "m2": {
       "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t538-delivery2-m2",
       "build": "PASS",
-      "buildLog": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t538-m2-final4-build.txt",
+      "buildLog": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t538-delivery2-m2-isolation-build.txt",
       "signed": {
-        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T538-m2-final\\T538-m2-final-signed.hap",
-        "sha256": "bc0465c930385a3d5aaa64cceadee9895a740f9e6b1ea2d52534f493eba0e95e",
-        "bytes": 10667914
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T538-m2-isolated\\T538-m2-isolated-signed.hap",
+        "sha256": "38e40e9ba3dbd1206a2956d0cccca3b379accf570adc953a9ea33df89b73cee0",
+        "bytes": 10490831
       },
       "sourceSha256": {
         "module.json5": "a8440427f0347296fd42fe394534175f6a9452ce6d5e708db8d42880009983bd",
-        "cpp\\CMakeLists.txt": "f25dc37a87874b9a09a7392eab0f703478b9b0921ab8507087d9677d8d0551a2",
+        "cpp\\CMakeLists.txt": "580657ca56966ef67a0eb7c9e0f0bdc65bf336c02fe4f338e8a27f1c7caee3f0",
         "cpp\\t538_lab_bridge.cpp": "46c7470b5c79be4e29195bebd12cbf0a62283b5e1da925c6ca3b764cd3b850ef",
         "cpp\\gpu_resident\\angles_certificate.json": "8f884a70b89a386d4c3060d4a344a21bc5abff3a23905178b516ad519593396c",
         "cpp\\gpu_resident\\angles_generated.h": "52f84e8fff5cfed295a55dbc38bc7eb6a6c42bde1e4adc1391f23fa1959da613",
@@ -1130,7 +1131,9 @@
         "resources\\base\\media\\app_icon.svg": "ff8ba8247963992176aae181f58473fb9e7e9ba4930fe43a51d6b3ab6ca8a391",
         "resources\\base\\media\\start_icon.svg": "e127c84c5e680548b9571479310d1944c6263ce8e28a2ec75129362a810c6191",
         "resources\\base\\profile\\main_pages.json": "9407f6d80057a818109b780c3122509dde3472f95586b8da32334c70d25086f8"
-      }
+      },
+      "cmakeSha256": "580657ca56966ef67a0eb7c9e0f0bdc65bf336c02fe4f338e8a27f1c7caee3f0"
     }
-  }
+  },
+  "labHelperSymbolVisibility": "HIDDEN_NO_CROSS_DSO_FAULT_INTERPOSITION"
 }

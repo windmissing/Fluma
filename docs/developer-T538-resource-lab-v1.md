@@ -19,3 +19,5 @@
 lab start/poll/release/cancel/export 接口不等待60s、不操作生产 App。导出 `T531_RESOURCE_LAB_RECORD_V1` 的 scope/sessionDirectory、逐阶段记录与文件 SHA；`FILE`/紧随的 `FILE_SHA256` 关联对应原件，tester应取回 session 目录文件，不能只凭 manifest 自证。原件故障不改写成 PASS。known payload 58,993,832B 之外，helper固定对象、cache pin/编码临时量、worker栈、allocator 明列排除，不能宣全进程硬界。
 
 两路线最终 hvigor/HAP 与签名收据见 `test/reports/t538/delivery.json`。本轮只编译/签包；全部 case、真60s TTL、实际设备资源、压力、driver、物理功能均 NOT_RUN/NOT_MEASURED，交 tester 接力，不以编译替代通过。
+
+最终符号隔离：lab 目标使用 -fvisibility=hidden/-fvisibility-inlines-hidden，避免故障宏改变 helper 布局后被其它DSO的弱符号抢占。最终签包使用 T538-m1-isolated/T538-m2-isolated 收据，取代先前 final 包。两路线重新编译/签包通过。
