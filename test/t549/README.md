@@ -13,3 +13,5 @@ tester在其独立受控GPU环境调用 `g9_differential INPUT_DIRECTORY NEW_OUT
 SOURCE仍12 dispatch，QUANTUM仍2024。执行原Fence/Pump与typed Accepted/Blocked；未获typed接受不提交。BLOCKED和错误仍写原completion/证据。每根写原request/input/completion、结果/dispatch/barrier/fence/deadline/GL/EGL；退休后经生产CaptureSpan输出完整raw cold（BASE/CURRENT/selected/public、FULL六trial arena，事件/PATH、来源、动量能量、去重胶囊、事务replay/控制summary原字均保留）。cold失败明确记录原GL/EGL，不能当有原件。读取/完整性与物理判据由tester实现，设施不输出物理PASS。错误退出非零，旧原件保留；无安全退休则明确RETIRE_TIMEOUT，不能继续复用GPU工作区。
 
 资源收据分别列生产profile resident/full arena逻辑payload，实际renderer原件；这些不是driver/RSS测量。builder只保一份caller-span冷块；逐根输出后释放，ROOT/FULL按原profile容量，未在JS聚合。原始文件SHA可用独立`python test/t549/receipts.py <directory> <new-receipt.json>`流式生成；脚本仅hash文件，不执行物理/判定。开发交付报告绑定实际全部源SHA、pipeline/generated-header SHA、exe/ELF/HAP和编译日志。运行结果仍NOT_RUN，差分及预期由T541 tester独立执行。
+
+最终generator在T529生成后按git e429ea7恢复完整g9spf目录，冻结生产源码，避免并行T548修改污染差分基线；最终签包以T549-frozen收据为准。仅做编译与签名，没有执行harness。
