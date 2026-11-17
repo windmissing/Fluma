@@ -338,8 +338,100 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
 // 疑似与 HOST_TEST 交互引入卡点。下一轮：用暖缓存种子
 // （test/t492/build_app.cjs 第4参数，同 T485-app-m1-exact cache）跳过 compute JIT，
 // 仅 graphics 冷编译，验证是否 Create 路径本身卡死。
+// CREATE_ONLY 三臂（T518 §3）：argv[1] = C0 | C1 | C2 | D1（旧 D1 两臂模式保留）。
+//  C0: 空 cache（纯冷）；C1: 仅 3 compute bin；C2: 全部 6 role bin。
+//  每臂独立新进程+新输出目录；Store().Configure 在 owner 启动前完成；
+//  900s 外部 watchdog 由 run_create_only.cmd 负责（不在进程内延长）。
+//  GL 编译链 ENTER/EXIT 落盘见 gl_sink.inc；首个 ENTER 无 EXIT 即首个未返回调用。
+static int RunCreateOnly(const std::string& arm) {
+    g_arm = "create_" + arm;
+    const std::string seedSrc = ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1";
+    const std::string filesDir = ".codex/local-test/t496/" + arm + "-files";
+    std::filesystem::remove_all(filesDir);
+    std::filesystem::create_directories(filesDir + "/gpu-program-cache/v1");
+    std::string packageSource = "EMPTY_CACHE";
+    if (arm == "C1" || arm == "C2") {
+        // compute 三 key：SOURCE=1028e02a INTERMEDIATE=9062993a FINAL=545a3f5f
+        const char* computeKeys[] = {"1028e02a", "9062993a", "545a3f5f"};
+        const char* gfxKeys[] = {"834a1766", "cd57d4ab", "e3c4f777"};
+        auto copyByPrefix = [&](const char* prefix) {
+            for (auto& e : std::filesystem::directory_iterator(seedSrc)) {
+                const auto name = e.path().filename().string();
+                if (name.rfind(prefix, 0) == 0)
+                    std::filesystem::copy_file(e.path(), filesDir + "/gpu-program-cache/v1/" + name,
+                                               std::filesystem::copy_options::overwrite_existing);
+            }
+        };
+        for (auto k : computeKeys) copyByPrefix(k);
+        packageSource = "SEEDED_COMPUTE3";
+        if (arm == "C2") { for (auto k : gfxKeys) copyByPrefix(k); packageSource = "SEEDED_ALL6"; }
+    }
+    Emit("BOOT", "CREATE_ONLY_START", 0,
+         "arm=" + arm + " filesDir=" + filesDir + " packageSource=" + packageSource);
+
+    // Store.Configure 在 owner 启动前完成并验证（T518 §3.2）
+    const bool configured = programcache::Store().Configure(filesDir);
+    Emit("BOOT", "STORE_CONFIGURED", 0,
+         std::string("ok=") + (configured ? "true" : "false") +
+         " entries=" + std::to_string(programcache::Store().Count()));
+    if (!configured) { Assert("CREATE_STORE_CONFIGURED", false, "Configure failed"); return 2; }
+    Assert("CREATE_STORE_CONFIGURED", true,
+           "entries=" + std::to_string(programcache::Store().Count()));
+    programcache::packageSource = "T496_" + arm + ":" + packageSource;
+
+    // owner 启动（同 D1 路径），等 captureCommittedEpoch（资源 commit）或 900s
+    g_hostNowNs.store(1000000);
+    auto owner = std::make_unique<App>(false); auto& a = *owner;
+    a.window = reinterpret_cast<void*>(1); a.nextProgressV2 = true; a.tailProbeNext = true;
+    a.hostNow = []() { return g_hostNowNs.load(); };
+    a.progress.BeginSession();
+    a.hostHook = &D1OwnerHook; // 锁外交接 hook，owner 的 PumpBegin checkpoint 继续 emit
+    const auto startWall = std::chrono::steady_clock::now();
+    std::thread worker([&] { a.loop(); });
+    bool committed = false;
+    for (int i = 0; i < 450000; ++i) { // 900s @2ms
+        { std::lock_guard<std::mutex> lock(a.mutex);
+          if (a.captureCommittedEpoch == a.epoch && a.captureCommittedEpoch) { committed = true; break; } }
+        if (i % 15000 == 0) Emit("BOOT", "CREATE_WAIT", g_hostNowNs.load(),
+             "iter=" + std::to_string(i));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - startWall).count();
+    Emit("BOOT", committed ? "CREATE_COMMITTED" : "CREATE_TIMEOUT", g_hostNowNs.load(),
+         "wallMs=" + std::to_string(elapsedMs));
+    Assert("CREATE_RESOURCE_COMMIT_" + arm, committed,
+           "wallMs=" + std::to_string(elapsedMs) +
+           " epoch=" + std::to_string(a.captureCommittedEpoch));
+    // 有限退出：设 quit+scriptDone+permit 并 notify（修 drain 自锁/卡 owner）
+    {
+        std::lock_guard<std::mutex> lk(g_schedMu);
+        g_scriptDone = true; g_permit = true;
+        g_schedCv.notify_all();
+    }
+    { std::lock_guard<std::mutex> lock(a.mutex); a.quit = true; }
+    worker.join();
+    return committed ? 0 : 1;
+}
+
+static int RunCreateOnlyDispatch(const std::string& arm) {
+    g_runId = "t496-" + arm + "-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
+    std::filesystem::create_directories(".codex/local-test/t496");
+    std::filesystem::create_directories("test/reports/t496");
+    const std::string tag = "t496_log_" + arm + ".ndjson";
+    g_log.open(".codex/local-test/t496/" + tag, std::ios::app);
+    g_stageLog.open(".codex/local-test/t496/t496-stages_" + arm + ".ndjson", std::ios::app);
+    const int rc = RunCreateOnly(arm);
+    std::cout << "T496 CREATE_ONLY " << arm << ": rc=" << rc << std::endl;
+    return rc;
+}
+
 int main(int argc, char** argv) {
-    (void)argc;(void)argv;
+    if (argc > 1) {
+        const std::string arm = argv[1];
+        if (arm == "C0" || arm == "C1" || arm == "C2") return RunCreateOnlyDispatch(arm);
+        // 其它参数：保留旧行为入口（无参数走 D1 两臂）
+    }
     g_runId="t496-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
     std::filesystem::create_directories(".codex/local-test/t496");
     std::filesystem::create_directories("test/reports/t496");
