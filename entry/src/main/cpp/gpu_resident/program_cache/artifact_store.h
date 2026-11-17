@@ -71,6 +71,10 @@ struct Artifact {
 class ProgramArtifactStore {
   std::mutex mutex_;
   std::condition_variable wake_;
+#ifdef GRS_PROGRAM_CACHE_TEST_FAULTS
+  // T565 (problem T560 §3): event-driven space signal for the test-only drain.
+  std::condition_variable spaceCv_;
+#endif
   std::deque<std::function<void()>> jobs_;
   bool quit_ = false;
   std::thread worker_;
@@ -193,6 +197,10 @@ class ProgramArtifactStore {
           return;
         job = std::move(jobs_.front());
         jobs_.pop_front();
+#ifdef GRS_PROGRAM_CACHE_TEST_FAULTS
+        // T565: every pop frees a slot; the test drain waits on this signal.
+        spaceCv_.notify_all();
+#endif
       }
       try {
         job();
@@ -553,6 +561,45 @@ public:
     Enqueue([done] { done->set_value(); });
     f.get();
   }
+#ifdef GRS_PROGRAM_CACHE_TEST_FAULTS
+  // T565 (problem T560 §3): test-only deterministic drain. The production
+  // Enqueue/Drain semantics are unchanged (128 capacity kept); the race where
+  // Drain's own enqueue hits a still-full queue before the worker pops is
+  // closed by waiting for space and inserting the fence under the SAME store
+  // mutex — no size-then-unlock-then-enqueue TOCTOU. The worker notifies
+  // spaceCv on every pop so the wait is event-driven, deadline-bounded (5s
+  // from the call), cancellable and never a polling sleep.
+  enum class DrainResult { DRAINED, TIMEOUT, CANCELLED, STOPPED };
+  struct DrainForTestToken { std::atomic<bool> cancelled{false}; };
+  DrainResult DrainForTest(std::chrono::steady_clock::time_point deadline,
+                           const std::atomic<bool> &cancel) {
+    bool timedOut = false;
+    {
+      std::unique_lock<std::mutex> lock(mutex_);
+      spaceCv_.wait(lock, [&] {
+        return quit_ || jobs_.size() < 128 || cancel.load() ||
+               std::chrono::steady_clock::now() >= deadline;
+      });
+      if (cancel.load())
+        return DrainResult::CANCELLED;
+      if (quit_)
+        return DrainResult::STOPPED;
+      if (jobs_.size() >= 128 || std::chrono::steady_clock::now() >= deadline)
+        return DrainResult::TIMEOUT;
+      // Queue has space with the mutex still held: the fence insertion below
+      // cannot observe a stale size.
+      auto done = std::make_shared<std::promise<void>>();
+      auto future = done->get_future();
+      jobs_.push_back([done] { done->set_value(); });
+      wake_.notify_one();
+      // Wait for the fence OUTSIDE the store mutex (the worker must be able
+      // to run); the fence covers every job submitted before this call.
+      lock.unlock();
+      timedOut = future.wait_until(deadline) == std::future_status::timeout;
+    }
+    return timedOut ? DrainResult::TIMEOUT : DrainResult::DRAINED;
+  }
+#endif
   std::string Rejection(const std::string &key) {
     std::lock_guard<std::mutex> lock(mutex_);
     auto at = rejected_.find(key);

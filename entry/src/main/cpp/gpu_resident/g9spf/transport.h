@@ -1,6 +1,7 @@
 #pragma once
 #include "completion_gate.h"
 #include "../uniform_locations.h"
+#include "stage_capability.h"
 #include <EGL/egl.h>
 #include <thread>
 namespace grs::g9spf {
@@ -25,6 +26,10 @@ class Transport {
  void Bind(const Pass&);void Common(const Input128&,const std::array<uint32_t,8>& layout,const std::array<uint32_t,8>& shader);
 public:
  Result Create(const Config&,const ControlIdentity&,const SeedFileIdentity&);
+ // T564 (problem T560 §2): COMPUTE_ONLY eligibility, queried once on the
+ // current owner context; vertex/fragment shader-storage blocks are recorded
+ // but no longer gate compute.
+ Result QueryComputeCaps(const ProfileRequirements&,StageCapabilityV2*);
  Result Begin(const Permit&,const Input128&,Check,void*);
  Result Pump();
  bool Commit(const Permit&,const Completion256&);

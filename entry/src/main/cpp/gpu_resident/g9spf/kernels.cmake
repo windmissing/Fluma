@@ -15,4 +15,4 @@ foreach(G9_PAIR "g9spf/scene.vert|kG9SceneVertex" "g9spf/scene.frag|kG9SceneFrag
  string(APPEND G9_SCENE_HEADER "static constexpr const char* ${G9_SYMBOL}=R\"G9SC(${G9_TEXT})G9SC\";\n")
 endforeach()
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/g9spf_scene.h" "${G9_SCENE_HEADER}")
-target_sources(grs_foundation PRIVATE g9spf/kernel_assets.cpp g9spf/transport.cpp g9spf/completion_gate.cpp g9spf/progress_clock_v3.cpp g9spf/planning_control.cpp g9spf/quota_snapshot_v3.cpp g9spf/quota_reader_v3.cpp g9spf/controller.cpp g9spf/controller_cold.cpp g9spf/cold_capture.cpp g9spf/scene.cpp)
+target_sources(grs_foundation PRIVATE g9spf/kernel_assets.cpp g9spf/transport.cpp g9spf/completion_gate.cpp g9spf/progress_clock_v3.cpp g9spf/planning_control.cpp g9spf/quota_snapshot_v3.cpp g9spf/quota_reader_v3.cpp g9spf/controller.cpp g9spf/controller_cold.cpp g9spf/cold_capture.cpp g9spf/scene.cpp g9spf/stage_capability.cpp)

@@ -7,15 +7,45 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
+#include <sys/stat.h>
 namespace grs::resource538 {
+// T565 (problem T560 §4): RESOURCE_LAB_FILES_V2 bounds.
+inline constexpr size_t kLabFilesMax=32;inline constexpr size_t kLabFileBytesMax=2*1024*1024;inline constexpr uint64_t kLabFilesTotalMax=64*1024*1024;
+inline constexpr size_t kLabChunkBytes=4096;inline constexpr size_t kLabReplyBytesMax=8192;inline constexpr size_t kLabIndexPerPage=8;
+inline constexpr uint64_t kLabExportTtlNs=60ull*1000000000ull;
 // Only this separate module defines cache faults. No production App is linked.
 class Lab {
  struct Row {std::array<char,256> raw{};};static_assert(sizeof(Row)==256);
  std::mutex mutex;std::condition_variable cv;std::thread worker;bool cancelled=false,released=false,running=false;
  uint64_t serial=0,job=0;size_t count=0,dropped=0;std::array<Row,256> records{};
  cold503::TraceManager trace;cold503::Scope scope{};resource501::Ledger ledger;std::string directory;
+ // T565 (problem T560 §4): private-domain paged file export state. Single
+ // reader, no builder, fixed TTL, fixed catalog (32 x 256B), fixed chunk.
+ static constexpr size_t kSavedNameMax=96;
+ struct SavedFileEntry{char name[kSavedNameMax+1]{};uint64_t device=0,inode=0,size=0,mtime=0;std::array<uint8_t,32> sha{};};
+ static_assert(sizeof(SavedFileEntry)<=256,"catalog entry bound");
+ struct ExportState{bool active=false;uint64_t job=0,exportId=0,startedNs=0;uint32_t files=0;uint64_t totalBytes=0;};
+ ExportState export_{};
+ std::array<FILE*,kLabFilesMax> handles_{};
+ std::array<SavedFileEntry,kLabFilesMax> savedFiles_{};uint32_t savedCount_=0;
  void Log(const char* stage,const char* result,uint64_t a=0,uint64_t b=0){std::lock_guard<std::mutex> lock(mutex);if(count==records.size()){++dropped;return;}auto& r=records[count++];cold503::Writer w(r.raw.data(),r.raw.size());w.Raw("{\"stage\":");w.String(stage,std::min<size_t>(48,std::strlen(stage)));w.Raw(",\"result\":");w.String(result,std::min<size_t>(64,std::strlen(result)));w.Raw(",\"ns\":");w.U64(BridgeTimeline::Now());w.Raw(",\"a\":");w.U64(a);w.Raw(",\"b\":");w.U64(b);w.Raw("}");if(!w.Good()||w.Size()>=r.raw.size()){std::strcpy(r.raw.data(),"{\"state\":\"INCOMPLETE_RECORD\"}");++dropped;}else r.raw[w.Size()]=0;}
- void SaveBytes(const char* name,const char* bytes,size_t size){if(size>cold503::DiagnosticBytes){Log("FILE","UTF8_LIMIT");return;}std::filesystem::create_directories(directory);const auto path=std::filesystem::path(directory)/name;FILE* f=std::fopen(path.c_str(),"wb");if(!f){Log("FILE","OPEN_FAILED",errno);return;}const auto wrote=std::fwrite(bytes,1,size,f);const bool ok=std::fflush(f)==0&&fsync(fileno(f))==0;const auto closed=std::fclose(f);Log("FILE",name,wrote,ok&&!closed&&wrote==size);p011gpu::Sha256 hash;hash.update(bytes,size);const auto digest=hash.finish();Log("FILE_SHA256",programcache::Hex(digest.data(),digest.size()).c_str());}
+ void SaveBytes(const char* name,const char* bytes,size_t size){
+   if(size>cold503::DiagnosticBytes){Log("FILE","UTF8_LIMIT");return;}std::filesystem::create_directories(directory);const auto path=std::filesystem::path(directory)/name;
+   // T565 (problem T560 §4): allowlist entry — only files whose complete
+   // write+sync+close succeeded become export candidates, with stat identity.
+   struct stat identity{};bool persisted=false;
+   FILE* f=std::fopen(path.c_str(),"wb");if(!f){Log("FILE","OPEN_FAILED",errno);return;}
+   const auto wrote=std::fwrite(bytes,1,size,f);const bool ok=std::fflush(f)==0&&fsync(fileno(f))==0;const auto closed=std::fclose(f);
+   persisted=ok&&!closed&&wrote==size;
+   Log("FILE",name,wrote,persisted);p011gpu::Sha256 hash;hash.update(bytes,size);const auto digest=hash.finish();
+   Log("FILE_SHA256",programcache::Hex(digest.data(),digest.size()).c_str());
+   if(persisted&&stat(path.c_str(),&identity)==0&&savedCount_<kLabFilesMax){
+    auto& entry=savedFiles_[savedCount_++];const auto n=std::strlen(name);
+    if(n<=kSavedNameMax){std::memcpy(entry.name,name,n);entry.name[n]=0;}else{std::memcpy(entry.name,name,kSavedNameMax);entry.name[kSavedNameMax]=0;}
+    entry.device=identity.st_dev;entry.inode=identity.st_ino;entry.size=identity.st_size;entry.mtime=identity.st_mtime;
+    std::memcpy(entry.sha.data(),digest.data(),digest.size());
+   }
+ }
  void Storage(programcache::ProgramArtifactStore& store,const char* name){const auto raw=store.Diagnostics502();SaveBytes(name,raw.data(),raw.size());}
  bool Stop(){std::lock_guard<std::mutex> lock(mutex);return cancelled;}
  void Wait(){std::unique_lock<std::mutex> lock(mutex);cv.wait(lock,[&]{return cancelled||released;});}
@@ -96,7 +126,113 @@ public:
  }
  void Cancel(){std::lock_guard<std::mutex> lock(mutex);cancelled=true;released=true;cv.notify_all();}
  void Release(){std::lock_guard<std::mutex> lock(mutex);released=true;cv.notify_all();}
- std::string Poll(uint64_t id){std::array<char,131072> bytes{};cold503::Writer w(bytes.data(),bytes.size());std::lock_guard<std::mutex> lock(mutex);w.Raw("{\"revision\":\"T531_RESOURCE_LAB_RECORD_V1\",\"evidenceOrigin\":\"FIXTURE_SYNTHETIC\",\"physicsValidated\":false,\"currentGranted\":false,\"deviceGLMeasured\":false,\"jobId\":");w.U64(job);w.Raw(",\"state\":");w.Raw(id!=job?"\"STALE_JOB\"":running?"\"RUNNING\"":"\"FINISHED\"");w.Raw(",\"scope\":");cold503::ScopeJson(w,scope);w.Raw(",\"sessionDirectory\":");w.String(directory.data(),directory.size());w.Raw(",\"knownHostPayloadLimit\":58993832,\"excluded\":\"helper fixed objects; cache pins 128MiB; worker stacks; allocator\",\"dropped\":");w.Number(dropped);w.Raw(",\"records\":[");for(size_t i=0;i<count;++i){if(i)w.Raw(",");w.Raw(records[i].raw.data());}w.Raw("]}");return w.Good()?std::string(w.Data(),w.Size()):"{\"state\":\"INCOMPLETE\"}";}
+ std::string Poll(uint64_t id){std::array<char,131072> bytes{};cold503::Writer w(bytes.data(),bytes.size());std::lock_guard<std::mutex> lock(mutex);w.Raw("{\"revision\":\"T531_RESOURCE_LAB_RECORD_V2\",\"evidenceOrigin\":\"FIXTURE_SYNTHETIC\",\"physicsValidated\":false,\"currentGranted\":false,\"deviceGLMeasured\":false,\"jobId\":");w.U64(job);w.Raw(",\"state\":");w.Raw(id!=job?"\"STALE_JOB\"":running?"\"RUNNING\"":"\"FINISHED\"");
+  // T565 (problem T560 §3): outcome is a separate axis from lifecycle; a
+  // FINISHED without an outcome is exactly what V1 readers must treat by
+  // falling back to records. firstFailure keeps the first FAIL stage.
+  if(id==job&&!running){const char* outcome="INCOMPLETE";bool sawEnd=false,sawFail=false;const char* failStage="";
+   for(size_t i=0;i<count;++i){const char* r=records[i].raw.data();if(!sawFail&&std::strstr(r,"\"stage\":\"FAIL\"")){sawFail=true;const auto* at=std::strstr(r,"\"result\":\"");if(at)failStage=at+9;}
+    if(std::strstr(r,"\"stage\":\"END\""))sawEnd=true;}
+   if(cancelled)outcome="CANCELLED";else if(sawFail)outcome="CASE_FAILED";else if(sawEnd)outcome="COMPLETED_FIXTURE";
+   w.Raw(",\"outcome\":");w.String(outcome,std::strlen(outcome));
+   if(sawFail&&*failStage&&*failStage!='\\'){char bounded[72]{};size_t n=0;while(failStage[n]&&failStage[n]!='}'&&failStage[n]!='"'&&n<sizeof(bounded)-1){bounded[n]=failStage[n];++n;}w.Raw(",\"firstFailure\":{\"stage\":\"FAIL\",\"result\":");w.String(bounded,n);w.Raw("}");}
+  }
+  w.Raw(",\"scope\":");cold503::ScopeJson(w,scope);w.Raw(",\"sessionDirectory\":");w.String(directory.data(),directory.size());w.Raw(",\"knownHostPayloadLimit\":58993832,\"excluded\":\"helper fixed objects; cache pins 128MiB; worker stacks; allocator\",\"dropped\":");w.Number(dropped);w.Raw(",\"records\":[");for(size_t i=0;i<count;++i){if(i)w.Raw(",");w.Raw(records[i].raw.data());}w.Raw("]}");return w.Good()?std::string(w.Data(),w.Size()):"{\"state\":\"INCOMPLETE\"}";}
  bool Matches(uint64_t id){std::lock_guard<std::mutex> lock(mutex);return id!=0&&id==job;}
+ // T565 (problem T560 §4): same-process private-domain paged export of the
+ // job's own SaveBytes allowlist. Single reader, fixed 60s TTL (no renew),
+ // openat-style pinned root via the session directory (no caller paths, no
+ // '..', no symlinks), stat identity checked before and after each read.
+ std::string FilesBeginV2(uint64_t jobId){
+  std::lock_guard<std::mutex> lock(mutex);
+  cold503::Writer w=LabReply();
+  const auto now=BridgeTimeline::Now();
+  if(export_.active&&now-export_.startedNs<kLabExportTtlNs){w.Raw("{\"state\":\"LAB_EXPORT_BUSY\"}");return Finish(w);}
+  if(export_.active){CloseHandlesLocked();}
+  if(!jobId||jobId!=job){w.Raw("{\"state\":\"STALE_JOB\"}");return Finish(w);}
+  if(running){w.Raw("{\"state\":\"LAB_JOB_RUNNING\"}");return Finish(w);}
+  if(savedCount_==0){w.Raw("{\"state\":\"NO_FILES\"}");return Finish(w);}
+  uint64_t total=0;for(uint32_t i=0;i<savedCount_;++i){
+   const auto& entry=savedFiles_[i];
+   if(entry.size>kLabFileBytesMax||total+entry.size>kLabFilesTotalMax){w.Raw("{\"state\":\"EXPORT_LIMIT\"}");return Finish(w);}
+   total+=entry.size;
+   const auto path=std::filesystem::path(directory)/entry.name;
+   struct stat identity{};if(stat(path.c_str(),&identity)!=0||identity.st_dev!=entry.device||identity.st_ino!=entry.inode||identity.st_size!=entry.size){w.Raw("{\"state\":\"FILE_CHANGED\"}");return Finish(w);}
+   FILE* f=std::fopen(path.c_str(),"rb");if(!f){w.Raw("{\"state\":\"FILE_OPEN_FAILED\"}");return Finish(w);}
+   handles_[i]=f;
+  }
+  export_={true,job,++serial,now,savedCount_,total};
+  w.Raw("{\"revision\":\"RESOURCE_LAB_FILES_V2\",\"state\":\"OK\",\"jobId\":");w.U64(job);
+  w.Raw(",\"exportId\":");w.U64(export_.exportId);w.Raw(",\"expiresAtMonotonicNs\":");w.U64(now+kLabExportTtlNs);
+  w.Raw(",\"fileCount\":");w.Number(savedCount_);w.Raw(",\"totalBytes\":");w.Number(total);w.Raw("}");
+  return Finish(w);
+ }
+ std::string FilesIndexV2(uint64_t exportId,uint32_t page){
+  std::lock_guard<std::mutex> lock(mutex);
+  cold503::Writer w=LabReply();
+  if(!export_.active||exportId!=export_.exportId){w.Raw("{\"state\":\"STALE_EXPORT\"}");return Finish(w);}
+  if(BridgeTimeline::Now()-export_.startedNs>=kLabExportTtlNs){CloseHandlesLocked();export_.active=false;w.Raw("{\"state\":\"EXPIRED\"}");return Finish(w);}
+  if(savedCount_==0||page*kLabIndexPerPage>=savedCount_){w.Raw("{\"state\":\"INVALID_PAGE\"}");return Finish(w);}
+  w.Raw("{\"revision\":\"RESOURCE_LAB_FILES_V2\",\"state\":\"OK\",\"exportId\":");w.U64(exportId);
+  w.Raw(",\"page\":");w.Number(page);w.Raw(",\"entries\":[");
+  const uint32_t first=page*kLabIndexPerPage,last=std::min<uint32_t>(first+kLabIndexPerPage,savedCount_);
+  for(uint32_t i=first;i<last;++i){const auto& e=savedFiles_[i];
+   if(i>first)w.Raw(",");
+   w.Raw("{\"fileId\":");w.Number(i);w.Raw(",\"name\":");w.String(e.name,std::strlen(e.name));
+   w.Raw(",\"bytes\":");w.Number(e.size);w.Raw(",\"sha256\":");w.Hex(e.sha.data(),e.sha.size());w.Raw("}");}
+  w.Raw("],\"done\":");w.Raw(last>=savedCount_?"true":"false");w.Raw("}");
+  return Finish(w);
+ }
+ std::string FilePageV2(uint64_t exportId,uint32_t fileId,uint64_t offset){
+  std::lock_guard<std::mutex> lock(mutex);
+  cold503::Writer w=LabReply();
+  if(!export_.active||exportId!=export_.exportId){w.Raw("{\"state\":\"STALE_EXPORT\"}");return Finish(w);}
+  if(BridgeTimeline::Now()-export_.startedNs>=kLabExportTtlNs){CloseHandlesLocked();export_.active=false;w.Raw("{\"state\":\"EXPIRED\"}");return Finish(w);}
+  if(fileId>=savedCount_||!handles_[fileId]){w.Raw("{\"state\":\"INVALID_FILE\"}");return Finish(w);}
+  const auto& entry=savedFiles_[fileId];FILE* f=handles_[fileId];
+  if(offset%kLabChunkBytes!=0||offset>=entry.size){w.Raw("{\"state\":\"INVALID_OFFSET\"}");return Finish(w);}
+  const auto path=std::filesystem::path(directory)/entry.name;struct stat identity{};
+  if(stat(path.c_str(),&identity)!=0||identity.st_dev!=entry.device||identity.st_ino!=entry.inode||identity.st_size!=entry.size){w.Raw("{\"state\":\"FILE_CHANGED\"}");return Finish(w);}
+  const uint32_t n=uint32_t(std::min<uint64_t>(kLabChunkBytes,entry.size-offset));
+  std::array<char,kLabChunkBytes> chunk{};
+  if(std::fseek(f,offset,SEEK_SET)!=0){w.Raw("{\"state\":\"INCOMPLETE\"}");return Finish(w);}
+  const auto read=std::fread(chunk.data(),1,n,f);
+  if(read!=n){w.Raw("{\"state\":\"INCOMPLETE\"}");return Finish(w);}
+  p011gpu::Sha256 sha;sha.update(chunk.data(),n);const auto digest=sha.finish();
+  static_assert((kLabChunkBytes+2)/3*4+1024<=16384,"base64+json bound");
+  std::array<char,(kLabChunkBytes+2)/3*4+16> base64{};
+  const auto encoded=LabBase64(chunk.data(),n,base64.data(),base64.size());
+  w.Raw("{\"revision\":\"RESOURCE_LAB_FILES_V2\",\"state\":\"OK\",\"exportId\":");w.U64(exportId);
+  w.Raw(",\"fileId\":");w.Number(fileId);w.Raw(",\"offset\":");w.Number(offset);w.Raw(",\"nBytes\":");w.Number(n);
+  w.Raw(",\"totalBytes\":");w.Number(entry.size);w.Raw(",\"eof\":");w.Raw(offset+n>=entry.size?"true":"false");
+  w.Raw(",\"chunkSHA256\":");w.Hex(digest.data(),digest.size());w.Raw(",\"base64\":");
+  w.Append(base64.data(),encoded);w.Raw("}");
+  return Finish(w);
+ }
+ std::string FilesEndV2(uint64_t exportId){
+  std::lock_guard<std::mutex> lock(mutex);
+  cold503::Writer w=LabReply();
+  const bool active=export_.active&&exportId==export_.exportId;
+  if(active)CloseHandlesLocked();
+  export_.active=false;
+  w.Raw("{\"revision\":\"RESOURCE_LAB_FILES_V2\",\"state\":\"OK\",\"exportId\":");w.U64(exportId);
+  w.Raw(",\"released\":");w.Raw(active?"true":"false");w.Raw("}");
+  return Finish(w);
+ }
+private:
+ // T565: standard base64 (RFC 4648, with padding) for the 4096B chunk; the
+ // caller-provided buffer must hold (n+2)/3*4 bytes.
+ static size_t LabBase64(const char* data,size_t n,char* out,size_t capacity){
+  if((n+2)/3*4>capacity)return 0;static const char* table="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  size_t at=0,w=0;while(n-at>=3){const uint32_t v=(uint8_t(data[at])<<16)|(uint8_t(data[at+1])<<8)|uint8_t(data[at+2]);
+   out[w++]=table[(v>>18)&63];out[w++]=table[(v>>12)&63];out[w++]=table[(v>>6)&63];out[w++]=table[v&63];at+=3;}
+  if(n-at==1){const uint32_t v=uint8_t(data[at])<<16;out[w++]=table[(v>>18)&63];out[w++]=table[(v>>12)&63];out[w++]='=';out[w++]='=';}
+  else if(n-at==2){const uint32_t v=(uint8_t(data[at])<<16)|(uint8_t(data[at+1])<<8);out[w++]=table[(v>>18)&63];out[w++]=table[(v>>12)&63];out[w++]=table[(v>>6)&63];out[w++]='=';}
+  return w;
+ }
+ void CloseHandlesLocked(){for(auto& f:handles_){if(f){std::fclose(f);f=nullptr;}}}
+ cold503::Writer LabReply(){return cold503::Writer(replyBytes_.data(),sizeof(replyBytes_));}
+ std::string Finish(cold503::Writer& w){if(!w.Good()||w.Size()>=sizeof(replyBytes_))return "{\"state\":\"INCOMPLETE\"}";return std::string(w.Data(),w.Size());}
+ std::array<char,16384> replyBytes_{};
 };
 }

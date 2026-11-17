@@ -3,7 +3,6 @@
 // previous inline implementation; only ordered per-stage observation with
 // first-failure locking is added. G9 (g9spf/napi.inc) delegates here with
 // its own Route::G9 so G9 attempts are never labeled M3.
-inline bool wordsOk(const grs::words::ReadWordsResult<0>&){return false;}
 template<size_t N>bool m3Words(napi_env env,napi_callback_info info,std::array<uint32_t,N>& out){
  auto result=grs::words::ReadWords<N>(env,info,grs::words::Route::M3A,0);
  if(result.ok)out=result.words;

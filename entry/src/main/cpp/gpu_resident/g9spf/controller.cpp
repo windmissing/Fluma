@@ -13,6 +13,8 @@ ControlResult Controller::RevokeLocked(ControlResult why){
 Result Controller::ConfigureResearch(const Config& config,const ControlIdentity& id,const SeedFileIdentity& seed){
  {std::lock_guard<std::mutex> lock(mutex_);if(configured_||!config.Valid()||config.parameterSha!=ParameterHash(config))return Result::CALIBRATION_CONFIG_REQUIRED;}
  const auto result=transport_.Create(config,id,seed);if(result!=Result::OK)return result;
+ // T564 (problem T560 §2): cold compute-capability export right after a successful create; the caller layers SCENE_ATTR separately.
+ {const auto* profile=SelectProfile(config.k);grs::g9spf::ProfileRequirements need{profile?profile->stateBytes:0,profile?profile->workBytes:0,profile?profile->arenaBytes:0};StageCapabilityV2 caps{};if(transport_.QueryComputeCaps(need,&caps)==Result::OK)caps_.computeEligible=true;caps_.k=config.k;}
  std::lock_guard<std::mutex> lock(mutex_);identity_=id;config_=config;profile_=SelectProfile(config.k);clock_.identity=id;clock_.open=clock_.ready=clock_.uiFresh=clock_.gravityFresh=true;clock_.counters.session=id.pageSession;inputGate_.Configure(config,id);inputGate_.Pose(0,Now());
  const auto raw=std::string(kEngineeringSha);std::array<uint32_t,32> bytes{};for(size_t i=0;i<raw.size();++i)bytes[i/4]|=uint32_t(uint8_t(raw[i]))<<(8*(i%4));layoutSha_=HashWords(bytes.data(),16);shaderSha_=transport_.ShaderHash();configured_=true;return Result::OK;
 }

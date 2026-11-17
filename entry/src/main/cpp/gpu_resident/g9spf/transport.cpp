@@ -18,13 +18,54 @@ void Transport::I(const char* n,int32_t v){glUniform1i(program_.uniforms.Find(n)
 void Transport::P(const char* n,uint64_t v){glUniform2ui(program_.uniforms.Find(n),uint32_t(v),uint32_t(v>>32));}
 void Transport::Quad(const char* n,const uint32_t* p){glUniform4uiv(program_.uniforms.Find(n),1,p);}
 std::array<uint32_t,8> Transport::ShaderHash()const{return ParseHash(PipelineSourceHash());}
+Result Transport::QueryComputeCaps(const ProfileRequirements& need,StageCapabilityV2* out){
+ // T564 (problem T560 §2): compute-only eligibility. Called only on the cold
+ // path (owner context, create/capability export); per-frame code never
+ // queries the driver. Vertex/fragment shader-storage block counts are
+ // recorded for the SCENE_ATTR domain but do not gate compute.
+ if(!out||!Current())return Result::CONTEXT_LOST;
+ StageCapabilityV2 c{};c.context=context_;c.route=2;c.buildGeneration=identity_.context;
+ int32_t bad=0;
+ bad|=QueryCapabilityI(c,GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS,c.ssboBindings,"COMPUTE",4);
+ bad|=QueryCapabilityI(c,GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS,c.computeBlocks,"COMPUTE",4);
+ bad|=QueryCapabilityI(c,GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS,c.combinedBlocks,"COMPUTE",4);
+ bad|=QueryCapabilityI(c,GL_MAX_COMPUTE_SHARED_MEMORY_SIZE,c.sharedBytes,"COMPUTE",4096);
+ bad|=QueryCapabilityI(c,GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS,c.invocations,"COMPUTE",64);
+ {
+  GLint v[3]={0,0,0};glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE,0,&v[0]);const auto s=int32_t(glGetError());
+  c.sizeX=v[0];RecordQuery(c,GL_MAX_COMPUTE_WORK_GROUP_SIZE+0,v[0],s,64,"COMPUTE");bad|=s;
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE,1,&v[1]);const auto s1=int32_t(glGetError());
+  c.sizeY=v[1];RecordQuery(c,GL_MAX_COMPUTE_WORK_GROUP_SIZE+1,v[1],s1,1,"COMPUTE");bad|=s1;
+  glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE,2,&v[2]);const auto s2=int32_t(glGetError());
+  c.sizeZ=v[2];RecordQuery(c,GL_MAX_COMPUTE_WORK_GROUP_SIZE+2,v[2],s2,1,"COMPUTE");bad|=s2;
+ }
+ {
+  GLint v=0;glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_COUNT,&v);const auto s=int32_t(glGetError());
+  c.countX=v;RecordQuery(c,GL_MAX_COMPUTE_WORK_GROUP_COUNT,v,s,1,"COMPUTE");bad|=s;
+ }
+ {
+  GLint64 v=0;glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE,&v);const auto s=int32_t(glGetError());
+  c.maxBlockBytes=v;RecordQuery(c,GL_MAX_SHADER_STORAGE_BLOCK_SIZE,int64_t(v),s,int32_t(std::max<size_t>(need.stateBytes,std::max(need.workBytes,need.arenaBytes))),"COMPUTE");bad|=s;
+ }
+ bad|=QueryCapabilityI(c,GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS,c.vertexBlocksQueried,"SCENE_ATTR",0);
+ bad|=QueryCapabilityI(c,GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS,c.fragmentBlocksQueried,"SCENE_ATTR",0);
+ const auto gl=firstGl_;
+ *out=c;
+ if(bad||gl){out->computeFailure=bad?"UNSUPPORTED_QUERY":"PRIOR_GL_ERROR";return Result::UNSUPPORTED;}
+ if(c.ssboBindings<4||c.computeBlocks<4||c.combinedBlocks<4||c.sharedBytes<4096||c.invocations<64||c.sizeX<64||c.countX<1||c.maxBlockBytes<int64_t(std::max<size_t>(need.stateBytes,std::max(need.workBytes,need.arenaBytes)))){out->computeFailure="COMPUTE_LIMIT";return Result::UNSUPPORTED;}
+ out->computeEligible=true;return Result::OK;
+}
 Result Transport::Create(const Config& config,const ControlIdentity& id,const SeedFileIdentity& seed){
  if(ready_||busy_||!config.Valid()||config.parameterSha!=ParameterHash(config)||!id.run||!id.owner||!id.context)return Result::CALIBRATION_CONFIG_REQUIRED;
  const auto* p=SelectProfile(config.k);if(!p)return Result::UNSUPPORTED;
  context_=eglGetCurrentContext();display_=eglGetCurrentDisplay();surface_=eglGetCurrentSurface(EGL_DRAW);thread_=std::this_thread::get_id();if(!Current())return Result::CONTEXT_LOST;
  GLint bindings=0,blocks=0,shared=0,lanes=0,vertex=0,fragment=0;GLint64 maximum=0;
  glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS,&bindings);glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS,&blocks);glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE,&shared);glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS,&lanes);glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS,&vertex);glGetIntegerv(GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS,&fragment);glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE,&maximum);
- if(!Good()||bindings<4||blocks<4||shared<4096||lanes<64||vertex<1||fragment<1||maximum<=0||uint64_t(maximum)<std::max(p->arenaBytes,std::max(p->stateBytes,p->workBytes)))return Result::UNSUPPORTED;
+ // T564 (problem T560 §2): compute init gates only on compute-stage limits.
+ // Vertex/fragment shader-storage counts stay recorded (cold capability
+ // export) but no longer gate the compute pipeline; the packet vertex stage
+ // now uses integer instance attributes instead of a vertex SSBO.
+ if(!Good()||bindings<4||blocks<4||shared<4096||lanes<64||maximum<=0||uint64_t(maximum)<std::max(p->arenaBytes,std::max(p->stateBytes,p->workBytes)))return Result::UNSUPPORTED;
  GLenum error=0;if(!programcache::Build(1,PipelineSource(),PipelineSourceHash(),"G9_SPF_Q20_V1_FOUR_SSBO_INTEGER128",program_.id,error)||!programcache::Reflect(program_.uniforms,program_.id)){if(error&&!firstGl_)firstGl_=error;Release(true);return Result::SHADER_FAILED;}
  profile_=p;config_=config;identity_=id;
  glGenBuffers(GLsizei(buffers_.size()),buffers_.data());

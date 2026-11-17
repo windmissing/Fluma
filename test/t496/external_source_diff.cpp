@@ -49,6 +49,7 @@ static EGLSurface t496HostWindow(EGLDisplay d, EGLConfig cfg, EGLNativeWindowTyp
 #include "../t488/gl_wrappers.inc"
 #include <GLES3/gl3.h>
 #include "../t485/gl_exports.inc"
+#include "t561_seams.h"
 #include <fstream>
 #include <filesystem>
 #include <sstream>
@@ -211,7 +212,7 @@ static void DispatchActions(App& a, const std::vector<Act>& acts,
         std::lock_guard<std::mutex> lock(a.mutex);
         g_hostNowNs.store(stamp);  // 原子发布脚本时钟
         if (act.kind == Ak::PULSE || act.kind == Ak::TAIL_PULSE) {
-            const char* code = a.PagePulseLocked(a.progress.session, act.pulseSeq, stamp);
+            const char* code;{t561seams::Guard seam(t496sink::FN_SEAM_FIRST_PAGE_PULSE,std::string("session=")+std::to_string(a.progress.session)+" seq="+std::to_string(act.pulseSeq));code = a.PagePulseLocked(a.progress.session, act.pulseSeq, stamp);}
             Emit(std::to_string(act.id), "PULSE", stamp,
                  std::string("pulseSeq=") + std::to_string(act.pulseSeq) + " code=" + code);
         } else if (act.kind == Ak::SOURCE) {
@@ -389,9 +390,23 @@ static int RunCreateOnly(const std::string& arm) {
     const auto startWall = std::chrono::steady_clock::now();
     std::thread worker([&] { a.loop(); });
     bool committed = false;
+    uint64_t lastCaptureEpoch = 0; bool lastResourcesReady = false;
     for (int i = 0; i < 450000; ++i) { // 900s @2ms
         { std::lock_guard<std::mutex> lock(a.mutex);
-          if (a.captureCommittedEpoch == a.epoch && a.captureCommittedEpoch) { committed = true; break; } }
+          // T561 seams: observed transitions, recorded with actual values.
+          if (a.v2ResourcesReady != lastResourcesReady) {
+            lastResourcesReady = a.v2ResourcesReady;
+            t561seams::Observe(t496sink::FN_SEAM_RESOURCE_COMMIT,
+              std::string("v2ResourcesReady=") + (a.v2ResourcesReady ? "true" : "false"));
+          }
+          if (a.captureCommittedEpoch != lastCaptureEpoch) {
+            lastCaptureEpoch = a.captureCommittedEpoch;
+            t561seams::Observe(t496sink::FN_SEAM_CAPTURE_EPOCH,
+              std::string("epoch=") + std::to_string(a.captureCommittedEpoch));
+          }
+          if (a.captureCommittedEpoch == a.epoch && a.captureCommittedEpoch) { committed = true;
+            t561seams::Observe(t496sink::FN_SEAM_READY, std::string("phase=") + a.phase);
+            break; } }
         if (i % 15000 == 0) Emit("BOOT", "CREATE_WAIT", g_hostNowNs.load(),
              "iter=" + std::to_string(i));
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
@@ -400,6 +415,10 @@ static int RunCreateOnly(const std::string& arm) {
         std::chrono::steady_clock::now() - startWall).count();
     Emit("BOOT", committed ? "CREATE_COMMITTED" : "CREATE_TIMEOUT", g_hostNowNs.load(),
          "wallMs=" + std::to_string(elapsedMs));
+    t561seams::Observe(t496sink::FN_SEAM_TRANSPORT_CREATE,
+        std::string("committed=") + (committed ? "true" : "false") + " wallMs=" + std::to_string(elapsedMs));
+    t561seams::Observe(t496sink::FN_SEAM_SCENE_PREPARE,
+        std::string("phase=") + a.phase + " firstFailure=" + a.firstFailure);
     Assert("CREATE_RESOURCE_COMMIT_" + arm, committed,
            "wallMs=" + std::to_string(elapsedMs) +
            " epoch=" + std::to_string(a.captureCommittedEpoch));

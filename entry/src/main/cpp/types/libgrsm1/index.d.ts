@@ -25,4 +25,4 @@ export const configureOptics:(optics:Float32Array)=>string;
 // T550 (problem T546 §3): cold input diagnostics — route is 'M3A'|'M3B'|'G9';
 // attemptId is an optional decimal U64 string selecting this generation's
 // first-failure snapshot instead of the last attempt.
-export const gpuInputDiagnosticsV1:(route:string,attemptId?:string)=>string;
+export const gpuInputDiagnosticsV1:(route:string,attemptId:string)=>string;

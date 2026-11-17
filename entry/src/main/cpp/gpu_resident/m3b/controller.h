@@ -24,6 +24,7 @@ class ControllerV5:public SceneSourceV5 {
  std::array<PublicationTokenV5,2> drawTokens_{};
  std::array<GLsync,2> releaseFences_{};
  coldtrace::TraceManager coldTrace_;
+ bool coldBuilding_=false;
  uint64_t coldEpoch_=1;
  cold503::Scope ColdScopeLocked()const;
  static bool Authorize(void*,const RootPermitV5&,uint64_t);

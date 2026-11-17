@@ -127,7 +127,14 @@ cold503::Scope ControllerV5::ColdScopeLocked()const{
  scope.control.epoch=coldEpoch_;scope.control.run=clock_.identity.run;scope.control.context=clock_.identity.context;scope.control.surface=clock_.identity.surface;scope.control.session=clock_.identity.pageSession;scope.control.reset=clock_.identity.inputEpoch;scope.control.permission=clock_.identity.permission;
  std::strncpy(scope.route.data(),"m3b",scope.route.size()-1);std::strncpy(scope.source.data(),kDesignSha,scope.source.size()-1);return scope;
 }
-std::string ControllerV5::ColdBegin(uint64_t replace,uint64_t now){return "{\"revision\":\"T527_V5_BOUNDED_COLD_V1\",\"state\":\"PREFIX_DIGEST_POLICY_REQUIRED\"}";}
+std::string ControllerV5::ColdBegin(uint64_t replace,uint64_t now){
+ coldtrace::TraceManager::Receipt receipt;
+ {std::lock_guard<std::mutex> lock(mutex_);receipt.scope=ColdScopeLocked();cold::Layout layout;
+  if(!configured_||run_.active||run_.jobLive||transport_.Busy()||!cold::Layout::Make(*profile_,transport_.StorageAlignment(),layout,false))receipt.result="WOULD_BLOCK";
+  else{receipt.result=coldTrace_.Begin(receipt.scope,receipt.scope,now,replace,layout.words,receipt.request,receipt.id,layout.words-256);if(std::strcmp(receipt.result,"REQUESTED")==0)coldBuilding_=true;}
+ }
+ std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt);return std::string(w.Data(),w.Size());
+}
 std::string ControllerV5::ColdCapabilities()const{
  std::array<char,2048> bytes{};cold::Writer writer(bytes.data(),bytes.size());
  {std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!cold::Capabilities(writer,*profile_,transport_.StorageAlignment(),transport_.FullBranchMode()))return "{\"state\":\"UNSUPPORTED_M3_COLD\"}";}
@@ -138,11 +145,42 @@ std::string ControllerV5::SourceStats()const{
  std::array<char,512> bytes{};cold::Writer w(bytes.data(),bytes.size());
  w.Raw("{\"revision\":\"GRS_M3_SOURCE_PRODUCER_V5\",\"offered\":");w.U64(stats.offered);w.Raw(",\"enqueued\":");w.U64(stats.enqueued);w.Raw(",\"backpressured\":");w.U64(stats.backpressured);w.Raw(",\"replayed\":");w.U64(stats.replayed);w.Raw(",\"rejected\":");w.U64(stats.rejected);w.Raw("}");return std::string(w.Data(),w.Size());
 }
-std::string ControllerV5::ColdState(uint64_t request,uint64_t now){return "{\"revision\":\"T527_V5_BOUNDED_COLD_V1\",\"state\":\"PREFIX_DIGEST_POLICY_REQUIRED\"}";}
-std::string ControllerV5::ColdPage(uint64_t trace,uint32_t page,uint64_t now){return "{\"revision\":\"T527_V5_BOUNDED_COLD_V1\",\"state\":\"PREFIX_DIGEST_POLICY_REQUIRED\"}";}
-std::string ControllerV5::ColdEnd(uint64_t trace,uint64_t now){return "{\"revision\":\"T527_V5_BOUNDED_COLD_V1\",\"state\":\"PREFIX_DIGEST_POLICY_REQUIRED\"}";}
-void ControllerV5::BuildCold(uint64_t now){// No allocation, GL capture or invented digest while the canonical input is unresolved.
- (void)now;}
+std::string ControllerV5::ColdState(uint64_t request,uint64_t now){
+ coldtrace::TraceManager::Receipt receipt;{std::lock_guard<std::mutex> lock(mutex_);receipt=coldTrace_.StateOf(request,now,ColdScopeLocked());}
+ std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt);return std::string(w.Data(),w.Size());
+}
+std::string ControllerV5::ColdPage(uint64_t trace,uint32_t page,uint64_t now){
+ coldtrace::TraceManager::Read read;const char* result;
+ {std::lock_guard<std::mutex> lock(mutex_);result=coldTrace_.Acquire(trace,page,now,ColdScopeLocked(),read);}
+ if(std::strcmp(result,"OK"))return std::string("{\"state\":\"")+result+"\"}";
+ struct ReleaseRead {ControllerV5* self;coldtrace::TraceManager::Read read;uint64_t now;bool active=true;~ReleaseRead(){if(active){std::lock_guard<std::mutex> lock(self->mutex_);self->coldTrace_.Release(read,now,self->ColdScopeLocked());}}} release{this,read,now};
+ std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::TracePage(w,read,page);
+ {std::lock_guard<std::mutex> lock(mutex_);result=coldTrace_.Release(read,now,ColdScopeLocked());release.active=false;}
+ if(!w.Good()||std::strcmp(result,"TRACE_READY"))return "{\"state\":\"INCOMPLETE_SCOPE_CHANGED\"}";
+ return std::string(w.Data(),w.Size());
+}
+std::string ControllerV5::ColdEnd(uint64_t trace,uint64_t now){
+ std::lock_guard<std::mutex> lock(mutex_);const auto result=coldTrace_.End(trace,now,ColdScopeLocked());return std::string("{\"revision\":\"T527_V5_BOUNDED_COLD_V1\",\"state\":\"")+result+"\"}";
+}
+void ControllerV5::BuildCold(uint64_t now){
+ int slot;size_t words=0;bool full=false;
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Maintain(now,ColdScopeLocked());slot=coldTrace_.Start();if(slot<0){if(coldTrace_.builder<0)coldBuilding_=false;return;}
+  words=coldTrace_.slots[slot].requestWords;auto detached=coldTrace_.TakeOld(slot);detached.reset();coldTrace_.OldFreed(slot);
+  full=transport_.FullBranchMode();}
+ // FULL-plan capture is not implemented in this slice (T552 FULL wire, five
+ // BASE/SOURCE_CONTEXT anchors and multi-root aggregation pending); refuse
+ // honestly instead of inventing segments.
+ if(full){std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,"V5_FULL_CAPTURE_NOT_IMPLEMENTED",0,0,0,0,"");coldBuilding_=false;return;}
+ std::unique_ptr<uint32_t[]> allocated;
+ {std::lock_guard<std::mutex> lock(mutex_);words=coldTrace_.slots[slot].reserved;}
+ if(words)allocated.reset(new(std::nothrow)uint32_t[words]);
+ uint32_t* storage=nullptr;uint64_t request=0;
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(allocated));auto& s=coldTrace_.slots[slot];storage=s.block.get();words=s.capacity;request=s.request;}
+ size_t stateWords=0,eventWords=0;QuotaSnapshotV3 quota=Quota(now);
+ const bool copied=storage&&transport_.CaptureColdV5(storage,words,quota,stateWords,eventWords);
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":"V5_CAPTURE_FAILED",stateWords,eventWords,transport_.FirstGlError(),uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE");coldBuilding_=false;}
+}
+
 ControllerV5::RootDiagnostic ControllerV5::DiagnosticOwnerThread()const{std::lock_guard<std::mutex> lock(mutex_);return {active_,transport_.Tail(),transport_.Evidence(),clock_.fault};}
 
 InputResult ControllerV5::OfferLiftInput(const LiftInput64& raw,uint64_t receipt){

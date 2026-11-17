@@ -9,7 +9,7 @@
 namespace grs::g9spf {
 class Controller {
  mutable std::mutex mutex_;
- Transport transport_;Config config_;const Profile* profile_=nullptr;ControlIdentity identity_{};
+ StageCapabilityV2 caps_{};Transport transport_;Config config_;const Profile* profile_=nullptr;ControlIdentity identity_{};
  ProgressClockV3 clock_;RunControl run_;PlanningControl planning_{clock_,run_};InputGate inputGate_;
  struct Queued {Input128 input{};SourceIntentKey key{};uint64_t intent=0;};
  Input128 consumedSource_{},consumedImpulse_{};bool hasConsumedSource_=false,hasConsumedImpulse_=false;
@@ -34,6 +34,10 @@ public:
  Result Stop();bool Drain();void Release(bool current);
  struct SceneView {bool valid=false,stale=false;GLuint buffer=0;uint64_t generation=0;ControlIdentity identity{};uint32_t k=0;};
  SceneView AcquireScene();bool ReleaseScene(uint64_t,GLsync);bool PollSceneFence();
+ // T564: the packet draw reads profile.state[6] for the packet64 byte start.
+ const Profile* TransportProfile()const{return profile_;}
+ // T564: cold capability record for this controller (compute + scene domains).
+ const StageCapabilityV2& Caps()const{return caps_;}
  bool CanPresent(uint64_t,uint64_t now)const;
  Completion256 LastCompletion()const;
  std::string ColdCapabilities()const;

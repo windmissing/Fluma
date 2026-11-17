@@ -28,7 +28,7 @@ target_link_libraries(grs_resource_lab PRIVATE grs_foundation libace_napi.z.so l
 ''';p.write_text(s,encoding='utf8')
  types=cpp/'types/libgrs_resource_lab';types.mkdir(parents=True,exist_ok=True)
  (types/'oh-package.json5').write_text(json.dumps({'name':'libgrs_resource_lab.so','types':'./index.d.ts','version':'1.0.0'}))
- (types/'index.d.ts').write_text('export const resourceLabStartV1:(caseId:string,filesDir:string)=>string;\n'+''.join('export const '+n+':(jobId:string)=>string;\n' for n in ['resourceLabPollV1','resourceLabReleaseBarrierV1','resourceLabCancelV1','resourceLabExportV1']))
+ (types/'index.d.ts').write_text('export const resourceLabStartV1:(caseId:string,filesDir:string)=>string;\n'+''.join('export const '+n+':(jobId:string)=>string;\n' for n in ['resourceLabPollV1','resourceLabReleaseBarrierV1','resourceLabCancelV1','resourceLabExportV1'])+'export const resourceLabFilesBeginV2:(jobId:string)=>string;\nexport const resourceLabFilesIndexV2:(exportId:string,page:number)=>string;\nexport const resourceLabFilePageV2:(exportId:string,fileId:string,offset:string)=>string;\nexport const resourceLabFilesEndV2:(exportId:string)=>string;\n')
  p=out/'entry/oh-package.json5';s=json.loads(p.read_text(encoding='utf8'));s.setdefault('dependencies',{})['libgrs_resource_lab.so']='file:./src/main/cpp/types/libgrs_resource_lab';p.write_text(json.dumps(s,indent=2))
  for p in (cpp/'types').rglob('index.d.ts'):
   if p.parent.name=='libgrsm1':p.write_text(p.read_text()+'\nexport const resourceSampleBeginV1:(label:string,expectedScope:string)=>string;\nexport const resourceSampleEndV1:(sampleId:string)=>string;\n')

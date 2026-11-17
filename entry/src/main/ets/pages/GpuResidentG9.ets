@@ -10,9 +10,9 @@ interface G9Session { revision?: string; identity?: number[]; }
 // bounded length, caught JSON.parse, non-null non-array object root, exact
 // revision match. LEGACY_NON_JSON_REPLY surfaces old bare-token replies as a
 // controlled failure instead of crashing on JSON.parse.
-interface NativeObjectResult { ok: boolean; object: Record<string, Object> | null; error: string; }
+interface NativeObjectResult { ok: boolean; words: number[] | null; revision: string | null; error: string; }
 function parseNativeObject(raw: string, api: string, allowedRevisions: string[]): NativeObjectResult {
-  const fail = (error: string): NativeObjectResult => ({ ok: false, object: null, error: error });
+  const fail = (error: string): NativeObjectResult => ({ ok: false, words: null, revision: null, error: error });
   if (typeof raw !== 'string' || raw.length === 0 || raw.length > 65536) return fail('NATIVE_REPLY_NOT_STRING');
   let parsed: Object;
   try { parsed = JSON.parse(raw); } catch (e) { return fail('LEGACY_NON_JSON_REPLY'); }
@@ -26,11 +26,17 @@ function parseNativeObject(raw: string, api: string, allowedRevisions: string[])
   const revision = record['revision'];
   if (typeof revision !== 'string' || allowedRevisions.indexOf(revision) < 0) return fail('REVISION_MISMATCH');
   if (api === 'g9ResearchConfig') {
-    const words = record['words'];
+    const words: Object | undefined = record['words'];
     if (!Array.isArray(words) || words.length !== 24) return fail('CONFIG_WORDS_INVALID');
-    for (const w of words) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) return fail('CONFIG_WORDS_INVALID');
+    const checked: number[] = [];
+    for (let i = 0; i < words.length; i++) {
+      const w: Object = words[i];
+      if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) return fail('CONFIG_WORDS_INVALID');
+      checked.push(w);
+    }
+    return { ok: true, words: checked, revision: revision, error: '' };
   }
-  return { ok: true, object: record, error: '' };
+  return { ok: true, words: null, revision: revision, error: '' };
 }
 class G9Frame extends FrameCallback {
   owner: GpuResidentG9 | null = null;
@@ -75,9 +81,9 @@ struct GpuResidentG9 {
       try { native.setActive(true); } catch (cleanup) { if (firstError === '') firstError = 'SET_ACTIVE_FAILED ' + String(cleanup); }
       const configResult = parseNativeObject(native.g9ResearchConfig(new Uint32Array([k, full ? 1 : 0])), 'g9ResearchConfig', ['T529_EXPLICIT_RESEARCH_CANDIDATE_1']);
       if (!configResult.ok) { this.message = 'G9_CONFIG_FAULT：' + configResult.error + (firstError === '' ? '' : '；清理：' + firstError); return; }
-      const config = configResult.object as unknown as G9Config;
-      if (config.words?.length !== 24) { this.message = 'CALIBRATION_CONFIG_REQUIRED'; return; }
-      const reply = native.g9Configure(new Uint32Array(config.words));
+      const configWords: number[] | null = configResult.words;
+      if (configWords === null || configWords.length !== 24) { this.message = 'CALIBRATION_CONFIG_REQUIRED'; return; }
+      const reply: string = native.g9Configure(new Uint32Array(configWords));
       if (reply !== 'G9_NEW_EMPTY_RESEARCH_RUN_REQUESTED') {
         this.message = 'G9_CONFIG_FAULT：' + reply + (reply.indexOf('G9') === 0 ? '（可读诊断：native.gpuInputDiagnosticsV1(\'G9\')）' : '');
         return;
@@ -101,10 +107,15 @@ struct GpuResidentG9 {
       if (this.identity.length !== 18) {
         const sessionResult = parseNativeObject(native.g9Session(), 'g9Session', ['G9_SPF_Q20_V1']);
         if (!sessionResult.ok) throw new Error('G9_SESSION_' + sessionResult.error);
-        const session = sessionResult.object as unknown as G9Session;
-        if (session.revision === 'G9_SPF_Q20_V1' && session.identity?.length === 18) {
-          for (const w of session.identity) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) throw new Error('G9_SESSION_IDENTITY_WORD_INVALID');
-          this.identity = session.identity;
+        const identityWords: Object | undefined = (JSON.parse(native.g9Session()) as Record<string, Object>)['identity'];
+        if (Array.isArray(identityWords) && identityWords.length === 18) {
+          const checked: number[] = [];
+          for (let i = 0; i < identityWords.length; i++) {
+            const w: Object = identityWords[i];
+            if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) throw new Error('G9_SESSION_IDENTITY_WORD_INVALID');
+            checked.push(w);
+          }
+          this.identity = checked;
         }
       }
       if (this.identity.length === 18) {

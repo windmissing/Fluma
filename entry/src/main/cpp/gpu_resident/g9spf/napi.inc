@@ -1,6 +1,6 @@
 // T550 (problem T546 §2): g9Words delegates over the shared strict decode
 // contract with its own Route::G9 — G9 attempts are never labeled M3.
-template<size_t N>bool g9Words(napi_env e,napi_callback_info info,std::array<uint32_t,N>& out){
+template<size_t N>bool g9Words(napi_env env,napi_callback_info info,std::array<uint32_t,N>& out){
  auto result=grs::words::ReadWords<N>(env,info,grs::words::Route::G9,0);
  if(result.ok)out=result.words;
  return result.ok;

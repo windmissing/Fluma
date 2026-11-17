@@ -54,13 +54,16 @@ struct GpuResidentM5 {
       const parsed = m5ParseNativeObject(native.m5ResearchConfig(new Uint32Array([mode, 0])), 0);
       if (parsed.error === 'REVISION_MISMATCH' || !parsed.ok && parsed.error === 'NATIVE_REPLY_NOT_OBJECT') {
         // T517_EXPLICIT_RESEARCH_CANDIDATE_1 carries a string revision; re-check.
-        const raw = native.m5ResearchConfig(new Uint32Array([mode, 0]));
+        const raw: string = native.m5ResearchConfig(new Uint32Array([mode, 0]));
         if (typeof raw === 'string' && raw.indexOf('"T517_EXPLICIT_RESEARCH_CANDIDATE_1"') >= 0 && raw.indexOf('"words"') >= 0) {
           let words: Object | undefined;
           try { words = (JSON.parse(raw) as Record<string, Object>)['words']; } catch (e) { words = undefined; }
           if (Array.isArray(words)) {
-            for (const w of words) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; }
-            this.config = words as number[]; this.mode = mode;
+            const list: Object[] = words;
+            for (let i = 0; i < list.length; i++) { const w: Object = list[i]; if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; } }
+            const numbers: number[] = [];
+            for (let i = 0; i < list.length; i++) numbers.push(list[i] as number);
+            this.config = numbers; this.mode = mode;
             native.setActive(true);
             const reply: string = native.m5Configure(new Uint32Array(this.config));
             this.message = reply;
@@ -73,10 +76,14 @@ struct GpuResidentM5 {
         this.message = '研究参数不可用（' + parsed.error + '）'; return;
       }
       if (!parsed.ok) { this.message = 'M5_CONFIG_FAULT：' + parsed.error; return; }
-      const words = parsed.object!['words'];
+      const obj: Record<string, Object> = parsed.object as Record<string, Object>;
+      const words: Object | undefined = obj['words'];
       if (!Array.isArray(words) || words.length !== 32) { this.message = '研究参数不可用'; return; }
-      for (const w of words) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; }
-      this.config = words as number[]; this.mode = mode;
+      const wordsList: Object[] = words;
+      for (let i = 0; i < wordsList.length; i++) { const w: Object = wordsList[i]; if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; } }
+      const numbers2: number[] = [];
+      for (let i = 0; i < wordsList.length; i++) numbers2.push(wordsList[i] as number);
+      this.config = numbers2; this.mode = mode;
       native.setActive(true);
       const reply: string = native.m5Configure(new Uint32Array(this.config));
       this.message = reply;
