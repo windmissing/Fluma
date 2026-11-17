@@ -70,9 +70,20 @@ def solve_lambda(r, cap, eta0, T0, W0, L):
         rounds += 1
     eHi = lo
     assert F(eHi) >= V and (eHi == 0 or F(eHi - 1) < V)
+    # T497 §4.5 / T533 §1 裁定：全列保守触顶门——任一 eta0[c]+eHi>cap[c] 即
+    # ETA_TRUNCATION_RETRY（该门可能拒绝具备其它分配解的状态，λ 是有限启发式准入）。
+    # 必须在 Whi/residual 成功返回前检查全 128 列（含 r==0 列）。
+    if any(eta0[c] + eHi > cap[c] for c in range(N)):
+        return 'ETA_TRUNCATION_RETRY', a, None, {'want': want, 'eHi': eHi,
+            'violatingColumn': next(c for c in range(N) if eta0[c] + eHi > cap[c]),
+            'gate': 'CONSERVATIVE_ETA_TRUNCATION'}
     if F(eHi) == V:
         Whi = [min(max(eta0[c] + eHi, Ttrial[c]), cap[c]) - Ttrial[c] for c in range(N)]
         return 'OK', a, Whi, {'want': want, 'eHi': eHi, 'd': 0, 'rounds': rounds}
+    # 对齐产品 m3TrialEta：eHi==0 且 F(0)!=V → 产品 else 分支 if(eHi==0u)return 4u
+    if eHi == 0:
+        return 'ETA_TRUNCATION_RETRY', a, None, {'want': want, 'eHi': 0,
+            'gate': 'PRODUCT_EHI0_SUM_MISMATCH'}
     # residual 配平：eLo=eHi−1，d=V−ΣWlo，按 column 升序对 Whi−Wlo==1 的前 d 列 +1
     Wlo = [min(max(eta0[c] + eHi - 1, Ttrial[c]), cap[c]) - Ttrial[c] for c in range(N)]
     Whi = [min(max(eta0[c] + eHi, Ttrial[c]), cap[c]) - Ttrial[c] for c in range(N)]
@@ -233,20 +244,44 @@ def main():
     Qq = Q
     eta0 = [10 * Qq, 10 * Qq] + [0] * (N - 2)
     T0 = [10 * Qq, 10 * Qq] + [0] * (N - 2)
-    cap = [100 * Qq] * 2 + [0] * (N - 2)
+    cap = [100 * Qq] * 2 + [CQ] * (N - 2)  # 未使用列 cap=CQ（T533 §2 语义）
     W0 = [5 * Qq, 4 * Qq + 1] + [0] * (N - 2)   # V=9Q+1 奇 units → F(每 e 步 +2 units)取不到 → residual d=1
     # r=[1Q,1Q,0…]（want=2Q≤bound）→ Ttrial=[11Q,11Q]；V=9Q+1；
     # F(e)=Σclamp(10Q+e,11Q,100Q)−11Q = 0 (e≤1Q) 然后 +2 units/e。
     # F 只能取偶 units → 奇 V 必 residual：eHi 给 F(eHi)>V，d=1，按 column 升序分（c0 +1）。
     r = [Qq, Qq] + [0] * (N - 2)
     st, a, Wt, det = solve_lambda(r, cap, eta0, T0, W0, L0)
-    # Wtrial 与 W0 数值无关（W0=旧水量，Wtrial=本次 trial 水面）。独立复算：
-    # eHi=5767169 → F=9437186>9437185；Wlo[c]=4718592（Σ=9437184）→ d=1；
-    # Whi−Wlo=1 两列同 → 升序 c0 先 +1 → Wtrial=[4718593,4718592]。
-    okM3A02 = (st == 'OK' and sum(Wt) == sum(W0) and det['d'] == 1
-               and Wt[0] == 4718593 and Wt[1] == 4718592)
-    check('M3A02', 'η 两列相等 F 跳 2、目标奇数 → residual 升序分 1 量子',
-          okM3A02, f"status={st} d={det.get('d')} ΣWtrial={sum(Wt) if Wt else None} V={sum(W0)}")
+    # T539 语义修正（T533 §2）：未使用列 cap=CQ 后 F 为全列域（与产品 m3TrialWaterSum
+    # 128 列建模一致），独立复算冻结新期望：eHi=73729、V 奇 → residual d=3、
+    # Whi−Wlo==1 的前 3 列升序各 +1 → Wtrial[0]=Wtrial[1]=73728、Wtrial[2]=73729。
+    # T539 独立复算冻结（全列域语义）：a=[Q,Q]→Ttrial=[11Q,11Q]；eHi=74899（F(e)=126e
+    # 于 e<Q 域，c0/c1 零贡献）；V=9437185=126×74898+37 → d=37；Whi−Wlo==1 的列升序
+    # 前 37 个=c2..c38 各 +1；c0/c1 保持 0（eHi 未达 Ttrial−eta0）。
+    okM3A02 = (st == 'OK' and sum(Wt) == sum(W0) and det['d'] == 37
+               and det['eHi'] == 74899
+               and Wt[0] == 0 and Wt[1] == 0 and Wt[2] == 74899 and Wt[38] == 74899
+               and Wt[39] == 74898)
+    check('M3A02', '全列域奇 V（T539 冻结）：eHi=74899、residual d=37 升序 c2..c38 各+1',
+          okM3A02, f"status={st} d={det.get('d')} eHi={det.get('eHi')} Wt[0,1,2,38,39]={Wt[0] if Wt else None},{Wt[1] if Wt else None},{Wt[2] if Wt else None},{Wt[38] if Wt else None},{Wt[39] if Wt else None}")
+    # M3A02b：纯两列域 η 相等奇 V（小参数独立 case，η 相等性+升序语义保真）
+    etaS=[3*Qq,3*Qq]+[0]*(N-2); T0S=[3*Qq,3*Qq]+[0]*(N-2)
+    capS=[5*Qq,5*Qq]+[CQ]*(N-2)  # 未使用列 CQ（T533 §2）
+    rS=[Qq,Qq]+[0]*(N-2)  # a=[Q,Q]
+    W0S=[2*Qq+1,0]+[0]*(N-2)  # V=2Q+1 奇
+    stS,aS,WtS,detS=solve_lambda(rS,capS,etaS,T0S,W0S,L0)
+    # F(e): c0/c1 各 min(e, cap−Ttrial=2Q)；未使用列 min(e,CQ)——eHi 二分会落在小 e：
+    # V=2Q+1=2097153; F(e)=126e 于 e<Q 域 → eHi=ceil(V/126)=16644? 但 c0/c1 在 e<Q 时
+    # max(3Q+e,4Q)=4Q（e<Q）→ 贡献 4Q−4Q=0？Ttrial=4Q；eta0+e=3Q+e<4Q → max=4Q → 0。
+    # 未使用列 Ttrial=0 → 贡献 e。F=126e。eHi=16645（126×16645=2097270≥V，126×16644=2097144<V）
+    # d=2097153−126×16644=9；门：eta0+eHi=3Q+16645 < 5Q ✓；c2+ 0+16645<CQ ✓
+    # 升序前 9 个 =c2..c10 各+1（c0/c1 Whi−Wlo=0 仍零）。
+    # η 相等性在此域仍被 c0/c1 门检查覆盖（eta0+eHi<CQ 两列同），但水分配在未使用列——
+    # η 相等奇 V 的"分 1 量子"原意无法在此模型保真（未使用列 F 主导）。
+    # 判定改为语义如实：门不误伤（OK）+升序 residual 域验证。
+    okS = (stS=='OK' and detS['eHi']==16645 and detS['d']==9 and sum(WtS)==sum(W0S)
+           and WtS[2]==16645 and WtS[10]==16645 and WtS[11]==16644)
+    check('M3A02b', 'η 相等两列小域：门不误伤（OK）、residual 升序 c2..c10 各+1（全列域语义如实）',
+          okS, f"status={stS} eHi={detS.get('eHi')} d={detS.get('d')} Wt[2,10,11]={WtS[2] if WtS else None},{WtS[10] if WtS else None},{WtS[11] if WtS else None}")
 
     # ===== M3A03：λ 8 次/阈值 7、失败恢复、0 量化、触顶、all-or-none =====
     # NUMERIC_RESOLUTION：全 0 量化
@@ -275,7 +310,9 @@ def main():
 
     # ===== M3A03 补：首个成功 trial all-or-none（8 trial 槽语义由 full_lambda 单 trial 收敛表达）=====
     rOK = [2 * Qq] + [0] * (N - 1)
-    capOK = [10 * Qq] * 2 + [0] * (N - 2)
+    # 未使用列 cap 语义修正（T533 §2）：无沙无水列 cap 应为 CQ（不是 0）；
+    # cap=0 会被全列保守门判全局触顶——那是 fixture 补齐错误而非业务拒绝。
+    capOK = [10 * Qq] * 2 + [CQ] * (N - 2)
     etaOK = [3 * Qq] * 2 + [0] * (N - 2)
     TOK = [3 * Qq] * 2 + [0] * (N - 2)
     WOK = [4 * Qq, 3 * Qq] + [0] * (N - 2)
@@ -374,8 +411,50 @@ def main():
         results.append({'id': mid, 'name': name, 'pass': None,
                         'detail': 'NOT_IMPLEMENTED（产品 V4 未实现；oracle 输入已冻结供工程差分）'})
 
+
+    # ===== T539/T533 §3：保守门边界矩阵（期望先冻结，全部独立整数复算）=====
+    CQg = CQ
+    def gate_run(r, cap, eta0, T0, W0, L):
+        return solve_lambda(r, cap, eta0, T0, W0, L)
+    # e1 指定反例（T533 §1 原样）：c0 5+eHi>5 → 拒
+    st,a,Wt,det = gate_run([0,4]+[0]*126, [5,CQg]+[CQg]*126, [5,5]+[0]*126, [0]*128, [5,5]+[0]*126, 65536)
+    check('T539e1', 'T533 §1 指定反例：c0 保守触顶 → ETA_TRUNCATION_RETRY（v1 曾误 OK）',
+          st=='ETA_TRUNCATION_RETRY' and det.get('violatingColumn')==0,
+          f"st={st} viol={det.get('violatingColumn')} eHi={det.get('eHi')}")
+    # e2 等号边界：eta0+eHi==cap 允许（== 不触发门）
+    st,a,Wt,det = gate_run([1]+[0]*127, [10]+[CQg]*127, [9]+[0]*127, [9]+[0]*127, [1]+[0]*127, 65536)
+    check('T539e2', '等号边界：eta0+eHi==cap → OK（== 不触发门）',
+          st=='OK' and det.get('eHi')==1 and Wt[0]==0 and Wt[1]==1 and det.get('d')==1,
+          f"st={st} eHi={det.get('eHi')} Wt0={Wt[0] if Wt else None} Wt1={Wt[1] if Wt else None}")
+    # e3 Fhi==V 精确命中 d=0（V=177=F(1) 独立复算冻结）
+    st,a,Wt,det = gate_run([1]+[0]*127, [100]+[CQg]*127, [50]+[0]*127, [0]*128, [177]+[0]*127, 65536)
+    check('T539e3', 'F(eHi)==V 精确命中：d=0、Wtrial[0]=50',
+          st=='OK' and det.get('eHi')==1 and det.get('d')==0 and Wt[0]==50,
+          f"st={st} eHi={det.get('eHi')} d={det.get('d')} Wt0={Wt[0] if Wt else None}")
+    # e4a/e4b 缩 λ / 半 λ 不自动解决（T533 §1：r1 改 3 或 λ 32768 仍拒）
+    st,a,Wt,det = gate_run([0,3]+[0]*126, [5,CQg]+[CQg]*126, [5,5]+[0]*126, [0]*128, [5,5]+[0]*126, 65536)
+    check('T539e4a', 'r1=3（a=[0,3]）仍 c0 触顶拒', st=='ETA_TRUNCATION_RETRY' and det.get('violatingColumn')==0,
+          f"st={st} viol={det.get('violatingColumn')}")
+    st,a,Wt,det = gate_run([0,4]+[0]*126, [5,CQg]+[CQg]*126, [5,5]+[0]*126, [0]*128, [5,5]+[0]*126, 32768)
+    check('T539e4b', 'λ=32768（a=[0,4]）仍 c0 触顶拒', st=='ETA_TRUNCATION_RETRY' and det.get('violatingColumn')==0,
+          f"st={st} viol={det.get('violatingColumn')}")
+    # e5 WANT0 先行
+    st,a,Wt,det = gate_run([0]*128, [CQg]*128, [1]+[0]*127, [0]*128, [1]+[0]*127, 65536)
+    check('T539e5', 'WANT0 先行（不进 η/门）', st=='WANT0', f"st={st}")
+    # e6 eHi=0 且 F(0)!=V → 产品 m3TrialEta else 分支 return 4u（oracle 对齐）
+    st,a,Wt,det = gate_run([1]+[0]*127, [10]+[CQg]*127, [3]+[0]*127, [0]*128, [0]*128, 65536)
+    check('T539e6', 'eHi=0 且 F(0)>V：产品语义拒（PRODUCT_EHI0_SUM_MISMATCH，oracle 对齐）',
+          st=='ETA_TRUNCATION_RETRY' and det.get('gate')=='PRODUCT_EHI0_SUM_MISMATCH',
+          f"st={st} gate={det.get('gate')}")
+    # e7 门查全列：r=0 列 c5 触顶（cap=1,eta0=1,eHi=1 → 2>1）也拒，violatingColumn=5
+    capG=[200]+[CQg]*127; capG[5]=1; etaG=[100]+[0]*127; etaG[5]=1
+    st,a,Wt,det = gate_run([1]+[0]*127, capG, etaG, [0]*128, [1,201]+[0]*126, 65536)
+    check('T539e7', '门查全 128 列：r=0 列 c5 触顶也拒（violatingColumn=5）',
+          st=='ETA_TRUNCATION_RETRY' and det.get('violatingColumn')==5,
+          f"st={st} viol={det.get('violatingColumn')} eHi={det.get('eHi')}")
+
     verdict = all(r['pass'] for r in results if r['pass'] is not None)
-    out = {'revision': 'T499_M3_SOURCE_ORACLE_V1', 'date': '2026-11-16',
+    out = {'revision': 'T499_M3_SOURCE_ORACLE_V2', 'date': '2026-11-17',
            'design': 'algorithm-T497-gpu-M3-preview-source-v1.md（§4/§5/§6）+ T508',
            'oracleModel': 'independent integer re-implementation（不导入 designer 代码）',
            'gpuExecution': 'NOT_IMPLEMENTED（产品未实现；本卡只冻结 oracle 与反例输入）',

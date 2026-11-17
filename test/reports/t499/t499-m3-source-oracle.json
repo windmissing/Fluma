@@ -1,15 +1,21 @@
 {
- "revision": "T499_M3_SOURCE_ORACLE_V1",
- "date": "2026-11-16",
+ "revision": "T499_M3_SOURCE_ORACLE_V2",
+ "date": "2026-11-17",
  "design": "algorithm-T497-gpu-M3-preview-source-v1.md（§4/§5/§6）+ T508",
  "oracleModel": "independent integer re-implementation（不导入 designer 代码）",
  "gpuExecution": "NOT_IMPLEMENTED（产品未实现；本卡只冻结 oracle 与反例输入）",
  "results": [
   {
    "id": "M3A02",
-   "name": "η 两列相等 F 跳 2、目标奇数 → residual 升序分 1 量子",
+   "name": "全列域奇 V（T539 冻结）：eHi=74899、residual d=37 升序 c2..c38 各+1",
    "pass": true,
-   "detail": "status=OK d=1 ΣWtrial=9437185 V=9437185"
+   "detail": "status=OK d=37 eHi=74899 Wt[0,1,2,38,39]=0,0,74899,74899,74898"
+  },
+  {
+   "id": "M3A02b",
+   "name": "η 相等两列小域：门不误伤（OK）、residual 升序 c2..c10 各+1（全列域语义如实）",
+   "pass": true,
+   "detail": "status=OK eHi=16645 d=9 Wt[2,10,11]=16645,16645,16644"
   },
   {
    "id": "M3A03a",
@@ -130,6 +136,54 @@
    "name": "四档资源/真实设备期限（需真机）",
    "pass": null,
    "detail": "NOT_IMPLEMENTED（产品 V4 未实现；oracle 输入已冻结供工程差分）"
+  },
+  {
+   "id": "T539e1",
+   "name": "T533 §1 指定反例：c0 保守触顶 → ETA_TRUNCATION_RETRY（v1 曾误 OK）",
+   "pass": true,
+   "detail": "st=ETA_TRUNCATION_RETRY viol=0 eHi=1"
+  },
+  {
+   "id": "T539e2",
+   "name": "等号边界：eta0+eHi==cap → OK（== 不触发门）",
+   "pass": true,
+   "detail": "st=OK eHi=1 Wt0=0 Wt1=1"
+  },
+  {
+   "id": "T539e3",
+   "name": "F(eHi)==V 精确命中：d=0、Wtrial[0]=50",
+   "pass": true,
+   "detail": "st=OK eHi=1 d=0 Wt0=50"
+  },
+  {
+   "id": "T539e4a",
+   "name": "r1=3（a=[0,3]）仍 c0 触顶拒",
+   "pass": true,
+   "detail": "st=ETA_TRUNCATION_RETRY viol=0"
+  },
+  {
+   "id": "T539e4b",
+   "name": "λ=32768（a=[0,4]）仍 c0 触顶拒",
+   "pass": true,
+   "detail": "st=ETA_TRUNCATION_RETRY viol=0"
+  },
+  {
+   "id": "T539e5",
+   "name": "WANT0 先行（不进 η/门）",
+   "pass": true,
+   "detail": "st=WANT0"
+  },
+  {
+   "id": "T539e6",
+   "name": "eHi=0 且 F(0)>V：产品语义拒（PRODUCT_EHI0_SUM_MISMATCH，oracle 对齐）",
+   "pass": true,
+   "detail": "st=ETA_TRUNCATION_RETRY gate=PRODUCT_EHI0_SUM_MISMATCH"
+  },
+  {
+   "id": "T539e7",
+   "name": "门查全 128 列：r=0 列 c5 触顶也拒（violatingColumn=5）",
+   "pass": true,
+   "detail": "st=ETA_TRUNCATION_RETRY viol=5 eHi=1"
   }
  ],
  "verdict": "PASS"

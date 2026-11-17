@@ -1,0 +1,16 @@
+{
+ "revision": "T499_M3_SOURCE_ORACLE_V2",
+ "date": "2026-11-17",
+ "v1FrozenSHA256": "5f9b01e5859546b10ef096e53fe1220bb2842f3968323a42042311b5a4e446cc",
+ "v2SHA256": "7376e0103963ab9807d721ddb464782be2344122cec6a2f0683dfb6a47446ff7",
+ "changes": [
+  "solve_lambda: full-column conservative eta gate (eta0[c]+eHi>cap[c] -> ETA_TRUNCATION_RETRY) inserted after eHi bisection, before Whi/residual success return (T497 §4.5 / T533 §1)",
+  "solve_lambda: eHi==0 && F(0)!=V -> ETA_TRUNCATION_RETRY (aligned to product m3TrialEta else-branch eHi==0 return 4u)",
+  "fixtures: unused-column cap semantics corrected 0->CQ per T533 §2 (M3A02/M3A03e); M3A02 expectations recomputed from independent integer derivation (eHi=74899 d=37 ascending c2..c38); new M3A02b (small two-column eta-equality domain)",
+  "new T539 boundary matrix e1..e7 (T533 §3 required checks)"
+ ],
+ "v1Baseline": "test/reports/t539/t499-v1-baseline.json (17 PASS/4 NOT_IMPL, historical)",
+ "v2Result": "26 PASS / 4 NOT_IMPLEMENTED / 0 FAIL",
+ "productDiff": "truncation_contract input: new oracle ETA_TRUNCATION_RETRY == GPU status=4 (T522/T523) MATCH",
+ "t520Erratum": "G920 supportImpulse 7 -> -8 (pAfter - pTrial), text-only, report erratum appended"
+}

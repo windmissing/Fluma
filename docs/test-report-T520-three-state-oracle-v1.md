@@ -66,3 +66,14 @@
 - **oracle/输入冻结**：PASS（45 项；1 处初版值类型错误（JSON 字符串数字）修正）
 - **产品 V5 GPU 执行**：NOT_IMPLEMENTED（真实 run 域；模型/契约与 GPU 运行分列）
 - **工程 wire 依赖**：T524 工程闭包（architect 在途）——语义基线不依赖
+
+
+---
+
+## 勘误（2026-11-17，T539 卡面要求：G920 supportImpulse 文字核）
+
+G920_WEAK_IMPULSE 报告正文原写 "p′=0、supportImpulse=7 入环境账"——**7 是误值**（Bd=7
+的动摩擦参数被误当反冲量）。按 T515 §5.8 正式式：入口 REST 且 |pTrial|≤Bs → p′=0
+（静摩擦分支，不经 Bd）；"差额进入床/容器反冲" = p′−pTrial = **0−8 = −8**（环境账收 −8）。
+oracle 数值断言（pAfter=0、modeAfter=REST）不受影响——错误仅在报告文字，fixture/oracle
+无改动。原件（本报告勘误前版本）留存于 git 历史（commit 4e2647f）。

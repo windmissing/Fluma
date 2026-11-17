@@ -1,0 +1,136 @@
+{
+ "revision": "T499_M3_SOURCE_ORACLE_V1",
+ "date": "2026-11-16",
+ "design": "algorithm-T497-gpu-M3-preview-source-v1.md（§4/§5/§6）+ T508",
+ "oracleModel": "independent integer re-implementation（不导入 designer 代码）",
+ "gpuExecution": "NOT_IMPLEMENTED（产品未实现；本卡只冻结 oracle 与反例输入）",
+ "results": [
+  {
+   "id": "M3A02",
+   "name": "η 两列相等 F 跳 2、目标奇数 → residual 升序分 1 量子",
+   "pass": true,
+   "detail": "status=OK d=1 ΣWtrial=9437185 V=9437185"
+  },
+  {
+   "id": "M3A03a",
+   "name": "非0原请求全量化为0 → NUMERIC_RESOLUTION（want=0 即停）",
+   "pass": true,
+   "detail": "status=NUMERIC_RESOLUTION"
+  },
+  {
+   "id": "M3A03b",
+   "name": "want>bound 且 Lnext<LMIN → CAPACITY_BLOCKED delta=0",
+   "pass": true,
+   "detail": "status=CAPACITY_BLOCKED attempts=1"
+  },
+  {
+   "id": "M3A03c",
+   "name": "触顶保守门（eta0+eHi>cap 任一列）→ ETA_TRUNCATION_RETRY 不可准入",
+   "pass": true,
+   "detail": "status=CAPACITY_BLOCKED（F(CQ)=0<V）"
+  },
+  {
+   "id": "M3A03d",
+   "name": "λ 严格下降（无原值不变重试）且 ≤8 attempt",
+   "pass": true,
+   "detail": "L 序列=[65536]"
+  },
+  {
+   "id": "M3A03e",
+   "name": "首次 attempt 成功即停（attemptCount=1，无多余重试）",
+   "pass": true,
+   "detail": "status=ACCEPTED attempt=0 L=65536"
+  },
+  {
+   "id": "M3A08a",
+   "name": "rate0（alphaQ=0）→ waterBudget=0 零转移",
+   "pass": true,
+   "detail": "transfers=0 budget0=0"
+  },
+  {
+   "id": "M3A08b",
+   "name": "offset=0 目标均分（V 守恒、两列各 5Q、donor 先转）",
+   "pass": true,
+   "detail": "transfers=[{'donor': 0, 'receiver': 1, 'q': 3145728}] final=[5242880, 5242880]"
+  },
+  {
+   "id": "M3A08c",
+   "name": "signed offset（u 奇）RNE tie 取偶",
+   "pass": true,
+   "detail": "offset[c0]=66584512 期望 66584512（tie 取偶）"
+  },
+  {
+   "id": "T508e1",
+   "name": "active4 全清 → blockedDiscardedActive=4 不填 accepted/overload",
+   "pass": true,
+   "detail": "{'blockedDiscardedActive': 4, 'blockedDiscardedPending': 0, 'blockedClearedCarry': 0, 'accepted': 0, 'overload': 0}"
+  },
+  {
+   "id": "T508e2",
+   "name": "active2+pending2+carry3 → 分账清 carry 余数",
+   "pass": true,
+   "detail": "{'blockedDiscardedActive': 2, 'blockedDiscardedPending': 2, 'blockedClearedCarry': 3, 'accepted': 0, 'overload': 0}"
+  },
+  {
+   "id": "T508e3",
+   "name": "arm 后首 pulse 整间隔计等待（fresh 归 blockedDiscardedWait）",
+   "pass": true,
+   "detail": "{'generated': 600, 'blockedDiscardedWait': 600, 'carry': 0}"
+  },
+  {
+   "id": "M3A05a",
+   "name": "REQUESTED own 可行 → 直接 selected REQUESTED",
+   "pass": true,
+   "detail": "REQUESTED j=50"
+  },
+  {
+   "id": "M3A05b",
+   "name": "REQUESTED 不可行→CLAMPED own 可行 → selected CLAMPED",
+   "pass": true,
+   "detail": "CLAMPED j=(7630,) trace=2"
+  },
+  {
+   "id": "M3A05c",
+   "name": "REQUESTED/CLAMPED 均不可行→OLD own 可行 → selected OLD/HELD",
+   "pass": true,
+   "detail": "OLD j=0"
+  },
+  {
+   "id": "M3A05d",
+   "name": "全不可行 → PLANNING_BLOCKED 零 commit 留 base",
+   "pass": true,
+   "detail": "PLANNING_BLOCKED"
+  },
+  {
+   "id": "M3A05e",
+   "name": "preexisting S0@j0 非法 → fatal PREEXISTING_INFEASIBLE",
+   "pass": true,
+   "detail": "FATAL_PREEXISTING_INFEASIBLE"
+  },
+  {
+   "id": "M3A01",
+   "name": "旧F64与网格量化语义差异/拒混用（需 V4 reader 实现）",
+   "pass": null,
+   "detail": "NOT_IMPLEMENTED（产品 V4 未实现；oracle 输入已冻结供工程差分）"
+  },
+  {
+   "id": "M3A04",
+   "name": "seed 顺序/同origin新生合并退役/连续ID（需 SOURCE_TRIAL GPU）",
+   "pass": null,
+   "detail": "NOT_IMPLEMENTED（产品 V4 未实现；oracle 输入已冻结供工程差分）"
+  },
+  {
+   "id": "M3A09",
+   "name": "source接受→quantum1成功→quantum2失败保前缀（需 V4 root）",
+   "pass": null,
+   "detail": "NOT_IMPLEMENTED（产品 V4 未实现；oracle 输入已冻结供工程差分）"
+  },
+  {
+   "id": "M3A10",
+   "name": "四档资源/真实设备期限（需真机）",
+   "pass": null,
+   "detail": "NOT_IMPLEMENTED（产品 V4 未实现；oracle 输入已冻结供工程差分）"
+  }
+ ],
+ "verdict": "PASS"
+}
