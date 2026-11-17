@@ -1,0 +1,154 @@
+{
+  "schema": "T560_SOURCE_AND_FINITE_AUDIT_V1",
+  "rawReceipts": [
+    {
+      "path": "test/reports/t541/g9d-execution-k192.jsonl",
+      "bytes": 225,
+      "sha256": "456efd31fe22db92886feb27c8304e534188f65bed11deecdcb1cc83e8b8c891"
+    },
+    {
+      "path": "test/reports/t541/glver-out.txt",
+      "bytes": 109,
+      "sha256": "e147da71df9e53c5548113f25f35b4652ee51bfab24b51548af523e6da5d4624"
+    },
+    {
+      "path": "test/reports/t541/glext-out.txt",
+      "bytes": 3880,
+      "sha256": "b1705c62c2f63010cab13300d5158af40dde3147d7933695e6ec9306662d05c0"
+    },
+    {
+      "path": "test/reports/t491/t519v2/lab-cache-fault.json",
+      "bytes": 2347,
+      "sha256": "c088556634196acf7a40a84b51605f7965375ead81c2b8d03141a4a7a538c34d"
+    }
+  ],
+  "sourceReceipts": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/packet.vert",
+      "bytes": 681,
+      "sha256": "b80aebd3971eb49d0813deab8a6afc0f77f9d5488bb2feb71ae47d2e9dded87b"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/scene.vert",
+      "bytes": 151,
+      "sha256": "86cbf1b6124112ff42e817ace151a5425206b7f149e7d3ebc4b8bf3a45f2e108"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/scene.frag",
+      "bytes": 930,
+      "sha256": "d123f70a02f57a40a147c8f1f649d02e825c2b009779339af1f125a1e453e225"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/resource_lab/lab.h",
+      "bytes": 18258,
+      "sha256": "679c0a025f98635a1a5f0898b4139008941467b2f3b9f9a0585234d9f6ce60e4"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+      "bytes": 22003,
+      "sha256": "294245dda2ea1fbca05162182c324dc433b256307fc0ae0495f9413ec3171784"
+    }
+  ],
+  "qualificationMatrix": [
+    {
+      "vertex": 0,
+      "compute": 0,
+      "fragment": 0,
+      "computeEligible": false,
+      "sceneEligible": false,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 0,
+      "compute": 0,
+      "fragment": 1,
+      "computeEligible": false,
+      "sceneEligible": true,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 0,
+      "compute": 4,
+      "fragment": 0,
+      "computeEligible": true,
+      "sceneEligible": false,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 0,
+      "compute": 4,
+      "fragment": 1,
+      "computeEligible": true,
+      "sceneEligible": true,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 1,
+      "compute": 0,
+      "fragment": 0,
+      "computeEligible": false,
+      "sceneEligible": false,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 1,
+      "compute": 0,
+      "fragment": 1,
+      "computeEligible": false,
+      "sceneEligible": true,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 1,
+      "compute": 4,
+      "fragment": 0,
+      "computeEligible": true,
+      "sceneEligible": false,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    },
+    {
+      "vertex": 1,
+      "compute": 4,
+      "fragment": 1,
+      "computeEligible": true,
+      "sceneEligible": true,
+      "note": "other numeric and actual gates assumed satisfied; independent layers"
+    }
+  ],
+  "queueInterleavings": [
+    {
+      "afterReleaseBeforeDrain": "no worker pop",
+      "queueSize": 128,
+      "legacyDrain": "CACHE_QUEUE_FULL"
+    },
+    {
+      "afterReleaseBeforeDrain": "worker pops >=1",
+      "queueSizeMax": 127,
+      "legacyDrain": "can enqueue"
+    }
+  ],
+  "actualFileAndSHARecordPairs": [
+    [
+      "cache-enospc.json",
+      "722a0ffec40251e69fe205dd8da075c4602b92d5445d5e084152a030e90f1d56"
+    ],
+    [
+      "cache-temp-remove.json",
+      "1c2199a3bcc3ffc2d5c76e103c4ff57f21f58a2a106416a34fd4c1180cc0858f"
+    ],
+    [
+      "cache-recovered.json",
+      "9af4738f5f132d7bce1ca18beb95bfc6ed5b49b638df681f994d9aaaae9f030f"
+    ],
+    [
+      "cache-scan-failed.json",
+      "ee799144751200f00937ff82ebaf125c4175094d0693cb361d7ba38a722fabb1"
+    ]
+  ],
+  "result": "FINITE_ENGINEERING_CHECKS_PASS_NOT_PRODUCT_PASS",
+  "deviceExecuted": false,
+  "GPUCapabilityMeasuredThisTask": false,
+  "fullPredicateProbeStdoutAvailable": false,
+  "stackAtSecondQueueThrowAvailable": false,
+  "labOutcome": "HISTORICAL_FAIL_PRESERVED"
+}

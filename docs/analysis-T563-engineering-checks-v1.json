@@ -1,0 +1,82 @@
+{
+  "schema": "T563_FINITE_ENGINEERING_AUDIT_V1",
+  "result": "FINITE_ENGINEERING_CHECKS_PASS_NOT_PRODUCT_PASS",
+  "inputs": [
+    {
+      "path": "docs/algorithm-G11-surface-lateral-rendering-v1.md",
+      "bytes": 20989,
+      "sha256": "e6c634595f1ac5b368bd2bc6f3903b86728d3dbe3b1cd195d2c11df3906edabf"
+    },
+    {
+      "path": "docs/design-T557-T558-fixtures-v1.json",
+      "bytes": 7748,
+      "sha256": "2a035fe1abfe3bcbb46fad3bc9d12a5c24a6860e82b67dc4637697b507046d8e"
+    },
+    {
+      "path": "docs/architecture-T524-g9-spf-manifest-v1.json",
+      "bytes": 408536,
+      "sha256": "0ae205834bbf0efde09768ec48551925570effbc3b4b5f2d1ad2ed467e203a82"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-dispatch-v2.json",
+      "bytes": 242873,
+      "sha256": "976ff2f73bf3190113689a73431c5aa63261330d1409be332a6b8c5efec26a44"
+    }
+  ],
+  "resourceCombinations": 8,
+  "rankPartitionMirrorCases": 52650,
+  "threeColumnGlobalBijectionCases": 7875,
+  "uniformFluxDisplacementCases": 5200,
+  "requantizationBoundCases": 8192,
+  "configWords": 64,
+  "markerWords": 32,
+  "controlBytes": 65536,
+  "maxPlanRecords": 49664,
+  "R": 65536,
+  "dispatch": [
+    {
+      "parent": "R1",
+      "SOURCE": 19,
+      "QUANTUM": 2543,
+      "G1F4": 10191,
+      "H": 258,
+      "newQuantumPasses": 519
+    },
+    {
+      "parent": "DM",
+      "SOURCE": 19,
+      "QUANTUM": 2923,
+      "G1F4": 11711,
+      "H": 258,
+      "newQuantumPasses": 519
+    }
+  ],
+  "checks": [
+    "parent pass order preserved exactly after stripping visual hooks",
+    "FLOW_BEGIN precedes origin reserve scratch reuse",
+    "no hooks in discovery/rejected prefix",
+    "root/source seal last",
+    "4 bindings every pass",
+    "all 8 resource combinations contiguous",
+    "q0 exact rank identity",
+    "rank interval partition bijection and mirror",
+    "three-column boundary/interior exact rank bijection",
+    "uniform displacement q/m including crossing",
+    "quantization <=1/(2m)",
+    "seed pair mirror",
+    "full cold/witness cost arithmetic"
+  ],
+  "limitations": [
+    "finite algebra is not independent GPU validation",
+    "no Hamilton physics recomputation or CPU physical stepper",
+    "no device/GL tests or performance claim",
+    "mirror proof assumes corresponding actual left/right shares; does not fix parent left-first tie"
+  ],
+  "deviceExecuted": false,
+  "productPASS": false
+}

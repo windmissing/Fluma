@@ -1,0 +1,1642 @@
+{
+  "schema": "T563_G11_VIS_ENGINEERING_V1",
+  "date": "2026-11-17",
+  "status": "ENGINEERING_READY_NOT_IMPLEMENTED_NOT_VALIDATED",
+  "notUsingDevice": true,
+  "defaultOFF": true,
+  "CPUPhysicsAdded": false,
+  "goal10": "PAUSED",
+  "inputs": [
+    {
+      "path": "docs/algorithm-G11-surface-lateral-rendering-v1.md",
+      "bytes": 20989,
+      "sha256": "e6c634595f1ac5b368bd2bc6f3903b86728d3dbe3b1cd195d2c11df3906edabf"
+    },
+    {
+      "path": "docs/design-T557-T558-fixtures-v1.json",
+      "bytes": 7748,
+      "sha256": "2a035fe1abfe3bcbb46fad3bc9d12a5c24a6860e82b67dc4637697b507046d8e"
+    },
+    {
+      "path": "docs/architecture-T524-g9-spf-manifest-v1.json",
+      "bytes": 408536,
+      "sha256": "0ae205834bbf0efde09768ec48551925570effbc3b4b5f2d1ad2ed467e203a82"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-dispatch-v2.json",
+      "bytes": 242873,
+      "sha256": "976ff2f73bf3190113689a73431c5aa63261330d1409be332a6b8c5efec26a44"
+    }
+  ],
+  "profiles": [
+    {
+      "profile": "G11_VIS_G9_R1_V1",
+      "code": 1378955591,
+      "parent": "G9_SPF_Q20_V1"
+    },
+    {
+      "profile": "G11_VIS_G9_DM_V2_V1",
+      "code": 1144074567,
+      "parent": "G9_SPF_DM_Q20_V2"
+    }
+  ],
+  "identity": {
+    "parentPhysicsStateInputParameters": "unchanged exact parent bytes and identities",
+    "new": [
+      "compositeProfile",
+      "pipelineSHA",
+      "layoutSHA",
+      "shaderSHA",
+      "visualConfigSHA",
+      "visualSeedRecipeSHA",
+      "readerSchema",
+      "visualGeneration"
+    ],
+    "SHA": "SHA256 of exact little-endian u32 bytes; digest stored as 8 LE u32 words",
+    "actualVisualSeedSHA": "only after GPU initialization and raw cold retrieval",
+    "permit": "parent scope + composite/config/pipeline + physical/visual base generations"
+  },
+  "visualSeedRecipe": {
+    "path": "docs/architecture-T563-visual-recipe-v1.json",
+    "bytes": 867,
+    "sha256": "995f898d9e0583046298e5689af0dc32e80c9b0033832aef479af81a8852cfca"
+  },
+  "configHashBindings": {
+    "recipeSHA": "exact bytes in visualSeedRecipe receipt",
+    "designSHA": "exact algorithm-G11 md input receipt",
+    "parentParameterSHA": "exact already-selected parent parameter block; no new approval",
+    "configSHA": "exact 256 bytes little-endian VisualConfig64; hash external, reserved zero"
+  },
+  "visualConfig64": [
+    {
+      "word": 0,
+      "name": "magic"
+    },
+    {
+      "word": 1,
+      "name": "revision"
+    },
+    {
+      "word": 2,
+      "name": "compositeProfile"
+    },
+    {
+      "word": 3,
+      "name": "parentProfile"
+    },
+    {
+      "word": 4,
+      "name": "K"
+    },
+    {
+      "word": 5,
+      "name": "V"
+    },
+    {
+      "word": 6,
+      "name": "markerWords"
+    },
+    {
+      "word": 7,
+      "name": "glyphWords"
+    },
+    {
+      "word": 8,
+      "name": "R"
+    },
+    {
+      "word": 9,
+      "name": "blendTicks"
+    },
+    {
+      "word": 10,
+      "name": "depthQ20"
+    },
+    {
+      "word": 11,
+      "name": "diameterQ20"
+    },
+    {
+      "word": 12,
+      "name": "speedNumerator"
+    },
+    {
+      "word": 13,
+      "name": "speedDenominator"
+    },
+    {
+      "word": 14,
+      "name": "minimumSpeedQ20"
+    },
+    {
+      "word": 15,
+      "name": "samplingPolicy"
+    },
+    {
+      "word": 16,
+      "name": "descriptorRevision"
+    },
+    {
+      "word": 17,
+      "name": "markerRevision"
+    },
+    {
+      "word": 18,
+      "name": "glyphRevision"
+    },
+    {
+      "word": 19,
+      "name": "readerRevision"
+    },
+    {
+      "word": 20,
+      "name": "parentParameterSHA0"
+    },
+    {
+      "word": 21,
+      "name": "parentParameterSHA1"
+    },
+    {
+      "word": 22,
+      "name": "parentParameterSHA2"
+    },
+    {
+      "word": 23,
+      "name": "parentParameterSHA3"
+    },
+    {
+      "word": 24,
+      "name": "parentParameterSHA4"
+    },
+    {
+      "word": 25,
+      "name": "parentParameterSHA5"
+    },
+    {
+      "word": 26,
+      "name": "parentParameterSHA6"
+    },
+    {
+      "word": 27,
+      "name": "parentParameterSHA7"
+    },
+    {
+      "word": 28,
+      "name": "designSHA0"
+    },
+    {
+      "word": 29,
+      "name": "designSHA1"
+    },
+    {
+      "word": 30,
+      "name": "designSHA2"
+    },
+    {
+      "word": 31,
+      "name": "designSHA3"
+    },
+    {
+      "word": 32,
+      "name": "designSHA4"
+    },
+    {
+      "word": 33,
+      "name": "designSHA5"
+    },
+    {
+      "word": 34,
+      "name": "designSHA6"
+    },
+    {
+      "word": 35,
+      "name": "designSHA7"
+    },
+    {
+      "word": 36,
+      "name": "recipeSHA0"
+    },
+    {
+      "word": 37,
+      "name": "recipeSHA1"
+    },
+    {
+      "word": 38,
+      "name": "recipeSHA2"
+    },
+    {
+      "word": 39,
+      "name": "recipeSHA3"
+    },
+    {
+      "word": 40,
+      "name": "recipeSHA4"
+    },
+    {
+      "word": 41,
+      "name": "recipeSHA5"
+    },
+    {
+      "word": 42,
+      "name": "recipeSHA6"
+    },
+    {
+      "word": 43,
+      "name": "recipeSHA7"
+    },
+    {
+      "word": 44,
+      "name": "reserved0"
+    },
+    {
+      "word": 45,
+      "name": "reserved1"
+    },
+    {
+      "word": 46,
+      "name": "reserved2"
+    },
+    {
+      "word": 47,
+      "name": "reserved3"
+    },
+    {
+      "word": 48,
+      "name": "reserved4"
+    },
+    {
+      "word": 49,
+      "name": "reserved5"
+    },
+    {
+      "word": 50,
+      "name": "reserved6"
+    },
+    {
+      "word": 51,
+      "name": "reserved7"
+    },
+    {
+      "word": 52,
+      "name": "reserved8"
+    },
+    {
+      "word": 53,
+      "name": "reserved9"
+    },
+    {
+      "word": 54,
+      "name": "reserved10"
+    },
+    {
+      "word": 55,
+      "name": "reserved11"
+    },
+    {
+      "word": 56,
+      "name": "reserved12"
+    },
+    {
+      "word": 57,
+      "name": "reserved13"
+    },
+    {
+      "word": 58,
+      "name": "reserved14"
+    },
+    {
+      "word": 59,
+      "name": "reserved15"
+    },
+    {
+      "word": 60,
+      "name": "reserved16"
+    },
+    {
+      "word": 61,
+      "name": "reserved17"
+    },
+    {
+      "word": 62,
+      "name": "reserved18"
+    },
+    {
+      "word": 63,
+      "name": "reserved19"
+    }
+  ],
+  "configConstants": {
+    "magic": 1127297351,
+    "revision": 1,
+    "blendTicks": [
+      0,
+      256
+    ],
+    "depthQ20": 131072,
+    "diameterQ20": 32768,
+    "speedNumerator": 1,
+    "speedDenominator": 1,
+    "minimumSpeedQ20": 0,
+    "samplingPolicy": 1,
+    "markerWords": 32,
+    "glyphWords": 8,
+    "R": 65536,
+    "reserved": 0
+  },
+  "marker32": [
+    {
+      "word": 0,
+      "name": "owner"
+    },
+    {
+      "word": 1,
+      "name": "column"
+    },
+    {
+      "word": 2,
+      "name": "cohortRank"
+    },
+    {
+      "word": 3,
+      "name": "packetSlot"
+    },
+    {
+      "word": 4,
+      "name": "packetGeneration"
+    },
+    {
+      "word": 5,
+      "name": "packetId"
+    },
+    {
+      "word": 6,
+      "name": "originLo"
+    },
+    {
+      "word": 7,
+      "name": "originHi"
+    },
+    {
+      "word": 8,
+      "name": "sourceId"
+    },
+    {
+      "word": 9,
+      "name": "rank"
+    },
+    {
+      "word": 10,
+      "name": "massSnapshot"
+    },
+    {
+      "word": 11,
+      "name": "parkedXiNumerator"
+    },
+    {
+      "word": 12,
+      "name": "parkedXiDenominator"
+    },
+    {
+      "word": 13,
+      "name": "oldXQ24"
+    },
+    {
+      "word": 14,
+      "name": "oldYQ23"
+    },
+    {
+      "word": 15,
+      "name": "newXQ24"
+    },
+    {
+      "word": 16,
+      "name": "newYQ23"
+    },
+    {
+      "word": 17,
+      "name": "phaseStartTickLo"
+    },
+    {
+      "word": 18,
+      "name": "phaseStartTickHi"
+    },
+    {
+      "word": 19,
+      "name": "phaseSpanTicks"
+    },
+    {
+      "word": 20,
+      "name": "visualIdLo"
+    },
+    {
+      "word": 21,
+      "name": "visualIdHi"
+    },
+    {
+      "word": 22,
+      "name": "flags"
+    },
+    {
+      "word": 23,
+      "name": "sampleGeneration"
+    },
+    {
+      "word": 24,
+      "name": "appearanceSampleKey"
+    },
+    {
+      "word": 25,
+      "name": "cohortMapEpochLo"
+    },
+    {
+      "word": 26,
+      "name": "cohortMapEpochHi"
+    },
+    {
+      "word": 27,
+      "name": "lastPlanOrdinal"
+    },
+    {
+      "word": 28,
+      "name": "lastMaterialPhase"
+    },
+    {
+      "word": 29,
+      "name": "phaseOldKind"
+    },
+    {
+      "word": 30,
+      "name": "reserved0"
+    },
+    {
+      "word": 31,
+      "name": "seal"
+    }
+  ],
+  "markerSeal": 3235778817,
+  "owner": {
+    "INACTIVE": 0,
+    "S": 1,
+    "F": 2,
+    "P": 3
+  },
+  "flags": {
+    "PHASE_ACTIVE": 1,
+    "PHASE_REBASED": 2,
+    "CLIPPED_ANCHOR": 4,
+    "VISUAL_REQUANTIZATION": 8,
+    "P_GHOST_REPRESENTATIVE": 16
+  },
+  "glyph8": [
+    {
+      "word": 0,
+      "name": "oldXQ24"
+    },
+    {
+      "word": 1,
+      "name": "oldYQ23"
+    },
+    {
+      "word": 2,
+      "name": "newXQ24"
+    },
+    {
+      "word": 3,
+      "name": "newYQ23"
+    },
+    {
+      "word": 4,
+      "name": "kindFlags"
+    },
+    {
+      "word": 5,
+      "name": "blendQ16"
+    },
+    {
+      "word": 6,
+      "name": "oldPacketMassOr0"
+    },
+    {
+      "word": 7,
+      "name": "appearanceKey"
+    }
+  ],
+  "glyphKindFlags": {
+    "oldOwnerBits": [
+      0,
+      1
+    ],
+    "newOwnerBits": [
+      2,
+      3
+    ],
+    "oldVisible": 16,
+    "newVisible": 32,
+    "oldPacketGhost": 64,
+    "knownMask": 127
+  },
+  "appearance": {
+    "recipe": "mirror-paired stratified column slots; no periodic reseeding",
+    "M": "V/128",
+    "xi": "(2*j+1)/(2*M)",
+    "eta": "(2*min(j,M-1-j)+1)/M",
+    "mirror": "(c,j)->(127-c,M-1-j)",
+    "key": "(M<<16)|min(j,M-1-j), stable across flow/conversion; new sample uses same candidate",
+    "verticalEta": "(2*(appearanceSampleKey & 65535)+1)/(appearanceSampleKey>>16)",
+    "sourceOfOrigin": "actual cumulative inventory, never color hash",
+    "poolFull": "VIS_DENSITY_LIMITED; physical transaction unchanged"
+  },
+  "controlSegments": [
+    {
+      "name": "bankHeaders",
+      "byteStart": 0,
+      "byteEnd": 1536,
+      "bytes": 1536,
+      "count": 3,
+      "strideBytes": 512
+    },
+    {
+      "name": "packetStyle",
+      "byteStart": 1536,
+      "byteEnd": 9728,
+      "bytes": 8192,
+      "count": 512,
+      "strideBytes": 16
+    },
+    {
+      "name": "columnIndex",
+      "byteStart": 9728,
+      "byteEnd": 10752,
+      "bytes": 1024,
+      "count": 128,
+      "strideBytes": 8
+    },
+    {
+      "name": "markerIndex",
+      "byteStart": 10752,
+      "byteEnd": 43520,
+      "bytes": 32768,
+      "count": 8192,
+      "strideBytes": 4
+    },
+    {
+      "name": "batchDigest",
+      "byteStart": 43520,
+      "byteEnd": 60032,
+      "bytes": 16512,
+      "count": 258,
+      "strideBytes": 64
+    },
+    {
+      "name": "planHeader",
+      "byteStart": 60032,
+      "byteEnd": 60544,
+      "bytes": 512,
+      "count": 1,
+      "strideBytes": 512
+    },
+    {
+      "name": "visualConfig",
+      "byteStart": 60544,
+      "byteEnd": 60800,
+      "bytes": 256,
+      "count": 1,
+      "strideBytes": 256
+    },
+    {
+      "name": "scopeCounters",
+      "byteStart": 60800,
+      "byteEnd": 61312,
+      "bytes": 512,
+      "count": 2,
+      "strideBytes": 256
+    },
+    {
+      "name": "reservedZero",
+      "byteStart": 61312,
+      "byteEnd": 65536,
+      "bytes": 4224,
+      "count": 4224,
+      "strideBytes": 1
+    }
+  ],
+  "plan": {
+    "R": 65536,
+    "words": 8,
+    "maxValid": "49152+K <=49664",
+    "fields": [
+      {
+        "word": 0,
+        "name": "type"
+      },
+      {
+        "word": 1,
+        "name": "ownerRef"
+      },
+      {
+        "word": 2,
+        "name": "originRef"
+      },
+      {
+        "word": 3,
+        "name": "oldRef"
+      },
+      {
+        "word": 4,
+        "name": "newRef"
+      },
+      {
+        "word": 5,
+        "name": "amount"
+      },
+      {
+        "word": 6,
+        "name": "rangeStartOrEventRef"
+      },
+      {
+        "word": 7,
+        "name": "seal"
+      }
+    ],
+    "seal": 3235778818,
+    "referenceTagBits": [
+      28,
+      31
+    ],
+    "referenceIndexBits": [
+      0,
+      27
+    ],
+    "referenceTags": {
+      "OLD_BED": 1,
+      "NEW_BED": 2,
+      "OLD_FLOW": 3,
+      "NEW_FLOW": 4,
+      "PACKET": 5,
+      "EVENT64": 6,
+      "COLUMN": 7
+    },
+    "NONE": 4294967295,
+    "types": {
+      "MAP_OLD_BED": 1,
+      "MAP_NEW_BED": 2,
+      "MAP_OLD_FLOW": 3,
+      "MAP_NEW_FLOW": 4,
+      "DONOR_LEFT": 5,
+      "DONOR_RIGHT": 6,
+      "S_CUT": 7,
+      "DEPOSIT": 8,
+      "PACKET_LAUNCH": 9,
+      "PACKET_CAPTURE": 10,
+      "SOURCE_BIRTH": 11
+    },
+    "partitions": [
+      {
+        "start": 0,
+        "end": 32768,
+        "domain": "4 maps x128x64 MAP_REF"
+      },
+      {
+        "start": 32768,
+        "end": 49152,
+        "domain": "2 conversion/donor planes x128x64"
+      },
+      {
+        "start": 49152,
+        "end": "49152+K",
+        "domain": "one actual action per packet slot"
+      },
+      {
+        "start": "49152+K",
+        "end": 65536,
+        "domain": "zero"
+      }
+    ],
+    "phaseTypes": {
+      "TOUCH": [
+        "S_CUT",
+        "PACKET_LAUNCH"
+      ],
+      "NATURAL": [
+        "S_CUT"
+      ],
+      "FLOW": [
+        "DONOR_LEFT",
+        "DONOR_RIGHT"
+      ],
+      "DEPOSIT": [
+        "DEPOSIT"
+      ],
+      "CAPTURE": [
+        "PACKET_CAPTURE"
+      ],
+      "SOURCE": [
+        "SOURCE_BIRTH"
+      ]
+    },
+    "mapTypes": "four MAP_* slots valid only for active nonempty cohort rows; other rows zero",
+    "count": "number of valid sealed records; never a dense prefix length",
+    "capacityProofAssumption": "one material phase per batch, no packet merge, <=K actual packet actions",
+    "lifetime": "old maps before writer; exact final Hamilton shares before scratch reuse; new maps after writer; consume before reuse",
+    "typedReferences": "validate type/tag/bounds/header generation/full origin words and key; no truncated origin"
+  },
+  "planUnions": {
+    "MAP_REF": {
+      "ownerRef": "COLUMN(c)",
+      "originRef": "nonempty cohort side",
+      "oldRef": "old physical cohort row or NONE",
+      "newRef": "actual surviving physical cohort row or NONE",
+      "amount": "referenced side mass",
+      "rangeStartOrEventRef": 0
+    },
+    "S_CUT": {
+      "ownerRef": "COLUMN(c)",
+      "originRef": "OLD_BED",
+      "oldRef": "OLD_BED",
+      "newRef": "NEW_FLOW or NONE if all launched",
+      "amount": "actual cut",
+      "rangeStartOrEventRef": "old cohort mass minus cut"
+    },
+    "DONOR": {
+      "ownerRef": "COLUMN(donor)",
+      "originRef": "OLD_FLOW",
+      "oldRef": "OLD_FLOW",
+      "newRef": "neighbor NEW_FLOW",
+      "amount": "exact final Hamilton share",
+      "rangeStartOrEventRef": "left 0; right old origin mass minus right share"
+    },
+    "DEPOSIT": {
+      "ownerRef": "COLUMN(c)",
+      "originRef": "OLD_FLOW",
+      "oldRef": "OLD_FLOW",
+      "newRef": "actual NEW_BED row",
+      "amount": "actual deposition",
+      "rangeStartOrEventRef": "preexisting mass in merged old top, otherwise 0"
+    },
+    "PACKET": {
+      "ownerRef": "COLUMN(c)",
+      "originRef": "EVENT64",
+      "oldRef": "actual owner side or NONE",
+      "newRef": "actual owner side or NONE",
+      "amount": "event q",
+      "rangeStartOrEventRef": "EVENT64 index; launch prefix starts 0"
+    },
+    "unused": "all 32 bytes zero; otherwise fields not applicable use NONE for refs and zero for scalars",
+    "touchOrder": "recruit projection on old F + actual cuts, then launch exact origin prefix, then final F map",
+    "cohortContinuity": "writer row mapping, never merge distinct bed rows solely because origin matches"
+  },
+  "controlABI": {
+    "bankHeader128": "0 magic 1 rev 2 composite 3 parent 4 K 5 V; 6..7 generation; 8..9 acceptedTicks; 10..11 nextVisualId; 12..13 baseCommit; 14..15 rootNonce; 16..17 owner; 18..19 context; 20..21 run; 22..23 surface; 24..31 visualConfigSHA; 32..39 pipelineSHA; 40 flags; 41 activeCount; 42 fault; 43..47 counters; 48..126 zero; 127 seal",
+    "bankHeaderMagic": 1110520135,
+    "bankHeaderSeal": 3235778819,
+    "planHeader128": "0 magic 1 rev 2 composite 3 parent; 4..5 generation; 6..7 rootNonce; 8..9 baseCommit; 10 role; 11 micro; 12 phase; 13 ordinal; 14 validCount; 15 zero; 16..23 visualConfigSHA; 24..31 pipelineSHA; 32..33 run; 34..35 owner; 36..37 context; 38..39 surface; 40 K; 41 V; 42 oldBank; 43 newBank; 44 materialStatus; 45..126 zero; 127 seal",
+    "planHeaderMagic": 1345401159,
+    "planHeaderSeal": 3235778820,
+    "materialPhases": {
+      "TOUCH": 1,
+      "NATURAL": 2,
+      "FLOW": 3,
+      "DEPOSIT": 4,
+      "CAPTURE": 5,
+      "SOURCE": 6
+    },
+    "batchDigest16": "0 ordinal 1 role 2 micro 3 phase 4 validCount 5 physicalReason 6 markerCount 7 flags; 8..15 SHA256 locator only",
+    "scopeCounter64": "0 consumedBatches; 1..2 nextVisualId; 3 rebaseCount; 4 clippedCount; 5 requantizationCount; 6 densityLimitedCount; 7 noVisibleCount; 8..63 zero",
+    "pstyle4": [
+      "physicsId",
+      "generation",
+      "opacityQ16",
+      "representativeMarkerIndex"
+    ],
+    "columnIndex2": [
+      "start",
+      "count"
+    ],
+    "markerIndex": "stable marker slot order grouped by column",
+    "roleNormalization": "ACTUAL/REPLAY per-role plan header and locators differ; compare canonical marker/header state excluding role-specific locators; reserved always zero"
+  },
+  "root": {
+    "banks": [
+      "BASE(previous CURRENT)",
+      "ACTUAL",
+      "REPLAY"
+    ],
+    "hotBindings": 4,
+    "scopeH": "1+4J",
+    "rootHMax": 258,
+    "sourceHMax": 2,
+    "parentPassesPreserved": true,
+    "initializationDispatches": 1,
+    "auditBits": {
+      "PLAN_MAPPING": 18,
+      "VIS_REPLAY_GLYPH": 19
+    },
+    "requiredMasks": {
+      "R1_SOURCE": 851967,
+      "R1_QUANTUM": 851967,
+      "DM_SOURCE": 851967,
+      "DM_QUANTUM": 1048575
+    },
+    "completion": "new composite revision/profile and counts; physical fields parent semantics; last ROOT_SEAL after VIS readiness",
+    "publication": "single native mutex publishes physical+visual bank/generation; no GL/wait under lock",
+    "glyphLease": "single work glyph buffer; block next writer until scene fence retires",
+    "FAULT": "no partial publication; explicit FAULT or labelled STALE complete old shader frame",
+    "unchanged": {
+      "deadlineNs": 250000000,
+      "gapNs": 33333333,
+      "quotaHz": 120,
+      "displayFps": 30
+    }
+  },
+  "dispatch": [
+    {
+      "parent": "R1",
+      "SOURCE": 19,
+      "QUANTUM": 2543,
+      "G1F4": 10191,
+      "H": 258,
+      "newQuantumPasses": 519
+    },
+    {
+      "parent": "DM",
+      "SOURCE": 19,
+      "QUANTUM": 2923,
+      "G1F4": 11711,
+      "H": 258,
+      "newQuantumPasses": 519
+    }
+  ],
+  "resources": [
+    {
+      "parent": "R1",
+      "K": 192,
+      "V": 2048,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1286784,
+          "byteEnd": 1548928,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 1548928,
+          "byteEnd": 1811072,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 1811072,
+          "byteEnd": 2073216,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 2073216,
+          "byteEnd": 2138752,
+          "bytes": 65536,
+          "count": 2048,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 2138752,
+          "byteEnd": 4235904,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 4235904,
+          "byteEnd": 4301440,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 4301440,
+          "byteEnd": 4825728,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 3538944,
+      "totalWorkBytes": 4825728,
+      "stateBytes": 591872,
+      "arenaBytes": 11718656,
+      "residentPayloadBytes": 54659712,
+      "fullGPUAdditionalBytes": 70311936,
+      "coldROOTSlotBytes": 28192768,
+      "coldFULLSlotBytes": 98504704,
+      "twoFULLSlotsBytes": 197009408,
+      "largestGLObjectBytes": 11718656,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 322019968,
+      "optionalSinglePhaseWitnessBytes": 3149824,
+      "knownPayloadWithWitnessGPUAndNative": 328319616,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 864,
+      "combinedFULLPageUpperBound": 24082,
+      "combinedFULLArchiveUtf8UpperBound": 394575872,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "R1",
+      "K": 192,
+      "V": 8192,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1286784,
+          "byteEnd": 2335360,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 2335360,
+          "byteEnd": 3383936,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 3383936,
+          "byteEnd": 4432512,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 4432512,
+          "byteEnd": 4694656,
+          "bytes": 262144,
+          "count": 8192,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 4694656,
+          "byteEnd": 6791808,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 6791808,
+          "byteEnd": 6857344,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 6857344,
+          "byteEnd": 7381632,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 6094848,
+      "totalWorkBytes": 7381632,
+      "stateBytes": 591872,
+      "arenaBytes": 11718656,
+      "residentPayloadBytes": 57215616,
+      "fullGPUAdditionalBytes": 70311936,
+      "coldROOTSlotBytes": 30748672,
+      "coldFULLSlotBytes": 101060608,
+      "twoFULLSlotsBytes": 202121216,
+      "largestGLObjectBytes": 11718656,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 329687680,
+      "optionalSinglePhaseWitnessBytes": 4722688,
+      "knownPayloadWithWitnessGPUAndNative": 339133056,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 1488,
+      "combinedFULLPageUpperBound": 24706,
+      "combinedFULLArchiveUtf8UpperBound": 404799488,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "R1",
+      "K": 512,
+      "V": 2048,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1289344,
+          "byteEnd": 1551488,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 1551488,
+          "byteEnd": 1813632,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 1813632,
+          "byteEnd": 2075776,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 2075776,
+          "byteEnd": 2141312,
+          "bytes": 65536,
+          "count": 2048,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 2141312,
+          "byteEnd": 4238464,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 4238464,
+          "byteEnd": 4304000,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 4304000,
+          "byteEnd": 4828288,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 3538944,
+      "totalWorkBytes": 4828288,
+      "stateBytes": 673792,
+      "arenaBytes": 22286336,
+      "residentPayloadBytes": 97342592,
+      "fullGPUAdditionalBytes": 133718016,
+      "coldROOTSlotBytes": 49491968,
+      "coldFULLSlotBytes": 183209984,
+      "twoFULLSlotsBytes": 366419968,
+      "largestGLObjectBytes": 22286336,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 597519488,
+      "optionalSinglePhaseWitnessBytes": 3149824,
+      "knownPayloadWithWitnessGPUAndNative": 603819136,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 864,
+      "combinedFULLPageUpperBound": 44762,
+      "combinedFULLArchiveUtf8UpperBound": 733396992,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "R1",
+      "K": 512,
+      "V": 8192,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1289344,
+          "byteEnd": 2337920,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 2337920,
+          "byteEnd": 3386496,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 3386496,
+          "byteEnd": 4435072,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 4435072,
+          "byteEnd": 4697216,
+          "bytes": 262144,
+          "count": 8192,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 4697216,
+          "byteEnd": 6794368,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 6794368,
+          "byteEnd": 6859904,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 6859904,
+          "byteEnd": 7384192,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 6094848,
+      "totalWorkBytes": 7384192,
+      "stateBytes": 673792,
+      "arenaBytes": 22286336,
+      "residentPayloadBytes": 99898496,
+      "fullGPUAdditionalBytes": 133718016,
+      "coldROOTSlotBytes": 52047872,
+      "coldFULLSlotBytes": 185765888,
+      "twoFULLSlotsBytes": 371531776,
+      "largestGLObjectBytes": 22286336,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 605187200,
+      "optionalSinglePhaseWitnessBytes": 4722688,
+      "knownPayloadWithWitnessGPUAndNative": 614632576,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 1488,
+      "combinedFULLPageUpperBound": 45386,
+      "combinedFULLArchiveUtf8UpperBound": 743620608,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "DM",
+      "K": 192,
+      "V": 2048,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1311360,
+          "byteEnd": 1573504,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 1573504,
+          "byteEnd": 1835648,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 1835648,
+          "byteEnd": 2097792,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 2097792,
+          "byteEnd": 2163328,
+          "bytes": 65536,
+          "count": 2048,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 2163328,
+          "byteEnd": 4260480,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 4260480,
+          "byteEnd": 4326016,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 4326016,
+          "byteEnd": 4850304,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 3538944,
+      "totalWorkBytes": 4850304,
+      "stateBytes": 591872,
+      "arenaBytes": 12767232,
+      "residentPayloadBytes": 58878592,
+      "fullGPUAdditionalBytes": 76603392,
+      "coldROOTSlotBytes": 30289920,
+      "coldFULLSlotBytes": 106893312,
+      "twoFULLSlotsBytes": 213786624,
+      "largestGLObjectBytes": 12767232,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 349307520,
+      "optionalSinglePhaseWitnessBytes": 3149824,
+      "knownPayloadWithWitnessGPUAndNative": 355607168,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 864,
+      "combinedFULLPageUpperBound": 26130,
+      "combinedFULLArchiveUtf8UpperBound": 428130304,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "DM",
+      "K": 192,
+      "V": 8192,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1311360,
+          "byteEnd": 2359936,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 2359936,
+          "byteEnd": 3408512,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 3408512,
+          "byteEnd": 4457088,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 4457088,
+          "byteEnd": 4719232,
+          "bytes": 262144,
+          "count": 8192,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 4719232,
+          "byteEnd": 6816384,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 6816384,
+          "byteEnd": 6881920,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 6881920,
+          "byteEnd": 7406208,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 6094848,
+      "totalWorkBytes": 7406208,
+      "stateBytes": 591872,
+      "arenaBytes": 12767232,
+      "residentPayloadBytes": 61434496,
+      "fullGPUAdditionalBytes": 76603392,
+      "coldROOTSlotBytes": 32845824,
+      "coldFULLSlotBytes": 109449216,
+      "twoFULLSlotsBytes": 218898432,
+      "largestGLObjectBytes": 12767232,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 356975232,
+      "optionalSinglePhaseWitnessBytes": 4722688,
+      "knownPayloadWithWitnessGPUAndNative": 366420608,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 1488,
+      "combinedFULLPageUpperBound": 26754,
+      "combinedFULLArchiveUtf8UpperBound": 438353920,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "DM",
+      "K": 512,
+      "V": 2048,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1313920,
+          "byteEnd": 1576064,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 1576064,
+          "byteEnd": 1838208,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 1838208,
+          "byteEnd": 2100352,
+          "bytes": 262144,
+          "count": 2048,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 2100352,
+          "byteEnd": 2165888,
+          "bytes": 65536,
+          "count": 2048,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 2165888,
+          "byteEnd": 4263040,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 4263040,
+          "byteEnd": 4328576,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 4328576,
+          "byteEnd": 4852864,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 3538944,
+      "totalWorkBytes": 4852864,
+      "stateBytes": 673792,
+      "arenaBytes": 23334912,
+      "residentPayloadBytes": 101561472,
+      "fullGPUAdditionalBytes": 140009472,
+      "coldROOTSlotBytes": 51589120,
+      "coldFULLSlotBytes": 191598592,
+      "twoFULLSlotsBytes": 383197184,
+      "largestGLObjectBytes": 23334912,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 624807040,
+      "optionalSinglePhaseWitnessBytes": 3149824,
+      "knownPayloadWithWitnessGPUAndNative": 631106688,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 864,
+      "combinedFULLPageUpperBound": 46810,
+      "combinedFULLArchiveUtf8UpperBound": 766951424,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    },
+    {
+      "parent": "DM",
+      "K": 512,
+      "V": 8192,
+      "workSegments": [
+        {
+          "name": "markerCURRENT",
+          "byteStart": 1313920,
+          "byteEnd": 2362496,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerACTUAL",
+          "byteStart": 2362496,
+          "byteEnd": 3411072,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "markerREPLAY",
+          "byteStart": 3411072,
+          "byteEnd": 4459648,
+          "bytes": 1048576,
+          "count": 8192,
+          "strideBytes": 128
+        },
+        {
+          "name": "glyph",
+          "byteStart": 4459648,
+          "byteEnd": 4721792,
+          "bytes": 262144,
+          "count": 8192,
+          "strideBytes": 32
+        },
+        {
+          "name": "materialPlan",
+          "byteStart": 4721792,
+          "byteEnd": 6818944,
+          "bytes": 2097152,
+          "count": 65536,
+          "strideBytes": 32
+        },
+        {
+          "name": "control",
+          "byteStart": 6818944,
+          "byteEnd": 6884480,
+          "bytes": 65536,
+          "count": 1,
+          "strideBytes": 65536
+        },
+        {
+          "name": "fourMaps",
+          "byteStart": 6884480,
+          "byteEnd": 7408768,
+          "bytes": 524288,
+          "count": 32768,
+          "strideBytes": 16
+        }
+      ],
+      "visualBytes": 6094848,
+      "totalWorkBytes": 7408768,
+      "stateBytes": 673792,
+      "arenaBytes": 23334912,
+      "residentPayloadBytes": 104117376,
+      "fullGPUAdditionalBytes": 140009472,
+      "coldROOTSlotBytes": 54145024,
+      "coldFULLSlotBytes": 194154496,
+      "twoFULLSlotsBytes": 388308992,
+      "largestGLObjectBytes": 23334912,
+      "knownPayloadWithGPUFullTwoColdInputAndPage": 632474752,
+      "optionalSinglePhaseWitnessBytes": 4722688,
+      "knownPayloadWithWitnessGPUAndNative": 641920128,
+      "visualColdSegments": 7,
+      "maxCombinedFULLSegments": 17,
+      "visualColdDataPages": 1488,
+      "combinedFULLPageUpperBound": 47434,
+      "combinedFULLArchiveUtf8UpperBound": 777175040,
+      "inputSnapshotAndPageBytes": 38912,
+      "excluded": [
+        "driver/JIT/host objects",
+        "FBO>=8*w*h",
+        "alignment",
+        "JS/runtime",
+        "files"
+      ],
+      "simultaneousOldProfileAllowed": false
+    }
+  ],
+  "scene": {
+    "pipeline": "XComponent+shader only",
+    "vertexSSBOBlocks": 0,
+    "fragmentSSBOBlocks": 1,
+    "attributesRequired": 6,
+    "glyph": "loc0/1 uvec4 IPointer offsets0/16 stride32 divisor1 from same WORK",
+    "packet": "loc0/1/2 parent mass/x/y, loc3 uvec4 Pstyle, loc4/5 uint id/generation; separate VAO",
+    "barriers": [
+      "SHADER_STORAGE",
+      "VERTEX_ATTRIB_ARRAY"
+    ],
+    "drawBounds": "at most V glyph and K physical packet instances; 6*(V+K) vertices",
+    "mask": "current S/F/B and foreground same CURRENT token and view; no invented thickness",
+    "cost": "two-anchor bounding quad can overdraw large area; measure real fragment cost",
+    "material": "premultiplied linear alpha<=0.5 contrast +/-0.08 research constants not approved thresholds"
+  },
+  "cold": {
+    "capability": "G11_VIS_COLD_V1",
+    "page": "G11_VIS_SEGMENT_PAGE_V1",
+    "slots": 2,
+    "readerMax": 1,
+    "builderMax": 1,
+    "ttlNs": "60000000000",
+    "pageWords": 1024,
+    "pageUtf8Bytes": 16384,
+    "payload": "parent selected ROOT/FULL plus all visual segments with exact profile/offset dictionary",
+    "wholeRows": "marker32/glyph8/descriptor8/cohort4 never split",
+    "credit": "global actual native capacity; pinned old route prevents third slot",
+    "witness": "one prearmed (root,micro,phase,role), complete plan/maps and old/new marker, header4096; extra GPU+native each capacity listed",
+    "witnessCopies": "old marker before update, new marker and plan/maps after; no extra dispatch, count actual segmented copies",
+    "historyLimit": "last plan only, batch digest is locator not full intermediate material proof"
+  },
+  "unmeasured": [
+    "shader compile/link",
+    "actual capabilities/attributes",
+    "GPU runtime/250ms feasibility",
+    "scene/device image correctness",
+    "perceptual thresholds",
+    "fragment overdraw",
+    "actual file export"
+  ],
+  "handoff": {
+    "developer": "all implementation/compile/commit scope or concrete blocker; no tests/device",
+    "tester": "independent V01-V14, exact source plans and replay, no new CPU physics stepper",
+    "effector": "same accepted interval, no visible layer/phase rebase/overdraw, no fabricated animation"
+  }
+}

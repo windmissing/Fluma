@@ -1,0 +1,143 @@
+{
+  "schema": "T560_STAGE_LAB_ENGINEERING_V1",
+  "status": "ENGINEERING_READY_NOT_IMPLEMENTED_NOT_VALIDATED",
+  "notUsingDevice": true,
+  "productionDefaultChanged": false,
+  "compute": {
+    "ES": [
+      3,
+      1
+    ],
+    "ssboBindings": 4,
+    "computeSSBOBlocks": 4,
+    "combinedSSBOBlocks": 4,
+    "vertexSSBOBlocks": 0,
+    "fragmentSSBOBlocks": 0,
+    "sharedBytes": 4096,
+    "invocations": 64,
+    "sizeX": 64,
+    "countX": 1,
+    "maxBlockBytes": "max(profile.stateBytes, profile.workBytes, profile.arenaBytes)",
+    "additionalGates": [
+      "actual link",
+      "reflection",
+      "prewarm",
+      "GL error status"
+    ]
+  },
+  "scene": {
+    "vertexSSBOBlocks": 0,
+    "fragmentSSBOBlocks": 1,
+    "combinedSSBOBlocks": 1,
+    "packetAttributes": 3,
+    "G11PacketAttributes": 6,
+    "glyphAttributes": 2,
+    "actualGates": [
+      "integer attribute types/offsets/divisors",
+      "shader reflection",
+      "FBO complete",
+      "same CURRENT lease",
+      "scene fence retirement"
+    ]
+  },
+  "present": [
+    "actual XComponent window/surface/context generation",
+    "token",
+    "Swap result"
+  ],
+  "packetABI": {
+    "id": "G9_PACKET_ATTR_U32_V2",
+    "source": "same CURRENT state GL buffer",
+    "packetByteStart": 280576,
+    "strideBytes": 256,
+    "verticesPerInstance": 6,
+    "attributes": [
+      {
+        "location": 0,
+        "type": "UNSIGNED_INT",
+        "components": 1,
+        "offsetBytes": 0,
+        "divisor": 1
+      },
+      {
+        "location": 1,
+        "type": "UNSIGNED_INT",
+        "components": 1,
+        "offsetBytes": 4,
+        "divisor": 1
+      },
+      {
+        "location": 2,
+        "type": "UNSIGNED_INT",
+        "components": 1,
+        "offsetBytes": 8,
+        "divisor": 1
+      }
+    ],
+    "API": "glVertexAttribIPointer",
+    "extraGPUBytes": 0,
+    "extraDispatch": 0,
+    "extraHotReadbackBytes": 0,
+    "barriers": [
+      "SHADER_STORAGE",
+      "VERTEX_ATTRIB_ARRAY"
+    ]
+  },
+  "lab": {
+    "queueCapacity": 128,
+    "fault": "129th pending enqueue rejected while worker blocked",
+    "race": "release barrier; Drain enqueue can execute before first worker pop",
+    "fix": "test-only DrainForTest atomically waits for space and enqueues fence under same mutex",
+    "deadlineMs": 5000,
+    "productionEnqueueAndDrainUnchanged": true,
+    "lifecycle": [
+      "RUNNING",
+      "FINISHED"
+    ],
+    "outcomes": [
+      "COMPLETED_FIXTURE",
+      "CANCELLED",
+      "CASE_FAILED",
+      "INCOMPLETE"
+    ],
+    "oldFAILReclassified": false,
+    "oldExportV1IsPollAlias": true
+  },
+  "files": {
+    "schema": "RESOURCE_LAB_FILES_V2",
+    "maxFiles": 32,
+    "maxFileBytes": 2097152,
+    "maxTotalFileBytes": 67108864,
+    "chunkBytes": 4096,
+    "base64BytesMax": 5464,
+    "replyUtf8BytesMax": 8192,
+    "indexEntriesPerPage": 8,
+    "ttlNs": "60000000000",
+    "readerMax": 1,
+    "renewTTL": false,
+    "nativePayloadBytes": 20480,
+    "extraFixedHostState": "fd/mutex/identities/hash state separately declared by implementation",
+    "catalogEntryBytes": 256,
+    "producer": "explicit successful SaveBytes allowlist only",
+    "paths": "openat pinned job root fd + O_NOFOLLOW; no caller path or recursive cache export",
+    "endpoints": [
+      "resourceLabFilesBeginV2(jobId)",
+      "resourceLabFilesIndexV2(exportId,page)",
+      "resourceLabFilePageV2(exportId,fileId,offset)",
+      "resourceLabFilesEndV2(exportId)"
+    ],
+    "acceptance": "actual sequential raw bytes, chunk SHA, file SHA after fsync/close",
+    "newStartWhilePinned": "LAB_EXPORT_BUSY",
+    "fileMutation": "FILE_CHANGED/INCOMPLETE"
+  },
+  "evidenceLimits": [
+    "vertexSSBO0/lanes1024/fragment16 are T541 report observations; full probe stdout not saved",
+    "CACHE_QUEUE_FULL second throw location is source-supported race, no runtime stack",
+    "FILE_SHA memory-input hash alone is not independently retrieved disk bytes"
+  ],
+  "handoff": {
+    "developer": "implementation/compile/commit only, no tests/device",
+    "tester": "new version qualification, scene and lab/file evidence independently",
+    "manager": "register existing FAIL and follow-up work; no new acceptance gate"
+  }
+}

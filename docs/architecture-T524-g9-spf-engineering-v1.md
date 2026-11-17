@@ -1,5 +1,7 @@
 # T524 目标9三态GPU工程闭包 v1
 
+> 2026-11-17工程修订：设备资格/packet顶点取数以 `architecture-T560-stage-capability-and-lab-triage-v1.md` 的分stage/整数实例属性合同为准；目标11可选组合仅适用 `architecture-T563-g11-accepted-flux-visual-v1.md` 的独立profile、dispatch和资源表。旧机器表/冻结baseline保留历史身份，不能沿旧计数宣称新组合成本或整设备支持。
+
 2026-11-16，architect，P4，不使用真机。消费T515 `gpu-spf-depth-averaged-coupling-v1`。独立 `G9_SPF_Q20_V1` 研究route，工程可交完整实现，产品NOT_IMPLEMENTED。参数无默认值，真实触摸/摇晃映射与效果阈值仍待产品裁决。机器合同 `architecture-T524-g9-spf-manifest-v1.json`，逐pass/布局/接口静态核对见 `analysis-T524-T527-engineering-checks-v1.json`。
 
 ## 1. 独立管线、模块及依赖
