@@ -414,13 +414,23 @@ static int RunCreateOnly(const std::string& arm) {
     return committed ? 0 : 1;
 }
 
-static int RunCreateOnlyDispatch(const std::string& arm) {
-    g_runId = "t496-" + arm + "-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
+extern "C" bool t496_sink_initialize(const char*, const char*, const char*); // gl_forward_sink TU
+static int RunCreateOnlyDispatch(const std::string& arm, const std::string& attemptArg) {
+    const std::string attemptId = attemptArg.empty()
+        ? arm + "-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())
+        : attemptArg;
+    g_runId = "t496-" + attemptId;
+    { // T547 §3: sink identity injection + attempt-unique trace file (create-new)
+        if (!t496_sink_initialize(g_runId.c_str(), ("create_" + arm).c_str(), attemptId.c_str())) {
+            std::cerr << "SINK_INITIALIZE_FAILED (attempt file reuse?)" << std::endl;
+            return 5;
+        }
+    }
     std::filesystem::create_directories(".codex/local-test/t496");
     std::filesystem::create_directories("test/reports/t496");
-    const std::string tag = "t496_log_" + arm + ".ndjson";
+    const std::string tag = "t496_log_" + attemptId + ".ndjson";
     g_log.open(".codex/local-test/t496/" + tag, std::ios::app);
-    g_stageLog.open(".codex/local-test/t496/t496-stages_" + arm + ".ndjson", std::ios::app);
+    g_stageLog.open(".codex/local-test/t496/t496-stages_" + attemptId + ".ndjson", std::ios::app);
     const int rc = RunCreateOnly(arm);
     std::cout << "T496 CREATE_ONLY " << arm << ": rc=" << rc << std::endl;
     return rc;
@@ -429,7 +439,7 @@ static int RunCreateOnlyDispatch(const std::string& arm) {
 int main(int argc, char** argv) {
     if (argc > 1) {
         const std::string arm = argv[1];
-        if (arm == "C0" || arm == "C1" || arm == "C2") return RunCreateOnlyDispatch(arm);
+        if (arm == "C0" || arm == "C1" || arm == "C2") return RunCreateOnlyDispatch(arm, argc > 2 ? argv[2] : "");
         // 其它参数：保留旧行为入口（无参数走 D1 两臂）
     }
     g_runId="t496-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());

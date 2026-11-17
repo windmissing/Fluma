@@ -15,10 +15,17 @@
 #include <mutex>
 #include <atomic>
 #include <sstream>
+#include <filesystem>
+#include <process.h>
 
 namespace t496sink {
+// T547 §3: explicit identity injection (no empty default, no cross-arm inheritance);
+// trace path is attempt-unique and must be create-new (reuse rejected).
 inline std::string& RunId() { static std::string s; return s; }
 inline std::string& Arm() { static std::string s; return s; }
+inline std::string& AttemptId() { static std::string s; return s; }
+inline std::atomic<bool>& Initialized() { static std::atomic<bool> v{false}; return v; }
+inline std::string& TracePath() { static std::string s; return s; }
 inline std::string JEsc(const std::string& s) {
     std::string o;
     for (char c : s) {
@@ -30,11 +37,21 @@ inline std::string JEsc(const std::string& s) {
     return o;
 }
 inline std::ofstream& TraceFile() {
-    static std::ofstream f(".codex/local-test/t496/t496-gltrace.ndjson", std::ios::app);
+    static std::ofstream f(TracePath(), std::ios::app);
     return f;
 }
 inline std::mutex& TraceMu() { static std::mutex m; return m; }
 inline std::atomic<uint64_t>& CallSeq() { static std::atomic<uint64_t> s{0}; return s; }
+extern "C" bool t496_sink_initialize(const char* runId, const char* arm, const char* attemptId) {
+    bool expect = false;
+    if (!Initialized().compare_exchange_strong(expect, true)) return false;
+    RunId() = runId; Arm() = arm; AttemptId() = attemptId;
+    TracePath() = std::string(".codex/local-test/t496/gltrace-") + attemptId + ".ndjson";
+    if (std::filesystem::exists(std::filesystem::path(TracePath()))) {
+        Initialized() = false; return false; // T547 §3: create-new rule, reuse rejected
+    }
+    return true;
+}
 inline uint64_t WallNs() {
     return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::steady_clock::now().time_since_epoch()).count());
@@ -43,8 +60,7 @@ inline void Emit(const char* event, const char* call, uint64_t seq, uint64_t wal
                  const std::string& detail = "") {
     std::lock_guard<std::mutex> lk(TraceMu());
     auto& f = TraceFile();
-    f << "{\"runId\":\"" << JEsc(RunId()) << "\",\"arm\":\"" << JEsc(Arm())
-      << "\",\"event\":\"" << event << "\",\"call\":\"" << call
+    f << "{\"runId\":\"" << JEsc(RunId()) << "\",\"arm\":\"" << JEsc(Arm()) << "\",\"attemptId\":\"" << JEsc(AttemptId()) << "\",\"pid\":" << (int)_getpid() << ",\"event\":\"" << event << "\",\"call\":\"" << call
       << "\",\"callSeq\":" << seq << ",\"wallNs\":" << wallNs;
     if (!detail.empty()) f << ",\"detail\":\"" << JEsc(detail) << "\"";
     f << "}\n" << std::flush;

@@ -20,12 +20,12 @@ cl /nologo /utf-8 /std:c++17 /EHsc /Zs /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIM
 if errorlevel 1 (echo GATE_FAIL driver syntax & exit /b 1)
 cl /nologo /utf-8 /std:c++17 /EHsc /Zs /DGRS_T456_BOOT /DGRS_PROGRESS_V2_EXPERIMENT /DGRS_APP_M1 %INCS% /d1reportSingleClassLayoutFullM1Transport %SRC%/gpu_resident/m1/full_transport.cpp > .codex/local-test/t496/layout-impl.txt 2>&1
 if errorlevel 1 (echo GATE_FAIL impl syntax & exit /b 1)
-rem sizeof compare via findstr on both dumps
-findstr /C:"sizeof" .codex\local-test\t496\layout-driver.txt > .codex\local-test\t496\sizeof-driver.txt
-findstr /C:"sizeof" .codex\local-test\t496\layout-impl.txt > .codex\local-test\t496\sizeof-impl.txt
-fc /b .codex\local-test\t496\sizeof-driver.txt .codex\local-test\t496\sizeof-impl.txt >nul 2>&1
+rem T547 §1 fix: MSVC /d1reportSingleClassLayout writes "size(...)" not "sizeof".
+rem Compare the non-empty class-layout sections; empty section = gate failure.
+rem T547 §1 nonempty gate + precise class-layout compare (python, noise-immune)
+python -X utf8 test/t496/layout_gate.py .codex/local-test/t496/layout-driver.txt .codex/local-test/t496/layout-impl.txt FullM1Transport
 if errorlevel 1 (
-  echo GATE_FAIL FullM1Transport layout mismatch between driver TU and implementation TU
+  echo GATE_FAIL FullM1Transport layout mismatch or empty (T547 nonempty-gate^)
   exit /b 1
 )
 echo GATE_OK single-source layout consistent
