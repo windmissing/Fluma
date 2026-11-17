@@ -1,0 +1,569 @@
+{
+  "schema": "T546_FIRST_ATTRIBUTION_EVIDENCE_V1",
+  "date": "2026-11-17",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "status": "ENGINEERING_ATTRIBUTION_COMPLETE_EXACT_DEVICE_PREDICATE_UNKNOWN",
+  "originalCrash": {
+    "pid": 30232,
+    "time": "2026-11-17 11:25:49.830",
+    "reason": "SyntaxError",
+    "location": "GpuResidentG9.ets:43:25",
+    "messageMasked": true,
+    "reportReproductions": 3,
+    "localCrashOriginalsAudited": 1
+  },
+  "sources": [
+    {
+      "path": "docs\\test-report-T542-g9-device-eligibility-v1.md",
+      "bytes": 2708,
+      "sha256": "ea1f73f90f1baaadf88f361cfbb9d2eb584207ef79ef26a968239a68b4234767"
+    },
+    {
+      "path": "docs\\test-report-T545-device-deadline-v1.md",
+      "bytes": 3179,
+      "sha256": "82a88de850799d53c39355859942255327a71a831a2ecda339eab66f0ac00753"
+    },
+    {
+      "path": "test\\reports\\t491\\t542\\jscrash-latest.log",
+      "bytes": 78729,
+      "sha256": "746c4cff149c3aea7933bbcdd41b1f1bbd9139367c4bcb62221e35573fb881dc"
+    },
+    {
+      "path": "test\\reports\\t491\\t542\\crash-hilog.txt",
+      "bytes": 893,
+      "sha256": "781fc8be83f8f791bd6988bc46a59e62372cfafa1cbf9f0de1b48e302fdc7c48"
+    },
+    {
+      "path": "test\\reports\\t491\\t542\\faultlog-hilog.txt",
+      "bytes": 1387,
+      "sha256": "48a112cadc4bd4b0a479b080db5683b954f00526a86b4682f4a95d284a73ccdc"
+    },
+    {
+      "path": "entry\\src\\main\\cpp\\gpu_resident\\m3a\\napi.inc",
+      "bytes": 6846,
+      "sha256": "5c9cb37eb635cf65629016cc1991c4f0c705c2ef4ef6b5d0788e54049ab24189"
+    },
+    {
+      "path": "entry\\src\\main\\cpp\\gpu_resident\\m3b\\napi.inc",
+      "bytes": 10780,
+      "sha256": "1d79919e8143079c2bc4c693000f5ffc42905489653f9149f0cf371bc70cba45"
+    },
+    {
+      "path": "entry\\src\\main\\cpp\\gpu_resident\\g9spf\\napi.inc",
+      "bytes": 6872,
+      "sha256": "8a740920f8fbd028333e8a615dca661760bda1773b561b34d6d59356b6930db6"
+    },
+    {
+      "path": "entry\\src\\main\\ets\\pages\\GpuResidentG9.ets",
+      "bytes": 6671,
+      "sha256": "9f5a0735fcf3be23849cbc41f8390bb760f8cfd666e59a5d64644937487d85de"
+    },
+    {
+      "path": "entry\\src\\main\\ets\\pages\\GpuResidentM3.ets",
+      "bytes": 7784,
+      "sha256": "0fea9d4a77960a4089ac334746f2bd76c1e389b6ba0a1c5e667e2d5908b48265"
+    },
+    {
+      "path": "entry\\src\\main\\ets\\pages\\GpuResidentM5.ets",
+      "bytes": 6962,
+      "sha256": "02e209887a9addf67ec4dbf43ea82a42681304199177b3672001da46fe899c70"
+    },
+    {
+      "path": "test\\t522\\bridge_overlay.cjs",
+      "bytes": 3873,
+      "sha256": "dc6eb12e5932715fde2e1dece2bce3c28e92708dbf8524530352ed928ab568de"
+    },
+    {
+      "path": "test\\t529\\bridge_overlay.cjs",
+      "bytes": 3930,
+      "sha256": "d7564ea6b779c86262212685d7b166add9646908882c09f151a16da12c50241c"
+    },
+    {
+      "path": "test\\t517\\bridge_overlay.cjs",
+      "bytes": 3879,
+      "sha256": "97a0e32f0470f04592d4ba8bd0414b71e16b7c78087b210fd228bb6c65e4df94"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\sysroot\\usr\\include\\napi\\native_api.h",
+      "bytes": 153440,
+      "sha256": "7f86ceb77a2103eb4b4d394779c8e003b4323087df7ecee7b1c7c08ab6ee7ef2"
+    }
+  ],
+  "generatedHelperComparisons": [
+    {
+      "tree": "t522-delivery",
+      "file": {
+        "path": ".codex\\local-test\\t522-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "bytes": 123369,
+        "sha256": "577297a62a8b1b2ce49d2589f43f377eae3ae46c08c2043c3d9cd7fcba8c36ec"
+      },
+      "helperFound": true,
+      "normalizedHelperSha256": "3c1ed437d33c79a20e0894263c0a341a55a3c41c44929fdda7d87b321f60d770",
+      "equalsCanonical": true
+    },
+    {
+      "tree": "t529-delivery",
+      "file": {
+        "path": ".codex\\local-test\\t529-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "bytes": 137452,
+        "sha256": "15c8032401f43c25e4dee5a3a14cccbf63ae5829463060ceaddbe2b6431f9a4c"
+      },
+      "helperFound": true,
+      "normalizedHelperSha256": "3c1ed437d33c79a20e0894263c0a341a55a3c41c44929fdda7d87b321f60d770",
+      "equalsCanonical": true
+    },
+    {
+      "tree": "t529-development",
+      "file": {
+        "path": ".codex\\local-test\\t529-development\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "bytes": 136158,
+        "sha256": "5349d741b93b816e89fef621b94940528148bc114db539fb90cb7d1df0320ea2"
+      },
+      "helperFound": true,
+      "normalizedHelperSha256": "3c1ed437d33c79a20e0894263c0a341a55a3c41c44929fdda7d87b321f60d770",
+      "equalsCanonical": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "crash_confirms_start_json_syntax_error",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "G9_delegates_shared_m3Words",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "strict_type_count_offset_and_backing_are_present",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "page_start_has_unguarded_JSON_parse",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "SDK_length_is_elements",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "expected_M3_words_first_branch_valid",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "expected_G9_request_valid",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_CB_INFO",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_ARG_COUNT",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_IS_TYPEDARRAY_API",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_IS_TYPEDARRAY_VALUE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_TYPEDARRAY_INFO",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_ELEMENT_TYPE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_ELEMENT_COUNT",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_BYTE_OFFSET",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_DATA_POINTER",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_DETACHED_API",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_DETACHED_VALUE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_BACKING_INFO",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_BASE_POINTER",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_BACKING_BYTES",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_WORD_COPY",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_HEADER_REVISION",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_FEATURES",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_PROFILE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_FULL_FLAG",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_COLD_REVISION",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_stage_COLD_VALUES",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "first_rejection_wins",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "do_not_weaken_to_either_unit",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_legacy_token",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_empty",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_malformed",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_null",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_array",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_number",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_json_string",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_error",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_good",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_unknown_revision",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_short_words",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_negative",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_fraction",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_overflow",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_unsafe",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_boolean",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "safe_reply_null_word",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "worst_fixed_snapshot_under_4096",
+      "result": "PASS_FINITE_ENGINEERING_ONLY",
+      "bytes": 2857
+    },
+    {
+      "id": "snapshot_native_credit",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    }
+  ],
+  "vectors": [
+    {
+      "givenFailedStages": [
+        "CB_INFO"
+      ],
+      "expectedFirstStage": "CB_INFO",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "ARG_COUNT"
+      ],
+      "expectedFirstStage": "ARG_COUNT",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "IS_TYPEDARRAY_API"
+      ],
+      "expectedFirstStage": "IS_TYPEDARRAY_API",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "IS_TYPEDARRAY_VALUE"
+      ],
+      "expectedFirstStage": "IS_TYPEDARRAY_VALUE",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "TYPEDARRAY_INFO"
+      ],
+      "expectedFirstStage": "TYPEDARRAY_INFO",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "ELEMENT_TYPE"
+      ],
+      "expectedFirstStage": "ELEMENT_TYPE",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "ELEMENT_COUNT"
+      ],
+      "expectedFirstStage": "ELEMENT_COUNT",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "BYTE_OFFSET"
+      ],
+      "expectedFirstStage": "BYTE_OFFSET",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "DATA_POINTER"
+      ],
+      "expectedFirstStage": "DATA_POINTER",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "DETACHED_API"
+      ],
+      "expectedFirstStage": "DETACHED_API",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "DETACHED_VALUE"
+      ],
+      "expectedFirstStage": "DETACHED_VALUE",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "BACKING_INFO"
+      ],
+      "expectedFirstStage": "BACKING_INFO",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "BASE_POINTER"
+      ],
+      "expectedFirstStage": "BASE_POINTER",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "BACKING_BYTES"
+      ],
+      "expectedFirstStage": "BACKING_BYTES",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "WORD_COPY"
+      ],
+      "expectedFirstStage": "WORD_COPY",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "HEADER_REVISION"
+      ],
+      "expectedFirstStage": "HEADER_REVISION",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "FEATURES"
+      ],
+      "expectedFirstStage": "FEATURES",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "PROFILE"
+      ],
+      "expectedFirstStage": "PROFILE",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "FULL_FLAG"
+      ],
+      "expectedFirstStage": "FULL_FLAG",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "COLD_REVISION"
+      ],
+      "expectedFirstStage": "COLD_REVISION",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "givenFailedStages": [
+        "COLD_VALUES"
+      ],
+      "expectedFirstStage": "COLD_VALUES",
+      "laterStages": "NOT_EVALUATED"
+    },
+    {
+      "id": "safe_reply_legacy_token",
+      "input": "G9_RESEARCH_CONFIG_REJECTED",
+      "expected": "NON_JSON"
+    },
+    {
+      "id": "safe_reply_empty",
+      "input": "",
+      "expected": "NON_JSON"
+    },
+    {
+      "id": "safe_reply_malformed",
+      "input": "{\"ok\":",
+      "expected": "NON_JSON"
+    },
+    {
+      "id": "safe_reply_null",
+      "input": "null",
+      "expected": "ROOT_OBJECT_REQUIRED"
+    },
+    {
+      "id": "safe_reply_array",
+      "input": "[]",
+      "expected": "ROOT_OBJECT_REQUIRED"
+    },
+    {
+      "id": "safe_reply_number",
+      "input": "1",
+      "expected": "ROOT_OBJECT_REQUIRED"
+    },
+    {
+      "id": "safe_reply_json_string",
+      "input": "\"G9_RESEARCH_CONFIG_REJECTED\"",
+      "expected": "ROOT_OBJECT_REQUIRED"
+    },
+    {
+      "id": "safe_reply_error",
+      "input": "{\"revision\": \"GPU_NAPI_ERROR_V1\", \"ok\": false, \"code\": \"G9_RESEARCH_CONFIG_REJECTED\"}",
+      "expected": "CONTROLLED_NATIVE_ERROR"
+    },
+    {
+      "id": "safe_reply_good",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "ACCEPT"
+    },
+    {
+      "id": "safe_reply_unknown_revision",
+      "input": "{\"revision\":\"UNKNOWN\",\"words\":[]}",
+      "expected": "REVISION"
+    },
+    {
+      "id": "safe_reply_short_words",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORDS_LENGTH"
+    },
+    {
+      "id": "safe_reply_negative",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORD_TYPE_RANGE"
+    },
+    {
+      "id": "safe_reply_fraction",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [1.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORD_TYPE_RANGE"
+    },
+    {
+      "id": "safe_reply_overflow",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [4294967296, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORD_TYPE_RANGE"
+    },
+    {
+      "id": "safe_reply_unsafe",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [9007199254740992, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORD_TYPE_RANGE"
+    },
+    {
+      "id": "safe_reply_boolean",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [true, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORD_TYPE_RANGE"
+    },
+    {
+      "id": "safe_reply_null_word",
+      "input": "{\"revision\": \"T529_EXPLICIT_RESEARCH_CANDIDATE_1\", \"words\": [null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+      "expected": "WORD_TYPE_RANGE"
+    }
+  ],
+  "manifestSha256": "56d9d350a0ec4e9817e84f145a35e16b2e06cfd4b188ab93bdfc1cbba074177d",
+  "preciseMissingEvidence": [
+    "same attempt UI type/length/offset/bytes",
+    "per NAPI raw statuses and valid output values",
+    "semantic branch observations",
+    "actual runtime/package/PID/boot identity"
+  ],
+  "notProductPass": true
+}

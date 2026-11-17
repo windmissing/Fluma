@@ -1,0 +1,1046 @@
+{
+  "schema": "T547_READONLY_EVIDENCE_AUDIT_V1",
+  "date": "2026-11-17",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "GLRun": false,
+  "unknowns": [
+    "specific Create/scene/commit failure",
+    "unique run qualified six-role warm success",
+    "M2 native Create code/firstFailure"
+  ],
+  "C0": {
+    "records": 378,
+    "audit": {
+      "pairs": 189,
+      "unmatchedEnters": [],
+      "errors": [],
+      "enterCounts": {
+        "glCreateShader": 9,
+        "glShaderSource": 9,
+        "glCompileShader": 9,
+        "glCreateProgram": 147,
+        "glAttachShader": 9,
+        "glLinkProgram": 6
+      },
+      "durationNs": {
+        "glCreateShader": 4909000,
+        "glShaderSource": 216800,
+        "glCompileShader": 45118900,
+        "glCreateProgram": 4398900,
+        "glAttachShader": 107800,
+        "glLinkProgram": 745600
+      },
+      "firstWallNs": "1037810976196800",
+      "lastWallNs": "1038727833491400",
+      "spanNs": "916857294600"
+    }
+  },
+  "C2": {
+    "records": 660,
+    "inheritedC0Records": 378,
+    "ownRecords": 282,
+    "audit": {
+      "pairs": 141,
+      "unmatchedEnters": [],
+      "errors": [],
+      "enterCounts": {
+        "glCreateProgram": 141
+      },
+      "durationNs": {
+        "glCreateProgram": 5576700
+      },
+      "firstWallNs": "1038821648755300",
+      "lastWallNs": "1039711731541700",
+      "spanNs": "890082786400"
+    }
+  },
+  "rawClassLayout": {
+    "layout-driver.txt": {
+      "size": 182640,
+      "memberLines": [
+        "0\t| TailObserver tailObserver",
+        "16\t| TailObserver coldObserver",
+        "32\t| isolation",
+        "40\t| SubmitObserver submitObserver",
+        "64\t| TailSample flushSample",
+        "128\t| SourceCoreTransport source",
+        "92128\t| QuantumCandidate quantum",
+        "181248\t| eventArenas",
+        "181256\t| scratchEvent",
+        "181260\t| results",
+        "| <alignment member> (size=4)",
+        "181272\t| extraBytes",
+        "181280\t| spareAt",
+        "181284\t| replayFrozen",
+        "181288\t| active",
+        "181289\t| quantumFlight",
+        "181290\t| failed",
+        "181291\t| lost",
+        "181292\t| frozen",
+        "| <alignment member> (size=3)",
+        "181296\t| RootRequest pending",
+        "181360\t| ?$array@I$0BAA@ tail",
+        "182384\t| SourceTransportStats stats",
+        "182456\t| U64 lastFrame",
+        "182464\t| arenaFrame",
+        "182480\t| used",
+        "182488\t| lastOrdinal",
+        "182492\t| lastPublication",
+        "182496\t| frameHasSource",
+        "| <alignment member> (size=3)",
+        "182500\t| acceptedArena",
+        "182504\t| acceptedQuantum",
+        "| <alignment member> (size=3)",
+        "182508\t| QuantumParameters coldParams",
+        "182544\t| SubmitPhase submitPhase",
+        "| <alignment member> (size=3)",
+        "182548\t| passCursor",
+        "182552\t| batchesIssued",
+        "182556\t| lastBatchPasses",
+        "182560\t| submitCancelled",
+        "182564\t| flushes",
+        "182568\t| warmupWallNs",
+        "182576\t| lastBatchWallNs",
+        "182584\t| submitFirstNs",
+        "182592\t| submitTotalWallNs",
+        "182600\t| submitPumpWallNs",
+        "182608\t| tailSpare",
+        "182612\t| tailReplay",
+        "182616\t| tailBank",
+        "182620\t| tailSlot",
+        "182624\t| tailArena",
+        "182628\t| tailCarry",
+        "182632\t| tailDispatches",
+        "| <alignment member> (size=4)"
+      ]
+    },
+    "layout-impl.txt": {
+      "size": 182640,
+      "memberLines": [
+        "0\t| TailObserver tailObserver",
+        "16\t| TailObserver coldObserver",
+        "32\t| isolation",
+        "40\t| SubmitObserver submitObserver",
+        "64\t| TailSample flushSample",
+        "128\t| SourceCoreTransport source",
+        "92128\t| QuantumCandidate quantum",
+        "181248\t| eventArenas",
+        "181256\t| scratchEvent",
+        "181260\t| results",
+        "| <alignment member> (size=4)",
+        "181272\t| extraBytes",
+        "181280\t| spareAt",
+        "181284\t| replayFrozen",
+        "181288\t| active",
+        "181289\t| quantumFlight",
+        "181290\t| failed",
+        "181291\t| lost",
+        "181292\t| frozen",
+        "| <alignment member> (size=3)",
+        "181296\t| RootRequest pending",
+        "181360\t| ?$array@I$0BAA@ tail",
+        "182384\t| SourceTransportStats stats",
+        "182456\t| U64 lastFrame",
+        "182464\t| arenaFrame",
+        "182480\t| used",
+        "182488\t| lastOrdinal",
+        "182492\t| lastPublication",
+        "182496\t| frameHasSource",
+        "| <alignment member> (size=3)",
+        "182500\t| acceptedArena",
+        "182504\t| acceptedQuantum",
+        "| <alignment member> (size=3)",
+        "182508\t| QuantumParameters coldParams",
+        "182544\t| SubmitPhase submitPhase",
+        "| <alignment member> (size=3)",
+        "182548\t| passCursor",
+        "182552\t| batchesIssued",
+        "182556\t| lastBatchPasses",
+        "182560\t| submitCancelled",
+        "182564\t| flushes",
+        "182568\t| warmupWallNs",
+        "182576\t| lastBatchWallNs",
+        "182584\t| submitFirstNs",
+        "182592\t| submitTotalWallNs",
+        "182600\t| submitPumpWallNs",
+        "182608\t| tailSpare",
+        "182612\t| tailReplay",
+        "182616\t| tailBank",
+        "182620\t| tailSlot",
+        "182624\t| tailArena",
+        "182628\t| tailCarry",
+        "182632\t| tailDispatches",
+        "| <alignment member> (size=4)"
+      ]
+    }
+  },
+  "automaticLayoutGate": "INVALID_EMPTY_COMPARISON",
+  "rawLogs": {
+    "C0": [
+      {
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "actionId": "BOOT",
+        "phase": "CREATE_ONLY_START",
+        "scriptNs": "0",
+        "detail": "arm=C0 filesDir=.codex/local-test/t496/C0-files packageSource=EMPTY_CACHE"
+      },
+      {
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "actionId": "BOOT",
+        "phase": "STORE_CONFIGURED",
+        "scriptNs": "0",
+        "detail": "ok=true entries=0"
+      },
+      {
+        "assertId": "CREATE_STORE_CONFIGURED",
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "pass": true,
+        "detail": "entries=0"
+      },
+      {
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=0"
+      },
+      {
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=15000"
+      },
+      {
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=30000"
+      },
+      {
+        "runId": "t496-C0-1037810840413700",
+        "arm": "create_C0",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=45000"
+      }
+    ],
+    "C2": [
+      {
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "CREATE_ONLY_START",
+        "scriptNs": "0",
+        "detail": "arm=C2 filesDir=.codex/local-test/t496/C2-files packageSource=SEEDED_ALL6"
+      },
+      {
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "STORE_CONFIGURED",
+        "scriptNs": "0",
+        "detail": "ok=true entries=6"
+      },
+      {
+        "assertId": "CREATE_STORE_CONFIGURED",
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "pass": true,
+        "detail": "entries=6"
+      },
+      {
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=0"
+      },
+      {
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=15000"
+      },
+      {
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=30000"
+      },
+      {
+        "runId": "t496-C2-1038821468209800",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "CREATE_WAIT",
+        "scriptNs": "1000000",
+        "detail": "iter=45000"
+      }
+    ]
+  },
+  "contextualCacheReceipts": [
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.jsonl",
+        "bytes": 130695,
+        "sha256": "53671a16e1b5df327f09d24755b0469245e98716fedb97290204446634e61ed6"
+      },
+      "directoryArm": "C0",
+      "rows": 101,
+      "taggedT496Rows": 101,
+      "packageSources": {
+        "T496_C0:EMPTY_CACHE": 101
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "LOAD_CHECKED": 17,
+        "LOAD_LINK_OK_REFLECTION_PENDING": 17,
+        "REFLECT_OK": 17,
+        "PREPARE_OK": 17,
+        "REFLECT_PREPARE_OK": 17,
+        "BINARY_LOAD_ENTER": 16
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.jsonl",
+        "bytes": 130129,
+        "sha256": "953cd8afd4b56b944dd179a72d67fc5a2c5e4bdffb75a721275e1dbfb1995e1c"
+      },
+      "directoryArm": "C0",
+      "rows": 99,
+      "taggedT496Rows": 99,
+      "packageSources": {
+        "T496_C0:EMPTY_CACHE": 99
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "REFLECT_PREPARE_OK": 15,
+        "WARMUP_OK": 14,
+        "BINARY_LOAD_ENTER": 14,
+        "LOAD_CHECKED": 14,
+        "LOAD_LINK_OK_REFLECTION_PENDING": 14,
+        "REFLECT_OK": 14,
+        "PREPARE_OK": 14
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.jsonl",
+        "bytes": 130560,
+        "sha256": "caa44c1d82cea321387205dd14d9c49b95a800ff85417853ebbdd7dc57d42cae"
+      },
+      "directoryArm": "C0",
+      "rows": 100,
+      "taggedT496Rows": 100,
+      "packageSources": {
+        "T496_C0:EMPTY_CACHE": 100
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "BINARY_LOAD_ENTER": 20,
+        "LOAD_CHECKED": 20,
+        "LOAD_LINK_OK_REFLECTION_PENDING": 20,
+        "REFLECT_OK": 20,
+        "REFLECT_PREPARE_OK": 20
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5.jsonl",
+        "bytes": 18851,
+        "sha256": "f1a20d84a3978b9e31eaff445bf6be5b9fd18e2116557c90f9f2915316531ecd"
+      },
+      "directoryArm": "C0",
+      "rows": 11,
+      "taggedT496Rows": 11,
+      "packageSources": {
+        "T496_C0:EMPTY_CACHE": 11
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "VERTEX_COMPILE_ENTER": 1,
+        "BINARY_LOAD_ENTER": 10
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C2-files\\gpu-program-cache\\v1\\1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.jsonl",
+        "bytes": 130695,
+        "sha256": "8a9ff32252f2941411011674144c3258f01290fcc8d77a5165476c840ad45697"
+      },
+      "directoryArm": "C2",
+      "rows": 101,
+      "taggedT496Rows": 101,
+      "packageSources": {
+        "T496_C2:SEEDED_ALL6": 101
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "LOAD_CHECKED": 17,
+        "LOAD_LINK_OK_REFLECTION_PENDING": 17,
+        "REFLECT_OK": 17,
+        "PREPARE_OK": 17,
+        "REFLECT_PREPARE_OK": 17,
+        "BINARY_LOAD_ENTER": 16
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C2-files\\gpu-program-cache\\v1\\545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.jsonl",
+        "bytes": 130129,
+        "sha256": "111767a583c6ef71f8583d9bafc2fd43d9f0884d0a57804bbfad4681e9569057"
+      },
+      "directoryArm": "C2",
+      "rows": 99,
+      "taggedT496Rows": 99,
+      "packageSources": {
+        "T496_C2:SEEDED_ALL6": 99
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "REFLECT_PREPARE_OK": 15,
+        "WARMUP_OK": 14,
+        "BINARY_LOAD_ENTER": 14,
+        "LOAD_CHECKED": 14,
+        "LOAD_LINK_OK_REFLECTION_PENDING": 14,
+        "REFLECT_OK": 14,
+        "PREPARE_OK": 14
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C2-files\\gpu-program-cache\\v1\\834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942.jsonl",
+        "bytes": 22616,
+        "sha256": "08caeaa1341bffba3c61aed2b3f15eefd8ebbd26599e5e367a53bd1425afbfdf"
+      },
+      "directoryArm": "C2",
+      "rows": 12,
+      "taggedT496Rows": 0,
+      "packageSources": {
+        "HOST_APP_cold": 7,
+        "HOST_APP_warm": 5
+      },
+      "environmentSHAs": [],
+      "taggedStages": {},
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C2-files\\gpu-program-cache\\v1\\9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.jsonl",
+        "bytes": 130560,
+        "sha256": "62af1920266a4593503d9a2bd8ea30925c0f0c0785573251995fde3cbb38266a"
+      },
+      "directoryArm": "C2",
+      "rows": 100,
+      "taggedT496Rows": 100,
+      "packageSources": {
+        "T496_C2:SEEDED_ALL6": 100
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "BINARY_LOAD_ENTER": 20,
+        "LOAD_CHECKED": 20,
+        "LOAD_LINK_OK_REFLECTION_PENDING": 20,
+        "REFLECT_OK": 20,
+        "REFLECT_PREPARE_OK": 20
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C2-files\\gpu-program-cache\\v1\\cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88.jsonl",
+        "bytes": 23258,
+        "sha256": "d89ca5240586867de4a64a36cde9a466250e026d43f0723a2bc4d16f31d91346"
+      },
+      "directoryArm": "C2",
+      "rows": 12,
+      "taggedT496Rows": 0,
+      "packageSources": {
+        "HOST_APP_cold": 7,
+        "HOST_APP_warm": 5
+      },
+      "environmentSHAs": [],
+      "taggedStages": {},
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C2-files\\gpu-program-cache\\v1\\e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5.jsonl",
+        "bytes": 36390,
+        "sha256": "1e8a089cd98710aba2b722121b286e91e2797c8e70a1f781c4594be558753a06"
+      },
+      "directoryArm": "C2",
+      "rows": 20,
+      "taggedT496Rows": 8,
+      "packageSources": {
+        "HOST_APP_cold": 7,
+        "HOST_APP_warm": 5,
+        "T496_C2:SEEDED_ALL6": 8
+      },
+      "environmentSHAs": [
+        "2aabb8c88eabed25386ede5af0b3fd16cfe498a5c53ba42f5239900f2258a5b0"
+      ],
+      "taggedStages": {
+        "BINARY_LOAD_ENTER": 8
+      },
+      "status": "CONTEXTUAL_MUTABLE_CACHE_RECEIPTS_NOT_UNIQUE_RUN_PROOF"
+    }
+  ],
+  "seedEnvelopeChecks": [
+    {
+      "file": {
+        "path": ".codex\\local-test\\t485-app-m1-exact\\cache\\gpu-program-cache\\v1\\1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.bin",
+        "bytes": 172842,
+        "sha256": "4f3b44c37b25fafb7fe2679e1f47f83aa8cc6c207e72bf6b07cb9e11e47d0fe3"
+      },
+      "format": 37798,
+      "key": "1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc",
+      "payloadBytes": 172698,
+      "payloadSha256": "624bfaaa84e3e4e4b7cd35fb92076e945614b17a5391e1e4d1441144658816fe",
+      "status": "FILE_INTEGRITY_ONLY_NOT_CURRENT_GL_QUALIFICATION"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t485-app-m1-exact\\cache\\gpu-program-cache\\v1\\545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.bin",
+        "bytes": 377626,
+        "sha256": "245cd234f82817c317904b03f09a112bb0c4f59f59e1b609a694bf55d5e46558"
+      },
+      "format": 37798,
+      "key": "545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494",
+      "payloadBytes": 377482,
+      "payloadSha256": "70fa746bfc0cae377d687e1e915f2c424736f0ec0d6add0c3d5b38b9a47d9375",
+      "status": "FILE_INTEGRITY_ONLY_NOT_CURRENT_GL_QUALIFICATION"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t485-app-m1-exact\\cache\\gpu-program-cache\\v1\\834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942.bin",
+        "bytes": 17735,
+        "sha256": "a26dcc6d9dd09945d22ca8c86af86b10a46e817f1329130bbcd25686a4a25dca"
+      },
+      "format": 37798,
+      "key": "834a1766deedc2d5cd912a2089e6e16e0e57bd84dcdcb3bfec0e445039d27942",
+      "payloadBytes": 17591,
+      "payloadSha256": "79db7b346a30bc614bfd05c65a87d108a24c8270661a011e8308a330fb782839",
+      "status": "FILE_INTEGRITY_ONLY_NOT_CURRENT_GL_QUALIFICATION"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t485-app-m1-exact\\cache\\gpu-program-cache\\v1\\9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.bin",
+        "bytes": 177964,
+        "sha256": "eac3ddf9f6b1694c58f414475b5980d98e608aa261c9fb8b399876b90b49ebac"
+      },
+      "format": 37798,
+      "key": "9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1",
+      "payloadBytes": 177820,
+      "payloadSha256": "5353319bedbd0e577b9f9aed18e5b505ff7d75ea68ab535c1d6ecc6c0e195392",
+      "status": "FILE_INTEGRITY_ONLY_NOT_CURRENT_GL_QUALIFICATION"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t485-app-m1-exact\\cache\\gpu-program-cache\\v1\\cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88.bin",
+        "bytes": 18934,
+        "sha256": "6e9d0bb2d3b0f9a18b38d8d9501556b221c6175d65b7b2e226837d65bc5d6bcb"
+      },
+      "format": 37798,
+      "key": "cd57d4abf63b4f123adbe9adeaf5f363c7058431011069ffafe752a0828a9e88",
+      "payloadBytes": 18790,
+      "payloadSha256": "14a11c615bb52303cdc3361eb58527030fd7889334acb98d3c2cf0976b596df2",
+      "status": "FILE_INTEGRITY_ONLY_NOT_CURRENT_GL_QUALIFICATION"
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t485-app-m1-exact\\cache\\gpu-program-cache\\v1\\e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5.bin",
+        "bytes": 28434,
+        "sha256": "6cf2fa7fe4f6b94b03b89913abde21aa6c5716c6e1e09163718551f58b1cd350"
+      },
+      "format": 37798,
+      "key": "e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5",
+      "payloadBytes": 28290,
+      "payloadSha256": "08b114496212fa8424596dadb2cd872f25680e62075495c074a546f4a1c4d6a3",
+      "status": "FILE_INTEGRITY_ONLY_NOT_CURRENT_GL_QUALIFICATION"
+    }
+  ],
+  "rawExport": {
+    "localRawCopiesAudited": 1,
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reportedDeviceExports": 3,
+    "UIErrors": [
+      "CREATE_EXPORT_FAILED Error: update failed"
+    ],
+    "canonicalMatchesDelivered": true,
+    "productStatus": "NOT_REACHED"
+  },
+  "sources": [
+    {
+      "path": "docs\\test-report-T496-create-only-v2.md",
+      "bytes": 4715,
+      "sha256": "0771dfe3b00404ec91462e101300c15f6186f36ecb0bda0382291b31d20d3a47"
+    },
+    {
+      "path": "docs\\test-report-T461-device-evidence-v2.md",
+      "bytes": 5516,
+      "sha256": "299699f01f9c83b62ba99ea48e1c93ac52a2995ec6c522035e83d97f2327a893"
+    },
+    {
+      "path": "docs\\architecture-T518-host-create-triage-v1.md",
+      "bytes": 10517,
+      "sha256": "e2b2f480ad62d2fb33503db0f242e0b7b8ed04fff76604933ae5546c7f5d6c93"
+    },
+    {
+      "path": "docs\\architecture-T521-m2-zero-ledger-triage-v1.md",
+      "bytes": 8631,
+      "sha256": "fe19c8814ea4d941c8cc724753e98c7a051c9f02bf1507ed31562d7a9dc4497d"
+    },
+    {
+      "path": "test\\t496\\external_source_diff.cpp",
+      "bytes": 25063,
+      "sha256": "2783f8bbb89c1c1dc3545d4eb9bc68a31e5b7476e5fe077625b809d604c33062"
+    },
+    {
+      "path": "test\\t496\\gl_sink.inc",
+      "bytes": 2159,
+      "sha256": "9b9667593d8ea0f4a4a6107166dba5e8fd7c8da6dac1473c67401728987d4b7b"
+    },
+    {
+      "path": "test\\t496\\gl_forward_sink.cpp",
+      "bytes": 15802,
+      "sha256": "5a4b7c583ab71619074dce550702b727785f5f41a2b7d232ee4fa0f025a48be4"
+    },
+    {
+      "path": "test\\t496\\build.cmd",
+      "bytes": 3283,
+      "sha256": "274db4d6d78a8084ee5c21c4f349f5182eb472fb9be43505656550ea5878af67"
+    },
+    {
+      "path": "test\\t496\\run_create_only.cmd",
+      "bytes": 827,
+      "sha256": "88a296e968cfee4b456e2eb624cd9d85d62f13134d3ed0010cd39ee2c1d940f8"
+    },
+    {
+      "path": "test\\t488\\gl_wrappers.inc",
+      "bytes": 1720,
+      "sha256": "73df8724d67d3254f2c2b307712a0a9789ef2c363de501ee9b478fffcdb8ec37"
+    },
+    {
+      "path": "test\\t485\\gl_exports.inc",
+      "bytes": 1855,
+      "sha256": "7190cf380ec481e8c15fc7b9ba071583f947347283e1aebff955a86e32b629a4"
+    },
+    {
+      "path": "test\\t324\\gl_extra.cpp",
+      "bytes": 531,
+      "sha256": "e182642ca419a1d1547cebf34212b735bcfa5e5c0927eb10e83d06cb8137e85c"
+    },
+    {
+      "path": "test\\t468\\M2CreateColdFiles.ets",
+      "bytes": 1194,
+      "sha256": "a760b95b33a389dcc015e9e99dfbfe348cbad45e5ae5b66802763b9ebfbda48b"
+    },
+    {
+      "path": "test\\t468\\generate.cjs",
+      "bytes": 7148,
+      "sha256": "d45c3fba6e89a5941a00572ee5b8f309d57cea010a11047b6889168d43288244"
+    },
+    {
+      "path": "test\\t468\\page_units.cjs",
+      "bytes": 2646,
+      "sha256": "2253129ee108008dd4257ea4aca0e2d62e5f1b42a3cb0e51b032cb0edb94c218"
+    },
+    {
+      "path": "test\\reports\\t496\\gltrace-C0.ndjson",
+      "bytes": 43231,
+      "sha256": "6273939b9d75008fe8374578079fd3e722f4ccfbb79e4bbd39344100f81f36f1"
+    },
+    {
+      "path": "test\\reports\\t496\\gltrace-C2.ndjson",
+      "bytes": 75159,
+      "sha256": "28f5ebbcb4eeef3081eb37be889555b847733d96fdcfb7999d8773fe3defc1d8"
+    },
+    {
+      "path": "test\\reports\\t496\\log-C0.ndjson",
+      "bytes": 1025,
+      "sha256": "49144fb2f5f4ab71a6f1b65b78e04c2f0818641e82585038025a3b074608b1b7"
+    },
+    {
+      "path": "test\\reports\\t496\\log-C2.ndjson",
+      "bytes": 1025,
+      "sha256": "8d364571e2b605779d83a0072526f092b388bcc09a79e420d850562ac82c9607"
+    },
+    {
+      "path": "test\\reports\\t491\\t461r2\\lA.json",
+      "bytes": 75157,
+      "sha256": "99c2afbf31aa1ef25e24502948790fb657a365c06d908432d57033a9707666fc"
+    },
+    {
+      "path": "test\\reports\\t491\\t461r2\\create-raw0.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test\\reports\\t491\\t461r2\\files-ls-before.txt",
+      "bytes": 198,
+      "sha256": "28bcc061a9dacfe95b3ea78dbf2bf865bb3861336ce80027c6321eeae198c867"
+    },
+    {
+      "path": "test\\reports\\t491\\t461r2\\files-ls-after-both.txt",
+      "bytes": 286,
+      "sha256": "45913a2f621c6a9888f48b756ca2571ecd182e2fe0d6ba98fe6d6c429bfbfc9a"
+    },
+    {
+      "path": ".codex\\local-test\\t482-final\\entry\\src\\main\\ets\\physics\\M2CreateColdFiles.ets",
+      "bytes": 1194,
+      "sha256": "a760b95b33a389dcc015e9e99dfbfe348cbad45e5ae5b66802763b9ebfbda48b"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\gpu_resident\\m1_scene_sources.h",
+      "bytes": 5673,
+      "sha256": "1c5ee1e864d43568f362efa66e9840f16f3c86ff4c3e6803c14863e9ae22e68a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.cpp",
+      "bytes": 32096,
+      "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_transport.cpp",
+      "bytes": 16166,
+      "sha256": "872818b5297118e8106caccd15a582cb75f2f139f2a7afa6faf584fd03d4830f"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\quantum_candidate.cpp",
+      "bytes": 14723,
+      "sha256": "d0838f4c4470c6c2adeebd54553090c449b5cb39b2efbdf2ee14afdde94024f1"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\scene.cpp",
+      "bytes": 14459,
+      "sha256": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\program_factory.h",
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\graphics_program_factory.h",
+      "bytes": 18446,
+      "sha256": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\create_diagnostics.h",
+      "bytes": 14631,
+      "sha256": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\fullframe_targets.cpp",
+      "bytes": 1848,
+      "sha256": "b6797f7e09f97bc150ca3f6527805fa4044bbfcd985fd3c4b4a0277152fbb0ec"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.cpp",
+      "bytes": 32096,
+      "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\scene.cpp",
+      "bytes": 14459,
+      "sha256": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\program_factory.h",
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\graphics_program_factory.h",
+      "bytes": 18446,
+      "sha256": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C2_contains_exact_C0_prefix",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "C0_actual_record_count",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "C2_own_record_count",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "covered_calls_all_pair",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "C2_own_has_no_compile_link",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "sink_run_arm_missing",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "sink_shared_append_path_confirmed",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "wait_heartbeat_is_coordinator",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "layout_automatic_gate_empty",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_class_layouts_match_separately",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "runner_target_and_kill_defects_present",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "no_commit_assert_in_raw",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "contextual_environment_not_reported_mismatch",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "independent_current_SCENE_FULL_key",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "seed_envelope_1028e02a",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "seed_envelope_545a3f5f",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "seed_envelope_834a1766",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "seed_envelope_9062993a",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "seed_envelope_cd57d4ab",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "seed_envelope_e3c4f777",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "canonical_T468_writer_matches_T482",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "empty_allowed_but_crypto_update_unconditional",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "empty_sha_mathematical_identity",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "local_empty_raw_original",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_UI_update_failure_present",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "old_mock_accepts_empty_crypto",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_empty",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_one",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_nonempty",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_max",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_odd",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_bad",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "raw_domain_too_large",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "failure_cannot_be_empty_success_OPEN",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "failure_cannot_be_empty_success_WRITE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "failure_cannot_be_empty_success_FSYNC",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "failure_cannot_be_empty_success_CLOSE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "failure_cannot_be_empty_success_HASH_NONEMPTY",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "all_named_direct_calls_catalogued",
+      "result": "PASS_FINITE_ENGINEERING_ONLY",
+      "count": 95
+    }
+  ],
+  "exportContractVectors": [
+    {
+      "id": "empty",
+      "hexBytes": 0,
+      "expected": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "cryptoUpdateCalls": 0
+      }
+    },
+    {
+      "id": "one",
+      "hexBytes": 2,
+      "expected": {
+        "bytes": 1,
+        "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+        "cryptoUpdateCalls": 1
+      }
+    },
+    {
+      "id": "nonempty",
+      "hexBytes": 8,
+      "expected": {
+        "bytes": 4,
+        "sha256": "2a86f087a71fab884eaade327199f27a62730eac9bb8f7eb3ec2a6e594dbbdb5",
+        "cryptoUpdateCalls": 1
+      }
+    },
+    {
+      "id": "max",
+      "hexBytes": 8192,
+      "expected": {
+        "bytes": 4096,
+        "sha256": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7",
+        "cryptoUpdateCalls": 1
+      }
+    },
+    {
+      "id": "odd",
+      "hexBytes": 1,
+      "expected": {
+        "status": "CREATE_RAW_FORMAT"
+      }
+    },
+    {
+      "id": "bad",
+      "hexBytes": 2,
+      "expected": {
+        "status": "CREATE_RAW_FORMAT"
+      }
+    },
+    {
+      "id": "too_large",
+      "hexBytes": 8194,
+      "expected": {
+        "status": "CREATE_RAW_FORMAT"
+      }
+    },
+    {
+      "failAt": "OPEN",
+      "expected": "ERROR_PRESERVE_FIRST_CAUSE_NO_SUCCESS_RECEIPT"
+    },
+    {
+      "failAt": "WRITE",
+      "expected": "ERROR_PRESERVE_FIRST_CAUSE_NO_SUCCESS_RECEIPT"
+    },
+    {
+      "failAt": "FSYNC",
+      "expected": "ERROR_PRESERVE_FIRST_CAUSE_NO_SUCCESS_RECEIPT"
+    },
+    {
+      "failAt": "CLOSE",
+      "expected": "ERROR_PRESERVE_FIRST_CAUSE_NO_SUCCESS_RECEIPT"
+    },
+    {
+      "failAt": "HASH_NONEMPTY",
+      "expected": "ERROR_PRESERVE_FIRST_CAUSE_NO_SUCCESS_RECEIPT"
+    }
+  ],
+  "manifestSha256": "347977ec0fab5af6b9d9e4e766fd973876219508dfd5c156ddd95fe9b8a26d31",
+  "notProductPass": true
+}

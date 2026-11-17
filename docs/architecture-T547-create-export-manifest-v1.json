@@ -1,0 +1,375 @@
+{
+  "schema": "T547_CREATE_EXPORT_ENGINEERING_V1",
+  "date": "2026-11-17",
+  "deviceUsed": false,
+  "status": "ENGINEERING_TRIAGE_COMPLETE_CREATE_CALL_UNKNOWN_EXPORT_DEFECT_CONFIRMED",
+  "create": {
+    "frozenTree": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident",
+    "maxAttemptWallNs": "900000000000",
+    "extendDeadline": false,
+    "sourceGate": "nonempty raw size/member layout + showIncludes + full source/link/DLL/EXE hashes",
+    "runArms": [
+      "C0_EMPTY",
+      "C1_COMPUTE3",
+      "C2_ALL6"
+    ],
+    "armIsolation": "new process, unique create-new output dir, no inherited receipts/traces",
+    "sink": {
+      "recordUtf8Max": 4096,
+      "attemptFileBytesMax": 33554432,
+      "identity": [
+        "runId",
+        "arm",
+        "pid",
+        "ownerTid",
+        "contextGeneration",
+        "createAttemptId",
+        "callId",
+        "parentCallId",
+        "functionId",
+        "role",
+        "key",
+        "wallNs",
+        "scriptNs"
+      ],
+      "activeCallPhases": [
+        "ENTER_EMIT",
+        "IN_API",
+        "RETURNED",
+        "EXIT_EMIT"
+      ],
+      "errorConsumption": "forward original glGetError/eglGetError only; never extra reads",
+      "crossTU": "single initialized process instance; no independent inline sink state",
+      "proof": "same attempt durable ENTER + IN_API + no return; not a coordinator heartbeat"
+    },
+    "apiGroups": {
+      "egl": [
+        "eglGetPlatformDisplayEXT",
+        "eglInitialize",
+        "eglBindAPI",
+        "eglChooseConfig",
+        "eglCreateContext",
+        "eglCreatePbufferSurface",
+        "eglMakeCurrent",
+        "eglQuerySurface",
+        "eglQueryContext",
+        "eglSwapBuffers",
+        "eglDestroySurface",
+        "eglDestroyContext",
+        "eglTerminate",
+        "eglGetProcAddress",
+        "eglGetCurrentContext",
+        "eglGetCurrentDisplay",
+        "eglGetCurrentSurface",
+        "eglGetError"
+      ],
+      "compile_binary": [
+        "glCreateShader",
+        "glShaderSource",
+        "glCompileShader",
+        "glCreateProgram",
+        "glAttachShader",
+        "glLinkProgram",
+        "glProgramParameteri",
+        "glProgramBinary",
+        "glGetProgramBinary",
+        "glGetProgramiv",
+        "glGetShaderiv",
+        "glGetShaderInfoLog",
+        "glGetProgramInfoLog",
+        "glDeleteProgram",
+        "glDeleteShader"
+      ],
+      "environment": [
+        "glGetString",
+        "glGetStringi",
+        "glGetIntegerv",
+        "glGetInteger64v",
+        "glGetError"
+      ],
+      "reflection": [
+        "glGetActiveUniform",
+        "glGetUniformLocation",
+        "glGetProgramInterfaceiv",
+        "glGetProgramResourceIndex",
+        "glGetProgramResourceiv",
+        "glGetActiveAttrib",
+        "glGetAttribLocation",
+        "glGetFragDataLocation",
+        "glIsProgram"
+      ],
+      "resource_prepare": [
+        "glGenBuffers",
+        "glBindBuffer",
+        "glBufferData",
+        "glBufferSubData",
+        "glBindBufferBase",
+        "glCopyBufferSubData",
+        "glDeleteBuffers",
+        "glGenVertexArrays",
+        "glBindVertexArray",
+        "glDeleteVertexArrays",
+        "glUseProgram",
+        "glDispatchCompute",
+        "glMemoryBarrier",
+        "glFlush",
+        "glFinish",
+        "glFenceSync",
+        "glClientWaitSync",
+        "glDeleteSync",
+        "glMapBufferRange",
+        "glUnmapBuffer"
+      ],
+      "scene_if_reached": [
+        "glGenFramebuffers",
+        "glBindFramebuffer",
+        "glDeleteFramebuffers",
+        "glGenTextures",
+        "glBindTexture",
+        "glDeleteTextures",
+        "glTexImage2D",
+        "glTexStorage2D",
+        "glTexParameteri",
+        "glFramebufferTexture2D",
+        "glCheckFramebufferStatus",
+        "glDrawArrays",
+        "glDrawArraysInstanced",
+        "glViewport"
+      ],
+      "uniform_exact": [
+        "glUniform1f",
+        "glUniform1i",
+        "glUniform1ui",
+        "glUniform2f",
+        "glUniform2ui",
+        "glUniform4f",
+        "glUniform4fv"
+      ],
+      "additional_direct_calls": [
+        "eglCreateWindowSurface",
+        "eglGetDisplay",
+        "glActiveTexture",
+        "glBlendFunc",
+        "glColorMask",
+        "glDisable",
+        "glEnable",
+        "glEnableVertexAttribArray",
+        "glGetFramebufferAttachmentParameteriv",
+        "glGetIntegeri_v",
+        "glVertexAttribDivisor",
+        "glVertexAttribIPointer",
+        "glVertexAttribPointer"
+      ]
+    },
+    "highLevelSeams": [
+      {
+        "id": "TRANSPORT_CREATE",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.cpp",
+        "token": "FullM1Transport::Create",
+        "lines": [
+          8
+        ],
+        "returnEvidence": "return TransportCode, first raw GL, allocatedBytes",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "SOURCE_CREATE",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_transport.cpp",
+        "token": "SourceCoreTransport::CreateUsing",
+        "lines": [
+          16
+        ],
+        "returnEvidence": "return TransportCode + resources/reflect/prepare",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "INTERMEDIATE_CREATE",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\quantum_candidate.cpp",
+        "token": "QuantumCandidate::Create",
+        "lines": [
+          60
+        ],
+        "returnEvidence": "return TransportCode + context",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "FINAL_BUILD",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.cpp",
+        "token": "programcache::Build(2",
+        "lines": [
+          12
+        ],
+        "returnEvidence": "return bool/program/first GL",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "REFLECT_PREPARE",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\program_factory.h",
+        "token": "ObservePrepare",
+        "lines": [
+          309
+        ],
+        "returnEvidence": "original prepare status; no added GL read",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "COLD_PREFIX",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.cpp",
+        "token": "PrepareColdPrefix",
+        "lines": [
+          45,
+          65
+        ],
+        "returnEvidence": "return TransportCode/error + warmup wall",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "SCENE_PREPARE",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\scene.cpp",
+        "token": "Scene::PreparePrograms",
+        "lines": [
+          33
+        ],
+        "returnEvidence": "bool/PrepareFailure + generation/current check",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "SCENE_ROLE_BUILD",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\graphics_program_factory.h",
+        "token": "BuildGraphics",
+        "lines": [
+          152
+        ],
+        "returnEvidence": "each role bool/key/route/link/reflect/prepare",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "RESOURCE_COMMIT",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "token": "recovery.Resources",
+        "lines": [
+          817
+        ],
+        "returnEvidence": "scope/current/resources result + first rejected predicate",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "CAPTURE_EPOCH",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "token": "captureCommittedEpoch=seen",
+        "lines": [
+          836
+        ],
+        "returnEvidence": "committed epoch written only in real committed branch",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "SESSION_HANDOFF",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "token": "RecoverySessionLocked",
+        "lines": [
+          143,
+          224,
+          1232
+        ],
+        "returnEvidence": "expected serial/epoch/run/page + returned session",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "FIRST_PAGE_PULSE",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "token": "PagePulseLocked",
+        "lines": [
+          226,
+          1312
+        ],
+        "returnEvidence": "sequence/UI/receipt/baseline + result",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "READY",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "token": "TryReadyV2Locked",
+        "lines": [
+          215,
+          241,
+          487,
+          819,
+          842
+        ],
+        "returnEvidence": "phase/ready permission/current scope",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      },
+      {
+        "id": "RETIRE_RETRY",
+        "source": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+        "token": "auto retire=",
+        "lines": [
+          607
+        ],
+        "returnEvidence": "previous attempt result, release/context retirement, next attempt relation",
+        "instrumentation": "existing hook/forward first; missing high-level seam -> developer",
+        "tokenFound": true
+      }
+    ],
+    "cache": "full exact source/ABI/link/environment tuple and 144-byte T475B001 envelope; only .bin seeded, no historical .jsonl/.tmp",
+    "current_SCENE_FULL_IndependentKey": "e3c4f777656fdd529b6a20ac19aa2df8975f8436677c4a544acd366ac4cfd9a5",
+    "watchdog": "exact child PID/tree only; no image/window wildcard kill; wall deadline including startup",
+    "handoff": "tester owns fixture/sink/seed; missing high-level observation seam -> developer; no canonical business changes",
+    "readiness": "resource commit first, then production session handoff + first pulse baseline; commit is not READY"
+  },
+  "export": {
+    "canonical": "test/t468/M2CreateColdFiles.ets",
+    "generator": "test/t468/generate.cjs",
+    "rawHexLimit": 8192,
+    "rawByteLimit": 4096,
+    "emptyAllowed": true,
+    "emptySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "emptyOrder": [
+      "validate",
+      "open/truncate",
+      "fsync",
+      "close",
+      "return bytes0 + exact empty SHA"
+    ],
+    "emptyCryptoUpdateCalls": 0,
+    "nonempty": "original crypto SHA256 over exact bytes; no empty fallback on failure",
+    "noSuccessBeforeAllDurable": true,
+    "existingManifestAndEndpointProtocolUnchanged": true,
+    "failureStages": [
+      "FORMAT",
+      "OPEN",
+      "WRITE",
+      "FSYNC",
+      "CLOSE",
+      "HASH",
+      "JSON",
+      "MANIFEST"
+    ],
+    "testerMock": "empty crypto update throws; empty path must never invoke it",
+    "productCreateAndRoot": "NOT_REACHED until native JSON/scope proof; no inference from raw0B"
+  },
+  "developer": "development compile commit only; no tests; no device",
+  "unchanged": {
+    "rootDeadlineNs": 250000000,
+    "gapNs": 33333333,
+    "quotaHz": 120,
+    "displayTargetFps": 30,
+    "CPUStopped": true,
+    "render": "XComponent+shader only"
+  },
+  "evidence": "analysis-T547-create-export-evidence-v1.json"
+}

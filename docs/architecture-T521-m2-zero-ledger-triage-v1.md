@@ -1,5 +1,7 @@
 # T521 M2 正确修复包零账与空日志首次归因 v1
 
+> 2026-11-17 T547新证修订：T461 v2原件与canonical T468 writer确认合法空raw写盘后无条件md.update(empty)使收据链失败。本文当时“当前没有证据要求developer改saveRaw”的历史判断已被新证取代；按 `architecture-T547-create-and-empty-export-triage-v1.md` §5修工程后交developer。空raw允许，native/manifest不得为空，M2产品域仍NOT_REACHED；不改NO_PREVIOUS_CREATE/NO_TRACE准入。
+
 2026-11-16，architect，不使用真机。结论 **包来源可核；证据采集未完成，功能保持NOT_REACHED；先复用现有诊断补证，当前不派kernel拆分或认定呈现同因**。原件指纹/布局与包内ELF核对见 `analysis-T521-m2-zero-ledger-evidence-v1.json`。
 
 ## 1. 来源与现场边界

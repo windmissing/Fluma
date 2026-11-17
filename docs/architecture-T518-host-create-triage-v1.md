@@ -1,5 +1,7 @@
 # T518 同源离线 Create 长等待首次归因 v1
 
+> 2026-11-17 T547补充生效：`architecture-T547-create-and-empty-export-triage-v1.md` / 对应机器表修订后段精确sink、匹配环境seed与900s runner。T496 v2原件实际C0 378行、C2 660行且继承完整C0前缀；C2自身无compile/link，不能采报告的环境miss重编译断言。CREATE_WAIT非owner心跳，非空sizeof门仍未修。本文旧历史证据不冒新核验；新请求按T547执行，CPU/期限/渲染边界不变。
+
 2026-11-16，architect，不使用真机，不运行GL长测。结论 **首次归因与设施修订合同已交付；具体未返回GL调用仍需精确补证**。不能从CPU活跃、等待iter或T475另一fixture成功推断JIT/驱动死锁。输入原件及SHA见 `analysis-T518-host-create-evidence-v1.json`，其中保全现存小日志/布局文本，避免忽略目录中的原件丢失。
 
 ## 1. 原件能证明到哪

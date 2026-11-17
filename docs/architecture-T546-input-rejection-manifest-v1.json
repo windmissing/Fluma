@@ -1,0 +1,139 @@
+{
+  "schema": "T546_INPUT_REJECTION_ENGINEERING_V1",
+  "date": "2026-11-17",
+  "status": "ENGINEERING_READY_DEVICE_PREDICATE_UNKNOWN",
+  "known": [
+    "G9 start unguarded JSON.parse",
+    "shared decoder hides first rejection",
+    "configure result not gated before frame scheduling"
+  ],
+  "notProved": [
+    "specific failed NAPI predicate",
+    "M3 and G9 same root cause",
+    "shader/physics/OOM failure"
+  ],
+  "expectedRequests": {
+    "M3Configure": [
+      4,
+      15,
+      192,
+      64,
+      7680,
+      8388608,
+      1048576,
+      65536,
+      1048576,
+      0,
+      0,
+      120,
+      524288,
+      1048576,
+      1,
+      0
+    ],
+    "G9ResearchConfig": [
+      192,
+      0
+    ]
+  },
+  "decode": {
+    "stages": [
+      "CB_INFO",
+      "ARG_COUNT",
+      "IS_TYPEDARRAY_API",
+      "IS_TYPEDARRAY_VALUE",
+      "TYPEDARRAY_INFO",
+      "ELEMENT_TYPE",
+      "ELEMENT_COUNT",
+      "BYTE_OFFSET",
+      "DATA_POINTER",
+      "DETACHED_API",
+      "DETACHED_VALUE",
+      "BACKING_INFO",
+      "BASE_POINTER",
+      "BACKING_BYTES",
+      "WORD_COPY",
+      "HEADER_REVISION",
+      "FEATURES",
+      "PROFILE",
+      "FULL_FLAG",
+      "COLD_REVISION",
+      "COLD_VALUES"
+    ],
+    "strictType": "napi_uint32_array",
+    "lengthUnit": "elements",
+    "expectedBytes": "checked(N*4)",
+    "offset": 0,
+    "baseEqualsDataRequired": true,
+    "detachedApiMustSucceed": true,
+    "fallbackNumberArray": false,
+    "outputs": "VALID / API_FAILED / NOT_EVALUATED",
+    "copy": "synchronous fixed native array only after every gate"
+  },
+  "diagnostics": {
+    "endpoint": "gpuInputDiagnosticsV1(route:string,attemptId?:string):string",
+    "routes": [
+      "M3A",
+      "M3B",
+      "G9"
+    ],
+    "snapshotBytes": 512,
+    "perRouteSnapshots": 2,
+    "nativePayloadBytes": 3072,
+    "responseUtf8Max": 4096,
+    "expandedSnapshotsPerReply": 1,
+    "firstFailure": "separate reference; selected by exact attemptId",
+    "attemptId": "nonzero monotonic U64 decimal string; exhaustion is error",
+    "businessFirstCauseUnchanged": true
+  },
+  "errorJSON": {
+    "revision": "GPU_NAPI_ERROR_V1",
+    "ok": false,
+    "required": [
+      "state",
+      "code",
+      "api",
+      "route",
+      "attemptId",
+      "diagnosticRevision"
+    ],
+    "nativePendingException": "preserve exception/status; UI catch; never fake ordinary success",
+    "budgetBytes": 4096
+  },
+  "legacyStatusApisRemainStrings": [
+    "m3Configure",
+    "g9Configure",
+    "pulse",
+    "target",
+    "offer"
+  ],
+  "successJSONUnchanged": true,
+  "UI": {
+    "parseRoot": "non-null object, not array/primitive",
+    "validateWords": "exact length + safe integers U32 before construction",
+    "start": "catch entire event including cleanup; schedule frame only after exact accepted configure token",
+    "cleanup": "preserve original error; cleanup failure separately"
+  },
+  "sourceOwnership": [
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.h (new)",
+    "m3a/napi.inc",
+    "m3b/napi.inc",
+    "g9spf/napi.inc",
+    "native type declarations",
+    "G9/M3/M5 pages and cold parsers",
+    "T522/T529/T517 overlay generators"
+  ],
+  "handoff": {
+    "developer": "development compile commit only; no test; no device",
+    "tester": "new signed package then minimal one request/route with raw predicate statuses, device serial; return to architect"
+  },
+  "unchanged": {
+    "rootDeadlineNs": 250000000,
+    "gapNs": 33333333,
+    "quotaHz": 120,
+    "displayTargetFps": 30,
+    "CPUStopped": true,
+    "render": "XComponent+shader only"
+  },
+  "evidence": "analysis-T546-rejection-evidence-v1.json"
+}
