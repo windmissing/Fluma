@@ -1,0 +1,82 @@
+{
+  "schema": "T553_PREPARE_ROOT_PNG_EVIDENCE_ENGINEERING_V1",
+  "date": "2026-11-17",
+  "deviceUsed": false,
+  "IME": {
+    "status": "PREPARE_UNKNOWN_EXACT_SUBPREDICATE_NOT_PROVED",
+    "existingPage": "P051DerivedV2Demo",
+    "paths": [
+      "verify fixed keyboard/window/registration snapshot",
+      "real click focused t413-roi + actual avoid/height",
+      "same UIAbility inputMethod.getController().showTextInput if needed",
+      "existing stopEditing + clearFocus prepare sequence"
+    ],
+    "forbidden": [
+      "set keyboardAreaSeen directly",
+      "fake avoid",
+      "clear editing history to bypass",
+      "UNKNOWN->HIDDEN",
+      "extend prepare 3000ms"
+    ],
+    "missingEngineering": "same-process requestImeForPrepare only if existing UI path cannot request IME; developer compile only"
+  },
+  "root": {
+    "T537AlreadyContainsT536": true,
+    "HAPSha256": "97e8e342d34431c64cc8c1286cc503271c1d61e82a062dc98f73c0f3cc24ae0b",
+    "ELFSha256": "c65aab0751e68580ffe1e59ff11fcf06b50d9d3fe6a8912c57caafe8b8e2a6e1",
+    "ELFMarkers": [
+      "T536_COLD_PREPARE_V1",
+      "Q_COPY",
+      "Q_PREFLIGHT",
+      "Q_WATER",
+      "Q_INDEX_SORT",
+      "Q_TRANSPORT",
+      "Q_BED",
+      "Q_AUDIT_REPLAY",
+      "Q_PUBLICATION",
+      "T537_INPUT_STAGE_V1"
+    ],
+    "evidence": "5153 ROOT_ACCEPT counted, last root5121; future CLOCK_GAP root5122 is not blanket successor failure",
+    "nextEvidence": [
+      "same scope sourceOpen/FIFO/headAge/generation",
+      "Down command/intent/enqueue seq",
+      "G1 Claim/source Begin/completion/Accept or exact no-claim reason",
+      "per-domain wall/fence/pulse/Swap clock evidence"
+    ],
+    "optionalSeam": {
+      "name": "SourceClaimWitnessV1",
+      "fixedBytesMax": 256,
+      "additionalJSONMax": 2048,
+      "existingWriterBytesMax": 2097152,
+      "existingTotalBytesMax": 4194304,
+      "changesQueueOrWakesOwner": false
+    }
+  },
+  "PNG": {
+    "primary": "UiTest Driver.screenCap in real test runner, actual display and sandbox path",
+    "verify": [
+      "PNG magic/CRC/decode",
+      "original bytes/SHA/size",
+      "display and coordinate mapping",
+      "same token native hold + certified clock interval"
+    ],
+    "forbidden": [
+      "JPEG re-encode",
+      "filename as format proof",
+      "tolerance1 pass",
+      "hold renewal",
+      "cross-domain naked ns subtraction"
+    ],
+    "fallback": "API/permission/runtime raw error and case-decision evidence to manager; no threshold change",
+    "diagnosticHoldNs": 2000000000
+  },
+  "unchanged": {
+    "rootDeadlineNs": 250000000,
+    "gapNs": 33333333,
+    "prepareDeadlineMs": 3000,
+    "quotaHz": 120,
+    "displayTargetFps": 30,
+    "CPUStopped": true
+  },
+  "checks": "analysis-T553-evidence-v1.json"
+}

@@ -1,5 +1,7 @@
 # T535：V5 cold prefix 摘要合同修订（V2）
 
+> 2026-11-17 T552补充生效：本文“非prefix沿T527”原先未给数值的部分现已由 `architecture-T552-v5-segment-wire-v2.json` 及 `architecture-T552-v5-wire-and-g9-seed-v2.md` 唯一补齐；按新逐段身份/计数/捕获元数据实施。T535固定自身SHA mask、版本及预算规则不变。
+
 日期：2026-11-17。角色：architect。不使用真机。状态：ENGINEERING_READY_NOT_IMPLEMENTED。
 
 本稿消费 T517 `7a02d77`、`developer-T517-v5-implementation.md` 和 T527 正式表。T527 的 prefix descriptor 覆盖自身 SHA 而未定义 canonical 输入，是工程合同遗漏；T517 拒绝自行选择算法、以 `PREFIX_DIGEST_POLICY_REQUIRED` 暂停完整 cold 是正确处理。容量 helper 和局部编译均不等于完整 capture。本稿解除该合同前置，不声称 T517 已完成。

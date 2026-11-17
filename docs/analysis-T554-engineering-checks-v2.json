@@ -1,0 +1,644 @@
+{
+  "schema": "T554_FINITE_ENGINEERING_CHECKS_V2",
+  "date": "2026-11-17",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "cases": [
+    {
+      "id": "eight_header_config_params",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "exact_full_2404_dispatch_table",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "plan_dispatch_9628",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_micro_counts",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "count_PREDICTOR_FACE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "count_MIDPOINT_BUILD",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "count_CORRECTOR_FACE",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "old_natural_writer_disabled",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "new_micro_exactly_12",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_WORK48_unique",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_seed_192_cache_and_profile",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_designer_resource_match_192",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_cold_delta_192",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_pages_192",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_append_no_alias_192",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_event_path_page_alignment_192",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_seed_512_cache_and_profile",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_designer_resource_match_512",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_cold_delta_512",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_pages_512",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_append_no_alias_512",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_event_path_page_alignment_512",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_max_two_FULL",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_known_peak",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "DM_Eval_and_division_bound",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "event_mask_DM_NATURAL",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "event_mask_DM_PREDICTOR",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_0_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_1_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_1_1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_2_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_2_1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_2_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_127_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_127_63",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_127_127",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_1024_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_1024_512",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_1024_1024",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_268435455_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_268435455_134217727",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_268435455_268435455",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_268435456_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_268435456_134217728",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "32_rounds_268435456_268435456",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_0",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_3",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_3",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_3",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_4",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_4",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_4",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_5",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_5",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_5",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_6",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_6",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_6",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_small_prefix_7",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_H_omega_nonincreasing_7",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "Eval_upper_bound_7",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "RNE_1_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "RNE_3_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "RNE_-1_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "RNE_-3_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "RNE_-5_2",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    }
+  ],
+  "abstractPrefixBoundaryVectors": [
+    {
+      "upper": 0,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 0
+    },
+    {
+      "upper": 1,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 1
+    },
+    {
+      "upper": 1,
+      "abstractMaxFeasible": 1,
+      "lo": 1,
+      "hi": 2,
+      "activeRounds": 1
+    },
+    {
+      "upper": 2,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 1
+    },
+    {
+      "upper": 2,
+      "abstractMaxFeasible": 1,
+      "lo": 1,
+      "hi": 2,
+      "activeRounds": 2
+    },
+    {
+      "upper": 2,
+      "abstractMaxFeasible": 2,
+      "lo": 2,
+      "hi": 3,
+      "activeRounds": 2
+    },
+    {
+      "upper": 127,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 7
+    },
+    {
+      "upper": 127,
+      "abstractMaxFeasible": 63,
+      "lo": 63,
+      "hi": 64,
+      "activeRounds": 7
+    },
+    {
+      "upper": 127,
+      "abstractMaxFeasible": 127,
+      "lo": 127,
+      "hi": 128,
+      "activeRounds": 7
+    },
+    {
+      "upper": 1024,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 10
+    },
+    {
+      "upper": 1024,
+      "abstractMaxFeasible": 512,
+      "lo": 512,
+      "hi": 513,
+      "activeRounds": 10
+    },
+    {
+      "upper": 1024,
+      "abstractMaxFeasible": 1024,
+      "lo": 1024,
+      "hi": 1025,
+      "activeRounds": 11
+    },
+    {
+      "upper": 268435455,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 28
+    },
+    {
+      "upper": 268435455,
+      "abstractMaxFeasible": 134217727,
+      "lo": 134217727,
+      "hi": 134217728,
+      "activeRounds": 28
+    },
+    {
+      "upper": 268435455,
+      "abstractMaxFeasible": 268435455,
+      "lo": 268435455,
+      "hi": 268435456,
+      "activeRounds": 28
+    },
+    {
+      "upper": 268435456,
+      "abstractMaxFeasible": 0,
+      "lo": 0,
+      "hi": 1,
+      "activeRounds": 28
+    },
+    {
+      "upper": 268435456,
+      "abstractMaxFeasible": 134217728,
+      "lo": 134217728,
+      "hi": 134217729,
+      "activeRounds": 28
+    },
+    {
+      "upper": 268435456,
+      "abstractMaxFeasible": 268435456,
+      "lo": 268435456,
+      "hi": 268435457,
+      "activeRounds": 29
+    }
+  ],
+  "finiteEvalVectors": [
+    {
+      "S": 31,
+      "F": 0,
+      "p": "0",
+      "gn": 536870912,
+      "Hg": 20,
+      "J": 1,
+      "upper": 0,
+      "maximumFeasible": 0,
+      "maxRecord": {
+        "H": 20,
+        "omega": 262144,
+        "u": 0,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 20,
+        "omega": 262144,
+        "u": 0,
+        "feasible": false
+      }
+    },
+    {
+      "S": 31,
+      "F": 0,
+      "p": "0",
+      "gn": 536870912,
+      "Hg": 0,
+      "J": 32,
+      "upper": 0,
+      "maximumFeasible": 0,
+      "maxRecord": {
+        "H": 0,
+        "omega": 262144,
+        "u": 0,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 0,
+        "omega": 262144,
+        "u": 0,
+        "feasible": false
+      }
+    },
+    {
+      "S": 63,
+      "F": 1,
+      "p": "10485760",
+      "gn": 536870912,
+      "Hg": 0,
+      "J": 1,
+      "upper": 28,
+      "maximumFeasible": 3,
+      "maxRecord": {
+        "H": 64,
+        "omega": 409600,
+        "u": 2621440,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 1,
+        "omega": 262144,
+        "u": 2097152,
+        "feasible": false
+      }
+    },
+    {
+      "S": 63,
+      "F": 1,
+      "p": "-10485760",
+      "gn": 536870912,
+      "Hg": 0,
+      "J": 1,
+      "upper": 28,
+      "maximumFeasible": 3,
+      "maxRecord": {
+        "H": 64,
+        "omega": 409600,
+        "u": -2621440,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 1,
+        "omega": 262144,
+        "u": -2097152,
+        "feasible": false
+      }
+    },
+    {
+      "S": 63,
+      "F": 1,
+      "p": "1073741824",
+      "gn": 1,
+      "Hg": 0,
+      "J": 1,
+      "upper": 31,
+      "maximumFeasible": 31,
+      "maxRecord": {
+        "H": 64,
+        "omega": 7864320,
+        "u": 33554432,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 64,
+        "omega": 7864320,
+        "u": 32537631,
+        "feasible": false
+      }
+    },
+    {
+      "S": 63,
+      "F": 32,
+      "p": "671088640",
+      "gn": 536870912,
+      "Hg": 40,
+      "J": 2,
+      "upper": 21,
+      "maximumFeasible": 21,
+      "maxRecord": {
+        "H": 95,
+        "omega": 7864320,
+        "u": 12662050,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 95,
+        "omega": 7864320,
+        "u": 12427567,
+        "feasible": false
+      }
+    },
+    {
+      "S": 127,
+      "F": 32,
+      "p": "0",
+      "gn": 536870912,
+      "Hg": 120,
+      "J": 32,
+      "upper": 0,
+      "maximumFeasible": 0,
+      "maxRecord": {
+        "H": 120,
+        "omega": 262144,
+        "u": 0,
+        "feasible": true
+      },
+      "qPlus1Record": {
+        "H": 120,
+        "omega": 262144,
+        "u": 0,
+        "feasible": false
+      }
+    },
+    {
+      "S": 0,
+      "F": 32,
+      "p": "0",
+      "gn": 536870912,
+      "Hg": 32,
+      "J": 1,
+      "upper": 0,
+      "maximumFeasible": 0,
+      "maxRecord": {
+        "H": 32,
+        "omega": 262144,
+        "u": 0,
+        "feasible": true
+      },
+      "qPlus1Record": "S_PLUS_ONE_OUTSIDE_DOMAIN"
+    }
+  ],
+  "notFullStepper": true,
+  "notProductOracle": true,
+  "sources": [
+    {
+      "path": "docs/algorithm-G9-dynamic-mobilization-v2.md",
+      "bytes": 24975,
+      "sha256": "bd1cba97223ff25941a448096cb7d2d784bc6e066dc15b8451cd3a8e6e61ae7e"
+    },
+    {
+      "path": "docs/design-G9-dynamic-mobilization-manifest-v2.json",
+      "bytes": 13045,
+      "sha256": "b17060c0441e481ec99f3279c76c8b8c94a1013b0fd9045d6b01b6cb827dac77"
+    },
+    {
+      "path": "docs/design-G9-dynamic-mobilization-fixtures-v2.json",
+      "bytes": 10490,
+      "sha256": "93967212f43013177ebc1b01bc0522aa1073086cdd672e21a27d4c281e2e9873"
+    },
+    {
+      "path": "docs/architecture-T552-g9-seed-manifest-v2.json",
+      "bytes": 3947,
+      "sha256": "2a8ed1093e201a9f3cf5386dbc80840a1d481ca58396f9d737320a6ae0fc6a4c"
+    },
+    {
+      "path": "docs/architecture-T524-g9-spf-manifest-v1.json",
+      "bytes": 408536,
+      "sha256": "0ae205834bbf0efde09768ec48551925570effbc3b4b5f2d1ad2ed467e203a82"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/reader_schema.json",
+      "bytes": 54525,
+      "sha256": "05e480e0a2ce34de8a6d56ac03225cbf296b4c3edf4372d9d1527473b222e0dd"
+    }
+  ],
+  "manifest": {
+    "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+    "bytes": 22451,
+    "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+  }
+}

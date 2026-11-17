@@ -1,0 +1,252 @@
+{
+  "schema": "T553_READONLY_EVIDENCE_AND_FINITE_CHECKS_V1",
+  "date": "2026-11-17",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "cases": [
+    {
+      "id": "Down_to_offer_exact",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "five_retained_offers_enqueued",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "input_seen_not_same_as_retained",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "fault_is_GAP_before_root_deadline",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "real_gap_and_excess",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "fault_not_immediate_input_failure",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "many_successor_roots_already_observed",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "T537_generator_already_calls_T536",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "T537_signed_hash",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_T536_COLD_PREPARE_V1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_COPY",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_PREFLIGHT",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_WATER",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_INDEX_SORT",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_TRANSPORT",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_BED",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_AUDIT_REPLAY",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_Q_PUBLICATION",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "ELF_contains_T537_INPUT_STAGE_V1",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "IME_UNKNOWN_is_composite",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "IME_seen_only_from_real_observation",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "existing_observers_and_prepare_unchanged",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "integer_raster_raw_present",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "UiTest_PNG_API_documented",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "same_process_IME_API_documented",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "existing_system_capture_is_JPEG",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "PNG_qualification_real_header",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "PNG_qualification_jpeg_named_png",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "PNG_qualification_no_clock",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "PNG_qualification_outside_hold",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    },
+    {
+      "id": "original_deadlines_unchanged",
+      "result": "PASS_FINITE_ENGINEERING_ONLY"
+    }
+  ],
+  "DownToOfferNs": "18633594",
+  "retainedOffers": 5,
+  "seenCounters": [
+    "1",
+    "0",
+    "1",
+    "0",
+    "1",
+    "23",
+    "11",
+    "0",
+    "23"
+  ],
+  "dropped": "31",
+  "rootAcceptCount": "5153",
+  "lastRootAccepted": "5121",
+  "faultRoot": "5122",
+  "rootRevokeAgeNs": "41380625",
+  "rootDeadlineDeltaNs": "250000000",
+  "gapNs": "34047344",
+  "gapExcessNs": "714011",
+  "DownToFaultNs": "311789784375",
+  "rootScope": {
+    "epoch": "7",
+    "run": "4",
+    "context": "7",
+    "surface": "7",
+    "session": "2",
+    "resetSerial": "2",
+    "permissionRevision": "4"
+  },
+  "rasterBoundsRaw": [
+    "[51,990][1205,1661]",
+    "[51,990][1205,2634]"
+  ],
+  "T537Package": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T537-m1-final\\T537-m1-final-signed.hap",
+    "bytes": 9726567,
+    "sha256": "97e8e342d34431c64cc8c1286cc503271c1d61e82a062dc98f73c0f3cc24ae0b",
+    "ELFBytes": 1939224,
+    "ELFSha256": "c65aab0751e68580ffe1e59ff11fcf06b50d9d3fe6a8912c57caafe8b8e2a6e1"
+  },
+  "SDK": [
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\ets\\api\\@ohos.UiTest.d.ts",
+      "sha256": "7cffe0842708bb6dcdfdf7ed5fa87fad8adb9f9aa172d47e5b1964908f322ee6"
+    },
+    {
+      "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\ets\\api\\@ohos.inputMethod.d.ts",
+      "sha256": "e5064841ffd2201aa08fbd5b14ccbd485246c97a32dddcd6aabe00375829d560"
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/test-report-T408-t540-domain-v9.md",
+      "bytes": 2710,
+      "sha256": "3d356554cb01cda05a5f3a9ab8c0025deec89e7f50f7900709456e1ef57770f8"
+    },
+    {
+      "path": "docs/test-report-T510-t537-domain-v2.md",
+      "bytes": 4018,
+      "sha256": "f86102d11e2eaddaa0e7f5b2eb409bdfd357049bb436356570dad2523f6d5d2b"
+    },
+    {
+      "path": "test/reports/t491/t510v2/execution-diag.json",
+      "bytes": 603127,
+      "sha256": "7e069551a0d06f35e79112495dd52a6f6abad2330bf6c21382dcc99fe222f6c1"
+    },
+    {
+      "path": "test/reports/t491/t510v2/boot-diag.json",
+      "bytes": 182984,
+      "sha256": "3145e562a51ce7c712a4b2e315662687c71c77894e5598db5dd800da0415e85d"
+    },
+    {
+      "path": "test/reports/t491/t510v2/t537-pixel-envelope.json",
+      "bytes": 2190,
+      "sha256": "9a44f5e0d9cf1c27a70f9e87fc23c273363c295b0a510c496a0dede0ae49cbcc"
+    },
+    {
+      "path": "test/reports/t491/t510v2/capture1.json",
+      "bytes": 809,
+      "sha256": "50bf7caa3f72f987d30cc9ff45534c6cdfd2b3c61e06afb4a056146f779f491e"
+    },
+    {
+      "path": "test/reports/t491/t510v2/capture2.json",
+      "bytes": 812,
+      "sha256": "6d78466804a532c8a57f3fb9d5def1526e292f87be25f1a6591f4e7eacd78777"
+    },
+    {
+      "path": "test/reports/t491/t510v2/diag1.jpeg",
+      "bytes": 112489,
+      "sha256": "5fe6b7c5d26b56d9eb32b80eb8ab9d1a859b22492c52666e7e111d327a7861a2"
+    },
+    {
+      "path": "test/t537/generate.cjs",
+      "bytes": 400,
+      "sha256": "8c21492ae8f43f5395a458e251c3459c4b8d0e220f9f33159829561385bfc0f7"
+    },
+    {
+      "path": "test/reports/t257/T537-m1-final.json",
+      "bytes": 2301,
+      "sha256": "2ce440c62ee3425bcbc196132d72ebcfe01a5c974c22e96fe44ab44ace8cef94"
+    },
+    {
+      "path": ".codex/local-test/t540-final/entry/src/main/ets/render/PrepareReadiness.ets",
+      "bytes": 11621,
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2"
+    },
+    {
+      "path": ".codex/local-test/t540-final/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 47937,
+      "sha256": "5deeaa3f52b249d30dce2bfc4558e0ae36f6d69f3de466d3814e43223f30a2d7"
+    }
+  ],
+  "unknown": [
+    "IME actual failed subpredicate",
+    "enqueue to G1 claim correlation",
+    "strict lossless same-token system pixel verdict"
+  ],
+  "notProductPass": true
+}
