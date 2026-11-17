@@ -1,0 +1,7 @@
+ private resourceCollector538:GpuResourceSnapshotCold=new GpuResourceSnapshotCold();
+ @State private resourceStatus538:string='PRODUCTION_READ_ONLY · Lab FIXTURE_SYNTHETIC';
+ @State private labOpen538:boolean=false;@State private labCase538:string='TRACE_MAX_SOURCE';private labJob538:string='';
+ private async resourceExport538():Promise<void>{try{const context=this.getUIContext().getHostContext() as common.UIAbilityContext;const out=await this.resourceCollector538.collect(m1 as ResourcePort538,new DiagnosticColdFiles(context.filesDir),'manual',this.packageSha);this.resourceStatus538=out.state+' '+out.reason+' '+out.sampleId;}catch(error){this.resourceStatus538='INCOMPLETE '+String(error);}}
+ private labStart538():void{const context=this.getUIContext().getHostContext() as common.UIAbilityContext;this.labJob538=lab538.resourceLabStartV1(this.labCase538,context.filesDir);this.resourceStatus538='FIXTURE_SYNTHETIC job='+this.labJob538;}
+ private labPoll538():void{const raw=lab538.resourceLabPollV1(this.labJob538);this.resourceStatus538=raw.substring(0,180);}
+ private async labExport538():Promise<void>{try{const context=this.getUIContext().getHostContext() as common.UIAbilityContext;const raw=lab538.resourceLabExportV1(this.labJob538);const receipt=await new DiagnosticColdFiles(context.filesDir).save('resource-lab-'+this.labJob538+'-'+Date.now()+'.json',raw);this.resourceStatus538=receipt.name+' '+receipt.sha256;console.info('WS_EVENT RESOURCE_LAB '+JSON.stringify(receipt));}catch(error){this.resourceStatus538='INCOMPLETE '+String(error);}}
