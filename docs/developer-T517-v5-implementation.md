@@ -31,3 +31,11 @@
 完整隔离工程构建：`assembleHap --no-daemon` **BUILD SUCCESSFUL**，34 tasks，46.577s，零编译错误。日志 `.codex/local-test/t517-delivery-build.txt`。产物标记 development/partial，不作为完整 V5 验证包。
 
 签名构建收据 `test/reports/t257/T517-development.json`；signed HAP SHA256 `a9e328a38a865801467d5beb779d7adfd2a84368b77783c898184d9bc2115b8a`。签包验证是构建步骤，不含应用测试或设备安装。
+
+## 2026-11-17 T535 接续
+
+T535已解除prefix自身SHA输入歧义，新增PrefixDigest固定word279..286虚拟归零与HexDigest字节序helper；旧捕获仍未启用，不能把helper当完整V5_2档案。隔离工程t517-t535-digest native/ArkTS/HAP编译通过，34tasks/50.614s，未执行测试或真机。
+
+发现独立wire合同缺项：T527机器表仅列descriptor字段名，非prefix各段kind枚举、segmentRevision数值、ROOT rootIndex/role/trial及NOT_EXECUTED行计数规则未绑定到各段；T535只规定prefix(kind1/rev2/身份0)，其余称沿T527。现有helper kind=index+1是实现假设，不能自行晋升正式合同。已原卡给architect提交精确补表请求；需要机器表逐段值或明确确认index+1/revision规则后继续完整writer/reader。
+
+未完成仍为ROOT/FULL捕获、五BASE/SOURCE_CONTEXT、完整collector/reader与跨route信用。已查T527 MD/JSON、T535 MD/JSON与现有Validate，未发现非prefix数值定义；严格实现需要对端同一解释，developer不私定wire。本人行看评论；并继续用户另两卡。原PREFIX_DIGEST_POLICY_REQUIRED回执暂保历史disabled状态，不将其当新阻断原因或完整功能。

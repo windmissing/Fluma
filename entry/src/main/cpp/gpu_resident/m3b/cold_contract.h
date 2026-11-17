@@ -25,6 +25,10 @@ inline void Digest(const uint32_t* words,size_t count,uint32_t* digest){
  p011gpu::Sha256 sha;for(size_t i=0;i<count;++i){const auto v=words[i];const uint8_t b[]={uint8_t(v),uint8_t(v>>8),uint8_t(v>>16),uint8_t(v>>24)};sha.update(b,4);}
  const auto bytes=sha.finish();for(size_t i=0;i<8;++i)digest[i]=uint32_t(bytes[4*i])|(uint32_t(bytes[4*i+1])<<8)|(uint32_t(bytes[4*i+2])<<16)|(uint32_t(bytes[4*i+3])<<24);
 }
+inline void PrefixDigest(const uint32_t* b,uint32_t* digest){
+ p011gpu::Sha256 sha;for(size_t i=0;i<8192;++i){const uint32_t v=(i>=279&&i<287)?0:b[i];const uint8_t bytes[]={uint8_t(v),uint8_t(v>>8),uint8_t(v>>16),uint8_t(v>>24)};sha.update(bytes,4);}const auto bytes=sha.finish();for(size_t i=0;i<8;++i)digest[i]=uint32_t(bytes[4*i])|(uint32_t(bytes[4*i+1])<<8)|(uint32_t(bytes[4*i+2])<<16)|(uint32_t(bytes[4*i+3])<<24);
+}
+inline void HexDigest(Writer& w,const uint32_t* words){uint8_t raw[32];for(size_t i=0;i<8;++i)for(unsigned j=0;j<4;++j)raw[4*i+j]=uint8_t(words[i]>>(8*j));w.Hex(raw,32);}
 inline bool Validate(const uint32_t* b,size_t words,const Layout& l){
  if(!b||words<l.words||b[0]!=826488150u||b[1]!=1u||b[2]!=256u||b[3]!=3235775745u||b[4]!=5u||b[5]!=31u||b[6]!=15u||b[11]!=l.count||Pair(b,44)!=l.words*4)return false;
  size_t previous=0;for(size_t i=0;i<l.count;++i){const auto& s=l.segments[i];const auto* d=b+256+i*32;
