@@ -1255,12 +1255,15 @@ bool g9InputBodyWord(uint kind,uint word){
  if(kind==1u)return word>=64u&&word<=76u;
  return kind==2u&&((word>=46u&&word<=63u)||word==77u);
 }
+bool g9FlickVerify();
 bool g9ValidateInput(uint rootKind){
- if(g9Input(0u)!=G9_INPUT_MAGIC||g9Input(1u)!=1u||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
+ if(g9Input(0u)!=G9_INPUT_MAGIC||(g9Input(1u)!=1u&&g9Input(1u)!=2u)||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
  if(any(notEqual(g9InputPair(4u),uRun))||any(notEqual(g9InputPair(6u),uOwner))||any(notEqual(g9InputPair(8u),uContext))||any(notEqual(g9InputPair(10u),uNonce))||any(notEqual(g9InputPair(12u),uInputGeneration)))return false;
  if(rootKind==1u&&g9Input(40u)!=1u||rootKind==2u&&g9Input(40u)==1u)return false;
  for(uint word=40u;word<128u;++word)if(!g9InputBodyWord(g9Input(40u),word)&&g9Input(word)!=0u)return false;
  for(uint i=0u;i<8u;++i)if(g9Input(26u+i)!=W[uConfig+16u+i])return false;
+ if(g9Input(1u)==2u&&!g9FlickVerify())return false;
+ if(g9Input(1u)==1u&&W[uConfig+6u]==2u)return false;
  return g9Input(25u)==W[uConfig+6u]&&g9Input(24u)==uint(uAcceptedAngle);
 }
 bool g9CommandCompare(uint capsule){
@@ -1322,6 +1325,29 @@ bool g9SourceBirth(){
  C[18u]=id+1u;g9PutColumn(c,8u,g9Column(c,8u)+q);
  uvec4 px,py,energy;if(!g9SMul(g9U32(q),g9S32(int(g9Ctl(53u))),px)||!g9SMul(g9U32(q),g9S32(int(g9Ctl(54u))),py)||!g9PacketEnergy(q,x,g9Ctl(52u),int(g9Ctl(53u)),int(g9Ctl(54u)),energy)||!g9Accumulate(66u,px)||!g9Accumulate(70u,py)||!g9Accumulate(90u,energy)){g9Fault(29u,slot,0u);return false;}
  uint row[64];g9Event(row,G9_EVENT_SOURCE_BIRTH,slot,c,c);row[12]=id;row[13]=generation;row[14]|=4u;row[15]=q;row[16]=origin;row[18]=g9Input(74u);row[19]=x;row[20]=g9Ctl(52u);row[21]=g9Ctl(53u);row[22]=g9Ctl(54u);row[23]=generation-1u;row[24]=generation;for(uint i=0u;i<4u;++i)row[25u+i]=energy[i];return g9WriteEvent(event,row)&&g9Seal();
+}
+
+// T543 integer-only verification; no FP64, new dispatch or binding.
+bool g9FlickVelocity(uvec4 magnitude,uvec4 duration,uint cap,out uint velocity,out bool saturated){
+ uvec4 product,denominator,value;
+ if(!g9UMul(magnitude,g9U32(1000000000u),product)||!g9UMul(duration,g9U32(4u),denominator)||!g9SDiv(product,denominator,1u,value))return false;
+ saturated=g9UCmp(value,g9U32(cap))>0;velocity=saturated?cap:value.x;return true;
+}
+bool g9FlickVerify(){
+ uint kind=g9Input(40u),adapter=g9Input(77u),flags=g9Input(45u);
+ if(kind!=2u)return flags==0u;
+ if(adapter==0u)return flags==0u;
+ if(adapter!=53401u||(flags&4u)==0u||(flags&~7u)!=0u||g9Input(48u)!=0u||g9Input(49u)!=0x40100000u)return false;
+ uvec2 xb=g9InputPair(50u),yb=g9InputPair(52u);uvec2 ax=uvec2(xb.x,xb.y&0x7fffffffu),ay=uvec2(yb.x,yb.y&0x7fffffffu);
+ if(ax.y>0x40600000u||(ax.y==0x40600000u&&ax.x!=0u)||ay.y>0x40700000u||(ay.y==0x40700000u&&ay.x!=0u))return false;
+ uvec4 dx,dy,xx,yy,norm,duration=g9U64(g9InputPair(54u));
+ if(g9UCmp(duration,g9U32(8333334u))<0||g9UCmp(duration,g9U32(1000000000u))>0||!g9DecodeBinary64(xb,20u,false,dx)||!g9DecodeBinary64(yb,20u,false,dy)||!g9UMul(g9Magnitude(dx),g9Magnitude(dx),xx)||!g9UMul(g9Magnitude(dy),g9Magnitude(dy),yy)||!g9UAdd(xx,yy,norm)||g9UCmp(norm,uvec4(0u,16u,0u,0u))<0)return false;
+ uint vx,vy;bool sx,sy;if(!g9FlickVelocity(g9Magnitude(dx),duration,25165824u,vx,sx)||!g9FlickVelocity(g9Negative(dy)?uvec4(0u):dy,duration,33554432u,vy,sy))return false;
+ if(flags!=(4u|(sx?1u:0u)|(sy?2u:0u)))return false;
+ uvec4 jx,jy,work,squares;if(!g9UMul(g9U32(vx),g9U32(65536u),jx)||!g9FromMagnitude(jx,g9Negative(dx),jx)||!g9UMul(g9U32(vy),g9U32(65536u),jy)||g9Zero(jx)&&g9Zero(jy))return false;
+ if(any(notEqual(jx,g9S64(g9InputPair(56u))))||any(notEqual(jy,g9U64(g9InputPair(58u)))))return false;
+ if(!g9UMul(g9U32(vx),g9U32(vx),xx)||!g9UMul(g9U32(vy),g9U32(vy),yy)||!g9UAdd(xx,yy,squares)||!g9UShift(squares,43u,work))return false;
+ return all(equal(work,uvec4(g9Input(60u),g9Input(61u),g9Input(62u),g9Input(63u))));
 }
 
 // Face records are frozen before any apply. Both columns consume the same q

@@ -22,12 +22,15 @@ bool g9InputBodyWord(uint kind,uint word){
  if(kind==1u)return word>=64u&&word<=76u;
  return kind==2u&&((word>=46u&&word<=63u)||word==77u);
 }
+bool g9FlickVerify();
 bool g9ValidateInput(uint rootKind){
- if(g9Input(0u)!=G9_INPUT_MAGIC||g9Input(1u)!=1u||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
+ if(g9Input(0u)!=G9_INPUT_MAGIC||(g9Input(1u)!=1u&&g9Input(1u)!=2u)||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
  if(any(notEqual(g9InputPair(4u),uRun))||any(notEqual(g9InputPair(6u),uOwner))||any(notEqual(g9InputPair(8u),uContext))||any(notEqual(g9InputPair(10u),uNonce))||any(notEqual(g9InputPair(12u),uInputGeneration)))return false;
  if(rootKind==1u&&g9Input(40u)!=1u||rootKind==2u&&g9Input(40u)==1u)return false;
  for(uint word=40u;word<128u;++word)if(!g9InputBodyWord(g9Input(40u),word)&&g9Input(word)!=0u)return false;
  for(uint i=0u;i<8u;++i)if(g9Input(26u+i)!=W[uConfig+16u+i])return false;
+ if(g9Input(1u)==2u&&!g9FlickVerify())return false;
+ if(g9Input(1u)==1u&&W[uConfig+6u]==2u)return false;
  return g9Input(25u)==W[uConfig+6u]&&g9Input(24u)==uint(uAcceptedAngle);
 }
 bool g9CommandCompare(uint capsule){
