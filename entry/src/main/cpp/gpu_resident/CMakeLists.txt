@@ -71,7 +71,12 @@ endforeach()
 string(SHA256 M1_SCENE_SHA "${M1_SCENE_HEADER}")
 string(APPEND M1_SCENE_HEADER "static constexpr const char* kM1SceneSha=\"${M1_SCENE_SHA}\";\n")
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/m1_scene_sources.h" "${M1_SCENE_HEADER}")
-add_library(grs_foundation STATIC integer.cpp control.cpp resources.cpp foundation.cpp product_wire.cpp source_transport.cpp scene.cpp run.cpp m1/profile.cpp m1/source_kernel.cpp m1/source_owner.cpp m1/source_transport.cpp m1/quantum_kernel.cpp m1/quantum_candidate.cpp m1/full_kernel.cpp m1/full_transport.cpp)
+# T550 (problem T546): shared strict typedarray decode contract + diagnostic
+# snapshot store. Compiled INTO grs_foundation (not a separate library) so the
+# grsm0/grsm1 link lines stay byte-identical to the pre-T550 build — the OHOS
+# toolchain duplicates linker flags per library entry and the link command was
+# already at the cmd.exe 8191-char boundary.
+add_library(grs_foundation STATIC napi_words_contract.cpp integer.cpp control.cpp resources.cpp foundation.cpp product_wire.cpp source_transport.cpp scene.cpp run.cpp m1/profile.cpp m1/source_kernel.cpp m1/source_owner.cpp m1/source_transport.cpp m1/quantum_kernel.cpp m1/quantum_candidate.cpp m1/full_kernel.cpp m1/full_transport.cpp)
 target_include_directories(grs_foundation PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 target_sources(grs_foundation PRIVATE m1/scene.cpp m1/run.cpp)
 target_compile_options(grs_foundation PRIVATE -fno-fast-math -ffp-contract=off)

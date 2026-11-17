@@ -1,8 +1,9 @@
+// T550 (problem T546 §2): m5Words delegates over the shared strict decode
+// contract with Route::M3B — same ordered observation as M3A/G9.
 template<size_t N>bool m5Words(napi_env env,napi_callback_info info,std::array<uint32_t,N>& out){
- size_t count=1;napi_value value,backing;bool typed=false,detached=false;napi_typedarray_type type;size_t length=0,offset=0,bytes=0;void* pointer=nullptr;void* base=nullptr;
- if(napi_get_cb_info(env,info,&count,&value,nullptr,nullptr)!=napi_ok||count!=1||napi_is_typedarray(env,value,&typed)!=napi_ok||!typed||napi_get_typedarray_info(env,value,&type,&length,&pointer,&backing,&offset)!=napi_ok||type!=napi_uint32_array||length!=N||offset||!pointer)return false;
- if(napi_is_detached_arraybuffer(env,backing,&detached)!=napi_ok||detached||napi_get_arraybuffer_info(env,backing,&base,&bytes)!=napi_ok||base!=pointer||bytes!=N*4)return false;
- std::memcpy(out.data(),pointer,N*4);return true;
+ auto result=grs::words::ReadWords<N>(env,info,grs::words::Route::M3B,0);
+ if(result.ok)out=result.words;
+ return result.ok;
 }
 template<size_t N>grs::m3b::ControlIdentityV5 m5IdentityOf(const std::array<uint32_t,N>& words){
  static_assert(N>=18);auto pair=[&](size_t at){return uint64_t(words[at])|(uint64_t(words[at+1])<<32);};return {pair(0),pair(2),pair(4),pair(6),pair(8),pair(10),pair(12),pair(14),pair(16)};

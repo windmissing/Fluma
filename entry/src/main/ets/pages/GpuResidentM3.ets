@@ -81,31 +81,45 @@ struct GpuResidentM3 {
   }
 
   private start(full: boolean = false): void {
-    this.fullBranch = full;
-    this.cold.cancel();
-    this.endExport(false);
-    native.setActive(true);
-    // Explicit candidate policy: index/s, water Q/s, and physical cold fields.
-    // No default fallback is supplied when the required omega field is absent.
-    const config = new Uint32Array([4, 15, 192, 64, 7680, 8388608,
-      1048576, 65536, 1048576, 0, 0, 120, 524288, 1048576, 1, full ? 1 : 0]);
-    this.message = native.m3Configure(config);
-    this.identity = [];
-    this.sequence = 0;
-    this.intent = 0;
-    this.request = 0;
-    if (this.frame !== null) this.frame.owner = null;
-    this.frame = new M3PageFrame();
-    this.frame.owner = this;
-    this.getUIContext().postFrameCallback(this.frame);
+    // T550 (problem T546 §4): startup transaction guarded; only the explicit
+    // M3_NEW_EMPTY_RUN_REQUESTED success token arms the frame.
+    try {
+      this.fullBranch = full;
+      try { this.cold.cancel(); } catch (cleanup) { }
+      try { this.endExport(false); } catch (cleanup) { }
+      native.setActive(true);
+      // Explicit candidate policy: index/s, water Q/s, and physical cold fields.
+      // No default fallback is supplied when the required omega field is absent.
+      const config = new Uint32Array([4, 15, 192, 64, 7680, 8388608,
+        1048576, 65536, 1048576, 0, 0, 120, 524288, 1048576, 1, full ? 1 : 0]);
+      const reply: string = native.m3Configure(config);
+      this.message = reply;
+      if (reply !== 'M3_NEW_EMPTY_RUN_REQUESTED') {
+        this.message = reply + '（可读诊断：native.gpuInputDiagnosticsV1(\'M3A\')）';
+        return;
+      }
+      this.identity = [];
+      this.sequence = 0;
+      this.intent = 0;
+      this.request = 0;
+      if (this.frame !== null) this.frame.owner = null;
+      this.frame = new M3PageFrame();
+      this.frame.owner = this;
+      this.getUIContext().postFrameCallback(this.frame);
+    } catch (e) {
+      if (this.frame !== null) this.frame.owner = null;
+      this.frame = null;
+      this.message = 'M3_START_FAULT：' + String(e);
+    }
   }
 
   frameTick(frame: M3PageFrame, ns: number): void {
     if (frame !== this.frame || frame.owner !== this || !Number.isSafeInteger(ns) || ns < 0) return;
     if (this.sequence >= Number.MAX_SAFE_INTEGER) { frame.owner = null; native.setActive(false); this.message = 'M3_SEQUENCE_EXHAUSTED'; return; }
     if (this.identity.length !== 18) {
-      const session = JSON.parse(native.m3Session()) as M3Session;
-      if (session.revision !== 4 || session.features !== 15 || session.identity?.length !== 18) {
+      let session: M3Session | null = null;
+      try { session = JSON.parse(native.m3Session()) as M3Session; } catch (e) { session = null; }
+      if (session === null || session.revision !== 4 || session.features !== 15 || session.identity?.length !== 18) {
         this.getUIContext().postFrameCallback(frame);
         return;
       }

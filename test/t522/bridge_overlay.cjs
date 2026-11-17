@@ -25,4 +25,6 @@ module.exports=function(main){
  }
  fs.writeFileSync(file,source);
  const types=path.join(main,'cpp/types/libgrsm1/index.d.ts');fs.appendFileSync(types,'\n'+['m3Configure','m3Pulse','m3Target','m3Offer','m3ColdBegin','m3ColdState','m3ColdPage','m3ColdEnd'].map(n=>'export const '+n+':(words:Uint32Array)=>string;').join('\n')+'\nexport const m3Session:()=>string;\nexport const m3Quota:()=>string;\nexport const m3ColdCapabilities:()=>string;\nexport const m3SourceStats:()=>string;\n');
+ // T550 (problem T546 §5): strict decode contract same-source injection.
+ require('../t550_words_contract_overlay.cjs')(main);
 };

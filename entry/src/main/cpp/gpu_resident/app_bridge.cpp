@@ -7,6 +7,10 @@
 #include "m1/ui_state.h"
 #endif
 #include "foundation.h"
+// T550 (problem T546): shared strict typedarray decode contract — included
+// unconditionally so both grsm0/grsm1 and every generated delivery tree
+// observe the same source.
+#include "napi_words_contract.h"
 #include "bridge_packet.h"
 #include "bridge_state.h"
 #include "bridge_timeline.h"
@@ -943,12 +947,33 @@ napi_value setColdTwoBatches(napi_env e,napi_callback_info i){
 napi_value opticsConfig(napi_env e,napi_callback_info i){size_t n=1;napi_value v;bool typed=false;napi_typedarray_type type;napi_value backing;size_t len=0,offset=0,bytes=0;void* ptr=nullptr;void* base=nullptr;if(napi_get_cb_info(e,i,&n,&v,nullptr,nullptr)!=napi_ok||n!=1||napi_is_typedarray(e,v,&typed)!=napi_ok||!typed||napi_get_typedarray_info(e,v,&type,&len,&ptr,&backing,&offset)!=napi_ok||type!=napi_float32_array||len!=16||!ptr||offset%4||napi_get_arraybuffer_info(e,backing,&base,&bytes)!=napi_ok||!base||offset>bytes||bytes-offset<64)return text(e,"INVALID_OPTICS16");m1::SceneOptics cold;std::memcpy(cold.values.data(),ptr,64);if(!m1::ValidOptics(cold))return text(e,"INVALID_OPTICS16");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.SetSourceLocked(-1);a.optics=cold;a.requiresReset=false;a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_OPTICS_RUN_REQUESTED");}
 napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4];double k=0,kw=0,feature=0,revision=0;if(napi_get_cb_info(e,i,&n,v,nullptr,nullptr)!=napi_ok||n!=4||napi_get_value_double(e,v[0],&k)!=napi_ok||napi_get_value_double(e,v[1],&kw)!=napi_ok||napi_get_value_double(e,v[2],&feature)!=napi_ok||napi_get_value_double(e,v[3],&revision)!=napi_ok||(k!=192&&k!=512)||(kw!=64&&kw!=128)||feature!=3||revision!=2)return text(e,"UNSUPPORTED_M1_CONFIG");auto& a=app();std::lock_guard<std::mutex> l(a.mutex);a.K=uint32_t(k);a.Kw=uint32_t(kw);a.requiresReset=false;a.InvalidateLocked();a.MarkLocked(BridgeStage::Invalidate);a.wake.notify_one();return text(e,"NEW_EMPTY_M1_RUN_REQUESTED");}
 #endif
+// T550 (problem T546 §3): cold input-diagnostics endpoint. route is
+// M3A|M3B|G9 (plain string), attemptId is an optional decimal U64 string
+// selecting this generation's first-failure snapshot instead of the last
+// attempt. The request never goes through the typedarray decoder under
+// diagnosis and never overwrites the recorded input receipt.
+napi_value gpuInputDiagnosticsV1(napi_env e,napi_callback_info info){
+ size_t argc=2;napi_value argv[2]={nullptr,nullptr};
+ if(napi_get_cb_info(e,info,&argc,argv,nullptr,nullptr)!=napi_ok||argc<1||argc>2)
+  return text(e,"{\"revision\":\"GPU_INPUT_DIAGNOSTIC_V1\",\"error\":\"ARG_COUNT\"}");
+ char route[16]={0};size_t routeLen=0;
+ if(napi_get_value_string_utf8(e,argv[0],route,sizeof(route),&routeLen)!=napi_ok)
+  return text(e,"{\"revision\":\"GPU_INPUT_DIAGNOSTIC_V1\",\"error\":\"ROUTE_NOT_STRING\"}");
+ std::string attempt;
+ if(argc==2){
+  char buf[24]={0};size_t len=0;
+  if(napi_get_value_string_utf8(e,argv[1],buf,sizeof(buf),&len)==napi_ok)attempt.assign(buf,len);
+ }
+ std::string out;
+ grs::words::SnapshotJson(route,attempt,out);
+ return text(e,out);
+}
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},
 {"beginEvidenceCapture",nullptr,beginEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"evidenceCaptureRequest",nullptr,evidenceCaptureRequest,nullptr,nullptr,nullptr,napi_default,nullptr},{"cancelEvidenceCaptureRequest",nullptr,cancelEvidenceCaptureRequest,nullptr,nullptr,nullptr,napi_default,nullptr},{"endEvidenceCapture",nullptr,endEvidenceCapture,nullptr,nullptr,nullptr,napi_default,nullptr},{"evidenceCapturePage",nullptr,evidenceCapturePage,nullptr,nullptr,nullptr,napi_default,nullptr},{"recordSourceAttempt",nullptr,recordSourceAttempt,nullptr,nullptr,nullptr,napi_default,nullptr},{"beginPageSession",nullptr,beginPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"endPageSession",nullptr,endPageSession,nullptr,nullptr,nullptr,napi_default,nullptr},{"pagePulse",nullptr,pagePulse,nullptr,nullptr,nullptr,napi_default,nullptr},{"setProgressV2",nullptr,setProgressV2,nullptr,nullptr,nullptr,napi_default,nullptr},{"setColdTwoBatches",nullptr,setColdTwoBatches,nullptr,nullptr,nullptr,napi_default,nullptr},{"setTailProbe",nullptr,setTailProbe,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureM1",nullptr,configure,nullptr,nullptr,nullptr,napi_default,nullptr},
 #endif
-{"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
+{"gpuInputDiagnosticsV1",nullptr,gpuInputDiagnosticsV1,nullptr,nullptr,nullptr,napi_default,nullptr},{"timeline",nullptr,timeline,nullptr,nullptr,nullptr,napi_default,nullptr},{"diagnostics",nullptr,diagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{"newRun",nullptr,newRun,nullptr,nullptr,nullptr,napi_default,nullptr},{"status",nullptr,status,nullptr,nullptr,nullptr,napi_default,nullptr},{"setActive",nullptr,active,nullptr,nullptr,nullptr,napi_default,nullptr},{"setAngle",nullptr,angle,nullptr,nullptr,nullptr,napi_default,nullptr},{"offer",nullptr,offer,nullptr,nullptr,nullptr,napi_default,nullptr}};napi_define_properties(e,out,sizeof(d)/sizeof(d[0]),d);bool has=false;napi_has_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&has);if(has){napi_value v;OH_NativeXComponent* c=nullptr;napi_get_named_property(e,out,OH_NATIVE_XCOMPONENT_OBJ,&v);napi_unwrap(e,v,reinterpret_cast<void**>(&c));if(c)OH_NativeXComponent_RegisterCallback(c,&callbacks);}return out;}
 #ifdef GRS_APP_M1
 napi_module module={1,0,nullptr,init,"grsm1",nullptr,{0}};
 #else

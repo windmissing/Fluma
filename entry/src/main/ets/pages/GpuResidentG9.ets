@@ -6,6 +6,32 @@ import { GpuG9Cold } from '../physics/GpuG9Cold';
 
 interface G9Config { words?: number[]; }
 interface G9Session { revision?: string; identity?: number[]; }
+// T550 (problem T546 §4): shared safe native object parse. Checked string,
+// bounded length, caught JSON.parse, non-null non-array object root, exact
+// revision match. LEGACY_NON_JSON_REPLY surfaces old bare-token replies as a
+// controlled failure instead of crashing on JSON.parse.
+interface NativeObjectResult { ok: boolean; object: Record<string, Object> | null; error: string; }
+function parseNativeObject(raw: string, api: string, allowedRevisions: string[]): NativeObjectResult {
+  const fail = (error: string): NativeObjectResult => ({ ok: false, object: null, error: error });
+  if (typeof raw !== 'string' || raw.length === 0 || raw.length > 65536) return fail('NATIVE_REPLY_NOT_STRING');
+  let parsed: Object;
+  try { parsed = JSON.parse(raw); } catch (e) { return fail('LEGACY_NON_JSON_REPLY'); }
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return fail('NATIVE_REPLY_NOT_OBJECT');
+  const record = parsed as Record<string, Object>;
+  // GPU_NAPI_ERROR_V1 (T546 §3): safe error object — stop and surface it.
+  if (record['revision'] === 'GPU_NAPI_ERROR_V1') {
+    const code = typeof record['code'] === 'string' ? record['code'] as string : 'UNKNOWN';
+    return fail('NAPI_ERROR:' + code);
+  }
+  const revision = record['revision'];
+  if (typeof revision !== 'string' || allowedRevisions.indexOf(revision) < 0) return fail('REVISION_MISMATCH');
+  if (api === 'g9ResearchConfig') {
+    const words = record['words'];
+    if (!Array.isArray(words) || words.length !== 24) return fail('CONFIG_WORDS_INVALID');
+    for (const w of words) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) return fail('CONFIG_WORDS_INVALID');
+  }
+  return { ok: true, object: record, error: '' };
+}
 class G9Frame extends FrameCallback {
   owner: GpuResidentG9 | null = null;
   onFrame(ns: number): void { if (this.owner !== null) this.owner.tick(this, ns); }
@@ -36,25 +62,50 @@ struct GpuResidentG9 {
     else this.archive = 'INCOMPLETE ' + this.path;
   }
   private start(k: number, full: boolean): void {
-    this.cold.cancel();
-    this.closeArchive(false);
-    if (this.frame !== null) this.frame.owner = null;
-    native.setActive(true);
-    const config = JSON.parse(native.g9ResearchConfig(new Uint32Array([k, full ? 1 : 0]))) as G9Config;
-    if (config.words?.length !== 24) { this.message = 'CALIBRATION_CONFIG_REQUIRED'; return; }
-    this.message = native.g9Configure(new Uint32Array(config.words));
-    this.identity = [];
-    this.sequence = this.command = this.angle = 0;
-    this.frame = new G9Frame();
-    this.frame.owner = this;
-    this.getUIContext().postFrameCallback(this.frame);
+    // T550 (problem T546 §4): the whole startup transaction (archive close,
+    // setActive, config read, configure, frame scheduling) is guarded; any
+    // failure cancels the new frame and never schedules a pulse. Only the
+    // explicit G9_NEW_EMPTY_RESEARCH_RUN_REQUESTED success token arms the run.
+    let firstError: string = '';
+    try {
+      try { this.cold.cancel(); } catch (cleanup) { firstError = 'COLD_CANCEL_FAILED ' + String(cleanup); }
+      try { this.closeArchive(false); } catch (cleanup) { if (firstError === '') firstError = 'ARCHIVE_CLOSE_FAILED ' + String(cleanup); }
+      if (this.frame !== null) this.frame.owner = null;
+      this.frame = null;
+      try { native.setActive(true); } catch (cleanup) { if (firstError === '') firstError = 'SET_ACTIVE_FAILED ' + String(cleanup); }
+      const configResult = parseNativeObject(native.g9ResearchConfig(new Uint32Array([k, full ? 1 : 0])), 'g9ResearchConfig', ['T529_EXPLICIT_RESEARCH_CANDIDATE_1']);
+      if (!configResult.ok) { this.message = 'G9_CONFIG_FAULT：' + configResult.error + (firstError === '' ? '' : '；清理：' + firstError); return; }
+      const config = configResult.object as unknown as G9Config;
+      if (config.words?.length !== 24) { this.message = 'CALIBRATION_CONFIG_REQUIRED'; return; }
+      const reply = native.g9Configure(new Uint32Array(config.words));
+      if (reply !== 'G9_NEW_EMPTY_RESEARCH_RUN_REQUESTED') {
+        this.message = 'G9_CONFIG_FAULT：' + reply + (reply.indexOf('G9') === 0 ? '（可读诊断：native.gpuInputDiagnosticsV1(\'G9\')）' : '');
+        return;
+      }
+      this.message = reply;
+      this.identity = [];
+      this.sequence = this.command = this.angle = 0;
+      this.frame = new G9Frame();
+      this.frame.owner = this;
+      this.getUIContext().postFrameCallback(this.frame);
+    } catch (e) {
+      // Startup fault: no new pulse, no auto re-configure; first cause kept.
+      if (this.frame !== null) this.frame.owner = null;
+      this.frame = null;
+      this.message = 'G9_START_FAULT：' + String(e) + (firstError === '' ? '' : '；清理：' + firstError);
+    }
   }
   tick(frame: G9Frame, ns: number): void {
     if (frame !== this.frame || frame.owner !== this || !Number.isSafeInteger(ns)) return;
     try {
       if (this.identity.length !== 18) {
-        const session = JSON.parse(native.g9Session()) as G9Session;
-        if (session.revision === 'G9_SPF_Q20_V1' && session.identity?.length === 18) this.identity = session.identity;
+        const sessionResult = parseNativeObject(native.g9Session(), 'g9Session', ['G9_SPF_Q20_V1']);
+        if (!sessionResult.ok) throw new Error('G9_SESSION_' + sessionResult.error);
+        const session = sessionResult.object as unknown as G9Session;
+        if (session.revision === 'G9_SPF_Q20_V1' && session.identity?.length === 18) {
+          for (const w of session.identity) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) throw new Error('G9_SESSION_IDENTITY_WORD_INVALID');
+          this.identity = session.identity;
+        }
       }
       if (this.identity.length === 18) {
         if (this.sequence >= Number.MAX_SAFE_INTEGER) throw new Error('G9_SEQUENCE_EXHAUSTED');

@@ -2,6 +2,25 @@ import native from 'libgrsm1.so';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 
 interface M5Words { revision?: number; features?: number; identity?: number[]; sourceControlGeneration?: number[]; words?: number[]; }
+// T550 (problem T546 §4): safe native object parse for the M5 route. Bounded
+// string, caught parse, object root, revision gate; LEGACY_NON_JSON_REPLY
+// surfaces old bare-token replies as controlled failure.
+interface M5ParseResult { ok: boolean; object: Record<string, Object> | null; error: string; }
+function m5ParseNativeObject(raw: string, allowedRevision: number): M5ParseResult {
+  const fail = (error: string): M5ParseResult => ({ ok: false, object: null, error: error });
+  if (typeof raw !== 'string' || raw.length === 0 || raw.length > 65536) return fail('NATIVE_REPLY_NOT_STRING');
+  let parsed: Object;
+  try { parsed = JSON.parse(raw); } catch (e) { return fail('LEGACY_NON_JSON_REPLY'); }
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return fail('NATIVE_REPLY_NOT_OBJECT');
+  const record = parsed as Record<string, Object>;
+  if (record['revision'] === 'GPU_NAPI_ERROR_V1') {
+    const code = typeof record['code'] === 'string' ? record['code'] as string : 'UNKNOWN';
+    return fail('NAPI_ERROR:' + code);
+  }
+  const revision = record['revision'];
+  if (typeof revision !== 'number' || revision !== allowedRevision) return fail('REVISION_MISMATCH');
+  return { ok: true, object: record, error: '' };
+}
 class M5Frame extends FrameCallback {
   owner: GpuResidentM5 | null = null;
   onFrame(ns: number): void { if (this.owner !== null) this.owner.frameTick(this, ns); }
@@ -29,13 +48,46 @@ struct GpuResidentM5 {
     this.getUIContext().postFrameCallback(next);
   }
   private start(mode: number): void {
-    const result = JSON.parse(native.m5ResearchConfig(new Uint32Array([mode, 0]))) as M5Words;
-    if (result.words?.length !== 32) { this.message = '研究参数不可用'; return; }
-    this.config = result.words; this.mode = mode;
-    native.setActive(true);
-    this.message = native.m5Configure(new Uint32Array(this.config));
-    this.identity = []; this.sequence = this.sample = this.intent = this.request = 0;
-    this.attachFrame();
+    // T550 (problem T546 §4): startup transaction guarded; only the explicit
+    // M5_NEW_EMPTY_RUN_REQUESTED success token arms the frame.
+    try {
+      const parsed = m5ParseNativeObject(native.m5ResearchConfig(new Uint32Array([mode, 0])), 0);
+      if (parsed.error === 'REVISION_MISMATCH' || !parsed.ok && parsed.error === 'NATIVE_REPLY_NOT_OBJECT') {
+        // T517_EXPLICIT_RESEARCH_CANDIDATE_1 carries a string revision; re-check.
+        const raw = native.m5ResearchConfig(new Uint32Array([mode, 0]));
+        if (typeof raw === 'string' && raw.indexOf('"T517_EXPLICIT_RESEARCH_CANDIDATE_1"') >= 0 && raw.indexOf('"words"') >= 0) {
+          let words: Object | undefined;
+          try { words = (JSON.parse(raw) as Record<string, Object>)['words']; } catch (e) { words = undefined; }
+          if (Array.isArray(words)) {
+            for (const w of words) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; }
+            this.config = words as number[]; this.mode = mode;
+            native.setActive(true);
+            const reply: string = native.m5Configure(new Uint32Array(this.config));
+            this.message = reply;
+            if (reply !== 'M5_NEW_EMPTY_RUN_REQUESTED') return;
+            this.identity = []; this.sequence = this.sample = this.intent = this.request = 0;
+            this.attachFrame();
+            return;
+          }
+        }
+        this.message = '研究参数不可用（' + parsed.error + '）'; return;
+      }
+      if (!parsed.ok) { this.message = 'M5_CONFIG_FAULT：' + parsed.error; return; }
+      const words = parsed.object!['words'];
+      if (!Array.isArray(words) || words.length !== 32) { this.message = '研究参数不可用'; return; }
+      for (const w of words) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; }
+      this.config = words as number[]; this.mode = mode;
+      native.setActive(true);
+      const reply: string = native.m5Configure(new Uint32Array(this.config));
+      this.message = reply;
+      if (reply !== 'M5_NEW_EMPTY_RUN_REQUESTED') return;
+      this.identity = []; this.sequence = this.sample = this.intent = this.request = 0;
+      this.attachFrame();
+    } catch (e) {
+      if (this.frame !== null) this.frame.owner = null;
+      this.frame = null;
+      this.message = 'M5_START_FAULT：' + String(e);
+    }
   }
   private resume(): void {
     this.message = native.m5ResumeInput();
@@ -46,7 +98,7 @@ struct GpuResidentM5 {
   private offerSynthetic(): boolean {
     if (this.mode !== 2) return true;
     if (this.sample >= 4294967295) { this.message = 'M5_SAMPLE_SEQUENCE_EXHAUSTED'; return false; }
-    const clock = JSON.parse(native.m5InputClock()) as M5Words;
+    const clock = JSON.parse(native.m5InputClock()) as M5Words; // kept inside try of frameTick; bounded words gate below
     if (clock.words?.length !== 2 || this.config.length !== 32) return false;
     const w = new Uint32Array(64);
     w[0] = 893994572; w[1] = 5; w[2] = 2; w[3] = 2;
@@ -66,8 +118,11 @@ struct GpuResidentM5 {
     if (frame !== this.frame || frame.owner !== this || !Number.isSafeInteger(ns) || ns < 0) return;
     try {
       if (this.identity.length !== 18) {
-        const s = JSON.parse(native.m5Session()) as M5Words;
-        if (s.revision !== 5 || s.features !== 31 || s.identity?.length !== 18) { this.getUIContext().postFrameCallback(frame); return; }
+        const raw: string = native.m5Session();
+        let s: M5Words | null = null;
+        try { s = JSON.parse(raw) as M5Words; } catch (e) { s = null; }
+        if (s === null || typeof s.revision !== 'number' || s.revision !== 5 || s.features !== 31 || s.identity?.length !== 18) { this.getUIContext().postFrameCallback(frame); return; }
+        for (const w of s.identity) if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.getUIContext().postFrameCallback(frame); return; }
         this.identity = s.identity; this.sourceGeneration = s.sourceControlGeneration ?? [1, 0];
       }
       if (!this.offerSynthetic()) { frame.owner = null; return; }
