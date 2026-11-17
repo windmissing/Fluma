@@ -1,0 +1,33 @@
+{
+  "revision": "T540_COMPILE_DELIVERY_V1",
+  "date": "2026-11-17",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t540-final",
+  "manifest": {
+    "revision": "T532_WINDOW_HOST_RASTER_V3",
+    "prepare": "T532_PREPARE_V3",
+    "base": "T516",
+    "tests": "NOT_RUN_BY_USER_DIRECTION",
+    "device": "NOT_RUN",
+    "files": {
+      "pages\\P051DerivedV2Demo.ets": "5deeaa3f52b249d30dce2bfc4558e0ae36f6d69f3de466d3814e43223f30a2d7",
+      "render\\RasterGeometry.ets": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc",
+      "render\\PrepareReadiness.ets": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2",
+      "render\\PrepareFrameObservation.ets": "f108395804be5c775ee4be09a05acc935f1508a5e5250b58d1067785a122b264",
+      "render\\T413Capture.ets": "804a04b974176c43e69f422acdd78e432d640eff8c338a95819fe75034bb0b46",
+      "render\\P013SingleSandController.ets": "50c84d9b2d042c13d6839aff86f901e08a486794051ab32f05c6bbb73edc6db7"
+    }
+  },
+  "sourceManifestMatchesCompiledInputs": true,
+  "build": "PASS_NATIVE_ARKTS_HAP",
+  "buildLog": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t540-final-build.txt",
+  "signed": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T540-final\\T540-final-signed.hap",
+    "sha256": "550e537a9515346cfa315f1965c9e26d3b79369c5e89694cd8959d722726d3d7",
+    "bytes": 8022628
+  },
+  "tests": "NOT_RUN_BY_USER_DIRECTION",
+  "device": "NOT_RUN",
+  "actualPlacement": "NOT_MEASURED",
+  "thresholds": "UNCHANGED_STRICT_EQUALITY",
+  "signing": "ISOLATED_PROJECT_REMOVES_LEGACY_SIGNING_CONFIG_THEN_EXISTING_SIGN_SCRIPT"
+}
