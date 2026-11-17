@@ -1,0 +1,1055 @@
+{
+  "schema": "T543_FINITE_ENGINEERING_CHECKS_V1",
+  "date": "2026-11-17",
+  "status": "PASS_FINITE_CONTRACT_ONLY",
+  "deviceUsed": false,
+  "productTestRun": false,
+  "CPUPhysicsRun": false,
+  "cases": [
+    {
+      "id": "T534_candidate_canonical_sha",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "canonical_seed_64bit_total",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "canonical_seed_physical_parameters",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "post_identity_seed_sha_distinct",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "config_not_legacy_candidate",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "one_parameter_changes_sha",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "MAP_HORIZONTAL_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "EXPLICIT_MODEL_IMPULSE",
+      "actual": "EXPLICIT_MODEL_IMPULSE"
+    },
+    {
+      "id": "MAP_HORIZONTAL_vxQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 25165824,
+      "actual": 25165824
+    },
+    {
+      "id": "MAP_HORIZONTAL_vyQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "id": "MAP_HORIZONTAL_JxQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "1649267441664",
+      "actual": "1649267441664"
+    },
+    {
+      "id": "MAP_HORIZONTAL_JyQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "id": "MAP_HORIZONTAL_positiveWorkCap128",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "5570730176784211237046059008",
+      "actual": "5570730176784211237046059008"
+    },
+    {
+      "id": "MAP_HORIZONTAL_saturatedX",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_HORIZONTAL_saturatedY",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_UP_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "EXPLICIT_MODEL_IMPULSE",
+      "actual": "EXPLICIT_MODEL_IMPULSE"
+    },
+    {
+      "id": "MAP_UP_vxQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "id": "MAP_UP_vyQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 33554432,
+      "actual": 33554432
+    },
+    {
+      "id": "MAP_UP_JxQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "id": "MAP_UP_JyQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "2199023255552",
+      "actual": "2199023255552"
+    },
+    {
+      "id": "MAP_UP_positiveWorkCap128",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "9903520314283042199192993792",
+      "actual": "9903520314283042199192993792"
+    },
+    {
+      "id": "MAP_UP_saturatedX",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_UP_saturatedY",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_COMBINED_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "EXPLICIT_MODEL_IMPULSE",
+      "actual": "EXPLICIT_MODEL_IMPULSE"
+    },
+    {
+      "id": "MAP_COMBINED_vxQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 25165824,
+      "actual": 25165824
+    },
+    {
+      "id": "MAP_COMBINED_vyQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 33554432,
+      "actual": 33554432
+    },
+    {
+      "id": "MAP_COMBINED_JxQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "1649267441664",
+      "actual": "1649267441664"
+    },
+    {
+      "id": "MAP_COMBINED_JyQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "2199023255552",
+      "actual": "2199023255552"
+    },
+    {
+      "id": "MAP_COMBINED_positiveWorkCap128",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "15474250491067253436239052800",
+      "actual": "15474250491067253436239052800"
+    },
+    {
+      "id": "MAP_COMBINED_saturatedX",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_COMBINED_saturatedY",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_NEGATIVE_X_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "EXPLICIT_MODEL_IMPULSE",
+      "actual": "EXPLICIT_MODEL_IMPULSE"
+    },
+    {
+      "id": "MAP_NEGATIVE_X_vxQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": -25165824,
+      "actual": -25165824
+    },
+    {
+      "id": "MAP_NEGATIVE_X_vyQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "id": "MAP_NEGATIVE_X_JxQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "-1649267441664",
+      "actual": "-1649267441664"
+    },
+    {
+      "id": "MAP_NEGATIVE_X_JyQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "0",
+      "actual": "0"
+    },
+    {
+      "id": "MAP_NEGATIVE_X_positiveWorkCap128",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "5570730176784211237046059008",
+      "actual": "5570730176784211237046059008"
+    },
+    {
+      "id": "MAP_NEGATIVE_X_saturatedX",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_NEGATIVE_X_saturatedY",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "id": "MAP_DOWN_ONLY_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "NO_IMPULSE",
+      "actual": "NO_IMPULSE"
+    },
+    {
+      "id": "MAP_DOWN_ONLY_reason",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "NO_SUPPORTED_DIRECTION",
+      "actual": "NO_SUPPORTED_DIRECTION"
+    },
+    {
+      "id": "MAP_ZERO_TIME_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "BAD_DURATION",
+      "actual": "REJECT_BAD_DURATION"
+    },
+    {
+      "id": "MAP_DURATION_TOO_LONG_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "BAD_DURATION",
+      "actual": "REJECT_BAD_DURATION"
+    },
+    {
+      "id": "MAP_SATURATE_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "EXPLICIT_MODEL_IMPULSE",
+      "actual": "EXPLICIT_MODEL_IMPULSE"
+    },
+    {
+      "id": "MAP_SATURATE_vxQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 25165824,
+      "actual": 25165824
+    },
+    {
+      "id": "MAP_SATURATE_vyQ",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": 33554432,
+      "actual": 33554432
+    },
+    {
+      "id": "MAP_SATURATE_JxQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "1649267441664",
+      "actual": "1649267441664"
+    },
+    {
+      "id": "MAP_SATURATE_JyQ40",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "2199023255552",
+      "actual": "2199023255552"
+    },
+    {
+      "id": "MAP_SATURATE_positiveWorkCap128",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "15474250491067253436239052800",
+      "actual": "15474250491067253436239052800"
+    },
+    {
+      "id": "MAP_SATURATE_saturatedX",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "id": "MAP_SATURATE_saturatedY",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "id": "MAP_DEAD_TAP_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "NO_IMPULSE",
+      "actual": "NO_IMPULSE"
+    },
+    {
+      "id": "MAP_DEAD_TAP_reason",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "DEAD_DISPLACEMENT",
+      "actual": "DEAD_DISPLACEMENT"
+    },
+    {
+      "id": "MAP_DOMAIN_status",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "expected": "DISPLACEMENT_DOMAIN",
+      "actual": "REJECT_BAD_DELTA"
+    },
+    {
+      "id": "dt_low_minus1",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "dt_low_exact",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "dt_high_exact",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "dt_high_plus1",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "negative_zero",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "subnormal",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "nan",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "inf",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "x_outside",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "dead_below",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "dead_exact",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "down_only",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "down_tangent",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "saturate_both",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "RNE_1_2",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "RNE_3_2",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "RNE_5_2",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "RNE_7_2",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "RNE_249999999_1000000000",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "negative_quantization_unbiased",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "max_caps",
+      "result": "PASS_FINITE_CONTRACT_ONLY",
+      "cap": "15474250491067253436239052800",
+      "bitLength": 94
+    },
+    {
+      "id": "pixel_upper_left",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "pixel_center",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "pixel_right_rejected",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "pixel_bottom_rejected",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "pixel_blackbar_rejected",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "pixel_bad_float_rejected",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_x_RNE_grid_fringe_rejected",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "clock_age_equal",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "clock_age_plus1_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "clock_future_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "clock_backwards_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "clock_unknown_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "clock_unsafe_number_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "real_impulse_unused_zero",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "reject_unused_word_38",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "reject_unused_word_39",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "reject_unused_word_64",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "reject_unused_word_76",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "reject_unused_word_78",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "reject_unused_word_127",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "nonce_receipts_do_not_duplicate",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "changed_J_not_same_command",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "changed_capture_not_same_command",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "GPU_word_exact_cap_mismatch_vector",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_zero_active_valid",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_one_active_valid",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_two_active_cancel",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_no_changed_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_two_changed_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_pointer_changed_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_cancelled_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_mapping_changed_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_scope_changed_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "UP_move_overflow_reject",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "record_unique_complete_256",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "prefix_extension_nonoverlap",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "native_credit_exact",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "resource_original_unchanged",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    },
+    {
+      "id": "complete_machine_fields",
+      "result": "PASS_FINITE_CONTRACT_ONLY"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "MAP_HORIZONTAL",
+      "given": {
+        "dxModel": "24",
+        "dyModel": "0",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "0000000000003840",
+      "rawDyBitsLE": "0000000000000000",
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 25165824,
+        "dyQ": 0,
+        "vxQ": 25165824,
+        "vyQ": 0,
+        "JxQ40": "1649267441664",
+        "JyQ40": "0",
+        "positiveWorkCap128": "5570730176784211237046059008",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "MAP_UP",
+      "given": {
+        "dxModel": "0",
+        "dyModel": "32",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "0000000000000000",
+      "rawDyBitsLE": "0000000000004040",
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 0,
+        "dyQ": 33554432,
+        "vxQ": 0,
+        "vyQ": 33554432,
+        "JxQ40": "0",
+        "JyQ40": "2199023255552",
+        "positiveWorkCap128": "9903520314283042199192993792",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "MAP_COMBINED",
+      "given": {
+        "dxModel": "24",
+        "dyModel": "32",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "0000000000003840",
+      "rawDyBitsLE": "0000000000004040",
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 25165824,
+        "dyQ": 33554432,
+        "vxQ": 25165824,
+        "vyQ": 33554432,
+        "JxQ40": "1649267441664",
+        "JyQ40": "2199023255552",
+        "positiveWorkCap128": "15474250491067253436239052800",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "MAP_NEGATIVE_X",
+      "given": {
+        "dxModel": "-24",
+        "dyModel": "0",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "00000000000038c0",
+      "rawDyBitsLE": "0000000000000000",
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": -25165824,
+        "dyQ": 0,
+        "vxQ": -25165824,
+        "vyQ": 0,
+        "JxQ40": "-1649267441664",
+        "JyQ40": "0",
+        "positiveWorkCap128": "5570730176784211237046059008",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "MAP_DOWN_ONLY",
+      "given": {
+        "dxModel": "0",
+        "dyModel": "-32",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "0000000000000000",
+      "rawDyBitsLE": "00000000000040c0",
+      "expected": {
+        "status": "NO_IMPULSE",
+        "reason": "NO_SUPPORTED_DIRECTION"
+      }
+    },
+    {
+      "id": "MAP_ZERO_TIME",
+      "given": {
+        "dxModel": "24",
+        "dyModel": "32",
+        "durationNs": 0
+      },
+      "rawDxBitsLE": "0000000000003840",
+      "rawDyBitsLE": "0000000000004040",
+      "expected": {
+        "status": "REJECT_BAD_DURATION"
+      }
+    },
+    {
+      "id": "MAP_DURATION_TOO_LONG",
+      "given": {
+        "dxModel": "24",
+        "dyModel": "32",
+        "durationNs": 1000000001
+      },
+      "rawDxBitsLE": "0000000000003840",
+      "rawDyBitsLE": "0000000000004040",
+      "expected": {
+        "status": "REJECT_BAD_DURATION"
+      }
+    },
+    {
+      "id": "MAP_SATURATE",
+      "given": {
+        "dxModel": "128",
+        "dyModel": "256",
+        "durationNs": 8333334
+      },
+      "rawDxBitsLE": "0000000000006040",
+      "rawDyBitsLE": "0000000000007040",
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 134217728,
+        "dyQ": 268435456,
+        "vxQ": 25165824,
+        "vyQ": 33554432,
+        "JxQ40": "1649267441664",
+        "JyQ40": "2199023255552",
+        "positiveWorkCap128": "15474250491067253436239052800",
+        "saturatedX": true,
+        "saturatedY": true
+      }
+    },
+    {
+      "id": "MAP_DEAD_TAP",
+      "given": {
+        "dxModel": "1/8",
+        "dyModel": "0",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "000000000000c03f",
+      "rawDyBitsLE": "0000000000000000",
+      "expected": {
+        "status": "NO_IMPULSE",
+        "reason": "DEAD_DISPLACEMENT"
+      }
+    },
+    {
+      "id": "MAP_DOMAIN",
+      "given": {
+        "dxModel": "129",
+        "dyModel": "0",
+        "durationNs": 250000000
+      },
+      "rawDxBitsLE": "0000000000206040",
+      "rawDyBitsLE": "0000000000000000",
+      "expected": {
+        "status": "REJECT_BAD_DELTA"
+      }
+    },
+    {
+      "id": "dt_low_minus1",
+      "dxBitsLE": "0000000000003840",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 8333333,
+      "expected": {
+        "status": "REJECT_BAD_DURATION"
+      }
+    },
+    {
+      "id": "dt_low_exact",
+      "dxBitsLE": "0000000000003840",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 8333334,
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 25165824,
+        "dyQ": 0,
+        "vxQ": 25165824,
+        "vyQ": 0,
+        "JxQ40": "1649267441664",
+        "JyQ40": "0",
+        "positiveWorkCap128": "5570730176784211237046059008",
+        "saturatedX": true,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "dt_high_exact",
+      "dxBitsLE": "0000000000003840",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 1000000000,
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 25165824,
+        "dyQ": 0,
+        "vxQ": 6291456,
+        "vyQ": 0,
+        "JxQ40": "412316860416",
+        "JyQ40": "0",
+        "positiveWorkCap128": "348170636049013202315378688",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "dt_high_plus1",
+      "dxBitsLE": "0000000000003840",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 1000000001,
+      "expected": {
+        "status": "REJECT_BAD_DURATION"
+      }
+    },
+    {
+      "id": "negative_zero",
+      "dxBitsLE": "0000000000000080",
+      "dyBitsLE": "0000000000000080",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "NO_IMPULSE",
+        "reason": "DEAD_DISPLACEMENT"
+      }
+    },
+    {
+      "id": "subnormal",
+      "dxBitsLE": "0100000000000000",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "NO_IMPULSE",
+        "reason": "DEAD_DISPLACEMENT"
+      }
+    },
+    {
+      "id": "nan",
+      "dxBitsLE": "000000000000f87f",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "REJECT_BAD_DELTA"
+      }
+    },
+    {
+      "id": "inf",
+      "dxBitsLE": "000000000000f07f",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "REJECT_BAD_DELTA"
+      }
+    },
+    {
+      "id": "x_outside",
+      "dxBitsLE": "be0d000000006040",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "REJECT_BAD_DELTA"
+      }
+    },
+    {
+      "id": "dead_below",
+      "dxBitsLE": "ffffffffffffcf3f",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "NO_IMPULSE",
+        "reason": "DEAD_DISPLACEMENT"
+      }
+    },
+    {
+      "id": "dead_exact",
+      "dxBitsLE": "000000000000d03f",
+      "dyBitsLE": "0000000000000000",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 262144,
+        "dyQ": 0,
+        "vxQ": 262144,
+        "vyQ": 0,
+        "JxQ40": "17179869184",
+        "JyQ40": "0",
+        "positiveWorkCap128": "604462909807314587353088",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "down_only",
+      "dxBitsLE": "0000000000000000",
+      "dyBitsLE": "00000000000040c0",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "NO_IMPULSE",
+        "reason": "NO_SUPPORTED_DIRECTION"
+      }
+    },
+    {
+      "id": "down_tangent",
+      "dxBitsLE": "0000000000003840",
+      "dyBitsLE": "00000000000040c0",
+      "durationNs": 250000000,
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 25165824,
+        "dyQ": -33554432,
+        "vxQ": 25165824,
+        "vyQ": 0,
+        "JxQ40": "1649267441664",
+        "JyQ40": "0",
+        "positiveWorkCap128": "5570730176784211237046059008",
+        "saturatedX": false,
+        "saturatedY": false
+      }
+    },
+    {
+      "id": "saturate_both",
+      "dxBitsLE": "0000000000006040",
+      "dyBitsLE": "0000000000007040",
+      "durationNs": 8333334,
+      "expected": {
+        "status": "EXPLICIT_MODEL_IMPULSE",
+        "dxQ": 134217728,
+        "dyQ": 268435456,
+        "vxQ": 25165824,
+        "vyQ": 33554432,
+        "JxQ40": "1649267441664",
+        "JyQ40": "2199023255552",
+        "positiveWorkCap128": "15474250491067253436239052800",
+        "saturatedX": true,
+        "saturatedY": true
+      }
+    }
+  ],
+  "exampleInput128V2": [
+    826882375,
+    2,
+    826691667,
+    0,
+    7,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    1663926286,
+    1081161885,
+    3699735402,
+    848607685,
+    377956346,
+    256005574,
+    2082821521,
+    2317515905,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    1,
+    0,
+    250000001,
+    0,
+    4,
+    0,
+    1078984704,
+    0,
+    1074790400,
+    0,
+    1077411840,
+    0,
+    1077936128,
+    250000000,
+    0,
+    0,
+    384,
+    0,
+    512,
+    0,
+    0,
+    838860800,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    53401,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "exampleInputSha256": "f1ea7beab7cf0384d584f15157eb29de96ed21863a5f22094ac0d7a822847be5",
+  "parameterSha256": "0e802d639d3871406a7b85dcc5b99432fa278716c655420f9155257c817c228a",
+  "seedTemplateSha256": "243b2b95586f5aa7f22610b13bb826f514cb4e27775a9476f99fcebbcadfa468",
+  "exampleActualSeedSha256": "172b67baab787b0c2a4d494dd294519dc4b004a3619df6b5c5ed2ea732bd07d4",
+  "manifestSha256": "e9ae448c9c7e210f5bc1734ffbe6de5d6ea89b015a9b9afa9ef8d2b0ca210f0d",
+  "notCovered": [
+    "native/ArkTS/GPU actual implementation",
+    "platform clock mapping on device",
+    "physics",
+    "runtime cold export",
+    "subjective effect",
+    "30fps"
+  ]
+}

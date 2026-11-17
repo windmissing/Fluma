@@ -1,0 +1,118 @@
+{
+  "schema": "T535_V5_PREFIX_DIGEST_ENGINEERING_V2",
+  "date": "2026-11-17",
+  "status": "ENGINEERING_READY_NOT_IMPLEMENTED",
+  "baseTable": "architecture-T527-v5-cold-manifest-v1.json",
+  "baseTableSha256": "eb12ae2881e489ac0a6aa8bf33dd3c57dc20dd5d7b64300244da5882006223af",
+  "capability": "T527_V5_BOUNDED_COLD_V2",
+  "payload": "GRS_M3B_LINEAGE_COLD_V5_2",
+  "page": "T527_SEGMENT_PAGE_V2",
+  "headerRevision": 2,
+  "headerSeal": 3235775746,
+  "digestPolicy": {
+    "code": 1,
+    "name": "SELF_SHA_ZERO32_V1",
+    "prefixDescriptorIndex": 0,
+    "prefixBytes": 32768,
+    "descriptorByteStart": 1024,
+    "maskByteRange": [
+      1116,
+      1148
+    ],
+    "maskValue": 0,
+    "shaWords": [
+      23,
+      31
+    ],
+    "prefixSegmentRevision": 2,
+    "prefixRows": 8192,
+    "nonPrefixSha": "SHA256 full byteLength actual LE bytes including zero padding",
+    "canonicalPrefixSha256": "SHA256(P[:1116] + zero32 + P[1148:32768])",
+    "rawPrefixSha256": "SHA256 actual final prefix bytes",
+    "publish": "metadata and constant seals first; own SHA last; immutable before READY",
+    "revisionSource": "architecture-T535-v5-prefix-digest-v2.md"
+  },
+  "archive": {
+    "schema": "T535_V5_ARCHIVE_MANIFEST_V2",
+    "encoding": "UTF8 JSONL; LF included in each 16384-byte record limit",
+    "location": "last record outside native payload",
+    "digests": [
+      "canonicalPrefixSha256",
+      "rawPrefixSha256",
+      "payloadRawSha256",
+      "pagesFileSha256"
+    ],
+    "pagesFileSha256Coverage": "exact bytes before last manifest record, including LF",
+    "finalFileSha256": "external receipt only, never in hashed file",
+    "complete": "all exact pages and final manifest durable before rename/receipt"
+  },
+  "pageIdentityFields": [
+    "capability",
+    "payload",
+    "pageRevision",
+    "headerRevision",
+    "policy",
+    "mode",
+    "K",
+    "Kw",
+    "requestId",
+    "traceId",
+    "scope",
+    "actualBytes",
+    "segmentCount",
+    "actualDataPages",
+    "canonicalPrefixSha256",
+    "rawPrefixSha256"
+  ],
+  "unsupported": [
+    "V5_1",
+    "missing_policy",
+    "unknown_policy",
+    "legacy_page_for_V5_2"
+  ],
+  "prefixDescriptor": {
+    "index": 0,
+    "kind": 1,
+    "byteOffset": 0,
+    "byteLength": 32768,
+    "strideWords": 1,
+    "validRows": 8192,
+    "plannedRows": 8192,
+    "sealedRows": 8192,
+    "segmentRevision": 2,
+    "flags": 2,
+    "zeroMetadataWords": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  "construction": [
+    "zero block",
+    "fill all nonprefix immutable bytes",
+    "hash full nonprefix segments",
+    "freeze all metadata and constant seals",
+    "canonical prefix SHA with fixed zero32 mask",
+    "write own SHA once",
+    "raw prefix SHA",
+    "scope TTL restore validation",
+    "immutable READY"
+  ],
+  "resourceChanges": {
+    "nativePayloadBytes": 0,
+    "GPUPayloadBytes": 0,
+    "slots": 0,
+    "archiveRecords": 0
+  },
+  "developerResponsibility": "development compile commit only; no tests; no device",
+  "checks": "analysis-T535-contract-checks-v1.json"
+}

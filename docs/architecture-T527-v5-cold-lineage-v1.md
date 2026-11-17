@@ -1,5 +1,7 @@
 # T527 V5 完整冷谱系、容量与兼容合同 v1
 
+> 2026-11-17 T535修订生效：本文旧header rev1/摘要隐含规则由 `architecture-T535-v5-prefix-digest-v2.md` 取代；同路径机器表已升ENGINEERING_V2、payload V5_2、header2/policy1。仅自身SHA字节[1116,1148)虚拟归零，其他字节全部覆盖。容量/offset/预算不变。历史共享V1生成脚本不可覆盖当前表。
+
 2026-11-16，architect，P5，不使用真机。消费T512/T506 V5及T498控制闭包、T503合同和T507实际helper。**工程合同交付，V5 cold适配NOT_IMPLEMENTED**。不改物理和旧默认，不让T522/V4等待本卡。机器表 `architecture-T527-v5-cold-manifest-v1.json` 给完整offset/容量/检查项；静态核对见 `analysis-T524-T527-engineering-checks-v1.json`。
 
 ## 1. 版本与完整性的精确含义
@@ -16,7 +18,7 @@ FULL_PLAN_BRANCH是下一完整plan的显式冷实验，最多G1+F4、五角色�
 
 每slot一块精确capacity U32[]，无自动增长。固定32,768B prefix含header256、64条descriptor32、最多5份completion256/input64/quota256/rootCursor64、完整source命令32+bulk512、配置与收据；所有实际段布局由机器表生成，保留/未用内容0。大state和各流在prefix后，offset checked U64→size_t；逻辑连续不要求另造第三个vector。
 
-descriptor32字段冻结于机器表：segmentKind/rootIndex/role/trial、branchEpoch、arena/generation、byteOffset/byteLength、stride/validRows/plannedRows/sealedRows、physical/aux ordinal区间、flags/revision及SHA256八word。header256为独立V5C1 magic/rev1，绑定完整scope、request/trace、参数/layout/shader及外部包声明摘要；U64均low-first。ROOT_RECORD128共最多5条，关联scope根索引/nonce/base/source与physics commits、input/参数SHA、root期限与样本资格检查时刻及outcome，不能仅凭scope全局一个nonce解释五根。8,576B configAndRootRecords段中前2,560B为5条记录、其后4,096B完整cold配置胶囊、余1,920B为0。机器表逐word列明，保留位0。对象号不代替权限，跨root相同ordinal不互引。包/ELF摘要只是声明，必须与外部签包收据核对后才是加载来源证据。
+descriptor32字段冻结于机器表：segmentKind/rootIndex/role/trial、branchEpoch、arena/generation、byteOffset/byteLength、stride/validRows/plannedRows/sealedRows、physical/aux ordinal区间、flags/revision及SHA256八word。header256为独立V5C1 magic/rev2（T535，word15=policy1），绑定完整scope、request/trace、参数/layout/shader及外部包声明摘要；U64均low-first。ROOT_RECORD128共最多5条，关联scope根索引/nonce/base/source与physics commits、input/参数SHA、root期限与样本资格检查时刻及outcome，不能仅凭scope全局一个nonce解释五根。8,576B configAndRootRecords段中前2,560B为5条记录、其后4,096B完整cold配置胶囊、余1,920B为0。机器表逐word列明，保留位0。对象号不代替权限，跨root相同ordinal不互引。包/ELF摘要只是声明，必须与外部签包收据核对后才是加载来源证据。
 
 | 段 | stride | 核心校验 |
 |---|---:|---|

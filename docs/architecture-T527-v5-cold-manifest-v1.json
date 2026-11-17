@@ -1,10 +1,10 @@
 {
-  "schema": "T527_V5_COLD_ENGINEERING_V1",
-  "date": "2026-11-16",
+  "schema": "T527_V5_COLD_ENGINEERING_V2",
+  "date": "2026-11-17",
   "status": "ENGINEERING_READY_NOT_IMPLEMENTED",
-  "capability": "T527_V5_BOUNDED_COLD_V1",
-  "payload": "GRS_M3B_LINEAGE_COLD_V5_1",
-  "pageSchema": "T527_SEGMENT_PAGE_V1",
+  "capability": "T527_V5_BOUNDED_COLD_V2",
+  "payload": "GRS_M3B_LINEAGE_COLD_V5_2",
+  "pageSchema": "T527_SEGMENT_PAGE_V2",
   "physicalWire": 5,
   "features": 31,
   "channelBitmap": 15,
@@ -153,7 +153,7 @@
     "flags",
     "headerPage",
     "dataPageCount",
-    "reserved15",
+    "prefixDigestPolicy",
     "requestIdLo",
     "requestIdHi",
     "traceIdLo",
@@ -396,7 +396,7 @@
     "reserved_255"
   ],
   "headerMagic": 826488150,
-  "headerRevision": 1,
+  "headerRevision": 2,
   "rootRecord128": [
     "rootKind",
     "outcome",
@@ -3540,12 +3540,13 @@
   "legacyOnline": {
     "V3": "T503 route m2 only; reject V5 IDs",
     "V4": "explicit independent adapter required",
-    "unknown": "UNSUPPORTED_COLD_REVISION; never downgrade"
+    "unknown": "UNSUPPORTED_COLD_REVISION; never downgrade",
+    "V5_1": "UNSUPPORTED_V5_DIGEST_POLICY; no automatic migration"
   },
   "legacyOffline": {
     "V3": "existing reader",
     "V4": "its versioned reader or READER_NOT_IMPLEMENTED",
-    "V5": "this new complete lineage reader"
+    "V5": "V5_2 only per T535; reject V5_1/missing policy, no guesses"
   },
   "rootDeadlineNs": 250000000,
   "gapNs": 33333333,
@@ -3565,6 +3566,56 @@
       "path": "docs/architecture-T503-cold-manifest-v1.json",
       "bytes": 3599,
       "sha256": "73975006f64234358567919b58dd43ced454299e8fb8d3fdfc3e4d7e6ef34b23"
+    }
+  ],
+  "headerSeal": 3235775746,
+  "prefixDigestPolicy": {
+    "code": 1,
+    "name": "SELF_SHA_ZERO32_V1",
+    "prefixDescriptorIndex": 0,
+    "prefixBytes": 32768,
+    "descriptorByteStart": 1024,
+    "maskByteRange": [
+      1116,
+      1148
+    ],
+    "maskValue": 0,
+    "shaWords": [
+      23,
+      31
+    ],
+    "prefixSegmentRevision": 2,
+    "prefixRows": 8192,
+    "nonPrefixSha": "SHA256 full byteLength actual LE bytes including zero padding",
+    "canonicalPrefixSha256": "SHA256(P[:1116] + zero32 + P[1148:32768])",
+    "rawPrefixSha256": "SHA256 actual final prefix bytes",
+    "publish": "metadata and constant seals first; own SHA last; immutable before READY",
+    "revisionSource": "architecture-T535-v5-prefix-digest-v2.md"
+  },
+  "archiveManifest": {
+    "schema": "T535_V5_ARCHIVE_MANIFEST_V2",
+    "encoding": "UTF8 JSONL; LF included in each 16384-byte record limit",
+    "location": "last record outside native payload",
+    "digests": [
+      "canonicalPrefixSha256",
+      "rawPrefixSha256",
+      "payloadRawSha256",
+      "pagesFileSha256"
+    ],
+    "pagesFileSha256Coverage": "exact bytes before last manifest record, including LF",
+    "finalFileSha256": "external receipt only, never in hashed file",
+    "complete": "all exact pages and final manifest durable before rename/receipt"
+  },
+  "revisionHistory": [
+    {
+      "revision": 1,
+      "sourceCommit": "082dd1e",
+      "status": "SUPERSEDED_PREFIX_DIGEST_AMBIGUOUS"
+    },
+    {
+      "revision": 2,
+      "task": "T535",
+      "change": "fixed self-SHA mask/header15/version/archive identity; no capacity or resource changes"
     }
   ]
 }
