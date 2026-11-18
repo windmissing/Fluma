@@ -1,3 +1,6 @@
+"""Historical migration retained below; active delivery generators copy canonical sources."""
+raise SystemExit("RETIRED_MIGRATION: use the canonical generate.cjs delivery chain; active cold sources must not be regenerated from V1")
+
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 D=ROOT/'entry/src/main/cpp/gpu_resident/m3b'

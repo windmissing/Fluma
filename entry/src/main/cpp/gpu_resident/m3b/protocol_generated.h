@@ -112,7 +112,7 @@ inline constexpr uint32_t rawPayloadIdentity=14;
 }
 namespace sourceEvent128 {
 inline constexpr uint32_t magic=876950349u;
-inline constexpr uint32_t revision=4u;
+inline constexpr uint32_t revision=5u;
 inline constexpr uint32_t seal=3235774468u;
 inline constexpr uint32_t MERGE=15;
 inline constexpr std::array<uint32_t,4> MERGEMask={4160749567u,4294967295u,4294967295u,255u};
@@ -132,11 +132,11 @@ inline constexpr uint32_t TRIAL_BEGIN=23;
 inline constexpr std::array<uint32_t,4> TRIAL_BEGINMask={3456139263u,6144u,0u,255u};
 }
 namespace quantumEvent64 {
-inline constexpr uint32_t revision=4u;
+inline constexpr uint32_t revision=5u;
 }
 namespace control128 {
 inline constexpr uint32_t magic=876825680u;
-inline constexpr uint32_t revision=4u;
+inline constexpr uint32_t revision=5u;
 inline constexpr uint32_t seal=3235774468u;
 inline constexpr uint32_t PREVIEW_DECISION=24;
 inline constexpr uint32_t PLANNER_END=25;

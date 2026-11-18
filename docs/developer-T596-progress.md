@@ -1,11 +1,17 @@
-# T596 开发进度（未完成）
+# T596 开发回执：契约冲突，整卡未完成
 
-2026-11-18。开发/编译，不测试、不使用真机。
+2026-11-18。不测试、不使用真机。本人行登记看评论，不声明FULL可用或协议PASS。
 
-已修：删除transport.cpp的CaptureColdV5重复stub，唯一实现来自cold_capture.cpp；byte offset摘要寻址改begin/4；prefix使用T535固定自身SHA掩码。增加FULL保留对象布局（20份physical+aux、5个BASE state/context、40960B控制和256B输入保守额度），在根Begin前复制真实BASE及SOURCE control/dedup/ledger/rawBulk/meta，scope入口/结束复制原cursor32，physical/provenance成对保留，不再按slot奇偶漏一半。FULL正式61段目录不改。
+本轮独立收口：共享DSO libgrs_cold_slots.so统一M2/M3/G9实际TraceManager的两slot、单builder/reader、全进程及各route原上限。分配前预约；缓存/reader/RETIRING不因逻辑取消退账，Trim的RAII票据随detached block移动、delete[]后退款。实际生成链复制并链接公共实现，不以各DSO静态对象冒进程单例。这是native cold信用，不冒尚未完成的FULL GPU预约票据。
 
-尚未完成：完整逐根INPUT/completion/quota/rootRecord和SOURCE控制封存、公开CaptureScopeMeta32转换/共同sealed授权、真实plan跳过记录、请求前native预约、跨route全进程ColdSlotBroker、V2 descriptor/header/page/reader/collector全链。现有FULL入口能力门仍保留，不把新增对象代码冒已可运行的完整FULL；未启用不完整模式。
+writer唯一cold_capture.cpp定义；摘要byte→word及T535虚拟零化。V2 header/descriptor/rootRecord校验拒绝错版本/范围/摘要/保留位/假NOT_EXECUTED。SOURCE/physical/provenance frame取accepted state的真实arena/有效行数，不取无关buffer/容量。全量校验移至owner锁外。GL/map/unmap/参数/上下文/in-flight/缺锚点/META_INCOMPLETE分别具名。历史迁移脚本显式退役，不能覆盖canonical；正式生成仍复制canonical。G9 cold_trace的V2 receipt helper与T599为同批依赖。
 
-安全行为：writer无法证明完整根元数据时不发布TRACE_READY/COMPLETE，返回MISSING_REQUIRED_ANCHOR。这个返回是开发缺口的诚实拒绝，不是本卡完成或正式功能。它尚非完整first-error分类，需在后续writer闭包同时收口；不把所有故障冒真实缺锚点实测。现有首次错误GL/EGL原值仍保留。
+上一提交FULL布局、BASE原件和双流copy保留；FULL早期能力门仍关闭，writer元数据不完整返回META_INCOMPLETE，不发布TRACE_READY/COMPLETE。编译通过不代表完整FULL实现。
 
-完整隔离工程t596-progress最终hvigor native/ArkTS/HAP编译通过；日志.codex/local-test/t596-last-build.txt，33tasks/14.306s。不运行测试/实际采集，不宣物理或协议通过。这里是进行中进度，不虚构外部前置阻塞，剩余属于本卡开发责任。
+具体阻断：T552要求在v5BeginScope之后、首事务之前捕获原入口cursor32，但lift_writer.glsl::v5InputEnergy在同次SCOPE_INIT invocation内先BeginScope，再credit(0,1)、WriteAux、SealCompound。host只能整dispatch后copy，入口aux游标已变。GL copy不能插入invocation；禁止新增dispatch/热map，不能冒尾为入口、反算一笔或自行占reserved word。
+
+已尝试排除：dispatch后copy不保真；反算违背原件；新增dispatch/热读回违反合同。原卡评论6afd53cce4b0d2e2f7786bb2已有源码切点。所需architect裁定：既有cursor32显式入口字段/usedMask修订，或同预算零新增dispatch切点。developer据新合同继续封存实现。
+
+未完成仍属本卡developer责任，不冒只缺测试：逐根INPUT/completion/quota/rootRecord、SOURCE跳过证据；原入口/尾cursor→公开Meta32和共同sealed/forensic；FULL首根前GPU/native联合预约及GPU退休RAII；完整V2 writer/header/descriptor身份填充与collector/reader闭环。FULL公开证据按裁定切点共同收口，当前不启用半实现路径。裁定后仍需developer完成，不转嫁tester。
+
+新生成 .codex/local-test/t596-broker-final native/ArkTS/HAP成功（60.083s），日志 .codex/local-test/t596-broker-final-build.txt。llvm-nm确认一个CaptureColdV5全局定义；llvm-readelf确认M0/M1均NEEDED同一libgrs_cold_slots.so。test/reports/t596/link-symbols.txt保留符号收据。未运行测试/reader/GPU/真机。

@@ -43,16 +43,14 @@ public:
  bool HasColdTail()const{return !busy_&&tail_[0]==1381192263&&tail_[1]==4&&tail_[28]!=4;}
  GLenum FirstGlError()const{return rawGl_;}
  bool CaptureColdV5(uint32_t* reserved,size_t capacity,const QuotaSnapshotV3&,size_t& stateWords,size_t& eventWords);
- // T571 (problem T527/T552): FULL-plan capture state — which of the 20 scope
- // pairs and 4 quanta actually executed in this plan, and whether the frozen
- // completion copies exist. BASE anchors have no persistent resident object;
- // their descriptors are honest NOT_EXECUTED unless a future change adds one.
+ // These host masks locate retained objects; they do not authorize GPU rows.
+ // Executed roots require their real retained BASE pair and sealed metadata.
  uint32_t FullScopeMask()const{return fullMask_;}
  uint32_t FullQuantumMask()const{return fullQuantumMask_;}
  bool FullFrozen()const{return fullFrozen_;}
  uint32_t CurrentStateBank()const{return currentBank_;}
  uint32_t SourcePrefix()const{return sourcePrefix_;}
- const char* CaptureFailure()const{return "MISSING_REQUIRED_ANCHOR";}
+ const char* CaptureFailure()const{return captureFailure_;}
  size_t SourceFrameBytes()const{return profile_?size_t(profile_->k+1)*256:0;}
  size_t CombinedEventBytes()const{return layout_.combinedBytes;}
  EGLint FirstEglError()const{return rawEgl_;}
@@ -77,6 +75,7 @@ private:
  uint32_t baseMask_=0,enteredMask_=0;
  uint32_t fullMask_=0,fullQuantumMask_=0,pendingFullMask_=0;
  bool fullFrozen_=true;
+ const char* captureFailure_="NO_CAPTURE_REQUEST";
  GLenum rawGl_=0;EGLint rawEgl_=EGL_SUCCESS;
  bool Current()const;bool Good();bool Allowed();
  TransportResultV5 Denied()const;

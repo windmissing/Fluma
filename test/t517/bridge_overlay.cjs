@@ -25,7 +25,7 @@ module.exports=function(main){
  one('napi_property_descriptor d[]={','napi_property_descriptor d[]={\n'+block([...withWords,...noArgs].map(n=>' {"'+n+'",nullptr,'+n+',nullptr,nullptr,nullptr,napi_default,nullptr},').join('\n')));
  for(const name of ['coldCapabilities','coldTraceBeginV1','coldTraceStateV1','coldTracePageV1','coldTraceEndV1','executionDiagnosticsV1']){
   const at=s.indexOf('napi_value '+name+'('),brace=s.indexOf('{',at);if(at<0||brace<0)throw Error('T517_COLD_ANCHOR '+name);
-  s=s.slice(0,brace+1)+block('if(app().m5Selected)return text(e,"{\\\"state\\\":\\\"UNSUPPORTED_COLD_REVISION\\\",\\\"required\\\":\\\"T527_V5_BOUNDED_COLD_V1\\\"}");')+s.slice(brace+1);
+  s=s.slice(0,brace+1)+block('if(app().m5Selected)return text(e,"{\\\"state\\\":\\\"UNSUPPORTED_COLD_REVISION\\\",\\\"required\\\":\\\"T527_V5_BOUNDED_COLD_V2\\\"}");')+s.slice(brace+1);
  }
  fs.writeFileSync(file,s);
  const types=path.join(main,'cpp/types/libgrsm1/index.d.ts');fs.appendFileSync(types,'\n'+withWords.map(n=>'export const '+n+':(words:Uint32Array)=>string;').join('\n')+'\n'+noArgs.map(n=>'export const '+n+':()=>string;').join('\n')+'\n');

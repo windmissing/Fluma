@@ -6,7 +6,8 @@ const read=n=>fs.readFileSync(path.join(__dirname,n),'utf8').replaceAll('\r\n','
 function one(s,a,b){if(s.split(a).length!==2)throw Error('T507_ANCHOR '+a);return s.replace(a,b);}
 function edit(name,fn){const p=path.join(main,name);fs.writeFileSync(p,fn(fs.readFileSync(p,'utf8').replaceAll('\r\n','\n')));}
 function replaceFunction(s,name,body){const begin=s.indexOf('napi_value '+name+'(');if(begin<0)throw Error('FUNCTION '+name);let at=s.indexOf('{',begin),level=0,quote='';for(let i=at;i<s.length;i++){const c=s[i];if(quote){if(c==='\\')i++;else if(c===quote)quote='';continue;}if(c==='"'||c==="'"){quote=c;continue;}if(c==='{')level++;if(c==='}'&&!--level)return s.slice(0,begin)+'napi_value '+name+'(napi_env e,napi_callback_info){'+body+'}'+s.slice(i+1);}throw Error('UNBALANCED');}
-for(const name of ['cold_protocol.h','cold_trace.h','cold_diagnostics.h'])fs.copyFileSync('entry/src/main/cpp/gpu_resident/'+name,path.join(base,name));
+for(const name of ['cold_protocol.h','cold_trace.h','cold_diagnostics.h','cold_slot_broker.h','cold_slot_broker.cpp','cold_slot_broker.cmake'])fs.copyFileSync('entry/src/main/cpp/gpu_resident/'+name,path.join(base,name));
+fs.appendFileSync(path.join(base,'CMakeLists.txt'),'\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/cold_slot_broker.cmake")\n');
 if(route==='m2'){
  edit('cpp/gpu_resident/m2route/full_transport.h',s=>one(s,' TransportCode Freeze(bool);',' TransportCode CaptureSpan(uint32_t*,size_t,size_t&,size_t&,GLenum&,const char*&);\n TransportCode Freeze(bool);'));
  edit('cpp/gpu_resident/m2route/full_transport.cpp',s=>{const marker='TransportCode FullM1Transport::Capture(std::vector';const at=s.indexOf(marker);if(at<0)throw Error('CAPTURE');return s.slice(0,at)+read('span.inc')+'\n'+s.slice(at);});

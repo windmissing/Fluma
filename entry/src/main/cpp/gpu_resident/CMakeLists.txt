@@ -85,3 +85,5 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/m3a/kernels.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/g9dm/kernels.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/g11vis/kernels.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/g12water/kernels.cmake")
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/cold_slot_broker.cmake")

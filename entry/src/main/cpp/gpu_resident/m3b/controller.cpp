@@ -160,20 +160,21 @@ std::string ControllerV5::ColdPage(uint64_t trace,uint32_t page,uint64_t now){
  return std::string(w.Data(),w.Size());
 }
 std::string ControllerV5::ColdEnd(uint64_t trace,uint64_t now){
- std::lock_guard<std::mutex> lock(mutex_);const auto result=coldTrace_.End(trace,now,ColdScopeLocked());return std::string("{\"revision\":\"T527_V5_BOUNDED_COLD_V1\",\"state\":\"")+result+"\"}";
+ std::lock_guard<std::mutex> lock(mutex_);const auto result=coldTrace_.End(trace,now,ColdScopeLocked());return std::string("{\"revision\":\"T527_V5_BOUNDED_COLD_V2\",\"state\":\"")+result+"\"}";
 }
 void ControllerV5::BuildCold(uint64_t now){
- int slot;size_t words=0;bool full=false;
+ int slot;size_t words=0;bool full=false;std::unique_ptr<uint32_t[]> detached;
  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Maintain(now,ColdScopeLocked());slot=coldTrace_.Start();if(slot<0){if(coldTrace_.builder<0)coldBuilding_=false;return;}
-  words=coldTrace_.slots[slot].requestWords;auto detached=coldTrace_.TakeOld(slot);detached.reset();coldTrace_.OldFreed(slot);
+  words=coldTrace_.slots[slot].requestWords;detached=coldTrace_.TakeOld(slot);
   full=transport_.FullBranchMode();}
+ // Free outside the owner lock. Capacity remains charged until destruction.
+ detached.reset();
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.OldFreed(slot);}
  // T571 (problem T527/T552): FULL-plan capture now runs through the same
  // owner-thread CaptureColdV5 with the FULL layout. A plan that is still
  // mid-flight (not yet frozen) is refused honestly — the archive must cover
- // the whole plan, never half of it. The 20 scope pairs archive only the
- // streams whose plan bits actually executed; BASE anchors stay NOT_EXECUTED
- // because no persistent resident base snapshots exist (T527: never reverse
- // CURRENT into a fake anchor).
+ // the whole plan, never half of it. Host masks cannot substitute for GPU
+ // entry/seal evidence or authorize missing BASE anchors.
  if(full&&!transport_.FullFrozen()){std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,"V5_FULL_PLAN_IN_FLIGHT",0,0,0,0,"");coldBuilding_=false;return;}
  std::unique_ptr<uint32_t[]> allocated;
  {std::lock_guard<std::mutex> lock(mutex_);words=coldTrace_.slots[slot].reserved;}
@@ -182,7 +183,9 @@ void ControllerV5::BuildCold(uint64_t now){
  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(allocated));auto& s=coldTrace_.slots[slot];storage=s.block.get();words=s.capacity;request=s.request;}
  size_t stateWords=0,eventWords=0;QuotaSnapshotV3 quota=Quota(now);
  const bool copied=storage&&transport_.CaptureColdV5(storage,words,quota,stateWords,eventWords);
- {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":transport_.CaptureFailure(),stateWords,eventWords,transport_.FirstGlError(),uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE");coldBuilding_=false;}
+ // coldBuilding_ pins the builder span. Hash/scan outside the owner lock.
+ bool validated=false;if(copied){const auto* profile=SelectProfile(storage[8],storage[9]);cold::Layout layout;validated=profile&&cold::Layout::Make(*profile,4,layout,full)&&stateWords+256==layout.words&&eventWords==0&&cold::Validate(storage,words,layout);}
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":transport_.CaptureFailure(),stateWords,eventWords,transport_.FirstGlError(),uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE",0,validated);coldBuilding_=false;}
 }
 
 ControllerV5::RootDiagnostic ControllerV5::DiagnosticOwnerThread()const{std::lock_guard<std::mutex> lock(mutex_);return {active_,transport_.Tail(),transport_.Evidence(),clock_.fault};}

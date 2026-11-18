@@ -1,3 +1,6 @@
+"""Historical migration retained below; active delivery generators copy canonical sources."""
+raise SystemExit("RETIRED_MIGRATION: use the canonical generate.cjs delivery chain; active cold sources must not be regenerated from V1")
+
 """Adapt lifecycle ownership to T527 descriptor payloads, preserving M2 ABI."""
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]

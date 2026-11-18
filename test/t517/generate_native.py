@@ -19,7 +19,7 @@ def generate():
     # The public V5 fields come from its own frozen dictionary; retain only the
     # inherited kind/enumeration namespaces, not V4 header reserved names.
     old=(GPU/'m3a/protocol_generated.h').read_text(encoding='utf-8')
-    enums=old[old.index('namespace sourceMeta32 {'):old.rindex('}')]
+    enums=old[old.index('namespace sourceMeta32 {'):old.rindex('}')].replace('inline constexpr uint32_t revision=4u;', 'inline constexpr uint32_t revision=5u;')
     pre='''#pragma once
 #include <array>
 #include <cstddef>

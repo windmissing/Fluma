@@ -3,10 +3,9 @@
 // the 20 physical/provenance scope pairs from the full-trace buffers (when a
 // pair actually executed in this plan), the frozen per-root completion copies
 // from fullBuffers_[20], the final state/source-context, and the current
-// SOURCE frame. BASE_STATE_x/BASE_SOURCE_CONTEXT_x anchors have no persistent
-// resident object in this transport; per the T527 contract they are recorded
-// NOT_EXECUTED rather than invented from CURRENT (an all-zero body still
-// participates in the full-length segment digest). The prefix follows the
+// SOURCE frame. Executed roots require their retained BASE pair; absent
+// required anchors are failures, never evidence that a root did not execute.
+// The prefix follows the
 // T535 fixed self-digest mask (its own SHA bytes are virtually zeroed at
 // digest time by cold::Digest) and segment descriptors follow the T552 wire
 // (kind=index+1, container segmentRevision=1, executed/not-executed).
@@ -16,12 +15,16 @@
 namespace grs::m3b {
 bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapshotV3& quota,size_t& stateWords,size_t& eventWords){
  stateWords=eventWords=0;
+ captureFailure_="CAPTURE_ARGUMENT_INVALID";
  cold::Layout layout;
- if(!ready_||busy_||!Current()||!profile_||!out)return false;
+ if(!ready_||!profile_||!out)return false;
+ if(busy_){captureFailure_="V5_FULL_PLAN_IN_FLIGHT";return false;}
+ if(!Current()){captureFailure_="CAPTURE_CONTEXT_LOST";return false;}
  if(!cold::Layout::Make(*profile_,alignment_,layout,config_.fullBranchTrace))return false;
- if(config_.fullBranchTrace&&((enteredMask_&baseMask_)!=enteredMask_))return false; // plan mid-flight: refuse rather than archive a half plan
- if(capacity<layout.words)return false;
- auto good=[&](){const auto g=glGetError();if(g&&!rawGl_)rawGl_=g;return !rawGl_;};
+ if(config_.fullBranchTrace&&((enteredMask_&baseMask_)!=enteredMask_)){captureFailure_="MISSING_REQUIRED_ANCHOR";return false;}
+ if(capacity<layout.words){captureFailure_="CAPTURE_SPAN_TOO_SMALL";return false;}
+ captureFailure_="CAPTURE_LAYOUT_INVALID";
+ auto good=[&](){const auto g=glGetError();if(g&&!rawGl_)rawGl_=g;if(rawGl_)captureFailure_="CAPTURE_GL_FAILED";return !rawGl_;};
  std::memset(out,0,layout.words*4);
  // Prefix header (T535): magic/rev/policy; word 7 marks the archive mode.
  out[0]=826488150u;out[1]=2u;out[2]=256u;out[4]=5u;out[5]=31u;out[6]=15u;out[11]=uint32_t(layout.count);
@@ -38,9 +41,10 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
   if(destination>layout.words||countWords>layout.words-destination||offsetWords>SIZE_MAX/4)return false;
   glBindBuffer(GL_COPY_READ_BUFFER,buffer);
   auto* mapped=glMapBufferRange(GL_COPY_READ_BUFFER,GLintptr(offsetWords*4),GLsizeiptr(countWords*4),GL_MAP_READ_BIT);
-  if(!mapped){good();return false;}
+  if(!mapped){captureFailure_="CAPTURE_MAP_FAILED";good();return false;}
   std::memcpy(out+destination,mapped,countWords*4);
   const bool unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;
+  if(!unmapped)captureFailure_="CAPTURE_UNMAP_FAILED";
   return unmapped&&good();
  };
  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);
@@ -60,28 +64,19 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
  if(contextSegment==layout.count)return false;
  {size_t dst=layout.segments[contextSegment].begin/4;const size_t offsets[]={0,96,old_->sourceLedger.begin,profile_->source[0].begin/4,profile_->source[1].begin/4};const size_t sizes[]={96,4096*64,4096*16,4096*512,4096*32};for(size_t j=0;j<5;++j){if(!copy(buffers_[15],offsets[j],sizes[j],dst))return false;dst+=sizes[j];}}
  executed[contextSegment]=true;
- // SOURCE frame: the live SOURCE128 arena prefix actually accepted so far.
- const size_t sourceSegment=layout.Find("SOURCE_FRAME128");
- if(sourceSegment!=layout.count&&buffers_[5]){
-  const size_t frameWords=std::min<size_t>(layout.segments[sourceSegment].bytes/4,size_t(profile_->k+1)*64);
-  if(!copy(buffers_[5],0,frameWords,layout.segments[sourceSegment].begin/4))return false;
-  executed[sourceSegment]=true;
- }
+ // Frame rows/arenas come from the accepted state, not SOURCE ledger size.
+ const auto* accepted=out+layout.segments[stateSegment].begin/4+headerWord_;
+ auto frame=[&](const char* name,uint32_t arena,size_t bufferBase,size_t offset,uint32_t rows,size_t stride){
+  const size_t at=layout.Find(name);if(at==layout.count||arena>=3)return false;
+  const auto& segment=layout.segments[at];if(rows>segment.bytes/(4*stride))return false;
+  if(!copy(buffers_[bufferBase+arena],offset,size_t(rows)*stride,segment.begin/4))return false;
+  executed[at]=true;return true;
+ };
+ if(!frame("SOURCE_FRAME128",accepted[144],22,0,accepted[157],128)||
+    !frame("PHYSICAL_FRAME64",accepted[37],8,0,accepted[38],64)||
+    !frame("PROVENANCE_FRAME32",accepted[180],8,size_t(profile_->quantumFrameRows)*64,accepted[179],32))return false;
  if(!config_.fullBranchTrace){
-  // ROOT mode: the remaining prefix segments come from the resident event
-  // arenas; absent objects stay NOT_EXECUTED with zero bodies.
-  struct RootPlan{const char* name;GLuint buffer;};
-  const RootPlan plan[]={
-   {"PHYSICAL_FRAME64",buffers_[8+0]},
-   {"PROVENANCE_FRAME32",buffers_[8+1]},
-   {"CONTROL_ROOT_0",buffers_[15]},
-  };
-  for(const auto& item:plan){
-   const size_t at=layout.Find(item.name);
-   if(at==layout.count||!item.buffer)continue;
-   if(!copy(item.buffer,0,layout.segments[at].bytes/4,layout.segments[at].begin/4))return false;
-   executed[at]=true;
-  }
+  // An absent frozen root-control mirror cannot be replaced by scratch.
  }else{
   // FULL mode (T527 §1): 20 scope pairs from the full-trace buffers. A pair
   // is archived only when its bit is set in the plan's executed scope mask;
@@ -108,9 +103,6 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
    const size_t words=std::min(segWords,available-offset);
    if(words&&copy(fullBuffers_[20],offset,words,layout.segments[at].begin/4))executed[at]=true;
   }
-  // BASE_STATE_x / BASE_SOURCE_CONTEXT_x: no persistent resident base
-  // snapshots exist in this transport; recorded NOT_EXECUTED (T527: do not
-  // invent anchors by reversing CURRENT) — descriptors below seal zero rows.
  }
  // Segment descriptors — field offsets match cold::Validate exactly:
  // d[0]=kind(index+1), Pair(d,9)=begin, Pair(d,11)=bytes, d[13]=stride,
@@ -134,6 +126,7 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
  auto* prefix=out+256;prefix[14]=prefix[15]=prefix[16]=8192;prefix[21]=2;prefix[22]=2;cold::PrefixDigest(out,prefix+23);
  // Required producer metadata is not yet all retained: never publish a
  // purported COMPLETE archive from capacity/masks alone.
+ captureFailure_="META_INCOMPLETE";
  return false;
 
 }
