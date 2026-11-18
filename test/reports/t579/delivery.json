@@ -81,5 +81,59 @@
    "fixes": "\u72ec\u7acb\u5dee\u5206\u8bbe\u65bd\uff08\u65e0\u9700\u7b7e\u5305\uff0c\u76f4\u63a8\u8bbe\u5907\uff09",
    "executes": "T541/T569 \u5dee\u5206\u7eed\u6d4b\uff08\u8f93\u5165\u4e94\u4ef6\u5957\u534f\u8bae\u89c1 test-report-T541-device-predicate-v2.md\uff09"
   }
+ },
+ "wave2": {
+  "T579b-v5": {
+   "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579b-v5\\T579b-v5-signed.hap",
+   "bytes": 11016042,
+   "hapSha256": "55611dc1bf3edf76fc814a114a917b4a6f1660011f253e53535e98115ca7bccc",
+   "sourceTree": "t571-v5-tree",
+   "elfFiles": {
+    "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a",
+    "libs/arm64-v8a/libgrsm0.so": "925efd2bcde0a0c8",
+    "libs/arm64-v8a/libgrsm1.so": "679f62f27bcbd528",
+    "libs/arm64-v8a/libp013hello.so": "75092bac0b361494",
+    "libs/arm64-v8a/libp013renderer.so": "12d1414ab807591f"
+   }
+  },
+  "T579b-witness": {
+   "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579b-witness\\T579b-witness-signed.hap",
+   "bytes": 9735500,
+   "hapSha256": "3095547c855650b7055532a50a155492b40bd514c946b005f1821db211650ba3",
+   "sourceTree": "t575-witness-tree",
+   "elfFiles": {
+    "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a",
+    "libs/arm64-v8a/libgrsm0.so": "8ecf5cb7d78822b4",
+    "libs/arm64-v8a/libgrsm1.so": "c73ad2c49d154e38",
+    "libs/arm64-v8a/libp013hello.so": "935b43706c7f67c0",
+    "libs/arm64-v8a/libp013renderer.so": "2c189b0e198e8e7c"
+   }
+  },
+  "T579b-adapter": {
+   "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579b-adapter\\T579b-adapter-signed.hap",
+   "bytes": 10820376,
+   "hapSha256": "d535e1d3f637f7ef6c33977753fb2ae1c32e428c1274ccbc5001030bd395bd59",
+   "sourceTree": "t572-adapter-tree",
+   "elfFiles": {
+    "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a",
+    "libs/arm64-v8a/libgrsm0.so": "2eb1dfefa3afbee5",
+    "libs/arm64-v8a/libgrsm1.so": "41a9d02206e8e4b7",
+    "libs/arm64-v8a/libp013hello.so": "1769d12a18d2e9be",
+    "libs/arm64-v8a/libp013renderer.so": "13b95852dc938be7"
+   }
+  },
+  "T579b-prepare": {
+   "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579b-prepare\\T579b-prepare-signed.hap",
+   "bytes": 8074109,
+   "hapSha256": "4a1998c4db2c1d2401c66f1c0c4c2f956d333287a116f6c7c15165350bcd0d4c",
+   "sourceTree": "t574-prepare-tree",
+   "elfFiles": {
+    "libs/arm64-v8a/libc++_shared.so": "bff501a19fadbc9a",
+    "libs/arm64-v8a/libgrsm0.so": "e7b30c68a1970431",
+    "libs/arm64-v8a/libgrsm1.so": "4e464e543d9a92c5",
+    "libs/arm64-v8a/libp013hello.so": "6b7c0413a2ce51cf",
+    "libs/arm64-v8a/libp013renderer.so": "5d2569f1519d6cbb"
+   }
+  }
  }
 }
