@@ -1,0 +1,31 @@
+11-18 21:16:37.354   964  3044 I C02805/multimodalinput/InputKeyFlow: [P:D:56640|7016]61334|497|497|1256|2760|0|497|102.000000
+11-18 21:16:37.355   964  3044 I C02805/multimodalinput/InputKeyFlow: [P:D:56640|637]SendMsg:61334, pointerAc:2, PI:10000
+11-18 21:16:37.356 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:D:56640|252]ac: down: 56640
+11-18 21:16:37.356 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:D:56640|732]recv
+11-18 21:16:37.356 61334 61334 I C04213/com.example.helloworld/InputKeyFlow: HandleInputEvent: eid:10,InputId:56640,wid:497,ac:2
+11-18 21:16:37.357 61334 61334 I C03951/com.example.helloworld/InputKeyFlow: ITK Id:56640, fId:10000, T:0, I=0, M=0
+11-18 21:16:37.358 61334 61334 W C03951/com.example.helloworld/InputKeyFlow: Touch test result is empty.
+11-18 21:16:37.360 61334 61334 I C03919/com.example.helloworld/AceInputTracking: [(100000:100000:scope)] Hitted recognizer info is empty.
+11-18 21:16:37.362 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:M:56641|252]ac: move: 56641
+11-18 21:16:38.137 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:M:56741|252]ac: move, first: 56642-(2026-11-18 21:16:37.369ms), 56741, count: 100
+11-18 21:16:38.729 61334 62409 I C02805/com.example.helloworld/InputKeyFlow: [|74]Ffrt PE:56627 56815
+11-18 21:16:38.940 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:M:56841|252]ac: move, first: 56742-(2026-11-18 21:16:38.145ms), 56841, count: 100
+11-18 21:16:39.745 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:M:56941|252]ac: move, first: 56842-(2026-11-18 21:16:38.948ms), 56941, count: 100
+11-18 21:16:40.335 61334 62409 I C02805/com.example.helloworld/InputKeyFlow: [|74]Ffrt PE:56817 57014
+11-18 21:16:40.549 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:M:57041|252]ac: move, first: 56942-(2026-11-18 21:16:39.753ms), 57041, count: 100
+11-18 21:16:41.353 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:M:57141|252]ac: move, first: 57042-(2026-11-18 21:16:40.556ms), 57141, count: 100
+11-18 21:16:41.608   964  3044 I C02805/multimodalinput/InputKeyFlow: [P:U:57173|7016]61334|497|497|1256|2760|0|497|102.000000
+11-18 21:16:41.609   964  3044 I C02805/multimodalinput/InputKeyFlow: [P:U:57173|637]SendMsg:61334, pointerAc:4, PI:10000
+11-18 21:16:41.610 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:U:57173|252]ac: move, first: 57142-(2026-11-18 21:16:41.361ms), 57172, count: 31, last: ac: up: 57173
+11-18 21:16:41.610 61334 61334 I C02805/com.example.helloworld/InputKeyFlow: [P:U:57173|732]recv
+11-18 21:16:41.610 61334 61334 I C04213/com.example.helloworld/InputKeyFlow: HandleInputEvent: eid:11,InputId:57173,wid:497,ac:4
+11-18 21:16:41.612 61334 61334 I C03951/com.example.helloworld/InputKeyFlow: ITK Id:57173, fId:10000, T:1, I=0, M=0
+11-18 21:16:44.204 61334 61580 I C01D02/com.example.helloworld/accessibility_asacfwk: [(NotifyStateChanged:887)]observers size is 1
+11-18 21:16:44.205 61334 61580 I C01D02/com.example.helloworld/accessibility_asacfwk: [(NotifyStateChanged:887)]observers size is 1
+11-18 21:16:44.205 61334 61334 I C01D02/com.example.helloworld/accessibility_asacfwk: [(RegisterElementOperator:436)]Register windowId[497] start
+11-18 21:16:44.206 61334 61334 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+11-18 21:16:44.206 61334 61334 I C03931/com.example.helloworld/AceXcomponent: [(-2:100000:singleton)] Not register native accessibility
+11-18 21:16:44.868 61334 61580 I C01D02/com.example.helloworld/accessibility_asacfwk: [(NotifyStateChanged:887)]observers size is 1
+11-18 21:16:44.868 61334 61580 I C01D02/com.example.helloworld/accessibility_asacfwk: [(NotifyStateChanged:887)]observers size is 1
+11-18 21:16:44.869 61334 61334 I C01D02/com.example.helloworld/accessibility_asacfwk: [(DeregisterElementOperator:517)]Deregister windowId[497] start
+11-18 21:16:52.604 61334 62000 I C01490/com.example.helloworld/HW_GPU_CPL: [nodict]CompilerShaderInfoReport: Shader bisheng_graphic_pipeline_compilation_211547.765593_vs__fs__gs__cs_74344f724a4e5665536c6761596c7076474e5857773873302b6c4d3d_tcs_tes_ compile costs 73308903 us.
