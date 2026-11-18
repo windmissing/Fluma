@@ -1,5 +1,7 @@
 # T584：V5 FULL真实BASE锚点与完整证据语义
 
+> 2026-11-18 T614补齐同dispatch入口切点：本文默认非prefix revision1须应用FULL CONTROL revision2例外；scope入口/原件/Meta2和具体opcode以 [T614修订](architecture-T614-v5-entry-cursor-v1.md) 为准，不再要求host插入invocation。
+
 2026-11-18，architect，不使用真机。读取T571 1c7946b、现存T527/T535/T552正式机器表、m3b writer/transport/controller/cold manager，证据 `analysis-T584-source-evidence-v1.json`。保T571开发交付已登记；本轮是新缺口分流，不替其重开验收。
 
 ## 裁定

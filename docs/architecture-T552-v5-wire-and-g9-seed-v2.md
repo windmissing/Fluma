@@ -1,10 +1,12 @@
 # T552：V5逐段身份和G9规范seed补齐
 
+> 2026-11-18 T614生效：真实opcode切点、GPU不可变入口cursor32、Meta2及FULL CONTROL revision2以 [T614修订](architecture-T614-v5-entry-cursor-v1.md) 和同名JSON为准；G9 seed无变化。
+
 2026-11-17，architect，不使用真机。消费T517 7dd6e58阻断回执、T548 cdb4c77局部交付、T527/T535/T543及实际shader。两项均是此前工程合同遗漏，本次分别给出可独立实施的完整机器表；不让developer猜值、删审计或用helper冒完整功能。未运行业务测试/真机。
 
 ## 1. V5非prefix数值合同
 
-权威机器表 `architecture-T552-v5-segment-wire-v2.json` 完整展开四profile×ROOT/FULL的每一段，不改原offset/byteLength/stride/容量。**正式确认kind=descriptorIndex+1**，它是该mode目录内的编码，不是跨mode恒定的物理事件kind；reader必须同时核mode/目录。prefix仍kind1、segmentRevision2、header2/policy1和T535固定mask。所有非prefix容器segmentRevision=1，内嵌SOURCE/QUANTUM/control/input各行自身magic/revision/seal按原V5协议，不从容器revision推断。旧helper的kind算法至此才成为正式合同，旧header1/错误版本Validate不得据此继续使用。
+权威机器表 `architecture-T552-v5-segment-wire-v2.json` 完整展开四profile×ROOT/FULL的每一段，不改原offset/byteLength/stride/容量。**正式确认kind=descriptorIndex+1**，它是该mode目录内的编码，不是跨mode恒定的物理事件kind；reader必须同时核mode/目录。prefix仍kind1、segmentRevision2、header2/policy1和T535固定mask。非prefix容器默认segmentRevision=1，T614例外FULL CONTROL_ROOT_0..4为2；内嵌SOURCE/QUANTUM/control/input各行自身magic/revision/seal按原V5协议，不从容器revision推断。旧helper的kind算法至此才成为正式合同，旧header1/错误版本Validate不得据此继续使用。
 
 内层数值也明确：SOURCE128 magic876950349/rev5、seal在word31为3235774468；CONTROL128 magic876825680/rev5、seal同word31/3235774468；PHYSICAL64 magic1163088455/rev5，**没有通用末word seal**（word63依kind可能是segment等operand），以原kind usedMask及paired planned/sealed游标授权；PROVENANCE32 magic894456396/rev5、word31 seal3235774469。不能把外层descriptor seal或“版本5”机械写进所有行尾。现m3b/protocol_generated.h的source/quantum/control revision仍4而实际V5 writers写5，是待T517同源生成器对齐的已见实现缺口；SOURCE/CONTROL旧seal数值保留是协议事实，不一律改成aux seal。
 
@@ -47,11 +49,11 @@ CONTROL的128word stride是容器分页粒度，不意味着每128word都用旧c
 
 FULL身份/游标必须在**本role SCOPE_FINALIZE/原保留copy切点**锁定，不能等CONSISTENCY覆盖WORK后才从“当前cursor”取AUTHORITATIVE身份。control role行槽为r≤3?r−1:r（0/1/2/4/5），PLANNER_END为3；branchEpoch=row10/11、nonce=row4/5、role=row7。physical/aux起点取该次v5BeginScope的实际参数；planned/sealed终点取同次v5Cursor[0..3]；不能拿最后一次compound的cursor5/6当scope起点。AUTHORITATIVE可从frame非零起点复制，descriptor仍保原ordinal区间，reader据此归一化而非私改行内ordinal。
 
-如现有capture实现尚未保这些数值，FULL在原已预留8192B/root的GPU control保留尾部存**每role入口/末尾原GPU cursor32各一份**：word768起，slot=r−1，每slot64word，入口在768+64slot、末尾在800+64slot，结束word1088。真正SCOPE_INIT/v5BeginScope后、SCOPE_FINALIZE后分别从同WORK cursor原位置glCopyBufferSubData，保原barrier和owner许可；不新增WORK写域/物理dispatch/热map/完成尾/第五binding。最多10次copy/Q、1280B/Q，四Q共40次/5120B，均在原control8192B/root额度内，不另造GPU数组。
+FULL在原已预留8192B/root的GPU control保留尾部存**每role入口/末尾原GPU cursor32各一份**：word768起，slot=r−1，每slot64word，入口在768+64slot、末尾在800+64slot，结束word1088。T614具名cursor32的9/10为不可变入口、11为valid、12..17为身份/revision2、31为seal，0..8仍原mutable字段，18..30零。SCOPE_INIT先清无效原件，INPUT_E_REQUEST内部BeginScope在首credit前封入口；host在INPUT_E_REQUEST dispatch后及SCOPE_FINALIZE后copy，不能把前者mutable0..3冒首事务前值。保原barrier/owner许可；无新增分配/物理dispatch/热map/完成尾/第五binding。最多10次copy/Q、1280B/Q，四Q40次/5120B；内部重放只重置mutable，不覆盖逻辑scope入口。
 
 冷采集统一fence/安全点之后，builder用这两份原cursor和本role control行构造公开CaptureScopeMeta32（root/role/nonce/branchEpoch、pStart/pPlannedEnd/pSealedEnd/aStart/aPlannedEnd/aSealedEnd、entered/complete/firstError），只做字段搬运/checked减法，不预测执行。公开控制段前6×128word不变，word768起改为5条Meta32（r−1索引），结束928，928..2047为0；内部raw布局不作为公开wire。完整字典见机器表，builder写body后seal。原control copy3072B不变，入口/末尾raw快照copy额外如上；不存在“需使用未证明空闲的原WORK尾部”前置。ROOT模式不申请该FULL保留集，也不伪造五scope Meta；其公开control尾部全0。
 
-每scope pair的CaptureScopeMeta与control的nonce/role/branchEpoch相互核；完整control明确NOT_EXECUTED的role其Meta全0，不能因dispatch发出就伪造scope执行。若硬错导致control/入口/末尾任一缺失，则标META_INCOMPLETE/FORENSIC，不能猜未执行或报FULL完整。控制尾新增元数据的父container revision1仅此次未实施合同补齐，字典标识`T552_CAPTURE_SCOPE_META_V1`；原control128行格式未改。
+每scope pair的CaptureScopeMeta与control的nonce/role/branchEpoch相互核；完整control明确NOT_EXECUTED的role其Meta全0，不能因dispatch发出就伪造scope执行。若硬错导致control/入口/末尾任一缺失，则标META_INCOMPLETE/FORENSIC，不能猜未执行或报FULL完整。T614字典标识`T614_CAPTURE_SCOPE_META_V2`，Meta自身revision2，FULL CONTROL父container revision2；ROOT CONTROL仍1，原control128行格式未改。
 
 所有非prefix SHA仍覆盖完整byteLength，含零尾/NOT_EXECUTED零body，prefix只按T535固定32B虚拟归零。两slot/TTL/GPU保留/原四profile最大524375552B native及894457592B已知并存包络不变；源数据/record缺失报INCOMPLETE，不能选择方便的0补身份。机器表包括有限正例与wrong kind/rev/root/role/trial/branch/range/count/seal/未执行非零反例规则。
 

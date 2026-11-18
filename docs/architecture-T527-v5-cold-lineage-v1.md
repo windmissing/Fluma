@@ -1,5 +1,7 @@
 # T527 V5 完整冷谱系、容量与兼容合同 v1
 
+> 2026-11-18 T614切点修订：同dispatch首事务前入口保存在GPU cursor32不可变字段，不从dispatch后mutable反算；公开Meta2及FULL CONTROL容器revision2按 [T614合同](architecture-T614-v5-entry-cursor-v1.md)。ROOT CONTROL仍1、header2/payloadV5_2/目录/预算不变。
+
 > 2026-11-18 T584实现闭包修订：FULL必须保执行root的真实BASE及source上下文、五根控制与scope双stream，不能用NOT_EXECUTED代替缺对象。正式61段、既有预算和V5_2字典不变；缺口、唯一链接实现、捕获时机、sealed语义与跨route双槽生命周期以 [T584工程稿](architecture-T584-first-attribution-v1.md) 为准。
 
 > 2026-11-17 T552补齐：所有非prefix逐段kind/index+1、revision/身份、根槽引用/行计数、FULL scope入口与末尾cursor原件采集及内层wire差异以 `architecture-T552-v5-wire-and-g9-seed-v2.md` / `architecture-T552-v5-segment-wire-v2.json` 为准。原T527表的offset/容量不变；本文旧“通用seal/角色隐含规则”不得代替新逐段表。

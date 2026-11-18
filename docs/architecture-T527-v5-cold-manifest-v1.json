@@ -3616,6 +3616,22 @@
       "revision": 2,
       "task": "T535",
       "change": "fixed self-SHA mask/header15/version/archive identity; no capacity or resource changes"
+    },
+    {
+      "task": "T614",
+      "engineeringRevision": 3,
+      "change": "immutable scope entry, Meta2 and FULL CONTROL segmentRevision2; header2/payloadV5_2/capacity unchanged"
     }
-  ]
+  ],
+  "scopeCursorCaptureContract": {
+    "task": "T614",
+    "path": "docs/architecture-T614-v5-entry-cursor-v1.json",
+    "rawRevision": 2,
+    "metaRevision": 2,
+    "privateWords": 32,
+    "privateUsedMaskU32": 2147745791,
+    "FULLControlSegmentRevision": 2,
+    "ROOTControlSegmentRevision": 1,
+    "prefixAndHeaderUnchanged": true
+  }
 }
