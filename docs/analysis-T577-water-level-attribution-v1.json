@@ -1,0 +1,235 @@
+{
+  "schema": "T577_SOURCE_AND_FIXED_ALGEBRA_AUDIT_V1",
+  "date": "2026-11-18",
+  "result": "ATTRIBUTION_COMPLETE_NOT_PRODUCT_PASS",
+  "deviceExecuted": false,
+  "oldOracleExecuted": false,
+  "productTestsRerun": false,
+  "CPUPhysicsAdded": false,
+  "inputs": [
+    {
+      "path": "test/t568/independent_oracle.py",
+      "bytes": 9762,
+      "sha256": "06d9e86e5a5d6bb64896294279a0ae4c7bb41164aa276b9649f503193167e81a"
+    },
+    {
+      "path": "docs/test-report-T568-g12-oracle-v1.md",
+      "bytes": 3651,
+      "sha256": "0c9a4d7ee36f967c033728aa761e970ca57f88debaee4ce5818a6cc60fac4fef"
+    },
+    {
+      "path": "docs/algorithm-G12-water-sfp-coupling-v1.md",
+      "bytes": 29465,
+      "sha256": "15e606f26ed43b51bba342d402dd07f0317c1b56808528e0dcb2f3621162b3c7"
+    },
+    {
+      "path": "docs/design-G12-water-sfp-fixtures-v1.json",
+      "bytes": 5328,
+      "sha256": "502113bdb3b15376e52a00a61da623be63fdcd24bb47b597a524d42da47de1a1"
+    },
+    {
+      "path": "docs/architecture-T567-water-sfp-engineering-v1.md",
+      "bytes": 19833,
+      "sha256": "73d415f627836d61da5fddd4b1a19152f356dedb276af1c7a7dcff5ddb0ec5e6"
+    },
+    {
+      "path": "docs/architecture-T567-g12-engineering-v1.json",
+      "bytes": 180212,
+      "sha256": "df5d403d6e243809ed2f4d596bfc758d67cd551992674ce003103d9f8e13b7ad"
+    }
+  ],
+  "originalSourceFragments": {
+    "closed_form_noP": {
+      "line": 73,
+      "endLine": 78,
+      "source": "def closed_form_noP(H4, B):\n    \"\"\"SS3 closed form without P: H4<=2B -> eta=2H4,R=H4,W=0; else\n    eta=H4+2B, R=2B, W=H4-2B (H4,B in Q22 volume units).\"\"\"\n    if H4 <= 2 * B:\n        return 2 * H4, H4, 0\n    return H4 + 2 * B, 2 * B, H4 - 2 * B"
+    },
+    "c02": {
+      "line": 100,
+      "endLine": 121,
+      "source": "def c02():\n    \"\"\"S40 F4, H=0/11/22/27 (volume units): eta/pore/free.\"\"\"\n    S, F = 40, 4\n    B = S + F\n    # no P: solid interval is [0, 4B] (single bulk interval), endpoints in 4Q*y\n    Bq = B * Q          # Q20 sand volume\n    intervals = [(0, 4 * Bq)]\n    out = []\n    for Hv in [0, 11, 22, 27]:\n        H4 = Hv * Q22\n        eta = eta4(H4, intervals, Bq)\n        R4, W4 = pore_free(H4, intervals, eta)\n        # closed form cross-check\n        ce, cr, cw = closed_form_noP(H4, B)\n        out.append({'H': Hv, 'eta_units': eta / (4 * Q), 'pore': R4 / Q22,\n                    'free': W4 / Q22, 'closed_match': (eta, R4, W4) == (ce, cr, cw)})\n    fx = json.load(open(ROOT / 'docs/design-G12-water-sfp-fixtures-v1.json', encoding='utf-8'))\n    exp = [c for c in fx['cases'] if c['id'] == 'C02'][0]['expect']\n    match = (all(abs(o['eta_units'] - e) < 1e-9 for o, e in zip(out, exp['eta']))\n             and all(abs(o['pore'] - e) < 1e-9 for o, e in zip(out, exp['pore_water']))\n             and all(abs(o['free'] - e) < 1e-9 for o, e in zip(out, exp['free_water'])))\n    return {'rows': out, 'matches_fixture_expect': match}"
+    },
+    "c03": {
+      "line": 124,
+      "endLine": 143,
+      "source": "def c03():\n    \"\"\"beds 20/40/60 with same eta=80, pW=0, angle=0, F=0: calm water must not\n    drift regardless of bed height (hydrostatic equilibrium, no Rusanov diffusion\n    from H differences).\"\"\"\n    outs = []\n    for bed in [20, 40, 60]:\n        B = bed\n        Bq = B * Q\n        intervals = [(0, 4 * Bq)]\n        # eta=80 volume units -> H4 = 80*Q22? eta as height 80 units with bed b:\n        # water volume = eta - b (above-bed capacity full) => H = 80 - bed\n        H = 80 - bed\n        H4 = H * Q22\n        eta = eta4(H4, intervals, Bq)\n        # face flux: fmW = RNE((pWL+pWR - a*Cface*(etaR4-etaL4))/2); equal eta,\n        # pW=0, equal C -> fmW=0 -> qW=0 strictly\n        qW = 0\n        outs.append({'bed': bed, 'H': H, 'eta_units': eta / (4 * Q), 'qW': qW})\n    return {'rows': outs, 'all_qW_zero': all(o['qW'] == 0 for o in outs),\n            'principle': 'equal-eta pW=0 => strictly zero face flux (no H-diffusion)'}"
+    },
+    "c05": {
+      "line": 167,
+      "endLine": 179,
+      "source": "def c05():\n    \"\"\"S40 F4 with F moving right, free water 5, pW=0: F face flux uses same\n    frozen state as water face flux; joint capacity precheck then apply.\"\"\"\n    # Local check: F face flux does not write H; water face flux does not write F.\n    # Joint capacity: B + sumP <= CQ and 2*(B+sumP)+H4+sumJ4 <= 4CQ must hold\n    # post-apply for both.\n    S, F, H = 40, 4, 27  # free water 5 with pore 22\n    B = S + F\n    ok_capacity = (2 * B + H * Q22 // Q22 <= 4 * 256)  # unit-level identity check\n    return {'joint_capacity_identity': 2 * B + H <= 4 * 256,\n            'writers_disjoint': True,\n            'note': 'F flux and water flux are independent requests from one '\n                    'frozen state; both must pass the two capacity inequalities'}"
+    },
+    "eta4": {
+      "line": 46,
+      "endLine": 62,
+      "source": "def eta4(H4, intervals, B):\n    \"\"\"Lower_bound water level: first z4 in [0,4CQ] with C8(z4) >= 2*H4;\n    require exact equality C8(eta)==2H4. H4=0 -> eta4=0.\"\"\"\n    target = 2 * H4\n    if H4 == 0:\n        return 0\n    lo, hi = 0, 4 * CQ\n    # binary lower bound (max 31 rounds per SS3)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if c8(mid, intervals) >= target:\n            hi = mid\n        else:\n            lo = mid + 1\n    eta = lo\n    assert c8(eta, intervals) == target, f'C8(eta)={c8(eta, intervals)} != {target}'\n    return eta"
+    }
+  },
+  "sourceFindings": {
+    "C02ClosedArg": "B=44 physical, should Bq=44Q for the stated helper formula",
+    "helperDocstring": "says B/H4 both Q22; B must be Q20 for this exact formula",
+    "closedAssertionMissing": "closed_match booleans returned but neither asserted nor included in fixture match predicate",
+    "C03": "H=80-bed yields eta70/60/40; qW assigned literal0 so all_qW_zero does not test equal-head flux",
+    "C05": "2B+Hphysical<=4*256 mixes scales; true joint scalar in physical units is B/2+H<=256 (P=J=0)"
+  },
+  "C02LegalNoPFixedPoints": [
+    {
+      "BQ20": 46137344,
+      "H4": 0,
+      "branch": "PORE_ONLY",
+      "eta4": 0,
+      "R4": 0,
+      "W4": 0,
+      "C8": 0,
+      "target": 0,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 1,
+      "branch": "PORE_ONLY",
+      "eta4": 2,
+      "R4": 1,
+      "W4": 0,
+      "C8": 2,
+      "target": 2,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 92274687,
+      "branch": "PORE_ONLY",
+      "eta4": 184549374,
+      "R4": 92274687,
+      "W4": 0,
+      "C8": 184549374,
+      "target": 184549374,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 92274688,
+      "branch": "PORE_ONLY",
+      "eta4": 184549376,
+      "R4": 92274688,
+      "W4": 0,
+      "C8": 184549376,
+      "target": 184549376,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 92274689,
+      "branch": "FREE_WATER",
+      "eta4": 184549377,
+      "R4": 92274688,
+      "W4": 1,
+      "C8": 184549378,
+      "target": 184549378,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 113246208,
+      "branch": "FREE_WATER",
+      "eta4": 205520896,
+      "R4": 92274688,
+      "W4": 20971520,
+      "C8": 226492416,
+      "target": 226492416,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 981467136,
+      "branch": "FREE_WATER",
+      "eta4": 1073741824,
+      "R4": 92274688,
+      "W4": 889192448,
+      "C8": 1962934272,
+      "target": 1962934272,
+      "residual": 0
+    },
+    {
+      "BQ20": 46137344,
+      "H4": 981467137,
+      "status": "CAPACITY_REJECT_BEFORE_SEARCH"
+    }
+  ],
+  "reportPreservedCounterexample": {
+    "S": 40,
+    "F": 4,
+    "H": 27,
+    "correctEtaHeight": 49,
+    "correct": {
+      "BQ20": 46137344,
+      "H4": 113246208,
+      "eta4": 205520896,
+      "R4": 92274688,
+      "W4": 20971520
+    },
+    "wrongLowBranchOutsideDomain": {
+      "eta4": 226492416,
+      "etaHeight": 54,
+      "C8": 268435456,
+      "target": 226492416,
+      "residual": 41943040
+    },
+    "actualWrongUnitCall": {
+      "BArgument": 44,
+      "branch": "ELSE",
+      "eta4": 113246296,
+      "R4": 88,
+      "W4": 113246120,
+      "C8": 113246296,
+      "target": 226492416
+    }
+  },
+  "C03ConstructionAudit": [
+    {
+      "bed": 20,
+      "sourceH4": 251658240,
+      "sourceEta4": 293601280,
+      "sourceEtaHeight": 70,
+      "requiredH4": 293601280,
+      "requiredWaterVolume": 70,
+      "requiredEta4": 335544320
+    },
+    {
+      "bed": 40,
+      "sourceH4": 167772160,
+      "sourceEta4": 251658240,
+      "sourceEtaHeight": 60,
+      "requiredH4": 251658240,
+      "requiredWaterVolume": 60,
+      "requiredEta4": 335544320
+    },
+    {
+      "bed": 60,
+      "sourceH4": 83886080,
+      "sourceEta4": 167772160,
+      "sourceEtaHeight": 40,
+      "requiredH4": 209715200,
+      "requiredWaterVolume": 50,
+      "requiredEta4": 335544320
+    }
+  ],
+  "C05SuppliedNearCapacityCounterexample": {
+    "B": 44,
+    "H": 235,
+    "wrongScalar": 323,
+    "wrongLimit": 1024,
+    "wrongExpressionAccepts": true,
+    "trueOccupancy": 257,
+    "trueLimit": 256,
+    "trueCapacityAccepts": false
+  },
+  "maxSearchRounds": 31,
+  "notEstablished": [
+    "T568 eight scenarios fully validated",
+    "wet GPU time evolution",
+    "all GPU/cold/scene correctness",
+    "energy stability/standard wet-case progress",
+    "real device deadline/performance"
+  ]
+}

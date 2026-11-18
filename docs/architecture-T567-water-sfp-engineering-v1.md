@@ -1,5 +1,7 @@
 # T567：目标12水相与S/F/P的GPU工程闭包
 
+> 2026-11-18 T577单位澄清：见 `architecture-T577-water-level-attribution-v1.md` 及 `architecture-T577-geometry-clarification-v1.json`。无P完整两段闭式与C8一致，B须为Q20、H4/eta4/R4/W4为4Q格点；T568分歧来自独立测试参数/断言与报告误归因，不改本稿有界二分/精确等式、ABI/资源/dispatch或T576真实前置。
+
 2026-11-17，architect，不使用真机，不执行GPU/产品测试。消费T559正式G12方案、manifest及C01–C20。工程状态ENGINEERING_READY_RESEARCH；产品NOT_IMPLEMENTED/NOT_VALIDATED。研究参数未批准、未标定，默认OFF；CPU停投，目标10暂停。机器合同 `architecture-T567-g12-engineering-v1.json`、完整 `architecture-T567-g12-dispatch-v1.json` 与有限审计为本稿配套单源，旧G9/M1/M3/G11 reader和资格不迁名冒用。
 
 ## 1. 真前置与支持域

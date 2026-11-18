@@ -1,0 +1,99 @@
+{
+  "schema": "T577_G12_GEOMETRY_CLARIFICATION_V1",
+  "date": "2026-11-18",
+  "classification": "TEST_IMPLEMENTATION_UNITS_AND_ASSERTIONS_REPORT_ATTRIBUTION_ERROR",
+  "designEquationChanged": false,
+  "T567BinaryContractChanged": false,
+  "units": {
+    "B": "S+F in Q20; b physical height=B/Q",
+    "H4": "4Q*physical total water volume",
+    "eta4": "4Q*physical water height",
+    "R4": "4Q*pore water volume",
+    "W4": "4Q*free water volume"
+  },
+  "noP": {
+    "domain": "no active P in this column, valid B/H4/J reservation and all normal input gates",
+    "capacity": "0<=B<=CQ; H4>=0; 2B+H4+J4<=4CQ",
+    "C8": "z4 for0<=z4<=4B, otherwise2z4-4B",
+    "branches": [
+      {
+        "if": "H4<=2B",
+        "eta4": "2H4",
+        "R4": "H4",
+        "W4": "0"
+      },
+      {
+        "if": "H4>2B",
+        "eta4": "H4+2B",
+        "R4": "2B",
+        "W4": "H4-2B"
+      }
+    ],
+    "physicalUnits": "h<=b/2 -> eta=2h; h>b/2 -> eta=h+b/2",
+    "generalValidity": "both branches satisfy C8(eta4)=2H4 over their complete valid no-P domain",
+    "productionPolicy": "T576 keeps existing lower_bound+exact-equality contract; no new fast path is authorized by this clarification"
+  },
+  "search": {
+    "interval": [
+      0,
+      1073741824
+    ],
+    "maxRounds": 31,
+    "widthSequence": [
+      1073741824,
+      536870912,
+      268435456,
+      134217728,
+      67108864,
+      33554432,
+      16777216,
+      8388608,
+      4194304,
+      2097152,
+      1048576,
+      524288,
+      262144,
+      131072,
+      65536,
+      32768,
+      16384,
+      8192,
+      4096,
+      2048,
+      1024,
+      512,
+      256,
+      128,
+      64,
+      32,
+      16,
+      8,
+      4,
+      2,
+      1,
+      0
+    ],
+    "preconditions": [
+      "nonnegative valid inventories and dual capacity",
+      "bed/P endpoints even and within[0,4CQ]",
+      "same-column P slabs disjoint and outside bed; equality at endpoints allowed"
+    ],
+    "proof": "C8 has slope1 inside one solid slab and2 outside; even slab endpoints make all even targets attainable; exact equality checked, not approximate convergence",
+    "H4Zero": "eta4=0 and no water surface",
+    "reject": "bad geometry/capacity is rejected before search; never clamp H/eta or union overlap to manufacture an equality"
+  },
+  "T576": {
+    "newDesignDependency": false,
+    "newArchitectApprovalGate": false,
+    "realPrerequisite": "T573 complete DM parent backend remains unchanged",
+    "implementation": "existing C8 lower_bound plus exact equality remains valid; preserve input units/normal gates",
+    "noABIResourceDispatchChange": true,
+    "GPUStatus": "NOT_IMPLEMENTED_NOT_RUN evidence retained"
+  },
+  "routing": {
+    "tester": "repair existing T568 static oracle units, independent assertions and report; preserve v1 artifacts, deliver new version",
+    "designer": "no model/closed-form correction required by the supplied counterexample",
+    "developer": "T576 consumes this unit clarification with original binary C8 contract; not a repair for an observed GPU bug",
+    "manager": "register test implementation/report correction and follow-up; no threshold dispute or new acceptance gate"
+  }
+}
