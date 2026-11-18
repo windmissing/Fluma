@@ -21,13 +21,13 @@ inline const char* RouteName(Route r) {
   return "UNKNOWN";
 }
 enum class Stage : uint8_t {
-  CB_INFO = 1, IS_TYPEDARRAY, TYPEDARRAY_INFO, ELEMENT_TYPE, ELEMENT_COUNT,
+  CB_INFO = 1, ARG_COUNT, IS_TYPEDARRAY, TYPEDARRAY_INFO, ELEMENT_TYPE, ELEMENT_COUNT,
   BYTE_OFFSET, DATA_POINTER, DETACHED_API, DETACHED_VALUE, BACKING_INFO,
   BASE_POINTER, BACKING_BYTES, WORD_COPY, API_SEMANTIC
 };
 inline const char* StageName(Stage s) {
   switch (s) {
-    case Stage::CB_INFO: return "CB_INFO"; case Stage::IS_TYPEDARRAY: return "IS_TYPEDARRAY";
+    case Stage::CB_INFO: return "CB_INFO"; case Stage::ARG_COUNT: return "ARG_COUNT"; case Stage::IS_TYPEDARRAY: return "IS_TYPEDARRAY";
     case Stage::TYPEDARRAY_INFO: return "TYPEDARRAY_INFO"; case Stage::ELEMENT_TYPE: return "ELEMENT_TYPE";
     case Stage::ELEMENT_COUNT: return "ELEMENT_COUNT"; case Stage::BYTE_OFFSET: return "BYTE_OFFSET";
     case Stage::DATA_POINTER: return "DATA_POINTER"; case Stage::DETACHED_API: return "DETACHED_API";
@@ -50,6 +50,7 @@ struct Observation {
   // Tri-state values - only meaningful after their stage ran.
   Tri typed = Tri::NOT_EVALUATED;
   Tri detached = Tri::NOT_EVALUATED;
+  bool typedValue=false,detachedValue=false;
   // TYPEDARRAY_INFO outputs (valid only when typedarrayInfoStatus == napi_ok).
   int32_t elementKind = -1;      // napi_typedarray_type raw value
   uint64_t elementLength = 0;    // SDK: length is in ELEMENTS
@@ -73,102 +74,48 @@ struct ReadWordsResult {
   bool argcObserved = false;
 };
 
-// ---------------- T550 S3 diagnostic snapshots (512B per snapshot) --------
+// Binary snapshots stay within 512B; JSON is encoded outside the small lock.
 struct Snapshot {
-  static constexpr size_t kRawBytes = 512;
-  bool used = false;
-  uint64_t attemptId = 0;
-  uint64_t bootStamp = 0;
-  uint64_t diagGeneration = 1;
-  Route route = Route::M3A;
-  size_t expectedN = 0;
-  Stage firstFailedStage = Stage::CB_INFO;
-  bool copyComplete = false;
-  Observation observed{};
-  std::array<uint32_t, 16> configHeader{};  // first 16 words when copied
-  std::array<char, kRawBytes> raw{};
-  uint16_t rawBytesUsed = 0;
-
-  void Clear() { used = false; rawBytesUsed = 0; std::memset(raw.data(), 0, raw.size()); }
-  // Returns false when the 512B budget is exhausted (writer.Good() == false).
-  template <size_t N>
-  bool Build(const ReadWordsResult<N>& r, Route route, uint64_t attemptId,
-             uint64_t bootStamp, uint64_t diagGeneration, uint64_t attemptCounter) {
-    used = true; this->route = route; this->attemptId = attemptId;
-    this->bootStamp = bootStamp; this->diagGeneration = diagGeneration;
-    expectedN = N; firstFailedStage = r.firstFailedStage;
-    copyComplete = r.observed.copyComplete; observed = r.observed;
-    if (r.observed.copyComplete) {
-      constexpr size_t header = N < 16 ? N : 16;
-      for (size_t i = 0; i < header; ++i) configHeader[i] = r.words[i];
-    } else {
-      configHeader.fill(0);
-    }
-    (void)attemptCounter;
-    return JsonEncode();
-  }
-  bool JsonEncode();
+ uint64_t bootStamp=0,diagGeneration=0,attemptId=0;Route route=Route::M3A;
+ uint32_t expectedN=0;Observation observed{};Stage firstFailedStage=Stage::API_SEMANTIC;
+ std::array<uint32_t,16> configHeader{};uint32_t headerWords=0;
+ std::array<char,40> api{};std::array<char,64> reason{};
+ uint32_t semanticPassed=0,semanticFailed=0;int32_t rawStatus=-1;
+ bool used=false,ok=false;
 };
-
-struct RouteLedger {
-  std::mutex mutex;
-  Snapshot lastAttempt{};
-  Snapshot firstFailure{};
-  uint64_t attemptCounter = 0;      // monotonic attempt ids
-  uint64_t firstFailureAttempt = 0; // attemptId owning the firstFailure slot
-  bool firstFailureLatched = false; // first failure of this generation
-};
-
+static_assert(sizeof(Snapshot)<=512,"T546 binary snapshot credit");
+struct RouteLedger {Snapshot lastAttempt{},firstFailure{};};
 struct DiagnosticStore {
-  std::mutex mutex;                 // small lock, never taken under App lock
-  std::array<RouteLedger, 3> routes{};
-  uint64_t bootStamp = 0;
-  uint64_t diagGeneration = 1;
-
-  static DiagnosticStore& Instance() { static DiagnosticStore store; return store; }
-  void BeginGeneration(uint64_t stamp) {
-    std::lock_guard<std::mutex> lock(mutex);
-    if (bootStamp == 0) bootStamp = stamp;
-    ++diagGeneration;
-    for (auto& route : routes) {
-      std::lock_guard<std::mutex> routeLock(route.mutex);
-      route.lastAttempt.Clear();
-      route.firstFailure.Clear();
-      route.attemptCounter = 0;
-      route.firstFailureAttempt = 0;
-      route.firstFailureLatched = false;
-    }
-  }
-  // Called with the App lock NOT held (App mutation happens before/after, the
-  // diagnostic record itself never under the App lock - T546 S3 lock order).
-  template <size_t N>
-  uint64_t Record(Route route, const ReadWordsResult<N>& result, uint64_t nowStamp) {
-    auto& ledger = routes[static_cast<size_t>(route)];
-    std::lock_guard<std::mutex> lock(ledger.mutex);
-    const uint64_t attemptId = ++ledger.attemptCounter;
-    ledger.lastAttempt.Build(result, route, attemptId, bootStamp, diagGeneration, attemptId);
-    if (!result.ok && !ledger.firstFailureLatched) {
-      ledger.firstFailureLatched = true;
-      ledger.firstFailureAttempt = attemptId;
-      ledger.firstFailure.Build(result, route, attemptId, bootStamp, diagGeneration, attemptId);
-    }
-    (void)nowStamp;
-    return attemptId;
-  }
+ std::mutex mutex;std::array<RouteLedger,3> routes{};uint64_t bootStamp=0,diagGeneration=1,serial=0;
+ static DiagnosticStore& Instance();
 };
-
-// One decode attempt: allocates a fresh attemptId and runs the ordered stages.
-template <size_t N>
-uint64_t BeginInputCall(Route route) {
-  auto& store = DiagnosticStore::Instance();
-  auto& ledger = store.routes[static_cast<size_t>(route)];
-  std::lock_guard<std::mutex> lock(ledger.mutex);
-  return ++ledger.attemptCounter;
-}
-
+class InputCall {
+ InputCall* previous_=nullptr;bool finished_=false;
+public:
+ Snapshot snapshot{};
+ InputCall(Route,const char*,size_t);~InputCall();
+ void Capture(const Observation&,Stage,bool,const uint32_t*,size_t);
+ void Finish(bool,const char*,bool newGeneration=false);
+};
+InputCall* CurrentInputCall();
+// Ordered semantic predicates use fixed bit positions and first-reason latch.
+bool Semantic(bool pass,const char* reason,uint32_t bit);
+napi_value Invoke(napi_env,napi_callback_info,Route,const char*,size_t,napi_callback,bool configuration=false,bool jsonStatus=false);
+bool SnapshotJson(const std::string&,const std::string&,std::string&,const std::string& boot="",const std::string& generation="");
+napi_value Diagnostics(napi_env,napi_callback_info);
+template<size_t N>class DecodeCapture {
+ ReadWordsResult<N>& result_;Route route_;
+public:
+ DecodeCapture(ReadWordsResult<N>& r,Route route):result_(r),route_(route){}
+ ~DecodeCapture(){
+  if(auto* call=CurrentInputCall())call->Capture(result_.observed,result_.firstFailedStage,result_.ok,result_.words.data(),N);
+  else {InputCall fallback(route_,"UNWRAPPED_TYPED_INPUT",N);fallback.Capture(result_.observed,result_.firstFailedStage,result_.ok,result_.words.data(),N);fallback.Finish(result_.ok,result_.ok?"DECODE_OK":"DECODE_REJECTED");}
+ }
+};
 template <size_t N>
 ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route, uint64_t attemptId) {
   ReadWordsResult<N> result{};
+  DecodeCapture<N> capture(result,route);
   Observation& o = result.observed;
   // Stage 1: CB_INFO / ARG_COUNT - read capacity 2 to detect extra args
   // without treating a capacity-1 truncation as proof of argc==1.
@@ -176,15 +123,15 @@ ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route,
   size_t argc = 2;
   const napi_status cbInfo = napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
   o.cbInfoStatus = static_cast<int32_t>(cbInfo);
-  o.argc = argc;
+  if(cbInfo==napi_ok)o.argc = argc;
   if (cbInfo != napi_ok) { result.firstFailedStage = Stage::CB_INFO; return result; }
-  if (argc != 1) { result.firstFailedStage = Stage::CB_INFO; return result; }
+  if (argc != 1) { result.firstFailedStage = Stage::ARG_COUNT; return result; }
   // Stage 2: IS_TYPEDARRAY - no implicit conversion from number[]/DataView/etc.
   bool typed = false;
   const napi_status isTyped = napi_is_typedarray(env, argv[0], &typed);
   o.isTypedarrayStatus = static_cast<int32_t>(isTyped);
-  if (isTyped != napi_ok) { result.firstFailedStage = Stage::IS_TYPEDARRAY; return result; }
-  o.typed = typed ? Tri::VALID : Tri::VALID;  // API succeeded; value below
+  if (isTyped != napi_ok) { o.typed=Tri::API_FAILED; result.firstFailedStage = Stage::IS_TYPEDARRAY; return result; }
+  o.typed = Tri::VALID;o.typedValue=typed;
   if (!typed) { o.typed = Tri::VALID; result.firstFailedStage = Stage::IS_TYPEDARRAY; return result; }
   // Stage 3: TYPEDARRAY_INFO - outputs only read after API success.
   napi_typedarray_type kind = static_cast<napi_typedarray_type>(-1);
@@ -210,8 +157,8 @@ ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route,
   bool detached = false;
   const napi_status detachedStatus = napi_is_detached_arraybuffer(env, backing, &detached);
   o.isDetachedStatus = static_cast<int32_t>(detachedStatus);
-  if (detachedStatus != napi_ok) { result.firstFailedStage = Stage::DETACHED_API; return result; }
-  o.detached = detached ? Tri::VALID : Tri::VALID;
+  if (detachedStatus != napi_ok) { o.detached=Tri::API_FAILED; result.firstFailedStage = Stage::DETACHED_API; return result; }
+  o.detached = Tri::VALID;o.detachedValue=detached;
   if (detached) { result.firstFailedStage = Stage::DETACHED_VALUE; return result; }
   // Stage 7: BACKING_INFO.
   void* base = nullptr;
@@ -231,14 +178,11 @@ ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route,
   o.copyComplete = true;
   result.ok = true;
   result.firstFailedStage = Stage::WORD_COPY;  // not failed; ok == true
-  auto& store = DiagnosticStore::Instance();
-  store.template Record<N>(route, result, 0);
+
   (void)attemptId;
   return result;
 }
 
-// Bounded JSON snapshot writer for the gpuInputDiagnosticsV1 cold endpoint.
-bool SnapshotJson(const std::string& routeText, const std::string& attemptText, std::string& out);
 
-}  // namespace grs::words
+} // namespace grs::words
 #endif

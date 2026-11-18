@@ -1,3 +1,4 @@
+import { GpuInputAttempt } from '../physics/GpuInputAttempt';
 import native from 'libgrsm1.so';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 import fs from '@ohos.file.fs';
@@ -25,6 +26,23 @@ struct GpuResidentM3 {
   @State exportState: string = '';
   @State fullBranch: boolean = false;
   private frame: M3PageFrame | null = null;
+  @State inputDiagnostic: string = '';
+  private startupIntent: number = 0;
+  private inputCall(api: string, words: Uint32Array, schema: string, invoke: (value: Uint32Array) => string): string {
+    const context = getContext(this) as common.UIAbilityContext;
+    return GpuInputAttempt.call('M3A', api, words, schema, context.filesDir, invoke, (state: string): void => { this.inputDiagnostic = state; });
+  }
+  private requested(reply: string, state: string): boolean { return GpuInputAttempt.requested(reply, state); }
+  private stopFrame(): void {
+    const previous = this.frame;
+    if (previous !== null) previous.owner = null;
+    this.frame = null;
+  }
+  private startupFault(message: string): void {
+    ++this.startupIntent;
+    this.stopFrame(); this.identity = []; this.message = message;
+    try { native.setActive(false); } catch (cleanup) { this.message += ';CLEANUP_FAILED:' + String(cleanup); }
+  }
   private identity: number[] = [];
   private sequence: number = 0;
   private intent: number = 0;
@@ -83,33 +101,30 @@ struct GpuResidentM3 {
   private start(full: boolean = false): void {
     // T550 (problem T546 §4): startup transaction guarded; only the explicit
     // M3_NEW_EMPTY_RUN_REQUESTED success token arms the frame.
+    const intent: number = ++this.startupIntent;
+    this.stopFrame(); this.identity = [];
     try {
       this.fullBranch = full;
-      try { this.cold.cancel(); } catch (cleanup) { }
-      try { this.endExport(false); } catch (cleanup) { }
+      this.cold.cancel();
+      this.endExport(false);
       native.setActive(true);
       // Explicit candidate policy: index/s, water Q/s, and physical cold fields.
       // No default fallback is supplied when the required omega field is absent.
       const config = new Uint32Array([4, 15, 192, 64, 7680, 8388608,
         1048576, 65536, 1048576, 0, 0, 120, 524288, 1048576, 1, full ? 1 : 0]);
-      const reply: string = native.m3Configure(config);
+      const reply: string = this.inputCall('m3Configure', config, 'M3_CONFIG16_V4', (words: Uint32Array): string => native.m3Configure(words));
       this.message = reply;
-      if (reply !== 'M3_NEW_EMPTY_RUN_REQUESTED') {
-        this.message = reply + '（可读诊断：native.gpuInputDiagnosticsV1(\'M3A\')）';
-        return;
-      }
+      if (!this.requested(reply, 'M3_NEW_EMPTY_RUN_REQUESTED')) { native.setActive(false); return; }
       this.identity = [];
       this.sequence = 0;
       this.intent = 0;
       this.request = 0;
-      if (this.frame !== null) this.frame.owner = null;
-      this.frame = new M3PageFrame();
-      this.frame.owner = this;
-      this.getUIContext().postFrameCallback(this.frame);
+      GpuInputAttempt.waitSession((): string => native.m3Session(), '4', 15, (): boolean => intent === this.startupIntent,
+        (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.frame = new M3PageFrame(); this.frame.owner = this; this.getUIContext().postFrameCallback(this.frame); },
+        (error: string): void => { this.startupFault(error); });
     } catch (e) {
-      if (this.frame !== null) this.frame.owner = null;
-      this.frame = null;
-      this.message = 'M3_START_FAULT：' + String(e);
+      this.stopFrame();
+      this.startupFault('M3_START_FAULT：' + String(e));
     }
   }
 
@@ -180,12 +195,10 @@ struct GpuResidentM3 {
   }
 
   aboutToDisappear(): void {
-    this.cold.cancel();
-    this.endExport(false);
-    if (this.frame !== null) this.frame.owner = null;
-    this.frame = null;
-    native.setActive(false);
-    this.identity = [];
+    ++this.startupIntent;
+    try { this.cold.cancel(); this.endExport(false); }
+    catch (cleanup) { this.inputDiagnostic = 'CLEANUP_FAILED:' + String(cleanup); }
+    finally { this.startupFault(this.message); }
   }
 
   build() {
@@ -205,6 +218,7 @@ struct GpuResidentM3 {
       }
       XComponent({ id: 'grsM3V4', type: XComponentType.SURFACE, libraryname: 'grsm1' })
         .width('100%').layoutWeight(1)
+      Text(this.inputDiagnostic).fontSize(10)
       Text(this.message).fontSize(11).maxLines(4)
       Text(this.exportState).fontSize(10).maxLines(2)
     }.width('100%').height('100%').padding(12)

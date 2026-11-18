@@ -1,0 +1,92 @@
+{
+  "revision": "T582_DEVELOPER_COMPILE_HANDOFF_V1",
+  "date": "2026-11-18",
+  "status": "DEVELOPMENT_DELIVERED",
+  "tests": "NOT_RUN_BY_USER_DIRECTION",
+  "device": "NOT_RUN",
+  "signingDeployment": "NOT_RUN",
+  "productVerdict": "NOT_EVALUATED",
+  "sourceSha256": {
+    "entry/src/main/cpp/gpu_resident/app_bridge.cpp": "19f00feae7248e8cac1acb5e07b77587730e18568731037952de69a879fd7dd7",
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.h": "a5dc2b69c10c9fa99d7743919797c97ef7aa9821424688eb53476adc10c84470",
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.cpp": "72ccee3c9ac9133da7ac7b5b8686a83d8394a451b560d99479c14be355b9bc14",
+    "entry/src/main/cpp/gpu_resident/m3a/napi.inc": "b565ab2818207a384ffcc2f3e731d0e3925024ef824d3d287ea683f274ea9980",
+    "entry/src/main/cpp/gpu_resident/m3b/napi.inc": "6915f00e664d37139ad9f45f778e78a6da0afd8dbe754ac4bd46fcbb25b07a30",
+    "entry/src/main/cpp/gpu_resident/g9spf/napi.inc": "f592fb6275b05d4ffef7451f5033f1bb019912a8cc1d062b426ee54f3e4ff85d",
+    "entry/src/main/cpp/types/libgrsm1/index.d.ts": "fadac29751180732fefefde08d7093fca97bd00b7fcc7e4d8c5e3b9a5a1c7d56",
+    "entry/src/main/ets/pages/GpuResidentM3.ets": "a3e1b550d4a4dd8d1317e2877f71d9ead681231be942e6e50bb7d835bb3c5bd0",
+    "entry/src/main/ets/pages/GpuResidentM5.ets": "c9f77e5e0af986fb54ae2eb69b222255da258c64d641ce85f22c013399cf75b9",
+    "entry/src/main/ets/pages/GpuResidentG9.ets": "8f631e48aad7636358c5e053e896078404f28f87b6280368017e72b1e504e11d",
+    "entry/src/main/ets/physics/GpuInputAttempt.ets": "229abf5c22f80fa65f674667d318dd05ced698e603a2e3eb1b06719509596ea0",
+    "entry/src/main/ets/physics/DiagnosticColdFiles.ets": "36993b0aecfb6b5e85e796b392173dec8d275a558108c7139720498116adc2f8",
+    "test/t522/bridge_overlay.cjs": "17dd0e56491b9b30f8235b8ee72dc033f07523530efd848ca2adfa927748cbd4",
+    "test/t529/bridge_overlay.cjs": "5d0d0c3027c5dff121c7ebc1c3746e3929a731f86f0af92994e3a99992616d8d",
+    "test/t517/bridge_overlay.cjs": "62fd5e1964371e9631a3c41d747e62f107a808e276058f5e3f7cac9a564ddaee",
+    "test/t582/overlay.cjs": "e65fe5d31236d0bfa647f693e5f09ed1b373551ee238fdd3f4250dd1cc77d4be",
+    "docs/developer-T582-bound-input-diagnostics.md": "63ed1150ec7cfdd88f9ba3ee30eacd075e8a13f13dd77bee47c60d19d69af245"
+  },
+  "builds": [
+    {
+      "route": "g9",
+      "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t582-g9-final",
+      "result": "PASS_NATIVE_ARKTS_HAP",
+      "log": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t582-g9-handoff-build.txt",
+      "logSha256": "549ba2e2fe990a6968e71c9189c379e6643d98836dbb8651f7e56b20563cad18",
+      "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t582-g9-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "hapSha256": "e4c38c87b7ed3bbb1d630c4f04a05d1c59277170e607e348a6e4e4ec3010124e",
+      "packagedElfSha256": {
+        "libs/arm64-v8a/libgrsm0.so": "3c217da82084b46a7a225598f51f0d0eb2503fd9230a03922b6cbc414a586130",
+        "libs/arm64-v8a/libgrsm1.so": "2f2ed3f2c932932bbb88cb1318f3a066431ddf9c6d7b74f7fb2b615ec42ec520",
+        "libs/arm64-v8a/libgrs_cold_slots.so": "d78ab561df0254909ee736579c730e5c5b27a9125613bd2ccec99f7ade41710a"
+      },
+      "bindingMatrixSha256": "851bf7bf54df8f63db634eb5275233393aa509e65ca7d3d3d7eb93ec0ff206be",
+      "bindingCount": 26,
+      "generatedSourceSha256": {
+        "cpp/gpu_resident/app_bridge.cpp": "f43524d1f3569f685921932402184f10d63846b2644294958678af5ee3b0e397",
+        "cpp/gpu_resident/napi_words_contract.h": "a5dc2b69c10c9fa99d7743919797c97ef7aa9821424688eb53476adc10c84470",
+        "cpp/gpu_resident/napi_words_contract.cpp": "72ccee3c9ac9133da7ac7b5b8686a83d8394a451b560d99479c14be355b9bc14",
+        "cpp/types/libgrsm1/index.d.ts": "4cb02ad33ee54b1e5c38947868aabc4c1f0c0bfa1b21f486ee586cf0961310f8",
+        "ets/pages/GpuResidentM3.ets": "a3e1b550d4a4dd8d1317e2877f71d9ead681231be942e6e50bb7d835bb3c5bd0",
+        "ets/physics/GpuInputAttempt.ets": "229abf5c22f80fa65f674667d318dd05ced698e603a2e3eb1b06719509596ea0",
+        "ets/physics/DiagnosticColdFiles.ets": "36993b0aecfb6b5e85e796b392173dec8d275a558108c7139720498116adc2f8",
+        "ets/physics/GpuUtf8Budget.ets": "993de36a3293b18049300db5a9847b5ac645d489dc221f5834f4b9bf42a8a5bb",
+        "ets/pages/GpuResidentG9.ets": "8f631e48aad7636358c5e053e896078404f28f87b6280368017e72b1e504e11d"
+      },
+      "sourceSync": "Fresh generation; final canonical shared cpp/UI files copied before final incremental compile. G9 and M5 both include M3A; existing G11/G12 header generators satisfy build dependencies."
+    },
+    {
+      "route": "m5",
+      "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t582-m5-final",
+      "result": "PASS_NATIVE_ARKTS_HAP",
+      "log": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t582-m5-handoff-build.txt",
+      "logSha256": "603ab8555b830ded2953bf71ffb00c8e94f097a1a420dfc410148dd8b94bde67",
+      "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t582-m5-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "hapSha256": "62e702f3b5b0081a596f8e4f51b13f69be9f6ddb29832a2cc0943c24472a0ae8",
+      "packagedElfSha256": {
+        "libs/arm64-v8a/libgrsm0.so": "69af023776689e90e18dd3666e130df274e80acb241b0d8da164df5920fa6d46",
+        "libs/arm64-v8a/libgrsm1.so": "f8d4228121e2f0b88b3f8bebeed8f4bf6821ec9f316d3cac58f4dd0b73eb0c85",
+        "libs/arm64-v8a/libgrs_cold_slots.so": "90aeed2a08aa437d5e957336d98f8c3d79b5baf7b285c02adcbd7d3ea136d93e"
+      },
+      "bindingMatrixSha256": "24adf81a533209daf163d468537e22febfd7bfedf8c84fbc89f471d04cd4b5d4",
+      "bindingCount": 27,
+      "generatedSourceSha256": {
+        "cpp/gpu_resident/app_bridge.cpp": "844003e5764c3ec00e18c690459fb5bd3bce8a871a4b839423920761677941d9",
+        "cpp/gpu_resident/napi_words_contract.h": "a5dc2b69c10c9fa99d7743919797c97ef7aa9821424688eb53476adc10c84470",
+        "cpp/gpu_resident/napi_words_contract.cpp": "72ccee3c9ac9133da7ac7b5b8686a83d8394a451b560d99479c14be355b9bc14",
+        "cpp/types/libgrsm1/index.d.ts": "be6b2b94595fa277d20f29636eefb7fb53c07659cc1fb707547889e3be75be9f",
+        "ets/pages/GpuResidentM3.ets": "a3e1b550d4a4dd8d1317e2877f71d9ead681231be942e6e50bb7d835bb3c5bd0",
+        "ets/physics/GpuInputAttempt.ets": "229abf5c22f80fa65f674667d318dd05ced698e603a2e3eb1b06719509596ea0",
+        "ets/physics/DiagnosticColdFiles.ets": "36993b0aecfb6b5e85e796b392173dec8d275a558108c7139720498116adc2f8",
+        "ets/physics/GpuUtf8Budget.ets": "993de36a3293b18049300db5a9847b5ac645d489dc221f5834f4b9bf42a8a5bb",
+        "ets/pages/GpuResidentM5.ets": "c9f77e5e0af986fb54ae2eb69b222255da258c64d641ce85f22c013399cf75b9"
+      },
+      "sourceSync": "Fresh generation; final canonical shared cpp/UI files copied before final incremental compile. G9 and M5 both include M3A; existing G11/G12 header generators satisfy build dependencies."
+    }
+  ],
+  "scope": "T581 actual bindings + strict decode/semantic observation + correlated safe replies + bounded UI/cold files; no physics threshold or acceptance relaxation",
+  "unownedGeneratorInput": {
+    "path": "test/t550_words_contract_overlay.cjs",
+    "sha256": "a1b2a48b1001d499b153721ad09ace87729ea880f28d252e4201b3e6740a4239",
+    "note": "Existing dirty edits excluded from commit. Owned overlays explicitly pass repo root and replace diagnostics/type binding; functional generation does not rely on dirty root/default-signature edits."
+  }
+}

@@ -7,15 +7,15 @@ template<size_t N>bool g9Words(napi_env env,napi_callback_info info,std::array<u
 }
 template<size_t N>grs::g9spf::ControlIdentity g9IdentityOf(const std::array<uint32_t,N>& w){const auto p=[&](size_t i){return uint64_t(w[i])|(uint64_t(w[i+1])<<32);};return {p(0),p(2),p(4),p(6),p(8),p(10),p(12),p(14),p(16)};}
 napi_value g9ResearchConfig(napi_env e,napi_callback_info info){
- std::array<uint32_t,2> request{};if(!g9Words(e,info,request)||!grs::g9spf::SelectProfile(request[0])||request[1]>1)return text(e,"G9_RESEARCH_CONFIG_REJECTED");
+ std::array<uint32_t,2> request{};if(!g9Words(e,info,request)||!grs::words::Semantic(grs::g9spf::SelectProfile(request[0])!=nullptr,"PROFILE_UNSUPPORTED",2)||!grs::words::Semantic(request[1]<=1,"FULL_FLAG_INVALID",3))return text(e,"G9_RESEARCH_CONFIG_REJECTED");
  grs::g9spf::Config c;c.k=request[0];c.g=16*1048576;c.muStart=32768;c.muStop=16384;c.band=1048576;c.entrainRate=4*65536;c.shear=65536;c.settleTicks=384;c.revision=1;c.research=c.synthetic=true;c.fullTrialTrace=request[1]==1;c.parameterSha=grs::g9spf::ParameterHash(c);
  std::array<uint32_t,24> words{grs::g9spf::kProfileCode,c.k,c.g,c.muStart,c.muStop,c.band,c.entrainRate,c.shear,c.settleTicks,c.revision,1,1,c.fullTrialTrace?1u:0u};for(size_t i=0;i<8;++i)words[16+i]=c.parameterSha[i];
  std::array<char,2048> data{};grs::cold503::Writer w(data.data(),data.size());w.Raw("{\"revision\":\"T529_EXPLICIT_RESEARCH_CANDIDATE_1\",\"productionDefault\":false,\"words\":[");for(size_t i=0;i<words.size();++i){if(i)w.Raw(",");w.Number(words[i]);}w.Raw("]}");return text(e,std::string(w.Data(),w.Size()));
 }
 napi_value g9Configure(napi_env e,napi_callback_info info){
- std::array<uint32_t,24> w{};if(!g9Words(e,info,w)||w[0]!=grs::g9spf::kProfileCode||w[10]!=1||w[11]!=1||w[12]>1||w[13]||w[14]||w[15])return text(e,"G9_CONFIG_REJECTED");
+ std::array<uint32_t,24> w{};if(!g9Words(e,info,w)||!grs::words::Semantic(w[0]==grs::g9spf::kProfileCode,"PROFILE_CODE_INVALID",2)||!grs::words::Semantic(w[10]==1&&w[11]==1,"RESEARCH_FLAGS_INVALID",6)||!grs::words::Semantic(w[12]<=1,"FULL_FLAG_INVALID",3)||!grs::words::Semantic(!w[13]&&!w[14]&&!w[15],"RESERVED_NONZERO",8))return text(e,"G9_CONFIG_REJECTED");
  grs::g9spf::Config c;c.k=w[1];c.g=w[2];c.muStart=w[3];c.muStop=w[4];c.band=w[5];c.entrainRate=w[6];c.shear=w[7];c.settleTicks=w[8];c.revision=w[9];c.research=c.synthetic=true;c.fullTrialTrace=w[12]==1;for(size_t i=0;i<8;++i)c.parameterSha[i]=w[16+i];
- if(!c.Valid()||c.parameterSha!=grs::g9spf::ParameterHash(c))return text(e,"CALIBRATION_CONFIG_REQUIRED");
+ if(!grs::words::Semantic(c.Valid(),"COLD_PARAMETERS_INVALID",4)||!grs::words::Semantic(c.parameterSha==grs::g9spf::ParameterHash(c),"PARAMETER_SHA_MISMATCH",5))return text(e,"CALIBRATION_CONFIG_REQUIRED");
  auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
  if(a.coldTrace.reading||a.coldTrace.builder>=0||(a.m3Controller&&a.m3Controller.use_count()>2)||(a.g9Controller&&a.g9Controller.use_count()>2))return text(e,"G9_RETIRE_READER_BUSY");
  // Switching routes is an explicit scope retirement. Reclaim idle legacy slot
@@ -24,11 +24,11 @@ napi_value g9Configure(napi_env e,napi_callback_info info){
  if(a.m3Controller)a.m3Controller->Stop();if(a.g9Controller)a.g9Controller->Stop();a.m3Selected=false;a.g9Selected=true;a.g9Config=c;a.K=c.k;a.Kw=64;a.requiresReset=false;a.InvalidateLocked();a.wake.notify_one();return text(e,"G9_NEW_EMPTY_RESEARCH_RUN_REQUESTED");
 }
 napi_value g9ResearchConfig64(napi_env e,napi_callback_info info){
- std::array<uint32_t,1> request{};if(!g9Words(e,info,request)||request[0]!=2u)return text(e,"G9_REAL_TOUCH_CONFIG_REJECTED");
+ std::array<uint32_t,1> request{};if(!g9Words(e,info,request)||!grs::words::Semantic(request[0]==2u,"SEED_REVISION_INVALID",0))return text(e,"G9_REAL_TOUCH_CONFIG_REJECTED");
  std::array<char,2048> data{};grs::cold503::Writer out(data.data(),data.size());out.Raw("{\"revision\":\"G9_CONFIG64_R2\",\"words\":[");const auto& config=grs::g9spf::candidate548::kConfig;for(size_t i=0;i<config.size();++i){if(i)out.Raw(",");out.Number(config[i]);}out.Raw("]}");return text(e,std::string(out.Data(),out.Size()));
 }
 napi_value g9Configure64(napi_env e,napi_callback_info info){
- std::array<uint32_t,64> words{};grs::g9spf::Config config;if(!g9Words(e,info,words)||!grs::g9spf::candidate548::Decode(words,config))return text(e,"G9_REAL_TOUCH_CONFIG_REJECTED");
+ std::array<uint32_t,64> words{};grs::g9spf::Config config;if(!g9Words(e,info,words)||!grs::words::Semantic(grs::g9spf::candidate548::Decode(words,config),"CONFIG64_IDENTITY_INVALID",9))return text(e,"G9_REAL_TOUCH_CONFIG_REJECTED");
  auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);
  if(a.coldTrace.reading||a.coldTrace.builder>=0||(a.m3Controller&&a.m3Controller.use_count()>2)||(a.g9Controller&&a.g9Controller.use_count()>2))return text(e,"G9_RETIRE_READER_BUSY");
  // Existing routes must retire through their owner; no new per-route credit.

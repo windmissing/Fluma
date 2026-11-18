@@ -1,0 +1,167 @@
+{
+  "revision": "T582_BOUND_INPUT_MATRIX_V1",
+  "entries": [
+    {
+      "api": "m3Configure",
+      "route": "M3A",
+      "n": 16,
+      "configuration": true
+    },
+    {
+      "api": "m3Pulse",
+      "route": "M3A",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "m3Target",
+      "route": "M3A",
+      "n": 19,
+      "configuration": false
+    },
+    {
+      "api": "m3Offer",
+      "route": "M3A",
+      "n": 566,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdBegin",
+      "route": "M3A",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdState",
+      "route": "M3A",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdPage",
+      "route": "M3A",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdEnd",
+      "route": "M3A",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m3Session",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m3Quota",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdCapabilities",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m3SourceStats",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m5Configure",
+      "route": "M3B",
+      "n": 32,
+      "configuration": true
+    },
+    {
+      "api": "m5Pulse",
+      "route": "M3B",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "m5Target",
+      "route": "M3B",
+      "n": 19,
+      "configuration": false
+    },
+    {
+      "api": "m5Offer",
+      "route": "M3B",
+      "n": 566,
+      "configuration": false
+    },
+    {
+      "api": "m5ColdBegin",
+      "route": "M3B",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m5ColdState",
+      "route": "M3B",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m5ColdPage",
+      "route": "M3B",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "m5ColdEnd",
+      "route": "M3B",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m5Session",
+      "route": "M3B",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m5Quota",
+      "route": "M3B",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m5ColdCapabilities",
+      "route": "M3B",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m5ResearchConfig",
+      "route": "M3B",
+      "n": 2,
+      "configuration": false
+    },
+    {
+      "api": "m5OfferInput64",
+      "route": "M3B",
+      "n": 64,
+      "configuration": false
+    },
+    {
+      "api": "m5SourceStats",
+      "route": "M3B",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m5InputClock",
+      "route": "M3B",
+      "n": 0,
+      "configuration": false
+    }
+  ]
+}

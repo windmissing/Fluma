@@ -1,0 +1,161 @@
+{
+  "revision": "T582_BOUND_INPUT_MATRIX_V1",
+  "entries": [
+    {
+      "api": "m3Configure",
+      "route": "M3A",
+      "n": 16,
+      "configuration": true
+    },
+    {
+      "api": "m3Pulse",
+      "route": "M3A",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "m3Target",
+      "route": "M3A",
+      "n": 19,
+      "configuration": false
+    },
+    {
+      "api": "m3Offer",
+      "route": "M3A",
+      "n": 566,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdBegin",
+      "route": "M3A",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdState",
+      "route": "M3A",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdPage",
+      "route": "M3A",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdEnd",
+      "route": "M3A",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "m3Session",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m3Quota",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m3ColdCapabilities",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "m3SourceStats",
+      "route": "M3A",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "g9Configure",
+      "route": "G9",
+      "n": 24,
+      "configuration": true
+    },
+    {
+      "api": "g9Pulse",
+      "route": "G9",
+      "n": 22,
+      "configuration": false
+    },
+    {
+      "api": "g9Target",
+      "route": "G9",
+      "n": 19,
+      "configuration": false
+    },
+    {
+      "api": "g9ColdBegin",
+      "route": "G9",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "g9ColdState",
+      "route": "G9",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "g9ColdPage",
+      "route": "G9",
+      "n": 21,
+      "configuration": false
+    },
+    {
+      "api": "g9ColdEnd",
+      "route": "G9",
+      "n": 20,
+      "configuration": false
+    },
+    {
+      "api": "g9Session",
+      "route": "G9",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "g9Quota",
+      "route": "G9",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "g9ColdCapabilities",
+      "route": "G9",
+      "n": 0,
+      "configuration": false
+    },
+    {
+      "api": "g9ResearchConfig",
+      "route": "G9",
+      "n": 2,
+      "configuration": false
+    },
+    {
+      "api": "g9ResearchConfig64",
+      "route": "G9",
+      "n": 1,
+      "configuration": false
+    },
+    {
+      "api": "g9Configure64",
+      "route": "G9",
+      "n": 64,
+      "configuration": true
+    },
+    {
+      "api": "g9OfferModel",
+      "route": "G9",
+      "n": 148,
+      "configuration": false
+    }
+  ]
+}

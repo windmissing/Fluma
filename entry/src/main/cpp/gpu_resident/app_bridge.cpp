@@ -834,7 +834,7 @@ void created(OH_NativeXComponent*,void* w){app().invalidate(w,true);}
 void changed(OH_NativeXComponent*,void* w){app().invalidate(w,true);}
 void destroyed(OH_NativeXComponent*,void*){app().invalidate(nullptr,true);}
 OH_NativeXComponent_Callback callbacks{created,changed,destroyed,nullptr};
-napi_value text(napi_env e,const std::string& s){napi_value v;napi_create_string_utf8(e,s.c_str(),s.size(),&v);return v;}
+napi_value text(napi_env e,const std::string& s){napi_value v=nullptr;if(napi_create_string_utf8(e,s.c_str(),s.size(),&v)!=napi_ok)return nullptr;return v;}
 napi_value status(napi_env e,napi_callback_info){auto& a=app();std::lock_guard<std::mutex> l(a.mutex);std::ostringstream o;
 #ifdef GRS_APP_M1
 a.ObserveControlLocked(a.Stamp());
@@ -952,22 +952,8 @@ napi_value configure(napi_env e,napi_callback_info i){size_t n=4;napi_value v[4]
 // selecting this generation's first-failure snapshot instead of the last
 // attempt. The request never goes through the typedarray decoder under
 // diagnosis and never overwrites the recorded input receipt.
-napi_value gpuInputDiagnosticsV1(napi_env e,napi_callback_info info){
- size_t argc=2;napi_value argv[2]={nullptr,nullptr};
- if(napi_get_cb_info(e,info,&argc,argv,nullptr,nullptr)!=napi_ok||argc<1||argc>2)
-  return text(e,"{\"revision\":\"GPU_INPUT_DIAGNOSTIC_V1\",\"error\":\"ARG_COUNT\"}");
- char route[16]={0};size_t routeLen=0;
- if(napi_get_value_string_utf8(e,argv[0],route,sizeof(route),&routeLen)!=napi_ok)
-  return text(e,"{\"revision\":\"GPU_INPUT_DIAGNOSTIC_V1\",\"error\":\"ROUTE_NOT_STRING\"}");
- std::string attempt;
- if(argc==2){
-  char buf[24]={0};size_t len=0;
-  if(napi_get_value_string_utf8(e,argv[1],buf,sizeof(buf),&len)==napi_ok)attempt.assign(buf,len);
- }
- std::string out;
- grs::words::SnapshotJson(route,attempt,out);
- return text(e,out);
-}
+napi_value gpuInputDiagnosticsV1(napi_env e,napi_callback_info info){return grs::words::Diagnostics(e,info);}
+
 napi_value init(napi_env e,napi_value out){napi_property_descriptor d[]={
 #ifdef GRS_APP_M1
 {"setSource",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravityMode",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{"setGravitySample",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{"configureOptics",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},

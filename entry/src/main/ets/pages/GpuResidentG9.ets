@@ -1,3 +1,4 @@
+import { GpuInputAttempt } from '../physics/GpuInputAttempt';
 import native from 'libgrsm1.so';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 import fs from '@ohos.file.fs';
@@ -53,6 +54,23 @@ struct GpuResidentG9 {
   @State touchMessage: string = '未启用真实拨动';
   private publication: string = '0';
   private token: string = '';
+  @State inputDiagnostic: string = '';
+  private startupIntent: number = 0;
+  private inputCall(api: string, words: Uint32Array, schema: string, invoke: (value: Uint32Array) => string): string {
+    const context = getContext(this) as common.UIAbilityContext;
+    return GpuInputAttempt.call('G9', api, words, schema, context.filesDir, invoke, (state: string): void => { this.inputDiagnostic = state; });
+  }
+  private requested(reply: string, state: string): boolean { return GpuInputAttempt.requested(reply, state); }
+  private stopFrame(): void {
+    const previous = this.frame;
+    if (previous !== null) previous.owner = null;
+    this.frame = null;
+  }
+  private startupFault(message: string): void {
+    ++this.startupIntent;
+    this.stopFrame(); this.identity = []; this.message = message;
+    try { native.setActive(false); } catch (cleanup) { this.message += ';CLEANUP_FAILED:' + String(cleanup); }
+  }
   private identity: number[] = [];
   private sequence: number = 0;
   private command: number = 0;
@@ -72,7 +90,10 @@ struct GpuResidentG9 {
     else this.archive = 'INCOMPLETE ' + this.path;
   }
   private start(k: number, full: boolean): void {
-    this.realTouch = false; this.publication = '0'; this.token = ''; native.g9TouchCancel();
+    const intent: number = ++this.startupIntent;
+    this.identity = [];
+    this.realTouch = false; this.publication = '0'; this.token = '';
+    this.stopFrame();
     // T550 (problem T546 §4): the whole startup transaction (archive close,
     // setActive, config read, configure, frame scheduling) is guarded; any
     // failure cancels the new frame and never schedules a pulse. Only the
@@ -81,44 +102,44 @@ struct GpuResidentG9 {
     try {
       try { this.cold.cancel(); } catch (cleanup) { firstError = 'COLD_CANCEL_FAILED ' + String(cleanup); }
       try { this.closeArchive(false); } catch (cleanup) { if (firstError === '') firstError = 'ARCHIVE_CLOSE_FAILED ' + String(cleanup); }
-      if (this.frame !== null) this.frame.owner = null;
-      this.frame = null;
-      try { native.setActive(true); } catch (cleanup) { if (firstError === '') firstError = 'SET_ACTIVE_FAILED ' + String(cleanup); }
-      const configResult = parseNativeObject(native.g9ResearchConfig(new Uint32Array([k, full ? 1 : 0])), 'g9ResearchConfig', ['T529_EXPLICIT_RESEARCH_CANDIDATE_1']);
-      if (!configResult.ok) { this.message = 'G9_CONFIG_FAULT：' + configResult.error + (firstError === '' ? '' : '；清理：' + firstError); return; }
+      this.stopFrame();
+      if (firstError !== '') throw new Error(firstError);
+      native.g9TouchCancel(); native.setActive(true);
+      const configResult = parseNativeObject(this.inputCall('g9ResearchConfig', new Uint32Array([k, full ? 1 : 0]), 'G9_RESEARCH_REQUEST2', (words: Uint32Array): string => native.g9ResearchConfig(words)), 'g9ResearchConfig', ['T529_EXPLICIT_RESEARCH_CANDIDATE_1']);
+      if (!configResult.ok) throw new Error('G9_CONFIG_FAULT:' + configResult.error);
       const configWords: number[] | null = configResult.words;
-      if (configWords === null || configWords.length !== 24) { this.message = 'CALIBRATION_CONFIG_REQUIRED'; return; }
-      const reply: string = native.g9Configure(new Uint32Array(configWords));
-      if (reply !== 'G9_NEW_EMPTY_RESEARCH_RUN_REQUESTED') {
-        this.message = 'G9_CONFIG_FAULT：' + reply + (reply.indexOf('G9') === 0 ? '（可读诊断：native.gpuInputDiagnosticsV1(\'G9\')）' : '');
-        return;
-      }
+      if (configWords === null || configWords.length !== 24) throw new Error('CALIBRATION_CONFIG_REQUIRED');
+      const reply: string = this.inputCall('g9Configure', new Uint32Array(configWords), 'G9_CONFIG24_V1', (words: Uint32Array): string => native.g9Configure(words));
+      if (!this.requested(reply, 'G9_NEW_EMPTY_RESEARCH_RUN_REQUESTED')) { this.message = reply; native.setActive(false); return; }
       this.message = reply;
       this.identity = [];
       this.sequence = this.command = this.angle = 0;
-      this.frame = new G9Frame();
-      this.frame.owner = this;
-      this.getUIContext().postFrameCallback(this.frame);
+      this.awaitSession(intent);
     } catch (e) {
       // Startup fault: no new pulse, no auto re-configure; first cause kept.
-      if (this.frame !== null) this.frame.owner = null;
-      this.frame = null;
-      this.message = 'G9_START_FAULT：' + String(e) + (firstError === '' ? '' : '；清理：' + firstError);
+      this.stopFrame();
+      this.startupFault('G9_START_FAULT：' + String(e) + (firstError === '' ? '' : '；清理：' + firstError));
     }
   }
   private startReal(): void {
+    const intent: number = ++this.startupIntent; this.identity = [];
+    this.stopFrame();
     try {
       this.cold.cancel(); this.closeArchive(false); native.g9TouchCancel();
-      if (this.frame !== null) this.frame.owner = null;
-      this.frame = null; this.publication = '0'; this.token = ''; native.setActive(true);
-      const config = parseNativeObject(native.g9ResearchConfig64(new Uint32Array([2])), 'g9ResearchConfig64', ['G9_CONFIG64_R2']);
+      this.stopFrame(); this.publication = '0'; this.token = ''; native.setActive(true);
+      const config = parseNativeObject(this.inputCall('g9ResearchConfig64', new Uint32Array([2]), 'G9_RESEARCH_SEED_R2_REQUEST1', (words: Uint32Array): string => native.g9ResearchConfig64(words)), 'g9ResearchConfig64', ['G9_CONFIG64_R2']);
       if (!config.ok || config.words === null || config.words.length !== 64) throw new Error('G9_CONFIG64_' + config.error);
-      const result: string = native.g9Configure64(new Uint32Array(config.words));
-      if (result !== 'G9_NEW_S40_REAL_TOUCH_R2_REQUESTED') throw new Error(result);
+      const result: string = this.inputCall('g9Configure64', new Uint32Array(config.words), 'G9_CONFIG64_R2', (words: Uint32Array): string => native.g9Configure64(words));
+      if (!this.requested(result, 'G9_NEW_S40_REAL_TOUCH_R2_REQUESTED')) throw new Error(result);
       this.realTouch = true; this.identity = []; this.sequence = this.command = this.angle = 0;
       this.touchMessage = 'REAL_TOUCH_R2：等待独立时钟资格及成功呈现映射';
-      this.message = result; this.frame = new G9Frame(); this.frame.owner = this; this.getUIContext().postFrameCallback(this.frame);
-    } catch (e) { this.realTouch = false; this.message = 'G9_REAL_TOUCH_START_FAULT：' + String(e); }
+      this.message = result; this.awaitSession(intent);
+    } catch (e) { this.realTouch = false; this.startupFault('G9_REAL_TOUCH_START_FAULT：' + String(e)); }
+  }
+  private awaitSession(intent: number): void {
+    GpuInputAttempt.waitSession((): string => native.g9Session(), 'G9_SPF_Q20_V1', 0, (): boolean => intent === this.startupIntent,
+      (identity: number[], source: number[]): void => { this.identity = identity; this.frame = new G9Frame(); this.frame.owner = this; this.getUIContext().postFrameCallback(this.frame); },
+      (error: string): void => { this.startupFault(error); });
   }
   private publicationWords(words: Uint32Array): boolean {
     if (!/^[1-9][0-9]{0,19}$/.test(this.publication)) return false;
@@ -239,6 +260,7 @@ struct GpuResidentG9 {
     } catch (e) { this.cold.cancel(); this.closeArchive(false); }
   }
   aboutToDisappear(): void {
+    ++this.startupIntent;
     if (this.frame !== null) this.frame.owner = null;
     try { this.cold.cancel(); this.closeArchive(false); }
     finally { native.g9TouchCancel(); this.publication = '0'; this.token = ''; native.setActive(false); }
@@ -261,6 +283,7 @@ struct GpuResidentG9 {
       }
       Slider({ value: this.angle, min: -7680, max: 7680, step: 1 }).onChange((value: number) => { this.angle = Math.round(value); })
       XComponent({ id: 'grs-surface', type: XComponentType.SURFACE, libraryname: 'grsm1' }).layoutWeight(1).width('100%').onTouch((event: TouchEvent) => this.touch(event))
+      Text(this.inputDiagnostic).fontSize(10)
       Text(this.message).fontSize(10).maxLines(3)
       Text(this.archive).fontSize(10).maxLines(2)
     }.width('100%').height('100%')

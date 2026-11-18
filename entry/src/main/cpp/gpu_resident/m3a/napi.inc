@@ -16,8 +16,8 @@ template<size_t N>grs::m3a::ControlIdentityV4 m3IdentityOf(const std::array<uint
  static_assert(N>=18);auto pair=[&](size_t at){return uint64_t(words[at])|(uint64_t(words[at+1])<<32);};return {pair(0),pair(2),pair(4),pair(6),pair(8),pair(10),pair(12),pair(14),pair(16)};
 }
 napi_value m3Configure(napi_env e,napi_callback_info info){
- std::array<uint32_t,16> words{};if(!m3Words(e,info,words)||words[0]!=4||words[1]!=15||!grs::m3a::SelectProfile(words[2],words[3])||words[15]>1)return text(e,"M3_CONFIG_REJECTED");
- grs::m3a::PhysicalConfigV4 cold;cold.omegaProvided=true;cold.fullBranchTrace=words[15]==1;cold.omega=words[4];cold.waterRate=words[5];cold.gravity=words[6];cold.settle=words[7];cold.emit=words[8];cold.kAir=words[9];cold.kFlight=words[10];cold.kWet=words[11];cold.soft=words[12];cold.flux=words[13];if(words[14]!=1||!cold.Valid())return text(e,"M3_CONFIG_REQUIRED");
+ std::array<uint32_t,16> words{};if(!m3Words(e,info,words)||!grs::words::Semantic(words[0]==4,"REVISION_MISMATCH",0)||!grs::words::Semantic(words[1]==15,"FEATURES_MISMATCH",1)||!grs::words::Semantic(grs::m3a::SelectProfile(words[2],words[3])!=nullptr,"PROFILE_UNSUPPORTED",2)||!grs::words::Semantic(words[15]<=1,"FULL_FLAG_INVALID",3))return text(e,"M3_CONFIG_REJECTED");
+ grs::m3a::PhysicalConfigV4 cold;cold.omegaProvided=true;cold.fullBranchTrace=words[15]==1;cold.omega=words[4];cold.waterRate=words[5];cold.gravity=words[6];cold.settle=words[7];cold.emit=words[8];cold.kAir=words[9];cold.kFlight=words[10];cold.kWet=words[11];cold.soft=words[12];cold.flux=words[13];if(!grs::words::Semantic(words[14]==1,"COLD_REQUIRED",4)||!grs::words::Semantic(cold.Valid(),"COLD_PARAMETERS_INVALID",4))return text(e,"M3_CONFIG_REQUIRED");
  auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);if(a.m3Controller){a.m3Controller->Stop();a.m3Controller.reset();}a.m3Selected=true;a.m3Config=cold;a.K=words[2];a.Kw=words[3];
 #ifdef GRS_APP_M1
  a.requiresReset=false;

@@ -16,7 +16,7 @@ std::array<uint32_t,8> m5ConfigDigest(const std::array<uint32_t,32>& words){
 }
 bool m5ConfigDigestValid(const std::array<uint32_t,32>& words){const auto digest=m5ConfigDigest(words);for(size_t i=0;i<8;++i)if(words[24+i]!=digest[i])return false;return true;}
 napi_value m5ResearchConfig(napi_env e,napi_callback_info info){
- std::array<uint32_t,2> request{};if(!m5Words(e,info,request)||request[0]>2||request[1])return text(e,"RESEARCH_CONFIG_REJECTED");
+ std::array<uint32_t,2> request{};if(!m5Words(e,info,request)||!grs::words::Semantic(request[0]<=2,"LIFT_MODE_INVALID",7)||!grs::words::Semantic(request[1]==0,"RESERVED_NONZERO",8))return text(e,"RESEARCH_CONFIG_REJECTED");
  // Explicit candidate 1, not a product default or calibrated sensor law.
  std::array<uint32_t,32> words={5,31,192,64,7680,8388608,1048576,65536,1048576,0,0,120,524288,1048576,1,0,request[0],65536,1048576,65536,65536,1048576,1048576,1};
  const auto digest=m5ConfigDigest(words);for(size_t i=0;i<8;++i)words[24+i]=digest[i];
@@ -35,10 +35,10 @@ napi_value m5ResumeInput(napi_env e,napi_callback_info){
 }
 
 napi_value m5Configure(napi_env e,napi_callback_info info){
- std::array<uint32_t,32> words{};if(!m5Words(e,info,words)||words[0]!=5||words[1]!=31||!grs::m3b::SelectProfile(words[2],words[3])||words[15]>1)return text(e,"M5_CONFIG_REJECTED");
- if(words[15])return text(e,"PREFIX_DIGEST_POLICY_REQUIRED");
- if(!m5ConfigDigestValid(words))return text(e,"M5_PARAMETER_SHA_REJECTED");
- grs::m3b::PhysicalConfigV5 cold;cold.lift.mode=grs::m3b::LiftMode(words[16]);cold.lift.liftRateQ16=words[17];cold.lift.bandQ=words[18];cold.lift.rampQ16=words[19];cold.lift.decayQ16=words[20];cold.lift.liftSpeedQ=words[21];cold.lift.liftCapQ=words[22];cold.lift.revision=words[23];for(size_t i=0;i<8;++i)cold.lift.sha[i]=words[24+i];cold.omegaProvided=true;cold.fullBranchTrace=words[15]==1;cold.omega=words[4];cold.waterRate=words[5];cold.gravity=words[6];cold.settle=words[7];cold.emit=words[8];cold.kAir=words[9];cold.kFlight=words[10];cold.kWet=words[11];cold.soft=words[12];cold.flux=words[13];if(words[14]!=1||!cold.Valid())return text(e,"M5_CONFIG_REQUIRED");
+ std::array<uint32_t,32> words{};if(!m5Words(e,info,words)||!grs::words::Semantic(words[0]==5,"REVISION_MISMATCH",0)||!grs::words::Semantic(words[1]==31,"FEATURES_MISMATCH",1)||!grs::words::Semantic(grs::m3b::SelectProfile(words[2],words[3])!=nullptr,"PROFILE_UNSUPPORTED",2)||!grs::words::Semantic(words[15]<=1,"FULL_FLAG_INVALID",3))return text(e,"M5_CONFIG_REJECTED");
+ if(!grs::words::Semantic(words[15]==0,"PREFIX_DIGEST_POLICY_REQUIRED",3))return text(e,"PREFIX_DIGEST_POLICY_REQUIRED");
+ if(!grs::words::Semantic(m5ConfigDigestValid(words),"PARAMETER_SHA_MISMATCH",5))return text(e,"M5_PARAMETER_SHA_REJECTED");
+ grs::m3b::PhysicalConfigV5 cold;cold.lift.mode=grs::m3b::LiftMode(words[16]);cold.lift.liftRateQ16=words[17];cold.lift.bandQ=words[18];cold.lift.rampQ16=words[19];cold.lift.decayQ16=words[20];cold.lift.liftSpeedQ=words[21];cold.lift.liftCapQ=words[22];cold.lift.revision=words[23];for(size_t i=0;i<8;++i)cold.lift.sha[i]=words[24+i];cold.omegaProvided=true;cold.fullBranchTrace=words[15]==1;cold.omega=words[4];cold.waterRate=words[5];cold.gravity=words[6];cold.settle=words[7];cold.emit=words[8];cold.kAir=words[9];cold.kFlight=words[10];cold.kWet=words[11];cold.soft=words[12];cold.flux=words[13];if(!grs::words::Semantic(words[14]==1,"COLD_REQUIRED",4)||!grs::words::Semantic(cold.Valid(),"COLD_PARAMETERS_INVALID",4))return text(e,"M5_CONFIG_REQUIRED");
  auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);if(a.m5Controller){a.m5Controller->Stop();a.m5Controller.reset();}if(a.m3Controller)a.m3Controller->Stop();a.m3Selected=false;a.m5Selected=true;a.m5Config=cold;a.K=words[2];a.Kw=words[3];
 #ifdef GRS_APP_M1
  a.requiresReset=false;

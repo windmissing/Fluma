@@ -1,3 +1,5 @@
+import { common } from '@kit.AbilityKit';
+import { GpuInputAttempt } from '../physics/GpuInputAttempt';
 import native from 'libgrsm1.so';
 import { FrameCallback } from '@ohos.arkui.UIContext';
 
@@ -32,6 +34,23 @@ struct GpuResidentM5 {
   @State message: string = 'V5 研究入口；起沙默认关闭';
   @State signalOn: boolean = false;
   private frame: M5Frame | null = null;
+  @State inputDiagnostic: string = '';
+  private startupIntent: number = 0;
+  private inputCall(api: string, words: Uint32Array, schema: string, invoke: (value: Uint32Array) => string): string {
+    const context = getContext(this) as common.UIAbilityContext;
+    return GpuInputAttempt.call('M3B', api, words, schema, context.filesDir, invoke, (state: string): void => { this.inputDiagnostic = state; });
+  }
+  private requested(reply: string, state: string): boolean { return GpuInputAttempt.requested(reply, state); }
+  private stopFrame(): void {
+    const previous = this.frame;
+    if (previous !== null) previous.owner = null;
+    this.frame = null;
+  }
+  private startupFault(message: string): void {
+    ++this.startupIntent;
+    this.stopFrame(); this.identity = []; this.message = message;
+    try { native.setActive(false); } catch (cleanup) { this.message += ';CLEANUP_FAILED:' + String(cleanup); }
+  }
   private identity: number[] = [];
   private config: number[] = [];
   private sourceGeneration: number[] = [1, 0];
@@ -48,59 +67,40 @@ struct GpuResidentM5 {
     this.getUIContext().postFrameCallback(next);
   }
   private start(mode: number): void {
-    // T550 (problem T546 §4): startup transaction guarded; only the explicit
-    // M5_NEW_EMPTY_RUN_REQUESTED success token arms the frame.
+    const intent: number = ++this.startupIntent;
+    this.stopFrame(); this.identity = [];
     try {
-      const parsed = m5ParseNativeObject(native.m5ResearchConfig(new Uint32Array([mode, 0])), 0);
-      if (parsed.error === 'REVISION_MISMATCH' || !parsed.ok && parsed.error === 'NATIVE_REPLY_NOT_OBJECT') {
-        // T517_EXPLICIT_RESEARCH_CANDIDATE_1 carries a string revision; re-check.
-        const raw: string = native.m5ResearchConfig(new Uint32Array([mode, 0]));
-        if (typeof raw === 'string' && raw.indexOf('"T517_EXPLICIT_RESEARCH_CANDIDATE_1"') >= 0 && raw.indexOf('"words"') >= 0) {
-          let words: Object | undefined;
-          try { words = (JSON.parse(raw) as Record<string, Object>)['words']; } catch (e) { words = undefined; }
-          if (Array.isArray(words)) {
-            const list: Object[] = words;
-            for (let i = 0; i < list.length; i++) { const w: Object = list[i]; if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; } }
-            const numbers: number[] = [];
-            for (let i = 0; i < list.length; i++) numbers.push(list[i] as number);
-            this.config = numbers; this.mode = mode;
-            native.setActive(true);
-            const reply: string = native.m5Configure(new Uint32Array(this.config));
-            this.message = reply;
-            if (reply !== 'M5_NEW_EMPTY_RUN_REQUESTED') return;
-            this.identity = []; this.sequence = this.sample = this.intent = this.request = 0;
-            this.attachFrame();
-            return;
-          }
-        }
-        this.message = '研究参数不可用（' + parsed.error + '）'; return;
-      }
-      if (!parsed.ok) { this.message = 'M5_CONFIG_FAULT：' + parsed.error; return; }
-      const obj: Record<string, Object> = parsed.object as Record<string, Object>;
-      const words: Object | undefined = obj['words'];
-      if (!Array.isArray(words) || words.length !== 32) { this.message = '研究参数不可用'; return; }
-      const wordsList: Object[] = words;
-      for (let i = 0; i < wordsList.length; i++) { const w: Object = wordsList[i]; if (typeof w !== 'number' || !Number.isSafeInteger(w) || w < 0 || w > 0xffffffff) { this.message = '研究参数无效'; return; } }
-      const numbers2: number[] = [];
-      for (let i = 0; i < wordsList.length; i++) numbers2.push(wordsList[i] as number);
-      this.config = numbers2; this.mode = mode;
-      native.setActive(true);
-      const reply: string = native.m5Configure(new Uint32Array(this.config));
+      const raw = this.inputCall('m5ResearchConfig', new Uint32Array([mode, 0]), 'M5_RESEARCH_REQUEST2', (words: Uint32Array): string => native.m5ResearchConfig(words));
+      if (raw.length === 0 || raw.length > 4096) throw new Error('M5_RESEARCH_REPLY_BOUND');
+      const parsed: Object = JSON.parse(raw);
+      if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('M5_RESEARCH_REPLY_OBJECT');
+      const record = parsed as Record<string, Object>;
+      if (record['revision'] !== 'T517_EXPLICIT_RESEARCH_CANDIDATE_1') throw new Error(raw);
+      const values: Object = record['words'];
+      if (!Array.isArray(values) || values.length !== 32) throw new Error('M5_CONFIG32_INVALID');
+      const config: number[] = [];
+      const list: Object[] = values;
+      for (let i: number = 0; i < list.length; i++) { const value: Object = list[i]; if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0 || value > 4294967295) throw new Error('M5_CONFIG_WORD_INVALID'); config.push(value); }
+      this.config = config; this.mode = mode; native.setActive(true);
+      const reply = this.inputCall('m5Configure', new Uint32Array(config), 'M5_CONFIG32_V5', (words: Uint32Array): string => native.m5Configure(words));
       this.message = reply;
-      if (reply !== 'M5_NEW_EMPTY_RUN_REQUESTED') return;
-      this.identity = []; this.sequence = this.sample = this.intent = this.request = 0;
-      this.attachFrame();
-    } catch (e) {
-      if (this.frame !== null) this.frame.owner = null;
-      this.frame = null;
-      this.message = 'M5_START_FAULT：' + String(e);
-    }
+      if (!this.requested(reply, 'M5_NEW_EMPTY_RUN_REQUESTED')) { native.setActive(false); return; }
+      this.sequence = this.sample = this.intent = this.request = 0;
+      GpuInputAttempt.waitSession((): string => native.m5Session(), '5', 31, (): boolean => intent === this.startupIntent,
+        (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.attachFrame(); },
+        (error: string): void => { this.startupFault(error); });
+    } catch (error) { this.startupFault('M5_START_FAULT:' + String(error)); }
   }
   private resume(): void {
-    this.message = native.m5ResumeInput();
-    if (this.message !== '0') return;
-    this.identity = []; this.sequence = this.sample = this.intent = this.request = 0;
-    this.attachFrame();
+    const intent: number = ++this.startupIntent; this.stopFrame(); this.identity = [];
+    try {
+      this.message = native.m5ResumeInput();
+      if (this.message !== '0') return;
+      this.sequence = this.sample = this.intent = this.request = 0;
+      GpuInputAttempt.waitSession((): string => native.m5Session(), '5', 31, (): boolean => intent === this.startupIntent,
+        (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.attachFrame(); },
+        (error: string): void => { this.startupFault(error); });
+    } catch (error) { this.startupFault('M5_RESUME_FAULT:' + String(error)); }
   }
   private offerSynthetic(): boolean {
     if (this.mode !== 2) return true;
@@ -156,7 +156,8 @@ struct GpuResidentM5 {
     if (this.identity.length !== 18) return;
     const w = new Uint32Array(19); w.set(this.identity); w[18] = index; this.message = native.m5Target(w);
   }
-  aboutToDisappear(): void { if (this.frame !== null) this.frame.owner = null; this.frame = null; this.identity = []; native.setActive(false); }
+  aboutToDisappear(): void {
+    this.startupFault(this.message); }
   build() {
     Column({ space: 6 }) {
       Text('V5 独立研究：真实来源层与活动粒子').fontSize(17)
@@ -177,6 +178,7 @@ struct GpuResidentM5 {
         Button('+30°').onClick(() => this.target(7680))
         Button('冷档状态').onClick(() => this.message = native.m5ColdCapabilities())
       }
+      Text(this.inputDiagnostic).fontSize(10)
       Text(this.message).fontSize(11).maxLines(4)
       XComponent({ id: 'gpuResidentM5', type: XComponentType.SURFACE, libraryname: 'grsm1' }).width('100%').layoutWeight(1)
     }.width('100%').height('100%').padding(6).backgroundColor('#080b12')
