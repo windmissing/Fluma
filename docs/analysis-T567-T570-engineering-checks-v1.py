@@ -352,6 +352,8 @@ manifest={
           'publish':'all water/sand/derived/IDs/dedup/time commit atomically from same accepted root; no partial water publication',
           'replay':'sixJ discovery, rejected prefix, authoritative, accepted replay each from full same BASE; no host water solver'},
  'dispatch':{'SOURCE':16,'WET_QUANTUM':6204,'DRY_QUANTUM':2404,'WET_G1F4':24832,'DRY_G1F4':9632},
+ 'resourceFormulaContract':{'schema':'T580_G12_RESOURCE_FORMULAS_V1','path':'docs/architecture-T580-resource-formulas-v1.json',
+     'purpose':'explicit parent/G12 row domains, DM WORK baseline, raw alignment and all normal/trial/native copies; numeric capacities unchanged'},
  'resources':resources,
  'complexity':{'perMicroGeometry':'7*(31*N*(K+1)+K*(K-1)/2), no division by64 for serial cost',
                'originReserve':'O(N*64^2) independently sand/water','JOrder':'O(Kw^2) bounded selection',

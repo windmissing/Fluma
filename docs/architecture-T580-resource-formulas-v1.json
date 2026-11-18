@@ -1,0 +1,637 @@
+{
+  "schema": "T580_G12_RESOURCE_FORMULAS_V1",
+  "date": "2026-11-18",
+  "status": "ENGINEERING_FORMULA_CLARIFICATION_NO_BUDGET_INCREASE",
+  "units": "integer event/path rows; all byte quantities exact raw payload bytes",
+  "constants": {
+    "N": 128,
+    "K": [
+      192,
+      512
+    ],
+    "Kw": [
+      64,
+      128
+    ],
+    "JMax": 32,
+    "eventStrideBytes": 256,
+    "pathStrideBytes": 64
+  },
+  "formulas": {
+    "parentR1EventRows": "32*(5N+2K)+(4N+K+16)",
+    "parentDMEventRows": "32*(6N+2K)+(4N+K+16)",
+    "g12EventIncrement": "32*(2K+8N+4Kw+32)+64",
+    "g12EventRows": "32*(14N+4K+4Kw+32)+4N+K+80",
+    "g12EventRowsN128": "58960+129K+128Kw",
+    "pathRows": "32*8K+32*16Kw",
+    "pathRowsSimplified": "256K+512Kw",
+    "arenaBytes": "256*eventRows+64*pathRows",
+    "arenaBytesN128": "15093760+49408K+65536Kw",
+    "stateBytesN128": "944384+256K+128Kw",
+    "workBytesN128": "1985664+136K+256Kw",
+    "ROOT": "2S+2A+65536+4096",
+    "FULL_CORE": "R+65536+4096",
+    "FULL_TRIALS": "FULL_CORE+6A",
+    "resident": "5S+W+4A",
+    "coreKnownPeak": "3R+178176",
+    "fullTrialsKnownPeak": "3R+18A+178176"
+  },
+  "eventDomains": {
+    "parentMicro": [
+      {
+        "name": "natural_mobilization",
+        "rows": "N",
+        "coefficientN": 1
+      },
+      {
+        "name": "sand_force",
+        "rows": "N",
+        "coefficientN": 1
+      },
+      {
+        "name": "friction",
+        "rows": "N",
+        "coefficientN": 1
+      },
+      {
+        "name": "deposit",
+        "rows": "N",
+        "coefficientN": 1
+      },
+      {
+        "name": "interior_faces_plus_step_seal",
+        "rows": "(N-1)+1=N",
+        "coefficientN": 1
+      },
+      {
+        "name": "DM_private_predictor",
+        "rows": "N",
+        "coefficientN": 1
+      },
+      {
+        "name": "P_flight",
+        "rows": "K",
+        "coefficientK": 1
+      },
+      {
+        "name": "P_capture",
+        "rows": "K",
+        "coefficientK": 1
+      }
+    ],
+    "parentRoot": [
+      {
+        "name": "touch_column_compound_envelope",
+        "rows": "4N"
+      },
+      {
+        "name": "packet_source_root_envelope",
+        "rows": "K"
+      },
+      {
+        "name": "root_control_global_envelope",
+        "rows": "16"
+      }
+    ],
+    "g12Micro": [
+      {
+        "name": "P_KICK_A",
+        "rows": "K"
+      },
+      {
+        "name": "P_KICK_B",
+        "rows": "K"
+      },
+      {
+        "name": "WET_PROBE",
+        "rows": "N"
+      },
+      {
+        "name": "FS_PRESSURE",
+        "rows": "N"
+      },
+      {
+        "name": "FS_DRAG_A",
+        "rows": "N"
+      },
+      {
+        "name": "FS_DRAG_B",
+        "rows": "N"
+      },
+      {
+        "name": "WATER_FACE",
+        "rows": "N"
+      },
+      {
+        "name": "WATER_ORIGIN",
+        "rows": "N"
+      },
+      {
+        "name": "WET_CAPACITY_ENERGY",
+        "rows": "N"
+      },
+      {
+        "name": "HYDRO_SUMMARY",
+        "rows": "N"
+      },
+      {
+        "name": "J_FLIGHT",
+        "rows": "Kw"
+      },
+      {
+        "name": "J_CONTACT",
+        "rows": "Kw"
+      },
+      {
+        "name": "J_ARRIVE",
+        "rows": "Kw"
+      },
+      {
+        "name": "J_RETIRE",
+        "rows": "Kw"
+      },
+      {
+        "name": "shared_stage_audit_wall_global_envelope",
+        "rows": "32"
+      }
+    ],
+    "g12Source": {
+      "rows": 64,
+      "charge": "once per arena envelope, not per micro/pass/column",
+      "emissionLimit": "one WATER_SOURCE +one affected-column capacity/energy +one affected-column hydro summary +at most16 SOURCE global records <=19; 45 remaining credit unused",
+      "noPerColumnHydroRows": true
+    },
+    "HYDRO_SUMMARY": "one row per column per micro carries all7 HYDRO epochs; no7N extra records",
+    "WATER_FACE": "at most N-1 interior rows, walls consume shared32 global credit",
+    "global32": "collective phase/audit/wall credit, not32 mandatory rows plus independent wall rows",
+    "parentPolicy": "conservative parent allocation retained even when wet writer replaces an old action; a physical record is emitted once, not through both old/new aliases",
+    "empty": "credit is not a manufactured event; sealed cursor advances only on actual typed emission",
+    "pending": "A drag->pressure and B pressure->drag each charge one composite P row per slot; never charge again at seal",
+    "sourceRootUnion": "SOURCE and QUANTUM are distinct root kinds; parent+64 is a conservative additive capacity, not a claim both execute in one root"
+  },
+  "profiles": [
+    {
+      "K": 192,
+      "Kw": 64,
+      "parentStateItems": {
+        "header_and_command_capsules": 2048,
+        "column32": 16384,
+        "bed_and_flow_cohort4": 262144,
+        "packet64": 49152,
+        "sandSource16": 262144
+      },
+      "parentStateBytes": 591872,
+      "parentR1DesignWorkItems": {
+        "faces129x32": 16512,
+        "twoColumnStaging32": 32768,
+        "Hamilton32PerOrigin": 1048576,
+        "twoOriginAuditU64": 65536,
+        "twoParticleIndexesU32": 1536,
+        "input128": 512,
+        "sixSummary64": 1536,
+        "rootStageControls": 4096,
+        "completion256": 1024
+      },
+      "T524EngineeringExtraItems": {
+        "researchConfigQuota": 1536,
+        "rootControlExtension": 512,
+        "columnWideLedgers": 9216,
+        "particleContactStaging": 32768,
+        "originAuditExtension": 65536,
+        "stageReplayDiagnostics": 5120
+      },
+      "parentR1EngineeringWorkBytes": 1286784,
+      "DMWorkAddBytes": 24576,
+      "parentDMWorkBytes": 1311360,
+      "stateAddItems": {
+        "waterHeader64": 256,
+        "waterColumn16": 8192,
+        "waterOrigin4": 131072,
+        "waterSource16": 262144,
+        "waterPacket32": 8192
+      },
+      "g12FixedWorkItems": {
+        "hydroColumn128": 65536,
+        "waterFace64": 33024,
+        "fourFinalShare4Planes": 524288,
+        "wetRootControl": 8192,
+        "wetDrive32": 16384,
+        "wideColumn32": 16384,
+        "sixWaterSummary64": 1536,
+        "prefixCompare": 8192,
+        "runtimeConfigExtension64": 256,
+        "reservedZero": 2048
+      },
+      "eventBreakdown": {
+        "parentMicroRows": 1152,
+        "parentRootRows": 720,
+        "parentArenaRows": 37584,
+        "g12MicroRows": 1696,
+        "g12MicroTotal": 54272,
+        "g12SourceExtraRows": 64,
+        "g12ArenaRows": 91920
+      },
+      "pathBreakdown": {
+        "parentSandRows": 49152,
+        "extraWaterRows": 32768,
+        "totalRows": 81920
+      },
+      "stateBytes": 1001728,
+      "workBytes": 2028160,
+      "eventRows": 91920,
+      "pathRows": 81920,
+      "eventBytes": 23531520,
+      "pathByteOffset": 23531520,
+      "pathBytes": 5242880,
+      "paddingBetweenEventAndPath": 0,
+      "arenaBytes": 28774400,
+      "residentPayloadBytes": 122134400,
+      "ROOTSlotBytes": 59621888,
+      "FULL_CORESlotBytes": 122204032,
+      "FULL_TRIALSSlotBytes": 294850432,
+      "FULL_TRIALSGPUAdditionalBytes": 172646400,
+      "twoFULL_CORESlotsBytes": 244408064,
+      "twoFULL_TRIALSSlotsBytes": 589700864,
+      "knownCoreResidentTwoColdInputPageBytes": 366581376,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 884520576,
+      "coexistence": {
+        "normalGPUStateBanks": 5,
+        "normalGPUArenas": 4,
+        "normalGPUWorkBuffers": 1,
+        "optionalDiscoveryGPUArenas": 6,
+        "nativeSlots": 2,
+        "nativeTrialArenasPerSlot": 6,
+        "fullPeakArenaEquivalent": 30,
+        "decomposition": {
+          "resident": 122134400,
+          "discoveryGPU": 172646400,
+          "nativeCold0": 294850432,
+          "nativeCold1": 294850432,
+          "inputSnapshot": 22528,
+          "page": 16384
+        }
+      }
+    },
+    {
+      "K": 192,
+      "Kw": 128,
+      "parentStateItems": {
+        "header_and_command_capsules": 2048,
+        "column32": 16384,
+        "bed_and_flow_cohort4": 262144,
+        "packet64": 49152,
+        "sandSource16": 262144
+      },
+      "parentStateBytes": 591872,
+      "parentR1DesignWorkItems": {
+        "faces129x32": 16512,
+        "twoColumnStaging32": 32768,
+        "Hamilton32PerOrigin": 1048576,
+        "twoOriginAuditU64": 65536,
+        "twoParticleIndexesU32": 1536,
+        "input128": 512,
+        "sixSummary64": 1536,
+        "rootStageControls": 4096,
+        "completion256": 1024
+      },
+      "T524EngineeringExtraItems": {
+        "researchConfigQuota": 1536,
+        "rootControlExtension": 512,
+        "columnWideLedgers": 9216,
+        "particleContactStaging": 32768,
+        "originAuditExtension": 65536,
+        "stageReplayDiagnostics": 5120
+      },
+      "parentR1EngineeringWorkBytes": 1286784,
+      "DMWorkAddBytes": 24576,
+      "parentDMWorkBytes": 1311360,
+      "stateAddItems": {
+        "waterHeader64": 256,
+        "waterColumn16": 8192,
+        "waterOrigin4": 131072,
+        "waterSource16": 262144,
+        "waterPacket32": 16384
+      },
+      "g12FixedWorkItems": {
+        "hydroColumn128": 65536,
+        "waterFace64": 33024,
+        "fourFinalShare4Planes": 524288,
+        "wetRootControl": 8192,
+        "wetDrive32": 16384,
+        "wideColumn32": 16384,
+        "sixWaterSummary64": 1536,
+        "prefixCompare": 8192,
+        "runtimeConfigExtension64": 256,
+        "reservedZero": 2048
+      },
+      "eventBreakdown": {
+        "parentMicroRows": 1152,
+        "parentRootRows": 720,
+        "parentArenaRows": 37584,
+        "g12MicroRows": 1952,
+        "g12MicroTotal": 62464,
+        "g12SourceExtraRows": 64,
+        "g12ArenaRows": 100112
+      },
+      "pathBreakdown": {
+        "parentSandRows": 49152,
+        "extraWaterRows": 65536,
+        "totalRows": 114688
+      },
+      "stateBytes": 1009920,
+      "workBytes": 2044544,
+      "eventRows": 100112,
+      "pathRows": 114688,
+      "eventBytes": 25628672,
+      "pathByteOffset": 25628672,
+      "pathBytes": 7340032,
+      "paddingBetweenEventAndPath": 0,
+      "arenaBytes": 32968704,
+      "residentPayloadBytes": 138968960,
+      "ROOTSlotBytes": 68026880,
+      "FULL_CORESlotBytes": 139038592,
+      "FULL_TRIALSSlotBytes": 336850816,
+      "FULL_TRIALSGPUAdditionalBytes": 197812224,
+      "twoFULL_CORESlotsBytes": 278077184,
+      "twoFULL_TRIALSSlotsBytes": 673701632,
+      "knownCoreResidentTwoColdInputPageBytes": 417085056,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1010521728,
+      "coexistence": {
+        "normalGPUStateBanks": 5,
+        "normalGPUArenas": 4,
+        "normalGPUWorkBuffers": 1,
+        "optionalDiscoveryGPUArenas": 6,
+        "nativeSlots": 2,
+        "nativeTrialArenasPerSlot": 6,
+        "fullPeakArenaEquivalent": 30,
+        "decomposition": {
+          "resident": 138968960,
+          "discoveryGPU": 197812224,
+          "nativeCold0": 336850816,
+          "nativeCold1": 336850816,
+          "inputSnapshot": 22528,
+          "page": 16384
+        }
+      }
+    },
+    {
+      "K": 512,
+      "Kw": 64,
+      "parentStateItems": {
+        "header_and_command_capsules": 2048,
+        "column32": 16384,
+        "bed_and_flow_cohort4": 262144,
+        "packet64": 131072,
+        "sandSource16": 262144
+      },
+      "parentStateBytes": 673792,
+      "parentR1DesignWorkItems": {
+        "faces129x32": 16512,
+        "twoColumnStaging32": 32768,
+        "Hamilton32PerOrigin": 1048576,
+        "twoOriginAuditU64": 65536,
+        "twoParticleIndexesU32": 4096,
+        "input128": 512,
+        "sixSummary64": 1536,
+        "rootStageControls": 4096,
+        "completion256": 1024
+      },
+      "T524EngineeringExtraItems": {
+        "researchConfigQuota": 1536,
+        "rootControlExtension": 512,
+        "columnWideLedgers": 9216,
+        "particleContactStaging": 32768,
+        "originAuditExtension": 65536,
+        "stageReplayDiagnostics": 5120
+      },
+      "parentR1EngineeringWorkBytes": 1289344,
+      "DMWorkAddBytes": 24576,
+      "parentDMWorkBytes": 1313920,
+      "stateAddItems": {
+        "waterHeader64": 256,
+        "waterColumn16": 8192,
+        "waterOrigin4": 131072,
+        "waterSource16": 262144,
+        "waterPacket32": 8192
+      },
+      "g12FixedWorkItems": {
+        "hydroColumn128": 65536,
+        "waterFace64": 33024,
+        "fourFinalShare4Planes": 524288,
+        "wetRootControl": 8192,
+        "wetDrive32": 16384,
+        "wideColumn32": 16384,
+        "sixWaterSummary64": 1536,
+        "prefixCompare": 8192,
+        "runtimeConfigExtension64": 256,
+        "reservedZero": 2048
+      },
+      "eventBreakdown": {
+        "parentMicroRows": 1792,
+        "parentRootRows": 1040,
+        "parentArenaRows": 58384,
+        "g12MicroRows": 2336,
+        "g12MicroTotal": 74752,
+        "g12SourceExtraRows": 64,
+        "g12ArenaRows": 133200
+      },
+      "pathBreakdown": {
+        "parentSandRows": 131072,
+        "extraWaterRows": 32768,
+        "totalRows": 163840
+      },
+      "stateBytes": 1083648,
+      "workBytes": 2071680,
+      "eventRows": 133200,
+      "pathRows": 163840,
+      "eventBytes": 34099200,
+      "pathByteOffset": 34099200,
+      "pathBytes": 10485760,
+      "paddingBetweenEventAndPath": 0,
+      "arenaBytes": 44584960,
+      "residentPayloadBytes": 185829760,
+      "ROOTSlotBytes": 91406848,
+      "FULL_CORESlotBytes": 185899392,
+      "FULL_TRIALSSlotBytes": 453409152,
+      "FULL_TRIALSGPUAdditionalBytes": 267509760,
+      "twoFULL_CORESlotsBytes": 371798784,
+      "twoFULL_TRIALSSlotsBytes": 906818304,
+      "knownCoreResidentTwoColdInputPageBytes": 557667456,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1360196736,
+      "coexistence": {
+        "normalGPUStateBanks": 5,
+        "normalGPUArenas": 4,
+        "normalGPUWorkBuffers": 1,
+        "optionalDiscoveryGPUArenas": 6,
+        "nativeSlots": 2,
+        "nativeTrialArenasPerSlot": 6,
+        "fullPeakArenaEquivalent": 30,
+        "decomposition": {
+          "resident": 185829760,
+          "discoveryGPU": 267509760,
+          "nativeCold0": 453409152,
+          "nativeCold1": 453409152,
+          "inputSnapshot": 22528,
+          "page": 16384
+        }
+      }
+    },
+    {
+      "K": 512,
+      "Kw": 128,
+      "parentStateItems": {
+        "header_and_command_capsules": 2048,
+        "column32": 16384,
+        "bed_and_flow_cohort4": 262144,
+        "packet64": 131072,
+        "sandSource16": 262144
+      },
+      "parentStateBytes": 673792,
+      "parentR1DesignWorkItems": {
+        "faces129x32": 16512,
+        "twoColumnStaging32": 32768,
+        "Hamilton32PerOrigin": 1048576,
+        "twoOriginAuditU64": 65536,
+        "twoParticleIndexesU32": 4096,
+        "input128": 512,
+        "sixSummary64": 1536,
+        "rootStageControls": 4096,
+        "completion256": 1024
+      },
+      "T524EngineeringExtraItems": {
+        "researchConfigQuota": 1536,
+        "rootControlExtension": 512,
+        "columnWideLedgers": 9216,
+        "particleContactStaging": 32768,
+        "originAuditExtension": 65536,
+        "stageReplayDiagnostics": 5120
+      },
+      "parentR1EngineeringWorkBytes": 1289344,
+      "DMWorkAddBytes": 24576,
+      "parentDMWorkBytes": 1313920,
+      "stateAddItems": {
+        "waterHeader64": 256,
+        "waterColumn16": 8192,
+        "waterOrigin4": 131072,
+        "waterSource16": 262144,
+        "waterPacket32": 16384
+      },
+      "g12FixedWorkItems": {
+        "hydroColumn128": 65536,
+        "waterFace64": 33024,
+        "fourFinalShare4Planes": 524288,
+        "wetRootControl": 8192,
+        "wetDrive32": 16384,
+        "wideColumn32": 16384,
+        "sixWaterSummary64": 1536,
+        "prefixCompare": 8192,
+        "runtimeConfigExtension64": 256,
+        "reservedZero": 2048
+      },
+      "eventBreakdown": {
+        "parentMicroRows": 1792,
+        "parentRootRows": 1040,
+        "parentArenaRows": 58384,
+        "g12MicroRows": 2592,
+        "g12MicroTotal": 82944,
+        "g12SourceExtraRows": 64,
+        "g12ArenaRows": 141392
+      },
+      "pathBreakdown": {
+        "parentSandRows": 131072,
+        "extraWaterRows": 65536,
+        "totalRows": 196608
+      },
+      "stateBytes": 1091840,
+      "workBytes": 2088064,
+      "eventRows": 141392,
+      "pathRows": 196608,
+      "eventBytes": 36196352,
+      "pathByteOffset": 36196352,
+      "pathBytes": 12582912,
+      "paddingBetweenEventAndPath": 0,
+      "arenaBytes": 48779264,
+      "residentPayloadBytes": 202664320,
+      "ROOTSlotBytes": 99811840,
+      "FULL_CORESlotBytes": 202733952,
+      "FULL_TRIALSSlotBytes": 495409536,
+      "FULL_TRIALSGPUAdditionalBytes": 292675584,
+      "twoFULL_CORESlotsBytes": 405467904,
+      "twoFULL_TRIALSSlotsBytes": 990819072,
+      "knownCoreResidentTwoColdInputPageBytes": 608171136,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1486197888,
+      "coexistence": {
+        "normalGPUStateBanks": 5,
+        "normalGPUArenas": 4,
+        "normalGPUWorkBuffers": 1,
+        "optionalDiscoveryGPUArenas": 6,
+        "nativeSlots": 2,
+        "nativeTrialArenasPerSlot": 6,
+        "fullPeakArenaEquivalent": 30,
+        "decomposition": {
+          "resident": 202664320,
+          "discoveryGPU": 292675584,
+          "nativeCold0": 495409536,
+          "nativeCold1": 495409536,
+          "inputSnapshot": 22528,
+          "page": 16384
+        }
+      }
+    }
+  ],
+  "alignment": {
+    "rawInternalPaddingBytes": 0,
+    "eventBegin": 0,
+    "pathBegin": "256E",
+    "binding": "whole arena buffer at binding3, internal offsets are shader array addresses",
+    "rangeBinding": "if an implementation uses glBindBufferRange, query actual GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT and report added allocation/ranges separately",
+    "notMeasured": [
+      "driver/internal allocator",
+      "GL range offset alignment",
+      "FBO",
+      "host fixed state",
+      "JIT",
+      "JS/runtime",
+      "files"
+    ],
+    "rule": "no invented padding added to row counts and no fractional event rows; revised physical ranges must remain compatible with declared byte dictionary"
+  },
+  "producerAccounting": {
+    "SOURCE64": "once at root/arena envelope, never64*16 source passes or64*32 microsteps",
+    "discovery": "six scopes each get at most one saved arena; no multiplication of E by190 scope-micro count",
+    "pending": "planned/sealed cursor plus outstanding composite window <=E; seal does not reserve a second copy",
+    "onOverflow": "typed failure with requested/remaining/phase evidence, no truncation or silent budget growth"
+  },
+  "T576": {
+    "physicalSupportChanged": false,
+    "newBudget": false,
+    "ABIOrOffsetsChanged": false,
+    "dispatchChanged": false,
+    "realPrerequisite": "T573 complete DM backend",
+    "instruction": "consume expanded formulas and same four capacities; do not copy failed inverse arithmetic or bypass evidence credit"
+  },
+  "references": [
+    {
+      "path": "docs/algorithm-T515-gpu-three-state-dynamics-v1.md",
+      "bytes": 35055,
+      "sha256": "966762fffd4bb2cbb0c58da70e48a613e728d642b0810e92ad84d1bf569c15d2"
+    },
+    {
+      "path": "docs/algorithm-G9-dynamic-mobilization-v2.md",
+      "bytes": 24975,
+      "sha256": "bd1cba97223ff25941a448096cb7d2d784bc6e066dc15b8451cd3a8e6e61ae7e"
+    },
+    {
+      "path": "docs/algorithm-G12-water-sfp-coupling-v1.md",
+      "bytes": 29465,
+      "sha256": "15e606f26ed43b51bba342d402dd07f0317c1b56808528e0dcb2f3621162b3c7"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    }
+  ],
+  "deviceExecuted": false,
+  "productPASS": false
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "T580_SOURCE_AND_RESOURCE_ALGEBRA_AUDIT_V1",
+  "date": "2026-11-18",
+  "result": "ATTRIBUTION_COMPLETE_STATIC_FORMULAS_MATCH_NOT_PRODUCT_PASS",
+  "inputs": [
+    {
+      "path": "docs/test-report-T578-g12-resources-v1.md",
+      "bytes": 3484,
+      "sha256": "4c38b70c5c5c7f17ad37cc56e01c66c24c7c776578576346c9128c374d880d3e"
+    },
+    {
+      "path": "test/t578/resource_recompute.py",
+      "bytes": 3093,
+      "sha256": "5ae5f8f3f8f0ec2a69f5276af6506c8a1d1e1dd70b6cbb58d2125b6042f2e876"
+    },
+    {
+      "path": "docs/architecture-T567-g12-engineering-v1.json",
+      "bytes": 180511,
+      "sha256": "a376cc4c1e2a7397eea5952c98849b282668e5b80c28f09ce784507d6e07511e"
+    },
+    {
+      "path": "docs/architecture-T567-water-sfp-engineering-v1.md",
+      "bytes": 20256,
+      "sha256": "071fea79cafa8bc9d210eb5c7c3f4bb5270b95856bd10f3f673683548c7b4dc0"
+    },
+    {
+      "path": "docs/analysis-T567-T570-engineering-checks-v1.py",
+      "bytes": 39101,
+      "sha256": "2e761e441aa7ceb1ad5bacadf3a131d9c599216222820914493312434b63d873"
+    },
+    {
+      "path": "docs/analysis-T552-T554-engineering-checks-v1.py",
+      "bytes": 38207,
+      "sha256": "ec731b4a68139b87c402a26ec4d8ec1d36f6243b6da56c2a6b5fcee720ef9a52"
+    },
+    {
+      "path": "docs/design-G9-dynamic-mobilization-checks-v2.py",
+      "bytes": 26827,
+      "sha256": "6592dac4c4316649d8c6cfd1c52fd69426cfce3fc89ca18aaf51c4b04cb26b0d"
+    }
+  ],
+  "testerSourceFragment": {
+    "line": 30,
+    "source": "def recompute(K, Kw):\n    p = PARENT[K]\n    state = p['state'] + G12_STATE_ADD + 128 * Kw\n    work = p['work'] + DM_WORK_ADD + G12_WORK_FIXED + 128 * K + 256 * Kw\n    path_rows = 32 * 8 * K + 32 * 16 * Kw\n    ev = MANIFEST[(K, Kw)]['eventRows']\n    arena = ev * 256 + path_rows * 64 if ev else None\n    resident = 4 * arena + 5 * state + work if arena else None\n    root = 2 * state + 2 * arena + 65536 + 4096 if arena else None\n    full = resident + 65536 + 4096 if resident else None\n    trials = full + 6 * arena if full else None\n    return {'state': state, 'work': work, 'pathRows': path_rows, 'arena': arena,\n            'resident': resident, 'root': root, 'full': full, 'trials': trials}"
+  },
+  "findings": [
+    "all4 eventRows/arena values were already present in T567 formal engineering manifest; design reference table has2 rows",
+    "tester code reads eventRows from its own2-known/2-None MANIFEST dictionary; arena/resident/etc are not independent from eventRows references",
+    "None descendants skipped by checks comprehension; cannot report all4 downstream formulas independently verified",
+    "formal parent and G12 formulas exist but engineering flat trace of row domains and WORK baseline needed explicit packaging",
+    "6 extra GPU discovery arenas and6 per native slot already in explicit engineering fields; inverse alone is not independent proof"
+  ],
+  "inverseAudit": {
+    "givenArena": 44584960,
+    "givenPathRows": 163840,
+    "pathStride": 64,
+    "eventStride": 256,
+    "properEventRows": 133200,
+    "reportedEventRows": "1068725/8",
+    "impliedArenaForReportedValue": 44684960,
+    "impliedExtraBytes": 100000,
+    "cause": "arithmetic or undisclosed operand mismatch; no raw inversion trace supports a more specific cause",
+    "alignmentExplanationSupported": false
+  },
+  "all4PrimitiveCrossChecks": true,
+  "profiles": [
+    {
+      "K": 192,
+      "Kw": 64,
+      "eventRows": 91920,
+      "arenaBytes": 28774400,
+      "stateBytes": 1001728,
+      "workBytes": 2028160,
+      "residentPayloadBytes": 122134400,
+      "knownCoreResidentTwoColdInputPageBytes": 366581376,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 884520576
+    },
+    {
+      "K": 192,
+      "Kw": 128,
+      "eventRows": 100112,
+      "arenaBytes": 32968704,
+      "stateBytes": 1009920,
+      "workBytes": 2044544,
+      "residentPayloadBytes": 138968960,
+      "knownCoreResidentTwoColdInputPageBytes": 417085056,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1010521728
+    },
+    {
+      "K": 512,
+      "Kw": 64,
+      "eventRows": 133200,
+      "arenaBytes": 44584960,
+      "stateBytes": 1083648,
+      "workBytes": 2071680,
+      "residentPayloadBytes": 185829760,
+      "knownCoreResidentTwoColdInputPageBytes": 557667456,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1360196736
+    },
+    {
+      "K": 512,
+      "Kw": 128,
+      "eventRows": 141392,
+      "arenaBytes": 48779264,
+      "stateBytes": 1091840,
+      "workBytes": 2088064,
+      "residentPayloadBytes": 202664320,
+      "knownCoreResidentTwoColdInputPageBytes": 608171136,
+      "knownFullTrialsResidentTwoColdInputPageBytes": 1486197888
+    }
+  ],
+  "historicalT578Status": "PARTIAL preserved; tester must independently resume against expanded input contract",
+  "testerCodeChanged": false,
+  "testerExecuted": false,
+  "productTestsExecuted": false,
+  "deviceExecuted": false
+}
