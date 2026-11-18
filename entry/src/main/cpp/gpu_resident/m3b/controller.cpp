@@ -130,8 +130,8 @@ cold503::Scope ControllerV5::ColdScopeLocked()const{
 std::string ControllerV5::ColdBegin(uint64_t replace,uint64_t now){
  coldtrace::TraceManager::Receipt receipt;
  {std::lock_guard<std::mutex> lock(mutex_);receipt.scope=ColdScopeLocked();cold::Layout layout;
-  if(!configured_||run_.active||run_.jobLive||transport_.Busy()||!cold::Layout::Make(*profile_,transport_.StorageAlignment(),layout,false))receipt.result="WOULD_BLOCK";
-  else{receipt.result=coldTrace_.Begin(receipt.scope,receipt.scope,now,replace,layout.words,receipt.request,receipt.id,layout.words-256);if(std::strcmp(receipt.result,"REQUESTED")==0)coldBuilding_=true;}
+  if(!configured_||run_.active||run_.jobLive||transport_.Busy()||!cold::Layout::Make(*profile_,transport_.StorageAlignment(),layout,transport_.FullBranchMode()))receipt.result="WOULD_BLOCK";
+  else{receipt.result=coldTrace_.Begin(receipt.scope,receipt.scope,now,replace,layout.words,receipt.request,receipt.id,layout.words-256,transport_.FullBranchMode()?uint32_t(1):uint32_t(0));if(std::strcmp(receipt.result,"REQUESTED")==0)coldBuilding_=true;}
  }
  std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt);return std::string(w.Data(),w.Size());
 }
@@ -167,10 +167,14 @@ void ControllerV5::BuildCold(uint64_t now){
  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Maintain(now,ColdScopeLocked());slot=coldTrace_.Start();if(slot<0){if(coldTrace_.builder<0)coldBuilding_=false;return;}
   words=coldTrace_.slots[slot].requestWords;auto detached=coldTrace_.TakeOld(slot);detached.reset();coldTrace_.OldFreed(slot);
   full=transport_.FullBranchMode();}
- // FULL-plan capture is not implemented in this slice (T552 FULL wire, five
- // BASE/SOURCE_CONTEXT anchors and multi-root aggregation pending); refuse
- // honestly instead of inventing segments.
- if(full){std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,"V5_FULL_CAPTURE_NOT_IMPLEMENTED",0,0,0,0,"");coldBuilding_=false;return;}
+ // T571 (problem T527/T552): FULL-plan capture now runs through the same
+ // owner-thread CaptureColdV5 with the FULL layout. A plan that is still
+ // mid-flight (not yet frozen) is refused honestly — the archive must cover
+ // the whole plan, never half of it. The 20 scope pairs archive only the
+ // streams whose plan bits actually executed; BASE anchors stay NOT_EXECUTED
+ // because no persistent resident base snapshots exist (T527: never reverse
+ // CURRENT into a fake anchor).
+ if(full&&!transport_.FullFrozen()){std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,"V5_FULL_PLAN_IN_FLIGHT",0,0,0,0,"");coldBuilding_=false;return;}
  std::unique_ptr<uint32_t[]> allocated;
  {std::lock_guard<std::mutex> lock(mutex_);words=coldTrace_.slots[slot].reserved;}
  if(words)allocated.reset(new(std::nothrow)uint32_t[words]);

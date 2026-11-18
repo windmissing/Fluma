@@ -5,7 +5,7 @@ const ets=path.join(out,'entry/src/main/ets');
 const read=n=>fs.readFileSync(path.join(ets,n),'utf8').replaceAll('\r\n','\n');
 const local=n=>fs.readFileSync(path.join(__dirname,n),'utf8').replace(/^\uFEFF/,'').replaceAll('\r\n','\n');
 function edit(n,a,b){const s=read(n);if(s.split(a).length!==2)throw Error('T426_ANCHOR '+n+' '+a.slice(0,100));fs.writeFileSync(path.join(ets,n),s.replace(a,b));}
-for(const n of ['PrepareReadiness.ets','PrepareMainWindow.ets'])fs.writeFileSync(path.join(ets,'render',n),local(n));
+for(const n of ['PrepareReadiness.ets','PrepareMainWindow.ets','PrepareReadinessV4.ets'])fs.writeFileSync(path.join(ets,'render',n),local(n));
 const ability='entryability/EntryAbility.ets';
 edit(ability,"import window from '@ohos.window';","import window from '@ohos.window';\nimport { PrepareMainWindow } from '../render/PrepareMainWindow';");
 edit(ability,'  onWindowStageCreate(windowStage: window.WindowStage): void {','  onWindowStageCreate(windowStage: window.WindowStage): void {\n    PrepareMainWindow.set(windowStage.getMainWindowSync());');

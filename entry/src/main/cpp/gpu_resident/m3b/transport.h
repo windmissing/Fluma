@@ -43,6 +43,17 @@ public:
  bool HasColdTail()const{return !busy_&&tail_[0]==1381192263&&tail_[1]==4&&tail_[28]!=4;}
  GLenum FirstGlError()const{return rawGl_;}
  bool CaptureColdV5(uint32_t* reserved,size_t capacity,const QuotaSnapshotV3&,size_t& stateWords,size_t& eventWords);
+ // T571 (problem T527/T552): FULL-plan capture state — which of the 20 scope
+ // pairs and 4 quanta actually executed in this plan, and whether the frozen
+ // completion copies exist. BASE anchors have no persistent resident object;
+ // their descriptors are honest NOT_EXECUTED unless a future change adds one.
+ uint32_t FullScopeMask()const{return fullMask_;}
+ uint32_t FullQuantumMask()const{return fullQuantumMask_;}
+ bool FullFrozen()const{return fullFrozen_;}
+ uint32_t CurrentStateBank()const{return currentBank_;}
+ uint32_t SourcePrefix()const{return sourcePrefix_;}
+ size_t SourceFrameBytes()const{return profile_?size_t(profile_->k+1)*256:0;}
+ size_t CombinedEventBytes()const{return layout_.combinedBytes;}
  EGLint FirstEglError()const{return rawEgl_;}
 private:
  struct Program {GLuint id=0;UniformLocations locations;};

@@ -34,4 +34,35 @@ public:
   if(serial==UINT64_MAX)return "INPUT_SEQUENCE_EXHAUSTED";stroke.up=p;stroke.sequence=++serial;out=stroke;last=0;return "UP_READY_NOT_CONSUMED";
  }
 };
+
+// T572 (problem T543 §7, T552 R2): cold-V2 prefix records. Two
+// TOUCH_EVIDENCE256 slots at prefix words 3072..3583 (CURRENT_FROZEN_TOUCH /
+// BASE_LAST_CONSUMED_TOUCH; absence is all-zero with an explicit kind word),
+// Config64 at 3584..3647, SEED_META64 at 3648..3711.
+struct TouchEvidence256 {
+ uint32_t kind=0; // 0=NONE,1=CURRENT_FROZEN_TOUCH,2=BASE_LAST_CONSUMED_TOUCH
+ std::array<uint32_t,64> words{};
+};
+struct SeedMeta64 {
+ std::array<uint32_t,8> templateSha{},actualSha{},parameterSha{};
+ uint64_t uploadedBytes=0;uint32_t m0=0,origin=0,sourceId=0,version=2;
+};
+inline void WriteColdV2Records(uint32_t* prefix,
+                               const TouchEvidence256& current,
+                               const TouchEvidence256& base,
+                               const std::array<uint32_t,64>& config64,
+                               const SeedMeta64& seed){
+ if(!prefix)return;
+ std::memset(prefix+3072,0,512);
+ if(current.kind)std::memcpy(prefix+3072,current.words.data(),256);
+ if(base.kind)std::memcpy(prefix+3200,base.words.data(),256);
+ prefix[3072]=current.kind;prefix[3200]=base.kind;
+ std::memcpy(prefix+3584,config64.data(),256);
+ std::memset(prefix+3648,0,256);
+ std::memcpy(prefix+3648,seed.templateSha.data(),32);
+ std::memcpy(prefix+3656,seed.actualSha.data(),32);
+ std::memcpy(prefix+3664,seed.parameterSha.data(),32);
+ Put(prefix+3672,0,seed.uploadedBytes);
+ prefix[3674]=seed.m0;prefix[3675]=seed.origin;prefix[3676]=seed.sourceId;prefix[3677]=seed.version;
+}
 }

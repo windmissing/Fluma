@@ -22,14 +22,15 @@ def overlay(out,route):
  main=out/'entry/src/main';base=main/'cpp/gpu_resident'
  module=base/'input_diagnostic';module.mkdir(exist_ok=True)
  (module/'input_stage.h').write_bytes((ROOT/'entry/src/main/cpp/gpu_resident/input_diagnostic/input_stage.h').read_bytes())
+ (module/'source_claim_witness.h').write_bytes((ROOT/'entry/src/main/cpp/gpu_resident/input_diagnostic/source_claim_witness.h').read_bytes())
  (main/'ets/physics/GpuInputStage.ets').write_bytes((ROOT/'entry/src/main/ets/physics/GpuInputStage.ets').read_bytes())
  read=lambda n:(ROOT/'test/t537'/n).read_text(encoding='utf8')
  wrap=lambda body:'\n#ifdef GRS_APP_M1\n'+body+'\n#endif\n'
  p=base/'cold_diagnostics.h';s=p.read_text(encoding='utf8')
- s=one(s,'#include "cold_protocol.h"','#include "cold_protocol.h"\n#include "input_diagnostic/input_stage.h"')
- s=one(s,'size_t limit,bool stale){\n w.Raw("{\\\"revision\\\":\\\"T503_EXECUTION_DIAGNOSTICS_V1', 'size_t limit,bool stale,const input537::Ledger* input=nullptr){\n w.Raw("{\\\"revision\\\":\\\"T503_EXECUTION_DIAGNOSTICS_V1')
+ s=one(s,'#include "cold_protocol.h"','#include "cold_protocol.h"\n#include "input_diagnostic/input_stage.h"\n#include "input_diagnostic/source_claim_witness.h"')
+ s=one(s,'size_t limit,bool stale){\n w.Raw("{\\\"revision\\\":\\\"T503_EXECUTION_DIAGNOSTICS_V1', 'size_t limit,bool stale,const input537::Ledger* input=nullptr,const claim575::Ledger* claims=nullptr){\n w.Raw("{\\\"revision\\\":\\\"T503_EXECUTION_DIAGNOSTICS_V1')
  anchor='CountsJson(w,summary);w.Raw(",\\\"stages\\\":[");'
- s=one(s,anchor,'CountsJson(w,summary);if(input){w.Raw(",\\\"inputStages\\\":");input->Json(w);}w.Raw(",\\\"stages\\\":[");');p.write_text(s,encoding='utf8')
+ s=one(s,anchor,'CountsJson(w,summary);if(input){w.Raw(",\\\"inputStages\\\":");input->Json(w);}if(claims){w.Raw(",\\\"sourceClaimWitness\\\":");claims->Json(w);}w.Raw(",\\\"stages\\\":[");');p.write_text(s,encoding='utf8')
  for folder in ['m1']+(['m2route'] if route=='m2' else []):
   p=base/folder/'scene.h';s=p.read_text(encoding='utf8');s=one(s,'#pragma once','#pragma once\n#include "../input_diagnostic/input_stage.h"')
   s=one(s,' void Reset(bool);',' bool DrawDiagnostic(const ResidentSceneFrame&,uint64_t,CandidateCheck,ResidentScene::Swap,void*,input537::Pixel&);\n void Reset(bool);')
@@ -40,24 +41,27 @@ def overlay(out,route):
   at=s.index('ResidentSceneReceipt Scene::Draw(');s=s[:at]+read('scene_diagnostic.inc')+'\n'+s[at:];p.write_text(s,encoding='utf8')
  p=base/'m1/scene.frag';s=p.read_text(encoding='utf8');s=one(s,'void main(){','void main(){\n if(uLayer==7){float x=gl_FragCoord.x/uResolution.x;color=x<1./3.?vec4(1.,0.,0.,1.):x<2./3.?vec4(0.,1.,0.,1.):vec4(0.,0.,1.,1.);return;}');p.write_text(s,encoding='utf8')
  p=base/'app_bridge.cpp';s=p.read_text(encoding='utf8');s='#include "input_diagnostic/input_stage.h"\n'+s
- fields=''' input537::Ledger inputStages;
+ fields=''' input537::Ledger inputStages;claim575::Ledger claimWitness;
  std::atomic<bool> pixelSelected{false};bool pixelPulseOpen=false,pixelFailed=false,pixelDrawn=false;
  uint64_t pixelLastNative=0,pixelLastUi=0;input537::Pixel pixel;std::string pixelGeometry;
  bool PixelAllowedLocked(uint64_t candidate,void* held,uint64_t stamp)const{return pixelSelected&&!pixelFailed&&pixelPulseOpen&&active&&held&&CurrentLocked(candidate,held)&&stamp>=pixelLastNative&&stamp-pixelLastNative<=33333333;}
 '''
  s=one(s,'struct App : BridgeState {','struct App : BridgeState {\n'+fields)
- s=one(s,'void DiagnosticOfferLocked(const std::array<uint32_t,32>& words,const char* result){','void DiagnosticOfferLocked(const std::array<uint32_t,32>& words,const char* result){inputStages.Packet(DiagnosticPointLocked("T537_NATIVE_OFFER"),words,result);')
+ s=one(s,'void DiagnosticOfferLocked(const std::array<uint32_t,32>& words,const char* result){','void DiagnosticOfferLocked(const std::array<uint32_t,32>& words,const char* result){inputStages.Packet(DiagnosticPointLocked("T537_NATIVE_OFFER"),words,result);if(std::strcmp(result,"ENQUEUED_NOT_ACK")==0){(void)claimWitness.onEnqueue(DiagnosticPointLocked("T575_SOURCE_CLAIM"),uint64_t(words[6])|(uint64_t(words[7])<<32),uint32_t(count),ui.boundary,(uint64_t(input.lo)|uint64_t(input.hi)<<32));}')
  s=one(s,'void DiagnosticActionLocked(const std::string& raw){','void DiagnosticActionLocked(const std::string& raw){const char* reached="{\\\"origin\\\":\\\"NATIVE_ACTION_API_REACHED\\\"}";inputStages.Add(9,DiagnosticPointLocked("T537_NATIVE_ACTION"),reached,std::strlen(reached));')
  s=one(s,'||(!gpu&&enabled&&!failed&&!resetBlocked)','||(!gpu&&!pixelSelected&&enabled&&!failed&&!resetBlocked)')
  s=one(s,'transportEpoch=seen;transportIdentity=id;resource501::Bind(resources.get(),seen);','transportEpoch=seen;transportIdentity=id;resource501::Bind(resources.get(),seen);'+wrap(read('pixel_create.inc')))
  s=one(s,'   if(run&&!failed&&!gap){',wrap(read('pixel_pump.inc'))+'\n   if(run&&!failed&&!gap){')
+ # T575: claim witness at the actual head-consume point. The witness records
+ # the first named no-claim reason or the accepted claim with real values.
+ s=one(s,'FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);auto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}','FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);\n#ifdef GRS_APP_M1\n{std::lock_guard<std::mutex> l(mutex);claimWitness.onClaim(0,DiagnosticPointLocked("T575_SOURCE_CLAIM"),uint32_t((Stamp()-sourceEnqueued[head])/1000000ull),(uint64_t(run->Tick().latest.nonce.hi)<<32)|run->Tick().latest.nonce.lo,(uint64_t(run->Tick().latest.nonce.hi)<<32)|run->Tick().latest.nonce.lo,run->Tick().latest.nonce.lo||run->Tick().latest.nonce.hi?1u:0u,(AllowedLocked()?1u:0u)|(epoch.load()==seen?8u:0u)|(run->Tick().active?16u:0u)|(1u<<2),(uint64_t(gpu->Owner().Header()[15])<<32)|gpu->Owner().Header()[14],"CLAIMED");}\n#endif\nauto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}')
  # A single diagnostic gate owns both the original Capture copy and the new
  # input copy. The same pre-reserved UTF8 writer enforces the old total limit.
  s=one(s,'auto copy=std::unique_ptr<diagnostic492::Capture>', 'auto inputCopy=std::unique_ptr<input537::Ledger>(new(std::nothrow) input537::Ledger);\n auto copy=std::unique_ptr<diagnostic492::Capture>')
  s=one(s,'if(!copy||!buffer){','if(!copy||!buffer||!inputCopy){')
- s=one(s,'bool stale=false;','resource501::HostScope inputOwnership(a.resources.get(),"T537_INPUT_STAGE_COPY",inputCopy.get(),sizeof(*inputCopy),sizeof(*inputCopy));\n bool stale=false;')
- s=one(s,'*copy=a.diagnostics;','*copy=a.diagnostics;*inputCopy=a.inputStages;')
- s=one(s,'cold503::DiagnosticJson(w,*copy,summary,limit,stale);','cold503::DiagnosticJson(w,*copy,summary,limit,stale,inputCopy.get());')
+ s=one(s,'bool stale=false;','resource501::HostScope inputOwnership(a.resources.get(),"T537_INPUT_STAGE_COPY",inputCopy.get(),sizeof(*inputCopy),sizeof(*inputCopy));\n auto claimCopy=std::unique_ptr<claim575::Ledger>(new(std::nothrow) claim575::Ledger);\n bool stale=false;')
+ s=one(s,'*copy=a.diagnostics;','*copy=a.diagnostics;*inputCopy=a.inputStages;*claimCopy=a.claimWitness;')
+ s=one(s,'cold503::DiagnosticJson(w,*copy,summary,limit,stale);','cold503::DiagnosticJson(w,*copy,summary,limit,stale,inputCopy.get(),claimCopy.get());')
  s=one(s,'napi_value init(napi_env e,napi_value out){',wrap(read('napi.inc'))+'\nnapi_value init(napi_env e,napi_value out){')
  names=['recordInputStageV1','pixelDiagnosticStart','pixelDiagnosticPulse','pixelDiagnosticStop','pixelDiagnosticSnapshot']
  s=one(s,'napi_property_descriptor d[]={','napi_property_descriptor d[]={'+wrap('\n'.join('{"'+n+'",nullptr,'+n+',nullptr,nullptr,nullptr,napi_default,nullptr},' for n in names)))

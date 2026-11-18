@@ -31,4 +31,5 @@ module.exports=function(main){
  const types=path.join(main,'cpp/types/libgrsm1/index.d.ts');fs.appendFileSync(types,'\n'+withWords.map(n=>'export const '+n+':(words:Uint32Array)=>string;').join('\n')+'\n'+noArgs.map(n=>'export const '+n+':()=>string;').join('\n')+'\n');
  // T550 (problem T546 §5): strict decode contract same-source injection.
  require('../t550_words_contract_overlay.cjs')(main);
+ require('../t572/t572_touch_overlay.cjs')(main);
 };
