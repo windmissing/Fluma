@@ -1,0 +1,147 @@
+#version 310 es
+precision highp float;
+precision highp int;
+layout(local_size_x=64) in;
+layout(std430,binding=0) readonly buffer Base {uint baseState[];};
+layout(std430,binding=1) buffer Candidate {uint outState[];};
+layout(std430,binding=2) buffer Work {uint w[];};
+layout(std430,binding=3) buffer Control {uint c[];};
+#ifdef G13_TEST_HOOKS
+uniform uint uTestHook;
+#endif
+uniform uint uOp,uScope,uJ,uMicro,uBlock,uIndex;
+uniform uint uL[80];
+shared float sharedSum[64],sharedMax[64];
+shared uvec4 sharedWide[64];
+shared uint errorAtEntry,selectedAtEntry,convergedAtEntry;
+uint lane;
+bool softDomain=false;
+void syncAll(){memoryBarrierBuffer();memoryBarrierShared();barrier();}
+void fail(uint e){uint old=atomicCompSwap(c[514],0u,e);if(old==0u){c[513]=uOp;c[515]=uScope;c[516]=uJ;c[517]=uMicro;c[526]=1u;}}
+void checkVelocity(float x){if(isnan(x)||isinf(x))fail(16u);else{atomicMax(c[676],floatBitsToUint(abs(x)));if(abs(x)>2.)fail(35u);}}
+void reducePair(float sum,float mx){sharedSum[lane]=sum;sharedMax[lane]=mx;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride){sharedSum[lane]+=sharedSum[lane+stride];sharedMax[lane]=max(sharedMax[lane],sharedMax[lane+stride]);}syncAll();}}
+void reduceSums(float first,float second){sharedSum[lane]=first;sharedMax[lane]=second;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride){sharedSum[lane]+=sharedSum[lane+stride];sharedMax[lane]+=sharedMax[lane+stride];}syncAll();}}
+/* INCLUDE layout_generated.glsl */
+/* INCLUDE wide_q32.glsl */
+/* INCLUDE math_constants.glsl */
+/* INCLUDE math_soft128.glsl */
+/* INCLUDE mac_access.glsl */
+/* INCLUDE sha256.glsl */
+/* INCLUDE trace.glsl */
+/* INCLUDE drive.glsl */
+/* INCLUDE advection.glsl */
+/* INCLUDE viscosity.glsl */
+/* INCLUDE pressure_mg.glsl */
+/* INCLUDE ledger.glsl */
+/* INCLUDE render_pack.glsl */
+void fieldAudit();
+/* INCLUDE units.glsl */
+void copyBase(){for(uint i=lane;i<uL[4];i+=64u)outState[i]=baseState[i];syncAll();if(lane==0u){for(uint i=0u;i<4u;++i)outState[12u+i]=c[146u+i];if(c[520]>=50u)for(uint i=160u;i<192u;++i)outState[i]=0u;}}
+void entryCopy(){for(uint f=lane;f<nf();f+=64u){float value=uintBitsToFloat(outState[256u+f]);checkVelocity(value);w[work(0u)+f]=outState[256u+f];}}
+void fieldAudit(){if(lane==0u){for(uint i=26u;i<=29u;++i)if(isnan(uintBitsToFloat(outState[i]))||isinf(uintBitsToFloat(outState[i])))fail(16u);for(uint i=202u;i<=205u;++i)if(i!=204u&&(isnan(uintBitsToFloat(outState[i]))||isinf(uintBitsToFloat(outState[i]))))fail(16u);if(outState[30]>3u||outState[206]!=outState[30]||outState[204]>3u||abs(uintBitsToFloat(outState[27]))>2.||abs(uintBitsToFloat(outState[205]))>8.||length(vec2(uintBitsToFloat(outState[202]),uintBitsToFloat(outState[203])))>64.||(outState[30]==2u&&uintBitsToFloat(outState[28])<2.))fail(35u);}uvec4 sumGauge=uvec4(0u);for(uint i=lane;i<nc();i+=64u)sumGauge=wadd(sumGauge,s64(uvec2(outState[uL[10]+2u*i],outState[uL[10]+2u*i+1u])));integerReduce(sumGauge);if(lane==0u&&wlt(uvec4(nc()/2u,0u,0u,0u),sabs(sharedWide[0])))fail(20u);for(uint z=lane;z<4096u;z+=64u){uint at=uL[11]+8u*z;if(z>=c[28]){for(uint j=0u;j<8u;++j)if(outState[at+j]!=0u)fail(26u);}else if(outState[at+4u]!=z||outState[at+5u]!=1u)fail(26u);}for(uint i=223u+lane;i<256u;i+=64u)if(outState[i]!=0u)fail(2u);for(uint k=lane;k<4u;k+=64u)if(outState[167u+8u*k]!=0u)fail(2u);for(uint f=lane;f<nf();f+=64u){float value=uintBitsToFloat(outState[256u+f]);checkVelocity(value);if(!activeFace(f)){bool vertical=f>=nuFaces();uint z=vertical?f-nuFaces():f;int x=int(vertical?z%nx():z%(nx()+1u)),y=int(vertical?z/nx():z/(nx()+1u));float expected=fieldRead(0xffffffffu,vertical,x,y);if(outState[256u+f]!=floatBitsToUint(expected))fail(35u);}}for(uint i=lane;i<nc();i+=64u){uvec4 p=s64(uvec2(outState[uL[10]+2u*i],outState[uL[10]+2u*i+1u]));if(wlt(wshl(uvec4(64u,0u,0u,0u),32u),sabs(p)))fail(35u);}for(uint i=lane;i<c[28];i+=64u){uint at=uL[11]+8u*i;vec2 pos=uintBitsToFloat(uvec2(outState[at],outState[at+1u]));if(any(isnan(pos))||any(isinf(pos))||any(lessThan(pos,vec2(0.)))||any(greaterThan(pos,vec2(uintBitsToFloat(c[8]),uintBitsToFloat(c[9]))))||outState[at+7u]!=0u)fail(26u);}}
+void audit(uint bit){syncAll();if(lane==0u&&c[514]==0u)c[755]|=1u<<bit;}
+void rootInputAudit(){if(lane==0u){if(c[128]!=1u||c[255]!=0xc0de1301u)fail(2u);uint hash[8];gpuSha(0u,128u,hash);for(uint i=0u;i<8u;++i)if(hash[i]!=c[76u+i]||hash[i]!=c[168u+i])fail(3u);gpuSha(1u,128u,hash);for(uint i=0u;i<8u;++i)if(hash[i]!=c[1296u+i]||hash[i]!=c[200u+i])fail(3u);}audit(17u);}
+void baseIdentityAudit(){if(lane==0u){if(baseState[0]!=1395863879u||baseState[1]!=1u||baseState[2]!=1177760071u||baseState[3]!=uL[4]||baseState[4]!=nx()||baseState[5]!=ny()||baseState[6]!=c[6])fail(2u);for(uint i=0u;i<8u;++i)if(baseState[32u+i]!=c[76u+i])fail(3u);for(uint i=0u;i<2u;++i)if(c[222]==0u&&(baseState[12u+i]!=c[146u+i]||baseState[14u+i]!=c[148u+i]))fail(2u);for(uint i=0u;i<2u;++i)if(baseState[8u+i]!=c[140u+i]||baseState[10u+i]!=c[144u+i]||baseState[16u+i]!=c[160u+i])fail(2u);}audit(0u);audit(19u);}
+void sourceInstall(){if(lane!=0u)return;uint inputOffset=1216u,op=c[inputOffset+88u];if(op==1u){outState[202]=c[inputOffset+93u];outState[203]=c[inputOffset+94u];}else if(op==2u){if(c[629]==0u||c[625]!=0u||c[inputOffset+90u]!=c[624])fail(31u);outState[26]=c[inputOffset+90u];outState[27]=c[inputOffset+91u];outState[28]=c[inputOffset+92u];outState[30]=c[inputOffset+89u];outState[206]=c[inputOffset+89u];outState[24]=baseState[18];outState[25]=baseState[19];uvec4 ticks=wshl(uvec4(baseState[18],baseState[19],0u,0u),2u);if(ticks.z!=0u||ticks.w!=0u)fail(17u);outState[220]=ticks.x;outState[221]=ticks.y;}else if(op==3u){outState[204]=c[inputOffset+95u];outState[205]=c[inputOffset+96u];outState[29]=c[inputOffset+96u];for(uint i=0u;i<4u;++i)outState[198u+i]=c[inputOffset+97u+i];}else fail(4u);outState[22]=c[inputOffset+20u];outState[23]=c[inputOffset+21u];outState[196]=c[inputOffset+104u];outState[197]=c[inputOffset+105u];outState[208]=c[inputOffset+22u];outState[209]=c[inputOffset+23u];outState[192]=c[inputOffset+20u];outState[193]=c[inputOffset+21u];outState[194]=c[inputOffset+18u];outState[195]=c[inputOffset+19u];outState[210]=c[inputOffset+106u];outState[211]=c[inputOffset+107u];for(uint i=0u;i<8u;++i)outState[212u+i]=c[inputOffset+80u+i];}
+void rootInit(){
+ for(uint i=lane;i<448u;i+=64u)c[512u+i]=0u;
+ for(uint i=lane;i<16384u;i+=64u)c[2048u+i]=0u;
+ for(uint i=lane;i<256u;i+=64u)c[18432u+i]=0u;
+ syncAll();
+ for(uint scope=0u;scope<2u;++scope){uint t=scope==0u?2048u:10240u;
+  for(uint i=lane;i<128u;i+=64u){c[t+512u+i]=c[1216u+i];c[t+640u+i]=c[i];c[t+768u+i]=w[work(19u)+512u+i];}
+  for(uint i=lane;i<64u;i+=64u)c[t+896u+i]=c[256u+i];
+  if(lane==0u){c[t]=1412641095u;c[t+1u]=1u;c[t+2u]=1177760071u;c[t+3u]=1024u;c[t+4u]=scope;c[t+6u]=c[129];for(uint i=0u;i<2u;++i){c[t+8u+i]=c[136u+i];c[t+10u+i]=c[138u+i];c[t+12u+i]=c[160u+i];}for(uint i=0u;i<8u;++i){c[t+16u+i]=c[200u+i];c[t+24u+i]=c[76u+i];}}
+ }
+ if(lane==0u){for(uint i=0u;i<2u;++i){c[528u+i]=c[218u+i];c[530u+i]=c[136u+i];c[532u+i]=c[138u+i];c[534u+i]=c[160u+i];c[536u+i]=c[162u+i];c[538u+i]=c[216u+i];c[540u+i]=c[216u+i];c[542u+i]=c[158u+i];}c[520]=c[129];c[761]=c[222];c[764]=c[30];c[754]=c[135];c[753]=c[129]>=50u?16u:820u;c[758]=c[131];c[759]=c[132];c[760]=c[133];c[762]=c[220];c[763]=c[221];c[765]=1u;c[522]=1u;}
+}
+void timePrepare(){
+ if(c[514]!=0u||c[518]==0u)return;
+ if(lane==0u){
+  uvec2 commit=pairAdd(uvec2(baseState[16],baseState[17]),uvec2(1u,0u));outState[16]=commit.x;outState[17]=commit.y;
+  uvec2 q=uvec2(baseState[18],baseState[19]);if(c[520]<50u&&c[762]!=1u&&c[762]!=3u)q=pairAdd(q,uvec2(1u,0u));outState[18]=q.x;outState[19]=q.y;
+  if(c[520]<50u)outState[20]=c[518];outState[21]=c[520];outState[7]=1u;
+  for(uint i=0u;i<8u;++i)outState[72u+i]=c[200u+i];
+  if(c[520]<50u){outState[128]=(c[729]+15u)/16u;outState[129]=c[729];outState[130]=c[730];outState[131]=c[730]*(8u*uL[7]+28u);outState[132]=c[720];outState[133]=c[721];outState[134]=c[665];outState[135]=c[666];for(uint i=0u;i<4u;++i)outState[136u+i]=c[656u+i];outState[140]=c[620];outState[141]=c[621];outState[142]=floatBitsToUint(c[6]==2u?32.:8.);outState[143]=c[669];outState[144]=c[663];outState[145]=c[664];outState[146]=c[724];outState[155]=c[518];outState[156]=c[784];outState[157]=c[788];}
+  outState[147]=c[624];outState[148]=c[625];outState[149]=c[626];float om=uintBitsToFloat(c[625]);outState[150]=floatBitsToUint(om*om*(uintBitsToFloat(c[8])*uintBitsToFloat(c[8])+uintBitsToFloat(c[9])*uintBitsToFloat(c[9])-2.*h()*h())/24.);outState[151]=c[34];outState[152]=1u;outState[153]=c[513];outState[154]=c[514];outState[158]=c[523];
+ }
+}
+void completion(){
+ if(lane!=0u)return;uint t=18432u;
+ for(uint i=0u;i<256u;++i)c[t+i]=0u;
+ c[t]=1379086663u;c[t+1u]=1u;c[t+2u]=1177760071u;c[t+3u]=256u;c[t+4u]=c[520];
+ uint error=c[514];if(c[518]==0u&&error==0u)error=14u;if((c[755]&c[754])!=c[754]&&error==0u)error=37u;
+ c[512]=error==0u?1u:3u;c[757]=1u;c[767]=0xc0de1301u;c[540]=outState[18];c[541]=outState[19];c[t+5u]=error==0u?((c[762]==1u||c[762]==3u)?7u:1u):(error==12u||error==13u||error==14u||error==15u||error==23u?2u:3u);if(c[802]!=0u)c[t+5u]=3u;c[t+6u]=c[513];c[t+7u]=error;
+ for(uint i=0u;i<16u;++i)c[t+8u+i]=c[136u+i];
+ c[t+24u]=c[160];c[t+25u]=c[161];c[t+26u]=c[162];c[t+27u]=c[163];
+ for(uint i=0u;i<4u;++i)c[t+28u+i]=c[164u+i];
+ c[t+34u]=outState[18];c[t+35u]=outState[19];c[t+36u]=c[520]>=50u?0u:c[518];c[t+37u]=c[754];c[t+38u]=c[755];c[t+39u]=uIndex+1u;c[t+40u]=c[522];c[t+41u]=c[523];c[t+42u]=uint(error==0u&&c[762]!=1u&&c[762]!=3u);c[t+43u]=c[756];
+ c[t+44u]=outState[192];c[t+45u]=outState[193];c[t+46u]=outState[194];c[t+47u]=outState[195];
+ for(uint i=0u;i<8u;++i){c[t+48u+i]=c[168u+i];c[t+56u+i]=c[176u+i];c[t+64u+i]=c[184u+i];c[t+72u+i]=c[192u+i];c[t+80u+i]=outState[64u+i];c[t+88u+i]=c[200u+i];}
+ uint hash[8];gpuSha(2u,uL[4],hash);for(uint i=0u;i<8u;++i)c[t+96u+i]=hash[i];
+ c[t+104u]=outState[132];c[t+105u]=outState[133];c[t+106u]=outState[124];c[t+107u]=outState[126];c[t+108u]=outState[144];c[t+109u]=outState[145];c[t+110u]=outState[146];c[t+111u]=outState[108];c[t+112u]=floatBitsToUint(exp2(-10.)*uintBitsToFloat(outState[114]));c[t+113u]=outState[116];c[t+114u]=outState[118];c[t+115u]=outState[90];
+ c[t+116u]=c[162];c[t+117u]=c[163];c[t+118u]=c[136];c[t+119u]=c[137];c[t+120u]=c[131];c[t+121u]=c[133];c[t+122u]=error==0u?0u:c[515];c[t+123u]=error==0u?0u:c[516];c[t+124u]=error==0u?0u:c[517];c[t+125u]=1u;c[t+126u]=c[762];c[t+127u]=c[223];
+ for(uint i=0u;i<8u;++i)c[t+128u+i]=c[152u+i];
+ c[t+136u]=c[624];c[t+137u]=c[625];c[t+138u]=c[626];c[t+139u]=c[627];c[t+140u]=c[628];c[t+141u]=c[629];uvec4 forceQ=uvec4(outState[18],outState[19],0u,0u);c[t+142u]=uint(outState[204]!=0u&&!wlt(forceQ,uvec4(outState[198],outState[199],0u,0u))&&wlt(forceQ,uvec4(outState[200],outState[201],0u,0u)));c[t+143u]=uint(error==0u);c[t+144u]=outState[24];c[t+145u]=outState[25];
+ for(uint scope=0u;scope<2u;++scope){uint root=scope==0u?2048u:10240u;for(uint i=0u;i<255u;++i)c[root+256u+i]=c[t+i];c[root+511u]=0xc0de1301u;}
+ memoryBarrierBuffer();c[t+255u]=0xc0de1301u;
+}
+void main(){lane=gl_LocalInvocationID.x;if(lane==0u){c[752]=uIndex;errorAtEntry=c[514];selectedAtEntry=c[518u+min(uScope,1u)];convergedAtEntry=uint((uOp==OP_VISC_BLOCK&&c[525]!=0u)||(uOp==OP_PRESSURE_V&&c[524]!=0u));c[676]=0u;}syncAll();
+ if(uOp==64u){coldInitialize();return;}
+ if(uOp==65u){coldAudit();return;}
+ if(uOp==OP_ROOT_INIT||uOp==OP_SOURCE_INIT){rootInit();return;}if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));if(nooped)c[523]++;else c[522]++;if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r+(nooped?9u:8u)]++;}}
+ if(uOp==OP_ROOT_REPLAY_BEGIN){if(lane==0u){c[772]=c[755];c[2048u+5u]=32u|(c[518]!=0u?1u:8u);c[2048u+1023u]=0xc0de1301u;uint e=c[514];if(e==0u||e==12u||e==13u||e==14u||e==15u||e==23u){c[514]=0u;c[513]=0u;}}return;}
+ if(uOp==OP_TRIAL_GATE){if(lane==0u){c[521]|=1u<<uScope;uint error=c[514];bool retry=error==0u||error==12u||error==13u||error==14u||error==15u||error==23u;if(c[518u+uScope]==0u&&retry){c[514]=0u;c[513]=0u;c[526]=0u;}c[515]=uScope;c[516]=uJ;c[768u+uScope]=uint(c[763]!=0u&&uJ<c[763]);uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r]=uJ;if(c[768u+uScope]!=0u||selectedAtEntry!=0u){c[r+1u]=32u|(c[768u+uScope]!=0u?16u:2u);c[r+63u]=0xc0de1301u;}}return;}
+ bool selected=selectedAtEntry!=0u;
+ if(uOp==OP_TRIAL_RESET_FROM_BASE){if(!selected&&c[768u+uScope]==0u)copyBase();return;}
+ if(uOp==OP_TRIAL_INIT){if(!selected&&c[768u+uScope]==0u&&lane==0u){for(uint i=32u;i<80u;++i)c[512u+i]=baseState[80u+i-32u];c[554]=c[555]=0u;for(uint i=0u;i<20u;++i)c[688u+i]=0u;if((baseState[18]%120u+16u*(baseState[19]%120u))%120u==0u){for(uint i=36u;i<80u;++i)c[512u+i]=0u;}for(uint i=160u;i<192u;++i)outState[i]=0u;c[755]&=(1u<<0u)|(1u<<17u)|(1u<<19u);}return;}
+ if(uOp==OP_SOURCE_ACTUAL_COPY||uOp==OP_SOURCE_REPLAY_COPY){copyBase();return;}
+ if(uOp==OP_SOURCE_ACTUAL_INSTALL||uOp==OP_SOURCE_REPLAY_INSTALL){drive();syncAll();sourceInstall();return;}
+ if(uOp==OP_ROOT_SCOPE_COMPARE||uOp==OP_SOURCE_COMPARE){if(lane==0u){c[10240u+5u]=32u|(c[519]!=0u?1u:8u);c[10240u+1023u]=0xc0de1301u;c[773]=c[755];c[802]=uint(c[518]!=c[519]);}syncAll();for(uint i=lane;i<uL[4];i+=64u)if(baseState[i]!=outState[i])atomicOr(c[802],1u);for(uint i=lane;i<8192u;i+=64u){bool scopeWord=(i==4u)||(i>=1024u&&i%1024u==4u);if(!scopeWord&&c[2048u+i]!=c[10240u+i])atomicOr(c[802],1u);}syncAll();if(lane==0u){if(c[802]!=0u){fail(18u);}else if(c[514]==0u){c[755]=(c[772]&c[773])|(1u<<13u);c[756]=3u;}}return;}
+ if(uOp==OP_ROOT_TIME_PREPARE||uOp==OP_SOURCE_CONTROL_PREPARE){timePrepare();return;}
+ if(uOp==OP_PACK_VIEW){if(errorAtEntry==0u)renderPack();return;}
+ if(uOp==OP_PACK_AUDIT){if(errorAtEntry==0u)renderAudit();audit(14u);return;}
+ if(uOp==OP_ROOT_COMPLETION_SEAL||uOp==OP_SOURCE_COMPLETION_SEAL){completion();return;}
+ if(uOp>=OP_ROOT_INPUT_GATE&&uOp<=OP_ROOT_ACTUAL_BEGIN){if(uOp==OP_ROOT_INPUT_GATE)rootInputAudit();if(uOp==OP_ROOT_BASE_AUDIT)baseIdentityAudit();return;}
+ if(uOp>=OP_SOURCE_INPUT_GATE&&uOp<=OP_SOURCE_TIME_ZERO_AUDIT){
+  if(uOp==OP_SOURCE_INPUT_GATE)rootInputAudit();
+  if(uOp==OP_SOURCE_BASE_AUDIT){baseIdentityAudit();}
+  if(uOp==OP_SOURCE_DEDUP_GATE&&lane==0u){uvec2 seq=uvec2(c[1236],c[1237]);if(!wlt(uvec4(baseState[192],baseState[193],0u,0u),uvec4(seq,0u,0u)))fail(31u);}
+  if(uOp==OP_SOURCE_ACTUAL_AUDIT||uOp==OP_SOURCE_REPLAY_AUDIT){fieldAudit();drive();audit(1u);audit(2u);syncAll();wallLedger(false);audit(15u);if(lane==0u&&c[514]==0u){uint which=uOp==OP_SOURCE_ACTUAL_AUDIT?0u:1u;c[518u+which]=1u;c[772u+which]=c[755];uint root=which==0u?2048u:10240u;c[root+5u]=33u;c[root+1023u]=0xc0de1301u;}}
+  if(uOp==OP_SOURCE_TIME_ZERO_AUDIT){for(uint f=lane;f<nf()+2u*nc();f+=64u)if(outState[256u+f]!=baseState[256u+f])fail(18u);for(uint i=lane;i<c[28];i+=64u)if(outState[uL[11]+8u*i+6u]!=baseState[uL[11]+8u*i+6u])fail(18u);if(lane==0u&&(outState[18]!=baseState[18]||outState[19]!=baseState[19]))fail(18u);audit(18u);}
+  return;}
+ if(uOp==OP_ROOT_FINAL_FIELD_AUDIT||uOp==OP_TRIAL_ENTRY_AUDIT){if(uOp==OP_ROOT_FINAL_FIELD_AUDIT||(!selected&&c[768u+uScope]==0u)){fieldAudit();audit(1u);audit(2u);if(uOp==OP_ROOT_FINAL_FIELD_AUDIT)drive();}return;}
+ bool projectOnly=c[762]==1u;bool diagnosticNoop=projectOnly&&((uOp>=18u&&uOp<=35u&&uOp!=33u)||(uOp>=43u&&uOp<=46u)||uOp==48u);bool forcedSkip=c[768u+uScope]!=0u;bool noop=selected||errorAtEntry!=0u||diagnosticNoop||forcedSkip;
+ if(lane==0u){if(noop||convergedAtEntry!=0u)c[523]++;else c[522]++;uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r+((noop||convergedAtEntry!=0u)?9u:8u)]++;}
+ if(noop){if(uOp==OP_ENTRY_PARTIAL){microHeader();if(lane==0u){c[776u+uScope]=0u;c[microBase()+7u]=32u|(c[514]!=0u?8u:(forcedSkip?16u:2u));}}if(uOp==OP_MICRO_SEAL){if(!selected&&c[776u+uScope]!=0u)sealMicro();else if(lane==0u)c[microBase()+1023u]=0xc0de1301u;}if(uOp==OP_VISC_BLOCK||uOp==OP_PRESSURE_V){if(lane==0u){uint p=microBase()+(uOp==OP_VISC_BLOCK?384u:128u)+16u*uBlock;c[p]=uBlock;c[p+1u]=32u|(c[514]!=0u?8u:(diagnosticNoop||forcedSkip?16u:2u));c[p+3u]=c[514];c[p+15u]=0xc0de1301u;}}traceStage(true);return;}
+ if(convergedAtEntry!=0u){if(lane==0u){uint p=microBase()+(uOp==OP_VISC_BLOCK?384u:128u)+16u*uBlock;if(uBlock>0u){for(uint i=0u;i<16u;++i)c[p+i]=c[p-16u+i];}else{for(uint i=0u;i<16u;++i)c[p+i]=0u;c[p+2u]=1u;if(uOp==OP_VISC_BLOCK)c[p+7u]=floatBitsToUint(1.);}c[p]=uBlock;c[p+1u]=36u;c[p+14u]=0u;c[p+15u]=0xc0de1301u;}return;}
+ if(uOp==OP_ENTRY_PARTIAL){microHeader();entryCopy();if(lane==0u){c[776u+uScope]=1u;c[517]=uMicro;}}
+ else if(uOp==OP_ENTRY_FINAL){drive();entryLedger();}
+ else if(uOp==OP_ADVECT)advect();
+ else if(uOp==OP_ADVECT_ENERGY_FINAL)advectionLedger();
+ else if(uOp==OP_BODY_KICK)bodyKick();
+ else if(uOp==OP_BODY_WORK_REDUCE)bodyWork();
+ else if(uOp>=OP_CORIOLIS_0_F&&uOp<=OP_CORIOLIS_0_R){uint i=uOp-OP_CORIOLIS_0_F;coriolis(i<4u?i:7u-i);}
+ else if(uOp==OP_CORIOLIS_ENERGY_FINAL)momentumOperator(2u,work(2u),work(3u),false,false);
+ else if(uOp==OP_VISC_SETUP){if(projectOnly){for(uint f=lane;f<nf();f+=64u)w[work(6u)+f]=w[work(0u)+f];if(lane==0u)c[525]=1u;}else viscSetup();}
+ else if(uOp==OP_VISC_BLOCK){viscBlock();if(lane==0u)c[784u+uScope]++;}
+ else if(uOp==OP_VISC_ENERGY_PARTIAL){uint result=viscResult();for(uint f=lane;f<nf();f+=64u)w[work(6u)+f]=w[result+f];}
+ else if(uOp==OP_VISC_ENERGY_FINAL){viscosityLedger();audit(4u);}
+ else if(uOp==OP_PRESSURE_RHS)pressureRhs();
+ else if(uOp==OP_PRESSURE_RHS_COMPAT){meanRemove(work(12u),0u,true);audit(3u);}
+ else if(uOp==OP_PRESSURE_INIT){for(uint i=lane;i<2u*uL[12];i+=64u){w[work(10u)+i]=0u;w[work(11u)+i]=0u;w[work(13u)+i]=0u;}if(lane==0u)c[524]=0u;}
+ else if(uOp==OP_PRESSURE_V){pressureCycle();if(lane==0u){c[730]=uBlock+1u;c[788u+uScope]++;}}
+ else if(uOp==OP_PROJECT)project();
+ else if(uOp==OP_ENFORCE_NORMAL_FACES){for(uint f=lane;f<nf();f+=64u){bool v=f>=nuFaces();uint z=v?f-nuFaces():f;if(!activeFace(f)){uint alias=v?256u+nuFaces()+z%nx():256u+(z/(nx()+1u))*(nx()+1u);outState[256u+f]=((!v&&periodicX())||(v&&periodicY()))?outState[alias]:0u;}}}
+ else if(uOp==OP_FLOW_AUDIT_FINAL){
+#ifdef G13_TEST_HOOKS
+ if(lane==0u&&uTestHook==5u)outState[256]=floatBitsToUint(.25);syncAll();
+#endif
+actualFlowAudit();projectionLedger();audit(5u);audit(6u);audit(7u);audit(8u);}
+ else if(uOp==OP_TRACER_ADVECT)tracerAdvect();
+ else if(uOp==OP_TRACER_CHECK){fieldAudit();audit(12u);}
+ else if(uOp==OP_ENERGY_LEDGER_PARTIAL)wallLedger(true);
+ else if(uOp==OP_ENERGY_LEDGER_FINAL){finalLedger();audit(9u);audit(10u);audit(11u);audit(16u);}
+ else if(uOp==OP_MICRO_SEAL)sealMicro();
+ traceStage(false);
+}

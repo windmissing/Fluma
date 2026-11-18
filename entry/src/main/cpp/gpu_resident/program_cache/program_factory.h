@@ -192,7 +192,8 @@ inline bool Build(uint32_t object, const char *source,
   p.begin = Stamp();
   p.context = eglGetCurrentContext();
   p.owner = std::this_thread::get_id();
-  p.role = object == 0   ? "SOURCE"
+  p.role = object == 13  ? "G13_COMPUTE"
+           : object == 0 ? "SOURCE"
            : object == 1 ? "INTERMEDIATE_QUANTUM"
                          : "FINAL_QUANTUM";
   p.shader = Hash(source);

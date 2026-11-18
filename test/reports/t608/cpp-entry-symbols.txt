@@ -1,0 +1,10 @@
+0000000000000000 T grs::g13::Controller::CaptureSpan(bool, unsigned int*, unsigned long, unsigned long&)
+0000000000000000 T grs::g13::Controller::NativePulse(unsigned long, unsigned long)
+0000000000000000 T grs::g13::Controller::PumpBounded(unsigned long)
+0000000000000000 T grs::g13::Controller::AcquireScene()
+0000000000000000 T grs::g13::Controller::ReleaseScene(unsigned long, __GLsync*)
+0000000000000000 T grs::g13::Controller::Offer(std::__n1::array<unsigned int, 128ul> const&, unsigned long)
+0000000000000000 T grs::g13::Controller::Rebind(unsigned long, unsigned long)
+0000000000000000 T grs::g13::Controller::BeginRoot(std::__n1::array<unsigned int, 128ul> const&)
+0000000000000000 T grs::g13::Controller::Configure(std::__n1::array<unsigned int, 128ul> const&, grs::g13::Seed const&, grs::g13::Identity const&)
+0000000000000000 T grs::g13::Controller::Poll(std::__n1::array<unsigned int, 256ul>&) const

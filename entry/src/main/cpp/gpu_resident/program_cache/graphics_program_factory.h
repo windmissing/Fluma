@@ -60,7 +60,7 @@ inline void AppendGraphicsField(std::string& out,std::string_view value) {
   out.append(value.data(),value.size());
 }
 inline bool ValidGraphics(const GraphicsProgramDesc& d) {
-  if(d.role!="SCENE_FULL"&&d.role!="SCENE_PARTICLES"&&d.role!="SCENE_WATER")return false;
+  if(d.role!="SCENE_FULL"&&d.role!="SCENE_PARTICLES"&&d.role!="SCENE_WATER"&&d.role!="G13_SCENE")return false;
   if(d.stages[0].stage!=GL_VERTEX_SHADER||d.stages[1].stage!=GL_FRAGMENT_SHADER||
      d.bindingAbi.empty()||d.bindingAbi.size()>kEntryLimit)return false;
   size_t total=d.bindingAbi.size();
@@ -243,8 +243,13 @@ inline bool ReflectGraphics(GLuint program,GraphicsUniformTable& table,const Gra
     for(size_t i=0;i<table.count;++i){const auto& e=table.entries[i];if(e.name==name)return e.location>=0&&e.type==type&&e.size>=size;}
     return false;
   };
-  valid=valid&&uniform("uResolution",GL_FLOAT_VEC2)&&uniform("uBox",GL_FLOAT_VEC4)&&uniform("uMirror",GL_BOOL);
-  if(d.role=="SCENE_FULL") {
+  if(d.role=="G13_SCENE") {
+    valid=valid&&uniform("uDraw",GL_UNSIGNED_INT)&&uniform("uMode",GL_UNSIGNED_INT)&&uniform("uGrid",GL_FLOAT_VEC2)&&uniform("uBoxSize",GL_FLOAT_VEC2)&&uniform("uBox",GL_FLOAT_VEC4)&&uniform("uPose",GL_FLOAT_VEC2)&&uniform("uRange",GL_FLOAT_VEC4)&&uniform("uFrame",GL_SAMPLER_2D);
+    for(GLuint i=0;i<6;++i){std::string name="a"+std::to_string(i);valid=valid&&glGetAttribLocation(program,name.c_str())==GLint(i);}
+  }else valid=valid&&uniform("uResolution",GL_FLOAT_VEC2)&&uniform("uBox",GL_FLOAT_VEC4)&&uniform("uMirror",GL_BOOL);
+  if(d.role=="G13_SCENE") {
+    // Independent integer attribute ABI, with no vertex/fragment SSBO.
+  }else if(d.role=="SCENE_FULL") {
     valid=valid&&uniform("uColumn",GL_UNSIGNED_INT)&&uniform("uLayer",GL_INT)&&uniform("uFrame",GL_SAMPLER_2D)&&uniform("uOptics",GL_FLOAT_VEC4,4);
     const GLuint block=glGetProgramResourceIndex(program,GL_SHADER_STORAGE_BLOCK,"Publication");
     const GLenum property=GL_BUFFER_BINDING;GLint binding=-1;

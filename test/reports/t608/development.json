@@ -1,0 +1,190 @@
+{
+  "schema": "T608_DEVELOPER_COMPILATION_DELIVERY_V1",
+  "task": "T608",
+  "scope": "G13_GPU_IMPLEMENTATION_ONLY_RUNTIME_UNVALIDATED",
+  "testsRun": false,
+  "deviceUsed": false,
+  "signOrDeploy": false,
+  "production": {
+    "native": "COMPILED",
+    "ArkTSAndRegisteredWorker": "COMPILED",
+    "unsignedHAP": "PACKAGED",
+    "buildLog": {
+      "path": ".codex/local-test/t608-release-delivery.txt",
+      "bytes": 21380,
+      "sha256": "843d06c3b23e6a668bfd6cb3e64ebe684badbd18f2b0c4826cbf4474cc90ab4e"
+    },
+    "duration": "13 s 716 ms \u001b[39m",
+    "testHooks": false,
+    "assembledSHA": "09b45bbc83d47bf5c7547b743335b03f07770ddfb43d6131719d66cabbab1c28",
+    "generatedManifest": {
+      "path": ".codex/local-test/t608-release/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/assets_manifest.json",
+      "bytes": 2846,
+      "sha256": "a61ab3d54563ba97b1164967ac7917be91224a9bf0e94fc1128e72028ec73b47"
+    },
+    "HAP": {
+      "path": ".codex/local-test/t608-release/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7632424,
+      "sha256": "395d8ea7e7207323bccb22da734a0b543582ecc6ecd5fc377206ce804eb2d3d7"
+    },
+    "ELF": {
+      "path": ".codex/local-test/t608-release/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13.so",
+      "bytes": 5617120,
+      "sha256": "92414d34cdfda2ea616cb14914d041eccf7feec6fec7470d81246f6e48eb2595"
+    },
+    "coreStaticArchive": {
+      "path": ".codex/local-test/t608-release/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13_core.a",
+      "bytes": 10478172,
+      "sha256": "1676dd8413243efff2f149d5066f9f1a882e6462ee008e641dea64726176ab34"
+    },
+    "brokerELF": {
+      "path": ".codex/local-test/t608-release/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_cold_slots.so",
+      "bytes": 200824,
+      "sha256": "715f314d43549d4eed991922f25faa350fedcaf6ab8dab1598abc980dd278d03"
+    }
+  },
+  "diagnosticVariant": {
+    "native": "COMPILED",
+    "ArkTSAndRegisteredWorker": "COMPILED",
+    "unsignedHAP": "PACKAGED",
+    "buildLog": {
+      "path": ".codex/local-test/t608-hooks-delivery.txt",
+      "bytes": 21841,
+      "sha256": "7ebbe616071a2b121083c376dfbeeee866ef392fc522532bdaa07990f734d0e5"
+    },
+    "duration": "14 s 754 ms \u001b[39m",
+    "testHooks": true,
+    "assembledSHA": "c52564049bfa741bfb12da3f9ddeaf9fcfe561a0fa44a07c0395543141c7cfcf",
+    "generatedManifest": {
+      "path": ".codex/local-test/t608-hooks-compile/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/g13flow/g13_assets/assets_manifest.json",
+      "bytes": 2845,
+      "sha256": "f0155b7f8fb890f43bad40e9b1d54e306a9a1447561353b288229f3ac1b2cc7e"
+    },
+    "HAP": {
+      "path": ".codex/local-test/t608-hooks-compile/entry/build/default/outputs/default/entry-default-unsigned.hap",
+      "bytes": 7632456,
+      "sha256": "1459e4e3e5fbce9575d28123dc8c02dced1e06726437e8793fdeb52c17022296"
+    },
+    "ELF": {
+      "path": ".codex/local-test/t608-hooks-compile/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13.so",
+      "bytes": 5621552,
+      "sha256": "ae1e18b660c5df651fa85a36d362abbec556796be2349cc7f1de786e9dbdc15a"
+    },
+    "coreStaticArchive": {
+      "path": ".codex/local-test/t608-hooks-compile/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13_core.a",
+      "bytes": 10484116,
+      "sha256": "e5022d703fb88ea4f26748ca7bb22162db81d878ea81f37c7ceb84b77a750fca"
+    },
+    "brokerELF": {
+      "path": ".codex/local-test/t608-hooks-compile/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_cold_slots.so",
+      "bytes": 200856,
+      "sha256": "f29e11eb1a9ec64118606ebd9657c9feefa434631e00b7680fb1a2e922071f28"
+    }
+  },
+  "legacySharedCacheCompile": {
+    "path": ".codex/local-test/t608-legacy-cache-build.txt",
+    "bytes": 4988,
+    "sha256": "7d2a0a7e4b9df071614158c5c994f2686de7c6c7b9eb735052fde6f0727e3e72"
+  },
+  "offlineShaderCompile": {
+    "compiler": {
+      "path": ".codex/local-test/g13-glslang/bin/glslang.exe",
+      "bytes": 5178368,
+      "sha256": "a805c1a20df884aafc77cb896f9ffe74c1f9567aab10682fba05aefafc23e06d"
+    },
+    "downloadArchive": {
+      "path": ".codex/local-test/g13-glslang.zip",
+      "bytes": 13643817,
+      "sha256": "82e421b1a56bc5c64bdffa45ac3050f6f6eea63fd7c0cd6001294ed13bcf427c"
+    },
+    "version": "Khronos glslang 16.6.0",
+    "productionCompute": "COMPILED",
+    "diagnosticCompute": "COMPILED",
+    "vertex": "COMPILED",
+    "fragment": "COMPILED",
+    "shaderExecution": false
+  },
+  "syntaxOnly": {
+    "Python": "py_compile",
+    "Node": "--check",
+    "readerExecuted": false
+  },
+  "dispatchIdentity": {
+    "quantum": 820,
+    "source": 16,
+    "sourcePlusFourQuanta": 3296,
+    "stateBanks": 3,
+    "traceScopes": 2,
+    "bindings": 4,
+    "persistentLanes": 64
+  },
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/g13flow/advection.glsl": "934674d22ef05c45166e9de1984e887fa72b89856e0dbcc9ccedbb037cfa9ca1",
+    "entry/src/main/cpp/gpu_resident/g13flow/assets_manifest.json": "a61ab3d54563ba97b1164967ac7917be91224a9bf0e94fc1128e72028ec73b47",
+    "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp": "2327ba5676854ad3dd8d92de58917d9ceb8546052490152a3d3fd1ac287d5b81",
+    "entry/src/main/cpp/gpu_resident/g13flow/CMakeLists.txt": "9fbe74e357e125e441b334bfc4c40ccb391f9f3fb6cf1e6ace82db1449bd1e61",
+    "entry/src/main/cpp/gpu_resident/g13flow/cold.cpp": "b095ef07c78ebd2d9f27c5b61fe7d43a46dfb56b73f2910ef07ca94bed9b2bda",
+    "entry/src/main/cpp/gpu_resident/g13flow/cold.h": "9ce294185627f669e3731bc58ba1d8dd6f8fbfeef67a3e0c457731d2875a182e",
+    "entry/src/main/cpp/gpu_resident/g13flow/contract_generated.h": "d095944645691f2980574517031d1f5e910935fcb52ed300ae29e70052ad60a5",
+    "entry/src/main/cpp/gpu_resident/g13flow/controller.cpp": "f0fd302cbe609800a7f90200643f1b1bd444d293b045ecee8218e4e49293cbe4",
+    "entry/src/main/cpp/gpu_resident/g13flow/controller.h": "1086a129b662231cb843da27d1dc357532d83bed5b54a6762ad9da9f7b24891e",
+    "entry/src/main/cpp/gpu_resident/g13flow/drive.glsl": "f17fe34583c2c7a754c3da88c81bd58c3665f160e47ad526a613be1a5d7345c4",
+    "entry/src/main/cpp/gpu_resident/g13flow/frame_targets.cpp": "3c730e79c82310208a63ba355fbd84f945196f3e8635d2cf18946ee9b51598c9",
+    "entry/src/main/cpp/gpu_resident/g13flow/json.h": "270cbe20da6437c461fef863c98b2ebf73e150397ae1a506b1ea108582bff3b4",
+    "entry/src/main/cpp/gpu_resident/g13flow/kernel_assets.cpp": "98e964973e9ae6bbc614783f5f88a6a0e67a3d6578a20d33b9e2670ea3359368",
+    "entry/src/main/cpp/gpu_resident/g13flow/kernels.cmake": "9a512c93ecc2bdf5664c24a343ade6a7671bb6102f29340b19abc6cd03da331a",
+    "entry/src/main/cpp/gpu_resident/g13flow/layout_generated.glsl": "f7eca1132f8581bef48ea04240df96a801f679d030e9a95e77388544781a9759",
+    "entry/src/main/cpp/gpu_resident/g13flow/ledger.glsl": "2887b9a6b4149172c6c8a3101da01e021be2c57bb282afec52a47fb1a4ba886a",
+    "entry/src/main/cpp/gpu_resident/g13flow/mac_access.glsl": "892b41eb0cf8d042f48872ad5319b91a9dc02c460fa4074a257c396a8b3d22bb",
+    "entry/src/main/cpp/gpu_resident/g13flow/math_constants.glsl": "d5de12fb86a43950dd5f40fddc4f32224f4b9e18be1258635218944a269d12e2",
+    "entry/src/main/cpp/gpu_resident/g13flow/math_soft128.glsl": "0d27ca6b98b00521e7105c8583f5b7c8efbaab0d40caf1d509565b0595b308c8",
+    "entry/src/main/cpp/gpu_resident/g13flow/pipeline.comp": "aed83cade0f3c349b1a553f8144ee787e3fc1b492fb8706cc194d192fd799483",
+    "entry/src/main/cpp/gpu_resident/g13flow/pipeline_assembled.comp": "09b45bbc83d47bf5c7547b743335b03f07770ddfb43d6131719d66cabbab1c28",
+    "entry/src/main/cpp/gpu_resident/g13flow/pipeline_source.h": "3b80142ad1d1258b42c48f22f33e05902712b093bb747c076fe1670248ddc6ac",
+    "entry/src/main/cpp/gpu_resident/g13flow/pressure_mg.glsl": "86bdd72a21dd4f376e56ae422caeb653e444676a8d2a07f13b66ba37bddc8fce",
+    "entry/src/main/cpp/gpu_resident/g13flow/render_pack.glsl": "af3c073b69dc3173b3365d6eb159d463d6fbf3ad3286b4f16fea7dc549348e8d",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene.cpp": "ae8311a3ceba7304c0d1e409e4ba37b4a50d4195cca031a2204b248bed052658",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene.frag": "bfde59fd6bba4865a8f58a0d6fced65005e6e311266cef4edde7e76cc7a84666",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene.h": "eb3f55fb300da8b0dff9ee8172ba32e585ff3ac8d5307745d8507c3db2239f88",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene.vert": "bf7b11aab4ea52232c7fa1d20bdff9d5ee63da3a5ab4aa3252fe1a97f7d09d51",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene_sources.h": "9bce2cf32ad389e5ba8f417f4f98a03175c5d80bb199f875248c837b38bffdf3",
+    "entry/src/main/cpp/gpu_resident/g13flow/sha256.glsl": "9d0781da8bc988554ea13c7fabe23cd608cdd08958b041d07cb799a703ab3e91",
+    "entry/src/main/cpp/gpu_resident/g13flow/trace.glsl": "4f1e54796f7b4b5784cc082a5c18545bd28ef74a7951f458bb6649221b20db1f",
+    "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp": "77968c683061696daabc00f7f893da57e20b0868008b0b0bcdc191b43e1b47f1",
+    "entry/src/main/cpp/gpu_resident/g13flow/transport.h": "ad1368af525bec87e6d3218469b049eabd397d52e310cee09fb97b3569718a58",
+    "entry/src/main/cpp/gpu_resident/g13flow/units.glsl": "35416589b653bdbda57dab2201330b85ef2bf4f794f14f66bfcaaeab386f8fad",
+    "entry/src/main/cpp/gpu_resident/g13flow/viscosity.glsl": "8637821ebfb9dca88110ccfce407b6ba79246bd798adb158da96ed0f0a0dd3ba",
+    "entry/src/main/cpp/gpu_resident/g13flow/wide_q32.glsl": "48632d611a89b76a10895f0bb691cbe9cf2a6033cfc73c30536e9f7f4ef3d674",
+    "entry/src/main/cpp/gpu_resident/g13flow/wire.h": "7f015ec449445fbae4de217cd69955727a09c4241f131208d1bce24497750fc3",
+    "entry/src/main/cpp/gpu_resident/program_cache/graphics_program_factory.h": "7831d8c6259fd27484ce66fef6330eca1eb6c15f75fe1c9761a915b4acc1216b",
+    "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h": "3d3be0be6e85c2aafc78bcb14207ac76a1342374c2aac3167550c04cbc81d658",
+    "entry/src/main/cpp/types/libgrs_g13/index.d.ts": "1533290fe476021065065144f178df5fb105ee708775bd2205675bab4639ad8e",
+    "entry/src/main/cpp/types/libgrs_g13/oh-package.json5": "3720e3d46c28b1d9607e4bd02e606755f1f8410d360131a46dd6b1f2a77c65ff",
+    "entry/src/main/ets/entryability/G13ResearchAbility.ets": "1ba95fd88f61fc95bbdab9497dc5d51b88a6e26de427b9b10540ae26df8eb82d",
+    "entry/src/main/ets/pages/GpuResidentG13.ets": "3a1f63754203e498ae8e5dae5af9d56bbd592a4802216c3261edce1d42560ae0",
+    "entry/src/main/ets/physics/G13ColdArchiveCore.ets": "3eecb0c3482641dc47b887d6fef670ea6a772e5e7a2190b5b2bcd764403de841",
+    "entry/src/main/ets/physics/G13ResearchConfig.ets": "d20f1d4cb8ac716160cba9923385b1f74999f27fe3f187346c6709bfd5e12548",
+    "entry/src/main/ets/physics/GpuG13Cold.ets": "d68ea30b8384f5df9406523189384b7a754fb2bd7aba03f9158b71c6dce8cbfa",
+    "entry/src/main/ets/physics/GpuG13Input.ets": "67c47020a0c3362ba376046153771ffd58c2b324d906cc10fb7b4c58f4cede5b",
+    "entry/src/main/ets/workers/G13ColdWorker.ets": "45b396a594897f731138a50f8123adf9a0fe6e4d1045c5e641af5c8bbf8e78a7",
+    "tools/g13/generate_assets.py": "815a367593e9160ad442ef631064fd33d7343f9e97a584d20c6a003ad5bb52c7",
+    "tools/g13/prepare_build.cjs": "a0a86e96ea9c8bdee26457c40571500810dd679362edbabb7b3c4d32489c9655",
+    "tools/g13/read_archive.py": "e8e360596f870f422c474ea8d23db9c70fbf5067025f33e46b9aa0e7dbdea77c"
+  },
+  "runtimeEvidence": {
+    "F01_F16": "NOT_MEASURED",
+    "device_FP32_global_precision": "NOT_MEASURED",
+    "math_global_precision": "NOT_MEASURED",
+    "F05_physical_pressure": "NOT_MEASURED",
+    "physical_energy_momentum": "NOT_MEASURED",
+    "250ms_deadline": "NOT_MEASURED",
+    "30fps": "NOT_MEASURED",
+    "GPU_timing": "NOT_MEASURED",
+    "memory_RSS": "NOT_MEASURED",
+    "actual_display_present": "NOT_MEASURED"
+  },
+  "externalContractQuestion": {
+    "originalComment": "6afdaa64e4b004b3f877fcf4",
+    "implementation": "Existing error 17; raw mathStatus and NUMERIC_DOMAIN detail in cold diagnostic; no invented public error enum or relaxed precision gate."
+  }
+}
