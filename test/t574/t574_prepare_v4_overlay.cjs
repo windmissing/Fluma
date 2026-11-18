@@ -1,52 +1,24 @@
-'use strict';
-// T574: v4 prepare transaction overlay on the t540 chain — imports
-// PrepareReadinessV4 into the generated page, binds the owner at begin,
-// records soft/hard changes with the first-invalidating witness, and exposes
-// prepareAttemptWitnessV4(prepareId) as a cold export (no owner wake-up).
-const fs = require('node:fs');
-const path = require('node:path');
-const ROOT = path.resolve(__dirname, '../..');
-module.exports = function overlayT574(out) {
-  const ets = path.join(out, 'entry/src/main/ets');
-  // 1. V4 module rides the t426 copy (already handled there).
-  // 2. Page: import + field + witness wiring.
-  const page = path.join(ets, 'pages/P051DerivedV2Demo.ets');
-  let s = fs.readFileSync(page, 'utf8').replaceAll('\r\n', '\n');
-  if (s.includes('PrepareReadinessV4')) return; // idempotent
-  const anchor = "import { PrepareReadiness, PrepareSnapshot, PrepareRect, PrepareApiRecord } from '../render/PrepareReadiness';";
-  if (s.split(anchor).length !== 2) throw Error('T574_IMPORT_ANCHOR');
-  s = s.replace(anchor, anchor + "\nimport { PrepareReadinessV4, PrepareAttemptOwner } from '../render/PrepareReadinessV4';");
-  // field next to the existing prepare instance
-  const fieldAnchor = 'private readonly prepareGate:PrepareReadiness=new PrepareReadiness(';
-  if (s.split(fieldAnchor).length !== 2) throw Error('T574_FIELD_ANCHOR');
-  s = s.replace(fieldAnchor, 'readonly prepareV4=new PrepareReadinessV4();\n  ' + fieldAnchor);
-  // begin() wiring: the page's begin call starts the v4 transaction with the
-  // real owner; soft/hard changes route through noteChange.
-  const beginAnchor = '  if(!this.prepareGate.begin(';
-  if (s.split(beginAnchor).length !== 2) throw Error('T574_BEGIN_ANCHOR');
-  s = s.replace(beginAnchor, '  this.prepareV4Begin570();\n' + beginAnchor);
-  // append the helper + witness export methods before the final closing brace
-  const lastBrace = s.lastIndexOf('}');
-  const methods = `
-  prepareV4Begin570():void {
-    const owner=new PrepareAttemptOwner();
-    owner.prepareId=this.prepareGate.prepareId;owner.pageGeneration=this.prepareGate.pageGeneration;owner.branch=this.raster.plan.generation;
-    owner.windowId=this.prepareCurrentWindow570();owner.windowGeneration=owner.windowId;
-    owner.controller=this.prepareSession570();owner.session=owner.controller;owner.surface=owner.controller;
-    owner.context=this.prepareContext570();owner.run=this.prepareRun570();
-    this.prepareV4.begin(p013NowMs(),this.prepareAllowed570(),owner);
-  }
-  prepareCurrentWindow570():number{return 0;}
-  prepareSession570():number{return 0;}
-  prepareContext570():number{return 0;}
-  prepareRun570():string{return '';}
-  prepareAllowed570():boolean{return this.prepareGate.active;}
-  prepareAttemptWitnessV4(prepareId:number):string {
-    if(this.prepareV4.prepareId!==prepareId)return '{"state":"STALE_PREPARE_ID"}';
-    return this.prepareV4.report();
-  }
-`;
-  s = s.slice(0, lastBrace) + methods + s.slice(lastBrace);
-  fs.writeFileSync(page, s);
-  console.log('t574 overlay applied');
+const fs=require('node:fs'),path=require('node:path');
+module.exports=function(out){
+ const base=path.join(out,'entry/src/main/ets'),file=path.join(base,'pages/P051DerivedV2Demo.ets');
+ fs.copyFileSync(path.join(__dirname,'../t426/PrepareReadinessV4.ets'),path.join(base,'render/PrepareReadinessV4.ets'));
+ let s=fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
+ s="import { PrepareReadinessV4, PrepareAttemptOwner } from '../render/PrepareReadinessV4';\n"+s;
+ s=s.replace('private readonly prepareGate:PrepareReadiness=new PrepareReadiness(', 'private readonly prepareGate:PrepareReadinessV4=new PrepareReadinessV4(');
+ s=s.replace("@State private prepareText:string='CONFIGURING';","@State private reserveEnabled:boolean=false;\n @State private prepareText:string='CONFIGURING';");
+ s=s.replace(' private prepareUpdate():void {'," private prepareUpdate():void {\n  this.reserveEnabled=this.prepareGate.state==='READY'&&!this.configuring&&!this.exporting&&this.evidence===null&&this.singleSand.capture.configurable();");
+ s=s.replace(".enabled(this.prepareGate.state==='READY')",'.enabled(this.reserveEnabled)');
+ s=s.replace('  s.nativeReady=native.ready;s.run=native.run;s.opticsRevision=native.revision;', '  s.nativeReady=native.ready;s.run=native.run;s.opticsRevision=native.revision;\n  const owner=new PrepareAttemptOwner();owner.prepareId=this.prepareGate.prepareId;owner.pageGeneration=this.prepareGate.pageGeneration;owner.branch=this.prepareBranch;owner.windowId=s.windowId;owner.windowGeneration=s.windowGeneration;owner.controller=s.controller;owner.session=s.session;owner.surface=s.surface;owner.context=s.context;owner.run=s.run;if(this.prepareObservation!==null&&this.prepareObservation.prepareId===this.prepareGate.prepareId)this.prepareGate.sampleFrame(owner);');
+ s=s.replace("const r=this.singleSand.reserveCapture(roi,this.probeFixtureKey,Number(this.maxHoldText));","    const ticket=this.prepareGate.checkForReserve(this.readPrepareSnapshot(),p013NowMs());if(!ticket.valid){this.probeStatus=ticket.reason;this.prepareUpdate();return;}\nconst r=this.singleSand.reserveCapture(roi,this.probeFixtureKey,Number(this.maxHoldText));");
+ s=s.replace('this.prepareGate.consume();',`if(!this.prepareGate.consumeTicket(ticket)){this.singleSand.capture.invalidate('PREPARE_TICKET_MISMATCH');this.probeStatus='PREPARE_TICKET_MISMATCH';}`);
+ s=s.replace(' private async reserve():Promise<void> {',' private async reserveImpl598():Promise<void> {');
+ const methods=`
+ private reserveIo598:number=0;private reserveSerial598:number=0;private reserveFirst598:Uint32Array=new Uint32Array(64);private reserveLast598:Uint32Array=new Uint32Array(64);
+ private async reserve():Promise<void>{const id=++this.reserveSerial598;const before=this.prepareGate.state;let failure='';this.reserveIo598=0;try{await this.reserveImpl598();}catch(error){failure=String(error);if(this.reserveIo598===1)this.reserveIo598=3;}finally{const core=new Uint32Array(64);core[0]=id;core[1]=this.prepareGate.prepareId;core[2]=this.prepareGate.pageGeneration;core[3]=this.prepareGate.observationSerial;core[4]=this.prepareGate.inputSerial;core[5]=this.configuring?1:0;core[6]=this.exporting?1:0;core[7]=this.evidence!==null?1:0;core[8]=this.reserveIo598;core[11]=parseWindowRoi(this.probeRoi)===null?0:1;core[12]=this.singleSand.capture.status().state==='RESERVED'?1:0;core[13]=this.prepareGate.reason==='PREPARE_PERMIT_CONSUMED'?1:0;core[14]=this.prepareGate.ownerSerial;core[9]=before==='READY'?1:0;core[10]=this.prepareGate.state==='READY'?1:0;const reason=failure||this.prepareGate.reason||this.probeStatus;for(let i=0;i<Math.min(48,reason.length);i++)core[16+i]=reason.charCodeAt(i);if(this.reserveFirst598[0]===0)this.reserveFirst598.set(core);this.reserveLast598.set(core);this.prepareUpdate();}}
+ reserveAttemptWitnessV1(id:number):string{const first:number[]=[],last:number[]=[];if(id===0||id===this.reserveFirst598[0])for(let i=0;i<64;i++)first.push(this.reserveFirst598[i]);if(id===0||id===this.reserveLast598[0])for(let i=0;i<64;i++)last.push(this.reserveLast598[i]);const raw=JSON.stringify({revision:'ReserveAttemptWitnessV1',coreBytes:256,first:first,last:last});return this.rawBytes540(raw)<=4096?raw:'{"state":"INCOMPLETE_WITNESS_UTF8_LIMIT"}';}
+
+ `;
+ const start=s.indexOf(' private async reserveImpl598'),end=s.indexOf(' private async exportWindow',start);let reserve=s.slice(start,end);reserve=reserve.replace('  const context=getContext(this)', '  this.reserveIo598=1;\n  const context=getContext(this)').replace('  await this.statusCold();','  this.reserveIo598=2;\n  await this.statusCold();');s=s.slice(0,start)+reserve+s.slice(end);
+ const at=s.lastIndexOf('}');s=s.slice(0,at)+methods+s.slice(at);
+ fs.writeFileSync(file,s);
 };
