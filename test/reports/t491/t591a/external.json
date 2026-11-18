@@ -1,0 +1,54 @@
+{
+ "revision": "T591_EXTERNAL_RECEIPT_V1",
+ "package": {
+  "path": "test/t257/T579-m2fix/T579-m2fix-signed.hap",
+  "bytes": 8845396,
+  "sha256": "a332c0a1cd541e586a42984dc33bb353486c3852ec87b567b8a95606d13c44b3"
+ },
+ "elf": {
+  "name": "libs/arm64-v8a/libgrsm1.so",
+  "bytes": 1174288,
+  "sha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f"
+ },
+ "device": {
+  "serial": "011124264R000337",
+  "osVersion": "MLN-AL00 7.1.0.566(C00E23R2P1DEVDUlog)",
+  "model": "MLN-AL00",
+  "build": "MLN-AL00-user 207.1.0 HUAWEIMLN-AL00 566DEVDU-CHN-LGRP1 release-keys"
+ },
+ "bmDump": [
+  "                \"versionName\": \"\"",
+  "                \"versionName\": \"\"",
+  "            \"versionName\": \"\"",
+  "        \"versionName\": \"1.0.0\"",
+  "    \"installTime\": 1794884244276,",
+  "    \"updateTime\": 1795007225132,",
+  "            \"installTime\": 1794884244276,",
+  "            \"updateTime\": 1795007225132",
+  "    \"versionName\": \"1.0.0\""
+ ],
+ "installAt": "2026-11-18T21:13:25",
+ "notes": "install+load receipt; original manifest kept DECLARATION_MISSING (COLD_WANT_EXTERNAL_RECEIPT intent preserved); SHA match to delivery.json wave1 T579-m2fix confirmed",
+ "linkedOriginal": {
+  "hapSha256": "a332c0a1cd541e586a42984dc33bb353486c3852ec87b567b8a95606d13c44b3",
+  "elfSha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f"
+ },
+ "process": {
+  "pid": 57432,
+  "note": "current M0 owner PID (new attempt epoch4); original T461 m2fix attempt process no longer alive - same-attempt second read NOT possible per T588 rule (no stitching)"
+ },
+ "timeline": {
+  "snapshot": "gpu-timeline-libgrsm0.so-57432-1-1795007523565",
+  "rows": 185,
+  "pages": 47,
+  "missing": 0,
+  "duplicates": 0,
+  "state": "INCOMPLETE",
+  "reason": "GREW_DURING_EXPORT",
+  "epoch": 4,
+  "runLo": 2,
+  "surfaceLo": 3,
+  "contextLo": 3,
+  "permissionState": "STATE_LOST"
+ }
+}
