@@ -1,0 +1,1203 @@
+{
+  "schema": "T613_G13_REUSE_INVENTORY_V1",
+  "date": "2026-11-18",
+  "role": "architect",
+  "snapshotHead": "07eda79e0634582faa87d2c40536d0a19fd702ab",
+  "workingTreeModifications": [
+    "entry/src/main/cpp/gpu_resident/CMakeLists.txt",
+    "entry/src/main/cpp/gpu_resident/g9spf/clock_producer.h",
+    "entry/src/main/cpp/gpu_resident/g9spf/kernels.cmake",
+    "entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp",
+    "entry/src/main/cpp/gpu_resident/g9spf/touch_adapter.h",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h",
+    "entry/src/main/ets/physics/GpuG9Cold.ets"
+  ],
+  "scope": [
+    "M1",
+    "M2",
+    "M3",
+    "G9",
+    "G11",
+    "G12"
+  ],
+  "executionOrder": [
+    13,
+    14,
+    12
+  ],
+  "sourceBytesAreSnapshot": true,
+  "deployedIdentityProven": false,
+  "deviceUsed": false,
+  "buildsRun": false,
+  "productTestsRun": false,
+  "newFluidSolverImplemented": false,
+  "productPASS": false,
+  "assets": [
+    {
+      "id": "I01",
+      "route": "build",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "explicit targets and assembled shader identity",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/CMakeLists.txt",
+          "symbol": "add_library(grsm1 SHARED",
+          "line": 75
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/CMakeLists.txt",
+          "symbol": "add_library(grs_foundation STATIC",
+          "line": 79
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/kernels.cmake",
+          "symbol": "m3b_root_sha.h",
+          "line": 31
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/kernels.cmake",
+          "symbol": "g9spf/transport.cpp",
+          "line": 22
+        }
+      ]
+    },
+    {
+      "id": "I02",
+      "route": "build",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "isolated generators are different binding graphs",
+      "refs": [
+        {
+          "path": "test/t517/generate.cjs",
+          "symbol": "/m3b/kernels.cmake",
+          "line": 6
+        },
+        {
+          "path": "test/t529/generate.cjs",
+          "symbol": "/g9spf/kernels.cmake",
+          "line": 6
+        },
+        {
+          "path": "test/t537/generate.cjs",
+          "symbol": "['m1','m2']",
+          "line": 3
+        },
+        {
+          "path": "test/t599/generate.cjs",
+          "symbol": "t576_generate_pipeline.cjs",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "I03",
+      "route": "common",
+      "disposition": "REUSE_CONDITIONAL",
+      "purpose": "compute program persistence and real compile receipts",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+          "symbol": "inline bool Build(",
+          "line": 178
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+          "symbol": "inline std::string Environment()",
+          "line": 36
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+          "symbol": "bool Configure(",
+          "line": 365
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h",
+          "symbol": "kTotalLimit = 128u * 1024 * 1024",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "I04",
+      "route": "common",
+      "disposition": "REUSE_CONDITIONAL",
+      "purpose": "graphics cache ABI and reflection",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/program_cache/graphics_program_factory.h",
+          "symbol": "BuildGraphics(",
+          "line": 151
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/uniform_locations.h",
+          "symbol": "struct UniformLocations",
+          "line": 8
+        }
+      ]
+    },
+    {
+      "id": "I05",
+      "route": "common",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "strict typed decode with route-specific registration",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/napi_words_contract.h",
+          "symbol": "ReadWordsResult<N> ReadWords(",
+          "line": 170
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/napi_words_contract.h",
+          "symbol": "M3A = 0, M3B = 1, G9 = 2",
+          "line": 18
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/napi_words_contract.cpp",
+          "symbol": "bool SnapshotJson(",
+          "line": 87
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/bridge_state.h",
+          "symbol": "OfferLocked(",
+          "line": 22
+        }
+      ]
+    },
+    {
+      "id": "I06",
+      "route": "common",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "XComponent single EGL owner and revoke-before-retire",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+          "symbol": "struct App : BridgeState",
+          "line": 51
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+          "symbol": "eglSwapBuffers",
+          "line": 760
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/bridge_state.h",
+          "symbol": "InvalidateLocked()",
+          "line": 20
+        },
+        {
+          "path": "entry/src/main/ets/pages/GpuResidentM1.ets",
+          "symbol": "class M1DemoFrame",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "id": "I07",
+      "route": "common",
+      "disposition": "REUSE_CONDITIONAL",
+      "purpose": "bounded logical resource ledger, not driver RSS",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/resource_ledger.h",
+          "symbol": "class Ledger",
+          "line": 29
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/resource_ledger.h",
+          "symbol": "DRIVER_NOT_MEASURED",
+          "line": 21
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/resource_gl.h",
+          "symbol": "inline void Bind(",
+          "line": 15
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/resource_gl.h",
+          "symbol": "#define glBufferData",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "id": "I08",
+      "route": "common",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "separate compute scene and present qualification",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/stage_capability.h",
+          "symbol": "struct StageCapabilityV2",
+          "line": 14
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/stage_capability.h",
+          "symbol": "QueryCapabilityI(",
+          "line": 33
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/capability.h",
+          "symbol": "ProbeCurrent(",
+          "line": 21
+        }
+      ]
+    },
+    {
+      "id": "I09",
+      "route": "common",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "root completion and bank/lease atomicity",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/control.h",
+          "symbol": "class RootOwner",
+          "line": 27
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.h",
+          "symbol": "ContinueSubmit()",
+          "line": 31
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/controller.h",
+          "symbol": "AcquireV5(",
+          "line": 50
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/controller.h",
+          "symbol": "AcquireScene()",
+          "line": 36
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/transport.h",
+          "symbol": "Commit(const Permit&",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "id": "I10",
+      "route": "common",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "monotonic quotas, not a new fluid time discretization",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h",
+          "symbol": "GapNs=33333333,JobNs=250000000",
+          "line": 12
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.h",
+          "symbol": "GapNs=33333333,RootNs=250000000",
+          "line": 14
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.h",
+          "symbol": "Balanced()const",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "id": "I11",
+      "route": "common",
+      "disposition": "REUSE_CONDITIONAL",
+      "purpose": "one process-wide cold credit DSO",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.h",
+          "symbol": "class DetachedBlock",
+          "line": 31
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp",
+          "symbol": "kProcessBytes=524375552",
+          "line": 8
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp",
+          "symbol": "GrsColdReserve(",
+          "line": 11
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.cmake",
+          "symbol": "add_library(grs_cold_slots SHARED",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "id": "I12",
+      "route": "M3",
+      "disposition": "IN_FLIGHT_PARTIAL",
+      "purpose": "V5 retained BASE/cold implementation and ongoing closure",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp",
+          "symbol": "CaptureColdV5",
+          "line": 16
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/transport.cpp",
+          "symbol": "TransportV5::",
+          "line": 15
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h",
+          "symbol": "namespace",
+          "line": 7
+        },
+        {
+          "path": "docs/developer-T596-progress.md",
+          "symbol": "尚未完成",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "id": "I13",
+      "route": "common",
+      "disposition": "PATTERN_ONLY",
+      "purpose": "cold collector paging and source-specific reader",
+      "refs": [
+        {
+          "path": "entry/src/main/ets/physics/GpuBoundedCold.ets",
+          "symbol": "export",
+          "line": 1
+        },
+        {
+          "path": "entry/src/main/ets/physics/GpuM3Cold.ets",
+          "symbol": "export",
+          "line": 27
+        },
+        {
+          "path": "entry/src/main/ets/physics/GpuG9Cold.ets",
+          "symbol": "export",
+          "line": 30
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/cold_reader.py",
+          "symbol": "def ",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "id": "I14",
+      "route": "scene",
+      "disposition": "REUSE_CONDITIONAL",
+      "purpose": "two GPU full-frame targets and last-good commit",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/p013renderer/fullframe_targets.h",
+          "symbol": "class FullFrameTargets",
+          "line": 5
+        },
+        {
+          "path": "entry/src/main/cpp/p013renderer/fullframe_targets.cpp",
+          "symbol": "FullFrameTargets::Ensure",
+          "line": 4
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/scene.cpp",
+          "symbol": "controller.AcquireScene()",
+          "line": 74
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/scene.cpp",
+          "symbol": "controller.ReleaseScene(",
+          "line": 99
+        }
+      ]
+    },
+    {
+      "id": "I15",
+      "route": "M1",
+      "disposition": "LEGACY_NUMERICS",
+      "purpose": "height transport/packet rules do not supply a field solver",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/water_edge.comp",
+          "symbol": "uniform uint parity,kappaW;",
+          "line": 7
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/quantum_motion.glsl",
+          "symbol": "void resolvePacket(",
+          "line": 1
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/layout_generated.h",
+          "symbol": "revision=2,features=3",
+          "line": 6
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/full_transport.h",
+          "symbol": "class FullM1Transport",
+          "line": 18
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/scene.frag",
+          "symbol": "void main",
+          "line": 19
+        }
+      ]
+    },
+    {
+      "id": "I16",
+      "route": "M1",
+      "disposition": "SCAFFOLD_DISTINCT_FROM_FULL",
+      "purpose": "old source-core profile explicitly has no quantum implementation",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/profile.h",
+          "symbol": "ProtocolReadyShaderNotImplemented",
+          "line": 5
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m1/profile.cpp",
+          "symbol": "ConfigureCode::ProtocolReadyShaderNotImplemented",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "id": "I17",
+      "route": "M2",
+      "disposition": "LEGACY_NUMERICS",
+      "purpose": "SOURCE128 merging and legacy stock geometry",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/source_execute.glsl",
+          "symbol": "void ",
+          "line": 13
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/merge_primitives.glsl",
+          "symbol": "uint ",
+          "line": 2
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/root_gate.h",
+          "symbol": "class RootGate",
+          "line": 20
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/buffer_plan.h",
+          "symbol": "ResidentBufferBytes(",
+          "line": 8
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m2/layout_generated.h",
+          "symbol": "namespace",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "id": "I18",
+      "route": "M3",
+      "disposition": "LEGACY_NUMERICS",
+      "purpose": "V4/V5 sand lineage and lifting",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3a/source_v4.comp",
+          "symbol": "void main",
+          "line": 33
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/lift_writer.glsl",
+          "symbol": "void ",
+          "line": 9
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/lineage_schema.h",
+          "symbol": "struct LineageProfile",
+          "line": 1080
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/m3b/controller.h",
+          "symbol": "class ControllerV5",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "id": "I19",
+      "route": "G9",
+      "disposition": "LEGACY_NUMERICS",
+      "purpose": "SPF R1 and DM v2 are sand physics",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/schema_generated.h",
+          "symbol": "namespace",
+          "line": 5
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp",
+          "symbol": "void main",
+          "line": 1959
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/schema_generated.h",
+          "symbol": "namespace",
+          "line": 8
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp",
+          "symbol": "void main",
+          "line": 2199
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9dm/research_config.h",
+          "symbol": "namespace",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "id": "I20",
+      "route": "G9",
+      "disposition": "IN_FLIGHT_PARTIAL",
+      "purpose": "clock proof and actual touch/presented mapping still separate",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/clock_producer.h",
+          "symbol": "CLOCK_MONOTONIC",
+          "line": 32
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/touch_adapter.h",
+          "symbol": "TouchEvidence256",
+          "line": 50
+        },
+        {
+          "path": "docs/developer-T599-progress.md",
+          "symbol": "尚未完成",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "id": "I21",
+      "route": "G11",
+      "disposition": "LEGACY_VISUAL",
+      "purpose": "accepted sand material-plan markers are not fluid velocity",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.h",
+          "symbol": "class VisualTransport",
+          "line": 38
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl",
+          "symbol": "g11PutMarker(",
+          "line": 32
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h",
+          "symbol": "kConfigRevision = 1u",
+          "line": 14
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/scene.cpp",
+          "symbol": "CompositeScene::Draw(",
+          "line": 129
+        },
+        {
+          "path": "test/t566_generate_composite.cjs",
+          "symbol": "g9dm/pipeline.comp",
+          "line": 12
+        }
+      ]
+    },
+    {
+      "id": "I22",
+      "route": "G11",
+      "disposition": "METADATA_ONLY",
+      "purpose": "cold PAGE receipt has no actual raw word payload",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/cold.cpp",
+          "symbol": "Cold::Read(",
+          "line": 54
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/cold.cpp",
+          "symbol": "page.Number(available < kPageWords",
+          "line": 71
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g11vis/kernels.cmake",
+          "symbol": "../../../test/t566_generate_composite.cjs",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "id": "I23",
+      "route": "G12",
+      "disposition": "PARTIAL_NOT_IMPLEMENTED",
+      "purpose": "old porous coupling and explicit wet writer faults",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/contract_generated.h",
+          "symbol": "G12_POROUS_SPF_Q20_V1",
+          "line": 8
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/water_core.glsl",
+          "symbol": "g12JFlight()",
+          "line": 78
+        },
+        {
+          "path": "test/t576_generate_pipeline.cjs",
+          "symbol": "bool g12NotImplemented(",
+          "line": 73
+        },
+        {
+          "path": "test/t576_generate_pipeline.cjs",
+          "symbol": "bool g12SourceWetGate(){return true;}",
+          "line": 85
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/transport.h",
+          "symbol": "class Transport",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "id": "I24",
+      "route": "G12",
+      "disposition": "METADATA_ONLY",
+      "purpose": "cold PAGE has no immutable snapshot or raw payload",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/cold.cpp",
+          "symbol": "Cold::Read(",
+          "line": 29
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/cold.h",
+          "symbol": "struct Slot",
+          "line": 19
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/scene.cpp",
+          "symbol": "G12_POROUS_SCENE_V1|",
+          "line": 90
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g12water/kernels.cmake",
+          "symbol": "../../../test/t576_generate_pipeline.cjs",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "id": "I25",
+      "route": "common",
+      "disposition": "REUSE_CONDITIONAL",
+      "purpose": "checked integer primitives only if new numeric policy needs them",
+      "refs": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/integer.h",
+          "symbol": "namespace grs",
+          "line": 5
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/integer_primitives.glsl",
+          "symbol": "grsMul32",
+          "line": 3
+        },
+        {
+          "path": "entry/src/main/cpp/gpu_resident/g9spf/wide_integer.glsl",
+          "symbol": "uint ",
+          "line": 5
+        }
+      ]
+    },
+    {
+      "id": "I26",
+      "route": "evidence",
+      "disposition": "FACILITY_NOT_NEW_QUALIFICATION",
+      "purpose": "existing signing and legacy independent evidence are narrow",
+      "refs": [
+        {
+          "path": "docs/test-report-T579-signing-handoff-v1.md",
+          "symbol": "不使用真机",
+          "line": 3
+        },
+        {
+          "path": "docs/test-report-T541-device-predicate-v2.md",
+          "symbol": "vertex=0",
+          "line": 27
+        },
+        {
+          "path": "docs/test-report-T556-dm2-oracle-v1.md",
+          "symbol": "GPU 域全 NOT_RUN",
+          "line": 3
+        },
+        {
+          "path": "docs/test-report-T461-empty-raw-v3.md",
+          "symbol": "nativeEndNs",
+          "line": 32
+        }
+      ]
+    }
+  ],
+  "receipts": {
+    "entry/src/main/cpp/CMakeLists.txt": {
+      "bytes": 5901,
+      "sha256": "2a4b318d116aa5344f06ad39b34075b496fcdd5d7bfb723c14cb734312990291"
+    },
+    "entry/src/main/cpp/gpu_resident/CMakeLists.txt": {
+      "bytes": 7680,
+      "sha256": "a6e737a87f9a8c40012059aa9cc80022a78582378711e7c997b02d754c080c9f"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/kernels.cmake": {
+      "bytes": 3664,
+      "sha256": "2819ce5fa17ab77e5c1646253321e83325af6abeff2aafa4297da95ebd823f97"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/kernels.cmake": {
+      "bytes": 1935,
+      "sha256": "dc7233b5bd6dd525324e31040f84c54ae51b5653d33071ec81373776caa1c820"
+    },
+    "test/t517/generate.cjs": {
+      "bytes": 1854,
+      "sha256": "991625af20e7e08bda0686d7ec0dd76909a87c0e532a8835784cd21946eb19f6"
+    },
+    "test/t529/generate.cjs": {
+      "bytes": 1975,
+      "sha256": "49a7e4197937eaf219564c6512d8e7b2c98c45fdb039b720a44148a837f136d2"
+    },
+    "test/t537/generate.cjs": {
+      "bytes": 400,
+      "sha256": "8c21492ae8f43f5395a458e251c3459c4b8d0e220f9f33159829561385bfc0f7"
+    },
+    "test/t599/generate.cjs": {
+      "bytes": 456,
+      "sha256": "eae9cf1fd31f5808056319405b3e314157aaf3016772bba27e36a12c00e420ee"
+    },
+    "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h": {
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    "entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h": {
+      "bytes": 24301,
+      "sha256": "c9557a0133c7b19878e079f0cc1587c7dbae346c15011773b3a76501811f75a3"
+    },
+    "entry/src/main/cpp/gpu_resident/program_cache/graphics_program_factory.h": {
+      "bytes": 18059,
+      "sha256": "44a9281a06392a9989fced145fdad78e126e09a8b3a6d57a9b6a6561c4d8e7e7"
+    },
+    "entry/src/main/cpp/gpu_resident/uniform_locations.h": {
+      "bytes": 1213,
+      "sha256": "979ecf2ec65152a6f3d54e9a98dc0d85a198a9c1b3702c6b46e72cb232f197c3"
+    },
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.h": {
+      "bytes": 11104,
+      "sha256": "87491012a266ceffab5e55225c9c992506c4d503ff80209a86a9bd6573a22d24"
+    },
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.cpp": {
+      "bytes": 6318,
+      "sha256": "5e571b384249ba14a272886da0f3c36cf4989efcaf8671e49c7a0ac30b4111d8"
+    },
+    "entry/src/main/cpp/gpu_resident/bridge_state.h": {
+      "bytes": 2686,
+      "sha256": "a9bf23423c4bd6536593e604e96d845a448fcb4b47f27aa0f268c9d7aec263cd"
+    },
+    "entry/src/main/cpp/gpu_resident/app_bridge.cpp": {
+      "bytes": 64968,
+      "sha256": "66864df5d141405ab95b49c1450df4109aec7bc9207a8e9e599eceae0a469594"
+    },
+    "entry/src/main/ets/pages/GpuResidentM1.ets": {
+      "bytes": 13732,
+      "sha256": "4ce2810a5169131980b8e12097d4b73c1ac3b5e3c302c5ff028bc2a43c1df655"
+    },
+    "entry/src/main/cpp/gpu_resident/resource_ledger.h": {
+      "bytes": 10689,
+      "sha256": "72062e487b7606239b06ec092145e6e2033ca2bf05d4adcbf2412228047f5f0e"
+    },
+    "entry/src/main/cpp/gpu_resident/resource_gl.h": {
+      "bytes": 6019,
+      "sha256": "2e9f374313b15af9fe23ea816a57df3b9d09c424de9c784de42f9842c91e3985"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/stage_capability.h": {
+      "bytes": 2118,
+      "sha256": "9509b85ca8b27c58d400286c7623340d623d5345a39dd648c521175dd2e63f71"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/capability.h": {
+      "bytes": 2264,
+      "sha256": "bfecc8ae4c73d686da9c3680946d4bf8e8ff4d64c29fd5bd5cf262446db349b3"
+    },
+    "entry/src/main/cpp/gpu_resident/control.h": {
+      "bytes": 3263,
+      "sha256": "7cd39cd0e570379cfdcd1d8563fc218888f6b10cdfe8c0ae6e6cd3770f883ede"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/full_transport.h": {
+      "bytes": 7180,
+      "sha256": "9faad28d0d30e6325637f3dd07c1b9017328c71cbf00b5dc0b68bbf6c682c8f9"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/controller.h": {
+      "bytes": 3132,
+      "sha256": "eaa5ccd9a4676e51e2890064c6ee8e7156566c47a8a12851c4ee2d200bf82483"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/controller.h": {
+      "bytes": 2639,
+      "sha256": "4808d1607a74e64f90ddeb7e8b46bf9fb28af2c7603c742a6f575cf4759ceb9a"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/transport.h": {
+      "bytes": 2924,
+      "sha256": "3b32bb2df662cc644f4f257678824b65f790052045543f344a32f6e51979f289"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/progress_clock_v2.h": {
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/progress_clock_v3.h": {
+      "bytes": 2604,
+      "sha256": "864741167f1ab2fb4ba525dd99c8461603d043d9a6b30aefb3600e446badf2e7"
+    },
+    "entry/src/main/cpp/gpu_resident/cold_slot_broker.h": {
+      "bytes": 2288,
+      "sha256": "27a3dc748fd950be44595bc8c8d7e6d5caf79fd955af00227fa93b926c1c760f"
+    },
+    "entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp": {
+      "bytes": 2146,
+      "sha256": "dd9e14ce53bbf2be330d2751f16ddc9cf4d0a5cfa4134ddcbf9143c2adefdb5f"
+    },
+    "entry/src/main/cpp/gpu_resident/cold_slot_broker.cmake": {
+      "bytes": 395,
+      "sha256": "76a2b62ecd0e64a87de0f5745fe2552252975c9c43367c8d3bfc7076168e4277"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp": {
+      "bytes": 8376,
+      "sha256": "519f4b966bc708171dee4d0f1f801966f89d6e9289820a915c4dcb76d600a88b"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/transport.cpp": {
+      "bytes": 24944,
+      "sha256": "707f1f6cd3d566905ea67bbae9d03479e2b542f7f9e5a3b76407ee3f8716bce7"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h": {
+      "bytes": 7112,
+      "sha256": "d5a2982fee06ac5aa2c8c5e1bd36dca5dfba2a05249d868b6a1529d112b782ef"
+    },
+    "docs/developer-T596-progress.md": {
+      "bytes": 1652,
+      "sha256": "fc519524239d7cab1cd76b09630e651351abd7e3ad40a2313353c4d09384da3e"
+    },
+    "entry/src/main/ets/physics/GpuBoundedCold.ets": {
+      "bytes": 1455,
+      "sha256": "015bd814550731ad96f11dc89f7be44427f56ece0d936757b57137ed4615f54f"
+    },
+    "entry/src/main/ets/physics/GpuM3Cold.ets": {
+      "bytes": 6467,
+      "sha256": "5ce6b93f05949d8deed236fef66413179697beccbd6af32e8bc624c52e5ef398"
+    },
+    "entry/src/main/ets/physics/GpuG9Cold.ets": {
+      "bytes": 7518,
+      "sha256": "7023d4218c8b98224608dbe727ee12900dbfaff9f4f7dd9c4796fe423c29bac6"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/cold_reader.py": {
+      "bytes": 4542,
+      "sha256": "7a7d9cc25080faf95c55cf9e2623ef9e49f397f5c61fa6e57eea84a33302ef80"
+    },
+    "entry/src/main/cpp/p013renderer/fullframe_targets.h": {
+      "bytes": 407,
+      "sha256": "cc9048fcaeb8795737e3adeceadf0dac8fdc613ef8f7fd92f310eb487e4a7489"
+    },
+    "entry/src/main/cpp/p013renderer/fullframe_targets.cpp": {
+      "bytes": 1608,
+      "sha256": "09a1c8ab2c37dae7a1873e4f729d612a33f9d9c27fb4744daf10eac33634dc9d"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/scene.cpp": {
+      "bytes": 9698,
+      "sha256": "2bf37bd7d0dc59f598e5b43c6e831e82f9e4934c42c33b4899bf4fcdbe6fb0dc"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/water_edge.comp": {
+      "bytes": 1516,
+      "sha256": "f29a7ec29dd474335a6421a169da1c6dc0268039d193c0d8973ece1f9d20f59d"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/quantum_motion.glsl": {
+      "bytes": 4208,
+      "sha256": "156349ce76b74cbad4b7de0286380c61edc94c17cd3f40353dc3b604eb9d3d10"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/layout_generated.h": {
+      "bytes": 40620,
+      "sha256": "3668b16e6f9f9169048eda5380549260cac76440b08e1502eba88844d9eec41f"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/scene.frag": {
+      "bytes": 2670,
+      "sha256": "949c9768faa27255c1cb063258f46f86743be7b0655f22016019fa8150a9390e"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/profile.h": {
+      "bytes": 646,
+      "sha256": "b587b884c5883b0e879e1860a1c58269a6f107bfe115b8f32c9b364cce052b03"
+    },
+    "entry/src/main/cpp/gpu_resident/m1/profile.cpp": {
+      "bytes": 1005,
+      "sha256": "7d17baa842b5b675c3c48604087f18d685e2a653458252c9a6351c38999175d9"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/source_execute.glsl": {
+      "bytes": 10042,
+      "sha256": "7f9fbd1af21f7ae2ab1c3711b54dedd2105b18c5ae78c392bf40edb0a686c439"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/merge_primitives.glsl": {
+      "bytes": 3286,
+      "sha256": "7837f82a0a8ceaced0224e89be3499d19feb517ef8655e72cf2419be5ee0abb9"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/root_gate.h": {
+      "bytes": 8414,
+      "sha256": "fcc196ba42813a2fe8690dd84a8219603558ba07b8438f6bf7e68e178d1377c3"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/buffer_plan.h": {
+      "bytes": 1039,
+      "sha256": "57db4c9c00d149d1e2ee27380c9c342a2aa2b8fb95a2c29d5f3193200ad30f2b"
+    },
+    "entry/src/main/cpp/gpu_resident/m2/layout_generated.h": {
+      "bytes": 41835,
+      "sha256": "7da72f25901263556013d3a16c4a4edcda02aa87577f727e6b9b2a64fdaa37ef"
+    },
+    "entry/src/main/cpp/gpu_resident/m3a/source_v4.comp": {
+      "bytes": 1149,
+      "sha256": "dc2f8c0cbbb05bceeaa87a405af6b4b87801cf1ba521ade753d5aac3f4eb0a3b"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/lift_writer.glsl": {
+      "bytes": 7456,
+      "sha256": "c3f707a3c117b363c471cc9705d3b9d1102efe108b0ce157e1c6b1b463ed2fbe"
+    },
+    "entry/src/main/cpp/gpu_resident/m3b/lineage_schema.h": {
+      "bytes": 46316,
+      "sha256": "eb7d637e46b5f2dce64b74528ee9174bd008f9a0463687bdd57ac70c84625eeb"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/schema_generated.h": {
+      "bytes": 103669,
+      "sha256": "b131836719c1f040eabb298accec204408549457df8c1c39293e30b535b5ead8"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp": {
+      "bytes": 130226,
+      "sha256": "fa3ae9049ad0643e0ead002806e608594a148c943ab5cada30b6daf418b80978"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/schema_generated.h": {
+      "bytes": 80253,
+      "sha256": "879507b9586f8eb3b3d5cf7a1e2c1db79d27572495b3dac718b7248fefc11207"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp": {
+      "bytes": 140106,
+      "sha256": "972edb7f6b4b7a387f57bb1578b8c3bb66cdad7e226be8f943857a49de06063b"
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/research_config.h": {
+      "bytes": 3321,
+      "sha256": "6a76c1be507d4081d83479fb02b55c060f3d1d1fc49f4b2f71b4992768e31798"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/clock_producer.h": {
+      "bytes": 2683,
+      "sha256": "81d7b7d97cb4426ee8e129070f7b72da2517284be2afd4b19cdf25e01c1585dd"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/touch_adapter.h": {
+      "bytes": 7290,
+      "sha256": "8a35ce1f7810bae473bbab28ce8cddf7997152ea61c5777204fe8ba3edc3b2f3"
+    },
+    "docs/developer-T599-progress.md": {
+      "bytes": 1922,
+      "sha256": "129a68144a7a5d5e7cd87070bcf9cd5bddf65c886f0a4d8ae67ebb730ef06b33"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.h": {
+      "bytes": 4372,
+      "sha256": "d43592fe43bd6e24ed8c95f37915314813fe6265b47e54182ad886d805ed2b2a"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl": {
+      "bytes": 9786,
+      "sha256": "048d03c2a6e9bc712b5b062634bdfff95e6e42f52422621c63d01b774ea7a58d"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h": {
+      "bytes": 5869,
+      "sha256": "ea21e312a5e849050c20d3c3e17d666d90143e1c7e5fb49dbcbf1d24a53c5b40"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/scene.cpp": {
+      "bytes": 9898,
+      "sha256": "f419734a322431492dabb40897b4aeb9296b6e7ff25c07b252369cb682192487"
+    },
+    "test/t566_generate_composite.cjs": {
+      "bytes": 8100,
+      "sha256": "7fea019a49cdc6ff1f6678bd23ed98caaeaeb62742301dcbae3e8385aa0349de"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/cold.cpp": {
+      "bytes": 4313,
+      "sha256": "b7940dfe8530d683bc4669efc3cb925e133e91df5241e21bf8e6572e0b305b25"
+    },
+    "entry/src/main/cpp/gpu_resident/g11vis/kernels.cmake": {
+      "bytes": 973,
+      "sha256": "4a0762fa4ee8147b0e818a9fe135d3a4cc397960bff1900c2f05b37e28e21e8d"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/contract_generated.h": {
+      "bytes": 8780,
+      "sha256": "b19f0fedd707eb9d85480b2f1ca258a889c3d9bab9364aa4ee1ca6d87c691bbb"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/water_core.glsl": {
+      "bytes": 5375,
+      "sha256": "b59c6045bb568110135a0a56301f0be37eb9a467e144e420bcec4cc2aacf1ab4"
+    },
+    "test/t576_generate_pipeline.cjs": {
+      "bytes": 8665,
+      "sha256": "e7ab7b44addb6cfbec3aed99894d9f7197b7d241d1d872954a87cb58eb50c406"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/transport.h": {
+      "bytes": 3950,
+      "sha256": "38e912b02d21216128634c48e36f52c38891dc2ed5e077b3dd0e699b8c758d03"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/cold.cpp": {
+      "bytes": 2820,
+      "sha256": "f23c070c0ed91b7ccb57d8617f443efe58cd6a89889a6a66f517f01d851b20f8"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/cold.h": {
+      "bytes": 994,
+      "sha256": "e04337587bb00c1af29782cd6a40ff860bff12d929035d959a2a9e1a9e6236b5"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/scene.cpp": {
+      "bytes": 8559,
+      "sha256": "d12a2887d8a49a1cf64c38f4ef725fd23adec228e7e020c4f2b7af11b7df6f1e"
+    },
+    "entry/src/main/cpp/gpu_resident/g12water/kernels.cmake": {
+      "bytes": 924,
+      "sha256": "778866e3397cae39f71141112d91096d911d228e3160b36f7e2856a19c915143"
+    },
+    "entry/src/main/cpp/gpu_resident/integer.h": {
+      "bytes": 1084,
+      "sha256": "1e2ed5a33775acac2759baad9ce7f1ccb77ca578355d198037c86297d1dfe8c4"
+    },
+    "entry/src/main/cpp/gpu_resident/integer_primitives.glsl": {
+      "bytes": 3892,
+      "sha256": "66fce1a2585bbda31b6802523a335a796f2b0b66272648f05640812ba837bd40"
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/wide_integer.glsl": {
+      "bytes": 6198,
+      "sha256": "efb96d241740c5db759b28723e8064122962851f33efe3147b6b7e3e5114a020"
+    },
+    "docs/test-report-T579-signing-handoff-v1.md": {
+      "bytes": 2255,
+      "sha256": "d404f003ceed0a2b2dadbb577ff5d3af6045f4160d13e2de8450940f75a5b2dc"
+    },
+    "docs/test-report-T541-device-predicate-v2.md": {
+      "bytes": 3290,
+      "sha256": "4079b000416ac5225d61260b4f4a98e0c277b479b2a3a6142574d174db3abb42"
+    },
+    "docs/test-report-T556-dm2-oracle-v1.md": {
+      "bytes": 3670,
+      "sha256": "50d300b8e6a741dbbc4a4aaa5b2b990db433568c02fc82cd9e5cf924e3dfc7e9"
+    },
+    "docs/test-report-T461-empty-raw-v3.md": {
+      "bytes": 2066,
+      "sha256": "783161bc8abe33f92466e66b9b610f12f915acc434adeff547bfd6b392868852"
+    }
+  },
+  "governingInputs": {
+    "AGENTS.md": {
+      "bytes": 10900,
+      "sha256": "22d11582dd63a1fa5da79bf2a3e623a46de37b1a7f958a015d37d24c2671a818"
+    },
+    "docs/goals.md": {
+      "bytes": 17198,
+      "sha256": "e119c196f94d2c8148c7cd45f3e249ae265d4ff479958849ada88d95e18774dd"
+    },
+    "docs/architecture-T584-first-attribution-v1.md": {
+      "bytes": 5763,
+      "sha256": "ca452ec4ced263fdd82848cca1ec21899869861d7d11a9ee47a39106c8ed8339"
+    },
+    "docs/architecture-T589-first-attribution-v1.md": {
+      "bytes": 6885,
+      "sha256": "a84399cbc26221e496403e4b2489aaba9f0a385591f9d6496510fe6a4cb1af1c"
+    },
+    "docs/architecture-T567-water-sfp-engineering-v1.md": {
+      "bytes": 20256,
+      "sha256": "071fea79cafa8bc9d210eb5c7c3f4bb5270b95856bd10f3f673683548c7b4dc0"
+    }
+  },
+  "buildFacts": {
+    "canonicalDirectRoutes": [
+      "m3a",
+      "g9dm",
+      "g11vis",
+      "g12water"
+    ],
+    "isolatedExtraRoutes": [
+      "m3b",
+      "g9spf"
+    ],
+    "conditionalGeneratorPaths": [
+      {
+        "route": "g11vis",
+        "canonicalConfiguredGenerator": "D:\\hmprojects\\HelloWorld\\entry\\src\\test\\t566_generate_composite.cjs",
+        "exists": false,
+        "actualRepositoryGenerator": "test/t566_generate_composite.cjs"
+      },
+      {
+        "route": "g12water",
+        "canonicalConfiguredGenerator": "D:\\hmprojects\\HelloWorld\\entry\\src\\test\\t576_generate_pipeline.cjs",
+        "exists": false,
+        "actualRepositoryGenerator": "test/t576_generate_pipeline.cjs"
+      }
+    ]
+  },
+  "g12ExplicitNotImplementedWriters": [
+    {
+      "symbol": "g12DragHalfA",
+      "stage": 29
+    },
+    {
+      "symbol": "g12PressureA",
+      "stage": 30
+    },
+    {
+      "symbol": "g12WaterFace",
+      "stage": 37
+    },
+    {
+      "symbol": "g12CoupledForceReserve",
+      "stage": 38
+    },
+    {
+      "symbol": "g12WaterOriginReserve",
+      "stage": 39
+    },
+    {
+      "symbol": "g12CoupledFlowApply",
+      "stage": 41
+    },
+    {
+      "symbol": "g12PressureB",
+      "stage": 43
+    },
+    {
+      "symbol": "g12DragHalfB",
+      "stage": 44
+    },
+    {
+      "symbol": "g12CapturePlan",
+      "stage": 47
+    },
+    {
+      "symbol": "g12ArrivalPlan",
+      "stage": 50
+    },
+    {
+      "symbol": "g12ArrivalApply",
+      "stage": 51
+    }
+  ],
+  "handoff": {
+    "design": "T605 chooses model/discretization/numerics; no model selected by T613",
+    "engineering": "T607 consumes T605 plus this inventory; new G13 identity/ABI/layout/caps/resource/cold/scene",
+    "implementation": "T608 complete product and compile only; no device/test closing prerequisite",
+    "verification": "T606 independent baselines then T609/T610 GPU quantitative/observable evidence"
+  },
+  "limits": [
+    "symbol/byte existence is not runtime binding or product correctness",
+    "legacy schemas, clocks, resource profiles, thresholds and physics do not automatically qualify G13",
+    "T596/T599 are in-flight source snapshots, not newly accepted completion",
+    "goals1-11 ongoing and goal10 paused; old water tasks deferred without deleting assets"
+  ]
+}
