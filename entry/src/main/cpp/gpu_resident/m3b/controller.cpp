@@ -182,7 +182,7 @@ void ControllerV5::BuildCold(uint64_t now){
  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(allocated));auto& s=coldTrace_.slots[slot];storage=s.block.get();words=s.capacity;request=s.request;}
  size_t stateWords=0,eventWords=0;QuotaSnapshotV3 quota=Quota(now);
  const bool copied=storage&&transport_.CaptureColdV5(storage,words,quota,stateWords,eventWords);
- {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":"V5_CAPTURE_FAILED",stateWords,eventWords,transport_.FirstGlError(),uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE");coldBuilding_=false;}
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":transport_.CaptureFailure(),stateWords,eventWords,transport_.FirstGlError(),uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE");coldBuilding_=false;}
 }
 
 ControllerV5::RootDiagnostic ControllerV5::DiagnosticOwnerThread()const{std::lock_guard<std::mutex> lock(mutex_);return {active_,transport_.Tail(),transport_.Evidence(),clock_.fault};}

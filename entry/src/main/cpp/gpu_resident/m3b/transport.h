@@ -52,6 +52,7 @@ public:
  bool FullFrozen()const{return fullFrozen_;}
  uint32_t CurrentStateBank()const{return currentBank_;}
  uint32_t SourcePrefix()const{return sourcePrefix_;}
+ const char* CaptureFailure()const{return "MISSING_REQUIRED_ANCHOR";}
  size_t SourceFrameBytes()const{return profile_?size_t(profile_->k+1)*256:0;}
  size_t CombinedEventBytes()const{return layout_.combinedBytes;}
  EGLint FirstEglError()const{return rawEgl_;}
@@ -59,7 +60,7 @@ private:
  struct Program {GLuint id=0;UniformLocations locations;};
  std::array<Program,20> programs_{};
  std::array<GLuint,28> buffers_{};
- std::array<GLuint,21> fullBuffers_{};
+ std::array<GLuint,32> fullBuffers_{};
  const Profile* profile_=nullptr;const m2::Profile* old_=nullptr;WorkLayout layout_;ResidentBuffersV5 allocation_;
  m2::Profile oldStorage_{};uint32_t headerWord_=0;
  PhysicalConfigV5 config_;RootPermitV5 permit_;int32_t target_=0;
@@ -73,6 +74,7 @@ private:
  uint32_t uploadCounter_=0;bool dryUniforms_=false;
  size_t alignment_=16;
  uint64_t fullPlan_=0;
+ uint32_t baseMask_=0,enteredMask_=0;
  uint32_t fullMask_=0,fullQuantumMask_=0,pendingFullMask_=0;
  bool fullFrozen_=true;
  GLenum rawGl_=0;EGLint rawEgl_=EGL_SUCCESS;

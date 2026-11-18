@@ -55,10 +55,10 @@ TransportResultV5 TransportV5::Create(const Profile& p,const ControlIdentityV5& 
  glGenBuffers(GLsizei(buffers_.size()),buffers_.data());
  for(size_t i=0;i<buffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(allocation_.bytes[i]),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}}
  if(config_.fullBranchTrace){
-  const size_t flowBytes=size_t(p.scopeRows)*256;
+  const size_t flowBytes=size_t(p.scopeRows)*256+size_t(SelectLineageProfile(p.k,p.kw)->ea)*128;
   if(flowBytes>size_t(maximum)||32768>maximum){Release(true);return TransportResultV5::UNSUPPORTED;}
   glGenBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());
-  for(size_t i=0;i<fullBuffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,fullBuffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(i==20?32768:flowBytes),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}}
+  for(size_t i=0;i<fullBuffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,fullBuffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(i<20?flowBytes:i==20?40960:i==31?256:(i%2?p.stateBytes:10224000)),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}}
  }
  // A fresh independent run, initialized only once at cold creation.
  std::vector<uint32_t> state(p.stateBytes/4);const uint32_t h=headerWord_;
@@ -119,7 +119,13 @@ TransportResultV5 TransportV5::Begin(const RootPermitV5& permit,int32_t target,c
  if(permit.baseBank!=currentBank_||permit.candidateBank!=1-currentBank_||sourcePrefix>4096||dedupPrefix>4096||target< -7680||target>7680||!authorize||(permit.kind==1)!=bool(packet))return TransportResultV5::INVALID;
  permit_=permit;target_=target;authorize_=authorize;authorization_=user;if(!Allowed())return Denied();
  if(config_.fullBranchTrace){
-  if(fullPlan_!=permit.plan){if(fullPlan_&&!fullFrozen_)return TransportResultV5::WOULD_BLOCK;fullPlan_=permit.plan;fullMask_=fullQuantumMask_=0;fullFrozen_=false;}
+  if(fullPlan_!=permit.plan){if(fullPlan_&&!fullFrozen_)return TransportResultV5::WOULD_BLOCK;fullPlan_=permit.plan;fullMask_=fullQuantumMask_=baseMask_=enteredMask_=0;fullFrozen_=false;}
+  const uint32_t root=permit.kind==1?0:permit.ordinal;if(root>4)return TransportResultV5::INVALID;
+  Copy(buffers_[permit.baseBank],0,fullBuffers_[21+root*2],0,profile_->stateBytes/4);
+  const GLuint dst=fullBuffers_[22+root*2];size_t at=0;
+  const size_t starts[]={0,96,old_->sourceLedger.begin,profile_->source[0].begin/4,profile_->source[1].begin/4};
+  const size_t counts[]={96,4096*64,4096*16,4096*512,4096*32};
+  for(size_t j=0;j<5;++j){Copy(buffers_[15],starts[j],dst,at,counts[j]);at+=counts[j];}Barrier();if(!Good())return TransportResultV5::GL_FAILED;baseMask_|=1u<<root;enteredMask_|=1u<<root;
   pendingFullMask_=0;
  }
  auxStart_=permit.frame==auxFrame_?auxEnd_:0;
@@ -164,14 +170,21 @@ void TransportV5::QuantumPass(uint32_t index){
  U("uV5AuxWord",scope&&pass.role!=4?uint32_t(layout_.combinedEventOffset/4)+profile_->scopeRows*64:profile_->quantumFrameRows*64);U("uV5AuxCapacity",SelectLineageProfile(profile_->k,profile_->kw)->ea*(pass.role==4?4:1));
  U("uM3RootPass",index);U("uM3Role",pass.role);U("uM3WriteBank",pass.role==4?permit_.candidateBank:4);U("uPass",pass.nativeStage);U("uSortK",pass.sortK);U("uSortJ",pass.sortJ);U("uColor",pass.color);
  U("uEventStart",pass.role==4?permit_.eventStart:0);U("uM3EventStart",pass.role==4?permit_.eventStart:0);U("uEventCapacity",pass.role==4||pass.role==0?profile_->quantumFrameRows:profile_->scopeRows);U("uM3EventCapacity",pass.role==4||pass.role==0?profile_->quantumFrameRows:profile_->scopeRows);U("uM3EventWord",scope&&pass.role!=4?uint32_t(layout_.combinedEventOffset/4):0);
- glDispatchCompute((pass.count+63)/64,1,1);++evidence_.submittedPasses;Barrier();
+ glDispatchCompute((pass.count+63)/64,1,1); // Original dispatch; only read-only copies below are added.
+ if(config_.fullBranchTrace&&(pass.opcode==Opcode::SCOPE_INIT||pass.opcode==Opcode::SCOPE_FINALIZE)&&pass.role>=1&&pass.role<=5){
+  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);
+  const size_t cursor=(profile_->quantumWorkBytes-32768-512)/4+8192;
+  Copy(buffers_[16],cursor,fullBuffers_[20],size_t(permit_.ordinal)*2048+768+64*(pass.role-1)+(pass.opcode==Opcode::SCOPE_FINALIZE?32:0),32);
+ }
+++evidence_.submittedPasses;Barrier();
  if(config_.fullBranchTrace&&pass.opcode==Opcode::SCOPE_FINALIZE){
   const uint32_t slot=(permit_.ordinal-1)*5+pass.role-1;
-  Copy(pass.role==4?buffers_[8+permit_.eventArena]:buffers_[21],pass.role==4?size_t(permit_.eventStart)*64:layout_.combinedEventOffset/4,fullBuffers_[slot],0,size_t(profile_->scopeRows)*64);Barrier();pendingFullMask_|=1u<<slot;
+  Copy(pass.role==4?buffers_[8+permit_.eventArena]:buffers_[21],pass.role==4?size_t(permit_.eventStart)*64:layout_.combinedEventOffset/4,fullBuffers_[slot],0,size_t(profile_->scopeRows)*64);
+  Copy(pass.role==4?buffers_[8+permit_.eventArena]:buffers_[21],pass.role==4?size_t(profile_->quantumFrameRows)*64:layout_.combinedEventOffset/4+profile_->scopeRows*64,fullBuffers_[slot],size_t(profile_->scopeRows)*64,size_t(SelectLineageProfile(profile_->k,profile_->kw)->ea)*32);Barrier();pendingFullMask_|=1u<<slot;
  }
  if(pass.opcode==Opcode::PRIVATE_PROMOTE){
   Copy(buffers_[16],profile_->quantum[1].begin/4+6144,buffers_[25+permit_.eventArena],0,6*128);
-  if(config_.fullBranchTrace)Copy(buffers_[16],profile_->quantum[1].begin/4+6144,fullBuffers_[20],size_t(permit_.ordinal-1)*2048,6*128);
+  if(config_.fullBranchTrace)Copy(buffers_[16],profile_->quantum[1].begin/4+6144,fullBuffers_[20],size_t(permit_.ordinal)*2048,6*128);
   Barrier();
  }
 }
@@ -217,7 +230,5 @@ void TransportV5::Release(bool current){
  current=current&&Current();if(current){if(fence_)glDeleteSync(fence_);glDeleteBuffers(GLsizei(buffers_.size()),buffers_.data());glDeleteBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());}
  fence_=nullptr;buffers_={};fullBuffers_={};for(auto& p:programs_){if(p.id){programcache::Forget(p.id);if(current)glDeleteProgram(p.id);}p={};}
  ready_=busy_=mapped_=false;profile_=nullptr;old_=nullptr;context_=EGL_NO_CONTEXT;
-}
-bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapshotV3& quota,size_t& stateWords,size_t& eventWords){(void)out;(void)capacity;(void)quota;stateWords=eventWords=0;return false; // PREFIX_DIGEST_POLICY_REQUIRED
 }
 }

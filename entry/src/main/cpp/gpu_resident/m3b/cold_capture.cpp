@@ -19,21 +19,20 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
  cold::Layout layout;
  if(!ready_||busy_||!Current()||!profile_||!out)return false;
  if(!cold::Layout::Make(*profile_,alignment_,layout,config_.fullBranchTrace))return false;
- if(config_.fullBranchTrace&&!fullFrozen_&&!busy_)return false; // plan mid-flight: refuse rather than archive a half plan
+ if(config_.fullBranchTrace&&((enteredMask_&baseMask_)!=enteredMask_))return false; // plan mid-flight: refuse rather than archive a half plan
  if(capacity<layout.words)return false;
  auto good=[&](){const auto g=glGetError();if(g&&!rawGl_)rawGl_=g;return !rawGl_;};
  std::memset(out,0,layout.words*4);
  // Prefix header (T535): magic/rev/policy; word 7 marks the archive mode.
- out[0]=826488150u;out[1]=1u;out[2]=256u;out[4]=5u;out[5]=31u;out[6]=15u;out[11]=uint32_t(layout.count);
+ out[0]=826488150u;out[1]=2u;out[2]=256u;out[4]=5u;out[5]=31u;out[6]=15u;out[11]=uint32_t(layout.count);
  out[7]=config_.fullBranchTrace?2u:1u; // T527: ROOT_COMPLETE=1 / FULL_PLAN_BRANCH=2
  cold::Put(out,44,layout.words*4);
  // FULL-plan identity: plan id + executed scope/quantum masks (observed
  // facts only — masks record which streams actually ran in this plan).
  if(config_.fullBranchTrace){cold::Put(out,48,fullPlan_);out[50]=fullMask_;out[51]=fullQuantumMask_;}
- out[3]=3235775745u;
+ out[3]=3235775746u;out[15]=1;out[8]=profile_->k;out[9]=profile_->kw;
  // Fixed identity row: run/owner/context/surface from the active permit.
- cold::Put(out,256+0,permit_.identity.run);cold::Put(out,256+2,permit_.identity.context);
- cold::Put(out,256+4,permit_.identity.surface);
+ 
  auto copy=[&](GLuint buffer,size_t offsetWords,size_t countWords,size_t destination){
   if(!countWords)return true;
   if(destination>layout.words||countWords>layout.words-destination||offsetWords>SIZE_MAX/4)return false;
@@ -59,7 +58,7 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
  // Final source context: the resident combined semantic stream.
  const size_t contextSegment=layout.Find("FINAL_SOURCE_CONTEXT");
  if(contextSegment==layout.count)return false;
- if(!copy(buffers_[20],0,layout.segments[contextSegment].bytes/4,layout.segments[contextSegment].begin/4))return false;
+ {size_t dst=layout.segments[contextSegment].begin/4;const size_t offsets[]={0,96,old_->sourceLedger.begin,profile_->source[0].begin/4,profile_->source[1].begin/4};const size_t sizes[]={96,4096*64,4096*16,4096*512,4096*32};for(size_t j=0;j<5;++j){if(!copy(buffers_[15],offsets[j],sizes[j],dst))return false;dst+=sizes[j];}}
  executed[contextSegment]=true;
  // SOURCE frame: the live SOURCE128 arena prefix actually accepted so far.
  const size_t sourceSegment=layout.Find("SOURCE_FRAME128");
@@ -90,25 +89,21 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
   // and the archive only publishes the sealed prefix (T552 wire semantics).
   for(uint32_t slot=0;slot<20;++slot){
    if(!(fullMask_&(1u<<slot)))continue; // NOT_EXECUTED in this plan
-   char name[40];
-   std::snprintf(name,sizeof(name),"Q%u_ROLE%u_%s",slot/5,slot%5+1,slot%2?"PROVENANCE":"PHYSICAL");
-   const size_t at=layout.Find(name);
-   if(at==layout.count)return false;
-   if(!copy(fullBuffers_[slot],0,layout.segments[at].bytes/4,layout.segments[at].begin/4))return false;
-   executed[at]=true;
+   for(unsigned part=0;part<2;++part){const size_t at=21+slot*2+part;const auto& seg=layout.segments[at];if(!copy(fullBuffers_[slot],part?size_t(profile_->scopeRows)*64:0,seg.bytes/4,seg.begin/4))return false;executed[at]=true;}
   }
+  for(unsigned root=0;root<5;++root)if(enteredMask_&(1u<<root)){if(!(baseMask_&(1u<<root)))return false;for(unsigned part=0;part<2;++part){const auto at=11+root*2+part;const auto& seg=layout.segments[at];if(!copy(fullBuffers_[21+root*2+part],0,seg.bytes/4,seg.begin/4))return false;executed[at]=true;}}
   // Frozen per-root completion copies: fullBuffers_[20] holds 6x128 words per
   // root ordinal (the frozen plan-completion block); CONTROL_ROOT_x segments
   // are archived from it for the quanta that actually executed.
   for(uint32_t q=0;q<4;++q){
    if(!(fullQuantumMask_&(1u<<q)))continue;
    char name[24];
-   std::snprintf(name,sizeof(name),"CONTROL_ROOT_%u",q);
+   std::snprintf(name,sizeof(name),"CONTROL_ROOT_%u",q+1);
    const size_t at=layout.Find(name);
    if(at==layout.count)return false;
    const size_t segWords=layout.segments[at].bytes/4;
-   const size_t available=32768/4; // fullBuffers_[20] capacity in words
-   const size_t offset=size_t(q)*2048; // per-ordinal 6x128 frozen block
+   const size_t available=40960/4; // fullBuffers_[20] capacity in words
+   const size_t offset=size_t(q+1)*2048; // per-ordinal 6x128 frozen block
    if(offset>=available)continue;      // ordinal beyond the frozen block
    const size_t words=std::min(segWords,available-offset);
    if(words&&copy(fullBuffers_[20],offset,words,layout.segments[at].begin/4))executed[at]=true;
@@ -131,10 +126,15 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
   cold::Put(d,11,s.bytes);
   d[13]=s.stride;
   d[14]=sealed;d[15]=executed[i]&&rows<=UINT32_MAX?uint32_t(rows):0u;d[16]=sealed;
-  d[21]=0u;
-  cold::Digest(out+s.begin,s.bytes/4,d+23);
+  d[21]=executed[i]?2u:1u;d[22]=i?1u:2u;
+  if(i)cold::Digest(out+s.begin/4,s.bytes/4,d+23);
   d[31]=3235775745u;
  }
- return cold::Validate(out,capacity,layout);
+ // Mandatory prefix itself is always sealed, using the fixed T535 mask.
+ auto* prefix=out+256;prefix[14]=prefix[15]=prefix[16]=8192;prefix[21]=2;prefix[22]=2;cold::PrefixDigest(out,prefix+23);
+ // Required producer metadata is not yet all retained: never publish a
+ // purported COMPLETE archive from capacity/masks alone.
+ return false;
+
 }
 }
