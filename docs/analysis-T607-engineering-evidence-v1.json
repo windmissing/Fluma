@@ -1,0 +1,61 @@
+{
+  "schema": "T607_FINITE_ENGINEERING_EVIDENCE_V1",
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "buildsRun": false,
+  "productTestsRun": false,
+  "CPUPhysicsAdded": false,
+  "productPASS": false,
+  "checks": [
+    "five nonoverlapping layout profiles and four resource rows match T605",
+    "all declared word counts",
+    "820 indexed quantum passes, each scope/trial4+56J, source16/G1F4 3296",
+    "Machin/ln2 rational intervals agree on constants and polynomial truncation bounds",
+    "original gates/support unchanged",
+    "local document links exist"
+  ],
+  "limits": [
+    "not a pressure/viscosity solve",
+    "not a CPU fluid stepper or independent physical oracle",
+    "software GPU math, actual FP32 behavior and F05 pressure/splitting unverified",
+    "performance and device qualifications unmeasured"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/architecture-T607-g13-layout-v1.json",
+      "bytes": 164808,
+      "sha256": "5e74048da7d40dae6c881a7ea8348fc28550a4b6cf6a9a7fa94595ad8fa9deaa"
+    },
+    {
+      "path": "docs/architecture-T607-g13-dispatch-v1.json",
+      "bytes": 143062,
+      "sha256": "6d0cf08bf17389f3915cfb0bd5406327ab6cdd030aa1541db5e4e3dffa90f0af"
+    },
+    {
+      "path": "docs/architecture-T607-g13-math-v1.json",
+      "bytes": 7606,
+      "sha256": "fb80d0eb3486f59c2db4f0ef8ebb5adeff3751f4149cee7b8685eac60342645f"
+    },
+    {
+      "path": "docs/architecture-T607-g13-engineering-v1.json",
+      "bytes": 10271,
+      "sha256": "32a895019ff92ca279c76c4496a5398e515c40bef7f9cb9ac8ebc20edf25aa44"
+    },
+    {
+      "path": "docs/architecture-T607-g13-engineering-v1.md",
+      "bytes": 30352,
+      "sha256": "ba1326e5b24eb9d4d654b03883c52eb0296737b16fb9cad052793737bb0f7f9d"
+    },
+    {
+      "path": "docs/retro-T607-g13-engineering-v1.md",
+      "bytes": 1801,
+      "sha256": "c65a0ae1de456b027cbcbcb1cf4b9bcb3964ff82806b7b20cd968269d10943f5"
+    },
+    {
+      "path": "docs/analysis-T607-engineering-layout-v1.py",
+      "bytes": 32911,
+      "sha256": "d2e069180dd77942e2ccc69fbfc9bfc2c032135f4933767db08a229812b0ce4d"
+    }
+  ]
+}

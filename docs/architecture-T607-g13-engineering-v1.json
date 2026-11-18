@@ -1,0 +1,295 @@
+{
+  "schema": "T607_G13_ENGINEERING_V1",
+  "date": "2026-11-18",
+  "role": "architect",
+  "task": "T607",
+  "status": "ENGINEERING_READY_NOT_IMPLEMENTED_NOT_VALIDATED",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "inputs": [
+    {
+      "path": "docs/algorithm-G13-pure-fluid-gpu-v1.md",
+      "bytes": 38084,
+      "sha256": "5321a1b88cc8134e6a4e6fcbd795e8dbf7e476d5a9f465696c4ef5323908a04e"
+    },
+    {
+      "path": "docs/design-G13-pure-fluid-manifest-v1.json",
+      "bytes": 13368,
+      "sha256": "8bb564d6e9ec2a22070bbf993fc1954dfb0ee4bdbcf46810f937124bf1d13b95"
+    },
+    {
+      "path": "docs/design-G13-pure-fluid-fixtures-v1.json",
+      "bytes": 9308,
+      "sha256": "bb62c36b14565e502e83199ddf85c2b8fbf3ff5e155fb403ddf1c935f2f9fff7"
+    },
+    {
+      "path": "docs/architecture-T613-g13-reuse-boundaries-v1.md",
+      "bytes": 15999,
+      "sha256": "c22efc17991d0dd9fdb2e741ed829ca3367a6e151a852944fed3e7941c7d989e"
+    },
+    {
+      "path": "docs/architecture-T613-g13-reuse-manifest-v1.json",
+      "bytes": 40356,
+      "sha256": "d2e613c567c1396a7641529abf23e358abdcb306c2323ba525ffc7af279e42f0"
+    }
+  ],
+  "tables": [
+    "architecture-T607-g13-layout-v1.json",
+    "architecture-T607-g13-dispatch-v1.json",
+    "architecture-T607-g13-math-v1.json"
+  ],
+  "hashes": {
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "gatesSHA": "d6bbb2fe320786174cd3c81f84727f304b5fa73671f5fd83a90fbef9dff6dd48",
+    "mathSHA": "ee12f34b54239a8c7c395e5aa30aadcd95683be9d4f72e8f92cc203e92f68829",
+    "algorithmSHA": "9bbb3df8eee70de03e156de8d2ec919e37515c999e177f4bdf63d195d1cfd48d"
+  },
+  "gates": {
+    "status": "FORMAL_V1_RESEARCH_SPEC_NOT_MEASURED_PASS",
+    "runtime": {
+      "actualDivergenceRMS": "2^-14",
+      "actualDivergenceMax": "2^-12",
+      "momentumClosure": "2^-14*max(Area,sumAxisAbsActualJ); actual per-operator impulses, never residual refill",
+      "viscTrueResidualRMS": "2^-16/J",
+      "viscTrueResidualMax": "2^-14/J",
+      "pressureRMSCertificate": "norm(rP)/lambda1<=2^-16 including RHS construction perturbation",
+      "projectionVelocityCertificate": "delta*norm(rP)/sqrt(lambda1)<=2^-16/J",
+      "pressureGaugeMeanAbs": "2^-33",
+      "projectionIdentityMax": "64*2^-24/h*max(1,abs(wVisc),abs(delta*Gpi))",
+      "energyFloatBudget": "2^-10*max(K_window_start,sum(abs(externalWork)),Area*2^-20)",
+      "energyWindowAcceptedQuanta": 120,
+      "zeroRestStateMustBeBitwiseZero": true,
+      "nonFiniteAllowed": false,
+      "solverNoConvergence": "NORMAL_NUMERIC_BLOCKED_NOT_A_SUCCESS_FRAME"
+    },
+    "analytic": {
+      "pressureManufacturedRMS": "2^-16 plus convergence-specific tighter certificate Etrunc/16",
+      "pressureManufacturedMax": "2^-12",
+      "pressureOperatorSpaceOrderMin": 1.8,
+      "decayContinuousVelocityRelMax": "1/64",
+      "decayEnergyRelMax": "1/32",
+      "decayTimeOrderMin": 0.8,
+      "TGVelocityRelRMSMax": "1/32",
+      "TGVelocityRelMaxMax": "1/16",
+      "TGPressureRelRMSMax": "1/16",
+      "MMSVelocityRelRMSMax": "1/32",
+      "MMSVelocityRelMaxMax": "1/16",
+      "MMSPressureRelRMSMax": "1/16",
+      "NSFirstOrderSpaceMin": 0.8,
+      "CouetteWallShearRelMax": "1/64",
+      "CouetteTransientRelRMSMax": "1/32",
+      "PoiseuilleMax": "f*h^2/(8*nu)+2^-12",
+      "PoiseuilleFluxAndShearRelMax": "1/32"
+    },
+    "cost": {
+      "hardRootDeadlineMs": 250,
+      "newFrameTargetPerSecond": 30,
+      "deviceStatus": "UNMEASURED",
+      "mustReport": [
+        "accepted_time/wall_time",
+        "new_frame_per_s",
+        "root_p95_p99_ms",
+        "active_vs_noop",
+        "peak_memory",
+        "driver_retirement",
+        "cold_bytes"
+      ]
+    }
+  },
+  "support": {
+    "model": "2D_FILLED_CONSTANT_DENSITY_NEWTONIAN_INCOMPRESSIBLE",
+    "gridProfiles": [
+      {
+        "Nx": 16,
+        "Ny": 16,
+        "Lx": 1,
+        "Ly": 1,
+        "diagnosticOnly": true
+      },
+      {
+        "Nx": 32,
+        "Ny": 32,
+        "Lx": 1,
+        "Ly": 1
+      },
+      {
+        "Nx": 64,
+        "Ny": 64,
+        "Lx": 1,
+        "Ly": 1
+      },
+      {
+        "Nx": 64,
+        "Ny": 128,
+        "Lx": 0.5,
+        "Ly": 1
+      },
+      {
+        "Nx": 128,
+        "Ny": 128,
+        "Lx": 1,
+        "Ly": 1
+      }
+    ],
+    "recommendedGrid": [
+      64,
+      64
+    ],
+    "maxCells": 16384,
+    "tracers": 4096,
+    "boundaryModes": [
+      "CLOSED_NOSLIP",
+      "TEST_PERIODIC_XY",
+      "TEST_PERIODIC_X_CHANNEL"
+    ],
+    "nuRangePositive": [
+      9.5367431640625e-07,
+      0.125
+    ],
+    "nuZeroDiagnosticOnly": true,
+    "velocityComponentMax": 2,
+    "dynamicPressureMax": 64,
+    "gravityMagnitudeMax": 64,
+    "nonconservativeForceComponentMax": 8,
+    "wallTangentialSpeedMax": 0.5,
+    "positiveWorkCapPerQuantum": 1,
+    "OmegaMax": 2,
+    "alphaMax": 4,
+    "rampDurationMin_seconds": 2,
+    "quantum_seconds": "1/120",
+    "J": [
+      1,
+      2,
+      4
+    ],
+    "micro_seconds": "1/(120J)",
+    "unsupported": [
+      "SAND",
+      "POROSITY",
+      "MOVING_SAND_BOUNDARY",
+      "IRREGULAR_INTERNAL_SOLIDS",
+      "FREE_SURFACE",
+      "INFLOW_OUTFLOW",
+      "WATER_MASS_SOURCE",
+      "VARIABLE_DENSITY_OR_VISCOSITY",
+      "NON_NEWTONIAN",
+      "3D_TURBULENCE",
+      "HELE_SHAW_FRONT_BACK_DRAG",
+      "TRANSLATING_CONTAINER",
+      "ARBITRARY_SENSOR_MOTION_STREAM"
+    ]
+  },
+  "goalOrder": [
+    13,
+    14,
+    12
+  ],
+  "goal10Paused": true,
+  "unresolved": "F05 physical pressure/splitting and all GPU qualification/performance unmeasured; linear residual is not a physical oracle",
+  "newFiles": [
+    "entry/src/main/cpp/gpu_resident/g13flow/contract_generated.h",
+    "entry/src/main/cpp/gpu_resident/g13flow/layout_generated.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/kernel_assets.cpp",
+    "entry/src/main/cpp/gpu_resident/g13flow/pipeline.comp",
+    "entry/src/main/cpp/gpu_resident/g13flow/mac_access.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/advection.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/viscosity.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/pressure_mg.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/wide_q32.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/math_soft128.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/drive.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/ledger.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/trace.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/render_pack.glsl",
+    "entry/src/main/cpp/gpu_resident/g13flow/controller.h",
+    "entry/src/main/cpp/gpu_resident/g13flow/controller.cpp",
+    "entry/src/main/cpp/gpu_resident/g13flow/transport.h",
+    "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+    "entry/src/main/cpp/gpu_resident/g13flow/cold.h",
+    "entry/src/main/cpp/gpu_resident/g13flow/cold.cpp",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene.h",
+    "entry/src/main/cpp/gpu_resident/g13flow/scene.cpp",
+    "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+    "entry/src/main/cpp/gpu_resident/g13flow/kernels.cmake",
+    "entry/src/main/cpp/gpu_resident/g13flow/CMakeLists.txt",
+    "entry/src/main/ets/pages/GpuResidentG13.ets",
+    "entry/src/main/ets/physics/GpuG13Cold.ets",
+    "entry/src/main/cpp/types/libgrs_g13/index.d.ts",
+    "tools/g13/generate_assets.py",
+    "tools/g13/prepare_build.cjs"
+  ],
+  "APIs": {
+    "configure": "g13Configure(config128:Uint32Array,seedReceiptJSON:string):string",
+    "offer": "g13Offer128(input:Uint32Array):string",
+    "pulse": "g13PagePulse(session:string,sequence:string,uiNs:string):string",
+    "stop": "g13Stop(scopeJSON:string):string",
+    "status": "g13Status():string",
+    "coldBegin": "g13ColdBegin(token:string,mode:string):string",
+    "coldPage": "g13ColdPage(id:string,segment:number,wordOffset:number):string",
+    "coldEnd": "g13ColdEnd(id:string):string",
+    "diagnostic": "g13DiagnosticBegin(config128,fixtureReceiptJSON):string; test-only seeds/faults are separate identity",
+    "session": "g13BeginSession(scopeJSON:string):string",
+    "active": "g13SetActive(active:boolean,scopeJSON:string):string",
+    "view": "g13ViewMode(mode:string,scales64:Uint32Array):string; immutable viewGeneration, no physical advance"
+  },
+  "cold": {
+    "route": 13,
+    "routeRawBudgetBytes": 11510272,
+    "slots": 2,
+    "builder": 1,
+    "reader": 1,
+    "TTLns": 60000000000,
+    "prefixBytes": 65536,
+    "ROOTsegments": [
+      "PREFIX",
+      "BASE",
+      "CANDIDATE",
+      "CTRL"
+    ],
+    "FULLsegments": [
+      "PREFIX",
+      "BASE",
+      "CANDIDATE",
+      "REPLAY",
+      "WORK",
+      "CTRL",
+      "PACK0",
+      "PACK1"
+    ],
+    "pageWords": 1024,
+    "pageUtf8Bytes": 16384,
+    "pageMax": "1+ceil(rawBytes/4096)+32",
+    "archiveUtf8Max": "(pageMax+1)*16384",
+    "prefixHashPolicy": {
+      "canonical": "SHA256 prefix65536 with header words248..255 zero",
+      "prefixDescriptorHash": "all8words0; header canonicalPrefixSHA owns prefix hash",
+      "otherDescriptors": "SHA256 complete actual segment bytes",
+      "externalLastManifest": [
+        "rawPrefixSHA",
+        "payloadRawSHA",
+        "pagesFileSHA"
+      ],
+      "finalFileSHA": "external receipt only"
+    },
+    "freeze": "owner idle; pin retained banks/work/control/pack; copy to broker-owned host slot; release GPU pins only after copy completion",
+    "normalHotReadBytes": 1024,
+    "sourceOrQuantum": "1 tail fence, no field hot readback"
+  },
+  "checks": {
+    "profiles": 5,
+    "quantumDispatches": 820,
+    "sourceDispatches": 16,
+    "G1F4": 3296,
+    "layoutNoOverlap": true,
+    "resourceMatchesT605": true,
+    "constantIntervalsAgree": true,
+    "physicalTestsRun": false
+  },
+  "scientificSources": [
+    {
+      "title": "Khronos GLSL ES3.10 specification",
+      "url": "https://registry.khronos.org/OpenGL/specs/es/3.1/GLSL_ES_Specification_3.10.pdf",
+      "scope": "API/precision/barrier constraints, not project solver or error/performance qualification"
+    }
+  ]
+}
