@@ -15,7 +15,7 @@ ControlCode Run::Advance(uint64_t deltaNs,U64 f,U64 c,int target,uint32_t capaci
  frame=lastFrame=f;control=c;angle=target;K=capacity;receipt={};receipt.time=plan;receipt.active=true;nextQuantum=1;sourcePending=count!=0;
  if(!sourcePending&&plan.quanta==0){receipt.active=false;receipt.complete=true;}return ControlCode::OK;
 }
-void Run::Fail(TransportCode code){receipt.code=code;receipt.fault=true;receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;receipt.time.discardedQuanta=receipt.discardedQuanta;}
+void Run::Fail(TransportCode code){if(sourceFlight)ObserveSource(6,0x80000000u|uint32_t(code));receipt.code=code;receipt.fault=true;receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;receipt.time.discardedQuanta=receipt.discardedQuanta;}
 ControlCode Run::AdvancePlanV2(const PlanGrantV2& grant,U64 f,uint32_t capacity){
  if(suspended||receipt.active||inflight||submitting||quarantined)return ControlCode::BUSY;
  if(grant.id<=planV2||grant.quanta>4||grant.carry>=1000000000||
@@ -81,7 +81,7 @@ TransportCode Run::Pump(){
   if(code==TransportCode::REVOKED){DropRevoked();return code;}
   if(code!=TransportCode::OK){Fail(code);return code;}receipt.accepted++;receipt.latest=accepted;
   nextPublication=1-accepted.publication;
-  if(sourceFlight){head=(head+1)%queue.size();count--;sourcePending=false;}else{receipt.successfulQuanta++;nextQuantum++;}
+  if(sourceFlight){ObserveSource(6,accepted.outcome);head=(head+1)%queue.size();count--;sourcePending=false;}else{receipt.successfulQuanta++;nextQuantum++;}
   if(suspended){receipt.active=false;receipt.complete=true;receipt.discardedQuanta=receipt.time.quanta-receipt.successfulQuanta;return TransportCode::OK;}
   if(!sourcePending&&nextQuantum>receipt.time.quanta){receipt.active=false;receipt.complete=true;}return TransportCode::OK;
  }
@@ -92,10 +92,10 @@ TransportCode Run::Pump(){
  // T324 §2.3: OK_SUBMITTING consumes the nonce immediately (no retry can
  // re-Begin the root); the root is unsealed, NOT inflight. Poll/Stop drain
  // semantics below only ever see sealed inflight roots.
- if(code==TransportCode::OK_SUBMITTING){nonce=next;sourceFlight=sourcePending;submitting=true;receipt.submitted++;return TransportCode::OK;}
+ if(code==TransportCode::OK_SUBMITTING){nonce=next;sourceFlight=sourcePending;if(sourceFlight)ObserveSource(5,uint32_t(code));submitting=true;receipt.submitted++;return TransportCode::OK;}
  if(code==TransportCode::REVOKED){nonce=next;sourceFlight=sourcePending;DropRevoked();return code;}
  if(code==TransportCode::BUSY)return code;if(code!=TransportCode::OK){Fail(code);return code;}
- nonce=next;sourceFlight=sourcePending;inflight=true;receipt.submitted++;
+ nonce=next;sourceFlight=sourcePending;if(sourceFlight)ObserveSource(5,uint32_t(code));inflight=true;receipt.submitted++;
  const auto stamp=transport.tailObserver.Stamp();
  transport.tailObserver.Emit({TailStage::Inflight,(uint64_t(nonce.hi)<<32)|nonce.lo,stamp,stamp,0,0,0,0,root.kind});
  return TransportCode::OK;

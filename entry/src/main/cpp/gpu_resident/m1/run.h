@@ -7,6 +7,9 @@ namespace grs {namespace m1 {
 class Run {
 public:
  explicit Run(FullM1Transport& t):transport(t){}
+ struct SourceObservation {uint64_t serial=0,intent=0,plan=0,nonce=0,commit=0;uint32_t stage=0,code=0;};
+ SourceObservation sourceObservation{};
+ void ObserveSource(uint32_t stage,uint32_t code){if(!count)return;auto& o=sourceObservation;++o.serial;o.intent=uint64_t(queue[head][6])|(uint64_t(queue[head][7])<<32);o.plan=progressV2?planV2:(uint64_t(control.hi)<<32)|control.lo;o.nonce=(uint64_t(nonce.hi)<<32)|nonce.lo;const auto& h=transport.Owner().Header();o.commit=uint64_t(h[14])|(uint64_t(h[15])<<32);o.stage=stage;o.code=code;}
  ControlCode Offer(const std::array<uint32_t,32>&);
  ControlCode Advance(uint64_t,U64,U64,int,uint32_t);
  ControlCode AdvancePlanV2(const PlanGrantV2&,U64,uint32_t);

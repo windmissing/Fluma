@@ -20,6 +20,13 @@ def end_delimiter(s,start,left='{',right='}'):
  raise ValueError('T537_DELIMITER')
 def overlay(out,route):
  main=out/'entry/src/main';base=main/'cpp/gpu_resident'
+ for name in ['run.h','run.cpp']:(base/'m1'/name).write_bytes((ROOT/'entry/src/main/cpp/gpu_resident/m1'/name).read_bytes())
+ if route=='m2':
+  source=(ROOT/'entry/src/main/cpp/gpu_resident/m1/run.h').read_text();observation=source[source.index(' struct SourceObservation'):source.index(' ControlCode Offer(')]
+  p=base/'m2route/run.h';body=p.read_text();body=one(body,' ControlCode Offer(',observation+' ControlCode Offer(');p.write_text(body)
+  p=base/'m2route/run.cpp';body=p.read_text();body=body.replace('void Run::Fail(TransportCode code){receipt.code=','void Run::Fail(TransportCode code){if(sourceFlight)ObserveSource(6,0x80000000u|uint32_t(code));receipt.code=')
+  body=body.replace('if(sourceFlight){head=','if(sourceFlight){ObserveSource(6,accepted.outcome);head=').replace('sourceFlight=sourcePending;submitting=true;','sourceFlight=sourcePending;if(sourceFlight)ObserveSource(5,uint32_t(code));submitting=true;').replace('sourceFlight=sourcePending;inflight=true;','sourceFlight=sourcePending;if(sourceFlight)ObserveSource(5,uint32_t(code));inflight=true;');p.write_text(body)
+
  module=base/'input_diagnostic';module.mkdir(exist_ok=True)
  (module/'input_stage.h').write_bytes((ROOT/'entry/src/main/cpp/gpu_resident/input_diagnostic/input_stage.h').read_bytes())
  (module/'source_claim_witness.h').write_bytes((ROOT/'entry/src/main/cpp/gpu_resident/input_diagnostic/source_claim_witness.h').read_bytes())
@@ -42,6 +49,10 @@ def overlay(out,route):
  p=base/'m1/scene.frag';s=p.read_text(encoding='utf8');s=one(s,'void main(){','void main(){\n if(uLayer==7){float x=gl_FragCoord.x/uResolution.x;color=x<1./3.?vec4(1.,0.,0.,1.):x<2./3.?vec4(0.,1.,0.,1.):vec4(0.,0.,1.,1.);return;}');p.write_text(s,encoding='utf8')
  p=base/'app_bridge.cpp';s=p.read_text(encoding='utf8');s='#include "input_diagnostic/input_stage.h"\n'+s
  fields=''' input537::Ledger inputStages;claim575::Ledger claimWitness;
+ #ifdef GRS_APP_M1
+ bool WitnessFrontLocked(uint64_t seen,U64 actual,std::array<uint32_t,32>& command){const auto p=DiagnosticPointLocked("T597_HEAD_GATE");const char* reason=!AllowedLocked()?"NOT_READY":seen!=epoch.load()?"STALE_EPOCH":!count?"QUEUE_EMPTY":queue[head].epoch!=seen?"HEAD_EPOCH_MISMATCH":queue[head].input.lo!=actual.lo||queue[head].input.hi!=actual.hi?"HEAD_INPUT_MISMATCH":PacketLocked(queue[head].words,actual);if(std::strcmp(reason,"OK"))claimWitness.NoClaim(p.scope,reason);return FrontLocked(seen,actual,command);}
+ #endif
+
  std::atomic<bool> pixelSelected{false};bool pixelPulseOpen=false,pixelFailed=false,pixelDrawn=false;
  uint64_t pixelLastNative=0,pixelLastUi=0;input537::Pixel pixel;std::string pixelGeometry;
  bool PixelAllowedLocked(uint64_t candidate,void* held,uint64_t stamp)const{return pixelSelected&&!pixelFailed&&pixelPulseOpen&&active&&held&&CurrentLocked(candidate,held)&&stamp>=pixelLastNative&&stamp-pixelLastNative<=33333333;}
@@ -54,12 +65,21 @@ def overlay(out,route):
  s=one(s,'   if(run&&!failed&&!gap){',wrap(read('pixel_pump.inc'))+'\n   if(run&&!failed&&!gap){')
  # T575: claim witness at the actual head-consume point. The witness records
  # the first named no-claim reason or the accepted claim with real values.
- s=one(s,'FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);auto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}','FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);\n#ifdef GRS_APP_M1\n{std::lock_guard<std::mutex> l(mutex);claimWitness.onClaim(0,DiagnosticPointLocked("T575_SOURCE_CLAIM"),uint32_t((Stamp()-sourceEnqueued[head])/1000000ull),(uint64_t(run->Tick().latest.nonce.hi)<<32)|run->Tick().latest.nonce.lo,(uint64_t(run->Tick().latest.nonce.hi)<<32)|run->Tick().latest.nonce.lo,run->Tick().latest.nonce.lo||run->Tick().latest.nonce.hi?1u:0u,(AllowedLocked()?1u:0u)|(epoch.load()==seen?8u:0u)|(run->Tick().active?16u:0u)|(1u<<2),(uint64_t(gpu->Owner().Header()[15])<<32)|gpu->Owner().Header()[14],"CLAIMED");}\n#endif\nauto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}')
+ s=one(s,'FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);auto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK)PopLocked();}}',"FrontLocked(seen,gpu->InputGeneration(),command)){MarkLocked(BridgeStage::Consume,seen);\n#ifdef GRS_APP_M1\nauto witnessPoint=DiagnosticPointLocked(\"T597_SOURCE_CLAIM\");const auto intent=uint64_t(command[6])|(uint64_t(command[7])<<32);const auto seq=claimWitness.Sequence(intent,witnessPoint.scope);claimWitness.noteEligibility(seq,4);claimWitness.Attempt(seq,witnessPoint.scope);\n#endif\nauto c=run->Offer(command);lastRunOffer=int(c);if(c==ControlCode::OK){\n#ifdef GRS_APP_M1\nclaimWitness.onClaim(seq,witnessPoint,uint32_t((Stamp()-sourceEnqueued[head])/1000000ull),0,0,0,4,0,\"CLAIM_ACCEPTED\");\n#endif\nPopLocked();}}}")
+ # Poll the actual SOURCE observation published by Run, never latest Q.
+ s=s.replace('run->Pump();','run->Pump();\n#ifdef GRS_APP_M1\n{std::lock_guard<std::mutex> witnessLock(mutex);if(CurrentLocked(seen,held)){const auto& o=run->sourceObservation;if(o.serial)claimWitness.Observe(o.intent,DiagnosticPointLocked("T597_SOURCE_OWNER"),o.stage,o.plan,o.nonce,o.commit,o.code);}}\n#endif\n')
+
+ # Only the M1 build owns the narrow witness method; M0 keeps its old gate.
+ s=s.replace('FrontLocked(seen,gpu->InputGeneration(),command)){', 'FrontLocked(seen,gpu->InputGeneration(),command)){')
+ s=s.replace('bool WitnessFrontLocked(', 'bool WitnessFrontLocked(')
+ # Route the call through a macro whose expansion keeps M0 unchanged.
+ s='#ifdef GRS_APP_M1\n#define T597_FRONT WitnessFrontLocked\n#else\n#define T597_FRONT FrontLocked\n#endif\n'+s
+ s=s.replace('FrontLocked(seen,gpu->InputGeneration(),command)){','T597_FRONT(seen,gpu->InputGeneration(),command)){')
  # A single diagnostic gate owns both the original Capture copy and the new
  # input copy. The same pre-reserved UTF8 writer enforces the old total limit.
  s=one(s,'auto copy=std::unique_ptr<diagnostic492::Capture>', 'auto inputCopy=std::unique_ptr<input537::Ledger>(new(std::nothrow) input537::Ledger);\n auto copy=std::unique_ptr<diagnostic492::Capture>')
  s=one(s,'if(!copy||!buffer){','if(!copy||!buffer||!inputCopy){')
- s=one(s,'bool stale=false;','resource501::HostScope inputOwnership(a.resources.get(),"T537_INPUT_STAGE_COPY",inputCopy.get(),sizeof(*inputCopy),sizeof(*inputCopy));\n auto claimCopy=std::unique_ptr<claim575::Ledger>(new(std::nothrow) claim575::Ledger);\n bool stale=false;')
+ s=one(s,'bool stale=false;','resource501::HostScope inputOwnership(a.resources.get(),"T537_INPUT_STAGE_COPY",inputCopy.get(),sizeof(*inputCopy),sizeof(*inputCopy));\n auto claimCopy=std::unique_ptr<claim575::Ledger>(new(std::nothrow) claim575::Ledger);\n if(!claimCopy){cold503::Writer fail(buffer.get(),limit);cold503::DiagnosticFallback(fail,summary,\"CLAIM_COPY_ALLOCATION_FAILED\",limit);return ColdText(e,fail);}\n resource501::HostScope claimOwnership(a.resources.get(),\"T597_SOURCE_CLAIM_COPY\",claimCopy.get(),sizeof(*claimCopy),sizeof(*claimCopy));\n bool stale=false;')
  s=one(s,'*copy=a.diagnostics;','*copy=a.diagnostics;*inputCopy=a.inputStages;*claimCopy=a.claimWitness;')
  s=one(s,'cold503::DiagnosticJson(w,*copy,summary,limit,stale);','cold503::DiagnosticJson(w,*copy,summary,limit,stale,inputCopy.get(),claimCopy.get());')
  s=one(s,'napi_value init(napi_env e,napi_value out){',wrap(read('napi.inc'))+'\nnapi_value init(napi_env e,napi_value out){')

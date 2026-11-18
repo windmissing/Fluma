@@ -24,43 +24,42 @@ struct Witness {
  uint32_t rootKind=0;        // 0 unknown, 1 source, 2 quantum
  uint32_t eligibilityBits=0; // bit0 allowed, bit1 fresh UI, bit2 queue nonempty, bit3 same epoch, bit4 active run
  uint64_t sourceCommit=0;    // sourceCommit counter observed with the claim
- char reason[32]{};          // first named no-claim reason when applicable
+ uint32_t stage=0,terminalCode=0;char reason[32]{};          // first named no-claim reason when applicable
 };
 static_assert(sizeof(Witness)<=256,"T575 witness must stay within 256 bytes");
 class Ledger {
- std::array<Witness,8> rows_{};size_t count_=0,dropped_=0;uint64_t nextEnqueue_=1;
+ std::array<Witness,1> rows_{};size_t count_=0,dropped_=0;uint64_t nextEnqueue_=1;
  uint64_t lockedSeq_=0; // designated enqueueSeq for the narrow chain (0 = first)
 public:
  void designate(uint64_t seq){lockedSeq_=seq;}
  // Called with the App mutex held at the enqueue point (ENQUEUED_NOT_ACK).
  Witness* onEnqueue(const diagnostic492::Point& point,uint64_t intentSeq,uint32_t queueCount,uint64_t sourceGeneration,uint64_t inputEpoch){
-  if(count_==rows_.size()){++dropped_;return nullptr;}
+  if(nextEnqueue_==UINT64_MAX){++dropped_;return nullptr;}if(count_==rows_.size()){++nextEnqueue_;++dropped_;return nullptr;}
   if(lockedSeq_&&nextEnqueue_!=lockedSeq_){++nextEnqueue_;return nullptr;}
   auto& w=rows_[count_++];
   w={};w.scope=point.scope;w.intentSeq=intentSeq;w.enqueueSeq=nextEnqueue_++;w.enqueueNs=point.ns;
   w.queueCount=queueCount;w.sourceGeneration=sourceGeneration;w.inputEpoch=inputEpoch;
-  w.eligibilityBits=0x4u; // queue nonempty (just enqueued)
+  w.stage=1;w.eligibilityBits=0x4u; // queue nonempty (just enqueued)
   return &w;
  }
  // Called with the App mutex held at the claim point (head consumed).
  void onClaim(uint64_t enqueueSeq,const diagnostic492::Point& point,uint32_t headAgeMs,uint64_t planId,uint64_t rootNonce,uint32_t rootKind,uint32_t eligibilityBits,uint64_t sourceCommit,const char* reason){
-  (void)enqueueSeq;
-  // FIFO claim: the queue is consumed head-first, so the claim binds to the
-  // oldest row that has an enqueue but no claim yet (the contract locks the
-  // chain to one designated enqueueSeq; rows carry the real seq in JSON).
-  Witness* oldest=nullptr;
-  for(auto& w:rows_)if(w.enqueueNs&&w.claimNs==0&&(!oldest||w.enqueueSeq<oldest->enqueueSeq))oldest=&w;
-  for(auto& w:rows_)if(&w==oldest){
-   w.claimNs=point.ns;w.headAge=headAgeMs;w.planId=planId;w.rootNonce=rootNonce;w.rootKind=rootKind;
+  for(auto& w:rows_)if(w.enqueueSeq==enqueueSeq&&std::memcmp(&w.scope,&point.scope,sizeof(w.scope))==0){
+   w.stage=4;w.claimNs=point.ns;w.headAge=headAgeMs;w.planId=planId;w.rootNonce=rootNonce;w.rootKind=rootKind;
    w.eligibilityBits|=eligibilityBits;w.sourceCommit=sourceCommit;
    const size_t n=std::strlen(reason);std::memcpy(w.reason,reason,n<sizeof(w.reason)-1?n:sizeof(w.reason)-1);
    return;
   }
  }
+ uint64_t Sequence(uint64_t intent,const diagnostic492::Scope& scope)const{for(const auto& w:rows_)if(w.stage<6&&w.intentSeq==intent&&!std::memcmp(&w.scope,&scope,sizeof(scope)))return w.enqueueSeq;return 0;}
+ void NoClaim(const diagnostic492::Scope& scope,const char* reason){for(auto& w:rows_)if(w.enqueueNs&&w.stage<4&&!w.reason[0]&&!std::memcmp(&w.scope,&scope,sizeof(scope))){std::strncpy(w.reason,reason,sizeof(w.reason)-1);}}
+ void Attempt(uint64_t seq,const diagnostic492::Scope& scope){for(auto& w:rows_)if(w.enqueueSeq==seq&&seq&&!std::memcmp(&w.scope,&scope,sizeof(scope)))w.stage=3;}
+ void Observe(uint64_t intent,const diagnostic492::Point& p,uint32_t stage,uint64_t plan,uint64_t nonce,uint64_t commit,uint32_t code){for(auto& w:rows_)if(w.intentSeq==intent&&!std::memcmp(&w.scope,&p.scope,sizeof(w.scope))&&w.stage>=4&&w.stage<6){w.stage=stage;w.planId=plan;w.rootNonce=nonce;w.rootKind=1;w.sourceCommit=commit;w.terminalCode=code;}}
  void noteEligibility(uint64_t enqueueSeq,uint32_t bits){
-  for(auto& w:rows_)if(w.enqueueSeq==enqueueSeq)w.eligibilityBits|=bits;
+  for(auto& w:rows_)if(w.enqueueSeq==enqueueSeq&&enqueueSeq&&w.stage<6){w.eligibilityBits|=bits;if(w.stage<2)w.stage=2;}
  }
  void Json(cold503::Writer& w)const{
+  const size_t begin=w.Size();
   w.Raw("{\"revision\":\"SourceClaimWitnessV1\",\"witnessBytes\":");
   w.Number(sizeof(Witness));w.Raw(",\"designatedEnqueueSeq\":");w.U64(lockedSeq_);
   w.Raw(",\"dropped\":");w.Number(dropped_);w.Raw(",\"rows\":[");
@@ -70,7 +69,7 @@ public:
    w.Raw(",\"intentSeq\":");w.U64(r.intentSeq);
    w.Raw(",\"enqueueSeq\":");w.U64(r.enqueueSeq);
    w.Raw(",\"enqueueNs\":");w.U64(r.enqueueNs);
-   w.Raw(",\"claimNs\":");w.U64(r.claimNs);
+   w.Raw(",\"stage\":");w.Number(r.stage);w.Raw(",\"terminalCode\":");w.Number(r.terminalCode);w.Raw(",\"claimNs\":");w.U64(r.claimNs);
    w.Raw(",\"queueCount\":");w.Number(r.queueCount);
    w.Raw(",\"headAgeMs\":");w.Number(r.headAge);
    w.Raw(",\"sourceGeneration\":");w.U64(r.sourceGeneration);
@@ -82,7 +81,8 @@ public:
    w.Raw(",\"sourceCommit\":");w.U64(r.sourceCommit);
    w.Raw(",\"reason\":");w.String(r.reason,std::strlen(r.reason));
    w.Raw("}");}
-  w.Raw("]}");
+  w.Raw("]}");if(w.Size()-begin>2048)w.Append(nullptr,SIZE_MAX);
  }
 };
+static_assert(sizeof(Ledger)<=256,"T597 single designated witness credit");
 }
