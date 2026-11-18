@@ -6,7 +6,7 @@
 // command; without it endpoints refuse with INPUT_CLOCK_UNVERIFIED.
 #include <cmath>
 namespace t572 {
-static std::mutex touchMutex;
+static std::mutex touchMutex;static grs::g9spf::candidate548::ClockProducer clockProducer;
 static grs::g9spf::candidate548::TouchAdapter touchAdapter;
 static grs::g9spf::candidate548::Mapping presentedMapping;
 static uint64_t lastPresentedCommit=0;
@@ -18,7 +18,7 @@ struct ColdRecordsV2 {
 };
 static ColdRecordsV2 coldRecords;
 static void ResetLocked(){
- touchAdapter.Revoke();
+ clockProducer.Revoke();touchAdapter.Revoke();
  presentedMapping={};
  lastPresentedCommit=0;
  coldRecords=ColdRecordsV2{};
@@ -34,11 +34,13 @@ napi_value g9TouchBegin(napi_env e,napi_callback_info info){
     napi_get_value_int32(e,v[6],&touches)!=napi_ok||napi_get_value_uint32(e,v[7],&generation)!=napi_ok)
   return text(e,"INVALID_ARGUMENT");
  if(!(sample==std::floor(sample)&&std::fabs(sample)<9007199254740992.0)||!(receipt==std::floor(receipt)&&std::fabs(receipt)<9007199254740992.0))return text(e,"INPUT_TIMESTAMP_PRECISION_UNSUPPORTED");
- std::lock_guard<std::mutex> gate(t572::touchMutex);
+ if(!std::isfinite(sample)||sample<=0||sample>9007199254740991.0||sample!=std::floor(sample)||!std::isfinite(px)||!std::isfinite(py)||changed<0||touches<0)return text(e,"INPUT_TIMESTAMP_PRECISION_UNSUPPORTED");
+ receipt=double(grs::g9spf::candidate548::ClockProducer::Now());
  grs::g9spf::candidate548::TouchPoint p{uint64_t(sample),uint64_t(receipt),pointer,px,py};
  auto& a=app();std::shared_ptr<grs::g9spf::Controller> c;
  {std::lock_guard<std::mutex> lock(a.mutex);c=a.g9Controller;}
  if(!c)return text(e,"G9_NOT_READY");
+ std::lock_guard<std::mutex> gate(t572::touchMutex);
  grs::g9spf::candidate548::Mapping m=t572::presentedMapping;
  if(!m.current||m.generation!=generation)return text(e,"STALE_PRESENTED_MAPPING");
  return text(e,t572::touchAdapter.Down(p,m,uint32_t(changed),uint32_t(touches)));
@@ -51,6 +53,8 @@ napi_value g9TouchUpdate(napi_env e,napi_callback_info info){
     napi_get_value_int32(e,v[2],&pointer)!=napi_ok||napi_get_value_double(e,v[3],&px)!=napi_ok||
     napi_get_value_double(e,v[4],&py)!=napi_ok||napi_get_value_int32(e,v[5],&changed)!=napi_ok||
     napi_get_value_int32(e,v[6],&touches)!=napi_ok)return text(e,"INVALID_ARGUMENT");
+ if(!std::isfinite(sample)||sample<=0||sample>9007199254740991.0||sample!=std::floor(sample)||!std::isfinite(px)||!std::isfinite(py)||changed<0||touches<0)return text(e,"INPUT_TIMESTAMP_PRECISION_UNSUPPORTED");
+ receipt=double(grs::g9spf::candidate548::ClockProducer::Now());
  std::lock_guard<std::mutex> gate(t572::touchMutex);
  grs::g9spf::candidate548::TouchPoint p{uint64_t(sample),uint64_t(receipt),pointer,px,py};
  return text(e,t572::touchAdapter.Move(p,t572::presentedMapping,uint32_t(changed),uint32_t(touches)));
@@ -63,9 +67,11 @@ napi_value g9TouchEnd(napi_env e,napi_callback_info info){
     napi_get_value_int32(e,v[2],&pointer)!=napi_ok||napi_get_value_double(e,v[3],&px)!=napi_ok||
     napi_get_value_double(e,v[4],&py)!=napi_ok||napi_get_value_int32(e,v[5],&changed)!=napi_ok||
     napi_get_value_int32(e,v[6],&touches)!=napi_ok)return text(e,"INVALID_ARGUMENT");
- std::lock_guard<std::mutex> gate(t572::touchMutex);
  auto& a=app();std::shared_ptr<grs::g9spf::Controller> c;
  {std::lock_guard<std::mutex> lock(a.mutex);c=a.g9Controller;}
+ if(!std::isfinite(sample)||sample<=0||sample>9007199254740991.0||sample!=std::floor(sample)||!std::isfinite(px)||!std::isfinite(py)||changed<0||touches<0)return text(e,"INPUT_TIMESTAMP_PRECISION_UNSUPPORTED");
+ receipt=double(grs::g9spf::candidate548::ClockProducer::Now());
+ std::lock_guard<std::mutex> gate(t572::touchMutex);
  if(!c)return text(e,"G9_NOT_READY");
  grs::g9spf::candidate548::Stroke stroke;
  const char* result=t572::touchAdapter.Up({uint64_t(sample),uint64_t(receipt),pointer,px,py},t572::presentedMapping,uint32_t(changed),uint32_t(touches),stroke);
@@ -95,23 +101,13 @@ napi_value g9PresentedMappingV2(napi_env e,napi_callback_info info){
  char token[512]{};size_t bytes=0;
  if(napi_get_value_string_utf8(e,v,nullptr,0,&bytes)!=napi_ok||bytes>=sizeof(token))return text(e,"INVALID_ARGUMENT");
  if(napi_get_value_string_utf8(e,v,token,sizeof(token),&bytes)!=napi_ok)return text(e,"INVALID_ARGUMENT");
- // The page publishes this ONLY after a successful same-scope swap; the
- // mapping binds every subsequent stroke to one presented generation.
- std::lock_guard<std::mutex> gate(t572::touchMutex);
- auto& a=app();std::shared_ptr<grs::g9spf::Controller> c;
- {std::lock_guard<std::mutex> lock(a.mutex);c=a.g9Controller;}
- if(!c)return text(e,"G9_NOT_READY");
- std::string last;
- {std::lock_guard<std::mutex> lock(a.mutex);last=a.g9PresentedToken;}
+ // Query only; all App data is copied before taking the touch mutex.
+ grs::g9spf::candidate548::Mapping candidate;std::string last;
+ {auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);if(!a.g9Controller)return text(e,"G9_NOT_READY");last=a.g9PresentedToken;candidate.scope=a.g9Identity;candidate.width=double(a.nativeViewportWidth);candidate.height=double(a.nativeViewportHeight);}
  if(last.empty()||last!=std::string(token))return text(e,"STALE_PRESENTED_MAPPING");
- auto& m=t572::presentedMapping;
- m={};m.current=true;m.generation=++t572::lastPresentedCommit;m.commit=m.generation;
- m.left=0;m.top=0;m.width=double(a.nativeViewportWidth);m.height=double(a.nativeViewportHeight);
- {std::lock_guard<std::mutex> lock(a.mutex);m.scope=a.g9Identity;}
- // Authorize the stroke clock domain for this mapping generation (the proof
- // still requires the platform clock source verification elsewhere; the
- // adapter itself keeps refusing until that chain is complete).
- t572::touchAdapter.AuthorizeClock(m);
+ // Until an immutable successful-Swap lease snapshot is published by the
+ // owner, do not combine an old token with the copied current scope.
+ return text(e,"PRESENTED_LEASE_SNAPSHOT_NOT_AVAILABLE");
  return text(e,"PRESENTED_MAPPING_BOUND");
 }
 napi_value g9ColdRecordsV2(napi_env e,napi_callback_info){
@@ -123,4 +119,9 @@ napi_value g9ColdRecordsV2(napi_env e,napi_callback_info){
   r.revision,r.current.kind,r.base.kind,(unsigned long long)r.seed.uploadedBytes);
  if(wrote<=0||size_t(wrote)>=json.size())return text(e,"{\"state\":\"INCOMPLETE\"}");
  return text(e,std::string(json.data(),wrote));
+}
+
+napi_value g9ClockCapabilitiesV1(napi_env e,napi_callback_info){
+ auto& a=app();grs::g9spf::ControlIdentity scope;{std::lock_guard<std::mutex> lock(a.mutex);scope=a.g9Identity;}
+ std::lock_guard<std::mutex> gate(t572::touchMutex);std::array<char,2048> data{};grs::cold503::Writer w(data.data(),data.size());w.Raw("{\"revision\":\"G9_CLOCK_CAPABILITIES_V1\",\"producerId\":\"ARKUI_BASE_EVENT_TIMESTAMP\",\"profile\":\"OHOS_TOUCH_MONOTONIC_NS_R1\",\"unit\":\"ns\",\"epoch\":\"CLOCK_MONOTONIC\",\"proofGeneration\":");w.U64(t572::clockProducer.Generation());w.Raw(",\"verified\":");w.Bool(t572::clockProducer.Valid(scope));w.Raw(",\"state\":");const auto* state=t572::clockProducer.Valid(scope)?"VERIFIED_NATIVE_PRODUCER":"INPUT_CLOCK_UNVERIFIED";w.String(state,std::strlen(state));w.Raw(",\"platformBuild\":\"NOT_PROVIDED\",\"platformSourceSha\":\"NOT_PROVIDED\",\"requiredEvidence\":\"OS build -> actual event producer -> conversion -> CLOCK_MONOTONIC; native implementation source SHA; same scope proof generation\",\"nativeNow\":");w.U64(grs::g9spf::candidate548::ClockProducer::Now());w.Raw("}");return text(e,std::string(w.Data(),w.Size()));
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "flick_numeric.h"
+#include "clock_producer.h"
 namespace grs::g9spf::candidate548 {
 struct Mapping {ControlIdentity scope{};uint64_t generation=0,commit=0;double left=0,top=0,width=0,height=0;std::array<uint32_t,8> parameter{},seed{};bool current=false;};
 struct TouchPoint {uint64_t sample=0,receipt=0;int32_t pointer=0;double px=0,py=0;};
@@ -14,7 +15,7 @@ public:
  void Revoke(){active=proof=false;last=0;}
  // The caller must validate platform source/clock proof before granting this
  // scope. No timestamp supplied by JS can grant proof by itself.
- void AuthorizeClock(const Mapping& scope){Revoke();proved=scope;proof=scope.current;}
+ bool AuthorizeClock(const Mapping& scope,const ClockProducer& producer){Revoke();if(!producer.Valid(scope.scope))return false;proved=scope;proof=scope.current;return proof;}
  void Cancel(){active=false;last=0;}
  const char* Down(const TouchPoint& p,const Mapping& m,uint32_t changed,uint32_t touches){
   if(active){Cancel();return "REPEATED_DOWN";}if(!proof||!SameMapping(proved,m))return "INPUT_CLOCK_UNVERIFIED";
@@ -41,7 +42,7 @@ public:
 // Config64 at 3584..3647, SEED_META64 at 3648..3711.
 struct TouchEvidence256 {
  uint32_t kind=0; // 0=NONE,1=CURRENT_FROZEN_TOUCH,2=BASE_LAST_CONSUMED_TOUCH
- std::array<uint32_t,64> words{};
+ std::array<uint32_t,256> words{};
 };
 struct SeedMeta64 {
  std::array<uint32_t,8> templateSha{},actualSha{},parameterSha{};
@@ -53,10 +54,10 @@ inline void WriteColdV2Records(uint32_t* prefix,
                                const std::array<uint32_t,64>& config64,
                                const SeedMeta64& seed){
  if(!prefix)return;
- std::memset(prefix+3072,0,512);
- if(current.kind)std::memcpy(prefix+3072,current.words.data(),256);
- if(base.kind)std::memcpy(prefix+3200,base.words.data(),256);
- prefix[3072]=current.kind;prefix[3200]=base.kind;
+ std::memset(prefix+3072,0,2048);
+ if(current.kind)std::memcpy(prefix+3072,current.words.data(),1024);
+ if(base.kind)std::memcpy(prefix+3328,base.words.data(),1024);
+ // Record magic/identity words are never overwritten by presence metadata.
  std::memcpy(prefix+3584,config64.data(),256);
  std::memset(prefix+3648,0,256);
  std::memcpy(prefix+3648,seed.templateSha.data(),32);

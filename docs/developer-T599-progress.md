@@ -1,0 +1,11 @@
+# T599 producer安全修复与未完项
+
+2026-11-18。仅开发编译，不测试、不使用真机。整卡未完成。
+
+已删除PresentedMapping授予clock proof的路径。新增native ClockProducer::Now显式CLOCK_MONOTONIC ns，checked timespec溢出；InstallVerifiedProducerProof为native-only，要求完整scope/实际build/producer/conversion/native source SHA及真实已验证平台链，不提供JS verified=true。只读g9ClockCapabilitiesV1具名披露INPUT_CLOCK_UNVERIFIED、proofGeneration、缺失platformBuild/source证据与native时间；不存在从Date.now/调用计数拟合epoch。
+
+Begin/Move/End统一拒非finite/非正/非安全整数sample和非法点，native自己记录receipt，不信任UI receipt；Begin不再先touch锁后App锁。没有immutable成功Swap lease映射时明确PRESENTED_LEASE_SNAPSHOT_NOT_AVAILABLE，不拼旧token与新scope，不按调用次数增commit。TOUCH_EVIDENCE存储改为真实256U32，cold helper两段分别3072/3328、各1024B，零化2048B且不再以kind覆盖record[0] magic/身份。
+
+尚未完成：GL成功Swap同lease immutable映射发布、实际页面Config64/R2+四触摸事件→INPUT128/队列/Offer/Claim回执、完整256word字典填充、实际cold writer/BASE消费晋升/Config/SEED/collector/reader接线。当前元数据getter不能冒真实cold原件。类和窄安全修复不等于完整producer/手势DEMO；真实时钟平台证据也尚无，需要tester给实际OS/build、event采样producer→vendor转换→CLOCK_MONOTONIC、源码SHA和native实现身份，同scope新proof generation。SDK文档和上游参考本身不够。
+
+完整生成工程test/t599/generate.cjs经T529并补现有G11/G12源码生成头。native/ArkTS/HAP编译通过，见最终日志与进度收据；无GPU/dispatch/draw或设备资格实测。未完成的软件接线仍属developer责任，不伪装全部只等设备证明。

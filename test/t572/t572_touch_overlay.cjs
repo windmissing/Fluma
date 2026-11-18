@@ -32,6 +32,7 @@ module.exports = function injectTouchAdapter(main) {
   const anchorProp = '{"g9OfferModel",nullptr,g9OfferModel,nullptr,nullptr,nullptr,napi_default,nullptr},';
   if (s.split(anchorProp).length !== 2) throw Error('T572_PROP_ANCHOR');
   const newProps = [
+    '{"g9ClockCapabilitiesV1",nullptr,g9ClockCapabilitiesV1,nullptr,nullptr,nullptr,napi_default,nullptr},',
     '{"g9TouchBegin",nullptr,g9TouchBegin,nullptr,nullptr,nullptr,napi_default,nullptr},',
     '{"g9TouchUpdate",nullptr,g9TouchUpdate,nullptr,nullptr,nullptr,napi_default,nullptr},',
     '{"g9TouchEnd",nullptr,g9TouchEnd,nullptr,nullptr,nullptr,napi_default,nullptr},',
@@ -44,6 +45,7 @@ module.exports = function injectTouchAdapter(main) {
   // 4. d.ts declarations
   const types = path.join(cpp, 'types/libgrsm1/index.d.ts');
   fs.appendFileSync(types, [
+    'export const g9ClockCapabilitiesV1:()=>string;',
     'export const g9TouchBegin:(sample:number,receipt:number,pointer:number,px:number,py:number,changed:number,touches:number,generation:number)=>string;',
     'export const g9TouchUpdate:(sample:number,receipt:number,pointer:number,px:number,py:number,changed:number,touches:number)=>string;',
     'export const g9TouchEnd:(sample:number,receipt:number,pointer:number,px:number,py:number,changed:number,touches:number)=>string;',
