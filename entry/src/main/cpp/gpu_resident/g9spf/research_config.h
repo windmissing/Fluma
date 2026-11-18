@@ -10,6 +10,8 @@ namespace grs::g9spf {
 struct Config {
  uint32_t k=0,g=0,muStart=0,muStop=0,band=0,entrainRate=0,shear=0,settleTicks=0,revision=0;
  bool research=false,synthetic=false,fullTrialTrace=false;
+ bool realTouch=false;
+ std::array<uint32_t,64> capsule64{};
  std::array<uint32_t,8> parameterSha{},seedSha{};
  bool Valid()const{
   bool named=false;for(auto v:parameterSha)named|=v!=0;
@@ -25,7 +27,7 @@ inline std::array<uint32_t,8> HashWords(const uint32_t* words,size_t count){
  p011gpu::Sha256 sha;for(size_t i=0;i<count;++i){uint32_t v=words[i];const uint8_t b[]={uint8_t(v),uint8_t(v>>8),uint8_t(v>>16),uint8_t(v>>24)};sha.update(b,4);}
  auto digest=sha.finish();std::array<uint32_t,8> result{};for(size_t i=0;i<8;++i)result[i]=uint32_t(digest[4*i])|(uint32_t(digest[4*i+1])<<8)|(uint32_t(digest[4*i+2])<<16)|(uint32_t(digest[4*i+3])<<24);return result;
 }
-inline std::array<uint32_t,8> ParameterHash(const Config& c){const uint32_t words[]={kProfileCode,c.k,c.g,c.muStart,c.muStop,c.band,c.entrainRate,c.shear,c.settleTicks,c.revision,c.research?1u:0u,c.synthetic?1u:0u};return HashWords(words,sizeof(words)/4);}
+inline std::array<uint32_t,8> ParameterHash(const Config& c){if(c.realTouch)return HashWords(c.capsule64.data(),c.capsule64.size());const uint32_t words[]={kProfileCode,c.k,c.g,c.muStart,c.muStop,c.band,c.entrainRate,c.shear,c.settleTicks,c.revision,c.research?1u:0u,c.synthetic?1u:0u};return HashWords(words,sizeof(words)/4);}
 struct Permit {
  ControlIdentity identity;uint64_t nonce=0,plan=0,frame=0,control=0,geometry=0,deadline=0,baseCommit=0,quanta=0,arenaGeneration=0;
  uint32_t kind=0,ordinal=0,baseBank=0,candidateBank=1,arena=0;

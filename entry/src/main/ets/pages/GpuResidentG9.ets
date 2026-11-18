@@ -25,9 +25,9 @@ function parseNativeObject(raw: string, api: string, allowedRevisions: string[])
   }
   const revision = record['revision'];
   if (typeof revision !== 'string' || allowedRevisions.indexOf(revision) < 0) return fail('REVISION_MISMATCH');
-  if (api === 'g9ResearchConfig') {
+  if (api === 'g9ResearchConfig' || api === 'g9ResearchConfig64') {
     const words: Object | undefined = record['words'];
-    if (!Array.isArray(words) || words.length !== 24) return fail('CONFIG_WORDS_INVALID');
+    if (!Array.isArray(words) || words.length !== (api === 'g9ResearchConfig64' ? 64 : 24)) return fail('CONFIG_WORDS_INVALID');
     const checked: number[] = [];
     for (let i = 0; i < words.length; i++) {
       const w: Object = words[i];
@@ -49,6 +49,10 @@ struct GpuResidentG9 {
   @State message: string = 'G9 独立研究：未启动';
   @State archive: string = '';
   @State angle: number = 0;
+  @State realTouch: boolean = false;
+  @State touchMessage: string = '未启用真实拨动';
+  private publication: string = '0';
+  private token: string = '';
   private identity: number[] = [];
   private sequence: number = 0;
   private command: number = 0;
@@ -68,6 +72,7 @@ struct GpuResidentG9 {
     else this.archive = 'INCOMPLETE ' + this.path;
   }
   private start(k: number, full: boolean): void {
+    this.realTouch = false; this.publication = '0'; this.token = ''; native.g9TouchCancel();
     // T550 (problem T546 §4): the whole startup transaction (archive close,
     // setActive, config read, configure, frame scheduling) is guarded; any
     // failure cancels the new frame and never schedules a pulse. Only the
@@ -101,6 +106,49 @@ struct GpuResidentG9 {
       this.message = 'G9_START_FAULT：' + String(e) + (firstError === '' ? '' : '；清理：' + firstError);
     }
   }
+  private startReal(): void {
+    try {
+      this.cold.cancel(); this.closeArchive(false); native.g9TouchCancel();
+      if (this.frame !== null) this.frame.owner = null;
+      this.frame = null; this.publication = '0'; this.token = ''; native.setActive(true);
+      const config = parseNativeObject(native.g9ResearchConfig64(new Uint32Array([2])), 'g9ResearchConfig64', ['G9_CONFIG64_R2']);
+      if (!config.ok || config.words === null || config.words.length !== 64) throw new Error('G9_CONFIG64_' + config.error);
+      const result: string = native.g9Configure64(new Uint32Array(config.words));
+      if (result !== 'G9_NEW_S40_REAL_TOUCH_R2_REQUESTED') throw new Error(result);
+      this.realTouch = true; this.identity = []; this.sequence = this.command = this.angle = 0;
+      this.touchMessage = 'REAL_TOUCH_R2：等待独立时钟资格及成功呈现映射';
+      this.message = result; this.frame = new G9Frame(); this.frame.owner = this; this.getUIContext().postFrameCallback(this.frame);
+    } catch (e) { this.realTouch = false; this.message = 'G9_REAL_TOUCH_START_FAULT：' + String(e); }
+  }
+  private publicationWords(words: Uint32Array): boolean {
+    if (!/^[1-9][0-9]{0,19}$/.test(this.publication)) return false;
+    let low: number = 0; let high: number = 0;
+    for (let i: number = 0; i < this.publication.length; i++) {
+      const expanded: number = low * 10 + Number(this.publication.charAt(i));
+      high = high * 10 + Math.floor(expanded / 4294967296); low = expanded % 4294967296;
+      if (high > 4294967295) return false;
+    }
+    words[24] = low; words[25] = high; return true;
+  }
+  private touch(event: TouchEvent): void {
+    if (!this.realTouch) return;
+    try {
+      if (event.type === TouchType.Cancel) { this.touchMessage = native.g9TouchCancel(); return; }
+      const action: number = event.type === TouchType.Down ? 0 : event.type === TouchType.Move ? 1 : event.type === TouchType.Up ? 2 : -1;
+      if (action < 0 || event.changedTouches.length !== 1 || event.touches.length > 1) { native.g9TouchCancel(); this.touchMessage = 'MULTITOUCH_REJECTED'; return; }
+      if (!Number.isSafeInteger(event.timestamp) || event.timestamp <= 0) { native.g9TouchCancel(); this.touchMessage = 'INPUT_TIMESTAMP_PRECISION_UNSUPPORTED'; return; }
+      const point: TouchObject = event.changedTouches[0];
+      const words = new Uint32Array(64); const view = new DataView(words.buffer);
+      words[0] = action; words[1] = point.id; words[2] = event.changedTouches.length; words[3] = event.touches.length;
+      view.setFloat64(4 * 4, event.timestamp, true);
+      const scale: number = this.getUIContext().vp2px(1);
+      const raw: number[] = [point.x, point.y, point.windowX, point.windowY, point.screenX, point.screenY, scale, (point.windowX - point.x) * scale, (point.windowY - point.y) * scale];
+      for (let i: number = 0; i < raw.length; i++) { if (!Number.isFinite(raw[i])) throw new Error('TOUCH_POINT_INVALID'); view.setFloat64((6 + 2 * i) * 4, raw[i], true); }
+      if (!this.publicationWords(words)) { native.g9TouchCancel(); this.touchMessage = 'STALE_PRESENTED_MAPPING'; return; }
+      words[26] = words[27] = 1;
+      this.touchMessage = native.g9TouchEventV2(words);
+    } catch (e) { native.g9TouchCancel(); this.touchMessage = 'TOUCH_FAULT：' + String(e); }
+  }
   tick(frame: G9Frame, ns: number): void {
     if (frame !== this.frame || frame.owner !== this || !Number.isSafeInteger(ns)) return;
     try {
@@ -123,14 +171,24 @@ struct GpuResidentG9 {
         const pose = new Uint32Array(19);
         pose.set(this.identity);
         pose[18] = this.angle;
-        native.g9Target(pose); // Explicit manual model pose; never a sensor timestamp.
+        if (!this.realTouch) native.g9Target(pose); // Legacy explicit manual pose.
         const pulse = new Uint32Array(22);
         pulse.set(this.identity);
         this.pair(pulse, 18, ++this.sequence);
         this.pair(pulse, 20, ns);
         const code: string = native.g9Pulse(pulse);
         if (code !== '0') throw new Error('G9_PULSE_' + code);
+        if (this.realTouch && native.g9Target(pose) !== '0') throw new Error('G9_MANUAL_POSE_REJECTED');
         this.message = native.status();
+        if (this.realTouch && this.message.length <= 65536) {
+          const status = JSON.parse(this.message) as Record<string, Object>;
+          if (status['state'] === 'G9_CURRENT' && typeof status['token'] === 'string' && this.token !== (status['token'] as string)) {
+            const token: string = status['token'] as string;
+            const mappingRaw: string = native.g9PresentedMappingV2(token);
+            const mapping = parseNativeObject(mappingRaw, 'g9PresentedMappingV2', ['G9_PRESENTED_MAPPING_V2']);
+            if (mapping.ok) { const value = JSON.parse(mappingRaw) as Record<string, Object>; if (typeof value['generation'] === 'string') { this.publication = value['generation'] as string; this.token = token; } }
+          }
+        }
       }
       if (this.file !== null) {
         const state: string = this.cold.next((part: string) => {
@@ -143,6 +201,7 @@ struct GpuResidentG9 {
     } catch (e) { frame.owner = null; this.cold.cancel(); this.closeArchive(false); this.message = 'G9_FAULT，需新建运行'; }
   }
   private offer(kind: number): void {
+    if (this.realTouch) { this.touchMessage = 'REAL_TOUCH_R2：请在仿真区域拨动'; return; }
     if (this.identity.length !== 18 || this.command >= Number.MAX_SAFE_INTEGER) return;
     const words = new Uint32Array(148);
     words.set(this.identity);
@@ -181,14 +240,15 @@ struct GpuResidentG9 {
   }
   aboutToDisappear(): void {
     if (this.frame !== null) this.frame.owner = null;
-    this.cold.cancel();
-    this.closeArchive(false);
-    native.setActive(false);
+    try { this.cold.cancel(); this.closeArchive(false); }
+    finally { native.g9TouchCancel(); this.publication = '0'; this.token = ''; native.setActive(false); }
   }
   build() {
     Column({ space: 6 }) {
       Text('G9 · S/F/P GPU 独立研究').fontSize(20)
-      Text('候选参数待定标；SYNTHETIC 模型输入；默认关闭').fontSize(12)
+      Text(this.realTouch ? 'REAL_TOUCH_R2 · 手动姿态 · 时钟资格独立核验 · 候选待定标' : '候选参数待定标；SYNTHETIC 模型输入；默认关闭').fontSize(12)
+      Button('真实拨动 R2 · S40 新运行').onClick(() => this.startReal())
+      Text(this.touchMessage).fontSize(10).maxLines(2)
       Row({ space: 6 }) {
         Button('K192 新运行').onClick(() => this.start(192, false))
         Button('K512 新运行').onClick(() => this.start(512, false))
@@ -200,7 +260,7 @@ struct GpuResidentG9 {
         Button('冷导出').onClick(() => this.exportCold())
       }
       Slider({ value: this.angle, min: -7680, max: 7680, step: 1 }).onChange((value: number) => { this.angle = Math.round(value); })
-      XComponent({ id: 'grs-surface', type: XComponentType.SURFACE, libraryname: 'grsm1' }).layoutWeight(1).width('100%')
+      XComponent({ id: 'grs-surface', type: XComponentType.SURFACE, libraryname: 'grsm1' }).layoutWeight(1).width('100%').onTouch((event: TouchEvent) => this.touch(event))
       Text(this.message).fontSize(10).maxLines(3)
       Text(this.archive).fontSize(10).maxLines(2)
     }.width('100%').height('100%')

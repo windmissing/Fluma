@@ -2,7 +2,7 @@
 #include <chrono>
 #include <string>
 namespace grs::g9spf {
-namespace {uint64_t Now(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}}
+namespace {uint64_t Now(){return candidate548::ClockProducer::Now();}}
 bool Controller::Check(void* user,const Permit& p,uint64_t now){auto& self=*static_cast<Controller*>(user);std::lock_guard<std::mutex> lock(self.mutex_);return self.RecheckLocked(p,std::max(now,Now()));}
 bool Controller::RecheckLocked(const Permit& p,uint64_t now)const{
  return configured_&&rootLive_&&p==active_&&p.identity==identity_&&p.baseCommit==commit_&&now<=p.deadline&&clock_.Fresh(now)&&clock_.ready&&clock_.baseline&&clock_.mode==PlanningMode::RUNNABLE&&run_.active&&run_.plan==p.plan&&run_.nonce==p.nonce&&clock_.jobLive&&run_.jobLive;
@@ -19,7 +19,19 @@ Result Controller::ConfigureResearch(const Config& config,const ControlIdentity&
  const auto raw=std::string(kEngineeringSha);std::array<uint32_t,32> bytes{};for(size_t i=0;i<raw.size();++i)bytes[i/4]|=uint32_t(uint8_t(raw[i]))<<(8*(i%4));layoutSha_=HashWords(bytes.data(),16);shaderSha_=transport_.ShaderHash();configured_=true;return Result::OK;
 }
 Result Controller::OfferInput128(Input128 raw,uint64_t now,uint64_t sourceIntent){
- std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!clock_.open||!clock_.ready)return Result::STALE;
+ std::lock_guard<std::mutex> lock(mutex_);return OfferInputLocked(raw,now,sourceIntent,nullptr);
+}
+Result Controller::OfferTouch(const candidate548::Stroke& stroke,const candidate548::ClockProducer& producer,uint64_t now){
+ std::lock_guard<std::mutex> lock(mutex_);
+ if(!configured_||!config_.realTouch||!producer.Valid(identity_)||producer.Generation()!=stroke.proofGeneration)return Result::INPUT_CLOCK_UNVERIFIED;
+ if(stroke.mapping.scope!=identity_||stroke.mapping.generation!=generation_||stroke.mapping.commit!=commit_||stroke.mapping.parameter!=config_.parameterSha||stroke.mapping.seed!=transport_.Configuration().seedSha)return Result::STALE;
+ Input128 input;candidate548::TouchEvidence256 record;
+ if(!inputGate_.RealEnvelope(candidate548::TouchBody(stroke),input)||!candidate548::TouchRecord(stroke,input,config_,record))return Result::INVALID;
+ return OfferInputLocked(input,now,0,&record);
+}
+Result Controller::OfferInputLocked(Input128 raw,uint64_t now,uint64_t sourceIntent,const candidate548::TouchEvidence256* touch){
+ if(!configured_||!clock_.open||!clock_.ready)return Result::STALE;
+ if(config_.realTouch&&(!touch||!touch->kind))return Result::INPUT_CLOCK_UNVERIFIED;
  const auto accepted=inputGate_.Offer(raw,now);if(accepted!=Result::OK)return accepted;
  if(raw[40]==0)return Result::OK;
  // A consumed identity is never a new FIFO/meaningful SOURCE intent. Native
@@ -31,13 +43,13 @@ Result Controller::OfferInput128(Input128 raw,uint64_t now,uint64_t sourceIntent
  auto nextClock=clock_;const auto slot=(head_+size_)%queue_.size();SourceIntentKey key{identity_.run,identity_.owner,identity_.context,identity_.inputEpoch,identity_.pageSession,clock_.sourceControlGeneration,sourceIntent};
  if(raw[40]==1){InputPacket packet;packet.words=raw;const auto result=nextClock.RegisterSourceIntentLocked(key,packet,slot);if(result!=ControlResult::OK)return result==ControlResult::WOULD_BLOCK?Result::WOULD_BLOCK:Result::INVALID;}
  // IMPULSE enqueue deliberately does not call a meaningful-input registration.
- queue_[slot]={raw,key,sourceIntent};clock_=nextClock;++size_;return Result::OK;
+ queue_[slot]={raw,key,sourceIntent,touch?*touch:candidate548::TouchEvidence256{}};clock_=nextClock;++size_;return Result::OK;
 }
 Result Controller::OfferModelCommand(const Input128& body,uint64_t now,uint64_t sourceIntent){
  Input128 raw;{std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!inputGate_.ModelEnvelope(body,clock_.target,now,raw))return Result::INVALID;}
  return OfferInput128(raw,now,sourceIntent);
 }
-ControlResult Controller::Pulse(const PagePulseV3& pulse,uint64_t now){std::lock_guard<std::mutex> lock(mutex_);const auto result=clock_.PulseLocked(pulse,now);if(result==ControlResult::CLOCK_GAP||result==ControlResult::CONTROL_CLOCK_REVERSED||result==ControlResult::QUOTA_OVERFLOW)RevokeLocked(result);return result;}
+ControlResult Controller::Pulse(const PagePulseV3& pulse,uint64_t now){std::lock_guard<std::mutex> lock(mutex_);const auto result=clock_.PulseLocked(pulse,now);if(result==ControlResult::OK&&config_.realTouch)inputGate_.Pose(clock_.target,now);if(result==ControlResult::CLOCK_GAP||result==ControlResult::CONTROL_CLOCK_REVERSED||result==ControlResult::QUOTA_OVERFLOW)RevokeLocked(result);return result;}
 ControlResult Controller::Target(const ControlIdentity& id,int32_t angle,uint64_t now){std::lock_guard<std::mutex> lock(mutex_);const auto result=clock_.RegisterTargetLocked(id,angle);if(result==ControlResult::OK)inputGate_.Pose(angle,now);return result;}
 Result Controller::BeginRoot(uint64_t now,uint64_t frame,uint64_t geometry){
  if(!PollSceneFence())return Result::GL_FAILED;
@@ -53,6 +65,7 @@ Result Controller::BeginRoot(uint64_t now,uint64_t frame,uint64_t geometry){
   permit.identity=identity_;permit.nonce=++nonce_;permit.plan=run_.plan;permit.frame=frame;permit.control=frame;permit.geometry=geometry;permit.baseCommit=commit_;permit.quanta=quanta_;permit.kind=source?1:2;permit.ordinal=source?0:run_.quantumOrdinal+1;permit.baseBank=transport_.CurrentBank();permit.candidateBank=2;permit.arena=uint32_t(generation_&1);permit.arenaGeneration=generation_+1;
   if(inputGate_.Freeze(command,permit.nonce,now,frozen)!=Result::OK){RevokeLocked(ControlResult::STALE_REJECTED);return Result::STALE;}
   frozen[24]=uint32_t(clock_.grant.target);permit.parameterSha=config_.parameterSha;permit.layoutSha=layoutSha_;permit.shaderSha=shaderSha_;permit.inputSha=HashWords(frozen.data(),frozen.size());
+  frozenTouch_=command?queue_[head_].touch:candidate548::TouchEvidence256{};candidate548::FreezeTouchRecord(frozenTouch_,frozen);baseTouch_=consumedTouch_;if(baseTouch_.kind)baseTouch_.kind=2;
   active_=permit;rootLive_=true;clock_.jobLive=run_.jobLive=true;clock_.activeRootKind=permit.kind;run_.workspaceRetired=false;run_.nonce=permit.nonce;frame_=frame;
  }
  const auto result=transport_.Begin(permit,frozen,Check,this);if(result!=Result::OK){std::lock_guard<std::mutex> lock(mutex_);RevokeLocked(result==Result::DEADLINE?ControlResult::DEADLINE:ControlResult::STALE_REJECTED);}return result;
@@ -67,6 +80,7 @@ Result Controller::PumpBounded(uint64_t now){
  if(active_.kind==2){if(planning_.AcceptQuantumLocked(*record,now)!=ControlResult::OK){RevokeLocked(ControlResult::STALE_REJECTED);return Result::STALE;}}
  else{clock_.jobLive=run_.jobLive=false;clock_.activeRootKind=0;run_.sourcePhase=false;}
  if(!transport_.Commit(active_,tail)){RevokeLocked(ControlResult::STALE_REJECTED);return Result::STALE;}
+ if(frozenTouch_.kind&&(!hasConsumedImpulse_||Pair(frozenTouch_.words.data(),26)>Pair(consumedImpulse_.data(),41))){consumedTouch_=frozenTouch_;consumedTouch_.kind=2;}
  if(size_&&((active_.kind==1&&queue_[head_].input[40]==1)||(active_.kind==2&&queue_[head_].input[40]==2))){if(queue_[head_].input[40]==1){consumedSource_=queue_[head_].input;hasConsumedSource_=true;}else{consumedImpulse_=queue_[head_].input;hasConsumedImpulse_=true;}clock_.intents[head_]={};queue_[head_]={};head_=(head_+1)%queue_.size();--size_;}
  commit_=Pair(tail.data(),30);quanta_=Pair(tail.data(),54);if(generation_==UINT64_MAX){RevokeLocked(ControlResult::QUOTA_OVERFLOW);return Result::INVALID;}if(tail[6]!=2)++generation_;lastTail_=tail;lastGood_=true;stale_=tail[6]==2;rootLive_=false;run_.workspaceRetired=true;
  if(run_.active&&active_.kind==2)run_.quantumOrdinal=active_.ordinal;
@@ -77,7 +91,7 @@ QuotaSnapshotV3 Controller::Quota(uint64_t now)const{std::lock_guard<std::mutex>
 Result Controller::Stop(){std::lock_guard<std::mutex> lock(mutex_);RevokeLocked(ControlResult::STALE_REJECTED);return Result::OK;}
 bool Controller::Drain(){if(transport_.Busy()&&!transport_.RetireRejected(active_))return false;std::lock_guard<std::mutex> lock(mutex_);run_.workspaceRetired=true;return true;}
 void Controller::Release(bool current){if(current&&sceneFence_)glDeleteSync(sceneFence_);sceneFence_=nullptr;transport_.Release(current);std::lock_guard<std::mutex> lock(mutex_);RevokeLocked(ControlResult::STALE_REJECTED);run_.workspaceRetired=true;configured_=lease_=false;}
-Controller::SceneView Controller::AcquireScene(){if(!PollSceneFence())return {};std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!lastGood_||rootLive_||transport_.Busy()||lease_||sceneFence_)return {};lease_=true;return {true,stale_,transport_.StateBuffer(transport_.CurrentBank()),generation_,identity_,config_.k};}
+Controller::SceneView Controller::AcquireScene(){if(!PollSceneFence())return {};std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!lastGood_||rootLive_||transport_.Busy()||lease_||sceneFence_)return {};lease_=true;return {true,stale_,transport_.StateBuffer(transport_.CurrentBank()),generation_,identity_,config_.k,commit_,active_.geometry,transport_.FrozenAngle(),config_.parameterSha,transport_.Configuration().seedSha};}
 bool Controller::ReleaseScene(uint64_t generation,GLsync fence){std::lock_guard<std::mutex> lock(mutex_);if(!lease_||generation!=generation_||!fence||sceneFence_)return false;lease_=false;sceneFence_=fence;return true;}
 bool Controller::PollSceneFence(){GLsync fence;{std::lock_guard<std::mutex> lock(mutex_);fence=sceneFence_;}if(!fence)return true;const auto result=glClientWaitSync(fence,0,0);if(result==GL_WAIT_FAILED)return false;if(result==GL_TIMEOUT_EXPIRED)return true;glDeleteSync(fence);std::lock_guard<std::mutex> lock(mutex_);if(sceneFence_==fence)sceneFence_=nullptr;return true;}
 bool Controller::CanPresent(uint64_t generation,uint64_t now)const{std::lock_guard<std::mutex> lock(mutex_);return configured_&&lastGood_&&!stale_&&generation==generation_&&clock_.ready&&clock_.open&&clock_.Fresh(now)&&clock_.mode==PlanningMode::RUNNABLE&&now<=active_.deadline;}

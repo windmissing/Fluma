@@ -4,7 +4,7 @@ module.exports=function(main){
  const f=n=>fs.readFileSync(path.join(main,'cpp/gpu_resident/g9spf',n),'utf8').replaceAll('\r\n','\n');
  const block=t=>'\n#ifdef GRS_APP_M1\n'+t+'\n#endif\n';
  const one=(a,b)=>{if(s.split(a).length!==2)throw Error('T529_BRIDGE_ANCHOR '+a);s=s.replace(a,b);};
- one('#include "foundation.h"','#include "g9spf/controller.h"\n#include "g9spf/scene.h"\n#include "foundation.h"');
+ one('#include "foundation.h"','#include "g9spf/candidate_v2.h"\n#include "g9spf/controller.h"\n#include "g9spf/scene.h"\n#include "foundation.h"');
  one('struct App : BridgeState {','struct App : BridgeState {\n'+block(f('bridge_fields.inc')));
  one('void RevokeLocked(const char* why){','void RevokeLocked(const char* why){if(g9Controller)g9Controller->Stop();');
  one('void ObserveControlLocked(uint64_t stamp){','void ObserveControlLocked(uint64_t stamp){if(g9Selected)return;');
@@ -20,7 +20,7 @@ module.exports=function(main){
  one('transportEpoch=seen;transportIdentity=id;',block(f('bridge_create.inc'))+'\n transportEpoch=seen;transportIdentity=id;');
  one('   if(run&&!failed&&!gap){',block(f('bridge_pump.inc'))+'\n   if(run&&!failed&&!gap){');
  one('napi_value init(napi_env e,napi_value out){',block(f('napi.inc'))+'\nnapi_value init(napi_env e,napi_value out){');
- const withWords=['g9Configure','g9Pulse','g9Target','g9OfferModel','g9ColdBegin','g9ColdState','g9ColdPage','g9ColdEnd','g9ResearchConfig'];
+ const withWords=['g9ResearchConfig64','g9Configure64','g9Configure','g9Pulse','g9Target','g9OfferModel','g9ColdBegin','g9ColdState','g9ColdPage','g9ColdEnd','g9ResearchConfig'];
  const noArgs=['g9Session','g9Quota','g9ColdCapabilities'];
  one('napi_property_descriptor d[]={','napi_property_descriptor d[]={\n'+block([...withWords,...noArgs].map(n=>' {"'+n+'",nullptr,'+n+',nullptr,nullptr,nullptr,napi_default,nullptr},').join('\n')));
  for(const name of ['m3ColdCapabilities','m3ColdBegin','m3ColdState','m3ColdPage','m3ColdEnd','coldCapabilities','coldTraceBeginV1','coldTraceStateV1','coldTracePageV1','coldTraceEndV1','executionDiagnosticsV1']){

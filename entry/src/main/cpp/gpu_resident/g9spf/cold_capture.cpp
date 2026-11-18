@@ -1,7 +1,7 @@
 #include "cold_contract.h"
 #include <cstring>
 namespace grs::g9spf {
-bool Transport::CaptureSpan(uint32_t* out,size_t words,bool full,const uint32_t* quota,uint64_t request,uint64_t trace,uint64_t created){
+bool Transport::CaptureSpan(uint32_t* out,size_t words,bool full,const uint32_t* quota,uint64_t request,uint64_t trace,uint64_t created,const candidate548::TouchEvidence256* currentTouch,const candidate548::TouchEvidence256* baseTouch){
  coldGl_=coldEgl_=0;auto coldGood=[&](){const auto g=glGetError();const auto e=eglGetError();if(g&&!coldGl_)coldGl_=g;if(e!=EGL_SUCCESS&&!coldEgl_)coldEgl_=e;return !coldGl_&&!coldEgl_;};
  cold::Layout layout;if(!ready_||busy_||!Current()||!profile_||!out||!quota||!cold::Layout::Make(*profile_,4,layout,full)||words<layout.words||full&&!config_.fullTrialTrace||tail_[0]!=kCompletionMagic||tail_[6]==5)return false;
  // Prefix has no descriptor for itself. Its hash belongs to the external
@@ -20,6 +20,11 @@ bool Transport::CaptureSpan(uint32_t* out,size_t words,bool full,const uint32_t*
   if(executed&&!copy(buffer,0,segment.words,segment.begin))return false;
   auto* descriptor=out+2048+i*32;descriptor[0]=uint32_t(i+1);descriptor[1]=i>=4?uint32_t(i-4):0;descriptor[2]=i==2?1:i==3?2:i>=4?1:0;descriptor[3]=executed?2:1;descriptor[4]=i>=4?summary[0]:tail_[37];descriptor[5]=i>=4?summary[7]:tail_[44];descriptor[6]=i>=4?summary[8]:tail_[46];Put(descriptor,8,segment.begin);Put(descriptor,10,segment.words);descriptor[12]=1;
   cold::SegmentDigest(out+segment.begin,segment.words,descriptor+23);descriptor[31]=kSeal;
+ }
+ if(config_.realTouch){
+  if(!currentTouch||!baseTouch||(lastInput_[40]==2&&(!currentTouch->kind||Pair(currentTouch->words.data(),26)!=Pair(lastInput_.data(),41))))return false;
+  candidate548::SeedMeta64 seed;std::copy(config_.capsule64.begin()+32,config_.capsule64.begin()+40,seed.templateSha.begin());seed.actualSha=config_.seedSha;seed.parameterSha=config_.parameterSha;seed.m0=uint64_t(128)*41943040;seed.origin=1;seed.sourceId=1;seed.uploadedBytes=profile_->stateBytes;
+  candidate548::WriteColdV2Records(out,*currentTouch,*baseTouch,config_.capsule64,seed);out[1]=2;
  }
  out[3]=kSeal;return cold::Validate(out,words,layout);
 }

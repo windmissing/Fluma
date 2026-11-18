@@ -9,7 +9,7 @@ namespace grs::g9spf::candidate548 {
 inline constexpr std::array<uint32_t,64> kConfig={843266375,2,826691667,512,536870912,32768,24576,262144,262144,65536,576,3,7,2,53401,1,2016024897,2515985490,924096203,2197582556,1973154206,2196991564,284700942,637129275,1782254967,1574685276,2266489603,81830087,3718613522,2935158059,4102980319,2640608833,1905024894,2013720932,1728381989,791044997,2696668310,891730736,3810132939,2702886615,1781737610,301268279,828469598,2799693599,3935563064,3182723658,1165815609,2951438695,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 inline bool Decode(const std::array<uint32_t,64>& raw,Config& out){
  if(raw!=kConfig)return false;
- Config c;c.k=raw[3];c.g=raw[4];c.muStart=raw[5];c.muStop=raw[6];c.band=raw[7];c.entrainRate=raw[8];c.shear=raw[9];c.settleTicks=raw[10];c.revision=raw[11];c.research=c.synthetic=true;c.parameterSha=HashWords(raw.data(),raw.size());if(!c.Valid())return false;out=c;return true;
+ Config c;c.k=raw[3];c.g=raw[4];c.muStart=raw[5];c.muStop=raw[6];c.band=raw[7];c.entrainRate=raw[8];c.shear=raw[9];c.settleTicks=raw[10];c.revision=raw[11];c.research=c.realTouch=true;c.capsule64=raw;c.parameterSha=HashWords(raw.data(),raw.size());if(!c.Valid())return false;out=c;return true;
 }
 inline bool FillSeed(uint32_t* state,size_t words){
  const auto* p=SelectProfile(512);if(!state||!p||words!=673792/4||words!=p->stateBytes/4)return false;std::memset(state,0,words*4);

@@ -2,6 +2,7 @@
 #include "completion_gate.h"
 #include "../uniform_locations.h"
 #include "stage_capability.h"
+#include "touch_adapter.h"
 #include <EGL/egl.h>
 #include <thread>
 namespace grs::g9spf {
@@ -40,12 +41,13 @@ public:
  GLuint StateBuffer(uint32_t bank)const{return bank<5?buffers_[bank]:0;}
  size_t StateBytes()const{return profile_?profile_->stateBytes:0;}
  const Profile* SelectedProfile()const{return profile_;}
+ int32_t FrozenAngle()const{return int32_t(lastInput_[24]);}
  const Config& Configuration()const{return config_;}
  std::array<uint32_t,8> ShaderHash()const;
  // Owner-only direct spans. Caller reserves full credit before invoking; no
  // intermediate vector or live mapped storage escapes this call.
  uint32_t ColdGl()const{return coldGl_;}uint32_t ColdEgl()const{return coldEgl_;}
- bool CaptureSpan(uint32_t* caller,size_t words,bool full,const uint32_t* quota,uint64_t request,uint64_t trace,uint64_t created);
+ bool CaptureSpan(uint32_t* caller,size_t words,bool full,const uint32_t* quota,uint64_t request,uint64_t trace,uint64_t created,const candidate548::TouchEvidence256* currentTouch=nullptr,const candidate548::TouchEvidence256* baseTouch=nullptr);
 };
 const char* PipelineSource();const char* PipelineSourceHash();
 }

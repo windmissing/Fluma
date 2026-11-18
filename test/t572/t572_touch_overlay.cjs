@@ -14,16 +14,20 @@ module.exports = function injectTouchAdapter(main) {
   // 1. include the T548 adapter header (namespace candidate548) + the V2 records
   const anchorInclude = '#include "g9spf/controller.h"';
   if (s.split(anchorInclude).length !== 2) throw Error('T572_INCLUDE_ANCHOR');
-  s = s.replace(anchorInclude, '#include "g9spf/touch_adapter.h"\n' + anchorInclude);
+  s = s.replace(anchorInclude, '#include "g9spf/touch_adapter.h"\n#ifdef GRS_APP_M1\nnamespace {namespace t572 {void Revoke();void Configure(const grs::g9spf::ControlIdentity&); }}\n#endif\n' + anchorInclude);
   // 1b. app field for the last presented scene token + capture after Draw.
   const anchorFields='std::shared_ptr<grs::g9spf::Controller> g9Controller;';
   if (s.split(anchorFields).length !== 2) throw Error('T572_FIELDS_ANCHOR');
-  s = s.replace(anchorFields, anchorFields + 'std::string g9PresentedToken;');
+  s = s.replace(anchorFields, anchorFields + 'std::string g9PresentedToken;grs::g9spf::candidate548::Mapping g9PresentedMapping;');
   const anchorDraw='g9LastDisplay=generation;g9LastDraw=now();publish("{\\"state\\":\\"G9_CURRENT\\"';
   const drawAt=s.indexOf('g9LastDisplay=generation;');
   if (drawAt < 0) throw Error('T572_DRAW_ANCHOR');
   const lineEnd=s.indexOf('\n',drawAt);
-  s=s.slice(0,lineEnd)+' {std::lock_guard<std::mutex> lock(mutex);g9PresentedToken=token;}'+s.slice(lineEnd);
+  s=s.slice(0,lineEnd)+' {std::lock_guard<std::mutex> lock(mutex);if(CurrentLocked(seen,held)&&active&&g9Controller==g9Local){g9PresentedToken=token;g9PresentedMapping=g9Scene.Presented();}}'+s.slice(lineEnd);
+  s=s.replaceAll('if(g9Controller)g9Controller->Stop();','if(g9Controller){g9Controller->Stop();t572::Revoke();}');
+  const createAnchor='g9Local=next;g9LastDisplay=0;';
+  if(s.split(createAnchor).length!==2)throw Error('T599_CLOCK_CREATE_ANCHOR');
+  s=s.replace(createAnchor,'t572::Configure(control);'+createAnchor);
   // 2. the endpoint bodies + state, right before napi_value init(
   const anchorInit = 'napi_value init(napi_env e,napi_value out){';
   if (s.split(anchorInit).length !== 2) throw Error('T572_INIT_ANCHOR');
@@ -32,6 +36,7 @@ module.exports = function injectTouchAdapter(main) {
   const anchorProp = '{"g9OfferModel",nullptr,g9OfferModel,nullptr,nullptr,nullptr,napi_default,nullptr},';
   if (s.split(anchorProp).length !== 2) throw Error('T572_PROP_ANCHOR');
   const newProps = [
+    '{"g9TouchEventV2",nullptr,g9TouchEventV2,nullptr,nullptr,nullptr,napi_default,nullptr},',
     '{"g9ClockCapabilitiesV1",nullptr,g9ClockCapabilitiesV1,nullptr,nullptr,nullptr,napi_default,nullptr},',
     '{"g9TouchBegin",nullptr,g9TouchBegin,nullptr,nullptr,nullptr,napi_default,nullptr},',
     '{"g9TouchUpdate",nullptr,g9TouchUpdate,nullptr,nullptr,nullptr,napi_default,nullptr},',
@@ -45,6 +50,7 @@ module.exports = function injectTouchAdapter(main) {
   // 4. d.ts declarations
   const types = path.join(cpp, 'types/libgrsm1/index.d.ts');
   fs.appendFileSync(types, [
+    'export const g9TouchEventV2:(words:Uint32Array)=>string;',
     'export const g9ClockCapabilitiesV1:()=>string;',
     'export const g9TouchBegin:(sample:number,receipt:number,pointer:number,px:number,py:number,changed:number,touches:number,generation:number)=>string;',
     'export const g9TouchUpdate:(sample:number,receipt:number,pointer:number,px:number,py:number,changed:number,touches:number)=>string;',

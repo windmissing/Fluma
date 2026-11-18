@@ -100,6 +100,13 @@ void g9Completion(){
 }
 void g9Run(){
  uint lane=gl_LocalInvocationIndex;
+ // R2 cold initialization only: second dispatch, before CURRENT eligibility.
+ // Uses the existing four bindings and private controls; no root pass added.
+ if(uOp==0x7fffff00u){
+  if(lane==0u){bool valid=all(equal(uvec2(C[4u],C[5u]),uRun))&&all(equal(uvec2(C[6u],C[7u]),uOwner))&&all(equal(uvec2(C[8u],C[9u]),uContext))&&all(equal(uvec2(C[14u],C[15u]),uInputGeneration));
+   if(!valid||!g9AuditMassGeometry()||!g9AuditMomentum())g9Fault(24u,0u,0u);else W[uControls+127u]=0xc01d0002u;
+  }return;
+ }
  if(uOp==G9_OP_ROOT_INIT||uOp==G9_OP_SOURCE_INIT_BASE){
   for(uint i=lane;i<128u;i+=64u)W[uControls+i]=0u;for(uint i=lane;i<384u;i+=64u)W[uSummary+i]=0u;memoryBarrierBuffer();barrier();if(lane==0u)g9Set(16u,1u);return;
  }

@@ -67,12 +67,14 @@ bool Scene::PreparePrograms(uint64_t generation){
  return true;
 }
 void Scene::Reset(bool current){
+ presented_={};viewportSerial_=0;presentedWidth_=presentedHeight_=0;
  current=current&&context_==eglGetCurrentContext();targets_.Reset(current);
  for(auto p:programs_)if(p){programcache::ForgetGraphics(p,generation_,context_);if(current)glDeleteProgram(p);}if(current&&vao_)glDeleteVertexArrays(1,&vao_);if(current&&attrVao_)glDeleteVertexArrays(1,&attrVao_);programs_={};uniforms_={};vao_=attrVao_=0;context_=EGL_NO_CONTEXT;generation_=last_=0;sceneAttrReady_=false;
 }
 bool Scene::Draw(Controller& controller,uint32_t width,uint32_t height,bool(*swap)(void*),void* user,std::string& token){
+ presented_={};
  auto view=controller.AcquireScene();if(!view.valid)return false;
- bool success=!view.stale&&width>=128&&height>0&&PreparePrograms(view.identity.context)&&PrepareTargets(width,height,view.identity.context)&&controller.CanPresent(view.generation,programcache::Stamp());
+ bool success=!view.stale&&width>=128&&height>0&&PreparePrograms(view.identity.context)&&PrepareTargets(width,height,view.identity.context)&&controller.CanPresent(view.generation,candidate548::ClockProducer::Now());
  auto geometry=[&](size_t index){glUseProgram(programs_[index]);glUniform2f(uniforms_[index].Find("uResolution"),float(width),float(height));glUniform4f(uniforms_[index].Find("uBox"),0,0,float(width),float(height));};
  if(success){glBindFramebuffer(GL_FRAMEBUFFER,targets_.fbos[targets_.candidate]);glViewport(0,0,width,height);glDisable(GL_DEPTH_TEST);glDisable(GL_STENCIL_TEST);glDisable(GL_SCISSOR_TEST);glDisable(GL_CULL_FACE);glDisable(GL_BLEND);glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glBindVertexArray(vao_);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,0,view.buffer);geometry(0);glUniform1i(uniforms_[0].Find("uLayer"),0);glDrawArrays(GL_TRIANGLES,0,3);
   // T564 (problem T560 §2): compute writes -> scene reads need the consumer
@@ -94,10 +96,12 @@ bool Scene::Draw(Controller& controller,uint32_t width,uint32_t height,bool(*swa
   glBindBuffer(GL_ARRAY_BUFFER,0);glBindVertexArray(vao_);
   success=success&&glGetError()==GL_NO_ERROR;
  }
- if(success&&controller.CanPresent(view.generation,programcache::Stamp())){geometry(0);glBindFramebuffer(GL_FRAMEBUFFER,0);glViewport(0,0,width,height);glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_2D,targets_.textures[targets_.candidate]);glUniform1i(uniforms_[0].Find("uFrame"),1);glUniform1i(uniforms_[0].Find("uLayer"),2);glDrawArrays(GL_TRIANGLES,0,3);success=glGetError()==GL_NO_ERROR&&controller.CanPresent(view.generation,programcache::Stamp())&&swap&&swap(user)&&controller.CanPresent(view.generation,programcache::Stamp());}
+ if(success&&controller.CanPresent(view.generation,candidate548::ClockProducer::Now())){geometry(0);glBindFramebuffer(GL_FRAMEBUFFER,0);glViewport(0,0,width,height);glActiveTexture(GL_TEXTURE1);glBindTexture(GL_TEXTURE_2D,targets_.textures[targets_.candidate]);glUniform1i(uniforms_[0].Find("uFrame"),1);glUniform1i(uniforms_[0].Find("uLayer"),2);glDrawArrays(GL_TRIANGLES,0,3);success=glGetError()==GL_NO_ERROR&&controller.CanPresent(view.generation,candidate548::ClockProducer::Now())&&swap&&swap(user)&&controller.CanPresent(view.generation,candidate548::ClockProducer::Now());}
  else success=false;
  auto fence=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);glFlush();if(!fence||!controller.ReleaseScene(view.generation,fence))success=false;
  if(success){targets_.Commit();last_=view.generation;token="G9_SPF_SCENE_ATTR_V2|"+std::to_string(view.identity.run)+"|"+std::to_string(view.identity.context)+"|"+std::to_string(view.identity.surface)+"|"+std::to_string(view.generation)+"|"+std::to_string(width)+"|"+std::to_string(height);}
+ if(success&&(width!=presentedWidth_||height!=presentedHeight_)){if(viewportSerial_==UINT64_MAX)success=false;else{++viewportSerial_;presentedWidth_=width;presentedHeight_=height;}}
+ if(success){presented_.angle=view.angle;presented_.geometry=view.geometry;presented_.viewport=viewportSerial_;p011gpu::Sha256 sha;sha.update(token.data(),token.size());const auto digest=sha.finish();for(size_t i=0;i<8;++i)presented_.tokenSha[i]=uint32_t(digest[4*i])|(uint32_t(digest[4*i+1])<<8)|(uint32_t(digest[4*i+2])<<16)|(uint32_t(digest[4*i+3])<<24);presented_.scope=view.identity;presented_.generation=view.generation;presented_.commit=view.commit;presented_.parameter=view.parameter;presented_.seed=view.seed;presented_.width=double(width);presented_.height=double(height);presented_.current=true;}
  return success;
 }
 }

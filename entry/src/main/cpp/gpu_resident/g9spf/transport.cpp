@@ -1,4 +1,6 @@
 #include "transport.h"
+#include "candidate_v2.h"
+#include "clock_producer.h"
 #include "../angles_generated.h"
 #include "../program_cache/program_factory.h"
 #include <chrono>
@@ -6,7 +8,7 @@
 #include <limits>
 namespace grs::g9spf {
 namespace {
-uint64_t Now(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}
+uint64_t Now(){return candidate548::ClockProducer::Now();}
 std::array<uint32_t,8> ParseHash(const char* hex){std::array<uint32_t,8> result{};auto digit=[](char c){return uint32_t(c<='9'?c-'0':c-'a'+10);};for(size_t i=0;i<32;++i){uint32_t byte=(digit(hex[2*i])<<4)|digit(hex[2*i+1]);result[i/4]|=byte<<(8*(i%4));}return result;}
 }
 bool Transport::Current()const{return context_!=EGL_NO_CONTEXT&&thread_==std::this_thread::get_id()&&eglGetCurrentContext()==context_&&eglGetCurrentDisplay()==display_&&eglGetCurrentSurface(EGL_DRAW)==surface_;}
@@ -67,27 +69,40 @@ Result Transport::Create(const Config& config,const ControlIdentity& id,const Se
  // now uses integer instance attributes instead of a vertex SSBO.
  if(!Good()||bindings<4||blocks<4||shared<4096||lanes<64||maximum<=0||uint64_t(maximum)<std::max(p->arenaBytes,std::max(p->stateBytes,p->workBytes)))return Result::UNSUPPORTED;
  GLenum error=0;if(!programcache::Build(1,PipelineSource(),PipelineSourceHash(),"G9_SPF_Q20_V1_FOUR_SSBO_INTEGER128",program_.id,error)||!programcache::Reflect(program_.uniforms,program_.id)){if(error&&!firstGl_)firstGl_=error;Release(true);return Result::SHADER_FAILED;}
- profile_=p;config_=config;identity_=id;
+ profile_=p;config_=config;identity_=id;permit_.identity=id;
  glGenBuffers(GLsizei(buffers_.size()),buffers_.data());
  for(size_t i=0;i<buffers_.size();++i){size_t bytes=i<5?p->stateBytes:i==5?p->workBytes:p->arenaBytes;glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(bytes),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return Result::GL_FAILED;}}
  if(config.fullTrialTrace){glGenBuffers(GLsizei(full_.size()),full_.data());for(auto buffer:full_){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffer);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(p->arenaBytes),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return Result::GL_FAILED;}}}
  // Cold raw seed upload is an input file, not a host simulation. The first
  // GPU identity/map/mass audit validates all supplied seed words before use.
  std::vector<uint32_t> state;
- if(seed.state.empty())state.resize(p->stateBytes/4);else{if(seed.state.size()!=p->stateBytes/4||seed.sha!=HashWords(seed.state.data(),seed.state.size())){Release(true);return Result::INVALID;}state=seed.state;}
- config_.seedSha=seed.state.empty()?HashWords(state.data(),state.size()):seed.sha;
+ if(config.realTouch){
+  Config canonical;if(!candidate548::Decode(config.capsule64,canonical)||canonical.parameterSha!=config.parameterSha||!seed.state.empty()){Release(true);return Result::CALIBRATION_CONFIG_REQUIRED;}
+  state.resize(p->stateBytes/4);if(!candidate548::FillSeed(state.data(),state.size())){Release(true);return Result::INVALID;}
+  const auto templateSha=HashWords(state.data(),state.size());if(!std::equal(templateSha.begin(),templateSha.end(),config.capsule64.begin()+32)){Release(true);return Result::INVALID;}
+ }else if(seed.state.empty())state.resize(p->stateBytes/4);else{if(seed.state.size()!=p->stateBytes/4||seed.sha!=HashWords(seed.state.data(),seed.state.size())){Release(true);return Result::INVALID;}state=seed.state;}
  auto put=[&](size_t at,uint64_t n){Put(state.data(),at,n);};
  state[0]=kStateMagic;state[1]=1;state[2]=kProfileCode;put(4,id.run);put(6,id.owner);put(8,id.context);put(10,0);put(12,0);put(14,id.inputEpoch);put(16,0);
  if(seed.state.empty())state[18]=1;
  state[20]=0;state[21]=config.g;state[22]=0;state[23]=config.g;state[24]=config.k;state[25]=128;state[26]=state[27]=64;
  for(size_t i=0;i<8;++i)state[42+i]=config.parameterSha[i];
  state[98]=config.muStart;state[99]=config.muStop;state[100]=config.band;state[101]=config.entrainRate;state[102]=config.shear;state[103]=config.settleTicks;
+ // Hash the exact uploaded bytes after native identity/parameter stamping.
+ config_.seedSha=HashWords(state.data(),state.size());
  for(size_t i=0;i<5;++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferSubData(GL_SHADER_STORAGE_BUFFER,0,GLsizeiptr(p->stateBytes),state.data());}
  if(!Good()){Release(true);return Result::GL_FAILED;}
  // Read-only physical warmup: ROOT_INIT writes only private WORK controls.
  glUseProgram(program_.id);Input128 warm{};Common(warm,{},{});Bind(kQuantumPasses[0]);U("uOp",uint32_t(Op::ROOT_INIT));U("uPass",0);
- const auto begin=Now();glDispatchCompute(1,1,1);glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);glFinish();const auto end=Now();const auto errorWarm=glGetError();programcache::Warmup(program_.id,begin,end,errorWarm);
+ const auto begin=Now();glDispatchCompute(1,1,1);glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);
+ if(config.realTouch){U("uOp",0x7fffff00u);glDispatchCompute(1,1,1);glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);}
+ glFinish();const auto end=Now();const auto errorWarm=glGetError();programcache::Warmup(program_.id,begin,end,errorWarm);
  if(errorWarm||programcache::Prepared(program_.id)!=GL_NO_ERROR||!Good()){if(errorWarm&&!firstGl_)firstGl_=errorWarm;Release(true);return Result::GL_FAILED;}
+ if(config.realTouch){
+  glBindBuffer(GL_COPY_READ_BUFFER,buffers_[5]);const auto* audit=static_cast<const uint32_t*>(glMapBufferRange(GL_COPY_READ_BUFFER,GLintptr(p->work[7].begin),512,GL_MAP_READ_BIT));
+  if(!audit){Release(true);return Result::GL_FAILED;}
+  const bool valid=audit[0]==0&&audit[127]==0xc01d0002u;const bool unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;
+  if(!unmapped||!Good()){Release(true);return Result::GL_FAILED;}if(!valid){Release(true);return Result::INVALID;}
+ }
  current_=0;ready_=true;return Result::OK;
 }
 bool Transport::Copy(GLuint from,size_t fromWord,GLuint to,size_t toWord,size_t words){

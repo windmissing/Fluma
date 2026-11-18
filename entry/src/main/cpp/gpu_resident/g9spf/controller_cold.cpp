@@ -7,7 +7,7 @@
 #include <unistd.h>
 #endif
 namespace grs::g9spf {
-namespace {uint64_t Now(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}}
+namespace {uint64_t Now(){return candidate548::ClockProducer::Now();}}
 cold503::Scope Controller::ColdScopeLocked()const{
  cold503::Scope scope;
 #ifdef _WIN32
@@ -21,7 +21,7 @@ cold503::Scope Controller::ColdScopeLocked()const{
 std::string Controller::ColdCapabilities()const{
  std::array<char,2048> data{};cold::Writer w(data.data(),data.size());
  std::lock_guard<std::mutex> lock(mutex_);cold::Layout layout;if(!configured_||!cold::Layout::Make(*profile_,4,layout,config_.fullTrialTrace))return "{\"state\":\"UNSUPPORTED_G9_COLD\"}";
- w.Raw("{\"revision\":\"G9_SPF_COLD_V1\",\"pageRevision\":\"G9_SPF_SEGMENT_PAGE_V1\",\"route\":\"g9spf\",\"K\":");w.Number(config_.k);w.Raw(",\"traceBytes\":");w.U64(layout.words*4);w.Raw(",\"traceBudgetBytes\":\"359342080\",\"pageBytes\":16384,\"pageWords\":1024,\"slots\":2,\"builders\":1,\"readers\":1,\"ttlNs\":\"60000000000\",\"pages\":");w.Number(layout.Pages());w.Raw(",\"archiveUtf8Limit\":");w.U64((layout.Pages()+1)*cold::kPageBytes);w.Raw(",\"fullTrialTrace\":");w.Bool(config_.fullTrialTrace);w.Raw(",\"source\":");w.String(ColdScopeLocked().source);w.Raw("}");return std::string(w.Data(),w.Size());
+ w.Raw(config_.realTouch?"{\"revision\":\"G9_SPF_COLD_V2\",\"pageRevision\":\"G9_SPF_SEGMENT_PAGE_V2\",\"route\":\"g9spf\",\"K\":" : "{\"revision\":\"G9_SPF_COLD_V1\",\"pageRevision\":\"G9_SPF_SEGMENT_PAGE_V1\",\"route\":\"g9spf\",\"K\":");w.Number(config_.k);w.Raw(",\"traceBytes\":");w.U64(layout.words*4);w.Raw(",\"traceBudgetBytes\":\"359342080\",\"pageBytes\":16384,\"pageWords\":1024,\"slots\":2,\"builders\":1,\"readers\":1,\"ttlNs\":\"60000000000\",\"pages\":");w.Number(layout.Pages());w.Raw(",\"archiveUtf8Limit\":");w.U64((layout.Pages()+1)*cold::kPageBytes);w.Raw(",\"fullTrialTrace\":");w.Bool(config_.fullTrialTrace);w.Raw(",\"source\":");w.String(ColdScopeLocked().source);w.Raw("}");return std::string(w.Data(),w.Size());
 }
 std::string Controller::ColdBegin(uint64_t replace,uint64_t now){
  coldtrace::TraceManager::Receipt receipt;
@@ -29,14 +29,14 @@ std::string Controller::ColdBegin(uint64_t replace,uint64_t now){
   if(!configured_||rootLive_||transport_.Busy()||coldBuilding_||!lastGood_||!cold::Layout::Make(*profile_,4,layout,config_.fullTrialTrace))receipt.result="WOULD_BLOCK";
   else{receipt.result=coldTrace_.Begin(receipt.scope,receipt.scope,now,replace,layout.words,receipt.request,receipt.id,layout.words-256,config_.fullTrialTrace?1u:0u);if(std::strcmp(receipt.result,"REQUESTED")==0)coldBuilding_=true;}
  }
- std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt);return std::string(w.Data(),w.Size());
+ std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt,config_.realTouch);return std::string(w.Data(),w.Size());
 }
 std::string Controller::ColdState(uint64_t request,uint64_t now){
  coldtrace::TraceManager::Receipt receipt;{std::lock_guard<std::mutex> lock(mutex_);receipt=coldTrace_.StateOf(request,now,ColdScopeLocked());}
- std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt);return std::string(w.Data(),w.Size());
+ std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt,config_.realTouch);return std::string(w.Data(),w.Size());
 }
 std::string Controller::ColdEnd(uint64_t trace,uint64_t now){
- std::lock_guard<std::mutex> lock(mutex_);const auto result=coldTrace_.End(trace,now,ColdScopeLocked());return std::string("{\"revision\":\"G9_SPF_COLD_V1\",\"state\":\"")+result+"\"}";
+ std::lock_guard<std::mutex> lock(mutex_);const auto result=coldTrace_.End(trace,now,ColdScopeLocked());return std::string(config_.realTouch?"{\"revision\":\"G9_SPF_COLD_V2\",\"state\":\"" : "{\"revision\":\"G9_SPF_COLD_V1\",\"state\":\"")+result+"\"}";
 }
 std::string Controller::ColdPage(uint64_t trace,uint32_t page,uint64_t now){
  coldtrace::TraceManager::Read read;const char* result;
@@ -57,7 +57,8 @@ void Controller::BuildCold(uint64_t now){
  if(words)allocated.reset(new(std::nothrow)uint32_t[words]);
  uint32_t* storage=nullptr;uint64_t request=0,trace=0,created=0;
  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(allocated));auto& s=coldTrace_.slots[slot];storage=s.block.get();words=s.capacity;request=s.request;trace=s.id;created=s.created;}
- const bool copied=storage&&transport_.CaptureSpan(storage,words,full,quota.data(),request,trace,created);
+ // coldBuilding_ pins both root-bound records; new roots cannot overwrite them.
+ const bool copied=storage&&transport_.CaptureSpan(storage,words,full,quota.data(),request,trace,created,&frozenTouch_,&baseTouch_);
  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),Now(),copied?"OK":"G9_CAPTURE_FAILED",coldTrace_.slots[slot].requestWords-256,0,transport_.ColdGl(),transport_.ColdEgl(),copied?"":"G9_OWNER_CAPTURE");coldBuilding_=false;}
 }
 }
