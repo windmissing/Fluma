@@ -11,8 +11,24 @@ __attribute__((visibility("default"))) void GrsColdBuilderDone(uint64_t ticket);
 __attribute__((visibility("default"))) bool GrsColdReadBegin(uint64_t ticket);
 __attribute__((visibility("default"))) void GrsColdReadEnd(uint64_t ticket);
 __attribute__((visibility("default"))) void GrsColdFreed(uint64_t ticket);
+__attribute__((visibility("default"))) bool GrsFullGpuReserve(uint64_t* ticket,uint64_t context,size_t bytes);
+__attribute__((visibility("default"))) void GrsFullGpuFreed(uint64_t ticket);
+__attribute__((visibility("default"))) void GrsFullGpuContextRetired(uint64_t context);
+
 }
 namespace grs::coldbroker {
+// A forgotten/lost context never returns credit from a C++ destructor.
+// ReleaseAfterFenceDelete acknowledges actual owner retirement; otherwise the
+// broker retains the ticket until eglDestroyContext succeeds.
+class GpuLease {
+ uint64_t ticket_=0;
+public:
+ GpuLease()=default;GpuLease(const GpuLease&)=delete;GpuLease& operator=(const GpuLease&)=delete;
+ bool Reserve(uint64_t context,size_t bytes){return ticket_||GrsFullGpuReserve(&ticket_,context,bytes);}
+ void ReleaseAfterFenceDelete(){if(ticket_){GrsFullGpuFreed(ticket_);ticket_=0;}}
+ void ContextLost(){ticket_=0;} // process broker keeps the real retiring credit
+ bool Held()const{return ticket_!=0;}
+};
 class Lease {
  uint64_t ticket_=0;
 public:

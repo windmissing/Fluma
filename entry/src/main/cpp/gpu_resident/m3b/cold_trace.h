@@ -43,8 +43,8 @@ public:
   if(requestSerial==UINT64_MAX||traceSerial==UINT64_MAX)return "ID_EXHAUSTED";
   int free=-1;for(int i=0;i<2;++i)if(slots[i].state==FREE&&!slots[i].reader){free=i;if(slots[i].capacity>=words)break;}
   if(free<0)return "WOULD_BLOCK";auto& s=slots[free];const auto target=std::max(words,s.capacity);
-  if(Capacity()-s.capacity*4+target*4>(fullRows?cold::kTwoSlotFullTraceBytes:TraceBudget))return "WOULD_BLOCK";
-  uint64_t globalRequest=0,globalTrace=0;if(!s.credit.Reserve(target*4,fullRows?cold::kTwoSlotFullTraceBytes:TraceBudget,5,globalRequest,globalTrace))return "WOULD_BLOCK";
+  if(Capacity()-s.capacity*4+target*4>(2*words*4))return "WOULD_BLOCK";
+  uint64_t globalRequest=0,globalTrace=0;if(!s.credit.Reserve(target*4,2*words*4,5,globalRequest,globalTrace))return "WOULD_BLOCK";
   // Old free capacity remains charged until Taken block is actually freed.
   s.reserved=s.capacity>=words?0:words;s.state=BUILDING;s.started=s.cancel=false;s.result="REQUESTED";s.request=globalRequest;s.id=globalTrace;++requestSerial;++traceSerial;s.scope=actual;s.created=s.last=now;s.stateWords=s.eventWords=0;s.expectedState=stateWords;s.fullRows=fullRows;s.requestWords=words;s.gl=s.egl=s.transportCode=0;s.failedStage={};builder=free;request=s.request;id=s.id;return "REQUESTED";
  }

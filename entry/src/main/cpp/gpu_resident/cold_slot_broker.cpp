@@ -24,3 +24,12 @@ extern "C" void GrsColdBuilderDone(uint64_t ticket){std::lock_guard<std::mutex> 
 extern "C" bool GrsColdReadBegin(uint64_t ticket){std::lock_guard<std::mutex> lock(mutex);auto* slot=Find(ticket);if(!slot||slot->builder)return false;for(const auto& other:slots)if(other.reader)return false;slot->reader=true;return true;}
 extern "C" void GrsColdReadEnd(uint64_t ticket){std::lock_guard<std::mutex> lock(mutex);if(auto* slot=Find(ticket))slot->reader=false;}
 extern "C" void GrsColdFreed(uint64_t ticket){std::lock_guard<std::mutex> lock(mutex);if(auto* slot=Find(ticket)){if(slot->reader)return;*slot={};}}
+
+namespace {uint64_t gpuSerial=0,gpuTicket=0,gpuContext=0;size_t gpuBytes=0;}
+extern "C" bool GrsFullGpuReserve(uint64_t* ticket,uint64_t context,size_t bytes){
+ if(!ticket||*ticket||!context||!bytes||bytes>366564432u)return false;
+ std::lock_guard<std::mutex> lock(mutex);if(gpuTicket||gpuSerial==UINT64_MAX)return false;
+ gpuTicket=*ticket=++gpuSerial;gpuContext=context;gpuBytes=bytes;return true;
+}
+extern "C" void GrsFullGpuFreed(uint64_t ticket){std::lock_guard<std::mutex> lock(mutex);if(ticket&&ticket==gpuTicket){gpuTicket=gpuContext=0;gpuBytes=0;}}
+extern "C" void GrsFullGpuContextRetired(uint64_t context){std::lock_guard<std::mutex> lock(mutex);if(context&&context==gpuContext){gpuTicket=gpuContext=0;gpuBytes=0;}}

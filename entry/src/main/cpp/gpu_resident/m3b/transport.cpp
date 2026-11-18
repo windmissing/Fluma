@@ -5,6 +5,7 @@
 #include "../angles_generated.h"
 #include "../program_cache/program_factory.h"
 #include <chrono>
+#include <algorithm>
 #include <cstring>
 #include <string>
 namespace grs::m3b {
@@ -27,7 +28,6 @@ void TransportV5::Copy(GLuint from,size_t fromWord,GLuint to,size_t toWord,size_
 }
 TransportResultV5 TransportV5::Create(const Profile& p,const ControlIdentityV5& id,uint64_t geometry,const PhysicalConfigV5& config,
  const std::array<uint32_t,8>& shader,const std::array<uint32_t,8>& angle,const std::array<uint32_t,8>& layoutSha){
- if(config.fullBranchTrace)return TransportResultV5::UNSUPPORTED;
  if(busy_||ready_||!config.Valid()||!id.run||!geometry)return TransportResultV5::INVALID;
  context_=eglGetCurrentContext();display_=eglGetCurrentDisplay();surface_=eglGetCurrentSurface(EGL_DRAW);thread_=std::this_thread::get_id();if(!Current())return TransportResultV5::CONTEXT_LOST;
  GLint vertexBlocks=0;glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS,&vertexBlocks);if(vertexBlocks<1)return TransportResultV5::UNSUPPORTED;
@@ -54,12 +54,6 @@ TransportResultV5 TransportV5::Create(const Profile& p,const ControlIdentityV5& 
  }
  glGenBuffers(GLsizei(buffers_.size()),buffers_.data());
  for(size_t i=0;i<buffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(allocation_.bytes[i]),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}}
- if(config_.fullBranchTrace){
-  const size_t flowBytes=size_t(p.scopeRows)*256+size_t(SelectLineageProfile(p.k,p.kw)->ea)*128;
-  if(flowBytes>size_t(maximum)||32768>maximum){Release(true);return TransportResultV5::UNSUPPORTED;}
-  glGenBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());
-  for(size_t i=0;i<fullBuffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,fullBuffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(i<20?flowBytes:i==20?40960:i==31?256:(i%2?p.stateBytes:10224000)),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}}
- }
  // A fresh independent run, initialized only once at cold creation.
  std::vector<uint32_t> state(p.stateBytes/4);const uint32_t h=headerWord_;
  auto pair=[&](uint32_t at,uint64_t value){state[h+at]=uint32_t(value);state[h+at+1]=uint32_t(value>>32);};
@@ -85,6 +79,9 @@ TransportResultV5 TransportV5::Create(const Profile& p,const ControlIdentityV5& 
  // Restore private state banks changed by the warmup; accepted bank was never
  // bound for writing. The first real root resets all WORK scratch itself.
  for(size_t i=1;i<3;++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferSubData(GL_SHADER_STORAGE_BUFFER,0,GLsizeiptr(p.stateBytes),state.data());}
+ std::array<uint32_t,4096> zero{};glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[15]);
+ for(size_t at=0;at<allocation_.bytes[15];at+=sizeof(zero)){const size_t count=std::min(sizeof(zero),allocation_.bytes[15]-at);glBufferSubData(GL_SHADER_STORAGE_BUFFER,GLintptr(at),GLsizeiptr(count),zero.data());}
+ if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}
  currentBank_=0;sourceStore_=15;sourcePrefix_=dedupPrefix_=angle_=0;ready_=true;return TransportResultV5::OK;
 }
 void TransportV5::Common(bool source){
@@ -102,8 +99,8 @@ void TransportV5::Common(bool source){
   const uint32_t at=uint32_t(int32_t(angle_)+7680)*4;I("uM3Sin",int32_t(kAngleWords[at+1]));I("uM3Cos",int32_t(kAngleWords[at+2]));I("uM3Tangent",int32_t(kAngleWords[at]));return;
  }
  const uint32_t scratch=uint32_t(p.quantum[1].begin/4);
- U("uM3Scratch",scratch);U("uM3SourceMeta",uint32_t(p.quantum[0].begin/4));U("uM3SourceEvents",ledger_);U("uSourceEvents",ledger_);U("uM3OriginScratch",old_->quantumOrigins.begin);U("uM3FullBranchClear",config_.fullBranchTrace?1:0);U("uM3ScopeRows",p.scopeRows);
- U("uSandIndex",sandIndex_);U("uWaterIndex",waterIndex_);U("uArrivalIndex",arrivalIndex_);U("uEdges",edges_);U("uFrozen",frozen_);U("uRows",rows_);U("uAngles",angles_);U("uSpare",ledger_+4096*16);U("uReplayFrozen",ledger_+4096*16+old_->stateWords);U("uM3StateWords",old_->stateWords);U("uM3Header",headerWord_);U("uM3CombinedEventWord",uint32_t(layout_.combinedEventOffset/4));U("uM3SelectedBank",3);U("uM3CompareResult",scratch+80);U("uM3ActualEventStart",permit_.eventStart);U("uM3ExpectedPasses",uint32_t(p.passCount));U("uM3ActualBarriers",uint32_t(p.passCount)+2+(config_.fullBranchTrace?5:0));
+ U("uM3Scratch",scratch);U("uM3SourceMeta",uint32_t(p.quantum[0].begin/4));U("uM3SourceEvents",ledger_);U("uSourceEvents",ledger_);U("uM3OriginScratch",old_->quantumOrigins.begin);U("uM3FullBranchClear",captureArmed_?1:0);U("uM3ScopeRows",p.scopeRows);
+ U("uSandIndex",sandIndex_);U("uWaterIndex",waterIndex_);U("uArrivalIndex",arrivalIndex_);U("uEdges",edges_);U("uFrozen",frozen_);U("uRows",rows_);U("uAngles",angles_);U("uSpare",ledger_+4096*16);U("uReplayFrozen",ledger_+4096*16+old_->stateWords);U("uM3StateWords",old_->stateWords);U("uM3Header",headerWord_);U("uM3CombinedEventWord",uint32_t(layout_.combinedEventOffset/4));U("uM3SelectedBank",3);U("uM3CompareResult",scratch+80);U("uM3ActualEventStart",permit_.eventStart);U("uM3ExpectedPasses",uint32_t(p.passCount));U("uM3ActualBarriers",uint32_t(p.passCount)+2+(captureArmed_?5:0));
  U("uGravity",config_.gravity);U("uSettle",config_.settle);U("uKAir",config_.kAir);U("uKFlight",config_.kFlight);U("uKWet",config_.kWet);U("uSoft",config_.soft);U("uFlux",config_.flux);U("uM3WaterRate",config_.waterRate);U("uM3Omega",config_.omega);I("uM3Target",target_);U("uQuantumOrdinal",permit_.ordinal);
  Pair("uM3Nonce",permit_.nonce);Pair("uM3Frame",permit_.frame);U("uM3Ordinal",permit_.ordinal);U("uM3BaseSourceLo",uint32_t(permit_.sourceCommit));U("uM3BaseSourceHi",uint32_t(permit_.sourceCommit>>32));U("uM3ProposedPhysicsLo",uint32_t(permit_.physicsCommit+1));U("uM3ProposedPhysicsHi",uint32_t((permit_.physicsCommit+1)>>32));
 }
@@ -114,11 +111,36 @@ uint32_t TransportV5::PlannedUpload(uint32_t kind){
  else{for(uint32_t p=1;p<20;++p){Use(p);Common(false);}uploadCounter_+=uint32_t(profile_->passCount)*48;}
  const auto result=uploadCounter_;uploadCounter_=previous;activeProgram_=program;dryUniforms_=false;return result;
 }
+bool TransportV5::ReserveFullCredit(){
+ if(!config_.fullBranchTrace||!profile_||captureArmed_||!fullFrozen_)return false;
+ const size_t flow=size_t(profile_->scopeRows)*256+size_t(SelectLineageProfile(profile_->k,profile_->kw)->ea)*128;
+ const size_t extra=20*flow+5*(profile_->stateBytes+10224000)+40960+256;
+ return captureGpu_.Reserve(uint64_t(reinterpret_cast<uintptr_t>(context_)),allocation_.total+extra);
+}
+bool TransportV5::ArmFullCapture(){
+ if(!captureGpu_.Held()||busy_||!Current()||captureArmed_)return false;
+ GLint64 maximum=0;glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE,&maximum);
+ const size_t flow=size_t(profile_->scopeRows)*256+size_t(SelectLineageProfile(profile_->k,profile_->kw)->ea)*128;
+ if(maximum<=0||std::max({flow,size_t(10224000),profile_->stateBytes,size_t(40960)})>size_t(maximum)){captureFailure_="FULL_UNSUPPORTED_RESOURCE";captureGpu_.ReleaseAfterFenceDelete();return false;}
+ glGenBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());
+ for(size_t i=0;i<fullBuffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,fullBuffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(i<20?flow:i==20?40960:i==31?256:(i%2?profile_->stateBytes:10224000)),nullptr,GL_DYNAMIC_COPY);}
+ if(!Good()){glDeleteBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());fullBuffers_={};captureGpu_.ReleaseAfterFenceDelete();captureFailure_="FULL_ALLOCATION_GL_FAILED";return false;}
+ captureArmed_=true;fullPlan_=0;fullFrozen_=true;captureRoots_={};captureSource_={};baseMask_=enteredMask_=fullMask_=fullQuantumMask_=pendingFullMask_=0;return true;
+}
+void TransportV5::RetireFullCapture(){
+ if(busy_||!Current())return;
+ glDeleteBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());fullBuffers_={};captureGpu_.ReleaseAfterFenceDelete();captureArmed_=false;fullFrozen_=true;
+}
+void TransportV5::SealCaptureRoot(bool accepted,const QuotaSnapshotV3& quota){
+ pendingRoot_.completion=tail_;pendingRoot_.evidence=evidence_;pendingRoot_.quota=quota;pendingRoot_.checked=Now();pendingRoot_.complete=mapped_||tail_[0]==1381192263u;pendingRoot_.accepted=accepted;
+ if(captureArmed_){const auto root=permit_.kind==1?0:permit_.ordinal;if(root<5)captureRoots_[root]=pendingRoot_;}
+ if(accepted){acceptedRoot_=pendingRoot_;if(permit_.kind==1)acceptedSource_=captureSource_;}
+}
 TransportResultV5 TransportV5::Begin(const RootPermitV5& permit,int32_t target,const SourcePacketV5* packet,uint32_t sourcePrefix,uint32_t dedupPrefix,Authorize authorize,void* user){
  if(!ready_||busy_||!Current())return TransportResultV5::WOULD_BLOCK;
  if(permit.baseBank!=currentBank_||permit.candidateBank!=1-currentBank_||sourcePrefix>4096||dedupPrefix>4096||target< -7680||target>7680||!authorize||(permit.kind==1)!=bool(packet))return TransportResultV5::INVALID;
  permit_=permit;target_=target;authorize_=authorize;authorization_=user;if(!Allowed())return Denied();
- if(config_.fullBranchTrace){
+ if(captureArmed_){
   if(fullPlan_!=permit.plan){if(fullPlan_&&!fullFrozen_)return TransportResultV5::WOULD_BLOCK;fullPlan_=permit.plan;fullMask_=fullQuantumMask_=baseMask_=enteredMask_=0;fullFrozen_=false;}
   const uint32_t root=permit.kind==1?0:permit.ordinal;if(root>4)return TransportResultV5::INVALID;
   Copy(buffers_[permit.baseBank],0,fullBuffers_[21+root*2],0,profile_->stateBytes/4);
@@ -130,7 +152,11 @@ TransportResultV5 TransportV5::Begin(const RootPermitV5& permit,int32_t target,c
  }
  auxStart_=permit.frame==auxFrame_?auxEnd_:0;
  evidence_={};tail_={};nextPass_=0;mapped_=false;sourcePrefix_=sourcePrefix;dedupPrefix_=dedupPrefix;
+ pendingRoot_={};pendingRoot_.permit=permit;pendingRoot_.input=liftInput_;pendingRoot_.quota=pendingQuota_;pendingRoot_.started=pendingStarted_;pendingRoot_.sourceGeneration=pendingSourceGeneration_;pendingRoot_.entered=true;
+ if(captureArmed_){const auto root=permit.kind==1?0:permit.ordinal;captureRoots_[root]=pendingRoot_;if(packet)captureSource_=*packet;}
+
  if(permit.kind==1){
+  captureSource_=*packet;
   glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[15]);glBufferSubData(GL_SHADER_STORAGE_BUFFER,GLintptr(profile_->source[2].begin),sizeof(packet->words),packet->words.data());
  }else{
   const auto inputAt=profile_->quantumWorkBytes-256;glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[16]);glBufferSubData(GL_SHADER_STORAGE_BUFFER,GLintptr(inputAt),256,liftInput_.data());
@@ -171,16 +197,16 @@ void TransportV5::QuantumPass(uint32_t index){
  U("uM3RootPass",index);U("uM3Role",pass.role);U("uM3WriteBank",pass.role==4?permit_.candidateBank:4);U("uPass",pass.nativeStage);U("uSortK",pass.sortK);U("uSortJ",pass.sortJ);U("uColor",pass.color);
  U("uEventStart",pass.role==4?permit_.eventStart:0);U("uM3EventStart",pass.role==4?permit_.eventStart:0);U("uEventCapacity",pass.role==4||pass.role==0?profile_->quantumFrameRows:profile_->scopeRows);U("uM3EventCapacity",pass.role==4||pass.role==0?profile_->quantumFrameRows:profile_->scopeRows);U("uM3EventWord",scope&&pass.role!=4?uint32_t(layout_.combinedEventOffset/4):0);
  glDispatchCompute((pass.count+63)/64,1,1); // Original dispatch; only read-only copies below are added.
- if(config_.fullBranchTrace&&(pass.opcode==Opcode::SCOPE_INIT||pass.opcode==Opcode::SCOPE_FINALIZE)&&pass.role>=1&&pass.role<=5){
+ if(captureArmed_&&(pass.opcode==Opcode::INPUT_E_REQUEST||pass.opcode==Opcode::SCOPE_FINALIZE)&&pass.role>=1&&pass.role<=5){
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);
   const size_t cursor=(profile_->quantumWorkBytes-32768-512)/4+8192;
   Copy(buffers_[16],cursor,fullBuffers_[20],size_t(permit_.ordinal)*2048+768+64*(pass.role-1)+(pass.opcode==Opcode::SCOPE_FINALIZE?32:0),32);
  }
 ++evidence_.submittedPasses;Barrier();
- if(config_.fullBranchTrace&&pass.opcode==Opcode::SCOPE_FINALIZE){
+ if(captureArmed_&&pass.opcode==Opcode::SCOPE_FINALIZE){
   const uint32_t slot=(permit_.ordinal-1)*5+pass.role-1;
   Copy(pass.role==4?buffers_[8+permit_.eventArena]:buffers_[21],pass.role==4?size_t(permit_.eventStart)*64:layout_.combinedEventOffset/4,fullBuffers_[slot],0,size_t(profile_->scopeRows)*64);
-  Copy(pass.role==4?buffers_[8+permit_.eventArena]:buffers_[21],pass.role==4?size_t(profile_->quantumFrameRows)*64:layout_.combinedEventOffset/4+profile_->scopeRows*64,fullBuffers_[slot],size_t(profile_->scopeRows)*64,size_t(SelectLineageProfile(profile_->k,profile_->kw)->ea)*32);Barrier();pendingFullMask_|=1u<<slot;
+  Copy(pass.role==4?buffers_[8+permit_.eventArena]:buffers_[21],pass.role==4?size_t(profile_->quantumFrameRows)*64+size_t(auxStart_)*32:layout_.combinedEventOffset/4+profile_->scopeRows*64,fullBuffers_[slot],size_t(profile_->scopeRows)*64,size_t(SelectLineageProfile(profile_->k,profile_->kw)->ea)*32);Barrier();pendingFullMask_|=1u<<slot;
  }
  if(pass.opcode==Opcode::PRIVATE_PROMOTE){
   Copy(buffers_[16],profile_->quantum[1].begin/4+6144,buffers_[25+permit_.eventArena],0,6*128);
@@ -214,13 +240,13 @@ TransportResultV5 TransportV5::Pump(){
 }
 bool TransportV5::Commit(const RootPermitV5& permit,const Words256& tail){
  if(!busy_||!mapped_||permit.nonce!=permit_.nonce||tail!=tail_||tail[28]<1||tail[28]>3)return false;
- if(config_.fullBranchTrace){fullMask_|=pendingFullMask_;if(permit.kind==2)fullQuantumMask_|=1u<<(permit.ordinal-1);}
+ if(captureArmed_){fullMask_|=pendingFullMask_;if(permit.kind==2)fullQuantumMask_|=1u<<(permit.ordinal-1);}
  if(permit.kind==2){auxFrame_=permit.frame;auxEnd_=tail[207];}
  currentBank_=permit.candidateBank;sourcePrefix_=tail[56];dedupPrefix_=tail[58];angle_=tail[107];busy_=mapped_=false;return true;
 }
 bool TransportV5::RetireRejected(const RootPermitV5& permit){
  if(!busy_||permit.nonce!=permit_.nonce)return false;
- if(mapped_){if(config_.fullBranchTrace&&tail_[28]==5){fullMask_|=pendingFullMask_;fullQuantumMask_|=1u<<(permit_.ordinal-1);}busy_=mapped_=false;return true;}
+ if(mapped_){if(captureArmed_&&tail_[28]==5){fullMask_|=pendingFullMask_;fullQuantumMask_|=1u<<(permit_.ordinal-1);}busy_=mapped_=false;return true;}
  if(!Current())return false;
  if(fence_){const auto result=glClientWaitSync(fence_,0,0);if(result!=GL_ALREADY_SIGNALED&&result!=GL_CONDITION_SATISFIED)return false;glDeleteSync(fence_);fence_=nullptr;}
  else if(nextPass_&&!mapped_){fence_=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);glFlush();return false;}
@@ -228,6 +254,10 @@ bool TransportV5::RetireRejected(const RootPermitV5& permit){
 }
 void TransportV5::Release(bool current){
  current=current&&Current();if(current){if(fence_)glDeleteSync(fence_);glDeleteBuffers(GLsizei(buffers_.size()),buffers_.data());glDeleteBuffers(GLsizei(fullBuffers_.size()),fullBuffers_.data());}
+ // Unmapped completed roots may retire by owner deletion; otherwise credit
+ // remains pinned until the bridge acknowledges actual context destruction.
+ if(current&&!busy_)captureGpu_.ReleaseAfterFenceDelete();else captureGpu_.ContextLost();
+ captureArmed_=false;
  fence_=nullptr;buffers_={};fullBuffers_={};for(auto& p:programs_){if(p.id){programcache::Forget(p.id);if(current)glDeleteProgram(p.id);}p={};}
  ready_=busy_=mapped_=false;profile_=nullptr;old_=nullptr;context_=EGL_NO_CONTEXT;
 }

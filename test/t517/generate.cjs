@@ -1,5 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
 const out=path.resolve(process.argv[2]);
+cp.execFileSync(process.execPath,[require.resolve('../t596/generate_capture_schema.cjs')],{stdio:'inherit'});
 cp.execFileSync(process.execPath,[require.resolve('../t522/generate.cjs'),out],{stdio:'inherit'});
 const main=path.join(out,'entry/src/main'),cpp=path.join(main,'cpp'),dest=path.join(cpp,'gpu_resident/m3b');
 fs.cpSync('entry/src/main/cpp/gpu_resident/m3b',dest,{recursive:true});

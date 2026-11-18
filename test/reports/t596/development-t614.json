@@ -1,0 +1,52 @@
+{
+  "revision": "T596_T614_COMPILE_HANDOFF_V1",
+  "status": "BLOCKED_PREFIX_IDENTITY_CONTRACT_NOT_COMPLETE",
+  "date": "2026-11-18",
+  "blockingComment": "6afd8837e4b0dc337e97c48d",
+  "build": "PASS_NATIVE_ARKTS_HAP",
+  "project": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t596-t614-delivery",
+  "log": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t596-t614-sealed-build.txt",
+  "logSha256": "92a74d4f54ba50baca18a9a4f32c6f5cb1c2244f3b978e5877dfad84ff2f2eb8",
+  "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+  "hapSha256": "4364bb9ee85bbda164c6f8cdb7ad50369290314f29808ca95a8e1a47e1a55562",
+  "packagedElfSha256": {
+    "libs/arm64-v8a/libgrsm1.so": "d7db678555931cc56c1c90ef8299e6e013bf6cb7f7869d25f6e8b714f5c680d9",
+    "libs/arm64-v8a/libgrs_cold_slots.so": "40d79849a4d8de85c7cc402aac19f09d674ba9458022985ddb5568ab81527d03"
+  },
+  "sourceSha256": {
+    "entry/src/main/cpp/gpu_resident/cold_slot_broker.h": "15117bfd06bf802ea5b4dc168f2cc52e390abea335a1885559476bc61386e07a",
+    "entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp": "8a9e6325c67eaf152b95abebc5f258b91357a291a4a4f7809bf1ba795deba50f",
+    "entry/src/main/cpp/gpu_resident/m3b/capture_schema_generated.h": "b0e67dfdc5542a3e101d36d303744bd1c8414c99de9f16c4b506bffd66536bb4",
+    "entry/src/main/cpp/gpu_resident/m3b/capture_schema_generated.glsl": "61d26bb6d34d9aff31b1288b9a3fd0c6141f2e8c72e3968769f4cfddc1026ccf",
+    "entry/src/main/cpp/gpu_resident/m3b/lineage_events.glsl": "2be77a32d17877d5f3c6b337e816d5ad60fda3f81840370f87bf1900d0b0b49f",
+    "entry/src/main/cpp/gpu_resident/m3b/lift_writer.glsl": "38619f2a47b1dbbd36b6edb260061096d5e1590ef36892ee02c352245afd880f",
+    "entry/src/main/cpp/gpu_resident/m3b/quantum_v5.comp": "4e6ad54cc39471fae77aa7e3b230937f80f92012036a841da591dab90b1c7099",
+    "entry/src/main/cpp/gpu_resident/m3b/transport.h": "e8b60d1f7d7e83046e997c25351d0fc06bcd9617ad52a409063cd02e82fb800f",
+    "entry/src/main/cpp/gpu_resident/m3b/transport.cpp": "63134eb660989a5ae561a63cb83a9cb27317cb0c525bf1ba2fcde8cd2a8cb56d",
+    "entry/src/main/cpp/gpu_resident/m3b/controller.h": "cefda6b8a73385910b7e02ad27596fc90df63ea6560bc83b4caa01549d5319c2",
+    "entry/src/main/cpp/gpu_resident/m3b/controller.cpp": "bf35c5670b8be24780a64989079f6268f6b7a771a28d1b72c7bbee862fe7da8e",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp": "b781831fb26b5edb50eff883f61c7a8123e6e0d9623c9a0cac891995b171115e",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h": "40cec3fee2d00c803231def4f11731ec5ff7ecfcc6ce5c575008f2cc32d25d04",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_trace.h": "5eb247c7d8eaa843fa652189281d462f575e31dee5b4de47639c69cc2abc5635",
+    "entry/src/main/cpp/gpu_resident/m3b/napi.inc": "22413b30de51df70e4f6b2107b0108b87955e28c84fc8b315097638d56e2f6d1",
+    "entry/src/main/ets/physics/GpuV5Cold.ets": "d0eb2e75cfac2e37fe5f765d5f091c950d056a2ae0d0522d8fbe92acadf4ca87",
+    "entry/src/main/ets/pages/GpuResidentM5.ets": "4bafd338f9b1a43e234e36cc2d383efad5d79657e08fdae83e913d1086d08cca",
+    "test/t517/assemble_quantum.py": "1126463f737dcafc2fd0803581277559e1543d6153647b7377bf837c53f3d68b",
+    "test/t517/bridge_overlay.cjs": "014e5db1a52b70b7c88fca44542d73d01d834adcd1d24aca0d87782db79de20f",
+    "test/t517/generate.cjs": "6cb15ef5a1745ab4a624eafa8bbfe43a2a08c2ede6cc5047195176e69c229e3c",
+    "test/t596/generate_capture_schema.cjs": "8924bc665c36edbc3e382447c4a3c5c077def827d35b42bd101853afcb833b60",
+    "tools/v5/read_archive.py": "e122c6b5f43d8c13ce685798fd7f3d6a7d90cee8faeaa8d25b2c86b03ee631c9",
+    "docs/developer-T596-progress.md": "8dda45da220042301f5021caed3f9434ab6feba038c85bffd78aeff04951e9b0"
+  },
+  "tests": "NOT_RUN_BY_USER_DIRECTION",
+  "reader": "NOT_EXECUTED",
+  "device": "NOT_RUN",
+  "signingDeployment": "NOT_RUN",
+  "productVerdict": "NOT_EVALUATED",
+  "missing": [
+    "rootCursor64 word dictionary/usedMask/producer cut",
+    "rootTokenSha raw token preimage/encoding",
+    "fullColdConfigCapsule word dictionary"
+  ],
+  "remainingDeveloperWork": "Finish exact prefix codec and reader bindings after architect contract; no COMPLETE/Full enable before that. See developer receipt."
+}

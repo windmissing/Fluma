@@ -1,17 +1,17 @@
-# T596 开发回执：契约冲突，整卡未完成
+# T596 / T614 接续回执
 
-2026-11-18。不测试、不使用真机。本人行登记看评论，不声明FULL可用或协议PASS。
+2026-11-18，developer。不测试、不用真机。T614入口合同已实施；整张T596仍未完成，状态看评论，FULL未开放，T594未据此解锁。
 
-本轮独立收口：共享DSO libgrs_cold_slots.so统一M2/M3/G9实际TraceManager的两slot、单builder/reader、全进程及各route原上限。分配前预约；缓存/reader/RETIRING不因逻辑取消退账，Trim的RAII票据随detached block移动、delete[]后退款。实际生成链复制并链接公共实现，不以各DSO静态对象冒进程单例。这是native cold信用，不冒尚未完成的FULL GPU预约票据。
+已交：SCOPE_INIT9唯一lane清cursor32；INPUT_E_REQUEST15中首credit前封不可变entry9/10及nonce/role/branch/revision2/seal；内部replay只重置mutable0..8并核原入口身份。host切点改为15后copy，尾在SCOPE_FINALIZE后copy，四Q仍40次/5120B/0新增物理dispatch。正式JSON生成capture_schema_generated.h/.glsl，实际quantum生成与CMake源/hash同步，旧核不能冒新wire。
 
-writer唯一cold_capture.cpp定义；摘要byte→word及T535虚拟零化。V2 header/descriptor/rootRecord校验拒绝错版本/范围/摘要/保留位/假NOT_EXECUTED。SOURCE/physical/provenance frame取accepted state的真实arena/有效行数，不取无关buffer/容量。全量校验移至owner锁外。GL/map/unmap/参数/上下文/in-flight/缺锚点/META_INCOMPLETE分别具名。历史迁移脚本显式退役，不能覆盖canonical；正式生成仍复制canonical。G9 cold_trace的V2 receipt helper与T599为同批依赖。
+Meta2从同role原entry/final/control构造，checked差值与共同sealed、nonce/branch/role及root相互核；控制公开体先保6×128行，再构5×Meta32并清928..2047，内部raw不外泄。FULL CONTROL容器rev2，ROOT CONTROL仍1，非prefix其它段仍1。writer/validator及新只读reader核对应版本与paired counts/ranges。
 
-上一提交FULL布局、BASE原件和双流copy保留；FULL早期能力门仍关闭，writer元数据不完整返回META_INCOMPLETE，不发布TRACE_READY/COMPLETE。编译通过不代表完整FULL实现。
+已接完整native cold预约→等待下一plan边界→owner准备GPU保留→原根推进→caller-owned span采集→发布/失败的生命周期框架。全进程单FULL GPU票据在分配前保留，GL owner安全delete才退款；丢失context时保retiring信用至真实eglDestroyContext成功回执。native双slot仍共用此前broker，并核本profile/mode pair上限。没有Native第二整档vector。GPU保留5(S+D)、双stream、控制与输入额度沿原公式；新固定CaptureRoot元数据计入capability的fixedCaptureMetadataBytesExcludedFromPayload，明确属于旧包络排除的fixed objects，不冒原包络已含该固定对象成本。
 
-具体阻断：T552要求在v5BeginScope之后、首事务之前捕获原入口cursor32，但lift_writer.glsl::v5InputEnergy在同次SCOPE_INIT invocation内先BeginScope，再credit(0,1)、WriteAux、SealCompound。host只能整dispatch后copy，入口aux游标已变。GL copy不能插入invocation；禁止新增dispatch/热map，不能冒尾为入口、反算一笔或自行占reserved word。
+逐根保存真实permit、冻结INPUT、完成尾、quota、source控制generation及原SOURCE命令；BASE在首次写之前copy。跳过判定取真实PlanGrant/sourcePhase与实际控制NOT_EXECUTED原件，缺对象不以host mask冒跳过。frame从accepted state的真实arena/rows获取；AUTHORITATIVE附属copy加实际auxStart，避免拿前根的aux冒本scope。SOURCE上下文冷初始化未用槽规范0。新增结构均为原件/身份搬运，不改变物理选择/配方。
 
-已尝试排除：dispatch后copy不保真；反算违背原件；新增dispatch/热读回违反合同。原卡评论6afd53cce4b0d2e2f7786bb2已有源码切点。所需architect裁定：既有cursor32显式入口字段/usedMask修订，或同预算零新增dispatch切点。developer据新合同继续封存实现。
+有界GpuV5Cold逐页保存原JSONL，四个流式SHA分别覆盖canonical prefix/raw prefix/payload/pages file，最后manifest单独落盘后改名；新增reader以临时文件流式读，不执行流体/粒子物理。collector/reader仅交代码，未执行。ROOT/FULL发布仍由实际native writer验证；当前缺定义时显式PREFIX_IDENTITY_CONTRACT_REQUIRED，不输出伪COMPLETE。full配置入口同步具名此原因，默认off不变。
 
-未完成仍属本卡developer责任，不冒只缺测试：逐根INPUT/completion/quota/rootRecord、SOURCE跳过证据；原入口/尾cursor→公开Meta32和共同sealed/forensic；FULL首根前GPU/native联合预约及GPU退休RAII；完整V2 writer/header/descriptor身份填充与collector/reader闭环。FULL公开证据按裁定切点共同收口，当前不启用半实现路径。裁定后仍需developer完成，不转嫁tester。
+实际阻断（原卡评论6afd8837e4b0dc337e97c48d）：T527只给rootCursor64地址，缺逐word/usedMask/原producer切点；RootRecord[58..65] rootTokenSha缺原字节与哈希前像；4096B fullColdConfigCapsule缺数值字段表。T614明确未知字段不得借私有cursor填充。已查T527/T535/T552/T614机器表及当前源码，不能反算/自创编码/填零冒动态身份。需architect补正式字典/前像，或明确全零reserved和可逐字搬的既有原件。然后developer仍须完成该prefix编码、root token绑定、reader相应完整校验并解除整体发布门；不是只缺测试。当前仅有这些字段的缺失占位，writer明确失败，reader也不报完整。
 
-新生成 .codex/local-test/t596-broker-final native/ArkTS/HAP成功（60.083s），日志 .codex/local-test/t596-broker-final-build.txt。llvm-nm确认一个CaptureColdV5全局定义；llvm-readelf确认M0/M1均NEEDED同一libgrs_cold_slots.so。test/reports/t596/link-symbols.txt保留符号收据。未运行测试/reader/GPU/真机。
+编译：新生成.codex/local-test/t596-t614-delivery的native/ArkTS/unsigned HAP成功，完整日志t596-t614-delivery-build.txt（70.425s），最终冷IO同步后t596-t614-sealed-build.txt再次成功（17.063s）。此前T614切点版和collector版也完整编译通过。未运行shader/reader/单元/模拟/设备测试，不签名部署。准确源码和HAP/ELF身份见test/reports/t596/development-t614.json。所有上屏仍XComponent+shader；CPU仿真停投。

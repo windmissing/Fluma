@@ -27,7 +27,9 @@ module.exports=function(main){
   const at=s.indexOf('napi_value '+name+'('),brace=s.indexOf('{',at);if(at<0||brace<0)throw Error('T517_COLD_ANCHOR '+name);
   s=s.slice(0,brace+1)+block('if(app().m5Selected)return text(e,"{\\\"state\\\":\\\"UNSUPPORTED_COLD_REVISION\\\",\\\"required\\\":\\\"T527_V5_BOUNDED_COLD_V2\\\"}");')+s.slice(brace+1);
  }
+ s=s.replace('eglDestroyContext(display,context);','{if(eglDestroyContext(display,context)==EGL_TRUE)GrsFullGpuContextRetired(uint64_t(reinterpret_cast<uintptr_t>(context)));}');
  fs.writeFileSync(file,s);
+ fs.copyFileSync('entry/src/main/ets/physics/GpuV5Cold.ets',path.join(main,'ets/physics/GpuV5Cold.ets'));
  const types=path.join(main,'cpp/types/libgrsm1/index.d.ts');fs.appendFileSync(types,'\n'+withWords.map(n=>'export const '+n+':(words:Uint32Array)=>string;').join('\n')+'\n'+noArgs.map(n=>'export const '+n+':()=>string;').join('\n')+'\n');
  // T550 (problem T546 §5): strict decode contract same-source injection.
  require('../t550_words_contract_overlay.cjs')(main,process.cwd());

@@ -4,6 +4,8 @@
 #include "source_queue_v5.h"
 #include "lift_input.h"
 #include "../uniform_locations.h"
+#include "../cold_slot_broker.h"
+#include "../cold_protocol.h"
 #include <EGL/egl.h>
 #include <thread>
 namespace grs::m3b {
@@ -38,11 +40,20 @@ public:
  size_t PublicationWords()const{return old_?old_->pubWords:0;}
  size_t StorageAlignment()const{return alignment_;}
  bool FullBranchMode()const{return config_.fullBranchTrace;}
- bool FullTraceNeedsFreeze()const{return config_.fullBranchTrace&&fullPlan_!=0&&!fullFrozen_;}
+ bool FullTraceNeedsFreeze()const{return captureArmed_&&fullPlan_!=0&&!fullFrozen_;}
  void TraceFrozen(){fullFrozen_=true;}
- bool HasColdTail()const{return !busy_&&tail_[0]==1381192263&&tail_[1]==4&&tail_[28]!=4;}
+ bool HasColdTail()const{return !busy_&&acceptedRoot_.complete;}
  GLenum FirstGlError()const{return rawGl_;}
- bool CaptureColdV5(uint32_t* reserved,size_t capacity,const QuotaSnapshotV3&,size_t& stateWords,size_t& eventWords);
+ bool CaptureColdV5(uint32_t* reserved,size_t capacity,const QuotaSnapshotV3&,size_t& stateWords,size_t& eventWords,uint64_t request=0,uint64_t trace=0,uint64_t created=0,const cold503::Scope* scope=nullptr);
+ size_t CaptureFixedMetadataBytes()const{return sizeof(captureRoots_)+sizeof(pendingRoot_)+sizeof(acceptedRoot_)+sizeof(captureSource_)+sizeof(acceptedSource_)+sizeof(pendingQuota_)+sizeof(captureGrant_)+sizeof(pendingStarted_)+sizeof(pendingSourceGeneration_);}
+ bool ReserveFullCredit();bool ArmFullCapture();void RetireFullCapture();
+ bool CaptureArmed()const{return captureArmed_;}
+ bool CaptureStarted()const{return fullPlan_!=0;}
+ void SetCaptureGrant(const PlanGrantV3& grant,bool source){captureGrant_=grant;captureSourceExpected_=source;}
+ void SetCaptureQuota(const QuotaSnapshotV3& quota,uint64_t started,uint64_t sourceGeneration){pendingQuota_=quota;pendingStarted_=started;pendingSourceGeneration_=sourceGeneration;}
+ void SealCaptureRoot(bool accepted,const QuotaSnapshotV3& quota);
+ const char* CaptureModeState()const{return captureFailure_;}
+
  // These host masks locate retained objects; they do not authorize GPU rows.
  // Executed roots require their real retained BASE pair and sealed metadata.
  uint32_t FullScopeMask()const{return fullMask_;}
@@ -61,6 +72,15 @@ private:
  std::array<GLuint,32> fullBuffers_{};
  const Profile* profile_=nullptr;const m2::Profile* old_=nullptr;WorkLayout layout_;ResidentBuffersV5 allocation_;
  m2::Profile oldStorage_{};uint32_t headerWord_=0;
+ struct CaptureRoot {
+  RootPermitV5 permit{};LiftInput64 input{};Words256 completion{},quota{};
+  NativeRootEvidence evidence{};uint64_t started=0,checked=0,sourceGeneration=0;bool entered=false,complete=false,accepted=false;
+ };
+ std::array<CaptureRoot,5> captureRoots_{};CaptureRoot pendingRoot_{},acceptedRoot_{};
+ SourcePacketV5 captureSource_{},acceptedSource_{};
+ QuotaSnapshotV3 pendingQuota_{};PlanGrantV3 captureGrant_{};uint64_t pendingStarted_=0,pendingSourceGeneration_=0;
+ bool captureArmed_=false,captureSourceExpected_=false;
+ coldbroker::GpuLease captureGpu_;
  PhysicalConfigV5 config_;RootPermitV5 permit_;int32_t target_=0;
  LiftInput64 liftInput_{};uint64_t auxFrame_=0;uint32_t auxEnd_=0,auxStart_=0;
  Words256 tail_{};NativeRootEvidence evidence_;

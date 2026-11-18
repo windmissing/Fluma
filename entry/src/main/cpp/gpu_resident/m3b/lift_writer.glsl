@@ -30,7 +30,7 @@ bool v5InputEnergy(){
  if(!v5Energy(E0,signal,uV5Mode,uV5Ramp,uV5Decay,E1)){qfail(37u);return false;}
  uint auxStart=uM3Role==4u&&B[uHeader+35u]==uFrame.x&&B[uHeader+36u]==uFrame.y?B[uHeader+179u]:0u;
  if(uM3Role==4u&&auxStart!=uV5ActualAuxStart){qfail(37u);return false;}
- v5BeginScope(uEventStart,auxStart);
+ if(!v5BeginScope(uEventStart,auxStart))return false;
  C[uHeader+180u]=uV5EventArena;
  C[uHeader+163u]=E1;C[uHeader+164u]=E0;C[uHeader+165u]=uV5Mode==0u?0u:W[uV5Input+6u];C[uHeader+166u]=uV5Mode==0u?0u:W[uV5Input+3u];
  C[uHeader+167u]=C[uHeader+168u]=C[uHeader+182u]=0u;

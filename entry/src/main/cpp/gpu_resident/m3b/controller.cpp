@@ -38,9 +38,9 @@ ControlResult ControllerV5::Advance(uint64_t now,uint64_t frame,uint64_t control
  {
   std::lock_guard<std::mutex> lock(mutex_);
   now=std::max(now,SteadyNow());
-  if(!configured_||coldTrace_.builder>=0||transport_.Busy()||owner_.HasRootLocked())return ControlResult::WOULD_BLOCK;
+  if(!configured_||coldBuilding_||(coldTrace_.builder>=0&&(!transport_.FullBranchMode()||(!coldPrepared_&&!run_.active)))||transport_.Busy()||owner_.HasRootLocked())return ControlResult::WOULD_BLOCK;
   if(!frame||!control||frame<frame_||control<control_)return ControlResult::SEQUENCE_REJECTED;
-  if(!run_.active){PlanGrantV3 grant;if(!clock_.ClaimLocked(now,queue_.SizeLocked()!=0,run_,grant))return ControlResult::WOULD_BLOCK;}
+  if(!run_.active){PlanGrantV3 grant;if(!clock_.ClaimLocked(now,queue_.SizeLocked()!=0,run_,grant))return ControlResult::WOULD_BLOCK;transport_.SetCaptureGrant(grant,run_.sourcePhase);}
   const LiftInput64* input=nullptr;if(liftInput_.Freeze(clock_.grant.id,now,input)!=InputResult::OK){clock_.gravityFresh=false;owner_.RevokeLocked({ControlResult::STALE_REJECTED});return ControlResult::STALE_REJECTED;}frozen=*input;
   source=run_.sourcePhase;
   if(source){const auto peek=queue_.PeekForPlanLocked(clock_,run_,clock_.grant,packet);if(peek!=ControlResult::OK)return peek;sourceIntent_=queue_.FrontIntentLocked(clock_);}
@@ -48,6 +48,7 @@ ControlResult ControllerV5::Advance(uint64_t now,uint64_t frame,uint64_t control
   const uint32_t start=source?0:frame==owner_.eventFrame?owner_.eventEnd:0;
   const auto begun=owner_.BeginRootLocked(now,source?1:2,source?0:run_.quantumOrdinal+1,frame,control,uint32_t(frame&1u),start,publication,transport_.PlannedUpload(source?1:2),active_);
   if(begun!=ControlResult::OK)return begun;
+  transport_.SetCaptureQuota(clock_.SnapshotLocked(now,queue_.SizeLocked()!=0,run_),now,clock_.sourceControlGeneration);
   target=clock_.grant.target;prefix=owner_.sourcePrefix;dedup=owner_.dedupPrefix;frame_=frame;control_=control;
  }
  transport_.SetLiftInput(frozen);
@@ -69,8 +70,9 @@ TransportResultV5 ControllerV5::Pump(uint64_t now){
  else if(tail[28]==1){auto success=CompletionGate::Success(*profile_,active_,tail,evidence);if(success)result=active_.kind==1?owner_.AcceptSourceLocked(*success,now):owner_.AcceptQuantumLocked(*success,now);}
  else{auto metadata=CompletionGate::Metadata(*profile_,active_,tail,evidence);if(metadata)result=owner_.AcceptSourceLocked(*metadata,now);}
  if(result!=ControlResult::OK){owner_.RevokeLocked({result});return TransportResultV5::STALE;}
- if(tail[28]==5){if(!transport_.RetireRejected(active_))return TransportResultV5::GL_FAILED;if(transport_.FullTraceNeedsFreeze())run_.workspaceRetired=false;return TransportResultV5::OK;}
+ if(tail[28]==5){transport_.SealCaptureRoot(false,clock_.SnapshotLocked(now,queue_.SizeLocked()!=0,run_));if(!transport_.RetireRejected(active_))return TransportResultV5::GL_FAILED;if(transport_.FullTraceNeedsFreeze())run_.workspaceRetired=false;return TransportResultV5::OK;}
  if(!transport_.Commit(active_,tail)){owner_.RevokeLocked({ControlResult::INVALID_ARGUMENT});return TransportResultV5::GL_FAILED;}
+ transport_.SealCaptureRoot(true,clock_.SnapshotLocked(now,queue_.SizeLocked()!=0,run_));
  PublicationTokenV5 token;token.identity=active_.identity;token.generation=owner_.publicationGeneration;token.source=owner_.sourceCommit;token.physics=owner_.physicsCommit;token.slot=owner_.publicationSlot;token.bank=owner_.currentBank;
  if(!leases_.PublishLocked(token)){owner_.RevokeLocked({ControlResult::INVALID_ARGUMENT});return TransportResultV5::STALE;}
  sceneHeader_[1]=5;sceneHeader_[27]=3;sceneHeader_[31]=31;sceneHeader_[32]=0;sceneHeader_[122]=1;sceneHeader_[124]=sceneHeader_[125]=2;
@@ -129,15 +131,21 @@ cold503::Scope ControllerV5::ColdScopeLocked()const{
 }
 std::string ControllerV5::ColdBegin(uint64_t replace,uint64_t now){
  coldtrace::TraceManager::Receipt receipt;
- {std::lock_guard<std::mutex> lock(mutex_);receipt.scope=ColdScopeLocked();cold::Layout layout;
-  if(!configured_||run_.active||run_.jobLive||transport_.Busy()||!cold::Layout::Make(*profile_,transport_.StorageAlignment(),layout,transport_.FullBranchMode()))receipt.result="WOULD_BLOCK";
-  else{receipt.result=coldTrace_.Begin(receipt.scope,receipt.scope,now,replace,layout.words,receipt.request,receipt.id,layout.words-256,transport_.FullBranchMode()?uint32_t(1):uint32_t(0));if(std::strcmp(receipt.result,"REQUESTED")==0)coldBuilding_=true;}
+ {std::lock_guard<std::mutex> lock(mutex_);receipt.scope=ColdScopeLocked();cold::Layout layout;const bool full=transport_.FullBranchMode();
+  if(!configured_||(!full&&(run_.active||run_.jobLive||transport_.Busy()))||!cold::Layout::Make(*profile_,transport_.StorageAlignment(),layout,full))receipt.result="WOULD_BLOCK";
+  else{
+   receipt.result=coldTrace_.Begin(receipt.scope,receipt.scope,now,replace,layout.words,receipt.request,receipt.id,layout.words-256,full?1u:0u);
+   if(!std::strcmp(receipt.result,"REQUESTED")){
+    if(full&&!transport_.ReserveFullCredit()){coldTrace_.Close(coldTrace_.builder,"FULL_UNSUPPORTED_RESOURCE");coldTrace_.Start();receipt.result="FULL_UNSUPPORTED_RESOURCE";}
+    else{coldPrepared_=false;coldBuilding_=!full;}
+   }
+  }
  }
  std::array<char,16384> data{};cold::Writer w(data.data(),data.size());coldtrace::ReceiptJson(w,receipt);return std::string(w.Data(),w.Size());
 }
 std::string ControllerV5::ColdCapabilities()const{
  std::array<char,2048> bytes{};cold::Writer writer(bytes.data(),bytes.size());
- {std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!cold::Capabilities(writer,*profile_,transport_.StorageAlignment(),transport_.FullBranchMode()))return "{\"state\":\"UNSUPPORTED_M3_COLD\"}";}
+ {std::lock_guard<std::mutex> lock(mutex_);if(!configured_||!cold::Capabilities(writer,*profile_,transport_.StorageAlignment(),transport_.FullBranchMode(),transport_.CaptureFixedMetadataBytes()))return "{\"state\":\"UNSUPPORTED_M3_COLD\"}";}
  return std::string(writer.Data(),writer.Size());
 }
 std::string ControllerV5::SourceStats()const{
@@ -163,29 +171,34 @@ std::string ControllerV5::ColdEnd(uint64_t trace,uint64_t now){
  std::lock_guard<std::mutex> lock(mutex_);const auto result=coldTrace_.End(trace,now,ColdScopeLocked());return std::string("{\"revision\":\"T527_V5_BOUNDED_COLD_V2\",\"state\":\"")+result+"\"}";
 }
 void ControllerV5::BuildCold(uint64_t now){
- int slot;size_t words=0;bool full=false;std::unique_ptr<uint32_t[]> detached;
- {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Maintain(now,ColdScopeLocked());slot=coldTrace_.Start();if(slot<0){if(coldTrace_.builder<0)coldBuilding_=false;return;}
-  words=coldTrace_.slots[slot].requestWords;detached=coldTrace_.TakeOld(slot);
-  full=transport_.FullBranchMode();}
- // Free outside the owner lock. Capacity remains charged until destruction.
- detached.reset();
- {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.OldFreed(slot);}
- // T571 (problem T527/T552): FULL-plan capture now runs through the same
- // owner-thread CaptureColdV5 with the FULL layout. A plan that is still
- // mid-flight (not yet frozen) is refused honestly — the archive must cover
- // the whole plan, never half of it. Host masks cannot substitute for GPU
- // entry/seal evidence or authorize missing BASE anchors.
- if(full&&!transport_.FullFrozen()){std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,"V5_FULL_PLAN_IN_FLIGHT",0,0,0,0,"");coldBuilding_=false;return;}
- std::unique_ptr<uint32_t[]> allocated;
- {std::lock_guard<std::mutex> lock(mutex_);words=coldTrace_.slots[slot].reserved;}
- if(words)allocated.reset(new(std::nothrow)uint32_t[words]);
- uint32_t* storage=nullptr;uint64_t request=0;
- {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(allocated));auto& s=coldTrace_.slots[slot];storage=s.block.get();words=s.capacity;request=s.request;}
- size_t stateWords=0,eventWords=0;QuotaSnapshotV3 quota=Quota(now);
- const bool copied=storage&&transport_.CaptureColdV5(storage,words,quota,stateWords,eventWords);
- // coldBuilding_ pins the builder span. Hash/scan outside the owner lock.
- bool validated=false;if(copied){const auto* profile=SelectProfile(storage[8],storage[9]);cold::Layout layout;validated=profile&&cold::Layout::Make(*profile,4,layout,full)&&stateWords+256==layout.words&&eventWords==0&&cold::Validate(storage,words,layout);}
- {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":transport_.CaptureFailure(),stateWords,eventWords,transport_.FirstGlError(),uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE",0,validated);coldBuilding_=false;}
+ int slot=-1;bool full=false,cancel=false,prepare=false;size_t allocate=0;std::unique_ptr<uint32_t[]> old;
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Maintain(now,ColdScopeLocked());slot=coldTrace_.builder;if(slot<0)return;
+  auto& record=coldTrace_.slots[slot];full=record.fullRows!=0;cancel=record.cancel;
+  if(transport_.Busy()||run_.jobLive)return;
+  if(!cancel&&full&&!coldPrepared_&&run_.active)return; // next complete plan boundary
+  if(!record.started&&!cancel){if(coldTrace_.Start()<0)return;old=coldTrace_.TakeOld(slot);allocate=record.reserved;prepare=true;}
+ }
+ old.reset();
+ if(prepare){
+  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.OldFreed(slot);}
+  std::unique_ptr<uint32_t[]> block;if(allocate)block.reset(new(std::nothrow)uint32_t[allocate]);
+  {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Adopt(slot,std::move(block));if(!coldTrace_.slots[slot].block)cancel=true;}
+  if(full&&!cancel){const bool armed=transport_.ArmFullCapture();std::lock_guard<std::mutex> lock(mutex_);if(armed)coldPrepared_=true;else cancel=true;}
+ }
+ if(cancel){
+  transport_.RetireFullCapture();
+  std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,"CAPTURE_CANCELLED_OR_ALLOCATION_FAILED",0,0);coldBuilding_=coldPrepared_=false;run_.workspaceRetired=true;return;
+ }
+ uint32_t* storage=nullptr;size_t words=0;uint64_t request=0,trace=0,created=0;QuotaSnapshotV3 quota;cold503::Scope scope;
+ {std::lock_guard<std::mutex> lock(mutex_);
+  if(full&&(!transport_.CaptureStarted()||run_.active))return;
+  coldBuilding_=true;auto& record=coldTrace_.slots[slot];storage=record.block.get();words=record.capacity;request=record.request;trace=record.id;created=record.created;scope=record.scope;quota=clock_.SnapshotLocked(now,queue_.SizeLocked()!=0,run_);
+ }
+ size_t state=0,events=0;
+ const bool copied=storage&&transport_.CaptureColdV5(storage,words,quota,state,events,request,trace,created,&scope);
+ bool validated=false;if(copied){const auto* profile=SelectProfile(storage[8],storage[9]);cold::Layout layout;validated=profile&&cold::Layout::Make(*profile,4,layout,full)&&state+256==layout.words&&events==0&&cold::Validate(storage,words,layout);}
+ if(full)transport_.RetireFullCapture();
+ {std::lock_guard<std::mutex> lock(mutex_);coldTrace_.Finish(slot,ColdScopeLocked(),now,copied?"OK":transport_.CaptureFailure(),state,events,transport_.FirstGlError(),transport_.FirstEglError()==EGL_SUCCESS?0:uint32_t(transport_.FirstEglError()),copied?"":"V5_OWNER_CAPTURE",0,validated);coldBuilding_=coldPrepared_=false;run_.workspaceRetired=true;}
 }
 
 ControllerV5::RootDiagnostic ControllerV5::DiagnosticOwnerThread()const{std::lock_guard<std::mutex> lock(mutex_);return {active_,transport_.Tail(),transport_.Evidence(),clock_.fault};}

@@ -1,0 +1,2 @@
+// T614 contract SHA256 b024ab7cc9e8b79cff6be33279ab75c640e05b790a6c51a4f0ec4cf8ebed8da3
+const uint V5_ENTRY_REVISION=2u,V5_ENTRY_USED_MASK=0x8003ffffu;

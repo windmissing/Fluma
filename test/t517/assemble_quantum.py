@@ -92,6 +92,7 @@ uint v5BedPrefix(uint,uint,uint);uint v5FragmentCount(uint,uint);bool v5ColorCre
         return;
     }
     if(uM3Opcode==M3_OP_CORE){''')
+    driver=once(driver,'m3RoleInitialize(uM3Role);','v5ClearScopeEntry();m3RoleInitialize(uM3Role);')
     # Control revision5 keeps the original semantic control operands.
     receipts=(GPU/'m3a/plan_receipts.glsl').read_text(encoding='utf-8').replace('row[1]=4u','row[1]=5u')
     receipts=once(receipts,'if(B[i]!=actual){qfail(16u);',

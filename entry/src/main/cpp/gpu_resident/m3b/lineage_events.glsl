@@ -1,3 +1,4 @@
+/* m3b/capture_schema_generated.glsl */
 // One paired stream in binding3. WORK's cursor retains planned and sealed
 // lengths separately; a failed body is forensic data, never a readable prefix.
 uniform uint uV5Cursor,uV5AuxWord,uV5AuxCapacity;
@@ -35,11 +36,23 @@ bool v5SealCompound(){
  if(v5Cursor(4u)==0u||v5Cursor(8u)!=v5Cursor(1u)){qfail(39u);return false;}
  v5SetCursor(2u,v5Cursor(0u));v5SetCursor(3u,v5Cursor(1u));v5SetCursor(4u,0u);return true;
 }
-void v5BeginScope(uint physicalStart,uint auxStart){
- for(uint i=0u;i<32u;++i)v5SetCursor(i,0u);
- v5SetCursor(0u,physicalStart);v5SetCursor(2u,physicalStart);v5SetCursor(1u,auxStart);v5SetCursor(3u,auxStart);
- v5SetCursor(8u,auxStart);
+uint m3RoleAddress(uint role);
+void v5ClearScopeEntry(){for(uint i=0u;i<32u;++i)v5SetCursor(i,0u);}
+void v5ResetCompoundMutable(uint physicalStart,uint auxStart){
+ for(uint i=0u;i<9u;++i)v5SetCursor(i,0u);
+ v5SetCursor(0u,physicalStart);v5SetCursor(2u,physicalStart);v5SetCursor(1u,auxStart);v5SetCursor(3u,auxStart);v5SetCursor(8u,auxStart);
 }
+bool v5BeginScope(uint physicalStart,uint auxStart){
+ uint role=m3RoleAddress(uM3Role);uvec2 branch=uvec2(W[role+5u],W[role+6u]);
+ if(v5Replay){
+  if(v5Cursor(11u)!=1u||v5Cursor(17u)!=V5_ENTRY_REVISION||v5Cursor(31u)!=3235775745u||v5Cursor(9u)!=physicalStart||v5Cursor(10u)!=auxStart||v5Cursor(12u)!=uNonce.x||v5Cursor(13u)!=uNonce.y||v5Cursor(14u)!=uM3Role||v5Cursor(15u)!=branch.x||v5Cursor(16u)!=branch.y){qfail(38u);return false;}
+  v5ResetCompoundMutable(physicalStart,auxStart);return true;
+ }
+ v5ClearScopeEntry();v5ResetCompoundMutable(physicalStart,auxStart);
+ v5SetCursor(9u,physicalStart);v5SetCursor(10u,auxStart);v5SetCursor(12u,uNonce.x);v5SetCursor(13u,uNonce.y);v5SetCursor(14u,uM3Role);v5SetCursor(15u,branch.x);v5SetCursor(16u,branch.y);v5SetCursor(17u,V5_ENTRY_REVISION);v5SetCursor(11u,1u);
+ memoryBarrierBuffer();v5SetCursor(31u,3235775745u);return true;
+}
+
 bool v5Plus(uint header,uint amount){
  uvec2 next;if(!grsAdd64(uvec2(C[uHeader+header],C[uHeader+header+1u]),uvec2(amount,0u),next)){qfail(13u);return false;}
  C[uHeader+header]=next.x;C[uHeader+header+1u]=next.y;return true;

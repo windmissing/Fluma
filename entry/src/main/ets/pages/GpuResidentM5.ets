@@ -1,3 +1,4 @@
+import { GpuV5Cold } from '../physics/GpuV5Cold';
 import { common } from '@kit.AbilityKit';
 import { GpuInputAttempt } from '../physics/GpuInputAttempt';
 import native from 'libgrsm1.so';
@@ -59,6 +60,9 @@ struct GpuResidentM5 {
   private intent: number = 0;
   private request: number = 0;
   private mode: number = 0;
+  private v5Cold: GpuV5Cold = new GpuV5Cold();
+  @State coldMessage: string = '';
+  private exportV5(): void { try { const context = getContext(this) as common.UIAbilityContext; this.v5Cold.collect(this.identity, context.filesDir, (value: string): void => { this.coldMessage = value; }).catch((error: Error): void => { this.coldMessage = 'INCOMPLETE:' + String(error); }); } catch (error) { this.coldMessage = 'INCOMPLETE:' + String(error); } }
 
   private pair(w: Uint32Array, at: number, n: number): void { w[at] = n % 4294967296; w[at + 1] = Math.floor(n / 4294967296); }
   private attachFrame(): void {
@@ -157,7 +161,7 @@ struct GpuResidentM5 {
     const w = new Uint32Array(19); w.set(this.identity); w[18] = index; this.message = native.m5Target(w);
   }
   aboutToDisappear(): void {
-    this.startupFault(this.message); }
+    this.v5Cold.cancel(); this.startupFault(this.message); }
   build() {
     Column({ space: 6 }) {
       Text('V5 独立研究：真实来源层与活动粒子').fontSize(17)
@@ -177,7 +181,9 @@ struct GpuResidentM5 {
         Button('0°').onClick(() => this.target(0))
         Button('+30°').onClick(() => this.target(7680))
         Button('冷档状态').onClick(() => this.message = native.m5ColdCapabilities())
+        Button('导出 V5 冷档').onClick(() => this.exportV5())
       }
+      Text(this.coldMessage).fontSize(10)
       Text(this.inputDiagnostic).fontSize(10)
       Text(this.message).fontSize(11).maxLines(4)
       XComponent({ id: 'gpuResidentM5', type: XComponentType.SURFACE, libraryname: 'grsm1' }).width('100%').layoutWeight(1)
