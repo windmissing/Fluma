@@ -1,0 +1,2085 @@
+{
+ "schema": "G12_READER_SCHEMA_V1",
+ "profile": "G12_POROUS_SPF_Q20_V1",
+ "state": {
+  "waterHeader64": [
+   {
+    "word": 0,
+    "name": "magic"
+   },
+   {
+    "word": 1,
+    "name": "revision"
+   },
+   {
+    "word": 2,
+    "name": "Kw"
+   },
+   {
+    "word": 3,
+    "name": "nextJId"
+   },
+   {
+    "word": 4,
+    "name": "waterSourceCount"
+   },
+   {
+    "word": 5,
+    "name": "flags"
+   },
+   {
+    "word": 6,
+    "name": "initialWaterLo"
+   },
+   {
+    "word": 7,
+    "name": "initialWaterHi"
+   },
+   {
+    "word": 8,
+    "name": "admittedWaterLo"
+   },
+   {
+    "word": 9,
+    "name": "admittedWaterHi"
+   },
+   {
+    "word": 10,
+    "name": "sumHLo"
+   },
+   {
+    "word": 11,
+    "name": "sumHHi"
+   },
+   {
+    "word": 12,
+    "name": "sumJLo"
+   },
+   {
+    "word": 13,
+    "name": "sumJHi"
+   },
+   {
+    "word": 14,
+    "name": "lastWaterSourceSeqLo"
+   },
+   {
+    "word": 15,
+    "name": "lastWaterSourceSeqHi"
+   },
+   {
+    "word": 16,
+    "name": "waterSourceImpulseX0"
+   },
+   {
+    "word": 17,
+    "name": "waterSourceImpulseX1"
+   },
+   {
+    "word": 18,
+    "name": "waterSourceImpulseX2"
+   },
+   {
+    "word": 19,
+    "name": "waterSourceImpulseX3"
+   },
+   {
+    "word": 20,
+    "name": "waterSourceImpulseY0"
+   },
+   {
+    "word": 21,
+    "name": "waterSourceImpulseY1"
+   },
+   {
+    "word": 22,
+    "name": "waterSourceImpulseY2"
+   },
+   {
+    "word": 23,
+    "name": "waterSourceImpulseY3"
+   },
+   {
+    "word": 24,
+    "name": "waterGravityImpulseY0"
+   },
+   {
+    "word": 25,
+    "name": "waterGravityImpulseY1"
+   },
+   {
+    "word": 26,
+    "name": "waterGravityImpulseY2"
+   },
+   {
+    "word": 27,
+    "name": "waterGravityImpulseY3"
+   },
+   {
+    "word": 28,
+    "name": "wetSupportImpulseX0"
+   },
+   {
+    "word": 29,
+    "name": "wetSupportImpulseX1"
+   },
+   {
+    "word": 30,
+    "name": "wetSupportImpulseX2"
+   },
+   {
+    "word": 31,
+    "name": "wetSupportImpulseX3"
+   },
+   {
+    "word": 32,
+    "name": "wetSupportImpulseY0"
+   },
+   {
+    "word": 33,
+    "name": "wetSupportImpulseY1"
+   },
+   {
+    "word": 34,
+    "name": "wetSupportImpulseY2"
+   },
+   {
+    "word": 35,
+    "name": "wetSupportImpulseY3"
+   },
+   {
+    "word": 36,
+    "name": "waterSourceEnergy0"
+   },
+   {
+    "word": 37,
+    "name": "waterSourceEnergy1"
+   },
+   {
+    "word": 38,
+    "name": "waterSourceEnergy2"
+   },
+   {
+    "word": 39,
+    "name": "waterSourceEnergy3"
+   },
+   {
+    "word": 40,
+    "name": "waterSourceWork0"
+   },
+   {
+    "word": 41,
+    "name": "waterSourceWork1"
+   },
+   {
+    "word": 42,
+    "name": "waterSourceWork2"
+   },
+   {
+    "word": 43,
+    "name": "waterSourceWork3"
+   },
+   {
+    "word": 44,
+    "name": "wetTouchWork0"
+   },
+   {
+    "word": 45,
+    "name": "wetTouchWork1"
+   },
+   {
+    "word": 46,
+    "name": "wetTouchWork2"
+   },
+   {
+    "word": 47,
+    "name": "wetTouchWork3"
+   },
+   {
+    "word": 48,
+    "name": "initialWaterEnergy0"
+   },
+   {
+    "word": 49,
+    "name": "initialWaterEnergy1"
+   },
+   {
+    "word": 50,
+    "name": "initialWaterEnergy2"
+   },
+   {
+    "word": 51,
+    "name": "initialWaterEnergy3"
+   },
+   {
+    "word": 52,
+    "name": "waterDragDissipation0"
+   },
+   {
+    "word": 53,
+    "name": "waterDragDissipation1"
+   },
+   {
+    "word": 54,
+    "name": "waterDragDissipation2"
+   },
+   {
+    "word": 55,
+    "name": "waterDragDissipation3"
+   },
+   {
+    "word": 56,
+    "name": "wetConversionDissipation0"
+   },
+   {
+    "word": 57,
+    "name": "wetConversionDissipation1"
+   },
+   {
+    "word": 58,
+    "name": "wetConversionDissipation2"
+   },
+   {
+    "word": 59,
+    "name": "wetConversionDissipation3"
+   },
+   {
+    "word": 60,
+    "name": "phaseFlags"
+   },
+   {
+    "word": 61,
+    "name": "waterIdExhausted"
+   },
+   {
+    "word": 62,
+    "name": "reserved62"
+   },
+   {
+    "word": 63,
+    "name": "seal"
+   }
+  ],
+  "waterColumn16": [
+   {
+    "word": 0,
+    "name": "H4"
+   },
+   {
+    "word": 1,
+    "name": "pWLo"
+   },
+   {
+    "word": 2,
+    "name": "pWHi"
+   },
+   {
+    "word": 3,
+    "name": "J4"
+   },
+   {
+    "word": 4,
+    "name": "eta4"
+   },
+   {
+    "word": 5,
+    "name": "R4"
+   },
+   {
+    "word": 6,
+    "name": "W4"
+   },
+   {
+    "word": 7,
+    "name": "C_Q16"
+   },
+   {
+    "word": 8,
+    "name": "waterOriginCount"
+   },
+   {
+    "word": 9,
+    "name": "PCount"
+   },
+   {
+    "word": 10,
+    "name": "JCount"
+   },
+   {
+    "word": 11,
+    "name": "wetFlags"
+   },
+   {
+    "word": 12,
+    "name": "hydroEpoch"
+   },
+   {
+    "word": 13,
+    "name": "hydroPhase"
+   },
+   {
+    "word": 14,
+    "name": "geometryStatus"
+   },
+   {
+    "word": 15,
+    "name": "reserved15"
+   }
+  ],
+  "waterOrigin4": [
+   {
+    "word": 0,
+    "name": "originLo"
+   },
+   {
+    "word": 1,
+    "name": "originHi"
+   },
+   {
+    "word": 2,
+    "name": "sourceId"
+   },
+   {
+    "word": 3,
+    "name": "mass4"
+   }
+  ],
+  "waterSource16": [
+   {
+    "word": 0,
+    "name": "originLo"
+   },
+   {
+    "word": 1,
+    "name": "originHi"
+   },
+   {
+    "word": 2,
+    "name": "sourceId"
+   },
+   {
+    "word": 3,
+    "name": "sourceKind"
+   },
+   {
+    "word": 4,
+    "name": "admittedMassLo"
+   },
+   {
+    "word": 5,
+    "name": "admittedMassHi"
+   },
+   {
+    "word": 6,
+    "name": "sourceSeqLo"
+   },
+   {
+    "word": 7,
+    "name": "sourceSeqHi"
+   },
+   {
+    "word": 8,
+    "name": "inputGenerationLo"
+   },
+   {
+    "word": 9,
+    "name": "inputGenerationHi"
+   },
+   {
+    "word": 10,
+    "name": "digest0"
+   },
+   {
+    "word": 11,
+    "name": "digest1"
+   },
+   {
+    "word": 12,
+    "name": "digest2"
+   },
+   {
+    "word": 13,
+    "name": "digest3"
+   },
+   {
+    "word": 14,
+    "name": "flags"
+   },
+   {
+    "word": 15,
+    "name": "reserved15"
+   }
+  ],
+  "waterPacket32": [
+   {
+    "word": 0,
+    "name": "mass4"
+   },
+   {
+    "word": 1,
+    "name": "xQ20"
+   },
+   {
+    "word": 2,
+    "name": "y4Q22"
+   },
+   {
+    "word": 3,
+    "name": "vxQ20"
+   },
+   {
+    "word": 4,
+    "name": "vyQ20"
+   },
+   {
+    "word": 5,
+    "name": "column"
+   },
+   {
+    "word": 6,
+    "name": "id"
+   },
+   {
+    "word": 7,
+    "name": "generation"
+   },
+   {
+    "word": 8,
+    "name": "originLo"
+   },
+   {
+    "word": 9,
+    "name": "originHi"
+   },
+   {
+    "word": 10,
+    "name": "sourceId"
+   },
+   {
+    "word": 11,
+    "name": "flags"
+   },
+   {
+    "word": 12,
+    "name": "birthSeqLo"
+   },
+   {
+    "word": 13,
+    "name": "birthSeqHi"
+   },
+   {
+    "word": 14,
+    "name": "ageTicksLo"
+   },
+   {
+    "word": 15,
+    "name": "ageTicksHi"
+   },
+   {
+    "word": 16,
+    "name": "contactKind"
+   },
+   {
+    "word": 17,
+    "name": "contactLevel4"
+   },
+   {
+    "word": 18,
+    "name": "pathBegin"
+   },
+   {
+    "word": 19,
+    "name": "pathCount"
+   },
+   {
+    "word": 20,
+    "name": "birthCommitLo"
+   },
+   {
+    "word": 21,
+    "name": "birthCommitHi"
+   },
+   {
+    "word": 22,
+    "name": "reserved22"
+   },
+   {
+    "word": 23,
+    "name": "reserved23"
+   },
+   {
+    "word": 24,
+    "name": "reserved24"
+   },
+   {
+    "word": 25,
+    "name": "reserved25"
+   },
+   {
+    "word": 26,
+    "name": "reserved26"
+   },
+   {
+    "word": 27,
+    "name": "reserved27"
+   },
+   {
+    "word": 28,
+    "name": "reserved28"
+   },
+   {
+    "word": 29,
+    "name": "reserved29"
+   },
+   {
+    "word": 30,
+    "name": "reserved30"
+   },
+   {
+    "word": 31,
+    "name": "seal"
+   }
+  ],
+  "freeJ": "zero all except preserved generation; checked increment on reuse",
+  "retiredId": "never reused; MAX_ID allocatable once with exhausted flag, no wrap",
+  "wetAdditionalLedgers": "parent sand Q40 impulse/Q60 E2 plus declared wet corrections Q42/Q62; never silently reinterpret parent fields",
+  "cumulativeWidth": "S128 checked; instantaneous bounds do not excuse cumulative overflow"
+ },
+ "work": {
+  "hydroColumn128": [
+   {
+    "word": 0,
+    "name": "epoch"
+   },
+   {
+    "word": 1,
+    "name": "phase"
+   },
+   {
+    "word": 2,
+    "name": "B"
+   },
+   {
+    "word": 3,
+    "name": "Psum"
+   },
+   {
+    "word": 4,
+    "name": "H4"
+   },
+   {
+    "word": 5,
+    "name": "J4"
+   },
+   {
+    "word": 6,
+    "name": "eta4"
+   },
+   {
+    "word": 7,
+    "name": "R4"
+   },
+   {
+    "word": 8,
+    "name": "W4"
+   },
+   {
+    "word": 9,
+    "name": "SWet4"
+   },
+   {
+    "word": 10,
+    "name": "FWet4"
+   },
+   {
+    "word": 11,
+    "name": "C_Q16"
+   },
+   {
+    "word": 12,
+    "name": "PCount"
+   },
+   {
+    "word": 13,
+    "name": "JCount"
+   },
+   {
+    "word": 14,
+    "name": "lowerBoundIterations"
+   },
+   {
+    "word": 15,
+    "name": "status"
+   },
+   {
+    "word": 16,
+    "name": "waterPotentialQ620"
+   },
+   {
+    "word": 17,
+    "name": "waterPotentialQ621"
+   },
+   {
+    "word": 18,
+    "name": "waterPotentialQ622"
+   },
+   {
+    "word": 19,
+    "name": "waterPotentialQ623"
+   },
+   {
+    "word": 20,
+    "name": "waterPotentialScaledLower0"
+   },
+   {
+    "word": 21,
+    "name": "waterPotentialScaledLower1"
+   },
+   {
+    "word": 22,
+    "name": "waterPotentialScaledLower2"
+   },
+   {
+    "word": 23,
+    "name": "waterPotentialScaledLower3"
+   },
+   {
+    "word": 24,
+    "name": "waterPotentialScaledUpper0"
+   },
+   {
+    "word": 25,
+    "name": "waterPotentialScaledUpper1"
+   },
+   {
+    "word": 26,
+    "name": "waterPotentialScaledUpper2"
+   },
+   {
+    "word": 27,
+    "name": "waterPotentialScaledUpper3"
+   },
+   {
+    "word": 28,
+    "name": "PiWQ620"
+   },
+   {
+    "word": 29,
+    "name": "PiWQ621"
+   },
+   {
+    "word": 30,
+    "name": "PiWQ622"
+   },
+   {
+    "word": 31,
+    "name": "PiWQ623"
+   },
+   {
+    "word": 32,
+    "name": "PiFQ600"
+   },
+   {
+    "word": 33,
+    "name": "PiFQ601"
+   },
+   {
+    "word": 34,
+    "name": "PiFQ602"
+   },
+   {
+    "word": 35,
+    "name": "PiFQ603"
+   },
+   {
+    "word": 36,
+    "name": "NFQ400"
+   },
+   {
+    "word": 37,
+    "name": "NFQ401"
+   },
+   {
+    "word": 38,
+    "name": "NFQ402"
+   },
+   {
+    "word": 39,
+    "name": "NFQ403"
+   },
+   {
+    "word": 40,
+    "name": "aPXQ20"
+   },
+   {
+    "word": 41,
+    "name": "gammaFQ16"
+   },
+   {
+    "word": 42,
+    "name": "gammaSQ16"
+   },
+   {
+    "word": 43,
+    "name": "gammaRefQ16"
+   },
+   {
+    "word": 44,
+    "name": "gnRefQ20"
+   },
+   {
+    "word": 45,
+    "name": "psiLo"
+   },
+   {
+    "word": 46,
+    "name": "psiHi"
+   },
+   {
+    "word": 47,
+    "name": "probeDepth"
+   },
+   {
+    "word": 48,
+    "name": "jProbeLo"
+   },
+   {
+    "word": 49,
+    "name": "jProbeHi"
+   },
+   {
+    "word": 50,
+    "name": "aWaterLo"
+   },
+   {
+    "word": 51,
+    "name": "aWaterHi"
+   },
+   {
+    "word": 52,
+    "name": "fStaticEligible"
+   },
+   {
+    "word": 53,
+    "name": "waveSpeedQ20"
+   },
+   {
+    "word": 54,
+    "name": "sourceGeometryEpoch"
+   },
+   {
+    "word": 55,
+    "name": "wetLengthEpoch"
+   },
+   {
+    "word": 56,
+    "name": "nextEta4"
+   },
+   {
+    "word": 57,
+    "name": "nextR4"
+   },
+   {
+    "word": 58,
+    "name": "nextW4"
+   },
+   {
+    "word": 59,
+    "name": "reserved59"
+   },
+   {
+    "word": 60,
+    "name": "reserved60"
+   },
+   {
+    "word": 61,
+    "name": "reserved61"
+   },
+   {
+    "word": 62,
+    "name": "reserved62"
+   },
+   {
+    "word": 63,
+    "name": "reserved63"
+   },
+   {
+    "word": 64,
+    "name": "reserved64"
+   },
+   {
+    "word": 65,
+    "name": "reserved65"
+   },
+   {
+    "word": 66,
+    "name": "reserved66"
+   },
+   {
+    "word": 67,
+    "name": "reserved67"
+   },
+   {
+    "word": 68,
+    "name": "reserved68"
+   },
+   {
+    "word": 69,
+    "name": "reserved69"
+   },
+   {
+    "word": 70,
+    "name": "reserved70"
+   },
+   {
+    "word": 71,
+    "name": "reserved71"
+   },
+   {
+    "word": 72,
+    "name": "reserved72"
+   },
+   {
+    "word": 73,
+    "name": "reserved73"
+   },
+   {
+    "word": 74,
+    "name": "reserved74"
+   },
+   {
+    "word": 75,
+    "name": "reserved75"
+   },
+   {
+    "word": 76,
+    "name": "reserved76"
+   },
+   {
+    "word": 77,
+    "name": "reserved77"
+   },
+   {
+    "word": 78,
+    "name": "reserved78"
+   },
+   {
+    "word": 79,
+    "name": "reserved79"
+   },
+   {
+    "word": 80,
+    "name": "reserved80"
+   },
+   {
+    "word": 81,
+    "name": "reserved81"
+   },
+   {
+    "word": 82,
+    "name": "reserved82"
+   },
+   {
+    "word": 83,
+    "name": "reserved83"
+   },
+   {
+    "word": 84,
+    "name": "reserved84"
+   },
+   {
+    "word": 85,
+    "name": "reserved85"
+   },
+   {
+    "word": 86,
+    "name": "reserved86"
+   },
+   {
+    "word": 87,
+    "name": "reserved87"
+   },
+   {
+    "word": 88,
+    "name": "reserved88"
+   },
+   {
+    "word": 89,
+    "name": "reserved89"
+   },
+   {
+    "word": 90,
+    "name": "reserved90"
+   },
+   {
+    "word": 91,
+    "name": "reserved91"
+   },
+   {
+    "word": 92,
+    "name": "reserved92"
+   },
+   {
+    "word": 93,
+    "name": "reserved93"
+   },
+   {
+    "word": 94,
+    "name": "reserved94"
+   },
+   {
+    "word": 95,
+    "name": "reserved95"
+   },
+   {
+    "word": 96,
+    "name": "reserved96"
+   },
+   {
+    "word": 97,
+    "name": "reserved97"
+   },
+   {
+    "word": 98,
+    "name": "reserved98"
+   },
+   {
+    "word": 99,
+    "name": "reserved99"
+   },
+   {
+    "word": 100,
+    "name": "reserved100"
+   },
+   {
+    "word": 101,
+    "name": "reserved101"
+   },
+   {
+    "word": 102,
+    "name": "reserved102"
+   },
+   {
+    "word": 103,
+    "name": "reserved103"
+   },
+   {
+    "word": 104,
+    "name": "reserved104"
+   },
+   {
+    "word": 105,
+    "name": "reserved105"
+   },
+   {
+    "word": 106,
+    "name": "reserved106"
+   },
+   {
+    "word": 107,
+    "name": "reserved107"
+   },
+   {
+    "word": 108,
+    "name": "reserved108"
+   },
+   {
+    "word": 109,
+    "name": "reserved109"
+   },
+   {
+    "word": 110,
+    "name": "reserved110"
+   },
+   {
+    "word": 111,
+    "name": "reserved111"
+   },
+   {
+    "word": 112,
+    "name": "reserved112"
+   },
+   {
+    "word": 113,
+    "name": "reserved113"
+   },
+   {
+    "word": 114,
+    "name": "reserved114"
+   },
+   {
+    "word": 115,
+    "name": "reserved115"
+   },
+   {
+    "word": 116,
+    "name": "reserved116"
+   },
+   {
+    "word": 117,
+    "name": "reserved117"
+   },
+   {
+    "word": 118,
+    "name": "reserved118"
+   },
+   {
+    "word": 119,
+    "name": "reserved119"
+   },
+   {
+    "word": 120,
+    "name": "reserved120"
+   },
+   {
+    "word": 121,
+    "name": "reserved121"
+   },
+   {
+    "word": 122,
+    "name": "reserved122"
+   },
+   {
+    "word": 123,
+    "name": "reserved123"
+   },
+   {
+    "word": 124,
+    "name": "reserved124"
+   },
+   {
+    "word": 125,
+    "name": "reserved125"
+   },
+   {
+    "word": 126,
+    "name": "reserved126"
+   },
+   {
+    "word": 127,
+    "name": "reserved127"
+   }
+  ],
+  "waterFace64": [
+   {
+    "word": 0,
+    "name": "leftColumn"
+   },
+   {
+    "word": 1,
+    "name": "rightColumn"
+   },
+   {
+    "word": 2,
+    "name": "qW4"
+   },
+   {
+    "word": 3,
+    "name": "jpWLo"
+   },
+   {
+    "word": 4,
+    "name": "jpWHi"
+   },
+   {
+    "word": 5,
+    "name": "qF"
+   },
+   {
+    "word": 6,
+    "name": "jpFLo"
+   },
+   {
+    "word": 7,
+    "name": "jpFHi"
+   },
+   {
+    "word": 8,
+    "name": "CfaceQ16"
+   },
+   {
+    "word": 9,
+    "name": "waveSpeedQ20"
+   },
+   {
+    "word": 10,
+    "name": "etaLeft4"
+   },
+   {
+    "word": 11,
+    "name": "etaRight4"
+   },
+   {
+    "word": 12,
+    "name": "FLeft"
+   },
+   {
+    "word": 13,
+    "name": "FRight"
+   },
+   {
+    "word": 14,
+    "name": "flags"
+   },
+   {
+    "word": 15,
+    "name": "status"
+   },
+   {
+    "word": 16,
+    "name": "fmWQ420"
+   },
+   {
+    "word": 17,
+    "name": "fmWQ421"
+   },
+   {
+    "word": 18,
+    "name": "fmWQ422"
+   },
+   {
+    "word": 19,
+    "name": "fmWQ423"
+   },
+   {
+    "word": 20,
+    "name": "fpWQ620"
+   },
+   {
+    "word": 21,
+    "name": "fpWQ621"
+   },
+   {
+    "word": 22,
+    "name": "fpWQ622"
+   },
+   {
+    "word": 23,
+    "name": "fpWQ623"
+   },
+   {
+    "word": 24,
+    "name": "ALQ620"
+   },
+   {
+    "word": 25,
+    "name": "ALQ621"
+   },
+   {
+    "word": 26,
+    "name": "ALQ622"
+   },
+   {
+    "word": 27,
+    "name": "ALQ623"
+   },
+   {
+    "word": 28,
+    "name": "ARQ620"
+   },
+   {
+    "word": 29,
+    "name": "ARQ621"
+   },
+   {
+    "word": 30,
+    "name": "ARQ622"
+   },
+   {
+    "word": 31,
+    "name": "ARQ623"
+   },
+   {
+    "word": 32,
+    "name": "PiWLQ620"
+   },
+   {
+    "word": 33,
+    "name": "PiWLQ621"
+   },
+   {
+    "word": 34,
+    "name": "PiWLQ622"
+   },
+   {
+    "word": 35,
+    "name": "PiWLQ623"
+   },
+   {
+    "word": 36,
+    "name": "PiWRQ620"
+   },
+   {
+    "word": 37,
+    "name": "PiWRQ621"
+   },
+   {
+    "word": 38,
+    "name": "PiWRQ622"
+   },
+   {
+    "word": 39,
+    "name": "PiWRQ623"
+   },
+   {
+    "word": 40,
+    "name": "capacityOperand0"
+   },
+   {
+    "word": 41,
+    "name": "capacityOperand1"
+   },
+   {
+    "word": 42,
+    "name": "capacityOperand2"
+   },
+   {
+    "word": 43,
+    "name": "capacityOperand3"
+   },
+   {
+    "word": 44,
+    "name": "reservedWide0"
+   },
+   {
+    "word": 45,
+    "name": "reservedWide1"
+   },
+   {
+    "word": 46,
+    "name": "reservedWide2"
+   },
+   {
+    "word": 47,
+    "name": "reservedWide3"
+   },
+   {
+    "word": 48,
+    "name": "reserved48"
+   },
+   {
+    "word": 49,
+    "name": "reserved49"
+   },
+   {
+    "word": 50,
+    "name": "reserved50"
+   },
+   {
+    "word": 51,
+    "name": "reserved51"
+   },
+   {
+    "word": 52,
+    "name": "reserved52"
+   },
+   {
+    "word": 53,
+    "name": "reserved53"
+   },
+   {
+    "word": 54,
+    "name": "reserved54"
+   },
+   {
+    "word": 55,
+    "name": "reserved55"
+   },
+   {
+    "word": 56,
+    "name": "reserved56"
+   },
+   {
+    "word": 57,
+    "name": "reserved57"
+   },
+   {
+    "word": 58,
+    "name": "reserved58"
+   },
+   {
+    "word": 59,
+    "name": "reserved59"
+   },
+   {
+    "word": 60,
+    "name": "reserved60"
+   },
+   {
+    "word": 61,
+    "name": "reserved61"
+   },
+   {
+    "word": 62,
+    "name": "reserved62"
+   },
+   {
+    "word": 63,
+    "name": "reserved63"
+   }
+  ],
+  "wetDrive32": [
+   {
+    "word": 0,
+    "name": "eta4"
+   },
+   {
+    "word": 1,
+    "name": "SWet4"
+   },
+   {
+    "word": 2,
+    "name": "FWet4"
+   },
+   {
+    "word": 3,
+    "name": "probeDepth"
+   },
+   {
+    "word": 4,
+    "name": "gammaRefQ16"
+   },
+   {
+    "word": 5,
+    "name": "gnRefQ20"
+   },
+   {
+    "word": 6,
+    "name": "psiLo"
+   },
+   {
+    "word": 7,
+    "name": "psiHi"
+   },
+   {
+    "word": 8,
+    "name": "jProbeLo"
+   },
+   {
+    "word": 9,
+    "name": "jProbeHi"
+   },
+   {
+    "word": 10,
+    "name": "aWaterLo"
+   },
+   {
+    "word": 11,
+    "name": "aWaterHi"
+   },
+   {
+    "word": 12,
+    "name": "direction"
+   },
+   {
+    "word": 13,
+    "name": "qPhysical"
+   },
+   {
+    "word": 14,
+    "name": "qOrigin"
+   },
+   {
+    "word": 15,
+    "name": "qActual"
+   },
+   {
+    "word": 16,
+    "name": "pendingTouchJyLo"
+   },
+   {
+    "word": 17,
+    "name": "pendingTouchJyHi"
+   },
+   {
+    "word": 18,
+    "name": "touchConsumed"
+   },
+   {
+    "word": 19,
+    "name": "touchReason"
+   },
+   {
+    "word": 20,
+    "name": "modeEntry"
+   },
+   {
+    "word": 21,
+    "name": "pEntryLo"
+   },
+   {
+    "word": 22,
+    "name": "pEntryHi"
+   },
+   {
+    "word": 23,
+    "name": "wetEpoch"
+   },
+   {
+    "word": 24,
+    "name": "reserved24"
+   },
+   {
+    "word": 25,
+    "name": "reserved25"
+   },
+   {
+    "word": 26,
+    "name": "reserved26"
+   },
+   {
+    "word": 27,
+    "name": "reserved27"
+   },
+   {
+    "word": 28,
+    "name": "reserved28"
+   },
+   {
+    "word": 29,
+    "name": "reserved29"
+   },
+   {
+    "word": 30,
+    "name": "reserved30"
+   },
+   {
+    "word": 31,
+    "name": "reserved31"
+   }
+  ],
+  "share4": [
+   {
+    "word": 0,
+    "name": "originLo"
+   },
+   {
+    "word": 1,
+    "name": "originHi"
+   },
+   {
+    "word": 2,
+    "name": "sourceId"
+   },
+   {
+    "word": 3,
+    "name": "actualShare"
+   }
+  ],
+  "packetKick32": "per-packet staged actual/requested S64 impulses/velocities/status, no extra source of authority",
+  "waterFlight64": "per-J original/proposed state, path/contact/rational cursor and sort index, max64 words",
+  "wideColumn32": "two capacities, aggregate impulses and per-column source/energy guards",
+  "pendingControl": "in declared 8192B root control, bounds/cursors/phase/key, no new global binding",
+  "scratchReuse": "after both reserves, parent Hamilton scratch stages128*(newFmap256+newHmap256)words before C mutation"
+ },
+ "config": {
+  "materialConfig128": [
+   {
+    "word": 0,
+    "name": "parentConfig64_0"
+   },
+   {
+    "word": 1,
+    "name": "parentConfig64_1"
+   },
+   {
+    "word": 2,
+    "name": "parentConfig64_2"
+   },
+   {
+    "word": 3,
+    "name": "parentConfig64_3"
+   },
+   {
+    "word": 4,
+    "name": "parentConfig64_4"
+   },
+   {
+    "word": 5,
+    "name": "parentConfig64_5"
+   },
+   {
+    "word": 6,
+    "name": "parentConfig64_6"
+   },
+   {
+    "word": 7,
+    "name": "parentConfig64_7"
+   },
+   {
+    "word": 8,
+    "name": "parentConfig64_8"
+   },
+   {
+    "word": 9,
+    "name": "parentConfig64_9"
+   },
+   {
+    "word": 10,
+    "name": "parentConfig64_10"
+   },
+   {
+    "word": 11,
+    "name": "parentConfig64_11"
+   },
+   {
+    "word": 12,
+    "name": "parentConfig64_12"
+   },
+   {
+    "word": 13,
+    "name": "parentConfig64_13"
+   },
+   {
+    "word": 14,
+    "name": "parentConfig64_14"
+   },
+   {
+    "word": 15,
+    "name": "parentConfig64_15"
+   },
+   {
+    "word": 16,
+    "name": "parentConfig64_16"
+   },
+   {
+    "word": 17,
+    "name": "parentConfig64_17"
+   },
+   {
+    "word": 18,
+    "name": "parentConfig64_18"
+   },
+   {
+    "word": 19,
+    "name": "parentConfig64_19"
+   },
+   {
+    "word": 20,
+    "name": "parentConfig64_20"
+   },
+   {
+    "word": 21,
+    "name": "parentConfig64_21"
+   },
+   {
+    "word": 22,
+    "name": "parentConfig64_22"
+   },
+   {
+    "word": 23,
+    "name": "parentConfig64_23"
+   },
+   {
+    "word": 24,
+    "name": "parentConfig64_24"
+   },
+   {
+    "word": 25,
+    "name": "parentConfig64_25"
+   },
+   {
+    "word": 26,
+    "name": "parentConfig64_26"
+   },
+   {
+    "word": 27,
+    "name": "parentConfig64_27"
+   },
+   {
+    "word": 28,
+    "name": "parentConfig64_28"
+   },
+   {
+    "word": 29,
+    "name": "parentConfig64_29"
+   },
+   {
+    "word": 30,
+    "name": "parentConfig64_30"
+   },
+   {
+    "word": 31,
+    "name": "parentConfig64_31"
+   },
+   {
+    "word": 32,
+    "name": "parentConfig64_32"
+   },
+   {
+    "word": 33,
+    "name": "parentConfig64_33"
+   },
+   {
+    "word": 34,
+    "name": "parentConfig64_34"
+   },
+   {
+    "word": 35,
+    "name": "parentConfig64_35"
+   },
+   {
+    "word": 36,
+    "name": "parentConfig64_36"
+   },
+   {
+    "word": 37,
+    "name": "parentConfig64_37"
+   },
+   {
+    "word": 38,
+    "name": "parentConfig64_38"
+   },
+   {
+    "word": 39,
+    "name": "parentConfig64_39"
+   },
+   {
+    "word": 40,
+    "name": "parentConfig64_40"
+   },
+   {
+    "word": 41,
+    "name": "parentConfig64_41"
+   },
+   {
+    "word": 42,
+    "name": "parentConfig64_42"
+   },
+   {
+    "word": 43,
+    "name": "parentConfig64_43"
+   },
+   {
+    "word": 44,
+    "name": "parentConfig64_44"
+   },
+   {
+    "word": 45,
+    "name": "parentConfig64_45"
+   },
+   {
+    "word": 46,
+    "name": "parentConfig64_46"
+   },
+   {
+    "word": 47,
+    "name": "parentConfig64_47"
+   },
+   {
+    "word": 48,
+    "name": "parentConfig64_48"
+   },
+   {
+    "word": 49,
+    "name": "parentConfig64_49"
+   },
+   {
+    "word": 50,
+    "name": "parentConfig64_50"
+   },
+   {
+    "word": 51,
+    "name": "parentConfig64_51"
+   },
+   {
+    "word": 52,
+    "name": "parentConfig64_52"
+   },
+   {
+    "word": 53,
+    "name": "parentConfig64_53"
+   },
+   {
+    "word": 54,
+    "name": "parentConfig64_54"
+   },
+   {
+    "word": 55,
+    "name": "parentConfig64_55"
+   },
+   {
+    "word": 56,
+    "name": "parentConfig64_56"
+   },
+   {
+    "word": 57,
+    "name": "parentConfig64_57"
+   },
+   {
+    "word": 58,
+    "name": "parentConfig64_58"
+   },
+   {
+    "word": 59,
+    "name": "parentConfig64_59"
+   },
+   {
+    "word": 60,
+    "name": "parentConfig64_60"
+   },
+   {
+    "word": 61,
+    "name": "parentConfig64_61"
+   },
+   {
+    "word": 62,
+    "name": "parentConfig64_62"
+   },
+   {
+    "word": 63,
+    "name": "parentConfig64_63"
+   },
+   {
+    "word": 64,
+    "name": "magic"
+   },
+   {
+    "word": 65,
+    "name": "revision"
+   },
+   {
+    "word": 66,
+    "name": "profile"
+   },
+   {
+    "word": 67,
+    "name": "Kw"
+   },
+   {
+    "word": 68,
+    "name": "kappaQ16"
+   },
+   {
+    "word": 69,
+    "name": "phiNumerator"
+   },
+   {
+    "word": 70,
+    "name": "phiDenominator"
+   },
+   {
+    "word": 71,
+    "name": "waterDensityNumerator"
+   },
+   {
+    "word": 72,
+    "name": "waterDensityDenominator"
+   },
+   {
+    "word": 73,
+    "name": "bulkDensityNumerator"
+   },
+   {
+    "word": 74,
+    "name": "bulkDensityDenominator"
+   },
+   {
+    "word": 75,
+    "name": "waterMassScaleBits"
+   },
+   {
+    "word": 76,
+    "name": "wetAngleIndex"
+   },
+   {
+    "word": 77,
+    "name": "waterSourcesMax"
+   },
+   {
+    "word": 78,
+    "name": "waterOriginsPerColumn"
+   },
+   {
+    "word": 79,
+    "name": "JPathRowsPerMicro"
+   },
+   {
+    "word": 80,
+    "name": "designSHA0"
+   },
+   {
+    "word": 81,
+    "name": "designSHA1"
+   },
+   {
+    "word": 82,
+    "name": "designSHA2"
+   },
+   {
+    "word": 83,
+    "name": "designSHA3"
+   },
+   {
+    "word": 84,
+    "name": "designSHA4"
+   },
+   {
+    "word": 85,
+    "name": "designSHA5"
+   },
+   {
+    "word": 86,
+    "name": "designSHA6"
+   },
+   {
+    "word": 87,
+    "name": "designSHA7"
+   },
+   {
+    "word": 88,
+    "name": "parentParameterSHA0"
+   },
+   {
+    "word": 89,
+    "name": "parentParameterSHA1"
+   },
+   {
+    "word": 90,
+    "name": "parentParameterSHA2"
+   },
+   {
+    "word": 91,
+    "name": "parentParameterSHA3"
+   },
+   {
+    "word": 92,
+    "name": "parentParameterSHA4"
+   },
+   {
+    "word": 93,
+    "name": "parentParameterSHA5"
+   },
+   {
+    "word": 94,
+    "name": "parentParameterSHA6"
+   },
+   {
+    "word": 95,
+    "name": "parentParameterSHA7"
+   },
+   {
+    "word": 96,
+    "name": "seedRecipeSHA0"
+   },
+   {
+    "word": 97,
+    "name": "seedRecipeSHA1"
+   },
+   {
+    "word": 98,
+    "name": "seedRecipeSHA2"
+   },
+   {
+    "word": 99,
+    "name": "seedRecipeSHA3"
+   },
+   {
+    "word": 100,
+    "name": "seedRecipeSHA4"
+   },
+   {
+    "word": 101,
+    "name": "seedRecipeSHA5"
+   },
+   {
+    "word": 102,
+    "name": "seedRecipeSHA6"
+   },
+   {
+    "word": 103,
+    "name": "seedRecipeSHA7"
+   },
+   {
+    "word": 104,
+    "name": "fixturesSHA0"
+   },
+   {
+    "word": 105,
+    "name": "fixturesSHA1"
+   },
+   {
+    "word": 106,
+    "name": "fixturesSHA2"
+   },
+   {
+    "word": 107,
+    "name": "fixturesSHA3"
+   },
+   {
+    "word": 108,
+    "name": "fixturesSHA4"
+   },
+   {
+    "word": 109,
+    "name": "fixturesSHA5"
+   },
+   {
+    "word": 110,
+    "name": "fixturesSHA6"
+   },
+   {
+    "word": 111,
+    "name": "fixturesSHA7"
+   },
+   {
+    "word": 112,
+    "name": "reserved112"
+   },
+   {
+    "word": 113,
+    "name": "reserved113"
+   },
+   {
+    "word": 114,
+    "name": "reserved114"
+   },
+   {
+    "word": 115,
+    "name": "reserved115"
+   },
+   {
+    "word": 116,
+    "name": "reserved116"
+   },
+   {
+    "word": 117,
+    "name": "reserved117"
+   },
+   {
+    "word": 118,
+    "name": "reserved118"
+   },
+   {
+    "word": 119,
+    "name": "reserved119"
+   },
+   {
+    "word": 120,
+    "name": "reserved120"
+   },
+   {
+    "word": 121,
+    "name": "reserved121"
+   },
+   {
+    "word": 122,
+    "name": "reserved122"
+   },
+   {
+    "word": 123,
+    "name": "reserved123"
+   },
+   {
+    "word": 124,
+    "name": "reserved124"
+   },
+   {
+    "word": 125,
+    "name": "reserved125"
+   },
+   {
+    "word": 126,
+    "name": "reserved126"
+   },
+   {
+    "word": 127,
+    "name": "reserved127"
+   }
+  ]
+ },
+ "dispatch": {
+  "passCount": {
+   "SOURCE": 16,
+   "WET_QUANTUM": 6204,
+   "DRY_QUANTUM": 2404,
+   "WET_G1F4": 24832,
+   "DRY_G1F4": 9632
+  },
+  "opcodes": {
+   "SOURCE_INIT_BASE": 0,
+   "SOURCE_VALIDATE_INPUT": 1,
+   "SOURCE_DEDUP": 2,
+   "SOURCE_DECODE": 3,
+   "SOURCE_WET_DOMAIN_GATE": 4,
+   "SOURCE_CREDIT": 5,
+   "SOURCE_PRIVATE_BIRTH": 6,
+   "SOURCE_HYDRO": 7,
+   "SOURCE_ORIGIN_CERTIFICATE": 8,
+   "SOURCE_LEDGER": 9,
+   "SOURCE_WATER_ENERGY_AUDIT": 10,
+   "SOURCE_AUDIT_REPLAY": 11,
+   "SOURCE_COMPARE": 12,
+   "SOURCE_PACK_SCENE": 13,
+   "SOURCE_FINAL_WET_AUDIT": 14,
+   "SOURCE_SEAL": 15,
+   "ROOT_INIT": 16,
+   "BASE_FREEZE": 17,
+   "CONFIG_INPUT_GATE": 18,
+   "TRIAL_SCHEDULE_BEGIN": 19,
+   "INIT_COPY": 20,
+   "INPUT_AND_CFL": 21,
+   "GRAVITY_WORK": 22,
+   "TOUCH_ATOMIC": 23,
+   "AFTER_TOUCH_CFL": 24,
+   "HYDRO_ENTRY": 25,
+   "WATER_PROBE": 26,
+   "DM_REQUEST": 27,
+   "DM_APPLY": 28,
+   "DRAG_HALF_A": 29,
+   "P_PRESSURE_A": 30,
+   "SAND_FLIGHT": 31,
+   "J_FLIGHT": 32,
+   "HYDRO_AFTER_FLIGHT": 33,
+   "F_PREDICTOR": 34,
+   "F_MIDPOINT": 35,
+   "F_CORRECTOR": 36,
+   "WATER_FACE": 37,
+   "COUPLED_FORCE_RESERVE": 38,
+   "WATER_ORIGIN_RESERVE": 39,
+   "F_ORIGIN_RESERVE": 40,
+   "COUPLED_FLOW_APPLY": 41,
+   "HYDRO_AFTER_FLOW": 42,
+   "P_PRESSURE_B": 43,
+   "DRAG_HALF_B": 44,
+   "F_FRICTION_DEPOSIT": 45,
+   "HYDRO_AFTER_DEPOSIT": 46,
+   "SAND_CAPTURE_PLAN": 47,
+   "SAND_CAPTURE_APPLY": 48,
+   "HYDRO_AFTER_CAPTURE": 49,
+   "J_ARRIVAL_PLAN": 50,
+   "J_ARRIVAL_APPLY": 51,
+   "HYDRO_AFTER_ARRIVE": 52,
+   "LAUNCH": 53,
+   "HYDRO_END": 54,
+   "WET_LEDGER_ENERGY_AUDIT": 55,
+   "STAGE_SUMMARY_SEAL": 56,
+   "FINAL_MASS_ORIGIN_MOMENTUM": 57,
+   "FINAL_ENERGY_CURSORS": 58,
+   "SCOPE_SEAL_AND_CHOICE": 59,
+   "DISCOVERY_COMMIT_SELECTION": 60,
+   "AUTHORITATIVE_BEGIN": 61,
+   "REJECT_PREFIX_BEGIN": 62,
+   "REPLAY_BEGIN": 63,
+   "COMPARE_SELECTED_AUTHORITATIVE": 64,
+   "COMPARE_REPLAY_STREAM": 65,
+   "PACK_SCENE_METADATA": 66,
+   "ROOT_SEAL": 67,
+   "FLIGHT_PATH": 68,
+   "PARTICLE_FOLD": 69,
+   "PREDICTOR_FACE": 70,
+   "MIDPOINT_BUILD": 71,
+   "CORRECTOR_FACE": 72,
+   "FLOW_ORIGIN_RESERVE": 73,
+   "FLOW_PAIR_APPLY": 74,
+   "FRICTION_REST_DEPOSIT": 75,
+   "ORDERED_CAPTURE": 76,
+   "MICRO_AUDIT_SEAL": 77
+  }
+ },
+ "cold": {
+  "schema": "G12_POROUS_COLD_V1",
+  "page": "G12_POROUS_SEGMENT_PAGE_V1",
+  "slots": 2
+ }
+}

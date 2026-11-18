@@ -33,4 +33,5 @@ struct Permit {
  bool operator==(const Permit& b)const{return identity==b.identity&&nonce==b.nonce&&plan==b.plan&&frame==b.frame&&control==b.control&&geometry==b.geometry&&deadline==b.deadline&&baseCommit==b.baseCommit&&quanta==b.quanta&&arenaGeneration==b.arenaGeneration&&kind==b.kind&&ordinal==b.ordinal&&baseBank==b.baseBank&&candidateBank==b.candidateBank&&arena==b.arena&&parameterSha==b.parameterSha&&layoutSha==b.layoutSha&&shaderSha==b.shaderSha&&inputSha==b.inputSha;}
 };
 enum class Result {OK,IN_PROGRESS,WOULD_BLOCK,INVALID,UNSUPPORTED,STALE,DEADLINE,GL_FAILED,SHADER_FAILED,CONTEXT_LOST,INPUT_CLOCK_UNVERIFIED,CALIBRATION_CONFIG_REQUIRED};
+using PermitCheck=bool(*)(void*,const Permit&,uint64_t);
 }
