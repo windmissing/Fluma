@@ -1,5 +1,7 @@
 # T570：单沙准备收敛、真实换代与STALE首次归因
 
+> 2026-11-18 T586新证修订：T408 v12旧gate真实READY与布局按钮disabled同时成立，不能推三次handler已执行；T574 v4尚未完整接到真实状态/帧/预约路径。响应式按钮、单一权威gate、fresh check→reserve→成功consume及有界回执以 [T586工程稿](architecture-T586-first-attribution-v1.md) 为准，3000ms/GAP/HOLD/严格PNG不放宽。
+
 2026-11-17，architect，不使用真机，不执行产品测试。消费T408 attempt10、T553、`test/reports/t491/t408vA/`原件及T540→T516→T469→T455→T426生成链。当前卡完成首次归因和工程接缝；READY/HOLD/严格PNG/标定仍NOT_REACHED，不修改旧失败或宣称产品通过。
 
 ## 1. 证据裁定

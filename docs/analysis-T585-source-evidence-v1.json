@@ -1,0 +1,126 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "schema": "T585_FIRST_ATTRIBUTION_V1",
+  "sources": [
+    {
+      "path": "test/t537/overlay.py",
+      "bytes": 13391,
+      "sha256": "b7bd69b6d2994668ed8b64d3a2bc2f413dedfb81f68835cb1f9202c4704210c2"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/input_diagnostic/source_claim_witness.h",
+      "bytes": 4958,
+      "sha256": "651d3bcec8a14a08110a8a93b20f7f7dbe8553235d9a660173178e9041a112ce"
+    },
+    {
+      "path": ".codex/local-test/t575-witness-tree/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 114322,
+      "sha256": "9bd1c13b961bd44ad2186353f631bfa8ada390bc9df579d2ba129d990c05328d"
+    },
+    {
+      "path": ".codex/local-test/t575-witness-tree/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 11403,
+      "sha256": "db8aa549a21890d13abce09183a0e60a592dba82554767bfa30217c55c2a5437"
+    },
+    {
+      "path": ".codex/local-test/t575-witness-tree/entry/src/main/ets/physics/GpuM1DemoController.ets",
+      "bytes": 12810,
+      "sha256": "c58337940636820dae14399bc5e593769a6990dd4841517412a8f8df45220aa9"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T510-witness-ledger-v4.md",
+      "bytes": 2302,
+      "sha256": "97f407a13049022801b9c93b6e333ec45f3bf710ea6359e404ab1c7512762ab3"
+    }
+  ],
+  "package": {
+    "hapSha": "3095547c855650b7055532a50a155492b40bd514c946b005f1821db211650ba3",
+    "elfSha": "c73ad2c49d154e38e208ab13b68663380ab111e4799f44b40f75045aa72e527a",
+    "unsignedPath": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t575-witness-tree\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "receipt": {
+      "path": "test/reports/t257/T579b-witness.json",
+      "bytes": 2302,
+      "sha256": "5702256ecd93008cd8f7e7932df8f4b37236f819b8b945755c10dcc091c52a3a"
+    },
+    "bytesVerified": true
+  },
+  "raw": [
+    {
+      "path": "test/reports/t491/t510d/gpu-snapshot-execution.json",
+      "bytes": 558438,
+      "sha256": "a9c1e11d1d11ee50416d5922197280b86689730eca338a9b52d846f62e42a330"
+    },
+    {
+      "path": "test/reports/t491/t510d/boot-touch.json",
+      "bytes": 138978,
+      "sha256": "5e24b23a9b090108538dfe39de37b1a3e69a48ccfd38f2146cd40b0c5d541566"
+    }
+  ],
+  "currentScope": {
+    "pid": "64805",
+    "route": "m1",
+    "source": "4c4ec8c66a64792349116cb435894209a7ed753c+T492-overlay-v1",
+    "control": {
+      "epoch": "4",
+      "run": "2",
+      "context": "4",
+      "surface": "4",
+      "session": "2",
+      "resetSerial": "2",
+      "permissionRevision": "5"
+    }
+  },
+  "inputStageScope": {
+    "epoch": "4",
+    "run": "1",
+    "context": "3",
+    "surface": "3",
+    "session": "1",
+    "resetSerial": "2",
+    "permissionRevision": "4"
+  },
+  "inputStageCounts": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "0",
+    "0",
+    "2"
+  ],
+  "witness": {
+    "revision": "SourceClaimWitnessV1",
+    "witnessBytes": 176,
+    "designatedEnqueueSeq": "0",
+    "dropped": 0,
+    "rows": []
+  },
+  "established": [
+    "empty ledger field and fixed JSON shape observed",
+    "captured input-stage scope differs from final execution scope"
+  ],
+  "unproved": [
+    "swipe entered touch handler",
+    "same intent got typed enqueue",
+    "same enqueue got claim or terminal completion",
+    "1187 empty Q proves SOURCE progress"
+  ],
+  "sourceRisks": [
+    "nested same std::mutex at actual claim hook",
+    "pre-Offer CLAIMED with previous nonce reused as planId and guessed kind",
+    "enqueueSeq argument ignored and oldest row selected across scope",
+    "no terminal completion hook",
+    "8x176B rows exceed original one256B witness payload and can exceed2048B JSON",
+    "nothrow claimCopy dereferenced without null branch/accounting"
+  ],
+  "handoff": "fix actual generator witness hook/identity/bounds; T593 collect sustained real Down over multiple pulses, independent of G9 T572"
+}

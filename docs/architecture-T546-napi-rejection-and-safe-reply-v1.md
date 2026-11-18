@@ -1,5 +1,7 @@
 # T546：GPU配置入口拒绝与错误串崩退首次归因
 
+> 2026-11-18 T581修订：实际签包对应生成树仍绑定旧裸token函数，页面提示文字不等于自动诊断消费。既有endpoint错误对象、同attempt快照身份与有界冷文件接线以 [T581工程稿](architecture-T581-first-attribution-v1.md) 为准；无崩退的窄结论保留，精确拒绝谓词仍未证。
+
 2026-11-17，architect，不使用真机，不运行产品测试。消费T542/T545正式报告、原卡评论、jscrash和源码。结论：**G9未捕获JSON.parse异常和入口拒因不可区分为已确认工程缺陷；M3/G9具体拒绝谓词及“同一typedarray根因”尚未证实。** 物理/资格/期限域均保持NOT_REACHED。本稿与 `architecture-T546-input-rejection-manifest-v1.json` 冻结修复和精确取证合同，工程范围已交付。
 
 ## 1. 已证事实与不能合并的推断

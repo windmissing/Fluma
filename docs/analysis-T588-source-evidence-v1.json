@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "schema": "T588_FIRST_ATTRIBUTION_V1",
+  "sources": [
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/ets/pages/GpuSandWaterExperience.ets",
+      "bytes": 12607,
+      "sha256": "875f0e1763e3063a87fa37df7ba8d73c761c81e2e6e7a6e3a3df4506aa14714f"
+    },
+    {
+      "path": "docs/architecture-T547-create-and-empty-export-triage-v1.md",
+      "bytes": 17785,
+      "sha256": "65551039246cdf9c6219f2fbb57bef18d079d550ab6f9da8c33930e2b235763e"
+    },
+    {
+      "path": "docs/architecture-T521-m2-zero-ledger-triage-v1.md",
+      "bytes": 8631,
+      "sha256": "fe19c8814ea4d941c8cc724753e98c7a051c9f02bf1507ed31562d7a9dc4497d"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T461-empty-raw-v3.md",
+      "bytes": 2066,
+      "sha256": "783161bc8abe33f92466e66b9b610f12f915acc434adeff547bfd6b392868852"
+    }
+  ],
+  "package": {
+    "hapSha": "a332c0a1cd541e586a42984dc33bb353486c3852ec87b567b8a95606d13c44b3",
+    "elfSha": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f",
+    "sourceTree": "t562-m2-fix",
+    "bytesVerified": true
+  },
+  "raw": [
+    {
+      "path": "test/reports/t491/t461b/t468-create-1-1794963701327-native.json",
+      "bytes": 4778,
+      "sha256": "3c24de90bb911d10fb6388702ff8f1e42737d661f00c8feb3ce6ee4e846e8776"
+    },
+    {
+      "path": "test/reports/t491/t461b/t468-create-1-1794963701327-manifest.json",
+      "bytes": 719,
+      "sha256": "e2283ef3735533dcd36ac42f912f790cf2377e5de375e7041412cc5a9ecad479"
+    }
+  ],
+  "currentCreate": {
+    "bootSerial": "1",
+    "epoch": "3",
+    "candidateRun": "1",
+    "nativeBeginNs": "158321408219846",
+    "nativeEndNs": "0",
+    "sealed": false,
+    "inCall": true,
+    "inCallDurationNs": "41149887187",
+    "current": {
+      "object": 0,
+      "stage": "LINK",
+      "enterNs": "158325621617971",
+      "exitNs": "0",
+      "handle": 2,
+      "success": false,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    "firstFailure": null
+  },
+  "compileObservedDurationNs": 4212609219,
+  "externalDeclaration": {
+    "packageSha256": "",
+    "libElfSha256": "",
+    "status": "DECLARATION_MISSING",
+    "source": "COLD_WANT_EXTERNAL_RECEIPT"
+  },
+  "logStatus": [
+    {
+      "object": 0,
+      "compile": {
+        "queried": true,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      },
+      "link": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      }
+    },
+    {
+      "object": 1,
+      "compile": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      },
+      "link": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      }
+    },
+    {
+      "object": 2,
+      "compile": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      },
+      "link": {
+        "queried": false,
+        "reportedLength": 0,
+        "copiedLength": 0,
+        "offset": 0,
+        "truncated": false,
+        "emptyLog": true,
+        "queryError": 0
+      }
+    }
+  ],
+  "findings": [
+    "actual SOURCE_V3 compile completed and LINK entered, open interval not completed result",
+    "code0 with sealedfalse/end0 is not Create OK or physical error",
+    "empty link file when queryfalse is not observed empty link log",
+    "signed package/ELF receipts can be externally supplied now without rewriting native declarations",
+    "V5 FULL T571 not an M2 Create prerequisite; offline T496 scope not same device attempt"
+  ],
+  "handoff": "T591 pair original same-attempt snapshots with existing external signed-package/ELF/install/PID/context receipt; code change only on precise missing product observation"
+}

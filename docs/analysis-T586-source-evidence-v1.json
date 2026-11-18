@@ -1,0 +1,153 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "schema": "T586_FIRST_ATTRIBUTION_V1",
+  "sources": [
+    {
+      "path": "test/t574/t574_prepare_v4_overlay.cjs",
+      "bytes": 3096,
+      "sha256": "08bb4686aeb232b261b3622820ddb77c410902dcb541664f1c39c58cedc5e45a"
+    },
+    {
+      "path": "test/t426/PrepareReadinessV4.ets",
+      "bytes": 7571,
+      "sha256": "a74248dfa1a341dd6024afa10511be45d0363a72009430f63ee2004e4b7d198c"
+    },
+    {
+      "path": ".codex/local-test/t574-prepare-tree/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 48442,
+      "sha256": "7666875b2119d26fa8e134ebe6d1157d0408bec93db78cb41f507dae13f6e25f"
+    },
+    {
+      "path": ".codex/local-test/t574-prepare-tree/entry/src/main/ets/render/PrepareReadiness.ets",
+      "bytes": 11621,
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T408-ready-v12.md",
+      "bytes": 2049,
+      "sha256": "1eae954dc95e0e99ef99e884711c90af659a0051b8a3e5d49405a5aa770628ef"
+    }
+  ],
+  "package": {
+    "hapSha": "4a1998c4db2c1d2401c66f1c0c4c2f956d333287a116f6c7c15165350bcd0d4c",
+    "elfSha": "4e464e543d9a92c54eb45b2676d656990f2d0d2d4c84e24b267a915eefcad6d1",
+    "unsignedPath": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t574-prepare-tree\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "receipt": {
+      "path": "test/reports/t257/T579b-prepare.json",
+      "bytes": 2302,
+      "sha256": "f956d74fe2e351341603882fbd281b7cf6f4939c2e0965b30f49c21518293449"
+    },
+    "bytesVerified": true
+  },
+  "raw": [
+    {
+      "path": "test/reports/t491/t408vC/prepB-PREPARING.json",
+      "bytes": 8113,
+      "sha256": "86f99f722bff9307d30fc665380f59ba3e5ebfc9064d94e39fdc735f7fbe3d3a"
+    },
+    {
+      "path": "test/reports/t491/t408vC/prepB-READY.json",
+      "bytes": 76995,
+      "sha256": "7d6ab6da4807d89a5c31da15f1320e8691a341a4d425d8bff9dd17b98e915fbf"
+    },
+    {
+      "path": "test/reports/t491/t408vC/l2.json",
+      "bytes": 70295,
+      "sha256": "52c45443abd44fdc2d0834d924a5ed76a8fcb81909d012fc0048e03dbfe15366"
+    },
+    {
+      "path": "test/reports/t491/t408vC/l4.json",
+      "bytes": 66775,
+      "sha256": "2dc122335a5537d2616642fb459769f209f009b3cf23a887f62d2595e85c8458"
+    },
+    {
+      "path": "test/reports/t491/t408vC/l6.json",
+      "bytes": 66775,
+      "sha256": "1cf711859e5ca863ca0eadfc2b56f744d55cf0bcf1d7b35666145800611016a4"
+    }
+  ],
+  "ready": {
+    "revision": "T532_PREPARE_V3",
+    "prepareId": 1,
+    "pageGeneration": 1,
+    "firstFrame": 164061126008938,
+    "secondFrame": 164061175801123,
+    "readyMonoMs": 164061220.377346
+  },
+  "buttons": {
+    "l2.json": [
+      {
+        "id": "t413-status-text",
+        "text": "READY  · IDLE  ",
+        "enabled": "true",
+        "clickable": "false",
+        "bounds": "[503,248][753,311]",
+        "visible": "true"
+      },
+      {
+        "id": "t413-reserve",
+        "text": "预约",
+        "enabled": "false",
+        "clickable": "false",
+        "bounds": "[184,388][408,514]",
+        "visible": "true"
+      }
+    ],
+    "l4.json": [
+      {
+        "id": "t413-status-text",
+        "text": "READY  · IDLE  ",
+        "enabled": "true",
+        "clickable": "false",
+        "bounds": "[503,248][753,311]",
+        "visible": "true"
+      },
+      {
+        "id": "t413-reserve",
+        "text": "预约",
+        "enabled": "false",
+        "clickable": "false",
+        "bounds": "[184,388][408,514]",
+        "visible": "true"
+      }
+    ],
+    "l6.json": [
+      {
+        "id": "t413-status-text",
+        "text": "READY  · IDLE  ",
+        "enabled": "true",
+        "clickable": "false",
+        "bounds": "[503,248][753,311]",
+        "visible": "true"
+      },
+      {
+        "id": "t413-reserve",
+        "text": "预约",
+        "enabled": "false",
+        "clickable": "false",
+        "bounds": "[184,388][408,514]",
+        "visible": "true"
+      }
+    ]
+  },
+  "findings": [
+    "READY genuine under existing gate; button disabled/clickablefalse in actual layouts",
+    "enabled reads nonreactive plain gate field, text uses separate reactive prepareText",
+    "reserve preguard blocks evidence!=null, not evidence==null",
+    "3000ms bounds PREPARING in active old gate, not a demonstrated READY expiry",
+    "v4 side object begin before old begin uses zero owner helpers, inactive default and no frame/change/check/consume binding"
+  ],
+  "unproved": [
+    "three clicks entered handler",
+    "unique early return reason",
+    "v4 full semantics passed"
+  ],
+  "handoff": "developer reactive affordance +one authoritative v4 integration and bounded reserve receipt; T592 precise hit/check/result/IO evidence"
+}

@@ -1,5 +1,7 @@
 # T527 V5 完整冷谱系、容量与兼容合同 v1
 
+> 2026-11-18 T584实现闭包修订：FULL必须保执行root的真实BASE及source上下文、五根控制与scope双stream，不能用NOT_EXECUTED代替缺对象。正式61段、既有预算和V5_2字典不变；缺口、唯一链接实现、捕获时机、sealed语义与跨route双槽生命周期以 [T584工程稿](architecture-T584-first-attribution-v1.md) 为准。
+
 > 2026-11-17 T552补齐：所有非prefix逐段kind/index+1、revision/身份、根槽引用/行计数、FULL scope入口与末尾cursor原件采集及内层wire差异以 `architecture-T552-v5-wire-and-g9-seed-v2.md` / `architecture-T552-v5-segment-wire-v2.json` 为准。原T527表的offset/容量不变；本文旧“通用seal/角色隐含规则”不得代替新逐段表。
 
 > 2026-11-17 T535修订生效：本文旧header rev1/摘要隐含规则由 `architecture-T535-v5-prefix-digest-v2.md` 取代；同路径机器表已升ENGINEERING_V2、payload V5_2、header2/policy1。仅自身SHA字节[1116,1148)虚拟归零，其他字节全部覆盖。容量/offset/预算不变。历史共享V1生成脚本不可覆盖当前表。

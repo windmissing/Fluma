@@ -1,5 +1,7 @@
 # T547：离线Create后段与空日志导出的分项归因
 
+> 2026-11-18 T588新证修订：T461 v3合法空raw导出窄PASS保留；同次native证明COMPILE完成且LINK进入未封口，非NO_ATTEMPT，未查询link日志不得称观测到空日志。外部包/ELF/安装/PID声明可由tester沿现有设施补齐，V5 FULL不是M2 Create前置；具体分流以 [T588工程稿](architecture-T588-first-attribution-v1.md) 为准。
+
 2026-11-17，architect，不使用真机、不跑GL长测/产品测试。输入T496 v2、T461取证v2、T518/T521及相应原件/同源源码。结论分开：**T496仍是精确调用证据不足，先修测试设施并做有界定位；T461的合法空raw被md.update拒绝是已具备证据的导出工程缺陷，先修合同再交developer。** 不从任一项推断物理/shader/呈现失败，不延长900s，不恢复CPU线。
 
 ## 1. T496原件复算：纠正报告边界

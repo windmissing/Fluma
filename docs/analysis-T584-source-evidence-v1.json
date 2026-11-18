@@ -1,0 +1,199 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "schema": "T584_FIRST_ATTRIBUTION_V1",
+  "sources": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/transport.cpp",
+      "bytes": 23690,
+      "sha256": "a86b7513e359b9af3fa6e88c796011b708f4ef3d59879059c6fe9ef773f6a4a1"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp",
+      "bytes": 7753,
+      "sha256": "ba5ac5957c67d4d9a01e85e8b94b065a18dc792b57b20ec5f39f812f492c8211"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h",
+      "bytes": 5029,
+      "sha256": "fcb95941a435487371ffcbdd4b675486aa45879b9442ae682a9ff26f6bb0ea33"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_layout_generated.h",
+      "bytes": 13712,
+      "sha256": "3acc8a4b74654e2555d9d256a02da1f65429ed8d23ea461a72383669fdf9fe32"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/controller.cpp",
+      "bytes": 19929,
+      "sha256": "75d562f5914633efaf124381de04927ff65cf01d7993a53eb9c443727c8ca510"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/controller.h",
+      "bytes": 3132,
+      "sha256": "eaa5ccd9a4676e51e2890064c6ee8e7156566c47a8a12851c4ee2d200bf82483"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_trace.h",
+      "bytes": 8985,
+      "sha256": "4a60aa57360ca5042039828b58276b1d9ffa9648ba39816648f807dea635f5a8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/kernels.cmake",
+      "bytes": 3664,
+      "sha256": "2819ce5fa17ab77e5c1646253321e83325af6abeff2aafa4297da95ebd823f97"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/architecture-T527-v5-cold-manifest-v1.json",
+      "bytes": 91276,
+      "sha256": "eb12ae2881e489ac0a6aa8bf33dd3c57dc20dd5d7b64300244da5882006223af"
+    },
+    {
+      "path": "docs/architecture-T552-v5-segment-wire-v2.json",
+      "bytes": 259961,
+      "sha256": "f8ae455cf7ac5db4d929fc0f1b9ce68931f85880844ff13ff22b7a8db9c97ac8"
+    }
+  ],
+  "formalFullSegmentCounts": [
+    61,
+    61,
+    61,
+    61
+  ],
+  "rootAnchorTruth": [
+    {
+      "rootExecuted": false,
+      "anchorCaptured": false,
+      "status": "NOT_EXECUTED"
+    },
+    {
+      "rootExecuted": false,
+      "anchorCaptured": true,
+      "status": "NOT_EXECUTED"
+    },
+    {
+      "rootExecuted": true,
+      "anchorCaptured": false,
+      "status": "INCOMPLETE_MISSING_REQUIRED_ANCHOR"
+    },
+    {
+      "rootExecuted": true,
+      "anchorCaptured": true,
+      "status": "SEALED_COMPLETE"
+    }
+  ],
+  "selectedStreamNames": [
+    "Q0_ROLE1_PHYSICAL",
+    "Q0_ROLE2_PROVENANCE",
+    "Q0_ROLE3_PHYSICAL",
+    "Q0_ROLE4_PROVENANCE",
+    "Q0_ROLE5_PHYSICAL",
+    "Q1_ROLE1_PROVENANCE",
+    "Q1_ROLE2_PHYSICAL",
+    "Q1_ROLE3_PROVENANCE",
+    "Q1_ROLE4_PHYSICAL",
+    "Q1_ROLE5_PROVENANCE",
+    "Q2_ROLE1_PHYSICAL",
+    "Q2_ROLE2_PROVENANCE",
+    "Q2_ROLE3_PHYSICAL",
+    "Q2_ROLE4_PROVENANCE",
+    "Q2_ROLE5_PHYSICAL",
+    "Q3_ROLE1_PROVENANCE",
+    "Q3_ROLE2_PHYSICAL",
+    "Q3_ROLE3_PROVENANCE",
+    "Q3_ROLE4_PHYSICAL",
+    "Q3_ROLE5_PROVENANCE"
+  ],
+  "missingCounterpartNames": [
+    "Q0_ROLE1_PROVENANCE",
+    "Q0_ROLE2_PHYSICAL",
+    "Q0_ROLE3_PROVENANCE",
+    "Q0_ROLE4_PHYSICAL",
+    "Q0_ROLE5_PROVENANCE",
+    "Q1_ROLE1_PHYSICAL",
+    "Q1_ROLE2_PROVENANCE",
+    "Q1_ROLE3_PHYSICAL",
+    "Q1_ROLE4_PROVENANCE",
+    "Q1_ROLE5_PHYSICAL",
+    "Q2_ROLE1_PROVENANCE",
+    "Q2_ROLE2_PHYSICAL",
+    "Q2_ROLE3_PROVENANCE",
+    "Q2_ROLE4_PHYSICAL",
+    "Q2_ROLE5_PROVENANCE",
+    "Q3_ROLE1_PHYSICAL",
+    "Q3_ROLE2_PROVENANCE",
+    "Q3_ROLE3_PHYSICAL",
+    "Q3_ROLE4_PROVENANCE",
+    "Q3_ROLE5_PHYSICAL"
+  ],
+  "findings": [
+    "executed root cannot call missing resident BASE not executed",
+    "writer loops20 slots selecting onlyone ofeach physical/provenance pair",
+    "four Q control slots omit SOURCE root slot and copy768words without complete metadata",
+    "all segment capacities labelled sealed instead of observed paired cursor prefix",
+    "old rev1/prefix digest policy and byte/word digest pointer conflict with V5_2/T535/T552",
+    "transport stub and cold_capture definition coexist in static library source set; actual selected symbol needs compile-link receipt, no runtime proof inferred",
+    "per-controller trace managers alone do not prove process-global cross-route2-slot credit"
+  ],
+  "resources": [
+    {
+      "K": 192,
+      "Kw": 64,
+      "stateBytes": 172544,
+      "sourceContextBytes": 10224000,
+      "fullSlotBytes": 157537024,
+      "fullGPUReservationBytes": 129021056,
+      "sourceContextBaseAnchorCopyBytesMax": 51982720
+    },
+    {
+      "K": 192,
+      "Kw": 128,
+      "stateBytes": 176640,
+      "sourceContextBytes": 10224000,
+      "fullSlotBytes": 163853056,
+      "fullGPUReservationBytes": 134284416,
+      "sourceContextBaseAnchorCopyBytesMax": 52003200
+    },
+    {
+      "K": 512,
+      "Kw": 64,
+      "stateBytes": 218624,
+      "sourceContextBytes": 10224000,
+      "fullSlotBytes": 255871744,
+      "fullGPUReservationBytes": 208713856,
+      "sourceContextBaseAnchorCopyBytesMax": 52213120
+    },
+    {
+      "K": 512,
+      "Kw": 128,
+      "stateBytes": 222720,
+      "sourceContextBytes": 10224000,
+      "fullSlotBytes": 262187776,
+      "fullGPUReservationBytes": 213977216,
+      "sourceContextBaseAnchorCopyBytesMax": 52233600
+    }
+  ],
+  "worstKnownConcurrentPayload": {
+    "gpuResidentAndFull": 366564432,
+    "nativeTwoSlots": 524375552,
+    "diagnosticCopyAndWriter": 3501224,
+    "pageWriter": 16384,
+    "total": 894457592,
+    "excludes": [
+      "alignment",
+      "FBO",
+      "JS",
+      "fixed objects",
+      "cache",
+      "driver retirement/JIT"
+    ]
+  },
+  "policy": "keep COMPLETE false until required executed-root anchors, both paired streams, root records and current V5_2 digest all present",
+  "handoff": "developer required, not tester to prove missing implementation; T571 prior developer delivery remains registered"
+}

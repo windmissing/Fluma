@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "schema": "T589_FIRST_ATTRIBUTION_V1",
+  "sources": [
+    {
+      "path": "test/t572/t572_touch_bridge.inc",
+      "bytes": 7564,
+      "sha256": "0029d9d049f22657110dca79dfb45946841e3039c1f54390a3052516d365bc14"
+    },
+    {
+      "path": "test/t572/t572_touch_overlay.cjs",
+      "bytes": 3732,
+      "sha256": "bb925b3820773ebe9a06f95b002552e433a726f12b1d79834c0e4629e36b6eb9"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/touch_adapter.h",
+      "bytes": 4738,
+      "sha256": "0ac46a5462f1257ed9e2ba073be12461c1c634c323d8677377de3374848d1a1b"
+    },
+    {
+      "path": ".codex/local-test/t572-adapter-tree/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 147501,
+      "sha256": "6e7cb4c59c7771787652c60b5754226b2e51c176aaa22450e53e755fc5968231"
+    },
+    {
+      "path": ".codex/local-test/t572-adapter-tree/entry/src/main/ets/pages/GpuResidentG9.ets",
+      "bytes": 10883,
+      "sha256": "cc918efa2ece602393c38d9e8f3acadc5c77a4ca8e4d930849d5d6e099724cfc"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/architecture-T543-g9-candidate-touch-adapter-v1.md",
+      "bytes": 22077,
+      "sha256": "07070c2c0af88bdac6870d2851149123ef8719726630d56f4d972f5d81a9e002"
+    },
+    {
+      "path": "docs/architecture-T552-g9-seed-manifest-v2.json",
+      "bytes": 3947,
+      "sha256": "2a8ed1093e201a9f3cf5386dbc80840a1d481ca58396f9d737320a6ae0fc6a4c"
+    }
+  ],
+  "package": {
+    "hapSha": "d535e1d3f637f7ef6c33977753fb2ae1c32e428c1274ccbc5001030bd395bd59",
+    "elfSha": "41a9d02206e8e4b7bc5de0cac896a4580d3acdc0b4d7976bfc51772be1c906da",
+    "unsignedPath": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t572-adapter-tree\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "receipt": {
+      "path": "test/reports/t257/T579b-adapter.json",
+      "bytes": 2303,
+      "sha256": "6a921af33ce2d1a4d9f181579679753fee6699f84b1278cce03eb691851459b8"
+    },
+    "bytesVerified": true
+  },
+  "findings": [
+    "native touch endpoints exist but page has no Down/Move/Up calls",
+    "mapping endpoint grants clock solely from mapping, no platform proof producer",
+    "presented generation/commit fabricated from call count, current identity combined with prior token risks",
+    "UP computes evidence only, no INPUT128 queue/Offer connection",
+    "cold metadata endpoint not full record export; no consumed BASE promotion",
+    "TouchEvidence256 actually64U32; writes base at3200 vs required3328 and overwrites field0 with kind",
+    "Update/End lack same safe integer/nonnegative checks as Begin"
+  ],
+  "contract": {
+    "clock": "independent trusted native platform/source/monotonic proof; page cannot authorize via token or timestamps",
+    "mapping": "GL owner only after same-scope successful Swap; immutable lease commit/viewport/uBox and idempotent generation",
+    "touchEvidenceSlots": [
+      {
+        "startWord": 3072,
+        "words": 256
+      },
+      {
+        "startWord": 3328,
+        "words": 256
+      }
+    ],
+    "Config64StartWord": 3584,
+    "SeedMeta64StartWord": 3648,
+    "nativePayloadBudget": 22528
+  },
+  "handoff": "full product integration/producer proof before T544 real-flick demo; safe INPUT_CLOCK_UNVERIFIED remains if actual platform proof unavailable"
+}

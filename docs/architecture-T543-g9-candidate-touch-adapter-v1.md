@@ -1,5 +1,7 @@
 # T543：G9_BALANCED_R1 与一次UP拨动工程闭包
 
+> 2026-11-18 T589信任与消费闭包修订：clock资格必须有独立可信producer证明，presented映射只能来自同lease成功Swap；页面真实Config64/R2、INPUT128入队消费与CURRENT/BASE两份完整256U32记录均须真正接线。native端点存在不代表闭包完成；精确producer、失效、完整冷记录及T544真实前置以 [T589工程稿](architecture-T589-first-attribution-v1.md) 为准。
+
 > 2026-11-17 T552新证修订：本稿seed漏填列9=B，与完整初始审计冲突；新实施必须消费 `architecture-T552-g9-seed-manifest-v2.json` 及 `architecture-T552-v5-wire-and-g9-seed-v2.md` 的R2合法模板、parameterRevision3/seedRevision2和重算SHA链。旧T543机表/有限检查保为历史，不能覆盖R2；触摸配方/候选物理参数不变。DM升级另按T554新profile，不原地改本R1或T549冻结基线。
 
 日期：2026-11-17。architect；不使用真机。ENGINEERING_READY_NOT_IMPLEMENTED。输入为T534正式MD/JSON、manager已批准的显式研究比较规格，以及T529 `e429ea7`源码/开发报告。本稿和 `architecture-T543-g9-adapter-manifest-v1.json` 是developer接力合同，有限整数/位型例见 `analysis-T543-contract-checks-v1.json`。没有运行产品测试、物理模拟或真机，不宣称标定、观感、30fps通过。

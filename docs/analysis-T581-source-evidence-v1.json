@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "schema": "T581_FIRST_ATTRIBUTION_V1",
+  "sources": [
+    {
+      "path": "test/t550_words_contract_overlay.cjs",
+      "bytes": 4311,
+      "sha256": "a1b2a48b1001d499b153721ad09ace87729ea880f28d252e4201b3e6740a4239"
+    },
+    {
+      "path": "test/t529/bridge_overlay.cjs",
+      "bytes": 4112,
+      "sha256": "0c76ebd1b876369435a76cac270910ee1940cff62684b2d0a09648d392ce13f0"
+    },
+    {
+      "path": "test/t522/bridge_overlay.cjs",
+      "bytes": 4004,
+      "sha256": "5a0bbbe6f85bcff6c9c285b5b4633813373ccd028b2fccda43f7a84bda5f57d7"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/napi_words_contract.h",
+      "bytes": 11104,
+      "sha256": "87491012a266ceffab5e55225c9c992506c4d503ff80209a86a9bd6573a22d24"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/napi_words_contract.cpp",
+      "bytes": 6318,
+      "sha256": "5e571b384249ba14a272886da0f3c36cf4989efcaf8671e49c7a0ac30b4111d8"
+    },
+    {
+      "path": ".codex/local-test/t562-g9-diagnostic/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 138756,
+      "sha256": "da7870904644d64586d48109dd943af4dddf1b34723670639b899ff974ea5f08"
+    },
+    {
+      "path": ".codex/local-test/t562-m3-diagnostic/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 124498,
+      "sha256": "af14257afc8b33385436aa349be8183ac55aceed564160f7d37d5c77521d0287"
+    },
+    {
+      "path": ".codex/local-test/t562-g9-diagnostic/entry/src/main/ets/pages/GpuResidentG9.ets",
+      "bytes": 10883,
+      "sha256": "cc918efa2ece602393c38d9e8f3acadc5c77a4ca8e4d930849d5d6e099724cfc"
+    },
+    {
+      "path": ".codex/local-test/t562-m3-diagnostic/entry/src/main/ets/pages/GpuResidentM3.ets",
+      "bytes": 8500,
+      "sha256": "67de0e6ef49621d9cc80477b027d13d8930f6674b71f37aec8d4da1168db26ec"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T545-m3-entry-v3.md",
+      "bytes": 2232,
+      "sha256": "ad176dee26a7ccff5e8ddcec8def882988adf3dbc6a2091a40e149eac059ae34"
+    },
+    {
+      "path": "docs/test-report-T542-g9-entry-v3.md",
+      "bytes": 2699,
+      "sha256": "43231655510b49b1912a6c96431398d6b3351aea8edcbb94cabb826e8a7bdb62"
+    }
+  ],
+  "packages": {
+    "T579-m3diag": {
+      "hapSha": "6d346433f20571bd6944f7d509965474c08bcd847750fd3e4e65816da9194e9e",
+      "elfSha": "458d8a3e9c1c918da644e5cd097c05bed47538d7e0e4a529db87f0f0dcd1aa65",
+      "sourceTree": "t562-m3-diagnostic",
+      "bytesVerified": true
+    },
+    "T579-g9diag": {
+      "hapSha": "c999825ce467f445fdf344b9cb00ffea71cf89b0c04863647fc0714e401b7192",
+      "elfSha": "480c0f82cc2721a870c4e69129ad58fb2856c9abd229708ea42e5deb511ec420",
+      "sourceTree": "t562-g9-diagnostic",
+      "bytesVerified": true
+    }
+  },
+  "actualBinding": "generated app_bridge existing property functions, not an unbound alternate napi.inc",
+  "established": [
+    "safe UI prevents observed JSON parse crash",
+    "legacy bound rejection still bare token",
+    "native diagnostic registered but page instruction text is not automatic call/export"
+  ],
+  "unproved": [
+    "exact failed NAPI predicate",
+    "M3/G9 identical typedarray cause",
+    "root GPU deadline/physics failure"
+  ],
+  "replyContract": "existing endpoint GPU_NAPI_ERROR_V1 object +route/api/boot/diagGeneration/attemptId, semantic header failures included",
+  "evidence": {
+    "fileUtf8Max": 16384,
+    "UIWordsMax": 16,
+    "nativeSnapshotUtf8Max": 4096,
+    "attemptsRetained": "first rejected + last; exact full identity, no last-attempt substitution",
+    "credit": "existing2MiB writer/4MiB total"
+  },
+  "handoff": "T582 product wiring first; tester own existing signing/deploy/collection after product closure, not a developer test gate"
+}

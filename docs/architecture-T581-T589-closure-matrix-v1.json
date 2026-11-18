@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-18",
+  "role": "architect",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "status": "FIRST_ATTRIBUTION_AND_ENGINEERING_CONTRACT_DELIVERED",
+  "tasks": {
+    "T581": {
+      "report": "architecture-T581-first-attribution-v1.md",
+      "evidence": "analysis-T581-source-evidence-v1.json"
+    },
+    "T584": {
+      "report": "architecture-T584-first-attribution-v1.md",
+      "evidence": "analysis-T584-source-evidence-v1.json"
+    },
+    "T585": {
+      "report": "architecture-T585-first-attribution-v1.md",
+      "evidence": "analysis-T585-source-evidence-v1.json"
+    },
+    "T586": {
+      "report": "architecture-T586-first-attribution-v1.md",
+      "evidence": "analysis-T586-source-evidence-v1.json"
+    },
+    "T588": {
+      "report": "architecture-T588-first-attribution-v1.md",
+      "evidence": "analysis-T588-source-evidence-v1.json"
+    },
+    "T589": {
+      "report": "architecture-T589-first-attribution-v1.md",
+      "evidence": "analysis-T589-source-evidence-v1.json"
+    }
+  },
+  "notTask": "T569 typo corrected to T589; no tester card state or tests changed",
+  "checks": [
+    "signed package and ELF bytes",
+    "raw file hashes",
+    "READY button actual attributes",
+    "M2 open compile/link interval",
+    "V5 directory completeness and parity selection",
+    "actual generator mutex/seq/endpoint/page connections",
+    "cold record word ranges"
+  ],
+  "limits": [
+    "static/source inference is not device reproduction",
+    "prior narrow PASS retained only within proved domain",
+    "no product code/build/sign/deploy/test done by architect"
+  ]
+}
