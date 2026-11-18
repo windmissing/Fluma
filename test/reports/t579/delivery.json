@@ -1,0 +1,85 @@
+{
+ "T579-m2fix": {
+  "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579-m2fix\\T579-m2fix-signed.hap",
+  "hapBytes": 8845396,
+  "hapSha256": "a332c0a1cd541e586a42984dc33bb353486c3852ec87b567b8a95606d13c44b3",
+  "elfName": "libs/arm64-v8a/libgrsm1.so",
+  "elfSha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f",
+  "handoff": {
+   "source": "t562-m2-fix",
+   "fixes": "T551/T562 \u7a7a\u65e5\u5fd7\u5bfc\u51fa\u517c\u5bb9\u4fee\u590d\uff08saveRaw \u7a7a raw SHA \u5e38\u91cf\u8def\u5f84\uff09",
+   "executes": "T461 \u539f\u5361\u7eed\u6d4b\uff08\u7a7a\u8f93\u5165\u5bfc\u51fa\u5168\u94fe\uff1araw0B+native/manifest+WS_EVENT\uff09",
+   "sign": "PASS",
+   "verify": "PASS"
+  }
+ },
+ "T579-m3diag": {
+  "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579-m3diag\\T579-m3diag-signed.hap",
+  "hapBytes": 10408098,
+  "hapSha256": "6d346433f20571bd6944f7d509965474c08bcd847750fd3e4e65816da9194e9e",
+  "elfName": "libs/arm64-v8a/libgrsm1.so",
+  "elfSha256": "458d8a3e9c1c918da644e5cd097c05bed47538d7e0e4a529db87f0f0dcd1aa65",
+  "handoff": {
+   "source": "t562-m3-diagnostic",
+   "fixes": "T550/T562 M3 \u9996\u62d2\u8bca\u65ad\uff08gpuInputDiagnosticsV1+JSON \u7aef\u70b9\u5b89\u5168\u9519\u8bef\uff09",
+   "executes": "T545 \u539f\u5361\u7eed\u6d4b\uff08\u56db\u6863 M3_CONFIG_REJECTED \u8c13\u8bcd\u53d6\u8bc1\uff1a\u8bfb attemptId \u5feb\u7167\uff09",
+   "sign": "PASS",
+   "verify": "PASS"
+  }
+ },
+ "T579-g9diag": {
+  "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579-g9diag\\T579-g9diag-signed.hap",
+  "hapBytes": 10789563,
+  "hapSha256": "c999825ce467f445fdf344b9cb00ffea71cf89b0c04863647fc0714e401b7192",
+  "elfName": "libs/arm64-v8a/libgrsm1.so",
+  "elfSha256": "480c0f82cc2721a870c4e69129ad58fb2856c9abd229708ea42e5deb511ec420",
+  "handoff": {
+   "source": "t562-g9-diagnostic",
+   "fixes": "T550/T562 G9 \u8bca\u65ad+\u5b89\u5168\u542f\u52a8\uff08G9 start catch/finally+JSON \u9519\u8bef\uff09",
+   "executes": "T542 \u539f\u5361\u7eed\u6d4b\uff08N2/G9 \u7814\u7a76\u914d\u7f6e\u6700\u5c0f\u5165\u53e3\u53d6\u8bc1\uff09",
+   "sign": "PASS",
+   "verify": "PASS"
+  }
+ },
+ "T579-stage": {
+  "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579-stage\\T579-stage-signed.hap",
+  "hapBytes": 10798301,
+  "hapSha256": "819dc2dc2817301967baba868f2952ef0fdb5da09b0db4f34fed60a37e7f54f4",
+  "elfName": "libs/arm64-v8a/libgrsm1.so",
+  "elfSha256": "d12bac8163d19d9aec6816190994affb9015d9e5b12f41ddc7fe85e21733d903",
+  "handoff": {
+   "source": "t564-stage-tree",
+   "fixes": "T564 \u5206\u5c42\u8d44\u683c\u4e0e\u6574\u6570\u5c5e\u6027\u5448\u73b0",
+   "executes": "T560 \u5206\u5c42\u57df\u7eed\u6d4b",
+   "sign": "PASS",
+   "verify": "PASS"
+  }
+ },
+ "T579-lab": {
+  "hap": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579-lab\\T579-lab-signed.hap",
+  "hapBytes": 10499256,
+  "hapSha256": "c772f665e77d04487ed50ee45e235a914e9eac4968f54cf5629016496d787f2d",
+  "elfName": "libs/arm64-v8a/libgrsm1.so",
+  "elfSha256": "8806ff7b9f9c392c916ae9188dd5e5d8d188d7bbc71375dc50d1bfb107fa584b",
+  "handoff": {
+   "source": "t565-lab-tree",
+   "fixes": "T565 \u5b9e\u9a8clab\u6392\u7a7a\u7ec8\u6001\u4e0e\u539f\u6587\u4ef6\u5206\u9875\u5bfc\u51fa",
+   "executes": "T565 \u57df\u7eed\u6d4b",
+   "sign": "PASS",
+   "verify": "PASS"
+  }
+ },
+ "g9_differential": {
+  "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t549-frozen\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\g9_differential",
+  "bytes": 3640304,
+  "sha256": "b62730f3becef830a6c8e797870e04c5cc7f764921cec364c6c8c903161ef3d8",
+  "arch": "aarch64-linux-ohos ELF (e_machine=183)",
+  "usage": "g9_differential INPUT_DIRECTORY NEW_OUTPUT_DIRECTORY",
+  "note": "T549-frozen git e429ea7; device run protocol in test-report-T541-device-predicate-v2.md",
+  "handoff": {
+   "source": "t549-frozen",
+   "fixes": "\u72ec\u7acb\u5dee\u5206\u8bbe\u65bd\uff08\u65e0\u9700\u7b7e\u5305\uff0c\u76f4\u63a8\u8bbe\u5907\uff09",
+   "executes": "T541/T569 \u5dee\u5206\u7eed\u6d4b\uff08\u8f93\u5165\u4e94\u4ef6\u5957\u534f\u8bae\u89c1 test-report-T541-device-predicate-v2.md\uff09"
+  }
+ }
+}
