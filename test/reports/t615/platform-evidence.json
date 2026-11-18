@@ -1,0 +1,30 @@
+{
+ "revision": "T615_PLATFORM_CLOCK_EVIDENCE_V1",
+ "date": "2026-11-18",
+ "device": "011124264R000337",
+ "os": {
+  "version": "MLN-AL00 7.1.0.566(C00E23R2P1DEVDUlog)",
+  "model": "MLN-AL00"
+ },
+ "sdkContract": {
+  "file": "ets/component/common.d.ts",
+  "sha256": "c4e673557876fecbe51603b4d76a39c78def8cf0983352199c133793a8b2c804",
+  "text": "timestamp = interval between event trigger and system start, Unit: ns (@since 8)"
+ },
+ "procUptime": "204155.02 2309540.13",
+ "measurement": {
+  "timelineNativeNs": "T510v3 166330650141252 / T593v1 nativeNs~1.667e14 — same magnitude as ns-since-boot uptime, consistent (not proof)"
+ },
+ "gaps": {
+  "producer": null,
+  "resampleChain": null,
+  "deployedBinaryMap": null
+ },
+ "deployedBinary": {
+  "hap": "T599-delivery-final-signed.hap",
+  "bytes": 10950266,
+  "sha256": "02bbd0cf940d99df99d9039ca1c75081c286f56aded860de6134e01e812b34ec",
+  "elfSha256": "facae236bbf21d7958852939bd834734aa44388fbb5b63f320c2b64730c8e65f",
+  "note": "本地签包与设备安装包同 SHA 域；实际进程加载映射仍需设备运行时核（未在本轮做进程级 dlopen 句柄核）"
+ }
+}
