@@ -13,9 +13,9 @@ cd /d D:/hmprojects/HelloWorld
 set "PATH=C:\Users\admin\AppData\Local\Programs\CokePLUS;%PATH%"
 set "EXE=D:\hmprojects\HelloWorld\.codex\local-test\t496\t496.exe"
 if exist ".codex\local-test\t496\child-pid-%ATTEMPT%.txt" del ".codex\local-test\t496\child-pid-%ATTEMPT%.txt"
-powershell -NoProfile -Command "$p=Start-Process -FilePath '%EXE%' -ArgumentList '%ARM%','%ATTEMPTID%' -WorkingDirectory 'D:/hmprojects/HelloWorld' -PassThru -RedirectStandardOutput 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stdout.txt' -RedirectStandardError 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stderr.txt'; $p.Id | Out-File -Encoding ascii 'D:/hmprojects/HelloWorld/.codex/local-test/t496/child-pid-%ATTEMPT%.txt'"
+powershell -NoProfile -Command "$p=Start-Process -FilePath '%EXE%' -ArgumentList '%ARM%','%ATTEMPT%' -WorkingDirectory 'D:/hmprojects/HelloWorld' -PassThru -RedirectStandardOutput 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stdout.txt' -RedirectStandardError 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stderr.txt'; $p.Id | Out-File -Encoding ascii 'D:/hmprojects/HelloWorld/.codex/local-test/t496/child-pid-%ATTEMPT%.txt'"
 set /p CPID=<.codex\local-test\t496\child-pid-%ATTEMPT%.txt
-echo CHILD_PID=%CPID%
-powershell -NoProfile -Command "$deadline=(Get-Date).AddSeconds(900); while((Get-Date) -lt $deadline -and -not (Get-Process -Id %CPID% -ErrorAction SilentlyContinue)){Start-Sleep -Milliseconds 500}; $p=Get-Process -Id %CPID% -ErrorAction SilentlyContinue; if($p){Stop-Process -Id %CPID% -Force; Write-Output ('WATCHDOG_KILL pid=%CPID% at='+(Get-Date -Format o))} else {Write-Output 'CHILD_EXITED_BEFORE_DEADLINE'}" > .codex\local-test\t496\watchdog-%ATTEMPT%.txt
+echo CHILD_PID=%CPID% & echo LAUNCH_AT=%DATE% %TIME%
+powershell -NoProfile -Command "$deadline=(Get-Date).AddSeconds(900); while((Get-Date) -lt $deadline -and (Get-Process -Id %CPID% -ErrorAction SilentlyContinue)){Start-Sleep -Milliseconds 500}; $p=Get-Process -Id %CPID% -ErrorAction SilentlyContinue; if($p){Stop-Process -Id %CPID% -Force; Write-Output ('WATCHDOG_KILL pid=%CPID% at='+(Get-Date -Format o))} else {Write-Output 'CHILD_EXITED_BEFORE_DEADLINE'}" > .codex\local-test\t496\watchdog-%ATTEMPT%.txt
 type .codex\local-test\t496\watchdog-%ATTEMPT%.txt
 endlocal

@@ -100,8 +100,8 @@ static void Emit(const std::string& actionId, const std::string& phase,
     std::ostringstream o;
     o << "{\"runId\":\"" << g_runId << "\",\"arm\":\"" << g_arm
       << "\",\"actionId\":\"" << actionId << "\",\"phase\":\"" << phase
-      << "\",\"scriptNs\":\"" << scriptNs << "\",\"detail\":\""
-      << JsonEscape(detail) << "\"}\n";
+      << "\",\"clockDomain\":\"steady_real\",\"wallNs\":\"" << scriptNs
+      << "\",\"detail\":\"" << JsonEscape(detail) << "\"}\n";
     g_log << o.str() << std::flush;
 }
 static bool Assert(const std::string& id, bool pass, const std::string& detail) {
@@ -289,6 +289,23 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
               +"|ownerProgressSession="+std::to_string(a.progress.session)+"|epoch="+std::to_string(a.epoch.load())
               +"|captureCommittedEpoch="+std::to_string(a.captureCommittedEpoch));}
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    // T646 step6: this block only runs when captureCommittedEpoch is actually
+    // set (loop broke on commit); on loop exhaustion emit TIMEOUT instead.
+    if (a.captureCommittedEpoch != a.epoch.load() || !a.captureCommittedEpoch) {
+        Emit("BOOT","RESOURCE_COMMIT_TIMEOUT",g_hostNowNs.load(),
+             std::string("coordinatorWaitIteration exhausted without resource commit")
+             +"|captureCommittedEpoch="+std::to_string(a.captureCommittedEpoch)
+             +"|epoch="+std::to_string(a.epoch.load()));
+        std::cerr << "RESOURCE_COMMIT_TIMEOUT" << std::endl;
+        // bounded diagnostic snapshot before exit (step5: 2-3 samples)
+        {   std::lock_guard<std::mutex> lk(a.mutex);
+            std::ostringstream rs; a.RecoveryJson(rs,false);
+            Emit("BOOT","DIAGNOSTIC_SNAPSHOT",g_hostNowNs.load(),
+                 "recovery="+rs.str().substr(0,600)
+                 +"|ownerProgressSession="+std::to_string(a.progress.session));
+        }
+        return R;
     }
     // T620 step3: resource-commit reached -> capture recovery ledger + bind real
     // session + first pulse, via the production recovery entry points.
@@ -496,7 +513,10 @@ int main(int argc, char** argv) {
     if (argc > 1) {
         const std::string arm = argv[1];
         if (arm == "C0" || arm == "C1" || arm == "C2") return RunCreateOnlyDispatch(arm, argc > 2 ? argv[2] : "");
-        // 其它参数：保留旧行为入口（无参数走 D1 两臂）
+        // T646 step1: predeclared modes only — unknown params must exit non-zero,
+        // never silently fall through to default D1 (v6 ran D1_OFF by accident).
+        std::fprintf(stderr, "T646_UNKNOWN_MODE:%s\n", arm.c_str());
+        return 2;
     }
     g_runId="t496-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
     std::filesystem::create_directories(".codex/local-test/t496");

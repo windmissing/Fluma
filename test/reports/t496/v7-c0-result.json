@@ -1,0 +1,22 @@
+{
+ "revision": "T496_V7_C0_FIXED_ARM_V1",
+ "date": "2026-11-19",
+ "attempt": "t646cA",
+ "facility": {
+  "commits": [
+   "T646 step1 strict-entry",
+   "step2 runner fixes (attempt var, watchdog direction, PATH)",
+   "step3 clockDomain explicit",
+   "step6 TIMEOUT guard"
+  ],
+  "build": "PASS (t496.exe)"
+ },
+ "observations": {
+  "startup": "CREATE_ONLY_START / STORE_CONFIGURED / CREATE_WAIT iter=0 \u2014 strict entry OK, sink injected OK",
+  "clock": "sink wallNs = real epoch ns (1225880136165000); log wallNs field still script domain in CREATE_ONLY arm (documented gap, D1 arm fixed)",
+  "finalGL": "callId 266 glDispatchCompute(x=1) ENTER \u2014 NO EXIT, process GONE (not hanging: tasklist empty, no stderr, no WER dialog)",
+  "gltrace": "533 rows, 267 unpaired ENTERs total; last unpaired = dispatch 411 x=1",
+  "difference vs v4c": "v4c arms hung alive at dispatch 411 for 430s+; v7 C0 CRASHES inside dispatch \u2014 different failure mode at same call"
+ },
+ "route": "architect \u2014 glDispatchCompute crash needs product/driver attribution (program/binding state at dispatch x=1; v4c hung, v7 crashed \u2014 same call, different process fate)"
+}
