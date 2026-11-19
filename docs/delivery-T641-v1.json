@@ -1,0 +1,27 @@
+{
+  "schema": "T641_ARCHITECT_DELIVERY_V1",
+  "date": "2026-11-19",
+  "task": "T641",
+  "role": "architect",
+  "projectId": "6ac8a7e3e9adb60000000419",
+  "taskId": "6afe637ae4b059b97418f51a",
+  "title": "【T641·目标9接收时间位移拨动新profile工程闭包】architect",
+  "engineeringCommit": "093c1b2",
+  "result": "ENGINEERING_READY_FOR_T644",
+  "productState": "NOT_IMPLEMENTED_NOT_DEVICE_VALIDATED",
+  "status": "结束待验收",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "engineeringAbiSyntaxCompile": true,
+  "commentId": "6afe6c00e4b059b9741b4a35",
+  "comment": "T641 architect完整交付（不使用真机），提交093c1b2。正式稿docs/architecture-T641-v1.md；wire/runtime/storage-cold/seed-config四张机器表、独立ABI标本与两份检查证据、retro-T641-v1.md已交。冻结新GNR1 Config64/INPUT128/RECEIPT_CONTROL256、首取时/getres/实际加载身份/同步RAW64/8ms与250ms门、GeometryKey/FrameWitness分离、固定Dref125ms GPU配方/FIFO16/消费与BASE晋升、双record冷reader及真实页→桥→owner→GPU→scene→冷档逐函数接线。补实际帧commit sidecar/new header与两档合法seed/config SHA，避免opaque SHA自证。AArch64 syntax-only标本sizeof载荷40960B/align64、RxSync64B，有限工程检查PASS；未执行产品构建/物理测试/真机，不代表产品PASS或部署资格。新域默认OFF，同位移不同合法时长同J/cap，不承诺真实手速/sample age，旧REAL_TOUCH仍未资格。T644完整实施并编译；T645独立组件/设备验证与签名部署采证，不作开发关闭门。无剩余工程阻断，仅本人行改结束待验收；未改其它队列/滴答同名清单。",
+  "commentReadbackExact": true,
+  "statusEvidence": "docs/analysis-T641-status-v1.json",
+  "downstream": {
+    "T644": "complete implementation and compile",
+    "T645": "independent validation, fixtures, signing, deployment and evidence"
+  },
+  "otherQueueRowsChanged": false,
+  "didaSameNameListChanged": false
+}
