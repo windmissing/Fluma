@@ -1,0 +1,15 @@
+{
+  "device": "NOT_RUN",
+  "checks": [
+    {
+      "argv": [
+        "python",
+        "test/t670/check.py",
+        "--selftest"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"result\": \"PASS\", \"checks\": [\"existing T556 event oracle positive\", \"q mismatch rejects\"], \"device\": \"NOT_RUN\"}\r\n",
+      "stderr": ""
+    }
+  ]
+}

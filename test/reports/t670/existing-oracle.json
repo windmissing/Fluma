@@ -1,0 +1,124 @@
+{
+  "schema": "T556_INDEPENDENT_ORACLE_V1",
+  "source": "algorithm-G9-dynamic-mobilization-v2.md SS4/SS9 + fixtures-v2",
+  "independence": "no designer module import; own rne/floor/eval implementation",
+  "parameterSet": "G9_DM_RESEARCH_R0_UNAPPROVED",
+  "results": {
+    "DM01": {
+      "gn_used": 464943848,
+      "q": [
+        {
+          "chiG": "0",
+          "qPhysical": 0,
+          "U": 0,
+          "H0": 0,
+          "omega0": 262144
+        },
+        {
+          "chiG": "1/64",
+          "qPhysical": 4610,
+          "U": 4610,
+          "H0": 131072,
+          "omega0": 286720
+        },
+        {
+          "chiG": "1/8",
+          "qPhysical": 57795,
+          "U": 57795,
+          "H0": 1048576,
+          "omega0": 458752
+        },
+        {
+          "chiG": "1",
+          "qPhysical": 1587033,
+          "U": 1587033,
+          "H0": 8388608,
+          "omega0": 1835008
+        }
+      ],
+      "nondecreasing": true,
+      "firstZero": true
+    },
+    "DM02": {
+      "per_angle": [
+        {
+          "deg": 0,
+          "chiG": 0,
+          "qPhysical": 0,
+          "H0": 0,
+          "omega0": 262144
+        },
+        {
+          "deg": 15,
+          "chiG": 0,
+          "qPhysical": 0,
+          "H0": 0,
+          "omega0": 262144
+        },
+        {
+          "deg": 30,
+          "chiG": 81107,
+          "qPhysical": 30192,
+          "H0": 648856,
+          "omega0": 383804
+        }
+      ],
+      "stable0_15": true,
+      "candidate30": true,
+      "chiG30_matches_design_0_07735": true
+    },
+    "DM05": {
+      "u_before": 4,
+      "u_after": 2,
+      "ke_before": 48,
+      "ke_after": 24,
+      "p_unchanged": true,
+      "velocity_drops": true,
+      "ke_drops": true
+    },
+    "DM06": {
+      "feasible": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "max_q": 5,
+      "q6_infeasible": true,
+      "expected5": true
+    },
+    "DM07": {
+      "qOrigin": 4,
+      "qActual": 4,
+      "expected": [
+        4,
+        4
+      ],
+      "no_skip": true
+    },
+    "DM19": {
+      "actual_before_friction": 7,
+      "not_10": true,
+      "pMid6_diagnostic_only": true
+    },
+    "DM17": {
+      "counterexample": "ORDERING_LEVEL",
+      "rejects": true,
+      "argument": [
+        "old-p flux zero under uniform F/p=0",
+        "gravity source adds p>0 with PE unchanged",
+        "angle work already consumed in snapshot",
+        "strict audit must reject; no epsilon release authorized"
+      ]
+    }
+  },
+  "notRun": [
+    "DM03",
+    "DM04",
+    "DM08-DM16",
+    "DM18",
+    "DM20-DM32 (need GPU route or designer-side schema detail; GPU domains NOT_RUN pending T555)"
+  ]
+}
