@@ -1,0 +1,43 @@
+{
+  "schema": "T633_T636_DELIVERY_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "commit": "b075688",
+  "checks": "architecture source/receipt/ELF/schema checks only; no builds, component/product/GL tests or device",
+  "queue": "Only four own status cells changed; no other queue content or Dida same-name list updated",
+  "status": "结束待验收",
+  "comments": [
+    {
+      "task": "T635",
+      "taskId": "6afe52c2e4b004b3f88029ff",
+      "commentId": "6afe5af4e4b0dc337ea2960f",
+      "title": "T635 architect当前约定范围已完成，提交b075688。\n两份v2原生START→END仅0.360570468s/0.352362969s，无Cancel调用/观察时刻；UI残留RUNNING不能证4s取消命中执行中。已证完成后Cancel改bool使Poll翻转终态，需不可变V3终态。另证DrainForTest未接Lab，space wait无定时唤醒、插入后等fence不看cancel；FilesV2裸base64/错End/部分open/stat及边界补口已定。developer修工程编译，tester独立屏障/5s/FilesV2续测，不加生产强BUSY，保v1窄分页PASS。\n正式稿docs/architecture-T635-v1.md、同卡机器表/evidence-v1.json；汇总docs/retro-T633-T636-v1.md及共同执行边界。原件连接/ELF-SHA/有限规格检查通过；未运行产品/组件/GL测试、不构建、不用真机，不冒产品PASS。本人行结束待验收，manager登记推进，不新增验收门。",
+      "createdTime": "2026-11-19T02:12:04+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T636",
+      "taskId": "6afe52c2e4b0680b8cd2c685",
+      "commentId": "6afe5af4e4b0680b8cd3af15",
+      "title": "T636 architect当前约定范围已完成，提交b075688。\n原maps只证单套加载，timeline初34→实35行且未含票据调用。T617部分断言不能隔离所称门，保窄PASS。实际T600旧broker只有5个host符号，T608 final现成DSO有8符号；两版本不拼。现有C ABI足够tester两个独立DSO交叉Reserve/BuilderDone/Read/Freed及独立GPU-ticket组件harness，无需双GL或新生产信用endpoint。矩阵隔离单builder/单reader、route/process总量、持读保留及陈旧票据；不冒driverfree。\n正式稿docs/architecture-T636-v1.md、同卡机器表/evidence-v1.json；汇总docs/retro-T633-T636-v1.md及共同执行边界。原件连接/ELF-SHA/有限规格检查通过；未运行产品/组件/GL测试、不构建、不用真机，不冒产品PASS。本人行结束待验收，manager登记推进，不新增验收门。",
+      "createdTime": "2026-11-19T02:12:04+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T633",
+      "taskId": "6afe52c2e4b0dc337ea1ab61",
+      "commentId": "6afe5af4e4b0680b8cd3af1f",
+      "title": "T633 architect当前约定范围已完成，提交b075688。\nl3原件已捕获g13Configure attempt2=NAPI_DECODE/TYPEDARRAY_INFO/error6，copiedWords0，该请求未进入owner Configure；具体type/raw length/data仍缺字段，沿T629/T630，不把G13四倍单位冒已实测。测试签的t608-delivery早期包68b5→a492，不是最终t608-release 395d交付。另证未配置激活/零scope进账与CONFIG_PENDING兜底误导；已定ConfigTicket生命周期、Ready门与32KiB只读阶段seam。tester正确包准备，developer工程修复，与T632并行。\n正式稿docs/architecture-T633-v1.md、同卡机器表/evidence-v1.json；汇总docs/retro-T633-T636-v1.md及共同执行边界。原件连接/ELF-SHA/有限规格检查通过；未运行产品/组件/GL测试、不构建、不用真机，不冒产品PASS。本人行结束待验收，manager登记推进，不新增验收门。",
+      "createdTime": "2026-11-19T02:12:04+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T634",
+      "taskId": "6afe52c2e4b0dc337ea1ab64",
+      "commentId": "6afe5af4e4b0e5384a4b2cab",
+      "title": "T634 architect当前约定范围已完成，提交b075688。\n组合transport/512–516分支代码存在但无产品owner接入，不能说全无消费者。当前源码还见Completion64word却copy1024B、CPU强置bit18/19、父kind/count/mask混用、DM facade/材料计划marker生产/一致barrier、scene零generation/glyph错位/lease及真实cold未闭合。W01–W12完整工程范围及生成链fatal/身份已定，交developer完整入口/调度/双提交/新管线帧/原件并编译，不能只加按钮。G9首拒沿T629/T630，不等真机才开发；SandCanvas CA无关，T600/T601等真实非空帧。\n正式稿docs/architecture-T634-v1.md、同卡机器表/evidence-v1.json；汇总docs/retro-T633-T636-v1.md及共同执行边界。原件连接/ELF-SHA/有限规格检查通过；未运行产品/组件/GL测试、不构建、不用真机，不冒产品PASS。本人行结束待验收，manager登记推进，不新增验收门。",
+      "createdTime": "2026-11-19T02:12:04+0000",
+      "readbackVerified": true
+    }
+  ]
+}
