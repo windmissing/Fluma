@@ -1,0 +1,30 @@
+{
+ "revision": "T590_T541_A2_CLEAN_BUILD_V1",
+ "date": "2026-11-19",
+ "attempt": "t541-t624-a2 (fresh isolated, hvigorfile/oh-package/local.properties completed, clean cache)",
+ "result": "hvigor BUILD SUCCESSFUL in 1m51s \u2014 full chain compile+link clean",
+ "kernel_assets_cmds": [
+  {
+   "file": "est\\t541-t624-a2\\entry\\src\\main\\cpp\\gpu_resident\\m3a\\kernel_assets.cpp",
+   "cmdLen": 820
+  },
+  {
+   "file": "t\\t541-t624-a2\\entry\\src\\main\\cpp\\gpu_resident\\g9spf\\kernel_assets.cpp",
+   "cmdLen": 824
+  }
+ ],
+ "cacheFlagCheck": {
+  "CMAKE_SHARED_LINKER_FLAGS": {
+   "len": 167,
+   "rtlibCount": 1
+  },
+  "CMAKE_EXE_LINKER_FLAGS": {
+   "len": 185,
+   "rtlibCount": 1
+  }
+ },
+ "soProducts": {
+  "libgrsm1.so": "387d6f4ccadfeda3",
+  "libgrsm0.so": "c5f6ed53f398c95f"
+ }
+}
