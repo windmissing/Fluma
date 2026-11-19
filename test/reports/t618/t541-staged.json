@@ -1,0 +1,22 @@
+{
+ "revision": "T541_V7_T624_STAGED_REPRO_V1",
+ "date": "2026-11-19",
+ "stage1": {
+  "target": "g9spf/kernel_assets.cpp (frozen generated header e4ab1d57)",
+  "rc": 0,
+  "seconds": 1.0,
+  "preprocBytes": 2743933,
+  "preprocSHA": "15e3b0441d2c82fa"
+ },
+ "stage2": {
+  "g9spf rc": 0,
+  "seconds": 1.9,
+  "objBytes": 174560,
+  "objSHA": "12bb315f79e9a45c",
+  "g9dm rc": 0
+ },
+ "interpretation": "140KB R-string units compile clean in single-process clean-attempt environment with original argv - the 38min/60min CPU-zero hangs did NOT reproduce; T624 \"CPU-zero != deadlock\" upheld, old hangs were build-orchestration artifacts (ninja/cmd long-command-line/parallel parent), not compiler internals",
+ "stage3": "link-only blocked by INDEPENDENT defect: T629 CMake additions push libgrs_cold_slots link line to 11876 chars > cmd 8191 (ninja -k0 stops before grsm1 link) - same root as T590 block",
+ "route": "architect: (a) hang attribution shift - build-orchestration/env domain, recommend re-observing with staging harness under hvigor wrapper if needed; (b) CMake link-line fix unlocks both T590 and T541 stage3 link",
+ "manifest": ".codex/local-test/t541-t624-a1/manifest.json (304 source inputs + frozen generated header + toolchain hashes)"
+}
