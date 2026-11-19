@@ -1,0 +1,20 @@
+[
+{
+  "directory": "D:/hmprojects/HelloWorld/.codex/local-test/t666-delivery",
+  "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -o CMakeFiles\\grs_foundation.dir\\anchor.cpp.o -c D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile\\anchor.cpp",
+  "file": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile\\anchor.cpp",
+  "output": "CMakeFiles\\grs_foundation.dir\\anchor.cpp.o"
+},
+{
+  "directory": "D:/hmprojects/HelloWorld/.codex/local-test/t666-delivery",
+  "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -Dgrs_cold_slots_EXPORTS -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -o CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o -c D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp",
+  "file": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp",
+  "output": "CMakeFiles\\grs_cold_slots.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o"
+},
+{
+  "directory": "D:/hmprojects/HelloWorld/.codex/local-test/t666-delivery",
+  "command": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe --target=aarch64-linux-ohos --gcc-toolchain=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/llvm --sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot -DgrsT666Consumer_EXPORTS -ID:/hmprojects/HelloWorld/entry/src/main/cpp/gpu_resident -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -fno-fast-math -ffp-contract=off -D__MUSL__ -O0 -g -fno-limit-debug-info  -std=gnu++17 -fPIC -o CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o -c D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile\\consumer.cpp",
+  "file": "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile\\consumer.cpp",
+  "output": "CMakeFiles\\grsT666Consumer.dir\\consumer.cpp.o"
+}
+]

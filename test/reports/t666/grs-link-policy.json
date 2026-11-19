@@ -1,0 +1,41 @@
+{
+  "schema": "GRS_EXPLICIT_LINK_BASELINE_V1",
+  "policySHA256": "745773de8603fad3a09b87bbf6489cab5a0f260f5a36103044039b1626ae7701",
+  "policy": {
+    "schema": "GRS_EXPLICIT_LINK_BASELINE_V1",
+    "source": "D:/hmprojects/HelloWorld/tools/build/broker_compile",
+    "cmake": "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/build-tools/cmake/bin/cmake.exe",
+    "ninja": "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/build-tools/cmake/bin/ninja.exe",
+    "sdkToolchain": "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/build/cmake/ohos.toolchain.cmake",
+    "baseline": {
+      "SHARED": "-Wl,--as-needed -Wl,--no-as-needed",
+      "MODULE": "",
+      "EXE": ""
+    },
+    "definitions": [
+      "-DOHOS_ARCH=arm64-v8a",
+      "-DCMAKE_BUILD_TYPE=Debug",
+      "-DCMAKE_CXX_FLAGS=-fno-fast-math -ffp-contract=off"
+    ]
+  },
+  "sdkToolchainSHA256": "ed9ef39b5e32f1d9db139bf1d0dc7a6e56902848bf092f0296897063320499f8",
+  "wrapperSHA256": "6744768e9e002fbeb5e956b7e992d3755b2befec9d817e88b5e4aec28dcbaca0",
+  "note": "Known original baseline re-established before every SDK evaluation; ordered target/implicit libraries untouched.",
+  "configureArgv": [
+    "C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/build-tools/cmake/bin/cmake.exe",
+    "-S",
+    "D:\\hmprojects\\HelloWorld\\tools\\build\\broker_compile",
+    "-B",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t666-delivery",
+    "-G",
+    "Ninja",
+    "-DCMAKE_TOOLCHAIN_FILE=D:/hmprojects/HelloWorld/.codex/local-test/t666-delivery/grs_owned_toolchain.cmake",
+    "-DCMAKE_MAKE_PROGRAM=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/build-tools/cmake/bin/ninja.exe",
+    "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+    "-DOHOS_ARCH=arm64-v8a",
+    "-DCMAKE_BUILD_TYPE=Debug",
+    "-DCMAKE_CXX_FLAGS=-fno-fast-math -ffp-contract=off"
+  ],
+  "cwd": "D:/hmprojects/HelloWorld/tools/build/broker_compile",
+  "configureReturnCode": 0
+}

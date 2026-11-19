@@ -41,3 +41,6 @@ test/reports/t663/*.log -text -whitespace
 docs/architecture-T66[457]*.json -text whitespace=cr-at-eol
 docs/analysis-T66[457]*.json -text whitespace=cr-at-eol
 docs/receipt-T664-T667-*.json -text whitespace=cr-at-eol
+
+# T666 original generated build/link evidence bytes.
+test/reports/t666/** -text -whitespace
