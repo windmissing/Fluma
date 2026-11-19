@@ -1,0 +1,249 @@
+{
+ "revision": "T531_RESOURCE_LAB_RECORD_V3",
+ "evidenceOrigin": "FIXTURE_SYNTHETIC",
+ "physicsValidated": false,
+ "currentGranted": false,
+ "deviceGLMeasured": false,
+ "jobId": "1",
+ "generation": "1",
+ "pollSampleNs": "264161719123127",
+ "terminalNs": "264148418236565",
+ "cancelRequestedNs": "0",
+ "cancelObservedNs": "0",
+ "state": "FINISHED",
+ "pendingResources": "NONE",
+ "outcome": "COMPLETED_FIXTURE",
+ "firstFailure": "",
+ "recordsSHA256": "b142ba33ed2de7af0a99bdc75a887d8b9f5ab0ad948999cd95726084863eabd3",
+ "fixedNewMetadataBytes": 329,
+ "scope": {
+  "pid": "39840",
+  "route": "m2",
+  "source": "T531_RESOURCE_LAB_V1_FIXTURE_SYNTHETIC",
+  "control": {
+   "epoch": "1",
+   "run": "1",
+   "context": "1",
+   "surface": "1",
+   "session": "1",
+   "resetSerial": "0",
+   "permissionRevision": "0"
+  }
+ },
+ "sessionDirectory": "/data/storage/el2/base/haps/entry/files/t531-resource-lab/39840-264148066294690-1",
+ "knownHostPayloadLimit": 58993832,
+ "excluded": "helper fixed objects; cache pins 128MiB; worker stacks; allocator",
+ "dropped": 0,
+ "records": [
+  {
+   "stage": "START",
+   "result": "TRACE_MAX_SOURCE",
+   "ns": "264148066633596",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "TRACE_BEGIN",
+   "result": "REQUESTED",
+   "ns": "264148066696252",
+   "a": "0",
+   "b": "223744"
+  },
+  {
+   "stage": "TRACE_FINISH",
+   "result": "TRACE_READY",
+   "ns": "264148067796096",
+   "a": "223744",
+   "b": "223744"
+  },
+  {
+   "stage": "FIXTURE_SHA256",
+   "result": "5e846956754f4665d5fda19662252ac4c158dda4cfafda581764e612f99e5e08",
+   "ns": "264148076565940",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "FIXTURE_RECIPE",
+   "result": "i*2654435761u; header T445 V3 synthetic",
+   "ns": "264148076569690",
+   "a": "192",
+   "b": "64"
+  },
+  {
+   "stage": "PAGE_ACQUIRE",
+   "result": "OK",
+   "ns": "264148076579690",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "PAGE_WRITER",
+   "result": "ENCODED_SYNTHETIC",
+   "ns": "264148125904065",
+   "a": "12226",
+   "b": "55"
+  },
+  {
+   "stage": "PAGE_SHA_PREFIX",
+   "result": "SHA256",
+   "ns": "264148125906721",
+   "a": "2357395631",
+   "b": "0"
+  },
+  {
+   "stage": "TRACE_BEGIN",
+   "result": "REQUESTED",
+   "ns": "264148125918440",
+   "a": "223744",
+   "b": "4096"
+  },
+  {
+   "stage": "TRACE_FINISH",
+   "result": "TRACE_READY",
+   "ns": "264148126266721",
+   "a": "227840",
+   "b": "227840"
+  },
+  {
+   "stage": "FIXTURE_SHA256",
+   "result": "2edd5384892093e684638f578b6a79497ea36d2cbf8f19c9a8b31f1208891b5f",
+   "ns": "264148131897502",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "FIXTURE_RECIPE",
+   "result": "i*2654435761u; header T445 V3 synthetic",
+   "ns": "264148131900315",
+   "a": "192",
+   "b": "128"
+  },
+  {
+   "stage": "PAGE_ACQUIRE",
+   "result": "OK",
+   "ns": "264148131904377",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "PAGE_WRITER",
+   "result": "ENCODED_SYNTHETIC",
+   "ns": "264148174331252",
+   "a": "12226",
+   "b": "56"
+  },
+  {
+   "stage": "PAGE_SHA_PREFIX",
+   "result": "SHA256",
+   "ns": "264148174333127",
+   "a": "2817156141",
+   "b": "0"
+  },
+  {
+   "stage": "TRACE_BEGIN",
+   "result": "REQUESTED",
+   "ns": "264148174341721",
+   "a": "227840",
+   "b": "344064"
+  },
+  {
+   "stage": "TRACE_FINISH",
+   "result": "TRACE_READY",
+   "ns": "264148175500471",
+   "a": "571904",
+   "b": "571904"
+  },
+  {
+   "stage": "FIXTURE_SHA256",
+   "result": "f8be02756634e5175e8cf19e831dd8681eb6d785b2e17c8b28fcec6e7292de54",
+   "ns": "264148189660940",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "FIXTURE_RECIPE",
+   "result": "i*2654435761u; header T445 V3 synthetic",
+   "ns": "264148189663596",
+   "a": "512",
+   "b": "64"
+  },
+  {
+   "stage": "PAGE_ACQUIRE",
+   "result": "OK",
+   "ns": "264148189667346",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "PAGE_WRITER",
+   "result": "ENCODED_SYNTHETIC",
+   "ns": "264148295950940",
+   "a": "12234",
+   "b": "140"
+  },
+  {
+   "stage": "PAGE_SHA_PREFIX",
+   "result": "SHA256",
+   "ns": "264148295953283",
+   "a": "3174779508",
+   "b": "0"
+  },
+  {
+   "stage": "TRACE_BEGIN",
+   "result": "REQUESTED",
+   "ns": "264148295961408",
+   "a": "571904",
+   "b": "4096"
+  },
+  {
+   "stage": "TRACE_FINISH",
+   "result": "TRACE_READY",
+   "ns": "264148296789221",
+   "a": "576000",
+   "b": "576000"
+  },
+  {
+   "stage": "FIXTURE_SHA256",
+   "result": "2fba9968cab27faf647d594ab14e67adb57d00db382c6e985908605fb5c44f2d",
+   "ns": "264148311084065",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "FIXTURE_RECIPE",
+   "result": "i*2654435761u; header T445 V3 synthetic",
+   "ns": "264148311086877",
+   "a": "512",
+   "b": "128"
+  },
+  {
+   "stage": "PAGE_ACQUIRE",
+   "result": "OK",
+   "ns": "264148311090471",
+   "a": "0",
+   "b": "0"
+  },
+  {
+   "stage": "PAGE_WRITER",
+   "result": "ENCODED_SYNTHETIC",
+   "ns": "264148418143596",
+   "a": "12234",
+   "b": "141"
+  },
+  {
+   "stage": "PAGE_SHA_PREFIX",
+   "result": "SHA256",
+   "ns": "264148418145940",
+   "a": "2637624881",
+   "b": "0"
+  },
+  {
+   "stage": "END",
+   "result": "COMPLETED_FIXTURE_NOT_PHYSICS",
+   "ns": "264148418156565",
+   "a": "0",
+   "b": "0"
+  }
+ ]
+}
