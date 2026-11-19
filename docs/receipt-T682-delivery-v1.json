@@ -1,0 +1,48 @@
+{
+  "schema": "T682_ARCHITECT_DELIVERY_RECEIPT_V1",
+  "queue": {
+    "task": "T682",
+    "before": "| T682 | 【T682·M2单API链接开放调用与对象来源续归因】architect | architect | P5 | 进行中 | 6afeefdde4b00927f0f8c947 |",
+    "after": "| T682 | 【T682·M2单API链接开放调用与对象来源续归因】architect | architect | P5 | 结束待验收 | 6afeefdde4b00927f0f8c947 |",
+    "beforeSha256": "0833e22a675cdc06dca5aaf3a181961f73e3100658134afb18c1f56b9b7a16b4",
+    "afterSha256": "e8ee8cbd2abab71d0d898b6e206eca51bd889b913f95ba6c97ad75ee20070678",
+    "onlyOwnStatusChanged": true,
+    "staged": false,
+    "sameNameDidaListUpdated": false
+  },
+  "commit": "467d28657af12cff23ad7aab8a7c14c9512a43e2",
+  "deliverables": [
+    {
+      "path": "docs/architecture-T682-v1.md",
+      "sha256": "d359b7e3569188321ccc356da871367b4665e95e34be7f4003bd48f8d8bcbd73"
+    },
+    {
+      "path": "docs/architecture-T682-contract-v1.json",
+      "sha256": "de94d03c7185d393ce4e7ed989c94e07aba6f9d92a1b6280a737db765f1119d6"
+    },
+    {
+      "path": "docs/analysis-T682-evidence-v1.json",
+      "sha256": "fe6545a901de2b5aa29c5c21211804bc2bfa81935f834b1da16b8cfdc53497ff"
+    }
+  ],
+  "comment": {
+    "id": "6afef394e4b00dfe2a810f13",
+    "userId": 1010673194,
+    "title": "T682 architect 已交付，commit 467d2865，docs/architecture-T682-v1.md、contract 与原字节审计。T590 单次 cursor seq71 是 object2 QUANTUM_FINAL_V3 的 glLinkProgram(program4) ENTER，ATTACH证明 shader3→program4，约20.568s仍开放，attempt龄124.764s。object2 COMPILE EXIT success=true/rawGl=0，GL_COMPILE_STATUS 已返非零，compile log已查询且空，LINK_STATUS/错误/log/终态未采到。object0 SOURCE_V3 同档复合 LINK 成功返73.432s，object1中间程序亦已返11.883s。旧T591 40.141s是另scope object0 SOURCE_V3/program2复合LINK，无cursor；共同layout/combined SHA不能合成同API两次复现。永久死锁、驱动根因、host/M1共同根因未证。\n签包与T663 native一致，三个实际 GLSL 字节已核；设备 manifest DECLARATION_MISSING，loaded ELF/进程起点待关联，0/2.log仅有空收据。T676-A先复用现存同scope原串、后续终态及加载身份，真实M2页与原60s/64查询/16KiB/1MiB预算。tester离线，effector真机串行。诊断包走直接源码创建；产品先核复用T475持久化，另比较中间临时program及SOURCE/最终QUANTUM的整体结构，不猜改热点。原T590/T591剩余矩阵按真实前置接续。本卡范围完成，不使用真机、不运行产品/构建/测试。",
+    "modifiedTime": "2026-11-19T13:03:16+0000",
+    "createdTime": "2026-11-19T13:03:16+0000",
+    "replyCommentId": null,
+    "replyUserId": null
+  },
+  "commentReadbackMatched": true,
+  "checks": [
+    "original native/log bytes match c8434b96 and manifest",
+    "3 HAP SHAs and 3 actual shader strings checked",
+    "T663 ELF BuildId and compiled source header matched",
+    "cursor identity, object, timing and machine contract consistent",
+    "staged whitespace check"
+  ],
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false
+}
