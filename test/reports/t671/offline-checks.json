@@ -1,0 +1,29 @@
+{
+  "device": "NOT_RUN",
+  "checks": [
+    {
+      "argv": [
+        "python",
+        "test/t671/check_owner.py",
+        "--selftest"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"fixtureCases\": 13, \"result\": \"PASS\", \"device\": \"NOT_RUN\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "node",
+        "test/t671/owner_units.cjs"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"result\":\"PASS\",\"checks\":\"ten owner fields, immutable private copy, safe integers, fresh equal identity, one-shot invalid-ticket rejection\",\"device\":\"NOT_RUN\"}\n{\"actualGateTickets\":\"PASS\",\"checks\":[\"READY no TTL\",\"one-shot\",\"six ticket fields\",\"readiness fall\"],\"device\":\"NOT_RUN\"}\n",
+      "stderr": ""
+    }
+  ],
+  "prepareWitnessSelftest": {
+    "result": "PASS",
+    "fixtureCases": 8,
+    "device": "NOT_RUN"
+  }
+}
