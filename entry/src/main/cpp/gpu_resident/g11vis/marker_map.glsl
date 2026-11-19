@@ -15,7 +15,7 @@ bool g11XY(uint m,uint bed,uint flow,uint mapTable,out uvec2 point){uint kind=W[
 bool g11SetPoint(uint m,bool intermediate,uint mass){uint c=W[m+1u];uvec2 point;uint s=g11MapTotal(2u,c),f=g11MapTotal(4u,c);if(intermediate){f=g11MapTotal(3u,c);for(uint r=0u;r<64u;++r){uint a=g11PlanAt(32768u+c*64u+r);if(W[a]==7u)f+=W[a+5u];}}if(!g11XY(m,s,f,W[m]==1u?2u:4u,point))return false;W[m+15u]=point.x;W[m+16u]=point.y;if((W[m+22u]&1u)==0u){W[m+13u]=point.x;W[m+14u]=point.y;}return true;}
 bool g11ChangeOwner(uint m,uint bank,uint next,uvec2 oldPoint){uint old=W[m];if(old==next)return true;uint counter=g11RoleCounter(bank);uvec2 tick=g11PhaseTick();if(g9Ctl(0u)!=0u)return false;uint flags=W[m+22u]&~(1u|2u|16u);
  if((W[m+22u]&1u)!=0u){uvec4 elapsed;if(!g9USub(g9U64(tick),g9U64(uvec2(W[m+17u],W[m+18u])),elapsed))return g11Fault(29u,m,17u);if(g9UCmp(elapsed,g9U32(W[m+19u]))<0){flags|=2u;if(atomicAdd(W[counter+3u],1u)==0xffffffffu)return g11Fault(29u,m,3u);}}
- W[m+29u]=old;W[m]=next;W[m+13u]=oldPoint.x;W[m+14u]=oldPoint.y;W[m+17u]=tick.x;W[m+18u]=tick.y;W[m+19u]=g11Blend();W[m+22u]=flags|(g11Blend()>0u?1u:0u);return true;}
+ W[m+29u]=old;W[m]=next;W[m+13u]=oldPoint.x;W[m+14u]=oldPoint.y;W[m+17u]=tick.x;W[m+18u]=tick.y;W[m+19u]=g11Blend();W[m+22u]=flags|(g11Blend()>0u?1u:0u);W[m+30u]=0u;if(old!=3u||g11Blend()==0u){if(next!=3u)W[m+3u]=W[m+4u]=W[m+5u]=0u;}return true;}
 bool g11Project(uint numerator,uint denominator,uint mass,out uint rank){if(mass==0u||numerator>=denominator||!g11Divide(numerator,mass,denominator,rank)||rank>=mass)return g11Fault(24u,mass,9u);return true;}
 bool g11MoveFlow(uint m,uvec3 key){uint c=W[m+1u],r=g11FindMap(3u,c,key);if(r>=64u)return g11Fault(24u,c,2u);uint mass=g11MapMass(3u,c,r),rank=W[m+9u],a=g11SideShare(0u,c,key),b=g11SideShare(1u,c,key);if(W[m+10u]!=mass||rank>=mass||a>mass||b>mass-a)return g11Fault(24u,c,9u);
  uint dst=c,nextRank=0u;if(rank<a){if(c==0u)return g11Fault(24u,c,0u);dst=c-1u;uint peer=g11FindMap(3u,dst,key),old=peer<64u?g11MapMass(3u,dst,peer):0u,stay=old-g11SideShare(0u,dst,key)-g11SideShare(1u,dst,key);nextRank=(dst>0u?g11SideShare(1u,dst-1u,key):0u)+stay+rank;}
@@ -37,13 +37,10 @@ bool g11DepositMarker(uint m,uint bank){if(W[m]!=2u)return true;uint c=W[m+1u],r
  uint key=W[m+24u],samples=key>>16u,pair=key&65535u,vertical=0u;if(!g11Divide(2u*pair+1u,W[a+5u],samples,vertical))return g11Fault(29u,c,24u);uvec2 oldPoint=uvec2(W[m+15u],W[m+16u]);if(!g11ChangeOwner(m,bank,1u,oldPoint))return false;W[m+11u]=2u*rank+1u;W[m+12u]=2u*oldMass;W[m+2u]=(W[a+4u]&0x0fffffffu)%64u;W[m+9u]=W[a+6u]+vertical;W[m+10u]=g11MapMass(2u,c,W[m+2u]);W[m+3u]=W[m+4u]=W[m+5u]=0u;return true;
 }
 bool g11CaptureMarker(uint m,uint bank){if(W[m]!=3u)return true;uint slot=W[m+3u];if(slot>=uK)return g11Fault(24u,slot,3u);uint a=g11PlanAt(49152u+slot);if(W[a]!=10u)return true;uint e=W[a+6u]*64u;if(E[e+12u]!=W[m+5u]||E[e+13u]!=W[m+4u])return g11Fault(24u,slot,4u);
- // T639 contract question: no field may impersonate persistent old-P mass.
- // Blend=0 is fully specified. Blend>0 cannot publish until its legal union is frozen.
- if(g11Blend()!=0u)return g11Fault(23u,slot,10u);
  uint c=W[a+1u]&0x0fffffffu,r=(W[a+4u]&0x0fffffffu)%64u,mass=g11MapMass(4u,c,r),rank=0u;uvec3 key=g11PacketKey(W[a+6u],10u);uint fraction=E[e+34u]&1048575u;if(!g11Project(fraction,1048576u,mass,rank))return false;
- uvec2 oldPoint=uvec2(E[e+34u]*16u,E[e+19u]*4u);if(!g11ChangeOwner(m,bank,2u,oldPoint))return false;W[m+1u]=c;W[m+2u]=r;W[m+9u]=rank;W[m+10u]=mass;g11KeyPut(m,key);W[m+3u]=W[m+4u]=W[m+5u]=0u;return true;
+ uvec2 oldPoint=uvec2(E[e+34u]*16u,E[e+19u]*4u);if(!g11ChangeOwner(m,bank,2u,oldPoint))return false;W[m+1u]=c;W[m+2u]=r;W[m+9u]=rank;W[m+10u]=mass;g11KeyPut(m,key);if(g11Blend()>0u){W[m+30u]=E[e+15u];}else{W[m+30u]=0u;W[m+3u]=W[m+4u]=W[m+5u]=0u;}return true;
 }
-bool g11ApplyMarker(uint bank,uint slot){uint m=g11MarkerAt(bank,slot),kind=W[m];if(W[m+31u]!=3235778817u||W[m+30u]!=0u||kind>3u)return g11Fault(26u,slot,31u);if(kind==0u)return true;uint c=W[m+1u];if(c>=128u)return g11Fault(24u,slot,1u);
+bool g11ApplyMarker(uint bank,uint slot){uint m=g11MarkerAt(bank,slot),kind=W[m];if(W[m+31u]!=3235778817u||kind>3u)return g11Fault(26u,slot,31u);if(kind==0u)return true;uint c=W[m+1u];if(c>=128u)return g11Fault(24u,slot,1u);
  uvec2 oldPoint;
  if(kind!=3u){if(!g11XY(m,g11MapTotal(1u,c),g11MapTotal(3u,c),1u,oldPoint))return false;W[m+15u]=oldPoint.x;W[m+16u]=oldPoint.y;}
  if(uVisPhase==1u||uVisPhase==2u){if(!g11RecruitMarker(m,bank))return false;}

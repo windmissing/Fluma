@@ -1,11 +1,4 @@
-// Compile-only scaffold for the T639 blocked delivery. No device/test execution.
-const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
-const root=path.resolve(__dirname,'../..'),out=path.resolve(process.argv[2]||path.join(root,'.codex/local-test/t639-compile'));
-process.chdir(root);
-cp.execFileSync(process.execPath,['tools/g13/prepare_build.cjs',out],{stdio:'inherit'});
-function copy(rel){const p=path.join(out,rel);fs.mkdirSync(path.dirname(p),{recursive:true});fs.copyFileSync(path.join(root,rel),p);}
-const manifest=JSON.parse(fs.readFileSync(path.join(root,'docs/architecture-T563-g11-manifest-v1.json'),'utf8'));
-for(const rel of ['test/t566_generate_composite.cjs','tools/g11/generate_contract.cjs','docs/architecture-T552-g9-seed-manifest-v2.json','docs/architecture-T563-g11-manifest-v1.json','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path])copy(rel);
-const cpp=path.join(out,'entry/src/main/cpp');
-fs.writeFileSync(path.join(cpp,'t639_compile_anchor.cpp'),'#include "gpu_resident/g11vis/visual_transport.h"\nextern "C" __attribute__((visibility("default"))) const char* g11CompileOnly(){return grs::g11vis::VisualTransport::PipelineSourceR1();}\n');
-fs.appendFileSync(path.join(cpp,'CMakeLists.txt'),`\nadd_library(grs_foundation STATIC)\ninclude("\${CMAKE_CURRENT_SOURCE_DIR}/gpu_resident/g11vis/kernels.cmake")\ntarget_compile_features(grs_foundation PRIVATE cxx_std_17)\nset_target_properties(grs_foundation PROPERTIES POSITION_INDEPENDENT_CODE ON)\ntarget_include_directories(grs_foundation PRIVATE "\${CMAKE_CURRENT_SOURCE_DIR}" "\${CMAKE_CURRENT_SOURCE_DIR}/gpu_resident")\nadd_library(grs_g11_compile SHARED t639_compile_anchor.cpp p013renderer/fullframe_targets.cpp gpu_resident/g9spf/stage_capability.cpp gpu_resident/g9spf/completion_gate.cpp gpu_resident/g9dm/completion_gate.cpp gpu_resident/acceptance_t647/contract.cpp)\ntarget_compile_features(grs_g11_compile PRIVATE cxx_std_17)\ntarget_include_directories(grs_g11_compile PRIVATE "\${G11_ASSET_DIR}" "\${CMAKE_CURRENT_SOURCE_DIR}/gpu_resident")\ntarget_link_libraries(grs_g11_compile PRIVATE -Wl,--whole-archive grs_foundation -Wl,--no-whole-archive libEGL.so libGLESv3.so libhilog_ndk.z.so)\n`);
+'use strict';
+// Compatibility command name: now prepares the actual G11 research product.
+// No compile anchor, signing, deployment, execution or test invocation.
+require('./prepare_build.cjs');

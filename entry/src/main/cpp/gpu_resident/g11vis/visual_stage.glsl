@@ -2,7 +2,7 @@
 #ifndef G11VIS_STAGE_GLSL
 #define G11VIS_STAGE_GLSL
 uniform uint uVisMarkerCurrent,uVisMarkerActual,uVisMarkerReplay,uVisGlyph,uVisPlan,uVisControl,uVisMaps,uVisV;
-uniform uint uVisOldBank,uVisNewBank,uVisPhase,uVisOrdinal;
+uniform uint uVisOldBank,uVisNewBank,uVisPhase,uVisOrdinal,uVisHeaderCurrent,uVisHeaderActual,uVisHeaderReplay;
 uniform uvec2 uVisTicks,uVisBaseTicks,uVisBaseGeneration;
 const uint G11_COLD_INIT=0x7fffff01u;
 /* g11vis/material_plan.glsl */
@@ -17,10 +17,11 @@ void g11Hash(uint start,uint count,out uint result[8]){
  uint a=h[0],b=h[1],c=h[2],d=h[3],e=h[4],f=h[5],g=h[6],hh=h[7];for(uint t=0u;t<64u;++t){uint z=hh+(g11Ror(e,6u)^g11Ror(e,11u)^g11Ror(e,25u))+((e&f)^((~e)&g))+k[t]+schedule[t],y=(g11Ror(a,2u)^g11Ror(a,13u)^g11Ror(a,22u))+((a&b)^(a&c)^(b&c));hh=g;g=f;f=e;e=d+z;d=c;c=b;b=a;a=z+y;}h[0]+=a;h[1]+=b;h[2]+=c;h[3]+=d;h[4]+=e;h[5]+=f;h[6]+=g;h[7]+=hh;}
  for(uint i=0u;i<8u;++i)result[i]=g11Swap(h[i]);
 }
-bool g11ConfigValid(){uint a=uVisControl+G11_CFG,e=uVisControl+G11_EXPECT;if(W[a]!=1127297351u||W[a+1u]!=1u||W[a+2u]!=W[e+6u]||W[a+3u]!=W[e+7u]||W[a+4u]!=uK||W[a+5u]!=uVisV||W[a+6u]!=32u||W[a+7u]!=8u||W[a+8u]!=65536u||(W[a+9u]!=0u&&W[a+9u]!=256u)||W[a+10u]!=131072u||W[a+11u]!=32768u||W[a+12u]!=1u||W[a+13u]!=1u||W[a+14u]!=0u||W[a+15u]!=1u)return false;
- for(uint i=16u;i<20u;++i)if(W[a+i]!=1u)return false;for(uint i=44u;i<64u;++i)if(W[a+i]!=0u)return false;uint digest[8];g11Hash(a,64u,digest);for(uint i=0u;i<8u;++i)if(digest[i]!=W[e+128u+i]||W[a+20u+i]!=W[e+72u+i]||W[a+36u+i]!=W[e+136u+i])return false;return true;}
-uint g11BankHeader(uint bank,uint field){return W[uVisControl+bank*128u+field];}
-void g11BankPut(uint bank,uint field,uint value){W[uVisControl+bank*128u+field]=value;}
+bool g11ConfigValid(){uint a=uVisControl+G11_CFG,e=uVisControl+G11_EXPECT;if(W[a]!=1127297351u||W[a+1u]!=2u||W[a+2u]!=W[e+6u]||W[a+3u]!=W[e+7u]||W[a+4u]!=uK||W[a+5u]!=uVisV||W[a+6u]!=32u||W[a+7u]!=8u||W[a+8u]!=65536u||(W[a+9u]!=0u&&W[a+9u]!=256u)||W[a+10u]!=131072u||W[a+11u]!=32768u||W[a+12u]!=1u||W[a+13u]!=1u||W[a+14u]!=0u||W[a+15u]!=1u)return false;
+ if(W[a+16u]!=1u||W[a+17u]!=2u||W[a+18u]!=2u||W[a+19u]!=2u)return false;for(uint i=44u;i<64u;++i)if(W[a+i]!=0u)return false;uint digest[8];g11Hash(a,64u,digest);for(uint i=0u;i<8u;++i)if(digest[i]!=W[e+128u+i]||W[a+20u+i]!=W[e+72u+i]||W[a+36u+i]!=W[e+136u+i])return false;return true;}
+uint g11HeaderBank(uint bank){return bank==0u?uVisHeaderCurrent:bank==1u?uVisHeaderActual:uVisHeaderReplay;}
+uint g11BankHeader(uint bank,uint field){return W[uVisControl+g11HeaderBank(bank)*128u+field];}
+void g11BankPut(uint bank,uint field,uint value){W[uVisControl+g11HeaderBank(bank)*128u+field]=value;}
 bool g11NextId(uint bank,out uvec2 id){id=uvec2(g11BankHeader(bank,10u),g11BankHeader(bank,11u));uvec4 next;if(all(equal(id,uvec2(0u)))||!g9UAdd(g9U64(id),g9U32(1u),next)||any(notEqual(next.zw,uvec2(0u))))return g11Fault(29u,bank,10u);g11BankPut(bank,10u,next.x);g11BankPut(bank,11u,next.y);uint sc=g11RoleCounter(bank);W[sc+1u]=next.x;W[sc+2u]=next.y;return true;}
 bool g11Sample(uint bank,uint slot,uint c){uint m=g11MarkerAt(bank,slot),samples=uVisV/128u,j=slot%samples,pair=min(j,samples-1u-j),wanted=0u,total=g9Occupied(c);if(total==0u)return true;if(!g11Divide(2u*pair+1u,total,samples,wanted))return g11Fault(29u,c,24u);
  uint kind=0u,rank=0u,row=0u,mass=0u,packet=uK;uvec3 key=uvec3(0u);
@@ -39,10 +40,13 @@ bool g11ColdInitialize(){
  for(uint at=gl_LocalInvocationIndex;at<uVisV*32u;at+=64u){W[uVisMarkerCurrent+at]=0u;W[uVisMarkerActual+at]=0u;W[uVisMarkerReplay+at]=0u;}
  for(uint at=gl_LocalInvocationIndex;at<uVisV*8u;at+=64u)W[uVisGlyph+at]=0u;
  memoryBarrierBuffer();barrier();
- if(gl_LocalInvocationIndex==0u){for(uint bank=0u;bank<3u;++bank){for(uint w=0u;w<128u;++w)g11BankPut(bank,w,0u);g11BankPut(bank,0u,1110520135u);g11BankPut(bank,1u,1u);g11BankPut(bank,2u,W[uVisControl+G11_CFG+2u]);g11BankPut(bank,3u,W[uVisControl+G11_CFG+3u]);g11BankPut(bank,4u,uK);g11BankPut(bank,5u,uVisV);g11BankPut(bank,10u,1u);g11BankPut(bank,16u,uOwner.x);g11BankPut(bank,17u,uOwner.y);g11BankPut(bank,18u,uContext.x);g11BankPut(bank,19u,uContext.y);g11BankPut(bank,20u,uRun.x);g11BankPut(bank,21u,uRun.y);g11BankPut(bank,22u,uSurface.x);g11BankPut(bank,23u,uSurface.y);uint cfg[8];g11Hash(uVisControl+G11_CFG,64u,cfg);for(uint i=0u;i<8u;++i){g11BankPut(bank,24u+i,cfg[i]);g11BankPut(bank,32u+i,W[uConfig+32u+i]);}g11BankPut(bank,40u,1u);g11BankPut(bank,127u,3235778819u);}
+ if(gl_LocalInvocationIndex==0u){for(uint bank=0u;bank<3u;++bank){for(uint w=0u;w<128u;++w)g11BankPut(bank,w,0u);g11BankPut(bank,0u,1110520135u);g11BankPut(bank,1u,2u);g11BankPut(bank,2u,W[uVisControl+G11_CFG+2u]);g11BankPut(bank,3u,W[uVisControl+G11_CFG+3u]);g11BankPut(bank,4u,uK);g11BankPut(bank,5u,uVisV);g11BankPut(bank,10u,1u);g11BankPut(bank,16u,uOwner.x);g11BankPut(bank,17u,uOwner.y);g11BankPut(bank,18u,uContext.x);g11BankPut(bank,19u,uContext.y);g11BankPut(bank,20u,uRun.x);g11BankPut(bank,21u,uRun.y);g11BankPut(bank,22u,uSurface.x);g11BankPut(bank,23u,uSurface.y);uint cfg[8];g11Hash(uVisControl+G11_CFG,64u,cfg);for(uint i=0u;i<8u;++i){g11BankPut(bank,24u+i,cfg[i]);g11BankPut(bank,32u+i,W[uConfig+32u+i]);}g11BankPut(bank,40u,1u);g11BankPut(bank,127u,3235778819u);}
  for(uint slot=0u;slot<uVisV;++slot){W[g11MarkerAt(0u,slot)+31u]=3235778817u;if(!g11Sample(0u,slot,slot/(uVisV/128u)))break;}
  }
- memoryBarrierBuffer();barrier();return g9Ctl(0u)==0u;
+ memoryBarrierBuffer();barrier();
+ for(uint p=gl_LocalInvocationIndex;p<512u;p+=64u){uint at=uVisControl+384u+p*4u;for(uint f=0u;f<4u;++f)W[at+f]=0u;if(p<uK&&g9Packet(p,0u)>0u){W[at]=g9Packet(p,6u);W[at+1u]=g9Packet(p,7u);W[at+2u]=65536u;W[at+3u]=G11_NONE;}}
+ memoryBarrierBuffer();barrier();for(uint slot=gl_LocalInvocationIndex;slot<uVisV;slot+=64u){uint m=g11MarkerAt(0u,slot);if(W[m]==3u)atomicMin(W[uVisControl+384u+W[m+3u]*4u+3u],slot);}memoryBarrierBuffer();barrier();
+ if(gl_LocalInvocationIndex==0u){uint countActive=0u;for(uint slot=0u;slot<uVisV;++slot)if(W[g11MarkerAt(0u,slot)]!=0u)countActive++;g11BankPut(0u,41u,countActive);if(!g9AuditMassGeometry()||!g9AuditMomentum())g11Fault(24u,0u,0u);else W[uControls+127u]=0xc01d0002u;g11BankPut(0u,42u,g9Ctl(0u));g11BankPut(0u,40u,g9Ctl(0u)==0u?1u:0u);}memoryBarrierBuffer();barrier();return g9Ctl(0u)==0u;
 }
 bool visRootCopy(){
  for(uint at=gl_LocalInvocationIndex;at<uVisV*32u;at+=64u){W[uVisMarkerActual+at]=W[uVisMarkerCurrent+at];W[uVisMarkerReplay+at]=W[uVisMarkerCurrent+at];}
@@ -65,10 +69,20 @@ bool g11RefillColumn(uint bank,uint c){uint samples=uVisV/128u,have=0u;for(uint 
 bool g11Refill(uint bank){if(uVisPhase==6u){for(uint event=0u;event<g9Ctl(7u);++event){uint e=event*64u;if(E[e+2u]!=G9_EVENT_SOURCE_BIRTH)continue;uint slot=E[e+11u];if(slot>=uK)return g11Fault(24u,event,11u);uint a=g11PlanAt(49152u+slot);if(W[a]==11u&&W[a+6u]==event&&!g11RefillColumn(bank,E[e+9u]))return false;}}
  else if(uVisPhase==1u||uVisPhase==2u){for(uint c=0u;c<128u;++c){bool exposed=false;for(uint r=0u;r<64u;++r)exposed=exposed||W[g11PlanAt(32768u+c*64u+r)]==7u;if(exposed&&!g11RefillColumn(bank,c))return false;}}return true;
 }
-void g11ExpirePhase(uint m){if((W[m+22u]&1u)==0u)return;uvec4 elapsed;if(!g9USub(g9U64(uVisTicks),g9U64(uvec2(W[m+17u],W[m+18u])),elapsed)){g11Fault(29u,m,17u);return;}if(g9UCmp(elapsed,g9U32(W[m+19u]))>=0){W[m+22u]&=~(1u|16u);W[m+13u]=W[m+15u];W[m+14u]=W[m+16u];W[m+29u]=0u;}}
-bool g11MarkerValid(uint m){uint owner=W[m],c=W[m+1u];if(owner==0u)return W[m+31u]==3235778817u&&W[m+30u]==0u;if(owner>3u||c>=128u||W[m+30u]!=0u||W[m+31u]!=3235778817u||(W[m+22u]&~31u)!=0u||all(equal(uvec2(W[m+20u],W[m+21u]),uvec2(0u)))||W[m+23u]==0u)return false;
- uint rank=W[m+2u];if(owner==1u||owner==2u){if(rank>=g9MapCount(owner==2u,c)||any(notEqual(g9Key(owner==2u,c,rank),g11MarkerKey(m)))||W[m+9u]>=C[g9MapAddress(owner==2u,c,rank)+3u]||W[m+10u]!=C[g9MapAddress(owner==2u,c,rank)+3u]||W[m+3u]!=0u||W[m+4u]!=0u||W[m+5u]!=0u)return false;}
+void g11ExpirePhase(uint m){if((W[m+22u]&1u)==0u)return;uvec4 elapsed;if(!g9USub(g9U64(uVisTicks),g9U64(uvec2(W[m+17u],W[m+18u])),elapsed)){g11Fault(29u,m,17u);return;}if(g9UCmp(elapsed,g9U32(W[m+19u]))>=0){W[m+22u]&=~(1u|16u);W[m+13u]=W[m+15u];W[m+14u]=W[m+16u];W[m+29u]=0u;W[m+30u]=0u;if(W[m]!=3u)W[m+3u]=W[m+4u]=W[m+5u]=0u;}}
+bool g11IsGhost(uint m){return W[m]!=3u&&(W[m+22u]&1u)!=0u&&W[m+29u]==3u;}
+bool g11GhostLess(uint bank,uint left,uint right){uint a=g11MarkerAt(bank,left),b=g11MarkerAt(bank,right);const uint fields[5]=uint[5](3u,4u,5u,18u,17u);for(uint i=0u;i<5u;++i){uint x=W[a+fields[i]],y=W[b+fields[i]];if(x!=y)return x<y;}return left<right;}
+void g11GhostSift(uint bank,uint root,uint count){uint index=uVisControl+2688u;for(;;){uint child=root*2u+1u;if(child>=count)return;if(child+1u<count&&g11GhostLess(bank,W[index+child],W[index+child+1u]))child++;if(!g11GhostLess(bank,W[index+root],W[index+child]))return;uint swap=W[index+root];W[index+root]=W[index+child];W[index+child]=swap;root=child;}}
+bool g11SameGhost(uint a,uint b){return W[a+3u]==W[b+3u]&&W[a+4u]==W[b+4u]&&W[a+5u]==W[b+5u]&&W[a+17u]==W[b+17u]&&W[a+18u]==W[b+18u];}
+bool g11GhostRepresentatives(uint bank){uint index=uVisControl+2688u,count=0u;for(uint slot=0u;slot<uVisV;++slot){uint m=g11MarkerAt(bank,slot);W[m+22u]&=~16u;if(g11IsGhost(m))W[index+count++]=slot;}
+ for(uint i=count/2u;i>0u;--i)g11GhostSift(bank,i-1u,count);for(uint end=count;end>1u;--end){uint swap=W[index];W[index]=W[index+end-1u];W[index+end-1u]=swap;g11GhostSift(bank,0u,end-1u);}
+ uint representative=0u;for(uint i=0u;i<count;++i){uint slot=W[index+i],m=g11MarkerAt(bank,slot);if(i==0u||!g11SameGhost(m,g11MarkerAt(bank,W[index+i-1u]))){representative=m;W[m+22u]|=16u;}else if(W[m+30u]!=W[representative+30u]||W[m+13u]!=W[representative+13u]||W[m+14u]!=W[representative+14u]||any(notEqual(g11MarkerKey(m),g11MarkerKey(representative))))return g11Fault(25u,slot,30u);}
+ for(uint i=count;i<8192u;++i)W[index+i]=0u;return true;
+}
+bool g11MarkerValid(uint m){uint owner=W[m],c=W[m+1u];if(owner==0u)return W[m+31u]==3235778817u&&W[m+30u]==0u;if(owner>3u||c>=128u||W[m+31u]!=3235778817u||(W[m+22u]&~31u)!=0u||all(equal(uvec2(W[m+20u],W[m+21u]),uvec2(0u)))||W[m+23u]==0u)return false;
+ uint rank=W[m+2u];if(owner==1u||owner==2u){if(rank>=g9MapCount(owner==2u,c)||any(notEqual(g9Key(owner==2u,c,rank),g11MarkerKey(m)))||W[m+9u]>=C[g9MapAddress(owner==2u,c,rank)+3u]||W[m+10u]!=C[g9MapAddress(owner==2u,c,rank)+3u]||(!g11IsGhost(m)&&(W[m+3u]!=0u||W[m+4u]!=0u||W[m+5u]!=0u)))return false;}
  else{uint slot=W[m+3u];if(slot>=uK||g9Packet(slot,0u)==0u||g9Packet(slot,6u)!=W[m+5u]||g9Packet(slot,7u)!=W[m+4u]||any(notEqual(uvec3(g9Packet(slot,8u),g9Packet(slot,9u),g9Packet(slot,10u)),g11MarkerKey(m))))return false;}
+ if(g11IsGhost(m)){if(W[m+30u]==0u||W[m+3u]>=uK||W[m+4u]==0u||W[m+5u]==0u)return false;}else if(W[m+30u]!=0u)return false;
  return W[m+15u]<2147483648u&&W[m+16u]<=2147483648u;
 }
 bool visPlanApply(){
@@ -82,9 +96,12 @@ bool visPlanApply(){
  memoryBarrierBuffer();barrier();return g9Ctl(0u)==0u;
 }
 bool visRootAudit(){
- for(uint slot=gl_LocalInvocationIndex;slot<uVisV;slot+=64u){uint a=g11MarkerAt(1u,slot),b=g11MarkerAt(2u,slot);g11ExpirePhase(a);g11ExpirePhase(b);if(!g11MarkerValid(a)||!g11MarkerValid(b))g11Fault(24u,slot,0u);for(uint f=0u;f<32u;++f)if(W[a+f]!=W[b+f])g11Fault(25u,slot,f);if(W[a]>3u||W[a+30u]!=0u||W[a+31u]!=3235778817u)g11Fault(26u,slot,31u);}
+ for(uint slot=gl_LocalInvocationIndex;slot<uVisV;slot+=64u){g11ExpirePhase(g11MarkerAt(1u,slot));g11ExpirePhase(g11MarkerAt(2u,slot));}memoryBarrierBuffer();barrier();
+ if(gl_LocalInvocationIndex==0u){if(!g11GhostRepresentatives(1u)||!g11GhostRepresentatives(2u)){} }memoryBarrierBuffer();barrier();
+ for(uint slot=gl_LocalInvocationIndex;slot<uVisV;slot+=64u){uint a=g11MarkerAt(1u,slot),b=g11MarkerAt(2u,slot);g11ExpirePhase(a);g11ExpirePhase(b);if(!g11MarkerValid(a)||!g11MarkerValid(b))g11Fault(24u,slot,0u);for(uint f=0u;f<32u;++f)if(W[a+f]!=W[b+f])g11Fault(25u,slot,f);if(W[a]>3u||W[a+31u]!=3235778817u)g11Fault(26u,slot,31u);}
  memoryBarrierBuffer();barrier();
  if(gl_LocalInvocationIndex==0u){uint batches=uRootKind==1u?1u:g9Ctl(11u)==0u?0u:1u+4u*g9Ctl(11u);if(!g11ConfigValid()||W[g11RoleCounter(1u)]!=batches||W[g11RoleCounter(2u)]!=batches)g11Fault(26u,batches,0u);
+ for(uint bank=1u;bank<3u;++bank){uint countActive=0u;for(uint slot=0u;slot<uVisV;++slot)if(W[g11MarkerAt(bank,slot)]!=0u)countActive++;g11BankPut(bank,41u,countActive);uint e=uVisControl+G11_EXPECT;bool unchanged=uRootKind==1u?g9Ctl(18u)!=0u:g9Ctl(11u)==0u;for(uint word=0u;word<2u;++word){g11BankPut(bank,6u+word,W[e+(unchanged?62u:66u)+word]);g11BankPut(bank,8u+word,W[e+(unchanged?64u:68u)+word]);g11BankPut(bank,12u+word,C[10u+word]);g11BankPut(bank,14u+word,uNonce[word]);}uint sc=g11RoleCounter(bank);for(uint field=0u;field<5u;++field)g11BankPut(bank,43u+field,W[sc+3u+field]);}
  for(uint f=0u;f<128u;++f)if(g11BankHeader(1u,f)!=g11BankHeader(2u,f))g11Fault(25u,1u,f);
  if(g9Ctl(0u)==0u){for(uint bank=1u;bank<3u;++bank)g11BankPut(bank,40u,g11BankHeader(bank,40u)|4u);g9Set(17u,g9Ctl(17u)|262144u);}}
  memoryBarrierBuffer();barrier();return g9Ctl(0u)==0u;
@@ -95,12 +112,12 @@ bool visGlyphBuild(){
  memoryBarrierBuffer();barrier();
  for(uint slot=gl_LocalInvocationIndex;slot<uVisV;slot+=64u){uint m=g11MarkerAt(1u,slot),g=uVisGlyph+slot*8u,owner=W[m];if(owner==0u){for(uint i=0u;i<8u;++i)W[g+i]=0u;continue;}if(owner==3u){uint p=W[m+3u];if(p>=uK){g11Fault(24u,slot,3u);continue;}atomicMin(W[uVisControl+384u+p*4u+3u],slot);}uint old=(W[m+22u]&1u)!=0u?W[m+29u]:owner,flags=(old&3u)|((owner&3u)<<2u)|(old!=0u?16u:0u)|32u;uint blend=65536u;
  if(W[m+19u]>0u){uvec4 elapsed,product,q,rem;if(!g9USub(g9U64(uVisTicks),g9U64(uvec2(W[m+17u],W[m+18u])),elapsed)){g11Fault(29u,slot,17u);continue;}if(g9UCmp(elapsed,g9U32(W[m+19u]))<0){if(!g9UMul(elapsed,g9U32(65536u),product)||!g9UDiv(product,g9U32(W[m+19u]),q,rem)){g11Fault(29u,slot,19u);continue;}blend=q.x;}}
- if(old==3u&&owner!=3u&&blend<65536u){g11Fault(23u,slot,10u);continue;}
- W[g]=W[m+13u];W[g+1u]=W[m+14u];W[g+2u]=W[m+15u];W[g+3u]=W[m+16u];W[g+4u]=flags;W[g+5u]=blend;W[g+6u]=old==3u?W[m+10u]:0u;W[g+7u]=W[m+24u];if(W[g]>=2147483648u||W[g+2u]>=2147483648u||W[g+1u]>2147483648u||W[g+3u]>2147483648u||blend>65536u)g11Fault(24u,slot,16u);
+ if(g11IsGhost(m)&&(W[m+22u]&16u)!=0u)flags|=64u;
+ W[g]=W[m+13u];W[g+1u]=W[m+14u];W[g+2u]=W[m+15u];W[g+3u]=W[m+16u];W[g+4u]=flags;W[g+5u]=blend;W[g+6u]=g11IsGhost(m)?W[m+30u]:owner==3u?g9Packet(W[m+3u],0u):0u;W[g+7u]=W[m+24u];if(W[g]>=2147483648u||W[g+2u]>=2147483648u||W[g+1u]>2147483648u||W[g+3u]>2147483648u||blend>65536u)g11Fault(24u,slot,16u);
  }
  memoryBarrierBuffer();barrier();
  for(uint p=gl_LocalInvocationIndex;p<uK;p+=64u){uint at=uVisControl+384u+p*4u;if(g9Packet(p,0u)==0u)continue;uint slot=W[at+3u];if(slot!=G11_NONE){if(slot>=uVisV){g11Fault(24u,p,3u);continue;}uint m=g11MarkerAt(1u,slot);if(W[m]!=3u||W[m+3u]!=p||W[m+4u]!=W[at+1u]||W[m+5u]!=W[at]){g11Fault(24u,p,4u);continue;}if((W[m+22u]&1u)!=0u&&W[m+29u]!=3u)W[at+2u]=W[uVisGlyph+slot*8u+5u];}}
- memoryBarrierBuffer();barrier();if(gl_LocalInvocationIndex==0u&&g9Ctl(0u)==0u&&(g11BankHeader(1u,40u)&4u)!=0u){g11BankPut(1u,40u,g11BankHeader(1u,40u)|8u);g9Set(17u,g9Ctl(17u)|524288u);}memoryBarrierBuffer();barrier();return g9Ctl(0u)==0u;
+ memoryBarrierBuffer();barrier();if(gl_LocalInvocationIndex==0u&&g9Ctl(0u)==0u&&(g11BankHeader(1u,40u)&4u)!=0u){for(uint bank=1u;bank<3u;++bank)g11BankPut(bank,40u,g11BankHeader(bank,40u)|8u);g9Set(17u,g9Ctl(17u)|524288u);}memoryBarrierBuffer();barrier();return g9Ctl(0u)==0u;
 }
 void g11CompletionExtension(){uint e=uVisControl+G11_EXPECT;W[uCompletion]=1127297351u;W[uCompletion+1u]=2u;W[uCompletion+3u]=3235800177u;W[uCompletion+4u]=W[e+6u];W[uCompletion+156u]=1u;W[uCompletion+157u]=W[e+183u];W[uCompletion+158u]=W[e+7u];W[uCompletion+159u]=W[e+6u];
  const uint dst[8]=uint[8](160u,168u,176u,184u,192u,200u,216u,224u);const uint src[8]=uint[8](152u,128u,136u,104u,112u,120u,80u,144u);for(uint n=0u;n<8u;++n)for(uint i=0u;i<8u;++i)W[uCompletion+dst[n]+i]=W[e+src[n]+i];bool same=W[uCompletion+6u]==2u||W[uCompletion+6u]==4u;

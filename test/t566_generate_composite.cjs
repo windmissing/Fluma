@@ -7,7 +7,7 @@
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const ROOT = path.resolve(__dirname, '..');
 require('node:child_process').execFileSync(process.execPath,[path.join(ROOT,'tools/g11/generate_contract.cjs'),'--check']);
-const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'docs/architecture-T563-g11-manifest-v1.json'),'utf8'));
+const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'docs/architecture-T660-g11-manifest-v2.json'),'utf8'));
 for(const receipt of [...manifest.inputs,manifest.visualSeedRecipe]){const raw=fs.readFileSync(path.join(ROOT,receipt.path));if(raw.length!==receipt.bytes||crypto.createHash('sha256').update(raw).digest('hex')!==receipt.sha256)throw Error('G11_APPROVED_INPUT_MISMATCH '+receipt.path);}
 
 let VIS = fs.readFileSync(path.join(ROOT, 'entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl'), 'utf8').replace(/\r\n/g, '\n');
@@ -136,7 +136,7 @@ function emit() {
   }
   fs.writeFileSync(path.join(outDir, 'g11vis_pipeline.h'), header);
   for(const which of ['r1','dm']){fs.writeFileSync(path.join(outDir,'g11vis_'+which+'.comp'),build(which).src);}
-  const inputs=['entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl','entry/src/main/cpp/gpu_resident/g11vis/material_plan.glsl','entry/src/main/cpp/gpu_resident/g11vis/marker_map.glsl','tools/g11/generate_contract.cjs','docs/architecture-T552-g9-seed-manifest-v2.json','entry/src/main/cpp/gpu_resident/g11vis/parent_seed_generated.h','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json','docs/architecture-T563-g11-manifest-v1.json','entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h','test/t566_generate_composite.cjs',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path];
+  const inputs=['docs/architecture-T660-contract-v1.json','entry/src/main/cpp/gpu_resident/g11vis/bootstrap_generated.h','entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl','entry/src/main/cpp/gpu_resident/g11vis/material_plan.glsl','entry/src/main/cpp/gpu_resident/g11vis/marker_map.glsl','tools/g11/generate_contract.cjs','docs/architecture-T552-g9-seed-manifest-v2.json','entry/src/main/cpp/gpu_resident/g11vis/parent_seed_generated.h','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json','docs/architecture-T660-g11-manifest-v2.json','entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h','test/t566_generate_composite.cjs',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path];
   fs.writeFileSync(path.join(outDir,'g11vis_dependencies.cmake'),'set(G11_INPUTS\n'+[...new Set(inputs)].map(p=>'\"'+path.join(ROOT,p).replaceAll('\\','/')+'\"').join('\n')+'\n)\n');
   fs.writeFileSync(path.join(outDir,'g11vis_inputs.json'),JSON.stringify(Object.fromEntries(inputs.map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex')])),null,2));
   console.log('written: ' + path.join(outDir, 'g11vis_pipeline.h'));
