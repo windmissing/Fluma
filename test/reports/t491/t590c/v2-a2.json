@@ -1,0 +1,48 @@
+{
+ "revision": "T590_V2_A2_DEVICE_V1",
+ "date": "2026-11-19",
+ "package": {
+  "task": "T590-a2",
+  "tree": "t541-t624-a2 (T564 real source + clean cache, T655-attributed resume)",
+  "inputSha": "6b019ef9",
+  "signedSha": "5dcaeda5"
+ },
+ "artifact": "t456-boot-1795088885162.json (T451_GPU_BOOT_PROBE_V1, pid 14871)",
+ "recovery": {
+  "revision": "T464_RECOVERY_V1",
+  "phase": "CREATING_NEW",
+  "firstReason": "WINDOW_OR_PAGE_CHANGED",
+  "resetSerial": 1,
+  "epoch": 3,
+  "retired": true,
+  "resources": false
+ },
+ "attempts": [
+  {
+   "bootSerial": 1,
+   "terminal": true,
+   "complete": true,
+   "firstFailure": "SURFACE_CREATED"
+  },
+  {
+   "bootSerial": 2,
+   "terminal": true,
+   "complete": true,
+   "firstFailure": "RESET_REQUIRED"
+  },
+  {
+   "bootSerial": 3,
+   "terminal": false,
+   "complete": false,
+   "firstFailure": null
+  }
+ ],
+ "transitionsSample": [
+  "XCOMPONENT_UNWRAP/REGISTER/SIZE",
+  "CALLBACK_WINDOW_REFERENCE",
+  "SURFACE_CREATED",
+  "UI_RESET epoch2->3"
+ ],
+ "interpretation": "attempt3 non-terminal = creation arm active (same family as T593 v3 oscillation); recovery state machine correctly advances resetSerial/epoch; DEVICE deadline domain: root deadline 250ms unchanged per T664 \u2014 same-attempt rejection causes now precisely itemized per attempt with terminal flags",
+ "route": "architect: attempt3 non-terminal + recovery CREATING_NEW originals pair with T591 LINK 40s / T496 crash / T593 oscillation for creation-arm terminal absence attribution"
+}
