@@ -1,0 +1,8 @@
+error: failed to start ability.
+Error Code:10104001  Error Message:The specified ability does not exist
+Error cause: The specified Ability is not installed
+  Try the following:
+  > Check if the parameter abilityName of aa -a and the parameter bundleName of -b are correct
+  > Check if the application corresponding to the specified bundleName is installed
+  > For multi-HAP applications, it is necessary to confirm whether the HAP to which the ability belongs has been installed
+

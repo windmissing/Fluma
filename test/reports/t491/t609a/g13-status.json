@@ -1,0 +1,73 @@
+{
+ "route": 13,
+ "schema": 1,
+ "native": {
+  "route": 13,
+  "schema": 1,
+  "fieldToken": "G13F1:244621396514846:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000",
+  "coldToken": "G13R1:244621396514846:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+  "consumedSourceSeq": "0",
+  "lastRoot": {
+   "clock": "CLOCK_MONOTONIC",
+   "nonce": "0",
+   "plan": "0",
+   "nativePollNs": "0",
+   "startedNs": "0",
+   "deadlineNs": "0",
+   "nativeError": 0,
+   "nativeOutcome": 0,
+   "gpuTailAvailable": false,
+   "domain": "PAGE_NATIVE_CONTROL"
+  },
+  "motionBits": [],
+  "state": "CONFIG_PENDING",
+  "firstError": 0,
+  "commit": "0",
+  "acceptedQuantum": "0",
+  "nonce": "0",
+  "queued": 0,
+  "earned": "0",
+  "reserved": "0",
+  "consumed": "0",
+  "discarded": "0",
+  "capability": null,
+  "compile": null,
+  "physicsValidation": "NOT_MEASURED",
+  "displayPresentVerified": false,
+  "scene": {
+   "route": 13,
+   "sceneState": "WAIT_ACCEPTED_FIELD",
+   "staleAttempts": "0",
+   "fieldCommit": "0",
+   "viewGeneration": "1",
+   "fboBytes": "0",
+   "rawGL": 0,
+   "presentedMapping": null,
+   "displayPresentVerified": false
+  }
+ },
+ "cold": {},
+ "lastSourceReply": {},
+ "scope": {
+  "run": "0",
+  "owner": "0",
+  "context": "0",
+  "surface": "0",
+  "geometry": "0",
+  "config": "0",
+  "session": "0",
+  "permission": "0",
+  "inputEpoch": "0",
+  "control": "2"
+ },
+ "lastCommand": {
+  "route": 13,
+  "schema": 1,
+  "api": "g13PagePulse",
+  "state": "REJECTED",
+  "error": 31,
+  "boot": "244621396514846",
+  "generation": "0",
+  "attempt": "0"
+ }
+}
