@@ -1,0 +1,17 @@
+{
+ "revision": "T496_V6_SINGLE_FIXED_ARM_V1",
+ "date": "2026-11-19",
+ "attempt": "62012",
+ "facilityRework": "aba5938 (clock/coordinator-owner split/recovery handshake/non-blocking D1)",
+ "observation": {
+  "windowSeconds": 420,
+  "aliveAtKill": true,
+  "coordinatorWaitIteration": 15000,
+  "captureCommittedEpoch": 0,
+  "ownerProgressSession": 1,
+  "epoch": 1,
+  "recoveryHandshake": "NOT_REACHED (no resource commit)"
+ },
+ "conclusion": "CREATE_WAIT stall persists under reworked facility; block is in resource-creation domain BEFORE recovery handshake - recovery-entry rework cannot engage; per T620 step4 rule (must prove resource stage before another arm), stopped at one fixed arm",
+ "next": "architect: resource-creation stall point needs product-side diagnosis (glDispatchCompute callId chain captured previously shows last unpaired dispatch 411; resource commit never lands despite correct handshake preconditions)"
+}
