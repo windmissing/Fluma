@@ -1,0 +1,71 @@
+{
+  "schema": "T649_T651_ARCHITECT_DELIVERY_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "engineeringCommit": "cd4f395",
+  "status": "结束待验收",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "productPassClaimed": false,
+  "finiteChecks": "saved artifacts, archive ELF/ABC equality, listed source identities, samples and finite observation layouts",
+  "statusEvidence": "docs/analysis-T649-T651-status-v1.json",
+  "tasks": [
+    {
+      "task": "T650",
+      "taskId": "6afe7f2de4b004b3f884bd60",
+      "document": "docs/architecture-T650-v1.md",
+      "contract": "docs/architecture-T650-contract-v1.json",
+      "evidence": "docs/analysis-T650-evidence-v1.json",
+      "comment": {
+        "id": "6afe8878e4b059b97420869b",
+        "userId": 1010673194,
+        "title": "T650 architect完整归因/工程稿已交，不使用真机，提交cd4f395。docs/architecture-T650-v1.md、contract/evidence及共用analysis-T649-T651脚本/retro。勘误：源码在Controller Configure、scene程序/目标与Current核通过后先赋m5Controller，才写M5_WAIT_PAGE_PULSE；m5Pulse直接调用控制器Pulse，并非等待GL消费后构造。REQUESTED只证受理；attempt4配置与1361冷查询不可拼成终态，未证surface/EGL或同G13根因。实际bc4c→8348签包与T619旧HAP717e不同，ELF92fe/ABC签前后相同但部分m3b源码零diff不足证完整bridge/生成链。已定义16KiB固定配置ticket阶段观测/全字段/独立锁/有界页面启动与原错（无新GL查询、fence、热IO），交developer；另确有word15==0/PREFIX_IDENTITY_CONTRACT_REQUIRED遗留，按T619完整FULL合同修，不能仅删门或冒本次flag0 NOT_READY根因。tester可先取既有同配置status/session/input/pulse/身份原件；T594 ROOT/FULL四档/61段/token/reader仍未行使，不再重复空INCOMPLETE档。有限包源/布局检查PASS，无产品构建/测试/真机；本卡范围完成，本人行结束待验收，无新增manager/开发设备门。",
+        "modifiedTime": "2026-11-19T05:26:16+0000",
+        "createdTime": "2026-11-19T05:26:16+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "REPORT_CORRECTION_MINIMAL_PRODUCT_OBSERVABILITY_AND_FULL_GUARD_HANDOFF"
+    },
+    {
+      "task": "T651",
+      "taskId": "6afe7f2de4b004b3f884bd61",
+      "document": "docs/architecture-T651-v1.md",
+      "contract": "docs/architecture-T651-contract-v1.json",
+      "evidence": "docs/analysis-T651-evidence-v1.json",
+      "comment": {
+        "id": "6afe8878e4b0dc337ea6d612",
+        "userId": 1010673194,
+        "title": "T651 architect首次归因已交，不使用真机，提交cd4f395。docs/architecture-T651-v1.md、contract/evidence、共用analysis脚本与retro。64样本确为52+12个NO_CREATE_ATTEMPT；独立T591Probe无真正M2 XComponent，newRun仅invalidate，不足证创建中只读通道堵塞或漏Finish。现有m2CreateDiagnostics/Log独立Store mutex且不取App锁，先由tester把collector嵌入真实GpuResidentM1/M2页，在创建前arm，保原route/active/session/窗口。已列设施缺陷：native是bootSerial字符串，regex numeric serial/Number不匹配且丢U64；sealed/nativeEndNs终态不可用code0/endNs猜；120/80/1400截屏片段非完整原件；64 tick两读是128调用。续办合同总≤60s、全部native查询合计≤64、记录≤16KiB/目录≤1MiB含索引，完整原串分块SHA、固定新serial/进程模块身份、真实Finish或OPEN_CALL/PROCESS_LOST。当前未触发T622产品三槽/非GL fallback，不派物理返修或新线程；真正同attempt通道阻断有原件再回architect。有限源码/保存样本检查PASS，未运行产品/真机；本人行结束待验收，不改其它队列/滴答同名清单。",
+        "modifiedTime": "2026-11-19T05:26:16+0000",
+        "createdTime": "2026-11-19T05:26:16+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "TESTER_SAME_PAGE_COLLECTOR_REPAIR_NO_FALLBACK_TRIGGER"
+    },
+    {
+      "task": "T649",
+      "taskId": "6afe7f2de4b0dc337ea62de0",
+      "document": "docs/architecture-T649-v1.md",
+      "contract": "docs/architecture-T649-contract-v1.json",
+      "evidence": "docs/analysis-T649-evidence-v1.json",
+      "comment": {
+        "id": "6afe8878e4b0680b8cd805db",
+        "userId": 1010673194,
+        "title": "T649 architect首次归因/补证合同已交，不使用真机，提交cd4f395。docs/architecture-T649-v1.md、contract/evidence与共用analysis脚本。确认CONFIGURE_ERROR_29失败，但CAPABILITY:EXIT在实际阈值判定之前，不证明门合格/进入PROGRAM_BUILD；handledTicket仅COMPUTE_READY后赋0不能当未出队。目录只有281/319B摘要与页面树，无4页base64/32KiB raw，rawBytes32768只是容量声明；sampleSeq只计Stage，不是全部payload版本。已核2008→8e5签包、包内ELF403b/ABC签前后一致、隔离T638源收据一致；maps是4同inode文件映射+1匿名BSS，不冒已加载字节SHA。交tester先复用活attempt232读完整g13Status native.capability/compile及4页g13InitDiagnostics，按ABI核ConfigTicket/原Config128、全部能力原值/要求/原GL与stage身份/source/log，最多3轮并保逐页采样；缺原值不放宽精度/资源门、不改shader、不泛派产品stage。进程已失才单次新attempt补缺项，不拼旧232；真资源/数学约束待原件交designer，工程缺陷先改文档转developer。T643有限采证交付可关闭，T609/T610完整物理/显示仍未行使。有限检查PASS，未构建/运行产品或真机；本人行结束待验收。",
+        "modifiedTime": "2026-11-19T05:26:16+0000",
+        "createdTime": "2026-11-19T05:26:16+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "TESTER_EXACT_EXISTING_CAPABILITY_AND_RAW_PAGE_EVIDENCE"
+    }
+  ],
+  "otherQueueRowsChanged": false,
+  "didaSameNameListChanged": false
+}
