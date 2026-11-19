@@ -1,0 +1,46 @@
+{
+ "revision": "T541_V2_SPF_BASELINE_DEVICE_V1",
+ "date": "2026-11-20",
+ "package": {
+  "task": "T670-spf-final",
+  "signedSha": "f1994d312dabd024240ae88cf547c525b74fffbb4555708ccc7ff13f3dec25ca"
+ },
+ "dmDefect": {
+  "package": "T670-dm-final",
+  "missing": "libgrsm0.so+libgrsm1.so in HAP (only libgrs_dm_t647.so present)",
+  "crash": "jscrash Cannot read property setActive of undefined at onForeground (dlopen failed grsm0+grsm1)",
+  "route": "T670 build defect -> manager/architect"
+ },
+ "spfBaseline": {
+  "pid": 62965,
+  "buildProfile": "T456_EXPERIMENT",
+  "clock": "GRS_M1_PROGRESS_CLOCK_V2",
+  "recovery": {
+   "phase": "RESET_REQUESTED",
+   "reason": "WAIT_RETIRED",
+   "firstReason": "WINDOW_OR_PAGE_CHANGED"
+  },
+  "attempts": [
+   {
+    "bootSerial": 1,
+    "terminal": true,
+    "complete": true,
+    "firstFailure": "SURFACE_CREATED"
+   },
+   {
+    "bootSerial": 2,
+    "terminal": true,
+    "complete": true,
+    "firstFailure": "RESET_REQUIRED"
+   },
+   {
+    "bootSerial": 3,
+    "terminal": true,
+    "complete": true,
+    "firstFailure": "UI_RESET"
+   }
+  ],
+  "uiState": "RESET_REQUESTED held, physics 0:0, source receipt #0"
+ },
+ "interpretation": "spf-final loads clean (M1 page normal, CLOCK_V2); all three attempts terminal but stuck at RESET_REQUESTED/WAIT_RETIRED \u2014 retire of old resources not completing; three-state differential: DM arm NOT_RUN (package defect), SPF arm baseline captured"
+}

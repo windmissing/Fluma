@@ -1,0 +1,554 @@
+User ID #100
+  current mission lists:{
+    Mission ID #149  mission name #[#com.huawei.ohos.watt:entry:EntryAbility]  lockedState #0  mission affinity #[]
+      AbilityRecord ID #948
+        app name [com.huawei.ohos.watt]
+        main name [EntryAbility]
+        bundle name [com.huawei.ohos.watt]
+        ability type [PAGE]
+        state #BACKGROUND  start time [23429095]
+        app state #BACKGROUND
+        ready #1  window attached #0  launcher #0
+        callee connections: 
+        isKeepAlive: false
+    Mission ID #461  mission name #[#com.example.physics_test:entry:EntryAbility]  lockedState #0  mission affinity #[]
+      AbilityRecord ID #3419
+        app name [com.example.physics_test]
+        main name [EntryAbility]
+        bundle name [com.example.physics_test]
+        ability type [PAGE]
+        state #BACKGROUND  start time [162168332]
+        app state #BACKGROUND
+        ready #1  window attached #0  launcher #0
+        callee connections: 
+        isKeepAlive: false
+    Mission ID #673  mission name #[#com.huawei.hmsapp.gamecenter:entry:EntryAbility]  lockedState #0  mission affinity #[]
+      AbilityRecord ID #6086
+        app name [com.huawei.hmsapp.gamecenter]
+        main name [EntryAbility]
+        bundle name [com.huawei.hmsapp.gamecenter]
+        ability type [PAGE]
+        state #FOREGROUND  start time [326535234]
+        app state #FOREGROUND
+        ready #1  window attached #0  launcher #0
+        callee connections: 
+        isKeepAlive: false
+ }
+  ExtensionRecords:
+    uri [/com.huawei.hmos.aidataservice/entry/AiDataServiceAbility]
+      AbilityRecord ID #12   state #ACTIVE   start time [52801]
+      main name [AiDataServiceAbility]
+      bundle name [com.huawei.hmos.aidataservice]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 4
+       > com.huawei.hmos.aidataservice/AiDataServiceAbility   connectionState #CONNECTED
+       > com.huawei.hmos.aidataservice/AiDataServiceAbility   connectionState #CONNECTED
+       > com.huawei.hmos.aidataservice/AiDataServiceAbility   connectionState #CONNECTED
+       > com.huawei.hmos.aidataservice/AiDataServiceAbility   connectionState #CONNECTED
+    uri [/com.huawei.hmos.aidispatchservice/entry/AiDispatchNotifyAbility]
+      AbilityRecord ID #6107   state #ACTIVE   start time [326805539]
+      main name [AiDispatchNotifyAbility]
+      bundle name [com.huawei.hmos.aidispatchservice]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 1
+       > com.huawei.hmos.aidispatchservice/AiDispatchNotifyAbility   connectionState #CONNECTED
+    uri [/com.huawei.hmos.aidispatchservice/entry/AiDispatchRemoteAbility]
+      AbilityRecord ID #11   state #ACTIVE   start time [52798]
+      main name [AiDispatchRemoteAbility]
+      bundle name [com.huawei.hmos.aidispatchservice]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 0
+    uri [/com.huawei.hmos.inputmethod/default/InputService]
+      AbilityRecord ID #1422   state #ACTIVE   start time [27769607]
+      main name [InputService]
+      bundle name [com.huawei.hmos.inputmethod]
+      ability type [SERVICE]
+      app state #BACKGROUND
+        isKeepAlive: false
+      Connections: 1
+       > com.huawei.hmos.inputmethod/InputService   connectionState #CONNECTED
+    uri [/com.huawei.hmos.spamshield/phone/DataExtAbility]
+      AbilityRecord ID #2216   state #ACTIVE   start time [81220118]
+      main name [DataExtAbility]
+      bundle name [com.huawei.hmos.spamshield]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: false
+      Connections: 1
+       > com.huawei.hmos.spamshield/DataExtAbility   connectionState #CONNECTED
+    uri [/com.huawei.hms.adsservice/ads_service/AdsCommonService]
+      AbilityRecord ID #13   state #ACTIVE   start time [52812]
+      main name [AdsCommonService]
+      bundle name [com.huawei.hms.adsservice]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 0
+    uri [/com.huawei.hms.pafservice/PAFServiceMain/PAFCoreServiceExtensionAbility]
+      AbilityRecord ID #262   state #ACTIVE   start time [789913]
+      main name [PAFCoreServiceExtensionAbility]
+      bundle name [com.huawei.hms.pafservice]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 0
+    uri [/com.huawei.hmsapp.adminprovisioning/phone/AfterOobeServiceExtAbility]
+      AbilityRecord ID #264   state #ACTIVE   start time [789972]
+      main name [AfterOobeServiceExtAbility]
+      bundle name [com.huawei.hmsapp.adminprovisioning]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: false
+      Connections: 1
+       > com.huawei.hmsapp.adminprovisioning/AfterOobeServiceExtAbility   connectionState #CONNECTED
+    uri [/com.huawei.hmsapp.intelligent/service/ResidentServiceAbility]
+      AbilityRecord ID #14   state #ACTIVE   start time [52816]
+      main name [ResidentServiceAbility]
+      bundle name [com.huawei.hmsapp.intelligent]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 0
+    uri [/com.ohos.FusionSearch/core/CoreAbility]
+      AbilityRecord ID #138   state #ACTIVE   start time [278689]
+      main name [CoreAbility]
+      bundle name [com.ohos.FusionSearch]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 0
+    uri [/com.ohos.formrenderservice/entry/ServiceExtension0]
+      AbilityRecord ID #95   state #ACTIVE   start time [65919]
+      main name [ServiceExtension]
+      bundle name [com.ohos.formrenderservice]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: false
+      Connections: 11
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+       > com.ohos.formrenderservice/ServiceExtension   connectionState #CONNECTED
+    uri [/com.ohos.medialibrary.medialibrarydata/entry/DataShareExtAbility]
+      AbilityRecord ID #9   state #ACTIVE   start time [52623]
+      main name [DataShareExtAbility]
+      bundle name [com.ohos.medialibrary.medialibrarydata]
+      ability type [SERVICE]
+      app state #BEGIN
+        isKeepAlive: false
+      Connections: 2
+       > com.ohos.medialibrary.medialibrarydata/DataShareExtAbility   connectionState #CONNECTED
+       > com.ohos.medialibrary.medialibrarydata/DataShareExtAbility   connectionState #CONNECTED
+    uri [/com.ohos.sceneboard/engineservice/EngineServiceAbility1]
+      AbilityRecord ID #76   state #FOREGROUND   start time [57612]
+      main name [EngineServiceAbility]
+      bundle name [com.ohos.sceneboard]
+      ability type [UIEXTENSION]
+      app state #FOREGROUND
+        isKeepAlive: true
+      Connections: 0
+      root host bundle name [com.ohos.sceneboard]
+      root host module name [phone_sceneboard]
+      root host ability name [com.ohos.sceneboard.MainAbility]
+      pid: 12556
+    uri [/com.ohos.sceneboard/phone_sceneboard/ImmersiveServiceExtAbility]
+      AbilityRecord ID #71   state #ACTIVE   start time [57054]
+      main name [ImmersiveServiceExtAbility]
+      bundle name [com.ohos.sceneboard]
+      ability type [SERVICE]
+      app state #FOREGROUND
+        isKeepAlive: true
+      Connections: 1
+       > com.ohos.sceneboard/ImmersiveServiceExtAbility   connectionState #CONNECTED
+    uri [/com.ohos.sceneboard/phone_sceneboard/com.ohos.sceneboard.MainAbility]
+      AbilityRecord ID #7   state #ACTIVE   start time [52563]
+      main name [com.ohos.sceneboard.MainAbility]
+      bundle name [com.ohos.sceneboard]
+      ability type [SERVICE]
+      app state #FOREGROUND
+        isKeepAlive: true
+      Connections: 0
+    uri [/com.ohos.sceneboard/themecomponent/ScreenLockEditUIExtAbility15]
+      AbilityRecord ID #416   state #INACTIVE   start time [820943]
+      main name [ScreenLockEditUIExtAbility]
+      bundle name [com.ohos.sceneboard]
+      ability type [UIEXTENSION]
+      app state #BEGIN
+        isKeepAlive: true
+      Connections: 0
+      pid: 44877
+    uri [/com.ohos.sceneboard/themeservice_core/ThemeServiceAbility]
+      AbilityRecord ID #18   state #ACTIVE   start time [53632]
+      main name [ThemeServiceAbility]
+      bundle name [com.ohos.sceneboard]
+      ability type [SERVICE]
+      app state #FOREGROUND
+        isKeepAlive: true
+      Connections: 0
+    PendingWantRecords:
+        PendWantRecord ID #61  type #1
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/com.huawei.hmos.advisor.JumpAbility]
+          resolved types []
+        PendWantRecord ID #60  type #1
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.tips/]
+          resolved types []
+        PendWantRecord ID #9  type #3
+        bundle name [com.huawei.hmos.emergencycommunication]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.emergencycommunication/com.huawei.hmos.emergencycommunication.ServiceExtAbility]
+          resolved types []
+        PendWantRecord ID #16  type #3
+        bundle name [com.huawei.hmos.AutoRegService]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.AutoRegService/AutoRegServiceAbilities]
+          resolved types []
+        PendWantRecord ID #56  type #1
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.tips/]
+          resolved types []
+        PendWantRecord ID #1  type #4
+        bundle name []
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [///]
+          resolved types []
+        PendWantRecord ID #57  type #1
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/com.huawei.hmos.advisor.JumpAbility]
+          resolved types []
+        PendWantRecord ID #65  type #1
+        bundle name [com.huawei.hmos.parentcontrol]
+        result who []
+        request code #10  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.parentcontrol/ServiceExtAbility]
+          resolved types []
+        PendWantRecord ID #52  type #3
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/AdvisorService]
+          resolved types []
+        PendWantRecord ID #58  type #3
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/AdvisorService]
+          resolved types []
+        PendWantRecord ID #64  type #1
+        bundle name [com.huawei.hmos.parentcontrol]
+        result who []
+        request code #10  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.settings/com.huawei.hmos.settings.MainAbility]
+          resolved types []
+        PendWantRecord ID #7  type #4
+        bundle name [com.ohos.locationdialog]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [///]
+          resolved types []
+        PendWantRecord ID #2  type #1
+        bundle name [com.usb.right]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.usb.right/EntryAbility]
+          resolved types []
+        PendWantRecord ID #20  type #1
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/com.huawei.hmos.advisor.JumpAbility]
+          resolved types []
+        PendWantRecord ID #11  type #3
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/AdvisorService]
+          resolved types []
+        PendWantRecord ID #12  type #3
+        bundle name [com.huawei.hmos.emergencycommunication]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.emergencycommunication/com.huawei.hmos.emergencycommunication.ServiceExtAbility]
+          resolved types []
+        PendWantRecord ID #14  type #3
+        bundle name [com.huawei.hmos.AutoRegService]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.AutoRegService/AutoRegServiceAbilities]
+          resolved types []
+        PendWantRecord ID #13  type #3
+        bundle name [com.huawei.hmos.AutoRegService]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.AutoRegService/AutoRegServiceAbilities]
+          resolved types []
+        PendWantRecord ID #19  type #1
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.tips/]
+          resolved types []
+        PendWantRecord ID #3  type #1
+        bundle name [com.huawei.hmos.settings]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.settings/com.huawei.hmos.settings.MainAbility]
+          resolved types []
+        PendWantRecord ID #17  type #3
+        bundle name [com.huawei.hmos.AutoRegService]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.AutoRegService/AutoRegServiceAbilities]
+          resolved types []
+        PendWantRecord ID #26  type #0
+        bundle name []
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [///]
+          resolved types []
+        PendWantRecord ID #15  type #3
+        bundle name [com.huawei.hmos.AutoRegService]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.AutoRegService/AutoRegServiceAbilities]
+          resolved types []
+        PendWantRecord ID #4  type #3
+        bundle name [com.huawei.hmos.clock]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.clock/MainProcessClockService]
+          resolved types []
+        PendWantRecord ID #10  type #1
+        bundle name [com.huawei.hmos.parentcontrol]
+        result who []
+        request code #10  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.minorsprotection/MinorsUIAbility]
+          resolved types []
+        PendWantRecord ID #8  type #3
+        bundle name [com.huawei.hmos.restores]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.restores/ScheduledTaskServiceAbility]
+          resolved types []
+        PendWantRecord ID #68  type #4
+        bundle name []
+        result who []
+        request code #0  flags #268435456
+        resolved type []
+        Wants:
+          uri [///]
+          resolved types []
+        PendWantRecord ID #21  type #3
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/AdvisorService]
+          resolved types []
+        PendWantRecord ID #18  type #3
+        bundle name [com.huawei.hmos.AutoRegService]
+        result who []
+        request code #0  flags #134217728
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.AutoRegService/AutoRegServiceAbilities]
+          resolved types []
+        PendWantRecord ID #54  type #3
+        bundle name [com.huawei.hmos.advisor]
+        result who []
+        request code #0  flags #67108864
+        resolved type []
+        Wants:
+          uri [//com.huawei.hmos.advisor/AdvisorService]
+          resolved types []
+  AppRunningRecords:
+    AppRunningRecord ID #0
+      process name [com.huawei.hmos.location]
+      pid #5379  uid #20008
+      state #READY
+    AppRunningRecord ID #1
+      process name [com.ohos.settingsdata]
+      pid #5393  uid #20005
+      state #READY
+    AppRunningRecord ID #2
+      process name [com.huawei.hmsapp.samplemanagement]
+      pid #5402  uid #20002
+      state #READY
+    AppRunningRecord ID #3
+      process name [com.huawei.hms.pushservice]
+      pid #7825  uid #20007
+      state #READY
+    AppRunningRecord ID #4
+      process name [com.ohos.sceneboard]
+      pid #11085  uid #20020040
+      state #FOREGROUND
+      uiextension provider #0
+        pid #12556
+      uiextension provider #1
+        pid #44877
+    AppRunningRecord ID #5
+      process name [com.ohos.medialibrary.medialibrarydata]
+      pid #11187  uid #20020126
+      state #READY
+    AppRunningRecord ID #6
+      process name [com.huawei.hmos.aidispatchservice]
+      pid #11256  uid #20020021
+      state #READY
+    AppRunningRecord ID #7
+      process name [com.huawei.hmos.aidataservice]
+      pid #11291  uid #20020017
+      state #READY
+    AppRunningRecord ID #8
+      process name [com.huawei.hms.adsservice]
+      pid #11311  uid #20020039
+      state #READY
+    AppRunningRecord ID #9
+      process name [com.huawei.hmsapp.intelligent]
+      pid #11337  uid #20020015
+      state #READY
+    AppRunningRecord ID #10
+      process name [com.ohos.sceneboard:EngineServiceAbility:1]
+      pid #12556  uid #20020040
+      state #FOREGROUND
+      root caller #0
+        pid #11085
+    AppRunningRecord ID #11
+      process name [com.ohos.formrenderservice]
+      pid #13965  uid #20020223
+      state #READY
+    AppRunningRecord ID #12
+      process name [com.ohos.FusionSearch]
+      pid #19012  uid #20020027
+      state #READY
+    AppRunningRecord ID #13
+      process name [com.huawei.hms.pafservice]
+      pid #36633  uid #20020030
+      state #READY
+    AppRunningRecord ID #14
+      process name [com.huawei.hmsapp.adminprovisioning]
+      pid #36672  uid #20020170
+      state #READY
+    AppRunningRecord ID #15
+      process name [com.huawei.shell_assistant]
+      pid #43121  uid #20006
+      state #READY
+    AppRunningRecord ID #16
+      process name [com.ohos.sceneboard:ScreenLockEditUIExtAbility:15]
+      pid #44877  uid #20020040
+      state #READY
+      root caller #0
+        pid #11085
+    AppRunningRecord ID #17
+      process name [com.jd.hm.mall]
+      pid #29060  uid #20020064
+      state #READY
+    AppRunningRecord ID #18
+      process name [com.huawei.ohos.watt]
+      pid #38091  uid #20020229
+      state #BACKGROUND
+    AppRunningRecord ID #19
+      process name [com.taobao.taobao4hmos]
+      pid #38511  uid #20020042
+      state #READY
+    AppRunningRecord ID #20
+      process name [com.huawei.hmsapp.music]
+      pid #26449  uid #20020072
+      state #READY
+    AppRunningRecord ID #21
+      process name [com.huawei.hmos.inputmethod:inputMethod]
+      pid #57970  uid #20020034
+      state #BACKGROUND
+    AppRunningRecord ID #22
+      process name [com.huawei.hmos.spamshield]
+      pid #36682  uid #20020114
+      state #READY
+    AppRunningRecord ID #23
+      process name [com.example.physics_test]
+      pid #24224  uid #20020228
+      state #BACKGROUND
+    AppRunningRecord ID #24
+      process name [com.huawei.hmos.camera]
+      pid #59901  uid #20020045
+      state #READY
+    AppRunningRecord ID #25
+      process name [com.huawei.hmsapp.gamecenter]
+      pid #55272  uid #20020089
+      state #FOREGROUND
