@@ -33,3 +33,8 @@ T462原raw log保在Store，不复制第二套history。文件在UI锁外异步�
 只有该新证据成立才启用T622的非GL线程/外读三槽固定快照、≤64KiB/每页16KiB、锁序与atomic发布工程；当前不将其作为开发或T591开工前置，不授权泛化落盘系统。若需新产品接口，必须先正式定义所选字段/截断、真实sizeof（不能复制三份可能超过64KiB的完整Attempt）、源/模块身份、失败原码和Finish切点，再developer；不把测试夹具交开发。现有32/64KiB fallback只是条件方案，不是本卡未完成项。
 
 本卡已完成首次归因及精确原卡续办。T591 create终态、实际开放调用等待、M2编译/资源/恢复/物理指标仍未测；64个空样本不是产品PASS。执行要么完成当前范围/本角色必要检查，要么遇确实无法继续的问题并完整回执才停，不能做一点就停；局部受阻先做其余。失败列未完/复现原错/证据/已试/不能继续原因/前置与角色，原卡评论并本人行看评论，成功结束待验收。不允许修改D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态例外），不改其它列/他行/队列或滴答同名清单。GPU驻留、CPU停投、仅XComponent+shader前背景，FAULT或明确STALE，禁Canvas/软件GL回退；目标10/旧湿M1暂缓，水线13→14→12。开发仅编译交付，tester/effector签名部署执行、真机串行；不加manager或开发设备门。
+
+
+## 2026-11-19 T662 采集终态/预算及最小生产接缝修订
+
+[T662](architecture-T662-v1.md) 重算原件103行：40诊断+24log恰64次，38条TERMINAL_SEEN全为键名误判；末态仅开放LINK。现有LINK阶段包围link/status/error等多API，精确首未返API缺生产点，正式冻结每attempt128B ApiCursor（3份新增payload384B）供developer，不新加GL查询/线程/外部三槽；tester原T591修终态/UTF8/原返回/总预算并补精确cursor原件。沿本卡真实同页collector及全部既有预算，不延长等待冒根治，不把平台/attempt统一根因。

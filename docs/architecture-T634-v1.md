@@ -58,3 +58,8 @@ glyph8精确为[oldXQ24,oldYQ23,newXQ24,newYQ23,kindFlags,blendQ16,oldPacketMass
 developer按上表W01–W12及T563完成入口/实际parent adapter/marker与计划/typed事务/scene/真实cold，维护生成链与native/GLSL/reader同一ABI并编译；不能仅提交配置壳或NotImplemented就称整卡完成。T629共用reader和T630实际provider取证并行，G11接线不等待设备先通过。T600/T601等真实非空组合帧再做父ON/OFF逐word、位18/19负控、同token像素与真实效果；编译或生成行数不冒PASS。任何缺真实父接口可做范围继续、具体阻断回architect，不退旧CPU CA或扩大CPU线。
 
 本稿与`architecture-T634-composite-closure-v1.json`补充T563，未改变其算法/阈值/资源表。完整执行prompt约束见`architecture-T633-T636-execution-boundaries-v1.md`。
+
+
+## 2026-11-19 T660 接续修订
+
+W05/W10/W12的实际视觉seed、旧P ghost持久字段/身份与冷信用歧义已由 [T660](architecture-T660-v1.md) / [v2机器表](architecture-T660-g11-manifest-v2.json) 精确冻结。消费T648真实双父proof，原T639续全部未完范围；不能以旧seed未知零、blend0替代默认256、共享glyph冒独立replay。原父/Expected/联合提交门不放宽。此为工程修订交付，现有候选rev1尚待实施；不添真机/manager开发关闭门。

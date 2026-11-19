@@ -1,0 +1,45 @@
+{
+  "schema": "G11_VISUAL_RECIPE_V2",
+  "markerWords": 32,
+  "glyphWords": 8,
+  "sampling": {
+    "M": "V/128",
+    "xi": "(2*j+1)/(2*M)",
+    "eta": "(2*min(j,M-1-j)+1)/M",
+    "appearanceKey": "(M<<16)|min(j,M-1-j)",
+    "inventoryOrder": [
+      "S bottom-to-top",
+      "F physical map order",
+      "P physical slot order at actual x column"
+    ],
+    "refill": "accepted event/column order then INACTIVE slot order; j=slot%M; no periodic refill"
+  },
+  "blendTicks": [
+    0,
+    256
+  ],
+  "depthQ20": 131072,
+  "diameterQ20": 32768,
+  "speed": [
+    1,
+    1
+  ],
+  "minimumSpeedQ20": 0,
+  "alphaMax": "1/2",
+  "linearContrastMax": "2/25",
+  "physicalSource": "exact sealed final per-origin accepted shares and conversions only",
+  "algorithmRevision": 1,
+  "markerRevision": 2,
+  "planRevision": 1,
+  "sceneRevision": 2,
+  "persistentGhost": {
+    "massWord": 30,
+    "identityWords": [
+      3,
+      4,
+      5
+    ],
+    "source": "sealed CAPTURE event64[15]; independently produced per role",
+    "noPhysicalAlgorithmChange": true
+  }
+}

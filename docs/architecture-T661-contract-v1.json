@@ -1,0 +1,60 @@
+{
+  "schema": "T661_G13_SAME_PAGE_CAPTURE_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productCodeChanged": false,
+  "productPASS": false,
+  "verdict": "TESTER_FIXTURE_AND_IDENTITY_GAP",
+  "evidence": "docs/analysis-T661-evidence-v1.json",
+  "error29PriorObservedDomain": "CAPABILITY:EXIT in boot271023133916096/attempt209 and boot271319633950940/attempt110; raw failing values NOT_CAPTURED",
+  "old232": "DIFFERENT_ATTEMPT_PROCESS_DEAD",
+  "probe7": {
+    "boot": "271944415857815",
+    "configureReturnedAttempt": "1",
+    "statusApiInvocationId": "2",
+    "statusApiInvocationIdIsConfigTicket": false,
+    "statusCharactersSaved": 600,
+    "statusCompleteJSON": false,
+    "page0and3CharactersLimit": 2400,
+    "page1and2RawSaved": false
+  },
+  "endpoint": {
+    "name": "g13InitDiagnostics",
+    "arguments": ["full decimal U64 string attempt, 0 discovers latest", "integer Number page 0..3"],
+    "acceptance": "currentConfigTicket.attempt OR firstFailureAttempt; queuedTicket does not imply active ticket",
+    "rawPageBytes": 8192,
+    "pages": 4,
+    "mutex": "existing independent InitDiagnostic Store mutex",
+    "newGLQueries": 0,
+    "newProductThread": false,
+    "newEndpoint": false
+  },
+  "segments": [
+    {"name": "decode", "byteRange": [0, 4096], "count": 4, "stride": 1024},
+    {"name": "stages", "byteRange": [4096, 20480], "count": 64, "stride": 256},
+    {"name": "logs", "byteRange": [20480, 28672], "count": 2, "stride": 4096},
+    {"name": "control", "byteRange": [28672, 32768], "count": 1, "stride": 4096}
+  ],
+  "collector": {
+    "owner": "original T654 tester",
+    "page": "actual GpuResidentG13 in actual G13ResearchAbility, same VM/module/window/context",
+    "configureCount": 1,
+    "rawCapture": "full original configure/status/page strings, exact UTF8; no slice or UI-only metadata",
+    "failureWindow": "no new configure/activation/pulse/route change or Stop before full capture",
+    "ticketSource": "actual configure reply and initialization firstFailureAttempt/current raw control, never g13Status.attemptId",
+    "maximumRounds": 3,
+    "maximumStatusCalls": 4,
+    "maximumJSONUTF8Bytes": 16384,
+    "maximumDirectoryBytesIncludingIndex": 1048576,
+    "anchorReadsCountAgainstBudget": true,
+    "decode": "strict base64->8192 bytes/page, save JSONSHA/decodedSHA/control anchors/Stage identities, unknown remains -1",
+    "sampleSeq": "Stage counter only, not total payload version or frozen 4-page guarantee",
+    "inconsistentSnapshot": "preserve all raw pages and report INCONSISTENT_SNAPSHOT; no stitched atomic-state PASS"
+  },
+  "capabilityGate": {"blocksMin": 4, "bindingsMin": 4, "invocationsMin": 64, "floatPrecisionMin": 23, "laneXMin": 64, "sharedMinBytes": 4096, "maxBlockMinBytes": "actual profile work words*4", "rawGL": 0, "numericalPassIsPhysicalPASS": false},
+  "seamEscalation": "only after correct same-page calls fail with same boot/ticket/start/end/error/window/context/owner/module evidence; architect defines exact bounded missing seam, no cross-domain M2 fallback",
+  "roles": {"tester": "fixture/sign/deploy/device capture", "developer": "only concrete demonstrated product gap, implementation+compile; no tester duties as closure gate"},
+  "render": "XComponent+shader only; FAULT or explicitly STALE; no Canvas/softwareGL product fallback",
+  "CPU": "STOPPED", "goal10": "PAUSED", "waterOrder": [13, 14, 12],
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。"
+}

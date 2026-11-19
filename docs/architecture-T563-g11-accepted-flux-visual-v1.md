@@ -121,3 +121,8 @@ GLSL接口按表生成 `visBeginBatch(role,micro,phase,oldBank)`、`visRecordFin
 初始化每列用真实库存累计域顺序S由床底到顶、F按原map顺序、P按真实slot顺序（物理x所在列），以η选择owner/来源与S垂向rank；F横向用ξ，P绑定真实slot/id/gen。appearanceSampleKey编码(M<<16)|pair，垂向η在初始化和后续投影始终相同。初始候选slot=c*M+j；补样只在真实SOURCE/新暴露阶段，按实际事件序/列序，再按INACTIVE slot序使用同j=slot%M配方，ID/counter基于各自BASE独立推进。不得借补样改已有marker或物理库存，补样导致的稀疏/镜像采样差单列而不冒物理tie修复。
 
 `python docs/analysis-T560-T563-engineering-checks-v1.py`只重建本轮新工程表。52,650个小整数rank分区/镜像关系、8,192个重投影误差关系、全部8个父/K/V资源档及完整父dispatch去钩子等价检查通过；这是有限规格代数/布局核对，不是GPU实测、物理oracle、产品PASS或新CPU投入。最大的DM K512 V8192已知GPU FULL+双cold+input/page包络632474752B；预约GPU/native witness后641920128B，另有driver/FBO/host等排除项。
+
+
+## 2026-11-19 T660 正式修订：实际 seed / marker rev2
+
+T660 已冻结首 claim 前视觉种子原件四段（CURRENT header512 + marker128V + Pstyle8192 + Config256）、既有 singlePhase witness 冷信用交接，以及 marker30旧P质量和3..5旧ghost身份union。当前工程权威为 [T660](architecture-T660-v1.md) 和 [完整v2机器表](architecture-T660-g11-manifest-v2.json)。config/marker/glyph/reader/bankHeader rev2；旧v1保留历史，不能私占reserved或混用旧生成物。T647 Expected224/尾256 ABI不变，928B上传正式占control61312..62240；布局预算不增，新增native receipt bookkeeping512B单列。原T639接续实现，不宣已实现或产品PASS。

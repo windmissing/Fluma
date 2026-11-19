@@ -1,0 +1,650 @@
+{
+  "schema": "T661_G13_CAPTURE_ATTRIBUTION_V1",
+  "notUsingDevice": true,
+  "captures": [
+    {
+      "path": "test/reports/t491/t654a/t654-capture1.txt",
+      "bytes": 1230,
+      "sha256": "0d7b7c69f5cfdcb08816103ead6f53347287825f1fb88486d8ca0e712c71d32b",
+      "statuses": [
+        {
+          "chars": 600,
+          "completeJSON": false,
+          "raw": "{\"route\":13,\"schema\":1,\"native\":{\"route\":13,\"schema\":1,\"fieldToken\":\"G13F1:271944415857815:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000\",\"coldToken\":\"G13R1:271944415857815:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560\",\"consumedSourceSeq\":\"0\",\"lastRoot\":{\"clock\":\"CLOCK_MONOTONIC\",\"nonce\":\"0\",\"plan\":\"0\",\"nativePollNs\":\"0\",\"startedNs\":\"0\",\"deadlineNs\":\"0\",\"nativeError\":0,\"nativeOutcome\":0,\"gpuTailAvailable\":false,\"domain\":\"PAGE_NATIVE_CONTROL\"},\"motionBits\":[],\"state\":\"UNCONFIGURED\",\"firstError\":0,\"commit\":\"0\",\"acceptedQuantum\":\"0\""
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/t654-capture2.txt",
+      "bytes": 2222,
+      "sha256": "fe4fb1e96460fef98b7cdfff0b838eb30fe8719a3d1503fd438e5e2fd6a53358",
+      "statuses": [
+        {
+          "chars": 600,
+          "completeJSON": false,
+          "raw": "{\"route\":13,\"schema\":1,\"native\":{\"route\":13,\"schema\":1,\"fieldToken\":\"G13F1:271944415857815:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000\",\"coldToken\":\"G13R1:271944415857815:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560\",\"consumedSourceSeq\":\"0\",\"lastRoot\":{\"clock\":\"CLOCK_MONOTONIC\",\"nonce\":\"0\",\"plan\":\"0\",\"nativePollNs\":\"0\",\"startedNs\":\"0\",\"deadlineNs\":\"0\",\"nativeError\":0,\"nativeOutcome\":0,\"gpuTailAvailable\":false,\"domain\":\"PAGE_NATIVE_CONTROL\"},\"motionBits\":[],\"state\":\"UNCONFIGURED\",\"firstError\":0,\"commit\":\"0\",\"acceptedQuantum\":\"0\""
+        },
+        {
+          "chars": 600,
+          "completeJSON": false,
+          "raw": "{\"route\":13,\"schema\":1,\"native\":{\"route\":13,\"schema\":1,\"fieldToken\":\"G13F1:271944415857815:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000\",\"coldToken\":\"G13R1:271944415857815:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560\",\"consumedSourceSeq\":\"0\",\"lastRoot\":{\"clock\":\"CLOCK_MONOTONIC\",\"nonce\":\"0\",\"plan\":\"0\",\"nativePollNs\":\"0\",\"startedNs\":\"0\",\"deadlineNs\":\"0\",\"nativeError\":0,\"nativeOutcome\":0,\"gpuTailAvailable\":false,\"domain\":\"PAGE_NATIVE_CONTROL\"},\"motionBits\":[],\"state\":\"UNCONFIGURED\",\"firstError\":0,\"commit\":\"0\",\"acceptedQuantum\":\"0\""
+        }
+      ]
+    }
+  ],
+  "uiOriginals": [
+    {
+      "path": "test/reports/t491/t654a/l1.json",
+      "bytes": 49243,
+      "sha256": "33772cc5d946acefada9e9253052e35adc425b0e13b8c1a0446532c1208263bd",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l2.json",
+      "bytes": 52238,
+      "sha256": "12b0754fd1f73a27b76f0505fc3b996d8556b2206c67d8fb38c372ec885b5f2a",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"CONFIG_FAILED\",\"lastProgress\":\"CAPABILITY:EXIT\",\"firstConfigFailure\":\"CONFIGURE_ERROR_29\",\"firstFailureAttempt\":\"209\",\"queuedTicket\":\"209\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "{\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271023133916096\",\"generation\":\"0\",\"attempt\":\"209\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLength\":512,\"lengthUnit\":\"BYTES\",\"normalizedElementCount\":128,\"providerProfileId\":\"T629:271075157257971:1\",\"providerEvidenceSHA\":\"4572741616dfbf78df0ccd9640e93a763332713a039f121129ee02aa9d1e0ee1\",\"providerQualification\":{\"schema\":\"T629_NATIVE_PROVIDER_QUALIFICATION_V1\",\"boot\":\"271075157257971\",\"interop\":\"NATIVE_STANDARD_TYPEDARRAY_API\",\"module\":\"/system/lib64/platformsdk/libace_napi.z.so\",\"symbol\":\"napi_get_typedarray_info\",\"symbolAddress\":\"386722057472\",\"sdkHeaderSHA\":\"7f86ceb77a2103eb4b4d394779c8e003b4323087df7ecee7b1c7c08ab6ee7ef2\",\"lengthUnit\":\"BYTES\",\"scopeStatus\":[0,0,0],\"samples\":[[1,1,1,1,0,0,0,0,1],[3,1,3,3,0,0,0,0,1],[1,2,2,2,0,0,0,0,1],[3,2,6,6,0,0,0,0,1],[1,4,4,4,0,0,0,0,1],[3,4,12,12,0,0,0,0,1],[1,4,4,4,0,0,0,0,1],[3,4,12,12,0,0,0,0,1]]},\"apiStatuses\":[0,0,0,0],\"backingBytes\":512},\"diagGeneration\":\"0\",\"attemptId\":\"209\",\"decodeStage\":\"STRING_COPY\",\"rawNapiStatus\":0}"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l3.json",
+      "bytes": 49243,
+      "sha256": "921dca4cee0f718f7334ff76e0b9f503b7087f037cf230b2e79497e77dec0a7a",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l4.json",
+      "bytes": 52238,
+      "sha256": "2ce3141f53bff239bef285b52e8f3e7a82c9dbe4fd234145d58d964de3d002f8",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"CONFIG_FAILED\",\"lastProgress\":\"CAPABILITY:EXIT\",\"firstConfigFailure\":\"CONFIGURE_ERROR_29\",\"firstFailureAttempt\":\"110\",\"queuedTicket\":\"110\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "{\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271319633950940\",\"generation\":\"0\",\"attempt\":\"110\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLength\":512,\"lengthUnit\":\"BYTES\",\"normalizedElementCount\":128,\"providerProfileId\":\"T629:271346816325158:1\",\"providerEvidenceSHA\":\"7f8a203277e154ea4e7e36bb72ff163f77bb304c2383e7e16c1e324711ce19f0\",\"providerQualification\":{\"schema\":\"T629_NATIVE_PROVIDER_QUALIFICATION_V1\",\"boot\":\"271346816325158\",\"interop\":\"NATIVE_STANDARD_TYPEDARRAY_API\",\"module\":\"/system/lib64/platformsdk/libace_napi.z.so\",\"symbol\":\"napi_get_typedarray_info\",\"symbolAddress\":\"386722057472\",\"sdkHeaderSHA\":\"7f86ceb77a2103eb4b4d394779c8e003b4323087df7ecee7b1c7c08ab6ee7ef2\",\"lengthUnit\":\"BYTES\",\"scopeStatus\":[0,0,0],\"samples\":[[1,1,1,1,0,0,0,0,1],[3,1,3,3,0,0,0,0,1],[1,2,2,2,0,0,0,0,1],[3,2,6,6,0,0,0,0,1],[1,4,4,4,0,0,0,0,1],[3,4,12,12,0,0,0,0,1],[1,4,4,4,0,0,0,0,1],[3,4,12,12,0,0,0,0,1]]},\"apiStatuses\":[0,0,0,0],\"backingBytes\":512},\"diagGeneration\":\"0\",\"attemptId\":\"110\",\"decodeStage\":\"STRING_COPY\",\"rawNapiStatus\":0}"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l5.json",
+      "bytes": 49243,
+      "sha256": "b720185764496327b0b08ba2e5141016edd7d15f4502dd5f97509a5999437b1e",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l6.json",
+      "bytes": 49243,
+      "sha256": "298bb5ab19312a4dce3db8d6c689aa886b08376d725187ab0d06de1b7276572d",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l7.json",
+      "bytes": 49243,
+      "sha256": "321ef35aa27e1e20a9288735c487b3a1add1e239cab5e50f9ef2a85065dec485",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l8.json",
+      "bytes": 49243,
+      "sha256": "68a54e24eda2187bdbbe0403121e63cbdeed2bb949404ba2eb9d581c055e4200",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/l9.json",
+      "bytes": 40267,
+      "sha256": "e1535fe234c63bf4ffdf25317f4e87a2e8aab54dfc7c72bcc89151f29bdae85c",
+      "relevantTexts": [
+        "attempt=110"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lA.json",
+      "bytes": 42147,
+      "sha256": "402ece8307db5690e3420027de4e07e28d1613e106f6040c8027998d16e60650",
+      "relevantTexts": [
+        "attempt=110\n[STATUS R1] {\"route\":13,\"schema\":1,\"native\":{},\"cold\":{},\"lastSourceReply\":{},\"scope\":{},\"lastCommand\":{},\"initialization\":{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1},\"api\":\"g13Status\",\"boot\":\"271724245495783\",\"diagGeneration\":\"0\",\"attemptId\":\"1\",\"decodeStage\":\"ENTER\",\"rawNapiStatus\":0}\n[P0 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P0] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}\n[P1 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P2 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P3 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P3] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lB.json",
+      "bytes": 40913,
+      "sha256": "c4c06e9716637d4b1d0568f14b5175920ec44555dc5eea318daad6b0a3ef14f6",
+      "relevantTexts": [
+        "attempt=1",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lC.json",
+      "bytes": 41437,
+      "sha256": "8ecbd997b34f926aab82c5a954fbc447581888bdfa04cc72c5465ffb58fa43c3",
+      "relevantTexts": [
+        "attempt=1\n[NEW ATTEMPT] {\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271944415857815\",\"generation\":\"0\",\"attempt\":\"1\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLeng\n[ATTEMPT] 2",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lD.json",
+      "bytes": 41437,
+      "sha256": "c3172e7e0b6547b60fec9774c6786e629f2ee3edd612ed71cb364d9ce0af9d3f",
+      "relevantTexts": [
+        "attempt=1\n[NEW ATTEMPT] {\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271944415857815\",\"generation\":\"0\",\"attempt\":\"1\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLeng\n[ATTEMPT] 2",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lE.json",
+      "bytes": 41437,
+      "sha256": "95199fb4b227daab716417977443274351ab0b1618e5a54e282c6ef845fff712",
+      "relevantTexts": [
+        "attempt=1\n[NEW ATTEMPT] {\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271944415857815\",\"generation\":\"0\",\"attempt\":\"1\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLeng\n[ATTEMPT] 2",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lF.json",
+      "bytes": 41437,
+      "sha256": "4bd7ab9f3cf935ec6c0c84da6a449ebf8b72557b3fe0ca8d6b88e5daf3ff4905",
+      "relevantTexts": [
+        "attempt=1\n[NEW ATTEMPT] {\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271944415857815\",\"generation\":\"0\",\"attempt\":\"1\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLeng\n[ATTEMPT] 2",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lG.json",
+      "bytes": 43583,
+      "sha256": "4fa1a62fe974661ed04646a9baf85b3ec4cafdb1d5abb239c8edd451cc074480",
+      "relevantTexts": [
+        "attempt=1\n[NEW ATTEMPT] {\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271944415857815\",\"generation\":\"0\",\"attempt\":\"1\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLeng\n[ATTEMPT] 2\n[STATUS R1] {\"route\":13,\"schema\":1,\"native\":{\"route\":13,\"schema\":1,\"fieldToken\":\"G13F1:271944415857815:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000\",\"coldToken\":\"G13R1:271944415857815:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560\",\"consumedSourceSeq\":\"0\",\"lastRoot\":{\"clock\":\"CLOCK_MONOTONIC\",\"nonce\":\"0\",\"plan\":\"0\",\"nativePollNs\":\"0\",\"startedNs\":\"0\",\"deadlineNs\":\"0\",\"nativeError\":0,\"nativeOutcome\":0,\"gpuTailAvailable\":false,\"domain\":\"PAGE_NATIVE_CONTROL\"},\"motionBits\":[],\"state\":\"UNCONFIGURED\",\"firstError\":0,\"commit\":\"0\",\"acceptedQuantum\":\"0\"\n[P0 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P0] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}\n[P1 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P2 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P3 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P3] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lH.json",
+      "bytes": 45731,
+      "sha256": "dd56f7dc1d30a1ebd0e01eec41f63ef820110d2cbee4c393cee54e78e46769bb",
+      "relevantTexts": [
+        "attempt=1\n[NEW ATTEMPT] {\"route\":13,\"schema\":1,\"api\":\"g13Configure\",\"state\":\"QUEUED\",\"error\":0,\"boot\":\"271944415857815\",\"generation\":\"0\",\"attempt\":\"1\",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":512,\"elementLeng\n[ATTEMPT] 2\n[STATUS R1] {\"route\":13,\"schema\":1,\"native\":{\"route\":13,\"schema\":1,\"fieldToken\":\"G13F1:271944415857815:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000\",\"coldToken\":\"G13R1:271944415857815:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560\",\"consumedSourceSeq\":\"0\",\"lastRoot\":{\"clock\":\"CLOCK_MONOTONIC\",\"nonce\":\"0\",\"plan\":\"0\",\"nativePollNs\":\"0\",\"startedNs\":\"0\",\"deadlineNs\":\"0\",\"nativeError\":0,\"nativeOutcome\":0,\"gpuTailAvailable\":false,\"domain\":\"PAGE_NATIVE_CONTROL\"},\"motionBits\":[],\"state\":\"UNCONFIGURED\",\"firstError\":0,\"commit\":\"0\",\"acceptedQuantum\":\"0\"\n[P0 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P0] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}\n[P1 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P2 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P3 R1] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P3] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}\n[STATUS R2] {\"route\":13,\"schema\":1,\"native\":{\"route\":13,\"schema\":1,\"fieldToken\":\"G13F1:271944415857815:0:0:0:0:0:0:0:0:0:0:0:0:0000000000000000000000000000000000000000000000000000000000000000\",\"coldToken\":\"G13R1:271944415857815:0:076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560\",\"consumedSourceSeq\":\"0\",\"lastRoot\":{\"clock\":\"CLOCK_MONOTONIC\",\"nonce\":\"0\",\"plan\":\"0\",\"nativePollNs\":\"0\",\"startedNs\":\"0\",\"deadlineNs\":\"0\",\"nativeError\":0,\"nativeOutcome\":0,\"gpuTailAvailable\":false,\"domain\":\"PAGE_NATIVE_CONTROL\"},\"motionBits\":[],\"state\":\"UNCONFIGURED\",\"firstError\":0,\"commit\":\"0\",\"acceptedQuantum\":\"0\"\n[P0 R2] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P0] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}\n[P1 R2] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P2 R2] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[P3 R2] len=33 keys=1 rawBytes=undefined sampleSeq=undefined stages=-1\n[FULL P3] {\"state\":\"STALE_ATTEMPT_OR_PAGE\"}",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lI.json",
+      "bytes": 40917,
+      "sha256": "b45383426d421b6d9116f15a0b5cba3343e766c85e56124ef4c370390fe16e15",
+      "relevantTexts": [
+        "attempt=110",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lJ.json",
+      "bytes": 40917,
+      "sha256": "f2fafb5f3a31e95a14e3c3cdaeadfda25178015e53a362e4ad1aa6baf6812c74",
+      "relevantTexts": [
+        "attempt=110",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lK.json",
+      "bytes": 40923,
+      "sha256": "1b6eba4f965bf5979b343af38a1958e218d34b53d606273550db21dc9714bef8",
+      "relevantTexts": [
+        "attempt=110",
+        "去G13配置",
+        "新attempt"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lL.json",
+      "bytes": 49253,
+      "sha256": "cb75cd363fa7a5249609c486dd5c31a12b8083e142756eb79e3b3a4bc363c382",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lM.json",
+      "bytes": 49253,
+      "sha256": "956efb157023d9e0a690e7069013669baee45ef91afdc4e1fc1614f01fa9f9a4",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lN.json",
+      "bytes": 49253,
+      "sha256": "d523aae7bf4de8a851cf3ad3371cc7379c93a853e99b25dd3674a68503d8fe03",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t654a/lO.json",
+      "bytes": 49253,
+      "sha256": "0b1020504cb1f8afd0def64fe67e8f9a425300f21f5781fb099dd74444614a96",
+      "relevantTexts": [
+        "G13 · 纯流场独立研究",
+        "{\"schema\":\"G13InitDiagnosticV1\",\"rawBytes\":32768,\"currentLifecycle\":\"UNCONFIGURED\",\"lastProgress\":\"\",\"firstConfigFailure\":\"\",\"firstFailureAttempt\":\"0\",\"queuedTicket\":\"0\",\"handledTicket\":\"0\",\"dropped\":0,\"truncated\":0,\"unobservedRaw\":-1}",
+        "G13 流场研究 OFF；设备资格与物理指标尚未验证"
+      ]
+    }
+  ],
+  "fixture": {
+    "path": ".codex/local-test/t638-delivery/entry/src/main/ets/pages/T654Probe.ets",
+    "bytes": 3578,
+    "sha256": "54edf4e6702515e7750bfcf28ccaf92d54279afa8b514c34de25ad54c0c7614e"
+  },
+  "fixtureDefects": [
+    "status.slice(0,600) truncates native.capability/initialization",
+    "first attemptId regex reads status API invocation id, not configure queued attempt",
+    "default110/209 are historical process-local ids",
+    "page1/2 body not persisted; page0/3 truncated to2400",
+    "router/new configure changes context rather than same-page stable failure read",
+    "no raw base64 decode/SHA/controlanchor files"
+  ],
+  "endpoint": {
+    "args": [
+      "decimal attempt string; 0 discovers latest",
+      "integer number page in[0,3]"
+    ],
+    "acceptedAttempt": "currentConfigTicket.attempt OR firstFailureAttempt; queuedTicket alone insufficient",
+    "return": "8192 raw bytes base64 plus metadata; independent Store mutex; no App/GL command"
+  },
+  "sourceFiles": [
+    {
+      "path": "docs/test-report-T654-v1.md",
+      "bytes": 2535,
+      "sha256": "b4ca860d73be39059a120903432d4ff3da675fc069b5611a39a4e00faba46e0b"
+    },
+    {
+      "path": ".codex/local-test/t638-delivery/entry/src/main/ets/entryability/G13ResearchAbility.ets",
+      "bytes": 1516,
+      "sha256": "a0c2cae5f69074564a225d4d7e6a6eedc28fd69f7e74d0706be38387e61ed617"
+    },
+    {
+      "path": "entry/src/main/ets/pages/GpuResidentG13.ets",
+      "bytes": 5769,
+      "sha256": "d5db76c00f9ff620f9b093fc5113d06753a82deea1fecf5e919acbc903489a3b"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h",
+      "bytes": 8729,
+      "sha256": "b3d02e5c94600d14845543a9686c1f755ebe3338b49c5400babe6873b147850a"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+      "bytes": 36635,
+      "sha256": "7947c63d2c3fa15768e0503667950dd58fc1d11e521020a8cbb642f5c8e1f4d8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "bytes": 21281,
+      "sha256": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407"
+    }
+  ],
+  "signedVersions": [
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe.json",
+        "bytes": 2289,
+        "sha256": "25ac1cad89f37077e846eba20a7d5a870eb76ba96b7ab0c01040506e2f58b985"
+      },
+      "expectedSignedSHA": "028f966d345f9b722fd30556bf60caa6e972c9b9c558245dd51403af50a61a8a",
+      "actualSignedSHA": "028f966d345f9b722fd30556bf60caa6e972c9b9c558245dd51403af50a61a8a",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2835660,
+          "sha256": "829b28e1159ba6bd2a1ffece29514487e437f38c5dd9e04bca7cbe9607fe9d61"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe2.json",
+        "bytes": 2292,
+        "sha256": "3ec4c3ba9a02fd444b4ce24776c3c94668937013212cc39af69f642991f1f48d"
+      },
+      "expectedSignedSHA": "7972339800a6d1beefbb789221b637c58318a15477fefa076f4732a5c0b7ad71",
+      "actualSignedSHA": "7972339800a6d1beefbb789221b637c58318a15477fefa076f4732a5c0b7ad71",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2835660,
+          "sha256": "829b28e1159ba6bd2a1ffece29514487e437f38c5dd9e04bca7cbe9607fe9d61"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe3.json",
+        "bytes": 2292,
+        "sha256": "72aaf2664ea53201667396f88cf45c1597cbf912dd7727771b96a1befae9b18f"
+      },
+      "expectedSignedSHA": "4100795b040c5ddd9048284f3e94cf34bb5e5251405688fbfdd784fed3894e3a",
+      "actualSignedSHA": "4100795b040c5ddd9048284f3e94cf34bb5e5251405688fbfdd784fed3894e3a",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2836168,
+          "sha256": "f9592a484011a94e1ecd153a95bd9f93439396699005cb6856ab671e5c33f027"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe4.json",
+        "bytes": 2292,
+        "sha256": "645953d239639161875524fc7b432e866ac25420e69822af095c5573646de619"
+      },
+      "expectedSignedSHA": "2ce4311050b5d08857d2e773ae5c5ae7b70cd9766e70f7e614b4189d9c5dfdb5",
+      "actualSignedSHA": "2ce4311050b5d08857d2e773ae5c5ae7b70cd9766e70f7e614b4189d9c5dfdb5",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2836168,
+          "sha256": "f9592a484011a94e1ecd153a95bd9f93439396699005cb6856ab671e5c33f027"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe5.json",
+        "bytes": 2292,
+        "sha256": "529d0d242d1d8111b60a3ba60d192d9788d148059dcf6c6e0c34a56b972334af"
+      },
+      "expectedSignedSHA": "38448bd8cf7f884c55ae81b5beed7817d6114014ee64eceed7a5f7b14d3669d9",
+      "actualSignedSHA": "38448bd8cf7f884c55ae81b5beed7817d6114014ee64eceed7a5f7b14d3669d9",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2837660,
+          "sha256": "10297388ae895b463b73585697e7154a21156fa535bc12e3e88086a737663780"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe6.json",
+        "bytes": 2292,
+        "sha256": "2336548ba44c74d801027283fd9a880fe7abc8c0aeb3eb500c80b78f5d7f6f84"
+      },
+      "expectedSignedSHA": "2e8dd9a80e79e7dcd0dd21ace09f896977b017179b1d3c57fbe7fa12f6a16783",
+      "actualSignedSHA": "2e8dd9a80e79e7dcd0dd21ace09f896977b017179b1d3c57fbe7fa12f6a16783",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2837660,
+          "sha256": "10297388ae895b463b73585697e7154a21156fa535bc12e3e88086a737663780"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    },
+    {
+      "receipt": {
+        "path": "test/reports/t257/T654-probe7.json",
+        "bytes": 2292,
+        "sha256": "0100891cf4ba0b1eb07f44420b3ed16f0a467ceb4cf625b611a13495003a4bbb"
+      },
+      "expectedSignedSHA": "9ec69010ceca0a634d360ab945145b250b0f897248f23f7d4f26e241f6e5670f",
+      "actualSignedSHA": "9ec69010ceca0a634d360ab945145b250b0f897248f23f7d4f26e241f6e5670f",
+      "signedHashMatches": true,
+      "modules": [
+        {
+          "entry": "ets/modules.abc",
+          "bytes": 2838344,
+          "sha256": "56ac4370786407fd15b3547ceb441f7d825b02212b8583e041fd25d5c971f1d7"
+        },
+        {
+          "entry": "libs/arm64-v8a/libc++_shared.so",
+          "bytes": 1262248,
+          "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+          "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "08c0dadf634385309a48a2a15ff05d4465fc72e4a6083f1a737f5750b0fe5200",
+          "buildId": "93ab51c6662b24caebec666dec908667c2cd5fd3"
+        },
+        {
+          "entry": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb",
+          "buildId": "69d14bc65a1acb6146f2c27a7ae767b96c71cd4a"
+        },
+        {
+          "entry": "module.json",
+          "bytes": 1414,
+          "sha256": "e1deaf3996505b0f92b258312d77781e28486a567cd4d1f507f5cbefd2aa48b5"
+        }
+      ],
+      "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+    }
+  ],
+  "historicalProbeSources": "Only current .ets source and per-version signed packages/ABC bytes available; no versioned .ets archive proving all seven sources identical",
+  "error29": "l2 boot271023133916096/attempt209 and l4 boot271319633950940/attempt110 explicitly CAPABILITY:EXIT then CONFIGURE_ERROR_29; exact failing raw values NOT_CAPTURED; not NOT_REACHED and not CAP_PASS",
+  "verdict": "TESTER_FIXTURE_AND_IDENTITY_GAP; SAME_PAGE_COLLECTION_NOT_DISPROVEN; NO_PRODUCT_PERSISTENCE_THREAD_PREREQUISITE",
+  "currentToBuildTreeSourceComparison": [
+    {
+      "current": {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+        "bytes": 36635,
+        "sha256": "7947c63d2c3fa15768e0503667950dd58fc1d11e521020a8cbb642f5c8e1f4d8"
+      },
+      "buildTree": {
+        "path": ".codex/local-test/t638-delivery/entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+        "bytes": 36635,
+        "sha256": "7947c63d2c3fa15768e0503667950dd58fc1d11e521020a8cbb642f5c8e1f4d8"
+      },
+      "identical": true
+    },
+    {
+      "current": {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+        "bytes": 21281,
+        "sha256": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407"
+      },
+      "buildTree": {
+        "path": ".codex/local-test/t638-delivery/entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+        "bytes": 21281,
+        "sha256": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407"
+      },
+      "identical": true
+    },
+    {
+      "current": {
+        "path": "entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h",
+        "bytes": 8729,
+        "sha256": "b3d02e5c94600d14845543a9686c1f755ebe3338b49c5400babe6873b147850a"
+      },
+      "buildTree": {
+        "path": ".codex/local-test/t638-delivery/entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h",
+        "bytes": 8729,
+        "sha256": "b3d02e5c94600d14845543a9686c1f755ebe3338b49c5400babe6873b147850a"
+      },
+      "identical": true
+    }
+  ]
+}

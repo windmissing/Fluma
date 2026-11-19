@@ -1,0 +1,384 @@
+{
+  "schema": "T660_STATIC_CONTRACT_CHECK_V1",
+  "notUsingDevice": true,
+  "noProductTestRun": true,
+  "noBusinessCodeChanged": true,
+  "result": "STATIC_CONTRACT_CHECK_PASS_NOT_IMPLEMENTATION_PASS",
+  "resourceRows": [
+    {
+      "parent": "R1",
+      "K": 192,
+      "V": 2048,
+      "totalWorkBytes": 4825728,
+      "preimageBytes": 271104,
+      "witnessCapacityEach": 3149824,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 4235904,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1286784,
+          "bytes": 262144,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 4237440,
+          "bytes": 8192,
+          "preimageByteOffset": 262656,
+          "witnessByteOffset": 266752
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 4296448,
+          "bytes": 256,
+          "preimageByteOffset": 270848,
+          "witnessByteOffset": 274944
+        }
+      ]
+    },
+    {
+      "parent": "R1",
+      "K": 192,
+      "V": 8192,
+      "totalWorkBytes": 7381632,
+      "preimageBytes": 1057536,
+      "witnessCapacityEach": 4722688,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 6791808,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1286784,
+          "bytes": 1048576,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 6793344,
+          "bytes": 8192,
+          "preimageByteOffset": 1049088,
+          "witnessByteOffset": 1053184
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 6852352,
+          "bytes": 256,
+          "preimageByteOffset": 1057280,
+          "witnessByteOffset": 1061376
+        }
+      ]
+    },
+    {
+      "parent": "R1",
+      "K": 512,
+      "V": 2048,
+      "totalWorkBytes": 4828288,
+      "preimageBytes": 271104,
+      "witnessCapacityEach": 3149824,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 4238464,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1289344,
+          "bytes": 262144,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 4240000,
+          "bytes": 8192,
+          "preimageByteOffset": 262656,
+          "witnessByteOffset": 266752
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 4299008,
+          "bytes": 256,
+          "preimageByteOffset": 270848,
+          "witnessByteOffset": 274944
+        }
+      ]
+    },
+    {
+      "parent": "R1",
+      "K": 512,
+      "V": 8192,
+      "totalWorkBytes": 7384192,
+      "preimageBytes": 1057536,
+      "witnessCapacityEach": 4722688,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 6794368,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1289344,
+          "bytes": 1048576,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 6795904,
+          "bytes": 8192,
+          "preimageByteOffset": 1049088,
+          "witnessByteOffset": 1053184
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 6854912,
+          "bytes": 256,
+          "preimageByteOffset": 1057280,
+          "witnessByteOffset": 1061376
+        }
+      ]
+    },
+    {
+      "parent": "DM",
+      "K": 192,
+      "V": 2048,
+      "totalWorkBytes": 4850304,
+      "preimageBytes": 271104,
+      "witnessCapacityEach": 3149824,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 4260480,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1311360,
+          "bytes": 262144,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 4262016,
+          "bytes": 8192,
+          "preimageByteOffset": 262656,
+          "witnessByteOffset": 266752
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 4321024,
+          "bytes": 256,
+          "preimageByteOffset": 270848,
+          "witnessByteOffset": 274944
+        }
+      ]
+    },
+    {
+      "parent": "DM",
+      "K": 192,
+      "V": 8192,
+      "totalWorkBytes": 7406208,
+      "preimageBytes": 1057536,
+      "witnessCapacityEach": 4722688,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 6816384,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1311360,
+          "bytes": 1048576,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 6817920,
+          "bytes": 8192,
+          "preimageByteOffset": 1049088,
+          "witnessByteOffset": 1053184
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 6876928,
+          "bytes": 256,
+          "preimageByteOffset": 1057280,
+          "witnessByteOffset": 1061376
+        }
+      ]
+    },
+    {
+      "parent": "DM",
+      "K": 512,
+      "V": 2048,
+      "totalWorkBytes": 4852864,
+      "preimageBytes": 271104,
+      "witnessCapacityEach": 3149824,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 4263040,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1313920,
+          "bytes": 262144,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 4264576,
+          "bytes": 8192,
+          "preimageByteOffset": 262656,
+          "witnessByteOffset": 266752
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 4323584,
+          "bytes": 256,
+          "preimageByteOffset": 270848,
+          "witnessByteOffset": 274944
+        }
+      ]
+    },
+    {
+      "parent": "DM",
+      "K": 512,
+      "V": 8192,
+      "totalWorkBytes": 7408768,
+      "preimageBytes": 1057536,
+      "witnessCapacityEach": 4722688,
+      "segments": [
+        {
+          "name": "CURRENT_bankHeader128",
+          "sourceWorkByteOffset": 6818944,
+          "bytes": 512,
+          "preimageByteOffset": 0,
+          "witnessByteOffset": 4096
+        },
+        {
+          "name": "CURRENT_marker32",
+          "sourceWorkByteOffset": 1313920,
+          "bytes": 1048576,
+          "preimageByteOffset": 512,
+          "witnessByteOffset": 4608
+        },
+        {
+          "name": "Pstyle512x4",
+          "sourceWorkByteOffset": 6820480,
+          "bytes": 8192,
+          "preimageByteOffset": 1049088,
+          "witnessByteOffset": 1053184
+        },
+        {
+          "name": "VisualConfig64V2",
+          "sourceWorkByteOffset": 6879488,
+          "bytes": 256,
+          "preimageByteOffset": 1057280,
+          "witnessByteOffset": 1061376
+        }
+      ]
+    }
+  ],
+  "controlPartitionBytes": 65536,
+  "T647FrozenExpectedAndHashBytes": 928,
+  "markerBytes": 128,
+  "glyphBytes": 32,
+  "newHostReceiptBookkeepingBytes": 512,
+  "newGPUOrColdRawAllocationBytes": 0,
+  "authority": [
+    {
+      "path": "docs/architecture-T660-contract-v1.json",
+      "bytes": 9453,
+      "sha256": "64f3ed3ba540b32027948f7f5dad569632250ca07559d31c30561c80d7d89913"
+    },
+    {
+      "path": "docs/architecture-T660-visual-recipe-v2.json",
+      "bytes": 1051,
+      "sha256": "a6470070f339f785b2af64e203555d8947fe478c618b5c66bc3d8c44d7cb5600"
+    },
+    {
+      "path": "docs/architecture-T660-g11-manifest-v2.json",
+      "bytes": 47361,
+      "sha256": "9af1e3e7f64cc922e91879cc604649eef1effbf7303e84c32c779b3a29cbd4ea"
+    }
+  ],
+  "consumedCurrentSources": [
+    {
+      "path": "docs/developer-T639-v1.md",
+      "bytes": 13622,
+      "sha256": "5a75a67a0bdc96d01a4905a43e0998966adf3598f4513218bc19eeb308249fad"
+    },
+    {
+      "path": "docs/developer-T648-v1.md",
+      "bytes": 6922,
+      "sha256": "481dfabeba197af6a2c4b9c9cb3ff34440b19077ca1be36b3acf24b257b54317"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/acceptance_t647/contract.cpp",
+      "bytes": 9053,
+      "sha256": "f95f06178754d14769b8bf6861a2f9b42b4fb717bf489b877017766871ec98d4"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g11vis/composite_gate.cpp",
+      "bytes": 1864,
+      "sha256": "b051f00563d366dac077f6a133a4d1bbd28062295789a812f4be136257af57f8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g11vis/marker_map.glsl",
+      "bytes": 9196,
+      "sha256": "1e2631ddf05c310d72d2d64d444a2283537a0a858857051750a21e31d8c3c777"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl",
+      "bytes": 16240,
+      "sha256": "0f8bc73a14009bb6fb2899dd6fce6ea858c275b3a23762cc8f3ecc5212279535"
+    },
+    {
+      "path": "tools/g11/generate_contract.cjs",
+      "bytes": 2433,
+      "sha256": "8416af6a5f155b4e75fe06bcbb0b75fecbc0e8ee0ce36b68b528d621cad5f6b2"
+    },
+    {
+      "path": "test/t566_generate_composite.cjs",
+      "bytes": 13551,
+      "sha256": "eb8d23e4372958e804fa86791e8e86204b7e1e332b035eff195deb2234198663"
+    },
+    {
+      "path": "tools/g11/prepare_compile.cjs",
+      "bytes": 2338,
+      "sha256": "453b6e779701daf56ed676588d8b1587c6a544936433b693c6a0dc2953a395c9"
+    }
+  ],
+  "implementationState": "Existing product generator/source still revision1 and rejects default P capture; original T639 must implement revision2, not passed by this architecture check"
+}

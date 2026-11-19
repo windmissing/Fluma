@@ -41,3 +41,8 @@ capability按原不等式逐项输出raw/required/结果，maxBlock保GLint64/�
 T643本轮有限包身份/首失败采证已交付可登记关闭，本卡不撤销其交付，但纠正PROGRAM_BUILD定位推断。T609完整物理与T610可见观测仍未行使，须真实Configure/初始化成功和各自实际前置齐才恢复；补出首失败并不等产品通过，不设新manager核查/批准门。
 
 执行必须完成当前约定范围与本角色必要检查，或遇确实无法继续的具体问题并完整回执才停，不能做一点就停；局部受阻先完成其余。失败列未完、复现原错/证据/已试/不能继续原因、所需前置与角色，原卡评论并本人行看评论，成功结束待验收。不允许修改D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态例外），不改他行/其它列/队列或滴答同名清单。不使用真机；开发仅开发编译，tester/effector签名部署执行采证、真机串行。GPU驻留/CPU停投，前景背景只XComponent+shader，故障FAULT或明确STALE，禁Canvas/软件GL回退。目标10和旧湿M1暂停，水线13→14→12，不放宽GAP/物理/容量/资格。
+
+
+## 2026-11-19 T661 原件归因修订
+
+[T661](architecture-T661-v1.md) 核定T654的STATUS实际slice600，probe把g13Status调用attemptId当配置ticket；旧110/209错误29有CAPABILITY:EXIT但raw数值未取全。先原T654 tester同真实G13页保存完整status+4原页/锚；保本合同预算与Store边界，不由换页STALE推导新增产品线程或借M2三槽。新机器表见architecture-T661-contract-v1.json；无产品能力PASS。

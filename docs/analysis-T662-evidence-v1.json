@@ -1,0 +1,516 @@
+{
+  "schema": "T662_ORIGINAL_BYTE_ATTRIBUTION_V1",
+  "notUsingDevice": true,
+  "original": {
+    "path": "test/reports/t491/t591c/collector.ndjson",
+    "bytes": 222253,
+    "sha256": "83d19d7b63d728014025b4b92fa0dc863d4d34cd3895d92a4dc8137013f9d07d"
+  },
+  "lineCount": 103,
+  "tags": {
+    "ARMED_INITIAL": 1,
+    "DISCOVER_TICK": 1,
+    "SERIAL_LOCKED": 1,
+    "LOCKED_TICK": 38,
+    "TERMINAL_SEEN": 38,
+    "OBJ0": 8,
+    "OBJ1": 8,
+    "OBJ2": 8
+  },
+  "sequenceContiguous": true,
+  "diagnosticTicks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+  ],
+  "nativeQueryCount": 64,
+  "diagnosticQueries": 40,
+  "objectLogQueries": 24,
+  "queryBudget64Satisfied": true,
+  "reportArithmetic": {
+    "expression": "39*1+8*3+2",
+    "value": 65,
+    "within64": false,
+    "rawActual": 64
+  },
+  "maxPersistedUTF8LineBytes": 5593,
+  "directoryBytes": 320501,
+  "directoryBudgetScope": "three original T591c files collector.ndjson/l1.json/l2.json; exclude later other-task captures in shared directory",
+  "identity": {
+    "bootSerial": "1",
+    "epoch": "2",
+    "window": "387041997984",
+    "ownerTid": "4360",
+    "eglContext": "387048859216",
+    "candidateRun": "1",
+    "surface": "2",
+    "contextGeneration": "2",
+    "geometry": "2",
+    "config": "1",
+    "owner": "1",
+    "layoutSha": "6e01a7bd26032beb1efd3cb58d8fb7377c4a5e4c16903572187dc11d9b87c73e",
+    "combinedShaderSha": "7e19a455a8e4b213a3823111cc0c00c802912fdc5f361b05d57f82c923654a49",
+    "K": 192,
+    "Kw": 128,
+    "wire": 3,
+    "policy": 1,
+    "nativeBeginNs": "273554856423752"
+  },
+  "identityStableAcross39AttemptSamples": true,
+  "actualTerminalRows": [],
+  "falseTerminalSeen": 38,
+  "endReason": "BUDGET_EXHAUSTION_INFERRED_FROM64_CALLS_AND_FIXTURE; NO_EXPLICIT_WINDOW_END_RECEIPT",
+  "verdict": "OPEN_CALL_AT_OBSERVATION_END_NOT_PERMANENT_HANG",
+  "last": {
+    "nativeEndNs": "0",
+    "sealed": false,
+    "inCall": true,
+    "inCallDurationNs": "40140833750",
+    "code": 0,
+    "dropped": 0,
+    "incomplete": false,
+    "firstFailure": null,
+    "current": {
+      "object": 0,
+      "stage": "LINK",
+      "enterNs": "273559698263283",
+      "exitNs": "0",
+      "handle": 2,
+      "success": false,
+      "rawGl": 0,
+      "a": "0",
+      "b": "0",
+      "c": "0"
+    },
+    "events": [
+      {
+        "object": 0,
+        "stage": "CREATE_SHADER",
+        "enterNs": "273554856653596",
+        "exitNs": "273554856660627",
+        "handle": 0,
+        "success": true,
+        "rawGl": 0,
+        "a": "0",
+        "b": "0",
+        "c": "0"
+      },
+      {
+        "object": 0,
+        "stage": "SOURCE_UPLOAD",
+        "enterNs": "273554856661096",
+        "exitNs": "273554856739846",
+        "handle": 1,
+        "success": true,
+        "rawGl": 0,
+        "a": "0",
+        "b": "0",
+        "c": "0"
+      },
+      {
+        "object": 0,
+        "stage": "COMPILE",
+        "enterNs": "273554856740315",
+        "exitNs": "273559698193596",
+        "handle": 1,
+        "success": true,
+        "rawGl": 0,
+        "a": "0",
+        "b": "0",
+        "c": "0"
+      },
+      {
+        "object": 0,
+        "stage": "CREATE_PROGRAM",
+        "enterNs": "273559698233908",
+        "exitNs": "273559698242033",
+        "handle": 0,
+        "success": true,
+        "rawGl": 0,
+        "a": "0",
+        "b": "0",
+        "c": "0"
+      },
+      {
+        "object": 0,
+        "stage": "ATTACH",
+        "enterNs": "273559698242190",
+        "exitNs": "273559698263127",
+        "handle": 2,
+        "success": true,
+        "rawGl": 0,
+        "a": "1",
+        "b": "0",
+        "c": "0"
+      }
+    ],
+    "programs": [
+      {
+        "object": 0,
+        "name": "SOURCE_V3",
+        "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1",
+        "sourceBytes": 85839,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": true,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      {
+        "object": 1,
+        "name": "QUANTUM_INTERMEDIATE",
+        "sha256": "",
+        "sourceBytes": 0,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      },
+      {
+        "object": 2,
+        "name": "QUANTUM_FINAL_V3",
+        "sha256": "",
+        "sourceBytes": 0,
+        "rawBytes": 0,
+        "compileLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        },
+        "linkLog": {
+          "queried": false,
+          "reportedLength": 0,
+          "copiedLength": 0,
+          "offset": 0,
+          "truncated": false,
+          "emptyLog": true,
+          "queryError": 0
+        }
+      }
+    ]
+  },
+  "logRounds": [
+    {
+      "tick": 5,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 10,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 15,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 20,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 25,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 30,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 35,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    },
+    {
+      "tick": 36,
+      "objects": [
+        "OBJ0",
+        "OBJ1",
+        "OBJ2"
+      ]
+    }
+  ],
+  "allObjectHexEmpty": true,
+  "firstUnreturnedAPI": "UNKNOWN_WITHIN_LINK_STAGE: glLinkProgram OR glGetProgramiv(GL_LINK_STATUS) OR glGetError; observer/recorder gaps also unexcluded",
+  "lossClaim": "NO_GAP_IN_PERSISTED_ROWS_AND_NATIVE_DROPPED0_ONLY; collector may silently reject oversized lines, not a general no-loss proof",
+  "sourceFiles": [
+    {
+      "path": "docs/test-report-T591-v3.md",
+      "bytes": 2809,
+      "sha256": "2272917c8bef2401f90e66b5dece4faa657301f106f595c9f93194f50edc7720"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/ets/physics/T591CreateCollector.ets",
+      "bytes": 4788,
+      "sha256": "93160873afa052e9bf9a0fe04f7fe09d0434a8630497f64978488e43b9cb2e4a"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+      "bytes": 14631,
+      "sha256": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/cpp/gpu_resident/m2route/create_shader_identity.h",
+      "bytes": 254,
+      "sha256": "6b335b79f9926369440b8f98cc6493b46d1211361ed563c7f5706e9e6cccc871"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/.cxx/default/default/debug/arm64-v8a/gpu_resident/quantum_core_kernel.h",
+      "bytes": 26807,
+      "sha256": "e2c7d40ff7a3193e623c05440ffe0d495316c46fe129d17b6e4ce56e087bc75a"
+    }
+  ],
+  "package": {
+    "receipt": {
+      "path": "test/reports/t257/T591-collector.json",
+      "bytes": 2299,
+      "sha256": "7ff508a6f234b098b412bdf8834d0678b33736a9b8790f931f58397bc402cc58"
+    },
+    "expectedSignedSHA": "9550454cbec14659075802a37cc589f0a28c89eeba44ef02d1d80ca00cdb5d91",
+    "actualSignedSHA": "9550454cbec14659075802a37cc589f0a28c89eeba44ef02d1d80ca00cdb5d91",
+    "signedHashMatches": true,
+    "modules": [
+      {
+        "entry": "ets/modules.abc",
+        "bytes": 2844184,
+        "sha256": "5c6ad40897db7dc00b041534579070ea8ad82f98e3a9e3b2de2f5cfe68c27a6e"
+      },
+      {
+        "entry": "libs/arm64-v8a/libc++_shared.so",
+        "bytes": 1262248,
+        "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274",
+        "buildId": "cc43b88777e50c8432da0f3bf929950fcd876c58"
+      },
+      {
+        "entry": "libs/arm64-v8a/libgrsm0.so",
+        "bytes": 623448,
+        "sha256": "1943497401c6db15af1e7edca9a22db4c25b8263c627bad72885097343dcf686",
+        "buildId": "2e676a466a596de8700af83066883e088b87df3a"
+      },
+      {
+        "entry": "libs/arm64-v8a/libgrsm1.so",
+        "bytes": 1174288,
+        "sha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f",
+        "buildId": "0cf0ffde1232b06e0ee044ef519cf01c11120dd9",
+        "embeddedGLSLSources": [
+          {
+            "fileOffset": 98938,
+            "bytes": 471,
+            "sha256": "3d40e11d57d122104b1836d99ca214ecee3696d725fe0e9e66a996b1d15fe9c7"
+          },
+          {
+            "fileOffset": 99453,
+            "bytes": 54857,
+            "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+          },
+          {
+            "fileOffset": 162670,
+            "bytes": 85839,
+            "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1"
+          },
+          {
+            "fileOffset": 251378,
+            "bytes": 681,
+            "sha256": "d50ea2f0b2affe94968647225ae3043e585d39b5ac721337e82122deed19d9ce"
+          },
+          {
+            "fileOffset": 253530,
+            "bytes": 713,
+            "sha256": "555874a2b5c12b211433d8bf6bced48892c5472c687609893a599252090bda1e"
+          },
+          {
+            "fileOffset": 257289,
+            "bytes": 2636,
+            "sha256": "5761edd08c8c084b13e2fb74ddbfeed29ddf14f2db0c5808c64ec3d6e0b13445"
+          },
+          {
+            "fileOffset": 262314,
+            "bytes": 26429,
+            "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96"
+          },
+          {
+            "fileOffset": 290089,
+            "bytes": 28365,
+            "sha256": "aa0c848e6821d757ecb0a94dc550fdc5e7c871d648fa28bf40f582890f86e924"
+          },
+          {
+            "fileOffset": 322862,
+            "bytes": 97575,
+            "sha256": "fb27edff537d99fd141d451ae3cef9d3b21df50a8a9802560e274603e3d9ff14"
+          },
+          {
+            "fileOffset": 421818,
+            "bytes": 108,
+            "sha256": "0dcacef16d47a9155810f81fcf9aa0d75848b93cee587dd9d187eeb2836919ed"
+          },
+          {
+            "fileOffset": 421927,
+            "bytes": 514,
+            "sha256": "13af641559528842a55b65d07aec2a98f8607061ec32e995851a83608a4ed612"
+          }
+        ]
+      },
+      {
+        "entry": "libs/arm64-v8a/libp013hello.so",
+        "bytes": 70544,
+        "sha256": "7fd12f7534b701497b78399cd6b917947b57a5705bb85b5ccbe5e43406c3609f",
+        "buildId": "e84ebb1f87427a0ae188667f57394eac6aa67725"
+      },
+      {
+        "entry": "libs/arm64-v8a/libp013renderer.so",
+        "bytes": 498120,
+        "sha256": "60f77f48db9e9fc6717b5a3989118d5653c2e5764e140d42e015f6b02228458a",
+        "buildId": "1658b9f5adb7dabb5951863d3e7b4531016675ba"
+      },
+      {
+        "entry": "module.json",
+        "bytes": 1408,
+        "sha256": "340cf83f165d31023b438266f1dd8bf92d2eb8262fd87d1e93fc9a2c722e3e96"
+      }
+    ],
+    "loadedDeviceModuleIdentity": "NOT_CAPTURED_SAME_PROCESS_MAPS_NOT_PRESENT"
+  },
+  "plannedPackageProgramsNotRuntimeSubstitutes": [
+    {
+      "object": 0,
+      "role": "SOURCE_V3",
+      "embeddedSources": [
+        {
+          "fileOffset": 162670,
+          "bytes": 85839,
+          "sha256": "b7d0a027128811db429440dec0cb94c77c8c26167fc7b507c611ffb3158606a1"
+        }
+      ],
+      "attemptEnteredBuild": true
+    },
+    {
+      "object": 1,
+      "role": "QUANTUM_INTERMEDIATE",
+      "embeddedSources": [
+        {
+          "fileOffset": 262314,
+          "bytes": 26429,
+          "sha256": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96"
+        }
+      ],
+      "attemptEnteredBuild": false
+    },
+    {
+      "object": 2,
+      "role": "QUANTUM_FINAL_V3",
+      "embeddedSources": [
+        {
+          "fileOffset": 99453,
+          "bytes": 54857,
+          "sha256": "0ef4f0457a8be135953bff0ce61845d854c6c7774e36ee0d6a79a7a3605a31cc"
+        }
+      ],
+      "attemptEnteredBuild": false
+    }
+  ],
+  "plannedShaderABI": {
+    "localSizeX": 64,
+    "SSBOBindings": {
+      "0": "Base",
+      "1": "Candidate",
+      "2": "Workspace",
+      "3": "Output"
+    },
+    "reflectionOrRuntimeBindingReached": false
+  }
+}

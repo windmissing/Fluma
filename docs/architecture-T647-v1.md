@@ -98,3 +98,8 @@ manager可将DM父默认修复独立developer卡，与T639不依赖的材料/sce
 本卡有限检查确认10个family/root行、正式完整dispatch计数、20审核族/精确mask、新尾156..239无重叠与保留零、DM/RX不同Config偏移，以及T639阻断源码SHA与当前一致；**不模拟物理、不运行产品、不证明审核producer已部署**。独立客观后继需核真实审核缺一必拒、坏qNext/错来源/中点未消费/重复力与时间/漏micro/伪scope证书/错Expected/CPU补位/旧缓存混版、全拒BLOCKED与accepted全unapplied、父ON/OFF物理逐字段、视觉同token/真实cold。失败先architect分流。
 
 不使用真机。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部分支受阻先完成其它可做项；阻断原卡含未完、复现原错/证据/SHA、已试/不能继续原因、所需真实前置与接手角色。成功结束待验收、失败看评论。不允许修改D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态例外），不改其它列/他行/队列或滴答同名清单。GPU驻留、CPU停投、前景背景仅XComponent+shader；FAULT或明确STALE，禁Canvas/软件GL产品回退。目标1–11不变、10暂停，水线13→14→12、旧湿M1暂缓；无manager新验收门。
+
+
+## 2026-11-19 T660：actualVisualSeed 的生产点
+
+[当前T660合同](architecture-T660-contract-v1.json) 冻结四段GPU初始原件拼接SHA、首claim前witness退信用和私有ActiveProgramIdentity接入，绑定Expected224[144..151]/尾[224..231]；不改变本表896B/1024B、十行count/mask及真实私有proof ABI。marker/配置/reader rev2及新组合身份由原T639实施，旧recipe/physicalseedSHA/未知零不能代实际视觉seed。T648真实工厂只读复用，不因本次工程文档要求重写默认父或共享静态门。

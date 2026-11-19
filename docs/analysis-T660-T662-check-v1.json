@@ -1,0 +1,34 @@
+{
+  "schema": "T660_T662_ARCHITECTURE_CHECK_V1",
+  "result": "STATIC_CONTRACT_AND_ORIGINAL_BYTE_CHECK_PASS",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "buildRun": false,
+  "productPASS": false,
+  "checks": [
+    "8 resource rows and seed byte spans/witness capacity",
+    "65536 control partition and T647928B ranges",
+    "128word512B owner bookkeeping partition",
+    "128B cursor/384B three-attempt payload",
+    "T591103 rows/64calls/38false terminal and actual embedded source bytes",
+    "T65424 UI originals/3 incomplete600char status strings/7 actual packages and same G13 ELF",
+    "authoritative input hashes and revision2 cold/seed/gate ABI links"
+  ],
+  "authorities": [
+    {
+      "path": "docs/architecture-T660-contract-v1.json",
+      "bytes": 9453,
+      "sha256": "64f3ed3ba540b32027948f7f5dad569632250ca07559d31c30561c80d7d89913"
+    },
+    {
+      "path": "docs/architecture-T661-contract-v1.json",
+      "bytes": 3569,
+      "sha256": "2c0bbf2c8a504302f8d792c1b82f8d81aa4050feef19e01abdded4b41c9ef60e"
+    },
+    {
+      "path": "docs/architecture-T662-contract-v1.json",
+      "bytes": 4969,
+      "sha256": "da8f6ea65810642c29340ef755fcb22432d1d16938030c04b8a17c90aae667c1"
+    }
+  ]
+}
