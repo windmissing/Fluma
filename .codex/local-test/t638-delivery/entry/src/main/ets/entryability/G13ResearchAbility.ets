@@ -9,9 +9,11 @@ interface G13AbilityStatus { scope: Object; }
 export default class G13ResearchAbility extends UIAbility {
   onCreate(want: Want): void {
     AppStorage.setOrCreate('t630probeFlag', `${want?.parameters?.t630probe}` === 'true');
+    AppStorage.setOrCreate('t654probeFlag', `${want?.parameters?.t654probe}` === 'true');
+    AppStorage.setOrCreate('t654Attempt', `${want?.parameters?.t654attempt ?? '110'}`);
   }
   onWindowStageCreate(stage: window.WindowStage): void {
-    stage.loadContent(AppStorage.get<boolean>('t630probeFlag') === true ? 'pages/T630Probe' : 'pages/GpuResidentG13', (error) => {
+    stage.loadContent(AppStorage.get<boolean>('t654probeFlag') === true ? 'pages/T654Probe' : AppStorage.get<boolean>('t630probeFlag') === true ? 'pages/T630Probe' : 'pages/GpuResidentG13', (error) => {
       if (error.code !== 0) console.error('G13_PAGE_LOAD_FAILED:' + String(error.code));
     });
   }

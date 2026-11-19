@@ -1,0 +1,13 @@
+{
+ "revision": "T654_V1_PARTIAL_V1",
+ "date": "2026-11-19",
+ "package": "T654-probe7 (t638 tree, tester probe pages T654Probe+router; inputSha fefb921c/ea78d97b, signed 2e8dd9a8/9ec69010)",
+ "collected": {
+  "g13Status_full": "attemptId/fieldToken/coldToken/consumedSourceSeq/lastRoot(clock=MONOTONIC,nonce/plan/deadline)/motionBits/UNCONFIGURED/firstError=0/commit=0/acceptedQuantum=0 (t654-capture1/2.txt)",
+  "configure_reply": "QUEUED error=0 attempt=2 typedarray diagnosticRevision=2 rawReturnedLength=512",
+  "g13InitDiagnostics": "STALE_ATTEMPT_OR_PAGE on all 4 pages for attempt 110/2 (original process dead; new-process attempt never Begin because GL thread did not consume configure in probe-only context)"
+ },
+ "blocker": "diag raw pages (8192x4) live only in-process; GL thread that consumes configure is bound to G13 page XComponent lifecycle; probe page and GL page cannot coexist in one Ability \u2014 the exact external-readable-snapshot/non-GL-diagnostic-thread seam T622 already anticipated",
+ "attempt232": "dead since T643 session (process lost) \u2014 differentAttempt=true applies; 110/2/209 all new attempts, none reached Build (NOT_REACHED, capability thresholds not observable)",
+ "route": "architect: G13 diag raw-page capture requires the T622 minimal seam (external readable 3-slot snapshot or independent non-GL diagnostic thread); same seam as T591/T594 family"
+}

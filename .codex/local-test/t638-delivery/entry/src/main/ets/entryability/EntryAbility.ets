@@ -23,6 +23,8 @@ export default class EntryAbility extends UIAbility {
   private p011ScheduleWantSequence: number = 0;
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    AppStorage.setOrCreate('t654probeFlag', `${want?.parameters?.t654probe}` === 'true');
+    AppStorage.setOrCreate('t654Attempt', `${want?.parameters?.t654attempt ?? '209'}`);
     AppStorage.setOrCreate('t630probeFlag', `${want?.parameters?.t630probe}` === 'true');
     hilog.info(this.hilogDomain, this.hilogTag, 'onCreate');
     // §27.6: load the persisted threshold pair. A corrupt/illegal pair is
@@ -472,8 +474,8 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(this.hilogDomain, this.hilogTag, 'onWindowStageCreate');
     // P-013 P1-G0 平台探针页（PROBE-ONLY：勿并入发布分支）
-    const probePage: string = AppStorage.get<boolean>('gpuResidentM1') === true ? 'pages/GpuResidentM1' : AppStorage.get<boolean>('gpuResidentM0') === true ? 'pages/GpuResidentM0' : AppStorage.get<boolean>('cwDemo') === true ? 'pages/ClearWaterDemo' : (AppStorage.get<boolean>('p051v2Demo') === true || AppStorage.get<boolean>('singleSandDemo') === true) ? 'pages/P051DerivedV2Demo' : AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
-      'pages/P013P1G0Probe' : AppStorage.get<boolean>('t630probeFlag') === true ? 'pages/T630Probe' : 'pages/SandCanvas';
+    const probePage: string = AppStorage.get<boolean>('t654probeFlag') === true ? 'pages/T654Probe' : AppStorage.get<boolean>('gpuResidentM1') === true ? 'pages/GpuResidentM1' : AppStorage.get<boolean>('gpuResidentM0') === true ? 'pages/GpuResidentM0' : AppStorage.get<boolean>('cwDemo') === true ? 'pages/ClearWaterDemo' : (AppStorage.get<boolean>('p051v2Demo') === true || AppStorage.get<boolean>('singleSandDemo') === true) ? 'pages/P051DerivedV2Demo' : AppStorage.get<boolean>('emptySandDemo') === true ? 'pages/EmptySandDemo' : AppStorage.get<boolean>('p013g0') === true ?
+      'pages/P013P1G0Probe' : AppStorage.get<boolean>('t630probeFlag') === true ? 'pages/T630Probe' : AppStorage.get<boolean>('t654probeFlag') === true ? 'pages/T654Probe' : 'pages/SandCanvas';
     windowStage.loadContent(probePage, (err) => {
       if (err.code) {
         hilog.error(this.hilogDomain, this.hilogTag, 'Failed to load the content. Cause: %{public}s', err.message);
