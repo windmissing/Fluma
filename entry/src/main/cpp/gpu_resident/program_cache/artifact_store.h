@@ -359,7 +359,7 @@ public:
       quit_ = true;
     }
     wake_.notify_all();
-    worker_.join();
+    if(worker_.joinable())worker_.join();
   }
   ProgramArtifactStore(const ProgramArtifactStore &) = delete;
   bool Configure(const std::filesystem::path &filesDir) {
@@ -570,35 +570,37 @@ public:
   // spaceCv on every pop so the wait is event-driven, deadline-bounded (5s
   // from the call), cancellable and never a polling sleep.
   enum class DrainResult { DRAINED, TIMEOUT, CANCELLED, STOPPED };
+  void RetireForTest(){ {std::lock_guard<std::mutex> lock(mutex_);quit_=true;wake_.notify_all();spaceCv_.notify_all();}if(worker_.joinable())worker_.join();}
   struct DrainForTestToken { std::atomic<bool> cancelled{false}; };
-  DrainResult DrainForTest(std::chrono::steady_clock::time_point deadline,
-                           const std::atomic<bool> &cancel) {
-    bool timedOut = false;
-    {
-      std::unique_lock<std::mutex> lock(mutex_);
-      spaceCv_.wait(lock, [&] {
-        return quit_ || jobs_.size() < 128 || cancel.load() ||
-               std::chrono::steady_clock::now() >= deadline;
-      });
-      if (cancel.load())
-        return DrainResult::CANCELLED;
-      if (quit_)
-        return DrainResult::STOPPED;
-      if (jobs_.size() >= 128 || std::chrono::steady_clock::now() >= deadline)
-        return DrainResult::TIMEOUT;
-      // Queue has space with the mutex still held: the fence insertion below
-      // cannot observe a stale size.
-      auto done = std::make_shared<std::promise<void>>();
-      auto future = done->get_future();
-      jobs_.push_back([done] { done->set_value(); });
-      wake_.notify_one();
-      // Wait for the fence OUTSIDE the store mutex (the worker must be able
-      // to run); the fence covers every job submitted before this call.
-      lock.unlock();
-      timedOut = future.wait_until(deadline) == std::future_status::timeout;
-    }
-    return timedOut ? DrainResult::TIMEOUT : DrainResult::DRAINED;
+  struct DrainObservation {
+    uint64_t queuedAtEntry=0, fenceSequence=0, enterNs=0, insertNs=0, popNs=0, returnNs=0;
+  };
+  struct DrainCompletion { bool done=false; uint64_t popNs=0; };
+  uint64_t drainSequence_=0;
+  static uint64_t DrainNow() { return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); }
+  // Caller retains shared Store ownership across this notification. No stack token is registered.
+  void CancelDrainForTest(std::atomic<bool>& cancel) {
+    std::lock_guard<std::mutex> lock(mutex_); cancel.store(true); spaceCv_.notify_all();
   }
+  DrainResult DrainForTest(std::chrono::steady_clock::time_point deadline,
+                           const std::atomic<bool> &cancel, DrainObservation* observation=nullptr) {
+    auto done=std::make_shared<DrainCompletion>();
+    std::unique_lock<std::mutex> lock(mutex_);
+    DrainObservation sample;sample.enterNs=DrainNow();sample.queuedAtEntry=jobs_.size();
+    auto finish=[&](DrainResult result){sample.popNs=done->popNs;sample.returnNs=DrainNow();if(observation)*observation=sample;return result;};
+    spaceCv_.wait_until(lock,deadline,[&]{return quit_||jobs_.size()<128||cancel.load();});
+    if(cancel.load()) return finish(DrainResult::CANCELLED);
+    if(quit_) return finish(DrainResult::STOPPED);
+    if(jobs_.size()>=128||std::chrono::steady_clock::now()>=deadline) return finish(DrainResult::TIMEOUT);
+    sample.fenceSequence=++drainSequence_;sample.insertNs=DrainNow();
+    jobs_.push_back([this,done]{std::lock_guard<std::mutex> lock(mutex_);done->popNs=DrainNow();done->done=true;spaceCv_.notify_all();});
+    wake_.notify_one();
+    spaceCv_.wait_until(lock,deadline,[&]{return done->done||cancel.load()||quit_;});
+    if(cancel.load())return finish(DrainResult::CANCELLED);
+    if(quit_)return finish(DrainResult::STOPPED);
+    return finish(done->done?DrainResult::DRAINED:DrainResult::TIMEOUT);
+  }
+
 #endif
   std::string Rejection(const std::string &key) {
     std::lock_guard<std::mutex> lock(mutex_);

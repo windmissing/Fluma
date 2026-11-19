@@ -1,0 +1,42 @@
+{
+  "schema": "T640_DEVELOPER_DELIVERY_V1",
+  "date": "2026-11-19",
+  "contractSHA": "d69efff8eb3113ec4f58853a56d322f6883d23dc1af9d2a3818e93499f3a40f1",
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/resource_lab/lab.h": "0f139dc733d6d5a25fdcbf03f1116d48901493b8e45842317e3f16faf0c84f67",
+    "entry/src/main/cpp/gpu_resident/program_cache/artifact_store.h": "9483b49c51971d32b818791d44ffae18b1912c5752e817f0e83b9597b7f85a89",
+    "test/t538/lab_bridge.cpp": "b5644f15a644ee16313083c3f114fe6fdc821aca94557c9fe7845cc1684ac130",
+    "test/t538/GpuResourceLab.ets": "80c9cf35500214555345d27a30d44396b33c834bac449c6c6e6349a0ba481664",
+    "docs/developer-T640-v1.md": "03c2f02f57bd3f02924004cf3fcc97794df3ef6492360dae7368d47294a05445"
+  },
+  "build": {
+    "result": "COMPILE_PASS",
+    "durationSeconds": 13.877,
+    "log": ".codex/local-test/t640-delivery-build.txt",
+    "artifacts": {
+      ".codex/local-test/t640-delivery/entry/build/default/outputs/default/entry-default-unsigned.hap": "9de815d733a81606db2a1c8989a9172bb577065b1e8d4918afe18676564e6134",
+      ".codex/local-test/t640-delivery/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_resource_lab.so": "c844f93abe31b341d3f256927140be5bf2a66e10325c365448637124a9bec9f5"
+    }
+  },
+  "ARM64sizeof": {
+    "Lifecycle": 176,
+    "atomicBool": 1,
+    "storeSharedPtr": 16,
+    "DrainCompletion": 16,
+    "DrainObservation": 48,
+    "sequence": 8,
+    "catalogEntry": 192
+  },
+  "metadataCredit": {
+    "fixedObjectsSubtotal": 265,
+    "sharedControlCallbackReserve": 64,
+    "total": 329,
+    "limit": 1024,
+    "catalogBytes": 6144,
+    "catalogLimit": 8192
+  },
+  "layoutCompileLog": ".codex/local-test/t640-record-layouts.txt",
+  "testsRun": false,
+  "deviceUsed": false,
+  "runtimeQualification": "NOT_MEASURED"
+}
