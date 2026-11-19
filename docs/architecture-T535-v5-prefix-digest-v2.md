@@ -1,5 +1,7 @@
 # T535：V5 cold prefix 摘要合同修订（V2）
 
+> 2026-11-19 T619补齐prefix内公开身份/配置：按 [T619](architecture-T619-v1.md) 及其JSON先冻结capsule和root token，再执行本稿固定mask摘要。mask[1116,1148)、32768B范围、header2/policy1及预算不变；token包含胶囊原SHA而不含prefix SHA，不产生循环。reader不得用补零接受旧未定义身份。
+
 > 2026-11-17 T552补充生效：本文“非prefix沿T527”原先未给数值的部分现已由 `architecture-T552-v5-segment-wire-v2.json` 及 `architecture-T552-v5-wire-and-g9-seed-v2.md` 唯一补齐；按新逐段身份/计数/捕获元数据实施。T535固定自身SHA mask、版本及预算规则不变。
 
 日期：2026-11-17。角色：architect。不使用真机。状态：ENGINEERING_READY_NOT_IMPLEMENTED。

@@ -38,6 +38,7 @@ c=dict(schema='T614_V5_SCOPE_ENTRY_CURSOR_V1',date='2026-11-18',task='T614',
 assert len(fields)==32 and c['checks']['controlEndBytes']<=8192
 assert c['checks']['perPlanCopies']==40 and c['checks']['perPlanCopyBytes']==5120
 assert raw['usedMaskU32']==sum(1<<i for i in list(range(18))+[31])
+c['publicRootIdentityContract']=receipt('docs/architecture-T619-v5-public-identity-v1.json')
 put('architecture-T614-v5-entry-cursor-v1.json',c)
 pn='architecture-T527-v5-cold-manifest-v1.json';wn='architecture-T552-v5-segment-wire-v2.json'
 p=get(pn);w=get(wn)

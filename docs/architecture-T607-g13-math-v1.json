@@ -383,7 +383,7 @@
   "smallPhaseTheta": "Om*T/(4*pi)*(x-sin(x)); for |x|<1/4 evaluate x^3*(1/3!-x^2/5!+...-x^22/25!) without cancellation",
   "runtime": "scalar drive lane0; finite spatial sin table GPU cold in existing4096word coeff area; no extra dispatch in root",
   "requiredSinCosAbsError": "2^-21",
-  "requiredExpRelError": "2^-20 where output representable; explicit numeric fault otherwise",
+  "requiredExpRelError": "2^-20 total including approximation and actual F32 conversion; representability alone insufficient; public17/math bit4 otherwise",
   "constantsProof": "Machin alternating rational intervals256 terms each, identical binary128 pi and512 reciprocal floor; positive atanh1/3 series bound for ln2",
   "truncationBounds": {
     "sin25": "2^-102",
@@ -391,5 +391,78 @@
     "exp20": "2^-96"
   },
   "testsRun": false,
-  "mathSHA": "ee12f34b54239a8c7c395e5aa30aadcd95683be9d4f72e8f92cc203e92f68829"
+  "domainContract": {
+    "schema": "T628_G13_MATH_DOMAIN_V1",
+    "date": "2026-11-19",
+    "publicError": {
+      "code": 17,
+      "name": "NUMERIC_OVERFLOW",
+      "newPublicErrorCode": false
+    },
+    "mathStatus": {
+      "type": "U32_BITSET",
+      "bits": {
+        "1": "DIVIDE_BY_ZERO",
+        "2": "NONFINITE_BINARY64_OR_F32_OVERFLOW",
+        "4": "EXP_RANGE_OR_UNDERFLOW_OR_RELATIVE_ERROR"
+      },
+      "unknownBits": "UNSUPPORTED_MATH_STATUS",
+      "detail": "NUMERIC_DOMAIN iff same first-fault root/micro/stage has public17 and nonzero supported mathStatus",
+      "zero": "public17+0 is ordinary numeric overflow, not NUMERIC_DOMAIN",
+      "absent": "MATH_DETAIL_NOT_OBSERVED",
+      "aggregate": "observational aggregateMathStatus never replaces firstError"
+    },
+    "exp": {
+      "requiredTotalRelativeError": "2^-20",
+      "includes": [
+        "software approximation",
+        "actual F32 conversion"
+      ],
+      "subnormal": "representability alone insufficient; accept only if total relative bound met",
+      "failure": "public17 + bit4; retain raw argument, soft value, rounded F32 bits and identity; never clamp or silently zero",
+      "exampleRejected": "exp(-103) rounds near2^-149 with about24 percent relative error"
+    },
+    "firstFault": {
+      "bind": [
+        "root nonce",
+        "micro ordinal",
+        "stage",
+        "public firstError",
+        "math detail"
+      ],
+      "latch": "single same-boundary first-fault observation; later aggregate bits cannot change original cause",
+      "storage": "ctrl750 firstMathStatus, ctrl751 aggregateMathStatus, ctrl766 firstFaultDetailSeal within existing gpuGlobal256; original first fault op/scope/J/micro ctrl513/515/516/517; micro783 retains aggregate semantics",
+      "seal": 3235779345,
+      "reset": "clear750/766 whenever514 firstError is reset; aggregate751 only at original root initialization, not inferred from latest trial",
+      "writer": "generic fail(error) passes detail0; failMath(localDetail) passes public17 and invocation-local detail; atomic first-error winner writes750 then766 seal; root-tail barrier/fence publishes the tuple",
+      "reader": "require seal and matching root/op/scope/J/micro, never infer first detail from aggregate751",
+      "divideZeroOrder": "test denominator before numerator so0/0 produces bit1; 0/nonzero remains exact0"
+    },
+    "testOnlyHooks": {
+      "1": "PRESSURE_DISABLED",
+      "2": "PRESSURE_SIGN_REVERSED",
+      "3": "RHS_INCOMPATIBLE",
+      "4": "GAUGE_OFFSET",
+      "5": "NORMAL_WALL",
+      "6": "PERIODIC_ALIAS_DUPLICATE"
+    },
+    "hook6": {
+      "status": "ENGINEERING_READY_PRODUCT_NOT_IMPLEMENTED",
+      "inject": "after periodic alias synchronization, before FLOW_AUDIT; corrupt one alias or duplicate one update",
+      "detect": "independent alias equality check; no subsequent enforce may erase injection",
+      "outcome": "FIELD_RANGE35 with FIELD_RANGE audit bit1 not satisfied, no CURRENT/commit/tick advance",
+      "identity": "test-only build and shader identity distinct from production"
+    },
+    "unchanged": [
+      "T605 thresholds",
+      "T607 error enum0..37",
+      "layout bytes",
+      "820 quantum dispatches",
+      "16 SOURCE dispatches",
+      "G1F4=3296"
+    ],
+    "testsRun": false,
+    "deviceUsed": false
+  },
+  "mathSHA": "1629bffe555eae801007af8ae7bc74e1a677b0b7a519853ff484a1f535d8a968"
 }

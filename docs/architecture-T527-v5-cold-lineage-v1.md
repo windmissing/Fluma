@@ -1,5 +1,7 @@
 # T527 V5 完整冷谱系、容量与兼容合同 v1
 
+> 2026-11-19 T619生效：prefix公开rootCursor64、RootRecord58..65 token精确前像、4096B配置胶囊以 [T619](architecture-T619-v1.md) 和 `architecture-T619-v5-public-identity-v1.json` 为准。不得从私有scope cursor反算或补零；原目录/容量/header2/policy1不变。T596原卡续实现，本文历史NOT_IMPLEMENTED不替代当前实际开发状态。
+
 > 2026-11-18 T614切点修订：同dispatch首事务前入口保存在GPU cursor32不可变字段，不从dispatch后mutable反算；公开Meta2及FULL CONTROL容器revision2按 [T614合同](architecture-T614-v5-entry-cursor-v1.md)。ROOT CONTROL仍1、header2/payloadV5_2/目录/预算不变。
 
 > 2026-11-18 T584实现闭包修订：FULL必须保执行root的真实BASE及source上下文、五根控制与scope双stream，不能用NOT_EXECUTED代替缺对象。正式61段、既有预算和V5_2字典不变；缺口、唯一链接实现、捕获时机、sealed语义与跨route双槽生命周期以 [T584工程稿](architecture-T584-first-attribution-v1.md) 为准。

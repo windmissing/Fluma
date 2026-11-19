@@ -1,0 +1,38 @@
+{
+  "schema": "T620_ARCHITECTURE_SOURCE_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "inputs": [
+    {
+      "path": "docs/test-report-T496-create-only-v5.md",
+      "bytes": 3063,
+      "sha256": "464a69ab2c5af1384ac24921fe9e2d349b31a45698b48b563a6c0bebfedc808c"
+    },
+    {
+      "path": "test/t496/external_source_diff.cpp",
+      "bytes": 27449,
+      "sha256": "c3305df1a7306614be9f6e8f05fe4702b6fac6e83320786343e65bc7e4337e19"
+    },
+    {
+      "path": "test/t496/t561_seams.h",
+      "bytes": 2660,
+      "sha256": "726eacebf70922dd70768f944e68b1dd2b57bb1b736c04bf7f5ded78831a0cde"
+    },
+    {
+      "path": "test/t496/gl_sink.inc",
+      "bytes": 9409,
+      "sha256": "5da8009672c6fa0879a25204b058be3c7899b08202fd95bf91814a8cb49d357a"
+    },
+    {
+      "path": "test/t496/gl_forward_sink.cpp",
+      "bytes": 24258,
+      "sha256": "cde134861901b79f5825af5a5c8eb232d92e19210d4f97ee1243c245b8c3ad12"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    }
+  ]
+}

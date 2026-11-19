@@ -4,8 +4,8 @@
   "status": "ENGINEERING_READY_NOT_IMPLEMENTED",
   "parent": {
     "path": "docs/architecture-T527-v5-cold-manifest-v1.json",
-    "bytes": 91819,
-    "sha256": "c4588ea3675a1ff2d6d927bdd56f0c90be494729b3cc54c0c7e7e602aac5f5ae"
+    "bytes": 92193,
+    "sha256": "6aa1a99eaa694ef95889ca0ce15445ec61e87810a0f61d10354cb7a125d9ffa3"
   },
   "payload": "GRS_M3B_LINEAGE_COLD_V5_2",
   "headerRevision": 2,
@@ -7467,5 +7467,10 @@
   "engineeringRevision": 3,
   "segmentRevisionExceptions": {
     "FULL:CONTROL_ROOT_0..4": 2
+  },
+  "publicIdentityContract": {
+    "path": "docs/architecture-T619-v5-public-identity-v1.json",
+    "bytes": 178702,
+    "sha256": "d50862d08b4727759a500e70725fdb38364b57401e3fc1917b0085fe00ed7296"
   }
 }

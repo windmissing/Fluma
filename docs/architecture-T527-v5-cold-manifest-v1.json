@@ -3621,6 +3621,11 @@
       "task": "T614",
       "engineeringRevision": 3,
       "change": "immutable scope entry, Meta2 and FULL CONTROL segmentRevision2; header2/payloadV5_2/capacity unchanged"
+    },
+    {
+      "task": "T619",
+      "date": "2026-11-19",
+      "change": "first defined rootCursor64/token/capsule; no offsets/credit/prefix policy change"
     }
   ],
   "scopeCursorCaptureContract": {
@@ -3633,5 +3638,10 @@
     "FULLControlSegmentRevision": 2,
     "ROOTControlSegmentRevision": 1,
     "prefixAndHeaderUnchanged": true
+  },
+  "publicIdentityContract": {
+    "path": "docs/architecture-T619-v5-public-identity-v1.json",
+    "bytes": 178702,
+    "sha256": "d50862d08b4727759a500e70725fdb38364b57401e3fc1917b0085fe00ed7296"
   }
 }

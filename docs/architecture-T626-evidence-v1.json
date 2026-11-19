@@ -1,0 +1,23 @@
+{
+  "schema": "T626_ARCHITECTURE_SOURCE_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "inputs": [
+    {
+      "path": "docs/test-report-T615-platform-clock-v1.md",
+      "bytes": 2170,
+      "sha256": "a243023afa33a662930f0aa20f7b69133cb7c9924e940adaee3c98ea7a173197"
+    },
+    {
+      "path": "test/reports/t615/platform-evidence.json",
+      "bytes": 1151,
+      "sha256": "c3bafa66672ee6bd7c4a549ba2e41aabb1470405566556e7c06a77e06e517cef"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/clock_producer.h",
+      "bytes": 2683,
+      "sha256": "81d7b7d97cb4426ee8e129070f7b72da2517284be2afd4b19cdf25e01c1585dd"
+    }
+  ]
+}

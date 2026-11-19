@@ -1,0 +1,28 @@
+{
+  "schema": "T624_ARCHITECTURE_SOURCE_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "inputs": [
+    {
+      "path": "docs/test-report-T541-differential-toolchain-v2.md",
+      "bytes": 2041,
+      "sha256": "bdd554fb5d44d6e8adada325c8a6d32303eb9e45c3fa74a703f4a62d230f0ecf"
+    },
+    {
+      "path": ".codex/local-test/t564-stage-tree/build.log",
+      "bytes": 9664,
+      "sha256": "a52dcd89ee984a86591bcca9990757ac6f4c078ed637a7a0b2d40cde6d8eabab"
+    },
+    {
+      "path": ".codex/local-test/t564-stage-tree/entry/.cxx/default/default/debug/arm64-v8a/compile_commands.json",
+      "bytes": 89949,
+      "sha256": "2a980d2be1d2c59bb89761a13995d9a2b0a96b115b1c3a3c5a009705e303222c"
+    },
+    {
+      "path": ".codex/local-test/t564-stage-tree/entry/src/main/cpp/gpu_resident/g9spf/kernel_assets.cpp",
+      "bytes": 215,
+      "sha256": "11276222e39525aae02397f007f2e7a86bb0405a935e62a323461106b3c922f7"
+    }
+  ]
+}

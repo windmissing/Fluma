@@ -1,0 +1,223 @@
+{
+  "schema": "T619_T628_ARCHITECTURE_AUDIT_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "buildRun": false,
+  "cursorEncodingChecks": true,
+  "tokenPreimageBytes": 2920,
+  "byteMutationChangesToken": true,
+  "t620": [
+    {
+      "arm": "c0",
+      "enters": 5959,
+      "exits": 5958,
+      "openCall": {
+        "schema": "T561_CREATE_SINK_V1",
+        "runId": "t496-t496v4c-c0",
+        "arm": "create_C0",
+        "pid": 8992,
+        "createAttemptId": "t496v4c-c0",
+        "callId": 5958,
+        "functionId": 411,
+        "event": "ENTER",
+        "wallNs": "1161573294781100",
+        "scriptNs": "1161573294781100",
+        "detail": "x=1"
+      },
+      "raw": {
+        "path": ".codex/local-test/t496/gltrace-t496v4c-c0.ndjson",
+        "bytes": 3014966,
+        "sha256": "e6c47946a0fd85e2c326b2369c628224f39a4fc3c786226b34af2cfad2544efb"
+      },
+      "stages": {
+        "path": ".codex/local-test/t496/t496-stages_t496v4c-c0.ndjson",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "arm": "c1",
+      "enters": 6264,
+      "exits": 6263,
+      "openCall": {
+        "schema": "T561_CREATE_SINK_V1",
+        "runId": "t496-t496v4c-c1",
+        "arm": "create_C1",
+        "pid": 82676,
+        "createAttemptId": "t496v4c-c1",
+        "callId": 6263,
+        "functionId": 411,
+        "event": "ENTER",
+        "wallNs": "1162509698276400",
+        "scriptNs": "1162509698276400",
+        "detail": "x=1"
+      },
+      "raw": {
+        "path": ".codex/local-test/t496/gltrace-t496v4c-c1.ndjson",
+        "bytes": 3181957,
+        "sha256": "6e9f9ae1583c221b7da30af5e8858ed4543449ce9c7c591f0d96bb8c5daa6276"
+      },
+      "stages": {
+        "path": ".codex/local-test/t496/t496-stages_t496v4c-c1.ndjson",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "arm": "c2",
+      "enters": 6548,
+      "exits": 6547,
+      "openCall": {
+        "schema": "T561_CREATE_SINK_V1",
+        "runId": "t496-t496v4c-c2",
+        "arm": "create_C2",
+        "pid": 66336,
+        "createAttemptId": "t496v4c-c2",
+        "callId": 6547,
+        "functionId": 411,
+        "event": "ENTER",
+        "wallNs": "1163441882931600",
+        "scriptNs": "1163441882931600",
+        "detail": "x=1"
+      },
+      "raw": {
+        "path": ".codex/local-test/t496/gltrace-t496v4c-c2.ndjson",
+        "bytes": 3326399,
+        "sha256": "8d47f82969c4ffa912db284de04d6c2fae00ee9d0aeb6ad59c2756c4ec0ae6b1"
+      },
+      "stages": {
+        "path": ".codex/local-test/t496/t496-stages_t496v4c-c2.ndjson",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "t621": [
+    {
+      "file": {
+        "path": "test/reports/t491/t590a/gpu-input-G9-first.json",
+        "bytes": 1652,
+        "sha256": "c6dbf8c3ac638e62ef15c9e04f96e3f410c0050754b3b56a2744f95bcb29e232"
+      },
+      "identity": {
+        "api": "g9ResearchConfig64",
+        "route": "G9",
+        "bootStamp": "202439093814377",
+        "diagGeneration": "1",
+        "attemptId": "1"
+      },
+      "rawLength": 4,
+      "expectedN": 1,
+      "expectedBytes": 4,
+      "kind": 6,
+      "offset": 0,
+      "firstFailedStage": "ELEMENT_COUNT"
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t590a/gpu-input-G9-last.json",
+        "bytes": 3618,
+        "sha256": "a3b58115f061b35b04a4349c874491265384e52d24388c2a0da64912d66ff11f"
+      },
+      "identity": {
+        "api": "g9ResearchConfig64",
+        "route": "G9",
+        "bootStamp": "202439093814377",
+        "diagGeneration": "1",
+        "attemptId": "1"
+      },
+      "rawLength": 4,
+      "expectedN": 1,
+      "expectedBytes": 4,
+      "kind": 6,
+      "offset": 0,
+      "firstFailedStage": "ELEMENT_COUNT"
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t590a/gpu-input-M3A-first.json",
+        "bytes": 1638,
+        "sha256": "3afef15a450135337efee7f3b16ee95033c8f94fbeb45fe64fe153b4bdecfe53"
+      },
+      "identity": {
+        "api": "m3Configure",
+        "route": "M3A",
+        "bootStamp": "202612073253127",
+        "diagGeneration": "1",
+        "attemptId": "1"
+      },
+      "rawLength": 64,
+      "expectedN": 16,
+      "expectedBytes": 64,
+      "kind": 6,
+      "offset": 0,
+      "firstFailedStage": "ELEMENT_COUNT"
+    },
+    {
+      "file": {
+        "path": "test/reports/t491/t590a/gpu-input-M3A-last.json",
+        "bytes": 3638,
+        "sha256": "9715dac2791e10eca564c690fa272b38b8360f3a7b2f10cae131507e485e468a"
+      },
+      "identity": {
+        "api": "m3Configure",
+        "route": "M3A",
+        "bootStamp": "202612073253127",
+        "diagGeneration": "1",
+        "attemptId": "1"
+      },
+      "rawLength": 64,
+      "expectedN": 16,
+      "expectedBytes": 64,
+      "kind": 6,
+      "offset": 0,
+      "firstFailedStage": "ELEMENT_COUNT"
+    }
+  ],
+  "t622": {
+    "process": {
+      "pid": 57432,
+      "note": "current M0 owner PID (new attempt epoch4); original T461 m2fix attempt process no longer alive - same-attempt second read NOT possible per T588 rule (no stitching)"
+    },
+    "timeline": {
+      "snapshot": "gpu-timeline-libgrsm0.so-57432-1-1795007523565",
+      "rows": 185,
+      "pages": 47,
+      "missing": 0,
+      "duplicates": 0,
+      "state": "INCOMPLETE",
+      "reason": "GREW_DURING_EXPORT",
+      "epoch": 4,
+      "runLo": 2,
+      "surfaceLo": 3,
+      "contextLo": 3,
+      "permissionState": "STATE_LOST"
+    },
+    "linkedOriginal": {
+      "hapSha256": "a332c0a1cd541e586a42984dc33bb353486c3852ec87b567b8a95606d13c44b3",
+      "elfSha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f"
+    }
+  },
+  "t624": [
+    {
+      "file": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t564-stage-tree\\entry\\src\\main\\cpp\\gpu_resident\\g9spf\\kernel_assets.cpp",
+      "directory": "D:/hmprojects/HelloWorld/.codex/local-test/t564-stage-tree/entry/.cxx/default/default/debug/arm64-v8a",
+      "argvLength": 830,
+      "argvSHA": "ab645dcc4e9e1c46f1fed4c8585248069696e42dfae7557213b1d013be869c14"
+    }
+  ],
+  "t628": {
+    "F06EarliestTimeTailBounds": {
+      "40": 0.004951643762395021,
+      "128": 2.7120243262812697e-12
+    },
+    "F07ContinuousFlux": "1/6",
+    "expMinus103": 1.8521167695179754e-45,
+    "nearestF32": 1.401298464324817e-45,
+    "relativeError": 0.24340706407538582,
+    "gate": 9.5367431640625e-07,
+    "scalarChecksOnly": true,
+    "mathSHA": "1629bffe555eae801007af8ae7bc74e1a677b0b7a519853ff484a1f535d8a968"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "T619_ARCHITECTURE_SOURCE_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "inputs": [
+    {
+      "path": "docs/developer-T596-progress.md",
+      "bytes": 3774,
+      "sha256": "8dda45da220042301f5021caed3f9434ab6feba038c85bffd78aeff04951e9b0"
+    },
+    {
+      "path": "test/reports/t596/development-t614.json",
+      "bytes": 4293,
+      "sha256": "b1f5cfb8861421646a791fc6d7b928c945bb5b32eb83527bd8143742a0eb9481"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp",
+      "bytes": 10417,
+      "sha256": "b781831fb26b5edb50eff883f61c7a8123e6e0d9623c9a0cac891995b171115e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/completion_gate.h",
+      "bytes": 2647,
+      "sha256": "be4c3a84908c543ec2de669eb26adc53e1c2adc12f568bd55a46adefa47202b0"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/transport.h",
+      "bytes": 6738,
+      "sha256": "e8b60d1f7d7e83046e997c25351d0fc06bcd9617ad52a409063cd02e82fb800f"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/transport.cpp",
+      "bytes": 27604,
+      "sha256": "63134eb660989a5ae561a63cb83a9cb27317cb0c525bf1ba2fcde8cd2a8cb56d"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/controller.cpp",
+      "bytes": 21330,
+      "sha256": "bf35c5670b8be24780a64989079f6268f6b7a771a28d1b72c7bbee862fe7da8e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/root_owner.h",
+      "bytes": 2325,
+      "sha256": "640b747459714b92a5225ad8cae4d0a1e328d47ca347eeb3345300e8f97e6bc2"
+    }
+  ]
+}

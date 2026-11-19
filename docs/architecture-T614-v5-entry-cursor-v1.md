@@ -1,5 +1,7 @@
 # T614 V5同dispatch入口cursor修订
 
+> 2026-11-19 T619补充公开root身份，与本稿scope私有32及公开Meta32不同层级。参见 [T619](architecture-T619-v1.md)；同名JSON和生成器已加显式引用，40次/5120B切点复制不变。T596 b127521已实现本稿入口保留，仍等T619三项编码；本稿下文未实现状态是历史交付时点。
+
 2026-11-18，architect，不使用真机。输入为T596原评论6afd53cce4b0d2e2f7786bb2、646af44回执、T552/T584/T527和当前canonical shader/transport。交付为**工程合同修订，产品未实现/未验证**；原T596续办，不另建同一开发卡，FULL继续关闭/META_INCOMPLETE直到完整实现。
 
 ## 切点裁定

@@ -1,5 +1,7 @@
 # T552：V5逐段身份和G9规范seed补齐
 
+> 2026-11-19 T619生效：同名segment-wire JSON已同步T527 parent SHA及T619公开身份表引用；root cursor64/token/capsule按 [T619](architecture-T619-v1.md) 生成和读取。段地址/ROOT7/FULL61/CONTROL revision例外和G9 seed均不改；不得复制T614私有cursor32作公开root64。
+
 > 2026-11-18 T614生效：真实opcode切点、GPU不可变入口cursor32、Meta2及FULL CONTROL revision2以 [T614修订](architecture-T614-v5-entry-cursor-v1.md) 和同名JSON为准；G9 seed无变化。
 
 2026-11-17，architect，不使用真机。消费T517 7dd6e58阻断回执、T548 cdb4c77局部交付、T527/T535/T543及实际shader。两项均是此前工程合同遗漏，本次分别给出可独立实施的完整机器表；不让developer猜值、删审计或用helper冒完整功能。未运行业务测试/真机。

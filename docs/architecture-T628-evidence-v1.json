@@ -1,0 +1,53 @@
+{
+  "schema": "T628_ARCHITECTURE_SOURCE_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "inputs": [
+    {
+      "path": "docs/test-report-T606-independent-baseline-v1.md",
+      "bytes": 3642,
+      "sha256": "ee68e33cbaa07b2a60701f236d63c3842fd0519c7f69ef5952677e7d7fb13b3d"
+    },
+    {
+      "path": "docs/developer-T608-progress.md",
+      "bytes": 8091,
+      "sha256": "e98b433562efff1261f91e74be889d60a448ed5ea124de05dd4a3b6e37075baf"
+    },
+    {
+      "path": "docs/algorithm-G13-pure-fluid-gpu-v1.md",
+      "bytes": 38084,
+      "sha256": "5321a1b88cc8134e6a4e6fcbd795e8dbf7e476d5a9f465696c4ef5323908a04e"
+    },
+    {
+      "path": "docs/design-G13-pure-fluid-fixtures-v1.json",
+      "bytes": 9308,
+      "sha256": "bb62c36b14565e502e83199ddf85c2b8fbf3ff5e155fb403ddf1c935f2f9fff7"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/math_soft128.glsl",
+      "bytes": 6295,
+      "sha256": "0d27ca6b98b00521e7105c8583f5b7c8efbaab0d40caf1d509565b0595b308c8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/cold.cpp",
+      "bytes": 13996,
+      "sha256": "b095ef07c78ebd2d9f27c5b61fe7d43a46dfb56b73f2910ef07ca94bed9b2bda"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/trace.glsl",
+      "bytes": 3962,
+      "sha256": "4f1e54796f7b4b5784cc082a5c18545bd28ef74a7951f458bb6649221b20db1f"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+      "bytes": 25629,
+      "sha256": "2327ba5676854ad3dd8d92de58917d9ceb8546052490152a3d3fd1ac287d5b81"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/pipeline.comp",
+      "bytes": 18728,
+      "sha256": "aed83cade0f3c349b1a553f8144ee787e3fc1b492fb8706cc194d192fd799483"
+    }
+  ]
+}

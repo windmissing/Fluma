@@ -1,0 +1,7672 @@
+{
+  "schema": "T619_V5_PUBLIC_IDENTITY_V1",
+  "date": "2026-11-19",
+  "status": "ENGINEERING_READY_NOT_VALIDATED",
+  "encoding": "LE32 U32; U64 low then high; no C++ object representation, padding or JSON",
+  "rootCursor64": {
+    "prefixByteStart": 20736,
+    "slots": 5,
+    "words": 64,
+    "revision": 1,
+    "usedMaskLo": 4294967295,
+    "usedMaskHi": 1073741823,
+    "fields": [
+      {
+        "word": 0,
+        "name": "magic",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 826488146
+      },
+      {
+        "word": 1,
+        "name": "revision",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 1
+      },
+      {
+        "word": 2,
+        "name": "words",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 64
+      },
+      {
+        "word": 3,
+        "name": "seal",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 3235775761
+      },
+      {
+        "word": 4,
+        "name": "kind",
+        "producer": "frozen RootPermitV5.kind",
+        "unit": "U32"
+      },
+      {
+        "word": 5,
+        "name": "ordinal",
+        "producer": "frozen RootPermitV5.ordinal",
+        "unit": "U32"
+      },
+      {
+        "word": 6,
+        "name": "baseBank",
+        "producer": "frozen RootPermitV5.baseBank",
+        "unit": "U32"
+      },
+      {
+        "word": 7,
+        "name": "candidateBank",
+        "producer": "frozen RootPermitV5.candidateBank",
+        "unit": "U32"
+      },
+      {
+        "word": 8,
+        "name": "spareBank",
+        "producer": "frozen RootPermitV5.spareBank",
+        "unit": "U32"
+      },
+      {
+        "word": 9,
+        "name": "eventArena",
+        "producer": "frozen RootPermitV5.eventArena",
+        "unit": "U32"
+      },
+      {
+        "word": 10,
+        "name": "eventStart",
+        "producer": "frozen RootPermitV5.eventStart",
+        "unit": "U32"
+      },
+      {
+        "word": 11,
+        "name": "eventCapacity",
+        "producer": "frozen RootPermitV5.eventCapacity",
+        "unit": "U32"
+      },
+      {
+        "word": 12,
+        "name": "publicationSlot",
+        "producer": "frozen RootPermitV5.publicationSlot",
+        "unit": "U32"
+      },
+      {
+        "word": 13,
+        "name": "uploadedBytes",
+        "producer": "frozen RootPermitV5.uploadedBytes",
+        "unit": "U32"
+      },
+      {
+        "word": 14,
+        "name": "carry",
+        "producer": "frozen RootPermitV5.carry",
+        "unit": "U32"
+      },
+      {
+        "word": 15,
+        "name": "captureFlags",
+        "producer": "owner actual authorization and first dispatch submission; bit0 AUTHORIZED, bit1 ROOT_ENTERED, all other bits0",
+        "unit": "U32"
+      },
+      {
+        "word": 16,
+        "name": "nonceLo",
+        "producer": "frozen RootPermitV5.nonce",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 17,
+        "name": "nonceHi",
+        "producer": "frozen RootPermitV5.nonce",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 18,
+        "name": "planLo",
+        "producer": "frozen RootPermitV5.plan",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 19,
+        "name": "planHi",
+        "producer": "frozen RootPermitV5.plan",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 20,
+        "name": "frameLo",
+        "producer": "frozen RootPermitV5.frame",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 21,
+        "name": "frameHi",
+        "producer": "frozen RootPermitV5.frame",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 22,
+        "name": "controlLo",
+        "producer": "frozen RootPermitV5.control",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 23,
+        "name": "controlHi",
+        "producer": "frozen RootPermitV5.control",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 24,
+        "name": "geometryLo",
+        "producer": "frozen RootPermitV5.geometry",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 25,
+        "name": "geometryHi",
+        "producer": "frozen RootPermitV5.geometry",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 26,
+        "name": "sourceCommitLo",
+        "producer": "frozen RootPermitV5.sourceCommit",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 27,
+        "name": "sourceCommitHi",
+        "producer": "frozen RootPermitV5.sourceCommit",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 28,
+        "name": "physicsCommitLo",
+        "producer": "frozen RootPermitV5.physicsCommit",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 29,
+        "name": "physicsCommitHi",
+        "producer": "frozen RootPermitV5.physicsCommit",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 30,
+        "name": "publicationGenerationLo",
+        "producer": "frozen RootPermitV5.publicationGeneration",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 31,
+        "name": "publicationGenerationHi",
+        "producer": "frozen RootPermitV5.publicationGeneration",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 32,
+        "name": "deadlineLo",
+        "producer": "frozen RootPermitV5.deadline",
+        "unit": "U64_Lo; deadline ns MONOTONIC"
+      },
+      {
+        "word": 33,
+        "name": "deadlineHi",
+        "producer": "frozen RootPermitV5.deadline",
+        "unit": "U64_Hi; deadline ns MONOTONIC"
+      },
+      {
+        "word": 34,
+        "name": "runLo",
+        "producer": "frozen RootPermitV5.identity.run",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 35,
+        "name": "runHi",
+        "producer": "frozen RootPermitV5.identity.run",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 36,
+        "name": "ownerLo",
+        "producer": "frozen RootPermitV5.identity.owner",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 37,
+        "name": "ownerHi",
+        "producer": "frozen RootPermitV5.identity.owner",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 38,
+        "name": "contextLo",
+        "producer": "frozen RootPermitV5.identity.context",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 39,
+        "name": "contextHi",
+        "producer": "frozen RootPermitV5.identity.context",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 40,
+        "name": "inputEpochLo",
+        "producer": "frozen RootPermitV5.identity.inputEpoch",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 41,
+        "name": "inputEpochHi",
+        "producer": "frozen RootPermitV5.identity.inputEpoch",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 42,
+        "name": "pageSessionLo",
+        "producer": "frozen RootPermitV5.identity.pageSession",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 43,
+        "name": "pageSessionHi",
+        "producer": "frozen RootPermitV5.identity.pageSession",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 44,
+        "name": "permissionLo",
+        "producer": "frozen RootPermitV5.identity.permission",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 45,
+        "name": "permissionHi",
+        "producer": "frozen RootPermitV5.identity.permission",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 46,
+        "name": "windowLo",
+        "producer": "frozen RootPermitV5.identity.window",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 47,
+        "name": "windowHi",
+        "producer": "frozen RootPermitV5.identity.window",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 48,
+        "name": "configLo",
+        "producer": "frozen RootPermitV5.identity.config",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 49,
+        "name": "configHi",
+        "producer": "frozen RootPermitV5.identity.config",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 50,
+        "name": "surfaceLo",
+        "producer": "frozen RootPermitV5.identity.surface",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 51,
+        "name": "surfaceHi",
+        "producer": "frozen RootPermitV5.identity.surface",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 52,
+        "name": "sourcePrefix",
+        "producer": "frozen RootOwnerV5 before root.sourcePrefix",
+        "unit": "U32"
+      },
+      {
+        "word": 53,
+        "name": "dedupPrefix",
+        "producer": "frozen RootOwnerV5 before root.dedupPrefix",
+        "unit": "U32"
+      },
+      {
+        "word": 54,
+        "name": "eventEnd",
+        "producer": "frozen RootOwnerV5 before root.eventEnd",
+        "unit": "U32"
+      },
+      {
+        "word": 55,
+        "name": "actualBank",
+        "producer": "frozen RootOwnerV5 before root.actualBank",
+        "unit": "U32"
+      },
+      {
+        "word": 56,
+        "name": "eventFrameLo",
+        "producer": "frozen RootOwnerV5 before root.eventFrame",
+        "unit": "U64_Lo"
+      },
+      {
+        "word": 57,
+        "name": "eventFrameHi",
+        "producer": "frozen RootOwnerV5 before root.eventFrame",
+        "unit": "U64_Hi"
+      },
+      {
+        "word": 58,
+        "name": "lastGood",
+        "producer": "frozen RootOwnerV5 before root.lastGood",
+        "unit": "boolean U32"
+      },
+      {
+        "word": 59,
+        "name": "stale",
+        "producer": "frozen RootOwnerV5 before root.stale",
+        "unit": "boolean U32"
+      },
+      {
+        "word": 60,
+        "name": "currentBank",
+        "producer": "frozen RootOwnerV5 before root.currentBank",
+        "unit": "U32"
+      },
+      {
+        "word": 61,
+        "name": "publicationSlot",
+        "producer": "frozen RootOwnerV5 before root.publicationSlot",
+        "unit": "U32"
+      },
+      {
+        "word": 62,
+        "name": "reserved_62",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 63,
+        "name": "reserved_63",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      }
+    ],
+    "capture": "authorized owner before first root dispatch; publish entered flag only after actual submission",
+    "completeFlags": 3,
+    "zeroWords": [
+      62,
+      63
+    ],
+    "notPrivateScopeCursor": true
+  },
+  "rootTokenSha": {
+    "recordWords": [
+      58,
+      65
+    ],
+    "algorithm": "SHA256",
+    "bytes": 2920,
+    "words": 730,
+    "preimage": [
+      {
+        "name": "domainMagic",
+        "words": 1,
+        "constant": 827609653
+      },
+      {
+        "name": "tokenRevision",
+        "words": 1,
+        "constant": 1
+      },
+      {
+        "name": "headerIdentity24to41",
+        "words": 18,
+        "producer": "original capture scope header words24..41, frozen at root; never current export scope"
+      },
+      {
+        "name": "rootCursor64",
+        "words": 64,
+        "producer": "same root frozen entry"
+      },
+      {
+        "name": "input64",
+        "words": 64,
+        "producer": "same root original INPUT64"
+      },
+      {
+        "name": "quota256",
+        "words": 256,
+        "producer": "same root original quota"
+      },
+      {
+        "name": "completion256",
+        "words": 256,
+        "producer": "same root sealed completion"
+      },
+      {
+        "name": "rootRecord0to29",
+        "words": 30,
+        "producer": "same root actual finalized RootRecord128 words0..29"
+      },
+      {
+        "name": "parameterSha",
+        "words": 8,
+        "producer": "record42..49/config.lift.sha"
+      },
+      {
+        "name": "shaderSha",
+        "words": 8,
+        "producer": "frozen RootPermitV5.shaderSha"
+      },
+      {
+        "name": "layoutSha",
+        "words": 8,
+        "producer": "frozen RootPermitV5.layoutSha"
+      },
+      {
+        "name": "angleSha",
+        "words": 8,
+        "producer": "frozen RootPermitV5.angleSha"
+      },
+      {
+        "name": "configCapsuleRawSha",
+        "words": 8,
+        "producer": "SHA256 entire4096B capsule, digest bytes packed LE32"
+      }
+    ],
+    "digestPacking": "original digest bytes per4 LE32; lowercase hex in original byte order",
+    "missing": "FOR FORENSIC: no invented commitment; COMPLETE requires all frozen inputs; NOT_EXECUTED token zero"
+  },
+  "fullColdConfigCapsule": {
+    "prefixByteStart": 26752,
+    "bytes": 4096,
+    "words": 1024,
+    "revision": 1,
+    "fields": [
+      {
+        "word": 0,
+        "name": "magic",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 1178809686
+      },
+      {
+        "word": 1,
+        "name": "revision",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 1
+      },
+      {
+        "word": 2,
+        "name": "words",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 1024
+      },
+      {
+        "word": 3,
+        "name": "seal",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 3235775761
+      },
+      {
+        "word": 4,
+        "name": "K",
+        "producer": "frozen Profile.k",
+        "unit": "U32"
+      },
+      {
+        "word": 5,
+        "name": "Kw",
+        "producer": "frozen Profile.kw",
+        "unit": "U32"
+      },
+      {
+        "word": 6,
+        "name": "physicalWire",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 5
+      },
+      {
+        "word": 7,
+        "name": "features",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 31
+      },
+      {
+        "word": 8,
+        "name": "parameterRevision",
+        "producer": "frozen config.lift.revision",
+        "unit": "U32",
+        "valid": "1..UINT32_MAX"
+      },
+      {
+        "word": 9,
+        "name": "liftMode",
+        "producer": "frozen config.lift.mode",
+        "unit": "U32",
+        "valid": "OFF0/SENSOR_RESEARCH1/SYNTHETIC_TEST2"
+      },
+      {
+        "word": 10,
+        "name": "omegaProvided",
+        "producer": "frozen config.omegaProvided",
+        "unit": "boolean U32",
+        "valid": "must be1"
+      },
+      {
+        "word": 11,
+        "name": "fullBranchTrace",
+        "producer": "frozen config.fullBranchTrace",
+        "unit": "boolean U32",
+        "valid": "0 or1"
+      },
+      {
+        "word": 12,
+        "name": "omega",
+        "producer": "frozen PhysicalConfigV5.omega",
+        "unit": "angle-table index/s",
+        "valid": "0..1966080"
+      },
+      {
+        "word": 13,
+        "name": "waterRate",
+        "producer": "frozen PhysicalConfigV5.waterRate",
+        "unit": "Q20/s",
+        "valid": "0..1006632960"
+      },
+      {
+        "word": 14,
+        "name": "gravity",
+        "producer": "frozen PhysicalConfigV5.gravity",
+        "unit": "Q20/s^2",
+        "valid": "120..1073741824"
+      },
+      {
+        "word": 15,
+        "name": "settle",
+        "producer": "frozen PhysicalConfigV5.settle",
+        "unit": "Q20/s",
+        "valid": "1..1073741824"
+      },
+      {
+        "word": 16,
+        "name": "emit",
+        "producer": "frozen PhysicalConfigV5.emit",
+        "unit": "Q20/s",
+        "valid": "0..1073741824"
+      },
+      {
+        "word": 17,
+        "name": "kAir",
+        "producer": "frozen PhysicalConfigV5.kAir",
+        "unit": "integer s^-1",
+        "valid": "0..960"
+      },
+      {
+        "word": 18,
+        "name": "kFlight",
+        "producer": "frozen PhysicalConfigV5.kFlight",
+        "unit": "integer s^-1",
+        "valid": "0..960"
+      },
+      {
+        "word": 19,
+        "name": "kWet",
+        "producer": "frozen PhysicalConfigV5.kWet",
+        "unit": "integer s^-1",
+        "valid": "1..960"
+      },
+      {
+        "word": 20,
+        "name": "soft",
+        "producer": "frozen PhysicalConfigV5.soft",
+        "unit": "Q20 column height-difference threshold",
+        "valid": "0..605393"
+      },
+      {
+        "word": 21,
+        "name": "flux",
+        "producer": "frozen PhysicalConfigV5.flux",
+        "unit": "Q20/s per-edge solid transfer cap",
+        "valid": "0..4294967295"
+      },
+      {
+        "word": 22,
+        "name": "liftRateQ16",
+        "producer": "frozen config.lift.liftRateQ16",
+        "unit": "Q16/s",
+        "valid": "0..62914560"
+      },
+      {
+        "word": 23,
+        "name": "bandQ",
+        "producer": "frozen config.lift.bandQ",
+        "unit": "Q20 model height",
+        "valid": "1..1048576"
+      },
+      {
+        "word": 24,
+        "name": "rampQ16",
+        "producer": "frozen config.lift.rampQ16",
+        "unit": "Q16/s",
+        "valid": "1..7864320"
+      },
+      {
+        "word": 25,
+        "name": "decayQ16",
+        "producer": "frozen config.lift.decayQ16",
+        "unit": "Q16/s",
+        "valid": "1..62914560"
+      },
+      {
+        "word": 26,
+        "name": "liftSpeedQ",
+        "producer": "frozen config.lift.liftSpeedQ",
+        "unit": "Q20/s model velocity",
+        "valid": "1..67108864"
+      },
+      {
+        "word": 27,
+        "name": "liftCapQ",
+        "producer": "frozen config.lift.liftCapQ",
+        "unit": "Q20/s volume channel cap",
+        "valid": "0..314572800"
+      },
+      {
+        "word": 28,
+        "name": "quantumHz",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "Hz",
+        "constant": 120
+      },
+      {
+        "word": 29,
+        "name": "timeTicksPerQuantum",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "ticks",
+        "constant": 65536
+      },
+      {
+        "word": 30,
+        "name": "gapNsLo",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "ns U64_Lo",
+        "constant": 33333333
+      },
+      {
+        "word": 31,
+        "name": "gapNsHi",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "ns U64_Hi",
+        "constant": 0
+      },
+      {
+        "word": 32,
+        "name": "rootDeadlineNsLo",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "ns U64_Lo",
+        "constant": 250000000
+      },
+      {
+        "word": 33,
+        "name": "rootDeadlineNsHi",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "ns U64_Hi",
+        "constant": 0
+      },
+      {
+        "word": 34,
+        "name": "layoutSha0",
+        "producer": "frozen root permit layoutSha[0]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 35,
+        "name": "layoutSha1",
+        "producer": "frozen root permit layoutSha[1]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 36,
+        "name": "layoutSha2",
+        "producer": "frozen root permit layoutSha[2]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 37,
+        "name": "layoutSha3",
+        "producer": "frozen root permit layoutSha[3]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 38,
+        "name": "layoutSha4",
+        "producer": "frozen root permit layoutSha[4]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 39,
+        "name": "layoutSha5",
+        "producer": "frozen root permit layoutSha[5]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 40,
+        "name": "layoutSha6",
+        "producer": "frozen root permit layoutSha[6]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 41,
+        "name": "layoutSha7",
+        "producer": "frozen root permit layoutSha[7]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 42,
+        "name": "shaderSha0",
+        "producer": "frozen root permit shaderSha[0]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 43,
+        "name": "shaderSha1",
+        "producer": "frozen root permit shaderSha[1]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 44,
+        "name": "shaderSha2",
+        "producer": "frozen root permit shaderSha[2]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 45,
+        "name": "shaderSha3",
+        "producer": "frozen root permit shaderSha[3]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 46,
+        "name": "shaderSha4",
+        "producer": "frozen root permit shaderSha[4]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 47,
+        "name": "shaderSha5",
+        "producer": "frozen root permit shaderSha[5]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 48,
+        "name": "shaderSha6",
+        "producer": "frozen root permit shaderSha[6]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 49,
+        "name": "shaderSha7",
+        "producer": "frozen root permit shaderSha[7]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 50,
+        "name": "angleSha0",
+        "producer": "frozen root permit angleSha[0]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 51,
+        "name": "angleSha1",
+        "producer": "frozen root permit angleSha[1]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 52,
+        "name": "angleSha2",
+        "producer": "frozen root permit angleSha[2]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 53,
+        "name": "angleSha3",
+        "producer": "frozen root permit angleSha[3]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 54,
+        "name": "angleSha4",
+        "producer": "frozen root permit angleSha[4]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 55,
+        "name": "angleSha5",
+        "producer": "frozen root permit angleSha[5]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 56,
+        "name": "angleSha6",
+        "producer": "frozen root permit angleSha[6]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 57,
+        "name": "angleSha7",
+        "producer": "frozen root permit angleSha[7]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 58,
+        "name": "parameterSha0",
+        "producer": "frozen config.lift.sha[0]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 59,
+        "name": "parameterSha1",
+        "producer": "frozen config.lift.sha[1]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 60,
+        "name": "parameterSha2",
+        "producer": "frozen config.lift.sha[2]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 61,
+        "name": "parameterSha3",
+        "producer": "frozen config.lift.sha[3]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 62,
+        "name": "parameterSha4",
+        "producer": "frozen config.lift.sha[4]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 63,
+        "name": "parameterSha5",
+        "producer": "frozen config.lift.sha[5]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 64,
+        "name": "parameterSha6",
+        "producer": "frozen config.lift.sha[6]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 65,
+        "name": "parameterSha7",
+        "producer": "frozen config.lift.sha[7]",
+        "unit": "digest original bytes packed LE32"
+      },
+      {
+        "word": 66,
+        "name": "rootCursorRevision",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 1
+      },
+      {
+        "word": 67,
+        "name": "rootTokenRevision",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 1
+      },
+      {
+        "word": 68,
+        "name": "inputRevision",
+        "producer": "CONTRACT_CONSTANT",
+        "unit": "U32",
+        "constant": 5
+      },
+      {
+        "word": 69,
+        "name": "effectiveWaterKappa",
+        "producer": "existing owned-program uniform policy: uKappa remains link-initial0; explicitly track0, reject if policy differs",
+        "unit": "integer s^-1",
+        "constant": 0
+      },
+      {
+        "word": 70,
+        "name": "reserved_70",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 71,
+        "name": "reserved_71",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 72,
+        "name": "reserved_72",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 73,
+        "name": "reserved_73",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 74,
+        "name": "reserved_74",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 75,
+        "name": "reserved_75",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 76,
+        "name": "reserved_76",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 77,
+        "name": "reserved_77",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 78,
+        "name": "reserved_78",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 79,
+        "name": "reserved_79",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 80,
+        "name": "reserved_80",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 81,
+        "name": "reserved_81",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 82,
+        "name": "reserved_82",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 83,
+        "name": "reserved_83",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 84,
+        "name": "reserved_84",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 85,
+        "name": "reserved_85",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 86,
+        "name": "reserved_86",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 87,
+        "name": "reserved_87",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 88,
+        "name": "reserved_88",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 89,
+        "name": "reserved_89",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 90,
+        "name": "reserved_90",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 91,
+        "name": "reserved_91",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 92,
+        "name": "reserved_92",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 93,
+        "name": "reserved_93",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 94,
+        "name": "reserved_94",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 95,
+        "name": "reserved_95",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 96,
+        "name": "reserved_96",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 97,
+        "name": "reserved_97",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 98,
+        "name": "reserved_98",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 99,
+        "name": "reserved_99",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 100,
+        "name": "reserved_100",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 101,
+        "name": "reserved_101",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 102,
+        "name": "reserved_102",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 103,
+        "name": "reserved_103",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 104,
+        "name": "reserved_104",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 105,
+        "name": "reserved_105",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 106,
+        "name": "reserved_106",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 107,
+        "name": "reserved_107",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 108,
+        "name": "reserved_108",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 109,
+        "name": "reserved_109",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 110,
+        "name": "reserved_110",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 111,
+        "name": "reserved_111",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 112,
+        "name": "reserved_112",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 113,
+        "name": "reserved_113",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 114,
+        "name": "reserved_114",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 115,
+        "name": "reserved_115",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 116,
+        "name": "reserved_116",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 117,
+        "name": "reserved_117",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 118,
+        "name": "reserved_118",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 119,
+        "name": "reserved_119",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 120,
+        "name": "reserved_120",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 121,
+        "name": "reserved_121",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 122,
+        "name": "reserved_122",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 123,
+        "name": "reserved_123",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 124,
+        "name": "reserved_124",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 125,
+        "name": "reserved_125",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 126,
+        "name": "reserved_126",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 127,
+        "name": "reserved_127",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 128,
+        "name": "reserved_128",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 129,
+        "name": "reserved_129",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 130,
+        "name": "reserved_130",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 131,
+        "name": "reserved_131",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 132,
+        "name": "reserved_132",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 133,
+        "name": "reserved_133",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 134,
+        "name": "reserved_134",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 135,
+        "name": "reserved_135",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 136,
+        "name": "reserved_136",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 137,
+        "name": "reserved_137",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 138,
+        "name": "reserved_138",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 139,
+        "name": "reserved_139",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 140,
+        "name": "reserved_140",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 141,
+        "name": "reserved_141",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 142,
+        "name": "reserved_142",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 143,
+        "name": "reserved_143",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 144,
+        "name": "reserved_144",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 145,
+        "name": "reserved_145",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 146,
+        "name": "reserved_146",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 147,
+        "name": "reserved_147",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 148,
+        "name": "reserved_148",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 149,
+        "name": "reserved_149",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 150,
+        "name": "reserved_150",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 151,
+        "name": "reserved_151",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 152,
+        "name": "reserved_152",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 153,
+        "name": "reserved_153",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 154,
+        "name": "reserved_154",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 155,
+        "name": "reserved_155",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 156,
+        "name": "reserved_156",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 157,
+        "name": "reserved_157",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 158,
+        "name": "reserved_158",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 159,
+        "name": "reserved_159",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 160,
+        "name": "reserved_160",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 161,
+        "name": "reserved_161",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 162,
+        "name": "reserved_162",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 163,
+        "name": "reserved_163",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 164,
+        "name": "reserved_164",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 165,
+        "name": "reserved_165",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 166,
+        "name": "reserved_166",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 167,
+        "name": "reserved_167",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 168,
+        "name": "reserved_168",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 169,
+        "name": "reserved_169",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 170,
+        "name": "reserved_170",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 171,
+        "name": "reserved_171",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 172,
+        "name": "reserved_172",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 173,
+        "name": "reserved_173",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 174,
+        "name": "reserved_174",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 175,
+        "name": "reserved_175",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 176,
+        "name": "reserved_176",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 177,
+        "name": "reserved_177",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 178,
+        "name": "reserved_178",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 179,
+        "name": "reserved_179",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 180,
+        "name": "reserved_180",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 181,
+        "name": "reserved_181",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 182,
+        "name": "reserved_182",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 183,
+        "name": "reserved_183",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 184,
+        "name": "reserved_184",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 185,
+        "name": "reserved_185",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 186,
+        "name": "reserved_186",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 187,
+        "name": "reserved_187",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 188,
+        "name": "reserved_188",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 189,
+        "name": "reserved_189",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 190,
+        "name": "reserved_190",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 191,
+        "name": "reserved_191",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 192,
+        "name": "reserved_192",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 193,
+        "name": "reserved_193",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 194,
+        "name": "reserved_194",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 195,
+        "name": "reserved_195",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 196,
+        "name": "reserved_196",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 197,
+        "name": "reserved_197",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 198,
+        "name": "reserved_198",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 199,
+        "name": "reserved_199",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 200,
+        "name": "reserved_200",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 201,
+        "name": "reserved_201",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 202,
+        "name": "reserved_202",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 203,
+        "name": "reserved_203",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 204,
+        "name": "reserved_204",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 205,
+        "name": "reserved_205",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 206,
+        "name": "reserved_206",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 207,
+        "name": "reserved_207",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 208,
+        "name": "reserved_208",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 209,
+        "name": "reserved_209",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 210,
+        "name": "reserved_210",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 211,
+        "name": "reserved_211",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 212,
+        "name": "reserved_212",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 213,
+        "name": "reserved_213",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 214,
+        "name": "reserved_214",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 215,
+        "name": "reserved_215",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 216,
+        "name": "reserved_216",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 217,
+        "name": "reserved_217",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 218,
+        "name": "reserved_218",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 219,
+        "name": "reserved_219",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 220,
+        "name": "reserved_220",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 221,
+        "name": "reserved_221",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 222,
+        "name": "reserved_222",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 223,
+        "name": "reserved_223",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 224,
+        "name": "reserved_224",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 225,
+        "name": "reserved_225",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 226,
+        "name": "reserved_226",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 227,
+        "name": "reserved_227",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 228,
+        "name": "reserved_228",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 229,
+        "name": "reserved_229",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 230,
+        "name": "reserved_230",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 231,
+        "name": "reserved_231",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 232,
+        "name": "reserved_232",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 233,
+        "name": "reserved_233",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 234,
+        "name": "reserved_234",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 235,
+        "name": "reserved_235",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 236,
+        "name": "reserved_236",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 237,
+        "name": "reserved_237",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 238,
+        "name": "reserved_238",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 239,
+        "name": "reserved_239",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 240,
+        "name": "reserved_240",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 241,
+        "name": "reserved_241",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 242,
+        "name": "reserved_242",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 243,
+        "name": "reserved_243",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 244,
+        "name": "reserved_244",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 245,
+        "name": "reserved_245",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 246,
+        "name": "reserved_246",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 247,
+        "name": "reserved_247",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 248,
+        "name": "reserved_248",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 249,
+        "name": "reserved_249",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 250,
+        "name": "reserved_250",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 251,
+        "name": "reserved_251",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 252,
+        "name": "reserved_252",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 253,
+        "name": "reserved_253",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 254,
+        "name": "reserved_254",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 255,
+        "name": "reserved_255",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 256,
+        "name": "reserved_256",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 257,
+        "name": "reserved_257",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 258,
+        "name": "reserved_258",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 259,
+        "name": "reserved_259",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 260,
+        "name": "reserved_260",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 261,
+        "name": "reserved_261",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 262,
+        "name": "reserved_262",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 263,
+        "name": "reserved_263",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 264,
+        "name": "reserved_264",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 265,
+        "name": "reserved_265",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 266,
+        "name": "reserved_266",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 267,
+        "name": "reserved_267",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 268,
+        "name": "reserved_268",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 269,
+        "name": "reserved_269",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 270,
+        "name": "reserved_270",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 271,
+        "name": "reserved_271",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 272,
+        "name": "reserved_272",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 273,
+        "name": "reserved_273",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 274,
+        "name": "reserved_274",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 275,
+        "name": "reserved_275",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 276,
+        "name": "reserved_276",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 277,
+        "name": "reserved_277",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 278,
+        "name": "reserved_278",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 279,
+        "name": "reserved_279",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 280,
+        "name": "reserved_280",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 281,
+        "name": "reserved_281",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 282,
+        "name": "reserved_282",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 283,
+        "name": "reserved_283",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 284,
+        "name": "reserved_284",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 285,
+        "name": "reserved_285",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 286,
+        "name": "reserved_286",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 287,
+        "name": "reserved_287",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 288,
+        "name": "reserved_288",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 289,
+        "name": "reserved_289",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 290,
+        "name": "reserved_290",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 291,
+        "name": "reserved_291",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 292,
+        "name": "reserved_292",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 293,
+        "name": "reserved_293",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 294,
+        "name": "reserved_294",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 295,
+        "name": "reserved_295",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 296,
+        "name": "reserved_296",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 297,
+        "name": "reserved_297",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 298,
+        "name": "reserved_298",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 299,
+        "name": "reserved_299",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 300,
+        "name": "reserved_300",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 301,
+        "name": "reserved_301",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 302,
+        "name": "reserved_302",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 303,
+        "name": "reserved_303",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 304,
+        "name": "reserved_304",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 305,
+        "name": "reserved_305",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 306,
+        "name": "reserved_306",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 307,
+        "name": "reserved_307",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 308,
+        "name": "reserved_308",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 309,
+        "name": "reserved_309",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 310,
+        "name": "reserved_310",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 311,
+        "name": "reserved_311",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 312,
+        "name": "reserved_312",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 313,
+        "name": "reserved_313",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 314,
+        "name": "reserved_314",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 315,
+        "name": "reserved_315",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 316,
+        "name": "reserved_316",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 317,
+        "name": "reserved_317",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 318,
+        "name": "reserved_318",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 319,
+        "name": "reserved_319",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 320,
+        "name": "reserved_320",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 321,
+        "name": "reserved_321",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 322,
+        "name": "reserved_322",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 323,
+        "name": "reserved_323",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 324,
+        "name": "reserved_324",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 325,
+        "name": "reserved_325",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 326,
+        "name": "reserved_326",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 327,
+        "name": "reserved_327",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 328,
+        "name": "reserved_328",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 329,
+        "name": "reserved_329",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 330,
+        "name": "reserved_330",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 331,
+        "name": "reserved_331",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 332,
+        "name": "reserved_332",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 333,
+        "name": "reserved_333",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 334,
+        "name": "reserved_334",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 335,
+        "name": "reserved_335",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 336,
+        "name": "reserved_336",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 337,
+        "name": "reserved_337",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 338,
+        "name": "reserved_338",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 339,
+        "name": "reserved_339",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 340,
+        "name": "reserved_340",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 341,
+        "name": "reserved_341",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 342,
+        "name": "reserved_342",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 343,
+        "name": "reserved_343",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 344,
+        "name": "reserved_344",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 345,
+        "name": "reserved_345",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 346,
+        "name": "reserved_346",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 347,
+        "name": "reserved_347",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 348,
+        "name": "reserved_348",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 349,
+        "name": "reserved_349",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 350,
+        "name": "reserved_350",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 351,
+        "name": "reserved_351",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 352,
+        "name": "reserved_352",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 353,
+        "name": "reserved_353",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 354,
+        "name": "reserved_354",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 355,
+        "name": "reserved_355",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 356,
+        "name": "reserved_356",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 357,
+        "name": "reserved_357",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 358,
+        "name": "reserved_358",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 359,
+        "name": "reserved_359",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 360,
+        "name": "reserved_360",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 361,
+        "name": "reserved_361",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 362,
+        "name": "reserved_362",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 363,
+        "name": "reserved_363",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 364,
+        "name": "reserved_364",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 365,
+        "name": "reserved_365",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 366,
+        "name": "reserved_366",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 367,
+        "name": "reserved_367",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 368,
+        "name": "reserved_368",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 369,
+        "name": "reserved_369",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 370,
+        "name": "reserved_370",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 371,
+        "name": "reserved_371",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 372,
+        "name": "reserved_372",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 373,
+        "name": "reserved_373",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 374,
+        "name": "reserved_374",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 375,
+        "name": "reserved_375",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 376,
+        "name": "reserved_376",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 377,
+        "name": "reserved_377",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 378,
+        "name": "reserved_378",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 379,
+        "name": "reserved_379",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 380,
+        "name": "reserved_380",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 381,
+        "name": "reserved_381",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 382,
+        "name": "reserved_382",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 383,
+        "name": "reserved_383",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 384,
+        "name": "reserved_384",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 385,
+        "name": "reserved_385",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 386,
+        "name": "reserved_386",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 387,
+        "name": "reserved_387",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 388,
+        "name": "reserved_388",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 389,
+        "name": "reserved_389",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 390,
+        "name": "reserved_390",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 391,
+        "name": "reserved_391",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 392,
+        "name": "reserved_392",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 393,
+        "name": "reserved_393",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 394,
+        "name": "reserved_394",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 395,
+        "name": "reserved_395",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 396,
+        "name": "reserved_396",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 397,
+        "name": "reserved_397",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 398,
+        "name": "reserved_398",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 399,
+        "name": "reserved_399",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 400,
+        "name": "reserved_400",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 401,
+        "name": "reserved_401",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 402,
+        "name": "reserved_402",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 403,
+        "name": "reserved_403",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 404,
+        "name": "reserved_404",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 405,
+        "name": "reserved_405",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 406,
+        "name": "reserved_406",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 407,
+        "name": "reserved_407",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 408,
+        "name": "reserved_408",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 409,
+        "name": "reserved_409",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 410,
+        "name": "reserved_410",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 411,
+        "name": "reserved_411",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 412,
+        "name": "reserved_412",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 413,
+        "name": "reserved_413",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 414,
+        "name": "reserved_414",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 415,
+        "name": "reserved_415",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 416,
+        "name": "reserved_416",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 417,
+        "name": "reserved_417",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 418,
+        "name": "reserved_418",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 419,
+        "name": "reserved_419",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 420,
+        "name": "reserved_420",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 421,
+        "name": "reserved_421",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 422,
+        "name": "reserved_422",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 423,
+        "name": "reserved_423",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 424,
+        "name": "reserved_424",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 425,
+        "name": "reserved_425",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 426,
+        "name": "reserved_426",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 427,
+        "name": "reserved_427",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 428,
+        "name": "reserved_428",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 429,
+        "name": "reserved_429",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 430,
+        "name": "reserved_430",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 431,
+        "name": "reserved_431",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 432,
+        "name": "reserved_432",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 433,
+        "name": "reserved_433",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 434,
+        "name": "reserved_434",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 435,
+        "name": "reserved_435",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 436,
+        "name": "reserved_436",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 437,
+        "name": "reserved_437",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 438,
+        "name": "reserved_438",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 439,
+        "name": "reserved_439",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 440,
+        "name": "reserved_440",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 441,
+        "name": "reserved_441",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 442,
+        "name": "reserved_442",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 443,
+        "name": "reserved_443",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 444,
+        "name": "reserved_444",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 445,
+        "name": "reserved_445",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 446,
+        "name": "reserved_446",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 447,
+        "name": "reserved_447",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 448,
+        "name": "reserved_448",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 449,
+        "name": "reserved_449",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 450,
+        "name": "reserved_450",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 451,
+        "name": "reserved_451",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 452,
+        "name": "reserved_452",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 453,
+        "name": "reserved_453",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 454,
+        "name": "reserved_454",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 455,
+        "name": "reserved_455",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 456,
+        "name": "reserved_456",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 457,
+        "name": "reserved_457",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 458,
+        "name": "reserved_458",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 459,
+        "name": "reserved_459",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 460,
+        "name": "reserved_460",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 461,
+        "name": "reserved_461",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 462,
+        "name": "reserved_462",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 463,
+        "name": "reserved_463",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 464,
+        "name": "reserved_464",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 465,
+        "name": "reserved_465",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 466,
+        "name": "reserved_466",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 467,
+        "name": "reserved_467",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 468,
+        "name": "reserved_468",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 469,
+        "name": "reserved_469",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 470,
+        "name": "reserved_470",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 471,
+        "name": "reserved_471",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 472,
+        "name": "reserved_472",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 473,
+        "name": "reserved_473",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 474,
+        "name": "reserved_474",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 475,
+        "name": "reserved_475",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 476,
+        "name": "reserved_476",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 477,
+        "name": "reserved_477",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 478,
+        "name": "reserved_478",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 479,
+        "name": "reserved_479",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 480,
+        "name": "reserved_480",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 481,
+        "name": "reserved_481",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 482,
+        "name": "reserved_482",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 483,
+        "name": "reserved_483",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 484,
+        "name": "reserved_484",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 485,
+        "name": "reserved_485",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 486,
+        "name": "reserved_486",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 487,
+        "name": "reserved_487",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 488,
+        "name": "reserved_488",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 489,
+        "name": "reserved_489",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 490,
+        "name": "reserved_490",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 491,
+        "name": "reserved_491",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 492,
+        "name": "reserved_492",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 493,
+        "name": "reserved_493",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 494,
+        "name": "reserved_494",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 495,
+        "name": "reserved_495",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 496,
+        "name": "reserved_496",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 497,
+        "name": "reserved_497",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 498,
+        "name": "reserved_498",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 499,
+        "name": "reserved_499",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 500,
+        "name": "reserved_500",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 501,
+        "name": "reserved_501",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 502,
+        "name": "reserved_502",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 503,
+        "name": "reserved_503",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 504,
+        "name": "reserved_504",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 505,
+        "name": "reserved_505",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 506,
+        "name": "reserved_506",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 507,
+        "name": "reserved_507",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 508,
+        "name": "reserved_508",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 509,
+        "name": "reserved_509",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 510,
+        "name": "reserved_510",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 511,
+        "name": "reserved_511",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 512,
+        "name": "reserved_512",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 513,
+        "name": "reserved_513",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 514,
+        "name": "reserved_514",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 515,
+        "name": "reserved_515",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 516,
+        "name": "reserved_516",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 517,
+        "name": "reserved_517",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 518,
+        "name": "reserved_518",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 519,
+        "name": "reserved_519",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 520,
+        "name": "reserved_520",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 521,
+        "name": "reserved_521",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 522,
+        "name": "reserved_522",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 523,
+        "name": "reserved_523",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 524,
+        "name": "reserved_524",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 525,
+        "name": "reserved_525",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 526,
+        "name": "reserved_526",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 527,
+        "name": "reserved_527",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 528,
+        "name": "reserved_528",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 529,
+        "name": "reserved_529",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 530,
+        "name": "reserved_530",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 531,
+        "name": "reserved_531",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 532,
+        "name": "reserved_532",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 533,
+        "name": "reserved_533",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 534,
+        "name": "reserved_534",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 535,
+        "name": "reserved_535",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 536,
+        "name": "reserved_536",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 537,
+        "name": "reserved_537",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 538,
+        "name": "reserved_538",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 539,
+        "name": "reserved_539",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 540,
+        "name": "reserved_540",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 541,
+        "name": "reserved_541",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 542,
+        "name": "reserved_542",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 543,
+        "name": "reserved_543",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 544,
+        "name": "reserved_544",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 545,
+        "name": "reserved_545",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 546,
+        "name": "reserved_546",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 547,
+        "name": "reserved_547",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 548,
+        "name": "reserved_548",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 549,
+        "name": "reserved_549",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 550,
+        "name": "reserved_550",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 551,
+        "name": "reserved_551",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 552,
+        "name": "reserved_552",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 553,
+        "name": "reserved_553",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 554,
+        "name": "reserved_554",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 555,
+        "name": "reserved_555",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 556,
+        "name": "reserved_556",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 557,
+        "name": "reserved_557",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 558,
+        "name": "reserved_558",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 559,
+        "name": "reserved_559",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 560,
+        "name": "reserved_560",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 561,
+        "name": "reserved_561",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 562,
+        "name": "reserved_562",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 563,
+        "name": "reserved_563",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 564,
+        "name": "reserved_564",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 565,
+        "name": "reserved_565",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 566,
+        "name": "reserved_566",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 567,
+        "name": "reserved_567",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 568,
+        "name": "reserved_568",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 569,
+        "name": "reserved_569",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 570,
+        "name": "reserved_570",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 571,
+        "name": "reserved_571",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 572,
+        "name": "reserved_572",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 573,
+        "name": "reserved_573",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 574,
+        "name": "reserved_574",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 575,
+        "name": "reserved_575",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 576,
+        "name": "reserved_576",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 577,
+        "name": "reserved_577",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 578,
+        "name": "reserved_578",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 579,
+        "name": "reserved_579",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 580,
+        "name": "reserved_580",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 581,
+        "name": "reserved_581",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 582,
+        "name": "reserved_582",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 583,
+        "name": "reserved_583",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 584,
+        "name": "reserved_584",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 585,
+        "name": "reserved_585",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 586,
+        "name": "reserved_586",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 587,
+        "name": "reserved_587",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 588,
+        "name": "reserved_588",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 589,
+        "name": "reserved_589",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 590,
+        "name": "reserved_590",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 591,
+        "name": "reserved_591",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 592,
+        "name": "reserved_592",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 593,
+        "name": "reserved_593",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 594,
+        "name": "reserved_594",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 595,
+        "name": "reserved_595",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 596,
+        "name": "reserved_596",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 597,
+        "name": "reserved_597",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 598,
+        "name": "reserved_598",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 599,
+        "name": "reserved_599",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 600,
+        "name": "reserved_600",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 601,
+        "name": "reserved_601",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 602,
+        "name": "reserved_602",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 603,
+        "name": "reserved_603",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 604,
+        "name": "reserved_604",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 605,
+        "name": "reserved_605",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 606,
+        "name": "reserved_606",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 607,
+        "name": "reserved_607",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 608,
+        "name": "reserved_608",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 609,
+        "name": "reserved_609",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 610,
+        "name": "reserved_610",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 611,
+        "name": "reserved_611",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 612,
+        "name": "reserved_612",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 613,
+        "name": "reserved_613",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 614,
+        "name": "reserved_614",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 615,
+        "name": "reserved_615",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 616,
+        "name": "reserved_616",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 617,
+        "name": "reserved_617",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 618,
+        "name": "reserved_618",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 619,
+        "name": "reserved_619",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 620,
+        "name": "reserved_620",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 621,
+        "name": "reserved_621",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 622,
+        "name": "reserved_622",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 623,
+        "name": "reserved_623",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 624,
+        "name": "reserved_624",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 625,
+        "name": "reserved_625",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 626,
+        "name": "reserved_626",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 627,
+        "name": "reserved_627",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 628,
+        "name": "reserved_628",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 629,
+        "name": "reserved_629",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 630,
+        "name": "reserved_630",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 631,
+        "name": "reserved_631",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 632,
+        "name": "reserved_632",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 633,
+        "name": "reserved_633",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 634,
+        "name": "reserved_634",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 635,
+        "name": "reserved_635",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 636,
+        "name": "reserved_636",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 637,
+        "name": "reserved_637",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 638,
+        "name": "reserved_638",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 639,
+        "name": "reserved_639",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 640,
+        "name": "reserved_640",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 641,
+        "name": "reserved_641",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 642,
+        "name": "reserved_642",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 643,
+        "name": "reserved_643",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 644,
+        "name": "reserved_644",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 645,
+        "name": "reserved_645",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 646,
+        "name": "reserved_646",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 647,
+        "name": "reserved_647",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 648,
+        "name": "reserved_648",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 649,
+        "name": "reserved_649",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 650,
+        "name": "reserved_650",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 651,
+        "name": "reserved_651",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 652,
+        "name": "reserved_652",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 653,
+        "name": "reserved_653",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 654,
+        "name": "reserved_654",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 655,
+        "name": "reserved_655",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 656,
+        "name": "reserved_656",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 657,
+        "name": "reserved_657",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 658,
+        "name": "reserved_658",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 659,
+        "name": "reserved_659",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 660,
+        "name": "reserved_660",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 661,
+        "name": "reserved_661",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 662,
+        "name": "reserved_662",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 663,
+        "name": "reserved_663",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 664,
+        "name": "reserved_664",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 665,
+        "name": "reserved_665",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 666,
+        "name": "reserved_666",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 667,
+        "name": "reserved_667",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 668,
+        "name": "reserved_668",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 669,
+        "name": "reserved_669",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 670,
+        "name": "reserved_670",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 671,
+        "name": "reserved_671",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 672,
+        "name": "reserved_672",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 673,
+        "name": "reserved_673",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 674,
+        "name": "reserved_674",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 675,
+        "name": "reserved_675",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 676,
+        "name": "reserved_676",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 677,
+        "name": "reserved_677",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 678,
+        "name": "reserved_678",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 679,
+        "name": "reserved_679",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 680,
+        "name": "reserved_680",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 681,
+        "name": "reserved_681",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 682,
+        "name": "reserved_682",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 683,
+        "name": "reserved_683",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 684,
+        "name": "reserved_684",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 685,
+        "name": "reserved_685",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 686,
+        "name": "reserved_686",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 687,
+        "name": "reserved_687",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 688,
+        "name": "reserved_688",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 689,
+        "name": "reserved_689",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 690,
+        "name": "reserved_690",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 691,
+        "name": "reserved_691",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 692,
+        "name": "reserved_692",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 693,
+        "name": "reserved_693",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 694,
+        "name": "reserved_694",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 695,
+        "name": "reserved_695",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 696,
+        "name": "reserved_696",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 697,
+        "name": "reserved_697",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 698,
+        "name": "reserved_698",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 699,
+        "name": "reserved_699",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 700,
+        "name": "reserved_700",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 701,
+        "name": "reserved_701",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 702,
+        "name": "reserved_702",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 703,
+        "name": "reserved_703",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 704,
+        "name": "reserved_704",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 705,
+        "name": "reserved_705",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 706,
+        "name": "reserved_706",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 707,
+        "name": "reserved_707",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 708,
+        "name": "reserved_708",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 709,
+        "name": "reserved_709",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 710,
+        "name": "reserved_710",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 711,
+        "name": "reserved_711",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 712,
+        "name": "reserved_712",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 713,
+        "name": "reserved_713",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 714,
+        "name": "reserved_714",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 715,
+        "name": "reserved_715",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 716,
+        "name": "reserved_716",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 717,
+        "name": "reserved_717",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 718,
+        "name": "reserved_718",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 719,
+        "name": "reserved_719",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 720,
+        "name": "reserved_720",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 721,
+        "name": "reserved_721",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 722,
+        "name": "reserved_722",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 723,
+        "name": "reserved_723",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 724,
+        "name": "reserved_724",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 725,
+        "name": "reserved_725",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 726,
+        "name": "reserved_726",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 727,
+        "name": "reserved_727",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 728,
+        "name": "reserved_728",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 729,
+        "name": "reserved_729",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 730,
+        "name": "reserved_730",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 731,
+        "name": "reserved_731",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 732,
+        "name": "reserved_732",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 733,
+        "name": "reserved_733",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 734,
+        "name": "reserved_734",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 735,
+        "name": "reserved_735",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 736,
+        "name": "reserved_736",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 737,
+        "name": "reserved_737",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 738,
+        "name": "reserved_738",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 739,
+        "name": "reserved_739",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 740,
+        "name": "reserved_740",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 741,
+        "name": "reserved_741",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 742,
+        "name": "reserved_742",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 743,
+        "name": "reserved_743",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 744,
+        "name": "reserved_744",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 745,
+        "name": "reserved_745",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 746,
+        "name": "reserved_746",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 747,
+        "name": "reserved_747",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 748,
+        "name": "reserved_748",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 749,
+        "name": "reserved_749",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 750,
+        "name": "reserved_750",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 751,
+        "name": "reserved_751",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 752,
+        "name": "reserved_752",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 753,
+        "name": "reserved_753",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 754,
+        "name": "reserved_754",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 755,
+        "name": "reserved_755",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 756,
+        "name": "reserved_756",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 757,
+        "name": "reserved_757",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 758,
+        "name": "reserved_758",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 759,
+        "name": "reserved_759",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 760,
+        "name": "reserved_760",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 761,
+        "name": "reserved_761",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 762,
+        "name": "reserved_762",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 763,
+        "name": "reserved_763",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 764,
+        "name": "reserved_764",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 765,
+        "name": "reserved_765",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 766,
+        "name": "reserved_766",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 767,
+        "name": "reserved_767",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 768,
+        "name": "reserved_768",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 769,
+        "name": "reserved_769",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 770,
+        "name": "reserved_770",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 771,
+        "name": "reserved_771",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 772,
+        "name": "reserved_772",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 773,
+        "name": "reserved_773",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 774,
+        "name": "reserved_774",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 775,
+        "name": "reserved_775",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 776,
+        "name": "reserved_776",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 777,
+        "name": "reserved_777",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 778,
+        "name": "reserved_778",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 779,
+        "name": "reserved_779",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 780,
+        "name": "reserved_780",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 781,
+        "name": "reserved_781",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 782,
+        "name": "reserved_782",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 783,
+        "name": "reserved_783",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 784,
+        "name": "reserved_784",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 785,
+        "name": "reserved_785",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 786,
+        "name": "reserved_786",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 787,
+        "name": "reserved_787",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 788,
+        "name": "reserved_788",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 789,
+        "name": "reserved_789",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 790,
+        "name": "reserved_790",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 791,
+        "name": "reserved_791",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 792,
+        "name": "reserved_792",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 793,
+        "name": "reserved_793",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 794,
+        "name": "reserved_794",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 795,
+        "name": "reserved_795",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 796,
+        "name": "reserved_796",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 797,
+        "name": "reserved_797",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 798,
+        "name": "reserved_798",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 799,
+        "name": "reserved_799",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 800,
+        "name": "reserved_800",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 801,
+        "name": "reserved_801",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 802,
+        "name": "reserved_802",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 803,
+        "name": "reserved_803",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 804,
+        "name": "reserved_804",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 805,
+        "name": "reserved_805",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 806,
+        "name": "reserved_806",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 807,
+        "name": "reserved_807",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 808,
+        "name": "reserved_808",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 809,
+        "name": "reserved_809",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 810,
+        "name": "reserved_810",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 811,
+        "name": "reserved_811",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 812,
+        "name": "reserved_812",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 813,
+        "name": "reserved_813",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 814,
+        "name": "reserved_814",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 815,
+        "name": "reserved_815",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 816,
+        "name": "reserved_816",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 817,
+        "name": "reserved_817",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 818,
+        "name": "reserved_818",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 819,
+        "name": "reserved_819",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 820,
+        "name": "reserved_820",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 821,
+        "name": "reserved_821",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 822,
+        "name": "reserved_822",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 823,
+        "name": "reserved_823",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 824,
+        "name": "reserved_824",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 825,
+        "name": "reserved_825",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 826,
+        "name": "reserved_826",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 827,
+        "name": "reserved_827",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 828,
+        "name": "reserved_828",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 829,
+        "name": "reserved_829",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 830,
+        "name": "reserved_830",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 831,
+        "name": "reserved_831",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 832,
+        "name": "reserved_832",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 833,
+        "name": "reserved_833",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 834,
+        "name": "reserved_834",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 835,
+        "name": "reserved_835",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 836,
+        "name": "reserved_836",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 837,
+        "name": "reserved_837",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 838,
+        "name": "reserved_838",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 839,
+        "name": "reserved_839",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 840,
+        "name": "reserved_840",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 841,
+        "name": "reserved_841",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 842,
+        "name": "reserved_842",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 843,
+        "name": "reserved_843",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 844,
+        "name": "reserved_844",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 845,
+        "name": "reserved_845",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 846,
+        "name": "reserved_846",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 847,
+        "name": "reserved_847",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 848,
+        "name": "reserved_848",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 849,
+        "name": "reserved_849",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 850,
+        "name": "reserved_850",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 851,
+        "name": "reserved_851",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 852,
+        "name": "reserved_852",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 853,
+        "name": "reserved_853",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 854,
+        "name": "reserved_854",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 855,
+        "name": "reserved_855",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 856,
+        "name": "reserved_856",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 857,
+        "name": "reserved_857",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 858,
+        "name": "reserved_858",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 859,
+        "name": "reserved_859",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 860,
+        "name": "reserved_860",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 861,
+        "name": "reserved_861",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 862,
+        "name": "reserved_862",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 863,
+        "name": "reserved_863",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 864,
+        "name": "reserved_864",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 865,
+        "name": "reserved_865",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 866,
+        "name": "reserved_866",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 867,
+        "name": "reserved_867",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 868,
+        "name": "reserved_868",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 869,
+        "name": "reserved_869",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 870,
+        "name": "reserved_870",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 871,
+        "name": "reserved_871",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 872,
+        "name": "reserved_872",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 873,
+        "name": "reserved_873",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 874,
+        "name": "reserved_874",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 875,
+        "name": "reserved_875",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 876,
+        "name": "reserved_876",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 877,
+        "name": "reserved_877",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 878,
+        "name": "reserved_878",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 879,
+        "name": "reserved_879",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 880,
+        "name": "reserved_880",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 881,
+        "name": "reserved_881",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 882,
+        "name": "reserved_882",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 883,
+        "name": "reserved_883",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 884,
+        "name": "reserved_884",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 885,
+        "name": "reserved_885",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 886,
+        "name": "reserved_886",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 887,
+        "name": "reserved_887",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 888,
+        "name": "reserved_888",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 889,
+        "name": "reserved_889",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 890,
+        "name": "reserved_890",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 891,
+        "name": "reserved_891",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 892,
+        "name": "reserved_892",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 893,
+        "name": "reserved_893",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 894,
+        "name": "reserved_894",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 895,
+        "name": "reserved_895",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 896,
+        "name": "reserved_896",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 897,
+        "name": "reserved_897",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 898,
+        "name": "reserved_898",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 899,
+        "name": "reserved_899",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 900,
+        "name": "reserved_900",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 901,
+        "name": "reserved_901",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 902,
+        "name": "reserved_902",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 903,
+        "name": "reserved_903",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 904,
+        "name": "reserved_904",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 905,
+        "name": "reserved_905",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 906,
+        "name": "reserved_906",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 907,
+        "name": "reserved_907",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 908,
+        "name": "reserved_908",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 909,
+        "name": "reserved_909",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 910,
+        "name": "reserved_910",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 911,
+        "name": "reserved_911",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 912,
+        "name": "reserved_912",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 913,
+        "name": "reserved_913",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 914,
+        "name": "reserved_914",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 915,
+        "name": "reserved_915",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 916,
+        "name": "reserved_916",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 917,
+        "name": "reserved_917",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 918,
+        "name": "reserved_918",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 919,
+        "name": "reserved_919",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 920,
+        "name": "reserved_920",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 921,
+        "name": "reserved_921",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 922,
+        "name": "reserved_922",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 923,
+        "name": "reserved_923",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 924,
+        "name": "reserved_924",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 925,
+        "name": "reserved_925",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 926,
+        "name": "reserved_926",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 927,
+        "name": "reserved_927",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 928,
+        "name": "reserved_928",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 929,
+        "name": "reserved_929",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 930,
+        "name": "reserved_930",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 931,
+        "name": "reserved_931",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 932,
+        "name": "reserved_932",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 933,
+        "name": "reserved_933",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 934,
+        "name": "reserved_934",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 935,
+        "name": "reserved_935",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 936,
+        "name": "reserved_936",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 937,
+        "name": "reserved_937",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 938,
+        "name": "reserved_938",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 939,
+        "name": "reserved_939",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 940,
+        "name": "reserved_940",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 941,
+        "name": "reserved_941",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 942,
+        "name": "reserved_942",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 943,
+        "name": "reserved_943",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 944,
+        "name": "reserved_944",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 945,
+        "name": "reserved_945",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 946,
+        "name": "reserved_946",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 947,
+        "name": "reserved_947",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 948,
+        "name": "reserved_948",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 949,
+        "name": "reserved_949",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 950,
+        "name": "reserved_950",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 951,
+        "name": "reserved_951",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 952,
+        "name": "reserved_952",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 953,
+        "name": "reserved_953",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 954,
+        "name": "reserved_954",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 955,
+        "name": "reserved_955",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 956,
+        "name": "reserved_956",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 957,
+        "name": "reserved_957",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 958,
+        "name": "reserved_958",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 959,
+        "name": "reserved_959",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 960,
+        "name": "reserved_960",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 961,
+        "name": "reserved_961",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 962,
+        "name": "reserved_962",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 963,
+        "name": "reserved_963",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 964,
+        "name": "reserved_964",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 965,
+        "name": "reserved_965",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 966,
+        "name": "reserved_966",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 967,
+        "name": "reserved_967",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 968,
+        "name": "reserved_968",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 969,
+        "name": "reserved_969",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 970,
+        "name": "reserved_970",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 971,
+        "name": "reserved_971",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 972,
+        "name": "reserved_972",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 973,
+        "name": "reserved_973",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 974,
+        "name": "reserved_974",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 975,
+        "name": "reserved_975",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 976,
+        "name": "reserved_976",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 977,
+        "name": "reserved_977",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 978,
+        "name": "reserved_978",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 979,
+        "name": "reserved_979",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 980,
+        "name": "reserved_980",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 981,
+        "name": "reserved_981",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 982,
+        "name": "reserved_982",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 983,
+        "name": "reserved_983",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 984,
+        "name": "reserved_984",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 985,
+        "name": "reserved_985",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 986,
+        "name": "reserved_986",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 987,
+        "name": "reserved_987",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 988,
+        "name": "reserved_988",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 989,
+        "name": "reserved_989",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 990,
+        "name": "reserved_990",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 991,
+        "name": "reserved_991",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 992,
+        "name": "reserved_992",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 993,
+        "name": "reserved_993",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 994,
+        "name": "reserved_994",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 995,
+        "name": "reserved_995",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 996,
+        "name": "reserved_996",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 997,
+        "name": "reserved_997",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 998,
+        "name": "reserved_998",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 999,
+        "name": "reserved_999",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1000,
+        "name": "reserved_1000",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1001,
+        "name": "reserved_1001",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1002,
+        "name": "reserved_1002",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1003,
+        "name": "reserved_1003",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1004,
+        "name": "reserved_1004",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1005,
+        "name": "reserved_1005",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1006,
+        "name": "reserved_1006",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1007,
+        "name": "reserved_1007",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1008,
+        "name": "reserved_1008",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1009,
+        "name": "reserved_1009",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1010,
+        "name": "reserved_1010",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1011,
+        "name": "reserved_1011",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1012,
+        "name": "reserved_1012",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1013,
+        "name": "reserved_1013",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1014,
+        "name": "reserved_1014",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1015,
+        "name": "reserved_1015",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1016,
+        "name": "reserved_1016",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1017,
+        "name": "reserved_1017",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1018,
+        "name": "reserved_1018",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1019,
+        "name": "reserved_1019",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1020,
+        "name": "reserved_1020",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1021,
+        "name": "reserved_1021",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1022,
+        "name": "reserved_1022",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      },
+      {
+        "word": 1023,
+        "name": "reserved_1023",
+        "producer": "CONTRACT_ZERO",
+        "unit": "U32",
+        "constant": 0
+      }
+    ],
+    "parameterShaMeaning": "existing named lift parameter SHA, not full-config digest",
+    "numericSemantics": "model units, not SI material calibration; record actual frozen values, never defaults"
+  },
+  "writerReader": {
+    "order": [
+      "frozen same-root originals",
+      "capsule",
+      "root record0..57",
+      "rootTokenSha58..65",
+      "nonprefix descriptor SHA",
+      "T535 canonical prefix SHA mask[1116,1148)",
+      "raw prefix SHA",
+      "immutable publish"
+    ],
+    "reject": [
+      "IDENTITY_CONTRACT_MISSING",
+      "UNSUPPORTED_IDENTITY_REVISION",
+      "RESERVED_NONZERO",
+      "ROOT_TOKEN_MISMATCH",
+      "SCOPE_MISMATCH"
+    ],
+    "complete": "all required actual producers, exact flags/versions/seals, same root identity and recomputed hashes",
+    "noNewEndpoint": true,
+    "prefixRevision": 2,
+    "payload": "GRS_M3B_LINEAGE_COLD_V5_2"
+  },
+  "budget": {
+    "extraGPUBytes": 0,
+    "extraDispatches": 0,
+    "extraHotMapBytes": 0,
+    "prefixBytes": 32768,
+    "extraFrozenHostMetadataMaxBytes": 2352,
+    "metadataCredit": "7 CaptureRoot instances (5 retained + pending + accepted), each64 cursor words +18 original header identity words =2296 raw bytes; allow struct rounding up to2352, charge actual sizeof delta before allocation; never payload/diagnostic credit",
+    "hashWorkspace": "streaming SHA context only; no duplicate preimage allocation",
+    "scopeCopiesPerPlan": 40,
+    "scopeCopyBytesPerPlan": 5120
+  },
+  "G13Reuse": "hash/credit/immutable publishing helpers only; not V5 public layout/token preimage",
+  "testsRun": false,
+  "deviceUsed": false
+}

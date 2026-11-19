@@ -318,6 +318,8 @@ mathSpec=dict(schema='T607_G13_GPU_MATH_V1',backend='SOFT_BINARY128_CONSTANT_RAN
  'cos24':dyadic_upper((pihi/4)**26/math.factorial(26)),
  'exp20':dyadic_upper(2*(lnhi/2)**21/math.factorial(21))},
  testsRun=False)
+mathSpec['requiredExpRelError']='2^-20 total including approximation and actual F32 conversion; representability alone insufficient; public17/math bit4 otherwise'
+mathSpec['domainContract']=read('architecture-T628-math-domain-v1.json')
 mathSpec['mathSHA']=sha(canonical(mathSpec));emit('architecture-T607-g13-math-v1.json',mathSpec)
 engineering=dict(schema='T607_G13_ENGINEERING_V1',date='2026-11-18',role='architect',task='T607',
  status='ENGINEERING_READY_NOT_IMPLEMENTED_NOT_VALIDATED',deviceUsed=False,productTestsRun=False,
@@ -356,6 +358,7 @@ engineering=dict(schema='T607_G13_ENGINEERING_V1',date='2026-11-18',role='archit
  layoutNoOverlap=True,resourceMatchesT605=True,constantIntervalsAgree=True,physicalTestsRun=False),
  scientificSources=[dict(title='Khronos GLSL ES3.10 specification',url='https://registry.khronos.org/OpenGL/specs/es/3.1/GLSL_ES_Specification_3.10.pdf',
  scope='API/precision/barrier constraints, not project solver or error/performance qualification')])
+engineering['T628Supplement']=receipt('docs/architecture-T628-math-domain-v1.json')
 emit('architecture-T607-g13-engineering-v1.json',engineering)
 for n,a in schemas.items():
  m=re.search(r'(\d+)$',n)
