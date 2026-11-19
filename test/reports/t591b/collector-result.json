@@ -1,0 +1,17 @@
+{
+ "revision": "T591_V2_COLLECTOR_PROBE_V1",
+ "date": "2026-11-19",
+ "attempt": "62020-probe",
+ "facility": "T591Probe.ets (t562-m2-fix tree, tester facility; 1s sampling, 64 cap, serial-locked identity per T622)",
+ "package": {
+  "signedSha": "e0b0af6a558f14f3b99bcd389760e951943c2ebfa5f909bf5c25b6e8b91d7af2"
+ },
+ "observations": {
+  "baseline": "S1-S52 (52s): m2CreateDiagnostics(0)=NO_CREATE_ATTEMPT, m2CreateLog(0,0)=STALE_CREATE_SERIAL \u2014 Store empty before attempt",
+  "trigger": "[TRIGGER] newRun sent at ~S52 (probe page native.newRun())",
+  "post-trigger": "S53-S64 (12s): still NO_CREATE_ATTEMPT \u2014 probe-page newRun does NOT begin an M2 create attempt (invalidate != create; create begins on M1 page XComponent/GL context)",
+  "serialLocked": null
+ },
+ "finding": "single-page limitation: collector page and M2-create page cannot both be foreground; probe-page newRun is not an M2 create attempt. T622 anticipated this (minimal seam option: external-readable 3-slot snapshot or independent non-GL diagnostic thread)",
+ "route": "architect \u2014 per T622 fallback: provide minimal product seam (external snapshot/non-GL diag thread) OR specify legal cross-page query channel; originals: probe log l2.json 64 samples"
+}
