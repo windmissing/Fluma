@@ -1,0 +1,16 @@
+{
+ "revision": "T569_STATIC_CONSISTENCY_V1",
+ "date": "2026-11-19",
+ "scope": "offline-verifiable domain only (no device)",
+ "dmEval_vs_oracle": {
+  "compared": "10 semantic items (f/u/r/head/yieldDepth/excessHead/Hs/H/chiS/shearOff)",
+  "result": "ALL CONSISTENT",
+  "note": "GLSL adds defensive ceil-correction for negative numerator in head (unreachable for u^2>=0) and shearOff config branch - domain extensions, not conflicts"
+ },
+ "dm20_22_29_31": {
+  "domain": "GPU/device real execution (GLSL dispatch on Maleoon)",
+  "status": "NOT_RUN - awaiting manager device tagging (per card: offline domain done; GPU dispatch needs device)",
+  "offline_preparation": "solver body static audit done; oracle fixtures DM01/02/05/06/07/19/17 already PASS in T556 v1"
+ },
+ "toolchain_warning": "kernel_assets.cpp (140KB+ R-string) toolchain deadlock blocks any tree rebuild carrying g9dm/g9spf units - see T541 v2 report; T573 solver ships via main tree pipeline.comp generation"
+}
