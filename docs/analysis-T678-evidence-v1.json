@@ -1,0 +1,1502 @@
+{
+  "schema": "T678_M1_BUSY_AND_A2_BOOT_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "bootOriginal": {
+    "path": "test/reports/t491/t590c/t590-boot.json",
+    "bytes": 11665,
+    "sha256": "62d09f6030bcb6a748b73d71e2ce3a97eb84d198030775b7b668dfce1366a4e7"
+  },
+  "bootPID": "14871",
+  "attempts": [
+    {
+      "bootSerial": "1",
+      "epoch": "1",
+      "surfaceGeneration": "0",
+      "windowId": "0",
+      "candidateRun": "0",
+      "publishedRun": "0",
+      "readyEpoch": "0",
+      "session": "0",
+      "ownerTid": "15134",
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V1",
+      "K": 192,
+      "Kw": 128,
+      "width": 0,
+      "height": 0,
+      "terminal": true,
+      "complete": true,
+      "dropped": "0",
+      "shaderLog": "",
+      "firstFailure": {
+        "stage": "SURFACE_CREATED",
+        "ns": "283472433504690",
+        "tid": "14871",
+        "root": "0",
+        "a": "1",
+        "b": "2",
+        "c": "1",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      "latest": {
+        "stage": "SURFACE_CREATED",
+        "ns": "283472433504690",
+        "tid": "14871",
+        "root": "0",
+        "a": "1",
+        "b": "2",
+        "c": "1",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      "rows": [
+        {
+          "stage": "OWNER_ATTEMPT",
+          "ns": "283472392059533",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "WAIT_WINDOW",
+          "ns": "283472392085315",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "SURFACE_CREATED",
+          "ns": "283472433504690",
+          "tid": "14871",
+          "root": "0",
+          "a": "1",
+          "b": "2",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ],
+      "interpretation": "lifecycle revoked attempt"
+    },
+    {
+      "bootSerial": "2",
+      "epoch": "2",
+      "surfaceGeneration": "1",
+      "windowId": "1",
+      "candidateRun": "0",
+      "publishedRun": "0",
+      "readyEpoch": "0",
+      "session": "0",
+      "ownerTid": "15134",
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+      "K": 192,
+      "Kw": 128,
+      "width": 0,
+      "height": 0,
+      "terminal": true,
+      "complete": true,
+      "dropped": "0",
+      "shaderLog": "",
+      "firstFailure": {
+        "stage": "RESET_REQUIRED",
+        "ns": "283472433568283",
+        "tid": "15134",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      "latest": {
+        "stage": "UI_RESET",
+        "ns": "283472439371252",
+        "tid": "14871",
+        "root": "0",
+        "a": "2",
+        "b": "3",
+        "c": "1",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      "rows": [
+        {
+          "stage": "OWNER_ATTEMPT",
+          "ns": "283472433564377",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "RESET_REQUIRED",
+          "ns": "283472433568283",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "UI_RESET",
+          "ns": "283472439371252",
+          "tid": "14871",
+          "root": "0",
+          "a": "2",
+          "b": "3",
+          "c": "1",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ],
+      "interpretation": "lifecycle revoked attempt"
+    },
+    {
+      "bootSerial": "3",
+      "epoch": "3",
+      "surfaceGeneration": "1",
+      "windowId": "1",
+      "candidateRun": "1",
+      "publishedRun": "0",
+      "readyEpoch": "0",
+      "session": "0",
+      "ownerTid": "15134",
+      "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+      "K": 192,
+      "Kw": 128,
+      "width": 1256,
+      "height": 1399,
+      "terminal": false,
+      "complete": false,
+      "dropped": "0",
+      "shaderLog": "",
+      "firstFailure": {
+        "stage": "",
+        "ns": "0",
+        "tid": "0",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      "latest": {
+        "stage": "SUBMIT_OBSERVER",
+        "ns": "283477263148127",
+        "tid": "15134",
+        "root": "0",
+        "a": "28",
+        "b": "0",
+        "c": "0",
+        "result": 0,
+        "rawEgl": 0,
+        "rawGl": 0
+      },
+      "rows": [
+        {
+          "stage": "OWNER_ATTEMPT",
+          "ns": "283472439552033",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "OWNER_WINDOW_REFERENCE_ENTER",
+          "ns": "283472439556565",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "OWNER_WINDOW_REFERENCE_EXIT",
+          "ns": "283472439557815",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_GET_DISPLAY_ENTER",
+          "ns": "283472439560158",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_GET_DISPLAY_EXIT",
+          "ns": "283472439578596",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_INITIALIZE_ENTER",
+          "ns": "283472439579221",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_INITIALIZE_EXIT",
+          "ns": "283472461037033",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_VERSION",
+          "ns": "283472461040940",
+          "tid": "15134",
+          "root": "0",
+          "a": "1",
+          "b": "4",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_BIND_API_ENTER",
+          "ns": "283472461041877",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_BIND_API_EXIT",
+          "ns": "283472461046721",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CHOOSE_CONFIG_ENTER",
+          "ns": "283472461047971",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CHOOSE_CONFIG_EXIT",
+          "ns": "283472461127502",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CONFIG_COUNT",
+          "ns": "283472461128440",
+          "tid": "15134",
+          "root": "0",
+          "a": "4",
+          "b": "64",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CREATE_CONTEXT_ENTER",
+          "ns": "283472461129690",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CREATE_CONTEXT_EXIT",
+          "ns": "283472466150002",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CREATE_SURFACE_ENTER",
+          "ns": "283472466153752",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_CREATE_SURFACE_EXIT",
+          "ns": "283472466485783",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_MAKE_CURRENT_ENTER",
+          "ns": "283472466487033",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_MAKE_CURRENT_EXIT",
+          "ns": "283472466507815",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_QUERY_SURFACE_ENTER",
+          "ns": "283472466509065",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 12375,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_QUERY_SURFACE_EXIT",
+          "ns": "283472466512033",
+          "tid": "15134",
+          "root": "0",
+          "a": "12375",
+          "b": "1256",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_QUERY_SURFACE_ENTER",
+          "ns": "283472466513596",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 12374,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "EGL_QUERY_SURFACE_EXIT",
+          "ns": "283472466514533",
+          "tid": "15134",
+          "root": "0",
+          "a": "12374",
+          "b": "1399",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "TRANSPORT_CREATE_ENTER",
+          "ns": "283472466564533",
+          "tid": "15134",
+          "root": "0",
+          "a": "0",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "283472487672190",
+          "tid": "15134",
+          "root": "0",
+          "a": "26",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "283477263047815",
+          "tid": "15134",
+          "root": "0",
+          "a": "27",
+          "b": "0",
+          "c": "0",
+          "result": 1,
+          "rawEgl": 0,
+          "rawGl": 0
+        },
+        {
+          "stage": "SUBMIT_OBSERVER",
+          "ns": "283477263148127",
+          "tid": "15134",
+          "root": "0",
+          "a": "28",
+          "b": "0",
+          "c": "0",
+          "result": 0,
+          "rawEgl": 0,
+          "rawGl": 0
+        }
+      ],
+      "interpretation": "OPEN_PROGRAM_STAGE_AT_OBSERVATION; no create EXIT/ready/root/draw observed"
+    }
+  ],
+  "transitions": [
+    {
+      "reason": "XCOMPONENT_UNWRAP",
+      "ns": "283472433296096",
+      "tid": "14871",
+      "beforeEpoch": "1",
+      "afterEpoch": "1",
+      "surfaceGeneration": "0",
+      "a": "0",
+      "b": "0",
+      "result": 0
+    },
+    {
+      "reason": "XCOMPONENT_REGISTER",
+      "ns": "283472433320471",
+      "tid": "14871",
+      "beforeEpoch": "1",
+      "afterEpoch": "1",
+      "surfaceGeneration": "0",
+      "a": "0",
+      "b": "0",
+      "result": 0
+    },
+    {
+      "reason": "XCOMPONENT_SIZE",
+      "ns": "283472433476877",
+      "tid": "14871",
+      "beforeEpoch": "1",
+      "afterEpoch": "1",
+      "surfaceGeneration": "0",
+      "a": "1256",
+      "b": "1399",
+      "result": 0
+    },
+    {
+      "reason": "CALLBACK_WINDOW_REFERENCE",
+      "ns": "283472433496408",
+      "tid": "14871",
+      "beforeEpoch": "1",
+      "afterEpoch": "1",
+      "surfaceGeneration": "1",
+      "a": "1256",
+      "b": "1399",
+      "result": 0
+    },
+    {
+      "reason": "SURFACE_CREATED",
+      "ns": "283472433504690",
+      "tid": "14871",
+      "beforeEpoch": "1",
+      "afterEpoch": "2",
+      "surfaceGeneration": "1",
+      "a": "1256",
+      "b": "1399",
+      "result": 0
+    },
+    {
+      "reason": "UI_RESET",
+      "ns": "283472439371252",
+      "tid": "14871",
+      "beforeEpoch": "2",
+      "afterEpoch": "3",
+      "surfaceGeneration": "1",
+      "a": "0",
+      "b": "0",
+      "result": 0
+    }
+  ],
+  "recovery": {
+    "revision": "T464_RECOVERY_V1",
+    "phase": "CREATING_NEW",
+    "reason": "CREATING_NEW",
+    "firstReason": "WINDOW_OR_PAGE_CHANGED",
+    "resetSerial": "1",
+    "epoch": "3",
+    "session": "0",
+    "runLo": 0,
+    "runHi": 0,
+    "contextLo": 0,
+    "contextHi": 0,
+    "retired": true,
+    "resources": false,
+    "incomplete": false,
+    "dropped": 0,
+    "inCall": false,
+    "callRoot": "0",
+    "callEnterNs": "0",
+    "callFrom": 0,
+    "callTo": 0,
+    "events": [
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472372750627",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472372840471",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472400176408",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472400190627",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472408521408",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472408548752",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472417055315",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472417083596",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "1",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472420156252",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472420176096",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472424689533",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472424719377",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472432916721",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472432938440",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "OLD_PERMIT_TOMBSTONE",
+        "ns": "283472433502658",
+        "tid": "14871",
+        "role": 1,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472433539377",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472433556565",
+        "tid": "15134",
+        "role": 2,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "OLD_PERMIT_TOMBSTONE",
+        "ns": "283472439369065",
+        "tid": "14871",
+        "role": 1,
+        "serial": "0",
+        "epoch": "0",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "RESET_REQUESTED",
+        "ns": "283472439370783",
+        "tid": "14871",
+        "role": 1,
+        "serial": "1",
+        "epoch": "3",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_TOMBSTONES",
+        "ns": "283472439526408",
+        "tid": "15134",
+        "role": 2,
+        "serial": "1",
+        "epoch": "3",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      },
+      {
+        "kind": "CONTEXT_RETIRED",
+        "ns": "283472439545002",
+        "tid": "15134",
+        "role": 2,
+        "serial": "1",
+        "epoch": "3",
+        "session": "0",
+        "permissionRevision": "2",
+        "root": "0",
+        "a": "0",
+        "b": "0",
+        "c": "0",
+        "code": 0
+      }
+    ],
+    "oldLedgers": [],
+    "windowAvailable": true,
+    "actualClock": "GRS_M1_PROGRESS_CLOCK_V2",
+    "readyEpoch": "0"
+  },
+  "bootSemantics": {
+    "terminal": "explicit terminal Mark, revoke transition, failed Draw, or first quantum accepted AND first Draw done; not glCreate completion flag",
+    "complete": "terminal && dropped==0, not product success",
+    "firstFailure": "failure-marked lifecycle event including SURFACE_CREATED/reset, not necessarily raw driver error",
+    "windowId": "bootSurface surrogate counter, not native pointer",
+    "ownerTid": "observed owner thread, no captured EGLContext pointer in JSON",
+    "snapshotNowNs": "NOT_CAPTURED; filename wall clock is not monotonic call duration"
+  },
+  "A2LastPoint": {
+    "major": "TRANSPORT_CREATE_ENTER then SUBMIT_OBSERVER26/27/28",
+    "stage28": "ProgramEnter",
+    "code": "0 is Enter/default, not successful link return",
+    "missing": "ProgramExit29, TransportCreateExit, READY, root/draw",
+    "exactAPI": "not separable within existing coarse link/status/error sequence",
+    "permanentHang": "NOT_PROVEN"
+  },
+  "M1UI": [
+    {
+      "path": "test/reports/t491/t593c/l1.json",
+      "bytes": 53140,
+      "sha256": "76448db1d669285d56a95edae019873a6a223e68b5034a1aae328a8e492855a7",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:1 / epoch 3 / session 1 / sample 3374 · GPU_WORK_PENDING",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:1 / epoch 3 / session 1 / sample 3374 · 最近源收据#0 0.0000 · 物理 0:375"
+      ],
+      "scopes": [
+        {
+          "runHi": "0",
+          "runLo": "1",
+          "epoch": "3",
+          "session": "1",
+          "sampleSerial": "3374",
+          "busy": "GPU_WORK_PENDING"
+        },
+        {
+          "runHi": "0",
+          "runLo": "1",
+          "epoch": "3",
+          "session": "1",
+          "sampleSerial": "3374",
+          "physicalCommitHi": "0",
+          "physicalCommitLo": "375",
+          "busy": "OTHER"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t593c/l2.json",
+      "bytes": 53138,
+      "sha256": "c4bc212965314674cfac176b542f72d1d91e12ecfb478053164138edd825d9dc",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 4607 · GPU_WORK_PENDING",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 4607 · 最近源收据#0 0.0000 · 物理 0:88"
+      ],
+      "scopes": [
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "4607",
+          "busy": "GPU_WORK_PENDING"
+        },
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "4607",
+          "physicalCommitHi": "0",
+          "physicalCommitLo": "88",
+          "busy": "OTHER"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t593c/l3.json",
+      "bytes": 53140,
+      "sha256": "59f39b0438b43ae8d4e4dea794b65362d12ad19590ac1bdb1cb2c015fca45c5e",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 5780 · GPU_WORK_PENDING",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 5780 · 最近源收据#0 0.0000 · 物理 0:318"
+      ],
+      "scopes": [
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "5780",
+          "busy": "GPU_WORK_PENDING"
+        },
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "5780",
+          "physicalCommitHi": "0",
+          "physicalCommitLo": "318",
+          "busy": "OTHER"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t593c/l4.json",
+      "bytes": 53140,
+      "sha256": "62ad9569a7556a0342d898d587aafce055aeb6b98e989143f9d77eee0fa7bc13",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 6741 · GPU_WORK_PENDING",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 6741 · 最近源收据#0 0.0000 · 物理 0:536"
+      ],
+      "scopes": [
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "6741",
+          "busy": "GPU_WORK_PENDING"
+        },
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "6741",
+          "physicalCommitHi": "0",
+          "physicalCommitLo": "536",
+          "busy": "OTHER"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t593c/l5.json",
+      "bytes": 53134,
+      "sha256": "4a5a0df5b24c39562a8fad4a5add13a84c8dc67b3380b6adb4216fd0f3a4757a",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 8673 · DRAW_PENDING",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 8673 · 最近源收据#0 0.0000 · 物理 0:1002"
+      ],
+      "scopes": [
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "8673",
+          "busy": "DRAW_PENDING"
+        },
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "8673",
+          "physicalCommitHi": "0",
+          "physicalCommitLo": "1002",
+          "busy": "OTHER"
+        }
+      ]
+    },
+    {
+      "path": "test/reports/t491/t593c/l6.json",
+      "bytes": 53146,
+      "sha256": "6972f08b9d13123107b553f3e1ca3330c189db6f9b8c3f3b91a3abf74bbc451f",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 10935 · GPU_WORK_PENDING",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V2 / run 0:2 / epoch 4 / session 2 / sample 10935 · 最近源收据#0 0.0000 · 物理 0:1513"
+      ],
+      "scopes": [
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "10935",
+          "busy": "GPU_WORK_PENDING"
+        },
+        {
+          "runHi": "0",
+          "runLo": "2",
+          "epoch": "4",
+          "session": "2",
+          "sampleSerial": "10935",
+          "physicalCommitHi": "0",
+          "physicalCommitLo": "1513",
+          "busy": "OTHER"
+        }
+      ]
+    }
+  ],
+  "packages": {
+    "T590-a2": {
+      "receipt": {
+        "path": "test/reports/t257/T590-a2.json",
+        "bytes": 2280,
+        "sha256": "44ccd90741f725e45985f6dd7646b0a6fe5de4a83a832f93aac112d4da4fabe8"
+      },
+      "packageSHA": "5dcaeda54508a24e740ccd0d84063f571c1ee56eb7d45125468eec34598f0b72",
+      "receiptMatched": true,
+      "inputSHA": "6b019ef9481984a06a8f9578fda71e9d60e76d2e68ace769b3adf7e0e649add6",
+      "libgrsm1.so": {
+        "entry": "libs/arm64-v8a/libgrsm1.so",
+        "bytes": 2849936,
+        "sha256": "f5d23d510c8a47a0bad76ab054ea7e25f25513d250a4411ebc1f21123d8f51ad",
+        "buildId": "c789cf34c0b0f16212341c39010b7780e15654e1",
+        "registeredNameStringsPresent": {
+          "recoveryState": true,
+          "beginRecoverySession": true,
+          "bootDiagnostics": true,
+          "m2CreateDiagnostics": true,
+          "executionDiagnosticsV1": true,
+          "timelineSnapshotBegin": true,
+          "coldTraceBeginV1": true
+        }
+      },
+      "modules.abc": {
+        "entry": "ets/modules.abc",
+        "bytes": 2940832,
+        "sha256": "8abc19f2bff25b0834b7f6d93a638d29b5fb247791ffabf28a21e1429e11af3f"
+      }
+    },
+    "T593-m1": {
+      "receipt": {
+        "path": "test/reports/t257/T593-m1.json",
+        "bytes": 2277,
+        "sha256": "58713736eef4e9b4e792ca83f86cb5b56a620d86d7937adaba0bd9acf473ecbc"
+      },
+      "packageSHA": "798747a0d616554d8375ac180c66625fd086ae730c334c507c622953e005f720",
+      "receiptMatched": true,
+      "inputSHA": "7d01da02226e6ecc75c91a87498f5570de782d807e3de4d86d96370068c0967c",
+      "libgrsm1.so": {
+        "entry": "libs/arm64-v8a/libgrsm1.so",
+        "bytes": 1950560,
+        "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+        "buildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c",
+        "registeredNameStringsPresent": {
+          "recoveryState": true,
+          "beginRecoverySession": true,
+          "bootDiagnostics": true,
+          "m2CreateDiagnostics": false,
+          "executionDiagnosticsV1": true,
+          "timelineSnapshotBegin": true,
+          "coldTraceBeginV1": true
+        }
+      },
+      "modules.abc": {
+        "entry": "ets/modules.abc",
+        "bytes": 2861292,
+        "sha256": "511bc6afb97ca30c22d6393e54212b7fb3b8dda79810a89ae9378bd655ba4c64"
+      }
+    }
+  },
+  "A2UIOriginals": [
+    {
+      "path": "test/reports/t491/t590c/l1.json",
+      "bytes": 49802,
+      "sha256": "6d747630c05a3c7f6ce06c8b7e91bf772e67950314c83ed49c6bf8a1a681d70e",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:0 / epoch 3 / session 0 / sample 4049 · CREATING_NEW",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V1 / run 0:0 / epoch 0 / session 0 / sample 4049 · 最近源收据#0 0.0000 · 物理 0:0"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/l2.json",
+      "bytes": 49802,
+      "sha256": "3aa9b13b9101a112e6e18d562b9d4f2bcb66e55d815c8ce068d350f01d30c623",
+      "texts": [
+        "STALE · GRS_M1_PROGRESS_CLOCK_V2 / run 0:0 / epoch 3 / session 0 / sample 4787 · CREATING_NEW",
+        "STALE · 账 GRS_M1_PROGRESS_CLOCK_V1 / run 0:0 / epoch 0 / session 0 / sample 4787 · 最近源收据#0 0.0000 · 物理 0:0"
+      ]
+    },
+    {
+      "path": "test/reports/t491/t590c/l3.json",
+      "bytes": 82902,
+      "sha256": "ecb9cce02de9b18e4a11b342577596323c42180c5b91461aaca88ccbcb1c3b4c",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/l4.json",
+      "bytes": 82902,
+      "sha256": "10e81fdcd96fbab1f26d32dde2943ad688e13169c7f9fd285eb107f162cfc76f",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/l5.json",
+      "bytes": 82902,
+      "sha256": "712d8bb112139812845781f6ffcb08c8626357421f2c444194e0cac350226b66",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/l6.json",
+      "bytes": 82902,
+      "sha256": "a0a9b8b49c24ea41594b4ea27dd638cb8636b5fc22f37924a75c11c3bd1cbce9",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/l7.json",
+      "bytes": 82902,
+      "sha256": "c35c0ebb6beaf666dc50a1d810d1d3965f377782fdce85f8179a1fb995823a19",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/l8.json",
+      "bytes": 82902,
+      "sha256": "8d5061b99c28ae25ce4574a4b03d13d17a97aae4be408f14b97c35e698518b76",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/l9.json",
+      "bytes": 82902,
+      "sha256": "2e8ee2211398d2cdbd698caaf4d536861a20de02884731a77929c0a3466db640",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lA.json",
+      "bytes": 82902,
+      "sha256": "959e5f847bd488687af8db9043cd7a908368bf81210a5c0efffef725fc9b9aef",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lB.json",
+      "bytes": 82902,
+      "sha256": "7a541a38976fba4e841510654eeb7116d59fe4ec5ca0d9b7e7369896509638d2",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lD.json",
+      "bytes": 62551,
+      "sha256": "6e4319e5f98a46659eb1cbf1aea697386b6bfe315b31c24474539df57874b1ab",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lE.json",
+      "bytes": 62551,
+      "sha256": "3994ed5995ae7e1c789522ff11bdc052eb6a6f41bf5e6a049dfe7df516c67fac",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lF.json",
+      "bytes": 172807,
+      "sha256": "bf55821848b5ee9c17b1bf4b08b5970a14561ed60f152428f643f1836b8f96b1",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lG.json",
+      "bytes": 117536,
+      "sha256": "979245eae5f1c87dbf5b7052f0e32946d1fc65d3a568c2ed1693b5f9883d1081",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lH.json",
+      "bytes": 117536,
+      "sha256": "254c51b52be26b04a110d81aa505e5c627ba0ecfc438824ac2eb34a2302af637",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lI.json",
+      "bytes": 117536,
+      "sha256": "a916c56fefe33bc04a6906f5165426df0007548a21218ad4b71f98c2fbb3dd36",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lJ.json",
+      "bytes": 117536,
+      "sha256": "21aca378fe305e86b4a06a07f232057686d5d3f71c341822204dd43bf399fe5a",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lK.json",
+      "bytes": 117536,
+      "sha256": "f130dcbd559cbef943b5275e0665fe0d05785b3a37d4f3de592c58490935921d",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lM.json",
+      "bytes": 117536,
+      "sha256": "8285612cfc17eeb5fcf7de1ad1ec245e427a5c3b3c616e37554415bf9a06ea7b",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lO.json",
+      "bytes": 117536,
+      "sha256": "627f0fdd35653aefb90ab3d2ca76977194aa700ed6046c38eaf6f801987fec54",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lP.json",
+      "bytes": 117536,
+      "sha256": "e3c5c291a5399b905a98a29c28639ebc24dc5fce73635e934b00e881bdc5c047",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lR.json",
+      "bytes": 117536,
+      "sha256": "0ef747d1db0bfd62793e2b4d5498f62e31bba7c007a97fa2ad6c0ee8531e9cc7",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lS.json",
+      "bytes": 177760,
+      "sha256": "e6851ee2abb0b93430d7bfd536db9cee0d8ad1b135a4c9b58a32a3216b710831",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lT.json",
+      "bytes": 172715,
+      "sha256": "c76e8adc06618c4a70523096ba754d02a9768b473cb2c0db9621179ae717b461",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lU.json",
+      "bytes": 117514,
+      "sha256": "35cc62cb75fea4ebf5ad4b4f6c5b7a69377a69ba1dcea6f89c0cf6ce1821ebf7",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lV.json",
+      "bytes": 172715,
+      "sha256": "c268cc89461e2876e1c3bdfe740336c082f21b29e980ccb75d6b6fd12fb47eed",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lW.json",
+      "bytes": 81392,
+      "sha256": "263a53071a1cdbd89ce2999adf9d57bd5e42f17cf56a5c3a3e534d8cb63e64c7",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lX.json",
+      "bytes": 172715,
+      "sha256": "b9d4132f9cbe9e2c033c93bb51650cb74e851c496fbd5f01c2e8be8caf5e602b",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lY.json",
+      "bytes": 177760,
+      "sha256": "eea586a91b95cf2baa694bd8541289699bfdc58e5253e3b94bb26ccd61bcb851",
+      "texts": []
+    },
+    {
+      "path": "test/reports/t491/t590c/lZ.json",
+      "bytes": 177760,
+      "sha256": "79738137a902d05c416bd2524a24c2db6ab951af8351cf12b0cc5f92bdf2dfbb",
+      "texts": []
+    }
+  ],
+  "M1CounterSequence": [
+    88,
+    318,
+    536,
+    1002,
+    1513
+  ],
+  "M1BusyMeaning": {
+    "GPU_WORK_PENDING": "FreezePermitLocked status marks old frame stale for a new runtime root; not creation marker",
+    "DRAW_PENDING": "AcceptLocked after guarded accepted callback updates accepted/source/physics counters then awaits presentation",
+    "statusReady": "AllowedLocked permission separate from current/stale display state",
+    "downAllowed": "does not require s.state==CURRENT; UI STALE label alone is not NOT_READY evidence",
+    "sourceReceipt0": "not a complete enqueue/claim ledger"
+  },
+  "M1EndpointAvailability": "recoveryState/beginRecoverySession/bootDiagnostics exist in actual T597 module names and source; report NOT_AVAILABLE not established by missing UI button",
+  "sources": [
+    {
+      "path": ".codex/local-test/t541-t624-a2/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 139381,
+      "sha256": "e8e0b4ee676664d4886326ed4dac79291004d05ee2a60fb273e7f433d9826de5"
+    },
+    {
+      "path": ".codex/local-test/t541-t624-a2/entry/src/main/cpp/gpu_resident/boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex/local-test/t541-t624-a2/entry/src/main/cpp/gpu_resident/submit_observer.h",
+      "bytes": 3230,
+      "sha256": "484e154003ff9b8dd5091992c48a287ce8a27c63251ee8024b3de124a1840696"
+    },
+    {
+      "path": ".codex/local-test/t541-t624-a2/entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+      "bytes": 14631,
+      "sha256": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc"
+    },
+    {
+      "path": ".codex/local-test/t541-t624-a2/entry/src/main/cpp/gpu_resident/m2route/full_transport.cpp",
+      "bytes": 34490,
+      "sha256": "0e4d1b86102b1f559ed1114993513583bad60a21439fc14a6096eb0eaa23bc57"
+    },
+    {
+      "path": ".codex/local-test/t541-t624-a2/entry/src/main/cpp/CMakeLists.txt",
+      "bytes": 6506,
+      "sha256": "34bfeafa913576e54e193e809247f2d822d11efc5a4177a947b1365539814811"
+    },
+    {
+      "path": ".codex/local-test/t597-fixed/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 115987,
+      "sha256": "def6fba299b976b4d1cfa9213b420c32cca8377eb49004fbc880c9473ae63b78"
+    },
+    {
+      "path": ".codex/local-test/t597-fixed/entry/src/main/cpp/gpu_resident/boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex/local-test/t597-fixed/entry/src/main/cpp/gpu_resident/recovery_v3.h",
+      "bytes": 4917,
+      "sha256": "f2c7da7b358a53200ec36a2920b7f847de610c6152d18bbb621c027508760970"
+    },
+    {
+      "path": ".codex/local-test/t597-fixed/entry/src/main/ets/physics/GpuM1DemoController.ets",
+      "bytes": 12810,
+      "sha256": "c58337940636820dae14399bc5e593769a6990dd4841517412a8f8df45220aa9"
+    },
+    {
+      "path": ".codex/local-test/t597-fixed/entry/src/main/ets/pages/GpuResidentM1.ets",
+      "bytes": 18585,
+      "sha256": "1775949ba8af709425c5dd3607dbcdcf5e547a3a681dc8c0ddb6a93d89449809"
+    },
+    {
+      "path": ".codex/local-test/t597-fixed/entry/src/main/ets/physics/GpuRecoveryPulse.ets",
+      "bytes": 2545,
+      "sha256": "89b744717e26284765848461cf574c1afbc87ecfcef591545bdbdab5b9ae2ed0"
+    }
+  ],
+  "hilog": {
+    "path": "test/reports/t491/t593c/hilog-t593c.txt",
+    "bytes": 1233691,
+    "sha256": "6e1a15bf226b886653bbf275adf3ab5a6481dfc08514c2a5562d8f4c0d81a72c"
+  },
+  "missingSameAttempt": [
+    "pid-start/process boot key/context pointer/source/layout in current M1 raw",
+    "full READY/current permission vs render/stale status",
+    "pulse receipt/Fresh/gravity",
+    "Down handler/reason/typed enqueue and same seq claim/root",
+    "runtime first accepted/draw root tickets and original GL/EGL/clock times"
+  ],
+  "verdict": "SPLIT_A2_M2_OPEN_CREATE_FROM_FORMAL_M1_POST_CREATE_BUSY; SHARED_CREATE_ROOT_CAUSE_NOT_ESTABLISHED",
+  "noNewProductSeamEstablished": true,
+  "reuse": "T676-A/T663 for new M2 exact API; T676-B existing formal M1 endpoints/collector; no duplicate implementation or device gate"
+}

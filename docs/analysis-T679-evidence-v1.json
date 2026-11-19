@@ -1,0 +1,751 @@
+{
+  "schema": "T679_GPU_RESEARCH_CONSTRAINT_EVIDENCE_V1",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "algorithmChoiceFrozen": false,
+  "designInputs": [
+    {
+      "path": "docs/algorithm-G15-G19-roadmap-v1.md",
+      "bytes": 34425,
+      "sha256": "01f3dadc42e36c911a4797a427bad96a28de66c55defc4a305ed8575210fb158"
+    },
+    {
+      "path": "docs/design-T673-research-cases-v1.json",
+      "bytes": 17406,
+      "sha256": "85022fe65a37de96cac436c95cd886950fc529b966685e13fcd0cf332ba91075"
+    },
+    {
+      "path": "docs/design-T673-roadmap-evidence-v1.json",
+      "bytes": 24095,
+      "sha256": "e651efbeca85d286898bfe62838ec6566963ff8f820667037ba7ed104a0b89a2"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C01",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "kind": "ownership_and_transaction",
+      "criterion": "Exact authoritative integer mass/origin balance and one owner; rejection changes none of the accepted physical/visual/time state",
+      "reference": "Independent inventory/event audit; no CPU physics stepping",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C02",
+      "goals": [
+        15,
+        16,
+        17
+      ],
+      "kind": "frame_and_input",
+      "criterion": "Coordinate identities and separately derived impulse/work balance; no duplicated world moving-wall and rotating-frame forcing",
+      "reference": "Analytic coordinate transformation and declared scripted motion",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C03",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "kind": "capacity_and_cost",
+      "criterion": "All explicit maxima accounted for; overflow rejects without truncation; timing and memory measured separately from payload estimates",
+      "reference": "Offline cost formula and actual device allocation/timing records",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C04",
+      "goals": [
+        15,
+        16,
+        17,
+        19
+      ],
+      "kind": "water_geometry_and_reaction",
+      "criterion": "Same physical occupancy does not displace additional water; closed-volume compatibility and geometry-time balance; loads counted once",
+      "reference": "Actual G14/G12 validated interface plus independent geometry algebra; no early release of T611/T612",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C05",
+      "goals": [
+        15
+      ],
+      "kind": "fixed_angle_sliding_subproblem",
+      "criterion": "Compare a=g*(sin(theta)-mu*cos(theta)), velocity and displacement under the stated sliding assumptions; refine dt/h",
+      "reference": "Analytic subproblem, not an entire collapsing heap oracle",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C06",
+      "goals": [
+        15
+      ],
+      "kind": "large_tilt_collapse",
+      "criterion": "Continuous physically accepted movement and collapse/recovery against declared reference uncertainty; reaching angle alone is insufficient",
+      "reference": "REFERENCE_REQUIRED for real-material claim; existing relevant physical evidence reused where applicable",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C07",
+      "goals": [
+        15
+      ],
+      "kind": "closure_and_numerical_separation",
+      "criterion": "Distinguish closure, discretization, representation and visual errors using one reference/error budget; no unapproved old-profile resolution change",
+      "reference": "Independent analytic or measured observables; new research identities for unsupported resolutions",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C08",
+      "goals": [
+        15,
+        16
+      ],
+      "kind": "height_representation_limit",
+      "criterion": "Represent the state in the selected new domain or explicitly reject as unsupported; never collapse the gap or use abs/epsilon normal gravity silently",
+      "reference": "Finite geometric and unilateral-support counterexamples",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C09",
+      "goals": [
+        16
+      ],
+      "kind": "free_flight",
+      "criterion": "Analytic free-flight trajectory within declared spatial/time/quantization budget; no hidden contact or second integration at conversion",
+      "reference": "Analytic before-contact interval only",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C10",
+      "goals": [
+        16
+      ],
+      "kind": "fixed_and_moving_wall_contact",
+      "criterion": "Analytic scalar impact impulse/energy plus declared nonpenetration tolerance; moving wall can supply work",
+      "reference": "Independent finite impact formula, not a DEM time integrator",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C11",
+      "goals": [
+        16
+      ],
+      "kind": "support_release_and_recontact",
+      "criterion": "No tensile sticking without declared cohesion; support may transfer to side walls; mass flows/falls/recontacts continuously and conservatively",
+      "reference": "Support inequalities plus REFERENCE_REQUIRED for dense-material dynamics",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C12",
+      "goals": [
+        16
+      ],
+      "kind": "sparse_packet_capacity",
+      "criterion": "Recognize existing P capacity is insufficient for this whole detached mass; new bulk representation/capacity required",
+      "reference": "Exact finite capacity calculation; not a universal impossibility proof",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C13",
+      "goals": [
+        17
+      ],
+      "kind": "phase_wrap",
+      "criterion": "No artificial -358 degree jump; whole-phase offset is physically equivalent within the declared arithmetic domain",
+      "reference": "Phase algebra and independently prescribed derivatives",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C14",
+      "goals": [
+        17
+      ],
+      "kind": "stop_and_reverse",
+      "criterion": "Respond to the complete motion path; sand need not reverse instantly or have same state at same final angle",
+      "reference": "Declared input/force histories and material reference where needed",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C15",
+      "goals": [
+        17
+      ],
+      "kind": "repeated_rotation",
+      "criterion": "No history clearing to hide drift; all resource/accuracy limits remain explicit; full turn is not a state-return identity",
+      "reference": "Independent cumulative audit plus actual sustained device record",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C16",
+      "goals": [
+        17,
+        19
+      ],
+      "kind": "axis_scope",
+      "criterion": "Declare or reject out-of-plane motion in a planar profile; genuine coverage requires justified finite-gap/3D physics",
+      "reference": "Coordinate/scope audit; no restoration of paused goal10",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C17",
+      "goals": [
+        18
+      ],
+      "kind": "same_mean_different_profile",
+      "criterion": "All have mass=1 and momentum=1 but different energies/fluxes; chosen representation must distinguish target observables",
+      "reference": "Exact profile integrals",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C18",
+      "goals": [
+        18
+      ],
+      "kind": "counterflow_and_layer_order",
+      "criterion": "Net momentum=0 does not mean rest; equal variance does not fix basal velocity or layer ordering",
+      "reference": "Exact two-mass algebra",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C19",
+      "goals": [
+        18
+      ],
+      "kind": "layer_exchange_and_load",
+      "criterion": "Paired internal force and nonnegative friction loss; no repeated full-bed friction or forced equal-velocity remix; full spatial closure still required",
+      "reference": "Finite impulse identity and REFERENCE_REQUIRED for actual shear law",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C20",
+      "goals": [
+        18
+      ],
+      "kind": "two_four_layer_or_volume_selection",
+      "criterion": "Choose sufficient representation by target-observable error and cost; two layers are not frozen in advance; no duplicated mass if volume model resolves profile",
+      "reference": "REFERENCE_REQUIRED plus resolution/error-budget comparison",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C21",
+      "goals": [
+        19
+      ],
+      "kind": "finite_gap_water_channel",
+      "criterion": "Compare u=f*z*(b-z)/(2nu), mean=f*b^2/(12nu), wall shear magnitude=rho*f*b/2; refine Nz and time independently",
+      "reference": "Analytic fully developed laminar channel, not a closed-box circulating-flow solution",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C22",
+      "goals": [
+        19
+      ],
+      "kind": "true_transverse_motion",
+      "criterion": "Independent physical depth motion/response present and conservative; observe cross-sections and oblique view, not only the front image",
+      "reference": "Manufactured transverse subproblem plus material/flow references as applicable",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C23",
+      "goals": [
+        19
+      ],
+      "kind": "gap_and_wall_scaling",
+      "criterion": "Separate thin-gap closure assumptions from true 3D degrees of freedom; explicitly test boundary resolution and time-scale validity",
+      "reference": "Known laminar scale and REFERENCE_REQUIRED for granular wall law",
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "id": "C24",
+      "goals": [
+        19
+      ],
+      "kind": "three_dimensional_water_sand_feedback",
+      "criterion": "Both sand and water use qualified depth dynamics/boundaries and validated interactions; preserve G13/G14/G12 domain-specific evidence and revalidate 3D",
+      "reference": "Actual valid G14/G12 interfaces plus independent 3D geometry/solver/material evidence",
+      "productStatus": "NOT_RUN"
+    }
+  ],
+  "historicalT131": {
+    "original": {
+      "path": "test/reports/t131/t131.json",
+      "bytes": 1501,
+      "sha256": "2d1d92df3fc755cce3154ba6ba897b0281bded5edf9f671b6c9914a25e6e5882"
+    },
+    "identity": {
+      "egl": "1.4 OpenHarmony EGL",
+      "gl": "OpenGL ES 3.2 B318.bd51c15da8175cd9bc398a845491808e549b4664",
+      "glsl": "OpenGL ES GLSL ES 3.20",
+      "glMajor": 3,
+      "glMinor": 2,
+      "es31Compatible": 1,
+      "extComputeChars": 0
+    },
+    "limits": {
+      "wgCount": [
+        65535,
+        65535,
+        65535
+      ],
+      "wgSize": [
+        1024,
+        1024,
+        1024
+      ],
+      "maxInvocations": 1024,
+      "ssboMaxBytes": 1073741824,
+      "sharedMemBytes": 32768,
+      "ssboBindings": 16
+    },
+    "class": "HISTORICAL_DEVICE_PBUFFER_SCOPE"
+  },
+  "historicalT232": {
+    "original": {
+      "path": "test/reports/t232/t232.json",
+      "bytes": 906,
+      "sha256": "bed72574e4cf16739817bed4cb43fcc7bc1f581d5e7627ad6517a507f742d105"
+    },
+    "raw": {
+      "identity": {
+        "gl": "OpenGL ES 3.2 B318.bd51c15da8175cd9bc398a845491808e549b4664",
+        "glsl": "OpenGL ES GLSL ES 3.20",
+        "vendor": "HUAWEI",
+        "renderer": "Maleoon 920",
+        "glMajor": 3,
+        "glMinor": 2
+      },
+      "limitsP_B": {
+        "globalBindings": 32,
+        "computeBlocks": 16,
+        "combinedBlocks": 32,
+        "vertexBlocks": 0,
+        "fragmentBlocks": 16,
+        "offsetAlignment": 256,
+        "wgCount": [
+          65535,
+          65535,
+          65535
+        ],
+        "wgSize": [
+          1024,
+          1024,
+          1024
+        ],
+        "invocations": 1024,
+        "ssboMaxBytes": 1073741824,
+        "sharedBytes": 32768
+      },
+      "extensions": {
+        "gpu_shader5": 1,
+        "fp64Hint": 0,
+        "int64": 0,
+        "atomicFloat": 0,
+        "disjointTimerQuery": 1
+      },
+      "doubleCompileNegative": {
+        "rejected": 1
+      },
+      "intPrim": {
+        "status": "OK",
+        "n": 4096,
+        "mismatch": 0,
+        "firstDiff": ""
+      },
+      "crossDispatch": {
+        "status": "OK",
+        "bad": 0
+      },
+      "completion": {
+        "status": "OK",
+        "fenceStatus": 37146,
+        "polls": 1,
+        "fenceWaitMs": 0.003437,
+        "tailBad": 0
+      },
+      "pE_shared_context": {
+        "status": "NOT_RUN_PBUFFER_SECTION",
+        "reason": "P-E requires XComponent real window context; separate device phase"
+      }
+    },
+    "class": "HISTORICAL_DEVICE_PBUFFER_SCOPE_NOT_WINDOW_QUALIFICATION"
+  },
+  "M2ObservedLimits": {
+    "original": {
+      "path": "test/reports/t491/t591c/collector.ndjson",
+      "bytes": 222253,
+      "sha256": "83d19d7b63d728014025b4b92fa0dc863d4d34cd3895d92a4dc8137013f9d07d"
+    },
+    "bootSerial": "1",
+    "epoch": "2",
+    "window": "387041997984",
+    "context": "387048859216",
+    "ownerTid": "4360",
+    "driver": [
+      {
+        "value": "HUAWEI",
+        "rawGl": 0
+      },
+      {
+        "value": "Maleoon 935F",
+        "rawGl": 0
+      },
+      {
+        "value": "OpenGL ES 3.2 B320.89d539c90932f442acb8859a1797b348e4060bcc",
+        "rawGl": 0
+      },
+      {
+        "value": "OpenGL ES GLSL ES 3.20",
+        "rawGl": 0
+      }
+    ],
+    "limits": [
+      {
+        "api": "glGetIntegerv",
+        "token": 33307,
+        "index": 0,
+        "value": "3",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 33308,
+        "index": 0,
+        "value": "2",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37085,
+        "index": 0,
+        "value": "32",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37083,
+        "index": 0,
+        "value": "16",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37082,
+        "index": 0,
+        "value": "16",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37087,
+        "index": 0,
+        "value": "256",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 37099,
+        "index": 0,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegerv",
+        "token": 33378,
+        "index": 0,
+        "value": "32768",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetInteger64v",
+        "token": 37086,
+        "index": 0,
+        "value": "1073741824",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37311,
+        "index": 0,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37310,
+        "index": 0,
+        "value": "65535",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37311,
+        "index": 1,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37310,
+        "index": 1,
+        "value": "65535",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37311,
+        "index": 2,
+        "value": "1024",
+        "rawGl": 0
+      },
+      {
+        "api": "glGetIntegeri_v",
+        "token": 37310,
+        "index": 2,
+        "value": "65535",
+        "rawGl": 0
+      }
+    ],
+    "probe": {
+      "queried": true,
+      "code": 0,
+      "rawGl": 0,
+      "values": [
+        32,
+        16,
+        16,
+        1024,
+        1024,
+        32768,
+        256,
+        1073741824
+      ]
+    },
+    "class": "DEVICE_QUERY_VALUES_ONLY_SAME_M2_CONTEXT_NOT_NEW_KERNEL_PASS"
+  },
+  "SDK": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\sysroot\\usr\\include\\GLES3\\gl31.h",
+    "bytes": 107911,
+    "sha256": "dfd7a9df7fb16d2c1b1138269e212ae90e3ca70c6e2dc5bffe868dc1edefbc16",
+    "declaredSymbolsChecked": [
+      "GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS",
+      "GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS",
+      "GL_MAX_SHADER_STORAGE_BLOCK_SIZE",
+      "GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT",
+      "glDispatchCompute",
+      "glMemoryBarrier"
+    ],
+    "class": "SDK_API_DECLARATIONS_NOT_DEVICE_LIMITS_OR_PRODUCT_PASS"
+  },
+  "examples": [
+    {
+      "grid": [
+        64,
+        64
+      ],
+      "cells": 4096,
+      "nodes": 4225,
+      "points": 16384,
+      "pointStride": 96,
+      "nodeStride": 64,
+      "support": 9,
+      "banks": 3,
+      "stateBytes": 5529792,
+      "sortBytes": 4718592,
+      "partialTotalBytes": 10248384,
+      "partialTotalMiB": 9.77362060546875,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 1843264,
+      "pointOneBankBytes": 1572864,
+      "nodeOneBankBytes": 270400,
+      "sortOneBufferBytes": 2359296,
+      "packed3StateBanksVsObserved1GiBBlock": "NUMERIC_ONLY_NOT_ALLOCATION_PASS",
+      "facesMAC": 8320,
+      "newGpuAllocationsActuallyRun": 0
+    },
+    {
+      "grid": [
+        128,
+        128
+      ],
+      "cells": 16384,
+      "nodes": 16641,
+      "points": 65536,
+      "pointStride": 96,
+      "nodeStride": 64,
+      "support": 9,
+      "banks": 3,
+      "stateBytes": 22069440,
+      "sortBytes": 18874368,
+      "partialTotalBytes": 40943808,
+      "partialTotalMiB": 39.04705810546875,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 7356480,
+      "pointOneBankBytes": 6291456,
+      "nodeOneBankBytes": 1065024,
+      "sortOneBufferBytes": 9437184,
+      "packed3StateBanksVsObserved1GiBBlock": "NUMERIC_ONLY_NOT_ALLOCATION_PASS",
+      "facesMAC": 33024,
+      "newGpuAllocationsActuallyRun": 0
+    },
+    {
+      "grid": [
+        64,
+        64,
+        8
+      ],
+      "cells": 32768,
+      "nodes": 38025,
+      "points": 262144,
+      "pointStride": 192,
+      "nodeStride": 96,
+      "support": 27,
+      "banks": 3,
+      "stateBytes": 161946144,
+      "sortBytes": 226492416,
+      "partialTotalBytes": 388438560,
+      "partialTotalMiB": 370.4438781738281,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 53982048,
+      "pointOneBankBytes": 50331648,
+      "nodeOneBankBytes": 3650400,
+      "sortOneBufferBytes": 113246208,
+      "packed3StateBanksVsObserved1GiBBlock": "NUMERIC_ONLY_NOT_ALLOCATION_PASS",
+      "facesMAC": 103424,
+      "newGpuAllocationsActuallyRun": 0
+    },
+    {
+      "grid": [
+        64,
+        64,
+        64
+      ],
+      "cells": 262144,
+      "nodes": 274625,
+      "points": 2097152,
+      "pointStride": 192,
+      "nodeStride": 96,
+      "support": 27,
+      "banks": 3,
+      "stateBytes": 1287051552,
+      "sortBytes": 1811939328,
+      "partialTotalBytes": 3098990880,
+      "partialTotalMiB": 2955.428009033203,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 429017184,
+      "pointOneBankBytes": 402653184,
+      "nodeOneBankBytes": 26364000,
+      "sortOneBufferBytes": 905969664,
+      "packed3StateBanksVsObserved1GiBBlock": "EXCEEDS_OBSERVED_SINGLE_BLOCK_NUMERIC_LIMIT",
+      "facesMAC": 798720,
+      "newGpuAllocationsActuallyRun": 0
+    }
+  ],
+  "sharedTileExamples": {
+    "assumptions": "8 interior cells per dimension + 1-cell halo on both sides, full node payload in shared, illustrative only",
+    "2DNodesBytes": 6400,
+    "3DNodesBytes": 96000,
+    "observedSharedBytes": 32768,
+    "class": "ASSUMPTION_NUMERIC_BOUND_ONLY"
+  },
+  "additionalSourceMapExample": {
+    "assumptions": "3 banks, per-cell 64 full origin entries each16B only IF chosen new algorithm needs this layout; not additional mandatory cost or origin capacity freeze",
+    "2D128sqBytes": 50331648,
+    "3D64x64x8Bytes": 100663296
+  },
+  "legacyContracts": {
+    "G11_DM_K512_V8192": {
+      "residentPayloadBytes": 104117376,
+      "fullGPUAdditionalBytes": 140009472,
+      "coldFULLSlotBytes": 194154496,
+      "twoFULLSlotsBytes": 388308992,
+      "optionalSinglePhaseWitnessBytes": 4722688,
+      "knownPayloadWithWitnessGPUAndNative": 641920128,
+      "largestGLObjectBytes": 23334912
+    },
+    "DM_K512": {
+      "residentPayloadBytes": 98022528,
+      "fullGPUAdditionalBytes": 140009472,
+      "twoFullSlotsBytes": 376119296,
+      "maxGLBufferObjectBytes": 23334912
+    }
+  },
+  "legacyCountsAreAllocatedDevicePeak": false,
+  "sourceReceipts": [
+    {
+      "path": "docs/architecture-T231-gpu-resident-platform-v1.md",
+      "bytes": 18239,
+      "sha256": "2a4352e167cbeb4fbfb5ee4952cb64f73eb1b30cd0cbd40fc04f2e490f846e26"
+    },
+    {
+      "path": "docs/architecture-T660-g11-manifest-v2.json",
+      "bytes": 47361,
+      "sha256": "9af1e3e7f64cc922e91879cc604649eef1effbf7303e84c32c779b3a29cbd4ea"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    },
+    {
+      "path": "docs/architecture-T647-acceptance-v1.json",
+      "bytes": 17778,
+      "sha256": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/assets_manifest.json",
+      "bytes": 2966,
+      "sha256": "0dab10b0462a67b36b0a85846803a814403cc6a7c26a3c5acaa50f64843b5a83"
+    },
+    {
+      "path": "docs/analysis-T661-evidence-v1.json",
+      "bytes": 36633,
+      "sha256": "cdb7757fc56360bc7e336544e2b7aaea56d9850d0e1f075f8f680633e7e56346"
+    },
+    {
+      "path": "docs/analysis-T665-evidence-v1.json",
+      "bytes": 19817,
+      "sha256": "7cb9c37f241afa169f19d0b960a8765629e336170d5debcaa60a09e4c3ddc14a"
+    },
+    {
+      "path": "docs/developer-T663-v1.md",
+      "bytes": 3188,
+      "sha256": "b1bf3b9abee034d68fd31312da050ed059354a394475230ff592a8bbb508bacd"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp",
+      "bytes": 2909,
+      "sha256": "8a9e6325c67eaf152b95abebc5f258b91357a291a4a4f7809bf1ba795deba50f"
+    }
+  ],
+  "unknown": [
+    "target new route window-context allocation peak/RSS",
+    "new program compile/link/dispatch/float behavior",
+    "physics discretization/domain/reference and source/contact caps",
+    "new route iterations/trials/root wall-time/thermal30fps",
+    "full scene/cold/old-new overlap budgets",
+    "G13/14/12 actual trusted prerequisites"
+  ],
+  "priorityAfter11": [
+    13,
+    14,
+    12,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "noNewGateForGoals1to14": true
+}

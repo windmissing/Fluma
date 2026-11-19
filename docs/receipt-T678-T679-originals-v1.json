@@ -1,0 +1,162 @@
+{
+  "schema": "T678_T679_ORIGINAL_TASK_CONTEXT_V1",
+  "date": "2026-11-19",
+  "tasks": [
+    {
+      "n": 678,
+      "id": "6afee2d2e4b0e380f8bcc1b1",
+      "projectId": "6ac8a7e3e9adb60000000419",
+      "original": {
+        "result": {
+          "id": "6afee2d2e4b0e380f8bcc1b1",
+          "projectId": "6ac8a7e3e9adb60000000419",
+          "sortOrder": 189183915777472,
+          "title": "【T678·正式M1忙态与a2创建活动原件首次归因】architect",
+          "content": "不使用真机，不运行构建/产品/测试。读取docs/test-report-T590-v2.md、test/reports/t491/t590c完整boot原件、docs/test-report-T593-v3.md及t593c l1–l6/hilog、T664合同、两真实签包及实际源。逐artifact/route/boot/pid-start/context/run/attempt和时间域分开，核T590 terminal字段真实语义与是否可观测完成/失败，核T593非零物理计数、GPU_WORK_PENDING/DRAW_PENDING代表已创建后排队/绘制还是创建未完成；不能仅busy标签/非terminal快照推永久创建挂死、READY从未发布、物理线程活或SOURCE零入队。与T591旧M2 LINK40s和T496 host故障逐域对照，证据不齐不得合并共同根因。首次归因按工程/设计/用例/预期未实现/证据不足分流：工程先修订文档再developer，测试误判修正证据分档，缺证提出精确同scope字段/现有出口/有界预算并区分tester离线设施和effector真机采证。避免重复T676离线交接和T663已有M2单API实现；若正确M1缺独立观测，只定义实缺字段最小接缝。交docs/architecture-T678-v1.md与机器分流合同。\n2026-11-19最新角色边界（优先历史分工）：不需要真机的用例、oracle、夹具/测试脚本维护、host测试、构建签名与离线分析由tester负责；需要真机的部署、执行、客观定量测试、探针、采证及主观效果统一由effector负责。客观真机测试仍按客观阈值输出test-report，不改成主观评分。developer仅开发及编译通过；失败首次归因仍交architect。混合卡离线产物交接后由effector执行，不增manager验收门；已有可用产物直接复用，不等准备卡形式关闭。\n用户2026-11-19最新目标裁定：目标1–11不变（10继续暂停）；当前19目标。目标12及以后优先级从高到低严格为13→14→12→15→16→17→18→19。13可信纯流场速度/压力/黏性；14给定沙轮廓及运动影响水并输出可信流场与边界载荷；12载荷驱动沙动员、冲刷、离床扬起、悬浮输运、再沉积及轮廓反馈；15为45°等大角度连续搬移/崩塌/重新稳定；16连续跨90°至180°失支撑/脱离/碰壁/重堆；17连续360°旋转及沿途停止/反向/重复；18上下层差速、层间剪切与差异受力，双层F仅拟研究路线，未经比较论证不冻结为方案；19真实厚度方向沙水运动与前后壁作用。优先次序不是未经设计已证明的全部技术依赖；实施放行须用真实前置。GPU驻留优先、CPU停投、XComponent+shader唯一渲染；旧湿卡继续暂缓。\n要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部受阻先完成其它可做项。接单原卡评论已开始，仅本人行状态改进行中；成功评论交付并改结束待验收；失败/FAIL/BLOCKED/缺关键证据在原卡评论写未完成项、复现原错、证据、已尝试办法、为何不能继续、所需前置与接手角色，并仅本人行改看评论。评论不可用留本地报告明确未同步。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外本人行状态），不得改其它行列/队列或滴答同名清单。GPU驻留优先，CPU停止投入；仅XComponent+shader渲染，前景背景禁止Canvas或软件GL产品回退，失败FAULT或明确stale。失败先architect分流；目标10暂停，水线13→14→12。",
+          "desc": null,
+          "startDate": null,
+          "dueDate": null,
+          "timeZone": "Asia/Shanghai",
+          "isAllDay": false,
+          "priority": 5,
+          "progress": null,
+          "isFloating": false,
+          "reminders": null,
+          "repeatFlag": null,
+          "repeatFrom": null,
+          "completedTime": null,
+          "status": 0,
+          "items": null,
+          "tags": [
+            "gpu",
+            "architect"
+          ],
+          "columnId": null,
+          "parentId": null,
+          "childIds": null,
+          "columnName": null,
+          "assigneeUsername": null,
+          "etag": "gbx51glk",
+          "kind": "TEXT",
+          "createdTime": "2026-11-19T19:51:46+0800",
+          "modifiedTime": "2026-11-19T19:51:46+0800",
+          "focusSummaries": null,
+          "projectName": "多相流麻效果"
+        }
+      },
+      "commentsAtStart": {
+        "result": []
+      }
+    },
+    {
+      "n": 679,
+      "id": "6afee2d2e4b0097f44e12c61",
+      "projectId": "6ac8a7e3e9adb60000000419",
+      "original": {
+        "result": {
+          "id": "6afee2d2e4b0097f44e12c61",
+          "projectId": "6ac8a7e3e9adb60000000419",
+          "sortOrder": 189183915777472,
+          "title": "【T679·目标15至19候选表示与GPU平台工程约束盘点】architect",
+          "content": "不使用真机，不编产品/跑测试。本卡仅消费已交docs/algorithm-G15-G19-roadmap-v1.md、24项研究案例与现有平台证据，将候选表示的SSBO/block/binding、程序规模/dispatch同步、排序/接触/完整trial-replay、状态/几何/scene/cold/旧新重叠峰值、来源/容量、2D→有限厚度3D工程缺口列成可追溯约束和未知项。严格区分既有设备实证/静态SDK上限/设计假设，未知不得凭空填PASS；不联网重做算法选型、不冻结MPM或双层F，不新增CPUstepper/低优先目标实施，不改现G9/G11/G13合同。输出docs/architecture-G15-G19-research-constraints-v1.md，给后续正式15设计所需的最小输入与可复用GPU工具链/迁移风险，按13→14→12→15→16→17→18→19资源顺序P3排后；纯盘点可独立做，不把它新增为目标1–14开发/测试门。\n2026-11-19最新角色边界（优先历史分工）：不需要真机的用例、oracle、夹具/测试脚本维护、host测试、构建签名与离线分析由tester负责；需要真机的部署、执行、客观定量测试、探针、采证及主观效果统一由effector负责。客观真机测试仍按客观阈值输出test-report，不改成主观评分。developer仅开发及编译通过；失败首次归因仍交architect。混合卡离线产物交接后由effector执行，不增manager验收门；已有可用产物直接复用，不等准备卡形式关闭。\n用户2026-11-19最新目标裁定：目标1–11不变（10继续暂停）；当前19目标。目标12及以后优先级从高到低严格为13→14→12→15→16→17→18→19。13可信纯流场速度/压力/黏性；14给定沙轮廓及运动影响水并输出可信流场与边界载荷；12载荷驱动沙动员、冲刷、离床扬起、悬浮输运、再沉积及轮廓反馈；15为45°等大角度连续搬移/崩塌/重新稳定；16连续跨90°至180°失支撑/脱离/碰壁/重堆；17连续360°旋转及沿途停止/反向/重复；18上下层差速、层间剪切与差异受力，双层F仅拟研究路线，未经比较论证不冻结为方案；19真实厚度方向沙水运动与前后壁作用。优先次序不是未经设计已证明的全部技术依赖；实施放行须用真实前置。GPU驻留优先、CPU停投、XComponent+shader唯一渲染；旧湿卡继续暂缓。\n要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部受阻先完成其它可做项。接单原卡评论已开始，仅本人行状态改进行中；成功评论交付并改结束待验收；失败/FAIL/BLOCKED/缺关键证据在原卡评论写未完成项、复现原错、证据、已尝试办法、为何不能继续、所需前置与接手角色，并仅本人行改看评论。评论不可用留本地报告明确未同步。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外本人行状态），不得改其它行列/队列或滴答同名清单。GPU驻留优先，CPU停止投入；仅XComponent+shader渲染，前景背景禁止Canvas或软件GL产品回退，失败FAULT或明确stale。失败先architect分流；目标10暂停，水线13→14→12。",
+          "desc": null,
+          "startDate": null,
+          "dueDate": null,
+          "timeZone": "Asia/Shanghai",
+          "isAllDay": false,
+          "priority": 1,
+          "progress": null,
+          "isFloating": false,
+          "reminders": null,
+          "repeatFlag": null,
+          "repeatFrom": null,
+          "completedTime": null,
+          "status": 0,
+          "items": null,
+          "tags": [
+            "gpu",
+            "architect"
+          ],
+          "columnId": null,
+          "parentId": null,
+          "childIds": null,
+          "columnName": null,
+          "assigneeUsername": null,
+          "etag": "ovm7prgx",
+          "kind": "TEXT",
+          "createdTime": "2026-11-19T19:51:46+0800",
+          "modifiedTime": "2026-11-19T19:51:46+0800",
+          "focusSummaries": null,
+          "projectName": "多相流麻效果"
+        }
+      },
+      "commentsAtStart": {
+        "result": []
+      }
+    }
+  ],
+  "starts": [
+    {
+      "task": 678,
+      "comment": {
+        "id": "6afee3cce4b00927f0f7e1a1",
+        "userId": 1010673194,
+        "title": "已开始 T678 architect 范围。不使用真机，不运行构建/产品/测试；保十九目标顺序及最新tester离线/effector真机边界，仅更新本人状态。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-19T11:55:56+0000",
+        "createdTime": "2026-11-19T11:55:56+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    },
+    {
+      "task": 679,
+      "comment": {
+        "id": "6afee3cce4b0e380f8bcd09d",
+        "userId": 1010673194,
+        "title": "已开始 T679 architect 范围。不使用真机，不运行构建/产品/测试；保十九目标顺序及最新tester离线/effector真机边界，仅更新本人状态。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-19T11:55:56+0000",
+        "createdTime": "2026-11-19T11:55:56+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    }
+  ],
+  "existingCollectorTaskT676": {
+    "result": {
+      "id": "6afedf69e4b00dfe2a7f8c5b",
+      "projectId": "6ac8a7e3e9adb60000000419",
+      "sortOrder": 186984892521920,
+      "title": "【T676·M2单API与正式M1恢复输入离线采集交接】tester",
+      "content": "分别交接两个独立产物域，不互等：A消费T663 e33898e真实unsigned/ABI/prepare_cursor_build.cjs，修T591 collector精确单API cursor/current/events/terminal值判定与原日志分页/64query预算/同attempt scope，签名正确M2包，保实际ELF/源SHA/BuildId与命令；B按T664正式M1既有T597-fixed签包（527c863f/dc54802f）复用、不重造产物，修T593测试脚本先资源发布/退休→RecoveryResources→新session/Fresh→真实Down typed/同seq Claim/SOURCE，sampleSerial不可冒pulse，保实际handler/down原返回、candidate/published分列和全部scope。不使用真机；只离线脚本/fixture/包身份与执行说明，实际部署采证由T591/T593 effector。现成可用脚本与正确签包可分别直接交接，不增集中准备完成门。\n2026-11-19最新角色边界（优先历史分工）：不需要真机的用例、oracle、夹具/测试脚本维护、host测试、构建签名与离线分析由tester负责；需要真机的部署、执行、客观定量测试、探针、采证及主观效果统一由effector负责。客观真机测试仍按客观阈值输出test-report，不改成主观评分。developer仅开发及编译通过；失败首次归因仍交architect。混合卡离线产物交接后由effector执行，不增manager验收门；已有可用产物直接复用，不等准备卡形式关闭。\n用户2026-11-19最新目标裁定：目标1–11不变（10继续暂停）；当前19目标。目标12及以后优先级从高到低严格为13→14→12→15→16→17→18→19。13可信纯流场速度/压力/黏性；14给定沙轮廓及运动影响水并输出可信流场与边界载荷；12载荷驱动沙动员、冲刷、离床扬起、悬浮输运、再沉积及轮廓反馈；15为45°等大角度连续搬移/崩塌/重新稳定；16连续跨90°至180°失支撑/脱离/碰壁/重堆；17连续360°旋转及沿途停止/反向/重复；18上下层差速、层间剪切与差异受力，双层F仅拟研究路线，未经比较论证不冻结为方案；19真实厚度方向沙水运动与前后壁作用。优先次序不是未经设计已证明的全部技术依赖；实施放行须用真实前置。GPU驻留优先、CPU停投、XComponent+shader唯一渲染；旧湿卡继续暂缓。\n要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部受阻先完成其它可做项。接单原卡评论已开始，仅本人行状态改进行中；成功评论交付并改结束待验收；失败/FAIL/BLOCKED/缺关键证据在原卡评论写未完成项、复现原错、证据、已尝试办法、为何不能继续、所需前置与接手角色，并仅本人行改看评论。评论不可用留本地报告明确未同步。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外本人行状态），不得改其它行列/队列或滴答同名清单。GPU驻留优先，CPU停止投入；仅XComponent+shader渲染，前景背景禁止Canvas或软件GL产品回退，失败FAULT或明确stale。失败先architect分流；目标10暂停，水线13→14→12。",
+      "desc": null,
+      "startDate": null,
+      "dueDate": null,
+      "timeZone": "Asia/Shanghai",
+      "isAllDay": false,
+      "priority": 5,
+      "progress": null,
+      "isFloating": false,
+      "reminders": null,
+      "repeatFlag": null,
+      "repeatFrom": null,
+      "completedTime": null,
+      "status": 0,
+      "items": null,
+      "tags": [
+        "gpu",
+        "tester"
+      ],
+      "columnId": null,
+      "parentId": null,
+      "childIds": null,
+      "columnName": null,
+      "assigneeUsername": null,
+      "etag": "j24hddyz",
+      "kind": "TEXT",
+      "createdTime": "2026-11-19T19:37:13+0800",
+      "modifiedTime": "2026-11-19T19:37:13+0800",
+      "focusSummaries": null,
+      "projectName": "多相流麻效果"
+    }
+  }
+}

@@ -49,3 +49,8 @@ docs/receipt-T592-raster-*.json -text whitespace=cr-at-eol
 
 # T666 original generated build/link evidence bytes.
 test/reports/t666/** -text -whitespace
+
+# T678/T679 exact architecture constraints and original artifact receipts.
+docs/analysis-T67[89]*.json -text whitespace=cr-at-eol
+docs/architecture-T67[89]*.json -text whitespace=cr-at-eol
+docs/receipt-T678-T679-*.json -text whitespace=cr-at-eol

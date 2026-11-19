@@ -1,0 +1,196 @@
+{
+  "schema": "T678_ARTIFACT_AND_RUNTIME_SPLIT_V1",
+  "date": "2026-11-19",
+  "boundaries": {
+    "deviceUsed": false,
+    "buildRun": false,
+    "productTestsRun": false,
+    "productPASS": false,
+    "goalCount": 19,
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "goal10": "PAUSED",
+    "CPU": "STOPPED",
+    "oldWetM1": "DEFERRED",
+    "render": "XComponent+shader foreground/background only; FAULT/explicitly STALE previous valid new-pipeline frame; no Canvas/softwareGL product fallback",
+    "roles": "designer algorithm; architect engineering/first attribution; developer implementation+compile; tester offline case/oracle reuse/fixture/host/build/sign/analysis; effector all device deployment/probe/objective/effect, serialized",
+    "managerGateAdded": false,
+    "developerDeviceGateAdded": false,
+    "queue": "不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md；唯一例外本人行状态；不更新滴答同名清单",
+    "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。"
+  },
+  "verdict": "SPLIT_A2_M2_OPEN_CREATE_FROM_FORMAL_M1_POST_CREATE_BUSY; SHARED_CREATE_ROOT_CAUSE_NOT_ESTABLISHED",
+  "evidence": "docs/analysis-T678-evidence-v1.json",
+  "packages": {
+    "T590-a2": {
+      "receipt": {
+        "path": "test/reports/t257/T590-a2.json",
+        "bytes": 2280,
+        "sha256": "44ccd90741f725e45985f6dd7646b0a6fe5de4a83a832f93aac112d4da4fabe8"
+      },
+      "packageSHA": "5dcaeda54508a24e740ccd0d84063f571c1ee56eb7d45125468eec34598f0b72",
+      "receiptMatched": true,
+      "inputSHA": "6b019ef9481984a06a8f9578fda71e9d60e76d2e68ace769b3adf7e0e649add6",
+      "libgrsm1.so": {
+        "entry": "libs/arm64-v8a/libgrsm1.so",
+        "bytes": 2849936,
+        "sha256": "f5d23d510c8a47a0bad76ab054ea7e25f25513d250a4411ebc1f21123d8f51ad",
+        "buildId": "c789cf34c0b0f16212341c39010b7780e15654e1",
+        "registeredNameStringsPresent": {
+          "recoveryState": true,
+          "beginRecoverySession": true,
+          "bootDiagnostics": true,
+          "m2CreateDiagnostics": true,
+          "executionDiagnosticsV1": true,
+          "timelineSnapshotBegin": true,
+          "coldTraceBeginV1": true
+        }
+      },
+      "modules.abc": {
+        "entry": "ets/modules.abc",
+        "bytes": 2940832,
+        "sha256": "8abc19f2bff25b0834b7f6d93a638d29b5fb247791ffabf28a21e1429e11af3f"
+      }
+    },
+    "T593-m1": {
+      "receipt": {
+        "path": "test/reports/t257/T593-m1.json",
+        "bytes": 2277,
+        "sha256": "58713736eef4e9b4e792ca83f86cb5b56a620d86d7937adaba0bd9acf473ecbc"
+      },
+      "packageSHA": "798747a0d616554d8375ac180c66625fd086ae730c334c507c622953e005f720",
+      "receiptMatched": true,
+      "inputSHA": "7d01da02226e6ecc75c91a87498f5570de782d807e3de4d86d96370068c0967c",
+      "libgrsm1.so": {
+        "entry": "libs/arm64-v8a/libgrsm1.so",
+        "bytes": 1950560,
+        "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+        "buildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c",
+        "registeredNameStringsPresent": {
+          "recoveryState": true,
+          "beginRecoverySession": true,
+          "bootDiagnostics": true,
+          "m2CreateDiagnostics": false,
+          "executionDiagnosticsV1": true,
+          "timelineSnapshotBegin": true,
+          "coldTraceBeginV1": true
+        }
+      },
+      "modules.abc": {
+        "entry": "ets/modules.abc",
+        "bytes": 2861292,
+        "sha256": "511bc6afb97ca30c22d6393e54212b7fb3b8dda79810a89ae9378bd655ba4c64"
+      }
+    }
+  },
+  "A2": {
+    "route": "M2 FullM1Transport m2route, not T597 formal M1; same library/page name insufficient",
+    "pid": "14871",
+    "bootAttempt": "3",
+    "epoch": "3",
+    "candidateRun": "1",
+    "publishedRun": "0",
+    "ownerTid": "15134",
+    "bootWindowSurrogate": "1",
+    "actualEGLContext": "NOT_CAPTURED",
+    "lastStage": "ProgramEnter28",
+    "lastNs": "283477263148127",
+    "terminal": false,
+    "createExitObserved": false,
+    "classification": "OPEN_COMPOSITE_PROGRAM_STAGE_AT_OBSERVATION",
+    "apiUnreturned": "UNKNOWN",
+    "permanentHang": "NOT_PROVEN",
+    "root250msApplicableToColdCreate": false
+  },
+  "bootFieldSemantics": {
+    "terminal": "explicit terminal Mark, revoke transition, failed Draw, or first quantum accepted AND first Draw done; not glCreate completion flag",
+    "complete": "terminal && dropped==0, not product success",
+    "firstFailure": "failure-marked lifecycle event including SURFACE_CREATED/reset, not necessarily raw driver error",
+    "windowId": "bootSurface surrogate counter, not native pointer",
+    "ownerTid": "observed owner thread, no captured EGLContext pointer in JSON",
+    "snapshotNowNs": "NOT_CAPTURED; filename wall clock is not monotonic call duration"
+  },
+  "M1": {
+    "route": "formal T597-fixed re-signed T593-m1",
+    "run": "2",
+    "epoch": "4",
+    "session": "2",
+    "physicalCounterSequence": [
+      88,
+      318,
+      536,
+      1002,
+      1513
+    ],
+    "classification": "POST_CREATE_RUNTIME_ACCEPT_CALLBACKS_AND_PRESENTATION_BUSY",
+    "busy": {
+      "GPU_WORK_PENDING": "FreezePermitLocked status marks old frame stale for a new runtime root; not creation marker",
+      "DRAW_PENDING": "AcceptLocked after guarded accepted callback updates accepted/source/physics counters then awaits presentation",
+      "statusReady": "AllowedLocked permission separate from current/stale display state",
+      "downAllowed": "does not require s.state==CURRENT; UI STALE label alone is not NOT_READY evidence",
+      "sourceReceipt0": "not a complete enqueue/claim ledger"
+    },
+    "GPUCorrectnessOrActivityTimeProven": false,
+    "NeverPublishedREADYSupported": false,
+    "sourceNeverEnqueuedSupported": false,
+    "recoveryEndpointAbsentSupported": false
+  },
+  "routing": {
+    "type": "TEST_REPORT_INTERPRETATION_AND_PRECISE_EVIDENCE_GAP",
+    "newProductSeamRequiredNow": false,
+    "designer": "NO_ALGORITHM_DEFECT_ESTABLISHED",
+    "developer": "NO_CONCRETE_NEW_PRODUCT_GAP_ESTABLISHED",
+    "tester": "reuse T676-A/T663 exact M2 cursor package and T676-B formal M1 existing endpoints; no duplicate card",
+    "effector": "original T590/T591/T593 device raw collection separated by actual artifact/attempt; no cross-domain success"
+  },
+  "M1ExistingEndpoints": [
+    "status",
+    "recoveryState",
+    "bootDiagnostics",
+    "executionDiagnosticsV1",
+    "timelineSnapshotBegin/Page/End",
+    "coldTraceBeginV1 family"
+  ],
+  "M2ExistingEndpoints": [
+    "m2CreateDiagnostics",
+    "m2CreateLog"
+  ],
+  "budget": {
+    "windowMaxSeconds": 60,
+    "diagnosticNativeQueriesIncludingPagesAndLogsMax": 64,
+    "recordMaxUTF8Bytes": 16384,
+    "rawFragmentMaxBytes": 8192,
+    "directoryMaxBytes": 1048576,
+    "indexReserveBytes": 32768,
+    "largeJSON": "one API call, preserve complete raw string in fragments with offsets+full SHA; never re-call per fragment",
+    "existingEndpointCreditAndTTL": "unchanged; all probes count",
+    "normalControlAndInputCalls": "separate log; not hidden as diagnostic budget"
+  },
+  "readSemantics": {
+    "status": "ObserveControlLocked can enforce real deadline/revoke, not side-effect-free",
+    "bootDiagnostics": "Store Copy then App mutex for recovery append, not one atomic snapshot or fully independent API",
+    "newSeamCondition": "same-scope exact endpoint start/end/error/module and demonstrated unavailable existing channel; architect specifies only missing bounded field"
+  },
+  "missingFields": [
+    "pid-start/process boot key/context pointer/source/layout in current M1 raw",
+    "full READY/current permission vs render/stale status",
+    "pulse receipt/Fresh/gravity",
+    "Down handler/reason/typed enqueue and same seq claim/root",
+    "runtime first accepted/draw root tickets and original GL/EGL/clock times"
+  ],
+  "separateDomains": [
+    "oldT591 M2 LINK",
+    "T590a2 other M2 boot program stage",
+    "T593 formal M1 runtime",
+    "T496 Windows host/ANGLE"
+  ],
+  "downstream": "T519/T410/T437 nonempty real SOURCE prerequisites unchanged; current original scopes remain incomplete"
+}

@@ -1,0 +1,898 @@
+{
+  "schema": "T679_G15_G19_GPU_RESEARCH_CONSTRAINTS_V1",
+  "date": "2026-11-19",
+  "boundaries": {
+    "deviceUsed": false,
+    "buildRun": false,
+    "productTestsRun": false,
+    "productPASS": false,
+    "goalCount": 19,
+    "priorityAfter11": [
+      13,
+      14,
+      12,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "goal10": "PAUSED",
+    "CPU": "STOPPED",
+    "oldWetM1": "DEFERRED",
+    "render": "XComponent+shader foreground/background only; FAULT/explicitly STALE previous valid new-pipeline frame; no Canvas/softwareGL product fallback",
+    "roles": "designer algorithm; architect engineering/first attribution; developer implementation+compile; tester offline case/oracle reuse/fixture/host/build/sign/analysis; effector all device deployment/probe/objective/effect, serialized",
+    "managerGateAdded": false,
+    "developerDeviceGateAdded": false,
+    "queue": "不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md；唯一例外本人行状态；不更新滴答同名清单",
+    "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。"
+  },
+  "status": "RESEARCH_CONSTRAINT_INVENTORY_COMPLETE_NOT_IMPLEMENTATION_READY",
+  "algorithmChoiceFrozen": false,
+  "MPMChosen": false,
+  "twoLayerFChosen": false,
+  "goal1to14NewGate": false,
+  "currentG9G11G13ContractChanged": false,
+  "noNetworkResearchPerformed": true,
+  "evidence": "docs/analysis-T679-evidence-v1.json",
+  "document": "docs/architecture-G15-G19-research-constraints-v1.md",
+  "evidenceClasses": [
+    "D-HIST historical device pbuffer",
+    "D-M2 same context actual limit query",
+    "S-SDK API declaration only",
+    "C-PROFILE existing contract bytes not allocation or new-route PASS",
+    "A-RESEARCH explicit assumptions/symbolic byte arithmetic",
+    "U-UNKNOWN"
+  ],
+  "constraints": [
+    {
+      "id": "E01",
+      "area": "SSBO/block/binding/shared/checked arithmetic",
+      "class": "DEVICE_QUERY_PLUS_NEW_LAYOUT_UNKNOWN",
+      "required": "per-pass actual arrays/buffer/range/offset/stage-active count; observed limits scoped to driver/context, padded bytes and overflow checked"
+    },
+    {
+      "id": "E02",
+      "area": "shader/source/cache identity and program scale",
+      "class": "EXISTING_ENGINEERING_PATTERN_NOT_SIZE_LIMIT",
+      "required": "canonical source/ELF actual bytes, target compile/link/program identity, fatal dependency checks; no inferred KB threshold"
+    },
+    {
+      "id": "E03",
+      "area": "dispatch/global synchronization/full work",
+      "class": "DESIGN_REQUIRED",
+      "required": "all clear/transfer/sort/contact/solver/audit/replay/scene passes and barriers; no cross-workgroup barrier assumption or hidden per-step CPU readback"
+    },
+    {
+      "id": "E04",
+      "area": "determinism/atomic/order/wide arithmetic",
+      "class": "DESIGN_AND_TARGET_EVIDENCE_REQUIRED",
+      "required": "fixed order or proven finite exact accumulation, range/rounding/collision and full state replay, no assumed float atomics"
+    },
+    {
+      "id": "E05",
+      "area": "contact/search/history/capacity",
+      "class": "CANDIDATE_UNKNOWN",
+      "required": "Nd/Ccap/Zcap/Bmax, stable pair+generation key/history; overflow rejects candidate, no truncation"
+    },
+    {
+      "id": "E06",
+      "area": "state banks/trial/reject/replay/transaction",
+      "class": "DESIGN_REQUIRED",
+      "required": "complete physical/source/tensor/contact/geometry/water state, all failed+successful micro work, private proof/atomic commit pattern without reusing old ABI"
+    },
+    {
+      "id": "E07",
+      "area": "origin/source ownership",
+      "class": "DESIGN_REQUIRED",
+      "required": "per-point/mixed-grid source representation and bounds; one owner per actual mass; no silent loss/duplicate mass"
+    },
+    {
+      "id": "E08",
+      "area": "topology/dimensionality/geometry/migration",
+      "class": "NOT_IN_EXISTING_HEIGHT_STATE",
+      "required": "true free-volume/support/position/stress/holes, explicit seed or reconstruction assumption, actual old-new overlap"
+    },
+    {
+      "id": "E09",
+      "area": "water geometry/load/interface",
+      "class": "HIGHER_PRIORITY_REAL_PREREQUISITES",
+      "required": "13 then14 then12 trusted interfaces, GCL/volume/face and total traction/impulse/work; no rectangle-spectrum transfer to 3D/cutcell"
+    },
+    {
+      "id": "E10",
+      "area": "scene/shader/accepted token",
+      "class": "NEW_REPRESENTATION_DESIGN_REQUIRED",
+      "required": "full volume/surface visibility and layer/3D consumers, GPU packing/barriers/fences/lease/fragment cost; no stretch as physics"
+    },
+    {
+      "id": "E11",
+      "area": "cold/credit/real retirement",
+      "class": "REUSE_PATTERN_NEW_BUDGET_REQUIRED",
+      "required": "all new source/history/geometry/water archives, fixed page/builder/reader/TTL bounds, physical freeing and GL retirement before credit return"
+    },
+    {
+      "id": "E12",
+      "area": "peak memory/old-new overlap",
+      "class": "UNMEASURED",
+      "required": "max over actual lifetime, GPU/native/FBO/driver separated; single block limit is not total memory; no net-delta-only budget"
+    },
+    {
+      "id": "E13",
+      "area": "rotation input/time/lifetime",
+      "class": "DESIGN_AND_INPUT_QUALIFICATION_REQUIRED",
+      "required": "unwrapped theta/Omega/alpha/accepted interval/source and overflow, pause/reverse/3D axis; callback receive time not real hand speed"
+    },
+    {
+      "id": "E14",
+      "area": "performance/30fps/real-time/thermal",
+      "class": "COST_NOT_MEASURED",
+      "required": "new accepted frames distinct from STALE repeats, acceptedSimTime/wallTime, root p95/p99/worst/all-trial GPU and submission/thermal costs; no120fps render requirement"
+    },
+    {
+      "id": "E15",
+      "area": "reference/cases/provenance/role",
+      "class": "REFERENCE_REQUIRED_OR_NOT_RUN",
+      "required": "same observable/reference uncertainty and dimension/domain, C01-C24 preserved, tester offline/effector device; planning not physical PASS"
+    }
+  ],
+  "caseMapping": [
+    {
+      "id": "C01",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "kind": "ownership_and_transaction",
+      "criterion": "Exact authoritative integer mass/origin balance and one owner; rejection changes none of the accepted physical/visual/time state",
+      "reference": "Independent inventory/event audit; no CPU physics stepping",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E06",
+        "E07",
+        "E11"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C02",
+      "goals": [
+        15,
+        16,
+        17
+      ],
+      "kind": "frame_and_input",
+      "criterion": "Coordinate identities and separately derived impulse/work balance; no duplicated world moving-wall and rotating-frame forcing",
+      "reference": "Analytic coordinate transformation and declared scripted motion",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E08",
+        "E13",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C03",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "kind": "capacity_and_cost",
+      "criterion": "All explicit maxima accounted for; overflow rejects without truncation; timing and memory measured separately from payload estimates",
+      "reference": "Offline cost formula and actual device allocation/timing records",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E01",
+        "E03",
+        "E12",
+        "E14"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C04",
+      "goals": [
+        15,
+        16,
+        17,
+        19
+      ],
+      "kind": "water_geometry_and_reaction",
+      "criterion": "Same physical occupancy does not displace additional water; closed-volume compatibility and geometry-time balance; loads counted once",
+      "reference": "Actual G14/G12 validated interface plus independent geometry algebra; no early release of T611/T612",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E08",
+        "E09"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C05",
+      "goals": [
+        15
+      ],
+      "kind": "fixed_angle_sliding_subproblem",
+      "criterion": "Compare a=g*(sin(theta)-mu*cos(theta)), velocity and displacement under the stated sliding assumptions; refine dt/h",
+      "reference": "Analytic subproblem, not an entire collapsing heap oracle",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E04",
+        "E08",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C06",
+      "goals": [
+        15
+      ],
+      "kind": "large_tilt_collapse",
+      "criterion": "Continuous physically accepted movement and collapse/recovery against declared reference uncertainty; reaching angle alone is insufficient",
+      "reference": "REFERENCE_REQUIRED for real-material claim; existing relevant physical evidence reused where applicable",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E06",
+        "E07",
+        "E08",
+        "E14",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C07",
+      "goals": [
+        15
+      ],
+      "kind": "closure_and_numerical_separation",
+      "criterion": "Distinguish closure, discretization, representation and visual errors using one reference/error budget; no unapproved old-profile resolution change",
+      "reference": "Independent analytic or measured observables; new research identities for unsupported resolutions",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E03",
+        "E04",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C08",
+      "goals": [
+        15,
+        16
+      ],
+      "kind": "height_representation_limit",
+      "criterion": "Represent the state in the selected new domain or explicitly reject as unsupported; never collapse the gap or use abs/epsilon normal gravity silently",
+      "reference": "Finite geometric and unilateral-support counterexamples",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E07",
+        "E08",
+        "E12"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C09",
+      "goals": [
+        16
+      ],
+      "kind": "free_flight",
+      "criterion": "Analytic free-flight trajectory within declared spatial/time/quantization budget; no hidden contact or second integration at conversion",
+      "reference": "Analytic before-contact interval only",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E04",
+        "E05",
+        "E08"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C10",
+      "goals": [
+        16
+      ],
+      "kind": "fixed_and_moving_wall_contact",
+      "criterion": "Analytic scalar impact impulse/energy plus declared nonpenetration tolerance; moving wall can supply work",
+      "reference": "Independent finite impact formula, not a DEM time integrator",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E05",
+        "E08",
+        "E13"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C11",
+      "goals": [
+        16
+      ],
+      "kind": "support_release_and_recontact",
+      "criterion": "No tensile sticking without declared cohesion; support may transfer to side walls; mass flows/falls/recontacts continuously and conservatively",
+      "reference": "Support inequalities plus REFERENCE_REQUIRED for dense-material dynamics",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E05",
+        "E06",
+        "E08"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C12",
+      "goals": [
+        16
+      ],
+      "kind": "sparse_packet_capacity",
+      "criterion": "Recognize existing P capacity is insufficient for this whole detached mass; new bulk representation/capacity required",
+      "reference": "Exact finite capacity calculation; not a universal impossibility proof",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E01",
+        "E05",
+        "E07",
+        "E12"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C13",
+      "goals": [
+        17
+      ],
+      "kind": "phase_wrap",
+      "criterion": "No artificial -358 degree jump; whole-phase offset is physically equivalent within the declared arithmetic domain",
+      "reference": "Phase algebra and independently prescribed derivatives",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E04",
+        "E13"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C14",
+      "goals": [
+        17
+      ],
+      "kind": "stop_and_reverse",
+      "criterion": "Respond to the complete motion path; sand need not reverse instantly or have same state at same final angle",
+      "reference": "Declared input/force histories and material reference where needed",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E05",
+        "E06",
+        "E13",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C15",
+      "goals": [
+        17
+      ],
+      "kind": "repeated_rotation",
+      "criterion": "No history clearing to hide drift; all resource/accuracy limits remain explicit; full turn is not a state-return identity",
+      "reference": "Independent cumulative audit plus actual sustained device record",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E06",
+        "E07",
+        "E11",
+        "E12",
+        "E13",
+        "E14"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C16",
+      "goals": [
+        17,
+        19
+      ],
+      "kind": "axis_scope",
+      "criterion": "Declare or reject out-of-plane motion in a planar profile; genuine coverage requires justified finite-gap/3D physics",
+      "reference": "Coordinate/scope audit; no restoration of paused goal10",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E08",
+        "E09",
+        "E13"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C17",
+      "goals": [
+        18
+      ],
+      "kind": "same_mean_different_profile",
+      "criterion": "All have mass=1 and momentum=1 but different energies/fluxes; chosen representation must distinguish target observables",
+      "reference": "Exact profile integrals",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E06",
+        "E08",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C18",
+      "goals": [
+        18
+      ],
+      "kind": "counterflow_and_layer_order",
+      "criterion": "Net momentum=0 does not mean rest; equal variance does not fix basal velocity or layer ordering",
+      "reference": "Exact two-mass algebra",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E04",
+        "E06",
+        "E08"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C19",
+      "goals": [
+        18
+      ],
+      "kind": "layer_exchange_and_load",
+      "criterion": "Paired internal force and nonnegative friction loss; no repeated full-bed friction or forced equal-velocity remix; full spatial closure still required",
+      "reference": "Finite impulse identity and REFERENCE_REQUIRED for actual shear law",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E04",
+        "E06",
+        "E07",
+        "E09"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C20",
+      "goals": [
+        18
+      ],
+      "kind": "two_four_layer_or_volume_selection",
+      "criterion": "Choose sufficient representation by target-observable error and cost; two layers are not frozen in advance; no duplicated mass if volume model resolves profile",
+      "reference": "REFERENCE_REQUIRED plus resolution/error-budget comparison",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E01",
+        "E12",
+        "E14",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C21",
+      "goals": [
+        19
+      ],
+      "kind": "finite_gap_water_channel",
+      "criterion": "Compare u=f*z*(b-z)/(2nu), mean=f*b^2/(12nu), wall shear magnitude=rho*f*b/2; refine Nz and time independently",
+      "reference": "Analytic fully developed laminar channel, not a closed-box circulating-flow solution",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C22",
+      "goals": [
+        19
+      ],
+      "kind": "true_transverse_motion",
+      "criterion": "Independent physical depth motion/response present and conservative; observe cross-sections and oblique view, not only the front image",
+      "reference": "Manufactured transverse subproblem plus material/flow references as applicable",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E07",
+        "E08",
+        "E10"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C23",
+      "goals": [
+        19
+      ],
+      "kind": "gap_and_wall_scaling",
+      "criterion": "Separate thin-gap closure assumptions from true 3D degrees of freedom; explicitly test boundary resolution and time-scale validity",
+      "reference": "Known laminar scale and REFERENCE_REQUIRED for granular wall law",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E05",
+        "E08",
+        "E09",
+        "E15"
+      ],
+      "originalCriterionUnchanged": true
+    },
+    {
+      "id": "C24",
+      "goals": [
+        19
+      ],
+      "kind": "three_dimensional_water_sand_feedback",
+      "criterion": "Both sand and water use qualified depth dynamics/boundaries and validated interactions; preserve G13/G14/G12 domain-specific evidence and revalidate 3D",
+      "reference": "Actual valid G14/G12 interfaces plus independent 3D geometry/solver/material evidence",
+      "productStatus": "NOT_RUN",
+      "engineeringConstraints": [
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E10",
+        "E12",
+        "E14"
+      ],
+      "originalCriterionUnchanged": true
+    }
+  ],
+  "candidateRepresentations": [
+    {
+      "id": "A",
+      "representation": "fixed-column S/F/P limited tilt expansion",
+      "goals": [
+        15
+      ],
+      "status": "CANDIDATE; not90/180 support",
+      "constraints": [
+        "E01",
+        "E04",
+        "E06",
+        "E07",
+        "E08",
+        "E14"
+      ]
+    },
+    {
+      "id": "B",
+      "representation": "directional/local multi-chart plus free volume",
+      "goals": [
+        15,
+        16,
+        17
+      ],
+      "status": "CANDIDATE",
+      "constraints": [
+        "E06",
+        "E07",
+        "E08",
+        "E10",
+        "E12",
+        "E13"
+      ]
+    },
+    {
+      "id": "C",
+      "representation": "full-volume material-point/grid continuum MPM class",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "status": "CANDIDATE_NOT_FROZEN",
+      "constraints": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E10",
+        "E11",
+        "E12",
+        "E14"
+      ]
+    },
+    {
+      "id": "D",
+      "representation": "full-volume Eulerian stress/volume fraction",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "status": "CANDIDATE",
+      "constraints": [
+        "E01",
+        "E03",
+        "E04",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E12"
+      ]
+    },
+    {
+      "id": "E",
+      "representation": "full DEM",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "status": "CANDIDATE",
+      "constraints": [
+        "E01",
+        "E03",
+        "E04",
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E12",
+        "E14"
+      ]
+    },
+    {
+      "id": "F",
+      "representation": "continuum/local DEM hybrid",
+      "goals": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "status": "CANDIDATE",
+      "constraints": [
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E11",
+        "E12",
+        "E14"
+      ]
+    },
+    {
+      "id": "LAYER",
+      "representation": "2/4-layer or direct full-volume profile",
+      "goals": [
+        18
+      ],
+      "status": "COMPARISON_REQUIRED_NOT_PRECONDITION_FOR9_12_15_17",
+      "constraints": [
+        "E04",
+        "E06",
+        "E07",
+        "E10",
+        "E12",
+        "E15"
+      ]
+    },
+    {
+      "id": "3D",
+      "representation": "finite-thickness full3D sand-water,6walls",
+      "goals": [
+        19
+      ],
+      "status": "REQUIRES_TRUE_Z_MOTION_NOT_RENDER_STRETCH",
+      "constraints": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "E10",
+        "E11",
+        "E12",
+        "E13",
+        "E14",
+        "E15"
+      ]
+    }
+  ],
+  "observedM2NumericLimitsScope": {
+    "blockMaxBytes": 1073741824,
+    "globalBindings": 32,
+    "computeBlocks": 16,
+    "fragmentBlocks": 16,
+    "offsetAlignmentBytes": 256,
+    "sharedBytes": 32768,
+    "groupCountEachAxis": 65535,
+    "groupSizeEachAxis": 1024,
+    "groupTotalInvocations": 1024,
+    "newRouteAllocationPASS": false
+  },
+  "examples": [
+    {
+      "grid": [
+        64,
+        64
+      ],
+      "cells": 4096,
+      "nodes": 4225,
+      "points": 16384,
+      "pointStride": 96,
+      "nodeStride": 64,
+      "support": 9,
+      "banks": 3,
+      "stateBytes": 5529792,
+      "sortBytes": 4718592,
+      "partialTotalBytes": 10248384,
+      "partialTotalMiB": 9.77362060546875,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 1843264,
+      "pointOneBankBytes": 1572864,
+      "nodeOneBankBytes": 270400,
+      "sortOneBufferBytes": 2359296,
+      "packed3StateBanksVsObserved1GiBBlock": "NUMERIC_ONLY_NOT_ALLOCATION_PASS",
+      "facesMAC": 8320,
+      "newGpuAllocationsActuallyRun": 0
+    },
+    {
+      "grid": [
+        128,
+        128
+      ],
+      "cells": 16384,
+      "nodes": 16641,
+      "points": 65536,
+      "pointStride": 96,
+      "nodeStride": 64,
+      "support": 9,
+      "banks": 3,
+      "stateBytes": 22069440,
+      "sortBytes": 18874368,
+      "partialTotalBytes": 40943808,
+      "partialTotalMiB": 39.04705810546875,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 7356480,
+      "pointOneBankBytes": 6291456,
+      "nodeOneBankBytes": 1065024,
+      "sortOneBufferBytes": 9437184,
+      "packed3StateBanksVsObserved1GiBBlock": "NUMERIC_ONLY_NOT_ALLOCATION_PASS",
+      "facesMAC": 33024,
+      "newGpuAllocationsActuallyRun": 0
+    },
+    {
+      "grid": [
+        64,
+        64,
+        8
+      ],
+      "cells": 32768,
+      "nodes": 38025,
+      "points": 262144,
+      "pointStride": 192,
+      "nodeStride": 96,
+      "support": 27,
+      "banks": 3,
+      "stateBytes": 161946144,
+      "sortBytes": 226492416,
+      "partialTotalBytes": 388438560,
+      "partialTotalMiB": 370.4438781738281,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 53982048,
+      "pointOneBankBytes": 50331648,
+      "nodeOneBankBytes": 3650400,
+      "sortOneBufferBytes": 113246208,
+      "packed3StateBanksVsObserved1GiBBlock": "NUMERIC_ONLY_NOT_ALLOCATION_PASS",
+      "facesMAC": 103424,
+      "newGpuAllocationsActuallyRun": 0
+    },
+    {
+      "grid": [
+        64,
+        64,
+        64
+      ],
+      "cells": 262144,
+      "nodes": 274625,
+      "points": 2097152,
+      "pointStride": 192,
+      "nodeStride": 96,
+      "support": 27,
+      "banks": 3,
+      "stateBytes": 1287051552,
+      "sortBytes": 1811939328,
+      "partialTotalBytes": 3098990880,
+      "partialTotalMiB": 2955.428009033203,
+      "classification": "RESEARCH_ASSUMPTION_BYTE_ARITHMETIC_ONLY",
+      "stateOneBankBytes": 429017184,
+      "pointOneBankBytes": 402653184,
+      "nodeOneBankBytes": 26364000,
+      "sortOneBufferBytes": 905969664,
+      "packed3StateBanksVsObserved1GiBBlock": "EXCEEDS_OBSERVED_SINGLE_BLOCK_NUMERIC_LIMIT",
+      "facesMAC": 798720,
+      "newGpuAllocationsActuallyRun": 0
+    }
+  ],
+  "sharedTileExamples": {
+    "assumptions": "8 interior cells per dimension + 1-cell halo on both sides, full node payload in shared, illustrative only",
+    "2DNodesBytes": 6400,
+    "3DNodesBytes": 96000,
+    "observedSharedBytes": 32768,
+    "class": "ASSUMPTION_NUMERIC_BOUND_ONLY"
+  },
+  "sourceMapExample": {
+    "assumptions": "3 banks, per-cell 64 full origin entries each16B only IF chosen new algorithm needs this layout; not additional mandatory cost or origin capacity freeze",
+    "2D128sqBytes": 50331648,
+    "3D64x64x8Bytes": 100663296
+  },
+  "existingBudgets": {
+    "G11_DM_K512_V8192": {
+      "residentPayloadBytes": 104117376,
+      "fullGPUAdditionalBytes": 140009472,
+      "coldFULLSlotBytes": 194154496,
+      "twoFULLSlotsBytes": 388308992,
+      "optionalSinglePhaseWitnessBytes": 4722688,
+      "knownPayloadWithWitnessGPUAndNative": 641920128,
+      "largestGLObjectBytes": 23334912
+    },
+    "DM_K512": {
+      "residentPayloadBytes": 98022528,
+      "fullGPUAdditionalBytes": 140009472,
+      "twoFullSlotsBytes": 376119296,
+      "maxGLBufferObjectBytes": 23334912
+    }
+  },
+  "existingKnownCombinedGPUAndHost641920128IsGPUCapacity": false,
+  "brokerCaps": {
+    "hostComponentCreditBytes": 524375552,
+    "GPUFULLComponentCreditBytes": 366564432,
+    "notSystemRSSOrGPUAllocationLimits": true
+  },
+  "formalG15MinimumInputs": [
+    "angle/rate/material/wet/dimensional/domain/units and initial-boundary scope",
+    "same-observable A/C and other candidate comparison with reference/error",
+    "complete operators/stress/contact/history/work/source/trial/replay and migration",
+    "N/Np/Ng/q/NS/Nd/Ccap/Zcap/bin/dt/iteration/trial/event bound and numerical range/rounding",
+    "existing actual physical evidence and real wet interfaces only where needed",
+    "GPU/native/FBO/driver/lifetime/old-new overlap and new-accepted30fps/real-time/thermal targets"
+  ],
+  "unmeasured": [
+    "target new route window-context allocation peak/RSS",
+    "new program compile/link/dispatch/float behavior",
+    "physics discretization/domain/reference and source/contact caps",
+    "new route iterations/trials/root wall-time/thermal30fps",
+    "full scene/cold/old-new overlap budgets",
+    "G13/14/12 actual trusted prerequisites"
+  ],
+  "existingTools": [
+    "canonical source generation/fatal dependency and ELF/BuildId provenance",
+    "typed proof/full tail audit/atomic commit patterns, not old ABI for new state",
+    "bounded cold broker/actual retirement/streaming raw pages",
+    "GPU shader scene pack/lease/barriers on exact route",
+    "tester static/offline cases and effector exact-device acquisition"
+  ]
+}

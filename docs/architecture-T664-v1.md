@@ -52,3 +52,8 @@ T591先前collector有serial1/epoch2、候选run1、SOURCE LINK开放，T662已�
 原T593修对象/采集设施后续完整未完；T519/T410/T437仍需其各自真实非空SOURCE前置，不由本卡归因或旧零收据放行。T591/T663保持M2独立域，T597已有开发资产不回退，不因tester签名/部署/测试增加开发关闭门。此为完整architect分流交付，具体产品指标仍未证；静态检查与机器表不冒设备/恢复/SOURCE PASS。
 
 执行prompt：architect/developer不使用真机；tester需要真机标签并按设备队列串行，维护脚本/签名部署/原件。不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人行状态有限例外），不更新滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。GPU驻留优先、CPU停投、目标10暂停、水13→14→12、旧湿M1暂停。全部背景前景XComponent+shader，失败FAULT/明确STALE，无Canvas/软件GL产品回退；不设manager验收门。
+
+
+## 2026-11-19 T678：正式M1换包后证据更新
+
+[T678](architecture-T678-v1.md)及architecture-T678-contract-v1.json已核T593-v3正确T597产物与T590-a2不同M2域：正式M1 run2/epoch4/session2物理88→318→536→1002→1513且GPU_WORK_PENDING/DRAW_PENDING是运行/呈现生产点，不支持从未创建/从未READY；busy也不直接等Down拒绝。a2 boot3最后ProgramEnter是另一创建开放快照，terminal/complete不等Create完成。正式M1已有recoveryState/bootDiagnostics等出口，不能因UI未展示称不可用。原T676-A/B分域接续同scope原返回/输入/claim/Draw，保SOURCE真实非空前置；本修订不宣物理/呈现PASS、不增产品seam或集中准备门。
