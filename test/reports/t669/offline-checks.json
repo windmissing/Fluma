@@ -1,0 +1,24 @@
+{
+  "device": "NOT_RUN",
+  "checks": [
+    {
+      "argv": [
+        "python",
+        "test/t669/check_attempt.py",
+        "--selftest"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"result\": \"PASS\", \"fixtureCases\": 6, \"device\": \"NOT_RUN\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "test/t669/reader_units.py"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"result\": \"PASS\", \"negativeCases\": [{\"case\": \"empty\", \"rejected\": \"INCOMPLETE_DIRECTORY\"}, {\"case\": \"old-reader\", \"rejected\": \"PAGE_VERSION_OR_ORDER\"}, {\"case\": \"bad-root-mode\", \"rejected\": \"MODE\"}, {\"case\": \"bad-full-profile\", \"rejected\": \"PROFILE\"}], \"ROOT_FULL_complete_device_archives\": \"NOT_RUN\", \"device\": \"NOT_RUN\"}\r\n",
+      "stderr": ""
+    }
+  ]
+}
