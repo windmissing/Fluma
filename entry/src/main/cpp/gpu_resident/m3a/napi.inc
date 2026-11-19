@@ -1,6 +1,6 @@
 // T550 (problem T546 §2): m3Words is now a thin delegation over the shared
-// strict decode contract — the acceptance predicate is bit-identical to the
-// previous inline implementation; only ordered per-stage observation with
+// strict decode contract — cardinality/backing remain strict after T629 normalization of the
+// provider length unit; ordered per-stage observation with
 // first-failure locking is added. G9 (g9spf/napi.inc) delegates here with
 // its own Route::G9 so G9 attempts are never labeled M3.
 template<size_t N>bool m3Words(napi_env env,napi_callback_info info,std::array<uint32_t,N>& out){

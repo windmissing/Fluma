@@ -13,7 +13,7 @@ module.exports = function injectWordsContract(main, projectRoot) {
   const root = projectRoot || path.resolve(__dirname, '../..');
   const base = path.join(main, 'cpp/gpu_resident');
   // 1. same-source copies (canonical -> delivery).
-  for (const name of ['napi_words_contract.h', 'napi_words_contract.cpp'])
+  for (const name of ['napi_words_contract.h', 'napi_words_contract.cpp', 'napi_provider_profile.h', 'napi_provider_profile.cmake'])
     fs.copyFileSync(path.join(root, 'entry/src/main/cpp/gpu_resident', name), path.join(base, name));
   // 2. CMake: fold the contract TU into the delivery tree's grs_foundation
   //    (byte-identical link lines vs pre-T550 — the OHOS toolchain duplicates
@@ -27,6 +27,7 @@ module.exports = function injectWordsContract(main, projectRoot) {
     cmakeText = cmakeText.replace(anchor, anchor + 'napi_words_contract.cpp ');
     fs.writeFileSync(cmake, cmakeText);
   }
+  if (!cmakeText.includes('grs_bind_napi_provider_sdk(grs_foundation)')) { fs.appendFileSync(cmake, '\ninclude("${CMAKE_CURRENT_SOURCE_DIR}/napi_provider_profile.cmake")\ngrs_bind_napi_provider_sdk(grs_foundation)\n'); }
   // 3. bridge injection (post-freeze delivery app_bridge.cpp).
   const bridgePath = path.join(base, 'app_bridge.cpp');
   let s = fs.readFileSync(bridgePath, 'utf8').replaceAll('\r\n', '\n');

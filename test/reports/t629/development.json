@@ -1,0 +1,97 @@
+{
+  "schema": "T629_DEVELOPER_DELIVERY_V1",
+  "testsRun": false,
+  "deviceUsed": false,
+  "runtimeProviderProbeExecuted": false,
+  "runtimeUnit": "NOT_OBSERVED",
+  "sourceSHA": {
+    "entry/src/main/cpp/gpu_resident/napi_provider_profile.h": "6d923450939d8ee09c4001585183fb886738afd5fcc4bd1af2f6df150d7f2a30",
+    "entry/src/main/cpp/gpu_resident/napi_provider_profile.cmake": "76db8254841e81f1905f80b3c53f0b1dea23e9b7273f8351306c8aad1e2419ec",
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.h": "76cd7f9ac619752cc917f627441b33e5f1743b32f1d532b9eb8c7ccb6d611b5e",
+    "entry/src/main/cpp/gpu_resident/napi_words_contract.cpp": "3e846d94b65dd638a27ef221366edec6b43821ec6995a1d64d7184628eba53e9",
+    "entry/src/main/cpp/gpu_resident/CMakeLists.txt": "1a011c3424bbc6608eb4a7aaba12114553f4596d051016a24326ea243411ebea",
+    "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp": "abbcf3bf301f807801b8a22b0ce6bda33e1c5e691e7e107a6873708ce4d66f1e",
+    "entry/src/main/cpp/gpu_resident/g13flow/CMakeLists.txt": "61b80e47768470a1e7a096d3eefc27645fd050a8a733206e066b55fe6baaef01",
+    "entry/src/main/cpp/gpu_resident/m3a/napi.inc": "7bbd44107df151734608b956e804ef36af9bc4ceeedba6b72f0b7703d230511b",
+    "entry/src/main/ets/physics/GpuInputAttempt.ets": "318a0713f7101f1648b94166cda95bb192fdd79a749e1f8b864e7496942c4ef6"
+  },
+  "packages": {
+    "M3_M5": {
+      "buildLog": {
+        "path": ".codex\\local-test\\t629-m3-final-build.txt",
+        "bytes": 7295,
+        "sha256": "2f12c4c036f9a36b63300e51af41086a921149a057e0467c5f345114806cd597"
+      },
+      "duration": "40 s 671 ms \u001b[39m",
+      "HAP": {
+        "path": ".codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "bytes": 11144611,
+        "sha256": "bc4c5ec3fbaa1a6a1708901272594402923312b7c9b9125cbcf37b06e44831c9"
+      },
+      "ELF": [
+        {
+          "path": ".codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrsm0.so",
+          "bytes": 2013200,
+          "sha256": "4e6a8f92520fba28f374f2e7c04dafa8c4d766a631aae3615896ff8049333080"
+        },
+        {
+          "path": ".codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrsm1.so",
+          "bytes": 13289960,
+          "sha256": "f82bcdafa18ff4f2836e4844615a36ee97f64afef011f6e74afae410de3fd925"
+        }
+      ]
+    },
+    "G9": {
+      "buildLog": {
+        "path": ".codex\\local-test\\t629-g9-final-build.txt",
+        "bytes": 34587,
+        "sha256": "9c721f3fee056a65202eebeb01bb1c1062d70a7bbc68d84de00bc11247633a61"
+      },
+      "duration": "42 s 644 ms \u001b[39m",
+      "HAP": {
+        "path": ".codex\\local-test\\t582-g9-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "bytes": 10958319,
+        "sha256": "4cf9f4a99c74808950d57efcfb952610da6b30365fb326e380c5674dd207f4d6"
+      },
+      "ELF": [
+        {
+          "path": ".codex\\local-test\\t582-g9-final\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrsm0.so",
+          "bytes": 2016640,
+          "sha256": "3642b67d4fed60d626a353590ef98ae76125e34dc58bcd0b3107a0c2f1b01b4e"
+        },
+        {
+          "path": ".codex\\local-test\\t582-g9-final\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrsm1.so",
+          "bytes": 13164192,
+          "sha256": "8874fb0afe8fdd7ce98471feefa75cfb3742af433cecfceb1ae7019ace599559"
+        }
+      ]
+    },
+    "G13_STATIC_AUDIT": {
+      "buildLog": {
+        "path": ".codex\\local-test\\t629-g13-final-build.txt",
+        "bytes": 2776,
+        "sha256": "d146ccb0a38ff1642de2d26b270200407b0248144ae24d1c1f451030f30ad2e6"
+      },
+      "duration": "9 s 401 ms \u001b[39m",
+      "HAP": {
+        "path": ".codex\\local-test\\t608-release\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "bytes": 7662336,
+        "sha256": "f746ed6350f5d9fbc983d19d5abbd88960187f10b4d3f75d7e93c4cb014383ed"
+      },
+      "ELF": [
+        {
+          "path": ".codex\\local-test\\t608-release\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrs_g13.so",
+          "bytes": 5679048,
+          "sha256": "5c91e8503ea958689087e290824ad43269b68060092c6de5a44bb07c907c9330"
+        }
+      ]
+    }
+  },
+  "SDKHeader": {
+    "sha256": "c7d241f14ecd4d3e7c9b9ae34eff1f5da40bec53686717870227285b2e97f56a"
+  },
+  "generator": {
+    "path": "test/t550_words_contract_overlay.cjs",
+    "note": "Only provider-copy/CMake hunks staged; pre-existing root/d.ts hunks excluded."
+  }
+}

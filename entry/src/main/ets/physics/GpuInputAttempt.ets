@@ -38,7 +38,7 @@ export class GpuInputAttempt {
       if (identity.route !== route || identity.api !== api || !GpuInputAttempt.id(identity.bootStamp) || !GpuInputAttempt.id(identity.diagGeneration) || !GpuInputAttempt.id(identity.attemptId)) throw new Error('INPUT_CALL_IDENTITY_MISSING');
       selected = native.gpuInputDiagnosticsV1(route, identity.attemptId ?? '', identity.bootStamp ?? '', identity.diagGeneration ?? '');
       const diagnostic = GpuInputAttempt.object(selected, 4096);
-      if (diagnostic.revision !== 'GPU_INPUT_DIAGNOSTIC_V1' || !GpuInputAttempt.exact(diagnostic, identity)) throw new Error('INPUT_DIAGNOSTIC_IDENTITY_MISMATCH:' + (diagnostic.error ?? 'UNKNOWN'));
+      if ((diagnostic.revision !== 'GPU_INPUT_DIAGNOSTIC_V1' && diagnostic.revision !== 'GPU_INPUT_DIAGNOSTIC_V2') || !GpuInputAttempt.exact(diagnostic, identity)) throw new Error('INPUT_DIAGNOSTIC_IDENTITY_MISMATCH:' + (diagnostic.error ?? 'UNKNOWN'));
       const ref: CallIdentity582 | null | undefined = diagnostic.firstFailure;
       if (ref !== null && ref !== undefined) {
         if (ref.route !== route || ref.bootStamp !== identity.bootStamp || ref.diagGeneration !== identity.diagGeneration || !GpuInputAttempt.id(ref.attemptId)) throw new Error('FIRST_FAILURE_IDENTITY_INVALID');

@@ -1,3 +1,4 @@
+#include "../napi_words_contract.h"
 #include "../program_cache/artifact_store.h"
 #include "cold.h"
 #include "controller.h"
@@ -451,6 +452,7 @@ struct Decode {
   uint64_t attempt = 0;
   const char *stage = "ENTER";
   napi_status raw = napi_ok;
+  grs::words::Observation typedObservation{};
   bool valid = false;
   uint32_t copiedWords = 0;
   std::array<uint32_t, 128> snapshot{};
@@ -460,35 +462,25 @@ Decode lastDecode;
 uint64_t decodeSerial = 0;
 template <size_t N>
 bool Words(napi_env e, napi_value v, std::array<uint32_t, N> &out, Decode &d) {
-  bool typed = false;
-  d.stage = "IS_TYPEDARRAY";
-  d.raw = napi_is_typedarray(e, v, &typed);
-  if (d.raw != napi_ok || !typed)
+  auto result = grs::words::ReadTypedValue<N>(e, v);
+  d.typedObservation = result.observed;
+  d.stage = grs::words::StageName(result.firstFailedStage);
+  const auto &o = result.observed;
+  int raw = o.arraybufferInfoStatus >= 0  ? o.arraybufferInfoStatus
+            : o.isDetachedStatus >= 0     ? o.isDetachedStatus
+            : o.typedarrayInfoStatus >= 0 ? o.typedarrayInfoStatus
+                                          : o.isTypedarrayStatus;
+  d.raw = raw >= 0 ? static_cast<napi_status>(raw) : napi_ok;
+  if (!result.ok)
     return false;
-  napi_typedarray_type type;
-  napi_value buffer;
-  size_t count = 0, offset = 0;
-  void *data = nullptr;
-  d.stage = "TYPEDARRAY_INFO";
-  d.raw =
-      napi_get_typedarray_info(e, v, &type, &count, &data, &buffer, &offset);
-  if (d.raw != napi_ok || type != napi_uint32_array || count != N || !data ||
-      offset % 4)
-    return false;
-  void *base = nullptr;
-  size_t bytes = 0;
-  d.stage = "ARRAYBUFFER_INFO";
-  d.raw = napi_get_arraybuffer_info(e, buffer, &base, &bytes);
-  if (d.raw != napi_ok || !base || offset > bytes || N * 4 > bytes - offset ||
-      static_cast<uint8_t *>(base) + offset != data)
-    return false;
-  std::memcpy(out.data(), data, N * 4);
+  out = result.words;
   std::copy(out.begin(), out.end(), d.snapshot.begin());
   d.valid = true;
   d.copiedWords = N;
   d.stage = "COPIED";
   return true;
 }
+
 bool Text(napi_env e, napi_value v, std::string &out, Decode &d) {
   size_t size = 0;
   d.stage = "STRING_LENGTH";
@@ -509,6 +501,32 @@ std::string Decorate(std::string reply, const std::string &api,
   if (reply.empty() || reply.back() != '}')
     return Result(api.c_str(), "BAD_NATIVE_ENVELOPE", 28, decode.attempt);
   reply.pop_back();
+  const auto &o = decode.typedObservation;
+  if (o.isTypedarrayStatus >= 0) {
+    reply +=
+        ",\"typedarray\":{\"diagnosticRevision\":2,\"rawReturnedLength\":" +
+        (o.typedarrayInfoStatus == napi_ok ? std::to_string(o.rawReturnedLength)
+                                           : "null") +
+        ",\"elementLength\":" +
+        (o.typedarrayInfoStatus == napi_ok ? std::to_string(o.elementLength)
+                                           : "null") +
+        ",\"lengthUnit\":" + Quote(provider629::Name(o.lengthUnit)) +
+        ",\"normalizedElementCount\":" +
+        (o.normalizationObserved ? std::to_string(o.normalizedElementCount)
+                                 : "null") +
+        ",\"providerProfileId\":" + Quote(o.providerProfileId.data()) +
+        ",\"providerEvidenceSHA\":" + Quote(o.providerEvidenceSHA.data()) +
+        ",\"providerQualification\":" +
+        provider629::Lookup(o.providerProfileId.data()) + ",\"apiStatuses\":[" +
+        std::to_string(o.isTypedarrayStatus) + "," +
+        std::to_string(o.typedarrayInfoStatus) + "," +
+        std::to_string(o.isDetachedStatus) + "," +
+        std::to_string(o.arraybufferInfoStatus) + "],\"backingBytes\":" +
+        (o.arraybufferInfoStatus == napi_ok ? std::to_string(o.backingBytes)
+                                            : "null") +
+        "}";
+  }
+
   if (reply.find("\"api\":") == std::string::npos)
     reply += ",\"api\":" + Quote(api);
   if (reply.find("\"boot\":") == std::string::npos)
@@ -531,7 +549,10 @@ bool Double(napi_env e, napi_value value, double &out, Decode &d) {
   return d.raw == napi_ok;
 }
 napi_value TextValue(napi_env e, const std::string &s) {
-  napi_value v;
+  bool pending = false;
+  if (napi_is_exception_pending(e, &pending) != napi_ok || pending)
+    return nullptr;
+  napi_value v = nullptr;
   napi_create_string_utf8(e, s.data(), s.size(), &v);
   return v;
 }

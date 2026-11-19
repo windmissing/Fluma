@@ -13,3 +13,6 @@ target_include_directories(grs_g13_core BEFORE PUBLIC "${G13_ASSET_DIR}" "${CMAK
 target_link_libraries(grs_g13_core PUBLIC grs_cold_slots libEGL.so libGLESv3.so libhilog_ndk.z.so)
 add_library(grs_g13 SHARED bridge.cpp)
 target_link_libraries(grs_g13 PUBLIC grs_g13_core libace_napi.z.so libace_ndk.z.so libnative_window.so)
+
+include("${CMAKE_CURRENT_LIST_DIR}/../napi_provider_profile.cmake")
+grs_bind_napi_provider_sdk(grs_g13_core)

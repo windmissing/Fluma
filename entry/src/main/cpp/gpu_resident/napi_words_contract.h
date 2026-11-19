@@ -2,12 +2,13 @@
 // Shared per-stage observation decoder for M3A/M3B/G9 typedarray inputs.
 // All three routes delegate here; the old opaque one-short-circuit bool is
 // replaced by ordered stage observations with first-failure locking.
-// No N/type/offset/bytes/range semantics are changed by this contract -
-// the acceptance predicate is bit-identical to the previous m3Words/m5Words;
-// only the diagnostic observation layer is new.
+// T629 adds provider-qualified length normalization. N/kind/offset/backing
+// and all downstream physical/hash/revision predicates stay strict.
 #ifndef GRS_NAPI_WORDS_CONTRACT_H
 #define GRS_NAPI_WORDS_CONTRACT_H
 #include <napi/native_api.h>
+#include "napi_provider_profile.h"
+#include <limits>
 #include <array>
 #include <cstdint>
 #include <cstring>
@@ -23,7 +24,7 @@ inline const char* RouteName(Route r) {
 enum class Stage : uint8_t {
   CB_INFO = 1, ARG_COUNT, IS_TYPEDARRAY, TYPEDARRAY_INFO, ELEMENT_TYPE, ELEMENT_COUNT,
   BYTE_OFFSET, DATA_POINTER, DETACHED_API, DETACHED_VALUE, BACKING_INFO,
-  BASE_POINTER, BACKING_BYTES, WORD_COPY, API_SEMANTIC
+  BASE_POINTER, BACKING_BYTES, WORD_COPY, API_SEMANTIC, PROVIDER_PROFILE, LENGTH_UNIT
 };
 inline const char* StageName(Stage s) {
   switch (s) {
@@ -33,6 +34,7 @@ inline const char* StageName(Stage s) {
     case Stage::DATA_POINTER: return "DATA_POINTER"; case Stage::DETACHED_API: return "DETACHED_API";
     case Stage::DETACHED_VALUE: return "DETACHED_VALUE"; case Stage::BACKING_INFO: return "BACKING_INFO";
     case Stage::BASE_POINTER: return "BASE_POINTER"; case Stage::BACKING_BYTES: return "BACKING_BYTES";
+    case Stage::PROVIDER_PROFILE:return "PROVIDER_PROFILE";case Stage::LENGTH_UNIT:return "LENGTH_UNIT";
     case Stage::WORD_COPY: return "WORD_COPY"; case Stage::API_SEMANTIC: return "API_SEMANTIC";
   }
   return "UNKNOWN";
@@ -47,13 +49,17 @@ struct Observation {
   int32_t typedarrayInfoStatus = -1;
   int32_t isDetachedStatus = -1;
   int32_t arraybufferInfoStatus = -1;
+  int32_t isSendableStatus=-1;bool sendableValue=false;
   // Tri-state values - only meaningful after their stage ran.
   Tri typed = Tri::NOT_EVALUATED;
   Tri detached = Tri::NOT_EVALUATED;
   bool typedValue=false,detachedValue=false;
   // TYPEDARRAY_INFO outputs (valid only when typedarrayInfoStatus == napi_ok).
   int32_t elementKind = -1;      // napi_typedarray_type raw value
-  uint64_t elementLength = 0;    // SDK: length is in ELEMENTS
+  uint64_t elementLength = 0; // V1 raw value is preserved, never relabelled.
+  uint64_t rawReturnedLength=0,normalizedElementCount=0;
+  provider629::Unit lengthUnit=provider629::Unit::UNKNOWN;bool normalizationObserved=false;
+  std::array<char,48> providerProfileId{};std::array<char,65> providerEvidenceSHA{};
   int64_t byteOffset = -1;
   bool dataPresent = false;
   // BACKING_INFO outputs.
@@ -112,23 +118,11 @@ public:
   else {InputCall fallback(route_,"UNWRAPPED_TYPED_INPUT",N);fallback.Capture(result_.observed,result_.firstFailedStage,result_.ok,result_.words.data(),N);fallback.Finish(result_.ok,result_.ok?"DECODE_OK":"DECODE_REJECTED");}
  }
 };
-template <size_t N>
-ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route, uint64_t attemptId) {
-  ReadWordsResult<N> result{};
-  DecodeCapture<N> capture(result,route);
-  Observation& o = result.observed;
-  // Stage 1: CB_INFO / ARG_COUNT - read capacity 2 to detect extra args
-  // without treating a capacity-1 truncation as proof of argc==1.
-  napi_value argv[2] = {nullptr, nullptr};
-  size_t argc = 2;
-  const napi_status cbInfo = napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
-  o.cbInfoStatus = static_cast<int32_t>(cbInfo);
-  if(cbInfo==napi_ok)o.argc = argc;
-  if (cbInfo != napi_ok) { result.firstFailedStage = Stage::CB_INFO; return result; }
-  if (argc != 1) { result.firstFailedStage = Stage::ARG_COUNT; return result; }
+template<size_t N> ReadWordsResult<N> ReadTypedValue(napi_env env,napi_value value){
+ static_assert(N<=std::numeric_limits<size_t>::max()/sizeof(uint32_t),"typedarray size overflow");ReadWordsResult<N> result{};Observation& o=result.observed;
   // Stage 2: IS_TYPEDARRAY - no implicit conversion from number[]/DataView/etc.
   bool typed = false;
-  const napi_status isTyped = napi_is_typedarray(env, argv[0], &typed);
+  const napi_status isTyped = napi_is_typedarray(env, value, &typed);
   o.isTypedarrayStatus = static_cast<int32_t>(isTyped);
   if (isTyped != napi_ok) { o.typed=Tri::API_FAILED; result.firstFailedStage = Stage::IS_TYPEDARRAY; return result; }
   o.typed = Tri::VALID;o.typedValue=typed;
@@ -139,17 +133,22 @@ ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route,
   void* data = nullptr;
   napi_value backing = nullptr;
   size_t offset = 0;
-  const napi_status infoStatus = napi_get_typedarray_info(env, argv[0], &kind, &length, &data, &backing, &offset);
+  const napi_status infoStatus = napi_get_typedarray_info(env, value, &kind, &length, &data, &backing, &offset);
   o.typedarrayInfoStatus = static_cast<int32_t>(infoStatus);
   if (infoStatus != napi_ok) { result.firstFailedStage = Stage::TYPEDARRAY_INFO; return result; }
   o.elementKind = static_cast<int32_t>(kind);
-  o.elementLength = length;
+  o.elementLength = length;o.rawReturnedLength=length;
   o.byteOffset = static_cast<int64_t>(offset);
   o.dataPresent = data != nullptr;
   // Stage 4: ELEMENT_TYPE - must be exactly napi_uint32_array.
   if (kind != napi_uint32_array) { result.firstFailedStage = Stage::ELEMENT_TYPE; return result; }
-  // Stage 4b: ELEMENT_COUNT - length is in ELEMENTS (SDK native_api.h), never bytes.
-  if (length != N) { result.firstFailedStage = Stage::ELEMENT_COUNT; return result; }
+  // T629: qualify provider independently; a request cannot select its unit.
+  using SendableCheck=napi_status(*)(napi_env,napi_value,bool*);auto sendable=reinterpret_cast<SendableCheck>(dlsym(RTLD_DEFAULT,"napi_is_sendable"));if(sendable){o.isSendableStatus=sendable(env,value,&o.sendableValue);if(o.isSendableStatus!=napi_ok||o.sendableValue){result.firstFailedStage=Stage::PROVIDER_PROFILE;return result;}}
+  const auto profile=provider629::For(env);o.rawReturnedLength=length;o.lengthUnit=profile.unit;o.providerProfileId=profile.id;o.providerEvidenceSHA=profile.evidence;
+  if(!profile.ready||profile.unit==provider629::Unit::UNKNOWN){result.firstFailedStage=Stage::PROVIDER_PROFILE;return result;}
+  if(profile.unit==provider629::Unit::BYTES&&length%sizeof(uint32_t)){result.firstFailedStage=Stage::LENGTH_UNIT;return result;}
+  o.normalizedElementCount=profile.unit==provider629::Unit::BYTES?length/sizeof(uint32_t):length;o.normalizationObserved=true;
+  if (o.normalizedElementCount != N) { result.firstFailedStage = Stage::ELEMENT_COUNT; return result; }
   // Stage 5: BYTE_OFFSET / DATA_POINTER - zero offset, external data present.
   if (offset != 0) { result.firstFailedStage = Stage::BYTE_OFFSET; return result; }
   if (data == nullptr) { result.firstFailedStage = Stage::DATA_POINTER; return result; }
@@ -179,9 +178,27 @@ ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route,
   result.ok = true;
   result.firstFailedStage = Stage::WORD_COPY;  // not failed; ok == true
 
-  (void)attemptId;
-  return result;
+ return result;
 }
+
+template <size_t N>
+ReadWordsResult<N> ReadWords(napi_env env, napi_callback_info info, Route route, uint64_t attemptId) {
+  ReadWordsResult<N> result{};
+  DecodeCapture<N> capture(result,route);
+  Observation& o = result.observed;
+  // Stage 1: CB_INFO / ARG_COUNT - read capacity 2 to detect extra args
+  // without treating a capacity-1 truncation as proof of argc==1.
+  napi_value argv[2] = {nullptr, nullptr};
+  size_t argc = 2;
+  const napi_status cbInfo = napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+  o.cbInfoStatus = static_cast<int32_t>(cbInfo);
+  if(cbInfo==napi_ok)o.argc = argc;
+  if (cbInfo != napi_ok) { result.firstFailedStage = Stage::CB_INFO; return result; }
+  if (argc != 1) { result.firstFailedStage = Stage::ARG_COUNT; return result; }
+  auto typedResult=ReadTypedValue<N>(env,argv[0]);typedResult.observed.cbInfoStatus=o.cbInfoStatus;typedResult.observed.argc=o.argc;result=typedResult;
+  (void)attemptId;return result;
+}
+
 
 
 } // namespace grs::words

@@ -87,3 +87,6 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/g11vis/kernels.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/g12water/kernels.cmake")
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/cold_slot_broker.cmake")
+
+include("${CMAKE_CURRENT_SOURCE_DIR}/napi_provider_profile.cmake")
+grs_bind_napi_provider_sdk(grs_foundation)
