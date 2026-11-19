@@ -1,0 +1,64 @@
+{
+  "schema": "T678_T679_ARCHITECT_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "statusChange": {
+    "onlyOwnStatusCellsChanged": true,
+    "changes": [
+      {
+        "task": 678,
+        "from": "进行中",
+        "to": "结束待验收"
+      },
+      {
+        "task": 679,
+        "from": "进行中",
+        "to": "结束待验收"
+      }
+    ],
+    "beforeSHA256": "510201d04b9de5e85a14c2a843de35cb5812bbf324b3599fd9ae7aa27f012540",
+    "afterSHA256": "05d8adec52808046194146edf09f8d163929c6be918ebd0d55e15cec66a0e75c",
+    "queueStaged": false,
+    "engineeringCommit": "724e05c84364c389ad9c792d7657189f9ab24d7e"
+  },
+  "commentReadbacks": [
+    {
+      "task": 678,
+      "taskId": "6afee2d2e4b0e380f8bcc1b1",
+      "comment": {
+        "id": "6afee853e4b08269c819fdeb",
+        "userId": 1010673194,
+        "title": "T678 architect当前范围完整交付，commit 724e05c8。docs/architecture-T678-v1.md/contract及analysis核完整boot、31份a2布局、6份正式M1布局、hilog、两实签包/ELF和真实源码。a2实际m2route域（f5d23d51/c789cf34），boot3末ProgramEnter28仅开放复合创建快照，无snapshot单调时点不能判永久挂死；terminal可由撤权或首quantum+Draw封口，complete不是Create成功，root0不套250ms冷创建期限。正式T597 M1（527c863f/dc54802f）同run2/epoch4/session2物理88→318→536→1002→1513，GPU_WORK_PENDING由新root冻结产生、DRAW_PENDING在Accept回调后产生，不支持创建从未完成/从未READY；busy也不等Down拒或零入队。recoveryState/bootDiagnostics等真实出口存在，报告缺端点推断不成立。先T676-A复用T663精确M2cursor，B用现M1status/recovery/执行diagnostic/冷snapshot取同scope许可、inputStages/claim/root/Draw原件；不重复seam/夹具卡，不把M2/host/M1并因。预算/角色已给，静态检查通过，不使用真机/构建/产品测试，无产品PASS。",
+        "modifiedTime": "2026-11-19T12:15:15+0000",
+        "createdTime": "2026-11-19T12:15:15+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackMatched": true
+    },
+    {
+      "task": 679,
+      "taskId": "6afee2d2e4b0097f44e12c61",
+      "comment": {
+        "id": "6afee853e4b00927f0f835ea",
+        "userId": 1010673194,
+        "title": "T679 architect当前范围完整交付，commit 724e05c8。主稿docs/architecture-G15-G19-research-constraints-v1.md、architecture-T679-constraints-v1.json及analysis：完整24案例逐项映射15工程约束，A-F/层模型/有限厚度3D的SSBO/binding/程序/dispatch同步、确定排序接触历史、全部trial-replay、来源/几何/scene/cold/退役/旧新峰值与未知项齐。T131/T232旧pbuffer、T591c具体M2context查询、SDK26声明、既有profile合同与研究假设严格分级；不把单block1GiB/32768 shared当可分配总量或新核PASS。复核4档state+排序部分账；3D64³三bank装单block超限，分别拆小也不证同时可分配/实时；GPU/native/FBO/driver不混账。给正式15设计最小输入和可复用工具链/迁移风险，30fps不等仿真实时。未联网重选算法、未冻结MPM/双层F、无CPUstepper/低优先实施，未改G9/G11/G13合同、不增1–14前置；19目标顺序/10暂停/新shader唯一保持。静态核对通过，不使用真机、不编产品/跑测试，无产品PASS。",
+        "modifiedTime": "2026-11-19T12:15:15+0000",
+        "createdTime": "2026-11-19T12:15:15+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackMatched": true
+    }
+  ],
+  "validation": "docs/analysis-T678-T679-check-v1.json",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "businessCodeChanged": false,
+  "currentG9G11G13ContractChanged": false,
+  "managerQueueUpdated": false,
+  "sameNameDidaListUpdated": false,
+  "onlyOwnStatusLimitedException": true
+}
