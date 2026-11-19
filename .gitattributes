@@ -30,6 +30,6 @@ test/reports/t639/*.log -text -whitespace
 test/reports/t659/*.log -text -whitespace
 
 # T660-T662 architecture tables/receipts bind exact UTF-8 bytes and SHA inputs.
-docs/architecture-T66[0-2]*.json -text
-docs/analysis-T66[0-2]*.json -text
-docs/receipt-T660-T662-*.json -text
+docs/architecture-T66[0-2]*.json -text whitespace=cr-at-eol
+docs/analysis-T66[0-2]*.json -text whitespace=cr-at-eol
+docs/receipt-T660-T662-*.json -text whitespace=cr-at-eol
