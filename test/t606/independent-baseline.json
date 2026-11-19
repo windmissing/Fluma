@@ -1,0 +1,195 @@
+{
+ "revision": "T606_INDEPENDENT_BASELINE_V1",
+ "date": "2026-11-19",
+ "method": "independent closed-form derivation; no designer-checker import; no CPU stepper",
+ "cases": [
+  {
+   "id": "F01",
+   "quantity": "velocity bit-zero + pressure phi reconstruction",
+   "independent": "REST: u=v=0 exact (no flow driving); pi=0; p*=phi-mean(phi)+C with max error bound 32*2^-24*max(1,maxabs(phi)) (Q32 quantization over 32 pressure points/line)",
+   "proves": [
+    "pressure reconstruction",
+    "gravity-as-potential (no velocity paint)"
+   ],
+   "canNotProve": [
+    "viscosity",
+    "advection"
+   ]
+  },
+  {
+   "id": "F02",
+   "quantity": "manufactured projection component",
+   "independent": "given divergence-free u field + injected divergence; projection removes exact normal component; residual identity div(u_proj)=0 verified by own sum (telescoping on MAC faces)",
+   "proves": [
+    "pressure projection operator",
+    "divergence-free residual"
+   ],
+   "canNotProve": [
+    "full NS time stepping"
+   ]
+  },
+  {
+   "id": "F03",
+   "quantity": "viscous shear decay",
+   "independent": "u(y,0)=U0*sin(k*y) -> u(y,t)=U0*sin(k*y)*exp(-nu*k^2*t); own closed form; decay rate k^2*nu with nu=1/64,k=2*pi -> rate=pi^2/16 per unit t; bounded series alternative for periodic box",
+   "proves": [
+    "viscosity term (Laplace) coefficient exactness"
+   ],
+   "canNotProve": [
+    "pressure",
+    "nonlinear advection"
+   ]
+  },
+  {
+   "id": "F04",
+   "quantity": "Taylor-Green full NS",
+   "independent": "u=A sin(kx)cos(ky)e^{-2nu k2 t}, v=-A cos(kx)sin(ky)e^{-2nu k2 t}, pi=A^2/4 (cos2kx+cos2ky) e^{-4nu k2 t}; own exponential/sin-cos sampling with abs err<=2^-21; kinetic energy decay E(t)=E0 e^{-4nu k2 t} exact identity",
+   "proves": [
+    "advection",
+    "pressure",
+    "viscosity jointly (full NS)"
+   ],
+   "canNotProve": [
+    "3D",
+    "wall boundaries (periodic domain)"
+   ]
+  },
+  {
+   "id": "F05",
+   "quantity": "closed box manufactured NS + rotation",
+   "independent": "manufactured body force f=du/dt+...-nu Lap u + grad pi with own symbolic differentiation; rotation: J90 terms cancel in potential split; Coriolis 2*Omega*J90(u)=0 for u=0 rest",
+   "proves": [
+    "rotation potential split",
+    "Coriolis zero-rest"
+   ],
+   "canNotProve": [
+    "free surface"
+   ]
+  },
+  {
+   "id": "F06",
+   "quantity": "Couette steady + startup",
+   "independent": "steady u(y)=U*y/H linear (exact); startup: u/U = y/H - sum_{n=1..N} (2/(n*pi)) sin(n*pi*y/H) exp(-n^2*pi^2*nu*t/H^2); N bounded by tail bound 2*exp(-N^2*pi^2*nu*T/H^2)/(pi*(1-exp(-pi^2*nu/H^2))) < tol",
+   "proves": [
+    "wall no-slip",
+    "viscosity time scale (channel)"
+   ],
+   "canNotProve": [
+    "pressure magnitude (Couette has none in x)"
+   ]
+  },
+  {
+   "id": "F07",
+   "quantity": "Poiseuille pressure drive",
+   "independent": "u(y)= (G/(2 rho nu)) * y*(H-y) with own G=|grad p|; flow rate Q = G*H^3/(12 rho nu); equivalence to body-force drive checked by momentum balance",
+   "proves": [
+    "pressure gradient -> flow conversion",
+    "viscosity"
+   ],
+   "canNotProve": [
+    "rotation",
+    "advection (laminar creeping)"
+   ]
+  },
+  {
+   "id": "F08",
+   "quantity": "ramp spin stop",
+   "independent": "Omega(t)=Om*sin^2(pi t/T), alpha=Om*pi/T*sin(2 pi t/T) consistency: d/dt(Omega)=alpha by own derivative check; theta(t)=theta0+Om*(t/2 - T*sin(2pi t/T)/(4pi)) with own integral; rest-liquid invariant during pure rotation of frame",
+   "proves": [
+    "motion profile consistency",
+    "frame-rotation potential"
+   ],
+   "canNotProve": [
+    "liquid inertia response (needs full solve)"
+   ]
+  },
+  {
+   "id": "F09",
+   "quantity": "corotating rest + Coriolis pair",
+   "independent": "u0 co-rotating: Eulerian steady in box frame -> residual=0 with Coriolis 2 Omega J90(u0) balanced by own pressure gradient -rho Omega^2 r (centrifugal in phi); own closed form on grid",
+   "proves": [
+    "Coriolis/centrifugal split correctness"
+   ],
+   "canNotProve": []
+  },
+  {
+   "id": "F10",
+   "quantity": "uniform periodic flow",
+   "independent": "u=U0 constant: exact invariant (advective+viscous+pressure all zero residual); tracers advect x+=U0*t exactly",
+   "proves": [
+    "advection transport (tracer)",
+    "boundary periodic consistency"
+   ],
+   "canNotProve": [
+    "pressure solver (uniform field trivial)"
+   ]
+  },
+  {
+   "id": "F11",
+   "quantity": "negative controls",
+   "independent": "injected faults (nonzero normal wall face / gauge/sign wrong / alias duplicate) must each trip own independently-computed violation detector; PASS criterion: FAULT and no CURRENT commit",
+   "proves": [
+    "gate coverage / no silent repair"
+   ],
+   "canNotProve": [
+    "physics"
+   ]
+  },
+  {
+   "id": "F12",
+   "quantity": "external work + energy budget",
+   "independent": "dE/dt = -int(2 nu mu*|S|^2) + boundary power, own identity from NS x u; discrete telescoping bound with known truncation order",
+   "proves": [
+    "energy budget closure"
+   ],
+   "canNotProve": [
+    "pressure field directly"
+   ]
+  },
+  {
+   "id": "F13",
+   "quantity": "transaction paths",
+   "independent": "replay/cancel/late/solver-failure are protocol cases: own expected state transitions (no commit on cancel; late rejected; failure keeps lastConsumed)",
+   "proves": [
+    "transaction/ledger semantics"
+   ],
+   "canNotProve": [
+    "physics"
+   ]
+  },
+  {
+   "id": "F14",
+   "quantity": "config precision/domain gates",
+   "independent": "boundary values (nu* range 2^-20..1/8, |g*|<=64, |u*|<=2...) each independently re-derived from algorithm doc section 2; out-of-range must FAULT",
+   "proves": [
+    "config gate coverage"
+   ],
+   "canNotProve": [
+    "physics"
+   ]
+  },
+  {
+   "id": "F15",
+   "quantity": "accepted field render + cold evidence",
+   "independent": "render path consumes accepted field only: pixel identity to field snapshot via own hash-chain; cold evidence page SHA format check",
+   "proves": [
+    "accepted-only rendering",
+    "evidence chain"
+   ],
+   "canNotProve": [
+    "solver math"
+   ]
+  },
+  {
+   "id": "F16",
+   "quantity": "cost + resource",
+   "independent": "own accounting table: expected GPU pass counts per stage from algorithm (projection=1 Poisson solve etc.); resource bounds from config 128U32+state sizes",
+   "proves": [
+    "resource bounds"
+   ],
+   "canNotProve": [
+    "numerical accuracy"
+   ]
+  }
+ ]
+}
