@@ -1,0 +1,87 @@
+{
+  "schema": "T619_T628_DELIVERY_RECEIPTS_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "scope": "T619-T626 and T628 architecture only",
+  "commits": [
+    "0fe6a6a",
+    "ea14a7f"
+  ],
+  "localStatus": "结束待验收",
+  "queueMutation": "Only own nine status cells, byte-preserving; no manager queue/same-name Dida list updates",
+  "checks": "architecture schema, original receipt hashes and source/log joins; no product builds/tests/device",
+  "comments": [
+    {
+      "task": "T619",
+      "taskId": "6afe456de4b0dc337ea02672",
+      "commentId": "6afe4fb6e4b0680b8cd26db8",
+      "title": "T619 architect已完成当前约定范围。已补公开rootCursor64逐word/producer/取样切点、精确2920B rootToken SHA前像、4096B配置胶囊；同步T527/T535/T552/T614机器表和生成器，prefix/目录/协议不变。固定metadata按7实例增量计账，禁私有cursor冒公开身份/反算/假零。原T596续实现完整writer/reader，不另建同开发卡或测试门。\n正式稿docs/architecture-T619-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T620",
+      "taskId": "6afe456de4b0680b8cd0f774",
+      "commentId": "6afe4fb6e4b0e5384a49e753",
+      "title": "T620 architect已完成当前约定范围。原报告关键勘误：三臂GL sink均真实有记录，ENTER/EXIT分别5959/5958、6264/6263、6548/6547；各末尾一个functionId411=glDispatchCompute未EXIT，不能排除driver。CREATE_ONLY另缺恢复session/首pulse，且D1 hook潜在等待permit。tester先修设施与同身份采证，单修正臂先行、总墙钟900s有界，不重复无增量三臂。\n正式稿docs/architecture-T620-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T621",
+      "taskId": "6afe456de4b0e5384a48bb03",
+      "commentId": "6afe4fb6e4b059b9741367d0",
+      "title": "T621 architect已完成当前约定范围。原件native raw length为64/4，UI实际元素16/1，均4倍；首拒ELEMENT_COUNT发生在backing/语义检查前。官方平台导出接口有字节长度差异，现reader无单位适配。交developer按已资格provider固定ELEMENTS/BYTES规范化并保strict backing/kind/offset；未知不盲除4。T582安全诊断PASS保留，T590原卡续测。\n正式稿docs/architecture-T621-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T622",
+      "taskId": "6afe456de4b0e5384a48bb04",
+      "commentId": "6afe4fb6e4b0e5384a49e754",
+      "title": "T622 architect已完成当前约定范围。旧T461进程已亡不拼后继；external.json是新M0 pid57432/libgrsm0.so，不证明M2加载，linkedOriginal也未列原manifest/native文件SHA。已有m2CreateDiagnostics具体serial只取独立Store mutex，可先持续外采Enter/Exit/Finish。交tester补真实M2加载/同attempt终态；真证明查询通道堵塞才按稿补最小产品seam，原DECLARATION_MISSING保留。\n正式稿docs/architecture-T622-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T623",
+      "taskId": "6afe456de4b004b3f87e7a81",
+      "commentId": "6afe4fb6e4b0dc337ea15384",
+      "title": "T623 architect已完成当前约定范围。原件当前permissionRevision5与inputStages4不同代，无Down/typed enqueue/非空SOURCE；SOURCE_SELECT/acceptedQ都不能代替。给精确surface坐标/Down保持跨3pulse/Up及同seq witness路径，tester先补操作取证；必要developer补onTouch入口和分段bounded观察。不据uitest失败断只能真人，合成typed仅隔离接口域。\n正式稿docs/architecture-T623-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T624",
+      "taskId": "6afe456de4b004b3f87e7a82",
+      "commentId": "6afe4fb6e4b0680b8cd26dbe",
+      "title": "T624 architect已完成当前约定范围。clang/lld低CPU长等待已观察，但无线程栈/等待链/完整链接响应文件，140KB R-string根因未证。交tester全新输出、源/argv/rsp/对象/ELF一致指纹和分阶段有限超时最小复现；确证产品生成缺陷再developer按工程稿拆资产TU。保T541/T564真实源，不拿旧T549 frozen/缓存绿替代；T569/T600仅同指纹复用。\n正式稿docs/architecture-T624-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T625",
+      "taskId": "6afe456de4b0680b8cd0f77b",
+      "commentId": "6afe4fb6e4b004b3f87fd4a4",
+      "title": "T625 architect已完成当前约定范围。报告缺原始API错，不能猜window/avoid/keyboard根因。T598现有prepareCold/readiness.report.api已能保window.snapshot/subscribe原错，record在同active id下FAILED后仍可写；tester先取同轮冷文件。两个无记录catch和snapshot具名stage补口工程已定。保非READY disabled/TTL/严格PNG，原T592续办，不快点绕过。\n正式稿docs/architecture-T625-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T626",
+      "taskId": "6afe456de4b004b3f87e7a83",
+      "commentId": "6afe4fb6e4b0680b8cd26dc1",
+      "title": "T626 architect已完成当前约定范围。商业7.1.0.566仍缺producer/重采样转换/部署映射；SDK ns-since-start和非同步uptime不构成MONOTONIC proof，T593量级引用亦须纠正。已列平台可信bundle责任输入、可控系统新profile、改native receipt语义须designer三路线。无平台输入不让T616空转，不自降门；研究/SYNTHETIC域可按原范围继续。\n正式稿docs/architecture-T626-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    },
+    {
+      "task": "T628",
+      "taskId": "6afe456de4b059b97410cea2",
+      "commentId": "6afe4fb6e4b004b3f87fd4a7",
+      "title": "T628 architect已完成当前约定范围。已分流F02压力分量/F05非零MMS覆盖，F03/F06/F07参数公式和F12离散账；F11缺alias负控，工程冻结hook6。公共17+同首因mathStatus bitset，不新错误码；exp总相对2^-20含F32转换，exp(-103)拒绝。发现softDiv 0/0提前返回静态缺口；首数学原因锁存槽/复位/冷映射已定。同步T607数学表/生成器/SHA。tester修基准、developer补工程；不阻T609/T610可测域。\n正式稿docs/architecture-T628-v1.md及对应evidence-v1.json；汇总docs/retro-T619-T628-attribution-v1.md。\n架构合同/原件有限检查通过；未运行产品测试/构建、不使用真机，不冒产品PASS。交付提交0fe6a6a（T628引用收据修正ea14a7f）。 本人行结束待验收，由manager登记后推进依赖，不新增验收门。",
+      "createdTime": "2026-11-19T01:24:06+0000",
+      "readbackVerified": true
+    }
+  ]
+}

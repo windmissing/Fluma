@@ -36,6 +36,8 @@ T608 softDomain→fail(17)、ctrl[751]→micro[783]/cold已有真实来源，基
 
 更新math语义后mathSHA/algorithmSHA应按T607规范重算并显式新构建身份；常数/coefficients、布局、dispatch、gates未改。旧T608构建保旧身份和开发完成状态，tester记录实际使用哪一版，不在文件上“补写”旧二进制SHA。T607生成器同步读取新补充表，避免重跑覆盖本裁定。
 
+过渡期T609/T610可以继续使用T608 dd91018原包及其随包冻结合同：mathSHA=`ee12f34b54239a8c7c395e5aa30aadcd95683be9d4f72e8f92cc203e92f68829`，algorithmSHA=`9bbb3df8eee70de03e156de8d2ec919e37515c999e177f4bdf63d195d1cfd48d`；用T608收据/原T607版本复核，不能把当前表的新SHA配置注入旧包导致全域BAD_HASH。原包不具备新firstMathStatus封存或hook6的部分只记NOT_OBSERVED/NOT_IMPLEMENTED，其余按未改的T605门验证。新工程实现后单列新包身份验证新增域；不是等待新包才能开始全部验证。
+
 交接：tester修独立公式/fixture参数与覆盖/原件，developer补hook6和首次数学原因绑定并编译（不要求真机）；F05真实失败先architect归因再designer，测试门若不合理才manager裁决。T609/T610按现有可验证域并行，争议/缺hook域记NOT_IMPLEMENTED或NOT_MEASURED，不宣PASS，不新设集中准备/manager验收门。
 
 续作prompt：不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态例外）或滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。具体阻断含未完成、原错/复现/证据/尝试、不能继续原因、前置与接手角色。开发只开发编译、不使用真机；tester/effector签名部署/执行采证，真机串行。GPU驻留优先、CPU停投、XComponent+shader唯一上屏，失败FAULT/显式STALE，禁Canvas/软件GL产品回退；目标10暂停，水线13→14→12，旧湿M1暂停。
