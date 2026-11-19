@@ -1,0 +1,19 @@
+{
+ "revision": "T618_T645_PREREQ_BLOCK_V1",
+ "date": "2026-11-19",
+ "T618": {
+  "title": "\u76ee\u68079\u771f\u5b9e\u65f6\u949f\u8d44\u683c\u4e0e\u62e8\u52a8\u8f93\u5165\u51b7\u8bc1\u636e\u72ec\u7acb\u9a8c\u8bc1",
+  "prerequisite": "T616 \u5408\u683c\u5e73\u53f0 clock provider",
+  "status": "BLOCKED \u2014 T615 v1 (commit 08c824c) \u5df2\u88c1\u5b9a\u5e73\u53f0\u8bc1\u636e\u4e09\u7f3a\u53e3\u5728\u6863\uff1aproducer \u5b9e\u73b0\u6e90/\u91cd\u91c7\u6837\u8f6c\u6362\u94fe/\u90e8\u7f72\u4e8c\u8fdb\u5236\u6620\u5c04\u9700 MLN-AL00 7.1.0.566 build \u5bf9\u5e94 vendor \u6e90\u7801+\u7b26\u53f7\uff08\u63a5\u624b\u89d2\u8272=\u5e73\u53f0/\u7cfb\u7edf\u89d2\u8272\uff09\uff1bINPUT_CLOCK_UNVERIFIED \u7ef4\u6301\uff1bSDK since-boot \u4e00\u53e5\u4e0d\u80fd\u4f2a\u5b8c\u6574 proof",
+  "readyWhen": "T616 \u771f\u5b9e provider \u8d44\u683c\u4ea4\u4ed8\uff08\u6216 T626 A \u8def\u7ebf\u53ef\u4fe1 bundle \u5230\u4f4d\uff09",
+  "noIdleWork": "\u8bbe\u5907\u9a8c\u8bc1\u5168\u57df\u4f9d\u8d56 provider \u8d44\u683c\uff0c\u65e0\u72ec\u7acb\u53ef\u91c7\u524d\u7f6e\u4ef6"
+ },
+ "T645": {
+  "title": "\u76ee\u68079\u63a5\u6536\u65f6\u95f4\u4f4d\u79fb\u62e8\u52a8\u5b8c\u6574\u72ec\u7acbGPU\u9a8c\u8bc1",
+  "prerequisite": "T637 G9_DM_NATIVE_RECEIPT_SPATIAL_R1 \u4ea7\u54c1\u5b9e\u73b0",
+  "status": "BLOCKED \u2014 T637 profile NOT_IMPLEMENTED\uff08T642 v1 commit 4af1b0b \u5df2\u786e\u8ba4\uff0cN01-N11 \u8bbe\u5907\u57df\u5168\u90e8\u4f9d\u8d56\u5b9e\u73b0\uff09\uff1bT638 \u6b63\u5f0f\u5305\u53ea\u542b T632 G13 \u7ebf\uff0c\u65e0 T637 profile",
+  "readyWhen": "T637 profile \u4ea7\u54c1\u5b9e\u73b0+\u7f16\u8bd1\u4ea4\u4ed8",
+  "ready": "T642 \u72ec\u7acb\u516c\u5f0f\u57fa\u51c6 30/30 \u5df2\u5c31\u7eea\u53ef\u5bf9\u7167"
+ },
+ "note": "both blocked-not-idle: prerequisites are external deliverables; original evidence preserved and referenced"
+}
