@@ -1,0 +1,30 @@
+{
+ "revision": "T645_V1_RX_FIRST_DEVICE_V1",
+ "date": "2026-11-19",
+ "package": {
+  "task": "T645-rx",
+  "tree": "t645-tree (tools/g9rx/prepare_build.cjs fresh isolated)",
+  "inputSha": "0ef930ea",
+  "signedSha": "0bdf3304"
+ },
+ "chain": [
+  {
+   "stage": "LOAD",
+   "result": "LOADED_FILE_OBSERVED",
+   "detail": "libgrs_g9rx.so sha256=b050b96e bytes=1399592 BuildId=e0e62034 memoryBuildIdMatched=true"
+  },
+  {
+   "stage": "ENABLE",
+   "result": "configure enters GL thread",
+   "detail": "two independent rounds both reach configure"
+  },
+  {
+   "stage": "SHADER",
+   "result": "CONFIGURE_FAILED_8=SHADER_FAILED",
+   "detail": "driver log: 0:1728: S0022: Symbol slot redeclared (stable across rounds)"
+  }
+ ],
+ "blocker": "generated g9rx shader line 1728 redeclares symbol slot - product generator defect (T644 generate_assets.py / frozen parent variant), route developer",
+ "notClaimed": "no READY/pulse/touch/physics/visible-frame evidence - configure never passed; T642 N01-N11 counterexamples not yet reachable",
+ "route": "developer (T644 shader generation fix) -> T645 v2 resume (facility+package ready)"
+}
