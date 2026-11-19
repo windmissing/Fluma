@@ -1,0 +1,90 @@
+{
+  "schema": "T655_T658_ARCHITECT_DELIVERY_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "engineeringCommit": "4b9fb8f",
+  "status": "结束待验收",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "productPassClaimed": false,
+  "ELFInspectionOnly": true,
+  "existingHostEvidenceReadOnly": true,
+  "statusEvidence": "docs/analysis-T655-T658-status-v1.json",
+  "tasks": [
+    {
+      "task": "T655",
+      "taskId": "6afeaec4e4b0e5384a52ff4c",
+      "document": "docs/architecture-T655-v1.md",
+      "contract": "docs/architecture-T655-contract-v1.json",
+      "evidence": "docs/analysis-T655-evidence-v1.json",
+      "comment": {
+        "id": "6afeb54be4b059b9742b27df",
+        "userId": 1010673194,
+        "title": "T655 architect完整归因/合同已交，不使用真机，提交4b9fb8f。docs/architecture-T655-v1.md、contract/evidence、共用analysis-T655-T658脚本和执行边界/retro。保留命令外层约11K、62组重复SDK链接标志；当前cache/rules稍后快照为63组。broker仅一对象且已有对象rsp，膨胀在仍留外层的LINK_FLAGS，不是cold_slots混入大批对象。SDK toolchain CACHE FORCE前置已有flags可累积；T629 helper只改编译头身份，触发因果未证。实际cmd/Win32原错与manual失败rsp argv未全保，不把11876/丢slash猜测当原件。交tester先独立新输出/cache、结构化native argv和完整rsp/cwd/flags/对象ELF身份；不全局删cache/换SDK/去重有序flags/降FP门。干净合法target仍超长才按target级完整driver rsp工程交developer。T541 SPF旧树与DM主树标本分名，1–2s本次编译不排除历史compiler问题；T590/T541精确修后续测，独立正确G9rx包不无证牵连blocked。有限源/构建原件检查PASS，未构建/运行产品或测试；本人行结束待验收。",
+        "modifiedTime": "2026-11-19T08:37:31+0000",
+        "createdTime": "2026-11-19T08:37:31+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "BUILD_CACHE_ACCUMULATION_TESTER_ISOLATED_BUILD_FIRST"
+    },
+    {
+      "task": "T656",
+      "taskId": "6afeaec4e4b059b9742973b6",
+      "document": "docs/architecture-T656-v1.md",
+      "contract": "docs/architecture-T656-contract-v1.json",
+      "evidence": "docs/analysis-T656-evidence-v1.json",
+      "comment": {
+        "id": "6afeb54ce4b004b3f889a392",
+        "userId": 1010673194,
+        "title": "T656 architect完整归因已交，不使用真机，提交4b9fb8f。docs/architecture-T656-v1.md、contract/evidence及T636正式矩阵澄清。真实driver先Freed(gB)，之后ContextRetired已无活动票据；又用仍非零gA作Reserve输出入参，违反*ticket==0，不能据false推Retired不释放。生产matching ContextRetired确清内部GPU租约，按值API不清调用方变量；现成broker715f与T608同字节、8符号及双adapter DT_NEEDED已静态核对，无产品接口/设计变更。交tester修为保留活动gB→正确ctx Retired→NEW零gC Reserve正控，记录每调用所有before/after输出，分别隔离错票/错ctx和builder/reader门。现日志38行两段seq0..18，21是去重字串；每段15个矩阵bool观察，M4 route/process累计cap未执行，不能概括ALL PASS。保跨DSO既有窄事实，不冒真实eglDestroyContext/driverfree/产品route集成。loader还须核全部8函数指针和真实导出名，unique attempt禁止append拼轮。有限源码/ELF元数据/保存调用检查PASS，无harness/设备运行；本人行结束待验收。",
+        "modifiedTime": "2026-11-19T08:37:32+0000",
+        "createdTime": "2026-11-19T08:37:32+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "TEST_FIXTURE_TICKET_INPUT_AND_ORDER_ERROR"
+    },
+    {
+      "task": "T657",
+      "taskId": "6afeaec4e4b059b9742973b7",
+      "document": "docs/architecture-T657-v1.md",
+      "contract": "docs/architecture-T657-contract-v1.json",
+      "evidence": "docs/analysis-T657-evidence-v1.json",
+      "comment": {
+        "id": "6afeb54ce4b0680b8cdc3d88",
+        "userId": 1010673194,
+        "title": "T657 architect首次归因/续办合同已交，不使用真机，提交4b9fb8f。docs/architecture-T657-v1.md、contract/evidence/host-inspection及共用脚本。t646cA实为267 ENTER/266 EXIT，仅1未配对call266/function411；保program4和bindings0..3=1/11/12/13传参，x1已记但y/z未记。缺退出码/异常地址/线程栈/ActivePhase/主动kill账，进程后来不在不能断dispatch内部硬崩、driver或与旧v4c同调用点；steady ns不是UTC epoch。只读现有CrashDumps/WER/Application记录未找到该attempt异常，仅11月14日旧RADAR记录，不推无异常。原T646全部六步仍范围内，交tester补实际C0真实时钟、固定GL shadow/源程序身份、child+parent pid-start/PE与加载DLL、wait退出码/异常dump或watchdog主动终止原件和真实guard。整体≤420s、单臂、不延长/不跨run借411；现runner900s也须纠正，不能称shadow scope外后泛派产品日志。缓存role/SHA/time保有用关联但无pid/attempt绑定不冒精确程序证明。D1D2/32cycle仍未测，host ANGLE失败不冒真机产品FAIL。有限检查PASS，无产品/测试执行；本人行结束待验收。",
+        "modifiedTime": "2026-11-19T08:37:32+0000",
+        "createdTime": "2026-11-19T08:37:32+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "PROCESS_EXIT_CAUSE_UNPROVEN_TESTER_COMPLETES_EVIDENCE"
+    },
+    {
+      "task": "T658",
+      "taskId": "6afeaec4e4b059b9742973c3",
+      "document": "docs/architecture-T658-v1.md",
+      "contract": "docs/architecture-T658-contract-v1.json",
+      "evidence": "docs/analysis-T658-evidence-v1.json",
+      "comment": {
+        "id": "6afeb54ce4b0e5384a53be68",
+        "userId": 1010673194,
+        "title": "T658 architect完整工程修订已交，不使用真机，提交4b9fb8f。docs/architecture-T658-v1.md、contract/evidence，并修T625/T586引用。当前pid35376 raw jscrash noteChange→changed→键盘回调与模板/生成源闭合：JSON owner副本丢.same，随后方法调用TypeError；不是window观察门放宽问题。只证本版本该路径，不无证外推每次必崩/v1两轮同因。唯一修复为私有method-free十字段值拷贝、逐字段strict equal、固定十primitive tuple key；完整bind/change/sample/check/consume/report不再调用JSON副本方法，不推荐structuredClone保原型、不吞异常继续READY。明确真实before/after、同ID但ready下降/窗口变代仍撤权、旧回调discard、当前具名首错与有界冷原件；保单权威gate、reserve disabled、RESERVED再consume、3000ms仅PREPARING和严格PNG/HOLD/标定。交developer修test/t426真源、overlay/page生成链并编译，不只改local-test；原T592独立同版本复测另行，非开发设备门。签前后ABC/包身份及有限源码检查PASS，未运行产品/JS测试或真机；本人行结束待验收。",
+        "modifiedTime": "2026-11-19T08:37:32+0000",
+        "createdTime": "2026-11-19T08:37:32+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackExact": true,
+      "result": "PRODUCT_OWNER_PROTOTYPE_LOSS_DEVELOPER_REPAIR_CONTRACT"
+    }
+  ],
+  "otherQueueRowsChanged": false,
+  "didaSameNameListChanged": false
+}
