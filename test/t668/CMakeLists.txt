@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(t668_offline_driver LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+get_filename_component(ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
+add_executable(t668_driver driver.cpp)
+target_include_directories(t668_driver PRIVATE "${ROOT}/entry/src/main/cpp/gpu_resident")
+target_compile_options(t668_driver PRIVATE -fno-fast-math -ffp-contract=off)
+target_sources(t668_driver PRIVATE "${ROOT}/entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp")

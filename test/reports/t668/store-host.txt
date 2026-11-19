@@ -1,0 +1,5 @@
+driver.cpp
+{"mode":"full_queue_cancel","result":"EXPECTED","queuedAtEntry":128,"fenceSequence":0,"enterNs":"1250556400063900","insertNs":"0","popNs":"0","returnNs":"1250556434528400","elapsedMs":34,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}
+{"mode":"fence_cancel","result":"EXPECTED","queuedAtEntry":0,"fenceSequence":1,"enterNs":"1250556447018900","insertNs":"1250556447019300","popNs":"0","returnNs":"1250556481466000","elapsedMs":34,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}
+{"mode":"deadline","result":"EXPECTED","queuedAtEntry":128,"fenceSequence":0,"enterNs":"1250556492775100","insertNs":"0","popNs":"0","returnNs":"1250561493489100","elapsedMs":5000,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}
+{"mode":"full_queue_pop","result":"EXPECTED","queuedAtEntry":128,"fenceSequence":1,"enterNs":"1250561582245200","insertNs":"1250561619596300","popNs":"1250561619612100","returnNs":"1250561619617500","elapsedMs":37,"retired":true,"origin":"FIXTURE_NOT_PHYSICS"}

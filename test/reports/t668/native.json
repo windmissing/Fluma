@@ -1,0 +1,122 @@
+{
+  "schema": "OFFLINE_NATIVE_EXECUTABLE_V1",
+  "device": "NOT_RUN",
+  "productPASS": false,
+  "executable": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\t668_driver",
+    "bytes": 1346288,
+    "sha256": "6243cb7800354db7fe282e39cec58309f5573ccd426109a2401a9a22a6a923ef"
+  },
+  "buildId": "7be66db1799a0a2315b8e9129d2857c4e60a636e",
+  "dynamic": "Dynamic section at offset 0x89338 contains 26 entries:\n  Tag                Type           Name/Value\n  0x0000000000000001 (NEEDED)       Shared library: [libc++_shared.so]\n  0x0000000000000001 (NEEDED)       Shared library: [libc.so]\n  0x000000000000001e (FLAGS)        BIND_NOW \n  0x000000006ffffffb (FLAGS_1)      NOW PIE \n  0x0000000000000015 (DEBUG)        0x0\n  0x0000000000000007 (RELA)         0x5938\n  0x0000000000000008 (RELASZ)       10368 (bytes)\n  0x0000000000000009 (RELAENT)      24 (bytes)\n  0x000000006ffffff9 (RELACOUNT)    289\n  0x0000000000000017 (JMPREL)       0x81b8\n  0x0000000000000002 (PLTRELSZ)     4056 (bytes)\n  0x0000000000000003 (PLTGOT)       0x8b600\n  0x0000000000000014 (PLTREL)       RELA\n  0x0000000000000006 (SYMTAB)       0x340\n  0x000000000000000b (SYMENT)       24 (bytes)\n  0x0000000000000005 (STRTAB)       0x2b40\n  0x000000000000000a (STRSZ)        11766 (bytes)\n  0x000000006ffffef5 (GNU_HASH)     0x1fc0\n  0x0000000000000004 (HASH)         0x21b8\n  0x0000000000000019 (INIT_ARRAY)   0x8a550\n  0x000000000000001b (INIT_ARRAYSZ) 16 (bytes)\n  0x000000000000001a (FINI_ARRAY)   0x8a560\n  0x000000000000001c (FINI_ARRAYSZ) 16 (bytes)\n  0x000000000000000c (INIT)         0x88a74\n  0x000000000000000d (FINI)         0x88a88\n  0x0000000000000000 (NULL)         0x0\n",
+  "inspectionArgv": [
+    "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+    "-d",
+    "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\t668_driver"
+  ],
+  "inspectionTool": {
+    "path": "C:\\Program Files\\Huawei\\DevEco Studio\\sdk\\default\\openharmony\\native\\llvm\\bin\\llvm-readelf.exe",
+    "bytes": 9246648,
+    "sha256": "dbe01fbc443753bbde1dad7d6f7f3ca16f9c5b80549ec1b4169d26c9761615fc"
+  },
+  "closure": {
+    "build.ninja": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\build.ninja",
+      "bytes": 11104,
+      "sha256": "32102158253c4f88836c1ebdd65626d1149dabb9a6796e9b97cd659cc4e1f913"
+    },
+    "compile_commands.json": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\compile_commands.json",
+      "bytes": 2033,
+      "sha256": "515c4837695eac10f878a5865be9391d02611d90145836c455db3a39050619eb"
+    },
+    "CMakeFiles\\rules.ninja": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\CMakeFiles\\rules.ninja",
+      "bytes": 2855,
+      "sha256": "4bc4c6a10bb477a6b4a0120cbc9a3aaf44f5c533013dfed936bf5ab0414ff3e2"
+    },
+    "CMakeFiles\\t668_driver.dir\\driver.cpp.o": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\CMakeFiles\\t668_driver.dir\\driver.cpp.o",
+      "bytes": 2245280,
+      "sha256": "73e1e4a18ace90abcab28ee995b42b5146e3bab12913e7aa457d67068b93bf68"
+    },
+    "CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.cpp": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.cpp",
+      "bytes": 27673,
+      "sha256": "55fd3ebf28d178ff42660c6d98b824592428a7f63cdf682fe188d97ef42e8195"
+    },
+    "CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\CMakeFiles\\3.28.2\\CompilerIdCXX\\CMakeCXXCompilerId.o",
+      "bytes": 3320,
+      "sha256": "9baf07287af6422a32a627d9f80cb7e7c243a903ad420bb1b6c90b0cff04b6d1"
+    },
+    "CMakeFiles\\t668_driver.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t668-ndk\\CMakeFiles\\t668_driver.dir\\D_\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp.o",
+      "bytes": 16792,
+      "sha256": "08468cec2d69616df6423150d0dfa7ca9f3b770770ec2a466c4110c93b5dbbc7"
+    }
+  },
+  "sourceBinding": "exact actual snapshot/objects, not a claim about runtime-loaded maps or product PASS",
+  "externalSourceInputs": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cmake",
+      "bytes": 395,
+      "sha256": "76a2b62ecd0e64a87de0f5745fe2552252975c9c43367c8d3bfc7076168e4277"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.cpp",
+      "bytes": 2909,
+      "sha256": "8a9e6325c67eaf152b95abebc5f258b91357a291a4a4f7809bf1ba795deba50f"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\cold_slot_broker.h",
+      "bytes": 3291,
+      "sha256": "15117bfd06bf802ea5b4dc168f2cc52e390abea335a1885559476bc61386e07a"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\artifact_store.h",
+      "bytes": 25189,
+      "sha256": "9483b49c51971d32b818791d44ffae18b1912c5752e817f0e83b9597b7f85a89"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\graphics_program_factory.h",
+      "bytes": 19444,
+      "sha256": "c9c49e9dd41784d67b3ced9d37797a1741fd9e9338b56ba05f1fe9688d3925fe"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\program_factory.h",
+      "bytes": 16764,
+      "sha256": "79cdeee17b131bf850514b6f2793bd87628880950ddbbac2c2bceaec10bdd9a3"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\program_observer.h",
+      "bytes": 838,
+      "sha256": "95e48f379a453247dabf9cdfcfa5ce6bcc43583d10aaf95ecd18579f782495ed"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\sha256.h",
+      "bytes": 2753,
+      "sha256": "154cf18fe5b2c1fe2831326faf0287dbcd83f420e4eea22a8dfe5d30a7db9faa"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\resource_lab\\bounded_stream.h",
+      "bytes": 1104,
+      "sha256": "a776e487855725e1605f83b6066be0a64f2642057baa42b9e0c4cc31ff755857"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\entry\\src\\main\\cpp\\gpu_resident\\resource_lab\\lab.h",
+      "bytes": 45982,
+      "sha256": "0f139dc733d6d5a25fdcbf03f1116d48901493b8e45842317e3f16faf0c84f67"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\test\\t668\\CMakeLists.txt",
+      "bytes": 486,
+      "sha256": "b007c7447b14caa924ed72dbedcac2107e8e97f143f92bee7e4cdea3369765a4"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\test\\t668\\driver.cpp",
+      "bytes": 6360,
+      "sha256": "f22fec91d3a82335dfd96a8a47aaed15e4cd6a5d8826e9aaf203c76ec85404c7"
+    }
+  ]
+}

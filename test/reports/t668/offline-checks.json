@@ -1,0 +1,15 @@
+{
+  "device": "NOT_RUN",
+  "checks": [
+    {
+      "argv": [
+        "python",
+        "test/t668/files.py",
+        "--selftest"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"result\": \"PASS\", \"fixtureCases\": 7, \"device\": \"NOT_RUN\"}\r\n",
+      "stderr": ""
+    }
+  ]
+}
