@@ -1,3 +1,48 @@
+# T639 接续：真实双父适配与候选 GPU 材料实现；新增契约阻断
+
+2026-11-19，消费 T648 `2a670f2`。**本卡整体未完成，状态“看评论”；本次提交不是 G11 产品闭环。** 原先 DM 2404/2024、时间/审核和私有父 proof 接口阻断已经 T648 解决，下面历史报告只作留档，不再将其列为当前前置。本次未使用真机，未执行测试、shader、签名或部署。
+
+## 本次可独立提交的修改
+
+- `parent_adapter.h/.cpp` 使用真实 `variant<R1 Config,DM Config>` 与真实父 Permit；明确转换资源描述，不转换父 Config/Permit，不降组合 count/mask。R1 使用既有 synthetic research 参数，DM 解码真实正式 Config64；物理 seed 由冻结 T552 输入构造与真实 DM 模板生成，写实际 scope/参数后哈希。输入仅声明 SYNTHETIC_TEST_NATIVE_CONTROL，不冒 REAL_TOUCH。
+- `composite_gate.h/.cpp` 消费 T648 的真实私有 R1/DM composite proof，核组合身份、真实 18/19、ExpectedHash 后才返回本域私有证明；没有任意 count/mask 或测试 boolean 授权入口。它目前是可编译模块，**未声称已接入实际 native producer/联合提交**。
+- `material_plan.glsl` 与组合生成器在真实 recruit、Hamilton final share、deposit、sealed source/launch/capture event writer 接缝写 pending 计划；touch rollback 清对应 pending。核完整来源键、范围、nonce/封前缀，物理批结束后再封计划；不用最终差或预测通量反推。核新床 cohort、S→F→P 全退出来源等守恒覆盖。默认两个父源码和共享 proof 只读。
+- `marker_map.glsl` 加入精确 F rank/m 左先右后迁移、真实 S cut/launch/deposit、固定锚 phase、accepted tick 256、已有 F capture 混合及 blend=0 的 P capture；并行 rebase/requant 计数用原子操作。**blend=256 的 P capture 明确拒绝**，未私占 reserved 字段保存旧 P 质量。
+- `visual_stage.glsl` 加入一次候选冷初始化、独立角色 counter/ID、真实暴露/事件顺序的 INACTIVE 补样、marker 对比、Pstyle 真实 id/gen 与最小 marker slot 代表、无样本真实 P 不透明。Expected/VisualConfig 采用真实 LE SHA 约束，扩展从 GPU 的冻结区写入，不在 native map 后补尾。这些是**候选 producer 源码**，没有运行或完整审核/呈现 PASS 证据；column index、完整 ghost/glyph 审核仍未闭合。
+- `generate_contract.cjs` 从正式资源表生成八档数据，修正 DM V8192 两档旧表少算 896B（7406208 / 7408768），没有增加正式预算。冻结输入 seed header 可复现生成；正常编译先 `--check`，stale/missing fatal。CMake 跟踪新增 GLSL/seed/工具依赖，R1/DM 组合保留 SOURCE19、Q2543/2923。
+- 原 R1-only `VisualTransport::Create` 不能产生新受信种子身份，现明确返回 `CALIBRATION_CONFIG_REQUIRED`，不再报告 READY。保留的旧 Permit 改名 LegacyCompositePermit，避免与新的 tagged CompositePermit 发生跨 TU ODR 冲突。原 raw Commit 仍拒绝，未建立 owner/page 的空壳成功路径。
+
+## 当前确实无法自行裁定的两项契约
+
+1. **实际视觉 seed SHA 的精确前像及冷取交接。** T647 要求第一 root claim 前 Expected224[144..151] 绑定实际视觉种子；T648 `acceptance_t647/contract.cpp:23` 对 G11 强制非零。T563 manifest `identity.actualVisualSeedSHA` 只规定 GPU 初始化并 raw cold retrieval 后可得，没有规定 CURRENT marker payload / bankHeader / Pstyle 的确切跨度、顺序、header 身份是否纳入，以及首 claim 前读取与 singlePhase witness 信用交接。已核两版工程、机器表和真实工厂，不能用 recipeSHA、物理 seedSHA 或零替代。**原卡问题评论 `6afeba20e4b0e5384a544ca3`。** 需要 architect 冻结具体字节域及初始化→hash→首次 claim/reader 切点，developer 再实施 native 捕获。
+2. **P→F 旧 ghost mass 持久落点。** marker32[10] 为当前 F massSnapshot，glyph8[6] 要旧 P mass；捕获后 packet slot 可以换代，phase 跨 SOURCE 不推进时间，而当前 plan/event 会被下一批覆盖。marker[30]/余区正式保留零，Pstyle4 无 mass。共用 glyph 缓存不在 ACTUAL/REPLAY marker 独立比较内；用新 F 总质量会冒充旧包质量。已核字典/slot 生命周期与 span256，blend=0 可实现，默认 span256 无合法既定持久字段。**原卡问题评论 `6afebd90e4b0dc337eac0d2e`。** 需要 architect 明确现有字段合法 union 或修订字典/预算；developer 不擅改协议。
+
+这不是设备等待、不是默认 DM 设备 PASS 前置，也没有新增 manager 验收门。两项均已原卡反馈，尚无回复；继续写一个随意 hash/字段约定会破坏冻结身份与独立 replay，不能自行放行。已完成上述独立材料/适配/生成范围并编译，保留候选源码，未把部分产出报整卡完成。
+
+## 未完成范围与接续入口
+
+| 项 | 当前实际状态 |
+|---|---|
+| W01 | 生成/全输入依赖可编译；独立 G11 owner/NAPI/page、真实 session/clock 未接 |
+| W02–W03 | 保留 1024B 尾安全；两父类型化 adapter/gate 模块已编译；native ActiveProgramIdentity/Expected224 冻结上传及真实 mapped proof 未接 |
+| W04/W06–W08 | 候选真实 writer/plan/marker/补样/Pstyle/角色对比落地；完整 bit18/19 生产审核及默认 ghost、column index 未闭合，未运行 |
+| W05 | 真 Config/seed 构造模块已编译；视觉 seed 原件/hash 阻断实际 Create/首次 claim |
+| W09/W11 | 私有 candidate 保留，联合物理/VIS bank 提交锁、SceneLease/实际 fence/token/Swap 未接，不发布 |
+| W10 | 已有新管线 scene 消费保留；旧 P ghost 需要上述字段契约，未宣完整真实呈现 |
+| W12 | 完整 ROOT/FULL+7VIS raw cold、singlePhase witness/broker/reader 未完成；不将旧 metadata Read 冒原件 |
+
+先由 architect 回到原卡补充这两个精确契约；developer 续实际种子捕获→可信 native identity/Expected→owner/联合提交与 lease→完整冷档/reader。旧父默认/新 RX/共享 proof 源码未改。无 Canvas 上屏或回退。
+
+## 编译证据
+
+`node tools/g11/prepare_compile.cjs .codex/local-test/t639-receipt-build` 生成新的隔离编译工程，g11vis 六个 TU whole-archive 并链接真实 R1/DM gates 与 T647 核心。native、ArkTS、unsigned HAP 全构建 **39.869s**；最终 legacy guard/类型修订后增量 **9.841s**，均零错误。两套 compute GLSL 静态编译 exit0，未运行 shader。
+
+这仍是**编译脚手架包，不是可运行 G11 产品包，不交 T600/T601 做产品复测**。正式 receipt、输入/产物 SHA 和原始日志：`test/reports/t639/continuation-compile.json`、`continuation-full-build.log`、`continuation-final-build.log`。HAP SHA `3a59830b360842fe0863c07a0758c8986e410a49f4b29ffacc9cbe333d1ee3c6`；打包 libgrs_g11_compile.so SHA `98758d23ca7b1008341fb41e6c3a334af7a95f3a703f5c571a7cc62b9d173924`。GPU 正确性、ON/OFF、开销/期限、非空完整帧均 NOT_MEASURED，不冒 PASS。
+
+---
+
+以下为 `ede5891` 历史回执。其父接口阻断已由 T648 解决；仅保留当时原始结论，不作为本轮状态。
+
 # T639 developer：独立安全修复与真实父前置阻断
 
 2026-11-19。**本卡未完成，BLOCKED；不是产品交付/PASS。** 按T634/T563继续到实际父typed接受链发现冲突后，已完成不依赖接受链的安全/静态修复。本人行应为看评论；原卡已有问题评论6afe69b8e4b0680b8cd552aa。未使用真机、未执行测试。

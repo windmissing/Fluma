@@ -1,0 +1,118 @@
+{
+  "schema": "T639_CONTINUATION_COMPILE_ONLY_V1",
+  "date": "2026-11-19",
+  "taskStatus": "BLOCKED_CONTRACT_NOT_COMPLETE",
+  "T648PriorBlockers": "RESOLVED by 2a670f2; default parents/shared proof read-only",
+  "productDelivered": false,
+  "deviceUsed": false,
+  "testsRun": false,
+  "shaderExecuted": false,
+  "signingOrDeployment": false,
+  "scope": "Typed parent adapter/gate, candidate GPU material/marker/refill/style producers, formal resource generator, fail-closed legacy path. NOT a G11 product owner/page/cold archive.",
+  "build": {
+    "directory": ".codex\\local-test\\t639-receipt-build",
+    "full": "BUILD SUCCESSFUL in 39 s 869 ms",
+    "final": "BUILD SUCCESSFUL in 9 s 841 ms",
+    "hap": ".codex\\local-test\\t639-receipt-build\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "hapSHA256": "3a59830b360842fe0863c07a0758c8986e410a49f4b29ffacc9cbe333d1ee3c6",
+    "packagedArtifacts": {
+      "libs/arm64-v8a/libgrs_g11_compile.so": {
+        "bytes": 1574248,
+        "sha256": "98758d23ca7b1008341fb41e6c3a334af7a95f3a703f5c571a7cc62b9d173924"
+      },
+      "ets/modules.abc": {
+        "bytes": 2813160,
+        "sha256": "ec7e5fea1fb70b12345a85144136f3285f91e509d7ef4544c95e2cebe6f57632"
+      }
+    },
+    "logs": {
+      "continuation-full-build.log": "9c79342f8bee29959a5910d996e7af51acf97a1cb0f614dd0a0b3ac24cd93beb",
+      "continuation-final-build.log": "0e65f5522a46b28bdf8c1d05b78c22951cdddb699e263dee2e2ff4ffc2c24344"
+    }
+  },
+  "ownedSourceHashes": {
+    "entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h": "d19cb5cfb3d90cf178c9fc8ee444f9723890387600165293b13374afea4eb6e5",
+    "entry/src/main/cpp/gpu_resident/g11vis/kernels.cmake": "1de1ff5e13d113b3aa0494144efd9356e7fa15ba1184ec482bd96f489d0cea0a",
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl": "0f8bc73a14009bb6fb2899dd6fce6ea858c275b3a23762cc8f3ecc5212279535",
+    "entry/src/main/cpp/gpu_resident/g11vis/material_plan.glsl": "f5af2402b712cf388d9bdc12d78f060e284e24c00f84862f8f90d4b5532f980e",
+    "entry/src/main/cpp/gpu_resident/g11vis/marker_map.glsl": "1e2631ddf05c310d72d2d64d444a2283537a0a858857051750a21e31d8c3c777",
+    "entry/src/main/cpp/gpu_resident/g11vis/parent_adapter.h": "276dcaa93e9fab7c70d53f3e1246131dd2a6854e6affffb2265445d5f7c9d0b1",
+    "entry/src/main/cpp/gpu_resident/g11vis/parent_adapter.cpp": "59506d33aec92a10d5ebcfd75d6d3771f82f0c874c8271e3031a9a2a8260fac2",
+    "entry/src/main/cpp/gpu_resident/g11vis/parent_seed_generated.h": "e71ec17bc5ade63c62bc996e02c2caa2fabd5a72c2d2f898e1bcbeb6996b4edf",
+    "entry/src/main/cpp/gpu_resident/g11vis/composite_gate.h": "dc8a724085bc508b0bdc4719a897008b11421d7e38d254cb26f1a8ab7c8caeb2",
+    "entry/src/main/cpp/gpu_resident/g11vis/composite_gate.cpp": "b051f00563d366dac077f6a133a4d1bbd28062295789a812f4be136257af57f8",
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.h": "9bbe89891ba45e7c2aab72cf2f3f983b472843dc4761e828f0b9426974cc2cf4",
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.cpp": "eee97e7fe552db13d8aff0c3aca2905fa11d826e3fe1421540ab2926324ac16f",
+    "test/t566_generate_composite.cjs": "eb8d23e4372958e804fa86791e8e86204b7e1e332b035eff195deb2234198663",
+    "tools/g11/generate_contract.cjs": "8416af6a5f155b4e75fe06bcbb0b75fecbc0e8ee0ce36b68b528d621cad5f6b2",
+    "tools/g11/prepare_compile.cjs": "453b6e779701daf56ed676588d8b1587c6a544936433b693c6a0dc2953a395c9"
+  },
+  "formalAndReadOnlyInputs": {
+    "docs/architecture-T647-v1.md": "e142a716fddf76f7ffa990ad869e1d2afea1069a8517b7968ec710df00c94972",
+    "docs/architecture-T647-acceptance-v1.json": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+    "docs/architecture-T563-g11-accepted-flux-visual-v1.md": "b3dd3d0a6ed8e5a5102572f070c32b1888f835b3a452847b6a14fd07ab1650ef",
+    "docs/architecture-T563-g11-manifest-v1.json": "b9130e13377159b2731910daf839f97c9736f36e47ef0210f78ca470300f8047",
+    "docs/architecture-T552-g9-seed-manifest-v2.json": "2a8ed1093e201a9f3cf5386dbc80840a1d481ca58396f9d737320a6ae0fc6a4c",
+    "entry/src/main/cpp/gpu_resident/acceptance_t647/contract.cpp": "f95f06178754d14769b8bf6861a2f9b42b4fb717bf489b877017766871ec98d4",
+    "entry/src/main/cpp/gpu_resident/acceptance_t647/contract.h": "64db435a7c47acdf2954f6bd54449f101c6ea1f0fada5cb834b5c5c4863fcd0d"
+  },
+  "generatedAssets": {
+    "g11vis_dependencies.cmake": "0a579dedacedac27d01a831fc1cc19e89c83ce295e6f9d2e502789dfe2c07e82",
+    "g11vis_dm.comp": "1a73bfa8f70f48a975bfaf1f20fee70aadc51a1a37cae57e69a1706e62317f31",
+    "g11vis_inputs.json": "84a0ed2c45b6c03d360d73a384b058c6dd64cb4fa072493378d1ef9f56a34f57",
+    "g11vis_pipeline.h": "0153d36c1f20d2a0952dc9141390423c8022bf4f243171b111c29674dcf350a8",
+    "g11vis_r1.comp": "1aff37b838c8b58880b2b98a3ae5233a9f3e1660f424312a970e26c6f6b92b16"
+  },
+  "staticComputeCompile": {
+    "tool": ".codex/local-test/g13-glslang/bin/glslang.exe -S comp",
+    "R1": {
+      "exit": 0,
+      "source": ".codex\\local-test\\t639-receipt-build\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\g11_assets\\g11vis_r1.comp",
+      "sha256": "1aff37b838c8b58880b2b98a3ae5233a9f3e1660f424312a970e26c6f6b92b16"
+    },
+    "DM": {
+      "exit": 0,
+      "source": ".codex\\local-test\\t639-receipt-build\\entry\\.cxx\\default\\default\\debug\\arm64-v8a\\g11_assets\\g11vis_dm.comp",
+      "sha256": "1a73bfa8f70f48a975bfaf1f20fee70aadc51a1a37cae57e69a1706e62317f31"
+    }
+  },
+  "blockers": [
+    {
+      "id": "ACTUAL_VISUAL_SEED_DOMAIN",
+      "originalComment": "6afeba20e4b0e5384a544ca3",
+      "required": "architect freeze canonical raw span/order/header inclusion and initialization->hash/cold witness handoff before first claim. No recipe/physical hash/zero substitute.",
+      "evidence": [
+        {
+          "path": "entry/src/main/cpp/gpu_resident/acceptance_t647/contract.cpp",
+          "line": 23
+        },
+        {
+          "path": "docs/architecture-T563-g11-manifest-v1.json",
+          "jsonPath": "identity.actualVisualSeedSHA"
+        }
+      ]
+    },
+    {
+      "id": "P_CAPTURE_GHOST_MASS",
+      "originalComment": "6afebd90e4b0dc337eac0d2e",
+      "required": "architect freeze persistent marker union or revised dictionary/budget for captured old P mass, independently checked in ACTUAL/REPLAY.",
+      "evidence": [
+        "marker32[10] current F massSnapshot vs glyph8[6] old P mass; slot reuse and zero-time SOURCE survive event/plan overwrite; marker[30] reserved zero; Pstyle has no mass field."
+      ]
+    }
+  ],
+  "remaining": [
+    "Native producer active identity/Expected224 upload/native mapped proof integration",
+    "Independent G11 owner/NAPI/page and real session/clock",
+    "Atomic physical+VIS publication and joint scene lease/fence/token",
+    "Canonical cold raw seed SHA capture",
+    "P->F ghost span256, complete glyph/index/style audit and accepted publication",
+    "Parent ROOT/FULL+7 VIS raw cold broker/witness/reader"
+  ],
+  "notMeasured": [
+    "GPU physics/visual correctness",
+    "runtime cost/resource/deadline",
+    "ON/OFF equivalence",
+    "nonempty complete presented frame"
+  ]
+}

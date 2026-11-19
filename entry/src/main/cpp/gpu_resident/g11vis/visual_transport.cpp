@@ -49,44 +49,14 @@ VisualTransport::Result VisualTransport::QueryComputeCaps(const g9spf::ProfileRe
  out->computeEligible=true;return Result::OK;
 }
 VisualTransport::Result VisualTransport::Create(uint32_t parentKind,uint32_t k,uint32_t v,const g9spf::Config& config,const g9spf::ControlIdentity& id,const g9spf::SeedFileIdentity& seed){
- if(parentKind!=0)return Result::UNSUPPORTED; // DM requires its real typed adapter, never R1 fallback.
- if(ready_||busy_||!config.Valid()||config.parameterSha!=g9spf::ParameterHash(config)||!id.run||!id.owner||!id.context)return Result::CALIBRATION_CONFIG_REQUIRED;
- const auto* parent=g9spf::SelectProfile(config.k);if(!parent)return Result::UNSUPPORTED;
- const auto* visual=SelectVisual(parentKind,config.k,v);if(!visual)return Result::UNSUPPORTED;
- context_=eglGetCurrentContext();display_=eglGetCurrentDisplay();surface_=eglGetCurrentSurface(EGL_DRAW);thread_=std::this_thread::get_id();if(!Current())return Result::CONTEXT_LOST;
- GLint bindings=0,blocks=0,shared=0,lanes=0;GLint64 maximum=0;
- glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS,&bindings);glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS,&blocks);glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE,&shared);glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS,&lanes);glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE,&maximum);
- if(!Good()||bindings<4||blocks<4||shared<4096||lanes<64||maximum<=0||uint64_t(maximum)<std::max(parent->arenaBytes,std::max(parent->stateBytes,visual->workBytes)))return Result::UNSUPPORTED;
- GLenum error=0;const char* source=parentKind==1?PipelineSourceDm():PipelineSourceR1();const char* hash=parentKind==1?PipelineSourceHashDm():PipelineSourceHashR1();
- if(!programcache::Build(1,source,hash,PipelineAbi(parentKind),program_.id,error)||!programcache::Reflect(program_.uniforms,program_.id)){if(error&&!firstGl_)firstGl_=error;Release(true);return Result::SHADER_FAILED;}
- parentProfile_=parent;visual_=visual;parentKind_=parentKind;config_=config;identity_=id;
- glGenBuffers(GLsizei(buffers_.size()),buffers_.data());
- for(size_t i=0;i<buffers_.size();++i){size_t bytes=i<5?parent->stateBytes:(i==5?visual->workBytes:parent->arenaBytes);glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(bytes),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return Result::GL_FAILED;}}
- // Cold raw seed upload (input file, not host simulation); the GPU audits.
- std::vector<uint32_t> state;
- if(seed.state.empty())state.resize(parent->stateBytes/4);
- else{if(seed.state.size()!=parent->stateBytes/4||seed.sha!=g9spf::HashWords(seed.state.data(),seed.state.size())){Release(true);return Result::INVALID;}state=seed.state;}
- config_.seedSha=seed.state.empty()?g9spf::HashWords(state.data(),state.size()):seed.sha;
- auto put=[&](size_t at,uint64_t n){g9spf::Put(state.data(),at,n);};
- state[0]=g9spf::kStateMagic;state[1]=1;state[2]=parentKind==1?0u:g9spf::kProfileCode;put(4,id.run);put(6,id.owner);put(8,id.context);put(10,0);put(12,0);put(14,id.inputEpoch);put(16,0);
- if(seed.state.empty())state[18]=1;
- state[20]=0;state[21]=config.g;state[22]=0;state[23]=config.g;state[24]=config.k;state[25]=128;state[26]=state[27]=64;
- for(size_t i=0;i<8;++i)state[42+i]=config.parameterSha[i];
- state[98]=config.muStart;state[99]=config.muStop;state[100]=config.band;state[101]=config.entrainRate;state[102]=config.shear;state[103]=config.settleTicks;
- for(size_t i=0;i<5;++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferSubData(GL_SHADER_STORAGE_BUFFER,0,GLsizeiptr(parent->stateBytes),state.data());}
- // Visual WORK control segment init: bank headers for the three banks.
- std::vector<uint32_t> control(visual->visual[kSegControl]/4+16384,0);
- for(uint32_t bank=0;bank<3;++bank){size_t at=visual->visual[kSegControl]/4+bank*128;control[at+0]=kBankHeaderMagic;control[at+1]=kConfigRevision;control[at+2]=parentKind==1?kCompositeDmCode:kCompositeR1Code;control[at+3]=g9spf::kProfileCode;control[at+4]=config.k;control[at+5]=v;control[at+127]=kBankHeaderSeal;}
- glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[5]);glBufferSubData(GL_SHADER_STORAGE_BUFFER,GLintptr(visual_->visual[kSegControl]),GLsizeiptr(65536),control.data()+visual->visual[kSegControl]/4);
- if(!Good()){Release(true);return Result::GL_FAILED;}
- // Read-only warmup: ROOT_INIT writes only private WORK controls.
- glUseProgram(program_.id);g9spf::Input128 warm{};Common(warm);
- U("uOp",parentKind==1?12u:0u);U("uPass",0u);
- const auto begin=Now();glDispatchCompute(1,1,1);glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);glFinish();const auto end=Now();const auto errorWarm=glGetError();
- programcache::Warmup(program_.id,begin,end,errorWarm);
- if(errorWarm||programcache::Prepared(program_.id)!=GL_NO_ERROR||!Good()){if(errorWarm&&!firstGl_)firstGl_=errorWarm;Release(true);return Result::GL_FAILED;}
- current_=0;ready_=true;return Result::OK;
+ // The legacy R1-only entry cannot mint T647's private active identity.
+ // ParentAdapter and CompositeGate now compile against both real parents, but
+ // actualVisualSeed's canonical raw span/cold handoff is not frozen yet.
+ // Do not report READY or submit a root with a zero/substituted seed identity.
+ (void)parentKind;(void)k;(void)v;(void)config;(void)id;(void)seed;
+ return Result::CALIBRATION_CONFIG_REQUIRED;
 }
+
 void VisualTransport::Common(const g9spf::Input128& input){
  const auto& p=*parentProfile_;const auto& vis=*visual_;
  U("uK",p.k);U("uStateWords",uint32_t(p.stateBytes/4));U("uColumn",uint32_t(p.state[3].begin/4));U("uBed",uint32_t(p.state[4].begin/4));U("uFlow",uint32_t(p.state[5].begin/4));U("uPacket",uint32_t(p.state[6].begin/4));U("uSources",uint32_t(p.state[7].begin/4));
@@ -105,7 +75,7 @@ void VisualTransport::Common(const g9spf::Input128& input){
  U("uEventCapacity",p.eventCapacity);U("uPathCapacity",p.pathCapacity);U("uPathWord",p.eventCapacity*64);
  const auto angle=int32_t(input[24]);I("uAcceptedAngle",angle);const auto at=size_t(angle+7680)*4;I("uAngleSin",int32_t(kAngleWords[at+1]));I("uAngleCos",int32_t(kAngleWords[at+2]));
 }
-VisualTransport::Result VisualTransport::Begin(const CompositePermit& p,const g9spf::Input128& input,g9spf::PermitCheck check,void* user){
+VisualTransport::Result VisualTransport::Begin(const LegacyCompositePermit& p,const g9spf::Input128& input,g9spf::PermitCheck check,void* user){
  if(!ready_||busy_||!Current())return Result::WOULD_BLOCK;
  if(!check||p.visualGeneration==UINT64_MAX||p.parent.quanta>UINT64_MAX/32-1)return Result::INVALID;
  if(p.parent.baseBank!=current_||p.parent.candidateBank>=5||p.parent.baseBank==p.parent.candidateBank||p.parent.kind<1||p.parent.kind>2||int32_t(input[24])<-7680||int32_t(input[24])>7680)return Result::INVALID;
@@ -158,13 +128,14 @@ VisualTransport::Result VisualTransport::Pump(){
  tail_.visAuditBits=tail_.words[42]&((1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph));
  return Result::OK;
 }
-bool VisualTransport::Commit(const CompositePermit& p,const CompositeCompletion& w){
+bool VisualTransport::Commit(const LegacyCompositePermit& p,const CompositeCompletion& w){
  if((w.visAuditBits&((1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph)))!=((1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph)))return false;
  if(!busy_||!mapped_||!(p==permit_)||w.words!=tail_.words||w.visAuditBits!=tail_.visAuditBits||w.words[6]<1||w.words[6]>3||!Current()||Now()>p.parent.deadline)return false;
- // T639: awaiting formal parent composite typed proof; no bank can switch.
+ // T648 provides the parent proof API. This legacy raw entry cannot bind
+ // a native frozen Expected or privately validated composite proof; never switch.
  return false;
 }
-bool VisualTransport::RetireRejected(const CompositePermit& p){
+bool VisualTransport::RetireRejected(const LegacyCompositePermit& p){
  if(!busy_)return true;if(!(p==permit_)||!Current())return false;
  if(!mapped_){if(!fence_){fence_=glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE,0);glFlush();return false;}const auto result=glClientWaitSync(fence_,0,0);if(result!=GL_ALREADY_SIGNALED&&result!=GL_CONDITION_SATISFIED)return false;glDeleteSync(fence_);fence_=nullptr;}
  busy_=mapped_=false;return Good();

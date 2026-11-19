@@ -6,18 +6,36 @@
 // T563 dispatch JSONs. Never modifies the parent files on disk.
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const ROOT = path.resolve(__dirname, '..');
+require('node:child_process').execFileSync(process.execPath,[path.join(ROOT,'tools/g11/generate_contract.cjs'),'--check']);
 const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'docs/architecture-T563-g11-manifest-v1.json'),'utf8'));
 for(const receipt of [...manifest.inputs,manifest.visualSeedRecipe]){const raw=fs.readFileSync(path.join(ROOT,receipt.path));if(raw.length!==receipt.bytes||crypto.createHash('sha256').update(raw).digest('hex')!==receipt.sha256)throw Error('G11_APPROVED_INPUT_MISMATCH '+receipt.path);}
 
-const VIS = fs.readFileSync(path.join(ROOT, 'entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl'), 'utf8').replace(/\r\n/g, '\n');
+let VIS = fs.readFileSync(path.join(ROOT, 'entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl'), 'utf8').replace(/\r\n/g, '\n');
 
+for(const name of ['material_plan.glsl','marker_map.glsl']) VIS=VIS.replace('/* g11vis/'+name+' */',fs.readFileSync(path.join(ROOT,'entry/src/main/cpp/gpu_resident/g11vis',name),'utf8').replace(/\r\n/g,'\n'));
+function exact(src,anchor,replacement){if(src.split(anchor).length!==2)throw Error('G11_WRITER_ANCHOR '+anchor.slice(0,80));return src.replace(anchor,replacement);}
 function parentSource(which) {
   const file = which === 'dm' ? 'g9dm/pipeline.comp' : 'g9spf/pipeline.comp';
   let src = fs.readFileSync(path.join(ROOT, 'entry/src/main/cpp/gpu_resident', file), 'utf8').replace(/\r\n/g, '\n');
-  src=src.replace('uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,','uniform uint uRootKind,uRequiredAudits;\nuniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,');
+  if(which==='r1') src=exact(src,'uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,','uniform uint uRootKind,uRequiredAudits;\nuniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,');
   src=src.replaceAll('uRequiredPasses==12u','uRootKind==1u').replaceAll('uRequiredPasses==2024u','uRootKind==2u').replaceAll('uRequiredPasses==2404u','uRootKind==2u');
   src=src.replace('void g9Completion(){','void g9Completion(){\n if((g9Ctl(17u)&uRequiredAudits)!=uRequiredAudits)g9Fault(30u,0u,uRequiredAudits);');
   if(/uRequiredPasses\s*==\s*(12|2024|2404)u/.test(src))throw Error('G11_IMPLICIT_ROOT_KIND_REMAINS');
+  // Observe only successful real writers; discovery has no pending PlanHeader.
+  const prototypes='bool g11TapCut(uint,uint,uint);\nbool g11TapDonor(uint,uint,uint,uint);\nbool g11TapDeposit(uint,uint,uint,uint,uint);\nbool g11TapPacketEvent(uint,uint[64]);\nvoid g11CancelTouchColumn(uint);\nvoid g11CompletionExtension();\n';
+  src=exact(src,'bool g9WriteEvent(uint at,uint row[64]){',prototypes+'bool g9WriteEvent(uint at,uint row[64]){');
+  const eventBegin=src.indexOf('bool g9WriteEvent('),eventEnd=src.indexOf('\nbool g9Seal()',eventBegin);
+  if(eventEnd<0)throw Error('G11_EVENT_END');
+  const event=src.slice(eventBegin,eventEnd);if(event.split('return true;').length!==3)throw Error('G11_EVENT_SUCCESS_COUNT');
+  src=src.slice(0,eventBegin)+event.replaceAll('return true;','return g11TapPacketEvent(at,row);')+src.slice(eventEnd);
+  src=exact(src,'if(!g9MapTake(false,c,rank,amount)||!g9MapAdd(true,c,key,amount))return false;left-=amount;',
+    'if(!g9MapTake(false,c,rank,amount)||!g9MapAdd(true,c,key,amount))return false;if(!g11TapCut(c,rank,amount))return false;left-=amount;');
+  src=exact(src,'if(!g9MapAdd(false,c,g9Key(true,c,i),C[at+3u]))return false;',
+    'if(!g9MapAdd(false,c,g9Key(true,c,i),C[at+3u]))return false;uint nr=g9MapCount(false,c)-1u;if(!g11TapDeposit(c,i,nr,C[at+3u],C[g9MapAddress(false,c,nr)+3u]-C[at+3u]))return false;');
+  src=exact(src,'if(!g9ProvisionalAdd(receiver,uvec3(W[at],W[at+1u],W[at+2u]),share)){g9Reject(11u,receiver,i);return false;}W[at+3u]-=share;',
+    'if(!g9ProvisionalAdd(receiver,uvec3(W[at],W[at+1u],W[at+2u]),share)){g9Reject(11u,receiver,i);return false;}if(!g11TapDonor(donor,side,i,share))return false;W[at+3u]-=share;');
+  src=exact(src,'void g9RestoreTouchColumn(uint c){','void g9RestoreTouchColumn(uint c){g11CancelTouchColumn(c);');
+  src=exact(src,'memoryBarrierBuffer();W[uCompletion+3u]=G9_SEAL;','g11CompletionExtension();');
   // The visual stage needs the parent helpers (g9Fault etc.); inject right
   // before void g9Run() so all helpers are declared. The stage's own VIS ops
   // hook into the dispatch after this mark.
@@ -53,6 +71,7 @@ function build(which) {
   const runBody = ' uint lane=gl_LocalInvocationIndex;\n';
   if (!src.includes(runBody)) throw Error('G11_RUN_BODY_ANCHOR');
   const visArm = runBody +
+    ' if(uOp==G11_COLD_INIT){g11ColdInitialize();return;}\n' +
     ' // T639: VIS rows advance the same actual pass counter before uniform gates.\n' +
     ' if(uOp>=512u&&uOp<=516u){if(lane==0u){if(g9Ctl(16u)!=uPass)g9Fault(25u,0u,uPass);g9Set(16u,g9Ctl(16u)+1u);}memoryBarrierBuffer();barrier();uJ=(uRole==2u||uRole==4u)?g9Ctl(11u):uJslot;if(g9Ctl(0u)!=0u)return;if(uOp==513u||uOp==514u){if(uRootKind==2u&&((uRole!=2u&&uRole!=4u)||!g9ScopeEnabled()||(uMicro!=0xffffffffu&&(uMicro>=uJ||g9Ctl(14u)!=0u))))return;}}\n' +
     ' if(uOp==G11_OP_VIS_ROOT_COPY){if(!visRootCopy())return;return;}\n' +
@@ -117,7 +136,7 @@ function emit() {
   }
   fs.writeFileSync(path.join(outDir, 'g11vis_pipeline.h'), header);
   for(const which of ['r1','dm']){fs.writeFileSync(path.join(outDir,'g11vis_'+which+'.comp'),build(which).src);}
-  const inputs=['entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json','docs/architecture-T563-g11-manifest-v1.json','entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h','test/t566_generate_composite.cjs',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path];
+  const inputs=['entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl','entry/src/main/cpp/gpu_resident/g11vis/material_plan.glsl','entry/src/main/cpp/gpu_resident/g11vis/marker_map.glsl','tools/g11/generate_contract.cjs','docs/architecture-T552-g9-seed-manifest-v2.json','entry/src/main/cpp/gpu_resident/g11vis/parent_seed_generated.h','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json','docs/architecture-T563-g11-manifest-v1.json','entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h','test/t566_generate_composite.cjs',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path];
   fs.writeFileSync(path.join(outDir,'g11vis_dependencies.cmake'),'set(G11_INPUTS\n'+[...new Set(inputs)].map(p=>'\"'+path.join(ROOT,p).replaceAll('\\','/')+'\"').join('\n')+'\n)\n');
   fs.writeFileSync(path.join(outDir,'g11vis_inputs.json'),JSON.stringify(Object.fromEntries(inputs.map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex')])),null,2));
   console.log('written: ' + path.join(outDir, 'g11vis_pipeline.h'));
