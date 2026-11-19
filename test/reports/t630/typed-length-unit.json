@@ -1,0 +1,48 @@
+{
+ "revision": "T630_TYPED_LENGTH_UNIT_V1",
+ "date": "2026-11-19",
+ "device": "011124264R000337",
+ "package": "T630-probe3/4-signed.hap (tester probe page, real grsm1 binding)",
+ "probe": {
+  "page": "T630Probe.ets (tester facility; routes via --ps t630probe true)",
+  "binding": "native.m3Configure / native.g9ResearchConfig64 from libgrsm1.so (REAL production bindings)"
+ },
+ "measurements": [
+  {
+   "input": "Uint8Array(64)",
+   "elements": 64,
+   "bytes": 64,
+   "stage": "ELEMENT_TYPE",
+   "note": "kind!=uint32 rejected before length check"
+  },
+  {
+   "input": "Uint16Array(32)",
+   "elements": 32,
+   "bytes": 64,
+   "stage": "ELEMENT_TYPE",
+   "note": "kind!=uint32"
+  },
+  {
+   "input": "Uint32Array(16)",
+   "elements": 16,
+   "bytes": 64,
+   "stage": "ELEMENT_COUNT",
+   "expectedIfElements": "PASS (16==16)",
+   "observed": "REJECTED -> length!=16, consistent with BYTES (raw=64)"
+  },
+  {
+   "input": "Uint32Array(64)",
+   "elements": 64,
+   "bytes": 256,
+   "stage": "ELEMENT_COUNT",
+   "note": "reject under both units, weaker signal; decisive pair is u32(16)"
+  }
+ ],
+ "conclusion": {
+  "lengthUnit": "BYTES (for this packaged provider)",
+  "decisive": "Uint32Array(16) rejected at ELEMENT_COUNT \u2014 impossible under ELEMENTS (raw would be 16==N), only possible under BYTES (raw=64!=16)",
+  "crossCheck": "T590 v1 recorded native elementLength=64 for ArkTS Uint32Array(16) \u2014 matches BYTES exactly"
+ },
+ "productFix": "T629 profile lengthUnit=BYTES with checked /4 normalization (per architecture-T621-v1.md)",
+ "gaps": "Float32Array opticsConfig path not exercised (M1 page never sent optics in prior rounds); Sendable cross-domain not probed; elementKind numeric value not surfaced in outer reply (inner snapshot only)"
+}
