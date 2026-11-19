@@ -1,0 +1,69 @@
+{
+  "schema": "T680_ARCHITECT_DELIVERY_RECEIPT_V1",
+  "commit": "8623ea52343b9a2dd4fdfd4bf628c3e25b0717c8",
+  "files": [
+    {
+      "path": "docs/architecture-T680-v1.md",
+      "bytes": 17819,
+      "sha256": "efdd2abe95c9fa2cb316197e7f3e2bc209bc49401162203c2e3a7f4559ebd04a"
+    },
+    {
+      "path": "docs/architecture-T680-contract-v1.json",
+      "bytes": 9571,
+      "sha256": "c5109b7fcb2cbc13d24619fa0275f1f213918c70b1918b56c34e984b8b2ad4d0"
+    },
+    {
+      "path": "docs/analysis-T680-evidence-v1.json",
+      "bytes": 20297,
+      "sha256": "9559aa24adce9f46225a470fdecab07b6bb17d7542c4d57cb422f6513743baf3"
+    },
+    {
+      "path": "docs/receipt-T680-original-v1.json",
+      "bytes": 9647,
+      "sha256": "b27e6ce56d77dbe5a761ea25d5ae33a53148f61cc8ec44e001f5270b9d58b964"
+    },
+    {
+      "path": "tools/architecture/analyze_t680.py",
+      "bytes": 10670,
+      "sha256": "d4e655f28cf1d0c51bf843e118fd6ca5d01c442eb35a09f0b431297ddda08a6d"
+    }
+  ],
+  "originalCard": "https://dida365.com/webapp/#p/6ac8a7e3e9adb60000000419/tasks/6afee921e4b0097f44e213e4",
+  "completionComment": {
+    "id": "6afeecc3e4b0e380f8bd7f95",
+    "userId": 1010673194,
+    "title": "T680 architect归因交付，commit 8623ea52。docs/architecture-T680-v1.md、contract及analysis；原件SHA/十项actual-expected/13处真实源码检查完成，不使用真机、构建或产品测试。\n纠正v3b：9/7是真实UI geometry与ArkTS preparation.packet.geometry差，不是native回传ack；十项仅geometry不等，但PREPARING-18为DISMISSING、owner=null、无FRAME/FAILED；input仍focused、keyboardConfiguration=UNKNOWN、snapshot高度1099、firstDraw=0/layoutAck=0，不能当唯一失败首因。FAILED-25为KEYBOARD_VISIBILITY_UNKNOWN且detailTruncated=true，authority整体丢失；同短ID/window/时间相容不足证同attempt，亦不能证另次，不拼旧geometry11 JPEG。\n已证工程缺口：V4 report超14336B摘要丢弃配对身份/快照。文档第四节给developer最小既有冷导出pairingEvidence摘要/真源模板接线边界，保原错与14/16KiB上限、无状态副作用；不是猜修ack/geometry，不新增日志线程/协议。\nT671继续离线解析签包；T592 effector先取已有原名WS_EVENT/hash同scope完整档，截断档不可恢复则用有界摘要产物再精确续证。geometry-only不入change-key，不强写旧packet新geometry/延3000ms/放宽READY。HOLD/严格PNG仍未达。本卡范围完成，状态结束待验收；无manager/设备开发关闭新门。",
+    "modifiedTime": "2026-11-19T12:34:11+0000",
+    "createdTime": "2026-11-19T12:34:11+0000",
+    "replyCommentId": null,
+    "replyUserId": null
+  },
+  "commentReadbackMatched": true,
+  "queue": {
+    "path": "docs\\后续工作清单.md",
+    "task": "T680",
+    "from": "进行中",
+    "to": "结束待验收",
+    "onlyOwnStatusChanged": true,
+    "beforeSha256": "332e010d00e2628395226f7d9cbbd7dfb2318dab0fb622a8571dcf17d2338035",
+    "afterSha256": "f3d69524d1f0f5e5732104954381ce836e6f227b277aa5b3ce42df9e3ec634b3",
+    "beforeRow": "| T680 | 【T680·单沙raster与native几何代际配对续归因】architect | architect | P4 | 进行中 | 6afee921e4b0097f44e213e4 |",
+    "afterRow": "| T680 | 【T680·单沙raster与native几何代际配对续归因】architect | architect | P4 | 结束待验收 | 6afee921e4b0097f44e213e4 |",
+    "queueStaged": false,
+    "sameNameDidaListUpdated": false
+  },
+  "checks": {
+    "savedJsonAndRawByteSha": "OK",
+    "nativeActualExpectedComparisons": 10,
+    "satisfied": 9,
+    "sourceAnchors": 13,
+    "actualSourceMatchesPriorFiles": 5,
+    "contractConsistency": "OK",
+    "stagedWhitespace": "OK",
+    "deviceUsed": false,
+    "buildRun": false,
+    "productOrTestsRun": false,
+    "productCodeChanged": false
+  },
+  "outcome": "ARCHITECT_SCOPE_DELIVERED; PRODUCT_ACK_ROOT_CAUSE_NOT_PROVEN; COLD_DIAGNOSTIC_GAP_ENGINEERING_CONTRACT_READY; HOLD_STRICT_PNG_NOT_PASS"
+}
