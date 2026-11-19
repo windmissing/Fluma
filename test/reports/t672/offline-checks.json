@@ -1,0 +1,15 @@
+{
+  "device": "NOT_RUN",
+  "checks": [
+    {
+      "argv": [
+        "python",
+        "test/t672/analyze.py",
+        "--selftest"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"result\": \"PASS\", \"cases\": [\"wide ticket exact\", \"four complete pages\", \"anchor mismatch\", \"invalid base64\"], \"device\": \"NOT_RUN\"}\r\n",
+      "stderr": ""
+    }
+  ]
+}
