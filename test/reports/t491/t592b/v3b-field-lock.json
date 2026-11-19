@@ -1,0 +1,32 @@
+{
+ "revision": "T592_V3B_COLD_EXPORT_FIELD_LOCK_V1",
+ "date": "2026-11-19",
+ "artifact": "t540-prepare-s1795089517841-1-1-1-PREPARING-18.json (T659_PREPARE_OWNER_VALUE_V1, prepareId=1, observationSerial=18)",
+ "exactMismatch": {
+  "raster.geometry": 9,
+  "raster.native.geometry": 7,
+  "snapshot.nativeGeometry": 7,
+  "native": {
+   "controller": 1,
+   "session": 1,
+   "surface": 2,
+   "context": 1,
+   "run": "p011-run-1795089517855-3",
+   "packetW": 1154,
+   "packetH": 1644
+  },
+  "delta": "UI raster plan advanced to generation 9; native confirmed only generation 7 \u2014 native lags 2 generations"
+ },
+ "otherFields": {
+  "rasterW": 1154,
+  "rasterH": 1644,
+  "vp2px": 3.5,
+  "keyboardHeight": 1099,
+  "nativeReady": true,
+  "valid": true,
+  "didLayoutSerial": 301,
+  "requestedAtLayout": 300
+ },
+ "interpretation": "NOT protocol-name vs generation mismatch (T664 already rejected that read); exact failing pair = raster.geometry(9) vs raster.native.geometry(7) \u2014 native ack lag",
+ "route": "architect: native geometry acknowledgement lag (9 vs 7) \u2014 developer/native-side ack path or publishRaster advance policy per T664 caution (geometry-only feedback avoidance)"
+}

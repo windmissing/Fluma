@@ -30,3 +30,24 @@ signed 包）。
 
 T659 developer 交付验证通过（本报告即验收输入）；T592 续测脚本就绪——
 raster-native 配对修复落地后完整 HOLD/严格 PNG 序列即续。
+
+
+## v3b 追加（2026-11-19 19:57，冷导出精确字段锁定）
+
+按 T664 handoff 要求取得**同 attempt FAILED prepare 冷导出原件**：
+`t540-prepare-s1795089517841-1-1-1-PREPARING-18.json`（T659_PREPARE_OWNER_VALUE_V1，
+prepareId=1，observationSerial=18）+ FAILED-25.json（reason=
+PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN——另一次运行的拒因，键盘可见性
+判定域）。
+
+**精确失配字段锁定**（v3b-field-lock.json）：
+- `raster.geometry=9` vs `raster.native.geometry=7`（snapshot.nativeGeometry=7）
+- **native 侧几何确认落后 UI raster plan 2 个 generation**（9 vs 7）
+- 其余域全部一致：rasterW/H=1154/1644、vp2px=3.5、nativeReady=true、
+  didLayoutSerial=301>requestedAtLayout=300（布局门槛满足）
+- 证实 T664 判定：非协议名 vs generation 误读；真实谓词失配对=
+  **native geometry ack 滞后**
+
+回 architect：native 侧 geometry ack 路径（9→7 滞后）为精确工程域；按 T664
+警示不盲目改 publishRaster 推进策略（geometry-only 反馈回避），由
+architect→developer 精确分流。
