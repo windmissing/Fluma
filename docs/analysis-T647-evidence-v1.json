@@ -97,6 +97,11 @@
       "path": "docs/architecture-T641-runtime-v1.json",
       "bytes": 26713,
       "sha256": "90887a30bfc035caa25a3dec627c31a21796e123daf5b2dca66a5e721fe0d3e1"
+    },
+    {
+      "path": "docs/design-T515-three-state-manifest-v1.json",
+      "bytes": 48678,
+      "sha256": "bc8b258eb8199e08a9d6d1ecaef32ef7f3444bb4210f58a0a8eb52194abc22ff"
     }
   ],
   "blockerSourceAgreement": [
@@ -198,6 +203,14 @@
         {
           "line": 1417,
           "text": "  uvec4 pEnd=g9ReadWide(uColumnStage+c*64u+52u);"
+        },
+        {
+          "line": 1422,
+          "text": "  if(f==0u&&!g9Zero(mid)){g9Reject(28u,c,c);return false;}"
+        },
+        {
+          "line": 1426,
+          "text": "  if(g9UCmp(g9Magnitude(mid),bound)>0){g9Reject(28u,c,c);return false;}"
         },
         {
           "line": 1427,

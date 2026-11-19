@@ -50,6 +50,8 @@ def build():
  assert sorted(i for f in expected for i in range(f['start'],f['start']+f['words']))==list(range(224))
  table=dict(schema='T647_TYPED_ACCEPTANCE_CONTRACT_V1',date='2026-11-19',deviceUsed=False,productTestsRun=False,productImplemented=False,
   rows=rows,rootKind='SOURCE1/QUANTUM2 explicit; never inferred from pass count',factory='native trusted pipeline identity + generated table + active immutable permit; no caller arbitrary counts/masks',
+  canonicalReasons=get('docs/design-T515-three-state-manifest-v1.json')['enums']['reason'],blockedReasons=list(range(1,19)),
+  midpointRejects=dict(emptyFNonzeroP=7,velocityOrS64Domain=6,midpointWaveCFL=5,wideArithmeticOverflow=29,pathBoundIsHard28=True),
   CommonFields='T524 completion words0..155 exact semantic predicates plus new family identity; no normalization of count/mask/revision/profile',
   defaultReservedZero=[156,256],compositeExtension=fields,compositeReservedZero=[240,256],
   FrozenExpected224=expected,expectedMagic=magic('GREX'),expectedRevision=1,expectedWords=224,expectedBytes=896,
@@ -74,7 +76,7 @@ def build():
   'docs/architecture-T563-g11-manifest-v1.json','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json',
   'entry/src/main/cpp/gpu_resident/g9dm/transport.cpp','entry/src/main/cpp/gpu_resident/g9dm/completion_gate.cpp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/research_config.h',
   'entry/src/main/cpp/gpu_resident/g9spf/completion_gate.cpp','entry/src/main/cpp/gpu_resident/g11vis/visual_transport.cpp','entry/src/main/cpp/gpu_resident/g11vis/visual_transport.h',
-  'docs/architecture-T634-composite-closure-v1.json','docs/architecture-T641-runtime-v1.json']
+  'docs/architecture-T634-composite-closure-v1.json','docs/architecture-T641-runtime-v1.json','docs/design-T515-three-state-manifest-v1.json']
  saved=get('test/reports/t639/blocker-evidence.json')['sources'];agreement=[]
  for p,sourceReceipt in saved.items():agreement.append(dict(path=p,sameAsT639=fp(p)['sha256']==sourceReceipt['sha256']))
  assert all(x['sameAsT639'] for x in agreement)
@@ -87,7 +89,7 @@ def build():
   expectedScopes=discovery|(rejected<<7)|(1<<6)|(1<<13)
   assert expectedScopes.bit_count()==2*selected+3
  sources=[]
- needles=['?12:2024','?12:2404','uRequiredPasses==2024u','g9Set(17u,65535u)','uColumnStage+c*64u+52u','uColumnStage+c*64u+56u','uint dmWord','C[uConfig+','awaiting formal parent','P("uVisTicks"']
+ needles=['?12:2024','?12:2404','uRequiredPasses==2024u','g9Set(17u,65535u)','uColumnStage+c*64u+52u','uColumnStage+c*64u+56u','uint dmWord','C[uConfig+','awaiting formal parent','P("uVisTicks"','g9Reject(28u']
  for p in inputs[8:]:
   lines=(R/p).read_text(encoding='utf-8-sig').splitlines();matches=[dict(line=i+1,text=s) for i,s in enumerate(lines) if any(n in s for n in needles)]
   if matches:sources.append(dict(path=p,matches=matches))

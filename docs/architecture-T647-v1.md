@@ -42,6 +42,8 @@ bit17按真实post-FOLD私有预测链核：pTrial0含一次原HR/床修正/gxδ
 
 根时间核不能只看某个计数：MICRO_AUDIT对每个实际执行micro检查δ=1/(120J)、rest tick=32/J的实际更新/扰动规则，scope总δ=1/120；私有预测不加tick。根被接受QUANTUM只在candidate metadata增加acceptedQuanta一次；SOURCE不加。相同修正同时应用六J发现、authority、独立拒前缀、accepted replay，保全部质量/来源/动量/功/严格能量/CFL门。
 
+拒绝码仍用正式T515 enum，不能加宽Blocked范围吞硬错。当前dmMidpoint把中点F0非零/速度越界写`g9Reject(28)`，而正式28是PATH_BOUND；应按真实谓词分别用7=NEGATIVE_OR_EMPTY_WITH_MOMENTUM、6=VELOCITY_DOMAIN、5=CFL，保持试验可细分语义；S64不可表示按设计速度域拒绝，S128算术溢出硬29=OVERFLOW。正式19..29协议/来源/replay/信用/path/算术错不能转正常BLOCKED4；30撤权/上下文失效按owner取消处理。Blocked proof只准正式1..18正常族且满足六试验拒前缀/无提交，不能为容纳错误28直接放宽gate。DM局部ORIGIN_WAIT/PARTIAL仍列级q0/部分准入，不提升为根BLOCKED或fault。机器表保存完整enum与中点映射，T639/T644共用。
+
 ### 有界审核闭合（无新 dispatch）
 
 在新DM工程revision显式登记已有RootAndStageControls的word120..127为机器表八字段；旧shader未用这些slot，容量和偏移不增、原completion reserved统计位仍零。ROOT_INIT清零并设protocolRevision1；scope进入与结束记录真实seen与certified16/17位，不靠mask常量初始为PASS。
