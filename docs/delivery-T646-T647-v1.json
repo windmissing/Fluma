@@ -1,0 +1,63 @@
+{
+  "schema": "T646_T647_ARCHITECT_DELIVERY_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "checks": "saved-source/evidence, formal table counts/masks/layouts and T641 consistency only",
+  "commits": [
+    "98188bb",
+    "28f5963",
+    "26a63f0"
+  ],
+  "status": "结束待验收",
+  "statusEvidence": "docs/analysis-T646-T647-status-v1.json",
+  "tasks": [
+    {
+      "task": "T646",
+      "taskId": "6afe6d21e4b0680b8cd5b9f7",
+      "engineeringCommit": "98188bb",
+      "result": "TEST_FACILITY_REPAIR_AND_PRECISE_EVIDENCE_FIRST",
+      "comments": [
+        {
+          "id": "6afe70a2e4b0e5384a4db9bb",
+          "title": "已开始 T646，architect，不使用真机。读取原报告/原件、正式合同与实际源码，完成本卡首次归因和必要工程修订/精确角色分流，不执行产品测试或签名部署；仅本人状态例外，不维护其它队列/滴答同名清单。要么完成当前范围与必要检查，要么遇确实无法继续的具体问题并完整回执才停止。"
+        },
+        {
+          "id": "6afe7479e4b0e5384a4e1069",
+          "title": "T646 architect完整归因已交，不使用真机。提交98188bb；正式稿docs/architecture-T646-v1.md，analysis-T646-evidence-v1.json及只读脚本。v6实际run t496-1218097213334300是默认D1_OFF，不是具名CREATE_ONLY；main该分支未初始化sink，本attempt无GL trace，最后ENTER/EXIT/program/role/等待链均UNKNOWN，旧v4c未返411不能拼接。ownerProgressSession实为progress.session不是心跳；captureCommittedEpoch0只证采样未发布，不证零分配。已核真实Create→scene→Resources→capture发布及现有BootProbe/Submit只读切点，现足够先由tester续办T496设施/精确等待证据，不泛派产品日志。合同含严格入口/attempt身份、runner ATTEMPTID及反向watchdog条件、双时钟域与真实guard/首pulse返回码、固定shadow程序/source/role、同attempt栈/ActivePhase/退出证据和总≤420s单臂窗口，不延长/不重跑三臂。D1D2/32cycle仍NOT_MEASURED；产品卡顿根因未定不冒PASS。本卡归因范围完成，无剩余阻断；只改本人行结束待验收，不维护其它队列/滴答同名清单。"
+        },
+        {
+          "id": "6afe74d1e4b0dc337ea57209",
+          "title": "T646最终补充26a63f0：GL sink当前将两次WallNs分别标wallNs/scriptNs，已在工程稿要求按真实producer/clock profile分名，非脚本臂标absent，避免采证再次混时域。其余结论与98188bb一致：先tester修设施采同attempt等待证据，未证明产品卡顿根因。"
+        }
+      ],
+      "originalCommentReadbackExact": true
+    },
+    {
+      "task": "T647",
+      "taskId": "6afe6d21e4b0680b8cd5b9f8",
+      "engineeringCommit": "28f5963",
+      "result": "ENGINEERING_DEFECT_CONFIRMED_CONTRACT_READY_FOR_DEVELOPER",
+      "comments": [
+        {
+          "id": "6afe70a2e4b0680b8cd61f88",
+          "title": "已开始 T647，architect，不使用真机。读取原报告/原件、正式合同与实际源码，完成本卡首次归因和必要工程修订/精确角色分流，不执行产品测试或签名部署；仅本人状态例外，不维护其它队列/滴答同名清单。要么完成当前范围与必要检查，要么遇确实无法继续的具体问题并完整回执才停止。"
+        },
+        {
+          "id": "6afe7479e4b0e5384a4e106a",
+          "title": "T647 architect完整工程修订已交，不使用真机。提交28f5963；docs/architecture-T647-v1.md、acceptance机器表、analysis-T647证据/脚本与retro已交，并同步T554/T563/T634/T641正式引用/必要机器表。确认DM真实12/2404却gate硬12/2024、quanta只判2024、mask65535；另核预测pEnd无writer/中点未消费、参数错C buffer、DM48错占旧scratch、q+1审核缺口及组合32/256 tick混域。不能只宽松gate/CPU补PASS。已冻结五family×两root的显式kind/实际pass/审核mask/profile/tail版本，真实16/17 producer与拒前缀证书、完整DM配置/物理时间、受信Expected224/NativeEvidence→私有父proof→联合proof/原子commit、新组合尾156..239。新G11期望上传928B登记原control保留区，容量/dispatch/1024B读回/一fence不增，成本显式。保ede5891，T639按完整合同续实施；DM父默认修复可独立developer，原R1默认门不改。T644可同源生成正确DM专用validator，不等默认DM设备PASS。有限源码/布局/正式表检查PASS，未构建或运行产品/GPU/设备；物理与产品仍未验证。本人行结束待验收，无新manager/开发设备门。"
+        },
+        {
+          "id": "6afe74d1e4b004b3f8840961",
+          "title": "T647最终补充26a63f0：冻结正式T515拒绝enum，中点F0非零/速度域/CFL分别7/6/5，wide overflow硬29；当前dmMidpoint误用软拒28，而28正式是PATH_BOUND硬错，不能扩大Blocked范围吞掉。机器表保完整enum/1..18正常Blocked族与精确映射，T639/T644共用；未新增算法或降低门。"
+        }
+      ],
+      "originalCommentReadbackExact": true
+    }
+  ],
+  "otherQueueRowsChanged": false,
+  "didaSameNameListChanged": false,
+  "productPassClaimed": false
+}
