@@ -1,0 +1,248 @@
+{
+ "revision": "T652_INDEPENDENT_COUNTEREXAMPLE_BASE_V1",
+ "date": "2026-11-19",
+ "machineTableSHA": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+ "familyIndex": {
+  "R1_DEFAULT#rk1": {
+   "sourcePasses": 12,
+   "quantumPasses": null,
+   "requiredAudits": "0xffff",
+   "completionMagic": 826489159,
+   "tailRevision": 1,
+   "seal": 3235776769,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 0,
+   "visualTickDelta": 0,
+   "tailProfile": 826691667,
+   "physicalProfile": 826691667
+  },
+  "R1_DEFAULT#rk2": {
+   "sourcePasses": null,
+   "quantumPasses": 2024,
+   "requiredAudits": "0xffff",
+   "completionMagic": 826489159,
+   "tailRevision": 1,
+   "seal": 3235776769,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 1,
+   "visualTickDelta": 256,
+   "tailProfile": 826691667,
+   "physicalProfile": 826691667
+  },
+  "DM_DEFAULT#rk1": {
+   "sourcePasses": 12,
+   "quantumPasses": null,
+   "requiredAudits": "0xffff",
+   "completionMagic": 843269191,
+   "tailRevision": 2,
+   "seal": 3235776802,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 0,
+   "visualTickDelta": 0,
+   "tailProfile": 843924551,
+   "physicalProfile": 843924551
+  },
+  "DM_DEFAULT#rk2": {
+   "sourcePasses": null,
+   "quantumPasses": 2404,
+   "requiredAudits": "0x3ffff",
+   "completionMagic": 843269191,
+   "tailRevision": 2,
+   "seal": 3235776802,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 1,
+   "visualTickDelta": 256,
+   "tailProfile": 843924551,
+   "physicalProfile": 843924551
+  },
+  "G11_R1#rk1": {
+   "sourcePasses": 19,
+   "quantumPasses": null,
+   "requiredAudits": "0xcffff",
+   "completionMagic": 1127297351,
+   "tailRevision": 2,
+   "seal": 3235800177,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 0,
+   "visualTickDelta": 0,
+   "tailProfile": 1378955591,
+   "physicalProfile": 826691667
+  },
+  "G11_R1#rk2": {
+   "sourcePasses": null,
+   "quantumPasses": 2543,
+   "requiredAudits": "0xcffff",
+   "completionMagic": 1127297351,
+   "tailRevision": 2,
+   "seal": 3235800177,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 1,
+   "visualTickDelta": 256,
+   "tailProfile": 1378955591,
+   "physicalProfile": 826691667
+  },
+  "G11_DM#rk1": {
+   "sourcePasses": 19,
+   "quantumPasses": null,
+   "requiredAudits": "0xcffff",
+   "completionMagic": 1127297351,
+   "tailRevision": 2,
+   "seal": 3235800177,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 0,
+   "visualTickDelta": 0,
+   "tailProfile": 1144074567,
+   "physicalProfile": 843924551
+  },
+  "G11_DM#rk2": {
+   "sourcePasses": null,
+   "quantumPasses": 2923,
+   "requiredAudits": "0xfffff",
+   "completionMagic": 1127297351,
+   "tailRevision": 2,
+   "seal": 3235800177,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 1,
+   "visualTickDelta": 256,
+   "tailProfile": 1144074567,
+   "physicalProfile": 843924551
+  },
+  "G9_RX#rk1": {
+   "sourcePasses": 12,
+   "quantumPasses": null,
+   "requiredAudits": "0xffff",
+   "completionMagic": 843269191,
+   "tailRevision": 2,
+   "seal": 3235776802,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 0,
+   "visualTickDelta": 0,
+   "tailProfile": 827477575,
+   "physicalProfile": 827477575
+  },
+  "G9_RX#rk2": {
+   "sourcePasses": null,
+   "quantumPasses": 2404,
+   "requiredAudits": "0x3ffff",
+   "completionMagic": 843269191,
+   "tailRevision": 2,
+   "seal": 3235776802,
+   "words": 256,
+   "tailReadBytes": 1024,
+   "quantumDelta": 1,
+   "visualTickDelta": 256,
+   "tailProfile": 827477575,
+   "physicalProfile": 827477575
+  }
+ },
+ "counterexamples": [
+  {
+   "id": "N01",
+   "desc": "G11_R1 tail (magic 1127297351) presented to R1_DEFAULT reader (magic 826489159)",
+   "expect": "REJECT magic-mismatch",
+   "clause": "T647 §2 两组合尾是新组合身份；旧 reader 明确拒收",
+   "imageSHA": "29316beb924dfd5e4340cb64e3b4eb4cb19f3f90c9644af4775e5ae53428dbf6",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N02",
+   "desc": "SOURCE count 12 passed as QUANTUM for DM_DEFAULT (needs 2404)",
+   "expect": "REJECT count-mismatch (12!=2404)",
+   "clause": "T647 §2 kind 显式；count 校实际完整 dispatch",
+   "imageSHA": "12f6e456bda39812a35a0ceededc4cbd9a4068db7eeafe80019ee5698c9bf9b8",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N03",
+   "desc": "R1_DEFAULT tail with DM mask 0x3ffff (R1 keeps 0xffff)",
+   "expect": "REJECT mask-not-registered",
+   "clause": "T647 §2 R1 默认不放宽；未知 bits 拒绝",
+   "imageSHA": "57890a637ec3f51733e1db4f7f4818b109cefc142f22c12017cc5ceedbc0c945",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N04",
+   "desc": "DM_DEFAULT old identity rev1/0xffff fed to rev2 reader",
+   "expect": "REJECT rev/cache mismatch",
+   "clause": "T647 §2 旧错误 2024/rev1/0xffff 产物不能热续接为正确 DM",
+   "imageSHA": "e11f89a6ff8ff462af52430f71ca9e4e0833ee7816cb8670f23abba5e4dbd3dc",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N05",
+   "desc": "DM tail words 248..251 non-zero (reserved must be zero)",
+   "expect": "REJECT reserved-nonzero",
+   "clause": "T647 §5 240..255 零；保留零按表",
+   "imageSHA": "d9557fdb46e557958f5a964736e70bab14ca48fb1275546111f9b5064089ea8f",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N06",
+   "desc": "DM_DEFAULT tail carrying G11 156..239 extension (must be zero)",
+   "expect": "REJECT extension-in-non-G11",
+   "clause": "T647 §5 默认 DM2/RX 156..255 全零",
+   "imageSHA": "6fef2a239a62c478a83e93f50b18e5d70d9f8c682872c73ad8179cedd95aee22",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N07",
+   "desc": "midpoint F0 non-zero reported as BLOCKED(4) instead of 28=PATH_BOUND family split (7/6/5)",
+   "expect": "REJECT canonical-reason-widening",
+   "clause": "T647 §3 28=PATH_BOUND；按真实谓词 7/6/5 细分；不加宽 Blocked 吞硬错",
+   "imageSHA": "12f6e456bda39812a35a0ceededc4cbd9a4068db7eeafe80019ee5698c9bf9b8",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N08",
+   "desc": "composite visual ticks computed as quanta*32 (rest-tick unit) instead of *256",
+   "expect": "REJECT visual-unit-mix",
+   "clause": "T647 §5 acceptedTicks=checked(acceptedQuanta×256)",
+   "imageSHA": "d95af57a428a98af83bc6a7bfca5792335c5bddb707d01557f00d3a83ab219d2",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N09",
+   "desc": "SOURCE duplicate outcome2 carrying visualGeneration+1 / new commit",
+   "expect": "REJECT duplicate-source-mutation",
+   "clause": "T647 §5 SOURCE duplicate2 不加 commit/quanta/visualGeneration",
+   "imageSHA": "6158da28df2e48357e056b707ebfc79d6b65693f9709f69ab526c4ac8ef64448",
+   "imageBytes": 1024
+  },
+  {
+   "id": "N10",
+   "desc": "frozenExpectedSHA recomputed over blob containing itself",
+   "expect": "REJECT selfhash-cycle",
+   "clause": "T647 §5 frozenExpectedSHA 不含自身/尾字节",
+   "imageSHA": "28e523c59a32efd330bad27f8f545912ae2e822a4c774107769949622cd391ea",
+   "imageBytes": 262
+  }
+ ],
+ "positiveControls": [
+  {
+   "id": "P01",
+   "desc": "R1_DEFAULT SOURCE tail (12/0xffff/rev1/magic R1)",
+   "imageSHA": "92ba7d744ec783c9934f84bac84ebb02a446e2697a66a43e3127a543346818c6"
+  },
+  {
+   "id": "P02",
+   "desc": "DM_DEFAULT QUANTUM tail (2404/0x3ffff/rev2/DM2)",
+   "imageSHA": "6d336879acef2734203bb0af3c7d27fd146fd4ed0dd5658e65572ac4e622d574"
+  },
+  {
+   "id": "P03",
+   "desc": "G11_DM QUANTUM tail (2923/0xfffff/rev2/G11C+ext)",
+   "imageSHA": "c3eceac5a4712f070516e4bacd6314ed4336048b440735f78fb0edf7c240fc76"
+  }
+ ],
+ "notClaimed": "no CPU stepper/no product PASS/no architect/designer checker import; T648/T639/T644 not implemented — seam requirements recorded, no fabricated interfaces",
+ "scope": "byte-level image construction + negative/positive control catalog + 31-enum canonical reason index (blockedReasons 1..18 preserved, 28=PATH_BOUND split 7/6/5, 29=OVERFLOW hard)"
+}
