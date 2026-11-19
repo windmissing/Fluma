@@ -1,0 +1,179 @@
+> hvigor [32mUP-TO-DATE :entry:default@PreBuild...  [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateMetadata...  [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 121 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MergeProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CreateBuildProfile...  [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 8 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgSdkInfo...  [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 2 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 58 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@MakePackInfo...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@SyscapTransform...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessProfile...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessRouterMap...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessShareConfig...  [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessResource...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@GenerateLoaderJson...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CompileResource...  [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 4 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithNinja... after 343 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@ProcessLibs...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@DoNativeStrip...  [39m
+> hvigor [32mUP-TO-DATE :entry:default@CacheNativeLibs...  [39m
+> hvigor WARN: WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013RenderController.ets:7:26
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:15:14
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:16:64
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:16:257
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:16:285
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:17:28
+ The system capacity of this api 'createMd' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:17:28
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:17:56
+ The system capacity of this api 'update' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:17:56
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:17:99
+ The system capacity of this api 'digest' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/physics/DiagnosticColdFiles.ets:17:99
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013SingleSandController.ets:8:28
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013SceneController.ets:4:28
+ Currently module for 'libp013renderer.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/entryability/EntryAbility.ets:7:19
+ Currently module for 'libgrsm0.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/entryability/EntryAbility.ets:8:19
+ Currently module for 'libgrsm1.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/entryability/EntryAbility.ets:472:39
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:75:17
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:79:52
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:80:53
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:81:54
+ The system capacity of this api 'TextInputController' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:108:18
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:148:38
+ The system capacity of this api 'off' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:201:55
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:287:17
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:287:46
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:288:59
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:292:51
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:293:59
+ The system capacity of this api 'getWindowStatus' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:293:59
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:370:17
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:382:19
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:389:18
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:404:17
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:411:9
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:411:30
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:413:10
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:413:30
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:414:11
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:424:18
+ 'getContext' has been deprecated.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:646:33
+ The system capacity of this api 'off' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:646:33
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:652:217
+ The system capacity of this api 'WINDOW_DESTROYED' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:655:137
+ The system capacity of this api 'on' is not supported on all devices
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets:655:137
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:33:24
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:37:6
+ Function may throw exceptions. Special handling is required.
+
+WARN: ArkTS:WARN File: D:/hmprojects/HelloWorld/.codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/workers/P011NaturalObservationWorker.ets:41:14
+ Function may throw exceptions. Special handling is required.
+
+
+> hvigor [32mFinished :entry:default@CompileArkTS... after 6 s 521 ms [39m
+> hvigor [32mUP-TO-DATE :entry:default@GeneratePkgModuleJson...  [39m
+> hvigor [32mFinished :entry:default@ProcessCompiledResources... after 1 ms [39m
+> hvigor [32mFinished :entry:default@PackageHap... after 878 ms [39m
+> hvigor [32mFinished :entry:default@PackingCheck... after 8 ms [39m
+> hvigor WARN: No signingConfig found for product default
+> hvigor [32mFinished :entry:default@SignHap... after 3 ms [39m
+> hvigor [32mFinished :entry:default@CollectDebugSymbol... after 2 ms [39m
+> hvigor [32mFinished :entry:assembleHap... after 1 ms [39m
+> hvigor [32mBUILD SUCCESSFUL in 14 s 437 ms [39m
+
+33 tasks in total: 16 executed, 17 up-to-date

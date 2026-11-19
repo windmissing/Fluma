@@ -1,0 +1,70 @@
+{
+  "schema": "T659_COMPILE_DELIVERY_V1",
+  "date": "2026-11-19",
+  "scopeCompleted": true,
+  "productTestPassClaimed": false,
+  "deviceUsed": false,
+  "testsRun": false,
+  "signingOrDeployment": false,
+  "productBaseline": "9ec800f446c62d45197ec74abc4023e85400756d",
+  "baselineReason": "Same real product baseline as T592; current DiagnosticColdFiles has a different writer API and is outside owner fix scope. No baseline source overwritten in workspace.",
+  "ownedSources": {
+    "test/t426/PrepareReadinessV4.ets": "5ba55fc107f479ffd6b9ba4db2a613a6548fc9ddcf91e8cb61ef4c680fcd0495",
+    "test/t574/t574_prepare_v4_overlay.cjs": "c6bdf83d8660b40c5120e23eef75a6cc0670f0ce25a5c968aa4310934a964040",
+    "test/t574/t659_owner_glue.cjs": "abada073bf4d2f7f0577be6b9048be832fd41361756aaaebf7f1f1631ebbc048",
+    "tools/singlesand/prepare_owner_build.py": "8bee9bed55540854124e8293340f5bdfe87b9bfc23e62409942018f37885703c"
+  },
+  "formalInputs": {
+    "docs/architecture-T658-v1.md": "8986c90cb672a5c50d07aa973dd398a0deb7c32f13c4320f0cad3f00c36ef1a3",
+    "docs/architecture-T658-contract-v1.json": "bfc5f46594f89a9bc19be63cf5e4ef4ecfc2669c8df3d8dcbcdb3f4b489de48c"
+  },
+  "generatedSourceManifest": {
+    "path": "test\\reports\\t659\\generated-sources.json",
+    "sha256": "28c196e6aa1a32d163f4bd921c779e3de463149df5fb6a1c64af5e3a7ee2c669",
+    "files": 599
+  },
+  "build": {
+    "sourceDirectory": ".codex\\local-test\\t659-delivery-source",
+    "productDirectory": ".codex\\local-test\\t659-delivery-source\\.codex\\local-test\\product",
+    "command": "hvigorw.bat --mode module -p product=default -p module=entry@default assembleHap --no-daemon",
+    "full": "BUILD SUCCESSFUL in 58 s 605 ms",
+    "final": "BUILD SUCCESSFUL in 14 s 437 ms",
+    "CompileArkTS": "executed, 6 s 521 ms; final owner guard/escaped error limits included",
+    "errors": 0,
+    "hap": ".codex\\local-test\\t659-delivery-source\\.codex\\local-test\\product\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "hapBytes": 7980038,
+    "hapSHA256": "f3a0beb3377b4a00df61170b7e748389fe6d1219b5f54d07703b47c6bfa9b42e",
+    "packaged": {
+      "libs/arm64-v8a/libc++_shared.so": {
+        "bytes": 1262248,
+        "sha256": "bff501a19fadbc9a006d7f26a9bf62137cb5ec124959d3fdb701e9278f3df274"
+      },
+      "libs/arm64-v8a/libgrsm0.so": {
+        "bytes": 638640,
+        "sha256": "8a710800eda39e5edbaf34169cbecb12fab258cf649aad926614632ce08639eb"
+      },
+      "libs/arm64-v8a/libgrsm1.so": {
+        "bytes": 1512272,
+        "sha256": "e14906565979b9ead6435f846ae53f3a96d11056ee9b17e2bfe7af4391d57c81"
+      },
+      "libs/arm64-v8a/libp013hello.so": {
+        "bytes": 70544,
+        "sha256": "91db35bec365f99d8540e2783bf2e87edefb332d1055906b9f961a6ae53971e6"
+      },
+      "libs/arm64-v8a/libp013renderer.so": {
+        "bytes": 520640,
+        "sha256": "4a18eb40342e63d229828c190d296bbd5a980154f983758766337b55530920f7"
+      },
+      "ets/modules.abc": {
+        "bytes": 2159204,
+        "sha256": "28077347107671a7013380238b16adff0ce23ac91700be3b6cfc0d684b2dc6fe"
+      }
+    },
+    "logs": {
+      "full-build.log": "655cf8d5bc2d7eb145ef59b5d292dc8937b8ce82e8dd3a52184cfc46dda00157",
+      "final-build.log": "68b7eefbab2d7ea449c5ca5fbb9c4686ca92e3445a580e11608ad371f769f0e9",
+      "generation.log": "4c3e2966582ff8ab29e39ab6782277dcddd6edb5e494731d6fb355da089ee7c2"
+    }
+  },
+  "followup": "T592 tester independent same-version fixed keyboard -> prepare -> RESERVED -> HOLD -> strict PNG. Not a developer completion gate."
+}

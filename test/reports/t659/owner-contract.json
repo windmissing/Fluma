@@ -1,0 +1,76 @@
+{
+  "schema": "T659_OWNER_VALUE_IMPLEMENTATION_V1",
+  "formalInput": "docs/architecture-T658-contract-v1.json",
+  "ownerTuple": [
+    "prepareId",
+    "pageGeneration",
+    "branch",
+    "windowId",
+    "windowGeneration",
+    "controller",
+    "session",
+    "surface",
+    "context",
+    "run"
+  ],
+  "ownerSnapshot": "Explicit validated primitive copy, privately held; fresh copies returned for evidence only",
+  "samePrepareOwner": "Strict equality of all ten fields; no JSON string object comparison or prototype method",
+  "key": "JSON.stringify of the ten primitive tuple in this exact order; evidence binding, not authority",
+  "numberDomain": "Safe nonnegative integers; native controller/session/surface/context nonzero. Window registration/activity/id predicate unchanged. Run nonempty string. Unknown/unrepresentable rejected.",
+  "ticket": [
+    "valid",
+    "prepareId",
+    "pageGeneration",
+    "observationSerial",
+    "inputSerial",
+    "ownerSerial",
+    "owner",
+    "reason"
+  ],
+  "privateIssuedTicket": true,
+  "staleScope": "Old prepare/page owner or ticket discarded; callback checks actual window reference+generation and prepare/page/branch before actions and after native/window reads",
+  "sameOwnerReadiness": "Parent observe/frame/check strict predicate still invalidates READY on snapshot/readiness/input/layout changes",
+  "reserveOrder": [
+    "fresh snapshot",
+    "same-scope guard",
+    "checkForReserve ticket",
+    "actual reserveCapture",
+    "RESERVED only",
+    "consumeTicket exactly once",
+    "async cold I/O"
+  ],
+  "preserved": [
+    "3000ms PREPARING only",
+    "No READY TTL",
+    "strict PNG",
+    "HOLD/ROI/geometry thresholds",
+    "reserveEnabled from the one real gate",
+    "XComponent+shader pipeline"
+  ],
+  "cold": {
+    "envelopeUTF8MaxBytes": 16384,
+    "gateReportUTF8MaxBytes": 14336,
+    "firstAndLastRawError": true,
+    "messageUTF8MaxBytesEach": 1024,
+    "escapedJSONAlsoBounded": true,
+    "truncationFlagsExplicit": true,
+    "firstErrorKeys": [
+      "stage",
+      "code",
+      "name",
+      "message",
+      "messageTruncated",
+      "nameTruncated",
+      "before",
+      "after",
+      "ownerTruncated",
+      "prepareId",
+      "pageGeneration",
+      "branch"
+    ],
+    "asyncCatchFinally": true
+  },
+  "witnessCore15": "1 if the reserve attempt belongs to a retired prepare/page, 0 if current; core1/2 remain the captured attempt scope",
+  "testsRun": false,
+  "deviceUsed": false
+}

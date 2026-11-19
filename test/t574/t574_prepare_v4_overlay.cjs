@@ -21,4 +21,5 @@ module.exports=function(out){
  const start=s.indexOf(' private async reserveImpl598'),end=s.indexOf(' private async exportWindow',start);let reserve=s.slice(start,end);reserve=reserve.replace('  const context=getContext(this)', '  this.reserveIo598=1;\n  const context=getContext(this)').replace('  await this.statusCold();','  this.reserveIo598=2;\n  await this.statusCold();');s=s.slice(0,start)+reserve+s.slice(end);
  const at=s.lastIndexOf('}');s=s.slice(0,at)+methods+s.slice(at);
  fs.writeFileSync(file,s);
+ require('./t659_owner_glue.cjs')(out);
 };

@@ -25,3 +25,6 @@ test/reports/t653/*.log -text -whitespace
 
 # T639 original compiler logs retain exact evidence bytes.
 test/reports/t639/*.log -text -whitespace
+
+# T659 compiler/generation raw evidence logs.
+test/reports/t659/*.log -text -whitespace
