@@ -1,0 +1,101 @@
+{
+  "schema": "T658_PREPARE_OWNER_DATA_CONTRACT_V1",
+  "task": "T658",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "classification": "PRODUCT_ENGINEERING_PROTOTYPE_LOSS; minimal developer fix",
+  "uniqueImplementation": "method-free owned primitive snapshot plus explicit field comparator and canonical tuple key; no method invocation on serialized/foreign objects",
+  "ownerFields": [
+    {
+      "name": "prepareId",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "pageGeneration",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "branch",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "windowId",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "windowGeneration",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "controller",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "session",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "surface",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "context",
+      "type": "number with exact existing integer-domain validity"
+    },
+    {
+      "name": "run",
+      "type": "string"
+    }
+  ],
+  "canonicalKey": {
+    "format": "JSON array of ten primitives",
+    "order": [
+      "prepareId",
+      "pageGeneration",
+      "branch",
+      "windowId",
+      "windowGeneration",
+      "controller",
+      "session",
+      "surface",
+      "context",
+      "run"
+    ],
+    "notAuthority": true
+  },
+  "operations": [
+    "copyPrepareOwner: validate primitives then explicit fresh field copy, never alias original",
+    "samePrepareOwner: explicit strict equality of all10 fields, independent of prototype/key insertion order",
+    "bindOwner: first copy once/checked ownerSerial, later same fields unchanged; mismatch hard invalidates",
+    "changed(reason): preserve parent change semantics; never compare one owner object with itself to infer fresh identity",
+    "noteChange: compare genuine before/after owned values; differing owner revokes",
+    "readiness/snapshot changes revoke via unchanged strict predicate even if owner IDs same",
+    "check ticket and consume compare prepare/page/observation/input/ownerSerial/ownerKey on same UI stack"
+  ],
+  "callbacks": "actual window reference+generation, prepare/page/branch bind at registration, stale callbacks discard without revoking new attempt",
+  "preserved": [
+    "single authoritative gate",
+    "reserve disabled except actual fresh valid READY",
+    "3000ms applies PREPARING only, no new READY TTL",
+    "RESERVED before consume; failed consume invalidates capture",
+    "strict PNG, HOLD/ROI/geometry and original calibration thresholds"
+  ],
+  "artifacts": "first raw Error stage/code/name/message and before/after owner+scope in bounded cold receipt, unknown not synthesized",
+  "forbidden": [
+    "structuredClone claimed to preserve custom class methods",
+    "swallow TypeError and continue READY",
+    "unconditional reconstruction with guessed identity",
+    "global JSON-clone refactor unrelated to this path"
+  ],
+  "files": [
+    "test/t426/PrepareReadinessV4.ets",
+    "test/t574/t574_prepare_v4_overlay.cjs",
+    "actual page/frame/window preparation producer and generated product page",
+    "PrepareReadiness parent only if needed to preserve original predicate/error receipt"
+  ],
+  "postRole": "developer complete minimal fix+compile; T592 tester independent same-version prepare/reserve/HOLD/strict PNG",
+  "evidenceLimit": "current stack confirmed only; every-click/v1 two-run same-cause assertions require their own original version/crash evidence"
+}

@@ -1,5 +1,7 @@
 # T586：真实READY与禁用预约按钮/未接入v4的分流
 
+> 2026-11-19现役v4准备路径jscrash工程修订见`architecture-T658-v1.md`及contract表：owner由纯字段值复制/比较/固定tuple绑定票据，不在JSON对象调用.same，不以structuredClone保原型；唯一gate/响应式reserve、实际RESERVED再consume、原predicate和3000ms仅PREPARING不改。
+
 2026-11-18，architect，不使用真机。输入T408-ready-v12、两份prepare原件、布局l2/l4/l6、T574准确生成页/overlay/v4类和签包，证据 `analysis-T586-source-evidence-v1.json`。
 
 ## 决定性原件与纠正

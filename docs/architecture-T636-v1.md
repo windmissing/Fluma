@@ -1,5 +1,7 @@
 # T636：跨 DSO broker 票据与信用的可验证闭包
 
+> 2026-11-19实测首次归因修订见`architecture-T656-v1.md`及contract表：Reserve输出入参必须初始0；ContextRetired正控须保留活动gB，不能先Freed再复用非零gA。生产matching-retired清租约语义不改；M4原矩阵未执行，38行两片段/21去重字符串不冒全域PASS。
+
 2026-11-19，architect，不使用真机、不运行broker/GL/构建。结论：已交最终broker的8个exported C ABI足够tester独立跨DSO harness；T627旧包实际只有5个host符号，必须分版本。无需生产只读新endpoint或可改信用开关，不要求grsm0/grsm1同时跑GL。方案机器表`architecture-T636-cross-dso-harness-v1.json`。
 
 ## 原证据能证明什么

@@ -1,0 +1,45 @@
+{
+  "schema": "T656_GPU_TICKET_FIXTURE_CORRECTION_V1",
+  "task": "T656",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "classification": "TEST_FIXTURE_INPUT_AND_ORDER_ERROR, production semantics unchanged",
+  "preconditions": "GpuReserve requires nonnull ticket pointer, *ticket==0, context!=0, bytes>0, no live global GPU ticket",
+  "actualSequence": [
+    "A Reserve out gA=1",
+    "B Reserve rejected",
+    "wrong Freed/Retired do not clear",
+    "B Freed(1)",
+    "B Reserve succeeds gB=2",
+    "B Freed(2) BEFORE ContextRetired",
+    "ContextRetired(ctxA) sees no live ticket",
+    "A Reserve(&gA) rejects stale nonzero input1 before context checks"
+  ],
+  "correctedSequence": [
+    "reserve fresh zero gA in ctxA",
+    "wrong ticket free and wrong context retire followed by fresh-zero probe still reject",
+    "B Freed(gA) then fresh-zero gB succeeds",
+    "KEEP gB ACTIVE",
+    "B ContextRetired(ctxA) clears matching global ticket",
+    "A reserve NEW zero gC succeeds",
+    "wrong-context retire does not release a new active ticket; correct cleanup by owned ticket"
+  ],
+  "semantics": "matching ContextRetired clears matching GPU ticket; caller variable not rewritten; opaque context call is not proof of actual EGL destruction",
+  "followup": "tester repairs driver/out-param logging/null export checks, no designer or developer change needed now",
+  "notMeasured": [
+    "M4 route accumulated credit boundary",
+    "M4 process accumulated cap boundary",
+    "production route integration",
+    "driver actual free/eglDestroyContext"
+  ],
+  "budgets": {
+    "maxRuntimeSeconds": 30,
+    "maxRecords": 128,
+    "recordUtf8Max": 512,
+    "logBytesMax": 65536,
+    "manifestBytesMax": 16384
+  }
+}

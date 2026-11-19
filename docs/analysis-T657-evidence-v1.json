@@ -1,0 +1,393 @@
+{
+  "schema": "T657_SAVED_TRACE_SOURCE_REVIEW_V1",
+  "task": "T657",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "rowCount": 533,
+  "enters": 267,
+  "exits": 266,
+  "unpaired": [
+    [
+      "t496-t646cA",
+      "create_C0",
+      62736,
+      "t646cA",
+      266,
+      411
+    ]
+  ],
+  "lastRows": [
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 262,
+      "functionId": 404,
+      "event": "EXIT",
+      "wallNs": "1225880134085900",
+      "scriptNs": "1225880134085900",
+      "detail": "name=glBindBufferBase"
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 263,
+      "functionId": 411,
+      "event": "ENTER",
+      "wallNs": "1225880134089900",
+      "scriptNs": "1225880134089900",
+      "detail": "x=0"
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 263,
+      "functionId": 411,
+      "event": "EXIT",
+      "wallNs": "1225880134094200",
+      "scriptNs": "1225880134094200",
+      "detail": "name=glDispatchCompute"
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 264,
+      "functionId": 15,
+      "event": "ENTER",
+      "wallNs": "1225880134147100",
+      "scriptNs": "1225880134147100",
+      "detail": ""
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 264,
+      "functionId": 15,
+      "event": "EXIT",
+      "wallNs": "1225880134154300",
+      "scriptNs": "1225880134154200",
+      "detail": "name=eglGetCurrentContext"
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 265,
+      "functionId": 109,
+      "event": "ENTER",
+      "wallNs": "1225880134188800",
+      "scriptNs": "1225880134188700",
+      "detail": "program=4 pname=34625"
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 265,
+      "functionId": 109,
+      "event": "EXIT",
+      "wallNs": "1225880135079800",
+      "scriptNs": "1225880135079800",
+      "detail": "name=glGetProgramiv"
+    },
+    {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 266,
+      "functionId": 411,
+      "event": "ENTER",
+      "wallNs": "1225880136165000",
+      "scriptNs": "1225880136165000",
+      "detail": "x=1"
+    }
+  ],
+  "lastPassedArguments": {
+    "lastUseProgram": {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 258,
+      "functionId": 410,
+      "event": "ENTER",
+      "wallNs": "1225880134041600",
+      "scriptNs": "1225880134041600",
+      "detail": "program=4"
+    },
+    "binding0": {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 259,
+      "functionId": 404,
+      "event": "ENTER",
+      "wallNs": "1225880134054400",
+      "scriptNs": "1225880134054400",
+      "detail": "target=37074 index=0 buffer=1"
+    },
+    "binding1": {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 260,
+      "functionId": 404,
+      "event": "ENTER",
+      "wallNs": "1225880134065500",
+      "scriptNs": "1225880134065500",
+      "detail": "target=37074 index=1 buffer=11"
+    },
+    "binding2": {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 261,
+      "functionId": 404,
+      "event": "ENTER",
+      "wallNs": "1225880134073800",
+      "scriptNs": "1225880134073800",
+      "detail": "target=37074 index=2 buffer=12"
+    },
+    "binding3": {
+      "schema": "T561_CREATE_SINK_V1",
+      "runId": "t496-t646cA",
+      "arm": "create_C0",
+      "pid": 62736,
+      "createAttemptId": "t646cA",
+      "callId": 262,
+      "functionId": 404,
+      "event": "ENTER",
+      "wallNs": "1225880134081900",
+      "scriptNs": "1225880134081800",
+      "detail": "target=37074 index=3 buffer=13"
+    }
+  },
+  "firstToLastTraceNs": 138159500,
+  "cacheReceipts": [
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\1028e02aca887e6a81a259c1fa803dc22b80dfb0846d75a1e1250eeb089841dc.jsonl",
+        "bytes": 10287,
+        "sha256": "862b8f89305572b6490fd24eaf7ca6626bbe2bcc8ed1b9190debd1995b5272ad"
+      },
+      "role": "SOURCE",
+      "shaderSHA": "47c0076c8a5dba5e2bf578bd447751fbeee389168a463b73ec7d18ef14e63ea2",
+      "beginNs": 1225880071193200,
+      "linkEndNs": 1225880086751200,
+      "stage": "EXPORT_WRITE_SUBMITTED",
+      "hasPidOrAttempt": false
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\545a3f5f518ff2980894c01c2d1b5ddea7063d40604933a9307f2643e51fb494.jsonl",
+        "bytes": 10343,
+        "sha256": "c434b989a72ef871c83db64349d77cf2c9ed6cc1ad0b7870bfb5fac98ed0b69a"
+      },
+      "role": "FINAL_QUANTUM",
+      "shaderSHA": "5d4e983fbcf8453eb05a5edb7e9793f1e7708515d82a03ef62724bbbe4674332",
+      "beginNs": 1225880103466300,
+      "linkEndNs": 1225880133329900,
+      "stage": "EXPORT_WRITE_SUBMITTED",
+      "hasPidOrAttempt": false
+    },
+    {
+      "file": {
+        "path": ".codex\\local-test\\t496\\C0-files\\gpu-program-cache\\v1\\9062993ac025b39225a9c5071f66dc143723793898149f927c7c4e357b85eca1.jsonl",
+        "bytes": 8987,
+        "sha256": "c983a63d78f4bea6142d209983a8f4185227cc720f3427b8590e63973a205743"
+      },
+      "role": "INTERMEDIATE_QUANTUM",
+      "shaderSHA": "54946590ca762cc8d9bb2e153e3fbab839b74bdf70fd474ad7b94b621f580f96",
+      "beginNs": 1225880089166300,
+      "linkEndNs": 1225880101618400,
+      "stage": "EXPORT_WRITE_SUBMITTED",
+      "hasPidOrAttempt": false
+    }
+  ],
+  "noArchivedChildExitCodeOrExceptionDump": true,
+  "existingHostInspection": {
+    "schema": "T657_EXISTING_HOST_EVIDENCE_INSPECTION_V1",
+    "capturedAt": "2026-11-19T16:35:36.9623085+08:00",
+    "productStarted": false,
+    "testsRun": false,
+    "directories": [
+      {
+        "path": "C:/Users/admin/AppData/Local/CrashDumps",
+        "status": "NOT_PRESENT"
+      },
+      {
+        "path": "C:/ProgramData/Microsoft/Windows/WER/ReportArchive",
+        "status": "READ",
+        "matchingCount": 0,
+        "matchingNames": [
+          null
+        ]
+      },
+      {
+        "path": "C:/ProgramData/Microsoft/Windows/WER/ReportQueue",
+        "status": "READ",
+        "matchingCount": 0,
+        "matchingNames": [
+          null
+        ]
+      }
+    ],
+    "applicationEventQuery": "Application EventID1000/1001 Data='t496.exe', max8",
+    "matchingEventSummary": [
+      {
+        "recordId": 48339,
+        "eventId": 1001,
+        "time": "2026-11-14T13:18:48.5670629Z",
+        "belongsToT646cA": false,
+        "app": "t496.exe",
+        "eventName": "RADAR_PRE_LEAK_64"
+      }
+    ],
+    "sameAttemptExceptionEvidenceFound": false,
+    "limits": "No matching current artifact observed; absence of WER/dump is not proof no exception or external kill"
+  },
+  "sourceCuts": [
+    {
+      "path": "test/t496/external_source_diff.cpp",
+      "lines": [
+        {
+          "line": 401,
+          "text": "static int RunCreateOnly(const std::string& arm) {",
+          "lineCharacters": 50
+        },
+        {
+          "line": 441,
+          "text": "    a.hostNow = []() { return g_hostNowNs.load(); };",
+          "lineCharacters": 52
+        },
+        {
+          "line": 507,
+          "text": "    const int rc = RunCreateOnly(arm);",
+          "lineCharacters": 38
+        }
+      ]
+    },
+    {
+      "path": "test/t496/run_create_only.cmd",
+      "lines": [
+        {
+          "line": 16,
+          "text": "powershell -NoProfile -Command \"$p=Start-Process -FilePath '%EXE%' -ArgumentList '%ARM%','%ATTEMPT%' -WorkingDirectory 'D:/hmprojects/HelloWorld' -PassThru -RedirectStandardOutput 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stdout.txt' -RedirectStandardError 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stderr.txt'; $p.Id | Out-File -Encoding ascii 'D:/hmprojects/HelloWorld/.codex/local-test/t496/child-pid-%ATTEMPT%.txt'\"",
+          "lineCharacters": 461
+        },
+        {
+          "line": 18,
+          "text": "echo CHILD_PID=%CPID% & echo LAUNCH_AT=%DATE% %TIME%",
+          "lineCharacters": 52
+        },
+        {
+          "line": 19,
+          "text": "powershell -NoProfile -Command \"$deadline=(Get-Date).AddSeconds(900); while((Get-Date) -lt $deadline -and (Get-Process -Id %CPID% -ErrorAction SilentlyContinue)){Start-Sleep -Milliseconds 500}; $p=Get-Process -Id %CPID% -ErrorAction SilentlyContinue; if($p){Stop-Process -Id %CPID% -Force; Write-Output ('WATCHDOG_KILL pid=%CPID% at='+(Get-Date -Format o))} else {Write-Output 'CHILD_EXITED_BEFORE_DEADLINE'}\" > .codex\\local-test\\t496\\watchdog-%ATTEMPT%.txt",
+          "lineCharacters": 457
+        }
+      ]
+    },
+    {
+      "path": "test/t496/gl_forward_sink.cpp",
+      "lines": [
+        {
+          "line": 115,
+          "text": "extern \"C\" void GL_APIENTRY glDispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z){ static auto fn=reinterpret_cast<decltype(&glDispatchCompute)>(eglGetProcAddress(\"glDispatchCompute\"));assert(fn);ScopedCallVoid(411,\"glDispatchCompute\",std::string(\"x=\")+std::to_string(num_groups_x),[&]{fn(num_groups_x, num_groups_y, num_groups_z);});}",
+          "lineCharacters": 362
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T496-create-only-v7.md",
+      "bytes": 2707,
+      "sha256": "cc06e0a21f54f76d5c93780a88755f971b73413563727924169f1d26e8a88ad0"
+    },
+    {
+      "path": "docs/architecture-T646-v1.md",
+      "bytes": 9618,
+      "sha256": "dc157670f17bc055e2efa4ae8ae09f51a721d47bf9db16a104c5f156440c12ce"
+    },
+    {
+      "path": "test/reports/t496/v7-c0-result.json",
+      "bytes": 1178,
+      "sha256": "3fa6fbeaa3288a747ec65b557eb056541cac6e0fe5dab8f1ae30785d0350ca6d"
+    },
+    {
+      "path": "test/reports/t496/gltrace-t646cA.ndjson",
+      "bytes": 130849,
+      "sha256": "d44f31e10a82ec50fc772d606a30ed6ca9260250a8ad312a96cf925ba1c95107"
+    },
+    {
+      "path": "test/reports/t496/log-t646cA.ndjson",
+      "bytes": 634,
+      "sha256": "7a74bc4095dd00904b206c74830630c0b12eca10b45ba17a9c06093d9a813679"
+    },
+    {
+      "path": "test/reports/t496/stages-t646cA.ndjson",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/t496/external_source_diff.cpp",
+      "bytes": 30429,
+      "sha256": "3f879f574f27600429c80ca934c10ff599608f2ef7b686d3247cd1120c57315e"
+    },
+    {
+      "path": "test/t496/run_create_only.cmd",
+      "bytes": 1963,
+      "sha256": "2df0e72e5d72d02fe7e6ea23682ed74b94609769590fad0d276c061b56b156a8"
+    },
+    {
+      "path": "test/t496/gl_forward_sink.cpp",
+      "bytes": 24258,
+      "sha256": "cde134861901b79f5825af5a5c8eb232d92e19210d4f97ee1243c245b8c3ad12"
+    },
+    {
+      "path": "test/t496/gl_sink.inc",
+      "bytes": 9409,
+      "sha256": "5da8009672c6fa0879a25204b058be3c7899b08202fd95bf91814a8cb49d357a"
+    },
+    {
+      "path": ".codex/local-test/t496/out-cA.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/analysis-T657-host-inspection-v1.json",
+      "bytes": 1156,
+      "sha256": "04d0a32ab336fcdb8a39062e333fcfbb59fd5c745ec9110cac2ab1f8135c63ee"
+    }
+  ]
+}

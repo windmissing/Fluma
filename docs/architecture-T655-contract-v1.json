@@ -1,0 +1,32 @@
+{
+  "schema": "T655_WINDOWS_LINK_STATE_CONTRACT_V1",
+  "task": "T655",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "classification": "BUILD_CACHE_FLAG_ACCUMULATION; tester isolated clean build first, durable build-policy engineering only if necessary",
+  "currentTarget": "grs_cold_slots",
+  "alreadyUsesObjectResponseFile": true,
+  "knownObjectCount": 1,
+  "rules": [
+    "use fresh attempt output/build cache, preserve original polluted cache/logs",
+    "native subprocess argv array, shell=False; never POSIX shlex Windows argv",
+    "absolute response token @D:/.../file.rsp as one argv item, cwd is its build tree",
+    "all target flags retained, -fno-fast-math/-ffp-contract=off never relaxed",
+    "CMAKE_NINJA_FORCE_RESPONSE_FILE alone only moves in/libs in current rule, not repeated LINK_FLAGS",
+    "do not patch global installed SDK or delete global caches",
+    "if clean target still exceeds wrapper bound, use target-scoped full driver rsp with all effective flags/objects/libs and explicit build dependencies"
+  ],
+  "rspEncoding": "UTF8 no BOM, LF, driver response quoting; forward-slash canonical paths, embedded double-quotes/backslashes encoded for the consuming driver; native argv serialization is separate",
+  "receipts": [
+    "full native argv JSON+cwd+launcher identity",
+    "generated rules/target stanza/response raw SHA",
+    "known user vs SDK flags baseline and repetition count",
+    "compiler/linker SHA, immutable source/generated inputs/object SHA",
+    "new unique ELF path/hash/BuildId and package entry relation"
+  ],
+  "compilerHistoricalConclusion": "a1 reported fast compilation is attempt-local; no proof excluding every compiler issue or explaining old CPU-zero waits",
+  "noAutomaticBlock": "independently built correct G9rx package is not blocked by this main-tree cache failure"
+}

@@ -1,0 +1,46 @@
+{
+  "schema": "T657_T646C_A_PRECISE_EXIT_CONTINUATION_V1",
+  "task": "T657",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "classification": "PROCESS_EXIT_CAUSE_UNPROVEN; tester completes T646 facility and exit/crash evidence",
+  "finalOpenCall": {
+    "run": "t496-t646cA",
+    "arm": "create_C0",
+    "pid": 62736,
+    "attempt": "t646cA",
+    "callId": 266,
+    "functionId": 411,
+    "x": 1,
+    "y": null,
+    "z": null
+  },
+  "noInference": [
+    "no dispatch hard-crash/driver defect from missing EXIT and later tasklist absence",
+    "411 is functionId, not common callId/site identity across runs",
+    "steady_clock ns is not UTC epoch",
+    "host ANGLE outcome not hardware GPU product verdict"
+  ],
+  "required": [
+    "child+parent PID/start/argv/cwd/PE SHA and loaded ANGLE module bytes",
+    "child wait handle exit code unsigned+hex, exception code/address/module+stack if exception",
+    "watchdog launch/deadline/kill-request/target-start/exit timeline",
+    "same-attempt stderr/stdout/ActiveCall phase/owner stage and bounded thread/module exception dump",
+    "complete GL argument-return shadow source SHA/program generation/XYZ/binding-allocation/uniform context"
+  ],
+  "facility": "all T646 steps remain in scope: real clock on actual CREATE_ONLY, valid recovery guard, fixed-capacity shadow, sink phase and truthful budgets",
+  "budgets": {
+    "totalSeconds": 420,
+    "resourceSeconds": 240,
+    "handshakeSeconds": 120,
+    "diagnosticAndCleanupSeconds": 60,
+    "traceMaxBytes": 33554432,
+    "dumpMaxBytes": 67108864,
+    "dumpCountMax": 1
+  },
+  "programReceiptQualification": "existing cache role/SHA/time is useful correlation; absent pid/ticket/program mapping must not elevate to exact loaded program proof",
+  "followup": "tester only now; new product readonly stage only after precise existing-interface gap shown; no larger window or three-arm rerun"
+}

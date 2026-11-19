@@ -1,5 +1,15 @@
 {
   "schema": "T636_CROSS_DSO_HARNESS_V1",
+  "implementationClarification": {
+    "task": "T656",
+    "contract": "docs/architecture-T656-contract-v1.json",
+    "reserveTicketInputMustBeZero": true,
+    "contextRetiredMeans": "clear matching live GPU ticket; caller variables unchanged; not a real EGL destruction receipt",
+    "retiredPositiveControl": "keep B GPU ticket active, retire exact context, reserve using a NEW zero output variable",
+    "doNotFreePositiveControlBeforeRetired": true,
+    "M4RecordedExecution": false,
+    "savedLog": "38 rows in two seq0..18 segments;21 unique raw strings is dedup only"
+  },
   "deviceUsed": false,
   "productTestsRun": false,
   "render": "XComponent+shader only; FAULT or explicit STALE; no Canvas/softwareGL",

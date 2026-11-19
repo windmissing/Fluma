@@ -1,5 +1,7 @@
 # T646：GPU 创建未发布与原生停点首次归因
 
+> 2026-11-19 t646cA后继归因见`architecture-T657-v1.md`：533行仅1个未配对call266/function411，进程后续不在但无退出码/异常/dump，不能直接叫dispatch硬崩。原六步全部仍必要，GL shadow/C0真实时钟/同attempt等待退出与≤420s预算不能列scope外。
+
 2026-11-19，architect，不使用真机。结论 **TEST_FACILITY_REPAIR_AND_PRECISE_EVIDENCE_FIRST**；本卡归因与分流已完成。当前不能确定本轮最后GL调用、program/role或线程等待链，不能据缺证派产品卡顿修复。先由tester续办原T496设施与有界采证；没有证据表明还缺产品只读stage。未运行夹具、构建、产品测试或设备。
 
 ## 1. v6 原件勘误及身份

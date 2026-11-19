@@ -1,0 +1,178 @@
+{
+  "schema": "T658_STATIC_SOURCE_AND_RAW_CRASH_V1",
+  "task": "T658",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "packages": [
+    {
+      "kind": "input",
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t598-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "actualSHA": "ba8980ef6e60992748e575b117e0807722a23b1a232edc64998a7b3a1563a40d",
+      "recordedSHA": "ba8980ef6e60992748e575b117e0807722a23b1a232edc64998a7b3a1563a40d",
+      "matches": true,
+      "abcSHA": "5583f3e7ccb3ad981f9e14bacd53f7fb7bb3fb51a8053c6da1bf19f001220f53"
+    },
+    {
+      "kind": "signed",
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T592-rev2\\T592-rev2-signed.hap",
+      "actualSHA": "eeb39a4f18af73dd9410105651f59dbaf15ce8be5c75255bffe49b1cce9a2f42",
+      "recordedSHA": "eeb39a4f18af73dd9410105651f59dbaf15ce8be5c75255bffe49b1cce9a2f42",
+      "matches": true,
+      "abcSHA": "5583f3e7ccb3ad981f9e14bacd53f7fb7bb3fb51a8053c6da1bf19f001220f53"
+    }
+  ],
+  "rawCrash": {
+    "pid": 35376,
+    "uniqueId": "8041312369877275180",
+    "timestamp": "2026-11-19 16:03:28.166",
+    "error": "TypeError same is not callable, same is undefined",
+    "stack": [
+      "noteChange PrepareReadinessV4:18:97",
+      "changed PrepareReadinessV4:19:58",
+      "P051DerivedV2Demo:130:102"
+    ]
+  },
+  "sourceMatchesTemplate": true,
+  "sourceCuts": [
+    {
+      "path": "test/t426/PrepareReadinessV4.ets",
+      "lines": [
+        {
+          "line": 4,
+          "text": " same(b:PrepareAttemptOwner):boolean{return JSON.stringify(this)===JSON.stringify(b);}",
+          "lineCharacters": 86
+        },
+        {
+          "line": 15,
+          "text": "  if(this.ownerV4!==null&&!this.ownerV4.same(o)){this.invalidate('OWNER_CHANGED');return false;}",
+          "lineCharacters": 96
+        },
+        {
+          "line": 16,
+          "text": "  if(this.ownerV4===null)this.ownerSerial++;this.ownerV4=JSON.parse(JSON.stringify(o)) as PrepareAttemptOwner;return true;",
+          "lineCharacters": 122
+        },
+        {
+          "line": 18,
+          "text": " noteChange(reason:string,before:PrepareAttemptOwner,after:PrepareAttemptOwner):void{if(!before.same(after))this.invalidate(reason);else super.changed(reason);}",
+          "lineCharacters": 160
+        },
+        {
+          "line": 19,
+          "text": " changed(reason:string):void{if(this.ownerV4!==null)this.noteChange(reason,this.ownerV4,this.ownerV4);else super.changed(reason);}",
+          "lineCharacters": 130
+        },
+        {
+          "line": 23,
+          "text": " checkForReserve(snapshot:PrepareSnapshot,now:number):PrepareCheckTicket{",
+          "lineCharacters": 73
+        },
+        {
+          "line": 27,
+          "text": " consumeTicket(t:PrepareCheckTicket):boolean{",
+          "lineCharacters": 45
+        }
+      ]
+    },
+    {
+      "path": ".codex/local-test/t598-final/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "lines": [
+        {
+          "line": 130,
+          "text": "    if(event.type===window.AvoidAreaType.TYPE_KEYBOARD){this.prepareLayoutChanged();this.prepareGate.changed('KEYBOARD_AVOID_CHANGED');this.observePrepare();}",
+          "lineCharacters": 158
+        },
+        {
+          "line": 141,
+          "text": "    this.keyboardHeight=height;this.prepareLayoutChanged();this.prepareGate.changed('KEYBOARD_HEIGHT_CHANGED');this.observePrepare();",
+          "lineCharacters": 133
+        },
+        {
+          "line": 205,
+          "text": "  if(this.prepareGate.state==='READY')this.prepareGate.changed('PREPARE_LAYOUT_CHANGED');",
+          "lineCharacters": 89
+        },
+        {
+          "line": 299,
+          "text": "  const props=w.getWindowProperties(),area=w.getWindowAvoidArea(window.AvoidAreaType.TYPE_KEYBOARD);",
+          "lineCharacters": 100
+        },
+        {
+          "line": 323,
+          "text": "  const owner=new PrepareAttemptOwner();owner.prepareId=this.prepareGate.prepareId;owner.pageGeneration=this.prepareGate.pageGeneration;owner.branch=this.prepareBranch;owner.windowId=s.windowId;owner.windowGeneration=s.windowGeneration;owner.controller=s.controller;owner.session=s.session;owner.surface=s.surface;owner.context=s.context;owner.run=s.run;if(this.prepareObservation!==null&&this.prepareObservation.prepareId===this.prepareGate.prepareId)this.prepareGate.sampleFrame(owner);",
+          "lineCharacters": 488
+        },
+        {
+          "line": 372,
+          "text": "  if(r.state==='RESERVED'){if(!this.prepareGate.consumeTicket(ticket)){this.singleSand.capture.invalidate('PREPARE_TICKET_MISMATCH');this.probeStatus='PREPARE_TICKET_MISMATCH';}this.prepareUpdate();",
+          "lineCharacters": 198
+        },
+        {
+          "line": 496,
+          "text": "   const props=this.prepareWindow.getWindowProperties(),avoid=this.prepareWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_KEYBOARD),input=new RasterAllocation();",
+          "lineCharacters": 165
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T592-v2.md",
+      "bytes": 2076,
+      "sha256": "1d4b68d3d261eb258318369957ce3ef35691e796c3454e2c464db10097875b63"
+    },
+    {
+      "path": "docs/architecture-T625-v1.md",
+      "bytes": 5050,
+      "sha256": "59695697a60af7ebf7fe1e8c296caac660d11bb5cf25488fb12b9be904617b74"
+    },
+    {
+      "path": "docs/architecture-T586-first-attribution-v1.md",
+      "bytes": 5459,
+      "sha256": "e41fcfaea3c247286155320e147d9a6a38dadd285558caa8fa09e8e00df2595a"
+    },
+    {
+      "path": "test/reports/t491/t592b/v2-jscrash.json",
+      "bytes": 1195,
+      "sha256": "9dcb0f165268e949cfdabd50010bf482bda85298e830322f134c56423bf14602"
+    },
+    {
+      "path": "test/reports/t491/t592b/jscrash-160328.txt",
+      "bytes": 27206,
+      "sha256": "edc29a3240e372ce328484ac3239854972f14b2eb40ccfb5d7b34a295a36f1d6"
+    },
+    {
+      "path": "test/t426/PrepareReadinessV4.ets",
+      "bytes": 3050,
+      "sha256": "7ba006c611e9426a31584fd76ae8b73eac169be692360886d10aed48113a7a66"
+    },
+    {
+      "path": ".codex/local-test/t598-final/entry/src/main/ets/render/PrepareReadinessV4.ets",
+      "bytes": 3050,
+      "sha256": "7ba006c611e9426a31584fd76ae8b73eac169be692360886d10aed48113a7a66"
+    },
+    {
+      "path": "test/t574/t574_prepare_v4_overlay.cjs",
+      "bytes": 4761,
+      "sha256": "7a8874459bf615cf57d5e8f34d088afcf4be5bcd6c465d3ff68ec3414305f179"
+    },
+    {
+      "path": ".codex/local-test/t598-final/entry/src/main/ets/render/PrepareReadiness.ets",
+      "bytes": 11621,
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2"
+    },
+    {
+      "path": ".codex/local-test/t598-final/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 50194,
+      "sha256": "0fd7875584a1c57027d048bf11d8967d570e64514d082aebf599f9c502d694b2"
+    },
+    {
+      "path": "test/reports/t257/T592-rev2.json",
+      "bytes": 2283,
+      "sha256": "69765729ce869161a6ef2c7e34a1109ba2102d863d3408b2991e0b994d8b8f2b"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 # T625：PREPARE 观察异常的首因与补证合同
 
+> 2026-11-19本次raw jscrash首因闭合见`architecture-T658-v1.md`：JSON owner快照丢失.same后由键盘回调调用触发TypeError，交developer纯字段不可变owner/比较/key最小修复。仅当前版本栈已证，旧v1两轮不自动归同因；原首错冷记录、reserve禁用/严格PNG与PREPARING期限均保留。
+
 2026-11-19；architect；不使用真机。结论：FAILED且reserve disabled符合安全语义；现有报告没有原始API异常，不能确定window/avoid-area/keyboard中哪个失败。先提取现有同attempt冷记录；未覆盖catch的最小观测工程见下。T592尚不具备HOLD/PNG通过证据。
 
 消费test-report-T592-prepare-hold-v1.md、test/reports/t491/t592a布局/日志和 `.codex/local-test/t598-final` 实际单权威页面、PrepareMainWindow、PrepareReadiness/V4。不是旧canonical页面。EntryAbility持主window，generation更换，不采用lastWindow猜对象；单一gate输出reserveEnabled，PREPARING之外停止观察。

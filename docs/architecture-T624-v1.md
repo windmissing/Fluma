@@ -1,5 +1,7 @@
 # T624：大 shader 构建挂起归因与有界重建
 
+> 2026-11-19 a1/长链接命令归因见`architecture-T655-v1.md`：已使用对象rsp，主要膨胀是SDK链接标志缓存重复62/63组；先tester独立新输出与native argv。T629因果未证，单次1–2s编译不复现不等排除所有compiler问题，SPF旧树与DM主树标本须分名，不阻塞独立正确G9rx包。
+
 2026-11-19；architect；不使用真机。结论：已证构建未产出，未证140KB R-string为根因；先由tester修独立测试构建/等待证据，确证产品生成单元缺陷再交developer。保留T541/T564真实harness，不使用旧frozen或缓存绿替代。
 
 ## 能证明与不能证明

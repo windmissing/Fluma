@@ -1,0 +1,41 @@
+{
+  "schema": "T657_EXISTING_HOST_EVIDENCE_INSPECTION_V1",
+  "capturedAt": "2026-11-19T16:35:36.9623085+08:00",
+  "productStarted": false,
+  "testsRun": false,
+  "directories": [
+    {
+      "path": "C:/Users/admin/AppData/Local/CrashDumps",
+      "status": "NOT_PRESENT"
+    },
+    {
+      "path": "C:/ProgramData/Microsoft/Windows/WER/ReportArchive",
+      "status": "READ",
+      "matchingCount": 0,
+      "matchingNames": [
+        null
+      ]
+    },
+    {
+      "path": "C:/ProgramData/Microsoft/Windows/WER/ReportQueue",
+      "status": "READ",
+      "matchingCount": 0,
+      "matchingNames": [
+        null
+      ]
+    }
+  ],
+  "applicationEventQuery": "Application EventID1000/1001 Data='t496.exe', max8",
+  "matchingEventSummary": [
+    {
+      "recordId": 48339,
+      "eventId": 1001,
+      "time": "2026-11-14T13:18:48.5670629Z",
+      "belongsToT646cA": false,
+      "app": "t496.exe",
+      "eventName": "RADAR_PRE_LEAK_64"
+    }
+  ],
+  "sameAttemptExceptionEvidenceFound": false,
+  "limits": "No matching current artifact observed; absence of WER/dump is not proof no exception or external kill"
+}
