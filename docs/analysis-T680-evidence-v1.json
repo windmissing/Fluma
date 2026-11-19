@@ -1,0 +1,662 @@
+{
+  "schema": "T680_SAVED_SCOPE_PACKET_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productOrTestsRun": false,
+  "method": "parse saved JSON, hash original bytes, inspect source anchors; no product simulation",
+  "sourceFiles": [
+    {
+      "path": "docs/test-report-T592-v3.md",
+      "bytes": 3045,
+      "sha256": "419c728e324fcc09a2b0a4ae35c2023e1456686e4d344d48b6ef659615138125"
+    },
+    {
+      "path": "test/reports/t491/t592b/v3b-field-lock.json",
+      "bytes": 1215,
+      "sha256": "dc08efe0ec7dc59a22b1468998aca48aad595cf9eda129cedb693d344450845d"
+    },
+    {
+      "path": "docs/architecture-T592-raster-v1.md",
+      "bytes": 7973,
+      "sha256": "2f78086bdfe2bce17372aef6147003be7156befe29bd98330fd4c7ff9f927d54"
+    },
+    {
+      "path": "docs/architecture-T592-raster-contract-v1.json",
+      "bytes": 3525,
+      "sha256": "0c127e765123df810dc2ccb561cfe426f3cafe288ceebb72337fe990e73e0e86"
+    },
+    {
+      "path": "test/t540/RasterGeometry.ets",
+      "bytes": 10437,
+      "sha256": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc"
+    },
+    {
+      "path": "test/t540/page_raster.inc",
+      "bytes": 7998,
+      "sha256": "83d60d3605cd967de81372476fd45bfac9a9bfc61f76696c8c2f981a6bf5fc17"
+    },
+    {
+      "path": "test/t540/overlay.py",
+      "bytes": 5195,
+      "sha256": "36573c373cf993df74a36dc34e1ba9e5971eaec1271d45b73fbed3db6e88b19e"
+    },
+    {
+      "path": "test/t426/PrepareReadinessV4.ets",
+      "bytes": 10300,
+      "sha256": "5ba55fc107f479ffd6b9ba4db2a613a6548fc9ddcf91e8cb61ef4c680fcd0495"
+    },
+    {
+      "path": "test/t574/t574_prepare_v4_overlay.cjs",
+      "bytes": 4802,
+      "sha256": "c6bdf83d8660b40c5120e23eef75a6cc0670f0ce25a5c968aa4310934a964040"
+    },
+    {
+      "path": "test/t574/t659_owner_glue.cjs",
+      "bytes": 16092,
+      "sha256": "abada073bf4d2f7f0577be6b9048be832fd41361756aaaebf7f1f1631ebbc048"
+    },
+    {
+      "path": "tools/singlesand/prepare_owner_build.py",
+      "bytes": 2492,
+      "sha256": "8bee9bed55540854124e8293340f5bdfe87b9bfc23e62409942018f37885703c"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 55268,
+      "sha256": "02ead9a28dcb9a8111215262748e50d5bf5d91061d10a106f10022e988c97087"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/RasterGeometry.ets",
+      "bytes": 10437,
+      "sha256": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/PrepareReadiness.ets",
+      "bytes": 11621,
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/PrepareReadinessV4.ets",
+      "bytes": 10300,
+      "sha256": "5ba55fc107f479ffd6b9ba4db2a613a6548fc9ddcf91e8cb61ef4c680fcd0495"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013SingleSandController.ets",
+      "bytes": 21068,
+      "sha256": "50c84d9b2d042c13d6839aff86f901e08a486794051ab32f05c6bbb73edc6db7"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013SingleSandPreparation.ets",
+      "bytes": 5041,
+      "sha256": "41f43fde4e4d8cce11bab520d0e5d9b14d863f62a1c4dea0ffc8218c092e1f82"
+    }
+  ],
+  "sourceAnchors": {
+    "nativeGeometryProducerIsArkTSPacket": true,
+    "packUsesContextGeometryEpoch": true,
+    "nativeGeometryExcludedFromActualChangeKey": true,
+    "nativeCopyUpdatedWithoutAdvance": true,
+    "snapshotCopiesLiveControllerAndAssignsCurrentGeometry": true,
+    "actualPageReadUsesLiveControllerSnapshot": true,
+    "willDrawFreshReadBeforeGateObserveAndFrame": true,
+    "coldIsStateTransitionExport": true,
+    "fallbackDropsAuthority": true,
+    "authorityBudget14336": true,
+    "outerBudget16384": true,
+    "templateRasterMatchesActualBytes": true,
+    "templateV4MatchesActualBytes": true
+  },
+  "actualSourcePriorComparison": [
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "sameAsPriorAttribution": true
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/RasterGeometry.ets",
+      "sameAsPriorAttribution": true
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/PrepareReadiness.ets",
+      "sameAsPriorAttribution": true
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/PrepareReadinessV4.ets",
+      "sameAsPriorAttribution": true
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013SingleSandController.ets",
+      "sameAsPriorAttribution": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "test/reports/t491/t592b/t540-PREPARING-18.json",
+      "bytes": 8286,
+      "sha256": "b1268279f1f8a90ec7edec5f9ffb2c7b292ec97133808ca162182e9fd94c742a",
+      "detailTruncated": false,
+      "observationTruncated": false,
+      "authorityPresent": true,
+      "scope": {
+        "prepareId": 1,
+        "pageGeneration": 1,
+        "ownerSerial": 0,
+        "owner": null,
+        "session": "s1795089517841-1",
+        "observationSerial": 18,
+        "startedMonoMs": 284251072.706096,
+        "windowId": 649,
+        "windowGeneration": 1,
+        "context": 1
+      },
+      "readinessHeader": {
+        "revision": "T659_PREPARE_OWNER_VALUE_V1",
+        "subphase": "DISMISSING",
+        "firstCause": "",
+        "owner": null,
+        "ownerKey": "",
+        "ownerSerial": 0,
+        "discardedCallbacks": 0,
+        "firstRawError": null,
+        "lastRawError": null
+      },
+      "observation": null,
+      "missingFieldRule": "null here means unavailable, never numeric zero or false",
+      "state": "PREPARING",
+      "readinessReason": "WAIT_OBSERVATIONS",
+      "inputs": [
+        {
+          "created": true,
+          "editing": false,
+          "focused": true,
+          "everEditing": true
+        },
+        {
+          "created": true,
+          "editing": false,
+          "focused": false,
+          "everEditing": false
+        },
+        {
+          "created": true,
+          "editing": false,
+          "focused": false,
+          "everEditing": false
+        }
+      ],
+      "events": [
+        {
+          "kind": "BEGIN",
+          "value": "284251072.706096",
+          "prepareId": 1,
+          "pageGeneration": 1,
+          "serial": 17
+        },
+        {
+          "kind": "INPUT",
+          "value": "{\"index\":0,\"editing\":false,\"focused\":null}",
+          "prepareId": 1,
+          "pageGeneration": 1,
+          "serial": 17
+        },
+        {
+          "kind": "CHANGE",
+          "value": "INPUT_SESSION_CHANGED",
+          "prepareId": 1,
+          "pageGeneration": 1,
+          "serial": 18
+        }
+      ],
+      "apiCount": 0,
+      "diagnosticOverflow": false,
+      "snapshotScalars": {
+        "layoutGeneration": 0,
+        "windowId": 649,
+        "windowGeneration": 1,
+        "windowActive": true,
+        "windowRegistered": true,
+        "keyboardConfiguration": "UNKNOWN",
+        "deviceType": "phone",
+        "windowMode": 1,
+        "windowRect": {
+          "x": 0,
+          "y": 0,
+          "width": 1256,
+          "height": 2760
+        },
+        "avoid": [
+          {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          },
+          {
+            "x": 0,
+            "y": 1661,
+            "width": 1256,
+            "height": 1099
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0
+          }
+        ],
+        "avoidUnit": "WINDOW_PX",
+        "keyboardHeight": 1099,
+        "keyboardAnimation": false,
+        "geometry": 9,
+        "configurationRevision": 3,
+        "globalX": 14.571428571428571,
+        "globalY": 282.85714285714283,
+        "widthVp": 329.7142857142857,
+        "heightVp": 469.7142857142857,
+        "vp2px": 3.5,
+        "fullyVisible": true,
+        "vpBoxWindowPx": {
+          "x": 51,
+          "y": 990,
+          "width": 1154,
+          "height": 1644
+        },
+        "vpBoxScreenPx": {
+          "x": 51,
+          "y": 990,
+          "width": 1154,
+          "height": 1644
+        },
+        "component": {
+          "x": 51,
+          "y": 990,
+          "width": 1154,
+          "height": 1644
+        },
+        "screen": {
+          "x": 51,
+          "y": 990,
+          "width": 1154,
+          "height": 1644
+        },
+        "componentPresent": true,
+        "transformIdentity": true,
+        "orientation": 0,
+        "controller": 1,
+        "session": 1,
+        "surface": 2,
+        "context": 1,
+        "nativeGeometry": 7,
+        "viewportWidth": 1154,
+        "viewportHeight": 1644,
+        "nativeReady": true,
+        "run": "p011-run-1795089517855-3",
+        "opticsRevision": 1
+      },
+      "rasterScalars": {
+        "revision": "T532_WINDOW_HOST_RASTER_V3",
+        "generation": 7,
+        "geometry": 9,
+        "rasterW": 1154,
+        "rasterH": 1644,
+        "valid": true,
+        "reason": "",
+        "observationSerial": 306,
+        "didLayoutSerial": 301,
+        "requestedAtLayout": 300,
+        "layoutAcknowledged": 0,
+        "firstDrawSerial": 0,
+        "frameAnchorNs": "NOT_OBSERVED",
+        "renderNode": "t463-xcomponent",
+        "native": {
+          "controller": 1,
+          "session": 1,
+          "surface": 2,
+          "context": 1,
+          "run": "p011-run-1795089517855-3",
+          "geometry": 7,
+          "packetWidth": 1154,
+          "packetHeight": 1644,
+          "viewportWidth": 1154,
+          "viewportHeight": 1644
+        }
+      },
+      "tenNativeChecks": [
+        {
+          "field": "controller",
+          "actual": 1,
+          "expected": "nonzero",
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "session",
+          "actual": 1,
+          "expected": "nonzero",
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "surface",
+          "actual": 2,
+          "expected": "nonzero",
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "context",
+          "actual": 1,
+          "expected": "nonzero",
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "run",
+          "actual": "p011-run-1795089517855-3",
+          "expected": "nonempty",
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "geometry",
+          "actual": 7,
+          "expected": 9,
+          "comparisonSatisfied": false
+        },
+        {
+          "field": "packetWidth",
+          "actual": 1154,
+          "expected": 1154,
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "packetHeight",
+          "actual": 1644,
+          "expected": 1644,
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "viewportWidth",
+          "actual": 1154,
+          "expected": 1154,
+          "comparisonSatisfied": true
+        },
+        {
+          "field": "viewportHeight",
+          "actual": 1644,
+          "expected": 1644,
+          "comparisonSatisfied": true
+        }
+      ],
+      "nativeComparisonSatisfiedCount": 9,
+      "earlierUnsatisfiedConditions": [
+        {
+          "condition": "inputs[0].focused",
+          "actual": true,
+          "expected": false,
+          "baseReasonIfEvaluated": "INPUT_EDITING_OR_FOCUSED"
+        },
+        {
+          "condition": "keyboardConfiguration",
+          "actual": "UNKNOWN",
+          "expected": "TESTER_CONFIRMED_FIXED_SYSTEM_KEYBOARD",
+          "baseReasonIfEvaluated": "KEYBOARD_VISIBILITY_UNKNOWN"
+        },
+        {
+          "condition": "keyboardHeight",
+          "actual": 1099,
+          "expected": 0,
+          "baseReasonIfEvaluated": "KEYBOARD_OCCLUDED"
+        },
+        {
+          "condition": "avoid[2]",
+          "actual": {
+            "x": 0,
+            "y": 1661,
+            "width": 1256,
+            "height": 1099
+          },
+          "expected": "zero area",
+          "baseReasonIfEvaluated": "KEYBOARD_OCCLUDED"
+        },
+        {
+          "condition": "firstDrawSerial/frameAnchorNs",
+          "actual": [
+            0,
+            "NOT_OBSERVED"
+          ],
+          "expected": [
+            "positive",
+            "observed"
+          ],
+          "rasterReasonIfEvaluated": "RASTER_WAIT_DRAW_PAIR"
+        },
+        {
+          "condition": "layoutAcknowledged",
+          "actual": 0,
+          "expected": "nonzero and equal snapshot.layoutGeneration",
+          "snapshotLayoutGeneration": 0,
+          "rasterReasonIfEvaluated": "RASTER_WAIT_NEW_LAYOUT"
+        }
+      ],
+      "interpretation": "PREPARING_DISMISSING_UNBOUND_BEFORE_FRAME_NOT_FAILURE_WITNESS"
+    },
+    {
+      "path": "test/reports/t491/t592b/t540-FAILED-25.json",
+      "bytes": 1833,
+      "sha256": "4428bbde374d243d3b7f7364f9bc928eaae559d524d9c67b62f654dd0cbb243f",
+      "detailTruncated": true,
+      "observationTruncated": false,
+      "authorityPresent": false,
+      "scope": {
+        "prepareId": 1,
+        "pageGeneration": 1,
+        "ownerSerial": 1,
+        "owner": null,
+        "session": null,
+        "observationSerial": null,
+        "startedMonoMs": null,
+        "windowId": 649,
+        "windowGeneration": 1,
+        "context": null,
+        "branch": 1
+      },
+      "readinessHeader": {
+        "revision": "T659_PREPARE_OWNER_VALUE_V1",
+        "detailTruncated": true,
+        "state": "FAILED",
+        "reason": "PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN",
+        "prepareId": 1,
+        "pageGeneration": 1,
+        "ownerSerial": 1,
+        "firstCause": "PREPARE_TIMEOUT:KEYBOARD_VISIBILITY_UNKNOWN",
+        "firstRawError": null,
+        "lastRawError": null
+      },
+      "observation": {
+        "revision": "T532_FRAME_OBSERVATION_V3",
+        "stages": [
+          {
+            "count": 3,
+            "first": {
+              "seq": 1,
+              "appMs": 284251095.69344,
+              "frameNs": 0,
+              "reason": ""
+            },
+            "last": {
+              "seq": 8,
+              "appMs": 284253202.438596,
+              "frameNs": 0,
+              "reason": ""
+            },
+            "name": "POST"
+          },
+          {
+            "count": 2,
+            "first": {
+              "seq": 2,
+              "appMs": 284252147.099065,
+              "frameNs": 284251080681019,
+              "reason": ""
+            },
+            "last": {
+              "seq": 7,
+              "appMs": 284253202.353283,
+              "frameNs": 284252159365832,
+              "reason": ""
+            },
+            "name": "FRAME_ENTER"
+          },
+          {
+            "count": 2,
+            "first": {
+              "seq": 4,
+              "appMs": 284252159.801252,
+              "frameNs": 0,
+              "reason": ""
+            },
+            "last": {
+              "seq": 9,
+              "appMs": 284253208.834065,
+              "frameNs": 284252159365832,
+              "reason": ""
+            },
+            "name": "LAYOUT_DONE"
+          },
+          {
+            "count": 2,
+            "first": {
+              "seq": 5,
+              "appMs": 284252160.39094,
+              "frameNs": 0,
+              "reason": ""
+            },
+            "last": {
+              "seq": 10,
+              "appMs": 284253209.115158,
+              "frameNs": 284252159365832,
+              "reason": ""
+            },
+            "name": "DRAW_ENTER"
+          },
+          {
+            "count": 1,
+            "first": {
+              "seq": 11,
+              "appMs": 284253209.115158,
+              "frameNs": 284252159365832,
+              "reason": ""
+            },
+            "last": {
+              "seq": 11,
+              "appMs": 284253209.115158,
+              "frameNs": 284252159365832,
+              "reason": ""
+            },
+            "name": "SAMPLE"
+          },
+          {
+            "count": 1,
+            "first": {
+              "seq": 6,
+              "appMs": 284252160.39094,
+              "frameNs": 0,
+              "reason": "NO_FRAME_TICKET"
+            },
+            "last": {
+              "seq": 6,
+              "appMs": 284252160.39094,
+              "frameNs": 0,
+              "reason": "NO_FRAME_TICKET"
+            },
+            "name": "STALE_DROP"
+          }
+        ],
+        "layoutGeneration": 2,
+        "serial": 11,
+        "lastFrameNs": 284252159365832,
+        "ticketNs": 0,
+        "anchor": "[7,7,177,447.5,9,\"t463-xcomponent\",{\"x\":51,\"y\":990,\"width\":1154,\"height\":1644},{\"x\":51,\"y\":990,\"width\":1154,\"height\":1644}]",
+        "pendingLayout": false,
+        "prepareId": 1,
+        "pageGeneration": 1,
+        "windowId": 649,
+        "windowGeneration": 1,
+        "branch": 1
+      },
+      "missingFieldRule": "null here means unavailable, never numeric zero or false",
+      "filenameSerial": {
+        "value": 25,
+        "status": "SHORT_LOCAL_NAME_ONLY_NOT_PAYLOAD_CONFIRMED"
+      },
+      "unavailable": [
+        "gate.session",
+        "gate.startedMonoMs",
+        "gate.observationSerial",
+        "owner",
+        "snapshot",
+        "raster.native",
+        "snapshot.nativeGeometry",
+        "packet/native dimensions",
+        "context",
+        "inputs",
+        "FRAME reason/time"
+      ]
+    }
+  ],
+  "fieldLock": {
+    "revision": "T592_V3B_COLD_EXPORT_FIELD_LOCK_V1",
+    "date": "2026-11-19",
+    "artifact": "t540-prepare-s1795089517841-1-1-1-PREPARING-18.json (T659_PREPARE_OWNER_VALUE_V1, prepareId=1, observationSerial=18)",
+    "exactMismatch": {
+      "raster.geometry": 9,
+      "raster.native.geometry": 7,
+      "snapshot.nativeGeometry": 7,
+      "native": {
+        "controller": 1,
+        "session": 1,
+        "surface": 2,
+        "context": 1,
+        "run": "p011-run-1795089517855-3",
+        "packetW": 1154,
+        "packetH": 1644
+      },
+      "delta": "UI raster plan advanced to generation 9; native confirmed only generation 7 — native lags 2 generations"
+    },
+    "otherFields": {
+      "rasterW": 1154,
+      "rasterH": 1644,
+      "vp2px": 3.5,
+      "keyboardHeight": 1099,
+      "nativeReady": true,
+      "valid": true,
+      "didLayoutSerial": 301,
+      "requestedAtLayout": 300
+    },
+    "interpretation": "NOT protocol-name vs generation mismatch (T664 already rejected that read); exact failing pair = raster.geometry(9) vs raster.native.geometry(7) — native ack lag",
+    "route": "architect: native geometry acknowledgement lag (9 vs 7) — developer/native-side ack path or publishRaster advance policy per T664 caution (geometry-only feedback avoidance)"
+  },
+  "pairing": {
+    "status": "NOT_ESTABLISHED",
+    "sameShortIdsAndWindow": true,
+    "failedSampleMinusPreparingStartMs": 2136.409062027931,
+    "compatibleTimesDoNotProveIdentity": true,
+    "reportClaimsAnotherRun": true,
+    "missing": [
+      "FAILED gate session/start/observationSerial/full owner/context",
+      "original FAILED filename+WS_EVENT hash association",
+      "same-scope raster-failure snapshot"
+    ],
+    "prohibited": "joining PREPARING 9/7 to FAILED keyboard reason or old geometry11 JPEG"
+  },
+  "verdict": {
+    "geometryDifference": "REAL_PACKET_GEOMETRY_DIFFERENCE_IN_EARLY_SNAPSHOT",
+    "nativeAckMissing": "NOT_PROVEN_NOT_AN_ACK_FIELD",
+    "legalTransient": "ALLOWED_BY_PUBLISH_THEN_PACK_ORDER_RECOVERY_NOT_CAPTURED",
+    "staleConsumer": "NOT_PROVEN_LIVE_READ_PATH_EXISTS",
+    "persistentPublishOrDrawBug": "NOT_PROVEN_NO_SAME_SCOPE_FAILURE_SEQUENCE",
+    "engineeringGap": "PROVEN_COLD_TRUNCATION_DROPS_PAIRING_AUTHORITY",
+    "HOLD_strictPNG": "NOT_REACHED_NOT_PASS"
+  }
+}

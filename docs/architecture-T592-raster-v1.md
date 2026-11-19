@@ -44,3 +44,9 @@ fix9_l1–l8布局原件的非空text主要是系统状态栏时钟，未包含�
 T659已有修复保留，T592完整真实prepare→check ticket→实际reserve→仅RESERVED后consume→HOLD→严格PNG/原标定仍未完成。developer只在具体工程缺陷证据齐并由architect修订后实施+编译；本轮不默认退developer，不设manager/设备关闭门。
 
 执行prompt：不使用真机（本architect）；effector真机读取/执行串行，tester离线脚本/构建签名解析。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅执行者本人状态有限例外），不更新滴答同名清单。GPU驻留优先、CPU停止、目标10暂停、水13→14→12；全部背景前景仅XComponent+shader，FAULT或明确STALE，无Canvas/软件GL产品回退。禁止JPEG转PNG冒严格截图，不降低几何/身份/时限门。
+
+## 2026-11-19 T680 续归因修订
+
+新 v3b 两份冷档已按 `docs/architecture-T680-v1.md`、`architecture-T680-contract-v1.json` 和 `analysis-T680-evidence-v1.json` 独立核对。PREPARING-18 是 DISMISSING/owner=null、未产生 FRAME 的早期档：plan generation7、UI geometry9、packet geometry7；input仍focused、键盘资格UNKNOWN且snapshot高度1099、draw/layout ack尚未齐。十项native比较虽只有geometry不等，却不能证明实际失败已走到该门，更不是native返回的ack（它来自ArkTS packet）。
+
+FAILED-25 实为 KEYBOARD_VISIBILITY_UNKNOWN 且 detailTruncated=true，authority整体丢失；与PREPARING的完整同attempt身份不能建立，亦不能只凭报告称另次就视作已经证实不同次。旧JPEG geometry11不得与新geometry9档混拼。唯一已证工程修订为既有report溢出分支保留有界配对摘要，精确developer边界见T680第四节；已有完整原件直接复用，T671离线与T592真机各按角色接续，不重复同条件截断取证，不猜修native ack/协议/geometry推进。HOLD/严格PNG仍未达，不能冒产品通过。

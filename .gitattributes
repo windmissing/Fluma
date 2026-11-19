@@ -54,3 +54,8 @@ test/reports/t666/** -text -whitespace
 docs/analysis-T67[89]*.json -text whitespace=cr-at-eol
 docs/architecture-T67[89]*.json -text whitespace=cr-at-eol
 docs/receipt-T678-T679-*.json -text whitespace=cr-at-eol
+
+# T680 original-byte attribution, routing and original-card receipts.
+docs/analysis-T680-*.json -text whitespace=cr-at-eol
+docs/architecture-T680-*.json -text whitespace=cr-at-eol
+docs/receipt-T680-*.json -text whitespace=cr-at-eol

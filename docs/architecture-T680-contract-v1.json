@@ -1,0 +1,127 @@
+{
+  "schema": "T680_PAIRING_ATTRIBUTION_AND_ENGINEERING_ROUTING_V1",
+  "task": "T680",
+  "date": "2026-11-19",
+  "role": "architect",
+  "evidence": "docs/analysis-T680-evidence-v1.json",
+  "architecture": "docs/architecture-T680-v1.md",
+  "scope": {
+    "deviceUsed": false,
+    "buildRun": false,
+    "productOrTestsRun": false,
+    "productCodeChanged": false,
+    "ownQueueStatusOnly": true,
+    "managerGateAdded": false
+  },
+  "verdict": {
+    "PREPARING": "EARLY_DISMISSING_UNBOUND_NO_FRAME_FAILURE_WITNESS",
+    "nativeTenComparisons": {"satisfied": 9, "total": 10, "unequalField": "geometry", "actual": 7, "expected": 9},
+    "comparisonIsProductPass": false,
+    "geometryProducer": "ArkTS preparation.packet.geometry, not native geometry acknowledgement",
+    "legalTransient": "permitted by publish-before-pack; recovery not captured",
+    "persistentAckOrPublishBug": "NOT_PROVEN",
+    "staleSnapshotConsumer": "NOT_PROVEN; actual willDraw refreshes live controller snapshot",
+    "FAILED": "KEYBOARD_VISIBILITY_UNKNOWN; authority truncated; detailed condition unavailable",
+    "sameAttempt": "NOT_ESTABLISHED; compatible IDs/window/times do not establish session/owner/context",
+    "confirmedEngineeringGap": "V4 cold overflow fallback drops all pairing authority",
+    "HOLD_strictPNG": "NOT_REACHED_NOT_PASS"
+  },
+  "rawPaths": {
+    "fullSnapshot": "readiness.authority.snapshot",
+    "fullNative": "readiness.authority.snapshot.raster.native",
+    "fullEvents": "readiness.authority.events",
+    "detailTruncated": "readiness.detailTruncated",
+    "outerObservationTruncated": "observationTruncated",
+    "proposedSummary": "readiness.pairingEvidence",
+    "missingRule": "TRUNCATED/NOT_CAPTURED/NOT_EVALUATED; never substitute zero/false"
+  },
+  "routing": [
+    {
+      "id": "R0_EXISTING_ARTIFACTS",
+      "owners": ["T671 tester offline", "T592 effector device serial"],
+      "action": "Recover original filename and WS_EVENT name/bytes/SHA plus actual loaded-package/process association; inspect already-existing same-scope full cold files before new execution.",
+      "identity": ["gate.session", "pageGeneration", "prepareId", "ownerSerial", "owner ten fields", "observationSerial", "windowId/windowGeneration", "context", "startedMonoMs", "recorded FRAME now/frame/serial"],
+      "forbiddenJoin": ["PREPARING9/7 to truncated FAILED keyboard reason", "PREPARING geometry9 to old JPEG geometry11", "gate serial to raster serial or observation.serial"],
+      "prerequisite": "Actual matching original available; no dependency on a preparation card merely closing."
+    },
+    {
+      "id": "R1_BOUNDED_COLD_EVIDENCE",
+      "owner": "developer implementation and compile only",
+      "classification": "PROVEN_ENGINEERING_DIAGNOSTIC_GAP",
+      "action": "Retain a bounded pairingEvidence DTO in existing full and overflow report branches; no native ack/physics/gate behavior repair authorized.",
+      "trueSources": ["test/t426/PrepareReadinessV4.ets::report", "test/t574/t574_prepare_v4_overlay.cjs", "test/t574/t659_owner_glue.cjs", "tools/singlesand/prepare_owner_build.py"],
+      "generatedVerificationTarget": ".codex/local-test/product/entry/src/main/ets/render/PrepareReadinessV4.ets and actual P051DerivedV2Demo cold export from T598 fixed baseline",
+      "diagnosticRevision": "T680_PREPARE_PAIRING_EVIDENCE_V1",
+      "publicSignatureUnchanged": "PrepareReadinessV4.report():string",
+      "suggestedPureHelper": "buildPreparePairingEvidence(authority:PrepareAuthorityReport, owner:PrepareAttemptOwner|null, ownerSerial:number):PreparePairingEvidence",
+      "summaryKeys": ["revision", "status", "gate", "ownerSerial", "owner", "snapshot", "raster", "inputs", "keyboard", "lastFrame", "missingFields", "truncatedFields", "sources"],
+      "summaryStatus": ["COMPLETE", "INCOMPLETE"],
+      "lastFrameKeys": ["status", "observationSerial", "frame", "monoMs", "reason", "snapshotSerialMatches"],
+      "absenceSemantics": "Unknown numeric values are null with explicit paths; legitimate captured zero remains zero. No existing matching FRAME means NOT_EVALUATED with null values. Null owner at start is an observation, not automatically a product identity defect.",
+      "protocolChange": false,
+      "reuse": "Already generated same-call super.report() authority, same-call copied owner, existing at-most-256 recorded events; no new logger or per-frame stream.",
+      "requiredGroups": {
+        "gate": ["session", "pageGeneration", "prepareId", "observationSerial", "inputSerial", "startedMonoMs", "state", "reason", "diagnosticOverflow"],
+        "owner": ["ownerSerial", "full ten-field owner or explicit null", "branch unknown if owner absent"],
+        "snapshot": ["windowId/windowGeneration", "controller/session/surface/context/run", "geometry", "nativeGeometry", "nativeReady", "viewportWidth/Height", "layoutGeneration"],
+        "raster": ["revision", "generation", "geometry", "rasterW/H", "valid/reason", "didLayoutSerial", "requestedAtLayout", "layoutAcknowledged", "firstDrawSerial", "frameAnchorNs", "all ten raster.native fields"],
+        "earlierGates": ["three inputs created/editing/focused", "keyboardConfiguration", "deviceType", "windowMode", "avoidUnit", "four avoid rects", "keyboardHeight", "keyboardAnimation", "keyboardAreaSeen", "sessionEverEdited"],
+        "evaluation": ["last existing matching FRAME serial/frame/now/reason or NOT_EVALUATED", "whether its observationSerial matches saved snapshot", "explicit field absence/truncation", "packet/native.getState field provenance"]
+      },
+      "budgetsUtf8Bytes": {"summaryTargetMax": 4096, "readinessHardMax": 14336, "outerHardMax": 16384},
+      "overflow": "Count serialized UTF8, preserve first/last raw error contract, omit bulky diagnostic detail with explicit flags; never silently truncate identity. If still impossible emit INCOMPLETE/PREPARE_COLD_UTF8_LIMIT and exact missing fields, not complete evidence.",
+      "noSideEffects": ["refreshRaster", "bindOwner", "advance", "pack", "frame", "check", "reserve", "native calls", "re-evaluating predicate to invent a recorded reason"],
+      "completion": "Develop and compile. Offline fixture/scripts/signing tester; all device execution effector. No device or independent test card is a developer closure gate."
+    },
+    {
+      "id": "R2_KEYBOARD_FIRST",
+      "owners": ["tester offline configuration/fixture", "effector actual device callbacks", "architect if actual product failure"],
+      "when": "Recorded same-attempt refusal is input/keyboard before raster",
+      "action": "Handle actual failed domain; real fixed-keyboard confirmation and focus/dismiss callbacks required. Missing detailed keyboard condition is not geometry proof."
+    },
+    {
+      "id": "R3_TRANSIENT",
+      "owner": "effector T592 original matrix",
+      "when": "Proven same scope publishes new UI geometry, next real pack/draw catches up and gates converge",
+      "action": "Record legal transient; continue prepare/check/reserve/RESERVED-then-consume/HOLD/strict PNG; no geometry-policy patch."
+    },
+    {
+      "id": "R4_PERSISTENT_PRODUCER_LAG",
+      "owner": "architect first; developer only after exact engineering revision",
+      "when": "All earlier gates fulfilled, stable scope and actual successive frames through deadline, packet geometry remains old",
+      "action": "Use real prepareSingleSandFrame first refusal, pack/draw/receipt and surface/context provenance to isolate producer/scheduling. No forced new geometry in old packet; no unsupported native-ack conclusion."
+    },
+    {
+      "id": "R5_STALE_EVIDENCE",
+      "owner": "architect first; developer targeted sampling only if established",
+      "when": "Same-scope actual packet/current viewport are new while gate cached native evidence remains old at matching observation",
+      "action": "Fix only confirmed read/cache update ordering. Evidence-only updates must not advance allocation or geometry."
+    },
+    {
+      "id": "R6_SCOPE_OR_FIELDS_MISSING",
+      "owners": ["tester T671 precise parse", "effector existing-artifact retrieval", "developer R1 only for proven truncation seam"],
+      "action": "Mark exact missing/truncated identity; reuse existing complete files or bounded report artifact before fresh attempt. Do not repeat identical truncated captures or claim product PASS."
+    }
+  ],
+  "unchangedContracts": [
+    "T532 protocol string != plan generation != geometry",
+    "native.geometry excluded from allocation/actual change-key",
+    "never force old packet.geometry to latest UI geometry",
+    "no relaxed px/identity gate or extended 3000ms timeout",
+    "two actual frames and fresh owner/ticket still required",
+    "only consume ticket after RESERVED",
+    "no JPEG conversion as strict PNG",
+    "T659 owner DTO and value predicates retained"
+  ],
+  "boundaries": {
+    "goals": 19,
+    "goal10": "PAUSED",
+    "CPU": "STOPPED",
+    "simulation": "GPU_RESIDENT_PRIORITY",
+    "priorityAfter11": [13, 14, 12, 15, 16, 17, 18, 19],
+    "priorityIsAutomaticTechnicalDependency": false,
+    "render": "XComponent+shader only, all foreground/background; FAULT or explicit STALE last valid frame; no Canvas/softwareGL product fallback",
+    "queue": "Do not modify D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md except own task status; no other row/column/queue or Dida same-name list update"
+  },
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。"
+}
