@@ -1,0 +1,252 @@
+{
+  "schema": "T646_SOURCE_AND_SAVED_EVIDENCE_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "fixtureRun": false,
+  "productTestsRun": false,
+  "reportAttempt": "62012",
+  "actualRunId": "t496-1218097213334300",
+  "actualBranch": "D1_OFF (not C0/C1/C2 CREATE_ONLY)",
+  "matchedRows": [
+    {
+      "runId": "t496-1218097213334300",
+      "arm": "",
+      "actionId": "BOOT",
+      "phase": "START",
+      "scriptNs": "0",
+      "detail": "source=t492-m1-delivery dcf105d+T492-overlay route=m1"
+    },
+    {
+      "runId": "t496-1218097213334300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "COORDINATOR_WAIT_ITER",
+      "scriptNs": "1000000",
+      "detail": "coordinatorWaitIteration=0|ownerProgressSession=1|epoch=1|captureCommittedEpoch=0"
+    },
+    {
+      "runId": "t496-1218097213334300",
+      "arm": "off",
+      "actionId": "BOOT",
+      "phase": "COORDINATOR_WAIT_ITER",
+      "scriptNs": "1000000",
+      "detail": "coordinatorWaitIteration=15000|ownerProgressSession=1|epoch=1|captureCommittedEpoch=0"
+    }
+  ],
+  "matchedStages": [
+    {
+      "runId": "t496-1218097213334300",
+      "arm": "",
+      "stage": "D1_OFF",
+      "event": "ENTER"
+    }
+  ],
+  "trace62012Present": false,
+  "currentLastGlEnter": null,
+  "currentLastGlExit": null,
+  "currentProgramRole": null,
+  "currentWaitChain": null,
+  "conclusion": "TEST_FACILITY_REPAIR_AND_PRECISE_EVIDENCE_FIRST; no established new product stage gap",
+  "facts": [
+    "hostNow in RunD1 is real steady_clock; scriptNs field remains script domain1000000",
+    "ownerProgressSession is progress.session, not a progress counter",
+    "captureCommittedEpoch0 is publication absent at two sampled cuts, not proof no resource allocation occurred",
+    "v4c unpaired411 belongs older identities, not this run",
+    "default main does not initialize sink; only recognized create-only dispatch does",
+    "real source already has bootProbe.Copy, TRANSPORT_CREATE pair, submit observer, scene pair, Resources and capture publication cuts"
+  ],
+  "inputs": [
+    {
+      "path": "test/t496/external_source_diff.cpp",
+      "bytes": 29216,
+      "sha256": "b99eb2c77d2f7b6e76bf82f040120e813e665f1ceb8955060dbbdc9f822263c7"
+    },
+    {
+      "path": "test/t496/t561_seams.h",
+      "bytes": 2660,
+      "sha256": "726eacebf70922dd70768f944e68b1dd2b57bb1b736c04bf7f5ded78831a0cde"
+    },
+    {
+      "path": "test/t496/gl_sink.inc",
+      "bytes": 9409,
+      "sha256": "5da8009672c6fa0879a25204b058be3c7899b08202fd95bf91814a8cb49d357a"
+    },
+    {
+      "path": "test/t496/gl_forward_sink.cpp",
+      "bytes": 24258,
+      "sha256": "cde134861901b79f5825af5a5c8eb232d92e19210d4f97ee1243c245b8c3ad12"
+    },
+    {
+      "path": "test/t496/run_create_only.cmd",
+      "bytes": 1939,
+      "sha256": "aec45530e446a198506522d43c22989b9505d8bbf7f7def70da532e77ab111c2"
+    },
+    {
+      "path": "test/t496/build.cmd",
+      "bytes": 3344,
+      "sha256": "39c1162fdcf51bca2b3ae7796e70d34e202832c31143ced542d1768a9051c73e"
+    },
+    {
+      "path": "docs/test-report-T496-create-only-v6.md",
+      "bytes": 2558,
+      "sha256": "503a547fcbd105bd4dcc0afb6ca9723afc91a1a2cc7bebfa920dc7522f9ebf24"
+    },
+    {
+      "path": "docs/architecture-T620-v1.md",
+      "bytes": 5280,
+      "sha256": "25eb89768faeccc5caa18b9496b578e4d11afa014a5088352afb270bfc993528"
+    },
+    {
+      "path": ".codex/local-test/t496/t496_log.ndjson",
+      "bytes": 7112,
+      "sha256": "44c7c8483be00746b8c4b6163a780cb12c22414f96e802f1ce3b264dbcdee347"
+    },
+    {
+      "path": ".codex/local-test/t496/t496-stages.ndjson",
+      "bytes": 1315,
+      "sha256": "7c31ebf8ade5bab3b9ccb407a6295d0106c4f5743774a24bb4b2b35de00c751e"
+    },
+    {
+      "path": ".codex/local-test/t496/t496-v6-summary.json",
+      "bytes": 942,
+      "sha256": "a5e8afd180d384a0f4d2d016c73966c3ce231258d56901ce1781d56f421840b5"
+    },
+    {
+      "path": ".codex/local-test/t496/build-t620.log",
+      "bytes": 918,
+      "sha256": "c5e56920d646feb21506e6bd81aea47aa7d85e5585df084a8bb22fb315e1102d"
+    },
+    {
+      "path": ".codex/local-test/t496/t496.exe",
+      "bytes": 1311232,
+      "sha256": "7160cda1081d54ad742637f8522a154d60fb3cdf09c4ddac40a2b112cd84ba91"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/m1/full_transport.cpp",
+      "bytes": 32096,
+      "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+    }
+  ],
+  "sourceCuts": [
+    {
+      "path": "test/t496/external_source_diff.cpp",
+      "sha256": "b99eb2c77d2f7b6e76bf82f040120e813e665f1ceb8955060dbbdc9f822263c7",
+      "matches": [
+        {
+          "line": 275,
+          "text": "    a.hostNow=[](){ // T620 step2: real monotonic clock (script-clock profile declared separately)"
+        },
+        {
+          "line": 287,
+          "text": "           Emit(\"BOOT\",\"COORDINATOR_WAIT_ITER\",g_hostNowNs.load(),"
+        },
+        {
+          "line": 289,
+          "text": "              +\"|ownerProgressSession=\"+std::to_string(a.progress.session)+\"|epoch=\"+std::to_string(a.epoch.load())"
+        },
+        {
+          "line": 297,
+          "text": "        Emit(\"BOOT\",\"RESOURCE_COMMITTED\",g_hostNowNs.load(),"
+        },
+        {
+          "line": 299,
+          "text": "             +\"|ownerProgressSession=\"+std::to_string(a.progress.session));"
+        },
+        {
+          "line": 308,
+          "text": "                a.PagePulseLocked(bound,1,g_hostNowNs.load());"
+        },
+        {
+          "line": 319,
+          "text": "             \"ownerProgressSession=\"+std::to_string(a.progress.session)"
+        },
+        {
+          "line": 424,
+          "text": "    a.hostNow = []() { return g_hostNowNs.load(); };"
+        },
+        {
+          "line": 473,
+          "text": "extern \"C\" bool t496_sink_initialize(const char*, const char*, const char*); // gl_forward_sink TU"
+        },
+        {
+          "line": 480,
+          "text": "        if (!t496_sink_initialize(g_runId.c_str(), (\"create_\" + arm).c_str(), attemptId.c_str())) {"
+        },
+        {
+          "line": 495,
+          "text": "int main(int argc, char** argv) {"
+        },
+        {
+          "line": 498,
+          "text": "        if (arm == \"C0\" || arm == \"C1\" || arm == \"C2\") return RunCreateOnlyDispatch(arm, argc > 2 ? argv[2] : \"\");"
+        }
+      ]
+    },
+    {
+      "path": ".codex/local-test/t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0",
+      "matches": [
+        {
+          "line": 734,
+          "text": "bootNote(seen,\"TRANSPORT_CREATE_ENTER\");"
+        },
+        {
+          "line": 737,
+          "text": "    gpu->submitObserver={this,[](void* ptr,SubmitStage stage,uint64_t root,uint32_t code,uint32_t ordinal,uint64_t wallNs){auto& app=*static_cast<App*>(ptr);std::lock_guard<std::mutex> lock(app.mutex);BridgeTimeRow row;row.ns=row.now=app.Stamp();row.tid=BridgeTid();row.epoch=app.transportEpoch;row.run=(uint64_t(app.transportIdentity.run.hi)<<32)|app.transportIdentity.run.lo;row.surface=(uint64_t(app.transportIdentity.surface.hi)<<32)|app.transportIdentity.surface.lo;row.input=(uint64_t(app.input.hi)<<32)|app.input.lo;row.root=root;row.stage=uint32_t(stage);row.code=code;row.carry=ordinal;row.delta=wallNs;if(stage==SubmitStage::BootCapability||stage==SubmitStage::BootAllocation){"
+        },
+        {
+          "line": 791,
+          "text": "bootNote(seen,\"TRANSPORT_CREATE_EXIT\",code!=TransportCode::OK,code!=TransportCode::OK,int(code),0,gpu->Stats().firstGlError,0,gpu->Stats().allocatedBytes);"
+        },
+        {
+          "line": 793,
+          "text": "    if(code!=TransportCode::OK){publish(\"{\\\"state\\\":\\\"FAULT\\\",\\\"stage\\\":\\\"TRANSPORT_CREATE\\\",\\\"code\\\":\"+std::to_string(int(code))+\"}\");failed=true;retire();continue;}"
+        },
+        {
+          "line": 803,
+          "text": "    bootNote(seen,\"SCENE_PROGRAM_PREPARE_ENTER\");"
+        },
+        {
+          "line": 811,
+          "text": "    bootNote(seen,\"SCENE_PROGRAM_PREPARE_EXIT\",false,false,0,0,0,0,scene.PrepareWallNs());"
+        },
+        {
+          "line": 817,
+          "text": "      v2ResourcesReady=recovery.Resources(seen,held,id);input=gpu->InputGeneration();identity=id;"
+        },
+        {
+          "line": 836,
+          "text": "captureCommittedEpoch=seen;"
+        }
+      ]
+    },
+    {
+      "path": "test/t496/run_create_only.cmd",
+      "sha256": "aec45530e446a198506522d43c22989b9505d8bbf7f7def70da532e77ab111c2",
+      "matches": [
+        {
+          "line": 10,
+          "text": "if \"%ARM%\"==\"\" (echo usage: run_create_only.cmd ARM ATTEMPTID & exit /b 1)"
+        },
+        {
+          "line": 16,
+          "text": "powershell -NoProfile -Command \"$p=Start-Process -FilePath '%EXE%' -ArgumentList '%ARM%','%ATTEMPTID%' -WorkingDirectory 'D:/hmprojects/HelloWorld' -PassThru -RedirectStandardOutput 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stdout.txt' -RedirectStandardError 'D:/hmprojects/HelloWorld/.codex/local-test/t496/out-%ATTEMPT%-stderr.txt'; $p.Id | Out-File -Encoding ascii 'D:/hmprojects/HelloWorld/.codex/local-test/t496/child-pid-%ATTEMPT%.txt'\""
+        },
+        {
+          "line": 19,
+          "text": "powershell -NoProfile -Command \"$deadline=(Get-Date).AddSeconds(900); while((Get-Date) -lt $deadline -and -not (Get-Process -Id %CPID% -ErrorAction SilentlyContinue)){Start-Sleep -Milliseconds 500}; $p=Get-Process -Id %CPID% -ErrorAction SilentlyContinue; if($p){Stop-Process -Id %CPID% -Force; Write-Output ('WATCHDOG_KILL pid=%CPID% at='+(Get-Date -Format o))} else {Write-Output 'CHILD_EXITED_BEFORE_DEADLINE'}\" > .codex\\local-test\\t496\\watchdog-%ATTEMPT%.txt"
+        }
+      ]
+    }
+  ]
+}

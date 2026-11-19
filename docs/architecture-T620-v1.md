@@ -1,5 +1,7 @@
 # T620：CREATE_WAIT 握手与 GL 原件归因
 
+> 2026-11-19 v6首次归因续稿见`architecture-T646-v1.md`：实际为未初始化sink的默认D1_OFF分支，session不是owner心跳，capture发布0不代表零分配；先tester修入口/runner/真实时钟握手和现有seam采证，不能拼旧411派产品日志。原T620产品/设施分域原则不变。
+
 2026-11-19；architect；不使用真机。结论：测试设施握手存在缺口；原报告对sink和driver的排除不成立。交tester修T496原设施并有界续测，不先派产品修复。未复跑三臂或构建。
 
 ## 原件给出的事实
