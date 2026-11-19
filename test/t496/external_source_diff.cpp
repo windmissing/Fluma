@@ -199,7 +199,10 @@ static void D1OwnerHook(App& a, BridgeStage stage) {
         std::unique_lock<std::mutex> lk(g_schedMu);
         g_ownerCheckpoint = true; g_permit = false;
         g_schedCv.notify_all();
-        g_schedCv.wait(lk, [&] { return g_permit || g_scriptDone; });
+        // T620 step4: non-blocking observer - checkpoint published, owner never
+        // waits on the coordinator (old barrier only released at exit and could
+        // wedge the owner). Coordinator acks asynchronously.
+        // g_schedCv.wait(lk, [&] { return g_permit || g_scriptDone; });
     }
 }
 
@@ -269,7 +272,9 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
     g_hostNowNs.store(1000000);
     auto owner=std::make_unique<App>(false); auto& a=*owner;
     a.window=reinterpret_cast<void*>(1); a.nextProgressV2=true; a.tailProbeNext=true;
-    a.hostNow=[](){return g_hostNowNs.load();};
+    a.hostNow=[](){ // T620 step2: real monotonic clock (script-clock profile declared separately)
+        return (uint64_t)std::chrono::duration_cast<std::chrono::nanoseconds>(
+            std::chrono::steady_clock::now().time_since_epoch()).count();};
     a.progress.BeginSession();
     a.hostHook=&D1OwnerHook;
     std::thread worker([&]{ a.loop(); });
@@ -278,9 +283,41 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
     for (int i=0;i<450000;++i){
         {std::lock_guard<std::mutex> lock(a.mutex);
          if (a.captureCommittedEpoch==a.epoch.load() && a.captureCommittedEpoch) break;}
-        if (i%15000==0) Emit("BOOT","CREATE_WAIT",g_hostNowNs.load(),
-             "waiting transport create, iter="+std::to_string(i));
+        if (i%15000==0) { // T620 step2: coordinator iteration renamed + owner progress snapshot
+           Emit("BOOT","COORDINATOR_WAIT_ITER",g_hostNowNs.load(),
+              "coordinatorWaitIteration="+std::to_string(i)
+              +"|ownerProgressSession="+std::to_string(a.progress.session)+"|epoch="+std::to_string(a.epoch.load())
+              +"|captureCommittedEpoch="+std::to_string(a.captureCommittedEpoch));}
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    // T620 step3: resource-commit reached -> capture recovery ledger + bind real
+    // session + first pulse, via the production recovery entry points.
+    {   std::lock_guard<std::mutex> lock(a.mutex);
+        std::ostringstream rs; a.RecoveryJson(rs,false);
+        Emit("BOOT","RESOURCE_COMMITTED",g_hostNowNs.load(),
+             "recovery="+rs.str().substr(0,900)
+             +"|ownerProgressSession="+std::to_string(a.progress.session));
+        const uint64_t serial=a.recovery.serial, e=a.recovery.epoch, page=1;
+        const U64 run=a.recovery.candidate.run;
+        if (serial) {
+            uint64_t bound=a.RecoverySessionLocked(serial,e,run,page);
+            Emit("BOOT","RECOVERY_BOUND",g_hostNowNs.load(),
+                 "boundSession="+std::to_string(bound)
+                 +"|serial="+std::to_string(serial)+"|epoch="+std::to_string(e));
+            if (bound) {
+                a.PagePulseLocked(bound,1,g_hostNowNs.load());
+                Emit("BOOT","FIRST_PULSE_ACCEPTED",g_hostNowNs.load(),
+                     "session="+std::to_string(bound)+"|seq=1");
+            } else {
+                Emit("BOOT","RECOVERY_BIND_REJECTED",g_hostNowNs.load(),
+                     "serial="+std::to_string(serial)+"|epoch="+std::to_string(e));
+            }
+        } else {
+            Emit("BOOT","RECOVERY_LEDGER_EMPTY",g_hostNowNs.load(),"no serial at commit");
+        }
+        Emit("BOOT","READY_CHECK",g_hostNowNs.load(),
+             "ownerProgressSession="+std::to_string(a.progress.session)
+             +"|phase="+std::string(a.phase));
     }
     size_t cursor=0; R.actions=script.size();
     const auto startWall=std::chrono::steady_clock::now();
