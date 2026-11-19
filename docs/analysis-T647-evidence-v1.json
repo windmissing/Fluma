@@ -1,0 +1,252 @@
+{
+  "schema": "T647_FINITE_SOURCE_REVIEW_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "checks": [
+    "10 family/root exact contract rows",
+    "T55412/2404 and G11 19/2543/2923 actual formal tables",
+    "20 audit families and exact masks",
+    "composite tail156..239 no overlap,240..255zero",
+    "DM/RX distinct RootConfig parameter offsets",
+    "T639 source SHA matches current snapshot"
+  ],
+  "inputs": [
+    {
+      "path": "docs/developer-T639-v1.md",
+      "bytes": 6351,
+      "sha256": "383fb3eaf95eed5a151ce5d07852ddacebc62dce6ddc588817b333f2a3c8d0c7"
+    },
+    {
+      "path": "test/reports/t639/blocker-evidence.json",
+      "bytes": 6040,
+      "sha256": "c0fceac8cbf3936f75d30b9db54779f2c4fd8b0e2fefa9964670669b4123345c"
+    },
+    {
+      "path": "docs/algorithm-G9-dynamic-mobilization-v2.md",
+      "bytes": 24975,
+      "sha256": "bd1cba97223ff25941a448096cb7d2d784bc6e066dc15b8451cd3a8e6e61ae7e"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-dispatch-v2.json",
+      "bytes": 242873,
+      "sha256": "976ff2f73bf3190113689a73431c5aa63261330d1409be332a6b8c5efec26a44"
+    },
+    {
+      "path": "docs/architecture-T563-g11-manifest-v1.json",
+      "bytes": 42076,
+      "sha256": "b9130e13377159b2731910daf839f97c9736f36e47ef0210f78ca470300f8047"
+    },
+    {
+      "path": "docs/architecture-T563-g11-r1-dispatch-v1.json",
+      "bytes": 565491,
+      "sha256": "9aa011bba55ecee78089d592122279e1892aa292e4bda0a2297e47aabf3dab57"
+    },
+    {
+      "path": "docs/architecture-T563-g11-dm-dispatch-v1.json",
+      "bytes": 635607,
+      "sha256": "80ffa0f9d97fd49ed5a9cb3a73d2f91a1fe9c2dcffb80a6ed9cc766be625c356"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/transport.cpp",
+      "bytes": 17485,
+      "sha256": "5b9ff7aa2aa0804eb1c5f54a0e63383494af3370042ee96f4a3b36d3adff5460"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/completion_gate.cpp",
+      "bytes": 3306,
+      "sha256": "906bc64597d7b3b227be9f85fe31e8850a960f4c494137013eacac958febb6ba"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp",
+      "bytes": 140106,
+      "sha256": "972edb7f6b4b7a387f57bb1578b8c3bb66cdad7e226be8f943857a49de06063b"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/research_config.h",
+      "bytes": 3321,
+      "sha256": "6a76c1be507d4081d83479fb02b55c060f3d1d1fc49f4b2f71b4992768e31798"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/completion_gate.cpp",
+      "bytes": 3339,
+      "sha256": "e31b700afe7a3da90bb8b2c6fda24fcc7b7bc341bd4f51ea2a32b8bf3d3f3384"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.cpp",
+      "bytes": 18576,
+      "sha256": "27bc77fed5c65c92a297b918c0410f42c240877b83e972741d52d77f429ddea5"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.h",
+      "bytes": 4503,
+      "sha256": "828566388076e312ec8b53e97c4a7b171c4a31e7a98182c94486ca4ebaf1599b"
+    },
+    {
+      "path": "docs/architecture-T634-composite-closure-v1.json",
+      "bytes": 4748,
+      "sha256": "9b01a70535e49d4a3d2bd9d3eea2756a38b9a7369fcd617bf14d890c605f668b"
+    },
+    {
+      "path": "docs/architecture-T641-runtime-v1.json",
+      "bytes": 26713,
+      "sha256": "90887a30bfc035caa25a3dec627c31a21796e123daf5b2dca66a5e721fe0d3e1"
+    }
+  ],
+  "blockerSourceAgreement": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/transport.cpp",
+      "sameAsT639": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/completion_gate.cpp",
+      "sameAsT639": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp",
+      "sameAsT639": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/schema_generated.h",
+      "sameAsT639": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/completion_gate.h",
+      "sameAsT639": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/completion_gate.h",
+      "sameAsT639": true
+    }
+  ],
+  "sourceMatches": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/transport.cpp",
+      "matches": [
+        {
+          "line": 101,
+          "text": " U(\"uCandidateBank\",permit_.candidateBank);U(\"uBaseBank\",permit_.baseBank);U(\"uArena\",permit_.arena);U(\"uRequiredPasses\",permit_.kind==1?12:2404);U(\"uEventCapacity\",p.eventCapacity);U(\"uPathCapacity\",p.pathCapacity);U(\"uPathWord\",p.eventCapacity*64);"
+        },
+        {
+          "line": 144,
+          "text": " const uint32_t count=permit_.kind==1?12:2404;"
+        }
+      ]
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/completion_gate.cpp",
+      "matches": [
+        {
+          "line": 5,
+          "text": " const uint32_t count=permit.kind==1?12:2024;"
+        }
+      ]
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp",
+      "matches": [
+        {
+          "line": 1204,
+          "text": "uint dmWord(uint c,uint field){return W[uColumnStage+c*64u+32u+field];}"
+        },
+        {
+          "line": 1219,
+          "text": " uint r=max(f,uint(C[uConfig+7u+0u])); // hReg placeholder word below replaced by header param"
+        },
+        {
+          "line": 1223,
+          "text": " if(!g9SMul(square,g9S32(int(C[uConfig+4u])),numerator))return false; // kShear Q16"
+        },
+        {
+          "line": 1230,
+          "text": " if(!g9RneProduct(g9S32(int(C[uConfig+0u])),g9U32(r),65536u,yieldDepth))return false;"
+        },
+        {
+          "line": 1236,
+          "text": " else if(!g9SMul(g9S32(int(C[uConfig+6u+1u])),excessHead,numerator)||!g9SDiv(numerator,g9U32(65536u),2u,hsWide))return false;"
+        },
+        {
+          "line": 1247,
+          "text": " if(!shearOff&&chiS!=0xffffffffu){uvec4 osWide;if(!g9UMul(g9U32(C[uConfig+6u+2u]),g9U32(chiS),numerator)||!g9UDiv(numerator,g9U32(1048576u),quotient,remainder))return false;"
+        },
+        {
+          "line": 1252,
+          "text": " omegaOut=min(uint(C[uConfig+6u+3u]),uint(C[uConfig+5u])+raw);"
+        },
+        {
+          "line": 1281,
+          "text": "  if(!g9RneProduct(g9S32(int(C[uConfig+0u])),g9U32(gn),65536u,yieldA))return false;"
+        },
+        {
+          "line": 1289,
+          "text": "  if(!g9UMul(g9U32(C[uConfig+6u+0u]),g9U32(chiG),hgWide)||!g9UDiv(hgWide,g9U32(65536u),q3,r3))return false;"
+        },
+        {
+          "line": 1294,
+          "text": "  if(!g9UMul(g9U32(C[uConfig+6u+4u]),g9U32(chiG),ogW)||!g9UDiv(ogW,g9U32(1048576u),q3,r3))return false;"
+        },
+        {
+          "line": 1297,
+          "text": "  bool shearOff=g9Zero(pEntry)||C[uConfig+4u]==0u;"
+        },
+        {
+          "line": 1417,
+          "text": "  uvec4 pEnd=g9ReadWide(uColumnStage+c*64u+52u);"
+        },
+        {
+          "line": 1427,
+          "text": "  g9WriteWide(uColumnStage+c*64u+56u,mid);"
+        },
+        {
+          "line": 2116,
+          "text": " if(uRequiredPasses==2024u){uvec4 quanta;if(!g9UAdd(g9U64(uvec2(C[12u],C[13u])),g9U32(1u),quanta)||any(notEqual(quanta.zw,uvec2(0u)))){g9Fault(29u,0u,12u);return;}C[12u]=quanta.x;C[13u]=quanta.y;}"
+        },
+        {
+          "line": 2189,
+          "text": "  if(g9Ctl(11u)!=0u){if(!g9ConsumeCommand(1u,0u))return;g9EndAcceptedMetadata(1u);g9Set(17u,65535u);}"
+        },
+        {
+          "line": 2190,
+          "text": "  else g9Set(17u,65535u);"
+        },
+        {
+          "line": 2197,
+          "text": " else if(uOp==G9_OP_SOURCE_PACK_SCENE)g9Set(17u,65535u);"
+        }
+      ]
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9spf/completion_gate.cpp",
+      "matches": [
+        {
+          "line": 5,
+          "text": " const uint32_t count=permit.kind==1?12:2024;"
+        }
+      ]
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.cpp",
+      "matches": [
+        {
+          "line": 99,
+          "text": " if(permit_.parent.quanta<=UINT64_MAX/32-1)P(\"uVisTicks\",(permit_.parent.quanta+(permit_.parent.kind==2?1:0))*32);"
+        },
+        {
+          "line": 164,
+          "text": " // T639: awaiting formal parent composite typed proof; no bank can switch."
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "no validated GPU audit producer deployed",
+    "no runtime proof/physics/replay/performance/device PASS",
+    "DM_DEFAULT/RX cannot accept by relaxing gate alone"
+  ]
+}

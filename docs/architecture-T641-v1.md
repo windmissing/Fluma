@@ -1,5 +1,7 @@
 # T641：G9 接收时间位移拨动独立 profile 工程闭包
 
+> 2026-11-19 T647接受链修订：消费`architecture-T647-v1.md`及acceptance机器表G9_RX行；完整真实DM审核16/17、预测/校正/接受时间必须实现，不能复用当前错误2024默认gate。GNR1的12/2404、DM2完成尾及RootConfig76..83保留，Runtime表已登记正式依赖；可同源生成专用validator，不等默认DM设备PASS、不CPU补位。
+
 2026-11-19，architect，不使用真机；消费manager对T637候选的采用裁定、`algorithm-T637-v1.md`、manifest/fixtures及实际g9dm源码。结论 **ENGINEERING_READY_FOR_T644 / PRODUCT_NOT_IMPLEMENTED_NOT_DEVICE_VALIDATED**。本卡交完整实现合同，不实现产品代码、不构建或测试产品；仅对独立布局标本作AArch64 syntax-only编译。后继T644开发编译、T645独立验证，不增manager批准/集中准备门。
 
 正式表：`architecture-T641-wire-v1.json`（Config64/RAW64/INPUT128/RECEIPT_CONTROL256/RootConfig128）、`architecture-T641-runtime-v1.json`（入口/能力/映射/哈希/锁序）、`architecture-T641-storage-cold-v1.json`（40960B/冷布局/资源）、`architecture-T641-seed-config-v1.json`（两档完整构造与SHA）。生成/只读有限检查为`analysis-T641-engineering-v1.py`，证据同名JSON；不是物理oracle或产品PASS。

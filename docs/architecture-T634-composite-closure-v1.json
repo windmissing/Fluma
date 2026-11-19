@@ -1,5 +1,28 @@
 {
   "schema": "T634_G11_COMPOSITE_CLOSURE_V1",
+  "acceptanceEngineeringRevision": {
+    "task": "T647",
+    "contract": "docs/architecture-T647-acceptance-v1.json",
+    "families": ["G11_R1", "G11_DM"],
+    "tailMagicLE": "G11C",
+    "tailRevision": 2,
+    "tailSeal": 3235800177,
+    "parentDefaultR1Unchanged": true,
+    "DMPrerequisite": "correct physical audit16/17 producers, configuration and accepted time; trusted ExpectedContract and private parent proof",
+    "tailExtensionWords": [156, 240],
+    "tailReservedZero": [240, 256],
+    "newVisualControlRegistration": {
+      "relativeByteRange": [61312, 62240],
+      "expectedWords": 224,
+      "digestWords": 8,
+      "perRootUploadBytes": 928,
+      "additionalSubDataCalls": 1,
+      "remainingReservedZero": [62240, 65536],
+      "residentCapacityUnchanged": true,
+      "revisionOverridesOnlyNewG11Layout": true
+    },
+    "noTailNormalizationOrCpuPass": true
+  },
   "deviceUsed": false,
   "productTestsRun": false,
   "render": "XComponent+shader only; FAULT or explicit STALE; no Canvas/softwareGL",

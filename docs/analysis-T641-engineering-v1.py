@@ -92,6 +92,8 @@ def manifest():
   recordPresence=dict(CURRENT=1,BASE=2),historyQualification=dict(BASE_CAP_REFERENCE_ONLY=1,PRIOR_ROOT_ARCHIVE_ABSENT=2),
   eventType=dict(DOWN=0,MOVE=1,UP=2,CANCEL=3),samplePresent=dict(ABSENT=0,PRESENT=1))
  runtime=dict(schema='T641_RX_RUNTIME_V1',**common,constants=m['constants'],enums=enums,capability64=cap,mapping64=mapping,hashes=hashes,
+  acceptanceEngineeringRevision=dict(task='T647',contract='docs/architecture-T647-acceptance-v1.json',family='G9_RX',tailRevision=2,sourcePasses=12,quantumPasses=2404,sourceAudits=65535,quantumAudits=262143,
+   prerequisite='true DM physical audit16/17 producers and accepted-time updates, not relaxed old gate; native expected/validated proof',rootConfigDMWords=[76,84]),
   clock=dict(first='dedicated ingress callback first operation CheckedClockRead before get_cb_info/Product/locks/parse',zeroNsCanBeValid=True,
    resolution='checked getres, 0<ns<=1000000',ordering='single synchronous ingress and owner each check causal reads; no global max across concurrently sampled timestamps',
    reverse='revoke capability/pending stroke/commands; never max(now,last)',vendorProofRequired=False,suspendLimit='unreported suspend wall age not guaranteed'),
