@@ -36,6 +36,8 @@ static EGLSurface t496HostWindow(EGLDisplay d, EGLConfig cfg, EGLNativeWindowTyp
     EGLint attrs[] = {EGL_WIDTH, 256, EGL_HEIGHT, 256, EGL_NONE};
     return eglCreatePbufferSurface(d, cfg, attrs);
 }
+extern "C" __eglMustCastToProperFunctionPointerType GL_APIENTRY t496GetProcAddress(const char*);
+#define eglGetProcAddress t496GetProcAddress
 #define eglGetDisplay t496HostDisplay
 #define eglCreateWindowSurface t496HostWindow
 #undef EGL_WINDOW_BIT
@@ -46,9 +48,13 @@ static EGLSurface t496HostWindow(EGLDisplay d, EGLConfig cfg, EGLNativeWindowTyp
 #define GRS_PROGRESS_V2_EXPERIMENT
 #define GRS_APP_M1
 #include "../t492-m1-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp"
+#define glProgramBinary t496LegacyProgramBinary
+#define glGetProgramBinary t496LegacyGetProgramBinary
 #include "../t488/gl_wrappers.inc"
 #include <GLES3/gl3.h>
 #include "../t485/gl_exports.inc"
+#undef glProgramBinary
+#undef glGetProgramBinary
 #include "t561_seams.h"
 #include <fstream>
 #include <filesystem>
@@ -58,6 +64,9 @@ static EGLSurface t496HostWindow(EGLDisplay d, EGLConfig cfg, EGLNativeWindowTyp
 
 // ---------- 结构化 JSONL：合法序列化、append+flush、唯一断言 ID ----------
 static std::string g_runId, g_arm;
+static std::mutex g_emitMutex;
+static App* g_cutApp=nullptr;static std::mutex g_cutMu;static std::condition_variable g_cutCv;static bool g_cutEntered=false,g_cutReleased=false,g_cutStop=false,g_d2Mode=false;static std::atomic<bool> g_d2Frozen{false};static std::atomic<bool> g_cutArmed{false};
+static std::string g_peSha;static uint64_t g_scriptBase=0;
 static std::ofstream g_log;
 static std::map<std::string, bool> g_asserted;
 static std::map<std::string, int> g_seqCounter;
@@ -96,15 +105,17 @@ static std::string JsonEscape(const std::string& s) {
 }
 static void Emit(const std::string& actionId, const std::string& phase,
                  uint64_t scriptNs, const std::string& detail) {
+    std::lock_guard<std::mutex> emitLock(g_emitMutex);
     if (!g_log.is_open()) return;
     std::ostringstream o;
     o << "{\"runId\":\"" << g_runId << "\",\"arm\":\"" << g_arm
       << "\",\"actionId\":\"" << actionId << "\",\"phase\":\"" << phase
-      << "\",\"clockDomain\":\"steady_real\",\"wallNs\":\"" << scriptNs
-      << "\",\"detail\":\"" << JsonEscape(detail) << "\"}\n";
+      << "\",\"clockDomain\":\"steady_real\",\"wallNs\":\"" << t496sink::WallNs()
+      << "\",\"declaredScriptNs\":\""<<scriptNs<<"\",\"detail\":\"" << JsonEscape(detail) << "\"}\n";
     g_log << o.str() << std::flush;
 }
 static bool Assert(const std::string& id, bool pass, const std::string& detail) {
+    std::lock_guard<std::mutex> emitLock(g_emitMutex);
     if (g_asserted.count(id)) return pass;
     g_asserted[id] = pass;
     if (g_log.is_open()) {
@@ -117,6 +128,28 @@ static bool Assert(const std::string& id, bool pass, const std::string& detail) 
     return pass;
 }
 static std::atomic<uint64_t> g_hostNowNs{1000000};
+
+extern "C" void t496_shadow_hash_role(const char*,const char*);
+extern "C" void t496_shadow_seed(const char*,const char*);
+static std::map<std::string,std::string> CanonicalSources(){
+ std::map<std::string,std::string> result{{"SOURCE",grs::programcache::Hash(grs::m1::FullSourceKernel())},{"INTERMEDIATE_QUANTUM",grs::programcache::Hash(grs::m1::QuantumKernel())},{"FINAL_QUANTUM",grs::programcache::Hash(grs::m1::QuantumCommitKernel())}};
+ for(const auto& desc:grs::m1::ScenePrograms())result[std::string(desc.role)]=grs::programcache::Hash(desc.stages[0].bytes.data(),desc.stages[0].bytes.size())+grs::programcache::Hash(desc.stages[1].bytes.data(),desc.stages[1].bytes.size());
+ return result;
+}
+static std::string ReceiptField(const std::string& line,const std::string& name){const auto prefix="\""+name+"\":\"";auto at=line.find(prefix);if(at==std::string::npos)return {};at+=prefix.size();auto end=line.find('"',at);return end==std::string::npos?std::string():line.substr(at,end-at);}
+static void RegisterCachedSources(const std::string& filesDir){
+ const auto known=CanonicalSources();const auto directory=std::filesystem::path(filesDir)/"gpu-program-cache/v1";
+ for(const auto& entry:std::filesystem::directory_iterator(directory)){
+  if(entry.path().extension()!=".bin")continue;const auto key=entry.path().stem().string();auto artifact=grs::programcache::Store().Get(key);if(!artifact)continue;
+  auto receipt=entry.path();receipt.replace_extension(".jsonl");if(!std::filesystem::exists(receipt)||std::filesystem::file_size(receipt)>1048576)continue;
+  const auto binary=grs::programcache::Hash(artifact->bytes.data(),artifact->bytes.size());std::ifstream in(receipt);std::string line;
+  while(std::getline(in,line)){
+   const auto role=ReceiptField(line,"role");const auto it=known.find(role);if(it==known.end()||ReceiptField(line,"key")!=key||(it->second.size()==64&&ReceiptField(line,"binarySHA")!=binary))continue;
+   const auto& source=it->second;bool sourceMatch=source.size()==64?ReceiptField(line,"shaderSHA")==source:(line.find(source.substr(0,64))!=std::string::npos&&line.find(source.substr(64))!=std::string::npos);
+   if(!sourceMatch)continue;t496_shadow_seed(binary.c_str(),source.c_str());Emit("BOOT","CACHE_SOURCE_BIND",t496sink::WallNs(),"role="+role+" key="+key+" binarySHA="+binary+" programSources="+source+" evidence=validated_artifact_receipt_not_GL_state");break;
+  }
+ }
+}
 
 // ---------- D1：独立调度 mutex/cv 固定动作表 ----------
 enum class Ak { PULSE, SOURCE, RESERVE, END, TAIL_PULSE };
@@ -132,16 +165,18 @@ static std::vector<Act> BuildScript() {
     pulse(biz);
     ns = biz;
     for (int i = 0; i < 10; ++i) pulse(ns += 16000000);
-    t.push_back({++id, Ak::RESERVE, ns + 16000000, 0, 0, 0});
-    pulse(ns + 16000000);
+    ns += 16000000;
+    t.push_back({++id, Ak::RESERVE, ns, 0, 0, 0});
+    pulse(ns);
     for (int i = 0; i < 8; ++i) pulse(ns += 16000000);
     biz = ns + 16000000;
     t.push_back({++id, Ak::SOURCE, biz, 0, ++sseq, 1});
     pulse(biz);
     ns = biz;
     for (int i = 0; i < 12; ++i) pulse(ns += 16000000);
-    t.push_back({++id, Ak::END, ns + 16000000, 0, 0, 0});
-    pulse(ns + 16000000);
+    ns += 16000000;
+    t.push_back({++id, Ak::END, ns, 0, 0, 0});
+    pulse(ns);
     for (int i = 0; i < 8; ++i) pulse(ns += 16000000);
     std::stable_sort(t.begin(), t.end(), [](const Act& a, const Act& b) {
         if (a.scriptNs != b.scriptNs) return a.scriptNs < b.scriptNs;
@@ -165,12 +200,19 @@ static OwnerSnapshot g_snap;
 static std::mutex g_schedMu;
 static std::condition_variable g_schedCv;
 static bool g_ownerCheckpoint=false, g_permit=false, g_scriptDone=false;
+static uint64_t g_observedAccepted=0;
 
 // owner hook：PumpBegin 发布 checkpoint 并等 permit（锁外）
 static void D1OwnerHook(App& a, BridgeStage stage) {
-    if (stage != BridgeStage::PumpBegin) return;
+    if (stage != BridgeStage::PumpBegin && stage != BridgeStage::Wake) return;
+    {std::lock_guard<std::mutex> lock(a.mutex);if(!a.captureCommittedEpoch)return;}
     {
         std::lock_guard<std::mutex> lock(a.mutex);
+        if(a.accepted!=g_observedAccepted){
+          std::ostringstream ledger;EvidenceLedger::Of(a.progress).Json(ledger);
+          Emit("ROOT","ACCEPTED_OBSERVED",g_hostNowNs.load(),"accepted="+std::to_string(a.accepted)+" source="+std::to_string(a.sourceCommit)+" physics="+std::to_string(a.physicsCommit)+" nonce="+std::to_string((uint64_t(a.rootNonce.hi)<<32)|a.rootNonce.lo)+" ledger="+ledger.str()+" token="+a.lastGoodControl);
+          g_observedAccepted=a.accepted;
+        }
         // 定长快照（owner 线程读 Run 合法）
         // T492 同源 App 的 Run/gpu 为 loop() 局部（非成员）；owner hook 无法跨作用域读。
         // 按 T494 §5.2 用现有成员冷接口：accepted/sourceCommit/evidence/mailbox。
@@ -202,7 +244,7 @@ static void D1OwnerHook(App& a, BridgeStage stage) {
         // T620 step4: non-blocking observer - checkpoint published, owner never
         // waits on the coordinator (old barrier only released at exit and could
         // wedge the owner). Coordinator acks asynchronously.
-        // g_schedCv.wait(lk, [&] { return g_permit || g_scriptDone; });
+        g_schedCv.wait_for(lk,std::chrono::seconds(5),[&]{return g_permit||g_scriptDone;});
     }
 }
 
@@ -213,14 +255,14 @@ static void DispatchActions(App& a, const std::vector<Act>& acts,
     while (cursor < acts.size() && acts[cursor].scriptNs == stamp) {
         const auto& act = acts[cursor];
         std::lock_guard<std::mutex> lock(a.mutex);
-        g_hostNowNs.store(stamp);  // 原子发布脚本时钟
+        const uint64_t received=t496sink::WallNs();g_hostNowNs.store(g_scriptBase+stamp); // Declared T494 fixed replay clock; wall/root deadlines remain separately observed.
         if (act.kind == Ak::PULSE || act.kind == Ak::TAIL_PULSE) {
-            const char* code;{t561seams::Guard seam(t496sink::FN_SEAM_FIRST_PAGE_PULSE,std::string("session=")+std::to_string(a.progress.session)+" seq="+std::to_string(act.pulseSeq));code = a.PagePulseLocked(a.progress.session, act.pulseSeq, stamp);}
+            const char* code;{t561seams::Guard seam(t496sink::FN_SEAM_FIRST_PAGE_PULSE,std::string("session=")+std::to_string(a.progress.session)+" seq="+std::to_string(act.pulseSeq));code = a.PagePulseLocked(a.progress.session, act.pulseSeq+1, g_scriptBase+stamp);}
             Emit(std::to_string(act.id), "PULSE", stamp,
                  std::string("pulseSeq=") + std::to_string(act.pulseSeq) + " code=" + code);
         } else if (act.kind == Ak::SOURCE) {
             assert(a.SetSourceLocked(act.phase ? 1 : 0));
-            a.ui.applied = a.ui.boundary; a.ui.sampleNs = stamp;
+            a.ui.applied = a.ui.boundary; a.ui.sampleNs = g_scriptBase+stamp;
             a.ui.sampleValid = true; a.ui.sampleSeq++;
             std::array<uint32_t,32> w{};
             w[0]=1129534023; w[1]=2; w[2]=act.phase;
@@ -241,11 +283,11 @@ static void DispatchActions(App& a, const std::vector<Act>& acts,
                  std::string("srcSeq=")+std::to_string(act.srcSeq)+" fnv="+
                  ([h]{std::ostringstream o;o<<std::hex<<h;return o.str();})()+
                  " reply="+reply+" mailbox="+std::to_string(a.count)+
-                 " enqueuedNs="+std::to_string(a.count?a.sourceEnqueued[(a.head+a.count-1)%a.queue.size()]:0));
+                 " enqueuedNs="+std::to_string(a.count?a.sourceEnqueued[(a.head+a.count-1)%a.queue.size()]:0)+" payloadSHA="+grs::programcache::Hash(w.data(),w.size()*4)+" words="+([&]{std::ostringstream o;for(auto v:w)o<<v<<",";return o.str();})());
         } else if (act.kind == Ak::RESERVE) {
-            if (!captureOn) { Emit(std::to_string(act.id),"RESERVE_OFF_NOOP",stamp,""); }
+            if (!captureOn||g_d2Mode) { Emit(std::to_string(act.id),"RESERVE_OFF_NOOP",stamp,""); }
             else {
-                EvidenceConfig c; c.packageSha256=std::string(64,'a');
+                EvidenceConfig c; c.packageSha256=g_peSha;
                 c.expectedRevision="GRS_M1_PROGRESS_CLOCK_V2";
                 c.epoch=a.epoch; c.runLo=a.identity.run.lo; c.runHi=a.identity.run.hi;
                 c.pageSession=a.progress.session; c.durationNs=2000000000;
@@ -262,25 +304,49 @@ static void DispatchActions(App& a, const std::vector<Act>& acts,
     }
 }
 
+extern "C" void t496_before_original_flush(){
+ if(!g_cutArmed.load()||!g_cutApp)return;
+ {std::unique_lock<std::mutex> appLock(g_cutApp->mutex,std::try_to_lock);if(!appLock.owns_lock()||!g_cutApp->captureRootBusy)return;}
+ if(!g_cutArmed.exchange(false))return;
+ std::unique_lock<std::mutex> lock(g_cutMu);g_cutEntered=true;g_cutCv.notify_all();
+ if(!g_cutCv.wait_for(lock,std::chrono::milliseconds(20),[]{return g_cutReleased;}))Emit("D2","CONTROL_HANDOFF_TIMEOUT",t496sink::WallNs(),"test wrapper BEFORE_ORIGINAL_GLFLUSH, not driver wait");
+}
+static void CaptureControl(App& a){
+ {std::unique_lock<std::mutex> lock(g_cutMu);g_cutCv.wait_for(lock,std::chrono::seconds(120),[]{return g_cutEntered||g_cutStop;});if(!g_cutEntered){Emit("D2","NO_REAL_FLUSH_CUT",t496sink::WallNs(),"NOT_MEASURED");return;}}
+ uint64_t request=0;
+ {std::lock_guard<std::mutex> lock(a.mutex);EvidenceConfig c;c.packageSha256=g_peSha;c.expectedRevision="GRS_M1_PROGRESS_CLOCK_V2";c.epoch=a.epoch;c.runLo=a.identity.run.lo;c.runHi=a.identity.run.hi;c.pageSession=a.progress.session;c.durationNs=2000000000;
+  Emit("D2","RESERVE_AT_FLUSH_BUSY",t496sink::WallNs(),"captureRootBusy="+std::to_string(a.captureRootBusy)+" Allowed="+std::to_string(a.AllowedLocked()));const auto reply=a.ReserveEvidenceLocked(c);request=a.captureRequest.id;Emit("D2","RESERVE_RAW",t496sink::WallNs(),reply);}
+ {std::lock_guard<std::mutex> lock(g_cutMu);g_cutReleased=true;g_cutCv.notify_all();}
+ const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(30);
+ while(std::chrono::steady_clock::now()<deadline){
+  {std::lock_guard<std::mutex> lock(a.mutex);auto reply=a.ReadCaptureRequestLocked(request);Emit("D2","REQUEST_RAW",t496sink::WallNs(),reply);if(reply.find("FROZEN")!=std::string::npos)g_d2Frozen=true;if(reply.find("\"state\":\"RESERVED\"")==std::string::npos){if(a.evidence&&a.evidence->armed){const auto end=a.EndEvidenceLocked(a.evidence->id);Emit("D2","END_RAW",t496sink::WallNs(),end);if(a.evidence->frozen)g_d2Frozen=true;}return;}}
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+ }
+}
 struct D1Result {
     OwnerSnapshot snap; bool delivered=false;
     size_t actions=0; std::string lastPhase;
 };
 
 static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
-    D1Result R; g_arm = captureOn ? "on" : "off";
-    g_hostNowNs.store(1000000);
+    D1Result R; // g_arm remains the same declared sink identity for this process.
+    g_hostNowNs.store(t496sink::WallNs());
+    g_scriptDone=g_permit=g_ownerCheckpoint=false;
     auto owner=std::make_unique<App>(false); auto& a=*owner;
     a.window=reinterpret_cast<void*>(1); a.nextProgressV2=true; a.tailProbeNext=true;
     a.hostNow=[](){ // T620 step2: real monotonic clock (script-clock profile declared separately)
         return (uint64_t)std::chrono::duration_cast<std::chrono::nanoseconds>(
             std::chrono::steady_clock::now().time_since_epoch()).count();};
     a.progress.BeginSession();
+    {std::lock_guard<std::mutex> lock(a.mutex);a.RecoveryRequestLocked(true);}
     a.hostHook=&D1OwnerHook;
+    g_cutApp=&a;g_cutEntered=g_cutReleased=g_cutStop=false;g_cutArmed=g_d2Mode;
+    std::thread control;if(g_d2Mode)control=std::thread([&]{CaptureControl(a);});
     std::thread worker([&]{ a.loop(); });
     // 等 Create 完成：ANGLE JIT 编译三 compute+场景可达 8-15min（T475 fixture 同量级），
     // 上限 900s；期间 Emit 心跳每 30s 供外部守护读取。
-    for (int i=0;i<450000;++i){
+    const auto resourceDeadline=std::chrono::steady_clock::now()+std::chrono::seconds(240);
+    for (int i=0;std::chrono::steady_clock::now()<resourceDeadline;++i){
         {std::lock_guard<std::mutex> lock(a.mutex);
          if (a.captureCommittedEpoch==a.epoch.load() && a.captureCommittedEpoch) break;}
         if (i%15000==0) { // T620 step2: coordinator iteration renamed + owner progress snapshot
@@ -305,7 +371,7 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
                  "recovery="+rs.str().substr(0,600)
                  +"|ownerProgressSession="+std::to_string(a.progress.session));
         }
-        return R;
+        {std::lock_guard<std::mutex> l(a.mutex);a.quit=true;}g_scriptDone=true;g_schedCv.notify_all();{std::lock_guard<std::mutex> lock(g_cutMu);g_cutStop=true;g_cutCv.notify_all();}if(control.joinable())control.join();worker.join();return R;
     }
     // T620 step3: resource-commit reached -> capture recovery ledger + bind real
     // session + first pulse, via the production recovery entry points.
@@ -314,6 +380,8 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
         Emit("BOOT","RESOURCE_COMMITTED",g_hostNowNs.load(),
              "recovery="+rs.str().substr(0,900)
              +"|ownerProgressSession="+std::to_string(a.progress.session));
+        g_scriptBase=t496sink::WallNs();g_hostNowNs.store(g_scriptBase);a.hostNow=[](){return g_hostNowNs.load();};
+        Emit("BOOT","CLOCK_PROFILE",g_scriptBase,"T494 scripted native/UI comparison, real transport root clock and parent wall observed separately; not device timegate qualification");
         const uint64_t serial=a.recovery.serial, e=a.recovery.epoch, page=1;
         const U64 run=a.recovery.candidate.run;
         if (serial) {
@@ -322,9 +390,9 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
                  "boundSession="+std::to_string(bound)
                  +"|serial="+std::to_string(serial)+"|epoch="+std::to_string(e));
             if (bound) {
-                a.PagePulseLocked(bound,1,g_hostNowNs.load());
+                const char* reply=a.PagePulseLocked(bound,1,g_hostNowNs.load());
                 Emit("BOOT","FIRST_PULSE_ACCEPTED",g_hostNowNs.load(),
-                     "session="+std::to_string(bound)+"|seq=1");
+                     "session="+std::to_string(bound)+"|seq=1|reply="+reply);
             } else {
                 Emit("BOOT","RECOVERY_BIND_REJECTED",g_hostNowNs.load(),
                      "serial="+std::to_string(serial)+"|epoch="+std::to_string(e));
@@ -338,52 +406,70 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
     }
     size_t cursor=0; R.actions=script.size();
     const auto startWall=std::chrono::steady_clock::now();
-    while (cursor < script.size()) {
+    uint64_t heldCheckpoints=0;
+    const auto scriptDeadline=std::chrono::steady_clock::now()+std::chrono::seconds(120);
+    while (cursor < script.size()&&std::chrono::steady_clock::now()<scriptDeadline&&(!g_d2Mode||!g_d2Frozen.load())&&!t496sink::BudgetExceeded().load()) {
         bool timedOut=false;
         {   // 等 checkpoint（wall 守护 120s/动作组）
             std::unique_lock<std::mutex> lk(g_schedMu);
-            if (!g_schedCv.wait_for(lk, std::chrono::seconds(120),
+            if (!g_schedCv.wait_for(lk, std::chrono::seconds(5),
                     [&]{return g_ownerCheckpoint;})) timedOut=true;
             g_ownerCheckpoint=false;
         }
         if (timedOut) {
-            Emit("WALL","GUARD_TIMEOUT",g_hostNowNs.load(),"no owner checkpoint in 120s");
+            Emit("WALL","GUARD_TIMEOUT",g_hostNowNs.load(),"no owner checkpoint in 5s");
             Assert("D1_WALL_GUARD",false,"owner stalled before script end");
             break;
         }
         // 业务里程碑门：仅在 idle/排空点送下一组（同 stamp 可多次 Pump/Poll）
+        bool pending=false;
         {
             std::lock_guard<std::mutex> lock(a.mutex);
+            pending=a.jobLive||a.runQueue||a.count||a.progress.activeRemaining||a.progress.pending;
+            if(pending&&heldCheckpoints++==0)Emit("MILESTONE","HOLD_FIXED_STAMP",g_hostNowNs.load(),"jobLive="+std::to_string(a.jobLive)+" runQueue="+std::to_string(a.runQueue)+" mailbox="+std::to_string(a.count));
         }
+        if(pending){
+            {std::lock_guard<std::mutex> lk(g_schedMu);g_permit=true;g_schedCv.notify_all();}
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));continue;
+        }
+        if(heldCheckpoints){Emit("MILESTONE","IDLE_AFTER_HOLD",g_hostNowNs.load(),"checkpoints="+std::to_string(heldCheckpoints));heldCheckpoints=0;}
         DispatchActions(a, script, cursor, captureOn);
+        std::this_thread::sleep_for(std::chrono::milliseconds(g_d2Mode?12:1));
         {   // 放行 owner
             std::lock_guard<std::mutex> lk(g_schedMu);
             g_permit=true; g_schedCv.notify_all();
         }
     }
-    // 有限排空：尾表耗尽后再等最多 30 个 checkpoint 或 60s
+    R.delivered=cursor==script.size();
+    if(!g_d2Mode)Assert("SCRIPT_COMPLETE",R.delivered,"delivered="+std::to_string(cursor)+" expected="+std::to_string(script.size()));
+    // Finite drain: same fixed stamp, no extra pulse, real wall <=30s.
     {
-        int drains=0;
-        while (drains<30) {
+        int drains=0;const auto drainDeadline=std::chrono::steady_clock::now()+std::chrono::seconds(30);
+        while (std::chrono::steady_clock::now()<drainDeadline&&!t496sink::BudgetExceeded().load()) {
             std::unique_lock<std::mutex> lk(g_schedMu);
-            if (!g_schedCv.wait_for(lk, std::chrono::seconds(60),
+            if (!g_schedCv.wait_for(lk, std::chrono::seconds(1),
                     [&]{return g_ownerCheckpoint;})) break;
             g_ownerCheckpoint=false; ++drains;
             {std::lock_guard<std::mutex> lock(a.mutex);
-             if (a.runQueue==0 && a.count==0 && a.sourceCommit>0) break;}
-            std::lock_guard<std::mutex> lk2(g_schedMu);
+             if (!a.jobLive && a.runQueue==0 && a.count==0 && !a.progress.pending && !a.progress.activeRemaining) break;}
             g_permit=true; g_schedCv.notify_all();
+            lk.unlock();std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
     {   // quit 前快照（退出清理前）
         std::lock_guard<std::mutex> lock(a.mutex);
-        R.snap=g_snap;
+        R.snap=g_snap;R.snap.accepted=a.accepted;R.snap.sourceCommit=a.sourceCommit;R.snap.physicsCommit=a.physicsCommit;
+        if(a.evidence&&a.evidence->frozen){for(uint32_t page=0;page<a.evidence->PageCount();++page)Emit("CAPTURE","PAGE_RAW",g_hostNowNs.load(),a.evidence->Page(page));}
+        std::ostringstream progress;a.ProgressJsonLocked(progress);Emit("DRAIN","PROGRESS_RAW",g_hostNowNs.load(),progress.str());
+        auto boot=a.bootProbe.Copy();boot456::Json(g_stageLog,boot,"T496_HOST_DIAGNOSTIC",uint64_t(getpid()));g_stageLog<<"\n"<<std::flush;
         Emit("DRAIN","PRE_QUIT_SNAPSHOT",g_hostNowNs.load(),
              "accepted="+std::to_string(a.accepted)+" sourceCommit="+std::to_string(a.sourceCommit)+
-             " mailbox="+std::to_string(a.count)+" runQueue="+std::to_string(a.runQueue));
+             " mailbox="+std::to_string(a.count)+" runQueue="+std::to_string(a.runQueue)+" phase="+a.phase+" firstFailure="+a.firstFailure+" permission="+a.permission);
         a.quit=true;
     }
-    worker.join();
+    {std::lock_guard<std::mutex> lock(g_schedMu);g_scriptDone=true;g_permit=true;g_schedCv.notify_all();}
+    {std::lock_guard<std::mutex> lock(g_cutMu);g_cutStop=true;g_cutReleased=true;g_cutCv.notify_all();}
+    if(control.joinable())control.join();worker.join();g_cutApp=nullptr;
     R.lastPhase=R.snap.phase;
     return R;
 }
@@ -401,7 +487,7 @@ static D1Result RunD1(bool captureOn, const std::vector<Act>& script) {
 static int RunCreateOnly(const std::string& arm) {
     g_arm = "create_" + arm;
     const std::string seedSrc = ".codex/local-test/t485-app-m1-exact/cache/gpu-program-cache/v1";
-    const std::string filesDir = ".codex/local-test/t496/" + arm + "-files";
+    const std::string filesDir = ".codex/local-test/t496/" + t496sink::AttemptId() + "-files";
     std::filesystem::remove_all(filesDir);
     std::filesystem::create_directories(filesDir + "/gpu-program-cache/v1");
     std::string packageSource = "EMPTY_CACHE";
@@ -432,20 +518,22 @@ static int RunCreateOnly(const std::string& arm) {
     if (!configured) { Assert("CREATE_STORE_CONFIGURED", false, "Configure failed"); return 2; }
     Assert("CREATE_STORE_CONFIGURED", true,
            "entries=" + std::to_string(programcache::Store().Count()));
+    RegisterCachedSources(filesDir);
     programcache::packageSource = "T496_" + arm + ":" + packageSource;
 
     // owner 启动（同 D1 路径），等 captureCommittedEpoch（资源 commit）或 900s
-    g_hostNowNs.store(1000000);
+    g_hostNowNs.store(t496sink::WallNs());
     auto owner = std::make_unique<App>(false); auto& a = *owner;
     a.window = reinterpret_cast<void*>(1); a.nextProgressV2 = true; a.tailProbeNext = true;
-    a.hostNow = []() { return g_hostNowNs.load(); };
+    a.hostNow = []() { return t496sink::WallNs(); };
     a.progress.BeginSession();
-    a.hostHook = &D1OwnerHook; // 锁外交接 hook，owner 的 PumpBegin checkpoint 继续 emit
+    {std::lock_guard<std::mutex> lock(a.mutex);a.RecoveryRequestLocked(true);Emit("BOOT","RECOVERY_REQUESTED",t496sink::WallNs(),"serial="+std::to_string(a.recovery.serial));}
+    a.hostHook = nullptr; // CREATE_ONLY has no coordinator checkpoint handshake; real guard below.
     const auto startWall = std::chrono::steady_clock::now();
     std::thread worker([&] { a.loop(); });
     bool committed = false;
     uint64_t lastCaptureEpoch = 0; bool lastResourcesReady = false;
-    for (int i = 0; i < 450000; ++i) { // 900s @2ms
+    for (int i = 0; std::chrono::steady_clock::now()-startWall<std::chrono::seconds(240); ++i) {
         { std::lock_guard<std::mutex> lock(a.mutex);
           // T561 seams: observed transitions, recorded with actual values.
           if (a.v2ResourcesReady != lastResourcesReady) {
@@ -458,12 +546,22 @@ static int RunCreateOnly(const std::string& arm) {
             t561seams::Observe(t496sink::FN_SEAM_CAPTURE_EPOCH,
               std::string("epoch=") + std::to_string(a.captureCommittedEpoch));
           }
-          if (a.captureCommittedEpoch == a.epoch && a.captureCommittedEpoch) { committed = true;
+          if (a.captureCommittedEpoch == a.epoch && a.captureCommittedEpoch && a.v2ResourcesReady) { committed = true;
             t561seams::Observe(t496sink::FN_SEAM_READY, std::string("phase=") + a.phase);
             break; } }
+        if(i%250==0){auto probe=a.bootProbe.Copy();std::ostringstream observed;boot456::Json(observed,probe,"T496_HOST_DIAGNOSTIC",uint64_t(getpid()));g_stageLog<<observed.str()<<"\n"<<std::flush;}
         if (i % 15000 == 0) Emit("BOOT", "CREATE_WAIT", g_hostNowNs.load(),
              "iter=" + std::to_string(i));
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    if(committed){std::lock_guard<std::mutex> lock(a.mutex);
+      Emit("BOOT","RESOURCE_COMMITTED",t496sink::WallNs(),"real capture epoch and v2ResourcesReady");
+      const auto bound=a.RecoverySessionLocked(a.recovery.serial,a.recovery.epoch,a.recovery.candidate.run,1);
+      Emit("BOOT","RECOVERY_BOUND",t496sink::WallNs(),"session="+std::to_string(bound));
+      const char* result=bound?a.PagePulseLocked(bound,1,t496sink::WallNs()):"SESSION_NOT_BOUND";
+      Emit("BOOT","FIRST_PULSE_RETURN",t496sink::WallNs(),result);
+      a.TryReadyV2Locked();committed=bound&&std::string(result)=="PAGE_PULSE_ACCEPTED"&&a.AllowedLocked();
+      Emit("BOOT","READY_GUARD",t496sink::WallNs(),committed?"AllowedLocked=true":"AllowedLocked=false");
     }
     const auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::steady_clock::now() - startWall).count();
@@ -492,7 +590,7 @@ static int RunCreateOnlyDispatch(const std::string& arm, const std::string& atte
     const std::string attemptId = attemptArg.empty()
         ? arm + "-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())
         : attemptArg;
-    g_runId = "t496-" + attemptId;
+    g_runId = "t496-" + attemptId;g_arm="create_"+arm;
     { // T547 §3: sink identity injection + attempt-unique trace file (create-new)
         if (!t496_sink_initialize(g_runId.c_str(), ("create_" + arm).c_str(), attemptId.c_str())) {
             std::cerr << "SINK_INITIALIZE_FAILED (attempt file reuse?)" << std::endl;
@@ -504,83 +602,35 @@ static int RunCreateOnlyDispatch(const std::string& arm, const std::string& atte
     const std::string tag = "t496_log_" + attemptId + ".ndjson";
     g_log.open(".codex/local-test/t496/" + tag, std::ios::app);
     g_stageLog.open(".codex/local-test/t496/t496-stages_" + attemptId + ".ndjson", std::ios::app);
-    const int rc = RunCreateOnly(arm);
+    int rc=0;
+    if(arm=="D1_OFF"||arm=="D1_ON"||arm=="D2"){
+      const auto files=std::string(".codex/local-test/t496/")+attemptId+"-files";std::filesystem::create_directories(files+"/gpu-program-cache/v1");
+      const auto seed=std::filesystem::path(".codex/local-test/t496/t657r3-files/gpu-program-cache/v1");
+      for(auto& e:std::filesystem::directory_iterator(seed))if(e.is_regular_file())std::filesystem::copy_file(e.path(),std::filesystem::path(files)/"gpu-program-cache/v1"/e.path().filename());
+      if(!programcache::Store().Configure(files))return 7;RegisterCachedSources(files);
+      g_d2Mode=arm=="D2";auto script=BuildScript();if(g_d2Mode)script.erase(std::remove_if(script.begin(),script.end(),[](const Act& a){return a.kind==Ak::SOURCE;}),script.end());auto result=RunD1(arm!="D1_OFF",script);
+      const bool source=result.snap.sourceCommit>0,quantum=result.snap.physicsCommit>0;
+      if(!g_d2Mode)Assert("EXTERNAL_SOURCE_NONEMPTY",source,"source="+std::to_string(result.snap.sourceCommit));Assert("QUANTUM_NONEMPTY",quantum,"physics="+std::to_string(result.snap.physicsCommit));rc=g_d2Mode?(g_d2Frozen?0:9):(source&&quantum&&result.delivered?0:8);
+    }else rc=RunCreateOnly(arm);
     std::cout << "T496 CREATE_ONLY " << arm << ": rc=" << rc << std::endl;
-    return rc;
+    return t496sink::BudgetExceeded().load()?10:rc;
 }
 
+extern "C" void t496_shadow_role(const char*,const char*);
 int main(int argc, char** argv) {
-    if (argc > 1) {
+    {std::ifstream exe(".codex/local-test/t496/t496.exe",std::ios::binary);std::string bytes((std::istreambuf_iterator<char>(exe)),{});g_peSha=grs::programcache::Hash(bytes);}
+    t496_shadow_role(grs::m1::FullSourceKernel(),"SOURCE");
+    t496_shadow_role(grs::m1::QuantumKernel(),"INTERMEDIATE_QUANTUM");
+    t496_shadow_role(grs::m1::QuantumCommitKernel(),"FINAL_QUANTUM");
+    for(const auto& item:CanonicalSources())if(item.second.size()==128)t496_shadow_hash_role(item.second.c_str(),item.first.c_str());
+    if (argc == 3) {
         const std::string arm = argv[1];
-        if (arm == "C0" || arm == "C1" || arm == "C2") return RunCreateOnlyDispatch(arm, argc > 2 ? argv[2] : "");
+        if (arm == "C0" || arm == "C1" || arm == "C2" || arm=="D1_OFF" || arm=="D1_ON" || arm=="D2") return RunCreateOnlyDispatch(arm, argc > 2 ? argv[2] : "");
         // T646 step1: predeclared modes only — unknown params must exit non-zero,
         // never silently fall through to default D1 (v6 ran D1_OFF by accident).
         std::fprintf(stderr, "T646_UNKNOWN_MODE:%s\n", arm.c_str());
         return 2;
     }
-    g_runId="t496-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count());
-    std::filesystem::create_directories(".codex/local-test/t496");
-    std::filesystem::create_directories("test/reports/t496");
-    g_log.open(".codex/local-test/t496/t496_log.ndjson", std::ios::app);
-    g_stageLog.open(".codex/local-test/t496/t496-stages.ndjson", std::ios::app);
-    Emit("BOOT","START",0,"source=t492-m1-delivery dcf105d+T492-overlay route=m1");
-
-    // 动作表 manifest
-    const auto script=BuildScript();
-    {
-        std::ofstream m(".codex/local-test/t496/t496-script-manifest.json");
-        m<<"{\"revision\":\"T496_SCRIPT_V2\",\"runId\":\""<<g_runId<<"\",\"actions\":"<<script.size()<<"}";
-    }
-
-    // D1 两臂
-    StageEnterLog("D1_OFF");
-    const auto off=RunD1(false,script);
-    StageExitLog("D1_OFF","OK");
-    StageEnterLog("D1_ON");
-    const auto on=RunD1(true,script);
-    StageExitLog("D1_ON","OK");
-
-    // 正控（T494 §5.3）：真实外线程 SOURCE 接受+非空 QUANTUM，空账 NOT_MEASURED
-    bool offHasSource = off.snap.sourceCommit>0;
-    bool onHasSource = on.snap.sourceCommit>0;
-    Assert("D1_OFF_SOURCE_ACCEPTED", offHasSource,
-           "sourceCommit="+std::to_string(off.snap.sourceCommit));
-    Assert("D1_ON_SOURCE_ACCEPTED", onHasSource,
-           "sourceCommit="+std::to_string(on.snap.sourceCommit));
-    bool bothEmpty = !offHasSource && !onHasSource;
-    if (bothEmpty) {
-        Assert("D1_EMPTY_LEDGER_NOT_MEASURED", true,
-               "两臂 SOURCE 均未消费（空账）——按 §5.3 记 NOT_MEASURED 不计 PASS，"
-               "首个未进展切点见 D1_OFF_SOURCE_ACCEPTED detail 与 log");
-    }
-    Assert("D1_QUANTUM_NONEMPTY", off.snap.physicsCommit>0 || bothEmpty,
-           "physicsCommit="+std::to_string(off.snap.physicsCommit));
-    // 逐账差分（仅当非空）
-    Assert("D1_LEDGER_PARITY",
-           bothEmpty || (off.snap.accepted==on.snap.accepted &&
-                         off.snap.generated==on.snap.generated &&
-                         off.snap.revoked==on.snap.revoked &&
-                         off.snap.overload==on.snap.overload),
-           "off(on): accepted="+std::to_string(off.snap.accepted)+"/"+std::to_string(on.snap.accepted)+
-           " generated="+std::to_string(off.snap.generated)+"/"+std::to_string(on.snap.generated));
-    // capture-on 事务
-    Assert("D2_CAPTURE_FROZEN", on.snap.evidenceFrozen,
-           "rows="+std::to_string(on.snap.captureRows));
-
-    // 汇总
-    int total=0, passed=0;
-    for (auto& [id,pass] : g_asserted) { ++total; if (pass) ++passed; }
-    {
-        std::ofstream sum("test/reports/t496/t496-summary.json");
-        sum<<"{\"revision\":\"T496_EXTERNAL_SOURCE_V1\",\"runId\":\""<<g_runId
-           <<"\",\"mode\":\"HOST_SCRIPTED_OFFLINE\",\"source\":\"t492-m1-delivery dcf105d+T492-overlay\""
-           <<",\"asserts\":"<<total<<",\"passed\":"<<passed
-           <<",\"emptyLedger\":"<<(bothEmpty?"true":"false")
-           <<",\"offSourceCommit\":"<<off.snap.sourceCommit
-           <<",\"onSourceCommit\":"<<on.snap.sourceCommit<<"}"<<std::endl;
-    }
-    std::cout<<"T496: "<<passed<<"/"<<total
-             <<" (off src="<<off.snap.sourceCommit<<" on src="<<on.snap.sourceCommit
-             <<")"<<std::endl;
-    return 0;
+    if(argc!=3){std::cerr<<"EXPLICIT_MODE_AND_ATTEMPT_REQUIRED";return 2;}
+    return 2;
 }

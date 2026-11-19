@@ -1,0 +1,11 @@
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"CREATE_ONLY_START","clockDomain":"steady_real","wallNs":"1253477393206400","declaredScriptNs":"0","detail":"arm=C1 filesDir=.codex/local-test/t496/t657v5c1-files packageSource=SEEDED_COMPUTE3"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"STORE_CONFIGURED","clockDomain":"steady_real","wallNs":"1253477399406500","declaredScriptNs":"0","detail":"ok=true entries=3"}
+{"assertId":"CREATE_STORE_CONFIGURED","runId":"t496-t657v5c1","arm":"create_C1","pass":true,"detail":"entries=3"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"RECOVERY_REQUESTED","clockDomain":"steady_real","wallNs":"1253477400692900","declaredScriptNs":"1253477400689100","detail":"serial=1"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"CREATE_WAIT","clockDomain":"steady_real","wallNs":"1253477400945800","declaredScriptNs":"1253477399463700","detail":"iter=0"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"RESOURCE_COMMITTED","clockDomain":"steady_real","wallNs":"1253518168711700","declaredScriptNs":"1253518168706100","detail":"real capture epoch and v2ResourcesReady"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"RECOVERY_BOUND","clockDomain":"steady_real","wallNs":"1253518168740500","declaredScriptNs":"1253518168739100","detail":"session=2"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"FIRST_PULSE_RETURN","clockDomain":"steady_real","wallNs":"1253518168801400","declaredScriptNs":"1253518168798700","detail":"PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"READY_GUARD","clockDomain":"steady_real","wallNs":"1253518168815200","declaredScriptNs":"1253518168814100","detail":"AllowedLocked=true"}
+{"runId":"t496-t657v5c1","arm":"create_C1","actionId":"BOOT","phase":"CREATE_COMMITTED","clockDomain":"steady_real","wallNs":"1253518168827400","declaredScriptNs":"1253477399463700","detail":"wallMs=40767"}
+{"assertId":"CREATE_RESOURCE_COMMIT_C1","runId":"t496-t657v5c1","arm":"create_C1","pass":true,"detail":"wallMs=40767 epoch=1"}

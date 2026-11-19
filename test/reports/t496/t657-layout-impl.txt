@@ -1,0 +1,59 @@
+full_transport.cpp
+
+class grs::m1::FullM1Transport	size(182640):
+	+---
+ 0	| TailObserver tailObserver
+16	| TailObserver coldObserver
+32	| isolation
+40	| SubmitObserver submitObserver
+64	| TailSample flushSample
+128	| SourceCoreTransport source
+92128	| QuantumCandidate quantum
+181248	| eventArenas
+181256	| scratchEvent
+181260	| results
+  	| <alignment member> (size=4)
+181272	| extraBytes
+181280	| spareAt
+181284	| replayFrozen
+181288	| active
+181289	| quantumFlight
+181290	| failed
+181291	| lost
+181292	| frozen
+  	| <alignment member> (size=3)
+181296	| RootRequest pending
+181360	| ?$array@I$0BAA@ tail
+182384	| SourceTransportStats stats
+182456	| U64 lastFrame
+182464	| arenaFrame
+182480	| used
+182488	| lastOrdinal
+182492	| lastPublication
+182496	| frameHasSource
+  	| <alignment member> (size=3)
+182500	| acceptedArena
+182504	| acceptedQuantum
+  	| <alignment member> (size=3)
+182508	| QuantumParameters coldParams
+182544	| SubmitPhase submitPhase
+  	| <alignment member> (size=3)
+182548	| passCursor
+182552	| batchesIssued
+182556	| lastBatchPasses
+182560	| submitCancelled
+182564	| flushes
+182568	| warmupWallNs
+182576	| lastBatchWallNs
+182584	| submitFirstNs
+182592	| submitTotalWallNs
+182600	| submitPumpWallNs
+182608	| tailSpare
+182612	| tailReplay
+182616	| tailBank
+182620	| tailSlot
+182624	| tailArena
+182628	| tailCarry
+182632	| tailDispatches
+  	| <alignment member> (size=4)
+	+---

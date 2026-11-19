@@ -1,0 +1,727 @@
+{
+  "schema": "T496_SOURCE_CLOSURE_V1",
+  "files": [
+    {
+      "path": ".codex\\local-test\\t236-source-host\\egl.lib",
+      "bytes": 5172,
+      "sha256": "2e43dc888adda5b86c0e698367b2af665971853204142a341d2e3ad18f7c053a"
+    },
+    {
+      "path": ".codex\\local-test\\t236-source-host\\gl_forward.cpp",
+      "bytes": 13886,
+      "sha256": "fe0d0506582fc7a8448403f4126635ec80348e25abfe5d743a10dca78c548481"
+    },
+    {
+      "path": ".codex\\local-test\\t236-source-host\\host_clock.h",
+      "bytes": 383,
+      "sha256": "a8954ff5190c93e266305725b51ef8ee7ccc33c645447e1141b8fd8958e09c14"
+    },
+    {
+      "path": ".codex\\local-test\\t236-source-host\\source_hash.h",
+      "bytes": 217,
+      "sha256": "b929baca3a5bea7fc1b6509e253c4e8175d7895ec460216d1ae444e93b24be00"
+    },
+    {
+      "path": ".codex\\local-test\\t240-source\\source_core_kernel.h",
+      "bytes": 28836,
+      "sha256": "0d7da7fc40aa8bedffcb740891b9c94f84776878f23d9f0769244bffb7fef5b9"
+    },
+    {
+      "path": ".codex\\local-test\\t279\\finish_native.py",
+      "bytes": 3166,
+      "sha256": "c6d41592c35c9e05f6fa5790111f92ca1e7dcea538633085c46011cabb518935"
+    },
+    {
+      "path": ".codex\\local-test\\t279\\quantum_core_kernel.h",
+      "bytes": 26807,
+      "sha256": "e2c7d40ff7a3193e623c05440ffe0d495316c46fe129d17b6e4ce56e087bc75a"
+    },
+    {
+      "path": ".codex\\local-test\\t279\\stage_delivery.py",
+      "bytes": 1827,
+      "sha256": "c1abce3df7bf1c59fd9e6c8456a6c009d46295ab4580d48c7956f7700911d510"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\build.cmd",
+      "bytes": 1022,
+      "sha256": "d96c1c6bd476c5c4adc2be4a5c5c9bdd89956799e88f5a2fecad361146c7fd20"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\cold_params.py",
+      "bytes": 1427,
+      "sha256": "9455c8e10e037b1b46e4dca08e617dee152149afb647da22cacdb57043e0464f"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\full_m1_kernels.h",
+      "bytes": 82282,
+      "sha256": "357dc4896575c9f3e06f50897a0ac7160da3b8808902cf975dd733c1505e34a0"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\pool_test.py",
+      "bytes": 227,
+      "sha256": "a686aef7616618c39575d340e93cba109d7124568875dff9d3ca657e7ce1098f"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\quantum_commit_kernel.h",
+      "bytes": 53421,
+      "sha256": "763bdafc9a50d5c5ea2e7af24431f975b4159e02396c23adbbf9a199c2976fe8"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\replay_host.cpp",
+      "bytes": 7915,
+      "sha256": "93ac89ae3fe13add21b315752ab5ec0547658fe67cc5a6a63cca3ad01eaa8141"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\trace.py",
+      "bytes": 2797,
+      "sha256": "e83291f942e15321f4bd9d3eb3bf1be20083270f62654b5e4527c7545f3ef215"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\trace_test.py",
+      "bytes": 1627,
+      "sha256": "0547caa8f6007944693d550286d5c4429f92ed6fbc0bd2aea4fa68f5568befc1"
+    },
+    {
+      "path": ".codex\\local-test\\t280\\water_policy.py",
+      "bytes": 1728,
+      "sha256": "5e1547be6d94195698a0ace70a7d41ab8744a23eaedbc9910c4fa536e25f757d"
+    },
+    {
+      "path": ".codex\\local-test\\t281\\build-app.cmd",
+      "bytes": 1418,
+      "sha256": "429e6769ee169cf9fb8feb690b55c212394e19e9954d3677f8d3271de98b9c40"
+    },
+    {
+      "path": ".codex\\local-test\\t281\\build.cmd",
+      "bytes": 1262,
+      "sha256": "f54bbb145e63327438c9d8bdba700f8d6d31e904bdfcf5f13bf0e386e7323c97"
+    },
+    {
+      "path": ".codex\\local-test\\t281\\m1_scene_sources.h",
+      "bytes": 5673,
+      "sha256": "1c5ee1e864d43568f362efa66e9840f16f3c86ff4c3e6803c14863e9ae22e68a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\angles_generated.h",
+      "bytes": 741450,
+      "sha256": "52f84e8fff5cfed295a55dbc38bc7eb6a6c42bde1e4adc1391f23fa1959da613"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\app_bridge.cpp",
+      "bytes": 92394,
+      "sha256": "7444aab6c9ef278e904051e5979002ada7505c957b8fcd4d50274c4dc91d32f0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\boot_probe.h",
+      "bytes": 7624,
+      "sha256": "b2e20da50b4d71da79b05a568b83ca70e80949f8b1d1b9fad9615da59b6d9a74"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\bridge_napi.h",
+      "bytes": 1692,
+      "sha256": "e26fbc623a1905d697807baba08cf3b3c97ba7201ce9b72c927fd702a617763a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\bridge_packet.h",
+      "bytes": 1058,
+      "sha256": "2606396dd59f32bd4ff2b468fd1b28b40f1419b69cc9a2c1566fd4212705044c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\bridge_state.h",
+      "bytes": 2660,
+      "sha256": "4c41b6b8eafe0566c058ee3201243574edef6fa514ef61bfe6454c903d970630"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\bridge_timeline.h",
+      "bytes": 4791,
+      "sha256": "68796b7887874f4b5ac483fee18da01c27848618dcc421641884bb9844abc0a1"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\control.cpp",
+      "bytes": 16911,
+      "sha256": "025d0bd2b0fef3d8db9c979963b16f5cd9037ce391f23112862e133b88eecfbc"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\control.h",
+      "bytes": 3218,
+      "sha256": "7fb8ecc0997d5db3c398f9efe864a9b8389ba2bf0585cdf8c29c53ee41c32703"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\evidence_capture.h",
+      "bytes": 17589,
+      "sha256": "5d224762362b4019a14546bf49f6a97d24b3a0bd2545e6b9d6c27b62af34ef2a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\evidence_capture_app.inc",
+      "bytes": 7625,
+      "sha256": "64c08e47193bb7c5b61d1990d6148a1a66776af33bcc9e421e891d9652ec9bce"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\evidence_capture_napi.inc",
+      "bytes": 5962,
+      "sha256": "0bf7094825989d932ea3651f2ed1d6aa7a0decc453b3f1084c1f5c872232909c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\evidence_capture_request.inc",
+      "bytes": 9343,
+      "sha256": "48d915643e4d596c1f08940ed2d87c94bf34c67f6c5909efc50785f94af5bdc5"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\execution_diagnostics.h",
+      "bytes": 9391,
+      "sha256": "4493f69416e8af858a2a932e469094b9e474d6300ac6107d6410e50956411ac5"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\foundation.cpp",
+      "bytes": 594,
+      "sha256": "6d9d8dc6417a64caef19dae215a7f701c20fb5bed5ed9a0532c0a2c3103cea56"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\foundation.h",
+      "bytes": 444,
+      "sha256": "6e4e9c59ed61350f00e57cb9b936bdbfc422f7b8ce96552f3d680a5b2f08a6b9"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\integer.cpp",
+      "bytes": 4317,
+      "sha256": "87c0181a7a6aa61db7eb235a6d3c4749851ebae141d6ab88e99f19a096e6b886"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\integer.h",
+      "bytes": 1063,
+      "sha256": "2924230b2186d592b9a75411a9fdcaeda95f50c087b9230be48aa91461683c40"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\layout_generated.h",
+      "bytes": 47030,
+      "sha256": "53aff4b664525a8b1ab872dbfc3c874dcea3399825d71c0511edbff2c7a17b59"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\experience_capabilities.h",
+      "bytes": 844,
+      "sha256": "ccd286281412ec7e100a1ffcef22f10aa42833e4a83c37a52df8f2f2e8c49848"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_kernel.cpp",
+      "bytes": 254,
+      "sha256": "2f84fdfb6874b3f376e27e3a1b9ac8c7bb9ebd70396f4bc1dc3ae0b86013a4a0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.cpp",
+      "bytes": 32096,
+      "sha256": "5c6b17903256b40f7716a0a127063c675f2a0d78e3361aa91ee2466d5306515c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\full_transport.h",
+      "bytes": 6476,
+      "sha256": "78ff42aad2862a7bfa54f132c6746f5b4008c4a1cbb9bfac7919d06cadc1558d"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\layout_generated.h",
+      "bytes": 39640,
+      "sha256": "e0d1c23527077c26ad3d153013570315929c778b5804c5d37b894de5a6849e7e"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\profile.cpp",
+      "bytes": 1005,
+      "sha256": "7d17baa842b5b675c3c48604087f18d685e2a653458252c9a6351c38999175d9"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\profile.h",
+      "bytes": 646,
+      "sha256": "b587b884c5883b0e879e1860a1c58269a6f107bfe115b8f32c9b364cce052b03"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\progress_clock_v2.h",
+      "bytes": 3250,
+      "sha256": "c24aea55d0480de48c8118bb2e76e186bb7ec7587eecce6d31069075f8cd6b0a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\quantum_candidate.cpp",
+      "bytes": 14723,
+      "sha256": "d0838f4c4470c6c2adeebd54553090c449b5cb39b2efbdf2ee14afdde94024f1"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\quantum_candidate.h",
+      "bytes": 4282,
+      "sha256": "9f3458190ce967d8e8275b63eddb6747b00effb2c0b1df289a9c9eea374616c2"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\quantum_kernel.cpp",
+      "bytes": 201,
+      "sha256": "495aa657f796a8cdb07b4a5c0044f53ddccaad117c99447089c897fddeaea7e6"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\quantum_owner.inc",
+      "bytes": 3905,
+      "sha256": "10533e255da1bfabcf7f56747db845c5efbe6edd5e63b5f3f6720b49e98fb428"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\root_isolation.h",
+      "bytes": 1471,
+      "sha256": "9dcdf6afb55ba716892e71d3fe8f7e899d87d581ed13d1ee0c27453803187836"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\run.cpp",
+      "bytes": 8314,
+      "sha256": "db0172ff21448d64db1fff53880324904364fa467e33c4f3cef0a722477ad167"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\run.h",
+      "bytes": 2025,
+      "sha256": "aa47746b62a11553c14bdea099855bcf14344dee78721226caa0ab29c84d1f11"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\scene.cpp",
+      "bytes": 14459,
+      "sha256": "1a0f27f63d2f3f283b33eff9112d01bda38e25e7d19e5a1438799701322f1a64"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\scene.h",
+      "bytes": 1601,
+      "sha256": "8a1ad3b2fe06d4b535ad1619439d370fc2b6e97f0b5a44f88eeb9e24ba751be2"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_kernel.cpp",
+      "bytes": 174,
+      "sha256": "f91296c32b43f2fb7fd22f0b470d97367eb72c15b5edb3a9a763a60cd46ea3d2"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_owner.cpp",
+      "bytes": 10118,
+      "sha256": "0390df4af9f546dc21ef688cccc1a772db8ca9bfa644650c28860f49a08049fb"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_owner.h",
+      "bytes": 1902,
+      "sha256": "8e2317d78b7401a78a13ce992a4aff453afc182574497d94b27eece98abca60c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_transport.cpp",
+      "bytes": 16166,
+      "sha256": "872818b5297118e8106caccd15a582cb75f2f139f2a7afa6faf584fd03d4830f"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\source_transport.h",
+      "bytes": 2380,
+      "sha256": "8989a9e289dd191fc8495532ae6ede3ed713f6c1acefcd3f7484c13574d037b5"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m1\\ui_state.h",
+      "bytes": 2883,
+      "sha256": "6140e21a1055d6428b7c993577e1c46780c5a6a63973bf5a433e16c85e3d0e4a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\assemble_kernels.py",
+      "bytes": 5519,
+      "sha256": "207d90d948b144427b717e8f3cd6fc717d3e7035aa1a7692d71b0e40f799ee26"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\buffer_plan.h",
+      "bytes": 1039,
+      "sha256": "57db4c9c00d149d1e2ee27380c9c342a2aa2b8fb95a2c29d5f3193200ad30f2b"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\capability.h",
+      "bytes": 2264,
+      "sha256": "bfecc8ae4c73d686da9c3680946d4bf8e8ff4d64c29fd5bd5cf262446db349b3"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\cold_reader.py",
+      "bytes": 4542,
+      "sha256": "7a7d9cc25080faf95c55cf9e2623ef9e49f397f5c61fa6e57eea84a33302ef80"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\create_diagnostics.h",
+      "bytes": 14631,
+      "sha256": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\generate_layout.py",
+      "bytes": 5725,
+      "sha256": "e5d86665101dd98d2040edc4c4a59bb16fe095aa6e96552f27d0aa06eda165a0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\layout_generated.h",
+      "bytes": 41835,
+      "sha256": "7da72f25901263556013d3a16c4a4edcda02aa87577f727e6b9b2a64fdaa37ef"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\m2\\root_gate.h",
+      "bytes": 8414,
+      "sha256": "fcc196ba42813a2fe8690dd84a8219603558ba07b8438f6bf7e68e178d1377c3"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\product_wire.cpp",
+      "bytes": 3195,
+      "sha256": "cebfb37318af953e2326c971a7cf576e32baf6bb3c1634ebe8cc6748faeda7f9"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\product_wire.h",
+      "bytes": 786,
+      "sha256": "a76604295b7d22f3317ed7fd2d5af2597d0a8fbd0f1a5f4539a2892c4efec9d8"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\artifact_store.h",
+      "bytes": 17881,
+      "sha256": "063af2d2b1fcea06113f52f057d46ec54bb539d3f1b9e805e1dace920a9edb92"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\graphics_program_factory.h",
+      "bytes": 18446,
+      "sha256": "7e1190272c4c022051d479dbbdd14eb3ded287483f8ab1cae6de2c8e3ebd6aea"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\program_factory.h",
+      "bytes": 15343,
+      "sha256": "64e689f7bbfb165e31bdf921d8e758de7d6df3c1de54dd741f5eb964dfe11244"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\program_cache\\sha256.h",
+      "bytes": 2753,
+      "sha256": "154cf18fe5b2c1fe2831326faf0287dbcd83f420e4eea22a8dfe5d30a7db9faa"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\recovery_v3.h",
+      "bytes": 4917,
+      "sha256": "f2c7da7b358a53200ec36a2920b7f847de610c6152d18bbb621c027508760970"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\resources.cpp",
+      "bytes": 3228,
+      "sha256": "104ea176b6aa18d26640287032322fa95f4d59885e59170adcfb9b82f2452d74"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\resources.h",
+      "bytes": 1104,
+      "sha256": "8612a125d712ca7738d75005aa0618d45348de889437d1dd30a830f90ffb40be"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\run.cpp",
+      "bytes": 3021,
+      "sha256": "b4017f4d54c311e60ffdab351d0ade30c760571f5007a122d0739ccfe98f29f5"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\run.h",
+      "bytes": 1433,
+      "sha256": "3902a07552284861b6f6e18ca1054f9cd3ebcbf3aeee6b3a26d677b1f9cb1706"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\scene.cpp",
+      "bytes": 7580,
+      "sha256": "e50dc9781aa75c798043fae0afdb575decdd3e8ef9ebaaefa486f084ec0a4fbc"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\scene.h",
+      "bytes": 1218,
+      "sha256": "5a0607f59910eac7b66c13fef91cf53cbd68f3c25dfd2cb4eee7237e7180a2ce"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\source_transport.cpp",
+      "bytes": 18030,
+      "sha256": "61c96047f9b7d8186edde3fd2f09a88bd7dd3bb61fb9933df262e50c218b5457"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\source_transport.h",
+      "bytes": 3751,
+      "sha256": "c7e8f43ccf40586f768a44058725268bd1e5503cdaf6219c3a7f391986ab6288"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\submit_observer.h",
+      "bytes": 3230,
+      "sha256": "484e154003ff9b8dd5091992c48a287ce8a27c63251ee8024b3de124a1840696"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\t492_source.h",
+      "bytes": 150,
+      "sha256": "0167901f153df2f4f854c411ea2512c57413f955c0d6ac0c3b6adfe033c46474"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\timeline_snapshot.h",
+      "bytes": 4786,
+      "sha256": "807528f3eb3407d0d6ff105dfeabd9ea8bc2cf930c2db3fd1a5d2ec8dc15adc8"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\trace.h",
+      "bytes": 1089,
+      "sha256": "eb584910887907ce1170bbf33d3418088454de739db66ba58e010dcf1d4b5bd4"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\gpu_resident\\uniform_locations.h",
+      "bytes": 1213,
+      "sha256": "979ecf2ec65152a6f3d54e9a98dc0d85a198a9c1b3702c6b46e72cb232f197c3"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\hello\\hello_surface.cpp",
+      "bytes": 5192,
+      "sha256": "b16a406f8742d2feca3640aebbfe8e11e0ae6e2c524bf9071ff028c20f198f0e"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\base_strip_uploader.cpp",
+      "bytes": 7943,
+      "sha256": "89311d9247def81107b97817c35df3f596e83f502da5f9cbbc6fb4453cfb95ed"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\base_strip_uploader.h",
+      "bytes": 2199,
+      "sha256": "4a1ce264832e9cb6e3c9c3f361c03a49095be1eb230de86554db5729f884290d"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\clear_water_gpu.cpp",
+      "bytes": 4621,
+      "sha256": "c1d4260c711b8f2fb25e089168c717e7ad383761f5237761e32607395ca4f04e"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\clear_water_gpu.h",
+      "bytes": 781,
+      "sha256": "7e6ffe43f77ae102d749270b4a3a28eea8b797139673b45ba0e815797c092253"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\clear_water_identity.h",
+      "bytes": 1924,
+      "sha256": "61b2f1ac5427c5d9e307c92f5853ba7532364dfe54595ef763da85fcf74ba777"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\clear_water_packet.cpp",
+      "bytes": 9300,
+      "sha256": "96326fc9af1d5f74758e9fb15bbde8d3f25fb06c97466e5047000c8c9b0149fd"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\clear_water_packet.h",
+      "bytes": 1608,
+      "sha256": "ddddc297b48c0de2301a0c4a165bd8fb086e8e8ae306a7ded65124b13141095a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\composition_probe.cpp",
+      "bytes": 4734,
+      "sha256": "5d40968f5865b078315341b31149bc7a6dc88214b6336409c097eadde1a4e7f6"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\composition_probe.h",
+      "bytes": 619,
+      "sha256": "be3a96a6ab20521d70200aeeddddbd29b8df1d3a4773d2c0c0d1ef1c2d626d88"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\dualfield_pass.cpp",
+      "bytes": 6956,
+      "sha256": "c7859b6270c1f462bb2b26641522da1a3059115ff6f511820972ff8c42648143"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\dualfield_pass.h",
+      "bytes": 681,
+      "sha256": "8ed3845935e9f58cff17b5df03eb716e36e357655b9a00c102e20e942592c0a7"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\egl_context.cpp",
+      "bytes": 12038,
+      "sha256": "1dfcb7daf7150cf3bda1f8e134d60ddbada5bd637872e6be85dbfc4cf2268728"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\egl_context.h",
+      "bytes": 2179,
+      "sha256": "a04a3960fccd1b660344f7522151f7f9b9fc30523806f982f5babd0dac409df2"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\fullframe_targets.cpp",
+      "bytes": 1848,
+      "sha256": "b6797f7e09f97bc150ca3f6527805fa4044bbfcd985fd3c4b4a0277152fbb0ec"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\fullframe_targets.h",
+      "bytes": 407,
+      "sha256": "cc9048fcaeb8795737e3adeceadf0dac8fdc613ef8f7fd92f310eb487e4a7489"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\material_pass.cpp",
+      "bytes": 8573,
+      "sha256": "3e5ca2cc05951071e5b039775555bbc14454eb63876a274696c95096c3dccb8c"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\material_pass.h",
+      "bytes": 1576,
+      "sha256": "1a8cca7b7fbc935c9fda04f5fedaf0ce7b84fd7430c0f0311837e42ac11a7f71"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\material_uploader.cpp",
+      "bytes": 14836,
+      "sha256": "727b01f16a89a143c3bd71cf5311104ca05f581ab6e55a55071fe9d28ccff3c3"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\material_uploader.h",
+      "bytes": 4180,
+      "sha256": "6cff40a2ada909bea33bdd2398c54683707c1eed8f1e38458e988add4554e61a"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\napi_bridge.cpp",
+      "bytes": 93986,
+      "sha256": "187aee5f3987edef3ee4b9e554f1561e327734fc131ad0b1c35e02a5ae166071"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\napi_bridge.h",
+      "bytes": 118,
+      "sha256": "6eac98f575fbaec169bd27d670673452f363c33473b88f5e506ef90137504845"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\render_contract.h",
+      "bytes": 6553,
+      "sha256": "44c025188c5fe9f2a754bc029ab6fa30ebde07ddcc53f54e8f8bcfc3db3295e5"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\scene_compositor.cpp",
+      "bytes": 10247,
+      "sha256": "484957eab74fd19b855aa6cac1d66e411dc564c2688691a5468035d0c85f6f67"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\scene_compositor.h",
+      "bytes": 3053,
+      "sha256": "dae9f7c8311293fe40ed32187cc78e750b5b7071225ef6d09f68454ecbd54ad7"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\scene_gpu.cpp",
+      "bytes": 3421,
+      "sha256": "083230a5ce5c5f10f3932591600f512fbd8fdceb114bb61490276fda59bb2fd0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\scene_gpu.h",
+      "bytes": 1044,
+      "sha256": "29f6650d6a0e99e654aeb5229dafda4549323b3a57210cc37e52e49664280f6f"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\scene_layers.cpp",
+      "bytes": 9620,
+      "sha256": "15c5d467149ce01d6893da1ebc00e76aa648db137334970eb777a6a0e45908ec"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\scene_layers.h",
+      "bytes": 359,
+      "sha256": "4d8ec0de83f56a949bf0c872199f0e80d7da13c388c623143636f77ad69eb044"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\shader_pass.cpp",
+      "bytes": 4016,
+      "sha256": "98f62a916635b8ef6f890c32af20b98e80c21b8227080024d327a00b2136b648"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\shader_pass.h",
+      "bytes": 756,
+      "sha256": "13a7e262de85e5ae2992a881837a3abc938c5c5e5f8a10d46e9fa236b22e8d21"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\single_sand_napi.inc",
+      "bytes": 8905,
+      "sha256": "211cd191876a18eb49bc08267374cfdce6fc3014c0256a108f90d558af0b71f8"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\single_sand_packet.cpp",
+      "bytes": 4207,
+      "sha256": "991da1214c05027f25c068d73d777605da6b9a67c0756052abf008ca584dfbc4"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\single_sand_packet.h",
+      "bytes": 1335,
+      "sha256": "3fc1b0a7d277cb039f0bb77c57121a44e066dd1d78e805684d289c1e46ff3f2e"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\single_sand_pass.cpp",
+      "bytes": 10671,
+      "sha256": "498df027fd3a8ab2cf63eae14db0ced1291e95300eaa9669b74ce89bab6cea30"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\single_sand_pass.h",
+      "bytes": 1419,
+      "sha256": "37c434de8e4d7c1052fce952926a4cc65840a02aa376cf7985264f3b957588d9"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\tdata_uploader.cpp",
+      "bytes": 1664,
+      "sha256": "898eeb9d640df7c21ca34aab6376c981909b4b5f8d71dc55e574637a92a647b0"
+    },
+    {
+      "path": ".codex\\local-test\\t492-m1-delivery\\entry\\src\\main\\cpp\\p013renderer\\tdata_uploader.h",
+      "bytes": 445,
+      "sha256": "988698e5ebb6d35d8cc093e6c2a3106bbb960c9a096b481fc0e6e383e54dac9f"
+    },
+    {
+      "path": "test\\t295\\bridge_platform_double.h",
+      "bytes": 149,
+      "sha256": "98f468a168fbe5e20b21e903630344b4586ea5b6a2065f78383ec440699fd55a"
+    },
+    {
+      "path": "test\\t295\\bridge_test.cpp",
+      "bytes": 3891,
+      "sha256": "06c8209d9a3f714434af44a2a6106a84ba2fd61b8b802efa417c2f3710e304c8"
+    },
+    {
+      "path": "test\\t295\\build.cmd",
+      "bytes": 695,
+      "sha256": "bd54da2e376aaad149d009f34d8e78ba65c957d6991d3c0c1fc2cde766c5aa26"
+    },
+    {
+      "path": "test\\t496\\argument_shadow.h",
+      "bytes": 3062,
+      "sha256": "1759d14b665a62ee99ca335120795bb934ec3c801a7bea96ae87e3c6eaf22038"
+    },
+    {
+      "path": "test\\t496\\build.cmd",
+      "bytes": 3354,
+      "sha256": "8961859752e84f0d6f0a0ae3e5ceb4462f87c909b9016c36c0c8cb2e86566a33"
+    },
+    {
+      "path": "test\\t496\\check_actions.py",
+      "bytes": 2710,
+      "sha256": "ae74f649de6b853ee6b4b60fce5455f281046c28534db8d2c44a69dabbdfdca8"
+    },
+    {
+      "path": "test\\t496\\exit_diagnostics.h",
+      "bytes": 1986,
+      "sha256": "fdd259cb29a2bb0148b2a4c8120da0bb40e5a1653eaffb845eef6d5f406eec26"
+    },
+    {
+      "path": "test\\t496\\external_source_diff.cpp",
+      "bytes": 38776,
+      "sha256": "55a088e7745268100d7a7c9ca5d7c5e1748a7b8baaea1604faa068357616e47e"
+    },
+    {
+      "path": "test\\t496\\gl_forward_sink.cpp",
+      "bytes": 38413,
+      "sha256": "5583ca01bec502d92e222546eb7120bef151288def92df52caa5c92c413d9b60"
+    },
+    {
+      "path": "test\\t496\\gl_sink.inc",
+      "bytes": 10571,
+      "sha256": "c0bb75370ab54803ad2dee08a86b6270cf2eba7f113db445fe7ab1f9d9b891ec"
+    },
+    {
+      "path": "test\\t496\\layout_gate.py",
+      "bytes": 865,
+      "sha256": "090b0c2e61a7669c897378f480e83155ed2d1e7ba11b67d20e51b383fd3e77ac"
+    },
+    {
+      "path": "test\\t496\\run_bounded.py",
+      "bytes": 4442,
+      "sha256": "b2325b30306b89bd60e867b35a8a42985dfb7186e195f8cf624fcc6bd50aefe9"
+    },
+    {
+      "path": "test\\t496\\run_create_only.cmd",
+      "bytes": 109,
+      "sha256": "12ac6ea6f8450f208a12da84b495615535b570f82ec5cb395d80b0c3595b583d"
+    },
+    {
+      "path": "test\\t496\\shadow_units.cpp",
+      "bytes": 1140,
+      "sha256": "4d4c91313de45b6601ae031e124868e67ff64eb1b78c2a78c662d1ce71599216"
+    },
+    {
+      "path": "test\\t496\\source_manifest.py",
+      "bytes": 923,
+      "sha256": "931eca480aa49caf288a274db7f3182cb920904b5db47537c936a213ae31b3e4"
+    },
+    {
+      "path": "test\\t496\\t561_seams.h",
+      "bytes": 2660,
+      "sha256": "726eacebf70922dd70768f944e68b1dd2b57bb1b736c04bf7f5ded78831a0cde"
+    }
+  ],
+  "device": "NOT_RUN",
+  "frozenProduct": "t492-m1-delivery; current root not substituted"
+}

@@ -1,0 +1,25 @@
+{
+  "exit": 2,
+  "stderr": "T646_UNKNOWN_MODE:UNKNOWN\r\n",
+  "dependencyPath": "CokePLUS prefix as runner",
+  "priorMissingDllProbe": {
+    "exitUnsigned": 3221225781,
+    "notValidCliEvidence": true
+  },
+  "device": "NOT_RUN",
+  "cases": [
+    {
+      "args": [],
+      "exit": 2,
+      "stderr": "EXPLICIT_MODE_AND_ATTEMPT_REQUIRED"
+    },
+    {
+      "args": [
+        "UNKNOWN",
+        "negative"
+      ],
+      "exit": 2,
+      "stderr": "T646_UNKNOWN_MODE:UNKNOWN\r\n"
+    }
+  ]
+}

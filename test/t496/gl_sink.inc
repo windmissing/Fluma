@@ -26,6 +26,7 @@
 #define T561_GETPID getpid
 #endif
 
+#include "exit_diagnostics.h"
 namespace t496sink {
 // ---- one instance per process; main initializes before the owner starts ----
 inline std::string& RunId(){static std::string s;return s;}
@@ -47,6 +48,13 @@ inline constexpr uint64_t kAttemptFileBytesMax=33554432ull; // 32MiB test-disk c
 inline constexpr size_t kRecordUtf8Max=4096;
 
 inline uint64_t WallNs(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}
+inline uint64_t OwnerTid(){
+#ifdef _WIN32
+ return GetCurrentThreadId();
+#else
+ return uint64_t(std::hash<std::thread::id>{}(std::this_thread::get_id()));
+#endif
+}
 inline std::string JEsc(const std::string& s){std::string o;for(char c:s){if(c=='"')o+="\\\"";else if(c=='\\')o+="\\\\";else if(static_cast<unsigned char>(c)<0x20){char b[8];std::snprintf(b,sizeof(b),"\\u%04x",c);o+=b;}else o+=c;}return o;}
 
 // Stable function ids, ordered after the T547 manifest apiGroups + seams.
@@ -81,12 +89,12 @@ enum FunctionId:uint32_t{
 inline bool EmitRecord(uint32_t functionId,const char* event,uint64_t callId,const std::string& detail){
  if(!Initialized().load()||BudgetExceeded().load())return false;
  char record[kRecordUtf8Max];
- const std::string safe=JEsc(detail.substr(0,384));
+ const std::string safe=JEsc(detail.substr(0,3000));
  const auto wrote=std::snprintf(record,sizeof(record),
-  "{\"schema\":\"T561_CREATE_SINK_V1\",\"runId\":\"%s\",\"arm\":\"%s\",\"pid\":%d,"
+  "{\"schema\":\"T561_CREATE_SINK_V1\",\"runId\":\"%s\",\"arm\":\"%s\",\"pid\":%d,\"ownerTid\":%llu,"
   "\"createAttemptId\":\"%s\",\"callId\":%llu,\"functionId\":%u,\"event\":\"%s\","
   "\"wallNs\":\"%llu\",\"scriptNs\":\"%llu\",\"detail\":\"%s\"}\n",
-  JEsc(RunId()).c_str(),JEsc(Arm()).c_str(),int(T561_GETPID()),
+  JEsc(RunId()).c_str(),JEsc(Arm()).c_str(),int(T561_GETPID()),(unsigned long long)OwnerTid(),
   JEsc(AttemptId()).c_str(),(unsigned long long)callId,functionId,event,
   (unsigned long long)WallNs(),(unsigned long long)WallNs(),safe.c_str());
  if(wrote<=0||size_t(wrote)>=sizeof(record))return false;
@@ -94,8 +102,8 @@ inline bool EmitRecord(uint32_t functionId,const char* event,uint64_t callId,con
  auto*& f=TraceHandleRef();
  if(!f)return false;
  const size_t n=size_t(wrote);
- if(BudgetBytes().fetch_add(n)+n>kAttemptFileBytesMax){BudgetExceeded().store(true);return false;}
- if(std::fwrite(record,1,n,f)!=n){BudgetExceeded().store(true);return false;}
+ if(BudgetBytes().fetch_add(n)+n>kAttemptFileBytesMax){BudgetExceeded().store(true);t496diag::EvidenceBudget();return false;}
+ if(std::fwrite(record,1,n,f)!=n){BudgetExceeded().store(true);t496diag::EvidenceBudget();return false;}
  std::fflush(f);
  return true;
 }
@@ -114,12 +122,13 @@ template<typename Call>
 auto ScopedCall(uint32_t functionId,const char* name,const std::string& enterDetail,Call&& call)->decltype(call()){
  const auto seq=CallSeq().fetch_add(1);
  ActiveFunction().store(functionId);ActiveCallId().store(seq);
- ActivePhase().store(ENTER_EMIT);
+ ActivePhase().store(ENTER_EMIT);t496diag::Sample(ENTER_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
  EmitRecord(functionId,"ENTER",seq,enterDetail);
- ActivePhase().store(IN_API);
+ ActivePhase().store(IN_API);t496diag::Sample(IN_API,ActiveFunction(),ActiveCallId(),WallNs());
  auto value=call();
- ActivePhase().store(RETURNED);
- EmitRecord(functionId,"EXIT",seq,std::string("name=")+name);
+ ActivePhase().store(RETURNED);t496diag::Sample(RETURNED,ActiveFunction(),ActiveCallId(),WallNs());
+ ActivePhase().store(EXIT_EMIT);t496diag::Sample(EXIT_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
+ EmitRecord(functionId,"EXIT",seq,std::string("name=")+name+" return="+std::to_string((uintptr_t)value));
  ActivePhase().store(PHASE_IDLE);
  return value;
 }
@@ -127,11 +136,12 @@ template<typename Call>
 void ScopedCallVoid(uint32_t functionId,const char* name,const std::string& enterDetail,Call&& call){
  const auto seq=CallSeq().fetch_add(1);
  ActiveFunction().store(functionId);ActiveCallId().store(seq);
- ActivePhase().store(ENTER_EMIT);
+ ActivePhase().store(ENTER_EMIT);t496diag::Sample(ENTER_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
  EmitRecord(functionId,"ENTER",seq,enterDetail);
- ActivePhase().store(IN_API);
+ ActivePhase().store(IN_API);t496diag::Sample(IN_API,ActiveFunction(),ActiveCallId(),WallNs());
  call();
- ActivePhase().store(RETURNED);
+ ActivePhase().store(RETURNED);t496diag::Sample(RETURNED,ActiveFunction(),ActiveCallId(),WallNs());
+ ActivePhase().store(EXIT_EMIT);t496diag::Sample(EXIT_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
  EmitRecord(functionId,"EXIT",seq,std::string("name=")+name);
  ActivePhase().store(PHASE_IDLE);
 }
@@ -140,14 +150,14 @@ void ScopedCallVoid(uint32_t functionId,const char* name,const std::string& ente
 inline uint64_t SeamEnter(uint32_t functionId,const std::string& detail){
  const auto seq=CallSeq().fetch_add(1);
  ActiveFunction().store(functionId);ActiveCallId().store(seq);
- ActivePhase().store(ENTER_EMIT);
+ ActivePhase().store(ENTER_EMIT);t496diag::Sample(ENTER_EMIT,ActiveFunction(),ActiveCallId(),WallNs());
  if(!EmitRecord(functionId,"ENTER",seq,detail)){ActivePhase().store(PHASE_IDLE);return 0;}
- ActivePhase().store(IN_API);
+ ActivePhase().store(IN_API);t496diag::Sample(IN_API,ActiveFunction(),ActiveCallId(),WallNs());
  return seq;
 }
 inline bool SeamExit(uint64_t seq,uint32_t functionId,const std::string& result){
  if(!seq)return false;
- ActivePhase().store(RETURNED);
+ ActivePhase().store(RETURNED);t496diag::Sample(RETURNED,ActiveFunction(),ActiveCallId(),WallNs());
  const bool persisted=EmitRecord(functionId,"EXIT",seq,result);
  ActivePhase().store(PHASE_IDLE);
  return persisted;
@@ -166,5 +176,6 @@ extern "C" inline bool t496_sink_initialize(const char* runId,const char* arm,co
  if(t496sink::TraceHandleRef())return false;
  t496sink::TraceHandleRef()=std::fopen(t496sink::TracePath().c_str(),"wb");
  if(!t496sink::TraceHandleRef()){t496sink::Initialized().store(false);return false;}
+ if(!t496diag::Begin(std::string(".codex/local-test/t496/")+t496sink::AttemptId()))return false;
  return true;
 }

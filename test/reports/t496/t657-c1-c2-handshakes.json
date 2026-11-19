@@ -1,0 +1,104 @@
+[
+  {
+    "attempt": "t657v5c1",
+    "exit": "0x00000000",
+    "elapsed": 41.04600000008941,
+    "handshake": [
+      {
+        "runId": "t496-t657v5c1",
+        "arm": "create_C1",
+        "actionId": "BOOT",
+        "phase": "STORE_CONFIGURED",
+        "clockDomain": "steady_real",
+        "wallNs": "1253477399406500",
+        "declaredScriptNs": "0",
+        "detail": "ok=true entries=3"
+      },
+      {
+        "runId": "t496-t657v5c1",
+        "arm": "create_C1",
+        "actionId": "BOOT",
+        "phase": "RECOVERY_BOUND",
+        "clockDomain": "steady_real",
+        "wallNs": "1253518168740500",
+        "declaredScriptNs": "1253518168739100",
+        "detail": "session=2"
+      },
+      {
+        "runId": "t496-t657v5c1",
+        "arm": "create_C1",
+        "actionId": "BOOT",
+        "phase": "FIRST_PULSE_RETURN",
+        "clockDomain": "steady_real",
+        "wallNs": "1253518168801400",
+        "declaredScriptNs": "1253518168798700",
+        "detail": "PAGE_PULSE_ACCEPTED"
+      },
+      {
+        "runId": "t496-t657v5c1",
+        "arm": "create_C1",
+        "actionId": "BOOT",
+        "phase": "READY_GUARD",
+        "clockDomain": "steady_real",
+        "wallNs": "1253518168815200",
+        "declaredScriptNs": "1253518168814100",
+        "detail": "AllowedLocked=true"
+      }
+    ],
+    "programBinaryLoads": 3,
+    "shaderCompiles": 6,
+    "allTraceRecordsHaveOwnerTid": true,
+    "PE": "11b0c6412fa5d108b76658e74292d57dfecac0d1ed28b11d52023fa3dc575ccb"
+  },
+  {
+    "attempt": "t657v5c2",
+    "exit": "0x00000000",
+    "elapsed": 43.28100000019185,
+    "handshake": [
+      {
+        "runId": "t496-t657v5c2",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "STORE_CONFIGURED",
+        "clockDomain": "steady_real",
+        "wallNs": "1253518749079700",
+        "declaredScriptNs": "0",
+        "detail": "ok=true entries=6"
+      },
+      {
+        "runId": "t496-t657v5c2",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "RECOVERY_BOUND",
+        "clockDomain": "steady_real",
+        "wallNs": "1253561740248800",
+        "declaredScriptNs": "1253561740237200",
+        "detail": "session=2"
+      },
+      {
+        "runId": "t496-t657v5c2",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "FIRST_PULSE_RETURN",
+        "clockDomain": "steady_real",
+        "wallNs": "1253561740297500",
+        "declaredScriptNs": "1253561740293800",
+        "detail": "PAGE_PULSE_ACCEPTED"
+      },
+      {
+        "runId": "t496-t657v5c2",
+        "arm": "create_C2",
+        "actionId": "BOOT",
+        "phase": "READY_GUARD",
+        "clockDomain": "steady_real",
+        "wallNs": "1253561740318200",
+        "declaredScriptNs": "1253561740317000",
+        "detail": "AllowedLocked=true"
+      }
+    ],
+    "programBinaryLoads": 6,
+    "shaderCompiles": 0,
+    "allTraceRecordsHaveOwnerTid": true,
+    "PE": "11b0c6412fa5d108b76658e74292d57dfecac0d1ed28b11d52023fa3dc575ccb"
+  }
+]

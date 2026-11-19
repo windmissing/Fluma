@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "scope": "actual busy reservation -> safe point ARMED -> complete BEGIN/END pages with FROZEN state",
+  "requestId": "1",
+  "safePointSerial": "1",
+  "pages": 2,
+  "kinds": [
+    "BEGIN",
+    "READY",
+    "END"
+  ],
+  "traceBytes": 1245511,
+  "elapsedSeconds": 47.34400000004098,
+  "PE": "889ff10c087e3d8d06aff1ed51ef2aacbc5b444ba9307517cb93bd116e29fe1c",
+  "device": "NOT_RUN",
+  "productPASS": false
+}

@@ -1,0 +1,58 @@
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"BOOT","phase":"COORDINATOR_WAIT_ITER","clockDomain":"steady_real","wallNs":"1251110934521100","detail":"coordinatorWaitIteration=0|ownerProgressSession=1|epoch=1|captureCommittedEpoch=0"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"BOOT","phase":"RESOURCE_COMMITTED","clockDomain":"steady_real","wallNs":"1251172736314400","detail":"recovery={\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"WAIT_NEW_SESSION\",\"reason\":\"WAIT_NEW_SESSION\",\"firstReason\":\"NONE\",\"resetSerial\":\"1\",\"epoch\":\"1\",\"session\":\"0\",\"runLo\":1,\"runHi\":0,\"contextLo\":1,\"contextHi\":0,\"retired\":true,\"resources\":true,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}|ownerProgressSession=1"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"BOOT","phase":"RECOVERY_BOUND","clockDomain":"steady_real","wallNs":"1251172736761200","detail":"boundSession=2|serial=1|epoch=1"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"BOOT","phase":"FIRST_PULSE_ACCEPTED","clockDomain":"steady_real","wallNs":"1251172736802300","detail":"session=2|seq=1|reply=PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"BOOT","phase":"READY_CHECK","clockDomain":"steady_real","wallNs":"1251172736814400","detail":"ownerProgressSession=2|phase=READY"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"1","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172736860200","detail":"pulseSeq=1 code=PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"2","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172752276000","detail":"pulseSeq=2 code=PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"3","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172767240000","detail":"pulseSeq=3 code=PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"4","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172783668500","detail":"pulseSeq=4 code=PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"5","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172818291300","detail":"pulseSeq=5 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"6","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172844250500","detail":"pulseSeq=6 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"8","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172860185500","detail":"pulseSeq=7 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"9","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172875271400","detail":"pulseSeq=8 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"10","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172891301500","detail":"pulseSeq=9 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"11","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172907373600","detail":"pulseSeq=10 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"12","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172922793800","detail":"pulseSeq=11 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"13","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172938838700","detail":"pulseSeq=12 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"14","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172954781000","detail":"pulseSeq=13 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"15","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172971053100","detail":"pulseSeq=14 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"16","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251172987023100","detail":"pulseSeq=15 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"17","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173003049700","detail":"pulseSeq=16 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"18","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173019167500","detail":"pulseSeq=17 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"19","phase":"RESERVE_OFF_NOOP","clockDomain":"steady_real","wallNs":"1251173034572500","detail":""}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"20","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173034663700","detail":"pulseSeq=18 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"21","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173034721200","detail":"pulseSeq=19 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"22","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173050650500","detail":"pulseSeq=20 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"23","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173066539800","detail":"pulseSeq=21 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"24","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173082664100","detail":"pulseSeq=22 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"25","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173098653100","detail":"pulseSeq=23 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"26","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173114562000","detail":"pulseSeq=24 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"27","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173130056500","detail":"pulseSeq=25 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"28","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173145629100","detail":"pulseSeq=26 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"30","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173161649000","detail":"pulseSeq=27 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"31","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173176911400","detail":"pulseSeq=28 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"32","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173192476500","detail":"pulseSeq=29 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"33","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173208420200","detail":"pulseSeq=30 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"34","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173224937600","detail":"pulseSeq=31 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"35","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173240927200","detail":"pulseSeq=32 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"36","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173257308400","detail":"pulseSeq=33 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"37","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173272239000","detail":"pulseSeq=34 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"38","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173288299400","detail":"pulseSeq=35 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"39","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173304302800","detail":"pulseSeq=36 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"40","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173320251700","detail":"pulseSeq=37 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"41","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173336317600","detail":"pulseSeq=38 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"42","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173351758600","detail":"pulseSeq=39 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"43","phase":"END_SKIP","clockDomain":"steady_real","wallNs":"1251173368266000","detail":"not armed/off"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"44","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173368539500","detail":"pulseSeq=40 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"45","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173368604800","detail":"pulseSeq=41 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"46","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173383274200","detail":"pulseSeq=42 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"47","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173398732700","detail":"pulseSeq=43 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"48","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173414762500","detail":"pulseSeq=44 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"49","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173431272600","detail":"pulseSeq=45 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"50","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173447267400","detail":"pulseSeq=46 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"51","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173463271900","detail":"pulseSeq=47 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"52","phase":"PULSE","clockDomain":"steady_real","wallNs":"1251173478297900","detail":"pulseSeq=48 code=STALE_PAGE_SESSION"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"DRAIN","phase":"PRE_QUIT_SNAPSHOT","clockDomain":"steady_real","wallNs":"1251173494327600","detail":"accepted=0 sourceCommit=0 mailbox=0 runQueue=0"}
+{"runId":"t496-t657d2a","arm":"create_D2","actionId":"D2","phase":"NO_REAL_FLUSH_CUT","clockDomain":"steady_real","wallNs":"1251173494373000","detail":"NOT_MEASURED"}
+{"assertId":"QUANTUM_NONEMPTY","runId":"t496-t657d2a","arm":"create_D2","pass":false,"detail":"physics=0"}

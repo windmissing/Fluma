@@ -1,0 +1,11 @@
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"CREATE_ONLY_START","clockDomain":"steady_real","wallNs":"1249983092652300","detail":"arm=C0 filesDir=.codex/local-test/t496/t657r3-files packageSource=EMPTY_CACHE"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"STORE_CONFIGURED","clockDomain":"steady_real","wallNs":"1249983095748600","detail":"ok=true entries=0"}
+{"assertId":"CREATE_STORE_CONFIGURED","runId":"t496-t657r3","arm":"create_C0","pass":true,"detail":"entries=0"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"RECOVERY_REQUESTED","clockDomain":"steady_real","wallNs":"1249983097185300","detail":"serial=1"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"CREATE_WAIT","clockDomain":"steady_real","wallNs":"1249983097347200","detail":"iter=0"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"RESOURCE_COMMITTED","clockDomain":"steady_real","wallNs":"1250023174970000","detail":"real capture epoch and v2ResourcesReady"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"RECOVERY_BOUND","clockDomain":"steady_real","wallNs":"1250023174990400","detail":"session=2"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"FIRST_PULSE_RETURN","clockDomain":"steady_real","wallNs":"1250023175002200","detail":"PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"READY_GUARD","clockDomain":"steady_real","wallNs":"1250023175010400","detail":"AllowedLocked=true"}
+{"runId":"t496-t657r3","arm":"create_C0","actionId":"BOOT","phase":"CREATE_COMMITTED","clockDomain":"steady_real","wallNs":"1250023175020900","detail":"wallMs=40077"}
+{"assertId":"CREATE_RESOURCE_COMMIT_C0","runId":"t496-t657r3","arm":"create_C0","pass":true,"detail":"wallMs=40077 epoch=1"}

@@ -1,0 +1,117 @@
+{
+  "schema": "T496_FINAL_BUILD_CLOSURE_V1",
+  "fullBuildExit": 0,
+  "driverIncrementalExit": 0,
+  "commands": [
+    "cmd /c test/t496/build.cmd",
+    "cmd /c test/t496/rebuild_driver.cmd"
+  ],
+  "executable": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\t496.exe",
+    "bytes": 1433600,
+    "sha256": "889ff10c087e3d8d06aff1ed51ef2aacbc5b444ba9307517cb93bd116e29fe1c"
+  },
+  "objects": [
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\budget_units.obj",
+      "bytes": 277085,
+      "sha256": "74c5f57d768992cea601c6aad5f4896de4d4d2c0433c6dc72413ecf37db5c2b4"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\control.obj",
+      "bytes": 23648,
+      "sha256": "60aa222a2ca42286d3dd59004002294cd87321d7ed57b0e47a326abe44f360e7"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\external_source_diff.obj",
+      "bytes": 2867770,
+      "sha256": "7f304f5141974963ca878eced13d5449a22e71781fd1529d62539255a5c83ad4"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\foundation.obj",
+      "bytes": 351211,
+      "sha256": "c9b4c22348f1cc05c73bfd69755ad06649e52c453d013b96df7a2df4468647b0"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\fullframe_targets.obj",
+      "bytes": 9146,
+      "sha256": "438c62dd025cb83999cdb23cc806c8dcfd8602917eb0c0609fc242b66f13d4aa"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\full_kernel.obj",
+      "bytes": 83738,
+      "sha256": "d5411335658dd59f25f7011a182ec8ede58f0cfee45e6adc3d9c5e5bf63be831"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\full_transport.obj",
+      "bytes": 2126187,
+      "sha256": "2724ab11499927795d82d2194f8e54eb6a2d0f33260ddc1c48b43b1f9e2a3194"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\gl_extra.obj",
+      "bytes": 2188,
+      "sha256": "b7049e9c9e3cacabafc8655e7491c9acad0768e2c10297744b97e0dfd85e145e"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\gl_forward.obj",
+      "bytes": 79627,
+      "sha256": "4ade6b5d3393a7e692ec26db6c04d03142b3e966753503100c93bb299bed66fb"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\gl_forward_sink.obj",
+      "bytes": 950925,
+      "sha256": "d1426e9b44fcc2874a97709c1ff0065f79d3a2a1afd10a5618dbbbc8f9216308"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\integer.obj",
+      "bytes": 8482,
+      "sha256": "a69cfda5be4d9e927773daef5072ed5cbb5dca1b9a1c072afc651be170ea0e96"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\profile.obj",
+      "bytes": 4352,
+      "sha256": "ab90935a95284b89359a196a310e69ef327f557675095d1ebdd6936ecd55d4f5"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\quantum_candidate.obj",
+      "bytes": 2109770,
+      "sha256": "301ee489e329aeb6ad11ca3d7aab3e3e370cda5707811669a3ddf093c2d9bd14"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\quantum_kernel.obj",
+      "bytes": 28325,
+      "sha256": "33cb0b92383121491650bbd2a97bb939c14d50286c3f699794561640e1a275d4"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\run.obj",
+      "bytes": 20395,
+      "sha256": "89352ff1d6b2a1cc35e4185933e5e158f5415ca6d790f73f364f45db70de24fa"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\scene.obj",
+      "bytes": 1942652,
+      "sha256": "57941baaaf27c1c09e7177600b7be0ca220e81c96b7b67ec729a6cad0ec1b6b9"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\shadow_units.obj",
+      "bytes": 401355,
+      "sha256": "278b785d1fe7549757c080df90395d407d259d76b533679f5fdb63af6702e9f6"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\source_kernel.obj",
+      "bytes": 30265,
+      "sha256": "7dcf106de65ee7c865da8308f1999833092953b42e56c980ed9862b96bc14f70"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\source_owner.obj",
+      "bytes": 39438,
+      "sha256": "b835c4715b571baaf620b0271753baa754b9f27eda4d5beae9b0a776acf86bfc"
+    },
+    {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\source_transport.obj",
+      "bytes": 1870332,
+      "sha256": "f319fbcca4c14aefbacc19839fd9a9d224d28f58161a959e59f6ac8a385a294a"
+    }
+  ],
+  "device": "NOT_RUN"
+}

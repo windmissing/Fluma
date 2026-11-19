@@ -1,0 +1,25 @@
+{
+  "result": "INVALID_CLI_EVIDENCE",
+  "cases": [
+    {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\t496.exe"
+      ],
+      "exit": 3221225781,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t496\\t496.exe",
+        "UNKNOWN",
+        "badmode"
+      ],
+      "exit": 3221225781,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "device": "NOT_RUN",
+  "reason": "Dependency PATH omitted; nonzero DLL load failure is not argument rejection. Actual PATH-qualified exit=2 checks in t657-delivery-cli.json."
+}

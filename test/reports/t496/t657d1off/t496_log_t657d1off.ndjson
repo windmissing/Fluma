@@ -1,0 +1,10 @@
+{"runId":"t496-t657d1off","arm":"off","actionId":"BOOT","phase":"COORDINATOR_WAIT_ITER","clockDomain":"steady_real","wallNs":"1250304767877100","detail":"coordinatorWaitIteration=0|ownerProgressSession=1|epoch=1|captureCommittedEpoch=0"}
+{"runId":"t496-t657d1off","arm":"off","actionId":"BOOT","phase":"RESOURCE_COMMITTED","clockDomain":"steady_real","wallNs":"1250349929286300","detail":"recovery={\"revision\":\"T464_RECOVERY_V1\",\"phase\":\"WAIT_NEW_SESSION\",\"reason\":\"WAIT_NEW_SESSION\",\"firstReason\":\"NONE\",\"resetSerial\":\"1\",\"epoch\":\"1\",\"session\":\"0\",\"runLo\":1,\"runHi\":0,\"contextLo\":1,\"contextHi\":0,\"retired\":true,\"resources\":true,\"windowAvailable\":true,\"actualClock\":\"GRS_M1_PROGRESS_CLOCK_V2\",\"readyEpoch\":\"0\"}|ownerProgressSession=1"}
+{"runId":"t496-t657d1off","arm":"off","actionId":"BOOT","phase":"RECOVERY_BOUND","clockDomain":"steady_real","wallNs":"1250349929495800","detail":"boundSession=2|serial=1|epoch=1"}
+{"runId":"t496-t657d1off","arm":"off","actionId":"BOOT","phase":"FIRST_PULSE_ACCEPTED","clockDomain":"steady_real","wallNs":"1250349929519900","detail":"session=2|seq=1|reply=PAGE_PULSE_ACCEPTED"}
+{"runId":"t496-t657d1off","arm":"off","actionId":"BOOT","phase":"READY_CHECK","clockDomain":"steady_real","wallNs":"1250349929530800","detail":"ownerProgressSession=2|phase=READY"}
+{"runId":"t496-t657d1off","arm":"off","actionId":"WALL","phase":"GUARD_TIMEOUT","clockDomain":"steady_real","wallNs":"1250354944197500","detail":"no owner checkpoint in 120s"}
+{"assertId":"D1_WALL_GUARD","runId":"t496-t657d1off","arm":"off","pass":false,"detail":"owner stalled before script end"}
+{"runId":"t496-t657d1off","arm":"off","actionId":"DRAIN","phase":"PRE_QUIT_SNAPSHOT","clockDomain":"steady_real","wallNs":"1250355955030000","detail":"accepted=0 sourceCommit=0 mailbox=0 runQueue=0"}
+{"assertId":"EXTERNAL_SOURCE_NONEMPTY","runId":"t496-t657d1off","arm":"off","pass":false,"detail":"source=0"}
+{"assertId":"QUANTUM_NONEMPTY","runId":"t496-t657d1off","arm":"off","pass":false,"detail":"physics=0"}

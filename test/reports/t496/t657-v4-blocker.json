@@ -1,0 +1,95 @@
+{
+  "schema": "T496_V4_INCOMPLETE_V1",
+  "outcome": "NOT_MEASURED_COMPLETE_DIFF",
+  "reason": [
+    "120s script window: 46/52 actions delivered",
+    "32MiB trace credit reached: subsequent GL trace records missing"
+  ],
+  "rawChildExit": 0,
+  "rawExitIsNotSuitePass": true,
+  "traceBytes": 33554177,
+  "traceCap": 33554432,
+  "actions": 46,
+  "mapped1024Spans": 78,
+  "acceptedRootObservations": 80,
+  "topFunctionRecordCounts": [
+    [
+      "412",
+      19788
+    ],
+    [
+      "411",
+      19596
+    ],
+    [
+      "15",
+      14319
+    ],
+    [
+      "16",
+      14236
+    ],
+    [
+      "17",
+      14224
+    ],
+    [
+      "416",
+      11878
+    ],
+    [
+      "410",
+      2430
+    ],
+    [
+      "413",
+      2200
+    ],
+    [
+      "404",
+      1260
+    ],
+    [
+      "401",
+      722
+    ],
+    [
+      "408",
+      234
+    ],
+    [
+      "418",
+      234
+    ]
+  ],
+  "firstRecord": {
+    "schema": "T561_CREATE_SINK_V1",
+    "runId": "t496-t657v4off",
+    "arm": "create_D1_OFF",
+    "pid": 26144,
+    "ownerTid": 12660,
+    "createAttemptId": "t657v4off",
+    "callId": 0,
+    "functionId": 2,
+    "event": "ENTER",
+    "wallNs": "1253095791191000",
+    "scriptNs": "1253095791191000",
+    "detail": ""
+  },
+  "lastRecord": {
+    "schema": "T561_CREATE_SINK_V1",
+    "runId": "t496-t657v4off",
+    "arm": "create_D1_OFF",
+    "pid": 26144,
+    "ownerTid": 12660,
+    "createAttemptId": "t657v4off",
+    "callId": 51327,
+    "functionId": 15,
+    "event": "ENTER",
+    "wallNs": "1253259010609400",
+    "scriptNs": "1253259010609400",
+    "detail": ""
+  },
+  "productPASS": false,
+  "device": "NOT_RUN"
+}

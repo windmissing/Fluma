@@ -1,0 +1,6 @@
+{"runId":"t496-t657r2","arm":"create_C0","actionId":"BOOT","phase":"CREATE_ONLY_START","clockDomain":"steady_real","wallNs":"1249040709774500","detail":"arm=C0 filesDir=.codex/local-test/t496/t657r2-files packageSource=EMPTY_CACHE"}
+{"runId":"t496-t657r2","arm":"create_C0","actionId":"BOOT","phase":"STORE_CONFIGURED","clockDomain":"steady_real","wallNs":"1249040713703100","detail":"ok=true entries=0"}
+{"assertId":"CREATE_STORE_CONFIGURED","runId":"t496-t657r2","arm":"create_C0","pass":true,"detail":"entries=0"}
+{"runId":"t496-t657r2","arm":"create_C0","actionId":"BOOT","phase":"CREATE_WAIT","clockDomain":"steady_real","wallNs":"1249040715336500","detail":"iter=0"}
+{"runId":"t496-t657r2","arm":"create_C0","actionId":"BOOT","phase":"CREATE_TIMEOUT","clockDomain":"steady_real","wallNs":"1249280728176200","detail":"wallMs=240012"}
+{"assertId":"CREATE_RESOURCE_COMMIT_C0","runId":"t496-t657r2","arm":"create_C0","pass":false,"detail":"wallMs=240012 epoch=0"}
