@@ -6,11 +6,18 @@
 // T563 dispatch JSONs. Never modifies the parent files on disk.
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const ROOT = path.resolve(__dirname, '..');
+const manifest=JSON.parse(fs.readFileSync(path.join(ROOT,'docs/architecture-T563-g11-manifest-v1.json'),'utf8'));
+for(const receipt of [...manifest.inputs,manifest.visualSeedRecipe]){const raw=fs.readFileSync(path.join(ROOT,receipt.path));if(raw.length!==receipt.bytes||crypto.createHash('sha256').update(raw).digest('hex')!==receipt.sha256)throw Error('G11_APPROVED_INPUT_MISMATCH '+receipt.path);}
+
 const VIS = fs.readFileSync(path.join(ROOT, 'entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl'), 'utf8').replace(/\r\n/g, '\n');
 
 function parentSource(which) {
   const file = which === 'dm' ? 'g9dm/pipeline.comp' : 'g9spf/pipeline.comp';
   let src = fs.readFileSync(path.join(ROOT, 'entry/src/main/cpp/gpu_resident', file), 'utf8').replace(/\r\n/g, '\n');
+  src=src.replace('uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,','uniform uint uRootKind,uRequiredAudits;\nuniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,');
+  src=src.replaceAll('uRequiredPasses==12u','uRootKind==1u').replaceAll('uRequiredPasses==2024u','uRootKind==2u').replaceAll('uRequiredPasses==2404u','uRootKind==2u');
+  src=src.replace('void g9Completion(){','void g9Completion(){\n if((g9Ctl(17u)&uRequiredAudits)!=uRequiredAudits)g9Fault(30u,0u,uRequiredAudits);');
+  if(/uRequiredPasses\s*==\s*(12|2024|2404)u/.test(src))throw Error('G11_IMPLICIT_ROOT_KIND_REMAINS');
   // The visual stage needs the parent helpers (g9Fault etc.); inject right
   // before void g9Run() so all helpers are declared. The stage's own VIS ops
   // hook into the dispatch after this mark.
@@ -46,13 +53,14 @@ function build(which) {
   const runBody = ' uint lane=gl_LocalInvocationIndex;\n';
   if (!src.includes(runBody)) throw Error('G11_RUN_BODY_ANCHOR');
   const visArm = runBody +
-    ' // T566 composite VIS ops: independent switch; every lane passes barriers.\n' +
+    ' // T639: VIS rows advance the same actual pass counter before uniform gates.\n' +
+    ' if(uOp>=512u&&uOp<=516u){if(lane==0u){if(g9Ctl(16u)!=uPass)g9Fault(25u,0u,uPass);g9Set(16u,g9Ctl(16u)+1u);}memoryBarrierBuffer();barrier();uJ=(uRole==2u||uRole==4u)?g9Ctl(11u):uJslot;if(g9Ctl(0u)!=0u)return;if(uOp==513u||uOp==514u){if(uRootKind==2u&&((uRole!=2u&&uRole!=4u)||!g9ScopeEnabled()||(uMicro!=0xffffffffu&&(uMicro>=uJ||g9Ctl(14u)!=0u))))return;}}\n' +
     ' if(uOp==G11_OP_VIS_ROOT_COPY){if(!visRootCopy())return;return;}\n' +
     ' if(uOp==G11_OP_VIS_PLAN_BEGIN){if(!visPlanBegin())return;return;}\n' +
     ' if(uOp==G11_OP_VIS_PLAN_APPLY){if(!visPlanApply())return;return;}\n' +
     ' if(uOp==G11_OP_VIS_ROOT_AUDIT){if(!visRootAudit())return;return;}\n' +
     ' if(uOp==G11_OP_VIS_GLYPH){if(!visGlyphBuild())return;return;}\n';
-  src = src.replace(runBody, visArm);
+  const runAt=src.indexOf(anchor);if(runAt<0)throw Error('RUN_ANCHOR');const bodyAt=src.indexOf(runBody,runAt);if(bodyAt<0)throw Error('RUN_BODY_AFTER_ANCHOR');src=src.slice(0,bodyAt)+visArm+src.slice(bodyAt+runBody.length);
   const sha = crypto.createHash('sha256').update(src).digest('hex');
   return { src, sha, ops };
 }
@@ -96,6 +104,7 @@ function emit() {
     header += 'static constexpr const char* ' + raw + '=R"G11V(' + src + ')G11V";\n';
     header += 'static constexpr const char* ' + raw + 'Hash="' + sha + '";\n';
     const table = passTable(which);
+    if(table.source.length!==19||table.quantum.length!==(which==='dm'?2923:2543))throw Error('G11_FROZEN_PASS_COUNT');
     const tname = 'kG11' + tag + 'Passes';
     for (const kind of ['source', 'quantum']) {
       const rows = table[kind];
@@ -107,6 +116,10 @@ function emit() {
     console.log('g11vis composite ' + which.toUpperCase() + ': pipeline sha256=' + sha.slice(0, 16) + '… source=' + table.source.length + ' quantum=' + table.quantum.length);
   }
   fs.writeFileSync(path.join(outDir, 'g11vis_pipeline.h'), header);
+  for(const which of ['r1','dm']){fs.writeFileSync(path.join(outDir,'g11vis_'+which+'.comp'),build(which).src);}
+  const inputs=['entry/src/main/cpp/gpu_resident/g9spf/pipeline.comp','entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp','entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl','docs/architecture-T563-g11-r1-dispatch-v1.json','docs/architecture-T563-g11-dm-dispatch-v1.json','docs/architecture-T563-g11-manifest-v1.json','entry/src/main/cpp/gpu_resident/g11vis/generated_contract.h','test/t566_generate_composite.cjs',...manifest.inputs.map(x=>x.path),manifest.visualSeedRecipe.path];
+  fs.writeFileSync(path.join(outDir,'g11vis_dependencies.cmake'),'set(G11_INPUTS\n'+[...new Set(inputs)].map(p=>'\"'+path.join(ROOT,p).replaceAll('\\','/')+'\"').join('\n')+'\n)\n');
+  fs.writeFileSync(path.join(outDir,'g11vis_inputs.json'),JSON.stringify(Object.fromEntries(inputs.map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex')])),null,2));
   console.log('written: ' + path.join(outDir, 'g11vis_pipeline.h'));
 }
 emit();

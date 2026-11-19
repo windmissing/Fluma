@@ -16,7 +16,7 @@ const char* PipelineAbi(uint32_t parent){return parent==1?kPipelineAbiDm:kPipeli
 // Pipeline sources live in the generated header; kernel_assets.cpp re-exports.
 bool VisualTransport::Current()const{return context_!=EGL_NO_CONTEXT&&thread_==std::this_thread::get_id()&&eglGetCurrentContext()==context_&&eglGetCurrentDisplay()==display_&&eglGetCurrentSurface(EGL_DRAW)==surface_;}
 bool VisualTransport::Good(){const auto gl=glGetError();const auto egl=eglGetError();if(gl&&!firstGl_)firstGl_=gl;if(egl!=EGL_SUCCESS&&!firstEgl_)firstEgl_=egl;return !firstGl_&&!firstEgl_;}
-bool VisualTransport::Allowed()const{return Current()&&Now()<=permit_.parent.deadline;}
+bool VisualTransport::Allowed()const{return Current()&&Now()<=permit_.parent.deadline&&check_&&check_(checkUser_,permit_.parent,Now());}
 VisualTransport::Result VisualTransport::Denied()const{return !Current()?Result::CONTEXT_LOST:Now()>permit_.parent.deadline?Result::DEADLINE:Result::STALE;}
 void VisualTransport::U(const char* n,uint32_t v){glUniform1ui(program_.uniforms.Find(n),v);}
 void VisualTransport::I(const char* n,int32_t v){glUniform1i(program_.uniforms.Find(n),v);}
@@ -49,6 +49,7 @@ VisualTransport::Result VisualTransport::QueryComputeCaps(const g9spf::ProfileRe
  out->computeEligible=true;return Result::OK;
 }
 VisualTransport::Result VisualTransport::Create(uint32_t parentKind,uint32_t k,uint32_t v,const g9spf::Config& config,const g9spf::ControlIdentity& id,const g9spf::SeedFileIdentity& seed){
+ if(parentKind!=0)return Result::UNSUPPORTED; // DM requires its real typed adapter, never R1 fallback.
  if(ready_||busy_||!config.Valid()||config.parameterSha!=g9spf::ParameterHash(config)||!id.run||!id.owner||!id.context)return Result::CALIBRATION_CONFIG_REQUIRED;
  const auto* parent=g9spf::SelectProfile(config.k);if(!parent)return Result::UNSUPPORTED;
  const auto* visual=SelectVisual(parentKind,config.k,v);if(!visual)return Result::UNSUPPORTED;
@@ -95,15 +96,18 @@ void VisualTransport::Common(const g9spf::Input128& input){
  U("uVisMarkerCurrent",uint32_t(vis.visual[kSegMarkerCurrent]/4));U("uVisMarkerActual",uint32_t(vis.visual[kSegMarkerActual]/4));U("uVisMarkerReplay",uint32_t(vis.visual[kSegMarkerReplay]/4));
  U("uVisGlyph",uint32_t(vis.visual[kSegGlyph]/4));U("uVisPlan",uint32_t(vis.visual[kSegMaterialPlan]/4));U("uVisControl",uint32_t(vis.visual[kSegControl]/4));U("uVisMaps",uint32_t(vis.visual[kSegFourMaps]/4));
  U("uVisV",vis.v);
+ if(permit_.parent.quanta<=UINT64_MAX/32-1)P("uVisTicks",(permit_.parent.quanta+(permit_.parent.kind==2?1:0))*32);
  const auto& permit=permit_.parent;
  P("uNonce",permit.nonce);P("uRun",permit.identity.run);P("uOwner",permit.identity.owner);P("uContext",permit.identity.context);P("uSurface",permit.identity.surface);P("uGeometry",permit.geometry);P("uConfigId",permit.identity.config);P("uInputGeneration",permit.identity.inputEpoch);P("uSession",permit.identity.pageSession);P("uPlan",permit.plan);P("uBaseCommit",permit.baseCommit);P("uArenaGeneration",permit.arenaGeneration);
  U("uCandidateBank",permit.candidateBank);U("uBaseBank",permit.baseBank);U("uArena",permit.arena);
- U("uRequiredPasses",permit.kind==1?(parentKind_==1?kDmSourceMask:kR1SourceMask):(parentKind_==1?kDmQuantumMask:kR1QuantumMask));
+ U("uRootKind",permit.kind);U("uRequiredPasses",permit.kind==1?(parentKind_==1?kDmSourcePasses:kR1SourcePasses):(parentKind_==1?kDmQuantumPasses:kR1QuantumPasses));
+ U("uRequiredAudits",permit.kind==1?(parentKind_==1?kDmSourceMask:kR1SourceMask):(parentKind_==1?kDmQuantumMask:kR1QuantumMask));
  U("uEventCapacity",p.eventCapacity);U("uPathCapacity",p.pathCapacity);U("uPathWord",p.eventCapacity*64);
  const auto angle=int32_t(input[24]);I("uAcceptedAngle",angle);const auto at=size_t(angle+7680)*4;I("uAngleSin",int32_t(kAngleWords[at+1]));I("uAngleCos",int32_t(kAngleWords[at+2]));
 }
 VisualTransport::Result VisualTransport::Begin(const CompositePermit& p,const g9spf::Input128& input,g9spf::PermitCheck check,void* user){
  if(!ready_||busy_||!Current())return Result::WOULD_BLOCK;
+ if(!check||p.visualGeneration==UINT64_MAX||p.parent.quanta>UINT64_MAX/32-1)return Result::INVALID;
  if(p.parent.baseBank!=current_||p.parent.candidateBank>=5||p.parent.baseBank==p.parent.candidateBank||p.parent.kind<1||p.parent.kind>2||int32_t(input[24])<-7680||int32_t(input[24])>7680)return Result::INVALID;
  permit_=p;check_=check;checkUser_=user;if(!Allowed())return Denied();
  std::array<uint32_t,128> config{};config[0]=config_.muStart;config[1]=config_.muStop;config[2]=config_.band;config[3]=config_.entrainRate;config[4]=config_.shear;config[5]=config_.settleTicks;config[6]=config_.revision;config[7]=config_.g;
@@ -127,7 +131,7 @@ bool VisualTransport::Dispatch(const G11Pass& pass,uint32_t index){
  // REPLAY for replay roles; the write target stays within the same bank.
  U("uVisOldBank",pass.role==4?2u:1u);U("uVisNewBank",pass.role==4?2u:1u);
  U("uVisPhase",pass.phase);U("uVisOrdinal",uint32_t(index));
- Bind(pass);U("uOp",pass.op);U("uRole",pass.role);U("uJslot",pass.j);U("uMicro",uint32_t(pass.micro<0?0u:uint32_t(pass.micro)));U("uPass",index);
+ Bind(pass);U("uOp",pass.op);U("uRole",pass.role);U("uJslot",pass.j);U("uMicro",uint32_t(pass.micro));U("uPass",index);
  if(!Allowed())return false;glDispatchCompute(1,1,1);++evidence_.dispatches;glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);++evidence_.barriers;
  if(!Good())return false;
  return Allowed();
@@ -151,13 +155,14 @@ VisualTransport::Result VisualTransport::Pump(){
  if(!mapped)return Result::GL_FAILED;std::memcpy(tail_.words.data(),mapped,1024);const bool unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER)==GL_TRUE;if(!unmapped||!Good())return Result::GL_FAILED;
  glDeleteSync(fence_);fence_=nullptr;evidence_.gl=firstGl_;evidence_.egl=firstEgl_;mapped_=true;
  // Composite audit bits are set after VIS_ROOT_AUDIT+GLYPH complete.
- tail_.visAuditBits=(1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph);
+ tail_.visAuditBits=tail_.words[42]&((1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph));
  return Result::OK;
 }
 bool VisualTransport::Commit(const CompositePermit& p,const CompositeCompletion& w){
+ if((w.visAuditBits&((1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph)))!=((1u<<kAuditPlanMapping)|(1u<<kAuditVisReplayGlyph)))return false;
  if(!busy_||!mapped_||!(p==permit_)||w.words!=tail_.words||w.visAuditBits!=tail_.visAuditBits||w.words[6]<1||w.words[6]>3||!Current()||Now()>p.parent.deadline)return false;
- if(w.words[6]!=2){std::swap(buffers_[current_],buffers_[p.parent.candidateBank]);}
- busy_=mapped_=false;return true;
+ // T639: awaiting formal parent composite typed proof; no bank can switch.
+ return false;
 }
 bool VisualTransport::RetireRejected(const CompositePermit& p){
  if(!busy_)return true;if(!(p==permit_)||!Current())return false;

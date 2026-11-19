@@ -1,13 +1,17 @@
-# T566 (problem T563): G11 composite visual kernels.
-# The composite pipeline is generated from the frozen parent pipelines plus
-# the g11vis visual stage (test/t566_generate_composite.cjs); generation is a
-# pre-commit step that writes g11vis_pipeline.h next to this build tree.
-set(G11VIS_GEN "${CMAKE_CURRENT_SOURCE_DIR}/../../../test/t566_generate_composite.cjs")
-if(EXISTS "${G11VIS_GEN}")
-  execute_process(COMMAND "C:/Program Files/nodejs/node.exe" "${G11VIS_GEN}" "${CMAKE_CURRENT_BINARY_DIR}" OUTPUT_VARIABLE G11VIS_GEN_OUT ERROR_VARIABLE G11VIS_GEN_ERR RESULT_VARIABLE G11VIS_GEN_RESULT)
-  if(NOT G11VIS_GEN_RESULT EQUAL 0)
-    message(WARNING "g11vis composite generation failed: ${G11VIS_GEN_ERR}")
-  endif()
+# T639: missing/stale generated input is fatal; every build gets its own assets.
+get_filename_component(G11_REPO_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../../../.." ABSOLUTE)
+set(G11VIS_GEN "${G11_REPO_ROOT}/test/t566_generate_composite.cjs")
+if(NOT EXISTS "${G11VIS_GEN}")
+ message(FATAL_ERROR "G11_GENERATOR_MISSING: ${G11VIS_GEN}")
 endif()
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/g11vis/visual_stage.glsl")
-target_sources(grs_foundation PRIVATE g11vis/kernel_assets.cpp g11vis/visual_transport.cpp g11vis/scene.cpp g11vis/cold.cpp)
+find_program(G11_NODE NAMES node node.exe HINTS "C:/Program Files/Huawei/DevEco Studio/tools/node" REQUIRED)
+set(G11_ASSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/g11_assets")
+file(MAKE_DIRECTORY "${G11_ASSET_DIR}")
+execute_process(COMMAND "${G11_NODE}" "${G11VIS_GEN}" "${G11_ASSET_DIR}" RESULT_VARIABLE G11_RESULT OUTPUT_VARIABLE G11_OUTPUT ERROR_VARIABLE G11_ERROR)
+if(NOT G11_RESULT EQUAL 0 OR NOT EXISTS "${G11_ASSET_DIR}/g11vis_pipeline.h")
+ message(FATAL_ERROR "G11_GENERATION_FAILED: ${G11_ERROR}")
+endif()
+include("${G11_ASSET_DIR}/g11vis_dependencies.cmake")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${G11_INPUTS})
+target_include_directories(grs_foundation BEFORE PRIVATE "${G11_ASSET_DIR}")
+target_sources(grs_foundation PRIVATE "${CMAKE_CURRENT_LIST_DIR}/kernel_assets.cpp" "${CMAKE_CURRENT_LIST_DIR}/visual_transport.cpp" "${CMAKE_CURRENT_LIST_DIR}/scene.cpp" "${CMAKE_CURRENT_LIST_DIR}/cold.cpp")

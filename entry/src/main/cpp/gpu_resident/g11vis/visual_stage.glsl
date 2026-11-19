@@ -11,6 +11,7 @@
 // uniforms; the segment order matches grs::g11vis::VisualWork.
 uniform uint uVisMarkerCurrent,uVisMarkerActual,uVisMarkerReplay;
 uniform uint uVisGlyph,uVisPlan,uVisControl,uVisMaps;
+uniform uvec2 uVisTicks;
 uniform uint uVisV;              // marker slot count (V)
 uniform uint uVisOldBank,uVisNewBank;  // active marker bank pair (word index base)
 uniform uint uVisPhase;           // material phase (control ABI codes)
@@ -61,8 +62,10 @@ uint g11NextVisualId(){
 // Tagged references: low 28 bits index, high 4 bits table tag.
 uint g11Ref(uint tag,uint index){return (tag<<28u)|(index&0x0fffffffu);}
 void g11PlanClear(uint at){for(uint i=0u;i<G11_PLAN_WORDS;++i)W[uVisPlan+at+i]=0u;}
+uint G11_PLAN_SEAL();
+uint G11_BLEND_TICKS();
 bool g11PlanWrite(uint at,uint type,uint ownerRef,uint originRef,uint oldRef,uint newRef,uint amount,uint rangeStart){
- uint slot=at/G11_PLAN_WORDS;if(slot>=uVisPlan/G11_PLAN_WORDS&&at>=65536u*G11_PLAN_WORDS)return false;
+ uint slot=at/G11_PLAN_WORDS;if(at%G11_PLAN_WORDS!=0u||slot>=65536u)return false;
  W[uVisPlan+at+0u]=type;W[uVisPlan+at+1u]=ownerRef;W[uVisPlan+at+2u]=originRef;
  W[uVisPlan+at+3u]=oldRef;W[uVisPlan+at+4u]=newRef;W[uVisPlan+at+5u]=amount;
  W[uVisPlan+at+6u]=rangeStart;
@@ -76,7 +79,7 @@ uint G11_PLAN_SEAL(){return 3235778818u;}
 // One dispatch at root begin: CURRENT marker bank is copied to ACTUAL and
 // REPLAY with their headers; BASE stays read-only for the root lifetime.
 bool visRootCopy(){
- if(gl_LocalInvocationIndex!=0u)return true;
+ if(gl_LocalInvocationIndex==0u){
  // ACTUAL header words 6..7 (generation) and flags mirror CURRENT.
  for(uint bank=1u;bank<3u;++bank){
   g11PutBankHeader(bank,0u,g11BankHeader(0u,0u));
@@ -84,6 +87,7 @@ bool visRootCopy(){
   g11PutBankHeader(bank,2u,g11BankHeader(0u,2u));
   g11PutBankHeader(bank,3u,g11BankHeader(0u,3u));
   for(uint w=4u;w<48u;++w)g11PutBankHeader(bank,w,g11BankHeader(0u,w));
+ }
  }
  memoryBarrierBuffer();barrier();
  // Marker payloads: all lanes copy; exact bytes, no reinterpretation.
@@ -105,9 +109,9 @@ bool visPlanBegin(){
  for(uint c=0u;c<128u;++c){
   uint mapAt=uVisMaps+c*G11_MAP_ROWS*G11_COHORT_WORDS;
   uint bedAt=uBed+c*256u;
-  for(uint i=0u;i<256u;++i)W[mapAt+i]=C[bedAt+i];
+  for(uint i=0u;i<256u;++i)W[mapAt+i]=(uRootKind==1u&&uRole==4u)?B[bedAt+i]:C[bedAt+i];
   uint flowAt=uFlow+c*256u;
-  for(uint i=0u;i<256u;++i)W[mapAt+MAP_WORDS+i]=C[flowAt+i];
+  for(uint i=0u;i<256u;++i)W[mapAt+2u*MAP_WORDS+i]=(uRootKind==1u&&uRole==4u)?B[flowAt+i]:C[flowAt+i];
  }
  return true;
 }
@@ -121,14 +125,14 @@ bool visPlanApply(){
  for(uint c=gl_LocalInvocationIndex;c<128u;c+=64u){
   uint mapAt=uVisMaps+c*G11_MAP_ROWS*G11_COHORT_WORDS;
   uint bedAt=uBed+c*256u;
-  for(uint i=0u;i<256u;++i)W[mapAt+2u*32768u+i]=C[bedAt+i];
+  for(uint i=0u;i<256u;++i)W[mapAt+32768u+i]=C[bedAt+i];
   uint flowAt=uFlow+c*256u;
   for(uint i=0u;i<256u;++i)W[mapAt+3u*32768u+i]=C[flowAt+i];
  }
  memoryBarrierBuffer();barrier();
  if(gl_LocalInvocationIndex==0u){
   // Seal this stage's batch digest (locator only, 16 words).
-  uint ordinal=uVisOrdinal%258u;
+  uint ordinal=g11Control(G11_SCOPE_AT);if(ordinal>=258u){g9Fault(30u,ordinal,0u);return false;}
   W[uVisControl+G11_DIGEST_AT+ordinal*16u+0u]=uVisOrdinal;
   W[uVisControl+G11_DIGEST_AT+ordinal*16u+1u]=uRole;
   W[uVisControl+G11_DIGEST_AT+ordinal*16u+2u]=uMicro;
@@ -152,21 +156,18 @@ bool visRootAudit(){
  for(uint slot=gl_LocalInvocationIndex;slot<uVisV;slot+=64u){
   uint at1=uVisMarkerActual+slot*G11_MARKER_WORDS,at2=uVisMarkerReplay+slot*G11_MARKER_WORDS;
   for(uint w=0u;w<G11_MARKER_WORDS;++w){
-   if(W[at1+w]!=W[at2+w]){g9Fault(30u,slot,w);return false;}
+   if(W[at1+w]!=W[at2+w])g9Fault(30u,slot,w);
   }
  }
  memoryBarrierBuffer();barrier();
  if(gl_LocalInvocationIndex==0u){
-  for(uint w=0u;w<G11_BANK_HEADER_WORDS;++w){
-   if(W[uVisMarkerActual-slot*0u-0u+w]!=W[uVisMarkerReplay+w]){/* header compare is over control bank headers */}
-  }
   // Bank headers live in the control segment; compare words 0..127.
   for(uint bank=1u;bank<3u;++bank)for(uint w=0u;w<G11_BANK_HEADER_WORDS;++w){
    if(g11Control(bank*G11_BANK_HEADER_WORDS+w)!=g11Control(0u*G11_BANK_HEADER_WORDS+w)&&w>=41u&&w<=47u){/* role counters differ per roleNormalization */}
   }
   // Plan-mapping audit bit: marker owners only reference sealed plan rows.
   uint counters=g11Control(G11_SCOPE_AT);
-  (void)counters;
+  if(counters>258u)g9Fault(30u,counters,0u);
  }
  return true;
 }
@@ -185,13 +186,15 @@ bool visGlyphBuild(){
   W[g+1u]=W[m+14u];      // oldYQ23
   W[g+2u]=W[m+15u];      // newXQ24
   W[g+3u]=W[m+16u];      // newYQ23
-  uint kindFlags=(W[m+0u]&3u)|((W[m+0u]&3u)<<2u);
-  uint flags=W[m+22u];
-  if((flags&1u)!=0u)kindFlags|=16u;   // oldVisible
-  if((flags&1u)!=0u)kindFlags|=32u;   // newVisible (phase active)
-  if((flags&16u)!=0u)kindFlags|=64u;  // oldPacketGhost
+  uint flags=W[m+22u],oldKind=(flags&1u)!=0u?(W[m+29u]&3u):owner;
+  uint kindFlags=(oldKind&3u)|((owner&3u)<<2u);
+  if(oldKind!=0u)kindFlags|=16u;if(owner!=0u)kindFlags|=32u;
+  if((flags&16u)!=0u)kindFlags|=64u;
   W[g+4u]=kindFlags&127u;
-  W[g+5u]=W[m+19u]==0u?0u:(W[m+19u]<G11_BLEND_TICKS()?W[m+19u]:G11_BLEND_TICKS());
+  uvec4 elapsed,scaled,alpha,remainder;uint blend=65536u,span=W[m+19u];
+  if(span!=0u){if(!g9USub(g9U64(uVisTicks),g9U64(uvec2(W[m+17u],W[m+18u])),elapsed)){g9Fault(30u,slot,17u);return false;}
+   if(g9UCmp(elapsed,g9U32(span))<0){if(!g9UMul(elapsed,g9U32(65536u),scaled)||!g9UDiv(scaled,g9U32(span),alpha,remainder)){g9Fault(30u,slot,19u);return false;}blend=alpha.x;}}
+  W[g+5u]=blend;
   W[g+6u]=owner==3u?W[m+10u]:0u;
   W[g+7u]=W[m+24u];      // appearanceSampleKey
  }

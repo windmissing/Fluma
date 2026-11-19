@@ -6,53 +6,55 @@
 #pragma once
 namespace grs::g11vis {
 static constexpr const char* kG11CompositeSceneVertex=R"G11SC(#version 310 es
-precision highp int;
+precision highp float;precision highp int;
 uniform vec2 uResolution;
 uniform vec4 uBox;
-const vec2 kCorners[3]=vec2[3](vec2(0,0),vec2(1,0),vec2(1,1));
+const vec2 kCorners[3]=vec2[3](vec2(0,0),vec2(2,0),vec2(0,2));
 void main(){vec2 c=kCorners[gl_VertexID];gl_Position=vec4(c*2.0-1.0,0.0,1.0);}
 )G11SC";
 static constexpr const char* kG11CompositeSceneFragment=R"G11SF(#version 310 es
-precision highp int;
+precision highp float;precision highp int;
 layout(std430,binding=0)readonly buffer State{uint S[];};
 uniform vec2 uResolution;
 uniform vec4 uBox;
 uniform int uN;
 layout(location=0) out vec4 color;
 void main(){
- // Base bed/flow shading reads the real column32 words (S/F) of CURRENT.
- vec2 pixel=gl_FragCoord.xy/uResolution;
- uint column=uint(clamp(pixel.x,0.0,0.999)*128.0);
- uint at=512u+column*32u;
- uint bed=S[at+0u],flow=S[at+1u];
- uint total=bed+flow;
- float fill=total==0u?0.0:float(flow)/float(total);
- vec3 bedColor=vec3(0.72,0.56,0.32);
- vec3 flowColor=vec3(0.93,0.85,0.62);
- color=vec4(mix(bedColor,flowColor,fill),1.0);
+ vec2 uv=(gl_FragCoord.xy-uBox.xy)/uBox.zw;
+ if(any(lessThan(uv,vec2(0.0)))||any(greaterThanEqual(uv,vec2(1.0)))){color=vec4(0.04,0.05,0.06,1.0);return;}
+ uint column=uint(clamp(floor(uv.x*float(uN)),0.0,float(uN-1)));uint at=512u+column*32u;
+ float y=uv.y*256.0,bed=float(S[at])/1048576.0,top=bed+float(S[at+1u])/1048576.0;
+ vec3 shade=y<bed?vec3(0.72,0.56,0.32):y<top?vec3(0.78,0.64,0.39):vec3(0.08,0.10,0.12);
+ // Complete foreground boundary is part of the same shader frame.
+ if(min(min(uv.x,uv.y),min(1.0-uv.x,1.0-uv.y))<0.003)shade=vec3(0.15,0.17,0.20);
+ color=vec4(shade,1.0);
 }
 )G11SF";
 static constexpr const char* kG11CompositePacketVertex=R"G11PV(#version 310 es
-precision highp int;
+precision highp float;precision highp int;
 layout(location=0) in uint aMass;
 layout(location=1) in uint aXQ20;
 layout(location=2) in uint aYQ21;
+layout(location=3) in uvec4 aStyle;
+layout(location=4) in uint aId;
+layout(location=5) in uint aGeneration;
 uniform vec2 uResolution;
 uniform vec4 uBox;
-out float vShade;
+out vec2 local;flat out float opacity;flat out uint mass;
 void main(){
- // Packet instance: mass/xQ20/y2Q21 integers -> pixel quad via gl_VertexID.
- vec2 center=vec2(float(aXQ20)/1048576.0,float(aYQ21)/2097152.0);
- const vec2 kCorners[6]=vec2[6](vec2(0,0),vec2(1,0),vec2(1,1),vec2(0,0),vec2(1,1),vec2(0,1));
- vec2 corner=kCorners[gl_VertexID];
- vShade=clamp(float(aMass)/268435456.0,0.25,1.0);
- gl_Position=vec4((center+corner*0.01)*2.0-1.0,0.0,1.0);
+ const vec2 corners[6]=vec2[6](vec2(-1,-1),vec2(1,-1),vec2(-1,1),vec2(-1,1),vec2(1,-1),vec2(1,1));local=corners[gl_VertexID];mass=aMass;
+ opacity=aStyle.x==aId&&aStyle.y==aGeneration?float(min(aStyle.z,65536u))/65536.0:1.0;
+ // Missing sample/style cannot hide a real physical packet.
+ float radius=clamp(sqrt(float(aMass)/1048576.0)*3.0,0.75,3.0);
+ vec2 center=vec2(float(aXQ20)/134217728.0,float(aYQ21)/536870912.0);
+ vec2 pixel=uBox.xy+center*uBox.zw+local*radius;
+ gl_Position=aMass==0u?vec4(2,2,0,1):vec4(pixel/uResolution*2.0-1.0,0,1);
 }
 )G11PV";
 static constexpr const char* kG11CompositePacketFragment=R"G11PF(#version 310 es
-precision highp int;
-in float vShade;
+precision highp float;precision highp int;
+in vec2 local;flat in float opacity;flat in uint mass;
 layout(location=0) out vec4 color;
-void main(){color=vec4(vec3(0.35,0.50,0.75)*vShade,1.0);}
+void main(){if(mass==0u||dot(local,local)>1.0)discard;color=vec4(vec3(0.78,0.64,0.39)*opacity,opacity);}
 )G11PF";
 }

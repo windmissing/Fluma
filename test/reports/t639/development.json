@@ -1,0 +1,76 @@
+{
+  "schema": "T639_BLOCKED_DEVELOPER_DELIVERY_V1",
+  "date": "2026-11-19",
+  "taskOutcome": "BLOCKED_NOT_COMPLETE",
+  "blockerEvidence": "test/reports/t639/blocker-evidence.json",
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/g11vis/kernels.cmake": "fa7aca7ea21b167108a2c7c340a9f86fc5b68dc7c01ef93733c726f30074d4d4",
+    "entry/src/main/cpp/gpu_resident/g11vis/scene.cpp": "adf598edc36534a6c03384b6d557256cd5621c002cb7e12377cd9b3b9fd81994",
+    "entry/src/main/cpp/gpu_resident/g11vis/scene_shaders.h": "377a20de7660d91327e3a67ffda0d7b8120229851b30ab596595342255e260a4",
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_stage.glsl": "8d3452fe240af27501dbf6eab6ea364013ce3f64ba7544ae50542b7457e6a28e",
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.cpp": "27bc77fed5c65c92a297b918c0410f42c240877b83e972741d52d77f429ddea5",
+    "entry/src/main/cpp/gpu_resident/g11vis/visual_transport.h": "828566388076e312ec8b53e97c4a7b171c4a31e7a98182c94486ca4ebaf1599b",
+    "test/t566_generate_composite.cjs": "fcb61b3ac7847ab1e1f8d28fed3e8227c35d27d0aae67ad65c9c17f87b398334",
+    "tools/g11/prepare_compile.cjs": "d089234bfad21555a6cab799b63a4821873d57ed103e5e5858696c37633af427"
+  },
+  "build": {
+    "result": "COMPILE_PASS",
+    "scope": "G13 entry plus whole-archive G11 compile-only library; NOT a G11 product owner/entry delivery",
+    "durationSeconds": 45.466,
+    "log": ".codex/local-test/t639-delivery-build.txt",
+    "artifacts": {
+      ".codex/local-test/t639-delivery/entry/build/default/outputs/default/entry-default-unsigned.hap": "cb75f8a493139dd26f458bf2fe46cb0bb2f7781390eb9246b6365c806c0b8f69",
+      ".codex/local-test/t639-delivery/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g11_compile.so": "4e17f45c4c2deb370043cca9dbb3596ee79093bf9553f966ae77547d73f0d0df",
+      ".codex/local-test/t639-delivery/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_foundation.a": "9979740cbb91f9add75cee87bcd135d848b726c205ffb2d318bc0f543dea83d9",
+      ".codex/local-test/t639-delivery/entry/.cxx/default/default/debug/arm64-v8a/g11_assets/g11vis_inputs.json": "7aa570e76a666a83285f94f268fb5f225f2987109413b0abeb44e2e69df86189"
+    }
+  },
+  "staticShaders": {
+    "r1": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "da7351f8aa9794dd2f9df4eaf0a2c6aebe32e16775ea1efc5ad22663e9f49c06"
+    },
+    "dm": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "20668f5ebdc622a2a6a6aa8f9243e65a0eb1219e95000f4b3d4a24c674a166ff"
+    },
+    "kGlyphVertex": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "8b66999cd85e621976eaad72c5648f36adbeb1f5e6fc50e58071c44a8e8d2878"
+    },
+    "kGlyphFragment": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "f0607f5b83f5c69fa39f79547c813b1e50b811ba8b73f2944a809a7b8f4e821e"
+    },
+    "kG11CompositeSceneVertex": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "140f891ef29f9893cc806419d23fc51b9d8f60351fc20e834b4b18ad4e2973f7"
+    },
+    "kG11CompositeSceneFragment": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "a106e569a45f845c2f60ee877ad547aae51b87e23be8532e9e45a73667588e69"
+    },
+    "kG11CompositePacketVertex": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "9b3d7f5abbdfb3e1ba673e7ddc340260cd9af34906fa23474a8da249e6f55b42"
+    },
+    "kG11CompositePacketFragment": {
+      "state": "STATIC_COMPILE_PASS",
+      "sha256": "52bd0b4e49993f92a169e874e32e9e158b3bc2fcac57cd2ba030b54f5c0e08cd"
+    }
+  },
+  "sourceMatchesBuild": true,
+  "defaultParentModified": false,
+  "gpuExecuted": false,
+  "testsRun": false,
+  "deviceUsed": false,
+  "productPass": false,
+  "runtimeQualification": "NOT_MEASURED",
+  "remaining": [
+    "formal DM parent fixes and composite typed contract",
+    "true tagged R1/DM adapter and owner",
+    "actual sealed material/marker/ID/initialization/Pstyle/visual audit producers",
+    "joint publication/scene lease WORK pin",
+    "real ROOT/FULL cold raw bytes broker and phase witness"
+  ]
+}

@@ -14,18 +14,13 @@
 #include <EGL/egl.h>
 #include <array>
 #include <thread>
-#if __has_include("g11vis_pipeline.h")
 #include "g11vis_pipeline.h"
-#else
-// Syntax-gate fallback before the first CMake configure generates the table.
-struct G11Pass{uint32_t op;uint32_t role,j;int32_t micro;uint32_t vis,phase;};
-#endif
 namespace grs::g11vis {
 // Composite permit extends the parent permit with composite identity fields.
 struct CompositePermit {
   g9spf::Permit parent{};
   uint32_t compositeCode = 0;          // G11R / G11D
-  uint32_t visualGeneration = 0;
+  uint64_t visualGeneration = 0;
   std::array<uint32_t, 8> visualConfigSha{}, pipelineSha{};
   bool operator==(const CompositePermit& o) const {
     return parent == o.parent && compositeCode == o.compositeCode && visualGeneration == o.visualGeneration && visualConfigSha == o.visualConfigSha && pipelineSha == o.pipelineSha;
@@ -39,7 +34,8 @@ class VisualTransport {
  public:
   using Result = g9spf::Result;
   struct CompositeCompletion {
-    std::array<uint32_t, 64> words{};
+    std::array<uint32_t, 256> words{};
+    static_assert(sizeof(words)==1024,"Completion256 exact tail");
     uint32_t visAuditBits = 0;   // bit18 PLAN_MAPPING, bit19 VIS_REPLAY_GLYPH
   };
   Result Create(uint32_t parentKind, uint32_t k, uint32_t v, const g9spf::Config&, const g9spf::ControlIdentity&, const g9spf::SeedFileIdentity&);
@@ -50,6 +46,9 @@ class VisualTransport {
   bool RetireRejected(const CompositePermit&);
   void Release(bool current);
   bool Busy() const { return busy_; }
+  uint64_t ContextGeneration() const { return identity_.context; }
+  bool HasValidatedPublication() const { return false; } // T639 blocked on formal parent typed composite proof.
+  size_t PacketByteStart() const { return parentProfile_?parentProfile_->state[6].begin:0; }
   uint32_t CurrentBank() const { return current_; }
   GLuint StateBuffer(uint32_t bank) const { return bank < 5 ? buffers_[bank] : 0; }
   GLuint WorkBuffer() const { return buffers_[5]; }

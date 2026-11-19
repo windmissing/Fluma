@@ -1,0 +1,133 @@
+{
+  "schema": "T639_PARENT_BLOCKER_SOURCE_EVIDENCE_V1",
+  "date": "2026-11-19",
+  "evidenceKind": "STATIC_SOURCE_NOT_EXECUTED",
+  "deviceUsed": false,
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/g9dm/transport.cpp": {
+      "sha256": "5b9ff7aa2aa0804eb1c5f54a0e63383494af3370042ee96f4a3b36d3adff5460",
+      "lines": [
+        {
+          "line": 88,
+          "text": " glUseProgram(program_.id);Input128 warm{};Common(warm,{},{});Bind(kQuantumPasses[0]);U(\"uOp\",uint32_t(Op::ROOT_INIT));U(\"uPass\",0);"
+        },
+        {
+          "line": 101,
+          "text": " U(\"uCandidateBank\",permit_.candidateBank);U(\"uBaseBank\",permit_.baseBank);U(\"uArena\",permit_.arena);U(\"uRequiredPasses\",permit_.kind==1?12:2404);U(\"uEventCapacity\",p.eventCapacity);U(\"uPathCapacity\",p.pathCapacity);U(\"uPathWord\",p.eventCapacity*64);"
+        },
+        {
+          "line": 145,
+          "text": " if(!fence_){const auto begin=Now();uint32_t submitted=0;while(next_<count&&submitted<10&&Now()-begin<8000000){const auto& pass=permit_.kind==1?kSourcePasses[next_]:kQuantumPasses[next_];if(!Dispatch(pass,next_))return !Allowed()?Denied():Result::GL_FAILED;++next_;++submitted;}"
+        }
+      ]
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/completion_gate.cpp": {
+      "sha256": "906bc64597d7b3b227be9f85fe31e8850a960f4c494137013eacac958febb6ba",
+      "lines": [
+        {
+          "line": 5,
+          "text": " const uint32_t count=permit.kind==1?12:2024;"
+        }
+      ]
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp": {
+      "sha256": "972edb7f6b4b7a387f57bb1578b8c3bb66cdad7e226be8f943857a49de06063b",
+      "lines": [
+        {
+          "line": 983,
+          "text": "uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,uEventCapacity,uPathCapacity,uPathWord;"
+        },
+        {
+          "line": 2116,
+          "text": " if(uRequiredPasses==2024u){uvec4 quanta;if(!g9UAdd(g9U64(uvec2(C[12u],C[13u])),g9U32(1u),quanta)||any(notEqual(quanta.zw,uvec2(0u)))){g9Fault(29u,0u,12u);return;}C[12u]=quanta.x;C[13u]=quanta.y;}"
+        },
+        {
+          "line": 2120,
+          "text": " uint outcome=g9Ctl(0u)!=0u?5u:uRequiredPasses==12u?(g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u):g9Ctl(11u)==0u?4u:1u;"
+        },
+        {
+          "line": 2121,
+          "text": " W[uCompletion]=G9_COMPLETION_MAGIC;W[uCompletion+1u]=1u;W[uCompletion+2u]=256u;W[uCompletion+4u]=G9_PROFILE;W[uCompletion+5u]=uRequiredPasses==12u?1u:2u;W[uCompletion+6u]=outcome;W[uCompletion+7u]=g9Ctl(1u)!=0u?g9Ctl(1u):outcome==4u?g9Ctl(14u):0u;"
+        },
+        {
+          "line": 2125,
+          "text": " W[uCompletion+37u]=g9Ctl(11u);W[uCompletion+38u]=g9Ctl(12u);W[uCompletion+39u]=g9Ctl(16u);W[uCompletion+40u]=uRequiredPasses;W[uCompletion+41u]=uRequiredPasses;"
+        },
+        {
+          "line": 2129,
+          "text": " W[uCompletion+54u]=C[12u];W[uCompletion+55u]=C[13u];W[uCompletion+56u]=C[40u];W[uCompletion+57u]=C[41u];W[uCompletion+58u]=C[28u];W[uCompletion+59u]=C[29u];W[uCompletion+60u]=C[30u];W[uCompletion+61u]=C[31u];W[uCompletion+62u]=uRequiredPasses==12u?g9Ctl(49u):0u;"
+        },
+        {
+          "line": 2155,
+          "text": " if(uOp==G9_OP_BASE_FREEZE||uOp==G9_OP_SOURCE_VALIDATE_INPUT){g9CopyBase();if(uOp==G9_OP_SOURCE_VALIDATE_INPUT)g9ClearTrial();if(lane==0u&&(!g9ConfigValid()||!g9ValidateInput(uRequiredPasses==12u?1u:2u)||!g9AuditMassGeometry()))g9Fault(22u,0u,0u);return;}"
+        },
+        {
+          "line": 2189,
+          "text": "  if(g9Ctl(11u)!=0u){if(!g9ConsumeCommand(1u,0u))return;g9EndAcceptedMetadata(1u);g9Set(17u,65535u);}"
+        },
+        {
+          "line": 2190,
+          "text": "  else g9Set(17u,65535u);"
+        },
+        {
+          "line": 2197,
+          "text": " else if(uOp==G9_OP_SOURCE_PACK_SCENE)g9Set(17u,65535u);"
+        }
+      ]
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/schema_generated.h": {
+      "sha256": "879507b9586f8eb3b3d5cf7a1e2c1db79d27572495b3dac718b7248fefc11207",
+      "lines": [
+        {
+          "line": 29,
+          "text": "inline constexpr std::array<Pass,2404> kQuantumPasses={{"
+        }
+      ]
+    },
+    "entry/src/main/cpp/gpu_resident/g9spf/completion_gate.h": {
+      "sha256": "4b5ec012147baa93c543b9f8496e42dae924cd5297c5a40f6e6b70e1e543283f",
+      "lines": [
+        {
+          "line": 23,
+          "text": " static bool Common(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);"
+        },
+        {
+          "line": 25,
+          "text": " static std::optional<ValidatedRecord> Accepted(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);"
+        },
+        {
+          "line": 26,
+          "text": " static std::optional<ValidatedBlockedControlRecord> Blocked(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);"
+        }
+      ]
+    },
+    "entry/src/main/cpp/gpu_resident/g9dm/completion_gate.h": {
+      "sha256": "84b0971c414307d02a75de244d6325db44deacb6a6ca09d7a7396e99b798d5d8",
+      "lines": [
+        {
+          "line": 23,
+          "text": " static bool Common(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);"
+        },
+        {
+          "line": 25,
+          "text": " static std::optional<ValidatedRecord> Accepted(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);"
+        },
+        {
+          "line": 26,
+          "text": " static std::optional<ValidatedBlockedControlRecord> Blocked(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);"
+        }
+      ]
+    }
+  },
+  "formal": {
+    "dmParentSourcePasses": 12,
+    "dmParentQuantumPasses": 2404,
+    "g11R1QuantumPasses": 2543,
+    "g11DMQuantumPasses": 2923,
+    "g11SourcePasses": 19,
+    "g11DMMask": 1048575,
+    "defaultParentModified": false,
+    "neededRole": "architect then developer",
+    "needsDevice": false
+  }
+}
