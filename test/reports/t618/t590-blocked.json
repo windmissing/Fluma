@@ -1,0 +1,9 @@
+{
+ "revision": "T590_BLOCKED_LINKLINE_V1",
+ "date": "2026-11-19",
+ "finding": "main-tree full build fails: libgrs_cold_slots.so link command = 11876 chars > cmd.exe 8191 limit (\"\u547d\u4ee4\u884c\u592a\u957f\")",
+ "root": "T629 added napi_provider_profile.cmake + include expansion pushing link line over cmd limit \u2014 second confirmed instance of T541 toolchain family (long-command-line class), different trigger than kernel_assets R-string",
+ "evidence": ".codex/local-test/main-build-t629b.txt (ninja FAILED libgrs_cold_slots), clang manual run rc=0 proves objects compile fine (link-only failure)",
+ "workarounds_tried": "direct clang rsp link \u2014 internal CMake rsp path mangling (@CMakeFiles...grs) prevents simple replay",
+ "route": "architect/developer: CMake link-line fix (use_response_file / shorter object paths / target-level rsp) \u2014 then T590 device probe proceeds (T630Probe facility ready)"
+}
