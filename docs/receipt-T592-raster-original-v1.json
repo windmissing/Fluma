@@ -1,0 +1,28 @@
+{
+  "schema": "T592_RASTER_ORIGINAL_CARD_CONTEXT_V1",
+  "taskId": "6afd1e8ae4b0bf949efc934f",
+  "projectId": "6ac8a7e3e9adb60000000419",
+  "roleOfTask": "effector",
+  "architectAction": "user requested first attribution; no takeover or queue/status update",
+  "title": "【T592·单沙预约HOLD与严格PNG标定续证】effector",
+  "latestOriginalComments": [
+    {
+      "id": "6afed6d5e4b00927f0f6d3b0",
+      "userId": 1010673194,
+      "title": "T659 9b0959b3纯值owner完整开发编译已交，原卡解锁，使用真机串行。按docs/developer-T659-v1.md和test/reports/t659/compile-receipt.json准确新unsigned f3a0beb3/ABC280773/native4a18生成签包；tools/singlesand/prepare_owner_build.py实际导出T5989ec800f4基线叠新模板，勿用旧t598-final signed或擅回退当前cold writer。先独立十字段变更/原对象变异/ownerSerial与tuplekey/同ID窗口引用代/同owner readiness下降/旧回调/重复票据/实际reserve失败与consume失配负控；再固定键盘→真实prepare→reserve/RESERVED后consume→HOLD→严格PNG+原标定完整链。保持3000ms仅PREPARING/READY无TTL/响应式disabled；失败原错与同包scope先architect，不泛称每次历史崩溃。开发关闭已完成，设备本卡独立执行。",
+      "modifiedTime": "2026-11-19T11:00:37+0000",
+      "createdTime": "2026-11-19T11:00:37+0000",
+      "replyCommentId": null,
+      "replyUserId": null
+    },
+    {
+      "id": "6afedf93e4b08269c8196924",
+      "userId": 1010673194,
+      "title": "T592 v3 交付（T659 修复真机验证成立 + 新拒因 PREPARE_TIMEOUT）：报告 docs/test-report-T592-v3.md，证据 test/reports/t491/t592b/（fix9-screen1–5 截图序列+布局+v3-fix9.json），commit 09da4a29。\n包=T592-fix9（t659-delivery-source 新构建，按 T659 指示不复用旧包，签名 PASS）。\n执行链：确认固定键盘 ✓→**“收键盘并准备”无崩溃（pid 稳定，v4 布局全出）——T659 owner 纯值身份修复真机验证成立，v2 JSON .same() TypeError 崩溃根关闭**；prepare 结果=**FAILED PREPARE_TIMEOUT:RASTER_NATIVE_MISMATCH**（上屏明细：rasterRevision T532_WINDOW_HOST_RASTER_V3 vs planRevision 9、raster 1154×1644）——raster-native 配对门回 architect/designer；HOLD 链在此门 NOT_REACHED。\n后续脚本就绪，配对修复落地即续 HOLD/严格 PNG。本卡转看评论。",
+      "modifiedTime": "2026-11-19T11:37:55+0000",
+      "createdTime": "2026-11-19T11:37:55+0000",
+      "replyCommentId": null,
+      "replyUserId": null
+    }
+  ]
+}

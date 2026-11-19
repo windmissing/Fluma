@@ -1,0 +1,93 @@
+{
+  "schema": "T592_RASTER_NATIVE_FIRST_ATTRIBUTION_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "verdict": "NATIVE_PAIRING_GATE_PRECISE_SUBFIELD_NOT_YET_CAPTURED; NOT_PROTOCOL_NAME_VS_GENERATION_MISMATCH",
+  "evidence": "docs/analysis-T592-raster-v1.json",
+  "predicate": {
+    "revision": "protocol string compared only with fixed T532_WINDOW_HOST_RASTER_V3",
+    "generation": "per-plan monotonic generation, screenshot planRevision9 == raster.generation9",
+    "nativeGate": [
+      "nonzero controller",
+      "nonzero session",
+      "nonzero surface",
+      "nonzero context",
+      "nonempty run",
+      "native.geometry == current geometry",
+      "native.packetWidth == rasterW",
+      "native.packetHeight == rasterH",
+      "native.viewportWidth == rasterW",
+      "native.viewportHeight == rasterH"
+    ]
+  },
+  "visible": {
+    "state": "FAILED PREPARE_TIMEOUT:RASTER_NATIVE_MISMATCH",
+    "captureState": "IDLE",
+    "rasterRevision": "T532_WINDOW_HOST_RASTER_V3",
+    "planRevision": 9,
+    "rasterGeneration": 9,
+    "geometry": 11,
+    "rasterWidth": 1154,
+    "rasterHeight": 1644,
+    "reserve": "visibly disabled"
+  },
+  "fieldProducers": {
+    "controller": "P013SingleSandController.session",
+    "session": "preparation.packet.session",
+    "surface/context": "native.getState surfaceEpoch/contextEpoch",
+    "run/geometry/packetDimensions": "actual preparation.packet",
+    "viewport": "native.getState widthPx/heightPx"
+  },
+  "cold": {
+    "producer": "P051DerivedV2Demo.prepareUpdate calls prepareCold on state transition",
+    "filePattern": "t540-prepare-<session>-<pageGeneration>-<prepareId>-<state>-<observationSerial>.json",
+    "maxUTF8Bytes": 16384,
+    "snapshotPath": "readiness.authority.snapshot",
+    "rasterNativePath": "readiness.authority.snapshot.raster.native",
+    "APIPath": "readiness.authority.api",
+    "truncationFlags": [
+      "readiness.detailTruncated",
+      "observationTruncated",
+      "readiness.reason=PREPARE_COLD_UTF8_LIMIT"
+    ],
+    "contains": [
+      "readiness.authority snapshot when not detailTruncated",
+      "raster.native",
+      "frame observation",
+      "owner/API first-last error"
+    ],
+    "newRunRawFileInSavedEvidence": false,
+    "historicalFile": "test/reports/t491/t408vA/t540-prepare-s1794916671861-1-1-1-PREPARING-38.json",
+    "historicalFileCannotSubstitute": true
+  },
+  "roles": {
+    "architect": "first attribution only; no T592 state takeover",
+    "effector": "original T592 same-attempt device cold-file retrieval/execution",
+    "tester": "T671 offline parser/fixture/build/signature",
+    "developer": "only concrete engineering gap after exact raw evidence and architect revision"
+  },
+  "noUnsupportedFix": [
+    "compare protocol string to generation",
+    "force revision/generation values",
+    "copy latest geometry to stale packet",
+    "relax size/identity predicates",
+    "increase PREPARING3000ms or add READY TTL",
+    "JPEG as strict PNG"
+  ],
+  "boundaries": {
+    "queueTouched": false,
+    "CPU": "STOPPED",
+    "goal10": "PAUSED",
+    "waterOrder": [
+      13,
+      14,
+      12
+    ],
+    "render": "XComponent+shader foreground/background only; FAULT/explicitly STALE; no Canvas/softwareGL product fallback",
+    "managerGateAdded": false
+  },
+  "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。"
+}

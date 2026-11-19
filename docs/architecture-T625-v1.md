@@ -25,3 +25,8 @@ observePrepare的catch先fail(PREPARE_OBSERVATION_FAILED)，随后prepareApiFail
 原始错误确认后分流：合法窗口API误用/shape访问→developer按具名合同修；窗口生命周期引用过期→developer；真实平台权限/能力缺口→准确平台前置交manager裁决；测试导出/操作漏采→tester。单有generic reason不足以派具体业务修复。T592继续真实fresh PREPARE→reserve→HOLD→严格PNG与标定，禁JPEG替代/快点绕过/放宽指标；开发关闭不加此设备门。
 
 续作prompt：不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态例外）或滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。阻断须含未完成、原错/复现/证据/尝试、不能自行继续原因、输入与接手角色。developer不使用真机，tester/effector签名部署采证且真机串行。GPU驻留优先、CPU停投、XComponent+shader唯一上屏，失败FAULT/显式STALE，禁Canvas/软件GL产品回退；目标10暂停，水线13→14→12，旧湿M1暂停。
+
+
+## 2026-11-19 T592 v3 raster/native 续归因
+
+当前精确分流见[architecture-T592-raster-v1.md](architecture-T592-raster-v1.md)：协议字符串T532_WINDOW_HOST_RASTER_V3与planRevision9非同域版本，截图planRevision与raster.generation均9，不构成协议失配。RASTER_NATIVE_MISMATCH是native十项身份/geometry/尺寸合取，具体首不等项缺当前冷原件；先由effector原T592取已有自动prepareCold，tester T671离线解析readiness.authority.snapshot.raster.native并核detailTruncated。T659本次.same崩溃未复现不等全部负控通过；不猜重做版本/放宽门，不先派developer/designer，不修改T592状态。

@@ -1,0 +1,249 @@
+{
+  "schema": "T592_V3_RASTER_FIRST_ATTRIBUTION_V1",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "sourceFiles": [
+    {
+      "path": "docs/test-report-T592-v3.md",
+      "bytes": 1938,
+      "sha256": "2737ba20ec1d927a84ec8a25c14c39ddb6b9adb7f1fe8524eaa8359753ee1cac"
+    },
+    {
+      "path": "docs/developer-T659-v1.md",
+      "bytes": 5548,
+      "sha256": "a591195b82723ea4162547a9d8dc5a02c3143df694cd707120f1695bbfd7d8c4"
+    },
+    {
+      "path": "test/reports/t659/compile-receipt.json",
+      "bytes": 3610,
+      "sha256": "5287a69e2bd15ba45fcf7acadc97a70c2cd110f6e7f6f5f1ce505db8fb84a535"
+    },
+    {
+      "path": "test/reports/t491/t592b/v3-fix9.json",
+      "bytes": 1521,
+      "sha256": "9869829cc60c7ea96fb99cc7e4a313733aa4510b05ba94bb9ac577b00e144bf6"
+    },
+    {
+      "path": "test/reports/t257/T592-fix9.json",
+      "bytes": 2322,
+      "sha256": "c0a09937a6aa0904755d6cd8995c70d69a141336c769844cc58622f6c91e2579"
+    },
+    {
+      "path": "test/t540/RasterGeometry.ets",
+      "bytes": 10437,
+      "sha256": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc"
+    },
+    {
+      "path": "test/t540/page_raster.inc",
+      "bytes": 7998,
+      "sha256": "83d60d3605cd967de81372476fd45bfac9a9bfc61f76696c8c2f981a6bf5fc17"
+    },
+    {
+      "path": "test/t540/overlay.py",
+      "bytes": 5195,
+      "sha256": "36573c373cf993df74a36dc34e1ba9e5971eaec1271d45b73fbed3db6e88b19e"
+    },
+    {
+      "path": "tools/singlesand/prepare_owner_build.py",
+      "bytes": 2492,
+      "sha256": "8bee9bed55540854124e8293340f5bdfe87b9bfc23e62409942018f37885703c"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/pages/P051DerivedV2Demo.ets",
+      "bytes": 55268,
+      "sha256": "02ead9a28dcb9a8111215262748e50d5bf5d91061d10a106f10022e988c97087"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/RasterGeometry.ets",
+      "bytes": 10437,
+      "sha256": "51e39548100fcca4a3a9a08ac397d516df261de5233f845207a867606ef6c1dc"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/PrepareReadiness.ets",
+      "bytes": 11621,
+      "sha256": "7188835ecea951c738da3282e660cdd924d24e42e6fe7f8497256f34a65d9ec2"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/PrepareReadinessV4.ets",
+      "bytes": 10300,
+      "sha256": "5ba55fc107f479ffd6b9ba4db2a613a6548fc9ddcf91e8cb61ef4c680fcd0495"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/P013SingleSandController.ets",
+      "bytes": 21068,
+      "sha256": "50c84d9b2d042c13d6839aff86f901e08a486794051ab32f05c6bbb73edc6db7"
+    },
+    {
+      "path": ".codex/local-test/t659-delivery-source/.codex/local-test/product/entry/src/main/ets/render/T413Capture.ets",
+      "bytes": 9189,
+      "sha256": "804a04b974176c43e69f422acdd78e432d640eff8c338a95819fe75034bb0b46"
+    }
+  ],
+  "actualSignedArtifact": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T592-fix9\\T592-fix9-signed.hap",
+    "bytes": 8116677,
+    "sha256": "8a3238635649c65f72dc0dacca151060b929d98ac90f60bf5a6e153e2682f854",
+    "receiptMatched": true,
+    "payloads": [
+      {
+        "entry": "ets/modules.abc",
+        "bytes": 2159204,
+        "sha256": "28077347107671a7013380238b16adff0ce23ac91700be3b6cfc0d684b2dc6fe"
+      },
+      {
+        "entry": "libs/arm64-v8a/libp013renderer.so",
+        "bytes": 520640,
+        "sha256": "4a18eb40342e63d229828c190d296bbd5a980154f983758766337b55530920f7"
+      }
+    ]
+  },
+  "uiOriginals": [
+    {
+      "path": "test/reports/t491/t592b/fix9_l1.json",
+      "bytes": 67508,
+      "sha256": "41106b4448c065313bdef83d3ac23560b0d31602da5ad28ea8878fb78360a137",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l2.json",
+      "bytes": 67508,
+      "sha256": "692b9e37d9ea85cb555f2e39506be1c3b634f0ee62ed51f4970b1db693d94798",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l3.json",
+      "bytes": 67508,
+      "sha256": "2c93787017ae0dc48d1ba8af65f6759a858868dbaef2dede75dcb2985c83172d",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l4.json",
+      "bytes": 67508,
+      "sha256": "5ee5ce4394cf889d608a1c1b816da6054897bdd686f50b0e6dc4bde7807bda8b",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l5.json",
+      "bytes": 67508,
+      "sha256": "45fec706662e02c7fd26288726bf62bf6c5587a626465e855667cf54cb055bc2",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l6.json",
+      "bytes": 67508,
+      "sha256": "c6661e7bd28bfef7062b5859b009d65ba0586e777aa910510cd9d16898007086",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l7.json",
+      "bytes": 85341,
+      "sha256": "df8f756780e9563612a04f34a865e6d27948e667c4764c062b95762150ee8e29",
+      "applicationEvidenceTexts": [
+        "收键盘并准备"
+      ],
+      "allTextCount": 19
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9_l8.json",
+      "bytes": 35054,
+      "sha256": "66539780b415b65816d0a5559a3cc8b6a691b7f8e87f07cbfe73526e2af5f034",
+      "applicationEvidenceTexts": [],
+      "allTextCount": 5
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "test/reports/t491/t592b/fix9-screen.jpeg",
+      "bytes": 208536,
+      "sha256": "4f6676e596c24057981766e74c500a2b72ba0be78c58d3dd0a25b06669064464"
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9-screen2.jpeg",
+      "bytes": 208202,
+      "sha256": "9eebf0f9b802982db96faa051f4f798e60138a20aaaffb03dbe2dcdbcaac0471"
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9-screen3.jpeg",
+      "bytes": 207373,
+      "sha256": "c791870e22ae6a7e624e369534a55f63c50c648b0f41fa175475c25187a27a2f"
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9-screen4.jpeg",
+      "bytes": 167213,
+      "sha256": "25c871af477c43b4aef995647210e97dc36a760b4b0f64127ad0291bb9c98eea"
+    },
+    {
+      "path": "test/reports/t491/t592b/fix9-screen5.jpeg",
+      "bytes": 167157,
+      "sha256": "6cf00a83fed3cc34e5560133a82fb18a01e684a3b3ddccf2251c7de373784341"
+    }
+  ],
+  "visuallyInspected": {
+    "path": "test/reports/t491/t592b/fix9-screen4.jpeg",
+    "visible": {
+      "state": "FAILED PREPARE_TIMEOUT:RASTER_NATIVE_MISMATCH",
+      "captureState": "IDLE",
+      "rasterRevision": "T532_WINDOW_HOST_RASTER_V3",
+      "planRevision": 9,
+      "rasterGeneration": 9,
+      "geometry": 11,
+      "rasterWidth": 1154,
+      "rasterHeight": 1644,
+      "reserve": "visibly disabled"
+    },
+    "fullNativeFieldsVisible": false,
+    "notStrictPNGCalibration": true
+  },
+  "predicateOriginal": "export function rasterPredicate(p:RasterGeometryPlan,geometry:number,layout:number):string {\n if(p.revision!=='T532_WINDOW_HOST_RASTER_V3'||!p.valid||p.generation<1)return p.reason||'RASTER_PLAN_INVALID';\n if(p.didLayoutSerial<=p.requestedAtLayout)return 'RASTER_WAIT_NEW_DID_LAYOUT';\n if(p.firstDrawSerial<1||p.frameAnchorNs==='NOT_OBSERVED')return 'RASTER_WAIT_DRAW_PAIR';\n if(!p.layoutAcknowledged||p.layoutAcknowledged!==layout)return 'RASTER_WAIT_NEW_LAYOUT';\n if(p.geometry!==geometry||p.renderNode!=='t463-xcomponent')return 'RASTER_STALE_PLAN';\n const reason=rasterNodeReason(p);if(reason)return reason;\n const n=p.native;\n if(!n.controller||!n.session||!n.surface||!n.context||!n.run||n.geometry!==geometry||n.packetWidth!==p.rasterW||n.packetHeight!==p.rasterH||n.viewportWidth!==p.rasterW||n.viewportHeight!==p.rasterH)return 'RASTER_NATIVE_MISMATCH';\n return '';\n}\n",
+  "predicateMeaning": {
+    "revision": "protocol string compared only with fixed T532_WINDOW_HOST_RASTER_V3",
+    "generation": "per-plan monotonic generation, screenshot planRevision9 == raster.generation9",
+    "nativeGate": [
+      "nonzero controller",
+      "nonzero session",
+      "nonzero surface",
+      "nonzero context",
+      "nonempty run",
+      "native.geometry == current geometry",
+      "native.packetWidth == rasterW",
+      "native.packetHeight == rasterH",
+      "native.viewportWidth == rasterW",
+      "native.viewportHeight == rasterH"
+    ]
+  },
+  "reportInterpretationRejected": "protocol name T532_WINDOW_HOST_RASTER_V3 vs generation9 is not a revision mismatch predicate; screenshot shows generation pairing9=9",
+  "oldCrashClaimLimit": "this new prepare no same() crash reported; does not prove every owner/ticket negative control or lifetime passed",
+  "exactFailingField": "NOT_CAPTURED; current screenshots truncate before raster.native; fix9_l1..l8 expose system UI texts, not full application readiness payload",
+  "existingColdExport": {
+    "producer": "P051DerivedV2Demo.prepareUpdate calls prepareCold on state transition",
+    "filePattern": "t540-prepare-<session>-<pageGeneration>-<prepareId>-<state>-<observationSerial>.json",
+    "maxUTF8Bytes": 16384,
+    "snapshotPath": "readiness.authority.snapshot",
+    "rasterNativePath": "readiness.authority.snapshot.raster.native",
+    "APIPath": "readiness.authority.api",
+    "truncationFlags": [
+      "readiness.detailTruncated",
+      "observationTruncated",
+      "readiness.reason=PREPARE_COLD_UTF8_LIMIT"
+    ],
+    "contains": [
+      "readiness.authority snapshot when not detailTruncated",
+      "raster.native",
+      "frame observation",
+      "owner/API first-last error"
+    ],
+    "newRunRawFileInSavedEvidence": false,
+    "historicalFile": "test/reports/t491/t408vA/t540-prepare-s1794916671861-1-1-1-PREPARING-38.json",
+    "historicalFileCannotSubstitute": true
+  },
+  "sourceCandidateNotProvenDeviceCause": "publishRaster advances geometry on actual layout/native identity/size changes; native.geometry excluded from observe change-key explicitly avoids geometry-only feedback. Do not blindly change this policy or claim a proven loop from one screenshot",
+  "verdict": "NATIVE_PAIRING_GATE_PRECISE_SUBFIELD_NOT_YET_CAPTURED; NOT_PROTOCOL_NAME_VS_GENERATION_MISMATCH",
+  "handoff": "effector original T592 retrieves existing same-attempt FAILED prepare cold first, tester T671 parses/offline prepares; exact code mismatch only then architect->developer; no guessed version bump/designer/relaxed gate"
+}
