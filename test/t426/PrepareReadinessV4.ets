@@ -1,6 +1,7 @@
+import { PrepareAuthorityReport, PreparePairOwner, PairRaster, PairKeyboard, PairRect, buildPreparePairingEvidence, compactPreparePairingEvidence, minimumPreparePairingEvidence } from './PreparePairingEvidence';
 import { PrepareReadiness, PrepareSnapshot } from './PrepareReadiness';
 // T658/T659: method-free DTO. JSON/native values never supply authorization methods.
-export class PrepareAttemptOwner {
+export class PrepareAttemptOwner implements PreparePairOwner {
  prepareId:number=0;pageGeneration:number=0;branch:number=0;windowId:number=0;windowGeneration:number=0;controller:number=0;session:number=0;surface:number=0;context:number=0;run:string='';
 }
 export function copyPrepareOwner(o:PrepareAttemptOwner):PrepareAttemptOwner|null {
@@ -75,10 +76,30 @@ export class PrepareReadinessV4 extends PrepareReadiness {
   this.consumedV4=true;this.issuedV4=null;super.consume();return true;
  }
  report():string{
-  const authority=super.report();let raw='{"revision":"T659_PREPARE_OWNER_VALUE_V1","subphase":'+JSON.stringify(this.subphase)+',"firstCause":'+JSON.stringify(this.firstCause)+',"owner":'+JSON.stringify(this.ownerV4)+',"ownerKey":'+JSON.stringify(this.ownerV4===null?'':prepareOwnerKey(this.ownerV4))+',"ownerSerial":'+this.serialV4+',"discardedCallbacks":'+this.discardedV4+',"firstRawError":'+JSON.stringify(this.firstErrorV4)+',"lastRawError":'+JSON.stringify(this.lastErrorV4)+',"authority":'+authority+'}';
+  // One authority serialization and one same-call owner copy; no new observations or authorization.
+  const authority=super.report(),owner=this.ownerSnapshot(),ownerSerial=this.serialV4;
+  const parsed=JSON.parse(authority) as PrepareAuthorityReport;
+  const evidence=buildPreparePairingEvidence(parsed,owner,ownerSerial);
+  const first=this.firstErrorV4,last=this.lastErrorV4;
+  let raw='{"revision":"T659_PREPARE_OWNER_VALUE_V1","subphase":'+JSON.stringify(this.subphase)+',"firstCause":'+JSON.stringify(this.firstCause)+',"owner":'+JSON.stringify(owner)+',"ownerKey":'+JSON.stringify(owner===null?'':prepareOwnerKey(owner))+',"ownerSerial":'+ownerSerial+',"discardedCallbacks":'+this.discardedV4+',"firstRawError":'+JSON.stringify(first)+',"lastRawError":'+JSON.stringify(last)+',"pairingEvidence":'+JSON.stringify(evidence)+',"authority":'+authority+'}';
   if(prepareUtf8Bytes(raw)<=14336)return raw;
-  // Cold detail overflow is explicit; never silently omit a first raw exception.
-  raw=JSON.stringify({revision:'T659_PREPARE_OWNER_VALUE_V1',detailTruncated:true,state:this.state,reason:this.reason,prepareId:this.prepareId,pageGeneration:this.pageGeneration,ownerSerial:this.serialV4,firstCause:this.firstCause,firstRawError:this.firstErrorV4,lastRawError:this.lastErrorV4});
-  return prepareUtf8Bytes(raw)<=14336?raw:JSON.stringify({revision:'T659_PREPARE_OWNER_VALUE_V1',state:'INCOMPLETE',reason:'PREPARE_COLD_UTF8_LIMIT',firstCause:this.firstCause});
+  const reason=prepareErrorText(parsed.readinessReason??'',256,512),cause=prepareErrorText(this.firstCause,256,512);
+  const stringsTruncated=reason!==(parsed.readinessReason??'')||cause!==this.firstCause;
+  raw=JSON.stringify({revision:'T659_PREPARE_OWNER_VALUE_V1',detailTruncated:true,state:parsed.state??'UNKNOWN',reason:reason,prepareId:parsed.prepareId??null,pageGeneration:parsed.pageGeneration??null,ownerSerial:ownerSerial,firstCause:cause,summaryTextTruncated:stringsTruncated,firstRawError:first,lastRawError:last,pairingEvidence:evidence});
+  if(prepareUtf8Bytes(raw)<=14336)return raw;
+  compactPreparePairingEvidence(evidence);
+  // Extreme simultaneous error/summary pressure is explicit INCOMPLETE, never an evidence PASS.
+  raw=JSON.stringify({revision:'T659_PREPARE_OWNER_VALUE_V1',detailTruncated:true,state:'INCOMPLETE',reason:'PREPARE_COLD_UTF8_LIMIT',firstRawError:first,lastRawError:last,pairingEvidence:evidence});
+  if(prepareUtf8Bytes(raw)<=14336)return raw;
+  evidence.raster=new PairRaster();evidence.keyboard=new PairKeyboard();for(let i=0;i<4;i++)evidence.keyboard.avoid.push(new PairRect());
+  // Identity loss stays individually named even under exceptional envelope pressure.
+  evidence.missingFields=evidence.missingFields.filter((p:string)=>p.startsWith('gate.')||p.startsWith('owner')||p.startsWith('snapshot.')||p.startsWith('raster.native.'));evidence.missingFields.push('raster','keyboard','FIELD_LISTS_TRUNCATED_SEE_NULL_FIELDS');
+  evidence.truncatedFields=evidence.truncatedFields.filter((p:string)=>p.startsWith('gate.')||p.startsWith('owner')||p.startsWith('snapshot.')||p.startsWith('raster.native.'));evidence.truncatedFields.push('raster','keyboard','missingFields','truncatedFields');
+  raw=JSON.stringify({revision:'T659_PREPARE_OWNER_VALUE_V1',detailTruncated:true,state:'INCOMPLETE',reason:'PREPARE_COLD_UTF8_LIMIT',firstRawError:first,lastRawError:last,pairingEvidence:evidence});
+  if(prepareUtf8Bytes(raw)<=14336)return raw;
+  // Irreducible diagnostics still retain both raw errors and the same-call gate/window/owner identity.
+  raw=JSON.stringify({revision:'T659_PREPARE_OWNER_VALUE_V1',detailTruncated:true,state:'INCOMPLETE',reason:'PREPARE_COLD_UTF8_LIMIT',firstRawError:first,lastRawError:last,pairingEvidence:minimumPreparePairingEvidence(evidence)});
+  if(prepareUtf8Bytes(raw)>14336)throw new Error('PREPARE_COLD_UTF8_LIMIT');
+  return raw;
  }
 }

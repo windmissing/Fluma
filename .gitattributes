@@ -67,3 +67,6 @@ docs/receipt-T682-*.json -text whitespace=cr-at-eol
 
 # T674 original canonical shader and compile evidence bytes.
 test/reports/t674/** -text -whitespace
+
+# T681 exact generated consumers and original compile evidence.
+test/reports/t681/** -text -whitespace

@@ -56,7 +56,8 @@ one("this.prepareRawFailure659('reserve.attempt',error,this.prepareGate.prepareI
 // Bounded cold writing: total <=16KiB, catches/finally do not grant readiness.
 a=s.indexOf("  const text='{",s.indexOf(' private async prepareCold()'));b=s.indexOf('  try{',a);if(a<0||b<0)throw Error('T659_COLD_BLOCK');s=s.slice(0,a)+`  const readiness=this.prepareGate.report(),full='{"revision":"T659_PREPARE_OWNER_VALUE_V1","observation":'+JSON.stringify(this.prepareObservation)+',"readiness":'+readiness+'}';
   const text=prepareUtf8Bytes(full)<=16384?full:'{"revision":"T659_PREPARE_OWNER_VALUE_V1","observationTruncated":true,"readiness":'+readiness+'}',id=this.prepareGate.prepareId,generation=this.prepareGate.pageGeneration;
-`+s.slice(b);
+  try{if(prepareUtf8Bytes(text)>16384)throw new Error('PREPARE_COLD_UTF8_LIMIT');
+`+s.slice(b+'  try{'.length);
 // Catch export only affects its own attempt; preserve the original exception.
 one("}catch(error){if(this.prepareGate.currentId(id,generation)){this.prepareGate.fail('PREPARE_EXPORT_FAILED');this.prepareText=this.prepareGate.state+' '+this.prepareGate.reason;}}", "}catch(error){if(this.prepareGate.currentId(id,generation)){this.prepareRawFailure659('prepare.cold.write',error,id,generation,this.prepareBranch);this.prepareText=this.prepareGate.state+' '+this.prepareGate.reason;}}finally{this.prepareColdPending659=false;}");
 one(' private async prepareCold():Promise<void> {',' private prepareColdPending659:boolean=false;\n private async prepareCold():Promise<void> {\n  this.prepareColdPending659=true;');

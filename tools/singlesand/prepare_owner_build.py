@@ -14,13 +14,13 @@ source.mkdir(parents=True)
 with tarfile.open(fileobj=io.BytesIO(raw)) as archive:archive.extractall(source,filter='data')
 shutil.copyfile(ROOT/'local.properties',source/'local.properties')
 subprocess.run(['cmd','/c','mklink','/J',str(source/'oh_modules'),str(ROOT/'oh_modules')],check=True,capture_output=True)
-overlays=['test/t426/PrepareReadinessV4.ets','test/t574/t574_prepare_v4_overlay.cjs','test/t574/t659_owner_glue.cjs']
+overlays=['test/t426/PrepareReadinessV4.ets','test/t426/PreparePairingEvidence.ets','test/t574/t574_prepare_v4_overlay.cjs','test/t574/t659_owner_glue.cjs']
 for rel in overlays:
  target=source/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/rel,target)
 product=source/'.codex/local-test/product'
 result=subprocess.run(['node','test/t598/generate.cjs',str(product)],cwd=source,capture_output=True)
 (source/'generation.log').write_bytes(result.stdout+result.stderr)
 if result.returncode:print((result.stdout+result.stderr).decode('utf8',errors='replace')[-5000:]);raise RuntimeError('PRODUCT_GENERATION_FAILED')
-manifest={'schema':'T659_PRODUCT_SOURCE_V1','baseline':subprocess.check_output(['git','rev-parse',BASE],cwd=ROOT).decode().strip(),'reason':'Same real product baseline as T592; current DiagnosticColdFiles has a different writer API and is outside owner fix scope. No baseline source overwritten in workspace.','overlays':{p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in overlays},'generated':{str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (product/'entry/src/main').rglob('*') if p.is_file()}}
+manifest={'schema':'T681_PRODUCT_SOURCE_V1','baseline':subprocess.check_output(['git','rev-parse',BASE],cwd=ROOT).decode().strip(),'reason':'Same real product baseline as T592; current DiagnosticColdFiles has a different writer API and is outside owner fix scope. No baseline source overwritten in workspace.','overlays':{p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in overlays},'generated':{str(p.relative_to(product)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (product/'entry/src/main').rglob('*') if p.is_file()}}
 (source/'t659-generated-sources.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
 print(product)

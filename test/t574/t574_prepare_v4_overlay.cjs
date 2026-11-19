@@ -2,6 +2,7 @@ const fs=require('node:fs'),path=require('node:path');
 module.exports=function(out){
  const base=path.join(out,'entry/src/main/ets'),file=path.join(base,'pages/P051DerivedV2Demo.ets');
  fs.copyFileSync(path.join(__dirname,'../t426/PrepareReadinessV4.ets'),path.join(base,'render/PrepareReadinessV4.ets'));
+ fs.copyFileSync(path.join(__dirname,'../t426/PreparePairingEvidence.ets'),path.join(base,'render/PreparePairingEvidence.ets'));
  let s=fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
  s="import { PrepareReadinessV4, PrepareAttemptOwner } from '../render/PrepareReadinessV4';\n"+s;
  s=s.replace('private readonly prepareGate:PrepareReadiness=new PrepareReadiness(', 'private readonly prepareGate:PrepareReadinessV4=new PrepareReadinessV4(');
