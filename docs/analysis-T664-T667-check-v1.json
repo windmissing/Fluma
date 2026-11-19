@@ -1,0 +1,33 @@
+{
+  "schema": "T664_T667_ARCHITECTURE_CHECK_V1",
+  "result": "STATIC_ORIGINAL_BYTE_AND_CONTRACT_CHECK_PASS",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "productPASS": false,
+  "checks": [
+    "T5939 original UI files and two actual HAP/native identities",
+    "T62726 rows and actual reader/builder chronology,8 ABI signatures",
+    "actual715 broker static reader guard",
+    "M4 exact8192 and processcap524375552 boundaries",
+    "T645 two ELF same145268B shader/line1728, separate rawCRLF and canonicalLF hashes",
+    "all3 contracts and role/queue/GPU/render boundaries"
+  ],
+  "contracts": [
+    {
+      "path": "docs/architecture-T664-contract-v1.json",
+      "bytes": 5348,
+      "sha256": "40209dd267827ecb828bd9d0d4901ed97d143ab1b12bcaaf3df0267aea1753f4"
+    },
+    {
+      "path": "docs/architecture-T667-contract-v1.json",
+      "bytes": 8090,
+      "sha256": "8bba1ca11ed203fbc74ef38e1e14e48783e491cd4c859da7636f72e5fa566875"
+    },
+    {
+      "path": "docs/architecture-T665-contract-v1.json",
+      "bytes": 6184,
+      "sha256": "0f29f8da628061081a2e50fa81603edba49ab06a0923ab9c839ab2596aff86a6"
+    }
+  ]
+}

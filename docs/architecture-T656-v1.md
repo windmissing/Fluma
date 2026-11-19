@@ -27,3 +27,8 @@ GPU顺序：A reserve(ctxA,gA=0)成功→分别错ticket Freed、错context Reti
 预算仍≤30s、≤128条、每行≤512B、log≤64KiB/manifest≤16KiB。设备部署/运行与双DSO/生产broker加载映射由tester，真机串行；本architect不重跑。新原件按完整键分域报告M1–M5，不拿组件成功宣产品集成或driverfree。当前无需developer接口；若新原错显示生产ABI/实现与正式退役合同矛盾，再回architect修工程分流。
 
 共同执行约束见`architecture-T655-T658-boundaries-v1.md`；本卡归因完成，原报告宽结论收窄，不新增验收门。
+
+
+## 2026-11-19 T667 续归因
+
+[T667](architecture-T667-v1.md)确认新run的D2仍是设施票据/reader/清理错误，非Freed破坏持读合同；M5匹配ctx退休正控窄证保留，M4未执行。原T627按architecture-T667-contract-v1.json完整独立矩阵续办；所有成功探针票据必须入ledger清理，M2缺End2不能假End旧1，M3首ReadBegin必须检查bool。本文早先Reserve初始0的简写只对GPU绝对成立；host既有合法票重建保留，新host探针fresh0用于隔离。无需新developer接口/设计或manager门。

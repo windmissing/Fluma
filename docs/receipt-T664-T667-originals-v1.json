@@ -1,0 +1,367 @@
+{
+  "schema": "T664_T667_ORIGINAL_TASK_READBACK_V1",
+  "date": "2026-11-19",
+  "tasks": [
+    {
+      "n": 664,
+      "id": "6afed69fe4b00dfe2a7ec5cb",
+      "projectId": "6ac8a7e3e9adb60000000419",
+      "original": {
+        "result": {
+          "id": "6afed69fe4b00dfe2a7ec5cb",
+          "projectId": "6ac8a7e3e9adb60000000419",
+          "sortOrder": 181487334383040,
+          "title": "【T664·真实SOURCE持续STATE_LOST与恢复链首次归因】architect",
+          "content": "给architect的prompt。不使用真机。\n真实前置已齐，可立即开工。\n读取docs/test-report-T593-v2.md及test/reports/t491/t591c/t593_l1–l9、T623正式路径、实际T591 collector包/全部页与native identity。pulse sample递增不证明该scope脉冲被接受或恢复成功，九次UI STATE_LOST/最近收据0不自动证明缺恢复实现；核real run0/epoch/session/资源是否已发布、T591同包LINK开放Create未终态与该时段STATE_LOST的真实关联、RecoveryResources/session握手/新空场/前后台/ClockFresh/Down拒reason及真正typed enqueue/导出缺档。先同boot/ticket/时间producer找最早阻断；不要跨attempt把创建未成与时钟错误并作缺恢复路径，也不把定时sample当owner活性。工程问题先文档定义合法恢复/撤权/有界只读原错接线转developer；操作/夹具错误精确tester；设计问题再designer。禁止强设READY/重盖时间/合成SOURCE绕门/GAP放宽。原T593及T519/410/437真实非空前置不假放行。\n产出docs/architecture-T664-v1.md和必要完整机器表/工程/源产物证据及原卡回执。\n执行要求：要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部分支受阻先完成其它可做范围。失败/BLOCKED/缺关键证据须在原卡评论列未完成项、原始错误/复现、证据、已试办法、无法自行继续原因、所需前置与接手角色；评论不可用留本地报告并明确未同步。成功评论交付并本人行改结束待验收；失败本人行改看评论。接单先本人行进行中并原卡评论已开始。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外仅本人行状态；不得改其它列/他行/队列/覆盖整表），不得更新滴答同名清单。新增仿真GPU驻留优先，CPU停止投入；渲染仅XComponent+shader，含背景前景禁止Canvas/软件GL产品回退，失败FAULT或标明stale上一有效新管线帧。developer只开发编译，测试签名部署执行采证由tester/effector。失败归因architect先行：工程改文档转developer；设计转designer；用例不合理交manager；预期未实现记NOT_IMPLEMENTED。报告/编译完成不冒产品PASS。目标1–11不变、10暂停，水线13→14→12，旧湿M1暂停。",
+          "desc": null,
+          "startDate": null,
+          "dueDate": null,
+          "timeZone": "Asia/Shanghai",
+          "isAllDay": false,
+          "priority": 5,
+          "progress": null,
+          "isFloating": false,
+          "reminders": null,
+          "repeatFlag": null,
+          "repeatFrom": null,
+          "completedTime": null,
+          "status": 0,
+          "items": null,
+          "tags": [
+            "gpu",
+            "architect"
+          ],
+          "columnId": null,
+          "parentId": null,
+          "childIds": null,
+          "columnName": null,
+          "assigneeUsername": null,
+          "etag": "xpf08pii",
+          "kind": "TEXT",
+          "createdTime": "2026-11-19T18:59:43+0800",
+          "modifiedTime": "2026-11-19T18:59:43+0800",
+          "focusSummaries": null,
+          "projectName": "多相流麻效果"
+        }
+      },
+      "commentsAtStart": {
+        "result": []
+      }
+    },
+    {
+      "n": 667,
+      "id": "6afed76de4b00927f0f7022f",
+      "projectId": "6ac8a7e3e9adb60000000419",
+      "original": {
+        "result": {
+          "id": "6afed76de4b00927f0f7022f",
+          "projectId": "6ac8a7e3e9adb60000000419",
+          "sortOrder": 182586846010816,
+          "title": "【T667·broker持读释放新观测与矩阵隔离续归因】architect",
+          "content": "给architect的prompt。不使用真机。真实前置已齐，可立即开工。\n读取T627最新3190ce6f原卡回执、test/reports/t636/t656-run2.json及ndjson、test/t636/driver_v2.cpp、真实生产broker715f314d及T636/T656合同。新run M5 corrected ContextRetired成功保窄证；D2称Freed忽略活跃reader尚不能采结论：逐ticket真实ReadBegin成功与ReadEnd/BuilderDone/Freed/新Reserve顺序、当前持reader到底哪ticket、返回值与遗漏void调用从driver核清。日志M1已ReadEnd/Freed却M2 detail写readerA active、M2重复ReadBegin已有reader、M3第一read是否实际成功、泄漏builder/slot导致M4失败均须隔离；不能根据字符串expect/单false或freshReserve来自另一空slot断立即释放活reader。报告单run有boot/pid键而原26行仅seq/event/detail也须收窄identity声明，核全部8函数loader实际签名。若纯设施错误给T627准确矩阵修复，若真实生产退账/票据生命周期违约先工程文档再developer，不直接designer/改退休合同；M4仍NOT_RUN不冒ALL PASS。保原记录不改写，组件credit与driverfree/产品route集成分域。\n产出docs/architecture-T667-v1.md、必要contract/evidence及原卡续作条件。\n执行要求：要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部分支受阻先完成其它可做范围。失败/BLOCKED/缺关键证据须在原卡评论列未完成项、原始错误/复现、证据、已试办法、无法自行继续原因、所需前置与接手角色；评论不可用留本地报告并明确未同步。成功评论交付并本人行改结束待验收；失败本人行改看评论。接单先本人行进行中并原卡评论已开始。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外仅本人行状态；不得改其它列/他行/队列/覆盖整表），不得更新滴答同名清单。新增仿真GPU驻留优先，CPU停止投入；渲染仅XComponent+shader，含背景前景禁止Canvas/软件GL产品回退，失败FAULT或标明stale上一有效新管线帧。developer只开发编译，测试签名部署执行采证由tester/effector。失败归因architect先行：工程改文档转developer；设计转designer；用例不合理交manager；预期未实现记NOT_IMPLEMENTED。报告/编译完成不冒产品PASS。目标1–11不变、10暂停，水线13→14→12，旧湿M1暂停。",
+          "desc": null,
+          "startDate": null,
+          "dueDate": null,
+          "timeZone": "Asia/Shanghai",
+          "isAllDay": false,
+          "priority": 5,
+          "progress": null,
+          "isFloating": false,
+          "reminders": null,
+          "repeatFlag": null,
+          "repeatFrom": null,
+          "completedTime": null,
+          "status": 0,
+          "items": null,
+          "tags": [
+            "gpu",
+            "architect"
+          ],
+          "columnId": null,
+          "parentId": null,
+          "childIds": null,
+          "columnName": null,
+          "assigneeUsername": null,
+          "etag": "a1bpnjty",
+          "kind": "TEXT",
+          "createdTime": "2026-11-19T19:03:09+0800",
+          "modifiedTime": "2026-11-19T19:03:09+0800",
+          "focusSummaries": null,
+          "projectName": "多相流麻效果"
+        }
+      },
+      "commentsAtStart": {
+        "result": []
+      }
+    },
+    {
+      "n": 665,
+      "id": "6afed69fe4b08269c818a1b7",
+      "projectId": "6ac8a7e3e9adb60000000419",
+      "original": {
+        "result": {
+          "id": "6afed69fe4b08269c818a1b7",
+          "projectId": "6ac8a7e3e9adb60000000419",
+          "sortOrder": 181487334383040,
+          "title": "【T665·新RX设备shader重复符号与产物偏差首次归因】architect",
+          "content": "给architect的prompt。不使用真机。\n真实前置已齐，可立即开工。\n消费docs/test-report-T645-v1.md、test/reports/t645a真实driver log和包/BuildId/memory匹配原件、T644 cced586生成器/冻结父变体/静态编译收据。两次CONFIGURE_FAILED_8 driver 0:1728 slot redeclared是工程失败信号，先确认实际glShaderSource完整字节/source SHA/line映射/生成宏/#line与测试包lib b050/BuildId e0e62034对应原T644包a042/BuildId a048的差别；memoryBuildIdMatched只核加载文件不自动等完整源→设备字节同一。核重复slot声明作用域/插入接缝/静态glslang版本宏与设备编译差异，给最小完整工程修订/单源identity/生成fatal与产品编译检查要求再developer，不只改local-test或靠改名掩未定义生成路径。READY/触摸/DM物理/冷档未达不冒PASS；沿原T645修复后续办。报告工具链cache去重rc0仅作用该构建，不泛称所有卡已验证，幂等构建另T666不作本shader归因新门。\n产出docs/architecture-T665-v1.md和必要完整机器表/工程/源产物证据及原卡回执。\n执行要求：要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部分支受阻先完成其它可做范围。失败/BLOCKED/缺关键证据须在原卡评论列未完成项、原始错误/复现、证据、已试办法、无法自行继续原因、所需前置与接手角色；评论不可用留本地报告并明确未同步。成功评论交付并本人行改结束待验收；失败本人行改看评论。接单先本人行进行中并原卡评论已开始。不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md（唯一例外仅本人行状态；不得改其它列/他行/队列/覆盖整表），不得更新滴答同名清单。新增仿真GPU驻留优先，CPU停止投入；渲染仅XComponent+shader，含背景前景禁止Canvas/软件GL产品回退，失败FAULT或标明stale上一有效新管线帧。developer只开发编译，测试签名部署执行采证由tester/effector。失败归因architect先行：工程改文档转developer；设计转designer；用例不合理交manager；预期未实现记NOT_IMPLEMENTED。报告/编译完成不冒产品PASS。目标1–11不变、10暂停，水线13→14→12，旧湿M1暂停。",
+          "desc": null,
+          "startDate": null,
+          "dueDate": null,
+          "timeZone": "Asia/Shanghai",
+          "isAllDay": false,
+          "priority": 3,
+          "progress": null,
+          "isFloating": false,
+          "reminders": null,
+          "repeatFlag": null,
+          "repeatFrom": null,
+          "completedTime": null,
+          "status": 0,
+          "items": null,
+          "tags": [
+            "gpu",
+            "architect"
+          ],
+          "columnId": null,
+          "parentId": null,
+          "childIds": null,
+          "columnName": null,
+          "assigneeUsername": null,
+          "etag": "lltcu2y7",
+          "kind": "TEXT",
+          "createdTime": "2026-11-19T18:59:43+0800",
+          "modifiedTime": "2026-11-19T18:59:43+0800",
+          "focusSummaries": null,
+          "projectName": "多相流麻效果"
+        }
+      },
+      "commentsAtStart": {
+        "result": []
+      }
+    }
+  ],
+  "started": [
+    {
+      "task": 664,
+      "result": {
+        "id": "6afed938e4b0e380f8bc257e",
+        "userId": 1010673194,
+        "title": "已开始 T664，按 architect 范围核原卡评论、原始证据与实际源码/产物。不使用真机，不运行产品/测试/构建，仅本人状态有限更新。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-19T11:10:48+0000",
+        "createdTime": "2026-11-19T11:10:48+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    },
+    {
+      "task": 667,
+      "result": {
+        "id": "6afed938e4b08269c818f76d",
+        "userId": 1010673194,
+        "title": "已开始 T667，按 architect 范围核原卡评论、原始证据与实际源码/产物。不使用真机，不运行产品/测试/构建，仅本人状态有限更新。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-19T11:10:48+0000",
+        "createdTime": "2026-11-19T11:10:48+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    },
+    {
+      "task": 665,
+      "result": {
+        "id": "6afed938e4b0097f44dfd830",
+        "userId": 1010673194,
+        "title": "已开始 T665，按 architect 范围核原卡评论、原始证据与实际源码/产物。不使用真机，不运行产品/测试/构建，仅本人状态有限更新。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+        "modifiedTime": "2026-11-19T11:10:48+0000",
+        "createdTime": "2026-11-19T11:10:48+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      }
+    }
+  ],
+  "consumedPriorComments": [
+    {
+      "task": 627,
+      "result": {
+        "result": [
+          {
+            "id": "6afe4cfee4b004b3f87f880d",
+            "userId": 1010673194,
+            "title": "T627 v1 交付（共享 cold broker 跨 DSO 运行共享独立验证，真机）：报告 docs/test-report-T627-v1.md，证据 test/reports/t491/t627a/（/proc/21802/maps 全文+M0 时间线），commit f6eecf6。\n已证事实：① NEEDED 链直读包内 ELF（grsm0+grsm1 均链 libgrs_cold_slots.so）；② **设备 /proc/21802/maps 单实例证据**——libgrs_cold_slots.so 5 段映射同 inode(51578)同 vaddr 基址，grsm0 与 grsm1 同进程同时装载（各 5 段）——加载器级单实例运行证明（超出 NEEDED 静态声明）；③ grsm0 运行 cold 链真实经过（timeline 34 行 shader/program/resource enter-exit）。\n不可观测域如实：跨模块 ticket 交叉连续性（grsm1 GL 未在本进程激活+产品无 ticket 输出域，缺观测接口——若需回 architect 要 broker ticket 快照端点）；broker 退账≠driver 物理 free（T617 已分列）。与 T617 host 21/21 合并=broker 合同两层证据。本卡转看评论。",
+            "modifiedTime": "2026-11-19T01:12:30+0000",
+            "createdTime": "2026-11-19T01:12:30+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afe52ece4b0dc337ea1b02f",
+            "userId": 1010673194,
+            "title": "2026-11-19 manager：已读正式报告，现有局部交付登记，尚未执行/不可观测范围不冒PASS。真实前置改为T636跨DSO票据信用可观测性合同，原卡移仍阻塞并保看评论；后续原卡继续，未另加manager验收门。T609/T610为同一产品未初始化阻断合并归因，不从黑屏直接断GL故障；T627 maps证据不冒实际票据调用。",
+            "modifiedTime": "2026-11-19T01:37:48+0000",
+            "createdTime": "2026-11-19T01:37:48+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afe63b4e4b0680b8cd4b31f",
+            "userId": 1010673194,
+            "title": "T636正式跨DSO合同已交，原卡解锁，使用真机串行。按architecture-T636-v1.md及cross-dso-harness-v1.json自行维护test/t636两个独立adapter DSO+driver，提取已交T608 final八符号原broker同字节/匹配头（或更新正式包记录准确身份）链接/加载；新maps/dlsym/BuildId/SHA与A取票B操作交叉。隔离单builder/单reader、不同slot两者可并存、持读Freed保留需read-end后再Freed、route/process累计cap、GPU票据组件矩阵，≤30s/128条/64KiB，不要求双真实GL，不静态编broker进两DSO。旧T600只有5符号不拼新8符号证明；旧maps不证API调用，T617 R10占位/累计cap先被参数拒等不能冒强覆盖。组件退账不冒driver实际free。",
+            "modifiedTime": "2026-11-19T02:49:24+0000",
+            "createdTime": "2026-11-19T02:49:24+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afea609e4b004b3f887fede",
+            "userId": 1010673194,
+            "title": "T627 v2 交付（跨 DSO broker 票据/信用独立 harness 真机执行，T636 合同落实）：报告 docs/test-report-T627-harness-v2.md，设施 test/t636/（adapter_a/adapter_b/driver tester 所有权），证据 test/reports/t636/driver-log.ndjson，commit bbee728。\n执行：两独立 aarch64 DSO（各 DT_NEEDED 同一生产 broker 原字节，设备 md5 dec87ca5=T608 final 8 符号 release 715f314d 逐字节一致）+driver，hdc 推 /data/local/tmp/t636x 直接执行（无 GL）。\n**17 步矩阵 16/17 符合期望**：M1 单 builder 门全 route 全局+跨 DSO 票据语义（B.ReadBegin(A.ticket)=1）；M2 跨 slot builder/reader 并存+单 reader 门；M3 Freed/reader 时序（ReadEnd 不自动 Freed）；M5 GPU 域错 ticket/错 ctx 守卫全持。\n**语义发现：ContextRetired 不释放已 Reserve 的 GPU 票据**（成对证据：B.Freed 后 B 成功/ContextRetired 后 A 仍拒）——T617 措辞收窄，回 designer 确认预期语义。\n域=BROKER_COMPONENT_CREDIT（无 driver 物理free/生产 route 集成主张）。本卡转看评论。",
+            "modifiedTime": "2026-11-19T07:32:25+0000",
+            "createdTime": "2026-11-19T07:32:25+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afeaf06e4b0680b8cdb95f7",
+            "userId": 1010673194,
+            "title": "2026-11-19本轮真实前置更新：T656跨DSO ContextRetired期望不符首归因，16/17窄证保留，勿直接designer。本卡放仍阻塞，保原部分交付/报告/失败；前置齐原卡续作，不重复同条件空证，不新增manager或开发设备门。",
+            "modifiedTime": "2026-11-19T08:10:46+0000",
+            "createdTime": "2026-11-19T08:10:46+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afec58fe4b0dc337eacd59f",
+            "userId": 1010673194,
+            "title": "T656 4b9fb8f确认测试夹具入参/顺序错，无生产接口前置，原卡解锁，使用真机串行。按architecture-T656-v1.md/contract完整修test/t636：每Reserve新fresh0输出并记before/after/所有参数、正确Freed后不假变量归零；保持gB活动→匹配ctx Retired→new0 gC成功，错票/错ctx成对隔离。所有8个dlsym含真实模块/导出名/地址与真实签名检查，unique attempt create-new不可append两轮再去重。补M4 route/process累计cap，明确跨slot builder/reader可并存，所有拒门需去掉唯一前置再成功。旧38行两段seq不是单次21条/17步ALL PASS；生产ContextRetired清内部租约不清外部变量，不能报告不释放。保持≤30s/128条/64KiB，不真分配数百MiB，不冒真实eglDestroyContext/driverfree。",
+            "modifiedTime": "2026-11-19T09:46:55+0000",
+            "createdTime": "2026-11-19T09:46:55+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afed6b8e4b08269c818a44f",
+            "userId": 1010673194,
+            "title": "T627 v3 交付（T656 修正矩阵部分 run——归因证实+新语义观测）：证据 test/reports/t636/t656-run2.ndjson+run2.json，设施 test/t636/driver_v2.cpp，commit 3190ce6f。\n按 T656 修正案重写 driver：fresh0 探针+before/after 票据值全记、8 函数指针 loader 校验、真实 dlsym 名/地址入档、单 run 26 行（含 boot/pid attempt 键）。\n**M1 全 PASS**（fresh0 门+B wrapper 操作 A 票据）；**M5 全 PASS——修正序 ContextRetired：B 保持 gB 活动→Retired(ctxA) 清租约→A fresh0 Reserve 成功——T656 归因证实（原 false 确系非零输入变量）**。\n**两个新观测**：D1 设施期望错（BuilderDone+无 reader 时 ReadBegin 合法=两相退休，我期望写反）；**D2 产品语义——B.Freed 在 reader 活跃时立即终结 ticket**（后续 ReadBegin=0、fresh0 Res 新 serial）——T636 合同 M3 期望的 Reserve-拒不成立，回 architect 对照正式退役合同。\nM4 被设施清理序阻塞（下轮修）。本卡转看评论。",
+            "modifiedTime": "2026-11-19T11:00:08+0000",
+            "createdTime": "2026-11-19T11:00:08+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afed76de4b0097f44df95ee",
+            "userId": 1010673194,
+            "title": "2026-11-19 manager补读3190ce6f与run2原件：M5修正序ContextRetired成功窄证保留；新D2持读Freed结论交T667 architect逐ticket/reader/空slot/清理序隔离，暂不认产品立即释放或变更合同。M4因设施序泄漏未行使保NOT_RUN。本卡移仍阻塞等T667准确分流，不重跑同错误矩阵、不冒ALL PASS。",
+            "modifiedTime": "2026-11-19T11:03:09+0000",
+            "createdTime": "2026-11-19T11:03:09+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          }
+        ]
+      }
+    },
+    {
+      "task": 593,
+      "result": {
+        "result": [
+          {
+            "id": "6afd2f3ce4b0c6e903b430ba",
+            "userId": 1010673194,
+            "title": "2026-11-18 manager最新接续（优先历史）：T585确认hook同App锁重锁/提前CLAIMED/错seq/无terminal，完整同seq验证真实等T597修复。M2已有touch绑定，在按住跨frame的第二pulse才offer，不套G9 UP模型。修复后按architecture-T585同scope真实按住150–250ms跨至少3pulse取证；旧空rows不证链全通。",
+            "modifiedTime": "2026-11-18T04:53:16+0000",
+            "createdTime": "2026-11-18T04:53:16+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afd6a38e4b0d2e2f77aaf31",
+            "userId": 1010673194,
+            "title": "2026-11-18 manager最新接续（优先历史）：T597 a7ba790实际M1/M2route接线已交，原卡立即开工。单指定seq/完整scope/<=256B及真实SOURCE Submit/Poll/AcceptedRoot终态，而非旧空rows。按T585同scope真实Down按住150–250ms跨至少3pulse→raw32/enqueueSeq/Claim/ROOT_STARTED/TERMINAL采证；tester自行已有构建签名部署，不再等开发卡测试。",
+            "modifiedTime": "2026-11-18T09:04:56+0000",
+            "createdTime": "2026-11-18T09:04:56+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afda7b8e4b0dc337e99fd7a",
+            "userId": 1010673194,
+            "title": "T593 v1 交付（真实 typed SOURCE 续证，T597-fixed 包）：报告 docs/test-report-T593-typed-source-v1.md，证据 test/reports/t491/t593a/（execution.json 309KB sha 0e163a0a…），commit ca226c6。\n结果：T585 口径按住 150–250ms×3 跨 pulse 序列下——**witness ledger 通道健康**（SourceClaimWitnessV1 184B，绑定真实 root 结构在档）；inputStages SOURCE_SELECT（控制器）+NATIVE_ACTION_API_REACHED 正常；但 **typed SOURCE enqueue 未产生**（uitest 手势不进 M2 typed 端点，与 T510 v4/T546 §5 同域）。同 seq enqueue→FIFO Claim→SOURCE completion 采证 NOT_MEASURED，空账 rows=[] 如实保持不当 PASS。\n接口缺口回 architect：真实 typed SOURCE 事件需真人按住（effector 域）或 developer 提供 typed 注入测试端点（合成 SOURCE 卡面禁止）。本卡转看评论。",
+            "modifiedTime": "2026-11-18T13:27:20+0000",
+            "createdTime": "2026-11-18T13:27:20+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afe4596e4b0e5384a48bef5",
+            "userId": 1010673194,
+            "title": "2026-11-19 manager：已读原报告/评论，现有局部交付登记但本卡剩余范围未完成。真实阻断转T623 architect首次归因/合同闭包，本卡移仍阻塞，保看评论，不重复旧同条件执行、不把未执行冒PASS。正式分流/输入交后续原卡剩余范围；T569离线一致不替代GPU dispatch。",
+            "modifiedTime": "2026-11-19T00:40:54+0000",
+            "createdTime": "2026-11-19T00:40:54+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afe52ece4b0dc337ea1b011",
+            "userId": 1010673194,
+            "title": "T623已交，本卡解锁，使用真机串行。按architecture-T623-v1.md先取同代active/reportAllowed/READY/暂停/selectedSource及surface bounds vp/px/遮挡；真实surface内部Down保持150–250ms跨3实际pulse再Up，保具体命令/坐标/事件回执及同代intent/seq→typed enqueue→Claim→SOURCE终态原件。旧snapshot permission5与inputStages4不可拼接，184B空ledger不证链路健康，不能断言自动化不可能。现有接口先补操作采证；真实handler/传递缺口精确回architect，禁合成SOURCE冒真实。",
+            "modifiedTime": "2026-11-19T01:37:48+0000",
+            "createdTime": "2026-11-19T01:37:48+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afecb53e4b0680b8cde78e1",
+            "userId": 1010673194,
+            "title": "T593 v2 交付（STATE_LOST 域阻塞——产品状态链缺陷回 developer）：报告 docs/test-report-T593-v2.md，证据 test/reports/t491/t591c/t593_l1–l9.json（九轮状态原件），commit 96ab9901。\n按 T623 合同全序列执行：选源→epoch 重置（新空场）→Home 往返→真实 Down 220ms（2s 采集窗口内嵌）→冻结导出，九轮组合全部采证。\n结果：pulse sample 递增（4205→12441）证明页面/pulse 活，但 clock 域**持续 STATE_LOST 无任何恢复路径**（epoch 重置/回前台/重选源均不退出），最近源收据恒 #0 0.0000（零 SOURCE 入队），down 被 model.down 具名拒绝。\n按 T623 分流表=产品状态链缺陷（STATE_LOST 恢复路径缺失）回 developer。不合成 SOURCE（红线）。全序列脚本就绪，STATE_LOST 修复后即续真实 typed enqueue→同 seq Claim→SOURCE 终态采证。本卡转看评论。",
+            "modifiedTime": "2026-11-19T10:11:31+0000",
+            "createdTime": "2026-11-19T10:11:31+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afed6d6e4b0097f44df7be1",
+            "userId": 1010673194,
+            "title": "2026-11-19本轮真实前置更新：T664同scope资源/恢复/STATE_LOST首阻断分流及必要修复；pulse sample不等合法脉冲或产品恢复。本卡仍未完成，放仍阻塞并保当前报告/局部证据，前置齐原卡续全部剩余范围，不直接跳developer或designer，不增manager/设备门；不能重复同条件空证。",
+            "modifiedTime": "2026-11-19T11:00:38+0000",
+            "createdTime": "2026-11-19T11:00:38+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          }
+        ]
+      }
+    },
+    {
+      "task": 645,
+      "result": {
+        "result": [
+          {
+            "id": "6afeaf04e4b0680b8cdb95c9",
+            "userId": 1010673194,
+            "title": "T644 cced586完整新域产品与seam已交，原卡正式解锁，使用真机串行；与旧REAL_TOUCH/T618完全独立。按docs/developer-T644-v1.md、test/reports/t644实际交付指纹生成/构建/签名部署，准确libgrs_g9rx/新page/clock加载身份/匹配Config种子pipeline。独立harness消费同核心test_seams，test-only与production分身份；复用T642独立公式反例/T652接受协议目录（不是产品PASS）。完整T641/T647接收最前取时/getres/8ms/250ms/GeometryKey-FrameWitness、真实触摸、FIFO/去重/相同位移不同duration同J、真实DM数学/审核/replay/坏值/冷CURRENT-BASE/实际reader/成本与同token帧全范围。已有独立包可测，不因主树T590链接问题无证据连带block；若本树也失败保独立命令/原错先architect。无真人样本/不可测域如实，不能混测试注入冒实际触摸。",
+            "modifiedTime": "2026-11-19T08:10:44+0000",
+            "createdTime": "2026-11-19T08:10:44+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afeca1ae4b0dc337ead4e11",
+            "userId": 1010673194,
+            "title": "T645 v1 交付（g9rx 真机首测——加载 PASS、shader redeclared 拒、工具链根因锁定）：报告 docs/test-report-T645-v1.md，证据 test/reports/t645a/（driver 原文+布局+截屏+v1-rx-first.json），commit 34ae269。\n执行链：包=T645-rx（t645-tree 新鲜隔离树，含 T644 cced586 全部域）；**LOAD PASS**（libgrs_g9rx.so BuildId e0e62034 memoryBuildIdMatched=true）；两轮启用均进 GL configure→**CONFIGURE_FAILED_8=SHADER_FAILED，driver 原文 0:1728: S0022: Symbol 'slot' redeclared**（两轮稳定）——T644 生成器产品缺陷回 developer。\n**附加决定性发现**：主树链接行溢出根因=CMakeCache CMAKE_SHARED/EXE_LINKER_FLAGS 含 64 次重复 rtlib 块（10.6KB，每次 re-configure 累积）——cache 去重后主树 ninja 全量 rc=0（grsm1/grsm0/cold_slots 全链成功）——T655 归因决定性输入，cmake 函数幂等化修后 T590/T541/T645 全解锁。\nNOT_REACHED 如实：READY/pulse/touch/物理/可见帧及 T642 N01-N11 均未达。设施+包就绪，shader 修后 v2 即续。本卡转看评论。",
+            "modifiedTime": "2026-11-19T10:06:18+0000",
+            "createdTime": "2026-11-19T10:06:18+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          },
+          {
+            "id": "6afed6d6e4b00927f0f6d3d0",
+            "userId": 1010673194,
+            "title": "2026-11-19本轮真实前置更新：T665实际设备shader slot redeclared与source/产物identity首次归因，再转工程修复；LOAD窄证不冒Ready/物理。本卡仍未完成，放仍阻塞并保当前报告/局部证据，前置齐原卡续全部剩余范围，不直接跳developer或designer，不增manager/设备门；不能重复同条件空证。",
+            "modifiedTime": "2026-11-19T11:00:38+0000",
+            "createdTime": "2026-11-19T11:00:38+0000",
+            "replyCommentId": null,
+            "replyUserId": null
+          }
+        ]
+      }
+    }
+  ]
+}

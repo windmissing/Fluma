@@ -120,3 +120,8 @@ status给stage/firstFailure/原API错误/known-unknown、queue/claimed/consumed�
 要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。局部分支受阻先完成其它可做部分。阻断回执含全部未完成项、复现/原始错误/原件与SHA、已试办法、为何不能自行继续、所需输入/真实前置和接手角色，原卡评论并本人行看评论；成功本角色交付结束待验收。评论不可用留本地报告并明确未同步。
 
 不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人行状态有限例外），不改其它列/他行/队列或滴答同名清单。共享源码不回退他人工作；GPU驻留优先、CPU停止投入。全部前景背景只XComponent+shader，故障FAULT或显式STALE上一有效新管线帧，禁Canvas/软件GL产品回退。目标1–11不变、10暂停，水线13→14→12，旧湿M1保持暂停。tester/effector设备执行标真机且串行，失败先architect分流，不新增manager验收门。
+
+
+## 2026-11-19 T665：RX capture 生成兼容与单源身份修订
+
+[T665](architecture-T665-v1.md)及architecture-T665-contract-v1.json核实际T645包与T644旧ELF：native BuildId不同，生产shader均为同一145268B/74c820ec…；设备1728行拒g9Capture内slot局部复用。仅RX生成路径作具名严格唯一的scope hygiene（clearSlot/scanSlot/selectedSlot及显式scan块），冻结父源/默认线/DM数学/T647门不改；同一canonical LF原串贯穿comp/header/actual ELF/hash，完整转换/依赖/cache/reader身份与最终生产编译检查由developer实施。既有harness原件有额外身份检查差异，不能冒生产源码通过。修后原T645签名部署/设备完整未完续办；不借T666幂等构建作新shader门，不宣LOAD或静态编译为产品PASS。

@@ -36,3 +36,8 @@ docs/receipt-T660-T662-*.json -text whitespace=cr-at-eol
 
 # T663 original build evidence.
 test/reports/t663/*.log -text -whitespace
+
+# T664/T665/T667 exact architecture tables and original-byte receipts.
+docs/architecture-T66[457]*.json -text whitespace=cr-at-eol
+docs/analysis-T66[457]*.json -text whitespace=cr-at-eol
+docs/receipt-T664-T667-*.json -text whitespace=cr-at-eol

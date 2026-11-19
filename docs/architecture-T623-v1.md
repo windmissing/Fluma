@@ -23,3 +23,8 @@
 真人/effector可另证真实手势，但不是“自动化必不可能”的结论。若另需test-only typed接口，仅独立测试包/route标记SYNTHETIC_TEST、不同身份，证明接口/队列层；禁止冒REAL_TOUCH、真实SOURCE资格或绕过clock/同seq witness门。T593及依赖真实消费的下游只按非空原件推进；其他研究不新增此门。
 
 续作prompt：developer不使用真机，完成工程范围和编译；tester/effector负责真实操作、签名部署、测试采证，真机串行。不允许修改 D:\hmprojects\HelloWorld\docs\后续工作清单.md（仅本人状态例外）或滴答同名清单。要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。阻断回执列未完成项、原始错误/复现/证据/尝试、不能继续原因、前置与接手角色。GPU驻留优先、CPU停投、XComponent+shader唯一上屏，失败FAULT/显式STALE，禁Canvas/软件GL产品回退；目标10暂停，水线13→14→12，旧湿M1暂停。
+
+
+## 2026-11-19 T664：对象/恢复原件修订
+
+[T664](architecture-T664-v1.md)及architecture-T664-contract-v1.json核定：T593 v2误用T591旧M2诊断包，同名GpuResidentM1/libgrsm1不等T623正式M1恢复/输入链；sampleSerial是status读取计数，l7–l9已明确V3_USE_M2_TRACE拒绝，非静默丢档。先原T593 tester选择既有T597正式产物/实际加载身份，取同scope资源创建→恢复session→Fresh→真实Down→typed/Claim原件；不派推测性缺恢复修复，不与旧T591 LINK跨attempt并因。T519/T410/T437真实非空SOURCE前置保留；本卡不宣产品PASS。

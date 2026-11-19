@@ -1,0 +1,217 @@
+{
+  "schema": "T667_BROKER_ISOLATED_MATRIX_V1",
+  "date": "2026-11-19",
+  "boundaries": {
+    "role": "architect",
+    "deviceUsed": false,
+    "buildRun": false,
+    "productTestsRun": false,
+    "productPASS": false,
+    "CPU": "STOPPED",
+    "goal10": "PAUSED",
+    "waterOrder": [
+      13,
+      14,
+      12
+    ],
+    "oldWetM1": "DEFERRED",
+    "render": "XComponent+shader including foreground/background; FAULT or explicitly STALE prior valid new-pipeline frame; no Canvas/softwareGL product fallback",
+    "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+    "queue": "不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md；唯一例外本人行状态；不得更新滴答同名清单",
+    "roles": "developer implementation+compile; tester/effector fixture/sign/deploy/test/evidence; no device/manager closure gate"
+  },
+  "verdict": "FIXTURE_TICKET_READER_AND_CLEANUP_ERROR; D2_ACTIVE_READER_FREED_NOT_EXERCISED; NO_BROKER_SEMANTIC_CHANGE",
+  "evidence": "docs/analysis-T667-evidence-v1.json",
+  "ABI": [
+    {
+      "field": "Res",
+      "selected": "A_Reserve",
+      "signature": "bool(uint64_t*,size_t,size_t,uint32_t,uint64_t*,uint64_t*)"
+    },
+    {
+      "field": "BuilderDone",
+      "selected": "A_BuilderDone",
+      "signature": "void(uint64_t)"
+    },
+    {
+      "field": "ReadBegin",
+      "selected": "A_ReadBegin",
+      "signature": "bool(uint64_t)"
+    },
+    {
+      "field": "ReadEnd",
+      "selected": "A_ReadEnd",
+      "signature": "void(uint64_t)"
+    },
+    {
+      "field": "Freed",
+      "selected": "A_Freed",
+      "signature": "void(uint64_t)"
+    },
+    {
+      "field": "GpuRes",
+      "selected": "A_GpuReserve",
+      "signature": "bool(uint64_t*,uint64_t,size_t)"
+    },
+    {
+      "field": "GpuFreed",
+      "selected": "A_GpuFreed",
+      "signature": "void(uint64_t)"
+    },
+    {
+      "field": "GpuCtxRetired",
+      "selected": "A_GpuContextRetired",
+      "signature": "void(uint64_t)"
+    }
+  ],
+  "stateLedger": [
+    {
+      "afterSeq": 8,
+      "observed": "ReadBegin(ticket1)=true",
+      "heldReader": "ticket1",
+      "inference": false
+    },
+    {
+      "afterSeq": 10,
+      "observed": "ReadEnd(ticket1),Freed(ticket1) calls in source and logged",
+      "heldReader": "none",
+      "inference": "void result not returned; existing implementation ends/frees1"
+    },
+    {
+      "afterSeq": 13,
+      "observed": "ReadBegin(ticket2) after BuilderDone=true",
+      "heldReader": "ticket2",
+      "inference": "readerA-active detail string false; ticket1 already released"
+    },
+    {
+      "afterSeq": 14,
+      "observed": "second ReadBegin(ticket2)=false",
+      "heldReader": "ticket2",
+      "inference": "A.ReadEnd(ticket1) cannot end ticket2; false skips conditional cleanup"
+    },
+    {
+      "afterSeq": 15,
+      "observed": "Reserve ticket3=true",
+      "heldReader": "ticket2",
+      "builder": "ticket3"
+    },
+    {
+      "afterSeq": 16,
+      "observed": "Reserve fresh probe after Freed(ticket3)=true; output not logged",
+      "heldReader": "ticket2",
+      "builder": "new probe ticket (serial4 inferred, not observed)",
+      "inference": "ReadBegin(ticket3) return ignored: builder3 and existing reader2 reject it; Freed3 therefore not tested with active reader3; other slot genuinely free"
+    },
+    {
+      "afterSeq": 17,
+      "observed": "ReadEnd/ReadBegin(ticket3)=false",
+      "heldReader": "ticket2",
+      "inference": "ticket3 was freed, not an active reader ignored"
+    },
+    {
+      "afterSeq": 18,
+      "observed": "Reserve fresh0=false",
+      "heldReader": "ticket2",
+      "builder": "leaked new probe",
+      "inference": "earlier builder/two-slot gates; not credit-cap evidence"
+    },
+    {
+      "afterSeq": 19,
+      "observed": "M4 initial Reserve=false",
+      "inference": "M4 cumulative route/process matrix NOT_RUN"
+    },
+    {
+      "afterSeq": 24,
+      "observed": "fresh0 GPU Reserve after B.ContextRetired(matching ctx)=true",
+      "inference": "narrow opaque-context component lease evidence; not eglDestroyContext or driver free"
+    }
+  ],
+  "productionBrokerSHA": "715f314d43549d4eed991922f25faa350fedcaf6ab8dab1598abc980dd278d03",
+  "productionSemanticChange": false,
+  "developerSeamRequired": false,
+  "staticBinaryGuard": "Freed reads slot.reader at offset21; true skips clear. No native execution",
+  "hostReserve": "new probes fresh0; existing known same-route non-reader ticket rebuild remains legal with no builder",
+  "GPUReserve": "requires *ticket==0; Freed/ContextRetired values do not write caller variable zero",
+  "oldLog": {
+    "rows": 26,
+    "keys": [
+      "seq",
+      "event",
+      "detail"
+    ],
+    "bootPidAttemptKeys": false,
+    "openMode": "append",
+    "all8PointerNullChecks": true,
+    "onlyReserveDladdrNameLogged": true
+  },
+  "matrix": [
+    {
+      "id": "M1",
+      "setup": "fresh0 A reserve4096 budget8192 r1, builder retained",
+      "negative": "B fresh0 r1/r2 reserve reject",
+      "positive": "B.BuilderDone(A); B.ReadBegin(A)=true",
+      "cleanup": "B.ReadEnd(A); A.Freed(A), log VOID calls"
+    },
+    {
+      "id": "M2a",
+      "setup": "fresh stage no other reader, B reserve",
+      "negative": "ReadBegin(B) rejects own builder",
+      "positive": "BuilderDone(B); ReadBegin(B) true",
+      "cleanup": "End(B),Freed(B)"
+    },
+    {
+      "id": "M2b",
+      "setup": "A Done+ReadBegin(A) true and HOLD; B other route reserve succeeds then Done",
+      "negative": "ReadBegin(B) false only while A holds reader",
+      "positive": "ReadEnd(A); ReadBegin(B) true",
+      "cleanup": "End(B); Freed(A/B)"
+    },
+    {
+      "id": "M3",
+      "setup": "A Done+ReadBegin(A) true and HOLD; B reserve+Done, both slots occupied/no builder",
+      "operation": "B.Freed(A)",
+      "negative": "third fresh0 reserve rejects; alone insufficient proof",
+      "positive": "End(A); ReadBegin(A) true proves original ticket retained; End(A),Freed(A); third fresh0 reserve true/new ticket",
+      "cleanup": "retain all new outputs, Done/Freed new ticket,Freed(B)"
+    },
+    {
+      "id": "M4_ROUTE",
+      "setup": "fresh stage only A charge4096/r1/budget8192, Done",
+      "negative": "B fresh0 charge4097/r1 budget8192 rejects (8193)",
+      "positive": "B charge4096 succeeds (8192 exact)",
+      "cleanup": "Done/Freed B then Freed A"
+    },
+    {
+      "id": "M4_PROCESS",
+      "setup": "fresh stage only A charge cap-4096/r2/budgetcap, Done",
+      "negative": "B charge4097/r3 budgetcap rejects",
+      "positive": "B charge4096 succeeds totalcap",
+      "cleanup": "Done/Freed every owned ticket; no huge allocation"
+    },
+    {
+      "id": "M5",
+      "setup": "GPU gA fresh0 reserve matching opaque ctx",
+      "negative": "wrong ticket Freed and wrong ctx Retired tested separately, fresh0 rejects after each",
+      "positive": "B correct Freed(A), fresh0 gB reserve; HOLD gB; matching ctx Retired; fresh0 gC reserve succeeds",
+      "cleanup": "release only known owned GPU tickets; no claim driver free"
+    }
+  ],
+  "processCapBytes": 524375552,
+  "tester": {
+    "originalTask": "T627",
+    "logs": "unique exclusive-create attempt; every raw row boot/pid-start/attempt/seq/monoNs producer plus call/symbol/module/full inputs/outputs/bool or VOID",
+    "maxSeconds": 30,
+    "maxRows": 128,
+    "maxUTF8RowBytesIncludingNewline": 512,
+    "maxLogBytes": 65536,
+    "maxManifestBytes": 16384,
+    "fixedOwnedTicketLedgerEntriesMax": 16,
+    "unexpectedSuccess": "retain output ticket and clean/stop this stage, never leak local fresh probe",
+    "cleanupFailure": "preserve raw and end isolated harness process, no ResetAll or guessed production ticket",
+    "allCallsCount": true,
+    "harnessOnlyCredit": true,
+    "driverOrRouteIntegrationPASS": false
+  },
+  "M4": "NOT_RUN in old run; entry false from earlier builder/two-slot gates",
+  "M5": "retain corrected matching-context retirement positive control only, no ALL_PASS/actual EGL retirement claim"
+}

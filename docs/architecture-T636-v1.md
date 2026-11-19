@@ -47,3 +47,8 @@ tester所有权：新`test/t636/{adapter_a.cpp,adapter_b.cpp,driver.cpp,CMakeLis
 当前任务要证明跨DSO共享实际操作和额度，以上ABI已足够；**不派developer新快照**。新测如果符号未导出/目标ELF不可加载，tester保实际dlerror/NEEDED/dynsym/文件SHA，回architect定位包/ABI，现成签名部署/夹具归tester。若将来要问“生产route某次cold是否真的Reserve了哪个ticket”，那是另一个集成域，需要准确生产调用关联证据；本次harness不假充这一层，不把它加作组件或开发关闭门。driver物理free另域不误派。
 
 T627按此独立harness续办；既有maps/host结论保留、强覆盖断言收窄。完整执行约束见`architecture-T633-T636-execution-boundaries-v1.md`，本次架构交付不冒新设备PASS。
+
+
+## 2026-11-19 T667：持读Freed与矩阵隔离修订
+
+[T667](architecture-T667-v1.md)/architecture-T667-contract-v1.json逐ticket核run2：M1已End/Freed1；M2实际持reader2，M3未成功ReadBegin3且泄漏新的builder探针，D2未行使，M4仍NOT_RUN。现成715f314d二进制保reader保护；生产语义不改。正式续测采用T667独立M1/M2a/M2b/M3/M4/M5矩阵，M3占满另slot并保End后原票复读正控，M4同route4096+4096==8192应准。新探针fresh0是隔离选择，host允许合法现存票重建，不能照GPU要求*ticket0推所有host调用。日志必须真实8函数ABI/VOID顺序/unique attempt与boot-pid身份，不以字符串expect或26行无身份日志冒合规ALL PASS。

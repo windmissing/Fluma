@@ -1,0 +1,115 @@
+{
+  "schema": "T664_SOURCE_RECOVERY_ATTRIBUTION_V1",
+  "date": "2026-11-19",
+  "boundaries": {
+    "role": "architect",
+    "deviceUsed": false,
+    "buildRun": false,
+    "productTestsRun": false,
+    "productPASS": false,
+    "CPU": "STOPPED",
+    "goal10": "PAUSED",
+    "waterOrder": [
+      13,
+      14,
+      12
+    ],
+    "oldWetM1": "DEFERRED",
+    "render": "XComponent+shader including foreground/background; FAULT or explicitly STALE prior valid new-pipeline frame; no Canvas/softwareGL product fallback",
+    "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+    "queue": "不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md；唯一例外本人行状态；不得更新滴答同名清单",
+    "roles": "developer implementation+compile; tester/effector fixture/sign/deploy/test/evidence; no device/manager closure gate"
+  },
+  "verdict": "WRONG_ARTIFACT_AND_CAPTURE_ROUTE_WITH_UNPUBLISHED_RUN; NOT_PROVEN_MISSING_FORMAL_M1_RECOVERY",
+  "evidence": "docs/analysis-T664-evidence-v1.json",
+  "packageSelection": [
+    {
+      "task": "T591-collector",
+      "packageSHA": "9550454cbec14659075802a37cc589f0a28c89eeba44ef02d1d80ca00cdb5d91",
+      "packageReceiptMatched": true,
+      "module": "libgrsm1.so",
+      "bytes": 1174288,
+      "sha256": "04b98996346e2706fd54e6d3da5e91fefd028d5180c408fb231473554f3c559f",
+      "buildId": "0cf0ffde1232b06e0ee044ef519cf01c11120dd9",
+      "markerStringsPresent": {
+        "beginRecoverySession": false,
+        "recoveryState": false,
+        "V3_USE_M2_TRACE": true,
+        "WAIT_NEW_SESSION": false,
+        "T468_M2_V3_DIAGNOSTIC": true,
+        "PAGE_PULSE_ACCEPTED": true,
+        "T575": false
+      }
+    },
+    {
+      "task": "T597-fixed",
+      "packageSHA": "20bad4993786c3edf5e6d478767b0f28d49f54084b6c892ab290f788dcf87550",
+      "packageReceiptMatched": true,
+      "module": "libgrsm1.so",
+      "bytes": 1950560,
+      "sha256": "527c863f36bf543f1d4c45d212ef60ec62c2401f5fe693e5a453589c7f4280bf",
+      "buildId": "dc54802f9e1a0f0f8fae93a95aa7b343bce3a59c",
+      "markerStringsPresent": {
+        "beginRecoverySession": true,
+        "recoveryState": true,
+        "V3_USE_M2_TRACE": false,
+        "WAIT_NEW_SESSION": true,
+        "T468_M2_V3_DIAGNOSTIC": false,
+        "PAGE_PULSE_ACCEPTED": true,
+        "T575": true
+      }
+    }
+  ],
+  "observations": {
+    "snapshots": 9,
+    "stateScopes": "8 snapshots run0, epochs2/3 session1; no boot/pid/context/Create ticket/ns association",
+    "sampleSerial": "status-read count ++a.sampleSerial",
+    "zeroReceipt": "UI zero only, not complete enqueue ledger",
+    "downReason": "no captured down; actual legacy model maps !allowed to NOT_READY, not captured STATE_LOST down",
+    "capture": "l7/l8/l9 REJECTED V3_USE_M2_TRACE, no captureId or file expected"
+  },
+  "formalRecovery": [
+    {
+      "phase": "RESET_REQUESTED",
+      "required": "explicit newRun: revoke old permit/source/quota/capture, freeze firstFailure/ledger; checked resetSerial/epoch/window"
+    },
+    {
+      "phase": "RETIRING_OLD",
+      "required": "old flight/fence/scene lease actually retired; no force-ready or thread interruption"
+    },
+    {
+      "phase": "CREATING_NEW",
+      "required": "actual GL owner Create terminal OK under current scope, nonzero candidate run"
+    },
+    {
+      "phase": "WAIT_NEW_SESSION",
+      "required": "recovery.Resources current epoch/window/id after retirement; fresh actual page generation binds exact serial/epoch/run"
+    },
+    {
+      "phase": "READY",
+      "required": "resources/CanReady/active/window/progress.Fresh/ui.Fresh, then same-lock CommitReady and new actual Down"
+    }
+  ],
+  "sameAttemptAsOldT591LINK": "NOT_PROVEN; no boot/ticket/time chain. Candidate run and published run separate; old open Create could prevent publication but not proven cause of this UI set",
+  "tester": {
+    "originalTask": "T593",
+    "artifact": "existing formal M1 T597-fixed or independently byte-proven same formal implementation; not old T591 M2 collector by same UI/library name",
+    "captureFirst": [
+      "loaded HAP/ELF/BuildId and exact interfaces",
+      "full status+recoveryState",
+      "create/retirement/resources/current candidate and published identities",
+      "resetSerial/epoch/window/context/pageGeneration/session/permission",
+      "pulse raw return/page sequence/producer ns/Fresh",
+      "handler/changedTouches/down reason/coordinates/intent",
+      "typed enqueue same-seq claim/SOURCE terminal+witness"
+    ],
+    "touch": "150-250ms across real accepted scope pulses after legal READY; no synthetic SOURCE",
+    "gapNsUnchanged": 33333333,
+    "rootDeadlineNsUnchanged": 250000000,
+    "missingBuildField": "NOT_AVAILABLE_IN_THIS_BUILD with actual endpoint/return, not zero or fabricated recovery",
+    "noCrossAttemptMerge": true
+  },
+  "developer": "NO_NEW_PRODUCT_FIX_ESTABLISHED; use existing recovery/diagnostic path first; exact same-scope missing interface/terminal evidence back architect before any seam",
+  "existingM2Seam": "T663 in progress under T662; separate domain, no duplicate card or automatic M1 prerequisite",
+  "downstream": "T519/T410/T437 retain true nonempty SOURCE prerequisites; no false unlock"
+}

@@ -1,0 +1,277 @@
+{
+  "schema": "T667_SAVED_CALL_ORDER_ATTRIBUTION_V1",
+  "notUsingDevice": true,
+  "noHarnessRun": true,
+  "log": {
+    "path": "test/reports/t636/t656-run2.ndjson",
+    "bytes": 2222,
+    "sha256": "d170230c5f586cd18babfb0df1d655f8251bf3c858eb9f2439a13ba62bb27757"
+  },
+  "rows": [
+    {
+      "seq": 0,
+      "event": "START",
+      "detail": "T636 cross-DSO broker harness"
+    },
+    {
+      "seq": 1,
+      "event": "LOADED",
+      "detail": "/data/local/tmp/t636x/libadapter_a.so handle=0x3ee59a81c9a83bda Res=0x69d2341f04 ReadBegin=0x69d2341f78"
+    },
+    {
+      "seq": 2,
+      "event": "RESOLVE",
+      "detail": "resolved=0x69d2341f04 name=A_Reserve"
+    },
+    {
+      "seq": 3,
+      "event": "LOADED",
+      "detail": "/data/local/tmp/t636x/libadapter_b.so handle=0xf2d45d097ee9e0bc Res=0x69d2381f04 ReadBegin=0x69d2381f78"
+    },
+    {
+      "seq": 4,
+      "event": "RESOLVE",
+      "detail": "resolved=0x69d2381f04 name=A_Reserve"
+    },
+    {
+      "seq": 5,
+      "event": "M1_A_RES_FRESH0",
+      "detail": "A.Res(4096,r1)=1 ticket_before=0 ticket_after=1"
+    },
+    {
+      "seq": 6,
+      "event": "M1_B_RES_R1",
+      "detail": "B.Res(r1,fresh0)=0 after=0"
+    },
+    {
+      "seq": 7,
+      "event": "M1_B_RES_R2",
+      "detail": "B.Res(r2,fresh0)=0 after=0"
+    },
+    {
+      "seq": 8,
+      "event": "M1_B_READBEGIN_A",
+      "detail": "B.ReadBegin(A.ticket=1)=1"
+    },
+    {
+      "seq": 9,
+      "event": "M1_B_READEND",
+      "detail": "ok"
+    },
+    {
+      "seq": 10,
+      "event": "M1_A_FREED",
+      "detail": "tA released"
+    },
+    {
+      "seq": 11,
+      "event": "M2_B_RES_R2",
+      "detail": "B.Res(r2,readerA-active,fresh0)=1 after=2"
+    },
+    {
+      "seq": 12,
+      "event": "M2_B_SELF_READ",
+      "detail": "B.ReadBegin(own builder)=0 (expect 0)"
+    },
+    {
+      "seq": 13,
+      "event": "M2_B_READ_AFTER_DONE",
+      "detail": "B.ReadBegin(own done, readerA active)=1 (expect 0)"
+    },
+    {
+      "seq": 14,
+      "event": "M2_GLOBAL_READER_GATE",
+      "detail": "B.ReadBegin(own done, readers freed)=0 (expect 1)"
+    },
+    {
+      "seq": 15,
+      "event": "M3_A_RES",
+      "detail": "A.Res=1 ticket=3"
+    },
+    {
+      "seq": 16,
+      "event": "M3_FREED_WHILE_READER",
+      "detail": "A.Res(after B.Freed, reader-active)=1 (expect 0)"
+    },
+    {
+      "seq": 17,
+      "event": "M3_REREAD",
+      "detail": "A.ReadEnd+ReadBegin=0 (expect 1)"
+    },
+    {
+      "seq": 18,
+      "event": "M3_NEW_GEN",
+      "detail": "A.Res(fresh0, after release)=0 ticket=0 (new gen)"
+    },
+    {
+      "seq": 19,
+      "event": "M4_A_RES_R1",
+      "detail": "FAIL"
+    },
+    {
+      "seq": 20,
+      "event": "M5_A_GPU_RES",
+      "detail": "A.GpuRes(ctxA,1B)=1 ticket_after=1"
+    },
+    {
+      "seq": 21,
+      "event": "M5_B_SAME_CTX",
+      "detail": "B.GpuRes(same ctx)=0 (expect 0)"
+    },
+    {
+      "seq": 22,
+      "event": "M5_WRONG_GUARDS",
+      "detail": "B.GpuRes(after wrong-free/retire)=0 (expect 0)"
+    },
+    {
+      "seq": 23,
+      "event": "M5_B_FREED_A",
+      "detail": "B.GpuRes(after B.Freed(A ticket))=1 (expect 1)"
+    },
+    {
+      "seq": 24,
+      "event": "M5_CTX_RETIRED_CORRECT",
+      "detail": "A.GpuRes(fresh0, after B.ContextRetired(ctxA))=1 (expect 1: retired cleared lease)"
+    },
+    {
+      "seq": 25,
+      "event": "DONE",
+      "detail": "T656 corrected matrix complete"
+    }
+  ],
+  "rowCount": 26,
+  "contiguousSeq": true,
+  "keysInEveryRawRow": [
+    "detail",
+    "event",
+    "seq"
+  ],
+  "bootPidAttemptPresent": false,
+  "fileOpenMode": "std::ios::app, not exclusive create-new",
+  "stateLedger": [
+    {
+      "afterSeq": 8,
+      "observed": "ReadBegin(ticket1)=true",
+      "heldReader": "ticket1",
+      "inference": false
+    },
+    {
+      "afterSeq": 10,
+      "observed": "ReadEnd(ticket1),Freed(ticket1) calls in source and logged",
+      "heldReader": "none",
+      "inference": "void result not returned; existing implementation ends/frees1"
+    },
+    {
+      "afterSeq": 13,
+      "observed": "ReadBegin(ticket2) after BuilderDone=true",
+      "heldReader": "ticket2",
+      "inference": "readerA-active detail string false; ticket1 already released"
+    },
+    {
+      "afterSeq": 14,
+      "observed": "second ReadBegin(ticket2)=false",
+      "heldReader": "ticket2",
+      "inference": "A.ReadEnd(ticket1) cannot end ticket2; false skips conditional cleanup"
+    },
+    {
+      "afterSeq": 15,
+      "observed": "Reserve ticket3=true",
+      "heldReader": "ticket2",
+      "builder": "ticket3"
+    },
+    {
+      "afterSeq": 16,
+      "observed": "Reserve fresh probe after Freed(ticket3)=true; output not logged",
+      "heldReader": "ticket2",
+      "builder": "new probe ticket (serial4 inferred, not observed)",
+      "inference": "ReadBegin(ticket3) return ignored: builder3 and existing reader2 reject it; Freed3 therefore not tested with active reader3; other slot genuinely free"
+    },
+    {
+      "afterSeq": 17,
+      "observed": "ReadEnd/ReadBegin(ticket3)=false",
+      "heldReader": "ticket2",
+      "inference": "ticket3 was freed, not an active reader ignored"
+    },
+    {
+      "afterSeq": 18,
+      "observed": "Reserve fresh0=false",
+      "heldReader": "ticket2",
+      "builder": "leaked new probe",
+      "inference": "earlier builder/two-slot gates; not credit-cap evidence"
+    },
+    {
+      "afterSeq": 19,
+      "observed": "M4 initial Reserve=false",
+      "inference": "M4 cumulative route/process matrix NOT_RUN"
+    },
+    {
+      "afterSeq": 24,
+      "observed": "fresh0 GPU Reserve after B.ContextRetired(matching ctx)=true",
+      "inference": "narrow opaque-context component lease evidence; not eglDestroyContext or driver free"
+    }
+  ],
+  "broker": {
+    "path": ".codex/local-test/t636-harness/libgrs_cold_slots.so",
+    "bytes": 200824,
+    "sha256": "715f314d43549d4eed991922f25faa350fedcaf6ab8dab1598abc980dd278d03"
+  },
+  "releaseBroker": {
+    "path": ".codex/local-test/t608-release/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_cold_slots.so",
+    "bytes": 200824,
+    "sha256": "715f314d43549d4eed991922f25faa350fedcaf6ab8dab1598abc980dd278d03"
+  },
+  "sameBrokerBytes": true,
+  "brokerBuildId": "9c575e5315c89477744bb917d8db3ca9ffa12904",
+  "sources": [
+    {
+      "path": "test/t636/driver_v2.cpp",
+      "bytes": 8488,
+      "sha256": "3294884b3adb83c65f41970ba9b4032839042956e088cd093da55386a52a3736"
+    },
+    {
+      "path": "test/t636/adapter_a.cpp",
+      "bytes": 2600,
+      "sha256": "aaf432796def829c581bf37eab3e086e547b3df1d323c21ae20604379570006e"
+    },
+    {
+      "path": "test/t636/adapter_b.cpp",
+      "bytes": 2600,
+      "sha256": "aaf432796def829c581bf37eab3e086e547b3df1d323c21ae20604379570006e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.cpp",
+      "bytes": 2909,
+      "sha256": "8a9e6325c67eaf152b95abebc5f258b91357a291a4a4f7809bf1ba795deba50f"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/cold_slot_broker.h",
+      "bytes": 3291,
+      "sha256": "15117bfd06bf802ea5b4dc168f2cc52e390abea335a1885559476bc61386e07a"
+    }
+  ],
+  "loader": {
+    "all8NullChecked": true,
+    "selectedPrefix": "A_ on both distinct DSOs",
+    "resolvedNameActuallyLogged": [
+      "Reserve"
+    ],
+    "notAll8ModuleAddressesLogged": true,
+    "unusedBAliasBuilderDoneBool": "B_BuilderDone returns bool but loader selects A_BuilderDone with void signature, not an observed ABI fault"
+  },
+  "hostVsGPUReserve": "host permits known same-route non-reader ticket rebuild when no builder; GPU requires *ticket==0. New isolated probes use fresh0 in both, but do not generalize GPU gate to all host calls",
+  "M4ExtraExpectationBug": "same route 4096+4096==8192 should succeed after BuilderDone with free slot, not expect0",
+  "verdict": "FIXTURE_TICKET_READER_AND_CLEANUP_ERROR; D2_ACTIVE_READER_FREED_NOT_EXERCISED; NO_BROKER_SEMANTIC_CHANGE",
+  "M5": "MATCHING_CONTEXT_RETIREMENT_COMPONENT_POSITIVE_CONTROL_OBSERVED; no claim all8 guards/driverfree",
+  "brokerFreedStaticDisassembly": {
+    "toolSHA256": "8dfe367032345dccea9cff3fb652d11b973a6b87180aefd9f02cfb178810d28b",
+    "command": [
+      "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\llvm-objdump.exe",
+      "--disassemble-symbols=GrsColdFreed",
+      "--no-show-raw-insn",
+      ".codex/local-test/t636-harness/libgrs_cold_slots.so"
+    ],
+    "outputSHA256": "f0e7dadff09046d5161e2101b6ec06bf15918e475e3c1b1186eeae19e70cc383",
+    "output": "\n.codex/local-test/t636-harness/libgrs_cold_slots.so:\tfile format elf64-littleaarch64\n\nDisassembly of section .text:\n\n00000000000065a0 <GrsColdFreed>:\n    65a0:      \tsub\tsp, sp, #96\n    65a4:      \tstp\tx29, x30, [sp, #80]\n    65a8:      \tadd\tx29, sp, #80\n    65ac:      \tadrp\tx8, 0xd000 <GrsColdFreed+0x28>\n    65b0:      \tldr\tx8, [x8, #4064]\n    65b4:      \tldr\tx8, [x8]\n    65b8:      \tstur\tx8, [x29, #-8]\n    65bc:      \tstr\tx0, [sp, #32]\n    65c0:      \tadd\tx0, sp, #40\n    65c4:      \tnop\n    65c8:      \tadr\tx1, #35752\n    65cc:      \tbl\t0x6108 <_ZNSt4__n110lock_guardINS_5mutexEEC2B6v15004ERS1_>\n    65d0:      \tldr\tx0, [sp, #32]\n    65d4:      \tbl\t0x613c <_ZN12_GLOBAL__N_14FindEm>\n    65d8:      \tstr\tx0, [sp]\n    65dc:      \tb\t0x65e0 <GrsColdFreed+0x40>\n    65e0:      \tldr\tx8, [sp]\n    65e4:      \tstr\tx8, [sp, #24]\n    65e8:      \tldr\tx8, [sp, #24]\n    65ec:      \tsubs\tx8, x8, #0\n    65f0:      \tcset\tw8, eq\n    65f4:      \ttbnz\tw8, #0, 0x6660 <GrsColdFreed+0xc0>\n    65f8:      \tb\t0x65fc <GrsColdFreed+0x5c>\n    65fc:      \tldr\tx8, [sp, #24]\n    6600:      \tldrb\tw8, [x8, #21]\n    6604:      \ttbz\tw8, #0, 0x6630 <GrsColdFreed+0x90>\n    6608:      \tb\t0x660c <GrsColdFreed+0x6c>\n    660c:      \tmov\tw8, #1\n    6610:      \tstr\tw8, [sp, #8]\n    6614:      \tb\t0x6668 <GrsColdFreed+0xc8>\n    6618:      \tmov\tw8, w1\n    661c:      \tstr\tx0, [sp, #16]\n    6620:      \tstr\tw8, [sp, #12]\n    6624:      \tadd\tx0, sp, #40\n    6628:      \tbl\t0x6250 <_ZNSt4__n110lock_guardINS_5mutexEED2B6v15004Ev>\n    662c:      \tb\t0x66a0 <GrsColdFreed+0x100>\n    6630:      \tsub\tx8, x29, #32\n    6634:      \tstur\txzr, [x29, #-32]\n    6638:      \tstur\txzr, [x29, #-24]\n    663c:      \tstur\twzr, [x29, #-16]\n    6640:      \tsturb\twzr, [x29, #-12]\n    6644:      \tsturb\twzr, [x29, #-11]\n    6648:      \tldr\tx9, [sp, #24]\n    664c:      \tldur\tq0, [x29, #-32]\n    6650:      \tstr\tq0, [x9]\n    6654:      \tldur\tx8, [x8, #14]\n    6658:      \tstur\tx8, [x9, #14]\n    665c:      \tb\t0x6660 <GrsColdFreed+0xc0>\n    6660:      \tstr\twzr, [sp, #8]\n    6664:      \tb\t0x6668 <GrsColdFreed+0xc8>\n    6668:      \tadd\tx0, sp, #40\n    666c:      \tbl\t0x6250 <_ZNSt4__n110lock_guardINS_5mutexEED2B6v15004Ev>\n    6670:      \tldur\tx9, [x29, #-8]\n    6674:      \tadrp\tx8, 0xd000 <GrsColdFreed+0xf0>\n    6678:      \tldr\tx8, [x8, #4064]\n    667c:      \tldr\tx8, [x8]\n    6680:      \tsubs\tx8, x8, x9\n    6684:      \tcset\tw8, eq\n    6688:      \ttbnz\tw8, #0, 0x6694 <GrsColdFreed+0xf4>\n    668c:      \tb\t0x6690 <GrsColdFreed+0xf0>\n    6690:      \tbl\t0xcc20 <__stack_chk_fail@plt>\n    6694:      \tldp\tx29, x30, [sp, #80]\n    6698:      \tadd\tsp, sp, #96\n    669c:      \tret\n    66a0:      \tldr\tx0, [sp, #16]\n    66a4:      \tbl\t0xcc00 <_Unwind_Resume@plt>\n",
+    "readerGuard": "0x6600 ldrb [slot+21], 0x6604 tbz to clear only if reader bit0=0; true branch skips slot clear and unlocks. Static inspection, no native library load/execution"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "schema": "T665_RX_CAPTURE_SCOPE_HYGIENE_V1",
+  "date": "2026-11-19",
+  "boundaries": {
+    "role": "architect",
+    "deviceUsed": false,
+    "buildRun": false,
+    "productTestsRun": false,
+    "productPASS": false,
+    "CPU": "STOPPED",
+    "goal10": "PAUSED",
+    "waterOrder": [
+      13,
+      14,
+      12
+    ],
+    "oldWetM1": "DEFERRED",
+    "render": "XComponent+shader including foreground/background; FAULT or explicitly STALE prior valid new-pipeline frame; no Canvas/softwareGL product fallback",
+    "executionRequirement": "要么完成本卡当前约定范围及本角色必要检查，要么遇到确实无法继续的具体问题才停止；不能做一点就停下。",
+    "queue": "不允许修改 D:\\hmprojects\\HelloWorld\\docs\\后续工作清单.md；唯一例外本人行状态；不得更新滴答同名清单",
+    "roles": "developer implementation+compile; tester/effector fixture/sign/deploy/test/evidence; no device/manager closure gate"
+  },
+  "verdict": "RX_SOURCE_LOCAL_SYMBOL_REUSE_TARGET_COMPILER_REJECTION; SAME_SHADER_IN_DIFFERENT_NATIVE_ELFS; NOT_PROVEN_STALE_SHADER_OR_PHYSICS_DEFECT",
+  "evidence": "docs/analysis-T665-evidence-v1.json",
+  "oldProductionShader": {
+    "fileOffset": 278137,
+    "bytes": 145268,
+    "sha256": "74c820ecabfa8025361c42e10646642bf22d1f9b49cdb912349e2b856b6c1d25",
+    "lines": 2144
+  },
+  "testedELF": {
+    "task": "T645-rx",
+    "packageSHA": "0bdf3304533c3f3e8d7a13c80932115be01e655bd3ccdb632b288877c7b3c4db",
+    "packageReceiptMatched": true,
+    "module": "libgrs_g9rx.so",
+    "bytes": 1399592,
+    "sha256": "b050b96e3cda592841f33fe47322db4e23654e44089145e9fc02552fbc74fd63",
+    "buildId": "e0e6203459b9f4691bef6d7ec89ea92de0022b4b"
+  },
+  "oldDeveloperELF": {
+    "path": ".codex/local-test/t644-delivery-v1/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g9rx.so",
+    "bytes": 5540744,
+    "sha256": "a04296f2fbc29241972ca0bb418a3f738f52105d19e4d6c1b021614cca52ac9e",
+    "buildId": "a0488247ca999cf3931dc8897ba9b88f03621fbe",
+    "receiptMatches": true
+  },
+  "sameEmbeddedShader": true,
+  "loadedMemoryBuildIdIsFullSourceCapture": false,
+  "legacyCaptureFunction": {
+    "firstLine": 1723,
+    "lastLine": 1750,
+    "sha256LF": "d373b9c51027882f5a32b9d5a8c4c2cfaca21840d299dfdda8e210e36f510655"
+  },
+  "transformation": {
+    "id": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+    "expectedFunctions": 1,
+    "expectedTransforms": 1,
+    "originalFrozenPipelineSHA": "972edb7f6b4b7a387f57bb1578b8c3bb66cdad7e226be8f943857a49de06063b",
+    "scope": "only generated RX g9Capture after approved frozen-source SHA and RX math injection, before final source hash/output",
+    "names": {
+      "contactClearLoop": "clearSlot",
+      "candidateScanLoop": "scanSlot",
+      "selectedPacketLocal": "selectedSlot"
+    },
+    "scanLoopBraces": "explicit compound statement",
+    "binding": "lexically correct range per variable; no global slot replace",
+    "unchanged": [
+      "loop bounds/order",
+      "best comparator and tie-break",
+      "arithmetic/indices",
+      "events/packet ids",
+      "continue/break",
+      "DM physics/Config/time",
+      "T647 proof/masks"
+    ],
+    "frozenSourceEdited": false,
+    "legacyOutputFragment": "fatal if legacy slot redeclaration remains",
+    "record": "function before/after exact LF SHA, binding ranges, count1"
+  },
+  "singleSource": {
+    "bytes": "one canonical UTF8 LF no BOM/no embedded NUL/no injected #line",
+    "compFile": "write_bytes same canonical source",
+    "cppHeaderLiteral": "same source, C terminator excluded from shaderSHA",
+    "manifest": "canonical byte count/SHA separate from container file SHA and any legacy CRLF disk SHA",
+    "harness": "new explicit hooks variant, independent SHA; saved older harness not product proof"
+  },
+  "identity": {
+    "runtimeRXPreBuild": "existing native byte SHA/strlen equals generated shader and active program contract or SOURCE_IDENTITY_MISMATCH; no GL query",
+    "dependencies": [
+      "this T665 contract",
+      "RX generator and hygiene transform revision/receipt",
+      "frozen source receipt",
+      "canonical source and generated literal",
+      "kernel_assets/transport",
+      "actual shared program_factory/create_diagnostics source wrapper",
+      "native compilation inputs/ELF receipt"
+    ],
+    "recompute": [
+      "shaderSHA",
+      "sourceManifestSHA",
+      "implementationSHA",
+      "bundleSHA",
+      "pipeline/cacheABI",
+      "reader identity"
+    ],
+    "missingMismatchStale": "FATAL_NO_OLD_ASSET_FALLBACK",
+    "noDefaultOrFrozenRewrite": true
+  },
+  "developerFiles": [
+    "tools/g9rx/generate_assets.py",
+    "tools/g9rx/prepare_build.cjs",
+    "tools/g9rx/build_receipt.py",
+    "entry/src/main/cpp/gpu_resident/g9rx/transport.cpp",
+    "entry/src/main/cpp/gpu_resident/g9rx/CMakeLists.txt",
+    "generated RX pipeline/header/identity/reader assets"
+  ],
+  "compileChecks": [
+    "actual final production canonical GLSL with exact compiler path/version/flags/macros/target/log/exit",
+    "native+ArkTS unsigned product build",
+    "extract linked ELF actual source bytes and compare canonical SHA/length/line mapping"
+  ],
+  "developerDeviceGate": false,
+  "staticCompileIsProductPASS": false,
+  "compilerConformanceRootCause": "NOT_PROVEN",
+  "tester": {
+    "originalTask": "T645",
+    "after": "repaired actual artifact identities ready, no manager approval gate",
+    "capture": [
+      "loaded fileSHA/BuildId separate from memory PT_NOTE",
+      "same attempt boot/ticket/context/window/owner/time",
+      "program role/handle",
+      "actual sourceSHA/length and canonical source manifest",
+      "compile/link ENTER EXIT/error and raw log bytes",
+      "line mapping"
+    ],
+    "remaining": "READY/pulse/touch/T642 N01-N11/FIFO/DM/replay/cold CURRENT-BASE/reader/cost/full shader frames all original scope, currently NOT_REACHED"
+  },
+  "missingReceipt": "use existing actual program artifact cold/status first; exact same-attempt missing field to architect before minimal bounded seam, no generic thread/GLquery",
+  "T666": "separate idempotent link-flags work; not a prerequisite to this shader attribution or universal buildPASS"
+}
