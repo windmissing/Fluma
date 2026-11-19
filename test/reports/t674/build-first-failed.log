@@ -1,0 +1,86 @@
+Installing dependencies...
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1
++
+Progress: resolved 1, reused 1, downloaded 0, added 0
+Progress: resolved 1, reused 1, downloaded 0, added 1
+Progress: resolved 1, reused 1, downloaded 0, added 1, done
+ WARN  Issues with peer dependencies found
+.
+└─┬ @ohos/hvigor-ohos-plugin 6.26.8
+  └── ✕ missing peer @ohos/hvigor@6.26.8
+Peer dependencies that should be installed:
+  @ohos/hvigor@6.26.8
+
+dependencies:
++ @ohos/hvigor-ohos-plugin 6.26.8
+
+Done in 1m 24.6s using pnpm v10.28.2
+Hvigor install success.
+> hvigor [32mFinished :entry:clean... after 3 ms [39m
+> hvigor [32mFinished :entry:default@PreBuild... after 166 ms [39m
+> hvigor [32mFinished :entry:default@CreateModuleInfo... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GenerateMetadata... after 5 ms [39m
+> hvigor [32mFinished :entry:default@ConfigureCmake... after 29 ms [39m
+> hvigor [32mFinished :entry:default@MergeProfile... after 44 ms [39m
+> hvigor [32mFinished :entry:default@CreateBuildProfile... after 4 ms [39m
+> hvigor [32mFinished :entry:default@PreCheckSyscap... after 1 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgContextInfo... after 9 ms [39m
+> hvigor [32mFinished :entry:default@GeneratePkgSdkInfo... after 8 ms [39m
+> hvigor [32mFinished :entry:default@ProcessIntegratedHsp... after 1 ms [39m
+> hvigor [32mFinished :entry:default@MakePackInfo... after 4 ms [39m
+> hvigor [32mFinished :entry:default@ProcessProfile... after 291 ms [39m
+> hvigor [32mFinished :entry:default@ProcessRouterMap... after 6 ms [39m
+> hvigor [32mFinished :entry:default@ProcessShareConfig... after 3 ms [39m
+> hvigor [32mFinished :entry:default@ProcessStartupConfig... after 2 ms [39m
+> hvigor [32mFinished :entry:default@ProcessResource... after 5 ms [39m
+> hvigor [32mFinished :entry:default@GenerateLoaderJson... after 12 ms [39m
+> hvigor [32mFinished :entry:default@CompileResource... after 292 ms [39m
+> hvigor [32mFinished :entry:default@BuildJS... after 10 ms [39m
+> hvigor [32mFinished :entry:default@SyscapTransform... after 160 ms [39m
+> hvigor [32mFinished :entry:default@BuildNativeWithCmake... after 5 s 220 ms [39m
+> hvigor WARN: ninja: error: build.ninja:403: D:/hmprojects/HelloWorld/.codex/local-test/t674-delivery/entry/src/main/cpp/gpu_resident/napi_provider_profile.h is defined as an output multiple times
+
+
+> hvigor ERROR: Failed :entry:default@BuildNativeWithNinja... 
+> hvigor ERROR: 00303300 Configuration Error
+Error Message: Exceptions happened while executing C:\Users\admin\AppData\Local\OpenHarmony\Sdk\26.0.0\native\build-tools\cmake\bin\ninja.exe -C D:\hmprojects\HelloWorld\.codex\local-test\t674-delivery\entry\.cxx\default\default\debug\arm64-v8a.
+ninja: error: build.ninja:403: D:/hmprojects/HelloWorld/.codex/local-test/t674-delivery/entry/src/main/cpp/gpu_resident/napi_provider_profile.h is defined as an output multiple times
+
+undefined
+
+* Try the following:
+  > Check the error details to identify which module failed.
+  > Verify CMake/Ninja configuration is correct.
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+[31m
+FAILURE: Build completed with 1 failure.[31m[39m
+[31m
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task 'default@BuildNativeWithNinja'.
+[31m00303300 Configuration Error
+[31mError Message: Exceptions happened while executing C:\Users\admin\AppData\Local\OpenHarmony\Sdk\26.0.0\native\build-tools\cmake\bin\ninja.exe -C D:\hmprojects\HelloWorld\.codex\local-test\t674-delivery\entry\.cxx\default\default\debug\arm64-v8a.
+[31mninja: error: build.ninja:403: D:/hmprojects/HelloWorld/.codex/local-test/t674-delivery/entry/src/main/cpp/gpu_resident/napi_provider_profile.h is defined as an output multiple times[31m[39m
+[31m[31m[39m
+undefined
+[31m
+* Try the following:
+  > Check the error details to identify which module failed.
+  > Verify CMake/Ninja configuration is correct.
+[39m
+
+[31m* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+[31m[39m
+[31m================================================================================[31m[39m
+> hvigor ERROR: BUILD FAILED in 13 s 658 ms 
+
+22 tasks in total: 22 executed, 0 up-to-date

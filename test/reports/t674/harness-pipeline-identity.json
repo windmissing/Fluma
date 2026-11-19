@@ -1,0 +1,73 @@
+{
+  "schema": "GNR1_PIPELINE_IDENTITY_V2",
+  "shaderSHA": "61779b04a863e5cfbee9fc07b38d4483408703e26916fa412aa6e869e8cb5961",
+  "canonicalBytes": 145494,
+  "canonicalLines": 2146,
+  "hygieneRevision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+  "scopeTransform": {
+    "revision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+    "transforms": 1,
+    "beforeSHA256LF": "d373b9c51027882f5a32b9d5a8c4c2cfaca21840d299dfdda8e210e36f510655",
+    "afterSHA256LF": "24936c8e49c6d6e765ac865624bca6e31acc48ecbf0dd2f92e158c863693dbd0",
+    "bindingsOriginalFunctionOffsets": [
+      {
+        "name": "clearSlot",
+        "begin": 99,
+        "end": 160
+      },
+      {
+        "name": "scanSlot",
+        "begin": 220,
+        "end": 386
+      },
+      {
+        "name": "selectedSlot",
+        "begin": 407,
+        "end": 2992
+      }
+    ],
+    "bindingsCanonicalFunctionOffsets": [
+      {
+        "name": "clearSlot",
+        "begin": 99,
+        "end": 180
+      },
+      {
+        "name": "scanSlot",
+        "begin": 240,
+        "end": 440
+      },
+      {
+        "name": "selectedSlot",
+        "begin": 461,
+        "end": 3182
+      }
+    ],
+    "originalFunctionStart": 106857,
+    "originalFunctionEnd": 109865,
+    "firstLine": 1723,
+    "lastLine": 1750,
+    "sourceBytesUnchangedOutsideFunction": true
+  },
+  "variant": "HARNESS_NOT_PRODUCT",
+  "sceneSHA": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a",
+  "sourceManifestSHA": "dfe20ad33e970ed3e58445a4da2be0fd8f8bd7c16036b050c4a6afcc1b704df7",
+  "staticContractSHA": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+  "pipelineSHA": "61779b04a863e5cfbee9fc07b38d4483408703e26916fa412aa6e869e8cb5961",
+  "generatedFiles": {
+    "capture_line_map.json": "ab75b751ff279dc79b7e5c289b4e56bc173492e659250b5d2c282a9044aeffaf",
+    "cold_generated.h": "9a182e18458a6ec19aa4b95f92dec9c3d5709439dcf3b60e3287bb73f23093c5",
+    "contract_generated.h": "b2157811030fe71f5203b43c6abcef892964cfefffbb6147ca315cdb9bbe39e8",
+    "implementation_generated.h": "a9fcc91176ea5f6b8e8315f4466af3d7691fe27249c2d2bd2399fae5792d0c5f",
+    "inputs.json": "c0cffca759387830c59cc338d7b82cd57918ed1a3313a3052338ccbee1ea2fec",
+    "pipeline.comp": "61779b04a863e5cfbee9fc07b38d4483408703e26916fa412aa6e869e8cb5961",
+    "pipeline_source.h": "19253bf9cca37470abe92397dc40c15f12193972069195721467719172ceb09e",
+    "reader_schema.json": "712ca35d70016c25b17f513a643d13190e994eb1a3e2b1ad6904970ca1207cb4",
+    "rx_dependencies.cmake": "4a2a4dc257fe815330cf46f1c0dfef84dd1bf56c0ba03e3d018b5f798bc2989a",
+    "scene_generated.h": "618b7d2c44c1bc7d14053a5b5197383d059eee2c9bf633d6844154af98aa667a",
+    "schema_generated.h": "53247d274b3c6c07c231d3b78e0acc8368503541bb0548b50fd451fe71f4ef63",
+    "seed_constructor_receipt.json": "3ee3b6d27534142ac863bea48a4eeba186390271592d3f3863ce9016499cd552",
+    "seed_generated.h": "181c18f7c50ec949cc412db3d4f1cc13e0a057a4d3fc3bc15ff22c7bd04d6aac"
+  },
+  "bundleSHA": "00485126f10ec07408877b05d62ad2ef2ba5cb617231387a714d806418912049"
+}

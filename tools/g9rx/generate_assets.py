@@ -2,13 +2,14 @@
 # T644 isolated GNR1 compiler inputs. No runtime or test execution.
 from pathlib import Path
 import json,hashlib,argparse,struct
+from capture_scope import convert, REVISION
 ROOT=Path(__file__).resolve().parents[2];MOD=ROOT/'entry/src/main/cpp/gpu_resident/g9rx'
 def sha(b):return hashlib.sha256(b).hexdigest()
 def one(s,a,b):
  if s.count(a)!=1:raise ValueError('RX_ANCHOR '+a[:100])
  return s.replace(a,b)
 def generate(out,test_hooks=False):
- out.mkdir(parents=True,exist_ok=True);receipt=json.loads((MOD/'frozen/source_receipt.json').read_text(encoding='utf8'));deps={}
+ out.mkdir(parents=True,exist_ok=True);contract=json.loads((ROOT/'docs/architecture-T665-contract-v1.json').read_text(encoding='utf8'));receipt=json.loads((MOD/'frozen/source_receipt.json').read_text(encoding='utf8'));deps={}
  for n,h in receipt['sha256'].items():
   b=(MOD/'frozen'/n).read_bytes()
   if sha(b)!=h:raise ValueError('FROZEN_PARENT_CHANGED '+n)
@@ -24,7 +25,8 @@ def generate(out,test_hooks=False):
  for relative in ['docs/design-T637-manifest-v1.json','docs/architecture-T552-g9-seed-manifest-v2.json','docs/design-G9-dynamic-mobilization-manifest-v2.json','entry/src/main/ets/pages/GpuResidentG9Rx.ets','entry/src/main/ets/entryability/G9RxResearchAbility.ets','entry/src/main/ets/physics/G9RxColdArchiveCore.ets','entry/src/main/ets/physics/GpuG9RxCold.ets','entry/src/main/ets/workers/G9RxColdWorker.ets']:
   deps[relative]=sha((ROOT/relative).read_bytes())
  raw=(ROOT/'docs/architecture-T647-acceptance-v1.json').read_bytes();tables['acceptance']=json.loads(raw);deps['docs/architecture-T647-acceptance-v1.json']=sha(raw)
- s=(MOD/'frozen/pipeline.comp').read_text(encoding='utf8');dm=(MOD/'physical_dm.glsl').read_text(encoding='utf8');deps['physical_dm.glsl']=sha(dm.encode())
+ if sha((MOD/'frozen/pipeline.comp').read_bytes())!=contract['transformation']['originalFrozenPipelineSHA']:raise ValueError('T665_FROZEN_PIPELINE_IDENTITY')
+ s=(MOD/'frozen/pipeline.comp').read_text(encoding='utf8');dm=(MOD/'physical_dm.glsl').read_text(encoding='utf8');deps['physical_dm.glsl']=sha((MOD/'physical_dm.glsl').read_bytes())
  a=s.index('uint dmWord(');b=s.index('bool g9StartThreshold(',a);s=s[:a]+dm+'\n'+s[b:]
  s=one(s,'uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,','uniform uint uRootKind,uRequiredAudits;\nuniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,')
  s=s.replace('uRequiredPasses==2024u','uRootKind==2u').replace('uRequiredPasses==12u','uRootKind==1u')
@@ -56,7 +58,7 @@ def generate(out,test_hooks=False):
  s=s.replace('adapter!=53401u||(flags&4u)==0u||(flags&~7u)!=0u','adapter!=63701u||(flags&8u)==0u||(flags&~11u)!=0u')
  s=s.replace('g9UCmp(duration,g9U32(8333334u))<0||g9UCmp(duration,g9U32(1000000000u))>0', 'any(notEqual(duration,g9U32(125000000u)))')
  s=s.replace('flags!=(4u|', 'flags!=(8u|')
- audit=(MOD/'physical_audit.glsl').read_text(encoding='utf-8-sig');deps['physical_audit.glsl']=sha(audit.encode())
+ audit=(MOD/'physical_audit.glsl').read_text(encoding='utf-8-sig');deps['physical_audit.glsl']=sha((MOD/'physical_audit.glsl').read_bytes())
  # Forward declarations are ordinary function declarations; the bodies follow all parent helpers.
  s=one(s,'void g9BeginScope(){','void dmBeginScope();\nvoid dmSealScope();\nvoid g9BeginScope(){')
  s=one(s,' uint row[64];g9Event(row,G9_EVENT_ROOT_BEGIN,0u,0u,0u);row[15]=uJ;', ' dmBeginScope();\n uint row[64];g9Event(row,G9_EVENT_ROOT_BEGIN,0u,0u,0u);row[15]=uJ;')
@@ -68,8 +70,13 @@ def generate(out,test_hooks=False):
  s=one(s,'uint row[64];g9Event(row,G9_EVENT_STEP_SEAL,0u,0u,0u);','if(!dmMicroCertificate()){g9Fault(25u,0u,126u);return;}uint row[64];g9Event(row,G9_EVENT_STEP_SEAL,0u,0u,0u);')
  s=one(s,'uint flow=g9Column(c,1u),mode=g9Column(c,4u),oldRest=', 'uint flow=g9Column(c,1u),mode=dmWord(c,33u),oldRest=')
  s=s.replace('row[23]=65535u;', 'row[23]=dmScopeAudit();').replace('g9Set(17u,65535u);','g9Set(17u,dmRootAudit());')
+ s,hygiene=convert(s,contract)
  if test_hooks:s+='\n// GNR1_NATIVE_HARNESS_NOT_PRODUCT\n'
- (out/'pipeline.comp').write_text(s,encoding='utf8');(out/'pipeline_source.h').write_text('#pragma once\ninline constexpr const char* kRxPipeline=R"RXGPU('+s+')RXGPU";\ninline constexpr const char* kRxPipelineSHA="'+sha(s.encode())+'";\n',encoding='utf8')
+ canonical=s.encode('utf8')
+ if b'\r' in canonical or b'\0' in canonical or canonical.startswith(b'\xef\xbb\xbf') or '#line' in s:raise ValueError('RX_NON_CANONICAL_SOURCE')
+ (out/'pipeline.comp').write_bytes(canonical)
+ container='#pragma once\n#include <cstdint>\ninline constexpr const char* kRxPipeline=R"RXGPU('+s+')RXGPU";\ninline constexpr const char* kRxPipelineSHA="'+sha(canonical)+'";\ninline constexpr uint64_t kRxCanonicalShaderBytes='+str(len(canonical))+'ull;\ninline constexpr const char* kRxCaptureHygiene="'+REVISION+'";\n'
+ (out/'pipeline_source.h').write_bytes(container.encode('utf8'))
  header='#pragma once\n#include <array>\n#include <cstdint>\nnamespace grs::g9rx {\n'
  seeds=tables['seed-config']['profiles']
  for profile in seeds:
@@ -119,18 +126,34 @@ def generate(out,test_hooks=False):
   for mode,data in profile['modes'].items():
    cold+=f'inline constexpr std::array<ColdSegment,{len(data["segments"])}> kCold{profile["K"]}{mode}={{{{'+','.join('{'+str(seg['byteStart'])+','+str(seg['bytes'])+'}' for seg in data['segments'])+'}};\n'
  cold+='}\n';(out/'cold_generated.h').write_text(cold,encoding='utf8')
+ for directory in [MOD, ROOT/'tools/g9rx', ROOT/'entry/src/main/cpp/gpu_resident/program_cache']:
+  for file in sorted(directory.glob('*')):
+   if file.is_file():deps[file.relative_to(ROOT).as_posix()]=sha(file.read_bytes())
+ for relative in ['docs/architecture-T665-contract-v1.json','docs/architecture-T665-v1.md','entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h','entry/src/main/cpp/gpu_resident/uniform_locations.h','entry/src/main/cpp/gpu_resident/g9rx/frozen/source_receipt.json']:
+  deps[relative]=sha((ROOT/relative).read_bytes())
+ deps={name.replace("\\","/"):value for name,value in deps.items()}
  implementation=hashlib.sha256();implementation.update(b'HARNESS' if test_hooks else b'PRODUCTION');implementation.update(Path(__file__).read_bytes());implementation.update(json.dumps(deps,sort_keys=True).encode())
  for path in sorted(MOD.glob('*')):
   if path.is_file():implementation.update(path.name.encode()+b'\0'+path.read_bytes())
  schema=schema.replace('t555-g9dm-v2-initial-construction','t644-gnr1-t641-t647-v1:'+implementation.hexdigest()).replace('kContainerRevision=2u','kContainerRevision=1u')
  (out/'schema_generated.h').write_text(schema,encoding='utf8')
  (out/'implementation_generated.h').write_text('#pragma once\n#define kRxImplementationSHA "'+implementation.hexdigest()+'"\n',encoding='utf8')
- identity={'schema':'GNR1_PIPELINE_IDENTITY_V1','shaderSHA':sha(s.encode()),'sceneSHA':sha(scene.encode()),'sourceManifestSHA':implementation.hexdigest(),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json']}
+ identity={'schema':'GNR1_PIPELINE_IDENTITY_V2','shaderSHA':sha(canonical),'canonicalBytes':len(canonical),'canonicalLines':s.count('\n'),'hygieneRevision':REVISION,'scopeTransform':hygiene,'variant':'HARNESS_NOT_PRODUCT' if test_hooks else 'PRODUCTION','sceneSHA':sha(scene.encode()),'sourceManifestSHA':implementation.hexdigest(),'staticContractSHA':deps['docs/architecture-T647-acceptance-v1.json']}
+ pipeline=sha(canonical)
+ with (out/'contract_generated.h').open('a',encoding='utf8',newline='\n') as f:f.write('namespace grs::g9rx { inline constexpr const char* kPipelineSHA="'+pipeline+'"; }\n')
+ identity['pipelineSHA']=pipeline
+ reader=dict(tables);reader['sourceIdentity']={key:identity[key] for key in ['schema','shaderSHA','canonicalBytes','hygieneRevision','sourceManifestSHA','variant']}
+ (out/'reader_schema.json').write_bytes((json.dumps(reader,ensure_ascii=False,indent=2)+'\n').encode('utf8'))
+ (out/'capture_line_map.json').write_bytes((json.dumps(hygiene,indent=2)+'\n').encode())
+ (out/'inputs.json').write_bytes((json.dumps(deps,indent=2)+'\n').encode('utf8'))
+ paths=[(ROOT/name if name.startswith(('entry/','docs/','tools/')) else MOD/name).resolve().as_posix() for name in deps]
+ (out/'rx_dependencies.cmake').write_bytes(('set(RX_GENERATED_INPUTS\n'+''.join('"'+name+'"\n' for name in sorted(set(paths)))+')\n').encode('utf8'))
+ for file in out.iterdir():
+  if file.is_file() and file.suffix in ['.h','.json','.comp','.cmake']:file.write_bytes(file.read_bytes().replace(b'\r\n',b'\n'))
+ identity['generatedFiles']={file.name:sha(file.read_bytes()) for file in sorted(out.iterdir()) if file.is_file() and file.name!='pipeline_identity.json'}
  identity['bundleSHA']=sha(json.dumps(identity,sort_keys=True,separators=(',',':')).encode())
- pipeline=sha(s.encode())
- with (out/'contract_generated.h').open('a',encoding='utf8') as f:f.write('namespace grs::g9rx { inline constexpr const char* kPipelineSHA="'+pipeline+'"; }\n')
- identity['pipelineSHA']=pipeline;(out/'pipeline_identity.json').write_text(json.dumps(identity,indent=2)+'\n',encoding='utf8')
- (out/'inputs.json').write_text(json.dumps(deps,indent=2)+'\n',encoding='utf8');return s
+ (out/'pipeline_identity.json').write_bytes((json.dumps(identity,indent=2)+'\n').encode())
+ return s
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--out',type=Path,default=MOD/'generated');p.add_argument('--test-hooks',action='store_true');a=p.parse_args();generate(a.out,a.test_hooks)
 

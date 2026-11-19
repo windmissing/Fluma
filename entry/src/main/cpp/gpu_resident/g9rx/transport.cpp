@@ -194,9 +194,12 @@ Result Transport::Create(const Config &config, const ControlIdentity &id,
       uint64_t(maximum) <
           std::max(p->arenaBytes, std::max(p->stateBytes, p->workBytes)))
     return Result::UNSUPPORTED;
+  const char* actualSource=PipelineSource();const size_t actualBytes=std::strlen(actualSource);
+  if(actualBytes!=kRxCanonicalShaderBytes||programcache::Hash(actualSource,actualBytes)!=PipelineSourceHash()||std::strcmp(PipelineSourceHash(),kPipelineSHA)!=0||std::strcmp(kRxCaptureHygiene,"RX_CAPTURE_SCOPE_HYGIENE_V1")!=0)
+    return Result::SOURCE_IDENTITY_MISMATCH;
   GLenum error = 0;
   if (!programcache::Build(1, PipelineSource(), PipelineSourceHash(),
-                           "GNR1_T641_T647_DM2_V1|" kRxImplementationSHA,
+                           "GNR1_T665_CAPTURE_SCOPE_V1|" kRxImplementationSHA,
                            program_.id, error) ||
       !programcache::Reflect(program_.uniforms, program_.id)) {
     if (error && !firstGl_)

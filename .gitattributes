@@ -64,3 +64,6 @@ docs/receipt-T680-*.json -text whitespace=cr-at-eol
 docs/analysis-T682-*.json -text whitespace=cr-at-eol
 docs/architecture-T682-*.json -text whitespace=cr-at-eol
 docs/receipt-T682-*.json -text whitespace=cr-at-eol
+
+# T674 original canonical shader and compile evidence bytes.
+test/reports/t674/** -text -whitespace

@@ -239,7 +239,7 @@ void App::Loop() {
           controller_.Stop();
         SetStage(result == Result::OK
                      ? "CONFIGURED"
-                     : "CONFIGURE_FAILED_" + std::to_string(uint32_t(result)));
+                     : result==Result::SOURCE_IDENTITY_MISMATCH?"SOURCE_IDENTITY_MISMATCH":"CONFIGURE_FAILED_" + std::to_string(uint32_t(result)));
       }
     }
     if (context_ == EGL_NO_CONTEXT)

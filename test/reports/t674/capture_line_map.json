@@ -1,0 +1,45 @@
+{
+  "revision": "RX_CAPTURE_SCOPE_HYGIENE_V1",
+  "transforms": 1,
+  "beforeSHA256LF": "d373b9c51027882f5a32b9d5a8c4c2cfaca21840d299dfdda8e210e36f510655",
+  "afterSHA256LF": "24936c8e49c6d6e765ac865624bca6e31acc48ecbf0dd2f92e158c863693dbd0",
+  "bindingsOriginalFunctionOffsets": [
+    {
+      "name": "clearSlot",
+      "begin": 99,
+      "end": 160
+    },
+    {
+      "name": "scanSlot",
+      "begin": 220,
+      "end": 386
+    },
+    {
+      "name": "selectedSlot",
+      "begin": 407,
+      "end": 2992
+    }
+  ],
+  "bindingsCanonicalFunctionOffsets": [
+    {
+      "name": "clearSlot",
+      "begin": 99,
+      "end": 180
+    },
+    {
+      "name": "scanSlot",
+      "begin": 240,
+      "end": 440
+    },
+    {
+      "name": "selectedSlot",
+      "begin": 461,
+      "end": 3182
+    }
+  ],
+  "originalFunctionStart": 106857,
+  "originalFunctionEnd": 109865,
+  "firstLine": 1723,
+  "lastLine": 1750,
+  "sourceBytesUnchangedOutsideFunction": true
+}

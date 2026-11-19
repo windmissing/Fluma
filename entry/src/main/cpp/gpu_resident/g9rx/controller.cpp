@@ -96,8 +96,10 @@ Result Controller::ConfigureResearch(const Config &config,
       return Result::INVALID;
   }
   auto result = transport_.Create(config, id, {});
-  if (result != Result::OK)
+  if (result != Result::OK) {
+    if(result==Result::SOURCE_IDENTITY_MISMATCH){std::lock_guard<std::mutex> lock(protocol_.sync.protocol);if(!protocol_.payload.control[RxProtocol::FIRST_ERROR])protocol_.payload.control[RxProtocol::FIRST_ERROR]=uint32_t(result);}
     return result;
+  }
   const auto *p = transport_.SelectedProfile();
   ProfileRequirements requirements{p->stateBytes, p->workBytes, p->arenaBytes};
   if (transport_.QueryComputeCaps(requirements, &caps_) != Result::OK) {
