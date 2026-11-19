@@ -1,0 +1,2504 @@
+{
+  "schema": "T641_RX_STORAGE_COLD_V1",
+  "date": "2026-11-19",
+  "task": "T641",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "defaultOFF": true,
+  "profile": "G9_DM_NATIVE_RECEIPT_SPATIAL_R1",
+  "profileCode": 827477575,
+  "domain": "NATIVE_RECEIPT_SPATIAL_CONTROL",
+  "design": {
+    "path": "docs/design-T637-manifest-v1.json",
+    "bytes": 26719,
+    "sha256": "87920db46fa1e14055adcc8f275e49898788d56a0cf755e51b5abab72795fbb7"
+  },
+  "payloadBytes": 40960,
+  "payloadAlignment": 64,
+  "payload": [
+    {
+      "name": "WitnessDraftOrRecord20x1024",
+      "byteStart": 0,
+      "bytes": 20480,
+      "byteEnd": 20480
+    },
+    {
+      "name": "ConfigSeedCapabilityMapping4x256",
+      "byteStart": 20480,
+      "bytes": 1024,
+      "byteEnd": 21504
+    },
+    {
+      "name": "SerializationAndRootConfigScratch",
+      "byteStart": 21504,
+      "bytes": 1024,
+      "byteEnd": 22528
+    },
+    {
+      "name": "TerminalJournal16x64",
+      "byteStart": 22528,
+      "bytes": 1024,
+      "byteEnd": 23552
+    },
+    {
+      "name": "Control256IncludingManualPose128",
+      "byteStart": 23552,
+      "bytes": 1024,
+      "byteEnd": 24576
+    },
+    {
+      "name": "InputCapsules19x512",
+      "byteStart": 24576,
+      "bytes": 9728,
+      "byteEnd": 34304
+    },
+    {
+      "name": "BridgeAndPadding",
+      "byteStart": 34304,
+      "bytes": 6656,
+      "byteEnd": 40960
+    }
+  ],
+  "bridge": [
+    {
+      "name": "RAW64x2",
+      "byteStart": 34304,
+      "bytes": 512,
+      "byteEnd": 34816
+    },
+    {
+      "name": "Reply",
+      "byteStart": 34816,
+      "bytes": 2048,
+      "byteEnd": 36864
+    },
+    {
+      "name": "LoadedIdentityReceipt",
+      "byteStart": 36864,
+      "bytes": 1024,
+      "byteEnd": 37888
+    },
+    {
+      "name": "FrameCommitSidecar20x16",
+      "byteStart": 37888,
+      "bytes": 320,
+      "byteEnd": 38208
+    },
+    {
+      "name": "MappingScratch2x256",
+      "byteStart": 38208,
+      "bytes": 512,
+      "byteEnd": 38720
+    },
+    {
+      "name": "HashWorkspace2x128",
+      "byteStart": 38720,
+      "bytes": 256,
+      "byteEnd": 38976
+    },
+    {
+      "name": "SourceIntentKeys16x16",
+      "byteStart": 38976,
+      "bytes": 256,
+      "byteEnd": 39232
+    },
+    {
+      "name": "ReservedAlignment",
+      "byteStart": 39232,
+      "bytes": 1728,
+      "byteEnd": 40960
+    }
+  ],
+  "SeedMeta64": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1297306183
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "words",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 64
+    },
+    {
+      "word": 3,
+      "name": "seal",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 3235799922
+    },
+    {
+      "word": 4,
+      "name": "templateSHA.0",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 5,
+      "name": "templateSHA.1",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 6,
+      "name": "templateSHA.2",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 7,
+      "name": "templateSHA.3",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 8,
+      "name": "templateSHA.4",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 9,
+      "name": "templateSHA.5",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 10,
+      "name": "templateSHA.6",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 11,
+      "name": "templateSHA.7",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 12,
+      "name": "actualUploadedSeedSHA.0",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 13,
+      "name": "actualUploadedSeedSHA.1",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 14,
+      "name": "actualUploadedSeedSHA.2",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 15,
+      "name": "actualUploadedSeedSHA.3",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 16,
+      "name": "actualUploadedSeedSHA.4",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 17,
+      "name": "actualUploadedSeedSHA.5",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 18,
+      "name": "actualUploadedSeedSHA.6",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 19,
+      "name": "actualUploadedSeedSHA.7",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 20,
+      "name": "parameterSHA.0",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 21,
+      "name": "parameterSHA.1",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 22,
+      "name": "parameterSHA.2",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 23,
+      "name": "parameterSHA.3",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 24,
+      "name": "parameterSHA.4",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 25,
+      "name": "parameterSHA.5",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 26,
+      "name": "parameterSHA.6",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 27,
+      "name": "parameterSHA.7",
+      "producer": "exact bytes at named construction stage",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 28,
+      "name": "initialM0.0",
+      "producer": "same audited initial seed",
+      "type": "U64_LE"
+    },
+    {
+      "word": 29,
+      "name": "initialM0.1",
+      "producer": "same audited initial seed",
+      "type": "U64_LE"
+    },
+    {
+      "word": 30,
+      "name": "initialOrigin.0",
+      "producer": "same audited initial seed",
+      "type": "U64_LE"
+    },
+    {
+      "word": 31,
+      "name": "initialOrigin.1",
+      "producer": "same audited initial seed",
+      "type": "U64_LE"
+    },
+    {
+      "word": 32,
+      "name": "initialSourceId",
+      "producer": "same audited initial seed",
+      "type": "U32"
+    },
+    {
+      "word": 33,
+      "name": "seedRevision",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 34,
+      "name": "uploadedSeedBytes.0",
+      "producer": "same audited initial seed",
+      "type": "U64_LE"
+    },
+    {
+      "word": 35,
+      "name": "uploadedSeedBytes.1",
+      "producer": "same audited initial seed",
+      "type": "U64_LE"
+    },
+    {
+      "word": 36,
+      "name": "templateAlgorithm",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 37,
+      "name": "reserved_37",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 38,
+      "name": "reserved_38",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 39,
+      "name": "reserved_39",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 40,
+      "name": "reserved_40",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 41,
+      "name": "reserved_41",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 42,
+      "name": "reserved_42",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 43,
+      "name": "reserved_43",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 44,
+      "name": "reserved_44",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 45,
+      "name": "reserved_45",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 46,
+      "name": "reserved_46",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 47,
+      "name": "reserved_47",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 48,
+      "name": "reserved_48",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 49,
+      "name": "reserved_49",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 50,
+      "name": "reserved_50",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 51,
+      "name": "reserved_51",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 52,
+      "name": "reserved_52",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 53,
+      "name": "reserved_53",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 54,
+      "name": "reserved_54",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 55,
+      "name": "reserved_55",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 56,
+      "name": "reserved_56",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 57,
+      "name": "reserved_57",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 58,
+      "name": "reserved_58",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 59,
+      "name": "reserved_59",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 60,
+      "name": "reserved_60",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 61,
+      "name": "reserved_61",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 62,
+      "name": "reserved_62",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 63,
+      "name": "reserved_63",
+      "producer": "ZERO",
+      "constant": 0
+    }
+  ],
+  "TerminalJournal16": [
+    {
+      "word": 0,
+      "name": "kind",
+      "producer": "terminal operation code; named external receipt must match",
+      "type": "U32"
+    },
+    {
+      "word": 1,
+      "name": "status",
+      "producer": "terminal operation code; named external receipt must match",
+      "type": "U32"
+    },
+    {
+      "word": 2,
+      "name": "clockGeneration.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 3,
+      "name": "clockGeneration.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 4,
+      "name": "commandSeq.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 5,
+      "name": "commandSeq.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 6,
+      "name": "rootNonce.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 7,
+      "name": "rootNonce.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 8,
+      "name": "observedNs.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 9,
+      "name": "observedNs.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 10,
+      "name": "upReceiptNs.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 11,
+      "name": "upReceiptNs.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 12,
+      "name": "commit.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 13,
+      "name": "commit.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 14,
+      "name": "publication.0",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    },
+    {
+      "word": 15,
+      "name": "publication.1",
+      "producer": "actual operation identity; unavailable commit/publication zero, not inferred",
+      "type": "U64_LE"
+    }
+  ],
+  "sizeProof": "alignas(64) array<uint32_t,10240>; sizeof must40960, sizeof Sync excluded fixed helper<=256 and reported separately; no second legacy input FIFO",
+  "witnessSlots": {
+    "queue": [
+      0,
+      16
+    ],
+    "active": 16,
+    "currentFrozen": 17,
+    "baseSnapshot": 18,
+    "lastConsumed": 19
+  },
+  "inputSlots": {
+    "queue": [
+      0,
+      16
+    ],
+    "frozen": 16,
+    "lastConsumedSource": 17,
+    "lastConsumedImpulse": 18
+  },
+  "Control256": {
+    "controlWords": [
+      0,
+      128
+    ],
+    "manualPoseInput128": [
+      128,
+      256
+    ]
+  },
+  "coldCapability": "G9_DM_RX_COLD_V1",
+  "coldPage": "G9_DM_RX_SEGMENT_PAGE_V1",
+  "header256": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32",
+      "constant": 1129861703
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "prefixWords",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32",
+      "constant": 8192
+    },
+    {
+      "word": 3,
+      "name": "seal",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32",
+      "constant": 3235799921
+    },
+    {
+      "word": 4,
+      "name": "profile",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32",
+      "constant": 827477575
+    },
+    {
+      "word": 5,
+      "name": "mode",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 6,
+      "name": "segmentCount",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 7,
+      "name": "K",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 8,
+      "name": "payloadBytesLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 9,
+      "name": "payloadBytesHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 10,
+      "name": "requestLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 11,
+      "name": "requestHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 12,
+      "name": "traceLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 13,
+      "name": "traceHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 14,
+      "name": "createdNsLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 15,
+      "name": "createdNsHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 16,
+      "name": "runLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 17,
+      "name": "runHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 18,
+      "name": "contextLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 19,
+      "name": "contextHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 20,
+      "name": "surfaceLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 21,
+      "name": "surfaceHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 22,
+      "name": "pageSessionLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 23,
+      "name": "pageSessionHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 24,
+      "name": "inputEpochLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 25,
+      "name": "inputEpochHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 26,
+      "name": "rootNonceLo",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 27,
+      "name": "rootNonceHi",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 28,
+      "name": "outcome",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 29,
+      "name": "selectedJ",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 30,
+      "name": "eventCount",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 31,
+      "name": "pathCount",
+      "producer": "same immutable root capture; no zero substitutes",
+      "type": "U32"
+    },
+    {
+      "word": 32,
+      "name": "currentDownCommit.0",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 33,
+      "name": "currentDownCommit.1",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 34,
+      "name": "currentUpCommit.0",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 35,
+      "name": "currentUpCommit.1",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 36,
+      "name": "baseDownCommit.0",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 37,
+      "name": "baseDownCommit.1",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 38,
+      "name": "baseUpCommit.0",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 39,
+      "name": "baseUpCommit.1",
+      "producer": "record-matched FrameCommitSidecar, absent record0",
+      "type": "U64_LE"
+    },
+    {
+      "word": 40,
+      "name": "currentCapability64.0",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 41,
+      "name": "currentCapability64.1",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 42,
+      "name": "currentCapability64.2",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 43,
+      "name": "currentCapability64.3",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 44,
+      "name": "currentCapability64.4",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 45,
+      "name": "currentCapability64.5",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 46,
+      "name": "currentCapability64.6",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 47,
+      "name": "currentCapability64.7",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 48,
+      "name": "currentCapability64.8",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 49,
+      "name": "currentCapability64.9",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 50,
+      "name": "currentCapability64.10",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 51,
+      "name": "currentCapability64.11",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 52,
+      "name": "currentCapability64.12",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 53,
+      "name": "currentCapability64.13",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 54,
+      "name": "currentCapability64.14",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 55,
+      "name": "currentCapability64.15",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 56,
+      "name": "currentCapability64.16",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 57,
+      "name": "currentCapability64.17",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 58,
+      "name": "currentCapability64.18",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 59,
+      "name": "currentCapability64.19",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 60,
+      "name": "currentCapability64.20",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 61,
+      "name": "currentCapability64.21",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 62,
+      "name": "currentCapability64.22",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 63,
+      "name": "currentCapability64.23",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 64,
+      "name": "currentCapability64.24",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 65,
+      "name": "currentCapability64.25",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 66,
+      "name": "currentCapability64.26",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 67,
+      "name": "currentCapability64.27",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 68,
+      "name": "currentCapability64.28",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 69,
+      "name": "currentCapability64.29",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 70,
+      "name": "currentCapability64.30",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 71,
+      "name": "currentCapability64.31",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 72,
+      "name": "currentCapability64.32",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 73,
+      "name": "currentCapability64.33",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 74,
+      "name": "currentCapability64.34",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 75,
+      "name": "currentCapability64.35",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 76,
+      "name": "currentCapability64.36",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 77,
+      "name": "currentCapability64.37",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 78,
+      "name": "currentCapability64.38",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 79,
+      "name": "currentCapability64.39",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 80,
+      "name": "currentCapability64.40",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 81,
+      "name": "currentCapability64.41",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 82,
+      "name": "currentCapability64.42",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 83,
+      "name": "currentCapability64.43",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 84,
+      "name": "currentCapability64.44",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 85,
+      "name": "currentCapability64.45",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 86,
+      "name": "currentCapability64.46",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 87,
+      "name": "currentCapability64.47",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 88,
+      "name": "currentCapability64.48",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 89,
+      "name": "currentCapability64.49",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 90,
+      "name": "currentCapability64.50",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 91,
+      "name": "currentCapability64.51",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 92,
+      "name": "currentCapability64.52",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 93,
+      "name": "currentCapability64.53",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 94,
+      "name": "currentCapability64.54",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 95,
+      "name": "currentCapability64.55",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 96,
+      "name": "currentCapability64.56",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 97,
+      "name": "currentCapability64.57",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 98,
+      "name": "currentCapability64.58",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 99,
+      "name": "currentCapability64.59",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 100,
+      "name": "currentCapability64.60",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 101,
+      "name": "currentCapability64.61",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 102,
+      "name": "currentCapability64.62",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 103,
+      "name": "currentCapability64.63",
+      "producer": "actual frozen native capability64",
+      "type": "U32"
+    },
+    {
+      "word": 104,
+      "name": "currentGeometryKeySHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 105,
+      "name": "currentGeometryKeySHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 106,
+      "name": "currentGeometryKeySHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 107,
+      "name": "currentGeometryKeySHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 108,
+      "name": "currentGeometryKeySHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 109,
+      "name": "currentGeometryKeySHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 110,
+      "name": "currentGeometryKeySHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 111,
+      "name": "currentGeometryKeySHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 112,
+      "name": "baseGeometryKeySHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 113,
+      "name": "baseGeometryKeySHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 114,
+      "name": "baseGeometryKeySHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 115,
+      "name": "baseGeometryKeySHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 116,
+      "name": "baseGeometryKeySHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 117,
+      "name": "baseGeometryKeySHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 118,
+      "name": "baseGeometryKeySHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 119,
+      "name": "baseGeometryKeySHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 120,
+      "name": "pipelineSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 121,
+      "name": "pipelineSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 122,
+      "name": "pipelineSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 123,
+      "name": "pipelineSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 124,
+      "name": "pipelineSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 125,
+      "name": "pipelineSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 126,
+      "name": "pipelineSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 127,
+      "name": "pipelineSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 128,
+      "name": "layoutSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 129,
+      "name": "layoutSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 130,
+      "name": "layoutSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 131,
+      "name": "layoutSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 132,
+      "name": "layoutSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 133,
+      "name": "layoutSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 134,
+      "name": "layoutSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 135,
+      "name": "layoutSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 136,
+      "name": "algorithmSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 137,
+      "name": "algorithmSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 138,
+      "name": "algorithmSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 139,
+      "name": "algorithmSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 140,
+      "name": "algorithmSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 141,
+      "name": "algorithmSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 142,
+      "name": "algorithmSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 143,
+      "name": "algorithmSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 144,
+      "name": "configSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 145,
+      "name": "configSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 146,
+      "name": "configSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 147,
+      "name": "configSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 148,
+      "name": "configSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 149,
+      "name": "configSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 150,
+      "name": "configSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 151,
+      "name": "configSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 152,
+      "name": "actualSeedSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 153,
+      "name": "actualSeedSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 154,
+      "name": "actualSeedSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 155,
+      "name": "actualSeedSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 156,
+      "name": "actualSeedSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 157,
+      "name": "actualSeedSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 158,
+      "name": "actualSeedSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 159,
+      "name": "actualSeedSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 160,
+      "name": "clockCodeSourceSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 161,
+      "name": "clockCodeSourceSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 162,
+      "name": "clockCodeSourceSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 163,
+      "name": "clockCodeSourceSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 164,
+      "name": "clockCodeSourceSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 165,
+      "name": "clockCodeSourceSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 166,
+      "name": "clockCodeSourceSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 167,
+      "name": "clockCodeSourceSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 168,
+      "name": "mappingCodeSourceSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 169,
+      "name": "mappingCodeSourceSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 170,
+      "name": "mappingCodeSourceSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 171,
+      "name": "mappingCodeSourceSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 172,
+      "name": "mappingCodeSourceSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 173,
+      "name": "mappingCodeSourceSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 174,
+      "name": "mappingCodeSourceSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 175,
+      "name": "mappingCodeSourceSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 176,
+      "name": "loadedIdentityReceiptSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 177,
+      "name": "loadedIdentityReceiptSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 178,
+      "name": "loadedIdentityReceiptSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 179,
+      "name": "loadedIdentityReceiptSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 180,
+      "name": "loadedIdentityReceiptSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 181,
+      "name": "loadedIdentityReceiptSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 182,
+      "name": "loadedIdentityReceiptSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 183,
+      "name": "loadedIdentityReceiptSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 184,
+      "name": "mappingSpecSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 185,
+      "name": "mappingSpecSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 186,
+      "name": "mappingSpecSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 187,
+      "name": "mappingSpecSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 188,
+      "name": "mappingSpecSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 189,
+      "name": "mappingSpecSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 190,
+      "name": "mappingSpecSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 191,
+      "name": "mappingSpecSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 192,
+      "name": "inputPolicySHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 193,
+      "name": "inputPolicySHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 194,
+      "name": "inputPolicySHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 195,
+      "name": "inputPolicySHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 196,
+      "name": "inputPolicySHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 197,
+      "name": "inputPolicySHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 198,
+      "name": "inputPolicySHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 199,
+      "name": "inputPolicySHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 200,
+      "name": "clockSpecSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 201,
+      "name": "clockSpecSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 202,
+      "name": "clockSpecSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 203,
+      "name": "clockSpecSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 204,
+      "name": "clockSpecSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 205,
+      "name": "clockSpecSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 206,
+      "name": "clockSpecSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 207,
+      "name": "clockSpecSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 208,
+      "name": "seedTemplateSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 209,
+      "name": "seedTemplateSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 210,
+      "name": "seedTemplateSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 211,
+      "name": "seedTemplateSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 212,
+      "name": "seedTemplateSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 213,
+      "name": "seedTemplateSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 214,
+      "name": "seedTemplateSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 215,
+      "name": "seedTemplateSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 216,
+      "name": "loadedModuleSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 217,
+      "name": "loadedModuleSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 218,
+      "name": "loadedModuleSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 219,
+      "name": "loadedModuleSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 220,
+      "name": "loadedModuleSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 221,
+      "name": "loadedModuleSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 222,
+      "name": "loadedModuleSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 223,
+      "name": "loadedModuleSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 224,
+      "name": "recordPresenceMask",
+      "producer": "actual bounded native snapshot",
+      "type": "U32"
+    },
+    {
+      "word": 225,
+      "name": "historyQualification",
+      "producer": "actual bounded native snapshot",
+      "type": "U32"
+    },
+    {
+      "word": 226,
+      "name": "journalTotal.0",
+      "producer": "actual counter",
+      "type": "U64_LE"
+    },
+    {
+      "word": 227,
+      "name": "journalTotal.1",
+      "producer": "actual counter",
+      "type": "U64_LE"
+    },
+    {
+      "word": 228,
+      "name": "journalCount",
+      "producer": "actual bounded native snapshot",
+      "type": "U32"
+    },
+    {
+      "word": 229,
+      "name": "journalCursor",
+      "producer": "actual bounded native snapshot",
+      "type": "U32"
+    },
+    {
+      "word": 230,
+      "name": "journalLost.0",
+      "producer": "actual counter",
+      "type": "U64_LE"
+    },
+    {
+      "word": 231,
+      "name": "journalLost.1",
+      "producer": "actual counter",
+      "type": "U64_LE"
+    },
+    {
+      "word": 232,
+      "name": "journalRollingSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 233,
+      "name": "journalRollingSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 234,
+      "name": "journalRollingSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 235,
+      "name": "journalRollingSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 236,
+      "name": "journalRollingSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 237,
+      "name": "journalRollingSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 238,
+      "name": "journalRollingSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 239,
+      "name": "journalRollingSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 240,
+      "name": "compiledSourceManifestSHA.0",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 241,
+      "name": "compiledSourceManifestSHA.1",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 242,
+      "name": "compiledSourceManifestSHA.2",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 243,
+      "name": "compiledSourceManifestSHA.3",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 244,
+      "name": "compiledSourceManifestSHA.4",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 245,
+      "name": "compiledSourceManifestSHA.5",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 246,
+      "name": "compiledSourceManifestSHA.6",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 247,
+      "name": "compiledSourceManifestSHA.7",
+      "producer": "actual named source / snapshot SHA, computed before prefix publication",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 248,
+      "name": "reserved_248",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 249,
+      "name": "reserved_249",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 250,
+      "name": "reserved_250",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 251,
+      "name": "reserved_251",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 252,
+      "name": "reserved_252",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 253,
+      "name": "reserved_253",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 254,
+      "name": "reserved_254",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 255,
+      "name": "reserved_255",
+      "producer": "ZERO",
+      "constant": 0
+    }
+  ],
+  "prefix": {
+    "bytes": 32768,
+    "header": [
+      0,
+      256
+    ],
+    "completion": [
+      256,
+      512
+    ],
+    "input": [
+      512,
+      640
+    ],
+    "rootConfig": [
+      640,
+      768
+    ],
+    "quota": [
+      768,
+      1024
+    ],
+    "scopeSummaries": [
+      1024,
+      1408
+    ],
+    "zeroGap": [
+      1408,
+      2048
+    ],
+    "descriptors": [
+      2048,
+      3072
+    ],
+    "currentRecord": [
+      3072,
+      3328
+    ],
+    "baseRecord": [
+      3328,
+      3584
+    ],
+    "config": [
+      3584,
+      3648
+    ],
+    "seedMeta": [
+      3648,
+      3712
+    ],
+    "zeroTail": [
+      3712,
+      8192
+    ]
+  },
+  "prefixDigest": "no self descriptor; external rawPrefixSHA/payloadRawSHA/pagesFileSHA; records have no embedded self hash",
+  "profiles": [
+    {
+      "K": 192,
+      "stateBytes": 591872,
+      "eventBytes": 9621504,
+      "pathByteOffset": 9621504,
+      "arenaBytes": 12767232,
+      "resident": 55339648,
+      "extraFullGPU": 76603392,
+      "modes": {
+        "ROOT": {
+          "bytes": 26750976,
+          "segments": [
+            {
+              "name": "BASE",
+              "byteStart": 32768,
+              "bytes": 591872,
+              "byteEnd": 624640
+            },
+            {
+              "name": "FINAL",
+              "byteStart": 624640,
+              "bytes": 591872,
+              "byteEnd": 1216512
+            },
+            {
+              "name": "SELECTED_EVENT_PATH",
+              "byteStart": 1216512,
+              "bytes": 12767232,
+              "byteEnd": 13983744
+            },
+            {
+              "name": "AUTHORITATIVE_EVENT_PATH",
+              "byteStart": 13983744,
+              "bytes": 12767232,
+              "byteEnd": 26750976
+            }
+          ],
+          "actualPages": 6532,
+          "pageMax": 6564,
+          "archiveUtf8Max": 107560960
+        },
+        "FULL": {
+          "bytes": 103354368,
+          "segments": [
+            {
+              "name": "BASE",
+              "byteStart": 32768,
+              "bytes": 591872,
+              "byteEnd": 624640
+            },
+            {
+              "name": "FINAL",
+              "byteStart": 624640,
+              "bytes": 591872,
+              "byteEnd": 1216512
+            },
+            {
+              "name": "SELECTED_EVENT_PATH",
+              "byteStart": 1216512,
+              "bytes": 12767232,
+              "byteEnd": 13983744
+            },
+            {
+              "name": "AUTHORITATIVE_EVENT_PATH",
+              "byteStart": 13983744,
+              "bytes": 12767232,
+              "byteEnd": 26750976
+            },
+            {
+              "name": "DISCOVERY_J1_EVENT_PATH",
+              "byteStart": 26750976,
+              "bytes": 12767232,
+              "byteEnd": 39518208
+            },
+            {
+              "name": "DISCOVERY_J2_EVENT_PATH",
+              "byteStart": 39518208,
+              "bytes": 12767232,
+              "byteEnd": 52285440
+            },
+            {
+              "name": "DISCOVERY_J4_EVENT_PATH",
+              "byteStart": 52285440,
+              "bytes": 12767232,
+              "byteEnd": 65052672
+            },
+            {
+              "name": "DISCOVERY_J8_EVENT_PATH",
+              "byteStart": 65052672,
+              "bytes": 12767232,
+              "byteEnd": 77819904
+            },
+            {
+              "name": "DISCOVERY_J16_EVENT_PATH",
+              "byteStart": 77819904,
+              "bytes": 12767232,
+              "byteEnd": 90587136
+            },
+            {
+              "name": "DISCOVERY_J32_EVENT_PATH",
+              "byteStart": 90587136,
+              "bytes": 12767232,
+              "byteEnd": 103354368
+            }
+          ],
+          "actualPages": 25234,
+          "pageMax": 25266,
+          "archiveUtf8Max": 413974528
+        }
+      }
+    },
+    {
+      "K": 512,
+      "stateBytes": 673792,
+      "eventBytes": 14946304,
+      "pathByteOffset": 14946304,
+      "arenaBytes": 23334912,
+      "resident": 98022528,
+      "extraFullGPU": 140009472,
+      "modes": {
+        "ROOT": {
+          "bytes": 48050176,
+          "segments": [
+            {
+              "name": "BASE",
+              "byteStart": 32768,
+              "bytes": 673792,
+              "byteEnd": 706560
+            },
+            {
+              "name": "FINAL",
+              "byteStart": 706560,
+              "bytes": 673792,
+              "byteEnd": 1380352
+            },
+            {
+              "name": "SELECTED_EVENT_PATH",
+              "byteStart": 1380352,
+              "bytes": 23334912,
+              "byteEnd": 24715264
+            },
+            {
+              "name": "AUTHORITATIVE_EVENT_PATH",
+              "byteStart": 24715264,
+              "bytes": 23334912,
+              "byteEnd": 48050176
+            }
+          ],
+          "actualPages": 11732,
+          "pageMax": 11764,
+          "archiveUtf8Max": 192757760
+        },
+        "FULL": {
+          "bytes": 188059648,
+          "segments": [
+            {
+              "name": "BASE",
+              "byteStart": 32768,
+              "bytes": 673792,
+              "byteEnd": 706560
+            },
+            {
+              "name": "FINAL",
+              "byteStart": 706560,
+              "bytes": 673792,
+              "byteEnd": 1380352
+            },
+            {
+              "name": "SELECTED_EVENT_PATH",
+              "byteStart": 1380352,
+              "bytes": 23334912,
+              "byteEnd": 24715264
+            },
+            {
+              "name": "AUTHORITATIVE_EVENT_PATH",
+              "byteStart": 24715264,
+              "bytes": 23334912,
+              "byteEnd": 48050176
+            },
+            {
+              "name": "DISCOVERY_J1_EVENT_PATH",
+              "byteStart": 48050176,
+              "bytes": 23334912,
+              "byteEnd": 71385088
+            },
+            {
+              "name": "DISCOVERY_J2_EVENT_PATH",
+              "byteStart": 71385088,
+              "bytes": 23334912,
+              "byteEnd": 94720000
+            },
+            {
+              "name": "DISCOVERY_J4_EVENT_PATH",
+              "byteStart": 94720000,
+              "bytes": 23334912,
+              "byteEnd": 118054912
+            },
+            {
+              "name": "DISCOVERY_J8_EVENT_PATH",
+              "byteStart": 118054912,
+              "bytes": 23334912,
+              "byteEnd": 141389824
+            },
+            {
+              "name": "DISCOVERY_J16_EVENT_PATH",
+              "byteStart": 141389824,
+              "bytes": 23334912,
+              "byteEnd": 164724736
+            },
+            {
+              "name": "DISCOVERY_J32_EVENT_PATH",
+              "byteStart": 164724736,
+              "bytes": 23334912,
+              "byteEnd": 188059648
+            }
+          ],
+          "actualPages": 45914,
+          "pageMax": 45946,
+          "archiveUtf8Max": 752795648
+        }
+      }
+    }
+  ],
+  "pageWords": 1024,
+  "pageUtf8": 16384,
+  "slots": 2,
+  "builders": 1,
+  "readers": 1,
+  "ttlNs": "60000000000",
+  "recordMeaning": {
+    "current": "frozen before GPU, not accepted; claim/freeze/nonce/INPUT_SHA fixed",
+    "base": "prior actually consumed impulse linked to BASE state capsule; no promotion on failure",
+    "frame": "header32..39 stores actual commits to recompute FrameWitness41, never infer commit from publication",
+    "clock": "BASE older generation may be reference-only; missing prior archive never full historical replay"
+  },
+  "promotion": "clone CURRENT on actual typed accept+commit only; lastConsumed copy role2, never edit published CURRENT; next root copies BASE snapshot before new candidate",
+  "budgets": {
+    "witnessSlots": 20,
+    "witnessBytesEach": 1024,
+    "metadataObjects": 4,
+    "metadataBytesEach": 256,
+    "serializeScratch": 1024,
+    "terminalJournalEntries": 16,
+    "terminalJournalBytesEach": 64,
+    "controlBytes": 1024,
+    "inputCapsules": 19,
+    "inputBytesEach": 512,
+    "bridgePaddingBytes": 6656,
+    "nativeProtocolCreditBytes": 40960,
+    "oldNativeCredit": 22528,
+    "dmResidentK192": 55339648,
+    "dmResidentK512": 98022528,
+    "dmExtraFullGpuK192": 76603392,
+    "dmExtraFullGpuK512": 140009472,
+    "coldRootK192": 26750976,
+    "coldRootK512": 48050176,
+    "coldFullK192": 103354368,
+    "coldFullK512": 188059648,
+    "coldTwoMaxSlots": 376119296,
+    "parentKnownPayload": 614190208,
+    "newKnownPayload": 614208640,
+    "quantumDispatches": 2404,
+    "sourceDispatches": 12,
+    "maxPlanDispatches": 9628,
+    "maxDmEval": 875520,
+    "normalInputBytes": 512,
+    "normalConfigBytes": 512,
+    "normalCompletionBytes": 1024,
+    "computeBindings": 4
+  }
+}

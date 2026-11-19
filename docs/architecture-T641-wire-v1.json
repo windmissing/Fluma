@@ -1,0 +1,2601 @@
+{
+  "schema": "T641_RX_WIRE_V1",
+  "date": "2026-11-19",
+  "task": "T641",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "defaultOFF": true,
+  "profile": "G9_DM_NATIVE_RECEIPT_SPATIAL_R1",
+  "profileCode": 827477575,
+  "domain": "NATIVE_RECEIPT_SPATIAL_CONTROL",
+  "design": {
+    "path": "docs/design-T637-manifest-v1.json",
+    "bytes": 26719,
+    "sha256": "87920db46fa1e14055adcc8f275e49898788d56a0cf755e51b5abab72795fbb7"
+  },
+  "encoding": "U32 LE; U64 low/high; S64 twos-complement; SHA digest bytes packed LE per4; binary64 raw bits",
+  "Config64": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 826495559
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "profile",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 827477575
+    },
+    {
+      "word": 3,
+      "name": "K",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 4,
+      "name": "gQ20",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 5,
+      "name": "muStartQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 6,
+      "name": "muStopQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 7,
+      "name": "bandQ20",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 8,
+      "name": "entrainRateQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 9,
+      "name": "shearQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 10,
+      "name": "settleTicks",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 11,
+      "name": "physicalParameterRevision",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 12,
+      "name": "depthGravityGainQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 13,
+      "name": "depthShearGainQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 14,
+      "name": "regularizationDepthQ",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 15,
+      "name": "omegaBaseQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 16,
+      "name": "omegaGravityGainQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 17,
+      "name": "omegaShearGainQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 18,
+      "name": "omegaMaxQ16",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 19,
+      "name": "mobilizationPolicy",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 2
+    },
+    {
+      "word": 20,
+      "name": "referenceDurationNs",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 125000000
+    },
+    {
+      "word": 21,
+      "name": "minReceiptDurationNs",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 8333334
+    },
+    {
+      "word": 22,
+      "name": "maxReceiptDurationNs",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 1000000000
+    },
+    {
+      "word": 23,
+      "name": "maxCommandAgeNs",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 250000000
+    },
+    {
+      "word": 24,
+      "name": "maxValidationNs",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 8000000
+    },
+    {
+      "word": 25,
+      "name": "maxMoves",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 256
+    },
+    {
+      "word": 26,
+      "name": "queueCapacity",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 16
+    },
+    {
+      "word": 27,
+      "name": "adapter",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 63701
+    },
+    {
+      "word": 28,
+      "name": "commandClockDomain",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 3
+    },
+    {
+      "word": 29,
+      "name": "pointPolicy",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 30,
+      "name": "researchOnlyFlags",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 31,
+      "name": "clockResolutionLimitNs",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32",
+      "constant": 1000000
+    },
+    {
+      "word": 32,
+      "name": "physicalSpecSha.0",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 33,
+      "name": "physicalSpecSha.1",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 34,
+      "name": "physicalSpecSha.2",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 35,
+      "name": "physicalSpecSha.3",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 36,
+      "name": "physicalSpecSha.4",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 37,
+      "name": "physicalSpecSha.5",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 38,
+      "name": "physicalSpecSha.6",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 39,
+      "name": "physicalSpecSha.7",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 40,
+      "name": "inputPolicySha.0",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 41,
+      "name": "inputPolicySha.1",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 42,
+      "name": "inputPolicySha.2",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 43,
+      "name": "inputPolicySha.3",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 44,
+      "name": "inputPolicySha.4",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 45,
+      "name": "inputPolicySha.5",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 46,
+      "name": "inputPolicySha.6",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 47,
+      "name": "inputPolicySha.7",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 48,
+      "name": "seedTemplateSha.0",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 49,
+      "name": "seedTemplateSha.1",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 50,
+      "name": "seedTemplateSha.2",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 51,
+      "name": "seedTemplateSha.3",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 52,
+      "name": "seedTemplateSha.4",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 53,
+      "name": "seedTemplateSha.5",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 54,
+      "name": "seedTemplateSha.6",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 55,
+      "name": "seedTemplateSha.7",
+      "producer": "T637 fixed / parent research parameters / exact named spec hash / computed new seed template",
+      "type": "U32"
+    },
+    {
+      "word": 56,
+      "name": "reserved.0",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 57,
+      "name": "reserved.1",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 58,
+      "name": "reserved.2",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 59,
+      "name": "reserved.3",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 60,
+      "name": "reserved.4",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 61,
+      "name": "reserved.5",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 62,
+      "name": "reserved.6",
+      "producer": "ZERO",
+      "type": "U32"
+    },
+    {
+      "word": 63,
+      "name": "reserved.7",
+      "producer": "ZERO",
+      "type": "U32"
+    }
+  ],
+  "ConfigHash": "SHA256 exact256 LE bytes including reserved0; no self hash",
+  "INPUT128": [
+    "GNRX_magic",
+    "revision3",
+    "GNR1_profile",
+    "flags",
+    "runLo",
+    "runHi",
+    "ownerLo",
+    "ownerHi",
+    "contextLo",
+    "contextHi",
+    "rootNonceLo",
+    "rootNonceHi",
+    "inputGenerationLo",
+    "inputGenerationHi",
+    "manualPoseSeqLo",
+    "manualPoseSeqHi",
+    "manualObservationNsLo",
+    "manualObservationNsHi",
+    "poseValidatedNsLo",
+    "poseValidatedNsHi",
+    "freezeNsLo",
+    "freezeNsHi",
+    "clockDomain",
+    "gravitySource",
+    "acceptedAngleIndex",
+    "parameterRevision",
+    "parameterSha0",
+    "parameterSha1",
+    "parameterSha2",
+    "parameterSha3",
+    "parameterSha4",
+    "parameterSha5",
+    "parameterSha6",
+    "parameterSha7",
+    "rawAngleLo",
+    "rawAngleHi",
+    "sensorAdapterRevision",
+    "sensorFlags",
+    "reservedEnvelope38",
+    "reservedEnvelope39",
+    "commandKind",
+    "commandSeqLo",
+    "commandSeqHi",
+    "UP_receiptNsLo",
+    "UP_receiptNsHi",
+    "RX_flags",
+    "rawTouchXLo",
+    "rawTouchXHi",
+    "rawRadiusLo",
+    "rawRadiusHi",
+    "rawGestureDxLo",
+    "rawGestureDxHi",
+    "rawGestureDyLo",
+    "rawGestureDyHi",
+    "mappingReferenceDurationNsLo",
+    "mappingReferenceDurationNsHi",
+    "physicalJxLo",
+    "physicalJxHi",
+    "physicalJyLo",
+    "physicalJyHi",
+    "workCap0",
+    "workCap1",
+    "workCap2",
+    "workCap3",
+    "rawSourceMassLo",
+    "rawSourceMassHi",
+    "rawSourceXLo",
+    "rawSourceXHi",
+    "rawSourceYLo",
+    "rawSourceYHi",
+    "rawSourceVxLo",
+    "rawSourceVxHi",
+    "rawSourceVyLo",
+    "rawSourceVyHi",
+    "sourceId",
+    "sourceKind",
+    "sourceAdapterRevision",
+    "RX_adapter63701",
+    "reserved_78",
+    "reserved_79",
+    "reserved_80",
+    "reserved_81",
+    "reserved_82",
+    "reserved_83",
+    "reserved_84",
+    "reserved_85",
+    "reserved_86",
+    "reserved_87",
+    "reserved_88",
+    "reserved_89",
+    "reserved_90",
+    "reserved_91",
+    "reserved_92",
+    "reserved_93",
+    "reserved_94",
+    "reserved_95",
+    "reserved_96",
+    "reserved_97",
+    "reserved_98",
+    "reserved_99",
+    "reserved_100",
+    "reserved_101",
+    "reserved_102",
+    "reserved_103",
+    "reserved_104",
+    "reserved_105",
+    "reserved_106",
+    "reserved_107",
+    "reserved_108",
+    "reserved_109",
+    "reserved_110",
+    "reserved_111",
+    "reserved_112",
+    "reserved_113",
+    "reserved_114",
+    "reserved_115",
+    "reserved_116",
+    "reserved_117",
+    "reserved_118",
+    "reserved_119",
+    "reserved_120",
+    "reserved_121",
+    "reserved_122",
+    "reserved_123",
+    "reserved_124",
+    "reserved_125",
+    "reserved_126",
+    "reserved_127"
+  ],
+  "inputRules": {
+    "magic": 1481788999,
+    "revision": 3,
+    "profile": 827477575,
+    "parameterRevision": 1,
+    "envelopeFlags": 0,
+    "manualPoseClock": 2,
+    "manualPoseSource": 2,
+    "envelopeZero": [
+      34,
+      40
+    ],
+    "reserved": [
+      78,
+      128
+    ],
+    "impulse": {
+      "kind": 2,
+      "flagsMask": 11,
+      "rxBit": 8,
+      "forbiddenBit": 4,
+      "adapter": 63701,
+      "Dref": 125000000,
+      "zeroSourceWords": [
+        64,
+        77
+      ]
+    },
+    "none": "word40=0, words41..127 zero",
+    "source": "word40=1, seq and native receipt; flags0; words46..63 and77..127 zero; parent source words64..76 only"
+  },
+  "RAW64": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1347899975
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "words",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 64
+    },
+    {
+      "word": 3,
+      "name": "eventType",
+      "producer": "synchronous ArkUI observed argument; native verifies",
+      "type": "U32"
+    },
+    {
+      "word": 4,
+      "name": "pointer",
+      "producer": "synchronous ArkUI observed argument; native verifies",
+      "type": "U32"
+    },
+    {
+      "word": 5,
+      "name": "changedCount",
+      "producer": "synchronous ArkUI observed argument; native verifies",
+      "type": "U32"
+    },
+    {
+      "word": 6,
+      "name": "activeTouches",
+      "producer": "synchronous ArkUI observed argument; native verifies",
+      "type": "U32"
+    },
+    {
+      "word": 7,
+      "name": "ingressSource",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 8,
+      "name": "opaqueSampleBits.0",
+      "producer": "observed IEEE64 or absent0",
+      "type": "BITS64"
+    },
+    {
+      "word": 9,
+      "name": "opaqueSampleBits.1",
+      "producer": "observed IEEE64 or absent0",
+      "type": "BITS64"
+    },
+    {
+      "word": 10,
+      "name": "samplePresent",
+      "producer": "synchronous ArkUI observed argument; native verifies",
+      "type": "U32"
+    },
+    {
+      "word": 11,
+      "name": "reserved_11",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 12,
+      "name": "localX.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 13,
+      "name": "localX.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 14,
+      "name": "localY.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 15,
+      "name": "localY.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 16,
+      "name": "windowX.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 17,
+      "name": "windowX.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 18,
+      "name": "windowY.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 19,
+      "name": "windowY.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 20,
+      "name": "displayX.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 21,
+      "name": "displayX.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 22,
+      "name": "displayY.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 23,
+      "name": "displayY.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 24,
+      "name": "vp2pxScale.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 25,
+      "name": "vp2pxScale.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 26,
+      "name": "originX.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 27,
+      "name": "originX.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 28,
+      "name": "originY.0",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 29,
+      "name": "originY.1",
+      "producer": "same changedTouches point, DataView LE bits",
+      "type": "BINARY64"
+    },
+    {
+      "word": 30,
+      "name": "expectedGeometryKeySHA.0",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 31,
+      "name": "expectedGeometryKeySHA.1",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 32,
+      "name": "expectedGeometryKeySHA.2",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 33,
+      "name": "expectedGeometryKeySHA.3",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 34,
+      "name": "expectedGeometryKeySHA.4",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 35,
+      "name": "expectedGeometryKeySHA.5",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 36,
+      "name": "expectedGeometryKeySHA.6",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 37,
+      "name": "expectedGeometryKeySHA.7",
+      "producer": "echo native hash; comparison only",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 38,
+      "name": "expectedInputEpoch.0",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 39,
+      "name": "expectedInputEpoch.1",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 40,
+      "name": "expectedPageSession.0",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 41,
+      "name": "expectedPageSession.1",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 42,
+      "name": "expectedClockGeneration.0",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 43,
+      "name": "expectedClockGeneration.1",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 44,
+      "name": "expectedLifecycleGeneration.0",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 45,
+      "name": "expectedLifecycleGeneration.1",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 46,
+      "name": "expectedMappingGeneration.0",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 47,
+      "name": "expectedMappingGeneration.1",
+      "producer": "echo native scope; never grants authority",
+      "type": "U64_LE"
+    },
+    {
+      "word": 48,
+      "name": "expectedParameterSHA.0",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 49,
+      "name": "expectedParameterSHA.1",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 50,
+      "name": "expectedParameterSHA.2",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 51,
+      "name": "expectedParameterSHA.3",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 52,
+      "name": "expectedParameterSHA.4",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 53,
+      "name": "expectedParameterSHA.5",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 54,
+      "name": "expectedParameterSHA.6",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 55,
+      "name": "expectedParameterSHA.7",
+      "producer": "echo native configuration",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 56,
+      "name": "reserved_56",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 57,
+      "name": "reserved_57",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 58,
+      "name": "reserved_58",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 59,
+      "name": "reserved_59",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 60,
+      "name": "reserved_60",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 61,
+      "name": "reserved_61",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 62,
+      "name": "reserved_62",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 63,
+      "name": "reserved_63",
+      "producer": "ZERO",
+      "constant": 0
+    }
+  ],
+  "RECEIPT_CONTROL256": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 859199570
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "wordCount",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 256
+    },
+    {
+      "word": 3,
+      "name": "profile",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 827477575
+    },
+    {
+      "word": 4,
+      "name": "recordRole",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32"
+    },
+    {
+      "word": 5,
+      "name": "commandKind",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 2
+    },
+    {
+      "word": 6,
+      "name": "inputDomain",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 3
+    },
+    {
+      "word": 7,
+      "name": "recordStatus",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 8,
+      "name": "run.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 9,
+      "name": "run.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 10,
+      "name": "owner.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 11,
+      "name": "owner.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 12,
+      "name": "context.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 13,
+      "name": "context.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 14,
+      "name": "inputEpoch.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 15,
+      "name": "inputEpoch.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 16,
+      "name": "pageSession.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 17,
+      "name": "pageSession.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 18,
+      "name": "permission.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 19,
+      "name": "permission.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 20,
+      "name": "window.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 21,
+      "name": "window.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 22,
+      "name": "config.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 23,
+      "name": "config.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 24,
+      "name": "surface.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 25,
+      "name": "surface.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 26,
+      "name": "commandSeq.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 27,
+      "name": "commandSeq.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 28,
+      "name": "pointer",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "I32"
+    },
+    {
+      "word": 29,
+      "name": "ingressSource",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 30,
+      "name": "downIngressSeq.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 31,
+      "name": "downIngressSeq.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 32,
+      "name": "upIngressSeq.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 33,
+      "name": "upIngressSeq.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 34,
+      "name": "downReceiptNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 35,
+      "name": "downReceiptNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 36,
+      "name": "upReceiptNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 37,
+      "name": "upReceiptNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 38,
+      "name": "receiptDurationNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 39,
+      "name": "receiptDurationNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 40,
+      "name": "downValidatedNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 41,
+      "name": "downValidatedNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 42,
+      "name": "upValidatedNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 43,
+      "name": "upValidatedNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 44,
+      "name": "offerNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 45,
+      "name": "offerNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 46,
+      "name": "freezeNs.0",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 47,
+      "name": "freezeNs.1",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 48,
+      "name": "claimNs.0",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 49,
+      "name": "claimNs.1",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 50,
+      "name": "rootDeadlineNs.0",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 51,
+      "name": "rootDeadlineNs.1",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 52,
+      "name": "clockGeneration.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 53,
+      "name": "clockGeneration.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 54,
+      "name": "lifecycleGeneration.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 55,
+      "name": "lifecycleGeneration.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 56,
+      "name": "geometryRevision.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 57,
+      "name": "geometryRevision.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 58,
+      "name": "viewportRevision.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 59,
+      "name": "viewportRevision.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 60,
+      "name": "downPublication.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 61,
+      "name": "downPublication.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 62,
+      "name": "upPublication.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 63,
+      "name": "upPublication.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 64,
+      "name": "downlocalX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 65,
+      "name": "downlocalX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 66,
+      "name": "downlocalY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 67,
+      "name": "downlocalY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 68,
+      "name": "downwindowX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 69,
+      "name": "downwindowX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 70,
+      "name": "downwindowY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 71,
+      "name": "downwindowY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 72,
+      "name": "downdisplayX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 73,
+      "name": "downdisplayX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 74,
+      "name": "downdisplayY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 75,
+      "name": "downdisplayY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 76,
+      "name": "downvp2pxScale.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 77,
+      "name": "downvp2pxScale.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 78,
+      "name": "downoriginX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 79,
+      "name": "downoriginX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 80,
+      "name": "downoriginY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 81,
+      "name": "downoriginY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 82,
+      "name": "uplocalX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 83,
+      "name": "uplocalX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 84,
+      "name": "uplocalY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 85,
+      "name": "uplocalY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 86,
+      "name": "upwindowX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 87,
+      "name": "upwindowX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 88,
+      "name": "upwindowY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 89,
+      "name": "upwindowY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 90,
+      "name": "updisplayX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 91,
+      "name": "updisplayX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 92,
+      "name": "updisplayY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 93,
+      "name": "updisplayY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 94,
+      "name": "upvp2pxScale.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 95,
+      "name": "upvp2pxScale.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 96,
+      "name": "uporiginX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 97,
+      "name": "uporiginX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 98,
+      "name": "uporiginY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 99,
+      "name": "uporiginY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 100,
+      "name": "left.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 101,
+      "name": "left.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 102,
+      "name": "top.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 103,
+      "name": "top.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 104,
+      "name": "width.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 105,
+      "name": "width.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 106,
+      "name": "height.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 107,
+      "name": "height.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 108,
+      "name": "downModelX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 109,
+      "name": "downModelX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 110,
+      "name": "downModelY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 111,
+      "name": "downModelY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 112,
+      "name": "upModelX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 113,
+      "name": "upModelX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 114,
+      "name": "upModelY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 115,
+      "name": "upModelY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 116,
+      "name": "deltaX.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 117,
+      "name": "deltaX.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 118,
+      "name": "deltaY.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 119,
+      "name": "deltaY.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "IEEE754_BINARY64"
+    },
+    {
+      "word": 120,
+      "name": "opaqueDownSampleBits.0",
+      "producer": "opaque event Number IEEE64; never time arithmetic",
+      "type": "BITS64"
+    },
+    {
+      "word": 121,
+      "name": "opaqueDownSampleBits.1",
+      "producer": "opaque event Number IEEE64; never time arithmetic",
+      "type": "BITS64"
+    },
+    {
+      "word": 122,
+      "name": "opaqueUpSampleBits.0",
+      "producer": "opaque event Number IEEE64; never time arithmetic",
+      "type": "BITS64"
+    },
+    {
+      "word": 123,
+      "name": "opaqueUpSampleBits.1",
+      "producer": "opaque event Number IEEE64; never time arithmetic",
+      "type": "BITS64"
+    },
+    {
+      "word": 124,
+      "name": "sampleMetadataFlags",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32"
+    },
+    {
+      "word": 125,
+      "name": "pointPolicy",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 126,
+      "name": "mappingReferenceDurationNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 127,
+      "name": "mappingReferenceDurationNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 128,
+      "name": "Jx.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "S64"
+    },
+    {
+      "word": 129,
+      "name": "Jx.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "S64"
+    },
+    {
+      "word": 130,
+      "name": "Jy.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 131,
+      "name": "Jy.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 132,
+      "name": "workCap.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U128"
+    },
+    {
+      "word": 133,
+      "name": "workCap.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U128"
+    },
+    {
+      "word": 134,
+      "name": "workCap.2",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U128"
+    },
+    {
+      "word": 135,
+      "name": "workCap.3",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U128"
+    },
+    {
+      "word": 136,
+      "name": "saturationFlags",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32"
+    },
+    {
+      "word": 137,
+      "name": "moveCount",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32"
+    },
+    {
+      "word": 138,
+      "name": "nativeMovePolicy",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 0
+    },
+    {
+      "word": 139,
+      "name": "reportedClockResolutionNs",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32"
+    },
+    {
+      "word": 140,
+      "name": "frozenRootNonce.0",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 141,
+      "name": "frozenRootNonce.1",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 142,
+      "name": "mappingGeneration.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 143,
+      "name": "mappingGeneration.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 144,
+      "name": "parameterSha.0",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 145,
+      "name": "parameterSha.1",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 146,
+      "name": "parameterSha.2",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 147,
+      "name": "parameterSha.3",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 148,
+      "name": "parameterSha.4",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 149,
+      "name": "parameterSha.5",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 150,
+      "name": "parameterSha.6",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 151,
+      "name": "parameterSha.7",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 152,
+      "name": "actualSeedSha.0",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 153,
+      "name": "actualSeedSha.1",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 154,
+      "name": "actualSeedSha.2",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 155,
+      "name": "actualSeedSha.3",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 156,
+      "name": "actualSeedSha.4",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 157,
+      "name": "actualSeedSha.5",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 158,
+      "name": "actualSeedSha.6",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 159,
+      "name": "actualSeedSha.7",
+      "producer": "same new config/actually uploaded audited seed",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 160,
+      "name": "nativeClockSpecSha.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 161,
+      "name": "nativeClockSpecSha.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 162,
+      "name": "nativeClockSpecSha.2",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 163,
+      "name": "nativeClockSpecSha.3",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 164,
+      "name": "nativeClockSpecSha.4",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 165,
+      "name": "nativeClockSpecSha.5",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 166,
+      "name": "nativeClockSpecSha.6",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 167,
+      "name": "nativeClockSpecSha.7",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 168,
+      "name": "mappingSpecSha.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 169,
+      "name": "mappingSpecSha.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 170,
+      "name": "mappingSpecSha.2",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 171,
+      "name": "mappingSpecSha.3",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 172,
+      "name": "mappingSpecSha.4",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 173,
+      "name": "mappingSpecSha.5",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 174,
+      "name": "mappingSpecSha.6",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 175,
+      "name": "mappingSpecSha.7",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 176,
+      "name": "frozenInputSha.0",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 177,
+      "name": "frozenInputSha.1",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 178,
+      "name": "frozenInputSha.2",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 179,
+      "name": "frozenInputSha.3",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 180,
+      "name": "frozenInputSha.4",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 181,
+      "name": "frozenInputSha.5",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 182,
+      "name": "frozenInputSha.6",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 183,
+      "name": "frozenInputSha.7",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 184,
+      "name": "stableCommandSha.0",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 185,
+      "name": "stableCommandSha.1",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 186,
+      "name": "stableCommandSha.2",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 187,
+      "name": "stableCommandSha.3",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 188,
+      "name": "stableCommandSha.4",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 189,
+      "name": "stableCommandSha.5",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 190,
+      "name": "stableCommandSha.6",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 191,
+      "name": "stableCommandSha.7",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 192,
+      "name": "downTokenSha.0",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 193,
+      "name": "downTokenSha.1",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 194,
+      "name": "downTokenSha.2",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 195,
+      "name": "downTokenSha.3",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 196,
+      "name": "downTokenSha.4",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 197,
+      "name": "downTokenSha.5",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 198,
+      "name": "downTokenSha.6",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 199,
+      "name": "downTokenSha.7",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 200,
+      "name": "upTokenSha.0",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 201,
+      "name": "upTokenSha.1",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 202,
+      "name": "upTokenSha.2",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 203,
+      "name": "upTokenSha.3",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 204,
+      "name": "upTokenSha.4",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 205,
+      "name": "upTokenSha.5",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 206,
+      "name": "upTokenSha.6",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 207,
+      "name": "upTokenSha.7",
+      "producer": "actual successful shader present FrameWitness41 canonical SHA",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 208,
+      "name": "moveSummarySha.0",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 209,
+      "name": "moveSummarySha.1",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 210,
+      "name": "moveSummarySha.2",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 211,
+      "name": "moveSummarySha.3",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 212,
+      "name": "moveSummarySha.4",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 213,
+      "name": "moveSummarySha.5",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 214,
+      "name": "moveSummarySha.6",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 215,
+      "name": "moveSummarySha.7",
+      "producer": "canonical byte policy in T641 runtime table",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 216,
+      "name": "inputPolicySha.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 217,
+      "name": "inputPolicySha.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 218,
+      "name": "inputPolicySha.2",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 219,
+      "name": "inputPolicySha.3",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 220,
+      "name": "inputPolicySha.4",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 221,
+      "name": "inputPolicySha.5",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 222,
+      "name": "inputPolicySha.6",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 223,
+      "name": "inputPolicySha.7",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 224,
+      "name": "nativeBuildSha.0",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 225,
+      "name": "nativeBuildSha.1",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 226,
+      "name": "nativeBuildSha.2",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 227,
+      "name": "nativeBuildSha.3",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 228,
+      "name": "nativeBuildSha.4",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 229,
+      "name": "nativeBuildSha.5",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 230,
+      "name": "nativeBuildSha.6",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 231,
+      "name": "nativeBuildSha.7",
+      "producer": "actual loaded libgrs_g9rx.so whole-file SHA, not a self-embedded ELF digest",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 232,
+      "name": "freezeAgeNs.0",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 233,
+      "name": "freezeAgeNs.1",
+      "producer": "root claim/freeze cut, after complete INPUT128 construction; immutable thereafter",
+      "type": "U64"
+    },
+    {
+      "word": 234,
+      "name": "offerAgeNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 235,
+      "name": "offerAgeNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 236,
+      "name": "upValidationDurationNs.0",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 237,
+      "name": "upValidationDurationNs.1",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U64"
+    },
+    {
+      "word": 238,
+      "name": "angleQ8",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "I32"
+    },
+    {
+      "word": 239,
+      "name": "claimMask",
+      "producer": "same stroke native-owned values; frozen before GPU submission",
+      "type": "U32",
+      "constant": 15
+    },
+    {
+      "word": 240,
+      "name": "reserved.0",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 241,
+      "name": "reserved.1",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 242,
+      "name": "reserved.2",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 243,
+      "name": "reserved.3",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 244,
+      "name": "reserved.4",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 245,
+      "name": "reserved.5",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 246,
+      "name": "reserved.6",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 247,
+      "name": "reserved.7",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 248,
+      "name": "reserved.8",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 249,
+      "name": "reserved.9",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 250,
+      "name": "reserved.10",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 251,
+      "name": "reserved.11",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 252,
+      "name": "reserved.12",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 253,
+      "name": "reserved.13",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 254,
+      "name": "reserved.14",
+      "producer": "ZERO",
+      "type": "ZERO"
+    },
+    {
+      "word": 255,
+      "name": "reserved.15",
+      "producer": "ZERO",
+      "type": "ZERO"
+    }
+  ],
+  "recordRules": {
+    "roles": {
+      "1": "CURRENT_FROZEN",
+      "2": "BASE_LAST_CONSUMED"
+    },
+    "recordStatus": "1=FROZEN_INPUT; not product accepted",
+    "saturationFlags": "0..3 only, matches INPUT45&3",
+    "nativeMovePolicy": "0=NO_NATIVE_INTERPOLATION_OR_FORCE",
+    "sampleMetadataFlags": "bit0 DOWN_present, bit1 UP_present, bit2 UNVERIFIED(always1), other0; absent endpoint bits zero; present bits opaque",
+    "claimMask": "exact15: nativeReceiptOnly|sampleAgeUnknown|upstreamResamplingUnknown|hardwareGestureUnverified",
+    "pointPolicy": 1,
+    "ingressSource": "1=ARKUI_CHANGED_TOUCH_SYNCHRONOUS",
+    "referenceDuration": "must equal125000000; actual U64 receipt duration separate",
+    "nativeBuildSha": "runtime module identity evidence; schema placeholder not a fabricated deployed hash",
+    "mappingGeneration": "geometry capability generation, NOT per-frame publication counter",
+    "rootDeadline": "rootBegin+250ms; claimNs=rootBegin; freezeNs>=claimNs; also check upReceipt+250ms at commit",
+    "geometryGenerationComparison": "DOWN and UP same geometry generation; per-frame publication changes allowed",
+    "lastConsumedInput": "BASE physical-state dedupe capsule carries prior command body; original prior frozenInput SHA is a link, not proof of prior full root archive"
+  },
+  "RootConfig128": {
+    "physicalWords": [
+      "muStart",
+      "muStop",
+      "band",
+      "entrainRate",
+      "shear",
+      "settleTicks",
+      "physicalParameterRevision",
+      "g"
+    ],
+    "reservedZero": [
+      [
+        8,
+        16
+      ],
+      [
+        56,
+        64
+      ]
+    ],
+    "parameterSHA": [
+      16,
+      24
+    ],
+    "layoutSHA": [
+      24,
+      32
+    ],
+    "pipelineSHA": [
+      32,
+      40
+    ],
+    "inputSHA": [
+      40,
+      48
+    ],
+    "actualSeedSHA": [
+      48,
+      56
+    ],
+    "fullConfig64": [
+      64,
+      128
+    ],
+    "DMPhysicalWords": [
+      76,
+      84
+    ]
+  },
+  "compatiblePhysicalLayout": {
+    "stateMagic": 844317767,
+    "eventMagic": 843400263,
+    "pathMagic": 844121159,
+    "inputMagic": 843662407,
+    "completionMagic": 843269191,
+    "coldMagic": 844383303,
+    "revision": 2,
+    "seal": 3235776802
+  },
+  "identityRule": "DM state/event/path/completion magic+structure2 retained; profile/parameter/layout/algorithm/pipeline/cache are new; INPUT remains independent revision3"
+}

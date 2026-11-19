@@ -2,3 +2,5 @@
 * text=auto
 # P-013 embedded shader hashes must use the same LF bytes as CMake/GLSL.
 entry/src/main/cpp/p013renderer/glsl/* text eol=lf
+# Keep the T641 compiler's mixed-ending raw ABI evidence byte-identical.
+docs/analysis-T641-abi-aarch64-v1.log -text

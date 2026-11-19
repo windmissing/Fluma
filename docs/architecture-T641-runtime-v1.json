@@ -1,0 +1,982 @@
+{
+  "schema": "T641_RX_RUNTIME_V1",
+  "date": "2026-11-19",
+  "task": "T641",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "defaultOFF": true,
+  "profile": "G9_DM_NATIVE_RECEIPT_SPATIAL_R1",
+  "profileCode": 827477575,
+  "domain": "NATIVE_RECEIPT_SPATIAL_CONTROL",
+  "design": {
+    "path": "docs/design-T637-manifest-v1.json",
+    "bytes": 26719,
+    "sha256": "87920db46fa1e14055adcc8f275e49898788d56a0cf755e51b5abab72795fbb7"
+  },
+  "constants": {
+    "Q": 1048576,
+    "referenceDurationNs": 125000000,
+    "minReceiptDurationNs": 8333334,
+    "maxReceiptDurationNs": 1000000000,
+    "maxCommandAgeNs": 250000000,
+    "maxValidationNs": 8000000,
+    "maxMoves": 256,
+    "queueCapacity": 16,
+    "clockResolutionLimitNs": 1000000,
+    "radius": 4,
+    "adapter": 63701,
+    "rxFlag": 8,
+    "satX": 1,
+    "satY": 2,
+    "forbiddenRealTouchFlag": 4
+  },
+  "enums": {
+    "capabilityStatus": {
+      "CLOCK_READ_OK": 1,
+      "RESOLUTION_OK": 2,
+      "LOADED_IDENTITY_OK": 4,
+      "ROUNDING_OK": 8,
+      "SOURCE_MANIFEST_OK": 16
+    },
+    "capabilityQualifiedMask": 31,
+    "nativeApiPolicyRevision": 1,
+    "loaderPolicy": 1,
+    "mappingValidMask": {
+      "PRESENTED_FRESH": 1,
+      "GEOMETRY_KNOWN": 2,
+      "COMPLETE_SCOPE": 4
+    },
+    "mappingQualifiedMask": 7,
+    "recordPresence": {
+      "CURRENT": 1,
+      "BASE": 2
+    },
+    "historyQualification": {
+      "BASE_CAP_REFERENCE_ONLY": 1,
+      "PRIOR_ROOT_ARCHIVE_ABSENT": 2
+    },
+    "eventType": {
+      "DOWN": 0,
+      "MOVE": 1,
+      "UP": 2,
+      "CANCEL": 3
+    },
+    "samplePresent": {
+      "ABSENT": 0,
+      "PRESENT": 1
+    }
+  },
+  "capability64": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1129467463
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "profile",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 827477575
+    },
+    {
+      "word": 3,
+      "name": "statusMask",
+      "producer": "native checked capability, not JS input",
+      "type": "U32"
+    },
+    {
+      "word": 4,
+      "name": "actualClockId",
+      "producer": "native checked capability, not JS input",
+      "type": "U32"
+    },
+    {
+      "word": 5,
+      "name": "reportedResolutionNs",
+      "producer": "native checked capability, not JS input",
+      "type": "U32"
+    },
+    {
+      "word": 6,
+      "name": "clockGeneration.0",
+      "producer": "native checked increasing",
+      "type": "U64_LE"
+    },
+    {
+      "word": 7,
+      "name": "clockGeneration.1",
+      "producer": "native checked increasing",
+      "type": "U64_LE"
+    },
+    {
+      "word": 8,
+      "name": "lifecycleGeneration.0",
+      "producer": "native checked increasing",
+      "type": "U64_LE"
+    },
+    {
+      "word": 9,
+      "name": "lifecycleGeneration.1",
+      "producer": "native checked increasing",
+      "type": "U64_LE"
+    },
+    {
+      "word": 10,
+      "name": "scope.0",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 11,
+      "name": "scope.1",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 12,
+      "name": "scope.2",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 13,
+      "name": "scope.3",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 14,
+      "name": "scope.4",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 15,
+      "name": "scope.5",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 16,
+      "name": "scope.6",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 17,
+      "name": "scope.7",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 18,
+      "name": "scope.8",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 19,
+      "name": "scope.9",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 20,
+      "name": "scope.10",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 21,
+      "name": "scope.11",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 22,
+      "name": "scope.12",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 23,
+      "name": "scope.13",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 24,
+      "name": "scope.14",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 25,
+      "name": "scope.15",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 26,
+      "name": "scope.16",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 27,
+      "name": "scope.17",
+      "producer": "live complete native scope",
+      "type": "9xU64_LE"
+    },
+    {
+      "word": 28,
+      "name": "loadedModuleSHA.0",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 29,
+      "name": "loadedModuleSHA.1",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 30,
+      "name": "loadedModuleSHA.2",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 31,
+      "name": "loadedModuleSHA.3",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 32,
+      "name": "loadedModuleSHA.4",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 33,
+      "name": "loadedModuleSHA.5",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 34,
+      "name": "loadedModuleSHA.6",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 35,
+      "name": "loadedModuleSHA.7",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 36,
+      "name": "clockConversionSourceSHA.0",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 37,
+      "name": "clockConversionSourceSHA.1",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 38,
+      "name": "clockConversionSourceSHA.2",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 39,
+      "name": "clockConversionSourceSHA.3",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 40,
+      "name": "clockConversionSourceSHA.4",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 41,
+      "name": "clockConversionSourceSHA.5",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 42,
+      "name": "clockConversionSourceSHA.6",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 43,
+      "name": "clockConversionSourceSHA.7",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 44,
+      "name": "clockSpecSHA.0",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 45,
+      "name": "clockSpecSHA.1",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 46,
+      "name": "clockSpecSHA.2",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 47,
+      "name": "clockSpecSHA.3",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 48,
+      "name": "clockSpecSHA.4",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 49,
+      "name": "clockSpecSHA.5",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 50,
+      "name": "clockSpecSHA.6",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 51,
+      "name": "clockSpecSHA.7",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 52,
+      "name": "inputPolicySHA.0",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 53,
+      "name": "inputPolicySHA.1",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 54,
+      "name": "inputPolicySHA.2",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 55,
+      "name": "inputPolicySHA.3",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 56,
+      "name": "inputPolicySHA.4",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 57,
+      "name": "inputPolicySHA.5",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 58,
+      "name": "inputPolicySHA.6",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 59,
+      "name": "inputPolicySHA.7",
+      "producer": "actual runtime artifact / compiled source manifest / named spec",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 60,
+      "name": "nativeApiPolicyRevision",
+      "producer": "native checked capability, not JS input",
+      "type": "U32"
+    },
+    {
+      "word": 61,
+      "name": "readFailuresSaturated",
+      "producer": "native checked capability, not JS input",
+      "type": "U32"
+    },
+    {
+      "word": 62,
+      "name": "loaderPolicy",
+      "producer": "native checked capability, not JS input",
+      "type": "U32"
+    },
+    {
+      "word": 63,
+      "name": "reserved_63",
+      "producer": "ZERO",
+      "constant": 0
+    }
+  ],
+  "mapping64": [
+    {
+      "word": 0,
+      "name": "magic",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1347244615
+    },
+    {
+      "word": 1,
+      "name": "revision",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 2,
+      "name": "validMask",
+      "producer": "successful present only; native actual values",
+      "type": "U32"
+    },
+    {
+      "word": 3,
+      "name": "pointPolicy",
+      "producer": "CONSTANT",
+      "type": "U32",
+      "constant": 1
+    },
+    {
+      "word": 4,
+      "name": "geometryRevision.0",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 5,
+      "name": "geometryRevision.1",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 6,
+      "name": "viewportRevision.0",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 7,
+      "name": "viewportRevision.1",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 8,
+      "name": "mappingGeneration.0",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 9,
+      "name": "mappingGeneration.1",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 10,
+      "name": "GeometryKeySHA.0",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 11,
+      "name": "GeometryKeySHA.1",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 12,
+      "name": "GeometryKeySHA.2",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 13,
+      "name": "GeometryKeySHA.3",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 14,
+      "name": "GeometryKeySHA.4",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 15,
+      "name": "GeometryKeySHA.5",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 16,
+      "name": "GeometryKeySHA.6",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 17,
+      "name": "GeometryKeySHA.7",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 18,
+      "name": "FrameWitnessSHA.0",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 19,
+      "name": "FrameWitnessSHA.1",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 20,
+      "name": "FrameWitnessSHA.2",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 21,
+      "name": "FrameWitnessSHA.3",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 22,
+      "name": "FrameWitnessSHA.4",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 23,
+      "name": "FrameWitnessSHA.5",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 24,
+      "name": "FrameWitnessSHA.6",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 25,
+      "name": "FrameWitnessSHA.7",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 26,
+      "name": "physicsCommit.0",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 27,
+      "name": "physicsCommit.1",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 28,
+      "name": "publication.0",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 29,
+      "name": "publication.1",
+      "producer": "actual successful present view",
+      "type": "U64_LE"
+    },
+    {
+      "word": 30,
+      "name": "left.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 31,
+      "name": "left.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 32,
+      "name": "top.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 33,
+      "name": "top.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 34,
+      "name": "width.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 35,
+      "name": "width.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 36,
+      "name": "height.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 37,
+      "name": "height.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 38,
+      "name": "vp2pxScale.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 39,
+      "name": "vp2pxScale.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 40,
+      "name": "originX.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 41,
+      "name": "originX.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 42,
+      "name": "originY.0",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 43,
+      "name": "originY.1",
+      "producer": "same immutable presented geometry",
+      "type": "BINARY64"
+    },
+    {
+      "word": 44,
+      "name": "acceptedAngleQ8",
+      "producer": "successful present only; native actual values",
+      "type": "U32"
+    },
+    {
+      "word": 45,
+      "name": "viewportWidth",
+      "producer": "successful present only; native actual values",
+      "type": "U32"
+    },
+    {
+      "word": 46,
+      "name": "viewportHeight",
+      "producer": "successful present only; native actual values",
+      "type": "U32"
+    },
+    {
+      "word": 47,
+      "name": "reserved_47",
+      "producer": "ZERO",
+      "constant": 0
+    },
+    {
+      "word": 48,
+      "name": "parameterSHA.0",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 49,
+      "name": "parameterSHA.1",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 50,
+      "name": "parameterSHA.2",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 51,
+      "name": "parameterSHA.3",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 52,
+      "name": "parameterSHA.4",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 53,
+      "name": "parameterSHA.5",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 54,
+      "name": "parameterSHA.6",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 55,
+      "name": "parameterSHA.7",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 56,
+      "name": "actualSeedSHA.0",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 57,
+      "name": "actualSeedSHA.1",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 58,
+      "name": "actualSeedSHA.2",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 59,
+      "name": "actualSeedSHA.3",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 60,
+      "name": "actualSeedSHA.4",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 61,
+      "name": "actualSeedSHA.5",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 62,
+      "name": "actualSeedSHA.6",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    },
+    {
+      "word": 63,
+      "name": "actualSeedSHA.7",
+      "producer": "same immutable presented view",
+      "type": "SHA256_LE"
+    }
+  ],
+  "hashes": {
+    "GeometryKey": {
+      "words": 67,
+      "bytes": 268,
+      "order": [
+        "domain=LE32(GRGK),rev1,profile,pointPolicy",
+        "record8..25 scope18",
+        "record56..59 geometry+viewport4",
+        "record142..143 mappingGeneration2",
+        "record100..107 rect8",
+        "record76..81 scale/origin6; require94..99 same",
+        "record238 angle1",
+        "record144..159 parameter+seed16",
+        "record168..175 mappingSpec8"
+      ]
+    },
+    "FrameWitness": {
+      "words": 41,
+      "bytes": 164,
+      "order": [
+        "domain=LE32(GRFW),rev1,profile",
+        "scope18",
+        "GeometryKeySHA8",
+        "actualPhysicsCommit2",
+        "actualPublication2",
+        "newPipelineSHA8"
+      ]
+    },
+    "StableCommand": {
+      "words": 103,
+      "bytes": 412,
+      "order": [
+        "domain=LE32(GRSC),rev1",
+        "INPUT2 profile",
+        "INPUT4..5 run",
+        "INPUT12..13 inputEpoch",
+        "INPUT26..33 parameterSHA",
+        "INPUT40..127 body88"
+      ]
+    },
+    "MoveInitial": {
+      "words": 71,
+      "order": [
+        "domain=LE32(GRMD),rev1,profile",
+        "downIngressSeq2",
+        "clockGeneration2",
+        "RAW_DOWN64"
+      ]
+    },
+    "MoveStep": {
+      "words": 78,
+      "order": [
+        "domain=LE32(GRMM),rev1",
+        "previousHash8",
+        "ingressSeq2",
+        "receiptNs2",
+        "RAW_MOVE64"
+      ]
+    },
+    "MoveFinal": {
+      "words": 79,
+      "order": [
+        "domain=LE32(GRMU),rev1",
+        "previousHash8",
+        "upIngressSeq2",
+        "upReceiptNs2",
+        "moveCount1",
+        "RAW_UP64"
+      ]
+    }
+  },
+  "clock": {
+    "first": "dedicated ingress callback first operation CheckedClockRead before get_cb_info/Product/locks/parse",
+    "zeroNsCanBeValid": true,
+    "resolution": "checked getres, 0<ns<=1000000",
+    "ordering": "single synchronous ingress and owner each check causal reads; no global max across concurrently sampled timestamps",
+    "reverse": "revoke capability/pending stroke/commands; never max(now,last)",
+    "vendorProofRequired": false,
+    "suspendLimit": "unreported suspend wall age not guaranteed"
+  },
+  "ingress": {
+    "channel": "one synchronous UI .onTouch channel; no promise/worker/async repost",
+    "busy": "try-lock/atomic gate failure cancels active stroke through invalidation generation",
+    "validationMaxNs": 8000000,
+    "ABI": "g9RxTouchIngress(raw64:Uint32Array):string; no JS receipt timestamp, force or verified boolean",
+    "typedArray": "T629/T630 fixed provider unit profile, strict exact64/uint32/offset0 backing256; UNKNOWN safely rejects"
+  },
+  "locking": [
+    "clock first with no protocol lock",
+    "claim ingress gate without waiting",
+    "try protocol mutex",
+    "copy current mapping/config/cap; validate+enqueue within8ms",
+    "release mutex and ingress gate before return",
+    "GL owner never calls GL/IO/loader under protocol mutex",
+    "render/transport/Capture callbacks recheck outside GL and acquire only same protocol mutex"
+  ],
+  "FIFO": {
+    "capacity": 16,
+    "noMoveEntries": true,
+    "noOverwrite": true,
+    "expiry": "owner maintain before claim; expired in-flight retired before exact-slot pop",
+    "dedupe": "compare original semantic words, not hash; queued/claimed/lastConsumed known duplicates ACK; older unretained keys STALE, never replay",
+    "source": "same FIFO, native command serial; separate meaningful source intent, impulse never rearms BLOCKED"
+  },
+  "APIs": [
+    "g9RxResearchConfig(k:number):string",
+    "g9RxConfigure(config64:Uint32Array,scopeAndMode:string):string",
+    "g9RxSession():string",
+    "g9RxSetActive(active:boolean,expectedScope:string):string",
+    "g9RxPulse(pulse22:Uint32Array):string",
+    "g9RxTarget(target19:Uint32Array):string",
+    "g9RxTouchIngress(raw64:Uint32Array):string",
+    "g9RxSource(request:string):string",
+    "g9RxStatus():string",
+    "g9RxStop(expectedScope:string):string",
+    "g9RxLoadedIdentity():string",
+    "g9RxColdBegin(replaceId:string,mode:string):string",
+    "g9RxColdState(requestId:string):string",
+    "g9RxColdPage(traceId:string,page:number):string",
+    "g9RxColdEnd(traceId:string):string"
+  ],
+  "files": {
+    "native": "entry/src/main/cpp/gpu_resident/g9rx/",
+    "library": "libgrs_g9rx.so",
+    "page": "entry/src/main/ets/pages/GpuResidentG9DmRx.ets",
+    "bridge": "entry/src/main/ets/physics/GpuG9RxPort.ets",
+    "collector": "entry/src/main/ets/physics/GpuG9RxCold.ets",
+    "generator": "tools/g9rx/generate_assets.py"
+  },
+  "oldRoutesUnchanged": [
+    "g9spf REAL_TOUCH_R2",
+    "g9dm SYNTHETIC",
+    "T616 routeA"
+  ],
+  "qualificationNotProductPASS": true
+}

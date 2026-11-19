@@ -1,0 +1,13 @@
+# T641 工程复盘与交接
+
+2026-11-19，architect，不使用真机。已交完整新profile工程合同及四张机器表，结论ENGINEERING_READY_FOR_T644；产品实现/设备资格仍NOT_IMPLEMENTED/NOT_VALIDATED。本卡无未完成工程范围或外部阻断。
+
+最关键的边界是将接收时钟限制在资格与年龄：位移固定125ms参考映射不假定真实手速；GeometryKey不含逐帧commit，FrameWitness保真实commit/pub，长手势不因30fps正常刷新被误取消。CURRENT在提交前冻结，BASE只在真实accepted commit后晋升，两个身份及原件不能混用。四个实际帧commit通过新header和320B sidecar补全hash前像，不能由publication反算或用SHA自证。
+
+实际g9dm只交组件，不存在可直接搬用的完整产品页桥；旧synthetic InputGate、重盖命令时间、max时钟、旧ParameterHash/冷容量/短占位SHA均不符合新域。T644须一次实现真实页桥到DM owner/transport/scene/cold调用链，不把缺页误当外部前置，也不重复分配旧FIFO。只复用既有物理与事务数学，不能借旧route更名授REAL_TOUCH资格。
+
+检查覆盖精确64/128/256字段、40960B布局、两档Config/seed规格字节和SHA、原冷段容量/预算及哈希前像；独立AArch64标本syntax-only实际sizeof40960、RxSync64。两份证据明确记录无产品构建/测试/真机；规格SHA不是部署SHA，没有运行CPU场演化或冒物理PASS。已保存编译器/标本/原始布局日志SHA；T644须针对集成后真实对象再交sizeof，而非执行额外设备测试。
+
+T644接完整开发、生成链与编译，未知provider/加载能力必须安全UNQUALIFIED，不以synthetic放行；T645负责独立组件/设备验证、脚本夹具、签名部署与采证。对比T637全部fixture族，分别报告输入资格、命令重放、真实物理接受与新管线可见帧；无先前完整根档时BASE只作reference，不宣完整历史replay。旧REAL_TOUCH路线A保持未资格，厂商部署bundle不作为新接收域实施前置。
+
+全部背景前景只XComponent+shader，失败FAULT或显式STALE；CPU停止投入、水线13→14→12和旧湿M1暂停不变。执行者仅改本人状态与原卡回执；未维护整表、其它卡或滴答同名清单。

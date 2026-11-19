@@ -1,5 +1,7 @@
 # T554：目标9动态动员与中点积分v2工程闭包
 
+> 2026-11-19接收时间位移拨动独立研究profile：见 `architecture-T641-v1.md` 及四张机器表。新GNR1 Config/INPUT/冷reader、同步native receipt资格与页桥另立，默认OFF；不更改本父DM物理参数/2404调度，不给旧REAL_TOUCH或synthetic入口换语义。水线以当前13→14→12排期为准，旧湿M1暂缓。
+
 > 2026-11-17目标12独立湿域工程：见 `architecture-T567-water-sfp-engineering-v1.md`，新G12 profile/配置/单位/6204pass与孔隙水量合同。父DM干域/参数/旧机器表不变，不将旧M1/M3/G11或父2404计数迁名冒湿域支持。
 
 > 2026-11-17工程修订：设备资格与无vertex SSBO场景沿 `architecture-T560-stage-capability-and-lab-triage-v1.md`；可选目标11仅按 `architecture-T563-g11-accepted-flux-visual-v1.md` 独立组合接入。父DM物理数学/参数/机器表不变，新组合的视觉资源和dispatch不能复用父计数冒充。

@@ -1,0 +1,70 @@
+{
+  "schema": "T641_AARCH64_ENGINEERING_ABI_V1",
+  "target": "aarch64-linux-ohos",
+  "argv": [
+    "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+    "--target=aarch64-linux-ohos",
+    "--sysroot=C:/Users/admin/AppData/Local/OpenHarmony/Sdk/26.0.0/native/sysroot",
+    "-D__MUSL__",
+    "-std=c++17",
+    "-x",
+    "c++",
+    "-fsyntax-only",
+    "-Xclang",
+    "-fdump-record-layouts-simple",
+    "D:\\hmprojects\\HelloWorld\\docs\\architecture-T641-protocol-layout-v1.hpp"
+  ],
+  "exitCode": 0,
+  "compiler": {
+    "path": "C:\\Users\\admin\\AppData\\Local\\OpenHarmony\\Sdk\\26.0.0\\native\\llvm\\bin\\clang++.exe",
+    "bytes": 106698240,
+    "sha256": "c090283dcef69bb2792c1b8fde748557eab787a7a34ea1d35d01068fc6e0baf5"
+  },
+  "specimen": {
+    "path": "D:\\hmprojects\\HelloWorld\\docs\\architecture-T641-protocol-layout-v1.hpp",
+    "bytes": 1541,
+    "sha256": "c1417dca3135baf966ba616f61ab5ce150d5f75edec8cf62517bad654161b805"
+  },
+  "log": {
+    "path": "D:\\hmprojects\\HelloWorld\\docs\\analysis-T641-abi-aarch64-v1.log",
+    "bytes": 43428,
+    "sha256": "c558788812ffa6db8b40351b9eb378a7d69d4363451be50775a490854fe050a8"
+  },
+  "layouts": {
+    "RxProtocolPayload": {
+      "sizeofBytes": 40960,
+      "alignofBytes": 64,
+      "fieldByteOffsets": [
+        0
+      ]
+    },
+    "RxTypedStorage": {
+      "sizeofBytes": 40960,
+      "alignofBytes": 64,
+      "fieldByteOffsets": [
+        0,
+        20480,
+        21504,
+        22528,
+        23552,
+        24576,
+        34304
+      ]
+    },
+    "RxSyncState": {
+      "sizeofBytes": 64,
+      "alignofBytes": 8,
+      "fieldByteOffsets": [
+        0,
+        40,
+        48,
+        56
+      ]
+    }
+  },
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "deviceUsed": false,
+  "programExecuted": false,
+  "scope": "syntax-only architecture ABI specimen, no product sources or GPU/physics execution"
+}

@@ -1,0 +1,107 @@
+{
+  "schema": "T641_FINITE_ENGINEERING_EVIDENCE_V1",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "productBuildsRun": false,
+  "engineeringAbiSyntaxCompile": true,
+  "checks": [
+    "64/128/256 complete field maps",
+    "40960 packed protocol storage without duplicate legacy FIFO",
+    "two new seed/config exact-byte specifications",
+    "unchanged DM cold directory and GPU/dispatch budgets",
+    "fixed125ms gain exactly2/s, duration excluded",
+    "stable preimage mutation changes SHA"
+  ],
+  "limits": [
+    "isolated aarch64 ABI specimen only; real integrated T644 objects must report actual sizeof again",
+    "no actual deployed pipeline/ELF SHA fabricated",
+    "no gesture, physics, live clock, reader, performance or driver qualification"
+  ],
+  "abiReceipt": {
+    "path": "docs/analysis-T641-abi-v1.json",
+    "bytes": 1996,
+    "sha256": "2bcc04ae0a47f65ee4b09baa3847d84421c4c7ea6664e2b527458cd125d3432c"
+  },
+  "inputs": [
+    {
+      "path": "docs/algorithm-T637-v1.md",
+      "bytes": 21277,
+      "sha256": "87cb2a84fc1965702beef5cf33cb82c04b87191bc07414b465e81c23416c2bf6"
+    },
+    {
+      "path": "docs/design-T637-manifest-v1.json",
+      "bytes": 26719,
+      "sha256": "87920db46fa1e14055adcc8f275e49898788d56a0cf755e51b5abab72795fbb7"
+    },
+    {
+      "path": "docs/design-T637-fixtures-v1.json",
+      "bytes": 12685,
+      "sha256": "c4dcf5f499a1fd15b623e071cee4596a923156445e089b051fd677fc720353a0"
+    },
+    {
+      "path": "docs/architecture-T554-g9-dm-manifest-v2.json",
+      "bytes": 22451,
+      "sha256": "750cc59d80ad66a3b29f769570918d5d78c0dfaa3f7e00b6a1e983bdde13d062"
+    },
+    {
+      "path": "docs/architecture-T543-g9-adapter-manifest-v1.json",
+      "bytes": 26716,
+      "sha256": "e9ae448c9c7e210f5bc1734ffbe6de5d6ea89b015a9b9afa9ef8d2b0ca210f0d"
+    },
+    {
+      "path": "docs/architecture-T552-g9-seed-manifest-v2.json",
+      "bytes": 3947,
+      "sha256": "2a8ed1093e201a9f3cf5386dbc80840a1d481ca58396f9d737320a6ae0fc6a4c"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/research_config.h",
+      "bytes": 3321,
+      "sha256": "6a76c1be507d4081d83479fb02b55c060f3d1d1fc49f4b2f71b4992768e31798"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/controller.cpp",
+      "bytes": 11586,
+      "sha256": "12d4ea502ea276159ecc7de7f229b7fa244a671ae48ce371f6970620a735b1f7"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/input_gate.h",
+      "bytes": 3583,
+      "sha256": "be6b556d08f5ca684a5377c7b66b6351a8e252dd9a46cf118c3b1f1e43da8162"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/touch_adapter.h",
+      "bytes": 3172,
+      "sha256": "dc7a1a77bc1ae8ab9298c660cb07bc2d018dab8f404741e9c5762bcbdb101dc6"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/pipeline.comp",
+      "bytes": 140106,
+      "sha256": "972edb7f6b4b7a387f57bb1578b8c3bb66cdad7e226be8f943857a49de06063b"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/scene.cpp",
+      "bytes": 9698,
+      "sha256": "2bf37bd7d0dc59f598e5b43c6e831e82f9e4934c42c33b4899bf4fcdbe6fb0dc"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/cold_capture.cpp",
+      "bytes": 3079,
+      "sha256": "0d2eb4ed586f1245096a3a1dd10d94913d5c6bb48c6ae3ae571e1a87718f5d1e"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/cold_contract.h",
+      "bytes": 3351,
+      "sha256": "fb2eda0fccd841cc2a7865668e3875133896e163c67444847a478365b9569cb2"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g9dm/controller_cold.cpp",
+      "bytes": 5649,
+      "sha256": "7942a8d69042a998d98da133a2310d5799ddd967b2c893700b226ff2d2607617"
+    },
+    {
+      "path": "entry/src/main/ets/pages/GpuResidentG9.ets",
+      "bytes": 17448,
+      "sha256": "8f631e48aad7636358c5e053e896078404f28f87b6280368017e72b1e504e11d"
+    }
+  ]
+}
