@@ -1,0 +1,22 @@
+{"seq":0,"event":"START","detail":"T636 cross-DSO broker harness"}
+{"seq":1,"event":"LOADED","detail":"/data/local/tmp/t636x/libadapter_a.so handle=0xf34819761bb0c439 Res=0x5cab401f04 ReadBegin=0x5cab401f78"}
+{"seq":2,"event":"RESOLVE","detail":"resolved=0x5cab401f04 name=A_Reserve"}
+{"seq":3,"event":"LOADED","detail":"/data/local/tmp/t636x/libadapter_b.so handle=0xaf76b36ac98bf417 Res=0x5cab441f04 ReadBegin=0x5cab441f78"}
+{"seq":4,"event":"RESOLVE","detail":"resolved=0x5cab441f04 name=A_Reserve"}
+{"seq":5,"event":"M1_A_RES_FRESH0","detail":"A.Res(4096,r1)=1 ticket_before=0 ticket_after=1"}
+{"seq":6,"event":"M1_B_RES_R1","detail":"B.Res(r1,fresh0)=0 after=0"}
+{"seq":7,"event":"M1_B_RES_R2","detail":"B.Res(r2,fresh0)=0 after=0"}
+{"seq":8,"event":"M1_B_READBEGIN_A","detail":"B.ReadBegin(A.ticket=1)=1"}
+{"seq":9,"event":"M1_B_READEND","detail":"ok"}
+{"seq":10,"event":"M2_B_RES_R2","detail":"B.Res(r2,readerA-active,fresh0)=1 after=2"}
+{"seq":11,"event":"M2_B_SELF_READ","detail":"B.ReadBegin(own builder)=0 (expect 0)"}
+{"seq":12,"event":"M2_B_READ_AFTER_DONE","detail":"B.ReadBegin(own done, readerA active)=1 (expect 0)"}
+{"seq":13,"event":"M2_GLOBAL_READER_GATE","detail":"B.ReadBegin(own done, readers freed)=0 (expect 1)"}
+{"seq":14,"event":"M3_A_RES","detail":"A.Res=0 ticket=0"}
+{"seq":15,"event":"M4_A_RES_R1","detail":"FAIL"}
+{"seq":16,"event":"M5_A_GPU_RES","detail":"A.GpuRes(ctxA,1B)=1 ticket_after=1"}
+{"seq":17,"event":"M5_B_SAME_CTX","detail":"B.GpuRes(same ctx)=0 (expect 0)"}
+{"seq":18,"event":"M5_WRONG_GUARDS","detail":"B.GpuRes(after wrong-free/retire)=0 (expect 0)"}
+{"seq":19,"event":"M5_B_FREED_A","detail":"B.GpuRes(after B.Freed(A ticket))=1 (expect 1)"}
+{"seq":20,"event":"M5_CTX_RETIRED_CORRECT","detail":"A.GpuRes(fresh0, after B.ContextRetired(ctxA))=1 (expect 1: retired cleared lease)"}
+{"seq":21,"event":"DONE","detail":"T656 corrected matrix complete"}

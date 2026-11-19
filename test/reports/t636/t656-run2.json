@@ -1,0 +1,23 @@
+{
+ "revision": "T656_RUN_V2_PARTIAL_V1",
+ "date": "2026-11-19",
+ "package": "drv2 (test/t636/driver_v2.cpp fresh0 probes, 8-fn loader check, real dlsym names logged)",
+ "confirmed": {
+  "M1": "all 5 steps PASS incl B wrappers on A ticket",
+  "M5": "all 5 steps PASS incl corrected ContextRetired order (B keeps gB active, retired clears ctx lease, A fresh0 reserve OK)"
+ },
+ "deviations": [
+  {
+   "id": "D1",
+   "obs": "BuilderDone(own)+no reader -> ReadBegin OK (my expectation \"expect 0\" wrong per two-phase retirement semantics)",
+   "scope": "facility expectation error, not product defect"
+  },
+  {
+   "id": "D2",
+   "obs": "B.Freed(ticket) while reader ACTIVE terminates ticket immediately (subsequent ReadBegin=0, fresh0 Reserve starts new serial) \u2014 T636 M3 expected Reserve-reject does not hold",
+   "scope": "PRODUCT SEMANTIC OBSERVATION \u2014 Freed ignores active readers; needs architect confirmation vs formal retirement contract"
+  }
+ ],
+ "notReached": "M4 route/process credit matrix blocked by facility sequence leaks (M2/M3 cleanup order); single-run 26-line log with boot/pid attempt keys",
+ "route": "D2 to architect (T656 follow-up); facility fix then M4 rerun"
+}
