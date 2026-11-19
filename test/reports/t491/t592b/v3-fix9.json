@@ -1,0 +1,36 @@
+{
+ "revision": "T592_V3_FIX9_DEVICE_V1",
+ "date": "2026-11-19",
+ "package": {
+  "task": "T592-fix9",
+  "source": "t659-delivery-source product tree (T659 9b0959b3 fix, fresh build per T659 instruction)",
+  "inputSha": "f3a0beb3",
+  "signedSha": "8a323863"
+ },
+ "sequence": [
+  {
+   "step": "load",
+   "result": "P051DerivedV2Demo CONFIGURING-IDLE, soft keyboard up"
+  },
+  {
+   "step": "fixedKeyboard",
+   "result": "OK \u2014 button text changed to \u5df2\u786e\u8ba4\u56fa\u5b9a\u952e\u76d8 (responsive contract holds)"
+  },
+  {
+   "step": "prepare",
+   "result": "NO CRASH (pid 6577 stable) \u2014 T659 JSON-copy .same() fix VERIFIED on device",
+   "detail": "v4 layout entered: \u9884\u7ea6/\u5f52\u6863/\u65f6\u949f/\u72b6\u6001/\u5c01\u5b58/\u53d6\u6d88/\u91ca\u653e/\u914d\u7f6e"
+  },
+  {
+   "step": "prepare-result",
+   "result": "FAILED PREPARE_TIMEOUT:RASTER_NATIVE_MISMATCH",
+   "detail": "rasterRevision T532_WINDOW_HOST_RASTER_V3 vs planRevision 9 mismatch, rasterWidth 1154 rasterHeight 1644 shown on screen"
+  },
+  {
+   "step": "reserve",
+   "result": "clicked \u9884\u7ea6 \u2014 post-click state captured (fix9-screen5.jpeg)"
+  }
+ ],
+ "difference": "v2 crash root (JSON .same TypeError) eliminated; new named rejection PREPARE_TIMEOUT:RASTER_NATIVE_MISMATCH is downstream (raster host/plan revision pairing) \u2014 HOLD chain NOT_REACHED at this new gate",
+ "route": "architect/designer: raster-native revision pairing contract (T532_WINDOW_HOST_RASTER_V3 vs plan 9)"
+}
