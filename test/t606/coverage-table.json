@@ -1,0 +1,40 @@
+{
+ "revision": "T631_COVERAGE_TABLE_V1",
+ "date": "2026-11-19",
+ "rulings_applied": {
+  "F02": {
+   "fix": "pressure component k/d_h*P*cos form + RMS min(2^-16,...)/max 2^-12/order 1.8; div-only covered removed",
+   "status": "FIXED"
+  },
+  "F03": {
+   "fix": "formal nu=1/16,A=1/4,T=1/4,J{1/2,1,4} replacing old nu=1/64; BE amplitude + bounds + nu-doubling",
+   "status": "FIXED"
+  },
+  "F05": {
+   "fix": "non-zero manufactured NS + REST/RAMP_SPIN added (was coverage gap)",
+   "status": "FIXED"
+  },
+  "F06": {
+   "fix": "(-1)^n factor restored + N=128 + tail bound U*exp(-aN^2)/(pi a N^2) replacing old N40/3.1e-107",
+   "status": "FIXED (math error)"
+  },
+  "F07": {
+   "fix": "Q=1/6 (f_x=1/32) replacing 5.333; half-cell offset f_x h^2/(8nu) + max bias 2^-12 added",
+   "status": "FIXED"
+  },
+  "F11": {
+   "fix": "five-control mapping to product hooks 1-5; alias=hook6 NOT_OBSERVABLE (engineering gap)",
+   "status": "PARTIAL (alias pending hook6)"
+  },
+  "F12": {
+   "fix": "discrete ledger gate replaces continuous identity; rho*=1 dissipation 2nu∫S:S",
+   "status": "FIXED"
+  },
+  "F01/F04/F08-F10/F13-F16": {
+   "fix": "each row to bind fixture input SHA/grid/J/time/position/gauge/denominators/convergence pairs at measurement time (T605 frozen gates quoted as-is)",
+   "status": "BINDING-NOTE-ADDED"
+  }
+ },
+ "historical": "T606 v1 report/originals kept as history; superseded declarations flagged in asset fields (supersedes/binding)",
+ "GPU": "not blocked by product CONFIG_PENDING; no GPU PASS claimed"
+}

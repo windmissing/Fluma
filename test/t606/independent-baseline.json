@@ -14,31 +14,35 @@
    "canNotProve": [
     "viscosity",
     "advection"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F02",
-   "quantity": "manufactured projection component",
-   "independent": "given divergence-free u field + injected divergence; projection removes exact normal component; residual identity div(u_proj)=0 verified by own sum (telescoping on MAC faces)",
+   "quantity": "manufactured pressure projection component (physical pressure)",
+   "independent": "FORMAL (T628): not only div u=0. uStar given by continuous gradient; discrete pressure = (k/d_h)*P*cos(pi x)*cos(pi y), P=1/4. Pressure RMS<=min(2^-16, Etrunc_RMS/16), max<=2^-12, space order>=1.8. Proves Poisson/projection pressure component (not full NS physical pressure); forbidden to write analytic pressure into the solution-under-test.",
    "proves": [
     "pressure projection operator",
     "divergence-free residual"
    ],
    "canNotProve": [
     "full NS time stepping"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F03",
-   "quantity": "viscous shear decay",
-   "independent": "u(y,0)=U0*sin(k*y) -> u(y,t)=U0*sin(k*y)*exp(-nu*k^2*t); own closed form; decay rate k^2*nu with nu=1/64,k=2*pi -> rate=pi^2/16 per unit t; bounded series alternative for periodic box",
+   "quantity": "viscous shear decay (formal params)",
+   "independent": "FORMAL (T628): nu*=1/16, A*=1/4, T=1/4, J in {1/2,1,4}, grids 32/64/128, k=2*pi. Continuous decay u=A*sin(k*y)*exp(-nu*k^2*t) with rate nu*k^2; BE discrete amplitude |1/(1+nu*k^2*dt)|. Bounds: velocity rel RMS<=1/64 max<=1/32 (hmm per T628: M*2^-16/J+gamma), energy rel<=1/32; time order>=0.8, space order>=1.8; nu-doubling check. OLD T606 params (nu=1/64, rate pi^2/16) did NOT belong to this fixture - superseded.",
    "proves": [
     "viscosity term (Laplace) coefficient exactness"
    ],
    "canNotProve": [
     "pressure",
     "nonlinear advection"
-   ]
+   ],
+   "supersedes": "T606 v1 used nu=1/64 (wrong fixture params)",
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F04",
@@ -52,36 +56,39 @@
    "canNotProve": [
     "3D",
     "wall boundaries (periodic domain)"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F05",
-   "quantity": "closed box manufactured NS + rotation",
-   "independent": "manufactured body force f=du/dt+...-nu Lap u + grad pi with own symbolic differentiation; rotation: J90 terms cancel in potential split; Coriolis 2*Omega*J90(u)=0 for u=0 rest",
+   "quantity": "non-zero closed-box manufactured NS + REST/RAMP_SPIN",
+   "independent": "FORMAL (T628): u=a*sin^2(pi x)*sin(2 pi y), v=-a*sin(2 pi x)*sin^2(pi y), pi=P*exp(-2t)*cos(pi x)*cos(pi y), a=A=1/4, P=1/8, nu=1/64, T=1/4, J4; two runs REST and RAMP_SPIN. Own symbolic derivatives construct body force f = du/dt + div(u tensor u) - nu*Lap(u) + grad(pi) (+ rotation terms for RAMP_SPIN). Gates: velocity rel RMS<=1/32 max<=1/16, pressure rel RMS<=1/16, space order>=0.8. Coverage gap in T606 v1 (only rotation potential / rest Coriolis zero) - superseded.",
    "proves": [
     "rotation potential split",
     "Coriolis zero-rest"
    ],
    "canNotProve": [
     "free surface"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F06",
-   "quantity": "Couette steady + startup",
-   "independent": "steady u(y)=U*y/H linear (exact); startup: u/U = y/H - sum_{n=1..N} (2/(n*pi)) sin(n*pi*y/H) exp(-n^2*pi^2*nu*t/H^2); N bounded by tail bound 2*exp(-N^2*pi^2*nu*T/H^2)/(pi*(1-exp(-pi^2*nu/H^2))) < tol",
+   "quantity": "Couette startup with correct alternating series",
+   "independent": "FORMAL (T628): startup u/U = y/H + (2/pi)*sum_{n>=1} [(-1)^n / n] * sin(n*pi*y/H) * exp(-nu*n^2*pi^2*t/H^2). T606 v1 MISSED the (-1)^n factor - mathematical error fixed here. U=1/4, nu=1/64, N=128, t>=1/120. Tail bound: U*exp(-a*N^2)/(pi*a*N^2) with a=nu*pi^2*t/H^2 (NOT the old N40/3.1e-107 number computed with unknown params). Wall shear and steady/startup formal gates added.",
    "proves": [
     "wall no-slip",
     "viscosity time scale (channel)"
    ],
    "canNotProve": [
     "pressure magnitude (Couette has none in x)"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F07",
-   "quantity": "Poiseuille pressure drive",
-   "independent": "u(y)= (G/(2 rho nu)) * y*(H-y) with own G=|grad p|; flow rate Q = G*H^3/(12 rho nu); equivalence to body-force drive checked by momentum balance",
+   "quantity": "Poiseuille flow rate 1/6 + half-grid offset bounds",
+   "independent": "FORMAL (T628): f_x=1/32, nu=1/64, rho*=1, H=1. Continuous flow rate Q = f_x*H^3/(3*nu) = (1/32)*1/(3/64) = 64/96 = 2/3? Recompute per T628: Q=1/6 exact. Own rederivation: u(y)=f_x/(2*nu)*y*(H-y), Q=integral = f_x*H^3/(12*nu) = (1/32)/(12/64)= (1/32)*64/12=2/12=1/6. T606 v1 used G=1 (wrong drive) giving 5.333 - superseded. Discrete half-cell offset: f_x*h^2/(8*nu) for max-velocity position, max-velocity bias +2^-12, flow/shear rel 1/32. Drive is non-periodic body force, not pressure solve - must not fake nonzero pressure result.",
    "proves": [
     "pressure gradient -> flow conversion",
     "viscosity"
@@ -89,7 +96,8 @@
    "canNotProve": [
     "rotation",
     "advection (laminar creeping)"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F08",
@@ -101,7 +109,8 @@
    ],
    "canNotProve": [
     "liquid inertia response (needs full solve)"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F09",
@@ -110,7 +119,8 @@
    "proves": [
     "Coriolis/centrifugal split correctness"
    ],
-   "canNotProve": []
+   "canNotProve": [],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F10",
@@ -122,29 +132,32 @@
    ],
    "canNotProve": [
     "pressure solver (uniform field trivial)"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F11",
    "quantity": "negative controls",
-   "independent": "injected faults (nonzero normal wall face / gauge/sign wrong / alias duplicate) must each trip own independently-computed violation detector; PASS criterion: FAULT and no CURRENT commit",
+   "independent": "FORMAL (T628): five negative controls = normal wall / RHS sum / gauge / pressure sign / periodic alias duplicate. Product existing hooks: 1 PRESSURE_DISABLED, 2 PRESSURE_SIGN_REVERSED, 3 RHS_INCOMPATIBLE, 4 GAUGE_OFFSET, 5 NORMAL_WALL; alias-duplicate (hook6) is an engineering gap (test-only build per T628) - NOT_OBSERVABLE until hook6 lands; PRESSURE_DISABLED extra but must not masquerade as the fifth.",
    "proves": [
     "gate coverage / no silent repair"
    ],
    "canNotProve": [
     "physics"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F12",
    "quantity": "external work + energy budget",
-   "independent": "dE/dt = -int(2 nu mu*|S|^2) + boundary power, own identity from NS x u; discrete telescoping bound with known truncation order",
+   "independent": "FORMAL (T628): continuous identity must NOT multiply extra nu/mu; rho*=1 dissipation = 2*nu*integral(S:S). Product gate is the DISCRETE per-operator ledger / actual midpoint power, positive-power no-refund-from-negative-work, frozen 120 accepted-quanta window, no future-dissipation credit. T606 v1 continuous identity cannot substitute ledger originals.",
    "proves": [
     "energy budget closure"
    ],
    "canNotProve": [
     "pressure field directly"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F13",
@@ -155,7 +168,8 @@
    ],
    "canNotProve": [
     "physics"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F14",
@@ -166,7 +180,8 @@
    ],
    "canNotProve": [
     "physics"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F15",
@@ -178,7 +193,8 @@
    ],
    "canNotProve": [
     "solver math"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   },
   {
    "id": "F16",
@@ -189,7 +205,8 @@
    ],
    "canNotProve": [
     "numerical accuracy"
-   ]
+   ],
+   "binding": "fixture input SHA / grid / J / sample-time / variable position / pressure gauge / RMS-max denominators / convergence pairs to be pinned at measurement time from design-G13-pure-fluid-fixtures-v1.json given-block (T605 frozen gates quoted as-is; no new loose gates)"
   }
  ]
 }
