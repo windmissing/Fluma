@@ -21,7 +21,7 @@ def record(path):
 
 
 def write(path, obj):
-    (ROOT / path).write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (ROOT / path).write_bytes((json.dumps(obj, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
 
 
 def build_id(b):
