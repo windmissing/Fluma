@@ -1,0 +1,38 @@
+{"seq":0,"event":"START","detail":"T636 cross-DSO broker harness"}
+{"seq":1,"event":"LOADED","detail":"/data/local/tmp/t636x/libadapter_a.so handle=0xb81f25393b31910b Res=0x630e901f04 ReadBegin=0x630e901f78"}
+{"seq":2,"event":"LOADED","detail":"/data/local/tmp/t636x/libadapter_b.so handle=0x4de94fd442420fb4 Res=0x630e941f04 ReadBegin=0x630e941f78"}
+{"seq":3,"event":"M1_A_RESERVE","detail":"A.Reserve(4096,route1)=1 ticket=1"}
+{"seq":4,"event":"M1_B_RESERVE_SAME_ROUTE","detail":"B.Reserve(4096,route1)=0 (expect 0: single builder)"}
+{"seq":5,"event":"M1_B_RESERVE_OTHER_ROUTE","detail":"B.Reserve(4096,route2)=0 (expect 0: single builder global)"}
+{"seq":6,"event":"M1_B_READBEGIN_A_TICKET","detail":"B.ReadBegin(A.ticket=1)=1 (expect 1: cross-DSO)"}
+{"seq":7,"event":"M2_B_RESERVE_ROUTE2","detail":"B.Reserve(4096,route2,readerA-active)=1 (expect 1)"}
+{"seq":8,"event":"M2_B_SELF_READ","detail":"B.ReadBegin(own builder ticket)=0 (expect 0)"}
+{"seq":9,"event":"M2_B_READ_AFTER_DONE","detail":"B.ReadBegin(B ticket after own BuilderDone)=0 (expect 0 until A reader frees)"}
+{"seq":10,"event":"M3_FREED_WHILE_READER","detail":"A.Reserve after B.Freed(A.reader-active)=0 (expect 0)"}
+{"seq":11,"event":"M3_A_REREAD","detail":"A.ReadEnd+ReadBegin(A ticket)=1 (expect 1)"}
+{"seq":12,"event":"M3_RESERVE_NEW_GEN","detail":"A.Reserve after full release=1 (expect 1, new generation)"}
+{"seq":13,"event":"M5_A_GPU_RESERVE","detail":"A.GpuReserve(ctxA,1B)=1 ticket=1"}
+{"seq":14,"event":"M5_B_GPU_SAME_CTX","detail":"B.GpuReserve(same ctxA)=0 (expect 0)"}
+{"seq":15,"event":"M5_WRONG_FREE","detail":"B.GpuReserve after wrong-free/retire=0 (expect 0)"}
+{"seq":16,"event":"M5_B_FREED_A","detail":"B.GpuReserve after B.Freed(A ticket)=1 (expect 1)"}
+{"seq":17,"event":"M5_CTX_RETIRED","detail":"A.GpuReserve after B.ContextRetired=0 (expect 1)"}
+{"seq":18,"event":"DONE","detail":"matrix complete"}
+{"seq":0,"event":"START","detail":"T636 cross-DSO broker harness"}
+{"seq":1,"event":"LOADED","detail":"/data/local/tmp/t636x/libadapter_a.so handle=0xab189e220c579ac8 Res=0x683dcc1f04 ReadBegin=0x683dcc1f78"}
+{"seq":2,"event":"LOADED","detail":"/data/local/tmp/t636x/libadapter_b.so handle=0xb0a22c994a976bdd Res=0x683dd01f04 ReadBegin=0x683dd01f78"}
+{"seq":3,"event":"M1_A_RESERVE","detail":"A.Reserve(4096,route1)=1 ticket=1"}
+{"seq":4,"event":"M1_B_RESERVE_SAME_ROUTE","detail":"B.Reserve(4096,route1)=0 (expect 0: single builder)"}
+{"seq":5,"event":"M1_B_RESERVE_OTHER_ROUTE","detail":"B.Reserve(4096,route2)=0 (expect 0: single builder global)"}
+{"seq":6,"event":"M1_B_READBEGIN_A_TICKET","detail":"B.ReadBegin(A.ticket=1)=1 (expect 1: cross-DSO)"}
+{"seq":7,"event":"M2_B_RESERVE_ROUTE2","detail":"B.Reserve(4096,route2,readerA-active)=1 (expect 1)"}
+{"seq":8,"event":"M2_B_SELF_READ","detail":"B.ReadBegin(own builder ticket)=0 (expect 0)"}
+{"seq":9,"event":"M2_B_READ_AFTER_DONE","detail":"B.ReadBegin(B ticket after own BuilderDone)=0 (expect 0 until A reader frees)"}
+{"seq":10,"event":"M3_FREED_WHILE_READER","detail":"A.Reserve after B.Freed(A.reader-active)=0 (expect 0)"}
+{"seq":11,"event":"M3_A_REREAD","detail":"A.ReadEnd+ReadBegin(A ticket)=1 (expect 1)"}
+{"seq":12,"event":"M3_RESERVE_NEW_GEN","detail":"A.Reserve after full release=1 (expect 1, new generation)"}
+{"seq":13,"event":"M5_A_GPU_RESERVE","detail":"A.GpuReserve(ctxA,1B)=1 ticket=1"}
+{"seq":14,"event":"M5_B_GPU_SAME_CTX","detail":"B.GpuReserve(same ctxA)=0 (expect 0)"}
+{"seq":15,"event":"M5_WRONG_FREE","detail":"B.GpuReserve after wrong-free/retire=0 (expect 0)"}
+{"seq":16,"event":"M5_B_FREED_A","detail":"B.GpuReserve after B.Freed(A ticket)=1 (expect 1)"}
+{"seq":17,"event":"M5_CTX_RETIRED","detail":"A.GpuReserve after B.ContextRetired=0 (expect 1)"}
+{"seq":18,"event":"DONE","detail":"matrix complete"}
