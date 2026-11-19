@@ -1,0 +1,339 @@
+{
+  "schema": "T649_SAVED_EVIDENCE_REVIEW_V1",
+  "task": "T649",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "sourceReviewOnly": true,
+  "summary": {
+    "schema": "G13InitDiagnosticV1",
+    "rawBytes": 32768,
+    "currentLifecycle": "CONFIG_FAILED",
+    "lastProgress": "CAPABILITY:EXIT",
+    "firstConfigFailure": "CONFIGURE_ERROR_29",
+    "firstFailureAttempt": "232",
+    "queuedTicket": "232",
+    "handledTicket": "0",
+    "dropped": 0,
+    "truncated": 0,
+    "unobservedRaw": -1
+  },
+  "actualFiles": [
+    {
+      "path": "test/reports/t491/t643a/after-configure.json",
+      "bytes": 319,
+      "sha256": "0794f5d8582449a5f604172701cde2da264cd14bbc3a7c07fe49df5489226da9"
+    },
+    {
+      "path": "test/reports/t491/t643a/init-diagnostic.json",
+      "bytes": 281,
+      "sha256": "c19aa16d390bb4f390f97431f09e4de7abad6bbfdf354a13b4f3516d42bc2b0b"
+    },
+    {
+      "path": "test/reports/t491/t643a/l1.json",
+      "bytes": 49261,
+      "sha256": "4d134ef9bc606cbab07ae8113d1bb7266e19b836dd59115e2f1bdb1e0266ea99"
+    },
+    {
+      "path": "test/reports/t491/t643a/l2.json",
+      "bytes": 52256,
+      "sha256": "ab51e4bd48a0e737db22257219adda6e224f6e16166719af42f41feb3a285988"
+    },
+    {
+      "path": "test/reports/t491/t643a/l3.json",
+      "bytes": 52256,
+      "sha256": "347f7059a475854eb2c3b4d6e5a83e2567d3fd5166dd2c9e88d0507da2cf1b2a"
+    },
+    {
+      "path": "test/reports/t491/t643a/maps-g13.txt",
+      "bytes": 614961,
+      "sha256": "f1f3bbe7188b0f1e2756084eed3be7d99a79d6ecc844f481cae321df4f7983a7"
+    }
+  ],
+  "rawPageFiles": [],
+  "packages": {
+    "input": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t638-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 7736239,
+      "sha256": "2008c704f35b709e74fcd61f8a9141f0e355b0611f9cfe5270bac1a2d35b7eaa",
+      "entries": [
+        {
+          "path": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb"
+        },
+        {
+          "path": "ets/modules.abc",
+          "bytes": 2813160,
+          "sha256": "ec7e5fea1fb70b12345a85144136f3285f91e509d7ef4544c95e2cebe6f57632"
+        }
+      ]
+    },
+    "signed": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T643-g13\\T643-g13-signed.hap",
+      "bytes": 7836941,
+      "sha256": "8e5cfac9f6453e1b7713ea6d0c53af4a44aec53238ec8d873af451d970997ed7",
+      "entries": [
+        {
+          "path": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1349464,
+          "sha256": "403bb9bb1ae3025d5b8a4097671d5d7ff3d2d6ad0aba3d183c2e5c0ed8bad3eb"
+        },
+        {
+          "path": "ets/modules.abc",
+          "bytes": 2813160,
+          "sha256": "ec7e5fea1fb70b12345a85144136f3285f91e509d7ef4544c95e2cebe6f57632"
+        }
+      ]
+    }
+  },
+  "sourceAgreement": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+      "receiptSHA": "7947c63d2c3fa15768e0503667950dd58fc1d11e521020a8cbb642f5c8e1f4d8",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/controller.cpp",
+      "receiptSHA": "1dd7f8cdddb72159b41628598fb1d4ba9bd1d9dc94d12465ec7f85c3e0da6d5a",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/controller.h",
+      "receiptSHA": "fcab48ed8cd15e28d6caf028e2c4e56018a3ab3b5882875128911311e6867e02",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "receiptSHA": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h",
+      "receiptSHA": "7edce854e8ecb0f3d9c12e1322c7767397af57b7b3f9a61305fca8f661a5e0f6",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/types/libgrs_g13/index.d.ts",
+      "receiptSHA": "34c9bbd7978f8b0fc1d1d853af9f89b25f47c17eca7a0e08b4b0bb59e4b33bf0",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/ets/pages/GpuResidentG13.ets",
+      "receiptSHA": "d5db76c00f9ff620f9b093fc5113d06753a82deea1fecf5e919acbc903489a3b",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h",
+      "receiptSHA": "b3d02e5c94600d14845543a9686c1f755ebe3338b49c5400babe6873b147850a",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/program_cache/program_observer.h",
+      "receiptSHA": "390a775e19352786334680a6055051254e14afcae063aa07c7b779a578181ec1",
+      "mainMatch": true,
+      "builtMatch": true
+    }
+  ],
+  "maps": [
+    "5a30640000-5a306f3000 r--p 00000000 104:87 57371                         /data/storage/el1/bundle/libs/arm64/libgrs_g13.so",
+    "5a306f3000-5a3077d000 r-xp 000b2000 104:87 57371                         /data/storage/el1/bundle/libs/arm64/libgrs_g13.so",
+    "5a3077d000-5a30781000 r--p 0013b000 104:87 57371                         /data/storage/el1/bundle/libs/arm64/libgrs_g13.so",
+    "5a30781000-5a3078c000 rw-p 0013e000 104:87 57371                         /data/storage/el1/bundle/libs/arm64/libgrs_g13.so",
+    "5a3078c000-5a307ac000 rw-p 00000000 00:00 0                              [anon:libgrs_g13.so.bss]"
+  ],
+  "mappedBytesSHAOrBuildIdArchived": false,
+  "sourceCuts": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "matches": [
+        {
+          "line": 44,
+          "text": "  InitObservation().State(\"CAPABILITY\");"
+        },
+        {
+          "line": 45,
+          "text": "  InitStageEvent(\"CAPABILITY\", \"ENTER\");"
+        },
+        {
+          "line": 58,
+          "text": "  InitStageEvent(\"CAPABILITY\", \"EXIT\", 0, firstGl_);"
+        },
+        {
+          "line": 84,
+          "text": "  if (firstGl_ || blocks < 4 || bindings < 4 || invocations < 64 ||"
+        },
+        {
+          "line": 85,
+          "text": "      precision < 23 || group < 64 || shared < 4096 ||"
+        },
+        {
+          "line": 86,
+          "text": "      maxBlock < GLint64(profile_->ww * 4))"
+        },
+        {
+          "line": 87,
+          "text": "    return 29;"
+        },
+        {
+          "line": 92,
+          "text": "  InitObservation().State(\"PROGRAM_BUILD\");"
+        },
+        {
+          "line": 93,
+          "text": "  InitStageEvent(\"PROGRAM_BUILD\", \"ENTER\", 13, -1, PipelineSha());"
+        },
+        {
+          "line": 96,
+          "text": "    InitStageEvent(\"PROGRAM_BUILD\", \"EXIT\", 13, firstGl_, PipelineSha());"
+        },
+        {
+          "line": 97,
+          "text": "    return 29;"
+        },
+        {
+          "line": 99,
+          "text": "  InitStageEvent(\"PROGRAM_BUILD\", \"EXIT\", 13, firstGl_, PipelineSha());"
+        },
+        {
+          "line": 109,
+          "text": "    return 29;"
+        },
+        {
+          "line": 166,
+          "text": "      return 29;"
+        }
+      ]
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h",
+      "matches": [
+        {
+          "line": 67,
+          "text": "  void Ticket(const ConfigTicket &t) {"
+        },
+        {
+          "line": 76,
+          "text": "  void State(const char *state) {"
+        },
+        {
+          "line": 80,
+          "text": "  void Failure(const std::string &reason, uint64_t attempt) {"
+        },
+        {
+          "line": 116,
+          "text": "    row.seq = ++c.samples;"
+        },
+        {
+          "line": 149,
+          "text": "  void Handled(uint64_t id) {"
+        },
+        {
+          "line": 201,
+          "text": "           std::to_string(page) + \",\\\"sampleSeq\\\":\\\"\" + std::to_string(sample) +"
+        }
+      ]
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+      "matches": [
+        {
+          "line": 343,
+          "text": "        InitObservation().Failure(\"CONFIGURE_ERROR_\" + std::to_string(error),"
+        },
+        {
+          "line": 426,
+          "text": "        InitObservation().Handled(pendingTicket_.attempt);"
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T643-v1.md",
+      "bytes": 2662,
+      "sha256": "02530185d35b7aed350e6aa29d8698328b68781ee01039274624155beba50f50"
+    },
+    {
+      "path": "test/reports/t638/development.json",
+      "bytes": 2559,
+      "sha256": "b77c82bff9cdc3aa62ff7d188ae5e4c6d336f51e4e8b2944228300c084fa73b9"
+    },
+    {
+      "path": "test/reports/t257/T643-g13.json",
+      "bytes": 2283,
+      "sha256": "aef3371ef1d89a575dcdace6419b5d291693fc3c843d2910d39a90e8f4ceeb9f"
+    },
+    {
+      "path": "docs/developer-T638-init-abi-v1.json",
+      "bytes": 8213,
+      "sha256": "ad7e57686933e73f84349447884f1f4355831410251ea274dd06705bf44c0891"
+    },
+    {
+      "path": "test/reports/t491/t643a/after-configure.json",
+      "bytes": 319,
+      "sha256": "0794f5d8582449a5f604172701cde2da264cd14bbc3a7c07fe49df5489226da9"
+    },
+    {
+      "path": "test/reports/t491/t643a/init-diagnostic.json",
+      "bytes": 281,
+      "sha256": "c19aa16d390bb4f390f97431f09e4de7abad6bbfdf354a13b4f3516d42bc2b0b"
+    },
+    {
+      "path": "test/reports/t491/t643a/l1.json",
+      "bytes": 49261,
+      "sha256": "4d134ef9bc606cbab07ae8113d1bb7266e19b836dd59115e2f1bdb1e0266ea99"
+    },
+    {
+      "path": "test/reports/t491/t643a/l2.json",
+      "bytes": 52256,
+      "sha256": "ab51e4bd48a0e737db22257219adda6e224f6e16166719af42f41feb3a285988"
+    },
+    {
+      "path": "test/reports/t491/t643a/l3.json",
+      "bytes": 52256,
+      "sha256": "347f7059a475854eb2c3b4d6e5a83e2567d3fd5166dd2c9e88d0507da2cf1b2a"
+    },
+    {
+      "path": "test/reports/t491/t643a/maps-g13.txt",
+      "bytes": 614961,
+      "sha256": "f1f3bbe7188b0f1e2756084eed3be7d99a79d6ecc844f481cae321df4f7983a7"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp",
+      "bytes": 21281,
+      "sha256": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/controller.cpp",
+      "bytes": 28424,
+      "sha256": "1dd7f8cdddb72159b41628598fb1d4ba9bd1d9dc94d12465ec7f85c3e0da6d5a"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp",
+      "bytes": 36635,
+      "sha256": "7947c63d2c3fa15768e0503667950dd58fc1d11e521020a8cbb642f5c8e1f4d8"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h",
+      "bytes": 8729,
+      "sha256": "b3d02e5c94600d14845543a9686c1f755ebe3338b49c5400babe6873b147850a"
+    }
+  ],
+  "limits": [
+    "rawBytes32768 is declared capacity, not saved binary",
+    "no exact failing capability inequality available",
+    "no per-stage232 identity/source or program log saved",
+    "maps is 4 file mappings plus anon BSS, not mapped byte digest"
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "schema": "T650_SOURCE_PACKAGE_AND_SAVED_EVIDENCE_V1",
+  "task": "T650",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "sourceReviewOnly": true,
+  "packages": {
+    "input": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+      "bytes": 11144611,
+      "sha256": "bc4c5ec3fbaa1a6a1708901272594402923312b7c9b9125cbcf37b06e44831c9",
+      "entries": [
+        {
+          "path": "libs/arm64-v8a/libgrsm1.so",
+          "bytes": 3169352,
+          "sha256": "92fe79a3a401b4d09c86c5042ceeb5c80544bb9b90559209ece9f5a429651e3f"
+        },
+        {
+          "path": "ets/modules.abc",
+          "bytes": 2979996,
+          "sha256": "b1b961583c58e187667761b46a3241440a767701fad513474d22fd1aa2a9ea80"
+        }
+      ]
+    },
+    "signed": {
+      "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T594-v5\\T594-v5-signed.hap",
+      "bytes": 11284070,
+      "sha256": "83486466e0a1ede6f7109e34a86ad628214bcb595ec8d7d02e346930efffd345",
+      "entries": [
+        {
+          "path": "libs/arm64-v8a/libgrsm1.so",
+          "bytes": 3169352,
+          "sha256": "92fe79a3a401b4d09c86c5042ceeb5c80544bb9b90559209ece9f5a429651e3f"
+        },
+        {
+          "path": "ets/modules.abc",
+          "bytes": 2979996,
+          "sha256": "b1b961583c58e187667761b46a3241440a767701fad513474d22fd1aa2a9ea80"
+        }
+      ]
+    }
+  },
+  "developerRecordedHAP": {
+    "path": ".codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "sha256": "717e8650a608296eb3c1662281d0ccf17db305640e622c72257b65af53bfa37a"
+  },
+  "actualHAPMatchesDeveloperReceipt": false,
+  "selectedSourceAgreement": [
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_identity.h",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/transport.h",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/transport.cpp",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/controller.cpp",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/compound_cursor.h",
+      "mainMatch": true,
+      "builtMatch": true
+    },
+    {
+      "path": "tools/v5/read_archive.py",
+      "mainMatch": true,
+      "builtMatch": null
+    }
+  ],
+  "UIRelevant": [
+    "INCOMPLETE:Error: V5_CAPABILITY:REJECTED /data/storage/el2/base/haps/entry/files/v5-cold-1795060344278.part.jsonl",
+    "{\"revision\":\"GPU_NAPI_SUCCESS_V1\",\"ok\":true,\"state\":\"M5_NEW_EMPTY_RUN_REQUESTED\",\"api\":\"m5Configure\",\"route\":\"M3B\",\"bootStamp\":\"254766824872815\",\"diagGeneration\":\"2\",\"attemptId\":\"4\"}"
+  ],
+  "archiveFailure": {
+    "schema": "T535_V5_ARCHIVE_MANIFEST_V2",
+    "state": "INCOMPLETE",
+    "reason": "INCOMPLETE:Error: V5_CAPABILITY:REJECTED",
+    "rejectedRaw": "{\"revision\":\"GPU_NAPI_ERROR_V1\",\"ok\":false,\"state\":\"REJECTED\",\"code\":\"M5_NOT_READY\",\"api\":\"m5ColdCapabilities\",\"route\":\"M3B\",\"bootStamp\":\"254766824872815\",\"diagGeneration\":\"2\",\"attemptId\":\"1361\",\"stage\":\"API_SEMANTIC\",\"reason\":\"M5_NOT_READY\",\"napiStatus\":null,\"qualification\":\"NOT_EVALUATED\",\"diagnosticRevision\":\"GPU_INPUT_DIAGNOSTIC_V2\"}"
+  },
+  "controllerAbsentAtColdQuery": {
+    "revision": "GPU_NAPI_ERROR_V1",
+    "ok": false,
+    "state": "REJECTED",
+    "code": "M5_NOT_READY",
+    "api": "m5ColdCapabilities",
+    "route": "M3B",
+    "bootStamp": "254766824872815",
+    "diagGeneration": "2",
+    "attemptId": "1361",
+    "stage": "API_SEMANTIC",
+    "reason": "M5_NOT_READY",
+    "napiStatus": null,
+    "qualification": "NOT_EVALUATED",
+    "diagnosticRevision": "GPU_INPUT_DIAGNOSTIC_V2"
+  },
+  "WAIT_PAGE_PULSE_SameConfigIdentityProven": false,
+  "sources": [
+    {
+      "path": ".codex/local-test/t596-t614-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "matches": [
+        {
+          "line": 752,
+          "text": "if(m5Local){m5Local->Stop();m5Local->Release(true);m5Local.reset();m5Scene.Reset(true);std::lock_guard<std::mutex> lock(mutex);m5Controller.reset();}"
+        },
+        {
+          "line": 923,
+          "text": "  if(!CurrentLocked(seen,held)){next->Stop();}else{m5Controller=next;phase=permission=\"M5_WAIT_PAGE_PULSE\";status=\"{\\\"state\\\":\\\"M5_WAIT_PAGE_PULSE\\\",\\\"wire\\\":5,\\\"features\\\":31}\";}"
+        },
+        {
+          "line": 1850,
+          "text": " if(!controller)return text(e,\"M3_NOT_READY\");grs::m3a::PagePulseV3 pulse{m3IdentityOf(words),uint64_t(words[18])|(uint64_t(words[19])<<32),uint64_t(words[20])|(uint64_t(words[21])<<32)};const auto code=controller->Pulse(pulse,now());a.wake.notify_one();return text(e,std::to_string(uint32_t(code)));"
+        },
+        {
+          "line": 1942,
+          "text": " if(!grs::words::Semantic(words[15]==0,\"PREFIX_IDENTITY_CONTRACT_REQUIRED\",3))return text(e,\"PREFIX_IDENTITY_CONTRACT_REQUIRED\");"
+        },
+        {
+          "line": 1945,
+          "text": " auto& a=app();std::lock_guard<std::mutex> lock(a.mutex);if(a.m5Controller){a.m5Controller->Stop();a.m5Controller.reset();}if(a.m3Controller)a.m3Controller->Stop();a.m3Selected=false;a.m5Selected=true;a.m5Config=cold;a.K=words[2];a.Kw=words[3];"
+        },
+        {
+          "line": 1953,
+          "text": "napi_value m5SessionImplementation582(napi_env e,napi_callback_info){"
+        },
+        {
+          "line": 1957,
+          "text": "napi_value m5Session(napi_env e,napi_callback_info info){return grs::words::Invoke(e,info,grs::words::Route::M3B,\"m5Session\",0,m5SessionImplementation582,false,false);}"
+        },
+        {
+          "line": 1961,
+          "text": " if(!controller)return text(e,\"M5_NOT_READY\");grs::m3b::PagePulseV3 pulse{m5IdentityOf(words),uint64_t(words[18])|(uint64_t(words[19])<<32),uint64_t(words[20])|(uint64_t(words[21])<<32)};const auto code=controller->Pulse(pulse,now());a.wake.notify_one();return text(e,std::to_string(uint32_t(code)));"
+        }
+      ]
+    },
+    {
+      "path": ".codex/local-test/t596-t614-delivery/entry/src/main/ets/pages/GpuResidentM5.ets",
+      "matches": [
+        {
+          "line": 68,
+          "text": "  private attachFrame(): void {"
+        },
+        {
+          "line": 89,
+          "text": "      const reply = this.inputCall('m5Configure', new Uint32Array(config), 'M5_CONFIG32_V5', (words: Uint32Array): string => native.m5Configure(words));"
+        },
+        {
+          "line": 93,
+          "text": "      GpuInputAttempt.waitSession((): string => native.m5Session(), '5', 31, (): boolean => intent === this.startupIntent,"
+        },
+        {
+          "line": 94,
+          "text": "        (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.attachFrame(); },"
+        },
+        {
+          "line": 104,
+          "text": "      GpuInputAttempt.waitSession((): string => native.m5Session(), '5', 31, (): boolean => intent === this.startupIntent,"
+        },
+        {
+          "line": 105,
+          "text": "        (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.attachFrame(); },"
+        },
+        {
+          "line": 109,
+          "text": "  private offerSynthetic(): boolean {"
+        },
+        {
+          "line": 139,
+          "text": "      if (!this.offerSynthetic()) { frame.owner = null; return; }"
+        },
+        {
+          "line": 142,
+          "text": "      const code: string = native.m5Pulse(pulse);"
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/test-report-T594-v5-cold-v1.md",
+      "bytes": 2262,
+      "sha256": "737b888ae6839aa1b104792efa1bf88a5df39fd100f41717b41f55febd743d4e"
+    },
+    {
+      "path": "docs/architecture-T619-v1.md",
+      "bytes": 8161,
+      "sha256": "ac6d2d02822cbeb1bfbd5c50f0e36066035a2ea8c005b9f01ba9191a47544a95"
+    },
+    {
+      "path": "test/reports/t596/development-t619.json",
+      "bytes": 2388,
+      "sha256": "6f53eac357d4a19d0b67ab4ab45d2eea5dfed25a6c464c99f3c6549c09b5c8d0"
+    },
+    {
+      "path": "test/reports/t257/T594-v5.json",
+      "bytes": 2286,
+      "sha256": "15c3ca0d48e1e62808a8f8d515d90f9168da1429a3d30d9976cbceaedfb497c8"
+    },
+    {
+      "path": "test/reports/t594/v5-page-state.json",
+      "bytes": 50264,
+      "sha256": "dbbf6237aef15240982e9777f68efe397549de7e54dc162b51a3c01f575cb728"
+    },
+    {
+      "path": "test/reports/t594/v5-cold-part.jsonl",
+      "bytes": 522,
+      "sha256": "06c5fabd7df36bd3d6048d6c7cc4e2c17190ebebd9468fee5d1ff316819da7de"
+    },
+    {
+      "path": ".codex/local-test/t596-t614-delivery/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 148438,
+      "sha256": "f33c11c9cb63f146509340503f339187e74c856efb2581de68b7e6a42dede4c8"
+    },
+    {
+      "path": ".codex/local-test/t596-t614-delivery/entry/src/main/ets/pages/GpuResidentM5.ets",
+      "bytes": 12402,
+      "sha256": "4bafd338f9b1a43e234e36cc2d383efad5d79657e08fdae83e913d1086d08cca"
+    },
+    {
+      "path": ".codex/local-test/t596-t614-delivery/entry/src/main/ets/physics/GpuInputAttempt.ets",
+      "bytes": 9339,
+      "sha256": "318a0713f7101f1648b94166cda95bb192fdd79a749e1f8b864e7496942c4ef6"
+    },
+    {
+      "path": ".codex/local-test/t596-t614-delivery/entry/src/main/cpp/gpu_resident/napi_words_contract.cpp",
+      "bytes": 13607,
+      "sha256": "3e846d94b65dd638a27ef221366edec6b43821ec6995a1d64d7184628eba53e9"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/bridge_create.inc",
+      "bytes": 1803,
+      "sha256": "b5f32ebf8b3c57020ec15ba141f0c73c08fab69155a0d33743a62f78e244cf1f"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/napi.inc",
+      "bytes": 10851,
+      "sha256": "22413b30de51df70e4f6b2107b0108b87955e28c84fc8b315097638d56e2f6d1"
+    },
+    {
+      "path": "entry/src/main/cpp/gpu_resident/m3b/bridge_pump.inc",
+      "bytes": 2617,
+      "sha256": "0eb6c8ae91bad582c78c9f5b663dbf0bb5c9460d233d7c0f76df5f72cd4c2e57"
+    }
+  ],
+  "limits": [
+    "m3b matching files do not prove all bridge/generation/ABC/source inputs",
+    "current isolated source is reviewed, no actual runtime per-stage failure proven",
+    "no evidence of same G13 cause or surface/EGL failure"
+  ]
+}

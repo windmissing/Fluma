@@ -1,0 +1,170 @@
+{
+  "schema": "T651_SAVED_PROBE_AND_SOURCE_REVIEW_V1",
+  "task": "T651",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "sourceReviewOnly": true,
+  "probeSamples": 64,
+  "allNoCreateAttempt": true,
+  "baseline": 52,
+  "afterInvalidate": 12,
+  "serialLocked": null,
+  "facilityBugs": [
+    "standalone probe has no real M2 XComponent/active lifecycle",
+    "regex serial numeric mismatches native bootSerial string",
+    "Number conversion loses U64 identity",
+    "120/80 and1400 substring screens are not full originals",
+    "terminal fallback code0/endNs heuristic mismatches native nativeEndNs/sealed semantics",
+    "64 ticks with2 reads is128 calls not64 query budget"
+  ],
+  "sources": [
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/ets/pages/T591Probe.ets",
+      "matches": [
+        {
+          "line": 3,
+          "text": "// serial-locked identity, no old-attempt splicing). Polls in-page and keeps a"
+        },
+        {
+          "line": 12,
+          "text": "  private serial: number = 0;"
+        },
+        {
+          "line": 16,
+          "text": "    this.timerId = setInterval((): void => {"
+        },
+        {
+          "line": 21,
+          "text": "      try { diag = native.m2CreateDiagnostics(this.serial > 0 ? String(this.serial) : '0'); } catch (e) { diag = 'THROW:' + String(e); }"
+        },
+        {
+          "line": 23,
+          "text": "      try { clog = native.m2CreateLog(this.serial > 0 ? String(this.serial) : '0', 0); } catch (e) { clog = 'THROW:' + String(e); }"
+        },
+        {
+          "line": 24,
+          "text": "      const head = diag.slice(0, 120) + '|' + clog.slice(0, 80);"
+        },
+        {
+          "line": 26,
+          "text": "      const m = diag.match(/\"serial\":(\\d+)/);"
+        },
+        {
+          "line": 27,
+          "text": "      if (m && this.serial === 0 && Number(m[1]) > 0) {"
+        },
+        {
+          "line": 28,
+          "text": "        this.serial = Number(m[1]);"
+        },
+        {
+          "line": 29,
+          "text": "        this.log += `\\n[SERIAL LOCKED] ${this.serial}`;"
+        },
+        {
+          "line": 31,
+          "text": "      if (diag.indexOf('\"sealed\":true') >= 0 || diag.indexOf('\"code\":0,\"endNs\"') >= 0) {"
+        },
+        {
+          "line": 32,
+          "text": "        this.log += `\\n[FULL SNAPSHOT attempt=${this.serial}]\\n${diag.slice(0, 1400)}\\n[LOG]\\n${clog.slice(0, 1400)}`;"
+        },
+        {
+          "line": 42,
+          "text": "        Button('触发新空场(Create)').onClick((): void => { try { native.newRun(); this.log += '\\n[TRIGGER] newRun sent'; } catch (e) { this.log += '\\n[TRIGGER] THROW:' + String(e); } })"
+        }
+      ]
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+      "matches": [
+        {
+          "line": 40,
+          "text": " bool Copy(uint64_t id,Attempt& out){std::lock_guard<std::mutex> lock(mutex);if(!id)id=serial;if(!id||attempts[id%3].serial!=id)return false;out=attempts[id%3];return true;}"
+        },
+        {
+          "line": 51,
+          "text": " void Finish(uint32_t code){store.Change(serial,[&](Attempt& v){v.code=code;v.end=Now();v.sealed=true;v.calling=false;});}"
+        },
+        {
+          "line": 72,
+          "text": " void Finish(uint32_t code){recorder.Finish(code);}"
+        },
+        {
+          "line": 125,
+          "text": " u(\"bootSerial\",a.serial);u(\"previousSerial\",a.serial>1?a.serial-1:0);u(\"epoch\",a.epoch);u(\"window\",a.window);u(\"ownerTid\",a.tid);u(\"eglContext\",a.context);u(\"nativeBeginNs\",a.begin);u(\"nativeEndNs\",a.end);"
+        }
+      ]
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "matches": [
+        {
+          "line": 547,
+          "text": "    create468::Scope createScope(seen,reinterpret_cast<uintptr_t>(held),BridgeTid(),reinterpret_cast<uintptr_t>(eglGetCurrentContext()),id,capacity,waterCapacity);"
+        },
+        {
+          "line": 549,
+          "text": "    auto code=gpu->Create(capacity,waterCapacity,id,m2route::QuantumParameters{},16u*1048576u,cold);createScope.Finish(uint32_t(code));"
+        },
+        {
+          "line": 905,
+          "text": "napi_value newRun(napi_env e,napi_callback_info){app().invalidate(nullptr,false);return text(e,\"NEW_RUN_REQUESTED\");}"
+        },
+        {
+          "line": 1002,
+          "text": "napi_value m2CreateDiagnostics(napi_env e,napi_callback_info info){"
+        },
+        {
+          "line": 1008,
+          "text": "napi_value m2CreateLog(napi_env e,napi_callback_info info){"
+        },
+        {
+          "line": 1043,
+          "text": "{\"requestM2Trace\",nullptr,requestM2Trace,nullptr,nullptr,nullptr,napi_default,nullptr},{\"readM2Trace\",nullptr,readM2Trace,nullptr,nullptr,nullptr,napi_default,nullptr},{\"m2CreateDiagnostics\",nullptr,m2CreateDiagnostics,nullptr,nullptr,nullptr,napi_default,nullptr},{\"m2CreateLog\",nullptr,m2CreateLog,nullptr,nullptr,nullptr,napi_default,nullptr},{\"setSource\",nullptr,sourceMode,nullptr,nullptr,nullptr,napi_default,nullptr},{\"setGravityMode\",nullptr,gravityMode,nullptr,nullptr,nullptr,napi_default,nullptr},{\"setGravitySample\",nullptr,gravitySample,nullptr,nullptr,nullptr,napi_default,nullptr},{\"configureOptics\",nullptr,opticsConfig,nullptr,nullptr,nullptr,napi_default,nullptr},"
+        }
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/architecture-T622-v1.md",
+      "bytes": 4874,
+      "sha256": "eec036cc216bcf80844b99cfb8fc44ae17acbc7e43cfbbe4bf2f48f912aca577"
+    },
+    {
+      "path": "test/reports/t591b/collector-result.json",
+      "bytes": 1254,
+      "sha256": "4d1feed0e68ae8003e668a45cf351c22f822c1be62d3ee1b7ab4b1d184e8be6e"
+    },
+    {
+      "path": "test/reports/t591b/probe-log.json",
+      "bytes": 53432,
+      "sha256": "ee234465d7b85845b7018fc44ce00971b1ed5659c7d46b17cab3834f302beabe"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/ets/pages/T591Probe.ets",
+      "bytes": 2140,
+      "sha256": "340087e092f8c17a097cd9f27a30eca672ef828890ae0af0571d416fe6bee292"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/cpp/gpu_resident/app_bridge.cpp",
+      "bytes": 68783,
+      "sha256": "2e603650cfd1c333dd59b005db95686d826dec99e8d3181fa74a7f16cac38c21"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h",
+      "bytes": 14631,
+      "sha256": "7c4023addb674a44c2189241748aaf6299ed2adde5b11ebe51bfeba01bc9e6fc"
+    },
+    {
+      "path": ".codex/local-test/t562-m2-fix/entry/src/main/ets/pages/GpuResidentM1.ets",
+      "bytes": 13601,
+      "sha256": "f5c67e1291740318edad0a0b350540b3c8ab68eb54e16d722e5ca344d977669f"
+    }
+  ],
+  "conclusion": "existing same-page collector path has not been tried; no demonstrated native read channel blockage or missing Finish"
+}

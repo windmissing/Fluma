@@ -1,5 +1,7 @@
 # T633：G13 配置未达、零场和初始化可观测性归因
 
+> 2026-11-19 T638新包首配置失败归因见`architecture-T649-v1.md`及contract表：已到真实CONFIGURE_ERROR_29，但CAPABILITY:EXIT在阈值判定前；当前只存摘要/页面，先tester取现成native.capability及4页raw。handledTicket为COMPUTE_READY切点、sampleSeq只计stage，不能跨采样拼因果或未取原件就派shader降级。
+
 2026-11-19，architect，不使用真机，不构建/测试求解器。结论：**本轮已捕获的最早失败是NAPI解码，未证进入GPU初始化**；另有包来源、未配置激活和状态表达工程问题。五图黑屏按同一零accepted-field阻断合并，不派五个渲染故障。
 
 ## 原件优先的执行链

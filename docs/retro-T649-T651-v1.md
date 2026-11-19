@@ -1,0 +1,11 @@
+# T649–T651 首次归因复盘
+
+2026-11-19，architect，不使用真机。三卡归因与精确角色交接已完成；未构建、签名、部署、测试或运行产品。源码检查与有限表式核对不冒产品PASS。
+
+T650的REQUESTED是请求受理，WAIT_PAGE_PULSE反而在controller/scene成功发布之后，不能拼不同采样NULL指针推“GL没pulse”。T619旧HAP717e与本次重建bc4c签包8348不同，m3b部分源码相同不足以证明bridge/ABC生成链。选择16KiB按配置ticket绑定的最小观测和精确生命周期切点，保直接Pulse与owner后来读取控制状态之分；静态FULL临时guard确未移除，按已交T619完整合同修，不宣它是本次flag0 NOT_READY原因。不另套G13架构、不给泛hilog/假Ready。
+
+T651的独立probe没有真正M2 XComponent，52+12空样本未触发T622 fallback。优先把测试collector嵌入真实页，修bootSerial字符串、终态/完整原件与查询预算；无需新产品线程或物理返修。独立Store mutex提供现有native通道，但不夸称JS必可重入，真正同步阻断须新attempt的client/owner等待原件再判。
+
+T649的CAPABILITY:EXIT在阈值判定前，不能推到PROGRAM_BUILD。保存的rawBytes32768只是摘要声明，没有四页raw。现成g13Status的capability及诊断页足够先补精确值/阶段；handledTicket是COMPUTE_READY切点，sampleSeq只计stage，不能跨这些producer拼工厂错误。不同ELF strip产物SHA、pathname映射与实际加载字节证明分名。具体资源/数值问题待原值交designer，静态工程才developer，不由tester放宽门。
+
+共同选择是按真实producer、实际包源和同attempt原件处理；没有把三个初始化问题类比同因。原T594 ROOT/FULL/61段/reader、T591真实create终态和T609/T610物理/显示仍保留未行使状态，有限取证交付不等产品通过。CPU停投、GPU驻留、XComponent+shader唯一前背景、目标10/旧湿M1暂停、水线13→14→12，不增manager或开发设备验收门。

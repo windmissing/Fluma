@@ -1,5 +1,7 @@
 # T619：V5 公开身份和完整配置编码闭包
 
+> 2026-11-19 T594首受阻归因/工程续稿见`architecture-T650-v1.md`及contract表：WAIT_PAGE_PULSE在controller发布之后，配置ticket观测另立16KiB；bridge仍有word15==0的PREFIX_IDENTITY_CONTRACT_REQUIRED遗留，须按本稿完整FULL合同对齐，不将它冒本轮flag0 NOT_READY根因。冷档布局/容量/token合同不改。
+
 2026-11-19；architect；不使用真机。结论：ENGINEERING_READY，交原 T596 续实现；未运行产品、reader、构建或设备测试。消费 T596 b127521、原评论 6afd8837e4b0dc337e97c48d、developer-T596-progress.md 和 development-t614.json。T596 拒绝用零填未知身份是正确处理。
 
 ## 唯一正式表与版本

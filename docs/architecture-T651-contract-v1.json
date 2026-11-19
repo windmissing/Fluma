@@ -1,0 +1,52 @@
+{
+  "schema": "T651_M2_SAME_PAGE_COLLECTOR_CONTINUATION_V1",
+  "task": "T651",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "sourceReviewOnly": true,
+  "nextRole": "tester, original T591",
+  "newProductFallbackAuthorizedByEvidence": false,
+  "productChannel": "same real GpuResidentM1 page -> libgrsm1 m2CreateDiagnostics/Log -> independent Store mutex; owner creates M2 on its GL thread",
+  "fixtureFiles": [
+    "same build tree ets/physics/T591CreateCollector.ets (new tester module)",
+    "same build tree ets/pages/GpuResidentM1.ets (tester-only arm before XComponent, preserve original lifecycle)",
+    "tester collector file writer/index and build/source identity receipt"
+  ],
+  "serialField": "bootSerial decimal string, never JS Number or regex for numeric serial",
+  "identity": [
+    "process boot/start",
+    "pid",
+    "module path/BuildId or raw-byte relation",
+    "bootSerial",
+    "epoch",
+    "window",
+    "eglContext",
+    "candidateRun",
+    "ownerTid"
+  ],
+  "terminal": "sealed===true AND nativeEndNs>0 AND actual code present; exit/destructor/timeout never success",
+  "budget": {
+    "intervalMs": 1000,
+    "maxTotalNativeCalls": 64,
+    "maxSamplingTicks": 64,
+    "maxWindowSeconds": 60,
+    "maxUtf8RecordBytes": 16384,
+    "maxDirectoryBytes": 1048576,
+    "indexAndTerminalReserveBytes": 32768,
+    "rawChunkBytes": 8192
+  },
+  "capture": [
+    "initial read/collector receipt before XComponent creates; 0 is discovery only",
+    "after discovery pin exact bootSerial+scope, stale returns terminate rather than retarget",
+    "read logs0..2 only when fields say captured logs changed or terminal, under same 64 total call budget",
+    "save complete JSON/raw logs using indexed <=8KiB raw chunks/base64, no substrings as originals"
+  ],
+  "fallbackTrigger": "real M2 attempt with same identity open call, existing same-page timer/async channel demonstrated unable to read; preserve client ENTER/EXIT and owner stage/stack before requesting architect fallback",
+  "fallbackReserved": "T622 <=64KiB three-slot/non-GL snapshot only if trigger proven; not a current implementation prerequisite",
+  "noPhysicalRepair": true,
+  "noCpuPhysics": true,
+  "noNewManagerGate": true
+}

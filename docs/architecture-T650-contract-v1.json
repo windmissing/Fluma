@@ -1,0 +1,667 @@
+{
+  "schema": "T650_M5_INIT_OBSERVATION_V1",
+  "task": "T650",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "sourceReviewOnly": true,
+  "payloadBytes": 16384,
+  "segments": [
+    {
+      "name": "control",
+      "byteStart": 0,
+      "bytes": 1024,
+      "byteEnd": 1024
+    },
+    {
+      "name": "attempt4x512",
+      "byteStart": 1024,
+      "bytes": 2048,
+      "byteEnd": 3072
+    },
+    {
+      "name": "stages32x256",
+      "byteStart": 3072,
+      "bytes": 8192,
+      "byteEnd": 11264
+    },
+    {
+      "name": "logs2x2048",
+      "byteStart": 11264,
+      "bytes": 4096,
+      "byteEnd": 15360
+    },
+    {
+      "name": "reservedZero",
+      "byteStart": 15360,
+      "bytes": 1024,
+      "byteEnd": 16384
+    }
+  ],
+  "stage256": [
+    {
+      "offset": 0,
+      "bytes": 8,
+      "name": "seq"
+    },
+    {
+      "offset": 8,
+      "bytes": 8,
+      "name": "nativeNs"
+    },
+    {
+      "offset": 16,
+      "bytes": 8,
+      "name": "requestTicket"
+    },
+    {
+      "offset": 24,
+      "bytes": 8,
+      "name": "configAttempt"
+    },
+    {
+      "offset": 32,
+      "bytes": 8,
+      "name": "diagGeneration"
+    },
+    {
+      "offset": 40,
+      "bytes": 8,
+      "name": "cancelGeneration"
+    },
+    {
+      "offset": 48,
+      "bytes": 8,
+      "name": "ownerTid"
+    },
+    {
+      "offset": 56,
+      "bytes": 8,
+      "name": "epoch"
+    },
+    {
+      "offset": 64,
+      "bytes": 8,
+      "name": "window"
+    },
+    {
+      "offset": 72,
+      "bytes": 8,
+      "name": "context"
+    },
+    {
+      "offset": 80,
+      "bytes": 72,
+      "name": "scope9U64"
+    },
+    {
+      "offset": 152,
+      "bytes": 4,
+      "name": "actualReturnS32"
+    },
+    {
+      "offset": 156,
+      "bytes": 4,
+      "name": "rawGLS32"
+    },
+    {
+      "offset": 160,
+      "bytes": 4,
+      "name": "rawEGLS32"
+    },
+    {
+      "offset": 164,
+      "bytes": 4,
+      "name": "apiReturnS32"
+    },
+    {
+      "offset": 168,
+      "bytes": 32,
+      "name": "phaseASCII"
+    },
+    {
+      "offset": 200,
+      "bytes": 8,
+      "name": "edgeASCII"
+    },
+    {
+      "offset": 208,
+      "bytes": 32,
+      "name": "sourceSHAOrPulse4U64"
+    },
+    {
+      "offset": 240,
+      "bytes": 4,
+      "name": "knownFlags"
+    },
+    {
+      "offset": 244,
+      "bytes": 4,
+      "name": "op"
+    },
+    {
+      "offset": 248,
+      "bytes": 4,
+      "name": "programRole"
+    },
+    {
+      "offset": 252,
+      "bytes": 4,
+      "name": "reservedZero"
+    }
+  ],
+  "attempt128": [
+    {
+      "start": 0,
+      "words": 1,
+      "name": "magic"
+    },
+    {
+      "start": 1,
+      "words": 1,
+      "name": "revision1"
+    },
+    {
+      "start": 2,
+      "words": 1,
+      "name": "words128"
+    },
+    {
+      "start": 3,
+      "words": 1,
+      "name": "ticketKind"
+    },
+    {
+      "start": 4,
+      "words": 2,
+      "name": "requestTicket"
+    },
+    {
+      "start": 6,
+      "words": 2,
+      "name": "configAttempt"
+    },
+    {
+      "start": 8,
+      "words": 2,
+      "name": "diagGeneration"
+    },
+    {
+      "start": 10,
+      "words": 2,
+      "name": "cancelGeneration"
+    },
+    {
+      "start": 12,
+      "words": 2,
+      "name": "epoch"
+    },
+    {
+      "start": 14,
+      "words": 2,
+      "name": "window"
+    },
+    {
+      "start": 16,
+      "words": 2,
+      "name": "context"
+    },
+    {
+      "start": 18,
+      "words": 2,
+      "name": "ownerTid"
+    },
+    {
+      "start": 20,
+      "words": 2,
+      "name": "enqueueNs"
+    },
+    {
+      "start": 22,
+      "words": 2,
+      "name": "ownerBeginNs"
+    },
+    {
+      "start": 24,
+      "words": 2,
+      "name": "terminalNs"
+    },
+    {
+      "start": 26,
+      "words": 18,
+      "name": "scope9U64"
+    },
+    {
+      "start": 44,
+      "words": 32,
+      "name": "Config32Original"
+    },
+    {
+      "start": 76,
+      "words": 8,
+      "name": "configSHA"
+    },
+    {
+      "start": 84,
+      "words": 8,
+      "name": "sourceManifestSHA"
+    },
+    {
+      "start": 92,
+      "words": 8,
+      "name": "shaderSHA"
+    },
+    {
+      "start": 100,
+      "words": 1,
+      "name": "controllerPresent"
+    },
+    {
+      "start": 101,
+      "words": 1,
+      "name": "currentScope"
+    },
+    {
+      "start": 102,
+      "words": 1,
+      "name": "active"
+    },
+    {
+      "start": 103,
+      "words": 1,
+      "name": "lifecycle"
+    },
+    {
+      "start": 104,
+      "words": 1,
+      "name": "actualReturnS32"
+    },
+    {
+      "start": 105,
+      "words": 1,
+      "name": "firstFailureReturnS32"
+    },
+    {
+      "start": 106,
+      "words": 1,
+      "name": "firstFailureStage"
+    },
+    {
+      "start": 107,
+      "words": 1,
+      "name": "terminal"
+    },
+    {
+      "start": 108,
+      "words": 2,
+      "name": "firstPulseSeq"
+    },
+    {
+      "start": 110,
+      "words": 2,
+      "name": "lastAcceptedPulseSeq"
+    },
+    {
+      "start": 112,
+      "words": 2,
+      "name": "lastOwnerSeenPulseSeq"
+    },
+    {
+      "start": 114,
+      "words": 2,
+      "name": "firstPulseReceiptNs"
+    },
+    {
+      "start": 116,
+      "words": 2,
+      "name": "lastPulseReceiptNs"
+    },
+    {
+      "start": 118,
+      "words": 10,
+      "name": "reservedZero"
+    }
+  ],
+  "control256": [
+    {
+      "start": 0,
+      "words": 1,
+      "name": "magicM5ID"
+    },
+    {
+      "start": 1,
+      "words": 1,
+      "name": "revision1"
+    },
+    {
+      "start": 2,
+      "words": 1,
+      "name": "payloadBytes16384"
+    },
+    {
+      "start": 3,
+      "words": 1,
+      "name": "pageBytes2048"
+    },
+    {
+      "start": 4,
+      "words": 2,
+      "name": "nativeBoot"
+    },
+    {
+      "start": 6,
+      "words": 2,
+      "name": "pid"
+    },
+    {
+      "start": 8,
+      "words": 2,
+      "name": "processStartNsOrUnknown"
+    },
+    {
+      "start": 10,
+      "words": 2,
+      "name": "snapshotRevision"
+    },
+    {
+      "start": 12,
+      "words": 2,
+      "name": "currentTicket"
+    },
+    {
+      "start": 14,
+      "words": 2,
+      "name": "latestConfigAttempt"
+    },
+    {
+      "start": 16,
+      "words": 2,
+      "name": "diagGeneration"
+    },
+    {
+      "start": 18,
+      "words": 2,
+      "name": "stageTotal"
+    },
+    {
+      "start": 20,
+      "words": 2,
+      "name": "stageLost"
+    },
+    {
+      "start": 22,
+      "words": 2,
+      "name": "attemptTotal"
+    },
+    {
+      "start": 24,
+      "words": 2,
+      "name": "attemptLost"
+    },
+    {
+      "start": 26,
+      "words": 2,
+      "name": "truncatedBytes"
+    },
+    {
+      "start": 28,
+      "words": 2,
+      "name": "lastMutationNs"
+    },
+    {
+      "start": 30,
+      "words": 1,
+      "name": "stageCount"
+    },
+    {
+      "start": 31,
+      "words": 1,
+      "name": "stageCursor"
+    },
+    {
+      "start": 32,
+      "words": 1,
+      "name": "attemptCount"
+    },
+    {
+      "start": 33,
+      "words": 1,
+      "name": "attemptCursor"
+    },
+    {
+      "start": 34,
+      "words": 1,
+      "name": "knownFlags"
+    },
+    {
+      "start": 35,
+      "words": 1,
+      "name": "namespaceM5I1"
+    },
+    {
+      "start": 36,
+      "words": 8,
+      "name": "sourceManifestSHA"
+    },
+    {
+      "start": 44,
+      "words": 8,
+      "name": "loadedModuleSHAOrUnknown"
+    },
+    {
+      "start": 52,
+      "words": 8,
+      "name": "shaderSHA"
+    },
+    {
+      "start": 60,
+      "words": 1,
+      "name": "log0Copied"
+    },
+    {
+      "start": 61,
+      "words": 1,
+      "name": "log0Reported"
+    },
+    {
+      "start": 62,
+      "words": 1,
+      "name": "log0Flags"
+    },
+    {
+      "start": 63,
+      "words": 1,
+      "name": "log0Role"
+    },
+    {
+      "start": 66,
+      "words": 1,
+      "name": "log1Copied"
+    },
+    {
+      "start": 67,
+      "words": 1,
+      "name": "log1Reported"
+    },
+    {
+      "start": 68,
+      "words": 1,
+      "name": "log1Flags"
+    },
+    {
+      "start": 69,
+      "words": 1,
+      "name": "log1Role"
+    },
+    {
+      "start": 64,
+      "words": 2,
+      "name": "log0Ticket"
+    },
+    {
+      "start": 70,
+      "words": 2,
+      "name": "log1Ticket"
+    },
+    {
+      "start": 72,
+      "words": 8,
+      "name": "log0SourceSHA"
+    },
+    {
+      "start": 80,
+      "words": 8,
+      "name": "log1SourceSHA"
+    },
+    {
+      "start": 88,
+      "words": 168,
+      "name": "reservedZero"
+    }
+  ],
+  "controlKnownFlags": {
+    "PROCESS_START_KNOWN": 1,
+    "LOADED_MODULE_SHA_KNOWN": 2,
+    "SOURCE_MANIFEST_KNOWN": 4,
+    "SHADER_SHA_KNOWN": 8,
+    "REVISION_EXHAUSTED": 16
+  },
+  "namespaceMagic": 826881357,
+  "controlMagic": 1145648461,
+  "attemptMagic": 1413559629,
+  "encoding": "LE32/LE64 low first; stage raw status unknown -1; SHA32 digest bytes; ASCII fixed arrays nul or truncation flag",
+  "API": "m5InitDiagnostics(ticket:string,page:number):string; 8 pages x2048B raw/base64 <=4096B JSON; readonly no GL owner queue",
+  "lifecycleCodes": {
+    "NONE": 0,
+    "REQUEST_QUEUED": 1,
+    "WAIT_WINDOW": 2,
+    "WAIT_RETIRED": 3,
+    "OWNER_CREATE": 4,
+    "CONTROLLER_CONFIGURED": 5,
+    "SCENE_READY": 6,
+    "PUBLISHED_WAIT_PAGE_PULSE": 7,
+    "INPUT_READY": 8,
+    "PULSE_ACCEPTED": 9,
+    "RUNNING": 10,
+    "FAILED": 11,
+    "CANCELLED": 12
+  },
+  "stageCodes": {
+    "NONE": 0,
+    "CONFIG_REQUEST": 1,
+    "WINDOW_RETAIN": 2,
+    "RETIRE_PREVIOUS": 3,
+    "EGL_READY": 4,
+    "CONTROLLER_CONFIGURE": 5,
+    "PROGRAM_SOURCE": 6,
+    "PROGRAM_INTERMEDIATE": 7,
+    "PROGRAM_FINAL": 8,
+    "SCENE_PROGRAM": 9,
+    "SCENE_TARGETS": 10,
+    "PUBLISH_CONTROLLER": 11,
+    "SESSION_READ": 12,
+    "FRAME_ATTACH": 13,
+    "INPUT_OFFER": 14,
+    "PULSE_DIRECT": 15,
+    "OWNER_OBSERVE_PULSE": 16,
+    "PLAN_ADVANCE": 17,
+    "RETIRE_CONTROLLER": 18
+  },
+  "scopeOrder": [
+    "run",
+    "owner",
+    "context",
+    "inputEpoch",
+    "pageSession",
+    "permission",
+    "window",
+    "config",
+    "surface"
+  ],
+  "stages": [
+    "CONFIG_REQUEST",
+    "WINDOW_RETAIN",
+    "RETIRE_PREVIOUS",
+    "EGL_READY",
+    "CONTROLLER_CONFIGURE",
+    "PROGRAM_SOURCE",
+    "PROGRAM_INTERMEDIATE",
+    "PROGRAM_FINAL",
+    "SCENE_PROGRAM",
+    "SCENE_TARGETS",
+    "PUBLISH_CONTROLLER",
+    "SESSION_READ",
+    "FRAME_ATTACH",
+    "INPUT_OFFER",
+    "PULSE_DIRECT",
+    "OWNER_OBSERVE_PULSE",
+    "PLAN_ADVANCE",
+    "RETIRE_CONTROLLER"
+  ],
+  "producerRules": [
+    "controller published before wait-page-pulse",
+    "m5Pulse currently direct synchronous CPU control validation, not an owner queue",
+    "owner later reads real quota/Advance, no invented consume ACK",
+    "config ticket independent of words-call attempt overwritten by later cold/session reads",
+    "publish requires same native cancel generation/epoch/window/config ticket",
+    "first error per attempt plus last progress; all mutations increment snapshot revision"
+  ],
+  "knownFlags": {
+    "RAW_GL": 1,
+    "RAW_EGL": 2,
+    "API_RETURN": 4,
+    "SOURCE_SHA": 8,
+    "ACTUAL_RETURN": 16,
+    "SCOPE_KNOWN": 32,
+    "PULSE_PAYLOAD": 64
+  },
+  "pulseStagePayload": {
+    "offsetBytes": 208,
+    "words": 8,
+    "orderU64": [
+      "pulseSeq",
+      "uiCallbackNs",
+      "nativeReceiptArgumentNs",
+      "ownerObservedAcceptedPulseSeq"
+    ],
+    "exclusiveWithSourceSHA": true
+  },
+  "frontendEvidence": "FRAME_ATTACH/client callback lives in bounded existing ArkTS receipt, never forged as native stage or new authority; readonly API has no write mode",
+  "programRole": {
+    "NONE": 0,
+    "SOURCE": 1,
+    "INTERMEDIATE": 2,
+    "FINAL": 3,
+    "SCENE": 4
+  },
+  "log2048": {
+    "headerBytes": 64,
+    "rawBytes": 1984,
+    "ticketU64Word": 0,
+    "roleWord": 2,
+    "copiedWord": 3,
+    "reportedWord": 4,
+    "flagsWord": 5,
+    "sourceSHAWords": [
+      6,
+      14
+    ],
+    "reservedWords": [
+      14,
+      16
+    ]
+  },
+  "budgets": {
+    "newGpuDispatch": 0,
+    "newGpuReadback": 0,
+    "newFences": 0,
+    "newGlQueries": 0,
+    "hotIO": false,
+    "normalGAPNs": 33333333,
+    "physicalMathUnchanged": true
+  },
+  "FULLGuard": "align existing bridge word15 FULL admission with completed T619 identity/capacity contract; do not simply discard gate or expose unsupported COMPLETE",
+  "handoff": "tester existing exact identity/session/status/input diagnostics now; developer minimal lifecycle observation and confirmed leftover FULL guard, no fake Ready; T594 retains original full verification"
+}

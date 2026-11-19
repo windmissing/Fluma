@@ -1,0 +1,94 @@
+{
+  "schema": "T649_EXISTING_EVIDENCE_CONTINUATION_V1",
+  "task": "T649",
+  "date": "2026-11-19",
+  "role": "architect",
+  "deviceUsed": false,
+  "productBuildsRun": false,
+  "productTestsRun": false,
+  "sourceReviewOnly": true,
+  "attempt": "232",
+  "missingRawPages": 4,
+  "API": [
+    "g13Status() complete JSON, especially native.capability and lastCommand",
+    "g13InitDiagnostics(attemptId,page0..3) exact base64 pages"
+  ],
+  "capabilityThresholds": [
+    {
+      "field": "blocks",
+      "required": ">=4",
+      "producer": "glGetIntegerv(GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS)"
+    },
+    {
+      "field": "bindings",
+      "required": ">=4",
+      "producer": "glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS)"
+    },
+    {
+      "field": "invocations",
+      "required": ">=64",
+      "producer": "glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS)"
+    },
+    {
+      "field": "floatPrecision",
+      "required": ">=23",
+      "producer": "glGetShaderPrecisionFormat(COMPUTE,HIGH_FLOAT)"
+    },
+    {
+      "field": "laneX",
+      "required": ">=64",
+      "producer": "glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE,0)"
+    },
+    {
+      "field": "shared",
+      "required": ">=4096",
+      "producer": "glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE)"
+    },
+    {
+      "field": "maxBlock",
+      "required": ">=profile.ww*4 bytes",
+      "producer": "glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE)"
+    },
+    {
+      "field": "rawGL",
+      "required": "==0 at existing read",
+      "producer": "existing glGetError result"
+    }
+  ],
+  "capabilityExitMeans": "query stage ended; threshold check is later, not qualified PASS",
+  "pageABI": {
+    "bytes": 8192,
+    "count": 4,
+    "total": 32768,
+    "decode": [
+      0,
+      4096
+    ],
+    "stages": [
+      4096,
+      20480
+    ],
+    "logs": [
+      20480,
+      28672
+    ],
+    "control": [
+      28672,
+      32768
+    ]
+  },
+  "sampleSeqMeaning": "stage increment only, not complete payload revision; equal values alone do not prove all-page atomic snapshot",
+  "collector": {
+    "noNewConfigureWhileReading": true,
+    "noBusinessPulseOrActiveRequired": true,
+    "reuseSameLiveAttemptFirst": true,
+    "requireBootPidStartAndActualMappedModule": true,
+    "maxSnapshotRounds": 3,
+    "maxStatusReads": 4,
+    "utf8RecordMax": 16384,
+    "directoryMax": 1048576
+  },
+  "nextRole": "tester for precise existing fields; no new product stage/relaxed shader or precision threshold now",
+  "classification": "UNRESOLVED_CAPABILITY_OR_LATER_STAGE; capability branch is first candidate, not runtime proven",
+  "downstream": "T609/T610 full physics/effect remain not exercised; T643 limited evidence handoff is complete"
+}

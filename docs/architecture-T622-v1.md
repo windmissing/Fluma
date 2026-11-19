@@ -1,5 +1,7 @@
 # T622：M2 创建终态与跨 attempt 证据
 
+> 2026-11-19 T591 v2后继归因见`architecture-T651-v1.md`及contract表：独立probe无真实M2 create，先tester将collector嵌入真正M2页并修bootSerial/终态/完整原件/64次总查询预算；空Store未触发本稿产品fallback，不派物理返修或默认新增诊断线程。
+
 2026-11-19；architect；不使用真机。结论：旧进程终态不可恢复；当前已有独立mutex的只读Create查询接口，先交tester修证据闭环，不重造产品持久化系统。保留旧DECLARATION_MISSING，未测产品PASS。
 
 消费T588、test-report-T591-external-receipt-v1.md及test/reports/t491/t591a/external.json。其HAP/包内libgrsm1.so摘要是安装收据；process明确写新M0 pid57432，timeline也为libgrsm0.so，185行47页且GREW_DURING_EXPORT/INCOMPLETE。notes的“install+load receipt”不能支持实际M2加载。linkedOriginal只列包/ELF SHA，没有原native/manifest文件SHA；不能将报告文字当已存在的连接字段。原T461进程死亡，新epoch4/run2/context3不能拼旧LINK后继。
