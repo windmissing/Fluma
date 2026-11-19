@@ -1,0 +1,15 @@
+export const g9RxResearchConfig: (k: number) => string;
+export const g9RxConfigure: (config: Uint32Array, mode: string) => string;
+export const g9RxSession: () => string;
+export const g9RxSetActive: (active: boolean, scope: string) => string;
+export const g9RxPulse: (pulse: Uint32Array) => string;
+export const g9RxTarget: (target: Uint32Array) => string;
+export const g9RxTouchIngress: (raw: Uint32Array) => string;
+export const g9RxSource: (request: string) => string;
+export const g9RxStatus: () => string;
+export const g9RxStop: (scope: string) => string;
+export const g9RxLoadedIdentity: () => string;
+export const g9RxColdBegin: (replace: string, mode: string) => string;
+export const g9RxColdState: (id: string) => string;
+export const g9RxColdPage: (id: string, page: number) => string;
+export const g9RxColdEnd: (id: string) => string;

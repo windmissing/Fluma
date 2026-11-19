@@ -4,3 +4,14 @@
 entry/src/main/cpp/p013renderer/glsl/* text eol=lf
 # Keep the T641 compiler's mixed-ending raw ABI evidence byte-identical.
 docs/analysis-T641-abi-aarch64-v1.log -text
+
+# T644: preserve byte-addressed frozen inputs and SHA-bound profile sources.
+entry/src/main/cpp/gpu_resident/g9rx/** -text whitespace=cr-at-eol,-blank-at-eof
+tools/g9rx/** -text whitespace=cr-at-eol,-blank-at-eof
+entry/src/main/ets/**/*G9Rx*.ets -text whitespace=cr-at-eol
+entry/src/main/cpp/types/libgrs_g9rx/** -text whitespace=cr-at-eol
+docs/architecture-T641-*.json -text whitespace=cr-at-eol
+docs/architecture-T647-acceptance-v1.json -text whitespace=cr-at-eol
+docs/design-T637-manifest-v1.json -text whitespace=cr-at-eol
+docs/architecture-T552-g9-seed-manifest-v2.json -text whitespace=cr-at-eol
+docs/design-G9-dynamic-mobilization-manifest-v2.json -text whitespace=cr-at-eol

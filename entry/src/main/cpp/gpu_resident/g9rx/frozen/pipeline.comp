@@ -1,0 +1,2200 @@
+#version 310 es
+precision highp int;
+layout(local_size_x=64)in;
+// T529 generated ABI: independent G9 namespace, no legacy wire alias.
+const uint G9_PROFILE=843924551u,G9_SEAL=3235776802u;
+const uint G9_STATE_MAGIC=844317767u;
+const uint G9_EVENT_MAGIC=843400263u;
+const uint G9_PATH_MAGIC=827341127u;
+const uint G9_INPUT_MAGIC=826882375u;
+const uint G9_COMPLETION_MAGIC=826489159u;
+const uint G9_HEADER_magic=0u;
+const uint G9_HEADER_revision=1u;
+const uint G9_HEADER_profile=2u;
+const uint G9_HEADER_flags=3u;
+const uint G9_HEADER_runLo=4u;
+const uint G9_HEADER_runHi=5u;
+const uint G9_HEADER_ownerLo=6u;
+const uint G9_HEADER_ownerHi=7u;
+const uint G9_HEADER_contextLo=8u;
+const uint G9_HEADER_contextHi=9u;
+const uint G9_HEADER_commitLo=10u;
+const uint G9_HEADER_commitHi=11u;
+const uint G9_HEADER_acceptedQuantaLo=12u;
+const uint G9_HEADER_acceptedQuantaHi=13u;
+const uint G9_HEADER_inputGenerationLo=14u;
+const uint G9_HEADER_inputGenerationHi=15u;
+const uint G9_HEADER_lastNonceLo=16u;
+const uint G9_HEADER_lastNonceHi=17u;
+const uint G9_HEADER_nextId=18u;
+const uint G9_HEADER_originCount=19u;
+const uint G9_HEADER_angleIndex=20u;
+const uint G9_HEADER_gQ20=21u;
+const uint G9_HEADER_gxQ20=22u;
+const uint G9_HEADER_gnQ20=23u;
+const uint G9_HEADER_K=24u;
+const uint G9_HEADER_N=25u;
+const uint G9_HEADER_Ls=26u;
+const uint G9_HEADER_Lf=27u;
+const uint G9_HEADER_lastSourceSeqLo=28u;
+const uint G9_HEADER_lastSourceSeqHi=29u;
+const uint G9_HEADER_lastTouchSeqLo=30u;
+const uint G9_HEADER_lastTouchSeqHi=31u;
+const uint G9_HEADER_lastSourceCommitLo=32u;
+const uint G9_HEADER_lastSourceCommitHi=33u;
+const uint G9_HEADER_lastTouchCommitLo=34u;
+const uint G9_HEADER_lastTouchCommitHi=35u;
+const uint G9_HEADER_lastSourceOutcome=36u;
+const uint G9_HEADER_lastTouchOutcome=37u;
+const uint G9_HEADER_lastSourceAdmittedLo=38u;
+const uint G9_HEADER_lastSourceAdmittedHi=39u;
+const uint G9_HEADER_totalMassLo=40u;
+const uint G9_HEADER_totalMassHi=41u;
+const uint G9_HEADER_parameterSha0=42u;
+const uint G9_HEADER_parameterSha1=43u;
+const uint G9_HEADER_parameterSha2=44u;
+const uint G9_HEADER_parameterSha3=45u;
+const uint G9_HEADER_parameterSha4=46u;
+const uint G9_HEADER_parameterSha5=47u;
+const uint G9_HEADER_parameterSha6=48u;
+const uint G9_HEADER_parameterSha7=49u;
+const uint G9_HEADER_cumulativeGravityJx0=50u;
+const uint G9_HEADER_cumulativeGravityJx1=51u;
+const uint G9_HEADER_cumulativeGravityJx2=52u;
+const uint G9_HEADER_cumulativeGravityJx3=53u;
+const uint G9_HEADER_cumulativeGravityJy0=54u;
+const uint G9_HEADER_cumulativeGravityJy1=55u;
+const uint G9_HEADER_cumulativeGravityJy2=56u;
+const uint G9_HEADER_cumulativeGravityJy3=57u;
+const uint G9_HEADER_cumulativeTouchJx0=58u;
+const uint G9_HEADER_cumulativeTouchJx1=59u;
+const uint G9_HEADER_cumulativeTouchJx2=60u;
+const uint G9_HEADER_cumulativeTouchJx3=61u;
+const uint G9_HEADER_cumulativeTouchJy0=62u;
+const uint G9_HEADER_cumulativeTouchJy1=63u;
+const uint G9_HEADER_cumulativeTouchJy2=64u;
+const uint G9_HEADER_cumulativeTouchJy3=65u;
+const uint G9_HEADER_cumulativeSourceJx0=66u;
+const uint G9_HEADER_cumulativeSourceJx1=67u;
+const uint G9_HEADER_cumulativeSourceJx2=68u;
+const uint G9_HEADER_cumulativeSourceJx3=69u;
+const uint G9_HEADER_cumulativeSourceJy0=70u;
+const uint G9_HEADER_cumulativeSourceJy1=71u;
+const uint G9_HEADER_cumulativeSourceJy2=72u;
+const uint G9_HEADER_cumulativeSourceJy3=73u;
+const uint G9_HEADER_cumulativeSupportJx0=74u;
+const uint G9_HEADER_cumulativeSupportJx1=75u;
+const uint G9_HEADER_cumulativeSupportJx2=76u;
+const uint G9_HEADER_cumulativeSupportJx3=77u;
+const uint G9_HEADER_cumulativeSupportJy0=78u;
+const uint G9_HEADER_cumulativeSupportJy1=79u;
+const uint G9_HEADER_cumulativeSupportJy2=80u;
+const uint G9_HEADER_cumulativeSupportJy3=81u;
+const uint G9_HEADER_cumulativeGravityWork0=82u;
+const uint G9_HEADER_cumulativeGravityWork1=83u;
+const uint G9_HEADER_cumulativeGravityWork2=84u;
+const uint G9_HEADER_cumulativeGravityWork3=85u;
+const uint G9_HEADER_cumulativeTouchWork0=86u;
+const uint G9_HEADER_cumulativeTouchWork1=87u;
+const uint G9_HEADER_cumulativeTouchWork2=88u;
+const uint G9_HEADER_cumulativeTouchWork3=89u;
+const uint G9_HEADER_cumulativeSourceWork0=90u;
+const uint G9_HEADER_cumulativeSourceWork1=91u;
+const uint G9_HEADER_cumulativeSourceWork2=92u;
+const uint G9_HEADER_cumulativeSourceWork3=93u;
+const uint G9_HEADER_cumulativeDissipationLower0=94u;
+const uint G9_HEADER_cumulativeDissipationLower1=95u;
+const uint G9_HEADER_cumulativeDissipationLower2=96u;
+const uint G9_HEADER_cumulativeDissipationLower3=97u;
+const uint G9_HEADER_muStartQ16=98u;
+const uint G9_HEADER_muStopQ16=99u;
+const uint G9_HEADER_bandQ20=100u;
+const uint G9_HEADER_entrainRateQ16=101u;
+const uint G9_HEADER_shearCoeffQ16=102u;
+const uint G9_HEADER_settleTicks=103u;
+const uint G9_HEADER_lastSourceSeqValid=104u;
+const uint G9_HEADER_lastTouchSeqValid=105u;
+const uint G9_HEADER_reserved_106=106u;
+const uint G9_HEADER_reserved_107=107u;
+const uint G9_HEADER_reserved_108=108u;
+const uint G9_HEADER_reserved_109=109u;
+const uint G9_HEADER_reserved_110=110u;
+const uint G9_HEADER_reserved_111=111u;
+const uint G9_HEADER_reserved_112=112u;
+const uint G9_HEADER_reserved_113=113u;
+const uint G9_HEADER_reserved_114=114u;
+const uint G9_HEADER_reserved_115=115u;
+const uint G9_HEADER_reserved_116=116u;
+const uint G9_HEADER_reserved_117=117u;
+const uint G9_HEADER_reserved_118=118u;
+const uint G9_HEADER_reserved_119=119u;
+const uint G9_HEADER_reserved_120=120u;
+const uint G9_HEADER_reserved_121=121u;
+const uint G9_HEADER_reserved_122=122u;
+const uint G9_HEADER_reserved_123=123u;
+const uint G9_HEADER_reserved_124=124u;
+const uint G9_HEADER_reserved_125=125u;
+const uint G9_HEADER_reserved_126=126u;
+const uint G9_HEADER_reserved_127=127u;
+const uint G9_HEADER_reserved_128=128u;
+const uint G9_HEADER_reserved_129=129u;
+const uint G9_HEADER_reserved_130=130u;
+const uint G9_HEADER_reserved_131=131u;
+const uint G9_HEADER_reserved_132=132u;
+const uint G9_HEADER_reserved_133=133u;
+const uint G9_HEADER_reserved_134=134u;
+const uint G9_HEADER_reserved_135=135u;
+const uint G9_HEADER_reserved_136=136u;
+const uint G9_HEADER_reserved_137=137u;
+const uint G9_HEADER_reserved_138=138u;
+const uint G9_HEADER_reserved_139=139u;
+const uint G9_HEADER_reserved_140=140u;
+const uint G9_HEADER_reserved_141=141u;
+const uint G9_HEADER_reserved_142=142u;
+const uint G9_HEADER_reserved_143=143u;
+const uint G9_HEADER_reserved_144=144u;
+const uint G9_HEADER_reserved_145=145u;
+const uint G9_HEADER_reserved_146=146u;
+const uint G9_HEADER_reserved_147=147u;
+const uint G9_HEADER_reserved_148=148u;
+const uint G9_HEADER_reserved_149=149u;
+const uint G9_HEADER_reserved_150=150u;
+const uint G9_HEADER_reserved_151=151u;
+const uint G9_HEADER_reserved_152=152u;
+const uint G9_HEADER_reserved_153=153u;
+const uint G9_HEADER_reserved_154=154u;
+const uint G9_HEADER_reserved_155=155u;
+const uint G9_HEADER_reserved_156=156u;
+const uint G9_HEADER_reserved_157=157u;
+const uint G9_HEADER_reserved_158=158u;
+const uint G9_HEADER_reserved_159=159u;
+const uint G9_HEADER_reserved_160=160u;
+const uint G9_HEADER_reserved_161=161u;
+const uint G9_HEADER_reserved_162=162u;
+const uint G9_HEADER_reserved_163=163u;
+const uint G9_HEADER_reserved_164=164u;
+const uint G9_HEADER_reserved_165=165u;
+const uint G9_HEADER_reserved_166=166u;
+const uint G9_HEADER_reserved_167=167u;
+const uint G9_HEADER_reserved_168=168u;
+const uint G9_HEADER_reserved_169=169u;
+const uint G9_HEADER_reserved_170=170u;
+const uint G9_HEADER_reserved_171=171u;
+const uint G9_HEADER_reserved_172=172u;
+const uint G9_HEADER_reserved_173=173u;
+const uint G9_HEADER_reserved_174=174u;
+const uint G9_HEADER_reserved_175=175u;
+const uint G9_HEADER_reserved_176=176u;
+const uint G9_HEADER_reserved_177=177u;
+const uint G9_HEADER_reserved_178=178u;
+const uint G9_HEADER_reserved_179=179u;
+const uint G9_HEADER_reserved_180=180u;
+const uint G9_HEADER_reserved_181=181u;
+const uint G9_HEADER_reserved_182=182u;
+const uint G9_HEADER_reserved_183=183u;
+const uint G9_HEADER_reserved_184=184u;
+const uint G9_HEADER_reserved_185=185u;
+const uint G9_HEADER_reserved_186=186u;
+const uint G9_HEADER_reserved_187=187u;
+const uint G9_HEADER_reserved_188=188u;
+const uint G9_HEADER_reserved_189=189u;
+const uint G9_HEADER_reserved_190=190u;
+const uint G9_HEADER_reserved_191=191u;
+const uint G9_HEADER_reserved_192=192u;
+const uint G9_HEADER_reserved_193=193u;
+const uint G9_HEADER_reserved_194=194u;
+const uint G9_HEADER_reserved_195=195u;
+const uint G9_HEADER_reserved_196=196u;
+const uint G9_HEADER_reserved_197=197u;
+const uint G9_HEADER_reserved_198=198u;
+const uint G9_HEADER_reserved_199=199u;
+const uint G9_HEADER_reserved_200=200u;
+const uint G9_HEADER_reserved_201=201u;
+const uint G9_HEADER_reserved_202=202u;
+const uint G9_HEADER_reserved_203=203u;
+const uint G9_HEADER_reserved_204=204u;
+const uint G9_HEADER_reserved_205=205u;
+const uint G9_HEADER_reserved_206=206u;
+const uint G9_HEADER_reserved_207=207u;
+const uint G9_HEADER_reserved_208=208u;
+const uint G9_HEADER_reserved_209=209u;
+const uint G9_HEADER_reserved_210=210u;
+const uint G9_HEADER_reserved_211=211u;
+const uint G9_HEADER_reserved_212=212u;
+const uint G9_HEADER_reserved_213=213u;
+const uint G9_HEADER_reserved_214=214u;
+const uint G9_HEADER_reserved_215=215u;
+const uint G9_HEADER_reserved_216=216u;
+const uint G9_HEADER_reserved_217=217u;
+const uint G9_HEADER_reserved_218=218u;
+const uint G9_HEADER_reserved_219=219u;
+const uint G9_HEADER_reserved_220=220u;
+const uint G9_HEADER_reserved_221=221u;
+const uint G9_HEADER_reserved_222=222u;
+const uint G9_HEADER_reserved_223=223u;
+const uint G9_HEADER_reserved_224=224u;
+const uint G9_HEADER_reserved_225=225u;
+const uint G9_HEADER_reserved_226=226u;
+const uint G9_HEADER_reserved_227=227u;
+const uint G9_HEADER_reserved_228=228u;
+const uint G9_HEADER_reserved_229=229u;
+const uint G9_HEADER_reserved_230=230u;
+const uint G9_HEADER_reserved_231=231u;
+const uint G9_HEADER_reserved_232=232u;
+const uint G9_HEADER_reserved_233=233u;
+const uint G9_HEADER_reserved_234=234u;
+const uint G9_HEADER_reserved_235=235u;
+const uint G9_HEADER_reserved_236=236u;
+const uint G9_HEADER_reserved_237=237u;
+const uint G9_HEADER_reserved_238=238u;
+const uint G9_HEADER_reserved_239=239u;
+const uint G9_HEADER_reserved_240=240u;
+const uint G9_HEADER_reserved_241=241u;
+const uint G9_HEADER_reserved_242=242u;
+const uint G9_HEADER_reserved_243=243u;
+const uint G9_HEADER_reserved_244=244u;
+const uint G9_HEADER_reserved_245=245u;
+const uint G9_HEADER_reserved_246=246u;
+const uint G9_HEADER_reserved_247=247u;
+const uint G9_HEADER_reserved_248=248u;
+const uint G9_HEADER_reserved_249=249u;
+const uint G9_HEADER_reserved_250=250u;
+const uint G9_HEADER_reserved_251=251u;
+const uint G9_HEADER_reserved_252=252u;
+const uint G9_HEADER_reserved_253=253u;
+const uint G9_HEADER_reserved_254=254u;
+const uint G9_HEADER_reserved_255=255u;
+const uint G9_COLUMN_S=0u;
+const uint G9_COLUMN_F=1u;
+const uint G9_COLUMN_pLo=2u;
+const uint G9_COLUMN_pHi=3u;
+const uint G9_COLUMN_mode=4u;
+const uint G9_COLUMN_restTicks=5u;
+const uint G9_COLUMN_bedDepth=6u;
+const uint G9_COLUMN_flowOriginCount=7u;
+const uint G9_COLUMN_Psum=8u;
+const uint G9_COLUMN_B=9u;
+const uint G9_COLUMN_activationRequested=10u;
+const uint G9_COLUMN_activationAdmitted=11u;
+const uint G9_COLUMN_depositReason=12u;
+const uint G9_COLUMN_inputFlags=13u;
+const uint G9_COLUMN_lastMutationLo=14u;
+const uint G9_COLUMN_lastMutationHi=15u;
+const uint G9_COLUMN_reserved_16=16u;
+const uint G9_COLUMN_reserved_17=17u;
+const uint G9_COLUMN_reserved_18=18u;
+const uint G9_COLUMN_reserved_19=19u;
+const uint G9_COLUMN_reserved_20=20u;
+const uint G9_COLUMN_reserved_21=21u;
+const uint G9_COLUMN_reserved_22=22u;
+const uint G9_COLUMN_reserved_23=23u;
+const uint G9_COLUMN_reserved_24=24u;
+const uint G9_COLUMN_reserved_25=25u;
+const uint G9_COLUMN_reserved_26=26u;
+const uint G9_COLUMN_reserved_27=27u;
+const uint G9_COLUMN_reserved_28=28u;
+const uint G9_COLUMN_reserved_29=29u;
+const uint G9_COLUMN_reserved_30=30u;
+const uint G9_COLUMN_reserved_31=31u;
+const uint G9_PACKET_mass=0u;
+const uint G9_PACKET_x=1u;
+const uint G9_PACKET_y2=2u;
+const uint G9_PACKET_vx=3u;
+const uint G9_PACKET_vy=4u;
+const uint G9_PACKET_column=5u;
+const uint G9_PACKET_id=6u;
+const uint G9_PACKET_generation=7u;
+const uint G9_PACKET_originLo=8u;
+const uint G9_PACKET_originHi=9u;
+const uint G9_PACKET_sourceId=10u;
+const uint G9_PACKET_birthMicro=11u;
+const uint G9_PACKET_flags=12u;
+const uint G9_PACKET_pathStart=13u;
+const uint G9_PACKET_pathCount=14u;
+const uint G9_PACKET_mutationLo=15u;
+const uint G9_PACKET_mutationHi=16u;
+const uint G9_PACKET_certificate_birthId=17u;
+const uint G9_PACKET_certificate_slotGeneration=18u;
+const uint G9_PACKET_certificate_originLo=19u;
+const uint G9_PACKET_certificate_originHi=20u;
+const uint G9_PACKET_certificate_sourceId=21u;
+const uint G9_PACKET_certificate_birthKind=22u;
+const uint G9_PACKET_certificate_birthCommitLo=23u;
+const uint G9_PACKET_certificate_birthCommitHi=24u;
+const uint G9_PACKET_certificate_birthOrdinal=25u;
+const uint G9_PACKET_certificate_birthMass=26u;
+const uint G9_PACKET_certificate_birthColumn=27u;
+const uint G9_PACKET_certificate_parentOriginRank=28u;
+const uint G9_PACKET_certificate_parentMassBefore=29u;
+const uint G9_PACKET_certificate_certificateRevision=30u;
+const uint G9_PACKET_certificate_reservedCert14=31u;
+const uint G9_PACKET_certificate_reservedCert15=32u;
+const uint G9_PACKET_reserved_33=33u;
+const uint G9_PACKET_reserved_34=34u;
+const uint G9_PACKET_reserved_35=35u;
+const uint G9_PACKET_reserved_36=36u;
+const uint G9_PACKET_reserved_37=37u;
+const uint G9_PACKET_reserved_38=38u;
+const uint G9_PACKET_reserved_39=39u;
+const uint G9_PACKET_reserved_40=40u;
+const uint G9_PACKET_reserved_41=41u;
+const uint G9_PACKET_reserved_42=42u;
+const uint G9_PACKET_reserved_43=43u;
+const uint G9_PACKET_reserved_44=44u;
+const uint G9_PACKET_reserved_45=45u;
+const uint G9_PACKET_reserved_46=46u;
+const uint G9_PACKET_reserved_47=47u;
+const uint G9_PACKET_reserved_48=48u;
+const uint G9_PACKET_reserved_49=49u;
+const uint G9_PACKET_reserved_50=50u;
+const uint G9_PACKET_reserved_51=51u;
+const uint G9_PACKET_reserved_52=52u;
+const uint G9_PACKET_reserved_53=53u;
+const uint G9_PACKET_reserved_54=54u;
+const uint G9_PACKET_reserved_55=55u;
+const uint G9_PACKET_reserved_56=56u;
+const uint G9_PACKET_reserved_57=57u;
+const uint G9_PACKET_reserved_58=58u;
+const uint G9_PACKET_reserved_59=59u;
+const uint G9_PACKET_reserved_60=60u;
+const uint G9_PACKET_reserved_61=61u;
+const uint G9_PACKET_reserved_62=62u;
+const uint G9_PACKET_reserved_63=63u;
+const uint G9_SOURCE_originLo=0u;
+const uint G9_SOURCE_originHi=1u;
+const uint G9_SOURCE_sourceId=2u;
+const uint G9_SOURCE_sourceKind=3u;
+const uint G9_SOURCE_admittedLo=4u;
+const uint G9_SOURCE_admittedHi=5u;
+const uint G9_SOURCE_sourceSeqLo=6u;
+const uint G9_SOURCE_sourceSeqHi=7u;
+const uint G9_SOURCE_sourceInputLo=8u;
+const uint G9_SOURCE_sourceInputHi=9u;
+const uint G9_SOURCE_rawCommandDigest0=10u;
+const uint G9_SOURCE_rawCommandDigest1=11u;
+const uint G9_SOURCE_rawCommandDigest2=12u;
+const uint G9_SOURCE_rawCommandDigest3=13u;
+const uint G9_SOURCE_sourceRevision=14u;
+const uint G9_SOURCE_flags=15u;
+const uint G9_INPUT_magic=0u;
+const uint G9_INPUT_revision=1u;
+const uint G9_INPUT_profile=2u;
+const uint G9_INPUT_flags=3u;
+const uint G9_INPUT_runLo=4u;
+const uint G9_INPUT_runHi=5u;
+const uint G9_INPUT_ownerLo=6u;
+const uint G9_INPUT_ownerHi=7u;
+const uint G9_INPUT_contextLo=8u;
+const uint G9_INPUT_contextHi=9u;
+const uint G9_INPUT_rootNonceLo=10u;
+const uint G9_INPUT_rootNonceHi=11u;
+const uint G9_INPUT_inputGenerationLo=12u;
+const uint G9_INPUT_inputGenerationHi=13u;
+const uint G9_INPUT_sampleSeqLo=14u;
+const uint G9_INPUT_sampleSeqHi=15u;
+const uint G9_INPUT_captureNsLo=16u;
+const uint G9_INPUT_captureNsHi=17u;
+const uint G9_INPUT_receiptNsLo=18u;
+const uint G9_INPUT_receiptNsHi=19u;
+const uint G9_INPUT_freezeNsLo=20u;
+const uint G9_INPUT_freezeNsHi=21u;
+const uint G9_INPUT_clockDomain=22u;
+const uint G9_INPUT_gravitySource=23u;
+const uint G9_INPUT_acceptedAngleIndex=24u;
+const uint G9_INPUT_parameterRevision=25u;
+const uint G9_INPUT_parameterSha0=26u;
+const uint G9_INPUT_parameterSha1=27u;
+const uint G9_INPUT_parameterSha2=28u;
+const uint G9_INPUT_parameterSha3=29u;
+const uint G9_INPUT_parameterSha4=30u;
+const uint G9_INPUT_parameterSha5=31u;
+const uint G9_INPUT_parameterSha6=32u;
+const uint G9_INPUT_parameterSha7=33u;
+const uint G9_INPUT_rawAngleLo=34u;
+const uint G9_INPUT_rawAngleHi=35u;
+const uint G9_INPUT_sensorAdapterRevision=36u;
+const uint G9_INPUT_sensorFlags=37u;
+const uint G9_INPUT_reservedEnvelope38=38u;
+const uint G9_INPUT_reservedEnvelope39=39u;
+const uint G9_INPUT_commandKind=40u;
+const uint G9_INPUT_commandSeqLo=41u;
+const uint G9_INPUT_commandSeqHi=42u;
+const uint G9_INPUT_commandCaptureNsLo=43u;
+const uint G9_INPUT_commandCaptureNsHi=44u;
+const uint G9_INPUT_commandFlags=45u;
+const uint G9_INPUT_rawTouchXLo=46u;
+const uint G9_INPUT_rawTouchXHi=47u;
+const uint G9_INPUT_rawRadiusLo=48u;
+const uint G9_INPUT_rawRadiusHi=49u;
+const uint G9_INPUT_rawGestureDxLo=50u;
+const uint G9_INPUT_rawGestureDxHi=51u;
+const uint G9_INPUT_rawGestureDyLo=52u;
+const uint G9_INPUT_rawGestureDyHi=53u;
+const uint G9_INPUT_gestureDurationNsLo=54u;
+const uint G9_INPUT_gestureDurationNsHi=55u;
+const uint G9_INPUT_physicalJxLo=56u;
+const uint G9_INPUT_physicalJxHi=57u;
+const uint G9_INPUT_physicalJyLo=58u;
+const uint G9_INPUT_physicalJyHi=59u;
+const uint G9_INPUT_workCap0=60u;
+const uint G9_INPUT_workCap1=61u;
+const uint G9_INPUT_workCap2=62u;
+const uint G9_INPUT_workCap3=63u;
+const uint G9_INPUT_rawSourceMassLo=64u;
+const uint G9_INPUT_rawSourceMassHi=65u;
+const uint G9_INPUT_rawSourceXLo=66u;
+const uint G9_INPUT_rawSourceXHi=67u;
+const uint G9_INPUT_rawSourceYLo=68u;
+const uint G9_INPUT_rawSourceYHi=69u;
+const uint G9_INPUT_rawSourceVxLo=70u;
+const uint G9_INPUT_rawSourceVxHi=71u;
+const uint G9_INPUT_rawSourceVyLo=72u;
+const uint G9_INPUT_rawSourceVyHi=73u;
+const uint G9_INPUT_sourceId=74u;
+const uint G9_INPUT_sourceKind=75u;
+const uint G9_INPUT_sourceAdapterRevision=76u;
+const uint G9_INPUT_touchAdapterRevision=77u;
+const uint G9_INPUT_reserved_78=78u;
+const uint G9_INPUT_reserved_79=79u;
+const uint G9_INPUT_reserved_80=80u;
+const uint G9_INPUT_reserved_81=81u;
+const uint G9_INPUT_reserved_82=82u;
+const uint G9_INPUT_reserved_83=83u;
+const uint G9_INPUT_reserved_84=84u;
+const uint G9_INPUT_reserved_85=85u;
+const uint G9_INPUT_reserved_86=86u;
+const uint G9_INPUT_reserved_87=87u;
+const uint G9_INPUT_reserved_88=88u;
+const uint G9_INPUT_reserved_89=89u;
+const uint G9_INPUT_reserved_90=90u;
+const uint G9_INPUT_reserved_91=91u;
+const uint G9_INPUT_reserved_92=92u;
+const uint G9_INPUT_reserved_93=93u;
+const uint G9_INPUT_reserved_94=94u;
+const uint G9_INPUT_reserved_95=95u;
+const uint G9_INPUT_reserved_96=96u;
+const uint G9_INPUT_reserved_97=97u;
+const uint G9_INPUT_reserved_98=98u;
+const uint G9_INPUT_reserved_99=99u;
+const uint G9_INPUT_reserved_100=100u;
+const uint G9_INPUT_reserved_101=101u;
+const uint G9_INPUT_reserved_102=102u;
+const uint G9_INPUT_reserved_103=103u;
+const uint G9_INPUT_reserved_104=104u;
+const uint G9_INPUT_reserved_105=105u;
+const uint G9_INPUT_reserved_106=106u;
+const uint G9_INPUT_reserved_107=107u;
+const uint G9_INPUT_reserved_108=108u;
+const uint G9_INPUT_reserved_109=109u;
+const uint G9_INPUT_reserved_110=110u;
+const uint G9_INPUT_reserved_111=111u;
+const uint G9_INPUT_reserved_112=112u;
+const uint G9_INPUT_reserved_113=113u;
+const uint G9_INPUT_reserved_114=114u;
+const uint G9_INPUT_reserved_115=115u;
+const uint G9_INPUT_reserved_116=116u;
+const uint G9_INPUT_reserved_117=117u;
+const uint G9_INPUT_reserved_118=118u;
+const uint G9_INPUT_reserved_119=119u;
+const uint G9_INPUT_reserved_120=120u;
+const uint G9_INPUT_reserved_121=121u;
+const uint G9_INPUT_reserved_122=122u;
+const uint G9_INPUT_reserved_123=123u;
+const uint G9_INPUT_reserved_124=124u;
+const uint G9_INPUT_reserved_125=125u;
+const uint G9_INPUT_reserved_126=126u;
+const uint G9_INPUT_reserved_127=127u;
+const uint G9_COMPLETION_magic=0u;
+const uint G9_COMPLETION_revision=1u;
+const uint G9_COMPLETION_words=2u;
+const uint G9_COMPLETION_seal=3u;
+const uint G9_COMPLETION_profile=4u;
+const uint G9_COMPLETION_rootKind=5u;
+const uint G9_COMPLETION_outcome=6u;
+const uint G9_COMPLETION_reason=7u;
+const uint G9_COMPLETION_nonceLo=8u;
+const uint G9_COMPLETION_nonceHi=9u;
+const uint G9_COMPLETION_runLo=10u;
+const uint G9_COMPLETION_runHi=11u;
+const uint G9_COMPLETION_ownerLo=12u;
+const uint G9_COMPLETION_ownerHi=13u;
+const uint G9_COMPLETION_contextLo=14u;
+const uint G9_COMPLETION_contextHi=15u;
+const uint G9_COMPLETION_surfaceLo=16u;
+const uint G9_COMPLETION_surfaceHi=17u;
+const uint G9_COMPLETION_geometryLo=18u;
+const uint G9_COMPLETION_geometryHi=19u;
+const uint G9_COMPLETION_configLo=20u;
+const uint G9_COMPLETION_configHi=21u;
+const uint G9_COMPLETION_inputGenerationLo=22u;
+const uint G9_COMPLETION_inputGenerationHi=23u;
+const uint G9_COMPLETION_pageSessionLo=24u;
+const uint G9_COMPLETION_pageSessionHi=25u;
+const uint G9_COMPLETION_planIdLo=26u;
+const uint G9_COMPLETION_planIdHi=27u;
+const uint G9_COMPLETION_baseCommitLo=28u;
+const uint G9_COMPLETION_baseCommitHi=29u;
+const uint G9_COMPLETION_proposedCommitLo=30u;
+const uint G9_COMPLETION_proposedCommitHi=31u;
+const uint G9_COMPLETION_baseBank=32u;
+const uint G9_COMPLETION_candidateBank=33u;
+const uint G9_COMPLETION_arena=34u;
+const uint G9_COMPLETION_arenaGenerationLo=35u;
+const uint G9_COMPLETION_arenaGenerationHi=36u;
+const uint G9_COMPLETION_selectedJ=37u;
+const uint G9_COMPLETION_eligibleJ=38u;
+const uint G9_COMPLETION_completedDispatches=39u;
+const uint G9_COMPLETION_requiredDispatches=40u;
+const uint G9_COMPLETION_barriers=41u;
+const uint G9_COMPLETION_auditMask=42u;
+const uint G9_COMPLETION_eventPlanned=43u;
+const uint G9_COMPLETION_eventSealed=44u;
+const uint G9_COMPLETION_pathPlanned=45u;
+const uint G9_COMPLETION_pathSealed=46u;
+const uint G9_COMPLETION_trialValidMask=47u;
+const uint G9_COMPLETION_firstErrorStage=48u;
+const uint G9_COMPLETION_firstErrorMicro=49u;
+const uint G9_COMPLETION_firstErrorEntity=50u;
+const uint G9_COMPLETION_firstErrorOperand=51u;
+const uint G9_COMPLETION_originalGL=52u;
+const uint G9_COMPLETION_fenceStatus=53u;
+const uint G9_COMPLETION_acceptedQuantaLo=54u;
+const uint G9_COMPLETION_acceptedQuantaHi=55u;
+const uint G9_COMPLETION_totalMassLo=56u;
+const uint G9_COMPLETION_totalMassHi=57u;
+const uint G9_COMPLETION_sourceSeqLo=58u;
+const uint G9_COMPLETION_sourceSeqHi=59u;
+const uint G9_COMPLETION_impulseSeqLo=60u;
+const uint G9_COMPLETION_impulseSeqHi=61u;
+const uint G9_COMPLETION_sourceAdmittedLo=62u;
+const uint G9_COMPLETION_sourceAdmittedHi=63u;
+const uint G9_COMPLETION_parameterSha0=64u;
+const uint G9_COMPLETION_parameterSha1=65u;
+const uint G9_COMPLETION_parameterSha2=66u;
+const uint G9_COMPLETION_parameterSha3=67u;
+const uint G9_COMPLETION_parameterSha4=68u;
+const uint G9_COMPLETION_parameterSha5=69u;
+const uint G9_COMPLETION_parameterSha6=70u;
+const uint G9_COMPLETION_parameterSha7=71u;
+const uint G9_COMPLETION_layoutSha0=72u;
+const uint G9_COMPLETION_layoutSha1=73u;
+const uint G9_COMPLETION_layoutSha2=74u;
+const uint G9_COMPLETION_layoutSha3=75u;
+const uint G9_COMPLETION_layoutSha4=76u;
+const uint G9_COMPLETION_layoutSha5=77u;
+const uint G9_COMPLETION_layoutSha6=78u;
+const uint G9_COMPLETION_layoutSha7=79u;
+const uint G9_COMPLETION_shaderSha0=80u;
+const uint G9_COMPLETION_shaderSha1=81u;
+const uint G9_COMPLETION_shaderSha2=82u;
+const uint G9_COMPLETION_shaderSha3=83u;
+const uint G9_COMPLETION_shaderSha4=84u;
+const uint G9_COMPLETION_shaderSha5=85u;
+const uint G9_COMPLETION_shaderSha6=86u;
+const uint G9_COMPLETION_shaderSha7=87u;
+const uint G9_COMPLETION_inputSha0=88u;
+const uint G9_COMPLETION_inputSha1=89u;
+const uint G9_COMPLETION_inputSha2=90u;
+const uint G9_COMPLETION_inputSha3=91u;
+const uint G9_COMPLETION_inputSha4=92u;
+const uint G9_COMPLETION_inputSha5=93u;
+const uint G9_COMPLETION_inputSha6=94u;
+const uint G9_COMPLETION_inputSha7=95u;
+const uint G9_COMPLETION_movingPx0=96u;
+const uint G9_COMPLETION_movingPx1=97u;
+const uint G9_COMPLETION_movingPx2=98u;
+const uint G9_COMPLETION_movingPx3=99u;
+const uint G9_COMPLETION_movingPy0=100u;
+const uint G9_COMPLETION_movingPy1=101u;
+const uint G9_COMPLETION_movingPy2=102u;
+const uint G9_COMPLETION_movingPy3=103u;
+const uint G9_COMPLETION_gravityWork0=104u;
+const uint G9_COMPLETION_gravityWork1=105u;
+const uint G9_COMPLETION_gravityWork2=106u;
+const uint G9_COMPLETION_gravityWork3=107u;
+const uint G9_COMPLETION_touchWork0=108u;
+const uint G9_COMPLETION_touchWork1=109u;
+const uint G9_COMPLETION_touchWork2=110u;
+const uint G9_COMPLETION_touchWork3=111u;
+const uint G9_COMPLETION_sourceWork0=112u;
+const uint G9_COMPLETION_sourceWork1=113u;
+const uint G9_COMPLETION_sourceWork2=114u;
+const uint G9_COMPLETION_sourceWork3=115u;
+const uint G9_COMPLETION_dissipationLower0=116u;
+const uint G9_COMPLETION_dissipationLower1=117u;
+const uint G9_COMPLETION_dissipationLower2=118u;
+const uint G9_COMPLETION_dissipationLower3=119u;
+const uint G9_COMPLETION_trial0_J=120u;
+const uint G9_COMPLETION_trial0_outcome=121u;
+const uint G9_COMPLETION_trial0_firstStage=122u;
+const uint G9_COMPLETION_trial0_firstMicro=123u;
+const uint G9_COMPLETION_trial0_firstEntity=124u;
+const uint G9_COMPLETION_trial0_firstOperand=125u;
+const uint G9_COMPLETION_trial1_J=126u;
+const uint G9_COMPLETION_trial1_outcome=127u;
+const uint G9_COMPLETION_trial1_firstStage=128u;
+const uint G9_COMPLETION_trial1_firstMicro=129u;
+const uint G9_COMPLETION_trial1_firstEntity=130u;
+const uint G9_COMPLETION_trial1_firstOperand=131u;
+const uint G9_COMPLETION_trial2_J=132u;
+const uint G9_COMPLETION_trial2_outcome=133u;
+const uint G9_COMPLETION_trial2_firstStage=134u;
+const uint G9_COMPLETION_trial2_firstMicro=135u;
+const uint G9_COMPLETION_trial2_firstEntity=136u;
+const uint G9_COMPLETION_trial2_firstOperand=137u;
+const uint G9_COMPLETION_trial3_J=138u;
+const uint G9_COMPLETION_trial3_outcome=139u;
+const uint G9_COMPLETION_trial3_firstStage=140u;
+const uint G9_COMPLETION_trial3_firstMicro=141u;
+const uint G9_COMPLETION_trial3_firstEntity=142u;
+const uint G9_COMPLETION_trial3_firstOperand=143u;
+const uint G9_COMPLETION_trial4_J=144u;
+const uint G9_COMPLETION_trial4_outcome=145u;
+const uint G9_COMPLETION_trial4_firstStage=146u;
+const uint G9_COMPLETION_trial4_firstMicro=147u;
+const uint G9_COMPLETION_trial4_firstEntity=148u;
+const uint G9_COMPLETION_trial4_firstOperand=149u;
+const uint G9_COMPLETION_trial5_J=150u;
+const uint G9_COMPLETION_trial5_outcome=151u;
+const uint G9_COMPLETION_trial5_firstStage=152u;
+const uint G9_COMPLETION_trial5_firstMicro=153u;
+const uint G9_COMPLETION_trial5_firstEntity=154u;
+const uint G9_COMPLETION_trial5_firstOperand=155u;
+const uint G9_COMPLETION_reserved_156=156u;
+const uint G9_COMPLETION_reserved_157=157u;
+const uint G9_COMPLETION_reserved_158=158u;
+const uint G9_COMPLETION_reserved_159=159u;
+const uint G9_COMPLETION_reserved_160=160u;
+const uint G9_COMPLETION_reserved_161=161u;
+const uint G9_COMPLETION_reserved_162=162u;
+const uint G9_COMPLETION_reserved_163=163u;
+const uint G9_COMPLETION_reserved_164=164u;
+const uint G9_COMPLETION_reserved_165=165u;
+const uint G9_COMPLETION_reserved_166=166u;
+const uint G9_COMPLETION_reserved_167=167u;
+const uint G9_COMPLETION_reserved_168=168u;
+const uint G9_COMPLETION_reserved_169=169u;
+const uint G9_COMPLETION_reserved_170=170u;
+const uint G9_COMPLETION_reserved_171=171u;
+const uint G9_COMPLETION_reserved_172=172u;
+const uint G9_COMPLETION_reserved_173=173u;
+const uint G9_COMPLETION_reserved_174=174u;
+const uint G9_COMPLETION_reserved_175=175u;
+const uint G9_COMPLETION_reserved_176=176u;
+const uint G9_COMPLETION_reserved_177=177u;
+const uint G9_COMPLETION_reserved_178=178u;
+const uint G9_COMPLETION_reserved_179=179u;
+const uint G9_COMPLETION_reserved_180=180u;
+const uint G9_COMPLETION_reserved_181=181u;
+const uint G9_COMPLETION_reserved_182=182u;
+const uint G9_COMPLETION_reserved_183=183u;
+const uint G9_COMPLETION_reserved_184=184u;
+const uint G9_COMPLETION_reserved_185=185u;
+const uint G9_COMPLETION_reserved_186=186u;
+const uint G9_COMPLETION_reserved_187=187u;
+const uint G9_COMPLETION_reserved_188=188u;
+const uint G9_COMPLETION_reserved_189=189u;
+const uint G9_COMPLETION_reserved_190=190u;
+const uint G9_COMPLETION_reserved_191=191u;
+const uint G9_COMPLETION_reserved_192=192u;
+const uint G9_COMPLETION_reserved_193=193u;
+const uint G9_COMPLETION_reserved_194=194u;
+const uint G9_COMPLETION_reserved_195=195u;
+const uint G9_COMPLETION_reserved_196=196u;
+const uint G9_COMPLETION_reserved_197=197u;
+const uint G9_COMPLETION_reserved_198=198u;
+const uint G9_COMPLETION_reserved_199=199u;
+const uint G9_COMPLETION_reserved_200=200u;
+const uint G9_COMPLETION_reserved_201=201u;
+const uint G9_COMPLETION_reserved_202=202u;
+const uint G9_COMPLETION_reserved_203=203u;
+const uint G9_COMPLETION_reserved_204=204u;
+const uint G9_COMPLETION_reserved_205=205u;
+const uint G9_COMPLETION_reserved_206=206u;
+const uint G9_COMPLETION_reserved_207=207u;
+const uint G9_COMPLETION_reserved_208=208u;
+const uint G9_COMPLETION_reserved_209=209u;
+const uint G9_COMPLETION_reserved_210=210u;
+const uint G9_COMPLETION_reserved_211=211u;
+const uint G9_COMPLETION_reserved_212=212u;
+const uint G9_COMPLETION_reserved_213=213u;
+const uint G9_COMPLETION_reserved_214=214u;
+const uint G9_COMPLETION_reserved_215=215u;
+const uint G9_COMPLETION_reserved_216=216u;
+const uint G9_COMPLETION_reserved_217=217u;
+const uint G9_COMPLETION_reserved_218=218u;
+const uint G9_COMPLETION_reserved_219=219u;
+const uint G9_COMPLETION_reserved_220=220u;
+const uint G9_COMPLETION_reserved_221=221u;
+const uint G9_COMPLETION_reserved_222=222u;
+const uint G9_COMPLETION_reserved_223=223u;
+const uint G9_COMPLETION_reserved_224=224u;
+const uint G9_COMPLETION_reserved_225=225u;
+const uint G9_COMPLETION_reserved_226=226u;
+const uint G9_COMPLETION_reserved_227=227u;
+const uint G9_COMPLETION_reserved_228=228u;
+const uint G9_COMPLETION_reserved_229=229u;
+const uint G9_COMPLETION_reserved_230=230u;
+const uint G9_COMPLETION_reserved_231=231u;
+const uint G9_COMPLETION_reserved_232=232u;
+const uint G9_COMPLETION_reserved_233=233u;
+const uint G9_COMPLETION_reserved_234=234u;
+const uint G9_COMPLETION_reserved_235=235u;
+const uint G9_COMPLETION_reserved_236=236u;
+const uint G9_COMPLETION_reserved_237=237u;
+const uint G9_COMPLETION_reserved_238=238u;
+const uint G9_COMPLETION_reserved_239=239u;
+const uint G9_COMPLETION_reserved_240=240u;
+const uint G9_COMPLETION_reserved_241=241u;
+const uint G9_COMPLETION_reserved_242=242u;
+const uint G9_COMPLETION_reserved_243=243u;
+const uint G9_COMPLETION_reserved_244=244u;
+const uint G9_COMPLETION_reserved_245=245u;
+const uint G9_COMPLETION_reserved_246=246u;
+const uint G9_COMPLETION_reserved_247=247u;
+const uint G9_COMPLETION_reserved_248=248u;
+const uint G9_COMPLETION_reserved_249=249u;
+const uint G9_COMPLETION_reserved_250=250u;
+const uint G9_COMPLETION_reserved_251=251u;
+const uint G9_COMPLETION_reserved_252=252u;
+const uint G9_COMPLETION_reserved_253=253u;
+const uint G9_COMPLETION_reserved_254=254u;
+const uint G9_COMPLETION_reserved_255=255u;
+const uint G9_MODE_REST=0u;
+const uint G9_MODE_FLOW=1u;
+const uint G9_COMMAND_NONE=0u;
+const uint G9_COMMAND_SOURCE=1u;
+const uint G9_COMMAND_IMPULSE=2u;
+const uint G9_ROLE_TRIAL=0u;
+const uint G9_ROLE_AUTHORITATIVE=1u;
+const uint G9_ROLE_REPLAY=2u;
+const uint G9_PATH_TURN_X=1u;
+const uint G9_PATH_TURN_Y=2u;
+const uint G9_PATH_CROSS=3u;
+const uint G9_PATH_TOP_CONTACT=4u;
+const uint G9_PATH_SIDE_CONTACT=5u;
+const uint G9_PATH_CEILING=6u;
+const uint G9_PATH_WALL=7u;
+const uint G9_PATH_END=8u;
+const uint G9_OUTCOME_ACCEPTED=1u;
+const uint G9_OUTCOME_ALREADY_CONSUMED=2u;
+const uint G9_OUTCOME_SOURCE_ZERO_ADMISSION=3u;
+const uint G9_OUTCOME_G9_NUMERIC_OR_CAPACITY_BLOCKED=4u;
+const uint G9_OUTCOME_FAULT=5u;
+const uint G9_REASON_OK=0u;
+const uint G9_REASON_NOOP=1u;
+const uint G9_REASON_NO_HIT=2u;
+const uint G9_REASON_NO_MOVABLE_MASS=3u;
+const uint G9_REASON_NUMERIC_RESOLUTION=4u;
+const uint G9_REASON_CFL=5u;
+const uint G9_REASON_VELOCITY_DOMAIN=6u;
+const uint G9_REASON_NEGATIVE_OR_EMPTY_WITH_MOMENTUM=7u;
+const uint G9_REASON_CAPTURE_CAPACITY=8u;
+const uint G9_REASON_EMBEDDED_PACKET=9u;
+const uint G9_REASON_SUPPORT_MOVED_DEFER=10u;
+const uint G9_REASON_FLOW_ORIGIN_CAPACITY=11u;
+const uint G9_REASON_DEPOSIT_LAYER_WAIT=12u;
+const uint G9_REASON_POOL_FULL=13u;
+const uint G9_REASON_ID_EXHAUSTED=14u;
+const uint G9_REASON_SOURCE_ORIGIN_FULL=15u;
+const uint G9_REASON_ENERGY_INCREASE=16u;
+const uint G9_REASON_ENERGY_RESOLUTION=17u;
+const uint G9_REASON_WORK_CAP=18u;
+const uint G9_REASON_BAD_DUPLICATE=19u;
+const uint G9_REASON_STALE_COMMAND=20u;
+const uint G9_REASON_STALE_INPUT=21u;
+const uint G9_REASON_BAD_IDENTITY=22u;
+const uint G9_REASON_BAD_VERSION=23u;
+const uint G9_REASON_BAD_ORIGIN=24u;
+const uint G9_REASON_BAD_REPLAY=25u;
+const uint G9_REASON_BAD_SEAL=26u;
+const uint G9_REASON_EVENT_CREDIT=27u;
+const uint G9_REASON_PATH_BOUND=28u;
+const uint G9_REASON_OVERFLOW=29u;
+const uint G9_REASON_STOP_OR_CONTEXT_LOST=30u;
+const uint G9_EVENT_ROOT_BEGIN=1u;
+const uvec2 G9_MASK_ROOT_BEGIN=uvec2(2097151u,2147483648u);
+const uint G9_EVENT_GRAVITY_WORK=2u;
+const uvec2 G9_MASK_GRAVITY_WORK=uvec2(2097151u,2147483648u);
+const uint G9_EVENT_SOURCE_BIRTH=3u;
+const uvec2 G9_MASK_SOURCE_BIRTH=uvec2(536870911u,2147483648u);
+const uint G9_EVENT_ACTIVATE=4u;
+const uvec2 G9_MASK_ACTIVATE=uvec2(4294967295u,2147483663u);
+const uint G9_EVENT_TOUCH_WORK=5u;
+const uvec2 G9_MASK_TOUCH_WORK=uvec2(4294967295u,2147483711u);
+const uint G9_EVENT_FLIGHT=6u;
+const uvec2 G9_MASK_FLIGHT=uvec2(4294967295u,2147483775u);
+const uint G9_EVENT_CAPTURE=7u;
+const uvec2 G9_MASK_CAPTURE=uvec2(4294967295u,2147483903u);
+const uint G9_EVENT_EDGE_FLUX=8u;
+const uvec2 G9_MASK_EDGE_FLUX=uvec2(4294967295u,2147484159u);
+const uint G9_EVENT_MOMENTUM_FORCE=9u;
+const uvec2 G9_MASK_MOMENTUM_FORCE=uvec2(4294967295u,2147483648u);
+const uint G9_EVENT_FRICTION=10u;
+const uvec2 G9_MASK_FRICTION=uvec2(2147483647u,2147483648u);
+const uint G9_EVENT_DEPOSIT=11u;
+const uvec2 G9_MASK_DEPOSIT=uvec2(134217727u,2147483648u);
+const uint G9_EVENT_LAUNCH=12u;
+const uvec2 G9_MASK_LAUNCH=uvec2(4294967295u,2147483711u);
+const uint G9_EVENT_STEP_SEAL=13u;
+const uvec2 G9_MASK_STEP_SEAL=uvec2(134217727u,2147483648u);
+const uint G9_EVENT_ROOT_END=14u;
+const uvec2 G9_MASK_ROOT_END=uvec2(4294967295u,2147483648u);
+uvec2 g9EventMask(uint kind){
+if(kind==1u)return G9_MASK_ROOT_BEGIN;
+if(kind==2u)return G9_MASK_GRAVITY_WORK;
+if(kind==3u)return G9_MASK_SOURCE_BIRTH;
+if(kind==4u)return G9_MASK_ACTIVATE;
+if(kind==5u)return G9_MASK_TOUCH_WORK;
+if(kind==6u)return G9_MASK_FLIGHT;
+if(kind==7u)return G9_MASK_CAPTURE;
+if(kind==8u)return G9_MASK_EDGE_FLUX;
+if(kind==9u)return G9_MASK_MOMENTUM_FORCE;
+if(kind==10u)return G9_MASK_FRICTION;
+if(kind==11u)return G9_MASK_DEPOSIT;
+if(kind==12u)return G9_MASK_LAUNCH;
+if(kind==13u)return G9_MASK_STEP_SEAL;
+if(kind==14u)return G9_MASK_ROOT_END;
+return uvec2(0u);
+}
+const uint G9_OP_ROOT_INIT=12u;
+const uint G9_OP_BASE_FREEZE=13u;
+const uint G9_OP_CONFIG_INPUT_GATE=14u;
+const uint G9_OP_TRIAL_SCHEDULE_BEGIN=15u;
+const uint G9_OP_INIT_COPY=16u;
+const uint G9_OP_INPUT_AND_CFL=17u;
+const uint G9_OP_GRAVITY_WORK=18u;
+const uint G9_OP_TOUCH_ATOMIC=19u;
+const uint G9_OP_AFTER_TOUCH_CFL=20u;
+const uint G9_OP_DM_REQUEST=21u;
+const uint G9_OP_DM_APPLY=22u;
+const uint G9_OP_FLIGHT_PATH=23u;
+const uint G9_OP_PARTICLE_FOLD=24u;
+const uint G9_OP_PREDICTOR_FACE=25u;
+const uint G9_OP_MIDPOINT_BUILD=26u;
+const uint G9_OP_CORRECTOR_FACE=27u;
+const uint G9_OP_FLOW_ORIGIN_RESERVE=28u;
+const uint G9_OP_FLOW_PAIR_APPLY=29u;
+const uint G9_OP_FRICTION_REST_DEPOSIT=30u;
+const uint G9_OP_ORDERED_CAPTURE=31u;
+const uint G9_OP_MICRO_AUDIT_SEAL=32u;
+const uint G9_OP_FINAL_MASS_ORIGIN_MOMENTUM=33u;
+const uint G9_OP_FINAL_ENERGY_CURSORS=34u;
+const uint G9_OP_SCOPE_SEAL_AND_CHOICE=35u;
+const uint G9_OP_DISCOVERY_COMMIT_SELECTION=36u;
+const uint G9_OP_AUTHORITATIVE_BEGIN=37u;
+const uint G9_OP_REJECT_PREFIX_BEGIN=38u;
+const uint G9_OP_REPLAY_BEGIN=39u;
+const uint G9_OP_COMPARE_SELECTED_AUTHORITATIVE=40u;
+const uint G9_OP_COMPARE_REPLAY_STREAM=41u;
+const uint G9_OP_PACK_SCENE_METADATA=42u;
+const uint G9_OP_ROOT_SEAL=43u;
+const uint G9_OP_SOURCE_INIT_BASE=0u;
+const uint G9_OP_SOURCE_VALIDATE_INPUT=1u;
+const uint G9_OP_SOURCE_DEDUP=2u;
+const uint G9_OP_SOURCE_DECODE=3u;
+const uint G9_OP_SOURCE_CREDIT=4u;
+const uint G9_OP_SOURCE_PRIVATE_BIRTH=5u;
+const uint G9_OP_SOURCE_ORIGIN_CERTIFICATE=6u;
+const uint G9_OP_SOURCE_LEDGER=7u;
+const uint G9_OP_SOURCE_AUDIT_REPLAY=8u;
+const uint G9_OP_SOURCE_COMPARE=9u;
+const uint G9_OP_SOURCE_PACK_SCENE=10u;
+const uint G9_OP_SOURCE_SEAL=11u;
+
+// U32-limb U128/S128, low-first, two's complement. No int64 extension or
+// floating-point intermediary. All faulting operations leave out=0.
+bool g9Zero(uvec4 a){return all(equal(a,uvec4(0u)));}
+bool g9Negative(uvec4 a){return (a.w&0x80000000u)!=0u;}
+uvec4 g9U32(uint a){return uvec4(a,0u,0u,0u);}
+uvec4 g9S32(int a){uint sign=a<0?0xffffffffu:0u;return uvec4(uint(a),sign,sign,sign);}
+uvec4 g9U64(uvec2 a){return uvec4(a,0u,0u);}
+uvec4 g9S64(uvec2 a){uint sign=(a.y&0x80000000u)!=0u?0xffffffffu:0u;return uvec4(a,sign,sign);}
+int g9UCmp(uvec4 a,uvec4 b){for(int i=3;i>=0;--i)if(a[i]!=b[i])return a[i]<b[i]?-1:1;return 0;}
+int g9SCmp(uvec4 a,uvec4 b){if(g9Negative(a)!=g9Negative(b))return g9Negative(a)?-1:1;return g9UCmp(a,b);}
+uvec4 g9AddBits(uvec4 a,uvec4 b,out uint carry){
+ uvec4 result;carry=0u;for(int i=0;i<4;++i){uint c0,c1;uint sum=uaddCarry(a[i],b[i],c0);result[i]=uaddCarry(sum,carry,c1);carry=c0|c1;}return result;
+}
+uvec4 g9NegBits(uvec4 a){uint carry;return g9AddBits(~a,g9U32(1u),carry);}
+bool g9UAdd(uvec4 a,uvec4 b,out uvec4 result){uint carry;result=g9AddBits(a,b,carry);if(carry!=0u){result=uvec4(0u);return false;}return true;}
+bool g9USub(uvec4 a,uvec4 b,out uvec4 result){result=uvec4(0u);if(g9UCmp(a,b)<0)return false;uint carry;result=g9AddBits(a,g9NegBits(b),carry);return true;}
+bool g9SAdd(uvec4 a,uvec4 b,out uvec4 result){uint carry;result=g9AddBits(a,b,carry);if(g9Negative(a)==g9Negative(b)&&g9Negative(result)!=g9Negative(a)){result=uvec4(0u);return false;}return true;}
+bool g9SNeg(uvec4 a,out uvec4 result){result=uvec4(0u);if(all(equal(a,uvec4(0u,0u,0u,0x80000000u))))return false;result=g9NegBits(a);return true;}
+bool g9SSub(uvec4 a,uvec4 b,out uvec4 result){
+ // MIN is a valid subtrahend when the signed difference remains in range.
+ uint carry;result=g9AddBits(a,g9NegBits(b),carry);if(g9Negative(a)!=g9Negative(b)&&g9Negative(result)!=g9Negative(a)){result=uvec4(0u);return false;}return true;
+}
+uvec4 g9Magnitude(uvec4 a){return g9Negative(a)?g9NegBits(a):a;}
+bool g9FromMagnitude(uvec4 magnitude,bool negative,out uvec4 result){
+ result=uvec4(0u);const uvec4 minMagnitude=uvec4(0u,0u,0u,0x80000000u);int cmp=g9UCmp(magnitude,minMagnitude);
+ if(cmp>0||!negative&&cmp==0)return false;result=negative&&!g9Zero(magnitude)?g9NegBits(magnitude):magnitude;return true;
+}
+bool g9UMul(uvec4 a,uvec4 b,out uvec4 result){
+ uint aa[8],bb[8],digits[16];for(int i=0;i<8;++i){aa[i]=(a[i/2]>>uint(16*(i%2)))&65535u;bb[i]=(b[i/2]>>uint(16*(i%2)))&65535u;}
+ for(int i=0;i<16;++i)digits[i]=0u;
+ for(int i=0;i<8;++i){uint carry=0u;for(int j=0;j<8;++j){uint n=digits[i+j]+aa[i]*bb[j]+carry;digits[i+j]=n&65535u;carry=n>>16u;}digits[i+8]=carry;}
+ result=uvec4(0u);for(int i=8;i<16;++i)if(digits[i]!=0u)return false;
+ for(int i=0;i<4;++i)result[i]=digits[2*i]|(digits[2*i+1]<<16u);return true;
+}
+bool g9SMul(uvec4 a,uvec4 b,out uvec4 result){uvec4 magnitude;if(!g9UMul(g9Magnitude(a),g9Magnitude(b),magnitude)){result=uvec4(0u);return false;}return g9FromMagnitude(magnitude,g9Negative(a)!=g9Negative(b),result);}
+bool g9UShift(uvec4 a,uint n,out uvec4 result){
+ result=uvec4(0u);if(n>=128u)return g9Zero(a);
+ for(int bit=127;bit>=0;--bit)if(((a[bit/32]>>uint(bit%32))&1u)!=0u){uint target=uint(bit)+n;if(target>=128u){result=uvec4(0u);return false;}result[int(target/32u)]|=1u<<(target%32u);}return true;
+}
+bool g9SShift(uvec4 a,uint n,out uvec4 result){uvec4 magnitude;if(!g9UShift(g9Magnitude(a),n,magnitude)){result=uvec4(0u);return false;}return g9FromMagnitude(magnitude,g9Negative(a),result);}
+bool g9UDiv(uvec4 numerator,uvec4 denominator,out uvec4 quotient,out uvec4 remainder){
+ quotient=remainder=uvec4(0u);if(g9Zero(denominator))return false;
+ for(int bit=127;bit>=0;--bit){uint high=remainder.w>>31u;remainder=uvec4(remainder.x<<1u,(remainder.y<<1u)|(remainder.x>>31u),(remainder.z<<1u)|(remainder.y>>31u),(remainder.w<<1u)|(remainder.z>>31u));remainder.x|=(numerator[bit/32]>>uint(bit%32))&1u;
+  if(high!=0u||g9UCmp(remainder,denominator)>=0){uint carry;remainder=g9AddBits(remainder,g9NegBits(denominator),carry);quotient[bit/32]|=1u<<uint(bit%32);}
+ }return true;
+}
+// rounding: 0 TZ, 1 nearest-even, 2 floor, 3 ceil.
+bool g9SDiv(uvec4 numerator,uvec4 denominator,uint rounding,out uvec4 result){
+ result=uvec4(0u);uvec4 q,r;uvec4 d=g9Magnitude(denominator);bool negative=g9Negative(numerator)!=g9Negative(denominator);
+ if(!g9UDiv(g9Magnitude(numerator),d,q,r))return false;
+ bool increase=false;if(!g9Zero(r)){
+  if(rounding==1u){uvec4 complement;if(!g9USub(d,r,complement))return false;int cmp=g9UCmp(r,complement);increase=cmp>0||cmp==0&&(q.x&1u)!=0u;}
+  else increase=rounding==2u&&negative||rounding==3u&&!negative;
+ }
+ if(increase&&!g9UAdd(q,g9U32(1u),q))return false;return g9FromMagnitude(q,negative,result);
+}
+bool g9I32(uvec4 a,out int result){uint sign=(a.x&0x80000000u)!=0u?0xffffffffu:0u;result=0;if(a.y!=sign||a.z!=sign||a.w!=sign)return false;result=int(a.x);return true;}
+bool g9I64(uvec4 a,out uvec2 result){uint sign=(a.y&0x80000000u)!=0u?0xffffffffu:0u;result=uvec2(0u);if(a.z!=sign||a.w!=sign)return false;result=a.xy;return true;}
+bool g9Uint(uvec4 a,out uint result){result=0u;if(any(notEqual(a.yzw,uvec3(0u))))return false;result=a.x;return true;}
+bool g9CeilSqrt64(uvec2 raw,out uint result){
+ uvec4 n=g9U64(raw);uint low=0u,high=0xffffffffu;
+ for(uint iteration=0u;iteration<32u;++iteration){uint middle=low+(high-low)/2u;uvec4 square;if(!g9UMul(g9U32(middle),g9U32(middle),square))return false;if(g9UCmp(square,n)<0)low=middle+1u;else high=middle;}
+ uvec4 square;if(!g9UMul(g9U32(low),g9U32(low),square)||g9UCmp(square,n)<0)return false;result=low;return true;
+}
+struct G9EnergyInterval {uvec4 low;uvec4 high;};
+bool g9FlowKinetic(uvec2 momentum,uint mass,out G9EnergyInterval result){
+ result.low=result.high=uvec4(0u);uvec4 p=g9Magnitude(g9S64(momentum));if(mass==0u)return g9Zero(p);
+ uvec4 square,q,r,fraction,rest;if(!g9UMul(p,p,square)||!g9UDiv(square,g9U32(mass),q,r)||!g9UShift(q,24u,q)||!g9UShift(r,24u,r)||!g9UDiv(r,g9U32(mass),fraction,rest)||!g9UAdd(q,fraction,result.low))return false;
+ result.high=result.low;if(!g9Zero(rest)&&!g9UAdd(result.high,g9U32(1u),result.high))return false;return !g9Negative(result.high);
+}
+
+// Five complete banks are selected by the owner, four SSBOs per pass.
+layout(std430,binding=0)readonly buffer ReadState{uint B[];};
+layout(std430,binding=1)coherent buffer WriteState{uint C[];};
+layout(std430,binding=2)coherent buffer Workspace{uint W[];};
+layout(std430,binding=3)coherent buffer EventPath{uint E[];};
+uniform uint uK,uStateWords,uColumn,uBed,uFlow,uPacket,uSources;
+uniform uint uInput,uConfig,uControls,uSummary,uStageDiagnostic,uOriginAudit,uColumnStage,uHamilton,uContacts,uFaces,uWideLedger,uCompletion;
+uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,uEventCapacity,uPathCapacity,uPathWord;
+uint uJ;
+uniform uvec2 uNonce,uRun,uOwner,uContext,uSurface,uGeometry,uConfigId,uInputGeneration,uSession,uPlan,uBaseCommit;
+uniform uint uCandidateBank,uBaseBank,uArena;
+uniform uvec2 uArenaGeneration;
+uniform int uAcceptedAngle,uAngleSin,uAngleCos;
+uint g9Ctl(uint field){return W[uControls+field];}
+void g9Set(uint field,uint value){W[uControls+field]=value;}
+// Controls: 0 fatal,1 reason,2 stage,3 micro,4 entity,5 operand,
+// 6 event planned,7 event sealed,8 path planned,9 path sealed,
+// 10 compound pending,11 selectedJ,12 eligibleJ,13 selected trial,
+// 14 current trial reason,15 current outcome,16 executed dispatch,
+// 17 audit mask,18 source/impulse duplicate,19 stage cursor.
+void g9Fault(uint reason,uint entity,uint operand){
+ if(g9Ctl(0u)!=0u)return;g9Set(0u,1u);g9Set(1u,reason);g9Set(2u,uOp);g9Set(3u,uMicro);g9Set(4u,entity);g9Set(5u,operand);g9Set(15u,5u);
+}
+void g9Reject(uint reason,uint entity,uint operand){
+ if(g9Ctl(0u)!=0u||g9Ctl(14u)!=0u)return;
+ // A normal rejected private compound retains only the last sealed prefix.
+ g9Set(6u,g9Ctl(7u));g9Set(8u,g9Ctl(9u));g9Set(10u,0u);
+ g9Set(14u,reason);g9Set(2u,uOp);g9Set(3u,uMicro);g9Set(4u,entity);g9Set(5u,operand);
+}
+uint g9Column(uint c,uint field){return C[uColumn+c*32u+field];}
+void g9PutColumn(uint c,uint field,uint value){C[uColumn+c*32u+field]=value;}
+uint g9Packet(uint slot,uint field){return C[uPacket+slot*64u+field];}
+void g9PutPacket(uint slot,uint field,uint value){C[uPacket+slot*64u+field]=value;}
+uvec4 g9Momentum(uint c){return g9S64(uvec2(g9Column(c,2u),g9Column(c,3u)));}
+bool g9PutMomentum(uint c,uvec4 p){uvec2 narrow;if(!g9I64(p,narrow)){g9Fault(29u,c,2u);return false;}g9PutColumn(c,2u,narrow.x);g9PutColumn(c,3u,narrow.y);g9PutColumn(c,4u,g9Zero(p)?0u:1u);return true;}
+uvec4 g9ReadWide(uint at){return uvec4(W[at],W[at+1u],W[at+2u],W[at+3u]);}
+void g9WriteWide(uint at,uvec4 value){for(uint i=0u;i<4u;++i)W[at+i]=value[i];}
+uvec4 g9HeaderWide(uint at){return uvec4(C[at],C[at+1u],C[at+2u],C[at+3u]);}
+bool g9Accumulate(uint header,uvec4 delta){uvec4 next;if(!g9SAdd(g9HeaderWide(header),delta,next)){g9Fault(29u,0u,header);return false;}for(uint i=0u;i<4u;++i)C[header+i]=next[i];return true;}
+uint g9Material(uint c){return g9Column(c,0u)+g9Column(c,1u);}
+uint g9Occupied(uint c){return g9Material(c)+g9Column(c,8u);}
+void g9Derived(uint c){g9PutColumn(c,9u,g9Material(c));}
+bool g9AddMass(uint a,uint b,out uint result){result=0u;if(a>268435456u||b>268435456u-a)return false;result=a+b;return true;}
+bool g9Reserve(uint events,uint paths,out uint eventStart,out uint pathStart){
+ eventStart=g9Ctl(6u);pathStart=g9Ctl(8u);
+ if(g9Ctl(10u)!=0u||eventStart>uEventCapacity||events>uEventCapacity-eventStart||pathStart>uPathCapacity||paths>uPathCapacity-pathStart){g9Fault(27u,0u,0u);return false;}
+ g9Set(6u,eventStart+events);g9Set(8u,pathStart+paths);g9Set(10u,1u);return true;
+}
+void g9Event(out uint row[64],uint kind,uint entity,uint from,uint to){
+ for(uint i=0u;i<64u;++i)row[i]=0u;
+ row[0]=G9_EVENT_MAGIC;row[1]=1u;row[2]=kind;row[3]=g9Ctl(13u);row[4]=uNonce.x;row[5]=uNonce.y;row[6]=g9Ctl(7u)+1u;row[7]=uOp==G9_OP_SOURCE_AUDIT_REPLAY?G9_OP_SOURCE_PRIVATE_BIRTH:uOp;row[8]=uMicro;
+ row[9]=from;row[10]=to;row[11]=entity;row[14]=(uRole==4u?2u:uRole==2u?1u:0u);row[63]=G9_SEAL;
+}
+bool g9WriteEvent(uint at,uint row[64]){
+ if(at>=g9Ctl(6u)){g9Fault(27u,0u,at);return false;}
+ uvec2 mask=g9EventMask(row[2]);if(all(equal(mask,uvec2(0u)))){g9Fault(23u,0u,row[2]);return false;}
+ if(uOp==G9_OP_SOURCE_AUDIT_REPLAY){
+  for(uint i=0u;i<64u;++i){uint expected=((mask[i/32u]>>(i%32u))&1u)!=0u?row[i]:0u;if(E[at*64u+i]!=expected){g9Fault(25u,at,i);return false;}}return true;
+ }
+ for(uint i=0u;i<63u;++i)E[at*64u+i]=(((mask[i/32u]>>(i%32u))&1u)!=0u?row[i]:0u);
+ memoryBarrierBuffer();E[at*64u+63u]=G9_SEAL;return true;
+}
+bool g9Seal(){
+ if(g9Ctl(0u)!=0u||g9Ctl(14u)!=0u||g9Ctl(10u)==0u)return false;
+ g9Set(7u,g9Ctl(6u));g9Set(9u,g9Ctl(8u));g9Set(10u,0u);return true;
+}
+bool g9OneEvent(uint row[64]){uint event,path;return g9Reserve(1u,0u,event,path)&&g9WriteEvent(event,row)&&g9Seal();}
+
+// Bed: bottom-to-top stack. Flow: sorted uniformly mixed sparse map.
+uint g9MapAddress(bool flow,uint column,uint rank){return (flow?uFlow:uBed)+(column*64u+rank)*4u;}
+uvec3 g9Key(bool flow,uint column,uint rank){uint at=g9MapAddress(flow,column,rank);return uvec3(C[at],C[at+1u],C[at+2u]);}
+int g9KeyCompare(uvec3 a,uvec3 b){if(a.y!=b.y)return a.y<b.y?-1:1;if(a.x!=b.x)return a.x<b.x?-1:1;return a.z==b.z?0:a.z<b.z?-1:1;}
+bool g9KeyValid(uvec3 key){if(key.x==0u||key.x>C[19u]||key.y!=0u||key.z==0u)return false;uint at=uSources+(key.x-1u)*16u;return C[at]==key.x&&C[at+1u]==0u&&C[at+2u]==key.z;}
+uint g9MapCount(bool flow,uint c){return g9Column(c,flow?7u:6u);}
+void g9SetMapCount(bool flow,uint c,uint n){g9PutColumn(c,flow?7u:6u,n);}
+bool g9MapCanAdd(bool flow,uint c,uvec3 key){
+ uint count=g9MapCount(flow,c);if(count>64u)return false;
+ if(!flow)return count==0u||g9KeyCompare(g9Key(false,c,count-1u),key)==0||count<64u;
+ for(uint i=0u;i<count;++i)if(g9KeyCompare(g9Key(true,c,i),key)==0)return true;return count<64u;
+}
+bool g9MapAdd(bool flow,uint c,uvec3 key,uint q){
+ if(q==0u||!g9KeyValid(key)||!g9MapCanAdd(flow,c,key))return false;
+ uint count=g9MapCount(flow,c),rank=count;
+ if(!flow&&count>0u&&g9KeyCompare(g9Key(false,c,count-1u),key)==0)rank=count-1u;
+ if(flow)for(uint i=0u;i<count;++i){int cmp=g9KeyCompare(g9Key(true,c,i),key);if(cmp>=0){rank=i;break;}}
+ bool merge=rank<count&&g9KeyCompare(g9Key(flow,c,rank),key)==0;
+ if(merge){uint at=g9MapAddress(flow,c,rank),next;if(!g9AddMass(C[at+3u],q,next))return false;C[at+3u]=next;return true;}
+ for(uint i=count;i>rank;--i)for(uint f=0u;f<4u;++f)C[g9MapAddress(flow,c,i)+f]=C[g9MapAddress(flow,c,i-1u)+f];
+ uint at=g9MapAddress(flow,c,rank);C[at]=key.x;C[at+1u]=key.y;C[at+2u]=key.z;C[at+3u]=q;g9SetMapCount(flow,c,count+1u);return true;
+}
+bool g9MapTake(bool flow,uint c,uint rank,uint q){
+ uint count=g9MapCount(flow,c);if(rank>=count||count>64u||q==0u)return false;
+ uint at=g9MapAddress(flow,c,rank),mass=C[at+3u];if(q>mass)return false;
+ if(q<mass){C[at+3u]=mass-q;return true;}
+ for(uint i=rank;i+1u<count;++i)for(uint f=0u;f<4u;++f)C[g9MapAddress(flow,c,i)+f]=C[g9MapAddress(flow,c,i+1u)+f];
+ for(uint f=0u;f<4u;++f)C[g9MapAddress(flow,c,count-1u)+f]=0u;g9SetMapCount(flow,c,count-1u);return true;
+}
+// Preflight a whole S->F conversion in the already-budgeted Hamilton scratch.
+bool g9RecruitPreflight(uint c,uint q){
+ uint bed=g9Column(c,0u),depth=g9MapCount(false,c),flowCount=g9MapCount(true,c);if(q>bed||depth>64u||flowCount>64u)return false;
+ uint newCount=flowCount;
+ for(uint n=0u;n<depth&&q>0u;++n){uint rank=depth-1u-n;uvec3 key=g9Key(false,c,rank);bool found=false;
+  for(uint i=0u;i<flowCount;++i)if(g9KeyCompare(key,g9Key(true,c,i))==0)found=true;
+  for(uint i=0u;i<n&&!found;++i)if(g9KeyCompare(key,g9Key(false,c,depth-1u-i))==0)found=true;
+  if(!found&&++newCount>64u)return false;uint amount=min(q,C[g9MapAddress(false,c,rank)+3u]);q-=amount;
+ }return q==0u;
+}
+bool g9RecruitMap(uint c,uint q){
+ if(!g9RecruitPreflight(c,q))return false;
+ uint left=q;for(uint i=0u;i<64u&&left>0u;++i){uint rank=g9MapCount(false,c)-1u;uvec3 key=g9Key(false,c,rank);uint amount=min(left,C[g9MapAddress(false,c,rank)+3u]);
+  if(!g9MapTake(false,c,rank,amount)||!g9MapAdd(true,c,key,amount))return false;left-=amount;
+ }return left==0u;
+}
+bool g9DepositPreflight(uint c){
+ uint depth=g9MapCount(false,c),count=g9MapCount(true,c);if(depth>64u||count>64u)return false;
+ uvec3 top=depth==0u?uvec3(0u):g9Key(false,c,depth-1u);
+ for(uint i=0u;i<count;++i){uvec3 key=g9Key(true,c,i);if(depth==0u||g9KeyCompare(top,key)!=0){if(depth==64u)return false;++depth;top=key;}}return true;
+}
+bool g9DepositMap(uint c){
+ if(!g9DepositPreflight(c))return false;
+ uint count=g9MapCount(true,c);for(uint i=0u;i<count;++i){uint at=g9MapAddress(true,c,i);if(!g9MapAdd(false,c,g9Key(true,c,i),C[at+3u]))return false;}
+ for(uint i=0u;i<64u*4u;++i)C[uFlow+c*256u+i]=0u;g9SetMapCount(true,c,0u);return true;
+}
+// Left then right callers consume the remaining map, never the original M.
+bool g9Hamilton(uint donor,uint q,uint scratch){
+ uint mass=g9Column(donor,1u),count=g9MapCount(true,donor);if(q>mass||mass==0u||count>64u)return false;uint sum=0u;
+ for(uint i=0u;i<count;++i){uint at=g9MapAddress(true,donor,i);uvec4 product,quotient,remainder;
+  if(!g9UMul(g9U32(q),g9U32(C[at+3u]),product)||!g9UDiv(product,g9U32(mass),quotient,remainder))return false;
+  W[scratch+i*4u]=quotient.x;W[scratch+i*4u+1u]=remainder.x;W[scratch+i*4u+2u]=0u;sum+=quotient.x;
+ }
+ for(uint n=0u;n<q-sum;++n){uint best=count;for(uint i=0u;i<count;++i)if(W[scratch+i*4u+2u]==0u&&(best==count||W[scratch+i*4u+1u]>W[scratch+best*4u+1u]))best=i;
+  if(best==count)return false;W[scratch+best*4u]++;W[scratch+best*4u+2u]=1u;
+ }return true;
+}
+
+bool g9IntervalAdd(G9EnergyInterval a,G9EnergyInterval b,out G9EnergyInterval result){return g9SAdd(a.low,b.low,result.low)&&g9SAdd(a.high,b.high,result.high);}
+bool g9IntervalSubtract(G9EnergyInterval after,G9EnergyInterval before,out G9EnergyInterval result){return g9SSub(after.low,before.high,result.low)&&g9SSub(after.high,before.low,result.high);}
+G9EnergyInterval g9Exact(uvec4 value){G9EnergyInterval result;result.low=result.high=value;return result;}
+bool g9ColumnPotential(uint c,uint bed,uint flow,out uvec4 potential){
+ uvec4 x=g9U32(c*1048576u+524288u),gx=g9S32(int(C[22u])),gn=g9U32(C[23u]);
+ uvec4 total=g9U32(bed+flow),horizontal,vertical,inside;
+ if(!g9SMul(gx,x,horizontal)||!g9SShift(horizontal,1u,horizontal)||!g9SMul(gn,total,vertical)||!g9SSub(vertical,horizontal,inside)||!g9SMul(total,inside,potential)||!g9SShift(potential,24u,potential))return false;
+ return true; // U_bed+U_flow = (S+F)*(gn*(S+F)-2gx*x).
+}
+bool g9PacketEnergy(uint mass,uint x,uint y2,int vx,int vy,out uvec4 result){
+ uvec4 xx,yy,kinetic,potential,horizontal;
+ if(!g9SMul(g9S32(vx),g9S32(vx),xx)||!g9SMul(g9S32(vy),g9S32(vy),yy)||!g9SAdd(xx,yy,kinetic)||
+    !g9SMul(g9U32(C[23u]),g9U32(y2),potential)||!g9SMul(g9S32(int(C[22u])),g9U32(x),horizontal)||!g9SShift(horizontal,1u,horizontal)||
+    !g9SSub(potential,horizontal,potential)||!g9SAdd(kinetic,potential,result)||!g9SMul(result,g9U32(mass),result)||!g9SShift(result,24u,result))return false;
+ return true;
+}
+bool g9ColumnEnergy(uint c,out G9EnergyInterval result){
+ uvec4 potential;G9EnergyInterval kinetic;if(!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),potential)||!g9FlowKinetic(uvec2(g9Column(c,2u),g9Column(c,3u)),g9Column(c,1u),kinetic))return false;
+ return g9IntervalAdd(kinetic,g9Exact(potential),result);
+}
+bool g9NonIncrease(G9EnergyInterval delta,uint c){
+ if(g9SCmp(delta.high,uvec4(0u))<=0)return true;
+ g9Reject(g9SCmp(delta.low,uvec4(0u))>0?16u:17u,c,0u);return false;
+}
+// Two 128-bit counters preserve positive work and cap separately. Negative
+// touch work and recruitment loss never replenish the cap.
+bool g9ChargeTouch(G9EnergyInterval delta){
+ if(g9SCmp(delta.high,uvec4(0u))<=0)return true;
+ uvec4 used=g9ReadWide(uControls+32u),cap=g9ReadWide(uControls+36u),next;
+ if(!g9UAdd(used,delta.high,next)){g9Fault(29u,0u,32u);return false;}
+ if(g9UCmp(next,cap)>0)return false;g9WriteWide(uControls+32u,next);return true;
+}
+bool g9SnapshotMicro(){
+ for(uint c=0u;c<128u;++c){
+  uint at=uWideLedger+c*18u;W[at]=g9Column(c,0u);W[at+1u]=g9Column(c,1u);W[at+2u]=g9Column(c,2u);W[at+3u]=g9Column(c,3u);
+  G9EnergyInterval before;if(!g9ColumnEnergy(c,before)){g9Fault(29u,c,0u);return false;}g9WriteWide(at+4u,before.low);g9WriteWide(at+8u,before.high);
+ }
+ for(uint slot=0u;slot<uK;++slot){uint at=uContacts+slot*16u,mass=g9Packet(slot,0u);
+  for(uint f=0u;f<5u;++f)W[at+f]=g9Packet(slot,f);
+  uvec4 energy=uvec4(0u);if(mass!=0u&&!g9PacketEnergy(mass,g9Packet(slot,1u),g9Packet(slot,2u),int(g9Packet(slot,3u)),int(g9Packet(slot,4u)),energy)){g9Fault(29u,slot,0u);return false;}g9WriteWide(at+5u,energy);
+ }
+ return true;
+}
+bool g9AuditMicroEnergy(){
+ G9EnergyInterval delta=g9Exact(uvec4(0u));
+ for(uint c=0u;c<128u;++c){uint at=uWideLedger+c*18u;
+  bool same=W[at]==g9Column(c,0u)&&W[at+1u]==g9Column(c,1u)&&W[at+2u]==g9Column(c,2u)&&W[at+3u]==g9Column(c,3u);
+  if(same)continue;G9EnergyInterval before,after,change;before.low=g9ReadWide(at+4u);before.high=g9ReadWide(at+8u);
+  // The rational kinetic term cancels exactly when its operands are unchanged,
+  // even if S changed. Do not manufacture a one-unit interval for a no-op.
+  if(W[at+1u]==g9Column(c,1u)&&W[at+2u]==g9Column(c,2u)&&W[at+3u]==g9Column(c,3u)){
+   uvec4 oldPotential,newPotential,exact;
+   if(!g9ColumnPotential(c,W[at],W[at+1u],oldPotential)||!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),newPotential)||!g9SSub(newPotential,oldPotential,exact)){g9Fault(29u,c,1u);return false;}change=g9Exact(exact);
+  }else if(!g9ColumnEnergy(c,after)||!g9IntervalSubtract(after,before,change)){g9Fault(29u,c,2u);return false;}
+  if(!g9IntervalAdd(delta,change,delta)){g9Fault(29u,c,3u);return false;}
+ }
+ for(uint slot=0u;slot<uK;++slot){uint at=uContacts+slot*16u;bool same=true;for(uint f=0u;f<5u;++f)if(W[at+f]!=g9Packet(slot,f))same=false;
+  if(same)continue;uvec4 after=uvec4(0u),change;uint mass=g9Packet(slot,0u);
+  if(mass!=0u&&!g9PacketEnergy(mass,g9Packet(slot,1u),g9Packet(slot,2u),int(g9Packet(slot,3u)),int(g9Packet(slot,4u)),after)){g9Fault(29u,slot,4u);return false;}
+  if(!g9SSub(after,g9ReadWide(at+5u),change)||!g9IntervalAdd(delta,g9Exact(change),delta)){g9Fault(29u,slot,5u);return false;}
+ }
+ if(!g9NonIncrease(delta,0u))return false;
+ uvec4 dissipated;if(!g9SNeg(delta.high,dissipated)||!g9Accumulate(94u,dissipated)){g9Fault(29u,0u,94u);return false;}
+ g9WriteWide(uControls+40u,delta.high);return true;
+}
+
+bool g9RneProduct(uvec4 a,uvec4 b,uint denominator,out uvec4 result){uvec4 product;return g9SMul(a,b,product)&&g9SDiv(product,g9U32(denominator),1u,result);}
+bool g9Drive(uint c,out uvec4 drive){
+ drive=uvec4(0u);uvec4 gx=g9S32(int(C[22u])),gn=g9U32(C[23u]),term;
+ uint bedFlow=g9Material(c);
+ if(c<127u){uvec4 slope=g9S32(int(g9Material(c+1u))-int(bedFlow));if(!g9RneProduct(gn,slope,1048576u,term)||!g9SSub(gx,term,term))return false;if(g9SCmp(term,drive)>0)drive=term;}
+ if(c>0u){uvec4 slope=g9S32(int(g9Material(c-1u))-int(bedFlow)),negativeG;if(!g9SNeg(gx,negativeG)||!g9RneProduct(gn,slope,1048576u,term)||!g9SSub(negativeG,term,term))return false;if(g9SCmp(term,drive)>0)drive=term;}
+ uint flow=g9Column(c,1u),shear=W[uConfig+4u],band=W[uConfig+2u];
+ if(flow>0u&&shear>0u){uvec4 velocity,squared,numerator,denominator;
+  if(!g9SDiv(g9Momentum(c),g9U32(flow),1u,velocity)||!g9SMul(velocity,velocity,squared)||!g9SMul(squared,g9U32(shear),numerator)||!g9UMul(g9U32(65536u),g9U32(max(flow,band)),denominator)||!g9SDiv(numerator,denominator,1u,term))return false;
+  if(g9SCmp(term,drive)>0)drive=term;
+ }return true;
+}
+// T573 (problem T554 §4/§5, algorithm-G9-dynamic-mobilization-v2 §3-§6):
+// the DM v2 integer solver and midpoint corrector. Appended into
+// g9dm/pipeline.comp by test/t573/generate_dm_solver.cjs. All arithmetic uses
+// the checked U128/S128 limb helpers above; every division follows the
+// authoritative rounding (floor for non-negative, RNE signed) — never a
+// floating-point intermediary. The 32-round lower-bound solver is fixed
+// length (gap<=1 rounds are uniform no-ops) so dispatch counts stay exact.
+//
+// WORK layout (per column c, DM48 region at uColumnStage+c*64+32):
+//  word 0 reason, 1-2 chiG/Hg, 3-4 H0/omega0, 5 solverUpper,
+//  6 finalLo, 7 finalHi, 8 activeIterations, 9 closedFormBranch,
+//  10 qPhysical, 11 qOrigin, 12 qActual, 13 HAtPhysical,
+//  14-15 omegaAtPhysical/uAtPhysical, 16 qNext, 17 nextFeasible,
+//  18 evalCalls, 19-31 reserved zero.
+
+uint dmWord(uint c,uint field){return W[uColumnStage+c*64u+32u+field];}
+void dmPut(uint c,uint field,uint value){W[uColumnStage+c*64u+32u+field]=value;}
+
+// Eval(q) per §4.2 — computes u, head, H, omega and the feasibility test.
+// Returns false on any checked-arithmetic failure (FAULT domain).
+bool dmEval(uint c,uint q,uvec4 pEntry,uint fEntry,uint bedWide,
+            uvec4 hg,uvec4 omegaGWide,bool shearOff,
+            out uint omegaOut,out uvec4 hOut,out uint feasible){
+ feasible=0u;omegaOut=0u;hOut=uvec4(0u);
+ uint f=fEntry+q;
+ // u = 0 if f==0&&p==0 else RNE(p/f)
+ uvec4 u=uvec4(0u);
+ if(f!=0u){if(!g9SDiv(pEntry,g9U32(f),1u,u))return false;}
+ else if(!g9Zero(pEntry))return false;
+ // r=max(f,hRegQ)
+ uint r=max(f,uint(C[uConfig+7u+0u])); // hReg placeholder word below replaced by header param
+ // head=floor(kShear*u^2/(ONE*gn)); U128 with S128 magnitude of u
+ uvec4 uMag=g9Magnitude(u),square,headWide,numerator,denominator,quotient,remainder;
+ if(!g9UMul(uMag,uMag,square))return false;
+ if(!g9SMul(square,g9S32(int(C[uConfig+4u])),numerator))return false; // kShear Q16
+ if(!g9UMul(g9U32(65536u),g9U32(max(C[23u],1u)),denominator))return false; // ONE*gn
+ if(!g9UDiv(g9Magnitude(numerator),denominator,quotient,remainder))return false;
+ headWide=quotient;
+ if(g9Negative(numerator)&&!g9Zero(remainder)){uvec4 one;if(!g9UAdd(quotient,g9U32(1u),one))return false;headWide=one;}
+ // yieldDepth=RNE(muStart*r/ONE); excessHead=max(0,head-yieldDepth)
+ uvec4 yieldDepth,excessHead;
+ if(!g9RneProduct(g9S32(int(C[uConfig+0u])),g9U32(r),65536u,yieldDepth))return false;
+ if(g9SCmp(headWide,yieldDepth)>0){uvec4 diff;if(!g9SSub(headWide,yieldDepth,diff))return false;excessHead=diff;}
+ else excessHead=uvec4(0u);
+ // HsWide=floor(depthShearGainQ16*excessHead/ONE)
+ uvec4 hsWide,hSum;
+ if(shearOff)hsWide=uvec4(0u);
+ else if(!g9SMul(g9S32(int(C[uConfig+6u+1u])),excessHead,numerator)||!g9SDiv(numerator,g9U32(65536u),2u,hsWide))return false;
+ if(!g9SAdd(g9U32(fEntry),hsWide,hSum))return false;
+ // H=min(B,max(Hg,F_entry+HsWide))
+ uvec4 hCandidate=g9SCmp(hg,hSum)>0?hg:hSum;
+ hOut=g9SCmp(g9U32(bedWide),hCandidate)>0?hCandidate:g9U32(bedWide);
+ // chiS=floor(excessHead*Q/r); omegaS=floor(omegaShearGain*chiS/Q)
+ uint chiS=0u;
+ if(r>0u){uvec4 csWide;if(!g9UMul(g9Magnitude(excessHead),g9U32(1048576u),numerator)||!g9UDiv(numerator,g9U32(r),quotient,remainder))return false;
+  if(!g9Uint(quotient,chiS))chiS=0xffffffffu; // saturate: diagnostics bound only
+ }
+ uint omegaS=0u;
+ if(!shearOff&&chiS!=0xffffffffu){uvec4 osWide;if(!g9UMul(g9U32(C[uConfig+6u+2u]),g9U32(chiS),numerator)||!g9UDiv(numerator,g9U32(1048576u),quotient,remainder))return false;
+  if(!g9Uint(quotient,omegaS))return false;}
+ // omega=min(omegaMax,omegaBase+max(omegaG,omegaS))
+ uint omegaG=0u;if(!g9Uint(omegaGWide,omegaG))return false;
+ uint raw=omegaG>omegaS?omegaG:omegaS;
+ omegaOut=min(uint(C[uConfig+6u+3u]),uint(C[uConfig+5u])+raw);
+ // deficit=max(0,H-F_entry-q); feasible = q*(120*J*ONE)<=omega*deficit
+ uvec4 deficit=uvec4(0u);
+ uint hf;
+ if(g9Uint(hOut,hf)&&hf>fEntry+q){uvec4 diff;if(!g9SSub(hOut,g9U32(fEntry+q),diff))return false;deficit=diff;}
+ uint d;
+ if(!g9Uint(deficit,d))d=0u;
+ uvec4 lhs,rhs;
+ if(!g9UMul(g9U32(q),g9U32(120u*uJ*65536u),lhs))return false;
+ if(!g9UMul(g9U32(omegaOut),g9U32(d),rhs))return false;
+ feasible=g9UCmp(lhs,rhs)<=0?1u:0u;
+ return true;
+}
+
+// The DM_REQUEST body: freeze S/F/p/B, compute geometry, run the bounded
+// solver, record everything into the DM48 WORK fields.
+bool dmRequest(){
+ for(uint c=0u;c<128u;++c){
+  uint bed=g9Column(c,0u),flow=g9Column(c,1u),bedWide=g9Material(c);
+  uvec4 pEntry=g9Momentum(c);
+  // Freeze geometry from neighbors (frozen B=S+F at entry).
+  uvec4 gx=g9S64(uvec2(C[22u],0u));
+  uint gn=C[23u];
+  // dR/dL with frozen neighbor material; missing neighbors ignored.
+  uvec4 drive=uvec4(0u);
+  if(c<127u){uvec4 slope=g9S32(int(g9Material(c+1u))-int(bedWide));uvec4 term;if(!g9RneProduct(g9U32(gn),slope,1048576u,term))return false;uvec4 right;if(!g9SSub(gx,term,right))return false;drive=right;}
+  if(c>0u){uvec4 slope=g9S32(int(g9Material(c-1u))-int(bedWide));uvec4 negativeG,term;if(!g9SNeg(gx,negativeG)||!g9RneProduct(g9U32(gn),slope,1048576u,term))return false;uvec4 left;if(!g9SSub(negativeG,term,left))return false;if(g9SCmp(left,drive)>0)drive=left;}
+  // chiG=floor(max(excessA,0)*Q/gn)
+  uvec4 yieldA,excessA;
+  if(!g9RneProduct(g9S32(int(C[uConfig+0u])),g9U32(gn),65536u,yieldA))return false;
+  if(g9SCmp(drive,yieldA)>0){uvec4 diff;if(!g9SSub(drive,yieldA,diff))return false;excessA=diff;}
+  else excessA=uvec4(0u);
+  uvec4 chiGWide;
+  if(!g9UMul(g9Magnitude(excessA),g9U32(1048576u),chiGWide))return false;
+  uint chiG=0u;{uvec4 q2,r2;if(!g9UDiv(chiGWide,g9U32(gn),q2,r2))return false;if(!g9Uint(q2,chiG))return false;}
+  // Hg=min(B,floor(depthGravityGain*chiG/ONE))
+  uvec4 hgWide,q3,r3;
+  if(!g9UMul(g9U32(C[uConfig+6u+0u]),g9U32(chiG),hgWide)||!g9UDiv(hgWide,g9U32(65536u),q3,r3))return false;
+  uint hgU;if(!g9Uint(q3,hgU))return false;
+  uint hg=min(bedWide,hgU);
+  // omegaG=floor(omegaGravityGain*chiG/Q)
+  uvec4 ogW;
+  if(!g9UMul(g9U32(C[uConfig+6u+4u]),g9U32(chiG),ogW)||!g9UDiv(ogW,g9U32(1048576u),q3,r3))return false;
+  uint omegaG;if(!g9Uint(q3,omegaG))return false;
+  // Eval(0) — upper bound and closed-form branch decision.
+  bool shearOff=g9Zero(pEntry)||C[uConfig+4u]==0u;
+  uint omega0,feasible0;uvec4 h0;
+  if(!dmEval(c,0u,pEntry,flow,bedWide,g9U32(hg),g9U32(omegaG),shearOff,omega0,h0,feasible0))return false;
+  dmPut(c,1u,chiG);dmPut(c,2u,hg);dmPut(c,3u,0u);dmPut(c,4u,omega0);
+  // U=min(S,floor(omega0*max(H0-F,0)/(120JONE+omega0)))
+  uint h0u=0u;if(!g9Uint(h0,h0u))h0u=0u;
+  uint deficit0=h0u>flow?h0u-flow:0u;
+  uint upper=0u;
+  {uvec4 num;if(!g9UMul(g9U32(omega0),g9U32(deficit0),num))return false;
+   uvec4 den;if(!g9UAdd(g9U32(120u*uJ*65536u),g9U32(omega0),den))return false;
+   uvec4 q4,r4;if(!g9UDiv(num,den,q4,r4))return false;
+   if(!g9Uint(q4,upper))return false;
+   upper=min(upper,bed);}
+  dmPut(c,5u,upper);
+  uint qPhysical=0u,activeIterations=0u,closedForm=0u,finalLo=0u,finalHi=upper+1u,evalCalls=1u;
+  if(shearOff){
+   // Closed-form branch: no bisection, U is the answer.
+   qPhysical=upper;closedForm=1u;finalLo=upper;finalHi=upper+1u;
+  }else{
+   // 32-round fixed-length lower bound: lo feasible, hi sentinel.
+   uint lo=0u,hi=upper+1u;
+   for(uint round=0u;round<32u;++round){
+    if(hi-lo<=1u)continue; // uniform no-op round, still counted
+    uint mid=lo+(hi-lo)/2u;
+    uint omegaM,feasibleM;uvec4 hM;
+    ++evalCalls;
+    if(!dmEval(c,mid,pEntry,flow,bedWide,g9U32(hg),g9U32(omegaG),false,omegaM,hM,feasibleM))return false;
+    if(feasibleM!=0u)lo=mid;else hi=mid;
+    ++activeIterations;
+   }
+   qPhysical=lo;finalLo=lo;finalHi=hi;
+  }
+  dmPut(c,6u,finalLo);dmPut(c,7u,finalHi);dmPut(c,8u,activeIterations);dmPut(c,9u,closedForm);
+  dmPut(c,10u,qPhysical);dmPut(c,18u,evalCalls);
+  // qNext records q+1 (S+1 sentinel) and its feasibility (upper-bound proof
+  // may exclude it without an extra Eval).
+  dmPut(c,16u,qPhysical<bed?qPhysical+1u:bed+1u);
+  dmPut(c,17u,qPhysical<upper?1u:0u);
+  // Final Eval at qPhysical for the recorded H/omega/u (reuse when closed).
+  uint omegaP,feasibleP;uvec4 hP;
+  ++evalCalls;
+  if(!dmEval(c,qPhysical,pEntry,flow,bedWide,g9U32(hg),g9U32(omegaG),shearOff,omegaP,hP,feasibleP))return false;
+  if(feasibleP==0u)return false;
+  uint hPu=0u;if(!g9Uint(hP,hPu))hPu=0u;
+  dmPut(c,13u,hPu);dmPut(c,14u,omegaP);dmPut(c,15u,0u);dmPut(c,18u,evalCalls);
+  // Origin prefix (bed top-first contiguous expressible prefix).
+  uint qOrigin=0u;
+  {uint left=qPhysical,depth=g9MapCount(false,c),flowCount=g9MapCount(true,c);
+   for(uint n=0u;n<depth&&left>0u;++n){uint rank=depth-1u-n;uvec3 key=g9Key(false,c,rank);
+    bool found=false;
+    for(uint i=0u;i<flowCount;++i)if(g9KeyCompare(key,g9Key(true,c,i))==0)found=true;
+    for(uint i=0u;i<n&&!found;++i)if(g9KeyCompare(key,g9Key(false,c,depth-1u-i))==0)found=true;
+    if(!found&&flowCount>=64u)break; // 65th distinct origin unrepresentable
+    uint amount=min(left,C[g9MapAddress(false,c,rank)+3u]);left-=amount;qOrigin+=amount;}
+  }
+  dmPut(c,11u,qOrigin);
+  uint qActual=min(qPhysical,qOrigin);
+  dmPut(c,12u,qActual);
+  // Local reason per the T554 §8 order.
+  uint reason=0u;
+  if(bed==0u)reason=1u;
+  else if(deficit0==0u)reason=2u;
+  else if(omega0==0u)reason=3u;
+  else if(qPhysical==0u)reason=4u;
+  else if(qOrigin==0u)reason=5u;
+  else if(qOrigin<qPhysical)reason=6u;
+  dmPut(c,0u,reason);
+ }
+ return true;
+}
+
+// The DM_APPLY body: single-column atomic S->F with the map migration; p is
+// bit-identical before/after. One DM_NATURAL event per column including q0.
+bool dmApplyColumn(uint c){
+ uint qActual=dmWord(c,12u);
+ uint reason=dmWord(c,0u);
+ uint oldS=g9Column(c,0u),oldF=g9Column(c,1u);
+ uvec4 momentum=g9Momentum(c);
+ uint event,path;
+ if(!g9Reserve(1u,0u,event,path))return false;
+ if(qActual>0u){
+  if(!g9RecruitMap(c,qActual)){g9Fault(24u,c,0u);return false;}
+  g9PutColumn(c,0u,oldS-qActual);g9PutColumn(c,1u,oldF+qActual);
+  g9PutColumn(c,5u,0u);g9PutColumn(c,13u,g9Column(c,13u)|1u);
+  g9Derived(c);
+ }
+ uint row[64];
+ g9Event(row,15u,c,c,c); // kind15 DM_NATURAL
+ row[14]|=qActual>0u?4u:8u; // compoundMutation / normalDenial
+ row[15]=dmWord(c,10u);row[16]=dmWord(c,11u);row[17]=qActual;
+ row[19]=oldS;row[20]=g9Column(c,0u);row[21]=oldF;row[22]=g9Column(c,1u);
+ row[23]=momentum.x;row[24]=momentum.y;
+ row[25]=dmWord(c,1u);row[26]=dmWord(c,2u);row[27]=dmWord(c,3u);row[28]=dmWord(c,4u);
+ row[29]=dmWord(c,5u);row[30]=dmWord(c,6u);row[31]=dmWord(c,7u);
+ row[32u]=dmWord(c,8u);row[33u]=dmWord(c,9u);
+ row[34u]=dmWord(c,13u);row[35u]=dmWord(c,14u);row[36u]=dmWord(c,15u);
+ row[37u]=dmWord(c,16u);row[38u]=dmWord(c,17u);row[39u]=dmWord(c,18u);
+ row[40u]=g9MapCount(false,c);row[41u]=g9MapCount(true,c);
+ row[42u]=reason;
+ return g9WriteEvent(event,row)&&g9Seal();
+}
+
+// PREDICTOR_FACE / MIDPOINT_BUILD / CORRECTOR_FACE per §6.2: the private
+// predictor runs the existing face math on entry values, the midpoint is
+// RNE((pEntry+pEndPredict)/2) checked against the CFL domain, and the
+// corrector recomputes the faces with pMid while the real momentum still
+// accumulates from pEntry with one gravity application.
+bool dmPredictor(){
+ // Private WORK snapshot: pEndPredict = full proximal friction on the entry
+ // mode applied to pTrial0 = pEntry (face fluxes re-run via g9FaceFlux on the
+ // frozen entry values by the caller's staging; here we record the midpoint).
+ for(uint c=0u;c<128u;++c){
+  uvec4 pEntry=g9Momentum(c);
+  g9WriteWide(uColumnStage+c*64u+48u,pEntry);
+ }
+ return true;
+}
+bool dmMidpoint(){
+ for(uint c=0u;c<128u;++c){
+  uvec4 pEntry=g9ReadWide(uColumnStage+c*64u+48u);
+  uvec4 pEnd=g9ReadWide(uColumnStage+c*64u+52u);
+  uvec4 sum,mid;
+  if(!g9SAdd(pEntry,pEnd,sum)||!g9SDiv(sum,g9U32(2u),1u,mid)){g9Fault(29u,c,4u);return false;}
+  // F0 requires pMid0.
+  uint f=g9Column(c,1u);
+  if(f==0u&&!g9Zero(mid)){g9Reject(28u,c,c);return false;}
+  // |pMid|<=F*Vmax (Q40 p, Q20 F, Vmax 1024Q).
+  uvec4 bound;
+  if(!g9UMul(g9U32(f),g9U32(1024u*1048576u),bound))return false;
+  if(g9UCmp(g9Magnitude(mid),bound)>0){g9Reject(28u,c,c);return false;}
+  g9WriteWide(uColumnStage+c*64u+56u,mid);
+ }
+ return true;
+}
+
+bool g9StartThreshold(out uvec4 threshold){return g9RneProduct(g9U32(W[uConfig]),g9U32(C[23u]),65536u,threshold);}
+bool g9ActivationRequest(){
+ for(uint c=0u;c<128u;++c){uvec4 drive,threshold;
+  if(!g9Drive(c,drive)||!g9StartThreshold(threshold)){g9Fault(29u,c,0u);return false;}
+  uint q=0u,bed=g9Column(c,0u);
+  if(g9SCmp(drive,threshold)>0){uvec4 numerator,quotient,remainder;if(!g9UMul(g9U32(min(bed,W[uConfig+2u])),g9U32(W[uConfig+3u]),numerator)||!g9UDiv(numerator,g9U32(65536u*120u*uJ),quotient,remainder)||!g9Uint(quotient,q)){g9Fault(29u,c,1u);return false;}q=min(q,bed);}
+  g9PutColumn(c,10u,q);g9PutColumn(c,11u,0u);g9PutColumn(c,13u,uMicro==0u?W[uColumnStage+c*64u+21u]:0u);g9WriteWide(uHamilton+c*2048u+256u,drive);
+ }
+ return true;
+}
+bool g9Activate(uint c,uint requested,uint trigger){
+ if(requested==0u)return true;
+ if(!g9RecruitPreflight(c,requested)){g9Reject(11u,c,0u);return false;}
+ uint event,path;if(!g9Reserve(1u,0u,event,path))return false;
+ uint oldS=g9Column(c,0u),oldF=g9Column(c,1u),oldDepth=g9MapCount(false,c),oldCount=g9MapCount(true,c);uvec4 momentum=g9Momentum(c);
+ if(!g9RecruitMap(c,requested)){g9Fault(24u,c,0u);return false;}
+ g9PutColumn(c,0u,oldS-requested);g9PutColumn(c,1u,oldF+requested);g9PutColumn(c,5u,0u);g9PutColumn(c,11u,requested);g9PutColumn(c,13u,g9Column(c,13u)|1u);g9Derived(c);
+ uint row[64];g9Event(row,G9_EVENT_ACTIVATE,c,c,c);row[14]|=4u;row[15]=requested;row[16]=requested;row[18]=trigger;row[19]=oldS;row[20]=oldS-requested;row[21]=oldF;row[22]=oldF+requested;
+ row[23]=row[25]=momentum.x;row[24]=row[26]=momentum.y;row[27]=W[uConfig+2u];row[28]=oldDepth;row[29]=g9MapCount(false,c);row[30]=oldCount;row[31]=g9MapCount(true,c);
+ uvec4 drive=g9ReadWide(uHamilton+c*2048u+256u);for(uint i=0u;i<4u;++i)row[32u+i]=drive[i];
+ // At fixed B, potential and p are unchanged; adding zero-momentum mass
+ // decreases p²/F monotonically. No interval tolerance is introduced.
+ return g9WriteEvent(event,row)&&g9Seal();
+}
+bool g9ActivationApply(){for(uint c=0u;c<128u;++c)if(!g9Activate(c,g9Column(c,10u),1u))return false;return true;}
+bool g9Friction(){
+ for(uint c=0u;c<128u;++c){uint flow=g9Column(c,1u),mode=g9Column(c,4u),oldRest=g9Column(c,5u),rest=0u;uvec4 oldP=g9Momentum(c),staticBudget,dynamicBudget,product,numerator,denominator=g9U32(65536u*120u*uJ);
+  if(!g9SMul(g9U32(C[23u]),g9U32(flow),product)||!g9SMul(product,g9U32(W[uConfig]),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(W[uConfig+1u]),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}
+  uvec4 magnitude=g9Magnitude(oldP),newP=uvec4(0u);bool supported=mode==0u&&g9UCmp(magnitude,staticBudget)<=0;
+  if(!supported&&g9UCmp(magnitude,dynamicBudget)>0){uvec4 difference;if(!g9USub(magnitude,dynamicBudget,difference)||!g9FromMagnitude(difference,g9Negative(oldP),newP)){g9Fault(29u,c,1u);return false;}}
+  if(g9SCmp(g9Magnitude(newP),g9Magnitude(oldP))>0){g9Fault(29u,c,2u);return false;}
+  uvec4 support;if(!g9SSub(newP,oldP,support)||!g9Accumulate(74u,support)){g9Fault(29u,c,3u);return false;}
+  uvec4 drive,threshold;if(!g9Drive(c,drive)||!g9StartThreshold(threshold)){g9Fault(29u,c,4u);return false;}
+  bool still=flow>0u&&g9Zero(newP)&&g9Column(c,13u)==0u&&g9SCmp(drive,threshold)<=0;
+  if(still){uint increment=32u/uJ,settle=W[uConfig+5u];rest=oldRest>settle||increment>settle-oldRest?settle:oldRest+increment;}
+  uint row[64];g9Event(row,G9_EVENT_FRICTION,c,c,c);row[15]=flow;row[16]=mode;row[17]=g9Zero(newP)?0u:1u;row[18]=supported?W[uConfig]:W[uConfig+1u];row[19]=oldRest;row[20]=rest;
+  row[21]=oldP.x;row[22]=oldP.y;row[23]=newP.x;row[24]=newP.y;row[25]=staticBudget.x;row[26]=staticBudget.y;row[27]=dynamicBudget.x;row[28]=dynamicBudget.y;row[29]=support.x;row[30]=support.y;
+  if(!g9Zero(support)||oldRest!=rest){if(!g9OneEvent(row))return false;}
+  if(!g9PutMomentum(c,newP))return false;g9PutColumn(c,5u,rest);
+  if(!still||rest<W[uConfig+5u])continue;
+  if(!g9DepositPreflight(c)){g9PutColumn(c,12u,12u);continue;}
+  uint oldS=g9Column(c,0u),depth=g9MapCount(false,c),count=g9MapCount(true,c);if(!g9DepositMap(c)){g9Fault(24u,c,5u);return false;}
+  g9PutColumn(c,0u,oldS+flow);g9PutColumn(c,1u,0u);g9PutColumn(c,5u,0u);g9Derived(c);
+  g9Event(row,G9_EVENT_DEPOSIT,c,c,c);row[14]|=4u;row[15]=flow;row[17]=oldS;row[18]=oldS+flow;row[19]=flow;row[21]=depth;row[22]=g9MapCount(false,c);row[23]=count;row[25]=rest;row[26]=W[uConfig+5u];if(!g9OneEvent(row))return false;
+ }return true;
+}
+
+bool g9DecodeBinary64(uvec2 raw,uint fractionBits,bool roundEven,out uvec4 result){
+ result=uvec4(0u);uint exponent=(raw.y>>20u)&2047u,fraction=raw.y&0xfffffu;bool negative=(raw.y>>31u)!=0u;
+ if(exponent==2047u)return false;if(exponent==0u)return true;
+ uvec4 magnitude=uvec4(raw.x,fraction|0x100000u,0u,0u);int shift=int(exponent)-1023-52+int(fractionBits);
+ if(shift>=0){if(!g9UShift(magnitude,uint(shift),magnitude))return false;}
+ else{
+  uint right=uint(-shift);uvec4 quotient=uvec4(0u);bool halfway=false,below=false;
+  for(uint bit=0u;bit<64u;++bit)if(((magnitude[int(bit/32u)]>>(bit%32u))&1u)!=0u){
+   if(bit>=right){uint target=bit-right;quotient[int(target/32u)]|=1u<<(target%32u);}
+   else if(bit+1u==right)halfway=true;else below=true;
+  }
+  if(roundEven&&halfway&&(below||(quotient.x&1u)!=0u)&&!g9UAdd(quotient,g9U32(1u),quotient))return false;
+  magnitude=quotient;
+ }
+ return g9FromMagnitude(magnitude,negative,result);
+}
+uint g9Input(uint word){return W[uInput+word];}
+uvec2 g9InputPair(uint word){return uvec2(g9Input(word),g9Input(word+1u));}
+bool g9InputBodyWord(uint kind,uint word){
+ if(kind==0u)return false;
+ if(word>=40u&&word<=45u)return true;
+ if(kind==1u)return word>=64u&&word<=76u;
+ return kind==2u&&((word>=46u&&word<=63u)||word==77u);
+}
+bool g9FlickVerify();
+bool g9ValidateInput(uint rootKind){
+ if(g9Input(0u)!=G9_INPUT_MAGIC||(g9Input(1u)!=1u&&g9Input(1u)!=2u)||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
+ if(any(notEqual(g9InputPair(4u),uRun))||any(notEqual(g9InputPair(6u),uOwner))||any(notEqual(g9InputPair(8u),uContext))||any(notEqual(g9InputPair(10u),uNonce))||any(notEqual(g9InputPair(12u),uInputGeneration)))return false;
+ if(rootKind==1u&&g9Input(40u)!=1u||rootKind==2u&&g9Input(40u)==1u)return false;
+ for(uint word=40u;word<128u;++word)if(!g9InputBodyWord(g9Input(40u),word)&&g9Input(word)!=0u)return false;
+ for(uint i=0u;i<8u;++i)if(g9Input(26u+i)!=W[uConfig+16u+i])return false;
+ if(g9Input(1u)==2u&&!g9FlickVerify())return false;
+ if(g9Input(1u)==1u&&W[uConfig+6u]==2u)return false;
+ return g9Input(25u)==W[uConfig+6u]&&g9Input(24u)==uint(uAcceptedAngle);
+}
+bool g9CommandCompare(uint capsule){
+ for(uint i=40u;i<128u;++i)if(C[capsule+i]!=g9Input(i))return false;
+ const uint also[14]=uint[14](4u,5u,12u,13u,26u,27u,28u,29u,30u,31u,32u,33u,0u,1u);
+ for(uint i=0u;i<12u;++i)if(C[capsule+also[i]]!=g9Input(also[i]))return false;return true;
+}
+bool g9Dedup(){
+ uint kind=g9Input(40u);g9Set(18u,0u);if(kind==0u)return true;
+ uint seqAt=kind==1u?28u:30u,validAt=kind==1u?104u:105u,capsule=kind==1u?256u:384u;
+ uvec4 seq=g9U64(g9InputPair(41u)),old=g9U64(uvec2(C[seqAt],C[seqAt+1u]));
+ if(g9Zero(seq)){g9Fault(22u,0u,41u);return false;}
+ if(C[validAt]!=0u){int cmp=g9UCmp(seq,old);if(cmp<0){g9Fault(20u,0u,41u);return false;}if(cmp==0){if(!g9CommandCompare(capsule)){g9Fault(19u,0u,41u);return false;}g9Set(18u,1u);}}
+ return true;
+}
+bool g9ConsumeCommand(uint outcome,uint admitted){
+ uint kind=g9Input(40u);if(kind==0u||g9Ctl(18u)!=0u)return true;
+ uint seqAt=kind==1u?28u:30u,commitAt=kind==1u?32u:34u,capsule=kind==1u?256u:384u;
+ C[seqAt]=g9Input(41u);C[seqAt+1u]=g9Input(42u);uvec4 next;if(!g9UAdd(g9U64(uBaseCommit),g9U32(1u),next)){g9Fault(29u,0u,commitAt);return false;}
+ C[commitAt]=next.x;C[commitAt+1u]=next.y;C[kind==1u?36u:37u]=outcome;C[kind==1u?104u:105u]=1u;
+ if(kind==1u){C[38u]=admitted;C[39u]=0u;}
+ for(uint i=0u;i<128u;++i)C[capsule+i]=g9Input(i);return true;
+}
+void g9RetirePacket(uint slot){uint generation=g9Packet(slot,7u);for(uint f=0u;f<64u;++f)g9PutPacket(slot,f,0u);g9PutPacket(slot,7u,generation);}
+bool g9PacketCertificate(uint slot,uint kind,uint origin,uint sourceId,uint q,uint column,uint rank,uint parent,uint ordinal){
+ uint at=uPacket+slot*64u;uvec4 commit;if(!g9UAdd(g9U64(uBaseCommit),g9U32(1u),commit))return false;
+ C[at+17u]=C[at+6u];C[at+18u]=C[at+7u];C[at+19u]=origin;C[at+20u]=0u;C[at+21u]=sourceId;C[at+22u]=kind;C[at+23u]=commit.x;C[at+24u]=commit.y;C[at+25u]=ordinal;C[at+26u]=q;C[at+27u]=column;C[at+28u]=rank;C[at+29u]=parent;C[at+30u]=1u;return true;
+}
+bool g9SourceDecode(){
+ if(g9Ctl(18u)!=0u)return true;
+ uvec4 mass,x,y2,vx,vy;
+ if((g9Input(65u)&0x80000000u)!=0u||g9Input(65u)>0x40700000u||(g9Input(65u)==0x40700000u&&g9Input(64u)!=0u)||
+    !g9DecodeBinary64(g9InputPair(64u),20u,false,mass)||!g9DecodeBinary64(g9InputPair(66u),20u,true,x)||!g9DecodeBinary64(g9InputPair(68u),21u,true,y2)||!g9DecodeBinary64(g9InputPair(70u),20u,true,vx)||!g9DecodeBinary64(g9InputPair(72u),20u,true,vy)){
+  g9Fault(22u,0u,64u);return false;
+ }
+ uint requested,px,py;int vxx,vyy;
+ if(!g9Uint(mass,requested)||!g9Uint(x,px)||!g9Uint(y2,py)||!g9I32(vx,vxx)||!g9I32(vy,vyy)||px>=134217728u||abs(vxx)>1073741824||abs(vyy)>1073741824||g9Input(74u)==0u){g9Fault(22u,0u,66u);return false;}
+ uint c=px>>20u,q=min(requested,244666u);if(g9Occupied(c)>268435456u){g9Fault(24u,c,8u);return false;}q=min(q,268435456u-g9Occupied(c));
+  if(py<2u*g9Material(c)+q||py>536870912u-q){g9Fault(22u,c,68u);return false;}
+ uint slot=uK;for(uint i=0u;i<uK;++i)if(g9Packet(i,0u)==0u){slot=i;break;}
+ uint reason=requested==0u?4u:0u;
+ if(slot==uK){q=0u;reason=13u;}else if(g9Packet(slot,7u)==0xffffffffu){g9Fault(29u,slot,7u);return false;}
+ if(C[18u]==0u){q=0u;reason=14u;}if(C[19u]>=4096u){q=0u;reason=15u;}
+ g9Set(48u,requested);g9Set(49u,q);g9Set(50u,slot);g9Set(51u,px);g9Set(52u,py);g9Set(53u,uint(vxx));g9Set(54u,uint(vyy));g9Set(55u,reason);
+ return true;
+}
+bool g9SourceBirth(){
+ if(g9Ctl(18u)!=0u)return true;uint q=g9Ctl(49u);if(q==0u)return true;
+ uint slot=g9Ctl(50u),x=g9Ctl(51u),c=x>>20u,id=C[18u],origin=C[19u]+1u,generation=g9Packet(slot,7u)+1u;
+ uint event,path;if(!g9Reserve(1u,0u,event,path))return false;
+ uint src=uSources+(origin-1u)*16u;C[src]=origin;C[src+1u]=0u;C[src+2u]=g9Input(74u);C[src+3u]=g9Input(75u);C[src+4u]=q;C[src+5u]=0u;C[src+6u]=g9Input(41u);C[src+7u]=g9Input(42u);C[src+8u]=uInputGeneration.x;C[src+9u]=uInputGeneration.y;C[src+14u]=1u;C[19u]=origin;
+ // Four independent FNV1A32_LE locators. They never authorize dedup; the last
+ // command capsule comparison above always compares original full body words.
+ uvec4 digest=uvec4(2166136261u,2166136261u^1u,2166136261u^2u,2166136261u^3u);
+ for(uint word=40u;word<128u;++word){uint v=g9Input(word);for(uint byte=0u;byte<4u;++byte)for(uint lane=0u;lane<4u;++lane)digest[lane]=(digest[lane]^((v>>(8u*byte))&255u))*16777619u;}
+ for(uint i=0u;i<4u;++i)C[src+10u+i]=digest[i];
+ g9RetirePacket(slot);g9PutPacket(slot,0u,q);g9PutPacket(slot,1u,x);g9PutPacket(slot,2u,g9Ctl(52u));g9PutPacket(slot,3u,g9Ctl(53u));g9PutPacket(slot,4u,g9Ctl(54u));g9PutPacket(slot,5u,c);g9PutPacket(slot,6u,id);g9PutPacket(slot,7u,generation);g9PutPacket(slot,8u,origin);g9PutPacket(slot,10u,g9Input(74u));g9PutPacket(slot,11u,0xffffffffu);
+ if(!g9PacketCertificate(slot,0u,origin,g9Input(74u),q,c,0u,0u,event+1u)){g9Fault(29u,slot,23u);return false;}
+ C[18u]=id+1u;g9PutColumn(c,8u,g9Column(c,8u)+q);
+ uvec4 px,py,energy;if(!g9SMul(g9U32(q),g9S32(int(g9Ctl(53u))),px)||!g9SMul(g9U32(q),g9S32(int(g9Ctl(54u))),py)||!g9PacketEnergy(q,x,g9Ctl(52u),int(g9Ctl(53u)),int(g9Ctl(54u)),energy)||!g9Accumulate(66u,px)||!g9Accumulate(70u,py)||!g9Accumulate(90u,energy)){g9Fault(29u,slot,0u);return false;}
+ uint row[64];g9Event(row,G9_EVENT_SOURCE_BIRTH,slot,c,c);row[12]=id;row[13]=generation;row[14]|=4u;row[15]=q;row[16]=origin;row[18]=g9Input(74u);row[19]=x;row[20]=g9Ctl(52u);row[21]=g9Ctl(53u);row[22]=g9Ctl(54u);row[23]=generation-1u;row[24]=generation;for(uint i=0u;i<4u;++i)row[25u+i]=energy[i];return g9WriteEvent(event,row)&&g9Seal();
+}
+
+// T543 integer-only verification; no FP64, new dispatch or binding.
+bool g9FlickVelocity(uvec4 magnitude,uvec4 duration,uint cap,out uint velocity,out bool saturated){
+ uvec4 product,denominator,value;
+ if(!g9UMul(magnitude,g9U32(1000000000u),product)||!g9UMul(duration,g9U32(4u),denominator)||!g9SDiv(product,denominator,1u,value))return false;
+ saturated=g9UCmp(value,g9U32(cap))>0;velocity=saturated?cap:value.x;return true;
+}
+bool g9FlickVerify(){
+ uint kind=g9Input(40u),adapter=g9Input(77u),flags=g9Input(45u);
+ if(kind!=2u)return flags==0u;
+ if(adapter==0u)return flags==0u;
+ if(adapter!=53401u||(flags&4u)==0u||(flags&~7u)!=0u||g9Input(48u)!=0u||g9Input(49u)!=0x40100000u)return false;
+ uvec2 xb=g9InputPair(50u),yb=g9InputPair(52u);uvec2 ax=uvec2(xb.x,xb.y&0x7fffffffu),ay=uvec2(yb.x,yb.y&0x7fffffffu);
+ if(ax.y>0x40600000u||(ax.y==0x40600000u&&ax.x!=0u)||ay.y>0x40700000u||(ay.y==0x40700000u&&ay.x!=0u))return false;
+ uvec4 dx,dy,xx,yy,norm,duration=g9U64(g9InputPair(54u));
+ if(g9UCmp(duration,g9U32(8333334u))<0||g9UCmp(duration,g9U32(1000000000u))>0||!g9DecodeBinary64(xb,20u,false,dx)||!g9DecodeBinary64(yb,20u,false,dy)||!g9UMul(g9Magnitude(dx),g9Magnitude(dx),xx)||!g9UMul(g9Magnitude(dy),g9Magnitude(dy),yy)||!g9UAdd(xx,yy,norm)||g9UCmp(norm,uvec4(0u,16u,0u,0u))<0)return false;
+ uint vx,vy;bool sx,sy;if(!g9FlickVelocity(g9Magnitude(dx),duration,25165824u,vx,sx)||!g9FlickVelocity(g9Negative(dy)?uvec4(0u):dy,duration,33554432u,vy,sy))return false;
+ if(flags!=(4u|(sx?1u:0u)|(sy?2u:0u)))return false;
+ uvec4 jx,jy,work,squares;if(!g9UMul(g9U32(vx),g9U32(65536u),jx)||!g9FromMagnitude(jx,g9Negative(dx),jx)||!g9UMul(g9U32(vy),g9U32(65536u),jy)||g9Zero(jx)&&g9Zero(jy))return false;
+ if(any(notEqual(jx,g9S64(g9InputPair(56u))))||any(notEqual(jy,g9U64(g9InputPair(58u)))))return false;
+ if(!g9UMul(g9U32(vx),g9U32(vx),xx)||!g9UMul(g9U32(vy),g9U32(vy),yy)||!g9UAdd(xx,yy,squares)||!g9UShift(squares,43u,work))return false;
+ return all(equal(work,uvec4(g9Input(60u),g9Input(61u),g9Input(62u),g9Input(63u))));
+}
+
+// Face records are frozen before any apply. Both columns consume the same q
+// and jp, including pressure transmission with zero transported mass.
+bool g9FlowTerms(uint c,uint z,out uint f,out uvec4 p,out int velocity){
+ uint original=g9Column(c,1u);f=g9Material(c)>z?g9Material(c)-z:0u;p=uvec4(0u);velocity=0;
+ if(f==0u)return true;if(original==0u)return false;
+ if(!g9RneProduct(g9Momentum(c),g9U32(f),original,p))return false;uvec4 u;if(!g9SDiv(p,g9U32(f),1u,u)||!g9I32(u,velocity))return false;return abs(velocity)<=1073741824;
+}
+bool g9Pressure(uvec4 p,uint flow,out uvec4 result){
+ result=uvec4(0u);if(flow==0u)return g9Zero(p);
+ uvec4 square,kinetic,pressure;if(!g9SMul(p,p,square)||!g9SDiv(square,g9U32(flow),1u,kinetic)||!g9UMul(g9U32(flow),g9U32(flow),square)||!g9SMul(square,g9U32(C[23u]),pressure)||!g9SDiv(pressure,g9U32(2u),1u,pressure)||!g9SAdd(kinetic,pressure,result))return false;return true;
+}
+bool g9BedCorrection(uint original,uint reconstructed,out uvec4 result){
+ uvec4 a,b,difference;if(!g9UMul(g9U32(original),g9U32(original),a)||!g9UMul(g9U32(reconstructed),g9U32(reconstructed),b)||!g9USub(a,b,difference)||!g9SMul(difference,g9U32(C[23u]),difference)||!g9SDiv(difference,g9U32(2u),1u,result))return false;return true;
+}
+bool g9FaceFlux(){
+ for(uint edge=0u;edge<129u;++edge){uint at=uFaces+edge*32u;for(uint i=0u;i<32u;++i)W[at+i]=0u;
+  uint left=edge==0u?0u:edge-1u,right=edge==128u?127u:edge,z=max(g9Column(left,0u),g9Column(right,0u));
+  uint fl,fr;uvec4 pl,pr;int ul,ur;
+  if(!g9FlowTerms(left,z,fl,pl,ul)||!g9FlowTerms(right,z,fr,pr,ur)){g9Fault(29u,edge,0u);return false;}
+  if(edge==0u){fl=fr;ul=-ur;if(!g9SNeg(pr,pl)){g9Fault(29u,edge,1u);return false;}}
+  if(edge==128u){fr=fl;ur=-ul;if(!g9SNeg(pl,pr)){g9Fault(29u,edge,2u);return false;}}
+  uvec4 waveL,waveR;if(!g9UMul(g9U32(C[23u]),g9U32(fl),waveL)||!g9UMul(g9U32(C[23u]),g9U32(fr),waveR)){g9Fault(29u,edge,3u);return false;}
+  uint sl,sr;if(!g9CeilSqrt64(waveL.xy,sl)||!g9CeilSqrt64(waveR.xy,sr)){g9Fault(29u,edge,4u);return false;}uint speed=max(uint(abs(ul))+sl,uint(abs(ur))+sr);
+  uvec4 fm,fp,al,ar,difference,viscosity;
+  if(!g9SSub(g9U32(fr),g9U32(fl),difference)||!g9SMul(g9U32(speed),difference,viscosity)||!g9SAdd(pl,pr,fm)||!g9SSub(fm,viscosity,fm)||!g9SDiv(fm,g9U32(2u),1u,fm)||
+     !g9Pressure(pl,fl,al)||!g9Pressure(pr,fr,ar)||!g9SSub(pr,pl,difference)||!g9SMul(g9U32(speed),difference,viscosity)||!g9SAdd(al,ar,fp)||!g9SSub(fp,viscosity,fp)||!g9SDiv(fp,g9U32(2u),1u,fp)){g9Fault(29u,edge,5u);return false;}
+  uint denominator=1048576u*120u*uJ;uvec4 q,jp,cl,cr;
+  if(!g9SDiv(fm,g9U32(denominator),0u,q)||!g9SDiv(fp,g9U32(denominator),1u,jp)||!g9BedCorrection(g9Column(left,1u),fl,cl)||!g9BedCorrection(g9Column(right,1u),fr,cr)||!g9SDiv(cl,g9U32(denominator),1u,cl)||!g9SDiv(cr,g9U32(denominator),1u,cr)){g9Fault(29u,edge,6u);return false;}
+  int narrow;if(!g9I32(q,narrow)){g9Reject(8u,edge,0u);return false;}if(edge==0u||edge==128u)narrow=0;
+  W[at]=uint(narrow);W[at+1u]=speed;W[at+2u]=fl;W[at+3u]=fr;g9WriteWide(at+4u,jp);g9WriteWide(at+8u,cl);g9WriteWide(at+12u,cr);g9WriteWide(at+16u,fm);g9WriteWide(at+20u,fp);
+ }
+ for(uint c=0u;c<128u;++c){uint left=uFaces+c*32u,right=left+32u;uvec4 p=g9Momentum(c),change,bed,gravity,product;
+  if(!g9SSub(g9ReadWide(left+4u),g9ReadWide(right+4u),change)||!g9SSub(g9ReadWide(left+12u),g9ReadWide(right+8u),bed)||!g9SMul(g9S32(int(C[22u])),g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(120u*uJ),1u,gravity)||!g9SAdd(p,change,p)||!g9SAdd(p,bed,p)||!g9SAdd(p,gravity,p)){g9Fault(29u,c,7u);return false;}
+  uint stage=uColumnStage+c*64u;g9WriteWide(stage,p);g9WriteWide(stage+4u,bed);g9WriteWide(stage+8u,gravity);W[stage+12u]=g9Column(c,1u);W[stage+13u]=g9Column(c,4u);
+  uvec4 limit;if(!g9UMul(g9U32(W[uConfig]),g9U32(C[23u]),product)||!g9UMul(product,g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(65536u*120u*uJ),0u,limit)){g9Fault(29u,c,8u);return false;}
+  W[stage+14u]=g9Column(c,4u)==0u&&g9UCmp(g9Magnitude(p),limit)<=0?1u:0u;
+ }
+ for(uint edge=1u;edge<128u;++edge)if(W[uColumnStage+(edge-1u)*64u+14u]!=0u&&W[uColumnStage+edge*64u+14u]!=0u)W[uFaces+edge*32u]=0u;
+ return true;
+}
+// Provisional maps live in each column's 2048-word Hamilton partition. The
+// original C maps stay unchanged until every donor/receiver is representable.
+uint g9Provisional(uint c,uint rank){return uHamilton+c*2048u+rank*4u;}
+bool g9ProvisionalAdd(uint c,uvec3 key,uint mass){
+ if(mass==0u)return true;uint count=W[uHamilton+c*2048u+512u],rank=count;
+ for(uint i=0u;i<count;++i){uint at=g9Provisional(c,i);uvec3 old=uvec3(W[at],W[at+1u],W[at+2u]);int cmp=g9KeyCompare(old,key);if(cmp>=0){rank=i;break;}}
+ bool merge=false;if(rank<count){uint at=g9Provisional(c,rank);merge=g9KeyCompare(uvec3(W[at],W[at+1u],W[at+2u]),key)==0;}
+ if(merge){uint at=g9Provisional(c,rank),next;if(!g9AddMass(W[at+3u],mass,next))return false;W[at+3u]=next;return true;}
+ if(count==64u)return false;
+ for(uint i=count;i>rank;--i)for(uint f=0u;f<4u;++f)W[g9Provisional(c,i)+f]=W[g9Provisional(c,i-1u)+f];uint at=g9Provisional(c,rank);W[at]=key.x;W[at+1u]=key.y;W[at+2u]=key.z;W[at+3u]=mass;W[uHamilton+c*2048u+512u]=count+1u;return true;
+}
+bool g9FlowReserve(){
+ for(uint c=0u;c<128u;++c){uint base=uHamilton+c*2048u,count=g9MapCount(true,c);W[base+512u]=0u;
+  int l=int(W[uFaces+c*32u]),r=int(W[uFaces+(c+1u)*32u]);uint outgoing=(l<0?uint(-l):0u)+(r>0?uint(r):0u);
+  if(outgoing>g9Column(c,1u)){g9Reject(8u,c,0u);return false;}
+  uint incoming=(l>0?uint(l):0u)+(r<0?uint(-r):0u);if(incoming>268435456u-g9Occupied(c)+outgoing){g9Reject(8u,c,1u);return false;}
+  // Remaining donor maps retain their exact source keys for left/right split.
+  for(uint i=0u;i<64u;++i)for(uint f=0u;f<4u;++f)W[base+1024u+i*4u+f]=C[g9MapAddress(true,c,i)+f];W[base+1536u]=count;W[base+1537u]=g9Column(c,1u);
+ }
+ // Reserve Hamilton shares from remaining donor sources, left face first.
+ for(uint donor=0u;donor<128u;++donor){uint base=uHamilton+donor*2048u,count=W[base+1536u];
+  for(uint side=0u;side<2u;++side){int signedQ=int(W[uFaces+(donor+side)*32u]);uint q=side==0u?(signedQ<0?uint(-signedQ):0u):(signedQ>0?uint(signedQ):0u);if(q==0u)continue;
+   uint receiver=side==0u?donor-1u:donor+1u,total=W[base+1537u],sum=0u;
+   for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u,mass=W[at+3u];uvec4 product,quotient,remainder;
+    if(!g9UMul(g9U32(q),g9U32(mass),product)||!g9UDiv(product,g9U32(total),quotient,remainder)){g9Fault(29u,donor,i);return false;}W[base+256u+i*4u]=quotient.x;W[base+256u+i*4u+1u]=remainder.x;W[base+256u+i*4u+2u]=0u;sum+=quotient.x;
+   }
+   for(uint n=0u;n<q-sum;++n){uint best=count;for(uint i=0u;i<count;++i)if(W[base+256u+i*4u+2u]==0u&&(best==count||W[base+256u+i*4u+1u]>W[base+256u+best*4u+1u]))best=i;
+    if(best==count){g9Fault(24u,donor,n);return false;}W[base+256u+best*4u]++;W[base+256u+best*4u+2u]=1u;
+   }
+   for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u,share=W[base+256u+i*4u];if(share>W[at+3u]){g9Fault(24u,donor,i);return false;}
+    if(!g9ProvisionalAdd(receiver,uvec3(W[at],W[at+1u],W[at+2u]),share)){g9Reject(11u,receiver,i);return false;}W[at+3u]-=share;
+   }W[base+1537u]-=q;
+  }
+  for(uint i=0u;i<count;++i){uint at=base+1024u+i*4u;if(!g9ProvisionalAdd(donor,uvec3(W[at],W[at+1u],W[at+2u]),W[at+3u])){g9Reject(11u,donor,i);return false;}}
+ }return true;
+}
+bool g9FlowApply(){
+ // All source maps/face operands have been preflighted before the first write.
+ for(uint edge=1u;edge<128u;++edge){uint at=uFaces+edge*32u;int q=int(W[at]);uvec4 jp=g9ReadWide(at+4u);if(q==0&&g9Zero(jp))continue;
+  uint row[64];g9Event(row,G9_EVENT_EDGE_FLUX,edge,edge-1u,edge);row[14]|=4u;row[15]=uint(abs(q));row[16]=q<0?1u:0u;row[17]=(W[uColumnStage+(edge-1u)*64u+14u]!=0u?1u:0u)|(W[uColumnStage+edge*64u+14u]!=0u?2u:0u);
+  row[18]=g9Column(edge-1u,1u);row[19]=g9Column(edge,1u);row[20]=g9Column(edge-1u,0u);row[21]=g9Column(edge,0u);row[22]=W[at+2u];row[23]=W[at+3u];row[24]=W[at+1u];
+  for(uint i=0u;i<4u;++i){row[25u+i]=W[at+16u+i];row[29u+i]=W[at+20u+i];}row[33]=jp.x;row[34]=jp.y;row[35]=W[at+8u];row[36]=W[at+9u];row[37]=W[at+12u];row[38]=W[at+13u];row[39]=g9MapCount(true,edge-1u);row[40]=g9MapCount(true,edge);if(!g9OneEvent(row))return false;
+ }
+ for(uint c=0u;c<128u;++c){uint base=uHamilton+c*2048u,count=W[base+512u],oldF=g9Column(c,1u),sum=0u;
+  for(uint i=0u;i<64u;++i){uint src=g9Provisional(c,i),dst=g9MapAddress(true,c,i);for(uint f=0u;f<4u;++f)C[dst+f]=i<count?W[src+f]:0u;if(i<count)sum+=W[src+3u];}
+  uvec4 p=g9ReadWide(uColumnStage+c*64u),gravity=g9ReadWide(uColumnStage+c*64u+8u),bed=g9ReadWide(uColumnStage+c*64u+4u),oldP=g9Momentum(c);
+  if(sum==0u&&!g9Zero(p)){g9Reject(7u,c,0u);return false;}uvec4 bound;if(!g9UMul(g9U32(sum),g9U32(1073741824u),bound)){g9Fault(29u,c,0u);return false;}if(g9UCmp(g9Magnitude(p),bound)>0){g9Reject(6u,c,0u);return false;}
+  g9SetMapCount(true,c,count);g9PutColumn(c,1u,sum);if(!g9PutMomentum(c,p)||!g9Accumulate(50u,gravity)||!g9Accumulate(74u,bed))return false;g9Derived(c);
+  // The two container walls contribute their actual shared pressure impulses.
+  uvec4 wall=uvec4(0u);if(c==0u)wall=g9ReadWide(uFaces+4u);if(c==127u&&!g9SNeg(g9ReadWide(uFaces+128u*32u+4u),wall)){g9Fault(29u,c,1u);return false;}if(!g9Accumulate(74u,wall))return false;
+  if(!g9Zero(p)||!g9Zero(oldP)||!g9Zero(gravity)||!g9Zero(bed)||!g9Zero(wall)){uint row[64];g9Event(row,G9_EVENT_MOMENTUM_FORCE,c,c,c);row[15]=oldF;row[16]=sum;row[17]=W[uColumnStage+c*64u+13u];row[18]=oldP.x;row[19]=oldP.y;row[20]=p.x;row[21]=p.y;
+   uvec4 left=g9ReadWide(uFaces+c*32u+4u),right=g9ReadWide(uFaces+(c+1u)*32u+4u);row[22]=left.x;row[23]=left.y;row[24]=right.x;row[25]=right.y;row[26]=gravity.x;row[27]=gravity.y;row[28]=bed.x;row[29]=bed.y;row[30]=wall.x;row[31]=wall.y;if(!g9OneEvent(row))return false;}
+ }return true;
+}
+
+uvec4 g9VelocityDelta(int a,int b){uvec4 value;if(!g9SSub(g9S32(a),g9S32(b),value)){g9Fault(29u,0u,0u);return uvec4(0u);}return value;}
+// Full rational constant-acceleration trajectories. Each query is evaluated
+// from the immutable fragment entry; binary search never accumulates rounding.
+bool g9Trajectory(int start,int velocity,int acceleration,uint n,uint d,uint scale,out int value){
+ uvec4 denominator,term0,term1,term2,numerator;
+ if(d==0u||!g9UMul(g9U32(d),g9U32(d),denominator)||!g9SMul(g9S32(start),denominator,term0)||!g9SShift(term0,1u,term0)||
+    !g9SMul(g9S32(velocity),g9U32(n),term1)||!g9SMul(term1,g9U32(d),term1)||!g9SMul(term1,g9U32(2u*scale),term1)||
+    !g9SMul(g9S32(acceleration),g9U32(n),term2)||!g9SMul(term2,g9U32(n),term2)||!g9SMul(term2,g9U32(scale),term2)||
+    !g9SAdd(term0,term1,numerator)||!g9SAdd(numerator,term2,numerator)||!g9UShift(denominator,1u,denominator)||!g9SDiv(numerator,denominator,1u,numerator)||!g9I32(numerator,value))return false;
+ return true;
+}
+bool g9VelocityAt(int velocity,int acceleration,uint tick,out int result){
+ uvec4 change;if(!g9RneProduct(g9S32(acceleration),g9U32(tick),65536u*120u*uJ,change)||!g9SAdd(g9S32(velocity),change,change)||!g9I32(change,result))return false;return abs(result)<=1073741824;
+}
+bool g9PositionAt(int start,int velocity,int acceleration,uint tick,uint scale,out int value){return g9Trajectory(start,velocity,acceleration,tick,65536u*120u*uJ,scale,value);}
+bool g9Turn(int velocity,int acceleration,out uint numerator,out uint denominator){
+ numerator=denominator=0u;if(velocity==0||acceleration==0||(velocity<0)==(acceleration<0))return false;
+ numerator=uint(abs(velocity));denominator=uint(abs(acceleration));
+ uvec4 left,right;if(!g9UMul(g9U32(numerator),g9U32(120u*uJ),left)||!g9UMul(g9U32(denominator),g9U32(1u),right))return false;
+ return g9UCmp(left,right)<0;
+}
+// Compare at the rational TURN before mapping its diagnostic time to T16.
+// This endpoint preserves a within-tick excursion instead of guessing the
+// extremum from an already rounded tick or a sign test at two integer ticks.
+bool g9Reach(int start,int velocity,int acceleration,uint scale,int plane,bool greater,uint begin,uint end,out uint hit){
+ hit=0xffffffffu;int a,b;if(!g9PositionAt(start,velocity,acceleration,begin,scale,a)||!g9PositionAt(start,velocity,acceleration,end,scale,b))return false;
+ uint tn,td;bool turning=g9Turn(velocity,acceleration,tn,td);uint turnTick=0u;
+ if(turning){uvec4 scaled,q,r;if(!g9UMul(g9U32(tn),g9U32(65536u*120u*uJ),scaled)||!g9UDiv(scaled,g9U32(td),q,r))return false;turnTick=q.x+(g9Zero(r)?0u:1u);}
+ for(uint segment=0u;segment<(turning?2u:1u);++segment){
+  uint lo=segment==0u?begin:max(begin,turnTick),hi=segment==0u&&turning?min(end,turnTick):end;
+  if(lo>hi)continue;int endValue;
+  if(segment==0u&&turning&&turnTick<=end&&turnTick>=begin){if(!g9Trajectory(start,velocity,acceleration,tn,td,scale,endValue))return false;}
+  else if(!g9PositionAt(start,velocity,acceleration,hi,scale,endValue))return false;
+  int beginValue;if(!g9PositionAt(start,velocity,acceleration,lo,scale,beginValue))return false;
+  bool initial=greater?beginValue>=plane:beginValue<=plane;
+  if(initial&&beginValue==plane){
+   uvec4 derivative,term;
+   if(!g9SMul(g9S32(velocity),g9U32(65536u*120u*uJ),derivative)||!g9SMul(g9S32(acceleration),g9U32(lo),term)||!g9SAdd(derivative,term,derivative))return false;
+   bool leaving=greater?g9SCmp(derivative,uvec4(0u))<0:g9SCmp(derivative,uvec4(0u))>0;
+   if(leaving){if(segment==0u&&turning)continue;initial=false;if(lo==65536u)continue;++lo;}
+  }
+  if(initial){hit=min(hit,lo);continue;}
+  if(!(greater?endValue>=plane:endValue<=plane))continue;
+  for(uint iteration=0u;iteration<16u;++iteration){if(lo>=hi)break;uint mid=lo+(hi-lo)/2u;int value;
+   bool clampTurn=segment==0u&&turning&&mid>=turnTick;
+   if(clampTurn){if(!g9Trajectory(start,velocity,acceleration,tn,td,scale,value))return false;}else if(!g9PositionAt(start,velocity,acceleration,mid,scale,value))return false;
+   if(greater?value>=plane:value<=plane)hi=mid;else lo=mid+1u;
+  }hit=min(hit,lo);
+ }return true;
+}
+bool g9PathRow(uint at,uint parent,uint slot,uint kind,uint t0,uint t1,int x0,int x1,int y0,int y1,int vx0,int vy0,int vx1,int vy1){
+ if(at>=g9Ctl(8u)){g9Fault(28u,slot,at);return false;}uint row[16]=uint[16](parent,uMicro,slot,kind,t0,t1,uint(x0),uint(x1),uint(y0),uint(y1),uint(vx0),uint(vy0),uint(vx1),uint(vy1),0u,G9_SEAL);
+ for(uint i=0u;i<15u;++i)E[uPathWord+at*16u+i]=row[i];memoryBarrierBuffer();E[uPathWord+at*16u+15u]=G9_SEAL;return true;
+}
+// TURN rows carry rational-extremum coordinates. T16 is diagnostic only;
+// collision queries below still evaluate the immutable analytic trajectory.
+bool g9EmitTurns(uint slot,uint parent,uint first,inout uint count,int x0,int y0,int vx0,int vy0,int gx,int ay,uint begin,uint end,inout uint cursor,inout int px,inout int py,inout int pvx,inout int pvy){
+ uint nx,dx,ny,dy;bool tx=g9Turn(vx0,gx,nx,dx),ty=g9Turn(vy0,ay,ny,dy);
+ for(uint order=0u;order<2u;++order){
+  bool useX=tx;
+  if(tx&&ty){uvec4 a,b;if(!g9UMul(g9U32(nx),g9U32(dy),a)||!g9UMul(g9U32(ny),g9U32(dx),b))return false;useX=g9UCmp(a,b)<=0;}
+  if(!tx&&!ty)break;uint n=useX?nx:ny,d=useX?dx:dy;if(useX)tx=false;else ty=false;
+  uvec4 ticks,left,right,q,r;
+  if(!g9UMul(g9U32(n),g9U32(65536u*120u*uJ),ticks)||!g9UMul(g9U32(d),g9U32(begin),left)||!g9UMul(g9U32(d),g9U32(end),right))return false;
+  if(g9UCmp(ticks,left)<=0||g9UCmp(ticks,right)>=0)continue;
+  if(!g9UDiv(ticks,g9U32(d),q,r))return false;uint tick=q.x+(g9Zero(r)?0u:1u);
+  int x,y,vx,vy;uvec4 v,change;
+  if(!g9Trajectory(x0,vx0,gx,n,d,1u,x)||!g9Trajectory(y0,vy0,ay,n,d,2u,y)||!g9RneProduct(g9S32(gx),g9U32(n),d,change)||!g9SAdd(g9S32(vx0),change,v)||!g9I32(v,vx)||!g9RneProduct(g9S32(ay),g9U32(n),d,change)||!g9SAdd(g9S32(vy0),change,v)||!g9I32(v,vy))return false;
+  if(count>=8u||!g9PathRow(first+count,parent,slot,useX?1u:2u,cursor,tick,px,x,py,y,pvx,pvy,vx,vy))return false;
+  ++count;cursor=tick;px=x;py=y;pvx=vx;pvy=vy;
+ }return true;
+}
+bool g9FlightPacket(uint slot){
+ int gx=int(C[22u]),ay=-int(C[23u]);
+ uint mass=g9Packet(slot,0u),birth=g9Packet(slot,11u),scratch=uContacts+slot*16u;
+  W[scratch+9u]=0u;W[scratch+10u]=0u;W[scratch+11u]=0u;
+  uvec4 proposed;bool sameRoot=g9UAdd(g9U64(uBaseCommit),g9U32(1u),proposed)&&g9UCmp(g9U64(uvec2(g9Packet(slot,23u),g9Packet(slot,24u))),proposed)==0;
+  if(mass==0u||birth==uMicro&&sameRoot)return true;
+  int x0=int(g9Packet(slot,1u)),y0=int(g9Packet(slot,2u)),vx0=int(g9Packet(slot,3u)),vy0=int(g9Packet(slot,4u));uint c=g9Packet(slot,5u),begin=0u,pathCount=0u;
+  if(c>=128u||y0<int(2u*W[uColumnStage+c*64u+20u]+mass)){g9Reject(9u,slot,0u);return false;}
+  uint eventStart,pathStart;if(!g9Reserve(1u,8u,eventStart,pathStart))return false;
+  uint stop=65536u,contact=0u,column=c;int finalX,finalY,finalVx,finalVy;
+  for(uint segment=0u;segment<4u;++segment){
+   uint hit=65536u,kind=8u,candidate;int bedPlane=int(2u*W[uColumnStage+column*64u+20u]+mass);
+   if(!g9Reach(y0,vy0,ay,2u,bedPlane,false,begin,65536u,candidate)){g9Fault(29u,slot,1u);return false;}if(candidate<=hit){hit=candidate;kind=4u;}
+   if(!g9Reach(y0,vy0,ay,2u,int(536870912u-mass),true,begin,65536u,candidate)){g9Fault(29u,slot,2u);return false;}if(candidate<hit||candidate==hit&&kind!=4u){hit=candidate;kind=6u;}
+   bool leftWall=column==0u,rightWall=column==127u;int left=int(column*1048576u),right=int((column+1u)*1048576u);
+   if(!g9Reach(x0,vx0,gx,1u,leftWall?0:left-1,false,begin,65536u,candidate)){g9Fault(29u,slot,3u);return false;}uint leftKind=leftWall?7u:3u;if(candidate<hit||candidate==hit&&kind==8u){hit=candidate;kind=leftKind;}
+   bool toLeft=kind==leftKind&&hit==candidate;
+   if(!g9Reach(x0,vx0,gx,1u,rightWall?134217727:right,true,begin,65536u,candidate)){g9Fault(29u,slot,4u);return false;}if(candidate<hit||candidate==hit&&kind==8u){hit=candidate;kind=rightWall?7u:3u;toLeft=false;}
+   if(hit>65536u)hit=65536u;
+   int x,y,vx,vy;if(!g9PositionAt(x0,vx0,gx,hit,1u,x)||!g9PositionAt(y0,vy0,ay,hit,2u,y)||!g9VelocityAt(vx0,gx,hit,vx)||!g9VelocityAt(vy0,ay,hit,vy)){g9Fault(29u,slot,5u);return false;}
+   if(kind==4u){y=bedPlane;vy=0;contact=4u;stop=hit;W[scratch+9u]=4u;W[scratch+10u]=hit;}
+   else if(kind==6u){y=int(536870912u-mass);vy=0;stop=hit;}
+   else if(kind==7u){x=toLeft?0:134217727;vx=0;stop=hit;}
+   else if(kind==3u){
+    uint next=toLeft?column-1u:column+1u;x=toLeft?left-1:right;
+    if(y<int(2u*W[uColumnStage+next*64u+20u]+mass)){x=toLeft?left:right-1;vx=0;kind=5u;stop=hit;}
+    else column=next;
+   }
+   int oldX,oldY,oldVx,oldVy;if(!g9PositionAt(x0,vx0,gx,begin,1u,oldX)||!g9PositionAt(y0,vy0,ay,begin,2u,oldY)||!g9VelocityAt(vx0,gx,begin,oldVx)||!g9VelocityAt(vy0,ay,begin,oldVy)){g9Fault(29u,slot,6u);return false;}
+   uint pathBegin=begin;
+   if(!g9EmitTurns(slot,eventStart+1u,pathStart,pathCount,x0,y0,vx0,vy0,gx,ay,begin,hit,pathBegin,oldX,oldY,oldVx,oldVy)){g9Fault(28u,slot,pathCount);return false;}
+   if(pathCount>=8u||!g9PathRow(pathStart+pathCount,eventStart+1u,slot,kind,pathBegin,hit,oldX,x,oldY,y,oldVx,oldVy,vx,vy)){g9Fault(28u,slot,pathCount);return false;}++pathCount;
+   finalX=x;finalY=y;finalVx=vx;finalVy=vy;
+   if(kind!=3u||hit==65536u)break;
+   if(segment>0u){g9Reject(5u,slot,1u);return false;}begin=hit;
+  }
+  int freeVx,freeVy;if(!g9VelocityAt(vx0,gx,stop,freeVx)||!g9VelocityAt(vy0,ay,stop,freeVy)){g9Fault(29u,slot,7u);return false;}
+  uvec4 gravityX,gravityY,supportX,supportY;
+  if(!g9SMul(g9U32(mass),g9VelocityDelta(freeVx,vx0),gravityX)||!g9SMul(g9U32(mass),g9VelocityDelta(freeVy,vy0),gravityY)||!g9SMul(g9U32(mass),g9VelocityDelta(finalVx,freeVx),supportX)||!g9SMul(g9U32(mass),g9VelocityDelta(finalVy,freeVy),supportY)||
+     !g9Accumulate(50u,gravityX)||!g9Accumulate(54u,gravityY)||!g9Accumulate(74u,supportX)||!g9Accumulate(78u,supportY)){g9Fault(29u,slot,8u);return false;}
+  // Projection onto a contact/wall is a local conversion, checked before any
+  // later friction can disguise an increase. Free-flight rounding is also
+  // covered by the closed micro audit.
+  if(contact!=0u||stop<65536u){int freeX,freeY;uvec4 oldEnergy,newEnergy,delta;
+   if(!g9PositionAt(x0,vx0,gx,stop,1u,freeX)||!g9PositionAt(y0,vy0,ay,stop,2u,freeY)||!g9PacketEnergy(mass,uint(freeX),uint(freeY),freeVx,freeVy,oldEnergy)||!g9PacketEnergy(mass,uint(finalX),uint(finalY),finalVx,finalVy,newEnergy)||!g9SSub(newEnergy,oldEnergy,delta)){g9Fault(29u,slot,9u);return false;}
+   if(!g9NonIncrease(g9Exact(delta),slot))return false;
+  }
+  g9PutPacket(slot,1u,uint(finalX));g9PutPacket(slot,2u,uint(finalY));g9PutPacket(slot,3u,uint(finalVx));g9PutPacket(slot,4u,uint(finalVy));g9PutPacket(slot,5u,column);g9PutPacket(slot,13u,pathStart);g9PutPacket(slot,14u,pathCount);
+  // Return unused path reservation before jointly sealing the compound.
+  g9Set(8u,pathStart+pathCount);
+  uint row[64];g9Event(row,G9_EVENT_FLIGHT,slot,c,column);row[12]=g9Packet(slot,6u);row[13]=g9Packet(slot,7u);row[15]=mass;row[16]=g9Packet(slot,8u);row[17]=g9Packet(slot,9u);row[18]=g9Packet(slot,10u);row[19]=uint(x0);row[20]=uint(y0);row[21]=uint(vx0);row[22]=uint(vy0);row[23]=uint(finalX);row[24]=uint(finalY);row[25]=uint(finalVx);row[26]=uint(finalVy);row[27]=pathStart;row[28]=pathCount;row[29]=c;row[30]=column;row[31]=contact;row[32]=stop;row[33]=65536u-stop;row[34]=W[uColumnStage+column*64u+20u];row[35]=supportX.x;row[36]=supportX.y;row[37]=supportY.x;row[38]=supportY.y;
+  if(!g9WriteEvent(eventStart,row)||!g9Seal())return false;
+
+ return true;
+}
+// Each lane owns slot = batch*64+lane. Global paired cursors and environment
+// ledgers serialize in lane order, with every lane crossing identical barriers.
+// This conservative deterministic first implementation makes no speedup claim.
+bool g9Flight(){
+ uint lane=gl_LocalInvocationIndex;
+ for(uint c=lane;c<128u;c+=64u)W[uColumnStage+c*64u+20u]=g9Material(c);
+ memoryBarrierBuffer();barrier();
+ for(uint batch=0u;batch<uK/64u;++batch)for(uint owner=0u;owner<64u;++owner){
+  if(lane==owner&&g9Ctl(0u)==0u&&g9Ctl(14u)==0u)g9FlightPacket(batch*64u+lane);
+  memoryBarrierBuffer();barrier();
+ }
+ return g9Ctl(0u)==0u&&g9Ctl(14u)==0u;
+}
+bool g9Fold(){
+ for(uint c=0u;c<128u;++c)g9PutColumn(c,8u,0u);
+ for(uint slot=0u;slot<uK;++slot){uint mass=g9Packet(slot,0u);if(mass==0u)continue;uint c=g9Packet(slot,1u)>>20u;
+  if(c>=128u){g9Fault(24u,slot,1u);return false;}uint sum;if(!g9AddMass(g9Column(c,8u),mass,sum)){g9Reject(8u,slot,1u);return false;}g9PutColumn(c,8u,sum);g9PutPacket(slot,5u,c);
+ }
+ for(uint c=0u;c<128u;++c)if(g9Material(c)>268435456u-g9Column(c,8u)){g9Reject(8u,c,1u);return false;}
+ return true;
+}
+
+bool g9CaptureLess(uint a,uint b){
+ uint ca=g9Packet(a,5u),cb=g9Packet(b,5u);if(ca!=cb)return ca<cb;
+ int ba=int(g9Packet(a,2u))-int(g9Packet(a,0u)),bb=int(g9Packet(b,2u))-int(g9Packet(b,0u));if(ba!=bb)return ba<bb;return g9Packet(a,6u)<g9Packet(b,6u);
+}
+bool g9Capture(){
+ // Deterministic order is independent of slot allocation and invocation order.
+ for(uint slot=0u;slot<uK;++slot)W[uContacts+slot*16u+15u]=0u;
+ for(uint ordinal=0u;ordinal<uK;++ordinal){
+  uint best=uK;for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u&&W[uContacts+slot*16u+9u]==4u&&W[uContacts+slot*16u+15u]==0u&&(best==uK||g9CaptureLess(slot,best)))best=slot;
+  if(best==uK)break;uint slot=best,c=g9Packet(slot,5u),mass=g9Packet(slot,0u),y2=g9Packet(slot,2u),surface=2u*g9Material(c)+mass;W[uContacts+slot*16u+15u]=1u;
+  if(y2>surface)continue; // SUPPORT_MOVED_DEFER: retained P, no teleport.
+  if(y2<surface){g9Reject(9u,slot,0u);return false;}
+  uvec3 key=uvec3(g9Packet(slot,8u),g9Packet(slot,9u),g9Packet(slot,10u));
+  if(!g9MapCanAdd(true,c,key)||mass>268435456u-g9Column(c,0u)-g9Column(c,1u)){g9Reject(8u,c,0u);return false;}
+  uint oldF=g9Column(c,1u),count=g9MapCount(true,c),id=g9Packet(slot,6u),generation=g9Packet(slot,7u),x=g9Packet(slot,1u);int vx=int(g9Packet(slot,3u)),vy=int(g9Packet(slot,4u));
+  uvec4 oldP=g9Momentum(c),packetPx,packetPy,newP,packetEnergy;
+  G9EnergyInterval beforeColumn,afterColumn,before,after,delta;
+  if(!g9SMul(g9U32(mass),g9S32(vx),packetPx)||!g9SMul(g9U32(mass),g9S32(vy),packetPy)||!g9SAdd(oldP,packetPx,newP)||!g9ColumnEnergy(c,beforeColumn)||!g9PacketEnergy(mass,x,y2,vx,vy,packetEnergy)||!g9IntervalAdd(beforeColumn,g9Exact(packetEnergy),before)){g9Fault(29u,slot,0u);return false;}
+  uint event,path;if(!g9Reserve(1u,0u,event,path))return false;
+  if(!g9MapAdd(true,c,key,mass)){g9Fault(24u,c,0u);return false;}
+  g9PutColumn(c,1u,oldF+mass);g9PutColumn(c,8u,g9Column(c,8u)-mass);g9PutColumn(c,5u,0u);g9PutColumn(c,13u,g9Column(c,13u)|2u);if(!g9PutMomentum(c,newP))return false;g9Derived(c);
+  if(!g9ColumnEnergy(c,afterColumn)||!g9IntervalSubtract(afterColumn,before,delta)){g9Fault(29u,c,1u);return false;}
+  if(!g9NonIncrease(delta,c))return false;
+  // The FLIGHT stage has already accounted for normal impact; normally vy=0.
+  // Any remaining actual normal impulse is accounted once, with its sign.
+  uvec4 support;if(!g9SNeg(packetPy,support)||!g9Accumulate(78u,support)){g9Fault(29u,c,2u);return false;}
+  uint row[64];g9Event(row,G9_EVENT_CAPTURE,slot,c,c);row[12]=id;row[13]=generation;row[14]|=4u;row[15]=mass;row[16]=key.x;row[17]=key.y;row[18]=key.z;row[19]=y2;row[20]=oldF;row[21]=oldF+mass;row[22]=oldP.x;row[23]=oldP.y;row[24]=newP.x;row[25]=newP.y;row[26]=packetPx.x;row[27]=packetPx.y;row[28]=packetPy.x;row[29]=packetPy.y;row[30]=count;row[31]=g9MapCount(true,c);row[32]=generation;row[34]=x;row[35]=c*1048576u+524288u;
+  uvec4 projection,dx;if(!g9SSub(g9U32(row[35]),g9U32(x),dx)||!g9SMul(g9S32(int(C[22u])),dx,projection)||!g9SMul(projection,g9U32(mass),projection)||!g9SShift(projection,1u,projection)||!g9SNeg(projection,projection)){g9Fault(29u,c,3u);return false;}for(uint i=0u;i<4u;++i)row[36u+i]=projection[i];
+  g9RetirePacket(slot);if(!g9WriteEvent(event,row)||!g9Seal())return false;
+ }
+ return true;
+}
+
+bool g9TouchWeights(){
+ uvec4 decodedX,decodedRadius;uint x,radius;
+ if(!g9DecodeBinary64(g9InputPair(46u),20u,true,decodedX)||!g9DecodeBinary64(g9InputPair(48u),20u,true,decodedRadius)||!g9Uint(decodedX,x)||!g9Uint(decodedRadius,radius)||x>=134217728u||radius==0u||radius>134217728u){g9Fault(22u,0u,46u);return false;}
+ uint total=0u;for(uint c=0u;c<128u;++c){uint distance=uint(abs(int(c*1048576u+524288u)-int(x))),weight=distance<radius?radius-distance:0u;W[uHamilton+c*2048u+1600u]=weight;total+=weight;}
+ // N*r can exceed U32. Sum in limbs and use the same denominator on all
+ // components; equal remainders resolve by ascending column.
+ uvec4 sum=uvec4(0u);for(uint c=0u;c<128u;++c)if(!g9UAdd(sum,g9U32(W[uHamilton+c*2048u+1600u]),sum)){g9Fault(29u,c,0u);return false;}
+ if(g9Zero(sum)){g9Set(56u,2u);return true;}
+ for(uint component=0u;component<2u;++component){uvec4 impulse=component==0u?g9S64(g9InputPair(56u)):g9U64(g9InputPair(58u)),magnitude=g9Magnitude(impulse),admitted=uvec4(0u);uvec4 limit=uvec4(0u,1u<<26u,0u,0u);
+  if(g9UCmp(magnitude,limit)>0){g9Fault(22u,0u,56u+2u*component);return false;}
+  for(uint c=0u;c<128u;++c){uint at=uHamilton+c*2048u+1604u+component*12u;uvec4 product,q,r;
+   if(!g9UMul(magnitude,g9U32(W[uHamilton+c*2048u+1600u]),product)||!g9UDiv(product,sum,q,r)||!g9UAdd(admitted,q,admitted)){g9Fault(29u,c,1u);return false;}
+   g9WriteWide(at,q);g9WriteWide(at+4u,r);W[at+8u]=0u;
+  }
+  uvec4 remaining;if(!g9USub(magnitude,admitted,remaining)||any(notEqual(remaining.yzw,uvec3(0u)))||remaining.x>=128u){g9Fault(29u,0u,2u);return false;}
+  for(uint n=0u;n<remaining.x;++n){uint best=128u;uvec4 greatest=uvec4(0u);for(uint c=0u;c<128u;++c){uint at=uHamilton+c*2048u+1604u+component*12u;uvec4 rem=g9ReadWide(at+4u);if(W[at+8u]==0u&&(best==128u||g9UCmp(rem,greatest)>0)){best=c;greatest=rem;}}
+   if(best==128u){g9Fault(29u,0u,n);return false;}uint at=uHamilton+best*2048u+1604u+component*12u;uvec4 plus;if(!g9UAdd(g9ReadWide(at),g9U32(1u),plus)){g9Fault(29u,best,n);return false;}g9WriteWide(at,plus);W[at+8u]=1u;
+  }
+  if(component==0u&&g9Negative(impulse))for(uint c=0u;c<128u;++c){uint at=uHamilton+c*2048u+1604u;uvec4 signedValue;if(!g9FromMagnitude(g9ReadWide(at),true,signedValue)){g9Fault(29u,c,3u);return false;}g9WriteWide(at,signedValue);}
+ }return true;
+}
+// Snapshot one column and its full bed/flow maps in its fixed Hamilton range.
+// A rejected local touch restores all recruited sources, p and rest state.
+void g9SaveTouchColumn(uint c){uint base=uHamilton+c*2048u;for(uint i=0u;i<32u;++i)W[base+1664u+i]=g9Column(c,i);for(uint i=0u;i<256u;++i){W[base+512u+i]=C[uBed+c*256u+i];W[base+768u+i]=C[uFlow+c*256u+i];}}
+void g9RestoreTouchColumn(uint c){uint base=uHamilton+c*2048u;for(uint i=0u;i<32u;++i)g9PutColumn(c,i,W[base+1664u+i]);for(uint i=0u;i<256u;++i){C[uBed+c*256u+i]=W[base+512u+i];C[uFlow+c*256u+i]=W[base+768u+i];}}
+bool g9Launch(uint c,uvec4 jy,out uvec4 actualJy,out uvec4 work){
+ actualJy=work=uvec4(0u);uint flow=g9Column(c,1u),count=g9MapCount(true,c);if(flow==0u||count==0u||g9Zero(jy))return true;
+ uint originAt=g9MapAddress(true,c,0u),q=min(C[originAt+3u],min(W[uConfig+2u],244666u)),slot=uK;
+ if(q==0u)return true;for(uint i=0u;i<uK;++i)if(g9Packet(i,0u)==0u){slot=i;break;}
+ if(slot==uK||C[18u]==0u)return true;if(g9Packet(slot,7u)==0xffffffffu){g9Fault(29u,slot,7u);return false;}
+ uvec4 vyWide,vxWide;if(!g9SDiv(jy,g9U32(q),0u,vyWide)||!g9SDiv(g9Momentum(c),g9U32(flow),0u,vxWide)){g9Fault(29u,c,0u);return false;}int vx,vy;
+ if(!g9I32(vxWide,vx)||!g9I32(vyWide,vy)||vy<=0||vy>1073741824||abs(vx)>1073741824)return true;
+ uvec4 px,newP,oldP=g9Momentum(c);if(!g9SMul(g9U32(q),g9S32(vx),px)||!g9SMul(g9U32(q),g9S32(vy),actualJy)||!g9SSub(oldP,px,newP)){g9Fault(29u,c,1u);return false;}
+ G9EnergyInterval before,after,delta;if(!g9ColumnEnergy(c,before)){g9Fault(29u,c,2u);return false;}
+ uint x=c*1048576u+524288u,y2=2u*(g9Column(c,0u)+flow-q)+q;uvec4 packetEnergy;
+ if(!g9PacketEnergy(q,x,y2,vx,vy,packetEnergy)){g9Fault(29u,c,3u);return false;}
+ // Preflight numerical split energy using temporary column scalars, without
+ // altering origins, ID or slot before the work cap has accepted this mapping.
+ g9PutColumn(c,1u,flow-q);if(!g9PutMomentum(c,newP))return false;
+ if(!g9ColumnEnergy(c,after)||!g9IntervalAdd(after,g9Exact(packetEnergy),after)||!g9IntervalSubtract(after,before,delta)){g9Fault(29u,c,4u);return false;}
+ g9PutColumn(c,1u,flow);if(!g9PutMomentum(c,oldP))return false;
+ if(!g9ChargeTouch(delta)){g9Set(57u,1u);actualJy=uvec4(0u);return true;}work=delta.high;
+ uint event,path;if(!g9Reserve(1u,0u,event,path))return false;uvec3 origin=g9Key(true,c,0u);uint parent=C[originAt+3u],generation=g9Packet(slot,7u)+1u,id=C[18u];
+ if(!g9MapTake(true,c,0u,q)){g9Fault(24u,c,0u);return false;}g9PutColumn(c,1u,flow-q);g9PutColumn(c,8u,g9Column(c,8u)+q);g9PutColumn(c,5u,0u);g9PutColumn(c,13u,g9Column(c,13u)|4u);if(!g9PutMomentum(c,newP))return false;g9Derived(c);
+ g9RetirePacket(slot);g9PutPacket(slot,0u,q);g9PutPacket(slot,1u,x);g9PutPacket(slot,2u,y2);g9PutPacket(slot,3u,uint(vx));g9PutPacket(slot,4u,uint(vy));g9PutPacket(slot,5u,c);g9PutPacket(slot,6u,id);g9PutPacket(slot,7u,generation);g9PutPacket(slot,8u,origin.x);g9PutPacket(slot,9u,origin.y);g9PutPacket(slot,10u,origin.z);g9PutPacket(slot,11u,0u);
+ if(!g9PacketCertificate(slot,1u,origin.x,origin.z,q,c,0u,parent,event+1u)){g9Fault(29u,slot,0u);return false;}C[18u]=id+1u;
+ uint row[64];g9Event(row,G9_EVENT_LAUNCH,slot,c,c);row[12]=id;row[13]=generation;row[14]|=4u;row[15]=q;row[17]=origin.x;row[18]=origin.y;row[19]=origin.z;row[20]=x;row[21]=y2;row[22]=uint(vx);row[23]=uint(vy);row[24]=flow;row[25]=flow-q;row[26]=oldP.x;row[27]=oldP.y;row[28]=newP.x;row[29]=newP.y;row[30]=px.x;row[31]=px.y;row[32]=actualJy.x;row[33]=actualJy.y;for(uint i=0u;i<4u;++i)row[34u+i]=work[i];return g9WriteEvent(event,row)&&g9Seal();
+}
+bool g9Touch(){
+ if(g9Input(40u)!=2u||g9Ctl(18u)!=0u)return true;
+ if(!g9TouchWeights())return false;if(g9Ctl(56u)==2u)return true;
+ uvec4 cap=uvec4(g9Input(60u),g9Input(61u),g9Input(62u),g9Input(63u));if(g9UCmp(cap,uvec4(0u,0u,0u,1u<<24u))>0){g9Fault(22u,0u,60u);return false;}g9WriteWide(uControls+32u,uvec4(0u));g9WriteWide(uControls+36u,cap);
+ for(uint c=0u;c<128u;++c){uint base=uHamilton+c*2048u;uvec4 jx=g9ReadWide(base+1604u),jy=g9ReadWide(base+1616u);if(g9Zero(jx)&&g9Zero(jy))continue;
+  uint eventBefore=g9Ctl(6u),pathBefore=g9Ctl(8u);uvec4 usedBefore=g9ReadWide(uControls+32u);g9SaveTouchColumn(c);g9Set(57u,0u);
+  uint band=min(g9Column(c,0u),W[uConfig+2u]);uvec4 threshold,product;if(!g9UMul(g9U32(W[uConfig]),g9U32(C[23u]),product)||!g9UMul(product,g9U32(band),product)||!g9SDiv(product,g9U32(65536u*120u),3u,threshold)){g9Fault(29u,c,5u);return false;}
+  bool activate=!g9Zero(jy)||g9UCmp(g9Magnitude(jx),threshold)>0;
+  if(activate){uvec4 q,r;if(!g9UMul(g9U32(band),g9U32(W[uConfig+3u]),product)||!g9UDiv(product,g9U32(65536u*120u),q,r)){g9Fault(29u,c,6u);return false;}if(q.x>0u&&!g9Activate(c,min(q.x,g9Column(c,0u)),2u))return false;}
+  uint flow=g9Column(c,1u);uvec4 oldP=g9Momentum(c),newP,admittedX=uvec4(0u),admittedY=uvec4(0u),touchWork=uvec4(0u);
+  if(flow>0u&&!g9Zero(jx)){
+   G9EnergyInterval before,after,delta;if(!g9ColumnEnergy(c,before)||!g9SAdd(oldP,jx,newP)){g9Fault(29u,c,7u);return false;}
+   uvec4 bound;if(!g9UMul(g9U32(flow),g9U32(1073741824u),bound)){g9Fault(29u,c,8u);return false;}
+   if(g9UCmp(g9Magnitude(newP),bound)<=0){if(!g9PutMomentum(c,newP)||!g9ColumnEnergy(c,after)||!g9IntervalSubtract(after,before,delta)){g9Fault(29u,c,9u);return false;}
+    if(g9ChargeTouch(delta)){admittedX=jx;touchWork=delta.high;}else{g9Set(57u,1u);if(!g9PutMomentum(c,oldP))return false;}
+   }
+  }
+  uvec4 launchWork=uvec4(0u);if(g9Ctl(57u)==0u&&!g9Launch(c,jy,admittedY,launchWork))return false;
+  if(!g9SAdd(touchWork,launchWork,touchWork)){g9Fault(29u,c,10u);return false;}
+  if(g9Ctl(57u)!=0u||g9Zero(admittedX)&&g9Zero(admittedY)){
+   // A cap failure rolls back this column's entire touch, including an
+   // earlier accepted tangent impulse and recruitment, without refund credit
+   // from a later negative-work operation.
+   g9RestoreTouchColumn(c);g9Set(6u,eventBefore);g9Set(7u,eventBefore);g9Set(8u,pathBefore);g9Set(9u,pathBefore);g9WriteWide(uControls+32u,usedBefore);
+   uint denied[64];g9Event(denied,G9_EVENT_TOUCH_WORK,c,c,c);denied[14]|=8u;denied[15]=g9Ctl(57u)!=0u?18u:3u;denied[16]=denied[17]=g9Column(c,1u);denied[18]=jx.x;denied[19]=jx.y;denied[22]=jy.x;denied[23]=jy.y;uvec4 unchanged=g9Momentum(c);denied[26]=denied[28]=unchanged.x;denied[27]=denied[29]=unchanged.y;
+   uvec4 remaining;if(!g9USub(cap,usedBefore,remaining)){g9Fault(29u,c,11u);return false;}for(uint i=0u;i<4u;++i)denied[34u+i]=remaining[i];if(!g9OneEvent(denied))return false;continue;
+  }
+  g9PutColumn(c,5u,0u);g9PutColumn(c,13u,g9Column(c,13u)|8u);
+  W[uColumnStage+c*64u+21u]=g9Column(c,13u);
+  if(!g9Accumulate(58u,admittedX)||!g9Accumulate(62u,admittedY)||!g9Accumulate(86u,touchWork))return false;
+  uint row[64];g9Event(row,G9_EVENT_TOUCH_WORK,c,c,c);row[14]|=4u;row[16]=flow;row[17]=g9Column(c,1u);row[18]=jx.x;row[19]=jx.y;row[20]=admittedX.x;row[21]=admittedX.y;row[22]=jy.x;row[23]=jy.y;row[24]=admittedY.x;row[25]=admittedY.y;row[26]=oldP.x;row[27]=oldP.y;uvec4 nowP=g9Momentum(c);row[28]=nowP.x;row[29]=nowP.y;for(uint i=0u;i<4u;++i)row[30u+i]=touchWork[i];uvec4 left;if(!g9USub(cap,g9ReadWide(uControls+32u),left)){g9Fault(29u,c,11u);return false;}for(uint i=0u;i<4u;++i)row[34u+i]=left[i];if(!g9OneEvent(row))return false;
+ }return true;
+}
+
+bool g9SumOrigin(uint origin,uvec3 key,uint mass){
+ if(origin==0u||origin>C[19u]||key.x!=origin||!g9KeyValid(key))return false;
+ uint at=uOriginAudit+(origin-1u)*2u;uvec4 sum;if(!g9UAdd(g9U64(uvec2(W[at],W[at+1u])),g9U32(mass),sum)||any(notEqual(sum.zw,uvec2(0u))))return false;W[at]=sum.x;W[at+1u]=sum.y;return true;
+}
+bool g9AuditMaps(bool flow,uint c){
+ uint count=g9MapCount(flow,c),sum=0u;if(count>64u)return false;uvec3 previous=uvec3(0u);
+ for(uint rank=0u;rank<64u;++rank){uint at=g9MapAddress(flow,c,rank);uvec3 key=g9Key(flow,c,rank);uint mass=C[at+3u];
+  if(rank>=count){for(uint f=0u;f<4u;++f)if(C[at+f]!=0u)return false;continue;}
+  if(mass==0u||mass>268435456u-sum||!g9SumOrigin(key.x,key,mass))return false;
+  if(rank>0u&&(flow?g9KeyCompare(previous,key)>=0:g9KeyCompare(previous,key)==0))return false;sum+=mass;previous=key;
+ }return sum==g9Column(c,flow?1u:0u);
+}
+bool g9AuditMassGeometry(){
+ if(C[0]!=G9_STATE_MAGIC||C[1]!=1u||C[2]!=G9_PROFILE||C[24]!=uK||C[25]!=128u||C[26]!=64u||C[27]!=64u||C[19u]>4096u)return false;
+ for(uint i=106u;i<256u;++i)if(C[i]!=0u)return false;
+ for(uint i=0u;i<8192u;++i)W[uOriginAudit+i]=0u;
+ uvec4 total=uvec4(0u),declared=uvec4(0u),nextCommit;if(!g9UAdd(g9U64(uBaseCommit),g9U32(1u),nextCommit))return false;
+ for(uint c=0u;c<128u;++c){
+  if(!g9AuditMaps(false,c)||!g9AuditMaps(true,c)||g9Occupied(c)>268435456u||g9Column(c,9u)!=g9Material(c))return false;
+  uvec4 p=g9Momentum(c),bound;if(!g9UMul(g9U32(g9Column(c,1u)),g9U32(1073741824u),bound)||g9UCmp(g9Magnitude(p),bound)>0||g9Column(c,4u)!=(g9Zero(p)?0u:1u)||g9Column(c,1u)==0u&&(!g9Zero(p)||g9Column(c,5u)!=0u))return false;
+  for(uint f=16u;f<32u;++f)if(g9Column(c,f)!=0u)return false;
+  uint packets=0u;for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u&&g9Packet(slot,5u)==c){uint next;if(!g9AddMass(packets,g9Packet(slot,0u),next))return false;packets=next;}
+  if(packets!=g9Column(c,8u)||!g9UAdd(total,g9U32(g9Occupied(c)),total))return false;
+ }
+ for(uint slot=0u;slot<uK;++slot){uint at=uPacket+slot*64u,mass=C[at],generation=C[at+7u];
+  if(mass==0u){for(uint f=0u;f<64u;++f)if(f!=7u&&C[at+f]!=0u)return false;continue;}
+  uint c=C[at+5u],id=C[at+6u],x=C[at+1u],y2=C[at+2u];int vx=int(C[at+3u]),vy=int(C[at+4u]);uvec3 key=uvec3(C[at+8u],C[at+9u],C[at+10u]);
+  if(mass>244666u||c>=128u||x>=134217728u||x>>20u!=c||y2<2u*g9Material(c)+mass||y2>536870912u-mass||id==0u||generation==0u||abs(vx)>1073741824||abs(vy)>1073741824||!g9SumOrigin(key.x,key,mass))return false;
+  if(C[18u]!=0u&&id>=C[18u])return false;for(uint other=slot+1u;other<uK;++other)if(g9Packet(other,0u)!=0u&&g9Packet(other,6u)==id)return false;
+  if(C[at+17u]!=id||C[at+18u]!=generation||C[at+19u]!=key.x||C[at+20u]!=key.y||C[at+21u]!=key.z||C[at+22u]>1u||C[at+25u]==0u||C[at+26u]==0u||C[at+26u]>244666u||C[at+27u]>=128u||C[at+30u]!=1u)return false;
+  uvec4 birth=g9U64(uvec2(C[at+23u],C[at+24u]));if(g9Zero(birth)||g9UCmp(birth,nextCommit)>0)return false;
+  if(C[at+22u]==0u&&(C[at+28u]!=0u||C[at+29u]!=0u))return false;
+  if(C[at+22u]==1u&&(C[at+28u]>=64u||C[at+29u]<C[at+26u]))return false;
+  for(uint f=31u;f<64u;++f)if(C[at+f]!=0u)return false;
+ }
+ for(uint origin=0u;origin<4096u;++origin){uint at=uSources+origin*16u;
+  if(origin>=C[19u]){for(uint f=0u;f<16u;++f)if(C[at+f]!=0u)return false;continue;}
+  if(C[at]!=origin+1u||C[at+1u]!=0u||C[at+2u]==0u||C[at+14u]!=1u)return false;
+  uvec4 admitted=g9U64(uvec2(C[at+4u],C[at+5u])),sum=g9U64(uvec2(W[uOriginAudit+origin*2u],W[uOriginAudit+origin*2u+1u]));
+  if(g9UCmp(admitted,sum)!=0||!g9UAdd(declared,admitted,declared))return false;
+ }
+ if(g9UCmp(total,declared)!=0||any(notEqual(total.zw,uvec2(0u))))return false;C[40u]=total.x;C[41u]=total.y;return true;
+}
+bool g9Cfl(){
+ uvec4 maximum=uvec4(0u);
+ for(uint c=0u;c<128u;++c){uint f=g9Column(c,1u);if(f==0u){if(!g9Zero(g9Momentum(c))){g9Reject(7u,c,0u);return false;}continue;}
+  uvec4 speed,product;uint wave;if(!g9SDiv(g9Magnitude(g9Momentum(c)),g9U32(f),3u,speed)||!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)){g9Fault(29u,c,0u);return false;}if(g9UCmp(speed,maximum)>0)maximum=speed;
+ }
+ for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u){uint speed=max(uint(abs(int(g9Packet(slot,3u)))),uint(abs(int(g9Packet(slot,4u)))));if(g9UCmp(g9U32(speed),maximum)>0)maximum=g9U32(speed);}
+ uint g=W[uConfig+7u],extra=g/120u+uint(g%120u!=0u);if(!g9UAdd(maximum,g9U32(extra),maximum)){g9Fault(29u,0u,1u);return false;}
+ if(g9UCmp(maximum,g9U32(60u*uJ*1048576u))>0){g9Reject(5u,0u,0u);return false;}return true;
+}
+bool g9MomentumTotal(bool base,out uvec4 px,out uvec4 py){
+ px=py=uvec4(0u);
+ for(uint c=0u;c<128u;++c){uint at=uColumn+c*32u;uvec4 p=g9S64(base?uvec2(B[at+2u],B[at+3u]):uvec2(C[at+2u],C[at+3u]));if(!g9SAdd(px,p,px))return false;}
+ for(uint slot=0u;slot<uK;++slot){uint at=uPacket+slot*64u,mass=base?B[at]:C[at];if(mass==0u)continue;
+  uvec4 x,y;if(!g9SMul(g9U32(mass),g9S32(int(base?B[at+3u]:C[at+3u])),x)||!g9SMul(g9U32(mass),g9S32(int(base?B[at+4u]:C[at+4u])),y)||!g9SAdd(px,x,px)||!g9SAdd(py,y,py))return false;
+ }return true;
+}
+bool g9AuditMomentum(){
+ uvec4 beforeX,beforeY,afterX,afterY,expectedX=uvec4(0u),expectedY=uvec4(0u),delta;
+ if(!g9MomentumTotal(true,beforeX,beforeY)||!g9MomentumTotal(false,afterX,afterY))return false;
+ for(uint category=0u;category<4u;++category){uint at=50u+category*8u;uvec4 before=uvec4(B[at],B[at+1u],B[at+2u],B[at+3u]);if(!g9SSub(g9HeaderWide(at),before,delta)||!g9SAdd(expectedX,delta,expectedX))return false;
+  at+=4u;before=uvec4(B[at],B[at+1u],B[at+2u],B[at+3u]);if(!g9SSub(g9HeaderWide(at),before,delta)||!g9SAdd(expectedY,delta,expectedY))return false;
+ }
+ if(!g9SSub(afterX,beforeX,delta)||any(notEqual(delta,expectedX)))return false;
+ return g9SSub(afterY,beforeY,delta)&&all(equal(delta,expectedY));
+}
+bool g9AuditStream(){
+ if(g9Ctl(6u)!=g9Ctl(7u)||g9Ctl(8u)!=g9Ctl(9u)||g9Ctl(10u)!=0u||g9Ctl(7u)>uEventCapacity||g9Ctl(9u)>uPathCapacity)return false;
+ for(uint row=0u;row<g9Ctl(7u);++row){uint at=row*64u,kind=E[at+2u];uvec2 mask=g9EventMask(kind);
+  if(all(equal(mask,uvec2(0u)))||E[at]!=G9_EVENT_MAGIC||E[at+1u]!=1u||E[at+3u]!=g9Ctl(13u)||E[at+4u]!=uNonce.x||E[at+5u]!=uNonce.y||E[at+6u]!=row+1u||E[at+63u]!=G9_SEAL||(E[at+14u]&~15u)!=0u)return false;
+  for(uint i=0u;i<64u;++i)if(((mask[i/32u]>>(i%32u))&1u)==0u&&E[at+i]!=0u)return false;
+ }
+ uint previousParent=0u,previousTau=0u;
+ for(uint row=0u;row<g9Ctl(9u);++row){uint at=uPathWord+row*16u,parent=E[at],t0=E[at+4u],t1=E[at+5u];if(parent==0u||parent>g9Ctl(7u)||E[at+2u]>=uK||t0>t1||t1>65536u||E[at+15u]!=G9_SEAL||parent<previousParent||parent==previousParent&&t0<previousTau)return false;previousParent=parent;previousTau=t1;}
+ return true;
+}
+
+uint g9TrialIndex(uint j){return uint(findMSB(j));}
+bool g9ScopeEnabled(){
+ uint selected=g9Ctl(11u);
+ if(uRole==1u)return selected==0u||selected==uJslot&&g9Ctl(21u)==0u;
+ if(uRole==2u||uRole==4u)return selected!=0u;
+ if(uRole==3u)return selected==0u||uJslot<selected;
+ return true;
+}
+bool g9IsMicro(){return uMicro!=0xffffffffu;}
+void g9ClearTrial(){for(uint i=gl_LocalInvocationIndex;i<uEventCapacity*64u+uPathCapacity*16u;i+=64u)E[i]=0u;memoryBarrierBuffer();barrier();}
+void g9CopyBase(){for(uint i=gl_LocalInvocationIndex;i<uStateWords;i+=64u)C[i]=B[i];memoryBarrierBuffer();barrier();}
+bool g9GravityWork(){
+ int oldGx=int(B[22u]);uint oldGn=B[23u];uvec4 gxWide,gnWide;
+ if(uAcceptedAngle< -7680||uAcceptedAngle>7680||uAngleCos<=0||uAngleCos>1048576||uAngleSin< -1048576||uAngleSin>1048576||
+    !g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleSin),1048576u,gxWide)||!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleCos),1048576u,gnWide)){g9Fault(29u,0u,22u);return false;}
+ int gx;uint gn;if(!g9I32(gxWide,gx)||!g9Uint(gnWide,gn)||gn==0u){g9Fault(29u,0u,23u);return false;}
+ if(oldGx==gx&&oldGn==gn){C[22u]=uint(gx);C[23u]=gn;C[20u]=uint(uAcceptedAngle);return true;}
+ C[22u]=uint(oldGx);C[23u]=oldGn;
+ uvec4 before=uvec4(0u),after=uvec4(0u),work;
+ // Momentum is unchanged by an external-field change. Its rational kinetic
+ // term cancels symbolically, leaving exact potential differences.
+ for(uint c=0u;c<128u;++c){uvec4 p;if(!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),p)||!g9SAdd(before,p,before)){g9Fault(29u,c,0u);return false;}}
+ for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u){uvec4 p;if(!g9PacketEnergy(g9Packet(slot,0u),g9Packet(slot,1u),g9Packet(slot,2u),0,0,p)||!g9SAdd(before,p,before)){g9Fault(29u,slot,1u);return false;}}
+ C[22u]=uint(gx);C[23u]=gn;C[20u]=uint(uAcceptedAngle);
+ for(uint c=0u;c<128u;++c){uvec4 p;if(!g9ColumnPotential(c,g9Column(c,0u),g9Column(c,1u),p)||!g9SAdd(after,p,after)){g9Fault(29u,c,2u);return false;}}
+ for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u){uvec4 p;if(!g9PacketEnergy(g9Packet(slot,0u),g9Packet(slot,1u),g9Packet(slot,2u),0,0,p)||!g9SAdd(after,p,after)){g9Fault(29u,slot,3u);return false;}}
+ if(!g9SSub(after,before,work)||!g9Accumulate(82u,work)){g9Fault(29u,0u,82u);return false;}
+ uint row[64];g9Event(row,G9_EVENT_GRAVITY_WORK,0u,0u,0u);row[15]=B[20u];row[16]=uint(uAcceptedAngle);for(uint i=0u;i<4u;++i)row[17u+i]=work[i];return g9OneEvent(row);
+}
+bool g9ConfigValid(){
+ return W[uConfig]<=262144u&&W[uConfig+1u]<=W[uConfig]&&W[uConfig+2u]>0u&&W[uConfig+2u]<=268435456u&&W[uConfig+3u]<=62914560u&&W[uConfig+4u]<=262144u&&W[uConfig+5u]>0u&&W[uConfig+6u]>0u&&W[uConfig+7u]>=120u&&W[uConfig+7u]<=1073741824u;
+}
+bool g9RootEnd(uint outcome){
+ uint row[64];g9Event(row,G9_EVENT_ROOT_END,0u,0u,0u);row[15]=outcome;row[16]=uJ;row[17]=g9Ctl(7u)+1u;row[18]=g9Ctl(9u);row[19]=C[12u];row[23]=65535u;
+ uvec4 work=uvec4(0u),loss,part;
+ const uint ledgers[3]=uint[3](82u,86u,90u);
+ for(uint k=0u;k<3u;++k){uint at=ledgers[k];if(!g9SSub(uvec4(C[at],C[at+1u],C[at+2u],C[at+3u]),uvec4(B[at],B[at+1u],B[at+2u],B[at+3u]),part)||!g9SAdd(work,part,work)){g9Fault(29u,0u,at);return false;}}
+ if(!g9SSub(uvec4(C[94u],C[95u],C[96u],C[97u]),uvec4(B[94u],B[95u],B[96u],B[97u]),loss)){g9Fault(29u,0u,94u);return false;}
+ for(uint i=0u;i<4u;++i){row[24u+i]=work[i];row[28u+i]=loss[i];}
+ return g9OneEvent(row);
+}
+bool g9SourceTransaction(){
+ uint row[64];g9Event(row,G9_EVENT_ROOT_BEGIN,0u,0u,0u);row[15]=0u;row[16]=C[20u];row[17]=C[20u];row[18]=g9Input(14u);row[19]=uBaseCommit.x;row[20]=uBaseCommit.y;
+ if(!g9OneEvent(row)||!g9SourceBirth())return false;
+ return g9RootEnd(g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u);
+}
+void g9BeginScope(){
+ if(gl_LocalInvocationIndex!=0u)return;
+ g9Set(14u,0u);g9Set(6u,0u);g9Set(7u,0u);g9Set(8u,0u);g9Set(9u,0u);g9Set(10u,0u);g9Set(56u,0u);g9Set(13u,uRole==2u||uRole==4u?g9Ctl(20u):g9TrialIndex(uJ));
+ for(uint i=2u;i<6u;++i)g9Set(i,0u);
+ for(uint c=0u;c<128u;++c)W[uColumnStage+c*64u+21u]=0u;
+ uint row[64];g9Event(row,G9_EVENT_ROOT_BEGIN,0u,0u,0u);row[15]=uJ;row[16]=C[20u];row[17]=uint(uAcceptedAngle);row[18]=g9Input(14u);row[19]=uBaseCommit.x;row[20]=uBaseCommit.y;g9OneEvent(row);
+}
+void g9ScopeSeal(){
+ uint reason=g9Ctl(14u),summary=uSummary+g9TrialIndex(uJ)*64u;
+ if(uRole==1u){
+  W[summary]=uJ;W[summary+1u]=reason==0u?1u:4u;W[summary+2u]=reason;W[summary+3u]=reason==0u?0u:g9Ctl(2u);W[summary+4u]=reason==0u?0u:g9Ctl(3u);W[summary+5u]=reason==0u?0u:g9Ctl(4u);W[summary+6u]=reason==0u?0u:g9Ctl(5u);W[summary+7u]=g9Ctl(7u);W[summary+8u]=g9Ctl(9u);
+  if(reason==0u&&g9Ctl(11u)==0u){g9Set(11u,uJ);g9Set(20u,g9TrialIndex(uJ));g9Set(22u,g9Ctl(7u));g9Set(23u,g9Ctl(9u));g9Set(21u,1u);}
+ }else if(uRole==3u){
+  if(reason==0u||W[summary+1u]!=4u||W[summary+2u]!=reason||W[summary+3u]!=g9Ctl(2u)||W[summary+4u]!=g9Ctl(3u)||W[summary+5u]!=g9Ctl(4u)||W[summary+6u]!=g9Ctl(5u)){g9Fault(25u,0u,summary);return;}
+ }else if(reason!=0u)g9Fault(25u,g9Ctl(4u),g9Ctl(5u));
+}
+// These compare passes have explicit alternative binding descriptors. The
+// native owner binds two streams (B/C) + WORK + BASE, or two states + WORK +
+// event pair. They never require a fifth SSBO.
+bool g9CompareStream(){
+ uint events=g9Ctl(22u),paths=g9Ctl(23u);if(events!=g9Ctl(7u)||paths!=g9Ctl(9u)){g9Fault(25u,0u,0u);return false;}
+ for(uint row=0u;row<events;++row){uint at=row*64u;uvec2 mask=g9EventMask(B[at+2u]);
+  if(all(equal(mask,uvec2(0u)))||B[at+63u]!=G9_SEAL||C[at+63u]!=G9_SEAL){g9Fault(26u,row,63u);return false;}
+  uint expectedRole=B[at+14u]&3u,actualRole=C[at+14u]&3u;if(expectedRole!=0u||actualRole!=(uRole==2u?1u:2u)){g9Fault(25u,row,14u);return false;}
+  for(uint word=0u;word<64u;++word){uint a=B[at+word],b=C[at+word];if(word==14u){a&=~3u;b&=~3u;}if(((mask[word/32u]>>(word%32u))&1u)==0u&&(a!=0u||b!=0u)||a!=b){g9Fault(25u,row,word);return false;}}
+ }
+ for(uint i=0u;i<paths*16u;++i)if(B[uPathWord+i]!=C[uPathWord+i]){g9Fault(25u,i/16u,i%16u);return false;}
+ g9Set(uRole==2u?24u:25u,1u);return true;
+}
+bool g9CompareState(){for(uint i=0u;i<uStateWords;++i)if(B[i]!=C[i]){g9Fault(25u,i,0u);return false;}return true;}
+void g9EndAcceptedMetadata(uint outcome){
+ if(outcome==2u)return;
+ uvec4 commit;if(!g9UAdd(g9U64(uBaseCommit),g9U32(1u),commit)||any(notEqual(commit.zw,uvec2(0u)))){g9Fault(29u,0u,10u);return;}
+ C[10u]=commit.x;C[11u]=commit.y;C[16u]=uNonce.x;C[17u]=uNonce.y;
+ if(uRequiredPasses==2024u){uvec4 quanta;if(!g9UAdd(g9U64(uvec2(C[12u],C[13u])),g9U32(1u),quanta)||any(notEqual(quanta.zw,uvec2(0u)))){g9Fault(29u,0u,12u);return;}C[12u]=quanta.x;C[13u]=quanta.y;}
+}
+void g9Completion(){
+ for(uint i=0u;i<256u;++i)W[uCompletion+i]=0u;
+ uint outcome=g9Ctl(0u)!=0u?5u:uRequiredPasses==12u?(g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u):g9Ctl(11u)==0u?4u:1u;
+ W[uCompletion]=G9_COMPLETION_MAGIC;W[uCompletion+1u]=1u;W[uCompletion+2u]=256u;W[uCompletion+4u]=G9_PROFILE;W[uCompletion+5u]=uRequiredPasses==12u?1u:2u;W[uCompletion+6u]=outcome;W[uCompletion+7u]=g9Ctl(1u)!=0u?g9Ctl(1u):outcome==4u?g9Ctl(14u):0u;
+ uvec2 ids[11]=uvec2[11](uNonce,uRun,uOwner,uContext,uSurface,uGeometry,uConfigId,uInputGeneration,uSession,uPlan,uBaseCommit);
+ for(uint i=0u;i<11u;++i){W[uCompletion+8u+2u*i]=ids[i].x;W[uCompletion+9u+2u*i]=ids[i].y;}
+ W[uCompletion+30u]=C[10u];W[uCompletion+31u]=C[11u];W[uCompletion+32u]=uBaseBank;W[uCompletion+33u]=uCandidateBank;W[uCompletion+34u]=uArena;W[uCompletion+35u]=uArenaGeneration.x;W[uCompletion+36u]=uArenaGeneration.y;
+ W[uCompletion+37u]=g9Ctl(11u);W[uCompletion+38u]=g9Ctl(12u);W[uCompletion+39u]=g9Ctl(16u);W[uCompletion+40u]=uRequiredPasses;W[uCompletion+41u]=uRequiredPasses;
+ W[uCompletion+42u]=g9Ctl(17u);W[uCompletion+43u]=g9Ctl(6u);W[uCompletion+44u]=g9Ctl(7u);W[uCompletion+45u]=g9Ctl(8u);W[uCompletion+46u]=g9Ctl(9u);
+ uint valid=0u;for(uint i=0u;i<6u;++i)if(W[uSummary+i*64u]!=0u)valid|=1u<<i;W[uCompletion+47u]=valid;
+ for(uint i=0u;i<4u;++i)W[uCompletion+48u+i]=g9Ctl(2u+i);
+ W[uCompletion+54u]=C[12u];W[uCompletion+55u]=C[13u];W[uCompletion+56u]=C[40u];W[uCompletion+57u]=C[41u];W[uCompletion+58u]=C[28u];W[uCompletion+59u]=C[29u];W[uCompletion+60u]=C[30u];W[uCompletion+61u]=C[31u];W[uCompletion+62u]=uRequiredPasses==12u?g9Ctl(49u):0u;
+ for(uint i=0u;i<8u;++i){W[uCompletion+64u+i]=W[uConfig+16u+i];W[uCompletion+72u+i]=W[uConfig+24u+i];W[uCompletion+80u+i]=W[uConfig+32u+i];W[uCompletion+88u+i]=W[uConfig+40u+i];}
+ uvec4 px,py;if(g9MomentumTotal(false,px,py))for(uint i=0u;i<4u;++i){W[uCompletion+96u+i]=px[i];W[uCompletion+100u+i]=py[i];}
+ const uint ledger[4]=uint[4](82u,86u,90u,94u);for(uint category=0u;category<4u;++category)for(uint i=0u;i<4u;++i)W[uCompletion+104u+category*4u+i]=C[ledger[category]+i];
+ for(uint i=0u;i<6u;++i){uint at=uSummary+i*64u,dst=uCompletion+120u+i*6u;W[dst]=W[at];W[dst+1u]=W[at+1u];for(uint f=0u;f<4u;++f)W[dst+2u+f]=W[at+3u+f];}
+ memoryBarrierBuffer();W[uCompletion+3u]=G9_SEAL;
+}
+void g9Run(){
+ uint lane=gl_LocalInvocationIndex;
+ if(uOp==G9_OP_ROOT_INIT||uOp==G9_OP_SOURCE_INIT_BASE){
+  for(uint i=lane;i<128u;i+=64u)W[uControls+i]=0u;for(uint i=lane;i<384u;i+=64u)W[uSummary+i]=0u;memoryBarrierBuffer();barrier();if(lane==0u)g9Set(16u,1u);return;
+ }
+ if(lane==0u){if(g9Ctl(16u)!=uPass)g9Fault(25u,0u,uPass);g9Set(16u,g9Ctl(16u)+1u);}memoryBarrierBuffer();barrier();
+ uJ=(uRole==2u||uRole==4u)?g9Ctl(11u):uJslot;
+ if(uOp==G9_OP_ROOT_SEAL||uOp==G9_OP_SOURCE_SEAL){if(lane==0u)g9Completion();return;}
+ if(g9Ctl(0u)!=0u)return;
+ if(uRole!=0u&&!g9ScopeEnabled())return;
+ if(g9IsMicro()&&(uMicro>=uJ||g9Ctl(14u)!=0u))return;
+ if(uOp==G9_OP_INIT_COPY){g9CopyBase();g9ClearTrial();g9BeginScope();return;}
+ if(uOp==G9_OP_SOURCE_AUDIT_REPLAY){
+  g9CopyBase();if(lane==0u){uint events=g9Ctl(7u);g9Set(6u,0u);g9Set(7u,0u);g9Set(8u,0u);g9Set(9u,0u);g9Set(10u,0u);
+   if(!g9Dedup()||!g9SourceDecode()||!g9SourceTransaction())return;uint outcome=g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u;
+   if(!g9ConsumeCommand(outcome,g9Ctl(49u)))return;g9EndAcceptedMetadata(outcome);
+   if(g9Ctl(7u)!=events||!g9AuditMassGeometry()||!g9AuditMomentum()||!g9AuditStream())g9Fault(25u,0u,0u);
+  }return;
+ }
+ if(uOp==G9_OP_BASE_FREEZE||uOp==G9_OP_SOURCE_VALIDATE_INPUT){g9CopyBase();if(uOp==G9_OP_SOURCE_VALIDATE_INPUT)g9ClearTrial();if(lane==0u&&(!g9ConfigValid()||!g9ValidateInput(uRequiredPasses==12u?1u:2u)||!g9AuditMassGeometry()))g9Fault(22u,0u,0u);return;}
+ if(uOp==G9_OP_FLIGHT_PATH){g9Flight();return;}
+ if(lane!=0u)return;
+ if(uOp==G9_OP_CONFIG_INPUT_GATE||uOp==G9_OP_SOURCE_DEDUP){if(!g9Dedup())return;}
+ else if(uOp==G9_OP_INPUT_AND_CFL){
+  uvec4 gx,gn;int x;uint n;if(!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleSin),1048576u,gx)||!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleCos),1048576u,gn)||!g9I32(gx,x)||!g9Uint(gn,n)||n==0u){g9Fault(29u,0u,22u);return;}C[22u]=uint(x);C[23u]=n;C[20u]=uint(uAcceptedAngle);
+  bool eligible=g9Cfl();if(eligible&&(g9Ctl(12u)==0u||uJ<g9Ctl(12u)))g9Set(12u,uJ);
+ }
+ else if(uOp==G9_OP_GRAVITY_WORK){if(g9Ctl(14u)==0u)g9GravityWork();}
+ else if(uOp==G9_OP_TOUCH_ATOMIC){if(g9Ctl(14u)==0u)g9Touch();}
+ else if(uOp==G9_OP_AFTER_TOUCH_CFL){if(g9Ctl(14u)==0u)g9Cfl();}
+ else if(uOp==G9_OP_DM_REQUEST){if(g9Cfl()&&g9SnapshotMicro())dmRequest();}
+ else if(uOp==G9_OP_DM_APPLY){for(uint c=0u;c<128u;++c)if(!dmApplyColumn(c))return;}
+
+ else if(uOp==G9_OP_PARTICLE_FOLD)g9Fold();
+ else if(uOp==G9_OP_PREDICTOR_FACE){g9FaceFlux();if(!dmPredictor())return;}
+ else if(uOp==G9_OP_MIDPOINT_BUILD){if(!dmMidpoint())return;}
+ else if(uOp==G9_OP_CORRECTOR_FACE){g9FaceFlux();}
+ else if(uOp==G9_OP_FLOW_ORIGIN_RESERVE)g9FlowReserve();
+ else if(uOp==G9_OP_FLOW_PAIR_APPLY)g9FlowApply();
+ else if(uOp==G9_OP_FRICTION_REST_DEPOSIT)g9Friction();
+ else if(uOp==G9_OP_ORDERED_CAPTURE)g9Capture();
+ else if(uOp==G9_OP_MICRO_AUDIT_SEAL){
+  if(!g9Fold()||!g9Cfl()||!g9AuditMassGeometry()||!g9AuditMomentum()){if(g9Ctl(14u)==0u)g9Fault(24u,0u,0u);return;}if(!g9AuditMicroEnergy())return;
+  uint row[64];g9Event(row,G9_EVENT_STEP_SEAL,0u,0u,0u);row[15]=uJ;row[16]=32u/uJ;row[17]=g9Ctl(7u);row[18]=g9Ctl(9u);uvec4 delta=g9ReadWide(uControls+40u),loss;if(!g9SNeg(delta,loss)){g9Fault(29u,0u,0u);return;}for(uint i=0u;i<4u;++i){row[19u+i]=delta[i];row[23u+i]=loss[i];}g9OneEvent(row);
+ }
+ else if(uOp==G9_OP_FINAL_MASS_ORIGIN_MOMENTUM){if(g9Ctl(14u)==0u){if(!g9AuditMassGeometry()||!g9AuditMomentum())g9Fault(24u,0u,0u);else g9RootEnd(1u);}}
+ else if(uOp==G9_OP_FINAL_ENERGY_CURSORS){if(g9Ctl(14u)==0u){if(uRole==2u||uRole==4u)g9CompareStream();else if(!g9AuditStream())g9Fault(26u,0u,0u);}}
+ else if(uOp==G9_OP_SCOPE_SEAL_AND_CHOICE){
+  if(uRole==4u&&g9Ctl(14u)==0u&&!g9CompareState())return;g9ScopeSeal();
+ }
+ else if(uOp==G9_OP_COMPARE_SELECTED_AUTHORITATIVE){if(g9Ctl(11u)!=0u)g9CompareState();}
+ else if(uOp==G9_OP_COMPARE_REPLAY_STREAM){if(g9Ctl(11u)!=0u&&(g9Ctl(24u)!=1u||g9Ctl(25u)!=1u))g9Fault(25u,0u,0u);}
+ else if(uOp==G9_OP_PACK_SCENE_METADATA){
+  if(g9Ctl(11u)!=0u){if(!g9ConsumeCommand(1u,0u))return;g9EndAcceptedMetadata(1u);g9Set(17u,65535u);}
+  else g9Set(17u,65535u);
+ }
+ else if(uOp==G9_OP_SOURCE_DECODE)g9SourceDecode();
+ else if(uOp==G9_OP_SOURCE_PRIVATE_BIRTH)g9SourceTransaction();
+ else if(uOp==G9_OP_SOURCE_LEDGER){uint outcome=g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u;if(g9ConsumeCommand(outcome,g9Ctl(49u)))g9EndAcceptedMetadata(outcome);}
+ else if(uOp==G9_OP_SOURCE_ORIGIN_CERTIFICATE){if(!g9AuditMassGeometry()||!g9AuditMomentum()||!g9AuditStream())g9Fault(24u,0u,0u);}
+ else if(uOp==G9_OP_SOURCE_COMPARE)g9CompareState();
+ else if(uOp==G9_OP_SOURCE_PACK_SCENE)g9Set(17u,65535u);
+}
+void main(){g9Run();}
+
