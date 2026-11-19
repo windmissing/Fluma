@@ -1,0 +1,150 @@
+{
+  "schema": "T634_G11_COMPOSITE_CLOSURE_V1",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "render": "XComponent+shader only; FAULT or explicit STALE; no Canvas/softwareGL",
+  "CPU": "stopped",
+  "goalOrder": [
+    13,
+    14,
+    12
+  ],
+  "goal10": "paused",
+  "executionPrompt": "docs/architecture-T633-T636-execution-boundaries-v1.md",
+  "parentContract": "docs/architecture-T563-g11-manifest-v1.json",
+  "profiles": {
+    "R1": {
+      "sourcePasses": 19,
+      "quantumPasses": 2543,
+      "sourceAudit": 851967,
+      "quantumAudit": 851967
+    },
+    "DM": {
+      "sourcePasses": 19,
+      "quantumPasses": 2923,
+      "sourceAudit": 851967,
+      "quantumAudit": 1048575
+    }
+  },
+  "completionWords": 256,
+  "completionBytes": 1024,
+  "visualGeneration": "U64",
+  "uniforms": {
+    "rootKind": "explicit SOURCE1 or QUANTUM2",
+    "requiredPasses": "actual table count",
+    "requiredAudits": "mask not pass count"
+  },
+  "audit": {
+    "planMapping": 18,
+    "visualReplayGlyph": 19,
+    "producer": "actual successful GPU audits before ROOT_SEAL",
+    "CPUFabricationForbidden": true
+  },
+  "maps": [
+    {
+      "name": "OLD_BED",
+      "byteStart": 0,
+      "bytes": 131072
+    },
+    {
+      "name": "NEW_BED",
+      "byteStart": 131072,
+      "bytes": 131072
+    },
+    {
+      "name": "OLD_FLOW",
+      "byteStart": 262144,
+      "bytes": 131072
+    },
+    {
+      "name": "NEW_FLOW",
+      "byteStart": 393216,
+      "bytes": 131072
+    }
+  ],
+  "glyphWords": [
+    "oldXQ24",
+    "oldYQ23",
+    "newXQ24",
+    "newYQ23",
+    "kindFlags",
+    "blendQ16",
+    "oldPacketMassOr0",
+    "appearanceKey"
+  ],
+  "fixes": [
+    {
+      "id": "W01",
+      "description": "product owner and page wiring"
+    },
+    {
+      "id": "W02",
+      "description": "256word completion memcpy safety"
+    },
+    {
+      "id": "W03",
+      "description": "explicit root kind count mask"
+    },
+    {
+      "id": "W04",
+      "description": "GPU audits and typed acceptance"
+    },
+    {
+      "id": "W05",
+      "description": "actual R1/DM parent facade"
+    },
+    {
+      "id": "W06",
+      "description": "actual material plan and marker producers"
+    },
+    {
+      "id": "W07",
+      "description": "uniform barriers and valid GLSL scope"
+    },
+    {
+      "id": "W08",
+      "description": "four maps source/replay identity"
+    },
+    {
+      "id": "W09",
+      "description": "nonzero real generation and token"
+    },
+    {
+      "id": "W10",
+      "description": "glyph8 packet Pstyle mapping"
+    },
+    {
+      "id": "W11",
+      "description": "joint leases complete FBO publication"
+    },
+    {
+      "id": "W12",
+      "description": "real cold bytes broker and hashes"
+    }
+  ],
+  "APIs": [
+    "g11ResearchConfigure(parentKind:string,parentRequest:string,visualConfig64:Uint32Array,seedReceipt:string):string",
+    "g11BeginSession(scopeJSON:string):string",
+    "g11SetActive(active:boolean,scopeJSON:string):string",
+    "g11PagePulse(session:string,seq:string,uiNs:string):string",
+    "g11Offer128(words:Uint32Array):string",
+    "g11Stop(scopeJSON:string):string",
+    "g11Status():string",
+    "g11ColdBegin(token:string,mode:string):string",
+    "g11ColdPage(id:string,segment:number,offset:number):string",
+    "g11ColdEnd(id:string):string"
+  ],
+  "budgets": {
+    "computeSSBO": 4,
+    "tailReadBytes": 1024,
+    "rootFences": 1,
+    "pageWords": 1024,
+    "pageUtf8": 16384,
+    "ttlNs": "60000000000",
+    "maxDmTwoFullBytes": 388308992,
+    "witness2048": 3149824,
+    "witness8192": 4722688,
+    "maxKnownWithWitness": 641920128
+  },
+  "evidence": "real nonempty composite frame required for T600/T601; compiled strings/counts not product PASS"
+}

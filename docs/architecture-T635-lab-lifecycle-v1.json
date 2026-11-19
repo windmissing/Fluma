@@ -1,0 +1,93 @@
+{
+  "schema": "T635_LAB_LIFECYCLE_V1",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "render": "XComponent+shader only; FAULT or explicit STALE; no Canvas/softwareGL",
+  "CPU": "stopped",
+  "goalOrder": [
+    13,
+    14,
+    12
+  ],
+  "goal10": "paused",
+  "executionPrompt": "docs/architecture-T633-T636-execution-boundaries-v1.md",
+  "recordRevision": "T531_RESOURCE_LAB_RECORD_V3",
+  "lifecycle": [
+    "RUNNING",
+    "CANCELLING",
+    "DRAINING",
+    "FINISHED"
+  ],
+  "terminal": [
+    "COMPLETED_FIXTURE",
+    "CANCELLED",
+    "CASE_FAILED",
+    "INCOMPLETE"
+  ],
+  "terminalImmutable": true,
+  "terminalPriority": "real failure > cancellation observed under terminal lock > complete END > incomplete; postterminal cancel never rewrites",
+  "cancelResult": [
+    "REQUESTED",
+    "ALREADY_REQUESTED",
+    "ALREADY_TERMINAL",
+    "STALE_JOB"
+  ],
+  "checkpoints": [
+    "Build4096words",
+    "Hash4096words",
+    "Page",
+    "DiagnosticStage",
+    "CacheSubmit",
+    "DrainWait",
+    "ReaderBarrier"
+  ],
+  "terminalFields": [
+    "jobId",
+    "generation",
+    "terminalNs",
+    "cancelRequestedNs",
+    "cancelObservedNs",
+    "firstFailure",
+    "pendingResources"
+  ],
+  "drain": {
+    "testOnlyMacro": "GRS_PROGRAM_CACHE_TEST_FAULTS",
+    "deadlineNs": "5000000000",
+    "wait": "same store mutex capacity+insert; wait_until for space and fence; notify cancel/pop/stop/done",
+    "actualRetirement": "return TIMEOUT/CANCELLED does not imply worker or IO freed",
+    "productionEnqueueDrainUnchanged": true
+  },
+  "files": {
+    "maxFiles": 32,
+    "maxFileBytes": 2097152,
+    "maxTotalBytes": 67108864,
+    "chunkBytes": 4096,
+    "jsonBytes": 16384,
+    "ttlNs": "60000000000",
+    "noRenew": true,
+    "wrongEnd": "STALE_EXPORT leaves other active export unchanged",
+    "repairs": [
+      "quoted base64",
+      "RAII failed-open cleanup",
+      "checked page and fileId",
+      "fd/path stat before+after",
+      "frozen fileSHA vs collectorSHA",
+      "catalog reset only after export retirement"
+    ]
+  },
+  "controls": {
+    "maxRecords": 256,
+    "recordBytes": 256,
+    "newTerminalCancelMetadataMax": 1024
+  },
+  "injection": {
+    "scope": "isolated lab/helper instance only",
+    "allowed": [
+      "CHECKPOINT_BARRIER",
+      "QUEUE_HOLD",
+      "CLOCK_EDGE",
+      "PRIVATE_FILE_MUTATION"
+    ],
+    "productionForceBusy": false
+  }
+}

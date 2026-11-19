@@ -1,5 +1,7 @@
 # T607 目标13纯流场GPU工程闭包
 
+> 2026-11-19 T633初始化工程归因：[配置与零场闭包](architecture-T633-v1.md)优先区分实际NAPI_DECODE、早期签包来源、未配置激活与后继初始化状态；补只读有界阶段原件，不能由CONFIG_PENDING标签宣GL初始化死锁。数学口径沿T628/T632独立并行，布局/物理阈值不改。
+
 > 2026-11-19 T628数学口径修订生效：[T628](architecture-T628-v1.md) 和 `architecture-T628-math-domain-v1.json` 明确公共17+同首因math bitset、总exp相对误差及test-only hook6。math表/mathSHA/algorithmSHA和生成器已同步；layout/dispatch/gates不变，历史T607证据和T608旧二进制保原身份，不把新SHA补写旧包。T608 dd91018已开发编译完成；以下NOT_IMPLEMENTED仅为2026-11-18本稿初交历史状态，不阻T609/T610并行验证。
 
 2026-11-18，architect，不使用真机。消费T605正式 `algorithm-G13-pure-fluid-gpu-v1.md`、manifest/16 fixtures及T613资产盘点；状态为**ENGINEERING_READY，产品NOT_IMPLEMENTED/NOT_VALIDATED**。模型固定为G13_MAC_FILLED_V1：二维全满常密度不可压牛顿MAC、守恒迎风、后退Euler黏性Chebyshev、Q32压力MG投影。不得换为旧高度扩散、旧孔隙G12或视觉流线。目标1–11和原优先级保留，10暂停；水线13→14→12，旧T583/T595/T602/T603/T604暂缓，不删除旧资产。

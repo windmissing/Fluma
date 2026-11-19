@@ -1,5 +1,7 @@
 # T563：目标11已接受面通量视觉示踪工程闭包
 
+> 2026-11-19 T634工程闭包生效：[组合产品入口与消费者修订](architecture-T634-v1.md)及其JSON明确T566当前实现的W01–W12缺口、真实R1/DM adapter、GPU审核/双提交/联合lease/真实冷原件与生成链。本文两dispatch/8资源档/算法门不变；已有模块编译不等产品可达或完整实现，T600/T601仍需真实非空帧。
+
 2026-11-17，architect，不使用真机，不执行产品/GL测试。消费T558 `algorithm-G11-surface-lateral-rendering-v1.md` 与V01–V14 fixtures；DESIGN/ENGINEERING_READY，产品NOT_IMPLEMENTED/NOT_VALIDATED。目标10暂停，不等待或启动各向异性工作，只保原设计镜像定义和已知tie反例。CPU停投、GPU驻留、全前背景仅新XComponent+shader，禁Canvas/软件GL产品回退。
 
 机器表 `architecture-T563-g11-manifest-v1.json`、完整两父版本dispatch表、`analysis-T563-engineering-checks-v1.json` 是唯一工程引用；本稿不把T555/T548局部进展当已可用实际GPU能力，不更改父物理配方/参数批准/旧通过记录。

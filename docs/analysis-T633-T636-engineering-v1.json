@@ -1,0 +1,500 @@
+{
+  "schema": "T633_T636_ARCHITECTURE_AUDIT_V1",
+  "date": "2026-11-19",
+  "deviceUsed": false,
+  "buildRun": false,
+  "productTestsRun": false,
+  "T635": {
+    "nativeJobs": [
+      {
+        "file": {
+          "path": "test/reports/t491/t587b/lab-record-cancel.json",
+          "bytes": 3713,
+          "sha256": "f101baeeab7ead4d620eaf00d70aef3df771c0ef4269d29aa9ad16c61b3e3a7a"
+        },
+        "jobId": "1",
+        "nativeDurationNs": "360570468",
+        "records": 30,
+        "outcome": "CANCELLED",
+        "endResult": "COMPLETED_FIXTURE_NOT_PHYSICS",
+        "cancelCallTimeObserved": false
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t587b/lab-record-5scancel.json",
+          "bytes": 3713,
+          "sha256": "0b8a7f1dee7b83de2d9309df635baabc2bab7d33fc04947e277df0cb375f5811"
+        },
+        "jobId": "2",
+        "nativeDurationNs": "352362969",
+        "records": 30,
+        "outcome": "CANCELLED",
+        "endResult": "COMPLETED_FIXTURE_NOT_PHYSICS",
+        "cancelCallTimeObserved": false
+      }
+    ],
+    "signed": {
+      "input": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t565-lab-tree\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "sha256": "10abe155a60e226667d1c4a692795ad88f818de8064da762745c46d3c7824b6a"
+      },
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T579-lab\\T579-lab-signed.hap",
+        "sha256": "c772f665e77d04487ed50ee45e235a914e9eac4968f54cf5629016496d787f2d",
+        "bytes": 10499256
+      },
+      "members": [
+        {
+          "name": "libs/arm64-v8a/libgrs_resource_lab.so",
+          "bytes": 483200,
+          "sha256": "5a1ca1ff0d86fc6388f4649f4a3038673bd82344b84cd40e708b7f6dc5e547b6"
+        }
+      ]
+    },
+    "sourceMatchesBuildTree": true
+  },
+  "T636": {
+    "fileMappings": 4,
+    "bssMappings": 1,
+    "deviceInode": [
+      "104:87",
+      "51578"
+    ],
+    "timelineRows": 35,
+    "initialTimelineCount": 34,
+    "timelineBrokerCallEvidence": false,
+    "observedPackageBroker": {
+      "name": "libs/arm64-v8a/libgrs_cold_slots.so",
+      "bytes": 50280,
+      "sha256": "c103ffeae21a40e43c4c774079b2f77203a43515de0a4deab9eeb2f6ed95e9bc",
+      "exports": [
+        "GrsColdBuilderDone",
+        "GrsColdFreed",
+        "GrsColdReadBegin",
+        "GrsColdReadEnd",
+        "GrsColdReserve"
+      ]
+    },
+    "availableFinalBroker": {
+      "path": ".codex/local-test/t608-release/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_cold_slots.so",
+      "bytes": 200824,
+      "sha256": "715f314d43549d4eed991922f25faa350fedcaf6ab8dab1598abc980dd278d03",
+      "exports": [
+        "GrsColdBuilderDone",
+        "GrsColdFreed",
+        "GrsColdReadBegin",
+        "GrsColdReadEnd",
+        "GrsColdReserve",
+        "GrsFullGpuContextRetired",
+        "GrsFullGpuFreed",
+        "GrsFullGpuReserve"
+      ]
+    },
+    "abiFunctions": [
+      "GrsColdReserve",
+      "GrsColdBuilderDone",
+      "GrsColdReadBegin",
+      "GrsColdReadEnd",
+      "GrsColdFreed",
+      "GrsFullGpuReserve",
+      "GrsFullGpuFreed",
+      "GrsFullGpuContextRetired"
+    ],
+    "componentRun": false
+  },
+  "T633": {
+    "decodeRejections": [
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l3.json",
+          "bytes": 48590,
+          "sha256": "96b52c76b7bbb1541aff68a9b4aeaedb268c4613cb1d7121b8c5686412024987"
+        },
+        "reply": {
+          "route": 13,
+          "api": "g13Configure",
+          "state": "NAPI_DECODE",
+          "attempt": "2",
+          "stage": "TYPEDARRAY_INFO",
+          "error": 6,
+          "boot": "244621396514846",
+          "generation": "0",
+          "snapshotValid": false,
+          "copiedWords": 0,
+          "rawNapiStatus": 0,
+          "snapshot": []
+        }
+      }
+    ],
+    "statusSamples": [
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l4.json",
+          "bytes": 51116,
+          "sha256": "ed4aebbfa04c0cda649100125c8d4bc9b8019eeb8502640730784541b2c0d4ea"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "0",
+        "discarded": "0",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "2"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l5.json",
+          "bytes": 51120,
+          "sha256": "579d0f5165eb204141b7aa0e1f95f3d53b6b7794d9185fa07fd90719fa0e3b89"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "1749",
+        "discarded": "1745",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "2"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "PULSE",
+          "error": 0,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l6.json",
+          "bytes": 51130,
+          "sha256": "c86e5e12aaad2411e4574b89068eb304baf7eb3087e689e07967cdab50db07c1"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "4146",
+        "discarded": "4142",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "13",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "1",
+          "permission": "1",
+          "inputEpoch": "1",
+          "control": "3"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l7.json",
+          "bytes": 51128,
+          "sha256": "de06356b8fb732f7c44bd6671e55899bb5854626acb7d315ef7ae050fcd6824e"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "4146",
+        "discarded": "4146",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "3"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l8.json",
+          "bytes": 51128,
+          "sha256": "24bb0e5679e0a54578da44b10146ea36105ceac522e0bfb3c6318e6b905b2f0b"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "4146",
+        "discarded": "4146",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "3"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/l9.json",
+          "bytes": 51128,
+          "sha256": "57024a65f8450e736793bcb12572218202854203096cb77412c947d1dc3940bb"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "4146",
+        "discarded": "4146",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "3"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t609a/lA.json",
+          "bytes": 51128,
+          "sha256": "1f7b33a54b7f470d7b1a02a18c4f2d889201a62b9bd26ca72f76afd7d1186d5f"
+        },
+        "boot": "244621396514846",
+        "state": "CONFIG_PENDING",
+        "earned": "4146",
+        "discarded": "4146",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "3"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "244621396514846",
+          "generation": "0",
+          "attempt": "0"
+        }
+      },
+      {
+        "file": {
+          "path": "test/reports/t491/t610a/l2.json",
+          "bytes": 50996,
+          "sha256": "77e39383db68e12e8dba9a9d81d958a5a10a63e77b8010d6c076aa53bfc5094b"
+        },
+        "boot": "245880985181408",
+        "state": "CONFIG_PENDING",
+        "earned": "0",
+        "discarded": "0",
+        "queued": 0,
+        "scope": {
+          "run": "0",
+          "owner": "0",
+          "context": "0",
+          "surface": "0",
+          "geometry": "0",
+          "config": "0",
+          "session": "0",
+          "permission": "0",
+          "inputEpoch": "0",
+          "control": "2"
+        },
+        "capability": null,
+        "compile": null,
+        "lastCommand": {
+          "route": 13,
+          "schema": 1,
+          "api": "g13PagePulse",
+          "state": "REJECTED",
+          "error": 31,
+          "boot": "245880985181408",
+          "generation": "0",
+          "attempt": "0"
+        }
+      }
+    ],
+    "signedHandoff": {
+      "input": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t608-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+        "sha256": "68b5a89203923ae5d78a15bcd1dcdeb9ba35d0de9777f4ad5bf5bb65223d7ed8"
+      },
+      "signed": {
+        "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t257-sign\\T608-g13\\T608-g13-signed.hap",
+        "sha256": "a49229ed9d6ca2a8e0c52b4090a542d1951639320554e44d10d5dbd899484c6e",
+        "bytes": 7698169
+      },
+      "members": [
+        {
+          "name": "libs/arm64-v8a/libgrs_cold_slots.so",
+          "bytes": 51336,
+          "sha256": "1fb87c58051e39e0669e1cd49700ce88b0fc60926a0db5a3df5cedd35e051a0f",
+          "exports": [
+            "GrsColdBuilderDone",
+            "GrsColdFreed",
+            "GrsColdReadBegin",
+            "GrsColdReadEnd",
+            "GrsColdReserve",
+            "GrsFullGpuContextRetired",
+            "GrsFullGpuFreed",
+            "GrsFullGpuReserve"
+          ]
+        },
+        {
+          "name": "libs/arm64-v8a/libgrs_g13.so",
+          "bytes": 1247552,
+          "sha256": "b0d06f05555ea4888f09adcb3a2eba4548bc3979a0badf8a8f50f1d4cc731a7d"
+        }
+      ]
+    },
+    "finalDeveloperDelivery": {
+      "HAP": {
+        "path": ".codex/local-test/t608-release/entry/build/default/outputs/default/entry-default-unsigned.hap",
+        "bytes": 7632424,
+        "sha256": "395d8ea7e7207323bccb22da734a0b543582ecc6ecd5fc377206ce804eb2d3d7"
+      },
+      "ELF": {
+        "path": ".codex/local-test/t608-release/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13.so",
+        "bytes": 5617120,
+        "sha256": "92414d34cdfda2ea616cb14914d041eccf7feec6fec7470d81246f6e48eb2595"
+      }
+    },
+    "differentInput": true,
+    "actualRawLengthObserved": false,
+    "coldDispatchReachedNotProven": true
+  },
+  "T634": {
+    "tables": {
+      "r1": {
+        "source": {
+          "total": 19,
+          "vis": 7
+        },
+        "quantum": {
+          "total": 2543,
+          "vis": 519
+        }
+      },
+      "dm": {
+        "source": {
+          "total": 19,
+          "vis": 7
+        },
+        "quantum": {
+          "total": 2923,
+          "vis": 519
+        }
+      }
+    },
+    "completionDestinationBytes": 256,
+    "completionCopyBytes": 1024,
+    "overflowBytes": 768,
+    "zeroGenerationCall": true,
+    "materialPlanWriterOnlyDefinition": true,
+    "sourceFindingsNotDeviceExecution": true,
+    "cmakeOldGeneratorPath": "D:\\hmprojects\\HelloWorld\\entry\\src\\test\\t566_generate_composite.cjs",
+    "cmakeOldGeneratorPathExists": false
+  }
+}

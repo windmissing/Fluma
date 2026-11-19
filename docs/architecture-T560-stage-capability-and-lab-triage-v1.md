@@ -1,5 +1,7 @@
 # T560：G9分stage设备资格与Lab失败首次归因
 
+> 2026-11-19 T635补充：[实际取消/排空/文件通道闭包](architecture-T635-v1.md)消费T565和T587原件，修test-only helper未真正接线、等待/取消唤醒和FilesV2边界；不改生产Enqueue/Drain，不将存在helper等同已运行。能力分层合同不变。
+
 2026-11-17，architect，不使用真机，不跑GPU/NAPI/产品测试。输入T541 v2、T526 v3原报告/卡评论、现存原件、T529/T549及T538实际源码。工程结论：compute与scene资格必须分层，并以整数实例属性消除packet vertex shader的SSBO依赖；Lab队满注入后的控制排空有确定竞争窗口，须工程修复，现有FAIL不改PASS。机器表/审计见 `architecture-T560-stage-lab-manifest-v1.json` / `analysis-T560-evidence-v1.json`。
 
 ## 1. 设备证据精度与原谓词

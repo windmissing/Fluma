@@ -1,0 +1,70 @@
+{
+  "schema": "T636_CROSS_DSO_HARNESS_V1",
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "render": "XComponent+shader only; FAULT or explicit STALE; no Canvas/softwareGL",
+  "CPU": "stopped",
+  "goalOrder": [
+    13,
+    14,
+    12
+  ],
+  "goal10": "paused",
+  "executionPrompt": "docs/architecture-T633-T636-execution-boundaries-v1.md",
+  "owner": "tester",
+  "productCodeRequired": false,
+  "productionEndpointAdded": false,
+  "files": [
+    "test/t636/adapter_a.cpp",
+    "test/t636/adapter_b.cpp",
+    "test/t636/driver.cpp",
+    "test/t636/CMakeLists.txt",
+    "test/t636/receipt.py"
+  ],
+  "linkage": "two adapters DT_NEEDED one exact original broker DSO with matching archived header; prefer existing final T608 release8-symbol DSO; old T600 package has only5 symbols; do not merge identities",
+  "identity": [
+    "HAP_SHA",
+    "broker_ELF_SHA",
+    "BuildId",
+    "ABI aarch64 size_t64",
+    "pidStart",
+    "maps",
+    "dlopen errors",
+    "resolved symbol provider"
+  ],
+  "limits": {
+    "slots": 2,
+    "builders": 1,
+    "readers": 1,
+    "processBytes": 524375552,
+    "gpuTicketBytes": 366564432,
+    "logRows": 128,
+    "rowUtf8": 512,
+    "manifestUtf8": 16384,
+    "totalWallNs": "30000000000"
+  },
+  "concurrency": "one builder and one reader may coexist on different slots",
+  "routeA": 407041,
+  "routeB": 407042,
+  "scenarios": [
+    "cross BBuilderDone/AReserve",
+    "cross BReadBegin/ATicket",
+    "builder and other-slot reader coexist",
+    "global reader after both builders done",
+    "Freed-under-reader retained with later ReadBegin evidence",
+    "ReadEnd not automatic refund",
+    "stale ticket after exact free",
+    "route sum8192 edge4096+4097",
+    "process sum524375552 edge",
+    "cross GPU ticket/context component fixture"
+  ],
+  "domains": {
+    "actual": "broker cross-DSO component operations",
+    "notProven": [
+      "production route invocation",
+      "real payload memory release",
+      "EGL context destruction",
+      "driver physical free"
+    ]
+  }
+}
