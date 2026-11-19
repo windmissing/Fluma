@@ -6,6 +6,8 @@ function edit(p,f){const file=path.join(main,p);fs.writeFileSync(file,f(fs.readF
 function one(s,a,b){if(s.split(a).length!==2)throw Error('T468_ANCHOR '+a);return s.replace(a,b);}
 const rel=n=>'cpp/gpu_resident/m2route/'+n;
 fs.copyFileSync('entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h',path.join(base,'m2/create_diagnostics.h'));
+fs.copyFileSync('entry/src/main/cpp/gpu_resident/m2/create_diagnostics_abi.cpp',path.join(base,'m2/create_diagnostics_abi.cpp'));
+fs.appendFileSync(path.join(main,'cpp/CMakeLists.txt'),'\n# T663 actual linked M2 diagnostic ABI.\ntarget_sources(grsm1 PRIVATE gpu_resident/m2/create_diagnostics_abi.cpp)\n');
 fs.copyFileSync(path.join(__dirname,'uniform_locations_v3.h'),path.join(base,'m2route/uniform_locations_v3.h'));
 const sha=n=>crypto.createHash('sha256').update(fs.readFileSync(path.join(out,n+'-v3.glsl'))).digest('hex');
 fs.writeFileSync(path.join(base,'m2route/create_shader_identity.h'),`#pragma once\nnamespace grs::m2route {inline constexpr char kSourceActualSha[]="${sha('source')}";inline constexpr char kFinalActualSha[]="${sha('quantum')}";}\n`);
@@ -58,4 +60,4 @@ edit('ets/pages/GpuSandWaterExperience.ets',s=>{
  s=one(s,'  build() {',fs.readFileSync(path.join(__dirname,'page.inc'),'utf8')+'\n  build() {');
  return one(s,"      Text(this.operation)","      Button('导出 M2 创建原始诊断').onClick(()=>this.exportCreateDiagnostic())\n      Button('导出上一创建诊断').onClick(()=>this.exportCreateDiagnostic(true))\n      Text(this.operation)");
 });
-fs.writeFileSync(path.join(out,'t468-manifest.json'),JSON.stringify({schema:'T462_M2_CREATE_DIAGNOSTIC_V1',base:'911c9ce',sourceSha:sha('source'),finalSha:sha('quantum'),kernelWireChanged:false,device:'NOT_RUN'},null,2));
+fs.writeFileSync(path.join(out,'t468-manifest.json'),JSON.stringify({schema:'T462_M2_CREATE_DIAGNOSTIC_V1',base:'911c9ce',sourceSha:sha('source'),finalSha:sha('quantum'),apiCursorRevision:1,apiCursorBytes:128,apiCursorPayload:384,diagnosticSourceSha:crypto.createHash('sha256').update(fs.readFileSync(path.join(base,'m2/create_diagnostics.h'))).digest('hex'),kernelWireChanged:false,device:'NOT_RUN'},null,2));

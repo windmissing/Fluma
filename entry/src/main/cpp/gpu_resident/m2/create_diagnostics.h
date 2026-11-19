@@ -14,6 +14,14 @@ namespace grs::create468 {
 inline uint64_t Now(){return uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());}
 enum class Stage:uint32_t {CREATE_SHADER,SOURCE_UPLOAD,COMPILE,CREATE_PROGRAM,ATTACH,LINK,REFLECT,ALLOCATE,PREPARE};
 inline const char* Name(Stage s){static const char* names[]={"CREATE_SHADER","SOURCE_UPLOAD","COMPILE","CREATE_PROGRAM","ATTACH","LINK","REFLECT","ALLOCATE","PREPARE"};return names[uint32_t(s)];}
+// T663/T662: fixed current API cursor, not a second event log.
+enum class ApiCode:uint32_t {NOT_ENTERED,COMPILE_SHADER,GET_SHADER_COMPILE_STATUS,GET_ERROR,GET_SHADER_INFO_LOG_LENGTH,GET_SHADER_INFO_LOG,LINK_PROGRAM,GET_PROGRAM_LINK_STATUS,GET_PROGRAM_INFO_LOG_LENGTH,GET_PROGRAM_INFO_LOG};
+struct ApiCursorV1 {
+ uint32_t revision=1,majorStage=0,object=0,api=0,edge=0,handle=0;int32_t returned=-1,rawGl=-1;
+ uint64_t sequence=0,beginNs=0,endNs=0,ownerTid=0,epoch=0,window=0,context=0,bootSerial=0;
+ std::array<uint8_t,32> reservedZero{};
+};
+static_assert(sizeof(ApiCursorV1)==128&&offsetof(ApiCursorV1,sequence)==32&&offsetof(ApiCursorV1,reservedZero)==96,"T662 cursor ABI");
 struct Event {Stage stage=Stage::CREATE_SHADER;uint32_t object=0,handle=0,rawGl=0;uint64_t enter=0,exit=0,a=0,b=0,c=0;bool success=false;};
 struct Log {uint32_t offset=0,reported=0,copied=0,queryError=0;bool queried=false,truncated=false,empty=true;};
 struct Program {const char* name="";std::array<char,65> sha{};uint64_t bytes=0;std::array<unsigned char,4096> raw{};uint32_t used=0;Log compile{},link{};};
@@ -27,6 +35,7 @@ struct Attempt {
  std::array<int64_t,8> probeValues{};uint32_t probeCode=0,probeRawGl=0;bool probeSeen=false;
  int contextVersion=0;uint32_t contextQueryError=0;
  bool calling=false,failed=false,sealed=false;Event current{},firstFailure{};
+ ApiCursorV1 apiCursor{};
 };
 static_assert(sizeof(Program::raw)*3<=16384,"T462 total raw log bound");
 class Store {
@@ -34,7 +43,7 @@ class Store {
 public:
  template<class F> void Change(uint64_t id,F f){std::lock_guard<std::mutex> lock(mutex);auto& a=attempts[id%3];if(a.serial==id&&!a.sealed)f(a);}
  uint64_t Begin(uint64_t epoch,uint64_t window,uint64_t tid,uint64_t context,const Identity& identity,uint32_t k,uint32_t kw){
-  std::lock_guard<std::mutex> lock(mutex);if(serial==UINT64_MAX)return 0;auto id=++serial;auto& a=attempts[id%3];a={};a.serial=id;a.epoch=epoch;a.window=window;a.tid=tid;a.context=context;a.identity=identity;a.k=k;a.kw=kw;a.begin=Now();
+  std::lock_guard<std::mutex> lock(mutex);if(serial==UINT64_MAX)return 0;auto id=++serial;auto& a=attempts[id%3];a={};a.serial=id;a.epoch=epoch;a.window=window;a.tid=tid;a.context=context;a.identity=identity;a.k=k;a.kw=kw;a.begin=Now();a.apiCursor.ownerTid=tid;a.apiCursor.epoch=epoch;a.apiCursor.window=window;a.apiCursor.context=context;a.apiCursor.bootSerial=id;
   a.programs[0].name="SOURCE_V3";a.programs[1].name="QUANTUM_INTERMEDIATE";a.programs[2].name="QUANTUM_FINAL_V3";return id;
  }
  bool Copy(uint64_t id,Attempt& out){std::lock_guard<std::mutex> lock(mutex);if(!id)id=serial;if(!id||attempts[id%3].serial!=id)return false;out=attempts[id%3];return true;}
@@ -42,6 +51,8 @@ public:
 inline Store& Global(){static Store store;return store;}
 struct Recorder {
  Store& store;uint64_t serial=0;uint32_t object=0;GLenum pending=0;
+ void ApiEnter(Stage stage,ApiCode api,GLuint handle){store.Change(serial,[&](Attempt& v){auto& c=v.apiCursor;if(c.edge==1||c.sequence==UINT64_MAX){if(v.dropped<UINT32_MAX)++v.dropped;return;}c.majorStage=uint32_t(stage);c.object=object;c.api=uint32_t(api);c.edge=1;c.handle=handle;c.returned=-1;c.rawGl=-1;++c.sequence;c.beginNs=Now();c.endNs=0;});}
+ void ApiExit(ApiCode api,GLuint handle,int32_t returned=0,int32_t raw=-1){store.Change(serial,[&](Attempt& v){auto& c=v.apiCursor;if(c.edge!=1||c.api!=uint32_t(api)||c.handle!=handle||c.object!=object||c.sequence==UINT64_MAX){if(v.dropped<UINT32_MAX)++v.dropped;return;}c.returned=returned;c.rawGl=raw;++c.sequence;c.endNs=Now();c.edge=2;});}
  void Enter(Stage s,GLuint handle=0,uint64_t a=0,uint64_t b=0,uint64_t c=0){store.Change(serial,[&](Attempt& v){v.calling=true;v.current={s,object,handle,0,Now(),0,a,b,c,false};});}
  void Exit(bool success,GLenum error=0,uint64_t a=UINT64_MAX,uint64_t b=UINT64_MAX,uint64_t c=UINT64_MAX){
   if(error&&!pending)pending=error;
@@ -50,12 +61,14 @@ struct Recorder {
  GLenum Consume(GLenum error){auto original=pending?pending:error;pending=0;return original;}
  void Finish(uint32_t code){store.Change(serial,[&](Attempt& v){v.code=code;v.end=Now();v.sealed=true;v.calling=false;});}
  template<class Api> void ReadLog(Api& api,GLuint handle,bool program,bool success){
-  GLint length=0;if(program)api.Programiv(handle,GL_INFO_LOG_LENGTH,&length);else api.Shaderiv(handle,GL_INFO_LOG_LENGTH,&length);
-  GLenum query=api.Error();uint32_t used=0;store.Change(serial,[&](Attempt& v){used=v.programs[object].used;});
+  const auto stage=program?Stage::LINK:Stage::COMPILE;
+  const auto lengthApi=program?ApiCode::GET_PROGRAM_INFO_LOG_LENGTH:ApiCode::GET_SHADER_INFO_LOG_LENGTH,logApi=program?ApiCode::GET_PROGRAM_INFO_LOG:ApiCode::GET_SHADER_INFO_LOG;
+  GLint length=0;ApiEnter(stage,lengthApi,handle);if(program)api.Programiv(handle,GL_INFO_LOG_LENGTH,&length);else api.Shaderiv(handle,GL_INFO_LOG_LENGTH,&length);ApiExit(lengthApi,handle,length);
+  ApiEnter(stage,ApiCode::GET_ERROR,handle);GLenum query=api.Error();ApiExit(ApiCode::GET_ERROR,handle,int32_t(query),int32_t(query));uint32_t used=0;store.Change(serial,[&](Attempt& v){used=v.programs[object].used;});
   const uint32_t cap=std::max(1u,std::min(4096u-used,success?1024u:4096u));
   std::array<char,4096> bytes{};GLsizei copied=0;
-  if(program)api.ProgramLog(handle,GLsizei(cap),&copied,bytes.data());else api.ShaderLog(handle,GLsizei(cap),&copied,bytes.data());
-  const GLenum logError=api.Error();if(!query)query=logError;
+  ApiEnter(stage,logApi,handle);if(program)api.ProgramLog(handle,GLsizei(cap),&copied,bytes.data());else api.ShaderLog(handle,GLsizei(cap),&copied,bytes.data());ApiExit(logApi,handle,copied);
+  ApiEnter(stage,ApiCode::GET_ERROR,handle);const GLenum logError=api.Error();ApiExit(ApiCode::GET_ERROR,handle,int32_t(logError),int32_t(logError));if(!query)query=logError;
   uint32_t n=uint32_t(std::max(0,std::min(int(copied),int(cap-1))));
   store.Change(serial,[&](Attempt& v){auto& p=v.programs[object];n=std::min(n,4096u-p.used);Log entry{p.used,uint32_t(std::max(0,int(length))),n,query,true,uint32_t(std::max(0,int(length)))>n+1u,n==0};
    if(program)p.link=entry;else p.compile=entry;std::memcpy(p.raw.data()+p.used,bytes.data(),n);p.used+=n;});
@@ -80,15 +93,18 @@ struct GlApi {
 };
 template<class Api> bool Build(Api& api,uint32_t object,const char* source,const char* sha,GLuint& program,GLenum& firstGlError,SubmitObserver observer={}){
  if(active){active->object=object;active->store.Change(active->serial,[&](Attempt& a){auto& p=a.programs[object];std::strncpy(p.sha.data(),sha,64);p.bytes=std::strlen(source);});}
- auto finish=[&](bool ok){auto e=api.Error();if(e&&!firstGlError)firstGlError=e;Exit(ok,e);};
+ Stage major=Stage::CREATE_SHADER;GLuint apiHandle=0;
+ auto apiEnter=[&](ApiCode kind,GLuint h){if(active)active->ApiEnter(major,kind,h);};
+ auto apiExit=[&](ApiCode kind,GLuint h,int32_t value=0,int32_t raw=-1){if(active)active->ApiExit(kind,h,value,raw);};
+ auto finish=[&](bool ok){const bool cursor=major==Stage::COMPILE||major==Stage::LINK;if(cursor)apiEnter(ApiCode::GET_ERROR,apiHandle);auto e=api.Error();if(cursor)apiExit(ApiCode::GET_ERROR,apiHandle,int32_t(e),int32_t(e));if(e&&!firstGlError)firstGlError=e;Exit(ok,e);};
  Enter(Stage::CREATE_SHADER);auto shader=api.CreateShader();finish(shader!=0);
  Enter(Stage::SOURCE_UPLOAD,shader);api.Source(shader,source);finish(true);
- Enter(Stage::COMPILE,shader);observer.Emit(SubmitStage::ShaderEnter);api.Compile(shader);GLint ok=0;api.Shaderiv(shader,GL_COMPILE_STATUS,&ok);finish(ok!=0);observer.Emit(SubmitStage::ShaderExit,0,uint32_t(ok));
+ Enter(Stage::COMPILE,shader);major=Stage::COMPILE;apiHandle=shader;observer.Emit(SubmitStage::ShaderEnter);apiEnter(ApiCode::COMPILE_SHADER,shader);api.Compile(shader);apiExit(ApiCode::COMPILE_SHADER,shader);GLint ok=0;apiEnter(ApiCode::GET_SHADER_COMPILE_STATUS,shader);api.Shaderiv(shader,GL_COMPILE_STATUS,&ok);apiExit(ApiCode::GET_SHADER_COMPILE_STATUS,shader,ok);finish(ok!=0);observer.Emit(SubmitStage::ShaderExit,0,uint32_t(ok));
  if(active)active->ReadLog(api,shader,false,ok!=0);
  if(!ok){api.DeleteShader(shader);return false;}
- Enter(Stage::CREATE_PROGRAM);program=api.CreateProgram();finish(program!=0);
+ major=Stage::CREATE_PROGRAM;Enter(Stage::CREATE_PROGRAM);program=api.CreateProgram();finish(program!=0);
  Enter(Stage::ATTACH,program,shader);api.Attach(program,shader);finish(true);
- Enter(Stage::LINK,program);observer.Emit(SubmitStage::ProgramEnter);api.Link(program);api.Programiv(program,GL_LINK_STATUS,&ok);finish(ok!=0);observer.Emit(SubmitStage::ProgramExit,0,uint32_t(ok));
+ Enter(Stage::LINK,program);major=Stage::LINK;apiHandle=program;observer.Emit(SubmitStage::ProgramEnter);apiEnter(ApiCode::LINK_PROGRAM,program);api.Link(program);apiExit(ApiCode::LINK_PROGRAM,program);apiEnter(ApiCode::GET_PROGRAM_LINK_STATUS,program);api.Programiv(program,GL_LINK_STATUS,&ok);apiExit(ApiCode::GET_PROGRAM_LINK_STATUS,program,ok);finish(ok!=0);observer.Emit(SubmitStage::ProgramExit,0,uint32_t(ok));
  if(active)active->ReadLog(api,program,true,ok!=0);
  api.DeleteShader(shader);return ok!=0;
 }
@@ -130,6 +146,9 @@ inline void Json(std::ostream& o,const Attempt& a){
  o<<"\"K\":"<<a.k<<",\"Kw\":"<<a.kw<<",\"feature\":7,\"wire\":3,\"policy\":1,\"code\":"<<a.code<<",\"sealed\":"<<(a.sealed?"true":"false")<<",\"inCall\":"<<(a.calling?"true":"false")<<",\"inCallDurationNs\":\""<<(a.calling&&Now()>=a.current.enter?Now()-a.current.enter:0)<<"\",\"incomplete\":"<<(a.dropped?"true":"false")<<",\"dropped\":"<<a.dropped<<",\"firstFailure\":";
  auto event=[&](const Event& e){o<<"{\"object\":"<<e.object<<",\"stage\":\""<<Name(e.stage)<<"\",\"enterNs\":\""<<e.enter<<"\",\"exitNs\":\""<<e.exit<<"\",\"handle\":"<<e.handle<<",\"success\":"<<(e.success?"true":"false")<<",\"rawGl\":"<<e.rawGl<<",\"a\":\""<<e.a<<"\",\"b\":\""<<e.b<<"\",\"c\":\""<<e.c<<"\"}";};
  if(a.failed)event(a.firstFailure);else o<<"null";o<<",\"current\":";event(a.current);
+ const auto& cursor=a.apiCursor;
+ o<<",\"apiCursor\":{\"revision\":"<<cursor.revision<<",\"majorStage\":"<<cursor.majorStage<<",\"object\":"<<cursor.object<<",\"api\":"<<cursor.api<<",\"edge\":"<<cursor.edge<<",\"handle\":"<<cursor.handle<<",\"returned\":"<<cursor.returned<<",\"rawGl\":"<<cursor.rawGl<<',';
+ u("sequence",cursor.sequence);u("beginNs",cursor.beginNs);u("endNs",cursor.endNs);u("ownerTid",cursor.ownerTid);u("epoch",cursor.epoch);u("window",cursor.window);u("context",cursor.context);u("bootSerial",cursor.bootSerial);o<<"\"reservedZero\":[";for(size_t i=0;i<32;++i){if(i)o<<',';o<<uint32_t(cursor.reservedZero[i]);}o<<"]}";
  o<<",\"contextClientVersion\":"<<a.contextVersion<<",\"contextQueryError\":"<<a.contextQueryError<<",\"contextPriorGlError\":"<<a.rawContextError<<",\"driver\":[";
  for(unsigned i=0;i<4;++i){if(i)o<<',';o<<"{\"value\":";String(o,a.strings[i].data());o<<",\"rawGl\":"<<a.stringErrors[i]<<'}';}o<<"],\"limits\":[";
  for(unsigned i=0;i<a.limitCount;++i){if(i)o<<',';auto& l=a.limits[i];o<<"{\"api\":\""<<l.api<<"\",\"token\":"<<l.token<<",\"index\":"<<l.index<<",\"value\":\""<<l.value<<"\",\"rawGl\":"<<l.error<<'}';}Profiles(o,a);o<<"],\"programs\":[";

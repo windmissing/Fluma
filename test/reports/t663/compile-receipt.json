@@ -1,0 +1,67 @@
+{
+  "schema": "T663_COMPILE_DELIVERY_V1",
+  "deviceUsed": false,
+  "testsRun": false,
+  "productExecuted": false,
+  "signed": false,
+  "deployed": false,
+  "productPASS": false,
+  "status": "DEVELOPMENT_COMPILE_COMPLETE",
+  "buildDirectory": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t663-delivery",
+  "unsignedHap": {
+    "path": "D:\\hmprojects\\HelloWorld\\.codex\\local-test\\t663-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "bytes": 8734078,
+    "sha256": "d2a522e2733d4e5083452d9e74f3da6c3fdab11b6b71248a2865f5f02eb57828"
+  },
+  "packagedELF": {
+    "sha256": "7a0bcbaab37c3fabcff3a5874164bbea1767e2877db903ad867477fdb781253f",
+    "bytes": 1180096,
+    "buildId": "c23e231c781476010af91f631c60d2239371205c",
+    "abi": [
+      1,
+      128,
+      3,
+      384,
+      22512,
+      67584,
+      40,
+      22384,
+      32,
+      96
+    ]
+  },
+  "abc": {
+    "bytes": 2829740,
+    "sha256": "a64b403ad3ba061e8540ea24fa7fd6dcb2d3b5be9a52d68f1538ee5924a4948c"
+  },
+  "store": {
+    "previousCompiledBytes": 67200,
+    "actualBytes": 67584,
+    "mutexBytes": 40,
+    "cursorBytes": 128,
+    "slots": 3,
+    "addedPayload": 384,
+    "actualStoreIncrease": 384,
+    "externalFallbackTriggered": false
+  },
+  "actualCompiledOwnedSources": {
+    "entry/src/main/cpp/gpu_resident/m2/create_diagnostics.h": "404b26c03e0c7a4b5a8eda864d57175d85259ce86cce15d080436b67e6beb262",
+    "entry/src/main/cpp/gpu_resident/m2/create_diagnostics_abi.cpp": "bfd82a4d2f98c50523219a39a639f1a7e460d39bb9ba67051d276dfc32d13f14"
+  },
+  "sourceManifestSHA": "ad3baefbeae1fb6a14844790598b8b426d54ef0f5b515ffa041b08557b244b5d",
+  "mainRevision": "T462_M2_CREATE_DIAGNOSTIC_V1 unchanged",
+  "newField": "optional apiCursor revision1; u64 decimal strings; raw unknown -1",
+  "newGLQueries": 0,
+  "newWaits": 0,
+  "newThreads": 0,
+  "stageEventsFinish": "preserved; cursor does not authorize success",
+  "unmeasured": "Actual GL API returnedness/creation outcomes require T591 same-new-attempt device evidence",
+  "full-build.log": {
+    "sha256": "9ad2263ee22bbbaa56b273aad9436fd0e7b8f422dfdd79b2664d1f7bd08bade4",
+    "elapsed": "47 s 104 ms \u001b[39m"
+  },
+  "final-build.log": {
+    "sha256": "d2be9e356c197155448eda22a6d06a901e0af7ddd8e67af059f653e7f486b57d",
+    "elapsed": "11 s 995 ms \u001b[39m"
+  }
+}
