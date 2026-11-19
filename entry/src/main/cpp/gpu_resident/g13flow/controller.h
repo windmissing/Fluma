@@ -94,6 +94,8 @@ public:
   const std::string &BaseToken() const { return baseToken_; }
   std::string ColdToken() const;
   std::string RootReceipt() const;
+  uint32_t RootError() const { return lastRootError_; }
+  bool GpuTailObserved() const { return lastRootGpuTail_; }
   const Completion &AcceptedCompletion() const { return acceptedTail_; }
   void RecordSceneStale() { ++staleFrames_; }
   void RecordSceneSwap(bool source, bool repeated) {

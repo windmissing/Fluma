@@ -15,9 +15,12 @@ shared float sharedSum[64],sharedMax[64];
 shared uvec4 sharedWide[64];
 shared uint errorAtEntry,selectedAtEntry,convergedAtEntry;
 uint lane;
-bool softDomain=false;
+bool softDomain=false;uint localMathStatus=0u,localMathFunction=0u,localMathObserved=0u,localRounded=0u;uvec4 localArg0=uvec4(0u),localArg1=uvec4(0u),localSoftResult=uvec4(0u);bool expContext=false;
 void syncAll(){memoryBarrierBuffer();memoryBarrierShared();barrier();}
-void fail(uint e){uint old=atomicCompSwap(c[514],0u,e);if(old==0u){c[513]=uOp;c[515]=uScope;c[516]=uJ;c[517]=uMicro;c[526]=1u;}}
+void failDetail(uint e,uint detail){uint old=atomicCompSwap(c[514],0u,e);if(old==0u){c[513]=uOp;c[515]=uScope;c[516]=uJ;c[517]=uMicro;c[526]=1u;c[750]=detail;if(uOp<64u){c[733]=c[136];c[734]=c[137];c[735]=detail!=0u?localMathFunction:0u;c[736]=detail!=0u?localMathObserved:0u;for(uint i=0u;i<4u;++i){c[737u+i]=detail!=0u&&(localMathObserved&1u)!=0u?localArg0[i]:0u;c[741u+i]=detail!=0u&&(localMathObserved&4u)!=0u?localSoftResult[i]:0u;c[746u+i]=detail!=0u&&(localMathObserved&2u)!=0u?localArg1[i]:0u;}c[745]=detail!=0u&&(localMathObserved&8u)!=0u?localRounded:0u;}memoryBarrierBuffer();c[766]=0xc0de1311u;}}
+void fail(uint e){failDetail(e,0u);}void failMath(uint invocationDetail){failDetail(17u,invocationDetail);}
+void resetFault(){c[514]=0u;c[513]=0u;c[750]=0u;c[766]=0u;}
+
 void checkVelocity(float x){if(isnan(x)||isinf(x))fail(16u);else{atomicMax(c[676],floatBitsToUint(abs(x)));if(abs(x)>2.)fail(35u);}}
 void reducePair(float sum,float mx){sharedSum[lane]=sum;sharedMax[lane]=mx;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride){sharedSum[lane]+=sharedSum[lane+stride];sharedMax[lane]=max(sharedMax[lane],sharedMax[lane+stride]);}syncAll();}}
 void reduceSums(float first,float second){sharedSum[lane]=first;sharedMax[lane]=second;syncAll();for(uint stride=32u;stride>0u;stride>>=1u){if(lane<stride){sharedSum[lane]+=sharedSum[lane+stride];sharedMax[lane]+=sharedMax[lane+stride];}syncAll();}}
@@ -39,6 +42,7 @@ void fieldAudit();
 void copyBase(){for(uint i=lane;i<uL[4];i+=64u)outState[i]=baseState[i];syncAll();if(lane==0u){for(uint i=0u;i<4u;++i)outState[12u+i]=c[146u+i];if(c[520]>=50u)for(uint i=160u;i<192u;++i)outState[i]=0u;}}
 void entryCopy(){for(uint f=lane;f<nf();f+=64u){float value=uintBitsToFloat(outState[256u+f]);checkVelocity(value);w[work(0u)+f]=outState[256u+f];}}
 void fieldAudit(){if(lane==0u){for(uint i=26u;i<=29u;++i)if(isnan(uintBitsToFloat(outState[i]))||isinf(uintBitsToFloat(outState[i])))fail(16u);for(uint i=202u;i<=205u;++i)if(i!=204u&&(isnan(uintBitsToFloat(outState[i]))||isinf(uintBitsToFloat(outState[i]))))fail(16u);if(outState[30]>3u||outState[206]!=outState[30]||outState[204]>3u||abs(uintBitsToFloat(outState[27]))>2.||abs(uintBitsToFloat(outState[205]))>8.||length(vec2(uintBitsToFloat(outState[202]),uintBitsToFloat(outState[203])))>64.||(outState[30]==2u&&uintBitsToFloat(outState[28])<2.))fail(35u);}uvec4 sumGauge=uvec4(0u);for(uint i=lane;i<nc();i+=64u)sumGauge=wadd(sumGauge,s64(uvec2(outState[uL[10]+2u*i],outState[uL[10]+2u*i+1u])));integerReduce(sumGauge);if(lane==0u&&wlt(uvec4(nc()/2u,0u,0u,0u),sabs(sharedWide[0])))fail(20u);for(uint z=lane;z<4096u;z+=64u){uint at=uL[11]+8u*z;if(z>=c[28]){for(uint j=0u;j<8u;++j)if(outState[at+j]!=0u)fail(26u);}else if(outState[at+4u]!=z||outState[at+5u]!=1u)fail(26u);}for(uint i=223u+lane;i<256u;i+=64u)if(outState[i]!=0u)fail(2u);for(uint k=lane;k<4u;k+=64u)if(outState[167u+8u*k]!=0u)fail(2u);for(uint f=lane;f<nf();f+=64u){float value=uintBitsToFloat(outState[256u+f]);checkVelocity(value);if(!activeFace(f)){bool vertical=f>=nuFaces();uint z=vertical?f-nuFaces():f;int x=int(vertical?z%nx():z%(nx()+1u)),y=int(vertical?z/nx():z/(nx()+1u));float expected=fieldRead(0xffffffffu,vertical,x,y);if(outState[256u+f]!=floatBitsToUint(expected))fail(35u);}}for(uint i=lane;i<nc();i+=64u){uvec4 p=s64(uvec2(outState[uL[10]+2u*i],outState[uL[10]+2u*i+1u]));if(wlt(wshl(uvec4(64u,0u,0u,0u),32u),sabs(p)))fail(35u);}for(uint i=lane;i<c[28];i+=64u){uint at=uL[11]+8u*i;vec2 pos=uintBitsToFloat(uvec2(outState[at],outState[at+1u]));if(any(isnan(pos))||any(isinf(pos))||any(lessThan(pos,vec2(0.)))||any(greaterThan(pos,vec2(uintBitsToFloat(c[8]),uintBitsToFloat(c[9]))))||outState[at+7u]!=0u)fail(26u);}}
+void aliasAudit(){for(uint f=lane;f<nf();f+=64u){bool vertical=f>=nuFaces();uint z=vertical?f-nuFaces():f;bool alias=vertical?(periodicY()&&z/nx()==ny()):(periodicX()&&z%(nx()+1u)==nx());if(alias){uint canonical=vertical?nuFaces()+z%nx():(z/(nx()+1u))*(nx()+1u);if(outState[256u+f]!=outState[256u+canonical]){atomicAnd(c[755],~(1u<<1u));fail(35u);}}}}
 void audit(uint bit){syncAll();if(lane==0u&&c[514]==0u)c[755]|=1u<<bit;}
 void rootInputAudit(){if(lane==0u){if(c[128]!=1u||c[255]!=0xc0de1301u)fail(2u);uint hash[8];gpuSha(0u,128u,hash);for(uint i=0u;i<8u;++i)if(hash[i]!=c[76u+i]||hash[i]!=c[168u+i])fail(3u);gpuSha(1u,128u,hash);for(uint i=0u;i<8u;++i)if(hash[i]!=c[1296u+i]||hash[i]!=c[200u+i])fail(3u);}audit(17u);}
 void baseIdentityAudit(){if(lane==0u){if(baseState[0]!=1395863879u||baseState[1]!=1u||baseState[2]!=1177760071u||baseState[3]!=uL[4]||baseState[4]!=nx()||baseState[5]!=ny()||baseState[6]!=c[6])fail(2u);for(uint i=0u;i<8u;++i)if(baseState[32u+i]!=c[76u+i])fail(3u);for(uint i=0u;i<2u;++i)if(c[222]==0u&&(baseState[12u+i]!=c[146u+i]||baseState[14u+i]!=c[148u+i]))fail(2u);for(uint i=0u;i<2u;++i)if(baseState[8u+i]!=c[140u+i]||baseState[10u+i]!=c[144u+i]||baseState[16u+i]!=c[160u+i])fail(2u);}audit(0u);audit(19u);}
@@ -90,11 +94,11 @@ void main(){lane=gl_LocalInvocationID.x;if(lane==0u){c[752]=uIndex;errorAtEntry=
  if(uOp==64u){coldInitialize();return;}
  if(uOp==65u){coldAudit();return;}
  if(uOp==OP_ROOT_INIT||uOp==OP_SOURCE_INIT){rootInit();return;}if(lane==0u&&(uOp<16u||uOp>=50u)){bool nooped=uOp>=12u&&uOp<=15u&&(selectedAtEntry!=0u||(c[763]!=0u&&uJ<c[763]));if(nooped)c[523]++;else c[522]++;if(uJ!=0u){uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r+(nooped?9u:8u)]++;}}
- if(uOp==OP_ROOT_REPLAY_BEGIN){if(lane==0u){c[772]=c[755];c[2048u+5u]=32u|(c[518]!=0u?1u:8u);c[2048u+1023u]=0xc0de1301u;uint e=c[514];if(e==0u||e==12u||e==13u||e==14u||e==15u||e==23u){c[514]=0u;c[513]=0u;}}return;}
- if(uOp==OP_TRIAL_GATE){if(lane==0u){c[521]|=1u<<uScope;uint error=c[514];bool retry=error==0u||error==12u||error==13u||error==14u||error==15u||error==23u;if(c[518u+uScope]==0u&&retry){c[514]=0u;c[513]=0u;c[526]=0u;}c[515]=uScope;c[516]=uJ;c[768u+uScope]=uint(c[763]!=0u&&uJ<c[763]);uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r]=uJ;if(c[768u+uScope]!=0u||selectedAtEntry!=0u){c[r+1u]=32u|(c[768u+uScope]!=0u?16u:2u);c[r+63u]=0xc0de1301u;}}return;}
+ if(uOp==OP_ROOT_REPLAY_BEGIN){if(lane==0u){c[772]=c[755];c[2048u+5u]=32u|(c[518]!=0u?1u:8u);c[2048u+1023u]=0xc0de1301u;uint e=c[514];if(e==0u||e==12u||e==13u||e==14u||e==15u||e==23u){resetFault();}}return;}
+ if(uOp==OP_TRIAL_GATE){if(lane==0u){c[521]|=1u<<uScope;uint error=c[514];bool retry=error==0u||error==12u||error==13u||error==14u||error==15u||error==23u;if(c[518u+uScope]==0u&&retry){resetFault();c[526]=0u;}if(c[514]==0u){c[515]=uScope;c[516]=uJ;}c[768u+uScope]=uint(c[763]!=0u&&uJ<c[763]);uint r=traceBase()+64u+64u*(uJ==1u?0u:(uJ==2u?1u:2u));c[r]=uJ;if(c[768u+uScope]!=0u||selectedAtEntry!=0u){c[r+1u]=32u|(c[768u+uScope]!=0u?16u:2u);c[r+63u]=0xc0de1301u;}}return;}
  bool selected=selectedAtEntry!=0u;
- if(uOp==OP_TRIAL_RESET_FROM_BASE){if(!selected&&c[768u+uScope]==0u)copyBase();return;}
- if(uOp==OP_TRIAL_INIT){if(!selected&&c[768u+uScope]==0u&&lane==0u){for(uint i=32u;i<80u;++i)c[512u+i]=baseState[80u+i-32u];c[554]=c[555]=0u;for(uint i=0u;i<20u;++i)c[688u+i]=0u;if((baseState[18]%120u+16u*(baseState[19]%120u))%120u==0u){for(uint i=36u;i<80u;++i)c[512u+i]=0u;}for(uint i=160u;i<192u;++i)outState[i]=0u;c[755]&=(1u<<0u)|(1u<<17u)|(1u<<19u);}return;}
+ if(uOp==OP_TRIAL_RESET_FROM_BASE){if(!selected&&c[768u+uScope]==0u&&errorAtEntry==0u)copyBase();return;}
+ if(uOp==OP_TRIAL_INIT){if(!selected&&c[768u+uScope]==0u&&errorAtEntry==0u&&lane==0u){for(uint i=32u;i<80u;++i)c[512u+i]=baseState[80u+i-32u];c[554]=c[555]=0u;for(uint i=0u;i<20u;++i)c[688u+i]=0u;if((baseState[18]%120u+16u*(baseState[19]%120u))%120u==0u){for(uint i=36u;i<80u;++i)c[512u+i]=0u;}for(uint i=160u;i<192u;++i)outState[i]=0u;c[755]&=(1u<<0u)|(1u<<17u)|(1u<<19u);}return;}
  if(uOp==OP_SOURCE_ACTUAL_COPY||uOp==OP_SOURCE_REPLAY_COPY){copyBase();return;}
  if(uOp==OP_SOURCE_ACTUAL_INSTALL||uOp==OP_SOURCE_REPLAY_INSTALL){drive();syncAll();sourceInstall();return;}
  if(uOp==OP_ROOT_SCOPE_COMPARE||uOp==OP_SOURCE_COMPARE){if(lane==0u){c[10240u+5u]=32u|(c[519]!=0u?1u:8u);c[10240u+1023u]=0xc0de1301u;c[773]=c[755];c[802]=uint(c[518]!=c[519]);}syncAll();for(uint i=lane;i<uL[4];i+=64u)if(baseState[i]!=outState[i])atomicOr(c[802],1u);for(uint i=lane;i<8192u;i+=64u){bool scopeWord=(i==4u)||(i>=1024u&&i%1024u==4u);if(!scopeWord&&c[2048u+i]!=c[10240u+i])atomicOr(c[802],1u);}syncAll();if(lane==0u){if(c[802]!=0u){fail(18u);}else if(c[514]==0u){c[755]=(c[772]&c[773])|(1u<<13u);c[756]=3u;}}return;}
@@ -135,9 +139,10 @@ void main(){lane=gl_LocalInvocationID.x;if(lane==0u){c[752]=uIndex;errorAtEntry=
  else if(uOp==OP_ENFORCE_NORMAL_FACES){for(uint f=lane;f<nf();f+=64u){bool v=f>=nuFaces();uint z=v?f-nuFaces():f;if(!activeFace(f)){uint alias=v?256u+nuFaces()+z%nx():256u+(z/(nx()+1u))*(nx()+1u);outState[256u+f]=((!v&&periodicX())||(v&&periodicY()))?outState[alias]:0u;}}}
  else if(uOp==OP_FLOW_AUDIT_FINAL){
 #ifdef G13_TEST_HOOKS
- if(lane==0u&&uTestHook==5u)outState[256]=floatBitsToUint(.25);syncAll();
+ if(lane==0u&&uTestHook==5u)outState[256]=floatBitsToUint(.25);
+ if(lane==0u&&uTestHook==6u&&(periodicX()||periodicY())){uint face=periodicX()?nx():nuFaces()+ny()*nx();uint canonical=periodicX()?0u:nuFaces();uint expected=outState[256u+canonical];outState[256u+face]=expected^1u;c[828]=1u;c[829]=uScope;c[830]=uJ;c[831]=uMicro;c[832]=face;c[833]=expected;c[834]=expected^1u;c[835]=uOp;}syncAll();
 #endif
-actualFlowAudit();projectionLedger();audit(5u);audit(6u);audit(7u);audit(8u);}
+aliasAudit();syncAll();actualFlowAudit();projectionLedger();audit(5u);audit(6u);audit(7u);audit(8u);}
  else if(uOp==OP_TRACER_ADVECT)tracerAdvect();
  else if(uOp==OP_TRACER_CHECK){fieldAudit();audit(12u);}
  else if(uOp==OP_ENERGY_LEDGER_PARTIAL)wallLedger(true);

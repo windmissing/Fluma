@@ -273,11 +273,44 @@ std::string Cold::Build(Controller &controller, bool full,
                                  Quote(controller.BaseToken()) + "}");
   auto diagnosticJson = controller.RootReceipt();
   diagnosticJson.pop_back();
-  uint32_t mathStatus = h[ctrlOffset + 751];
+  const auto *global = h + ctrlOffset;
+  const uint32_t firstMath = global[750], aggregateMath = global[751],
+                 firstSeal = global[766];
+  const bool firstObserved =
+      sealed && controller.GpuTailObserved() && global[513] < 64u &&
+      firstSeal == 0xc0de1311u && U64(global + 733) == U64(permit.data() + 8) &&
+      global[514] == rawTail[7] && global[513] == rawTail[6] &&
+      global[515] == rawTail[122] && global[516] == rawTail[123] &&
+      global[517] == rawTail[124];
+  const char *reason = controller.RootError() == 17u
+                           ? (!firstObserved      ? "MATH_DETAIL_NOT_OBSERVED"
+                              : (firstMath & ~7u) ? "UNSUPPORTED_MATH_STATUS"
+                              : firstMath         ? "NUMERIC_DOMAIN"
+                                                  : "NUMERIC_OVERFLOW")
+                       : controller.RootError() ? "NON_MATH_FIRST_ERROR"
+                                                : "NONE";
   diagnosticJson +=
-      ",\"gpuMathStatus\":" + std::to_string(mathStatus) +
-      ",\"gpuMathReason\":" + Quote(mathStatus ? "NUMERIC_DOMAIN" : "NONE") +
-      "}";
+      ",\"firstMathStatus\":" +
+      (firstObserved ? std::to_string(firstMath) : "null") +
+      ",\"aggregateMathStatus\":" + std::to_string(aggregateMath) +
+      ",\"firstFaultDetailSeal\":" + std::to_string(firstSeal) +
+      ",\"firstFaultObserved\":" + (firstObserved ? "true" : "false") +
+      ",\"firstCause\":" + Quote(reason) + ",\"firstFaultTuple\":[";
+  for (size_t i = 0; i < 7; i++) {
+    if (i)
+      diagnosticJson += ',';
+    diagnosticJson += std::to_string(i < 2    ? global[733 + i]
+                                     : i == 2 ? global[513]
+                                     : i < 6  ? global[512 + i]
+                                              : global[514]);
+  }
+  diagnosticJson += "],\"aliasInjection\":[";
+  for (size_t i = 0; i < 8; i++) {
+    if (i)
+      diagnosticJson += ',';
+    diagnosticJson += std::to_string(global[828 + i]);
+  }
+  diagnosticJson += "]}";
   bool diagnosticReceipt = Receipt(h + 5504, 256, 6, diagnosticJson);
   bool receipts =
       Receipt(h + 2432, 512, 1, controller.Gpu().Capabilities()) &&
@@ -306,7 +339,18 @@ std::string Cold::Build(Controller &controller, bool full,
       mathReceipt << ',';
     mathReceipt << h[ctrlOffset + 2048 + 768 + i];
   }
-  mathReceipt << "],\"globalPrecisionProof\":\"NOT_MEASURED\"}";
+  mathReceipt << "],\"firstFaultScalarObserved\":"
+              << (firstObserved && firstMath ? "true" : "false")
+              << ",\"firstFaultScalarWords\":[";
+  if (firstObserved && firstMath)
+    for (size_t i = 0; i < 17; i++) {
+      if (i)
+        mathReceipt << ',';
+      mathReceipt << global[733 + i];
+    }
+  mathReceipt
+      << "],\"argumentOrigin\":\"OBSERVED_IF_FLAGGED_ELSE_DERIVED_FROM_CONFIG_"
+         "AND_ACCEPTED_TICK\",\"globalPrecisionProof\":\"NOT_MEASURED\"}";
   if (!Receipt(h + 2944, 512, 2, mathReceipt.str())) {
     raw.reset();
     slot->credit.Reset();

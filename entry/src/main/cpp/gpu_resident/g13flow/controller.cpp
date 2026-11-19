@@ -26,7 +26,8 @@ uint32_t Controller::Configure(const Config &c, const Seed &seed,
     return 2;
   if ((seed.testHook || seed.diagnostic == 3) && !PipelineTestHooks())
     return 4;
-  if (seed.testHook > 5 || seed.diagnostic > 3 ||
+  if ((seed.testHook && seed.diagnostic!=3)||(seed.testHook==6&&c[6]!=2&&c[6]!=3))return 5;
+  if (seed.testHook > 6 || seed.diagnostic > 3 ||
       (!seed.diagnostic && seed.forcedJ) ||
       (seed.forcedJ != 0 && seed.forcedJ != 1 && seed.forcedJ != 2 &&
        seed.forcedJ != 4) ||

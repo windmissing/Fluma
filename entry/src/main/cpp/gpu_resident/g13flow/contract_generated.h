@@ -4810,8 +4810,8 @@ inline constexpr Profile kProfiles[]={
 };
 inline constexpr char kHash_layoutSHA[]="b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9";
 inline constexpr char kHash_gatesSHA[]="d6bbb2fe320786174cd3c81f84727f304b5fa73671f5fd83a90fbef9dff6dd48";
-inline constexpr char kHash_mathSHA[]="ee12f34b54239a8c7c395e5aa30aadcd95683be9d4f72e8f92cc203e92f68829";
-inline constexpr char kHash_algorithmSHA[]="9bbb3df8eee70de03e156de8d2ec919e37515c999e177f4bdf63d195d1cfd48d";
+inline constexpr char kHash_mathSHA[]="1629bffe555eae801007af8ae7bc74e1a677b0b7a519853ff484a1f535d8a968";
+inline constexpr char kHash_algorithmSHA[]="06b8881107a867dce309212532edadf823b679aafe0465ccf5933a2ab331395e";
 const char* PipelineSource();
 const char* PipelineSha();
 bool PipelineTestHooks();

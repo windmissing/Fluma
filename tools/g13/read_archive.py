@@ -156,6 +156,42 @@ def read(path,receipt_path=None):
         require(hashlib.sha256(base_receipt['acceptedBaseToken'].encode('utf8')).hexdigest()==hex_words(permit[80:88]),'BASE_TOKEN_SHA')
         native=tagged_receipt(raw,5504*4,256,6)
         require(exact_id(native['nonce'])==pair(permit,8) and exact_id(native['deadlineNs'])==pair(permit,38),'NATIVE_ROOT_ID')
+        gpu=words_at(raw,ctrl_start+512*4,256)
+        first=gpu[238];aggregate=gpu[239];seal=gpu[254]
+        require(first&~7==0 and aggregate&~7==0,'UNSUPPORTED_MATH_STATUS')
+        raw_tail=words_at(raw,ctrl_start+73728,256)
+        gpu_sealed=raw_tail[:4]==(table['magic']['tail'],1,table['magic']['profile'],256) and raw_tail[255]==SEAL and pair(raw_tail,8)==pair(permit,8)
+        expected_observed=gpu_sealed and native['gpuTailAvailable'] and gpu[1]<64 and seal==0xc0de1311 and pair(gpu,221)==pair(permit,8) and (gpu[2],gpu[1],gpu[3],gpu[4],gpu[5])==(raw_tail[7],raw_tail[6],raw_tail[122],raw_tail[123],raw_tail[124])
+        require(native['firstFaultObserved']==expected_observed and native['firstMathStatus']==(first if expected_observed else None) and native['aggregateMathStatus']==aggregate and native['firstFaultDetailSeal']==seal,'FIRST_MATH_BINDING')
+        require(native['firstFaultTuple']==[gpu[221],gpu[222],gpu[1],gpu[3],gpu[4],gpu[5],gpu[2]],'FIRST_FAULT_COORDINATES')
+        expected_reason=('MATH_DETAIL_NOT_OBSERVED' if not expected_observed else 'NUMERIC_DOMAIN' if first else 'NUMERIC_OVERFLOW') if native['nativeError']==17 else ('NON_MATH_FIRST_ERROR' if native['nativeError'] else 'NONE')
+        require(native['firstCause']==expected_reason,'FIRST_CAUSE_CLASSIFICATION')
+        if expected_observed and gpu[2]!=17:
+            require(first==0,'NON_MATH_FIRST_DETAIL')
+        math=tagged_receipt(raw,2944*4,512,2)
+        scalar_observed=bool(expected_observed and first)
+        require(math['firstFaultScalarObserved']==scalar_observed and math['firstFaultScalarWords']==(list(gpu[221:238]) if scalar_observed else []),'MATH_SCALAR_ORIGINALS')
+        if scalar_observed:
+            require(gpu[223] in (1,2,3,4) and gpu[224]&~15==0,'MATH_SCALAR_SCHEMA')
+            for flag,start,count in ((1,225,4),(2,234,4),(4,229,4),(8,233,1)):
+                if not gpu[224]&flag: require(not any(gpu[start:start+count]),'UNOBSERVED_SCALAR_BYTES')
+        alias=words_at(raw,ctrl_start+828*4,8)
+        require(native['aliasInjection']==list(alias),'ALIAS_INJECTION_BINDING')
+        if alias[0]:
+            require(alias[0]==1 and alias[6]!=alias[5] and alias[1]<2 and alias[2] in (1,2,4) and alias[3]<alias[2],'ALIAS_FAULT_COORDINATES')
+            require(header[5]==1,'TEST_FAULT_NOT_CURRENT')
+            if native['gpuTailAvailable'] and native['nativeError']==35:
+                require(raw_tail[38]&2==0 and pair(raw_tail,34)==pair(permit,88),'ALIAS_GATE_OR_TIME')
+                nx,ny=header[96],header[97];u_faces=(nx+1)*ny;face=alias[4]
+                require(header[98] in (2,3) and 0<=face<u_faces+nx*(ny+1),'ALIAS_FACE_RANGE')
+                if face<u_faces:
+                    require(face%(nx+1)==nx,'ALIAS_U_FACE')
+                    canonical_face=(face//(nx+1))*(nx+1)
+                else:
+                    require(header[98]==2 and (face-u_faces)//nx==ny,'ALIAS_V_FACE')
+                    canonical_face=u_faces+(face-u_faces)%nx
+                candidate=next(d for d,e in zip(descriptors,directory) if e['name']=='CANDIDATE')
+                require(words_at(raw,pair(candidate,6)+(256+face)*4,1)[0]==alias[6] and words_at(raw,pair(candidate,6)+(256+canonical_face)*4,1)[0]==alias[5],'ALIAS_ORIGINAL_BITS')
         capsule=ctrl_start+4096
         for at,length,tag in ((0,64,8),(320,128,9),(448,128,10),(576,128,11),(704,128,12),(960,64,13)):
             tagged_receipt(raw,capsule+at*4,length,tag)

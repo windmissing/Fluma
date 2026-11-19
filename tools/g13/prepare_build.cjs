@@ -22,3 +22,5 @@ const pkg=JSON.parse(fs.readFileSync(path.join(out,'entry/oh-package.json5'),'ut
 console.log(out);
 
 const entryProfilePath=path.join(out,'entry/build-profile.json5');const entryProfile=JSON.parse(fs.readFileSync(entryProfilePath,'utf8'));entryProfile.buildOption.sourceOption??={};entryProfile.buildOption.sourceOption.workers??=[];const g13Worker='./src/main/ets/workers/G13ColdWorker.ets';if(!entryProfile.buildOption.sourceOption.workers.includes(g13Worker))entryProfile.buildOption.sourceOption.workers.push(g13Worker);fs.writeFileSync(entryProfilePath,JSON.stringify(entryProfile,null,2)+'\n');
+
+copy(path.join(root,"docs/architecture-T628-math-domain-v1.json"),path.join(out,"docs/architecture-T628-math-domain-v1.json"));

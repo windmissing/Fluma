@@ -1,0 +1,99 @@
+{
+  "schema": "T632_IMPLEMENTATION_WIRE_V1",
+  "contract": "docs/architecture-T628-math-domain-v1.json",
+  "hashes": {
+    "layoutSHA": "b9390359ff66315b2d73506c4bf7001533f9f104b6780988ed3f0aa6b5e7cab9",
+    "gatesSHA": "d6bbb2fe320786174cd3c81f84727f304b5fa73671f5fd83a90fbef9dff6dd48",
+    "mathSHA": "1629bffe555eae801007af8ae7bc74e1a677b0b7a519853ff484a1f535d8a968",
+    "algorithmSHA": "06b8881107a867dce309212532edadf823b679aafe0465ccf5933a2ab331395e"
+  },
+  "firstFault": {
+    "rootNonce": [
+      733,
+      734
+    ],
+    "functionId": 735,
+    "observedFlags": 736,
+    "argument0": [
+      737,
+      738,
+      739,
+      740
+    ],
+    "softResult": [
+      741,
+      742,
+      743,
+      744
+    ],
+    "roundedF32": 745,
+    "argument1": [
+      746,
+      747,
+      748,
+      749
+    ],
+    "firstMathStatus": 750,
+    "aggregateMathStatus": 751,
+    "sealWord": 766,
+    "seal": 3235779345,
+    "op": 513,
+    "error": 514,
+    "scope": 515,
+    "J": 516,
+    "micro": 517
+  },
+  "flags": {
+    "1": "arg0",
+    "2": "arg1",
+    "4": "softResult",
+    "8": "roundedF32"
+  },
+  "functionIds": {
+    "1": "softDiv",
+    "2": "softBinary64 raw64 in arg0 low words",
+    "3": "softFloat",
+    "4": "softExp"
+  },
+  "unobservedBytes": "zero; do not infer actual operands",
+  "aliasInjection": {
+    "words": [
+      828,
+      829,
+      830,
+      831,
+      832,
+      833,
+      834,
+      835
+    ],
+    "names": [
+      "active",
+      "scope",
+      "J",
+      "micro",
+      "flatFace",
+      "expectedBits",
+      "actualBits",
+      "opcode"
+    ],
+    "stateWord": "256+flatFace"
+  },
+  "exp": {
+    "totalRelativeGate": "2^-20",
+    "softwareApproximationReservation": "2^-90",
+    "conversionGate": "(2^-20-2^-90)/(1+2^-90)",
+    "qualification": "Engineering conservative reservation; not an executed global precision proof"
+  },
+  "derivedArguments": {
+    "origin": "config and accepted tick only when raw observed flag is absent",
+    "formulaSource": [
+      "docs/algorithm-G13-pure-fluid-gpu-v1.md",
+      "entry/src/main/cpp/gpu_resident/g13flow/drive.glsl"
+    ],
+    "actualOperandClaim": false
+  },
+  "newGpuBanks": 0,
+  "newDispatches": 0,
+  "runtimeExecuted": false
+}

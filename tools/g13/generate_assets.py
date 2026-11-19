@@ -48,6 +48,14 @@ def generate(out, hooks=False):
             raise ValueError('approved input fingerprint: '+item['path'])
         deps[item['path']]=sha(data)
     l, d, m = (tables[k] for k in ('layout', 'dispatch', 'math'))
+    domain_path=ROOT/'docs/architecture-T628-math-domain-v1.json'
+    domain_raw=domain_path.read_bytes();domain=json.loads(domain_raw)
+    if m.get('domainContract')!=domain or m['mathSHA']!=tables['engineering']['hashes']['mathSHA']:
+        raise ValueError('T628 domain/math identity mismatch')
+    if domain['firstFault']['seal']!=3235779345 or domain['publicError']['code']!=17:
+        raise ValueError('unsupported first-fault contract')
+    deps[str(domain_path.relative_to(ROOT))]=sha(domain_raw)
+
     if len(d['quantum']) != 820 or len(d['source']) != 16 or len(set(d['opcodes'].values())) != 64:
         raise ValueError('dispatch contract')
     h = ['#pragma once', '#include <array>', '#include <cstdint>', 'namespace grs::g13 {',

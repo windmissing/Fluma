@@ -3,6 +3,7 @@ get_filename_component(G13_REPO_DIR "${G13_MODULE_DIR}/../../../../../.." ABSOLU
 find_program(G13_PYTHON NAMES python python3 REQUIRED)
 file(GLOB G13_INPUTS CONFIGURE_DEPENDS "${G13_MODULE_DIR}/*.glsl" "${G13_MODULE_DIR}/*.comp" "${G13_MODULE_DIR}/*.vert" "${G13_MODULE_DIR}/*.frag" "${G13_REPO_DIR}/docs/architecture-T607-g13-*-v1.json")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${G13_INPUTS} "${G13_REPO_DIR}/tools/g13/generate_assets.py")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${G13_REPO_DIR}/docs/architecture-T628-math-domain-v1.json")
 set(G13_ASSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/g13_assets")
 set(G13_GENERATE_FLAGS)
 if(GRS_G13_TEST_HOOKS)

@@ -218,12 +218,13 @@ class App {
       if (!fault.empty()) {
         if (!PipelineTestHooks() || seed.diagnostic != 3)
           return Result("g13DiagnosticBegin", "TEST_HOOKS_DISABLED", 4);
-        seed.testHook = fault == "PRESSURE_DISABLED"        ? 1
-                        : fault == "PRESSURE_SIGN_REVERSED" ? 2
-                        : fault == "RHS_INCOMPATIBLE"       ? 3
-                        : fault == "GAUGE_OFFSET"           ? 4
-                        : fault == "NORMAL_WALL"            ? 5
-                                                            : 6;
+        seed.testHook = fault == "PRESSURE_DISABLED"          ? 1
+                        : fault == "PRESSURE_SIGN_REVERSED"   ? 2
+                        : fault == "RHS_INCOMPATIBLE"         ? 3
+                        : fault == "GAUGE_OFFSET"             ? 4
+                        : fault == "NORMAL_WALL"              ? 5
+                        : fault == "PERIODIC_ALIAS_DUPLICATE" ? 6
+                                                              : 7;
       }
       Identity proposed = id_;
       ++proposed.run;
