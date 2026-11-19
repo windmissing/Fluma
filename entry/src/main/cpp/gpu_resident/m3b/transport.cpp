@@ -68,7 +68,7 @@ TransportResultV5 TransportV5::Create(const Profile& p,const ControlIdentityV5& 
  // no-op/JIT warmup, never an accepted SOURCE/quantum or a device deadline
  // claim. Binding0 remains immutable and all scratch outputs are discarded.
  for(uint32_t n=0;n<20;++n){
-  Use(n);Common(n==0);U("uPass",0);U("uM3Role",1);U("uM3RootPass",0);
+  Use(n);U("uKappa",0);Common(n==0);U("uPass",0);U("uM3Role",1);U("uM3RootPass",0);
   const uint32_t failed=1;const GLuint work=buffers_[n==0?15:16];
   glBindBuffer(GL_SHADER_STORAGE_BUFFER,work);glBufferSubData(GL_SHADER_STORAGE_BUFFER,0,4,&failed);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER,0,buffers_[0]);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,1,buffers_[1]);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,2,work);glBindBufferBase(GL_SHADER_STORAGE_BUFFER,3,buffers_[8]);
@@ -147,12 +147,12 @@ TransportResultV5 TransportV5::Begin(const RootPermitV5& permit,int32_t target,c
   const GLuint dst=fullBuffers_[22+root*2];size_t at=0;
   const size_t starts[]={0,96,old_->sourceLedger.begin,profile_->source[0].begin/4,profile_->source[1].begin/4};
   const size_t counts[]={96,4096*64,4096*16,4096*512,4096*32};
-  for(size_t j=0;j<5;++j){Copy(buffers_[15],starts[j],dst,at,counts[j]);at+=counts[j];}Barrier();if(!Good())return TransportResultV5::GL_FAILED;baseMask_|=1u<<root;enteredMask_|=1u<<root;
+  for(size_t j=0;j<5;++j){Copy(buffers_[15],starts[j],dst,at,counts[j]);at+=counts[j];}Barrier();if(!Good())return TransportResultV5::GL_FAILED;baseMask_|=1u<<root;
   pendingFullMask_=0;
  }
  auxStart_=permit.frame==auxFrame_?auxEnd_:0;
  evidence_={};tail_={};nextPass_=0;mapped_=false;sourcePrefix_=sourcePrefix;dedupPrefix_=dedupPrefix;
- pendingRoot_={};pendingRoot_.permit=permit;pendingRoot_.input=liftInput_;pendingRoot_.quota=pendingQuota_;pendingRoot_.started=pendingStarted_;pendingRoot_.sourceGeneration=pendingSourceGeneration_;pendingRoot_.entered=true;
+ auto entry=pendingRoot_.cursor;auto entryScope=pendingRoot_.scope;pendingRoot_={};pendingRoot_.cursor=entry;pendingRoot_.scope=entryScope;pendingRoot_.permit=permit;pendingRoot_.input=liftInput_;pendingRoot_.quota=pendingQuota_;pendingRoot_.started=pendingStarted_;pendingRoot_.sourceGeneration=pendingSourceGeneration_;pendingRoot_.entered=false;
  if(captureArmed_){const auto root=permit.kind==1?0:permit.ordinal;captureRoots_[root]=pendingRoot_;if(packet)captureSource_=*packet;}
 
  if(permit.kind==1){
@@ -224,7 +224,7 @@ TransportResultV5 TransportV5::Pump(){
   while(nextPass_<count&&submitted<10&&Now()-begin<8000000){
    if(!Allowed())return Denied();
    if(permit_.kind==1)SourcePass(nextPass_);else QuantumPass(nextPass_);++nextPass_;++submitted;
-   if(!Good())return TransportResultV5::GL_FAILED;
+   if(!Good())return TransportResultV5::GL_FAILED;if(nextPass_==1){pendingRoot_.entered=true;pendingRoot_.cursor[15]|=2u;const uint32_t root=permit_.kind==1?0:permit_.ordinal;enteredMask_|=1u<<root;if(captureArmed_)captureRoots_[root]=pendingRoot_;}
   }
   if(!Allowed())return Denied();glFlush();if(!Good())return TransportResultV5::GL_FAILED;
   if(nextPass_!=count)return TransportResultV5::IN_PROGRESS;
@@ -259,6 +259,7 @@ void TransportV5::Release(bool current){
  if(current&&!busy_)captureGpu_.ReleaseAfterFenceDelete();else captureGpu_.ContextLost();
  captureArmed_=false;
  fence_=nullptr;buffers_={};fullBuffers_={};for(auto& p:programs_){if(p.id){programcache::Forget(p.id);if(current)glDeleteProgram(p.id);}p={};}
+ captureRoots_={};pendingRoot_={};acceptedRoot_={};captureSource_={};acceptedSource_={};
  ready_=busy_=mapped_=false;profile_=nullptr;old_=nullptr;context_=EGL_NO_CONTEXT;
 }
 }

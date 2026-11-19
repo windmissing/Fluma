@@ -1,0 +1,49 @@
+{
+  "schema": "T596_T619_DEVELOPER_DELIVERY_V1",
+  "task": "T596",
+  "implementation": "COMPLETE_RUNTIME_UNVALIDATED",
+  "testsRun": false,
+  "deviceUsed": false,
+  "readerExecuted": false,
+  "signedOrDeployed": false,
+  "buildLog": ".codex\\local-test\\t596-t619-final-build.txt",
+  "buildLogSHA": "629a16d384b711ba242059c439eb6589b268e4eaff356c3790d97a6e5429dbc2",
+  "HAP": {
+    "path": ".codex\\local-test\\t596-t614-delivery\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "sha256": "717e8650a608296eb3c1662281d0ccf17db305640e622c72257b65af53bfa37a"
+  },
+  "sourceSHA": {
+    "entry/src/main/cpp/gpu_resident/m3b/cold_identity.h": "5cb41b1111126c3c08dcc431835ceba1bf28c7d60e7539eaa19746e404be1604",
+    "entry/src/main/cpp/gpu_resident/m3b/transport.h": "a8245928f6ef4758bdc46771d123538ce1610dc2995b0c5f32e3cf2b1931340b",
+    "entry/src/main/cpp/gpu_resident/m3b/transport.cpp": "60ee3a3c97815ae1572a817176f8720e548f623150f5a5d58a1263712939d7db",
+    "entry/src/main/cpp/gpu_resident/m3b/controller.cpp": "cf7277b9606906ec56e3d9b6ae67902f208e09bc0d86817f870a73879bb55a04",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_capture.cpp": "a24d2364cfa6d656990507ce18ea9bb6bf5bca78b7483acacaba804a62d7b2ec",
+    "entry/src/main/cpp/gpu_resident/m3b/cold_contract.h": "d03c180837286313adea2bebd98d0fbb2001b0e5e71f7917217a95e0f3177401",
+    "entry/src/main/cpp/gpu_resident/m3b/compound_cursor.h": "ddcddf381d7dcb938ad1b0429270c99d2e6b2ed566cc2965c026374b7789352b",
+    "tools/v5/read_archive.py": "0872940caa155fcf07f816c5225bb02f0e05aa8e7825cf4c719ed1c84b77758b"
+  },
+  "identityContractSHA": "d50862d08b4727759a500e70725fdb38364b57401e3fc1917b0085fe00ed7296",
+  "metadata": {
+    "instances": 7,
+    "rawIncrementBytes": 2296,
+    "compiledStaticAssert": true,
+    "totalAccounting": "CaptureFixedMetadataBytes uses actual sizeof all seven objects and auxiliary fixed metadata"
+  },
+  "budgets": {
+    "additionalDispatch": 0,
+    "additionalHotMapBytes": 0,
+    "scopeCopies": 40,
+    "scopeCopyBytes": 5120,
+    "prefixBytes": 32768
+  },
+  "identity": {
+    "cursorWords": 64,
+    "scopeWords": 18,
+    "tokenPreimageBytes": 2920,
+    "capsuleBytes": 4096,
+    "effectiveWaterKappa": 0
+  },
+  "limitations": [
+    "No runtime capture/reader/physics/END_TO_END verdict; independent tester owns execution."
+  ]
+}

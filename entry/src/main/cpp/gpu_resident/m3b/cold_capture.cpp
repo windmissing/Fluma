@@ -36,7 +36,9 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
  if(!frame(3,state[144],22,0,state[157])||!frame(4,state[37],8,0,state[38])||!frame(5,state[180],8,size_t(profile_->quantumFrameRows)*64,state[179]))return false;
  if(state[38]){count[4].pFirst=1;count[4].pLast=state[38];}if(state[179]){count[5].aFirst=1;count[5].aLast=state[179];}
  const uint32_t roots=full?5:1;
- bool metadataComplete=true;
+ const CaptureRoot* identityRoot=full?nullptr:&acceptedRoot_;if(full)for(const auto& root:captureRoots_)if(root.entered){identityRoot=&root;break;}if(!identityRoot){captureFailure_="MISSING_REQUIRED_ROOT_IDENTITY";return false;}std::copy(identityRoot->scope.begin(),identityRoot->scope.end(),header+24);
+ auto* capsule=out+6688;identity619::Capsule(capsule,profile_->k,profile_->kw,config_,identityRoot->permit);if(!identity619::CapsuleValid(capsule)){captureFailure_="CONFIG_IDENTITY_INVALID";return false;}uint32_t capsuleSha[8];cold::Digest(capsule,1024,capsuleSha);
+
  for(uint32_t root=0;root<roots;++root){
   const auto& raw=full?captureRoots_[root]:acceptedRoot_;const uint32_t kind=full?(root?2u:1u):raw.permit.kind;auto* record=out+6048+128*root;
   record[0]=kind;record[7]=1;record[30]=2304+256*root;record[31]=3584+64*root;record[32]=3904+256*root;record[33]=5184+64*root;record[34]=full?11+2*root:UINT32_MAX;record[35]=full?12+2*root:UINT32_MAX;record[36]=3;record[37]=6+root;record[38]=full&&root?21+10*(root-1):UINT32_MAX;record[39]=full&&root?5:0;record[40]=1;record[41]=2;
@@ -50,9 +52,8 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
   cold::Put(record,8,permit.nonce);cold::Put(record,10,permit.sourceCommit);cold::Put(record,12,permit.physicsCommit);cold::Put(record,14,cold::Pair(tail.data(),18));cold::Put(record,16,cold::Pair(tail.data(),20));cold::Put(record,18,permit.frame);cold::Put(record,20,permit.plan);cold::Put(record,22,raw.started);cold::Put(record,24,permit.deadline);cold::Put(record,26,raw.checked);cold::Put(record,28,raw.sourceGeneration);
   std::copy(config_.lift.sha.begin(),config_.lift.sha.end(),record+42);cold::Digest(raw.input.data(),raw.input.size(),record+50);
   std::copy(tail.begin(),tail.end(),out+record[30]);std::copy(raw.input.begin(),raw.input.end(),out+record[31]);std::copy(raw.quota.begin(),raw.quota.end(),out+record[32]);
-  // rootCursor64, rootTokenSha and capsule wire/preimage await an explicit
-  // schema. They remain absent and prevent COMPLETE, never guessed bytes.
-  metadataComplete=false;
+  if(raw.cursor[0]!=826488146u||raw.cursor[1]!=1||raw.cursor[2]!=64||raw.cursor[3]!=3235775761u||raw.cursor[15]!=3||raw.scope!=identityRoot->scope||permit.shaderSha!=identityRoot->permit.shaderSha||permit.layoutSha!=identityRoot->permit.layoutSha||permit.angleSha!=identityRoot->permit.angleSha){captureFailure_="FROZEN_ROOT_IDENTITY_MISMATCH";return false;}
+  std::copy(raw.cursor.begin(),raw.cursor.end(),out+record[33]);identity619::Token(raw.scope.data(),raw.cursor.data(),raw.input.data(),raw.quota.data(),tail.data(),record,capsule,capsuleSha,record+58);
   if(full){for(uint32_t part=0;part<2;++part){const size_t i=11+2*root+part;if(!(baseMask_&(1u<<root))){captureFailure_="MISSING_REQUIRED_ANCHOR";return false;}if(!copy(fullBuffers_[21+2*root+part],0,layout.segments[i].bytes/4,layout.segments[i].begin/4))return false;fixed(i);}}
   auto& controls=count[6+root];controls.flags=2;
   if(kind==1)continue;
@@ -80,7 +81,7 @@ bool TransportV5::CaptureColdV5(uint32_t* out,size_t capacity,const QuotaSnapsho
   descriptor[0]=uint32_t(i+1);descriptor[1]=root;descriptor[2]=role;cold::Put(descriptor,4,rows.branch);descriptor[6]=uint32_t(i);cold::Put(descriptor,7,i?trace:0);cold::Put(descriptor,9,spec.begin);cold::Put(descriptor,11,spec.bytes);descriptor[13]=spec.stride;descriptor[14]=descriptor[16]=rows.sealed;descriptor[15]=rows.planned;descriptor[17]=rows.pFirst;descriptor[18]=rows.pLast;descriptor[19]=rows.aFirst;descriptor[20]=rows.aLast;descriptor[21]=rows.flags;descriptor[22]=!i||full&&i>=6&&i<=10?2:1;descriptor[31]=3235775745u;if(i)cold::Digest(out+spec.begin/4,spec.bytes/4,descriptor+23);
  }
  cold::PrefixDigest(out,out+279);
- if(!metadataComplete){captureFailure_="PREFIX_IDENTITY_CONTRACT_REQUIRED";return false;}
+
  stateWords=layout.words-256;captureFailure_="OK";return true;
 }
 }

@@ -48,6 +48,7 @@ ControlResult ControllerV5::Advance(uint64_t now,uint64_t frame,uint64_t control
   const uint32_t start=source?0:frame==owner_.eventFrame?owner_.eventEnd:0;
   const auto begun=owner_.BeginRootLocked(now,source?1:2,source?0:run_.quantumOrdinal+1,frame,control,uint32_t(frame&1u),start,publication,transport_.PlannedUpload(source?1:2),active_);
   if(begun!=ControlResult::OK)return begun;
+  transport_.SetCaptureRootIdentity(identity619::Freeze(active_,owner_),identity619::FreezeScope(ColdScopeLocked(),active_.identity.inputEpoch));
   transport_.SetCaptureQuota(clock_.SnapshotLocked(now,queue_.SizeLocked()!=0,run_),now,clock_.sourceControlGeneration);
   target=clock_.grant.target;prefix=owner_.sourcePrefix;dedup=owner_.dedupPrefix;frame_=frame;control_=control;
  }

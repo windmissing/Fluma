@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
 namespace grs::m3b {
-// Mirrored by the GPU rootCursor64. Reservations never authorize a reader.
+// Scope transaction cursor; separate from T619 native rootCursor64.
+// Reservations never authorize a reader.
 // A failed compound operation keeps its pending range for forensic export.
 struct CompoundCursor {
  uint32_t plannedPhysical=0,plannedAux=0,sealedPhysical=0,sealedAux=0;

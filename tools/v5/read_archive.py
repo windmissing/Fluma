@@ -71,6 +71,42 @@ def validate_meta(raw, directory, descriptors, root):
                     require(pair(event, 2) == pair(meta, 4) and event[ordinal] == meta[8] + n + 1, 'PHYSICAL_IDENTITY')
     require(not any(control[928:]), 'RAW_CAPTURE_LEAKED_IN_PUBLIC_CONTROL')
 
+def validate_identity(prefix,table):
+    capsule=prefix[6688:7712]
+    require(capsule[0]==1178809686 and capsule[2]==1024 and capsule[3]==3235775761,'IDENTITY_CONTRACT_MISSING')
+    require(capsule[1]==1,'UNSUPPORTED_IDENTITY_REVISION')
+    for field in table['fullColdConfigCapsule']['fields']:
+        if 'constant' in field: require(capsule[field['word']]==field['constant'],'CAPSULE_CONSTANT_OR_RESERVED:'+field['name'])
+    require(capsule[4:6]==prefix[8:10] and capsule[11]==int(prefix[7]==2),'CAPSULE_PROFILE')
+    for at,lo,hi in ((8,1,2**32-1),(9,0,2),(10,1,1),(12,0,1966080),(13,0,1006632960),(14,120,1073741824),(15,1,1073741824),(16,0,1073741824),(17,0,960),(18,0,960),(19,1,960),(20,0,605393),(22,0,62914560),(23,1,1048576),(24,1,7864320),(25,1,62914560),(26,1,67108864),(27,0,314572800)):
+        require(lo<=capsule[at]<=hi,'CAPSULE_RANGE:'+str(at))
+    require(capsule[58:66]==prefix[52:60] and capsule[34:42]==prefix[60:68] and capsule[42:50]==prefix[68:76] and not any(prefix[7712:]),'CAPSULE_BINDING_OR_TAIL')
+    capsule_sha=struct.unpack('<8I',hashlib.sha256(struct.pack('<1024I',*capsule)).digest())
+    for root in range(prefix[10]):
+        rec=prefix[6048+128*root:6176+128*root];cursor=prefix[5184+64*root:5248+64*root]
+        require(rec[30:34]==(2304+256*root,3584+64*root,3904+256*root,5184+64*root) and not any(rec[66:]),'ROOT_POINTERS_OR_RESERVED')
+        data=[prefix[rec[30]:rec[30]+256],prefix[rec[31]:rec[31]+64],prefix[rec[32]:rec[32]+256]]
+        if rec[7]==1:
+            require(not any(cursor) and not any(rec[1:7]) and not any(rec[8:30]) and not any(rec[42:66]) and all(not any(x) for x in data),'NOT_EXECUTED_IDENTITY')
+            continue
+        require(rec[7] in (2,4),'ROOT_STATE')
+        require(cursor[0]==826488146 and cursor[2]==64 and cursor[3]==3235775761,'IDENTITY_CONTRACT_MISSING')
+        require(cursor[1]==1,'UNSUPPORTED_IDENTITY_REVISION')
+        for field in table['rootCursor64']['fields']:
+            if 'constant' in field: require(cursor[field['word']]==field['constant'],'CURSOR_REVISION_OR_RESERVED:'+field['name'])
+        require(cursor[15]==3 and cursor[4]==rec[0] and cursor[58] in (0,1) and cursor[59] in (0,1),'CURSOR_AUTHORIZATION')
+        for a,b in ((16,8),(18,20),(26,10),(28,12),(32,24)):
+            require(pair(cursor,a)==pair(rec,b),'CURSOR_RECORD_ID')
+        for a,b in ((34,28),(38,30),(40,40),(42,34),(44,38),(50,32)):
+            require(pair(cursor,a)==pair(prefix,b),'CURSOR_SCOPE')
+        require(rec[42:50]==capsule[58:66] and hashlib.sha256(struct.pack('<64I',*data[1])).digest()==struct.pack('<8I',*rec[50:58]),'ROOT_INPUT_OR_PARAMETER_SHA')
+        preimage=(827609653,1)+prefix[24:42]+cursor+data[1]+data[2]+data[0]+rec[:30]+rec[42:50]+capsule[42:50]+capsule[34:42]+capsule[50:58]+capsule_sha
+        require(len(preimage)==730 and hashlib.sha256(struct.pack('<730I',*preimage)).digest()==struct.pack('<8I',*rec[58:66]),'ROOT_TOKEN_SHA')
+        require(rec[7]!=2 or prefix[12]&1,'FORENSIC_ROOT_FLAG')
+    require(not any(prefix[6048+128*prefix[10]:6688]),'UNUSED_ROOT_RECORDS')
+    for start,stride in ((2304,256),(3584,64),(3904,256),(5184,64)):
+        require(not any(prefix[start+stride*prefix[10]:start+stride*5]),'UNUSED_ROOT_RAW_SLOTS')
+
 def read_archive(path):
     table = json.loads((ROOT / 'docs/architecture-T552-v5-segment-wire-v2.json').read_text(encoding='utf8'))
     with tempfile.TemporaryFile() as raw, path.open('rb') as lines:
@@ -83,7 +119,9 @@ def read_archive(path):
         file_bytes = 0
         directory = None
         cursor_segment = 0
-        for line in lines:
+        while True:
+            line=lines.readline(16385)
+            if not line: break
             require(len(line) <= 16384 and line.endswith(b'\n'), 'JSONL_RECORD_BOUND')
             page = json.loads(line)
             if page.get('schema') == 'T535_V5_ARCHIVE_MANIFEST_V2':
@@ -98,6 +136,8 @@ def read_archive(path):
                 profile = next((p for p in table['profiles'] if (p['K'], p['Kw']) == (page['K'], page['Kw'])), None)
                 require(profile is not None, 'PROFILE')
                 directory = profile['fullDescriptors' if page['mode'] == 2 else 'rootDescriptors']
+                expected_pages=1+sum((d['capacityRows']+(1024//d['fixed']['strideWords'])-1)//(1024//d['fixed']['strideWords']) for d in directory)
+                require(page['pages']==expected_pages,'PAGE_CAPACITY_BOUND')
                 require(page['segmentCount'] == len(directory) and int(page['capacityBytes']) == sum(s['fixed']['byteLength'] for s in directory) and page.get('words') == [], 'SUMMARY_DIRECTORY')
             else:
                 for key in ('requestId', 'traceId', 'scope', 'mode', 'K', 'Kw', 'pages'):
@@ -115,6 +155,7 @@ def read_archive(path):
                 offset += len(data)
                 if offset == segment['byteOffset'] + segment['byteLength']:
                     cursor_segment += 1
+            require(count<summary['pages'],'EXCESS_PAGES')
             pages_sha.update(line)
             file_bytes += len(line)
             count += 1
@@ -146,9 +187,10 @@ def read_archive(path):
         if summary['mode'] == 2:
             for root in range(1, 5):
                 validate_meta(raw, directory, descriptors, root)
-        # The remaining undefined cursor64/config-capsule/root-token preimage
-        # is a real producer contract prerequisite, never defaulted to zero.
-        return {'revision': 'T596_V5_ARCHIVE_READER_V2', 'state': 'PREFIX_IDENTITY_CONTRACT_REQUIRED', 'knownContainerAndMeta2': 'CONSISTENT', 'physicsVerdict': 'NOT_EVALUATED', 'productPass': False, 'traceId': summary['traceId'], 'mode': summary['mode'], 'bytes': offset}
+        identity_table=json.loads((ROOT/'docs/architecture-T619-v5-public-identity-v1.json').read_text(encoding='utf8'))
+        validate_identity(prefix,identity_table)
+        require(bool(prefix[12]&1)==(manifest['state']=='FORENSIC_INCOMPLETE'),'MANIFEST_FORENSIC_STATE')
+        return {'revision': 'T596_V5_ARCHIVE_READER_V2', 'state': manifest['state'], 'knownContainerAndMeta2': 'CONSISTENT', 'physicsVerdict': 'NOT_EVALUATED', 'productPass': False, 'traceId': summary['traceId'], 'mode': summary['mode'], 'bytes': offset}
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

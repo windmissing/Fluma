@@ -1,3 +1,15 @@
+# 2026-11-19 T619 接续完成
+
+T619 正式合同已消费，原 PREFIX_IDENTITY_CONTRACT_REQUIRED 发布阻断已移除。入口锁内冻结 RootPermit/ownerBefore 与原 scope18；最终授权后首个原业务 dispatch 成功提交才置 ENTERED，未进入不冒已执行；不拿结束 owner 反算入口。
+
+公开 rootCursor64、完整 4096B 配置胶囊及同根 INPUT64/quota/completion/record0..29 的 2920B LE32 流式 token 已接实际 writer。配置在 Transport 的单次 Create/Release 生命周期内不可变；Release 清七份旧根，禁止拿新配置补旧 accepted。自有 program 冷初始化明确将 uKappa 设0，不启用新水模型，不增加热上传/dispatch。
+
+Native 严验及有界 Python reader共同核 capsule/cursor magic/revision/seal/reserved、scope/root/input/参数/SHA 与 token；缺合同/未知版本具名拒绝，NOT_EXECUTED 原件槽全零，失败根保持 FORENSIC。仍保 Meta2/paired streams/BASE/SOURCE_CONTEXT、原预约与真实退休链。固定 metadata 七实例实际 sizeof 增量编译断言2296B，总量由既有 getter实际计账，非payload/诊断信用。未新增 GPU bank、dispatch、hot map；原40 copy/5120B保持。
+
+本卡开发、native/ArkTS/unsigned HAP编译打包完成，原 Python reader仅 py_compile 未执行。未跑测试或真机，未签名部署；不冒 FULL runtime/守恒/设备 PASS。最终原件与源码指纹见 `test/reports/t596/development-t619.json`；旧报告为当时历史，不覆盖其构建身份。
+
+---
+
 # T596 / T614 接续回执
 
 2026-11-18，developer。不测试、不用真机。T614入口合同已实施；整张T596仍未完成，状态看评论，FULL未开放，T594未据此解锁。

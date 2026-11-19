@@ -3,6 +3,7 @@
 #include "completion_gate.h"
 #include "source_queue_v5.h"
 #include "lift_input.h"
+#include "cold_identity.h"
 #include "../uniform_locations.h"
 #include "../cold_slot_broker.h"
 #include "../cold_protocol.h"
@@ -46,11 +47,13 @@ public:
  GLenum FirstGlError()const{return rawGl_;}
  bool CaptureColdV5(uint32_t* reserved,size_t capacity,const QuotaSnapshotV3&,size_t& stateWords,size_t& eventWords,uint64_t request=0,uint64_t trace=0,uint64_t created=0,const cold503::Scope* scope=nullptr);
  size_t CaptureFixedMetadataBytes()const{return sizeof(captureRoots_)+sizeof(pendingRoot_)+sizeof(acceptedRoot_)+sizeof(captureSource_)+sizeof(acceptedSource_)+sizeof(pendingQuota_)+sizeof(captureGrant_)+sizeof(pendingStarted_)+sizeof(pendingSourceGeneration_);}
+ static constexpr size_t CaptureIdentityMetadataBytes(){return 7*(sizeof(CaptureRoot)-sizeof(PreviousCaptureRoot));}
  bool ReserveFullCredit();bool ArmFullCapture();void RetireFullCapture();
  bool CaptureArmed()const{return captureArmed_;}
  bool CaptureStarted()const{return fullPlan_!=0;}
  void SetCaptureGrant(const PlanGrantV3& grant,bool source){captureGrant_=grant;captureSourceExpected_=source;}
  void SetCaptureQuota(const QuotaSnapshotV3& quota,uint64_t started,uint64_t sourceGeneration){pendingQuota_=quota;pendingStarted_=started;pendingSourceGeneration_=sourceGeneration;}
+ void SetCaptureRootIdentity(const identity619::Cursor& c,const identity619::Scope& s){pendingRoot_.cursor=c;pendingRoot_.scope=s;}
  void SealCaptureRoot(bool accepted,const QuotaSnapshotV3& quota);
  const char* CaptureModeState()const{return captureFailure_;}
 
@@ -73,9 +76,12 @@ private:
  const Profile* profile_=nullptr;const m2::Profile* old_=nullptr;WorkLayout layout_;ResidentBuffersV5 allocation_;
  m2::Profile oldStorage_{};uint32_t headerWord_=0;
  struct CaptureRoot {
+  identity619::Cursor cursor{};identity619::Scope scope{};
   RootPermitV5 permit{};LiftInput64 input{};Words256 completion{},quota{};
   NativeRootEvidence evidence{};uint64_t started=0,checked=0,sourceGeneration=0;bool entered=false,complete=false,accepted=false;
  };
+ struct PreviousCaptureRoot {RootPermitV5 permit{};LiftInput64 input{};Words256 completion{},quota{};NativeRootEvidence evidence{};uint64_t started=0,checked=0,sourceGeneration=0;bool entered=false,complete=false,accepted=false;};
+ static_assert(7*(sizeof(CaptureRoot)-sizeof(PreviousCaptureRoot))==2296,"T619 seven-instance metadata credit");
  std::array<CaptureRoot,5> captureRoots_{};CaptureRoot pendingRoot_{},acceptedRoot_{};
  SourcePacketV5 captureSource_{},acceptedSource_{};
  QuotaSnapshotV3 pendingQuota_{};PlanGrantV3 captureGrant_{};uint64_t pendingStarted_=0,pendingSourceGeneration_=0;

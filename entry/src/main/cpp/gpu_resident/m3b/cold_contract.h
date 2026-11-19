@@ -5,6 +5,7 @@
 #include "../cold_protocol.h"
 #include "../program_cache/sha256.h"
 #include "cold_layout_generated.h"
+#include "cold_identity.h"
 namespace grs::m3b::cold {
 inline constexpr const char* kRevision="T527_V5_BOUNDED_COLD_V2";
 inline constexpr const char* kPayload="GRS_M3B_LINEAGE_COLD_V5_2";
@@ -19,7 +20,7 @@ inline bool Quota(Writer& w,const QuotaSnapshotV3& q){
 }
 inline bool Capabilities(Writer& w,const Profile& p,size_t alignment,bool full=false,size_t fixedMetadata=0){
  Layout layout;if(!Layout::Make(p,alignment,layout,full))return false;ResidentBuffersV5 allocation;if(!ResidentBuffersV5::Make(p,alignment,allocation))return false;
- w.Raw("{\"revision\":\"T527_V5_BOUNDED_COLD_V2\",\"state\":\"PREFIX_IDENTITY_CONTRACT_REQUIRED\",\"supported\":false,\"captureScopeMetaRevision\":2,\"payloadRevision\":\"GRS_M3B_LINEAGE_COLD_V5_2\",\"pageRevision\":\"T527_SEGMENT_PAGE_V2\",\"route\":\"m3b\",\"wire\":5,\"features\":31,\"channelBitmap\":15,\"pageBytes\":16384,\"pageWords\":1024,\"slotCount\":2,\"builders\":1,\"readers\":1,\"ttlNs\":\"60000000000\",\"residentPayloadBytes\":");w.U64(allocation.total);w.Raw(",\"fixedCaptureMetadataBytesExcludedFromPayload\":");w.U64(fixedMetadata);
+ w.Raw("{\"revision\":\"T527_V5_BOUNDED_COLD_V2\",\"state\":\"AVAILABLE\",\"supported\":true,\"captureScopeMetaRevision\":2,\"payloadRevision\":\"GRS_M3B_LINEAGE_COLD_V5_2\",\"pageRevision\":\"T527_SEGMENT_PAGE_V2\",\"route\":\"m3b\",\"wire\":5,\"features\":31,\"channelBitmap\":15,\"pageBytes\":16384,\"pageWords\":1024,\"slotCount\":2,\"builders\":1,\"readers\":1,\"ttlNs\":\"60000000000\",\"residentPayloadBytes\":");w.U64(allocation.total);w.Raw(",\"fixedCaptureMetadataBytesExcludedFromPayload\":");w.U64(fixedMetadata);w.Raw(",\"identityMetadataInstances\":7,\"identityMetadataIncrementBytes\":\"2296\"");
  w.Raw(",\"traceBytes\":");w.U64(layout.words*4);w.Raw(",\"traceBudgetBytes\":\"524375552\",\"pages\":");w.Number(layout.Pages());w.Raw(",\"archiveUtf8Limit\":");w.U64((layout.Pages()+1)*kPageBytes);w.Raw(",\"fullBranchMode\":");w.Bool(full);return w.Raw("}");
 }
 inline void Digest(const uint32_t* words,size_t count,uint32_t* digest){
@@ -65,11 +66,14 @@ inline bool Validate(const uint32_t* b,size_t words,const Layout& l){
   Digest(body,s.bytes/4,hash);if(std::memcmp(hash,d+23,32))return false;
  }
  if(previous!=l.words*4)return false;
+ if(!ZeroWords(b+6048+128*b[10],128*(5-b[10])))return false;for(auto region:std::array<std::pair<size_t,size_t>,4>{{{2304,256},{3584,64},{3904,256},{5184,64}}})if(!ZeroWords(b+region.first+region.second*b[10],region.second*(5-b[10])))return false;
  for(uint32_t root=0;root<b[10];++root){const auto* r=b+6048+root*128;
   if((r[0]!=1&&r[0]!=2)||l.fullBranch&&r[0]!=(root?2u:1u)||(r[7]!=1u&&r[7]!=2u&&r[7]!=4u)||r[30]!=2304+256*root||r[31]!=3584+64*root||r[32]!=3904+256*root||r[33]!=5184+64*root||r[34]!=(l.fullBranch?11+2*root:UINT32_MAX)||r[35]!=(l.fullBranch?12+2*root:UINT32_MAX)||r[36]!=3u||r[37]!=6+root||r[38]!=(l.fullBranch&&root?21+10*(root-1):UINT32_MAX)||r[39]!=(l.fullBranch&&root?5u:0u)||r[40]!=1u||r[41]!=2u||!ZeroWords(r+66,62))return false;
   if(r[7]==2u&&!(b[12]&1u))return false;
   if(r[7]==1u){if(!ZeroWords(r+1,6)||!ZeroWords(r+8,22)||!ZeroWords(r+42,24))return false;}
   else if(!Pair(r,8)||!Pair(r,20)||Pair(r,24)<Pair(r,22))return false;
+  const auto* cursor=b+5184+64*root;const auto* capsule=b+6688;if(!identity619::CapsuleValid(capsule)||capsule[4]!=b[8]||capsule[5]!=b[9]||capsule[11]!=uint32_t(l.fullBranch)||std::memcmp(capsule+58,b+52,32)||std::memcmp(capsule+34,b+60,32)||std::memcmp(capsule+42,b+68,32)||!ZeroWords(b+7712,480))return false;
+  if(r[7]==1u){if(!ZeroWords(cursor,64)||!ZeroWords(b+r[30],256)||!ZeroWords(b+r[31],64)||!ZeroWords(b+r[32],256))return false;}else{if(cursor[0]!=826488146u||cursor[1]!=1||cursor[2]!=64||cursor[3]!=3235775761u||cursor[4]!=r[0]||cursor[15]!=3||cursor[62]||cursor[63]||cursor[58]>1||cursor[59]>1||Pair(cursor,16)!=Pair(r,8)||Pair(cursor,18)!=Pair(r,20)||Pair(cursor,26)!=Pair(r,10)||Pair(cursor,28)!=Pair(r,12)||Pair(cursor,32)!=Pair(r,24)||Pair(cursor,34)!=Pair(b,28)||Pair(cursor,38)!=Pair(b,30)||Pair(cursor,40)!=Pair(b,40)||Pair(cursor,42)!=Pair(b,34)||Pair(cursor,44)!=Pair(b,38)||Pair(cursor,50)!=Pair(b,32)||std::memcmp(r+42,capsule+58,32))return false;uint32_t capsuleSha[8],token[8],inputSha[8];Digest(capsule,1024,capsuleSha);Digest(b+r[31],64,inputSha);if(std::memcmp(inputSha,r+50,32))return false;identity619::Token(b+24,cursor,b+r[31],b+r[32],b+r[30],r,capsule,capsuleSha,token);if(std::memcmp(token,r+58,32))return false;}
   const auto* cd=b+256+32*(6+root);const auto* control=b+l.segments[6+root].begin/4;
   if(r[7]==1u){if(cd[21]!=1u)return false;continue;}
   if(r[0]==1u){if(cd[21]!=2u||cd[14]||cd[15]||!ZeroWords(control,2048))return false;continue;}
