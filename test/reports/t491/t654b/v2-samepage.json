@@ -1,0 +1,65 @@
+{
+ "revision": "T654_V2_SAMEPAGE_CAPTURE_V1",
+ "date": "2026-11-19",
+ "package": {
+  "task": "T672-signed (T672 G13 same-page offline collector facility)",
+  "signedSha": "c9a274dbb4e0b5dd5316d16876766ba05acfbb534bafbd041906a4b9a961df8c"
+ },
+ "sequence": "G13 page -> \u914d\u7f6e REST (UNCONFIGURED held, attempt0) -> \u5b8c\u6574\u521d\u59cb\u5316\u8bca\u65ad button -> t672-1795093174273/ 6 files",
+ "pages": {
+  "page0": {
+   "rawBytes": 8192,
+   "sampleSeq": "16",
+   "offsetBytes": 0,
+   "sha256": "6e5aba26944e01947e379dadabbb5bf6e6773d961887a0adb37e2f33d0f5f60c"
+  },
+  "page1": {
+   "rawBytes": 8192,
+   "sampleSeq": "16",
+   "offsetBytes": 8192,
+   "sha256": "126cbee743165bbad30f5bdbfce3fa4a124b0ef34dca674c2e63078f1d2eccc8"
+  },
+  "page2": {
+   "rawBytes": 8192,
+   "sampleSeq": "16",
+   "offsetBytes": 16384,
+   "sha256": "8b9f7ed920a12c1a860f5dacaf367222c78094116fbe3ba9377f50428d6e1ca5"
+  },
+  "page3": {
+   "rawBytes": 8192,
+   "sampleSeq": "16",
+   "offsetBytes": 24576,
+   "sha256": "981d92cda65c8e49830f34526b6394fc31fa3ba08c989a86693662892574c94f"
+  }
+ },
+ "status": {
+  "fieldToken": "G13F1:287785986262658:0:0:0:0:0:0:0:0:0:0:0:0:00000000000000",
+  "coldToken": "G13R1:287785986262658:0:076a27c79e5ace2a",
+  "consumedSourceSeq": "0",
+  "lastRoot": {
+   "clock": "CLOCK_MONOTONIC",
+   "nonce": "0",
+   "plan": "0",
+   "nativePollNs": "0",
+   "startedNs": "0",
+   "deadlineNs": "0",
+   "nativeError": 0,
+   "nativeOutcome": 0,
+   "gpuTailAvailable": false,
+   "domain": "PAGE_NATIVE_CONTROL"
+  },
+  "initialization": {
+   "schema": "G13InitDiagnosticV1",
+   "rawBytes": 32768,
+   "currentLifecycle": "CONFIG_FAILED",
+   "lastProgress": "CAPABILITY:EXIT",
+   "firstConfigFailure": "CONFIGURE_ERROR_29",
+   "firstFailureAttempt": "216",
+   "queuedTicket": "216",
+   "handledTicket": "0",
+   "dropped": 0,
+   "truncated": 0,
+   "unobservedRaw": -1
+  }
+ }
+}
