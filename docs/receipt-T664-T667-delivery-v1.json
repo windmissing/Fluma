@@ -1,0 +1,86 @@
+{
+  "schema": "T664_T667_ARCHITECT_DELIVERY_RECEIPT_V1",
+  "date": "2026-11-19",
+  "role": "architect",
+  "engineeringCommit": "f2090c2130903920f6b80c412f33260db67dd86d",
+  "commentReadbacks": [
+    {
+      "task": 664,
+      "taskId": "6afed69fe4b00dfe2a7ec5cb",
+      "comment": {
+        "id": "6afedd4ce4b00927f0f75d72",
+        "userId": 1010673194,
+        "title": "T664 architect当前范围完整交付，commit f2090c21。docs/architecture-T664-v1.md/contract与analysis核9份UI、两实际签包和源码：T593所称T591-collector为旧M2诊断域（libgrsm1 SHA04b98996/BuildId0cf0ffde），不是T623已用的T597正式M1恢复/输入包（527c863f/dc54802f）。sampleSerial是status读取计数，不证pulse被接受/owner活；run0仅说明未证资源发布。l7–l9明确REJECTED V3_USE_M2_TRACE，无captureId不会导出，不是吞档。无handler/down原返回，不能把UI STATE_LOST当model.down具名reason（代码为NOT_READY）；也无boot/ticket/ns把9UI与旧T591 LINK并成同attempt。先原T593 tester选既有正式M1包，按资源/退休→RecoveryResources→新session/Fresh→真实Down/typed入队/同seq Claim取完整同代原件。正式恢复实现已存在，不派猜测性缺恢复修复；M2游标归在途T663，不重复卡。T519/410/437真实非空前置不假放行。静态检查通过，不使用真机/无产品测试或PASS。",
+        "modifiedTime": "2026-11-19T11:28:12+0000",
+        "createdTime": "2026-11-19T11:28:12+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackMatched": true
+    },
+    {
+      "task": 667,
+      "taskId": "6afed76de4b00927f0f7022f",
+      "comment": {
+        "id": "6afedd4ce4b08269c81938de",
+        "userId": 1010673194,
+        "title": "T667 architect当前范围完整交付，commit f2090c21。docs/architecture-T667-v1.md/contract及analysis逐票核26行：M1已End/Freed1；M2 Done后ReadBegin2=true，End旧1无效，第二ReadBegin2=false跳过清理，reader2泄漏。M3 ReadBegin3返回被忽略且builder未Done，未建立reader3；Freed3合法清空，fresh探针成功却遗失新builder，导致M4入口失败。D2持读Freed未行使，不是生产语义变化。715f314d现成ELF静态反汇编也有reader保护；M5匹配opaque ctx退役正控窄证保留，M4 NOT_RUN。新日志仅seq/event/detail且append，无所称boot/pid/attempt；8指针虽检查，只有Reserve实际名被记录。冻结T627独立M1/M2a/M2b/M3/M4/M5矩阵、成功票ledger/VOID调用全记、M3原票复读正控；M4 4096+4096=8192应准。host合法票重建与GPU输出必须0分域。纯tester设施修正，无新broker接口/改退休合同/driverfree PASS。静态核对通过，不使用真机、不运行harness/产品测试。",
+        "modifiedTime": "2026-11-19T11:28:12+0000",
+        "createdTime": "2026-11-19T11:28:12+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackMatched": true
+    },
+    {
+      "task": 665,
+      "taskId": "6afed69fe4b08269c818a1b7",
+      "comment": {
+        "id": "6afedd4ce4b08269c81938e0",
+        "userId": 1010673194,
+        "title": "T665 architect当前范围完整交付，commit f2090c21。docs/architecture-T665-v1.md/contract及analysis核真实T645签包、旧T644 ELF与全driver原件：native b050/e0e62034与a042/a048确不同，但两ELF内生产shader原字节同145268B/2144行/SHA74c820ec；磁盘CRLF147412B另记，不冒同一原SHA。两次0:1728 slot redeclared准确落g9Capture相邻扫描/选包局部复用，冻结父已有；未证旧shader或驱动规范故障。saved harness还缺最终身份检查，不冒生产静态成功。工程修订限定RX generator唯一函数/原SHA/严格一次scope hygiene（clearSlot/scanSlot/selectedSlot+显式块），不改冻结父/默认线/DM数学/T647门；单一canonical LF串贯穿comp/header/ELF，输入/转换/cache/reader身份全闭合，缺/旧/不匹配fatal，RX prebuild纯字节SHA核。developer实现并最终生产GLSL/native/ArkTS编译交付；签名部署/真机与原T645完整未完归tester。LOAD只核文件及memory BuildId，不冒glShaderSource原串/Ready/物理PASS；T666幂等构建独立，不增门。本卡未运行真机/编译/产品测试。",
+        "modifiedTime": "2026-11-19T11:28:12+0000",
+        "createdTime": "2026-11-19T11:28:12+0000",
+        "replyCommentId": null,
+        "replyUserId": null
+      },
+      "readbackMatched": true
+    }
+  ],
+  "localStatus": {
+    "schema": "T664_T667_OWN_STATUS_ONLY_V1",
+    "beforeSHA256": "fa24e18d32e8eea5c32297a6e5103190d3359e47d45246146363d61e5e2155a2",
+    "afterSHA256": "f6f5cae7c93317404894d321541e2f6fe8afe25d0b95c837913bd667b862e035",
+    "onlyOwnStatusCellsChanged": true,
+    "queueStaged": false,
+    "changes": [
+      {
+        "task": 664,
+        "from": "进行中",
+        "to": "结束待验收"
+      },
+      {
+        "task": 667,
+        "from": "进行中",
+        "to": "结束待验收"
+      },
+      {
+        "task": 665,
+        "from": "进行中",
+        "to": "结束待验收"
+      }
+    ],
+    "engineeringCommit": "f2090c2130903920f6b80c412f33260db67dd86d"
+  },
+  "validation": "docs/analysis-T664-T667-check-v1.json",
+  "scope": {
+    "deviceUsed": false,
+    "buildRun": false,
+    "productTestsRun": false,
+    "productPASS": false,
+    "businessCodeChanged": false,
+    "didaSameNameQueueUpdated": false,
+    "otherTaskStatusChanged": false,
+    "managerGateAdded": false
+  }
+}
