@@ -1,0 +1,70 @@
+{
+  "schema": "T638_INIT_DIAGNOSTIC_ABI_V1",
+  "byteOrder": "LITTLE_ENDIAN_ARM64",
+  "payloadBytes": 32768,
+  "pageBytes": 8192,
+  "pages": 4,
+  "pageEncoding": "base64 raw payload; sampleSeq may change between pages, reject mixed sample captures",
+  "segments": [
+    {
+      "name": "decode",
+      "offset": 0,
+      "count": 4,
+      "stride": 1024
+    },
+    {
+      "name": "stages",
+      "offset": 4096,
+      "count": 64,
+      "stride": 256
+    },
+    {
+      "name": "rawLogs",
+      "offset": 20480,
+      "count": 2,
+      "stride": 4096
+    },
+    {
+      "name": "control",
+      "offset": 28672,
+      "bytes": 4096
+    }
+  ],
+  "unknownRaw": -1,
+  "decodeFlags": {
+    "1": "whole decode valid",
+    "2": "dataPresent",
+    "4": "basePresent",
+    "8": "baseEqualsData",
+    "16": "normalizationObserved",
+    "32": "detached",
+    "64": "sendable"
+  },
+  "layouts": {
+    "InitStage": {
+      "sizeof": 256,
+      "compilerLayout": "         0 |   uint64_t seq\n         8 |   uint64_t ns\n        16 |   uint64_t boot\n        24 |   uint64_t attempt\n        32 |   uint64_t ticket\n        40 |   uint64_t queue\n        48 |   uint64_t window\n        56 |   uint64_t context\n        64 |   uint64_t tid\n        72 |   int64_t rawNapi\n        80 |   int64_t rawEGL\n        88 |   int64_t rawGL\n        96 |   int64_t fence\n       104 |   int64_t ctrl255\n       112 |   int64_t ctrl7\n       120 |   uint32_t op\n       124 |   int32_t apiReturn\n       128 |   char[32] phase\n       160 |   char[16] edge\n       176 |   char[65] sourceSHA\n       241 |   uint8_t[15] pad\n           | [sizeof=256, dsize=256, align=8,\n           |  nvsize=256, nvalign=8]"
+    },
+    "InitDecodeFields": {
+      "sizeof": 752,
+      "compilerLayout": "         0 |   uint64_t attempt\n         8 |   uint64_t rawReturnedLength\n        16 |   uint64_t normalizedElementCount\n        24 |   uint64_t backingBytes\n        32 |   int64_t offset\n        40 |   int32_t rawNapi\n        44 |   int32_t typedKind\n        48 |   int32_t[6] status\n        72 |   uint32_t flags\n        76 |   uint32_t lengthUnit\n        80 |   uint32_t copiedWords\n        84 |   char[40] stage\n       124 |   char[48] profileId\n       172 |   char[65] profileEvidenceSHA\n       240 |   struct std::array<unsigned int, 128> snapshot\n       240 |     unsigned int[128] __elems_\n           | [sizeof=752, dsize=752, align=8,\n           |  nvsize=752, nvalign=8]"
+    },
+    "InitDecode": {
+      "sizeof": 1024,
+      "compilerLayout": "         0 |   struct grs::g13::InitDecodeFields value\n         0 |     uint64_t attempt\n         8 |     uint64_t rawReturnedLength\n        16 |     uint64_t normalizedElementCount\n        24 |     uint64_t backingBytes\n        32 |     int64_t offset\n        40 |     int32_t rawNapi\n        44 |     int32_t typedKind\n        48 |     int32_t[6] status\n        72 |     uint32_t flags\n        76 |     uint32_t lengthUnit\n        80 |     uint32_t copiedWords\n        84 |     char[40] stage\n       124 |     char[48] profileId\n       172 |     char[65] profileEvidenceSHA\n       240 |     struct std::array<unsigned int, 128> snapshot\n       240 |       unsigned int[128] __elems_\n       752 |   struct std::array<unsigned char, 272> pad\n       752 |     unsigned char[272] __elems_\n           | [sizeof=1024, dsize=1024, align=8,\n           |  nvsize=1024, nvalign=8]"
+    },
+    "ConfigTicket": {
+      "sizeof": 176,
+      "compilerLayout": "         0 |   uint64_t boot\n         8 |   uint64_t attempt\n        16 |   uint64_t queueSerial\n        24 |   uint64_t cancelGeneration\n        32 |   struct grs::g13::Identity proposed\n        32 |     uint64_t run\n        40 |     uint64_t owner\n        48 |     uint64_t context\n        56 |     uint64_t surface\n        64 |     uint64_t geometry\n        72 |     uint64_t config\n        80 |     uint64_t session\n        88 |     uint64_t permission\n        96 |     uint64_t inputEpoch\n       104 |     uint64_t control\n       112 |   struct std::array<unsigned int, 8> configRawSHA\n       112 |     unsigned int[8] __elems_\n       144 |   struct std::array<unsigned int, 8> seedReceiptSHA\n       144 |     unsigned int[8] __elems_\n           | [sizeof=176, dsize=176, align=8,\n           |  nvsize=176, nvalign=8]"
+    },
+    "InitControl": {
+      "sizeof": 888,
+      "compilerLayout": "         0 |   uint64_t samples\n         8 |   uint64_t stageCount\n        16 |   uint64_t dropped\n        24 |   uint64_t truncated\n        32 |   uint64_t decodeCount\n        40 |   uint64_t handledTicket\n        48 |   uint64_t queuedTicket\n        56 |   struct grs::g13::ConfigTicket ticket\n        56 |     uint64_t boot\n        64 |     uint64_t attempt\n        72 |     uint64_t queueSerial\n        80 |     uint64_t cancelGeneration\n        88 |     struct grs::g13::Identity proposed\n        88 |       uint64_t run\n        96 |       uint64_t owner\n       104 |       uint64_t context\n       112 |       uint64_t surface\n       120 |       uint64_t geometry\n       128 |       uint64_t config\n       136 |       uint64_t session\n       144 |       uint64_t permission\n       152 |       uint64_t inputEpoch\n       160 |       uint64_t control\n       168 |     struct std::array<unsigned int, 8> configRawSHA\n       168 |       unsigned int[8] __elems_\n       200 |     struct std::array<unsigned int, 8> seedReceiptSHA\n       200 |       unsigned int[8] __elems_\n       232 |   uint64_t window\n       240 |   uint64_t context\n       248 |   char[40] lifecycle\n       288 |   char[512] firstFailure\n       800 |   char[64] lastProgress\n       864 |   uint64_t firstFailureAttempt\n       872 |   uint32_t[2] logBytes\n       880 |   uint32_t[2] logReported\n           | [sizeof=888, dsize=888, align=8,\n           |  nvsize=888, nvalign=8]"
+    },
+    "InitPayload": {
+      "sizeof": 32768,
+      "compilerLayout": "         0 |   struct std::array<struct grs::g13::InitDecode, 4> decode\n         0 |     struct grs::g13::InitDecode[4] __elems_\n      4096 |   struct std::array<struct grs::g13::InitStage, 64> stages\n      4096 |     struct grs::g13::InitStage[64] __elems_\n     20480 |   struct std::array<struct std::array<char, 4096>, 2> logs\n     20480 |     struct std::array<char, 4096>[2] __elems_\n     28672 |   struct grs::g13::InitControl control\n     28672 |     uint64_t samples\n     28680 |     uint64_t stageCount\n     28688 |     uint64_t dropped\n     28696 |     uint64_t truncated\n     28704 |     uint64_t decodeCount\n     28712 |     uint64_t handledTicket\n     28720 |     uint64_t queuedTicket\n     28728 |     struct grs::g13::ConfigTicket ticket\n     28728 |       uint64_t boot\n     28736 |       uint64_t attempt\n     28744 |       uint64_t queueSerial\n     28752 |       uint64_t cancelGeneration\n     28760 |       struct grs::g13::Identity proposed\n     28760 |         uint64_t run\n     28768 |         uint64_t owner\n     28776 |         uint64_t context\n     28784 |         uint64_t surface\n     28792 |         uint64_t geometry\n     28800 |         uint64_t config\n     28808 |         uint64_t session\n     28816 |         uint64_t permission\n     28824 |         uint64_t inputEpoch\n     28832 |         uint64_t control\n     28840 |       struct std::array<unsigned int, 8> configRawSHA\n     28840 |         unsigned int[8] __elems_\n     28872 |       struct std::array<unsigned int, 8> seedReceiptSHA\n     28872 |         unsigned int[8] __elems_\n     28904 |     uint64_t window\n     28912 |     uint64_t context\n     28920 |     char[40] lifecycle\n     28960 |     char[512] firstFailure\n     29472 |     char[64] lastProgress\n     29536 |     uint64_t firstFailureAttempt\n     29544 |     uint32_t[2] logBytes\n     29552 |     uint32_t[2] logReported\n     29560 |   struct std::array<unsigned char, 3208> pad\n     29560 |     unsigned char[3208] __elems_\n           | [sizeof=32768, dsize=32768, align=8,\n           |  nvsize=32768, nvalign=8]"
+    }
+  },
+  "runtimeExecuted": false
+}

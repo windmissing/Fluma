@@ -72,7 +72,9 @@ public:
   uint32_t PumpBounded(uint64_t now);
   bool Poll(Completion &) const;
   uint32_t Rebind(uint64_t surface, uint64_t geometry);
-  void SetActive(bool, const Identity &);
+  uint32_t SetActive(bool, const Identity &);
+  bool Configured() const { return configured_; }
+  uint32_t FailureCode() const { return failure_; }
   void Stop();
   void Release(bool current);
   bool Ready() const { return configured_ && transport_.Ready(); }

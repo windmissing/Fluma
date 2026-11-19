@@ -1,6 +1,7 @@
 #include "transport.h"
 #include "../program_cache/program_factory.h"
 #include "../resource_gl.h"
+#include "init_diagnostics.h"
 #include <fstream>
 namespace grs::g13 {
 bool Transport::Owner() const {
@@ -40,6 +41,8 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   seedReceipt_ = seed.receipt;
   if (seedReceipt_.size() > 448)
     return 30;
+  InitObservation().State("CAPABILITY");
+  InitStageEvent("CAPABILITY", "ENTER");
   GLint blocks = 0, group = 0, shared = 0, bindings = 0, invocations = 0,
         precision = 0, range[2] = {};
   glGetIntegerv(GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS, &bindings);
@@ -52,6 +55,7 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &shared);
   glGetInteger64v(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &maxBlock);
   firstGl_ = glGetError();
+  InitStageEvent("CAPABILITY", "EXIT", 0, firstGl_);
   std::ostringstream cap;
   cap << "{\"stage\":\"CAP_COMPUTE\",\"blocks\":" << blocks
       << ",\"bindings\":" << bindings << ",\"invocations\":" << invocations
@@ -85,12 +89,26 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
                           kHash_layoutSHA + "|MATH=" + kHash_mathSHA +
                           "|GATES=" + kHash_gatesSHA +
                           "|ALGORITHM=" + kHash_algorithmSHA;
+  InitObservation().State("PROGRAM_BUILD");
+  InitStageEvent("PROGRAM_BUILD", "ENTER", 13, -1, PipelineSha());
   if (!programcache::Build(13, PipelineSource(), PipelineSha(), abi.c_str(),
-                           program_, firstGl_))
+                           program_, firstGl_)) {
+    InitStageEvent("PROGRAM_BUILD", "EXIT", 13, firstGl_, PipelineSha());
     return 29;
-  if (!programcache::Reflect(locations_, program_) ||
-      programcache::Prepared(program_) != GL_NO_ERROR)
+  }
+  InitStageEvent("PROGRAM_BUILD", "EXIT", 13, firstGl_, PipelineSha());
+  InitObservation().State("REFLECT");
+  InitStageEvent("REFLECT", "ENTER", program_);
+  const bool reflected = programcache::Reflect(locations_, program_);
+  const auto prepared =
+      reflected ? programcache::Prepared(program_) : GLenum(GL_NO_ERROR);
+  InitObservation().Stage("REFLECT", "EXIT", program_,
+                          reflected ? int64_t(prepared) : -1, nullptr, -1, -1,
+                          -1, -1, 0, reflected ? 1 : 0);
+  if (!reflected || prepared != GL_NO_ERROR)
     return 29;
+  InitObservation().State("ALLOCATE_SEED");
+  InitStageEvent("ALLOCATE_SEED", "ENTER");
   compile_ = std::string("{\"pipelineSHA\":\"") + PipelineSha() +
              "\",\"layoutSHA\":\"" + kHash_layoutSHA + "\",\"mathSHA\":\"" +
              kHash_mathSHA +
@@ -184,6 +202,9 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, banks_[0]);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, work_);
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ctrl_);
+  InitStageEvent("ALLOCATE_SEED", "EXIT");
+  InitObservation().State("INIT_DISPATCH64");
+  InitStageEvent("INIT_DISPATCH64", "ENTER", 64);
   glUniform1ui(locations_.Find("uOp"), 64);
   for (uint32_t i = 0; i < 3; i++) {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, banks_[i]);
@@ -237,11 +258,17 @@ uint32_t Transport::Configure(const Config &config, const Seed &seed,
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, profile_->sw * 4, raw.get());
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(header), header.data());
   }
+  InitStageEvent("INIT_DISPATCH64", "EXIT", 64);
   seedHeader_ = header;
   glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, banks_[0]);
+  InitObservation().State("INIT_AUDIT65");
+  InitStageEvent("INIT_AUDIT65", "ENTER", 65);
   glUniform1ui(locations_.Find("uOp"), 65);
   glDispatchCompute(1, 1, 1);
   glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+  InitStageEvent("INIT_AUDIT65", "EXIT", 65);
+  InitObservation().State("INIT_FENCE_PENDING");
+  InitStageEvent("INIT_FENCE_PENDING", "ENTER");
   fence_ = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
   glFlush();
   if (!fence_)
@@ -423,6 +450,8 @@ uint32_t Transport::Poll(Completion &out) {
   if (!fence_)
     return 34;
   GLenum s = glClientWaitSync(fence_, 0, 0);
+  if (pass_ == SIZE_MAX)
+    InitStageEvent("INIT_FENCE_POLL", "EXIT", 0, -1, nullptr, -1, s);
   if (s == GL_TIMEOUT_EXPIRED)
     return 34;
   if (s == GL_WAIT_FAILED) {
@@ -442,8 +471,11 @@ uint32_t Transport::Poll(Completion &out) {
     if (!CopyBuffer(ctrl_, cold.data(), 256, 18432))
       return 10;
     pass_ = 0;
+    InitStageEvent("INIT_TAIL_VALID", "EXIT", 65, -1, nullptr, -1, s, cold[255],
+                   cold[7]);
     if (cold[255] != kSeal || cold[7])
       return cold[7] ? cold[7] : 28;
+    InitObservation().State("INIT_TAIL_VALID");
     ready_ = true;
     return 0;
   }

@@ -1,0 +1,38 @@
+{
+  "schema": "T638_DEVELOPER_DELIVERY_V1",
+  "date": "2026-11-19",
+  "contracts": {
+    "docs/architecture-T633-v1.md": "076cc7215d8e704287fdd93bbc2cb2d997058acf91938883c29cb7ccbf81acc8",
+    "docs/architecture-T633-init-observation-v1.json": "540c80451b7066fa07a37da233011ab0b04c7932dabb6a411ead7f4e7e7a8910"
+  },
+  "sources": {
+    "entry/src/main/cpp/gpu_resident/g13flow/bridge.cpp": "7947c63d2c3fa15768e0503667950dd58fc1d11e521020a8cbb642f5c8e1f4d8",
+    "entry/src/main/cpp/gpu_resident/g13flow/controller.cpp": "1dd7f8cdddb72159b41628598fb1d4ba9bd1d9dc94d12465ec7f85c3e0da6d5a",
+    "entry/src/main/cpp/gpu_resident/g13flow/controller.h": "fcab48ed8cd15e28d6caf028e2c4e56018a3ab3b5882875128911311e6867e02",
+    "entry/src/main/cpp/gpu_resident/g13flow/transport.cpp": "3c72824cb3b751debca696161158a026e87e7bfa32fb5485729729bc39ff5407",
+    "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h": "7edce854e8ecb0f3d9c12e1322c7767397af57b7b3f9a61305fca8f661a5e0f6",
+    "entry/src/main/cpp/types/libgrs_g13/index.d.ts": "34c9bbd7978f8b0fc1d1d853af9f89b25f47c17eca7a0e08b4b0bb59e4b33bf0",
+    "entry/src/main/ets/pages/GpuResidentG13.ets": "d5db76c00f9ff620f9b093fc5113d06753a82deea1fecf5e919acbc903489a3b",
+    "entry/src/main/cpp/gpu_resident/g13flow/init_diagnostics.h": "b3d02e5c94600d14845543a9686c1f755ebe3338b49c5400babe6873b147850a",
+    "entry/src/main/cpp/gpu_resident/program_cache/program_observer.h": "390a775e19352786334680a6055051254e14afcae063aa07c7b779a578181ec1"
+  },
+  "build": {
+    "result": "COMPILE_PASS",
+    "durationSeconds": 9.972,
+    "log": ".codex/local-test/t638-status-build.txt",
+    "artifacts": {
+      ".codex/local-test/t638-delivery/entry/build/default/outputs/default/entry-default-unsigned.hap": "2008c704f35b709e74fcd61f8a9141f0e355b0611f9cfe5270bac1a2d35b7eaa",
+      ".codex/local-test/t638-delivery/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13.so": "1b43b39176d1fbc99e69be906af25101fc0fe2fb7ef151a458f2fb4443a60f33",
+      ".codex/local-test/t638-delivery/entry/build/default/intermediates/cmake/default/obj/arm64-v8a/libgrs_g13_core.a": "4eb4d5648df4118cde621ca786319e84c457c7ab21de9ec9cdb355b6f993d86b"
+    }
+  },
+  "pipelineSHA": "5cc0fefbb87e693c003cf73bbb317ea11697e37e20c9b4b4826d0b31a4689170",
+  "diagnosticPayloadBytes": 32768,
+  "stageBytes": 256,
+  "decodeSnapshotBytes": 1024,
+  "configTicketBytes": 176,
+  "sourceMatchesBuild": true,
+  "testsRun": false,
+  "deviceUsed": false,
+  "runtimeQualification": "NOT_MEASURED"
+}

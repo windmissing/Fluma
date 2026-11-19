@@ -26,7 +26,9 @@ uint32_t Controller::Configure(const Config &c, const Seed &seed,
     return 2;
   if ((seed.testHook || seed.diagnostic == 3) && !PipelineTestHooks())
     return 4;
-  if ((seed.testHook && seed.diagnostic!=3)||(seed.testHook==6&&c[6]!=2&&c[6]!=3))return 5;
+  if ((seed.testHook && seed.diagnostic != 3) ||
+      (seed.testHook == 6 && c[6] != 2 && c[6] != 3))
+    return 5;
   if (seed.testHook > 6 || seed.diagnostic > 3 ||
       (!seed.diagnostic && seed.forcedJ) ||
       (seed.forcedJ != 0 && seed.forcedJ != 1 && seed.forcedJ != 2 &&
@@ -85,6 +87,11 @@ uint32_t Controller::NativePulse(uint64_t sequence, uint64_t now) {
 }
 uint32_t Controller::AcceptPulse(uint64_t session, uint64_t sequence,
                                  uint64_t uiNs, uint64_t now, bool ui) {
+  if (!Ready() || transport_.RetirementPending() || !identity_.run ||
+      !identity_.context || !identity_.config || !identity_.surface ||
+      !identity_.geometry || !identity_.session || !identity_.permission ||
+      !identity_.inputEpoch || !identity_.control)
+    return 34;
   if (session != identity_.session || !active_)
     return 31;
   if (sequence <= pulseSeq_ || (ui && uiNs <= lastUiNs_))
@@ -560,11 +567,14 @@ uint32_t Controller::Rebind(uint64_t surface, uint64_t geometry) {
   rebind_ = commit_ != 0;
   return 0;
 }
-void Controller::SetActive(bool active, const Identity &id) {
-  if (!(id == identity_)) {
-    Stop();
-    return;
-  }
+uint32_t Controller::SetActive(bool active, const Identity &id) {
+  if (!Ready() || transport_.RetirementPending() || !identity_.run ||
+      !identity_.owner || !identity_.context || !identity_.config ||
+      !identity_.surface || !identity_.geometry || !identity_.session ||
+      !identity_.permission || !identity_.inputEpoch || !identity_.control)
+    return 34;
+  if (!(id == identity_))
+    return 2;
   active_ = active;
   if (!active)
     Stop();
@@ -574,6 +584,7 @@ void Controller::SetActive(bool active, const Identity &id) {
       failure_ = 0;
     lastPulse_ = pulseSeq_ = lastUiNs_ = clockRemainder_ = 0;
   }
+  return 0;
 }
 void Controller::Stop() {
   active_ = false;
@@ -590,6 +601,7 @@ void Controller::Stop() {
 void Controller::Release(bool current) {
   Stop();
   transport_.Retire(current && !sceneLease_ && !sceneFence_);
+  configured_ = false;
   if (live_ && permit_[1] < 50 && reserved_) {
     --reserved_;
     ++discarded_;
@@ -700,15 +712,16 @@ std::string Controller::Status() const {
       o << acceptedTail_[136 + i];
     }
   o << "],\"state\":\""
-    << (failure_  ? ((failure_ == 7 || failure_ == 8 || failure_ == 9 ||
+    << (failure_      ? ((failure_ == 7 || failure_ == 8 || failure_ == 9 ||
                      failure_ == 11)
-                         ? "SUSPENDED"
-                     : (failure_ == 12 || failure_ == 13 || failure_ == 14 ||
+                             ? "SUSPENDED"
+                         : (failure_ == 12 || failure_ == 13 || failure_ == 14 ||
                        failure_ == 15 || failure_ == 23)
-                         ? "NUMERIC_BLOCKED"
-                         : "FAULT")
-        : Ready() ? "COMPUTE_READY"
-                  : "CONFIG_PENDING")
+                             ? "NUMERIC_BLOCKED"
+                             : "FAULT")
+        : Ready()     ? "COMPUTE_READY"
+        : configured_ ? "CONFIG_PENDING"
+                      : "UNCONFIGURED")
     << "\",\"firstError\":" << failure_ << ",\"commit\":\"" << commit_
     << "\",\"acceptedQuantum\":\"" << quantum_ << "\",\"nonce\":\"" << nonce_
     << "\",\"queued\":" << count_ << ",\"earned\":\"" << earned_

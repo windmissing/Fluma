@@ -10,3 +10,5 @@ export const g13DiagnosticBegin: (config128: Uint32Array, fixtureReceiptJSON: st
 export const g13BeginSession: (scopeJSON: string) => string;
 export const g13SetActive: (active: boolean, scopeJSON: string) => string;
 export const g13ViewMode: (mode: string, scales64: Uint32Array) => string;
+
+export const g13InitDiagnostics: (attemptId: string, page: number) => string;

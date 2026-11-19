@@ -1,6 +1,7 @@
 #pragma once
 #include "../m2/create_diagnostics.h"
 #include "artifact_store.h"
+#include "program_observer.h"
 #include <sstream>
 namespace grs::programcache {
 inline uint64_t Stamp() {
@@ -101,6 +102,7 @@ inline std::string Log(GLuint object, GLint &reported, bool shader = false) {
 }
 inline void Receipt(const Pending &p, const char *stage,
                     std::shared_ptr<Artifact> artifact = {}) {
+  if(p.role=="G13_COMPUTE"){Observe13(stage,"SAMPLE",0,(p.originalError||!std::strcmp(stage,"COMPILE_OR_LINK_FAILED")||!std::strcmp(stage,"LINK_OK_REFLECTION_PENDING"))?p.originalError:-1,p.shader.c_str());if(route13Hook.log){route13Hook.log(route13Hook.context,0,p.shaderLog.data(),p.shaderLog.size(),p.shaderReported);route13Hook.log(route13Hook.context,1,p.log.data(),p.log.size(),p.reported);}}
   std::ostringstream out;
   out << "{\"revision\":\"T475_PROGRAM_ARTIFACT_V1\",\"role\":" << Quote(p.role)
       << ",\"key\":" << Quote(p.key) << ",\"shaderSHA\":" << Quote(p.shader)
@@ -154,7 +156,9 @@ struct RetrievableApi : create468::GlApi {
   void Compile(GLuint s) {
     record.compileBegin = Stamp();
     Receipt(record, "COMPILE_ENTER");
+    if(record.role=="G13_COMPUTE")Observe13("SHADER_COMPILE","ENTER",s,-1,record.shader.c_str());
     create468::GlApi::Compile(s);
+    if(record.role=="G13_COMPUTE")Observe13("SHADER_COMPILE","EXIT",s,-1,record.shader.c_str());
     record.compileEnd = Stamp();
   }
   void Link(GLuint p) {
@@ -164,11 +168,14 @@ struct RetrievableApi : create468::GlApi {
       glProgramParameteri(p, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
       record.cacheError = glGetError();
     }
+    if(record.role=="G13_COMPUTE")Observe13("PROGRAM_LINK","ENTER",p,-1,record.shader.c_str());
     create468::GlApi::Link(p);
+    if(record.role=="G13_COMPUTE")Observe13("PROGRAM_LINK","EXIT",p,-1,record.shader.c_str());
     record.linkEnd = Stamp();
   }
   void DeleteShader(GLuint shader) {
     record.shaderLog = Log(shader, record.shaderReported, true);
+    if(record.role=="G13_COMPUTE"&&route13Hook.log)route13Hook.log(route13Hook.context,0,record.shaderLog.data(),record.shaderLog.size(),record.shaderReported);
     const auto error = glGetError();
     if (error)
       record.cacheError = error;

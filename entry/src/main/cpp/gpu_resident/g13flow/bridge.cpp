@@ -2,6 +2,7 @@
 #include "../program_cache/artifact_store.h"
 #include "cold.h"
 #include "controller.h"
+#include "init_diagnostics.h"
 #include "json.h"
 #include "scene.h"
 #include <ace/xcomponent/native_interface_xcomponent.h>
@@ -36,6 +37,8 @@ struct Command {
   uint64_t a = 0, b = 0, d = 0, attempt = 0, queueSerial = 0, received = 0;
   int replySlot = -1;
   void *window = nullptr;
+  ConfigTicket ticket{};
+  bool ticketPrepared = false;
 };
 class App {
   std::mutex mutex_;
@@ -64,7 +67,10 @@ class App {
   bool configured_ = false, sceneReady_ = false, rebindPending_ = false,
        configurePending_ = false;
   Command deferredConfigure_{};
-  uint64_t lastDraw_ = 0;
+  uint64_t lastDraw_ = 0, contextGeneration_ = 0, surfaceGeneration_ = 0,
+           geometryGeneration_ = 0;
+  bool initializing_ = false;
+  ConfigTicket pendingTicket_{};
   void Publish(const std::string &reply = "") {
     std::string status = controller_.Status(), scope = ScopeJson(id_);
     status.pop_back();
@@ -79,9 +85,22 @@ class App {
     if (!window_ || controller_.Gpu().RetirementPending() ||
         context_ != EGL_NO_CONTEXT || display_ != EGL_NO_DISPLAY)
       return false;
-    display_ = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    if (display_ == EGL_NO_DISPLAY ||
-        !eglInitialize(display_, nullptr, nullptr))
+    InitObservation().State("CONTEXT_CREATE");
+    auto api = [&](const char *phase, auto action) {
+      InitStageEvent(phase, "ENTER");
+      const auto result = action();
+      InitObservation().Stage(phase, "EXIT", 0, -1, nullptr, -1, -1, -1, -1, 0,
+                              result ? 1 : 0);
+      return result;
+    };
+    if (!api("EGL_GET_DISPLAY", [&] {
+          display_ = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+          return display_ != EGL_NO_DISPLAY;
+        }))
+      return false;
+    if (!api("EGL_INITIALIZE", [&] {
+          return eglInitialize(display_, nullptr, nullptr) == EGL_TRUE;
+        }))
       return false;
     EGLint attrs[] = {EGL_SURFACE_TYPE,
                       EGL_WINDOW_BIT,
@@ -98,21 +117,40 @@ class App {
                       EGL_NONE};
     EGLConfig cfg = nullptr;
     EGLint count = 0;
-    if (!eglChooseConfig(display_, attrs, &cfg, 1, &count) || count != 1)
+    if (!api("EGL_CHOOSE_CONFIG", [&] {
+          return eglChooseConfig(display_, attrs, &cfg, 1, &count) ==
+                     EGL_TRUE &&
+                 count == 1;
+        }))
       return false;
     EGLint ctx[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
-    context_ = eglCreateContext(display_, cfg, EGL_NO_CONTEXT, ctx);
-    surface_ = eglCreateWindowSurface(
-        display_, cfg, reinterpret_cast<EGLNativeWindowType>(window_), nullptr);
-    if (context_ == EGL_NO_CONTEXT || surface_ == EGL_NO_SURFACE ||
-        !eglMakeCurrent(display_, surface_, surface_, context_))
+    if (!api("EGL_CREATE_CONTEXT", [&] {
+          context_ = eglCreateContext(display_, cfg, EGL_NO_CONTEXT, ctx);
+          return context_ != EGL_NO_CONTEXT;
+        }))
       return false;
-    id_.context++;
-    id_.surface++;
-    id_.geometry++;
+    InitObservation().Environment(window_, context_);
+    if (!api("EGL_CREATE_SURFACE", [&] {
+          surface_ = eglCreateWindowSurface(
+              display_, cfg, reinterpret_cast<EGLNativeWindowType>(window_),
+              nullptr);
+          return surface_ != EGL_NO_SURFACE;
+        }))
+      return false;
+    if (!api("EGL_MAKE_CURRENT", [&] {
+          return eglMakeCurrent(display_, surface_, surface_, context_) ==
+                 EGL_TRUE;
+        }))
+      return false;
+    ++contextGeneration_;
+    ++surfaceGeneration_;
+    ++geometryGeneration_;
     return true;
   }
   bool Destroy() {
+    InitObservation().State("RETIRING");
+    InitStageEvent("RETIRING", "ENTER");
+    initializing_ = false;
     cold_.CancelPending(10, "CONTEXT_RETIRED");
     auto retiredContext = context_;
     const bool current =
@@ -144,6 +182,9 @@ class App {
     if (window_)
       OH_NativeWindow_NativeObjectUnreference(window_);
     window_ = nullptr;
+    InitObservation().Environment(nullptr, nullptr);
+    InitStageEvent("RETIRING", "EXIT");
+    InitObservation().State("UNCONFIGURED");
     return true;
   }
   std::string Execute(Command &cmd) {
@@ -154,7 +195,7 @@ class App {
         OH_NativeWindow_NativeObjectUnreference(cmd.window);
         return Result(api, "WINDOW_AVAILABLE");
       }
-      if (!Destroy()) {
+      if ((window_ || context_ != EGL_NO_CONTEXT) && !Destroy()) {
         OH_NativeWindow_NativeObjectUnreference(cmd.window);
         return Result(api, "CONTEXT_RETIRE_PENDING", 34);
       }
@@ -166,7 +207,8 @@ class App {
         return Result(api, "STALE_WINDOW", 2);
       controller_.Stop();
       id_ = controller_.Scope();
-      rebindPending_ = true;
+      ++geometryGeneration_;
+      rebindPending_ = configured_;
       return Result(api, "VIEW_REBIND_PENDING");
     }
     if (cmd.kind == Kind::Destroy) {
@@ -197,11 +239,64 @@ class App {
              ScopeJson(id_) + "}";
     }
     if (cmd.kind == Kind::Configure || cmd.kind == Kind::Diagnostic) {
-      if (context_ == EGL_NO_CONTEXT && !Create())
-        return Result("g13Configure", "WAIT_WINDOW", 29);
+      if (cmd.ticket.cancelGeneration != revoked_.load()) {
+        InitStageEvent("CONFIG_CANCELLED", "EXIT");
+        return Result("g13Configure", "CONFIG_CANCELLED", 11, cmd.attempt);
+      }
+      if (!cmd.ticketPrepared) {
+        cmd.ticket.proposed = id_;
+        ++cmd.ticket.proposed.run;
+        ++cmd.ticket.proposed.config;
+        cmd.ticket.proposed.context = context_ == EGL_NO_CONTEXT
+                                          ? contextGeneration_ + 1
+                                          : contextGeneration_;
+        cmd.ticket.proposed.surface = context_ == EGL_NO_CONTEXT
+                                          ? surfaceGeneration_ + 1
+                                          : surfaceGeneration_;
+        cmd.ticket.proposed.geometry = context_ == EGL_NO_CONTEXT
+                                           ? geometryGeneration_ + 1
+                                           : geometryGeneration_;
+        cmd.ticketPrepared = true;
+      }
+      if (initializing_) {
+        deferredConfigure_ = cmd;
+        configurePending_ = true;
+        return Result("g13Configure", "CONFIG_DEFERRED", 34, cmd.attempt);
+      }
+      InitObservation().Ticket(cmd.ticket);
+      InitObservation().Environment(window_, context_);
+      InitObservation().State("CONFIG_QUEUED");
+      if (context_ == EGL_NO_CONTEXT) {
+        if (!window_) {
+          deferredConfigure_ = cmd;
+          configurePending_ = true;
+          InitObservation().State("WAIT_WINDOW");
+          InitStageEvent("WAIT_WINDOW", "ENTER");
+          return Result("g13Configure", "WAIT_WINDOW", 0, cmd.attempt);
+        }
+        if (!Create()) {
+          configurePending_ = false;
+          InitObservation().State("CONFIG_FAILED");
+          InitObservation().Failure(
+              "CONTEXT_CREATE_FAILED: inspect ENTER/EXIT; raw EGL NOT_OBSERVED",
+              cmd.attempt);
+          return Result("g13Configure", "CONTEXT_CREATE_FAILED", 29,
+                        cmd.attempt);
+        }
+      }
+      if (cmd.ticket.proposed.context != contextGeneration_ ||
+          cmd.ticket.proposed.surface != surfaceGeneration_) {
+        InitObservation().Failure("STALE_CONFIG_ENVIRONMENT", cmd.attempt);
+        return Result("g13Configure", "STALE_SCOPE", 2, cmd.attempt);
+      }
+
       Json json(cmd.text);
-      if (!json.Valid())
+      if (!json.Valid()) {
+        configurePending_ = false;
+        InitObservation().State("CONFIG_FAILED");
+        InitObservation().Failure("BAD_SEED_RECEIPT", cmd.attempt);
         return Result("g13Configure", "BAD_SEED_RECEIPT", 5);
+      }
       Seed seed;
       seed.path = json.Text("path");
       seed.sha = json.Text("sha256");
@@ -209,8 +304,12 @@ class App {
       uint64_t mode = 0, forced = 0;
       if (!json.Number("diagnosticMode", mode, false) ||
           !json.Number("forcedJ", forced, false) || mode > 3 ||
-          (forced != 0 && forced != 1 && forced != 2 && forced != 4))
+          (forced != 0 && forced != 1 && forced != 2 && forced != 4)) {
+        configurePending_ = false;
+        InitObservation().State("CONFIG_FAILED");
+        InitObservation().Failure("BAD_DIAGNOSTIC", cmd.attempt);
         return Result("g13Configure", "BAD_DIAGNOSTIC", 5);
+      }
       seed.diagnostic =
           cmd.kind == Kind::Diagnostic ? uint32_t(mode ? mode : 1) : 0;
       seed.forcedJ = uint32_t(forced);
@@ -226,21 +325,23 @@ class App {
                         : fault == "PERIODIC_ALIAS_DUPLICATE" ? 6
                                                               : 7;
       }
-      Identity proposed = id_;
-      ++proposed.run;
-      ++proposed.config;
+      const Identity proposed = cmd.ticket.proposed;
       error = controller_.Configure(cmd.words, seed, proposed);
       if (!error) {
-        id_ = proposed;
-        gGeneration.store(id_.config);
-      }
-      if (!error) {
-        configured_ = true;
+        pendingTicket_ = cmd.ticket;
+        initializing_ = true;
+        configured_ = false;
         configurePending_ = false;
-        sceneReady_ = scene_.Prepare(id_.context, cmd.words);
+        sceneReady_ = scene_.Prepare(proposed.context, cmd.words);
       } else if (error == 34) {
         deferredConfigure_ = cmd;
         configurePending_ = true;
+      } else {
+        configurePending_ = false;
+        initializing_ = false;
+        InitObservation().State("CONFIG_FAILED");
+        InitObservation().Failure("CONFIGURE_ERROR_" + std::to_string(error),
+                                  cmd.attempt);
       }
       return Result("g13Configure", error ? "REJECTED" : "CONFIG_PENDING",
                     error, cmd.attempt);
@@ -255,15 +356,23 @@ class App {
       return Result("g13Stop", "REVOKED");
     }
     if (cmd.kind == Kind::Active) {
+      if (!configured_ || !controller_.Ready())
+        return Result("g13SetActive", "CONFIG_NOT_READY", 34);
       Identity supplied;
       Json j(cmd.text);
       if (!ReadScope(j, supplied) || !(supplied == id_))
         return Result("g13SetActive", "STALE_SCOPE", 2);
       if (cmd.a)
         armed_.store(revoked_.load());
-      controller_.SetActive(cmd.a != 0, id_);
-      id_ = controller_.Scope();
-      return Result("g13SetActive", cmd.a ? "ACTIVE" : "INACTIVE");
+      error = controller_.SetActive(cmd.a != 0, id_);
+      if (!error)
+        id_ = controller_.Scope();
+      return Result("g13SetActive",
+                    error == 34 ? "CONFIG_NOT_READY"
+                    : error     ? "STALE_SCOPE"
+                    : cmd.a     ? "ACTIVE"
+                                : "INACTIVE",
+                    error);
     }
     if (cmd.kind == Kind::Pulse) {
       error = controller_.Pulse(cmd.a, cmd.b, cmd.d, cmd.received);
@@ -296,7 +405,48 @@ class App {
       return cold_.End(cmd.a);
     return Result(api, "BAD_COMMAND", 5);
   }
+  void ServiceLifecycle() {
+    if (controller_.Configured())
+      controller_.PumpBounded(Now());
+    if (initializing_) {
+      if (pendingTicket_.cancelGeneration != revoked_.load()) {
+        if (controller_.RootIdle()) {
+          controller_.Release(context_ != EGL_NO_CONTEXT);
+          initializing_ = false;
+          configured_ = false;
+          InitObservation().State("UNCONFIGURED");
+          InitStageEvent("CONFIG_CANCELLED", "EXIT");
+        }
+      } else if (controller_.Ready()) {
+        id_ = pendingTicket_.proposed;
+        gGeneration.store(id_.config);
+        configured_ = true;
+        initializing_ = false;
+        InitObservation().State("COMPUTE_READY");
+        InitObservation().Handled(pendingTicket_.attempt);
+        InitStageEvent("COMPUTE_READY", "EXIT");
+      } else if (controller_.FailureCode() && controller_.RootIdle()) {
+        initializing_ = false;
+        InitObservation().State("CONFIG_FAILED");
+        InitObservation().Failure("INIT_ERROR_" +
+                                      std::to_string(controller_.FailureCode()),
+                                  pendingTicket_.attempt);
+      }
+    }
+    if (configurePending_ && controller_.RootIdle()) {
+      if (deferredConfigure_.ticket.cancelGeneration != revoked_.load()) {
+        configurePending_ = false;
+        InitObservation().State("UNCONFIGURED");
+        InitStageEvent("CONFIG_CANCELLED", "EXIT");
+      } else if (window_) {
+        auto pending = deferredConfigure_;
+        configurePending_ = false;
+        Publish(Execute(pending));
+      }
+    }
+  }
   void Loop() {
+    InstallInitObserver();
     id_.owner = 13;
     id_.session = id_.permission = id_.inputEpoch = id_.control = 1;
     while (true) {
@@ -340,19 +490,14 @@ class App {
         }
         wake_.notify_all();
       }
+      ServiceLifecycle();
       if (configured_) {
-        controller_.PumpBounded(Now());
         if (rebindPending_) {
-          auto e = controller_.Rebind(id_.surface, id_.geometry + 1);
+          auto e = controller_.Rebind(id_.surface, geometryGeneration_);
           if (!e) {
             id_ = controller_.Scope();
             rebindPending_ = false;
           }
-        }
-        if (configurePending_ && controller_.RootIdle()) {
-          auto pending = deferredConfigure_;
-          configurePending_ = false;
-          Publish(Execute(pending));
         }
         auto coldReply = cold_.Service(controller_, scene_.Receipt());
         if (!coldReply.empty()) {
@@ -373,7 +518,8 @@ class App {
             lastDraw_ = now;
         }
         Publish();
-      }
+      } else
+        Publish();
     }
     Destroy();
   }
@@ -423,6 +569,19 @@ public:
           return Result(api.c_str(), "REPLY_SLOTS_FULL", 30, apiAttempt);
       }
       queueId = command.queueSerial = ++serial_;
+      if (command.kind == Kind::Configure || command.kind == Kind::Diagnostic) {
+        command.ticket.boot = kBoot;
+        command.ticket.attempt = command.attempt;
+        command.ticket.queueSerial = queueId;
+        command.ticket.cancelGeneration = revoked_.load();
+        command.ticket.configRawSHA =
+            Hash(command.words.data(), sizeof(command.words));
+        command.ticket.seedReceiptSHA =
+            Hash(command.text.data(), command.text.size());
+        InitObservation().Queued(command.ticket.attempt);
+        InitObservation().State("CONFIG_QUEUED");
+        InitStageEvent("CONFIG_QUEUED", "ENTER");
+      }
       command.replySlot = slotIndex;
       queue_[(head_ + count_) % queue_.size()] = std::move(command);
       ++count_;
@@ -440,9 +599,11 @@ public:
   }
   std::string Status() {
     std::lock_guard<std::mutex> lock(mutex_);
-    return std::string("{\"route\":13,\"schema\":1,\"native\":") + status_ +
-           ",\"cold\":" + coldReply_ + ",\"lastSourceReply\":" + sourceReply_ +
-           ",\"scope\":" + scope_ + ",\"lastCommand\":" + reply_ + "}";
+    const auto init=InitObservation().Summary();
+    auto result=std::string("{\"route\":13,\"schema\":1,\"native\":")+status_+",\"cold\":"+coldReply_+",\"lastSourceReply\":"+sourceReply_+",\"scope\":"+scope_+",\"lastCommand\":"+reply_+",\"initialization\":"+init+"}";
+    if(result.size()>16384)result=std::string("{\"route\":13,\"schema\":1,\"native\":")+status_+",\"scope\":"+scope_+",\"initialization\":"+init+",\"cold\":{\"state\":\"READ_NAMED_COLD_ENDPOINT\"},\"statusOmitted\":true}";
+    if(result.size()>16384)return "{\"route\":13,\"state\":\"STATUS_UTF8_LIMIT\",\"initialization\":"+init+"}";
+    return result;
   }
 };
 App &Product() {
@@ -539,6 +700,35 @@ std::string Decorate(std::string reply, const std::string &api,
     reply += ",\"rawNapiStatus\":" + std::to_string(int(decode.raw));
   return reply + "}";
 }
+void SaveInitDecode(const Decode &d, bool valid) {
+  InitDecode record;
+  auto &r = record.value;
+  const auto &o = d.typedObservation;
+  r.attempt = d.attempt;
+  r.rawReturnedLength = o.rawReturnedLength;
+  r.normalizedElementCount = o.normalizedElementCount;
+  r.backingBytes = o.backingBytes;
+  r.offset = o.byteOffset;
+  r.rawNapi = d.raw;
+  r.typedKind = o.elementKind;
+  r.status[0] = o.cbInfoStatus;
+  r.status[1] = o.isTypedarrayStatus;
+  r.status[2] = o.typedarrayInfoStatus;
+  r.status[3] = o.isDetachedStatus;
+  r.status[4] = o.arraybufferInfoStatus;
+  r.status[5] = o.isSendableStatus;
+  r.flags = (valid ? 1 : 0) | (o.dataPresent ? 2 : 0) |
+            (o.basePresent ? 4 : 0) | (o.baseEqualsData ? 8 : 0) |
+            (o.normalizationObserved ? 16 : 0) | (o.detachedValue ? 32 : 0) |
+            (o.sendableValue ? 64 : 0);
+  r.lengthUnit = uint32_t(o.lengthUnit);
+  r.copiedWords = d.copiedWords;
+  r.snapshot = d.snapshot;
+  std::snprintf(r.stage, 40, "%s", d.stage);
+  std::snprintf(r.profileId, 48, "%s", o.providerProfileId.data());
+  std::snprintf(r.profileEvidenceSHA, 65, "%s", o.providerEvidenceSHA.data());
+  InitObservation().Decode(record, valid);
+}
 bool Boolean(napi_env e, napi_value value, bool &out, Decode &d) {
   d.stage = "BOOLEAN";
   d.raw = napi_get_value_bool(e, value, &out);
@@ -575,6 +765,21 @@ napi_value Api(napi_env e, napi_callback_info info) {
   if (api == "g13Stop" || api == "g13Configure" ||
       api == "g13DiagnosticBegin" || api == "g13BeginSession")
     Product().Revoke();
+  if (api == "g13InitDiagnostics") {
+    std::string attempt;
+    double page = 0;
+    bool valid = argc == 2 && Text(e, args[0], attempt, decode) &&
+                 Double(e, args[1], page, decode) && std::isfinite(page) &&
+                 page >= 0 && page < 4 && std::floor(page) == page;
+    uint64_t value = 0;
+    if (valid) {
+      Json j("{\"id\":" + Quote(attempt) + "}");
+      valid = j.Number("id", value);
+    }
+    return TextValue(
+        e, valid ? InitObservation().Page(value, uint32_t(page))
+                 : Result("g13InitDiagnostics", "INVALID_ARGUMENT", 6));
+  }
   if (api == "g13Status")
     return TextValue(e, Decorate(Product().Status(), api, decode));
   if (api == "g13Configure" || api == "g13DiagnosticBegin") {
@@ -670,7 +875,17 @@ napi_value Api(napi_env e, napi_callback_info info) {
         out << decode.snapshot[i];
       }
     out << "]}";
-    return TextValue(e, Decorate(out.str(), api, decode));
+    const auto failure = Decorate(out.str(), api, decode);
+    if (api == "g13Configure" || api == "g13DiagnosticBegin") {
+      SaveInitDecode(decode, false);
+      InitObservation().Failure(failure, decode.attempt);
+    }
+    return TextValue(e, failure);
+  }
+  if (api == "g13Configure" || api == "g13DiagnosticBegin") {
+    SaveInitDecode(decode, true);
+    InitObservation().Stage("DECODE_OK", "EXIT", 0, -1, nullptr, -1, -1, -1, -1,
+                            decode.attempt);
   }
   command.attempt = decode.attempt;
   command.api = api;
@@ -683,25 +898,28 @@ void Created(OH_NativeXComponent *, void *window) {
   Command c{};
   c.kind = Kind::Window;
   c.window = window;
-  Product().Submit(c, true);
+  Product().Submit(c, false);
 }
 void Changed(OH_NativeXComponent *, void *window) {
   Command c{};
   c.kind = Kind::Resize;
   c.window = window;
-  Product().Submit(c, true);
+  Product().Submit(c, false);
 }
 void Destroyed(OH_NativeXComponent *, void *) {
   Command c{};
   c.kind = Kind::Destroy;
-  Product().Submit(c, true);
+  Product().Submit(c, false);
 }
 OH_NativeXComponent_Callback callbacks = {Created, Changed, Destroyed, nullptr};
 napi_value Init(napi_env e, napi_value exports) {
-  const char *names[] = {
-      "g13Configure",       "g13Offer128",     "g13PagePulse", "g13Stop",
-      "g13Status",          "g13ColdBegin",    "g13ColdPage",  "g13ColdEnd",
-      "g13DiagnosticBegin", "g13BeginSession", "g13SetActive", "g13ViewMode"};
+  const char *names[] = {"g13Configure",       "g13Offer128",
+                         "g13PagePulse",       "g13Stop",
+                         "g13InitDiagnostics", "g13Status",
+                         "g13ColdBegin",       "g13ColdPage",
+                         "g13ColdEnd",         "g13DiagnosticBegin",
+                         "g13BeginSession",    "g13SetActive",
+                         "g13ViewMode"};
   for (auto name : names) {
     napi_property_descriptor p = {
         name,    nullptr, Api,          nullptr,
