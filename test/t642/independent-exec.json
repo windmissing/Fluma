@@ -1,0 +1,533 @@
+{
+ "revision": "T642_INDEPENDENT_EXEC_V1",
+ "results": [
+  {
+   "id": "R01",
+   "kind": "duration",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "R02",
+   "kind": "duration",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "R03",
+   "kind": "duration",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "R04",
+   "kind": "duration",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "R05",
+   "kind": "duration",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "R06",
+   "kind": "duration",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "A01",
+   "kind": "age",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "A02",
+   "kind": "age",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "A03",
+   "kind": "age",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "A04",
+   "kind": "age",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "A05",
+   "kind": "age",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "V01",
+   "kind": "validation",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "V02",
+   "kind": "validation",
+   "ok": true,
+   "got": {
+    "eligible": "True"
+   },
+   "note": ""
+  },
+  {
+   "id": "V03",
+   "kind": "validation",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "V04",
+   "kind": "validation",
+   "ok": true,
+   "got": {
+    "eligible": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "P01",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "COMMAND",
+    "vxQ": "524288",
+    "vyQ": "0",
+    "sat": "0",
+    "Jx": "34359738368",
+    "Jy": "0",
+    "cap": "2417851639229258349412352",
+    "dxQ": "262144",
+    "dyQ": "0"
+   },
+   "note": ""
+  },
+  {
+   "id": "P02",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "NO_IMPULSE",
+    "dxQ": "262143",
+    "dyQ": "0"
+   },
+   "note": ""
+  },
+  {
+   "id": "P03",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "COMMAND",
+    "vxQ": "2097152",
+    "vyQ": "0",
+    "sat": "0",
+    "Jx": "137438953472",
+    "Jy": "0",
+    "cap": "38685626227668133590597632",
+    "dxQ": "1048576",
+    "dyQ": "0"
+   },
+   "note": ""
+  },
+  {
+   "id": "P04",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "COMMAND",
+    "vxQ": "-2097152",
+    "vyQ": "0",
+    "sat": "0",
+    "Jx": "-137438953472",
+    "Jy": "0",
+    "cap": "38685626227668133590597632",
+    "dxQ": "-1048576",
+    "dyQ": "-1048576"
+   },
+   "note": ""
+  },
+  {
+   "id": "P05",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "NO_IMPULSE",
+    "dxQ": "0",
+    "dyQ": "-1048576"
+   },
+   "note": ""
+  },
+  {
+   "id": "P06",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "COMMAND",
+    "vxQ": "25165824",
+    "vyQ": "33554432",
+    "sat": "0",
+    "Jx": "1649267441664",
+    "Jy": "2199023255552",
+    "cap": "15474250491067253436239052800",
+    "dxQ": "12582912",
+    "dyQ": "16777216"
+   },
+   "note": ""
+  },
+  {
+   "id": "P07",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "COMMAND",
+    "vxQ": "25165824",
+    "vyQ": "33554432",
+    "sat": "3",
+    "Jx": "1649267441664",
+    "Jy": "2199023255552",
+    "cap": "15474250491067253436239052800",
+    "dxQ": "12582913",
+    "dyQ": "16777217"
+   },
+   "note": ""
+  },
+  {
+   "id": "P08",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "COMMAND",
+    "vxQ": "-25165824",
+    "vyQ": "33554432",
+    "sat": "3",
+    "Jx": "-1649267441664",
+    "Jy": "2199023255552",
+    "cap": "15474250491067253436239052800",
+    "dxQ": "-134217728",
+    "dyQ": "268435456"
+   },
+   "note": ""
+  },
+  {
+   "id": "P09",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "NO_IMPULSE",
+    "dxQ": "0",
+    "dyQ": "0"
+   },
+   "note": ""
+  },
+  {
+   "id": "P10",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "REJECT"
+   },
+   "note": ""
+  },
+  {
+   "id": "P11",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "REJECT"
+   },
+   "note": ""
+  },
+  {
+   "id": "P12",
+   "kind": "recipe",
+   "ok": true,
+   "got": {
+    "status": "REJECT"
+   },
+   "note": ""
+  },
+  {
+   "id": "D01",
+   "kind": "delay",
+   "ok": true,
+   "got": {
+    "receiptDurationNs": "1000000",
+    "eligible": "False",
+    "sampleAgeKnown": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "D02",
+   "kind": "delay",
+   "ok": true,
+   "got": {
+    "receiptDurationNs": "100000000",
+    "eligible": "True",
+    "sampleAgeKnown": "False"
+   },
+   "note": ""
+  },
+  {
+   "id": "D03",
+   "kind": "spatial_invariance",
+   "ok": true,
+   "got": {
+    "equalImpulse": "True",
+    "vxQ": "2097152",
+    "vyQ": "2097152"
+   },
+   "note": ""
+  },
+  {
+   "id": "S01",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S02",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S03",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S04",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S05",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S06",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S07",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S08",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S09",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S10",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "S11",
+   "kind": "bounded_protocol",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N01",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N02",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N03",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N04",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N05",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N06",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N07",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N08",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N09",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N10",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  },
+  {
+   "id": "N11",
+   "kind": "independent_handoff",
+   "ok": true,
+   "got": {
+    "execution": "NOT_RUN"
+   },
+   "note": ""
+  }
+ ]
+}

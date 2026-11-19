@@ -1,0 +1,59 @@
+{
+ "revision": "T642_INDEPENDENT_DERIVATIONS_V1",
+ "date": "2026-11-19",
+ "items": [
+  {
+   "id": "X01",
+   "domain": "quantization error bound",
+   "derivation": "trunc per-axis abs error < 1/Q model units (fraction part of |dx|*Q discarded); RNE control velocity error < 2/Q + 1/(2Q) = 2.5/Q per axis per second (quantization 1/Q via dxQ + RNE half 0.5/Q); saturation min/max does not amplify abs diff; J error < mref*2.5/Q = (Q/16)*2.5/Q = 2.5/16 = 0.15625 model units",
+   "verified": "analytic"
+  },
+  {
+   "id": "X02",
+   "domain": "deadzone discontinuity",
+   "derivation": "NO_IMPULSE vs COMMAND classification intentionally discontinuous at dxQ^2+dyQ^2 == (Q/4)^2; equality goes ACTIVE (>=). Boundary probes required at exact equality and +/-1 Q-step both axes",
+   "verified": "formula; device probes NOT_RUN"
+  },
+  {
+   "id": "X03",
+   "domain": "J/cap bounds",
+   "derivation": "max |Jx| = mref*24Q = (Q/16)*24Q = 1.5Q^2 ✓; max Jy = (Q/16)*32Q = 2Q^2 ✓; vector J <= sqrt(1.5^2+2^2)Q^2 = 2.5Q^2 ✓; cap max = 8*mref*((24Q)^2+(32Q)^2)*2^24 = 8*(Q/16)*1600Q^2*2^24 = 800Q^3*2^24 < 2^120 ✓ — all four hard bounds independently reproduce",
+   "verified": "analytic exact"
+  },
+  {
+   "id": "X04",
+   "domain": "delay non-identifiability",
+   "derivation": "rU-rD = (sU-sD)+(dU-dD); with unknown dD/dU no finite bound on sample duration/velocity error exists; D01 (99ms down delay -> 1ms receipt, REJECT by eligibility) and D02 (10s whole-stream delay -> receipt unchanged 100ms, eligible, sampleAgeUnknown) reproduce the two asymmetry examples; whole-stream delay is INVISIBLE by design",
+   "verified": "executable (D01/D02)"
+  },
+  {
+   "id": "X05",
+   "domain": "spatial invariance",
+   "derivation": "same endpoint displacement with receipt durations 20ms vs 200ms yields identical vxQ/vyQ/J/cap (Dref fixed) — D03 executable; receiptDuration never enters J/cap",
+   "verified": "executable (D03)"
+  },
+  {
+   "id": "X06",
+   "domain": "2^53 / opaque sample bits",
+   "derivation": "sample timestamp stays original IEEE64 opaque bits; never converted — values above 2^53, NaN must not become native numbers (N05 domain); tester device probes NOT_RUN (needs implementation)",
+   "verified": "formula; NOT_RUN device"
+  },
+  {
+   "id": "X07",
+   "domain": "state machine completeness",
+   "derivation": "S01-S11 eleven bounded_protocol cases independently enumerated: ONE_COMMAND for {DOWN,UP_ZERO_ACTIVE}, {DOWN,UP,UP}, {DOWN,FRAME_COMMIT_ONLY,UP}; NO_COMMAND for double-DOWN, second pointer, MOVE_257, hide/show, geometry change, cancel, clock-reversed, lock-wait>8ms — all 11 reproduce expected results by independent enumeration",
+   "verified": "executable (S01-S11)"
+  },
+  {
+   "id": "X08",
+   "domain": "budget cross-check",
+   "derivation": "validatedReady-r<=8ms includes parse/mapping/lock; UP receiptDuration in [8333334,1e9]ns both bounds exclusive/inclusive verified at +/-1ns (R02/R03, R05/R06); age gate 250ms inclusive both ends (A03/A04); parent root 250ms deadline separate — earlier of the two governs",
+   "verified": "executable (R/A/V groups)"
+  }
+ ],
+ "t637_pending_mapping": {
+  "41 spec-checked": "independent-exec.json 30 executable cases ALL PASS + 8 derivation items",
+  "11 NOT_RUN items": "N01-N11 independent_handoff domains (device/implementation required: FIFO full/expiry/dedup/GPU bad-value/cold reader/cost)",
+  "product status": "NOT_IMPLEMENTED (G9_DM_NATIVE_RECEIPT_SPATIAL_R1 default OFF) — independent baseline ready, no GPU PASS claimed"
+ }
+}
