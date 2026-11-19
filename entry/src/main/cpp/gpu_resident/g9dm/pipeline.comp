@@ -5,9 +5,9 @@ layout(local_size_x=64)in;
 const uint G9_PROFILE=843924551u,G9_SEAL=3235776802u;
 const uint G9_STATE_MAGIC=844317767u;
 const uint G9_EVENT_MAGIC=843400263u;
-const uint G9_PATH_MAGIC=827341127u;
-const uint G9_INPUT_MAGIC=826882375u;
-const uint G9_COMPLETION_MAGIC=826489159u;
+const uint G9_PATH_MAGIC=844121159u;
+const uint G9_INPUT_MAGIC=843662407u;
+const uint G9_COMPLETION_MAGIC=843269191u;
 const uint G9_HEADER_magic=0u;
 const uint G9_HEADER_revision=1u;
 const uint G9_HEADER_profile=2u;
@@ -855,7 +855,7 @@ if(kind==11u)return G9_MASK_DEPOSIT;
 if(kind==12u)return G9_MASK_LAUNCH;
 if(kind==13u)return G9_MASK_STEP_SEAL;
 if(kind==14u)return G9_MASK_ROOT_END;
-return uvec2(0u);
+if(kind==15u)return uvec2(4294967295u,2148007935u);if(kind==16u)return uvec2(1073741823u,2147483648u);return uvec2(0u);
 }
 const uint G9_OP_ROOT_INIT=12u;
 const uint G9_OP_BASE_FREEZE=13u;
@@ -980,6 +980,7 @@ layout(std430,binding=2)coherent buffer Workspace{uint W[];};
 layout(std430,binding=3)coherent buffer EventPath{uint E[];};
 uniform uint uK,uStateWords,uColumn,uBed,uFlow,uPacket,uSources;
 uniform uint uInput,uConfig,uControls,uSummary,uStageDiagnostic,uOriginAudit,uColumnStage,uHamilton,uContacts,uFaces,uWideLedger,uCompletion;
+uniform uint uRootKind,uRequiredAudits;
 uniform uint uOp,uRole,uJslot,uMicro,uPass,uRequiredPasses,uEventCapacity,uPathCapacity,uPathWord;
 uint uJ;
 uniform uvec2 uNonce,uRun,uOwner,uContext,uSurface,uGeometry,uConfigId,uInputGeneration,uSession,uPlan,uBaseCommit;
@@ -1023,7 +1024,7 @@ bool g9Reserve(uint events,uint paths,out uint eventStart,out uint pathStart){
 }
 void g9Event(out uint row[64],uint kind,uint entity,uint from,uint to){
  for(uint i=0u;i<64u;++i)row[i]=0u;
- row[0]=G9_EVENT_MAGIC;row[1]=1u;row[2]=kind;row[3]=g9Ctl(13u);row[4]=uNonce.x;row[5]=uNonce.y;row[6]=g9Ctl(7u)+1u;row[7]=uOp==G9_OP_SOURCE_AUDIT_REPLAY?G9_OP_SOURCE_PRIVATE_BIRTH:uOp;row[8]=uMicro;
+ row[0]=G9_EVENT_MAGIC;row[1]=2u;row[2]=kind;row[3]=g9Ctl(13u);row[4]=uNonce.x;row[5]=uNonce.y;row[6]=g9Ctl(7u)+1u;row[7]=uOp==G9_OP_SOURCE_AUDIT_REPLAY?G9_OP_SOURCE_PRIVATE_BIRTH:uOp;row[8]=uMicro;
  row[9]=from;row[10]=to;row[11]=entity;row[14]=(uRole==4u?2u:uRole==2u?1u:0u);row[63]=G9_SEAL;
 }
 bool g9WriteEvent(uint at,uint row[64]){
@@ -1201,233 +1202,107 @@ bool g9Drive(uint c,out uvec4 drive){
 //  14-15 omegaAtPhysical/uAtPhysical, 16 qNext, 17 nextFeasible,
 //  18 evalCalls, 19-31 reserved zero.
 
-uint dmWord(uint c,uint field){return W[uColumnStage+c*64u+32u+field];}
-void dmPut(uint c,uint field,uint value){W[uColumnStage+c*64u+32u+field]=value;}
-
-// Eval(q) per §4.2 — computes u, head, H, omega and the feasibility test.
-// Returns false on any checked-arithmetic failure (FAULT domain).
-bool dmEval(uint c,uint q,uvec4 pEntry,uint fEntry,uint bedWide,
-            uvec4 hg,uvec4 omegaGWide,bool shearOff,
-            out uint omegaOut,out uvec4 hOut,out uint feasible){
- feasible=0u;omegaOut=0u;hOut=uvec4(0u);
- uint f=fEntry+q;
- // u = 0 if f==0&&p==0 else RNE(p/f)
- uvec4 u=uvec4(0u);
- if(f!=0u){if(!g9SDiv(pEntry,g9U32(f),1u,u))return false;}
- else if(!g9Zero(pEntry))return false;
- // r=max(f,hRegQ)
- uint r=max(f,uint(C[uConfig+7u+0u])); // hReg placeholder word below replaced by header param
- // head=floor(kShear*u^2/(ONE*gn)); U128 with S128 magnitude of u
- uvec4 uMag=g9Magnitude(u),square,headWide,numerator,denominator,quotient,remainder;
- if(!g9UMul(uMag,uMag,square))return false;
- if(!g9SMul(square,g9S32(int(C[uConfig+4u])),numerator))return false; // kShear Q16
- if(!g9UMul(g9U32(65536u),g9U32(max(C[23u],1u)),denominator))return false; // ONE*gn
- if(!g9UDiv(g9Magnitude(numerator),denominator,quotient,remainder))return false;
- headWide=quotient;
- if(g9Negative(numerator)&&!g9Zero(remainder)){uvec4 one;if(!g9UAdd(quotient,g9U32(1u),one))return false;headWide=one;}
- // yieldDepth=RNE(muStart*r/ONE); excessHead=max(0,head-yieldDepth)
- uvec4 yieldDepth,excessHead;
- if(!g9RneProduct(g9S32(int(C[uConfig+0u])),g9U32(r),65536u,yieldDepth))return false;
- if(g9SCmp(headWide,yieldDepth)>0){uvec4 diff;if(!g9SSub(headWide,yieldDepth,diff))return false;excessHead=diff;}
- else excessHead=uvec4(0u);
- // HsWide=floor(depthShearGainQ16*excessHead/ONE)
- uvec4 hsWide,hSum;
- if(shearOff)hsWide=uvec4(0u);
- else if(!g9SMul(g9S32(int(C[uConfig+6u+1u])),excessHead,numerator)||!g9SDiv(numerator,g9U32(65536u),2u,hsWide))return false;
- if(!g9SAdd(g9U32(fEntry),hsWide,hSum))return false;
- // H=min(B,max(Hg,F_entry+HsWide))
- uvec4 hCandidate=g9SCmp(hg,hSum)>0?hg:hSum;
- hOut=g9SCmp(g9U32(bedWide),hCandidate)>0?hCandidate:g9U32(bedWide);
- // chiS=floor(excessHead*Q/r); omegaS=floor(omegaShearGain*chiS/Q)
- uint chiS=0u;
- if(r>0u){uvec4 csWide;if(!g9UMul(g9Magnitude(excessHead),g9U32(1048576u),numerator)||!g9UDiv(numerator,g9U32(r),quotient,remainder))return false;
-  if(!g9Uint(quotient,chiS))chiS=0xffffffffu; // saturate: diagnostics bound only
- }
- uint omegaS=0u;
- if(!shearOff&&chiS!=0xffffffffu){uvec4 osWide;if(!g9UMul(g9U32(C[uConfig+6u+2u]),g9U32(chiS),numerator)||!g9UDiv(numerator,g9U32(1048576u),quotient,remainder))return false;
-  if(!g9Uint(quotient,omegaS))return false;}
- // omega=min(omegaMax,omegaBase+max(omegaG,omegaS))
- uint omegaG=0u;if(!g9Uint(omegaGWide,omegaG))return false;
- uint raw=omegaG>omegaS?omegaG:omegaS;
- omegaOut=min(uint(C[uConfig+6u+3u]),uint(C[uConfig+5u])+raw);
- // deficit=max(0,H-F_entry-q); feasible = q*(120*J*ONE)<=omega*deficit
- uvec4 deficit=uvec4(0u);
- uint hf;
- if(g9Uint(hOut,hf)&&hf>fEntry+q){uvec4 diff;if(!g9SSub(hOut,g9U32(fEntry+q),diff))return false;deficit=diff;}
- uint d;
- if(!g9Uint(deficit,d))d=0u;
- uvec4 lhs,rhs;
- if(!g9UMul(g9U32(q),g9U32(120u*uJ*65536u),lhs))return false;
- if(!g9UMul(g9U32(omegaOut),g9U32(d),rhs))return false;
- feasible=g9UCmp(lhs,rhs)<=0?1u:0u;
- return true;
+// T648/T647: default DM2 genuine DM48 implementation.
+uniform uint uDmBase;
+uint dmWord(uint c,uint f){return W[uDmBase+c*48u+f];}
+void dmPut(uint c,uint f,uint v){W[uDmBase+c*48u+f]=v;}
+uint dmParam(uint f){return W[uConfig+112u+f];}
+uvec4 dmRead64(uint c,uint f){return g9S64(uvec2(dmWord(c,f),dmWord(c,f+1u)));}
+bool dmStore64(uint c,uint f,uvec4 v){uint sign=(v.y&0x80000000u)!=0u?0xffffffffu:0u;if(v.z!=sign||v.w!=sign){g9Reject(6u,c,f);return false;}dmPut(c,f,v.x);dmPut(c,f+1u,v.y);return true;}
+uvec4 dmShr(uvec4 a,uint n){return uvec4((a.x>>n)|(a.y<<(32u-n)),(a.y>>n)|(a.z<<(32u-n)),(a.z>>n)|(a.w<<(32u-n)),a.w>>n);}
+bool dmFloorMul(uvec4 a,uvec4 b,uint bits,out uvec4 result){uvec4 v;if(!g9UMul(a,b,v))return false;result=dmShr(v,bits);return true;}
+bool dmRneMul(uvec4 a,uvec4 b,uint bits,out uvec4 result){uvec4 v;if(!g9UMul(a,b,v))return false;uint mask=(1u<<bits)-1u,midpointBit=1u<<(bits-1u),rem=v.x&mask;result=dmShr(v,bits);return rem<midpointBit||(rem==midpointBit&&(result.x&1u)==0u)||g9UAdd(result,g9U32(1u),result);}
+uint dmBound(uvec4 v,uint bound){return g9UCmp(v,g9U32(bound))>=0?bound:v.x;}
+struct DmEval {uint omega;uvec4 h;uvec4 hs;int velocity;bool feasible;};
+bool dmEval(uint q,uvec4 p,uint f0,uint b,uvec4 hg,uvec4 og,out DmEval e){
+ e.omega=0u;e.h=e.hs=uvec4(0u);e.velocity=0;e.feasible=false;uint f=f0+q;if(f<f0)return false;
+ uvec4 u=uvec4(0u);if(f==0u){if(!g9Zero(p))return false;}else if(!g9SDiv(p,g9U32(f),1u,u))return false;
+ if(!g9I32(u,e.velocity))return false;
+ uint r=max(f,dmParam(2u));if(r==0u||C[23u]==0u)return false;
+ uvec4 square,num,den,head,rem,yieldDepth,excess=uvec4(0u),hs,hSum,chiS,os,raw,deficit=uvec4(0u),lhs,rhs;
+ if(!g9UMul(g9Magnitude(u),g9Magnitude(u),square)||!g9UMul(square,g9U32(W[uConfig+4u]),num)||!g9UMul(g9U32(65536u),g9U32(C[23u]),den)||!g9UDiv(num,den,head,rem)||!dmRneMul(g9U32(W[uConfig]),g9U32(r),16u,yieldDepth))return false;
+ if(g9UCmp(head,yieldDepth)>0&&!g9USub(head,yieldDepth,excess))return false;
+ if(!dmFloorMul(g9U32(dmParam(1u)),excess,16u,hs)||!g9UAdd(g9U32(f0),hs,hSum))return false;e.hs=hs;
+ e.h=g9UCmp(hg,hSum)>0?hg:hSum;if(g9UCmp(e.h,g9U32(b))>0)e.h=g9U32(b);
+ if(!g9UMul(excess,g9U32(1048576u),num)||!g9UDiv(num,g9U32(r),chiS,rem)||!dmFloorMul(g9U32(dmParam(5u)),chiS,20u,os)||!g9UAdd(g9U32(dmParam(3u)),g9UCmp(og,os)>0?og:os,raw))return false;
+ e.omega=dmBound(raw,dmParam(6u));if(g9UCmp(e.h,g9U32(f))>0&&!g9USub(e.h,g9U32(f),deficit))return false;
+ if(!g9UMul(g9U32(q),g9U32(120u*uJ*65536u),lhs)||!g9UMul(g9U32(e.omega),deficit,rhs))return false;e.feasible=g9UCmp(lhs,rhs)<=0;return true;
 }
-
-// The DM_REQUEST body: freeze S/F/p/B, compute geometry, run the bounded
-// solver, record everything into the DM48 WORK fields.
+bool dmGeometry(uint c,out uvec4 chi,out uvec4 hg,out uvec4 og){
+ uint b=g9Material(c),gn=C[23u];if(gn==0u)return false;uvec4 drive=uvec4(0u),term,d,negativeG,yield,excess=uvec4(0u),num,rem;
+ if(c<127u){if(!g9RneProduct(g9U32(gn),g9S32(int(g9Material(c+1u))-int(b)),1048576u,term)||!g9SSub(g9S32(int(C[22u])),term,d))return false;if(g9SCmp(d,drive)>0)drive=d;}
+ if(c>0u){if(!g9SNeg(g9S32(int(C[22u])),negativeG)||!g9RneProduct(g9U32(gn),g9S32(int(g9Material(c-1u))-int(b)),1048576u,term)||!g9SSub(negativeG,term,d))return false;if(g9SCmp(d,drive)>0)drive=d;}
+ if(!dmRneMul(g9U32(W[uConfig]),g9U32(gn),16u,yield))return false;if(g9SCmp(drive,yield)>0&&!g9USub(drive,yield,excess))return false;
+ if(!g9UMul(excess,g9U32(1048576u),num)||!g9UDiv(num,g9U32(gn),chi,rem)||!dmFloorMul(g9U32(dmParam(0u)),chi,16u,hg)||!dmFloorMul(g9U32(dmParam(4u)),chi,20u,og))return false;
+ if(g9UCmp(hg,g9U32(b))>0)hg=g9U32(b);return true;
+}
+bool dmOriginPrefix(uint c,uint q,out uint result){
+ result=0u;uint depth=g9MapCount(false,c),count=g9MapCount(true,c),admitted=count;
+ if(depth>64u||count>64u)return false;
+ for(uint n=0u;n<depth&&result<q;++n){uint rank=depth-1u-n;uvec3 key=g9Key(false,c,rank);if(!g9KeyValid(key))return false;bool found=false;
+  for(uint i=0u;i<count;++i)if(g9KeyCompare(key,g9Key(true,c,i))==0)found=true;
+  for(uint i=0u;i<n&&!found;++i)if(g9KeyCompare(key,g9Key(false,c,depth-1u-i))==0)found=true;
+  if(!found){if(admitted==64u)break;++admitted;}uint mass=C[g9MapAddress(false,c,rank)+3u];if(mass==0u)return false;result+=min(q-result,mass);
+ }return true;
+}
 bool dmRequest(){
- for(uint c=0u;c<128u;++c){
-  uint bed=g9Column(c,0u),flow=g9Column(c,1u),bedWide=g9Material(c);
-  uvec4 pEntry=g9Momentum(c);
-  // Freeze geometry from neighbors (frozen B=S+F at entry).
-  uvec4 gx=g9S64(uvec2(C[22u],0u));
-  uint gn=C[23u];
-  // dR/dL with frozen neighbor material; missing neighbors ignored.
-  uvec4 drive=uvec4(0u);
-  if(c<127u){uvec4 slope=g9S32(int(g9Material(c+1u))-int(bedWide));uvec4 term;if(!g9RneProduct(g9U32(gn),slope,1048576u,term))return false;uvec4 right;if(!g9SSub(gx,term,right))return false;drive=right;}
-  if(c>0u){uvec4 slope=g9S32(int(g9Material(c-1u))-int(bedWide));uvec4 negativeG,term;if(!g9SNeg(gx,negativeG)||!g9RneProduct(g9U32(gn),slope,1048576u,term))return false;uvec4 left;if(!g9SSub(negativeG,term,left))return false;if(g9SCmp(left,drive)>0)drive=left;}
-  // chiG=floor(max(excessA,0)*Q/gn)
-  uvec4 yieldA,excessA;
-  if(!g9RneProduct(g9S32(int(C[uConfig+0u])),g9U32(gn),65536u,yieldA))return false;
-  if(g9SCmp(drive,yieldA)>0){uvec4 diff;if(!g9SSub(drive,yieldA,diff))return false;excessA=diff;}
-  else excessA=uvec4(0u);
-  uvec4 chiGWide;
-  if(!g9UMul(g9Magnitude(excessA),g9U32(1048576u),chiGWide))return false;
-  uint chiG=0u;{uvec4 q2,r2;if(!g9UDiv(chiGWide,g9U32(gn),q2,r2))return false;if(!g9Uint(q2,chiG))return false;}
-  // Hg=min(B,floor(depthGravityGain*chiG/ONE))
-  uvec4 hgWide,q3,r3;
-  if(!g9UMul(g9U32(C[uConfig+6u+0u]),g9U32(chiG),hgWide)||!g9UDiv(hgWide,g9U32(65536u),q3,r3))return false;
-  uint hgU;if(!g9Uint(q3,hgU))return false;
-  uint hg=min(bedWide,hgU);
-  // omegaG=floor(omegaGravityGain*chiG/Q)
-  uvec4 ogW;
-  if(!g9UMul(g9U32(C[uConfig+6u+4u]),g9U32(chiG),ogW)||!g9UDiv(ogW,g9U32(1048576u),q3,r3))return false;
-  uint omegaG;if(!g9Uint(q3,omegaG))return false;
-  // Eval(0) — upper bound and closed-form branch decision.
-  bool shearOff=g9Zero(pEntry)||C[uConfig+4u]==0u;
-  uint omega0,feasible0;uvec4 h0;
-  if(!dmEval(c,0u,pEntry,flow,bedWide,g9U32(hg),g9U32(omegaG),shearOff,omega0,h0,feasible0))return false;
-  dmPut(c,1u,chiG);dmPut(c,2u,hg);dmPut(c,3u,0u);dmPut(c,4u,omega0);
-  // U=min(S,floor(omega0*max(H0-F,0)/(120JONE+omega0)))
-  uint h0u=0u;if(!g9Uint(h0,h0u))h0u=0u;
-  uint deficit0=h0u>flow?h0u-flow:0u;
-  uint upper=0u;
-  {uvec4 num;if(!g9UMul(g9U32(omega0),g9U32(deficit0),num))return false;
-   uvec4 den;if(!g9UAdd(g9U32(120u*uJ*65536u),g9U32(omega0),den))return false;
-   uvec4 q4,r4;if(!g9UDiv(num,den,q4,r4))return false;
-   if(!g9Uint(q4,upper))return false;
-   upper=min(upper,bed);}
-  dmPut(c,5u,upper);
-  uint qPhysical=0u,activeIterations=0u,closedForm=0u,finalLo=0u,finalHi=upper+1u,evalCalls=1u;
-  if(shearOff){
-   // Closed-form branch: no bisection, U is the answer.
-   qPhysical=upper;closedForm=1u;finalLo=upper;finalHi=upper+1u;
-  }else{
-   // 32-round fixed-length lower bound: lo feasible, hi sentinel.
-   uint lo=0u,hi=upper+1u;
-   for(uint round=0u;round<32u;++round){
-    if(hi-lo<=1u)continue; // uniform no-op round, still counted
-    uint mid=lo+(hi-lo)/2u;
-    uint omegaM,feasibleM;uvec4 hM;
-    ++evalCalls;
-    if(!dmEval(c,mid,pEntry,flow,bedWide,g9U32(hg),g9U32(omegaG),false,omegaM,hM,feasibleM))return false;
-    if(feasibleM!=0u)lo=mid;else hi=mid;
-    ++activeIterations;
-   }
-   qPhysical=lo;finalLo=lo;finalHi=hi;
-  }
-  dmPut(c,6u,finalLo);dmPut(c,7u,finalHi);dmPut(c,8u,activeIterations);dmPut(c,9u,closedForm);
-  dmPut(c,10u,qPhysical);dmPut(c,18u,evalCalls);
-  // qNext records q+1 (S+1 sentinel) and its feasibility (upper-bound proof
-  // may exclude it without an extra Eval).
-  dmPut(c,16u,qPhysical<bed?qPhysical+1u:bed+1u);
-  dmPut(c,17u,qPhysical<upper?1u:0u);
-  // Final Eval at qPhysical for the recorded H/omega/u (reuse when closed).
-  uint omegaP,feasibleP;uvec4 hP;
-  ++evalCalls;
-  if(!dmEval(c,qPhysical,pEntry,flow,bedWide,g9U32(hg),g9U32(omegaG),shearOff,omegaP,hP,feasibleP))return false;
-  if(feasibleP==0u)return false;
-  uint hPu=0u;if(!g9Uint(hP,hPu))hPu=0u;
-  dmPut(c,13u,hPu);dmPut(c,14u,omegaP);dmPut(c,15u,0u);dmPut(c,18u,evalCalls);
-  // Origin prefix (bed top-first contiguous expressible prefix).
-  uint qOrigin=0u;
-  {uint left=qPhysical,depth=g9MapCount(false,c),flowCount=g9MapCount(true,c);
-   for(uint n=0u;n<depth&&left>0u;++n){uint rank=depth-1u-n;uvec3 key=g9Key(false,c,rank);
-    bool found=false;
-    for(uint i=0u;i<flowCount;++i)if(g9KeyCompare(key,g9Key(true,c,i))==0)found=true;
-    for(uint i=0u;i<n&&!found;++i)if(g9KeyCompare(key,g9Key(false,c,depth-1u-i))==0)found=true;
-    if(!found&&flowCount>=64u)break; // 65th distinct origin unrepresentable
-    uint amount=min(left,C[g9MapAddress(false,c,rank)+3u]);left-=amount;qOrigin+=amount;}
-  }
-  dmPut(c,11u,qOrigin);
-  uint qActual=min(qPhysical,qOrigin);
-  dmPut(c,12u,qActual);
-  // Local reason per the T554 §8 order.
-  uint reason=0u;
-  if(bed==0u)reason=1u;
-  else if(deficit0==0u)reason=2u;
-  else if(omega0==0u)reason=3u;
-  else if(qPhysical==0u)reason=4u;
-  else if(qOrigin==0u)reason=5u;
-  else if(qOrigin<qPhysical)reason=6u;
-  dmPut(c,0u,reason);
- }
- return true;
+ for(uint c=0u;c<128u;++c){uint prior=dmWord(c,46u)&0xffff0000u;for(uint f=0u;f<48u;++f)dmPut(c,f,0u);dmPut(c,46u,prior);uint s=g9Column(c,0u),f0=g9Column(c,1u),b=g9Material(c);uvec4 p=g9Momentum(c),chi,hg,og;
+  if(!dmGeometry(c,chi,hg,og)||any(notEqual(chi.yzw,uvec3(0u))))return false;
+  dmPut(c,0u,s);dmPut(c,1u,f0);if(!dmStore64(c,2u,p))return false;dmPut(c,4u,b);dmPut(c,5u,C[22u]);dmPut(c,6u,C[23u]);dmPut(c,7u,chi.x);dmPut(c,8u,hg.x);dmPut(c,24u,g9MapCount(false,c));dmPut(c,25u,g9MapCount(true,c));
+  DmEval e0,ep,en;if(!dmEval(0u,p,f0,b,hg,og,e0)||!e0.feasible)return false;
+  uint deficit=e0.h.x>f0?e0.h.x-f0:0u;uvec4 numerator,denominator,quotient,remainder;
+  if(!g9UMul(g9U32(e0.omega),g9U32(deficit),numerator)||!g9UAdd(g9U32(120u*uJ*65536u),g9U32(e0.omega),denominator)||!g9UDiv(numerator,denominator,quotient,remainder))return false;
+  if(any(notEqual(quotient.yzw,uvec3(0u))))return false;uint upper=min(s,quotient.x),lo=0u,hi=upper+1u,iterations=0u,calls=1u;bool closed=g9Zero(p)||W[uConfig+4u]==0u;
+  if(closed)lo=upper;else for(uint round=0u;round<32u;++round){if(hi-lo<=1u)continue;uint mid=lo+(hi-lo)/2u;DmEval em;if(!dmEval(mid,p,f0,b,hg,og,em))return false;++calls;++iterations;if(em.feasible)lo=mid;else hi=mid;}
+  if(closed)hi=upper+1u;if(hi!=lo+1u)return false;
+  if(!dmEval(lo,p,f0,b,hg,og,ep)||!ep.feasible)return false;++calls;uint next=lo+1u;bool nextFeasible=false;
+  if(next<=s&&next<=upper){if(!dmEval(next,p,f0,b,hg,og,en))return false;++calls;nextFeasible=en.feasible;}if(nextFeasible)return false;
+  uint origin;if(!dmOriginPrefix(c,lo,origin))return false;uint actual=min(lo,origin);
+  uint reason=s==0u?1u:deficit==0u?2u:e0.omega==0u?3u:lo==0u?4u:origin==0u?5u:origin<lo?6u:0u;
+  dmPut(c,9u,e0.h.x);dmPut(c,10u,e0.omega);dmPut(c,11u,dmBound(e0.hs,268435456u));dmPut(c,12u,upper);dmPut(c,13u,lo);dmPut(c,14u,hi);dmPut(c,15u,iterations);dmPut(c,16u,lo);dmPut(c,17u,origin);dmPut(c,18u,actual);dmPut(c,19u,ep.h.x);dmPut(c,20u,ep.omega);dmPut(c,21u,uint(ep.velocity));dmPut(c,22u,dmBound(ep.hs,268435456u));dmPut(c,23u,reason);dmPut(c,28u,calls);dmPut(c,29u,next);dmPut(c,30u,0u);dmPut(c,31u,closed?1u:0u);dmPut(c,46u,prior|1u);
+ }return true;
 }
-
-// The DM_APPLY body: single-column atomic S->F with the map migration; p is
-// bit-identical before/after. One DM_NATURAL event per column including q0.
 bool dmApplyColumn(uint c){
- uint qActual=dmWord(c,12u);
- uint reason=dmWord(c,0u);
- uint oldS=g9Column(c,0u),oldF=g9Column(c,1u);
- uvec4 momentum=g9Momentum(c);
- uint event,path;
- if(!g9Reserve(1u,0u,event,path))return false;
- if(qActual>0u){
-  if(!g9RecruitMap(c,qActual)){g9Fault(24u,c,0u);return false;}
-  g9PutColumn(c,0u,oldS-qActual);g9PutColumn(c,1u,oldF+qActual);
-  g9PutColumn(c,5u,0u);g9PutColumn(c,13u,g9Column(c,13u)|1u);
-  g9Derived(c);
- }
- uint row[64];
- g9Event(row,15u,c,c,c); // kind15 DM_NATURAL
- row[14]|=qActual>0u?4u:8u; // compoundMutation / normalDenial
- row[15]=dmWord(c,10u);row[16]=dmWord(c,11u);row[17]=qActual;
- row[19]=oldS;row[20]=g9Column(c,0u);row[21]=oldF;row[22]=g9Column(c,1u);
- row[23]=momentum.x;row[24]=momentum.y;
- row[25]=dmWord(c,1u);row[26]=dmWord(c,2u);row[27]=dmWord(c,3u);row[28]=dmWord(c,4u);
- row[29]=dmWord(c,5u);row[30]=dmWord(c,6u);row[31]=dmWord(c,7u);
- row[32u]=dmWord(c,8u);row[33u]=dmWord(c,9u);
- row[34u]=dmWord(c,13u);row[35u]=dmWord(c,14u);row[36u]=dmWord(c,15u);
- row[37u]=dmWord(c,16u);row[38u]=dmWord(c,17u);row[39u]=dmWord(c,18u);
- row[40u]=g9MapCount(false,c);row[41u]=g9MapCount(true,c);
- row[42u]=reason;
- return g9WriteEvent(event,row)&&g9Seal();
+ uint oldS=dmWord(c,0u),oldF=dmWord(c,1u),q=dmWord(c,18u);uvec4 p=dmRead64(c,2u);uint origin;
+ if((dmWord(c,46u)&65535u)!=1u||g9Column(c,0u)!=oldS||g9Column(c,1u)!=oldF||any(notEqual(g9Momentum(c),p))||dmWord(c,4u)!=oldS+oldF||q!=min(dmWord(c,16u),dmWord(c,17u))||!dmOriginPrefix(c,dmWord(c,16u),origin)||origin!=dmWord(c,17u))return false;
+ uint event,path;if(!g9Reserve(1u,0u,event,path))return false;
+ if(q>0u){if(!g9RecruitMap(c,q))return false;g9PutColumn(c,0u,oldS-q);g9PutColumn(c,1u,oldF+q);g9PutColumn(c,5u,0u);g9PutColumn(c,13u,g9Column(c,13u)|1u);g9Derived(c);}
+ if(any(notEqual(g9Momentum(c),p))||g9Column(c,0u)+g9Column(c,1u)!=dmWord(c,4u))return false;
+ dmPut(c,26u,g9MapCount(false,c));dmPut(c,27u,g9MapCount(true,c));
+ uint row[64];g9Event(row,15u,c,c,c);row[14]|=q>0u?4u:8u;
+ const uint mapping[36]=uint[36](0u,1u,2u,3u,0xffffffffu,6u,7u,8u,0xfffffffeu,11u,9u,10u,16u,17u,18u,19u,20u,21u,29u,30u,15u,23u,24u,26u,25u,27u,0xfffffffdu,0xfffffffcu,2u,3u,22u,12u,13u,14u,0xfffffffbu,31u);
+ for(uint i=0u;i<36u;++i){uint field=mapping[i];row[15u+i]=field<48u?dmWord(c,field):field==0xffffffffu?W[uConfig]:field==0xfffffffeu?dmParam(2u):field==0xfffffffdu?g9Column(c,0u):field==0xfffffffcu?g9Column(c,1u):W[uConfig+6u];}
+ if(!g9WriteEvent(event,row)||!g9Seal())return false;dmPut(c,46u,(dmWord(c,46u)&0xffff0000u)|3u);return true;
 }
-
-// PREDICTOR_FACE / MIDPOINT_BUILD / CORRECTOR_FACE per §6.2: the private
-// predictor runs the existing face math on entry values, the midpoint is
-// RNE((pEntry+pEndPredict)/2) checked against the CFL domain, and the
-// corrector recomputes the faces with pMid while the real momentum still
-// accumulates from pEntry with one gravity application.
+bool dmProx(uint c,uvec4 trial,out uvec4 end,out bool supported){
+ uint f=dmWord(c,32u);uvec4 product,staticBudget,dynamicBudget,num,den=g9U32(65536u*120u*uJ);
+ if(!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9UMul(product,g9U32(W[uConfig]),num)||!g9UDiv(num,den,staticBudget,product)||!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9UMul(product,g9U32(W[uConfig+1u]),num)||!g9UDiv(num,den,dynamicBudget,product))return false;
+ supported=dmWord(c,33u)==0u&&g9UCmp(g9Magnitude(trial),staticBudget)<=0;end=uvec4(0u);
+ if(!supported&&g9UCmp(g9Magnitude(trial),dynamicBudget)>0){uvec4 diff;if(!g9USub(g9Magnitude(trial),dynamicBudget,diff)||!g9FromMagnitude(diff,g9Negative(trial),end))return false;}return true;
+}
 bool dmPredictor(){
- // Private WORK snapshot: pEndPredict = full proximal friction on the entry
- // mode applied to pTrial0 = pEntry (face fluxes re-run via g9FaceFlux on the
- // frozen entry values by the caller's staging; here we record the midpoint).
- for(uint c=0u;c<128u;++c){
-  uvec4 pEntry=g9Momentum(c);
-  g9WriteWide(uColumnStage+c*64u+48u,pEntry);
- }
- return true;
+ for(uint c=0u;c<128u;++c){dmPut(c,32u,g9Column(c,1u));dmPut(c,33u,g9Column(c,4u));uvec4 entry=g9Momentum(c),trial=g9ReadWide(uColumnStage+c*64u),end;bool supported;
+  if(!dmStore64(c,34u,entry)||!dmStore64(c,36u,trial)||!dmProx(c,trial,end,supported)||!dmStore64(c,38u,end))return false;dmPut(c,42u,supported?1u:0u);dmPut(c,46u,dmWord(c,46u)|4u);
+ }return true;
 }
 bool dmMidpoint(){
- for(uint c=0u;c<128u;++c){
-  uvec4 pEntry=g9ReadWide(uColumnStage+c*64u+48u);
-  uvec4 pEnd=g9ReadWide(uColumnStage+c*64u+52u);
-  uvec4 sum,mid;
-  if(!g9SAdd(pEntry,pEnd,sum)||!g9SDiv(sum,g9U32(2u),1u,mid)){g9Fault(29u,c,4u);return false;}
-  // F0 requires pMid0.
-  uint f=g9Column(c,1u);
-  if(f==0u&&!g9Zero(mid)){g9Reject(28u,c,c);return false;}
-  // |pMid|<=F*Vmax (Q40 p, Q20 F, Vmax 1024Q).
-  uvec4 bound;
-  if(!g9UMul(g9U32(f),g9U32(1024u*1048576u),bound))return false;
-  if(g9UCmp(g9Magnitude(mid),bound)>0){g9Reject(28u,c,c);return false;}
-  g9WriteWide(uColumnStage+c*64u+56u,mid);
+ uvec4 maximum=uvec4(0u);
+ for(uint c=0u;c<128u;++c){uvec4 sum,mid;if(!g9SAdd(dmRead64(c,34u),dmRead64(c,38u),sum)||!g9SDiv(sum,g9U32(2u),1u,mid))return false;uint f=dmWord(c,32u);
+  if(f==0u&&!g9Zero(mid)){g9Reject(7u,c,40u);return false;}uvec4 bound,product,speed=uvec4(0u);uint wave=0u;
+  if(!g9UMul(g9U32(f),g9U32(1073741824u),bound))return false;if(g9UCmp(g9Magnitude(mid),bound)>0){g9Reject(6u,c,40u);return false;}if(!dmStore64(c,40u,mid))return false;
+  if(f>0u&&(!g9SDiv(g9Magnitude(mid),g9U32(f),3u,speed)||!g9UMul(g9U32(C[23u]),g9U32(f),product)||!g9CeilSqrt64(product.xy,wave)||!g9UAdd(speed,g9U32(wave),speed)))return false;
+  if(g9UCmp(speed,maximum)>0)maximum=speed;
  }
- return true;
+ for(uint slot=0u;slot<uK;++slot)if(g9Packet(slot,0u)!=0u){uint speed=max(uint(abs(int(g9Packet(slot,3u)))),uint(abs(int(g9Packet(slot,4u)))));if(g9UCmp(g9U32(speed),maximum)>0)maximum=g9U32(speed);}
+ uint g=W[uConfig+7u],extra=g/120u+uint(g%120u!=0u);if(!g9UAdd(maximum,g9U32(extra),maximum))return false;
+ if(g9UCmp(maximum,g9U32(60u*uJ*1048576u))>0){g9Reject(5u,0u,40u);return false;}for(uint c=0u;c<128u;++c)dmPut(c,44u,1u);return true;
 }
+bool dmPredictorEvents(){
+ for(uint c=0u;c<128u;++c){if(g9Column(c,1u)!=dmWord(c,32u)||g9Column(c,4u)!=dmWord(c,33u)||any(notEqual(g9Momentum(c),dmRead64(c,34u)))||dmWord(c,44u)!=1u)return false;
+  if(W[uColumnStage+c*64u+14u]!=(dmWord(c,43u)&dmWord(c,42u)))return false;uint row[64];g9Event(row,16u,c,c,c);row[15]=dmWord(c,32u);row[16]=dmWord(c,33u);for(uint i=0u;i<8u;++i)row[17u+i]=dmWord(c,34u+i);row[25]=dmWord(c,42u);row[26]=dmWord(c,43u);row[27]=1u;row[28]=1u;row[29]=uJ;dmPut(c,45u,g9Ctl(7u)+1u);if(!g9OneEvent(row))return false;dmPut(c,46u,dmWord(c,46u)|8u);
+ }return true;
+}
+
 
 bool g9StartThreshold(out uvec4 threshold){return g9RneProduct(g9U32(W[uConfig]),g9U32(C[23u]),65536u,threshold);}
 bool g9ActivationRequest(){
@@ -1455,14 +1330,14 @@ bool g9Activate(uint c,uint requested,uint trigger){
 }
 bool g9ActivationApply(){for(uint c=0u;c<128u;++c)if(!g9Activate(c,g9Column(c,10u),1u))return false;return true;}
 bool g9Friction(){
- for(uint c=0u;c<128u;++c){uint flow=g9Column(c,1u),mode=g9Column(c,4u),oldRest=g9Column(c,5u),rest=0u;uvec4 oldP=g9Momentum(c),staticBudget,dynamicBudget,product,numerator,denominator=g9U32(65536u*120u*uJ);
+ for(uint c=0u;c<128u;++c){uint flow=g9Column(c,1u),mode=dmWord(c,33u),oldRest=g9Column(c,5u),rest=0u;uvec4 oldP=g9Momentum(c),staticBudget,dynamicBudget,product,numerator,denominator=g9U32(65536u*120u*uJ);
   if(!g9SMul(g9U32(C[23u]),g9U32(flow),product)||!g9SMul(product,g9U32(W[uConfig]),numerator)||!g9SDiv(numerator,denominator,0u,staticBudget)||!g9SMul(product,g9U32(W[uConfig+1u]),numerator)||!g9SDiv(numerator,denominator,0u,dynamicBudget)){g9Fault(29u,c,0u);return false;}
   uvec4 magnitude=g9Magnitude(oldP),newP=uvec4(0u);bool supported=mode==0u&&g9UCmp(magnitude,staticBudget)<=0;
   if(!supported&&g9UCmp(magnitude,dynamicBudget)>0){uvec4 difference;if(!g9USub(magnitude,dynamicBudget,difference)||!g9FromMagnitude(difference,g9Negative(oldP),newP)){g9Fault(29u,c,1u);return false;}}
   if(g9SCmp(g9Magnitude(newP),g9Magnitude(oldP))>0){g9Fault(29u,c,2u);return false;}
   uvec4 support;if(!g9SSub(newP,oldP,support)||!g9Accumulate(74u,support)){g9Fault(29u,c,3u);return false;}
-  uvec4 drive,threshold;if(!g9Drive(c,drive)||!g9StartThreshold(threshold)){g9Fault(29u,c,4u);return false;}
-  bool still=flow>0u&&g9Zero(newP)&&g9Column(c,13u)==0u&&g9SCmp(drive,threshold)<=0;
+  uvec4 chi,hg,og;if(!dmGeometry(c,chi,hg,og)){g9Fault(29u,c,4u);return false;}
+  bool still=flow>0u&&g9Zero(newP)&&g9Column(c,13u)==0u&&g9Zero(chi);
   if(still){uint increment=32u/uJ,settle=W[uConfig+5u];rest=oldRest>settle||increment>settle-oldRest?settle:oldRest+increment;}
   uint row[64];g9Event(row,G9_EVENT_FRICTION,c,c,c);row[15]=flow;row[16]=mode;row[17]=g9Zero(newP)?0u:1u;row[18]=supported?W[uConfig]:W[uConfig+1u];row[19]=oldRest;row[20]=rest;
   row[21]=oldP.x;row[22]=oldP.y;row[23]=newP.x;row[24]=newP.y;row[25]=staticBudget.x;row[26]=staticBudget.y;row[27]=dynamicBudget.x;row[28]=dynamicBudget.y;row[29]=support.x;row[30]=support.y;
@@ -1500,9 +1375,11 @@ bool g9InputBodyWord(uint kind,uint word){
  if(kind==1u)return word>=64u&&word<=76u;
  return kind==2u&&((word>=46u&&word<=63u)||word==77u);
 }
+bool dmStageEnter();
+uint dmScopeAudit();
 bool g9FlickVerify();
 bool g9ValidateInput(uint rootKind){
- if(g9Input(0u)!=G9_INPUT_MAGIC||(g9Input(1u)!=1u&&g9Input(1u)!=2u)||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
+ if(g9Input(0u)!=G9_INPUT_MAGIC||g9Input(1u)!=2u||g9Input(2u)!=G9_PROFILE||g9Input(38u)!=0u||g9Input(39u)!=0u||g9Input(40u)>2u)return false;
  if(any(notEqual(g9InputPair(4u),uRun))||any(notEqual(g9InputPair(6u),uOwner))||any(notEqual(g9InputPair(8u),uContext))||any(notEqual(g9InputPair(10u),uNonce))||any(notEqual(g9InputPair(12u),uInputGeneration)))return false;
  if(rootKind==1u&&g9Input(40u)!=1u||rootKind==2u&&g9Input(40u)==1u)return false;
  for(uint word=40u;word<128u;++word)if(!g9InputBodyWord(g9Input(40u),word)&&g9Input(word)!=0u)return false;
@@ -1600,7 +1477,7 @@ bool g9FlickVerify(){
 bool g9FlowTerms(uint c,uint z,out uint f,out uvec4 p,out int velocity){
  uint original=g9Column(c,1u);f=g9Material(c)>z?g9Material(c)-z:0u;p=uvec4(0u);velocity=0;
  if(f==0u)return true;if(original==0u)return false;
- if(!g9RneProduct(g9Momentum(c),g9U32(f),original,p))return false;uvec4 u;if(!g9SDiv(p,g9U32(f),1u,u)||!g9I32(u,velocity))return false;return abs(velocity)<=1073741824;
+ if(!g9RneProduct(uOp==G9_OP_CORRECTOR_FACE?dmRead64(c,40u):g9Momentum(c),g9U32(f),original,p))return false;uvec4 u;if(!g9SDiv(p,g9U32(f),1u,u)||!g9I32(u,velocity))return false;return abs(velocity)<=1073741824;
 }
 bool g9Pressure(uvec4 p,uint flow,out uvec4 result){
  result=uvec4(0u);if(flow==0u)return g9Zero(p);
@@ -1630,7 +1507,7 @@ bool g9FaceFlux(){
   if(!g9SSub(g9ReadWide(left+4u),g9ReadWide(right+4u),change)||!g9SSub(g9ReadWide(left+12u),g9ReadWide(right+8u),bed)||!g9SMul(g9S32(int(C[22u])),g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(120u*uJ),1u,gravity)||!g9SAdd(p,change,p)||!g9SAdd(p,bed,p)||!g9SAdd(p,gravity,p)){g9Fault(29u,c,7u);return false;}
   uint stage=uColumnStage+c*64u;g9WriteWide(stage,p);g9WriteWide(stage+4u,bed);g9WriteWide(stage+8u,gravity);W[stage+12u]=g9Column(c,1u);W[stage+13u]=g9Column(c,4u);
   uvec4 limit;if(!g9UMul(g9U32(W[uConfig]),g9U32(C[23u]),product)||!g9UMul(product,g9U32(g9Column(c,1u)),product)||!g9SDiv(product,g9U32(65536u*120u*uJ),0u,limit)){g9Fault(29u,c,8u);return false;}
-  W[stage+14u]=g9Column(c,4u)==0u&&g9UCmp(g9Magnitude(p),limit)<=0?1u:0u;
+  W[stage+14u]=g9Column(c,4u)==0u&&g9UCmp(g9Magnitude(p),limit)<=0?1u:0u;if(uOp==G9_OP_CORRECTOR_FACE){dmPut(c,43u,W[stage+14u]);W[stage+14u]&=dmWord(c,42u);}
  }
  for(uint edge=1u;edge<128u;++edge)if(W[uColumnStage+(edge-1u)*64u+14u]!=0u&&W[uColumnStage+edge*64u+14u]!=0u)W[uFaces+edge*32u]=0u;
  return true;
@@ -1967,8 +1844,9 @@ bool g9AuditMaps(bool flow,uint c){
  }return sum==g9Column(c,flow?1u:0u);
 }
 bool g9AuditMassGeometry(){
- if(C[0]!=G9_STATE_MAGIC||C[1]!=1u||C[2]!=G9_PROFILE||C[24]!=uK||C[25]!=128u||C[26]!=64u||C[27]!=64u||C[19u]>4096u)return false;
- for(uint i=106u;i<256u;++i)if(C[i]!=0u)return false;
+ if(any(notEqual(uvec2(C[4u],C[5u]),uRun))||any(notEqual(uvec2(C[6u],C[7u]),uOwner))||any(notEqual(uvec2(C[8u],C[9u]),uContext)))return false;for(uint i=0u;i<8u;++i)if(C[42u+i]!=W[uConfig+16u+i])return false;for(uint i=0u;i<6u;++i)if(C[98u+i]!=W[uConfig+i])return false;if(C[21u]!=W[uConfig+7u])return false;
+ if(C[0]!=G9_STATE_MAGIC||C[1]!=2u||C[2]!=G9_PROFILE||C[24]!=uK||C[25]!=128u||C[26]!=64u||C[27]!=64u||C[19u]>4096u)return false;
+ for(uint i=114u;i<256u;++i)if(C[i]!=0u)return false;for(uint i=0u;i<8u;++i)if(C[106u+i]!=dmParam(i))return false;
  for(uint i=0u;i<8192u;++i)W[uOriginAudit+i]=0u;
  uvec4 total=uvec4(0u),declared=uvec4(0u),nextCommit;if(!g9UAdd(g9U64(uBaseCommit),g9U32(1u),nextCommit))return false;
  for(uint c=0u;c<128u;++c){
@@ -2025,7 +1903,7 @@ bool g9AuditMomentum(){
 bool g9AuditStream(){
  if(g9Ctl(6u)!=g9Ctl(7u)||g9Ctl(8u)!=g9Ctl(9u)||g9Ctl(10u)!=0u||g9Ctl(7u)>uEventCapacity||g9Ctl(9u)>uPathCapacity)return false;
  for(uint row=0u;row<g9Ctl(7u);++row){uint at=row*64u,kind=E[at+2u];uvec2 mask=g9EventMask(kind);
-  if(all(equal(mask,uvec2(0u)))||E[at]!=G9_EVENT_MAGIC||E[at+1u]!=1u||E[at+3u]!=g9Ctl(13u)||E[at+4u]!=uNonce.x||E[at+5u]!=uNonce.y||E[at+6u]!=row+1u||E[at+63u]!=G9_SEAL||(E[at+14u]&~15u)!=0u)return false;
+  if(all(equal(mask,uvec2(0u)))||E[at]!=G9_EVENT_MAGIC||E[at+1u]!=2u||E[at+3u]!=g9Ctl(13u)||E[at+4u]!=uNonce.x||E[at+5u]!=uNonce.y||E[at+6u]!=row+1u||E[at+63u]!=G9_SEAL||(E[at+14u]&~15u)!=0u)return false;
   for(uint i=0u;i<64u;++i)if(((mask[i/32u]>>(i%32u))&1u)==0u&&E[at+i]!=0u)return false;
  }
  uint previousParent=0u,previousTau=0u;
@@ -2066,7 +1944,7 @@ bool g9ConfigValid(){
  return W[uConfig]<=262144u&&W[uConfig+1u]<=W[uConfig]&&W[uConfig+2u]>0u&&W[uConfig+2u]<=268435456u&&W[uConfig+3u]<=62914560u&&W[uConfig+4u]<=262144u&&W[uConfig+5u]>0u&&W[uConfig+6u]>0u&&W[uConfig+7u]>=120u&&W[uConfig+7u]<=1073741824u;
 }
 bool g9RootEnd(uint outcome){
- uint row[64];g9Event(row,G9_EVENT_ROOT_END,0u,0u,0u);row[15]=outcome;row[16]=uJ;row[17]=g9Ctl(7u)+1u;row[18]=g9Ctl(9u);row[19]=C[12u];row[23]=65535u;
+ uint row[64];g9Event(row,G9_EVENT_ROOT_END,0u,0u,0u);row[15]=outcome;row[16]=uJ;row[17]=g9Ctl(7u)+1u;row[18]=g9Ctl(9u);row[19]=C[12u];row[23]=dmScopeAudit();
  uvec4 work=uvec4(0u),loss,part;
  const uint ledgers[3]=uint[3](82u,86u,90u);
  for(uint k=0u;k<3u;++k){uint at=ledgers[k];if(!g9SSub(uvec4(C[at],C[at+1u],C[at+2u],C[at+3u]),uvec4(B[at],B[at+1u],B[at+2u],B[at+3u]),part)||!g9SAdd(work,part,work)){g9Fault(29u,0u,at);return false;}}
@@ -2079,14 +1957,18 @@ bool g9SourceTransaction(){
  if(!g9OneEvent(row)||!g9SourceBirth())return false;
  return g9RootEnd(g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u);
 }
+void dmBeginScope();
+void dmSealScope();
 void g9BeginScope(){
  if(gl_LocalInvocationIndex!=0u)return;
  g9Set(14u,0u);g9Set(6u,0u);g9Set(7u,0u);g9Set(8u,0u);g9Set(9u,0u);g9Set(10u,0u);g9Set(56u,0u);g9Set(13u,uRole==2u||uRole==4u?g9Ctl(20u):g9TrialIndex(uJ));
  for(uint i=2u;i<6u;++i)g9Set(i,0u);
  for(uint c=0u;c<128u;++c)W[uColumnStage+c*64u+21u]=0u;
+ dmBeginScope();
  uint row[64];g9Event(row,G9_EVENT_ROOT_BEGIN,0u,0u,0u);row[15]=uJ;row[16]=C[20u];row[17]=uint(uAcceptedAngle);row[18]=g9Input(14u);row[19]=uBaseCommit.x;row[20]=uBaseCommit.y;g9OneEvent(row);
 }
 void g9ScopeSeal(){
+ dmSealScope();if(g9Ctl(0u)!=0u)return;
  uint reason=g9Ctl(14u),summary=uSummary+g9TrialIndex(uJ)*64u;
  if(uRole==1u){
   W[summary]=uJ;W[summary+1u]=reason==0u?1u:4u;W[summary+2u]=reason;W[summary+3u]=reason==0u?0u:g9Ctl(2u);W[summary+4u]=reason==0u?0u:g9Ctl(3u);W[summary+5u]=reason==0u?0u:g9Ctl(4u);W[summary+6u]=reason==0u?0u:g9Ctl(5u);W[summary+7u]=g9Ctl(7u);W[summary+8u]=g9Ctl(9u);
@@ -2112,13 +1994,13 @@ bool g9CompareState(){for(uint i=0u;i<uStateWords;++i)if(B[i]!=C[i]){g9Fault(25u
 void g9EndAcceptedMetadata(uint outcome){
  if(outcome==2u)return;
  uvec4 commit;if(!g9UAdd(g9U64(uBaseCommit),g9U32(1u),commit)||any(notEqual(commit.zw,uvec2(0u)))){g9Fault(29u,0u,10u);return;}
- C[10u]=commit.x;C[11u]=commit.y;C[16u]=uNonce.x;C[17u]=uNonce.y;
- if(uRequiredPasses==2024u){uvec4 quanta;if(!g9UAdd(g9U64(uvec2(C[12u],C[13u])),g9U32(1u),quanta)||any(notEqual(quanta.zw,uvec2(0u)))){g9Fault(29u,0u,12u);return;}C[12u]=quanta.x;C[13u]=quanta.y;}
+ C[10u]=commit.x;C[11u]=commit.y;C[16u]=uNonce.x;C[17u]=uNonce.y;C[14u]=uInputGeneration.x;C[15u]=uInputGeneration.y;
+ if(uRootKind==2u){uvec4 quanta;if(!g9UAdd(g9U64(uvec2(C[12u],C[13u])),g9U32(1u),quanta)||any(notEqual(quanta.zw,uvec2(0u)))){g9Fault(29u,0u,12u);return;}C[12u]=quanta.x;C[13u]=quanta.y;}
 }
 void g9Completion(){
  for(uint i=0u;i<256u;++i)W[uCompletion+i]=0u;
- uint outcome=g9Ctl(0u)!=0u?5u:uRequiredPasses==12u?(g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u):g9Ctl(11u)==0u?4u:1u;
- W[uCompletion]=G9_COMPLETION_MAGIC;W[uCompletion+1u]=1u;W[uCompletion+2u]=256u;W[uCompletion+4u]=G9_PROFILE;W[uCompletion+5u]=uRequiredPasses==12u?1u:2u;W[uCompletion+6u]=outcome;W[uCompletion+7u]=g9Ctl(1u)!=0u?g9Ctl(1u):outcome==4u?g9Ctl(14u):0u;
+ uint outcome=g9Ctl(0u)!=0u?5u:uRootKind==1u?(g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u):g9Ctl(11u)==0u?4u:1u;
+ W[uCompletion]=G9_COMPLETION_MAGIC;W[uCompletion+1u]=2u;W[uCompletion+2u]=256u;W[uCompletion+4u]=G9_PROFILE;W[uCompletion+5u]=uRootKind==1u?1u:2u;W[uCompletion+6u]=outcome;W[uCompletion+7u]=g9Ctl(1u)!=0u?g9Ctl(1u):outcome==4u?g9Ctl(14u):0u;
  uvec2 ids[11]=uvec2[11](uNonce,uRun,uOwner,uContext,uSurface,uGeometry,uConfigId,uInputGeneration,uSession,uPlan,uBaseCommit);
  for(uint i=0u;i<11u;++i){W[uCompletion+8u+2u*i]=ids[i].x;W[uCompletion+9u+2u*i]=ids[i].y;}
  W[uCompletion+30u]=C[10u];W[uCompletion+31u]=C[11u];W[uCompletion+32u]=uBaseBank;W[uCompletion+33u]=uCandidateBank;W[uCompletion+34u]=uArena;W[uCompletion+35u]=uArenaGeneration.x;W[uCompletion+36u]=uArenaGeneration.y;
@@ -2126,17 +2008,78 @@ void g9Completion(){
  W[uCompletion+42u]=g9Ctl(17u);W[uCompletion+43u]=g9Ctl(6u);W[uCompletion+44u]=g9Ctl(7u);W[uCompletion+45u]=g9Ctl(8u);W[uCompletion+46u]=g9Ctl(9u);
  uint valid=0u;for(uint i=0u;i<6u;++i)if(W[uSummary+i*64u]!=0u)valid|=1u<<i;W[uCompletion+47u]=valid;
  for(uint i=0u;i<4u;++i)W[uCompletion+48u+i]=g9Ctl(2u+i);
- W[uCompletion+54u]=C[12u];W[uCompletion+55u]=C[13u];W[uCompletion+56u]=C[40u];W[uCompletion+57u]=C[41u];W[uCompletion+58u]=C[28u];W[uCompletion+59u]=C[29u];W[uCompletion+60u]=C[30u];W[uCompletion+61u]=C[31u];W[uCompletion+62u]=uRequiredPasses==12u?g9Ctl(49u):0u;
+ W[uCompletion+54u]=C[12u];W[uCompletion+55u]=C[13u];W[uCompletion+56u]=C[40u];W[uCompletion+57u]=C[41u];W[uCompletion+58u]=C[28u];W[uCompletion+59u]=C[29u];W[uCompletion+60u]=C[30u];W[uCompletion+61u]=C[31u];W[uCompletion+62u]=uRootKind==1u?g9Ctl(49u):0u;
  for(uint i=0u;i<8u;++i){W[uCompletion+64u+i]=W[uConfig+16u+i];W[uCompletion+72u+i]=W[uConfig+24u+i];W[uCompletion+80u+i]=W[uConfig+32u+i];W[uCompletion+88u+i]=W[uConfig+40u+i];}
  uvec4 px,py;if(g9MomentumTotal(false,px,py))for(uint i=0u;i<4u;++i){W[uCompletion+96u+i]=px[i];W[uCompletion+100u+i]=py[i];}
  const uint ledger[4]=uint[4](82u,86u,90u,94u);for(uint category=0u;category<4u;++category)for(uint i=0u;i<4u;++i)W[uCompletion+104u+category*4u+i]=C[ledger[category]+i];
  for(uint i=0u;i<6u;++i){uint at=uSummary+i*64u,dst=uCompletion+120u+i*6u;W[dst]=W[at];W[dst+1u]=W[at+1u];for(uint f=0u;f<4u;++f)W[dst+2u+f]=W[at+3u+f];}
  memoryBarrierBuffer();W[uCompletion+3u]=G9_SEAL;
 }
+// T647: bounded certificates for the actual enabled 14 scopes, no new dispatch.
+uint dmScopeId(){return uRole==1u?uint(findMSB(uJ)):uRole==2u?6u:uRole==3u?7u+uint(findMSB(uJ)):13u;}
+bool dmMicroOp(out uint bit){
+ bit=0u;
+ if(uOp==G9_OP_DM_REQUEST)bit=0u;else if(uOp==G9_OP_DM_APPLY)bit=1u;else if(uOp==G9_OP_FLIGHT_PATH)bit=2u;else if(uOp==G9_OP_PARTICLE_FOLD)bit=3u;else if(uOp==G9_OP_PREDICTOR_FACE)bit=4u;else if(uOp==G9_OP_MIDPOINT_BUILD)bit=5u;else if(uOp==G9_OP_CORRECTOR_FACE)bit=6u;else if(uOp==G9_OP_FLOW_ORIGIN_RESERVE)bit=7u;else if(uOp==G9_OP_FLOW_PAIR_APPLY)bit=8u;else if(uOp==G9_OP_FRICTION_REST_DEPOSIT)bit=9u;else if(uOp==G9_OP_ORDERED_CAPTURE)bit=10u;else if(uOp==G9_OP_MICRO_AUDIT_SEAL)bit=11u;else return false;return true;
+}
+void dmBeginScope(){
+ uint id=dmScopeId();if(id>=14u||g9Ctl(127u)!=1u||(g9Ctl(121u)&(1u<<id))!=0u){g9Fault(25u,id,120u);return;}
+ g9Set(121u,g9Ctl(121u)|(1u<<id));g9Set(124u,id);g9Set(125u,4095u);g9Set(126u,0u);
+ for(uint c=0u;c<128u;++c)for(uint f=0u;f<48u;++f)dmPut(c,f,0u);
+}
+bool dmStageEnter(){
+ uint bit;if(!dmMicroOp(bit))return true;uint visited=g9Ctl(126u);
+ if(bit==0u){uint completed=dmWord(0u,46u)>>16u;if(uMicro!=completed||(uMicro!=0u&&visited!=4095u)){g9Fault(25u,0u,uMicro);return false;}visited=0u;}
+ if(visited!=((1u<<bit)-1u)){g9Fault(25u,visited,bit);return false;}g9Set(126u,visited|(1u<<bit));return true;
+}
+bool dmMicroCertificate(){
+ if(g9Ctl(126u)!=4095u||uJ==0u||32u%uJ!=0u)return false;
+ for(uint c=0u;c<128u;++c){uint flags=dmWord(c,46u);if((flags&15u)!=15u||(flags>>16u)!=uMicro||dmWord(c,44u)!=1u||dmWord(c,47u)!=0u)return false;dmPut(c,46u,(flags&65535u)|((uMicro+1u)<<16u));}
+ return true;
+}
+void dmSealScope(){
+ if(g9Ctl(0u)!=0u)return;uint reason=g9Ctl(14u),id=g9Ctl(124u);bool valid=id==dmScopeId()&&id<14u;
+ valid=valid&&g9Ctl(6u)==g9Ctl(7u)&&g9Ctl(8u)==g9Ctl(9u)&&g9Ctl(10u)==0u;
+ if(reason==0u){valid=valid&&g9Ctl(126u)==4095u;for(uint c=0u;c<128u;++c)valid=valid&&(dmWord(c,46u)>>16u)==uJ;}
+ else valid=valid&&reason<=18u&&g9Ctl(2u)!=0u; // exact first rejected legal prefix, not fictitious later stages
+ if(!valid){g9Fault(25u,id,126u);return;}
+ g9Set(122u,g9Ctl(122u)|(1u<<id));g9Set(123u,g9Ctl(123u)|(1u<<id));
+}
+uint dmExpectedScopes(){uint selected=g9Ctl(11u);if(selected==0u)return 63u|(63u<<7u);uint k=uint(findMSB(selected));return ((1u<<(k+1u))-1u)|((1u<<k)-1u)<<7u|64u|8192u;}
+uint dmRootAudit(){
+ if(g9Ctl(0u)!=0u)return 0u;uint mask=0u;
+ bool identity=g9ConfigValid()&&g9ValidateInput(uRootKind);if(identity)mask|=1u;
+ bool mass=g9AuditMassGeometry();if(mass)mask|=62u; // actual mass, origin/map, slot certificate and geometry predicates
+ if(g9AuditMomentum())mask|=64u;
+ bool prefix=g9Ctl(6u)==g9Ctl(7u)&&g9Ctl(8u)==g9Ctl(9u)&&g9Ctl(10u)==0u&&g9AuditStream();if(prefix)mask|=16384u;
+ bool source=uRootKind==1u,chosen=g9Ctl(11u)!=0u;
+ bool certified=source;
+ if(!source){uint expected=dmExpectedScopes();g9Set(120u,expected);certified=g9Ctl(127u)==1u&&g9Ctl(121u)==expected&&g9Ctl(122u)==expected&&g9Ctl(123u)==expected;}
+ // Energy/work/CFL/rest were checked by the visited producer chain, including legitimate rejected prefixes.
+ if(certified&&g9Ctl(0u)==0u)mask|=128u|256u|512u|1024u|2048u;
+ bool choice=source;if(!source){choice=true;bool found=false;for(uint i=0u;i<6u;++i){uint at=uSummary+i*64u;if(W[at]==0u){if(!found)choice=false;continue;}if(W[at]!=(1u<<i)||(W[at+1u]!=1u&&W[at+1u]!=4u))choice=false;if(W[at+1u]==1u){if(found||(1u<<i)!=g9Ctl(11u))choice=false;found=true;}else if(W[at+2u]==0u||W[at+2u]>18u)choice=false;}choice=choice&&(found==chosen);}
+ if(choice)mask|=4096u;
+ bool replay=source?g9Ctl(0u)==0u:certified&&(!chosen||(g9Ctl(24u)==1u&&g9Ctl(25u)==1u));if(replay)mask|=8192u;
+ bool candidate=identity&&mass&&prefix&&choice&&replay&&g9Ctl(0u)==0u;if(candidate)mask|=32768u;
+ if(!source&&certified&&candidate)mask|=196608u;
+ return mask;
+}
+
+uint dmScopeAudit(){
+ if(g9Ctl(0u)!=0u||g9Ctl(14u)!=0u)return 0u;
+ uint mask=g9ConfigValid()&&g9ValidateInput(uRootKind)?1u:0u;
+ bool mass=g9AuditMassGeometry(),momentum=g9AuditMomentum(),prefix=g9AuditStream()&&g9Ctl(6u)==g9Ctl(7u)&&g9Ctl(8u)==g9Ctl(9u)&&g9Ctl(10u)==0u;
+ if(mass)mask|=62u;if(momentum)mask|=64u;if(prefix)mask|=16384u;
+ bool chain=g9Ctl(126u)==4095u;
+ for(uint c=0u;c<128u;++c)chain=chain&&(dmWord(c,46u)&15u)==15u&&(dmWord(c,46u)>>16u)==uJ&&dmWord(c,44u)==1u;
+ if(chain&&mass&&momentum&&prefix)mask|=128u|256u|512u|1024u|2048u|196608u;
+ return mask;
+}
+
 void g9Run(){
  uint lane=gl_LocalInvocationIndex;
+ if(uOp==0x7fffff00u){if(lane==0u){g9Set(0u,0u);g9Set(1u,g9ConfigValid()&&all(equal(uvec2(C[14u],C[15u]),uInputGeneration))&&g9AuditMassGeometry()&&g9AuditMomentum()?0x641647u:0u);}return;}
  if(uOp==G9_OP_ROOT_INIT||uOp==G9_OP_SOURCE_INIT_BASE){
-  for(uint i=lane;i<128u;i+=64u)W[uControls+i]=0u;for(uint i=lane;i<384u;i+=64u)W[uSummary+i]=0u;memoryBarrierBuffer();barrier();if(lane==0u)g9Set(16u,1u);return;
+  for(uint i=lane;i<128u;i+=64u)W[uControls+i]=0u;for(uint i=lane;i<384u;i+=64u)W[uSummary+i]=0u;memoryBarrierBuffer();barrier();if(lane==0u){g9Set(16u,1u);g9Set(127u,1u);}return;
  }
  if(lane==0u){if(g9Ctl(16u)!=uPass)g9Fault(25u,0u,uPass);g9Set(16u,g9Ctl(16u)+1u);}memoryBarrierBuffer();barrier();
  uJ=(uRole==2u||uRole==4u)?g9Ctl(11u):uJslot;
@@ -2152,9 +2095,10 @@ void g9Run(){
    if(g9Ctl(7u)!=events||!g9AuditMassGeometry()||!g9AuditMomentum()||!g9AuditStream())g9Fault(25u,0u,0u);
   }return;
  }
- if(uOp==G9_OP_BASE_FREEZE||uOp==G9_OP_SOURCE_VALIDATE_INPUT){g9CopyBase();if(uOp==G9_OP_SOURCE_VALIDATE_INPUT)g9ClearTrial();if(lane==0u&&(!g9ConfigValid()||!g9ValidateInput(uRequiredPasses==12u?1u:2u)||!g9AuditMassGeometry()))g9Fault(22u,0u,0u);return;}
- if(uOp==G9_OP_FLIGHT_PATH){g9Flight();return;}
+ if(uOp==G9_OP_BASE_FREEZE||uOp==G9_OP_SOURCE_VALIDATE_INPUT){g9CopyBase();if(uOp==G9_OP_SOURCE_VALIDATE_INPUT)g9ClearTrial();if(lane==0u&&(!g9ConfigValid()||!g9ValidateInput(uRootKind==1u?1u:2u)||!g9AuditMassGeometry()))g9Fault(22u,0u,0u);return;}
+ if(uOp==G9_OP_FLIGHT_PATH){if(lane==0u&&!dmStageEnter()){}memoryBarrierBuffer();barrier();if(g9Ctl(0u)==0u)g9Flight();return;}
  if(lane!=0u)return;
+ if(!dmStageEnter())return;
  if(uOp==G9_OP_CONFIG_INPUT_GATE||uOp==G9_OP_SOURCE_DEDUP){if(!g9Dedup())return;}
  else if(uOp==G9_OP_INPUT_AND_CFL){
   uvec4 gx,gn;int x;uint n;if(!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleSin),1048576u,gx)||!g9RneProduct(g9U32(W[uConfig+7u]),g9S32(uAngleCos),1048576u,gn)||!g9I32(gx,x)||!g9Uint(gn,n)||n==0u){g9Fault(29u,0u,22u);return;}C[22u]=uint(x);C[23u]=n;C[20u]=uint(uAcceptedAngle);
@@ -2163,20 +2107,20 @@ void g9Run(){
  else if(uOp==G9_OP_GRAVITY_WORK){if(g9Ctl(14u)==0u)g9GravityWork();}
  else if(uOp==G9_OP_TOUCH_ATOMIC){if(g9Ctl(14u)==0u)g9Touch();}
  else if(uOp==G9_OP_AFTER_TOUCH_CFL){if(g9Ctl(14u)==0u)g9Cfl();}
- else if(uOp==G9_OP_DM_REQUEST){if(g9Cfl()&&g9SnapshotMicro())dmRequest();}
- else if(uOp==G9_OP_DM_APPLY){for(uint c=0u;c<128u;++c)if(!dmApplyColumn(c))return;}
+ else if(uOp==G9_OP_DM_REQUEST){if(g9Cfl()&&g9SnapshotMicro()&&!dmRequest()&&g9Ctl(0u)==0u&&g9Ctl(14u)==0u)g9Fault(29u,0u,0u);}
+ else if(uOp==G9_OP_DM_APPLY){for(uint c=0u;c<128u;++c)if(!dmApplyColumn(c)){if(g9Ctl(0u)==0u&&g9Ctl(14u)==0u)g9Fault(29u,c,0u);return;}if(!g9Cfl())return;}
 
  else if(uOp==G9_OP_PARTICLE_FOLD)g9Fold();
- else if(uOp==G9_OP_PREDICTOR_FACE){g9FaceFlux();if(!dmPredictor())return;}
- else if(uOp==G9_OP_MIDPOINT_BUILD){if(!dmMidpoint())return;}
- else if(uOp==G9_OP_CORRECTOR_FACE){g9FaceFlux();}
+ else if(uOp==G9_OP_PREDICTOR_FACE){if(!g9FaceFlux()||!dmPredictor()){if(g9Ctl(0u)==0u&&g9Ctl(14u)==0u)g9Fault(29u,0u,0u);return;}}
+ else if(uOp==G9_OP_MIDPOINT_BUILD){if(!dmMidpoint()){if(g9Ctl(0u)==0u&&g9Ctl(14u)==0u)g9Fault(29u,0u,40u);return;}}
+ else if(uOp==G9_OP_CORRECTOR_FACE){if(!g9FaceFlux()||!dmPredictorEvents()){if(g9Ctl(0u)==0u&&g9Ctl(14u)==0u)g9Fault(29u,0u,0u);return;}}
  else if(uOp==G9_OP_FLOW_ORIGIN_RESERVE)g9FlowReserve();
  else if(uOp==G9_OP_FLOW_PAIR_APPLY)g9FlowApply();
  else if(uOp==G9_OP_FRICTION_REST_DEPOSIT)g9Friction();
  else if(uOp==G9_OP_ORDERED_CAPTURE)g9Capture();
  else if(uOp==G9_OP_MICRO_AUDIT_SEAL){
   if(!g9Fold()||!g9Cfl()||!g9AuditMassGeometry()||!g9AuditMomentum()){if(g9Ctl(14u)==0u)g9Fault(24u,0u,0u);return;}if(!g9AuditMicroEnergy())return;
-  uint row[64];g9Event(row,G9_EVENT_STEP_SEAL,0u,0u,0u);row[15]=uJ;row[16]=32u/uJ;row[17]=g9Ctl(7u);row[18]=g9Ctl(9u);uvec4 delta=g9ReadWide(uControls+40u),loss;if(!g9SNeg(delta,loss)){g9Fault(29u,0u,0u);return;}for(uint i=0u;i<4u;++i){row[19u+i]=delta[i];row[23u+i]=loss[i];}g9OneEvent(row);
+  if(!dmMicroCertificate()){g9Fault(25u,0u,126u);return;}uint row[64];g9Event(row,G9_EVENT_STEP_SEAL,0u,0u,0u);row[15]=uJ;row[16]=32u/uJ;row[17]=g9Ctl(7u);row[18]=g9Ctl(9u);uvec4 delta=g9ReadWide(uControls+40u),loss;if(!g9SNeg(delta,loss)){g9Fault(29u,0u,0u);return;}for(uint i=0u;i<4u;++i){row[19u+i]=delta[i];row[23u+i]=loss[i];}g9OneEvent(row);
  }
  else if(uOp==G9_OP_FINAL_MASS_ORIGIN_MOMENTUM){if(g9Ctl(14u)==0u){if(!g9AuditMassGeometry()||!g9AuditMomentum())g9Fault(24u,0u,0u);else g9RootEnd(1u);}}
  else if(uOp==G9_OP_FINAL_ENERGY_CURSORS){if(g9Ctl(14u)==0u){if(uRole==2u||uRole==4u)g9CompareStream();else if(!g9AuditStream())g9Fault(26u,0u,0u);}}
@@ -2186,15 +2130,15 @@ void g9Run(){
  else if(uOp==G9_OP_COMPARE_SELECTED_AUTHORITATIVE){if(g9Ctl(11u)!=0u)g9CompareState();}
  else if(uOp==G9_OP_COMPARE_REPLAY_STREAM){if(g9Ctl(11u)!=0u&&(g9Ctl(24u)!=1u||g9Ctl(25u)!=1u))g9Fault(25u,0u,0u);}
  else if(uOp==G9_OP_PACK_SCENE_METADATA){
-  if(g9Ctl(11u)!=0u){if(!g9ConsumeCommand(1u,0u))return;g9EndAcceptedMetadata(1u);g9Set(17u,65535u);}
-  else g9Set(17u,65535u);
+  if(g9Ctl(11u)!=0u){if(!g9ConsumeCommand(1u,0u))return;g9EndAcceptedMetadata(1u);g9Set(17u,dmRootAudit());}
+  else g9Set(17u,dmRootAudit());
  }
  else if(uOp==G9_OP_SOURCE_DECODE)g9SourceDecode();
  else if(uOp==G9_OP_SOURCE_PRIVATE_BIRTH)g9SourceTransaction();
  else if(uOp==G9_OP_SOURCE_LEDGER){uint outcome=g9Ctl(18u)!=0u?2u:g9Ctl(49u)==0u?3u:1u;if(g9ConsumeCommand(outcome,g9Ctl(49u)))g9EndAcceptedMetadata(outcome);}
  else if(uOp==G9_OP_SOURCE_ORIGIN_CERTIFICATE){if(!g9AuditMassGeometry()||!g9AuditMomentum()||!g9AuditStream())g9Fault(24u,0u,0u);}
  else if(uOp==G9_OP_SOURCE_COMPARE)g9CompareState();
- else if(uOp==G9_OP_SOURCE_PACK_SCENE)g9Set(17u,65535u);
+ else if(uOp==G9_OP_SOURCE_PACK_SCENE)g9Set(17u,dmRootAudit());
 }
 void main(){g9Run();}
 

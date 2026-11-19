@@ -12,12 +12,12 @@ class InputGate {
  static bool Age(uint64_t stamp,uint64_t now){return stamp<=now&&now-stamp<=250000000;}
 public:
  bool ModelEnvelope(const Input128& body,int32_t angle,uint64_t now,Input128& out)const{
-  if(!config_.synthetic||sample_==UINT64_MAX)return false;out=body;out[0]=kInputMagic;out[1]=1;out[2]=kProfileCode;Put(out.data(),4,identity_.run);Put(out.data(),6,identity_.owner);Put(out.data(),8,identity_.context);Put(out.data(),12,identity_.inputEpoch);Put(out.data(),14,sample_+1);Put(out.data(),16,now);out[22]=out[23]=2;out[24]=uint32_t(angle);out[25]=config_.revision;for(size_t i=0;i<8;++i)out[26+i]=config_.parameterSha[i];if(out[40])Put(out.data(),43,now);return true;
+  if(!config_.synthetic||sample_==UINT64_MAX)return false;out=body;out[0]=kInputMagic;out[1]=2;out[2]=kProfileCode;Put(out.data(),4,identity_.run);Put(out.data(),6,identity_.owner);Put(out.data(),8,identity_.context);Put(out.data(),12,identity_.inputEpoch);Put(out.data(),14,sample_+1);Put(out.data(),16,now);out[22]=out[23]=2;out[24]=uint32_t(angle);out[25]=config_.revision;for(size_t i=0;i<8;++i)out[26+i]=config_.parameterSha[i];if(out[40])Put(out.data(),43,now);return true;
  }
  void Configure(const Config& c,const ControlIdentity& id){config_=c;identity_=id;sample_=0;pose_={};ready_=false;}
  Result Offer(Input128& raw,uint64_t now){
   if(!config_.research)return Result::CALIBRATION_CONFIG_REQUIRED;
-  if(raw[0]!=kInputMagic||raw[1]!=1||raw[2]!=kProfileCode||Pair(raw.data(),4)!=identity_.run||Pair(raw.data(),6)!=identity_.owner||Pair(raw.data(),8)!=identity_.context||Pair(raw.data(),12)!=identity_.inputEpoch||raw[25]!=config_.revision||raw[38]||raw[39]||raw[40]>2||Pair(raw.data(),10)||Pair(raw.data(),18)||Pair(raw.data(),20))return Result::INVALID;
+  if(raw[0]!=kInputMagic||raw[1]!=2||raw[2]!=kProfileCode||Pair(raw.data(),4)!=identity_.run||Pair(raw.data(),6)!=identity_.owner||Pair(raw.data(),8)!=identity_.context||Pair(raw.data(),12)!=identity_.inputEpoch||raw[25]!=config_.revision||raw[38]||raw[39]||raw[40]>2||Pair(raw.data(),10)||Pair(raw.data(),18)||Pair(raw.data(),20))return Result::INVALID;
   for(size_t i=0;i<8;++i)if(raw[26+i]!=config_.parameterSha[i])return Result::INVALID;
   // This initial implementation admits explicitly identified synthetic model
   // inputs only. No pixel gain or sensor-clock proof is inferred here.
@@ -30,7 +30,7 @@ public:
  // Native/manual research input is an explicit control event. Its pose clock
  // is native-owned and never described as a sensor capture timestamp.
  void Pose(int32_t angle,uint64_t now){
-  pose_={};pose_[0]=kInputMagic;pose_[1]=1;pose_[2]=kProfileCode;Put(pose_.data(),4,identity_.run);Put(pose_.data(),6,identity_.owner);Put(pose_.data(),8,identity_.context);Put(pose_.data(),12,identity_.inputEpoch);if(sample_!=UINT64_MAX)++sample_;Put(pose_.data(),14,sample_);Put(pose_.data(),16,now);Put(pose_.data(),18,now);pose_[22]=2;pose_[23]=2;pose_[24]=uint32_t(angle);pose_[25]=config_.revision;for(size_t i=0;i<8;++i)pose_[26+i]=config_.parameterSha[i];ready_=true;
+  pose_={};pose_[0]=kInputMagic;pose_[1]=2;pose_[2]=kProfileCode;Put(pose_.data(),4,identity_.run);Put(pose_.data(),6,identity_.owner);Put(pose_.data(),8,identity_.context);Put(pose_.data(),12,identity_.inputEpoch);if(sample_!=UINT64_MAX)++sample_;Put(pose_.data(),14,sample_);Put(pose_.data(),16,now);Put(pose_.data(),18,now);pose_[22]=2;pose_[23]=2;pose_[24]=uint32_t(angle);pose_[25]=config_.revision;for(size_t i=0;i<8;++i)pose_[26+i]=config_.parameterSha[i];ready_=true;
  }
  Result Freeze(const Input128* command,uint64_t nonce,uint64_t now,Input128& out)const{
   if(!ready_||!Age(Pair(pose_.data(),16),now))return Result::STALE;

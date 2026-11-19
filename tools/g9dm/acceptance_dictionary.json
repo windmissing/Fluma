@@ -1,0 +1,508 @@
+{
+  "schema": "T648_READER_DICTIONARY_V1",
+  "staticContractSHA": "7d786425590c689fb22eac7fb5b8141020d7259393a0a829645b74cee1a1ded6",
+  "expectedWords": 224,
+  "expectedBytes": 896,
+  "encoding": "u32 little endian",
+  "rows": [
+    {
+      "family": "R1_DEFAULT",
+      "rootKind": 1,
+      "physicalProfileCode": 826691667,
+      "tailProfileCode": 826691667,
+      "actualPasses": 12,
+      "requiredAudits": 65535,
+      "completionMagic": 826489159,
+      "tailRevision": 1,
+      "seal": 3235776769,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 0,
+      "visualTickDelta": 0
+    },
+    {
+      "family": "R1_DEFAULT",
+      "rootKind": 2,
+      "physicalProfileCode": 826691667,
+      "tailProfileCode": 826691667,
+      "actualPasses": 2024,
+      "requiredAudits": 65535,
+      "completionMagic": 826489159,
+      "tailRevision": 1,
+      "seal": 3235776769,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 1,
+      "visualTickDelta": 256
+    },
+    {
+      "family": "DM_DEFAULT",
+      "rootKind": 1,
+      "physicalProfileCode": 843924551,
+      "tailProfileCode": 843924551,
+      "actualPasses": 12,
+      "requiredAudits": 65535,
+      "completionMagic": 843269191,
+      "tailRevision": 2,
+      "seal": 3235776802,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 0,
+      "visualTickDelta": 0
+    },
+    {
+      "family": "DM_DEFAULT",
+      "rootKind": 2,
+      "physicalProfileCode": 843924551,
+      "tailProfileCode": 843924551,
+      "actualPasses": 2404,
+      "requiredAudits": 262143,
+      "completionMagic": 843269191,
+      "tailRevision": 2,
+      "seal": 3235776802,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 1,
+      "visualTickDelta": 256
+    },
+    {
+      "family": "G11_R1",
+      "rootKind": 1,
+      "physicalProfileCode": 826691667,
+      "tailProfileCode": 1378955591,
+      "actualPasses": 19,
+      "requiredAudits": 851967,
+      "completionMagic": 1127297351,
+      "tailRevision": 2,
+      "seal": 3235800177,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 0,
+      "visualTickDelta": 0
+    },
+    {
+      "family": "G11_R1",
+      "rootKind": 2,
+      "physicalProfileCode": 826691667,
+      "tailProfileCode": 1378955591,
+      "actualPasses": 2543,
+      "requiredAudits": 851967,
+      "completionMagic": 1127297351,
+      "tailRevision": 2,
+      "seal": 3235800177,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 1,
+      "visualTickDelta": 256
+    },
+    {
+      "family": "G11_DM",
+      "rootKind": 1,
+      "physicalProfileCode": 843924551,
+      "tailProfileCode": 1144074567,
+      "actualPasses": 19,
+      "requiredAudits": 851967,
+      "completionMagic": 1127297351,
+      "tailRevision": 2,
+      "seal": 3235800177,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 0,
+      "visualTickDelta": 0
+    },
+    {
+      "family": "G11_DM",
+      "rootKind": 2,
+      "physicalProfileCode": 843924551,
+      "tailProfileCode": 1144074567,
+      "actualPasses": 2923,
+      "requiredAudits": 1048575,
+      "completionMagic": 1127297351,
+      "tailRevision": 2,
+      "seal": 3235800177,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 1,
+      "visualTickDelta": 256
+    },
+    {
+      "family": "G9_RX",
+      "rootKind": 1,
+      "physicalProfileCode": 827477575,
+      "tailProfileCode": 827477575,
+      "actualPasses": 12,
+      "requiredAudits": 65535,
+      "completionMagic": 843269191,
+      "tailRevision": 2,
+      "seal": 3235776802,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 0,
+      "visualTickDelta": 0
+    },
+    {
+      "family": "G9_RX",
+      "rootKind": 2,
+      "physicalProfileCode": 827477575,
+      "tailProfileCode": 827477575,
+      "actualPasses": 2404,
+      "requiredAudits": 262143,
+      "completionMagic": 843269191,
+      "tailRevision": 2,
+      "seal": 3235776802,
+      "words": 256,
+      "tailReadBytes": 1024,
+      "quantumDelta": 1,
+      "visualTickDelta": 256
+    }
+  ],
+  "FrozenExpected224": [
+    {
+      "start": 0,
+      "words": 1,
+      "name": "magicGREX"
+    },
+    {
+      "start": 1,
+      "words": 1,
+      "name": "revision1"
+    },
+    {
+      "start": 2,
+      "words": 1,
+      "name": "familyCode"
+    },
+    {
+      "start": 3,
+      "words": 1,
+      "name": "rootKind"
+    },
+    {
+      "start": 4,
+      "words": 1,
+      "name": "tailMagic"
+    },
+    {
+      "start": 5,
+      "words": 1,
+      "name": "tailRevision"
+    },
+    {
+      "start": 6,
+      "words": 1,
+      "name": "tailProfileCode"
+    },
+    {
+      "start": 7,
+      "words": 1,
+      "name": "physicalProfileCode"
+    },
+    {
+      "start": 8,
+      "words": 1,
+      "name": "seal"
+    },
+    {
+      "start": 9,
+      "words": 1,
+      "name": "tailWords"
+    },
+    {
+      "start": 10,
+      "words": 1,
+      "name": "actualPasses"
+    },
+    {
+      "start": 11,
+      "words": 1,
+      "name": "requiredAudits"
+    },
+    {
+      "start": 12,
+      "words": 1,
+      "name": "stateBytesLo"
+    },
+    {
+      "start": 13,
+      "words": 1,
+      "name": "stateBytesHi"
+    },
+    {
+      "start": 14,
+      "words": 1,
+      "name": "workBytesLo"
+    },
+    {
+      "start": 15,
+      "words": 1,
+      "name": "workBytesHi"
+    },
+    {
+      "start": 16,
+      "words": 1,
+      "name": "eventCapacity"
+    },
+    {
+      "start": 17,
+      "words": 1,
+      "name": "pathCapacity"
+    },
+    {
+      "start": 18,
+      "words": 2,
+      "name": "nonce"
+    },
+    {
+      "start": 20,
+      "words": 2,
+      "name": "plan"
+    },
+    {
+      "start": 22,
+      "words": 2,
+      "name": "frame"
+    },
+    {
+      "start": 24,
+      "words": 2,
+      "name": "control"
+    },
+    {
+      "start": 26,
+      "words": 2,
+      "name": "geometry"
+    },
+    {
+      "start": 28,
+      "words": 2,
+      "name": "deadlineNs"
+    },
+    {
+      "start": 30,
+      "words": 2,
+      "name": "rootBeginNs"
+    },
+    {
+      "start": 32,
+      "words": 2,
+      "name": "baseCommit"
+    },
+    {
+      "start": 34,
+      "words": 2,
+      "name": "baseQuanta"
+    },
+    {
+      "start": 36,
+      "words": 2,
+      "name": "arenaGeneration"
+    },
+    {
+      "start": 38,
+      "words": 1,
+      "name": "baseBank"
+    },
+    {
+      "start": 39,
+      "words": 1,
+      "name": "candidateBank"
+    },
+    {
+      "start": 40,
+      "words": 1,
+      "name": "arena"
+    },
+    {
+      "start": 41,
+      "words": 1,
+      "name": "ordinal"
+    },
+    {
+      "start": 42,
+      "words": 1,
+      "name": "K"
+    },
+    {
+      "start": 43,
+      "words": 1,
+      "name": "V"
+    },
+    {
+      "start": 44,
+      "words": 18,
+      "name": "scope9U64_run_owner_context_inputEpoch_pageSession_permission_window_config_surface"
+    },
+    {
+      "start": 62,
+      "words": 2,
+      "name": "baseVisualGeneration"
+    },
+    {
+      "start": 64,
+      "words": 2,
+      "name": "baseVisualTicks"
+    },
+    {
+      "start": 66,
+      "words": 2,
+      "name": "proposedVisualGeneration"
+    },
+    {
+      "start": 68,
+      "words": 2,
+      "name": "proposedVisualTicks"
+    },
+    {
+      "start": 70,
+      "words": 2,
+      "name": "reservedZero"
+    },
+    {
+      "start": 72,
+      "words": 8,
+      "name": "parameterSHA"
+    },
+    {
+      "start": 80,
+      "words": 8,
+      "name": "physicalSeedSHA"
+    },
+    {
+      "start": 88,
+      "words": 8,
+      "name": "physicalLayoutSHA"
+    },
+    {
+      "start": 96,
+      "words": 8,
+      "name": "actualShaderSHA"
+    },
+    {
+      "start": 104,
+      "words": 8,
+      "name": "physicalPipelineSpecSHA"
+    },
+    {
+      "start": 112,
+      "words": 8,
+      "name": "compositeLayoutSHA"
+    },
+    {
+      "start": 120,
+      "words": 8,
+      "name": "activePipelineSHA"
+    },
+    {
+      "start": 128,
+      "words": 8,
+      "name": "visualConfigSHA"
+    },
+    {
+      "start": 136,
+      "words": 8,
+      "name": "visualSeedRecipeSHA"
+    },
+    {
+      "start": 144,
+      "words": 8,
+      "name": "actualVisualSeedSHA"
+    },
+    {
+      "start": 152,
+      "words": 8,
+      "name": "staticContractSHA"
+    },
+    {
+      "start": 160,
+      "words": 8,
+      "name": "inputSHA"
+    },
+    {
+      "start": 168,
+      "words": 8,
+      "name": "inputPolicySHA"
+    },
+    {
+      "start": 176,
+      "words": 2,
+      "name": "clockGeneration"
+    },
+    {
+      "start": 178,
+      "words": 2,
+      "name": "lifecycleGeneration"
+    },
+    {
+      "start": 180,
+      "words": 1,
+      "name": "inputDomain"
+    },
+    {
+      "start": 181,
+      "words": 1,
+      "name": "physicalParameterRevision"
+    },
+    {
+      "start": 182,
+      "words": 1,
+      "name": "implementationRevision1"
+    },
+    {
+      "start": 183,
+      "words": 1,
+      "name": "parentKind"
+    },
+    {
+      "start": 184,
+      "words": 40,
+      "name": "reservedZero"
+    }
+  ],
+  "DMControlWords": [
+    {
+      "word": 120,
+      "name": "expectedScopeMask"
+    },
+    {
+      "word": 121,
+      "name": "seenScopeMask"
+    },
+    {
+      "word": 122,
+      "name": "certified16ScopeMask"
+    },
+    {
+      "word": 123,
+      "name": "certified17ScopeMask"
+    },
+    {
+      "word": 124,
+      "name": "currentScopeId"
+    },
+    {
+      "word": 125,
+      "name": "requiredStageMask"
+    },
+    {
+      "word": 126,
+      "name": "visitedStageMask"
+    },
+    {
+      "word": 127,
+      "name": "auditProtocolRevision1"
+    }
+  ],
+  "scopeBits": {
+    "discovery": [
+      0,
+      6
+    ],
+    "authority": 6,
+    "rejectPrefix": [
+      7,
+      13
+    ],
+    "acceptedReplay": 13
+  },
+  "DMWork": "exact T554 appended128x48words; no uColumnStage+32 overlap"
+}

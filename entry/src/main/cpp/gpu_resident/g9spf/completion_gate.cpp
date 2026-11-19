@@ -30,3 +30,8 @@ std::optional<ValidatedBlockedControlRecord> CompletionGate::Blocked(const Profi
  return ValidatedBlockedControlRecord(ValidatedRecord(permit,w));
 }
 }
+
+namespace grs::g9spf {
+std::optional<ValidatedCompositeParentR1> CompletionGate::AcceptedComposite(const accept647::CompositeExpectedContract& e,const accept647::NativeMappedObservation& o){if(e.SelectedFamily()!=accept647::Family::G11_R1)return {};auto proof=accept647::SemanticCore::Accepted(e,o);if(!proof)return {};return ValidatedCompositeParentR1(*proof);}
+std::optional<ValidatedBlockedCompositeParentR1> CompletionGate::BlockedComposite(const accept647::CompositeExpectedContract& e,const accept647::NativeMappedObservation& o){if(e.SelectedFamily()!=accept647::Family::G11_R1)return {};auto proof=accept647::SemanticCore::Blocked(e,o);if(!proof)return {};return ValidatedBlockedCompositeParentR1(*proof);}
+}

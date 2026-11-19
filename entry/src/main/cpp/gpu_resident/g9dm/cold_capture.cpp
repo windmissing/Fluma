@@ -6,7 +6,7 @@ bool Transport::CaptureSpan(uint32_t* out,size_t words,bool full,const uint32_t*
  cold::Layout layout;if(!ready_||busy_||!Current()||!profile_||!out||!quota||!cold::Layout::Make(*profile_,4,layout,full)||words<layout.words||full&&!config_.fullTrialTrace||tail_[0]!=kCompletionMagic||tail_[6]==5)return false;
  // Prefix has no descriptor for itself. Its hash belongs to the external
  // page archive manifest, avoiding any recursive digest input.
- std::memset(out,0,layout.words*4);out[0]=0x31433947;out[1]=1;out[2]=8192;out[4]=kProfileCode;out[5]=full?1:0;out[6]=uint32_t(layout.count);out[7]=profile_->k;Put(out,8,layout.words*4);Put(out,10,request);Put(out,12,trace);Put(out,14,created);Put(out,16,permit_.identity.run);Put(out,18,permit_.identity.context);Put(out,20,permit_.identity.surface);Put(out,22,permit_.identity.pageSession);Put(out,24,permit_.identity.inputEpoch);Put(out,26,permit_.nonce);out[28]=tail_[6];out[29]=tail_[37];out[30]=tail_[44];out[31]=tail_[46];
+ std::memset(out,0,layout.words*4);out[0]=kColdMagic;out[1]=2;out[2]=8192;out[4]=kProfileCode;out[5]=full?1:0;out[6]=uint32_t(layout.count);out[7]=profile_->k;Put(out,8,layout.words*4);Put(out,10,request);Put(out,12,trace);Put(out,14,created);Put(out,16,permit_.identity.run);Put(out,18,permit_.identity.context);Put(out,20,permit_.identity.surface);Put(out,22,permit_.identity.pageSession);Put(out,24,permit_.identity.inputEpoch);Put(out,26,permit_.nonce);out[28]=tail_[6];out[29]=tail_[37];out[30]=tail_[44];out[31]=tail_[46];
  std::copy(tail_.begin(),tail_.end(),out+256);std::copy(lastInput_.begin(),lastInput_.end(),out+512);std::copy(lastConfig_.begin(),lastConfig_.end(),out+640);std::copy(quota,quota+256,out+768);
  auto copy=[&](GLuint buffer,size_t offset,size_t count,size_t destination){
   if(!count)return true;if(destination>layout.words||count>layout.words-destination||offset>SIZE_MAX/4||count>SIZE_MAX/4)return false;
@@ -14,7 +14,7 @@ bool Transport::CaptureSpan(uint32_t* out,size_t words,bool full,const uint32_t*
   std::memcpy(out+destination,mapped,count*4);const auto unmapped=glUnmapBuffer(GL_COPY_READ_BUFFER);const bool good=coldGood();return unmapped==GL_TRUE&&good;
  };
  glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT|GL_BUFFER_UPDATE_BARRIER_BIT);
- if(!coldGood()||!copy(buffers_[5],profile_->work[6].begin/4,384,1024))return false;
+ if(!coldGood()||!copy(buffers_[5],profile_->work[6].begin/4,384,1024)||!copy(buffers_[5],profile_->work[7].begin/4,128,1408))return false;
  for(size_t i=0;i<layout.count;++i){const auto& segment=layout.segments[i];GLuint buffer=i==0?buffers_[1]:i==1?buffers_[current_]:i==2?buffers_[7]:i==3?buffers_[8+permit_.arena]:full_[i-4];
   const uint32_t* summary=i>=4?out+1024+(i-4)*64:nullptr;bool executed=i<4||summary[0]!=0;
   if(executed&&!copy(buffer,0,segment.words,segment.begin))return false;

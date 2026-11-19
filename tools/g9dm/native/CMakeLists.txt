@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.16)
+project(dm_t647_native LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+get_filename_component(DM_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+set(DM_GPU "${DM_ROOT}/entry/src/main/cpp/gpu_resident")
+# This library links the actual default DM transport/controller, not a mock gate.
+add_library(grs_foundation SHARED "${DM_GPU}/cold_slot_broker.cpp" "${DM_GPU}/../p013renderer/fullframe_targets.cpp")
+set_target_properties(grs_foundation PROPERTIES OUTPUT_NAME grs_dm_t647)
+include("${DM_GPU}/g9dm/kernels.cmake")
+target_include_directories(grs_foundation PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+target_compile_options(grs_foundation PRIVATE -fno-fast-math -ffp-contract=off)
+target_link_libraries(grs_foundation PUBLIC libEGL.so libGLESv3.so libhilog_ndk.z.so)

@@ -5,7 +5,7 @@
 namespace grs {namespace g9dm {namespace coldtrace {
 using cold503::Scope;using cold503::ScopeJson;
 using Writer=cold::Writer;
-inline constexpr size_t MaxTraceBytes=cold::kMaximumTraceBytes,TraceBudget=cold::kTwoSlotTraceBytes,PageWords=cold::kPageWords;
+inline constexpr size_t MaxTraceBytes=cold::kMaximumFullTraceBytes,TraceBudget=cold::kTwoSlotTraceBytes,PageWords=cold::kPageWords;
 inline constexpr uint64_t TtlNs=60000000000ULL;
 // All methods below require the single App control lock. Storage ownership is
 // transferred explicitly; allocation/free/Capture/encoding occur outside it.

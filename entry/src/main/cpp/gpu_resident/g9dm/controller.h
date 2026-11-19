@@ -8,7 +8,7 @@
 #include <string>
 namespace grs::g9dm {
 class Controller {
- mutable std::mutex mutex_;
+ mutable std::recursive_mutex mutex_;
  StageCapabilityV2 caps_{};Transport transport_;Config config_;const Profile* profile_=nullptr;ControlIdentity identity_{};
  ProgressClockV3 clock_;RunControl run_;PlanningControl planning_{clock_,run_};InputGate inputGate_;
  struct Queued {Input128 input{};SourceIntentKey key{};uint64_t intent=0;};

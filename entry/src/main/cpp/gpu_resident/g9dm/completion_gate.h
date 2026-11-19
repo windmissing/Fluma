@@ -1,28 +1,49 @@
 #pragma once
 #include "research_config.h"
+#include "../acceptance_t647/contract.h"
 #include <optional>
 namespace grs::g9dm {
-struct NativeEvidence {uint32_t dispatches=0,barriers=0;uint64_t fenceNs=0;uint32_t gl=0,egl=0;};
+struct NativeEvidence {uint32_t dispatches=0,barriers=0;uint64_t fenceNs=0;uint32_t gl=0,egl=0;bool fenceObserved=false;};
 class CompletionGate;
 class ValidatedRecord {
- Permit permit_;Completion256 tail_{};
- ValidatedRecord(const Permit& p,const Completion256& w):permit_(p),tail_(w){}
+ Permit permit_;accept647::ValidatedAccepted proof_;
+ ValidatedRecord(const Permit& p,const accept647::ValidatedAccepted& proof):permit_(p),proof_(proof){}
  friend class CompletionGate;
 public:
- const Permit& Permission()const{return permit_;}const Completion256& Words()const{return tail_;}
+ const Permit& Permission()const{return permit_;}const Completion256& Words()const{return proof_.Words();}
+ bool ProducedBy(const void* producer)const{return proof_.Producer()==producer;}
+ const auto& ExpectedHash()const{return proof_.ExpectedHash();}
 };
-// This is a G9-neutral control proof, not a cast of a V4 outcome or tail.
 class ValidatedBlockedControlRecord {
- ValidatedRecord record_;
- explicit ValidatedBlockedControlRecord(const ValidatedRecord& r):record_(r){}
+ Permit permit_;accept647::ValidatedBlocked proof_;
+ ValidatedBlockedControlRecord(const Permit& p,const accept647::ValidatedBlocked& proof):permit_(p),proof_(proof){}
  friend class CompletionGate;
 public:
- const Permit& Permission()const{return record_.Permission();}const Completion256& Words()const{return record_.Words();}
+ const Permit& Permission()const{return permit_;}const Completion256& Words()const{return proof_.Words();}
+};
+// Distinct composite proof: never accepted by the default bank commit API.
+class ValidatedCompositeParentDM {
+ accept647::ValidatedAccepted proof_;
+ explicit ValidatedCompositeParentDM(const accept647::ValidatedAccepted& proof):proof_(proof){}
+ friend class CompletionGate;
+public:
+ const auto& Words()const{return proof_.Words();}const auto& ExpectedHash()const{return proof_.ExpectedHash();}
+ const void* Producer()const{return proof_.Producer();}
+};
+class ValidatedBlockedCompositeParentDM {
+ accept647::ValidatedBlocked proof_;
+ explicit ValidatedBlockedCompositeParentDM(const accept647::ValidatedBlocked& proof):proof_(proof){}
+ friend class CompletionGate;
+public:
+ const auto& Words()const{return proof_.Words();}const auto& ExpectedHash()const{return proof_.ExpectedHash();}
+ const void* Producer()const{return proof_.Producer();}
 };
 class CompletionGate {
- static bool Common(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);
+ friend class Transport;
+ static std::optional<ValidatedRecord> Accepted(const Permit&,const accept647::ExpectedContract&,const accept647::NativeMappedObservation&);
+ static std::optional<ValidatedBlockedControlRecord> Blocked(const Permit&,const accept647::ExpectedContract&,const accept647::NativeMappedObservation&);
 public:
- static std::optional<ValidatedRecord> Accepted(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);
- static std::optional<ValidatedBlockedControlRecord> Blocked(const Profile&,const Permit&,const Completion256&,const NativeEvidence&);
+ static std::optional<ValidatedCompositeParentDM> AcceptedComposite(const accept647::CompositeExpectedContract&,const accept647::NativeMappedObservation&);
+ static std::optional<ValidatedBlockedCompositeParentDM> BlockedComposite(const accept647::CompositeExpectedContract&,const accept647::NativeMappedObservation&);
 };
 }

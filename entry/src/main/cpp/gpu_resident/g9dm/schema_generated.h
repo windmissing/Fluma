@@ -7,7 +7,7 @@
 #include <cstdint>
 namespace grs::g9dm {
 // T555: engineering SHA of this DM construction (schema+pipeline as delivered).
-inline constexpr const char* kEngineeringSha="t555-g9dm-v2-initial-construction";
+inline constexpr const char* kEngineeringSha="79c58d83feea110905dd43df0041d8de2f16a631f2bd553ade6523ad86cf69b3";
 inline constexpr uint32_t kProfileCode=843924551u,kSeal=3235776802u;
 inline constexpr uint32_t kStateMagic=844317767u;
 inline constexpr uint32_t kEventMagic=843400263u;
@@ -2454,7 +2454,8 @@ inline constexpr std::array<Profile,2> kProfiles={{
 {512,58384,131072,673792,1313920,23334912,98022528,188059648,48050176,{{{0,1024},{1024,512},{1536,512},{2048,16384},{18432,131072},{149504,131072},{280576,131072},{411648,262144}}},{{{0,16512},{16512,32768},{49280,1048576},{1097856,65536},{1163392,4096},{1167488,512},{1168000,1536},{1169536,4096},{1173632,2048},{1175680,1536},{1177216,512},{1177728,9216},{1186944,32768},{1219712,65536},{1285248,5120}}}},
 }};
 
-inline constexpr size_t kDM48ByteStart=1286784,kDM48Bytes=24576,kDM48Stride=192,kDM48Columns=128;
+inline constexpr size_t kDM48ByteStart192=1286784,kDM48ByteStart512=1289344,kDM48Bytes=24576,kDM48Stride=192,kDM48Columns=128;
+inline constexpr size_t DM48ByteStart(const Profile& p){return p.workBytes-kDM48Bytes;}
 namespace dm48 {
 inline constexpr size_t oldS=0;
 inline constexpr size_t oldF=1;
@@ -2517,3 +2518,18 @@ inline constexpr const char* kResearchSpecId="G9_DM_RESEARCH_R0";
 inline const Profile* SelectProfile(uint32_t k){for(const auto& p:kProfiles)if(p.k==k)return &p;return nullptr;}
 }
 
+
+namespace grs::g9dm {
+namespace audit647 {
+inline constexpr uint32_t kRevision=1,kDefaultSourcePasses=12,kDefaultQuantumPasses=2404,kSourceMask=65535,kQuantumMask=262143;
+inline constexpr size_t kFullConfigWord=64,kDmParametersWord=112,kColdControlsWord=1408,kColdControlWords=128;
+inline constexpr size_t expectedScopeMask=120;
+inline constexpr size_t seenScopeMask=121;
+inline constexpr size_t certified16ScopeMask=122;
+inline constexpr size_t certified17ScopeMask=123;
+inline constexpr size_t currentScopeId=124;
+inline constexpr size_t requiredStageMask=125;
+inline constexpr size_t visitedStageMask=126;
+inline constexpr size_t auditProtocolRevision1=127;
+}
+}

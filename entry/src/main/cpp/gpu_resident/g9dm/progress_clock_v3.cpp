@@ -75,7 +75,7 @@ ControlResult ProgressClockV3::RegisterSourceIntentLocked(const SourceIntentKey&
     if(!open||key.run!=identity.run||key.owner!=identity.owner||key.context!=identity.context||key.inputEpoch!=identity.inputEpoch||key.pageSession!=identity.pageSession)return ControlResult::STALE_REJECTED;
     if(freeSlot>=intents.size())return ControlResult::WOULD_BLOCK;
     if(key.sourceControlGeneration!=sourceControlGeneration||!key.userIntentSequence)return ControlResult::INVALID_ARGUMENT;
-    if(packet.words[0]!=826882375||packet.words[1]!=1||packet.words[40]!=1)return ControlResult::INVALID_ARGUMENT;
+    if(packet.words[0]!=843662407||packet.words[1]!=2||packet.words[40]!=1)return ControlResult::INVALID_ARGUMENT;
     uint64_t newest=counters.sourceIntentSeq;
     for(const auto& item:intents)if(item.generation==key.sourceControlGeneration)newest=std::max(newest,item.sequence);
     if(key.userIntentSequence<=newest)return ControlResult::ALREADY_RETIRED;
