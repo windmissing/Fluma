@@ -1,0 +1,23 @@
+{
+  "schema": "T592_RASTER_ARCHITECT_RECEIPT_V1",
+  "date": "2026-11-19",
+  "engineeringCommit": "a14b24cb",
+  "taskId": "6afd1e8ae4b0bf949efc934f",
+  "comment": {
+    "id": "6afee20ee4b0e380f8bcb532",
+    "userId": 1010673194,
+    "title": "T592本次architect问题定位回执（非真机任务完成，不改本卡状态），commit a14b24cb。docs/architecture-T592-raster-v1.md/contract及analysis：实际8a323863签包/ABC28077347/native4a18与T659相符；本次prepare无.same崩溃仅保窄证，未证明owner/票据全部负控。纠正v3根因：T532_WINDOW_HOST_RASTER_V3是协议名，planRevision9是generation；截图planRevision=9、raster.generation=9、geometry11，不是版本失配。RASTER_NATIVE_MISMATCH实际核十项：controller/session/surface/context/run非空，native geometry及packet/viewport尺寸与当前geometry/rasterW/H一致。当前JPEG只露JSON开头，fix9_l1–l8主要系统栏，具体失败项NOT_CAPTURED，不能猜版本/尺寸或交designer。先effector读取同attempt已有自动t540-prepare-*.json及WS_EVENT；tester T671离线查readiness.authority.snapshot.raster.native，核readiness.detailTruncated/observationTruncated。列十项actual/expected+owner/scope/时序；旧t408档不能代替，文件不存在明确differentAttempt再fresh一次即取原件。若截断/写失败准确回architect补那个字段，勿泛加日志/延3000ms/强READY。HOLD/严格PNG仍未达，本轮不运行设备/产品测试、不派猜测性developer修复。",
+    "modifiedTime": "2026-11-19T11:48:30+0000",
+    "createdTime": "2026-11-19T11:48:30+0000",
+    "replyCommentId": null,
+    "replyUserId": null
+  },
+  "readbackMatched": true,
+  "deviceUsed": false,
+  "productTestsRun": false,
+  "buildRun": false,
+  "productPASS": false,
+  "queueTouched": false,
+  "taskStatusTouched": false,
+  "sameNameDidaQueueUpdated": false
+}
