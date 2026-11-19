@@ -1,0 +1,24 @@
+{
+ "revision": "T592_V2_JSCRASH_ROOT_CAUSE_V1",
+ "date": "2026-11-19",
+ "package": {
+  "task": "T592-rev2",
+  "source": "t598-final tree (unchanged product code)",
+  "inputSha": "ba8980ef",
+  "signedSha": "eeb39a4f"
+ },
+ "sequence": "fixedKeyboardConfirmed OK -> prepare click -> app process GONE (jscrash, kicked to launcher)",
+ "rootCause": {
+  "file": "entry/src/main/ets/render/PrepareReadinessV4.ets:18:97",
+  "code": "this.ownerV4.same(o) where ownerV4=JSON.parse(JSON.stringify(o)) \u2014 plain JSON object has no .same method",
+  "error": "TypeError: same is not callable, same is undefined",
+  "faultlog": "faultlogger/jscrash-com.example.helloworld-20020231-20261119160328166.log",
+  "stack": [
+   "noteChange PrepareReadinessV4.ets:18:97",
+   "changedEntry PrepareReadinessV4.ets:19:58",
+   "anonymous P051DerivedV2Demo.ets:130:102"
+  ]
+ },
+ "differenceVsV1": "v1 reported PREPARE_OBSERVATION_FAILED (window readback); actual root = product JS TypeError crash at prepare-observe path. v1 observation was downstream symptom.",
+ "route": "developer (PrepareReadinessV4 owner snapshot must not call methods on JSON copy; compare fields or keep prototype object)"
+}
