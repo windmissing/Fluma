@@ -107,6 +107,8 @@ inline void GraphicsLogJson(std::ostream& out,const GraphicsLog& log) {
 }
 inline void GraphicsReceipt(const GraphicsRecord& r,const char* stage,
                             std::shared_ptr<Artifact> artifact={}) {
+  if(route5Hook.stage)route5Hook.stage(route5Hook.context,stage,"SAMPLE",0,-1,r.shaderSha[0].c_str());
+  if(route5Hook.log){for(size_t i=0;i<2;++i)if(r.compileLog[i].reported>0||!r.compileLog[i].bytes.empty())route5Hook.log(route5Hook.context,0,r.compileLog[i].bytes.data(),r.compileLog[i].bytes.size(),r.compileLog[i].reported);if(r.linkLog.reported>0||!r.linkLog.bytes.empty())route5Hook.log(route5Hook.context,1,r.linkLog.bytes.data(),r.linkLog.bytes.size(),r.linkLog.reported);}
   std::ostringstream out;
   out<<"{\"revision\":\"T480_SCENE_PROGRAM_ARTIFACT_V1\",\"programKind\":\"GRAPHICS\",\"role\":"
      <<Quote(r.role)<<",\"key\":"<<Quote(r.key)<<",\"bindingAbiSHA\":"<<Quote(Hash(r.abi))

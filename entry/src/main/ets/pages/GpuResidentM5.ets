@@ -1,3 +1,4 @@
+import { GpuM5Init } from '../physics/GpuM5Init';
 import { GpuV5Cold } from '../physics/GpuV5Cold';
 import { common } from '@kit.AbilityKit';
 import { GpuInputAttempt } from '../physics/GpuInputAttempt';
@@ -37,6 +38,8 @@ struct GpuResidentM5 {
   private frame: M5Frame | null = null;
   @State inputDiagnostic: string = '';
   private startupIntent: number = 0;
+  private configTicket: string = '';
+  private initClientReceipt: string = '';
   private inputCall(api: string, words: Uint32Array, schema: string, invoke: (value: Uint32Array) => string): string {
     const context = getContext(this) as common.UIAbilityContext;
     return GpuInputAttempt.call('M3B', api, words, schema, context.filesDir, invoke, (state: string): void => { this.inputDiagnostic = state; });
@@ -48,6 +51,10 @@ struct GpuResidentM5 {
     this.frame = null;
   }
   private startupFault(message: string): void {
+    if (this.configTicket !== '') {
+      const context = getContext(this) as common.UIAbilityContext;
+      GpuM5Init.archive(this.configTicket, context.filesDir, this.initClientReceipt + ';' + message).then((receipt: string): void => { this.inputDiagnostic = receipt; }).catch((error: Error): void => { this.inputDiagnostic = 'INIT_ARCHIVE_INCOMPLETE:' + String(error); });
+    }
     ++this.startupIntent;
     this.stopFrame(); this.identity = []; this.message = message;
     try { native.setActive(false); } catch (cleanup) { this.message += ';CLEANUP_FAILED:' + String(cleanup); }
@@ -68,13 +75,14 @@ struct GpuResidentM5 {
   private attachFrame(): void {
     if (this.frame !== null) this.frame.owner = null;
     const next = new M5Frame(); next.owner = this; this.frame = next;
+    this.initClientReceipt = 'FRAME_ATTACH:clientIntent=' + this.startupIntent;
     this.getUIContext().postFrameCallback(next);
   }
-  private start(mode: number): void {
+  private start(mode: number, full: boolean = false): void {
     const intent: number = ++this.startupIntent;
-    this.stopFrame(); this.identity = [];
+    this.stopFrame(); this.identity = []; this.configTicket = '';
     try {
-      const raw = this.inputCall('m5ResearchConfig', new Uint32Array([mode, 0]), 'M5_RESEARCH_REQUEST2', (words: Uint32Array): string => native.m5ResearchConfig(words));
+      const raw = this.inputCall('m5ResearchConfig', new Uint32Array([mode, full ? 1 : 0]), 'M5_RESEARCH_REQUEST2', (words: Uint32Array): string => native.m5ResearchConfig(words));
       if (raw.length === 0 || raw.length > 4096) throw new Error('M5_RESEARCH_REPLY_BOUND');
       const parsed: Object = JSON.parse(raw);
       if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('M5_RESEARCH_REPLY_OBJECT');
@@ -90,7 +98,9 @@ struct GpuResidentM5 {
       this.message = reply;
       if (!this.requested(reply, 'M5_NEW_EMPTY_RUN_REQUESTED')) { native.setActive(false); return; }
       this.sequence = this.sample = this.intent = this.request = 0;
-      GpuInputAttempt.waitSession((): string => native.m5Session(), '5', 31, (): boolean => intent === this.startupIntent,
+      this.configTicket = GpuM5Init.ticket(reply);
+      this.initClientReceipt = 'CONFIG_REQUEST:' + this.configTicket + ':intent=' + intent;
+      GpuM5Init.wait(this.configTicket, (): boolean => intent === this.startupIntent,
         (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.attachFrame(); },
         (error: string): void => { this.startupFault(error); });
     } catch (error) { this.startupFault('M5_START_FAULT:' + String(error)); }
@@ -101,7 +111,7 @@ struct GpuResidentM5 {
       this.message = native.m5ResumeInput();
       if (this.message !== '0') return;
       this.sequence = this.sample = this.intent = this.request = 0;
-      GpuInputAttempt.waitSession((): string => native.m5Session(), '5', 31, (): boolean => intent === this.startupIntent,
+      GpuM5Init.wait(this.configTicket, (): boolean => intent === this.startupIntent,
         (identity: number[], source: number[]): void => { this.identity = identity; this.sourceGeneration = source; this.attachFrame(); },
         (error: string): void => { this.startupFault(error); });
     } catch (error) { this.startupFault('M5_RESUME_FAULT:' + String(error)); }
@@ -128,6 +138,7 @@ struct GpuResidentM5 {
   frameTick(frame: M5Frame, ns: number): void {
     if (frame !== this.frame || frame.owner !== this || !Number.isSafeInteger(ns) || ns < 0) return;
     try {
+      if (this.initClientReceipt.indexOf('FIRST_FRAME') < 0) this.initClientReceipt += ';FIRST_FRAME:callbackNs=' + ns;
       if (this.identity.length !== 18) {
         const raw: string = native.m5Session();
         let s: M5Words | null = null;
@@ -169,6 +180,8 @@ struct GpuResidentM5 {
       Row({ space: 6 }) {
         Button('新空运行 · 起沙关闭').onClick(() => this.start(0))
         Button('新空运行 · 合成研究').onClick(() => this.start(2))
+        Button('FULL · 起沙关闭').onClick(() => this.start(0, true))
+        Button('FULL · 合成研究').onClick(() => this.start(2, true))
       }
       Row({ space: 6 }) {
         Button('投沙').onClick(() => this.source(0))

@@ -2,5 +2,5 @@
 #include <cstdint>
 namespace grs::m3b::capture614 {
 inline constexpr uint32_t kRawRevision=2,kMetaRevision=2,kRawUsedMask=0x8003ffffu,kMetaUsedMask=0x8007ffffu;
-inline constexpr const char* kContractSha="b024ab7cc9e8b79cff6be33279ab75c640e05b790a6c51a4f0ec4cf8ebed8da3";
+inline constexpr const char* kContractSha="86affc6fcf0bce6f2f29254c77d9ece7b1367f60d9566f0222d207630c4bae48";
 }

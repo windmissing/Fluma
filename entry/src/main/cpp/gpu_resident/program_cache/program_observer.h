@@ -11,6 +11,7 @@ struct ProgramObservationHook {
   void (*log)(void *, uint32_t, const char *, size_t, int64_t) = nullptr;
 };
 inline thread_local ProgramObservationHook route13Hook{};
+inline thread_local ProgramObservationHook route5Hook{};
 inline void Observe13(const char *phase, const char *edge, uint32_t object = 0,
                       int64_t raw = -1, const char *sha = nullptr) {
   if (route13Hook.stage)

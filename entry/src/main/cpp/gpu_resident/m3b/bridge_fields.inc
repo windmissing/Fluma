@@ -8,3 +8,6 @@ std::array<uint32_t,18> M5IdentityWordsLocked()const{
  std::array<uint32_t,18> out{};const uint64_t values[]={m5Identity.run,m5Identity.owner,m5Identity.context,m5Identity.inputEpoch,m5Identity.pageSession,m5Identity.permission,m5Identity.window,m5Identity.config,m5Identity.surface};
  for(size_t i=0;i<9;++i){out[i*2]=uint32_t(values[i]);out[i*2+1]=uint32_t(values[i]>>32);}return out;
 }
+
+grs::m3b::init650::Store m5InitStore;
+uint64_t m5InitTicket=0,m5InitEpoch=0;

@@ -10,7 +10,8 @@ if(m5Selected){
   if(code!=grs::m3b::TransportResultV5::OK&&code!=grs::m3b::TransportResultV5::IN_PROGRESS){publish("{\"state\":\"FAULT\",\"stage\":\"M5_ROOT\",\"code\":"+std::to_string(uint32_t(code))+"}");failed=true;continue;}
  }else{
   // V3 admission owns P/X and SOURCE-only plans; never run a legacy dt clock.
-  if(m5Local->Advance(now(),frame+1,frame+1)==grs::m3b::ControlResult::OK)++frame;
+  const auto advance=m5Local->Advance(now(),frame+1,frame+1);if(advance==grs::m3b::ControlResult::OK)++frame;
+  uint64_t ticket=0;{std::lock_guard<std::mutex> lock(mutex);ticket=m5InitTicket;}m5InitStore.Emit(ticket,grs::m3b::init650::Code::PLAN_ADVANCE,"EXIT",int32_t(advance));
  }
  const auto afterQuota=m5Local->Quota(now());m5Working=afterQuota[4]==0u&&(afterQuota[7]>0u||afterQuota[8]>0u);
  const auto h=m5Local->SceneHeaderV5();const uint64_t generation=uint64_t(h[72])|(uint64_t(h[73])<<32);

@@ -102,6 +102,8 @@ inline std::string Log(GLuint object, GLint &reported, bool shader = false) {
 }
 inline void Receipt(const Pending &p, const char *stage,
                     std::shared_ptr<Artifact> artifact = {}) {
+  if(route5Hook.stage)route5Hook.stage(route5Hook.context,stage,"SAMPLE",0,p.originalError?p.originalError:-1,p.shader.c_str());
+  if(route5Hook.log){if(p.shaderReported>0||!p.shaderLog.empty())route5Hook.log(route5Hook.context,0,p.shaderLog.data(),p.shaderLog.size(),p.shaderReported);if(p.reported>0||!p.log.empty())route5Hook.log(route5Hook.context,1,p.log.data(),p.log.size(),p.reported);}
   if(p.role=="G13_COMPUTE"){Observe13(stage,"SAMPLE",0,(p.originalError||!std::strcmp(stage,"COMPILE_OR_LINK_FAILED")||!std::strcmp(stage,"LINK_OK_REFLECTION_PENDING"))?p.originalError:-1,p.shader.c_str());if(route13Hook.log){route13Hook.log(route13Hook.context,0,p.shaderLog.data(),p.shaderLog.size(),p.shaderReported);route13Hook.log(route13Hook.context,1,p.log.data(),p.log.size(),p.reported);}}
   std::ostringstream out;
   out << "{\"revision\":\"T475_PROGRAM_ARTIFACT_V1\",\"role\":" << Quote(p.role)

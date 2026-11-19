@@ -1,5 +1,6 @@
 #pragma once
 #include "buffer_plan.h"
+#include "init_diagnostics.h"
 #include "completion_gate.h"
 #include "source_queue_v5.h"
 #include "lift_input.h"
@@ -21,6 +22,7 @@ enum class TransportResultV5 {OK,IN_PROGRESS,WOULD_BLOCK,UNSUPPORTED,INVALID,STA
 class TransportV5 {
 public:
  using Authorize=bool(*)(void*,const RootPermitV5&,uint64_t);
+ void SetInitDiagnostics(init650::Binding binding){initDiagnostics_=binding;}
  TransportV5()=default;TransportV5(const TransportV5&)=delete;TransportV5& operator=(const TransportV5&)=delete;
  TransportResultV5 Create(const Profile&,const ControlIdentityV5&,uint64_t geometry,const PhysicalConfigV5&,
                            const std::array<uint32_t,8>& shaderSha,const std::array<uint32_t,8>& angleSha,const std::array<uint32_t,8>& layoutSha);
@@ -102,6 +104,7 @@ private:
  uint32_t fullMask_=0,fullQuantumMask_=0,pendingFullMask_=0;
  bool fullFrozen_=true;
  const char* captureFailure_="NO_CAPTURE_REQUEST";
+ init650::Binding initDiagnostics_{};
  GLenum rawGl_=0;EGLint rawEgl_=EGL_SUCCESS;
  bool Current()const;bool Good();bool Allowed();
  TransportResultV5 Denied()const;

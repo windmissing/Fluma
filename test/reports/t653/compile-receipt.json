@@ -1,0 +1,88 @@
+{
+  "schema": "T653_COMPILE_DELIVERY_V1",
+  "result": "COMPILE_PASS_NOT_PRODUCT_PASS",
+  "deviceUsed": false,
+  "testsRun": false,
+  "productExecuted": false,
+  "signed": false,
+  "deployed": false,
+  "elapsed": "22 s 317 ms \u001b[39m",
+  "packagedELF": {
+    "entry": "libs/arm64-v8a/libgrsm1.so",
+    "sha256": "35ac238c0eb000010736eaf5d5e70917e8e28a7884d460d5832016429669b7f0",
+    "bytes": 3201504,
+    "buildId": "7f31c1de559a8e10a3ee7ba7dcc8837fb732a51b",
+    "abiWords": [
+      1,
+      16384,
+      256,
+      512,
+      2048,
+      16424,
+      40,
+      1024,
+      3072,
+      11264,
+      15360
+    ]
+  },
+  "unstrippedELF": {
+    "path": ".codex\\local-test\\t653-build-final\\entry\\build\\default\\intermediates\\cmake\\default\\obj\\arm64-v8a\\libgrsm1.so",
+    "sha256": "815cc9e694f4e647e46ba87e16adcf452db7aa1cfe894ac2e7a27615659dc946",
+    "bytes": 13493800,
+    "buildId": "7f31c1de559a8e10a3ee7ba7dcc8837fb732a51b",
+    "abiWords": [
+      1,
+      16384,
+      256,
+      512,
+      2048,
+      16424,
+      40,
+      1024,
+      3072,
+      11264,
+      15360
+    ]
+  },
+  "unsignedHap": {
+    "path": ".codex\\local-test\\t653-build-final\\entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
+    "sha256": "60e28a676acb5f6574c28b049eea79c7b88d48d64b888a2aa6233b23bb58ee9c",
+    "bytes": 11195197
+  },
+  "abc": {
+    "entry": "ets/modules.abc",
+    "sha256": "4595e19217df3a18c269ca6f4dbdf3e8a5259e5aa6faf5b4164798bb628d37f6",
+    "bytes": 2990464
+  },
+  "sourceManifestSHA": "3e93a1c35f75e1b7dbedfce130328903567f2dbe0d2595b364ee4efc1f3aa511",
+  "buildLogSHA": "169461e0167114f715637439cbdb7be7c255bdd2706788600e0d483475223001",
+  "actualCompiledOwnedSources": {
+    "entry/src/main/cpp/gpu_resident/m3b/bridge_create.inc": "1d76d633cff8f755d100779b362f33306c868279935298f9a345f3616b15d9dc",
+    "entry/src/main/cpp/gpu_resident/m3b/bridge_fields.inc": "9c766f3d41777ff4c6ce051e2a8db91ab0cbb189c5f13d7a0242ab808d4b60ef",
+    "entry/src/main/cpp/gpu_resident/m3b/bridge_pump.inc": "48fd43f235398a16a760377dffe2f1bb0b9d5bac58718f666e2cccdb8de8010b",
+    "entry/src/main/cpp/gpu_resident/m3b/capture_schema_generated.glsl": "68ebd752817c485d3634c6ee33d4b199f8b76c3c8d7e137b53ea913b9fbcb9d2",
+    "entry/src/main/cpp/gpu_resident/m3b/capture_schema_generated.h": "17c3b862a9c5d70a1e778653c0eda7c30873b485a5ac3b88b036e5e935404272",
+    "entry/src/main/cpp/gpu_resident/m3b/controller.cpp": "c71024b928a89f0e7e27bd46a1fbcc9fb0693f0b2ae65185541badcdc117d0f7",
+    "entry/src/main/cpp/gpu_resident/m3b/controller.h": "2973a1ccdb36a1caf32447d8ab20cd647a244389b2022e0a444846b13c4f5d0f",
+    "entry/src/main/cpp/gpu_resident/m3b/init_diagnostics.cpp": "67295b3f2d2e65950e032b81944f624cab98f1bb9b8edd27371b3879ebbb6b2a",
+    "entry/src/main/cpp/gpu_resident/m3b/init_diagnostics.h": "8eb72f89a15099c53b30b0bd8d0df9dde6be83468230150d7fa7b152564a38ef",
+    "entry/src/main/cpp/gpu_resident/m3b/init_program_watch.h": "c92a194081d7f38430645a3a5c11970d5b7727298dcd6fa2d45bcf3bfc1a7125",
+    "entry/src/main/cpp/gpu_resident/m3b/kernels.cmake": "3a267ebd6461886c1b0645e891fd153bae69dd64e1e578d6453cc7775a2583f3",
+    "entry/src/main/cpp/gpu_resident/m3b/napi.inc": "f5bcc6f2883ec3d4fc2fb17dca2be658116525df4a11b775071c1332bf4ee100",
+    "entry/src/main/cpp/gpu_resident/m3b/transport.cpp": "564745481a68a2c610a28eb94e50baa4fb731013d9dc28a115b4f6281be5a9cd",
+    "entry/src/main/cpp/gpu_resident/m3b/transport.h": "418c5be2074e64e5875cb99ea9c9a38ad7cd4592da9f8c8adbee6c06aed2d092",
+    "entry/src/main/cpp/gpu_resident/program_cache/graphics_program_factory.h": "c9c49e9dd41784d67b3ced9d37797a1741fd9e9338b56ba05f1fe9688d3925fe",
+    "entry/src/main/cpp/gpu_resident/program_cache/program_factory.h": "79cdeee17b131bf850514b6f2793bd87628880950ddbbac2c2bceaec10bdd9a3",
+    "entry/src/main/cpp/gpu_resident/program_cache/program_observer.h": "95e48f379a453247dabf9cdfcfa5ce6bcc43583d10aaf95ecd18579f782495ed",
+    "entry/src/main/ets/pages/GpuResidentM5.ets": "6c3489299d1446f8245195237f2852c45325be66161a13698d42c70cc67394de",
+    "entry/src/main/ets/physics/GpuM5Init.ets": "439938020d6c85194d0885625a27a55ef4bf7837b01fdb281296d26e0ab2b414"
+  },
+  "contracts": {
+    "docs/architecture-T650-contract-v1.json": "eed0d33f476fdd44980a9b43171692960675e15e33384db019c5a9a4ea3542ce",
+    "docs/architecture-T619-v5-public-identity-v1.json": "d50862d08b4727759a500e70725fdb38364b57401e3fc1917b0085fe00ed7296",
+    "docs/architecture-T614-v5-entry-cursor-v1.json": "86affc6fcf0bce6f2f29254c77d9ece7b1367f60d9566f0222d207630c4bae48"
+  },
+  "nativeLoadedModuleSHA": "UNKNOWN, known flag off; build SHA does not substitute runtime evidence",
+  "FULL": "formal flag0/1 admission, actual existing T619 writer/reservation/capsule/reader preserved, runtime not executed"
+}

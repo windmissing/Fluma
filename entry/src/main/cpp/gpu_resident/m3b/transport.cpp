@@ -1,4 +1,5 @@
 #include "transport.h"
+#include "init_program_watch.h"
 #include "kernel_assets.h"
 #include "shader_variant.h"
 #include "cold_contract.h"
@@ -47,10 +48,15 @@ TransportResultV5 TransportV5::Create(const Profile& p,const ControlIdentityV5& 
   std::string source=n==0?SourceKernelV5():QuantumKernelV5();
   if(n){const auto at=source.find('\n');if(at==std::string::npos)return TransportResultV5::SHADER_FAILED;source.insert(at+1,kOpcodeDefines[n-1]);}
   if(source.size()>kMaximumKernelSourceBytes)return TransportResultV5::UNSUPPORTED;
+  const auto role=n==0?1u:n==19?3u:2u;const auto stage=n==0?init650::Code::PROGRAM_SOURCE:n==19?init650::Code::PROGRAM_FINAL:init650::Code::PROGRAM_INTERMEDIATE;
+  const auto sourceDigest=init650::Hex(programcache::Hash(source).c_str());
+  init650::ProgramScope watch(initDiagnostics_,stage,role,sourceDigest);
+  if(initDiagnostics_.store)initDiagnostics_.store->Emit(initDiagnostics_.ticket,stage,"ENTER",-1,init650::Life::NONE,&sourceDigest,role);
   GLenum original=0;auto& program=programs_[n];
   // One existing T475 Store; exact specialized bytes and independent V5 ABI
   // enter the key. No second file worker, CPU decision or global route patch.
-  if(!programcache::Build(n==0?0:1,source.c_str(),programcache::Hash(source).c_str(),"GRS_M3_V5_FEATURES31_FOUR_SSBO",program.id,original)||!programcache::Reflect(program.locations,program.id)){if(original&&!rawGl_)rawGl_=original;Release(true);return TransportResultV5::SHADER_FAILED;}
+  if(!programcache::Build(n==0?0:1,source.c_str(),programcache::Hash(source).c_str(),"GRS_M3_V5_FEATURES31_FOUR_SSBO",program.id,original)||!programcache::Reflect(program.locations,program.id)){if(initDiagnostics_.store)initDiagnostics_.store->Emit(initDiagnostics_.ticket,stage,"EXIT",0,init650::Life::FAILED,&sourceDigest,role,original?int32_t(original):-1);if(original&&!rawGl_)rawGl_=original;Release(true);return TransportResultV5::SHADER_FAILED;}
+  if(initDiagnostics_.store)initDiagnostics_.store->Emit(initDiagnostics_.ticket,stage,"EXIT",1,init650::Life::NONE,&sourceDigest,role);
  }
  glGenBuffers(GLsizei(buffers_.size()),buffers_.data());
  for(size_t i=0;i<buffers_.size();++i){glBindBuffer(GL_SHADER_STORAGE_BUFFER,buffers_[i]);glBufferData(GL_SHADER_STORAGE_BUFFER,GLsizeiptr(allocation_.bytes[i]),nullptr,GL_DYNAMIC_COPY);if(!Good()){Release(true);return TransportResultV5::GL_FAILED;}}

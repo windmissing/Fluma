@@ -8,6 +8,8 @@
 namespace grs::m3b {
 class ControllerV5:public SceneSourceV5 {
  mutable std::mutex mutex_;
+ init650::Binding initDiagnostics_{};PagePulseV3 lastInitPulse_{};uint64_t lastInitReceipt_=0,lastInitOwnerSeen_=0;
+ void ObserveInitPulse();
  ProgressClockV3 clock_;LiftInputGate liftInput_;LiftParameters liftParameters_;
  RunControl run_;
  RootOwnerV5 owner_{clock_,run_};
@@ -30,6 +32,7 @@ class ControllerV5:public SceneSourceV5 {
  static bool Authorize(void*,const RootPermitV5&,uint64_t);
  ControlResult Fail(ControlResult);
 public:
+ void SetInitDiagnostics(init650::Binding b){initDiagnostics_=b;transport_.SetInitDiagnostics(b);}
  uint64_t SourceGeneration()const{std::lock_guard<std::mutex> lock(mutex_);return clock_.sourceControlGeneration;}
  ControlResult Configure(const Profile&,const ControlIdentityV5&,uint64_t geometry,const PhysicalConfigV5&,
                          const std::array<uint32_t,8>& shader,const std::array<uint32_t,8>& angle,const std::array<uint32_t,8>& layout);

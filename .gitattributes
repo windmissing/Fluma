@@ -19,3 +19,6 @@ docs/design-G9-dynamic-mobilization-manifest-v2.json -text whitespace=cr-at-eol
 # T648 immutable DM reference copies retain their receipt-bound original bytes.
 entry/src/main/cpp/gpu_resident/g9dm/frozen_t647/** -text whitespace=cr-at-eol,-blank-at-eof
 test/reports/t648/*.log -text -whitespace
+
+# T653 original compiler log is a byte-bound evidence artifact.
+test/reports/t653/*.log -text -whitespace

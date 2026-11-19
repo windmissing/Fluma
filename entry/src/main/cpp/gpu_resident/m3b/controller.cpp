@@ -19,6 +19,7 @@ ControlResult ControllerV5::Configure(const Profile& p,const ControlIdentityV5& 
  const std::array<uint32_t,8>& shader,const std::array<uint32_t,8>& angle,const std::array<uint32_t,8>& layout){
  {std::lock_guard<std::mutex> lock(mutex_);if(configured_||run_.active||!run_.workspaceRetired||!config.Valid())return ControlResult::INVALID_ARGUMENT;clock_.identity=id;clock_.counters.session=id.pageSession;clock_.open=true;}
  const auto created=transport_.Create(p,id,geometry,config,shader,angle,layout);
+ if(initDiagnostics_.store)initDiagnostics_.store->Emit(initDiagnostics_.ticket,init650::Code::CONTROLLER_CONFIGURE,"CREATE",int32_t(created),init650::Life::NONE,nullptr,0,transport_.FirstGlError()?int32_t(transport_.FirstGlError()):-1,transport_.FirstEglError()!=EGL_SUCCESS?int32_t(transport_.FirstEglError()):-1);
  if(created!=TransportResultV5::OK)return Fail(ControlResult::UNSUPPORTED);
  std::lock_guard<std::mutex> lock(mutex_);
  if(clock_.identity!=id||!clock_.open)return ControlResult::STALE_REJECTED;
@@ -28,11 +29,13 @@ ControlResult ControllerV5::Configure(const Profile& p,const ControlIdentityV5& 
  liftParameters_=config.lift;const auto inputResult=liftInput_.Configure({id.inputEpoch,id.pageSession,id.owner,id.run,id.context},config.lift,config.lift.mode==LiftMode::SYNTHETIC_TEST);if(inputResult!=InputResult::OK)return ControlResult::INVALID_ARGUMENT;
  clock_.uiFresh=true;clock_.ready=clock_.gravityFresh=config.lift.mode==LiftMode::OFF;configured_=true;return ControlResult::OK;
 }
-ControlResult ControllerV5::Pulse(const PagePulseV3& pulse,uint64_t now){std::lock_guard<std::mutex> lock(mutex_);const auto r=clock_.PulseLocked(pulse,now);if(r==ControlResult::CLOCK_GAP||r==ControlResult::CONTROL_CLOCK_REVERSED||r==ControlResult::QUOTA_OVERFLOW){if(coldEpoch_!=UINT64_MAX)++coldEpoch_;owner_.RevokeLocked({r});}return r;}
+ControlResult ControllerV5::Pulse(const PagePulseV3& pulse,uint64_t now){ControlResult r;{std::lock_guard<std::mutex> lock(mutex_);r=clock_.PulseLocked(pulse,now);if(r==ControlResult::OK){lastInitPulse_=pulse;lastInitReceipt_=now;}if(r==ControlResult::CLOCK_GAP||r==ControlResult::CONTROL_CLOCK_REVERSED||r==ControlResult::QUOTA_OVERFLOW){if(coldEpoch_!=UINT64_MAX)++coldEpoch_;owner_.RevokeLocked({r});}}if(initDiagnostics_.store)initDiagnostics_.store->Pulse(initDiagnostics_.ticket,init650::Code::PULSE_DIRECT,pulse,now,int32_t(r));return r;}
+void ControllerV5::ObserveInitPulse(){PagePulseV3 pulse{};uint64_t receipt=0,seen=0;{std::lock_guard<std::mutex> lock(mutex_);if(!lastInitPulse_.sequence||lastInitPulse_.sequence==lastInitOwnerSeen_||clock_.counters.pulseSequence!=lastInitPulse_.sequence)return;lastInitOwnerSeen_=seen=lastInitPulse_.sequence;pulse=lastInitPulse_;receipt=lastInitReceipt_;}if(initDiagnostics_.store)initDiagnostics_.store->Pulse(initDiagnostics_.ticket,init650::Code::OWNER_OBSERVE_PULSE,pulse,receipt,0,seen);}
 ControlResult ControllerV5::Target(const ControlIdentityV5& id,int32_t target){std::lock_guard<std::mutex> lock(mutex_);return clock_.RegisterTargetLocked(id,target);}
 ControlResult ControllerV5::Mode(const ControlIdentityV5& id,GravityMode mode){std::lock_guard<std::mutex> lock(mutex_);return clock_.RegisterModeLocked(id,mode);}
 ControlResult ControllerV5::Offer(const ControlIdentityV5& id,const SourceIntentKeyV5& key,const SourcePacketV5& packet){std::lock_guard<std::mutex> lock(mutex_);return queue_.EnqueueLocked(clock_,id,key,packet);}
 ControlResult ControllerV5::Advance(uint64_t now,uint64_t frame,uint64_t control){
+ ObserveInitPulse();
  if(!PollSceneReleases())return Fail(ControlResult::STALE_REJECTED);
  LiftInput64 frozen{};SourcePacketV5 packet;bool source=false;int32_t target=0;uint32_t prefix=0,dedup=0;
  {
